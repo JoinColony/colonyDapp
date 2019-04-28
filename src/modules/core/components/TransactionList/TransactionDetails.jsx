@@ -3,6 +3,9 @@
 import React from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 
+import { useDataFetcher } from '~utils/hooks';
+import { colonyFetcher } from '../../../dashboard/fetchers';
+
 import MaskedAddress from '~core/MaskedAddress';
 import Link from '~core/Link';
 
@@ -13,7 +16,7 @@ import type {
   ColonyType,
   ContractTransactionType,
   TaskType,
-  UserType,
+  UserProfileType,
 } from '~immutable';
 
 const MSG = defineMessages({
@@ -37,17 +40,13 @@ const MSG = defineMessages({
 const displayName = 'admin.TransactionList.TransactionDetails';
 
 type Props = {|
-  /*
-   * User data Object, follows the same format as UserPicker
-   */
   transaction: ContractTransactionType,
   colony?: ColonyType,
   task?: TaskType,
-  user?: UserType,
+  user?: UserProfileType,
   /*
-   * The user's address will always be shown, this just controlls if it's
-   * shown in full, or masked.
-   * Gets passed down to `UserListItem`
+   * User and colony addresses will always be shown; this controls whether the
+   * address is shown in full, or masked.
    */
   showMaskedAddress?: boolean,
   /*
@@ -60,40 +59,61 @@ type Props = {|
 |};
 
 /*
- * @NOTE I'm in doubt weather to export these three formatting components to
- * they're own file or to just leave them here.
+ * @NOTE I'm in doubt whether to export these three formatting components to
+ * their own file or to just leave them here.
  *
- * There are good argumnets to both sides...
+ * There are good arguments to both sides...
  */
 
 const UserDetails = ({
-  user: { displayName: userDisplayName = '', username = '' } = {},
-  address = '',
-}: Object) => (
+  user: {
+    displayName: userDisplayName = '',
+    username = '',
+    walletAddress = '',
+  } = {},
+  address = walletAddress,
+  showMaskedAddress,
+}: {|
+  address: string,
+  showMaskedAddress?: boolean,
+  user?: UserProfileType,
+|}) => (
   <span>
     {userDisplayName && <span>{`${userDisplayName} `}</span>}
     {username && <span>{`@${username} `}</span>}
-    {!userDisplayName && !username && address && <span>{address}</span>}
+    {!userDisplayName && !username && address && (
+      <span>
+        {showMaskedAddress ? <MaskedAddress address={address} /> : address}
+      </span>
+    )}
   </span>
 );
 
 const ColonyDetails = ({
   colony: { displayName: colonyDisplayName, colonyAddress },
-}: {
+  address = colonyAddress,
+  showMaskedAddress,
+}: {|
   colony: ColonyType,
-}) => (
+  address?: string,
+  showMaskedAddress?: boolean,
+|}) => (
   <span>
     {colonyDisplayName && <span>{`${colonyDisplayName} `}</span>}
-    {!colonyDisplayName && colonyAddress && <span>{colonyAddress}</span>}
+    {!colonyDisplayName && address && (
+      <span>
+        {showMaskedAddress ? <MaskedAddress address={address} /> : address}
+      </span>
+    )}
   </span>
 );
 
 const TaskDetails = ({
-  colonyName = '',
+  colonyName,
   task: { draftId, title },
 }: {
   task: TaskType,
-  colonyName?: ENSName,
+  colonyName: ENSName,
 }) => (
   <span>
     <Link
@@ -105,195 +125,160 @@ const TaskDetails = ({
 );
 
 const TransactionDetails = ({
-  transaction: { from = '', to = '' },
-  colony,
-  task,
-  user,
   showMaskedAddress = true,
-  incoming = true,
-}: Props) => (
-  <div className={styles.main}>
-    {/*
-     * Incoming transaction
-     */}
-    {incoming && (
-      <div>
-        <p className={styles.primaryText}>
+  task,
+  transaction: { from = '', to = '', incoming, colonyAddress },
+  user,
+}: Props) => {
+  const { data: colony } = useDataFetcher<ColonyType>(
+    colonyFetcher,
+    [colonyAddress],
+    [colonyAddress],
+  );
+  return (
+    <div className={styles.main}>
+      {/*
+       * Incoming transaction
+       */}
+      {incoming && (
+        <div>
+          <p className={styles.primaryText}>
+            {/*
+             * From a user
+             */}
+            {from && !(to && colony) && (
+              <FormattedMessage
+                {...MSG.fromText}
+                values={{
+                  senderString: <UserDetails user={user} address={from} />,
+                }}
+              />
+            )}
+            {/*
+             * From a task
+             */}
+            {!from && task && colony && (
+              <FormattedMessage
+                {...MSG.fromText}
+                values={{
+                  senderString: (
+                    <TaskDetails
+                      task={task}
+                      colonyName={colony && colony.colonyName}
+                    />
+                  ),
+                }}
+              />
+            )}
+            {/*
+             * From a Colony
+             */}
+            {to && colony && (
+              <FormattedMessage
+                {...MSG.fromText}
+                values={{
+                  senderString: (
+                    <ColonyDetails
+                      colony={colony}
+                      showMaskedAddress={showMaskedAddress}
+                    />
+                  ),
+                }}
+              />
+            )}
+          </p>
           {/*
-           * From a user
+           * To the colony
            */}
-          {from && !(to && colony) && (
-            <FormattedMessage
-              {...MSG.fromText}
-              values={{
-                senderString: (
-                  <UserDetails
-                    user={user && user && user.profile}
-                    address={
-                      showMaskedAddress ? (
-                        <MaskedAddress address={from} />
-                      ) : (
-                        from
-                      )
-                    }
-                  />
-                ),
-              }}
-            />
-          )}
+          <p className={styles.secondaryText}>
+            {!to && colony && (
+              <FormattedMessage
+                {...MSG.toText}
+                values={{
+                  recipientString: (
+                    <ColonyDetails
+                      colony={colony}
+                      showMaskedAddress={showMaskedAddress}
+                    />
+                  ),
+                }}
+              />
+            )}
+          </p>
+        </div>
+      )}
+      {/*
+       * Outgoing transaction
+       */}
+      {!incoming && (
+        <div>
+          <p className={styles.primaryText}>
+            {/*
+             * To a user
+             */}
+            {to && !(from && colony) && (
+              <FormattedMessage
+                {...MSG.toText}
+                values={{
+                  recipientString: <UserDetails user={user} address={to} />,
+                }}
+              />
+            )}
+            {/*
+             * To a task
+             */}
+            {!to && task && colony && (
+              <FormattedMessage
+                {...MSG.toText}
+                values={{
+                  recipientString: (
+                    <TaskDetails task={task} colonyName={colony.colonyName} />
+                  ),
+                }}
+              />
+            )}
+            {/*
+             * To a Colony
+             */}
+            {from && colony && (
+              <FormattedMessage
+                {...MSG.toText}
+                values={{
+                  recipientString: (
+                    <ColonyDetails
+                      colony={colony}
+                      showMaskedAddress={showMaskedAddress}
+                      address={from}
+                    />
+                  ),
+                }}
+              />
+            )}
+          </p>
           {/*
-           * From a task
+           * From the colony
            */}
-          {!from && task && colony && (
-            <FormattedMessage
-              {...MSG.fromText}
-              values={{
-                senderString: (
-                  <TaskDetails
-                    task={task}
-                    colonyName={colony && colony.colonyName}
-                  />
-                ),
-              }}
-            />
-          )}
-          {/*
-           * From a Colony
-           */}
-          {to && colony && (
-            <FormattedMessage
-              {...MSG.fromText}
-              values={{
-                senderString: (
-                  <ColonyDetails
-                    colony={colony}
-                    address={
-                      showMaskedAddress ? (
-                        <MaskedAddress address={colony.colonyAddress} />
-                      ) : (
-                        colony.colonyAddress
-                      )
-                    }
-                  />
-                ),
-              }}
-            />
-          )}
-        </p>
-        {/*
-         * To the colony
-         */}
-        <p className={styles.secondaryText}>
-          {!to && colony && (
-            <FormattedMessage
-              {...MSG.toText}
-              values={{
-                recipientString: (
-                  <ColonyDetails
-                    colony={colony}
-                    address={
-                      showMaskedAddress ? (
-                        <MaskedAddress address={colony.colonyAddress} />
-                      ) : (
-                        colony.colonyAddress
-                      )
-                    }
-                  />
-                ),
-              }}
-            />
-          )}
-        </p>
-      </div>
-    )}
-    {/*
-     * Outgoing transaction
-     */}
-    {!incoming && (
-      <div>
-        <p className={styles.primaryText}>
-          {/*
-           * To a user
-           */}
-          {to && !(from && colony) && (
-            <FormattedMessage
-              {...MSG.toText}
-              values={{
-                recipientString: (
-                  <UserDetails
-                    user={user && user && user.profile}
-                    address={
-                      showMaskedAddress ? <MaskedAddress address={to} /> : to
-                    }
-                  />
-                ),
-              }}
-            />
-          )}
-          {/*
-           * To a task
-           */}
-          {!to && task && colony && (
-            <FormattedMessage
-              {...MSG.toText}
-              values={{
-                recipientString: (
-                  <TaskDetails task={task} colonyName={colony.colonyName} />
-                ),
-              }}
-            />
-          )}
-          {/*
-           * To a Colony
-           */}
-          {from && colony && (
-            <FormattedMessage
-              {...MSG.toText}
-              values={{
-                recipientString: (
-                  <ColonyDetails
-                    colony={colony}
-                    address={
-                      showMaskedAddress ? (
-                        <MaskedAddress address={from} />
-                      ) : (
-                        from
-                      )
-                    }
-                  />
-                ),
-              }}
-            />
-          )}
-        </p>
-        {/*
-         * From the colony
-         */}
-        <p className={styles.secondaryText}>
-          {!from && colony && (
-            <FormattedMessage
-              {...MSG.fromText}
-              values={{
-                senderString: (
-                  <ColonyDetails
-                    colony={colony}
-                    address={
-                      showMaskedAddress ? (
-                        <MaskedAddress address={from} />
-                      ) : (
-                        from
-                      )
-                    }
-                  />
-                ),
-              }}
-            />
-          )}
-        </p>
-      </div>
-    )}
-  </div>
-);
+          <p className={styles.secondaryText}>
+            {!from && colony && (
+              <FormattedMessage
+                {...MSG.fromText}
+                values={{
+                  senderString: (
+                    <ColonyDetails
+                      colony={colony}
+                      address={from}
+                      showMaskedAddress={showMaskedAddress}
+                    />
+                  ),
+                }}
+              />
+            )}
+          </p>
+        </div>
+      )}
+    </div>
+  );
+};
 
 TransactionDetails.displayName = displayName;
 

@@ -1,28 +1,26 @@
 /* @flow */
 
-import React from 'react';
+// $FlowFixMe
+import React, { useCallback } from 'react';
 import { defineMessages, FormattedDate } from 'react-intl';
 
+import type { ContractTransactionType, TokenType, UserType } from '~immutable';
+
+import { ACTIONS } from '~redux';
+import { useDataFetcher } from '~utils/hooks';
+import { tokenFetcher } from '../../../dashboard/fetchers';
+import { userFetcher } from '../../../users/fetchers';
+
 import { TableRow, TableCell } from '~core/Table';
+import { ActionButton } from '~core/Button';
 import Numeral from '~core/Numeral';
-import Button from '~core/Button';
 import Icon from '~core/Icon';
 import ExternalLink from '~core/ExternalLink';
-import { useDataFetcher } from '~utils/hooks';
-
-import { userFetcher } from '../../../users/fetchers';
 
 import TransactionDetails from './TransactionDetails.jsx';
 
 import styles from './TransactionListItem.css';
-
-import type {
-  ColonyType,
-  ContractTransactionType,
-  TaskType,
-  TokenType,
-  UserType,
-} from '~immutable';
+import { mergePayload } from '~utils/actions';
 
 const MSG = defineMessages({
   buttonClaim: {
@@ -47,62 +45,52 @@ const displayName = 'admin.TransactionList.TransactionListItem';
 
 type Props = {|
   /*
-   * User data Object, follows the same format as UserPicker
+   * The given contract transaction.
    */
   transaction: ContractTransactionType,
-  colony?: ColonyType,
-  task?: TaskType,
-  token?: TokenType,
   /*
-   * The user's address will always be shown, this just controlls if it's
-   * shown in full, or masked.
-   * Gets passed down to `UserListItem`
+   * User and colony addresses will always be shown; this controls whether the
+   * address is shown in full, or masked.
    */
   showMaskedAddress?: boolean,
   /*
-   * To mark the transaction as either incoming or outgoing.
-   *
-   * This value is set by the Transaction list by comparing the transaction's
-   * addresses with the current colony's one
-   */
-  incoming?: boolean,
-  /*
-   * Method to call when clicking the 'Claim' button
-   * Only by setting this method, will the actual button show up
-   */
-  onClaim?: ContractTransactionType => any,
-  /*
-   * If to show the button to link to etherscan (or not)
-   *
-   * @NOTE that if this set that onClaim will not have any effect since
-   * the *Claim* button won't show up anymore
+   * If to show the button to link to etherscan (or not). If this is not set,
+   * it will not be possible to claim the transaction, as the button will
+   * not be visible.
    */
   linkToEtherscan: boolean,
 |};
 
 const TransactionListItem = ({
-  transaction,
-  colony,
-  task,
-  token,
-  showMaskedAddress = true,
-  incoming = true,
-  onClaim,
   linkToEtherscan,
+  showMaskedAddress = true,
+  transaction: { amount, colonyAddress, date, incoming, token: tokenAddress },
+  transaction,
 }: Props) => {
-  const { date, amount } = transaction;
-  const { data: user, isFetching } = useDataFetcher<UserType>(
+  const { data: user } = useDataFetcher<UserType>(
     userFetcher,
     [transaction.from],
     [transaction.from],
   );
 
-  if (!user || isFetching) {
-    /**
-     * @todo : ideally we would like to show some sort of loader
-     */
-    return null;
-  }
+  const { data: token } = useDataFetcher<TokenType>(
+    tokenFetcher,
+    [tokenAddress],
+    [tokenAddress],
+  );
+
+  /**
+   * @todo Support fetching of tasks by `taskId`
+   * */
+  // const { data: task } = useDataFetcher<TokenType>(
+  //   taskFetcher,
+  //   [taskId],
+  //   [taskId],
+  // );
+
+  const transform = useCallback(mergePayload({ colonyAddress }), [
+    colonyAddress,
+  ]);
 
   return (
     <TableRow className={styles.main}>
@@ -132,27 +120,32 @@ const TransactionListItem = ({
       <TableCell className={styles.transactionDetails}>
         <TransactionDetails
           transaction={transaction}
-          colony={colony}
-          task={task}
-          user={user}
+          user={user ? user.profile : undefined}
           showMaskedAddress={showMaskedAddress}
           incoming={incoming}
         />
       </TableCell>
       <TableCell className={styles.transactionAmountActions}>
-        {!linkToEtherscan && onClaim && (
+        {!linkToEtherscan && (
           <div className={styles.buttonWrapper}>
-            <Button
+            <ActionButton
               text={MSG.buttonClaim}
-              onClick={() => onClaim(transaction)}
               className={styles.customButton}
+              submit={ACTIONS.COLONY_CLAIM_TOKEN}
+              error={ACTIONS.COLONY_CLAIM_TOKEN_ERROR}
+              success={ACTIONS.COLONY_CLAIM_TOKEN_SUCCESS}
+              transform={transform}
             />
           </div>
         )}
-        {linkToEtherscan && (
+        {linkToEtherscan && transaction.hash && (
           <div className={styles.etherscanButtonWrapper}>
+            {/**
+             * @todo Use the correct network for etherscan links
+             * @body Suggestion: use an environment variable or otherwise global config to determine which network we are on (or if local). This could also be a self-contained component.
+             */}
             <ExternalLink
-              href={`https://rinkeby.etherscan.io/tx/${transaction.hash || 0}`}
+              href={`https://rinkeby.etherscan.io/tx/${transaction.hash}`}
               text={MSG.buttonEtherscan}
               className={styles.customButton}
             />
@@ -165,7 +158,7 @@ const TransactionListItem = ({
           /**
            * @todo : what should we show when we don't recognise the token?
            */
-          suffix={` ${token ? token.symbol : '???'}`}
+          suffix={` ${(token && token.symbol) || '???'}`}
         />
       </TableCell>
     </TableRow>
