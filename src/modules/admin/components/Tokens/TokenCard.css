@@ -1,4 +1,4 @@
-@value headerFooterHeights: 30px;
+@value headerFooterHeights: 35px;
 
 .main {
   display: flex;
@@ -9,7 +9,7 @@
 
 .cardHeading {
   display: flex;
-  align-items: center;
+  align-items: start;
   height: headerFooterHeights;
 }
 
@@ -25,7 +25,7 @@
 }
 
 .tokenSymbol {
-  margin-top: 2px;
+  margin-left: 15px;
 }
 
 .balanceContent {
@@ -48,4 +48,8 @@
   height: headerFooterHeights;
   font-weight: var(--weight-thin);
   color: var(--temp-grey-4);
+}
+
+.cardFooter span {
+  font-size: var(--size-small);
 }
