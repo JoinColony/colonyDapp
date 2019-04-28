@@ -79,16 +79,16 @@ export type ColonyActionTypes = {|
   COLONY_CLAIM_TOKEN: UniqueActionType<
     typeof ACTIONS.COLONY_CLAIM_TOKEN,
     {| tokenAddress: string, colonyAddress: Address |},
-    WithKey,
+    void,
   >,
   COLONY_CLAIM_TOKEN_ERROR: ErrorActionType<
     typeof ACTIONS.COLONY_CLAIM_TOKEN_ERROR,
-    WithKey,
+    void,
   >,
   COLONY_CLAIM_TOKEN_SUCCESS: UniqueActionType<
     typeof ACTIONS.COLONY_CLAIM_TOKEN_SUCCESS,
-    {| params: { token: string }, transaction: TransactionType<*, *> |},
-    WithKey,
+    { params: { token: string } },
+    void,
   >,
   COLONY_CREATE_LABEL: UniqueActionType<
     typeof ACTIONS.COLONY_CREATE_LABEL,
@@ -215,7 +215,7 @@ export type ColonyActionTypes = {|
   >,
   COLONY_FETCH_TRANSACTIONS_SUCCESS: ActionTypeWithPayloadAndMeta<
     typeof ACTIONS.COLONY_FETCH_TRANSACTIONS_SUCCESS,
-    ContractTransactionType[],
+    {| colonyAddress: Address, transactions: ContractTransactionType[] |},
     WithKey,
   >,
   COLONY_FETCH_UNCLAIMED_TRANSACTIONS: ActionTypeWithPayloadAndMeta<
@@ -229,7 +229,7 @@ export type ColonyActionTypes = {|
   >,
   COLONY_FETCH_UNCLAIMED_TRANSACTIONS_SUCCESS: ActionTypeWithPayloadAndMeta<
     typeof ACTIONS.COLONY_FETCH_UNCLAIMED_TRANSACTIONS_SUCCESS,
-    ContractTransactionType[],
+    {| colonyAddress: Address, transactions: ContractTransactionType[] |},
     WithKey,
   >,
   COLONY_MINT_TOKENS: UniqueActionType<
