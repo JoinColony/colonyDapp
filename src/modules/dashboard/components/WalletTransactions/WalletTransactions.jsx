@@ -30,7 +30,7 @@ type Props = {|
 |};
 
 const WalletTransactions = ({ transactions, isLoading }: Props) => (
-  <div className={styles.main}>
+  <div>
     <TransactionList
       transactions={transactions}
       isLoading={isLoading}
