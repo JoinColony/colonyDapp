@@ -57,18 +57,17 @@ export const getColonyTransactions: ContractEventQuery<
         ],
       },
     );
-    return Promise.all(
-      events
-        .map((event, i) =>
-          EVENT_PARSERS[event.eventName]({
-            event,
-            log: logs[i],
-            colonyClient,
-            colonyAddress,
-          }),
-        )
-        .filter(Boolean),
+    const transactions = await Promise.all(
+      events.map((event, i) =>
+        EVENT_PARSERS[event.eventName]({
+          event,
+          log: logs[i],
+          colonyClient,
+          colonyAddress,
+        }),
+      ),
     );
+    return transactions.filter(Boolean);
   },
 };
 
