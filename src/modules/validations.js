@@ -1,7 +1,9 @@
 /* @flow */
 
 import * as yup from 'yup';
+import { isIPFS } from 'ipfs';
 import { isAddress } from 'web3-utils';
+import { isValidAddress } from 'orbit-db';
 import { normalize as ensNormalize } from 'eth-ens-namehash-ms';
 
 import type { TokenType } from '~immutable';
@@ -56,6 +58,28 @@ function address(msg) {
   });
 }
 
+function orbitDBAddress(msg) {
+  return this.test({
+    name: 'orbitDBAddress',
+    message: msg || en.string.orbitDBAddress,
+    test(value) {
+      if (typeof value == 'undefined') return true;
+      return isValidAddress(value);
+    },
+  });
+}
+
+function cid(msg) {
+  return this.test({
+    name: 'cid',
+    message: msg || en.string.cid,
+    test(value) {
+      if (typeof value == 'undefined') return true;
+      return isIPFS.cid(value);
+    },
+  });
+}
+
 function domainName(msg) {
   return this.test({
     name: 'domainName',
@@ -100,3 +124,5 @@ yup.addMethod(yup.string, 'address', address);
 yup.addMethod(yup.string, 'domainName', domainName);
 yup.addMethod(yup.string, 'ensAddress', ensAddress);
 yup.addMethod(yup.array, 'includes', includes);
+yup.addMethod(yup.string, 'orbitDBAddress', orbitDBAddress);
+yup.addMethod(yup.string, 'cid', cid);
