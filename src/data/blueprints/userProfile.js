@@ -6,7 +6,7 @@ import * as yup from 'yup';
 import { ValidatedKVStore } from '../../lib/database/stores';
 import { getEthereumWalletStoreAccessController } from '../accessControllers';
 
-const userProfileStore: StoreBlueprint = {
+const userProfileStore: StoreBlueprint = Object.freeze({
   getAccessController: getEthereumWalletStoreAccessController,
   defaultName: 'userProfile',
   schema: yup.object({
@@ -30,6 +30,6 @@ const userProfileStore: StoreBlueprint = {
     inboxStoreAddress: yup.string(),
   }),
   type: ValidatedKVStore,
-};
+});
 
 export default userProfileStore;

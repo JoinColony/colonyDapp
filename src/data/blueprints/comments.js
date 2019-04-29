@@ -6,7 +6,7 @@ import type { TaskDraftId } from '~immutable';
 import { EventStore } from '../../lib/database/stores';
 import { getPermissiveStoreAccessController } from '../accessControllers';
 
-const commentsStore: StoreBlueprint = {
+const commentsStore: StoreBlueprint = Object.freeze({
   getAccessController: getPermissiveStoreAccessController,
   getName: ({
     colonyAddress,
@@ -21,6 +21,6 @@ const commentsStore: StoreBlueprint = {
     return `colony_${colonyAddress}_task_${draftId}_comments`;
   },
   type: EventStore,
-};
+});
 
 export default commentsStore;
