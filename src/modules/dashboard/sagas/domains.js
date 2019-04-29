@@ -1,8 +1,8 @@
 /* @flow */
 
 import type { Saga } from 'redux-saga';
-
-import { call, fork, put, takeEvery } from 'redux-saga/effects';
+import { call, fork, put, takeEvery, select } from 'redux-saga/effects';
+import nanoid from 'nanoid';
 
 import type { Action } from '~redux';
 
@@ -16,6 +16,7 @@ import { ACTIONS } from '~redux';
 
 import { createTransaction, getTxChannel } from '../../core/sagas';
 import { COLONY_CONTEXT } from '../../core/constants';
+import { walletAddressSelector } from '../../users/selectors';
 
 import { createDomain } from '../data/commands';
 import { getColonyDomains } from '../data/queries';
@@ -50,6 +51,10 @@ function* domainCreate({
 }: Action<typeof ACTIONS.DOMAIN_CREATE>): Saga<void> {
   const txChannel = yield call(getTxChannel, meta.id);
   try {
+    /*
+     * Get the current user's wallet address (we need that for notifications)
+     */
+    const walletAddress = yield select(walletAddressSelector);
     /*
      * @todo Create the domain on the colony with a transaction.
      * @body Idempotency could be improved here by looking for a pending transaction.
@@ -87,6 +92,27 @@ function* domainCreate({
       type: ACTIONS.DOMAIN_CREATE_SUCCESS,
       meta,
       payload: { colonyAddress, domain: { id, name } },
+    });
+
+    /*
+     * Notification
+     */
+    yield put<Action<typeof ACTIONS.USER_ACTIVITIES_ADD_SUCCESS>>({
+      type: ACTIONS.USER_ACTIVITIES_ADD_SUCCESS,
+      payload: {
+        activity: {
+          id: nanoid(),
+          event: 'notificationAdminColonyLabelAdded',
+          userAddress: walletAddress,
+          colonyAddress,
+          domainName: name,
+          timestamp: new Date(),
+        },
+      },
+      meta: {
+        key: [colonyAddress],
+        ...meta,
+      },
     });
   } catch (error) {
     yield putError(ACTIONS.DOMAIN_CREATE_ERROR, error, meta);
