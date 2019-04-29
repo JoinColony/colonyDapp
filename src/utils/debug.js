@@ -8,3 +8,5 @@ export const log = (
 ) => (isDev ? logger(error) : null);
 
 log.warn = (error: any) => log(error, console.warn.bind(console));
+
+log.debug = (message: string) => log(message, console.info.bind(console));
