@@ -250,7 +250,12 @@ workflows:
           filters:
             branches:
               only: master
-      - build-and-push-image
+      - build-and-push-image:
+          requires:
+            - build-with-lockfile
+            - integration-testing
+            - e2e-testing
+            - deploy-styleguide
   nightly:
     triggers:
       - schedule:
