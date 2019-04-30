@@ -66,6 +66,10 @@ const MSG = defineMessages({
     id: 'dashboard.Task.taskEditDialog.tokenRequiredError',
     defaultMessage: 'Token required',
   },
+  amountPositiveError: {
+    id: 'dashboard.Task.taskEditDialog.amountPositiveError',
+    defaultMessage: 'Amount must be a positive number.',
+  },
   amountRequiredError: {
     id: 'dashboard.Task.taskEditDialog.amountRequiredError',
     defaultMessage: 'Amount required',
@@ -215,8 +219,9 @@ const TaskEditDialog = ({
             yup.object().shape({
               token: yup.string().required(MSG.tokenRequiredError),
               amount: yup
-                .string()
+                .number()
                 .required(MSG.amountRequiredError)
+                .moreThan(0, MSG.amountPositiveError)
                 .lessThanPot(colonyTokenReferences, MSG.insufficientFundsError),
             }),
           )
