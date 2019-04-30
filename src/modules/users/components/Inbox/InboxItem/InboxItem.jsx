@@ -190,8 +190,14 @@ const InboxItem = ({
                  */
                 {...MSG[event]}
                 values={{
-                  amount: makeInboxDetail(amount, ({ unit, value }) => (
-                    <Numeral prefix={unit} value={value} />
+                  amount: makeInboxDetail(amount, value => (
+                    <Numeral
+                      /*
+                       * @todo Re-enable prifx value, when token registering has been fixed
+                       */
+                      // prefix={unit}
+                      value={value}
+                    />
                   )),
                   colonyDisplayName: makeInboxDetail(
                     /*
@@ -257,7 +263,14 @@ const InboxItem = ({
                 <span>
                   <span className={styles.pipe}>|</span>
                   <span className={styles.amount}>
-                    {amount.unit} {amount.value}
+                    <Numeral
+                      /*
+                       * @todo Re-enable prifx value, when token registering has been fixed
+                       */
+                      // prefix={unit}
+                      value={amount.toString()}
+                      appearance={{ size: 'small', theme: 'grey' }}
+                    />
                   </span>
                 </span>
               )}

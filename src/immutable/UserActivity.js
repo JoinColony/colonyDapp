@@ -2,6 +2,8 @@
 
 import type { RecordFactory, RecordOf } from 'immutable';
 
+import BN from 'bn.js';
+
 import { Record } from 'immutable';
 
 type Shared = {|
@@ -15,6 +17,7 @@ type Shared = {|
   colonyName?: string,
   colonyAddress?: string,
   domainName?: string,
+  amount?: BN,
 |};
 
 export type UserActivityType = $ReadOnly<Shared>;
@@ -32,6 +35,7 @@ const defaultValues: $Shape<Shared> = {
   colonyName: undefined,
   colonyAddress: undefined,
   domainName: undefined,
+  amount: undefined,
 };
 
 const UserActivityRecord: RecordFactory<Shared> = Record(defaultValues);
