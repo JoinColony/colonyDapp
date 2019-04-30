@@ -4,6 +4,10 @@ import type { RecordFactory, RecordOf } from 'immutable';
 
 import { Record } from 'immutable';
 
+import type {
+  ContractTransactionRecordType,
+  ContractTransactionType,
+} from './ContractTransaction';
 import type { TaskCommentRecordType, TaskCommentType } from './TaskComment';
 import type { TaskEventRecordType, TaskEventType } from './TaskEvent';
 import type { TaskRatingRecordType, TaskRatingType } from './TaskRating';
@@ -18,6 +22,7 @@ export type TaskFeedItemRecordProps = {|
   comment?: TaskCommentRecordType,
   event?: TaskEventRecordType,
   rating?: TaskRatingRecordType,
+  transaction?: ContractTransactionRecordType,
 |};
 
 export type TaskFeedItemType = $ReadOnly<{|
@@ -25,6 +30,7 @@ export type TaskFeedItemType = $ReadOnly<{|
   comment?: TaskCommentType,
   event?: TaskEventType,
   rating?: TaskRatingType,
+  transaction?: ContractTransactionType,
 |}>;
 
 export type TaskFeedItemId = $PropertyType<TaskFeedItemType, 'id'>;
@@ -37,6 +43,7 @@ const defaultValues: $Shape<TaskFeedItemRecordProps> = {
   event: undefined,
   id: undefined,
   rating: undefined,
+  transaction: undefined,
 };
 
 const TaskFeedItemRecord: RecordFactory<TaskFeedItemRecordProps> = Record(
