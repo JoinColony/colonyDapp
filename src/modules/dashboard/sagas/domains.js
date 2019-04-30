@@ -1,8 +1,8 @@
 /* @flow */
 
+import nanoid from 'nanoid';
 import type { Saga } from 'redux-saga';
 import { call, fork, put, takeEvery, select } from 'redux-saga/effects';
-import nanoid from 'nanoid';
 
 import type { Action } from '~redux';
 
