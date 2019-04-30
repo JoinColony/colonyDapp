@@ -1,8 +1,8 @@
 /* @flow */
 
+import nanoid from 'nanoid';
 import type { Saga } from 'redux-saga';
-
-import { call, fork, put, takeEvery } from 'redux-saga/effects';
+import { call, fork, put, takeEvery, select } from 'redux-saga/effects';
 
 import type { Action } from '~redux';
 
@@ -12,6 +12,7 @@ import { ACTIONS } from '~redux';
 import { getColonyRoles } from '../data/queries';
 import { createTransaction, getTxChannel } from '../../core/sagas';
 import { COLONY_CONTEXT } from '../../core/constants';
+import { walletAddressSelector } from '../../users/selectors';
 
 import { fetchRoles } from '../actionCreators';
 
@@ -43,6 +44,10 @@ function* colonyAdminAdd({
   const txChannel = yield call(getTxChannel, meta.id);
   try {
     /*
+     * Get the current user's wallet address (we need that for notifications)
+     */
+    const walletAddress = yield select(walletAddressSelector);
+    /*
      * Set the admin on the contract level (transaction)
      */
     yield fork(createTransaction, meta.id, {
@@ -62,6 +67,27 @@ function* colonyAdminAdd({
       type: ACTIONS.COLONY_ADMIN_ADD_SUCCESS,
       payload: { user: newAdmin },
       meta,
+    });
+
+    /*
+     * Notification
+     */
+    yield put<Action<typeof ACTIONS.USER_ACTIVITIES_ADD_SUCCESS>>({
+      type: ACTIONS.USER_ACTIVITIES_ADD_SUCCESS,
+      payload: {
+        activity: {
+          id: nanoid(),
+          event: 'notificationAdminOtherAdded',
+          userAddress: walletAddress,
+          colonyAddress,
+          otherUserAddress: newAdmin,
+          timestamp: new Date(),
+        },
+      },
+      meta: {
+        key: [colonyAddress],
+        ...meta,
+      },
     });
 
     yield put(fetchRoles(colonyAddress));
