@@ -34,7 +34,7 @@ export type CurrentUserPermissionsType = ImmutableMapType<
 
 export type CurrentUserColoniesType = ImmutableSetType<Address>;
 
-export type CurrentUserTasksType = ImmutableSetType<TaskDraftId>;
+export type CurrentUserTasksType = ImmutableSetType<[Address, TaskDraftId]>;
 
 export type CurrentUserTokensType = DataRecordType<
   ListType<TokenReferenceRecordType>,

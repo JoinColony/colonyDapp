@@ -26,12 +26,11 @@ const currentUserTasksReducer: ReducerType<State, Actions> = (
 ) => {
   switch (action.type) {
     case ACTIONS.USER_TASK_SUBSCRIBE_SUCCESS: {
-      const { draftId } = action.payload;
+      const { colonyAddress, draftId } = action.payload;
+      const entry = [colonyAddress, draftId];
       return state.merge({
         error: undefined,
-        record: state.record
-          ? state.record.add(draftId)
-          : ImmutableSet([draftId]),
+        record: state.record ? state.record.add(entry) : ImmutableSet(entry),
         isFetching: false,
       });
     }

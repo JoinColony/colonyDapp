@@ -7,6 +7,7 @@ import { defineMessages } from 'react-intl';
 import * as yup from 'yup';
 
 import type { OpenDialog } from '~core/Dialog/types';
+import type { Address } from '~types';
 import type { UserType } from '~immutable';
 
 import { ACTIONS } from '~redux';
@@ -50,6 +51,7 @@ type FormValues = {
 
 // Can't seal this object because of withConsumerFactory
 type Props = {
+  colonyAddress: Address,
   currentUser: UserType,
   openDialog: OpenDialog,
   draftId: string,
@@ -69,6 +71,7 @@ const TaskComments = ({
   },
   currentUser,
   taskTitle,
+  colonyAddress,
   draftId,
 }: Props) => {
   const addComment = useAsyncFunction({
@@ -101,6 +104,7 @@ const TaskComments = ({
         author: walletAddress,
       },
       draftId,
+      colonyAddress,
       taskTitle,
     }).then(() => {
       actions.setSubmitting(false);

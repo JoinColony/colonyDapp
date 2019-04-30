@@ -11,7 +11,7 @@ import type { DomainId, TaskDraftId, TaskType } from '~immutable';
 
 import { addressEquals } from '~utils/strings';
 import { TASK_STATE } from '~immutable';
-import { useDataMapFetcher } from '~utils/hooks';
+import { useDataTupleFetcher } from '~utils/hooks';
 import { TASKS_FILTER_OPTIONS } from '../shared/tasksFilter';
 import { tasksByIdFetcher } from '../../fetchers';
 
@@ -28,7 +28,7 @@ const MSG = defineMessages({
 });
 
 type Props = {|
-  draftIds?: TaskDraftId[],
+  draftIds: [Address, TaskDraftId][],
   emptyState?: Node,
   filteredDomainId?: DomainId,
   filterOption: string,
@@ -42,8 +42,7 @@ const TaskList = ({
   filterOption,
   walletAddress,
 }: Props) => {
-  const tasksData = useDataMapFetcher<TaskType>(tasksByIdFetcher, draftIds);
-
+  const tasksData = useDataTupleFetcher<TaskType>(tasksByIdFetcher, draftIds);
   const filter = useCallback(
     ({ creatorAddress, workerAddress, currentState, domainId }: TaskType) => {
       if (filteredDomainId && filteredDomainId !== domainId) return false;

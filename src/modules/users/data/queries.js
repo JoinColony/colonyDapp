@@ -179,14 +179,15 @@ export const getUserTasks: Query<
      * If the user has no metadata store set, we will assume that the
      * user is newly-created (and we can't get their subscribed tasks yet).
      */
-    if (!metadataStore) return [];
     return metadataStore
-      .all()
-      .filter(
-        ({ type }) =>
-          type === SUBSCRIBED_TO_TASK || type === UNSUBSCRIBED_FROM_TASK,
-      )
-      .reduce(getUserTasksReducer, []);
+      ? metadataStore
+          .all()
+          .filter(
+            ({ type }) =>
+              type === SUBSCRIBED_TO_TASK || type === UNSUBSCRIBED_FROM_TASK,
+          )
+          .reduce(getUserTasksReducer, [])
+      : [];
   },
 };
 
@@ -203,14 +204,15 @@ export const getUserColonies: Query<
      * If the user has no metadata store set, we will assume that the
      * user is newly-created (and we can't get their subscribed tasks yet).
      */
-    if (!metadataStore) return [];
-    return reduceToLastState(
-      metadataStore.all(),
-      ({ payload: { colonyAddress } }) => colonyAddress,
-      ({ type }) => type,
-    )
-      .filter(([, type]) => type === SUBSCRIBED_TO_COLONY)
-      .map(([colonyAddress]) => colonyAddress);
+    return metadataStore
+      ? reduceToLastState(
+          metadataStore.all(),
+          ({ payload: { colonyAddress } }) => colonyAddress,
+          ({ type }) => type,
+        )
+          .filter(([, type]) => type === SUBSCRIBED_TO_COLONY)
+          .map(([colonyAddress]) => colonyAddress)
+      : [];
   },
 };
 

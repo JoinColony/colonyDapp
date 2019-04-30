@@ -3,7 +3,7 @@
 import type { Match } from 'react-router';
 
 // $FlowFixMe update flow!
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useMemo } from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 import { Redirect } from 'react-router';
 
@@ -115,7 +115,13 @@ const ColonyHome = ({
     [colonyAddress],
     [colonyAddress],
   );
-  const draftIds = Object.keys(taskMetadata || {});
+
+  // This could be simpler if we had the tuples ready to select from state
+  const draftIds = useMemo(
+    () =>
+      Object.keys(taskMetadata || {}).map(draftId => [colonyAddress, draftId]),
+    [taskMetadata, colonyAddress],
+  );
 
   if (colonyError) {
     return <Redirect to="/404" />;

@@ -12,6 +12,8 @@ import { useDataFetcher, useSelector } from '~utils/hooks';
 // Temporary, please remove when wiring in the rating modals
 import type { OpenDialog } from '~core/Dialog/types';
 
+import type { Address } from '~types';
+
 import Heading from '~core/Heading';
 import withDialog from '~core/Dialog/withDialog';
 import Button, { ActionButton, ConfirmButton } from '~core/Button';
@@ -35,7 +37,7 @@ import {
   isFinalized,
 } from '../../checks';
 import { currentUserSelector } from '../../../users/selectors';
-import { taskFetcher } from '../../fetchers';
+import { colonyAddressFetcher, taskFetcher } from '../../fetchers';
 
 import styles from './Task.css';
 
@@ -92,13 +94,18 @@ const Task = ({
   const currentUser = useSelector(currentUserSelector);
   const { walletAddress } = currentUser.profile;
 
+  const { data: colonyAddress } = useDataFetcher<Address>(
+    colonyAddressFetcher,
+    [colonyName],
+    [colonyName],
+  );
+
   const { data: task, isFetching: isFetchingTask } = useDataFetcher(
     taskFetcher,
     [draftId],
-    [draftId],
+    [colonyAddress || undefined, draftId],
   );
   const {
-    colonyAddress,
     description,
     domainId,
     dueDate,
@@ -126,12 +133,13 @@ const Task = ({
     [draftId, openDialog, payouts, reputation, task, workerAddress],
   );
 
-  if (isFetchingTask || !task)
+  if (isFetchingTask || !task || !colonyAddress)
     return <LoadingTemplate loadingText={MSG.loadingText} />;
 
   const isTaskCreator = isCreator(task, walletAddress);
 
-  const setActionButtonValues = () => ({ colonyName, draftId });
+  // @todo Task.jsx "setActionButtonValues" could use useCallback
+  const setActionButtonValues = () => ({ colonyAddress, draftId });
 
   return (
     <div className={styles.main}>
@@ -248,10 +256,11 @@ const Task = ({
         </section>
         <div className={styles.activityContainer}>
           <section className={styles.activity}>
-            <TaskFeed draftId={draftId} />
+            <TaskFeed colonyAddress={colonyAddress} draftId={draftId} />
           </section>
           <section className={styles.commentBox}>
             <TaskComments
+              colonyAddress={colonyAddress}
               draftId={draftId}
               taskTitle={title}
               currentUser={currentUser}
