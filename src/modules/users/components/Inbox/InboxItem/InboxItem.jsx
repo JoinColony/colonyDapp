@@ -181,7 +181,7 @@ const InboxItem = ({
                     <Numeral prefix={unit} value={value} />
                   )),
                   colonyDisplayName: makeInboxDetail(
-                    colony && colony.displayName,
+                    colony && (colony.displayName || colony.colonyName),
                   ),
                   colonyName: makeInboxDetail(colonyName),
                   comment: makeInboxDetail(comment),
@@ -191,7 +191,9 @@ const InboxItem = ({
                   time: makeInboxDetail(timestamp, value => (
                     <TimeRelative value={value} />
                   )),
-                  user: makeInboxDetail(user && user.profile.username),
+                  user: makeInboxDetail(
+                    user && (user.profile.displayName || user.profile.username),
+                  ),
                 }}
               />
             </span>
