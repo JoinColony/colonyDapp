@@ -1,5 +1,6 @@
 /* @flow */
 
+import type { Address } from '~types';
 import type { TaskDraftId } from '~immutable';
 import type { EventReducer } from '~data/types';
 
@@ -13,7 +14,7 @@ const {
 } = USER_EVENT_TYPES;
 
 export const getUserTasksReducer: EventReducer<
-  TaskDraftId[],
+  [Address, TaskDraftId][],
   {|
     SUBSCRIBED_TO_TASK: *,
     UNSUBSCRIBED_FROM_TASK: *,
@@ -21,12 +22,15 @@ export const getUserTasksReducer: EventReducer<
 > = (userTasks, event) => {
   switch (event.type) {
     case SUBSCRIBED_TO_TASK: {
-      const { draftId } = event.payload;
-      return [...userTasks, draftId];
+      const { colonyAddress, draftId } = event.payload;
+      return [...userTasks, [colonyAddress, draftId]];
     }
     case UNSUBSCRIBED_FROM_TASK: {
-      const { draftId } = event.payload;
-      return userTasks.filter(userTaskId => userTaskId !== draftId);
+      return userTasks.filter(
+        ([colonyAddress, draftId]) =>
+          colonyAddress === event.payload.colonyAddress &&
+          draftId === event.payload.draftId,
+      );
     }
     default:
       return userTasks;

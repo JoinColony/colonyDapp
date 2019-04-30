@@ -230,22 +230,27 @@ export const subscribeToTask: Command<
   UserMetadataStore,
   UserMetadataStoreMetadata,
   {|
+    colonyAddress: Address,
     draftId: TaskDraftId,
-    userDraftIds: TaskDraftId[],
+    userDraftIds: [Address, TaskDraftId][],
   |},
   ?TaskDraftId,
 > = {
   context: [CONTEXT.DDB_INSTANCE],
   prepare: prepareMetadataCommand,
-  async execute(userMetadataStore, args) {
-    const { draftId, userDraftIds } = args;
-    if (
-      userDraftIds &&
-      userDraftIds.some(userDraftId => userDraftId === draftId)
-    )
+  async execute(userMetadataStore, { colonyAddress, draftId, userDraftIds }) {
+    const draftIds = userDraftIds
+      .filter(([userColonyAddress]) => userColonyAddress === colonyAddress)
+      .map(([, userDraftId]) => userDraftId);
+
+    if (draftIds.includes(draftId)) {
       return null;
+    }
     await userMetadataStore.append(
-      createEvent(USER_EVENT_TYPES.SUBSCRIBED_TO_TASK, { draftId }),
+      createEvent(USER_EVENT_TYPES.SUBSCRIBED_TO_TASK, {
+        colonyAddress,
+        draftId,
+      }),
     );
     return draftId;
   },
@@ -256,6 +261,7 @@ export const unsubscribeToTask: Command<
   UserMetadataStore,
   UserMetadataStoreMetadata,
   {|
+    colonyAddress: Address,
     draftId: TaskDraftId,
     userDraftIds: TaskDraftId[],
   |},
@@ -263,15 +269,20 @@ export const unsubscribeToTask: Command<
 > = {
   context: [CONTEXT.DDB_INSTANCE],
   prepare: prepareMetadataCommand,
-  async execute(userMetadataStore, args) {
-    const { draftId, userDraftIds } = args;
-    if (
-      userDraftIds &&
-      !userDraftIds.some(userDraftId => userDraftId === draftId)
-    )
+  async execute(userMetadataStore, { colonyAddress, draftId, userDraftIds }) {
+    const draftIds = userDraftIds
+      .filter(([userColonyAddress]) => userColonyAddress === colonyAddress)
+      .map(([, userDraftId]) => userDraftId);
+
+    if (!draftIds.includes(draftId)) {
       return null;
+    }
+
     await userMetadataStore.append(
-      createEvent(USER_EVENT_TYPES.UNSUBSCRIBED_FROM_TASK, { draftId }),
+      createEvent(USER_EVENT_TYPES.UNSUBSCRIBED_FROM_TASK, {
+        colonyAddress,
+        draftId,
+      }),
     );
     return draftId;
   },

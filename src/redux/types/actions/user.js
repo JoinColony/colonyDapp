@@ -140,11 +140,11 @@ export type UserActionTypes = {|
   >,
   USER_SUBSCRIBED_TASKS_FETCH_SUCCESS: ActionTypeWithPayload<
     typeof ACTIONS.USER_SUBSCRIBED_TASKS_FETCH_SUCCESS,
-    TaskDraftId[],
+    [Address, TaskDraftId][],
   >,
   USER_TASK_SUBSCRIBE: ActionTypeWithPayload<
     typeof ACTIONS.USER_TASK_SUBSCRIBE,
-    {| draftId: TaskDraftId |},
+    {| colonyAddress: Address, draftId: TaskDraftId |},
   >,
   USER_TASK_SUBSCRIBE_ERROR: ErrorActionType<
     typeof ACTIONS.USER_TASK_SUBSCRIBE_ERROR,
@@ -152,7 +152,7 @@ export type UserActionTypes = {|
   >,
   USER_TASK_SUBSCRIBE_SUCCESS: ActionTypeWithPayload<
     typeof ACTIONS.USER_TASK_SUBSCRIBE,
-    {| draftId: TaskDraftId |},
+    {| colonyAddress: Address, draftId: TaskDraftId |},
   >,
   USER_TOKEN_TRANSFERS_FETCH: ActionType<
     typeof ACTIONS.USER_TOKEN_TRANSFERS_FETCH,

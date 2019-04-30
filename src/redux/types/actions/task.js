@@ -38,7 +38,7 @@ type TaskActionMeta = {|
 |};
 
 type TaskActionPayload<P> = {|
-  ...TaskProps<{ draftId: * }>,
+  ...TaskProps<{ colonyAddress: *, draftId: * }>,
   ...P,
 |};
 

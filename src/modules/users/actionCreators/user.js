@@ -62,10 +62,11 @@ export const subscribeToColony = (
 });
 
 export const subscribeToTask = (
+  colonyAddress: Address,
   draftId: TaskDraftId,
 ): Action<typeof ACTIONS.USER_TASK_SUBSCRIBE> => ({
   type: ACTIONS.USER_TASK_SUBSCRIBE,
-  payload: { draftId },
+  payload: { colonyAddress, draftId },
 });
 
 export const currentUserFetchTasks = () => ({

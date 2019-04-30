@@ -34,15 +34,24 @@ const UserAvatar = HookedUserAvatar();
 const displayName = 'dashboard.TaskList.TaskListItem';
 
 type Props = {|
-  data: {| key: string, data: ?TaskType, isFetching: boolean, error: boolean |},
+  data: {|
+    key: string,
+    entry: [string, string],
+    data: ?TaskType,
+    isFetching: boolean,
+    error: boolean,
+  |},
 |};
 
 const TaskListItem = ({ data }: Props) => {
-  const { data: task, key, isFetching: isFetchingTask } = data;
-  const { workerAddress, payouts, reputation, draftId, title = MSG.untitled } =
+  const {
+    data: task,
+    entry: [colonyAddress, draftId],
+    isFetching: isFetchingTask,
+  } = data;
+  const { workerAddress, payouts, reputation, title = MSG.untitled } =
     task || {};
 
-  const [colonyAddress] = key.split('_');
   const {
     data: colonyName,
     isFetching: isFetchingColonyName,

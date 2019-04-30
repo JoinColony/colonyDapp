@@ -34,11 +34,11 @@ export const taskSelector = (state: RootStateRecord, draftId: TaskDraftId) =>
 
 export const tasksByIdsSelector = (
   state: RootStateRecord,
-  draftIds: TaskDraftId[],
+  draftIds: [Address, TaskDraftId][],
 ) =>
   state
     .getIn([ns, DASHBOARD_TASKS], ImmutableMap())
-    .filter((task, draftId) => draftIds.includes(draftId));
+    .filter((task, draftId) => draftIds.find(entry => entry[1] === draftId));
 
 export const taskFeedItemsSelector = (
   state: RootStateRecord,
