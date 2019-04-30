@@ -163,6 +163,7 @@ const StepUserName = ({ wizardForm, nextStep }: Props) => {
                     disabled={!isValid}
                     loading={isSubmitting}
                     text={MSG.continue}
+                    data-test="claimUsernameConfirm"
                   />
                 </div>
               </div>

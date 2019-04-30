@@ -30,7 +30,7 @@ describe('Claims a username', () => {
 
   it('Open the Claim Username flow', () => {
     /*
-     * Click the Avatar Dropdown
+     * Click the Avatar Dropdown once avatarDropdown is available
      */
     cy.get('button[data-test="avatarDropdown"]').then(btn => btn.click());
 
