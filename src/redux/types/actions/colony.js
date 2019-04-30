@@ -90,29 +90,6 @@ export type ColonyActionTypes = {|
     { params: { token: string } },
     void,
   >,
-  COLONY_CREATE_LABEL: UniqueActionType<
-    typeof ACTIONS.COLONY_CREATE_LABEL,
-    {|
-      colonyAddress: Address,
-      colonyId: number,
-      colonyName: ENSName,
-      displayName: string,
-      tokenAddress: Address,
-      tokenIcon: string,
-      tokenName: string,
-      tokenSymbol: string,
-    |},
-    void,
-  >,
-  COLONY_CREATE_LABEL_ERROR: ErrorActionType<
-    typeof ACTIONS.COLONY_CREATE_LABEL_ERROR,
-    void,
-  >,
-  COLONY_CREATE_LABEL_SUCCESS: UniqueActionType<
-    typeof ACTIONS.COLONY_CREATE_LABEL_SUCCESS,
-    TransactionType<{ colonyName: string }, *>,
-    void,
-  >,
   COLONY_CREATE: UniqueActionType<
     typeof ACTIONS.COLONY_CREATE,
     {|
@@ -204,31 +181,31 @@ export type ColonyActionTypes = {|
     ColonyType,
     WithKey,
   >,
-  COLONY_FETCH_TRANSACTIONS: ActionTypeWithPayloadAndMeta<
-    typeof ACTIONS.COLONY_FETCH_TRANSACTIONS,
+  COLONY_TRANSACTIONS_FETCH: ActionTypeWithPayloadAndMeta<
+    typeof ACTIONS.COLONY_TRANSACTIONS_FETCH,
     {| colonyAddress: Address |},
     WithKey,
   >,
-  COLONY_FETCH_TRANSACTIONS_ERROR: ErrorActionType<
-    typeof ACTIONS.COLONY_FETCH_TRANSACTIONS_ERROR,
+  COLONY_TRANSACTIONS_FETCH_ERROR: ErrorActionType<
+    typeof ACTIONS.COLONY_TRANSACTIONS_FETCH_ERROR,
     WithKey,
   >,
-  COLONY_FETCH_TRANSACTIONS_SUCCESS: ActionTypeWithPayloadAndMeta<
-    typeof ACTIONS.COLONY_FETCH_TRANSACTIONS_SUCCESS,
+  COLONY_TRANSACTIONS_FETCH_SUCCESS: ActionTypeWithPayloadAndMeta<
+    typeof ACTIONS.COLONY_TRANSACTIONS_FETCH_SUCCESS,
     {| colonyAddress: Address, transactions: ContractTransactionType[] |},
     WithKey,
   >,
-  COLONY_FETCH_UNCLAIMED_TRANSACTIONS: ActionTypeWithPayloadAndMeta<
-    typeof ACTIONS.COLONY_FETCH_UNCLAIMED_TRANSACTIONS,
+  COLONY_UNCLAIMED_TRANSACTIONS_FETCH: ActionTypeWithPayloadAndMeta<
+    typeof ACTIONS.COLONY_UNCLAIMED_TRANSACTIONS_FETCH,
     {| colonyAddress: Address |},
     WithKey,
   >,
-  COLONY_FETCH_UNCLAIMED_TRANSACTIONS_ERROR: ErrorActionType<
-    typeof ACTIONS.COLONY_FETCH_UNCLAIMED_TRANSACTIONS_ERROR,
+  COLONY_UNCLAIMED_TRANSACTIONS_FETCH_ERROR: ErrorActionType<
+    typeof ACTIONS.COLONY_UNCLAIMED_TRANSACTIONS_FETCH_ERROR,
     WithKey,
   >,
-  COLONY_FETCH_UNCLAIMED_TRANSACTIONS_SUCCESS: ActionTypeWithPayloadAndMeta<
-    typeof ACTIONS.COLONY_FETCH_UNCLAIMED_TRANSACTIONS_SUCCESS,
+  COLONY_UNCLAIMED_TRANSACTIONS_FETCH_SUCCESS: ActionTypeWithPayloadAndMeta<
+    typeof ACTIONS.COLONY_UNCLAIMED_TRANSACTIONS_FETCH_SUCCESS,
     {| colonyAddress: Address, transactions: ContractTransactionType[] |},
     WithKey,
   >,
