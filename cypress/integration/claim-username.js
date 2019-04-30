@@ -26,7 +26,7 @@ describe('Claims a username', () => {
 
   it('Open the Claim Username flow', () => {
     /*
-     * Click the Avatar Dropdown
+     * Click the Avatar Dropdown once avatarDropdown is available
      */
     cy.get('button[data-test="avatarDropdown"]').then(btn => btn.click());
 
@@ -68,12 +68,6 @@ describe('Claims a username', () => {
       .wait(2000);
   });
 
-  /*
-   * TODO fix these tests; they appear to not work on re-runs
-   * because transactions are rehydrated from localStorage.
-   * I haven't found a way to clear this reliably yet; maybe
-   * we need a setup/teardown routine?
-   */
   it('Sign the transaction', () => {
     /*
      * Check if the gas station is open
