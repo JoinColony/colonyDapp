@@ -99,6 +99,10 @@ function* colonyAdminRemove({
   let txChannel;
   try {
     txChannel = yield call(getTxChannel, meta.id);
+    /*
+     * Get the current user's wallet address (we need that for notifications)
+     */
+    const walletAddress = yield select(walletAddressSelector);
 
     /*
      * Remove the admin on the contract level (transaction)
@@ -116,6 +120,16 @@ function* colonyAdminRemove({
       type: ACTIONS.COLONY_ADMIN_REMOVE_SUCCESS,
       meta,
       payload,
+    });
+
+    /*
+     * Notification
+     */
+    yield putNotification({
+      event: 'notificationAdminOtherRemoved',
+      userAddress: walletAddress,
+      colonyAddress,
+      otherUserAddress: user,
     });
 
     yield put(fetchRoles(colonyAddress));

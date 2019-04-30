@@ -183,6 +183,11 @@ const InboxItem = ({
             )}
             <span className={styles.inboxAction}>
               <FormattedMessage
+                /*
+                 * @todo switch between notificationAdminOtherAdded v. notificationUserMadeAdmin notifications
+                 * depending if the otherUser address is the same as the userAddress
+                 * This is preffered as opposed to adding two notifications to the stores
+                 */
                 {...MSG[event]}
                 values={{
                   amount: makeInboxDetail(amount, ({ unit, value }) => (
