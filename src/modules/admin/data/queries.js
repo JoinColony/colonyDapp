@@ -87,9 +87,6 @@ export const getColonyUnclaimedTransactions: ContractEventQuery<
       events: { Transfer },
     } = tokenClient;
 
-    /*
-     * @todo use a more meaningful value for blocksBack
-     */
     const blocksBack = 400000;
 
     // Get logs & events for token transfer to this colony
