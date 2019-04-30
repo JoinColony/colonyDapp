@@ -22,11 +22,7 @@ import { executeQuery, putError } from '~utils/saga/effects';
 import { log } from '~utils/debug';
 
 import ENS from '../../../lib/ENS';
-import {
-  getUserBalance,
-  getUserMetadata,
-  getUserProfile,
-} from '../../users/data/queries';
+import { getUserBalance, getUserProfile } from '../../users/data/queries';
 import setupAdminSagas from '../../admin/sagas';
 import setupDashboardSagas from '../../dashboard/sagas';
 import { getWallet, setupUsersSagas } from '../../users/sagas';
@@ -135,20 +131,7 @@ export default function* setupUserContext(
       },
     });
 
-    /*
-     * Attempt to get the user metadata.
-     */
     try {
-      const metadata = yield* executeQuery(getUserMetadata, {
-        metadata: { walletAddress },
-      });
-      /*
-       * @todo consider merging this action with `CURRENT_USER_CREATE`?
-       */
-      yield put<Action<typeof ACTIONS.USER_METADATA_SET>>({
-        type: ACTIONS.USER_METADATA_SET,
-        payload: metadata,
-      });
       /*
        * Load the user activities from the store
        */

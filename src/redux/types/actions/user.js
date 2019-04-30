@@ -5,7 +5,6 @@ import type {
   ContractTransactionType,
   TaskDraftId,
   TokenReferenceType,
-  UserMetadataType,
   UserProfileType,
 } from '~immutable';
 
@@ -78,10 +77,6 @@ export type UserActionTypes = {|
     typeof ACTIONS.USER_FETCH_SUCCESS,
     UserProfileType,
     WithKey,
-  >,
-  USER_METADATA_SET: ActionTypeWithPayload<
-    typeof ACTIONS.USER_METADATA_SET,
-    $Shape<UserMetadataType>,
   >,
   // In the future we could specify in the payload which permission(s) we would like to fetch
   USER_PERMISSIONS_FETCH: ActionTypeWithPayloadAndMeta<

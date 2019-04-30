@@ -15,7 +15,6 @@ import type { ContractTransactionRecordType } from '../../ContractTransaction';
 import type { DataRecordType } from '../../Data';
 import type { TokenReferenceRecordType } from '../../TokenReference';
 import type { UserActivityRecordType } from '../../UserActivity';
-import type { UserMetadataRecordType } from '../../UserMetadata';
 import type { UserPermissionsRecordType } from '../../UserPermissions';
 import type { UserProfileRecordType } from '../../UserProfile';
 import type { WalletRecordType } from '../../Wallet';
@@ -43,7 +42,6 @@ export type CurrentUserTokensType = DataRecordType<
 export type CurrentUser = {|
   activities: ListType<UserActivityRecordType>,
   colonies: DataRecordType<CurrentUserColoniesType>,
-  metadata: UserMetadataRecordType,
   permissions: CurrentUserPermissionsType,
   profile: UserProfileRecordType,
   tasks: DataRecordType<CurrentUserTasksType>,

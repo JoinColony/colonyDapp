@@ -237,24 +237,13 @@ function* usernameCreate({
     /**
      * @todo  should these stores be created after the transaction succeeded?
      */
-    const { profileStore, inboxStore, metadataStore } = yield* executeCommand(
-      createUserProfile,
-      {
-        args: {
-          username,
-          walletAddress,
-        },
-        metadata: {
-          walletAddress,
-        },
+    const { profileStore } = yield* executeCommand(createUserProfile, {
+      args: {
+        username,
+        walletAddress,
       },
-    );
-    yield put<Action<typeof ACTIONS.USER_METADATA_SET>>({
-      type: ACTIONS.USER_METADATA_SET,
-      payload: {
-        inboxStoreAddress: inboxStore.address.toString(),
-        metadataStoreAddress: metadataStore.address.toString(),
-        profileStoreAddress: profileStore.address.toString(),
+      metadata: {
+        walletAddress,
       },
     });
 

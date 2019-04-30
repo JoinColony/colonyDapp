@@ -124,48 +124,6 @@ export const getUserProfile: Query<
   },
 };
 
-/**
- * @todo Merge `getUserMetadata` query with `getUserProfile`.
- */
-
-export const getUserMetadata: Query<
-  UserProfileStore,
-  UserProfileStoreMetadata,
-  void,
-  *,
-> = {
-  context: [CONTEXT.DDB_INSTANCE],
-  prepare: prepareProfileStoreQuery,
-  async execute(profileStore) {
-    const inboxStoreAddress = profileStore.get('inboxStoreAddress');
-    const metadataStoreAddress = profileStore.get('metadataStoreAddress');
-
-    // Flow hack: Should not happen, here to appease flow
-    if (!(inboxStoreAddress && metadataStoreAddress))
-      throw new Error('User metadata not found');
-
-    return {
-      inboxStoreAddress,
-      metadataStoreAddress,
-      profileStoreAddress: profileStore.address.toString(),
-    };
-  },
-};
-
-export const getUserMetadataStoreAddress: Query<
-  UserProfileStore,
-  UserProfileStoreMetadata,
-  void,
-  *,
-> = {
-  context: [CONTEXT.DDB_INSTANCE],
-  prepare: prepareProfileStoreQuery,
-  async execute(profileStore) {
-    const { metadataStoreAddress } = await profileStore.all();
-    return metadataStoreAddress;
-  },
-};
-
 export const getUserTasks: Query<
   ?UserMetadataStore,
   UserMetadataStoreMetadata,

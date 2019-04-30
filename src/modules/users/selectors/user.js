@@ -20,7 +20,6 @@ import {
   USERS_CURRENT_USER_PERMISSIONS,
   USERS_NAMESPACE as ns,
   USERS_USERS,
-  USERS_CURRENT_USER_METADATA,
   USERS_CURRENT_USER_SUBSCRIBED_COLONIES,
   USERS_CURRENT_USER_TASKS,
   USERS_CURRENT_USER_ACTIVITIES,
@@ -114,8 +113,11 @@ export const currentUserColonyPermissionsSelector = (
     USERS_CURRENT_USER_PERMISSIONS,
     colonyAddress,
   ]);
-export const currentUserMetadataSelector = (state: RootStateRecord) =>
-  state.getIn([ns, USERS_CURRENT_USER, USERS_CURRENT_USER_METADATA]);
+export const currentUserMetadataSelector = (state: RootStateRecord) => {
+  const { inboxStoreAddress, metadataStoreAddress } =
+    state.getIn([ns, USERS_CURRENT_USER, USERS_CURRENT_USER_PROFILE]) || {};
+  return { inboxStoreAddress, metadataStoreAddress };
+};
 
 export const currentUserColoniesSelector = (state: RootStateRecord) =>
   state.getIn([ns, USERS_CURRENT_USER, USERS_CURRENT_USER_SUBSCRIBED_COLONIES]);
