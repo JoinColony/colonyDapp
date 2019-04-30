@@ -166,21 +166,26 @@ export const parseUnclaimedTransferEvent = async ({
  * object for the token transfer.
  */
 export const parseUserTransferEvent = async ({
-  tokenClient,
   event: { to, from, value: amount },
   log: { address: token, transactionHash: hash },
   log,
+  tokenClient,
+  userColonyAddresses,
   walletAddress,
 }: {
-  tokenClient: TokenClientType,
   event: Object,
   log: Object,
+  tokenClient: TokenClientType,
+  userColonyAddresses: Address[],
   walletAddress: string,
 }): Promise<ContractTransactionType> => {
   const date = await getLogDate(tokenClient.adapter.provider, log);
 
   return {
     amount,
+    colonyAddress: userColonyAddresses.find(
+      colonyAddress => colonyAddress === from || colonyAddress === to,
+    ),
     date,
     from,
     hash,
