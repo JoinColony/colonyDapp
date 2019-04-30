@@ -26,6 +26,7 @@
         "test:ci": "jest --clearCache && NODE_ENV=test jest --ci --coverage --verbose=true --config=jest.conf.json --reporters='jest-junit'",
         "test:integration": "ava",
         "test:integration:ci": "yarn test:integration --tap | tap-xunit > reports/ava/ava-results.xml",
+        "truffle": "yarn --cwd ./src/lib/colonyNetwork truffle",
         "trufflepig": "scripts/start_trufflepig.js",
         "test:e2e": "rimraf .dappPids.json && scripts/start_all.js & wait-on .dappPids.json && scripts/run_cypress_based_on_browser.sh; scripts/stop_all.js",
         "test:e2e:ci": "scripts/start_all.js & wait-on .dappPids.json && cypress run --browser chrome",
