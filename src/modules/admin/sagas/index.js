@@ -2,7 +2,7 @@
 
 import type { Saga } from 'redux-saga';
 
-import { call, fork, put, takeEvery } from 'redux-saga/effects';
+import { call, fork, put, takeEvery, select } from 'redux-saga/effects';
 
 import type { Action } from '~redux';
 
@@ -11,6 +11,7 @@ import {
   putError,
   executeCommand,
   executeQuery,
+  putNotification,
 } from '~utils/saga/effects';
 import { ACTIONS } from '~redux';
 
@@ -27,6 +28,7 @@ import {
   fetchColonyUnclaimedTransactions,
 } from '../actionCreators';
 import { fetchColony } from '../../dashboard/actionCreators';
+import { walletAddressSelector } from '../../users/selectors';
 
 function* colonyTransactionsFetch({
   payload: { colonyAddress },
@@ -151,6 +153,10 @@ function* colonyMintTokens({
   let txChannel;
   try {
     txChannel = yield call(getTxChannel, meta.id);
+    /*
+     * Get the current user's wallet address (we need that for notifications)
+     */
+    const walletAddress = yield select(walletAddressSelector);
     yield fork(createTransaction, meta.id, {
       context: COLONY_CONTEXT,
       methodName: 'mintTokens',
@@ -184,6 +190,16 @@ function* colonyMintTokens({
       type: ACTIONS.COLONY_MINT_TOKENS_SUCCESS,
       payload: { amount: mintedAmount },
       meta,
+    });
+
+    /*
+     * Notification
+     */
+    yield putNotification({
+      event: 'notificationAdminTokensGenerated',
+      userAddress: walletAddress,
+      colonyAddress,
+      amount: mintedAmount,
     });
   } catch (error) {
     yield putError(ACTIONS.COLONY_MINT_TOKENS_ERROR, error, meta);
