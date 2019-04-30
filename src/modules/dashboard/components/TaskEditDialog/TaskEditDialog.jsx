@@ -305,20 +305,26 @@ const TaskEditDialog = ({
                               />
                             )}
                           </div>
-                          {values.payouts &&
-                            values.payouts.map((payout, index) => (
-                              <WrappedPayout
-                                key={payout.id}
-                                arrayHelpers={arrayHelpers}
-                                payouts={values.payouts}
-                                payout={payout}
-                                availableTokens={availableTokens}
-                                canRemove={canRemove}
-                                index={index}
-                                reputation={reputation}
-                                tokenOptions={tokenOptions}
-                              />
-                            ))}
+                          {colonyData ? (
+                            <>
+                              {values.payouts &&
+                                values.payouts.map((payout, index) => (
+                                  <WrappedPayout
+                                    key={payout.id}
+                                    arrayHelpers={arrayHelpers}
+                                    payouts={values.payouts}
+                                    payout={payout}
+                                    availableTokens={availableTokens}
+                                    canRemove={canRemove}
+                                    index={index}
+                                    reputation={reputation}
+                                    tokenOptions={tokenOptions}
+                                  />
+                                ))}
+                            </>
+                          ) : (
+                            <>{isFetchingColony ? <SpinnerLoader /> : null}</>
+                          )}
                         </>
                       )}
                     />
