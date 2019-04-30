@@ -66,7 +66,7 @@ const TransactionList = ({
           <TableBody>
             {transactions.map(transaction => (
               <TransactionListItem
-                key={transaction.id}
+                key={transaction.hash}
                 linkToEtherscan={linkToEtherscan}
                 showMaskedAddress={showMaskedAddress}
                 transaction={transaction}
