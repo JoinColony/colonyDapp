@@ -64,6 +64,10 @@ const MSG = defineMessages({
     id: 'dashboard.Task.taskEditDialog.amountRequiredError',
     defaultMessage: 'Amount required',
   },
+  unknownToken: {
+    id: 'dashboard.Task.taskEditDialog.unknownToken',
+    defaultMessage: 'Unknown Token',
+  },
 });
 
 type Props = {|
