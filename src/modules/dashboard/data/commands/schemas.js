@@ -34,11 +34,17 @@ export const CreateDomainCommandArgsSchema = yup.object({
 });
 
 export const SetColonyAvatarCommandArgsSchema = yup.object({
-  ipfsHash: yup.string().required(),
+  ipfsHash: yup
+    .string()
+    .cid()
+    .required(),
 });
 
 export const RemoveColonyAvatarCommandArgsSchema = yup.object({
-  ipfsHash: yup.string().required(),
+  ipfsHash: yup
+    .string()
+    .cid()
+    .required(),
 });
 
 export const SetTaskDueDateCommandArgsSchema = yup.object({

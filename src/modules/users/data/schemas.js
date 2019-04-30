@@ -25,10 +25,10 @@ export const UpdateUserProfileCommandArgsSchema = yup.object({
 });
 
 export const SetUserAvatarCommandArgsSchema = yup.object({
-  /**
-   * @todo Add yup validation for IPFS hashes
-   */
-  data: yup.string().required(),
+  data: yup
+    .string()
+    .cid()
+    .required(),
 });
 
 export const createCommentMentionInboxEventSchema = yup.object({

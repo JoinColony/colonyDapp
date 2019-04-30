@@ -9,7 +9,7 @@ import { getTaskStoreAccessController } from '../accessControllers';
 /**
  * @todo : We should type store props!
  */
-const taskStoreBlueprint: StoreBlueprint = {
+const taskStoreBlueprint: StoreBlueprint = Object.freeze({
   getAccessController: getTaskStoreAccessController,
   getName: ({
     colonyAddress,
@@ -23,6 +23,6 @@ const taskStoreBlueprint: StoreBlueprint = {
     return `colony_${colonyAddress}_task_${draftId}`;
   },
   type: EventStore,
-};
+});
 
 export default taskStoreBlueprint;
