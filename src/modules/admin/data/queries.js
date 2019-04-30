@@ -57,18 +57,17 @@ export const getColonyTransactions: ContractEventQuery<
         ],
       },
     );
-    return Promise.all(
-      events
-        .map((event, i) =>
-          EVENT_PARSERS[event.eventName]({
-            event,
-            log: logs[i],
-            colonyClient,
-            colonyAddress,
-          }),
-        )
-        .filter(Boolean),
+    const transactions = await Promise.all(
+      events.map((event, i) =>
+        EVENT_PARSERS[event.eventName]({
+          event,
+          log: logs[i],
+          colonyClient,
+          colonyAddress,
+        }),
+      ),
     );
+    return transactions.filter(Boolean);
   },
 };
 
@@ -88,9 +87,6 @@ export const getColonyUnclaimedTransactions: ContractEventQuery<
       events: { Transfer },
     } = tokenClient;
 
-    /*
-     * @todo use a more meaningful value for blocksBack
-     */
     const blocksBack = 400000;
 
     // Get logs & events for token transfer to this colony

@@ -328,13 +328,14 @@ export const getUserColonyTransactions: Query<
   ColonyClient,
   void,
   {|
+    userColonyAddresses: Address[],
     walletAddress: string,
   |},
   ContractTransactionType[],
 > = {
   context: [CONTEXT.COLONY_MANAGER],
   prepare: prepareMetaColonyClientQuery,
-  async execute(metaColonyClient, { walletAddress }) {
+  async execute(metaColonyClient, { walletAddress, userColonyAddresses }) {
     const { tokenClient } = metaColonyClient;
     const {
       events: { Transfer },
@@ -372,9 +373,10 @@ export const getUserColonyTransactions: Query<
     return Promise.all(
       transferEvents.map((event, i) =>
         parseUserTransferEvent({
-          tokenClient,
           event,
           log: logs[i],
+          tokenClient,
+          userColonyAddresses,
           walletAddress,
         }),
       ),

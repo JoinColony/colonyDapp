@@ -5,6 +5,8 @@ import type { ComponentType } from 'react';
 // $FlowFixMe
 import React, { useState } from 'react';
 
+import type { ActionTransformFnType } from '~utils/actions';
+
 import { log } from '~utils/debug';
 import { useAsyncFunction, useMounted } from '~utils/hooks';
 import DefaultButton from '~core/Button';
@@ -16,6 +18,7 @@ type Props = {
   success: string,
   values?: Object | (() => Object | Promise<Object>),
   onSuccess?: (result: any) => void,
+  transform?: ActionTransformFnType,
 };
 
 const ActionButton = ({
@@ -25,11 +28,12 @@ const ActionButton = ({
   success,
   onSuccess,
   values,
+  transform,
   ...props
 }: Props) => {
   const isMountedRef = useMounted();
   const [loading, setLoading] = useState(false);
-  const asyncFunction = useAsyncFunction({ submit, error, success });
+  const asyncFunction = useAsyncFunction({ submit, error, success, transform });
 
   const handleClick = async () => {
     let result;
@@ -37,7 +41,7 @@ const ActionButton = ({
     try {
       const asyncFuncValues =
         typeof values == 'function' ? await values() : values;
-      await asyncFunction(asyncFuncValues);
+      result = await asyncFunction(asyncFuncValues);
       if (isMountedRef.current) setLoading(false);
     } catch (err) {
       log(err);

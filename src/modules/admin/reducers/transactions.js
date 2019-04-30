@@ -21,11 +21,11 @@ const adminTransactionsReducer: ReducerType<
   switch (action.type) {
     case ACTIONS.COLONY_FETCH_TRANSACTIONS_SUCCESS: {
       const {
-        payload: transactions,
-        meta: { key: colonyName },
+        payload: { transactions },
+        meta: { key },
       } = action;
-      return state.mergeIn(
-        [colonyName],
+      return state.set(
+        key,
         DataRecord<ListType<ContractTransactionRecordType>>({
           record: List(transactions.map(tx => ContractTransactionRecord(tx))),
         }),

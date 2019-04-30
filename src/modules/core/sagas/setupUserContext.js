@@ -30,6 +30,7 @@ import {
 import setupAdminSagas from '../../admin/sagas';
 import setupDashboardSagas from '../../dashboard/sagas';
 import { getWallet, setupUsersSagas } from '../../users/sagas';
+import { currentUserFetchColonies } from '../../users/actionCreators';
 import setupTransactionsSagas from './transactions';
 import setupNetworkSagas from './network';
 import { getDDB, getGasPrices, getColonyManager } from './utils';
@@ -121,6 +122,19 @@ export default function* setupUserContext(
      */
     yield fork(setupContextDependentSagas);
 
+    yield put<Action<typeof ACTIONS.CURRENT_USER_CREATE>>({
+      type: ACTIONS.CURRENT_USER_CREATE,
+      payload: {
+        balance,
+        profileData,
+        walletAddress,
+      },
+      meta: {
+        ...meta,
+        key: walletAddress,
+      },
+    });
+
     /*
      * Attempt to get the user metadata.
      */
@@ -145,23 +159,14 @@ export default function* setupUserContext(
           key: walletAddress,
         },
       });
+      /*
+       * Load the user's subscribed colonies.
+       */
+      yield put(currentUserFetchColonies());
     } catch (caughtError) {
       // It's ok if the user store doesn't exist (yet)
       log.warn(caughtError);
     }
-
-    yield put<Action<typeof ACTIONS.CURRENT_USER_CREATE>>({
-      type: ACTIONS.CURRENT_USER_CREATE,
-      payload: {
-        balance,
-        profileData,
-        walletAddress,
-      },
-      meta: {
-        ...meta,
-        key: walletAddress,
-      },
-    });
 
     yield call(setupOnBeforeUnload);
   } catch (caughtError) {

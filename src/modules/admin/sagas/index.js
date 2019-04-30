@@ -42,7 +42,7 @@ function* colonyFetchTransactions({
     yield put<Action<typeof ACTIONS.COLONY_FETCH_TRANSACTIONS_SUCCESS>>({
       type: ACTIONS.COLONY_FETCH_TRANSACTIONS_SUCCESS,
       meta,
-      payload: transactions,
+      payload: { colonyAddress, transactions },
     });
   } catch (error) {
     yield putError(ACTIONS.COLONY_FETCH_TRANSACTIONS_ERROR, error, meta);
@@ -63,7 +63,7 @@ function* colonyFetchUnclaimedTransactions({
     >({
       type: ACTIONS.COLONY_FETCH_UNCLAIMED_TRANSACTIONS_SUCCESS,
       meta,
-      payload: transactions,
+      payload: { colonyAddress, transactions },
     });
   } catch (error) {
     yield putError(
@@ -78,7 +78,7 @@ function* colonyFetchUnclaimedTransactions({
  * Claim tokens, then reload unclaimed transactions list.
  */
 function* colonyClaimToken({
-  payload: { colonyAddress, tokenAddress: token },
+  payload: { colonyAddress, tokenAddress },
   meta,
 }: Action<typeof ACTIONS.COLONY_CLAIM_TOKEN>): Saga<void> {
   let txChannel;
@@ -88,7 +88,7 @@ function* colonyClaimToken({
       context: COLONY_CONTEXT,
       methodName: 'claimColonyFunds',
       identifier: colonyAddress,
-      params: { token },
+      params: { token: tokenAddress },
     });
 
     const { payload } = yield takeFrom(

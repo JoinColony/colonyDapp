@@ -44,7 +44,6 @@ export const parseColonyFundsClaimedEvent = async ({
         colonyAddress,
         date,
         from,
-        id: transactionHash,
         incoming: true,
         token,
         hash: transactionHash,
@@ -84,7 +83,6 @@ export const parseColonyFundsMovedBetweenFundingPotsEvent = async ({
     amount,
     colonyAddress,
     date,
-    id: transactionHash,
     incoming: fromPot !== 1,
     taskId,
     token,
@@ -113,7 +111,6 @@ export const parseTaskPayoutClaimedEvent = async ({
     amount,
     date,
     hash,
-    id: hash,
     incoming: false,
     taskId,
     to,
@@ -158,7 +155,6 @@ export const parseUnclaimedTransferEvent = async ({
         date,
         from,
         hash,
-        id: hash,
         incoming: true,
         token,
       };
@@ -170,25 +166,29 @@ export const parseUnclaimedTransferEvent = async ({
  * object for the token transfer.
  */
 export const parseUserTransferEvent = async ({
-  tokenClient,
   event: { to, from, value: amount },
   log: { address: token, transactionHash: hash },
   log,
+  tokenClient,
+  userColonyAddresses,
   walletAddress,
 }: {
-  tokenClient: TokenClientType,
   event: Object,
   log: Object,
+  tokenClient: TokenClientType,
+  userColonyAddresses: Address[],
   walletAddress: string,
 }): Promise<ContractTransactionType> => {
   const date = await getLogDate(tokenClient.adapter.provider, log);
 
   return {
     amount,
+    colonyAddress: userColonyAddresses.find(
+      colonyAddress => colonyAddress === from || colonyAddress === to,
+    ),
     date,
     from,
     hash,
-    id: hash,
     incoming: addressEquals(to, walletAddress),
     to,
     token,

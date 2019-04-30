@@ -19,6 +19,7 @@ import {
   executeCommand,
   putError,
   takeFrom,
+  selectAsJS,
 } from '~utils/saga/effects';
 import { ACTIONS } from '~redux';
 
@@ -26,6 +27,7 @@ import { NETWORK_CONTEXT } from '../../../lib/ColonyManager/constants';
 import {
   walletAddressSelector,
   currentUserMetadataSelector,
+  currentUserColoniesSelector,
 } from '../selectors';
 
 import { ipfsUpload } from '../../core/sagas/ipfs';
@@ -58,9 +60,11 @@ function* userTokenTransfersFetch(
   action: Action<typeof ACTIONS.USER_TOKEN_TRANSFERS_FETCH>,
 ): Saga<void> {
   try {
+    const userColonyAddresses = yield* selectAsJS(currentUserColoniesSelector);
     const transactions = yield* executeQuery(getUserColonyTransactions, {
       args: {
         walletAddress: yield select(walletAddressSelector),
+        userColonyAddresses: userColonyAddresses.record || [],
       },
     });
     yield put<Action<typeof ACTIONS.USER_TOKEN_TRANSFERS_FETCH_SUCCESS>>({

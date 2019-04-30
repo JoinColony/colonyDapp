@@ -20,13 +20,3 @@ export const fetchColonyUnclaimedTransactions = (
   payload: { colonyAddress },
   meta: { key: colonyAddress },
 });
-
-export const claimColonyToken = (
-  colonyAddress: Address,
-  tokenAddress: Address,
-  id: string,
-): Action<typeof ACTIONS.COLONY_CLAIM_TOKEN> => ({
-  type: ACTIONS.COLONY_CLAIM_TOKEN,
-  meta: { key: colonyAddress, id },
-  payload: { colonyAddress, tokenAddress },
-});

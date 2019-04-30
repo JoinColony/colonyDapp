@@ -13,11 +13,7 @@ import type {
   Wallet,
 } from '~data/types';
 
-import type {
-  ColonyType,
-  ContractTransactionType,
-  DomainType,
-} from '~immutable';
+import type { ColonyType, DomainType } from '~immutable';
 
 import BigNumber from 'bn.js';
 import { CONTEXT } from '~context';
@@ -25,14 +21,7 @@ import { COLONY_EVENT_TYPES } from '~data/constants';
 
 import { reduceToLastState, getLast } from '~utils/reducers';
 import { getColonyStore } from '~data/stores';
-import {
-  getEvents,
-  getLogsAndEvents,
-  parseColonyFundsClaimedEvent,
-  parseColonyFundsMovedBetweenFundingPotsEvent,
-  parseTaskPayoutClaimedEvent,
-  parseUnclaimedTransferEvent,
-} from '~utils/web3/eventLogs';
+import { getEvents } from '~utils/web3/eventLogs';
 import { ZERO_ADDRESS } from '~utils/web3/constants';
 import { getTokenClient } from '~utils/web3/contracts';
 import { addressEquals } from '~utils/strings';
@@ -49,13 +38,6 @@ type ColonyStoreMetadata = {|
   colonyAddress: Address,
 |};
 type ContractEventQuery<A, R> = Query<ColonyClient, ColonyStoreMetadata, A, R>;
-
-const EVENT_PARSERS = {
-  ColonyFundsClaimed: parseColonyFundsClaimedEvent,
-  // eslint-disable-next-line max-len
-  ColonyFundsMovedBetweenFundingPots: parseColonyFundsMovedBetweenFundingPotsEvent,
-  TaskPayoutClaimed: parseTaskPayoutClaimedEvent,
-};
 
 const context = [CONTEXT.COLONY_MANAGER];
 const colonyContext = [
@@ -92,99 +74,6 @@ const prepareColonyStoreQuery = async (
   const { colonyAddress } = metadata;
   const colonyClient = await colonyManager.getColonyClient(colonyAddress);
   return getColonyStore(colonyClient, ddb, wallet)(metadata);
-};
-
-export const getColonyTransactions: ContractEventQuery<
-  void,
-  ContractTransactionType[],
-> = {
-  context,
-  prepare: prepareColonyClientQuery,
-  async execute(colonyClient) {
-    const {
-      contract: { address: colonyAddress },
-      events: {
-        ColonyFundsClaimed,
-        ColonyFundsMovedBetweenFundingPots,
-        TaskPayoutClaimed,
-      },
-    } = colonyClient;
-    const { events, logs } = await getLogsAndEvents(
-      colonyClient,
-      {},
-      {
-        blocksBack: 400000,
-        events: [
-          ColonyFundsClaimed,
-          ColonyFundsMovedBetweenFundingPots,
-          TaskPayoutClaimed,
-        ],
-      },
-    );
-    return Promise.all(
-      events
-        .map((event, i) =>
-          EVENT_PARSERS[event.eventName]({
-            event,
-            log: logs[i],
-            colonyClient,
-            colonyAddress,
-          }),
-        )
-        .filter(Boolean),
-    );
-  },
-};
-
-export const getColonyUnclaimedTransactions: ContractEventQuery<
-  void,
-  ContractTransactionType[],
-> = {
-  context,
-  prepare: prepareColonyClientQuery,
-  async execute(colonyClient) {
-    const {
-      contract: { address: colonyAddress },
-      events: { ColonyFundsClaimed },
-      tokenClient,
-    } = colonyClient;
-    const {
-      events: { Transfer },
-    } = tokenClient;
-    const blocksBack = 400000;
-
-    // Get logs & events for token transfer to this colony
-    const {
-      logs: transferLogs,
-      events: transferEvents,
-    } = await getLogsAndEvents(
-      tokenClient,
-      {},
-      { blocksBack, events: [Transfer], to: colonyAddress },
-    );
-
-    // Get logs & events for token claims by this colony
-    const { logs: claimLogs, events: claimEvents } = await getLogsAndEvents(
-      colonyClient,
-      {},
-      { blocksBack, events: [ColonyFundsClaimed] },
-    );
-
-    const unclaimedTransfers = await Promise.all(
-      transferEvents.map((transferEvent, i) =>
-        parseUnclaimedTransferEvent({
-          claimEvents,
-          claimLogs,
-          colonyClient,
-          colonyAddress,
-          transferEvent,
-          transferLog: transferLogs[i],
-        }),
-      ),
-    );
-
-    return unclaimedTransfers.filter(Boolean);
-  },
 };
 
 export const getColonyRoles: ContractEventQuery<

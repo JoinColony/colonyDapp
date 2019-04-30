@@ -21,7 +21,6 @@ const mockTransactions: DataRecordType<*> = DataRecord({
       from: mockUser.profile.walletAddress,
       hash:
         '0x6f99abafeef056231b428dd94fc6f3c54a579ead0419a04efd643369f88aa7e9',
-      id: '0x6f99abafeef056231b428dd94fc6f3c54a579ead0419a04efd643369f88aa7e9',
       incoming: false,
       token: '0x0000000000000000000000000000000000000000',
     }),
