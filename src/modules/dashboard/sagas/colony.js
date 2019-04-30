@@ -431,22 +431,11 @@ function* colonyCreate({
     /*
      * Notification
      */
-    yield put<Action<typeof ACTIONS.USER_ACTIVITIES_ADD_SUCCESS>>({
-      type: ACTIONS.USER_ACTIVITIES_ADD_SUCCESS,
-      payload: {
-        activity: {
-          id: nanoid(),
-          event: 'notificationAdminENSCreated',
-          userAddress: walletAddress,
-          colonyName,
-          colonyAddress,
-          timestamp: new Date(),
-        },
-      },
-      meta: {
-        key: [colonyName],
-        ...meta,
-      },
+    yield putNotification({
+      event: 'notificationAdminENSCreated',
+      userAddress: walletAddress,
+      colonyName,
+      colonyAddress,
     });
   } catch (error) {
     yield putError(ACTIONS.COLONY_CREATE_ERROR, error, meta);
