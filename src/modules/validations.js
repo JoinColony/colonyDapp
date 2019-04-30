@@ -4,7 +4,7 @@ import * as yup from 'yup';
 import { isAddress } from 'web3-utils';
 import { normalize as ensNormalize } from 'eth-ens-namehash-ms';
 
-import type { TokenType } from '~immutable';
+import type { TokenReferenceType } from '~immutable';
 
 import { bnLessThan } from '../utils/numbers';
 
@@ -28,18 +28,20 @@ function equalTo(ref, msg) {
 
 // Used by `TaskEditDialog` to check there are sufficient funds for the
 // selected token.
-
-// This should accept a TokenReference
-function lessThanPot(availableTokens: Array<TokenType>, msg) {
+function lessThanPot(tokenReferences: Array<TokenReferenceType>, msg) {
   return this.test({
     name: 'lessThanPot',
     message: msg || en.mixed.lessThanPot,
+    params: {
+      tokenReferences,
+    },
     test(value) {
-      // $FlowFixMe `yup.ref` not recognised
-      const tokenIndex = this.resolve(yup.ref('token'));
-      if (!tokenIndex) return true;
-      // $FlowFixMe should be from TokenReference
-      const { balance } = availableTokens[parseInt(tokenIndex, 10) - 1] || {};
+      const tokenAddress = this.resolve(yup.ref('token'));
+      if (!tokenAddress) return true;
+      const { balance } =
+        tokenReferences.find(
+          ({ address: refAddress }) => refAddress === tokenAddress,
+        ) || {};
       return balance === undefined || bnLessThan(value, balance);
     },
   });
