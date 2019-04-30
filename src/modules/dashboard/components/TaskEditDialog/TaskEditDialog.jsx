@@ -6,7 +6,7 @@ import { defineMessages } from 'react-intl';
 import * as yup from 'yup';
 import { FieldArray } from 'formik';
 
-import type { UserType, TaskType } from '~immutable';
+import type { ColonyType, UserType, TaskType, TokenType } from '~immutable';
 import type { $Pick } from '~types';
 import type { ItemDataType } from '~core/OmniPicker';
 
@@ -22,7 +22,13 @@ import HookedUserAvatar from '~users/HookedUserAvatar';
 
 import WrappedPayout from './WrappedPayout.jsx';
 import { useDataFetcher, useDataMapFetcher, useSelector } from '~utils/hooks';
-import { taskRequestsSelector } from '../../selectors';
+import { colonyFetcher } from '../../fetchers';
+import {
+  allFromColonyTokensSelector,
+  colonyTokensSelector,
+  taskSelector,
+  taskRequestsSelector,
+} from '../../selectors';
 import { userFetcher, usersByAddressFetcher } from '../../../users/fetchers';
 
 import styles from './TaskEditDialog.css';
@@ -136,12 +142,41 @@ const TaskEditDialog = ({
   transform,
   workerAddress,
 }: Props) => {
-  const availableTokens = [];
+  const {
+    record: { colonyAddress },
+  } = useSelector(taskSelector, [draftId]);
+  const {
+    data: colonyData,
+    isFetching: isFetchingColony,
+  } = useDataFetcher<ColonyType>(
+    colonyFetcher,
+    [colonyAddress],
+    [colonyAddress],
+  );
+  // Get this task's colony's token references
+  const colonyTokenReferences = useSelector(colonyTokensSelector, [
+    colonyAddress,
+  ]);
+
+  // Get tokens using token references
+  const availableTokens: Array<TokenType> = useSelector(
+    allFromColonyTokensSelector,
+    [colonyTokenReferences],
+  );
+
+  // Get users that have requested to work on this task
   const userAddresses = useSelector(taskRequestsSelector, [draftId]);
   const userData = useDataMapFetcher<UserType>(
     usersByAddressFetcher,
     userAddresses,
   );
+
+  // Get user (worker) assigned to this task
+  const args = [workerAddress];
+  const {
+    data: worker,
+    isFetching: isFetchingWorker,
+  } = useDataFetcher<UserType>(userFetcher, args, args);
 
   const users = useMemo(
     () =>
@@ -198,12 +233,6 @@ const TaskEditDialog = ({
       })),
     [availableTokens],
   );
-
-  const args = [workerAddress];
-  const {
-    data: worker,
-    isFetching: isFetchingWorker,
-  } = useDataFetcher<UserType>(userFetcher, args, args);
 
   return (
     <FullscreenDialog
