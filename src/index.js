@@ -19,3 +19,8 @@ if (rootNode) render(createElement(App, { store, history }), rootNode);
 
 // $FlowFixMe
 if (module.hot) module.hot.accept();
+
+/* Expose redux store for testing purposes */
+if (window.Cypress) {
+  window.store = store;
+}

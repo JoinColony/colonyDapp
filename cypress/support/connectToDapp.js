@@ -3,7 +3,8 @@
  */
 const connectToDapp = before(() => {
   cy.log('Connected to the dApp');
-  cy.visit('/connect');
+  /*  Set initial state before starting tests */
+  cy.initState();
 });
 
 export default connectToDapp;

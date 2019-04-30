@@ -32,7 +32,8 @@ describe('Claims a username', () => {
     /*
      * Click the Avatar Dropdown
      */
-    cy.get('button[data-test="avatarDropdown"]').click();
+    cy.get('button[data-test="avatarDropdown"]').then(btn => btn.click());
+
     /*
      * Click on the Get Started link
      */
