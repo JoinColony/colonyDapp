@@ -153,6 +153,7 @@ const StepColonyName = ({
                   appearance={{ theme: 'fat' }}
                   name="displayName"
                   label={MSG.labelDisplay}
+                  data-test="claimColonyDisplayNameInput"
                 />
                 <Input
                   appearance={{ theme: 'fat' }}
@@ -161,6 +162,7 @@ const StepColonyName = ({
                   label={MSG.label}
                   status={normalized && MSG.statusText}
                   statusValues={{ normalized }}
+                  data-test="claimColonyNameInput"
                   extra={
                     <Tooltip
                       placement="right"
@@ -187,6 +189,7 @@ const StepColonyName = ({
                     disabled={!isValid}
                     loading={isSubmitting}
                     text={MSG.continue}
+                    data-test="claimColonyNameConfirm"
                   />
                 </div>
               </div>

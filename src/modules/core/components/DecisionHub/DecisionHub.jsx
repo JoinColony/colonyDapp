@@ -22,7 +22,7 @@ type Props = {|
 |};
 
 const DecisionHub = ({ options, name }: Props) => (
-  <div>
+  <div data-test="hubOptions">
     {options.map(option => (
       <DecisionOption name={name} option={option} key={`row-${option.value}`} />
     ))}

@@ -147,6 +147,7 @@ const StepCreateToken = ({
                 appearance={{ theme: 'fat' }}
                 label={MSG.labelTokenName}
                 help={MSG.helpTokenName}
+                data-test="defineTokenName"
                 extra={
                   <button
                     type="button"
@@ -165,6 +166,7 @@ const StepCreateToken = ({
                 appearance={{ theme: 'fat' }}
                 label={MSG.labelTokenSymbol}
                 help={MSG.helpTokenSymbol}
+                data-test="defineTokenSymbol"
               />
             </div>
             <div className={styles.inputFieldWrapper}>
@@ -188,6 +190,7 @@ const StepCreateToken = ({
               type="submit"
               disabled={!isValid}
               loading={isSubmitting}
+              data-test="definedTokenConfirm"
             />
           </section>
         </div>
