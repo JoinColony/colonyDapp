@@ -8,7 +8,7 @@ import type { TaskDraftId, TaskFeedItemType } from '~immutable';
 import { SpinnerLoader } from '~core/Preloaders';
 import { useDataFetcher } from '~utils/hooks';
 
-import { SpinnerLoader } from '~core/Preloaders';
+import TaskCompleteInfo from './TaskCompleteInfo';
 import TaskFeedEvent from './TaskFeedEvent.jsx';
 import TaskFeedComment from './TaskFeedComment.jsx';
 import TaskFeedRating from './TaskFeedRating.jsx';
@@ -53,33 +53,41 @@ const TaskFeed = ({ draftId }: Props) => {
     <div className={styles.main}>
       <div className={styles.items}>
         <div>
-          {feedItems.map(({ id, createdAt, comment, event, rating }) => {
-            if (comment) {
-              return (
-                <TaskFeedComment
-                  key={id}
-                  comment={comment}
-                  createdAt={createdAt}
-                />
-              );
-            }
+          {feedItems.map(
+            ({ id, createdAt, comment, event, rating, transaction }) => {
+              if (comment) {
+                return (
+                  <TaskFeedComment
+                    key={id}
+                    comment={comment}
+                    createdAt={createdAt}
+                  />
+                );
+              }
 
-            if (event) {
-              return (
-                <TaskFeedEvent
-                  colonyAddress={colonyAddress}
-                  createdAt={createdAt}
-                  event={event}
-                  key={id}
-                />
-              );
-            }
+              if (event) {
+                return (
+                  <TaskFeedEvent
+                    colonyAddress={colonyAddress}
+                    createdAt={createdAt}
+                    event={event}
+                    key={id}
+                  />
+                );
+              }
 
-            /**
-             * @todo Check that the reveal period is over for ratings (task feed).
-             */
-            return rating ? <TaskFeedRating key={id} rating={rating} /> : null;
-          })}
+              /**
+               * @todo Check that the reveal period is over for ratings (task feed).
+               */
+              if (rating) {
+                return <TaskFeedRating key={id} rating={rating} />;
+              }
+
+              return transaction ? (
+                <TaskCompleteInfo key={id} transaction={transaction} />
+              ) : null;
+            },
+          )}
           <div ref={bottomEl} />
         </div>
       </div>
