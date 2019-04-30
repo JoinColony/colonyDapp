@@ -1,0 +1,102 @@
+{
+    "admin": {
+       "transactions": {},
+       "unclaimedTransactions": {}
+    },
+    "core": {
+       "transactions": {
+          "list": {}
+       },
+       "gasPrices": {
+          "cheaper": "3b9aca00",
+          "cheaperWait": 654,
+          "faster": "b2d05e00",
+          "fasterWait": 24,
+          "network": "4a817c800",
+          "suggested": "b2d05e00",
+          "suggestedWait": 24,
+          "timestamp": 1556535694991
+       },
+       "network": {
+          "record": {
+             "fee": 0.01,
+             "feeInverse": 100,
+             "version": 1
+          },
+          "isFetching": false,
+          "lastFetchedAt": "2019-04-29T11:01:35.511Z"
+       },
+       "ipfsData": {}
+    },
+    "dashboard": {
+       "allColonies": {
+          "colonies": {},
+          "colonyNames": {}
+       },
+       "allDomains": {},
+       "allRoles": {},
+       "allTokens": {},
+       "taskFeedItems": {},
+       "taskMetadata": {},
+       "tasks": {}
+    },
+    "users": {
+       "allUsers": {
+          "users": {
+             "0xb77D57F4959eAfA0339424b83FcFaf9c15407461": {
+                "record": {
+                   "profile": {
+                      "balance": "98.8437555",
+                      "walletAddress": "0xb77D57F4959eAfA0339424b83FcFaf9c15407461"
+                   },
+                   "activities": []
+                },
+                "error": "Address not found for store with identifier 0xb77D57F4959eAfA0339424b83FcFaf9c15407461",
+                "isFetching": false,
+                "lastFetchedAt": "2019-04-29T11:01:35.311Z"
+             }
+          }
+       },
+       "currentUser": {
+          "activities": [],
+          "colonies": {
+             "isFetching": false,
+             "lastFetchedAt": "1970-01-01T00:00:00.000Z"
+          },
+          "metadata": {},
+          "permissions": {},
+          "profile": {
+             "balance": "98.8437555",
+             "walletAddress": "0xb77D57F4959eAfA0339424b83FcFaf9c15407461"
+          },
+          "tasks": {
+             "record": [],
+             "isFetching": false,
+             "lastFetchedAt": "2019-04-29T11:01:35.450Z"
+          },
+          "tokens": {
+             "isFetching": false,
+             "lastFetchedAt": "1970-01-01T00:00:00.000Z"
+          },
+          "transactions": {
+             "isFetching": false,
+             "lastFetchedAt": "1970-01-01T00:00:00.000Z"
+          }
+       },
+       "wallet": {
+          "availableAddresses": []
+       }
+    },
+    "router": {
+       "location": {
+          "pathname": "/dashboard",
+          "state": {
+             "hasBackLink": false
+          },
+          "search": "",
+          "hash": "",
+          "key": "xze0t9"
+       },
+       "action": "REPLACE"
+    }
+}

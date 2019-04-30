@@ -83,3 +83,31 @@ Cypress.Commands.add(
           ),
       ),
 );
+
+Cypress.Commands.add('initState', () => {
+  /*
+   * Dev Helper method to reset the state with no currentUser set
+   */
+  cy.fixture('initialState').then(initState => {
+    cy.visit('/connect', {
+      onBeforeLoad: win => {
+        /* eslint-disable no-param-reassign */
+
+        win.initialState = initState;
+      },
+    });
+  });
+});
+
+Cypress.Commands.add('logState', () => {
+  /*
+   * Dev Helper method to explore state
+   */
+  cy.window()
+    .its('store')
+    .invoke('getState')
+    .then(state =>
+      /* eslint-disable no-console */
+      console.log(state.toJS()),
+    );
+});
