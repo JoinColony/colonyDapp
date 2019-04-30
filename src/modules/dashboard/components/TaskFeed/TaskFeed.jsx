@@ -5,13 +5,14 @@ import React, { useRef, useLayoutEffect } from 'react';
 
 import type { TaskDraftId, TaskFeedItemType } from '~immutable';
 
+import { SpinnerLoader } from '~core/Preloaders';
 import { useDataFetcher } from '~utils/hooks';
-import { taskFeedItemsFetcher } from '../../fetchers';
 
 import { SpinnerLoader } from '~core/Preloaders';
 import TaskFeedEvent from './TaskFeedEvent.jsx';
 import TaskFeedComment from './TaskFeedComment.jsx';
 import TaskFeedRating from './TaskFeedRating.jsx';
+import { taskFeedItemsFetcher } from '../../fetchers';
 
 import styles from './TaskFeed.css';
 
