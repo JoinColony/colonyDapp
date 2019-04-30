@@ -185,7 +185,7 @@ const InboxItem = ({
                   ),
                   colonyName: makeInboxDetail(colonyName),
                   comment: makeInboxDetail(comment),
-                  domain: makeInboxDetail(domainName),
+                  domainName: makeInboxDetail(domainName),
                   other: makeInboxDetail(otherUser),
                   task: makeInboxDetail(taskTitle),
                   time: makeInboxDetail(timestamp, value => (
@@ -201,8 +201,8 @@ const InboxItem = ({
                 <FormattedMessage
                   {...MSG.metaColonyAndDomain}
                   values={{
-                    colonyName,
-                    domain: domainName,
+                    colonyName: colony.colonyName || colonyName,
+                    domainName,
                   }}
                 />
               )}
@@ -210,7 +210,7 @@ const InboxItem = ({
                 <FormattedMessage
                   {...MSG.metaColonyOnly}
                   values={{
-                    colonyName,
+                    colonyName: colony.colonyName || colonyName,
                   }}
                 />
               )}
