@@ -227,9 +227,9 @@ const TaskEditDialog = ({
 
   const tokenOptions = useMemo(
     () =>
-      availableTokens.map(({ symbol }, i) => ({
-        value: i + 1,
-        label: symbol,
+      availableTokens.map(({ address, symbol }) => ({
+        value: address,
+        label: symbol || MSG.unknownToken,
       })),
     [availableTokens],
   );
