@@ -116,7 +116,7 @@ const InboxItem = ({
   activity: {
     // Handle read/unread notifications
     // unread,
-    otherUser,
+    otherUserAddress,
     amount,
     colonyName,
     colonyAddress,
@@ -135,6 +135,14 @@ const InboxItem = ({
     [userAddress],
   );
   const {
+    data: otherUser,
+    isFetching: isFetchingOtherUser,
+  } = useDataFetcher<UserType>(
+    userFetcher,
+    [otherUserAddress],
+    [otherUserAddress],
+  );
+  const {
     data: colony,
     isFetching: isFetchingColony,
   } = useDataFetcher<ColonyType>(
@@ -149,7 +157,7 @@ const InboxItem = ({
       // onClick={() => unread && markAsRead(id)}
     >
       <TableCell className={styles.inboxRowCell}>
-        {!isFetchingUser && !isFetchingColony && !user && !colony ? (
+        {isFetchingUser || isFetchingColony || isFetchingOtherUser ? (
           <div className={styles.spinnerWrapper}>
             <SpinnerLoader
               loadingText={LOCAL_MSG.loadingText}
@@ -181,18 +189,41 @@ const InboxItem = ({
                     <Numeral prefix={unit} value={value} />
                   )),
                   colonyDisplayName: makeInboxDetail(
-                    colony && (colony.displayName || colony.colonyName),
+                    /*
+                     * Fallback
+                     * If we could fetch the colony then either show the display name (if available) or the ENS name
+                     * If we could not fetch the colony, just show the colony's address
+                     */
+                    (colony && (colony.displayName || colony.colonyName)) ||
+                      colonyAddress,
                   ),
                   colonyName: makeInboxDetail(colonyName),
                   comment: makeInboxDetail(comment),
                   domainName: makeInboxDetail(domainName),
-                  other: makeInboxDetail(otherUser),
+                  otherUser: makeInboxDetail(
+                    /*
+                     * Fallback
+                     * If we could fetch the other user then either show the display name (if available) or the ENS name
+                     * If we could not fetch the other user, just show the other user's wallet address
+                     */
+                    (otherUser &&
+                      (otherUser.profile.displayName ||
+                        otherUser.profile.username)) ||
+                      otherUserAddress,
+                  ),
                   task: makeInboxDetail(taskTitle),
                   time: makeInboxDetail(timestamp, value => (
                     <TimeRelative value={value} />
                   )),
                   user: makeInboxDetail(
-                    user && (user.profile.displayName || user.profile.username),
+                    /*
+                     * Fallback
+                     * If we could fetch the user then either show the display name (if available) or the ENS name
+                     * If we could not fetch the user, just show the user's wallet address
+                     */
+                    (user &&
+                      (user.profile.displayName || user.profile.username)) ||
+                      userAddress,
                   ),
                 }}
               />
