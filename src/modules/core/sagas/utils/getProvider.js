@@ -15,7 +15,7 @@ export function* getProvider(network: string = defaultNetwork): Saga<any> {
     return yield create(providers.JsonRpcProvider);
   }
 
-  // TODO: Use InfuraProvider instead of JsonRpcProvider and the following
+  // @todo: Use InfuraProvider instead of JsonRpcProvider and the following
   // switch statement once we have upgraded to ethers v4.
 
   let host;
