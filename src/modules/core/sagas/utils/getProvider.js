@@ -3,20 +3,16 @@
 import type { Saga } from 'redux-saga';
 
 import { providers } from 'ethers';
-import { call } from 'redux-saga/effects';
 
 import { create } from '~utils/saga/effects';
 
 export const defaultNetwork = process.env.NETWORK || 'rinkeby';
 
+export const defaultProjectId = '7d0d81d0919f4f05b9ab6634be01ee73';
+
 export function* getProvider(network: string = defaultNetwork): Saga<any> {
   if (network === 'local') {
     return yield create(providers.JsonRpcProvider);
-  }
-
-  // Infura project id is required
-  if (!process.env.INFURA_PROJECT_ID) {
-    throw new Error(`Could not get provider, INFURA_PROJECT_ID is required`);
   }
 
   // TODO: Use InfuraProvider instead of JsonRpcProvider and the following
@@ -36,9 +32,9 @@ export function* getProvider(network: string = defaultNetwork): Saga<any> {
       );
   }
 
-  return yield call(
-    new providers.JsonRpcProvider(),
-    `https://${host}/v3/${process.env.INFURA_PROJECT_ID || ''}`,
+  return yield create(
+    providers.JsonRpcProvider,
+    `https://${host}/v3/${process.env.INFURA_PROJECT_ID || defaultProjectId}`,
     network,
   );
 }
