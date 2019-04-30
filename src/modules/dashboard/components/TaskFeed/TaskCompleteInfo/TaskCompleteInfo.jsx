@@ -70,9 +70,9 @@ const TaskCompleteInfo = ({
 
   const { symbol } = token || {};
 
-  /*
-   * TODO: Use fee data from the transaction, as the current network fee doesn't
-   * necessarily reflect the fee at time of tx. This is intended to be temporary.
+  /**
+   * @todo: Use fee data from the transaction
+   * @body: The current network fee doesn't necessarily reflect the fee at time of tx.
    */
   const networkFee = useSelector(networkFeeSelector);
 
