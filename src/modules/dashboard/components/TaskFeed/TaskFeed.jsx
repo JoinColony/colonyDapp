@@ -40,60 +40,62 @@ const TaskFeed = ({ draftId }: Props) => {
     [bottomEl],
   );
 
-  const { data: feedItems } = useDataFetcher<TaskFeedItemType[]>(
-    taskFeedItemsFetcher,
-    [draftId],
-    [draftId],
-  );
+  const { data: feedItems, isFetching: isFetchingFeedItems } = useDataFetcher<
+    TaskFeedItemType[],
+  >(taskFeedItemsFetcher, [draftId], [draftId]);
 
   const nFeedItems = feedItems ? feedItems.length : 0;
   useLayoutEffect(scrollToEnd, [nFeedItems]);
 
-  return feedItems != null ? (
-    <div className={styles.main}>
-      <div className={styles.items}>
-        <div>
-          {feedItems.map(
-            ({ id, createdAt, comment, event, rating, transaction }) => {
-              if (comment) {
-                return (
-                  <TaskFeedComment
-                    key={id}
-                    comment={comment}
-                    createdAt={createdAt}
-                  />
-                );
-              }
-
-              if (event) {
-                return (
-                  <TaskFeedEvent
-                    colonyAddress={colonyAddress}
-                    createdAt={createdAt}
-                    event={event}
-                    key={id}
-                  />
-                );
-              }
-
-              /**
-               * @todo Check that the reveal period is over for ratings (task feed).
-               */
-              if (rating) {
-                return <TaskFeedRating key={id} rating={rating} />;
-              }
-
-              return transaction ? (
-                <TaskCompleteInfo key={id} transaction={transaction} />
-              ) : null;
-            },
-          )}
-          <div ref={bottomEl} />
-        </div>
-      </div>
-    </div>
-  ) : (
+  return isFetchingFeedItems ? (
     <SpinnerLoader />
+  ) : (
+    <>
+      {feedItems && (
+        <div className={styles.main}>
+          <div className={styles.items}>
+            <div>
+              {feedItems.map(
+                ({ id, createdAt, comment, event, rating, transaction }) => {
+                  if (comment) {
+                    return (
+                      <TaskFeedComment
+                        key={id}
+                        comment={comment}
+                        createdAt={createdAt}
+                      />
+                    );
+                  }
+
+                  if (event) {
+                    return (
+                      <TaskFeedEvent
+                        colonyAddress={colonyAddress}
+                        createdAt={createdAt}
+                        event={event}
+                        key={id}
+                      />
+                    );
+                  }
+
+                  /**
+                   * @todo Check that the reveal period is over for ratings (task feed).
+                   */
+                  if (rating) {
+                    return <TaskFeedRating key={id} rating={rating} />;
+                  }
+
+                  return transaction ? (
+                    <TaskCompleteInfo key={id} transaction={transaction} />
+                  ) : null;
+                },
+              )}
+              <div ref={bottomEl} />
+            </div>
+          </div>
+        </div>
+      )}
+    </>
   );
 };
 
