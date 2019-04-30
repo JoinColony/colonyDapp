@@ -21,6 +21,7 @@ import {
   executeQuery,
   putError,
   raceError,
+  putNotification,
 } from '~utils/saga/effects';
 import { generateUrlFriendlyId } from '~utils/data';
 import { ACTIONS } from '~redux';
@@ -635,19 +636,11 @@ function* taskCommentAdd({
      * So this should actually be gated behind a conditional
      * (once the mentions are all wired up)
      */
-    yield put<Action<typeof ACTIONS.USER_ACTIVITIES_ADD_SUCCESS>>({
-      type: ACTIONS.USER_ACTIVITIES_ADD_SUCCESS,
-      payload: {
-        activity: {
-          id: nanoid(),
-          event: 'notificationUserMentioned',
-          userAddress: walletAddress,
-          taskTitle,
-          comment: commentData.body,
-          timestamp: commentData.timestamp,
-        },
-      },
-      meta,
+    yield putNotification({
+      event: 'notificationUserMentioned',
+      userAddress: walletAddress,
+      taskTitle,
+      comment: commentData.body,
     });
   } catch (error) {
     yield putError(ACTIONS.TASK_COMMENT_ADD_ERROR, error, meta);

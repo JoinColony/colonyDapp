@@ -1,12 +1,16 @@
 /* @flow */
 
-import nanoid from 'nanoid';
 import type { Saga } from 'redux-saga';
 import { call, fork, put, takeEvery, select } from 'redux-saga/effects';
 
 import type { Action } from '~redux';
 
-import { executeQuery, putError, takeFrom } from '~utils/saga/effects';
+import {
+  executeQuery,
+  putError,
+  takeFrom,
+  putNotification,
+} from '~utils/saga/effects';
 import { ACTIONS } from '~redux';
 
 import { getColonyRoles } from '../data/queries';
@@ -72,22 +76,11 @@ function* colonyAdminAdd({
     /*
      * Notification
      */
-    yield put<Action<typeof ACTIONS.USER_ACTIVITIES_ADD_SUCCESS>>({
-      type: ACTIONS.USER_ACTIVITIES_ADD_SUCCESS,
-      payload: {
-        activity: {
-          id: nanoid(),
-          event: 'notificationAdminOtherAdded',
-          userAddress: walletAddress,
-          colonyAddress,
-          otherUserAddress: newAdmin,
-          timestamp: new Date(),
-        },
-      },
-      meta: {
-        key: [colonyAddress],
-        ...meta,
-      },
+    yield putNotification({
+      event: 'notificationAdminOtherAdded',
+      userAddress: walletAddress,
+      colonyAddress,
+      otherUserAddress: newAdmin,
     });
 
     yield put(fetchRoles(colonyAddress));

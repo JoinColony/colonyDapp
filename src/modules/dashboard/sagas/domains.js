@@ -1,6 +1,5 @@
 /* @flow */
 
-import nanoid from 'nanoid';
 import type { Saga } from 'redux-saga';
 import { call, fork, put, takeEvery, select } from 'redux-saga/effects';
 
@@ -11,6 +10,7 @@ import {
   takeFrom,
   executeQuery,
   executeCommand,
+  putNotification,
 } from '~utils/saga/effects';
 import { ACTIONS } from '~redux';
 
@@ -97,22 +97,11 @@ function* domainCreate({
     /*
      * Notification
      */
-    yield put<Action<typeof ACTIONS.USER_ACTIVITIES_ADD_SUCCESS>>({
-      type: ACTIONS.USER_ACTIVITIES_ADD_SUCCESS,
-      payload: {
-        activity: {
-          id: nanoid(),
-          event: 'notificationAdminColonyLabelAdded',
-          userAddress: walletAddress,
-          colonyAddress,
-          domainName: name,
-          timestamp: new Date(),
-        },
-      },
-      meta: {
-        key: [colonyAddress],
-        ...meta,
-      },
+    yield putNotification({
+      event: 'notificationAdminColonyLabelAdded',
+      userAddress: walletAddress,
+      colonyAddress,
+      domainName: name,
     });
   } catch (error) {
     yield putError(ACTIONS.DOMAIN_CREATE_ERROR, error, meta);
