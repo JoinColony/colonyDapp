@@ -10,17 +10,10 @@ import type {
 } from '~data/types';
 
 import { CONTEXT } from '~context';
+import { createEvent } from '~data/utils';
+import { COLONY_EVENT_TYPES } from '~data/constants';
 import { getColonyStore, createColonyStore } from '~data/stores';
 import { diffAddresses } from '~utils/arrays';
-import {
-  createColonyAvatarRemovedEvent,
-  createColonyAvatarUploadedEvent,
-  createColonyProfileCreatedEvent,
-  createColonyProfileUpdatedEvent,
-  createDomainCreatedEvent,
-  createTokenInfoAddedEvent,
-  createTokenInfoRemovedEvent,
-} from '../events';
 
 import {
   CreateColonyProfileCommandArgsSchema,
@@ -58,12 +51,9 @@ export const createColonyProfile: Command<
     colonyAddress: Address,
     colonyName: string,
     displayName: string,
-    description?: string,
-    guideline?: string,
-    website?: string,
     token: {|
       address: Address,
-      icon?: ?string,
+      iconHash?: ?string,
       isNative?: ?boolean,
       name: string,
       symbol: string,
@@ -95,21 +85,25 @@ export const createColonyProfile: Command<
       colonyAddress,
       colonyName,
       displayName,
-      description,
-      guideline,
-      website,
-      token,
+      token: { iconHash, isNative, ...token },
     },
   ) {
-    const profileCreatedEvent = createColonyProfileCreatedEvent({
-      colonyAddress,
-      colonyName,
-      displayName,
-      description,
-      guideline,
-      website,
-    });
-    const tokenInfoAddedEvent = createTokenInfoAddedEvent(token);
+    const profileCreatedEvent = createEvent(
+      COLONY_EVENT_TYPES.PROFILE_CREATED,
+      {
+        colonyAddress,
+        colonyName,
+        displayName,
+      },
+    );
+    const tokenInfoAddedEvent = createEvent(
+      COLONY_EVENT_TYPES.TOKEN_INFO_ADDED,
+      {
+        isNative: !!isNative,
+        ...(iconHash ? { iconHash } : null),
+        ...token,
+      },
+    );
     await colonyStore.append(profileCreatedEvent);
     await colonyStore.append(tokenInfoAddedEvent);
     await colonyStore.load();
@@ -130,7 +124,9 @@ export const createDomain: Command<
   prepare: prepareColonyStoreQuery,
   schema: CreateDomainCommandArgsSchema,
   async execute(colonyStore, args) {
-    await colonyStore.append(createDomainCreatedEvent(args));
+    await colonyStore.append(
+      createEvent(COLONY_EVENT_TYPES.DOMAIN_CREATED, args),
+    );
     return colonyStore;
   },
 };
@@ -139,7 +135,7 @@ export const updateColonyProfile: Command<
   ColonyStore,
   ColonyStoreMetadata,
   {|
-    displayName?: string,
+    displayName: string,
     description?: string,
     guideline?: string,
     website?: string,
@@ -150,7 +146,9 @@ export const updateColonyProfile: Command<
   prepare: prepareColonyStoreQuery,
   schema: UpdateColonyProfileCommandArgsSchema,
   async execute(colonyStore, args) {
-    await colonyStore.append(createColonyProfileUpdatedEvent(args));
+    await colonyStore.append(
+      createEvent(COLONY_EVENT_TYPES.PROFILE_UPDATED, args),
+    );
     await colonyStore.load();
     return colonyStore;
   },
@@ -168,7 +166,9 @@ export const setColonyAvatar: Command<
   prepare: prepareColonyStoreQuery,
   schema: SetColonyAvatarCommandArgsSchema,
   async execute(colonyStore, args) {
-    await colonyStore.append(createColonyAvatarUploadedEvent(args));
+    await colonyStore.append(
+      createEvent(COLONY_EVENT_TYPES.AVATAR_UPLOADED, args),
+    );
     await colonyStore.load();
     return colonyStore;
   },
@@ -186,18 +186,21 @@ export const removeColonyAvatar: Command<
   prepare: prepareColonyStoreQuery,
   schema: RemoveColonyAvatarCommandArgsSchema,
   async execute(colonyStore, args) {
-    await colonyStore.append(createColonyAvatarRemovedEvent(args));
+    await colonyStore.append(
+      createEvent(COLONY_EVENT_TYPES.AVATAR_REMOVED, args),
+    );
     await colonyStore.load();
     return colonyStore;
   },
 };
 
+// This is currently unused
 export const addTokenInfo: Command<
   ColonyStore,
   ColonyStoreMetadata,
   {|
     address: Address,
-    icon?: ?string,
+    iconHash?: ?string,
     isNative?: ?boolean,
     name: string,
     symbol: string,
@@ -206,8 +209,15 @@ export const addTokenInfo: Command<
 > = {
   context: [CONTEXT.COLONY_MANAGER, CONTEXT.DDB_INSTANCE, CONTEXT.WALLET],
   prepare: prepareColonyStoreQuery,
-  async execute(colonyStore, args) {
-    const tokenInfoAddedEvent = createTokenInfoAddedEvent(args);
+  async execute(colonyStore, { iconHash, isNative, ...args }) {
+    const tokenInfoAddedEvent = createEvent(
+      COLONY_EVENT_TYPES.TOKEN_INFO_ADDED,
+      {
+        ...(iconHash ? { iconHash } : null),
+        isNative: !!isNative,
+        ...args,
+      },
+    );
     await colonyStore.append(tokenInfoAddedEvent);
     await colonyStore.load();
     return colonyStore;
@@ -235,10 +245,14 @@ export const updateTokenInfo: Command<
     // add and remove tokens as required
     await Promise.all([
       ...add.map(address =>
-        colonyStore.append(createTokenInfoAddedEvent({ address })),
+        colonyStore.append(
+          createEvent(COLONY_EVENT_TYPES.TOKEN_INFO_ADDED, { address }),
+        ),
       ),
       ...remove.map(address =>
-        colonyStore.append(createTokenInfoRemovedEvent({ address })),
+        colonyStore.append(
+          createEvent(COLONY_EVENT_TYPES.TOKEN_INFO_REMOVED, { address }),
+        ),
       ),
     ]);
 

@@ -3,6 +3,7 @@
 import { TASK_EVENT_TYPES, TASK_STATUS } from '../constants';
 
 import type { EventDefinition } from './events';
+import type { Address } from '~types';
 
 const {
   COMMENT_POSTED,
@@ -98,11 +99,10 @@ export type TaskEvents = {|
   TASK_FINALIZED: EventDefinition<
     typeof TASK_FINALIZED,
     {|
-      status: typeof TASK_STATUS.FINALIZED,
-      workerAddress: string,
       amountPaid: string,
-      token?: string,
       paymentId?: number,
+      paymentTokenAddress?: Address,
+      workerAddress: string,
     |},
   >,
   TASK_TITLE_SET: EventDefinition<

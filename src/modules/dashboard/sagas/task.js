@@ -151,7 +151,7 @@ const getTaskFetchSuccessPayload = (
     finalizedAt,
     invites,
     paymentId,
-    paymentToken = '',
+    paymentTokenAddress = '',
     payout,
     requests,
     status: currentState,
@@ -166,14 +166,18 @@ const getTaskFetchSuccessPayload = (
     currentState,
     draftId,
     invites,
-    payouts: paymentToken
+    payouts: paymentTokenAddress
       ? [
           {
             // Consider using strings for amounts in TaskPayout
             amount: parseInt(payout, 10),
             // We should get the token name, or even alter TaskType so that we use
             // token addresses and amounts only (not name or symbol)
-            token: { address: paymentToken, name: 'Token', symbol: 'TKN' },
+            token: {
+              address: paymentTokenAddress,
+              name: 'Token',
+              symbol: 'TKN',
+            },
           },
         ]
       : undefined,
@@ -438,6 +442,9 @@ function* taskFinalize({
     const [colonyAddress, draftId] = slug.split('_');
     const { workerAddress, amountPaid } = yield select(taskSelector, draftId);
     const { event } = yield* executeCommand(finalizeTask, {
+      /**
+       * @todo Set the payment ID/payment token address when finalising a task
+       */
       args: { amountPaid, workerAddress },
       metadata: { colonyAddress, draftId },
     });
@@ -611,6 +618,7 @@ function* taskCommentAdd({
      */
     yield* executeCommand(commentMentionNotification, {
       args: {
+        colonyAddress,
         event: 'notificationUserMentioned',
         taskTitle,
         comment: commentData.body,

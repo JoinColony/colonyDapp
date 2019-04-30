@@ -253,7 +253,7 @@ export type ColonyActionTypes = {|
   >,
   COLONY_PROFILE_UPDATE: UniqueActionType<
     typeof ACTIONS.COLONY_PROFILE_UPDATE,
-    ColonyType,
+    $Shape<ColonyType>,
     WithKey,
   >,
   COLONY_PROFILE_UPDATE_ERROR: ErrorActionType<
@@ -262,7 +262,8 @@ export type ColonyActionTypes = {|
   >,
   COLONY_PROFILE_UPDATE_SUCCESS: UniqueActionType<
     typeof ACTIONS.COLONY_PROFILE_UPDATE_SUCCESS,
-    ColonyType,
+    // ColonyType,
+    $Shape<ColonyType>,
     WithKey,
   >,
   COLONY_PROFILE_UPDATE_ERROR: ErrorActionType<

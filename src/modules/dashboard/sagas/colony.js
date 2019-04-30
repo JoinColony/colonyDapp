@@ -220,21 +220,20 @@ function* colonyCreate({
     /*
      * Create the colony store
      */
-    const args = {
-      colonyAddress,
-      colonyName,
-      displayName,
-      token: {
-        address: tokenAddress,
-        icon: tokenIcon ? tokenIcon[0].uploaded.ipfsHash : undefined,
-        isNative: true,
-        name: tokenName,
-        symbol: tokenSymbol,
-      },
-    };
     const colonyStore = yield* executeCommand(createColonyProfile, {
       metadata: { colonyAddress },
-      args,
+      args: {
+        colonyAddress,
+        colonyName,
+        displayName,
+        token: {
+          address: tokenAddress,
+          iconHash: tokenIcon ? tokenIcon[0].uploaded.ipfsHash : undefined,
+          isNative: true,
+          name: tokenName,
+          symbol: tokenSymbol,
+        },
+      },
     });
 
     yield put(subscribeToColony(colonyAddress));
@@ -305,14 +304,15 @@ function* colonyProfileUpdate({
   },
 }: Action<typeof ACTIONS.COLONY_PROFILE_UPDATE>): Saga<void> {
   try {
-    const metadata = { colonyAddress };
-    const args = {
-      description,
-      displayName,
-      guideline,
-      website,
-    };
-    yield* executeCommand(updateColonyProfile, { args, metadata });
+    yield* executeCommand(updateColonyProfile, {
+      args: {
+        description,
+        displayName,
+        guideline,
+        website,
+      },
+      metadata: { colonyAddress },
+    });
 
     yield put<Action<typeof ACTIONS.COLONY_PROFILE_UPDATE_SUCCESS>>({
       type: ACTIONS.COLONY_PROFILE_UPDATE_SUCCESS,
