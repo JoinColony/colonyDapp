@@ -217,12 +217,12 @@ const TaskEditDialog = ({
               amount: yup
                 .string()
                 .required(MSG.amountRequiredError)
-                .lessThanPot(availableTokens, MSG.insufficientFundsError),
+                .lessThanPot(colonyTokenReferences, MSG.insufficientFundsError),
             }),
           )
           .max(maxTokens),
       }),
-    [maxTokens, availableTokens],
+    [colonyTokenReferences, maxTokens],
   );
 
   const tokenOptions = useMemo(
