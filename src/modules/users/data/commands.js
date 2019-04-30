@@ -18,17 +18,8 @@ import {
   getUserMetadataStore,
   getUserInboxStore,
 } from '~data/stores';
-
-import {
-  createUserAddTokenEvent,
-  createUserRemoveTokenEvent,
-  createNotificationsReadEvent,
-  createSubscribeToColonyEvent,
-  createUnsubscribeToColonyEvent,
-  createSubscribeToTaskEvent,
-  createUnsubscribeToTaskEvent,
-  createCommentMentionInboxEvent,
-} from './events';
+import { createEvent } from '~data/utils';
+import { USER_EVENT_TYPES } from '~data/constants';
 
 import { getUserTokenAddresses } from './utils';
 
@@ -188,7 +179,9 @@ export const updateTokens: Command<
             ),
         )
         .map(address =>
-          userMetadataStore.append(createUserAddTokenEvent({ address })),
+          userMetadataStore.append(
+            createEvent(USER_EVENT_TYPES.TOKEN_ADDED, { address }),
+          ),
         ),
     );
 
@@ -202,7 +195,9 @@ export const updateTokens: Command<
             ),
         )
         .map(address =>
-          userMetadataStore.append(createUserRemoveTokenEvent({ address })),
+          userMetadataStore.append(
+            createEvent(USER_EVENT_TYPES.TOKEN_REMOVED, { address }),
+          ),
         ),
     );
 
@@ -210,6 +205,7 @@ export const updateTokens: Command<
   },
 };
 
+// This is currently unused
 export const markNotificationsAsRead: Command<
   UserMetadataStore,
   UserMetadataStoreMetadata,
@@ -223,7 +219,9 @@ export const markNotificationsAsRead: Command<
   schema: MarkNotificationsAsReadCommandArgsSchema,
   prepare: prepareMetadataCommand,
   async execute(userMetadataStore, args) {
-    await userMetadataStore.append(createNotificationsReadEvent(args));
+    await userMetadataStore.append(
+      createEvent(USER_EVENT_TYPES.READ_UNTIL, args),
+    );
     return userMetadataStore;
   },
 };
@@ -246,11 +244,14 @@ export const subscribeToTask: Command<
       userDraftIds.some(userDraftId => userDraftId === draftId)
     )
       return null;
-    await userMetadataStore.append(createSubscribeToTaskEvent({ draftId }));
+    await userMetadataStore.append(
+      createEvent(USER_EVENT_TYPES.SUBSCRIBED_TO_TASK, { draftId }),
+    );
     return draftId;
   },
 };
 
+// This is currently unused
 export const unsubscribeToTask: Command<
   UserMetadataStore,
   UserMetadataStoreMetadata,
@@ -269,7 +270,9 @@ export const unsubscribeToTask: Command<
       !userDraftIds.some(userDraftId => userDraftId === draftId)
     )
       return null;
-    await userMetadataStore.append(createUnsubscribeToTaskEvent({ draftId }));
+    await userMetadataStore.append(
+      createEvent(USER_EVENT_TYPES.UNSUBSCRIBED_FROM_TASK, { draftId }),
+    );
     return draftId;
   },
 };
@@ -294,7 +297,7 @@ export const subscribeToColony: Command<
     )
       return null;
     await userMetadataStore.append(
-      createSubscribeToColonyEvent({ colonyAddress }),
+      createEvent(USER_EVENT_TYPES.SUBSCRIBED_TO_COLONY, { colonyAddress }),
     );
     return colonyAddress;
   },
@@ -320,7 +323,7 @@ export const unsubscribeToColony: Command<
     )
       return null;
     await userMetadataStore.append(
-      createUnsubscribeToColonyEvent({ colonyAddress }),
+      createEvent(USER_EVENT_TYPES.UNSUBSCRIBED_FROM_COLONY, { colonyAddress }),
     );
     return colonyAddress;
   },
@@ -330,17 +333,19 @@ export const commentMentionNotification: Command<
   UserInboxStore,
   UserInboxStoreMetadata,
   {|
+    colonyAddress: Address,
+    comment?: string,
     event: string,
     taskTitle?: string,
-    comment?: string,
-    colonyName?: string,
   |},
   UserInboxStore,
 > = {
   context: [CONTEXT.DDB_INSTANCE],
   prepare: prepareInboxStoreCommand,
   async execute(userInboxStore, args) {
-    await userInboxStore.append(createCommentMentionInboxEvent(args));
+    await userInboxStore.append(
+      createEvent(USER_EVENT_TYPES.COMMENT_MENTION, args),
+    );
     return userInboxStore;
   },
 };

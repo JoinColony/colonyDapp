@@ -9,14 +9,9 @@ import type { Event } from './types';
  */
 import { VERSION } from './constants';
 
-/*
- * @todo createEventCreator types aren't fully working! :(
- * @body The argument of the created function (payload) seems to
- * not be typed, so we don't know if we're calling the
- * action creators with the right arguments.
- */
 // eslint-disable-next-line import/prefer-default-export
-export const createEventCreator = <T: string>(type: T) => <P>(
+export const createEvent = <T: string, P: $PropertyType<Event<T>, 'payload'>>(
+  type: T,
   payload: P,
 ): Event<T> => ({
   meta: {

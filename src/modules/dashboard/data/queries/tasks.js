@@ -69,7 +69,7 @@ export const getTask: Query<TaskStore, TaskStoreMetadata, void, *> = {
         invites: [],
         paymentId: undefined,
         payout: undefined,
-        paymentToken: undefined,
+        paymentTokenAddress: undefined,
         requests: [],
         skillId: undefined,
         status: undefined,

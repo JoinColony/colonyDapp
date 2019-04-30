@@ -61,6 +61,7 @@ export type UserEvents = {|
   COMMENT_MENTION: EventDefinition<
     typeof COMMENT_MENTION,
     {|
+      colonyAddress: Address,
       event: string,
       taskTitle?: string,
       comment?: string,

@@ -15,7 +15,11 @@ import type {
 
 import { CONTEXT } from '~context';
 
-import { TASK_STATUS, TASK_EVENT_TYPES } from '~data/constants';
+import {
+  TASK_STATUS,
+  TASK_EVENT_TYPES,
+  COLONY_EVENT_TYPES,
+} from '~data/constants';
 import {
   createTaskStore,
   getColonyStore,
@@ -24,27 +28,7 @@ import {
   getTaskStoreAddress,
   getCommentsStoreAddress,
 } from '~data/stores';
-
-import {
-  createCommentPostedEvent,
-  createCommentStoreCreatedEvent,
-  createTaskCancelledEvent,
-  createTaskClosedEvent,
-  createTaskCreatedEvent,
-  createTaskDescriptionSetEvent,
-  createTaskDomainSetEvent,
-  createTaskDueDateSetEvent,
-  createTaskFinalizedEvent,
-  createTaskPayoutSetEvent,
-  createTaskSkillSetEvent,
-  createTaskStoreRegisteredEvent,
-  createTaskStoreUnregisteredEvent,
-  createTaskTitleSetEvent,
-  createWorkerAssignedEvent,
-  createWorkerUnassignedEvent,
-  createWorkInviteSentEvent,
-  createWorkRequestCreatedEvent,
-} from '../events';
+import { createEvent } from '~data/utils';
 
 import {
   CancelTaskCommandArgsSchema,
@@ -159,18 +143,20 @@ export const createTask: Command<
   ) {
     const commentsStoreAddress = commentsStore.address.toString();
     await taskStore.init(
-      createCommentStoreCreatedEvent({ commentsStoreAddress }),
+      createEvent(TASK_EVENT_TYPES.COMMENT_STORE_CREATED, {
+        commentsStoreAddress,
+      }),
     );
 
     const eventHash = await taskStore.append(
-      createTaskCreatedEvent({
+      createEvent(TASK_EVENT_TYPES.TASK_CREATED, {
         creatorAddress,
         draftId,
       }),
     );
 
     await colonyStore.append(
-      createTaskStoreRegisteredEvent({
+      createEvent(COLONY_EVENT_TYPES.TASK_STORE_REGISTERED, {
         commentsStoreAddress,
         draftId,
         taskStoreAddress: taskStore.address.toString(),
@@ -202,7 +188,7 @@ export const setTaskTitle: Command<
   schema: SetTaskTitleCommandArgsSchema,
   async execute(taskStore, { title }) {
     const eventHash = await taskStore.append(
-      createTaskTitleSetEvent({
+      createEvent(TASK_EVENT_TYPES.TASK_TITLE_SET, {
         title,
       }),
     );
@@ -226,7 +212,7 @@ export const setTaskDescription: Command<
   schema: SetTaskDescriptionCommandArgsSchema,
   async execute(taskStore, { description }) {
     const eventHash = await taskStore.append(
-      createTaskDescriptionSetEvent({
+      createEvent(TASK_EVENT_TYPES.TASK_DESCRIPTION_SET, {
         description,
       }),
     );
@@ -250,7 +236,7 @@ export const setTaskDueDate: Command<
   schema: SetTaskDueDateCommandArgsSchema,
   async execute(taskStore, { dueDate }) {
     const eventHash = await taskStore.append(
-      createTaskDueDateSetEvent({
+      createEvent(TASK_EVENT_TYPES.DUE_DATE_SET, {
         dueDate,
       }),
     );
@@ -274,7 +260,7 @@ export const setTaskSkill: Command<
   schema: SetTaskSkillCommandArgsSchema,
   async execute(taskStore, { skillId }) {
     const eventHash = await taskStore.append(
-      createTaskSkillSetEvent({
+      createEvent(TASK_EVENT_TYPES.SKILL_SET, {
         skillId,
       }),
     );
@@ -297,7 +283,7 @@ export const createWorkRequest: Command<
   prepare: prepareTaskStoreCommand,
   async execute(taskStore, { workerAddress }) {
     const eventHash = await taskStore.append(
-      createWorkRequestCreatedEvent({
+      createEvent(TASK_EVENT_TYPES.WORK_REQUEST_CREATED, {
         workerAddress,
       }),
     );
@@ -321,7 +307,7 @@ export const sendWorkInvite: Command<
   schema: SendWorkInviteCommandArgsSchema,
   async execute(taskStore, { workerAddress }) {
     const eventHash = await taskStore.append(
-      createWorkInviteSentEvent({
+      createEvent(TASK_EVENT_TYPES.WORK_INVITE_SENT, {
         workerAddress,
       }),
     );
@@ -336,6 +322,7 @@ export const postComment: Command<
     signature: string,
     content: {|
       id: string,
+      timestamp: number,
       /*
        * The author's address is passed explicitly in the arguments (as opposed
        * to using `event.meta.userAddress`) because it gets signed alongside
@@ -358,7 +345,7 @@ export const postComment: Command<
   schema: PostCommentCommandArgsSchema,
   async execute(commentsStore, args) {
     const eventHash = await commentsStore.append(
-      createCommentPostedEvent(args),
+      createEvent(TASK_EVENT_TYPES.COMMENT_POSTED, args),
     );
     return { commentsStore, event: commentsStore.getEvent(eventHash) };
   },
@@ -381,7 +368,7 @@ export const setTaskPayout: Command<
   schema: SetTaskPayoutCommandArgsSchema,
   async execute(taskStore, { amount, token }) {
     const eventHash = await taskStore.append(
-      createTaskPayoutSetEvent({
+      createEvent(TASK_EVENT_TYPES.PAYOUT_SET, {
         amount,
         token,
       }),
@@ -405,7 +392,7 @@ export const assignWorker: Command<
   prepare: prepareTaskStoreCommand,
   async execute(taskStore, { workerAddress }) {
     const eventHash = await taskStore.append(
-      createWorkerAssignedEvent({
+      createEvent(TASK_EVENT_TYPES.WORKER_ASSIGNED, {
         workerAddress,
       }),
     );
@@ -429,7 +416,7 @@ export const unassignWorker: Command<
   schema: SetTaskPayoutCommandArgsSchema,
   async execute(taskStore, { workerAddress }) {
     const eventHash = await taskStore.append(
-      createWorkerUnassignedEvent({
+      createEvent(TASK_EVENT_TYPES.WORKER_UNASSIGNED, {
         workerAddress,
       }),
     );
@@ -441,8 +428,10 @@ export const finalizeTask: Command<
   TaskStore,
   TaskStoreMetadata,
   {|
-    workerAddress: Address,
     amountPaid: string,
+    paymentId?: number,
+    paymentTokenAddress?: Address,
+    workerAddress: Address,
   |},
   {|
     event: Event<typeof TASK_EVENT_TYPES.TASK_FINALIZED>,
@@ -452,12 +441,9 @@ export const finalizeTask: Command<
   context: [CONTEXT.COLONY_MANAGER, CONTEXT.DDB_INSTANCE, CONTEXT.WALLET],
   prepare: prepareTaskStoreCommand,
   schema: FinalizeTaskCommandArgsSchema,
-  async execute(taskStore, { amountPaid, workerAddress }) {
+  async execute(taskStore, args) {
     const eventHash = await taskStore.append(
-      createTaskFinalizedEvent({
-        amountPaid,
-        workerAddress,
-      }),
+      createEvent(TASK_EVENT_TYPES.TASK_FINALIZED, args),
     );
     return { taskStore, event: taskStore.getEvent(eventHash) };
   },
@@ -511,10 +497,12 @@ export const cancelTask: Command<
   schema: CancelTaskCommandArgsSchema,
   async execute({ colonyStore, taskStore }, { draftId }) {
     const eventHash = await taskStore.append(
-      createTaskCancelledEvent({ status: TASK_STATUS.CANCELLED }),
+      createEvent(TASK_EVENT_TYPES.TASK_CANCELLED, {
+        status: TASK_STATUS.CANCELLED,
+      }),
     );
     await colonyStore.append(
-      createTaskStoreUnregisteredEvent({
+      createEvent(COLONY_EVENT_TYPES.TASK_STORE_UNREGISTERED, {
         draftId,
         taskStoreAddress: taskStore.address.toString(),
       }),
@@ -537,7 +525,7 @@ export const closeTask: Command<
   schema: FinalizeTaskCommandArgsSchema,
   async execute(taskStore) {
     const eventHash = await taskStore.append(
-      createTaskClosedEvent({
+      createEvent(TASK_EVENT_TYPES.TASK_CLOSED, {
         status: TASK_STATUS.CLOSED,
       }),
     );
@@ -561,7 +549,7 @@ export const setTaskDomain: Command<
   schema: SetTaskDomainCommandArgsSchema,
   async execute(taskStore, { domainId }) {
     const eventHash = await taskStore.append(
-      createTaskDomainSetEvent({
+      createEvent(TASK_EVENT_TYPES.DOMAIN_SET, {
         domainId,
       }),
     );
