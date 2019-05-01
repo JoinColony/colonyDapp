@@ -1,3 +1,3 @@
 /* @flow */
 
-export { default } from './TaskCompleteInfo';
+export { default } from './TaskCompleteInfo.jsx';
