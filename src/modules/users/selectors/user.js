@@ -58,6 +58,21 @@ export const userByUsernameSelector = (
     .getIn([ns, USERS_ALL_USERS, USERS_USERS], ImmutableMap())
     .find(user => getUsernameFromUserData(user) === username);
 
+export const userAddressByMultipleUsernameSelector = createSelector(
+  (state: RootStateRecord) =>
+    state.getIn([ns, USERS_ALL_USERS, USERS_USERS], ImmutableMap()),
+  (allUsers, usernames: string[] = []) =>
+    allUsers
+      .filter(user => usernames.includes(getUsernameFromUserData(user)))
+      .map(user => user && user.getIn(['record', 'profile']))
+      .reduce(
+        (users, { walletAddress, username, inboxStoreAddress }) => ({
+          [username]: { walletAddress, inboxStoreAddress },
+        }),
+        {},
+      ),
+);
+
 export const usersExceptSelector = createSelector(
   (state: RootStateRecord) =>
     state.getIn([ns, USERS_ALL_USERS, USERS_USERS], ImmutableMap()),
