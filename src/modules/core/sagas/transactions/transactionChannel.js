@@ -3,8 +3,6 @@
 import type { ContractResponse } from '@colony/colony-js-client';
 import { END, eventChannel } from 'redux-saga';
 
-import { log } from '~utils/debug';
-
 import type {
   TransactionRecordType,
   TransactionParams,
@@ -35,9 +33,7 @@ const channelGetTransactionReceipt = async ({ id, params }, sentTx, emit) => {
   } = sentTx;
   if (receiptPromise) {
     try {
-      log.debug('#1071 / before receipt promise');
       const receipt = await receiptPromise;
-      log.debug('#1071 / after receipt promise');
       emit(transactionReceiptReceived(id, { receipt, params }));
       return receipt;
     } catch (caughtError) {
