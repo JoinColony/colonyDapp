@@ -11,7 +11,7 @@ import {
   takeLeading,
 } from 'redux-saga/effects';
 import { replace } from 'connected-react-router';
-
+import nanoid from 'nanoid';
 import type { Action } from '~redux';
 import type { Address } from '~types';
 
@@ -22,11 +22,9 @@ import {
   putError,
   raceError,
 } from '~utils/saga/effects';
+import { generateUrlFriendlyId } from '~utils/data';
 import { ACTIONS } from '~redux';
 
-import nanoid from 'nanoid';
-
-import { generateId } from '~lib/database/DDB';
 import { fetchColonyTaskMetadata as createColonyTaskMetadataFetchAction } from '../actionCreators';
 import {
   allColonyNamesSelector,
@@ -103,7 +101,7 @@ function* taskCreate({
     } = yield select(colonySelector, colonyAddress);
     const wallet = yield* getContext(CONTEXT.WALLET);
     // NOTE: This is going to be part of the store address so we need to be careful
-    const draftId = generateId();
+    const draftId = generateUrlFriendlyId();
     const creatorAddress = wallet.address;
     const { taskStore, commentsStore, event } = yield* executeCommand(
       createTask,
