@@ -1,7 +1,6 @@
 /* @flow */
 
 import type { ErrorActionType, UniqueActionType } from '../index';
-import type { WithKey } from '../../../types';
 
 import { ACTIONS } from '../../index';
 
@@ -25,20 +24,19 @@ export type UsernameActionTypes = {|
   USERNAME_CREATE: UniqueActionType<
     typeof ACTIONS.USERNAME_CREATE,
     {| username: string |},
-    WithKey,
+    void,
   >,
   USERNAME_CREATE_ERROR: ErrorActionType<
     typeof ACTIONS.USERNAME_CREATE_ERROR,
-    WithKey,
+    void,
   >,
   USERNAME_CREATE_SUCCESS: UniqueActionType<
     typeof ACTIONS.USERNAME_CREATE_SUCCESS,
-    {
-      from: string,
-      params: {
-        username: string,
-      },
-    },
-    WithKey,
+    {|
+      inboxStoreAddress: string,
+      metadataStoreAddress: string,
+      username: string,
+    |},
+    void,
   >,
 |};

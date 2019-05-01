@@ -234,18 +234,17 @@ function* usernameCreate({
   const txChannel = yield call(getTxChannel, meta.id);
   try {
     const walletAddress = yield select(walletAddressSelector);
+
     /**
      * @todo  should these stores be created after the transaction succeeded?
      */
-    const { profileStore } = yield* executeCommand(createUserProfile, {
-      args: {
-        username,
-        walletAddress,
+    const { profileStore, inboxStore, metadataStore } = yield* executeCommand(
+      createUserProfile,
+      {
+        args: { username, walletAddress },
+        metadata: { walletAddress },
       },
-      metadata: {
-        walletAddress,
-      },
-    });
+    );
 
     yield fork(createTransaction, meta.id, {
       context: NETWORK_CONTEXT,
@@ -253,15 +252,15 @@ function* usernameCreate({
       params: { username, orbitDBPath: profileStore.address.toString() },
     });
 
-    const {
-      payload,
-    }: Action<typeof ACTIONS.TRANSACTION_CREATED> = yield takeFrom(
-      txChannel,
-      ACTIONS.TRANSACTION_CREATED,
-    );
+    yield takeFrom(txChannel, ACTIONS.TRANSACTION_CREATED);
+
     yield put<Action<typeof ACTIONS.USERNAME_CREATE_SUCCESS>>({
       type: ACTIONS.USERNAME_CREATE_SUCCESS,
-      payload,
+      payload: {
+        inboxStoreAddress: inboxStore.address.toString(),
+        metadataStoreAddress: metadataStore.address.toString(),
+        username,
+      },
       meta,
     });
   } catch (error) {
@@ -345,12 +344,11 @@ function* userSubscribedColoniesFetch(): Saga<*> {
   try {
     const walletAddress = yield select(walletAddressSelector);
     const { metadataStoreAddress } = yield select(currentUserMetadataSelector);
-    const metadata = {
-      walletAddress,
-      metadataStoreAddress,
-    };
     const colonyAddresses = yield* executeQuery(getUserColonies, {
-      metadata,
+      metadata: {
+        walletAddress,
+        metadataStoreAddress,
+      },
     });
     yield put<Action<typeof ACTIONS.USER_SUBSCRIBED_COLONIES_FETCH_SUCCESS>>({
       type: ACTIONS.USER_SUBSCRIBED_COLONIES_FETCH_SUCCESS,

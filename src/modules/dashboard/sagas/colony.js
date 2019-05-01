@@ -120,6 +120,7 @@ function* colonyCreate({
           metadataStoreAddress: metadataStore.address.toString(),
           username,
         },
+        meta,
       });
       yield put(
         transactionAddParams(createUserId, {

@@ -24,14 +24,9 @@ const currentUserProfileReducer: ReducerType<
       const { profileData, walletAddress, balance } = action.payload;
       return UserProfileRecord({ ...profileData, walletAddress, balance });
     }
-    case ACTIONS.USER_PROFILE_UPDATE_SUCCESS: {
-      return state.mergeDeep(fromJS(action.payload));
-    }
+    case ACTIONS.USER_PROFILE_UPDATE_SUCCESS:
     case ACTIONS.USERNAME_CREATE_SUCCESS: {
-      const {
-        params: { username },
-      } = action.payload;
-      return state.set('username', username);
+      return state.mergeDeep(fromJS(action.payload));
     }
     case ACTIONS.USER_AVATAR_UPLOAD_SUCCESS: {
       const { hash } = action.payload;
