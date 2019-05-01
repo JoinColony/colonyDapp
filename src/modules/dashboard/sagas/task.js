@@ -733,8 +733,8 @@ function* taskCommentAdd({
           draftId,
           taskTitle,
           comment,
-          mentions: matchingUsernames,
-          currentUsername,
+          sourceUsername: currentUsername,
+          sourceUserWalletAddress: walletAddress,
         },
         metadata: { matchingUsernames, cachedAddresses },
       });
