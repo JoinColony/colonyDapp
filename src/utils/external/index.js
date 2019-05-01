@@ -17,8 +17,9 @@ export const getEtherscanTxUrl = (
   txHash: string | number,
   network?: string = process.env.NETWORK || 'rinkeby',
 ): string => {
-  const networkSubdomain = network === 'homestead' ? '' : 'rinkeby.';
-  return `https://${networkSubdomain}etherscan.io/tx/${txHash}`;
+  const tld = network === 'tobalaba' ? 'com' : 'io';
+  const networkSubdomain = network === 'homestead' ? '' : `${network}.`;
+  return `https://${networkSubdomain}etherscan.${tld}/tx/${txHash}`;
 };
 
 /*
