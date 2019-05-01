@@ -1,14 +1,10 @@
 /* @flow */
 
-import generate from 'nanoid/generate';
-import urlDictionary from 'nanoid/url';
-
-import { raceAgainstTimeout } from '../../../utils/async';
-import { log } from '../../../utils/debug';
-
 import type { OrbitDBStore } from '../types';
 
-import PinnerConnector from '../../ipfs/PinnerConnector';
+import { raceAgainstTimeout } from '~utils/async';
+import { log } from '~utils/debug';
+import PinnerConnector from '~lib/ipfs/PinnerConnector';
 
 /**
  * A parent class for a wrapper around an orbit store that can load
@@ -16,10 +12,6 @@ import PinnerConnector from '../../ipfs/PinnerConnector';
  */
 class Store {
   static orbitType: string;
-
-  static generateId() {
-    return generate(urlDictionary, 21);
-  }
 
   +_orbitStore: OrbitDBStore;
 

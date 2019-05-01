@@ -1,7 +1,7 @@
 /* @flow */
 
 import type { OrbitDBStore } from './OrbitDBStore';
-import type { Entry } from './Entry';
+import type { Entry } from '~types';
 
 // NOTE reverse option appears to have no effect
 export type EventIteratorOptions = {

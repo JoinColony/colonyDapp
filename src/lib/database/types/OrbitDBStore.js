@@ -3,7 +3,7 @@
 import IPFS from 'ipfs';
 import EventEmitter from 'events';
 import type { StoreType } from './index';
-import type { Identity } from './Identity';
+import type { Identity } from '~types';
 
 export interface OrbitDBStore {
   _oplog: {

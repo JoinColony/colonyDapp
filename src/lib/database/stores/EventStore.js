@@ -2,7 +2,7 @@
 
 import Store from './Store';
 
-import type { EventIteratorOptions, OrbitDBEventStore, Entry } from '../types';
+import type { EventIteratorOptions, OrbitDBEventStore, Entry } from '~types';
 
 /**
  * The wrapper Store class for orbit's eventlog store.

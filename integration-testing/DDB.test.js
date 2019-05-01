@@ -4,8 +4,8 @@ import OrbitDB from 'orbit-db';
 
 import '../src/modules/validations';
 import { DDB } from '../src/lib/database';
-import PurserIdentity from '../src/lib/database/PurserIdentity';
-import PurserIdentityProvider from '../src/lib/database/PurserIdentityProvider';
+import PurserIdentity from '../src/data/PurserIdentity';
+import PurserIdentityProvider from '../src/data/PurserIdentityProvider';
 
 import createIPFSNode from './utils/createIPFSNode';
 
