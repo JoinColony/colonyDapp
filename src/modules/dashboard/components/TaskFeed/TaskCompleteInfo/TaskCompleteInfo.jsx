@@ -1,8 +1,9 @@
 /* @flow */
 import React from 'react';
 import { defineMessages, FormattedMessage, FormattedNumber } from 'react-intl';
+import BigNumber from 'bn.js';
 
-import type { TokenType, UserType } from '~immutable';
+import type { ContractTransactionType, TokenType } from '~immutable';
 
 import ExternalLink from '~core/ExternalLink';
 import Numeral from '~core/Numeral';
@@ -11,18 +12,19 @@ import TimeRelative from '~core/TimeRelative';
 import { getEtherscanTxUrl } from '~utils/external';
 import { useDataFetcher, useSelector } from '~utils/hooks';
 
-import type { EnhancedProps as Props } from './types';
-
-import { networkFeeSelector } from '../../../../core/selectors';
+import { useReputationEarned } from '../../../hooks/useReputationEarned';
 import { tokenFetcher } from '../../../fetchers';
-import { userFetcher } from '../../../../users/fetchers';
+import { taskSelector } from '../../../selectors';
+import { networkFeeSelector } from '../../../../core/selectors';
+import { friendlyUsernameSelector } from '../../../../users/selectors';
 
 import styles from './TaskCompleteInfo.css';
 
-const getTaskPayoutNetworkFee = (amount: number, fee: number) => amount * fee;
+const getTaskPayoutNetworkFee = (amount: BigNumber, fee: number) =>
+  amount.toNumber() * fee;
 
-const getTaskPayoutAmountMinusNetworkFee = (amount: number, fee: number) =>
-  amount - getTaskPayoutNetworkFee(amount, fee);
+const getTaskPayoutAmountMinusNetworkFee = (amount: BigNumber, fee: number) =>
+  amount.toNumber() - getTaskPayoutNetworkFee(amount, fee);
 
 const MSG = defineMessages({
   eventTaskSentMessage: {
@@ -52,48 +54,51 @@ const MSG = defineMessages({
   },
 });
 
+type Props = {|
+  transaction: ContractTransactionType,
+|};
+
 const displayName = 'dashboard.TaskFeed.TaskCompleteInfo';
 
 const TaskCompleteInfo = ({
-  reputation,
-  transaction: { amount, date, hash, to, token: tokenAddress },
+  transaction: { amount, date, hash, taskId, to, token: tokenAddress },
 }: Props) => {
-  const { data: user, isFetching: isFetchingUser } = useDataFetcher<UserType>(
-    userFetcher,
-    [to],
-    [to],
-  );
+  const {
+    record: { reputation: taskReputation = 0 },
+  } = useSelector(taskSelector, [taskId]);
+  const user = useSelector(friendlyUsernameSelector, [to]);
   const {
     data: token,
     isFetching: isFetchingToken,
   } = useDataFetcher<TokenType>(tokenFetcher, [tokenAddress], [tokenAddress]);
 
-  const { symbol } = token || {};
+  const { decimals, symbol } = token || {};
+
+  // For MVP, rating is always 2 stars and rating never fails
+  const rating = 2;
+  const didFailToRate = false;
+
+  const reputationEarned = useReputationEarned(
+    taskReputation,
+    rating,
+    didFailToRate,
+  );
 
   /**
    * @todo: Use fee data from the transaction
    * @body: The current network fee doesn't necessarily reflect the fee at time of tx.
    */
   const networkFee = useSelector(networkFeeSelector);
-
   return (
     <div className={styles.main}>
       <div className={styles.transactionSentCopy}>
         <p>
-          {!user || isFetchingUser ? (
-            <SpinnerLoader />
-          ) : (
-            <FormattedMessage
-              {...MSG.eventTaskSentMessage}
-              values={{
-                user: (
-                  <span className={styles.username}>
-                    {user.profile.displayName || user.profile.username}
-                  </span>
-                ),
-              }}
-            />
-          )}
+          <FormattedMessage
+            {...MSG.eventTaskSentMessage}
+            values={{
+              user: <span className={styles.username}>{user}</span>,
+            }}
+          />
           <span className={styles.timeSinceTx}>
             <TimeRelative value={date} />
           </span>
@@ -118,7 +123,7 @@ const TaskCompleteInfo = ({
                 values={{
                   amount: (
                     <Numeral
-                      decimals={4}
+                      decimals={decimals}
                       unit="ether"
                       value={getTaskPayoutAmountMinusNetworkFee(
                         amount,
@@ -135,7 +140,7 @@ const TaskCompleteInfo = ({
                 values={{
                   amount: (
                     <Numeral
-                      decimals={4}
+                      decimals={decimals}
                       unit="ether"
                       value={getTaskPayoutNetworkFee(amount, networkFee)}
                     />
@@ -147,8 +152,10 @@ const TaskCompleteInfo = ({
               <FormattedMessage
                 {...MSG.receiptReputationText}
                 values={{
-                  isNonNegative: reputation >= 0,
-                  reputationAmount: <FormattedNumber value={reputation} />,
+                  isNonNegative: reputationEarned >= 0,
+                  reputationAmount: (
+                    <FormattedNumber value={reputationEarned} />
+                  ),
                 }}
               />
               {hash && (
