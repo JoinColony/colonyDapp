@@ -1,14 +1,34 @@
 /* @flow */
 
-import type { StoreBlueprint } from '~types';
+import type { Address, StoreBlueprint } from '~types';
 
 import { EventStore } from '../../lib/database/stores';
-import { getEthereumWalletStoreAccessController } from '../accessControllers';
+import { EthereumWalletAccessController } from '../accessControllers';
 
-const userProfileStore: StoreBlueprint = Object.freeze({
+export type UserProfileStoreProps = {|
+  walletAddress: Address,
+|};
+
+export type UserProfileStoreBlueprint = StoreBlueprint<
+  UserProfileStoreProps,
+  EthereumWalletAccessController,
+>;
+
+const getEthereumWalletStoreAccessController = ({
+  walletAddress,
+}: UserProfileStoreProps) => {
+  if (!walletAddress)
+    throw new Error(
+      // eslint-disable-next-line max-len
+      `Could not create access controller, invalid wallet address: "${walletAddress}"`,
+    );
+  return new EthereumWalletAccessController(walletAddress);
+};
+
+const userProfileStoreBlueprint: UserProfileStoreBlueprint = Object.freeze({
   getAccessController: getEthereumWalletStoreAccessController,
-  defaultName: 'userProfile',
+  getName: ({ walletAddress }) => `userProfile.${walletAddress}`,
   type: EventStore,
 });
 
-export default userProfileStore;
+export default userProfileStoreBlueprint;

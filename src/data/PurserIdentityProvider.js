@@ -2,9 +2,9 @@
 /* eslint-disable class-methods-use-this */
 
 import type { WalletObjectType } from '@colony/purser-core/flowtypes';
-import type { IdentityProvider } from '~types';
+import OrbitDBKeystore from 'orbit-db-keystore';
+import type { IdentityProvider } from './types';
 
-import Keystore from '~lib/database/Keystore';
 import PurserIdentity from './PurserIdentity';
 
 // Ideally, we should use the actual type for the common wallet interface
@@ -19,16 +19,23 @@ class PurserIdentityProvider<I: PurserIdentity> implements IdentityProvider<I> {
 
   _type: ProviderType;
 
+  _keystore: OrbitDBKeystore;
+
   _purserWallet: PurserWallet;
 
   constructor(purserWallet: PurserWallet, options: Options = {}) {
-    this._type = PROVIDER_TYPE;
+    if (!purserWallet.address) {
+      throw new Error(
+        'Could not create an identity provider, is the wallet unlocked?',
+      );
+    }
 
-    /**
-     * @todo : Make sure wallet is unlocked when creating an identity
-     */
-    this._purserWallet = purserWallet;
+    this._type = PROVIDER_TYPE;
     this._options = options;
+    this._purserWallet = purserWallet;
+    this._keystore = OrbitDBKeystore.create(
+      `./keystore/${this._purserWallet.address}`,
+    );
   }
 
   get type() {
@@ -41,14 +48,21 @@ class PurserIdentityProvider<I: PurserIdentity> implements IdentityProvider<I> {
       throw new Error('Could not get wallet address. Is it unlocked?');
     }
 
-    // Always create a key per "session"
-    const orbitKey = Keystore.createKey(walletAddress);
+    // Make sure the keystore is open
+    await this._keystore.open(walletAddress);
+    // Always create a key per wallet address. This is stored on indexedDB
+    const orbitKey =
+      (await this._keystore.getKey(walletAddress)) ||
+      (await this._keystore.createKey(walletAddress));
 
     // Sign wallet address with the orbit signing key we've created and are going to use
-    const idSignature = Keystore.sign(orbitKey, walletAddress);
+    const idSignature = await this._keystore.sign(
+      orbitKey,
+      Buffer.from(walletAddress, 'hex'),
+    );
 
-    // Get the hex string of the public key
-    const publicKey = orbitKey.getPublic('hex');
+    // Get the public key
+    const publicKey = this._keystore.getPublic(orbitKey);
 
     // Sign both the key and the signature created with that key
     const pubKeyIdSignature = await this._purserWallet.signMessage({
@@ -66,10 +80,12 @@ class PurserIdentityProvider<I: PurserIdentity> implements IdentityProvider<I> {
   }
 
   async sign(identity: PurserIdentity, data: any): Promise<string> {
-    const signingKey = Keystore.getKey(identity.id);
+    // Make sure the keystore is open
+    await this._keystore.open();
+    const signingKey = await this._keystore.getKey(identity.id);
     if (!signingKey)
       throw new Error(`Private signing key not found from Keystore`);
-    return Keystore.sign(signingKey, data);
+    return this._keystore.sign(signingKey, data);
   }
 
   async verify(
@@ -77,7 +93,14 @@ class PurserIdentityProvider<I: PurserIdentity> implements IdentityProvider<I> {
     publicKey: string,
     data: any,
   ): Promise<boolean> {
-    return Keystore.verify(signature, publicKey, data);
+    // Make sure the keystore is open
+    await this._keystore.open();
+    return this._keystore.verify(signature, publicKey, data);
+  }
+
+  async close() {
+    // Make sure the keystore exists before trying to close it
+    if (this._keystore) await this._keystore.close();
   }
 }
 

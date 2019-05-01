@@ -1,9 +1,17 @@
 /* @flow */
 
+import AbstractAccessController from './AbstractAccessController';
+import PurserIdentity from '../PurserIdentity';
+import PurserIdentityProvider from '../PurserIdentityProvider';
+
 /* eslint-disable class-methods-use-this, no-empty-function */
-export default class PermissiveAccessController {
+const type = 'permissive';
+export default class PermissiveAccessController extends AbstractAccessController<
+  PurserIdentity,
+  PurserIdentityProvider<PurserIdentity>,
+> {
   static get type() {
-    return 'PERMISSIVE';
+    return type;
   }
 
   get type() {
@@ -21,7 +29,7 @@ export default class PermissiveAccessController {
   }
 
   async save() {
-    return 'PERMISSIVE';
+    return type;
   }
 
   async canAppend() {
