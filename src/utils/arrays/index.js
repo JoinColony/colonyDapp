@@ -137,3 +137,70 @@ export const sortTokensByEth = (
   if (addressEquals(b.address, ZERO_ADDRESS)) return 1;
   return 0;
 };
+
+/**
+ * Nest a an array of object using ids and they're parents ids
+ *
+ * @NOTE The parent must be always be declared (have a lower id) than the child
+ * While normal logic would imply this, you might run into issues, so take care.
+ *
+ * As for what this list does, is to take an array of `ConsumableItem` object
+ * and create a structure of nested ones.
+ *
+ * Eg:
+ * [
+ *   { id: 1 },
+ *   { id: 2, parent: 1 },
+ *   { id: 3, parent: 2 }
+ * ]
+ *
+ * Is going to be transformed into:
+ * [
+ *   {
+ *     id: 1,
+ *     children: [
+ *       {
+ *         id: 2,
+ *         children: [
+ *           {
+ *             id: 3,
+ *           },
+ *         ],
+ *       },
+ *     ],
+ *   },
+ * ]
+ */
+type ConsumableItem = {
+  id: number,
+  name: string,
+  parent?: number,
+  children?: Array<ConsumableItem>,
+};
+export const recursiveNestChildren = (
+  items: Array<ConsumableItem> = [],
+  firstParentLevel?: number = 0,
+) => {
+  const collapsedItems = [];
+  items.forEach(item => {
+    if (!item.parent) {
+      /*
+       * If the current item doesn't have the `parent` prop, we add it with id 0
+       */
+      /* eslint-disable-next-line no-param-reassign */
+      item.parent = 0;
+    }
+    if (item.parent === firstParentLevel) {
+      const children = recursiveNestChildren(items, item.id);
+      /*
+       * Add the children prop (which was already costructed recursevly)
+       */
+      if (children.length) {
+        /* eslint-disable-next-line no-param-reassign */
+        item.children = children;
+      }
+      collapsedItems.push(item);
+    }
+  });
+  return collapsedItems;
+};
