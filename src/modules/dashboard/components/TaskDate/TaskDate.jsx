@@ -12,6 +12,7 @@ import { ACTIONS } from '~redux';
 import styles from './TaskDate.css';
 
 import type { TaskProps } from '~immutable';
+import { mergePayload } from '~utils/actions';
 
 const MSG = defineMessages({
   title: {
@@ -46,7 +47,6 @@ const TaskDate = ({
     (date: ?Date) => setSelectedDate(date),
     [],
   );
-
   return (
     <div className={styles.main}>
       <div className={styles.controls}>
@@ -85,7 +85,11 @@ const TaskDate = ({
                   success={ACTIONS.TASK_SET_DUE_DATE_SUCCESS}
                   error={ACTIONS.TASK_SET_DUE_DATE_ERROR}
                   onSuccess={close}
-                  values={{ colonyAddress, draftId, dueDate: currentDate }}
+                  transform={mergePayload({
+                    colonyAddress,
+                    draftId,
+                    dueDate: currentDate,
+                  })}
                 />
               </div>
             )}

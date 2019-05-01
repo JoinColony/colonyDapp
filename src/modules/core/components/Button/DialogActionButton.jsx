@@ -1,6 +1,7 @@
 /* @flow */
 
-import React from 'react';
+// $FlowFixMe
+import React, { useCallback } from 'react';
 
 import withDialog from '~core/Dialog/withDialog';
 
@@ -29,17 +30,21 @@ const DialogActionButton = ({
   dialogProps,
   ...props
 }: Props) => {
-  const values = async () => {
-    const dialogValues = await openDialog(dialog, dialogProps).afterClosed();
-    if (typeof valuesProp === 'function') return valuesProp(dialogValues);
-    return { ...dialogValues, ...valuesProp };
-  };
+  const transform = useCallback(
+    async () => {
+      const dialogValues = await openDialog(dialog, dialogProps).afterClosed();
+      return typeof valuesProp == 'function'
+        ? valuesProp(dialogValues)
+        : { ...dialogValues, ...valuesProp };
+    },
+    [dialog, dialogProps, openDialog, valuesProp],
+  );
   return (
     <ActionButton
       submit={submit}
       success={success}
       error={error}
-      values={values}
+      transform={transform}
       {...props}
     />
   );
