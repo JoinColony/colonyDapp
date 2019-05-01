@@ -14,6 +14,8 @@ import type { OpenDialog } from '~core/Dialog/types';
 
 import type { Address } from '~types';
 
+import { mergePayload } from '~utils/actions';
+
 import Heading from '~core/Heading';
 import withDialog from '~core/Dialog/withDialog';
 import Button, { ActionButton, ConfirmButton } from '~core/Button';
@@ -120,7 +122,9 @@ const Task = ({
     () => {
       // If you've managed to click on the button that runs this without the
       // task being fetched yet, you are a wizard
-      if (!task) return;
+      if (!task) {
+        return;
+      }
 
       openDialog('TaskEditDialog', {
         draftId,
@@ -133,13 +137,16 @@ const Task = ({
     [draftId, openDialog, payouts, reputation, task, workerAddress],
   );
 
-  if (isFetchingTask || !task || !colonyAddress)
+  const transform = useCallback(mergePayload({ colonyAddress, draftId }), [
+    colonyAddress,
+    draftId,
+  ]);
+
+  if (isFetchingTask || !task || !colonyAddress) {
     return <LoadingTemplate loadingText={MSG.loadingText} />;
+  }
 
   const isTaskCreator = isCreator(task, walletAddress);
-
-  // @todo Task.jsx "setActionButtonValues" could use useCallback
-  const setActionButtonValues = () => ({ colonyAddress, draftId });
 
   return (
     <div className={styles.main}>
@@ -223,7 +230,7 @@ const Task = ({
               submit={ACTIONS.TASK_CANCEL}
               error={ACTIONS.TASK_CANCEL_ERROR}
               success={ACTIONS.TASK_CANCEL_SUCCESS}
-              values={setActionButtonValues}
+              transform={transform}
             />
           )}
           {/* Hide when discard confirm is displayed */}
@@ -235,7 +242,7 @@ const Task = ({
                   submit={ACTIONS.TASK_FINALIZE}
                   error={ACTIONS.TASK_FINALIZE_ERROR}
                   success={ACTIONS.TASK_FINALIZE_SUCCESS}
-                  values={setActionButtonValues}
+                  transform={transform}
                 />
               )}
               {isFinalized(task) && (

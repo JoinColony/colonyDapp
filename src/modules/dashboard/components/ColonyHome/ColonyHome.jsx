@@ -16,6 +16,7 @@ import type { TasksFilterOptionType } from '../shared/tasksFilter';
 
 import { ACTIONS } from '~redux';
 import { useDataFetcher, useSelector } from '~utils/hooks';
+import { mergePayload } from '~utils/actions';
 import { Tab, Tabs, TabList, TabPanel } from '~core/Tabs';
 import { Select } from '~core/Fields';
 import Button, { ActionButton } from '~core/Button';
@@ -123,6 +124,10 @@ const ColonyHome = ({
     [taskMetadata, colonyAddress],
   );
 
+  const transform = useCallback(mergePayload({ colonyAddress }), [
+    colonyAddress,
+  ]);
+
   if (colonyError) {
     return <Redirect to="/404" />;
   }
@@ -180,7 +185,7 @@ const ColonyHome = ({
             submit={ACTIONS.TASK_CREATE}
             success={ACTIONS.TASK_CREATE_SUCCESS}
             text={MSG.newTaskButton}
-            values={{ colonyAddress }}
+            transform={transform}
           />
         )}
         <ul className={styles.domainsFilters}>
