@@ -1,6 +1,10 @@
 /* @flow */
 
+import type { ObjectSchema } from 'yup';
 import type { EventStore } from '~lib/database/stores';
+import type { AccessController } from './accessControllers';
+import type PurserIdentity from '../PurserIdentity';
+import type PurserIdentityProvider from '../PurserIdentityProvider';
 
 /*
  * This perhaps slightly redundant when every store is of the
@@ -16,3 +20,12 @@ export type TaskStore = EventStore;
 export type UserInboxStore = EventStore;
 export type UserMetadataStore = EventStore;
 export type UserProfileStore = EventStore;
+
+export type StoreBlueprint<P: Object> = {|
+  schema?: ObjectSchema,
+  getAccessController: (
+    storeProps: P,
+  ) => AccessController<PurserIdentity, PurserIdentityProvider<PurserIdentity>>,
+  getName: (storeProps: P) => string,
+  type: *,
+|};
