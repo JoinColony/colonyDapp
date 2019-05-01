@@ -68,9 +68,9 @@ export const usePrevious = (value: any) => {
 
 const transformFetchedData = (data: ?DataRecordType<*>) => {
   if (!data) return null;
-  return data.record && typeof data.record.toJS == 'function'
-    ? data.record.toJS()
-    : data.record;
+  const record =
+    typeof data.get == 'function' ? data.get('record') : data.record;
+  return record && typeof record.toJS == 'function' ? record.toJS() : record;
 };
 
 const defaultTransform = (obj: Collection<*, *>) =>
