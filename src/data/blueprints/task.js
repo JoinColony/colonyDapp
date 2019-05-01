@@ -8,6 +8,7 @@ import type { TaskDraftId } from '~immutable';
 import { EventStore } from '~lib/database/stores';
 import { TaskAccessController } from '../accessControllers';
 import loadPermissionManifest from '../permissions';
+import { storePropsResolver } from './resolvers';
 
 export type TaskStoreProps = {|
   colonyAddress: Address,
@@ -57,6 +58,8 @@ const taskStoreBlueprint: TaskStoreBlueprint = Object.freeze({
     return `colony.${colonyAddress}.task.${draftId}`;
   },
   type: EventStore,
+  deterministicAddress: true,
+  resolver: storePropsResolver,
 });
 
 export default taskStoreBlueprint;

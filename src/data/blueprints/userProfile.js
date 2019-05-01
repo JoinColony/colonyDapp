@@ -4,6 +4,7 @@ import type { Address, StoreBlueprint } from '~types';
 
 import { EventStore } from '../../lib/database/stores';
 import { EthereumWalletAccessController } from '../accessControllers';
+import { createENSResolver } from './resolvers';
 
 export type UserProfileStoreProps = {|
   walletAddress: Address,
@@ -25,10 +26,12 @@ const getEthereumWalletStoreAccessController = ({
   return new EthereumWalletAccessController(walletAddress);
 };
 
+const resolver = createENSResolver<{ walletAddress: Address }>();
 const userProfileStoreBlueprint: UserProfileStoreBlueprint = Object.freeze({
   getAccessController: getEthereumWalletStoreAccessController,
   getName: ({ walletAddress }) => `userProfile.${walletAddress}`,
   type: EventStore,
+  resolver,
 });
 
 export default userProfileStoreBlueprint;

@@ -5,6 +5,7 @@ import type { TaskDraftId } from '~immutable';
 
 import { EventStore } from '~lib/database/stores';
 import { PermissiveAccessController } from '../accessControllers';
+import { storePropsResolver } from './resolvers';
 
 export type CommentsStoreProps = {|
   colonyAddress: Address,
@@ -25,6 +26,8 @@ const commentsStoreBlueprint: CommentsStoreBlueprint = Object.freeze({
     return `colony.${colonyAddress}.task.${draftId}.comments`;
   },
   type: EventStore,
+  deterministicAddress: true,
+  resolver: storePropsResolver,
 });
 
 export default commentsStoreBlueprint;

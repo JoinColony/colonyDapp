@@ -7,18 +7,21 @@ import type { Address, StoreBlueprint } from '~types';
 import { EventStore } from '~lib/database/stores';
 import { ColonyAccessController } from '../accessControllers';
 import loadPermissionManifest from '../permissions';
+import { createENSResolver } from './resolvers';
 
-export type ColonyStoreProps = {|
-  colonyAddress: Address,
+export type ColonyStoreDeps = {|
   wallet: WalletObjectType,
   colonyClient: ColonyClientType,
 |};
 
-export const getColonyStoreAccessController = ({
-  colonyAddress,
-  colonyClient,
-  wallet,
-}: ColonyStoreProps) => {
+export type ColonyStoreProps = {|
+  colonyAddress: Address,
+|};
+
+export const getStoreAccessController = (
+  { colonyAddress }: ColonyStoreProps,
+  { colonyClient, wallet }: ColonyStoreDeps,
+) => {
   if (!colonyAddress)
     throw new Error(
       // eslint-disable-next-line max-len
@@ -39,13 +42,22 @@ export const getColonyStoreAccessController = ({
 
 export type ColonyStoreBlueprint = StoreBlueprint<
   ColonyStoreProps,
+  ColonyStoreDeps,
   ColonyAccessController,
 >;
 
-const colonyStoreBlueprint: ColonyStoreBlueprint = Object.freeze({
-  getAccessController: getColonyStoreAccessController,
-  getName: ({ colonyAddress }) => `colony.${colonyAddress}`,
-  type: EventStore,
-});
+const resolver = createENSResolver<{ colonyAddress: Address }>();
+const getColonyStoreBlueprint = (
+  props: ColonyStoreProps,
+  deps: ColonyStoreDeps,
+): ColonyStoreBlueprint =>
+  Object.freeze({
+    accessController: getStoreAccessController(props, deps),
+    name: `colony.${props.colonyAddress}`,
+    type: EventStore,
+    resolver,
+    props,
+    deps,
+  });
 
-export default colonyStoreBlueprint;
+export default getColonyStoreBlueprint;

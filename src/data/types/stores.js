@@ -1,6 +1,7 @@
 /* @flow */
 
 import type { ObjectSchema } from 'yup';
+import type { OrbitDBAddress } from '~types';
 import type { AccessController } from './accessControllers';
 
 import { EventStore } from '../../lib/database/stores';
@@ -20,10 +21,17 @@ export type UserInboxStore = EventStore;
 export type UserMetadataStore = EventStore;
 export type UserProfileStore = EventStore;
 
-type StoreClassWrapper = typeof EventStore;
+export type StoreClassWrapper = typeof EventStore;
+export type StoreAddressResolverFn<P> = {|
+  id: string,
+  handler: (...deps: *) => (props: P) => Promise<string | OrbitDBAddress>,
+|};
+
 export type StoreBlueprint<P: Object, AC: AccessController<*, *>> = {|
-  schema?: ObjectSchema,
+  deterministicAddress?: boolean,
   getAccessController: (storeProps: P) => AC,
   getName: (storeProps: P) => string,
+  resolver: StoreAddressResolverFn<P>,
+  schema?: ObjectSchema,
   type: StoreClassWrapper,
 |};
