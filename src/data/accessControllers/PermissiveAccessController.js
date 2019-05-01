@@ -1,10 +1,12 @@
 /* @flow */
 
+import type { Entry } from '~types';
+
 import AbstractAccessController from './AbstractAccessController';
 import PurserIdentity from '../PurserIdentity';
 import PurserIdentityProvider from '../PurserIdentityProvider';
 
-/* eslint-disable class-methods-use-this, no-empty-function */
+/* eslint-disable class-methods-use-this, no-empty-function, no-underscore-dangle */
 const type = 'permissive';
 export default class PermissiveAccessController extends AbstractAccessController<
   PurserIdentity,
@@ -14,26 +16,18 @@ export default class PermissiveAccessController extends AbstractAccessController
     return type;
   }
 
-  get type() {
-    return this.constructor.type;
-  }
-
-  async load() {}
-
-  async grant() {
-    return true;
-  }
-
-  async revoke() {
-    return true;
-  }
-
   async save() {
     return type;
   }
 
-  async canAppend() {
-    return true;
+  async canAppend(entry: Entry, provider: P): Promise<boolean> {
+    const isWalletSignatureValid = this.constructor._walletDidVerifyOrbitKey(
+      entry,
+    );
+    if (!isWalletSignatureValid) return false;
+
+    // Did the wallet allow the orbit key to write on its behalf and vice-versa?
+    return this.constructor._providerDidVerifyEntry(provider, entry);
   }
 }
 /* eslint-emable class-methods-use-this */
