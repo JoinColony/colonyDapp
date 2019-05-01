@@ -64,9 +64,11 @@ export type UserEvents = {|
     typeof COMMENT_MENTION,
     {|
       colonyAddress: Address,
-      event: string,
+      draftId: TaskDraftId,
       taskTitle?: string,
-      comment?: string,
+      comment: string,
+      sourceUsername: string,
+      sourceUserWalletAddress: string,
     |},
   >,
 |};

@@ -5,6 +5,7 @@ import type { TaskDraftId } from '~immutable';
 import type {
   Command,
   DDB,
+  ENSCache,
   UserInboxStore,
   UserMetadataStore,
   UserProfileStore,
@@ -35,11 +36,6 @@ type UserProfileStoreMetadata = {|
   walletAddress: Address,
 |};
 
-type UserInboxStoreMetadata = {|
-  inboxStoreAddress: string | OrbitDBAddress,
-  walletAddress: Address,
-|};
-
 type UserMetadataStoreMetadata = {|
   metadataStoreAddress: string | OrbitDBAddress,
   walletAddress: Address,
@@ -54,11 +50,6 @@ const prepareMetadataCommand = async (
   { ddb }: {| ddb: DDB |},
   metadata: UserMetadataStoreMetadata,
 ) => getUserMetadataStore(ddb)(metadata);
-
-const prepareInboxStoreCommand = async (
-  { ddb }: { ddb: DDB },
-  metadata: UserInboxStoreMetadata,
-) => getUserInboxStore(ddb)(metadata);
 
 export const createUserProfile: Command<
   {|
@@ -350,24 +341,82 @@ export const unsubscribeToColony: Command<
   },
 };
 
-export const commentMentionNotification: Command<
-  UserInboxStore,
-  UserInboxStoreMetadata,
+export const createCommentMention: Command<
+  UserInboxStore[],
+  {| matchingUsernames: string[], cachedAddresses: ?Object |},
   {|
     colonyAddress: Address,
-    comment?: string,
-    event: string,
-    taskTitle?: string,
+    draftId: TaskDraftId,
+    taskTitle: string,
+    comment: string,
+    sourceUsername: string,
+    sourceWalletAddress: string,
   |},
-  UserInboxStore,
+  void,
 > = {
   name: 'commentMentionNotification',
-  context: [CONTEXT.DDB_INSTANCE],
-  prepare: prepareInboxStoreCommand,
-  async execute(userInboxStore, args) {
-    await userInboxStore.append(
-      createEvent(USER_EVENT_TYPES.COMMENT_MENTION, args),
+  context: [CONTEXT.DDB_INSTANCE, CONTEXT.ENS_INSTANCE, CONTEXT.COLONY_MANAGER],
+  async prepare(
+    {
+      ddb,
+      ens,
+      colonyManager: { networkClient },
+    }: { ddb: DDB, ens: ENSCache, colonyManager: ColonyManager },
+    {
+      matchingUsernames,
+      cachedAddresses,
+    }: {| matchingUsernames: string[], cachedAddresses: Object |},
+  ) {
+    if (!(matchingUsernames && matchingUsernames.length))
+      throw new Error('No username matches');
+
+    const usernamesToResolve = matchingUsernames.filter(
+      username => !cachedAddresses[username],
     );
-    return userInboxStore;
+    const hasUsernamesToResolve =
+      usernamesToResolve && usernamesToResolve.length;
+    const hasCachedAddresses =
+      cachedAddresses && Object.keys(cachedAddresses).length;
+
+    const getUserInboxStoreFromProfile = ({
+      walletAddress,
+      inboxStoreAddress,
+    }) => getUserInboxStore(ddb)({ inboxStoreAddress, walletAddress });
+    if (hasCachedAddresses && !hasUsernamesToResolve) {
+      return Object.values(cachedAddresses).map(getUserInboxStoreFromProfile);
+    }
+
+    const getUserAddressByUsername = async username => {
+      const address = await ens.getAddress(
+        ens.constructor.getFullDomain('user', username),
+        networkClient,
+      );
+      return address;
+    };
+
+    const resolvedUserAddresses = await Promise.all(
+      usernamesToResolve.map(getUserAddressByUsername),
+    );
+
+    /**
+     * @todo Limit number of mentions in comments
+     * @body We have to set a limit to the number of mentions an user can do or we'll get bitten by that later trying to load too many stores
+     */
+    const userProfileStores = await Promise.all(
+      resolvedUserAddresses
+        .filter(address => !!address)
+        .map(walletAddress => getUserProfileStore(ddb)({ walletAddress })),
+    );
+    const userProfiles = userProfileStores.map(profileStore =>
+      profileStore.all(),
+    );
+    return userProfiles.map(getUserInboxStoreFromProfile);
+  },
+  async execute(userInboxStores, args) {
+    return userInboxStores.map(userInboxStore =>
+      userInboxStore.append(
+        createEvent(USER_EVENT_TYPES.COMMENT_MENTION, args),
+      ),
+    );
   },
 };
