@@ -8,7 +8,7 @@ import type { TaskDraftId, TaskFeedItemType } from '~immutable';
 import { SpinnerLoader } from '~core/Preloaders';
 import { useDataFetcher } from '~utils/hooks';
 
-import TaskCompleteInfo from './TaskCompleteInfo';
+import TaskFeedCompleteInfo from './TaskFeedCompleteInfo.jsx';
 import TaskFeedEvent from './TaskFeedEvent.jsx';
 import TaskFeedComment from './TaskFeedComment.jsx';
 import TaskFeedRating from './TaskFeedRating.jsx';
@@ -86,7 +86,7 @@ const TaskFeed = ({ draftId }: Props) => {
                   }
 
                   return transaction ? (
-                    <TaskCompleteInfo key={id} transaction={transaction} />
+                    <TaskFeedCompleteInfo key={id} transaction={transaction} />
                   ) : null;
                 },
               )}
