@@ -70,7 +70,7 @@ class PinnerConnector extends EventEmitter {
 
   _handlePinnerMessage(message: PubsubMessage) {
     // Don't process anything that doesn't come from a pinner
-    if (message.from !== this._pinnerId) return;
+    if (!this.isPinner(message.from)) return;
     try {
       const pinnerAction = JSON.parse(message.data);
       this.emit('action', pinnerAction);
@@ -81,11 +81,12 @@ class PinnerConnector extends EventEmitter {
 
   _handleNewPeer(peer: string) {
     // If no pinner id was given, everyone can be the pinner! Definitely not recommended.
+    console.log('here is a new peer ' + peer)
 
     /**
      * @todo Maintain multiple pinner IDs for the PinnerConnector
      */
-    if (peer === this._pinnerId) {
+    if (this.isPinner(peer)) {
       this._setReady();
       this._flushPinnerMessages();
     }
@@ -94,7 +95,7 @@ class PinnerConnector extends EventEmitter {
   _handleLeavePeer(peer: string) {
     // When we have multiple pinner IDs, we are offline when the
     // last one leaves.
-    if (peer === this._pinnerId) {
+    if (this.isPinner(peer)) {
       this.online = false;
     }
   }
@@ -156,6 +157,10 @@ class PinnerConnector extends EventEmitter {
     });
   }
 
+  isPinner(peer: string) {
+    return peer === this._pinnerId;
+  }
+
   async init() {
     if (this._id) throw new Error('Unable to re-initialize PinnerConnector');
 
@@ -193,28 +198,28 @@ class PinnerConnector extends EventEmitter {
 
   async requestPinnedStore(address: string) {
     let listener;
-    const getHeads = new Promise(resolve => {
-      listener = ({ type, to, payload }) => {
-        if (type === PIN_ACTIONS.HAVE_HEADS && to === address) {
-          resolve(payload);
-          this.removeListener('action', listener);
-        }
-      };
-      this.on('action', listener);
-    });
+    // const getHeads = new Promise(resolve => {
+    //   listener = ({ type, to, payload }) => {
+    //     if (type === PIN_ACTIONS.HAVE_HEADS && to === address) {
+    //       resolve(payload);
+    //       this.removeListener('action', listener);
+    //     }
+    //   };
+    //   this.on('action', listener);
+    // });
     const publishActionPromise = this._publishAction({
       type: PIN_ACTIONS.LOAD_STORE,
       payload: { address },
     });
-    const [heads] = await raceAgainstTimeout(
-      Promise.all([getHeads, publishActionPromise]),
-      PINNER_HAVE_HEADS_TIMEOUT,
-      new Error(
-        `Pinner did not react in time to get heads for store ${address}`,
-      ),
-      () => this.removeListener('action', listener),
-    );
-    return heads;
+    // const [heads] = await raceAgainstTimeout(
+    //   Promise.all([getHeads, publishActionPromise]),
+    //   PINNER_HAVE_HEADS_TIMEOUT,
+    //   new Error(
+    //     `Pinner did not react in time to get heads for store ${address}`,
+    //   ),
+    //   () => this.removeListener('action', listener),
+    // );
+    return publishActionPromise;
   }
 
   pinStore(address: string) {
