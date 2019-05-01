@@ -56,4 +56,5 @@ declare module 'yup' {
   declare export function string(any): Function;
   declare export function date(any): DateSchema;
   declare export function boolean(any): Function;
+  declare export function ref(path: string, options?: { contextPrefix: string }): Ref;
 }

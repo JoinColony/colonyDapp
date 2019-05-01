@@ -17,12 +17,39 @@ export const allTokensSelector = (state: RootStateRecord) =>
 export const tokensSelector = (state: RootStateRecord) =>
   state.getIn([ns, DASHBOARD_ALL_TOKENS], ImmutableMap());
 
+export const tokensByAddressesSelector = (
+  state: RootStateRecord,
+  tokenAddresses: string[],
+) =>
+  state
+    .getIn([ns, DASHBOARD_ALL_TOKENS], ImmutableMap())
+    .filter((_, address) => tokenAddresses.includes(address));
+
 export const tokenSelector = (state: RootStateRecord, tokenAddress: Address) =>
   state.getIn([ns, DASHBOARD_ALL_TOKENS, tokenAddress]);
 
 /*
  * Selectors
  */
+export const allFromColonyTokensSelector = createSelector<
+  RootStateRecord,
+  Array<TokenReferenceType>,
+  *,
+  *,
+  *,
+>(
+  state => state,
+  (state, tokens) => tokens.map(({ address }) => address),
+  tokensByAddressesSelector,
+);
+
+allFromColonyTokensSelector.transform = input =>
+  input
+    .map(token => token.record)
+    .filter(Boolean)
+    .toList()
+    .toJS();
+
 export const nativeFromColonyTokensSelector = createSelector<
   RootStateRecord,
   Array<TokenReferenceType>,

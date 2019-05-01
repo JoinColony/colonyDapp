@@ -6,7 +6,7 @@ import { defineMessages } from 'react-intl';
 import * as yup from 'yup';
 import { FieldArray } from 'formik';
 
-import type { UserType, TaskType } from '~immutable';
+import type { ColonyType, UserType, TaskType, TokenType } from '~immutable';
 import type { $Pick } from '~types';
 import type { ItemDataType } from '~core/OmniPicker';
 
@@ -22,7 +22,13 @@ import HookedUserAvatar from '~users/HookedUserAvatar';
 
 import WrappedPayout from './WrappedPayout.jsx';
 import { useDataFetcher, useDataMapFetcher, useSelector } from '~utils/hooks';
-import { taskRequestsSelector } from '../../selectors';
+import { colonyFetcher } from '../../fetchers';
+import {
+  allFromColonyTokensSelector,
+  colonyTokensSelector,
+  taskSelector,
+  taskRequestsSelector,
+} from '../../selectors';
 import { userFetcher, usersByAddressFetcher } from '../../../users/fetchers';
 
 import styles from './TaskEditDialog.css';
@@ -60,9 +66,17 @@ const MSG = defineMessages({
     id: 'dashboard.Task.taskEditDialog.tokenRequiredError',
     defaultMessage: 'Token required',
   },
+  amountPositiveError: {
+    id: 'dashboard.Task.taskEditDialog.amountPositiveError',
+    defaultMessage: 'Amount must be a positive number.',
+  },
   amountRequiredError: {
     id: 'dashboard.Task.taskEditDialog.amountRequiredError',
     defaultMessage: 'Amount required',
+  },
+  unknownToken: {
+    id: 'dashboard.Task.taskEditDialog.unknownToken',
+    defaultMessage: 'Unknown Token',
   },
 });
 
@@ -85,14 +99,14 @@ const UserAvatar = HookedUserAvatar({ fetchUser: false });
 const supFilter = (data, filterValue) => {
   const filtered = data.filter(
     user =>
-      (user &&
-        filterValue &&
-        user.profile.username
-          .toLowerCase()
-          .includes(filterValue.toLowerCase())) ||
-      user.profile.walletAddress
+      user &&
+      filterValue &&
+      (user.profile.username
         .toLowerCase()
-        .includes(filterValue.toLowerCase()),
+        .includes(filterValue.toLowerCase()) ||
+        user.profile.walletAddress
+          .toLowerCase()
+          .includes(filterValue.toLowerCase())),
   );
 
   if (!filterValue) return filtered;
@@ -132,19 +146,50 @@ const TaskEditDialog = ({
   transform,
   workerAddress,
 }: Props) => {
-  const availableTokens = [];
+  const {
+    record: { colonyAddress },
+  } = useSelector(taskSelector, [draftId]);
+  const {
+    data: colonyData,
+    isFetching: isFetchingColony,
+  } = useDataFetcher<ColonyType>(
+    colonyFetcher,
+    [colonyAddress],
+    [colonyAddress],
+  );
+  // Get this task's colony's token references
+  const colonyTokenReferences = useSelector(colonyTokensSelector, [
+    colonyAddress,
+  ]);
+
+  // Get tokens using token references
+  const availableTokens: Array<TokenType> = useSelector(
+    allFromColonyTokensSelector,
+    [colonyTokenReferences],
+  );
+
+  // Get users that have requested to work on this task
   const userAddresses = useSelector(taskRequestsSelector, [draftId]);
   const userData = useDataMapFetcher<UserType>(
     usersByAddressFetcher,
     userAddresses,
   );
 
+  // Get user (worker) assigned to this task
+  const args = [workerAddress];
+  const {
+    data: worker,
+    isFetching: isFetchingWorker,
+  } = useDataFetcher<UserType>(userFetcher, args, args);
+
   const users = useMemo(
     () =>
-      userData.map(({ data, key }) => ({
-        id: key,
-        ...data,
-      })),
+      userData
+        .filter(({ data }) => !!data)
+        .map(({ data, key }) => ({
+          id: key,
+          ...data,
+        })),
     [userData],
   );
 
@@ -174,30 +219,25 @@ const TaskEditDialog = ({
             yup.object().shape({
               token: yup.string().required(MSG.tokenRequiredError),
               amount: yup
-                .string()
+                .number()
                 .required(MSG.amountRequiredError)
-                .lessThanPot(availableTokens, MSG.insufficientFundsError),
+                .moreThan(0, MSG.amountPositiveError)
+                .lessThanPot(colonyTokenReferences, MSG.insufficientFundsError),
             }),
           )
           .max(maxTokens),
       }),
-    [maxTokens, availableTokens],
+    [colonyTokenReferences, maxTokens],
   );
 
   const tokenOptions = useMemo(
     () =>
-      availableTokens.map(({ symbol }, i) => ({
-        value: i + 1,
-        label: symbol,
+      availableTokens.map(({ address, symbol }) => ({
+        value: address,
+        label: symbol || MSG.unknownToken,
       })),
     [availableTokens],
   );
-
-  const args = [workerAddress];
-  const {
-    data: worker,
-    isFetching: isFetchingWorker,
-  } = useDataFetcher<UserType>(userFetcher, args, args);
 
   return (
     <FullscreenDialog
@@ -270,20 +310,26 @@ const TaskEditDialog = ({
                               />
                             )}
                           </div>
-                          {values.payouts &&
-                            values.payouts.map((payout, index) => (
-                              <WrappedPayout
-                                key={payout.id}
-                                arrayHelpers={arrayHelpers}
-                                payouts={values.payouts}
-                                payout={payout}
-                                availableTokens={availableTokens}
-                                canRemove={canRemove}
-                                index={index}
-                                reputation={reputation}
-                                tokenOptions={tokenOptions}
-                              />
-                            ))}
+                          {colonyData ? (
+                            <>
+                              {values.payouts &&
+                                values.payouts.map((payout, index) => (
+                                  <WrappedPayout
+                                    key={payout.id}
+                                    arrayHelpers={arrayHelpers}
+                                    payouts={values.payouts}
+                                    payout={payout}
+                                    availableTokens={availableTokens}
+                                    canRemove={canRemove}
+                                    index={index}
+                                    reputation={reputation}
+                                    tokenOptions={tokenOptions}
+                                  />
+                                ))}
+                            </>
+                          ) : (
+                            <>{isFetchingColony ? <SpinnerLoader /> : null}</>
+                          )}
                         </>
                       )}
                     />
