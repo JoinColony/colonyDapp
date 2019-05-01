@@ -12,13 +12,13 @@ import TimeRelative from '~core/TimeRelative';
 import { getEtherscanTxUrl } from '~utils/external';
 import { useDataFetcher, useSelector } from '~utils/hooks';
 
-import { useReputationEarned } from '../../../hooks/useReputationEarned';
-import { tokenFetcher } from '../../../fetchers';
-import { taskSelector } from '../../../selectors';
-import { networkFeeSelector } from '../../../../core/selectors';
-import { friendlyUsernameSelector } from '../../../../users/selectors';
+import { useReputationEarned } from '../../hooks/useReputationEarned';
+import { tokenFetcher } from '../../fetchers';
+import { taskSelector } from '../../selectors';
+import { networkFeeSelector } from '../../../core/selectors';
+import { friendlyUsernameSelector } from '../../../users/selectors';
 
-import styles from './TaskCompleteInfo.css';
+import styles from './TaskFeedCompleteInfo.css';
 
 const getTaskPayoutNetworkFee = (amount: BigNumber, fee: number) =>
   amount.toNumber() * fee;
@@ -28,28 +28,28 @@ const getTaskPayoutAmountMinusNetworkFee = (amount: BigNumber, fee: number) =>
 
 const MSG = defineMessages({
   eventTaskSentMessage: {
-    id: 'dashboard.TaskFeed.TaskCompleteInfo.eventTaskSentMessage',
+    id: 'dashboard.TaskFeed.TaskFeedCompleteInfo.eventTaskSentMessage',
     defaultMessage: 'The task has been completed and payment sent to {user}',
   },
   receiptAmountText: {
-    id: 'dashboard.TaskFeed.TaskCompleteInfo.receiptAmountText',
+    id: 'dashboard.TaskFeed.TaskFeedCompleteInfo.receiptAmountText',
     defaultMessage: 'Amount: {amount} {symbol}',
   },
   receiptColonyFeeText: {
-    id: 'dashboard.TaskFeed.TaskCompleteInfo.receiptColonyFeeText',
+    id: 'dashboard.TaskFeed.TaskFeedCompleteInfo.receiptColonyFeeText',
     defaultMessage: 'Colony fee: {amount} {symbol}',
   },
   receiptRecipientText: {
-    id: 'dashboard.TaskFeed.TaskCompleteInfo.receiptRecipientText',
+    id: 'dashboard.TaskFeed.TaskFeedCompleteInfo.receiptRecipientText',
     defaultMessage: 'Recipient: {address}',
   },
   receiptReputationText: {
-    id: 'dashboard.TaskFeed.TaskCompleteInfo.receiptReputationText',
+    id: 'dashboard.TaskFeed.TaskFeedCompleteInfo.receiptReputationText',
     defaultMessage: `Reputation:
 {isNonNegative, select, true {+} false {}}{reputationAmount} rep`,
   },
   receiptViewTxLinkText: {
-    id: 'dashboard.TaskFeed.TaskCompleteInfo.receiptViewTxLinkText',
+    id: 'dashboard.TaskFeed.TaskFeedCompleteInfo.receiptViewTxLinkText',
     defaultMessage: 'View the task on Etherscan',
   },
 });
@@ -58,9 +58,9 @@ type Props = {|
   transaction: ContractTransactionType,
 |};
 
-const displayName = 'dashboard.TaskFeed.TaskCompleteInfo';
+const displayName = 'dashboard.TaskFeed.TaskFeedCompleteInfo';
 
-const TaskCompleteInfo = ({
+const TaskFeedCompleteInfo = ({
   transaction: { amount, date, hash, taskId, to, token: tokenAddress },
 }: Props) => {
   const {
@@ -176,6 +176,6 @@ const TaskCompleteInfo = ({
   );
 };
 
-TaskCompleteInfo.displayName = displayName;
+TaskFeedCompleteInfo.displayName = displayName;
 
-export default TaskCompleteInfo;
+export default TaskFeedCompleteInfo;
