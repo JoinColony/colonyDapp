@@ -19,7 +19,7 @@ class Store {
 
   _pinner: PinnerConnector;
 
-  _busyPromise: ?Promise<Array<*>>;
+  _busyPromise: ?Promise<void>;
 
   constructor(
     orbitStore: OrbitDBStore,
@@ -42,8 +42,26 @@ class Store {
   }
 
   async _loadHeads() {
+    const address = this.address.toString();
     // Let's see whether we have local heads already
     const heads = await this.ready();
+
+    if (heads && heads.length) {
+      log.verbose(`we have heads for store ${address}`);
+      // We have *some* heads and just assume it's going to be ok. We request the pinned store anyways
+      // but don't have to wait for any count. We'll replicate whenever it's convenient
+      // We're calling this synchronously as we don't care about the result
+      // _right now_
+      /**
+       * @todo Improve error modes for failed pinned store requests
+       * @body This could be dangerous in case of an unfinished replication. We have to account for that Quick fix could be to just also wait for the full replication, which might be a performance hit
+       */
+      this._pinner
+        .ready()
+        .then(() => this._pinner.requestPinnedStore(address))
+        .catch(log.warn);
+      return;
+    }
 
     try {
       // Try to connect to pinner, wait if necessary
@@ -55,60 +73,33 @@ class Store {
       );
       // Pinner is probably offline
       log(caughtError);
-      return heads;
     }
-
-    if (!(heads && heads.length)) {
-      // We don't have local heads. Let's ask the pinner
-      const { count } = await this._pinner.requestPinnedStore(
-        this.address.toString(),
-      );
-      if (count) {
-        // We're replicated and done
-        await this._waitForReplication(count);
-        log.verbose(`Finished replicating store "${this._name}"`, heads);
-        return heads;
-      }
-      // Pinner doesn't have any heads either. Maybe it's a newly created store?
-      throw new Error('Could not load store heads from anywhere');
+    try {
+      log.verbose(`Sending request for store ${address}`);
+      await Promise.all([
+        this._waitForReplication(),
+        this._pinner.requestPinnedStore(address),
+      ]);
+      return;
+    } catch (caughtError) {
+      log.warn(`Could not request pinned store: ${caughtError}`);
     }
-    // We have *some* heads and just assume it's going to be ok. We request the pinned store anyways
-    // but don't have to wait for any count. We'll replicate whenever it's convenient
-    /**
-     * @todo Improve error modes for failed pinned store requests
-     * @body This could be dangerous in case of an unfinished replication. We have to account for that Quick fix could be to just also wait for the full replication, which might be a performance hit
-     */
-    this._pinner.requestPinnedStore(this.address.toString()).catch(log);
-    log.verbose(`Finished replicating store "${this._name}"`, heads);
-    return heads;
   }
 
-  async _waitForReplication(headsRequired: number) {
-    /**
-     * @todo Improve waiting for replication for stores
-     * @body Suggestion: retry, replicated.progress? something else?
-     */
+  async _waitForReplication() {
     const replicated = new Promise(resolve => {
-      const listener = () => {
-        // We're using a private API here, don't know whether that's going to be painful at some point
-        // eslint-disable-next-line no-underscore-dangle
-        const heads = this._orbitStore._oplog._length;
-        log.verbose(`Replicated ${heads} heads for "${this._name}"`);
-
-        if (heads >= headsRequired) {
-          log.verbose(
-            `Replicated all ${headsRequired} heads for "${this._name}"`,
-          );
-          resolve(true);
-          this._orbitStore.events.removeListener('replicated', listener);
+      const listener = (peer: string) => {
+        if (this._pinner.isPinner(peer)) {
+          resolve();
+          this._orbitStore.events.removeListener('peer.exchanged', listener);
         }
       };
-      this._orbitStore.events.on('replicated', listener);
+      this._orbitStore.events.addListener('peer.exchanged', listener);
     });
     return raceAgainstTimeout(
       replicated,
-      10000,
-      new Error('Replication did not yield enough heads'),
+      60 * 1000,
+      new Error('Could not replicate with pinner in time.'),
     );
   }
 

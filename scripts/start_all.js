@@ -67,7 +67,7 @@ const webpackPromise = () =>
 
 const ipfsdPromise = () =>
   new Promise((resolve, reject) => {
-    const ipfsdProcess = spawn('yarn', ['ipfsd'], {
+    const ipfsdProcess = spawn('yarn', ['ipfsd-go'], {
       cwd: path.resolve(__dirname, '..', 'src/lib/pinion'),
       stdio: 'pipe',
     });
