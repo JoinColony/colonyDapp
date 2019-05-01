@@ -40,6 +40,7 @@ import { getUserTokenAddresses } from './utils';
 const {
   SUBSCRIBED_TO_COLONY,
   SUBSCRIBED_TO_TASK,
+  UNSUBSCRIBED_FROM_COLONY,
   UNSUBSCRIBED_FROM_TASK,
 } = USER_EVENT_TYPES;
 
@@ -80,11 +81,9 @@ const prepareProfileStoreQuery = async (
 const prepareMetadataStoreQuery = async (
   { ddb }: { ddb: DDB },
   metadata: UserMetadataStoreMetadata,
-) => {
-  const { metadataStoreAddress } = metadata;
-  if (!metadataStoreAddress) return null;
-  return getUserMetadataStore(ddb)(metadata);
-};
+) =>
+  metadata.metadataStoreAddress ? getUserMetadataStore(ddb)(metadata) : null;
+
 const prepareInboxStoreQuery = async (
   { ddb }: { ddb: DDB },
   metadata: UserInboxStoreMetadata,
@@ -164,7 +163,13 @@ export const getUserColonies: Query<
      */
     return metadataStore
       ? reduceToLastState(
-          metadataStore.all(),
+          metadataStore
+            .all()
+            .filter(
+              ({ type }) =>
+                type === SUBSCRIBED_TO_COLONY ||
+                type === UNSUBSCRIBED_FROM_COLONY,
+            ),
           ({ payload: { colonyAddress } }) => colonyAddress,
           ({ type }) => type,
         )
