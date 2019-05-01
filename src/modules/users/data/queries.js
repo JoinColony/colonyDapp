@@ -40,6 +40,7 @@ import { getUserTokenAddresses } from './utils';
 const {
   SUBSCRIBED_TO_COLONY,
   SUBSCRIBED_TO_TASK,
+  UNSUBSCRIBED_FROM_COLONY,
   UNSUBSCRIBED_FROM_TASK,
 } = USER_EVENT_TYPES;
 
@@ -80,11 +81,9 @@ const prepareProfileStoreQuery = async (
 const prepareMetadataStoreQuery = async (
   { ddb }: { ddb: DDB },
   metadata: UserMetadataStoreMetadata,
-) => {
-  const { metadataStoreAddress } = metadata;
-  if (!metadataStoreAddress) return null;
-  return getUserMetadataStore(ddb)(metadata);
-};
+) =>
+  metadata.metadataStoreAddress ? getUserMetadataStore(ddb)(metadata) : null;
+
 const prepareInboxStoreQuery = async (
   { ddb }: { ddb: DDB },
   metadata: UserInboxStoreMetadata,
@@ -124,48 +123,6 @@ export const getUserProfile: Query<
   },
 };
 
-/**
- * @todo Merge `getUserMetadata` query with `getUserProfile`.
- */
-
-export const getUserMetadata: Query<
-  UserProfileStore,
-  UserProfileStoreMetadata,
-  void,
-  *,
-> = {
-  context: [CONTEXT.DDB_INSTANCE],
-  prepare: prepareProfileStoreQuery,
-  async execute(profileStore) {
-    const inboxStoreAddress = profileStore.get('inboxStoreAddress');
-    const metadataStoreAddress = profileStore.get('metadataStoreAddress');
-
-    // Flow hack: Should not happen, here to appease flow
-    if (!(inboxStoreAddress && metadataStoreAddress))
-      throw new Error('User metadata not found');
-
-    return {
-      inboxStoreAddress,
-      metadataStoreAddress,
-      profileStoreAddress: profileStore.address.toString(),
-    };
-  },
-};
-
-export const getUserMetadataStoreAddress: Query<
-  UserProfileStore,
-  UserProfileStoreMetadata,
-  void,
-  *,
-> = {
-  context: [CONTEXT.DDB_INSTANCE],
-  prepare: prepareProfileStoreQuery,
-  async execute(profileStore) {
-    const { metadataStoreAddress } = await profileStore.all();
-    return metadataStoreAddress;
-  },
-};
-
 export const getUserTasks: Query<
   ?UserMetadataStore,
   UserMetadataStoreMetadata,
@@ -179,14 +136,15 @@ export const getUserTasks: Query<
      * If the user has no metadata store set, we will assume that the
      * user is newly-created (and we can't get their subscribed tasks yet).
      */
-    if (!metadataStore) return [];
     return metadataStore
-      .all()
-      .filter(
-        ({ type }) =>
-          type === SUBSCRIBED_TO_TASK || type === UNSUBSCRIBED_FROM_TASK,
-      )
-      .reduce(getUserTasksReducer, []);
+      ? metadataStore
+          .all()
+          .filter(
+            ({ type }) =>
+              type === SUBSCRIBED_TO_TASK || type === UNSUBSCRIBED_FROM_TASK,
+          )
+          .reduce(getUserTasksReducer, [])
+      : [];
   },
 };
 
@@ -203,14 +161,21 @@ export const getUserColonies: Query<
      * If the user has no metadata store set, we will assume that the
      * user is newly-created (and we can't get their subscribed tasks yet).
      */
-    if (!metadataStore) return [];
-    return reduceToLastState(
-      metadataStore.all(),
-      ({ payload: { colonyAddress } }) => colonyAddress,
-      ({ type }) => type,
-    )
-      .filter(([, type]) => type === SUBSCRIBED_TO_COLONY)
-      .map(([colonyAddress]) => colonyAddress);
+    return metadataStore
+      ? reduceToLastState(
+          metadataStore
+            .all()
+            .filter(
+              ({ type }) =>
+                type === SUBSCRIBED_TO_COLONY ||
+                type === UNSUBSCRIBED_FROM_COLONY,
+            ),
+          ({ payload: { colonyAddress } }) => colonyAddress,
+          ({ type }) => type,
+        )
+          .filter(([, type]) => type === SUBSCRIBED_TO_COLONY)
+          .map(([colonyAddress]) => colonyAddress)
+      : [];
   },
 };
 

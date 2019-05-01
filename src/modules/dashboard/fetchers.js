@@ -23,6 +23,7 @@ import {
   fetchDomains,
   fetchRoles,
   fetchTask,
+  fetchTaskByColonyAddressAndDraftId,
   fetchTaskFeedItems,
   fetchToken,
   fetchColonyTaskMetadata,
@@ -82,7 +83,7 @@ export const taskFetcher = Object.freeze({
 
 export const tasksByIdFetcher = Object.freeze({
   select: tasksByIdsSelector,
-  fetch: fetchTask,
+  fetch: fetchTaskByColonyAddressAndDraftId,
   ttl: 1000 * 60, // 1 minute,
 });
 

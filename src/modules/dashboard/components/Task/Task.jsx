@@ -12,6 +12,10 @@ import { useDataFetcher, useSelector } from '~utils/hooks';
 // Temporary, please remove when wiring in the rating modals
 import type { OpenDialog } from '~core/Dialog/types';
 
+import type { Address } from '~types';
+
+import { mergePayload } from '~utils/actions';
+
 import Heading from '~core/Heading';
 import withDialog from '~core/Dialog/withDialog';
 import Button, { ActionButton, ConfirmButton } from '~core/Button';
@@ -35,7 +39,7 @@ import {
   isFinalized,
 } from '../../checks';
 import { currentUserSelector } from '../../../users/selectors';
-import { taskFetcher } from '../../fetchers';
+import { colonyAddressFetcher, taskFetcher } from '../../fetchers';
 
 import styles from './Task.css';
 
@@ -92,13 +96,18 @@ const Task = ({
   const currentUser = useSelector(currentUserSelector);
   const { walletAddress } = currentUser.profile;
 
+  const { data: colonyAddress } = useDataFetcher<Address>(
+    colonyAddressFetcher,
+    [colonyName],
+    [colonyName],
+  );
+
   const { data: task, isFetching: isFetchingTask } = useDataFetcher(
     taskFetcher,
     [draftId],
-    [draftId],
+    [colonyAddress || undefined, draftId],
   );
   const {
-    colonyAddress,
     description,
     domainId,
     dueDate,
@@ -113,7 +122,9 @@ const Task = ({
     () => {
       // If you've managed to click on the button that runs this without the
       // task being fetched yet, you are a wizard
-      if (!task) return;
+      if (!task) {
+        return;
+      }
 
       openDialog('TaskEditDialog', {
         draftId,
@@ -126,12 +137,16 @@ const Task = ({
     [draftId, openDialog, payouts, reputation, task, workerAddress],
   );
 
-  if (isFetchingTask || !task)
+  const transform = useCallback(mergePayload({ colonyAddress, draftId }), [
+    colonyAddress,
+    draftId,
+  ]);
+
+  if (isFetchingTask || !task || !colonyAddress) {
     return <LoadingTemplate loadingText={MSG.loadingText} />;
+  }
 
   const isTaskCreator = isCreator(task, walletAddress);
-
-  const setActionButtonValues = () => ({ colonyName, draftId });
 
   return (
     <div className={styles.main}>
@@ -215,7 +230,7 @@ const Task = ({
               submit={ACTIONS.TASK_CANCEL}
               error={ACTIONS.TASK_CANCEL_ERROR}
               success={ACTIONS.TASK_CANCEL_SUCCESS}
-              values={setActionButtonValues}
+              transform={transform}
             />
           )}
           {/* Hide when discard confirm is displayed */}
@@ -227,7 +242,7 @@ const Task = ({
                   submit={ACTIONS.TASK_FINALIZE}
                   error={ACTIONS.TASK_FINALIZE_ERROR}
                   success={ACTIONS.TASK_FINALIZE_SUCCESS}
-                  values={setActionButtonValues}
+                  transform={transform}
                 />
               )}
               {isFinalized(task) && (
@@ -248,10 +263,11 @@ const Task = ({
         </section>
         <div className={styles.activityContainer}>
           <section className={styles.activity}>
-            <TaskFeed draftId={draftId} />
+            <TaskFeed colonyAddress={colonyAddress} draftId={draftId} />
           </section>
           <section className={styles.commentBox}>
             <TaskComments
+              colonyAddress={colonyAddress}
               draftId={draftId}
               taskTitle={title}
               currentUser={currentUser}

@@ -105,25 +105,22 @@ function* colonyCreate({
        * Create the profile store
        */
       const walletAddress = yield select(walletAddressSelector);
-      const { profileStore, inboxStore, metadataStore } = yield* executeCommand(
+      const { profileStore, metadataStore, inboxStore } = yield* executeCommand(
         createUserProfile,
         {
-          args: {
-            username,
-            walletAddress,
-          },
-          metadata: {
-            walletAddress,
-          },
+          args: { username, walletAddress },
+          metadata: { walletAddress },
         },
       );
-      yield put<Action<typeof ACTIONS.USER_METADATA_SET>>({
-        type: ACTIONS.USER_METADATA_SET,
+
+      yield put<Action<typeof ACTIONS.USERNAME_CREATE_SUCCESS>>({
+        type: ACTIONS.USERNAME_CREATE_SUCCESS,
         payload: {
           inboxStoreAddress: inboxStore.address.toString(),
           metadataStoreAddress: metadataStore.address.toString(),
-          profileStoreAddress: profileStore.address.toString(),
+          username,
         },
+        meta,
       });
       yield put(
         transactionAddParams(createUserId, {
@@ -179,7 +176,7 @@ function* colonyCreate({
 
     /* STEP 4: Fire success to progress to next wizard step where transactions can get
     processed  */
-    yield put({
+    yield put<Action<typeof ACTIONS.COLONY_CREATE_SUCCESS>>({
       type: ACTIONS.COLONY_CREATE_SUCCESS,
       meta,
       payload: undefined,

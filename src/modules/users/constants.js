@@ -9,7 +9,6 @@ export const USERS_CURRENT_USER_TOKENS = 'tokens';
 export const USERS_CURRENT_USER_TRANSACTIONS = 'transactions';
 export const USERS_CURRENT_USER_PERMISSIONS = 'permissions';
 export const USERS_CURRENT_USER_SUBSCRIBED_COLONIES = 'colonies';
-export const USERS_CURRENT_USER_METADATA = 'metadata';
 export const USERS_CURRENT_USER_ACTIVITIES = 'activities';
 export const USERS_CURRENT_USER_TASKS = 'tasks';
 export const USERS_WALLET = 'wallet';

@@ -43,7 +43,7 @@ const TabMyTasks = ({
   walletAddress,
 }: Props) => {
   const { isFetching: isFetchingTasks, data: draftIds } = useDataFetcher<
-    TaskDraftId[],
+    [Address, TaskDraftId][],
   >(currentUserDraftIdsFetcher, [], []);
 
   if (isFetchingTasks) {

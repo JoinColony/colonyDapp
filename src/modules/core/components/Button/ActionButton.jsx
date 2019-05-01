@@ -16,7 +16,6 @@ type Props = {
   error: string,
   submit: string,
   success: string,
-  values?: Object | (() => Object | Promise<Object>),
   onSuccess?: (result: any) => void,
   transform?: ActionTransformFnType,
 };
@@ -27,7 +26,6 @@ const ActionButton = ({
   submit,
   success,
   onSuccess,
-  values,
   transform,
   ...props
 }: Props) => {
@@ -39,9 +37,7 @@ const ActionButton = ({
     let result;
     setLoading(true);
     try {
-      const asyncFuncValues =
-        typeof values == 'function' ? await values() : values;
-      result = await asyncFunction(asyncFuncValues);
+      result = await asyncFunction();
       if (isMountedRef.current) setLoading(false);
     } catch (err) {
       log(err);

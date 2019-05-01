@@ -1,15 +1,18 @@
 /* @flow */
 
-import React from 'react';
+// $FlowFixMe
+import React, { useCallback } from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 
 import type { OpenDialog } from '~core/Dialog/types';
 import type { TaskType, UserType } from '~immutable';
 
+import { ACTIONS } from '~redux';
+import { mergePayload } from '~utils/actions';
+
 import withDialog from '~core/Dialog/withDialog';
 import Button, { ActionButton } from '~core/Button';
 import { unfinishedProfileOpener } from '~users/UnfinishedProfileDialog';
-import { ACTIONS } from '~redux';
 
 import { canRequestToWork, hasRequestedToWork } from '../../checks';
 import { userDidClaimProfile } from '../../../users/checks';
@@ -45,26 +48,33 @@ const TaskRequestWork = ({
   task: { colonyAddress, draftId },
   task,
 }: Props) => {
-  if (hasRequestedToWork(task, walletAddress))
+  const transform = useCallback(mergePayload({ colonyAddress, draftId }), [
+    colonyAddress,
+    draftId,
+  ]);
+
+  if (hasRequestedToWork(task, walletAddress)) {
     return (
       <p className={styles.requestSubmittedText}>
         <FormattedMessage {...MSG.workRequestSubmitted} />
       </p>
     );
+  }
 
-  if (userDidClaimProfile(currentUser) && canRequestToWork(task, walletAddress))
+  if (
+    userDidClaimProfile(currentUser) &&
+    canRequestToWork(task, walletAddress)
+  ) {
     return (
       <ActionButton
         text={MSG.requestWork}
         submit={ACTIONS.TASK_SEND_WORK_REQUEST}
         error={ACTIONS.TASK_SEND_WORK_REQUEST_ERROR}
         success={ACTIONS.TASK_SEND_WORK_REQUEST_SUCCESS}
-        values={{
-          colonyAddress,
-          draftId,
-        }}
+        transform={transform}
       />
     );
+  }
 
   return (
     <Button

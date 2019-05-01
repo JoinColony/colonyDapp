@@ -20,19 +20,19 @@ export const shouldFetchData = (
   if (data == null) return true;
 
   // If we're already fetching data, don't fetch
-  if (data.isFetching) return false;
+  if (data.get('isFetching')) return false;
 
   // If there was an error earlier but we have a freshly mounted component, try again to fetch
-  if (data.error && isFirstMount) return true;
+  if (data.get('error') && isFirstMount) return true;
 
   // If there's no record (and it's not fetching) and it's the first mount, fetch
-  if (typeof data.record == 'undefined' && isFirstMount) return true;
+  if (typeof data.get('record') == 'undefined' && isFirstMount) return true;
 
   // Check if the TTL is passed, if so, fetch again
   return !!(
     ttl &&
-    data.lastFetchedAt > 0 &&
-    Date.now() - data.lastFetchedAt > ttl
+    data.get('lastFetchedAt') > 0 &&
+    Date.now() - data.get('lastFetchedAt') > ttl
   );
 };
 

@@ -37,12 +37,14 @@ export type UserEvents = {|
   SUBSCRIBED_TO_TASK: EventDefinition<
     typeof SUBSCRIBED_TO_TASK,
     {|
+      colonyAddress: Address,
       draftId: TaskDraftId,
     |},
   >,
   UNSUBSCRIBED_FROM_TASK: EventDefinition<
     typeof UNSUBSCRIBED_FROM_TASK,
     {|
+      colonyAddress: Address,
       draftId: TaskDraftId,
     |},
   >,

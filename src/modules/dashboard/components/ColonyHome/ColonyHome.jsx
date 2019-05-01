@@ -3,7 +3,7 @@
 import type { Match } from 'react-router';
 
 // $FlowFixMe update flow!
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useMemo } from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 import { Redirect } from 'react-router';
 
@@ -16,6 +16,7 @@ import type { TasksFilterOptionType } from '../shared/tasksFilter';
 
 import { ACTIONS } from '~redux';
 import { useDataFetcher, useSelector } from '~utils/hooks';
+import { mergePayload } from '~utils/actions';
 import { Tab, Tabs, TabList, TabPanel } from '~core/Tabs';
 import { Select } from '~core/Fields';
 import Button, { ActionButton } from '~core/Button';
@@ -115,7 +116,17 @@ const ColonyHome = ({
     [colonyAddress],
     [colonyAddress],
   );
-  const draftIds = Object.keys(taskMetadata || {});
+
+  // This could be simpler if we had the tuples ready to select from state
+  const draftIds = useMemo(
+    () =>
+      Object.keys(taskMetadata || {}).map(draftId => [colonyAddress, draftId]),
+    [taskMetadata, colonyAddress],
+  );
+
+  const transform = useCallback(mergePayload({ colonyAddress }), [
+    colonyAddress,
+  ]);
 
   if (colonyError) {
     return <Redirect to="/404" />;
@@ -174,7 +185,7 @@ const ColonyHome = ({
             submit={ACTIONS.TASK_CREATE}
             success={ACTIONS.TASK_CREATE_SUCCESS}
             text={MSG.newTaskButton}
-            values={{ colonyAddress }}
+            transform={transform}
           />
         )}
         <ul className={styles.domainsFilters}>

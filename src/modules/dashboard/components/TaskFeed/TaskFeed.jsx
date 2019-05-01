@@ -3,6 +3,7 @@
 // $FlowFixMe
 import React, { useRef, useLayoutEffect } from 'react';
 
+import type { Address } from '~types';
 import type { TaskDraftId, TaskFeedItemType } from '~immutable';
 
 import { useDataFetcher } from '~utils/hooks';
@@ -18,12 +19,12 @@ import styles from './TaskFeed.css';
 const displayName = 'dashboard.TaskFeed';
 
 type Props = {|
+  colonyAddress: Address,
   draftId: TaskDraftId,
 |};
 
-const TaskFeed = ({ draftId }: Props) => {
+const TaskFeed = ({ colonyAddress, draftId }: Props) => {
   const bottomEl = useRef();
-  const [colonyAddress] = draftId.split('_');
 
   const scrollToEnd = () => {
     if (bottomEl.current) {
@@ -42,7 +43,7 @@ const TaskFeed = ({ draftId }: Props) => {
   const { data: feedItems } = useDataFetcher<TaskFeedItemType[]>(
     taskFeedItemsFetcher,
     [draftId],
-    [draftId],
+    [colonyAddress, draftId],
   );
 
   const nFeedItems = feedItems ? feedItems.length : 0;

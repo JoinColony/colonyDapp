@@ -5,7 +5,6 @@ import type {
   ContractTransactionType,
   TaskDraftId,
   TokenReferenceType,
-  UserMetadataType,
   UserProfileType,
 } from '~immutable';
 
@@ -79,10 +78,6 @@ export type UserActionTypes = {|
     UserProfileType,
     WithKey,
   >,
-  USER_METADATA_SET: ActionTypeWithPayload<
-    typeof ACTIONS.USER_METADATA_SET,
-    $Shape<UserMetadataType>,
-  >,
   // In the future we could specify in the payload which permission(s) we would like to fetch
   USER_PERMISSIONS_FETCH: ActionTypeWithPayloadAndMeta<
     typeof ACTIONS.USER_PERMISSIONS_FETCH,
@@ -140,11 +135,11 @@ export type UserActionTypes = {|
   >,
   USER_SUBSCRIBED_TASKS_FETCH_SUCCESS: ActionTypeWithPayload<
     typeof ACTIONS.USER_SUBSCRIBED_TASKS_FETCH_SUCCESS,
-    TaskDraftId[],
+    [Address, TaskDraftId][],
   >,
   USER_TASK_SUBSCRIBE: ActionTypeWithPayload<
     typeof ACTIONS.USER_TASK_SUBSCRIBE,
-    {| draftId: TaskDraftId |},
+    {| colonyAddress: Address, draftId: TaskDraftId |},
   >,
   USER_TASK_SUBSCRIBE_ERROR: ErrorActionType<
     typeof ACTIONS.USER_TASK_SUBSCRIBE_ERROR,
@@ -152,7 +147,7 @@ export type UserActionTypes = {|
   >,
   USER_TASK_SUBSCRIBE_SUCCESS: ActionTypeWithPayload<
     typeof ACTIONS.USER_TASK_SUBSCRIBE,
-    {| draftId: TaskDraftId |},
+    {| colonyAddress: Address, draftId: TaskDraftId |},
   >,
   USER_TOKEN_TRANSFERS_FETCH: ActionType<
     typeof ACTIONS.USER_TOKEN_TRANSFERS_FETCH,
