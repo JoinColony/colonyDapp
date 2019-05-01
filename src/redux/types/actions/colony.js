@@ -131,7 +131,7 @@ export type ColonyActionTypes = {|
   >,
   COLONY_CREATE_SUCCESS: UniqueActionType<
     typeof ACTIONS.COLONY_CREATE_SUCCESS,
-    TransactionType<{ colonyName: string }, *>,
+    void,
     void,
   >,
   COLONY_DOMAINS_FETCH: ActionTypeWithPayloadAndMeta<
