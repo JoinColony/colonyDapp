@@ -4,7 +4,7 @@
 import type { WalletObjectType } from '@colony/purser-core/flowtypes';
 import type { IdentityProvider } from '~types';
 
-import Keystore from '~lib/database/Keystore';
+import Keystore from '../lib/database/Keystore';
 import PurserIdentity from './PurserIdentity';
 
 // Ideally, we should use the actual type for the common wallet interface

@@ -1,11 +1,9 @@
 /* @flow */
 
 import type { ObjectSchema } from 'yup';
-import type { EventStore } from '~lib/database/stores';
 import type { AccessController } from './accessControllers';
-import type PurserIdentity from '../PurserIdentity';
-import type PurserIdentityProvider from '../PurserIdentityProvider';
 
+import { EventStore } from '~lib/database/stores';
 /*
  * This perhaps slightly redundant when every store is of the
  * same type, but these could change, and at least we know
@@ -21,11 +19,10 @@ export type UserInboxStore = EventStore;
 export type UserMetadataStore = EventStore;
 export type UserProfileStore = EventStore;
 
-export type StoreBlueprint<P: Object> = {|
+type StoreClassWrapper = typeof EventStore;
+export type StoreBlueprint<P: Object, AC: AccessController<*, *>> = {|
   schema?: ObjectSchema,
-  getAccessController: (
-    storeProps: P,
-  ) => AccessController<PurserIdentity, PurserIdentityProvider<PurserIdentity>>,
+  getAccessController: (storeProps: P) => AC,
   getName: (storeProps: P) => string,
-  type: *,
+  type: StoreClassWrapper,
 |};
