@@ -33,7 +33,11 @@ import {
 import { generateUrlFriendlyId } from '~utils/data';
 import { ACTIONS } from '~redux';
 import { matchUsernames } from '~lib/TextDecorator';
-
+import {
+  usernameSelector,
+  walletAddressSelector,
+  userAddressByMultipleUsernameSelector,
+} from '../../users/selectors';
 import { fetchColonyTaskMetadata as createColonyTaskMetadataFetchAction } from '../actionCreators';
 import {
   allColonyNamesSelector,
@@ -41,11 +45,6 @@ import {
   colonyTaskMetadataSelector,
   taskSelector,
 } from '../selectors';
-import {
-  usernameSelector,
-  userAddressByMultipleUsernameSelector,
-  walletAddressSelector,
-} from '../../users/selectors';
 import { createTransaction, getTxChannel } from '../../core/sagas';
 import { COLONY_CONTEXT } from '../../core/constants';
 
