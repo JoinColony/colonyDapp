@@ -111,7 +111,7 @@ export const createCustomMemo = (comparator: (...any) => boolean) => (
 ) => {
   const lastDeps = useRef(deps);
   const lastResult = useRef(fn());
-  if (comparator(lastDeps, deps)) {
+  if (comparator(lastDeps.current, deps)) {
     return lastResult.current;
   }
   lastResult.current = fn();
@@ -210,7 +210,7 @@ export const useDataMapFetcher = <T>(
    * Created memoized keys to guard the rest of the function against
    * unnecessary updates.
    */
-  const memoizedKeys = useMemoWithFlatArray(() => keys, [keys]);
+  const memoizedKeys = useMemoWithFlatArray(() => keys, keys);
 
   const dispatch = useDispatch();
   const allData: ImmutableMapType<string, DataRecordType<*>> = useMappedState(
@@ -282,7 +282,7 @@ export const useDataTupleFetcher = <T>(
    * Created memoized keys to guard the rest of the function against
    * unnecessary updates.
    */
-  const memoizedKeys = useMemoWithTupleArray(() => keys, [keys]);
+  const memoizedKeys = useMemoWithTupleArray(() => keys, keys);
   const dispatch = useDispatch();
   const allData: ImmutableMapType<string, DataRecordType<*>> = useMappedState(
     useCallback(state => select(state, memoizedKeys), [select, memoizedKeys]),
