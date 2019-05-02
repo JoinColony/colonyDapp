@@ -5,6 +5,7 @@ import type { ContractResponse } from '@colony/colony-js-client';
 import { call, put, take } from 'redux-saga/effects';
 
 import { ACTIONS } from '~redux';
+import { isDev } from '~utils/debug';
 import { selectAsJS } from '~utils/saga/effects';
 import type {
   TransactionRecordType,
@@ -51,8 +52,10 @@ async function getMethodTransactionPromise<
       gasPrice: gasPriceOverride || gasPrice,
     },
     restOptions,
-    // DEBUG-#1071 to have the timeout rather sooner than later. Remove this!
-    { timeoutMs: 30 * 1000 },
+    /*
+     * Use a 30s timeout for dev mode only
+     */
+    isDev ? { timeoutMs: 30 * 1000 } : {},
     { waitForMining: false },
   );
   if (method.restoreOperation && multisig) {
