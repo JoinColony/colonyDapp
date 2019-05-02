@@ -22,7 +22,12 @@ import { executeQuery, putError } from '~utils/saga/effects';
 import { log } from '~utils/debug';
 
 import ENS from '../../../lib/ENS';
-import { getUserBalance, getUserProfile } from '../../users/data/queries';
+import {
+  getUserBalance,
+  getUserMetadata,
+  getUserProfile,
+  getUserColonies,
+} from '../../users/data/queries';
 import setupAdminSagas from '../../admin/sagas';
 import setupDashboardSagas from '../../dashboard/sagas';
 import { getWallet, setupUsersSagas } from '../../users/sagas';
@@ -91,11 +96,10 @@ export default function* setupUserContext(
     /*
      * Attempt to get the user profile data.
      */
+    const context = { ddb, metadata: { walletAddress } };
     let profileData = {};
     try {
-      profileData = yield* executeQuery(getUserProfile, {
-        metadata: { walletAddress },
-      });
+      profileData = yield* executeQuery(context, getUserProfile);
     } catch (caughtError) {
       // It's ok if the user store doesn't exist (yet)
       log.warn(caughtError);
@@ -118,6 +122,60 @@ export default function* setupUserContext(
      */
     yield fork(setupContextDependentSagas);
 
+    /*
+     * Attempt to get the user metadata.
+     */
+    try {
+      const metadata = yield* executeQuery(context, getUserMetadata);
+      // Consider merging this action with `CURRENT_USER_CREATE`?
+      yield put<Action<typeof ACTIONS.USER_METADATA_SET>>({
+        type: ACTIONS.USER_METADATA_SET,
+        payload: metadata,
+      });
+
+      const contextWithMetadata = {
+        ...context,
+        metadata: {
+          ...context.metadata,
+          metadataStoreAddress: metadata.metadataStoreAddress,
+        },
+      };
+      const userColonies = yield* executeQuery(
+        /*
+         * @note for some reason Flow doesn't inffer that I've actually added
+         * `metadataStoreAddress` to the context I'm calling the query with
+         */
+        /* $FlowFixMe */
+        contextWithMetadata,
+        getUserColonies,
+      );
+
+      for (let index = 0; index < userColonies.length; index += 1) {
+        const colonyClient = yield call(
+          [colonyManager, colonyManager.getColonyClient],
+          userColonies[index],
+        );
+
+        /*
+         * Load the user activities from the store
+         */
+        yield put({
+          type: ACTIONS.USER_ACTIVITIES_FETCH,
+          payload: {
+            colonyClient,
+          },
+          meta: {
+            ...meta,
+            key: walletAddress,
+            colonyAddress: userColonies[index],
+          },
+        });
+      }
+    } catch (caughtError) {
+      // It's ok if the user store doesn't exist (yet)
+      log.warn(caughtError);
+    }
+
     yield put<Action<typeof ACTIONS.CURRENT_USER_CREATE>>({
       type: ACTIONS.CURRENT_USER_CREATE,
       payload: {
@@ -130,26 +188,6 @@ export default function* setupUserContext(
         key: walletAddress,
       },
     });
-
-    try {
-      /*
-       * Load the user activities from the store
-       */
-      yield put({
-        type: ACTIONS.USER_ACTIVITIES_FETCH,
-        meta: {
-          ...meta,
-          key: walletAddress,
-        },
-      });
-      /*
-       * Load the user's subscribed colonies.
-       */
-      yield put(currentUserFetchColonies());
-    } catch (caughtError) {
-      // It's ok if the user store doesn't exist (yet)
-      log.warn(caughtError);
-    }
 
     yield call(setupOnBeforeUnload);
   } catch (caughtError) {
