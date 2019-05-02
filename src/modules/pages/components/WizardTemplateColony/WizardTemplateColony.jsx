@@ -10,7 +10,7 @@ import { toWei } from 'ethjs-unit';
 
 import Numeral from '~core/Numeral';
 import QRCode from '~core/QRCode';
-import MaskedAddress from '~core/MaskedAddress';
+import CopyableAddress from '~core/CopyableAddress';
 import { HistoryNavigation } from '~pages/NavigationWrapper';
 import { withImmutablePropsToJS } from '~utils/hoc';
 
@@ -44,6 +44,8 @@ const WizardTemplateColony = ({
   previousStep,
   wizardValues,
 }: Props) => {
+  /* If we are in the first wizardStep handle
+    stepping back in history like usual */
   const customHandler = useCallback(() => previousStep(wizardValues), [
     previousStep,
     wizardValues,
@@ -61,7 +63,7 @@ const WizardTemplateColony = ({
               <span className={styles.hello}>
                 <FormattedMessage {...MSG.wallet} />
               </span>
-              <MaskedAddress address={walletAddress} />
+              <CopyableAddress>{walletAddress}</CopyableAddress>
             </div>
             <div className={styles.moneyContainer}>
               {new BN(balance).isZero() ? (
