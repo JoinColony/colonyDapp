@@ -32,7 +32,7 @@ import { USER_EVENT_TYPES } from '~data/constants';
 import { ZERO_ADDRESS } from '~utils/web3/constants';
 import { reduceToLastState } from '~utils/reducers';
 import { getTokenClient } from '~utils/web3/contracts';
-import { getEventLogs, parseUserTransferEvent } from '~utils/web3/eventLogs';
+import { getEventLogs, parseUserTransferEvent, getLogsAndEvents, getLogDate } from '~utils/web3/eventLogs';
 import {
   getUserProfileStore,
   getUserInboxStore,
@@ -384,10 +384,59 @@ export const getUserInboxActivity: Query<
   context: [CONTEXT.DDB_INSTANCE],
   prepare: prepareInboxStoreQuery,
   async execute(userInboxStore) {
+    const {
+      adapter: { provider },
+    } = colonyClient;
+    const { logs, events } = await getLogsAndEvents(
+      colonyClient,
+      {},
+      {
+        blocksBack: 400000,
+        events: [
+          colonyClient.events.ColonyAdminRoleSet,
+          colonyClient.events.ColonyAdminRoleRemoved,
+          colonyClient.events.ColonyLabelRegistered,
+          colonyClient.events.DomainAdded,
+        ],
+      },
+    );
+    const transformedEvents = await Promise.all(
+      logs.slice(2).map(async (log, index) => {
+        /*
+         * Manually set the `ColonyLabelRegistered` event since that doesn't show up
+         */
+        let manualEventName = 'NoEventSet';
+        if (index === 0) {
+          manualEventName = 'ColonyLabelRegistered';
+        }
+        const eventName =
+          (events.slice(2)[index] && events.slice(2)[index].eventName) ||
+          manualEventName;
+        const timestamp = await getLogDate(provider, log);
+        const transactionData = await provider.getTransaction(
+          log.transactionHash,
+        );
+        const transformedEvent = {
+          id: log.transactionHash,
+          event: transformNotificationEventNames(eventName),
+          timestamp: new Date(timestamp).getTime() * 1000,
+          userAddress: transactionData.from,
+        };
+        if (eventName === 'ColonyLabelRegistered') {
+          transformedEvent.colonyAddress = transactionData.to;
+        }
+        return transformedEvent;
+      }),
+    );
     return userInboxStore
       .all()
       .map(({ meta: { id, timestamp, userAddress }, payload }) =>
         Object.assign({}, payload, { id, timestamp, userAddress }),
+      )
+      .concat(transformedEvents)
+      .sort(
+        (firstEvent, secondEvent) =>
+          firstEvent.timestamp - secondEvent.timestamp,
       );
   },
 };
