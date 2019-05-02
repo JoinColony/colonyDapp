@@ -208,7 +208,9 @@ const InboxItem = ({
                     (colony && (colony.displayName || colony.colonyName)) ||
                       colonyAddress,
                   ),
-                  colonyName: makeInboxDetail(colonyName),
+                  colonyName: makeInboxDetail(
+                    (colony && colony.colonyName) || colonyName,
+                  ),
                   comment: makeInboxDetail(comment),
                   domainName: makeInboxDetail(domainName),
                   otherUser: makeInboxDetail(
@@ -245,7 +247,7 @@ const InboxItem = ({
                 <FormattedMessage
                   {...MSG.metaColonyAndDomain}
                   values={{
-                    colonyName: colony.colonyName || colonyName,
+                    colonyName: (colony && colony.colonyName) || colonyName,
                     domainName,
                   }}
                 />
@@ -254,7 +256,7 @@ const InboxItem = ({
                 <FormattedMessage
                   {...MSG.metaColonyOnly}
                   values={{
-                    colonyName: colony.colonyName || colonyName,
+                    colonyName: (colony && colony.colonyName) || colonyName,
                   }}
                 />
               )}
