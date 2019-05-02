@@ -21,14 +21,13 @@ const userProfileStore: StoreBlueprint = Object.freeze({
     username: yup.string(),
     website: yup.string().url(),
     location: yup.string(),
-    metadataStoreAddress: yup
-      .string()
-      .orbitDBAddress()
-      .required(),
-    inboxStoreAddress: yup
-      .string()
-      .orbitDBAddress()
-      .required(),
+    /*
+     * The store address fields are required for the store, but
+     * since we want to set fields invididually, we cannot mark them
+     * as such. Ideal solution: make this store an EventStore #1228
+     */
+    metadataStoreAddress: yup.string().orbitDBAddress(),
+    inboxStoreAddress: yup.string().orbitDBAddress(),
   }),
   type: ValidatedKVStore,
 });

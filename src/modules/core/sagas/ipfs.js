@@ -8,6 +8,7 @@ import nanoid from 'nanoid';
 import type { Action } from '~redux';
 
 import { putError, raceError } from '~utils/saga/effects';
+import { filterUniqueAction } from '~utils/actions';
 import { CONTEXT, getContext } from '~context';
 import { ACTIONS } from '~redux';
 
@@ -16,18 +17,21 @@ import { uploadIpfsData } from '../actionCreators';
 export function* ipfsUpload(data: string): Saga<string> {
   const id = nanoid();
   yield put(uploadIpfsData(data, id));
+
   const [
     {
       payload: { ipfsHash },
     },
     error,
   ] = yield raceError(
-    action =>
-      action.type === ACTIONS.IPFS_DATA_UPLOAD_SUCCESS && action.meta.id === id,
-    action =>
-      action.type === ACTIONS.IPFS_DATA_UPLOAD_ERROR && action.meta.id === id,
+    filterUniqueAction(id, ACTIONS.IPFS_DATA_UPLOAD_SUCCESS),
+    filterUniqueAction(id, ACTIONS.IPFS_DATA_UPLOAD_ERROR),
   );
-  if (error) throw new Error(error);
+
+  if (error) {
+    throw new Error(error);
+  }
+
   return ipfsHash;
 }
 

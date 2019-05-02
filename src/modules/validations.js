@@ -54,8 +54,7 @@ function address(msg) {
     name: 'address',
     message: msg || en.string.address,
     test(value) {
-      if (typeof value == 'undefined') return true;
-      return isAddress(value);
+      return typeof value == 'undefined' || isAddress(value);
     },
   });
 }
@@ -65,8 +64,7 @@ function orbitDBAddress(msg) {
     name: 'orbitDBAddress',
     message: msg || en.string.orbitDBAddress,
     test(value) {
-      if (typeof value == 'undefined') return true;
-      return isValidAddress(value);
+      return typeof value == 'undefined' || isValidAddress(value);
     },
   });
 }
@@ -76,8 +74,7 @@ function cid(msg) {
     name: 'cid',
     message: msg || en.string.cid,
     test(value) {
-      if (typeof value == 'undefined') return true;
-      return isIPFS.cid(value);
+      return typeof value == 'undefined' || isIPFS.cid(value);
     },
   });
 }
