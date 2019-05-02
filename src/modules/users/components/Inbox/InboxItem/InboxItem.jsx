@@ -155,7 +155,8 @@ const InboxItem = ({
     DomainType[],
   >(domainsFetcher, [colonyAddress], [colonyAddress]);
   const currentDomain =
-    domainName || (domains && domains.find(({ id }) => id === domainId || 0));
+    (domainName && { name: domainName }) ||
+    (domains && domains.find(({ id }) => id === domainId || 0));
   return (
     <TableRow
       className={styles.inboxRow}
