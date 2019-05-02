@@ -2,6 +2,7 @@
 
 import type { GenericWallet } from '@colony/purser-core/es';
 
+import { SUBTYPE_METAMASK } from '@colony/purser-core/types';
 import { hexSequenceNormalizer } from '@colony/purser-core/normalizers';
 import BigNumber from 'bn.js';
 import EthereumTx from 'ethereumjs-tx';
@@ -21,13 +22,17 @@ export default class EthersWrappedWallet {
     this.provider = provider;
   }
 
-  async getAddress(): Promise<string> {
+  get address() {
     return this.wallet.address;
+  }
+
+  async getAddress(): Promise<string> {
+    return this.address;
   }
 
   async signMessage(message: any): Promise<string> {
     const payload =
-      typeof message === 'string' && !isHex(message)
+      typeof message == 'string' && !isHex(message)
         ? { message }
         : { messageData: message };
     return this.wallet.signMessage(payload);
@@ -40,19 +45,24 @@ export default class EthersWrappedWallet {
    */
   async sendTransaction(tx: TransactionRequest): Promise<TransactionReceipt> {
     const { chainId, data, gasLimit, gasPrice, nonce, to, value } = tx;
-    const signOptions = {
+    const signedTx = await this.sign({
       chainId: chainId || this.provider.chainId,
       data,
-      gasLimit: gasLimit ? new BigNumber(gasLimit) : await this.estimateGas(tx),
+      // If no gas limit is provided, we need to get the estimate and multiply
+      // it by 1.1 (an amount that will prevent the transaction from failing)
+      gasLimit: gasLimit
+        ? new BigNumber(gasLimit)
+        : (await this.estimateGas(tx))
+            .mul(new BigNumber('11'))
+            .div(new BigNumber('10')),
       gasPrice: gasPrice ? new BigNumber(gasPrice) : await this.getGasPrice(),
       nonce: nonce || (await this.getTransactionCount()),
       to,
       value: new BigNumber(value),
-    };
-    const signedTx = await this.sign(signOptions);
+    });
 
     let txHash;
-    if (this.wallet.subtype === 'metamask') {
+    if (this.wallet.subtype === SUBTYPE_METAMASK) {
       // if metamask, tx has already been sent
 
       /**
@@ -65,7 +75,16 @@ export default class EthersWrappedWallet {
       txHash = await this.provider.sendTransaction(signedTx);
     }
 
-    return this.provider.getTransaction(txHash);
+    /*
+     * We need to wait for transaction to be mined, but ganache will mine the
+     * transaction too quickly, causing us to wait indefinitely.
+     * To mitigate this timing problem, wait for whichever is faster;
+     * getting the transaction, or waiting for the transaction.
+     */
+    return Promise.race([
+      this.provider.waitForTransaction(txHash),
+      this.provider.getTransaction(txHash),
+    ]);
   }
 
   /**
@@ -105,7 +124,7 @@ export default class EthersWrappedWallet {
 
   async send(
     to: string,
-    value: string,
+    value: BigNumber,
     options: TransactionOptions = {},
   ): Promise<TransactionReceipt> {
     return this.sendTransaction({
