@@ -25,7 +25,7 @@ export const UpdateUserProfileCommandArgsSchema = yup.object({
 });
 
 export const SetUserAvatarCommandArgsSchema = yup.object({
-  data: yup
+  ipfsHash: yup
     .string()
     .cid()
     .required(),
