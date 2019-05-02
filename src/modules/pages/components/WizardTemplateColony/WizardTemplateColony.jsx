@@ -25,6 +25,7 @@ type Props = {|
   currentUser: UserType,
   previousStep: (wizardValues?: Object) => void,
   wizardValues: Object,
+  hideQR: boolean,
 |};
 
 const MSG = defineMessages({
@@ -43,9 +44,8 @@ const WizardTemplateColony = ({
   },
   previousStep,
   wizardValues,
+  hideQR = false,
 }: Props) => {
-  /* If we are in the first wizardStep handle
-    stepping back in history like usual */
   const customHandler = useCallback(() => previousStep(wizardValues), [
     previousStep,
     wizardValues,
@@ -87,7 +87,7 @@ const WizardTemplateColony = ({
               )}
             </div>
           </div>
-          <QRCode address={walletAddress} width={60} />
+          {!hideQR && <QRCode address={walletAddress} width={60} />}
         </div>
       </header>
       <article className={styles.content}>{children}</article>

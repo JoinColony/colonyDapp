@@ -12,6 +12,8 @@ import Heading from '~core/Heading';
 import GasStationContent from '../../../users/components/GasStation/GasStationContent';
 import { useSelector } from '~utils/hooks';
 
+import { DASHBOARD_ROUTE } from '~routes';
+
 import {
   getGroupStatus,
   findTransactionGroupByKey,
@@ -36,7 +38,7 @@ const StepConfirmTransactions = () => {
     getGroupStatus(transactionGroups[0]) === 'succeeded' &&
     getGroupKey(transactionGroups[0]) === 'group.transaction.batch.createUser'
   ) {
-    return <Redirect to="/dashboard" />;
+    return <Redirect to={DASHBOARD_ROUTE} />;
   }
 
   const colonyTransaction = findTransactionGroupByKey(

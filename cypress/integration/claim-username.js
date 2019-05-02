@@ -4,26 +4,26 @@ describe('Claims a username', () => {
   it('Use a TrufflePig wallet', () => {
     cy.get('button')
       .contains('TrufflePig')
-      .click()
-      .wait(1000);
+      .click();
   });
 
   it('Select the second account and Log in', () => {
     /*
      * Click on the Button disquised as a Select
      */
-    cy.get('button[data-test="trufflepigAccountSelector"]').click();
+    cy.get('button[data-test="trufflepigAccountSelector"]', {
+      timeout: 1000,
+    }).click();
     /*
      * Select the second entry (Account 1), focus it, and click it
      */
     cy.get('li#accountIndex-listbox-entry-0')
       .trigger('mouseover')
-      .click()
-      .wait(2000);
+      .click();
     /*
      * Click on the button to go to the dApp
      */
-    cy.get('button[data-test="confirmTruffleAccount"]')
+    cy.get('button[data-test="confirmTruffleAccount"]', { timeout: 2000 })
       .contains('Go to Colony')
       .click();
   });
@@ -54,26 +54,21 @@ describe('Claims a username', () => {
      */
     cy.get('button[data-test="claimUsernameConfirm"]')
       .contains('Continue')
-      .click()
-      /*
-       * Wait a spell, it seems that the spinner on the button prevents
-       * cypress to fetch the Gas Station hook.
-       * This way, we make sure the modal is closed by the time it tries to.
-       */
-      .wait(2000);
+      .click();
+    /*
+     * Wait a spell, it seems that the spinner on the button prevents
+     * cypress to fetch the Gas Station hook.
+     * This way, we make sure the modal is closed by the time it tries to.
+     */
   });
 
-  /*
-   * TODO fix these tests; they appear to not work on re-runs
-   * because transactions are rehydrated from localStorage.
-   * I haven't found a way to clear this reliably yet; maybe
-   * we need a setup/teardown routine?
-   */
   it('Sign the transaction', () => {
     /*
      * Check if the gas station is open
      */
-    cy.get('div[data-test="gasStation"]').should('be.visible');
+    cy.get('div[data-test="gasStation"]', { timeout: 2000 }).should(
+      'be.visible',
+    );
     /*
      * Click on the Claim Username Transaction
      */
@@ -84,12 +79,13 @@ describe('Claims a username', () => {
     /*
      * Confirm the transaction
      */
-    cy.get('button[data-test="gasStationConfirmTransaction"]')
+    cy.get('button[data-test="gasStationConfirmTransaction"]', {
+      timeout: 2000,
+    })
       /*
        * Wait a bit, to make sure the gas limit has been estimated
        * We really need to teach cypress to wait for loading elements...
        */
-      .wait(2000)
       .click()
       .then(() => {
         /*

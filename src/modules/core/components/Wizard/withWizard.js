@@ -25,6 +25,7 @@ type Steps = Array<StepType> | StepsFn<Object>;
 type WizardArgs = {
   stepCount?: number,
   steps: Steps,
+  hideQR?: boolean,
 };
 
 const all = (values: ValueList) =>
@@ -33,7 +34,7 @@ const all = (values: ValueList) =>
 const getStep = (steps: Steps, step: number, values: Object, props?: Object) =>
   typeof steps === 'function' ? steps(step, values, props) : steps[step];
 
-const withWizard = ({ steps, stepCount: maxSteps }: WizardArgs) => (
+const withWizard = ({ steps, stepCount: maxSteps, hideQR }: WizardArgs) => (
   OuterComponent: ComponentType<Object>,
 ) => {
   class Wizard extends Component<Props, State> {
@@ -51,6 +52,14 @@ const withWizard = ({ steps, stepCount: maxSteps }: WizardArgs) => (
      * @body When going back we could instead store the isValid state of the form when going back
      */
     prev = (values?: Values) => {
+      const { step: currentStep } = this.state;
+      /* Inform developer if step has been changed
+       * if we are already in th first step there
+       * is no way of going back within the wizard
+       */
+      if (currentStep === 0) {
+        return false;
+      }
       this.setState(({ step, values: currentValues }) => ({
         step: step === 0 ? 0 : step - 1,
         // Going back we only want to set values when we actually have some
@@ -59,11 +68,6 @@ const withWizard = ({ steps, stepCount: maxSteps }: WizardArgs) => (
             ? currentValues.set(step, values)
             : currentValues,
       }));
-      const { step } = this.state;
-      /* Inform developer if step has been changed */
-      if (step === 0) {
-        return false;
-      }
       return true;
     };
 
@@ -85,6 +89,7 @@ const withWizard = ({ steps, stepCount: maxSteps }: WizardArgs) => (
           nextStep: this.next,
           previousStep: this.prev,
           wizardValues: allValues,
+          hideQR,
           ...this.props,
         },
         createElement(Step, {

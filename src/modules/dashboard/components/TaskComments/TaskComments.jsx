@@ -1,6 +1,7 @@
 /* @flow */
 
 import type { FormikProps } from 'formik';
+import type { IBrowserHistory } from 'history';
 
 import React, { Fragment } from 'react';
 import { defineMessages } from 'react-intl';
@@ -55,6 +56,7 @@ type Props = {
   currentUser: UserType,
   openDialog: OpenDialog,
   draftId: string,
+  history: IBrowserHistory,
   taskTitle: string,
 } & FormikProps<FormValues>;
 
@@ -65,14 +67,14 @@ const validationSchema = yup.object().shape({
 });
 
 const TaskComments = ({
-  openDialog,
   currentUser: {
-    profile: { balance, walletAddress },
+    profile: { walletAddress },
   },
   currentUser,
   taskTitle,
   colonyAddress,
   draftId,
+  history,
 }: Props) => {
   const addComment = useAsyncFunction({
     submit: ACTIONS.TASK_COMMENT_ADD,
@@ -114,7 +116,7 @@ const TaskComments = ({
 
   const handleUnclaimedProfile = () => {
     if (!didClaimProfile) {
-      return unfinishedProfileOpener(openDialog, balance);
+      return unfinishedProfileOpener(history);
     }
     return false;
   };
