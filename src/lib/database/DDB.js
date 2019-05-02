@@ -2,11 +2,12 @@
 
 import type { ObjectSchema } from 'yup';
 import type {
-  ResolverFn,
+  AccessController,
   Identity,
   IdentityProvider,
   OrbitDBAddress,
   OrbitDBStore,
+  ResolverFn,
   StoreBlueprint,
 } from '~types';
 
@@ -36,16 +37,17 @@ class DDB {
 
   _resolver: ?ResolverFn;
 
-  static getAccessController(
+  static getAccessController<P: Object, AC: AccessController<*, *>>(
     storeName: string,
-    { getAccessController }: StoreBlueprint<*, *>,
-    storeProps: Object,
+    { getAccessController }: StoreBlueprint<P, AC>,
+    storeProps: P,
   ) {
     const accessController = getAccessController(storeProps);
-    if (!accessController)
+    if (!accessController) {
       throw new Error(
         'Cannot instantiate an access controller, store blueprint invalid',
       ); // eslint-disable-line max-len
+    }
 
     return accessController;
   }
@@ -232,6 +234,36 @@ class DDB {
     return store;
   }
 
+  async generateStoreAddress<P: Object, AC: AccessController<*, *>>(
+    blueprint: StoreBlueprint<P, AC>,
+    storeProps: P,
+  ): Promise<OrbitDBAddress> {
+    const { getName, type: StoreClass } = blueprint;
+    const name = getName(storeProps);
+    if (!name) {
+      throw new Error('Store name is invalid or undefined');
+    }
+
+    const controller = this.constructor.getAccessController(
+      name,
+      blueprint,
+      storeProps,
+    );
+    return this._orbitNode.determineAddress(
+      name,
+      StoreClass.orbitType,
+      // We might want to use more options in the future. Just add them here
+      {
+        /**
+         * @NOTE: Only necessary to pass in the whole access controller object
+         * to orbit-db without it getting on our way
+         */
+        accessController: { controller },
+        overwrite: false,
+      },
+    );
+  }
+
   // Taken from https://github.com/orbitdb/orbit-db/commit/50dcd71411fbc96b1bcd2ab0625a3c0b76acbb7e
   async storeExists(identifier: StoreIdentifier): Promise<boolean> {
     const address = await this._getStoreAddress(identifier);
@@ -252,33 +284,6 @@ class DDB {
     }
     const data = await cache.get(`${address.toString()}/_manifest`);
     return data !== undefined && data !== null;
-  }
-
-  async generateStoreAddress(
-    blueprint: StoreBlueprint<*, *>,
-    storeProps: Object,
-  ): Promise<OrbitDBAddress> {
-    const { getName, type: StoreClass } = blueprint;
-    const name = getName(storeProps);
-    if (!name) throw new Error('Store name is invalid or undefined');
-    const storeAccessController = this.constructor.getAccessController(
-      name,
-      blueprint,
-      storeProps,
-    );
-    return this._orbitNode.determineAddress(
-      name,
-      StoreClass.orbitType,
-      // We might want to use more options in the future. Just add them here
-      {
-        /**
-         * @NOTE: Only necessary to pass in the whole access controller object
-         * to orbit-db without it getting on our way
-         */
-        accessController: { controller: storeAccessController },
-        overwrite: false,
-      },
-    );
   }
 
   async init() {
