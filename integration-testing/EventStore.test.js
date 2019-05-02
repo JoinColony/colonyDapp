@@ -5,13 +5,14 @@ import '../src/modules/validations';
 
 import { DDB } from '../src/lib/database';
 import PurserIdentityProvider from '../src/data/PurserIdentityProvider';
+import { PermissiveAccessController } from '../src/data/accessControllers';
 import { EventStore } from '../src/lib/database/stores';
 
 import createIPFSNode from './utils/createIPFSNode';
 
 const storeBlueprint = {
-  getAccessController: null,
-  defaultName: 'activity',
+  getAccessController: () => new PermissiveAccessController(),
+  getName: () => 'activity',
   type: EventStore,
 };
 
