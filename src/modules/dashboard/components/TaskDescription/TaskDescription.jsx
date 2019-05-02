@@ -39,6 +39,7 @@ const TaskDescription = ({
       })),
       mergePayload({ colonyAddress, draftId }),
     ),
+    [colonyAddress, draftId],
   );
   return (
     <ActionForm
@@ -57,7 +58,12 @@ const TaskDescription = ({
           name="description"
           placeholder={MSG.placeholder}
           readOnly={!isTaskCreator}
-          onEditorBlur={() => submitForm()}
+          onEditorBlur={() => {
+            /*
+             * Defer the form submission to let formik finish first.
+             */
+            setTimeout(submitForm, 0);
+          }}
         />
       )}
     </ActionForm>
