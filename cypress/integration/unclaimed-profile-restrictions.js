@@ -45,7 +45,7 @@ describe('Unclaimed Profile Restrictions', () => {
        */
       .click({ force: true })
       .then(() => {
-        cy.get('p[data-test="claimProfileDialog"]').should('exist');
+        cy.get('input[data-test="claimUsernameInput"]').should('exist');
       });
 
     /*
@@ -67,7 +67,7 @@ describe('Unclaimed Profile Restrictions', () => {
     cy.get('button[data-test="requestWorkButton"]')
       .click()
       .then(() => {
-        cy.get('p[data-test="claimProfileDialog"]').should('exist');
+        cy.get('input[data-test="claimUsernameInput"]').should('exist');
       });
 
     /*

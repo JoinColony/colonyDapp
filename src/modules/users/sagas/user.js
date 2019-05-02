@@ -18,7 +18,6 @@ import {
   executeQuery,
   executeCommand,
   putError,
-  takeFrom,
   selectAsJS,
 } from '~utils/saga/effects';
 import { ACTIONS } from '~redux';
@@ -31,6 +30,10 @@ import {
 } from '../selectors';
 
 import { ipfsUpload } from '../../core/sagas/ipfs';
+import {
+  transactionAddParams,
+  transactionReady,
+} from '../../core/actionCreators';
 
 import {
   updateTokens,
@@ -233,26 +236,29 @@ function* usernameCreate({
 }: Action<typeof ACTIONS.USERNAME_CREATE>): Saga<void> {
   const txChannel = yield call(getTxChannel, meta.id);
   try {
-    const walletAddress = yield select(walletAddressSelector);
+    yield fork(createTransaction, meta.id, {
+      context: NETWORK_CONTEXT,
+      methodName: 'registerUserLabel',
+      ready: false,
+      params: { username },
+      group: {
+        key: 'transaction.batch.createUser',
+        id: meta.id,
+        index: 0,
+      },
+    });
 
-    /**
-     * @todo  should these stores be created after the transaction succeeded?
+    /*
+     * Create the profile store
      */
-    const { profileStore, inboxStore, metadataStore } = yield* executeCommand(
+    const walletAddress = yield select(walletAddressSelector);
+    const { profileStore, metadataStore, inboxStore } = yield* executeCommand(
       createUserProfile,
       {
         args: { username, walletAddress },
         metadata: { walletAddress },
       },
     );
-
-    yield fork(createTransaction, meta.id, {
-      context: NETWORK_CONTEXT,
-      methodName: 'registerUserLabel',
-      params: { username, orbitDBPath: profileStore.address.toString() },
-    });
-
-    yield takeFrom(txChannel, ACTIONS.TRANSACTION_CREATED);
 
     yield put<Action<typeof ACTIONS.USERNAME_CREATE_SUCCESS>>({
       type: ACTIONS.USERNAME_CREATE_SUCCESS,
@@ -263,12 +269,20 @@ function* usernameCreate({
       },
       meta,
     });
+    yield put(
+      transactionAddParams(meta.id, {
+        orbitDBPath: profileStore.address.toString(),
+      }),
+    );
+
+    yield put(transactionReady(meta.id));
   } catch (error) {
     yield putError(ACTIONS.USERNAME_CREATE_ERROR, error, meta);
   } finally {
     txChannel.close();
   }
 }
+
 function* userPermissionsFetch({
   payload: { colonyAddress },
   meta,
