@@ -403,6 +403,7 @@ export const getUserInboxActivity: Query<
     const transformedEvents = await Promise.all(
       logs.slice(2).map(async (log, index) => {
         const cleanedEvents = events.slice(2);
+        const { domainId, user: otherUserAddress } = cleanedEvents[index] || {};
         /*
          * Manually set the `ColonyLabelRegistered` event since that doesn't show up
          */
@@ -410,22 +411,19 @@ export const getUserInboxActivity: Query<
           (cleanedEvents[index] && cleanedEvents[index].eventName) ||
           'ColonyLabelRegistered';
         const timestamp = await getLogDate(provider, log);
-        const transactionData = await provider.getTransaction(
-          log.transactionHash,
-        );
+        const {
+          to: colonyAddress,
+          from: userAddress,
+        } = await provider.getTransaction(log.transactionHash);
         const transformedEvent = {
           id: log.transactionHash,
           event: transformNotificationEventNames(eventName),
           timestamp: new Date(timestamp).getTime() * 1000,
-          userAddress: transactionData.from,
+          userAddress,
+          colonyAddress,
+          domainId,
+          otherUserAddress,
         };
-        if (eventName === 'ColonyLabelRegistered') {
-          transformedEvent.colonyAddress = transactionData.to;
-        }
-        if (eventName === 'DomainAdded') {
-          transformedEvent.colonyAddress = transactionData.to;
-          transformedEvent.domainId = cleanedEvents[index].domainId;
-        }
         return transformedEvent;
       }),
     );
