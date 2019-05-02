@@ -17,6 +17,7 @@ type Shared = {|
   colonyName?: string,
   colonyAddress?: string,
   domainName?: string,
+  domainId?: number,
   amount?: BN,
 |};
 
@@ -35,6 +36,7 @@ const defaultValues: $Shape<Shared> = {
   colonyName: undefined,
   colonyAddress: undefined,
   domainName: undefined,
+  domainId: undefined,
   amount: undefined,
 };
 

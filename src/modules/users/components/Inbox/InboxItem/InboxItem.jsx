@@ -18,7 +18,7 @@ import HookedUserAvatar from '~users/HookedUserAvatar';
 import { SpinnerLoader } from '~core/Preloaders';
 import { useDataFetcher } from '~utils/hooks';
 import { userFetcher } from '../../../fetchers';
-import { colonyFetcher } from '../../../../dashboard/fetchers';
+import { colonyFetcher, domainsFetcher } from '../../../../dashboard/fetchers';
 
 import styles from './InboxItem.css';
 
@@ -123,6 +123,7 @@ const InboxItem = ({
     comment,
     timestamp,
     domainName,
+    domainId,
     event,
     taskTitle,
     userAddress,
@@ -150,6 +151,11 @@ const InboxItem = ({
     [colonyAddress],
     [colonyAddress],
   );
+  const { data: domains, isFetching: isFetchingDomains } = useDataFetcher<
+    DomainType[],
+  >(domainsFetcher, [colonyAddress], [colonyAddress]);
+  const currentDomain =
+    domainName || (domains && domains.find(({ id }) => id === domainId || 0));
   return (
     <TableRow
       className={styles.inboxRow}
@@ -157,7 +163,10 @@ const InboxItem = ({
       // onClick={() => unread && markAsRead(id)}
     >
       <TableCell className={styles.inboxRowCell}>
-        {isFetchingUser || isFetchingColony || isFetchingOtherUser ? (
+        {isFetchingUser ||
+        isFetchingColony ||
+        isFetchingOtherUser ||
+        isFetchingDomains ? (
           <div className={styles.spinnerWrapper}>
             <SpinnerLoader
               loadingText={LOCAL_MSG.loadingText}
@@ -212,7 +221,9 @@ const InboxItem = ({
                     (colony && colony.colonyName) || colonyName,
                   ),
                   comment: makeInboxDetail(comment),
-                  domainName: makeInboxDetail(domainName),
+                  domainName: makeInboxDetail(
+                    currentDomain && currentDomain.name,
+                  ),
                   otherUser: makeInboxDetail(
                     /*
                      * Fallback
@@ -243,16 +254,16 @@ const InboxItem = ({
             </span>
 
             <span className={styles.additionalDetails}>
-              {colony && colony.colonyName && domainName && (
+              {colony && colony.colonyName && (domainName || currentDomain) && (
                 <FormattedMessage
                   {...MSG.metaColonyAndDomain}
                   values={{
                     colonyName: (colony && colony.colonyName) || colonyName,
-                    domainName,
+                    domainName: currentDomain && currentDomain.name,
                   }}
                 />
               )}
-              {colony && colony.colonyName && !domainName && (
+              {colony && colony.colonyName && !currentDomain && (
                 <FormattedMessage
                   {...MSG.metaColonyOnly}
                   values={{
