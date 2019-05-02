@@ -19,17 +19,14 @@ import { ACTIONS } from '~redux';
 
 import type { TxConfig } from '../../types';
 
+import { filterUniqueAction } from '~utils/actions';
+
 import { walletAddressSelector } from '../../../users/selectors';
 
 import { createTxAction } from '../../actionCreators';
 
 import estimateGasCost from './estimateGasCost';
 import sendTransaction from './sendTransaction';
-
-const filterAction = (action, id, type?: string) =>
-  !!action.meta &&
-  action.meta.id === id &&
-  (type ? action.type === type : true);
 
 export function* createTransaction(
   id: string,
@@ -53,12 +50,12 @@ export function* createTransaction(
 
   // Take the action where the user estimates the gas cost
   const task = yield takeEvery(
-    action => filterAction(action, id, ACTIONS.TRANSACTION_ESTIMATE_GAS),
+    filterUniqueAction(id, ACTIONS.TRANSACTION_ESTIMATE_GAS),
     estimateGasCost,
   );
 
   //  Take the action where the user sends off the transaction
-  yield take(action => filterAction(action, id, ACTIONS.TRANSACTION_SEND));
+  yield take(filterUniqueAction(id, ACTIONS.TRANSACTION_SEND));
 
   yield call(sendTransaction, id);
 
@@ -66,8 +63,5 @@ export function* createTransaction(
 }
 
 export function* getTxChannel(id: string): Saga<Channel<*>> {
-  return yield actionChannel(
-    action => filterAction(action, id),
-    buffers.fixed(),
-  );
+  return yield actionChannel(filterUniqueAction(id), buffers.fixed());
 }

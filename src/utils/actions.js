@@ -28,3 +28,8 @@ export const withKey = (key: string) => (
   ...action,
   meta: { ...action.meta, key },
 });
+
+export const filterUniqueAction = (id: string, type?: string) => (
+  action: Object,
+): boolean =>
+  action.meta && action.meta.id === id && (type ? action.type === type : true);
