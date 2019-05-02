@@ -36,7 +36,7 @@
   display: flex;
   justify-content: flex-end;
   justify-content: space-between;
-  width: 150px;
+  width: 180px;
   font-weight: var(--weight-medium);
 }
 

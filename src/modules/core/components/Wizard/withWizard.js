@@ -59,6 +59,12 @@ const withWizard = ({ steps, stepCount: maxSteps }: WizardArgs) => (
             ? currentValues.set(step, values)
             : currentValues,
       }));
+      const { step } = this.state;
+      /* Inform developer if step has been changed */
+      if (step === 0) {
+        return false;
+      }
+      return true;
     };
 
     render() {

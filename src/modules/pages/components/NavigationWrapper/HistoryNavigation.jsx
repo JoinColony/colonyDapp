@@ -79,7 +79,7 @@ const HistoryNavigation = ({
         <button
           className={styles.back}
           type="button"
-          onClick={customHandler || history.goBack}
+          onClick={() => (customHandler ? customHandler() : history.goBack())}
         >
           <Icon
             name="circle-back"
