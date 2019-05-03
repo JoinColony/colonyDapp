@@ -23,12 +23,12 @@ class Store {
 
   constructor(
     orbitStore: OrbitDBStore,
-    name: string,
+    name: string, // FIXME remove this
     pinner: PinnerConnector,
     ...args: * // eslint-disable-line no-unused-vars
   ) {
     this._orbitStore = orbitStore;
-    this._name = name;
+    this._name = orbitStore.address.path;
     this._pinner = pinner;
     this._busyPromise = null;
   }
@@ -149,6 +149,10 @@ class Store {
      * @body When pinion supports it :)
      */
     return null;
+  }
+
+  async close() {
+    return this._orbitStore.close();
   }
 }
 
