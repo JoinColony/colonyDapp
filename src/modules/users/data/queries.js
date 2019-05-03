@@ -32,14 +32,22 @@ import { USER_EVENT_TYPES } from '~data/constants';
 import { ZERO_ADDRESS } from '~utils/web3/constants';
 import { reduceToLastState } from '~utils/reducers';
 import { getTokenClient } from '~utils/web3/contracts';
-import { getEventLogs, parseUserTransferEvent, getLogsAndEvents, getLogDate } from '~utils/web3/eventLogs';
+import {
+  getEventLogs,
+  parseUserTransferEvent,
+  getLogsAndEvents,
+  getLogDate,
+} from '~utils/web3/eventLogs';
 import {
   getUserProfileStore,
   getUserInboxStore,
   getUserMetadataStore,
 } from '~data/stores';
 import { getUserTasksReducer, getUserProfileReducer } from './reducers';
-import { getUserTokenAddresses } from './utils';
+import {
+  getUserTokenAddresses,
+  transformNotificationEventNames,
+} from './utils';
 
 const {
   SUBSCRIBED_TO_COLONY,
@@ -383,7 +391,7 @@ export const getUserInboxActivity: Query<
   name: 'getUserInboxActivity',
   context: [CONTEXT.DDB_INSTANCE],
   prepare: prepareInboxStoreQuery,
-  async execute(userInboxStore) {
+  async execute(userInboxStore, { colonyClient }) {
     const {
       adapter: { provider },
     } = colonyClient;
