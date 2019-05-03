@@ -38,7 +38,7 @@ class PurserIdentityProvider<I: PurserIdentity> implements IdentityProvider<I> {
   async createIdentity() {
     const walletAddress = this._purserWallet.address;
     if (!walletAddress) {
-      throw new Error('Could not get wallet address. Is it unlocked?');
+      throw new Error('Could not create identity. Is the wallet unlocked?');
     }
 
     // Always create a key per "session"

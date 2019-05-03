@@ -4,6 +4,7 @@ import type { Address, StoreBlueprint } from '~types';
 
 import { EventStore } from '~lib/database/stores';
 import { EthereumWalletAccessController } from '../accessControllers';
+import { storePropsResolver } from './resolvers';
 
 export type UserMetadataStoreProps = {|
   walletAddress: Address,
@@ -29,6 +30,8 @@ const userMetadataStoreBlueprint: UserMetadataStoreBlueprint = Object.freeze({
   getAccessController: getEthereumWalletStoreAccessController,
   getName: ({ walletAddress }) => `userMetadata.${walletAddress}`,
   type: EventStore,
+  deterministicAddress: true,
+  resolver: storePropsResolver,
 });
 
 export default userMetadataStoreBlueprint;

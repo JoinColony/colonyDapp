@@ -7,6 +7,7 @@ import type { Address, StoreBlueprint } from '~types';
 import { EventStore } from '~lib/database/stores';
 import { ColonyAccessController } from '../accessControllers';
 import loadPermissionManifest from '../permissions';
+import { createENSResolver } from './resolvers';
 
 export type ColonyStoreProps = {|
   colonyAddress: Address,
@@ -42,10 +43,12 @@ export type ColonyStoreBlueprint = StoreBlueprint<
   ColonyAccessController,
 >;
 
+const resolver = createENSResolver<{ colonyAddress: Address }>();
 const colonyStoreBlueprint: ColonyStoreBlueprint = Object.freeze({
   getAccessController: getColonyStoreAccessController,
   getName: ({ colonyAddress }) => `colony.${colonyAddress}`,
   type: EventStore,
+  resolver,
 });
 
 export default colonyStoreBlueprint;
