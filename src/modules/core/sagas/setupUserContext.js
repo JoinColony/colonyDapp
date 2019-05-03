@@ -24,14 +24,12 @@ import { log } from '~utils/debug';
 import ENS from '../../../lib/ENS';
 import {
   getUserBalance,
-  getUserMetadata,
   getUserProfile,
   getUserColonies,
 } from '../../users/data/queries';
 import setupAdminSagas from '../../admin/sagas';
 import setupDashboardSagas from '../../dashboard/sagas';
 import { getWallet, setupUsersSagas } from '../../users/sagas';
-import { currentUserFetchColonies } from '../../users/actionCreators';
 import setupTransactionsSagas from './transactions';
 import setupNetworkSagas from './network';
 import { getDDB, getGasPrices, getColonyManager } from './utils';
@@ -93,13 +91,11 @@ export default function* setupUserContext(
     const ens = yield getContext(CONTEXT.ENS_INSTANCE);
     yield call(setupDDBResolver, colonyManager, ddb, ens);
 
-    /*
-     * Attempt to get the user profile data.
-     */
-    const context = { ddb, metadata: { walletAddress } };
     let profileData = {};
     try {
-      profileData = yield* executeQuery(context, getUserProfile);
+      profileData = yield* executeQuery(getUserProfile, {
+        metadata: { walletAddress },
+      });
     } catch (caughtError) {
       // It's ok if the user store doesn't exist (yet)
       log.warn(caughtError);
@@ -126,29 +122,12 @@ export default function* setupUserContext(
      * Attempt to get the user metadata.
      */
     try {
-      const metadata = yield* executeQuery(context, getUserMetadata);
-      // Consider merging this action with `CURRENT_USER_CREATE`?
-      yield put<Action<typeof ACTIONS.USER_METADATA_SET>>({
-        type: ACTIONS.USER_METADATA_SET,
-        payload: metadata,
-      });
-
-      const contextWithMetadata = {
-        ...context,
+      const userColonies = yield* executeQuery(getUserColonies, {
         metadata: {
-          ...context.metadata,
-          metadataStoreAddress: metadata.metadataStoreAddress,
+          walletAddress,
+          metadataStoreAddress: profileData.metadataStoreAddress,
         },
-      };
-      const userColonies = yield* executeQuery(
-        /*
-         * @note for some reason Flow doesn't inffer that I've actually added
-         * `metadataStoreAddress` to the context I'm calling the query with
-         */
-        /* $FlowFixMe */
-        contextWithMetadata,
-        getUserColonies,
-      );
+      });
 
       for (let index = 0; index < userColonies.length; index += 1) {
         const colonyClient = yield call(
