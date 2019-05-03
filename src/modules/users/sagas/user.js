@@ -493,7 +493,7 @@ function* userActivitiesFetch({
     const { inboxStoreAddress } = yield select(currentUserMetadataSelector);
     const activities = yield* executeQuery(getUserInboxActivity, {
       metadata: { inboxStoreAddress, walletAddress },
-      colonyClient,
+      args: { colonyClient },
     });
     yield put<Action<typeof ACTIONS.USER_ACTIVITIES_FETCH_SUCCESS>>({
       type: ACTIONS.USER_ACTIVITIES_FETCH_SUCCESS,
