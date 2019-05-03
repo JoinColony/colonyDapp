@@ -804,14 +804,14 @@
     "@colony/colony-js-contract-loader" "^1.8.1"
     bn.js "^4.11.6"
 
-"@colony/colony-js-client@^1.11.2":
-  version "1.11.2"
-  resolved "https://registry.yarnpkg.com/@colony/colony-js-client/-/colony-js-client-1.11.2.tgz#a0fa3424be26d247279de8c17f40561feb7254e9"
-  integrity sha512-4e8RVohxXDRSyZ4/RLxR44gD0A3FqS+Z2XJpXBr2kKkN/288Iax8oZ/nuoiKqhx6pLtezYY1EIg+woNAYDKIog==
+"@colony/colony-js-client@^1.12.0-beta.3":
+  version "1.12.0-beta.3"
+  resolved "https://registry.yarnpkg.com/@colony/colony-js-client/-/colony-js-client-1.12.0-beta.3.tgz#f46f18772687afe3c8d8ae1729ee36c5a38c6d92"
+  integrity sha512-/kCBAzmt/BCkML5j13k08Ex5+ge0iKsLVNigtFy1qc/QpRFGq6TK0wk54OJEMD2pSB7yFfWFAF018F1aIS4oAw==
   dependencies:
     "@colony/colony-js-adapter" "^1.9.0"
     "@colony/colony-js-adapter-ethers" "^1.10.0"
-    "@colony/colony-js-contract-client" "^1.11.0"
+    "@colony/colony-js-contract-client" "^1.12.0-beta.3"
     "@colony/colony-js-contract-loader" "^1.8.1"
     "@colony/colony-js-contract-loader-http" "^1.10.0"
     "@colony/colony-js-contract-loader-network" "^1.11.0"
@@ -825,10 +825,10 @@
     isomorphic-fetch "^2.2.1"
     web3-utils "^1.0.0-beta.34"
 
-"@colony/colony-js-contract-client@^1.11.0":
-  version "1.11.0"
-  resolved "https://registry.yarnpkg.com/@colony/colony-js-contract-client/-/colony-js-contract-client-1.11.0.tgz#3c80ae68260054ced75cb8c05ed45f845405206b"
-  integrity sha512-1BH+3+89O7rocHhcyiIhkcJPkYpY6n5oUg5NGeZXdM2kYcYu0Jzw5/f/CHXn4lK5tdn0pyINmti+kQg1tUwAHg==
+"@colony/colony-js-contract-client@^1.12.0-beta.3":
+  version "1.12.0-beta.3"
+  resolved "https://registry.yarnpkg.com/@colony/colony-js-contract-client/-/colony-js-contract-client-1.12.0-beta.3.tgz#3c54f2cecda4a80eec4a4ce49b7bcf4e82e72975"
+  integrity sha512-jgQql0X1qAYdqEYCt6QW2ysRGKRUaJ65biTA1i0jnqWtkDRmRHl/957B9+cCBOw1C8hpCM3IS2/qfU3rSUzxww==
   dependencies:
     "@colony/colony-js-adapter" "^1.9.0"
     "@colony/colony-js-contract-loader" "^1.8.1"
@@ -18336,7 +18336,7 @@ trough@^1.0.0:
   resolved "https://registry.yarnpkg.com/trough/-/trough-1.0.3.tgz#e29bd1614c6458d44869fc28b255ab7857ef7c24"
   integrity sha512-fwkLWH+DimvA4YCy+/nvJd61nWQQ2liO/nF/RjkTpiOGi+zxZzVkhb1mvbHIIW4b/8nDsYI8uTmAlc0nNkRMOw==
 
-trufflepig@^1.1.1:
+trufflepig@^1.1.2:
   version "1.1.2"
   resolved "https://registry.yarnpkg.com/trufflepig/-/trufflepig-1.1.2.tgz#081847f06dc775db905edcf02907a58040cd7e44"
   integrity sha512-PUNLHK2OumiDte7VfzfqGiAQqpxRap/whz7ydaI3ievdGfi9A/OXTYA2xltK4N7wDoE+K3T/RkZwxmzxKMUEBA==
