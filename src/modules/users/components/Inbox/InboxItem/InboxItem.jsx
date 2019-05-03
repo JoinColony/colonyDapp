@@ -6,7 +6,7 @@ import React from 'react';
 import { FormattedMessage, defineMessages } from 'react-intl';
 
 import type { InboxElement } from '../types';
-import type { UserType, ColonyType } from '~immutable';
+import type { UserType, ColonyType, DomainType } from '~immutable';
 
 import TimeRelative from '~core/TimeRelative';
 import { TableRow, TableCell } from '~core/Table';

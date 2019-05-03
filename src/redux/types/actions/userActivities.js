@@ -1,4 +1,7 @@
 /* @flow */
+
+import type { ColonyClient as ColonyClientType } from '@colony/colony-js-client';
+
 import type { WithKey } from '~types';
 
 import type { UniqueActionType, ErrorActionType } from '../index';
@@ -11,6 +14,7 @@ export type UserActivitiesActionTypes = {|
     typeof ACTIONS.USER_ACTIVITIES_FETCH,
     {|
       address: string,
+      colonyClient: ColonyClientType,
     |},
     WithKey,
   >,

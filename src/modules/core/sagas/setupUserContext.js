@@ -135,6 +135,11 @@ export default function* setupUserContext(
       const userColonies = yield* executeQuery(getUserColonies, {
         metadata: {
           walletAddress,
+          /*
+           * @note there's some Flow shennanings going on with how this
+           * type is declared in the `getUserProfile` query
+           */
+          /* $FlowFixMe */
           metadataStoreAddress: profileData.metadataStoreAddress,
         },
       });
