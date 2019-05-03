@@ -90,7 +90,7 @@ export const createColonyProfile: Command<
     },
   ) {
     const profileCreatedEvent = createEvent(
-      COLONY_EVENT_TYPES.PROFILE_CREATED,
+      COLONY_EVENT_TYPES.COLONY_PROFILE_CREATED,
       {
         colonyAddress,
         colonyName,
@@ -150,7 +150,7 @@ export const updateColonyProfile: Command<
   schema: UpdateColonyProfileCommandArgsSchema,
   async execute(colonyStore, args) {
     await colonyStore.append(
-      createEvent(COLONY_EVENT_TYPES.PROFILE_UPDATED, args),
+      createEvent(COLONY_EVENT_TYPES.COLONY_PROFILE_UPDATED, args),
     );
     await colonyStore.load();
     return colonyStore;
@@ -171,7 +171,7 @@ export const setColonyAvatar: Command<
   schema: SetColonyAvatarCommandArgsSchema,
   async execute(colonyStore, args) {
     await colonyStore.append(
-      createEvent(COLONY_EVENT_TYPES.AVATAR_UPLOADED, args),
+      createEvent(COLONY_EVENT_TYPES.COLONY_AVATAR_UPLOADED, args),
     );
     await colonyStore.load();
     return colonyStore;
@@ -192,7 +192,7 @@ export const removeColonyAvatar: Command<
   schema: RemoveColonyAvatarCommandArgsSchema,
   async execute(colonyStore, args) {
     await colonyStore.append(
-      createEvent(COLONY_EVENT_TYPES.AVATAR_REMOVED, args),
+      createEvent(COLONY_EVENT_TYPES.COLONY_AVATAR_REMOVED, args),
     );
     await colonyStore.load();
     return colonyStore;

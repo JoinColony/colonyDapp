@@ -159,12 +159,6 @@ export const createUserProfileStore = (ddb: DDB) => async ({
     }),
   ]);
 
-  await profileStore.set({
-    inboxStoreAddress: inboxStore.address.toString(),
-    metadataStoreAddress: metadataStore.address.toString(),
-  });
-  await profileStore.load();
-
   return { profileStore, inboxStore, metadataStore };
 };
 

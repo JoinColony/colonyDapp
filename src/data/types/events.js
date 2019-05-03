@@ -6,11 +6,13 @@ import type { Address, $Pick } from '~types';
 import type { ColonyEvents } from './ColonyEvents';
 import type { TaskEvents } from './TaskEvents';
 import type { UserEvents } from './UserEvents';
+import type { UserProfileEvents } from './UserProfileEvents';
 
 import {
   COLONY_EVENT_TYPES,
   TASK_EVENT_TYPES,
   USER_EVENT_TYPES,
+  USER_PROFILE_EVENT_TYPES,
 } from '../constants';
 
 // eslint-disable-next-line no-unused-vars
@@ -18,6 +20,7 @@ const ALL_EVENT_TYPES = Object.freeze({
   ...COLONY_EVENT_TYPES,
   ...TASK_EVENT_TYPES,
   ...USER_EVENT_TYPES,
+  ...USER_PROFILE_EVENT_TYPES,
 });
 
 /*
@@ -41,6 +44,7 @@ export type EventsType = {|
   ...ColonyEvents,
   ...TaskEvents,
   ...UserEvents,
+  ...UserProfileEvents,
 |};
 
 export type EventTypeString = $Keys<{|
