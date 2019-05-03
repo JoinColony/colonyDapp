@@ -3,31 +3,39 @@
 import type { ColonyClient as ColonyClientType } from '@colony/colony-js-client';
 
 import {
-  ADMIN_ROLE,
-  AUTHORITY_ROLES,
-  FOUNDER_ROLE,
+  COLONY_ROLE_ADMINISTRATION,
+  COLONY_ROLE_ROOT,
+  COLONY_ROLES,
 } from '@colony/colony-js-client';
 
 import type { PermissionsManifest } from './types';
 
-type AuthorityRole = $Keys<typeof AUTHORITY_ROLES>;
+type ColonyRole = $Keys<typeof COLONY_ROLES>;
 
 const isAny = (...promises): Promise<boolean> =>
   Promise.all(promises).then(values => values.some(value => !!value));
 
 const makeUserHasRoleFn = (
   colonyClient: ColonyClientType,
-  role: AuthorityRole,
-) => async (user: string): Promise<boolean> => {
-  const { hasRole } = await colonyClient.hasUserRole.call({ user, role });
+  role: ColonyRole,
+) => async (address: string): Promise<boolean> => {
+  // do they have the role in the colony root domain
+  const { hasRole } = await colonyClient.hasColonyRole.call({
+    address,
+    role,
+    domainId: 1,
+  });
   return hasRole;
 };
 
 export default function loadModule(
   colonyClient: ColonyClientType,
 ): PermissionsManifest {
-  const isColonyAdmin = makeUserHasRoleFn(colonyClient, ADMIN_ROLE);
-  const isColonyFounder = makeUserHasRoleFn(colonyClient, FOUNDER_ROLE);
+  const isColonyAdmin = makeUserHasRoleFn(
+    colonyClient,
+    COLONY_ROLE_ADMINISTRATION,
+  );
+  const isColonyFounder = makeUserHasRoleFn(colonyClient, COLONY_ROLE_ROOT);
 
   return {
     'is-colony-admin': isColonyAdmin,

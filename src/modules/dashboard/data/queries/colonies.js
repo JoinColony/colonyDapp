@@ -85,42 +85,41 @@ export const getColonyRoles: ContractEventQuery<
   prepare: prepareColonyClientQuery,
   async execute(colonyClient) {
     const {
-      events: {
-        ColonyAdminRoleRemoved,
-        ColonyAdminRoleSet,
-        ColonyFounderRoleSet,
-      },
+      events: { ColonyAdministrationRoleSet, ColonyRootRoleSet },
     } = colonyClient;
     const events = await getEvents(
       colonyClient,
       {},
       {
         blocksBack: 400000,
-        events: [
-          ColonyAdminRoleRemoved,
-          ColonyAdminRoleSet,
-          ColonyFounderRoleSet,
-        ],
+        events: [ColonyAdministrationRoleSet, ColonyRootRoleSet],
       },
     );
-    const { eventName: ADMIN_ADDED } = ColonyAdminRoleSet;
-    const { eventName: FOUNDER_SET } = ColonyFounderRoleSet;
+    const { eventName: ADMINISTRATION_SET } = ColonyAdministrationRoleSet;
+    const { eventName: ROOT_SET } = ColonyRootRoleSet;
 
-    const getKey = event => event.user;
-    const getValue = event => event.eventName;
-
-    const admins = reduceToLastState(events, getKey, getValue)
-      .filter(([, eventName]) => eventName === ADMIN_ADDED)
-      .map(([user]) => user);
-
+    // get the founder from the most recent ROOT_SET event
     const founderEvent = getLast(
       events,
-      ({ eventName }) => eventName === FOUNDER_SET,
+      ({ eventName, setTo }) => eventName === ROOT_SET && setTo === true,
     );
+    const founder = founderEvent && founderEvent.address;
+
+    // get admins from ADMINISTRATION_SET events which are not founder
+    const getKey = event => event.address;
+    const getValue = event => event;
+    const admins = reduceToLastState(events, getKey, getValue)
+      .filter(
+        ([, { eventName, setTo, address }]) =>
+          eventName === ADMINISTRATION_SET &&
+          setTo === true &&
+          address !== founder,
+      )
+      .map(([user]) => user);
 
     return {
       admins,
-      founder: founderEvent && founderEvent.newFounder,
+      founder,
     };
   },
 };

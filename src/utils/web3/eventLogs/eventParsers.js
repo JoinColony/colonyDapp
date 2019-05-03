@@ -91,10 +91,10 @@ export const parseColonyFundsMovedBetweenFundingPotsEvent = async ({
 };
 
 /*
- * Given a ColonyJS-parsed TaskPayoutClaimedEvent, log from which it was
+ * Given a ColonyJS-parsed PayoutClaimedEvent, log from which it was
  * parsed, and ColonyClient, return a ContractTransactionType object.
  */
-export const parseTaskPayoutClaimedEvent = async ({
+export const parsePayoutClaimedEvent = async ({
   event: { taskId, role, amount, token },
   log: { transactionHash: hash },
   log,
