@@ -116,7 +116,6 @@ function* colonyCreate({
       /*
        * Create the profile store
        */
-      const walletAddress = yield select(walletAddressSelector);
       const { profileStore, metadataStore, inboxStore } = yield* executeCommand(
         createUserProfile,
         {
