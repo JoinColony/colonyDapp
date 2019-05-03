@@ -409,11 +409,25 @@ export const getUserInboxActivity: Query<
       },
     );
     const transformedEvents = await Promise.all(
+      /*
+       * @note Remove the first two log entries.
+       *
+       * When creating a new colony, the first 3 log events are:
+       * - Root colony domain added with id `1`
+       * - Root colony domain added with id `1` (same as the above, maybe a bug?)
+       * - Colony ENS name claimed
+       *
+       * Since we don't notify the user about the root domain creation, we remove
+       * those two log entries from the array
+       */
       logs.slice(2).map(async (log, index) => {
         const cleanedEvents = events.slice(2);
         const { domainId, user: otherUserAddress } = cleanedEvents[index] || {};
         /*
-         * Manually set the `ColonyLabelRegistered` event since that doesn't show up
+         * @note Manually set the `ColonyLabelRegistered` event
+         *
+         * Since that event doesn't show up for some reason, maybe a bug ?
+         * But use the event name from the others (eg: DomainAdded, ColonyAdminRoleSet)
          */
         const eventName =
           (cleanedEvents[index] && cleanedEvents[index].eventName) ||
