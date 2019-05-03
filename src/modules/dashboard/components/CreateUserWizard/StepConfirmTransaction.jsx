@@ -1,7 +1,7 @@
 /* @flow */
 
 import React from 'react';
-import { defineMessages } from 'react-intl';
+import { defineMessages, FormattedMessage } from 'react-intl';
 import { Redirect } from 'react-router';
 
 import styles from './StepConfirmTransaction.css';
@@ -9,7 +9,9 @@ import styles from './StepConfirmTransaction.css';
 import { groupedTransactions } from '../../../core/selectors';
 
 import Heading from '~core/Heading';
-import GasStationContent from '../../../users/components/GasStation/GasStationContent';
+import Link from '~core/Link';
+
+import GasStationContent from '~users/GasStation/GasStationContent';
 import { useSelector } from '~utils/hooks';
 
 import { DASHBOARD_ROUTE } from '~routes';
@@ -18,7 +20,7 @@ import {
   getGroupStatus,
   findTransactionGroupByKey,
   getGroupKey,
-} from '../../../users/components/GasStation/transactionGroup';
+} from '~users/GasStation/transactionGroup';
 
 const MSG = defineMessages({
   heading: {
@@ -26,11 +28,15 @@ const MSG = defineMessages({
     defaultMessage: `Complete this transaction to
       finish setting up your account.`,
   },
+  later: {
+    id: 'dashboard.CreateUserWizard.StepUserName.later',
+    defaultMessage: `I'll do it later`,
+  },
 });
 
 const displayName = 'dashboard.CreateUserWizard.StepConfirmTransaction';
 
-const StepConfirmTransactions = () => {
+const StepConfirmTransaction = () => {
   const transactionGroups = useSelector(groupedTransactions);
   if (
     transactionGroups &&
@@ -60,10 +66,17 @@ const StepConfirmTransactions = () => {
           />
         )}
       </div>
+      <div className={styles.buttons}>
+        <p className={styles.reminder}>
+          <Link to={DASHBOARD_ROUTE}>
+            <FormattedMessage {...MSG.later} />
+          </Link>
+        </p>
+      </div>
     </section>
   );
 };
 
-StepConfirmTransactions.displayName = displayName;
+StepConfirmTransaction.displayName = displayName;
 
-export default StepConfirmTransactions;
+export default StepConfirmTransaction;

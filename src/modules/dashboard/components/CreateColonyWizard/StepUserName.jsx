@@ -34,7 +34,7 @@ const MSG = defineMessages({
     id: 'dashboard.CreateColonyWizard.StepUserName.descriptionOne',
     defaultMessage:
       // eslint-disable-next-line max-len
-      'Let’s start with the basics. What can we call you?',
+      `Let's get your account set up. All we need is a username.`,
   },
   label: {
     id: 'dashboard.CreateColonyWizard.StepUserName.label',

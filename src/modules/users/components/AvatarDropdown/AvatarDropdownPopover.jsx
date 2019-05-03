@@ -8,7 +8,7 @@ import { withRouter } from 'react-router-dom';
 import type { IBrowserHistory } from 'history';
 import type { OpenDialog } from '~core/Dialog/types';
 
-import { unfinishedProfileOpener } from '~users/UnfinishedProfileDialog';
+import unfinishedProfileOpener from '~users/UnfinishedProfile';
 
 import {
   USER_EDIT_ROUTE,

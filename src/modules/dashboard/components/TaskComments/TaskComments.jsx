@@ -16,7 +16,7 @@ import { useAsyncFunction } from '~utils/hooks';
 import withDialog from '~core/Dialog/withDialog';
 import { Form, FormStatus, TextareaAutoresize } from '~core/Fields';
 import Button from '~core/Button';
-import { unfinishedProfileOpener } from '~users/UnfinishedProfileDialog';
+import unfinishedProfileOpener from '~users/UnfinishedProfile';
 
 import { userDidClaimProfile } from '../../../users/checks';
 

@@ -13,7 +13,7 @@ import { mergePayload } from '~utils/actions';
 
 import withDialog from '~core/Dialog/withDialog';
 import Button, { ActionButton } from '~core/Button';
-import { unfinishedProfileOpener } from '~users/UnfinishedProfileDialog';
+import unfinishedProfileOpener from '~users/UnfinishedProfile';
 
 import { canRequestToWork, hasRequestedToWork } from '../../checks';
 import { userDidClaimProfile } from '../../../users/checks';
