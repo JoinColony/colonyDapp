@@ -5,7 +5,7 @@ import type { Channel, Saga } from 'redux-saga';
 import nanoid from 'nanoid';
 import { all, call, put, race, take, select } from 'redux-saga/effects';
 
-import type { ErrorActionType, TakeFilter } from '~redux';
+import type { ErrorActionType, TakeFilter, Action } from '~redux';
 import type { Command, Query } from '../../data/types';
 import type { UserActivityType } from '~immutable';
 

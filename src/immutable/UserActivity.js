@@ -13,7 +13,7 @@ type Shared = {|
   userAddress?: string,
   otherUserAddress?: string,
   event: string,
-  timestamp?: Date,
+  timestamp?: Date | number,
   colonyName?: string,
   colonyAddress?: string,
   domainName?: string,
