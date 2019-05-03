@@ -108,7 +108,7 @@ class Dashboard extends Component<Props, State> {
       />
     );
     return (
-      <div className={styles.layoutMain} data-test="dashboard">
+      <div data-test="dashboard" className={styles.layoutMain}>
         <main className={styles.content}>
           <Tabs onSelect={this.setTabIndex}>
             <TabList extra={filterSelect}>

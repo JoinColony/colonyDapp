@@ -116,6 +116,7 @@ const StepConfirmAllInput = ({ nextStep, wizardValues }: Props) => {
             <Button
               appearance={{ theme: 'primary', size: 'large' }}
               type="submit"
+              data-test="userInputConfirm"
               text={MSG.continue}
               loading={isSubmitting}
             />

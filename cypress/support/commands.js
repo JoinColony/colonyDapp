@@ -84,6 +84,14 @@ Cypress.Commands.add(
       ),
 );
 
+Cypress.Commands.add('confirmTx', () => {
+  cy.get('button[data-test="gasStationConfirmTransaction"]', {
+    timeout: 5000,
+  }).should('be.visible');
+
+  cy.get('button[data-test="gasStationConfirmTransaction"]').click();
+});
+
 Cypress.Commands.add('initState', () => {
   /*
    * Dev Helper method to reset the state with no currentUser set

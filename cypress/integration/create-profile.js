@@ -38,7 +38,10 @@ describe('Creates a new profile', () => {
       .contains('Create a Colony')
       .click();
   });
-
+  /*
+   * Please keep in mind that the test will not work on rerun
+   * since the username step will be skipped
+   */
   it('Fill out (ENS) username in first wizard step', () => {
     /*
      * Load the usernames fixture
@@ -76,16 +79,11 @@ describe('Creates a new profile', () => {
     /*
      * Submit your selected colonyName
      */
-    cy.get('button[data-test="claimColonyNameConfirm"]')
-      .click()
-      /*
-       * Wait until next wizard step opens
-       */
-      .wait(2000);
+    cy.get('button[data-test="claimColonyNameConfirm"]').click();
   });
 
   it('Fill out token details in fourth wizard step', () => {
-    cy.get('div[data-test="hubOptions"] button')
+    cy.get('div[data-test="hubOptions"] button', { timeout: 2000 })
       .first()
       .click();
     /*
@@ -93,14 +91,66 @@ describe('Creates a new profile', () => {
      */
     cy.fixture('colonies').then(({ tokenName, tokenSymbol }) => {
       /*
-       * Fill the colonyName form
+       * Fill the tokenName and tokenSymbol form
        */
       cy.get('input[data-test="defineTokenName"]').type(tokenName);
       cy.get('input[data-test="defineTokenSymbol"]').type(tokenSymbol);
     });
     /*
-     * Submit your selected colonyName
+     * Submit your token details
      */
     cy.get('button[data-test="definedTokenConfirm"]').click();
+  });
+
+  it('Confirm user input and process transactions', () => {
+    cy.get('button[data-test="userInputConfirm"]').click();
+  });
+
+  it('Sign the transaction', () => {
+    /*
+     * Check if the gas station is open
+     */
+    cy.get('div[data-test="gasStation"]', { timeout: 6000 }).should(
+      'be.visible',
+    );
+    /*
+     * Click on the Claim Username Transaction
+     */
+    cy.get('ul[data-test="gasStationGroupedTransaction"]')
+      .get('li')
+      .contains('Claim Username')
+      .click();
+    /*
+     * Confirm the transaction
+     */
+    cy.confirmTx();
+    /*
+     * Deal with next transaction
+     * Click on the Claim Username Transaction
+     */
+    cy.get('ul[data-test="gasStationGroupedTransaction"]')
+      .get('li')
+      .contains('Create Token')
+      .click();
+    /*
+     * Confirm the transaction
+     */
+    cy.confirmTx();
+
+    cy.get('ul[data-test="gasStationGroupedTransaction"]')
+      .get('li')
+      .contains('Create Colony')
+      .click();
+
+    cy.confirmTx();
+
+    cy.get('ul[data-test="gasStationGroupedTransaction"]')
+      .get('li')
+      .contains('Create Colony Name')
+      .click();
+
+    cy.confirmTx();
+
+    cy.get('div[data-test="dashboard"]').should('exist');
   });
 });
