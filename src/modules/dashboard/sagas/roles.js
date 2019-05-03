@@ -49,7 +49,7 @@ function* colonyAdminAdd({
       context: COLONY_CONTEXT,
       methodName: 'setAdminRole',
       identifier: colonyAddress,
-      params: { user: newAdmin },
+      params: { address: newAdmin, setTo: true },
     });
 
     yield takeFrom(txChannel, ACTIONS.TRANSACTION_SUCCEEDED);
@@ -86,9 +86,9 @@ function* colonyAdminRemove({
      */
     yield fork(createTransaction, meta.id, {
       context: COLONY_CONTEXT,
-      methodName: 'removeAdminRole',
+      methodName: 'setAdminRole',
       identifier: colonyAddress,
-      params: { user },
+      params: { address: user, setTo: false },
     });
 
     yield takeFrom(txChannel, ACTIONS.TRANSACTION_SUCCEEDED);

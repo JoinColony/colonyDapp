@@ -8,7 +8,7 @@ import {
   getLogsAndEvents,
   parseColonyFundsClaimedEvent,
   parseColonyFundsMovedBetweenFundingPotsEvent,
-  parseTaskPayoutClaimedEvent,
+  parsePayoutClaimedEvent,
   parseUnclaimedTransferEvent,
 } from '~utils/web3/eventLogs';
 
@@ -21,7 +21,7 @@ const EVENT_PARSERS = {
   ColonyFundsClaimed: parseColonyFundsClaimedEvent,
   // eslint-disable-next-line max-len
   ColonyFundsMovedBetweenFundingPots: parseColonyFundsMovedBetweenFundingPotsEvent,
-  TaskPayoutClaimed: parseTaskPayoutClaimedEvent,
+  PayoutClaimed: parsePayoutClaimedEvent,
 };
 
 const context = [CONTEXT.COLONY_MANAGER];
@@ -43,7 +43,7 @@ export const getColonyTransactions: ContractEventQuery<
       events: {
         ColonyFundsClaimed,
         ColonyFundsMovedBetweenFundingPots,
-        TaskPayoutClaimed,
+        PayoutClaimed,
       },
     } = colonyClient;
     const { events, logs } = await getLogsAndEvents(
@@ -54,7 +54,7 @@ export const getColonyTransactions: ContractEventQuery<
         events: [
           ColonyFundsClaimed,
           ColonyFundsMovedBetweenFundingPots,
-          TaskPayoutClaimed,
+          PayoutClaimed,
         ],
       },
     );
