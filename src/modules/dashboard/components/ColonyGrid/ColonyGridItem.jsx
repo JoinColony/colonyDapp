@@ -25,7 +25,7 @@ const ColonyGridItem = ({ colonyAddress }: Props) => {
   return (
     <div className={styles.main}>
       <Link to={`/colony/${colony.colonyName}`}>
-        <ColonyAvatar colonyAddress={colonyAddress} colony={colony} />
+        <ColonyAvatar colonyAddress={colonyAddress} colony={colony} showLink />
         <Heading text={colony.displayName} appearance={{ size: 'small' }} />
       </Link>
     </div>

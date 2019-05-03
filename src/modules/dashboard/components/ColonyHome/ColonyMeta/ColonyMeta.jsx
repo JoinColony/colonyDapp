@@ -76,6 +76,7 @@ const ColonyMeta = ({
         colonyAddress={colonyAddress}
         colony={colony}
         size="xl"
+        showLink
       />
       <section className={styles.headingWrapper}>
         <Heading appearance={{ margin: 'none', size: 'medium', theme: 'dark' }}>
