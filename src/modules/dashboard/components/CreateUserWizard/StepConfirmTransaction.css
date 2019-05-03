@@ -18,3 +18,17 @@
   border: 1px solid var(--temp-grey-blue-2);
   background-color: var(--temp-grey-blue-6);
 }
+
+.buttons {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  margin-top: 13px;
+}
+
+.reminder {
+  max-width: 215px;
+  font-size: var(--size-tiny);
+  font-weight: var(--weight-medium);
+  line-height: 18px;
+}

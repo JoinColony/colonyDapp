@@ -14,10 +14,13 @@ import { ActionForm, Input } from '~core/Fields';
 import Heading from '~core/Heading';
 import Button from '~core/Button';
 import Icon from '~core/Icon';
+import Link from '~core/Link';
 import { Tooltip } from '~core/Popover';
 import { ACTIONS } from '~redux';
 
 import { getNormalizedDomainText } from '~utils/strings';
+
+import { DASHBOARD_ROUTE } from '~routes';
 
 type FormValues = {
   username: string,
@@ -44,10 +47,9 @@ const MSG = defineMessages({
     id: 'dashboard.CreateUserWizard.StepUserName.continue',
     defaultMessage: 'Continue',
   },
-  gotETH: {
-    id: 'dashboard.CreateUserWizard.StepUserName.gotETH',
-    defaultMessage: `Got ETH? You'll need some at the end
-      to cover Ethereum's transaction fees.`,
+  later: {
+    id: 'dashboard.CreateUserWizard.StepUserName.later',
+    defaultMessage: `I'll do it later`,
   },
   errorDomainTaken: {
     id: 'dashboard.CreateUserWizard.StepUserName.errorDomainTaken',
@@ -156,7 +158,9 @@ const StepUserName = ({ wizardValues, nextStep }: Props) => {
                 />
                 <div className={styles.buttons}>
                   <p className={styles.reminder}>
-                    <FormattedMessage {...MSG.gotETH} />
+                    <Link to={DASHBOARD_ROUTE}>
+                      <FormattedMessage {...MSG.later} />
+                    </Link>
                   </p>
                   <Button
                     appearance={{ theme: 'primary', size: 'large' }}

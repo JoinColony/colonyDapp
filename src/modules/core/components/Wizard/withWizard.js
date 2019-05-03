@@ -54,7 +54,7 @@ const withWizard = ({ steps, stepCount: maxSteps, hideQR }: WizardArgs) => (
     prev = (values?: Values) => {
       const { step: currentStep } = this.state;
       /* Inform developer if step has been changed
-       * if we are already in th first step there
+       * if we are already in the first step there
        * is no way of going back within the wizard
        */
       if (currentStep === 0) {

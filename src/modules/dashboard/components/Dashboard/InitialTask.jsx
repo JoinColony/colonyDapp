@@ -8,7 +8,7 @@ import { withRouter } from 'react-router-dom';
 import compose from 'recompose/compose';
 import { FormattedMessage } from 'react-intl';
 
-import { unfinishedProfileOpener } from '~users/UnfinishedProfileDialog';
+import unfinishedProfileOpener from '~users/UnfinishedProfile';
 import { Table, TableBody, TableRow, TableCell } from '~core/Table';
 import HookedUserAvatar from '~users/HookedUserAvatar';
 

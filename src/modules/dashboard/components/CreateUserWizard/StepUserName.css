@@ -17,10 +17,12 @@
   display: flex;
   justify-content: space-between;
   align-items: flex-end;
+  align-items: baseline;
   margin-top: 13px;
 }
 
 .reminder {
+  margin-left: 50%;
   max-width: 215px;
   font-size: var(--size-tiny);
   font-weight: var(--weight-medium);

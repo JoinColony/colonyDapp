@@ -11,7 +11,7 @@ import type { UserType } from '~immutable';
 import type { IBrowserHistory } from 'history';
 
 import { withImmutablePropsToJS } from '~utils/hoc';
-import { unfinishedProfileOpener } from '~users/UnfinishedProfileDialog';
+import unfinishedProfileOpener from '~users/UnfinishedProfile';
 
 import { withCurrentUser } from '../../../hocs';
 
