@@ -118,9 +118,19 @@ export default function* setupUserContext(
      */
     yield fork(setupContextDependentSagas);
 
-    /*
-     * Attempt to get the user metadata.
-     */
+    yield put<Action<typeof ACTIONS.CURRENT_USER_CREATE>>({
+      type: ACTIONS.CURRENT_USER_CREATE,
+      payload: {
+        balance,
+        profileData,
+        walletAddress,
+      },
+      meta: {
+        ...meta,
+        key: walletAddress,
+      },
+    });
+
     try {
       const userColonies = yield* executeQuery(getUserColonies, {
         metadata: {
@@ -154,19 +164,6 @@ export default function* setupUserContext(
       // It's ok if the user store doesn't exist (yet)
       log.warn(caughtError);
     }
-
-    yield put<Action<typeof ACTIONS.CURRENT_USER_CREATE>>({
-      type: ACTIONS.CURRENT_USER_CREATE,
-      payload: {
-        balance,
-        profileData,
-        walletAddress,
-      },
-      meta: {
-        ...meta,
-        key: walletAddress,
-      },
-    });
 
     yield call(setupOnBeforeUnload);
   } catch (caughtError) {
