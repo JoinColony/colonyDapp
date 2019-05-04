@@ -153,7 +153,7 @@ export default function* setupUserContext(
         /*
          * Load the user activities from the store
          */
-        yield put({
+        yield put<Action<typeof ACTIONS.USER_ACTIVITIES_FETCH>>({
           type: ACTIONS.USER_ACTIVITIES_FETCH,
           payload: {
             colonyClient,
