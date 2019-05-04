@@ -16,9 +16,12 @@ import { DialogLink } from '~core/Dialog';
 import Link from '~core/Link';
 import HookedUserAvatar from '~users/HookedUserAvatar';
 import { SpinnerLoader } from '~core/Preloaders';
+
 import { useDataFetcher, useSelector } from '~utils/hooks';
+
 import { userFetcher } from '../../../fetchers';
 import { colonyFetcher, domainsFetcher } from '../../../../dashboard/fetchers';
+import { friendlyColonyNameSelector } from '../../../../dashboard/selectors';
 import { friendlyUsernameSelector } from '../../../selectors';
 
 import styles from './InboxItem.css';
@@ -150,6 +153,11 @@ const InboxItem = ({
     [colonyAddress],
     [colonyAddress],
   );
+  const colonyDisplayNameWithFallback = useSelector(
+    friendlyColonyNameSelector,
+    [colonyAddress],
+  );
+  const colonyNameWithFallback = (colony && colony.colonyName) || colonyName;
   const { data: domains, isFetching: isFetchingDomains } = useDataFetcher<
     DomainType[],
   >(domainsFetcher, [colonyAddress], [colonyAddress]);
@@ -206,17 +214,9 @@ const InboxItem = ({
                     />
                   )),
                   colonyDisplayName: makeInboxDetail(
-                    /*
-                     * Fallback
-                     * If we could fetch the colony then either show the display name (if available) or the ENS name
-                     * If we could not fetch the colony, just show the colony's address
-                     */
-                    (colony && (colony.displayName || colony.colonyName)) ||
-                      colonyAddress,
+                    colonyDisplayNameWithFallback,
                   ),
-                  colonyName: makeInboxDetail(
-                    (colony && colony.colonyName) || colonyName,
-                  ),
+                  colonyName: makeInboxDetail(colonyNameWithFallback),
                   comment: makeInboxDetail(comment),
                   domainName: makeInboxDetail(
                     currentDomain && currentDomain.name,
@@ -236,7 +236,7 @@ const InboxItem = ({
                 <FormattedMessage
                   {...MSG.metaColonyAndDomain}
                   values={{
-                    colonyName: (colony && colony.colonyName) || colonyName,
+                    colonyName: colonyNameWithFallback,
                     domainName: currentDomain && currentDomain.name,
                   }}
                 />
@@ -245,7 +245,7 @@ const InboxItem = ({
                 <FormattedMessage
                   {...MSG.metaColonyOnly}
                   values={{
-                    colonyName: (colony && colony.colonyName) || colonyName,
+                    colonyName: colonyNameWithFallback,
                   }}
                 />
               )}
