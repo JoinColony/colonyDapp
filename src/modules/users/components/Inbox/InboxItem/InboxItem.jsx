@@ -139,14 +139,6 @@ const InboxItem = ({
   const userDisplayWithFallback = useSelector(friendlyUsernameSelector, [
     userAddress,
   ]);
-  const {
-    data: otherUser,
-    isFetching: isFetchingOtherUser,
-  } = useDataFetcher<UserType>(
-    userFetcher,
-    [otherUserAddress],
-    [otherUserAddress],
-  );
   const otherUserDisplayWithFallback = useSelector(friendlyUsernameSelector, [
     otherUserAddress,
   ]);
@@ -171,10 +163,7 @@ const InboxItem = ({
       // onClick={() => unread && markAsRead(id)}
     >
       <TableCell className={styles.inboxRowCell}>
-        {isFetchingUser ||
-        isFetchingColony ||
-        isFetchingOtherUser ||
-        isFetchingDomains ? (
+        {isFetchingUser || isFetchingColony || isFetchingDomains ? (
           <div className={styles.spinnerWrapper}>
             <SpinnerLoader
               loadingText={LOCAL_MSG.loadingText}
