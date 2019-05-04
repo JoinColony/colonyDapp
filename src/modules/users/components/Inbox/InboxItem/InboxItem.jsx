@@ -16,9 +16,10 @@ import { DialogLink } from '~core/Dialog';
 import Link from '~core/Link';
 import HookedUserAvatar from '~users/HookedUserAvatar';
 import { SpinnerLoader } from '~core/Preloaders';
-import { useDataFetcher } from '~utils/hooks';
+import { useDataFetcher, useSelector } from '~utils/hooks';
 import { userFetcher } from '../../../fetchers';
 import { colonyFetcher, domainsFetcher } from '../../../../dashboard/fetchers';
+import { friendlyUsernameSelector } from '../../../selectors';
 
 import styles from './InboxItem.css';
 
@@ -135,6 +136,9 @@ const InboxItem = ({
     [userAddress],
     [userAddress],
   );
+  const userDisplayWithFallback = useSelector(friendlyUsernameSelector, [
+    userAddress,
+  ]);
   const {
     data: otherUser,
     isFetching: isFetchingOtherUser,
@@ -143,6 +147,9 @@ const InboxItem = ({
     [otherUserAddress],
     [otherUserAddress],
   );
+  const otherUserDisplayWithFallback = useSelector(friendlyUsernameSelector, [
+    otherUserAddress,
+  ]);
   const {
     data: colony,
     isFetching: isFetchingColony,
@@ -225,31 +232,12 @@ const InboxItem = ({
                   domainName: makeInboxDetail(
                     currentDomain && currentDomain.name,
                   ),
-                  otherUser: makeInboxDetail(
-                    /*
-                     * Fallback
-                     * If we could fetch the other user then either show the display name (if available) or the ENS name
-                     * If we could not fetch the other user, just show the other user's wallet address
-                     */
-                    (otherUser &&
-                      (otherUser.profile.displayName ||
-                        otherUser.profile.username)) ||
-                      otherUserAddress,
-                  ),
+                  otherUser: makeInboxDetail(otherUserDisplayWithFallback),
                   task: makeInboxDetail(taskTitle),
                   time: makeInboxDetail(timestamp, value => (
                     <TimeRelative value={value} />
                   )),
-                  user: makeInboxDetail(
-                    /*
-                     * Fallback
-                     * If we could fetch the user then either show the display name (if available) or the ENS name
-                     * If we could not fetch the user, just show the user's wallet address
-                     */
-                    (user &&
-                      (user.profile.displayName || user.profile.username)) ||
-                      userAddress,
-                  ),
+                  user: makeInboxDetail(userDisplayWithFallback),
                 }}
               />
             </span>
