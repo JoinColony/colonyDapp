@@ -6,7 +6,7 @@ import type { UserType } from '~immutable';
 
 import Avatar from '~core/Avatar';
 import UserInfo from '~core/UserInfo';
-import NavLink from '~core/NavLink';
+import Link from '~core/NavLink';
 
 export type Props = {|
   /** Address of the current user for identicon fallback */
@@ -55,7 +55,7 @@ const UserAvatar = ({
   );
   if (showLink && username) {
     // Won't this always be lowercase?
-    return <NavLink to={`/user/${username.toLowerCase()}`}>{avatar}</NavLink>;
+    return <Link to={`/user/${username.toLowerCase()}`}>{avatar}</Link>;
   }
   return avatar;
 };
