@@ -1,7 +1,8 @@
 /* @flow */
 
-import type { OrbitDBStore } from '../types';
+import debounce from 'lodash/debounce';
 
+import type { OrbitDBStore } from '../types';
 import { raceAgainstTimeout } from '../../../utils/async';
 import { log } from '../../../utils/debug';
 import PinnerConnector from '../../ipfs/PinnerConnector';
@@ -40,6 +41,12 @@ class Store {
   get busy() {
     return !!this._busyPromise;
   }
+
+  // This needs to be bound to the instance
+  pin = debounce(() => {
+    // @todo: it might be worthwhile finding out why we need to debounce this in the first place
+    this._pinner.pinStore(this.address.toString());
+  }, 10 * 1000);
 
   async _loadHeads() {
     const address = this.address.toString();
