@@ -5,7 +5,7 @@ import PeerMonitor from 'ipfs-pubsub-peer-monitor';
 import IPFS from 'ipfs';
 
 import { isDev, log } from '../../utils/debug';
-import { raceAgainstTimeout } from '../../utils/async';
+// import { raceAgainstTimeout } from '../../utils/async';
 
 import type { PinnerAction } from './types';
 
@@ -16,7 +16,7 @@ type PubsubMessage = {
 };
 
 const PINNER_CONNECT_TIMEOUT = 20 * 1000; // This is just a number I came up with randomly. Adjust if necessary
-const PINNER_HAVE_HEADS_TIMEOUT = 20 * 1000; // Same
+// const PINNER_HAVE_HEADS_TIMEOUT = 20 * 1000; // Same
 
 const PIN_ACTIONS = {
   PIN_STORE: 'PIN_STORE',
@@ -81,7 +81,7 @@ class PinnerConnector extends EventEmitter {
 
   _handleNewPeer(peer: string) {
     // If no pinner id was given, everyone can be the pinner! Definitely not recommended.
-    console.log('here is a new peer ' + peer)
+    //     console.log(`here is a new peer ${peer}`);
 
     /**
      * @todo Maintain multiple pinner IDs for the PinnerConnector
@@ -197,7 +197,7 @@ class PinnerConnector extends EventEmitter {
   }
 
   async requestPinnedStore(address: string) {
-    let listener;
+    // let listener;
     // const getHeads = new Promise(resolve => {
     //   listener = ({ type, to, payload }) => {
     //     if (type === PIN_ACTIONS.HAVE_HEADS && to === address) {
