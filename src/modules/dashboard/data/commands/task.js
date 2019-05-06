@@ -105,6 +105,7 @@ export const createTask: Command<
     taskStore: TaskStore,
   |},
 > = {
+  name: 'createTask',
   context: [CONTEXT.COLONY_MANAGER, CONTEXT.DDB_INSTANCE, CONTEXT.WALLET],
   schema: CreateTaskCommandArgsSchema,
   async prepare(
@@ -183,6 +184,7 @@ export const setTaskTitle: Command<
     taskStore: TaskStore,
   |},
 > = {
+  name: 'setTaskTitle',
   context: [CONTEXT.COLONY_MANAGER, CONTEXT.DDB_INSTANCE, CONTEXT.WALLET],
   prepare: prepareTaskStoreCommand,
   schema: SetTaskTitleCommandArgsSchema,
@@ -207,6 +209,7 @@ export const setTaskDescription: Command<
     taskStore: TaskStore,
   |},
 > = {
+  name: 'setTaskDescription',
   context: [CONTEXT.COLONY_MANAGER, CONTEXT.DDB_INSTANCE, CONTEXT.WALLET],
   prepare: prepareTaskStoreCommand,
   schema: SetTaskDescriptionCommandArgsSchema,
@@ -231,6 +234,7 @@ export const setTaskDueDate: Command<
     taskStore: TaskStore,
   |},
 > = {
+  name: 'setTaskDueDate',
   context: [CONTEXT.COLONY_MANAGER, CONTEXT.DDB_INSTANCE, CONTEXT.WALLET],
   prepare: prepareTaskStoreCommand,
   schema: SetTaskDueDateCommandArgsSchema,
@@ -255,6 +259,7 @@ export const setTaskSkill: Command<
     taskStore: TaskStore,
   |},
 > = {
+  name: 'setTaskSkill',
   context: [CONTEXT.COLONY_MANAGER, CONTEXT.DDB_INSTANCE, CONTEXT.WALLET],
   prepare: prepareTaskStoreCommand,
   schema: SetTaskSkillCommandArgsSchema,
@@ -279,6 +284,7 @@ export const createWorkRequest: Command<
     taskStore: TaskStore,
   |},
 > = {
+  name: 'createWorkRequest',
   context: [CONTEXT.COLONY_MANAGER, CONTEXT.DDB_INSTANCE, CONTEXT.WALLET],
   prepare: prepareTaskStoreCommand,
   async execute(taskStore, { workerAddress }) {
@@ -302,6 +308,7 @@ export const sendWorkInvite: Command<
     taskStore: TaskStore,
   |},
 > = {
+  name: 'sendWorkInvite',
   context: [CONTEXT.COLONY_MANAGER, CONTEXT.DDB_INSTANCE, CONTEXT.WALLET],
   prepare: prepareTaskStoreCommand,
   schema: SendWorkInviteCommandArgsSchema,
@@ -340,6 +347,7 @@ export const postComment: Command<
     commentsStore: CommentsStore,
   |},
 > = {
+  name: 'postComment',
   context: [CONTEXT.COLONY_MANAGER, CONTEXT.DDB_INSTANCE, CONTEXT.WALLET],
   prepare: prepareCommentsStoreCommand,
   schema: PostCommentCommandArgsSchema,
@@ -363,6 +371,7 @@ export const setTaskPayout: Command<
     taskStore: TaskStore,
   |},
 > = {
+  name: 'setTaskPayout',
   context: [CONTEXT.COLONY_MANAGER, CONTEXT.DDB_INSTANCE, CONTEXT.WALLET],
   prepare: prepareTaskStoreCommand,
   schema: SetTaskPayoutCommandArgsSchema,
@@ -388,6 +397,7 @@ export const assignWorker: Command<
     taskStore: TaskStore,
   |},
 > = {
+  name: 'assignWorker',
   context: [CONTEXT.COLONY_MANAGER, CONTEXT.DDB_INSTANCE, CONTEXT.WALLET],
   prepare: prepareTaskStoreCommand,
   async execute(taskStore, { workerAddress }) {
@@ -411,6 +421,7 @@ export const unassignWorker: Command<
     taskStore: TaskStore,
   |},
 > = {
+  name: 'unassignWorker',
   context: [CONTEXT.COLONY_MANAGER, CONTEXT.DDB_INSTANCE, CONTEXT.WALLET],
   prepare: prepareTaskStoreCommand,
   schema: SetTaskPayoutCommandArgsSchema,
@@ -438,6 +449,7 @@ export const finalizeTask: Command<
     taskStore: TaskStore,
   |},
 > = {
+  name: 'finalizeTask',
   context: [CONTEXT.COLONY_MANAGER, CONTEXT.DDB_INSTANCE, CONTEXT.WALLET],
   prepare: prepareTaskStoreCommand,
   schema: FinalizeTaskCommandArgsSchema,
@@ -460,6 +472,7 @@ export const cancelTask: Command<
     taskStore: TaskStore,
   |},
 > = {
+  name: 'cancelTask',
   context: [CONTEXT.COLONY_MANAGER, CONTEXT.DDB_INSTANCE, CONTEXT.WALLET],
   async prepare(
     {
@@ -520,6 +533,7 @@ export const closeTask: Command<
     taskStore: TaskStore,
   |},
 > = {
+  name: 'closeTask',
   context: [CONTEXT.COLONY_MANAGER, CONTEXT.DDB_INSTANCE, CONTEXT.WALLET],
   prepare: prepareTaskStoreCommand,
   schema: FinalizeTaskCommandArgsSchema,
@@ -544,6 +558,7 @@ export const setTaskDomain: Command<
     taskStore: TaskStore,
   |},
 > = {
+  name: 'setTaskDomain',
   context: [CONTEXT.COLONY_MANAGER, CONTEXT.DDB_INSTANCE, CONTEXT.WALLET],
   prepare: prepareTaskStoreCommand,
   schema: SetTaskDomainCommandArgsSchema,

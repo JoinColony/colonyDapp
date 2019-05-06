@@ -95,6 +95,7 @@ export const getUserProfile: Query<
   void,
   UserProfileType,
 > = {
+  name: 'getUserProfile',
   context: [CONTEXT.DDB_INSTANCE],
   prepare: prepareProfileStoreQuery,
   async execute(profileStore) {
@@ -129,6 +130,7 @@ export const getUserTasks: Query<
   void,
   *,
 > = {
+  name: 'getUserTasks',
   context: [CONTEXT.DDB_INSTANCE],
   prepare: prepareMetadataStoreQuery,
   async execute(metadataStore) {
@@ -154,6 +156,7 @@ export const getUserColonies: Query<
   void,
   *,
 > = {
+  name: 'getUserColonies',
   context: [CONTEXT.COLONY_MANAGER, CONTEXT.DDB_INSTANCE, CONTEXT.WALLET],
   prepare: prepareMetadataStoreQuery,
   async execute(metadataStore) {
@@ -185,6 +188,7 @@ export const getUserTokens: Query<
   {| walletAddress: Address |},
   *,
 > = {
+  name: 'getUserTokens',
   context: [CONTEXT.COLONY_MANAGER, CONTEXT.DDB_INSTANCE, CONTEXT.WALLET],
   async prepare(
     {
@@ -242,6 +246,7 @@ export const getUserBalance: Query<
   {| walletAddress: string |},
   string,
 > = {
+  name: 'getUserBalance',
   context: [CONTEXT.COLONY_MANAGER],
   prepare: async ({
     colonyManager: { networkClient },
@@ -263,6 +268,7 @@ export const getUserPermissions: Query<
   {| walletAddress: string |},
   UserPermissionsType,
 > = {
+  name: 'getUserPermissions',
   context: [CONTEXT.COLONY_MANAGER],
   prepare: prepareColonyClientQuery,
   async execute(colonyClient, { walletAddress }) {
@@ -298,6 +304,7 @@ export const getUserColonyTransactions: Query<
   |},
   ContractTransactionType[],
 > = {
+  name: 'getUserColonyTransactions',
   context: [CONTEXT.COLONY_MANAGER],
   prepare: prepareMetaColonyClientQuery,
   async execute(metaColonyClient, { walletAddress, userColonyAddresses }) {
@@ -355,6 +362,7 @@ export const checkUsernameIsAvailable: Query<
   { username: string },
   boolean,
 > = {
+  name: 'checkUsernameIsAvailable',
   context: [CONTEXT.COLONY_MANAGER, CONTEXT.ENS_INSTANCE],
   async prepare({
     colonyManager: { networkClient },
@@ -384,6 +392,7 @@ export const getUserInboxActivity: Query<
   *,
   *,
 > = {
+  name: 'getUserInboxActivity',
   context: [CONTEXT.DDB_INSTANCE],
   prepare: prepareInboxStoreQuery,
   async execute(userInboxStore) {

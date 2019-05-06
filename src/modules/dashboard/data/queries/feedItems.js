@@ -108,6 +108,7 @@ export const getTaskFeedItems: Query<
   void,
   TaskFeedItemEvents[],
 > = {
+  name: 'getTaskFeedItems',
   context: [CONTEXT.COLONY_MANAGER, CONTEXT.DDB_INSTANCE, CONTEXT.WALLET],
   prepare,
   async execute({ commentsStore, taskStore }) {

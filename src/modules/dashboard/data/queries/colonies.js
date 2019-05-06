@@ -80,6 +80,7 @@ export const getColonyRoles: ContractEventQuery<
   void,
   { admins: string[], founder: string },
 > = {
+  name: 'getColonyRoles',
   context,
   prepare: prepareColonyClientQuery,
   async execute(colonyClient) {
@@ -133,6 +134,7 @@ export const getColony: Query<
   {| colonyAddress: Address |},
   ColonyType,
 > = {
+  name: 'getColony',
   context: colonyContext,
   async prepare(
     {
@@ -189,6 +191,7 @@ export const getColonyTasks: Query<
     |},
   },
 > = {
+  name: 'getColonyTasks',
   context: colonyContext,
   prepare: prepareColonyStoreQuery,
   async execute(colonyStore) {
@@ -208,6 +211,7 @@ export const getColonyDomains: Query<
   void,
   DomainType[],
 > = {
+  name: 'getColonyDomains',
   context: colonyContext,
   prepare: prepareColonyStoreQuery,
   async execute(colonyStore) {
@@ -227,6 +231,7 @@ export const getColonyTokenBalance: Query<
   {| colonyAddress: Address, tokenAddress: Address |},
   BigNumber,
 > = {
+  name: 'getColonyTokenBalance',
   context: colonyContext,
   prepare: async ({
     colonyManager: { networkClient },

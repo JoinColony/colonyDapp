@@ -61,6 +61,7 @@ export const createColonyProfile: Command<
   |},
   ColonyStore,
 > = {
+  name: 'createColonyProfile',
   context: [CONTEXT.COLONY_MANAGER, CONTEXT.DDB_INSTANCE, CONTEXT.WALLET],
   async prepare(
     {
@@ -120,6 +121,7 @@ export const createDomain: Command<
   |},
   ColonyStore,
 > = {
+  name: 'createDomain',
   context: [CONTEXT.COLONY_MANAGER, CONTEXT.DDB_INSTANCE, CONTEXT.WALLET],
   prepare: prepareColonyStoreQuery,
   schema: CreateDomainCommandArgsSchema,
@@ -142,6 +144,7 @@ export const updateColonyProfile: Command<
   |},
   ColonyStore,
 > = {
+  name: 'updateColonyProfile',
   context: [CONTEXT.COLONY_MANAGER, CONTEXT.DDB_INSTANCE, CONTEXT.WALLET],
   prepare: prepareColonyStoreQuery,
   schema: UpdateColonyProfileCommandArgsSchema,
@@ -162,6 +165,7 @@ export const setColonyAvatar: Command<
   |},
   ColonyStore,
 > = {
+  name: 'setColonyAvatar',
   context: [CONTEXT.COLONY_MANAGER, CONTEXT.DDB_INSTANCE, CONTEXT.WALLET],
   prepare: prepareColonyStoreQuery,
   schema: SetColonyAvatarCommandArgsSchema,
@@ -182,6 +186,7 @@ export const removeColonyAvatar: Command<
   |},
   ColonyStore,
 > = {
+  name: 'removeColonyAvatar',
   context: [CONTEXT.COLONY_MANAGER, CONTEXT.DDB_INSTANCE, CONTEXT.WALLET],
   prepare: prepareColonyStoreQuery,
   schema: RemoveColonyAvatarCommandArgsSchema,
@@ -207,6 +212,7 @@ export const addTokenInfo: Command<
   |},
   ColonyStore,
 > = {
+  name: 'addTokenInfo',
   context: [CONTEXT.COLONY_MANAGER, CONTEXT.DDB_INSTANCE, CONTEXT.WALLET],
   prepare: prepareColonyStoreQuery,
   async execute(colonyStore, { iconHash, isNative, ...args }) {
@@ -233,6 +239,7 @@ export const updateTokenInfo: Command<
   |},
   ColonyStore,
 > = {
+  name: 'updateTokenInfo',
   context: [CONTEXT.COLONY_MANAGER, CONTEXT.DDB_INSTANCE, CONTEXT.WALLET],
   prepare: prepareColonyStoreQuery,
   async execute(colonyStore, { tokens, currentTokenReferences = {} }) {

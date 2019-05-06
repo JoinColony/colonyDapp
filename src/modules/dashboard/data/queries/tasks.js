@@ -48,6 +48,7 @@ const prepareTaskStoreQuery = async (
  */
 // eslint-disable-next-line import/prefer-default-export
 export const getTask: Query<TaskStore, TaskStoreMetadata, void, *> = {
+  name: 'getTask',
   context: [CONTEXT.COLONY_MANAGER, CONTEXT.DDB_INSTANCE, CONTEXT.WALLET],
   prepare: prepareTaskStoreQuery,
   async execute(taskStore) {

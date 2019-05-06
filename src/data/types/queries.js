@@ -20,8 +20,9 @@ import type { EventsType } from './events';
  */
 export type Query<D, M, A, R> = {|
   context: Array<ContextName>,
-  prepare: (context: *, metadata: M) => Promise<D>,
   execute: (deps: D, args: A) => Promise<R>,
+  name: string,
+  prepare: (context: *, metadata: M) => Promise<D>,
 |};
 
 /*

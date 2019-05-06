@@ -18,11 +18,12 @@ import type { Schema as SchemaType } from 'yup';
  */
 export type Command<D, M, A, R> = {|
   context: Array<ContextName>,
-  prepare: (context: *, metadata: M) => Promise<D>,
   /*
    * Script to execute the command for the given argument
    * (this usually performs a write of some kind).
    */
   execute: (deps: D, args: A) => Promise<R>,
+  name: string,
+  prepare: (context: *, metadata: M) => Promise<D>,
   schema?: SchemaType,
 |};
