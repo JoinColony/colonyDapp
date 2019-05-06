@@ -22,9 +22,9 @@ import { getNormalizedDomainText } from '~utils/strings';
 
 import { DASHBOARD_ROUTE } from '~routes';
 
-type FormValues = {
+type FormValues = {|
   username: string,
-};
+|};
 
 type Props = WizardProps<FormValues>;
 
@@ -37,7 +37,7 @@ const MSG = defineMessages({
     id: 'dashboard.CreateUserWizard.StepUserName.descriptionOne',
     defaultMessage:
       // eslint-disable-next-line max-len
-      'Le’ts get your account set up. All we need is a username.',
+      `Let's get your account set up. All we need is a username.`,
   },
   label: {
     id: 'dashboard.CreateUserWizard.StepUserName.label',
@@ -67,7 +67,7 @@ const MSG = defineMessages({
       while using a fully decentralized architecture.`,
   },
   statusText: {
-    id: 'users.ENSNameDialog.statusText',
+    id: 'users.CreateUserWizard.StepUserName.statusText',
     defaultMessage: 'Actual Username: @{normalized}',
   },
 });

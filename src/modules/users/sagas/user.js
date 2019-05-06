@@ -247,7 +247,9 @@ function* usernameCreate({
         index: 0,
       },
     });
-
+    /**
+     * @todo  should these stores be created after the transaction succeeded?
+     */
     /*
      * Create the profile store
      */
