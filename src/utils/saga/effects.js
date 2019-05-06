@@ -142,6 +142,7 @@ export function* executeQuery<D, M, A, R>(
     metadata?: M,
   },
 ): Saga<R> {
+  log.verbose(`Executing query "${query.name}"`, { args, metadata });
   return yield call(executeCommandOrQuery, query, {
     // Destructure the objects; either prop is optional, but for flow,
     // they need to be defined to call the inner function.
@@ -160,6 +161,7 @@ export function* executeCommand<D, M, A, R>(
     metadata?: M,
   |},
 ): Saga<R> {
+  log.verbose(`Executing command "${command.name}"`, { args, metadata });
   const maybeSanitizedArgs = command.schema
     ? validateSync(command.schema)(args)
     : args;
