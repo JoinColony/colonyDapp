@@ -10,7 +10,7 @@ import { toWei } from 'ethjs-unit';
 
 import Numeral from '~core/Numeral';
 import QRCode from '~core/QRCode';
-import MaskedAddress from '~core/MaskedAddress';
+import CopyableAddress from '~core/CopyableAddress';
 import { HistoryNavigation } from '~pages/NavigationWrapper';
 import { withImmutablePropsToJS } from '~utils/hoc';
 
@@ -25,6 +25,7 @@ type Props = {|
   currentUser: UserType,
   previousStep: (wizardValues?: Object) => void,
   wizardValues: Object,
+  hideQR: boolean,
 |};
 
 const MSG = defineMessages({
@@ -43,6 +44,7 @@ const WizardTemplateColony = ({
   },
   previousStep,
   wizardValues,
+  hideQR = false,
 }: Props) => {
   const customHandler = useCallback(() => previousStep(wizardValues), [
     previousStep,
@@ -61,7 +63,7 @@ const WizardTemplateColony = ({
               <span className={styles.hello}>
                 <FormattedMessage {...MSG.wallet} />
               </span>
-              <MaskedAddress address={walletAddress} />
+              <CopyableAddress>{walletAddress}</CopyableAddress>
             </div>
             <div className={styles.moneyContainer}>
               {new BN(balance).isZero() ? (
@@ -85,7 +87,7 @@ const WizardTemplateColony = ({
               )}
             </div>
           </div>
-          <QRCode address={walletAddress} width={60} />
+          {!hideQR && <QRCode address={walletAddress} width={60} />}
         </div>
       </header>
       <article className={styles.content}>{children}</article>

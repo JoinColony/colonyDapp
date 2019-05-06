@@ -46,7 +46,7 @@ type Props = {|
    * If you would like to stay at the same route but handle the navigation manually
    * a custom handler can be used i.e. switching to another wizard step
    */
-  customHandler?: () => void,
+  customHandler?: () => boolean,
 |};
 
 const HistoryNavigation = ({
@@ -79,7 +79,9 @@ const HistoryNavigation = ({
         <button
           className={styles.back}
           type="button"
-          onClick={customHandler || history.goBack}
+          onClick={() =>
+            customHandler && customHandler() ? undefined : history.goBack()
+          }
         >
           <Icon
             name="circle-back"

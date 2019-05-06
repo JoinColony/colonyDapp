@@ -50,6 +50,7 @@
 .transactionSpeedLabel,
 .transactionFeeLabel {
   color: var(--grey-dark);
+  letter-spacing: 0.25px;
 }
 
 .transactionDuration {
@@ -59,11 +60,13 @@
 .transactionFeeAmount {
   margin-right: 20px;
   text-align: right;
+  letter-spacing: 0.1px;
 }
 
 .transactionFeeConfirm {
   text-align: right;
   justify-self: flex-end;
+  letter-spacing: 0.25px;
 }
 
 /* State */

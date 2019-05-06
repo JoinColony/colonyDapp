@@ -12,6 +12,7 @@
 
 .description {
   flex: 1 1 auto;
+  letter-spacing: 0.25px;
 }
 
 .main.transactionList:first-child.li {

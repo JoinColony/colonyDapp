@@ -1,10 +1,13 @@
 /* @flow */
 
 import type { Match } from 'react-router';
+import type { IBrowserHistory } from 'history';
 
 // $FlowFixMe
 import React, { useState, useCallback } from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
+import compose from 'recompose/compose';
+import { withRouter } from 'react-router-dom';
 
 import { ACTIONS } from '~redux';
 import { useDataFetcher, useSelector } from '~utils/hooks';
@@ -81,6 +84,7 @@ const MSG = defineMessages({
 type Props = {|
   match: Match,
   openDialog: OpenDialog,
+  history: IBrowserHistory,
 |};
 
 const displayName = 'dashboard.Task';
@@ -90,6 +94,7 @@ const Task = ({
     params: { draftId, colonyName },
   },
   openDialog,
+  history,
 }: Props) => {
   const [isDiscardConfirmDisplayed, setDiscardConfirmDisplay] = useState(false);
 
@@ -253,7 +258,11 @@ const Task = ({
             </>
           )}
           {!isTaskCreator && (
-            <TaskRequestWork currentUser={currentUser} task={task} />
+            <TaskRequestWork
+              currentUser={currentUser}
+              task={task}
+              history={history}
+            />
           )}
           {/*
             Use these components for the full on-chain task workflow
@@ -270,6 +279,7 @@ const Task = ({
               colonyAddress={colonyAddress}
               draftId={draftId}
               taskTitle={title}
+              history={history}
               currentUser={currentUser}
             />
           </section>
@@ -281,4 +291,9 @@ const Task = ({
 
 Task.displayName = displayName;
 
-export default withDialog()(Task);
+const enhance = compose(
+  withDialog(),
+  withRouter,
+);
+
+export default enhance(Task);

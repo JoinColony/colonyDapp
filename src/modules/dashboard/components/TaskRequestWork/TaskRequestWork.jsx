@@ -6,13 +6,14 @@ import { defineMessages, FormattedMessage } from 'react-intl';
 
 import type { OpenDialog } from '~core/Dialog/types';
 import type { TaskType, UserType } from '~immutable';
+import type { IBrowserHistory } from 'history';
 
 import { ACTIONS } from '~redux';
 import { mergePayload } from '~utils/actions';
 
 import withDialog from '~core/Dialog/withDialog';
 import Button, { ActionButton } from '~core/Button';
-import { unfinishedProfileOpener } from '~users/UnfinishedProfileDialog';
+import unfinishedProfileOpener from '~users/UnfinishedProfile';
 
 import { canRequestToWork, hasRequestedToWork } from '../../checks';
 import { userDidClaimProfile } from '../../../users/checks';
@@ -37,16 +38,17 @@ type Props = {
   openDialog: OpenDialog,
   currentUser: UserType,
   task: TaskType,
+  history: IBrowserHistory,
 };
 
 const TaskRequestWork = ({
-  openDialog,
   currentUser: {
-    profile: { balance, walletAddress },
+    profile: { walletAddress },
   },
   currentUser,
   task: { colonyAddress, draftId },
   task,
+  history,
 }: Props) => {
   const transform = useCallback(mergePayload({ colonyAddress, draftId }), [
     colonyAddress,
@@ -79,7 +81,7 @@ const TaskRequestWork = ({
   return (
     <Button
       text={MSG.requestWork}
-      onClick={() => unfinishedProfileOpener(openDialog, balance)}
+      onClick={() => unfinishedProfileOpener(history)}
       data-test="requestWorkButton"
     />
   );

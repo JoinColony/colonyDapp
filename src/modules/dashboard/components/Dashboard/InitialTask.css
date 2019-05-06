@@ -7,6 +7,7 @@
 td.taskDetails {
   flex-wrap: wrap;
   width: calc(100% - 230px);
+  vertical-align: middle;
 }
 
 .taskDetailsTitle {
@@ -17,6 +18,7 @@ td.taskDetails {
   overflow: hidden;
   border: none;
   background-color: transparent;
+  font-size: var(--size-small);
   font-weight: var(--weight-semi);
   text-align: left;
   text-overflow: ellipsis;

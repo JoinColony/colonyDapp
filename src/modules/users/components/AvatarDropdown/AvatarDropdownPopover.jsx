@@ -2,12 +2,19 @@
 
 import React, { Component } from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
+import compose from 'recompose/compose';
+import { withRouter } from 'react-router-dom';
 
+import type { IBrowserHistory } from 'history';
 import type { OpenDialog } from '~core/Dialog/types';
-import withDialog from '~core/Dialog/withDialog';
-import { unfinishedProfileOpener } from '~users/UnfinishedProfileDialog';
 
-import { USER_EDIT_ROUTE, CREATE_COLONY_ROUTE } from '~routes';
+import unfinishedProfileOpener from '~users/UnfinishedProfile';
+
+import {
+  USER_EDIT_ROUTE,
+  CREATE_COLONY_ROUTE,
+  CREATE_USER_ROUTE,
+} from '~routes';
 import DropdownMenu, {
   DropdownMenuSection,
   DropdownMenuItem,
@@ -56,19 +63,15 @@ type Props = {
   closePopover: () => void,
   user: UserType,
   openDialog: OpenDialog,
+  history: IBrowserHistory,
 };
 
 class AvatarDropdownPopover extends Component<Props> {
   static displayName = 'users.AvatarDropdown.AvatarDropdownPopover';
 
   handleSetup = () => {
-    const {
-      openDialog,
-      user: {
-        profile: { balance },
-      },
-    } = this.props;
-    return unfinishedProfileOpener(openDialog, balance);
+    const { history } = this.props;
+    return unfinishedProfileOpener(history);
   };
 
   renderUserSection = () => {
@@ -81,9 +84,11 @@ class AvatarDropdownPopover extends Component<Props> {
       <DropdownMenuSection separator>
         {!username && (
           <DropdownMenuItem>
-            <button type="button" onClick={this.handleSetup}>
-              <FormattedMessage {...MSG.buttonGetStarted} />
-            </button>
+            <NavLink
+              to={CREATE_USER_ROUTE}
+              text={MSG.buttonGetStarted}
+              data-test="pickUserCreation"
+            />
           </DropdownMenuItem>
         )}
         {username && (
@@ -157,4 +162,6 @@ class AvatarDropdownPopover extends Component<Props> {
   }
 }
 
-export default withDialog()(AvatarDropdownPopover);
+const enhance = compose(withRouter);
+
+export default enhance(AvatarDropdownPopover);

@@ -1,20 +1,16 @@
 /* @flow */
 
 import type { MessageDescriptor, FormattedMessageValues } from 'react-intl';
+import type { IBrowserHistory } from 'history';
 
 import React from 'react';
+import { withRouter } from 'react-router-dom';
+import compose from 'recompose/compose';
 import { FormattedMessage } from 'react-intl';
-import { compose } from 'recompose';
 
-import { withImmutablePropsToJS } from '~utils/hoc';
-import type { OpenDialog } from '~core/Dialog/types';
-import type { UserType } from '~immutable';
-
-import withDialog from '~core/Dialog/withDialog';
+import unfinishedProfileOpener from '~users/UnfinishedProfile';
 import { Table, TableBody, TableRow, TableCell } from '~core/Table';
 import HookedUserAvatar from '~users/HookedUserAvatar';
-import { unfinishedProfileOpener } from '~users/UnfinishedProfileDialog';
-import { withCurrentUser } from '../../../users/hocs';
 
 import styles from './InitialTask.css';
 
@@ -26,21 +22,16 @@ export type InitialTaskType = {
   walletAddress: string,
 };
 
-// Can't seal this object because of withConsumerFactory
-type Props = {
-  currentUser: UserType,
-  openDialog: OpenDialog,
+type Props = {|
   task: InitialTaskType,
-};
+  history: IBrowserHistory,
+|};
 
 const displayName = 'dashboard.Dashboard.InitialTask';
 
 const InitialTask = ({
   task: { title, titleValues, walletAddress },
-  openDialog,
-  currentUser: {
-    profile: { balance },
-  },
+  history,
 }: Props) => (
   <div className={styles.main}>
     <Table>
@@ -50,7 +41,7 @@ const InitialTask = ({
             <button
               className={styles.taskDetailsTitle}
               type="button"
-              onClick={() => unfinishedProfileOpener(openDialog, balance)}
+              onClick={() => unfinishedProfileOpener(history)}
             >
               <FormattedMessage {...title} values={titleValues} />
             </button>
@@ -66,10 +57,6 @@ const InitialTask = ({
 
 InitialTask.displayName = displayName;
 
-const enhance = compose(
-  withCurrentUser,
-  withDialog(),
-  withImmutablePropsToJS,
-);
+const enhance = compose(withRouter);
 
 export default enhance(InitialTask);

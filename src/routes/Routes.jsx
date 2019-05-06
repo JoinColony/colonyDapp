@@ -5,6 +5,7 @@ import { withRouter, Route, Redirect, Switch } from 'react-router-dom';
 import { connect } from 'react-redux';
 
 import CreateColonyWizard from '~dashboard/CreateColonyWizard';
+import CreateUserWizard from '~dashboard/CreateUserWizard';
 import ColonyHome from '~dashboard/ColonyHome';
 import Task from '~dashboard/Task';
 import Dashboard from '~dashboard/Dashboard';
@@ -24,6 +25,7 @@ import {
   CONNECT_ROUTE,
   COLONY_HOME_ROUTE,
   CREATE_COLONY_ROUTE,
+  CREATE_USER_ROUTE,
   TASK_ROUTE,
   CREATE_WALLET_ROUTE,
   DASHBOARD_ROUTE,
@@ -105,6 +107,12 @@ const Routes = ({ walletAddress }) => {
         isConnected={isConnected}
         path={CREATE_COLONY_ROUTE}
         component={CreateColonyWizard}
+        hasNavigation={false}
+      />
+      <ConnectedOnlyRoute
+        isConnected={isConnected}
+        path={CREATE_USER_ROUTE}
+        component={CreateUserWizard}
         hasNavigation={false}
       />
       <ConnectedOnlyRoute

@@ -10,67 +10,69 @@ import type { WizardProps } from '~core/Wizard';
 import styles from './StepUserName.css';
 
 import { useAsyncFunction } from '~utils/hooks';
-import { Form, Input } from '~core/Fields';
+import { ActionForm, Input } from '~core/Fields';
 import Heading from '~core/Heading';
 import Button from '~core/Button';
 import Icon from '~core/Icon';
+import Link from '~core/Link';
 import { Tooltip } from '~core/Popover';
 import { ACTIONS } from '~redux';
 
 import { getNormalizedDomainText } from '~utils/strings';
 
-type FormValues = {
+import { DASHBOARD_ROUTE } from '~routes';
+
+type FormValues = {|
   username: string,
-};
+|};
 
 type Props = WizardProps<FormValues>;
 
 const MSG = defineMessages({
   heading: {
-    id: 'dashboard.CreateColonyWizard.StepUserName.heading',
+    id: 'dashboard.CreateUserWizard.StepUserName.heading',
     defaultMessage: 'Welcome to Colony!',
   },
   descriptionOne: {
-    id: 'dashboard.CreateColonyWizard.StepUserName.descriptionOne',
+    id: 'dashboard.CreateUserWizard.StepUserName.descriptionOne',
     defaultMessage:
       // eslint-disable-next-line max-len
       `Let's get your account set up. All we need is a username.`,
   },
   label: {
-    id: 'dashboard.CreateColonyWizard.StepUserName.label',
+    id: 'dashboard.CreateUserWizard.StepUserName.label',
     defaultMessage: 'Your Unique Username',
   },
   continue: {
-    id: 'dashboard.CreateColonyWizard.StepUserName.continue',
+    id: 'dashboard.CreateUserWizard.StepUserName.continue',
     defaultMessage: 'Continue',
   },
-  gotETH: {
-    id: 'dashboard.CreateColonyWizard.StepUserName.gotETH',
-    defaultMessage: `Got ETH? You'll need some at the end
-      to cover Ethereum's transaction fees.`,
+  later: {
+    id: 'dashboard.CreateUserWizard.StepUserName.later',
+    defaultMessage: `I'll do it later`,
   },
   errorDomainTaken: {
-    id: 'dashboard.CreateColonyWizard.StepUserName.errorDomainTaken',
+    id: 'dashboard.CreateUserWizard.StepUserName.errorDomainTaken',
     defaultMessage: 'This Username is already taken',
   },
   errorDomainInvalid: {
-    id: 'dashboard.CreateColonyWizard.StepUserName.errorDomainInvalid',
+    id: 'dashboard.CreateUserWizard.StepUserName.errorDomainInvalid',
     defaultMessage:
       'Invalid username. Please make sure this will be a valid domain',
   },
   tooltip: {
-    id: 'dashboard.CreateColonyWizard.StepUserName.tooltip',
+    id: 'dashboard.CreateUserWizard.StepUserName.tooltip',
     defaultMessage: `We use ENS to create a .joincolony.eth subdomain for
       your wallet address. This allows us to provide a good user experience
       while using a fully decentralized architecture.`,
   },
   statusText: {
-    id: 'users.CreateColonyWizard.StepUserName.statusText',
+    id: 'users.CreateUserWizard.StepUserName.statusText',
     defaultMessage: 'Actual Username: @{normalized}',
   },
 });
 
-const displayName = 'dashboard.CreateColonyWizard.StepUserName';
+const displayName = 'dashboard.CreateUserWizard.StepUserName';
 
 const validationSchema = yup.object({
   username: yup
@@ -79,13 +81,12 @@ const validationSchema = yup.object({
     .ensAddress(),
 });
 
-const StepUserName = ({ wizardForm, nextStep }: Props) => {
+const StepUserName = ({ wizardValues, nextStep }: Props) => {
   const checkDomainTaken = useAsyncFunction({
     submit: ACTIONS.USERNAME_CHECK_AVAILABILITY,
     success: ACTIONS.USERNAME_CHECK_AVAILABILITY_SUCCESS,
     error: ACTIONS.USERNAME_CHECK_AVAILABILITY_ERROR,
   });
-
   const validateDomain = useCallback(
     async (values: FormValues) => {
       try {
@@ -108,11 +109,13 @@ const StepUserName = ({ wizardForm, nextStep }: Props) => {
     [checkDomainTaken],
   );
   return (
-    <Form
-      onSubmit={nextStep}
+    <ActionForm
+      submit={ACTIONS.USERNAME_CREATE}
+      success={ACTIONS.USERNAME_CREATE_SUCCESS}
+      error={ACTIONS.USERNAME_CREATE_ERROR}
+      onSuccess={() => nextStep(wizardValues)}
       validate={validateDomain}
       validationSchema={validationSchema}
-      {...wizardForm}
     >
       {({ isValid, isSubmitting, values: { username } }) => {
         const normalized = getNormalizedDomainText(username);
@@ -155,7 +158,9 @@ const StepUserName = ({ wizardForm, nextStep }: Props) => {
                 />
                 <div className={styles.buttons}>
                   <p className={styles.reminder}>
-                    <FormattedMessage {...MSG.gotETH} />
+                    <Link to={DASHBOARD_ROUTE}>
+                      <FormattedMessage {...MSG.later} />
+                    </Link>
                   </p>
                   <Button
                     appearance={{ theme: 'primary', size: 'large' }}
@@ -163,6 +168,7 @@ const StepUserName = ({ wizardForm, nextStep }: Props) => {
                     disabled={!isValid}
                     loading={isSubmitting}
                     text={MSG.continue}
+                    data-test="claimUsernameConfirm"
                   />
                 </div>
               </div>
@@ -170,7 +176,7 @@ const StepUserName = ({ wizardForm, nextStep }: Props) => {
           </section>
         );
       }}
-    </Form>
+    </ActionForm>
   );
 };
 
