@@ -13,7 +13,7 @@ import type {
   OrbitDBStore,
   StoreBlueprint,
 } from './types';
-import { log } from '~utils/debug';
+import { log } from '../../utils/debug';
 
 import IPFSNode from '../ipfs';
 

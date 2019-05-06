@@ -9,7 +9,7 @@ import type {
   PermissionsManifest,
 } from './permissions/types';
 
-import { log } from '~utils/debug';
+import { log } from '../../../utils/debug';
 
 // NOTE: I know this is a terrible name, we need to refactor it to favour composition over inheritance at some point
 export default class PermissionManager {
