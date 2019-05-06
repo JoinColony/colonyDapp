@@ -13,6 +13,8 @@ import type {
   OrbitDBStore,
   StoreBlueprint,
 } from './types';
+import { log } from '~utils/debug';
+
 import IPFSNode from '../ipfs';
 
 import Keystore from './Keystore';
@@ -59,10 +61,9 @@ class DDB {
       ? getAccessController(storeProps || {})
       : new PermissiveAccessController();
 
-    if (!getAccessController)
-      console.warn(
-        `Using permissive access controller for store "${storeName}"`,
-      ); // eslint-disable-line max-len
+    if (!getAccessController) {
+      log.warn(`Using permissive access controller for store "${storeName}"`);
+    }
 
     return accessController;
   }
@@ -88,7 +89,9 @@ class DDB {
   get busy() {
     // eslint-disable-next-line no-restricted-syntax
     for (const [, store] of this._stores) {
-      if (store.busy) return true;
+      if (store.busy) {
+        return true;
+      }
     }
     return false;
   }
@@ -169,7 +172,9 @@ class DDB {
       ? `${defaultName}.${generateId()}`
       : getName && getName(storeProps);
 
-    if (!name) throw new Error('Store name is invalid or undefined');
+    if (!name) {
+      throw new Error('Store name is invalid or undefined');
+    }
 
     /**
      * @NOTE: Only necessary to pass in the whole access controller object
@@ -208,7 +213,7 @@ class DDB {
     }
 
     const address = await this._getStoreAddress(identifier);
-    if (!address)
+    if (!address) {
       throw new Error(
         `Address not found for store with identifier ${
           typeof identifier === 'string'
@@ -216,6 +221,7 @@ class DDB {
             : JSON.stringify(identifier)
         }`,
       );
+    }
 
     const cachedStore: ?T = this._getCachedStore(address);
     if (cachedStore) {
@@ -224,8 +230,9 @@ class DDB {
     }
 
     const expectedStoreName = defaultName || (getName && getName(storeProps));
-    if (!expectedStoreName)
+    if (!expectedStoreName) {
       throw new Error('Cannot define expected store name');
+    }
 
     const name = address.path.split('.')[0];
     if (name !== expectedStoreName) {
@@ -267,13 +274,17 @@ class DDB {
      * @todo Fix `DDB.storeExists` error modes
      * @body If there's no address, it should return an error. Also, this method is unused...
      */
-    if (!address) return false;
+    if (!address) {
+      return false;
+    }
     // eslint-disable-next-line no-underscore-dangle
     const cache = await this._orbitNode._loadCache(
       this._orbitNode.directory,
       address,
     );
-    if (!cache) return false;
+    if (!cache) {
+      return false;
+    }
     const data = await cache.get(`${address.toString()}/_manifest`);
     return data !== undefined && data !== null;
   }
@@ -291,7 +302,9 @@ class DDB {
     }
 
     const name = getName && getName(storeProps);
-    if (!name) throw new Error('Store name is invalid or undefined');
+    if (!name) {
+      throw new Error('Store name is invalid or undefined');
+    }
     const storeAccessController = this.constructor.getAccessController(
       name,
       blueprint,
