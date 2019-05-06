@@ -8347,31 +8347,19 @@ ipfs-http-response@~0.2.1:
     promisify-es6 "^1.0.3"
     stream-to-blob "^1.0.1"
 
-ipfs-log@rc1:
-  version "4.3.0-rc.1"
-  resolved "https://registry.yarnpkg.com/ipfs-log/-/ipfs-log-4.3.0-rc.1.tgz#18169485a934035ad148a606bfc3088249c778d3"
-  integrity sha512-orhzMDNAIX2Ghwl5Gast4bCD9krc18a26GSRSMUX9qby9Kds/3osAT+3T2U64RkE/ZIA0PO2p7idrMrfxK2eVw==
-  dependencies:
-    cids "^0.5.7"
-    ipld-dag-pb "^0.15.2"
-    orbit-db-identity-provider rc1
-    orbit-db-io "~0.0.1"
-    p-map "^1.1.1"
-    p-whilst "^1.0.0"
-    pify "^4.0.1"
-
-ipfs-log@rc3:
-  version "4.3.0-rc.3"
-  resolved "https://registry.yarnpkg.com/ipfs-log/-/ipfs-log-4.3.0-rc.3.tgz#4773a35715d31552e0abcf42c1790c46a4f9a196"
-  integrity sha512-hxJMN9d6dktY7JVASB6WeKKco65UStqKVcYLPGuPAArYkgJdA2xHP3tCwF+nCbMOty+HUZ3bEdias5UHK2ov5g==
+ipfs-log@~4.3.0:
+  version "4.3.1"
+  resolved "https://registry.yarnpkg.com/ipfs-log/-/ipfs-log-4.3.1.tgz#e149702b9945f6e6bad887de158cf7d1de54e23f"
+  integrity sha512-b+s9JICsXyZXNMZyW0AoEN4vOdSxh6W86KXBmhDOt3aiNSb7tOvVOheHqhGcjasmUyGcxhiFfMgPojoYC3ZOpQ==
   dependencies:
     cids "^0.5.7"
     ipld-dag-pb "^0.15.2"
     json-stringify-deterministic "^1.0.1"
-    orbit-db-identity-provider rc1.2
+    orbit-db-identity-provider "~0.1.0"
     orbit-db-io "~0.0.1"
     p-map "^1.1.1"
     p-whilst "^1.0.0"
+    pify "^4.0.1"
 
 ipfs-mfs@~0.10.2:
   version "0.10.4"
@@ -13007,10 +12995,10 @@ ora@^3.2.0:
     strip-ansi "^5.0.0"
     wcwidth "^1.0.1"
 
-orbit-db-access-controllers@rc2:
-  version "0.1.0-rc.2"
-  resolved "https://registry.yarnpkg.com/orbit-db-access-controllers/-/orbit-db-access-controllers-0.1.0-rc.2.tgz#6e9ddc62db88d15c31e433e4ef4380d3fb6da469"
-  integrity sha512-3v3f8PTgBE/VFKwx/vfw1nuQtcqjv5UR7vTi2DzSFOYK6E7j5lZHJ5YMImsAVm2Vs1rt7tqHhPtS7gxMBij28g==
+orbit-db-access-controllers@~0.1.0:
+  version "0.1.0"
+  resolved "https://registry.yarnpkg.com/orbit-db-access-controllers/-/orbit-db-access-controllers-0.1.0.tgz#eff03f0e129988a425ba37d15063f75b108a5da2"
+  integrity sha512-5nHaz4Mz8z8jUEBOaPNQhsI/WQq3r2VWA5LEwgeS1b7suIJVlA6otjptXbh659mzxFKkm4Cw1EAML4ayXLTTFg==
   dependencies:
     orbit-db-io "~0.0.1"
     p-map-series "^1.0.0"
@@ -13025,59 +13013,43 @@ orbit-db-cache@~0.2.4:
     logplease "^1.2.14"
     mkdirp "^0.5.1"
 
-orbit-db-counterstore@rc1:
-  version "1.5.0-rc.1"
-  resolved "https://registry.yarnpkg.com/orbit-db-counterstore/-/orbit-db-counterstore-1.5.0-rc.1.tgz#7861b2b389105f6a6d6ef645fa690542e8f6e799"
-  integrity sha512-yRiLTz+PaogAgRfAMKXk+FRz0/dZ+o/lwAalgWmQAVwxwm2Y8VRgDNt0ebXs5t7iXf50bk8cRurRKhbZx1FoiA==
+orbit-db-counterstore@~1.5.0:
+  version "1.5.1"
+  resolved "https://registry.yarnpkg.com/orbit-db-counterstore/-/orbit-db-counterstore-1.5.1.tgz#c732b94f6eda80afad0505406266253893f2c4d6"
+  integrity sha512-exPHiZH+fkSVTDYBAMwHDPNL8zNjbcPk0e+09pcwRBUJP8QS0JSza9V65iv2lfPBXJu3S7HIfwO8YeHTNCBN8g==
   dependencies:
     crdts "~0.1.2"
-    orbit-db-store rc1
+    orbit-db-store "~2.6.0"
 
-orbit-db-docstore@rc1:
-  version "1.5.1-rc.1"
-  resolved "https://registry.yarnpkg.com/orbit-db-docstore/-/orbit-db-docstore-1.5.1-rc.1.tgz#e340578c06b0e553b98d8d58ed572a009544097c"
-  integrity sha512-w6Vayu9EFi5gdWKJc0CYe7jKBbujfvizC7dY0319l46vDxnu+GvIzrs4Uqm8Rd2Dg7AsARYtdvkiYIOrDUIfhg==
+orbit-db-docstore@~1.5.0:
+  version "1.5.1"
+  resolved "https://registry.yarnpkg.com/orbit-db-docstore/-/orbit-db-docstore-1.5.1.tgz#cb9a981b0b8af029c7984a8a40298723e4d842e3"
+  integrity sha512-HzV93dJ6r5K0+elEXam31ZWxz2z6Gvil8jwCM27wceZbqrnjibzkCavIflknsosgA49o0y7ZbL6F1Z9JwI7PCQ==
   dependencies:
-    orbit-db-store rc1
+    orbit-db-store "~2.6.0"
     p-map "~1.1.1"
 
-orbit-db-eventstore@rc1:
-  version "1.5.0-rc.1"
-  resolved "https://registry.yarnpkg.com/orbit-db-eventstore/-/orbit-db-eventstore-1.5.0-rc.1.tgz#ba495c00b20b5417e9a60d86ce6f4270667b81d3"
-  integrity sha512-yHkaK5mcrMtwny//ksp0x3s67IinkScIgBv9qOrfM76O7yR0bE8oaaCeb8U73r+eZzUFEKbWxvtlsHd33dM/uA==
+orbit-db-eventstore@~1.5.0:
+  version "1.5.1"
+  resolved "https://registry.yarnpkg.com/orbit-db-eventstore/-/orbit-db-eventstore-1.5.1.tgz#2412b43da94257b9115adce03d0b686338429226"
+  integrity sha512-ZPRe9jXaf7P5QcJWEJKOZi5WRDt4K62pbTk1wdoQPvZ9xJiB/dUaA7M0Twq4qosv2SfbKVCClUbTzqzreLqIeA==
   dependencies:
-    orbit-db-store rc1
+    orbit-db-store "~2.6.0"
 
-orbit-db-feedstore@rc1:
-  version "1.5.0-rc.1"
-  resolved "https://registry.yarnpkg.com/orbit-db-feedstore/-/orbit-db-feedstore-1.5.0-rc.1.tgz#8b2f0612045ade4efbf481c42dde46679a9374cc"
-  integrity sha512-rNuG4JkS5pVhbp+vecX2thl94wd9QHBe79c0jpULiTt6CWAgLsaluxxX7f7O9FPlA6A9EVOhFDBNzab8iCXiCg==
+orbit-db-feedstore@~1.5.0:
+  version "1.5.1"
+  resolved "https://registry.yarnpkg.com/orbit-db-feedstore/-/orbit-db-feedstore-1.5.1.tgz#b786cfd7ffdf143b1783e3a5e95e3b7dd4fe55d1"
+  integrity sha512-o9XYcrhb0+Cx+QgF4W9gynYUTDFLvJA/r94VJM9O1g53Aw9pA/106TGlX/1bo7oUpFFlIjDIWfawRPSWgw9yqw==
   dependencies:
-    orbit-db-eventstore rc1
+    orbit-db-eventstore "~1.5.0"
 
-orbit-db-identity-provider@rc1:
-  version "0.1.0-rc.1.2"
-  resolved "https://registry.yarnpkg.com/orbit-db-identity-provider/-/orbit-db-identity-provider-0.1.0-rc.1.2.tgz#521404b7a6a876214ac60a2d0baa2612e99d3ce0"
-  integrity sha512-GcfooAdVr/G7nkvRqzE8ZL+w9Tt2dYMvQEC9uBFrYAtI4KMFLc0K9tShu/SlDdymtmWaudTwRBotc32jhukuEA==
+orbit-db-identity-provider@~0.1.0:
+  version "0.1.0"
+  resolved "https://registry.yarnpkg.com/orbit-db-identity-provider/-/orbit-db-identity-provider-0.1.0.tgz#9af5a38b12117e09f6b133581881b01b8e49b7d7"
+  integrity sha512-U8c2+Jmz903gpYMBHFQ+3RVj86up7Y7SJdPqOxvJVN2PQ4HXqLl2JiiFUIHtlb8wyyoCYHi1TSsGovD5wmgRlA==
   dependencies:
     ethers "^4.0.20"
-    orbit-db-keystore rc1.2
-
-orbit-db-identity-provider@rc1.2:
-  version "0.1.1-rc.1.2"
-  resolved "https://registry.yarnpkg.com/orbit-db-identity-provider/-/orbit-db-identity-provider-0.1.1-rc.1.2.tgz#2368405b05eab1a34e8cc0323f4eedbcf74ec0e0"
-  integrity sha512-EJ8//8hdhAb0Va9fsBGqVnmxk+89fuSW5Ya5rGPpU0xrylHNm4VtWDDwPd7yheWbn5uI5IyZNbfvaSL7uHbScg==
-  dependencies:
-    ethers "^4.0.20"
-    orbit-db-keystore rc1.2
-
-orbit-db-identity-provider@rc1.3:
-  version "0.1.0-rc.1.3"
-  resolved "https://registry.yarnpkg.com/orbit-db-identity-provider/-/orbit-db-identity-provider-0.1.0-rc.1.3.tgz#2ffa1122dd81cfebc32f797d8965b74a271bec7a"
-  integrity sha512-6Noppqab+PbZA+TB29+bzQTz/UVmSzdzQWwGHR6fOvMbdBjzGjC/ReKs1G5sU5RnNj42c9glIUpjWZy7MIIqPQ==
-  dependencies:
-    ethers "^4.0.20"
-    orbit-db-keystore rc1.2
+    orbit-db-keystore "~0.2.0"
 
 orbit-db-io@~0.0.1:
   version "0.0.1"
@@ -13088,10 +13060,10 @@ orbit-db-io@~0.0.1:
     ipld-dag-pb "^0.15.2"
     pify "^4.0.1"
 
-orbit-db-keystore@^0.2.0-rc.1.2, orbit-db-keystore@rc1.2:
-  version "0.2.0-rc.1.2"
-  resolved "https://registry.yarnpkg.com/orbit-db-keystore/-/orbit-db-keystore-0.2.0-rc.1.2.tgz#21b908cd2e7026874370c112988d8d3d301827eb"
-  integrity sha512-dSPoJygbnGJGAPVchu3KYWp2fhLezYCz9tHg6EzZB1cMuILN7DGMpM1Q1DsM3deNx2cdhYgEeYUsFJlttJfAPA==
+orbit-db-keystore@^0.2.0, orbit-db-keystore@~0.2.0:
+  version "0.2.0"
+  resolved "https://registry.yarnpkg.com/orbit-db-keystore/-/orbit-db-keystore-0.2.0.tgz#0c0c2c31dac9228eee8df4c898628234b50d769e"
+  integrity sha512-RvpCI3cdqpUnqAscYRgJG8QC2QZk5fsye9Ebag0nzad8VbBAPsHreVN5FSYT417vGdDn7Sf6mBZ51bhAg1yhNA==
   dependencies:
     elliptic "^6.4.1"
     level-js "~3.0.0"
@@ -13103,12 +13075,12 @@ orbit-db-keystore@^0.2.0-rc.1.2, orbit-db-keystore@rc1.2:
     mkdirp "^0.5.1"
     safe-buffer "^5.1.2"
 
-orbit-db-kvstore@^1.5.0-rc.3, orbit-db-kvstore@rc2:
-  version "1.5.0-rc2"
-  resolved "https://registry.yarnpkg.com/orbit-db-kvstore/-/orbit-db-kvstore-1.5.0-rc2.tgz#280b6930c6ef4e8a4ddb4eeb046df2b68cc66e4b"
-  integrity sha512-51nhtcdpaZQ6IXKuh5+hW55SEKAHCWk1Zwj0P6ZPQHBzJAFWrdOQl+ePhoZio/8VotTs9tz36Zy8LiP47aWWuA==
+orbit-db-kvstore@~1.5.0:
+  version "1.5.1"
+  resolved "https://registry.yarnpkg.com/orbit-db-kvstore/-/orbit-db-kvstore-1.5.1.tgz#49c3c8706c5762d1c941c606a597be67d5ed3861"
+  integrity sha512-fCov8iLmUA0GIsZi6oRspsAy3Rh5yaTBTnuJ/gN6MPU0LWuhZwH3sq/WVsrEQI8uGU4or4SKypSFSp8PC/G3qA==
   dependencies:
-    orbit-db-store rc1
+    orbit-db-store "~2.6.0"
 
 orbit-db-pubsub@~0.5.5:
   version "0.5.5"
@@ -13119,50 +13091,39 @@ orbit-db-pubsub@~0.5.5:
     logplease "~1.2.14"
     p-series "^1.1.0"
 
-orbit-db-store@^2.6.0-rc.2:
-  version "2.6.0-rc.2"
-  resolved "https://registry.yarnpkg.com/orbit-db-store/-/orbit-db-store-2.6.0-rc.2.tgz#9b2bf49620a85ba17d99edff2aac0bcf4759bb5a"
-  integrity sha512-Xjzuzo77igK790I0ruuX+EIvJ95LJrdDCujSh+bbSb5n7RNo3w7rqOXrxIw7C4iexIcbLqjeboe0CmaHvBaZBg==
+orbit-db-store@~2.6.0:
+  version "2.6.1"
+  resolved "https://registry.yarnpkg.com/orbit-db-store/-/orbit-db-store-2.6.1.tgz#951b75202a17f1302cfc7f222f6e002ac144113d"
+  integrity sha512-BuvXsws6JreQG6sGpdl/lMVSUaTI4JD/NlUjQ/XLGQw6uKjtdBrEUdg2MgPlB5rXfbwBvvJD/IUDcenBfAP9HA==
   dependencies:
-    ipfs-log rc3
+    ipfs-log "~4.3.0"
     logplease "^1.2.14"
     orbit-db-io "~0.0.1"
     p-each-series "^1.0.0"
     readable-stream "~2.3.5"
 
-orbit-db-store@rc1:
-  version "2.6.0-rc.1"
-  resolved "https://registry.yarnpkg.com/orbit-db-store/-/orbit-db-store-2.6.0-rc.1.tgz#1fd99ce6a8e1c534a0a5e1fb96185b7a3d787fbf"
-  integrity sha512-j2i+2fa2WlgXlUmgcivx+QnV/0oR7o4f7lQYKhL3RE7+IK49h8Zf/TOwmznon6zcsY9AiAVKZmNdZjpmYx6f9Q==
-  dependencies:
-    ipfs-log rc1
-    logplease "^1.2.14"
-    orbit-db-io "~0.0.1"
-    p-each-series "^1.0.0"
-    readable-stream "~2.3.5"
-
-orbit-db@^0.20.0-rc.7:
-  version "0.20.0-rc3"
-  resolved "https://registry.yarnpkg.com/orbit-db/-/orbit-db-0.20.0-rc3.tgz#19b8dcff5d96bb1273d5acaf7dc0ff467fde507f"
-  integrity sha512-2+2MZ16YDj7bWwz0hVLZvgDvUQEKAACFsdEJoDt1qXM1NI5KgmvVe1s/0O9cq+yheLEPMlFmBEaYqChQP2SDAg==
+orbit-db@^0.20.1:
+  version "0.20.1"
+  resolved "https://registry.yarnpkg.com/orbit-db/-/orbit-db-0.20.1.tgz#7f82a77712f06fb23b3eaa478190edef24a96666"
+  integrity sha512-Cu/9aDyVHJdnAptvh+pchph54Y1OPhxD5Nk9+wsx9i5L91AEH6R+JiLUfv9PGQcLOgFgApTJJ+TtM1UwrxDiqA==
   dependencies:
     cids "^0.5.7"
     ipfs-pubsub-1on1 "~0.0.4"
     localstorage-down "^0.6.7"
     logplease "^1.2.14"
     multihashes "^0.4.12"
-    orbit-db-access-controllers rc2
+    orbit-db-access-controllers "~0.1.0"
     orbit-db-cache "~0.2.4"
-    orbit-db-counterstore rc1
-    orbit-db-docstore rc1
-    orbit-db-eventstore rc1
-    orbit-db-feedstore rc1
-    orbit-db-identity-provider rc1.3
+    orbit-db-counterstore "~1.5.0"
+    orbit-db-docstore "~1.5.0"
+    orbit-db-eventstore "~1.5.0"
+    orbit-db-feedstore "~1.5.0"
+    orbit-db-identity-provider "~0.1.0"
     orbit-db-io "~0.0.1"
-    orbit-db-keystore rc1.2
-    orbit-db-kvstore rc2
+    orbit-db-keystore "~0.2.0"
+    orbit-db-kvstore "~1.5.0"
     orbit-db-pubsub "~0.5.5"
-    orbit-db-store rc1
+    orbit-db-store "~2.6.0"
 
 original@>=0.0.5, original@^1.0.0:
   version "1.0.2"
