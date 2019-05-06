@@ -1,12 +1,27 @@
 /* @flow */
 
 export const isDev = process.env.NODE_ENV === 'development';
+export const isVerbose = process.env.VERBOSE === 'true';
 
 export const log = (
-  error: Error | string,
   logger: any => void = console.error.bind(console),
-) => (isDev ? logger(error) : null);
+  ...args: any
+) => (isDev ? logger(...args) : null);
 
-log.warn = (error: any) => log(error, console.warn.bind(console));
+log.warn = (...args: any) => log(console.warn.bind(console), ...args);
 
-log.debug = (message: string) => log(message, console.info.bind(console));
+log.info = (...args: any) => log(console.info.bind(console), ...args);
+log.debug = log.info; // Just an alias for `info`
+
+// This will always log, and is only defined for consistency's sake
+log.error = console.error.bind(console);
+
+log.verbose = (message: string, ...args: any) =>
+  isVerbose
+    ? log(
+        console.info.bind(console),
+        `%c verbose: ${message}`,
+        'color: blue',
+        ...args,
+      )
+    : null;
