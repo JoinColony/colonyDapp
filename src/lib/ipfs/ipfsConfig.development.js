@@ -4,6 +4,9 @@ const config = () => ({
   repo: 'colonyIpfs',
   // config gets merged with the IPFS default config
   config: {
+    Addresses: {
+      Swarm: ['/ip4/127.0.0.1/tcp/9091/ws/p2p-webrtc-star'],
+    },
     Bootstrap: [
       // This is the connection to the dev ipfs daemon (for the pinner)
       /* eslint-disable max-len */
