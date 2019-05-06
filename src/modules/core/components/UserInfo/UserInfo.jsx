@@ -29,7 +29,7 @@ const renderTooltipContent = (user?: UserType) => {
   return (
     <div className={styles.main}>
       {displayName && <p className={styles.displayName}>{displayName}</p>}
-      {username && <UserMention username={username} />}
+      {username && <UserMention username={username} hasLink={false} />}
       {walletAddress && (
         <p className={styles.walletAddress}>
           <MaskedAddress address={walletAddress} />
