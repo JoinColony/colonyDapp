@@ -90,8 +90,8 @@ class UploadItem extends Component<Props> {
       readFile = await this.read(file);
       setValue({ ...$value, preview: readFile.data });
       fileReference = await upload(readFile);
-    } catch (e) {
-      log(e);
+    } catch (caughtError) {
+      log.error(caughtError);
 
       /**
        * @todo  better error handling here

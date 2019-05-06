@@ -45,7 +45,7 @@ export const putError = (type: string, error: Error, meta?: Object = {}) => {
     payload: error,
   };
   if (isDev) {
-    log(error);
+    log.error(error);
     Object.assign(action.meta, {
       error: {
         message: error.message,

@@ -63,7 +63,7 @@ const TaskDomains = ({
         });
         setSelectedDomainId(domainValue.id);
       } catch (caughtError) {
-        log(caughtError);
+        log.error(caughtError);
       }
     },
     [colonyAddress, draftId, setDomain],

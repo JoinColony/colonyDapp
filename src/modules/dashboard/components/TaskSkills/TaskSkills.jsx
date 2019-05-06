@@ -62,7 +62,7 @@ const TaskSkills = ({
         /**
          * @todo Improve error modes for setting the task skill.
          */
-        log(caughtError);
+        log.error(caughtError);
       }
     },
     [colonyAddress, draftId, setSkill],
