@@ -6,11 +6,11 @@ import type { EventDefinition } from './events';
 import { COLONY_EVENT_TYPES } from '../constants';
 
 const {
-  AVATAR_REMOVED,
-  AVATAR_UPLOADED,
+  COLONY_AVATAR_REMOVED,
+  COLONY_AVATAR_UPLOADED,
   DOMAIN_CREATED,
-  PROFILE_CREATED,
-  PROFILE_UPDATED,
+  COLONY_PROFILE_CREATED,
+  COLONY_PROFILE_UPDATED,
   TASK_STORE_REGISTERED,
   TASK_STORE_UNREGISTERED,
   TOKEN_INFO_ADDED,
@@ -18,14 +18,14 @@ const {
 } = COLONY_EVENT_TYPES;
 
 export type ColonyEvents = {|
-  AVATAR_REMOVED: EventDefinition<
-    typeof AVATAR_REMOVED,
+  COLONY_AVATAR_REMOVED: EventDefinition<
+    typeof COLONY_AVATAR_REMOVED,
     {|
       ipfsHash: string,
     |},
   >,
-  AVATAR_UPLOADED: EventDefinition<
-    typeof AVATAR_UPLOADED,
+  COLONY_AVATAR_UPLOADED: EventDefinition<
+    typeof COLONY_AVATAR_UPLOADED,
     {|
       ipfsHash: string,
     |},
@@ -37,16 +37,16 @@ export type ColonyEvents = {|
       name: string,
     |},
   >,
-  PROFILE_CREATED: EventDefinition<
-    typeof PROFILE_CREATED,
+  COLONY_PROFILE_CREATED: EventDefinition<
+    typeof COLONY_PROFILE_CREATED,
     ColonyProps<{
       colonyAddress: *,
       colonyName: *,
       displayName: *,
     }>,
   >,
-  PROFILE_UPDATED: EventDefinition<
-    typeof PROFILE_UPDATED,
+  COLONY_PROFILE_UPDATED: EventDefinition<
+    typeof COLONY_PROFILE_UPDATED,
     ColonyProps<{
       description: *,
       displayName: *,

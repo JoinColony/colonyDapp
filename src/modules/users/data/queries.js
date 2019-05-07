@@ -34,7 +34,7 @@ import {
   getUserInboxStore,
   getUserMetadataStore,
 } from '~data/stores';
-import { getUserTasksReducer } from './reducers';
+import { getUserTasksReducer, getUserProfileReducer } from './reducers';
 import { getUserTokenAddresses } from './utils';
 
 const {
@@ -99,28 +99,13 @@ export const getUserProfile: Query<
   context: [CONTEXT.DDB_INSTANCE],
   prepare: prepareProfileStoreQuery,
   async execute(profileStore) {
-    const {
-      avatarHash,
-      bio,
-      displayName,
-      location,
-      username,
-      walletAddress,
-      website,
-      inboxStoreAddress,
-      metadataStoreAddress,
-    } = await profileStore.all();
-    return {
-      avatarHash,
-      bio,
-      displayName,
-      location,
-      username,
-      walletAddress,
-      website,
-      inboxStoreAddress,
-      metadataStoreAddress,
-    };
+    return profileStore.all().reduce(getUserProfileReducer, {
+      /*
+       * We can be pretty sure that `walletAddress` will be in the first
+       * event for this store, but flow doesn't know that.
+       */
+      walletAddress: '',
+    });
   },
 };
 

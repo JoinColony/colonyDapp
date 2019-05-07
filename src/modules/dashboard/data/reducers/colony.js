@@ -8,10 +8,10 @@ import { COLONY_EVENT_TYPES } from '~data/constants';
 import { addressEquals } from '~utils/strings';
 
 const {
-  AVATAR_REMOVED,
-  AVATAR_UPLOADED,
-  PROFILE_CREATED,
-  PROFILE_UPDATED,
+  COLONY_AVATAR_REMOVED,
+  COLONY_AVATAR_UPLOADED,
+  COLONY_PROFILE_CREATED,
+  COLONY_PROFILE_UPDATED,
   TASK_STORE_REGISTERED,
   TASK_STORE_UNREGISTERED,
   TOKEN_INFO_ADDED,
@@ -50,10 +50,10 @@ export const colonyTasksReducer: EventReducer<
 export const colonyReducer: EventReducer<
   ColonyType,
   {|
-    AVATAR_REMOVED: *,
-    AVATAR_UPLOADED: *,
-    PROFILE_CREATED: *,
-    PROFILE_UPDATED: *,
+    COLONY_AVATAR_REMOVED: *,
+    COLONY_AVATAR_UPLOADED: *,
+    COLONY_PROFILE_CREATED: *,
+    COLONY_PROFILE_UPDATED: *,
     TOKEN_INFO_ADDED: *,
     TOKEN_INFO_REMOVED: *,
   |},
@@ -84,14 +84,14 @@ export const colonyReducer: EventReducer<
           ),
       };
     }
-    case AVATAR_UPLOADED: {
+    case COLONY_AVATAR_UPLOADED: {
       const { ipfsHash } = event.payload;
       return {
         ...colony,
         avatarHash: ipfsHash,
       };
     }
-    case AVATAR_REMOVED: {
+    case COLONY_AVATAR_REMOVED: {
       const { avatarHash } = colony;
       const { ipfsHash } = event.payload;
       return {
@@ -100,8 +100,8 @@ export const colonyReducer: EventReducer<
           avatarHash && avatarHash === ipfsHash ? undefined : avatarHash,
       };
     }
-    case PROFILE_CREATED:
-    case PROFILE_UPDATED:
+    case COLONY_PROFILE_CREATED:
+    case COLONY_PROFILE_UPDATED:
       return { ...colony, ...event.payload };
     default:
       return colony;

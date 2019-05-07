@@ -19,7 +19,7 @@ import {
   getUserInboxStore,
 } from '~data/stores';
 import { createEvent } from '~data/utils';
-import { USER_EVENT_TYPES } from '~data/constants';
+import { USER_EVENT_TYPES, USER_PROFILE_EVENT_TYPES } from '~data/constants';
 
 import { getUserTokenAddresses } from './utils';
 
@@ -84,12 +84,13 @@ export const createUserProfile: Command<
     return createUserProfileStore(ddb)(metadata);
   },
   async execute({ profileStore, inboxStore, metadataStore }, args) {
-    await profileStore.set({
-      createdAt: Date.now(),
-      inboxStoreAddress: inboxStore.address.toString(),
-      metadataStoreAddress: metadataStore.address.toString(),
-      ...args,
-    });
+    await profileStore.append(
+      createEvent(USER_PROFILE_EVENT_TYPES.USER_PROFILE_CREATED, {
+        inboxStoreAddress: inboxStore.address.toString(),
+        metadataStoreAddress: metadataStore.address.toString(),
+        ...args,
+      }),
+    );
     await profileStore.load();
     return { profileStore, inboxStore, metadataStore };
   },
@@ -111,7 +112,9 @@ export const updateUserProfile: Command<
   schema: UpdateUserProfileCommandArgsSchema,
   prepare: prepareProfileCommand,
   async execute(profileStore, args) {
-    await profileStore.set(args);
+    await profileStore.append(
+      createEvent(USER_PROFILE_EVENT_TYPES.USER_PROFILE_UPDATED, args),
+    );
     await profileStore.load();
     return profileStore;
   },
@@ -130,7 +133,11 @@ export const setUserAvatar: Command<
   schema: SetUserAvatarCommandArgsSchema,
   prepare: prepareProfileCommand,
   async execute(profileStore, { ipfsHash: avatarHash }) {
-    await profileStore.set({ avatarHash });
+    await profileStore.append(
+      createEvent(USER_PROFILE_EVENT_TYPES.USER_AVATAR_UPLOADED, {
+        avatarHash,
+      }),
+    );
     return avatarHash;
   },
 };
@@ -148,7 +155,9 @@ export const removeUserAvatar: Command<
   context: [CONTEXT.DDB_INSTANCE],
   prepare: prepareProfileCommand,
   async execute(profileStore) {
-    await profileStore.set({ avatarHash: null });
+    await profileStore.append(
+      createEvent(USER_PROFILE_EVENT_TYPES.USER_AVATAR_REMOVED),
+    );
     await profileStore.load();
     return profileStore;
   },
