@@ -192,32 +192,35 @@ const Task = ({
             isTaskCreator={isTaskCreator}
           />
         </section>
-        <section className={styles.section}>
-          <div className={styles.editor}>
-            <TaskDomains
-              colonyAddress={colonyAddress}
-              domainId={domainId}
-              draftId={draftId}
-              isTaskCreator={isTaskCreator}
-            />
-          </div>
-          <div className={styles.editor}>
-            <TaskSkills
-              colonyAddress={colonyAddress}
-              draftId={draftId}
-              isTaskCreator={isTaskCreator}
-              skillId={skillId}
-            />
-          </div>
-          <div className={styles.editor}>
-            <TaskDate
-              colonyAddress={colonyAddress}
-              draftId={draftId}
-              isTaskCreator={isTaskCreator}
-              dueDate={dueDate}
-            />
-          </div>
-        </section>
+        {isTaskCreator ||
+          ((dueDate || domainId || skillId) && (
+            <section className={styles.section}>
+              <div className={styles.editor}>
+                <TaskDomains
+                  colonyAddress={colonyAddress}
+                  domainId={domainId}
+                  draftId={draftId}
+                  isTaskCreator={isTaskCreator}
+                />
+              </div>
+              <div className={styles.editor}>
+                <TaskSkills
+                  colonyAddress={colonyAddress}
+                  draftId={draftId}
+                  isTaskCreator={isTaskCreator}
+                  skillId={skillId}
+                />
+              </div>
+              <div className={styles.editor}>
+                <TaskDate
+                  colonyAddress={colonyAddress}
+                  draftId={draftId}
+                  isTaskCreator={isTaskCreator}
+                  dueDate={dueDate}
+                />
+              </div>
+            </section>
+          ))}
       </aside>
       <div className={styles.container}>
         <section

@@ -2,7 +2,7 @@
 
 // $FlowFixMe upgrade flow
 import React, { useCallback, useState } from 'react';
-import { defineMessages } from 'react-intl';
+import { defineMessages, FormattedMessage } from 'react-intl';
 
 import type { DomainType, TaskProps } from '~immutable';
 
@@ -19,6 +19,10 @@ import { domainsFetcher } from '../../fetchers';
 import styles from './TaskDomains.css';
 
 const MSG = defineMessages({
+  notSet: {
+    id: 'dashboard.TaskDomains.notSet',
+    defaultMessage: 'Domain not set',
+  },
   title: {
     id: 'dashboard.TaskDomains.title',
     defaultMessage: 'Domain',
@@ -76,28 +80,31 @@ const TaskDomains = ({
 
   return (
     <div className={styles.main}>
-      {isTaskCreator && (
-        <ItemsList
-          list={domains || []}
-          itemDisplayPrefix="#"
-          handleSetItem={handleSetDomain}
-          name="taskDomains"
-          connect={false}
-          showArrow={false}
-          itemId={domainId}
-        >
-          <div className={styles.controls}>
-            <Heading
-              appearance={{ size: 'small', margin: 'none' }}
-              text={MSG.title}
-            />
+      <ItemsList
+        list={domains || []}
+        itemDisplayPrefix="#"
+        handleSetItem={handleSetDomain}
+        name="taskDomains"
+        connect={false}
+        showArrow={false}
+        itemId={domainId}
+      >
+        <div className={styles.controls}>
+          <Heading
+            appearance={{ size: 'small', margin: 'none' }}
+            text={MSG.title}
+          />
+          {isTaskCreator && (
             <Button
               appearance={{ theme: 'blue', size: 'small' }}
               text={MSG.selectDomain}
               textValues={{ domainSelected: selectedDomainId }}
             />
-          </div>
-        </ItemsList>
+          )}
+        </div>
+      </ItemsList>
+      {!domainId && (
+        <FormattedMessage className={styles.notSet} {...MSG.notSet} />
       )}
     </div>
   );
