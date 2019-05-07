@@ -10,10 +10,12 @@ import {
   select,
   takeEvery,
   takeLatest,
+  setContext,
 } from 'redux-saga/effects';
 
 import type { Action } from '~redux';
 import { getContext, CONTEXT } from '~context';
+
 import {
   executeQuery,
   executeCommand,
@@ -285,6 +287,38 @@ function* usernameCreate({
   }
 }
 
+// eslint-disable-next-line no-empty-pattern
+function* userLogout({  }: Action<typeof ACTIONS.USER_LOGOUT>): Saga<void> {
+  const ddb = yield* getContext('ddb');
+  /*
+   *  1. The redux store is wiped for user-specific data:
+   * Dealt with by reducers
+   */
+
+  /*
+   *  2. Reset user related state in the dApp:
+   */
+
+  /*
+   *  3. Destroy instances of colonyJS in the colonyManager? Probably.
+   */
+  yield setContext({
+    [CONTEXT.COLONY_MANAGER]: undefined,
+  });
+
+  /*
+   *  4. The purser wallet is reset
+   */
+  yield setContext({ [CONTEXT.WALLET]: undefined });
+  /*
+   *  6. Close orbit store
+   */
+  yield call(ddb.stop);
+  yield setContext({
+    [CONTEXT.DDB_INSTANCE]: undefined,
+  });
+}
+
 function* userPermissionsFetch({
   payload: { colonyAddress },
   meta,
@@ -488,6 +522,7 @@ export default function* setupUsersSagas(): Saga<void> {
     ACTIONS.USERNAME_CHECK_AVAILABILITY,
     usernameCheckAvailability,
   );
+  yield takeLatest(ACTIONS.USER_LOGOUT, userLogout);
   yield takeLatest(ACTIONS.USERNAME_CREATE, usernameCreate);
   yield takeLatest(ACTIONS.CURRENT_USER_GET_BALANCE, currentUserGetBalance);
   yield takeLatest(ACTIONS.USER_PROFILE_UPDATE, userProfileUpdate);

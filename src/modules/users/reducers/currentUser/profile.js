@@ -24,6 +24,10 @@ const currentUserProfileReducer: ReducerType<
       const { profileData, walletAddress, balance } = action.payload;
       return UserProfileRecord({ ...profileData, walletAddress, balance });
     }
+    case ACTIONS.USER_LOGOUT: {
+      /* Set values back to default */
+      return state.clear();
+    }
     case ACTIONS.USER_PROFILE_UPDATE_SUCCESS:
     case ACTIONS.USERNAME_CREATE_SUCCESS: {
       return state.mergeDeep(fromJS(action.payload));

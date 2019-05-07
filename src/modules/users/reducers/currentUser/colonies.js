@@ -14,14 +14,12 @@ type Actions = {
   USER_COLONY_SUBSCRIBE: *,
   USER_COLONY_SUBSCRIBE_ERROR: *,
   USER_COLONY_SUBSCRIBE_SUCCESS: *,
+  USER_LOGOUT_SUCCESS: *,
   USER_SUBSCRIBED_COLONIES_FETCH: *,
   USER_SUBSCRIBED_COLONIES_FETCH_ERROR: *,
   USER_SUBSCRIBED_COLONIES_FETCH_SUCCESS: *,
 };
 
-/**
- * @todo  in #755 (user logout) unset this state
- */
 const currentUserColoniesReducer: ReducerType<State, Actions> = (
   state = DataRecord(),
   action,
@@ -36,6 +34,13 @@ const currentUserColoniesReducer: ReducerType<State, Actions> = (
     case ACTIONS.USER_SUBSCRIBED_COLONIES_FETCH_SUCCESS: {
       const record = (state.record || ImmutableSet()).union(action.payload);
       return state.merge({ error: undefined, record, isFetching: false });
+    }
+    case ACTIONS.USER_LOGOUT_SUCCESS: {
+      return state.merge({
+        error: undefined,
+        record: undefined,
+        isFetching: false,
+      });
     }
     default:
       return state;
