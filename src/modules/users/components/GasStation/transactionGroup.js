@@ -21,6 +21,13 @@ export const findTransactionGroupByKey = (
   key: string,
 ) => txGroups.find(transactionGroup => getGroupKey(transactionGroup) === key);
 
+// Since we are not currently delete old transactions we sometimes need to check
+// for the newest one
+export const findNewestGroup = (txGroups: TransactionGroups) => {
+  txGroups.sort((a, b) => new Date(b[0].createdAt) - new Date(a[0].createdAt));
+  return txGroups[0];
+};
+
 // Get the index of the first transaction in a group that is ready to sign
 export const getActiveTransactionIdx = (txGroup: TransactionGroup) => {
   // Select the pending selection so that the user can't sign the next one

@@ -18,6 +18,7 @@ import {
   getGroupStatus,
   findTransactionGroupByKey,
   getGroupKey,
+  findNewestGroup,
 } from '../../../users/components/GasStation/transactionGroup';
 
 const MSG = defineMessages({
@@ -72,9 +73,10 @@ const displayName = 'dashboard.CreateColonyWizard.StepConfirmTransactions';
 
 const StepConfirmTransactions = ({ wizardValues: { colonyName } }: Props) => {
   const transactionGroups = useSelector(groupedTransactions);
+  const newestGroup = findNewestGroup(transactionGroups);
   if (
-    getGroupStatus(transactionGroups[0]) === 'succeeded' &&
-    getGroupKey(transactionGroups[0]) === 'group.transaction.batch.createColony'
+    getGroupStatus(newestGroup) === 'succeeded' &&
+    getGroupKey(newestGroup) === 'group.transaction.batch.createColony'
   ) {
     return <Redirect to={`/colony/${colonyName}`} />;
   }
