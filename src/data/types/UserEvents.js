@@ -65,7 +65,7 @@ export type UserEvents = {|
     {|
       colonyAddress: Address,
       draftId: TaskDraftId,
-      taskTitle?: string,
+      taskTitle: string,
       comment: string,
       sourceUsername: string,
       sourceUserWalletAddress: string,
