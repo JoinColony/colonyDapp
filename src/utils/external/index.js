@@ -13,18 +13,10 @@ type EthUsdResponse = {
   },
 };
 
-export const getEtherscanTxUrl = (
-  txHash: string | number,
-  network?: string = process.env.NETWORK || 'rinkeby',
-): string => {
-  const tld = network === 'tobalaba' ? 'com' : 'io';
-  const networkSubdomain = network === 'homestead' ? '' : `${network}.`;
-  return `https://${networkSubdomain}etherscan.${tld}/tx/${txHash}`;
-};
-
 /*
   Request dollar conversion value from etherScan
 */
+// eslint-disable-next-line import/prefer-default-export
 export const getEthToUsd = (ethValue: BN): Promise<number | void> => {
   const ETH_USD_KEY = 'ethUsd';
   const ETH_USD_TIMESTAMP_KEY = 'ethUsdTimestamp';
