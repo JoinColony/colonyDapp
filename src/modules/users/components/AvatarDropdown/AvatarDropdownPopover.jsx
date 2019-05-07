@@ -7,8 +7,12 @@ import { withRouter } from 'react-router-dom';
 
 import type { IBrowserHistory } from 'history';
 import type { OpenDialog } from '~core/Dialog/types';
+import { ActionButton } from '~core/Button';
+import { ACTIONS } from '~redux';
 
 import unfinishedProfileOpener from '~users/UnfinishedProfile';
+
+import styles from './AvatarDropdownPopover.css';
 
 import {
   USER_EDIT_ROUTE,
@@ -144,7 +148,13 @@ class AvatarDropdownPopover extends Component<Props> {
   renderMetaSection = () => (
     <DropdownMenuSection separator>
       <DropdownMenuItem>
-        <Link to="/" text={MSG.signOut} />
+        <ActionButton
+          className={styles.logout}
+          text={MSG.signOut}
+          submit={ACTIONS.USER_LOGOUT}
+          error={ACTIONS.USER_LOGOUT_ERROR}
+          success={ACTIONS.USER_LOGOUT_SUCCESS}
+        />
       </DropdownMenuItem>
     </DropdownMenuSection>
   );
