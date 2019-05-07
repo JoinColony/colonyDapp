@@ -241,7 +241,7 @@ class DDB {
   async generateStoreAddress<P: Object, AC: AccessController<*, *>>(
     blueprint: StoreBlueprint<P, AC>,
     storeProps: P,
-  ): Promise<OrbitDBAddress> {
+  ): Promise<string> {
     const { getName, type: StoreClass } = blueprint;
     const name = getName(storeProps);
     if (!name) {
@@ -254,7 +254,7 @@ class DDB {
       blueprint,
       storeProps,
     );
-    return this._orbitNode.determineAddress(
+    const address = await this._orbitNode.determineAddress(
       name,
       StoreClass.orbitType,
       // We might want to use more options in the future. Just add them here
@@ -270,6 +270,8 @@ class DDB {
         overwrite: true,
       },
     );
+
+    return address && address.toString();
   }
 
   // Taken from https://github.com/orbitdb/orbit-db/commit/50dcd71411fbc96b1bcd2ab0625a3c0b76acbb7e

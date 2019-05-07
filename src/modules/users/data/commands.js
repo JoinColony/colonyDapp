@@ -1,9 +1,10 @@
 /* @flow */
 
-import type { Address, OrbitDBAddress } from '~types';
+import type { Address } from '~types';
 import type { TaskDraftId } from '~immutable';
 import type {
   Command,
+  ColonyManager,
   DDB,
   ENSCache,
   UserInboxStore,
@@ -22,6 +23,7 @@ import {
 import { createEvent } from '~data/utils';
 import { USER_EVENT_TYPES, USER_PROFILE_EVENT_TYPES } from '~data/constants';
 
+import { getUserProfileReducer } from './reducers';
 import { getUserTokenAddresses } from './utils';
 
 import {
@@ -37,7 +39,7 @@ type UserProfileStoreMetadata = {|
 |};
 
 type UserMetadataStoreMetadata = {|
-  metadataStoreAddress: string | OrbitDBAddress,
+  metadataStoreAddress: string,
   walletAddress: Address,
 |};
 
@@ -343,14 +345,22 @@ export const unsubscribeToColony: Command<
 
 export const createCommentMention: Command<
   UserInboxStore[],
-  {| matchingUsernames: string[], cachedAddresses: ?Object |},
+  {|
+    matchingUsernames: string[],
+    cachedAddresses: {
+      [username: string]: {|
+        walletAddress: Address,
+        inboxStoreAddress: string,
+      |},
+    },
+  |},
   {|
     colonyAddress: Address,
     draftId: TaskDraftId,
     taskTitle: string,
     comment: string,
     sourceUsername: string,
-    sourceWalletAddress: string,
+    sourceUserWalletAddress: string,
   |},
   void,
 > = {
@@ -363,59 +373,99 @@ export const createCommentMention: Command<
       colonyManager: { networkClient },
     }: { ddb: DDB, ens: ENSCache, colonyManager: ColonyManager },
     {
-      matchingUsernames,
-      cachedAddresses,
-    }: {| matchingUsernames: string[], cachedAddresses: Object |},
+      matchingUsernames = [],
+      cachedAddresses = {},
+    }: {|
+      matchingUsernames: string[],
+      cachedAddresses: {
+        [username: string]: {|
+          walletAddress: Address,
+          inboxStoreAddress: string,
+        |},
+      },
+    |},
   ) {
-    if (!(matchingUsernames && matchingUsernames.length))
-      throw new Error('No username matches');
+    if (!matchingUsernames.length) throw new Error('No username matches');
 
-    const usernamesToResolve = matchingUsernames.filter(
-      username => !cachedAddresses[username],
-    );
-    const hasUsernamesToResolve =
-      usernamesToResolve && usernamesToResolve.length;
-    const hasCachedAddresses =
-      cachedAddresses && Object.keys(cachedAddresses).length;
+    const getUserInboxStoreFromProfile = (
+      profile: ?{|
+        walletAddress: Address,
+        inboxStoreAddress: string,
+      |},
+    ) => {
+      const { walletAddress, inboxStoreAddress } = profile || {};
+      if (!(inboxStoreAddress && walletAddress)) return null;
+      return getUserInboxStore(ddb)({
+        walletAddress,
+        inboxStoreAddress,
+      });
+    };
 
-    const getUserInboxStoreFromProfile = ({
-      walletAddress,
-      inboxStoreAddress,
-    }) => getUserInboxStore(ddb)({ inboxStoreAddress, walletAddress });
-    if (hasCachedAddresses && !hasUsernamesToResolve) {
-      return Object.values(cachedAddresses).map(getUserInboxStoreFromProfile);
-    }
-
-    const getUserAddressByUsername = async username => {
-      const address = await ens.getAddress(
+    const getUserAddressByUsername = (username: string) =>
+      username &&
+      ens.getAddress(
         ens.constructor.getFullDomain('user', username),
         networkClient,
       );
-      return address;
+    const getUserProfile = async (walletAddress: ?Address) => {
+      if (!walletAddress) return null;
+      const profileStore = await getUserProfileStore(ddb)({ walletAddress });
+      if (!profileStore) return null;
+      const {
+        inboxStoreAddress,
+        walletAddress: profileWalletAddress,
+      } = profileStore.all().reduce(getUserProfileReducer, {
+        /*
+         * We can be pretty sure that `walletAddress` will be in the first
+         * event for this store, but flow doesn't know that.
+         */
+        inboxStoreAddress: '',
+        metadataStoreAddress: '',
+        walletAddress: '',
+      });
+
+      return {
+        inboxStoreAddress,
+        walletAddress: profileWalletAddress,
+      };
     };
 
-    const resolvedUserAddresses = await Promise.all(
-      usernamesToResolve.map(getUserAddressByUsername),
+    const usernamesToResolve =
+      matchingUsernames.filter(username => !cachedAddresses[username]) || [];
+    if (Object.keys(cachedAddresses).length && !usernamesToResolve.length) {
+      return Promise.all(
+        Object.keys(cachedAddresses)
+          .filter(key => !!cachedAddresses[key])
+          .map(key => getUserInboxStoreFromProfile(cachedAddresses[key])),
+      );
+    }
+
+    const resolvedWalletAddresses = await Promise.all(
+      usernamesToResolve && usernamesToResolve.map(getUserAddressByUsername),
     );
 
     /**
      * @todo Limit number of mentions in comments
      * @body We have to set a limit to the number of mentions an user can do or we'll get bitten by that later trying to load too many stores
      */
-    const userProfileStores = await Promise.all(
-      resolvedUserAddresses
-        .filter(address => !!address)
-        .map(walletAddress => getUserProfileStore(ddb)({ walletAddress })),
+    const userProfiles = await Promise.all(
+      resolvedWalletAddresses && resolvedWalletAddresses.map(getUserProfile),
     );
-    const userProfiles = userProfileStores.map(profileStore =>
-      profileStore.all(),
+
+    const inboxStores = await Promise.all(
+      userProfiles && userProfiles.map(getUserInboxStoreFromProfile),
     );
-    return userProfiles.map(getUserInboxStoreFromProfile);
+
+    return (
+      (inboxStores && inboxStores.filter(inboxStore => !!inboxStore)) || []
+    );
   },
   async execute(userInboxStores, args) {
-    return userInboxStores.map(userInboxStore =>
-      userInboxStore.append(
-        createEvent(USER_EVENT_TYPES.COMMENT_MENTION, args),
+    await Promise.all(
+      userInboxStores.map(userInboxStore =>
+        userInboxStore.append(
+          createEvent(USER_EVENT_TYPES.COMMENT_MENTION, args),
+        ),
       ),
     );
   },

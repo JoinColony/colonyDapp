@@ -1,6 +1,6 @@
 /* @flow */
 
-import type { Address, OrbitDBAddress } from '~types';
+import type { Address } from '~types';
 import type {
   ColonyClient,
   ColonyManager,
@@ -62,7 +62,7 @@ type UserProfileStoreMetadata = {|
 |};
 
 type UserMetadataStoreMetadata = {|
-  metadataStoreAddress: string | OrbitDBAddress,
+  metadataStoreAddress: string,
   walletAddress: Address,
 |};
 
@@ -174,7 +174,7 @@ export const getUserColonies: Query<
 
 export const getUserTokens: Query<
   {| metadataStore: ?UserMetadataStore, networkClient: NetworkClient |},
-  {| walletAddress: Address, metadataStoreAddress: string | OrbitDBAddress |},
+  {| walletAddress: Address, metadataStoreAddress: string |},
   {| walletAddress: Address |},
   *,
 > = {
@@ -375,7 +375,7 @@ export const getUserInboxActivity: Query<
   |},
   {|
     colonyAddress: Address,
-    inboxStoreAddress: OrbitDBAddress,
+    inboxStoreAddress: string,
     walletAddress: Address,
   |},
   void,
@@ -397,7 +397,7 @@ export const getUserInboxActivity: Query<
       walletAddress,
     }: {|
       colonyAddress: Address,
-      inboxStoreAddress: OrbitDBAddress,
+      inboxStoreAddress: string,
       walletAddress: Address,
     |},
   ) {
