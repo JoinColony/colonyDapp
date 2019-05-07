@@ -3,7 +3,7 @@
 import type { ColonyClient as ColonyClientType } from '@colony/colony-js-client';
 import type { WalletObjectType } from '@colony/purser-core/flowtypes';
 
-import type { Address, OrbitDBAddress } from '~types';
+import type { Address } from '~types';
 import type { TaskDraftId } from '~immutable';
 import type { DDB } from '~lib/database';
 import type {
@@ -57,7 +57,7 @@ export const getTaskStore = (
 }: {
   colonyAddress: Address,
   draftId: TaskDraftId,
-  taskStoreAddress: string | OrbitDBAddress,
+  taskStoreAddress: string,
 }) =>
   ddb.getStore<TaskStore>(taskStoreBlueprint, taskStoreAddress, {
     colonyAddress,
@@ -72,7 +72,7 @@ export const getCommentsStore = (ddb: DDB) => async ({
   draftId,
 }: {
   colonyAddress: Address,
-  commentsStoreAddress: string | OrbitDBAddress,
+  commentsStoreAddress: string,
   draftId: TaskDraftId,
 }) =>
   ddb.getStore<CommentsStore>(commentsStoreBlueprint, commentsStoreAddress, {
@@ -119,7 +119,7 @@ export const getUserInboxStore = (ddb: DDB) => async ({
   inboxStoreAddress,
   walletAddress,
 }: {
-  inboxStoreAddress: string | OrbitDBAddress,
+  inboxStoreAddress: string,
   walletAddress: Address,
 }) =>
   ddb.getStore<UserInboxStore>(userInboxStoreBlueprint, inboxStoreAddress, {
@@ -130,7 +130,7 @@ export const getUserMetadataStore = (ddb: DDB) => async ({
   metadataStoreAddress,
   walletAddress,
 }: {
-  metadataStoreAddress: string | OrbitDBAddress,
+  metadataStoreAddress: string,
   walletAddress: Address,
 }) =>
   ddb.getStore<UserMetadataStore>(
