@@ -12,7 +12,6 @@ import type {
 } from '~types';
 
 import OrbitDB from 'orbit-db';
-import { log } from '../../utils/debug';
 import IPFSNode from '../ipfs';
 import Keystore from './Keystore';
 import AccessControllerFactory from './AccessControllerFactory';
@@ -46,7 +45,7 @@ class DDB {
     if (!accessController) {
       throw new Error(
         'Cannot instantiate an access controller, store blueprint invalid',
-      ); // eslint-disable-line max-len
+      );
     }
 
     return accessController;
@@ -162,7 +161,8 @@ class DDB {
       // We might want to use more options in the future. Just add them here
       {
         accessController: { controller: storeAccessController },
-        overwrite: false,
+        // @NOTE: For now, if a store gets the same address, we'll override it locally
+        overwrite: true,
       },
     );
 
@@ -220,7 +220,6 @@ class DDB {
     );
     const orbitStore: OrbitDBStore = await this._orbitNode.open(address, {
       accessController: { controller: storeAccessController },
-      overwrite: false,
     });
     if (orbitStore.type !== type.orbitType) {
       throw new Error(
@@ -259,7 +258,8 @@ class DDB {
          * to orbit-db without it getting on our way
          */
         accessController: { controller },
-        overwrite: false,
+        // @NOTE: For now, if a store gets the same address, we'll override it locally
+        overwrite: true,
       },
     );
   }
