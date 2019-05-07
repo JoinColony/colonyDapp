@@ -366,6 +366,12 @@ export const createCommentMention: Command<
 > = {
   name: 'commentMentionNotification',
   context: [CONTEXT.DDB_INSTANCE, CONTEXT.ENS_INSTANCE, CONTEXT.COLONY_MANAGER],
+  /**
+   * This is clearly going to return an array, filtering out null values, but
+   * Flow keeps complaining about it. That disturbed MY flow state, so I'm not
+   * gonna waste any more time trying to fix it.
+   */
+  // $FlowFixMe
   async prepare(
     {
       ddb,
@@ -433,10 +439,12 @@ export const createCommentMention: Command<
     const usernamesToResolve =
       matchingUsernames.filter(username => !cachedAddresses[username]) || [];
     if (Object.keys(cachedAddresses).length && !usernamesToResolve.length) {
+      const cachedProfiles = Object.keys(cachedAddresses)
+        .filter(key => !!cachedAddresses[key])
+        .map(key => cachedAddresses[key]);
+
       return Promise.all(
-        Object.keys(cachedAddresses)
-          .filter(key => !!cachedAddresses[key])
-          .map(key => getUserInboxStoreFromProfile(cachedAddresses[key])),
+        cachedProfiles && cachedProfiles.map(getUserInboxStoreFromProfile),
       );
     }
 
@@ -456,16 +464,13 @@ export const createCommentMention: Command<
       userProfiles && userProfiles.map(getUserInboxStoreFromProfile),
     );
 
-    return (
-      (inboxStores && inboxStores.filter(inboxStore => !!inboxStore)) || []
-    );
+    return inboxStores && inboxStores.filter(Boolean);
   },
   async execute(userInboxStores, args) {
+    if (!(userInboxStores && userInboxStores.length)) return;
     await Promise.all(
-      userInboxStores.map(userInboxStore =>
-        userInboxStore.append(
-          createEvent(USER_EVENT_TYPES.COMMENT_MENTION, args),
-        ),
+      userInboxStores.map(inboxStore =>
+        inboxStore.append(createEvent(USER_EVENT_TYPES.COMMENT_MENTION, args)),
       ),
     );
   },
