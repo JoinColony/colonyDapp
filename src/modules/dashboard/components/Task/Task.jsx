@@ -151,7 +151,7 @@ const Task = ({
 
       openDialog('TaskEditDialog', {
         draftId,
-        maxTokens: 2,
+        maxTokens: 1,
         payouts,
         reputation,
         workerAddress,
