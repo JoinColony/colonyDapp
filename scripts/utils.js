@@ -110,10 +110,20 @@ const getProcess = async processName => {
     return null;
   }
 
-  const [pid] = pids[processName];
+  let pid;
+  const details = pids[processName];
+
+  // Handle the legacy format
+  if (details && !Array.isArray(details)) {
+    pid = details;
+  } else {
+    [pid] = details || [];
+  }
+
   if (!pid) {
     return null;
   }
+
   const [process] = await findProcess('pid', parseInt(pid, 10)) || [];
   return process;
 };

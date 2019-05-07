@@ -17,6 +17,7 @@
         "lint:ci": "eslint --format junit -o 'reports/eslint/eslint-results.xml' 'src/**/*.{js,jsx}' 'integration-testing/**/*.js' 'cypress/**/*.js'",
         "provision": "scripts/provision_submodules.sh",
         "scaffold": "plop",
+        "stop": "scripts/stop_all.js --killEverything",
         "styleguide": "styleguidist server",
         "styleguide:build": "styleguidist build",
         "styleguide:deploy": "gh-pages -d styleguide -r git@github.com:JoinColony/colonyUI.git",

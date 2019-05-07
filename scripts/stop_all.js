@@ -1,17 +1,21 @@
 #!/usr/bin/env node
 
+const fs = require('fs');
 const kill = require('tree-kill');
 const chalk = require('chalk');
+const args = require('minimist')(process.argv);
 
+const { PID_FILE } = require('./paths');
 const { getAllPids } = require('./utils');
 
-const killPromise = (pidName, [pid, keepAlive]) => {
-  if (keepAlive) {
+const killPromise = async (pidName, [pid, keepAlive]) => {
+  if (!args.killEverything && keepAlive) {
     console.log(`Keeping "${pidName}" (${pid}) alive`);
-    return;
+    return { [pidName]: [pid, keepAlive] };
   }
+
   console.info(`Killing "${pidName}" (${pid})`);
-  return new Promise((resolve, reject) => {
+  await new Promise((resolve, reject) => {
     kill(pid, err => {
       if (err) {
         reject(err);
@@ -20,11 +24,22 @@ const killPromise = (pidName, [pid, keepAlive]) => {
       resolve(pid);
     });
   });
+  return null;
 };
 
 const teardown = async () => {
   const pids = getAllPids();
-  await Promise.all(Object.keys(pids).map(name => killPromise(name, pids[name])));
+
+  const newPids = (
+    await Promise.all(
+      Object.keys(pids).map(name => killPromise(name, pids[name]))
+    )
+  )
+    .filter(Boolean)
+    .reduce((result, obj) => ({ ...result, ...obj }), {});
+
+  fs.writeFileSync(PID_FILE, JSON.stringify(newPids));
+
   console.info(chalk.greenBright('Teardown done.'));
   process.exit(0);
 };
