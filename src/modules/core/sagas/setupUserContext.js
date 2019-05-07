@@ -135,28 +135,18 @@ export default function* setupUserContext(
       const userColonies = yield* executeQuery(getUserColonies, {
         metadata: {
           walletAddress,
-          /*
-           * @note there's some Flow shennanings going on with how this
-           * type is declared in the `getUserProfile` query
-           */
-          /* $FlowFixMe */
           metadataStoreAddress: profileData.metadataStoreAddress,
         },
       });
 
       for (let index = 0; index < userColonies.length; index += 1) {
-        const colonyClient = yield call(
-          [colonyManager, colonyManager.getColonyClient],
-          userColonies[index],
-        );
-
         /*
          * Load the user activities from the store
          */
         yield put<Action<typeof ACTIONS.USER_ACTIVITIES_FETCH>>({
           type: ACTIONS.USER_ACTIVITIES_FETCH,
           payload: {
-            colonyClient,
+            colonyAddress: userColonies[index],
           },
           meta: {
             ...meta,

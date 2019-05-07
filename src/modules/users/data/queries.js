@@ -117,6 +117,8 @@ export const getUserProfile: Query<
        * event for this store, but flow doesn't know that.
        */
       walletAddress: '',
+      inboxStoreAddress: '',
+      metadataStoreAddress: '',
     });
   },
 };
