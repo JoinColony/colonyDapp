@@ -33,10 +33,7 @@ export type TaskEvents = {|
         id: string,
         author: Address,
         body: string,
-        timestamp: number,
-        metadata?: {|
-          mentions: string[],
-        |},
+        mentions?: string[],
       |},
     |},
   >,

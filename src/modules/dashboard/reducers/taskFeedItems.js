@@ -27,7 +27,7 @@ const getTaskFeedItemRecordProps = (event: *) => {
     case TASK_EVENT_TYPES.COMMENT_POSTED: {
       const {
         signature,
-        content: { author, body, metadata: { mentions } = {} },
+        content: { author, body, mentions = [] },
       } = event.payload;
       return {
         comment: TaskCommentRecord({

@@ -704,9 +704,7 @@ function* taskCommentAdd({
           id: nanoid(),
           author: wallet.address,
           body: comment,
-          metadata: {
-            mentions: matchingUsernames || [],
-          },
+          mentions: matchingUsernames || [],
         },
       },
     });

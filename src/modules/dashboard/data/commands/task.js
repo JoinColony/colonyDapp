@@ -328,7 +328,6 @@ export const postComment: Command<
     signature: string,
     content: {|
       id: string,
-      timestamp: number,
       /*
        * The author's address is passed explicitly in the arguments (as opposed
        * to using `event.meta.userAddress`) because it gets signed alongside
@@ -336,11 +335,7 @@ export const postComment: Command<
        */
       author: Address,
       body: string,
-      // FIXME can I ask why the metadata is in the content here? Maybe not
-      // call it metadata? It's super confusing.
-      metadata?: {|
-        mentions: string[],
-      |},
+      mentions?: string[],
     |},
   |},
   {|
