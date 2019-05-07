@@ -77,10 +77,10 @@ function* colonyAdminAdd({
      * Notification
      */
     yield putNotification({
-      event: 'notificationAdminOtherAdded',
-      userAddress: walletAddress,
       colonyAddress,
-      otherUserAddress: newAdmin,
+      event: 'notificationAdminOtherAdded',
+      sourceUserAddress: walletAddress,
+      targetUserAddress: newAdmin,
     });
 
     yield put(fetchRoles(colonyAddress));
@@ -126,10 +126,10 @@ function* colonyAdminRemove({
      * Notification
      */
     yield putNotification({
-      event: 'notificationAdminOtherRemoved',
-      userAddress: walletAddress,
       colonyAddress,
-      otherUserAddress: user,
+      event: 'notificationAdminOtherRemoved',
+      sourceUserAddress: walletAddress,
+      targetUserAddress: user,
     });
 
     yield put(fetchRoles(colonyAddress));

@@ -196,10 +196,10 @@ function* colonyMintTokens({
      * Notification
      */
     yield putNotification({
-      event: 'notificationAdminTokensGenerated',
-      userAddress: walletAddress,
-      colonyAddress,
       amount: mintedAmount,
+      colonyAddress,
+      event: 'notificationAdminTokensGenerated',
+      sourceUserAddress: walletAddress,
     });
   } catch (error) {
     yield putError(ACTIONS.COLONY_MINT_TOKENS_ERROR, error, meta);

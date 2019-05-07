@@ -10,8 +10,6 @@ type Shared = {|
   id?: string,
   comment?: string,
   taskTitle?: string,
-  userAddress?: string,
-  otherUserAddress?: string,
   event: string,
   timestamp?: Date | number,
   colonyName?: string,
@@ -19,6 +17,8 @@ type Shared = {|
   domainName?: string,
   domainId?: number,
   amount?: BN,
+  sourceUserAddress?: string,
+  targetUserAddress?: string,
 |};
 
 export type UserActivityType = $ReadOnly<Shared>;
@@ -29,8 +29,6 @@ const defaultValues: $Shape<Shared> = {
   id: undefined,
   comment: undefined,
   taskTitle: undefined,
-  userAddress: undefined,
-  otherUserAddress: undefined,
   event: undefined,
   timestamp: new Date(),
   colonyName: undefined,
@@ -38,6 +36,8 @@ const defaultValues: $Shape<Shared> = {
   domainName: undefined,
   domainId: undefined,
   amount: undefined,
+  sourceUserAddress: undefined,
+  targetUserAddress: undefined,
 };
 
 const UserActivityRecord: RecordFactory<Shared> = Record(defaultValues);

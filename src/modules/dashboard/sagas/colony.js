@@ -432,10 +432,10 @@ function* colonyCreate({
      * Notification
      */
     yield putNotification({
-      event: 'notificationAdminENSCreated',
-      userAddress: walletAddress,
-      colonyName,
       colonyAddress,
+      colonyName,
+      event: 'notificationAdminENSCreated',
+      sourceUserAddress: walletAddress,
     });
   } catch (error) {
     yield putError(ACTIONS.COLONY_CREATE_ERROR, error, meta);

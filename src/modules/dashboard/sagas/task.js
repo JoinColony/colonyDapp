@@ -637,10 +637,10 @@ function* taskCommentAdd({
      * (once the mentions are all wired up)
      */
     yield putNotification({
-      event: 'notificationUserMentioned',
-      userAddress: walletAddress,
-      taskTitle,
       comment: commentData.body,
+      event: 'notificationUserMentioned',
+      sourceUserAddress: walletAddress,
+      taskTitle,
     });
   } catch (error) {
     yield putError(ACTIONS.TASK_COMMENT_ADD_ERROR, error, meta);

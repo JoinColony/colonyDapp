@@ -25,7 +25,7 @@ export type InboxElement = {
   domainId?: Number,
   dueDate?: Date,
   onClickRoute?: string,
-  otherUserAddress?: string,
+  sourceUserAddress?: string,
+  targetUserAddress?: string,
   taskTitle?: string,
-  userAddress?: string,
 };
