@@ -21,7 +21,7 @@ log.verbose = (message: string, ...args: any) =>
     ? log(
         console.info.bind(console),
         `%c verbose: ${message}`,
-        'color: blue',
+        'color: #f2f',
         ...args,
       )
     : null;
