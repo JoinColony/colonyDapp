@@ -9,23 +9,16 @@ const chalk = require('chalk');
 
 const startGanache = require('./start_ganache');
 const startStarSignal = require('./start_star_signal');
-const deployContracts = require('./deploy_contracts');
-
+const { getProcess } = require('./utils');
 const { PID_FILE } = require('./paths');
 
-const deployContractsPromise = () =>
-  new Promise((resolve, reject) => {
-    const contractProcess = deployContracts();
-    contractProcess.on(
-      'exit',
-      code =>
-        code ? reject(new Error('Contract deployment failed')) : resolve(true),
-    );
-    contractProcess.on('error', reject);
-  });
-
-const trufflePigPromise = () =>
-  new Promise((resolve, reject) => {
+const trufflePigPromise = async () => {
+  const existingProcess = await getProcess('trufflepig');
+  if (existingProcess) {
+    console.info(chalk.magentaBright('Got existing trufflepig...'));
+    return existingProcess;
+  }
+  return new Promise((resolve, reject) => {
     const trufflepigProcess = spawn(
       path.resolve(__dirname, './start_trufflepig.js'),
       {
@@ -44,6 +37,7 @@ const trufflePigPromise = () =>
       reject(e);
     });
   });
+};
 
 const webpackPromise = () =>
   new Promise((resolve, reject) => {
@@ -77,32 +71,25 @@ const wssProxyPromise = async () => {
 
 const startAll = async () => {
   try {
-    console.info('Starting ganache...');
     const ganacheProcess = await startGanache();
 
-    console.info('Deploying contracts...');
-    await deployContractsPromise();
-
-    console.info(chalk.magentaBright('Starting trufflepig...'));
     const trufflepigProcess = await trufflePigPromise();
 
     // This will probably be replaced with pinion
-    console.info('Starting star signal...');
     const starSignalProcess = await startStarSignal();
 
     // This is temporarily disabled until we actually *really* need it
-    // console.info('Starting websocket proxy...');
     // const wssProxyProcess = await wssProxyPromise();
 
     console.info('Starting webpack...');
     const webpackProcess = await webpackPromise();
 
     const pids = {
-      ganache: ganacheProcess.pid,
-      trufflepig: trufflepigProcess.pid,
-      webpack: webpackProcess.pid,
-      starSignal: starSignalProcess.pid,
-      // wssProxy: wssProxyProcess.pid,
+      ganache: [ganacheProcess.pid, args.keepAliveGanache],
+      trufflepig: [trufflepigProcess.pid, args.keepAliveTrufflepig],
+      webpack: [webpackProcess.pid],
+      starSignal: [starSignalProcess.pid, args.keepAliveStarSignal],
+      // wssProxy: [wssProxyProcess.pid, args.keepAliveWSS],
     };
 
     fs.writeFileSync(PID_FILE, JSON.stringify(pids));

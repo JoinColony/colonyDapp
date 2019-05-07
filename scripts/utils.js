@@ -2,10 +2,11 @@ const exec = require('child_process').exec;
 const chalk = require('chalk');
 const path = require('path');
 const fs = require('fs');
+const findProcess = require('find-process');
 const PATHS = require('./paths');
 
 const { readdirSync, existsSync } = fs;
-const { DAPP_MODULES, COMPONENTS_FOLDER } = PATHS;
+const { DAPP_MODULES, COMPONENTS_FOLDER, PID_FILE } = PATHS;
 
 
 /**
@@ -92,8 +93,35 @@ const getDappModules = (searchPath = DAPP_MODULES) => {
   );
 };
 
+const getAllPids = () => {
+  let pids;
+  try {
+    pids = require(PID_FILE);
+  } catch (caughtError) {
+    console.error(caughtError);
+    return console.log('PID file not found. Please close the processes manually.');
+  }
+  return pids;
+};
+
+const getProcess = async processName => {
+  const pids = getAllPids();
+  if (!pids[processName]) {
+    return null;
+  }
+
+  const [pid] = pids[processName];
+  if (!pid) {
+    return null;
+  }
+  const [process] = await findProcess('pid', parseInt(pid, 10)) || [];
+  return process;
+};
+
 module.exports = {
-  shell,
   generateWebpackAlias,
+  getAllPids,
   getDappModules,
+  getProcess,
+  shell,
 };

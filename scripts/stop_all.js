@@ -3,9 +3,13 @@
 const kill = require('tree-kill');
 const chalk = require('chalk');
 
-const { PID_FILE } = require('./paths');
+const { getAllPids } = require('./utils');
 
-const killPromise = (pidName, pid) => {
+const killPromise = (pidName, [pid, keepAlive]) => {
+  if (keepAlive) {
+    console.log(`Keeping "${pidName}" (${pid}) alive`);
+    return;
+  }
   console.info(`Killing "${pidName}" (${pid})`);
   return new Promise((resolve, reject) => {
     kill(pid, err => {
@@ -19,14 +23,7 @@ const killPromise = (pidName, pid) => {
 };
 
 const teardown = async () => {
-  console.info('Closing everything...');
-  let pids;
-  try {
-    pids = require(PID_FILE);
-  } catch (e) {
-    console.log(e);
-    return console.log('PID file not found. Please close the processes manually.');
-  }
+  const pids = getAllPids();
   await Promise.all(Object.keys(pids).map(name => killPromise(name, pids[name])));
   console.info(chalk.greenBright('Teardown done.'));
   process.exit(0);
