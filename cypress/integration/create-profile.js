@@ -1,4 +1,4 @@
-describe('Creates a new profile', () => {
+describe('Goes to user wizard', () => {
   it('Use a TrufflePig wallet', () => {
     cy.get('button')
       .contains('TrufflePig')
@@ -42,25 +42,53 @@ describe('Creates a new profile', () => {
    * Please keep in mind that the test will not work on rerun
    * since the username step will be skipped
    */
-  it('Fill out (ENS) username in first wizard step', () => {
+});
+
+describe('Creates a new profile', () => {
+  let hasUser = false;
+
+  it('Fill out (ENS) username in first wizard step or confirm skipping of this step', () => {
     /*
+     * This test only gets run when the username isn't defined yet
      * Load the usernames fixture
      */
+
     cy.fixture('users').then(({ ensName }) => {
+      cy.getState().then(
+        ({
+          users: {
+            currentUser: {
+              profile: { username },
+            },
+          },
+        }) => {
+          if (username) {
+            /*
+             * Store boolean to use later because transaction
+             * doesn't have to be confirmed if it doesn't get created
+             */
+            hasUser = true;
+
+            cy.get('span').should('be.visible');
+          } else {
+            cy.get('input[data-test="claimUsernameInput"]').type(ensName);
+
+            /*
+             * Submit your selected username
+             */
+            cy.get('button[data-test="claimUsernameConfirm"]')
+              .click()
+              /*
+               * Wait until next wizard step opens
+               */
+              .wait(2000);
+          }
+        },
+      );
       /*
        * Fill the username form
        */
-      cy.get('input[data-test="claimUsernameInput"]').type(ensName);
     });
-    /*
-     * Submit your selected username
-     */
-    cy.get('button[data-test="claimUsernameConfirm"]')
-      .click()
-      /*
-       * Wait until next wizard step opens
-       */
-      .wait(2000);
   });
 
   it('Fill out (ENS) colonyName in second wizard step', () => {
@@ -72,6 +100,7 @@ describe('Creates a new profile', () => {
        * Fill the colonyName form
        */
       cy.get('input[data-test="claimColonyNameInput"]').type(colonyName);
+
       cy.get('input[data-test="claimColonyDisplayNameInput"]').type(
         displayName,
       );
@@ -116,14 +145,16 @@ describe('Creates a new profile', () => {
     /*
      * Click on the Claim Username Transaction
      */
-    cy.get('ul[data-test="gasStationGroupedTransaction"]')
-      .get('li')
-      .contains('Claim Username')
-      .click();
-    /*
-     * Confirm the transaction
-     */
-    cy.confirmTx();
+    if (!hasUser) {
+      cy.get('ul[data-test="gasStationGroupedTransaction"]')
+        .get('li')
+        .contains('Claim Username')
+        .click();
+      /*
+       * Confirm the transaction
+       */
+      cy.confirmTx();
+    }
     /*
      * Deal with next transaction
      * Click on the Claim Username Transaction

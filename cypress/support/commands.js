@@ -86,7 +86,7 @@ Cypress.Commands.add(
 
 Cypress.Commands.add('confirmTx', () => {
   cy.get('button[data-test="gasStationConfirmTransaction"]', {
-    timeout: 5000,
+    timeout: 20000,
   }).should('be.visible');
 
   cy.get('button[data-test="gasStationConfirmTransaction"]').click();
@@ -107,15 +107,12 @@ Cypress.Commands.add('initState', () => {
   });
 });
 
-Cypress.Commands.add('logState', () => {
+Cypress.Commands.add('getState', () => {
   /*
    * Dev Helper method to explore state
    */
   cy.window()
     .its('store')
     .invoke('getState')
-    .then(state =>
-      /* eslint-disable no-console */
-      console.log(state.toJS()),
-    );
+    .then(state => state.toJS());
 });
