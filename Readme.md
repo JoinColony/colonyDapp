@@ -93,6 +93,8 @@ yarn webpack
 
 Set the environment variable `VERBOSE` to `true` to enable verbose mode logging in the browser console.
 
+If you're brave enough to set the `DEBUG` environment variable, you'll get a lot of logging from modules we're using (e.g. IPFS). To disable this, you'll need to unset the environment variable and then run this in the browser console: `localStorage.setItem('debug', undefined);`.
+
 
 ## Building the bundle locally
 

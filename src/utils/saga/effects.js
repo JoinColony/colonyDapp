@@ -143,12 +143,14 @@ export function* executeQuery<D, M, A, R>(
   },
 ): Saga<R> {
   log.verbose(`Executing query "${query.name}"`, { args, metadata });
-  return yield call(executeCommandOrQuery, query, {
+  const result = yield call(executeCommandOrQuery, query, {
     // Destructure the objects; either prop is optional, but for flow,
     // they need to be defined to call the inner function.
     args: { ...args },
     metadata: { ...metadata },
   });
+  log.verbose(`Executed query "${query.name}"`, result);
+  return result;
 }
 
 export function* executeCommand<D, M, A, R>(
@@ -165,12 +167,14 @@ export function* executeCommand<D, M, A, R>(
   const maybeSanitizedArgs = command.schema
     ? validateSync(command.schema)(args)
     : args;
-  return yield call(executeCommandOrQuery, command, {
+  const result = yield call(executeCommandOrQuery, command, {
     // Destructure the objects; either prop is optional, but for flow,
     // they need to be defined to call the inner function.
     args: { ...maybeSanitizedArgs },
     metadata: { ...metadata },
   });
+  log.verbose(`Executed command "${command.name}"`, result);
+  return result;
 }
 
 export function* selectAsJS(
