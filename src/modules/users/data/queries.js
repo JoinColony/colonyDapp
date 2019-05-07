@@ -445,7 +445,8 @@ export const getUserInboxActivity: Query<
        */
       logs.slice(2).map(async (log, index) => {
         const cleanedEvents = events.slice(2);
-        const { domainId, user: otherUserAddress } = cleanedEvents[index] || {};
+        const { domainId, user: targetUserAddress } =
+          cleanedEvents[index] || {};
         /*
          * @note Manually set the `ColonyLabelRegistered` event
          *
@@ -458,24 +459,24 @@ export const getUserInboxActivity: Query<
         const timestamp = await getLogDate(provider, log);
         const {
           to: colonyAddress,
-          from: userAddress,
+          from: sourceUserAddress,
         } = await provider.getTransaction(log.transactionHash);
         const transformedEvent = {
           id: log.transactionHash,
           event: transformNotificationEventNames(eventName),
           timestamp: new Date(timestamp).getTime() * 1000,
-          userAddress,
+          sourceUserAddress,
           colonyAddress,
           domainId,
-          otherUserAddress,
+          targetUserAddress,
         };
         return transformedEvent;
       }),
     );
     return userInboxStore
       .all()
-      .map(({ meta: { id, timestamp, userAddress }, payload }) =>
-        Object.assign({}, payload, { id, timestamp, userAddress }),
+      .map(({ meta: { id, timestamp, sourceUserAddress }, payload }) =>
+        Object.assign({}, payload, { id, timestamp, sourceUserAddress }),
       )
       .concat(transformedEvents)
       .sort(

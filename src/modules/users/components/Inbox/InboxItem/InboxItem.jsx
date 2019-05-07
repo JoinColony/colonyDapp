@@ -120,30 +120,30 @@ const InboxItem = ({
   activity: {
     // Handle read/unread notifications
     // unread,
-    otherUserAddress,
     amount,
     colonyName,
     colonyAddress,
     comment,
-    timestamp,
     domainName,
     domainId,
     event,
-    taskTitle,
-    userAddress,
     onClickRoute,
+    sourceUserAddress,
+    taskTitle,
+    targetUserAddress,
+    timestamp,
   },
 }: Props) => {
   const { data: user, isFetching: isFetchingUser } = useDataFetcher<UserType>(
     userFetcher,
-    [userAddress],
-    [userAddress],
+    [sourceUserAddress],
+    [sourceUserAddress],
   );
-  const userDisplayWithFallback = useSelector(friendlyUsernameSelector, [
-    userAddress,
+  const sourceUserDisplayWithFallback = useSelector(friendlyUsernameSelector, [
+    sourceUserAddress,
   ]);
-  const otherUserDisplayWithFallback = useSelector(friendlyUsernameSelector, [
-    otherUserAddress,
+  const targetUserDisplayWithFallback = useSelector(friendlyUsernameSelector, [
+    targetUserAddress,
   ]);
   const {
     data: colony,
@@ -199,7 +199,7 @@ const InboxItem = ({
               <FormattedMessage
                 /*
                  * @todo switch between notificationAdminOtherAdded v. notificationUserMadeAdmin notifications
-                 * depending if the otherUser address is the same as the userAddress
+                 * depending if the otherUser address is the same as the sourceUserAddress
                  * This is preffered as opposed to adding two notifications to the stores
                  */
                 {...MSG[event]}
@@ -221,12 +221,12 @@ const InboxItem = ({
                   domainName: makeInboxDetail(
                     currentDomain && currentDomain.name,
                   ),
-                  otherUser: makeInboxDetail(otherUserDisplayWithFallback),
+                  otherUser: makeInboxDetail(targetUserDisplayWithFallback),
                   task: makeInboxDetail(taskTitle),
                   time: makeInboxDetail(timestamp, value => (
                     <TimeRelative value={value} />
                   )),
-                  user: makeInboxDetail(userDisplayWithFallback),
+                  user: makeInboxDetail(sourceUserDisplayWithFallback),
                 }}
               />
             </span>

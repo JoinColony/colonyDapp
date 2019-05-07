@@ -98,10 +98,10 @@ function* domainCreate({
      * Notification
      */
     yield putNotification({
-      event: 'notificationAdminColonyLabelAdded',
-      userAddress: walletAddress,
       colonyAddress,
       domainName: name,
+      event: 'notificationAdminColonyLabelAdded',
+      sourceUserAddress: walletAddress,
     });
   } catch (error) {
     yield putError(ACTIONS.DOMAIN_CREATE_ERROR, error, meta);
