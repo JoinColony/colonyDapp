@@ -7,16 +7,16 @@ import { ACTIONS } from '~redux';
 
 export const fetchColonyTransactions = (
   colonyAddress: Address,
-): Action<typeof ACTIONS.COLONY_FETCH_TRANSACTIONS> => ({
-  type: ACTIONS.COLONY_FETCH_TRANSACTIONS,
+): Action<typeof ACTIONS.COLONY_TRANSACTIONS_FETCH> => ({
+  type: ACTIONS.COLONY_TRANSACTIONS_FETCH,
   payload: { colonyAddress },
   meta: { key: colonyAddress },
 });
 
 export const fetchColonyUnclaimedTransactions = (
   colonyAddress: Address,
-): Action<typeof ACTIONS.COLONY_FETCH_UNCLAIMED_TRANSACTIONS> => ({
-  type: ACTIONS.COLONY_FETCH_UNCLAIMED_TRANSACTIONS,
+): Action<typeof ACTIONS.COLONY_UNCLAIMED_TRANSACTIONS_FETCH> => ({
+  type: ACTIONS.COLONY_UNCLAIMED_TRANSACTIONS_FETCH,
   payload: { colonyAddress },
   meta: { key: colonyAddress },
 });

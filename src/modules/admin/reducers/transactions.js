@@ -16,10 +16,10 @@ import type { ReducerType } from '~redux';
 
 const adminTransactionsReducer: ReducerType<
   AdminTransactionsState,
-  {| COLONY_FETCH_TRANSACTIONS_SUCCESS: * |},
+  {| COLONY_TRANSACTIONS_FETCH_SUCCESS: * |},
 > = (state = ImmutableMap(), action) => {
   switch (action.type) {
-    case ACTIONS.COLONY_FETCH_TRANSACTIONS_SUCCESS: {
+    case ACTIONS.COLONY_TRANSACTIONS_FETCH_SUCCESS: {
       const {
         payload: { transactions },
         meta: { key },
@@ -39,4 +39,4 @@ const adminTransactionsReducer: ReducerType<
 export default withDataRecordMap<
   AdminTransactionsState,
   ContractTransactionRecordType,
->(ACTIONS.COLONY_FETCH_TRANSACTIONS, ImmutableMap())(adminTransactionsReducer);
+>(ACTIONS.COLONY_TRANSACTIONS_FETCH, ImmutableMap())(adminTransactionsReducer);

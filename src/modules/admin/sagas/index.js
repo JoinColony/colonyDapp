@@ -28,10 +28,10 @@ import {
 } from '../actionCreators';
 import { fetchColony } from '../../dashboard/actionCreators';
 
-function* colonyFetchTransactions({
+function* colonyTransactionsFetch({
   payload: { colonyAddress },
   meta,
-}: Action<typeof ACTIONS.COLONY_FETCH_TRANSACTIONS>): Saga<void> {
+}: Action<typeof ACTIONS.COLONY_TRANSACTIONS_FETCH>): Saga<void> {
   try {
     const transactions = yield* executeQuery(getColonyTransactions, {
       metadata: {
@@ -39,35 +39,35 @@ function* colonyFetchTransactions({
       },
     });
 
-    yield put<Action<typeof ACTIONS.COLONY_FETCH_TRANSACTIONS_SUCCESS>>({
-      type: ACTIONS.COLONY_FETCH_TRANSACTIONS_SUCCESS,
+    yield put<Action<typeof ACTIONS.COLONY_TRANSACTIONS_FETCH_SUCCESS>>({
+      type: ACTIONS.COLONY_TRANSACTIONS_FETCH_SUCCESS,
       meta,
       payload: { colonyAddress, transactions },
     });
   } catch (error) {
-    yield putError(ACTIONS.COLONY_FETCH_TRANSACTIONS_ERROR, error, meta);
+    yield putError(ACTIONS.COLONY_TRANSACTIONS_FETCH_ERROR, error, meta);
   }
 }
 
-function* colonyFetchUnclaimedTransactions({
+function* colonyUnclaimedTransactionsFetch({
   payload: { colonyAddress },
   meta,
-}: Action<typeof ACTIONS.COLONY_FETCH_UNCLAIMED_TRANSACTIONS>): Saga<void> {
+}: Action<typeof ACTIONS.COLONY_UNCLAIMED_TRANSACTIONS_FETCH>): Saga<void> {
   try {
     const transactions = yield* executeQuery(getColonyUnclaimedTransactions, {
       metadata: { colonyAddress },
     });
 
     yield put<
-      Action<typeof ACTIONS.COLONY_FETCH_UNCLAIMED_TRANSACTIONS_SUCCESS>,
+      Action<typeof ACTIONS.COLONY_UNCLAIMED_TRANSACTIONS_FETCH_SUCCESS>,
     >({
-      type: ACTIONS.COLONY_FETCH_UNCLAIMED_TRANSACTIONS_SUCCESS,
+      type: ACTIONS.COLONY_UNCLAIMED_TRANSACTIONS_FETCH_SUCCESS,
       meta,
       payload: { colonyAddress, transactions },
     });
   } catch (error) {
     yield putError(
-      ACTIONS.COLONY_FETCH_UNCLAIMED_TRANSACTIONS_ERROR,
+      ACTIONS.COLONY_UNCLAIMED_TRANSACTIONS_FETCH_ERROR,
       error,
       meta,
     );
@@ -101,10 +101,10 @@ function* colonyClaimToken({
       payload,
       meta,
     });
-    yield put<Action<typeof ACTIONS.COLONY_FETCH_TRANSACTIONS>>(
+    yield put<Action<typeof ACTIONS.COLONY_TRANSACTIONS_FETCH>>(
       fetchColonyTransactions(colonyAddress),
     );
-    yield put<Action<typeof ACTIONS.COLONY_FETCH_UNCLAIMED_TRANSACTIONS>>(
+    yield put<Action<typeof ACTIONS.COLONY_UNCLAIMED_TRANSACTIONS_FETCH>>(
       fetchColonyUnclaimedTransactions(colonyAddress),
     );
   } catch (error) {
@@ -193,10 +193,10 @@ function* colonyMintTokens({
 }
 
 export default function* adminSagas(): Saga<void> {
-  yield takeEvery(ACTIONS.COLONY_FETCH_TRANSACTIONS, colonyFetchTransactions);
+  yield takeEvery(ACTIONS.COLONY_TRANSACTIONS_FETCH, colonyTransactionsFetch);
   yield takeEvery(
-    ACTIONS.COLONY_FETCH_UNCLAIMED_TRANSACTIONS,
-    colonyFetchUnclaimedTransactions,
+    ACTIONS.COLONY_UNCLAIMED_TRANSACTIONS_FETCH,
+    colonyUnclaimedTransactionsFetch,
   );
   yield takeEvery(ACTIONS.COLONY_CLAIM_TOKEN, colonyClaimToken);
   yield takeEvery(ACTIONS.COLONY_UPDATE_TOKENS, colonyUpdateTokens);
