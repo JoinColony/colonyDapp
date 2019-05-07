@@ -98,7 +98,7 @@ const TokenSelector = ({
     (error: Error) => {
       setLoading(false);
       onTokenSelect(null);
-      log(error);
+      log.error(error);
     },
     [onTokenSelect],
   );

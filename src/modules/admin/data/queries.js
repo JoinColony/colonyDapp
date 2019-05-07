@@ -34,6 +34,7 @@ export const getColonyTransactions: ContractEventQuery<
   void,
   ContractTransactionType[],
 > = {
+  name: 'getColonyTransactions',
   context,
   prepare,
   async execute(colonyClient) {
@@ -75,6 +76,7 @@ export const getColonyUnclaimedTransactions: ContractEventQuery<
   void,
   ContractTransactionType[],
 > = {
+  name: 'getColonyUnclaimedTransactions',
   context,
   prepare,
   async execute(colonyClient) {

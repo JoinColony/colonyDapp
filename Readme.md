@@ -89,6 +89,11 @@ yarn trufflepig
 yarn webpack
 ```
 
+### Verbose logging
+
+Set the environment variable `VERBOSE` to `true` to enable verbose mode logging in the browser console.
+
+
 ## Building the bundle locally
 
 If you want to build the bundle locally for inspection, you can do it via:

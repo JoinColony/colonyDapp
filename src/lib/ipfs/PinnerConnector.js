@@ -70,8 +70,8 @@ class PinnerConnector extends EventEmitter {
     try {
       pinnerAction = JSON.parse(message.data);
       this.emit('action', pinnerAction);
-    } catch (e) {
-      log(new Error(`Could not parse pinner message: ${message.data}`));
+    } catch (caughtError) {
+      log.error(new Error(`Could not parse pinner message: ${message.data}`));
     }
   }
 

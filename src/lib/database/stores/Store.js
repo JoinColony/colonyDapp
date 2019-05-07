@@ -55,7 +55,10 @@ class Store {
 
     // Consider throwing an error when we are relying fully on the pinner...
     if (!this._pinner.online) {
-      log(new Error('Unable to load store; pinner is offline'));
+      log.verbose(
+        `Unable to fully load store "${this._name}"; pinner is offline`,
+        heads,
+      );
       return heads;
     }
 
@@ -67,6 +70,7 @@ class Store {
       if (count) {
         // We're replicated and done
         await this._waitForReplication(count);
+        log.verbose(`Finished replicating store "${this._name}"`, heads);
         return heads;
       }
       // Pinner doesn't have any heads either. Maybe it's a newly created store?
@@ -79,6 +83,7 @@ class Store {
      * @body This could be dangerous in case of an unfinished replication. We have to account for that Quick fix could be to just also wait for the full replication, which might be a performance hit
      */
     this._pinner.requestPinnedStore(this.address.toString()).catch(log);
+    log.verbose(`Finished replicating store "${this._name}"`, heads);
     return heads;
   }
 
@@ -91,7 +96,13 @@ class Store {
       const listener = () => {
         // We're using a private API here, don't know whether that's going to be painful at some point
         // eslint-disable-next-line no-underscore-dangle
-        if (this._orbitStore._oplog._length >= headsRequired) {
+        const heads = this._orbitStore._oplog._length;
+        log.verbose(`Replicated ${heads} heads for "${this._name}"`);
+
+        if (heads >= headsRequired) {
+          log.verbose(
+            `Replicated all ${headsRequired} heads for "${this._name}"`,
+          );
           resolve(true);
           this._orbitStore.events.removeListener('replicated', listener);
         }
@@ -106,6 +117,7 @@ class Store {
   }
 
   async ready() {
+    log.verbose(`Loading store "${this._name}"`);
     const headCountPromise = new Promise(resolve =>
       this._orbitStore.events.once('ready', (dbname, heads) => resolve(heads)),
     );
@@ -120,13 +132,15 @@ class Store {
   }
 
   async load() {
-    if (this._busyPromise) return this._busyPromise;
+    if (this._busyPromise) {
+      return this._busyPromise;
+    }
     try {
       this._busyPromise = this._loadHeads();
       return this._busyPromise;
-    } catch (err) {
+    } catch (caughtError) {
       // We just throw the error again. We're just using this to be able to set the busy indicator easily
-      throw err;
+      throw caughtError;
     } finally {
       this._busyPromise = null;
     }

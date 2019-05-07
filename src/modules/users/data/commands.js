@@ -77,6 +77,7 @@ export const createUserProfile: Command<
     metadataStore: UserMetadataStore,
   |},
 > = {
+  name: 'createUserProfile',
   context: [CONTEXT.DDB_INSTANCE],
   schema: CreateUserProfileCommandArgsSchema,
   async prepare({ ddb }: {| ddb: DDB |}, metadata: UserProfileStoreMetadata) {
@@ -105,6 +106,7 @@ export const updateUserProfile: Command<
   |},
   UserProfileStore,
 > = {
+  name: 'updateUserProfile',
   context: [CONTEXT.DDB_INSTANCE],
   schema: UpdateUserProfileCommandArgsSchema,
   prepare: prepareProfileCommand,
@@ -123,6 +125,7 @@ export const setUserAvatar: Command<
   |},
   string,
 > = {
+  name: 'setUserAvatar',
   context: [CONTEXT.DDB_INSTANCE],
   schema: SetUserAvatarCommandArgsSchema,
   prepare: prepareProfileCommand,
@@ -141,6 +144,7 @@ export const removeUserAvatar: Command<
   void,
   UserProfileStore,
 > = {
+  name: 'removeUserAvatar',
   context: [CONTEXT.DDB_INSTANCE],
   prepare: prepareProfileCommand,
   async execute(profileStore) {
@@ -158,6 +162,7 @@ export const updateTokens: Command<
   |},
   UserMetadataStore,
 > = {
+  name: 'updateTokens',
   context: [CONTEXT.DDB_INSTANCE],
   schema: UserUpdateTokensCommandArgsSchema,
   prepare: prepareMetadataCommand,
@@ -215,6 +220,7 @@ export const markNotificationsAsRead: Command<
   |},
   UserMetadataStore,
 > = {
+  name: 'markNotificationsAsRead',
   context: [CONTEXT.DDB_INSTANCE],
   schema: MarkNotificationsAsReadCommandArgsSchema,
   prepare: prepareMetadataCommand,
@@ -236,6 +242,7 @@ export const subscribeToTask: Command<
   |},
   ?TaskDraftId,
 > = {
+  name: 'subscribeToTask',
   context: [CONTEXT.DDB_INSTANCE],
   prepare: prepareMetadataCommand,
   async execute(userMetadataStore, { colonyAddress, draftId, userDraftIds }) {
@@ -267,6 +274,7 @@ export const unsubscribeToTask: Command<
   |},
   ?TaskDraftId,
 > = {
+  name: 'unsubscribeToTask',
   context: [CONTEXT.DDB_INSTANCE],
   prepare: prepareMetadataCommand,
   async execute(userMetadataStore, { colonyAddress, draftId, userDraftIds }) {
@@ -297,6 +305,7 @@ export const subscribeToColony: Command<
   |},
   ?Address,
 > = {
+  name: 'subscribeToColony',
   context: [CONTEXT.DDB_INSTANCE],
   prepare: prepareMetadataCommand,
   async execute(userMetadataStore, { colonyAddress, userColonyAddresses }) {
@@ -323,6 +332,7 @@ export const unsubscribeToColony: Command<
   |},
   ?Address,
 > = {
+  name: 'unsubscribeToColony',
   context: [CONTEXT.DDB_INSTANCE],
   prepare: prepareMetadataCommand,
   async execute(userMetadataStore, { colonyAddress, userColonyAddresses }) {
@@ -351,6 +361,7 @@ export const commentMentionNotification: Command<
   |},
   UserInboxStore,
 > = {
+  name: 'commentMentionNotification',
   context: [CONTEXT.DDB_INSTANCE],
   prepare: prepareInboxStoreCommand,
   async execute(userInboxStore, args) {

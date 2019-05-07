@@ -90,7 +90,7 @@ const StepTrufflePig = ({ previousStep, wizardForm, wizardValues }: Props) => {
           /*
            * Since this is a dev-only loader, logging the error is enough.
            */
-          log(caughtError);
+          log.error(caughtError);
           setIsValid(false);
         }
         setIsLoading(false);
