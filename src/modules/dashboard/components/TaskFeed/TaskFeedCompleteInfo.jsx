@@ -5,11 +5,10 @@ import BigNumber from 'bn.js';
 
 import type { ContractTransactionType, TokenType } from '~immutable';
 
-import ExternalLink from '~core/ExternalLink';
 import Numeral from '~core/Numeral';
 import { SpinnerLoader } from '~core/Preloaders';
 import TimeRelative from '~core/TimeRelative';
-import { getEtherscanTxUrl } from '~utils/external';
+import TransactionLink from '~core/TransactionLink';
 import { useDataFetcher, useSelector } from '~utils/hooks';
 
 import { useReputationEarned } from '../../hooks/useReputationEarned';
@@ -161,10 +160,10 @@ const TaskFeedCompleteInfo = ({
               {hash && (
                 <>
                   <br />
-                  <ExternalLink
+                  <TransactionLink
                     className={styles.receiptLink}
+                    hash={hash}
                     text={MSG.receiptViewTxLinkText}
-                    href={getEtherscanTxUrl(hash)}
                   />
                 </>
               )}
