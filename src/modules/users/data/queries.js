@@ -60,11 +60,6 @@ type UserProfileStoreMetadata = {|
   walletAddress: Address,
 |};
 
-type UserInboxStoreMetadata = {|
-  inboxStoreAddress: string | OrbitDBAddress,
-  walletAddress: Address,
-|};
-
 type UserMetadataStoreMetadata = {|
   metadataStoreAddress: string | OrbitDBAddress,
   walletAddress: Address,
@@ -95,11 +90,6 @@ const prepareMetadataStoreQuery = async (
   metadata: UserMetadataStoreMetadata,
 ) =>
   metadata.metadataStoreAddress ? getUserMetadataStore(ddb)(metadata) : null;
-
-const prepareInboxStoreQuery = async (
-  { ddb }: { ddb: DDB },
-  metadata: UserInboxStoreMetadata,
-) => getUserInboxStore(ddb)(metadata);
 
 export const getUserProfile: Query<
   UserProfileStore,
@@ -385,15 +375,46 @@ export const checkUsernameIsAvailable: Query<
 };
 
 export const getUserInboxActivity: Query<
-  UserInboxStore,
-  UserInboxStoreMetadata,
-  *,
+  {| userInboxStore: UserInboxStore, colonyClient: ColonyClient |},
+  {|
+    colonyAddress: Address,
+    inboxStoreAddress: OrbitDBAddress,
+    walletAddress: Address,
+  |},
+  void,
   *,
 > = {
   name: 'getUserInboxActivity',
-  context: [CONTEXT.DDB_INSTANCE],
-  prepare: prepareInboxStoreQuery,
-  async execute(userInboxStore, { colonyClient }) {
+  context: [CONTEXT.COLONY_MANAGER, CONTEXT.DDB_INSTANCE],
+  async prepare(
+    {
+      colonyManager,
+      ddb,
+    }: {|
+      colonyManager: ColonyManager,
+      ddb: DDB,
+    |},
+    {
+      colonyAddress,
+      inboxStoreAddress,
+      walletAddress,
+    }: {|
+      colonyAddress: Address,
+      inboxStoreAddress: OrbitDBAddress,
+      walletAddress: Address,
+    |},
+  ) {
+    const colonyClient = await colonyManager.getColonyClient(colonyAddress);
+    const userInboxStore = await getUserInboxStore(ddb)({
+      inboxStoreAddress,
+      walletAddress,
+    });
+    return {
+      userInboxStore,
+      colonyClient,
+    };
+  },
+  async execute({ userInboxStore, colonyClient }) {
     const {
       adapter: { provider },
     } = colonyClient;
