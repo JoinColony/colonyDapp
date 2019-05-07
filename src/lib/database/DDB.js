@@ -12,6 +12,7 @@ import type {
 } from '~types';
 
 import OrbitDB from 'orbit-db';
+import { log } from '../../utils/debug';
 import IPFSNode from '../ipfs';
 import Keystore from './Keystore';
 import AccessControllerFactory from './AccessControllerFactory';
@@ -108,11 +109,8 @@ class DDB {
   async _getStoreAddress(
     identifier: StoreIdentifier,
   ): Promise<OrbitDBAddress | null> {
-    if (!identifier) {
-      throw new Error(
-        'Please define an identifier for the store you want to retrieve',
-      );
-    }
+    if (!identifier) return null;
+    log.verbose(`Getting store address for identifier`, identifier);
     if (typeof identifier === 'string') {
       // If it's already a valid address we parse it
       if (isValidAddress(identifier)) {
@@ -123,6 +121,11 @@ class DDB {
         typeof this._resolver == 'function'
           ? await this._resolver(identifier)
           : null;
+
+      log.verbose(
+        `Resolved store address for identifier "${identifier}"`,
+        addressString,
+      );
       if (!addressString) {
         return null;
       }
@@ -144,6 +147,7 @@ class DDB {
   ): Promise<T> {
     const { getName, type: StoreClass } = blueprint;
     const name = getName(storeProps);
+    log.verbose(`Creating store "${name}"`, storeProps);
     if (!name) throw new Error('Store name is invalid or undefined');
 
     /**
@@ -192,6 +196,7 @@ class DDB {
 
     const cachedStore: ?T = this._getCachedStore(address);
     if (cachedStore) {
+      log.verbose(`Getting store from cache`, address);
       await cachedStore.load();
       return cachedStore;
     }
@@ -209,6 +214,7 @@ class DDB {
       );
     }
 
+    log.verbose(`Opening store "${name}" with address "${address.toString()}"`);
     /**
      * @NOTE: Only necessary to pass in the whole access controller object
      * to orbit-db without it getting on our way
@@ -243,6 +249,7 @@ class DDB {
       throw new Error('Store name is invalid or undefined');
     }
 
+    log.verbose(`Generating address for store "${name}"`);
     const controller = this.constructor.getAccessController(
       name,
       blueprint,
