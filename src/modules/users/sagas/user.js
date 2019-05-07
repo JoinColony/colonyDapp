@@ -485,20 +485,22 @@ function* userTaskSubscribe({
   }
 }
 function* userActivitiesFetch({
-  payload: { colonyClient },
+  payload: { colonyAddress },
   meta,
 }: Action<typeof ACTIONS.USER_ACTIVITIES_FETCH>): Saga<void> {
   try {
     const walletAddress = yield select(walletAddressSelector);
     const { inboxStoreAddress } = yield select(currentUserMetadataSelector);
     const activities = yield* executeQuery(getUserInboxActivity, {
-      metadata: { inboxStoreAddress, walletAddress },
-      args: { colonyClient },
+      metadata: { inboxStoreAddress, walletAddress, colonyAddress },
     });
     yield put<Action<typeof ACTIONS.USER_ACTIVITIES_FETCH_SUCCESS>>({
       type: ACTIONS.USER_ACTIVITIES_FETCH_SUCCESS,
       payload: { activities },
-      meta,
+      meta: {
+        ...meta,
+        colonyAddress,
+      },
     });
   } catch (error) {
     yield putError(ACTIONS.USER_ACTIVITIES_FETCH_ERROR, error, meta);
