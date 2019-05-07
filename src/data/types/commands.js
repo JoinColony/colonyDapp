@@ -2,8 +2,6 @@
 
 import type { ContextName } from '~context';
 import type { Schema as SchemaType } from 'yup';
-import type { OrbitDBAddress } from '~types';
-import type { ContextWithMetadata, DDBContext } from './context';
 
 /*
  * The specification for a data command.
@@ -29,17 +27,3 @@ export type Command<D, M, A, R> = {|
   prepare: (context: *, metadata: M) => Promise<D>,
   schema?: SchemaType,
 |};
-
-export type UserActivityCommandContext = ContextWithMetadata<
-  {|
-    walletAddress: string,
-    inboxStoreAddress: string | OrbitDBAddress,
-  |},
-  DDBContext,
->;
-
-export type UserInboxCommand<I: *, R: *> = Command<
-  UserActivityCommandContext,
-  I,
-  R,
->;
