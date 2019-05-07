@@ -190,3 +190,30 @@ export const getCommentsStoreAddress = (ddb: DDB) => async ({
     colonyAddress,
     draftId,
   });
+
+export const getUserProfileStoreAddress = (ddb: DDB) => async ({
+  walletAddress,
+}: {
+  walletAddress: Address,
+}) =>
+  ddb.generateStoreAddress(userProfileStoreBlueprint, {
+    walletAddress,
+  });
+
+export const getUserInboxStoreAddress = (ddb: DDB) => async ({
+  walletAddress,
+}: {
+  walletAddress: Address,
+}) =>
+  ddb.generateStoreAddress(userInboxStoreBlueprint, {
+    walletAddress,
+  });
+
+export const getUserMetadataStoreAddress = (ddb: DDB) => async ({
+  walletAddress,
+}: {
+  walletAddress: Address,
+}) =>
+  ddb.generateStoreAddress(userMetadataStoreBlueprint, {
+    walletAddress,
+  });
