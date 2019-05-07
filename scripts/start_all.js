@@ -119,8 +119,10 @@ const startAll = async () => {
 
 process.on('SIGINT', () => {
   spawn(path.resolve(__dirname, 'stop_all.js'), {
+    detached: true,
     stdio: 'inherit',
   });
+  process.exit(0);
 });
 
 startAll().catch(caughtError => {
