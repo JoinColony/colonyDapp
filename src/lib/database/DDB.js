@@ -17,7 +17,6 @@ import { log } from '../../utils/debug';
 
 import IPFSNode from '../ipfs';
 
-import Keystore from './Keystore';
 import {
   AccessControllerFactory,
   PermissiveAccessController,
@@ -333,7 +332,6 @@ class DDB {
     this._orbitNode = await OrbitDB.createInstance(ipfs, {
       AccessControllers: AccessControllerFactory,
       identity,
-      keystore: Keystore,
       /**
        * @todo : is there a case where this could not be the default? This be a constant, or configurable? and `colonyOrbitDB`?
        */
@@ -342,6 +340,7 @@ class DDB {
   }
 
   async stop() {
+    if (this._identityProvider) await this._identityProvider.close();
     return this._orbitNode.stop();
   }
 }
