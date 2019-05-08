@@ -239,7 +239,7 @@ const TaskEditDialog = ({
             yup.object().shape({
               token: yup.string().required(MSG.tokenRequiredError),
               amount: yup
-                .number()
+                .number(MSG.amountPositiveError)
                 .required(MSG.amountRequiredError)
                 .moreThan(0, MSG.amountPositiveError)
                 .lessThanPot(colonyTokenReferences, MSG.insufficientFundsError),
