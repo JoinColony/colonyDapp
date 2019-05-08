@@ -34,6 +34,7 @@ type Props = {|
   name: string,
   amount?: number | BigNumber,
   symbol?: string,
+  decimals: number,
   reputation?: number,
   isEth?: boolean,
   tokenOptions?: Array<{ value: number, label: string }>,
@@ -63,6 +64,7 @@ class Payout extends Component<Props, State> {
     const {
       amount,
       symbol,
+      decimals,
       reputation,
       name,
       tokenOptions,
@@ -101,7 +103,11 @@ class Payout extends Component<Props, State> {
               <Input
                 appearance={{ theme: 'minimal', align: 'right' }}
                 name={`${name}.amount`}
-                formattingOptions={{ numeral: true, delimiter: ',' }}
+                formattingOptions={{
+                  delimiter: ',',
+                  numeral: true,
+                  numeralDecimalScale: decimals,
+                }}
               />
             </div>
             <div className={styles.selectToken}>
@@ -120,7 +126,10 @@ class Payout extends Component<Props, State> {
                 <div>
                   <span className={styles.amount}>
                     <Numeral
-                      appearance={{ theme: 'grey', size: 'medium' }}
+                      appearance={{
+                        size: 'medium',
+                        theme: 'grey',
+                      }}
                       value={amount}
                     />
                   </span>
