@@ -27,6 +27,10 @@ const TaskAssignment = ({
   reputation,
   workerAddress,
 }: Props) => {
+  /**
+   * @todo: Use data fetcher for colony's native token
+   * @body: This can be an issue if the task is accessed directly without first loading the colony.
+   */
   const nativeToken = useSelector(colonyNativeTokenSelector, [colonyAddress]);
   const { data: worker } = useDataFetcher<UserType>(
     userFetcher,

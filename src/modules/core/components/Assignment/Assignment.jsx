@@ -75,6 +75,7 @@ const Assignment = ({
 }: Props) => {
   const fundingWithNativeToken =
     payouts &&
+    nativeToken &&
     payouts.find(payout => payout.token.address === nativeToken.address);
 
   return (
