@@ -53,6 +53,8 @@ export const isWorker = ({ workerAddress }: TaskType, userAddress: Address) =>
 export const isCreator = ({ creatorAddress }: TaskType, userAddress: Address) =>
   creatorAddress === userAddress;
 
+const isPayoutsSet = ({ payouts }: TaskType) => !!payouts && payouts.length > 0;
+
 export const isFinalized = ({ currentState }: TaskType) =>
   currentState === TASK_STATE.FINALIZED;
 
@@ -72,7 +74,10 @@ export const didDueDateElapse = ({ dueDate }: TaskType) =>
   !!(dueDate && dueDate < new Date());
 
 export const canEditTask = (task: TaskType, userAddress: Address) =>
-  !isFinalized(task) && !isCancelled(task) && isCreator(task, userAddress);
+  !isFinalized(task) &&
+  !isCancelled(task) &&
+  isCreator(task, userAddress) &&
+  !isPayoutsSet(task);
 
 export const isWorkerAssigned = ({ workerAddress }: TaskType) =>
   !!workerAddress;
