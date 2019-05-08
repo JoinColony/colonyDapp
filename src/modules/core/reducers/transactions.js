@@ -53,21 +53,25 @@ const coreTransactionsReducer: ReducerType<
         payload: {
           context,
           createdAt,
+          descriptionMessageId,
           from,
+          group,
           identifier,
           methodName,
           multisig,
           options,
           params,
           status,
-          group,
+          titleMessageId,
         },
       } = action;
 
       const tx = TransactionRecord({
         context,
         createdAt,
+        descriptionMessageId,
         from,
+        group,
         id,
         identifier,
         methodName,
@@ -75,7 +79,7 @@ const coreTransactionsReducer: ReducerType<
         options,
         params,
         status,
-        group,
+        titleMessageId,
       });
 
       return state.setIn(

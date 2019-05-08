@@ -43,6 +43,7 @@ export type TransactionMultisig = {|
 type Shared<P: TransactionParams, E: TransactionEventData> = {|
   context: ColonyContext,
   createdAt: Date,
+  descriptionMessageId?: string,
   eventData?: E,
   from: string,
   gasLimit?: number,
@@ -61,6 +62,7 @@ type Shared<P: TransactionParams, E: TransactionEventData> = {|
   params: P,
   receipt?: TransactionReceipt,
   status: 'created' | 'ready' | 'pending' | 'failed' | 'multisig' | 'succeeded',
+  titleMessageId?: string,
 |};
 
 type TransactionRecordProps<P: TransactionParams, E: TransactionEventData> = {|
@@ -84,6 +86,7 @@ export type TransactionRecordType<
 const defaultValues: $Shape<TransactionRecordProps<*, *>> = {
   context: undefined,
   createdAt: new Date(),
+  descriptionMessageId: undefined,
   errors: new List(),
   eventData: undefined,
   from: undefined,
@@ -99,6 +102,7 @@ const defaultValues: $Shape<TransactionRecordProps<*, *>> = {
   params: {},
   receipt: undefined,
   status: 'ready',
+  titleMessageId: undefined,
 };
 
 const TransactionRecord: RecordFactory<TransactionRecordProps<*, *>> = Record(

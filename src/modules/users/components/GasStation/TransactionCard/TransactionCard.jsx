@@ -48,11 +48,18 @@ class TransactionCard extends Component<Props> {
             <div className={styles.description}>
               <Heading
                 appearance={{ theme: 'dark', size: 'normal', margin: 'none' }}
-                text={{ id: `transaction.${groupKey}.title` }}
+                text={{
+                  id:
+                    transactionGroup[0].titleMessageId ||
+                    `transaction.${groupKey}.title`,
+                }}
                 textValues={values.params}
               />
               <FormattedMessage
-                id={`transaction.${groupKey}.description`}
+                id={
+                  transactionGroup[0].descriptionMessageId ||
+                  `transaction.${groupKey}.description`
+                }
                 values={values.params}
               />
             </div>

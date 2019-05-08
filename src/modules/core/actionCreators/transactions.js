@@ -24,13 +24,15 @@ export const createTxAction = <P>(
   from: string,
   {
     context,
+    descriptionMessageId,
+    group,
     identifier,
     methodName,
-    group,
     multisig: multisigConfig,
+    options,
     params,
     ready,
-    options,
+    titleMessageId,
   }: TxConfig<P>,
 ) => ({
   type: multisigConfig
@@ -39,6 +41,7 @@ export const createTxAction = <P>(
   payload: {
     context,
     createdAt: new Date(),
+    descriptionMessageId,
     from,
     group,
     identifier,
@@ -47,6 +50,7 @@ export const createTxAction = <P>(
     options,
     params,
     status: ready === false ? 'created' : 'ready',
+    titleMessageId,
   },
   meta: { id },
 });

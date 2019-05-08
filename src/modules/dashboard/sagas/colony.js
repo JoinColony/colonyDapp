@@ -196,6 +196,7 @@ function* colonyCreate({
         id: meta.id,
         index: 5,
       },
+      titleMessageId: 'transaction.colony.setOneTxRole.title',
     });
 
     yield fork(createTransaction, ids.deployOldRoles, {
@@ -220,6 +221,7 @@ function* colonyCreate({
         id: meta.id,
         index: 7,
       },
+      titleMessageId: 'transaction.colony.setOldRolesRole.title',
     });
 
     /* STEP 3: Notify about creation of each transaction in the group so they can

@@ -16,6 +16,7 @@ export type MultisigActionTypes = {|
       {
         context: *,
         createdAt: *,
+        descriptionMessageId: *,
         from: *,
         group: *,
         identifier: *,
@@ -24,6 +25,7 @@ export type MultisigActionTypes = {|
         options?: *,
         params: *,
         status: *,
+        titleMessageId: *,
       },
     >,
     WithId,

@@ -35,6 +35,7 @@ export type TransactionActionTypes = {|
       {
         context: *,
         createdAt: *,
+        descriptionMessageId: *,
         from: *,
         group: *,
         identifier: *,
@@ -43,6 +44,7 @@ export type TransactionActionTypes = {|
         options?: *,
         params: *,
         status: *,
+        titleMessageId: *,
       },
     >,
     WithId,

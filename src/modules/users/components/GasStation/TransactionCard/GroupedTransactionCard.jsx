@@ -96,7 +96,7 @@ class GroupedTransactionCard extends Component<Props, State> {
     const {
       idx,
       selected,
-      transaction: { context, methodName, status },
+      transaction: { context, methodName, status, params, titleMessageId },
     } = this.props;
     const { isShowingCancelConfirmation } = this.state;
     const ready = status === 'ready';
@@ -129,9 +129,13 @@ class GroupedTransactionCard extends Component<Props, State> {
             <div>
               {`${idx + 1}. `}
               <FormattedMessage
-                id={`transaction.${
-                  context ? `${context}.` : ''
-                }${methodName}.title`}
+                id={
+                  titleMessageId ||
+                  `transaction.${
+                    context ? `${context}.` : ''
+                  }${methodName}.title`
+                }
+                values={params}
               />
               {failed && (
                 <span className={styles.failedDescription}>

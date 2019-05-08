@@ -36,17 +36,19 @@ export type MultisigSender<
 
 export type TxConfig<P> = {|
   context: ColonyContext,
-  identifier?: string,
-  methodName: string,
+  descriptionMessageId?: string,
   group?: {|
     key: string,
     id: string | string[],
     index: number,
   |},
+  identifier?: string,
+  methodName: string,
   multisig?: boolean | TransactionMultisig,
+  options?: SendOptions,
   params?: P,
   ready?: boolean,
-  options?: SendOptions,
+  titleMessageId?: string,
 |};
 
 export type TransactionResponse<E: TransactionEventData> = {
