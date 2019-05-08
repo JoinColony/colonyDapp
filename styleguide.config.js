@@ -22,6 +22,7 @@ module.exports = {
         './src/modules/core/components/Link/Link.jsx',
         './src/modules/core/components/NavLink/NavLink.jsx',
         './src/modules/core/components/ExternalLink/ExternalLink.jsx',
+        './src/modules/core/components/TransactionLink/TransactionLink.jsx',
         './src/modules/core/components/Numeral/Numeral.jsx',
         './src/modules/core/components/Duration/Duration.jsx',
         './src/modules/core/components/TimeRelative/TimeRelative.jsx',

@@ -10,10 +10,9 @@ import { TableRow, TableCell } from '~core/Table';
 import { ActionButton } from '~core/Button';
 import Numeral from '~core/Numeral';
 import Icon from '~core/Icon';
-import ExternalLink from '~core/ExternalLink';
+import TransactionLink from '~core/TransactionLink';
 import { ACTIONS } from '~redux';
 import { mergePayload } from '~utils/actions';
-import { getEtherscanTxUrl } from '~utils/external';
 import { useDataFetcher } from '~utils/hooks';
 
 import { tokenFetcher } from '../../../dashboard/fetchers';
@@ -141,14 +140,10 @@ const TransactionListItem = ({
         )}
         {linkToEtherscan && transaction.hash && (
           <div className={styles.etherscanButtonWrapper}>
-            {/**
-             * @todo Use the correct network for etherscan links
-             * @body Suggestion: use an environment variable or otherwise global config to determine which network we are on (or if local). This could also be a self-contained component.
-             */}
-            <ExternalLink
-              href={getEtherscanTxUrl(transaction.hash)}
-              text={MSG.buttonEtherscan}
+            <TransactionLink
               className={styles.customButton}
+              hash={transaction.hash}
+              text={MSG.buttonEtherscan}
             />
           </div>
         )}

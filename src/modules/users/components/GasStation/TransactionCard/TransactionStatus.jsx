@@ -6,10 +6,9 @@ import { defineMessages, FormattedMessage } from 'react-intl';
 import type { TransactionType } from '~immutable';
 
 import { Tooltip } from '~core/Popover';
-import ExternalLink from '~core/ExternalLink';
+import TransactionLink from '~core/TransactionLink';
 import { SpinnerLoader } from '~core/Preloaders';
 import Icon from '~core/Icon';
-import { getEtherscanTxUrl } from '~utils/external';
 
 import styles from './TransactionStatus.css';
 
@@ -43,10 +42,10 @@ const displayName = 'users.GasStation.TransactionStatus';
 const TransactionStatus = ({ hash, status, groupCount }: Props) => (
   <div className={styles.main}>
     {hash && (
-      <ExternalLink
-        href={getEtherscanTxUrl(hash)}
-        text="Etherscan"
+      <TransactionLink
         className={styles.interaction}
+        hash={hash}
+        text="Etherscan"
       />
     )}
     <Tooltip
