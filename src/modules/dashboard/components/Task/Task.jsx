@@ -53,7 +53,7 @@ import styles from './Task.css';
 const MSG = defineMessages({
   assignmentFunding: {
     id: 'dashboard.Task.assignmentFunding',
-    defaultMessage: 'Assignment and funding',
+    defaultMessage: 'Assignee and Funding',
   },
   details: {
     id: 'dashboard.Task.details',
@@ -182,21 +182,27 @@ const Task = ({
               appearance={{ size: 'normal' }}
               text={MSG.assignmentFunding}
             />
-            {canEdit && (
-              <Button
-                appearance={{ theme: 'blue' }}
-                text={MSG.details}
-                onClick={onEditTask}
-              />
-            )}
           </header>
-          <TaskAssignment
-            colonyAddress={colonyAddress}
-            draftId={draftId}
-            payouts={payouts}
-            reputation={reputation}
-            workerAddress={workerAddress}
-          />
+          <div className={styles.assignment}>
+            <div>
+              <TaskAssignment
+                colonyAddress={colonyAddress}
+                draftId={draftId}
+                payouts={payouts}
+                reputation={reputation}
+                workerAddress={workerAddress}
+              />
+            </div>
+            {canEdit && (
+              <div className={styles.assignmentDetailsButton}>
+                <Button
+                  appearance={{ theme: 'blue' }}
+                  text={MSG.details}
+                  onClick={onEditTask}
+                />
+              </div>
+            )}
+          </div>
         </section>
         <section className={styles.section}>
           <TaskTitle

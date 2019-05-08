@@ -121,7 +121,7 @@ const Assignment = ({
                 />
               </span>
             )}
-            {payouts ? (
+            {payouts && payouts.length > 0 ? (
               <PayoutsList payouts={payouts} nativeToken="CLNY" maxLines={2} />
             ) : (
               <FormattedMessage {...MSG.fundingNotSet} />
