@@ -54,13 +54,14 @@ const coreTransactionsReducer: ReducerType<
           context,
           createdAt,
           from,
+          group,
           identifier,
+          methodContext,
           methodName,
           multisig,
           options,
           params,
           status,
-          group,
         },
       } = action;
 
@@ -68,14 +69,15 @@ const coreTransactionsReducer: ReducerType<
         context,
         createdAt,
         from,
+        group,
         id,
         identifier,
+        methodContext,
         methodName,
         multisig,
         options,
         params,
         status,
-        group,
       });
 
       return state.setIn(

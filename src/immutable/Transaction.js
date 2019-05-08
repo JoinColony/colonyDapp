@@ -55,6 +55,7 @@ type Shared<P: TransactionParams, E: TransactionEventData> = {|
   hash?: string,
   id: TransactionId,
   identifier?: AddressOrENSName,
+  methodContext?: string, // Context in which method is used e.g. setOneTxRole
   methodName: string,
   multisig?: TransactionMultisig, // Indicates tx is multisig if set
   options: SendOptions,
@@ -93,6 +94,7 @@ const defaultValues: $Shape<TransactionRecordProps<*, *>> = {
   hash: undefined,
   id: undefined,
   identifier: undefined,
+  methodContext: undefined,
   methodName: undefined,
   multisig: undefined,
   options: {},

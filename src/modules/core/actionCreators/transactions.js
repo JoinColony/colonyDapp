@@ -24,13 +24,14 @@ export const createTxAction = <P>(
   from: string,
   {
     context,
-    identifier,
-    methodName,
     group,
+    identifier,
+    methodContext,
+    methodName,
     multisig: multisigConfig,
+    options,
     params,
     ready,
-    options,
   }: TxConfig<P>,
 ) => ({
   type: multisigConfig
@@ -42,6 +43,7 @@ export const createTxAction = <P>(
     from,
     group,
     identifier,
+    methodContext,
     methodName,
     multisig: typeof multisigConfig == 'boolean' ? {} : multisigConfig,
     options,
