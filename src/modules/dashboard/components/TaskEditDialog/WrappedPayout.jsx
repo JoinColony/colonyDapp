@@ -53,7 +53,7 @@ const WrappedPayout = ({
     <Payout
       name={`payouts.${index}`}
       amount={amount}
-      decimals={!!token.decimals && token.decimals >= 0 ? token.decimals : 18}
+      decimals={token.decimals}
       symbol={token.symbol}
       // $FlowFixMe this should be from TokenReference
       reputation={token.isNative ? reputation : undefined}

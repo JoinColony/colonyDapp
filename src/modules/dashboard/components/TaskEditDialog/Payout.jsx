@@ -31,7 +31,7 @@ type Props = {|
   name: string,
   amount?: number | BigNumber,
   symbol?: string,
-  decimals: number,
+  decimals?: number,
   reputation?: number,
   isEth?: boolean,
   tokenOptions?: Array<{ value: number, label: string }>,
@@ -46,7 +46,7 @@ const displayName = 'dashboard.TaskEditDialog.Payout';
 const Payout = ({
   amount,
   symbol,
-  decimals,
+  decimals = 18,
   reputation,
   name,
   tokenOptions,

@@ -105,6 +105,7 @@ const TaskInviteDialog = ({
                             key={token.address}
                             name={`payouts.${index}`}
                             amount={amount}
+                            decimals={token.decimals}
                             symbol={token.symbol}
                             reputation={
                               // $FlowFixMe this should be from TokenReference
