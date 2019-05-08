@@ -389,7 +389,7 @@ function* taskSetSkill({
 }
 
 /*
- * As worker or manager, I want to be able to set a skill
+ * As worker or manager, I want to be able to set a payout
  */
 function* taskSetPayout({
   payload: { colonyAddress, draftId, token, amount },
