@@ -245,6 +245,7 @@ const TaskEditDialog = ({
                 .lessThanPot(colonyTokenReferences, MSG.insufficientFundsError),
             }),
           )
+          .min(minTokens)
           .max(maxTokens),
         worker: yup.object().shape({
           profile: yup.object().shape({
@@ -252,7 +253,7 @@ const TaskEditDialog = ({
           }),
         }),
       }),
-    [colonyTokenReferences, maxTokens],
+    [colonyTokenReferences, maxTokens, minTokens],
   );
 
   const tokenOptions = useMemo(
