@@ -208,31 +208,29 @@ const TaskEditDialog = ({
 
   // consider using a selector for this in #1048
   const existingPayouts = useMemo(
-    () => {
-      if (taskPayouts && taskPayouts.length > 0) {
-        return taskPayouts.map(payout => ({
-          token:
-            // we add 1 because Formik thinks 0 is empty
-            availableTokens.indexOf(
-              availableTokens.find(
-                token => token.address === payout.token.address,
-              ),
-            ) + 1,
-          amount: payout.amount,
-          id: payout.token.address,
-        }));
-      }
-      if (minTokens && minTokens === maxTokens) {
-        return Array.from({ length: minTokens }, () => ({ id: nanoid() }));
-      }
-      return [];
-    },
-    [taskPayouts, minTokens, maxTokens, availableTokens],
+    () =>
+      taskPayouts.map(payout => ({
+        token:
+          // we add 1 because Formik thinks 0 is empty
+          availableTokens.indexOf(
+            availableTokens.find(
+              token => token.address === payout.token.address,
+            ),
+          ) + 1,
+        amount: payout.amount,
+        id: payout.token.address,
+      })),
+    [taskPayouts, availableTokens],
   );
 
   const validateFunding = useMemo(
-    () =>
-      yup.object().shape({
+    () => {
+      const workerShape = yup.object().shape({
+        profile: yup.object().shape({
+          walletAddress: yup.string().required(),
+        }),
+      });
+      return yup.object().shape({
         payouts: yup
           .array()
           .of(
@@ -245,14 +243,16 @@ const TaskEditDialog = ({
                 .lessThanPot(colonyTokenReferences, MSG.insufficientFundsError),
             }),
           )
-          .min(minTokens)
-          .max(maxTokens),
-        worker: yup.object().shape({
-          profile: yup.object().shape({
-            walletAddress: yup.string().required(),
+          .when('worker', {
+            is: workerShape,
+            then: yup
+              .array()
+              .min(minTokens)
+              .max(maxTokens),
           }),
-        }),
-      }),
+        worker: workerShape,
+      });
+    },
     [colonyTokenReferences, maxTokens, minTokens],
   );
 
@@ -302,25 +302,32 @@ const TaskEditDialog = ({
       { payouts, worker }: FormValues,
       { setSubmitting }: FormikBag<{}, FormValues>,
     ) => {
-      // Don't allow submit unless all data present
-      if (!worker || !worker.profile || payouts.length <= 0) {
+      // disallow changes after payouts set for MVP
+      if (existingPayouts.length > 0 || !worker) {
+        setSubmitting(false);
         return;
       }
 
-      // assign the worker
       assignWorker({
         colonyAddress,
         draftId,
         workerAddress: worker.profile.walletAddress,
       }).then(() => {
-        // then set the payouts
+        // then set the payouts - can't set payouts without a worker
         setPayouts(payouts).then(() => {
           setSubmitting(false);
           closeDialog();
         });
       });
     },
-    [assignWorker, closeDialog, colonyAddress, draftId, setPayouts],
+    [
+      assignWorker,
+      closeDialog,
+      colonyAddress,
+      draftId,
+      existingPayouts.length,
+      setPayouts,
+    ],
   );
 
   return (
