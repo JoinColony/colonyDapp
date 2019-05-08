@@ -5,6 +5,7 @@ import type { Channel, Saga } from 'redux-saga';
 import { buffers } from 'redux-saga';
 import {
   actionChannel,
+  all,
   call,
   cancel,
   put,
@@ -64,4 +65,19 @@ export function* createTransaction(
 
 export function* getTxChannel(id: string): Saga<Channel<*>> {
   return yield actionChannel(filterUniqueAction(id), buffers.fixed());
+}
+
+export function* createTransactionChannels(
+  batchId: string,
+  ids: string[],
+): Saga<[{ [id: string]: string }, { [id: string]: Channel<*> }]> {
+  const txIds = ids.map(id => `${batchId}-${id}`);
+  const txChannels = yield all(txIds.map(txId => call(getTxChannel, txId)));
+  return ids.reduce(
+    ([txIdsObj, txChannelsObj], id, i) => [
+      { ...txIdsObj, [id]: txIds[i] },
+      { ...txChannelsObj, [id]: txChannels[i] },
+    ],
+    [{}, {}],
+  );
 }
