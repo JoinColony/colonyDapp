@@ -40,7 +40,10 @@ const WrappedPayout = ({
   ]);
 
   const resetPayout = useCallback(
-    () => arrayHelpers.replace(index, payouts[index]),
+    () =>
+      payouts.length > 0
+        ? arrayHelpers.replace(index, payouts[index])
+        : arrayHelpers.remove(index),
     [arrayHelpers, index, payouts],
   );
 
