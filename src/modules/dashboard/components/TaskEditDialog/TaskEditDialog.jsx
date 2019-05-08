@@ -208,19 +208,26 @@ const TaskEditDialog = ({
 
   // consider using a selector for this in #1048
   const existingPayouts = useMemo(
-    () =>
-      taskPayouts.map(payout => ({
-        token:
-          // we add 1 because Formik thinks 0 is empty
-          availableTokens.indexOf(
-            availableTokens.find(
-              token => token.address === payout.token.address,
-            ),
-          ) + 1,
-        amount: payout.amount,
-        id: payout.token.address,
-      })),
-    [taskPayouts, availableTokens],
+    () => {
+      if (taskPayouts && taskPayouts.length > 0) {
+        return taskPayouts.map(payout => ({
+          token:
+            // we add 1 because Formik thinks 0 is empty
+            availableTokens.indexOf(
+              availableTokens.find(
+                token => token.address === payout.token.address,
+              ),
+            ) + 1,
+          amount: payout.amount,
+          id: payout.token.address,
+        }));
+      }
+      if (minTokens && minTokens === maxTokens) {
+        return Array.from({ length: minTokens }, () => ({ id: nanoid() }));
+      }
+      return [];
+    },
+    [taskPayouts, minTokens, maxTokens, availableTokens],
   );
 
   const validateFunding = useMemo(
