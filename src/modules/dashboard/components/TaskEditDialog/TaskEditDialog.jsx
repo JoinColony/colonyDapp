@@ -394,7 +394,7 @@ const TaskEditDialog = ({
                                   <WrappedPayout
                                     key={payout.id}
                                     arrayHelpers={arrayHelpers}
-                                    payouts={values.payouts}
+                                    payouts={existingPayouts}
                                     payout={payout}
                                     availableTokens={availableTokens}
                                     canRemove={canRemove}

@@ -1,6 +1,7 @@
 /* @flow */
 
-import React, { Component } from 'react';
+// $FlowFixMe until hooks flow types
+import React, { useCallback, useState } from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 import BigNumber from 'bn.js';
 
@@ -26,10 +27,6 @@ const MSG = defineMessages({
   },
 });
 
-type State = {
-  editing: boolean,
-};
-
 type Props = {|
   name: string,
   amount?: number | BigNumber,
@@ -38,142 +35,139 @@ type Props = {|
   reputation?: number,
   isEth?: boolean,
   tokenOptions?: Array<{ value: number, label: string }>,
-  editPayout: boolean,
+  editPayout?: boolean,
   remove?: () => void,
   canRemove?: boolean,
   reset?: () => void,
 |};
 
-class Payout extends Component<Props, State> {
-  static displayName = 'dashboard.TaskEditDialog.Payout';
+const displayName = 'dashboard.TaskEditDialog.Payout';
 
-  static defaultProps = { editPayout: true };
+const Payout = ({
+  amount,
+  symbol,
+  decimals,
+  reputation,
+  name,
+  tokenOptions,
+  isEth = false,
+  canRemove = true,
+  remove,
+  reset,
+  editPayout = true,
+}: Props) => {
+  const [isEditing, setIsEditing] = useState(false);
 
-  state = { editing: false };
+  const exitEditAndCancel = useCallback(
+    () => {
+      if (isEditing && reset) {
+        reset();
+      }
+      setIsEditing(false);
+    },
+    [isEditing, reset],
+  );
 
-  toggleEdit = () => {
-    const { reset } = this.props;
-    const { editing } = this.state;
-    if (editing && reset) reset();
-    this.setState({
-      editing: !editing,
-    });
-  };
-
-  render() {
-    const {
-      amount,
-      symbol,
-      decimals,
-      reputation,
-      name,
-      tokenOptions,
-      isEth = false,
-      canRemove = true,
-      remove,
-      editPayout,
-    } = this.props;
-    const { editing } = this.state;
-
-    return (
-      <div>
-        <div hidden={!editing}>
-          <div className={styles.row}>
-            <Heading
-              appearance={{ size: 'small', margin: 'small' }}
-              text={{ id: 'label.amount' }}
-            />
-            <span>
-              {canRemove && (
-                <Button
-                  appearance={{ theme: 'blue', size: 'small' }}
-                  text={{ id: 'button.remove' }}
-                  onClick={remove}
-                />
-              )}
+  return (
+    <div>
+      <div hidden={!isEditing}>
+        <div className={styles.row}>
+          <Heading
+            appearance={{ size: 'small', margin: 'small' }}
+            text={{ id: 'label.amount' }}
+          />
+          <span>
+            {canRemove && (
               <Button
                 appearance={{ theme: 'blue', size: 'small' }}
-                text={{ id: 'button.cancel' }}
-                onClick={this.toggleEdit}
+                text={{ id: 'button.remove' }}
+                onClick={remove}
               />
-            </span>
-          </div>
-          <div className={styles.editContainer}>
-            <div className={styles.setAmount}>
-              <Input
-                appearance={{ theme: 'minimal', align: 'right' }}
-                name={`${name}.amount`}
-                formattingOptions={{
-                  delimiter: ',',
-                  numeral: true,
-                  numeralDecimalScale: decimals,
-                }}
-              />
-            </div>
-            <div className={styles.selectToken}>
-              <Select options={tokenOptions} name={`${name}.token`} />
-            </div>
-          </div>
-        </div>
-        <div hidden={editing}>
-          <div className={styles.row}>
-            <Heading
-              appearance={{ size: 'small' }}
-              text={{ id: 'label.amount' }}
-            />
-            {amount ? (
-              <div className={styles.fundingDetails}>
-                <div>
-                  <span className={styles.amount}>
-                    <Numeral
-                      appearance={{
-                        size: 'medium',
-                        theme: 'grey',
-                      }}
-                      value={amount}
-                    />
-                  </span>
-                  <span>{symbol}</span>
-                </div>
-                {reputation && (
-                  <div className={styles.reputation}>
-                    <FormattedMessage
-                      {...MSG.reputation}
-                      values={{ reputation }}
-                    />
-                  </div>
-                )}
-                {isEth && (
-                  <div className={styles.conversion}>
-                    <EthUsd
-                      appearance={{ theme: 'grey', size: 'small' }}
-                      value={amount}
-                    />
-                  </div>
-                )}
-              </div>
-            ) : (
-              <FormattedMessage {...MSG.notSet} />
             )}
-            <div>
-              {editPayout && (
-                <Button
-                  appearance={{ theme: 'blue', size: 'small' }}
-                  text={{ id: 'button.modify' }}
-                  onClick={this.toggleEdit}
-                />
-              )}
-            </div>
+            <Button
+              appearance={{ theme: 'blue', size: 'small' }}
+              text={{ id: 'button.cancel' }}
+              onClick={exitEditAndCancel}
+            />
+          </span>
+        </div>
+        <div className={styles.editContainer}>
+          <div className={styles.setAmount}>
+            <Input
+              appearance={{ theme: 'minimal', align: 'right' }}
+              name={`${name}.amount`}
+              formattingOptions={{
+                delimiter: ',',
+                numeral: true,
+                numeralDecimalScale: decimals,
+              }}
+            />
           </div>
-          {amount && symbol && !editing && (
-            <div className={styles.networkFeeRow}>
-              <NetworkFee amount={amount} symbol={symbol} />
-            </div>
-          )}
+          <div className={styles.selectToken}>
+            <Select options={tokenOptions} name={`${name}.token`} />
+          </div>
         </div>
       </div>
-    );
-  }
-}
+      <div hidden={isEditing}>
+        <div className={styles.row}>
+          <Heading
+            appearance={{ size: 'small' }}
+            text={{ id: 'label.amount' }}
+          />
+          {amount ? (
+            <div className={styles.fundingDetails}>
+              <div>
+                <span className={styles.amount}>
+                  <Numeral
+                    appearance={{
+                      size: 'medium',
+                      theme: 'grey',
+                    }}
+                    value={amount}
+                  />
+                </span>
+                <span>{symbol}</span>
+              </div>
+              {reputation && (
+                <div className={styles.reputation}>
+                  <FormattedMessage
+                    {...MSG.reputation}
+                    values={{ reputation }}
+                  />
+                </div>
+              )}
+              {isEth && (
+                <div className={styles.conversion}>
+                  <EthUsd
+                    appearance={{ theme: 'grey', size: 'small' }}
+                    value={amount}
+                  />
+                </div>
+              )}
+            </div>
+          ) : (
+            <FormattedMessage {...MSG.notSet} />
+          )}
+          <div>
+            {editPayout && (
+              <Button
+                appearance={{ theme: 'blue', size: 'small' }}
+                text={{ id: 'button.modify' }}
+                onClick={() => setIsEditing(true)}
+              />
+            )}
+          </div>
+        </div>
+        {amount && symbol && !isEditing && (
+          <div className={styles.networkFeeRow}>
+            <NetworkFee amount={amount} symbol={symbol} />
+          </div>
+        )}
+      </div>
+    </div>
+  );
+};
+
+Payout.displayName = displayName;
 
 export default Payout;
