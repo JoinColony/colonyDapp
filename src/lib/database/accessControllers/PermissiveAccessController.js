@@ -28,4 +28,4 @@ export default class PermissiveAccessController {
     return true;
   }
 }
-/* eslint-emable class-methods-use-this */
+/* eslint-enable class-methods-use-this */
