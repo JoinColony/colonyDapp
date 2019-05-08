@@ -87,9 +87,17 @@ Cypress.Commands.add(
 Cypress.Commands.add('confirmTx', () => {
   cy.get('button[data-test="gasStationConfirmTransaction"]', {
     timeout: 20000,
-  }).should('be.visible');
+  })
+    .contains('Confirm')
+    .click();
+});
 
-  cy.get('button[data-test="gasStationConfirmTransaction"]').click();
+Cypress.Commands.add('verifyTxByIndex', index => {
+  cy.get('span[data-test="gasStationTransactionSucceeded"]', {
+    timeout: 6000,
+  })
+    .find('i')
+    .should('have.length', index);
 });
 
 Cypress.Commands.add('initState', () => {
@@ -115,4 +123,14 @@ Cypress.Commands.add('getState', () => {
     .its('store')
     .invoke('getState')
     .then(state => state.toJS());
+});
+
+/* This works only after colonyDapp#755 has been merged */
+Cypress.Commands.add('logout', () => {
+  /*
+   * Dev Helper method to logout
+   */
+  cy.window()
+    .its('store')
+    .invoke('dispatch', { type: 'USER_LOGOUT' });
 });

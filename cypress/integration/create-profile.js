@@ -1,5 +1,6 @@
 describe('Goes to user wizard', () => {
   it('Use a TrufflePig wallet', () => {
+    cy.logout();
     cy.get('button')
       .contains('TrufflePig')
       .click();
@@ -45,52 +46,6 @@ describe('Goes to user wizard', () => {
 });
 
 describe('Creates a new profile', () => {
-  let hasUser = false;
-
-  it('Fill out (ENS) username in first wizard step or confirm skipping of this step', () => {
-    /*
-     * This test only gets run when the username isn't defined yet
-     * Load the usernames fixture
-     */
-
-    cy.fixture('users').then(({ ensName }) => {
-      cy.getState().then(
-        ({
-          users: {
-            currentUser: {
-              profile: { username },
-            },
-          },
-        }) => {
-          if (username) {
-            /*
-             * Store boolean to use later because transaction
-             * doesn't have to be confirmed if it doesn't get created
-             */
-            hasUser = true;
-
-            cy.get('span').should('be.visible');
-          } else {
-            cy.get('input[data-test="claimUsernameInput"]').type(ensName);
-
-            /*
-             * Submit your selected username
-             */
-            cy.get('button[data-test="claimUsernameConfirm"]')
-              .click()
-              /*
-               * Wait until next wizard step opens
-               */
-              .wait(2000);
-          }
-        },
-      );
-      /*
-       * Fill the username form
-       */
-    });
-  });
-
   it('Fill out (ENS) colonyName in second wizard step', () => {
     /*
      * Load the colonyNames fixture
@@ -132,7 +87,7 @@ describe('Creates a new profile', () => {
   });
 
   it('Confirm user input and process transactions', () => {
-    cy.get('button[data-test="userInputConfirm"]').click();
+    cy.get('button[data-test="userInputConfirm"]', { timeout: 5000 }).click();
   });
 
   it('Sign the transaction', () => {
@@ -145,43 +100,22 @@ describe('Creates a new profile', () => {
     /*
      * Click on the Claim Username Transaction
      */
-    if (!hasUser) {
-      cy.get('ul[data-test="gasStationGroupedTransaction"]')
-        .get('li')
-        .contains('Claim Username')
-        .click();
+    /*
+     * Currently we have 8 transactions, until this is
+     * simplified we still want to test
+     */
+    const verifyIndizes = Array.from({ length: 10 }, (v, i) => i + 1);
+
+    verifyIndizes.forEach(val => {
       /*
-       * Confirm the transaction
+       * Confirm the transactions
        */
       cy.confirmTx();
-    }
-    /*
-     * Deal with next transaction
-     * Click on the Claim Username Transaction
-     */
-    cy.get('ul[data-test="gasStationGroupedTransaction"]')
-      .get('li')
-      .contains('Create Token')
-      .click();
-    /*
-     * Confirm the transaction
-     */
-    cy.confirmTx();
 
-    cy.get('ul[data-test="gasStationGroupedTransaction"]')
-      .get('li')
-      .contains('Create Colony')
-      .click();
-
-    cy.confirmTx();
-
-    cy.get('ul[data-test="gasStationGroupedTransaction"]')
-      .get('li')
-      .contains('Create Colony Name')
-      .click();
-
-    cy.confirmTx();
-
-    cy.get('div[data-test="dashboard"]').should('exist');
+      /*
+       * Verify that transactions have succeeded
+       */
+      cy.verifyTxByIndex(val);
+    });
   });
 });
