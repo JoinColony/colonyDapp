@@ -57,6 +57,10 @@
   color: var(--grey-3);
 }
 
+.ethUsdText {
+  font-weight: var(--weight-semi);
+}
+
 .cardFooter span {
   font-size: var(--size-small);
 }
