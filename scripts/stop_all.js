@@ -1,13 +1,13 @@
 #!/usr/bin/env node
 
-const path = require('path');
-
 const kill = require('tree-kill');
+const chalk = require('chalk');
 
 const { PID_FILE } = require('./paths');
 
-const killPromise = pid =>
-  new Promise((resolve, reject) => {
+const killPromise = (pidName, pid) => {
+  console.info(`Killing "${pidName}" (${pid})`);
+  return new Promise((resolve, reject) => {
     kill(pid, err => {
       if (err) {
         reject(err);
@@ -16,6 +16,7 @@ const killPromise = pid =>
       resolve(pid);
     });
   });
+};
 
 const teardown = async () => {
   console.info('Closing everything...');
@@ -26,11 +27,13 @@ const teardown = async () => {
     console.log(e);
     return console.log('PID file not found. Please close the processes manually.');
   }
-  const { ganache, trufflepig, webpack } = pids;
-  await killPromise(ganache);
-  await killPromise(trufflepig);
-  await killPromise(webpack);
-  console.info('Teardown done.');
+  await Promise.all(Object.keys(pids).map(name => killPromise(name, pids[name])));
+  console.info(chalk.greenBright('Teardown done.'));
+  process.exit(0);
 };
 
-teardown();
+teardown().catch(caughtError => {
+  console.error('Error tearing down');
+  console.error(caughtError);
+  process.exit(1);
+});

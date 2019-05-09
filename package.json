@@ -102,6 +102,7 @@
         "jest-enzyme": "^7.0.0",
         "jest-junit": "^5.0.0",
         "jest-sandbox": "^1.1.2",
+        "libp2p-webrtc-star": "^0.15.8",
         "lint-staged": "^8.0.0",
         "minimist": "^1.2.0",
         "node-fetch": "^2.1.2",

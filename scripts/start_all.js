@@ -5,8 +5,10 @@ const path = require('path');
 const waitOn = require('wait-on');
 const fs = require('fs');
 const args = require('minimist')(process.argv);
+const chalk = require('chalk');
 
 const startGanache = require('./start_ganache');
+const startStarSignal = require('./start_star_signal');
 const deployContracts = require('./deploy_contracts');
 
 const { PID_FILE } = require('./paths');
@@ -71,7 +73,7 @@ const wssProxyPromise = async () => {
   );
   await waitOn({ resources: ['tcp:4003'] });
   return wssProxyProcess;
-}
+};
 
 const startAll = async () => {
   try {
@@ -81,8 +83,12 @@ const startAll = async () => {
     console.info('Deploying contracts...');
     await deployContractsPromise();
 
-    console.info('Starting trufflepig...');
+    console.info(chalk.magentaBright('Starting trufflepig...'));
     const trufflepigProcess = await trufflePigPromise();
+
+    // This will probably be replaced with pinion
+    console.info('Starting star signal...');
+    const starSignalProcess = await startStarSignal();
 
     // This is temporarily disabled until we actually *really* need it
     // console.info('Starting websocket proxy...');
@@ -95,21 +101,32 @@ const startAll = async () => {
       ganache: ganacheProcess.pid,
       trufflepig: trufflepigProcess.pid,
       webpack: webpackProcess.pid,
+      starSignal: starSignalProcess.pid,
       // wssProxy: wssProxyProcess.pid,
     };
 
     fs.writeFileSync(PID_FILE, JSON.stringify(pids));
   } catch (e) {
-    console.info('Stack start failed.');
-    console.info(e.message);
+    console.info(chalk.redBright('Stack start failed.'));
+    console.info(chalk.redBright(e.message));
     process.exit(1);
   }
 
-  console.info('Stack started successfully.');
+  console.info('Reticulating splines...');
+
+  console.info(chalk.greenBright('Stack started successfully.'));
 };
 
 process.on('SIGINT', () => {
-  spawn(path.resolve(__dirname, 'stop_all.js'));
+  spawn(path.resolve(__dirname, 'stop_all.js'), {
+    detached: true,
+    stdio: 'inherit',
+  });
+  process.exit(0);
 });
 
-startAll();
+startAll().catch(caughtError => {
+  console.error('Error starting');
+  console.error(caughtError);
+  process.exit(1);
+});
