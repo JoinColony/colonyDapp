@@ -1,6 +1,8 @@
 /* @flow */
 
 import type { ObjectSchema } from 'yup';
+import OrbitDB from 'orbit-db';
+
 import type {
   AccessController,
   Identity,
@@ -11,7 +13,6 @@ import type {
   StoreBlueprint,
 } from '~types';
 
-import OrbitDB from 'orbit-db';
 import { log } from '../../utils/debug';
 import IPFSNode from '../ipfs';
 import Keystore from './Keystore';
