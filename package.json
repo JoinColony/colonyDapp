@@ -24,7 +24,7 @@
         "stylelint:ci": "stylelint --custom-formatter './node_modules/stylelint-formatter-relative-junit' \"src/**/*.css\" > reports/stylelint/stylelint-results.xml",
         "test": "jest --config=jest.conf.json",
         "test:ci": "jest --clearCache && NODE_ENV=test jest --ci --coverage --verbose=true --config=jest.conf.json --reporters='jest-junit'",
-        "test:integration": "ava",
+        "test:integration": "ava --serial",
         "test:integration:ci": "yarn test:integration --tap | tap-xunit > reports/ava/ava-results.xml",
         "truffle": "yarn --cwd ./src/lib/colonyNetwork truffle",
         "trufflepig": "scripts/start_trufflepig.js",
