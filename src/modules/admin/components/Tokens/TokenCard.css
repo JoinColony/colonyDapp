@@ -26,6 +26,9 @@
 
 .tokenSymbol {
   margin-left: 15px;
+  font-size: var(--size-small);
+  font-weight: var(--weight-medium);
+  color: var(--grey-dark);
 }
 
 .balanceContent {
