@@ -58,6 +58,7 @@ const TokenCard = ({
         }
       >
         <Numeral
+          className={styles.balanceNumeral}
           integerSeparator=""
           truncate={2}
           unit={token.decimals || 18}
