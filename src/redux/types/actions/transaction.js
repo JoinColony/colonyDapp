@@ -38,6 +38,7 @@ export type TransactionActionTypes = {|
         from: *,
         group: *,
         identifier: *,
+        methodContext: *,
         methodName: *,
         multisig: *,
         options?: *,

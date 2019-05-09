@@ -19,6 +19,7 @@ export type MultisigActionTypes = {|
         from: *,
         group: *,
         identifier: *,
+        methodContext: *,
         methodName: *,
         multisig: *,
         options?: *,

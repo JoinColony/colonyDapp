@@ -23,6 +23,7 @@ import {
   selectAsJS,
 } from '~utils/saga/effects';
 import { ACTIONS } from '~redux';
+import { CONTEXT, getContext } from '~context';
 
 import {
   createColonyProfile,
@@ -45,7 +46,11 @@ import {
   transactionAddIdentifier,
   transactionReady,
 } from '../../core/actionCreators';
-import { createTransaction, getTxChannel } from '../../core/sagas';
+import {
+  createTransaction,
+  getTxChannel,
+  createTransactionChannels,
+} from '../../core/sagas';
 import { ipfsUpload } from '../../core/sagas/ipfs';
 import { COLONY_CONTEXT } from '../../core/constants';
 import { networkVersionSelector } from '../../core/selectors';
@@ -77,19 +82,21 @@ function* colonyCreate({
 
   /* STEP 1: Create ids to be able to find transactions in their channel */
   const key = 'transaction.batch.createColony';
-  const createUserId = `${meta.id}-createUser`;
-  const createTokenId = `${meta.id}-createToken`;
-  const createColonyId = `${meta.id}-createColony`;
-  const createLabelId = `${meta.id}-createLabel`;
-  const createUserChannel = yield call(getTxChannel, createUserId);
-  const createTokenChannel = yield call(getTxChannel, createTokenId);
-  const createColonyChannel = yield call(getTxChannel, createColonyId);
-  const createLabelChannel = yield call(getTxChannel, createLabelId);
+  const [ids, channels] = yield call(createTransactionChannels, meta.id, [
+    'createUser',
+    'createToken',
+    'createColony',
+    'createLabel',
+    'deployOneTx',
+    'setOneTxRole',
+    'deployOldRoles',
+    'setOldRolesRole',
+  ]);
 
   /* STEP 2: Create all transactions of createColony transactiongroup */
   try {
     if (!usernameCreated) {
-      yield fork(createTransaction, createUserId, {
+      yield fork(createTransaction, ids.createUser, {
         context: NETWORK_CONTEXT,
         methodName: 'registerUserLabel',
         ready: false,
@@ -123,18 +130,18 @@ function* colonyCreate({
         meta,
       });
       yield put(
-        transactionAddParams(createUserId, {
+        transactionAddParams(ids.createUser, {
           orbitDBPath: profileStore.address.toString(),
         }),
       );
 
-      yield put(transactionReady(createUserId));
+      yield put(transactionReady(ids.createUser));
     }
 
-    yield fork(createTransaction, createTokenId, {
+    yield fork(createTransaction, ids.createToken, {
       context: NETWORK_CONTEXT,
       methodName: 'createToken',
-      params: { name: tokenName, symbol: tokenSymbol },
+      params: { name: tokenName, symbol: tokenSymbol, decimals: 18 },
       group: {
         key,
         id: meta.id,
@@ -142,7 +149,7 @@ function* colonyCreate({
       },
     });
 
-    yield fork(createTransaction, createColonyId, {
+    yield fork(createTransaction, ids.createColony, {
       context: NETWORK_CONTEXT,
       methodName: 'createColony',
       ready: false,
@@ -153,7 +160,7 @@ function* colonyCreate({
       },
     });
 
-    yield fork(createTransaction, createLabelId, {
+    yield fork(createTransaction, ids.createLabel, {
       context: COLONY_CONTEXT,
       methodName: 'registerColonyLabel',
       params: { colonyName },
@@ -165,14 +172,70 @@ function* colonyCreate({
       },
     });
 
+    // @todo deploy TokenAuthority and setAuthority on the Token
+
+    yield fork(createTransaction, ids.deployOneTx, {
+      context: COLONY_CONTEXT,
+      methodName: 'addExtension',
+      params: { contractName: 'OneTxPayment' },
+      ready: false,
+      group: {
+        key,
+        id: meta.id,
+        index: 4,
+      },
+    });
+
+    yield fork(createTransaction, ids.setOneTxRole, {
+      context: COLONY_CONTEXT,
+      methodName: 'setRootRole',
+      params: { setTo: true },
+      ready: false,
+      group: {
+        key,
+        id: meta.id,
+        index: 5,
+      },
+      methodContext: 'setOneTxRole',
+    });
+
+    yield fork(createTransaction, ids.deployOldRoles, {
+      context: COLONY_CONTEXT,
+      methodName: 'addExtension',
+      params: { contractName: 'OldRoles' },
+      ready: false,
+      group: {
+        key,
+        id: meta.id,
+        index: 6,
+      },
+    });
+
+    yield fork(createTransaction, ids.setOldRolesRole, {
+      context: COLONY_CONTEXT,
+      methodName: 'setRootRole',
+      params: { setTo: true },
+      ready: false,
+      group: {
+        key,
+        id: meta.id,
+        index: 7,
+      },
+      methodContext: 'setOldRolesRole',
+    });
+
     /* STEP 3: Notify about creation of each transaction in the group so they can
     be added to the gas station  */
     if (!usernameCreated) {
-      yield takeFrom(createUserChannel, ACTIONS.TRANSACTION_CREATED);
+      yield takeFrom(channels.createUser, ACTIONS.TRANSACTION_CREATED);
     }
-    yield takeFrom(createTokenChannel, ACTIONS.TRANSACTION_CREATED);
-    yield takeFrom(createColonyChannel, ACTIONS.TRANSACTION_CREATED);
-    yield takeFrom(createLabelChannel, ACTIONS.TRANSACTION_CREATED);
+    yield takeFrom(channels.createToken, ACTIONS.TRANSACTION_CREATED);
+    yield takeFrom(channels.createColony, ACTIONS.TRANSACTION_CREATED);
+    yield takeFrom(channels.createLabel, ACTIONS.TRANSACTION_CREATED);
+    yield takeFrom(channels.deployOneTx, ACTIONS.TRANSACTION_CREATED);
+    yield takeFrom(channels.setOneTxRole, ACTIONS.TRANSACTION_CREATED);
+    yield takeFrom(channels.deployOldRoles, ACTIONS.TRANSACTION_CREATED);
+    yield takeFrom(channels.setOldRolesRole, ACTIONS.TRANSACTION_CREATED);
 
     /* STEP 4: Fire success to progress to next wizard step where transactions can get
     processed  */
@@ -191,20 +254,20 @@ function* colonyCreate({
           receipt: { contractAddress: tokenAddress },
         },
       },
-    } = yield takeFrom(createTokenChannel, ACTIONS.TRANSACTION_SUCCEEDED);
+    } = yield takeFrom(channels.createToken, ACTIONS.TRANSACTION_SUCCEEDED);
 
     /*
      * Pass through tokenAddress after token creation to colony creation
      */
-    yield put(transactionAddParams(createColonyId, { tokenAddress }));
+    yield put(transactionAddParams(ids.createColony, { tokenAddress }));
 
-    yield put(transactionReady(createColonyId));
+    yield put(transactionReady(ids.createColony));
 
     const {
       payload: {
         eventData: { colonyAddress },
       },
-    } = yield takeFrom(createColonyChannel, ACTIONS.TRANSACTION_SUCCEEDED);
+    } = yield takeFrom(channels.createColony, ACTIONS.TRANSACTION_SUCCEEDED);
 
     if (!colonyAddress) {
       yield putError(
@@ -239,22 +302,68 @@ function* colonyCreate({
      * Pass through colonyStore Address after colony store creation to colonyName creation
      */
     yield put(
-      transactionAddParams(createLabelId, {
+      transactionAddParams(ids.createLabel, {
         orbitDBPath: colonyStore.address.toString(),
       }),
     );
-    yield put(transactionAddIdentifier(createLabelId, colonyAddress));
+    yield put(transactionAddIdentifier(ids.createLabel, colonyAddress));
+    yield put(transactionAddIdentifier(ids.deployOneTx, colonyAddress));
+    yield put(transactionAddIdentifier(ids.setOneTxRole, colonyAddress));
+    yield put(transactionAddIdentifier(ids.deployOldRoles, colonyAddress));
+    yield put(transactionAddIdentifier(ids.setOldRolesRole, colonyAddress));
 
-    yield put(transactionReady(createLabelId));
+    const colonyManager = yield* getContext(CONTEXT.COLONY_MANAGER);
+    const colonyClient = yield call(
+      [colonyManager, colonyManager.getColonyClient],
+      colonyAddress,
+    );
 
-    yield takeFrom(createLabelChannel, ACTIONS.TRANSACTION_SUCCEEDED);
+    yield put(transactionReady(ids.createLabel));
+
+    yield takeFrom(channels.createLabel, ACTIONS.TRANSACTION_SUCCEEDED);
+
+    yield put(transactionReady(ids.deployOneTx));
+
+    yield takeFrom(channels.deployOneTx, ACTIONS.TRANSACTION_SUCCEEDED);
+    const { address: oneTxAddress } = yield call(
+      [colonyClient.getExtensionAddress, colonyClient.getExtensionAddress.call],
+      { contractName: 'OneTxPayment' },
+    );
+    yield put(
+      transactionAddParams(ids.setOneTxRole, { address: oneTxAddress }),
+    );
+
+    yield put(transactionReady(ids.setOneTxRole));
+
+    yield takeFrom(channels.setOneTxRole, ACTIONS.TRANSACTION_SUCCEEDED);
+
+    yield put(transactionReady(ids.deployOldRoles));
+
+    yield takeFrom(channels.deployOldRoles, ACTIONS.TRANSACTION_SUCCEEDED);
+    const { address: oldRolesAddress } = yield call(
+      [colonyClient.getExtensionAddress, colonyClient.getExtensionAddress.call],
+      { contractName: 'OldRoles' },
+    );
+    yield put(
+      transactionAddParams(ids.setOldRolesRole, {
+        address: oldRolesAddress,
+      }),
+    );
+
+    yield put(transactionReady(ids.setOldRolesRole));
+
+    yield takeFrom(channels.setOldRolesRole, ACTIONS.TRANSACTION_SUCCEEDED);
   } catch (error) {
     yield putError(ACTIONS.COLONY_CREATE_ERROR, error, meta);
   } finally {
-    createUserChannel.close();
-    createTokenChannel.close();
-    createColonyChannel.close();
-    createLabelChannel.close();
+    channels.createUser.close();
+    channels.createToken.close();
+    channels.createColony.close();
+    channels.createLabel.close();
+    channels.deployOneTx.close();
+    channels.setOneTxRole.close();
+    channels.deployOldRoles.close();
+    channels.setOldRolesRole.close();
   }
 }
 

@@ -19,7 +19,11 @@ import type {
   UserPermissionsType,
 } from '~immutable';
 
-import { ADMIN_ROLE, FOUNDER_ROLE } from '@colony/colony-js-client';
+import {
+  COLONY_ROLE_ADMINISTRATION,
+  COLONY_ROLE_ROOT,
+  COLONY_ROLE_RECOVERY,
+} from '@colony/colony-js-client';
 import BigNumber from 'bn.js';
 import { formatEther } from 'ethers/utils';
 
@@ -257,21 +261,20 @@ export const getUserPermissions: Query<
   context: [CONTEXT.COLONY_MANAGER],
   prepare: prepareColonyClientQuery,
   async execute(colonyClient, { walletAddress }) {
-    /**
-     * @todo Query colony client for recovery mode permission.
-     * @body Wait for new ColonyJS version and replace with the code below:
-     * ```js
-     * const canEnterRecoveryMode = await colonyClient.hasUserRole.call({ user: walletAddress, role: RECOVERY_ROLE });
-     * ```
-     */
-    const canEnterRecoveryMode = false;
-    const isAdmin = await colonyClient.hasUserRole.call({
-      user: walletAddress,
-      role: ADMIN_ROLE,
+    const canEnterRecoveryMode = await colonyClient.hasColonyRole.call({
+      address: walletAddress,
+      role: COLONY_ROLE_RECOVERY,
+      domainId: 1,
     });
-    const isFounder = await colonyClient.hasUserRole.call({
-      user: walletAddress,
-      role: FOUNDER_ROLE,
+    const isAdmin = await colonyClient.hasColonyRole.call({
+      address: walletAddress,
+      role: COLONY_ROLE_ADMINISTRATION,
+      domainId: 1,
+    });
+    const isFounder = await colonyClient.hasColonyRole.call({
+      address: walletAddress,
+      role: COLONY_ROLE_ROOT,
+      domainId: 1,
     });
     return { canEnterRecoveryMode, isAdmin, isFounder };
   },
