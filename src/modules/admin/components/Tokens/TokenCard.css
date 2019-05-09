@@ -54,7 +54,7 @@
   align-items: flex-end;
   height: headerFooterHeights;
   font-weight: var(--weight-thin);
-  color: var(--temp-grey-4);
+  color: var(--grey-3);
 }
 
 .cardFooter span {
