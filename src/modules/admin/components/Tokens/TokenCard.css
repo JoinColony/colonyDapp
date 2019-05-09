@@ -38,6 +38,10 @@
   font-size: var(--size-medium-l);
 }
 
+.balanceNumeral {
+  font-size: var(--size-medium-l);
+}
+
 .balanceNotPositive {
   composes: balanceContent;
   color: var(--pink);
