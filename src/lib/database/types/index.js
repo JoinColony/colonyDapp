@@ -9,7 +9,6 @@ import type { Entry } from './Entry';
 export type { AccessController, Entry };
 export type { Identity, IdentityObject } from './Identity';
 export type { IdentityProvider } from './IdentityProvider';
-export type { KeyPair } from './KeyPair';
 export type { OrbitDBStore } from './OrbitDBStore';
 export type { OrbitDBKVStore } from './OrbitDBKVStore';
 export type { OrbitDBDocStore, QueryFunction } from './OrbitDBDocStore';

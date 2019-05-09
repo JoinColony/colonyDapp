@@ -12,4 +12,6 @@ export interface IdentityProvider<+T: Identity> {
   sign(identity: T, data: any): Promise<string>;
 
   verify(signature: string, publicKey: string, data: any): Promise<boolean>;
+
+  close(): Promise<void>;
 }

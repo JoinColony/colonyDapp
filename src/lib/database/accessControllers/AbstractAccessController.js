@@ -36,7 +36,11 @@ export default class AbstractAccessController<
       identity: { id: walletAddress, publicKey: orbitPublicKey, signatures },
     }: Entry,
   ): Promise<boolean> {
-    return provider.verify(signatures.id, orbitPublicKey, walletAddress);
+    return provider.verify(
+      signatures.id,
+      orbitPublicKey,
+      Buffer.from(walletAddress, 'hex'),
+    );
   }
 
   static verifyWalletSignature(
