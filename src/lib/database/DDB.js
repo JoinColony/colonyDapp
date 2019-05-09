@@ -109,7 +109,6 @@ class DDB {
   async _getStoreAddress(
     identifier: StoreIdentifier,
   ): Promise<OrbitDBAddress | null> {
-    if (!identifier) return null;
     log.verbose(`Getting store address for identifier`, identifier);
     if (typeof identifier === 'string') {
       // If it's already a valid address we parse it
