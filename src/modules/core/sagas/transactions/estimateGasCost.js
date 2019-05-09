@@ -10,7 +10,7 @@ import { selectAsJS } from '~utils/saga/effects';
 import type { Action } from '~redux';
 
 import { oneTransaction } from '../../selectors';
-import { transactionUpdateGas } from '../../actionCreators';
+import { transactionUpdateGas, transactionError } from '../../actionCreators';
 import { getMethod, getGasPrices } from '../utils';
 
 /*
@@ -23,26 +23,33 @@ const SAFE_GAS_LIMIT_MULTIPLIER = 1.1;
 export default function* estimateGasCost({
   meta: { id },
 }: Action<typeof ACTIONS.TRANSACTION_ESTIMATE_GAS>): Saga<void> {
-  // Get the given transaction
-  const { context, methodName, identifier, params } = yield* selectAsJS(
-    oneTransaction,
-    id,
-  );
+  try {
+    // Get the given transaction
+    const { context, methodName, identifier, params } = yield* selectAsJS(
+      oneTransaction,
+      id,
+    );
 
-  const method = yield call(getMethod, context, methodName, identifier);
+    const method = yield call(getMethod, context, methodName, identifier);
 
-  // Estimate the gas limit with the method.
-  const estimatedGas = yield call([method, method.estimate], params);
+    // Estimate the gas limit with the method.
+    const estimatedGas = yield call([method, method.estimate], params);
 
-  // The suggested gas limit (briefly above the estimated gas cost)
-  const suggestedGasLimit = estimatedGas.toNumber() * SAFE_GAS_LIMIT_MULTIPLIER;
+    // The suggested gas limit (briefly above the estimated gas cost)
+    const suggestedGasLimit =
+      estimatedGas.toNumber() * SAFE_GAS_LIMIT_MULTIPLIER;
 
-  const { network, suggested } = yield call(getGasPrices);
+    const { network, suggested } = yield call(getGasPrices);
 
-  yield put(
-    transactionUpdateGas(id, {
-      gasLimit: suggestedGasLimit,
-      gasPrice: suggested || network,
-    }),
-  );
+    yield put(
+      transactionUpdateGas(id, {
+        gasLimit: suggestedGasLimit,
+        gasPrice: suggested || network,
+      }),
+    );
+  } catch (error) {
+    yield put<Action<typeof ACTIONS.TRANSACTION_ERROR>>(
+      transactionError(id, error),
+    );
+  }
 }
