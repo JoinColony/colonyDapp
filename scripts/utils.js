@@ -98,8 +98,8 @@ const getAllPids = () => {
   try {
     pids = require(PID_FILE);
   } catch (caughtError) {
-    console.error(caughtError);
-    return console.log('PID file not found. Please close the processes manually.');
+    // Ignore the error; having no pids set is valid.
+    return {};
   }
   return pids;
 };
