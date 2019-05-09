@@ -124,7 +124,7 @@ const Tokens = ({ canMintNativeToken, colonyAddress, openDialog }: Props) => {
             </Heading>
           )}
         </div>
-        <TokenList tokens={tokens} appearance={{ numCols: '5' }} />
+        <TokenList tokens={tokens} appearance={{ numCols: '3' }} />
       </main>
       <aside className={styles.sidebar}>
         <ul>
