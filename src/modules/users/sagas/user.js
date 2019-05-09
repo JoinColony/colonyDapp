@@ -287,36 +287,32 @@ function* usernameCreate({
   }
 }
 
-// eslint-disable-next-line no-empty-pattern
-function* userLogout({  }: Action<typeof ACTIONS.USER_LOGOUT>): Saga<void> {
-  const ddb = yield* getContext('ddb');
-  /*
-   *  1. The redux store is wiped for user-specific data:
-   * Dealt with by reducers
-   */
+function* userLogout(): Saga<void> {
+  const ddb = yield* getContext(CONTEXT.DDB_INSTANCE);
 
-  /*
-   *  2. Reset user related state in the dApp:
-   */
+  try {
+    /*
+     *  1. Destroy instances of colonyJS in the colonyManager? Probably.
+     */
+    yield setContext({
+      [CONTEXT.COLONY_MANAGER]: undefined,
+    });
 
-  /*
-   *  3. Destroy instances of colonyJS in the colonyManager? Probably.
-   */
-  yield setContext({
-    [CONTEXT.COLONY_MANAGER]: undefined,
-  });
+    /*
+     *  2. The purser wallet is reset
+     */
+    yield setContext({ [CONTEXT.WALLET]: undefined });
+    /*
+     *  3. Close orbit store
+     */
+    yield call([ddb, ddb.stop]);
 
-  /*
-   *  4. The purser wallet is reset
-   */
-  yield setContext({ [CONTEXT.WALLET]: undefined });
-  /*
-   *  6. Close orbit store
-   */
-  yield call(ddb.stop);
-  yield setContext({
-    [CONTEXT.DDB_INSTANCE]: undefined,
-  });
+    yield put<Action<typeof ACTIONS.USER_LOGOUT_SUCCESS>>({
+      type: ACTIONS.USER_LOGOUT_SUCCESS,
+    });
+  } catch (error) {
+    yield putError(ACTIONS.USER_LOGOUT_ERROR, error);
+  }
 }
 
 function* userPermissionsFetch({
