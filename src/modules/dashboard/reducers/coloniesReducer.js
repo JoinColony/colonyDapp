@@ -18,6 +18,7 @@ const coloniesReducer: ReducerType<
     COLONY_FETCH_SUCCESS: *,
     COLONY_PROFILE_UPDATE_SUCCESS: *,
     COLONY_TOKEN_BALANCE_FETCH_SUCCESS: *,
+    COLONY_CAN_MINT_NATIVE_TOKEN_FETCH_SUCCESS: *,
   |},
 > = (state = ImmutableMap(), action) => {
   switch (action.type) {
@@ -77,6 +78,15 @@ const coloniesReducer: ReducerType<
       return state.setIn(
         [colonyAddress, 'record', 'tokens', tokenAddress],
         record,
+      );
+    }
+    case ACTIONS.COLONY_CAN_MINT_NATIVE_TOKEN_FETCH_SUCCESS: {
+      const {
+        payload: { canMintNativeToken, colonyAddress },
+      } = action;
+      return state.setIn(
+        [colonyAddress, 'record', 'canMintNativeToken'],
+        canMintNativeToken,
       );
     }
     default:
