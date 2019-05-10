@@ -12,17 +12,17 @@ import Input from '~core/Fields/Input';
 import Select from '~core/Fields/Select';
 import Numeral from '~core/Numeral';
 
-import NetworkFee from './NetworkFee';
+import NetworkFee from '../NetworkFee';
 
 import styles from './Payout.css';
 
 const MSG = defineMessages({
   notSet: {
-    id: 'dashboard.Task.Payout.notSet',
+    id: 'dashboard.TaskEditDialog.Payout.notSet',
     defaultMessage: 'Not set',
   },
   reputation: {
-    id: 'dashboard.Task.Payout.reputation',
+    id: 'dashboard.TaskEditDialog.Payout.reputation',
     defaultMessage: '{reputation} max rep',
   },
 });

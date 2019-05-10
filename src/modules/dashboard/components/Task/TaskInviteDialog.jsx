@@ -14,7 +14,7 @@ import { ActionForm, FormStatus } from '~core/Fields';
 import { FullscreenDialog } from '~core/Dialog';
 import DialogSection from '~core/Dialog/DialogSection.jsx';
 import Heading from '~core/Heading';
-import Payout from '~dashboard/TaskEditDialog/Payout.jsx';
+import Payout from '~dashboard/TaskEditDialog/Payout';
 import DialogBox from '~core/Dialog/DialogBox.jsx';
 
 import styles from './TaskInviteDialog.css';

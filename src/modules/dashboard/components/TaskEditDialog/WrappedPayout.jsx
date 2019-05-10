@@ -8,7 +8,7 @@ import type { $Pick } from '~types';
 
 import { tokenIsETH } from '../../checks';
 
-import Payout from './Payout.jsx';
+import Payout from './Payout';
 
 type Props = {|
   ...$Exact<$Pick<TaskType, {| payouts: *, reputation: * |}>>,
