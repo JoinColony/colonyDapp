@@ -138,7 +138,7 @@ const tasksReducer: ReducerType<
     case ACTIONS.TASK_FETCH_SUCCESS: {
       const {
         draftId,
-        task: { requests, invites, payouts, ...task },
+        task: { requests = [], invites = [], payouts = [], ...task },
       } = action.payload;
       return state.set(
         draftId,
