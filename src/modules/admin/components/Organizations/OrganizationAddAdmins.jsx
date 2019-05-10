@@ -106,7 +106,6 @@ const OrganizationAddAdmins = ({ colonyAddress }: Props) => {
         transform={transform}
         initialValues={{
           newAdmin: null,
-          colonyAddress,
         }}
         onSuccess={(_, { resetForm }) => {
           resetForm();
