@@ -138,6 +138,16 @@ class Store {
     }
   }
 
+  /**
+   * Removes the local database completely and unpin it
+   * @method drop
+   * @return {Promise} A Promise that is resolved with the store removal
+   */
+  async drop() {
+    await this.unpin();
+    return this._orbitStore.drop();
+  }
+
   async pin() {
     return this._pinner.pinStore(this.address.toString());
   }

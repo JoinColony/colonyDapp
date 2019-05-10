@@ -31,7 +31,7 @@ test.before(async t => {
 });
 
 test.after.always(async t => {
-  await t.context.ddb.stop();
+  await Promise.all([t.context.ipfsNode.stop(), t.context.ddb.stop()]);
 });
 
 test('The all() method returns events in the order added', async t => {
@@ -54,6 +54,7 @@ test('The all() method returns events in the order added', async t => {
   t.is(events.length, 2);
   t.is(events[0].colonyName, 'Zombies');
   t.is(events[1].colonyName, 'Zombies2');
+  await store.drop();
 });
 
 test('The all() method can limit to most recent events', async t => {
@@ -78,11 +79,11 @@ test('The all() method can limit to most recent events', async t => {
   t.is(events[0].colonyName, 'Zombies');
   t.is(recent.length, 1);
   t.is(recent[0].colonyName, 'Zombies2');
+  await store.drop();
 });
 
 test('Can filter events with gt and gte, but not reverse', async t => {
   const { ddb } = t.context;
-
   const store = await ddb.createStore(storeBlueprint);
   const firstActivity = {
     colonyName: 'Zombies',
@@ -125,4 +126,5 @@ test('Can filter events with gt and gte, but not reverse', async t => {
   });
   t.is(secondReverse.length, 3);
   t.is(secondReverse[0].colonyName, 'Zombies2');
+  await store.drop();
 });
