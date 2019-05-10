@@ -259,3 +259,32 @@ export const getColonyTokenBalance: Query<
     return new BigNumber(amount.toString());
   },
 };
+
+export const getColonyCanMintNativeToken: Query<
+  ColonyClient,
+  {| colonyAddress: Address |},
+  void,
+  boolean,
+> = {
+  name: 'getColonyCanMintNativeToken',
+  context: colonyContext,
+  async prepare(
+    {
+      colonyManager,
+    }: {|
+      colonyManager: ColonyManager,
+    |},
+    metadata: ColonyStoreMetadata,
+  ) {
+    const { colonyAddress } = metadata;
+    return colonyManager.getColonyClient(colonyAddress);
+  },
+  async execute(colonyClient) {
+    try {
+      await colonyClient.mintTokens.estimate({ amount: new BigNumber(1) });
+    } catch (error) {
+      return false;
+    }
+    return true;
+  },
+};
