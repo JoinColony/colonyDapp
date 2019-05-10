@@ -106,7 +106,6 @@ const OrganizationAddAdmins = ({ colonyAddress }: Props) => {
         transform={transform}
         initialValues={{
           newAdmin: null,
-          colonyAddress,
         }}
         onSuccess={(_, { resetForm }) => {
           resetForm();
@@ -116,6 +115,7 @@ const OrganizationAddAdmins = ({ colonyAddress }: Props) => {
           <Fragment>
             <div className={styles.pickerWrapper}>
               <SingleUserPicker
+                disabled={isSubmitting}
                 name="newAdmin"
                 label={MSG.labelAddAdmins}
                 placeholder={MSG.placeholderAddAdmins}

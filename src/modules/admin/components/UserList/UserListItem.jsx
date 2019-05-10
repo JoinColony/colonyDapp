@@ -87,7 +87,6 @@ const UserListItem = ({
         )}
         {showUsername && username && (
           <span className={styles.username}>
-            &nbsp;
             <UserMention hasLink={false} username={username} />
           </span>
         )}

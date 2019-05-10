@@ -85,10 +85,8 @@
     "transaction.colony.mintTokens.description": "Mint New Tokens",
     "transaction.colony.claimColonyFunds.title": "Claim Pending Transactions",
     "transaction.colony.claimColonyFunds.description": "Claim Pending Transactions",
-    "transaction.colony.setAdminRole.title": "Add Admin",
-    "transaction.colony.setAdminRole.description": "Add Admin ({ user })",
-    "transaction.colony.removeAdminRole.title": "Remove Admin",
-    "transaction.colony.removeAdminRole.description": "Remove Admin ({ user })",
+    "transaction.colony.setAdminRole.title": "{setTo, select, true { Add Admin } false { Remove Admin } }",
+    "transaction.colony.setAdminRole.description": "{setTo, select, true { Add Admin ({ address }) } false { Remove Admin ({ address }) } }",
     "transaction.colony.addDomain.title": "Create Domain",
     "transaction.colony.addDomain.description": "Create Domain"
   }

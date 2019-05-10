@@ -122,15 +122,24 @@ const SingleUserPicker = ({
 }: Props) => {
   const handleActiveUserClick = useCallback(
     () => {
-      setValue(null);
-      openOmniPicker();
+      if (!disabled) {
+        setValue(null);
+        openOmniPicker();
+      }
     },
-    [openOmniPicker, setValue],
+    [disabled, openOmniPicker, setValue],
   );
   const handlePick = useCallback((user: UserType) => setValue(user), [
     setValue,
   ]);
-  const resetSelection = useCallback(() => setValue(null), [setValue]);
+  const resetSelection = useCallback(
+    () => {
+      if (!disabled) {
+        setValue(null);
+      }
+    },
+    [disabled, setValue],
+  );
   // Use custom render prop for item or the default one with the given renderAvatar function
   const renderItem =
     renderItemProp ||
