@@ -23,9 +23,10 @@ td.userRemove {
   width: 150px;
 }
 
-.fullName {
+.displayName {
   margin-right: nameMargin;
   font-weight: var(--weight-medium);
+  color: var(--grey-1);
 }
 
 .username {

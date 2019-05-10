@@ -82,7 +82,7 @@ const UserListItem = ({
       <TableCell className={styles.userDetails}>
         {showDisplayName && displayName && (
           <span className={styles.displayName} title={displayName}>
-            {displayName}&nbsp;
+            {displayName}
           </span>
         )}
         {showUsername && username && (
