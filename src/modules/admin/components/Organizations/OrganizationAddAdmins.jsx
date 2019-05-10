@@ -115,6 +115,7 @@ const OrganizationAddAdmins = ({ colonyAddress }: Props) => {
           <Fragment>
             <div className={styles.pickerWrapper}>
               <SingleUserPicker
+                disabled={isSubmitting}
                 name="newAdmin"
                 label={MSG.labelAddAdmins}
                 placeholder={MSG.placeholderAddAdmins}
