@@ -12,4 +12,5 @@ export const CORE_IPFS_DATA = 'ipfsData';
 export {
   COLONY_CONTEXT,
   NETWORK_CONTEXT,
+  TOKEN_CONTEXT,
 } from '../../lib/ColonyManager/constants';

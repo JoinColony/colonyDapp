@@ -5,7 +5,7 @@ import { isAddress } from 'web3-utils';
 
 import type { Address, AddressOrENSName, ColonyContext } from './types';
 
-import { NETWORK_CONTEXT } from './constants';
+import { COLONY_CONTEXT, NETWORK_CONTEXT, TOKEN_CONTEXT } from './constants';
 
 import ens from '../../context/ensContext';
 
@@ -59,6 +59,11 @@ export default class ColonyManager {
     return Reflect.get(client, methodName);
   }
 
+  async getTokenMethod(methodName: string, identifier?: AddressOrENSName) {
+    const client = await this.getColonyClient(identifier);
+    return Reflect.get(client.tokenClient, methodName);
+  }
+
   async getMethod<
     // This typing isn't perfect; it would be better to use something like
     // $PropertyType<ColonyNetworkClient, methodName, but the key needs to
@@ -67,18 +72,30 @@ export default class ColonyManager {
       | ColonyNetworkClient.Caller<*, *, *>
       | ColonyNetworkClient.Sender<*, *, *>
       | ColonyNetworkClient.ColonyClient.Caller<*, *, *>
-      | ColonyNetworkClient.ColonyClient.Sender<*, *, *>,
+      | ColonyNetworkClient.ColonyClient.Sender<*, *, *>
+      | ColonyNetworkClient.ColonyClient.TokenClient.Caller<*, *, *>
+      | ColonyNetworkClient.ColonyClient.TokenClient.Sender<*, *, *>,
   >(
     context: ColonyContext,
     methodName: string,
     identifier?: AddressOrENSName,
   ): Promise<M> {
-    const method =
-      context === NETWORK_CONTEXT
-        ? this.getNetworkMethod(methodName)
-        : this.getColonyMethod(methodName, identifier);
+    let method;
+    switch (context) {
+      case COLONY_CONTEXT:
+        method = this.getColonyMethod(methodName, identifier);
+        break;
+      case NETWORK_CONTEXT:
+        method = this.getNetworkMethod(methodName);
+        break;
+      case TOKEN_CONTEXT:
+        method = this.getTokenMethod(methodName, identifier);
+        break;
+      default:
+        throw new Error(`Unknown context: ${context}`);
+    }
     if (!method) {
-      throw new Error(`Method ${method} not found on ${context}`);
+      throw new Error(`Method ${methodName} not found on ${context}`);
     }
     return method;
   }
