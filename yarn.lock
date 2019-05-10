@@ -13069,7 +13069,22 @@ orbit-db-io@~0.0.1:
     ipld-dag-pb "^0.15.2"
     pify "^4.0.1"
 
-orbit-db-keystore@^0.2.0, orbit-db-keystore@~0.2.0:
+orbit-db-keystore@^0.2.1:
+  version "0.2.1"
+  resolved "https://registry.yarnpkg.com/orbit-db-keystore/-/orbit-db-keystore-0.2.1.tgz#3d81574e94c3955ca594a61ddc2135e64cbd0080"
+  integrity sha512-i27zTE1uzDnxoFAXTLTBr2/tCxrEKtRdd8uU/7Zq46qaNr8JEBLREvNw4yMB8Y3QT++3CcV/MniDEcwyLGtkKg==
+  dependencies:
+    elliptic "^6.4.1"
+    level-js "~3.0.0"
+    leveldown "~3.0.2"
+    levelup "^4.0.0"
+    libp2p-crypto "^0.16.0"
+    libp2p-crypto-secp256k1 "^0.3.0"
+    lru "^3.1.0"
+    mkdirp "^0.5.1"
+    safe-buffer "^5.1.2"
+
+orbit-db-keystore@~0.2.0:
   version "0.2.0"
   resolved "https://registry.yarnpkg.com/orbit-db-keystore/-/orbit-db-keystore-0.2.0.tgz#0c0c2c31dac9228eee8df4c898628234b50d769e"
   integrity sha512-RvpCI3cdqpUnqAscYRgJG8QC2QZk5fsye9Ebag0nzad8VbBAPsHreVN5FSYT417vGdDn7Sf6mBZ51bhAg1yhNA==

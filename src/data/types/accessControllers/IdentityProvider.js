@@ -1,9 +1,12 @@
 /* @flow */
 
+import OrbitDBKeystore from 'orbit-db-keystore';
 import type { Identity } from './Identity';
 
 export interface IdentityProvider<+T: Identity> {
   +_type: string;
+
+  get keystore(): OrbitDBKeystore;
 
   get type(): string;
 
