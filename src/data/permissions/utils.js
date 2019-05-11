@@ -5,7 +5,7 @@ import type {
   PermissionsManifest,
   Permission,
   PermissionModuleLoader,
-} from './types';
+} from '~types';
 
 export const buildManifest = (
   colonyClient: ColonyNetworkClient.ColonyClient,

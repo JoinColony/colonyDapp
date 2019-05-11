@@ -1,7 +1,6 @@
 /* @flow */
 /* eslint-disable no-underscore-dangle */
-
-import type { Entry } from '../types/index';
+import type { Entry } from '~types';
 
 import AbstractAccessController from './AbstractAccessController';
 import PurserIdentity from '../PurserIdentity';

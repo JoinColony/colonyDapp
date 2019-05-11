@@ -7,8 +7,8 @@ import { call } from 'redux-saga/effects';
 import { create } from '~utils/saga/effects';
 import { CONTEXT, getContext } from '~context';
 
-import { DDB as DDBClass } from '../../../../lib/database/index';
-import PurserIdentityProvider from '../../../../lib/database/PurserIdentityProvider';
+import { DDB as DDBClass } from '~lib/database';
+import PurserIdentityProvider from '~data/PurserIdentityProvider';
 
 export default function* getDDB(): Saga<DDBClass> {
   const wallet = yield* getContext(CONTEXT.WALLET);

@@ -3,7 +3,7 @@
 
 import { Wallet } from 'ethers';
 
-import type { AccessController, Entry } from '../types';
+import type { AccessController, Entry } from '~types';
 
 import PurserIdentity from '../PurserIdentity';
 import PurserIdentityProvider from '../PurserIdentityProvider';
@@ -36,11 +36,7 @@ export default class AbstractAccessController<
       identity: { id: walletAddress, publicKey: orbitPublicKey, signatures },
     }: Entry,
   ): Promise<boolean> {
-    return provider.verify(
-      signatures.id,
-      orbitPublicKey,
-      Buffer.from(walletAddress, 'hex'),
-    );
+    return provider.verify(signatures.id, orbitPublicKey, walletAddress);
   }
 
   static verifyWalletSignature(

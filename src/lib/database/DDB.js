@@ -1,31 +1,21 @@
 /* @flow */
 
-import OrbitDB from 'orbit-db';
-import generate from 'nanoid/generate';
-
 import type { ObjectSchema } from 'yup';
+import OrbitDB from 'orbit-db';
 
 import type {
-  ResolverFn,
+  AccessController,
   Identity,
   IdentityProvider,
   OrbitDBAddress,
   OrbitDBStore,
+  ResolverFn,
   StoreBlueprint,
-} from './types';
+} from '~types';
+
 import { log } from '../../utils/debug';
-
 import IPFSNode from '../ipfs';
-
-import {
-  AccessControllerFactory,
-  PermissiveAccessController,
-} from './accessControllers';
-
-// We'll skip the Q here because every id that contains a `Qm` is not allowed
-const ipfsCompatibleBase57 =
-  '123456789ABCDEFGHJKLMNPRSTUVWXYZabcdefghijkmnopqrstuvwxyz';
-export const generateId = () => generate(ipfsCompatibleBase57, 21);
+import AccessControllerFactory from './AccessControllerFactory';
 
 type StoreIdentifier = string | OrbitDBAddress;
 
@@ -47,21 +37,16 @@ class DDB {
 
   _resolver: ?ResolverFn;
 
-  static getAccessController(
+  static getAccessController<P: Object, AC: AccessController<*, *>>(
     storeName: string,
-    { getAccessController }: StoreBlueprint,
-    storeProps?: Object,
+    { getAccessController }: StoreBlueprint<P, AC>,
+    storeProps: P,
   ) {
-    /**
-     * @todo Remove fallback for DDB store props
-     * @body Once we use only the new store blueprints, we won't need a fallback for storeProps anymore
-     */
-    const accessController = getAccessController
-      ? getAccessController(storeProps || {})
-      : new PermissiveAccessController();
-
-    if (!getAccessController) {
-      log.warn(`Using permissive access controller for store "${storeName}"`);
+    const accessController = getAccessController(storeProps);
+    if (!accessController) {
+      throw new Error(
+        'Cannot instantiate an access controller, store blueprint invalid',
+      );
     }
 
     return accessController;
@@ -122,13 +107,9 @@ class DDB {
   }
 
   async _getStoreAddress(
-    identifier: ?StoreIdentifier,
+    identifier: StoreIdentifier,
   ): Promise<OrbitDBAddress | null> {
-    if (!identifier) {
-      throw new Error(
-        'Please define an identifier for the store you want to retrieve',
-      );
-    }
+    log.verbose(`Getting store address for identifier`, identifier);
     if (typeof identifier === 'string') {
       // If it's already a valid address we parse it
       if (isValidAddress(identifier)) {
@@ -139,6 +120,11 @@ class DDB {
         typeof this._resolver == 'function'
           ? await this._resolver(identifier)
           : null;
+
+      log.verbose(
+        `Resolved store address for identifier "${identifier}"`,
+        addressString,
+      );
       if (!addressString) {
         return null;
       }
@@ -155,25 +141,13 @@ class DDB {
   }
 
   async createStore<T: *>(
-    blueprint: StoreBlueprint,
-    storeProps?: Object,
+    blueprint: StoreBlueprint<*, *>,
+    storeProps: Object,
   ): Promise<T> {
-    const { defaultName, getName, type: StoreClass } = blueprint;
-    if (!(defaultName || getName)) {
-      throw new Error('Store blueprint is invalid');
-    }
-
-    if (defaultName && defaultName.includes('.')) {
-      throw new Error('A dot (.) in store names is not allowed');
-    }
-
-    const name = defaultName
-      ? `${defaultName}.${generateId()}`
-      : getName && getName(storeProps);
-
-    if (!name) {
-      throw new Error('Store name is invalid or undefined');
-    }
+    const { getName, type: StoreClass } = blueprint;
+    const name = getName(storeProps);
+    log.verbose(`Creating store "${name}"`, storeProps);
+    if (!name) throw new Error('Store name is invalid or undefined');
 
     /**
      * @NOTE: Only necessary to pass in the whole access controller object
@@ -190,7 +164,8 @@ class DDB {
       // We might want to use more options in the future. Just add them here
       {
         accessController: { controller: storeAccessController },
-        overwrite: false,
+        // @NOTE: For now, if a store gets the same address, we'll override it locally
+        overwrite: true,
       },
     );
 
@@ -202,15 +177,11 @@ class DDB {
   }
 
   async getStore<T: *>(
-    blueprint: StoreBlueprint,
-    identifier: ?StoreIdentifier,
-    storeProps?: Object,
+    blueprint: StoreBlueprint<*, *>,
+    identifier: StoreIdentifier,
+    storeProps: Object,
   ): Promise<T> {
-    const { defaultName, getName, type } = blueprint;
-    if (!(defaultName || getName)) {
-      throw new Error('Store blueprint is invalid');
-    }
-
+    const { getName, type } = blueprint;
     const address = await this._getStoreAddress(identifier);
     if (!address) {
       throw new Error(
@@ -224,16 +195,17 @@ class DDB {
 
     const cachedStore: ?T = this._getCachedStore(address);
     if (cachedStore) {
+      log.verbose(`Getting store from cache`, address);
       await cachedStore.load();
       return cachedStore;
     }
 
-    const expectedStoreName = defaultName || (getName && getName(storeProps));
+    const expectedStoreName = getName(storeProps);
     if (!expectedStoreName) {
       throw new Error('Cannot define expected store name');
     }
 
-    const name = address.path.split('.')[0];
+    const name = address.path;
     if (name !== expectedStoreName) {
       throw new Error(
         // eslint-disable-next-line max-len
@@ -241,6 +213,7 @@ class DDB {
       );
     }
 
+    log.verbose(`Opening store "${name}" with address "${address.toString()}"`);
     /**
      * @NOTE: Only necessary to pass in the whole access controller object
      * to orbit-db without it getting on our way
@@ -252,7 +225,6 @@ class DDB {
     );
     const orbitStore: OrbitDBStore = await this._orbitNode.open(address, {
       accessController: { controller: storeAccessController },
-      overwrite: false,
     });
     if (orbitStore.type !== type.orbitType) {
       throw new Error(
@@ -264,6 +236,38 @@ class DDB {
 
     await store.load();
     return store;
+  }
+
+  async generateStoreAddress<P: Object, AC: AccessController<*, *>>(
+    blueprint: StoreBlueprint<P, AC>,
+    storeProps: P,
+  ): Promise<OrbitDBAddress> {
+    const { getName, type: StoreClass } = blueprint;
+    const name = getName(storeProps);
+    if (!name) {
+      throw new Error('Store name is invalid or undefined');
+    }
+
+    log.verbose(`Generating address for store "${name}"`);
+    const controller = this.constructor.getAccessController(
+      name,
+      blueprint,
+      storeProps,
+    );
+    return this._orbitNode.determineAddress(
+      name,
+      StoreClass.orbitType,
+      // We might want to use more options in the future. Just add them here
+      {
+        /**
+         * @NOTE: Only necessary to pass in the whole access controller object
+         * to orbit-db without it getting on our way
+         */
+        accessController: { controller },
+        // @NOTE: For now, if a store gets the same address, we'll override it locally
+        overwrite: true,
+      },
+    );
   }
 
   // Taken from https://github.com/orbitdb/orbit-db/commit/50dcd71411fbc96b1bcd2ab0625a3c0b76acbb7e
@@ -288,42 +292,6 @@ class DDB {
     return data !== undefined && data !== null;
   }
 
-  async generateStoreAddress(
-    blueprint: StoreBlueprint,
-    storeProps?: Object,
-  ): Promise<OrbitDBAddress> {
-    const { defaultName, getName, type: StoreClass } = blueprint;
-    if (defaultName || !getName) {
-      throw new Error(
-        // eslint-disable-next-line max-len
-        'Cannot determine store address for the given blueprint. Store name not deterministic',
-      );
-    }
-
-    const name = getName && getName(storeProps);
-    if (!name) {
-      throw new Error('Store name is invalid or undefined');
-    }
-    const storeAccessController = this.constructor.getAccessController(
-      name,
-      blueprint,
-      storeProps,
-    );
-    return this._orbitNode.determineAddress(
-      name,
-      StoreClass.orbitType,
-      // We might want to use more options in the future. Just add them here
-      {
-        /**
-         * @NOTE: Only necessary to pass in the whole access controller object
-         * to orbit-db without it getting on our way
-         */
-        accessController: { controller: storeAccessController },
-        overwrite: false,
-      },
-    );
-  }
-
   async init() {
     const identity = await this._identityProvider.createIdentity();
     await this._ipfsNode.ready;
@@ -332,6 +300,7 @@ class DDB {
     this._orbitNode = await OrbitDB.createInstance(ipfs, {
       AccessControllers: AccessControllerFactory,
       identity,
+      keystore: this._identityProvider.keystore,
       /**
        * @todo : is there a case where this could not be the default? This be a constant, or configurable? and `colonyOrbitDB`?
        */

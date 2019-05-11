@@ -8,7 +8,7 @@ import {
   COLONY_ROLES,
 } from '@colony/colony-js-client';
 
-import type { PermissionsManifest } from './types';
+import type { PermissionsManifest } from '../types';
 
 type ColonyRole = $Keys<typeof COLONY_ROLES>;
 

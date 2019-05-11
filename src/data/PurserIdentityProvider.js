@@ -42,6 +42,10 @@ class PurserIdentityProvider<I: PurserIdentity> implements IdentityProvider<I> {
     return this._type;
   }
 
+  get keystore() {
+    return this._keystore;
+  }
+
   async createIdentity() {
     const walletAddress = this._purserWallet.address;
     if (!walletAddress) {
@@ -56,10 +60,7 @@ class PurserIdentityProvider<I: PurserIdentity> implements IdentityProvider<I> {
       (await this._keystore.createKey(walletAddress));
 
     // Sign wallet address with the orbit signing key we've created and are going to use
-    const idSignature = await this._keystore.sign(
-      orbitKey,
-      Buffer.from(walletAddress, 'hex'),
-    );
+    const idSignature = await this._keystore.sign(orbitKey, walletAddress);
 
     // Get the public key
     const publicKey = this._keystore.getPublic(orbitKey);

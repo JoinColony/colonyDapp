@@ -1,6 +1,6 @@
 /* @flow */
 
-import type { PermissionsManifest } from './types';
+import type { PermissionsManifest } from '~types';
 
 export default function loadModule(): PermissionsManifest {
   return {

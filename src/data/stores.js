@@ -5,8 +5,7 @@ import type { WalletObjectType } from '@colony/purser-core/flowtypes';
 
 import type { Address, OrbitDBAddress } from '~types';
 import type { TaskDraftId } from '~immutable';
-
-import type { DDB } from '../lib/database';
+import type { DDB } from '~lib/database';
 import type {
   ColonyStore,
   CommentsStore,
@@ -14,7 +13,7 @@ import type {
   UserMetadataStore,
   UserProfileStore,
   UserInboxStore,
-} from '~data/types';
+} from './types';
 
 import {
   colony as colonyStoreBlueprint,
@@ -179,6 +178,7 @@ export const getTaskStoreAddress = (
     draftId,
     wallet,
   });
+
 export const getCommentsStoreAddress = (ddb: DDB) => async ({
   draftId,
   colonyAddress,
@@ -189,4 +189,31 @@ export const getCommentsStoreAddress = (ddb: DDB) => async ({
   ddb.generateStoreAddress(commentsStoreBlueprint, {
     colonyAddress,
     draftId,
+  });
+
+export const getUserProfileStoreAddress = (ddb: DDB) => async ({
+  walletAddress,
+}: {
+  walletAddress: Address,
+}) =>
+  ddb.generateStoreAddress(userProfileStoreBlueprint, {
+    walletAddress,
+  });
+
+export const getUserInboxStoreAddress = (ddb: DDB) => async ({
+  walletAddress,
+}: {
+  walletAddress: Address,
+}) =>
+  ddb.generateStoreAddress(userInboxStoreBlueprint, {
+    walletAddress,
+  });
+
+export const getUserMetadataStoreAddress = (ddb: DDB) => async ({
+  walletAddress,
+}: {
+  walletAddress: Address,
+}) =>
+  ddb.generateStoreAddress(userMetadataStoreBlueprint, {
+    walletAddress,
   });

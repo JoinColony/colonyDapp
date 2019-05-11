@@ -4,7 +4,7 @@
  * @todo Create `orbit-db-identity-provider-purser` package
  */
 
-import type { Identity } from './types';
+import type { Identity } from '~types';
 import PurserIdentityProvider from './PurserIdentityProvider';
 
 class PurserIdentity implements Identity {

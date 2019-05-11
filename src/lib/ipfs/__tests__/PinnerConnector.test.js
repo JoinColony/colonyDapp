@@ -8,7 +8,7 @@ jest.mock('ipfs-pubsub-peer-monitor');
 
 const TEST_ROOM = 'PINNER_TEST_ROOM';
 
-describe('FeedStore', () => {
+describe('PinnerConnector', () => {
   const sandbox = createSandbox();
 
   beforeEach(() => {

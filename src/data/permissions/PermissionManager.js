@@ -3,13 +3,9 @@
 import isPlainObject from 'lodash/isPlainObject';
 import isString from 'lodash/isString';
 
-import type {
-  ActionId,
-  Permission,
-  PermissionsManifest,
-} from './permissions/types';
+import type { ActionId, Permission, PermissionsManifest } from '../types';
 
-import { log } from '../../../utils/debug';
+import { log } from '../../utils/debug';
 
 // NOTE: I know this is a terrible name, we need to refactor it to favour composition over inheritance at some point
 export default class PermissionManager {

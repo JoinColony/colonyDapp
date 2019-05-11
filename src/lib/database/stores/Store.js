@@ -1,13 +1,9 @@
 /* @flow */
 
-import generate from 'nanoid/generate';
-import urlDictionary from 'nanoid/url';
+import type { OrbitDBStore } from '../types';
 
 import { raceAgainstTimeout } from '../../../utils/async';
 import { log } from '../../../utils/debug';
-
-import type { OrbitDBStore } from '../types';
-
 import PinnerConnector from '../../ipfs/PinnerConnector';
 
 /**
@@ -16,10 +12,6 @@ import PinnerConnector from '../../ipfs/PinnerConnector';
  */
 class Store {
   static orbitType: string;
-
-  static generateId() {
-    return generate(urlDictionary, 21);
-  }
 
   +_orbitStore: OrbitDBStore;
 
@@ -144,6 +136,16 @@ class Store {
     } finally {
       this._busyPromise = null;
     }
+  }
+
+  /**
+   * Removes the local database completely and unpin it
+   * @method drop
+   * @return {Promise} A Promise that is resolved with the store removal
+   */
+  async drop() {
+    await this.unpin();
+    return this._orbitStore.drop();
   }
 
   async pin() {
