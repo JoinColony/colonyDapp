@@ -69,6 +69,8 @@ import { fetchColony, fetchToken } from '../actionCreators';
 import { colonyAvatarHashSelector } from '../selectors';
 import { getColonyAddress, getColonyName } from './shared';
 
+import { NOTIFICATION_EVENT_COLONY_ENS_CREATED } from '~users/Inbox/events';
+
 function* colonyCreate({
   meta,
   payload: {
@@ -433,7 +435,7 @@ function* colonyCreate({
     yield putNotification({
       colonyAddress,
       colonyName,
-      event: 'notificationAdminENSCreated',
+      event: NOTIFICATION_EVENT_COLONY_ENS_CREATED,
       sourceUserAddress: walletAddress,
     });
   } catch (error) {

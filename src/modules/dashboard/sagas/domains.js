@@ -21,6 +21,8 @@ import { walletAddressSelector } from '../../users/selectors';
 import { createDomain } from '../data/commands';
 import { getColonyDomains } from '../data/queries';
 
+import { NOTIFICATION_EVENT_DOMAIN_ADDED } from '~users/Inbox/events';
+
 function* colonyDomainsFetch({
   meta,
   payload: { colonyAddress },
@@ -100,7 +102,7 @@ function* domainCreate({
     yield putNotification({
       colonyAddress,
       domainName: name,
-      event: 'notificationAdminColonyLabelAdded',
+      event: NOTIFICATION_EVENT_DOMAIN_ADDED,
       sourceUserAddress: walletAddress,
     });
   } catch (error) {

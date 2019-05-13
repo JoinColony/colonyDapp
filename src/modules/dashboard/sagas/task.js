@@ -1,7 +1,7 @@
 /* @flow */
 
 import type { Saga } from 'redux-saga';
-
+import nanoid from 'nanoid';
 import {
   all,
   call,
@@ -11,7 +11,6 @@ import {
   takeLeading,
 } from 'redux-saga/effects';
 import { replace } from 'connected-react-router';
-import nanoid from 'nanoid';
 import type { Action } from '~redux';
 import type { Address } from '~types';
 
@@ -25,6 +24,7 @@ import {
 } from '~utils/saga/effects';
 import { generateUrlFriendlyId } from '~utils/data';
 import { ACTIONS } from '~redux';
+import { NOTIFICATION_EVENT_USER_MENTIONED } from '~users/Inbox/events';
 
 import { fetchColonyTaskMetadata as createColonyTaskMetadataFetchAction } from '../actionCreators';
 import {
@@ -638,7 +638,7 @@ function* taskCommentAdd({
      */
     yield putNotification({
       comment: commentData.body,
-      event: 'notificationUserMentioned',
+      event: NOTIFICATION_EVENT_USER_MENTIONED,
       sourceUserAddress: walletAddress,
       taskTitle,
     });
