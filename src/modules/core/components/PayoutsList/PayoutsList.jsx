@@ -60,7 +60,7 @@ const PayoutsList = ({ payouts, maxLines = 1, nativeToken }: Props) => {
             key={payout.token.symbol}
             value={payout.amount}
             unit="ether"
-            decimals={1}
+            truncate={1}
             prefix={`${payout.token.symbol} `}
           />
         ))}
@@ -77,7 +77,7 @@ const PayoutsList = ({ payouts, maxLines = 1, nativeToken }: Props) => {
                   key={payout.token.symbol}
                   value={payout.amount}
                   unit="ether"
-                  decimals={1}
+                  truncate={1}
                   prefix={`${payout.token.symbol} `}
                 />
               ))}

@@ -270,17 +270,17 @@ class GasStationPrice extends Component<Props, State> {
                       {transactionFee ? (
                         <Fragment>
                           <Numeral
-                            decimals={6}
-                            value={transactionFee}
                             suffix=" ETH"
+                            truncate={6}
                             unit="ether"
+                            value={transactionFee}
                           />
                           <div className={styles.transactionFeeEthUsd}>
                             <EthUsd
                               appearance={{ size: 'small', theme: 'grey' }}
-                              decimals={3}
-                              value={transactionFee}
+                              truncate={3}
                               unit="ether"
+                              value={transactionFee}
                             />
                           </div>
                         </Fragment>

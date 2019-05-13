@@ -25,12 +25,12 @@ type Appearance = {
 type Props = {|
   /** Appearance object for numeral */
   appearance?: Appearance,
-  /** Number of decimals to show */
-  decimals: number,
   /** Should the prefix be visible? */
   showPrefix: boolean,
   /** Should the suffix be visible? */
   showSuffix: boolean,
+  /** Number of decimals to show */
+  truncate: number,
   /** Ether unit the number is notated in (e.g. 'ether' = 10^18 wei) */
   unit?: string,
   /** Value in ether to convert to USD */
@@ -47,9 +47,9 @@ class EthUsd extends Component<Props, State> {
   static displayName = 'EthUsd';
 
   static defaultProps = {
-    decimals: 2,
     showPrefix: true,
     showSuffix: true,
+    truncate: 2,
     unit: 'ether',
   };
 
@@ -97,10 +97,10 @@ class EthUsd extends Component<Props, State> {
     const { valueUsd } = this.state;
     const {
       appearance,
-      decimals,
       intl: { formatMessage },
       showPrefix,
       showSuffix,
+      truncate,
       unit,
       value,
       ...rest
@@ -109,9 +109,9 @@ class EthUsd extends Component<Props, State> {
     return valueUsd || valueUsd === 0 ? (
       <Numeral
         appearance={appearance}
-        decimals={decimals}
         prefix={showPrefix ? '~ ' : ''}
         suffix={showSuffix ? ` ${suffixText}` : ''}
+        truncate={truncate}
         value={valueUsd}
         {...rest}
       />

@@ -58,14 +58,14 @@ const TokenCard = ({
         }
       >
         <Numeral
-          value={balance || 0}
-          decimals={2}
           integerSeparator=""
-          unit="ether"
+          truncate={2}
+          unit={token.decimals || 18}
+          value={balance || 0}
         />
       </div>
       <div className={styles.cardFooter}>
-        {tokenIsETH(token) && <EthUsd value={balance || 0} decimals={3} />}
+        {tokenIsETH(token) && <EthUsd value={balance || 0} truncate={3} />}
       </div>
     </Card>
   ) : (

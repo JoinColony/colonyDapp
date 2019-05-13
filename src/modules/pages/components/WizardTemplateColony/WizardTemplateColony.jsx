@@ -69,19 +69,19 @@ const WizardTemplateColony = ({
               {new BN(balance).isZero() ? (
                 <div className={styles.noMoney}>
                   <Numeral
-                    decimals={0}
-                    value={ethBalance}
                     suffix=" ETH"
+                    truncate={0}
                     unit="ether"
+                    value={ethBalance}
                   />
                 </div>
               ) : (
                 <div className={styles.yeihMoney}>
                   <Numeral
-                    decimals={2}
-                    value={ethBalance}
                     suffix=" ETH"
+                    truncate={2}
                     unit="ether"
+                    value={ethBalance}
                   />
                 </div>
               )}
