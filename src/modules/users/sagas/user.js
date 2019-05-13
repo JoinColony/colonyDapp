@@ -1,6 +1,7 @@
 /* @flow */
 
 import type { Saga } from 'redux-saga';
+import { push } from 'connected-react-router';
 
 import {
   call,
@@ -10,10 +11,13 @@ import {
   select,
   takeEvery,
   takeLatest,
+  setContext,
+  all,
 } from 'redux-saga/effects';
 
 import type { Action } from '~redux';
 import { getContext, CONTEXT } from '~context';
+
 import {
   executeQuery,
   executeCommand,
@@ -285,6 +289,37 @@ function* usernameCreate({
   }
 }
 
+function* userLogout(): Saga<void> {
+  const ddb = yield* getContext(CONTEXT.DDB_INSTANCE);
+
+  try {
+    /*
+     *  1. Destroy instances of colonyJS in the colonyManager? Probably.
+     */
+    yield setContext({
+      [CONTEXT.COLONY_MANAGER]: undefined,
+    });
+
+    /*
+     *  2. The purser wallet is reset
+     */
+    yield setContext({ [CONTEXT.WALLET]: undefined });
+    /*
+     *  3. Close orbit store
+     */
+    yield call([ddb, ddb.stop]);
+
+    yield all([
+      put<Action<typeof ACTIONS.USER_LOGOUT_SUCCESS>>({
+        type: ACTIONS.USER_LOGOUT_SUCCESS,
+      }),
+      put(push(`/dashboard`)),
+    ]);
+  } catch (error) {
+    yield putError(ACTIONS.USER_LOGOUT_ERROR, error);
+  }
+}
+
 function* userPermissionsFetch({
   payload: { colonyAddress },
   meta,
@@ -488,6 +523,7 @@ export default function* setupUsersSagas(): Saga<void> {
     ACTIONS.USERNAME_CHECK_AVAILABILITY,
     usernameCheckAvailability,
   );
+  yield takeLatest(ACTIONS.USER_LOGOUT, userLogout);
   yield takeLatest(ACTIONS.USERNAME_CREATE, usernameCreate);
   yield takeLatest(ACTIONS.CURRENT_USER_GET_BALANCE, currentUserGetBalance);
   yield takeLatest(ACTIONS.USER_PROFILE_UPDATE, userProfileUpdate);

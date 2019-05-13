@@ -186,4 +186,7 @@ export type UserActionTypes = {|
   USER_TOKENS_UPDATE_SUCCESS: ActionType<
     typeof ACTIONS.USER_TOKENS_UPDATE_SUCCESS,
   >,
+  USER_LOGOUT: ActionType<typeof ACTIONS.USER_LOGOUT>,
+  USER_LOGOUT_ERROR: ErrorActionType<typeof ACTIONS.USER_LOGOUT_ERROR, void>,
+  USER_LOGOUT_SUCCESS: ActionType<typeof ACTIONS.USER_LOGOUT_SUCCESS>,
 |};

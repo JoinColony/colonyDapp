@@ -11,15 +11,13 @@ import { withDataRecord } from '~utils/reducers';
 
 type State = DataRecordType<CurrentUserTasksType>;
 type Actions = {
+  USER_LOGOUT_SUCCESS: *,
   USER_TASK_SUBSCRIBE_SUCCESS: *,
   USER_SUBSCRIBED_TASKS_FETCH: *,
   USER_SUBSCRIBED_TASKS_FETCH_ERROR: *,
   USER_SUBSCRIBED_TASKS_FETCH_SUCCESS: *,
 };
 
-/**
- * @todo  in #755 (user logout) unset this state
- */
 const currentUserTasksReducer: ReducerType<State, Actions> = (
   state = DataRecord(),
   action,
@@ -31,6 +29,13 @@ const currentUserTasksReducer: ReducerType<State, Actions> = (
       return state.merge({
         error: undefined,
         record: state.record ? state.record.add(entry) : ImmutableSet(entry),
+        isFetching: false,
+      });
+    }
+    case ACTIONS.USER_LOGOUT_SUCCESS: {
+      return state.merge({
+        error: undefined,
+        record: undefined,
         isFetching: false,
       });
     }
