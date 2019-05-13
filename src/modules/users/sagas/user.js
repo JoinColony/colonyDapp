@@ -1,6 +1,7 @@
 /* @flow */
 
 import type { Saga } from 'redux-saga';
+import { push } from 'connected-react-router';
 
 import {
   call,
@@ -11,6 +12,7 @@ import {
   takeEvery,
   takeLatest,
   setContext,
+  all,
 } from 'redux-saga/effects';
 
 import type { Action } from '~redux';
@@ -307,9 +309,12 @@ function* userLogout(): Saga<void> {
      */
     yield call([ddb, ddb.stop]);
 
-    yield put<Action<typeof ACTIONS.USER_LOGOUT_SUCCESS>>({
-      type: ACTIONS.USER_LOGOUT_SUCCESS,
-    });
+    yield all([
+      put<Action<typeof ACTIONS.USER_LOGOUT_SUCCESS>>({
+        type: ACTIONS.USER_LOGOUT_SUCCESS,
+      }),
+      put(push(`/dashboard`)),
+    ]);
   } catch (error) {
     yield putError(ACTIONS.USER_LOGOUT_ERROR, error);
   }
