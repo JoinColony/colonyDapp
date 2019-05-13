@@ -20,6 +20,11 @@ import { walletAddressSelector } from '../../users/selectors';
 
 import { fetchRoles } from '../actionCreators';
 
+import {
+  NOTIFICATION_EVENT_ADMIN_ADDED,
+  NOTIFICATION_EVENT_ADMIN_REMOVED,
+} from '~users/Inbox/events';
+
 function* colonyRolesFetch({
   payload: { colonyAddress },
   meta,
@@ -78,7 +83,7 @@ function* colonyAdminAdd({
      */
     yield putNotification({
       colonyAddress,
-      event: 'notificationAdminOtherAdded',
+      event: NOTIFICATION_EVENT_ADMIN_ADDED,
       sourceUserAddress: walletAddress,
       targetUserAddress: newAdmin,
     });
@@ -127,7 +132,7 @@ function* colonyAdminRemove({
      */
     yield putNotification({
       colonyAddress,
-      event: 'notificationAdminOtherRemoved',
+      event: NOTIFICATION_EVENT_ADMIN_REMOVED,
       sourceUserAddress: walletAddress,
       targetUserAddress: user,
     });

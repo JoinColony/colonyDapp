@@ -30,6 +30,8 @@ import {
 import { fetchColony } from '../../dashboard/actionCreators';
 import { walletAddressSelector } from '../../users/selectors';
 
+import { NOTIFICATION_EVENT_TOKENS_MINTED } from '~users/Inbox/events';
+
 function* colonyTransactionsFetch({
   payload: { colonyAddress },
   meta,
@@ -198,7 +200,7 @@ function* colonyMintTokens({
     yield putNotification({
       amount: mintedAmount,
       colonyAddress,
-      event: 'notificationAdminTokensGenerated',
+      event: NOTIFICATION_EVENT_TOKENS_MINTED,
       sourceUserAddress: walletAddress,
     });
   } catch (error) {
