@@ -4,6 +4,7 @@ import React from 'react';
 import BN from 'bn.js';
 import formatNumber from 'format-number';
 import { fromWei } from 'ethjs-unit';
+import moveDecimal from 'move-decimal-point';
 
 import { getMainClasses } from '~utils/css';
 
@@ -19,37 +20,37 @@ type Props = {|
   appearance?: Appearance,
   /** Optional custom className, will overwrite appearance */
   className?: string,
-  /** Number of decimals to show after comma */
-  decimals?: number,
+  /** Separator for thousands (e.g. ',') */
+  integerSeparator?: string,
   /** Prefix the value with this string */
   prefix?: string,
   /** Suffix the value with this string */
   suffix?: string,
-  /** Ether unit the number is notated in (e.g. 'ether' = 10^18 wei) */
-  unit?: string,
+  /** Number of decimals to show after comma */
+  truncate?: number,
+  /** Number of decimals to format the number with, or unit from which to determine this (ether, gwei, etc.) */
+  unit?: number | string,
   /** Actual value */
   value: number | string | BN,
-  /** Separator for thousands (e.g. ',') */
-  integerSeparator?: string,
 |};
 
 const Numeral = ({
   appearance,
   className,
-  decimals: truncate,
   integerSeparator = ',',
   prefix,
   suffix,
+  truncate,
   unit,
   value,
   ...props
 }: Props) => {
-  let convertedNum;
-  if (BN.isBN(value)) {
-    convertedNum = unit ? fromWei(value, unit) : value.toString();
-  } else {
-    convertedNum = unit ? fromWei(value.toString(), unit) : value;
-  }
+  const convertedNum =
+    typeof unit === 'string'
+      ? // $FlowFixMe it's okay to pass radix regardless of type
+        fromWei(value.toString(10), unit)
+      : // $FlowFixMe same here
+        moveDecimal(value.toString(10), -(unit || 0));
 
   const formattedNumber = formatNumber({
     prefix,

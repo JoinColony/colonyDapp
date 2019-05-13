@@ -31,9 +31,10 @@ const tokensReducer: ReducerType<
 > = (state = INITIAL_STATE, action) => {
   switch (action.type) {
     case ACTIONS.TOKEN_INFO_FETCH_SUCCESS: {
-      const { name, symbol, tokenAddress } = action.payload;
+      const { name, symbol, decimals, tokenAddress } = action.payload;
       const record = TokenRecord({
         address: tokenAddress,
+        decimals,
         name,
         symbol,
       });

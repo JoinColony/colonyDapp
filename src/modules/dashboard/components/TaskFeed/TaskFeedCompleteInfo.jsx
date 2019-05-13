@@ -122,8 +122,8 @@ const TaskFeedCompleteInfo = ({
                 values={{
                   amount: (
                     <Numeral
-                      decimals={decimals}
-                      unit="ether"
+                      truncate={2}
+                      unit={decimals}
                       value={getTaskPayoutAmountMinusNetworkFee(
                         amount,
                         networkFee,
@@ -139,8 +139,8 @@ const TaskFeedCompleteInfo = ({
                 values={{
                   amount: (
                     <Numeral
-                      decimals={decimals}
-                      unit="ether"
+                      truncate={2}
+                      unit={decimals}
                       value={getTaskPayoutNetworkFee(amount, networkFee)}
                     />
                   ),
