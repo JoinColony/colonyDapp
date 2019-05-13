@@ -12,6 +12,7 @@ import type { ItemDataType } from '~core/OmniPicker';
 
 import MaskedAddress from '~core/MaskedAddress';
 import UserMention from '~core/UserMention';
+import { addressEquals } from '~utils/strings';
 
 import styles from './ItemDefault.css';
 
@@ -54,11 +55,13 @@ const ItemDefault = ({
       {displayName && (
         <span className={styles.displayName}>
           {displayName}
-          {walletAddress === userAddress && (
+          {addressEquals(walletAddress, userAddress) && (
             <span className={styles.thatsYou}>
+              &nbsp;
               <FormattedMessage {...MSG.ownName} />
             </span>
           )}
+          &nbsp;
         </span>
       )}
       {username && <UserMention username={username} hasLink={false} />}
