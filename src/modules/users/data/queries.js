@@ -417,23 +417,57 @@ export const getUserInboxActivity: Query<
   async execute({ userInboxStore, colonyClient }) {
     const {
       adapter: { provider },
+      contract: { address: colonyAddress },
+      events: {
+        ColonyAdministrationRoleSet,
+        ColonyLabelRegistered,
+        DomainAdded,
+      },
     } = colonyClient;
-    const { logs, events } = await getLogsAndEvents(
+    const { events, logs } = await getLogsAndEvents(
       colonyClient,
       {},
       {
         blocksBack: 400000,
         events: [
-          colonyClient.events.ColonyAdminRoleSet,
-          colonyClient.events.ColonyAdminRoleRemoved,
-          colonyClient.events.ColonyLabelRegistered,
-          colonyClient.events.DomainAdded,
+          ColonyAdministrationRoleSet,
+          ColonyLabelRegistered,
+          DomainAdded,
         ],
       },
     );
+    // console.log('colonyClient events', colonyClient);
+    // console.log('raw events', events);
+    // console.log('raw logs', logs);
+    const cleanedEvents = events
+      .map(({ eventName, setTo, ...restOfEvent }) => {
+        let modifiedEventName = eventName;
+        if (eventName === 'ColonyAdministrationRoleSet') {
+          if (setTo) {
+            modifiedEventName = 'ColonyAdministrationRoleSetAdded';
+          } else {
+            modifiedEventName = 'ColonyAdministrationRoleSetRemoved';
+          }
+        }
+        return {
+          ...restOfEvent,
+          setTo,
+          eventName: modifiedEventName,
+        };
+      })
+      .slice(4);
+    /*
+     * @note Manually set the `ColonyLabelRegistered` event
+     *
+     * Since that event doesn't show up for some reason, maybe a bug ?
+     * But use the event name from the others (eg: DomainAdded, ColonyAdminRoleSet)
+     */
+    cleanedEvents.unshift({
+      eventName: 'ColonyLabelRegistered',
+    });
     const transformedEvents = await Promise.all(
       /*
-       * @note Remove the first two log entries.
+       * @note Remove the first four log entries.
        *
        * When creating a new colony, the first 5 log events are:
        * - Root colony domain added with id `1`
@@ -446,26 +480,17 @@ export const getUserInboxActivity: Query<
        * those first four log entries from the array
        */
       logs.slice(4).map(async (log, index) => {
-        const cleanedEvents = events.slice(4);
-        const { domainId, user: targetUserAddress } =
+        const { domainId, address: targetUserAddress } =
           cleanedEvents[index] || {};
-        /*
-         * @note Manually set the `ColonyLabelRegistered` event
-         *
-         * Since that event doesn't show up for some reason, maybe a bug ?
-         * But use the event name from the others (eg: DomainAdded, ColonyAdminRoleSet)
-         */
-        const eventName =
-          (cleanedEvents[index] && cleanedEvents[index].eventName) ||
-          'ColonyLabelRegistered';
         const timestamp = await getLogDate(provider, log);
-        const {
-          to: colonyAddress,
-          from: sourceUserAddress,
-        } = await provider.getTransaction(log.transactionHash);
+        const { from: sourceUserAddress } = await provider.getTransaction(
+          log.transactionHash,
+        );
         const transformedEvent = {
           id: log.transactionHash,
-          event: transformNotificationEventNames(eventName),
+          event: transformNotificationEventNames(
+            cleanedEvents[index].eventName,
+          ),
           timestamp: new Date(timestamp).getTime() * 1000,
           sourceUserAddress,
           colonyAddress,
