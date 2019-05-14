@@ -21,6 +21,7 @@ import {
   executeCommand,
   executeQuery,
   selectAsJS,
+  putNotification,
 } from '~utils/saga/effects';
 import { ACTIONS } from '~redux';
 import { CONTEXT, getContext } from '~context';
@@ -84,6 +85,10 @@ function* colonyCreate({
 }: Action<typeof ACTIONS.COLONY_CREATE>): Saga<void> {
   const currentUser = yield* selectAsJS(currentUserSelector);
   const usernameCreated = userDidClaimProfile(currentUser);
+  /*
+   * Get the current user's wallet address (we need that for notifications)
+   */
+  const walletAddress = yield select(walletAddressSelector);
 
   /* STEP 1: Create ids to be able to find transactions in their channel */
   const key = 'transaction.batch.createColony';
