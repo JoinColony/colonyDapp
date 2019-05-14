@@ -20,8 +20,8 @@ export const getUserTokenAddresses = (metadataStore: UserMetadataStore) =>
 
 export const transformNotificationEventNames = (eventName: string): string => {
   const notificationsToEventsMapping = {
-    ColonyAdminRoleSet: NOTIFICATION_EVENT_ADMIN_ADDED,
-    ColonyAdminRoleRemoved: NOTIFICATION_EVENT_ADMIN_REMOVED,
+    ColonyAdministrationRoleSetAdded: NOTIFICATION_EVENT_ADMIN_ADDED,
+    ColonyAdministrationRoleSetRemoved: NOTIFICATION_EVENT_ADMIN_REMOVED,
     ColonyLabelRegistered: NOTIFICATION_EVENT_COLONY_ENS_CREATED,
     DomainAdded: NOTIFICATION_EVENT_DOMAIN_ADDED,
   };

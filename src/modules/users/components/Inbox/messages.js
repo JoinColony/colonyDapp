@@ -78,11 +78,13 @@ const messages = defineMessages({
   },
   notificationAdminOtherAdded: {
     id: 'dashboard.Inbox.InboxItem.notificationAdminOtherAdded',
-    defaultMessage: '{user} added {otherUser} to {colonyDisplayName}.',
+    defaultMessage:
+      '{user} added {otherUser} as an admin to {colonyDisplayName}.',
   },
   notificationAdminOtherRemoved: {
     id: 'dashboard.Inbox.InboxItem.notificationAdminOtherRemoved',
-    defaultMessage: '{user} removed {otherUser} from {colonyDisplayName}.',
+    defaultMessage:
+      '{user} removed {otherUser} as an admin from {colonyDisplayName}.',
   },
   notificationAdminENSCreated: {
     id: 'dashboard.Inbox.InboxItem.notificationAdminENSCreated',
