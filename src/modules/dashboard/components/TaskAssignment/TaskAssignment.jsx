@@ -2,14 +2,14 @@
 
 import React from 'react';
 
-import type { TaskProps, UserType } from '~immutable';
-
-import { useDataFetcher, useSelector } from '~utils/hooks';
-
-import { userFetcher } from '../../../users/fetchers';
-import { colonyNativeTokenSelector } from '../../selectors';
+import type { TaskProps, TokenReferenceType, UserType } from '~immutable';
 
 import Assignment from '~core/Assignment';
+import { SpinnerLoader } from '~core/Preloaders';
+import { useDataFetcher } from '~utils/hooks';
+
+import { colonyNativeTokenFetcher } from '../../fetchers';
+import { userFetcher } from '../../../users/fetchers';
 
 type Props = TaskProps<{
   colonyAddress: *,
@@ -27,17 +27,26 @@ const TaskAssignment = ({
   reputation,
   workerAddress,
 }: Props) => {
-  /**
-   * @todo: Use data fetcher for colony's native token
-   * @body: This can be an issue if the task is accessed directly without first loading the colony.
+  /*
+   * Using a data fetcher here incase task is accessed directly without
+   * first loading the colony.
    */
-  const nativeToken = useSelector(colonyNativeTokenSelector, [colonyAddress]);
+  const {
+    data: nativeToken,
+    isFetching: isFetchingNativeToken,
+  } = useDataFetcher<TokenReferenceType>(
+    colonyNativeTokenFetcher,
+    [colonyAddress],
+    [colonyAddress],
+  );
   const { data: worker } = useDataFetcher<UserType>(
     userFetcher,
     [workerAddress],
     [workerAddress],
   );
-  return (
+
+  if (isFetchingNativeToken) return <SpinnerLoader />;
+  return !nativeToken ? null : (
     <Assignment
       nativeToken={nativeToken}
       payouts={payouts}
