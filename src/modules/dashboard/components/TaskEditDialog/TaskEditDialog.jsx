@@ -112,6 +112,10 @@ type Props = {|
 const UserAvatar = HookedUserAvatar({ fetchUser: false });
 
 const supFilter = (data, filterValue) => {
+  if (!filterValue) {
+    return data;
+  }
+
   const filtered = data.filter(
     user =>
       user &&
@@ -123,8 +127,6 @@ const supFilter = (data, filterValue) => {
           .toLowerCase()
           .includes(filterValue.toLowerCase())),
   );
-
-  if (!filterValue) return filtered;
 
   const customValue = {
     id: 'filterValue',
@@ -183,7 +185,13 @@ const TaskEditDialog = ({
   );
 
   // Get users that have requested to work on this task
-  const userAddresses = useSelector(taskRequestsSelector, [draftId]);
+  const userAddressesRequested = useSelector(taskRequestsSelector, [draftId]);
+  /*
+   * @todo: Get addresses of all users subscribed to this colony
+   * @body: Likely use another selector to accomplish this
+   */
+  const userAddressesSubscribed = [];
+  const userAddresses = [...userAddressesRequested, ...userAddressesSubscribed];
   const userData = useDataMapFetcher<UserType>(
     usersByAddressFetcher,
     userAddresses,
