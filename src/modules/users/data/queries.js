@@ -435,16 +435,18 @@ export const getUserInboxActivity: Query<
       /*
        * @note Remove the first two log entries.
        *
-       * When creating a new colony, the first 3 log events are:
+       * When creating a new colony, the first 5 log events are:
        * - Root colony domain added with id `1`
+       * - Colony founder added as an admin
        * - Root colony domain added with id `1` (same as the above, maybe a bug?)
+       * - Colony founder added as an admin (again, same as above, buggy bug ?)
        * - Colony ENS name claimed
        *
-       * Since we don't notify the user about the root domain creation, we remove
-       * those two log entries from the array
+       * Since we don't notify the user about the root domain creation, or the default admin role, we remove
+       * those first four log entries from the array
        */
-      logs.slice(2).map(async (log, index) => {
-        const cleanedEvents = events.slice(2);
+      logs.slice(4).map(async (log, index) => {
+        const cleanedEvents = events.slice(4);
         const { domainId, user: targetUserAddress } =
           cleanedEvents[index] || {};
         /*
