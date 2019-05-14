@@ -424,6 +424,13 @@ export const getUserInboxActivity: Query<
         DomainAdded,
       },
     } = colonyClient;
+    /*
+     * @note For some reason Flow is complaining about `events` not existing as
+     * a prop on the Promise class.
+     * This is very weird, as all other instances of calling this method work.
+     * I think it doesn't inffer the actual promise result properly.
+     */
+    /* $FlowFixMe */
     const { events, logs } = await getLogsAndEvents(
       colonyClient,
       {},
@@ -436,9 +443,6 @@ export const getUserInboxActivity: Query<
         ],
       },
     );
-    // console.log('colonyClient events', colonyClient);
-    // console.log('raw events', events);
-    // console.log('raw logs', logs);
     const cleanedEvents = events
       .map(({ eventName, setTo, ...restOfEvent }) => {
         let modifiedEventName = eventName;
