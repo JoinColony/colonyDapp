@@ -8,6 +8,7 @@ import {
   NOTIFICATION_EVENT_ADMIN_REMOVED,
   NOTIFICATION_EVENT_COLONY_ENS_CREATED,
   NOTIFICATION_EVENT_DOMAIN_ADDED,
+  NOTIFICATION_EVENT_TOKENS_MINTED,
 } from '~users/Inbox/events';
 
 const { TOKEN_ADDED, TOKEN_REMOVED } = USER_EVENT_TYPES;
@@ -24,6 +25,7 @@ export const transformNotificationEventNames = (eventName: string): string => {
     ColonyAdministrationRoleSetRemoved: NOTIFICATION_EVENT_ADMIN_REMOVED,
     ColonyLabelRegistered: NOTIFICATION_EVENT_COLONY_ENS_CREATED,
     DomainAdded: NOTIFICATION_EVENT_DOMAIN_ADDED,
+    Mint: NOTIFICATION_EVENT_TOKENS_MINTED,
   };
   return notificationsToEventsMapping[eventName];
 };

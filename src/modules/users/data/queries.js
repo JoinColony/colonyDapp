@@ -423,8 +423,14 @@ export const getUserInboxActivity: Query<
         ColonyLabelRegistered,
         DomainAdded,
       },
+      tokenClient,
+      tokenClient: {
+        events: { Mint },
+      },
     } = colonyClient;
     /*
+     * Fetch the Colony's RAW Transactions Logs and Events
+     *
      * @note For some reason Flow is complaining about `events` not existing as
      * a prop on the Promise class.
      * This is very weird, as all other instances of calling this method work.
@@ -443,7 +449,10 @@ export const getUserInboxActivity: Query<
         ],
       },
     );
-    const cleanedEvents = events
+    /*
+     * @note Explain this!
+     */
+    let cleanedEvents = events
       .map(({ eventName, setTo, ...restOfEvent }) => {
         let modifiedEventName = eventName;
         if (eventName === 'ColonyAdministrationRoleSet') {
@@ -469,6 +478,48 @@ export const getUserInboxActivity: Query<
     cleanedEvents.unshift({
       eventName: 'ColonyLabelRegistered',
     });
+    /*
+     * Fetch the Colony's RAW Token Transactions Logs and Events
+     */
+    const {
+      logs: transferLogs,
+      events: transferEvents,
+    } = await getLogsAndEvents(
+      tokenClient,
+      {},
+      {
+        blocksBack: 400000,
+        events: [Mint],
+      },
+    );
+    /*
+     * @note Explain this filtering
+     */
+    const cleanedTransferEvents = transferEvents.filter(
+      ({ address }) => address === colonyAddress,
+    );
+    let cleanedTransferLogs = await Promise.all(
+      transferLogs.map(async transferLog => {
+        const { to } = await provider.getTransaction(
+          transferLog.transactionHash,
+        );
+        return {
+          ...transferLog,
+          to,
+        };
+      }),
+    );
+    cleanedTransferLogs = cleanedTransferLogs.filter(
+      ({ to }) => to === colonyAddress,
+    );
+    // console.log('raw tranfer events', transferEvents);
+    console.log('cleaned tranfer events', cleanedTransferEvents);
+    // console.log('raw transfer logs', transferLogs);
+    console.log('cleaned transfer logs', cleanedTransferLogs);
+    /*
+     * @note Explain this filtering
+     */
+    cleanedEvents = cleanedEvents.concat(cleanedTransferEvents);
     const transformedEvents = await Promise.all(
       /*
        * @note Remove the first four log entries.
@@ -483,26 +534,31 @@ export const getUserInboxActivity: Query<
        * Since we don't notify the user about the root domain creation, or the default admin role, we remove
        * those first four log entries from the array
        */
-      logs.slice(4).map(async (log, index) => {
-        const { domainId, address: targetUserAddress } =
-          cleanedEvents[index] || {};
-        const timestamp = await getLogDate(provider, log);
-        const { from: sourceUserAddress } = await provider.getTransaction(
-          log.transactionHash,
-        );
-        const transformedEvent = {
-          id: log.transactionHash,
-          event: transformNotificationEventNames(
-            cleanedEvents[index].eventName,
-          ),
-          timestamp: new Date(timestamp).getTime() * 1000,
-          sourceUserAddress,
-          colonyAddress,
-          domainId,
-          targetUserAddress,
-        };
-        return transformedEvent;
-      }),
+      logs
+        .slice(4)
+        .concat(cleanedTransferLogs)
+        .map(async (log, index) => {
+          const { domainId, address: targetUserAddress } =
+            cleanedEvents[index] || {};
+          const timestamp = await getLogDate(provider, log);
+          const { from: sourceUserAddress } = await provider.getTransaction(
+            log.transactionHash,
+          );
+          const transformedEvent = {
+            id: log.transactionHash,
+            event: transformNotificationEventNames(
+              cleanedEvents[index].eventName,
+            ),
+            timestamp: new Date(timestamp).getTime() * 1000,
+            sourceUserAddress,
+            colonyAddress,
+            domainId,
+            targetUserAddress,
+            amount: cleanedEvents[index].amount,
+            tokenAddress: log.address,
+          };
+          return transformedEvent;
+        }),
     );
     return userInboxStore
       .all()
