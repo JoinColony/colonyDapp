@@ -450,7 +450,13 @@ export const getUserInboxActivity: Query<
       },
     );
     /*
-     * @note Explain this!
+     * @note These are "fake" colony client event names, only used for easier
+     * separation of events.
+     *
+     * As it stands in the contracts, we only have the `ColonyAdministrationRoleSet`
+     * event, the deciding factor being the `setTo` prop being true/false
+     *
+     * We're changing this to make it easier to do 1-to-1 transformation of event names
      */
     let cleanedEvents = events
       .map(({ eventName, setTo, ...restOfEvent }) => {
@@ -493,13 +499,20 @@ export const getUserInboxActivity: Query<
       },
     );
     /*
-     * @note Explain this filtering
+     * @note We need to filter both the transaction logs and events to only
+     * match the new current colony (based on the address)
      */
     const cleanedTransferEvents = transferEvents.filter(
       ({ address }) => address === colonyAddress,
     );
     let cleanedTransferLogs = await Promise.all(
       transferLogs.map(async transferLog => {
+        /*
+         * @note in order to filter the transaction logs, we need to fetch the
+         * full transaction, and extract the the destination address, "to"
+         *
+         * For newly minted tokens, this will match the current colony's address
+         */
         const { to } = await provider.getTransaction(
           transferLog.transactionHash,
         );
@@ -509,15 +522,17 @@ export const getUserInboxActivity: Query<
         };
       }),
     );
+    /*
+     * @note Now that we have destination address in the transaction log, we
+     * can filter out the un-needed logs
+     */
     cleanedTransferLogs = cleanedTransferLogs.filter(
       ({ to }) => to === colonyAddress,
     );
-    // console.log('raw tranfer events', transferEvents);
-    console.log('cleaned tranfer events', cleanedTransferEvents);
-    // console.log('raw transfer logs', transferLogs);
-    console.log('cleaned transfer logs', cleanedTransferLogs);
     /*
-     * @note Explain this filtering
+     * @note Since we're using the events array based on it's index, we need to
+     * merge the colony events with the transaction events before transforming
+     * the actual logs
      */
     cleanedEvents = cleanedEvents.concat(cleanedTransferEvents);
     const transformedEvents = await Promise.all(
