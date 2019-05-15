@@ -7,7 +7,7 @@ const { spawn } = require('child_process');
 let stdio;
 
 const startStarSignal = async () => {
-  const process = spawn('yarn', ['star-signal', '--port=9091', '--host=127.0.0.1'], {
+  const process = spawn('yarn', ['rendezvous', '--port=9091', '--host=127.0.0.1'], {
     stdio,
     cwd: path.resolve(__dirname, '..'),
   });
