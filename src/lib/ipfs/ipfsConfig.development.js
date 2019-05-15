@@ -5,7 +5,7 @@ const config = () => ({
   // config gets merged with the IPFS default config
   config: {
     Addresses: {
-      Swarm: ['/ip4/127.0.0.1/tcp/9091/ws/p2p-webrtc-star'],
+      Swarm: ['/ip4/127.0.0.1/tcp/9091/ws/p2p-websocket-star'],
     },
     Bootstrap: [
       // This is the connection to the dev ipfs daemon (for the pinner)
