@@ -7,7 +7,7 @@ import React from 'react';
 import { injectIntl } from 'react-intl';
 import { NavLink } from 'react-router-dom';
 
-import { getMainClasses } from '~utils/css';
+import { useMainClasses } from '~utils/hooks';
 
 import styles from './Button.css';
 
@@ -85,13 +85,11 @@ const Button = ({
   const buttonText =
     typeof text == 'string' ? text : text && formatMessage(text, textValues);
 
+  const classNames = useMainClasses(appearance, styles, className);
+
   if (linkTo) {
     return (
-      <NavLink
-        className={className || getMainClasses(appearance, styles)}
-        to={linkTo}
-        {...props}
-      >
+      <NavLink className={classNames} to={linkTo} {...props}>
         {buttonText || children}
       </NavLink>
     );
@@ -99,7 +97,7 @@ const Button = ({
 
   return (
     <button
-      className={className || getMainClasses(appearance, styles)}
+      className={classNames}
       disabled={disabled || loading}
       aria-busy={loading}
       title={titleText}

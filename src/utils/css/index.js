@@ -20,27 +20,21 @@ import { capitalize } from '../strings';
  *
  * @param {object} appearance Appearance object
  * @param {styleObject} CSS modules styles object
+ * @param {state} State styles object
  *
  * @return {string} The composed class names string
  */
 export const getMainClasses = (
-  appearance: Object = {},
+  { theme, ...modifiers }: Object = {},
   styleObject: { [string]: string } = {},
   state: { [string]: boolean } = {},
 ) => {
-  const { theme, ...modifiers } = appearance;
-  const styleArray = [];
-  if (theme) {
-    const themeClass = `theme${capitalize(theme)}`;
-    styleArray.push(styleObject[themeClass]);
-  } else {
-    styleArray.push(styleObject.main);
-  }
+  const styles = [styleObject[theme ? `theme${capitalize(theme)}` : 'main']];
   const modifierClasses = Object.keys(modifiers)
     .map(key => styleObject[`${key}${capitalize(modifiers[key])}`])
-    .filter(i => !!i);
+    .filter(Boolean);
   const stateClasses = Object.keys(state)
     .map(key => (state[key] ? styleObject[`state${capitalize(key)}`] : ''))
-    .filter(i => !!i);
-  return [...styleArray, ...modifierClasses, ...stateClasses].join(' ');
+    .filter(Boolean);
+  return [...styles, ...modifierClasses, ...stateClasses].join(' ');
 };

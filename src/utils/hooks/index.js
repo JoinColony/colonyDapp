@@ -13,6 +13,7 @@ import type { DataRecordType, RootStateRecord } from '~immutable';
 import type { AsyncFunction } from '../../createPromiseListener';
 
 import { isFetchingData, shouldFetchData } from '~immutable/utils';
+import { getMainClasses } from '~utils/css';
 
 import promiseListener from '../../createPromiseListener';
 
@@ -419,3 +420,14 @@ export const useMounted = () => {
   );
   return ref;
 };
+
+export const useMainClasses = (
+  appearance: Object,
+  styles: Object,
+  className?: string,
+) =>
+  useMemo(() => className || getMainClasses(appearance, styles), [
+    appearance,
+    className,
+    styles,
+  ]);
