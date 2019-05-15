@@ -98,7 +98,7 @@ const messages = defineMessages({
   },
   notificationAdminTokensGenerated: {
     id: 'dashboard.Inbox.InboxItem.notificationAdminTokensGenerated',
-    defaultMessage: '{user} generated {amount} in {colonyDisplayName}.',
+    defaultMessage: '{user} generated {amount} tokens in {colonyDisplayName}.',
   },
   notificationUserMentioned: {
     id: 'dashboard.Inbox.InboxItem.notificationUserMentioned',

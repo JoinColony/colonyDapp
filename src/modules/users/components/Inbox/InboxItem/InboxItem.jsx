@@ -6,7 +6,7 @@ import React from 'react';
 import { FormattedMessage, defineMessages } from 'react-intl';
 
 import type { InboxElement } from '../types';
-import type { UserType, ColonyType, DomainType } from '~immutable';
+import type { UserType, ColonyType, DomainType, TokenType } from '~immutable';
 
 import TimeRelative from '~core/TimeRelative';
 import { TableRow, TableCell } from '~core/Table';
@@ -20,7 +20,11 @@ import { SpinnerLoader } from '~core/Preloaders';
 import { useDataFetcher, useSelector } from '~utils/hooks';
 
 import { userFetcher } from '../../../fetchers';
-import { colonyFetcher, domainsFetcher } from '../../../../dashboard/fetchers';
+import {
+  colonyFetcher,
+  domainsFetcher,
+  tokenFetcher,
+} from '../../../../dashboard/fetchers';
 import { friendlyColonyNameSelector } from '../../../../dashboard/selectors';
 import { friendlyUsernameSelector } from '../../../selectors';
 
@@ -121,6 +125,7 @@ const InboxItem = ({
     // Handle read/unread notifications
     // unread,
     amount,
+    tokenAddress,
     colonyName,
     colonyAddress,
     comment,
@@ -161,6 +166,10 @@ const InboxItem = ({
   const { data: domains, isFetching: isFetchingDomains } = useDataFetcher<
     DomainType[],
   >(domainsFetcher, [colonyAddress], [colonyAddress]);
+  const {
+    data: token,
+    isFetching: isFetchingToken,
+  } = useDataFetcher<TokenType>(tokenFetcher, [tokenAddress], [tokenAddress]);
   const currentDomain =
     (domainName && { name: domainName }) ||
     (domains && domains.find(({ id }) => id === domainId || 0));
@@ -171,7 +180,10 @@ const InboxItem = ({
       // onClick={() => unread && markAsRead(id)}
     >
       <TableCell className={styles.inboxRowCell}>
-        {isFetchingUser || isFetchingColony || isFetchingDomains ? (
+        {isFetchingUser ||
+        isFetchingColony ||
+        isFetchingDomains ||
+        isFetchingToken ? (
           <div className={styles.spinnerWrapper}>
             <SpinnerLoader
               loadingText={LOCAL_MSG.loadingText}
@@ -206,10 +218,10 @@ const InboxItem = ({
                 values={{
                   amount: makeInboxDetail(amount, value => (
                     <Numeral
-                      /*
-                       * @todo Re-enable prifx value, when token registering has been fixed
-                       */
-                      // prefix={unit}
+                      suffix={` ${token ? token.symbol : ''}`}
+                      integerSeparator=""
+                      truncate={2}
+                      unit={(token && token.decimals) || 18}
                       value={value}
                     />
                   )),
@@ -250,16 +262,16 @@ const InboxItem = ({
                 />
               )}
 
-              {amount && (
+              {amount && token && (
                 <span>
                   <span className={styles.pipe}>|</span>
                   <span className={styles.amount}>
                     <Numeral
-                      /*
-                       * @todo Re-enable prifx value, when token registering has been fixed
-                       */
-                      // prefix={unit}
-                      value={amount.toString()}
+                      suffix={` ${token ? token.symbol : ''}`}
+                      integerSeparator=""
+                      truncate={2}
+                      unit={(token && token.decimals) || 18}
+                      value={amount}
                       appearance={{ size: 'small', theme: 'grey' }}
                     />
                   </span>
