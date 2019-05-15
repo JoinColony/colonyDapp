@@ -17,6 +17,7 @@ type Shared = {|
   domainName?: string,
   domainId?: number,
   amount?: BN,
+  tokenAddress?: string,
   sourceUserAddress?: string,
   targetUserAddress?: string,
 |};
@@ -36,6 +37,7 @@ const defaultValues: $Shape<Shared> = {
   domainName: undefined,
   domainId: undefined,
   amount: undefined,
+  tokenAddress: undefined,
   sourceUserAddress: undefined,
   targetUserAddress: undefined,
 };

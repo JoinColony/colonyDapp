@@ -186,22 +186,23 @@ function* colonyMintTokens({
         type: ACTIONS.COLONY_TOKEN_BALANCE_FETCH,
         payload: { colonyAddress, tokenAddress },
       });
+
+      /*
+       * Notification
+       */
+      yield putNotification({
+        amount: mintedAmount,
+        colonyAddress,
+        tokenAddress,
+        event: NOTIFICATION_EVENT_TOKENS_MINTED,
+        sourceUserAddress: walletAddress,
+      });
     }
 
     yield put<Action<typeof ACTIONS.COLONY_MINT_TOKENS_SUCCESS>>({
       type: ACTIONS.COLONY_MINT_TOKENS_SUCCESS,
       payload: { amount: mintedAmount },
       meta,
-    });
-
-    /*
-     * Notification
-     */
-    yield putNotification({
-      amount: mintedAmount,
-      colonyAddress,
-      event: NOTIFICATION_EVENT_TOKENS_MINTED,
-      sourceUserAddress: walletAddress,
     });
   } catch (error) {
     yield putError(ACTIONS.COLONY_MINT_TOKENS_ERROR, error, meta);
