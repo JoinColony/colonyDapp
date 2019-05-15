@@ -67,6 +67,21 @@ export type UserActionTypes = {|
     typeof ACTIONS.USER_COLONY_SUBSCRIBE,
     {| colonyAddress: Address |},
   >,
+  USER_COLONY_UNSUBSCRIBE: UniqueActionType<
+    typeof ACTIONS.USER_COLONY_UNSUBSCRIBE,
+    {| colonyAddress: Address |},
+    void,
+  >,
+  USER_COLONY_UNSUBSCRIBE_ERROR: ErrorActionType<
+    typeof ACTIONS.USER_COLONY_UNSUBSCRIBE_ERROR,
+    void,
+    void,
+  >,
+  USER_COLONY_UNSUBSCRIBE_SUCCESS: UniqueActionType<
+    typeof ACTIONS.USER_COLONY_UNSUBSCRIBE,
+    {| colonyAddress: Address |},
+    void,
+  >,
   USER_FETCH: ActionTypeWithPayloadAndMeta<
     typeof ACTIONS.USER_FETCH,
     {| userAddress: string |},
