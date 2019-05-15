@@ -1,5 +1,7 @@
 /* @flow */
 
+import nanoid from 'nanoid';
+
 import type { Action } from '~redux';
 import type { Address } from '~types';
 
@@ -59,6 +61,7 @@ export const subscribeToColony = (
 ): Action<typeof ACTIONS.USER_COLONY_SUBSCRIBE> => ({
   type: ACTIONS.USER_COLONY_SUBSCRIBE,
   payload: { colonyAddress },
+  meta: { id: nanoid() },
 });
 
 export const subscribeToTask = (
