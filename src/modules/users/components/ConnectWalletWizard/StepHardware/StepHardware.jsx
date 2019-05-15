@@ -95,14 +95,8 @@ type FormValues = {
   hardwareWalletFilter: string,
 };
 
-/**
- * @todo Improve actionCreator types for props.
- * @body How do we want to type actionCreators in the future to avoid duplication? We could export the types from the actionCreator file itself?
- */
 type Props = WizardProps<FormValues> & {
-  fetchAccounts: (
-    method: $PropertyType<FormValues, 'method'>,
-  ) => { type: string },
+  fetchAccounts: typeof fetchAccountsAction,
   isLoading: boolean,
   availableAddresses: string[],
 };
