@@ -1,7 +1,5 @@
 /* @flow */
 
-import type { FormikBag } from 'formik';
-
 // $FlowFixMe until we have new react flow types with hooks
 import React, { useCallback, useMemo } from 'react';
 import { defineMessages } from 'react-intl';
@@ -21,7 +19,7 @@ import type { ItemDataType } from '~core/OmniPicker';
 
 import SingleUserPicker from '~core/SingleUserPicker';
 import Button from '~core/Button';
-import { Form, FormStatus } from '~core/Fields';
+import { ActionForm, FormStatus } from '~core/Fields';
 import { FullscreenDialog } from '~core/Dialog';
 import DialogSection from '~core/Dialog/DialogSection.jsx';
 import Heading from '~core/Heading';
@@ -31,12 +29,8 @@ import HookedUserAvatar from '~users/HookedUserAvatar';
 import { ACTIONS } from '~redux';
 
 import WrappedPayout from './WrappedPayout.jsx';
-import {
-  useAsyncFunction,
-  useDataFetcher,
-  useDataMapFetcher,
-  useSelector,
-} from '~utils/hooks';
+import { mapPayload, mergePayload, pipe } from '~utils/actions';
+import { useDataFetcher, useDataMapFetcher, useSelector } from '~utils/hooks';
 import { colonyFetcher } from '../../fetchers';
 import {
   allFromColonyTokensSelector,
@@ -94,11 +88,6 @@ const MSG = defineMessages({
     defaultMessage: 'Unknown Token',
   },
 });
-
-type FormValues = {|
-  payouts: Array<TaskPayoutType>,
-  worker?: UserType,
-|};
 
 type Props = {|
   ...$Exact<$Pick<TaskType, {| workerAddress: *, payouts: *, reputation: * |}>>,
@@ -231,7 +220,7 @@ const TaskEditDialog = ({
     [taskPayouts, availableTokens],
   );
 
-  const validateFunding = useMemo(
+  const validateForm = useMemo(
     () => {
       const workerShape = yup.object().shape({
         profile: yup.object().shape({
@@ -283,59 +272,15 @@ const TaskEditDialog = ({
     [maxTokens],
   );
 
-  const assignWorker = useAsyncFunction({
-    error: ACTIONS.TASK_WORKER_ASSIGN_ERROR,
-    submit: ACTIONS.TASK_WORKER_ASSIGN,
-    success: ACTIONS.TASK_WORKER_ASSIGN_SUCCESS,
-  });
-
-  const setPayout = useAsyncFunction({
-    error: ACTIONS.TASK_SET_PAYOUT_ERROR,
-    submit: ACTIONS.TASK_SET_PAYOUT,
-    success: ACTIONS.TASK_SET_PAYOUT_SUCCESS,
-  });
-
-  const setPayouts = useCallback(
-    async (payouts: Array<TaskPayoutType>) => {
-      const promises = payouts.map(({ amount, token }) =>
-        setPayout({ amount, colonyAddress, draftId, token }),
-      );
-      await Promise.all(promises);
-    },
-    [colonyAddress, draftId, setPayout],
-  );
-
-  const handleSubmit = useCallback(
-    (
-      { payouts, worker }: FormValues,
-      { setSubmitting }: FormikBag<{}, FormValues>,
-    ) => {
-      // disallow changes after payouts set for MVP
-      if (existingPayouts.length > 0 || !worker) {
-        setSubmitting(false);
-        return;
-      }
-
-      assignWorker({
-        colonyAddress,
-        draftId,
-        workerAddress: worker.profile.walletAddress,
-      }).then(() => {
-        // then set the payouts - can't set payouts without a worker
-        setPayouts(payouts).then(() => {
-          setSubmitting(false);
-          closeDialog();
-        });
-      });
-    },
-    [
-      assignWorker,
-      closeDialog,
-      colonyAddress,
-      draftId,
-      existingPayouts.length,
-      setPayouts,
-    ],
+  const transform = useCallback(
+    pipe(
+      mapPayload(p => ({
+        payouts: p.payouts.map(({ amount, token }) => ({ amount, token })),
+        workerAddress: p.worker.profile.walletAddress,
+      })),
+      mergePayload({ colonyAddress, draftId }),
+    ),
+    [colonyAddress, draftId],
   );
 
   return (
@@ -353,13 +298,17 @@ const TaskEditDialog = ({
       {isFetchingExistingWorker ? (
         <SpinnerLoader />
       ) : (
-        <Form
+        <ActionForm
           initialValues={{
             payouts: existingPayouts,
             worker: existingWorker,
           }}
-          onSubmit={handleSubmit}
-          validationSchema={validateFunding}
+          error={ACTIONS.TASK_SET_WORKER_AND_PAYOUTS_ERROR}
+          submit={ACTIONS.TASK_SET_WORKER_AND_PAYOUTS}
+          success={ACTIONS.TASK_SET_WORKER_AND_PAYOUTS_SUCCESS}
+          transform={transform}
+          onSuccess={closeDialog}
+          validationSchema={validateForm}
         >
           {({ status, values, dirty, isSubmitting, isValid }) => {
             const canRemove = canRemoveTokens(values, minTokens);
@@ -445,7 +394,7 @@ const TaskEditDialog = ({
               </>
             );
           }}
-        </Form>
+        </ActionForm>
       )}
     </FullscreenDialog>
   );
