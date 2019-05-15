@@ -40,7 +40,7 @@ const TokenCard = ({
   return token && balance !== undefined ? (
     <Card key={address} className={styles.main}>
       <div className={styles.cardHeading}>
-        <TokenIcon token={tokenReference} name={token.name} size="s" />
+        <TokenIcon token={tokenReference} name={token.name} size="xs" />
         <div className={styles.tokenSymbol}>
           {token.symbol || (
             <>
