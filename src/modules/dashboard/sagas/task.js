@@ -1,7 +1,7 @@
 /* @flow */
 
 import type { Saga } from 'redux-saga';
-
+import nanoid from 'nanoid';
 import {
   all,
   call,
@@ -11,7 +11,6 @@ import {
   takeLeading,
 } from 'redux-saga/effects';
 import { replace } from 'connected-react-router';
-import nanoid from 'nanoid';
 import type { Action } from '~redux';
 import type { Address } from '~types';
 
@@ -21,9 +20,11 @@ import {
   executeQuery,
   putError,
   raceError,
+  putNotification,
 } from '~utils/saga/effects';
 import { generateUrlFriendlyId } from '~utils/data';
 import { ACTIONS } from '~redux';
+import { NOTIFICATION_EVENT_USER_MENTIONED } from '~users/Inbox/events';
 
 import { fetchColonyTaskMetadata as createColonyTaskMetadataFetchAction } from '../actionCreators';
 import {
@@ -635,19 +636,11 @@ function* taskCommentAdd({
      * So this should actually be gated behind a conditional
      * (once the mentions are all wired up)
      */
-    yield put<Action<typeof ACTIONS.USER_ACTIVITIES_ADD_SUCCESS>>({
-      type: ACTIONS.USER_ACTIVITIES_ADD_SUCCESS,
-      payload: {
-        activity: {
-          id: nanoid(),
-          event: 'notificationUserMentioned',
-          userAddress: walletAddress,
-          taskTitle,
-          comment: commentData.body,
-          timestamp: commentData.timestamp,
-        },
-      },
-      meta,
+    yield putNotification({
+      comment: commentData.body,
+      event: NOTIFICATION_EVENT_USER_MENTIONED,
+      sourceUserAddress: walletAddress,
+      taskTitle,
     });
   } catch (error) {
     yield putError(ACTIONS.TASK_COMMENT_ADD_ERROR, error, meta);

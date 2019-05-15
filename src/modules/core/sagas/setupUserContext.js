@@ -22,11 +22,14 @@ import { executeQuery, putError } from '~utils/saga/effects';
 import { log } from '~utils/debug';
 
 import ENS from '../../../lib/ENS';
-import { getUserBalance, getUserProfile } from '../../users/data/queries';
+import {
+  getUserBalance,
+  getUserProfile,
+  getUserColonies,
+} from '../../users/data/queries';
 import setupAdminSagas from '../../admin/sagas';
 import setupDashboardSagas from '../../dashboard/sagas';
 import { getWallet, setupUsersSagas } from '../../users/sagas';
-import { currentUserFetchColonies } from '../../users/actionCreators';
 import setupTransactionsSagas from './transactions';
 import setupNetworkSagas from './network';
 import { getDDB, getGasPrices, getColonyManager } from './utils';
@@ -88,9 +91,6 @@ export default function* setupUserContext(
     const ens = yield getContext(CONTEXT.ENS_INSTANCE);
     yield call(setupDDBResolver, colonyManager, ddb, ens);
 
-    /*
-     * Attempt to get the user profile data.
-     */
     let profileData = {};
     try {
       profileData = yield* executeQuery(getUserProfile, {
@@ -132,20 +132,29 @@ export default function* setupUserContext(
     });
 
     try {
-      /*
-       * Load the user activities from the store
-       */
-      yield put({
-        type: ACTIONS.USER_ACTIVITIES_FETCH,
-        meta: {
-          ...meta,
-          key: walletAddress,
+      const userColonies = yield* executeQuery(getUserColonies, {
+        metadata: {
+          walletAddress,
+          metadataStoreAddress: profileData.metadataStoreAddress,
         },
       });
-      /*
-       * Load the user's subscribed colonies.
-       */
-      yield put(currentUserFetchColonies());
+
+      for (let index = 0; index < userColonies.length; index += 1) {
+        /*
+         * Load the user activities from the store
+         */
+        yield put<Action<typeof ACTIONS.USER_ACTIVITIES_FETCH>>({
+          type: ACTIONS.USER_ACTIVITIES_FETCH,
+          payload: {
+            colonyAddress: userColonies[index],
+          },
+          meta: {
+            ...meta,
+            key: walletAddress,
+            colonyAddress: userColonies[index],
+          },
+        });
+      }
     } catch (caughtError) {
       // It's ok if the user store doesn't exist (yet)
       log.warn(caughtError);

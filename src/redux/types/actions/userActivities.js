@@ -1,29 +1,42 @@
 /* @flow */
-import type { WithKey } from '~types';
 
-import type { UniqueActionType, ErrorActionType } from '../index';
+import type { Address, WithKey } from '~types';
+
+import type {
+  UniqueActionType,
+  ErrorActionType,
+  ActionTypeWithPayloadAndMeta,
+} from '../index';
 
 import { ACTIONS } from '../../index';
 import type { UserActivityType } from '~immutable';
 
 export type UserActivitiesActionTypes = {|
-  USER_ACTIVITIES_FETCH: UniqueActionType<
+  USER_ACTIVITIES_FETCH: ActionTypeWithPayloadAndMeta<
     typeof ACTIONS.USER_ACTIVITIES_FETCH,
     {|
-      address: string,
+      colonyAddress: Address,
     |},
-    WithKey,
+    {|
+      id: string,
+      key: *,
+      colonyAddress: Address,
+    |},
   >,
   USER_ACTIVITIES_FETCH_ERROR: ErrorActionType<
     typeof ACTIONS.USER_ACTIVITIES_FETCH_ERROR,
     WithKey,
   >,
-  USER_ACTIVITIES_FETCH_SUCCESS: UniqueActionType<
+  USER_ACTIVITIES_FETCH_SUCCESS: ActionTypeWithPayloadAndMeta<
     typeof ACTIONS.USER_ACTIVITIES_FETCH_SUCCESS,
     {|
       activities: UserActivityType[],
     |},
-    WithKey,
+    {|
+      id: string,
+      key: *,
+      colonyAddress?: string,
+    |},
   >,
   USER_ACTIVITIES_ADD: UniqueActionType<
     typeof ACTIONS.USER_ACTIVITIES_ADD,

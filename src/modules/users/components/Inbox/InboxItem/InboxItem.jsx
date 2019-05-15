@@ -6,7 +6,7 @@ import React from 'react';
 import { FormattedMessage, defineMessages } from 'react-intl';
 
 import type { InboxElement } from '../types';
-import type { UserType, ColonyType } from '~immutable';
+import type { UserType, ColonyType, DomainType, TokenType } from '~immutable';
 
 import TimeRelative from '~core/TimeRelative';
 import { TableRow, TableCell } from '~core/Table';
@@ -16,9 +16,17 @@ import { DialogLink } from '~core/Dialog';
 import Link from '~core/Link';
 import HookedUserAvatar from '~users/HookedUserAvatar';
 import { SpinnerLoader } from '~core/Preloaders';
-import { useDataFetcher } from '~utils/hooks';
+
+import { useDataFetcher, useSelector } from '~utils/hooks';
+
 import { userFetcher } from '../../../fetchers';
-import { colonyFetcher } from '../../../../dashboard/fetchers';
+import {
+  colonyFetcher,
+  domainsFetcher,
+  tokenFetcher,
+} from '../../../../dashboard/fetchers';
+import { friendlyColonyNameSelector } from '../../../../dashboard/selectors';
+import { friendlyUsernameSelector } from '../../../selectors';
 
 import styles from './InboxItem.css';
 
@@ -116,27 +124,55 @@ const InboxItem = ({
   activity: {
     // Handle read/unread notifications
     // unread,
-    otherUser,
     amount,
+    tokenAddress,
     colonyName,
+    colonyAddress,
     comment,
-    timestamp,
     domainName,
+    domainId,
     event,
-    taskTitle,
-    userAddress,
     onClickRoute,
+    sourceUserAddress,
+    taskTitle,
+    targetUserAddress,
+    timestamp,
   },
 }: Props) => {
   const { data: user, isFetching: isFetchingUser } = useDataFetcher<UserType>(
     userFetcher,
-    [userAddress],
-    [userAddress],
+    [sourceUserAddress],
+    [sourceUserAddress],
   );
+  const sourceUserDisplayWithFallback = useSelector(friendlyUsernameSelector, [
+    sourceUserAddress,
+  ]);
+  const targetUserDisplayWithFallback = useSelector(friendlyUsernameSelector, [
+    targetUserAddress,
+  ]);
   const {
     data: colony,
     isFetching: isFetchingColony,
-  } = useDataFetcher<ColonyType>(colonyFetcher, [colonyName], [colonyName]);
+  } = useDataFetcher<ColonyType>(
+    colonyFetcher,
+    [colonyAddress],
+    [colonyAddress],
+  );
+  const colonyDisplayNameWithFallback = useSelector(
+    friendlyColonyNameSelector,
+    [colonyAddress],
+  );
+  const colonyNameWithFallback = (colony && colony.colonyName) || colonyName;
+  const { data: domains, isFetching: isFetchingDomains } = useDataFetcher<
+    DomainType[],
+  >(domainsFetcher, [colonyAddress], [colonyAddress]);
+  const {
+    data: token,
+    isFetching: isFetchingToken,
+  } = useDataFetcher<TokenType>(tokenFetcher, [tokenAddress], [tokenAddress]);
+  const currentDomain =
+    (domainName && { name: domainName }) ||
+    (domains && domains.find(({ id }) => id === domainId || 0));
   return (
     <TableRow
       className={styles.inboxRow}
@@ -144,7 +180,10 @@ const InboxItem = ({
       // onClick={() => unread && markAsRead(id)}
     >
       <TableCell className={styles.inboxRowCell}>
-        {isFetchingUser || isFetchingColony ? (
+        {isFetchingUser ||
+        isFetchingColony ||
+        isFetchingDomains ||
+        isFetchingToken ? (
           <div className={styles.spinnerWrapper}>
             <SpinnerLoader
               loadingText={LOCAL_MSG.loadingText}
@@ -168,51 +207,73 @@ const InboxItem = ({
                 className={styles.userAvatar}
               />
             )}
-
             <span className={styles.inboxAction}>
               <FormattedMessage
+                /*
+                 * @todo switch between notificationAdminOtherAdded v. notificationUserMadeAdmin notifications
+                 * depending if the otherUser address is the same as the sourceUserAddress
+                 * This is preffered as opposed to adding two notifications to the stores
+                 */
                 {...MSG[event]}
                 values={{
-                  amount: makeInboxDetail(amount, ({ unit, value }) => (
-                    <Numeral prefix={unit} value={value} />
+                  amount: makeInboxDetail(amount, value => (
+                    <Numeral
+                      suffix={` ${token ? token.symbol : ''}`}
+                      integerSeparator=""
+                      truncate={2}
+                      unit={(token && token.decimals) || 18}
+                      value={value}
+                    />
                   )),
-                  colony: makeInboxDetail(colony && colony.colonyName),
+                  colonyDisplayName: makeInboxDetail(
+                    colonyDisplayNameWithFallback,
+                  ),
+                  colonyName: makeInboxDetail(colonyNameWithFallback),
                   comment: makeInboxDetail(comment),
-                  domain: makeInboxDetail(domainName),
-                  other: makeInboxDetail(otherUser),
+                  domainName: makeInboxDetail(
+                    currentDomain && currentDomain.name,
+                  ),
+                  otherUser: makeInboxDetail(targetUserDisplayWithFallback),
                   task: makeInboxDetail(taskTitle),
                   time: makeInboxDetail(timestamp, value => (
                     <TimeRelative value={value} />
                   )),
-                  user: makeInboxDetail(user && user.profile.username),
+                  user: makeInboxDetail(sourceUserDisplayWithFallback),
                 }}
               />
             </span>
 
             <span className={styles.additionalDetails}>
-              {colony && colony.colonyName && domainName && (
+              {colony && colony.colonyName && (domainName || currentDomain) && (
                 <FormattedMessage
                   {...MSG.metaColonyAndDomain}
                   values={{
-                    colony: colony.colonyName,
-                    domain: domainName,
+                    colonyName: colonyNameWithFallback,
+                    domainName: currentDomain && currentDomain.name,
                   }}
                 />
               )}
-              {colony && colony.colonyName && !domainName && (
+              {colony && colony.colonyName && !currentDomain && (
                 <FormattedMessage
                   {...MSG.metaColonyOnly}
                   values={{
-                    colony: colony.colonyName,
+                    colonyName: colonyNameWithFallback,
                   }}
                 />
               )}
 
-              {amount && (
+              {amount && token && (
                 <span>
                   <span className={styles.pipe}>|</span>
                   <span className={styles.amount}>
-                    {amount.unit} {amount.value}
+                    <Numeral
+                      suffix={` ${token ? token.symbol : ''}`}
+                      integerSeparator=""
+                      truncate={2}
+                      unit={(token && token.decimals) || 18}
+                      value={amount}
+                      appearance={{ size: 'small', theme: 'grey' }}
+                    />
                   </span>
                 </span>
               )}

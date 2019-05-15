@@ -2,14 +2,17 @@
 
 import type { Channel, Saga } from 'redux-saga';
 
+import nanoid from 'nanoid';
 import { all, call, put, race, take, select } from 'redux-saga/effects';
 
-import type { ErrorActionType, TakeFilter } from '~redux';
+import type { ErrorActionType, TakeFilter, Action } from '~redux';
 import type { Command, Query } from '../../data/types';
+import type { UserActivityType } from '~immutable';
 
 import { getContext, CONTEXT } from '~context';
 import { validateSync } from '~utils/yup';
 import { isDev, log } from '~utils/debug';
+import { ACTIONS } from '~redux';
 
 /*
  * Effect to take a specific action from a channel
@@ -186,3 +189,32 @@ export function* selectAsJS(
     ? selected.toJS()
     : selected;
 }
+
+/*
+ * Effect (actually more of a helper) to put a Notification action
+ */
+export const putNotification = (
+  payload?: UserActivityType,
+  meta?: Object = {},
+) => {
+  try {
+    const notificationAction: Action<
+      typeof ACTIONS.USER_ACTIVITIES_ADD_SUCCESS,
+    > = {
+      type: ACTIONS.USER_ACTIVITIES_ADD_SUCCESS,
+      payload: {
+        activity: {
+          id: nanoid(),
+          timestamp: new Date(),
+          ...payload,
+        },
+      },
+      meta: {
+        ...meta,
+      },
+    };
+    return put(notificationAction);
+  } catch (caughtError) {
+    return putError(ACTIONS.USER_ACTIVITIES_ADD_ERROR, caughtError, meta);
+  }
+};

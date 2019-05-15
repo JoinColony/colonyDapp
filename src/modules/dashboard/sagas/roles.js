@@ -1,19 +1,29 @@
 /* @flow */
 
 import type { Saga } from 'redux-saga';
-
-import { call, fork, put, takeEvery } from 'redux-saga/effects';
+import { call, fork, put, takeEvery, select } from 'redux-saga/effects';
 
 import type { Action } from '~redux';
 
-import { executeQuery, putError, takeFrom } from '~utils/saga/effects';
+import {
+  executeQuery,
+  putError,
+  takeFrom,
+  putNotification,
+} from '~utils/saga/effects';
 import { ACTIONS } from '~redux';
 
 import { getColonyRoles } from '../data/queries';
 import { createTransaction, getTxChannel } from '../../core/sagas';
 import { COLONY_CONTEXT } from '../../core/constants';
+import { walletAddressSelector } from '../../users/selectors';
 
 import { fetchRoles } from '../actionCreators';
+
+import {
+  NOTIFICATION_EVENT_ADMIN_ADDED,
+  NOTIFICATION_EVENT_ADMIN_REMOVED,
+} from '~users/Inbox/events';
 
 function* colonyRolesFetch({
   payload: { colonyAddress },
@@ -43,6 +53,10 @@ function* colonyAdminAdd({
   const txChannel = yield call(getTxChannel, meta.id);
   try {
     /*
+     * Get the current user's wallet address (we need that for notifications)
+     */
+    const walletAddress = yield select(walletAddressSelector);
+    /*
      * Set the admin on the contract level (transaction)
      */
     yield fork(createTransaction, meta.id, {
@@ -64,6 +78,16 @@ function* colonyAdminAdd({
       meta,
     });
 
+    /*
+     * Notification
+     */
+    yield putNotification({
+      colonyAddress,
+      event: NOTIFICATION_EVENT_ADMIN_ADDED,
+      sourceUserAddress: walletAddress,
+      targetUserAddress: newAdmin,
+    });
+
     yield put(fetchRoles(colonyAddress));
   } catch (error) {
     yield putError(ACTIONS.COLONY_ADMIN_ADD_ERROR, error, meta);
@@ -80,6 +104,10 @@ function* colonyAdminRemove({
   let txChannel;
   try {
     txChannel = yield call(getTxChannel, meta.id);
+    /*
+     * Get the current user's wallet address (we need that for notifications)
+     */
+    const walletAddress = yield select(walletAddressSelector);
 
     /*
      * Remove the admin on the contract level (transaction)
@@ -97,6 +125,16 @@ function* colonyAdminRemove({
       type: ACTIONS.COLONY_ADMIN_REMOVE_SUCCESS,
       meta,
       payload,
+    });
+
+    /*
+     * Notification
+     */
+    yield putNotification({
+      colonyAddress,
+      event: NOTIFICATION_EVENT_ADMIN_REMOVED,
+      sourceUserAddress: walletAddress,
+      targetUserAddress: user,
     });
 
     yield put(fetchRoles(colonyAddress));

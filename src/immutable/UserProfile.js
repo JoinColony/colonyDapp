@@ -13,8 +13,8 @@ type Shared = {|
   username?: string,
   walletAddress: string,
   website?: string,
-  inboxStoreAddress?: string,
-  metadataStoreAddress?: string,
+  inboxStoreAddress: string,
+  metadataStoreAddress: string,
 |};
 
 export type UserProfileType = $ReadOnly<Shared>;

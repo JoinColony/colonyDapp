@@ -10,16 +10,16 @@ import { defineMessages } from 'react-intl';
 const messages = defineMessages({
   metaColonyOnly: {
     id: 'dashboard.Inbox.InboxItem.metaColonyOnly',
-    defaultMessage: '{colony}',
+    defaultMessage: '{colonyName}',
   },
   metaColonyAndDomain: {
     id: 'dashboard.Inbox.InboxItem.metaColonyAndDomain',
-    defaultMessage: '{colony} in {domain}',
+    defaultMessage: '#{domainName} in {colonyName}',
   },
   actionColonyFundingReceived: {
     id: 'dashboard.Inbox.InboxItem.actionColonyFundingReceived',
     defaultMessage:
-      '{user} sent {amount} to {colony}. You need to claim these tokens.',
+      '{user} sent {amount} to {colonyDisplayName}. You need to claim these tokens.',
   },
   actionWorkerInviteReceived: {
     id: 'dashboard.Inbox.InboxItem.actionWorkerInviteReceived',
@@ -78,23 +78,27 @@ const messages = defineMessages({
   },
   notificationAdminOtherAdded: {
     id: 'dashboard.Inbox.InboxItem.notificationAdminOtherAdded',
-    defaultMessage: '{user} added {other} to {colony}.',
+    defaultMessage:
+      '{user} added {otherUser} as an admin to {colonyDisplayName}.',
   },
   notificationAdminOtherRemoved: {
     id: 'dashboard.Inbox.InboxItem.notificationAdminOtherRemoved',
-    defaultMessage: '{user} removed {other} from {colony}.',
+    defaultMessage:
+      '{user} removed {otherUser} as an admin from {colonyDisplayName}.',
   },
   notificationAdminENSCreated: {
     id: 'dashboard.Inbox.InboxItem.notificationAdminENSCreated',
-    defaultMessage: '{user} added the username {username} to {colony}.',
+    defaultMessage:
+      '{user} added the ENS name {colonyName} to {colonyDisplayName}.',
   },
-  notificationAdminDomainAdded: {
-    id: 'dashboard.Inbox.InboxItem.notificationAdminDomainAdded',
-    defaultMessage: '{user} added a new domain titled {domain} to {colony}.',
+  notificationAdminColonyLabelAdded: {
+    id: 'dashboard.Inbox.InboxItem.notificationAdminColonyLabelAdded',
+    defaultMessage:
+      '{user} added a new domain titled #{domainName} to {colonyDisplayName}.',
   },
   notificationAdminTokensGenerated: {
     id: 'dashboard.Inbox.InboxItem.notificationAdminTokensGenerated',
-    defaultMessage: '{user} generated {amount} in {colony}.',
+    defaultMessage: '{user} generated {amount} tokens in {colonyDisplayName}.',
   },
   notificationUserMentioned: {
     id: 'dashboard.Inbox.InboxItem.notificationUserMentioned',
@@ -102,11 +106,11 @@ const messages = defineMessages({
   },
   notificationUserMadeAdmin: {
     id: 'dashboard.Inbox.InboxItem.notificationUserMadeAdmin',
-    defaultMessage: '{user} added you as an Admin to {colony}.',
+    defaultMessage: '{user} added you as an Admin to {colonyDisplayName}.',
   },
   notificationUserAdminRevoked: {
     id: 'dashboard.Inbox.InboxItem.notificationUserAdminRevoked',
-    defaultMessage: '{user} removed you as an Admin from {colony}.',
+    defaultMessage: '{user} removed you as an Admin from {colonyDisplayName}.',
   },
   notificationUserTransferReceived: {
     id: 'dashboard.Inbox.InboxItem.notificationUserTransferReceived',

@@ -117,3 +117,19 @@ export const colonyRecentTokensSelector = createSelector(
       ]).values(),
     ),
 );
+
+/*
+ * Given a colony's address, select (with fallback):
+ * - The display name
+ * - The ens name (colonyName)
+ * - The colony's address
+ */
+export const friendlyColonyNameSelector = createSelector(
+  colonySelector,
+  (_, colonyAddress) => colonyAddress,
+  (colony, colonyAddress): string => {
+    const { displayName, colonyName } =
+      (colony && colony.getIn(['record'])) || {};
+    return displayName || colonyName || colonyAddress;
+  },
+);

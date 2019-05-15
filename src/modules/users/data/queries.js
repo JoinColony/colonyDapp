@@ -32,14 +32,22 @@ import { USER_EVENT_TYPES } from '~data/constants';
 import { ZERO_ADDRESS } from '~utils/web3/constants';
 import { reduceToLastState } from '~utils/reducers';
 import { getTokenClient } from '~utils/web3/contracts';
-import { getEventLogs, parseUserTransferEvent } from '~utils/web3/eventLogs';
+import {
+  getEventLogs,
+  parseUserTransferEvent,
+  getLogsAndEvents,
+  getLogDate,
+} from '~utils/web3/eventLogs';
 import {
   getUserProfileStore,
   getUserInboxStore,
   getUserMetadataStore,
 } from '~data/stores';
 import { getUserTasksReducer, getUserProfileReducer } from './reducers';
-import { getUserTokenAddresses } from './utils';
+import {
+  getUserTokenAddresses,
+  transformNotificationEventNames,
+} from './utils';
 
 const {
   SUBSCRIBED_TO_COLONY,
@@ -49,11 +57,6 @@ const {
 } = USER_EVENT_TYPES;
 
 type UserProfileStoreMetadata = {|
-  walletAddress: Address,
-|};
-
-type UserInboxStoreMetadata = {|
-  inboxStoreAddress: string | OrbitDBAddress,
   walletAddress: Address,
 |};
 
@@ -88,11 +91,6 @@ const prepareMetadataStoreQuery = async (
 ) =>
   metadata.metadataStoreAddress ? getUserMetadataStore(ddb)(metadata) : null;
 
-const prepareInboxStoreQuery = async (
-  { ddb }: { ddb: DDB },
-  metadata: UserInboxStoreMetadata,
-) => getUserInboxStore(ddb)(metadata);
-
 export const getUserProfile: Query<
   UserProfileStore,
   UserProfileStoreMetadata,
@@ -109,6 +107,8 @@ export const getUserProfile: Query<
        * event for this store, but flow doesn't know that.
        */
       walletAddress: '',
+      inboxStoreAddress: '',
+      metadataStoreAddress: '',
     });
   },
 };
@@ -375,19 +375,215 @@ export const checkUsernameIsAvailable: Query<
 };
 
 export const getUserInboxActivity: Query<
-  UserInboxStore,
-  UserInboxStoreMetadata,
-  *,
+  {| userInboxStore: UserInboxStore, colonyClient: ColonyClient |},
+  {|
+    colonyAddress: Address,
+    inboxStoreAddress: OrbitDBAddress,
+    walletAddress: Address,
+  |},
+  void,
   *,
 > = {
   name: 'getUserInboxActivity',
-  context: [CONTEXT.DDB_INSTANCE],
-  prepare: prepareInboxStoreQuery,
-  async execute(userInboxStore) {
+  context: [CONTEXT.COLONY_MANAGER, CONTEXT.DDB_INSTANCE],
+  async prepare(
+    {
+      colonyManager,
+      ddb,
+    }: {|
+      colonyManager: ColonyManager,
+      ddb: DDB,
+    |},
+    {
+      colonyAddress,
+      inboxStoreAddress,
+      walletAddress,
+    }: {|
+      colonyAddress: Address,
+      inboxStoreAddress: OrbitDBAddress,
+      walletAddress: Address,
+    |},
+  ) {
+    const colonyClient = await colonyManager.getColonyClient(colonyAddress);
+    const userInboxStore = await getUserInboxStore(ddb)({
+      inboxStoreAddress,
+      walletAddress,
+    });
+    return {
+      userInboxStore,
+      colonyClient,
+    };
+  },
+  async execute({ userInboxStore, colonyClient }) {
+    const {
+      adapter: { provider },
+      contract: { address: colonyAddress },
+      events: {
+        ColonyAdministrationRoleSet,
+        ColonyLabelRegistered,
+        DomainAdded,
+      },
+      tokenClient,
+      tokenClient: {
+        events: { Mint },
+      },
+    } = colonyClient;
+    /*
+     * Fetch the Colony's RAW Transactions Logs and Events
+     *
+     * @note For some reason Flow is complaining about `events` not existing as
+     * a prop on the Promise class.
+     * This is very weird, as all other instances of calling this method work.
+     * I think it doesn't inffer the actual promise result properly.
+     */
+    /* $FlowFixMe */
+    const { events, logs } = await getLogsAndEvents(
+      colonyClient,
+      {},
+      {
+        blocksBack: 400000,
+        events: [
+          ColonyAdministrationRoleSet,
+          ColonyLabelRegistered,
+          DomainAdded,
+        ],
+      },
+    );
+    /*
+     * @note These are "fake" colony client event names, only used for easier
+     * separation of events.
+     *
+     * As it stands in the contracts, we only have the `ColonyAdministrationRoleSet`
+     * event, the deciding factor being the `setTo` prop being true/false
+     *
+     * We're changing this to make it easier to do 1-to-1 transformation of event names
+     */
+    let cleanedEvents = events
+      .map(({ eventName, setTo, ...restOfEvent }) => {
+        let modifiedEventName = eventName;
+        if (eventName === 'ColonyAdministrationRoleSet') {
+          if (setTo) {
+            modifiedEventName = 'ColonyAdministrationRoleSetAdded';
+          } else {
+            modifiedEventName = 'ColonyAdministrationRoleSetRemoved';
+          }
+        }
+        return {
+          ...restOfEvent,
+          setTo,
+          eventName: modifiedEventName,
+        };
+      })
+      .slice(4);
+    /*
+     * @note Manually set the `ColonyLabelRegistered` event
+     *
+     * Since that event doesn't show up for some reason, maybe a bug ?
+     * But use the event name from the others (eg: DomainAdded, ColonyAdminRoleSet)
+     */
+    cleanedEvents.unshift({
+      eventName: 'ColonyLabelRegistered',
+    });
+    /*
+     * Fetch the Colony's RAW Token Transactions Logs and Events
+     */
+    const {
+      logs: transferLogs,
+      events: transferEvents,
+    } = await getLogsAndEvents(
+      tokenClient,
+      {},
+      {
+        blocksBack: 400000,
+        events: [Mint],
+      },
+    );
+    /*
+     * @note We need to filter both the transaction logs and events to only
+     * match the new current colony (based on the address)
+     */
+    const cleanedTransferEvents = transferEvents.filter(
+      ({ address }) => address === colonyAddress,
+    );
+    let cleanedTransferLogs = await Promise.all(
+      transferLogs.map(async transferLog => {
+        /*
+         * @note in order to filter the transaction logs, we need to fetch the
+         * full transaction, and extract the the destination address, "to"
+         *
+         * For newly minted tokens, this will match the current colony's address
+         */
+        const { to } = await provider.getTransaction(
+          transferLog.transactionHash,
+        );
+        return {
+          ...transferLog,
+          to,
+        };
+      }),
+    );
+    /*
+     * @note Now that we have destination address in the transaction log, we
+     * can filter out the un-needed logs
+     */
+    cleanedTransferLogs = cleanedTransferLogs.filter(
+      ({ to }) => to === colonyAddress,
+    );
+    /*
+     * @note Since we're using the events array based on it's index, we need to
+     * merge the colony events with the transaction events before transforming
+     * the actual logs
+     */
+    cleanedEvents = cleanedEvents.concat(cleanedTransferEvents);
+    const transformedEvents = await Promise.all(
+      /*
+       * @note Remove the first four log entries.
+       *
+       * When creating a new colony, the first 5 log events are:
+       * - Root colony domain added with id `1`
+       * - Colony founder added as an admin
+       * - Root colony domain added with id `1` (same as the above, maybe a bug?)
+       * - Colony founder added as an admin (again, same as above, buggy bug ?)
+       * - Colony ENS name claimed
+       *
+       * Since we don't notify the user about the root domain creation, or the default admin role, we remove
+       * those first four log entries from the array
+       */
+      logs
+        .slice(4)
+        .concat(cleanedTransferLogs)
+        .map(async (log, index) => {
+          const { domainId, address: targetUserAddress } =
+            cleanedEvents[index] || {};
+          const timestamp = await getLogDate(provider, log);
+          const { from: sourceUserAddress } = await provider.getTransaction(
+            log.transactionHash,
+          );
+          const transformedEvent = {
+            id: log.transactionHash,
+            event: transformNotificationEventNames(
+              cleanedEvents[index].eventName,
+            ),
+            timestamp: new Date(timestamp).getTime() * 1000,
+            sourceUserAddress,
+            colonyAddress,
+            domainId,
+            targetUserAddress,
+            amount: cleanedEvents[index].amount,
+            tokenAddress: log.address,
+          };
+          return transformedEvent;
+        }),
+    );
     return userInboxStore
       .all()
-      .map(({ meta: { id, timestamp, userAddress }, payload }) =>
-        Object.assign({}, payload, { id, timestamp, userAddress }),
+      .map(({ meta: { id, timestamp, sourceUserAddress }, payload }) =>
+        Object.assign({}, payload, { id, timestamp, sourceUserAddress }),
+      )
+      .concat(transformedEvents)
+      .sort(
+        (firstEvent, secondEvent) =>
+          firstEvent.timestamp - secondEvent.timestamp,
       );
   },
 };

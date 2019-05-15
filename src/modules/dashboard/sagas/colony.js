@@ -21,6 +21,7 @@ import {
   executeCommand,
   executeQuery,
   selectAsJS,
+  putNotification,
 } from '~utils/saga/effects';
 import { ACTIONS } from '~redux';
 import { CONTEXT, getContext } from '~context';
@@ -70,6 +71,8 @@ import { fetchColony, fetchToken } from '../actionCreators';
 import { colonyAvatarHashSelector } from '../selectors';
 import { getColonyAddress, getColonyName } from './shared';
 
+import { NOTIFICATION_EVENT_COLONY_ENS_CREATED } from '~users/Inbox/events';
+
 function* colonyCreate({
   meta,
   payload: {
@@ -83,6 +86,10 @@ function* colonyCreate({
 }: Action<typeof ACTIONS.COLONY_CREATE>): Saga<void> {
   const currentUser = yield* selectAsJS(currentUserSelector);
   const usernameCreated = userDidClaimProfile(currentUser);
+  /*
+   * Get the current user's wallet address (we need that for notifications)
+   */
+  const walletAddress = yield select(walletAddressSelector);
 
   /* STEP 1: Create ids to be able to find transactions in their channel */
   const key = 'transaction.batch.createColony';
@@ -117,7 +124,6 @@ function* colonyCreate({
       /*
        * Create the profile store
        */
-      const walletAddress = yield select(walletAddressSelector);
       const { profileStore, metadataStore, inboxStore } = yield* executeCommand(
         createUserProfile,
         {
@@ -428,6 +434,16 @@ function* colonyCreate({
     );
     yield put(transactionReady(ids.setOldRolesRole));
     yield takeFrom(channels.setOldRolesRole, ACTIONS.TRANSACTION_SUCCEEDED);
+
+    /*
+     * Notification
+     */
+    yield putNotification({
+      colonyAddress,
+      colonyName,
+      event: NOTIFICATION_EVENT_COLONY_ENS_CREATED,
+      sourceUserAddress: walletAddress,
+    });
   } catch (error) {
     yield putError(ACTIONS.COLONY_CREATE_ERROR, error, meta);
   } finally {

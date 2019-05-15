@@ -13,6 +13,10 @@ const MockUser: UserType = {
     username: 'chewie',
     location: 'Kashyyyk',
     website: 'https://github.com/chewie',
+    inboxStoreAddress:
+      '/orbitdb/QmQBF89g7VHjcQVNGEf5jKZnU5r6J8G2vfHzBpivKqgxs6/userInbox.0x1afb213afa8729fa7908154b90e256f1be70989a',
+    metadataStoreAddress:
+      '/orbitdb/QmQBF89g7VHjcQVNGEf5jKZnU5r6J8G2vfHzBpivKqgxs6/userMetadata.0x1afb213afa8729fa7908154b90e256f1be70989a',
   },
   activities: [],
 };
