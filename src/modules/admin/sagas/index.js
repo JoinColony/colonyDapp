@@ -171,7 +171,7 @@ function* colonyMintTokens({
       if we got a Mint event log back (we will have on success) get the
       contract address it's from, and refetch the colony's balance for it
     */
-    const mintLog = receipt.toJS().logs[0];
+    const mintLog = receipt.logs[0];
     if (mintLog) {
       const tokenAddress = mintLog.address;
       yield put<Action<typeof ACTIONS.COLONY_TOKEN_BALANCE_FETCH>>({

@@ -13,6 +13,7 @@ import type { TokenReferenceRecordType, TokenReferenceType } from './index';
 
 type Shared = {|
   avatarHash?: string,
+  canMintNativeToken?: boolean,
   colonyAddress: Address,
   colonyName: ENSName,
   description?: string,
@@ -38,6 +39,7 @@ type ColonyRecordProps = {|
 
 const defaultValues: $Shape<ColonyRecordProps> = {
   avatarHash: undefined,
+  canMintNativeToken: undefined,
   colonyAddress: undefined,
   colonyName: undefined,
   description: undefined,

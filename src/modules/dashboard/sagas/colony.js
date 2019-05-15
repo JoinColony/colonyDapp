@@ -36,6 +36,7 @@ import { createUserProfile } from '../../users/data/commands';
 
 import {
   getColony,
+  getColonyCanMintNativeToken,
   getColonyTasks,
   getColonyTokenBalance,
 } from '../data/queries';
@@ -543,6 +544,13 @@ function* colonyFetch({
         [],
       ),
     );
+
+    // fetch whether the user is allowed to mint tokens via the colony
+    yield put<Action<typeof ACTIONS.COLONY_CAN_MINT_NATIVE_TOKEN_FETCH>>({
+      type: ACTIONS.COLONY_CAN_MINT_NATIVE_TOKEN_FETCH,
+      meta: { key: colonyAddress },
+      payload: { colonyAddress },
+    });
   } catch (error) {
     yield putError(ACTIONS.COLONY_FETCH_ERROR, error, meta);
   }
@@ -757,8 +765,39 @@ function* colonyTaskMetadataFetch({
   }
 }
 
+function* colonyCanMintNativeTokenFetch({
+  meta,
+  payload: { colonyAddress },
+}: Action<typeof ACTIONS.COLONY_CAN_MINT_NATIVE_TOKEN_FETCH>): Saga<void> {
+  try {
+    const canMintNativeToken = yield* executeQuery(
+      getColonyCanMintNativeToken,
+      {
+        metadata: { colonyAddress },
+      },
+    );
+    yield put<
+      Action<typeof ACTIONS.COLONY_CAN_MINT_NATIVE_TOKEN_FETCH_SUCCESS>,
+    >({
+      type: ACTIONS.COLONY_CAN_MINT_NATIVE_TOKEN_FETCH_SUCCESS,
+      meta,
+      payload: { canMintNativeToken, colonyAddress },
+    });
+  } catch (error) {
+    yield putError(
+      ACTIONS.COLONY_CAN_MINT_NATIVE_TOKEN_FETCH_ERROR,
+      error,
+      meta,
+    );
+  }
+}
+
 export default function* colonySagas(): Saga<void> {
   yield takeEvery(ACTIONS.COLONY_ADDRESS_FETCH, colonyAddressFetch);
+  yield takeEvery(
+    ACTIONS.COLONY_CAN_MINT_NATIVE_TOKEN_FETCH,
+    colonyCanMintNativeTokenFetch,
+  );
   yield takeEvery(ACTIONS.COLONY_CREATE, colonyCreate);
   yield takeEvery(ACTIONS.COLONY_FETCH, colonyFetch);
   yield takeEvery(ACTIONS.COLONY_NAME_FETCH, colonyNameFetch);

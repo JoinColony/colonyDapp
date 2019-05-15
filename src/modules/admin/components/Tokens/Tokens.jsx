@@ -23,7 +23,7 @@ import {
 } from '../../../dashboard/selectors';
 import { walletAddressSelector } from '../../../users/selectors';
 
-import { canMintTokens, canEditTokens } from '../../checks';
+import { canEditTokens } from '../../checks';
 
 import TokenList from './TokenList.jsx';
 
@@ -49,11 +49,12 @@ const MSG = defineMessages({
 });
 
 type Props = {
-  openDialog: (dialogName: string, dialogProps?: Object) => DialogType,
+  canMintNativeToken?: boolean,
   colonyAddress: Address,
+  openDialog: (dialogName: string, dialogProps?: Object) => DialogType,
 };
 
-const Tokens = ({ colonyAddress, openDialog }: Props) => {
+const Tokens = ({ canMintNativeToken, colonyAddress, openDialog }: Props) => {
   // permissions checks
   const { data: roles } = useDataFetcher<RolesType>(
     rolesFetcher,
@@ -61,10 +62,6 @@ const Tokens = ({ colonyAddress, openDialog }: Props) => {
     [colonyAddress],
   );
   const walletAddress = useMappedState(walletAddressSelector);
-  const canMint = useMemo(() => canMintTokens(roles, walletAddress), [
-    roles,
-    walletAddress,
-  ]);
   const canEdit = useMemo(() => canEditTokens(roles, walletAddress), [
     roles,
     walletAddress,
@@ -131,7 +128,7 @@ const Tokens = ({ colonyAddress, openDialog }: Props) => {
       </main>
       <aside className={styles.sidebar}>
         <ul>
-          {canMint && (
+          {canMintNativeToken && (
             <li>
               <Button
                 text={MSG.navItemMintNewTokens}

@@ -73,7 +73,12 @@ const navigationItems = (colony: ColonyType): Array<NavigationItem> => [
   {
     id: 2,
     title: MSG.tabTokens,
-    content: <Tokens colonyAddress={colony.colonyAddress} />,
+    content: (
+      <Tokens
+        colonyAddress={colony.colonyAddress}
+        canMintNativeToken={colony.canMintNativeToken}
+      />
+    ),
   },
   {
     id: 3,

@@ -75,6 +75,20 @@ export type ColonyActionTypes = {|
     {| hash: string |},
     WithKey,
   >,
+  COLONY_CAN_MINT_NATIVE_TOKEN_FETCH: ActionTypeWithPayloadAndMeta<
+    typeof ACTIONS.COLONY_CAN_MINT_NATIVE_TOKEN_FETCH,
+    {| colonyAddress: Address |},
+    WithKey,
+  >,
+  COLONY_CAN_MINT_NATIVE_TOKEN_FETCH_ERROR: ErrorActionType<
+    typeof ACTIONS.COLONY_CAN_MINT_NATIVE_TOKEN_FETCH_ERROR,
+    WithKey,
+  >,
+  COLONY_CAN_MINT_NATIVE_TOKEN_FETCH_SUCCESS: ActionTypeWithPayloadAndMeta<
+    typeof ACTIONS.COLONY_CAN_MINT_NATIVE_TOKEN_FETCH_SUCCESS,
+    {| canMintNativeToken: boolean, colonyAddress: Address |},
+    WithKey,
+  >,
   COLONY_CLAIM_TOKEN: UniqueActionType<
     typeof ACTIONS.COLONY_CLAIM_TOKEN,
     {| tokenAddress: string, colonyAddress: Address |},
