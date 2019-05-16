@@ -36,7 +36,7 @@
 }
 
 .notSet {
-  color: var(--grey-4);
-  font-style: italic;
   font-weight: var(--weight-normal);
+  font-style: italic;
+  color: var(--grey-4);
 }
