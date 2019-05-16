@@ -166,6 +166,20 @@ export type ColonyActionTypes = {|
     {| colonyAddress: Address, colonyName: ENSName |},
     WithKey,
   >,
+  COLONY_NATIVE_TOKEN_UNLOCK: UniqueActionType<
+    typeof ACTIONS.COLONY_NATIVE_TOKEN_UNLOCK,
+    {| colonyAddress: Address |},
+    void,
+  >,
+  COLONY_NATIVE_TOKEN_UNLOCK_ERROR: ErrorActionType<
+    typeof ACTIONS.COLONY_NATIVE_TOKEN_UNLOCK_ERROR,
+    void,
+  >,
+  COLONY_NATIVE_TOKEN_UNLOCK_SUCCESS: UniqueActionType<
+    typeof ACTIONS.COLONY_NATIVE_TOKEN_UNLOCK_SUCCESS,
+    void,
+    void,
+  >,
   COLONY_ADDRESS_FETCH: ActionTypeWithPayloadAndMeta<
     typeof ACTIONS.COLONY_ADDRESS_FETCH,
     {| colonyName: ENSName |},

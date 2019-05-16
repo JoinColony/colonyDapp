@@ -18,6 +18,7 @@ import TaskEditDialog from '~dashboard/TaskEditDialog';
 import TaskInviteDialog from '~dashboard/Task/TaskInviteDialog.jsx';
 import { TaskClaimRewardDialog } from '~dashboard/TaskClaimReward';
 import RecoveryModeDialog from '~admin/RecoveryModeDialog';
+import UnlockTokenDialog from '~admin/Profile/UnlockTokenDialog.jsx';
 import UpgradeContractDialog from '~admin/UpgradeContractDialog';
 
 const dialogComponents: Object = {
@@ -30,6 +31,7 @@ const dialogComponents: Object = {
   TaskEditDialog,
   TaskInviteDialog,
   TokenMintDialog,
+  UnlockTokenDialog,
   UpgradeContractDialog,
   UserTokenEditDialog,
   WorkerRatingDialog,

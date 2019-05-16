@@ -159,6 +159,27 @@ export const getColony: Query<
   },
   async execute({ colonyStore, colonyClient }, { colonyAddress }) {
     const { inRecoveryMode } = await colonyClient.isInRecoveryMode.call();
+    const { version } = await colonyClient.getVersion.call();
+
+    // wrap this in a try/catch since it will fail if token doesn't support locking
+    let isNativeTokenLocked;
+    try {
+      ({
+        locked: isNativeTokenLocked,
+      } = await colonyClient.tokenClient.isLocked.call());
+    } catch (error) {
+      isNativeTokenLocked = false;
+    }
+
+    // estimate will throw if we're unable to unlock
+    let canUnlockNativeToken;
+    try {
+      await colonyClient.tokenClient.unlock.estimate({});
+      canUnlockNativeToken = true;
+    } catch (error) {
+      canUnlockNativeToken = false;
+    }
+
     return colonyStore
       .all()
       .filter(({ type: eventType }) => COLONY_EVENT_TYPES[eventType])
@@ -168,12 +189,15 @@ export const getColony: Query<
         colonyName: '',
         displayName: '',
         inRecoveryMode,
+        isNativeTokenLocked,
+        canUnlockNativeToken,
         tokens: {
           // also include Ether
           [ZERO_ADDRESS]: {
             address: ZERO_ADDRESS,
           },
         },
+        version,
       });
   },
 };
