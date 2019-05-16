@@ -68,6 +68,8 @@ const taskFeedItemsReducer: ReducerType<
     TASK_COMMENT_ADD_SUCCESS: *,
     TASK_CREATE_SUCCESS: *,
     TASK_FEED_ITEMS_FETCH_SUCCESS: *,
+    TASK_FEED_ITEMS_LQ_START: *,
+    TASK_FEED_ITEMS_LQ_YIELD: *,
     TASK_FINALIZE_SUCCESS: *,
     TASK_SEND_WORK_INVITE_SUCCESS: *,
     TASK_SEND_WORK_REQUEST_SUCCESS: *,
@@ -90,6 +92,29 @@ const taskFeedItemsReducer: ReducerType<
           record: List(events.map(createTaskFeedItemRecord)),
         }),
       );
+    }
+
+    case ACTIONS.TASK_FEED_ITEMS_LQ_START: {
+      const { draftId } = action.payload;
+      return state.getIn([draftId, 'record'])
+        ? state
+        : state.set(
+            draftId,
+            DataRecord({
+              record: List(),
+            }),
+          );
+    }
+
+    case ACTIONS.TASK_FEED_ITEMS_LQ_YIELD: {
+      const { draftId, event } = action.payload;
+      return state
+        .getIn([draftId, 'record'] || List())
+        .find(({ id }) => id === event.meta.id)
+        ? state
+        : state.updateIn([draftId, 'record'], list =>
+            list.push(createTaskFeedItemRecord(event)),
+          );
     }
 
     /*

@@ -50,12 +50,12 @@ class TaskAccessController extends AbstractAccessController<
   }
 
   async save() {
-    const isAllowed = await this.can(
-      'is-colony-founder-or-admin',
-      this._purserWallet.address,
-    );
-    if (!isAllowed)
-      throw new Error('Cannot create task database, user not allowed');
+    // const isAllowed = await this.can(
+    //   'is-colony-founder-or-admin',
+    //   this._purserWallet.address,
+    // );
+    // if (!isAllowed)
+    //   throw new Error('Cannot create task database, user not allowed');
 
     return `/colony/${this._colonyAddress}/task/${this._draftId}`;
   }

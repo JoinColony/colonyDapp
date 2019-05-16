@@ -37,6 +37,9 @@ class EventStore extends Store {
     return this.append(value);
   }
 
+  /*
+   * This is currently unused; do we still need it?
+   */
   async query(filter: * = {}) {
     return this._orbitStore
       .iterator(filter)
@@ -76,5 +79,47 @@ class EventStore extends Store {
       .collect()
       .map(entry => this.constructor.decorateEntry(entry));
   }
+
+  /*
+   * Wrap the store iterator such that the entries are decorated.
+   */
+  iterator(options: EventIteratorOptions = { limit: -1 }) {
+    const iter = this._orbitStore.iterator(options);
+    return {
+      collect: iter.collect,
+      next: () => {
+        const { done, value } = iter.next();
+        return {
+          done,
+          value: value ? this.constructor.decorateEntry(value) : null,
+        };
+      },
+    };
+  }
+
+  onReplicated(handler: (logsLength: number) => void) {
+    const wrappedHandler = (address: string, logsLength: number) =>
+      handler(logsLength);
+    this._orbitStore.events.on('replicated', wrappedHandler);
+    return {
+      close: () => {
+        this._orbitStore.events.removeListener('replicated', wrappedHandler);
+      },
+      handler: wrappedHandler,
+    };
+  }
+
+  onWrite(handler: (address: string, entry: *, remoteHeads: *) => void) {
+    const wrappedHandler = (address: string, entry: Entry) =>
+      handler(address, this.constructor.decorateEntry(entry));
+    this._orbitStore.events.on('write', wrappedHandler);
+    return {
+      close: () => {
+        this._orbitStore.events.removeListener('write', wrappedHandler);
+      },
+      handler: wrappedHandler,
+    };
+  }
 }
+
 export default EventStore;

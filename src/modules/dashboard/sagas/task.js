@@ -7,6 +7,7 @@ import {
   call,
   put,
   select,
+  take,
   takeEvery,
   takeLeading,
 } from 'redux-saga/effects';
@@ -18,6 +19,7 @@ import type { Address } from '~types';
 import { CONTEXT, getContext } from '~context';
 import {
   executeCommand,
+  executeLiveQuery,
   executeQuery,
   putError,
   raceError,
@@ -572,6 +574,34 @@ function* taskFeedItemsFetch({
   }
 }
 
+function* taskFeedItemsLQStart({
+  payload: { colonyAddress, draftId },
+  meta,
+}: *): Saga<void> {
+  try {
+    // FIXME the channel should be cancellable by taking an action
+    const chan = yield call(executeLiveQuery, getTaskFeedItems, {
+      metadata: { colonyAddress, draftId },
+    });
+    while (true) {
+      const event = yield take(chan);
+      yield put({
+        type: ACTIONS.TASK_FEED_ITEMS_LQ_YIELD,
+        meta,
+        payload: {
+          colonyAddress,
+          draftId,
+          event,
+        },
+      });
+    }
+  } catch (caughtError) {
+    yield putError(ACTIONS.TASK_FEED_ITEMS_LQ_ERROR, caughtError, meta);
+  } finally {
+    // FIXME cancel the channel
+  }
+}
+
 function* taskCommentAdd({
   payload: { colonyAddress, draftId, commentData, taskTitle },
   meta,
@@ -660,6 +690,7 @@ export default function* tasksSagas(): any {
   yield takeEvery(ACTIONS.TASK_COMMENT_ADD, taskCommentAdd);
   yield takeEvery(ACTIONS.TASK_CREATE, taskCreate);
   yield takeEvery(ACTIONS.TASK_FEED_ITEMS_FETCH, taskFeedItemsFetch);
+  yield takeEvery(ACTIONS.TASK_FEED_ITEMS_LQ_START, taskFeedItemsLQStart);
   yield takeEvery(ACTIONS.TASK_FETCH, taskFetch);
   yield takeEvery(ACTIONS.TASK_FINALIZE, taskFinalize);
   yield takeEvery(ACTIONS.TASK_SEND_WORK_INVITE, taskSendWorkInvite);

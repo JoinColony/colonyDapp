@@ -101,6 +101,23 @@ const prepare = async (
   };
 };
 
+const FEED_ITEM_TYPES = [
+  DOMAIN_SET,
+  DUE_DATE_SET,
+  PAYOUT_SET,
+  SKILL_SET,
+  TASK_CANCELLED,
+  TASK_CLOSED,
+  TASK_CREATED,
+  TASK_DESCRIPTION_SET,
+  TASK_FINALIZED,
+  TASK_TITLE_SET,
+  WORK_INVITE_SENT,
+  WORK_REQUEST_CREATED,
+  WORKER_ASSIGNED,
+  WORKER_UNASSIGNED,
+];
+
 // eslint-disable-next-line import/prefer-default-export
 export const getTaskFeedItems: Query<
   {| taskStore: TaskStore, commentsStore: CommentsStore |},
@@ -116,27 +133,10 @@ export const getTaskFeedItems: Query<
       typeof COMMENT_POSTED,
     >[] = commentsStore.all().filter(({ type }) => type === COMMENT_POSTED);
 
-    // Include only events we can treat as feed items
-    const feedItemTypes = [
-      DOMAIN_SET,
-      DUE_DATE_SET,
-      PAYOUT_SET,
-      SKILL_SET,
-      TASK_CANCELLED,
-      TASK_CLOSED,
-      TASK_CREATED,
-      TASK_DESCRIPTION_SET,
-      TASK_FINALIZED,
-      TASK_TITLE_SET,
-      WORK_INVITE_SENT,
-      WORK_REQUEST_CREATED,
-      WORKER_ASSIGNED,
-      WORKER_UNASSIGNED,
-    ];
-
     const taskEvents: TaskFeedItemEvents[] = taskStore
       .all()
-      .filter(({ type }) => feedItemTypes.includes(type));
+      // Include only events we can treat as feed items
+      .filter(({ type }) => FEED_ITEM_TYPES.includes(type));
 
     return [...commentEvents, ...taskEvents].sort(
       (a, b) => a.meta.timestamp - b.meta.timestamp,

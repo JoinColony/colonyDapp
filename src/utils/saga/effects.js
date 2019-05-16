@@ -2,6 +2,7 @@
 
 import type { Channel, Saga } from 'redux-saga';
 
+import { eventChannel, END, buffers } from 'redux-saga';
 import { all, call, put, race, take, select } from 'redux-saga/effects';
 
 import type { ErrorActionType, TakeFilter } from '~redux';
@@ -151,6 +152,77 @@ export function* executeQuery<D, M, A, R>(
   });
   log.verbose(`Executed query "${query.name}"`, result);
   return result;
+}
+
+export function* executeLiveQuery<D, M, A, R>(
+  query: Query<D, M, A, R>,
+  {
+    args,
+    metadata,
+  }: {
+    args?: A,
+    metadata?: M,
+  },
+): Saga<R> {
+  log.verbose(`Executing liveQuery "${query.name}"`, { args, metadata });
+
+  // FIXME use a function from the query object that we can create an eventChannel with
+  const { context, prepare } = query;
+
+  const contextValues = yield all(
+    context.map(contextName => call(getContext, contextName)),
+  );
+  const prepareContext = context.reduce(
+    (contextObj, contextName, index) => ({
+      ...contextObj,
+      [contextName]: contextValues[index],
+    }),
+    {},
+  );
+
+  // FIXME make this generic! I'm cheating here, using this function for
+  // just the task feed; it should be generic.
+  const { commentsStore } = yield call(prepare, prepareContext, metadata);
+
+  return eventChannel(emitter => {
+    // Event meta IDs we have emitted
+    const ids = [];
+
+    // Emit all loaded events
+    const events = commentsStore.all();
+    while (events.length) {
+      const event = events.shift();
+      ids.push(event.meta.id);
+      emitter(event);
+    }
+
+    // Handle events as they are replicated or written
+    const { close: closeOnReplicated } = commentsStore.onReplicated(() => {
+      commentsStore
+        .all()
+        // TODO we could use a 'skip' value, because the replicated
+        // event gives us a 'logs.length' value. Alternatively, we could
+        // change orbit to send us the most recent entries in the event?
+        .filter(({ meta: { id } }) => !ids.includes(id))
+        .forEach(event => {
+          ids.push(event.meta.id);
+          emitter(event);
+        });
+    });
+    const { close: closeOnWrite } = commentsStore.onWrite((address, event) => {
+      if (!ids.includes(event.meta.id)) {
+        ids.push(event.meta.id);
+        emitter(event);
+      }
+    });
+
+    return () => {
+      // Close the store event subscriptions
+      closeOnReplicated();
+      closeOnWrite();
+    };
+    // TODO this could easily be exceeded...
+  }, buffers.expanding(1000));
 }
 
 export function* executeCommand<D, M, A, R>(

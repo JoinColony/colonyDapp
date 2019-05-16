@@ -1,14 +1,16 @@
 /* @flow */
 
 // $FlowFixMe
+import { useDispatch } from 'redux-react-hook';
 import React, { useRef, useLayoutEffect } from 'react';
 
 import type { Address } from '~types';
 import type { TaskDraftId, TaskFeedItemType } from '~immutable';
 
 import { SpinnerLoader } from '~core/Preloaders';
-import { useDataFetcher } from '~utils/hooks';
+import { useDataFetcher, useSelector } from '~utils/hooks';
 
+import { taskFeedItemsSelector } from '../../selectors';
 import TaskFeedCompleteInfo from './TaskFeedCompleteInfo.jsx';
 import TaskFeedEvent from './TaskFeedEvent.jsx';
 import TaskFeedComment from './TaskFeedComment.jsx';
@@ -16,6 +18,7 @@ import TaskFeedRating from './TaskFeedRating.jsx';
 import { taskFeedItemsFetcher } from '../../fetchers';
 
 import styles from './TaskFeed.css';
+import { ACTIONS } from '~redux';
 
 const displayName = 'dashboard.TaskFeed';
 
@@ -41,9 +44,21 @@ const TaskFeed = ({ colonyAddress, draftId }: Props) => {
     [bottomEl],
   );
 
-  const { data: feedItems, isFetching: isFetchingFeedItems } = useDataFetcher<
-    TaskFeedItemType[],
-  >(taskFeedItemsFetcher, [draftId], [colonyAddress, draftId]);
+  // FIXME create an effect like `useDataFetcher` that runs a live query
+  // and provides the same sort of interface, and also closes it when
+  // the component is unmounted.
+  //
+  // Don't expect this to work as-is; actions need to be dispatched with
+  // the redux devtools :-/
+  //
+  // const { data: feedItems, isFetching: isFetchingFeedItems } = useDataFetcher<
+  //   TaskFeedItemType[],
+  // >(taskFeedItemsFetcher, [draftId], [colonyAddress, draftId]);
+
+  // Fake the same result as useDataFetcher
+  const data = useSelector(taskFeedItemsSelector, [draftId]);
+  const isFetchingFeedItems = !(data && data.record);
+  const feedItems = (data && data.record) || [];
 
   const nFeedItems = feedItems ? feedItems.length : 0;
   useLayoutEffect(scrollToEnd, [nFeedItems]);
