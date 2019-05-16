@@ -61,7 +61,7 @@ const stepFunction = (
 
     /* Standard wizard flow  */
     if (step === 0) {
-      if (usernameCreated) {
+      if (usernameCreated && stepArray[0].name === 'StepUserName') {
         stepArray.shift();
         return stepArray[step];
       }
