@@ -16,11 +16,9 @@ import withDialog from '~core/Dialog/withDialog';
 import { useDataFetcher } from '~utils/hooks';
 
 import { rolesFetcher, tokenFetcher } from '../../../dashboard/fetchers';
+import { useColonyNativeToken } from '../../../dashboard/hooks/useColonyNativeToken';
 
-import {
-  colonyTokensSelector,
-  colonyNativeTokenSelector,
-} from '../../../dashboard/selectors';
+import { colonyTokensSelector } from '../../../dashboard/selectors';
 import { walletAddressSelector } from '../../../users/selectors';
 
 import { canEditTokens } from '../../checks';
@@ -74,12 +72,7 @@ const Tokens = ({ canMintNativeToken, colonyAddress, openDialog }: Props) => {
   );
   const tokens = useMappedState(mapColonyTokens);
 
-  // get the native token info from reference
-  const mapColonyNativeToken = useCallback(
-    state => colonyNativeTokenSelector(state, colonyAddress),
-    [colonyAddress],
-  );
-  const nativeTokenReference = useMappedState(mapColonyNativeToken);
+  const nativeTokenReference = useColonyNativeToken(colonyAddress);
   const nativeTokenAddress = nativeTokenReference
     ? nativeTokenReference.address
     : '';

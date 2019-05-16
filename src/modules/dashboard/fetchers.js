@@ -4,7 +4,6 @@ import {
   colonyAddressSelector,
   colonyDomainsSelector,
   colonyNameSelector,
-  colonyNativeTokenSelector,
   colonyRolesSelector,
   colonySelector,
   colonyTaskMetadataSelector,
@@ -47,12 +46,6 @@ export const colonyAddressFetcher = Object.freeze({
 export const colonyNameFetcher = Object.freeze({
   select: colonyNameSelector,
   fetch: fetchColonyName,
-  ttl: 1000 * 60, // 1 minute
-});
-
-export const colonyNativeTokenFetcher = Object.freeze({
-  select: colonyNativeTokenSelector,
-  fetch: fetchColony,
   ttl: 1000 * 60, // 1 minute
 });
 
