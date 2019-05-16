@@ -21,6 +21,7 @@ export const domainSelector = (
   colonyAddress: Address,
   domainId: DomainId,
 ) =>
-  state
-    .getIn([ns, DASHBOARD_ALL_DOMAINS, colonyAddress, 'record'], ImmutableSet())
-    .find(({ id }) => id === domainId);
+  (
+    state.getIn([ns, DASHBOARD_ALL_DOMAINS, colonyAddress, 'record']) ||
+    ImmutableSet()
+  ).find(({ id }) => id === domainId);

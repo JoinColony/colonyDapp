@@ -1,6 +1,6 @@
 /* @flow */
 
-import { fromJS, Map as ImmutableMap } from 'immutable';
+import { Map as ImmutableMap, Set as ImmutableSet, List } from 'immutable';
 
 import type { ReducerType } from '~redux';
 import type { TaskRecordType, TasksMap } from '~immutable';
@@ -120,15 +120,41 @@ const tasksReducer: ReducerType<
   |},
 > = (state = ImmutableMap(), action) => {
   switch (action.type) {
-    case ACTIONS.TASK_FETCH_SUCCESS:
     case ACTIONS.TASK_CREATE_SUCCESS: {
-      const { draftId, task } = action.payload;
+      const {
+        draftId,
+        task: { colonyAddress, creatorAddress },
+      } = action.payload;
       return state.set(
         draftId,
         DataRecord({
           error: undefined,
           isFetching: false,
-          record: TaskRecord(fromJS(task)),
+          record: TaskRecord({ colonyAddress, creatorAddress, draftId }),
+        }),
+      );
+    }
+
+    case ACTIONS.TASK_FETCH_SUCCESS: {
+      const {
+        draftId,
+        task: { requests = [], invites = [], payouts = [], ...task },
+      } = action.payload;
+      return state.set(
+        draftId,
+        DataRecord({
+          error: undefined,
+          isFetching: false,
+          record: TaskRecord({
+            ...task,
+            requests: ImmutableSet(requests),
+            invites: ImmutableSet(invites),
+            payouts: List(
+              payouts.map(({ amount, token }) =>
+                TaskPayoutRecord({ amount, token: TokenRecord(token) }),
+              ),
+            ),
+          }),
         }),
       );
     }

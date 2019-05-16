@@ -2,7 +2,7 @@
 
 // $FlowFixMe update flow
 import React, { useCallback } from 'react';
-import { defineMessages } from 'react-intl';
+import { defineMessages, FormattedMessage } from 'react-intl';
 
 import type { TaskProps } from '~immutable';
 
@@ -18,9 +18,13 @@ import styles from './TaskSkills.css';
 import taskSkillsTree from './taskSkillsTree';
 
 const MSG = defineMessages({
+  notSet: {
+    id: 'dashboard.TaskSkills.notSet',
+    defaultMessage: 'Skill not set',
+  },
   title: {
     id: 'dashboard.TaskSkills.title',
-    defaultMessage: 'Skills',
+    defaultMessage: 'Skill',
   },
   selectSkill: {
     id: 'dashboard.TaskSkills.selectSkill',
@@ -70,27 +74,32 @@ const TaskSkills = ({
 
   return (
     <div className={styles.main}>
-      {isTaskCreator && (
-        <ItemsList
-          list={taskSkillsTree}
-          handleSetItem={handleSetSkill}
-          name="taskSkills"
-          connect={false}
-          showArrow={false}
-          itemId={skillId}
-        >
-          <div className={styles.controls}>
-            <Heading
-              appearance={{ size: 'small', margin: 'none' }}
-              text={MSG.title}
-            />
+      <ItemsList
+        list={taskSkillsTree}
+        handleSetItem={handleSetSkill}
+        name="taskSkills"
+        connect={false}
+        showArrow={false}
+        itemId={skillId}
+      >
+        <div className={styles.controls}>
+          <Heading
+            appearance={{ size: 'small', margin: 'none' }}
+            text={MSG.title}
+          />
+          {isTaskCreator && (
             <Button
               appearance={{ theme: 'blue', size: 'small' }}
               text={MSG.selectSkill}
               textValues={{ skillSelected: skillId }}
             />
-          </div>
-        </ItemsList>
+          )}
+        </div>
+      </ItemsList>
+      {!skillId && (
+        <span className={styles.notSet}>
+          <FormattedMessage {...MSG.notSet} />
+        </span>
       )}
     </div>
   );

@@ -2,7 +2,7 @@
 
 // $FlowFixMe upgrade flow
 import React, { useCallback, useState } from 'react';
-import { defineMessages, FormattedDate } from 'react-intl';
+import { defineMessages, FormattedDate, FormattedMessage } from 'react-intl';
 
 import Heading from '~core/Heading';
 import Button, { ActionButton } from '~core/Button';
@@ -17,7 +17,11 @@ import { mergePayload } from '~utils/actions';
 const MSG = defineMessages({
   title: {
     id: 'dashboard.TaskDate.title',
-    defaultMessage: 'Due Date',
+    defaultMessage: 'Due date',
+  },
+  notSet: {
+    id: 'dashboard.TaskDate.notSet',
+    defaultMessage: 'Date not set',
   },
   selectDate: {
     id: 'dashboard.TaskDate.selectDate',
@@ -97,13 +101,17 @@ const TaskDate = ({
         )}
       </div>
       <div className={styles.currentDate}>
-        {selectedDate && (
+        {selectedDate ? (
           <FormattedDate
             value={selectedDate}
             month="long"
             day="numeric"
             year="numeric"
           />
+        ) : (
+          <span className={styles.notSet}>
+            <FormattedMessage {...MSG.notSet} />
+          </span>
         )}
       </div>
     </div>

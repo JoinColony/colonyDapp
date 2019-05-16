@@ -18,3 +18,7 @@
 .controls h5 {
   display: inline-block;
 }
+
+.notSet {
+  font-style: italic;
+}
