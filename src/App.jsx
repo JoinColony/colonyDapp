@@ -1,11 +1,14 @@
 /* @flow */
 
 import React from 'react';
+import Favicon from 'react-favicon';
 import { Provider as ReduxProvider } from 'react-redux';
 import { StoreContext } from 'redux-react-hook';
 import { addLocaleData, IntlProvider } from 'react-intl';
 import en from 'react-intl/locale-data/en';
 import { ConnectedRouter } from 'connected-react-router';
+
+import favicon from './favicon';
 
 import layout from '~styles/layout.css';
 import { DialogProvider } from '~core/Dialog';
@@ -28,6 +31,7 @@ const App = ({ store, history }: Props) => (
         <ConnectedRouter history={history}>
           <DialogProvider dialogComponents={dialogComponents}>
             <div className={layout.stretch}>
+              <Favicon url={favicon()} />
               <Routes />
             </div>
           </DialogProvider>
