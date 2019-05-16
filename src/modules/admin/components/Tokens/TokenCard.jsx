@@ -40,7 +40,7 @@ const TokenCard = ({
   return token && balance !== undefined ? (
     <Card key={address} className={styles.main}>
       <div className={styles.cardHeading}>
-        <TokenIcon token={tokenReference} name={token.name} size="s" />
+        <TokenIcon token={tokenReference} name={token.name} size="xs" />
         <div className={styles.tokenSymbol}>
           {token.symbol || (
             <>
@@ -58,6 +58,7 @@ const TokenCard = ({
         }
       >
         <Numeral
+          className={styles.balanceNumeral}
           integerSeparator=""
           truncate={2}
           unit={token.decimals || 18}
@@ -65,7 +66,13 @@ const TokenCard = ({
         />
       </div>
       <div className={styles.cardFooter}>
-        {tokenIsETH(token) && <EthUsd value={balance || 0} truncate={3} />}
+        {tokenIsETH(token) && (
+          <EthUsd
+            className={styles.ethUsdText}
+            value={balance || 0}
+            truncate={3}
+          />
+        )}
       </div>
     </Card>
   ) : (

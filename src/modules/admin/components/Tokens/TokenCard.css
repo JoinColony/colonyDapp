@@ -4,12 +4,12 @@
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  min-height: 240px;
+  min-height: 220px;
 }
 
 .cardHeading {
   display: flex;
-  align-items: start;
+  align-items: center;
   height: headerFooterHeights;
 }
 
@@ -26,12 +26,19 @@
 
 .tokenSymbol {
   margin-left: 15px;
+  font-size: var(--size-small);
+  font-weight: var(--weight-medium);
+  color: var(--grey-dark);
 }
 
 .balanceContent {
   display: flex;
   justify-content: center;
   margin-top: calc(headerFooterHeights / 2);
+  font-size: var(--size-medium-l);
+}
+
+.balanceNumeral {
   font-size: var(--size-medium-l);
 }
 
@@ -47,7 +54,11 @@
   align-items: flex-end;
   height: headerFooterHeights;
   font-weight: var(--weight-thin);
-  color: var(--temp-grey-4);
+  color: var(--grey-3);
+}
+
+.ethUsdText {
+  font-weight: var(--weight-semi);
 }
 
 .cardFooter span {

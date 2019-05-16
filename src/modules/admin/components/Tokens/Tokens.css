@@ -1,6 +1,6 @@
 .main {
   display: grid;
-  grid-template-columns: minmax(800px, auto) 180px;
+  grid-template-columns: minmax(700px, auto) 180px;
   column-gap: 80px;
 }
 
