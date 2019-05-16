@@ -14,6 +14,7 @@ import type { TokenReferenceRecordType, TokenReferenceType } from './index';
 type Shared = {|
   avatarHash?: string,
   canMintNativeToken?: boolean,
+  canUnlockNativeToken?: boolean,
   colonyAddress: Address,
   colonyName: ENSName,
   description?: string,
@@ -21,6 +22,7 @@ type Shared = {|
   guideline?: string,
   id?: number,
   inRecoveryMode?: boolean,
+  isNativeTokenLocked?: boolean,
   version?: number,
   website?: string,
 |};
@@ -40,6 +42,7 @@ type ColonyRecordProps = {|
 const defaultValues: $Shape<ColonyRecordProps> = {
   avatarHash: undefined,
   canMintNativeToken: undefined,
+  canUnlockNativeToken: undefined,
   colonyAddress: undefined,
   colonyName: undefined,
   description: undefined,
@@ -47,6 +50,7 @@ const defaultValues: $Shape<ColonyRecordProps> = {
   guideline: undefined,
   id: undefined,
   inRecoveryMode: false,
+  isNativeTokenLocked: undefined,
   tokens: ImmutableMap(),
   version: undefined,
   website: undefined,

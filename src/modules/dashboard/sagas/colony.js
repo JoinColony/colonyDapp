@@ -808,6 +808,34 @@ function* colonyCanMintNativeTokenFetch({
   }
 }
 
+function* colonyNativeTokenUnlock({
+  meta,
+  payload: { colonyAddress },
+}: Action<typeof ACTIONS.COLONY_NATIVE_TOKEN_UNLOCK>): Saga<void> {
+  const txChannel = yield call(getTxChannel, meta.id);
+
+  try {
+    yield fork(createTransaction, meta.id, {
+      context: TOKEN_CONTEXT,
+      methodName: 'unlock',
+      identifier: colonyAddress,
+    });
+
+    yield takeFrom(txChannel, ACTIONS.TRANSACTION_SUCCEEDED);
+
+    yield put({
+      type: ACTIONS.COLONY_NATIVE_TOKEN_UNLOCK_SUCCESS,
+      meta,
+    });
+
+    yield put(fetchColony(colonyAddress));
+  } catch (error) {
+    yield putError(ACTIONS.COLONY_NATIVE_TOKEN_UNLOCK_ERROR, error, meta);
+  } finally {
+    txChannel.close();
+  }
+}
+
 export default function* colonySagas(): Saga<void> {
   yield takeEvery(ACTIONS.COLONY_ADDRESS_FETCH, colonyAddressFetch);
   yield takeEvery(
@@ -817,6 +845,7 @@ export default function* colonySagas(): Saga<void> {
   yield takeEvery(ACTIONS.COLONY_CREATE, colonyCreate);
   yield takeEvery(ACTIONS.COLONY_FETCH, colonyFetch);
   yield takeEvery(ACTIONS.COLONY_NAME_FETCH, colonyNameFetch);
+  yield takeEvery(ACTIONS.COLONY_NATIVE_TOKEN_UNLOCK, colonyNativeTokenUnlock);
   yield takeEvery(ACTIONS.COLONY_PROFILE_UPDATE, colonyProfileUpdate);
   yield takeEvery(ACTIONS.COLONY_RECOVERY_MODE_ENTER, colonyRecoveryModeEnter);
   yield takeEvery(ACTIONS.COLONY_TASK_METADATA_FETCH, colonyTaskMetadataFetch);

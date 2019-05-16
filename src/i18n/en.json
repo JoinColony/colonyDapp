@@ -65,6 +65,8 @@
     "transaction.colony.setRootRole.setOneTxRole.title": "Give Permission to OneTxPayment Extension",
     "transaction.colony.setRootRole.setOldRolesRole.title": "Give Permission to OldRoles Extension",
 
+    "transaction.token.unlock.title": "Unlock Token",
+
     "transaction.colony.setTaskBrief.title": "Update Task Brief",
     "transaction.colony.setTaskBrief.description": "Update Task Brief",
 
