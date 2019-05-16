@@ -49,18 +49,16 @@ class TaskAccessController extends AbstractAccessController<
       throw new Error('Could not get wallet address. Is it unlocked?');
   }
 
-  async save() {
-    // eslint-disable-next-line no-unused-vars
-    const isAllowed = await this.can(
-      'is-colony-founder-or-admin',
-      this._purserWallet.address,
-    );
-    /**
-     * @todo Fix task access controller saving for non-creators
-     * @body `TaskAccessController.save()` is being called by non-task creators, and failing. Re-enable it and ensure save() is called correctly.
-     */
-    // if (!isAllowed)
-    //   throw new Error('Cannot create task database, user not allowed');
+  async save({ onlyDetermineAddress }: { onlyDetermineAddress: boolean }) {
+    if (!onlyDetermineAddress) {
+      const isAllowed = await this.can(
+        'is-colony-founder-or-admin',
+        this._purserWallet.address,
+      );
+      if (!isAllowed) {
+        throw new Error('Cannot create task database, user not allowed');
+      }
+    }
 
     return `/colony/${this._colonyAddress}/task/${this._draftId}`;
   }

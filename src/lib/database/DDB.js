@@ -261,9 +261,11 @@ class DDB {
       {
         /**
          * @NOTE: Only necessary to pass in the whole access controller object
-         * to orbit-db without it getting on our way
+         * to orbit-db without it getting on our way. Also, the `onlyDetermineAddress`
+         * flag is used so we don't check for the contract permission whilst determining
+         * store addresses (see TaskAccessController)
          */
-        accessController: { controller },
+        accessController: { controller, onlyDetermineAddress: true },
         // @NOTE: For now, if a store gets the same address, we'll override it locally
         overwrite: true,
       },
