@@ -130,6 +130,7 @@ const config = {
     }),
     new HtmlWebpackPlugin({
       template: 'src/templates/index.html',
+      favicon: 'src/img/favicon.png',
     }),
     new webpack.HotModuleReplacementPlugin(),
   ],
