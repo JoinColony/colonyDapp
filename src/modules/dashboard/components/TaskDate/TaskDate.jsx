@@ -21,7 +21,7 @@ const MSG = defineMessages({
   },
   notSet: {
     id: 'dashboard.TaskDate.notSet',
-    defaultMessage: 'Not set',
+    defaultMessage: 'Date not set',
   },
   selectDate: {
     id: 'dashboard.TaskDate.selectDate',
@@ -109,7 +109,9 @@ const TaskDate = ({
             year="numeric"
           />
         ) : (
-          <FormattedMessage className={styles.notSet} {...MSG.notSet} />
+          <span className={styles.notSet}>
+            <FormattedMessage {...MSG.notSet} />
+          </span>
         )}
       </div>
     </div>

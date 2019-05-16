@@ -97,7 +97,9 @@ const TaskSkills = ({
         </div>
       </ItemsList>
       {!skillId && (
-        <FormattedMessage className={styles.notSet} {...MSG.notSet} />
+        <span className={styles.notSet}>
+          <FormattedMessage {...MSG.notSet} />
+        </span>
       )}
     </div>
   );
