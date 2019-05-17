@@ -604,15 +604,16 @@ function* taskSetWorkerAndPayouts({
   meta,
 }: Action<typeof ACTIONS.TASK_SET_WORKER_AND_PAYOUTS>): Saga<void> {
   try {
-    // assign the worker
     yield call(taskWorkerAssign, {
       meta: { key: draftId },
       payload: { colonyAddress, draftId, workerAddress },
       type: ACTIONS.TASK_WORKER_ASSIGN,
     });
 
-    // set the payouts
-    if (payouts) {
+    const {
+      record: { payouts: existingPayouts },
+    } = yield select(taskSelector, draftId);
+    if (payouts && !(existingPayouts && existingPayouts.length > 0)) {
       yield all(
         payouts.map(payout =>
           call(taskSetPayout, {
