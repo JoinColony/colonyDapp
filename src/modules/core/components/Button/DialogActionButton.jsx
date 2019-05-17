@@ -30,12 +30,11 @@ const DialogActionButton = ({
   dialogProps,
   ...props
 }: Props) => {
-  const transform = useCallback(
+  const values = useCallback(
     async () => {
       const dialogValues = await openDialog(dialog, dialogProps).afterClosed();
-      return typeof valuesProp == 'function'
-        ? valuesProp(dialogValues)
-        : { ...dialogValues, ...valuesProp };
+      if (typeof valuesProp === 'function') return valuesProp(dialogValues);
+      return { ...dialogValues, ...valuesProp };
     },
     [dialog, dialogProps, openDialog, valuesProp],
   );
@@ -44,7 +43,7 @@ const DialogActionButton = ({
       submit={submit}
       success={success}
       error={error}
-      transform={transform}
+      values={values}
       {...props}
     />
   );

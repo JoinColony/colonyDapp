@@ -10,6 +10,7 @@ import { ACTIONS } from '~redux';
 
 import { DialogActionButton } from '~core/Button';
 import Heading from '~core/Heading';
+import ExternalLink from '~core/ExternalLink';
 
 import { currentUserColonyPermissionsFetcher } from '../../../users/fetchers';
 import { networkVersionSelector } from '../../../core/selectors';
@@ -46,6 +47,24 @@ const MSG = defineMessages({
       false {Colony is not in recovery mode}
     }`,
   },
+  tokenLockedHeading: {
+    id: 'admin.Profile.ProfileAdvanced.tokenLockedHeading',
+    defaultMessage: 'Make your token transferable',
+  },
+  tokenLockedInfo: {
+    id: 'admin.Profile.ProfileAdvanced.tokenLockedInfo',
+    defaultMessage:
+      // eslint-disable-next-line max-len
+      'Your token is locked. It will not be transferable between accounts unless it is first unlocked. It is still usable within your colony to fund tasks. {link}.',
+  },
+  tokenLockedLearnMore: {
+    id: 'admin.Profile.ProfileAdvanced.tokenLockedLearnMore',
+    defaultMessage: 'Learn more',
+  },
+  buttonUnlockToken: {
+    id: 'admin.Profile.ProfileAdvanced.buttonUnlockToken',
+    defaultMessage: 'Unlock token',
+  },
 });
 
 const displayName: string = 'admin.Profile.ProfileAdvanced';
@@ -55,7 +74,7 @@ type Props = {|
 |};
 
 const ProfileAdvanced = ({
-  colony: { colonyAddress, id, version },
+  colony: { colonyAddress, id, version, canUnlockNativeToken },
   colony,
 }: Props) => {
   const {
@@ -127,6 +146,38 @@ const ProfileAdvanced = ({
           }
         />
       </section>
+      {canUnlockNativeToken && (
+        <>
+          <hr />
+          <section className={styles.section}>
+            <Heading
+              appearance={{ size: 'small' }}
+              text={MSG.tokenLockedHeading}
+            />
+            <p className={styles.bigInfoText}>
+              <FormattedMessage
+                {...MSG.tokenLockedInfo}
+                values={{
+                  link: (
+                    <ExternalLink text={MSG.tokenLockedLearnMore} href="#" />
+                  ),
+                }}
+              />
+            </p>
+            <div className={styles.unlockButton}>
+              <DialogActionButton
+                appearance={{ theme: 'blue', size: 'large' }}
+                text={MSG.buttonUnlockToken}
+                dialog="UnlockTokenDialog"
+                submit={ACTIONS.COLONY_NATIVE_TOKEN_UNLOCK}
+                success={ACTIONS.COLONY_NATIVE_TOKEN_UNLOCK_SUCCESS}
+                error={ACTIONS.COLONY_NATIVE_TOKEN_UNLOCK_ERROR}
+                values={{ colonyAddress }}
+              />
+            </div>
+          </section>
+        </>
+      )}
     </div>
   );
 };

@@ -1,10 +1,12 @@
 .main {
   composes: stretchVertical stretchHorizontal from '~styles/layout.css';
-  padding: 28px 60px 0 8px;
+  padding: 28px 0 0 8px;
 }
 
 .section {
   margin-bottom: 50px;
+  width: 100%;
+  max-width: 800px;
 }
 
 .withInlineButton {
@@ -16,4 +18,22 @@
 .bigInfoText {
   margin-top: 2px;
   font-size: var(--size-medium-l);
+}
+
+.smallInfoText {
+  vertical-align: bottom;
+  font-size: var(--size-medium-s);
+}
+
+.version {
+  display: flex;
+}
+
+.versionAction {
+  margin-left: 1rem;
+  vertical-align: bottom;
+}
+
+.unlockButton {
+  margin-top: var(--pad-large);
 }

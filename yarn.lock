@@ -785,98 +785,98 @@
     lodash "^4.17.10"
     to-fast-properties "^2.0.0"
 
-"@colony/colony-js-adapter-ethers@^1.10.0":
-  version "1.10.0"
-  resolved "https://registry.yarnpkg.com/@colony/colony-js-adapter-ethers/-/colony-js-adapter-ethers-1.10.0.tgz#4a6525476ef872a0c544d91bf30b7d4244cb8c9a"
-  integrity sha512-hMEW2XmKInrQZBl1VxrwhM1E7eU6n9HLpOI1mHKmlAKCAoGfIhNYffBnyNkR5xZ1Y6G+EQObVEqZofRL8Tk1fQ==
+"@colony/colony-js-adapter-ethers@^1.12.0-beta.4":
+  version "1.12.0-beta.4"
+  resolved "https://registry.yarnpkg.com/@colony/colony-js-adapter-ethers/-/colony-js-adapter-ethers-1.12.0-beta.4.tgz#0bac45df42abc956acbbf7cebe8afa86d169dc60"
+  integrity sha512-QYispORTunLoog9/CaO3HOpoOG4Nr0Pax/+XpcLpNaXMI95RctQUnLaGBwswuYq0lNQxFpeCOVkB4Xdn27GmoQ==
   dependencies:
-    "@colony/colony-js-adapter" "^1.9.0"
-    "@colony/colony-js-contract-loader" "^1.8.1"
-    "@colony/colony-js-utils" "^1.8.1"
+    "@colony/colony-js-adapter" "^1.12.0-beta.4"
+    "@colony/colony-js-contract-loader" "^1.12.0-beta.4"
+    "@colony/colony-js-utils" "^1.12.0-beta.4"
     babel-runtime "^6.26.0"
-    ethers "^3.0.27"
+    ethers "3.0.27"
 
-"@colony/colony-js-adapter@^1.9.0":
-  version "1.9.0"
-  resolved "https://registry.yarnpkg.com/@colony/colony-js-adapter/-/colony-js-adapter-1.9.0.tgz#4f16eaaac1922fd4f056a3bfc80d3379f3f98073"
-  integrity sha512-GwZfYG+KbI2PFDSYuj1GqPjn2jEMY/2+83tHBmQByyHgmk0E4Gmc4pcKOBBhB6+uA4+PaPUtYESH3qUrVkFcBg==
+"@colony/colony-js-adapter@^1.12.0-beta.4":
+  version "1.12.0-beta.4"
+  resolved "https://registry.yarnpkg.com/@colony/colony-js-adapter/-/colony-js-adapter-1.12.0-beta.4.tgz#658dc7e8be65380d999cd4d58de405b48428dd56"
+  integrity sha512-fGE3WqCMVvkF28KQVMs0uBv18YeohUJFyboLHtPDBPVEAx1LCBLf/uw0J/LsBUBXDO6FsnCrR0hT0SBRWoqKKg==
   dependencies:
-    "@colony/colony-js-contract-loader" "^1.8.1"
-    bn.js "^4.11.6"
+    "@colony/colony-js-contract-loader" "^1.12.0-beta.4"
+    bn.js "^4.11.8"
 
-"@colony/colony-js-client@^1.12.0-beta.3":
-  version "1.12.0-beta.3"
-  resolved "https://registry.yarnpkg.com/@colony/colony-js-client/-/colony-js-client-1.12.0-beta.3.tgz#f46f18772687afe3c8d8ae1729ee36c5a38c6d92"
-  integrity sha512-/kCBAzmt/BCkML5j13k08Ex5+ge0iKsLVNigtFy1qc/QpRFGq6TK0wk54OJEMD2pSB7yFfWFAF018F1aIS4oAw==
+"@colony/colony-js-client@^1.12.0-beta.5":
+  version "1.12.0-beta.5"
+  resolved "https://registry.yarnpkg.com/@colony/colony-js-client/-/colony-js-client-1.12.0-beta.5.tgz#06c4757422e279a7dde70827879a346bb9a45015"
+  integrity sha512-7J0Oq7UxYnycBPu2qi6WHJrV7bswZhxfIbu5VcMnw5lsYPpYjnJ2UKL5ICedzj6xo+n7i7me2/pWZNVprQTu/g==
   dependencies:
-    "@colony/colony-js-adapter" "^1.9.0"
-    "@colony/colony-js-adapter-ethers" "^1.10.0"
-    "@colony/colony-js-contract-client" "^1.12.0-beta.3"
-    "@colony/colony-js-contract-loader" "^1.8.1"
-    "@colony/colony-js-contract-loader-http" "^1.10.0"
-    "@colony/colony-js-contract-loader-network" "^1.11.0"
-    "@colony/colony-js-utils" "^1.8.1"
+    "@colony/colony-js-adapter" "^1.12.0-beta.4"
+    "@colony/colony-js-adapter-ethers" "^1.12.0-beta.4"
+    "@colony/colony-js-contract-client" "^1.12.0-beta.4"
+    "@colony/colony-js-contract-loader" "^1.12.0-beta.4"
+    "@colony/colony-js-contract-loader-http" "^1.12.0-beta.4"
+    "@colony/colony-js-contract-loader-network" "^1.12.0-beta.5"
+    "@colony/colony-js-utils" "^1.12.0-beta.4"
     "@colony/purser-core" "^2.1.0"
-    assert "^1.4.1"
+    assert "^2.0.0"
     babel-runtime "^6.26.0"
-    bn.js "^4.11.6"
+    bn.js "^4.11.8"
     ethereumjs-tx "^1.3.7"
     ethers "3.0.27"
     isomorphic-fetch "^2.2.1"
-    web3-utils "^1.0.0-beta.34"
+    web3-utils "^1.0.0-beta.55"
 
-"@colony/colony-js-contract-client@^1.12.0-beta.3":
-  version "1.12.0-beta.3"
-  resolved "https://registry.yarnpkg.com/@colony/colony-js-contract-client/-/colony-js-contract-client-1.12.0-beta.3.tgz#3c54f2cecda4a80eec4a4ce49b7bcf4e82e72975"
-  integrity sha512-jgQql0X1qAYdqEYCt6QW2ysRGKRUaJ65biTA1i0jnqWtkDRmRHl/957B9+cCBOw1C8hpCM3IS2/qfU3rSUzxww==
+"@colony/colony-js-contract-client@^1.12.0-beta.4":
+  version "1.12.0-beta.4"
+  resolved "https://registry.yarnpkg.com/@colony/colony-js-contract-client/-/colony-js-contract-client-1.12.0-beta.4.tgz#d4f176436c91b432a1f3c3df11e7b25339e28c34"
+  integrity sha512-i/aeydFXOsQQfh09Q8nhVvJBkUpw1VfMpuOC3ITK8NiVrbFHn6iDz01dXnL+IhIt5NY+JmdAm2favMcxbjjKzA==
   dependencies:
-    "@colony/colony-js-adapter" "^1.9.0"
-    "@colony/colony-js-contract-loader" "^1.8.1"
-    "@colony/colony-js-utils" "^1.8.1"
-    assert "^1.4.1"
+    "@colony/colony-js-adapter" "^1.12.0-beta.4"
+    "@colony/colony-js-contract-loader" "^1.12.0-beta.4"
+    "@colony/colony-js-utils" "^1.12.0-beta.4"
+    assert "^2.0.0"
     babel-runtime "^6.26.0"
-    bn.js "^4.11.6"
+    bn.js "^4.11.8"
     bs58 "^4.0.1"
     lodash.isequal "^4.5.0"
     lodash.isplainobject "^4.0.6"
-    web3-utils "^1.0.0-beta.34"
+    web3-utils "^1.0.0-beta.55"
 
-"@colony/colony-js-contract-loader-http@^1.10.0":
-  version "1.10.0"
-  resolved "https://registry.yarnpkg.com/@colony/colony-js-contract-loader-http/-/colony-js-contract-loader-http-1.10.0.tgz#f033a876d08a2d2a9cbddc1f89aa9dd4b683a004"
-  integrity sha512-mFWF9GP8CQRgH4g673GdZ8/2FwNWC+ETPMvaqOWOaEtlKNlnBv61V757rnjOch8PrySPfVaiFi8YSyKQCizc+w==
+"@colony/colony-js-contract-loader-http@^1.12.0-beta.4":
+  version "1.12.0-beta.4"
+  resolved "https://registry.yarnpkg.com/@colony/colony-js-contract-loader-http/-/colony-js-contract-loader-http-1.12.0-beta.4.tgz#f7cf9c343da2a4e8f9bb8c70ad818837dd20fcef"
+  integrity sha512-PKg9vnuKEldmJYEur7y8z2aRRt+U/IydA/g4HgigHURxM19gnAzxdD5XqadCyUEYyxMb0k4eCz7+pDQhl0wVXA==
   dependencies:
-    "@colony/colony-js-contract-loader" "^1.8.1"
-    assert "^1.4.1"
+    "@colony/colony-js-contract-loader" "^1.12.0-beta.4"
+    assert "^2.0.0"
     babel-runtime "^6.26.0"
     isomorphic-fetch "^2.2.1"
 
-"@colony/colony-js-contract-loader-network@^1.11.0":
-  version "1.11.0"
-  resolved "https://registry.yarnpkg.com/@colony/colony-js-contract-loader-network/-/colony-js-contract-loader-network-1.11.0.tgz#1255776853c97a60533238be6e82d24b14fe04fd"
-  integrity sha512-SEfQuZdoepcPawnA05lli1Jj1tncD4/+LOuWHBnpH/HhNzSPgj0nPbYf9K3765U4En8T0WLaQ7dFBoycNidW0w==
+"@colony/colony-js-contract-loader-network@^1.12.0-beta.5":
+  version "1.12.0-beta.5"
+  resolved "https://registry.yarnpkg.com/@colony/colony-js-contract-loader-network/-/colony-js-contract-loader-network-1.12.0-beta.5.tgz#446e70ae4cf0b6bae7a4e9efec463d05e93a3d15"
+  integrity sha512-7zVVCXUVb3yefqOnnJq7/5060Pk+SqlCZsTMea5R+AwetcRIJB+GQvOdfyXkOM2R7Cu5OMdo+EI+FMD/Jagqkw==
   dependencies:
-    "@colony/colony-js-contract-loader" "1.8.1"
-    assert "^1.4.1"
+    "@colony/colony-js-contract-loader" "^1.12.0-beta.4"
+    assert "^2.0.0"
     babel-runtime "^6.26.0"
 
-"@colony/colony-js-contract-loader@1.8.1", "@colony/colony-js-contract-loader@^1.8.1":
-  version "1.8.1"
-  resolved "https://registry.yarnpkg.com/@colony/colony-js-contract-loader/-/colony-js-contract-loader-1.8.1.tgz#af938d7e3588032f14eb71e7b5f8eefecdf7527a"
-  integrity sha512-FqnFgZqTx2pNx2LN8hIeu77yKEJJgmczITdf6QZqlbvauVXS5CehuKV5Y2yJwsHXcYOe/otNITcFZPfo3ShUOA==
+"@colony/colony-js-contract-loader@^1.12.0-beta.4":
+  version "1.12.0-beta.4"
+  resolved "https://registry.yarnpkg.com/@colony/colony-js-contract-loader/-/colony-js-contract-loader-1.12.0-beta.4.tgz#3195cd59a6344e4a98d430b1b58db14449e9091d"
+  integrity sha512-UisEm2201sSf2cAyF6hlSQ9js0pD2dTrO7bcrkkN8eHAQhrRa1sN+8I8pqRlkxeksNchJ4YZUvvxlovtv2QLDA==
   dependencies:
-    assert "^1.4.1"
+    assert "^2.0.0"
     babel-runtime "^6.26.0"
 
-"@colony/colony-js-utils@^1.8.1":
-  version "1.8.1"
-  resolved "https://registry.yarnpkg.com/@colony/colony-js-utils/-/colony-js-utils-1.8.1.tgz#6bc4117317277810be9957b902f6d6bf6ca0e164"
-  integrity sha512-J1SOxhNUNWEYY1mXQgCPZJ0yorMhL7o57t5FTbRBEA+6/Ylhkr6ST7wObqfJwtGFOaILRkPMLqyP+TC59oqHYw==
+"@colony/colony-js-utils@^1.12.0-beta.4":
+  version "1.12.0-beta.4"
+  resolved "https://registry.yarnpkg.com/@colony/colony-js-utils/-/colony-js-utils-1.12.0-beta.4.tgz#4f427a48273b1bc2b4aedaafff6d384efd7dd5f0"
+  integrity sha512-ovvdFy1hpZWVZr1xBlrv252FU1qzIEzABXKWbmxml466+X4eoSHjhlA2B0ZI6WXF8toXLLPVca6vgdY0uixH+g==
   dependencies:
-    assert "^1.4.1"
+    assert "^2.0.0"
     babel-runtime "^6.26.0"
-    bn.js "^4.11.6"
-    web3-utils "^1.0.0-beta.34"
+    bn.js "^4.11.8"
+    web3-utils "^1.0.0-beta.55"
 
 "@colony/eslint-config-colony@^7.0.0":
   version "7.0.0"
@@ -1922,6 +1922,16 @@ assert@^1.1.1, assert@^1.4.1:
   integrity sha1-mZEtWRg2tab1s0XA8H7vwI/GXZE=
   dependencies:
     util "0.10.3"
+
+assert@^2.0.0:
+  version "2.0.0"
+  resolved "https://registry.yarnpkg.com/assert/-/assert-2.0.0.tgz#95fc1c616d48713510680f2eaf2d10dd22e02d32"
+  integrity sha512-se5Cd+js9dXJnu6Ag2JFc00t+HmHOen+8Q+L7O9zI0PqQXr20uk2J0XQqMxZEeo5U50o8Nvmmx7dZrl+Ufr35A==
+  dependencies:
+    es6-object-assign "^1.1.0"
+    is-nan "^1.2.1"
+    object-is "^1.0.1"
+    util "^0.12.0"
 
 assign-symbols@^1.0.0:
   version "1.0.0"
@@ -4686,7 +4696,7 @@ deferred-leveldown@~5.0.0:
     abstract-leveldown "~6.0.0"
     inherits "^2.0.3"
 
-define-properties@^1.1.2:
+define-properties@^1.1.1, define-properties@^1.1.2, define-properties@^1.1.3:
   version "1.1.3"
   resolved "https://registry.yarnpkg.com/define-properties/-/define-properties-1.1.3.tgz#cf88da6cbee26fe6db7094f61d870cbd84cee9f1"
   integrity sha512-3MqfYKj2lLzdMSf8ZIZE/V+Zuy+BgD6f164e8K2w7dgnpKArBDerGYpM46IYYcjnkdPNMjPk9A6VFB8+3SKlXQ==
@@ -5380,7 +5390,19 @@ es-abstract@^1.10.0, es-abstract@^1.5.0, es-abstract@^1.5.1, es-abstract@^1.6.1,
     is-callable "^1.1.3"
     is-regex "^1.0.4"
 
-es-to-primitive@^1.1.1:
+es-abstract@^1.12.0:
+  version "1.13.0"
+  resolved "https://registry.yarnpkg.com/es-abstract/-/es-abstract-1.13.0.tgz#ac86145fdd5099d8dd49558ccba2eaf9b88e24e9"
+  integrity sha512-vDZfg/ykNxQVwup/8E1BZhVzFfBxs9NqMzGcvIJrqg5k2/5Za2bWo40dK2J1pgLngZ7c+Shh8lwYtLGyrwPutg==
+  dependencies:
+    es-to-primitive "^1.2.0"
+    function-bind "^1.1.1"
+    has "^1.0.3"
+    is-callable "^1.1.4"
+    is-regex "^1.0.4"
+    object-keys "^1.0.12"
+
+es-to-primitive@^1.1.1, es-to-primitive@^1.2.0:
   version "1.2.0"
   resolved "https://registry.yarnpkg.com/es-to-primitive/-/es-to-primitive-1.2.0.tgz#edf72478033456e8dda8ef09e00ad9650707f377"
   integrity sha512-qZryBOJjV//LaxLTV6UC//WewneB3LcXOL9NP++ozKVXsIIIpm/2c13UDiD9Jp2eThsecw9m3jPqDwTyobcdbg==
@@ -5394,7 +5416,7 @@ es6-error@^4.0.1:
   resolved "https://registry.yarnpkg.com/es6-error/-/es6-error-4.1.1.tgz#9e3af407459deed47e9a91f9b885a84eb05c561d"
   integrity sha512-Um/+FxMr9CISWh0bi5Zv0iOD+4cFh5qLeks1qhAopKVAJw3drgKbKySikp7wGhDL0HPeaja0P5ULZrxLkniUVg==
 
-es6-object-assign@~1.1.0:
+es6-object-assign@^1.1.0, es6-object-assign@~1.1.0:
   version "1.1.0"
   resolved "https://registry.yarnpkg.com/es6-object-assign/-/es6-object-assign-1.1.0.tgz#c2c3582656247c39ea107cb1e6652b6f9f24523c"
   integrity sha1-wsNYJlYkfDnqEHyx5mUrb58kUjw=
@@ -8831,6 +8853,11 @@ is-alphanumerical@^1.0.0:
     is-alphabetical "^1.0.0"
     is-decimal "^1.0.0"
 
+is-arguments@^1.0.4:
+  version "1.0.4"
+  resolved "https://registry.yarnpkg.com/is-arguments/-/is-arguments-1.0.4.tgz#3faf966c7cba0ff437fb31f6250082fcf0448cf3"
+  integrity sha512-xPh0Rmt8NE65sNzvyUmWgI1tz3mKq74lGA0mL8LYZcoIzKOzDh6HmrYm3d18k60nHerC8A9Km8kYu87zfSFnLA==
+
 is-arrayish@^0.2.1:
   version "0.2.1"
   resolved "https://registry.yarnpkg.com/is-arrayish/-/is-arrayish-0.2.1.tgz#77c99840527aa8ecb1a8ba697b80645a7a926a9d"
@@ -9004,6 +9031,11 @@ is-generator-fn@^1.0.0:
   resolved "https://registry.yarnpkg.com/is-generator-fn/-/is-generator-fn-1.0.0.tgz#969d49e1bb3329f6bb7f09089be26578b2ddd46a"
   integrity sha1-lp1J4bszKfa7fwkIm+JleLLd1Go=
 
+is-generator-function@^1.0.7:
+  version "1.0.7"
+  resolved "https://registry.yarnpkg.com/is-generator-function/-/is-generator-function-1.0.7.tgz#d2132e529bb0000a7f80794d4bdf5cd5e5813522"
+  integrity sha512-YZc5EwyO4f2kWCax7oegfuSr9mFz1ZvieNYBEjmukLxgXfBUbxAWGVF7GZf0zidYtoBl3WvC07YK0wT76a+Rtw==
+
 is-glob@^2.0.0, is-glob@^2.0.1:
   version "2.0.1"
   resolved "https://registry.yarnpkg.com/is-glob/-/is-glob-2.0.1.tgz#d096f926a3ded5600f3fdfd91198cb0888c2d863"
@@ -9073,6 +9105,13 @@ is-lower-case@^1.1.0:
   integrity sha1-fhR75HaNxGbbO/shzGCzHmrWk5M=
   dependencies:
     lower-case "^1.1.0"
+
+is-nan@^1.2.1:
+  version "1.2.1"
+  resolved "https://registry.yarnpkg.com/is-nan/-/is-nan-1.2.1.tgz#9faf65b6fb6db24b7f5c0628475ea71f988401e2"
+  integrity sha1-n69ltvttskt/XAYoR16nH5iEAeI=
+  dependencies:
+    define-properties "^1.1.1"
 
 is-natural-number@^4.0.1:
   version "4.0.1"
@@ -12955,6 +12994,16 @@ object.entries@^1.0.4:
     function-bind "^1.1.0"
     has "^1.0.1"
 
+object.entries@^1.1.0:
+  version "1.1.0"
+  resolved "https://registry.yarnpkg.com/object.entries/-/object.entries-1.1.0.tgz#2024fc6d6ba246aee38bdb0ffd5cfbcf371b7519"
+  integrity sha512-l+H6EQ8qzGRxbkHOd5I/aHRhHDKoQXQ8g0BYt4uSweQU1/J6dZUOyWh9a2Vky35YCKjzmgxOzta2hH6kf9HuXA==
+  dependencies:
+    define-properties "^1.1.3"
+    es-abstract "^1.12.0"
+    function-bind "^1.1.1"
+    has "^1.0.3"
+
 object.getownpropertydescriptors@^2.0.3:
   version "2.0.3"
   resolved "https://registry.yarnpkg.com/object.getownpropertydescriptors/-/object.getownpropertydescriptors-2.0.3.tgz#8758c846f5b407adab0f236e0986f14b051caa16"
@@ -15185,7 +15234,7 @@ randomatic@^3.0.0:
     kind-of "^6.0.0"
     math-random "^1.0.1"
 
-randombytes@^2.0.0, randombytes@^2.0.1, randombytes@^2.0.3, randombytes@^2.0.5:
+randombytes@^2.0.0, randombytes@^2.0.1, randombytes@^2.0.3, randombytes@^2.0.5, randombytes@^2.1.0:
   version "2.1.0"
   resolved "https://registry.yarnpkg.com/randombytes/-/randombytes-2.1.0.tgz#df6f84372f0270dc65cdf6291349ab7a473d4f2a"
   integrity sha512-vYl3iOX+4CKUWuxGi9Ukhie6fsqXqS9FE2Zaic4tNFD2N2QQaXOMFbuKK4QmDHC0JO6B1Zp41J0LpT0oR68amQ==
@@ -19010,6 +19059,17 @@ util@^0.10.3:
   dependencies:
     inherits "2.0.3"
 
+util@^0.12.0:
+  version "0.12.0"
+  resolved "https://registry.yarnpkg.com/util/-/util-0.12.0.tgz#bb5e3d29ba2703c7add0ad337003be3ca477798a"
+  integrity sha512-pPSOFl7VLhZ7LO/SFABPraZEEurkJUWSMn3MuA/r3WQZc+Z1fqou2JqLSOZbCLl73EUIxuUVX8X4jkX2vfJeAA==
+  dependencies:
+    inherits "2.0.3"
+    is-arguments "^1.0.4"
+    is-generator-function "^1.0.7"
+    object.entries "^1.1.0"
+    safe-buffer "^5.1.2"
+
 utila@^0.4.0, utila@~0.4:
   version "0.4.0"
   resolved "https://registry.yarnpkg.com/utila/-/utila-0.4.0.tgz#8a16a05d445657a3aea5eecc5b12a4fa5379772c"
@@ -19441,10 +19501,10 @@ web3-utils@1.0.0-beta.36, web3-utils@^1.0.0-beta.27:
     underscore "1.8.3"
     utf8 "2.1.1"
 
-web3-utils@^1.0.0-beta.34:
-  version "1.0.0-beta.46"
-  resolved "https://registry.yarnpkg.com/web3-utils/-/web3-utils-1.0.0-beta.46.tgz#9984dda27c9079b129e741cbb63b665ae0f9725c"
-  integrity sha512-mSz+NrAil2fDZkxTXHPntCclZ8DofMjv8Q+BYR0VAyzTzylpYNXAV0WDdxBp/sXgniWRZXZMF7OkQNWqhZ1J9g==
+web3-utils@^1.0.0-beta.55:
+  version "1.0.0-beta.55"
+  resolved "https://registry.yarnpkg.com/web3-utils/-/web3-utils-1.0.0-beta.55.tgz#beb40926b7c04208b752d36a9bc959d27a04b308"
+  integrity sha512-ASWqUi8gtWK02Tp8ZtcoAbHenMpQXNvHrakgzvqTNNZn26wgpv+Q4mdPi0KOR6ZgHFL8R/9b5BBoUTglS1WPpg==
   dependencies:
     "@babel/runtime" "^7.3.1"
     "@types/bn.js" "^4.11.4"
@@ -19454,7 +19514,7 @@ web3-utils@^1.0.0-beta.34:
     ethjs-unit "^0.1.6"
     lodash "^4.17.11"
     number-to-bn "1.7.0"
-    randomhex "0.1.5"
+    randombytes "^2.1.0"
     utf8 "2.1.1"
 
 web3@1.0.0-beta.36:
