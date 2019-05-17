@@ -33,28 +33,3 @@
   grid-column: 3;
   grid-row: 1;
 }
-
-.domainsFilters {
-  margin-top: 40px;
-}
-
-.filterItem {
-  margin: 0 0 20px 10px;
-  padding: 0;
-  border: none;
-  background: none;
-  font-weight: var(--weight-semi);
-  color: var(--text);
-  cursor: pointer;
-  outline: none;
-}
-
-.filterItem:hover {
-  color: var(--primary);
-  opacity: 0.8;
-}
-
-.filterItemActive {
-  composes: filterItem;
-  color: var(--primary);
-}
