@@ -19,7 +19,6 @@ import BigNumber from 'bn.js';
 import { CONTEXT } from '~context';
 import { COLONY_EVENT_TYPES } from '~data/constants';
 
-import { reduceToLastState, getLast } from '~utils/reducers';
 import { getColonyStore } from '~data/stores';
 import { getEvents } from '~utils/web3/eventLogs';
 import { ZERO_ADDRESS } from '~utils/web3/constants';
@@ -85,37 +84,56 @@ export const getColonyRoles: ContractEventQuery<
   prepare: prepareColonyClientQuery,
   async execute(colonyClient) {
     const {
-      events: { ColonyAdministrationRoleSet, ColonyRootRoleSet },
+      events: {
+        ColonyAdministrationRoleSet,
+        ColonyArchitectureRoleSet,
+        ColonyFundingRoleSet,
+        ColonyRootRoleSet,
+      },
     } = colonyClient;
     const events = await getEvents(
       colonyClient,
       {},
       {
         blocksBack: 400000,
-        events: [ColonyAdministrationRoleSet, ColonyRootRoleSet],
+        events: [
+          ColonyAdministrationRoleSet,
+          ColonyArchitectureRoleSet,
+          ColonyFundingRoleSet,
+          ColonyRootRoleSet,
+        ],
       },
     );
     const { eventName: ADMINISTRATION_SET } = ColonyAdministrationRoleSet;
+    const { eventName: ARCHITECTURE_SET } = ColonyArchitectureRoleSet;
+    const { eventName: FUNDING_SET } = ColonyFundingRoleSet;
     const { eventName: ROOT_SET } = ColonyRootRoleSet;
 
-    // get the founder from the most recent ROOT_SET event
-    const founderEvent = getLast(
-      events,
-      ({ eventName, setTo }) => eventName === ROOT_SET && setTo === true,
+    // reduce events to { [address]: { [role]: boolean } }
+    const addressRoles = events.reduce(
+      (acc, { address, eventName, setTo }) => ({
+        ...acc,
+        [address]: { ...acc[address], [eventName]: setTo },
+      }),
+      {},
     );
-    const founder = founderEvent && founderEvent.address;
 
-    // get admins from ADMINISTRATION_SET events which are not founder
-    const getKey = event => event.address;
-    const getValue = event => event;
-    const admins = reduceToLastState(events, getKey, getValue)
-      .filter(
-        ([, { eventName, setTo, address }]) =>
-          eventName === ADMINISTRATION_SET &&
-          setTo === true &&
-          address !== founder,
-      )
-      .map(([user]) => user);
+    // find user with all the roles OldRoles sets for founder
+    const founder =
+      Object.keys(addressRoles).find(
+        address =>
+          addressRoles[address][ADMINISTRATION_SET] &&
+          addressRoles[address][ARCHITECTURE_SET] &&
+          addressRoles[address][FUNDING_SET] &&
+          addressRoles[address][ROOT_SET],
+      ) || ZERO_ADDRESS;
+
+    // find users with administration role
+    const admins = Object.keys(addressRoles).filter(
+      address =>
+        addressRoles[address][ADMINISTRATION_SET] &&
+        !addressEquals(address, founder),
+    );
 
     return {
       admins,
