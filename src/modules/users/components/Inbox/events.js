@@ -14,3 +14,5 @@ export const NOTIFICATION_EVENT_DOMAIN_ADDED =
 export const NOTIFICATION_EVENT_ADMIN_ADDED = 'notificationAdminOtherAdded';
 export const NOTIFICATION_EVENT_ADMIN_REMOVED = 'notificationAdminOtherRemoved';
 export const NOTIFICATION_EVENT_USER_MENTIONED = 'notificationUserMentioned';
+export const NOTIFICATION_EVENT_USER_TRANSFER =
+  'notificationUserTransferReceived';
