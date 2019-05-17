@@ -44,47 +44,47 @@ import styles from './TaskEditDialog.css';
 
 const MSG = defineMessages({
   titleAssignment: {
-    id: 'dashboard.Task.taskEditDialog.titleAssignment',
+    id: 'dashboard.TaskEditDialog.titleAssignment',
     defaultMessage: 'Assignment',
   },
   titleFunding: {
-    id: 'dashboard.Task.taskEditDialog.titleFunding',
+    id: 'dashboard.TaskEditDialog.titleFunding',
     defaultMessage: 'Funding',
   },
   add: {
-    id: 'dashboard.Task.taskEditDialog.add',
+    id: 'dashboard.TaskEditDialog.add',
     defaultMessage: 'Add +',
   },
   notSet: {
-    id: 'dashboard.Task.taskEditDialog.notSet',
+    id: 'dashboard.TaskEditDialog.notSet',
     defaultMessage: 'Not set',
   },
   search: {
-    id: 'dashboard.Task.taskEditDialog.search',
+    id: 'dashboard.TaskEditDialog.search',
     defaultMessage: 'Search...',
   },
   selectAssignee: {
-    id: 'dashboard.Task.taskEditDialog.selectAssignee',
+    id: 'dashboard.TaskEditDialog.selectAssignee',
     defaultMessage: 'Select Assignee',
   },
   insufficientFundsError: {
-    id: 'dashboard.Task.taskEditDialog.insufficientFundsError',
+    id: 'dashboard.TaskEditDialog.insufficientFundsError',
     defaultMessage: "You don't have enough funds",
   },
   tokenRequiredError: {
-    id: 'dashboard.Task.taskEditDialog.tokenRequiredError',
+    id: 'dashboard.TaskEditDialog.tokenRequiredError',
     defaultMessage: 'Token required',
   },
   amountPositiveError: {
-    id: 'dashboard.Task.taskEditDialog.amountPositiveError',
+    id: 'dashboard.TaskEditDialog.amountPositiveError',
     defaultMessage: 'Amount must be a positive number.',
   },
   amountRequiredError: {
-    id: 'dashboard.Task.taskEditDialog.amountRequiredError',
+    id: 'dashboard.TaskEditDialog.amountRequiredError',
     defaultMessage: 'Amount required',
   },
   unknownToken: {
-    id: 'dashboard.Task.taskEditDialog.unknownToken',
+    id: 'dashboard.TaskEditDialog.unknownToken',
     defaultMessage: 'Unknown Token',
   },
 });
