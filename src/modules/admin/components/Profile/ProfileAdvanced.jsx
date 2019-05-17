@@ -74,7 +74,7 @@ type Props = {|
 |};
 
 const ProfileAdvanced = ({
-  colony: { colonyAddress, id, version, canMintNativeToken },
+  colony: { colonyAddress, id, version, canUnlockNativeToken },
   colony,
 }: Props) => {
   const {
@@ -146,7 +146,7 @@ const ProfileAdvanced = ({
           }
         />
       </section>
-      {canMintNativeToken && (
+      {canUnlockNativeToken && (
         <>
           <hr />
           <section className={styles.section}>

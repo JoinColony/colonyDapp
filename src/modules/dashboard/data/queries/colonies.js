@@ -175,7 +175,7 @@ export const getColony: Query<
     let canUnlockNativeToken;
     try {
       await colonyClient.tokenClient.unlock.estimate({});
-      canUnlockNativeToken = true;
+      canUnlockNativeToken = isNativeTokenLocked;
     } catch (error) {
       canUnlockNativeToken = false;
     }
