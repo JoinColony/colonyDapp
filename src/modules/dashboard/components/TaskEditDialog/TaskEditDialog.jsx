@@ -175,15 +175,9 @@ const TaskEditDialog = ({
 
   // Get users that have requested to work on this task
   const userAddressesRequested = useSelector(taskRequestsSelector, [draftId]);
-  /*
-   * @todo: Get addresses of all users subscribed to this colony
-   * @body: Likely use another selector to accomplish this
-   */
-  const userAddressesSubscribed = [];
-  const userAddresses = [...userAddressesRequested, ...userAddressesSubscribed];
   const userData = useDataMapFetcher<UserType>(
     usersByAddressFetcher,
-    userAddresses,
+    userAddressesRequested,
   );
 
   // Get user (worker) assigned to this task
