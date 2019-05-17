@@ -91,7 +91,7 @@ export default class AbstractAccessController<
     throw new Error('Not implemented');
   }
 
-  async save() {
+  async save(options: any) {
     throw new Error('Not implemented');
   }
 

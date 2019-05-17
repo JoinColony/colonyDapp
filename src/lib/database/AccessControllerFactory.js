@@ -9,10 +9,13 @@ export default class AccessControllerFactory {
   static async create(
     orbitdb: *,
     type: string,
-    { controller: accessController }: { controller: * },
+    {
+      controller: accessController,
+      onlyDetermineAddress,
+    }: { controller: *, onlyDetermineAddress?: boolean },
   ) {
     await accessController.load();
-    return accessController.save();
+    return accessController.save({ onlyDetermineAddress });
   }
 
   static async resolve(
@@ -20,6 +23,7 @@ export default class AccessControllerFactory {
     accessControllerAddress: string,
     { controller: accessController }: { controller: * },
   ) {
+    await accessController.load();
     return accessController;
   }
 }

@@ -11,7 +11,7 @@ export interface AccessController<I: Identity, P: IdentityProvider<I>> {
 
   load(options: any): Promise<void>;
 
-  save(): Promise<string>;
+  save(options: any): Promise<string>;
 
   grant(actionId: string, address: string): Promise<boolean>;
 
