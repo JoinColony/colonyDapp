@@ -203,7 +203,7 @@ const getClass = WrappedComponent => {
       const filteredData = this.getFilteredData();
       if (selected < 0) return;
       const itemData = getItem(filteredData, selected);
-      if (this.omniPicker) {
+      if (this.omniPicker && itemData) {
         this.omniPicker.handlePick(itemData);
       }
       this.reset();
