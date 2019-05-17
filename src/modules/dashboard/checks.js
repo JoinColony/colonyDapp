@@ -116,9 +116,5 @@ export const canRequestToWork = (task: TaskType, userAddress: Address) =>
     hasRequestedToWork(task, userAddress)
   );
 
-/**
- * @todo Fix `canFinalizeTask` check.
- * @body Use a task property indicating that work has been submitted
- */
 export const canFinalizeTask = (task: TaskType, userAddress: Address) =>
   isManager(task, userAddress) && isActive(task);

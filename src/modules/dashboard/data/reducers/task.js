@@ -60,6 +60,7 @@ export const taskReducer: EventReducer<
         ...task,
         createdAt: new Date(timestamp),
         creatorAddress,
+        managerAddress: creatorAddress, // @NOTE: At least for the draft version, the creator will also be the manager
         draftId,
       };
     }

@@ -86,7 +86,6 @@ const prepareTaskStoreCommand = async (
   });
 };
 
-// This is not a TaskCommand because we don't yet have a taskStoreAddress
 export const createTask: Command<
   {|
     colonyStore: ColonyStore,
