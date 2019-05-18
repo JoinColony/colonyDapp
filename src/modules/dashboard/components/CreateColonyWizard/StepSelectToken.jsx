@@ -20,19 +20,20 @@ import TokenSelector from './TokenSelector.jsx';
 
 import { getNormalizedDomainText } from '~utils/strings';
 
-type TokenData = ?{
+type TokenData = ?{|
   name: string,
   symbol: string,
-};
+|};
 
-type FormValues = {
+type FormValues = {|
   tokenAddress: string,
+  tokenChoice: 'create' | 'select',
   tokenSymbol?: string,
   tokenName?: string,
   iconUpload?: string,
   tokenData: ?TokenData,
   colonyName: string,
-};
+|};
 
 type Bag = FormikBag<Object, FormValues>;
 type SetFieldValue = $PropertyType<Bag, 'setFieldValue'>;
@@ -91,11 +92,10 @@ const StepSelectToken = ({
   wizardForm,
   wizardValues,
 }: Props) => {
-  /* Intialiase state */
-  const [tokenData, setTokenData] = useState(undefined);
+  const [tokenData, setTokenData] = useState();
 
   const handleTokenSelect = (data: TokenData, setFieldValue: SetFieldValue) => {
-    setTokenData({ data });
+    setTokenData(data);
     if (tokenData) {
       setFieldValue('tokenName', tokenData.name);
       setFieldValue('tokenSymbol', tokenData.symbol);
@@ -110,7 +110,7 @@ const StepSelectToken = ({
         TODO: there will be smoother solution or this, we already have an issue for it:
         https://github.com/JoinColony/colonyDapp/issues/1057
       */
-      const wizardValuesCopy = Object.assign({}, wizardValues);
+      const wizardValuesCopy: FormValues = { ...wizardValues };
       previousStep(wizardValuesCopy);
       wizardValuesCopy.tokenChoice = 'create';
       nextStep(wizardValuesCopy);

@@ -26,11 +26,11 @@ const stepArray = [
   StepConfirmTransactions,
 ];
 
-type StepValues = {
+type StepValues = {|
   tokenChoice: 'create' | 'select',
-};
+|};
 
-const pickTokenStep = tokenChoice => {
+const pickTokenStep = (tokenChoice: $Values<StepValues>) => {
   if (tokenChoice === 'create') return StepCreateToken;
   if (tokenChoice === 'select') return StepSelectToken;
   return StepCreateToken;
