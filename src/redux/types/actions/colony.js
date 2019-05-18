@@ -106,12 +106,14 @@ export type ColonyActionTypes = {|
   COLONY_CREATE: UniqueActionType<
     typeof ACTIONS.COLONY_CREATE,
     {|
-      username: string,
       colonyName: string,
       displayName: string,
+      tokenAddress?: string,
+      tokenChoice: 'create' | 'select',
+      tokenIcon: {},
       tokenName: string,
       tokenSymbol: string,
-      tokenIcon: {},
+      username: string,
     |},
     void,
   >,

@@ -41,10 +41,10 @@ const MSG = defineMessages({
   },
 });
 
-type TokenData = {
+type TokenData = {|
   name: string,
   symbol: string,
-};
+|};
 
 type Props = {|
   tokenAddress: string,
