@@ -25,12 +25,13 @@ import DialogSection from '~core/Dialog/DialogSection.jsx';
 import Heading from '~core/Heading';
 import DialogBox from '~core/Dialog/DialogBox.jsx';
 import { SpinnerLoader } from '~core/Preloaders';
-import HookedUserAvatar from '~users/HookedUserAvatar';
 import { ACTIONS } from '~redux';
-
-import WrappedPayout from './WrappedPayout.jsx';
+import HookedUserAvatar from '~users/HookedUserAvatar';
 import { mapPayload, mergePayload, pipe } from '~utils/actions';
 import { useDataFetcher, useDataMapFetcher, useSelector } from '~utils/hooks';
+import { addressEquals } from '~utils/strings';
+
+import WrappedPayout from './WrappedPayout.jsx';
 import { colonyFetcher } from '../../fetchers';
 import {
   allFromColonyTokensSelector,
@@ -200,17 +201,17 @@ const TaskEditDialog = ({
   // consider using a selector for this in #1048
   const existingPayouts = useMemo(
     () =>
-      taskPayouts.map(payout => ({
-        token:
-          // we add 1 because Formik thinks 0 is empty
-          availableTokens.indexOf(
-            availableTokens.find(
-              token => token.address === payout.token.address,
-            ),
-          ) + 1,
-        amount: payout.amount,
-        id: payout.token.address,
-      })),
+      taskPayouts.map(payout => {
+        const { address } =
+          availableTokens.find(token =>
+            addressEquals(token.address, payout.token.address),
+          ) || {};
+        return {
+          token: address,
+          amount: payout.amount,
+          id: payout.token.address,
+        };
+      }),
     [taskPayouts, availableTokens],
   );
 
@@ -350,15 +351,16 @@ const TaskEditDialog = ({
                               {values.payouts &&
                                 values.payouts.map((payout, index) => (
                                   <WrappedPayout
-                                    key={payout.id}
                                     arrayHelpers={arrayHelpers}
-                                    payouts={values.payouts}
-                                    payout={payout}
                                     availableTokens={availableTokens}
                                     canRemove={canRemove}
                                     index={index}
+                                    key={payout.id}
+                                    payout={payout}
+                                    payouts={values.payouts}
                                     reputation={reputation}
                                     tokenOptions={tokenOptions}
+                                    tokenReferences={colonyTokenReferences}
                                   />
                                 ))}
                             </>
