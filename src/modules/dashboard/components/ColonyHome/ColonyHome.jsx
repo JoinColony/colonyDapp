@@ -7,11 +7,11 @@ import React, { useState, useCallback } from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 import { Redirect } from 'react-router';
 
-import type { UserPermissionsType } from '~immutable';
+import type { TokenReferenceType, UserPermissionsType } from '~immutable';
 import type { TasksFilterOptionType } from '../shared/tasksFilter';
 
 import { ACTIONS } from '~redux';
-import { useDataFetcher } from '~utils/hooks';
+import { useDataFetcher, useSelector } from '~utils/hooks';
 import { mergePayload } from '~utils/actions';
 import { Tab, Tabs, TabList, TabPanel } from '~core/Tabs';
 import { Select } from '~core/Fields';
@@ -24,11 +24,16 @@ import {
 } from '../shared/tasksFilter';
 
 import { useColonyWithName } from '../../hooks/useColony';
+import { colonyNativeTokenSelector } from '../../selectors';
 import { currentUserColonyPermissionsFetcher } from '../../../users/fetchers';
-import { canAdminister, canCreateTask } from '../../../users/checks';
-import { isInRecoveryMode } from '../../checks';
+import {
+  canAdminister,
+  canCreateTask as canCreateTaskCheck,
+} from '../../../users/checks';
+import { isInRecoveryMode as isInRecoveryModeCheck } from '../../checks';
 
 import ColonyDomains from './ColonyDomains';
+import ColonyInitialFunding from './ColonyInitialFunding';
 import ColonyMeta from './ColonyMeta';
 import ColonyTasks from './ColonyTasks';
 
@@ -89,6 +94,11 @@ const ColonyHome = ({
     [colonyAddress],
   );
 
+  const nativeTokenRef: ?TokenReferenceType = useSelector(
+    colonyNativeTokenSelector,
+    [colonyAddress],
+  );
+
   const transform = useCallback(mergePayload({ colonyAddress }), [
     colonyAddress,
   ]);
@@ -101,6 +111,8 @@ const ColonyHome = ({
     return <LoadingTemplate loadingText={MSG.loadingText} />;
   }
 
+  const canCreateTask = canCreateTaskCheck(permissions);
+  const isInRecoveryMode = isInRecoveryModeCheck(colony);
   const filterSelect = (
     <Select
       appearance={{ alignOptions: 'right', theme: 'alt' }}
@@ -119,9 +131,7 @@ const ColonyHome = ({
       <aside className={styles.colonyInfo}>
         <ColonyMeta
           colony={colony}
-          canAdminister={
-            !isInRecoveryMode(colony) && canAdminister(permissions)
-          }
+          canAdminister={!isInRecoveryMode && canAdminister(permissions)}
         />
       </aside>
       <main className={styles.content}>
@@ -132,19 +142,31 @@ const ColonyHome = ({
             </Tab>
           </TabList>
           <TabPanel>
-            <ColonyTasks
-              colonyAddress={colonyAddress}
-              filteredDomainId={filteredDomainId}
-              filterOption={filterOption}
-            />
+            {nativeTokenRef &&
+            nativeTokenRef.balance &&
+            nativeTokenRef.balance.isZero() ? (
+              <ColonyInitialFunding
+                colonyAddress={colonyAddress}
+                displayName={colony.displayName}
+                tokenAddress={nativeTokenRef.address}
+              />
+            ) : (
+              <ColonyTasks
+                canCreateTask={canCreateTask}
+                colonyAddress={colonyAddress}
+                filteredDomainId={filteredDomainId}
+                filterOption={filterOption}
+                isInRecoveryMode={isInRecoveryMode}
+              />
+            )}
           </TabPanel>
         </Tabs>
       </main>
       <aside className={styles.sidebar}>
-        {canCreateTask(permissions) && (
+        {canCreateTask && (
           <ActionButton
             appearance={{ theme: 'primary', size: 'large' }}
-            disabled={isInRecoveryMode(colony)}
+            disabled={isInRecoveryMode}
             error={ACTIONS.TASK_CREATE_ERROR}
             submit={ACTIONS.TASK_CREATE}
             success={ACTIONS.TASK_CREATE_SUCCESS}
@@ -158,7 +180,7 @@ const ColonyHome = ({
           setFilteredDomainId={setFilteredDomainId}
         />
       </aside>
-      {isInRecoveryMode(colony) && <RecoveryModeAlert />}
+      {isInRecoveryMode && <RecoveryModeAlert />}
     </div>
   );
 };

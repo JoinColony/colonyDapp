@@ -1,0 +1,34 @@
+@import 'variables.css';
+
+.inputContainer {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+}
+
+.input {
+    flex-grow: 1;
+}
+
+.input input {
+  text-align: right;
+}
+
+.fundingPrompt {
+    margin-bottom: 10px;
+}
+
+.nativeToken {
+    padding: 0 50px 0 20px;
+}
+
+.mintTokensForm {
+    border-bottom: 1px solid var(--grey-blue-0);
+}
+
+.container {
+    border: 1px solid var(--grey-blue-0);
+    border-radius: var(--radius-tiny);
+    padding: 20px;
+    margin: 40px 0;
+}
