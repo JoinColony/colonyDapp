@@ -3,7 +3,7 @@ import React from 'react';
 import { defineMessages, FormattedMessage, FormattedNumber } from 'react-intl';
 import BigNumber from 'bn.js';
 
-import type { ContractTransactionType, TokenType } from '~immutable';
+import type { TransactionRecordType, TokenType } from '~immutable';
 
 import Numeral from '~core/Numeral';
 import { SpinnerLoader } from '~core/Preloaders';
@@ -14,16 +14,17 @@ import { useDataFetcher, useSelector } from '~utils/hooks';
 import { useReputationEarned } from '../../hooks/useReputationEarned';
 import { tokenFetcher } from '../../fetchers';
 import { taskSelector } from '../../selectors';
-import { networkFeeSelector } from '../../../core/selectors';
 import { friendlyUsernameSelector } from '../../../users/selectors';
 
 import styles from './TaskFeedCompleteInfo.css';
 
-const getTaskPayoutNetworkFee = (amount: BigNumber, fee: number) =>
+const getTaskPayoutTransactionFee = (amount: BigNumber, fee: number) =>
   amount.toNumber() * fee;
 
-const getTaskPayoutAmountMinusNetworkFee = (amount: BigNumber, fee: number) =>
-  amount.toNumber() - getTaskPayoutNetworkFee(amount, fee);
+const getTaskPayoutAmountMinusTransactionFee = (
+  amount: BigNumber,
+  fee: number,
+) => amount.toNumber() - getTaskPayoutTransactionFee(amount, fee);
 
 const MSG = defineMessages({
   eventTaskSentMessage: {
@@ -54,13 +55,22 @@ const MSG = defineMessages({
 });
 
 type Props = {|
-  transaction: ContractTransactionType,
+  transaction: TransactionRecordType<*, *>,
 |};
 
 const displayName = 'dashboard.TaskFeed.TaskFeedCompleteInfo';
 
 const TaskFeedCompleteInfo = ({
-  transaction: { amount, date, hash, taskId, to, token: tokenAddress },
+  transaction: {
+    amount,
+    date,
+    hash,
+    taskId,
+    to,
+    token: tokenAddress,
+    gasLimit,
+    gasPrice,
+  },
 }: Props) => {
   const {
     record: { reputation: taskReputation = 0 },
@@ -83,11 +93,8 @@ const TaskFeedCompleteInfo = ({
     didFailToRate,
   );
 
-  /**
-   * @todo: Use fee data from the transaction
-   * @body: The current network fee doesn't necessarily reflect the fee at time of tx.
-   */
-  const networkFee = useSelector(networkFeeSelector);
+  const transactionFee =
+    gasPrice && gasLimit && gasPrice.mul(new BigNumber(gasLimit));
   return (
     <div className={styles.main}>
       <div className={styles.transactionSentCopy}>
@@ -124,9 +131,9 @@ const TaskFeedCompleteInfo = ({
                     <Numeral
                       truncate={2}
                       unit={decimals}
-                      value={getTaskPayoutAmountMinusNetworkFee(
+                      value={getTaskPayoutAmountMinusTransactionFee(
                         amount,
-                        networkFee,
+                        transactionFee,
                       )}
                     />
                   ),
@@ -141,7 +148,10 @@ const TaskFeedCompleteInfo = ({
                     <Numeral
                       truncate={2}
                       unit={decimals}
-                      value={getTaskPayoutNetworkFee(amount, networkFee)}
+                      value={getTaskPayoutTransactionFee(
+                        amount,
+                        transactionFee,
+                      )}
                     />
                   ),
                   symbol,
