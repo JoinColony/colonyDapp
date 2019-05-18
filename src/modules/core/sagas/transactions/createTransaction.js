@@ -70,14 +70,16 @@ export function* getTxChannel(id: string): Saga<Channel<*>> {
 export function* createTransactionChannels(
   batchId: string,
   ids: string[],
-): Saga<[{ [id: string]: string }, { [id: string]: Channel<*> }]> {
+): Saga<{
+  [id: string]: {| channel: Channel<*>, index: number, id: string |},
+}> {
   const txIds = ids.map(id => `${batchId}-${id}`);
-  const txChannels = yield all(txIds.map(txId => call(getTxChannel, txId)));
+  const channels = yield all(txIds.map(id => call(getTxChannel, id)));
   return ids.reduce(
-    ([txIdsObj, txChannelsObj], id, i) => [
-      { ...txIdsObj, [id]: txIds[i] },
-      { ...txChannelsObj, [id]: txChannels[i] },
-    ],
-    [{}, {}],
+    (result, id, index) => ({
+      ...result,
+      [id]: { index, channel: channels[index], id: txIds[index] },
+    }),
+    {},
   );
 }
