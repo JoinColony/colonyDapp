@@ -54,6 +54,7 @@ export const createColonyProfile: Command<
     token: {|
       address: Address,
       iconHash?: ?string,
+      isExternal?: boolean,
       isNative?: ?boolean,
       name: string,
       symbol: string,
@@ -86,7 +87,7 @@ export const createColonyProfile: Command<
       colonyAddress,
       colonyName,
       displayName,
-      token: { iconHash, isNative, ...token },
+      token: { iconHash, isNative, isExternal, ...token },
     },
   ) {
     const profileCreatedEvent = createEvent(
@@ -100,6 +101,7 @@ export const createColonyProfile: Command<
     const tokenInfoAddedEvent = createEvent(
       COLONY_EVENT_TYPES.TOKEN_INFO_ADDED,
       {
+        isExternal: !!isExternal,
         isNative: !!isNative,
         ...(iconHash ? { iconHash } : null),
         ...token,
@@ -206,6 +208,7 @@ export const addTokenInfo: Command<
   {|
     address: Address,
     iconHash?: ?string,
+    isExternal?: boolean,
     isNative?: ?boolean,
     name: string,
     symbol: string,
@@ -215,11 +218,12 @@ export const addTokenInfo: Command<
   name: 'addTokenInfo',
   context: [CONTEXT.COLONY_MANAGER, CONTEXT.DDB_INSTANCE, CONTEXT.WALLET],
   prepare: prepareColonyStoreQuery,
-  async execute(colonyStore, { iconHash, isNative, ...args }) {
+  async execute(colonyStore, { iconHash, isNative, isExternal, ...args }) {
     const tokenInfoAddedEvent = createEvent(
       COLONY_EVENT_TYPES.TOKEN_INFO_ADDED,
       {
         ...(iconHash ? { iconHash } : null),
+        isExternal: !!isExternal,
         isNative: !!isNative,
         ...args,
       },

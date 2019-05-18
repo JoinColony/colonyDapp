@@ -10,6 +10,7 @@ import type { Address } from '../types';
 type Shared = {|
   address: Address,
   balance?: BigNumber,
+  isExternal?: boolean,
   isNative?: boolean,
   iconHash?: string,
 |};
@@ -21,6 +22,7 @@ export type TokenReferenceRecordType = RecordOf<Shared>;
 const defaultProps: $Shape<Shared> = {
   address: undefined,
   balance: undefined,
+  isExternal: undefined,
   isNative: undefined,
   iconHash: undefined,
 };
