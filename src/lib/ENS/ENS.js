@@ -155,4 +155,3 @@ class ENS {
 }
 
 export default ENS;
-
