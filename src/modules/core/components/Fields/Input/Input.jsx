@@ -94,6 +94,7 @@ const Input = ({
   setValue,
   setError,
   status,
+  statusValues,
   connect,
   onChange,
   ...props
@@ -137,7 +138,12 @@ const Input = ({
           <div className={styles.extension}>{formatIntl(extensionString)}</div>
         )}
       </div>
-      <InputStatus appearance={appearance} status={status} error={$error} />
+      <InputStatus
+        appearance={appearance}
+        status={status}
+        statusValues={statusValues}
+        error={$error}
+      />
     </div>
   );
 };

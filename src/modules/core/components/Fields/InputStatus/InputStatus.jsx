@@ -2,7 +2,7 @@
 
 import type { IntlShape, MessageDescriptor } from 'react-intl';
 
-import React, { Fragment } from 'react';
+import React from 'react';
 import { injectIntl } from 'react-intl';
 
 import { getMainClasses } from '~utils/css';
@@ -24,6 +24,8 @@ type Props = {
   error?: string | MessageDescriptor,
   /** Status text (if applicable) */
   status?: string | MessageDescriptor,
+  /** Values for status text (react-intl interpolation) (if applicable) */
+  statusValues?: Object,
   /** @ignore injected by `react-intl` */
   intl: IntlShape,
 };
@@ -35,32 +37,22 @@ const InputStatus = ({
   error,
   intl: { formatMessage },
   status,
+  statusValues,
 }: Props) => {
   const errorText = typeof error == 'object' ? formatMessage(error) : error;
-  const statusText = typeof status == 'object' ? formatMessage(status) : status;
+  const statusText =
+    typeof status == 'object' ? formatMessage(status, statusValues) : status;
   const text = errorText || statusText;
+  const Element = appearance.direction === 'horizontal' ? 'span' : 'p';
   return (
-    <Fragment>
-      {appearance.direction === 'horizontal' ? (
-        <span
-          className={getMainClasses(appearance, styles, {
-            error: !!error,
-            hidden: !text,
-          })}
-        >
-          {text}
-        </span>
-      ) : (
-        <p
-          className={getMainClasses(appearance, styles, {
-            error: !!error,
-            hidden: !text,
-          })}
-        >
-          {text}
-        </p>
-      )}
-    </Fragment>
+    <Element
+      className={getMainClasses(appearance, styles, {
+        error: !!error,
+        hidden: !text,
+      })}
+    >
+      {text}
+    </Element>
   );
 };
 
