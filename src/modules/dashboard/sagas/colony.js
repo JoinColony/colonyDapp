@@ -323,7 +323,7 @@ function* colonyCreate({
         displayName,
         token: {
           address: tokenAddress,
-          iconHash: tokenIcon ? tokenIcon[0].uploaded.ipfsHash : undefined,
+          iconHash: tokenIcon,
           isNative: true,
           name: tokenName,
           symbol: tokenSymbol,

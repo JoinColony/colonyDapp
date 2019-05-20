@@ -122,10 +122,21 @@ const StepCreateToken = ({
     },
     [wizardValues, nextStep, previousStep],
   );
+  const handleSubmit = useCallback(
+    ({ tokenIcon, ...values }) =>
+      nextStep({
+        ...values,
+        tokenIcon:
+          tokenIcon && tokenIcon.length
+            ? tokenIcon[0].uploaded.ipfsHash
+            : undefined,
+      }),
+    [nextStep],
+  );
 
   return (
     <Form
-      onSubmit={nextStep}
+      onSubmit={handleSubmit}
       validationSchema={validationSchema}
       {...wizardForm}
     >
