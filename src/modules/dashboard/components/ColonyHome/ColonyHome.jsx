@@ -148,6 +148,7 @@ const ColonyHome = ({
               <ColonyInitialFunding
                 colonyAddress={colonyAddress}
                 displayName={colony.displayName}
+                isExternal={nativeTokenRef.isExternal}
                 tokenAddress={nativeTokenRef.address}
               />
             ) : (

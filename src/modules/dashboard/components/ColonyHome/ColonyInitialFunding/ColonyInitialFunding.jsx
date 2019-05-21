@@ -15,13 +15,16 @@ import { tokenFetcher } from '../../../fetchers';
 import Heading from '~core/Heading';
 import Button from '~core/Button';
 import { Input } from '~core/Fields';
+import QRCode from '~core/QRCode';
 import { TokenMintForm } from '~admin/Tokens';
 
 import styles from './ColonyInitialFunding.css';
+import CopyableAddress from '~core/CopyableAddress';
 
 type Props = {|
   colonyAddress: Address,
   displayName: string,
+  isExternal?: boolean,
   tokenAddress: Address,
 |};
 
@@ -44,10 +47,21 @@ const MSG = defineMessages({
     id: 'dashboard.ColonyInitialFunding.amountLabel',
     defaultMessage: 'Amount',
   },
+  qrCodeDescriptionExternal: {
+    id: 'dashboard.ColonyInitialFunding.qrCodeDescriptionExternal',
+    // eslint-disable-next-line max-len
+    defaultMessage: `Send any ETH or ERC20 tokens to your colony's address below:`,
+  },
+  qrCodeDescription: {
+    id: 'dashboard.ColonyInitialFunding.qrCodeDescription',
+    // eslint-disable-next-line max-len
+    defaultMessage: `Or send any ETH or ERC20 tokens to your colony's address below:`,
+  },
 });
 
 const ColonyInitialFunding = ({
   colonyAddress,
+  isExternal,
   displayName,
   tokenAddress,
 }: Props) => {
@@ -56,57 +70,85 @@ const ColonyInitialFunding = ({
     [tokenAddress],
     [tokenAddress],
   );
-  // @todo Provide a means to determine whether the native token was created externally
-  const isExternal = false;
-  return nativeToken && !isExternal ? (
-    <div className={styles.container}>
-      <Heading
-        appearance={{ size: 'medium' }}
-        text={MSG.title}
-        textValues={{ displayName }}
-      />
-      <p className={styles.fundingPrompt}>
-        <FormattedMessage {...MSG.fundingPrompt} />
-      </p>
-      <TokenMintForm colonyAddress={colonyAddress} nativeToken={nativeToken}>
-        {({
-          handleSubmit,
-          isSubmitting,
-          isValid,
-        }: FormikProps<{|
-          mintAmount: number,
-        |}>) => (
-          <div className={styles.mintTokensForm}>
-            <Heading appearance={{ size: 'normal' }} text={MSG.mintNewTokens} />
-            <div className={styles.inputContainer}>
-              <div className={styles.input}>
-                <Input
-                  appearance={{ theme: 'minimal' }}
-                  formattingOptions={{
-                    numeral: true,
-                    numeralPositiveOnly: true,
-                    numeralDecimalScale: nativeToken.decimals || 18,
-                  }}
-                  label={MSG.amountLabel}
-                  name="mintAmount"
+
+  if (!nativeToken) {
+    return null;
+  }
+
+  return (
+    <>
+      {isExternal ? null : (
+        <div className={styles.container}>
+          <Heading
+            appearance={{ size: 'medium' }}
+            text={MSG.title}
+            textValues={{ displayName }}
+          />
+          <p className={styles.fundingPrompt}>
+            <FormattedMessage {...MSG.fundingPrompt} />
+          </p>
+          <TokenMintForm
+            colonyAddress={colonyAddress}
+            nativeToken={nativeToken}
+          >
+            {({
+              handleSubmit,
+              isSubmitting,
+              isValid,
+            }: FormikProps<{|
+              mintAmount: number,
+            |}>) => (
+              <div className={styles.mintTokensForm}>
+                <Heading
+                  appearance={{ size: 'normal' }}
+                  text={MSG.mintNewTokens}
                 />
+                <div className={styles.inputContainer}>
+                  <div className={styles.input}>
+                    <Input
+                      appearance={{ theme: 'minimal' }}
+                      formattingOptions={{
+                        numeral: true,
+                        numeralPositiveOnly: true,
+                        numeralDecimalScale: nativeToken.decimals || 18,
+                      }}
+                      label={MSG.amountLabel}
+                      name="mintAmount"
+                    />
+                  </div>
+                  <span className={styles.nativeToken} title={nativeToken.name}>
+                    {nativeToken.symbol}
+                  </span>
+                  <Button
+                    appearance={{ theme: 'primary', size: 'large' }}
+                    onClick={handleSubmit}
+                    text={MSG.mintNewTokens}
+                    loading={isSubmitting}
+                    disabled={!isValid}
+                  />
+                </div>
               </div>
-              <span className={styles.nativeToken} title={nativeToken.name}>
-                {nativeToken.symbol}
-              </span>
-              <Button
-                appearance={{ theme: 'primary', size: 'large' }}
-                onClick={handleSubmit}
-                text={MSG.mintNewTokens}
-                loading={isSubmitting}
-                disabled={!isValid}
-              />
-            </div>
-          </div>
-        )}
-      </TokenMintForm>
-    </div>
-  ) : null;
+            )}
+          </TokenMintForm>
+        </div>
+      )}
+      <div className={styles.qrCodeContainer}>
+        <div className={styles.qrCode}>
+          <QRCode address={colonyAddress} width={50} />
+        </div>
+        <div className={styles.qrCodeAddress}>
+          <FormattedMessage
+            className={styles.qrCodeDescription}
+            tagName="p"
+            {...MSG[
+              isExternal ? 'qrCodeDescriptionExternal' : 'qrCodeDescription'
+            ]}
+          />
+          <CopyableAddress full>{colonyAddress}</CopyableAddress>
+        </div>
+      </div>
+    </>
+  );
 };
 
 ColonyInitialFunding.displayName = 'dashboard.ColonyInitialFunding';

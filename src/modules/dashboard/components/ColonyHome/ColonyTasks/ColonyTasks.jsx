@@ -29,13 +29,28 @@ type Props = {|
 |};
 
 const MSG = defineMessages({
-  createTaskDescription: {
-    id: 'dashboard.ColonyTasks.createTaskDescription',
+  newTask: {
+    id: 'dashboard.ColonyTasks.newTask',
+    defaultMessage: 'New task',
+  },
+  newTaskDescription: {
+    id: 'dashboard.ColonyTasks.newTaskDescription',
     defaultMessage: 'One small task for Man, one giant leap for Mankind',
   },
 });
 
 const displayName = 'dashboard.ColonyTasks';
+
+const NewTaskButton = ({ onClick }: { onClick: Function }) => (
+  <div onClick={onClick}>
+    <Icon
+      className={styles.newTaskButton}
+      name="circle-add"
+      title={MSG.newTask}
+      viewBox="0 0 132 132"
+    />
+  </div>
+);
 
 const ColonyTasks = ({
   canCreateTask,
@@ -67,23 +82,18 @@ const ColonyTasks = ({
     return null;
   }
 
-  // FIXME the icon isn't showing up
   if (draftIds.length === 0) {
     return canCreateTask ? (
-      <div className={styles.createTaskContainer}>
+      <div className={styles.newTaskContainer}>
         <ActionButton
-          className={styles.createTaskButton}
-          button={Icon}
+          button={NewTaskButton}
           disabled={isInRecoveryMode}
           error={ACTIONS.TASK_CREATE_ERROR}
-          name="circle-add"
           submit={ACTIONS.TASK_CREATE}
           success={ACTIONS.TASK_CREATE_SUCCESS}
           transform={transform}
         />
-        <span className={styles.createTaskDescription}>
-          <FormattedMessage {...MSG.createTaskDescription} />
-        </span>
+        <FormattedMessage tagName="p" {...MSG.newTaskDescription} />
       </div>
     ) : null;
   }
