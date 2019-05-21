@@ -1,18 +1,19 @@
 /* @flow */
 
 // $FlowFixMe upgrade flow
-import React, { useCallback, useState } from 'react';
+import React, { useCallback } from 'react';
 import { defineMessages, FormattedDate, FormattedMessage } from 'react-intl';
 
 import Heading from '~core/Heading';
-import Button, { ActionButton } from '~core/Button';
+import Button from '~core/Button';
 import DatePicker from '~core/DatePicker';
+import { ActionForm } from '~core/Fields/Form';
 import { ACTIONS } from '~redux';
 
 import styles from './TaskDate.css';
 
 import type { TaskProps } from '~immutable';
-import { mergePayload } from '~utils/actions';
+import { mapPayload, mergePayload, pipe } from '~utils/actions';
 
 const MSG = defineMessages({
   title: {
@@ -45,12 +46,17 @@ const TaskDate = ({
   dueDate,
   isTaskCreator,
 }: Props) => {
-  const [selectedDate, setSelectedDate] = useState(dueDate);
-
-  const handleSelectDate = useCallback(
-    (date: ?Date) => setSelectedDate(date),
-    [],
+  const transform = useCallback(
+    pipe(
+      mapPayload(({ taskDueDate }) => ({ dueDate: taskDueDate })),
+      mergePayload({
+        colonyAddress,
+        draftId,
+      }),
+    ),
+    [colonyAddress, draftId],
   );
+
   return (
     <div className={styles.main}>
       <div className={styles.controls}>
@@ -59,51 +65,61 @@ const TaskDate = ({
           text={MSG.title}
         />
         {isTaskCreator && (
-          <DatePicker
-            elementOnly
-            connect={false}
-            name="taskDueDate"
-            setValue={handleSelectDate}
-            $value={selectedDate}
-            showArrow={false}
-            renderTrigger={
-              <Button
-                appearance={{ theme: 'blue', size: 'small' }}
-                text={MSG.selectDate}
-                textValues={{
-                  dateSelected: !!dueDate,
-                }}
+          <ActionForm
+            initialValues={{
+              taskDueDate: dueDate,
+            }}
+            submit={ACTIONS.TASK_SET_DUE_DATE}
+            success={ACTIONS.TASK_SET_DUE_DATE_SUCCESS}
+            error={ACTIONS.TASK_SET_DUE_DATE_ERROR}
+            transform={transform}
+          >
+            {({ submitForm }) => (
+              <DatePicker
+                elementOnly
+                name="taskDueDate"
+                showArrow={false}
+                setValueOnPick
+                renderTrigger={
+                  <Button
+                    appearance={{ theme: 'blue', size: 'small' }}
+                    text={MSG.selectDate}
+                    textValues={{
+                      dateSelected: !!dueDate,
+                    }}
+                  />
+                }
+                renderContentFooter={close => (
+                  <div className={styles.dateControls}>
+                    <Button
+                      appearance={{ theme: 'secondary' }}
+                      text={{ id: 'button.cancel' }}
+                      onClick={() => close(null, { cancelled: true })}
+                    />
+                    <Button
+                      appearance={{ theme: 'primary' }}
+                      text={{ id: 'button.confirm' }}
+                      onClick={() => {
+                        const result = submitForm();
+                        // use of condition to make flow happy
+                        if (result) {
+                          result.then(() => {
+                            close();
+                          });
+                        }
+                      }}
+                    />
+                  </div>
+                )}
               />
-            }
-            renderContentFooter={(close, currentDate) => (
-              <div className={styles.dateControls}>
-                <Button
-                  appearance={{ theme: 'secondary' }}
-                  text={{ id: 'button.cancel' }}
-                  onClick={() => close(null, { cancelled: true })}
-                />
-                <ActionButton
-                  appearance={{ theme: 'primary' }}
-                  text={{ id: 'button.confirm' }}
-                  submit={ACTIONS.TASK_SET_DUE_DATE}
-                  success={ACTIONS.TASK_SET_DUE_DATE_SUCCESS}
-                  error={ACTIONS.TASK_SET_DUE_DATE_ERROR}
-                  onSuccess={close}
-                  transform={mergePayload({
-                    colonyAddress,
-                    draftId,
-                    dueDate: currentDate,
-                  })}
-                />
-              </div>
             )}
-          />
+          </ActionForm>
         )}
       </div>
       <div className={styles.currentDate}>
-        {selectedDate ? (
+        {dueDate ? (
           <FormattedDate
-            value={selectedDate}
+            value={dueDate}
             month="long"
             day="numeric"
             year="numeric"
