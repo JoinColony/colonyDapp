@@ -68,6 +68,10 @@ const MSG = defineMessages({
     id: 'dashboard.TaskEditDialog.selectAssignee',
     defaultMessage: 'Select Assignee',
   },
+  workerRequiredError: {
+    id: 'dashboard.TaskEditDialog.workerRequiredError',
+    defaultMessage: 'Please select a worker.',
+  },
   insufficientFundsError: {
     id: 'dashboard.TaskEditDialog.insufficientFundsError',
     defaultMessage: "You don't have enough funds",
@@ -217,11 +221,14 @@ const TaskEditDialog = ({
 
   const validateForm = useMemo(
     () => {
-      const workerShape = yup.object().shape({
-        profile: yup.object().shape({
-          walletAddress: yup.string().required(),
-        }),
-      });
+      const workerShape = yup
+        .object()
+        .shape({
+          profile: yup.object().shape({
+            walletAddress: yup.string().required(MSG.workerRequiredError),
+          }),
+        })
+        .default(null);
       return yup.object().shape({
         payouts: yup
           .array()
@@ -229,7 +236,8 @@ const TaskEditDialog = ({
             yup.object().shape({
               token: yup.string().required(MSG.tokenRequiredError),
               amount: yup
-                .number(MSG.amountPositiveError)
+                .number()
+                .typeError(MSG.amountPositiveError)
                 .required(MSG.amountRequiredError)
                 .moreThan(0, MSG.amountPositiveError)
                 .lessThanPot(colonyTokenReferences, MSG.insufficientFundsError),
