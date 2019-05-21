@@ -17,14 +17,16 @@ import styles from './StepConfirmAllInput.css';
 
 import CardRow from './CreateColonyCardRow.jsx';
 
-type FormValues = {
+type FormValues = {|
   colonyName: string,
   displayName: string,
-  username: string,
-  tokenSymbol: string,
-  tokenName: string,
+  tokenAddress?: string,
+  tokenChoice: 'create' | 'select',
   tokenIcon: string,
-};
+  tokenName: string,
+  tokenSymbol: string,
+  username: string,
+|};
 
 type Props = WizardProps<FormValues>;
 
@@ -71,23 +73,30 @@ const options = [
   },
 ];
 
-const StepConfirmAllInput = ({ nextStep, wizardValues }: Props) => {
-  const {
-    displayName,
-    username,
-    tokenSymbol,
-    tokenName,
-    tokenIcon,
+const StepConfirmAllInput = ({
+  nextStep,
+  wizardValues: {
     colonyName,
-  } = wizardValues;
+    displayName,
+    tokenAddress,
+    tokenChoice,
+    tokenIcon,
+    tokenName,
+    tokenSymbol,
+    username,
+  },
+  wizardValues,
+}: Props) => {
   const transform = useCallback(
     mergePayload({
-      username,
-      displayName,
       colonyName,
-      tokenName,
+      displayName,
+      tokenAddress,
+      tokenChoice,
       tokenIcon,
+      tokenName,
       tokenSymbol,
+      username,
     }),
     [username, displayName, colonyName, tokenName, tokenIcon, tokenSymbol],
   );

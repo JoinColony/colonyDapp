@@ -1,0 +1,8 @@
+<svg version="1.1" viewBox="0 0 132 132">
+<line fill="none" stroke="#F82B65" stroke-width="2" x1="66" y1="51" x2="66" y2="81"/>
+<line fill="none" stroke="#ADB2B3" stroke-width="2" x1="66" y1="51" x2="66" y2="81"/>
+<line fill="none" stroke="#F82B65" stroke-width="2" x1="81" y1="66" x2="51" y2="66"/>
+<line fill="none" stroke="#ADB2B3" stroke-width="2" x1="81" y1="66" x2="51" y2="66"/>
+<circle fill="none" stroke="#F82B65" stroke-dasharray="5,7" cx="66" cy="66" r="65.5"/>
+<circle fill="none" stroke="#ADB2B3" stroke-dasharray="5,7" cx="66" cy="66" r="65.5"/>
+</svg>

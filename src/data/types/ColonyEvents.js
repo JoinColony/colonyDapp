@@ -75,6 +75,7 @@ export type ColonyEvents = {|
       address: string,
       iconHash?: string,
       isNative?: boolean,
+      isExternal?: boolean,
       name?: string,
       symbol?: string,
     |},

@@ -54,7 +54,7 @@ type Props = ActionFormikConfig & {
 };
 
 const defaultOnError: OnError = (err, { setStatus }) => {
-  log(err);
+  log.error(err);
   setStatus({ error: MSG.defaultError });
 };
 

@@ -1,0 +1,51 @@
+@import 'variables.css';
+
+.inputContainer {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+}
+
+.input {
+  flex-grow: 1;
+}
+
+.input input {
+  text-align: right;
+}
+
+.fundingPrompt {
+  margin-bottom: 10px;
+}
+
+.nativeToken {
+  padding: 0 50px 0 20px;
+}
+
+.mintTokensForm {
+  border-bottom: 1px solid var(--grey-blue-0);
+}
+
+.container, .qrCodeContainer {
+  margin: 40px 0;
+  padding: 20px;
+  border: 1px solid var(--grey-blue-0);
+  border-radius: var(--radius-tiny);
+}
+
+.qrCodeContainer {
+  display: flex;
+  align-items: center;
+}
+
+.qrCode {
+  margin-right: 20px;
+}
+
+.qrCodeDescription {
+  font-weight: var(--weight-medium);
+}
+
+.qrCodeAddress {
+  min-width: 0;
+}

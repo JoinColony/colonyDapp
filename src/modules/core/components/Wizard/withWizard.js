@@ -7,7 +7,7 @@ import { List, Map as ImmutableMap } from 'immutable';
 
 type Props = {};
 
-type Values = { [formValue: string]: any };
+type Values = Object;
 
 type ValueList = List<Values>;
 
@@ -18,7 +18,7 @@ type State = {
 
 type StepType = ComponentType<any>;
 
-type StepsFn<T> = (step: number, values: Values, props?: T) => StepType;
+type StepsFn<T> = (step: number, values: Object, props?: T) => StepType;
 
 type Steps = Array<StepType> | StepsFn<Object>;
 

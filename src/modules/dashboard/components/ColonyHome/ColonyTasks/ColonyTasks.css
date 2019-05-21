@@ -1,0 +1,13 @@
+@import 'variables.css';
+
+.newTaskContainer {
+  text-align: center;
+}
+
+.newTaskButton {
+  display: block;
+  margin: 150px auto 70px;
+  height: 150px;
+  width: 150px;
+  cursor: pointer;
+}
