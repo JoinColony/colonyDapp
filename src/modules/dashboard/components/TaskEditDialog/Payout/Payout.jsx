@@ -136,7 +136,7 @@ const Payout = ({
                   />
                 </div>
               )}
-              {isEth && (
+              {isEth && !isEditing && (
                 <div className={styles.conversion}>
                   <EthUsd
                     appearance={{ theme: 'grey', size: 'small' }}
