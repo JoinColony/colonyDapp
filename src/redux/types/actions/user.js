@@ -186,21 +186,6 @@ export type UserActionTypes = {|
   USER_TOKENS_UPDATE_SUCCESS: ActionType<
     typeof ACTIONS.USER_TOKENS_UPDATE_SUCCESS,
   >,
-  USER_TRANSACTIONS_FETCH: ActionType<typeof ACTIONS.USER_TRANSACTIONS_FETCH>,
-  USER_TRANSACTIONS_FETCH_SUCCESS: ActionTypeWithPayload<
-    typeof ACTIONS.USER_TRANSACTIONS_FETCH_SUCCESS,
-    /*
-     * @todo the user's wallet transactions will most likely require
-     * it's own type
-     */
-    {|
-      transactions: ContractTransactionType[],
-    |},
-  >,
-  USER_TRANSACTIONS_FETCH_ERROR: ErrorActionType<
-    typeof ACTIONS.USER_TRANSACTIONS_FETCH_ERROR,
-    void,
-  >,
   USER_LOGOUT: ActionType<typeof ACTIONS.USER_LOGOUT>,
   USER_LOGOUT_ERROR: ErrorActionType<typeof ACTIONS.USER_LOGOUT_ERROR, void>,
   USER_LOGOUT_SUCCESS: ActionType<typeof ACTIONS.USER_LOGOUT_SUCCESS>,
