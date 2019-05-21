@@ -132,7 +132,9 @@ class StepHardware extends Component<Props> {
 
     if (availableAddresses.length) {
       const filteredWalletChoices = availableAddresses.filter(address =>
-        address.includes(hardwareWalletFilter),
+        address
+          .toLocaleLowerCase()
+          .includes(hardwareWalletFilter.toLowerCase()),
       );
 
       const iconClassName = hardwareWalletFilter
