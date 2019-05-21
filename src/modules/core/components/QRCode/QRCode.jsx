@@ -1,45 +1,51 @@
 /* @flow */
 
-import React, { Component } from 'react';
+// $FlowFixMe
+import React, { useRef, useLayoutEffect } from 'react';
 import QRCodeGenerator from 'qrcode';
+
+import { log } from '~utils/debug';
 
 type Props = {|
   address: string,
   width?: number,
 |};
 
-class QRCode extends Component<Props> {
-  static displayName = 'QRCode';
+const displayName = 'QRCode';
 
-  componentDidMount() {
-    const { address, width } = this.props;
-    const canvas = document.getElementById('qr-code');
+const QRCode = ({ address, width }: Props) => {
+  const canvas = useRef();
+  useLayoutEffect(
+    () => {
+      if (canvas.current) {
+        QRCodeGenerator.toCanvas(
+          canvas.current,
+          address,
+          {
+            margin: 0,
+            width,
+            color: { light: '#0000', background: '#2F2F2F' },
+          },
+          (error: Error) => {
+            /*
+             * This is a normal callback to be called upon finishing generating
+             * the QR Code's image pattern, not an Error callback (even though it
+             * only receives one argument, and that's an Error object instance)
+             *
+             * See: https://www.npmjs.com/package/qrcode#cb
+             */
+            if (error) {
+              log.error(error);
+            }
+          },
+        );
+      }
+    },
+    [address, width],
+  );
+  return <canvas ref={canvas} />;
+};
 
-    if (canvas) {
-      QRCodeGenerator.toCanvas(
-        canvas,
-        address,
-        { margin: 0, width },
-        (error: Error) => {
-          /*
-           * @NOTE This is normal callback to be called upon finishing generating
-           * the QR Code's image pattern, not an Error callback (even though it
-           * only receives one argument, and that's an Error objet instance)
-           *
-           * See: https://www.npmjs.com/package/qrcode#cb
-           */
-          if (error) {
-            /* eslint-disable-next-line no-console */
-            console.log(error);
-          }
-        },
-      );
-    }
-  }
-
-  render() {
-    return <canvas id="qr-code" />;
-  }
-}
+QRCode.displayName = displayName;
 
 export default QRCode;
