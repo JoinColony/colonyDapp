@@ -375,7 +375,11 @@ export const checkUsernameIsAvailable: Query<
 };
 
 export const getUserInboxActivity: Query<
-  {| userInboxStore: UserInboxStore, colonyClient: ColonyClient |},
+  {|
+    userInboxStore: UserInboxStore,
+    colonyClient: ColonyClient,
+    walletAddress: Address,
+  |},
   {|
     colonyAddress: Address,
     inboxStoreAddress: OrbitDBAddress,
@@ -412,9 +416,10 @@ export const getUserInboxActivity: Query<
     return {
       userInboxStore,
       colonyClient,
+      walletAddress,
     };
   },
-  async execute({ userInboxStore, colonyClient }) {
+  async execute({ userInboxStore, colonyClient, walletAddress }) {
     const {
       adapter: { provider },
       contract: { address: colonyAddress },
@@ -425,7 +430,8 @@ export const getUserInboxActivity: Query<
       },
       tokenClient,
       tokenClient: {
-        events: { Mint },
+        events: { Mint, Transfer },
+        contract: { address: tokenAddress },
       },
     } = colonyClient;
     /*
@@ -485,7 +491,18 @@ export const getUserInboxActivity: Query<
       eventName: 'ColonyLabelRegistered',
     });
     /*
-     * Fetch the Colony's RAW Token Transactions Logs and Events
+     * Fetch the Colony's RAW Token Mint Logs and Events
+     */
+    const { logs: mintLogs, events: mintEvents } = await getLogsAndEvents(
+      tokenClient,
+      {},
+      {
+        blocksBack: 400000,
+        events: [Mint],
+      },
+    );
+    /*
+     * Fetch the Colony's RAW Token Mint Logs and Events
      */
     const {
       logs: transferLogs,
@@ -495,29 +512,28 @@ export const getUserInboxActivity: Query<
       {},
       {
         blocksBack: 400000,
-        events: [Mint],
+        events: [Transfer],
+        to: walletAddress,
       },
     );
     /*
      * @note We need to filter both the transaction logs and events to only
      * match the new current colony (based on the address)
      */
-    const cleanedTransferEvents = transferEvents.filter(
+    const cleanedMintEvents = mintEvents.filter(
       ({ address }) => address === colonyAddress,
     );
-    let cleanedTransferLogs = await Promise.all(
-      transferLogs.map(async transferLog => {
+    let cleanedMintLogs = await Promise.all(
+      mintLogs.map(async mintLog => {
         /*
          * @note in order to filter the transaction logs, we need to fetch the
          * full transaction, and extract the the destination address, "to"
          *
          * For newly minted tokens, this will match the current colony's address
          */
-        const { to } = await provider.getTransaction(
-          transferLog.transactionHash,
-        );
+        const { to } = await provider.getTransaction(mintLog.transactionHash);
         return {
-          ...transferLog,
+          ...mintLog,
           to,
         };
       }),
@@ -526,15 +542,15 @@ export const getUserInboxActivity: Query<
      * @note Now that we have destination address in the transaction log, we
      * can filter out the un-needed logs
      */
-    cleanedTransferLogs = cleanedTransferLogs.filter(
-      ({ to }) => to === colonyAddress,
-    );
+    cleanedMintLogs = cleanedMintLogs.filter(({ to }) => to === colonyAddress);
     /*
      * @note Since we're using the events array based on it's index, we need to
      * merge the colony events with the transaction events before transforming
      * the actual logs
      */
-    cleanedEvents = cleanedEvents.concat(cleanedTransferEvents);
+    cleanedEvents = cleanedEvents
+      .concat(cleanedMintEvents)
+      .concat(transferEvents);
     const transformedEvents = await Promise.all(
       /*
        * @note Remove the first four log entries.
@@ -551,26 +567,35 @@ export const getUserInboxActivity: Query<
        */
       logs
         .slice(4)
-        .concat(cleanedTransferLogs)
+        .concat(cleanedMintLogs)
+        .concat(transferLogs)
         .map(async (log, index) => {
-          const { domainId, address: targetUserAddress } =
-            cleanedEvents[index] || {};
+          const {
+            domainId,
+            address: targetUserAddress,
+            amount,
+            value,
+            eventName,
+            from,
+          } = cleanedEvents[index] || {};
           const timestamp = await getLogDate(provider, log);
-          const { from: sourceUserAddress } = await provider.getTransaction(
-            log.transactionHash,
-          );
+          let sourceUserAddress = from;
+          if (eventName !== 'Transfer') {
+            const { from: transactionSource } = await provider.getTransaction(
+              log.transactionHash,
+            );
+            sourceUserAddress = transactionSource;
+          }
           const transformedEvent = {
             id: log.transactionHash,
-            event: transformNotificationEventNames(
-              cleanedEvents[index].eventName,
-            ),
+            event: transformNotificationEventNames(eventName),
             timestamp: new Date(timestamp).getTime() * 1000,
             sourceUserAddress,
             colonyAddress,
             domainId,
             targetUserAddress,
-            amount: cleanedEvents[index].amount,
-            tokenAddress: log.address,
+            amount: amount || value,
+            tokenAddress,
           };
           return transformedEvent;
         }),
