@@ -3,7 +3,7 @@ import React from 'react';
 import { defineMessages, FormattedMessage, FormattedNumber } from 'react-intl';
 import BigNumber from 'bn.js';
 
-import type { TransactionRecordType, TokenType } from '~immutable';
+import type { ContractTransactionType, TokenType } from '~immutable';
 
 import Numeral from '~core/Numeral';
 import { SpinnerLoader } from '~core/Preloaders';
@@ -15,6 +15,7 @@ import { useReputationEarned } from '../../hooks/useReputationEarned';
 import { tokenFetcher } from '../../fetchers';
 import { taskSelector } from '../../selectors';
 import { friendlyUsernameSelector } from '../../../users/selectors';
+import { transactionByHash } from '../../../core/selectors';
 
 import styles from './TaskFeedCompleteInfo.css';
 
@@ -55,22 +56,13 @@ const MSG = defineMessages({
 });
 
 type Props = {|
-  transaction: TransactionRecordType<*, *>,
+  transaction: ContractTransactionType,
 |};
 
 const displayName = 'dashboard.TaskFeed.TaskFeedCompleteInfo';
 
 const TaskFeedCompleteInfo = ({
-  transaction: {
-    amount,
-    date,
-    hash,
-    taskId,
-    to,
-    token: tokenAddress,
-    gasLimit,
-    gasPrice,
-  },
+  transaction: { amount, date, hash, taskId, to, token: tokenAddress },
 }: Props) => {
   const {
     record: { reputation: taskReputation = 0 },
@@ -92,6 +84,7 @@ const TaskFeedCompleteInfo = ({
     rating,
     didFailToRate,
   );
+  const { gasPrice, gasLimit } = useSelector(transactionByHash, [hash]);
 
   const transactionFee =
     gasPrice && gasLimit && gasPrice.mul(new BigNumber(gasLimit));
