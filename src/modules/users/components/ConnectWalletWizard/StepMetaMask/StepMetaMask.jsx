@@ -6,6 +6,7 @@ import React, { Component, Fragment } from 'react';
 import { defineMessages } from 'react-intl';
 
 import { open } from '@colony/purser-metamask';
+import { staticMethods as metamaskMessages } from '@colony/purser-metamask/messages';
 
 import type { WizardProps } from '~core/Wizard';
 
@@ -28,7 +29,12 @@ const MSG = defineMessages({
   },
   errorHeading: {
     id: 'users.ConnectWalletWizard.StepMetaMask.errorHeading',
-    defaultMessage: "Oops we couldn't detect MetaMask",
+    defaultMessage: `{metamaskError, select,
+      notAuthorized {MetaMask is not authorized to access this domain}
+      cancelSign {Signing of the MetaMask authorization message was cancelled}
+      notAvailable {The MetaMask extension is not available}
+      other {Oops we couldn't detect MetaMask}
+    }`,
   },
   errorOpenMetamask: {
     id: 'users.ConnectWalletWizard.StepMetaMask.errorOpenMetamask',
@@ -55,6 +61,7 @@ type Props = WizardProps<FormValues>;
 type State = {
   isLoading: boolean,
   isValid: boolean,
+  metamaskError: string | null,
 };
 
 class MetaMask extends Component<Props, State> {
@@ -65,12 +72,10 @@ class MetaMask extends Component<Props, State> {
   state = {
     isLoading: false,
     isValid: false,
+    metamaskError: null,
   };
 
   componentDidMount() {
-    /**
-     * @todo Improve error modes for creating the metamask connection.
-     */
     this.connectMetaMask()
       .then()
       .catch();
@@ -83,23 +88,31 @@ class MetaMask extends Component<Props, State> {
   }
 
   connectMetaMask = async () => {
-    // Should this throw an error?
+    const {
+      didNotAuthorize,
+      cancelMessageSign,
+      metamaskNotAvailable,
+    } = metamaskMessages;
     let metamaskError = null;
     let wallet;
-    /**
-     * @todo Detect metamask wallet state for better errors.
-     * @body This should actually use `detect()` to check which metamask error this is
-     * and show the user a specific messages (locked, disabled, no account, etc)
-     */
     try {
-      // const provider: ProviderType = metamask();
       wallet = await open();
     } catch (error) {
-      metamaskError = error;
+      metamaskError = error.message;
+      if (error.message.includes(didNotAuthorize)) {
+        metamaskError = 'notAuthorized';
+      }
+      if (error.message.includes(cancelMessageSign)) {
+        metamaskError = 'cancelSign';
+      }
+      if (error.message.includes(metamaskNotAvailable)) {
+        metamaskError = 'notAvailable';
+      }
     }
     this.setState({
       isValid: !metamaskError || !!(wallet && wallet.ensAddress),
       isLoading: false,
+      metamaskError,
     });
   };
 
@@ -114,7 +127,7 @@ class MetaMask extends Component<Props, State> {
 
   render() {
     const { nextStep, previousStep, wizardForm, wizardValues } = this.props;
-    const { isLoading, isValid } = this.state;
+    const { isLoading, isValid, metamaskError } = this.state;
     return (
       <ActionForm
         submit={ACTIONS.WALLET_CREATE}
@@ -153,6 +166,7 @@ class MetaMask extends Component<Props, State> {
                   text={
                     status && status.error ? status.error : MSG.errorHeading
                   }
+                  textValues={{ metamaskError }}
                   appearance={{ size: 'medium', margin: 'none' }}
                 />
               )}
