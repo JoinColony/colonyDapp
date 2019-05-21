@@ -247,10 +247,13 @@ class StepHardware extends Component<Props> {
 }
 
 const enhance = connect(
-  ({ user }) => ({
-    isLoading: user.wallet.loading,
-    availableAddresses: user.wallet.availableAddresses,
-  }),
+  ({ users }) => {
+    const { isLoading, availableAddresses } = users.get('wallet');
+    return {
+      isLoading,
+      availableAddresses,
+    };
+  },
   { fetchAccounts: fetchAccountsAction },
 );
 
