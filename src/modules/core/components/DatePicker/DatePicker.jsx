@@ -54,6 +54,8 @@ type Props = {|
   $value?: ?Date,
   /** @ignore Will be injected by `asField` */
   setValue: (val: ?Date) => void,
+  /** Should it set the form value on pick. Useful when using a button to confirm choice & submit in rendered footer */
+  setValueOnPick?: boolean,
 |};
 
 const getShortDate = (date: Date) => formatDate(date, '{date} {Mon} {year}');
@@ -74,6 +76,7 @@ const DatePicker = ({
   renderTrigger,
   showArrow,
   setValue,
+  setValueOnPick,
   $value,
 }: Props) => {
   // Handles state of the input field if present
@@ -82,10 +85,16 @@ const DatePicker = ({
   const [currentDate, setCurrentDate] = useState($value);
 
   // Handle day picking via daypicker
-  const handleDayPick = useCallback(day => {
-    setCurrentDate(day);
-    setInputValue(getShortDate(day));
-  }, []);
+  const handleDayPick = useCallback(
+    day => {
+      if (setValueOnPick) {
+        setValue(day);
+      }
+      setCurrentDate(day);
+      setInputValue(getShortDate(day));
+    },
+    [setValue, setValueOnPick],
+  );
 
   // Handle day picking via input field
   const handleInputChange = useCallback(evt => {
