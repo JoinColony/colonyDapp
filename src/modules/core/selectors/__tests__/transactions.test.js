@@ -4,7 +4,11 @@ import { TransactionRecord } from '~immutable';
 
 import { CORE_NAMESPACE as ns } from '../../constants';
 
-import { groupedTransactions } from '../transactions';
+import {
+  groupedTransactions,
+  transactionByHash,
+  oneTransaction,
+} from '../transactions';
 
 jest.mock('../../../users/selectors', () => ({
   walletAddressSelector: () => '0xdeadbeef',
@@ -16,6 +20,7 @@ describe('Transaction selectors', () => {
     from: '0xdeadbeef',
     params: { taskId: 5 },
     identifier: 'coolony',
+    hash: '0x910ffad854fe8957f8ba2e581c891cdc8bacbcfdb1af3fc359c3ad1118175e26',
     group: {
       key: 'taskLifecycle',
       id: ['identifier', 'params.taskId'],
@@ -27,6 +32,7 @@ describe('Transaction selectors', () => {
     from: '0xdeadbeef',
     params: { taskId: 1 },
     identifier: 'othercolony',
+    hash: '0x910ffad854fe8957f8ba2e581c891cdc8bacbcfdb1af3fc359c3ad1118175e27',
     group: {
       key: 'taskLifecycle',
       id: 'taskLifecycle-1',
@@ -77,5 +83,44 @@ describe('Transaction selectors', () => {
       id: 'taskLifecycle-1',
       index: 1,
     });
+  });
+
+  test('transactionByHash selector', () => {
+    const state = fromJS({
+      [ns]: {
+        transactions: {
+          list: ImmutableMap({
+            tx1: TransactionRecord(tx1),
+            tx2: TransactionRecord(tx2),
+          }),
+        },
+      },
+    });
+    const found = transactionByHash(
+      state,
+      '0x910ffad854fe8957f8ba2e581c891cdc8bacbcfdb1af3fc359c3ad1118175e26',
+    );
+    const result = found.toJS();
+    expect(result.hash).toEqual(
+      '0x910ffad854fe8957f8ba2e581c891cdc8bacbcfdb1af3fc359c3ad1118175e26',
+    );
+  });
+
+  test('oneTransaction selector', () => {
+    const state = fromJS({
+      [ns]: {
+        transactions: {
+          list: ImmutableMap({
+            tx1: TransactionRecord(tx1),
+            tx2: TransactionRecord(tx2),
+          }),
+        },
+      },
+    });
+    const found = oneTransaction(state, 'tx2');
+
+    const result = found.toJS();
+    expect(result.from).toEqual('0xdeadbeef');
+    expect(result.identifier).toEqual('othercolony');
   });
 });

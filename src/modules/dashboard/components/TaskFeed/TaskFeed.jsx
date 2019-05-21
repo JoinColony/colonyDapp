@@ -85,6 +85,7 @@ const TaskFeed = ({ colonyAddress, draftId }: Props) => {
                   if (rating) {
                     return <TaskFeedRating key={id} rating={rating} />;
                   }
+
                   return transaction ? (
                     <TaskFeedCompleteInfo key={id} transaction={transaction} />
                   ) : null;
