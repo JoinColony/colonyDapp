@@ -42,6 +42,11 @@ const MSG = defineMessages({
 const displayName = 'dashboard.ColonyTasks';
 
 const NewTaskButton = ({ onClick }: { onClick: Function }) => (
+  /*
+   * Ordinarily this wouldn't be necessary, but we can't use <button>
+   * because of the style requirements.
+   */
+  // eslint-disable-next-line jsx-a11y/click-events-have-key-events,jsx-a11y/no-static-element-interactions
   <div onClick={onClick}>
     <Icon
       className={styles.newTaskButton}
