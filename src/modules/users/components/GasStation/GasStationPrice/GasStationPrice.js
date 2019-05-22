@@ -13,7 +13,10 @@ import {
   transactionUpdateGas,
 } from '../../../../core/actionCreators';
 import { gasPrices as gasPricesSelector } from '../../../../core/selectors';
-import { currentUserBalanceSelector } from '../../../selectors';
+import {
+  currentUserBalanceSelector,
+  walletTypeSelector,
+} from '../../../selectors';
 import GasStationPrice from './GasStationPrice.jsx';
 
 type InProps = {|
@@ -25,20 +28,14 @@ const enhance: HOC<*, InProps> = compose(
     state => ({
       gasPrices: gasPricesSelector(state),
       balance: currentUserBalanceSelector(state),
+      walletType: walletTypeSelector(state),
     }),
     {
       estimateGas: transactionEstimateGas,
       updateGas: transactionUpdateGas,
     },
   ),
-  withProps(({ gasPrices }) => {
-    /**
-     * @todo: Determine if a tx requires any action with the wallet (gas station).
-     * @body Also, union type here isn't necessary, just being used during mocking
-     * to remind that `undefined` is possible
-     */
-    const walletNeedsAction: 'hardware' | 'metamask' | void = undefined;
-
+  withProps(({ gasPrices, walletType }) => {
     /**
      * @todo Actually determine whether the network is congested (gas station).
      */
@@ -47,7 +44,7 @@ const enhance: HOC<*, InProps> = compose(
     return {
       // Use immutable helper? (or switch to hooks?)
       gasPrices: gasPrices.toJS(),
-      walletNeedsAction,
+      walletNeedsAction: walletType !== 'software' ? walletType : undefined,
       isNetworkCongested,
     };
   }),
