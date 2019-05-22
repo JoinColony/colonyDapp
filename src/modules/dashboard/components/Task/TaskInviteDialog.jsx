@@ -17,6 +17,8 @@ import Heading from '~core/Heading';
 import Payout from '~dashboard/TaskEditDialog/Payout';
 import DialogBox from '~core/Dialog/DialogBox.jsx';
 
+import { useColonyNativeToken } from '../../hooks/useColonyNativeToken';
+
 import styles from './TaskInviteDialog.css';
 
 import tokensMock from '../../../../__mocks__/mockTokens';
@@ -48,6 +50,7 @@ const TaskInviteDialog = ({
   },
   currentUser,
 }: Props) => {
+  const nativeTokenReference = useColonyNativeToken(colonyAddress);
   const transform = useCallback(
     mergePayload({
       worker: walletAddress,
@@ -74,12 +77,8 @@ const TaskInviteDialog = ({
                   appearance={{ size: 'medium' }}
                   text={MSG.titleAssignment}
                 />
-                {/*
-                 * @todo Supply nativeToken with a selector (TaskInviteDialog).
-                 */}
                 <Assignment
-                  // $FlowFixMe not an Address, but it doesn't matter for a default value
-                  nativeToken={{ address: '' }}
+                  nativeToken={nativeTokenReference}
                   payouts={payouts}
                   pending
                   reputation={reputation}
