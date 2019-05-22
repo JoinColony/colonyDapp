@@ -10,6 +10,7 @@ export type WalletProps = {|
   availableAddresses?: Address[],
   currentAddress?: Address,
   isLoading: boolean,
+  walletType: 'software' | 'metamask' | 'hardware',
 |};
 
 export type WalletPropsJS = $ReadOnly<WalletProps>;
@@ -20,6 +21,7 @@ const defaultValues: $Shape<WalletProps> = {
   availableAddresses: [],
   currentAddress: undefined,
   isLoading: undefined,
+  walletType: 'software',
 };
 
 const WalletRecord: RecordFactory<WalletProps> = Record(defaultValues);
