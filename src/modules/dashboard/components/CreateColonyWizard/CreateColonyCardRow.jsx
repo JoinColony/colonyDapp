@@ -24,6 +24,7 @@ type Row = {
 
 type FormValues = {
   colonyName: string,
+  displayName: string,
   username: string,
   tokenName: string,
   tokenSymbol: string,
@@ -51,7 +52,7 @@ const formatUsername = (currentUser, values, option) => {
 
 const formatColonyName = (values, option: { valueKey: string }) => {
   const normalized = normalize(values[option.valueKey]);
-  return `${normalized} (colony.io/colony/${normalized})`;
+  return `${values.displayName} (colony.io/colony/${normalized})`;
 };
 
 const CardRow = ({ cardOptions, values, currentUser }: CardProps): any[] => {

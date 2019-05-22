@@ -24,6 +24,7 @@ import {
   selectAsJS,
   putNotification,
 } from '~utils/saga/effects';
+import { getNormalizedDomainText } from '~utils/strings';
 import { ACTIONS } from '~redux';
 import { CONTEXT, getContext } from '~context';
 
@@ -77,7 +78,7 @@ import { NOTIFICATION_EVENT_COLONY_ENS_CREATED } from '~users/Inbox/events';
 function* colonyCreate({
   meta,
   payload: {
-    colonyName,
+    colonyName: givenColonyName,
     displayName,
     tokenAddress: givenTokenAddress,
     tokenChoice,
@@ -92,6 +93,8 @@ function* colonyCreate({
    */
   const walletAddress = yield select(walletAddressSelector);
   const currentUser = yield* selectAsJS(currentUserSelector);
+  const colonyName = yield call(getNormalizedDomainText, givenColonyName);
+  if (!colonyName) throw new Error(`Invalid colonyName '${givenColonyName}'`);
 
   /*
    * Define a manifest of transaction ids and their respective channels.

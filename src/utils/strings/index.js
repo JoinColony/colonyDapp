@@ -125,7 +125,7 @@ export const addressEquals = (a: ?string, b: ?string) =>
 export const getNormalizedDomainText = (domain: string) => {
   if (!domain) return null;
   try {
-    const normalized = ensNormalize(domain);
+    const normalized: string = ensNormalize(domain);
     return normalized;
   } catch (e) {
     return null;
