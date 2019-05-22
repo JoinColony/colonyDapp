@@ -26,7 +26,7 @@ export type WalletActionTypes = {|
   WALLET_CREATE_SUCCESS: ActionTypeWithPayload<
     typeof ACTIONS.WALLET_CREATE_SUCCESS,
     {|
-      walletType: string,
+      walletType: 'software' | 'metamask' | 'hardware',
     |},
   >,
   WALLET_CREATE_ERROR: ErrorActionType<
