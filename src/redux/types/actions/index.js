@@ -10,6 +10,7 @@ import type { ColonyActionTypes } from './colony';
 import type { CurrentUserActionTypes } from './currentUser';
 import type { DomainActionTypes } from './domain';
 import type { GasPricesActionTypes } from './gasPrices';
+import type { InboxActionTypes } from './inbox';
 import type { IpfsActionTypes } from './ipfs';
 import type { MultisigActionTypes } from './multisig';
 import type { NetworkActionTypes } from './network';
@@ -83,6 +84,7 @@ export type ActionsType = {|
   ...CurrentUserActionTypes,
   ...DomainActionTypes,
   ...GasPricesActionTypes,
+  ...InboxActionTypes,
   ...IpfsActionTypes,
   ...MultisigActionTypes,
   ...NetworkActionTypes,
