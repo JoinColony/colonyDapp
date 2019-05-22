@@ -23,6 +23,12 @@ export type WalletActionTypes = {|
     |},
     void,
   >,
+  WALLET_CREATE_SUCCESS: ActionTypeWithPayload<
+    typeof ACTIONS.WALLET_CREATE_SUCCESS,
+    {|
+      walletType: string,
+    |},
+  >,
   WALLET_CREATE_ERROR: ErrorActionType<
     typeof ACTIONS.WALLET_CREATE_ERROR,
     void,
