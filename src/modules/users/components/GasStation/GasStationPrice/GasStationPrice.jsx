@@ -59,10 +59,10 @@ are expensive. We recommend waiting.`,
   },
   walletPromptText: {
     id: 'users.GasStation.GasStationPrice.walletPromptText',
-    defaultMessage: `Finish the transaction on {walletType, select,
+    defaultMessage: `Please finish the transaction on {walletType, select,
       metamask {Metamask}
       hardware {your hardware wallet}
-    }.`,
+    }`,
   },
   inSufficientFundsNotification: {
     id: 'users.GasStation.GasStationFooter.insufficientFundsNotification',
@@ -159,6 +159,7 @@ class GasStationPrice extends Component<Props, State> {
     if (walletNeedsAction) {
       return (
         <Alert
+          appearance={{ theme: 'info' }}
           text={MSG.walletPromptText}
           textValues={{
             walletType: walletNeedsAction,
