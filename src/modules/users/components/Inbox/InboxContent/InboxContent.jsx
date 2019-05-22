@@ -29,6 +29,10 @@ type Props = {
   activities: Array<InboxElement>,
 };
 
+/* eslint-disable no-console */
+const markAllRead = () => console.log('markAllRead');
+const markAsRead = id => console.log(`markAsRead${id}`);
+
 const Inbox = ({ activities }: Props) => (
   <CenteredTemplate appearance={{ theme: 'alt' }}>
     <div className={styles.contentContainer}>
