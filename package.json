@@ -146,7 +146,7 @@
         "@colony/colony-js-contract-loader-network": "^1.12.0-beta.5",
         "@colony/purser-core": "^2.1.0",
         "@colony/purser-ledger": "^1.2.2",
-        "@colony/purser-metamask": "^2.1.0",
+        "@colony/purser-metamask": "^2.2.0",
         "@colony/purser-software": "^1.2.4",
         "@colony/purser-trezor": "^1.2.2",
         "@colony/redux-promise-listener": "^1.2.0",

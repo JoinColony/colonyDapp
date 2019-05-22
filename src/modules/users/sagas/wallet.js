@@ -2,10 +2,11 @@
 
 import type { Saga } from 'redux-saga';
 
-import { call, put, takeLatest } from 'redux-saga/effects';
+import { eventChannel } from 'redux-saga';
+import { call, put, spawn, take, takeLatest } from 'redux-saga/effects';
 
 import softwareWallet from '@colony/purser-software';
-import metamaskWallet from '@colony/purser-metamask';
+import metamaskWallet, { accountChangeHook } from '@colony/purser-metamask';
 import ledgerWallet from '@colony/purser-ledger';
 import trezorWallet from '@colony/purser-trezor';
 import { TrufflepigLoader } from '@colony/colony-js-contract-loader-http';
@@ -13,6 +14,7 @@ import { TrufflepigLoader } from '@colony/colony-js-contract-loader-http';
 import type { Action } from '~redux';
 
 import { create, putError } from '~utils/saga/effects';
+import { addressEquals } from '~utils/strings';
 import { ACTIONS } from '~redux';
 
 // This should be typed better
@@ -53,8 +55,36 @@ function* openMnemonicWallet(
   });
 }
 
+/**
+ * Watch for changes in Metamask account, and log the user out when they happen.
+ */
+function* metamaskWatch(walletAddress: string): Saga<void> {
+  const channel = eventChannel(emit => {
+    accountChangeHook(event => emit(event));
+    return () => {
+      // @todo Nicer unsubscribe once supported in purser-metamask
+      if (window.web3) {
+        // eslint-disable-next-line no-underscore-dangle
+        window.web3.currentProvider.publicConfigStore._events.update.pop();
+      }
+    };
+  });
+  let previousAddress = walletAddress;
+  while (true) {
+    const { selectedAddress } = yield take(channel);
+    if (!addressEquals(previousAddress, selectedAddress)) {
+      previousAddress = selectedAddress;
+      yield put<Action<typeof ACTIONS.USER_LOGOUT>>({
+        type: ACTIONS.USER_LOGOUT,
+      });
+    }
+  }
+}
+
 function* openMetamaskWallet(): Saga<void> {
-  return yield call(metamaskWallet.open);
+  const wallet = yield call(metamaskWallet.open);
+  yield spawn(metamaskWatch, wallet.address);
+  return wallet;
 }
 
 function* openHardwareWallet(
