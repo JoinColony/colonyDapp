@@ -32,7 +32,7 @@ import setupDashboardSagas from '../../dashboard/sagas';
 import { getWallet, setupUsersSagas } from '../../users/sagas';
 import setupTransactionsSagas from './transactions';
 import setupNetworkSagas from './network';
-import { getDDB, getGasPrices, getColonyManager } from './utils';
+import { getDDB, getGasPrices, getColonyManager, getWalletType } from './utils';
 import setupOnBeforeUnload from './setupOnBeforeUnload';
 import { createAddress } from '~types';
 
@@ -66,7 +66,10 @@ function* setupDDBResolver(
 export default function* setupUserContext(
   action: Action<typeof ACTIONS.WALLET_CREATE>,
 ): Saga<void> {
-  const { meta } = action;
+  const {
+    meta,
+    payload: { method },
+  } = action;
   try {
     /*
      * Get the wallet and set it in context.
@@ -74,6 +77,13 @@ export default function* setupUserContext(
     const wallet = yield call(getWallet, action);
     const walletAddress = createAddress(wallet.address);
     yield setContext({ [CONTEXT.WALLET]: wallet });
+
+    yield put<Action<typeof ACTIONS.WALLET_CREATE_SUCCESS>>({
+      type: ACTIONS.WALLET_CREATE_SUCCESS,
+      payload: {
+        walletType: getWalletType(method),
+      },
+    });
 
     /*
      * Set up the DDB instance and colony manager context.
