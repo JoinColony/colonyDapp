@@ -13,6 +13,8 @@ import { groupedTransactions } from '../../../core/selectors';
 import Heading from '~core/Heading';
 import GasStationContent from '../../../users/components/GasStation/GasStationContent';
 import { useSelector } from '~utils/hooks';
+import { getNormalizedDomainText } from '~utils/strings';
+import { log } from '~utils/debug';
 
 import {
   getGroupStatus,
@@ -78,7 +80,11 @@ const StepConfirmTransactions = ({ wizardValues: { colonyName } }: Props) => {
     getGroupStatus(newestGroup) === 'succeeded' &&
     getGroupKey(newestGroup) === 'group.transaction.batch.createColony'
   ) {
-    return <Redirect to={`/colony/${colonyName}`} />;
+    const normalizedColonyName = getNormalizedDomainText(colonyName);
+    // This should never happen
+    if (!normalizedColonyName)
+      log.error(`The colonyName '${colonyName}' could not be normalized`);
+    return <Redirect to={`/colony/${normalizedColonyName || colonyName}`} />;
   }
 
   const colonyTransaction = findTransactionGroupByKey(
