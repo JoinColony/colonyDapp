@@ -34,7 +34,7 @@ const MSG = defineMessages({
 });
 
 type Props = {|
-  isTaskCreator: boolean,
+  disabled?: boolean,
   ...TaskProps<{ colonyAddress: *, draftId: *, dueDate: * }>,
 |};
 
@@ -44,7 +44,7 @@ const TaskDate = ({
   colonyAddress,
   draftId,
   dueDate,
-  isTaskCreator,
+  disabled,
 }: Props) => {
   const transform = useCallback(
     pipe(
@@ -64,7 +64,7 @@ const TaskDate = ({
           appearance={{ size: 'small', margin: 'none' }}
           text={MSG.title}
         />
-        {isTaskCreator && (
+        {!disabled && (
           <ActionForm
             initialValues={{
               taskDueDate: dueDate,

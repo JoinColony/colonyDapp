@@ -19,11 +19,11 @@ const MSG = defineMessages({
 });
 
 type Props = {|
-  isTaskCreator: boolean,
+  disabled: boolean,
   ...TaskProps<{ colonyAddress: *, draftId: *, title: * }>,
 |};
 
-const TaskTitle = ({ isTaskCreator, title, colonyAddress, draftId }: Props) => {
+const TaskTitle = ({ disabled, title, colonyAddress, draftId }: Props) => {
   const transform = useCallback(mergePayload({ colonyAddress, draftId }), [
     colonyAddress,
     draftId,
@@ -40,7 +40,7 @@ const TaskTitle = ({ isTaskCreator, title, colonyAddress, draftId }: Props) => {
         maxLength={90}
         name="title"
         placeholder={MSG.placeholder}
-        readOnly={!isTaskCreator}
+        readOnly={disabled}
       />
     </ActionForm>
   );
