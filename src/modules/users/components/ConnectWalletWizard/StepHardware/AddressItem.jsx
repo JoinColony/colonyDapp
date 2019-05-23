@@ -71,7 +71,7 @@ class AddressItem extends Component<Props, State> {
         </div>
         <div className={styles.choiceBalanceContainer}>
           {isLoading ? (
-            <SpinnerLoader appearance={{ size: 'medium', theme: 'primary' }} />
+            <SpinnerLoader appearance={{ size: 'small', theme: 'primary' }} />
           ) : (
             <FormattedNumber {...formattedNumberProps} />
           )}

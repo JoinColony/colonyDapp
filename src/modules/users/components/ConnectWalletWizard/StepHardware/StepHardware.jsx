@@ -167,7 +167,7 @@ class StepHardware extends Component<Props> {
                 elementOnly
               />
             </div>
-            <div>
+            <div className={styles.balanceHeading}>
               <Heading text={MSG.balanceText} appearance={{ size: 'normal' }} />
             </div>
           </div>
