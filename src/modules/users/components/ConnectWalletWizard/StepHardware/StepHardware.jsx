@@ -19,6 +19,7 @@ import Button from '~core/Button';
 import Heading from '~core/Heading';
 import styles from './StepHardware.css';
 
+import { walletSelector } from '../../../selectors';
 import { fetchAccounts as fetchAccountsAction } from '../../../actionCreators';
 import AddressItem from './AddressItem.jsx';
 
@@ -249,8 +250,8 @@ class StepHardware extends Component<Props> {
 }
 
 const enhance = connect(
-  ({ users }) => {
-    const { isLoading, availableAddresses } = users.get('wallet');
+  state => {
+    const { isLoading, availableAddresses } = walletSelector(state);
     return {
       isLoading,
       availableAddresses,
