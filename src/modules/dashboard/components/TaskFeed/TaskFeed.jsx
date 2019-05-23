@@ -7,13 +7,13 @@ import type { Address } from '~types';
 import type { TaskDraftId, TaskFeedItemType } from '~immutable';
 
 import { SpinnerLoader } from '~core/Preloaders';
-import { useDataFetcher } from '~utils/hooks';
+import { useDataSubscriber } from '~utils/hooks';
 
 import TaskFeedCompleteInfo from './TaskFeedCompleteInfo.jsx';
 import TaskFeedEvent from './TaskFeedEvent.jsx';
 import TaskFeedComment from './TaskFeedComment.jsx';
 import TaskFeedRating from './TaskFeedRating.jsx';
-import { taskFeedItemsFetcher } from '../../fetchers';
+import { taskFeedItemsSubscriber } from '../../subscribers';
 
 import styles from './TaskFeed.css';
 
@@ -41,9 +41,14 @@ const TaskFeed = ({ colonyAddress, draftId }: Props) => {
     [bottomEl],
   );
 
-  const { data: feedItems, isFetching: isFetchingFeedItems } = useDataFetcher<
-    TaskFeedItemType[],
-  >(taskFeedItemsFetcher, [draftId], [colonyAddress, draftId]);
+  const {
+    data: feedItems,
+    isFetching: isFetchingFeedItems,
+  } = useDataSubscriber<TaskFeedItemType[]>(
+    taskFeedItemsSubscriber,
+    [draftId],
+    [colonyAddress, draftId],
+  );
 
   const nFeedItems = feedItems ? feedItems.length : 0;
   useLayoutEffect(scrollToEnd, [nFeedItems]);
@@ -56,41 +61,46 @@ const TaskFeed = ({ colonyAddress, draftId }: Props) => {
         <div className={styles.main}>
           <div className={styles.items}>
             <div>
-              {feedItems.map(
-                ({ id, createdAt, comment, event, rating, transaction }) => {
-                  if (comment) {
-                    return (
-                      <TaskFeedComment
+              {feedItems
+                .sort((a, b) => a.createdAt - b.createdAt)
+                .map(
+                  ({ id, createdAt, comment, event, rating, transaction }) => {
+                    if (comment) {
+                      return (
+                        <TaskFeedComment
+                          key={id}
+                          comment={comment}
+                          createdAt={createdAt}
+                        />
+                      );
+                    }
+
+                    if (event) {
+                      return (
+                        <TaskFeedEvent
+                          colonyAddress={colonyAddress}
+                          createdAt={createdAt}
+                          event={event}
+                          key={id}
+                        />
+                      );
+                    }
+
+                    /**
+                     * @todo Check that the reveal period is over for ratings (task feed).
+                     */
+                    if (rating) {
+                      return <TaskFeedRating key={id} rating={rating} />;
+                    }
+
+                    return transaction ? (
+                      <TaskFeedCompleteInfo
                         key={id}
-                        comment={comment}
-                        createdAt={createdAt}
+                        transaction={transaction}
                       />
-                    );
-                  }
-
-                  if (event) {
-                    return (
-                      <TaskFeedEvent
-                        colonyAddress={colonyAddress}
-                        createdAt={createdAt}
-                        event={event}
-                        key={id}
-                      />
-                    );
-                  }
-
-                  /**
-                   * @todo Check that the reveal period is over for ratings (task feed).
-                   */
-                  if (rating) {
-                    return <TaskFeedRating key={id} rating={rating} />;
-                  }
-
-                  return transaction ? (
-                    <TaskFeedCompleteInfo key={id} transaction={transaction} />
-                  ) : null;
-                },
-              )}
+                    ) : null;
+                  },
+                )}
               <div ref={bottomEl} />
             </div>
           </div>

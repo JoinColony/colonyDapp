@@ -43,6 +43,7 @@ const TaskDescription = ({
   );
   return (
     <ActionForm
+      enableReinitialize
       initialValues={{
         description: EditorState.createWithContent(
           ContentState.createFromText(description || ''),

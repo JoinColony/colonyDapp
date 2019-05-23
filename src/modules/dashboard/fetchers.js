@@ -7,7 +7,6 @@ import {
   colonyRolesSelector,
   colonySelector,
   colonyTaskMetadataSelector,
-  taskFeedItemsSelector,
   tasksByIdsSelector,
   taskSelector,
   tokenSelector,
@@ -24,7 +23,6 @@ import {
   fetchRoles,
   fetchTask,
   fetchTaskByColonyAddressAndDraftId,
-  fetchTaskFeedItems,
   fetchToken,
   fetchColonyTaskMetadata,
 } from './actionCreators';
@@ -96,11 +94,5 @@ export const colonyTaskMetadataFetcher = Object.freeze({
 export const tokenFetcher = Object.freeze({
   select: tokenSelector,
   fetch: fetchToken,
-  ttl: 1000 * 60,
-});
-
-export const taskFeedItemsFetcher = Object.freeze({
-  select: taskFeedItemsSelector,
-  fetch: fetchTaskFeedItems,
   ttl: 1000 * 60,
 });

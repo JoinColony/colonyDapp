@@ -67,7 +67,8 @@ const taskFeedItemsReducer: ReducerType<
     TASK_CLOSE_SUCCESS: *,
     TASK_COMMENT_ADD_SUCCESS: *,
     TASK_CREATE_SUCCESS: *,
-    TASK_FEED_ITEMS_FETCH_SUCCESS: *,
+    TASK_FEED_ITEMS_SUB_START: *,
+    TASK_FEED_ITEMS_SUB_EVENT: *,
     TASK_FINALIZE_SUCCESS: *,
     TASK_SEND_WORK_INVITE_SUCCESS: *,
     TASK_SEND_WORK_REQUEST_SUCCESS: *,
@@ -82,13 +83,23 @@ const taskFeedItemsReducer: ReducerType<
   },
 > = (state = ImmutableMap(), action) => {
   switch (action.type) {
-    case ACTIONS.TASK_FEED_ITEMS_FETCH_SUCCESS: {
-      const { draftId, events } = action.payload;
-      return state.set(
-        draftId,
-        DataRecord({
-          record: List(events.map(createTaskFeedItemRecord)),
-        }),
+    case ACTIONS.TASK_FEED_ITEMS_SUB_START: {
+      const { draftId } = action.payload;
+      return state.getIn([draftId, 'record'])
+        ? state
+        : state.set(
+            draftId,
+            DataRecord({
+              record: List(),
+            }),
+          );
+    }
+
+    case ACTIONS.TASK_FEED_ITEMS_SUB_EVENT: {
+      const { draftId, event } = action.payload;
+      return state.updateIn(
+        [draftId, 'record'],
+        list => list && list.push(createTaskFeedItemRecord(event)),
       );
     }
 
@@ -138,6 +149,7 @@ const taskFeedItemsReducer: ReducerType<
   }
 };
 
-export default withDataRecordMap(ACTIONS.TASK_FEED_ITEMS_FETCH, ImmutableMap())(
-  taskFeedItemsReducer,
-);
+export default withDataRecordMap(
+  ACTIONS.TASK_FEED_ITEMS_SUB_START,
+  ImmutableMap(),
+)(taskFeedItemsReducer);

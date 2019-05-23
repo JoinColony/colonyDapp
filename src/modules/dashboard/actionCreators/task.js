@@ -20,11 +20,38 @@ export const fetchTaskByColonyAddressAndDraftId = ([colonyAddress, draftId]: [
   TaskDraftId,
 ]) => fetchTask(colonyAddress, draftId);
 
-export const fetchTaskFeedItems = (
+export const taskFeedItemsSubStart = (
   colonyAddress: Address,
   draftId: TaskDraftId,
-): Action<typeof ACTIONS.TASK_FEED_ITEMS_FETCH> => ({
-  type: ACTIONS.TASK_FEED_ITEMS_FETCH,
+): Action<typeof ACTIONS.TASK_FEED_ITEMS_SUB_START> => ({
+  type: ACTIONS.TASK_FEED_ITEMS_SUB_START,
+  payload: { colonyAddress, draftId },
+  meta: { key: draftId },
+});
+
+export const taskFeedItemsSubStop = (
+  colonyAddress: Address,
+  draftId: TaskDraftId,
+): Action<typeof ACTIONS.TASK_FEED_ITEMS_SUB_STOP> => ({
+  type: ACTIONS.TASK_FEED_ITEMS_SUB_STOP,
+  payload: { colonyAddress, draftId },
+  meta: { key: draftId },
+});
+
+export const taskSubStart = (
+  colonyAddress: Address,
+  draftId: TaskDraftId,
+): Action<typeof ACTIONS.TASK_SUB_START> => ({
+  type: ACTIONS.TASK_SUB_START,
+  payload: { colonyAddress, draftId },
+  meta: { key: draftId },
+});
+
+export const taskSubStop = (
+  colonyAddress: Address,
+  draftId: TaskDraftId,
+): Action<typeof ACTIONS.TASK_SUB_STOP> => ({
+  type: ACTIONS.TASK_SUB_STOP,
   payload: { colonyAddress, draftId },
   meta: { key: draftId },
 });

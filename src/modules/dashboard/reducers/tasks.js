@@ -23,6 +23,7 @@ const {
   PAYOUT_SET,
   SKILL_SET,
   TASK_CANCELLED,
+  TASK_CREATED,
   TASK_DESCRIPTION_SET,
   TASK_FINALIZED,
   TASK_TITLE_SET,
@@ -34,6 +35,19 @@ const {
 
 const taskEventReducer = (task: TaskRecordType, event: *) => {
   switch (event.type) {
+    case TASK_CREATED: {
+      const {
+        payload: { creatorAddress, draftId },
+        meta: { timestamp },
+      } = event;
+      return task.merge({
+        createdAt: new Date(timestamp),
+        creatorAddress,
+        draftId,
+        managerAddress: creatorAddress,
+      });
+    }
+
     case DUE_DATE_SET: {
       const { dueDate } = event.payload;
       return task.set('dueDate', new Date(dueDate));
@@ -160,6 +174,20 @@ const tasksReducer: ReducerType<
       );
     }
 
+    case ACTIONS.TASK_SUB_EVENT: {
+      const { draftId, event } = action.payload;
+      const path = [draftId, 'record'];
+      const nextState = state.getIn(path)
+        ? state
+        : // $FlowFixMe just flow being silly
+          state.set(draftId, DataRecord({ record: TaskRecord() }));
+      // $FlowFixMe just flow being silly
+      return nextState.updateIn(
+        path,
+        task => task && taskEventReducer(task, event),
+      );
+    }
+
     case ACTIONS.TASK_CANCEL_SUCCESS:
     case ACTIONS.TASK_FINALIZE_SUCCESS:
     case ACTIONS.TASK_SEND_WORK_INVITE_SUCCESS:
@@ -185,6 +213,6 @@ const tasksReducer: ReducerType<
 };
 
 export default withDataRecordMap<TasksMap, TaskRecordType>(
-  ACTIONS.TASK_FETCH,
+  new Set([ACTIONS.TASK_FETCH, ACTIONS.TASK_SUB_START]),
   ImmutableMap(),
 )(tasksReducer);
