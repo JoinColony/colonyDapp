@@ -36,18 +36,13 @@ const MSG = defineMessages({
 });
 
 type Props = {|
-  isTaskCreator: boolean,
+  disabled?: boolean,
   ...TaskProps<{ draftId: *, colonyAddress: *, skillId: * }>,
 |};
 
 const displayName = 'daskboard.TaskSKills';
 
-const TaskSkills = ({
-  colonyAddress,
-  draftId,
-  isTaskCreator,
-  skillId,
-}: Props) => {
+const TaskSkills = ({ colonyAddress, draftId, disabled, skillId }: Props) => {
   const setSkill = useAsyncFunction({
     submit: ACTIONS.TASK_SET_SKILL,
     success: ACTIONS.TASK_SET_SKILL_SUCCESS,
@@ -87,7 +82,7 @@ const TaskSkills = ({
             appearance={{ size: 'small', margin: 'none' }}
             text={MSG.title}
           />
-          {isTaskCreator && (
+          {!disabled && (
             <Button
               appearance={{ theme: 'blue', size: 'small' }}
               text={MSG.selectSkill}

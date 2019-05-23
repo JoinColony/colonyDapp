@@ -33,18 +33,13 @@ const MSG = defineMessages({
 });
 
 type Props = {|
-  isTaskCreator: boolean,
+  disabled?: boolean,
   ...TaskProps<{ colonyAddress: *, draftId: *, dueDate: * }>,
 |};
 
 const displayName = 'dashboard.TaskDate';
 
-const TaskDate = ({
-  colonyAddress,
-  draftId,
-  dueDate,
-  isTaskCreator,
-}: Props) => {
+const TaskDate = ({ colonyAddress, draftId, dueDate, disabled }: Props) => {
   const [selectedDate, setSelectedDate] = useState(dueDate);
 
   const handleSelectDate = useCallback(
@@ -58,7 +53,7 @@ const TaskDate = ({
           appearance={{ size: 'small', margin: 'none' }}
           text={MSG.title}
         />
-        {isTaskCreator && (
+        {!disabled && (
           <DatePicker
             elementOnly
             connect={false}

@@ -112,7 +112,6 @@ export const SetTaskDomainCommandArgsSchema = yup.object({
 
 export const CancelTaskCommandArgsSchema = yup.object({
   draftId: yup.string().required(),
-  domainId: yup.number().required(),
 });
 
 export const FinalizeTaskCommandArgsSchema = yup.object({
