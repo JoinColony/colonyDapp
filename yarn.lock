@@ -905,10 +905,10 @@
     "@ledgerhq/hw-transport-u2f" "^4.20.0"
     ethereumjs-tx "^1.3.6"
 
-"@colony/purser-metamask@^2.1.0":
-  version "2.1.1"
-  resolved "https://registry.yarnpkg.com/@colony/purser-metamask/-/purser-metamask-2.1.1.tgz#670f48ab9103866aa582b2a4a4b1f77bba5a1748"
-  integrity sha512-lDy05YBhhlDu0V17tD2kvP6gwOFEz3CYqb3VEcgrCbYg2ut85Mwa89XRMxFQegcxQC4bcOLo3WlI/Wqqxu2S6w==
+"@colony/purser-metamask@^2.2.0":
+  version "2.2.0"
+  resolved "https://registry.yarnpkg.com/@colony/purser-metamask/-/purser-metamask-2.2.0.tgz#31d039db248c0f2b93d11af74f0327b91f1f0f0e"
+  integrity sha512-u0csExLqILvBRIP5xpDrO/CSlhsAJI2LCeLWth/DoOEItjOtud81/DBAt+XpnzAiCz3l9VeQBF8iFEhUHBJeUQ==
   dependencies:
     "@babel/runtime" "^7.1.2"
     "@colony/purser-core" "2.1.0"
