@@ -18,6 +18,7 @@ import type { PersistActionTypes } from '../../persist';
 import type { TaskActionTypes } from './task';
 import type { TokenActionTypes } from './token';
 import type { TransactionActionTypes } from './transaction';
+import type { MessageActionTypes } from './message';
 import type { UserActionTypes } from './user';
 import type { InboxItemsActionTypes } from './inboxItems';
 import type { UsernameActionTypes } from './username';
@@ -92,6 +93,7 @@ export type ActionsType = {|
   ...TaskActionTypes,
   ...TokenActionTypes,
   ...TransactionActionTypes,
+  ...MessageActionTypes,
   ...UserActionTypes,
   ...InboxItemsActionTypes,
   ...UsernameActionTypes,
