@@ -1,12 +1,13 @@
 /* @flow */
 
-import type { Channel, Saga } from 'redux-saga';
+import type { Channel, EventChannel, Saga } from 'redux-saga';
 
 import nanoid from 'nanoid';
+import { eventChannel, buffers } from 'redux-saga';
 import { all, call, put, race, take, select } from 'redux-saga/effects';
 
 import type { ErrorActionType, TakeFilter, Action } from '~redux';
-import type { Command, Query } from '../../data/types';
+import type { Command, Query, Subscription } from '../../data/types';
 import type { UserActivityType } from '~immutable';
 
 import { getContext, CONTEXT } from '~context';
@@ -76,23 +77,21 @@ export const raceError = (
   return call(raceErrorGenerator);
 };
 
-function* executeCommandOrQuery<D, M, A, R>(
+function* prepareCommandOrQuery<D, M, A, R>(
   commandOrQuery: Command<D, M, A, R> | Query<D, M, A, R>,
   {
-    args,
     metadata,
   }: {
-    args: A,
     metadata: M,
   },
-): Saga<R> {
-  const { context, execute, prepare } = commandOrQuery;
+): Saga<*> {
+  const { context, prepare } = commandOrQuery;
 
   /*
    * Validate the command or query object
    */
   if (!context) {
-    throw new Error('Cannot execute, context not defined');
+    throw new Error('Cannot prepare, context not defined');
   }
   const allowedContextNames = Object.values(CONTEXT);
   if (
@@ -101,13 +100,10 @@ function* executeCommandOrQuery<D, M, A, R>(
       context.every(contextName => allowedContextNames.includes(contextName))
     )
   ) {
-    throw new Error('Cannot execute, invalid context');
-  }
-  if (!execute) {
-    throw new Error('Cannot execute, "execute" function not defined');
+    throw new Error('Cannot prepare, invalid context');
   }
   if (!prepare) {
-    throw new Error('Cannot execute, "prepare" function not defined');
+    throw new Error('Cannot prepare, "prepare" function not defined');
   }
 
   /*
@@ -127,7 +123,31 @@ function* executeCommandOrQuery<D, M, A, R>(
   /*
    * Call the `prepare` step to get the `execute` dependencies.
    */
-  const executeDeps = yield call(prepare, prepareContext, metadata);
+  return yield call(prepare, prepareContext, metadata);
+}
+
+function* executeCommandOrQuery<D, M, A, R>(
+  commandOrQuery: Command<D, M, A, R> | Query<D, M, A, R>,
+  {
+    args,
+    metadata,
+  }: {
+    args: A,
+    metadata: M,
+  },
+): Saga<R> {
+  const { execute } = commandOrQuery;
+
+  if (!execute) {
+    throw new Error('Cannot execute, "execute" function not defined');
+  }
+
+  /*
+   * Get the `execute` dependencies.
+   */
+  const executeDeps = yield call(prepareCommandOrQuery, commandOrQuery, {
+    metadata,
+  });
 
   /*
    * Call and return the `execute` step with the dependencies and given args.
@@ -154,6 +174,47 @@ export function* executeQuery<D, M, A, R>(
   });
   log.verbose(`Executed query "${query.name}"`, result);
   return result;
+}
+
+export function* startSubscription<D, M, A, R>(
+  subscription: Subscription<D, M, A, R>,
+  {
+    args,
+    metadata,
+  }: {
+    args?: A,
+    metadata?: M,
+  },
+): Saga<EventChannel<R>> {
+  log.verbose(`Starting subscription "${subscription.name}"`, {
+    args,
+    metadata,
+  });
+
+  /*
+   * Get the `execute` dependencies to start the subscription.
+   */
+  // $FlowFixMe It works...
+  const executeDeps = yield call(prepareCommandOrQuery, subscription, {
+    metadata,
+  });
+
+  return eventChannel(emitter => {
+    /*
+     * Start the subscription with the eventChannel's emitter.
+     */
+    const subs = subscription.subscribe(executeDeps, args, emitter);
+    return () => {
+      log.verbose(`Stopping subscription "${subscription.name}"`, {
+        args,
+        metadata,
+      });
+      /*
+       * Close the subscriptions when the eventChannel is closed.
+       */
+      subs.forEach(({ close }) => close());
+    };
+  }, buffers.expanding());
 }
 
 export function* executeCommand<D, M, A, R>(
