@@ -77,6 +77,13 @@ export const didDueDateElapse = ({ dueDate }: TaskType) =>
 export const canEditTask = (task: TaskType, userAddress: Address) =>
   !isFinalized(task) && !isCancelled(task) && isCreator(task, userAddress);
 
+export const isWorkerAssigned = ({ workerAddress }: TaskType) =>
+  !!workerAddress;
+
+export const isDomainSet = ({ domainId }: TaskType) => !!domainId;
+
+export const isSkillSet = ({ skillId }: TaskType) => !!skillId;
+
 /**
  * @todo Fix task rating checks logic.
  * @body Fix this logic in #169
@@ -120,4 +127,8 @@ export const canRequestToWork = (task: TaskType, userAddress: Address) =>
   );
 
 export const canFinalizeTask = (task: TaskType, userAddress: Address) =>
-  isManager(task, userAddress) && isActive(task);
+  isManager(task, userAddress) &&
+  isActive(task) &&
+  isWorkerAssigned(task) &&
+  isDomainSet(task) &&
+  isSkillSet(task);

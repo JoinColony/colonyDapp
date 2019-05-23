@@ -12,8 +12,10 @@ import {
   takeLeading,
 } from 'redux-saga/effects';
 import { replace } from 'connected-react-router';
+import BigNumber from 'bn.js';
 import type { Action } from '~redux';
 import type { Address } from '~types';
+import type { TaskType } from '~immutable';
 
 import { CONTEXT, getContext } from '~context';
 import {
@@ -439,10 +441,15 @@ function* taskFinalize({
   meta,
 }: Action<typeof ACTIONS.TASK_FINALIZE>): Saga<void> {
   try {
-    const { workerAddress, payouts, domainId, skillId } = yield select(
-      taskSelector,
-      draftId,
-    );
+    const { record: taskRecord } = yield select(taskSelector, draftId);
+    const {
+      workerAddress,
+      payouts,
+      domainId,
+      skillId,
+    }: TaskType = taskRecord.toJS();
+    if (!workerAddress)
+      throw new Error(`Worker not assigned for task ${draftId}`);
     if (!domainId) throw new Error(`Domain not set for task ${draftId}`);
     if (!skillId) throw new Error(`Skill not set for task ${draftId}`);
     if (!payouts.length) throw new Error(`No payout set for task ${draftId}`);
@@ -456,8 +463,8 @@ function* taskFinalize({
       identifier: colonyAddress,
       params: {
         recipient: workerAddress,
-        token,
-        amount,
+        token: token.address,
+        amount: new BigNumber(amount),
         domainId,
         skillId,
       },
@@ -469,7 +476,7 @@ function* taskFinalize({
       /**
        * @todo Set the payment ID/payment token address when finalising a task
        */
-      args: { amountPaid: amount, workerAddress },
+      args: { amountPaid: amount.toString(), workerAddress },
       metadata: { colonyAddress, draftId },
     });
     yield put<Action<typeof ACTIONS.TASK_FINALIZE_SUCCESS>>({

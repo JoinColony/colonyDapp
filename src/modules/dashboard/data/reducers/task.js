@@ -3,6 +3,7 @@
 import type { EventReducer } from '~data/types';
 
 import { TASK_EVENT_TYPES } from '~data/constants';
+import { TASK_STATE } from '~immutable/constants';
 
 const {
   COMMENT_STORE_CREATED,
@@ -62,6 +63,7 @@ export const taskReducer: EventReducer<
         creatorAddress,
         managerAddress: creatorAddress, // @NOTE: At least for the draft version, the creator will also be the manager
         draftId,
+        status: TASK_STATE.ACTIVE,
       };
     }
     case TASK_TITLE_SET: {
