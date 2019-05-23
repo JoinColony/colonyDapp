@@ -35,14 +35,14 @@ function* markNotification({
     });
 
     yield put<Action<typeof ACTIONS.INBOX_MARK_NOTIFICATION_SUCCESS>>({
-      type: ACTIONS.USER_FETCH_SUCCESS,
+      type: ACTIONS.INBOX_MARK_NOTIFICATION_SUCCESS,
       payload: { readUntil, exceptFor },
     });
   } catch (error) {
-    yield putError(ACTIONS.USER_FETCH_ERROR, error);
+    yield putError(ACTIONS.INBOX_MARK_NOTIFICATION_ERROR, error);
   }
 }
 
 export default function* inboxSagas(): Saga<void> {
-  yield takeEvery(ACTIONS.USER_FETCH, markNotification);
+  yield takeEvery(ACTIONS.INBOX_MARK_NOTIFICATION, markNotification);
 }

@@ -13,7 +13,7 @@ export type InboxElement = {
   id: string,
   timestamp: Date,
   event: InboxEvent,
-  // unread: boolean,
+  unread: boolean,
 
   /* present depending on event */
   // amount?: {

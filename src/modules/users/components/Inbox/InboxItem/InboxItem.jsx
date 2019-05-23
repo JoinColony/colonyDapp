@@ -2,10 +2,11 @@
 
 import type { Node } from 'react';
 
-import React from 'react';
+// $FlowFixMe
+import React, { useCallback } from 'react';
 import { FormattedMessage, defineMessages } from 'react-intl';
 
-import type { InboxElement } from '../types';
+import type { InboxElement, EventType } from '../types';
 import type { UserType, ColonyType, DomainType, TokenType } from '~immutable';
 
 import TimeRelative from '~core/TimeRelative';
@@ -17,7 +18,7 @@ import Link from '~core/Link';
 import HookedUserAvatar from '~users/HookedUserAvatar';
 import { SpinnerLoader } from '~core/Preloaders';
 
-import { useDataFetcher, useSelector } from '~utils/hooks';
+import { useDataFetcher, useSelector, useAsyncFunction } from '~utils/hooks';
 
 import { userFetcher } from '../../../fetchers';
 import {
@@ -27,6 +28,9 @@ import {
 } from '../../../../dashboard/fetchers';
 import { friendlyColonyNameSelector } from '../../../../dashboard/selectors';
 import { friendlyUsernameSelector } from '../../../selectors';
+
+import { ACTIONS } from '~redux';
+import { mergePayload } from '~utils/actions';
 
 import styles from './InboxItem.css';
 
@@ -47,8 +51,6 @@ const displayName = 'users.Inbox.InboxItem';
 
 type Props = {|
   activity: InboxElement,
-  // Handle read/unread notifications (inbox items)
-  // markAsRead: (id: string) => void,
 |};
 
 const makeInboxDetail = (value: any, formatFn?: (value: any) => any) =>
@@ -59,20 +61,20 @@ const makeInboxDetail = (value: any, formatFn?: (value: any) => any) =>
   ) : null;
 
 // Handle read/unread notifications
-// const getType = (event: string): EventType => {
-//   const type = event.split(/[A-Z]/)[0];
-//   return type === 'action' || type === 'notification' ? type : 'notification';
-// };
+const getType = (event: string): EventType => {
+  const type = event.split(/[A-Z]/)[0];
+  return type === 'action' || type === 'notification' ? type : 'notification';
+};
 
-// const UnreadIndicator = ({ type }: { type: EventType }) => (
-//   <div
-//     className={`${styles.inboxUnread} ${
-//       type === 'action'
-//         ? styles.inboxUnreadAction
-//         : styles.inboxUnreadNotification
-//     }`}
-//   />
-// );
+const UnreadIndicator = ({ type }: { type: EventType }) => (
+  <div
+    className={`${styles.inboxUnread} ${
+      type === 'action'
+        ? styles.inboxUnreadAction
+        : styles.inboxUnreadNotification
+    }`}
+  />
+);
 
 const getTask = () => mockTask;
 
@@ -122,8 +124,8 @@ const ConditionalWrapper = ({
 
 const InboxItem = ({
   activity: {
-    // Handle read/unread notifications
-    // unread,
+    unread = true,
+    id,
     amount,
     tokenAddress,
     colonyName,
@@ -172,12 +174,23 @@ const InboxItem = ({
   } = useDataFetcher<TokenType>(tokenFetcher, [tokenAddress], [tokenAddress]);
   const currentDomain =
     (domainName && { name: domainName }) ||
-    (domains && domains.find(({ id }) => id === domainId || 0));
+    (domains &&
+      domains.find(
+        ({ id: currentDomainId }) => currentDomainId === domainId || 0,
+      ));
+
+  const readActions = {
+    submit: ACTIONS.INBOX_MARK_NOTIFICATION,
+    success: ACTIONS.INBOX_MARK_NOTIFICATION_SUCCESS,
+    error: ACTIONS.INBOX_MARK_NOTIFICATION_ERROR,
+  };
+
+  const transform = useCallback(mergePayload({ id }), [id]);
+  const markAsRead = useAsyncFunction({ ...readActions, transform });
   return (
     <TableRow
       className={styles.inboxRow}
-      // Handle read/unread notifications
-      // onClick={() => unread && markAsRead(id)}
+      onClick={() => unread && markAsRead(id)}
     >
       <TableCell className={styles.inboxRowCell}>
         {isFetchingUser ||
@@ -196,10 +209,7 @@ const InboxItem = ({
             event={event}
             user={(user && user.profile) || {}}
           >
-            {/*
-             * Handle read/unread notifications
-             */}
-            {/* {unread && <UnreadIndicator type={getType(event)} />} */}
+            {unread && <UnreadIndicator type={getType(event)} />}
             {user && (
               <UserAvatar
                 size="xxs"

@@ -166,3 +166,12 @@ export const currentUserActivitiesSelector = createSelector(
   getCurrentUserActivities,
   activitities => activitities,
 );
+
+/*
+ * Find one activity by its id
+ */
+export const activityByIdSelector = (state: RootStateRecord, id: string) =>
+  createSelector(
+    currentUserActivitiesSelector,
+    activities => activities.find(act => act.id === id),
+  )(state);
