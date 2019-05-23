@@ -153,29 +153,26 @@ class GasStationPrice extends Component<Props, State> {
   showAlert = () => {
     const { isNetworkCongested, walletNeedsAction } = this.props;
     const { insufficientFunds } = this.state;
-    if (isNetworkCongested) {
-      return <Alert text={MSG.networkCongestedWarning} />;
-    }
-    if (walletNeedsAction) {
-      return (
-        <Alert
-          appearance={{ theme: 'info' }}
-          text={MSG.walletPromptText}
-          textValues={{
-            walletType: walletNeedsAction,
-          }}
-        />
-      );
-    }
-    if (insufficientFunds) {
-      return (
-        <Alert
-          appearance={{ theme: 'danger', size: 'small' }}
-          text={MSG.inSufficientFundsNotification}
-        />
-      );
-    }
-    return null;
+    return (
+      <>
+        {isNetworkCongested && <Alert text={MSG.networkCongestedWarning} />}
+        {walletNeedsAction && (
+          <Alert
+            appearance={{ theme: 'info' }}
+            text={MSG.walletPromptText}
+            textValues={{
+              walletType: walletNeedsAction,
+            }}
+          />
+        )}
+        {insufficientFunds && (
+          <Alert
+            appearance={{ theme: 'danger', size: 'small' }}
+            text={MSG.inSufficientFundsNotification}
+          />
+        )}
+      </>
+    );
   };
 
   render() {
