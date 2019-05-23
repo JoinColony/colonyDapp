@@ -2,7 +2,12 @@
 
 import Store from './Store';
 
-import type { EventIteratorOptions, OrbitDBEventStore, Entry } from '~types';
+import type {
+  EventIteratorOptions,
+  OrbitDBEventStore,
+  Entry,
+  Event,
+} from '~types';
 
 /**
  * The wrapper Store class for orbit's eventlog store.
@@ -37,6 +42,9 @@ class EventStore extends Store {
     return this.append(value);
   }
 
+  /*
+   * This is currently unused; do we still need it?
+   */
   async query(filter: * = {}) {
     return this._orbitStore
       .iterator(filter)
@@ -76,5 +84,57 @@ class EventStore extends Store {
       .collect()
       .map(entry => this.constructor.decorateEntry(entry));
   }
+
+  /*
+   * Given a callback for handling events, create a subscription
+   * that calls the callback with all unique events, and provide
+   * a means to close the subscription.
+   */
+  subscribe(callback: (event: Event<*>) => void): {| close: () => void |} {
+    const hashes = [];
+
+    /*
+     * Given an entry from the store, call the callback when
+     * the entry hash has not been handled previously, so as to avoid
+     * duplicate entries.
+     */
+    const handleEntry = (entry: Entry) => {
+      if (!hashes.includes(entry.hash)) {
+        hashes.push(entry.hash);
+        callback(this.constructor.decorateEntry(entry));
+      }
+    };
+
+    /*
+     * Define and start the event listeners in order to handle new entries.
+     */
+    const onReplicateProgress = (address: string, hash: string, entry: Entry) =>
+      handleEntry(entry);
+    const onWrite = (address: string, entry: Entry) => handleEntry(entry);
+    this._orbitStore.events.on('replicate.progress', onReplicateProgress);
+    this._orbitStore.events.on('write', onWrite);
+
+    /*
+     * Handle all existing entries.
+     */
+    this._orbitStore
+      .iterator({ limit: -1 })
+      .collect()
+      .forEach(handleEntry);
+
+    return {
+      /*
+       * Provide a means of removing the event listeners.
+       */
+      close: () => {
+        this._orbitStore.events.removeListener(
+          'replicate.progress',
+          onReplicateProgress,
+        );
+        this._orbitStore.events.removeListener('write', onWrite);
+      },
+    };
+  }
 }
+
 export default EventStore;
