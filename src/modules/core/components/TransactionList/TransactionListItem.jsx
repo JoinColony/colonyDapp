@@ -64,13 +64,22 @@ type Props = {|
 const TransactionListItem = ({
   linkToEtherscan,
   showMaskedAddress = true,
-  transaction: { amount, colonyAddress, date, incoming, token: tokenAddress },
+  transaction: {
+    amount,
+    colonyAddress,
+    date,
+    incoming,
+    token: tokenAddress,
+    from: senderAddress,
+    to: recipientAddress,
+  },
   transaction,
 }: Props) => {
+  const userAddress = incoming ? senderAddress : recipientAddress;
   const { data: user } = useDataFetcher<UserType>(
     userFetcher,
-    [transaction.from],
-    [transaction.from],
+    [userAddress],
+    [userAddress],
   );
 
   const { data: token } = useDataFetcher<TokenType>(
