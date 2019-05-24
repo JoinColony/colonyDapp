@@ -11,8 +11,11 @@ import prodConfig from './ipfsConfig.production';
 import type { B58String, IPFSNodeOptions, IPFSPeer } from './types';
 import PinnerConnector from './PinnerConnector';
 
-// The latter is the pinner id of our dev pinner
-const { PINNING_ROOM, PINNER_ID } = process.env;
+// process.env is a special object. Destructuring doesn't work
+// eslint-disable-next-line prefer-destructuring
+const PINNING_ROOM = process.env.PINNING_ROOM;
+// eslint-disable-next-line prefer-destructuring
+const PINNER_ID = process.env.PINNER_ID;
 const TIMEOUT = process.env.CI ? 50000 : 10000;
 
 class IPFSNode {
