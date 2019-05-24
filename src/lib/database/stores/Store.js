@@ -136,7 +136,7 @@ class Store {
           }, REPLICATION_HACK_INTERVAL);
         }),
         REPLICATION_HACK_TIMEOUT,
-        null,
+        new Error('Replication error'),
         () => clearInterval(interval),
       );
 
