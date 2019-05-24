@@ -8,7 +8,7 @@ describe('EventStore', () => {
   const mockOrbitStore = createMockOrbitStore(sandbox);
 
   const mockPinner = {
-    requestPinnedStore: sandbox.fn(() => ({ count: 5 })),
+    requestReplication: sandbox.fn(() => ({ count: 5 })),
   };
 
   beforeEach(() => {
@@ -23,16 +23,5 @@ describe('EventStore', () => {
     expect(store._orbitStore).toBe(mockOrbitStore);
     expect(store._name).toBe(name);
     expect(store.constructor.orbitType).toBe(type);
-  });
-
-  test('It can append an event to the log', async () => {
-    const store = new EventStore(mockOrbitStore, name, mockPinner);
-    sandbox.spyOn(store, 'append');
-    const eventPayload = {
-      colonyName: 'Zombies',
-      user: 'jimmy',
-    };
-    await store.append(eventPayload);
-    expect(store.append).toHaveBeenCalledWith(eventPayload);
   });
 });
