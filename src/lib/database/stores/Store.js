@@ -1,6 +1,6 @@
 /* @flow */
 
-import debounce from 'lodash/debounce';
+import pEvent from 'p-event';
 
 import type { OrbitDBStore } from '../types';
 import { raceAgainstTimeout } from '../../../utils/async';
@@ -22,16 +22,19 @@ class Store {
 
   _busyPromise: ?Promise<void>;
 
-  constructor(
-    orbitStore: OrbitDBStore,
-    name: string,
-    pinner: PinnerConnector,
-    ...args: * // eslint-disable-line no-unused-vars
-  ) {
+  constructor(orbitStore: OrbitDBStore, name: string, pinner: PinnerConnector) {
     this._orbitStore = orbitStore;
     this._name = name;
     this._pinner = pinner;
     this._busyPromise = null;
+
+    this._orbitStore.events.on('peer.exchanged', (peer, address, heads) => {
+      log.verbose(
+        `Peer exchanged for store ${this.address.toString()}. Got ${
+          heads.length
+        } new heads.`,
+      );
+    });
   }
 
   get address() {
@@ -42,11 +45,10 @@ class Store {
     return !!this._busyPromise;
   }
 
-  // This needs to be bound to the instance
-  pin = debounce(() => {
-    // @todo: it might be worthwhile finding out why we need to debounce this in the first place
-    this._pinner.pinStore(this.address.toString());
-  }, 10 * 1000);
+  get length() {
+    // eslint-disable-next-line no-underscore-dangle
+    return this._orbitStore._oplog.length;
+  }
 
   async _loadHeads() {
     const address = this.address.toString();
@@ -55,17 +57,13 @@ class Store {
 
     if (heads && heads.length) {
       log.verbose(`we have heads for store ${address}`);
-      // We have *some* heads and just assume it's going to be ok. We request the pinned store anyways
-      // but don't have to wait for any count. We'll replicate whenever it's convenient
-      // We're calling this synchronously as we don't care about the result
-      // _right now_
       /**
        * @todo Improve error modes for failed pinned store requests
-       * @body This could be dangerous in case of an unfinished replication. We have to account for that Quick fix could be to just also wait for the full replication, which might be a performance hit
+       * @body We have *some* heads and just assume it's going to be ok. We request the pinned store anyways but don't have to wait for any count. We'll replicate whenever it's convenient. We're calling this synchronously as we don't care about the result _right now_. This could be dangerous in case of an unfinished replication. We have to account for that Quick fix could be to just also wait for the full replication, which might be a performance hit
        */
       this._pinner
         .ready()
-        .then(() => this._pinner.requestPinnedStore(address))
+        .then(() => this.replicate())
         .catch(log.warn);
       return;
     }
@@ -78,36 +76,12 @@ class Store {
         `Unable to fully load store "${this._name}"; pinner is offline`,
         caughtError,
       );
-      // Pinner is probably offline
-      log(caughtError);
     }
     try {
-      log.verbose(`Sending request for store ${address}`);
-      await Promise.all([
-        this._waitForReplication(),
-        this._pinner.requestPinnedStore(address),
-      ]);
-      return;
+      await this.replicate();
     } catch (caughtError) {
-      log.warn(`Could not request pinned store: ${caughtError}`);
+      log.warn(`Could not request pinned store`, caughtError);
     }
-  }
-
-  async _waitForReplication() {
-    const replicated = new Promise(resolve => {
-      const listener = (peer: string) => {
-        if (this._pinner.isPinner(peer)) {
-          resolve();
-          this._orbitStore.events.removeListener('peer.exchanged', listener);
-        }
-      };
-      this._orbitStore.events.addListener('peer.exchanged', listener);
-    });
-    return raceAgainstTimeout(
-      replicated,
-      60 * 1000,
-      new Error('Could not replicate with pinner in time.'),
-    );
   }
 
   async ready() {
@@ -123,6 +97,30 @@ class Store {
       new Error('Could not get store heads in time'),
     );
     return heads;
+  }
+
+  async replicate() {
+    const address = this.address.toString();
+    const headCount = await this._pinner.requestReplication(address);
+    log.verbose(
+      `Pinner has ${headCount} heads, we have ${
+        this.length
+      } for store ${address}`,
+    );
+    /**
+     * @todo Improve replication check
+     * @body This is not super accurate as the pinner could have the same number of heads but different ones. This can be improved but checking other internal states (like orbit stores do?). For now it's probably ok. Also, maybe it doesn't really need to be super accurate, as we're replicating anyways.
+     */
+    // We only block this call if we have 0 heads and the pinner has some
+    if (!this.length && headCount) {
+      log.verbose(`Waiting for replication of store ${address}`);
+      await pEvent(this._orbitStore.events, 'peer.exchanged', {
+        filter: (peer: string) => this._pinner.isPinner(peer),
+        timeout: 60 * 1000,
+      });
+      await this._orbitStore.load();
+      log.verbose(`Store sucessfully replicated: ${address}`);
+    }
   }
 
   async load() {
@@ -148,10 +146,6 @@ class Store {
   async drop() {
     await this.unpin();
     return this._orbitStore.drop();
-  }
-
-  async pin() {
-    return this._pinner.pinStore(this.address.toString());
   }
 
   // eslint-disable-next-line class-methods-use-this
