@@ -28,14 +28,6 @@ class Store {
     this._name = name;
     this._pinner = pinner;
     this._busyPromise = null;
-
-    this._orbitStore.events.on('peer.exchanged', (peer, address, heads) => {
-      log.verbose(
-        `Peer exchanged for store ${this.address.toString()}. Got ${
-          heads.length
-        } new heads.`,
-      );
-    });
   }
 
   get address() {
