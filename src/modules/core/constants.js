@@ -8,6 +8,11 @@ export const CORE_NETWORK = 'network';
 export const CORE_NETWORK_FEE = 'fee';
 export const CORE_NETWORK_VERSION = 'version';
 export const CORE_IPFS_DATA = 'ipfsData';
+/*
+ * @NOTE Messages that need to be signed using the user's wallet
+ * Don't mistake them for notifications
+ */
+export const CORE_MESSAGES = 'messages';
 
 export {
   COLONY_CONTEXT,
