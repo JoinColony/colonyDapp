@@ -81,6 +81,9 @@
     "transaction.colony.cancelTask.title": "Cancel task",
     "transaction.colony.cancelTask.description": "Cancel task",
 
+    "transaction.colony.makePayment.title": "Make payment",
+    "transaction.colony.makePayment.description": "Make payment",
+
     "transaction.colony.upgrade.title": "Update Colony",
     "transaction.colony.upgrade.description": "Update Colony",
     "transaction.colony.enterRecoveryMode.title": "Enter Recovery Mode",

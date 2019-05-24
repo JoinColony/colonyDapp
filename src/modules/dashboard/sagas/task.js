@@ -5,22 +5,27 @@ import nanoid from 'nanoid';
 import {
   all,
   call,
+  fork,
   put,
   select,
   takeEvery,
   takeLeading,
 } from 'redux-saga/effects';
 import { replace } from 'connected-react-router';
+import BigNumber from 'bn.js';
 import type { Action } from '~redux';
 import type { Address } from '~types';
+import type { TaskType } from '~immutable';
 
 import { CONTEXT, getContext } from '~context';
 import {
   executeCommand,
   executeQuery,
   putError,
-  raceError,
   putNotification,
+  raceError,
+  selectAsJS,
+  takeFrom,
 } from '~utils/saga/effects';
 import { generateUrlFriendlyId } from '~utils/data';
 import { ACTIONS } from '~redux';
@@ -37,6 +42,8 @@ import {
   currentUserMetadataSelector,
   walletAddressSelector,
 } from '../../users/selectors';
+import { createTransaction, getTxChannel } from '../../core/sagas';
+import { COLONY_CONTEXT } from '../../core/constants';
 
 import {
   assignWorker,
@@ -428,19 +435,45 @@ function* taskSetDueDate({
 }
 
 /*
- * As anyone, finalize task (`completeTask` group)
+ * As manager, finalize task (`completeTask` group)
  */
 function* taskFinalize({
   payload: { colonyAddress, draftId },
   meta,
 }: Action<typeof ACTIONS.TASK_FINALIZE>): Saga<void> {
   try {
-    const { workerAddress, amountPaid } = yield select(taskSelector, draftId);
+    const {
+      record: { workerAddress, payouts, domainId, skillId },
+    }: { record: TaskType } = yield* selectAsJS(taskSelector, draftId);
+    if (!workerAddress)
+      throw new Error(`Worker not assigned for task ${draftId}`);
+    if (!domainId) throw new Error(`Domain not set for task ${draftId}`);
+    if (!skillId) throw new Error(`Skill not set for task ${draftId}`);
+    if (!payouts.length) throw new Error(`No payout set for task ${draftId}`);
+    const { amount, token } = payouts[0];
+
+    const txChannel = yield call(getTxChannel, meta.id);
+
+    yield fork(createTransaction, meta.id, {
+      context: COLONY_CONTEXT,
+      methodName: 'makePayment',
+      identifier: colonyAddress,
+      params: {
+        recipient: workerAddress,
+        token: token.address,
+        amount: new BigNumber(amount),
+        domainId,
+        skillId,
+      },
+    });
+
+    yield takeFrom(txChannel, ACTIONS.TRANSACTION_CREATED);
+
     const { event } = yield* executeCommand(finalizeTask, {
       /**
        * @todo Set the payment ID/payment token address when finalising a task
        */
-      args: { amountPaid, workerAddress },
+      args: { amountPaid: amount.toString(), workerAddress },
       metadata: { colonyAddress, draftId },
     });
     yield put<Action<typeof ACTIONS.TASK_FINALIZE_SUCCESS>>({

@@ -34,18 +34,13 @@ const MSG = defineMessages({
 });
 
 type Props = {|
-  isTaskCreator: boolean,
+  disabled?: boolean,
   ...TaskProps<{ colonyAddress: *, draftId: *, dueDate: * }>,
 |};
 
 const displayName = 'dashboard.TaskDate';
 
-const TaskDate = ({
-  colonyAddress,
-  draftId,
-  dueDate,
-  isTaskCreator,
-}: Props) => {
+const TaskDate = ({ colonyAddress, draftId, dueDate, disabled }: Props) => {
   const transform = useCallback(
     pipe(
       mapPayload(({ taskDueDate }) => ({ dueDate: taskDueDate })),
@@ -64,7 +59,7 @@ const TaskDate = ({
           appearance={{ size: 'small', margin: 'none' }}
           text={MSG.title}
         />
-        {isTaskCreator && (
+        {!disabled && (
           <ActionForm
             initialValues={{
               taskDueDate: dueDate,

@@ -38,6 +38,7 @@ import {
   canCancelTask,
   canEditTask,
   canFinalizeTask,
+  isCancelled,
   isCreator,
   isFinalized,
 } from '../../checks';
@@ -62,6 +63,10 @@ const MSG = defineMessages({
   completed: {
     id: 'dashboard.Task.completed',
     defaultMessage: 'Task completed',
+  },
+  cancelled: {
+    id: 'dashboard.Task.cancelled',
+    defaultMessage: 'Task cancelled',
   },
   finalizeTask: {
     id: 'dashboard.Task.finalizeTask',
@@ -152,6 +157,7 @@ const Task = ({
   }
 
   const isTaskCreator = isCreator(task, walletAddress);
+  const canEdit = canEditTask(task, walletAddress);
 
   return (
     <div className={styles.main}>
@@ -162,7 +168,7 @@ const Task = ({
               appearance={{ size: 'normal' }}
               text={MSG.assignmentFunding}
             />
-            {!canEditTask(task, walletAddress) && (
+            {canEdit && (
               <Button
                 appearance={{ theme: 'blue' }}
                 text={MSG.details}
@@ -181,40 +187,40 @@ const Task = ({
         <section className={styles.section}>
           <TaskTitle
             colonyAddress={colonyAddress}
+            disabled={!canEdit}
             draftId={draftId}
-            isTaskCreator={isTaskCreator}
             title={title}
           />
           <TaskDescription
             colonyAddress={colonyAddress}
             description={description}
+            disabled={!canEdit}
             draftId={draftId}
-            isTaskCreator={isTaskCreator}
           />
         </section>
-        {!!(isTaskCreator || (dueDate || domainId || skillId)) && (
+        {!!(canEdit || (dueDate || domainId || skillId)) && (
           <section className={styles.section}>
             <div className={styles.editor}>
               <TaskDomains
                 colonyAddress={colonyAddress}
+                disabled={!canEdit}
                 domainId={domainId}
                 draftId={draftId}
-                isTaskCreator={isTaskCreator}
               />
             </div>
             <div className={styles.editor}>
               <TaskSkills
                 colonyAddress={colonyAddress}
+                disabled={!canEdit}
                 draftId={draftId}
-                isTaskCreator={isTaskCreator}
                 skillId={skillId}
               />
             </div>
             <div className={styles.editor}>
               <TaskDate
                 colonyAddress={colonyAddress}
+                disabled={!canEdit}
                 draftId={draftId}
-                isTaskCreator={isTaskCreator}
                 dueDate={dueDate}
               />
             </div>
@@ -255,6 +261,11 @@ const Task = ({
               {isFinalized(task) && (
                 <p className={styles.completedDescription}>
                   <FormattedMessage {...MSG.completed} />
+                </p>
+              )}
+              {isCancelled(task) && (
+                <p className={styles.completedDescription}>
+                  <FormattedMessage {...MSG.cancelled} />
                 </p>
               )}
             </>

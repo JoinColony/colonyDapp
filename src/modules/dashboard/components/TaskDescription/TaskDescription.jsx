@@ -22,13 +22,13 @@ const MSG = defineMessages({
 });
 
 type Props = {|
-  isTaskCreator: boolean,
+  disabled: boolean,
   ...TaskProps<{ colonyAddress: *, draftId: *, description: * }>,
 |};
 
 const TaskDescription = ({
   description,
-  isTaskCreator,
+  disabled,
   colonyAddress,
   draftId,
 }: Props) => {
@@ -57,7 +57,7 @@ const TaskDescription = ({
         <MultiLineEdit
           name="description"
           placeholder={MSG.placeholder}
-          readOnly={!isTaskCreator}
+          readOnly={disabled}
           onEditorBlur={() => {
             /*
              * Defer the form submission to let formik finish first.

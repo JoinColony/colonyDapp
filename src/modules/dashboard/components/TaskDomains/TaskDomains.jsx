@@ -37,18 +37,13 @@ const MSG = defineMessages({
 });
 
 type Props = {|
-  isTaskCreator: boolean,
+  disabled?: boolean,
   ...TaskProps<{ colonyAddress: *, domainId: *, draftId: * }>,
 |};
 
 const displayName = 'dashboard.TaskDomains';
 
-const TaskDomains = ({
-  colonyAddress,
-  domainId,
-  draftId,
-  isTaskCreator,
-}: Props) => {
+const TaskDomains = ({ colonyAddress, domainId, draftId, disabled }: Props) => {
   const setDomain = useAsyncFunction({
     submit: ACTIONS.TASK_SET_DOMAIN,
     success: ACTIONS.TASK_SET_DOMAIN_SUCCESS,
@@ -94,7 +89,7 @@ const TaskDomains = ({
             appearance={{ size: 'small', margin: 'none' }}
             text={MSG.title}
           />
-          {isTaskCreator && (
+          {!disabled && (
             <Button
               appearance={{ theme: 'blue', size: 'small' }}
               text={MSG.selectDomain}
