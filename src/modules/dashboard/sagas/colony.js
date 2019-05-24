@@ -36,6 +36,7 @@ import {
 } from '../data/commands';
 
 import { createUserProfile } from '../../users/data/commands';
+import { getProfileStoreAddress } from '../../users/data/queries';
 
 import {
   getColony,
@@ -167,26 +168,12 @@ function* colonyCreate({
         ready: false,
       });
 
-      const { profileStore, metadataStore, inboxStore } = yield* executeCommand(
-        createUserProfile,
-        {
-          args: { username, walletAddress },
-          metadata: { walletAddress },
-        },
-      );
-
-      yield put<Action<typeof ACTIONS.USERNAME_CREATE_SUCCESS>>({
-        type: ACTIONS.USERNAME_CREATE_SUCCESS,
-        payload: {
-          inboxStoreAddress: inboxStore.address.toString(),
-          metadataStoreAddress: metadataStore.address.toString(),
-          username,
-        },
-        meta,
+      const profileStoreAddress = yield* executeQuery(getProfileStoreAddress, {
+        metadata: { walletAddress },
       });
       yield put(
         transactionAddParams(createUser.id, {
-          orbitDBPath: profileStore.address.toString(),
+          orbitDBPath: profileStoreAddress,
         }),
       );
       yield put(transactionReady(createUser.id));
@@ -276,6 +263,32 @@ function* colonyCreate({
       meta,
       payload: undefined,
     });
+
+    if (createUser) {
+      /*
+       * If the username is being created, wait for the transaction to succeed
+       * before creating the profile store and dispatching a success action.
+       */
+      yield takeFrom(createUser.channel, ACTIONS.TRANSACTION_SUCCEEDED);
+
+      const { metadataStore, inboxStore } = yield* executeCommand(
+        createUserProfile,
+        {
+          args: { username, walletAddress },
+          metadata: { walletAddress },
+        },
+      );
+
+      yield put<Action<typeof ACTIONS.USERNAME_CREATE_SUCCESS>>({
+        type: ACTIONS.USERNAME_CREATE_SUCCESS,
+        payload: {
+          inboxStoreAddress: inboxStore.address.toString(),
+          metadataStoreAddress: metadataStore.address.toString(),
+          username,
+        },
+        meta,
+      });
+    }
 
     /*
      * For transactions that rely on the receipt/event data of previous transactions,
