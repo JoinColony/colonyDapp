@@ -6,7 +6,10 @@ import { put, takeEvery, select } from 'redux-saga/effects';
 
 import type { Action } from '~redux';
 
-import { executeCommand, putError } from '~utils/saga/effects';
+import {
+  executeCommand,
+  putError /* , executeQuery */,
+} from '~utils/saga/effects';
 import { ACTIONS } from '~redux';
 
 import {
@@ -14,10 +17,12 @@ import {
   currentUserMetadataSelector,
 } from '../selectors';
 
-import { markNotificationsAsRead } from '../data/commands';
+import {
+  markNotificationsAsRead /* , getUserNotificationMetadata */,
+} from '../data/commands';
 
 function* markNotification({
-  payload: { readUntil, exceptFor },
+  payload: { readUntil, exceptFor, id },
 }: Action<typeof ACTIONS.INBOX_MARK_NOTIFICATION>): Saga<*> {
   try {
     const walletAddress = yield select(walletAddressSelector);
@@ -26,9 +31,15 @@ function* markNotification({
       walletAddress,
       metadataStoreAddress,
     };
+
+    /* const { readUntil, exceptFor } = yield* executeQuery(getUserNotificationMetadata, {
+      metadata,
+    }); */
+
     yield* executeCommand(markNotificationsAsRead, {
       metadata,
       args: {
+        id,
         readUntil,
         exceptFor,
       },
@@ -36,7 +47,7 @@ function* markNotification({
 
     yield put<Action<typeof ACTIONS.INBOX_MARK_NOTIFICATION_SUCCESS>>({
       type: ACTIONS.INBOX_MARK_NOTIFICATION_SUCCESS,
-      payload: { readUntil, exceptFor },
+      payload: { readUntil, exceptFor, id },
     });
   } catch (error) {
     yield putError(ACTIONS.INBOX_MARK_NOTIFICATION_ERROR, error);
