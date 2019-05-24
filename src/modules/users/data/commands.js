@@ -217,6 +217,7 @@ export const markNotificationsAsRead: Command<
   {|
     readUntil: string,
     exceptFor?: string[],
+    id: string,
   |},
   UserMetadataStore,
 > = {
@@ -225,8 +226,9 @@ export const markNotificationsAsRead: Command<
   schema: MarkNotificationsAsReadCommandArgsSchema,
   prepare: prepareMetadataCommand,
   async execute(userMetadataStore, args) {
+    const { readUntil, exceptFor } = args;
     await userMetadataStore.append(
-      createEvent(USER_EVENT_TYPES.READ_UNTIL, args),
+      createEvent(USER_EVENT_TYPES.READ_UNTIL, { readUntil, exceptFor }),
     );
     return userMetadataStore;
   },

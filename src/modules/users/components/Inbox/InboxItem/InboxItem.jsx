@@ -188,10 +188,7 @@ const InboxItem = ({
   const transform = useCallback(mergePayload({ id }), [id]);
   const markAsRead = useAsyncFunction({ ...readActions, transform });
   return (
-    <TableRow
-      className={styles.inboxRow}
-      onClick={() => unread && markAsRead(id)}
-    >
+    <TableRow className={styles.inboxRow} onClick={() => markAsRead(id)}>
       <TableCell className={styles.inboxRowCell}>
         {isFetchingUser ||
         isFetchingColony ||
