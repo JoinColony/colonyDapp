@@ -21,7 +21,7 @@ type ReplicationRequest = {
 };
 
 const PINNER_CONNECT_TIMEOUT = 20 * 1000; // This is just a number I came up with randomly. Adjust if necessary
-const PINNER_HAVE_HEADS_TIMEOUT = 5 * 1000; // Same
+const PINNER_HAVE_HEADS_TIMEOUT = 30 * 1000; // Seems necessary to have this higher
 
 const PIN_ACTIONS = {
   REPLICATE: 'REPLICATE',
