@@ -24,6 +24,7 @@ import {
   putError,
   putNotification,
   raceError,
+  selectAsJS,
   takeFrom,
 } from '~utils/saga/effects';
 import { generateUrlFriendlyId } from '~utils/data';
@@ -441,13 +442,9 @@ function* taskFinalize({
   meta,
 }: Action<typeof ACTIONS.TASK_FINALIZE>): Saga<void> {
   try {
-    const { record: taskRecord } = yield select(taskSelector, draftId);
     const {
-      workerAddress,
-      payouts,
-      domainId,
-      skillId,
-    }: TaskType = taskRecord.toJS();
+      record: { workerAddress, payouts, domainId, skillId },
+    }: { record: TaskType } = yield* selectAsJS(taskSelector, draftId);
     if (!workerAddress)
       throw new Error(`Worker not assigned for task ${draftId}`);
     if (!domainId) throw new Error(`Domain not set for task ${draftId}`);

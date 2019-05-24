@@ -40,12 +40,7 @@ type Props = {|
 
 const displayName = 'dashboard.TaskDate';
 
-const TaskDate = ({
-  colonyAddress,
-  draftId,
-  dueDate,
-  disabled,
-}: Props) => {
+const TaskDate = ({ colonyAddress, draftId, dueDate, disabled }: Props) => {
   const transform = useCallback(
     pipe(
       mapPayload(({ taskDueDate }) => ({ dueDate: taskDueDate })),
