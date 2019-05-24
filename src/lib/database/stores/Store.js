@@ -1,11 +1,12 @@
 /* @flow */
 
-import pEvent from 'p-event';
-
 import type { OrbitDBStore } from '../types';
 import { raceAgainstTimeout } from '../../../utils/async';
 import { log } from '../../../utils/debug';
 import PinnerConnector from '../../ipfs/PinnerConnector';
+
+const REPLICATION_HACK_INTERVAL = 1000;
+const REPLICATION_HACK_TIMEOUT = 60 * 1000;
 
 /**
  * A parent class for a wrapper around an orbit store that can load
@@ -113,12 +114,32 @@ class Store {
      */
     // We only block this call if we have 0 heads and the pinner has some
     if (!this.length && headCount) {
-      log.verbose(`Waiting for replication of store ${address}`);
-      await pEvent(this._orbitStore.events, 'peer.exchanged', {
-        filter: (peer: string) => this._pinner.isPinner(peer),
-        timeout: 60 * 1000,
-      });
-      await this._orbitStore.load();
+      log.verbose(`Waiting for partial replication for store ${address}`);
+
+      /*
+       * This is our way of dealing with replication anxiety.
+       *
+       * If Orbit had a reliable way of determining when a store was replicated
+       * (preferably that worked in parallel with other replication requests?)
+       * then we would absolutely use that.
+       *
+       * https://media.giphy.com/media/WQguiWV2XdbDq/giphy.gif
+       */
+      let interval;
+      await raceAgainstTimeout(
+        new Promise(resolve => {
+          interval = setInterval(() => {
+            if (this.length) {
+              clearInterval(interval);
+              resolve();
+            }
+          }, REPLICATION_HACK_INTERVAL);
+        }),
+        REPLICATION_HACK_TIMEOUT,
+        null,
+        () => clearInterval(interval),
+      );
+
       log.verbose(`Store sucessfully replicated: ${address}`);
     }
   }
