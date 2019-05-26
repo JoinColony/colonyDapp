@@ -130,16 +130,7 @@ const Task = ({
     [draftId],
     [colonyAddress || undefined, draftId],
   );
-  const {
-    description,
-    domainId,
-    dueDate,
-    payouts,
-    reputation,
-    skillId,
-    title,
-    workerAddress,
-  } = task || {};
+  const { description, domainId, dueDate, skillId, title } = task || {};
 
   const onEditTask = useCallback(
     () => {
@@ -182,13 +173,7 @@ const Task = ({
           </header>
           <div className={styles.assignment}>
             <div>
-              <TaskAssignment
-                colonyAddress={colonyAddress}
-                draftId={draftId}
-                payouts={payouts}
-                reputation={reputation}
-                workerAddress={workerAddress}
-              />
+              <TaskAssignment colonyAddress={colonyAddress} draftId={draftId} />
             </div>
             {canEdit && (
               <div className={styles.assignmentDetailsButton}>
