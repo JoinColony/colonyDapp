@@ -153,12 +153,9 @@ const Task = ({
         draftId,
         maxTokens: 1,
         minTokens: 1,
-        payouts,
-        reputation,
-        workerAddress,
       });
     },
-    [draftId, openDialog, payouts, reputation, task, workerAddress],
+    [draftId, openDialog, task],
   );
 
   const transform = useCallback(mergePayload({ colonyAddress, draftId }), [

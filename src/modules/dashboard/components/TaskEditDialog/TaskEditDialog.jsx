@@ -11,10 +11,8 @@ import type {
   ColonyType,
   UserType,
   TaskPayoutType,
-  TaskType,
   TokenType,
 } from '~immutable';
-import type { $Pick } from '~types';
 import type { ItemDataType } from '~core/OmniPicker';
 
 import SingleUserPicker from '~core/SingleUserPicker';
@@ -95,7 +93,6 @@ const MSG = defineMessages({
 });
 
 type Props = {|
-  ...$Exact<$Pick<TaskType, {| workerAddress: *, payouts: *, reputation: * |}>>,
   cancel: () => void,
   close: () => void,
   draftId: string,
@@ -152,12 +149,9 @@ const TaskEditDialog = ({
   draftId,
   maxTokens,
   minTokens,
-  payouts: taskPayouts,
-  reputation,
-  workerAddress,
 }: Props) => {
   const {
-    record: { colonyAddress },
+    record: { colonyAddress, payouts: taskPayouts, reputation, workerAddress },
   } = useSelector(taskSelector, [draftId]);
   const {
     data: colonyData,
