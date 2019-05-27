@@ -43,6 +43,7 @@ const colonyNamesReducer: ReducerType<
   }
 };
 
-export default withDataRecordMap(ACTIONS.COLONY_NAME_FETCH, ImmutableMap())(
-  colonyNamesReducer,
-);
+export default withDataRecordMap(
+  new Set([ACTIONS.COLONY_NAME_FETCH, ACTIONS.COLONY_ADDRESS_FETCH]),
+  ImmutableMap(),
+)(colonyNamesReducer);
