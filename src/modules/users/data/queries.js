@@ -42,6 +42,7 @@ import {
   getUserProfileStore,
   getUserInboxStore,
   getUserMetadataStore,
+  getUserProfileStoreAddress,
 } from '~data/stores';
 import { getUserTasksReducer, getUserProfileReducer } from './reducers';
 import {
@@ -610,5 +611,22 @@ export const getUserInboxActivity: Query<
         (firstEvent, secondEvent) =>
           firstEvent.timestamp - secondEvent.timestamp,
       );
+  },
+};
+
+export const getProfileStoreAddress: Query<
+  {| ddb: DDB, metadata: {| walletAddress: string |} |},
+  {| walletAddress: string |},
+  void,
+  string,
+> = {
+  name: 'getProfileStoreAddress',
+  context: [CONTEXT.DDB_INSTANCE],
+  async prepare({ ddb }, metadata) {
+    return { ddb, metadata };
+  },
+  async execute({ ddb, metadata }) {
+    const orbitAddress = await getUserProfileStoreAddress(ddb)(metadata);
+    return orbitAddress.toString();
   },
 };
