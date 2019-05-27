@@ -5,10 +5,13 @@ import { isIPFS } from 'ipfs';
 import { isAddress } from 'web3-utils';
 import { isValidAddress } from 'orbit-db';
 import { normalize as ensNormalize } from 'eth-ens-namehash-ms';
+import BigNumber from 'bn.js';
+import moveDecimal from 'move-decimal-point';
 
-import type { TokenReferenceType } from '~immutable';
+import type { TokenReferenceType, TokenType } from '~immutable';
 
 import { bnLessThan } from '../utils/numbers';
+import { addressEquals } from '../utils/strings';
 
 import en from '../i18n/en-validation.json';
 
@@ -30,7 +33,11 @@ function equalTo(ref, msg) {
 
 // Used by `TaskEditDialog` to check there are sufficient funds for the
 // selected token.
-function lessThanPot(tokenReferences: Array<TokenReferenceType>, msg) {
+function lessThanPot(
+  tokenReferences: Array<TokenReferenceType>,
+  colonyTokens: Array<TokenType>,
+  msg,
+) {
   return this.test({
     name: 'lessThanPot',
     message: msg || en.mixed.lessThanPot,
@@ -41,10 +48,17 @@ function lessThanPot(tokenReferences: Array<TokenReferenceType>, msg) {
       const tokenAddress = this.resolve(yup.ref('token'));
       if (!tokenAddress) return true;
       const { balance } =
-        tokenReferences.find(
-          ({ address: refAddress }) => refAddress === tokenAddress,
+        tokenReferences.find(({ address: refAddress }) =>
+          addressEquals(refAddress, tokenAddress),
         ) || {};
-      return balance === undefined || bnLessThan(value, balance);
+      const { decimals } =
+        colonyTokens.find(({ address: refAddress }) =>
+          addressEquals(refAddress, tokenAddress),
+        ) || {};
+      const amount = new BigNumber(
+        moveDecimal(value, decimals ? parseInt(decimals, 10) : 18),
+      );
+      return balance === undefined || bnLessThan(amount, balance);
     },
   });
 }

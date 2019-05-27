@@ -234,7 +234,11 @@ const TaskEditDialog = ({
                 .typeError(MSG.amountPositiveError)
                 .required(MSG.amountRequiredError)
                 .moreThan(0, MSG.amountPositiveError)
-                .lessThanPot(colonyTokenReferences, MSG.insufficientFundsError),
+                .lessThanPot(
+                  colonyTokenReferences,
+                  availableTokens,
+                  MSG.insufficientFundsError,
+                ),
             }),
           )
           .when('worker', {
@@ -247,7 +251,7 @@ const TaskEditDialog = ({
         worker: workerShape,
       });
     },
-    [colonyTokenReferences, maxTokens, minTokens],
+    [availableTokens, colonyTokenReferences, maxTokens, minTokens],
   );
 
   const tokenOptions = useMemo(
