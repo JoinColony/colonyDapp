@@ -40,6 +40,12 @@ export const allTransactions = createSelector(
     transactions.filter(tx => tx.from === walletAddress),
 );
 
+export const transactionByHash = (state: RootStateRecord, hash: string) =>
+  createSelector(
+    allTransactions,
+    transactions => transactions.find(tx => tx.hash === hash),
+  )(state);
+
 export const groupedTransactions = createSelector(
   allTransactions,
   transactions =>

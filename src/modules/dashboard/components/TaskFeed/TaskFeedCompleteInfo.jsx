@@ -14,16 +14,18 @@ import { useDataFetcher, useSelector } from '~utils/hooks';
 import { useReputationEarned } from '../../hooks/useReputationEarned';
 import { tokenFetcher } from '../../fetchers';
 import { taskSelector } from '../../selectors';
-import { networkFeeSelector } from '../../../core/selectors';
 import { friendlyUsernameSelector } from '../../../users/selectors';
+import { transactionByHash } from '../../../core/selectors';
 
 import styles from './TaskFeedCompleteInfo.css';
 
-const getTaskPayoutNetworkFee = (amount: BigNumber, fee: number) =>
-  amount.toNumber() * fee;
+const getTaskPayoutTransactionFee = (amount: BigNumber, fee: number) =>
+  amount.multipliedBy(new BigNumber(fee));
 
-const getTaskPayoutAmountMinusNetworkFee = (amount: BigNumber, fee: number) =>
-  amount.toNumber() - getTaskPayoutNetworkFee(amount, fee);
+const getTaskPayoutAmountMinusTransactionFee = (
+  amount: BigNumber,
+  fee: number,
+) => amount.minus(getTaskPayoutTransactionFee(amount, fee));
 
 const MSG = defineMessages({
   eventTaskSentMessage: {
@@ -82,12 +84,10 @@ const TaskFeedCompleteInfo = ({
     rating,
     didFailToRate,
   );
+  const { gasPrice, gasLimit } = useSelector(transactionByHash, [hash]);
 
-  /**
-   * @todo: Use fee data from the transaction
-   * @body: The current network fee doesn't necessarily reflect the fee at time of tx.
-   */
-  const networkFee = useSelector(networkFeeSelector);
+  const transactionFee =
+    gasPrice && gasLimit && gasPrice.mul(new BigNumber(gasLimit));
   return (
     <div className={styles.main}>
       <div className={styles.transactionSentCopy}>
@@ -124,9 +124,9 @@ const TaskFeedCompleteInfo = ({
                     <Numeral
                       truncate={2}
                       unit={decimals}
-                      value={getTaskPayoutAmountMinusNetworkFee(
+                      value={getTaskPayoutAmountMinusTransactionFee(
                         amount,
-                        networkFee,
+                        transactionFee,
                       )}
                     />
                   ),
@@ -141,7 +141,10 @@ const TaskFeedCompleteInfo = ({
                     <Numeral
                       truncate={2}
                       unit={decimals}
-                      value={getTaskPayoutNetworkFee(amount, networkFee)}
+                      value={getTaskPayoutTransactionFee(
+                        amount,
+                        transactionFee,
+                      )}
                     />
                   ),
                   symbol,
