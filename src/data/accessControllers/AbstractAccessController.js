@@ -5,6 +5,8 @@ import { Wallet } from 'ethers';
 
 import type { AccessController, Entry } from '~types';
 
+import { addressEquals } from '../../utils/strings';
+
 import PurserIdentity from '../PurserIdentity';
 import PurserIdentityProvider from '../PurserIdentityProvider';
 
@@ -44,7 +46,10 @@ export default class AbstractAccessController<
     message: string,
     signature: string,
   ) {
-    return Wallet.verifyMessage(message, signature) === walletAddress;
+    return addressEquals(
+      Wallet.verifyMessage(message, signature),
+      walletAddress,
+    );
   }
 
   static get type() {

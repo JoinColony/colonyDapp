@@ -2,6 +2,8 @@
 /* eslint-disable no-underscore-dangle */
 import type { Entry } from '~types';
 
+import { addressEquals } from '../../utils/strings';
+
 import AbstractAccessController from './AbstractAccessController';
 import PurserIdentity from '../PurserIdentity';
 import PurserIdentityProvider from '../PurserIdentityProvider';
@@ -32,7 +34,7 @@ class EthereumWalletAccessController extends AbstractAccessController<
     } = entry;
 
     // @NOTE: This is only necessary for the EthereumWalletAccessController
-    if (walletAddress !== this._walletAddress) return false;
+    if (!addressEquals(walletAddress, this._walletAddress)) return false;
     return super.canAppend(entry, provider);
   }
 
