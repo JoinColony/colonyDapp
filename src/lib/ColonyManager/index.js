@@ -32,6 +32,15 @@ export default class ColonyManager {
 
   async setColonyClient(address: Address) {
     const client = await this.networkClient.getColonyClientByAddress(address);
+
+    // Check if the colony exists by calling `getVersion` (in lieu of an
+    // explicit means of checking whether a colony exists at an address).
+    try {
+      await client.getVersion.call();
+    } catch (caughtError) {
+      throw new Error(`Colony with address ${address} not found`);
+    }
+
     this.clients.set(address, client);
     return client;
   }
