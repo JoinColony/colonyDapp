@@ -50,18 +50,15 @@ class ColonyAccessController extends AbstractAccessController<
       throw new Error('Could not get wallet address. Is it unlocked?');
   }
 
-  async save() {
-    const isAllowed = await this.can('is-colony-founder', this.walletAddress);
-    if (!isAllowed)
-      throw new Error('Cannot create colony database, user not allowed');
+  async save({ onlyDetermineAddress }: { onlyDetermineAddress: boolean }) {
+    if (!onlyDetermineAddress) {
+      const isAllowed = await this.can('is-colony-founder', this.walletAddress);
+      if (!isAllowed) {
+        throw new Error('Cannot create colony database, user not allowed');
+      }
+    }
 
-    const signature = await this._purserWallet.signMessage({
-      message: this._colonyAddress + this.walletAddress,
-    });
-
-    return `/colony/${this._colonyAddress}/creator/${
-      this.walletAddress
-    }/${signature}`;
+    return `/colony/${this._colonyAddress}`;
   }
 
   async load() {
