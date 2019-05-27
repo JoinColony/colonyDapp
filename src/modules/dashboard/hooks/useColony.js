@@ -10,11 +10,21 @@ export const useColonyWithAddress = (colonyAddress: ?Address) =>
   useDataFetcher<ColonyType>(colonyFetcher, [colonyAddress], [colonyAddress]);
 
 export const useColonyWithName = (colonyName: ?ENSName) => {
-  const { data: address } = useDataFetcher<Address>(
+  const { error: addressError, data: address } = useDataFetcher<Address>(
     colonyAddressFetcher,
     [colonyName],
     [colonyName],
   );
+
   const args = [address || undefined];
-  return useDataFetcher<ColonyType>(colonyFetcher, args, args);
+  const { error: colonyError, ...colonyData } = useDataFetcher<ColonyType>(
+    colonyFetcher,
+    args,
+    args,
+  );
+
+  return {
+    ...colonyData,
+    error: addressError || colonyError,
+  };
 };
