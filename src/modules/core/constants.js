@@ -13,6 +13,7 @@ export const CORE_IPFS_DATA = 'ipfsData';
  * Don't mistake them for notifications
  */
 export const CORE_MESSAGES = 'messages';
+export const CORE_MESSAGES_LIST = 'list';
 
 export {
   COLONY_CONTEXT,

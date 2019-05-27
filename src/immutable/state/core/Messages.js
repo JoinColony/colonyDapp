@@ -12,10 +12,17 @@ import type { MessageRecordType, TransactionId } from '~immutable';
 
 export type MessagesList = ImmutableMapType<TransactionId, MessageRecordType>;
 
-const defaultValues: MessagesList = ImmutableMap();
+export type CoreMessagesProps = {|
+  list: MessagesList,
+|};
 
-const CoreMessages: RecordFactory<MessagesList> = Record(defaultValues);
+const defaultValues: $Shape<CoreMessagesProps> = {
+  // [CORE_TRANSACTIONS_LIST]: ImmutableMap(),
+  list: ImmutableMap(),
+};
 
-export type CoreMessagesRecord = RecordOf<MessagesList>;
+const CoreMessages: RecordFactory<CoreMessagesProps> = Record(defaultValues);
+
+export type CoreMessagesRecord = RecordOf<CoreMessagesProps>;
 
 export default CoreMessages;
