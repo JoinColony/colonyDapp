@@ -14,6 +14,9 @@ type Actions = {
   USER_COLONY_SUBSCRIBE: *,
   USER_COLONY_SUBSCRIBE_ERROR: *,
   USER_COLONY_SUBSCRIBE_SUCCESS: *,
+  USER_COLONY_UNSUBSCRIBE: *,
+  USER_COLONY_UNSUBSCRIBE_ERROR: *,
+  USER_COLONY_UNSUBSCRIBE_SUCCESS: *,
   USER_LOGOUT_SUCCESS: *,
   USER_SUBSCRIBED_COLONIES_FETCH: *,
   USER_SUBSCRIBED_COLONIES_FETCH_ERROR: *,
@@ -31,6 +34,14 @@ const currentUserColoniesReducer: ReducerType<State, Actions> = (
       ]);
       return state.merge({ error: undefined, record, isFetching: false });
     }
+
+    case ACTIONS.USER_COLONY_UNSUBSCRIBE_SUCCESS: {
+      const record = (state.record || ImmutableSet()).delete(
+        action.payload.colonyAddress,
+      );
+      return state.merge({ error: undefined, record, isFetching: false });
+    }
+
     case ACTIONS.USER_SUBSCRIBED_COLONIES_FETCH_SUCCESS: {
       const record = (state.record || ImmutableSet()).union(action.payload);
       return state.merge({ error: undefined, record, isFetching: false });

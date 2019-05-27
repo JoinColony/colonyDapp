@@ -47,6 +47,7 @@ import {
   subscribeToColony,
   subscribeToTask,
   updateUserProfile,
+  unsubscribeToColony,
 } from '../data/commands';
 import {
   checkUsernameIsAvailable,
@@ -409,8 +410,10 @@ function* userSubscribedColoniesFetch(): Saga<*> {
     yield putError(ACTIONS.USER_SUBSCRIBED_COLONIES_FETCH_SUCCESS, error);
   }
 }
+
 function* userColonySubscribe({
   payload,
+  meta,
 }: Action<typeof ACTIONS.USER_COLONY_SUBSCRIBE>): Saga<*> {
   try {
     const walletAddress = yield select(walletAddressSelector);
@@ -422,21 +425,49 @@ function* userColonySubscribe({
     const userColonyAddresses = yield* executeQuery(getUserColonies, {
       metadata,
     });
-    if (
-      yield* executeCommand(subscribeToColony, {
-        args: { ...payload, userColonyAddresses },
-        metadata,
-      })
-    ) {
-      yield put<Action<typeof ACTIONS.USER_COLONY_SUBSCRIBE_SUCCESS>>({
-        type: ACTIONS.USER_COLONY_SUBSCRIBE_SUCCESS,
-        payload,
-      });
-    }
-  } catch (error) {
-    yield putError(ACTIONS.USER_COLONY_SUBSCRIBE_ERROR, error);
+    yield* executeCommand(subscribeToColony, {
+      args: { ...payload, userColonyAddresses },
+      metadata,
+    });
+    yield put<Action<typeof ACTIONS.USER_COLONY_SUBSCRIBE_SUCCESS>>({
+      type: ACTIONS.USER_COLONY_SUBSCRIBE_SUCCESS,
+      payload,
+      meta,
+    });
+  } catch (caughtError) {
+    yield putError(ACTIONS.USER_COLONY_SUBSCRIBE_ERROR, caughtError, meta);
   }
 }
+
+function* userColonyUnsubscribe({
+  payload,
+  meta,
+}: Action<typeof ACTIONS.USER_COLONY_UNSUBSCRIBE>): Saga<*> {
+  try {
+    const walletAddress = yield select(walletAddressSelector);
+    const { metadataStoreAddress } = yield select(currentUserMetadataSelector);
+    const metadata = {
+      walletAddress,
+      metadataStoreAddress,
+    };
+    const userColonyAddresses = yield* executeQuery(getUserColonies, {
+      metadata,
+    });
+
+    yield* executeCommand(unsubscribeToColony, {
+      args: { ...payload, userColonyAddresses },
+      metadata,
+    });
+    yield put<Action<typeof ACTIONS.USER_COLONY_UNSUBSCRIBE_SUCCESS>>({
+      type: ACTIONS.USER_COLONY_UNSUBSCRIBE_SUCCESS,
+      payload,
+      meta,
+    });
+  } catch (caughtError) {
+    yield putError(ACTIONS.USER_COLONY_UNSUBSCRIBE_ERROR, caughtError, meta);
+  }
+}
+
 function* userSubscribedTasksFetch(): Saga<*> {
   try {
     const walletAddress = yield select(walletAddressSelector);
@@ -514,6 +545,7 @@ export default function* setupUsersSagas(): Saga<void> {
   yield takeEvery(ACTIONS.USER_TOKEN_TRANSFERS_FETCH, userTokenTransfersFetch);
   yield takeEvery(ACTIONS.USER_TOKENS_FETCH, userTokensFetch);
   yield takeEvery(ACTIONS.USER_COLONY_SUBSCRIBE, userColonySubscribe);
+  yield takeEvery(ACTIONS.USER_COLONY_UNSUBSCRIBE, userColonyUnsubscribe);
   yield takeEvery(
     ACTIONS.USER_SUBSCRIBED_TASKS_FETCH,
     userSubscribedTasksFetch,
