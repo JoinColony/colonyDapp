@@ -2,12 +2,12 @@
 
 import type { CoreMessagesRecord } from '~immutable';
 
+import type { ReducerType } from '~redux';
+
 import { MessageRecord, CoreMessages } from '~immutable';
 import { ACTIONS } from '~redux';
 
-import type { ReducerType } from '~redux';
-
-import { CORE_MESSAGES } from '../constants';
+import { CORE_MESSAGES_LIST } from '../constants';
 
 const coreMessagesReducer: ReducerType<
   CoreMessagesRecord,
@@ -20,8 +20,10 @@ const coreMessagesReducer: ReducerType<
       const {
         meta: { id },
       } = action;
-      const messageToSign = MessageRecord();
-      return state.setIn([CORE_MESSAGES, id], messageToSign);
+      return state.setIn(
+        [CORE_MESSAGES_LIST, id],
+        MessageRecord(action.payload),
+      );
     }
     default:
       return state;

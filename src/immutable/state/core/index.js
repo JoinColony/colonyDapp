@@ -15,7 +15,7 @@ import type { CoreMessagesRecord } from './Messages';
 export { default as GasPrices } from './GasPrices';
 export { default as CoreTransactions } from './CoreTransactions';
 export { default as Network } from './Network';
-export { default as Message } from './Messages';
+export { default as CoreMessages } from './Messages';
 
 export * from './GasPrices';
 export * from './CoreTransactions';
