@@ -6,6 +6,7 @@ import type { Address, Entry } from '~types';
 import AbstractAccessController from './AbstractAccessController';
 import PurserIdentity from '../PurserIdentity';
 import PurserIdentityProvider from '../PurserIdentityProvider';
+import { createAddress } from '../../types';
 
 const TYPE = 'eth-wallet/purser';
 
@@ -33,7 +34,7 @@ class EthereumWalletAccessController extends AbstractAccessController<
     } = entry;
 
     // @NOTE: This is only necessary for the EthereumWalletAccessController
-    if (walletAddress !== this._walletAddress) return false;
+    if (!createAddress(walletAddress) === this._walletAddress) return false;
     return super.canAppend(entry, provider);
   }
 
