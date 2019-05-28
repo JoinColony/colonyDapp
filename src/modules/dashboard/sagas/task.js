@@ -615,10 +615,15 @@ function* taskSetWorkerAndPayouts({
     } = yield select(taskSelector, draftId);
     if (payouts && !(existingPayouts && existingPayouts.length > 0)) {
       yield all(
-        payouts.map(payout =>
+        payouts.map(({ amount, token }) =>
           call(taskSetPayout, {
             meta,
-            payload: { colonyAddress, draftId, ...payout },
+            payload: {
+              colonyAddress,
+              draftId,
+              amount: amount.toString(),
+              token,
+            },
             type: ACTIONS.TASK_SET_PAYOUT,
           }),
         ),

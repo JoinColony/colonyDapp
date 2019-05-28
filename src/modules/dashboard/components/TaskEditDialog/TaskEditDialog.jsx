@@ -6,6 +6,8 @@ import { defineMessages } from 'react-intl';
 import * as yup from 'yup';
 import { FieldArray } from 'formik';
 import nanoid from 'nanoid';
+import moveDecimal from 'move-decimal-point';
+import BigNumber from 'bn.js';
 
 import type {
   ColonyType,
@@ -276,7 +278,18 @@ const TaskEditDialog = ({
   const transform = useCallback(
     pipe(
       mapPayload(p => ({
-        payouts: p.payouts.map(({ amount, token }) => ({ amount, token })),
+        payouts: p.payouts.map(({ amount, token }) => {
+          const { decimals } =
+            availableTokens.find(({ address: refAddress }) =>
+              addressEquals(refAddress, token),
+            ) || {};
+          return {
+            amount: new BigNumber(
+              moveDecimal(amount, decimals ? parseInt(decimals, 10) : 18),
+            ),
+            token,
+          };
+        }),
         workerAddress: p.worker.profile.walletAddress,
       })),
       mergePayload({ colonyAddress, draftId }),

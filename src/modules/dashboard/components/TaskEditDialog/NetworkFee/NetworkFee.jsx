@@ -9,7 +9,10 @@ import Numeral from '~core/Numeral';
 import { Tooltip } from '~core/Popover';
 import { useSelector } from '~utils/hooks';
 
-import { networkFeeSelector } from '../../../../core/selectors';
+import {
+  networkFeeInverseSelector,
+  networkFeeSelector,
+} from '../../../../core/selectors';
 
 import styles from './NetworkFee.css';
 
@@ -33,26 +36,34 @@ const MSG = defineMessages({
   },
 });
 
-const getNetworkFee = (amount: BN | number, feePercentage: number): number =>
-  new BN(amount).toNumber() * feePercentage;
+const getNetworkFee = (amount: BN | number, feeInverse: number): BN =>
+  new BN(amount.toString()).div(new BN(feeInverse));
 
 type Props = {|
   amount: BN | number,
+  decimals: number,
   symbol: string,
 |};
 
 const displayName = 'dashboard.Task.Payout.NetworkFee';
 
-const NetworkFee = ({ amount, symbol }: Props) => {
+const NetworkFee = ({ amount, decimals, symbol }: Props) => {
   const networkFee = useSelector(networkFeeSelector);
-  const feeAmount: number = getNetworkFee(amount, networkFee);
+  const networkFeeInverse = useSelector(networkFeeInverseSelector);
+  const feeAmount: BN = getNetworkFee(amount, networkFeeInverse);
   return (
     <>
       <div className={styles.amount}>
         <FormattedMessage
           {...MSG.colonyFeeText}
           values={{
-            amount: <Numeral value={feeAmount} suffix={` ${symbol}`} />,
+            amount: (
+              <Numeral
+                suffix={` ${symbol}`}
+                unit={decimals}
+                value={feeAmount}
+              />
+            ),
           }}
         />
       </div>

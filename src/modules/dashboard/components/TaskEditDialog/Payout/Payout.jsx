@@ -123,6 +123,7 @@ const Payout = ({
                       size: 'medium',
                       theme: 'grey',
                     }}
+                    unit={decimals}
                     value={amount}
                   />
                 </span>
@@ -160,7 +161,7 @@ const Payout = ({
         </div>
         {amount && symbol && !isEditing && (
           <div className={styles.networkFeeRow}>
-            <NetworkFee amount={amount} symbol={symbol} />
+            <NetworkFee amount={amount} decimals={decimals} symbol={symbol} />
           </div>
         )}
       </div>

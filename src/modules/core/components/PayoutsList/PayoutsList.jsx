@@ -6,6 +6,8 @@ import cx from 'classnames';
 
 import type { TaskPayoutType } from '~immutable';
 
+import { addressEquals } from '~utils/strings';
+
 import { Tooltip } from '../Popover';
 import Numeral from '../Numeral';
 
@@ -55,13 +57,13 @@ const PayoutsList = ({ payouts, maxLines = 1, nativeToken }: Props) => {
         {firstPayouts.map(payout => (
           <Numeral
             className={cx(styles.payoutNumber, {
-              [styles.native]: payout.token.symbol === nativeToken,
+              [styles.native]: addressEquals(payout.token.symbol, nativeToken),
             })}
             key={payout.token.address}
-            value={payout.amount}
-            unit="ether"
-            truncate={1}
             prefix={`${payout.token.symbol} `}
+            truncate={2}
+            unit={payout.token.decimals || 18}
+            value={payout.amount}
           />
         ))}
       </div>
@@ -72,12 +74,15 @@ const PayoutsList = ({ payouts, maxLines = 1, nativeToken }: Props) => {
               {extraPayouts.map(payout => (
                 <Numeral
                   className={cx(styles.payoutNumber, {
-                    [styles.native]: payout.token.symbol === nativeToken,
+                    [styles.native]: addressEquals(
+                      payout.token.symbol,
+                      nativeToken,
+                    ),
                   })}
                   key={payout.token.address}
                   value={payout.amount}
-                  unit="ether"
-                  truncate={1}
+                  unit={payout.token.decimals || 18}
+                  truncate={2}
                   prefix={`${payout.token.symbol} `}
                 />
               ))}
