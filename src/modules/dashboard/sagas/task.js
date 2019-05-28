@@ -735,6 +735,20 @@ function* taskCommentAdd({
     const walletAddress = yield select(walletAddressSelector);
     const currentUsername = yield select(usernameSelector, walletAddress);
     const wallet = yield* getContext(CONTEXT.WALLET);
+
+    /*
+     * @NOTE Initiate the message signature
+     */
+    yield put<Action<typeof ACTIONS.MESSAGE_CREATED>>({
+      type: ACTIONS.MESSAGE_CREATED,
+      payload: {
+        message: JSON.stringify(commentData),
+      },
+      meta: {
+        id: `${nanoid(10)}-signMessage`,
+      },
+    });
+
     /*
      * @todo Wire message signing to the Gas Station, once it's available
      */

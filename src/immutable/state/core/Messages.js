@@ -17,7 +17,6 @@ export type CoreMessagesProps = {|
 |};
 
 const defaultValues: $Shape<CoreMessagesProps> = {
-  // [CORE_TRANSACTIONS_LIST]: ImmutableMap(),
   list: ImmutableMap(),
 };
 
