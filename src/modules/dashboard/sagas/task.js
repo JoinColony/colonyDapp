@@ -476,11 +476,13 @@ function* taskFinalize({
 
     yield takeFrom(txChannel, ACTIONS.TRANSACTION_CREATED);
 
+    const { address: paymentTokenAddress } = token;
     const { event } = yield* executeCommand(finalizeTask, {
-      /**
-       * @todo Set the payment ID/payment token address when finalising a task
-       */
-      args: { amountPaid: amount.toString(), workerAddress },
+      args: {
+        paymentTokenAddress,
+        amountPaid: amount.toString(),
+        workerAddress,
+      },
       metadata: { colonyAddress, draftId },
     });
     yield put<Action<typeof ACTIONS.TASK_FINALIZE_SUCCESS>>({

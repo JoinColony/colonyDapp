@@ -100,7 +100,6 @@ export type TaskEvents = {|
     typeof TASK_FINALIZED,
     {|
       amountPaid: string,
-      paymentId?: number,
       paymentTokenAddress?: Address,
       workerAddress: Address,
     |},

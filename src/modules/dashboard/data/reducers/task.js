@@ -82,14 +82,13 @@ export const taskReducer: EventReducer<
     }
     case TASK_FINALIZED: {
       const {
-        payload: { amountPaid, paymentId, paymentTokenAddress, workerAddress },
+        payload: { amountPaid, paymentTokenAddress, workerAddress },
         meta: { timestamp },
       } = event;
       return {
         ...task,
         amountPaid,
         finalizedAt: new Date(timestamp),
-        paymentId,
         paymentTokenAddress,
         workerAddress,
       };

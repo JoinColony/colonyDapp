@@ -439,7 +439,6 @@ export const finalizeTask: Command<
   TaskStoreMetadata,
   {|
     amountPaid: string,
-    paymentId?: number,
     paymentTokenAddress?: Address,
     workerAddress: Address,
   |},
