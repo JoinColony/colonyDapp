@@ -40,7 +40,6 @@ const Inbox = ({ activities }: Props) => {
   };
 
   const markAllRead = useAsyncFunction({ ...allReadActions });
-
   return (
     <CenteredTemplate appearance={{ theme: 'alt' }}>
       <div className={styles.contentContainer}>

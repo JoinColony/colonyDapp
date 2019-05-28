@@ -51,6 +51,7 @@ import {
 } from './utils';
 
 const {
+  READ_UNTIL,
   SUBSCRIBED_TO_COLONY,
   SUBSCRIBED_TO_TASK,
   UNSUBSCRIBED_FROM_COLONY,
@@ -624,5 +625,32 @@ export const getProfileStoreAddress: Query<
   async execute({ ddb, metadata }) {
     const orbitAddress = await getUserProfileStoreAddress(ddb)(metadata);
     return orbitAddress.toString();
+  },
+};
+
+export const getUserNotificationMetadata: Query<
+  ?UserMetadataStore,
+  UserMetadataStoreMetadata,
+  void,
+  {| readUntil: number, exceptFor: string[] |},
+> = {
+  name: 'getUserNotificationMetadata',
+  context: [CONTEXT.DDB_INSTANCE],
+  prepare: prepareMetadataStoreQuery,
+  async execute(metadataStore) {
+    /*
+     * The user has no metadata store set, assuming there's no metadata
+     */
+    const [{ payload: { readUntil, exceptFor } = {} } = {}] = metadataStore
+      ? metadataStore
+          .all()
+          .filter(({ type }) => type === READ_UNTIL)
+          .sort((a, b) => b.meta.timestamp - a.meta.timestamp)
+      : [];
+
+    return {
+      readUntil,
+      exceptFor,
+    };
   },
 };

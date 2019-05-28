@@ -12,9 +12,8 @@ const enhanced = compose(
     activities: currentUserActivitiesSelector(state),
   })),
   withProps(({ activities }) => ({
-    hasUnreadActivities: !!(
-      activities && activities.find(activity => activity.unread)
-    ),
+    hasUnreadActivities:
+      activities && activities.toArray().some(activity => activity.unread),
   })),
 );
 
