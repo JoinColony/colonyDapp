@@ -24,13 +24,29 @@ export const getFilterFormatted = (input: any) => padLeft(toHex(input), 64);
  * Returns an array of topics for the given ColonyJS events, and from/to
  * addresses, if given, for ERC20 transfers, or similar events.
  */
-const getTopics = ({ events = [], from, to }: LogFilterOptions) => [
-  events.map(({ interface: { topics } }) => topics),
-  // $FlowFixMe the LogFilter type should accept null for this
-  from ? padTopicAddress(from) : null,
-  // $FlowFixMe the LogFilter type should accept null for this
-  to ? padTopicAddress(to) : null,
-];
+const getTopics = ({ events = [], from, to }: LogFilterOptions) =>
+  [
+    events.reduce(
+      (acc, { interface: { topics } }) =>
+        Array.isArray(topics) ? [...acc, ...topics] : [...acc, topics],
+      [],
+    ),
+    // $FlowFixMe the LogFilter type should accept null for this
+    from ? padTopicAddress(from) : null,
+    // $FlowFixMe the LogFilter type should accept null for this
+    to ? padTopicAddress(to) : null,
+  ].reduce(
+    (acc, topic) =>
+      // remove trailing null topics
+      topic === null
+        ? acc
+        : [
+            ...acc,
+            // single topics shouldn't be in arrays
+            Array.isArray(topic) && topic.length === 1 ? topic[0] : topic,
+          ],
+    [],
+  );
 
 /*
  * Returns given filter with added `fromBlock` and `toBlock` components
