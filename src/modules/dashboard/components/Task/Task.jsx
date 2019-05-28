@@ -245,27 +245,29 @@ const Task = ({
             isDiscardConfirmDisplayed ? styles.headerConfirm : ''
           }`}
         >
-          <Tooltip
-            content={
-              <div className={styles.trustInfoTooltip}>
-                <p className={styles.trustInfoTooltipHeading}>
-                  <FormattedMessage {...MSG.trustInfoTooltipHeading} />
-                </p>
-                <p>
-                  <FormattedMessage {...MSG.trustInfoTooltipBody} />
-                </p>
+          {!isTaskCreator && !isDiscardConfirmDisplayed && (
+            <Tooltip
+              content={
+                <div className={styles.trustInfoTooltip}>
+                  <p className={styles.trustInfoTooltipHeading}>
+                    <FormattedMessage {...MSG.trustInfoTooltipHeading} />
+                  </p>
+                  <p>
+                    <FormattedMessage {...MSG.trustInfoTooltipBody} />
+                  </p>
+                </div>
+              }
+              placement="right"
+            >
+              <div className={styles.trustInfoIcon}>
+                <Icon
+                  name="unlock"
+                  title={MSG.trustInfoTooltipHeading}
+                  appearance={{ size: 'small', theme: 'primary' }}
+                />
               </div>
-            }
-            placement="right"
-          >
-            <div className={styles.trustInfoIcon}>
-              <Icon
-                name="unlock"
-                title={MSG.trustInfoTooltipHeading}
-                appearance={{ size: 'small', theme: 'primary' }}
-              />
-            </div>
-          </Tooltip>
+            </Tooltip>
+          )}
           {canCancelTask(task, walletAddress) && (
             <ActionButton
               appearance={{ theme: 'secondary', size: 'small' }}
