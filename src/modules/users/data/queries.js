@@ -438,7 +438,9 @@ export const getUserInboxActivity: Query<
     /* $FlowFixMe */
     const { events, logs } = await getLogsAndEvents(
       colonyClient,
-      {},
+      {
+        address: colonyAddress,
+      },
       {
         blocksBack: 400000,
         events: [
@@ -488,7 +490,9 @@ export const getUserInboxActivity: Query<
      */
     const { logs: mintLogs, events: mintEvents } = await getLogsAndEvents(
       tokenClient,
-      {},
+      {
+        address: tokenAddress,
+      },
       {
         blocksBack: 400000,
         events: [Mint],
