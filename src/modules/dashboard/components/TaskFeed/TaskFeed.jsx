@@ -61,46 +61,41 @@ const TaskFeed = ({ colonyAddress, draftId }: Props) => {
         <div className={styles.main}>
           <div className={styles.items}>
             <div>
-              {feedItems
-                .sort((a, b) => a.createdAt - b.createdAt)
-                .map(
-                  ({ id, createdAt, comment, event, rating, transaction }) => {
-                    if (comment) {
-                      return (
-                        <TaskFeedComment
-                          key={id}
-                          comment={comment}
-                          createdAt={createdAt}
-                        />
-                      );
-                    }
-
-                    if (event) {
-                      return (
-                        <TaskFeedEvent
-                          colonyAddress={colonyAddress}
-                          createdAt={createdAt}
-                          event={event}
-                          key={id}
-                        />
-                      );
-                    }
-
-                    /**
-                     * @todo Check that the reveal period is over for ratings (task feed).
-                     */
-                    if (rating) {
-                      return <TaskFeedRating key={id} rating={rating} />;
-                    }
-
-                    return transaction ? (
-                      <TaskFeedCompleteInfo
+              {feedItems.map(
+                ({ id, createdAt, comment, event, rating, transaction }) => {
+                  if (comment) {
+                    return (
+                      <TaskFeedComment
                         key={id}
-                        transaction={transaction}
+                        comment={comment}
+                        createdAt={createdAt}
                       />
-                    ) : null;
-                  },
-                )}
+                    );
+                  }
+
+                  if (event) {
+                    return (
+                      <TaskFeedEvent
+                        colonyAddress={colonyAddress}
+                        createdAt={createdAt}
+                        event={event}
+                        key={id}
+                      />
+                    );
+                  }
+
+                  /**
+                   * @todo Check that the reveal period is over for ratings (task feed).
+                   */
+                  if (rating) {
+                    return <TaskFeedRating key={id} rating={rating} />;
+                  }
+
+                  return transaction ? (
+                    <TaskFeedCompleteInfo key={id} transaction={transaction} />
+                  ) : null;
+                },
+              )}
               <div ref={bottomEl} />
             </div>
           </div>

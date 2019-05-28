@@ -3,7 +3,7 @@
 import { Map as ImmutableMap, List } from 'immutable';
 
 import type { ReducerType } from '~redux';
-import type { TaskFeedItemsMap } from '~immutable';
+import type { TaskFeedItemsMap, TaskFeedItemRecordType } from '~immutable';
 
 import {
   DataRecord,
@@ -60,6 +60,45 @@ const createTaskFeedItemRecord = (event: *) =>
     ...getTaskFeedItemRecordProps(event),
   });
 
+const insertFeedItem = (list: List<*>, record: TaskFeedItemRecordType) => {
+  const last = list.last();
+  if (!last || record.createdAt >= last.createdAt) {
+    return list.push(record);
+  }
+
+  const index = list.findIndex(
+    ({ createdAt }) => createdAt >= record.createdAt,
+  );
+
+  return list.insert(index, record);
+};
+
+const updateStateForSubscription = (state: *, draftId: string) =>
+  state.getIn([draftId, 'record'])
+    ? state
+    : state.set(
+        draftId,
+        // $FlowFixMe it's not clear why this isn't acceptable.
+        DataRecord({
+          record: List(),
+        }),
+      );
+
+const updateStateForEvent = (state: *, draftId: string, event: *) => {
+  const newState = updateStateForSubscription(state, draftId);
+
+  const idExists = newState
+    .getIn([draftId, 'record'], List())
+    .find(item => item.id === event.meta.id);
+
+  return idExists
+    ? newState
+    : newState.updateIn(
+        [draftId, 'record'],
+        list => list && insertFeedItem(list, createTaskFeedItemRecord(event)),
+      );
+};
+
 const taskFeedItemsReducer: ReducerType<
   TaskFeedItemsMap,
   {
@@ -85,22 +124,12 @@ const taskFeedItemsReducer: ReducerType<
   switch (action.type) {
     case ACTIONS.TASK_FEED_ITEMS_SUB_START: {
       const { draftId } = action.payload;
-      return state.getIn([draftId, 'record'])
-        ? state
-        : state.set(
-            draftId,
-            DataRecord({
-              record: List(),
-            }),
-          );
+      return updateStateForSubscription(state, draftId);
     }
 
     case ACTIONS.TASK_FEED_ITEMS_SUB_EVENT: {
       const { draftId, event } = action.payload;
-      return state.updateIn(
-        [draftId, 'record'],
-        list => list && list.push(createTaskFeedItemRecord(event)),
-      );
+      return updateStateForEvent(state, draftId, event);
     }
 
     /*
@@ -123,25 +152,7 @@ const taskFeedItemsReducer: ReducerType<
     case ACTIONS.TASK_WORKER_ASSIGN_SUCCESS:
     case ACTIONS.TASK_WORKER_UNASSIGN_SUCCESS: {
       const { draftId, event } = action.payload;
-      const path = [draftId, 'record'];
-
-      const update = (items: *) =>
-        /*
-         * Ensure that the state contains unique events by only adding them
-         * when the event's id wasn't found in the existing items.
-         */
-        items.find(item => item.id === event.meta.id)
-          ? items
-          : items.push(createTaskFeedItemRecord(event));
-
-      return state.getIn(path)
-        ? state.updateIn(path, items => items && update(items))
-        : state.set(
-            draftId,
-            DataRecord({
-              record: update(List()),
-            }),
-          );
+      return updateStateForEvent(state, draftId, event);
     }
 
     default:
