@@ -1,5 +1,7 @@
 /* @flow */
 
+import debounce from 'lodash/debounce';
+
 import Store from './Store';
 
 import type {
@@ -42,28 +44,6 @@ class EventStore extends Store {
     return this.append(value);
   }
 
-  /*
-   * This is currently unused; do we still need it?
-   */
-  async query(filter: * = {}) {
-    return this._orbitStore
-      .iterator(filter)
-      .collect()
-      .reduce(
-        (entries, entry) => [
-          ...entries,
-          ...((entry &&
-            entry.next &&
-            entry.next.length &&
-            entry.next.map(hash => this._orbitStore.get(hash))) ||
-            []),
-          entry,
-        ],
-        [],
-      )
-      .map(entry => this.constructor.decorateEntry(entry));
-  }
-
   async append(value: {}) {
     return this._orbitStore.add(value);
   }
@@ -86,47 +66,50 @@ class EventStore extends Store {
   }
 
   /*
-   * Given a callback for handling events, create a subscription
-   * that calls the callback with all unique events, and provide
-   * a means to close the subscription.
+   * Given a callback for handling events, and optional options,
+   * create a subscription that calls the callback with all
+   * unique events, and provide a means to stop the subscription.
    */
-  subscribe(callback: (event: Event<*>) => void): {| close: () => void |} {
-    const hashes = [];
+  subscribe(
+    callback: (event: Event<*>) => void,
+    {
+      filter,
+      takeExisting,
+    }: {| filter?: (event: Event<*>) => boolean, takeExisting?: boolean |} = {},
+  ): {| stop: () => void |} {
+    const hashes = new Set();
 
-    /*
-     * Given an entry from the store, call the callback when
-     * the entry hash has not been handled previously, so as to avoid
-     * duplicate entries.
-     */
     const handleEntry = (entry: Entry) => {
-      if (!hashes.includes(entry.hash)) {
-        hashes.push(entry.hash);
-        callback(this.constructor.decorateEntry(entry));
-      }
+      // To avoid duplicate entries, ignore the entry if its hash was
+      // encountered before.
+      if (hashes.has(entry.hash)) return;
+      hashes.add(entry.hash);
+
+      const event = this.constructor.decorateEntry(entry);
+
+      if (!filter || filter(event)) callback(event);
     };
 
-    /*
-     * Define and start the event listeners in order to handle new entries.
-     */
     const onReplicateProgress = (address: string, hash: string, entry: Entry) =>
       handleEntry(entry);
-    const onWrite = (address: string, entry: Entry) => handleEntry(entry);
+    const onWrite = debounce(
+      (address: string, entry: Entry) => handleEntry(entry),
+      1000,
+    );
+
     this._orbitStore.events.on('replicate.progress', onReplicateProgress);
     this._orbitStore.events.on('write', onWrite);
 
-    /*
-     * Handle all existing entries.
-     */
-    this._orbitStore
-      .iterator({ limit: -1 })
-      .collect()
-      .forEach(handleEntry);
+    if (takeExisting) {
+      this._orbitStore
+        .iterator({ limit: -1 })
+        .collect()
+        .forEach(handleEntry);
+    }
 
     return {
-      /*
-       * Provide a means of removing the event listeners.
-       */
-      close: () => {
+      // The consumer is expected to stop the event listeners.
+      stop: () => {
         this._orbitStore.events.removeListener(
           'replicate.progress',
           onReplicateProgress,

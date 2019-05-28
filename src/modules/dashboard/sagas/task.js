@@ -26,7 +26,7 @@ import {
   putNotification,
   raceError,
   selectAsJS,
-  startSubscription,
+  executeSubscription,
   takeFrom,
 } from '~utils/saga/effects';
 import { generateUrlFriendlyId } from '~utils/data';
@@ -597,7 +597,7 @@ function* taskFeedItemsSubStart({
 }: *): Saga<void> {
   let channel;
   try {
-    channel = yield call(startSubscription, subscribeTaskFeedItems, {
+    channel = yield call(executeSubscription, subscribeTaskFeedItems, {
       metadata: { colonyAddress, draftId },
     });
 
@@ -640,7 +640,7 @@ function* taskSubStart({
   // as it gets used elsewhere.
   let channel;
   try {
-    channel = yield call(startSubscription, subscribeTask, {
+    channel = yield call(executeSubscription, subscribeTask, {
       metadata: { colonyAddress, draftId },
     });
 

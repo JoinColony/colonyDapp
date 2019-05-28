@@ -88,8 +88,7 @@ export const subscribeTask: Subscription<
   name: 'subscribeTask',
   context: [CONTEXT.COLONY_MANAGER, CONTEXT.DDB_INSTANCE, CONTEXT.WALLET],
   prepare: prepareTaskStoreQuery,
-  subscribe(taskStore, args, emitter) {
-    const taskSubscription = taskStore.subscribe(emitter);
-    return [taskSubscription];
+  execute(taskStore, args, emitter) {
+    return [taskStore.subscribe(emitter, { takeExisting: true })];
   },
 };

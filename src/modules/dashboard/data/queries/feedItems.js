@@ -126,19 +126,16 @@ export const subscribeTaskFeedItems: Subscription<
   name: 'subscribeTaskFeedItems',
   context: [CONTEXT.COLONY_MANAGER, CONTEXT.DDB_INSTANCE, CONTEXT.WALLET],
   prepare,
-  subscribe({ commentsStore, taskStore }, args, emitter) {
-    const commentsSubscription = commentsStore.subscribe(entry => {
-      if (entry.type === COMMENT_POSTED) {
-        emitter(entry);
-      }
-    });
-
-    const taskSubscription = taskStore.subscribe(event => {
-      if (FEED_ITEM_TYPES.includes(event.type)) {
-        emitter(event);
-      }
-    });
-
-    return [commentsSubscription, taskSubscription];
+  execute({ commentsStore, taskStore }, args, emitter) {
+    return [
+      commentsStore.subscribe(emitter, {
+        filter: ({ type }) => type === COMMENT_POSTED,
+        takeExisting: true,
+      }),
+      taskStore.subscribe(emitter, {
+        filter: ({ type }) => FEED_ITEM_TYPES.includes(type),
+        takeExisting: true,
+      }),
+    ];
   },
 };

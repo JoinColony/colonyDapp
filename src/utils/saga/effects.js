@@ -3,7 +3,7 @@
 import type { Channel, EventChannel, Saga } from 'redux-saga';
 
 import nanoid from 'nanoid';
-import { eventChannel, buffers } from 'redux-saga';
+import { eventChannel, buffers, END } from 'redux-saga';
 import { all, call, put, race, take, select } from 'redux-saga/effects';
 
 import type { ErrorActionType, TakeFilter, Action } from '~redux';
@@ -60,7 +60,7 @@ export const putError = (type: string, error: Error, meta?: Object = {}) => {
   return put(action);
 };
 
-/**
+/*
  * Races the `take` of two actions, one success and one error. If success is
  * first, function returns. If error is first, function throws.
  */
@@ -77,42 +77,50 @@ export const raceError = (
   return call(raceErrorGenerator);
 };
 
-function* prepareCommandOrQuery<D, M, A, R>(
-  commandOrQuery: Command<D, M, A, R> | Query<D, M, A, R>,
-  {
-    metadata,
-  }: {
-    metadata: M,
-  },
-): Saga<*> {
-  const { context, prepare } = commandOrQuery;
-
-  /*
-   * Validate the command or query object
-   */
-  if (!context) {
+const validateDataSpec = <D, M, A, R>(
+  spec: Command<D, M, A, R> | Query<D, M, A, R> | Subscription<D, M, A, R>,
+) => {
+  if (!spec.context) {
     throw new Error('Cannot prepare, context not defined');
   }
+
   const allowedContextNames = Object.values(CONTEXT);
   if (
     !(
-      context.length > 0 &&
-      context.every(contextName => allowedContextNames.includes(contextName))
+      spec.context.length > 0 &&
+      spec.context.every(contextName =>
+        allowedContextNames.includes(contextName),
+      )
     )
   ) {
     throw new Error('Cannot prepare, invalid context');
   }
-  if (!prepare) {
+
+  if (!spec.prepare) {
     throw new Error('Cannot prepare, "prepare" function not defined');
   }
 
-  /*
-   * Create a context object for the `prepare` step.
-   */
+  if (!spec.execute) {
+    throw new Error('Cannot execute, "execute" function not defined');
+  }
+
+  return true;
+};
+
+/*
+ * Given a data specification (Command/Query/Subscription)
+ * and metadata, validate it and get the dependencies to execute it.
+ */
+function* getExecuteDependencies<D, M, A, R>(
+  spec: Command<D, M, A, R> | Query<D, M, A, R> | Subscription<D, M, A, R>,
+  metadata: M,
+): Saga<*> {
+  validateDataSpec(spec);
+
   const contextValues = yield all(
-    context.map(contextName => call(getContext, contextName)),
+    spec.context.map(contextName => call(getContext, contextName)),
   );
-  const prepareContext = context.reduce(
+  const prepareContext = spec.context.reduce(
     (contextObj, contextName, index) => ({
       ...contextObj,
       [contextName]: contextValues[index],
@@ -120,39 +128,7 @@ function* prepareCommandOrQuery<D, M, A, R>(
     {},
   );
 
-  /*
-   * Call the `prepare` step to get the `execute` dependencies.
-   */
-  return yield call(prepare, prepareContext, metadata);
-}
-
-function* executeCommandOrQuery<D, M, A, R>(
-  commandOrQuery: Command<D, M, A, R> | Query<D, M, A, R>,
-  {
-    args,
-    metadata,
-  }: {
-    args: A,
-    metadata: M,
-  },
-): Saga<R> {
-  const { execute } = commandOrQuery;
-
-  if (!execute) {
-    throw new Error('Cannot execute, "execute" function not defined');
-  }
-
-  /*
-   * Get the `execute` dependencies.
-   */
-  const executeDeps = yield call(prepareCommandOrQuery, commandOrQuery, {
-    metadata,
-  });
-
-  /*
-   * Call and return the `execute` step with the dependencies and given args.
-   */
-  return yield call(execute, executeDeps, args);
+  return yield call(spec.prepare, prepareContext, metadata);
 }
 
 export function* executeQuery<D, M, A, R>(
@@ -166,53 +142,52 @@ export function* executeQuery<D, M, A, R>(
   },
 ): Saga<R> {
   log.verbose(`Executing query "${query.name}"`, { args, metadata });
-  const result = yield call(executeCommandOrQuery, query, {
-    // Destructure the objects; either prop is optional, but for flow,
-    // they need to be defined to call the inner function.
-    args: { ...args },
-    metadata: { ...metadata },
+
+  const executeDeps = yield call(getExecuteDependencies, query, {
+    // The metadata object is cloned to satisfy flow.
+    ...metadata,
   });
+
+  const result = yield call(query.execute, executeDeps, { ...args });
+
   log.verbose(`Executed query "${query.name}"`, result);
   return result;
 }
 
-export function* startSubscription<D, M, A, R>(
+export function* executeSubscription<D, M, A, R>(
   subscription: Subscription<D, M, A, R>,
   {
     args,
     metadata,
   }: {
     args?: A,
-    metadata?: M,
+    metadata: M,
   },
-): Saga<EventChannel<R>> {
+): Saga<EventChannel<R | typeof END>> {
   log.verbose(`Starting subscription "${subscription.name}"`, {
     args,
     metadata,
   });
 
-  /*
-   * Get the `execute` dependencies to start the subscription.
-   */
-  // $FlowFixMe It works...
-  const executeDeps = yield call(prepareCommandOrQuery, subscription, {
-    metadata,
+  const executeDeps = yield call(getExecuteDependencies, subscription, {
+    // The metadata object is cloned to satisfy flow.
+    ...metadata,
   });
 
   return eventChannel(emitter => {
-    /*
-     * Start the subscription with the eventChannel's emitter.
-     */
-    const subs = subscription.subscribe(executeDeps, args, emitter);
+    let subs = [];
+    try {
+      subs = subscription.execute(executeDeps, args, emitter);
+    } catch (caughtError) {
+      emitter(END);
+      throw caughtError;
+    }
     return () => {
       log.verbose(`Stopping subscription "${subscription.name}"`, {
         args,
         metadata,
       });
-      /*
-       * Close the subscriptions when the eventChannel is closed.
-       */
-      subs.forEach(({ close }) => close());
+      subs.forEach(({ stop }) => stop());
     };
   }, buffers.expanding());
 }
@@ -228,15 +203,17 @@ export function* executeCommand<D, M, A, R>(
   |},
 ): Saga<R> {
   log.verbose(`Executing command "${command.name}"`, { args, metadata });
-  const maybeSanitizedArgs = command.schema
-    ? validateSync(command.schema)(args)
-    : args;
-  const result = yield call(executeCommandOrQuery, command, {
-    // Destructure the objects; either prop is optional, but for flow,
-    // they need to be defined to call the inner function.
-    args: { ...maybeSanitizedArgs },
-    metadata: { ...metadata },
+
+  // The args and metadata objects are cloned to satisfy flow.
+  const maybeSanitizedArgs = {
+    ...(command.schema ? validateSync(command.schema)(args) : args),
+  };
+  const executeDeps = yield call(getExecuteDependencies, command, {
+    ...metadata,
   });
+
+  const result = yield call(command.execute, executeDeps, maybeSanitizedArgs);
+
   log.verbose(`Executed command "${command.name}"`, result);
   return result;
 }
