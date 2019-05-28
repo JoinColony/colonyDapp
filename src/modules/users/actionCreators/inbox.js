@@ -6,17 +6,14 @@ import { ACTIONS } from '~redux';
 
 export const markNotification = (
   id: string,
-  readUntil: string,
-  exceptFor: string[],
+  timestamp: number,
 ): Action<typeof ACTIONS.INBOX_MARK_NOTIFICATION> => ({
   type: ACTIONS.INBOX_MARK_NOTIFICATION,
-  payload: { id, readUntil, exceptFor },
+  payload: { id, timestamp },
 });
 
-export const markAllNotifications = (
-  readUntil: string,
-  exceptFor: string[],
-): Action<typeof ACTIONS.INBOX_MARK_ALL_NOTIFICATIONS> => ({
+export const markAllNotifications = (): Action<
+  typeof ACTIONS.INBOX_MARK_ALL_NOTIFICATIONS,
+> => ({
   type: ACTIONS.INBOX_MARK_ALL_NOTIFICATIONS,
-  payload: { readUntil, exceptFor },
 });

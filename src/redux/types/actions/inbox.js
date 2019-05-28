@@ -1,13 +1,17 @@
 /* @flow */
 
-import type { ErrorActionType, ActionTypeWithPayload } from '../index';
+import type {
+  ErrorActionType,
+  ActionType,
+  ActionTypeWithPayload,
+} from '../index';
 
 import { ACTIONS } from '../../index';
 
 export type InboxActionTypes = {|
   INBOX_MARK_NOTIFICATION: ActionTypeWithPayload<
     typeof ACTIONS.INBOX_MARK_NOTIFICATION,
-    {| readUntil: string, exceptFor: string[], id: string |},
+    {| id: string, timestamp: number |},
   >,
   INBOX_MARK_NOTIFICATION_ERROR: ErrorActionType<
     typeof ACTIONS.INBOX_MARK_NOTIFICATION_ERROR,
@@ -15,11 +19,10 @@ export type InboxActionTypes = {|
   >,
   INBOX_MARK_NOTIFICATION_SUCCESS: ActionTypeWithPayload<
     typeof ACTIONS.INBOX_MARK_NOTIFICATION_SUCCESS,
-    {| readUntil: string, exceptFor: string[], id: string |},
+    {| readUntil: number, exceptFor: string[] |},
   >,
-  INBOX_MARK_ALL_NOTIFICATIONS: ActionTypeWithPayload<
+  INBOX_MARK_ALL_NOTIFICATIONS: ActionType<
     typeof ACTIONS.INBOX_MARK_ALL_NOTIFICATIONS,
-    {| readUntil: string, exceptFor: string[] |},
   >,
   INBOX_MARK_ALL_NOTIFICATIONS_ERROR: ErrorActionType<
     typeof ACTIONS.INBOX_MARK_ALL_NOTIFICATIONS_ERROR,
@@ -27,6 +30,6 @@ export type InboxActionTypes = {|
   >,
   INBOX_MARK_ALL_NOTIFICATIONS_SUCCESS: ActionTypeWithPayload<
     typeof ACTIONS.INBOX_MARK_ALL_NOTIFICATIONS_SUCCESS,
-    {| readUntil: string, exceptFor: string[] |},
+    {| readUntil: number, exceptFor: string[] |},
   >,
 |};

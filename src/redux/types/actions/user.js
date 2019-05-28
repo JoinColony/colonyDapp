@@ -94,6 +94,21 @@ export type UserActionTypes = {|
     UserProfileType,
     WithKey,
   >,
+
+  USER_NOTIFICATION_METADATA_FETCH: ActionTypeWithPayloadAndMeta<
+    typeof ACTIONS.USER_NOTIFICATION_METADATA_FETCH,
+    {| readUntil: number, exceptFor: string[] |},
+    WithKey,
+  >,
+  USER_NOTIFICATION_METADATA_FETCH_ERROR: ErrorActionType<
+    typeof ACTIONS.USER_NOTIFICATION_METADATA_FETCH_ERROR,
+    void,
+  >,
+  USER_NOTIFICATION_METADATA_FETCH_SUCCESS: ActionTypeWithPayload<
+    typeof ACTIONS.USER_NOTIFICATION_METADATA_FETCH_SUCCESS,
+    {| readUntil: number, exceptFor: string[] |},
+  >,
+
   // In the future we could specify in the payload which permission(s) we would like to fetch
   USER_PERMISSIONS_FETCH: ActionTypeWithPayloadAndMeta<
     typeof ACTIONS.USER_PERMISSIONS_FETCH,

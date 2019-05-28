@@ -26,6 +26,7 @@ import {
   getUserBalance,
   getUserProfile,
   getUserColonies,
+  getUserNotificationMetadata,
 } from '../../users/data/queries';
 import setupAdminSagas from '../../admin/sagas';
 import setupDashboardSagas from '../../dashboard/sagas';
@@ -143,6 +144,25 @@ export default function* setupUserContext(
     });
 
     try {
+      const { readUntil = 0, exceptFor = [] } = yield* executeQuery(
+        getUserNotificationMetadata,
+        {
+          metadata: {
+            walletAddress,
+            metadataStoreAddress: profileData.metadataStoreAddress,
+          },
+        },
+      );
+      yield put<
+        Action<typeof ACTIONS.USER_NOTIFICATION_METADATA_FETCH_SUCCESS>,
+      >({
+        type: ACTIONS.USER_NOTIFICATION_METADATA_FETCH_SUCCESS,
+        payload: {
+          readUntil,
+          exceptFor,
+        },
+      });
+
       const userColonies = yield* executeQuery(getUserColonies, {
         metadata: {
           walletAddress,

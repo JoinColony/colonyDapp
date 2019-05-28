@@ -185,7 +185,10 @@ const InboxItem = ({
     error: ACTIONS.INBOX_MARK_NOTIFICATION_ERROR,
   };
 
-  const transform = useCallback(mergePayload({ id }), [id]);
+  const transform = useCallback(mergePayload({ id, timestamp }), [
+    id,
+    timestamp,
+  ]);
   const markAsRead = useAsyncFunction({ ...readActions, transform });
   return (
     <TableRow className={styles.inboxRow} onClick={() => markAsRead(id)}>

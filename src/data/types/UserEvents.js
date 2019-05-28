@@ -22,8 +22,8 @@ export type UserEvents = {|
   READ_UNTIL: EventDefinition<
     typeof READ_UNTIL,
     {|
-      readUntil: string,
-      exceptFor?: string[],
+      readUntil: number,
+      exceptFor: string[],
     |},
   >,
   SUBSCRIBED_TO_COLONY: EventDefinition<

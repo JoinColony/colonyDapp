@@ -215,9 +215,8 @@ export const markNotificationsAsRead: Command<
   UserMetadataStore,
   UserMetadataStoreMetadata,
   {|
-    readUntil: string,
-    exceptFor?: string[],
-    id: string,
+    readUntil: number,
+    exceptFor: string[],
   |},
   UserMetadataStore,
 > = {
