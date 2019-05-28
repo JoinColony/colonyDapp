@@ -85,3 +85,21 @@
   margin-right: 10px;
   font-size: var(--size-small);
 }
+
+.trustInfoIcon {
+  margin-right: auto;
+  margin-left: 15px;
+}
+
+.trustInfoIcon > i {
+  vertical-align: middle;
+}
+
+.trustInfoTooltip {
+  max-width: 340px;
+}
+
+.trustInfoTooltipHeading {
+  margin-bottom: 5px;
+  font-weight: 500;
+}

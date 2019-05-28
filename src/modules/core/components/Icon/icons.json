@@ -1,6 +1,7 @@
 {
   "icons": [
     "archive",
+    "arrow-wallet",
     "at-sign-circle",
     "attachment",
     "bell",
@@ -9,10 +10,10 @@
     "caret-right",
     "check-mark",
     "checklist",
+    "circle-add",
     "circle-archive",
     "circle-arrow-back",
     "circle-arrow-down",
-    "circle-add",
     "circle-back",
     "circle-check",
     "circle-close",
@@ -24,10 +25,10 @@
     "file",
     "forbidden-signal",
     "four-square",
-    "arrow-wallet",
     "graph-line",
     "home",
     "line-arrow-circle",
+    "lock",
     "pencil",
     "person",
     "phrase",
@@ -40,6 +41,7 @@
     "star",
     "tag",
     "three-dots-row",
+    "unlock",
     "wallet"
   ],
   "multiColorIcons": [

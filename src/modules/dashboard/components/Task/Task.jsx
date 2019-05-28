@@ -22,6 +22,8 @@ import { mergePayload } from '~utils/actions';
 import Heading from '~core/Heading';
 import withDialog from '~core/Dialog/withDialog';
 import Button, { ActionButton, ConfirmButton } from '~core/Button';
+import Icon from '~core/Icon';
+import { Tooltip } from '~core/Popover';
 import LoadingTemplate from '~pages/LoadingTemplate';
 
 import TaskAssignment from '~dashboard/TaskAssignment';
@@ -83,6 +85,16 @@ const MSG = defineMessages({
   loadingText: {
     id: 'dashboard.Task.loadingText',
     defaultMessage: 'Loading task',
+  },
+  trustInfoTooltipHeading: {
+    id: 'dashboard.Task.trustInfoTooltipHeading',
+    defaultMessage: 'Task data is not stored on chain',
+  },
+  trustInfoTooltipBody: {
+    id: 'dashboard.Task.trustInfoTooltipBody',
+    defaultMessage:
+      // eslint-disable-next-line max-len
+      'Admins can edit the task and remove the assignee without consent. Protect your work and ensure you trust whom you are working with.',
   },
 });
 
@@ -233,6 +245,29 @@ const Task = ({
             isDiscardConfirmDisplayed ? styles.headerConfirm : ''
           }`}
         >
+          {!isTaskCreator && !isDiscardConfirmDisplayed && (
+            <Tooltip
+              content={
+                <div className={styles.trustInfoTooltip}>
+                  <p className={styles.trustInfoTooltipHeading}>
+                    <FormattedMessage {...MSG.trustInfoTooltipHeading} />
+                  </p>
+                  <p>
+                    <FormattedMessage {...MSG.trustInfoTooltipBody} />
+                  </p>
+                </div>
+              }
+              placement="right"
+            >
+              <div className={styles.trustInfoIcon}>
+                <Icon
+                  name="unlock"
+                  title={MSG.trustInfoTooltipHeading}
+                  appearance={{ size: 'small', theme: 'primary' }}
+                />
+              </div>
+            </Tooltip>
+          )}
           {canCancelTask(task, walletAddress) && (
             <ActionButton
               appearance={{ theme: 'secondary', size: 'small' }}
