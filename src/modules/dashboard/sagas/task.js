@@ -743,7 +743,11 @@ function* taskCommentAdd({
     const message = JSON.stringify(commentData);
     yield put<Action<typeof ACTIONS.MESSAGE_CREATED>>({
       type: ACTIONS.MESSAGE_CREATED,
-      payload: { message },
+      payload: {
+        id: messageId,
+        for: 'taskComment',
+        message,
+      },
     });
 
     /*

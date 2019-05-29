@@ -7,7 +7,7 @@ import { ACTIONS } from '../../index';
 export type MessageActionTypes = {|
   MESSAGE_CREATED: ActionTypeWithPayload<
     typeof ACTIONS.MESSAGE_CREATED,
-    {| id?: string, message: string |},
+    {| id?: string, for?: string, message: string |},
   >,
   MESSAGE_SIGN: ActionTypeWithPayload<
     typeof ACTIONS.MESSAGE_SIGN,
