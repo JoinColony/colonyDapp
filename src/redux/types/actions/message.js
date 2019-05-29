@@ -1,20 +1,20 @@
 /* @flow */
 
-import type { ActionTypeWithPayloadAndMeta } from '~redux';
+import type { ActionTypeWithPayload } from '~redux';
 
 import { ACTIONS } from '../../index';
 
-type WithId = {| id: string |};
-
 export type MessageActionTypes = {|
-  MESSAGE_CREATED: ActionTypeWithPayloadAndMeta<
+  MESSAGE_CREATED: ActionTypeWithPayload<
     typeof ACTIONS.MESSAGE_CREATED,
-    {| message: string |},
-    WithId,
+    {| id?: string, message: string |},
   >,
-  MESSAGE_SIGNED: ActionTypeWithPayloadAndMeta<
+  MESSAGE_SIGN: ActionTypeWithPayload<
+    typeof ACTIONS.MESSAGE_SIGN,
+    {| id: string, message?: string |},
+  >,
+  MESSAGE_SIGNED: ActionTypeWithPayload<
     typeof ACTIONS.MESSAGE_SIGNED,
-    {| message: string, signature: string |},
-    WithId,
+    {| id: string, message: string, signature: string |},
   >,
 |};
