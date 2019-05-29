@@ -785,10 +785,10 @@
     lodash "^4.17.10"
     to-fast-properties "^2.0.0"
 
-"@colony/colony-js-adapter-ethers@^1.12.0":
-  version "1.12.0"
-  resolved "https://registry.yarnpkg.com/@colony/colony-js-adapter-ethers/-/colony-js-adapter-ethers-1.12.0.tgz#f50cac49aa0e70ed58b130ec4873ab8d4dda463b"
-  integrity sha512-VsY1+6N4zWcdUeqc6MmuK/w74VM8D4qMcdIWiMQrngbYMZKCAtZH13ZXyFjS/SLhon2ncXp59Y31eBAw4D9Npg==
+"@colony/colony-js-adapter-ethers@^1.12.1":
+  version "1.12.1"
+  resolved "https://registry.yarnpkg.com/@colony/colony-js-adapter-ethers/-/colony-js-adapter-ethers-1.12.1.tgz#7a2c4cf093d98f91896edc70da64142d3c14c473"
+  integrity sha512-G/E6c3+VjEA7gSbrLjPJZ00OvK54IohEU1k1ri3xrglNFA13g3ONpd5J4axC7GD181Kk9gYQS0qWbqmyxfGA/Q==
   dependencies:
     "@colony/colony-js-adapter" "^1.12.0"
     "@colony/colony-js-contract-loader" "^1.12.0"
@@ -804,13 +804,13 @@
     "@colony/colony-js-contract-loader" "^1.12.0"
     bn.js "^4.11.8"
 
-"@colony/colony-js-client@^1.12.0":
-  version "1.12.0"
-  resolved "https://registry.yarnpkg.com/@colony/colony-js-client/-/colony-js-client-1.12.0.tgz#b755b39750ac75d3b0f0158a64a083e911619dd1"
-  integrity sha512-gM5bD3hsbaI7jLauwcQCimSi78V4CGj9P2+ARTu4B7cLyoEfDFrIOjlPWv2bzJvGHOVi9bICgm3Duqny6AkrjQ==
+"@colony/colony-js-client@^1.12.1":
+  version "1.12.1"
+  resolved "https://registry.yarnpkg.com/@colony/colony-js-client/-/colony-js-client-1.12.1.tgz#6fadc3cfcbc59e1fd881ccb3605df9e462f84629"
+  integrity sha512-1ppFKh2aWwyWD/ekTCErqCT0ceZuQ8/qgondW0HfCM5P2B126m59AICw3KE1QY+9P2G5DLDbNzP/tCXu+lRvQQ==
   dependencies:
     "@colony/colony-js-adapter" "^1.12.0"
-    "@colony/colony-js-adapter-ethers" "^1.12.0"
+    "@colony/colony-js-adapter-ethers" "^1.12.1"
     "@colony/colony-js-contract-client" "^1.12.0"
     "@colony/colony-js-contract-loader" "^1.12.0"
     "@colony/colony-js-contract-loader-http" "^1.12.0"
