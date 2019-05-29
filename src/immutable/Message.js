@@ -7,6 +7,7 @@ import { Record } from 'immutable';
 
 export type MessageProps = {
   id: string,
+  createdAt: Date,
   message: string,
   signature?: string,
   status: 'created' | 'pending' | 'failed' | 'succeeded',
@@ -14,6 +15,7 @@ export type MessageProps = {
 
 const defaultValues: $Shape<MessageProps> = {
   id: `${nanoid(10)}-signMessage`,
+  createdAt: new Date(),
   message: undefined,
   signature: undefined,
   status: 'created',

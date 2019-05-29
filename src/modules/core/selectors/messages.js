@@ -2,8 +2,6 @@
 
 import { Map as ImmutableMap } from 'immutable';
 
-// import { createSelector } from 'reselect';
-
 import type { RootStateRecord } from '~immutable';
 
 import {
