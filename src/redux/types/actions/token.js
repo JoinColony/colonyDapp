@@ -1,7 +1,7 @@
 /* @flow */
 
 import type { Action, ErrorActionType, UniqueActionType } from '../index';
-import type { WithKey } from '~types';
+import type { Address, WithKey } from '~types';
 
 import { ACTIONS } from '../../index';
 
@@ -19,7 +19,7 @@ export type TokenActionTypes = {|
   TOKEN_INFO_FETCH: UniqueActionType<
     typeof ACTIONS.TOKEN_INFO_FETCH,
     {|
-      tokenAddress: string,
+      tokenAddress: Address,
     |},
     WithKey,
   >,
@@ -33,7 +33,7 @@ export type TokenActionTypes = {|
       decimals: number,
       name: string,
       symbol: string,
-      tokenAddress: string,
+      tokenAddress: Address,
     |},
     WithKey,
   >,

@@ -31,7 +31,7 @@ export type TaskEvents = {|
       signature: string,
       content: {|
         id: string,
-        author: string,
+        author: Address,
         body: string,
         timestamp: number,
         metadata?: {|
@@ -43,7 +43,7 @@ export type TaskEvents = {|
   COMMENT_STORE_CREATED: EventDefinition<
     typeof COMMENT_STORE_CREATED,
     {|
-      commentsStoreAddress: string,
+      commentsStoreAddress: Address,
     |},
   >,
   DOMAIN_SET: EventDefinition<
@@ -86,7 +86,7 @@ export type TaskEvents = {|
   TASK_CREATED: EventDefinition<
     typeof TASK_CREATED,
     {|
-      creatorAddress: string,
+      creatorAddress: Address,
       draftId: string,
     |},
   >,
@@ -102,7 +102,7 @@ export type TaskEvents = {|
       amountPaid: string,
       paymentId?: number,
       paymentTokenAddress?: Address,
-      workerAddress: string,
+      workerAddress: Address,
     |},
   >,
   TASK_TITLE_SET: EventDefinition<
@@ -114,25 +114,25 @@ export type TaskEvents = {|
   WORK_INVITE_SENT: EventDefinition<
     typeof WORK_INVITE_SENT,
     {|
-      workerAddress: string,
+      workerAddress: Address,
     |},
   >,
   WORK_REQUEST_CREATED: EventDefinition<
     typeof WORK_REQUEST_CREATED,
     {|
-      workerAddress: string,
+      workerAddress: Address,
     |},
   >,
   WORKER_ASSIGNED: EventDefinition<
     typeof WORKER_ASSIGNED,
     {|
-      workerAddress: string,
+      workerAddress: Address,
     |},
   >,
   WORKER_UNASSIGNED: EventDefinition<
     typeof WORKER_UNASSIGNED,
     {|
-      workerAddress: string,
+      workerAddress: Address,
     |},
   >,
 |};

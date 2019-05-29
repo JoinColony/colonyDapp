@@ -21,21 +21,21 @@ import { ACTIONS } from '../../index';
 export type ColonyActionTypes = {|
   COLONY_ADMIN_ADD: UniqueActionType<
     typeof ACTIONS.COLONY_ADMIN_ADD,
-    {| newAdmin: string, colonyAddress: Address |},
+    {| newAdmin: Address, colonyAddress: Address |},
     WithKey,
   >,
   COLONY_ADMIN_ADD_ERROR: ErrorActionType<
     typeof ACTIONS.COLONY_ADMIN_ADD_ERROR,
-    {| ...WithKey, userAddress: string |},
+    {| ...WithKey, userAddress: Address |},
   >,
   COLONY_ADMIN_ADD_SUCCESS: UniqueActionType<
     typeof ACTIONS.COLONY_ADMIN_ADD_SUCCESS,
-    {| user: string |},
+    {| user: Address |},
     WithKey,
   >,
   COLONY_ADMIN_REMOVE: UniqueActionType<
     typeof ACTIONS.COLONY_ADMIN_REMOVE,
-    {| user: string, colonyAddress: Address |},
+    {| user: Address, colonyAddress: Address |},
     WithKey,
   >,
   COLONY_ADMIN_REMOVE_ERROR: ErrorActionType<
@@ -91,7 +91,7 @@ export type ColonyActionTypes = {|
   >,
   COLONY_CLAIM_TOKEN: UniqueActionType<
     typeof ACTIONS.COLONY_CLAIM_TOKEN,
-    {| tokenAddress: string, colonyAddress: Address |},
+    {| tokenAddress: Address, colonyAddress: Address |},
     void,
   >,
   COLONY_CLAIM_TOKEN_ERROR: ErrorActionType<
@@ -100,7 +100,7 @@ export type ColonyActionTypes = {|
   >,
   COLONY_CLAIM_TOKEN_SUCCESS: UniqueActionType<
     typeof ACTIONS.COLONY_CLAIM_TOKEN_SUCCESS,
-    { params: { token: string } },
+    { params: { token: Address } },
     void,
   >,
   COLONY_CREATE: UniqueActionType<
@@ -108,7 +108,7 @@ export type ColonyActionTypes = {|
     {|
       colonyName: string,
       displayName: string,
-      tokenAddress?: string,
+      tokenAddress?: Address,
       tokenChoice: 'create' | 'select',
       tokenIcon: string,
       tokenName: string,
@@ -306,7 +306,7 @@ export type ColonyActionTypes = {|
   >,
   COLONY_ROLES_FETCH_SUCCESS: ActionTypeWithPayloadAndMeta<
     typeof ACTIONS.COLONY_ROLES_FETCH_SUCCESS,
-    { admins: string[], founder: string },
+    { admins: Address[], founder: Address },
     WithKey,
   >,
   COLONY_VERSION_UPGRADE: UniqueActionType<

@@ -6,8 +6,8 @@ import React from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 
 import type { TaskPayoutType, TokenReferenceType, UserType } from '~immutable';
+import type { Address } from '~types';
 
-import { addressEquals } from '~utils/strings';
 import Icon from '~core/Icon';
 import PayoutsList from '~core/PayoutsList';
 import HookedUserAvatar from '~users/HookedUserAvatar';
@@ -43,7 +43,7 @@ type Props = {|
   worker: ?UserType,
   /** List of payouts per token that has been set for a task */
   payouts?: Array<TaskPayoutType>,
-  renderAvatar?: (address: string, user: UserType) => Node,
+  renderAvatar?: (address: Address, user: UserType) => Node,
   /** current user reputation */
   reputation?: number,
   /** The assignment has to be confirmed first and can therefore appear as pending,
@@ -55,7 +55,7 @@ type Props = {|
   showFunding?: boolean,
 |};
 
-const defaultRenderAvatar = (address: string, user: UserType) => (
+const defaultRenderAvatar = (address: Address, user: UserType) => (
   <UserAvatar
     address={address}
     className={styles.recipientAvatar}
@@ -75,9 +75,7 @@ const Assignment = ({
 }: Props) => {
   const fundingWithNativeToken =
     payouts &&
-    payouts.find(payout =>
-      addressEquals(payout.token.address, nativeToken.address),
-    );
+    payouts.find(payout => payout.token.address === nativeToken.address);
 
   return (
     <div>

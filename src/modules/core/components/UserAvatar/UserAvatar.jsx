@@ -8,9 +8,11 @@ import Avatar from '~core/Avatar';
 import UserInfo from '~core/UserInfo';
 import Link from '~core/NavLink';
 
+import type { Address } from '~types';
+
 export type Props = {|
   /** Address of the current user for identicon fallback */
-  address: string,
+  address: Address,
   /** Avatar image URL (can be a base64 encoded url string) */
   avatarURL?: string,
   /** Is passed through to Avatar */

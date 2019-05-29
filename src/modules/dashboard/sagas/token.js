@@ -17,7 +17,6 @@ import type { Action } from '~redux';
 import { putError, takeFrom } from '~utils/saga/effects';
 import { getTokenClient } from '~utils/web3/contracts';
 import { ZERO_ADDRESS, ETHER_INFO } from '~utils/web3/constants';
-import { addressEquals } from '~utils/strings';
 import { CONTEXT, getContext } from '~context';
 import { ACTIONS } from '~redux';
 
@@ -46,7 +45,7 @@ function* tokenInfoFetch({
   meta,
 }: Action<typeof ACTIONS.TOKEN_INFO_FETCH>): Saga<void> {
   // if trying to fetch info for Ether, return hardcoded
-  if (addressEquals(tokenAddress, ZERO_ADDRESS)) {
+  if (tokenAddress === ZERO_ADDRESS) {
     yield put<Action<typeof ACTIONS.TOKEN_INFO_FETCH_SUCCESS>>({
       type: ACTIONS.TOKEN_INFO_FETCH_SUCCESS,
       payload: ETHER_INFO,

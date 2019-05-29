@@ -4,6 +4,7 @@ import type { ColonyProps } from '~immutable';
 import type { EventDefinition } from './events';
 
 import { COLONY_EVENT_TYPES } from '../constants';
+import type { Address } from '~types';
 
 const {
   COLONY_AVATAR_REMOVED,
@@ -72,7 +73,7 @@ export type ColonyEvents = {|
   TOKEN_INFO_ADDED: EventDefinition<
     typeof TOKEN_INFO_ADDED,
     {|
-      address: string,
+      address: Address,
       iconHash?: string,
       isNative?: boolean,
       isExternal?: boolean,
@@ -83,7 +84,7 @@ export type ColonyEvents = {|
   TOKEN_INFO_REMOVED: EventDefinition<
     typeof TOKEN_INFO_REMOVED,
     {|
-      address: string,
+      address: Address,
     |},
   >,
 |};

@@ -3,6 +3,8 @@
 import React from 'react';
 import { defineMessages } from 'react-intl';
 
+import type { Address } from '~types';
+
 import CopyableAddress from '~core/CopyableAddress';
 import Heading from '~core/Heading';
 import Icon from '~core/Icon';
@@ -23,7 +25,7 @@ const MSG = defineMessages({
 type Props = {
   balance: number,
   close?: () => void,
-  walletAddress: string,
+  walletAddress: Address,
 };
 
 const displayName = 'users.GasStation.GasStationHeader';

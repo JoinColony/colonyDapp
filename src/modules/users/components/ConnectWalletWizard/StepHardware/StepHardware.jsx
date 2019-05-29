@@ -8,6 +8,7 @@ import React, { Component, Fragment } from 'react';
 import { defineMessages } from 'react-intl';
 
 import type { WizardProps } from '~core/Wizard';
+import type { Address } from '~types';
 
 import { ACTIONS } from '~redux';
 import { mergePayload } from '~utils/actions';
@@ -98,7 +99,7 @@ type FormValues = {
 type Props = WizardProps<FormValues> & {
   fetchAccounts: typeof fetchAccountsAction,
   isLoading: boolean,
-  availableAddresses: string[],
+  availableAddresses: Address[],
 };
 
 class StepHardware extends Component<Props> {

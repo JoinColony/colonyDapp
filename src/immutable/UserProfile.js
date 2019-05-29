@@ -4,6 +4,8 @@ import type { RecordFactory, RecordOf } from 'immutable';
 
 import { Record } from 'immutable';
 
+import type { Address } from '~types';
+
 type Shared = {|
   avatarHash?: ?string,
   balance?: string,
@@ -11,7 +13,7 @@ type Shared = {|
   displayName?: string,
   location?: string,
   username?: string,
-  walletAddress: string,
+  walletAddress: Address,
   website?: string,
   inboxStoreAddress: string,
   metadataStoreAddress: string,

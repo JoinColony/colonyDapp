@@ -13,7 +13,7 @@ export type DataReducer<S: ImmutableMapType<*, *>> = (state: S, action: *) => S;
 
 const getNextState = <S: ImmutableMapType<*, *>, V: *>(
   state: S,
-  key: string,
+  key: any,
   payload: $Shape<DataRecordType<V>>,
 ) => {
   const immutablePayload: typeof payload = fromJS(payload);

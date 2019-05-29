@@ -3,7 +3,9 @@
 import ColonyNetworkClient from '@colony/colony-js-client';
 import { isAddress } from 'web3-utils';
 
-import type { Address, AddressOrENSName, ColonyContext } from './types';
+import type { Address } from '~types';
+
+import type { AddressOrENSName, ColonyContext } from './types';
 
 import { COLONY_CONTEXT, NETWORK_CONTEXT, TOKEN_CONTEXT } from './constants';
 

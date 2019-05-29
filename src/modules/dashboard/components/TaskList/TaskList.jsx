@@ -9,7 +9,6 @@ import { defineMessages, FormattedMessage } from 'react-intl';
 import type { Address } from '~types';
 import type { DomainId, TaskDraftId, TaskType } from '~immutable';
 
-import { addressEquals } from '~utils/strings';
 import { TASK_STATE } from '~immutable';
 import { useDataTupleFetcher } from '~utils/hooks';
 import { TASKS_FILTER_OPTIONS } from '../shared/tasksFilter';
@@ -49,10 +48,10 @@ const TaskList = ({
 
       switch (filterOption) {
         case TASKS_FILTER_OPTIONS.CREATED:
-          return addressEquals(creatorAddress, walletAddress);
+          return creatorAddress === walletAddress;
 
         case TASKS_FILTER_OPTIONS.ASSIGNED:
-          return addressEquals(workerAddress, walletAddress);
+          return workerAddress === walletAddress;
 
         case TASKS_FILTER_OPTIONS.COMPLETED:
           return currentState === TASK_STATE.FINALIZED;

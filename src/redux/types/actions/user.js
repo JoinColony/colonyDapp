@@ -30,7 +30,7 @@ export type UserActionTypes = {|
   >,
   USER_AVATAR_REMOVE_SUCCESS: UniqueActionType<
     typeof ACTIONS.USER_AVATAR_REMOVE_SUCCESS,
-    {| address: string |},
+    {| address: Address |},
     void,
   >,
   USER_AVATAR_UPLOAD: UniqueActionType<
@@ -45,7 +45,7 @@ export type UserActionTypes = {|
   USER_AVATAR_UPLOAD_SUCCESS: UniqueActionType<
     typeof ACTIONS.USER_AVATAR_UPLOAD_SUCCESS,
     {|
-      address: string,
+      address: Address,
       avatar: string,
       hash: string,
     |},
@@ -85,7 +85,7 @@ export type UserActionTypes = {|
   >,
   USER_FETCH: ActionTypeWithPayloadAndMeta<
     typeof ACTIONS.USER_FETCH,
-    {| userAddress: string |},
+    {| userAddress: Address |},
     WithKey,
   >,
   USER_FETCH_ERROR: ErrorActionType<typeof ACTIONS.USER_FETCH_ERROR, WithKey>,
@@ -192,7 +192,7 @@ export type UserActionTypes = {|
   USER_TOKENS_UPDATE: ActionTypeWithPayload<
     typeof ACTIONS.USER_TOKENS_UPDATE,
     {|
-      tokens: string[],
+      tokens: Address[],
     |},
   >,
   USER_TOKENS_UPDATE_ERROR: ErrorActionType<

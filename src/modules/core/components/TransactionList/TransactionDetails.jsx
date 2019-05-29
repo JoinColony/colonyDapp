@@ -11,7 +11,7 @@ import Link from '~core/Link';
 
 import styles from './TransactionDetails.css';
 
-import type { ENSName } from '~types';
+import type { Address, ENSName } from '~types';
 import type {
   ColonyType,
   ContractTransactionType,
@@ -59,12 +59,12 @@ const UserDetails = ({
   user: {
     displayName: userDisplayName = '',
     username = '',
-    walletAddress = '',
+    walletAddress,
   } = {},
   address = walletAddress,
   showMaskedAddress,
 }: {|
-  address: string,
+  address: Address,
   showMaskedAddress?: boolean,
   user?: UserProfileType,
 |}) => (
@@ -85,7 +85,7 @@ const ColonyDetails = ({
   showMaskedAddress,
 }: {|
   colony: ColonyType,
-  address?: string,
+  address?: Address,
   showMaskedAddress?: boolean,
 |}) => (
   <span>
@@ -118,7 +118,7 @@ const IncomingTransaction = ({
   colony,
   showMaskedAddress,
   task,
-  transaction: { from = '', to = '' },
+  transaction: { from, to },
   user,
 }: HookedProps) => (
   <div>
@@ -192,7 +192,7 @@ const OutgoingTransaction = ({
   colony,
   showMaskedAddress,
   task,
-  transaction: { from = '', to = '' },
+  transaction: { from, to },
   user,
 }: {|
   ...Props,

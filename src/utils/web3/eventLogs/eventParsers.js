@@ -10,9 +10,22 @@ import BigNumber from 'bn.js';
 import type { ContractTransactionType } from '~immutable';
 import type { Address } from '~types';
 
-import { addressEquals } from '~utils/strings';
-
 import { getLogDate } from './blocks';
+import { createAddress } from '~types';
+
+const createContractTxObj = ({
+  colonyAddress,
+  from,
+  to,
+  token,
+  ...rest
+}: Object): ContractTransactionType => ({
+  ...rest,
+  ...(colonyAddress ? { colonyAddress: createAddress(colonyAddress) } : {}),
+  ...(from ? { from: createAddress(from) } : {}),
+  ...(to ? { to: createAddress(to) } : {}),
+  token: createAddress(token),
+});
 
 /*
  * Given a ColonyJS-parsed ColonyFundsClaimedEvent, log from which it was
@@ -39,15 +52,15 @@ export const parseColonyFundsClaimedEvent = async ({
 
   // don't show claims of zero
   return amount.gt(new BigNumber(0))
-    ? {
+    ? createContractTxObj({
         amount,
         colonyAddress,
         date,
         from,
+        hash: transactionHash,
         incoming: true,
         token,
-        hash: transactionHash,
-      }
+      })
     : null;
 };
 
@@ -79,7 +92,7 @@ export const parseColonyFundsMovedBetweenFundingPotsEvent = async ({
   //   events[i].fromPot === 1 ? events[i].toPot : events[i].fromPot,
   // );
 
-  return {
+  return createContractTxObj({
     amount,
     colonyAddress,
     date,
@@ -87,7 +100,7 @@ export const parseColonyFundsMovedBetweenFundingPotsEvent = async ({
     taskId,
     token,
     hash: transactionHash,
-  };
+  });
 };
 
 /*
@@ -107,7 +120,7 @@ export const parsePayoutClaimedEvent = async ({
   const date = await getLogDate(colonyClient.adapter.provider, log);
 
   const { address: to } = await colonyClient.getTaskRole.call({ taskId, role });
-  return {
+  return createContractTxObj({
     amount,
     date,
     hash,
@@ -115,7 +128,7 @@ export const parsePayoutClaimedEvent = async ({
     taskId,
     to,
     token,
-  };
+  });
 };
 
 /*
@@ -130,7 +143,7 @@ export const parseUnclaimedTransferEvent = async ({
   colonyClient,
   colonyAddress,
   transferEvent: { from, value: amount },
-  transferLog: { address: token, blockNumber, transactionHash: hash },
+  transferLog: { address, blockNumber, transactionHash: hash },
   transferLog,
 }: {
   claimEvents: Array<Object>,
@@ -141,15 +154,16 @@ export const parseUnclaimedTransferEvent = async ({
   transferLog: Object,
 }): Promise<?ContractTransactionType> => {
   const date = await getLogDate(colonyClient.adapter.provider, transferLog);
+  const token = createAddress(address);
 
   // Only return if we haven't claimed since it happened
   return claimEvents.find(
     (claimEvent, i) =>
-      addressEquals(claimEvent.token, token) &&
+      createAddress(claimEvent.token) === token &&
       claimLogs[i].blockNumber > blockNumber,
   )
     ? null
-    : {
+    : createContractTxObj({
         amount,
         colonyAddress,
         date,
@@ -157,7 +171,7 @@ export const parseUnclaimedTransferEvent = async ({
         hash,
         incoming: true,
         token,
-      };
+      });
 };
 
 /*
@@ -166,7 +180,8 @@ export const parseUnclaimedTransferEvent = async ({
  * object for the token transfer.
  */
 export const parseUserTransferEvent = async ({
-  event: { to, from, value: amount },
+  event: { value: amount },
+  event,
   log: { address: token, transactionHash: hash },
   log,
   tokenClient,
@@ -180,17 +195,21 @@ export const parseUserTransferEvent = async ({
   walletAddress: string,
 }): Promise<ContractTransactionType> => {
   const date = await getLogDate(tokenClient.adapter.provider, log);
+  const to = createAddress(event.to);
+  const from = createAddress(event.from);
 
-  return {
+  const colonyAddress = userColonyAddresses.find(
+    address => address === from || address === to,
+  );
+
+  return createContractTxObj({
     amount,
-    colonyAddress: userColonyAddresses.find(
-      colonyAddress => colonyAddress === from || colonyAddress === to,
-    ),
+    colonyAddress,
     date,
     from,
     hash,
-    incoming: addressEquals(to, walletAddress),
+    incoming: to === walletAddress,
     to,
     token,
-  };
+  });
 };

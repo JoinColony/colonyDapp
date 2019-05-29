@@ -20,7 +20,7 @@ type Props = {|
   /*
    * Array of user data, follows the same format as UserPicker
    */
-  users: string[],
+  users: Address[],
   /*
    * Whether to show the fullname
    * Gets passed down to `UserListItem`

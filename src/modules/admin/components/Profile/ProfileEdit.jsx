@@ -21,7 +21,7 @@ import { pipe, mergePayload, withKey } from '~utils/actions';
 import { ACTIONS } from '~redux';
 
 import { colony as colonyStoreBlueprint } from '../../../../data/blueprints';
-import ENS from '../../../../lib/ENS';
+import ENS from '~lib/ENS';
 
 import ColonyAvatarUploader from './ColonyAvatarUploader.jsx';
 

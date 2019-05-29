@@ -1,6 +1,7 @@
 /* @flow */
 /* eslint-disable no-underscore-dangle */
-import type { Entry } from '~types';
+
+import type { Address, Entry } from '~types';
 
 import AbstractAccessController from './AbstractAccessController';
 import PurserIdentity from '../PurserIdentity';
@@ -12,13 +13,13 @@ class EthereumWalletAccessController extends AbstractAccessController<
   PurserIdentity,
   PurserIdentityProvider<PurserIdentity>,
 > {
-  _walletAddress: string;
+  _walletAddress: Address;
 
   static get type() {
     return TYPE;
   }
 
-  constructor(walletAddress: string) {
+  constructor(walletAddress: Address) {
     super();
     this._walletAddress = walletAddress;
   }
@@ -41,13 +42,13 @@ class EthereumWalletAccessController extends AbstractAccessController<
   }
 
   /* eslint-disable no-unused-vars,class-methods-use-this */
-  async grant(actionId: string, address: string) {
+  async grant(actionId: string, address: Address) {
     throw new Error(
       'The wallet owner is the only one allowed to write to this database',
     );
   }
 
-  async revoke(actionId: string, address: string) {
+  async revoke(actionId: string, address: Address) {
     throw new Error(
       'The wallet owner is the only one allowed to write to this database',
     );

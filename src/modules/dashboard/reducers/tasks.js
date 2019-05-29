@@ -15,6 +15,7 @@ import {
 import { ACTIONS } from '~redux';
 import { withDataRecordMap } from '~utils/reducers';
 import { TASK_EVENT_TYPES } from '~data/constants';
+import { createAddress } from '~types';
 
 const {
   DOMAIN_SET,
@@ -88,7 +89,7 @@ const taskEventReducer = (task: TaskRecordType, event: *) => {
         payouts.push(
           TaskPayoutRecord({
             amount: parseInt(amount, 10),
-            token: TokenRecord({ address: token }),
+            token: TokenRecord({ address: createAddress(token) }),
           }),
         ),
       );

@@ -6,8 +6,10 @@ import QRCodeGenerator from 'qrcode';
 
 import { log } from '~utils/debug';
 
+import type { Address } from '~types';
+
 type Props = {|
-  address: string,
+  address: Address,
   width?: number,
 |};
 

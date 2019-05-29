@@ -9,8 +9,7 @@ import type { WalletObjectType } from '@colony/purser-core/flowtypes';
 import type { DDB as DDBType } from '../../lib/database';
 import type IPFSNodeType from '../../lib/ipfs';
 import type ColonyManagerType from '../../lib/ColonyManager';
-
-import ENS from '../../lib/ENS';
+import type ENS from '~lib/ENS';
 
 /*
  * Type that produces a context object with a `metadata` property

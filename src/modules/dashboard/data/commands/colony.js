@@ -14,6 +14,7 @@ import { createEvent } from '~data/utils';
 import { COLONY_EVENT_TYPES } from '~data/constants';
 import { getColonyStore, createColonyStore } from '~data/stores';
 import { diffAddresses } from '~utils/arrays';
+import { createAddress } from '~types';
 
 import {
   CreateColonyProfileCommandArgsSchema,
@@ -239,7 +240,7 @@ export const updateTokenInfo: Command<
   ColonyStoreMetadata,
   {|
     tokens: Address[],
-    currentTokenReferences: Object,
+    currentTokenReferences: { [address: Address]: * },
   |},
   ColonyStore,
 > = {
@@ -250,7 +251,7 @@ export const updateTokenInfo: Command<
     // diff existing and user provided tokens
     const [add, remove] = diffAddresses(
       tokens,
-      Object.keys(currentTokenReferences),
+      Object.keys(currentTokenReferences).map(createAddress),
     );
 
     // add and remove tokens as required

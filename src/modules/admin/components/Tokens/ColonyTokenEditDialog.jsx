@@ -22,7 +22,7 @@ import {
 type Props = {|
   cancel: () => void,
   close: () => void,
-  selectedTokens: string[],
+  selectedTokens: Address[],
   colonyAddress: Address,
 |};
 

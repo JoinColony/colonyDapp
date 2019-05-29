@@ -72,7 +72,7 @@ export const getUserProfileReducer: EventReducer<
 };
 
 export const getUserTokensReducer: EventReducer<
-  string[],
+  Address[],
   {|
     TOKEN_ADDED: *,
     TOKEN_REMOVED: *,
@@ -85,9 +85,7 @@ export const getUserTokensReducer: EventReducer<
     }
     case TOKEN_REMOVED: {
       const { address } = event.payload;
-      return userTokens.filter(
-        tokenAddress => tokenAddress.toLowerCase() !== address.toLowerCase(),
-      );
+      return userTokens.filter(tokenAddress => tokenAddress !== address);
     }
     default:
       return userTokens;

@@ -3,6 +3,8 @@
 import type { WalletObjectType } from '@colony/purser-core/flowtypes';
 import type { Entry, PermissionsManifest } from '~types';
 
+import { createAddress } from '~types';
+
 import { PermissionManager } from '../permissions';
 import AbstractAccessController from './AbstractAccessController';
 import PurserIdentity from '../PurserIdentity';
@@ -35,6 +37,10 @@ class ColonyAccessController extends AbstractAccessController<
     this._manager = new PermissionManager(permissionsManifest);
   }
 
+  get walletAddress() {
+    return createAddress(this._purserWallet.address);
+  }
+
   _extendVerifyContext<Context: {}>(context: ?Context) {
     return Object.assign({}, context, { colonyAddress: this._colonyAddress });
   }
@@ -45,21 +51,17 @@ class ColonyAccessController extends AbstractAccessController<
   }
 
   async save() {
-    const isAllowed = await this.can(
-      'is-colony-founder',
-      this._purserWallet.address,
-    );
+    const isAllowed = await this.can('is-colony-founder', this.walletAddress);
     if (!isAllowed)
       throw new Error('Cannot create colony database, user not allowed');
 
-    const signingWalletAddress = this._purserWallet.address;
     const signature = await this._purserWallet.signMessage({
-      message: this._colonyAddress + signingWalletAddress,
+      message: this._colonyAddress + this.walletAddress,
     });
 
-    return `/colony/${
-      this._colonyAddress
-    }/creator/${signingWalletAddress}/${signature}`;
+    return `/colony/${this._colonyAddress}/creator/${
+      this.walletAddress
+    }/${signature}`;
   }
 
   async load() {

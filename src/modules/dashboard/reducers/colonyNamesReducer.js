@@ -9,7 +9,7 @@ import { withDataRecordMap } from '~utils/reducers';
 import type { AllColonyNamesMap } from '~immutable';
 import type { ReducerType } from '~redux';
 
-const updateState = (state: AllColonyNamesMap, key: string, value: string) =>
+const updateState = (state: AllColonyNamesMap, key: any, value: string) =>
   state.getIn([key, 'record'])
     ? state
     : state.set(key, DataRecord({ record: value }));

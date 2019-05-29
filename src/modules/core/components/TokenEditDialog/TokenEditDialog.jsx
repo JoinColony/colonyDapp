@@ -17,6 +17,7 @@ import Heading from '~core/Heading';
 import TokenCheckbox from './TokenCheckbox.jsx';
 
 import styles from './TokenEditDialog.css';
+import type { Address } from '~types/strings';
 
 const MSG = defineMessages({
   title: {
@@ -49,7 +50,7 @@ type Props = {|
   cancel: () => void,
   close: () => void,
   availableTokens: TokenReferenceType[],
-  selectedTokens: string[],
+  selectedTokens: Address[],
   submit: ActionTypeString,
   success: ActionTypeString,
   error: ActionTypeString,

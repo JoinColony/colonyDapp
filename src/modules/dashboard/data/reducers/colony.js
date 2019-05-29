@@ -5,8 +5,6 @@ import type { EventReducer } from '~data/types';
 
 import { COLONY_EVENT_TYPES } from '~data/constants';
 
-import { addressEquals } from '~utils/strings';
-
 const {
   COLONY_AVATAR_REMOVED,
   COLONY_AVATAR_UPLOADED,
@@ -74,7 +72,7 @@ export const colonyReducer: EventReducer<
       return {
         ...colony,
         tokens: Object.entries(colony.tokens)
-          .filter(([tokenAddress]) => !addressEquals(tokenAddress, address))
+          .filter(([tokenAddress]) => tokenAddress !== address)
           .reduce(
             (acc, [tokenAddress, token]) => ({
               ...acc,
