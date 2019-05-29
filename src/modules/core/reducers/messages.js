@@ -17,13 +17,8 @@ const coreMessagesReducer: ReducerType<
 > = (state = CoreMessages(), action) => {
   switch (action.type) {
     case ACTIONS.MESSAGE_CREATED: {
-      const {
-        meta: { id },
-      } = action;
-      return state.setIn(
-        [CORE_MESSAGES_LIST, id],
-        MessageRecord(action.payload),
-      );
+      const message = MessageRecord(action.payload);
+      return state.setIn([CORE_MESSAGES_LIST, message.id], message);
     }
     default:
       return state;
