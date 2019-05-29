@@ -11,7 +11,7 @@ export type MessageActionTypes = {|
   >,
   MESSAGE_SIGN: ActionTypeWithPayload<
     typeof ACTIONS.MESSAGE_SIGN,
-    {| id: string, message?: string |},
+    {| id: string |},
   >,
   MESSAGE_SIGNED: ActionTypeWithPayload<
     typeof ACTIONS.MESSAGE_SIGNED,
