@@ -563,9 +563,6 @@ function* colonyFetch({
   meta,
 }: Action<typeof ACTIONS.COLONY_FETCH>): Saga<void> {
   try {
-    /**
-     * @todo Add error mode for fetching a non-existent colony.
-     */
     const payload = yield* executeQuery(getColony, {
       args: { colonyAddress },
       metadata: { colonyAddress },
@@ -606,6 +603,7 @@ function* colonyFetch({
 
 function* colonyAddressFetch({
   payload: { colonyName },
+  meta,
 }: Action<typeof ACTIONS.COLONY_ADDRESS_FETCH>): Saga<void> {
   try {
     const colonyAddress = yield call(getColonyAddress, colonyName);
@@ -619,7 +617,7 @@ function* colonyAddressFetch({
       payload: { colonyAddress, colonyName },
     });
   } catch (error) {
-    yield putError(ACTIONS.COLONY_ADDRESS_FETCH_ERROR, error, { colonyName });
+    yield putError(ACTIONS.COLONY_ADDRESS_FETCH_ERROR, error, meta);
   }
 }
 
