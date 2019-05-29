@@ -688,22 +688,30 @@ function* taskCommentAdd({
     /*
      * @NOTE Initiate the message signature
      */
+    const message = JSON.stringify(commentData);
     yield put<Action<typeof ACTIONS.MESSAGE_CREATED>>({
       type: ACTIONS.MESSAGE_CREATED,
-      payload: {
-        message: JSON.stringify(commentData),
-      },
-      meta: {
-        id: `${nanoid(10)}-signMessage`,
-      },
+      payload: { message },
     });
+
+    // const siggy = yield takeEvery(
+    //   ACTIONS.MESSAGE_SIGN,
+    //   function* messageSignedTestSaga({
+    //     payload: { message: messageToSign, id: messageToSignId },
+    //   }) {
+    //     yield put({
+    //       type: 'MESSAGE_SIGNED_SUCCESS',
+    //     });
+    //     console.log('signed message', messageToSign, signedMessage);
+    //     return signedMessage;
+    //   },
+    // );
+    // console.log('siggy ziggy', siggy);
 
     /*
      * @todo Wire message signing to the Gas Station, once it's available
      */
-    const signature = yield call([wallet, wallet.signMessage], {
-      message: JSON.stringify(commentData),
-    });
+    const signature = yield call([wallet, wallet.signMessage], { message });
 
     const { event } = yield* executeCommand(postComment, {
       args: {
