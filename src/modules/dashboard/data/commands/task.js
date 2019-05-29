@@ -94,7 +94,7 @@ export const createTask: Command<
   |},
   TaskStoreMetadata,
   {|
-    creatorAddress: string,
+    creatorAddress: Address,
     draftId: string,
   |},
   {|

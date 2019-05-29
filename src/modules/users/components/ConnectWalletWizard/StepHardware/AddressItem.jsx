@@ -9,8 +9,10 @@ import styles from './AddressItem.css';
 import Radio from '~core/Fields/Radio';
 import SpinnerLoader from '~core/Preloaders/SpinnerLoader.jsx';
 
+import type { Address } from '~types';
+
 type Props = {|
-  address: string,
+  address: Address,
   checked: boolean,
   searchTerm: string,
 |};

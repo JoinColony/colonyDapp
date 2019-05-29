@@ -2,12 +2,13 @@
 /* eslint-disable no-underscore-dangle */
 
 import type { WalletObjectType } from '@colony/purser-core/flowtypes';
-import type { Entry, PermissionsManifest } from '~types';
+import type { Entry, PermissionsManifest } from '../../types';
 
 import { PermissionManager } from '../permissions';
 import AbstractAccessController from './AbstractAccessController';
 import PurserIdentity from '../PurserIdentity';
 import PurserIdentityProvider from '../PurserIdentityProvider';
+import { createAddress } from '../../types';
 
 const TYPE = 'eth-contract/colony/task/purser';
 
@@ -40,6 +41,10 @@ class TaskAccessController extends AbstractAccessController<
     this._manager = new PermissionManager(permissionsManifest);
   }
 
+  get walletAddress() {
+    return createAddress(this._purserWallet.address);
+  }
+
   _extendVerifyContext<Context: {}>(context: ?Context) {
     return Object.assign({}, context, { colonyAddress: this._colonyAddress });
   }
@@ -53,7 +58,7 @@ class TaskAccessController extends AbstractAccessController<
     if (!onlyDetermineAddress) {
       const isAllowed = await this.can(
         'is-colony-founder-or-admin',
-        this._purserWallet.address,
+        this.walletAddress,
       );
       if (!isAllowed) {
         throw new Error('Cannot create task database, user not allowed');

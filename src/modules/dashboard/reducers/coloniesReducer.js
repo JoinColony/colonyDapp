@@ -5,6 +5,7 @@ import { Map as ImmutableMap, fromJS } from 'immutable';
 import { ColonyRecord, DataRecord, TokenReferenceRecord } from '~immutable';
 import { withDataRecordMap } from '~utils/reducers';
 import { ACTIONS } from '~redux';
+import { createAddress } from '~types';
 
 import type { AllColoniesMap, ColonyRecordType } from '~immutable';
 import type { ReducerType } from '~redux';
@@ -31,7 +32,7 @@ const coloniesReducer: ReducerType<
         colonyAddress,
         tokens: ImmutableMap(
           Object.entries(tokens).map(([tokenAddress, token]) => [
-            tokenAddress,
+            createAddress(tokenAddress),
             TokenReferenceRecord(token),
           ]),
         ),

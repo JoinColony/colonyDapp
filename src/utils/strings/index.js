@@ -5,6 +5,8 @@ import { addressNormalizer } from '@colony/purser-core/normalizers';
 
 import { normalize as ensNormalize } from 'eth-ens-namehash-ms';
 
+import type { Address } from '~types';
+
 const HTTP_PROTOCOL: string = 'http://';
 const HTTPS_PROTOCOL: string = 'https://';
 
@@ -100,7 +102,7 @@ export type AddressElements = {
  *
  * @return {array} The split address in an array of strings
  */
-export const splitAddress = (address: string): AddressElements | Error => {
+export const splitAddress = (address: Address): AddressElements | Error => {
   try {
     addressValidator(address);
     const HEX_HEADER: string = '0x';
@@ -118,9 +120,6 @@ export const splitAddress = (address: string): AddressElements | Error => {
     return caughtError;
   }
 };
-
-export const addressEquals = (a: ?string, b: ?string) =>
-  (a && a.toLowerCase()) === (b && b.toLowerCase());
 
 export const getNormalizedDomainText = (domain: string) => {
   if (!domain) return null;

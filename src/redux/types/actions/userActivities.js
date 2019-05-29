@@ -35,14 +35,14 @@ export type UserActivitiesActionTypes = {|
     {|
       id: string,
       key: *,
-      colonyAddress?: string,
+      colonyAddress?: Address,
     |},
   >,
   USER_ACTIVITIES_ADD: UniqueActionType<
     typeof ACTIONS.USER_ACTIVITIES_ADD,
     {|
       activity: *,
-      address: string,
+      address: Address,
     |},
     WithKey,
   >,

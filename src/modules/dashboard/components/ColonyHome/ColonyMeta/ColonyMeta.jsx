@@ -22,7 +22,7 @@ import { currentUserColoniesFetcher, rolesFetcher } from '../../../fetchers';
 import styles from './ColonyMeta.css';
 
 import type { ColonyType, RolesType } from '~immutable';
-import type { Address } from '~lib/ColonyManager/types';
+import type { Address } from '~types';
 
 const MSG = defineMessages({
   websiteLabel: {

@@ -4,18 +4,20 @@ import type { RecordFactory, RecordOf } from 'immutable';
 
 import { Record, Set as ImmutableSet } from 'immutable';
 
+import type { Address } from '~types';
+
 type Shared = {|
-  founder: string,
+  founder: Address,
 |};
 
 export type RolesType = {|
   ...$ReadOnly<Shared>,
-  admins: string[],
+  admins: Address[],
 |};
 
 type ImmutableType = {|
   ...Shared,
-  admins: ImmutableSet<string>,
+  admins: ImmutableSet<Address>,
 |};
 
 export type RolesRecordType = RecordOf<ImmutableType>;

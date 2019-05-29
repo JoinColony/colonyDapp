@@ -13,6 +13,8 @@ import styles from './CopyableAddress.css';
 
 import Button from '../Button';
 
+import type { Address } from '~types';
+
 const MSG = defineMessages({
   buttonCopy: {
     id: 'CopyableAddress.buttonCopy',
@@ -38,7 +40,7 @@ type Props = {|
   /** Appearance object */
   appearance?: Appearance,
   /** Address to display */
-  children: string,
+  children: Address,
   /** Indicates that the full address should be shown instead of an abbreviated one */
   full?: boolean,
   /** In some occasions we want to show the button to copy only */

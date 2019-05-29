@@ -9,6 +9,7 @@ import { defineMessages } from 'react-intl';
 import compose from 'recompose/compose';
 
 import type { UserType } from '~immutable';
+import type { Address } from '~types';
 
 import { getMainClasses } from '~utils/css';
 
@@ -24,7 +25,7 @@ import ItemDefault from './ItemDefault.jsx';
 
 import styles from './SingleUserPicker.css';
 
-type AvatarRenderFn = (address: string, user: ItemDataType<UserType>) => Node;
+type AvatarRenderFn = (address: Address, user: ItemDataType<UserType>) => Node;
 
 const MSG = defineMessages({
   selectMember: {
@@ -41,7 +42,10 @@ const MSG = defineMessages({
   },
 });
 
-const defaultRenderAvatar = (address: string, item: ItemDataType<UserType>) => {
+const defaultRenderAvatar = (
+  address: Address,
+  item: ItemDataType<UserType>,
+) => {
   const { id, ...user } = item;
   return <UserAvatar address={address} user={user} size="xs" />;
 };

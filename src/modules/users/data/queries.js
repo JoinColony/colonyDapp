@@ -363,15 +363,7 @@ export const checkUsernameIsAvailable: Query<
     return { ens, networkClient };
   },
   async execute({ ens, networkClient }, { username }) {
-    const userAddress = await ens.getAddress(
-      ens.constructor.getFullDomain('user', username),
-      networkClient,
-    );
-
-    if (userAddress)
-      throw new Error(`ENS address for user "${username}" already exists`);
-
-    return true;
+    return ens.isENSNameAvailable('user', username, networkClient);
   },
 };
 
@@ -615,8 +607,8 @@ export const getUserInboxActivity: Query<
 };
 
 export const getProfileStoreAddress: Query<
-  {| ddb: DDB, metadata: {| walletAddress: string |} |},
-  {| walletAddress: string |},
+  {| ddb: DDB, metadata: {| walletAddress: Address |} |},
+  {| walletAddress: Address |},
   void,
   string,
 > = {

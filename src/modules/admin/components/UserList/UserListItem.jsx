@@ -14,6 +14,7 @@ import HookedUserAvatar from '~users/HookedUserAvatar';
 import styles from './UserListItem.css';
 
 import type { ColonyAdminType, UserType } from '~immutable';
+import type { Address } from '~types';
 
 const MSG = defineMessages({
   buttonRemove: {
@@ -34,7 +35,7 @@ type Props = {|
   /*
    * User address
    */
-  address: string,
+  address: Address,
   /*
    * Whether to show the fullname
    */

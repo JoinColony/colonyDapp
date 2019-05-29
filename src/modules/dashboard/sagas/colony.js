@@ -39,6 +39,7 @@ import { createUserProfile } from '../../users/data/commands';
 import { getProfileStoreAddress } from '../../users/data/queries';
 
 import {
+  checkColonyNameIsAvailable,
   getColony,
   getColonyCanMintNativeToken,
   getColonyTasks,
@@ -75,6 +76,7 @@ import { colonyAvatarHashSelector } from '../selectors';
 import { getColonyAddress, getColonyName } from './shared';
 
 import { NOTIFICATION_EVENT_COLONY_ENS_CREATED } from '~users/Inbox/events';
+import { createAddress } from '~types';
 
 function* colonyCreate({
   meta,
@@ -310,6 +312,7 @@ function* colonyCreate({
       }
       tokenAddress = givenTokenAddress;
     }
+    tokenAddress = createAddress(tokenAddress);
 
     /*
      * Pass through tokenAddress after token creation to the colony creation
@@ -494,14 +497,12 @@ function* colonyNameCheckAvailability({
   try {
     yield delay(300);
 
-    /**
-     * @todo Define `getColonyAddress` query.
-     * @body This should probably be a query at some point, like in `usernameCheckAvailability`.
-     */
-    const colonyAddress = yield call(getColonyAddress, colonyName);
+    const isAvailable = yield* executeQuery(checkColonyNameIsAvailable, {
+      args: { colonyName },
+    });
 
-    if (colonyAddress) {
-      throw new Error('ENS address already exists');
+    if (!isAvailable) {
+      throw new Error(`ENS address for colony "${colonyName}" already exists`);
     }
 
     yield put<Action<typeof ACTIONS.COLONY_NAME_CHECK_AVAILABILITY_SUCCESS>>({
@@ -577,17 +578,19 @@ function* colonyFetch({
 
     // dispatch actions to fetch info and balances for each colony token
     yield all(
-      Object.keys(payload.tokens || {}).reduce(
-        (effects, tokenAddress) => [
-          ...effects,
-          put(fetchToken(tokenAddress)),
-          put<Action<typeof ACTIONS.COLONY_TOKEN_BALANCE_FETCH>>({
-            type: ACTIONS.COLONY_TOKEN_BALANCE_FETCH,
-            payload: { colonyAddress, tokenAddress },
-          }),
-        ],
-        [],
-      ),
+      Object.keys(payload.tokens || {})
+        .map(createAddress)
+        .reduce(
+          (effects, tokenAddress) => [
+            ...effects,
+            put(fetchToken(tokenAddress)),
+            put<Action<typeof ACTIONS.COLONY_TOKEN_BALANCE_FETCH>>({
+              type: ACTIONS.COLONY_TOKEN_BALANCE_FETCH,
+              payload: { colonyAddress, tokenAddress },
+            }),
+          ],
+          [],
+        ),
     );
 
     // fetch whether the user is allowed to mint tokens via the colony
@@ -626,11 +629,6 @@ function* colonyNameFetch({
 }: Action<typeof ACTIONS.COLONY_NAME_FETCH>): Saga<void> {
   try {
     const colonyName = yield call(getColonyName, colonyAddress);
-    if (!colonyName)
-      throw new Error(
-        `No Colony ENS name found for address "${colonyAddress}"`,
-      );
-
     yield put<Action<typeof ACTIONS.COLONY_NAME_FETCH_SUCCESS>>({
       type: ACTIONS.COLONY_NAME_FETCH_SUCCESS,
       meta,

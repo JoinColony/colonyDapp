@@ -14,8 +14,9 @@ import { TrufflepigLoader } from '@colony/colony-js-contract-loader-http';
 import type { Action } from '~redux';
 
 import { create, putError } from '~utils/saga/effects';
-import { addressEquals } from '~utils/strings';
 import { ACTIONS } from '~redux';
+import { createAddress } from '~types';
+import type { Address } from '~types';
 
 // This should be typed better
 type WalletInstance = Object;
@@ -39,7 +40,7 @@ function* fetchAccounts(
     });
     yield put<Action<typeof ACTIONS.WALLET_FETCH_ACCOUNTS_SUCCESS>>({
       type: ACTIONS.WALLET_FETCH_ACCOUNTS_SUCCESS,
-      payload: { allAddresses: wallet.otherAddresses },
+      payload: { allAddresses: wallet.otherAddresses.map(createAddress) },
     });
   } catch (err) {
     yield putError(ACTIONS.WALLET_FETCH_ACCOUNTS_ERROR, err);
@@ -58,9 +59,11 @@ function* openMnemonicWallet(
 /**
  * Watch for changes in Metamask account, and log the user out when they happen.
  */
-function* metamaskWatch(walletAddress: string): Saga<void> {
+function* metamaskWatch(walletAddress: Address): Saga<void> {
   const channel = eventChannel(emit => {
-    accountChangeHook(event => emit(event));
+    accountChangeHook(({ selectedAddress }: { selectedAddress: string }) =>
+      emit(createAddress(selectedAddress)),
+    );
     return () => {
       // @todo Nicer unsubscribe once supported in purser-metamask
       if (window.web3) {
@@ -71,8 +74,8 @@ function* metamaskWatch(walletAddress: string): Saga<void> {
   });
   let previousAddress = walletAddress;
   while (true) {
-    const { selectedAddress } = yield take(channel);
-    if (!addressEquals(previousAddress, selectedAddress)) {
+    const selectedAddress: Address = yield take(channel);
+    if (previousAddress !== selectedAddress) {
       previousAddress = selectedAddress;
       yield put<Action<typeof ACTIONS.USER_LOGOUT>>({
         type: ACTIONS.USER_LOGOUT,
@@ -83,7 +86,7 @@ function* metamaskWatch(walletAddress: string): Saga<void> {
 
 function* openMetamaskWallet(): Saga<void> {
   const wallet = yield call(metamaskWallet.open);
-  yield spawn(metamaskWatch, wallet.address);
+  yield spawn(metamaskWatch, createAddress(wallet.address));
   return wallet;
 }
 

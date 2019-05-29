@@ -78,6 +78,7 @@ const TaskInviteDialog = ({
                  * @todo Supply nativeToken with a selector (TaskInviteDialog).
                  */}
                 <Assignment
+                  // $FlowFixMe not an Address, but it doesn't matter for a default value
                   nativeToken={{ address: '' }}
                   payouts={payouts}
                   pending

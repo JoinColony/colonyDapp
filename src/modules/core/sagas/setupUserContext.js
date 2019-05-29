@@ -20,8 +20,8 @@ import { CONTEXT } from '~context';
 import { ACTIONS } from '~redux';
 import { executeQuery, putError } from '~utils/saga/effects';
 import { log } from '~utils/debug';
+import ENSCache from '~lib/ENS';
 
-import ENS from '../../../lib/ENS';
 import {
   getUserBalance,
   getUserProfile,
@@ -34,6 +34,7 @@ import setupTransactionsSagas from './transactions';
 import setupNetworkSagas from './network';
 import { getDDB, getGasPrices, getColonyManager } from './utils';
 import setupOnBeforeUnload from './setupOnBeforeUnload';
+import { createAddress } from '~types';
 
 function* setupContextDependentSagas(): Saga<void> {
   yield all([
@@ -48,7 +49,7 @@ function* setupContextDependentSagas(): Saga<void> {
 function* setupDDBResolver(
   colonyManager: ColonyManagerType,
   ddb: DDBType,
-  ens: ENS,
+  ens: ENSCache,
 ) {
   const { networkClient } = colonyManager;
 
@@ -71,7 +72,7 @@ export default function* setupUserContext(
      * Get the wallet and set it in context.
      */
     const wallet = yield call(getWallet, action);
-    const { address: walletAddress } = wallet;
+    const walletAddress = createAddress(wallet.address);
     yield setContext({ [CONTEXT.WALLET]: wallet });
 
     /*

@@ -10,7 +10,9 @@ import { utils } from 'ethers';
 import { isHex } from 'web3-utils';
 
 import type { TransactionOptions, TransactionRequest } from './types';
-import type { TransactionReceipt } from '~types';
+import type { Address, TransactionReceipt } from '~types';
+
+import { createAddress } from '~types';
 
 export default class EthersWrappedWallet {
   wallet: GenericWallet;
@@ -23,10 +25,10 @@ export default class EthersWrappedWallet {
   }
 
   get address() {
-    return this.wallet.address;
+    return createAddress(this.wallet.address);
   }
 
-  async getAddress(): Promise<string> {
+  async getAddress(): Promise<Address> {
     return this.address;
   }
 

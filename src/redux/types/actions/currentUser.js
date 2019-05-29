@@ -1,6 +1,7 @@
 /* @flow */
 
 import type { UserProfileType } from '~immutable';
+import type { Address, WithKey } from '~types';
 
 import type {
   ActionType,
@@ -8,7 +9,6 @@ import type {
   ErrorActionType,
   UniqueActionType,
 } from '../index';
-import type { WithKey } from '../../../types';
 
 import { ACTIONS } from '../../index';
 
@@ -18,7 +18,7 @@ export type CurrentUserActionTypes = {|
     {|
       balance: string,
       profileData: $Shape<UserProfileType>,
-      walletAddress: string,
+      walletAddress: Address,
     |},
     WithKey,
   >,

@@ -4,6 +4,8 @@
 import React, { useEffect } from 'react';
 import { useDispatch, useMappedState } from 'redux-react-hook';
 
+import type { Address } from '~types/strings';
+
 import { ACTIONS } from '~redux';
 
 import { currentUserRecentTokensSelector } from '../../../users/selectors';
@@ -15,7 +17,7 @@ import TokenEditDialog from '~core/TokenEditDialog';
 type Props = {|
   cancel: () => void,
   close: () => void,
-  selectedTokens: string[],
+  selectedTokens: Address[],
 |};
 
 const UserTokenEditDialog = ({ selectedTokens = [], cancel, close }: Props) => {

@@ -4,9 +4,11 @@ import type { RecordFactory, RecordOf } from 'immutable';
 
 import { Record } from 'immutable';
 
+import type { Address } from '~types';
+
 type Shared = {|
   state: 'pending' | 'confirmed',
-  address: string,
+  address: Address,
 |};
 
 export type ColonyAdminType = $ReadOnly<Shared>;

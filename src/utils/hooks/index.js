@@ -31,16 +31,16 @@ type DataMapFetcher<T> = {|
     rootState: RootStateRecord,
     keys: string[],
   ) => ImmutableMapType<string, ?DataRecordType<T>>,
-  fetch: (key: string) => Action<*>,
+  fetch: (key: any) => Action<*>,
   ttl?: number,
 |};
 
 type DataTupleFetcher<T> = {|
   select: (
     rootState: RootStateRecord,
-    args: [string, string][],
+    args: [any, any][],
   ) => ImmutableMapType<string, ?DataRecordType<T>>,
-  fetch: ([string, string]) => Action<*>,
+  fetch: ([any, any]) => Action<*>,
   ttl?: number,
 |};
 

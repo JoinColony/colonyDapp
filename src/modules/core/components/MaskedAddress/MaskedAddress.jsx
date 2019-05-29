@@ -6,6 +6,7 @@ import { defineMessages, FormattedMessage } from 'react-intl';
 import { splitAddress } from '~utils/strings';
 
 import type { AddressElements } from '~utils/strings';
+import type { Address } from '~types';
 
 import styles from './MaskedAddress.css';
 
@@ -20,7 +21,7 @@ type Props = {|
   /*
    * The address to be masked by the helper util
    */
-  address: string,
+  address: Address,
   /*
    * String pattern to use when masking the address
    */

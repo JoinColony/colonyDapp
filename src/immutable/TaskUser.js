@@ -4,8 +4,10 @@ import type { RecordFactory, RecordOf } from 'immutable';
 
 import { Record } from 'immutable';
 
+import type { Address } from '~types';
+
 type Shared = {|
-  address: string,
+  address: Address,
   didClaimPayout: boolean,
   didFailToRate: boolean,
   didRate: boolean,

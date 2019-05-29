@@ -3,10 +3,11 @@
 
 import { Wallet } from 'ethers';
 
-import type { AccessController, Entry } from '~types';
+import type { AccessController, Address, Entry } from '../../types';
 
 import PurserIdentity from '../PurserIdentity';
 import PurserIdentityProvider from '../PurserIdentityProvider';
+import { createAddress } from '../../types';
 
 /**
  * Abstract access controller class, for on Purser-based Ethereum wallets
@@ -40,11 +41,14 @@ export default class AbstractAccessController<
   }
 
   static verifyWalletSignature(
-    walletAddress: string,
+    walletAddress: string, // Likely to be an Address type, but might not be
     message: string,
     signature: string,
   ) {
-    return Wallet.verifyMessage(message, signature) === walletAddress;
+    return (
+      createAddress(Wallet.verifyMessage(message, signature)) ===
+      createAddress(walletAddress)
+    );
   }
 
   static get type() {
@@ -83,11 +87,11 @@ export default class AbstractAccessController<
   }
 
   /* eslint-disable no-unused-vars,class-methods-use-this */
-  async grant(actionId: string, address: string) {
+  async grant(actionId: string, address: Address) {
     throw new Error('Not implemented');
   }
 
-  async revoke(actionId: string, address: string) {
+  async revoke(actionId: string, address: Address) {
     throw new Error('Not implemented');
   }
 

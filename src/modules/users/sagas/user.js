@@ -223,8 +223,14 @@ function* usernameCheckAvailability({
 }: Action<typeof ACTIONS.USERNAME_CHECK_AVAILABILITY>): Saga<void> {
   try {
     yield delay(300);
-    // This will throw if the username is not available
-    yield* executeQuery(checkUsernameIsAvailable, { args: { username } });
+
+    const isAvailable = yield* executeQuery(checkUsernameIsAvailable, {
+      args: { username },
+    });
+
+    if (!isAvailable) {
+      throw new Error(`ENS address for user "${username}" already exists`);
+    }
 
     yield put<Action<typeof ACTIONS.USERNAME_CHECK_AVAILABILITY_SUCCESS>>({
       type: ACTIONS.USERNAME_CHECK_AVAILABILITY_SUCCESS,

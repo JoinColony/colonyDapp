@@ -1,5 +1,6 @@
 /* @flow */
 
+import type { Address } from '~types';
 import type {
   ActionTypeWithPayload,
   ErrorActionType,
@@ -39,7 +40,7 @@ export type WalletActionTypes = {|
   WALLET_FETCH_ACCOUNTS_SUCCESS: ActionTypeWithPayload<
     typeof ACTIONS.WALLET_FETCH_ACCOUNTS_SUCCESS,
     {|
-      allAddresses: string[],
+      allAddresses: Address[],
     |},
   >,
 |};

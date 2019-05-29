@@ -3,7 +3,8 @@
 import type { ObjectSchema } from 'yup';
 import type { AccessController } from './accessControllers';
 
-import { EventStore } from '~lib/database/stores';
+import { EventStore } from '../../lib/database/stores';
+
 /*
  * This perhaps slightly redundant when every store is of the
  * same type, but these could change, and at least we know

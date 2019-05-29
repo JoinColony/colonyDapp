@@ -69,7 +69,7 @@ export const createUserProfile: Command<
   UserProfileStoreMetadata,
   {|
     username: string,
-    walletAddress: string,
+    walletAddress: Address,
   |},
   {|
     profileStore: UserProfileStore,
@@ -167,7 +167,7 @@ export const updateTokens: Command<
   UserMetadataStore,
   UserMetadataStoreMetadata,
   {|
-    tokens: string[],
+    tokens: Address[],
   |},
   UserMetadataStore,
 > = {
@@ -186,11 +186,7 @@ export const updateTokens: Command<
     await Promise.all(
       tokens
         .filter(
-          token =>
-            !currentTokens.find(
-              currentToken =>
-                token.toLowerCase() === currentToken.toLowerCase(),
-            ),
+          token => !currentTokens.find(currentToken => token === currentToken),
         )
         .map(address =>
           userMetadataStore.append(
@@ -202,12 +198,7 @@ export const updateTokens: Command<
     // remove tokens from store which have been removed by user
     await Promise.all(
       currentTokens
-        .filter(
-          currentToken =>
-            !tokens.find(
-              token => token.toLowerCase() === currentToken.toLowerCase(),
-            ),
-        )
+        .filter(currentToken => !tokens.find(token => token === currentToken))
         .map(address =>
           userMetadataStore.append(
             createEvent(USER_EVENT_TYPES.TOKEN_REMOVED, { address }),

@@ -18,7 +18,6 @@ import { walletAddressSelector } from '../../../users/selectors';
 import styles from './TaskFeedComment.css';
 
 import { useDataFetcher, useSelector } from '~utils/hooks';
-import { addressEquals } from '~utils/strings';
 
 const UserAvatar = HookedUserAvatar();
 
@@ -43,7 +42,7 @@ const TaskFeedComment = ({
 
   const walletAddress = useSelector(walletAddressSelector, []);
 
-  const isCurrentUser = addressEquals(authorAddress, walletAddress);
+  const isCurrentUser = authorAddress === walletAddress;
 
   const { data: creator } = useDataFetcher<UserType>(
     userFetcher,

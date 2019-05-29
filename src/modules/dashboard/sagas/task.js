@@ -107,10 +107,11 @@ function* taskCreate({
     const {
       record: { colonyName },
     } = yield select(colonySelector, colonyAddress);
-    const wallet = yield* getContext(CONTEXT.WALLET);
+
+    const creatorAddress = yield select(walletAddressSelector);
+
     // NOTE: This is going to be part of the store address so we need to be careful
     const draftId = generateUrlFriendlyId();
-    const creatorAddress = wallet.address;
     const { taskStore, commentsStore, event } = yield* executeCommand(
       createTask,
       {
@@ -626,7 +627,7 @@ function* taskCommentAdd({
         signature,
         content: {
           id: nanoid(),
-          author: wallet.address,
+          author: walletAddress,
           ...commentData,
         },
       },
@@ -651,7 +652,7 @@ function* taskCommentAdd({
         taskTitle,
         comment: commentData.body,
       },
-      metadata: { walletAddress: wallet.address, inboxStoreAddress },
+      metadata: { walletAddress, inboxStoreAddress },
     });
 
     yield put<Action<typeof ACTIONS.TASK_COMMENT_ADD_SUCCESS>>({

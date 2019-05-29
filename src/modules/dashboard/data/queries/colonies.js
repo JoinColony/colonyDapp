@@ -1,6 +1,6 @@
 /* @flow */
 
-import type { Address } from '~types';
+import type { Address, ENSCache } from '~types';
 
 import type {
   ColonyManager,
@@ -23,7 +23,7 @@ import { getColonyStore } from '~data/stores';
 import { getEvents } from '~utils/web3/eventLogs';
 import { ZERO_ADDRESS } from '~utils/web3/constants';
 import { getTokenClient } from '~utils/web3/contracts';
-import { addressEquals } from '~utils/strings';
+import { createAddress } from '~types';
 
 import { colonyReducer, colonyTasksReducer } from '../reducers';
 
@@ -77,7 +77,7 @@ const prepareColonyStoreQuery = async (
 
 export const getColonyRoles: ContractEventQuery<
   void,
-  { admins: string[], founder: string },
+  { admins: Address[], founder: Address },
 > = {
   name: 'getColonyRoles',
   context,
@@ -110,30 +110,32 @@ export const getColonyRoles: ContractEventQuery<
     const { eventName: ROOT_SET } = ColonyRootRoleSet;
 
     // reduce events to { [address]: { [role]: boolean } }
-    const addressRoles = events.reduce(
-      (acc, { address, eventName, setTo }) => ({
+    const addressRoles = events.reduce((acc, { address, eventName, setTo }) => {
+      const normalizedAddress = createAddress(address).toString();
+      return {
         ...acc,
-        [address]: { ...acc[address], [eventName]: setTo },
-      }),
-      {},
-    );
+        [normalizedAddress]: { ...acc[normalizedAddress], [eventName]: setTo },
+      };
+    }, {});
 
     // find user with all the roles OldRoles sets for founder
-    const founder =
+    const founder = createAddress(
       Object.keys(addressRoles).find(
         address =>
           addressRoles[address][ADMINISTRATION_SET] &&
           addressRoles[address][ARCHITECTURE_SET] &&
           addressRoles[address][FUNDING_SET] &&
           addressRoles[address][ROOT_SET],
-      ) || ZERO_ADDRESS;
+      ) || ZERO_ADDRESS,
+    );
 
     // find users with administration role
-    const admins = Object.keys(addressRoles).filter(
-      address =>
-        addressRoles[address][ADMINISTRATION_SET] &&
-        !addressEquals(address, founder),
-    );
+    const admins = Object.keys(addressRoles)
+      .filter(
+        address =>
+          addressRoles[address][ADMINISTRATION_SET] && address !== founder,
+      )
+      .map(createAddress);
 
     return {
       admins,
@@ -211,7 +213,7 @@ export const getColony: Query<
         canUnlockNativeToken,
         tokens: {
           // also include Ether
-          [ZERO_ADDRESS]: {
+          [ZERO_ADDRESS.toString()]: {
             address: ZERO_ADDRESS,
           },
         },
@@ -284,7 +286,7 @@ export const getColonyTokenBalance: Query<
       adapter: { provider },
     } = networkClient;
     // if ether, handle differently
-    if (addressEquals(tokenAddress, ZERO_ADDRESS)) {
+    if (tokenAddress === ZERO_ADDRESS) {
       const etherBalance = await provider.getBalance(colonyAddress);
 
       // convert from Ethers BN
@@ -328,5 +330,27 @@ export const getColonyCanMintNativeToken: Query<
       return false;
     }
     return true;
+  },
+};
+
+export const checkColonyNameIsAvailable: Query<
+  {| ens: ENSCache, networkClient: NetworkClient |},
+  void,
+  { colonyName: string },
+  boolean,
+> = {
+  name: 'checkColonyNameIsAvailable',
+  context: [CONTEXT.COLONY_MANAGER, CONTEXT.ENS_INSTANCE],
+  async prepare({
+    colonyManager: { networkClient },
+    ens,
+  }: {|
+    colonyManager: ColonyManager,
+    ens: ENSCache,
+  |}) {
+    return { ens, networkClient };
+  },
+  async execute({ ens, networkClient }, { colonyName }) {
+    return ens.isENSNameAvailable('colony', colonyName, networkClient);
   },
 };

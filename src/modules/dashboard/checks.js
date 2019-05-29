@@ -11,7 +11,6 @@ import type {
 import type { Address } from '~types';
 
 import { ZERO_ADDRESS } from '~utils/web3/constants';
-import { addressEquals } from '~utils/strings';
 import { TASK_STATE } from '~immutable';
 
 /*
@@ -42,19 +41,17 @@ export const canBeUpgraded = (colony: ?ColonyType, networkVersion: ?number) =>
  * @todo Wire task payouts.
  */
 // eslint-disable-next-line no-unused-vars
-const didClaimPayout = (taskUser: ?TaskUserType, userAddress: string) =>
-  taskUser &&
-  taskUser.didClaimPayout &&
-  addressEquals(taskUser.address, userAddress);
+const didClaimPayout = (taskUser: ?TaskUserType, userAddress: Address) =>
+  taskUser && taskUser.didClaimPayout && taskUser.address === userAddress;
 
 export const isManager = ({ managerAddress }: TaskType, userAddress: Address) =>
-  addressEquals(managerAddress, userAddress);
+  managerAddress === userAddress;
 
 export const isWorker = ({ workerAddress }: TaskType, userAddress: Address) =>
-  addressEquals(workerAddress, userAddress);
+  workerAddress === userAddress;
 
 export const isCreator = ({ creatorAddress }: TaskType, userAddress: Address) =>
-  addressEquals(creatorAddress, userAddress);
+  creatorAddress === userAddress;
 
 export const isFinalized = ({ currentState }: TaskType) =>
   currentState === TASK_STATE.FINALIZED;
