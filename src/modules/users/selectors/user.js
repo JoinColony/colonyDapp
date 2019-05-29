@@ -11,8 +11,6 @@ import type {
 } from '~immutable';
 import type { Address } from '~types';
 
-import { addressEquals } from '~utils/strings';
-
 import {
   USERS_ALL_USERS,
   USERS_CURRENT_USER,
@@ -83,7 +81,7 @@ export const usersByAddressesSelector = (
   state
     .getIn([ns, USERS_ALL_USERS, USERS_USERS], ImmutableMap())
     .filter((_, address) =>
-      addresses.some(searchAddress => addressEquals(searchAddress, address)),
+      addresses.some(searchAddress => searchAddress === address),
     );
 
 /*

@@ -29,7 +29,6 @@ import { ACTIONS } from '~redux';
 import HookedUserAvatar from '~users/HookedUserAvatar';
 import { mapPayload, mergePayload, pipe } from '~utils/actions';
 import { useDataFetcher, useDataMapFetcher, useSelector } from '~utils/hooks';
-import { addressEquals } from '~utils/strings';
 
 import WrappedPayout from './WrappedPayout.jsx';
 import { colonyFetcher } from '../../fetchers';
@@ -203,8 +202,8 @@ const TaskEditDialog = ({
     () =>
       taskPayouts.map(payout => {
         const { address } =
-          availableTokens.find(token =>
-            addressEquals(token.address, payout.token.address),
+          availableTokens.find(
+            token => token.address === payout.token.address,
           ) || {};
         return {
           token: address,
@@ -280,8 +279,8 @@ const TaskEditDialog = ({
       mapPayload(p => ({
         payouts: p.payouts.map(({ amount, token }) => {
           const { decimals } =
-            availableTokens.find(({ address: refAddress }) =>
-              addressEquals(refAddress, token),
+            availableTokens.find(
+              ({ address: refAddress }) => refAddress === token,
             ) || {};
           return {
             amount: new BigNumber(

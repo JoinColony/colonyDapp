@@ -29,7 +29,6 @@ import {
   getCommentsStoreAddress,
 } from '~data/stores';
 import { createEvent } from '~data/utils';
-import { addressEquals } from '~utils/strings';
 
 import {
   CancelTaskCommandArgsSchema,
@@ -402,7 +401,7 @@ export const assignWorker: Command<
   context: [CONTEXT.COLONY_MANAGER, CONTEXT.DDB_INSTANCE, CONTEXT.WALLET],
   prepare: prepareTaskStoreCommand,
   async execute(taskStore, { workerAddress, currentWorkerAddress }) {
-    if (addressEquals(workerAddress, currentWorkerAddress)) {
+    if (workerAddress === currentWorkerAddress) {
       return null;
     }
     const eventHash = await taskStore.append(

@@ -6,9 +6,8 @@ import React, { useCallback, useMemo } from 'react';
 import type { TaskType, TokenReferenceType, TokenType } from '~immutable';
 import type { $Pick } from '~types';
 
-import { addressEquals } from '~utils/strings';
-
 import { tokenIsETH } from '../../checks';
+import { createAddress } from '../../../../types';
 
 import Payout from './Payout';
 
@@ -37,12 +36,12 @@ const WrappedPayout = ({
 }: Props) => {
   const { amount, token: tokenAddress } = payout;
 
-  const token = availableTokens.find(({ address }) =>
-    addressEquals(address, tokenAddress),
-  ) || { address: '', decimals: 18, name: '', symbol: '' }; // make flow happy for below
+  const token = availableTokens.find(
+    ({ address }) => address === tokenAddress,
+  ) || { address: createAddress(''), decimals: 18, name: '', symbol: '' }; // make flow happy for below
 
-  const tokenReference = tokenReferences.find(({ address }) =>
-    addressEquals(address, tokenAddress),
+  const tokenReference = tokenReferences.find(
+    ({ address }) => address === tokenAddress,
   ) || { address: '' }; // make flow happy for below
 
   const removePayout = useCallback(() => arrayHelpers.remove(index), [

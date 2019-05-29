@@ -11,7 +11,6 @@ import moveDecimal from 'move-decimal-point';
 import type { TokenReferenceType, TokenType } from '~immutable';
 
 import { bnLessThan } from '../utils/numbers';
-import { addressEquals } from '../utils/strings';
 
 import en from '../i18n/en-validation.json';
 
@@ -48,12 +47,12 @@ function lessThanPot(
       const tokenAddress = this.resolve(yup.ref('token'));
       if (!tokenAddress) return true;
       const { balance } =
-        tokenReferences.find(({ address: refAddress }) =>
-          addressEquals(refAddress, tokenAddress),
+        tokenReferences.find(
+          ({ address: refAddress }) => refAddress === tokenAddress,
         ) || {};
       const { decimals } =
-        colonyTokens.find(({ address: refAddress }) =>
-          addressEquals(refAddress, tokenAddress),
+        colonyTokens.find(
+          ({ address: refAddress }) => refAddress === tokenAddress,
         ) || {};
       const amount = new BigNumber(
         moveDecimal(value, decimals ? parseInt(decimals, 10) : 18),
