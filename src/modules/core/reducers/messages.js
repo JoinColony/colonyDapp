@@ -14,6 +14,8 @@ const coreMessagesReducer: ReducerType<
   CoreMessagesRecord,
   {|
     MESSAGE_CREATED: *,
+    MESSAGE_SIGN: *,
+    MESSAGE_SIGNED: *,
   |},
 > = (state = CoreMessages(), action) => {
   switch (action.type) {
@@ -26,6 +28,16 @@ const coreMessagesReducer: ReducerType<
       return state.mergeIn(
         [CORE_MESSAGES_LIST, id],
         fromJS({ status: 'pending' }),
+      );
+    }
+    case ACTIONS.MESSAGE_SIGNED: {
+      const { id, signature } = action.payload;
+      return state.mergeIn(
+        [CORE_MESSAGES_LIST, id],
+        fromJS({
+          signature,
+          status: 'succeeded',
+        }),
       );
     }
     default:
