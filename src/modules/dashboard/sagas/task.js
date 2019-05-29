@@ -686,27 +686,31 @@ function* taskCommentAdd({
     const wallet = yield* getContext(CONTEXT.WALLET);
 
     /*
-     * @NOTE Initiate the message signature
+     * @NOTE Initiate the message signing process
      */
+    const messageId = `${nanoid(10)}-signMessage`;
     const message = JSON.stringify(commentData);
     yield put<Action<typeof ACTIONS.MESSAGE_CREATED>>({
       type: ACTIONS.MESSAGE_CREATED,
       payload: { message },
     });
 
-    // const siggy = yield takeEvery(
-    //   ACTIONS.MESSAGE_SIGN,
-    //   function* messageSignedTestSaga({
-    //     payload: { message: messageToSign, id: messageToSignId },
-    //   }) {
-    //     yield put({
-    //       type: 'MESSAGE_SIGNED_SUCCESS',
-    //     });
-    //     console.log('signed message', messageToSign, signedMessage);
-    //     return signedMessage;
-    //   },
-    // );
-    // console.log('siggy ziggy', siggy);
+    /*
+     * @NOTE Check/Wait for the message to be signed
+     */
+    yield takeEvery(ACTIONS.MESSAGE_SIGN, function* messageSignedTestSaga({
+      payload: { id },
+    }) {
+      if (id === messageId) {
+        const signature = yield call([wallet, wallet.signMessage], {
+          message,
+        });
+        yield put({
+          type: 'MESSAGE_SIGNED',
+          payload: { id, signature },
+        });
+      }
+    });
 
     /*
      * @todo Wire message signing to the Gas Station, once it's available
