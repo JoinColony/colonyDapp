@@ -739,14 +739,28 @@ function* taskCommentAdd({
     /*
      * @NOTE Initiate the message signature
      */
+    const messageId = `${nanoid(10)}-signMessage`;
+    const message = JSON.stringify(commentData);
     yield put<Action<typeof ACTIONS.MESSAGE_CREATED>>({
       type: ACTIONS.MESSAGE_CREATED,
-      payload: {
-        message: JSON.stringify(commentData),
-      },
-      meta: {
-        id: `${nanoid(10)}-signMessage`,
-      },
+      payload: { message },
+    });
+
+    /*
+     * @NOTE Check/Wait for the message to be signed
+     */
+    yield takeEvery(ACTIONS.MESSAGE_SIGN, function* messageSignedTestSaga({
+      payload: { id },
+    }) {
+      if (id === messageId) {
+        const signature = yield call([wallet, wallet.signMessage], {
+          message,
+        });
+        yield put({
+          type: 'MESSAGE_SIGNED',
+          payload: { id, signature },
+        });
+      }
     });
 
     /*
