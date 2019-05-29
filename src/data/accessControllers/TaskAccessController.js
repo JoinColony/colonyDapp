@@ -2,13 +2,13 @@
 /* eslint-disable no-underscore-dangle */
 
 import type { WalletObjectType } from '@colony/purser-core/flowtypes';
-import type { Entry, PermissionsManifest } from '~types';
+import type { Entry, PermissionsManifest } from '../../types';
 
 import { PermissionManager } from '../permissions';
 import AbstractAccessController from './AbstractAccessController';
 import PurserIdentity from '../PurserIdentity';
 import PurserIdentityProvider from '../PurserIdentityProvider';
-import { createAddress } from '~types';
+import { createAddress } from '../../types';
 
 const TYPE = 'eth-contract/colony/task/purser';
 

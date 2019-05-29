@@ -1,9 +1,9 @@
 /* @flow */
 /* eslint-disable no-underscore-dangle */
 import type { WalletObjectType } from '@colony/purser-core/flowtypes';
-import type { Entry, PermissionsManifest } from '~types';
+import type { Entry, PermissionsManifest } from '../../types';
 
-import { createAddress } from '~types';
+import { createAddress } from '../../types';
 
 import { PermissionManager } from '../permissions';
 import AbstractAccessController from './AbstractAccessController';

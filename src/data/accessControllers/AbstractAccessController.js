@@ -3,11 +3,11 @@
 
 import { Wallet } from 'ethers';
 
-import type { AccessController, Address, Entry } from '~types';
+import type { AccessController, Address, Entry } from '../../types';
 
 import PurserIdentity from '../PurserIdentity';
 import PurserIdentityProvider from '../PurserIdentityProvider';
-import { createAddress } from '~types';
+import { createAddress } from '../../types';
 
 /**
  * Abstract access controller class, for on Purser-based Ethereum wallets

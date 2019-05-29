@@ -6,7 +6,7 @@ import OrbitDBKeystore from 'orbit-db-keystore';
 import type { IdentityProvider } from './types';
 
 import PurserIdentity from './PurserIdentity';
-import { createAddress } from '~types';
+import { createAddress } from '../types';
 
 // Ideally, we should use the actual type for the common wallet interface
 type PurserWallet = WalletObjectType;
