@@ -72,48 +72,46 @@ class EventStore extends Store {
    */
   subscribe(
     callback: (event: Event<*>) => void,
-    {
-      filter,
-      takeExisting,
-    }: {| filter?: (event: Event<*>) => boolean, takeExisting?: boolean |} = {},
+    { filter }: {| filter?: (event: Event<*>) => boolean |} = {},
   ): {| stop: () => void |} {
-    const hashes = new Set();
+    // This naïve state is used over Orbit querying (e.g. with `gt`) because
+    // events earlier than the local heads may come in with `replicated` events
+    const taken = new Set<$PropertyType<Entry, 'hash'>>();
 
-    const handleEntry = (entry: Entry) => {
-      // To avoid duplicate entries, ignore the entry if its hash was
-      // encountered before.
-      if (hashes.has(entry.hash)) return;
-      hashes.add(entry.hash);
-
+    const takeEntry = (entry: Entry) => {
+      taken.add(entry.hash);
       const event = this.constructor.decorateEntry(entry);
-
-      if (!filter || filter(event)) callback(event);
+      if (!filter || filter(event)) {
+        callback(event);
+      }
     };
 
-    const onReplicateProgress = (address: string, hash: string, entry: Entry) =>
-      handleEntry(entry);
-    const onWrite = debounce(
-      (address: string, entry: Entry) => handleEntry(entry),
-      1000,
-    );
-
-    this._orbitStore.events.on('replicate.progress', onReplicateProgress);
-    this._orbitStore.events.on('write', onWrite);
-
-    if (takeExisting) {
+    const takeEntries = () =>
       this._orbitStore
         .iterator({ limit: -1 })
         .collect()
-        .forEach(handleEntry);
-    }
+        .filter(({ hash }) => !taken.has(hash))
+        .forEach(takeEntry);
+
+    const onReplicated = debounce(takeEntries, 1000);
+    const onWrite = debounce(
+      (address: string, entry: Entry) =>
+        taken.has(entry.hash) || takeEntry(entry),
+      1000,
+    );
+
+    this._orbitStore.events.on('replicated', onReplicated);
+    this._orbitStore.events.on('write', onWrite);
+
+    // Take all entries when the sub starts; this has the same effect as
+    // receiving the first `replicated` event (but that might not
+    // happen immediately).
+    takeEntries();
 
     return {
       // The consumer is expected to stop the event listeners.
       stop: () => {
-        this._orbitStore.events.removeListener(
-          'replicate.progress',
-          onReplicateProgress,
-        );
+        this._orbitStore.events.removeListener('replicated', onReplicated);
         this._orbitStore.events.removeListener('write', onWrite);
       },
     };

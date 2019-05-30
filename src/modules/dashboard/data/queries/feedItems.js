@@ -130,11 +130,9 @@ export const subscribeTaskFeedItems: Subscription<
     return [
       commentsStore.subscribe(emitter, {
         filter: ({ type }) => type === COMMENT_POSTED,
-        takeExisting: true,
       }),
       taskStore.subscribe(emitter, {
         filter: ({ type }) => FEED_ITEM_TYPES.includes(type),
-        takeExisting: true,
       }),
     ];
   },
