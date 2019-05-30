@@ -7,13 +7,13 @@ import type { Address } from '~types';
 import type { TaskDraftId, TaskFeedItemType } from '~immutable';
 
 import { SpinnerLoader } from '~core/Preloaders';
-import { useDataFetcher } from '~utils/hooks';
+import { useDataSubscriber } from '~utils/hooks';
 
 import TaskFeedCompleteInfo from './TaskFeedCompleteInfo.jsx';
 import TaskFeedEvent from './TaskFeedEvent.jsx';
 import TaskFeedComment from './TaskFeedComment.jsx';
 import TaskFeedRating from './TaskFeedRating.jsx';
-import { taskFeedItemsFetcher } from '../../fetchers';
+import { taskFeedItemsSubscriber } from '../../subscribers';
 
 import styles from './TaskFeed.css';
 
@@ -41,9 +41,14 @@ const TaskFeed = ({ colonyAddress, draftId }: Props) => {
     [bottomEl],
   );
 
-  const { data: feedItems, isFetching: isFetchingFeedItems } = useDataFetcher<
-    TaskFeedItemType[],
-  >(taskFeedItemsFetcher, [draftId], [colonyAddress, draftId]);
+  const {
+    data: feedItems,
+    isFetching: isFetchingFeedItems,
+  } = useDataSubscriber<TaskFeedItemType[]>(
+    taskFeedItemsSubscriber,
+    [draftId],
+    [colonyAddress, draftId],
+  );
 
   const nFeedItems = feedItems ? feedItems.length : 0;
   useLayoutEffect(scrollToEnd, [nFeedItems]);

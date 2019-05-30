@@ -30,6 +30,7 @@ const TaskTitle = ({ disabled, title, colonyAddress, draftId }: Props) => {
   ]);
   return (
     <ActionForm
+      enableReinitialize
       submit={ACTIONS.TASK_SET_TITLE}
       error={ACTIONS.TASK_SET_TITLE_ERROR}
       success={ACTIONS.TASK_SET_TITLE_SUCCESS}

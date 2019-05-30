@@ -1,8 +1,15 @@
 /* @flow */
 
+import debounce from 'lodash/debounce';
+
 import Store from './Store';
 
-import type { EventIteratorOptions, OrbitDBEventStore, Entry } from '~types';
+import type {
+  EventIteratorOptions,
+  OrbitDBEventStore,
+  Entry,
+  Event,
+} from '~types';
 
 /**
  * The wrapper Store class for orbit's eventlog store.
@@ -37,25 +44,6 @@ class EventStore extends Store {
     return this.append(value);
   }
 
-  async query(filter: * = {}) {
-    return this._orbitStore
-      .iterator(filter)
-      .collect()
-      .reduce(
-        (entries, entry) => [
-          ...entries,
-          ...((entry &&
-            entry.next &&
-            entry.next.length &&
-            entry.next.map(hash => this._orbitStore.get(hash))) ||
-            []),
-          entry,
-        ],
-        [],
-      )
-      .map(entry => this.constructor.decorateEntry(entry));
-  }
-
   async append(value: {}) {
     return this._orbitStore.add(value);
   }
@@ -76,5 +64,55 @@ class EventStore extends Store {
       .collect()
       .map(entry => this.constructor.decorateEntry(entry));
   }
+
+  /*
+   * Given a callback for handling events, and optional options,
+   * create a subscription that calls the callback with all
+   * unique events, and provide a means to stop the subscription.
+   */
+  subscribe(
+    callback: (event: Event<*>) => void,
+    { filter }: {| filter?: (event: Event<*>) => boolean |} = {},
+  ): {| stop: () => void |} {
+    // This naïve state is used over Orbit querying (e.g. with `gt`) because
+    // events earlier than the local heads may come in with `replicated` events
+    const taken = new Set<$PropertyType<Entry, 'hash'>>();
+
+    const takeEntry = (entry: Entry) => {
+      taken.add(entry.hash);
+      const event = this.constructor.decorateEntry(entry);
+      if (!filter || filter(event)) {
+        callback(event);
+      }
+    };
+
+    const takeEntries = () =>
+      this._orbitStore
+        .iterator({ limit: -1 })
+        .collect()
+        .filter(({ hash }) => !taken.has(hash))
+        .forEach(takeEntry);
+
+    const onReplicated = debounce(takeEntries, 1000);
+    const onWrite = (address: string, entry: Entry) =>
+      taken.has(entry.hash) || takeEntry(entry);
+
+    this._orbitStore.events.on('replicated', onReplicated);
+    this._orbitStore.events.on('write', onWrite);
+
+    // Take all entries when the sub starts; this has the same effect as
+    // receiving the first `replicated` event (but that might not
+    // happen immediately).
+    takeEntries();
+
+    return {
+      // The consumer is expected to stop the event listeners.
+      stop: () => {
+        this._orbitStore.events.removeListener('replicated', onReplicated);
+        this._orbitStore.events.removeListener('write', onWrite);
+      },
+    };
+  }
 }
+
 export default EventStore;

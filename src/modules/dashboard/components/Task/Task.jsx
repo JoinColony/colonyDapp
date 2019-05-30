@@ -10,7 +10,7 @@ import compose from 'recompose/compose';
 import { withRouter } from 'react-router-dom';
 
 import { ACTIONS } from '~redux';
-import { useDataFetcher, useSelector } from '~utils/hooks';
+import { useDataFetcher, useDataSubscriber, useSelector } from '~utils/hooks';
 
 // Temporary, please remove when wiring in the rating modals
 import type { OpenDialog } from '~core/Dialog/types';
@@ -45,7 +45,8 @@ import {
   isFinalized,
 } from '../../checks';
 import { currentUserSelector } from '../../../users/selectors';
-import { colonyAddressFetcher, taskFetcher } from '../../fetchers';
+import { colonyAddressFetcher } from '../../fetchers';
+import { taskSubscriber } from '../../subscribers';
 
 import styles from './Task.css';
 
@@ -124,8 +125,8 @@ const Task = ({
     [colonyName],
   );
 
-  const { data: task, isFetching: isFetchingTask } = useDataFetcher(
-    taskFetcher,
+  const { data: task, isFetching: isFetchingTask } = useDataSubscriber<*>(
+    taskSubscriber,
     [draftId],
     [colonyAddress || undefined, draftId],
   );

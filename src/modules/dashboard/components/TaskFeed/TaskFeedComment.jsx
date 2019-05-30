@@ -48,6 +48,8 @@ const TaskFeedComment = ({
     userFetcher,
     [authorAddress],
     [authorAddress],
+    // This is a workaround for the broken `shouldFetch` guard
+    { ttl: Infinity },
   );
   return (
     <div

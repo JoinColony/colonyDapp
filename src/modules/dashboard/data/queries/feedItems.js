@@ -1,13 +1,11 @@
 /* @flow */
 
-import type { Address, $Pick } from '~types';
+import type { Address, $Pick, Subscription } from '~types';
 import type { TaskDraftId } from '~immutable';
 import type {
   ColonyManager,
   CommentsStore,
   DDB,
-  Event,
-  Query,
   TaskStore,
   Wallet,
 } from '~data/types';
@@ -101,45 +99,41 @@ const prepare = async (
   };
 };
 
+const FEED_ITEM_TYPES = [
+  DOMAIN_SET,
+  DUE_DATE_SET,
+  PAYOUT_SET,
+  SKILL_SET,
+  TASK_CANCELLED,
+  TASK_CLOSED,
+  TASK_CREATED,
+  TASK_DESCRIPTION_SET,
+  TASK_FINALIZED,
+  TASK_TITLE_SET,
+  WORK_INVITE_SENT,
+  WORK_REQUEST_CREATED,
+  WORKER_ASSIGNED,
+  WORKER_UNASSIGNED,
+];
+
 // eslint-disable-next-line import/prefer-default-export
-export const getTaskFeedItems: Query<
+export const subscribeTaskFeedItems: Subscription<
   {| taskStore: TaskStore, commentsStore: CommentsStore |},
   Metadata,
   void,
-  TaskFeedItemEvents[],
+  TaskFeedItemEvents,
 > = {
-  name: 'getTaskFeedItems',
+  name: 'subscribeTaskFeedItems',
   context: [CONTEXT.COLONY_MANAGER, CONTEXT.DDB_INSTANCE, CONTEXT.WALLET],
   prepare,
-  async execute({ commentsStore, taskStore }) {
-    const commentEvents: Event<
-      typeof COMMENT_POSTED,
-    >[] = commentsStore.all().filter(({ type }) => type === COMMENT_POSTED);
-
-    // Include only events we can treat as feed items
-    const feedItemTypes = [
-      DOMAIN_SET,
-      DUE_DATE_SET,
-      PAYOUT_SET,
-      SKILL_SET,
-      TASK_CANCELLED,
-      TASK_CLOSED,
-      TASK_CREATED,
-      TASK_DESCRIPTION_SET,
-      TASK_FINALIZED,
-      TASK_TITLE_SET,
-      WORK_INVITE_SENT,
-      WORK_REQUEST_CREATED,
-      WORKER_ASSIGNED,
-      WORKER_UNASSIGNED,
+  execute({ commentsStore, taskStore }, args, emitter) {
+    return [
+      commentsStore.subscribe(emitter, {
+        filter: ({ type }) => type === COMMENT_POSTED,
+      }),
+      taskStore.subscribe(emitter, {
+        filter: ({ type }) => FEED_ITEM_TYPES.includes(type),
+      }),
     ];
-
-    const taskEvents: TaskFeedItemEvents[] = taskStore
-      .all()
-      .filter(({ type }) => feedItemTypes.includes(type));
-
-    return [...commentEvents, ...taskEvents].sort(
-      (a, b) => a.meta.timestamp - b.meta.timestamp,
-    );
   },
 };

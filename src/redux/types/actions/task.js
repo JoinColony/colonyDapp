@@ -4,6 +4,7 @@
 import type { TaskType, TaskProps } from '~immutable';
 import type { $Required, Address } from '~types';
 import type { Event } from '~data/types';
+import type { TaskEvents } from '~data/types/TaskEvents';
 import type {
   ActionType,
   ActionTypeWithPayloadAndMeta,
@@ -130,16 +131,20 @@ export type TaskActionTypes = {|
     |},
   >,
   TASK_FETCH_ALL: ActionType<typeof ACTIONS.TASK_FETCH_ALL>,
-  TASK_FEED_ITEMS_FETCH: NonUniqueTaskActionType<
-    typeof ACTIONS.TASK_FEED_ITEMS_FETCH,
+  TASK_FEED_ITEMS_SUB_START: NonUniqueTaskActionType<
+    typeof ACTIONS.TASK_FEED_ITEMS_SUB_START,
     void,
   >,
-  TASK_FEED_ITEMS_FETCH_ERROR: TaskErrorActionType<
-    typeof ACTIONS.TASK_FEED_ITEMS_FETCH_ERROR,
+  TASK_FEED_ITEMS_SUB_STOP: NonUniqueTaskActionType<
+    typeof ACTIONS.TASK_FEED_ITEMS_SUB_STOP,
+    void,
   >,
-  TASK_FEED_ITEMS_FETCH_SUCCESS: NonUniqueTaskActionType<
-    typeof ACTIONS.TASK_FEED_ITEMS_FETCH_SUCCESS,
-    {| events: TaskFeedItemEvents[] |},
+  TASK_FEED_ITEMS_SUB_EVENT: NonUniqueTaskActionType<
+    typeof ACTIONS.TASK_FEED_ITEMS_SUB_EVENT,
+    {| event: TaskFeedItemEvents |},
+  >,
+  TASK_FEED_ITEMS_SUB_ERROR: TaskErrorActionType<
+    typeof ACTIONS.TASK_FEED_ITEMS_SUB_ERROR,
   >,
   TASK_FINALIZE: TaskActionType<
     typeof ACTIONS.TASK_FINALIZE,
@@ -290,6 +295,13 @@ export type TaskActionTypes = {|
     typeof ACTIONS.TASK_SET_TITLE_SUCCESS,
     {| event: Event<typeof TASK_TITLE_SET> |},
   >,
+  TASK_SUB_START: NonUniqueTaskActionType<typeof ACTIONS.TASK_SUB_START, void>,
+  TASK_SUB_STOP: NonUniqueTaskActionType<typeof ACTIONS.TASK_SUB_STOP, void>,
+  TASK_SUB_EVENT: NonUniqueTaskActionType<
+    typeof ACTIONS.TASK_SUB_EVENT,
+    {| event: TaskEvents |},
+  >,
+  TASK_SUB_ERROR: TaskErrorActionType<typeof ACTIONS.TASK_SUB_ERROR>,
   TASK_SUBMIT_DELIVERABLE: TaskActionType<
     typeof ACTIONS.TASK_SUBMIT_DELIVERABLE,
     void,

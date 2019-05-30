@@ -8,6 +8,7 @@ import {
   fork,
   put,
   select,
+  take,
   takeEvery,
   takeLeading,
 } from 'redux-saga/effects';
@@ -25,6 +26,7 @@ import {
   putNotification,
   raceError,
   selectAsJS,
+  executeSubscription,
   takeFrom,
 } from '~utils/saga/effects';
 import { generateUrlFriendlyId } from '~utils/data';
@@ -39,7 +41,7 @@ import {
   taskSelector,
 } from '../selectors';
 import {
-  currentUserMetadataSelector,
+  // currentUserMetadataSelector,
   walletAddressSelector,
 } from '../../users/selectors';
 import { createTransaction, getTxChannel } from '../../core/sagas';
@@ -62,8 +64,12 @@ import {
   setTaskTitle,
   unassignWorker,
 } from '../data/commands';
-import { commentMentionNotification } from '../../users/data/commands';
-import { getTask, getTaskFeedItems } from '../data/queries';
+// import { commentMentionNotification } from '../../users/data/commands';
+import {
+  getTask,
+  subscribeTaskFeedItems,
+  subscribeTask,
+} from '../data/queries';
 
 import { subscribeToTask } from '../../users/actionCreators';
 
@@ -585,25 +591,86 @@ function* taskWorkerUnassign({
   }
 }
 
-function* taskFeedItemsFetch({
+function* taskFeedItemsSubStart({
   payload: { colonyAddress, draftId },
   meta,
-}: Action<typeof ACTIONS.TASK_FEED_ITEMS_FETCH>): Saga<void> {
+}: *): Saga<void> {
+  let channel;
   try {
-    const events = yield* executeQuery(getTaskFeedItems, {
+    channel = yield call(executeSubscription, subscribeTaskFeedItems, {
       metadata: { colonyAddress, draftId },
     });
-    yield put<Action<typeof ACTIONS.TASK_FEED_ITEMS_FETCH_SUCCESS>>({
-      type: ACTIONS.TASK_FEED_ITEMS_FETCH_SUCCESS,
-      meta,
-      payload: {
-        colonyAddress,
-        draftId,
-        events,
-      },
+
+    yield fork(function* stopSubscription() {
+      yield take(
+        action =>
+          action.type === ACTIONS.TASK_FEED_ITEMS_SUB_STOP &&
+          action.payload.draftId === draftId,
+      );
+      channel.close();
     });
-  } catch (error) {
-    yield putError(ACTIONS.TASK_FEED_ITEMS_FETCH_ERROR, error, meta);
+
+    while (true) {
+      const event = yield take(channel);
+      yield put({
+        type: ACTIONS.TASK_FEED_ITEMS_SUB_EVENT,
+        meta,
+        payload: {
+          colonyAddress,
+          draftId,
+          event,
+        },
+      });
+    }
+  } catch (caughtError) {
+    yield putError(ACTIONS.TASK_FEED_ITEMS_SUB_ERROR, caughtError, meta);
+  } finally {
+    if (channel && typeof channel.close == 'function') {
+      channel.close();
+    }
+  }
+}
+
+function* taskSubStart({
+  payload: { colonyAddress, draftId },
+  meta,
+}: *): Saga<void> {
+  // This could be generalised (it's very similar to the above function),
+  // but it's probably worth waiting to see, as this pattern will likely change
+  // as it gets used elsewhere.
+  let channel;
+  try {
+    channel = yield call(executeSubscription, subscribeTask, {
+      metadata: { colonyAddress, draftId },
+    });
+
+    yield fork(function* stopSubscription() {
+      yield take(
+        action =>
+          action.type === ACTIONS.TASK_SUB_STOP &&
+          action.payload.draftId === draftId,
+      );
+      channel.close();
+    });
+
+    while (true) {
+      const event = yield take(channel);
+      yield put({
+        type: ACTIONS.TASK_SUB_EVENT,
+        meta,
+        payload: {
+          colonyAddress,
+          draftId,
+          event,
+        },
+      });
+    }
+  } catch (caughtError) {
+    yield putError(ACTIONS.TASK_SUB_ERROR, caughtError, meta);
+  } finally {
+    if (channel && typeof channel.close == 'function') {
+      channel.close();
+    }
   }
 }
 
@@ -612,7 +679,7 @@ function* taskCommentAdd({
   meta,
 }: Action<typeof ACTIONS.TASK_COMMENT_ADD>): Saga<void> {
   try {
-    const { inboxStoreAddress } = yield select(currentUserMetadataSelector);
+    // const { inboxStoreAddress } = yield select(currentUserMetadataSelector);
     const walletAddress = yield select(walletAddressSelector);
     const wallet = yield* getContext(CONTEXT.WALLET);
     /*
@@ -645,15 +712,19 @@ function* taskCommentAdd({
      * Also, this should be iterated through each mentioned user, and add
      * a notification event to each one's store
      */
-    yield* executeCommand(commentMentionNotification, {
-      args: {
-        colonyAddress,
-        event: 'notificationUserMentioned',
-        taskTitle,
-        comment: commentData.body,
-      },
-      metadata: { walletAddress, inboxStoreAddress },
-    });
+    /*
+     * @todo Re-enable commentMentionNotification
+     * @body This is currently causing the command to stall.
+     */
+    // yield* executeCommand(commentMentionNotification, {
+    //   args: {
+    //     colonyAddress,
+    //     event: 'notificationUserMentioned',
+    //     taskTitle,
+    //     comment: commentData.body,
+    //   },
+    //   metadata: { walletAddress, inboxStoreAddress },
+    // });
 
     yield put<Action<typeof ACTIONS.TASK_COMMENT_ADD_SUCCESS>>({
       type: ACTIONS.TASK_COMMENT_ADD_SUCCESS,
@@ -686,7 +757,7 @@ export default function* tasksSagas(): any {
   yield takeEvery(ACTIONS.TASK_CLOSE, taskClose);
   yield takeEvery(ACTIONS.TASK_COMMENT_ADD, taskCommentAdd);
   yield takeEvery(ACTIONS.TASK_CREATE, taskCreate);
-  yield takeEvery(ACTIONS.TASK_FEED_ITEMS_FETCH, taskFeedItemsFetch);
+  yield takeEvery(ACTIONS.TASK_FEED_ITEMS_SUB_START, taskFeedItemsSubStart);
   yield takeEvery(ACTIONS.TASK_FETCH, taskFetch);
   yield takeEvery(ACTIONS.TASK_FINALIZE, taskFinalize);
   yield takeEvery(ACTIONS.TASK_SEND_WORK_INVITE, taskSendWorkInvite);
@@ -697,6 +768,7 @@ export default function* tasksSagas(): any {
   yield takeEvery(ACTIONS.TASK_SET_PAYOUT, taskSetPayout);
   yield takeEvery(ACTIONS.TASK_SET_SKILL, taskSetSkill);
   yield takeEvery(ACTIONS.TASK_SET_TITLE, taskSetTitle);
+  yield takeEvery(ACTIONS.TASK_SUB_START, taskSubStart);
   yield takeEvery(ACTIONS.TASK_WORKER_ASSIGN, taskWorkerAssign);
   yield takeEvery(ACTIONS.TASK_WORKER_UNASSIGN, taskWorkerUnassign);
   yield takeLeading(ACTIONS.TASK_FETCH_ALL, taskFetchAll);

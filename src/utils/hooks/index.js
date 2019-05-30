@@ -26,6 +26,15 @@ type DataFetcher<T> = {|
   ttl?: number,
 |};
 
+type DataSubscriber<T> = {|
+  select: (
+    rootState: RootStateRecord,
+    ...selectArgs: any[]
+  ) => ?DataRecordType<T>,
+  start: (...subArgs: any[]) => Action<*>,
+  stop: (...subArgs: any[]) => Action<*>,
+|};
+
 type DataMapFetcher<T> = {|
   select: (
     rootState: RootStateRecord,
@@ -170,6 +179,9 @@ export const useDataFetcher = <T>(
 
   const isFirstMount = useRef(true);
 
+  /*
+   * @todo Fetches are not guarded properly for the same item when called together
+   */
   const shouldFetch = shouldFetchData(
     data,
     ttlOverride || ttl,
@@ -336,6 +348,57 @@ export const useDataTupleFetcher = <T>(
       }),
     [allData, memoizedKeys, keysToFetchFor],
   );
+};
+
+/*
+ * T: JS type of the fetched and transformed data, e.g. ColonyType
+ */
+export const useDataSubscriber = <T>(
+  { start, stop, select }: DataSubscriber<T>,
+  selectArgs: any[],
+  subArgs: any[],
+): {|
+  data: ?T,
+  isFetching: boolean,
+  error: ?string,
+|} => {
+  const dispatch = useDispatch();
+  const mapState = useCallback(state => select(state, ...selectArgs), [
+    select,
+    selectArgs,
+  ]);
+  const data = useMappedState(mapState);
+
+  const isFirstMount = useRef(true);
+
+  const shouldSubscribe = shouldFetchData(
+    data,
+    Infinity,
+    isFirstMount.current,
+    subArgs,
+  );
+
+  useEffect(
+    () => {
+      if (shouldSubscribe) dispatch(start(...subArgs), subArgs);
+      isFirstMount.current = false;
+    },
+    [dispatch, shouldSubscribe, start, stop, subArgs],
+  );
+
+  useEffect(
+    () => () => {
+      dispatch(stop(...subArgs), subArgs);
+    },
+    // eslint-disable-next-line
+    [],
+  );
+
+  return {
+    data: transformFetchedData(data),
+    isFetching: shouldSubscribe && isFetchingData(data),
+    error: data ? data.error : null,
+  };
 };
 
 export const useFeatureFlags = (

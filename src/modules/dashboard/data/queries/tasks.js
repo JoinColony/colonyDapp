@@ -1,17 +1,40 @@
 /* @flow */
 
-import type { Address } from '~types';
+import type { Address, Subscription } from '~types';
 import type { TaskDraftId } from '~immutable';
 
 import type { ColonyManager, DDB, Query, Wallet, TaskStore } from '~data/types';
+import type { TaskEvents } from '~data/types/TaskEvents';
 
 import { CONTEXT } from '~context';
-import { TASK_EVENT_TYPES } from '~data/constants';
 
 import { getTaskStore, getTaskStoreAddress } from '~data/stores';
 import { taskReducer } from '../reducers';
 
 type TaskStoreMetadata = {| colonyAddress: Address, draftId: TaskDraftId |};
+
+const initialTask = {
+  amountPaid: undefined,
+  // $MeFixFlow
+  commentsStoreAddress: '',
+  createdAt: undefined,
+  creatorAddress: undefined,
+  description: undefined,
+  domainId: undefined,
+  // $MeFixFlow
+  draftId: '',
+  dueDate: undefined,
+  finalizedAt: undefined,
+  invites: [],
+  paymentId: undefined,
+  payout: undefined,
+  paymentTokenAddress: undefined,
+  requests: [],
+  skillId: undefined,
+  status: undefined,
+  title: undefined,
+  workerAddress: undefined,
+};
 
 const prepareTaskStoreQuery = async (
   {
@@ -52,30 +75,20 @@ export const getTask: Query<TaskStore, TaskStoreMetadata, void, *> = {
   context: [CONTEXT.COLONY_MANAGER, CONTEXT.DDB_INSTANCE, CONTEXT.WALLET],
   prepare: prepareTaskStoreQuery,
   async execute(taskStore) {
-    return taskStore
-      .all()
-      .filter(({ type: eventType }) => TASK_EVENT_TYPES[eventType])
-      .reduce(taskReducer, {
-        amountPaid: undefined,
-        // $MeFixFlow
-        commentsStoreAddress: '',
-        createdAt: undefined,
-        creatorAddress: undefined,
-        description: undefined,
-        domainId: undefined,
-        // $MeFixFlow
-        draftId: '',
-        dueDate: undefined,
-        finalizedAt: undefined,
-        invites: [],
-        paymentId: undefined,
-        payout: undefined,
-        paymentTokenAddress: undefined,
-        requests: [],
-        skillId: undefined,
-        status: undefined,
-        title: undefined,
-        workerAddress: undefined,
-      });
+    return taskStore.all().reduce(taskReducer, initialTask);
+  },
+};
+
+export const subscribeTask: Subscription<
+  TaskStore,
+  TaskStoreMetadata,
+  void,
+  TaskEvents,
+> = {
+  name: 'subscribeTask',
+  context: [CONTEXT.COLONY_MANAGER, CONTEXT.DDB_INSTANCE, CONTEXT.WALLET],
+  prepare: prepareTaskStoreQuery,
+  execute(taskStore, args, emitter) {
+    return [taskStore.subscribe(emitter)];
   },
 };
