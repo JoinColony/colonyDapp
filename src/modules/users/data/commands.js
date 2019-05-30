@@ -408,7 +408,6 @@ export const createCommentMention: Command<
     };
 
     const getUserAddressByUsername = (username: string) =>
-      username &&
       ens.getAddress(
         ens.constructor.getFullDomain('user', username),
         networkClient,
