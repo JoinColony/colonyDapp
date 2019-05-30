@@ -47,9 +47,9 @@ class PinnerConnector {
   // Can be an array in the future
   _pinnerId: string;
 
-  _replicationRequests: Map<string, ReplicationRequest>;
+  _readyPromise: ?Promise<void>;
 
-  _resolveReadyPromise: (boolean => void) | void;
+  _replicationRequests: Map<string, ReplicationRequest>;
 
   _room: string;
 
@@ -131,6 +131,7 @@ class PinnerConnector {
 
   _setReady(peer: string) {
     this.online = true;
+    this._readyPromise = undefined;
     this._events.emit(EVENTS.CONNECTED, peer);
     this._flushPinnerMessages();
   }
@@ -155,9 +156,11 @@ class PinnerConnector {
 
   async ready() {
     if (this.online) return true;
-    return pEvent(this._events, EVENTS.CONNECTED, {
+    if (this._readyPromise) return this._readyPromise;
+    this._readyPromise = pEvent(this._events, EVENTS.CONNECTED, {
       timeout: PINNER_CONNECT_TIMEOUT,
-    });
+    }).then(() => true);
+    return this._readyPromise;
   }
 
   async disconnect() {
@@ -174,6 +177,14 @@ class PinnerConnector {
       } = await request.promise;
       return count;
     }
+
+    try {
+      await this.ready();
+    } catch (caughtError) {
+      log.warn('Could not request replication. Pinner is offline.');
+      return 0;
+    }
+
     const newRequest = {
       isPending: true,
       promise: pEvent(this._events, PIN_ACTIONS.HAVE_HEADS, {

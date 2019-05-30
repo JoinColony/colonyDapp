@@ -54,22 +54,10 @@ class Store {
        * @todo Improve error modes for failed pinned store requests
        * @body We have *some* heads and just assume it's going to be ok. We request the pinned store anyways but don't have to wait for any count. We'll replicate whenever it's convenient. We're calling this synchronously as we don't care about the result _right now_. This could be dangerous in case of an unfinished replication. We have to account for that Quick fix could be to just also wait for the full replication, which might be a performance hit
        */
-      this._pinner
-        .ready()
-        .then(() => this.replicate())
-        .catch(log.warn);
+      this.replicate().catch(log.warn);
       return;
     }
 
-    try {
-      // Try to connect to pinner, wait if necessary
-      await this._pinner.ready();
-    } catch (caughtError) {
-      log.error(
-        `Unable to fully load store "${this._name}"; pinner is offline`,
-        caughtError,
-      );
-    }
     try {
       await this.replicate();
     } catch (caughtError) {
