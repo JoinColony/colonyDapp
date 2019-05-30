@@ -9,9 +9,12 @@ import type { Address, ENSName } from '~types';
 
 import { createAddress } from '~types';
 
+const colonyNetworkENSName =
+  process.env.COLONY_NETWORK_ENS_NAME || 'joincolony.eth';
+
 class ENS {
   static getFullDomain = (scope: 'user' | 'colony', name: string) =>
-    isAddress(name) ? name : `${name}.${scope}.joincolony.eth`;
+    isAddress(name) ? name : `${name}.${scope}.${colonyNetworkENSName}`;
 
   _domainCache: Map<string, Address>;
 

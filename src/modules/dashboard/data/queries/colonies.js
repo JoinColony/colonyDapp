@@ -90,10 +90,13 @@ export const getColonyRoles: ContractEventQuery<
         ColonyFundingRoleSet,
         ColonyRootRoleSet,
       },
+      contract: { address: colonyAddress },
     } = colonyClient;
     const events = await getEvents(
       colonyClient,
-      {},
+      {
+        address: colonyAddress,
+      },
       {
         blocksBack: 400000,
         events: [
