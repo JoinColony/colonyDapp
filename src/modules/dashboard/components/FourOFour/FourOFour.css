@@ -1,105 +1,48 @@
-@value sidbarWidth: 470px;
-@value headerHeight: 45px;
-
-.main {
-  display: flex;
-  flex-direction: row;
-  padding: 0;
-  height: 100%;
-  width: 100%;
-  background: var(--colony-white);
-}
-
-.sidebar {
-  padding: 11px;
-  height: calc(100vh - 70px);
-  width: sidbarWidth;
-  overflow-y: auto;
-  border-right: 1px solid var(--grey-blue-0);
-}
-
-.container {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  width: calc(100% - sidbarWidth);
-}
-
-.section {
-  margin-bottom: 15px;
-  padding: 15px;
-  border: 1px solid var(--grey-blue-0);
-  border-radius: var(--radius-tiny);
-  background-color: var(--grey-blue-3);
+.layoutMain {
+  composes: stretchVertical stretchHorizontal from '~styles/layout.css';
+  overflow: auto;
+  background-color: var(--grey-blue-2);
 }
 
 .header {
   display: flex;
-  flex-direction: row;
-  justify-content: flex-end;
-  align-items: center;
-  padding-right: 11px;
-  height: headerHeight;
-  width: 100%;
-  border-bottom: 1px solid var(--grey-blue-0);
-}
-
-.headerConfirm {
-  background-color: rgba(248, 43, 101, 0.1);
-}
-
-.headerAside {
-  display: flex;
-  flex-direction: row;
   justify-content: space-between;
-  height: 25px;
+  padding-top: 8px;
+  height: 60px;
+  width: 100%;
 }
 
-.editor {
+.logo {
+  flex: 1;
+  margin-left: 13px;
+  max-width: 130px;
+}
+
+.hero {
   display: flex;
-  flex-direction: row;
-  margin: 30px 0;
+  justify-content: center;
+  align-items: center;
+  margin-top: -170px;
+  height: calc(100% - 120px);
+  min-height: min-content;
+  min-height: -moz-min-content;
+  min-height: -webkit-min-content;
 }
 
-.editor > h5 {
-  margin-right: 5px;
+.herowrapper {
+  padding-top: 100px;
 }
 
-.activityContainer {
-  composes: stretchVertical stretchHorizontal from '~styles/layout.css';
-  display: flex;
-  flex-direction: column;
+.title {
+  margin: 0;
+  text-align: center;
 }
 
-.activity {
-  flex: 1 1 auto;
-  position: relative;
+.description {
+  margin: 10px 0 0 0;
+  text-align: center;
 }
 
-.commentBox {
-  flex: 0 0 auto;
-  position: relative;
-}
-
-.completedDescription {
-  margin-right: 10px;
-  font-size: var(--size-small);
-}
-
-.trustInfoIcon {
-  margin-right: auto;
-  margin-left: 15px;
-}
-
-.trustInfoIcon > i {
-  vertical-align: middle;
-}
-
-.trustInfoTooltip {
-  max-width: 340px;
-}
-
-.trustInfoTooltipHeading {
-  margin-bottom: 5px;
-  font-weight: 500;
+.naked-mole {
+  width: 660px;
 }
