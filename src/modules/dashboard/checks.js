@@ -78,10 +78,7 @@ export const isWorkerAssigned = ({ workerAddress }: TaskType) =>
   !!workerAddress;
 
 export const canEditTask = (task: TaskType, userAddress: Address) =>
-  !isFinalized(task) &&
-  !isCancelled(task) &&
-  isCreator(task, userAddress) &&
-  !isWorkerAssigned(task);
+  !isFinalized(task) && !isCancelled(task) && isCreator(task, userAddress);
 
 export const isAssignmentPending = ({ invites, workerAddress }: TaskType) =>
   !workerAddress && invites && invites.length > 0;

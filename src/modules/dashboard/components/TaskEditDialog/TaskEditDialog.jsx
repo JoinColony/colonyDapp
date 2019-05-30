@@ -39,6 +39,7 @@ import {
   taskRequestsSelector,
 } from '../../selectors';
 import { userFetcher, usersByAddressFetcher } from '../../../users/fetchers';
+import { createAddress } from '../../../../types';
 
 import styles from './TaskEditDialog.css';
 
@@ -289,7 +290,7 @@ const TaskEditDialog = ({
             token,
           };
         }),
-        workerAddress: p.worker.profile.walletAddress,
+        workerAddress: createAddress(p.worker.profile.walletAddress),
       })),
       mergePayload({ colonyAddress, draftId }),
     ),

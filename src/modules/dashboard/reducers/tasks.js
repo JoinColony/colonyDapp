@@ -91,7 +91,7 @@ const taskEventReducer = (task: TaskRecordType, event: *) => {
 
     case WORKER_ASSIGNED: {
       const { workerAddress } = event.payload;
-      return task.set('workerAddress', workerAddress);
+      return task.set('workerAddress', createAddress(workerAddress));
     }
 
     case WORKER_UNASSIGNED:
