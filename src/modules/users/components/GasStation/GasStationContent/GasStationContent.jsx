@@ -81,7 +81,6 @@ class GasStationContent extends Component<Props, State> {
 
     return detailsTransactionGroup || !interactive ? (
       <TransactionDetails
-        appearance={{ interactive: false }}
         transactionGroup={detailsTransactionGroup}
         onClose={this.unselectTransactionGroup}
       />
