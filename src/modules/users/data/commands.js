@@ -435,8 +435,17 @@ export const createCommentMention: Command<
       };
     };
 
+    /*
+     * Verify whether there are usernames we need to resolve to profiles
+     * or if they're all cached
+     */
     const usernamesToResolve =
       matchingUsernames.filter(username => !cachedAddresses[username]) || [];
+
+    /*
+     * If there are no usernames to resolve and we have cached profiles,
+     * load inbox stores from those cached profiles
+     */
     if (Object.keys(cachedAddresses).length && !usernamesToResolve.length) {
       const cachedProfiles = Object.keys(cachedAddresses)
         .filter(key => !!cachedAddresses[key])
@@ -447,6 +456,9 @@ export const createCommentMention: Command<
       );
     }
 
+    /*
+     * Fetch wallet addresses from ENS for mentioned usernames
+     */
     const resolvedWalletAddresses = await Promise.all(
       usernamesToResolve && usernamesToResolve.map(getUserAddressByUsername),
     );
@@ -455,10 +467,16 @@ export const createCommentMention: Command<
      * @todo Limit number of mentions in comments
      * @body We have to set a limit to the number of mentions an user can do or we'll get bitten by that later trying to load too many stores
      */
+    /*
+     * Fetch user profiles for mentioned usernames
+     */
     const userProfiles = await Promise.all(
       resolvedWalletAddresses && resolvedWalletAddresses.map(getUserProfile),
     );
 
+    /*
+     * Load inbox store for mentioned usernames using their profile
+     */
     const inboxStores = await Promise.all(
       userProfiles && userProfiles.map(getUserInboxStoreFromProfile),
     );
