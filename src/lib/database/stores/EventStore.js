@@ -94,11 +94,8 @@ class EventStore extends Store {
         .forEach(takeEntry);
 
     const onReplicated = debounce(takeEntries, 1000);
-    const onWrite = debounce(
-      (address: string, entry: Entry) =>
-        taken.has(entry.hash) || takeEntry(entry),
-      1000,
-    );
+    const onWrite = (address: string, entry: Entry) =>
+      taken.has(entry.hash) || takeEntry(entry);
 
     this._orbitStore.events.on('replicated', onReplicated);
     this._orbitStore.events.on('write', onWrite);
