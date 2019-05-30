@@ -1,0 +1,31 @@
+.main {
+  composes: main from '../TransactionCard/TransactionCard.css';
+}
+
+.button {
+  composes: button from '../TransactionCard/TransactionCard.css';
+}
+
+.summary {
+  composes: summary from '../TransactionCard/TransactionCard.css';
+}
+
+.description {
+  composes: description from '../TransactionCard/TransactionCard.css';
+}
+
+.statusPlaceholder {
+  flex: 0 1 auto;
+  height: 20px;
+  width: 20px;
+  cursor: default;
+}
+
+.statusPlaceholder span {
+  display: inline-block;
+  padding-top: 3px;
+  height: 20px;
+  width: 20px;
+  border-radius: 50%;
+  background-color: var(--pink);
+}

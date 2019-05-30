@@ -5,6 +5,7 @@ import React from 'react';
 import CardList from '~core/CardList';
 
 import TransactionCard from '../TransactionCard';
+import MessageCard from '../MessageCard';
 
 import type { TransactionGroup } from '../transactionGroup';
 import { getGroupId } from '../transactionGroup';
@@ -29,6 +30,7 @@ const TransactionList = ({ onClickGroup, transactionGroups }: Props) => (
         />
       ),
     )}
+    <MessageCard />
   </CardList>
 );
 
