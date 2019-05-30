@@ -95,5 +95,10 @@
     "transaction.colony.setAdminRole.title": "{setTo, select, true { Add Admin } false { Remove Admin } }",
     "transaction.colony.setAdminRole.description": "{setTo, select, true { Add Admin ({ address }) } false { Remove Admin ({ address }) } }",
     "transaction.colony.addDomain.title": "Create Domain",
-    "transaction.colony.addDomain.description": "Create Domain"
+    "transaction.colony.addDomain.description": "Create Domain",
+
+    "message.generic.title": "Generic Message",
+    "message.generic.description": "This needs your wallet's signature",
+    "message.taskComment.title": "Task Comment",
+    "message.taskComment.description": "Sign the message to post your comment"
   }
