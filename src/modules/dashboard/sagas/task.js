@@ -707,6 +707,10 @@ function* taskCommentAdd({
           mentions: matchingUsernames || [],
         },
       },
+      metadata: {
+        colonyAddress,
+        draftId,
+      },
     });
 
     yield put<Action<typeof ACTIONS.TASK_COMMENT_ADD_SUCCESS>>({
