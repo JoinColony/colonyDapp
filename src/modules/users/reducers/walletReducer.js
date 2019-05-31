@@ -12,6 +12,7 @@ const walletReducer: ReducerType<
   {|
     WALLET_FETCH_ACCOUNTS: *,
     WALLET_FETCH_ACCOUNTS_SUCCESS: *,
+    WALLET_CREATE_SUCCESS: *,
   |},
 > = (state = WalletRecord(), action) => {
   switch (action.type) {
@@ -25,6 +26,10 @@ const walletReducer: ReducerType<
         availableAddresses: allAddresses,
         isLoading: false,
       });
+    }
+    case ACTIONS.WALLET_CREATE_SUCCESS: {
+      const { walletType } = action.payload;
+      return state.set('walletType', walletType);
     }
     default:
       return state;

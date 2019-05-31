@@ -17,8 +17,10 @@ import Icon from '~core/Icon';
 import { ActionForm, Input, InputLabel, FormStatus } from '~core/Fields';
 import Button from '~core/Button';
 import Heading from '~core/Heading';
+import Alert from '~core/Alert';
 import styles from './StepHardware.css';
 
+import { walletSelector } from '../../../selectors';
 import { fetchAccounts as fetchAccountsAction } from '../../../actionCreators';
 import AddressItem from './AddressItem.jsx';
 
@@ -81,6 +83,10 @@ const MSG = defineMessages({
     id: 'users.ConnectWalletWizard.StepHardware.loadingAddresses',
     defaultMessage: 'Loading available addresses...',
   },
+  walletPromptText: {
+    id: 'users.ConnectWalletWizard.StepHardware.walletPromptText',
+    defaultMessage: `Please finish the transaction on your hardware wallet`,
+  },
 });
 
 const validationSchema = yup.object({
@@ -132,7 +138,9 @@ class StepHardware extends Component<Props> {
 
     if (availableAddresses.length) {
       const filteredWalletChoices = availableAddresses.filter(address =>
-        address.includes(hardwareWalletFilter),
+        address
+          .toLocaleLowerCase()
+          .includes(hardwareWalletFilter.toLowerCase()),
       );
 
       const iconClassName = hardwareWalletFilter
@@ -159,7 +167,7 @@ class StepHardware extends Component<Props> {
                 elementOnly
               />
             </div>
-            <div>
+            <div className={styles.balanceHeading}>
               <Heading text={MSG.balanceText} appearance={{ size: 'normal' }} />
             </div>
           </div>
@@ -221,6 +229,12 @@ class StepHardware extends Component<Props> {
               {this.renderContent(values)}
             </section>
             <FormStatus status={status} />
+            {isValid && (
+              <Alert
+                appearance={{ theme: 'info' }}
+                text={MSG.walletPromptText}
+              />
+            )}
             <div className={styles.actions}>
               <Button
                 text={MSG.buttonBack}
@@ -247,10 +261,13 @@ class StepHardware extends Component<Props> {
 }
 
 const enhance = connect(
-  ({ user }) => ({
-    isLoading: user.wallet.loading,
-    availableAddresses: user.wallet.availableAddresses,
-  }),
+  state => {
+    const { isLoading, availableAddresses } = walletSelector(state);
+    return {
+      isLoading,
+      availableAddresses,
+    };
+  },
   { fetchAccounts: fetchAccountsAction },
 );
 

@@ -42,3 +42,7 @@
 .actions {
   composes: alignRight from '~styles/text.css';
 }
+
+.balanceHeading {
+  margin-right: 20px;
+}

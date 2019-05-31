@@ -12,7 +12,7 @@
 
 .choiceBalanceContainer {
   composes: choiceCell;
-  padding: paddingVertical 0 paddingVertical paddingHorizontal;
+  padding: paddingVertical paddingVertical paddingVertical paddingHorizontal;
 }
 
 .addressSpacer {
