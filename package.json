@@ -29,7 +29,7 @@
         "truffle": "yarn --cwd ./src/lib/colonyNetwork truffle",
         "trufflepig": "scripts/start_trufflepig.js",
         "test:e2e": "rimraf .dappPids.json && scripts/start_all.js & wait-on .dappPids.json && scripts/run_cypress_based_on_browser.sh; scripts/stop_all.js",
-        "test:e2e:ci": "scripts/start_all.js & wait-on .dappPids.json && cypress run --browser chrome",
+        "test:e2e:ci": "IPFS_PATH=src/lib/pinion/data-js jsipfs daemon --enable-pubsub-experiment & yarn dev --skip-ipfsd & wait-on .dappPids.json && cypress run --browser chrome",
         "webpack": "webpack-dev-server --https --key ./ssl/localhost+2-key.pem --cert ./ssl/localhost+2.pem --port 9090 --config webpack.config.js",
         "webpack:build": "webpack-cli --config webpack.config.js",
         "wssproxy": "scripts/start_wss_proxy.js"
