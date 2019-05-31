@@ -46,6 +46,10 @@ const TransactionDetails = ({
   const groupKey = getGroupKey(transactionGroup);
   return (
     <div>
+      {/*
+       * @TODO This might be worth extracting away now that both the transactions
+       * and the messages are using it
+       */}
       {interactive && (
         <button
           type="button"
