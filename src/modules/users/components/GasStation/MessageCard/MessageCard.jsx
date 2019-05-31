@@ -8,6 +8,8 @@ import Card from '~core/Card';
 
 import styles from './MessageCard.css';
 
+const displayName = 'users.GasStation.MessageCard';
+
 const MessageCard = () => (
   <Card className={styles.main}>
     <button type="button" className={styles.button}>
@@ -29,5 +31,7 @@ const MessageCard = () => (
     </button>
   </Card>
 );
+
+MessageCard.displayName = displayName;
 
 export default MessageCard;
