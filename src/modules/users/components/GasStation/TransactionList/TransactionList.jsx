@@ -6,6 +6,7 @@ import CardList from '~core/CardList';
 
 import TransactionCard from '../TransactionCard';
 import MessageCard from '../MessageCard';
+import MessageCardDetails from '../MessageCardDetails';
 
 import type { TransactionGroup } from '../transactionGroup';
 import { getGroupId } from '../transactionGroup';
@@ -31,6 +32,7 @@ const TransactionList = ({ onClickGroup, transactionGroups }: Props) => (
       ),
     )}
     <MessageCard />
+    <MessageCardDetails />
   </CardList>
 );
 
