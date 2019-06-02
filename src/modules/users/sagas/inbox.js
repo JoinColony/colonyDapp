@@ -75,22 +75,29 @@ function* markNotification({
     } = yield* executeQuery(getUserNotificationMetadata, {
       metadata,
     });
-
     /* For each user activity in state, get their id */
-    const currentUserActivityIds = activities.map(x => x.get('id'));
+    const currentUserActivities = activities.map(x => ({
+      id: x.get('id'),
+      timestamp: x.get('timestamp'),
+    }));
     /* If the activity is not found, do nothing */
     if (
       !(
-        currentUserActivityIds &&
-        currentUserActivityIds.some(activityId => activityId === id)
+        currentUserActivities &&
+        currentUserActivities.some(({ id: activityId }) => activityId === id)
       )
     )
       return;
 
     const exceptFor =
-      Array.from(
-        new Set([...currentUserActivityIds, ...currentExceptFor]),
-      ).filter(activityId => activityId && activityId !== id) || [];
+      Array.from(new Set([...currentUserActivities, ...currentExceptFor]))
+        .filter(({ id: activityId }) => activityId && activityId !== id)
+        .filter(
+          ({ timestamp: activityTimeStamp }) =>
+            new Date(activityTimeStamp) <= new Date(timestamp) &&
+            new Date(activityTimeStamp) > new Date(currentReadUntil),
+        )
+        .map(({ id: activityId }) => activityId) || [];
 
     if (
       exceptFor.length === currentExceptFor.length &&
@@ -108,6 +115,14 @@ function* markNotification({
     yield* executeCommand(markNotificationsAsRead, {
       metadata,
       args: {
+        readUntil,
+        exceptFor,
+      },
+    });
+
+    yield put<Action<typeof ACTIONS.USER_NOTIFICATION_METADATA_FETCH_SUCCESS>>({
+      type: ACTIONS.USER_NOTIFICATION_METADATA_FETCH_SUCCESS,
+      payload: {
         readUntil,
         exceptFor,
       },

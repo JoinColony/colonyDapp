@@ -30,8 +30,8 @@ describe('Transaction selectors', () => {
     [ns]: {
       currentUser: {
         activities: List([
-          { 0: UserActivityRecord(activity1) },
-          { 1: UserActivityRecord(activity2) },
+          UserActivityRecord(activity1),
+          UserActivityRecord(activity2),
         ]),
       },
     },
@@ -41,10 +41,10 @@ describe('Transaction selectors', () => {
     const found = currentUserActivitiesSelector(state);
     const result = found.toJS();
 
-    expect(result[0][0].colonyAddress).toEqual(
+    expect(result[0].colonyAddress).toEqual(
       '0xEc46E0d7208FF021CDb5B9D47196adb8bbe07a3D',
     );
 
-    expect(result[0][0].event).toEqual('iceCreamInTheFridge');
+    expect(result[0].event).toEqual('iceCreamInTheFridge');
   });
 });

@@ -183,7 +183,8 @@ export const currentUserActivitiesSelector = createSelector(
         activity &&
         activity.set(
           'unread',
-          activity.timestamp > readUntil || exceptFor.includes(activity.id),
+          new Date(activity.timestamp) > new Date(readUntil) ||
+            exceptFor.includes(activity.id),
         ),
     ),
 );
