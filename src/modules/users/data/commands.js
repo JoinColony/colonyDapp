@@ -205,7 +205,6 @@ export const updateTokens: Command<
   },
 };
 
-// This is currently unused
 export const markNotificationsAsRead: Command<
   UserMetadataStore,
   UserMetadataStoreMetadata,

@@ -33,6 +33,7 @@
   --temp-grey-blue-4: rgb(200, 214, 247); /* Used for some box shadows */
   --temp-grey-blue-5: rgb(244, 238, 242); /* Used for user profile gradient start color */
   --temp-grey-blue-6: rgb(231, 242, 246); /* Used for user profile gradient end color */
+  --drop-shadow: rgba(62, 118, 244, 0.14);
 
   /*
    * Gradients

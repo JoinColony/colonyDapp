@@ -13,7 +13,7 @@ const enhanced = compose(
   })),
   withProps(({ activities }) => ({
     hasUnreadActivities:
-      activities && activities.toArray().some(activity => activity.unread),
+      activities && activities.some(activity => activity.unread),
   })),
 );
 

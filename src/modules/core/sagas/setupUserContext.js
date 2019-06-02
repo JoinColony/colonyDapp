@@ -30,7 +30,7 @@ import {
 } from '../../users/data/queries';
 import setupAdminSagas from '../../admin/sagas';
 import setupDashboardSagas from '../../dashboard/sagas';
-import { getWallet, setupUsersSagas } from '../../users/sagas';
+import { getWallet, setupUsersSagas, setupInboxSagas } from '../../users/sagas';
 import setupTransactionsSagas from './transactions';
 import setupNetworkSagas from './network';
 import { getDDB, getGasPrices, getColonyManager, getWalletType } from './utils';
@@ -42,6 +42,7 @@ function* setupContextDependentSagas(): Saga<void> {
     call(setupAdminSagas),
     call(setupDashboardSagas),
     call(setupUsersSagas),
+    call(setupInboxSagas),
     call(setupTransactionsSagas),
     call(setupNetworkSagas),
   ]);
