@@ -8,6 +8,7 @@ import CardList from '~core/CardList';
 import Heading from '~core/Heading';
 import Card from '~core/Card';
 import Button from '~core/Button';
+import { MessageCardStatus } from '../MessageCard';
 
 import styles from './MessageCardDetails.css';
 
@@ -44,12 +45,7 @@ const MessageCardDetails = () => (
             />
             <FormattedMessage id="message.generic.description" />
           </div>
-          {/*
-           * @TODO Implement the message status UI
-           */}
-          <div className={styles.statusPlaceholder}>
-            <span />
-          </div>
+          <MessageCardStatus status="created" />
         </div>
         <div className={styles.message}>
           <span className={styles.title}>Message:</span>

@@ -5,6 +5,7 @@ import { FormattedMessage } from 'react-intl';
 
 import Heading from '~core/Heading';
 import Card from '~core/Card';
+import MessageCardStatus from './MessageCardStatus.jsx';
 
 import styles from './MessageCard.css';
 
@@ -21,12 +22,7 @@ const MessageCard = () => (
           />
           <FormattedMessage id="message.generic.description" />
         </div>
-        {/*
-         * @TODO Implement the message status UI
-         */}
-        <div className={styles.statusPlaceholder}>
-          <span />
-        </div>
+        <MessageCardStatus status="created" />
       </div>
     </button>
   </Card>
