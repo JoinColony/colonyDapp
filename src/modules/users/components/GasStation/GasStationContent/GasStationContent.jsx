@@ -83,6 +83,7 @@ class GasStationContent extends Component<Props, State> {
       <TransactionDetails
         transactionGroup={detailsTransactionGroup}
         onClose={this.unselectTransactionGroup}
+        appearance={{ interactive: true }}
       />
     ) : (
       <TransactionList
