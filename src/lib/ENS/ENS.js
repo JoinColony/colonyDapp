@@ -12,8 +12,7 @@ import { createAddress } from '~types';
 
 const COLONY_NETWORK_ENS_NAME =
   process.env.COLONY_NETWORK_ENS_NAME || 'joincolony.eth';
-// FIXME change this
-const EXTERNAL_PREFIX = '?';
+const EXTERNAL_PREFIX = '$';
 
 class ENS {
   static getFullDomain = (scope: 'user' | 'colony', name: string) =>
