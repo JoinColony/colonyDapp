@@ -10,6 +10,7 @@ import {
   CORE_NAMESPACE as ns,
   CORE_NETWORK,
   CORE_NETWORK_FEE,
+  CORE_NETWORK_FEE_INVERSE,
   CORE_NETWORK_VERSION,
 } from '../constants';
 
@@ -22,6 +23,11 @@ export const networkSelector = (state: RootStateRecord) =>
 export const networkFeeSelector = createSelector(
   networkSelector,
   state => state.getIn(['record', CORE_NETWORK_FEE]),
+);
+
+export const networkFeeInverseSelector = createSelector(
+  networkSelector,
+  state => state.getIn(['record', CORE_NETWORK_FEE_INVERSE]),
 );
 
 export const networkVersionSelector = createSelector(
