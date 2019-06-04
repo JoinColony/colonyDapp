@@ -43,6 +43,7 @@ import {
   isCancelled,
   isCreator,
   isFinalized,
+  isPayoutsSet,
 } from '../../checks';
 import { currentUserSelector } from '../../../users/selectors';
 import { colonyAddressFetcher } from '../../fetchers';
@@ -175,7 +176,7 @@ const Task = ({
             <div>
               <TaskAssignment colonyAddress={colonyAddress} draftId={draftId} />
             </div>
-            {canEdit && (
+            {canEdit && !isPayoutsSet(task) && (
               <div className={styles.assignmentDetailsButton}>
                 <Button
                   appearance={{ theme: 'blue' }}

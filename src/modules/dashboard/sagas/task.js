@@ -468,7 +468,7 @@ function* taskFinalize({
       params: {
         recipient: workerAddress,
         token: token.address,
-        amount: new BigNumber(amount),
+        amount: new BigNumber(amount.toString()),
         domainId,
         skillId,
       },
