@@ -308,6 +308,23 @@ export type TaskActionTypes = {|
     {| event: TaskEvents |},
   >,
   TASK_SUB_ERROR: TaskErrorActionType<typeof ACTIONS.TASK_SUB_ERROR>,
+  TASK_SET_WORKER_AND_PAYOUTS: TaskActionType<
+    typeof ACTIONS.TASK_SET_WORKER_AND_PAYOUTS,
+    {|
+      payouts?: Array<{| token: string, amount: string |}>,
+      workerAddress: Address,
+    |},
+  >,
+  TASK_SET_WORKER_AND_PAYOUTS_ERROR: TaskErrorActionType<
+    typeof ACTIONS.TASK_SET_WORKER_AND_PAYOUTS_ERROR,
+  >,
+  TASK_SET_WORKER_AND_PAYOUTS_SUCCESS: TaskActionType<
+    typeof ACTIONS.TASK_SET_WORKER_AND_PAYOUTS_SUCCESS,
+    {|
+      payouts?: Array<{| amount: string, token: string |}>,
+      workerAddress: Address,
+    |},
+  >,
   TASK_SUBMIT_DELIVERABLE: TaskActionType<
     typeof ACTIONS.TASK_SUBMIT_DELIVERABLE,
     void,

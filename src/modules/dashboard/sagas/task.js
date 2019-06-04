@@ -388,7 +388,7 @@ function* taskSetSkill({
 }
 
 /*
- * As worker or manager, I want to be able to set a skill
+ * As worker or manager, I want to be able to set a payout
  */
 function* taskSetPayout({
   payload: { colonyAddress, draftId, token, amount },
@@ -467,7 +467,7 @@ function* taskFinalize({
       params: {
         recipient: workerAddress,
         token: token.address,
-        amount: new BigNumber(amount),
+        amount: new BigNumber(amount.toString()),
         domainId,
         skillId,
       },
@@ -551,19 +551,25 @@ function* taskWorkerAssign({
   meta,
 }: Action<typeof ACTIONS.TASK_WORKER_ASSIGN>): Saga<void> {
   try {
-    const { event } = yield* executeCommand(assignWorker, {
-      args: { workerAddress },
+    const {
+      record: { workerAddress: currentWorkerAddress },
+    } = yield select(taskSelector, draftId);
+    const eventData = yield* executeCommand(assignWorker, {
+      args: { workerAddress, currentWorkerAddress },
       metadata: { colonyAddress, draftId },
     });
-    yield put<Action<typeof ACTIONS.TASK_WORKER_ASSIGN_SUCCESS>>({
-      type: ACTIONS.TASK_WORKER_ASSIGN_SUCCESS,
-      payload: {
-        colonyAddress,
-        draftId,
-        event,
-      },
-      meta,
-    });
+    if (eventData) {
+      const { event } = eventData;
+      yield put<Action<typeof ACTIONS.TASK_WORKER_ASSIGN_SUCCESS>>({
+        type: ACTIONS.TASK_WORKER_ASSIGN_SUCCESS,
+        payload: {
+          colonyAddress,
+          draftId,
+          event,
+        },
+        meta,
+      });
+    }
   } catch (error) {
     yield putError(ACTIONS.TASK_WORKER_ASSIGN_ERROR, error, meta);
   }
@@ -589,6 +595,52 @@ function* taskWorkerUnassign({
     });
   } catch (error) {
     yield putError(ACTIONS.TASK_WORKER_UNASSIGN_ERROR, error, meta);
+  }
+}
+
+function* taskSetWorkerAndPayouts({
+  payload: { colonyAddress, draftId, payouts, workerAddress },
+  meta,
+}: Action<typeof ACTIONS.TASK_SET_WORKER_AND_PAYOUTS>): Saga<void> {
+  try {
+    yield call(taskWorkerAssign, {
+      meta: { key: draftId },
+      payload: { colonyAddress, draftId, workerAddress },
+      type: ACTIONS.TASK_WORKER_ASSIGN,
+    });
+
+    const {
+      record: { payouts: existingPayouts },
+    } = yield select(taskSelector, draftId);
+    if (payouts && !(existingPayouts && existingPayouts.length > 0)) {
+      yield all(
+        payouts.map(({ amount, token }) =>
+          call(taskSetPayout, {
+            meta,
+            payload: {
+              colonyAddress,
+              draftId,
+              amount: amount.toString(),
+              token,
+            },
+            type: ACTIONS.TASK_SET_PAYOUT,
+          }),
+        ),
+      );
+    }
+
+    yield put<Action<typeof ACTIONS.TASK_SET_WORKER_AND_PAYOUTS_SUCCESS>>({
+      type: ACTIONS.TASK_SET_WORKER_AND_PAYOUTS_SUCCESS,
+      meta,
+      payload: {
+        colonyAddress,
+        draftId,
+        payouts,
+        workerAddress,
+      },
+    });
+  } catch (error) {
+    yield putError(ACTIONS.TASK_SET_WORKER_AND_PAYOUTS_ERROR, error, meta);
   }
 }
 
@@ -758,6 +810,7 @@ export default function* tasksSagas(): any {
   yield takeEvery(ACTIONS.TASK_SET_SKILL, taskSetSkill);
   yield takeEvery(ACTIONS.TASK_SET_TITLE, taskSetTitle);
   yield takeEvery(ACTIONS.TASK_SUB_START, taskSubStart);
+  yield takeEvery(ACTIONS.TASK_SET_WORKER_AND_PAYOUTS, taskSetWorkerAndPayouts);
   yield takeEvery(ACTIONS.TASK_WORKER_ASSIGN, taskWorkerAssign);
   yield takeEvery(ACTIONS.TASK_WORKER_UNASSIGN, taskWorkerUnassign);
   yield takeLeading(ACTIONS.TASK_FETCH_ALL, taskFetchAll);
