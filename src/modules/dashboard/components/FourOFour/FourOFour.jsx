@@ -5,23 +5,23 @@ import { defineMessages, FormattedMessage } from 'react-intl';
 import { Link } from 'react-router-dom';
 
 import Logo from '../../../../img/logo.svg';
-import Icon from '~core/Icon';
+import NakedMole from '../../../../img/naked-mole.svg';
 import Heading from '~core/Heading';
 
 import styles from './FourOFour.css';
 
 const MSG = defineMessages({
   message: {
-    id: 'dashboard.message',
+    id: 'dashboard.FourOFour.message',
     defaultMessage:
       'Something went wrong! Have you tried turning it off and on again?',
   },
   nakedMole: {
-    id: 'dashboard.nakedMole',
+    id: 'dashboard.FourOFour.nakedMole',
     defaultMessage: 'Naked Mole',
   },
   fourOFour: {
-    id: 'dashboard.fourOFour',
+    id: 'dashboard.FourOFour.fourOFour',
     defaultMessage: '404!',
   },
 });
@@ -48,11 +48,7 @@ const FourOFour = () => (
         <FormattedMessage {...MSG.message} />
       </p>
       <div className={styles.hero}>
-        <Icon
-          name="naked-mole"
-          title={MSG.nakedMole}
-          appearance={{ size: 'image' }}
-        />
+        <NakedMole />
       </div>
     </div>
   </main>

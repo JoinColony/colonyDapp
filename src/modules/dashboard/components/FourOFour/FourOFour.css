@@ -19,14 +19,11 @@
 }
 
 .hero {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  margin-top: -170px;
+  display: block;
+  margin: auto;
   height: calc(100% - 120px);
   min-height: min-content;
-  min-height: -moz-min-content;
-  min-height: -webkit-min-content;
+  width: 660px;
 }
 
 .herowrapper {

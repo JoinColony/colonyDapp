@@ -55,6 +55,7 @@ const Routes = ({ walletAddress }) => {
           <Redirect to={isConnected ? DASHBOARD_ROUTE : CONNECT_ROUTE} />
         )}
       />
+      <Route exact path={FOUR_O_FOUR_ROUTE} component={FourOFour} />
       <DisconnectedOnlyRoute
         isConnected={isConnected}
         path={CONNECT_ROUTE}
@@ -64,11 +65,6 @@ const Routes = ({ walletAddress }) => {
         isConnected={isConnected}
         path={CREATE_WALLET_ROUTE}
         component={CreateWalletWizard}
-      />
-      <DisconnectedOnlyRoute
-        isConnected={isConnected}
-        path={FOUR_O_FOUR_ROUTE}
-        component={FourOFour}
       />
       <ConnectedOnlyRoute
         exact
