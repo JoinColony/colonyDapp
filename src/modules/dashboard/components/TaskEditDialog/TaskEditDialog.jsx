@@ -1,13 +1,20 @@
 /* @flow */
 
 // $FlowFixMe until we have new react flow types with hooks
-import React, { useMemo } from 'react';
+import React, { useCallback, useMemo } from 'react';
 import { defineMessages } from 'react-intl';
 import * as yup from 'yup';
 import { FieldArray } from 'formik';
+import nanoid from 'nanoid';
+import moveDecimal from 'move-decimal-point';
+import BigNumber from 'bn.js';
 
-import type { ColonyType, UserType, TaskType, TokenType } from '~immutable';
-import type { $Pick } from '~types';
+import type {
+  ColonyType,
+  UserType,
+  TaskPayoutType,
+  TokenType,
+} from '~immutable';
 import type { ItemDataType } from '~core/OmniPicker';
 
 import SingleUserPicker from '~core/SingleUserPicker';
@@ -18,10 +25,12 @@ import DialogSection from '~core/Dialog/DialogSection.jsx';
 import Heading from '~core/Heading';
 import DialogBox from '~core/Dialog/DialogBox.jsx';
 import { SpinnerLoader } from '~core/Preloaders';
+import { ACTIONS } from '~redux';
 import HookedUserAvatar from '~users/HookedUserAvatar';
+import { mapPayload, mergePayload, pipe } from '~utils/actions';
+import { useDataFetcher, useDataMapFetcher, useSelector } from '~utils/hooks';
 
 import WrappedPayout from './WrappedPayout.jsx';
-import { useDataFetcher, useDataMapFetcher, useSelector } from '~utils/hooks';
 import { colonyFetcher } from '../../fetchers';
 import {
   allFromColonyTokensSelector,
@@ -30,73 +39,76 @@ import {
   taskRequestsSelector,
 } from '../../selectors';
 import { userFetcher, usersByAddressFetcher } from '../../../users/fetchers';
+import { createAddress } from '../../../../types';
 
 import styles from './TaskEditDialog.css';
 
 const MSG = defineMessages({
   titleAssignment: {
-    id: 'dashboard.Task.taskEditDialog.titleAssignment',
+    id: 'dashboard.TaskEditDialog.titleAssignment',
     defaultMessage: 'Assignment',
   },
   titleFunding: {
-    id: 'dashboard.Task.taskEditDialog.titleFunding',
+    id: 'dashboard.TaskEditDialog.titleFunding',
     defaultMessage: 'Funding',
   },
   add: {
-    id: 'dashboard.Task.taskEditDialog.add',
+    id: 'dashboard.TaskEditDialog.add',
     defaultMessage: 'Add +',
   },
   notSet: {
-    id: 'dashboard.Task.taskEditDialog.notSet',
+    id: 'dashboard.TaskEditDialog.notSet',
     defaultMessage: 'Not set',
   },
   search: {
-    id: 'dashboard.Task.taskEditDialog.search',
+    id: 'dashboard.TaskEditDialog.search',
     defaultMessage: 'Search...',
   },
   selectAssignee: {
-    id: 'dashboard.Task.taskEditDialog.selectAssignee',
+    id: 'dashboard.TaskEditDialog.selectAssignee',
     defaultMessage: 'Select Assignee',
   },
+  workerRequiredError: {
+    id: 'dashboard.TaskEditDialog.workerRequiredError',
+    defaultMessage: 'Please select a worker.',
+  },
   insufficientFundsError: {
-    id: 'dashboard.Task.taskEditDialog.insufficientFundsError',
+    id: 'dashboard.TaskEditDialog.insufficientFundsError',
     defaultMessage: "You don't have enough funds",
   },
   tokenRequiredError: {
-    id: 'dashboard.Task.taskEditDialog.tokenRequiredError',
+    id: 'dashboard.TaskEditDialog.tokenRequiredError',
     defaultMessage: 'Token required',
   },
   amountPositiveError: {
-    id: 'dashboard.Task.taskEditDialog.amountPositiveError',
+    id: 'dashboard.TaskEditDialog.amountPositiveError',
     defaultMessage: 'Amount must be a positive number.',
   },
   amountRequiredError: {
-    id: 'dashboard.Task.taskEditDialog.amountRequiredError',
+    id: 'dashboard.TaskEditDialog.amountRequiredError',
     defaultMessage: 'Amount required',
   },
   unknownToken: {
-    id: 'dashboard.Task.taskEditDialog.unknownToken',
+    id: 'dashboard.TaskEditDialog.unknownToken',
     defaultMessage: 'Unknown Token',
   },
 });
 
 type Props = {|
-  ...$Exact<$Pick<TaskType, {| workerAddress: *, payouts: *, reputation: * |}>>,
-  addTokenFunding: (
-    values: { payouts?: Array<any> },
-    helpers: () => void,
-  ) => void,
   cancel: () => void,
+  close: () => void,
   draftId: string,
   maxTokens?: number,
   minTokens?: number,
-  transform: (action: Object) => Object,
-  walletAddress: string,
 |};
 
 const UserAvatar = HookedUserAvatar({ fetchUser: false });
 
 const supFilter = (data, filterValue) => {
+  if (!filterValue) {
+    return data;
+  }
+
   const filtered = data.filter(
     user =>
       user &&
@@ -108,8 +120,6 @@ const supFilter = (data, filterValue) => {
           .toLowerCase()
           .includes(filterValue.toLowerCase())),
   );
-
-  if (!filterValue) return filtered;
 
   const customValue = {
     id: 'filterValue',
@@ -136,18 +146,14 @@ const canRemoveTokens = (values, minTokens) =>
 const displayName = 'dashboard.TaskEditDialog';
 
 const TaskEditDialog = ({
-  addTokenFunding,
   cancel,
+  close: closeDialog,
   draftId,
   maxTokens,
   minTokens,
-  payouts: taskPayouts,
-  reputation,
-  transform,
-  workerAddress,
 }: Props) => {
   const {
-    record: { colonyAddress },
+    record: { colonyAddress, payouts: taskPayouts, reputation, workerAddress },
   } = useSelector(taskSelector, [draftId]);
   const {
     data: colonyData,
@@ -169,18 +175,17 @@ const TaskEditDialog = ({
   );
 
   // Get users that have requested to work on this task
-  const userAddresses = useSelector(taskRequestsSelector, [draftId]);
+  const userAddressesRequested = useSelector(taskRequestsSelector, [draftId]);
   const userData = useDataMapFetcher<UserType>(
     usersByAddressFetcher,
-    userAddresses,
+    userAddressesRequested,
   );
 
   // Get user (worker) assigned to this task
-  const args = [workerAddress];
   const {
-    data: worker,
-    isFetching: isFetchingWorker,
-  } = useDataFetcher<UserType>(userFetcher, args, args);
+    data: existingWorker,
+    isFetching: isFetchingExistingWorker,
+  } = useDataFetcher<UserType>(userFetcher, [workerAddress], [workerAddress]);
 
   const users = useMemo(
     () =>
@@ -194,25 +199,33 @@ const TaskEditDialog = ({
   );
 
   // consider using a selector for this in #1048
-  const payouts = useMemo(
+  const existingPayouts = useMemo(
     () =>
-      taskPayouts.map(payout => ({
-        token:
-          // we add 1 because Formik thinks 0 is empty
-          availableTokens.indexOf(
-            availableTokens.find(
-              token => token.address === payout.token.address,
-            ),
-          ) + 1,
-        amount: payout.amount,
-        id: payout.token.address,
-      })),
+      taskPayouts.map(payout => {
+        const { address } =
+          availableTokens.find(
+            token => token.address === payout.token.address,
+          ) || {};
+        return {
+          token: address,
+          amount: payout.amount,
+          id: payout.token.address,
+        };
+      }),
     [taskPayouts, availableTokens],
   );
 
-  const validateFunding = useMemo(
-    () =>
-      yup.object().shape({
+  const validateForm = useMemo(
+    () => {
+      const workerShape = yup
+        .object()
+        .shape({
+          profile: yup.object().shape({
+            walletAddress: yup.string().required(MSG.workerRequiredError),
+          }),
+        })
+        .default(null);
+      return yup.object().shape({
         payouts: yup
           .array()
           .of(
@@ -220,14 +233,27 @@ const TaskEditDialog = ({
               token: yup.string().required(MSG.tokenRequiredError),
               amount: yup
                 .number()
+                .typeError(MSG.amountPositiveError)
                 .required(MSG.amountRequiredError)
                 .moreThan(0, MSG.amountPositiveError)
-                .lessThanPot(colonyTokenReferences, MSG.insufficientFundsError),
+                .lessThanPot(
+                  colonyTokenReferences,
+                  availableTokens,
+                  MSG.insufficientFundsError,
+                ),
             }),
           )
-          .max(maxTokens),
-      }),
-    [colonyTokenReferences, maxTokens],
+          .when('worker', {
+            is: workerShape,
+            then: yup
+              .array()
+              .min(minTokens)
+              .max(maxTokens),
+          }),
+        worker: workerShape,
+      });
+    },
+    [availableTokens, colonyTokenReferences, maxTokens, minTokens],
   );
 
   const tokenOptions = useMemo(
@@ -237,6 +263,38 @@ const TaskEditDialog = ({
         label: symbol || MSG.unknownToken,
       })),
     [availableTokens],
+  );
+
+  const addTokenFunding = useCallback(
+    (values: { payouts?: Array<TaskPayoutType> }, helpers: () => void) => {
+      if (canAddTokens(values, maxTokens))
+        helpers.push({
+          id: nanoid(),
+        });
+    },
+    [maxTokens],
+  );
+
+  const transform = useCallback(
+    pipe(
+      mapPayload(p => ({
+        payouts: p.payouts.map(({ amount, token }) => {
+          const { decimals } =
+            availableTokens.find(
+              ({ address: refAddress }) => refAddress === token,
+            ) || {};
+          return {
+            amount: new BigNumber(
+              moveDecimal(amount, decimals ? parseInt(decimals, 10) : 18),
+            ),
+            token,
+          };
+        }),
+        workerAddress: createAddress(p.worker.profile.walletAddress),
+      })),
+      mergePayload({ colonyAddress, draftId }),
+    ),
+    [colonyAddress, draftId],
   );
 
   return (
@@ -251,23 +309,20 @@ const TaskEditDialog = ({
        */
       isDismissable={false}
     >
-      {isFetchingWorker ? (
+      {isFetchingExistingWorker ? (
         <SpinnerLoader />
       ) : (
         <ActionForm
-          /* In #1048 use correct actions */
-          /* $FlowFixMe */
-          submit="CREATE_COOL_THING"
-          /* $FlowFixMe */
-          success="COOL_THING_CREATED"
-          /* $FlowFixMe */
-          error="COOL_THING_CREATE_ERROR"
           initialValues={{
-            payouts,
-            worker,
+            payouts: existingPayouts,
+            worker: existingWorker,
           }}
-          validationSchema={validateFunding}
+          error={ACTIONS.TASK_SET_WORKER_AND_PAYOUTS_ERROR}
+          submit={ACTIONS.TASK_SET_WORKER_AND_PAYOUTS}
+          success={ACTIONS.TASK_SET_WORKER_AND_PAYOUTS_SUCCESS}
           transform={transform}
+          onSuccess={closeDialog}
+          validationSchema={validateForm}
         >
           {({ status, values, dirty, isSubmitting, isValid }) => {
             const canRemove = canRemoveTokens(values, minTokens);
@@ -315,15 +370,16 @@ const TaskEditDialog = ({
                               {values.payouts &&
                                 values.payouts.map((payout, index) => (
                                   <WrappedPayout
-                                    key={payout.id}
                                     arrayHelpers={arrayHelpers}
-                                    payouts={values.payouts}
-                                    payout={payout}
                                     availableTokens={availableTokens}
                                     canRemove={canRemove}
                                     index={index}
+                                    key={payout.id}
+                                    payout={payout}
+                                    payouts={existingPayouts}
                                     reputation={reputation}
                                     tokenOptions={tokenOptions}
+                                    tokenReferences={colonyTokenReferences}
                                   />
                                 ))}
                             </>

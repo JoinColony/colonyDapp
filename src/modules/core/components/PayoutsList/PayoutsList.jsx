@@ -56,11 +56,11 @@ const PayoutsList = ({ payouts, maxLines = 1, nativeToken }: Props) => {
             className={cx(styles.payoutNumber, {
               [styles.native]: payout.token.symbol === nativeToken,
             })}
-            key={payout.token.symbol}
-            value={payout.amount}
-            unit="ether"
-            truncate={1}
+            key={payout.token.address}
             prefix={`${payout.token.symbol} `}
+            truncate={2}
+            unit={payout.token.decimals || 18}
+            value={payout.amount}
           />
         ))}
       </div>
@@ -73,10 +73,10 @@ const PayoutsList = ({ payouts, maxLines = 1, nativeToken }: Props) => {
                   className={cx(styles.payoutNumber, {
                     [styles.native]: payout.token.symbol === nativeToken,
                   })}
-                  key={payout.token.symbol}
+                  key={payout.token.address}
                   value={payout.amount}
-                  unit="ether"
-                  truncate={1}
+                  unit={payout.token.decimals || 18}
+                  truncate={2}
                   prefix={`${payout.token.symbol} `}
                 />
               ))}
