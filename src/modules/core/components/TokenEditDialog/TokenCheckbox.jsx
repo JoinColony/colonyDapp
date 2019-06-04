@@ -1,6 +1,5 @@
 /* @flow */
 
-// $FlowFixMe until hooks flow types
 import React from 'react';
 import { defineMessages } from 'react-intl';
 
@@ -12,7 +11,7 @@ import Heading from '~core/Heading';
 import { SpinnerLoader } from '~core/Preloaders';
 import TokenIcon from '~dashboard/HookedTokenIcon';
 
-import { tokenIsETH } from '../../../dashboard/checks';
+import { tokenIsETH } from '../../checks';
 import { tokenFetcher } from '../../../dashboard/fetchers';
 
 import styles from './TokenEditDialog.css';

@@ -6,6 +6,8 @@ import cx from 'classnames';
 
 import type { TaskPayoutType } from '~immutable';
 
+import { tokenIsETH } from '../../checks';
+
 import { Tooltip } from '../Popover';
 import Numeral from '../Numeral';
 
@@ -30,17 +32,14 @@ type Props = {|
 const displayName = 'PayoutsList';
 
 const PayoutsList = ({ payouts, maxLines = 1, nativeToken }: Props) => {
-  /**
-   * @todo Improve sorting of payouts (payouts list).
-   */
   const sortedPayouts = payouts.sort(({ token: a }, { token: b }) => {
-    if (a.symbol === nativeToken && b.symbol === 'ETH') {
+    if (a.symbol === nativeToken && tokenIsETH(b)) {
       return -1;
     }
-    if (b.symbol === nativeToken && a.symbol === 'ETH') {
+    if (b.symbol === nativeToken && tokenIsETH(a)) {
       return 1;
     }
-    if (a.symbol === nativeToken || a.symbol === 'ETH') {
+    if (a.symbol === nativeToken || tokenIsETH(a)) {
       return -1;
     }
     return 1;
