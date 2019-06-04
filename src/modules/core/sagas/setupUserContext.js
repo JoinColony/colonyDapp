@@ -150,22 +150,21 @@ export default function* setupUserContext(
         },
       });
 
-      for (let index = 0; index < userColonies.length; index += 1) {
-        /*
-         * Load the user activities from the store
-         */
-        yield put<Action<typeof ACTIONS.USER_ACTIVITIES_FETCH>>({
+      const fetchActivitiesEffects = userColonies.map(colonyAddress =>
+        put<Action<typeof ACTIONS.USER_ACTIVITIES_FETCH>>({
           type: ACTIONS.USER_ACTIVITIES_FETCH,
           payload: {
-            colonyAddress: userColonies[index],
+            colonyAddress,
           },
           meta: {
             ...meta,
             key: walletAddress,
-            colonyAddress: userColonies[index],
+            colonyAddress,
           },
-        });
-      }
+        }),
+      );
+
+      yield all(fetchActivitiesEffects);
     } catch (caughtError) {
       // It's ok if the user store doesn't exist (yet)
       log.warn(caughtError);

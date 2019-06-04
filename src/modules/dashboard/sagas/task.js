@@ -690,10 +690,9 @@ function* taskCommentAdd({
       message: JSON.stringify({ comment, author }),
     });
 
-    const matches = matchUsernames(comment) || [];
-    const matchingUsernames = matches
-      .filter(({ text: username }) => username !== currentUsername)
-      .map(({ text }) => text);
+    const matches = (matchUsernames(comment) || []).filter(
+      username => username !== currentUsername,
+    );
 
     const { event } = yield* executeCommand(postComment, {
       args: {
@@ -702,7 +701,6 @@ function* taskCommentAdd({
           id: nanoid(),
           author: wallet.address,
           body: comment,
-          mentions: matchingUsernames || [],
         },
       },
       metadata: {
@@ -721,10 +719,10 @@ function* taskCommentAdd({
       meta,
     });
 
-    if (matchingUsernames && matchingUsernames.length) {
+    if (matches && matches.length) {
       const cachedAddresses = yield select(
         userAddressByMultipleUsernameSelector,
-        matchingUsernames,
+        matches,
       );
       yield* executeCommand(createCommentMention, {
         args: {
@@ -735,7 +733,7 @@ function* taskCommentAdd({
           sourceUsername: currentUsername,
           sourceUserWalletAddress: walletAddress,
         },
-        metadata: { matchingUsernames, cachedAddresses },
+        metadata: { matchingUsernames: matches, cachedAddresses },
       });
     }
   } catch (error) {

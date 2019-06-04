@@ -13,18 +13,20 @@ import type {
 } from '~data/types';
 
 import { CONTEXT } from '~context';
+import { log } from '~utils/debug';
 import { ZERO_ADDRESS } from '~utils/web3/constants';
 import {
   createUserProfileStore,
   getUserProfileStore,
   getUserMetadataStore,
-  getUserInboxStore,
 } from '~data/stores';
 import { createEvent } from '~data/utils';
 import { USER_EVENT_TYPES, USER_PROFILE_EVENT_TYPES } from '~data/constants';
 
-import { getUserProfileReducer } from './reducers';
-import { getUserTokenAddresses } from './utils';
+import {
+  getUserTokenAddresses,
+  getUserInboxStoreByProfileAddress,
+} from './utils';
 
 import {
   UserUpdateTokensCommandArgsSchema,
@@ -366,12 +368,7 @@ export const createCommentMention: Command<
 > = {
   name: 'commentMentionNotification',
   context: [CONTEXT.DDB_INSTANCE, CONTEXT.ENS_INSTANCE, CONTEXT.COLONY_MANAGER],
-  /**
-   * This is clearly going to return an array, filtering out null values, but
-   * Flow keeps complaining about it. That disturbed MY flow state, so I'm not
-   * gonna waste any more time trying to fix it.
-   */
-  // $FlowFixMe
+  // $FlowFixMe I don't know why flow thinks that this is a sparse array
   async prepare(
     {
       ddb,
@@ -380,7 +377,6 @@ export const createCommentMention: Command<
     }: { ddb: DDB, ens: ENSCache, colonyManager: ColonyManager },
     {
       matchingUsernames = [],
-      cachedAddresses = {},
     }: {|
       matchingUsernames: string[],
       cachedAddresses: {
@@ -391,97 +387,39 @@ export const createCommentMention: Command<
       },
     |},
   ) {
-    if (!matchingUsernames.length) throw new Error('No username matches');
+    if (!matchingUsernames.length) return [];
 
-    const getUserInboxStoreFromProfile = (
-      profile: ?{|
-        walletAddress: Address,
-        inboxStoreAddress: string,
-      |},
-    ) => {
-      const { walletAddress, inboxStoreAddress } = profile || {};
-      if (!(inboxStoreAddress && walletAddress)) return null;
-      return getUserInboxStore(ddb)({
-        walletAddress,
-        inboxStoreAddress,
-      });
+    const getWalletAddress = async (username: string) => {
+      try {
+        const address = await ens.getAddress(username, networkClient);
+        return address;
+      } catch (caughtError) {
+        log.warn(caughtError);
+        return null;
+      }
     };
 
-    const getUserAddressByUsername = (username: string) =>
-      ens.getAddress(
-        ens.constructor.getFullDomain('user', username),
-        networkClient,
-      );
-    const getUserProfile = async (walletAddress: ?Address) => {
-      if (!walletAddress) return null;
-      const profileStore = await getUserProfileStore(ddb)({ walletAddress });
-      if (!profileStore) return null;
-      const {
-        inboxStoreAddress,
-        walletAddress: profileWalletAddress,
-      } = profileStore.all().reduce(getUserProfileReducer, {
-        /*
-         * We can be pretty sure that `walletAddress` will be in the first
-         * event for this store, but flow doesn't know that.
-         */
-        inboxStoreAddress: '',
-        metadataStoreAddress: '',
-        walletAddress: '',
-      });
-
-      return {
-        inboxStoreAddress,
-        walletAddress: profileWalletAddress,
-      };
+    const getInboxStore = async (walletAddress: Address) => {
+      try {
+        const inboxStore = await getUserInboxStoreByProfileAddress(ddb)({
+          walletAddress,
+        });
+        return inboxStore;
+      } catch (caughtError) {
+        log.warn(caughtError);
+        return null;
+      }
     };
 
-    /*
-     * Verify whether there are usernames we need to resolve to profiles
-     * or if they're all cached
-     */
-    const usernamesToResolve =
-      matchingUsernames.filter(username => !cachedAddresses[username]) || [];
-
-    /*
-     * If there are no usernames to resolve and we have cached profiles,
-     * load inbox stores from those cached profiles
-     */
-    if (Object.keys(cachedAddresses).length && !usernamesToResolve.length) {
-      const cachedProfiles = Object.keys(cachedAddresses)
-        .filter(key => !!cachedAddresses[key])
-        .map(key => cachedAddresses[key]);
-
-      return Promise.all(
-        cachedProfiles && cachedProfiles.map(getUserInboxStoreFromProfile),
-      );
-    }
-
-    /*
-     * Fetch wallet addresses from ENS for mentioned usernames
-     */
-    const resolvedWalletAddresses = await Promise.all(
-      usernamesToResolve && usernamesToResolve.map(getUserAddressByUsername),
+    const addresses = await Promise.all(
+      matchingUsernames.map(getWalletAddress),
     );
 
-    /**
-     * @todo Limit number of mentions in comments
-     * @body We have to set a limit to the number of mentions an user can do or we'll get bitten by that later trying to load too many stores
-     */
-    /*
-     * Fetch user profiles for mentioned usernames
-     */
-    const userProfiles = await Promise.all(
-      resolvedWalletAddresses && resolvedWalletAddresses.map(getUserProfile),
-    );
-
-    /*
-     * Load inbox store for mentioned usernames using their profile
-     */
     const inboxStores = await Promise.all(
-      userProfiles && userProfiles.map(getUserInboxStoreFromProfile),
+      addresses.filter(Boolean).map(getInboxStore),
     );
 
-    return inboxStores && inboxStores.filter(Boolean);
+    return inboxStores.filter(Boolean);
   },
   async execute(userInboxStores, args) {
     if (!(userInboxStores && userInboxStores.length)) return;
