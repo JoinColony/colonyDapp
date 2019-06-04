@@ -43,6 +43,7 @@ import {
   isCancelled,
   isCreator,
   isFinalized,
+  isPayoutsSet,
 } from '../../checks';
 import { currentUserSelector } from '../../../users/selectors';
 import { colonyAddressFetcher } from '../../fetchers';
@@ -53,7 +54,7 @@ import styles from './Task.css';
 const MSG = defineMessages({
   assignmentFunding: {
     id: 'dashboard.Task.assignmentFunding',
-    defaultMessage: 'Assignment and funding',
+    defaultMessage: 'Assignee and Funding',
   },
   details: {
     id: 'dashboard.Task.details',
@@ -130,16 +131,7 @@ const Task = ({
     [draftId],
     [colonyAddress || undefined, draftId],
   );
-  const {
-    description,
-    domainId,
-    dueDate,
-    payouts,
-    reputation,
-    skillId,
-    title,
-    workerAddress,
-  } = task || {};
+  const { description, domainId, dueDate, skillId, title } = task || {};
 
   const onEditTask = useCallback(
     () => {
@@ -151,13 +143,11 @@ const Task = ({
 
       openDialog('TaskEditDialog', {
         draftId,
-        maxTokens: 2,
-        payouts,
-        reputation,
-        workerAddress,
+        maxTokens: 1,
+        minTokens: 1,
       });
     },
-    [draftId, openDialog, payouts, reputation, task, workerAddress],
+    [draftId, openDialog, task],
   );
 
   const transform = useCallback(mergePayload({ colonyAddress, draftId }), [
@@ -181,21 +171,21 @@ const Task = ({
               appearance={{ size: 'normal' }}
               text={MSG.assignmentFunding}
             />
-            {canEdit && (
-              <Button
-                appearance={{ theme: 'blue' }}
-                text={MSG.details}
-                onClick={onEditTask}
-              />
-            )}
           </header>
-          <TaskAssignment
-            colonyAddress={colonyAddress}
-            draftId={draftId}
-            payouts={payouts}
-            reputation={reputation}
-            workerAddress={workerAddress}
-          />
+          <div className={styles.assignment}>
+            <div>
+              <TaskAssignment colonyAddress={colonyAddress} draftId={draftId} />
+            </div>
+            {canEdit && !isPayoutsSet(task) && (
+              <div className={styles.assignmentDetailsButton}>
+                <Button
+                  appearance={{ theme: 'blue' }}
+                  text={MSG.details}
+                  onClick={onEditTask}
+                />
+              </div>
+            )}
+          </div>
         </section>
         <section className={styles.section}>
           <TaskTitle

@@ -1,7 +1,9 @@
 
 .placeholder {
   margin-top: 10px;
-  padding-left: 18px;
+  margin-left: 18px;
+  padding-bottom: 5px;
+  border-bottom: 1px solid var(--grey-1);
 }
 
 .container {

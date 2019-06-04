@@ -44,6 +44,15 @@
   border-bottom: 1px solid var(--grey-blue-0);
 }
 
+.assignment {
+  display: flex;
+  justify-content: space-between;
+}
+
+.assignmentDetailsButton {
+  margin-top: 20px;
+}
+
 .headerConfirm {
   background-color: rgba(248, 43, 101, 0.1);
 }
