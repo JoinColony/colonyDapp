@@ -5,7 +5,7 @@ import { defineMessages, FormattedMessage } from 'react-intl';
 import { Link } from 'react-router-dom';
 
 import Logo from '../../../../img/logo.svg';
-import Icon from '~core/Icon';
+import NakedMole from '../../../../img/naked-mole.svg';
 import Heading from '~core/Heading';
 
 import styles from './FourOFour.css';
@@ -48,11 +48,7 @@ const FourOFour = () => (
         <FormattedMessage {...MSG.message} />
       </p>
       <div className={styles.hero}>
-        <Icon
-          name="naked-mole"
-          title={MSG.nakedMole}
-          appearance={{ size: 'image' }}
-        />
+        <NakedMole />
       </div>
     </div>
   </main>

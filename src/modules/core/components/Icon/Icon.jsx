@@ -17,7 +17,7 @@ const displayName = 'Icon';
 
 type Appearance = {
   theme?: 'primary' | 'invert',
-  size?: 'tiny' | 'small' | 'normal' | 'medium' | 'large' | 'huge' | 'image',
+  size?: 'tiny' | 'small' | 'normal' | 'medium' | 'large' | 'huge',
 };
 
 type Props = {

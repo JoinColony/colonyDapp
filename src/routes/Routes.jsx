@@ -71,6 +71,11 @@ const Routes = ({ walletAddress }) => {
         component={FourOFour}
       />
       <ConnectedOnlyRoute
+        isConnected={isConnected}
+        path={FOUR_O_FOUR_ROUTE}
+        component={FourOFour}
+      />
+      <ConnectedOnlyRoute
         exact
         isConnected={isConnected}
         path={COLONY_HOME_ROUTE}
