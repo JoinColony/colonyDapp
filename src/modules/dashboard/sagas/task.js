@@ -18,13 +18,11 @@ import BigNumber from 'bn.js';
 import type { Action } from '~redux';
 import type { Address } from '~types';
 import type { TaskType } from '~immutable';
-import { NOTIFICATION_EVENT_USER_MENTIONED } from '~users/Inbox/events';
 import { CONTEXT, getContext } from '~context';
 import {
   executeCommand,
   executeQuery,
   putError,
-  putNotification,
   raceError,
   selectAsJS,
   executeSubscription,
@@ -738,18 +736,6 @@ function* taskCommentAdd({
           sourceUserWalletAddress: walletAddress,
         },
         metadata: { matchingUsernames, cachedAddresses },
-      });
-
-      /*
-       * @NOTE This is assuming we have a notification for the current user
-       * So this should actually be gated behind a conditional
-       * (once the mentions are all wired up)
-       */
-      yield putNotification({
-        comment,
-        event: NOTIFICATION_EVENT_USER_MENTIONED,
-        sourceUserAddress: walletAddress,
-        taskTitle,
       });
     }
   } catch (error) {
