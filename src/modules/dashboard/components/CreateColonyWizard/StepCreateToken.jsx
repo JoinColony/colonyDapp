@@ -174,6 +174,7 @@ const StepCreateToken = ({
               <Input
                 name="tokenSymbol"
                 appearance={{ theme: 'fat' }}
+                maxLength="4"
                 label={MSG.labelTokenSymbol}
                 help={MSG.helpTokenSymbol}
               />

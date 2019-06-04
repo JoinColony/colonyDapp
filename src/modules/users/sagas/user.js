@@ -521,6 +521,7 @@ function* userTaskSubscribe({
     yield putError(ACTIONS.USER_TASK_SUBSCRIBE_ERROR, error);
   }
 }
+
 function* userActivitiesFetch({
   payload: { colonyAddress },
   meta,

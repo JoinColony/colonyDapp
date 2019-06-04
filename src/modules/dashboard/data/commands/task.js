@@ -335,7 +335,6 @@ export const postComment: Command<
        */
       author: Address,
       body: string,
-      mentions?: string[],
     |},
   |},
   {|
