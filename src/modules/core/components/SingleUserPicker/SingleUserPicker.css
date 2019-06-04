@@ -49,12 +49,10 @@
   }
 }
 
-.input {
+.baseInput {
   flex: 1 1 0;
   margin-left: 10px;
-  padding: 3px;
-  width: 100%;
-  max-width: 450px;
+  max-width: 380px;
   vertical-align: baseline;
   border: none;
   border-bottom: 1px solid var(--colony-black);
@@ -63,18 +61,26 @@
   color: var(--colony-black);
   outline: none;
 
-  &:focus {
-    border-color: var(--primary);
-  }
-
   &[aria-invalid="true"] {
     border-color: var(--danger);
   }
 }
 
+.input {
+  composes: baseInput;
+  padding: 3px;
+  width: 100%;
+
+  &:focus {
+    border-color: var(--primary);
+  }
+}
+
 .recipientName {
-  composes: input;
+  composes: baseInput;
   padding: 5px 3px;
+  overflow: hidden;
+  text-overflow: ellipsis;
 
   &:hover {
     cursor: text;
