@@ -2,16 +2,39 @@
 
 import React from 'react';
 
+import type { MessageProps } from '~immutable';
+
+import { Tooltip } from '~core/Popover';
+
 import styles from './MessageCardStatus.css';
+
+type Props = {
+  status: $PropertyType<MessageProps, 'status'>,
+};
 
 const displayName = 'users.GasStation.MessageCard.MessageCardStatus';
 
-const MessageCardStatus = () => (
-  /*
-   * @TODO Implement the message status UI
-   */
-  <div className={styles.statusPlaceholder}>
-    <span />
+const MessageCardStatus = ({ status }: Props) => (
+  <div className={styles.main}>
+    <Tooltip
+      placement="top"
+      /* Because it's in an overflow window */
+      popperProps={{ positionFixed: true }}
+      showArrow
+      content={<span className={styles.tooltip}>Generic Message</span>}
+    >
+      {/*
+       * @NOTE The tooltip content needs to be wrapped inside a block
+       * element otherwise it won't detect the hover event
+       */}
+      <div>
+        {/*
+         * @NOTE There's never going to be more then a message to sign at a
+         * given time, so the counter will always show 1
+         */}
+        {status === 'created' && <span className={styles.counter}>1</span>}
+      </div>
+    </Tooltip>
   </div>
 );
 
