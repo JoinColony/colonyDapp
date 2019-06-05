@@ -25,7 +25,6 @@ type Steps = Array<StepType> | StepsFn<Object>;
 type WizardArgs = {
   stepCount?: number,
   steps: Steps,
-  hideQR?: boolean,
 };
 
 const all = (values: ValueList) =>
@@ -34,7 +33,7 @@ const all = (values: ValueList) =>
 const getStep = (steps: Steps, step: number, values: Object, props?: Object) =>
   typeof steps === 'function' ? steps(step, values, props) : steps[step];
 
-const withWizard = ({ steps, stepCount: maxSteps, hideQR }: WizardArgs) => (
+const withWizard = ({ steps, stepCount: maxSteps }: WizardArgs) => (
   OuterComponent: ComponentType<Object>,
 ) => {
   class Wizard extends Component<Props, State> {
@@ -89,7 +88,6 @@ const withWizard = ({ steps, stepCount: maxSteps, hideQR }: WizardArgs) => (
           nextStep: this.next,
           previousStep: this.prev,
           wizardValues: allValues,
-          hideQR,
           ...this.props,
         },
         createElement(Step, {

@@ -15,7 +15,6 @@ const stepFunction = (step: number) => stepArray[step];
 const CreateUserContainer = compose(
   withWizard({
     steps: stepFunction,
-    hideQR: true,
   }),
 )(CreateUser);
 
