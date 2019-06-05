@@ -521,19 +521,18 @@ function* userTaskSubscribe({
     yield putError(ACTIONS.USER_TASK_SUBSCRIBE_ERROR, error);
   }
 }
-
-function* userActivitiesFetch({
+function* inboxItemsFetch({
   payload: { colonyAddress },
   meta,
-}: Action<typeof ACTIONS.USER_ACTIVITIES_FETCH>): Saga<void> {
+}: Action<typeof ACTIONS.INBOX_ITEMS_FETCH>): Saga<void> {
   try {
     const walletAddress = yield select(walletAddressSelector);
     const { inboxStoreAddress } = yield select(currentUserMetadataSelector);
     const activities = yield* executeQuery(getUserInboxActivity, {
       metadata: { inboxStoreAddress, walletAddress, colonyAddress },
     });
-    yield put<Action<typeof ACTIONS.USER_ACTIVITIES_FETCH_SUCCESS>>({
-      type: ACTIONS.USER_ACTIVITIES_FETCH_SUCCESS,
+    yield put<Action<typeof ACTIONS.INBOX_ITEMS_FETCH_SUCCESS>>({
+      type: ACTIONS.INBOX_ITEMS_FETCH_SUCCESS,
       payload: { activities },
       meta: {
         ...meta,
@@ -541,7 +540,7 @@ function* userActivitiesFetch({
       },
     });
   } catch (error) {
-    yield putError(ACTIONS.USER_ACTIVITIES_FETCH_ERROR, error, meta);
+    yield putError(ACTIONS.INBOX_ITEMS_FETCH_ERROR, error, meta);
   }
 }
 
@@ -562,7 +561,7 @@ export default function* setupUsersSagas(): Saga<void> {
     ACTIONS.USER_SUBSCRIBED_COLONIES_FETCH,
     userSubscribedColoniesFetch,
   );
-  yield takeEvery(ACTIONS.USER_ACTIVITIES_FETCH, userActivitiesFetch);
+  yield takeEvery(ACTIONS.INBOX_ITEMS_FETCH, inboxItemsFetch);
   yield takeLatest(
     ACTIONS.USERNAME_CHECK_AVAILABILITY,
     usernameCheckAvailability,

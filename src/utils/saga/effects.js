@@ -8,7 +8,7 @@ import { all, call, put, race, take, select } from 'redux-saga/effects';
 
 import type { ErrorActionType, TakeFilter, Action } from '~redux';
 import type { Command, Query, Subscription } from '../../data/types';
-import type { UserActivityType } from '~immutable';
+import type { InboxItemType } from '~immutable';
 
 import { getContext, CONTEXT } from '~context';
 import { validateSync } from '~utils/yup';
@@ -232,14 +232,12 @@ export function* selectAsJS(
  * Effect (actually more of a helper) to put a Notification action
  */
 export const putNotification = (
-  payload?: UserActivityType,
+  payload?: InboxItemType,
   meta?: Object = {},
 ) => {
   try {
-    const notificationAction: Action<
-      typeof ACTIONS.USER_ACTIVITIES_ADD_SUCCESS,
-    > = {
-      type: ACTIONS.USER_ACTIVITIES_ADD_SUCCESS,
+    const notificationAction: Action<typeof ACTIONS.INBOX_ITEMS_ADD_SUCCESS> = {
+      type: ACTIONS.INBOX_ITEMS_ADD_SUCCESS,
       payload: {
         activity: {
           id: nanoid(),
@@ -253,6 +251,6 @@ export const putNotification = (
     };
     return put(notificationAction);
   } catch (caughtError) {
-    return putError(ACTIONS.USER_ACTIVITIES_ADD_ERROR, caughtError, meta);
+    return putError(ACTIONS.INBOX_ITEMS_ADD_ERROR, caughtError, meta);
   }
 };

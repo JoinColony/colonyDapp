@@ -12,16 +12,13 @@ import { ACTIONS } from '~redux';
 import {
   walletAddressSelector,
   currentUserMetadataSelector,
-  currentUserActivitiesSelector,
+  inboxItemsSelector,
 } from '../selectors';
 
 import { getUserNotificationMetadata } from '../data/queries';
 import { markNotificationsAsRead } from '../data/commands';
 
-function* markAllNotifications(
-  // eslint-disable-next-line no-unused-vars
-  action: Action<typeof ACTIONS.INBOX_MARK_ALL_NOTIFICATIONS>,
-): Saga<*> {
+function* markAllNotificationsAsRead(): Saga<*> {
   try {
     const walletAddress = yield select(walletAddressSelector);
     const { metadataStoreAddress } = yield select(currentUserMetadataSelector);
@@ -39,24 +36,26 @@ function* markAllNotifications(
       },
     });
 
-    yield put<Action<typeof ACTIONS.INBOX_MARK_ALL_NOTIFICATIONS_SUCCESS>>({
-      type: ACTIONS.INBOX_MARK_ALL_NOTIFICATIONS_SUCCESS,
-      payload: {
-        readUntil,
-        exceptFor: [],
+    yield put<Action<typeof ACTIONS.INBOX_MARK_ALL_NOTIFICATIONS_READ_SUCCESS>>(
+      {
+        type: ACTIONS.INBOX_MARK_ALL_NOTIFICATIONS_READ_SUCCESS,
+        payload: {
+          readUntil,
+          exceptFor: [],
+        },
       },
-    });
+    );
   } catch (error) {
-    yield putError(ACTIONS.INBOX_MARK_ALL_NOTIFICATIONS_ERROR, error);
+    yield putError(ACTIONS.INBOX_MARK_ALL_NOTIFICATIONS_READ_ERROR, error);
   }
 }
 
 /*  We use a timestamp here for the item being marked as read */
-function* markNotification({
+function* markNotificationAsRead({
   payload: { id, timestamp },
-}: Action<typeof ACTIONS.INBOX_MARK_NOTIFICATION>): Saga<*> {
+}: Action<typeof ACTIONS.INBOX_MARK_NOTIFICATION_READ>): Saga<*> {
   try {
-    const activities = yield select(currentUserActivitiesSelector);
+    const activities = yield select(inboxItemsSelector);
     const walletAddress = yield select(walletAddressSelector);
     const { metadataStoreAddress } = yield select(currentUserMetadataSelector);
     const metadata = {
@@ -76,21 +75,20 @@ function* markNotification({
       metadata,
     });
     /* For each user activity in state, get their id */
-    const currentUserActivities = activities.map(x => ({
-      id: x.get('id'),
-      timestamp: x.get('timestamp'),
+    const inboxItems = activities.map(activity => ({
+      id: activity.get('id'),
+      timestamp: activity.get('timestamp'),
     }));
     /* If the activity is not found, do nothing */
     if (
       !(
-        currentUserActivities &&
-        currentUserActivities.some(({ id: activityId }) => activityId === id)
+        inboxItems && inboxItems.some(({ id: activityId }) => activityId === id)
       )
     )
       return;
 
     const exceptFor =
-      Array.from(new Set([...currentUserActivities, ...currentExceptFor]))
+      Array.from(new Set([...inboxItems, ...currentExceptFor]))
         .filter(({ id: activityId }) => activityId && activityId !== id)
         .filter(
           ({ timestamp: activityTimeStamp }) =>
@@ -128,16 +126,19 @@ function* markNotification({
       },
     });
 
-    yield put<Action<typeof ACTIONS.INBOX_MARK_NOTIFICATION_SUCCESS>>({
-      type: ACTIONS.INBOX_MARK_NOTIFICATION_SUCCESS,
+    yield put<Action<typeof ACTIONS.INBOX_MARK_NOTIFICATION_READ_SUCCESS>>({
+      type: ACTIONS.INBOX_MARK_NOTIFICATION_READ_SUCCESS,
       payload: { readUntil, exceptFor },
     });
   } catch (error) {
-    yield putError(ACTIONS.INBOX_MARK_NOTIFICATION_ERROR, error);
+    yield putError(ACTIONS.INBOX_MARK_NOTIFICATION_READ_ERROR, error);
   }
 }
 
 export default function* inboxSagas(): Saga<void> {
-  yield takeEvery(ACTIONS.INBOX_MARK_NOTIFICATION, markNotification);
-  yield takeEvery(ACTIONS.INBOX_MARK_ALL_NOTIFICATIONS, markAllNotifications);
+  yield takeEvery(ACTIONS.INBOX_MARK_NOTIFICATION_READ, markNotificationAsRead);
+  yield takeEvery(
+    ACTIONS.INBOX_MARK_ALL_NOTIFICATIONS_READ,
+    markAllNotificationsAsRead,
+  );
 }

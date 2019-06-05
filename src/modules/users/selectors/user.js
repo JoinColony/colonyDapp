@@ -22,7 +22,7 @@ import {
   USERS_USERS,
   USERS_CURRENT_USER_SUBSCRIBED_COLONIES,
   USERS_CURRENT_USER_TASKS,
-  USERS_CURRENT_USER_ACTIVITIES,
+  USERS_INBOX_ITEMS,
   USERS_CURRENT_USER_NOTIFICATION_METADATA,
 } from '../constants';
 
@@ -175,8 +175,8 @@ export const friendlyUsernameSelector = createSelector(
 /*
  * User activities (Eg: Inbox)
  */
-const getCurrentUserActivities = (state: RootStateRecord) =>
-  state.getIn([ns, USERS_CURRENT_USER, USERS_CURRENT_USER_ACTIVITIES]);
+const getInboxItems = (state: RootStateRecord) =>
+  state.getIn([ns, USERS_CURRENT_USER, USERS_INBOX_ITEMS]);
 
 /*
  * User notification metadata
@@ -188,8 +188,8 @@ const getCurrentUserNotificationMetadata = (state: RootStateRecord) =>
     USERS_CURRENT_USER_NOTIFICATION_METADATA,
   ]) || {};
 
-export const currentUserActivitiesSelector = createSelector(
-  getCurrentUserActivities,
+export const inboxItemsSelector = createSelector(
+  getInboxItems,
   getCurrentUserNotificationMetadata,
   (activities, { readUntil = 0, exceptFor = [] }) =>
     activities &&

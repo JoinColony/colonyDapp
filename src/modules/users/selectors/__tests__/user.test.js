@@ -1,8 +1,8 @@
 import { List, fromJS } from 'immutable';
-import { UserActivityRecord } from '~immutable';
+import { InboxItemRecord } from '~immutable';
 import { USERS_NAMESPACE as ns } from '../../constants';
 
-import { currentUserActivitiesSelector } from '../user';
+import { inboxItemsSelector } from '../user';
 
 jest.mock('../../../users/selectors', () => ({
   walletAddressSelector: () => '0xdeadbeef',
@@ -30,15 +30,15 @@ describe('Transaction selectors', () => {
     [ns]: {
       currentUser: {
         activities: List([
-          UserActivityRecord(activity1),
-          UserActivityRecord(activity2),
+          InboxItemRecord(activity1),
+          InboxItemRecord(activity2),
         ]),
       },
     },
   });
 
-  test('currentUserActivities selector', () => {
-    const found = currentUserActivitiesSelector(state);
+  test('inboxItems selector', () => {
+    const found = inboxItemsSelector(state);
     const result = found.toJS();
 
     expect(result[0].colonyAddress).toEqual(

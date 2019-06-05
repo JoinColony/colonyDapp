@@ -8,8 +8,8 @@ import type { ReducerType } from '~redux';
 
 type State = UserNotificationMetadataRecordType;
 type Actions = {
-  INBOX_MARK_ALL_NOTIFICATIONS_SUCCESS: *,
-  INBOX_MARK_NOTIFICATION_SUCCESS: *,
+  INBOX_MARK_ALL_NOTIFICATIONS_READ_SUCCESS: *,
+  INBOX_MARK_NOTIFICATION_READ_SUCCESS: *,
   USER_NOTIFICATION_METADATA_FETCH_SUCCESS: *,
 };
 
@@ -18,8 +18,8 @@ const currentUserNotificationsReducer: ReducerType<State, Actions> = (
   action,
 ) => {
   switch (action.type) {
-    case ACTIONS.INBOX_MARK_ALL_NOTIFICATIONS_SUCCESS:
-    case ACTIONS.INBOX_MARK_NOTIFICATION_SUCCESS:
+    case ACTIONS.INBOX_MARK_ALL_NOTIFICATIONS_READ_SUCCESS:
+    case ACTIONS.INBOX_MARK_NOTIFICATION_READ_SUCCESS:
     case ACTIONS.USER_NOTIFICATION_METADATA_FETCH_SUCCESS: {
       const { readUntil, exceptFor } = action.payload;
       return UserNotificationMetadataRecord({ readUntil, exceptFor });

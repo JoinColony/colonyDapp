@@ -3,7 +3,7 @@
 import React from 'react';
 import { defineMessages } from 'react-intl';
 
-import type { InboxElement } from '../types';
+import type { InboxItemType } from '~immutable';
 
 import { ACTIONS } from '~redux';
 import { useAsyncFunction } from '~utils/hooks';
@@ -29,14 +29,14 @@ const MSG = defineMessages({
 const displayName = 'users.Inbox.InboxContent';
 
 type Props = {
-  activities: Array<InboxElement>,
+  activities: Array<InboxItemType>,
 };
 
-const Inbox = ({ activities }: Props) => {
+const InboxContent = ({ activities }: Props) => {
   const allReadActions = {
-    submit: ACTIONS.INBOX_MARK_ALL_NOTIFICATIONS,
-    success: ACTIONS.INBOX_MARK_ALL_NOTIFICATIONS_SUCCESS,
-    error: ACTIONS.INBOX_MARK_ALL_NOTIFICATIONS_ERROR,
+    submit: ACTIONS.INBOX_MARK_ALL_NOTIFICATIONS_READ,
+    success: ACTIONS.INBOX_MARK_ALL_NOTIFICATIONS_READ_SUCCESS,
+    error: ACTIONS.INBOX_MARK_ALL_NOTIFICATIONS_READ_ERROR,
   };
 
   const markAllRead = useAsyncFunction({ ...allReadActions });
@@ -68,6 +68,6 @@ const Inbox = ({ activities }: Props) => {
   );
 };
 
-Inbox.displayName = displayName;
+InboxContent.displayName = displayName;
 
-export default Inbox;
+export default InboxContent;

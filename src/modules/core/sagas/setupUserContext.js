@@ -171,9 +171,9 @@ export default function* setupUserContext(
         },
       });
 
-      const fetchActivitiesEffects = userColonies.map(colonyAddress =>
-        put<Action<typeof ACTIONS.USER_ACTIVITIES_FETCH>>({
-          type: ACTIONS.USER_ACTIVITIES_FETCH,
+      const fetchInboxItemsEffects = userColonies.map(colonyAddress =>
+        put<Action<typeof ACTIONS.INBOX_ITEMS_FETCH>>({
+          type: ACTIONS.INBOX_ITEMS_FETCH,
           payload: {
             colonyAddress,
           },
@@ -185,7 +185,7 @@ export default function* setupUserContext(
         }),
       );
 
-      yield all(fetchActivitiesEffects);
+      yield all(fetchInboxItemsEffects);
     } catch (caughtError) {
       // It's ok if the user store doesn't exist (yet)
       log.warn(caughtError);

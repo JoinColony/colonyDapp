@@ -2,12 +2,18 @@
 
 import type { Node } from 'react';
 
-// $FlowFixMe
+// $FlowFixMe until hooks flow types
 import React, { useCallback } from 'react';
 import { FormattedMessage, defineMessages } from 'react-intl';
 
-import type { InboxElement, EventType } from '../types';
-import type { UserType, ColonyType, DomainType, TokenType } from '~immutable';
+import type { EventType } from '../types';
+import type {
+  UserType,
+  ColonyType,
+  DomainType,
+  TokenType,
+  InboxItemType,
+} from '~immutable';
 
 import TimeRelative from '~core/TimeRelative';
 import { TableRow, TableCell } from '~core/Table';
@@ -50,8 +56,15 @@ const LOCAL_MSG = defineMessages({
 const displayName = 'users.Inbox.InboxItem';
 
 type Props = {|
-  activity: InboxElement,
+  activity: InboxItemType,
 |};
+
+const INBOX_REGEX = /[A-Z]/;
+
+const getType = (event: string): EventType => {
+  const type = event.split(INBOX_REGEX)[0];
+  return type === 'action' || type === 'notification' ? type : 'notification';
+};
 
 const makeInboxDetail = (value: any, formatFn?: (value: any) => any) =>
   value ? (
@@ -59,12 +72,6 @@ const makeInboxDetail = (value: any, formatFn?: (value: any) => any) =>
       {formatFn ? formatFn(value) : value}
     </span>
   ) : null;
-
-// Handle read/unread notifications
-const getType = (event: string): EventType => {
-  const type = event.split(/[A-Z]/)[0];
-  return type === 'action' || type === 'notification' ? type : 'notification';
-};
 
 const UnreadIndicator = ({ type }: { type: EventType }) => (
   <div
@@ -180,9 +187,9 @@ const InboxItem = ({
       ));
 
   const readActions = {
-    submit: ACTIONS.INBOX_MARK_NOTIFICATION,
-    success: ACTIONS.INBOX_MARK_NOTIFICATION_SUCCESS,
-    error: ACTIONS.INBOX_MARK_NOTIFICATION_ERROR,
+    submit: ACTIONS.INBOX_MARK_NOTIFICATION_READ,
+    success: ACTIONS.INBOX_MARK_NOTIFICATION_READ_SUCCESS,
+    error: ACTIONS.INBOX_MARK_NOTIFICATION_READ_ERROR,
   };
 
   const transform = useCallback(mergePayload({ id, timestamp }), [
@@ -292,7 +299,7 @@ const InboxItem = ({
                 <span className={styles.pipe}>|</span>
               )}
               <span className={styles.time}>
-                <TimeRelative value={timestamp} />
+                {timestamp && <TimeRelative value={new Date(timestamp)} />}
               </span>
             </span>
           </ConditionalWrapper>

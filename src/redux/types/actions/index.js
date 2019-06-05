@@ -19,7 +19,7 @@ import type { TaskActionTypes } from './task';
 import type { TokenActionTypes } from './token';
 import type { TransactionActionTypes } from './transaction';
 import type { UserActionTypes } from './user';
-import type { UserActivitiesActionTypes } from './userActivities';
+import type { InboxItemsActionTypes } from './inboxItems';
 import type { UsernameActionTypes } from './username';
 import type { WalletActionTypes } from './wallet';
 
@@ -93,7 +93,7 @@ export type ActionsType = {|
   ...TokenActionTypes,
   ...TransactionActionTypes,
   ...UserActionTypes,
-  ...UserActivitiesActionTypes,
+  ...InboxItemsActionTypes,
   ...UsernameActionTypes,
   ...WalletActionTypes,
 |};

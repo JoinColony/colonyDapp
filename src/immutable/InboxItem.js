@@ -21,11 +21,12 @@ type Shared = {|
   tokenAddress?: string,
   sourceUserAddress?: string,
   targetUserAddress?: string,
+  onClickRoute?: string,
 |};
 
-export type UserActivityType = $ReadOnly<Shared>;
+export type InboxItemType = $ReadOnly<Shared>;
 
-export type UserActivityRecordType = RecordOf<Shared>;
+export type InboxItemRecordType = RecordOf<Shared>;
 
 const defaultValues: $Shape<Shared> = {
   id: undefined,
@@ -42,8 +43,9 @@ const defaultValues: $Shape<Shared> = {
   tokenAddress: undefined,
   sourceUserAddress: undefined,
   targetUserAddress: undefined,
+  onClickRoute: undefined,
 };
 
-const UserActivityRecord: RecordFactory<Shared> = Record(defaultValues);
+const InboxItemRecord: RecordFactory<Shared> = Record(defaultValues);
 
-export default UserActivityRecord;
+export default InboxItemRecord;
