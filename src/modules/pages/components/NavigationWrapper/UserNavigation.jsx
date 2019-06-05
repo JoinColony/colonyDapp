@@ -32,7 +32,7 @@ const MSG = defineMessages({
 const displayName = 'pages.NavigationWrapper.UserNavigation';
 
 const UserNavigation = () => (
-  <nav className={styles.main}>
+  <div className={styles.main}>
     <NavLink
       to={DASHBOARD_ROUTE}
       className={styles.navigationItem}
@@ -64,7 +64,7 @@ const UserNavigation = () => (
       title={MSG.inboxTitle}
     />
     <AvatarDropdown />
-  </nav>
+  </div>
 );
 
 UserNavigation.displayName = displayName;
