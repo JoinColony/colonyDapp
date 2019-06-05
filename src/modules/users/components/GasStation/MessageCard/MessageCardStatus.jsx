@@ -5,6 +5,7 @@ import React from 'react';
 import type { MessageProps } from '~immutable';
 
 import { Tooltip } from '~core/Popover';
+import { SpinnerLoader } from '~core/Preloaders';
 
 import styles from './MessageCardStatus.css';
 
@@ -33,6 +34,16 @@ const MessageCardStatus = ({ status }: Props) => (
          * given time, so the counter will always show 1
          */}
         {status === 'created' && <span className={styles.counter}>1</span>}
+        {status === 'pending' && (
+          <div className={styles.spinner}>
+            <SpinnerLoader
+              appearance={{
+                size: 'small',
+                theme: 'primary',
+              }}
+            />
+          </div>
+        )}
       </div>
     </Tooltip>
   </div>

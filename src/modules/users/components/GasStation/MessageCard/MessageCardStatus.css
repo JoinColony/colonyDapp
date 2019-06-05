@@ -9,3 +9,7 @@
 .counter {
   composes: counter from '../TransactionCard/TransactionStatus.css';
 }
+
+.spinner {
+  composes: spinner from '../TransactionCard/TransactionStatus.css';
+}
