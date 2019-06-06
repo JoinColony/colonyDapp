@@ -31,7 +31,6 @@ import { CONTEXT } from '~context';
 import { USER_EVENT_TYPES } from '~data/constants';
 import { ZERO_ADDRESS } from '~utils/web3/constants';
 import { reduceToLastState } from '~utils/reducers';
-import { getTokenClient } from '~utils/web3/contracts';
 import {
   getEventLogs,
   parseUserTransferEvent,
@@ -174,7 +173,10 @@ export const getUserColonies: Query<
 };
 
 export const getUserTokens: Query<
-  {| metadataStore: ?UserMetadataStore, networkClient: NetworkClient |},
+  {|
+    metadataStore: ?UserMetadataStore,
+    colonyManager: ColonyManager,
+  |},
   {| walletAddress: Address, metadataStoreAddress: string |},
   {| walletAddress: Address |},
   *,
@@ -183,7 +185,7 @@ export const getUserTokens: Query<
   context: [CONTEXT.COLONY_MANAGER, CONTEXT.DDB_INSTANCE, CONTEXT.WALLET],
   async prepare(
     {
-      colonyManager: { networkClient },
+      colonyManager,
       ddb,
     }: {|
       colonyManager: ColonyManager,
@@ -195,19 +197,21 @@ export const getUserTokens: Query<
     let metadataStore = null;
     if (metadataStoreAddress)
       metadataStore = await getUserMetadataStore(ddb)(metadata);
-    return { metadataStore, networkClient };
+    return { metadataStore, colonyManager };
   },
-  async execute({ metadataStore, networkClient }, { walletAddress }) {
+  async execute({ metadataStore, colonyManager }, { walletAddress }) {
     const {
-      adapter: { provider },
-    } = networkClient;
+      networkClient: {
+        adapter: { provider },
+      },
+    } = colonyManager;
 
     // for each address, get balance
     let tokens = [];
     if (metadataStore) {
       tokens = await Promise.all(
         getUserTokenAddresses(metadataStore).map(async address => {
-          const tokenClient = await getTokenClient(address, networkClient);
+          const tokenClient = await colonyManager.getTokenClient(address);
           const { amount } = await tokenClient.getBalanceOf.call({
             sourceAddress: walletAddress,
           });
@@ -285,6 +289,7 @@ export const getUserPermissions: Query<
 };
 
 /**
+ * This query gets all tokens sent from or received to this wallet since a certain block time
  * @todo Use a meaningful value for `blocksBack` when getting past transactions.
  */
 export const getUserColonyTransactions: Query<

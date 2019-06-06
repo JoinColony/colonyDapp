@@ -1,13 +1,15 @@
 /* @flow */
 
 import ColonyNetworkClient from '@colony/colony-js-client';
+import TokenClient from '@colony/colony-js-client/lib/TokenClient';
+import EthersAdapter from '@colony/colony-js-adapter-ethers';
+
 import { isAddress } from 'web3-utils';
-
 import type { Address } from '~types';
-
 import type { AddressOrENSName, ColonyContext } from './types';
 
 import { COLONY_CONTEXT, NETWORK_CONTEXT, TOKEN_CONTEXT } from './constants';
+import tokenABILoader from './tokenABILoader';
 
 import ens from '../../context/ensContext';
 
@@ -61,6 +63,29 @@ export default class ColonyManager {
     return this.clients.get(address) || this.setColonyClient(address);
   }
 
+  /**
+   * Given a token contract address, create a `TokenClient` with the minimal
+   * token ABI loader and return it. The promise will be rejected if
+   * the functions do not exist on the contract.
+   */
+  async getTokenClient(contractAddress: string) {
+    const adapter = new EthersAdapter({
+      // $FlowFixMe The `ContractLoader` type is currently not exported
+      loader: tokenABILoader,
+      provider: this.networkClient.adapter.provider,
+      wallet: this.networkClient.adapter.wallet,
+    });
+
+    const client = new TokenClient({
+      adapter,
+      query: { contractAddress },
+    });
+
+    await client.init();
+
+    return client;
+  }
+
   getNetworkMethod(methodName: string) {
     return Reflect.get(this.networkClient, methodName);
   }
@@ -75,10 +100,12 @@ export default class ColonyManager {
     return Reflect.get(client.tokenClient, methodName);
   }
 
+  /*
+   * @note This typing isn't perfect; it would be better to use something like
+   * `$PropertyType<ColonyNetworkClient, methodName>` but the key needs to
+   * be a string literal.
+   */
   async getMethod<
-    // This typing isn't perfect; it would be better to use something like
-    // $PropertyType<ColonyNetworkClient, methodName, but the key needs to
-    // be a string literal.
     M:
       | ColonyNetworkClient.Caller<*, *, *>
       | ColonyNetworkClient.Sender<*, *, *>
