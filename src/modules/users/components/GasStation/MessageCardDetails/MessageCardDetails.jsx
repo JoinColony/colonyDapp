@@ -45,7 +45,7 @@ const MessageCardDetails = () => (
             />
             <FormattedMessage id="message.generic.description" />
           </div>
-          <MessageCardStatus status="created" />
+          <MessageCardStatus status="succeeded" />
         </div>
         <div className={styles.message}>
           <span className={styles.title}>Message:</span>

@@ -6,8 +6,9 @@ import type { MessageProps } from '~immutable';
 
 import { Tooltip } from '~core/Popover';
 import { SpinnerLoader } from '~core/Preloaders';
+import Icon from '~core/Icon';
 
-import styles from './MessageCardStatus.css';
+import styles from '../TransactionCard/TransactionStatus.css';
 
 type Props = {
   status: $PropertyType<MessageProps, 'status'>,
@@ -43,6 +44,22 @@ const MessageCardStatus = ({ status }: Props) => (
               }}
             />
           </div>
+        )}
+        {status === 'succeeded' && (
+          <span
+            className={styles.completed}
+            data-test="gasStationTransactionSucceeded"
+          >
+            <Icon
+              appearance={{ size: 'tiny' }}
+              name="check-mark"
+              /*
+               * @NOTE We disable the title since we already
+               * have a tooltip around it
+               */
+              title=""
+            />
+          </span>
         )}
       </div>
     </Tooltip>
