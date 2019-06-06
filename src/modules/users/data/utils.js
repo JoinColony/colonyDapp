@@ -1,8 +1,11 @@
 /* @flow */
 
+import type { DDB } from '~lib/database';
+import type { Address } from '~types';
 import type { UserMetadataStore } from '~data/types';
 import { USER_EVENT_TYPES } from '~data/constants';
-import { getUserTokensReducer } from './reducers';
+import { getUserProfileStore, getUserInboxStore } from '~data/stores';
+import { getUserProfileReducer, getUserTokensReducer } from './reducers';
 import {
   NOTIFICATION_EVENT_ADMIN_ADDED,
   NOTIFICATION_EVENT_ADMIN_REMOVED,
@@ -30,4 +33,19 @@ export const transformNotificationEventNames = (eventName: string): string => {
     Transfer: NOTIFICATION_EVENT_USER_TRANSFER,
   };
   return notificationsToEventsMapping[eventName];
+};
+
+export const getUserInboxStoreByProfileAddress = (ddb: DDB) => async ({
+  walletAddress,
+}: {
+  walletAddress: Address,
+}) => {
+  const profileStore = await getUserProfileStore(ddb)({ walletAddress });
+  const { inboxStoreAddress } = profileStore
+    .all()
+    .reduce(getUserProfileReducer);
+  return getUserInboxStore(ddb)({
+    inboxStoreAddress,
+    walletAddress,
+  });
 };

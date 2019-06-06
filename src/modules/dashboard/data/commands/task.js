@@ -328,7 +328,6 @@ export const postComment: Command<
     signature: string,
     content: {|
       id: string,
-      timestamp: number,
       /*
        * The author's address is passed explicitly in the arguments (as opposed
        * to using `event.meta.userAddress`) because it gets signed alongside
@@ -336,9 +335,6 @@ export const postComment: Command<
        */
       author: Address,
       body: string,
-      metadata?: {|
-        mentions: string[],
-      |},
     |},
   |},
   {|

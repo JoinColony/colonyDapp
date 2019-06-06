@@ -1,27 +1,32 @@
 /* @flow */
 
-import type { Address, OrbitDBAddress } from '~types';
+import type { Address } from '~types';
 import type { TaskDraftId } from '~immutable';
 import type {
   Command,
+  ColonyManager,
   DDB,
+  ENSCache,
   UserInboxStore,
   UserMetadataStore,
   UserProfileStore,
 } from '~data/types';
 
 import { CONTEXT } from '~context';
+import { log } from '~utils/debug';
 import { ZERO_ADDRESS } from '~utils/web3/constants';
 import {
   createUserProfileStore,
   getUserProfileStore,
   getUserMetadataStore,
-  getUserInboxStore,
 } from '~data/stores';
 import { createEvent } from '~data/utils';
 import { USER_EVENT_TYPES, USER_PROFILE_EVENT_TYPES } from '~data/constants';
 
-import { getUserTokenAddresses } from './utils';
+import {
+  getUserTokenAddresses,
+  getUserInboxStoreByProfileAddress,
+} from './utils';
 
 import {
   UserUpdateTokensCommandArgsSchema,
@@ -35,13 +40,8 @@ type UserProfileStoreMetadata = {|
   walletAddress: Address,
 |};
 
-type UserInboxStoreMetadata = {|
-  inboxStoreAddress: string | OrbitDBAddress,
-  walletAddress: Address,
-|};
-
 type UserMetadataStoreMetadata = {|
-  metadataStoreAddress: string | OrbitDBAddress,
+  metadataStoreAddress: string,
   walletAddress: Address,
 |};
 
@@ -54,11 +54,6 @@ const prepareMetadataCommand = async (
   { ddb }: {| ddb: DDB |},
   metadata: UserMetadataStoreMetadata,
 ) => getUserMetadataStore(ddb)(metadata);
-
-const prepareInboxStoreCommand = async (
-  { ddb }: { ddb: DDB },
-  metadata: UserInboxStoreMetadata,
-) => getUserInboxStore(ddb)(metadata);
 
 export const createUserProfile: Command<
   {|
@@ -350,24 +345,88 @@ export const unsubscribeToColony: Command<
   },
 };
 
-export const commentMentionNotification: Command<
-  UserInboxStore,
-  UserInboxStoreMetadata,
+export const createCommentMention: Command<
+  UserInboxStore[],
+  {|
+    matchingUsernames: string[],
+    cachedAddresses: {
+      [username: string]: {|
+        walletAddress: Address,
+        inboxStoreAddress: string,
+      |},
+    },
+  |},
   {|
     colonyAddress: Address,
-    comment?: string,
-    event: string,
-    taskTitle?: string,
+    draftId: TaskDraftId,
+    taskTitle: string,
+    comment: string,
+    sourceUsername: string,
+    sourceUserWalletAddress: string,
   |},
-  UserInboxStore,
+  void,
 > = {
   name: 'commentMentionNotification',
-  context: [CONTEXT.DDB_INSTANCE],
-  prepare: prepareInboxStoreCommand,
-  async execute(userInboxStore, args) {
-    await userInboxStore.append(
-      createEvent(USER_EVENT_TYPES.COMMENT_MENTION, args),
+  context: [CONTEXT.DDB_INSTANCE, CONTEXT.ENS_INSTANCE, CONTEXT.COLONY_MANAGER],
+  // $FlowFixMe I don't know why flow thinks that this is a sparse array
+  async prepare(
+    {
+      ddb,
+      ens,
+      colonyManager: { networkClient },
+    }: { ddb: DDB, ens: ENSCache, colonyManager: ColonyManager },
+    {
+      matchingUsernames = [],
+    }: {|
+      matchingUsernames: string[],
+      cachedAddresses: {
+        [username: string]: {|
+          walletAddress: Address,
+          inboxStoreAddress: string,
+        |},
+      },
+    |},
+  ) {
+    if (!matchingUsernames.length) return [];
+
+    const getWalletAddress = async (username: string) => {
+      try {
+        const address = await ens.getAddress(username, networkClient);
+        return address;
+      } catch (caughtError) {
+        log.warn(caughtError);
+        return null;
+      }
+    };
+
+    const getInboxStore = async (walletAddress: Address) => {
+      try {
+        const inboxStore = await getUserInboxStoreByProfileAddress(ddb)({
+          walletAddress,
+        });
+        return inboxStore;
+      } catch (caughtError) {
+        log.warn(caughtError);
+        return null;
+      }
+    };
+
+    const addresses = await Promise.all(
+      matchingUsernames.map(getWalletAddress),
     );
-    return userInboxStore;
+
+    const inboxStores = await Promise.all(
+      addresses.filter(Boolean).map(getInboxStore),
+    );
+
+    return inboxStores.filter(Boolean);
+  },
+  async execute(userInboxStores, args) {
+    if (!(userInboxStores && userInboxStores.length)) return;
+    await Promise.all(
+      userInboxStores.map(inboxStore =>
+        inboxStore.append(createEvent(USER_EVENT_TYPES.COMMENT_MENTION, args)),
+      ),
+    );
   },
 };

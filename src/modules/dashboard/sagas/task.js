@@ -14,16 +14,15 @@ import {
 } from 'redux-saga/effects';
 import { replace } from 'connected-react-router';
 import BigNumber from 'bn.js';
+
 import type { Action } from '~redux';
 import type { Address } from '~types';
 import type { TaskType } from '~immutable';
-
 import { CONTEXT, getContext } from '~context';
 import {
   executeCommand,
   executeQuery,
   putError,
-  putNotification,
   raceError,
   selectAsJS,
   executeSubscription,
@@ -31,8 +30,12 @@ import {
 } from '~utils/saga/effects';
 import { generateUrlFriendlyId } from '~utils/data';
 import { ACTIONS } from '~redux';
-import { NOTIFICATION_EVENT_USER_MENTIONED } from '~users/Inbox/events';
-
+import { matchUsernames } from '~lib/TextDecorator';
+import {
+  usernameSelector,
+  walletAddressSelector,
+  userAddressByMultipleUsernameSelector,
+} from '../../users/selectors';
 import { fetchColonyTaskMetadata as createColonyTaskMetadataFetchAction } from '../actionCreators';
 import {
   allColonyNamesSelector,
@@ -40,10 +43,6 @@ import {
   colonyTaskMetadataSelector,
   taskSelector,
 } from '../selectors';
-import {
-  // currentUserMetadataSelector,
-  walletAddressSelector,
-} from '../../users/selectors';
 import { createTransaction, getTxChannel } from '../../core/sagas';
 import { COLONY_CONTEXT } from '../../core/constants';
 
@@ -64,12 +63,12 @@ import {
   setTaskTitle,
   unassignWorker,
 } from '../data/commands';
-// import { commentMentionNotification } from '../../users/data/commands';
 import {
   getTask,
   subscribeTaskFeedItems,
   subscribeTask,
 } from '../data/queries';
+import { createCommentMention } from '../../users/data/commands';
 
 import { subscribeToTask } from '../../users/actionCreators';
 
@@ -677,56 +676,38 @@ function* taskSubStart({
 }
 
 function* taskCommentAdd({
-  payload: { colonyAddress, draftId, commentData, taskTitle },
+  payload: { author, colonyAddress, comment, draftId, taskTitle },
   meta,
 }: Action<typeof ACTIONS.TASK_COMMENT_ADD>): Saga<void> {
   try {
-    // const { inboxStoreAddress } = yield select(currentUserMetadataSelector);
     const walletAddress = yield select(walletAddressSelector);
+    const currentUsername = yield select(usernameSelector, walletAddress);
     const wallet = yield* getContext(CONTEXT.WALLET);
     /*
      * @todo Wire message signing to the Gas Station, once it's available
      */
     const signature = yield call([wallet, wallet.signMessage], {
-      message: JSON.stringify(commentData),
+      message: JSON.stringify({ comment, author }),
     });
+
+    const matches = (matchUsernames(comment) || []).filter(
+      username => username !== currentUsername,
+    );
 
     const { event } = yield* executeCommand(postComment, {
       args: {
         signature,
         content: {
           id: nanoid(),
-          author: walletAddress,
-          ...commentData,
+          author: wallet.address,
+          body: comment,
         },
       },
-      metadata: { colonyAddress, draftId },
+      metadata: {
+        colonyAddress,
+        draftId,
+      },
     });
-
-    /*
-     * @todo Filter out mentioned users.
-     * @body We need to filter out mentioned users from `commentData`.
-     * In the old beta we used to use `linkify-it` to achieve that
-     *
-     * See: https://github.com/JoinColony/colonyDapp/issues/1011 for the
-     * implementation details regarding this
-     *
-     * Also, this should be iterated through each mentioned user, and add
-     * a notification event to each one's store
-     */
-    /*
-     * @todo Re-enable commentMentionNotification
-     * @body This is currently causing the command to stall.
-     */
-    // yield* executeCommand(commentMentionNotification, {
-    //   args: {
-    //     colonyAddress,
-    //     event: 'notificationUserMentioned',
-    //     taskTitle,
-    //     comment: commentData.body,
-    //   },
-    //   metadata: { walletAddress, inboxStoreAddress },
-    // });
 
     yield put<Action<typeof ACTIONS.TASK_COMMENT_ADD_SUCCESS>>({
       type: ACTIONS.TASK_COMMENT_ADD_SUCCESS,
@@ -738,17 +719,23 @@ function* taskCommentAdd({
       meta,
     });
 
-    /*
-     * @NOTE This is assuming we have a notification for the current user
-     * So this should actually be gated behind a conditional
-     * (once the mentions are all wired up)
-     */
-    yield putNotification({
-      comment: commentData.body,
-      event: NOTIFICATION_EVENT_USER_MENTIONED,
-      sourceUserAddress: walletAddress,
-      taskTitle,
-    });
+    if (matches && matches.length) {
+      const cachedAddresses = yield select(
+        userAddressByMultipleUsernameSelector,
+        matches,
+      );
+      yield* executeCommand(createCommentMention, {
+        args: {
+          colonyAddress,
+          draftId,
+          taskTitle,
+          comment,
+          sourceUsername: currentUsername,
+          sourceUserWalletAddress: walletAddress,
+        },
+        metadata: { matchingUsernames: matches, cachedAddresses },
+      });
+    }
   } catch (error) {
     yield putError(ACTIONS.TASK_COMMENT_ADD_ERROR, error, meta);
   }
