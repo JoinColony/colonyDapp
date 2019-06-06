@@ -22,7 +22,7 @@ const MessageCard = () => (
           />
           <FormattedMessage id="message.generic.description" />
         </div>
-        <MessageCardStatus status="succeeded" />
+        <MessageCardStatus status="created" />
       </div>
     </button>
   </Card>

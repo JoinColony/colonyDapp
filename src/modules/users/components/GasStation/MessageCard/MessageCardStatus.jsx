@@ -61,6 +61,7 @@ const MessageCardStatus = ({ status }: Props) => (
             />
           </span>
         )}
+        {status === 'failed' && <span className={styles.failed}>!</span>}
       </div>
     </Tooltip>
   </div>
