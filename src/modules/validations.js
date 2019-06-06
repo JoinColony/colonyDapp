@@ -134,6 +134,14 @@ function includes(searchVal, msg) {
   });
 }
 
+// eslint-disable-next-line import/prefer-default-export, $FlowFixMe (polymorphic type)
+export class BigNumberSchemaType extends yup.object {
+  _typeCheck(value: any) {
+    // eslint-disable-next-line no-underscore-dangle
+    return super._typeCheck(value) || BigNumber.isBN(value);
+  }
+}
+
 yup.addMethod(yup.mixed, 'equalTo', equalTo);
 yup.addMethod(yup.mixed, 'lessThanPot', lessThanPot);
 yup.addMethod(yup.string, 'address', address);
