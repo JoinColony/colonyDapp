@@ -308,7 +308,7 @@ class DDB {
       /**
        * @todo : is there a case where this could not be the default? This be a constant, or configurable? and `colonyOrbitDB`?
        */
-      path: 'colonyOrbitdb',
+      directory: 'colonyOrbitdb',
     });
   }
 

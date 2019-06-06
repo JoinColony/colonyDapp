@@ -6,7 +6,6 @@ import {
   all,
   call,
   fork,
-  getContext,
   put,
   setContext,
 } from 'redux-saga/effects';
@@ -16,7 +15,7 @@ import type { Action } from '~redux';
 import type ColonyManagerType from '../../../lib/ColonyManager';
 import type { DDB as DDBType } from '../../../lib/database';
 
-import { CONTEXT } from '~context';
+import { CONTEXT, getContext } from '~context';
 import { ACTIONS } from '~redux';
 import { executeQuery, putError } from '~utils/saga/effects';
 import { log } from '~utils/debug';
@@ -99,9 +98,16 @@ export default function* setupUserContext(
       [CONTEXT.DDB_INSTANCE]: ddb,
     });
 
+    const colonyData = yield* getContext(CONTEXT.COLONY_DATA);
+    yield call([colonyData, colonyData.setContext], {
+      colonyManager,
+      ddb,
+      wallet,
+    });
+
     yield call(getGasPrices);
 
-    const ens = yield getContext(CONTEXT.ENS_INSTANCE);
+    const ens = yield* getContext(CONTEXT.ENS_INSTANCE);
     yield call(setupDDBResolver, colonyManager, ddb, ens);
 
     let profileData = {};

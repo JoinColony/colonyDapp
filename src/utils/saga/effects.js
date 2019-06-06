@@ -111,7 +111,7 @@ const validateDataSpec = <D, M, A, R>(
  * Given a data specification (Command/Query/Subscription)
  * and metadata, validate it and get the dependencies to execute it.
  */
-function* getExecuteDependencies<D, M, A, R>(
+export function* getExecuteDependencies<D, M, A, R>(
   spec: Command<D, M, A, R> | Query<D, M, A, R> | Subscription<D, M, A, R>,
   metadata: M,
 ): Saga<*> {
@@ -152,44 +152,6 @@ export function* executeQuery<D, M, A, R>(
 
   log.verbose(`Executed query "${query.name}"`, result);
   return result;
-}
-
-export function* executeSubscription<D, M, A, R>(
-  subscription: Subscription<D, M, A, R>,
-  {
-    args,
-    metadata,
-  }: {
-    args?: A,
-    metadata: M,
-  },
-): Saga<EventChannel<R | typeof END>> {
-  log.verbose(`Starting subscription "${subscription.name}"`, {
-    args,
-    metadata,
-  });
-
-  const executeDeps = yield call(getExecuteDependencies, subscription, {
-    // The metadata object is cloned to satisfy flow.
-    ...metadata,
-  });
-
-  return eventChannel(emitter => {
-    let subs = [];
-    try {
-      subs = subscription.execute(executeDeps, args, emitter);
-    } catch (caughtError) {
-      emitter(END);
-      throw caughtError;
-    }
-    return () => {
-      log.verbose(`Stopping subscription "${subscription.name}"`, {
-        args,
-        metadata,
-      });
-      subs.forEach(({ stop }) => stop());
-    };
-  }, buffers.expanding());
 }
 
 export function* executeCommand<D, M, A, R>(

@@ -206,6 +206,7 @@
         "request": "^2.87.0",
         "request-promise": "^4.2.2",
         "reselect": "^4.0.0",
+        "rxjs": "^6.5.2",
         "scroll-into-view-if-needed": "^2.2.16",
         "sugar-core": "^2.0.4",
         "sugar-date": "^2.0.4",

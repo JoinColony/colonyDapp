@@ -1,6 +1,7 @@
 /* @flow */
+/* eslint-disable no-underscore-dangle */
 
-import debounce from 'lodash/debounce';
+import { BehaviorSubject } from 'rxjs';
 
 import Store from './Store';
 
@@ -35,6 +36,31 @@ class EventStore extends Store {
   // https://github.com/babel/babel/issues/8417#issuecomment-415508558
   +_orbitStore: OrbitDBEventStore = this._orbitStore;
 
+  _observable: ?BehaviorSubject<Event<*>[]>;
+
+  get observable() {
+    if (this._observable) {
+      return this._observable;
+    }
+
+    this._observable = new BehaviorSubject<Event<*>[]>(this.all());
+
+    const next = () => this._observable.next(this.all());
+
+    // This isn't the most efficient way of getting the next value;
+    // we're sacrificing performance for reliability.
+    this._orbitStore.events.on('replicated', next);
+    this._orbitStore.events.on('write', next);
+
+    // Overload the store's close method to unsubscribe the observable.
+    this._orbitStore.close = async () => {
+      this._observable.unsubscribe();
+      return this._orbitStore.close();
+    };
+
+    return this._observable;
+  }
+
   /*
    @NOTE: for initialization purposes. The convention we're creating is that
    from within "infrastructure" layer we can only initialize. "service" layer
@@ -63,56 +89,7 @@ class EventStore extends Store {
     return this._orbitStore
       .iterator(options)
       .collect()
-      .map(entry => this.constructor.decorateEntry(entry));
-  }
-
-  /*
-   * Given a callback for handling events, and optional options,
-   * create a subscription that calls the callback with all
-   * unique events, and provide a means to stop the subscription.
-   */
-  subscribe(
-    callback: (event: Event<*>) => void,
-    { filter }: {| filter?: (event: Event<*>) => boolean |} = {},
-  ): {| stop: () => void |} {
-    // This naïve state is used over Orbit querying (e.g. with `gt`) because
-    // events earlier than the local heads may come in with `replicated` events
-    const taken = new Set<$PropertyType<Entry, 'hash'>>();
-
-    const takeEntry = (entry: Entry) => {
-      taken.add(entry.hash);
-      const event = this.constructor.decorateEntry(entry);
-      if (!filter || filter(event)) {
-        callback(event);
-      }
-    };
-
-    const takeEntries = () =>
-      this._orbitStore
-        .iterator({ limit: -1 })
-        .collect()
-        .filter(({ hash }) => !taken.has(hash))
-        .forEach(takeEntry);
-
-    const onReplicated = debounce(takeEntries, 1000);
-    const onWrite = (address: string, entry: Entry) =>
-      taken.has(entry.hash) || takeEntry(entry);
-
-    this._orbitStore.events.on('replicated', onReplicated);
-    this._orbitStore.events.on('write', onWrite);
-
-    // Take all entries when the sub starts; this has the same effect as
-    // receiving the first `replicated` event (but that might not
-    // happen immediately).
-    takeEntries();
-
-    return {
-      // The consumer is expected to stop the event listeners.
-      stop: () => {
-        this._orbitStore.events.removeListener('replicated', onReplicated);
-        this._orbitStore.events.removeListener('write', onWrite);
-      },
-    };
+      .map(this.constructor.decorateEntry);
   }
 }
 

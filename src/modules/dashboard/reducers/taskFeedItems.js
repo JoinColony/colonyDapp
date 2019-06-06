@@ -126,9 +126,12 @@ const taskFeedItemsReducer: ReducerType<
       return updateStateForSubscription(state, draftId);
     }
 
-    case ACTIONS.TASK_FEED_ITEMS_SUB_EVENT: {
-      const { draftId, event } = action.payload;
-      return updateStateForEvent(state, draftId, event);
+    case ACTIONS.TASK_FEED_ITEMS_SUB_EVENTS: {
+      const { draftId, events } = action.payload;
+      return state.setIn(
+        [draftId, 'record'],
+        List(events.map(createTaskFeedItemRecord)),
+      );
     }
 
     /*

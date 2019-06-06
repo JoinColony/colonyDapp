@@ -130,6 +130,7 @@ const tasksReducer: ReducerType<
     TASK_SET_PAYOUT_SUCCESS: *,
     TASK_SET_SKILL_SUCCESS: *,
     TASK_SET_TITLE_SUCCESS: *,
+    TASK_SUB_EVENTS: *,
     TASK_WORKER_ASSIGN_SUCCESS: *,
     TASK_WORKER_UNASSIGN_SUCCESS: *,
   |},
@@ -174,17 +175,11 @@ const tasksReducer: ReducerType<
       );
     }
 
-    case ACTIONS.TASK_SUB_EVENT: {
-      const { draftId, event } = action.payload;
-      const path = [draftId, 'record'];
-      const nextState = state.getIn(path)
-        ? state
-        : // $FlowFixMe just flow being silly
-          state.set(draftId, DataRecord({ record: TaskRecord() }));
-      // $FlowFixMe just flow being silly
-      return nextState.updateIn(
-        path,
-        task => task && taskEventReducer(task, event),
+    case ACTIONS.TASK_SUB_EVENTS: {
+      const { draftId, events } = action.payload;
+      return state.setIn(
+        [draftId, 'record'],
+        events.reduce(taskEventReducer, TaskRecord()),
       );
     }
 

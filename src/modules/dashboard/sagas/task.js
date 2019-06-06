@@ -8,7 +8,6 @@ import {
   fork,
   put,
   select,
-  take,
   takeEvery,
   takeLeading,
 } from 'redux-saga/effects';
@@ -21,13 +20,12 @@ import type { TaskType } from '~immutable';
 import { CONTEXT, getContext } from '~context';
 import {
   executeCommand,
-  executeQuery,
   putError,
   raceError,
   selectAsJS,
-  executeSubscription,
   takeFrom,
 } from '~utils/saga/effects';
+import { takeSubscription } from '~utils/saga/subscriptions';
 import { generateUrlFriendlyId } from '~utils/data';
 import { ACTIONS } from '~redux';
 import { matchUsernames } from '~lib/TextDecorator';
@@ -63,11 +61,6 @@ import {
   setTaskTitle,
   unassignWorker,
 } from '../data/commands';
-import {
-  getTask,
-  subscribeTaskFeedItems,
-  subscribeTask,
-} from '../data/queries';
 import { createCommentMention } from '../../users/data/commands';
 
 import { subscribeToTask } from '../../users/actionCreators';
@@ -206,8 +199,10 @@ function* taskFetch({
   payload: { colonyAddress, draftId },
 }: Action<typeof ACTIONS.TASK_FETCH>): Saga<void> {
   try {
-    const taskData = yield* executeQuery(getTask, {
+    const colonyData = yield* getContext(CONTEXT.COLONY_DATA);
+    const taskData = yield call([colonyData.queries, 'getTask'], {
       metadata: { colonyAddress, draftId },
+      args: {},
     });
     yield put<Action<typeof ACTIONS.TASK_FETCH_SUCCESS>>({
       type: ACTIONS.TASK_FETCH_SUCCESS,
@@ -644,89 +639,6 @@ function* taskSetWorkerAndPayouts({
   }
 }
 
-function* taskFeedItemsSubStart({
-  payload: { colonyAddress, draftId },
-  meta,
-}: *): Saga<void> {
-  let channel;
-  try {
-    channel = yield call(executeSubscription, subscribeTaskFeedItems, {
-      metadata: { colonyAddress, draftId },
-    });
-
-    yield fork(function* stopSubscription() {
-      yield take(
-        action =>
-          action.type === ACTIONS.TASK_FEED_ITEMS_SUB_STOP &&
-          action.payload.draftId === draftId,
-      );
-      channel.close();
-    });
-
-    while (true) {
-      const event = yield take(channel);
-      yield put({
-        type: ACTIONS.TASK_FEED_ITEMS_SUB_EVENT,
-        meta,
-        payload: {
-          colonyAddress,
-          draftId,
-          event,
-        },
-      });
-    }
-  } catch (caughtError) {
-    yield putError(ACTIONS.TASK_FEED_ITEMS_SUB_ERROR, caughtError, meta);
-  } finally {
-    if (channel && typeof channel.close == 'function') {
-      channel.close();
-    }
-  }
-}
-
-function* taskSubStart({
-  payload: { colonyAddress, draftId },
-  meta,
-}: *): Saga<void> {
-  // This could be generalised (it's very similar to the above function),
-  // but it's probably worth waiting to see, as this pattern will likely change
-  // as it gets used elsewhere.
-  let channel;
-  try {
-    channel = yield call(executeSubscription, subscribeTask, {
-      metadata: { colonyAddress, draftId },
-    });
-
-    yield fork(function* stopSubscription() {
-      yield take(
-        action =>
-          action.type === ACTIONS.TASK_SUB_STOP &&
-          action.payload.draftId === draftId,
-      );
-      channel.close();
-    });
-
-    while (true) {
-      const event = yield take(channel);
-      yield put({
-        type: ACTIONS.TASK_SUB_EVENT,
-        meta,
-        payload: {
-          colonyAddress,
-          draftId,
-          event,
-        },
-      });
-    }
-  } catch (caughtError) {
-    yield putError(ACTIONS.TASK_SUB_ERROR, caughtError, meta);
-  } finally {
-    if (channel && typeof channel.close == 'function') {
-      channel.close();
-    }
-  }
-}
-
 function* taskCommentAdd({
   payload: { author, colonyAddress, comment, draftId, taskTitle },
   meta,
@@ -798,7 +710,6 @@ export default function* tasksSagas(): any {
   yield takeEvery(ACTIONS.TASK_CLOSE, taskClose);
   yield takeEvery(ACTIONS.TASK_COMMENT_ADD, taskCommentAdd);
   yield takeEvery(ACTIONS.TASK_CREATE, taskCreate);
-  yield takeEvery(ACTIONS.TASK_FEED_ITEMS_SUB_START, taskFeedItemsSubStart);
   yield takeEvery(ACTIONS.TASK_FETCH, taskFetch);
   yield takeEvery(ACTIONS.TASK_FINALIZE, taskFinalize);
   yield takeEvery(ACTIONS.TASK_SEND_WORK_INVITE, taskSendWorkInvite);
@@ -809,9 +720,33 @@ export default function* tasksSagas(): any {
   yield takeEvery(ACTIONS.TASK_SET_PAYOUT, taskSetPayout);
   yield takeEvery(ACTIONS.TASK_SET_SKILL, taskSetSkill);
   yield takeEvery(ACTIONS.TASK_SET_TITLE, taskSetTitle);
-  yield takeEvery(ACTIONS.TASK_SUB_START, taskSubStart);
   yield takeEvery(ACTIONS.TASK_SET_WORKER_AND_PAYOUTS, taskSetWorkerAndPayouts);
   yield takeEvery(ACTIONS.TASK_WORKER_ASSIGN, taskWorkerAssign);
   yield takeEvery(ACTIONS.TASK_WORKER_UNASSIGN, taskWorkerUnassign);
   yield takeLeading(ACTIONS.TASK_FETCH_ALL, taskFetchAll);
+  yield takeSubscription(
+    {
+      error: ACTIONS.TASK_SUB_ERROR,
+      events: ACTIONS.TASK_SUB_EVENTS,
+      start: ACTIONS.TASK_SUB_START,
+      stop: ACTIONS.TASK_SUB_STOP,
+    },
+    'getTask',
+    ({ payload }) => ({
+      metadata: payload,
+    }),
+  );
+  yield takeSubscription(
+    {
+      error: ACTIONS.TASK_FEED_ITEMS_SUB_ERROR,
+      events: ACTIONS.TASK_FEED_ITEMS_SUB_EVENTS,
+      start: ACTIONS.TASK_FEED_ITEMS_SUB_START,
+      stop: ACTIONS.TASK_FEED_ITEMS_SUB_STOP,
+    },
+    'getTask',
+    ({ payload }) => ({
+      metadata: payload,
+      args: { comments: true },
+    }),
+  );
 }
