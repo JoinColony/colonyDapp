@@ -3,12 +3,17 @@
 import React from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 
+/*
+ * @TODO Remove blank data after wiring in the Redux state
+ */
+import { MessageRecord } from '~immutable';
+
 import Icon from '~core/Icon';
 import CardList from '~core/CardList';
 import Heading from '~core/Heading';
 import Card from '~core/Card';
-import Button from '~core/Button';
 import { MessageCardStatus } from '../MessageCard';
+import MessageCardControls from './MessageCardControls';
 
 import styles from './MessageCardDetails.css';
 
@@ -64,9 +69,7 @@ const MessageCardDetails = () => (
     {/*
      * @TODO This will need to be extracted in it's own Sub-Component
      */}
-    <div className={styles.controls}>
-      <Button text={{ id: 'button.confirm' }} type="submit" />
-    </div>
+    <MessageCardControls message={MessageRecord()} />
   </div>
 );
 
