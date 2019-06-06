@@ -89,7 +89,11 @@ const config = {
       {
         test: /\.(woff|woff2|png|jpg|gif)$/,
         use: 'file-loader',
+        include: [path.resolve('node_modules', 'eth-contract-metadata', 'images'), path.resolve('src')],
       },
+      /*
+       * To load company logo and token icons to import
+       */
       {
         test: /\.svg$/,
         exclude: path.resolve(__dirname, 'src', 'img', 'icons'),
@@ -98,10 +102,11 @@ const config = {
       /*
        * We are only parsing images inside `src/client/img/icons`. Doing so allows us to bundle the commonly-used icons.
        * This loader also runs the images through a svg optimizer. See: https://github.com/svg/svgo#what-it-can-do
+       * To use with Icon component
        */
       {
         test: /\.svg$/,
-        include: path.resolve(__dirname, 'src', 'img', 'icons'),
+        include: [path.resolve(__dirname, 'src', 'img', 'icons'), path.resolve('node_modules', 'eth-contract-metadata', 'images')],
         use: [
           {
             loader: 'svg-sprite-loader',
