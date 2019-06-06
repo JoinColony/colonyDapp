@@ -102,7 +102,7 @@ const taskEventReducer = (task: TaskRecordType, event: *) => {
       return task.update('payouts', payouts =>
         payouts.push(
           TaskPayoutRecord({
-            amount: parseInt(amount, 10),
+            amount,
             token: TokenRecord({ address: createAddress(token) }),
           }),
         ),

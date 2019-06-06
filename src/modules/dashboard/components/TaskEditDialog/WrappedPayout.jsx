@@ -1,5 +1,7 @@
 /* @flow */
 
+import type BigNumber from 'bn.js';
+
 // $FlowFixMe until hooks flow types
 import React, { useCallback, useMemo } from 'react';
 
@@ -17,7 +19,7 @@ type Props = {|
   canRemove: boolean,
   index: number,
   arrayHelpers: *,
-  payout: { amount: string, token: string },
+  payout: { amount: BigNumber, token: string },
   reputation: number,
   tokenOptions: Array<{ value: number, label: string }>,
   tokenReferences: Array<TokenReferenceType>,

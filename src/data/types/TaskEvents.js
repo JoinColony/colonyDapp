@@ -1,5 +1,7 @@
 /* @flow */
 
+import type BigNumber from 'bn.js';
+
 import { TASK_EVENT_TYPES, TASK_STATUS } from '../constants';
 
 import type { EventDefinition } from './events';
@@ -57,7 +59,7 @@ export type TaskEvents = {|
   PAYOUT_SET: EventDefinition<
     typeof PAYOUT_SET,
     {|
-      amount: string,
+      amount: BigNumber,
       token: string,
     |},
   >,

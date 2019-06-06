@@ -1,5 +1,6 @@
 /* eslint-disable max-len */
 /* @flow */
+import type BigNumber from 'bn.js';
 
 import type { TaskType, TaskProps } from '~immutable';
 import type { $Required, Address } from '~types';
@@ -270,7 +271,7 @@ export type TaskActionTypes = {|
   >,
   TASK_SET_PAYOUT: TaskActionType<
     typeof ACTIONS.TASK_SET_PAYOUT,
-    {| token: string, amount: string |},
+    {| token: string, amount: BigNumber |},
   >,
   TASK_SET_PAYOUT_ERROR: TaskErrorActionType<
     typeof ACTIONS.TASK_SET_PAYOUT_ERROR,
@@ -311,7 +312,7 @@ export type TaskActionTypes = {|
   TASK_SET_WORKER_AND_PAYOUTS: TaskActionType<
     typeof ACTIONS.TASK_SET_WORKER_AND_PAYOUTS,
     {|
-      payouts?: Array<{| token: string, amount: string |}>,
+      payouts?: Array<{| token: string, amount: BigNumber |}>,
       workerAddress: Address,
     |},
   >,
@@ -321,7 +322,7 @@ export type TaskActionTypes = {|
   TASK_SET_WORKER_AND_PAYOUTS_SUCCESS: TaskActionType<
     typeof ACTIONS.TASK_SET_WORKER_AND_PAYOUTS_SUCCESS,
     {|
-      payouts?: Array<{| amount: string, token: string |}>,
+      payouts?: Array<{| amount: BigNumber, token: string |}>,
       workerAddress: Address,
     |},
   >,

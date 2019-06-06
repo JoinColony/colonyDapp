@@ -1,5 +1,7 @@
 /* @flow */
 
+import type BigNumber from 'bn.js';
+
 import type { Address } from '~types';
 import type { TaskDraftId } from '~immutable';
 import type {
@@ -358,7 +360,7 @@ export const setTaskPayout: Command<
   TaskStore,
   TaskStoreMetadata,
   {|
-    amount: string,
+    amount: BigNumber,
     token: string,
   |},
   {|

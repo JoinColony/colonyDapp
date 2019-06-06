@@ -620,7 +620,7 @@ function* taskSetWorkerAndPayouts({
             payload: {
               colonyAddress,
               draftId,
-              amount: amount.toString(),
+              amount,
               token,
             },
             type: ACTIONS.TASK_SET_PAYOUT,
