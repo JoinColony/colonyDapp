@@ -1,6 +1,7 @@
 /* @flow */
 
 import React from 'react';
+import { defineMessages, FormattedMessage } from 'react-intl';
 
 import type { MessageProps } from '~immutable';
 
@@ -9,6 +10,19 @@ import { SpinnerLoader } from '~core/Preloaders';
 import Icon from '~core/Icon';
 
 import styles from '../TransactionCard/TransactionStatus.css';
+
+const MSG = defineMessages({
+  messageState: {
+    id: 'users.GasStation.MessageCard.MessageCardStatus.messageState',
+    defaultMessage: `{status, select,
+      created {The message is ready to be signed}
+      pending {The message is being signed}
+      succeeded {The message was signed successfully}
+      failed {Failed to sign the message}
+      other {Can't report any status}
+    }`,
+  },
+});
 
 type Props = {
   status: $PropertyType<MessageProps, 'status'>,
@@ -23,7 +37,11 @@ const MessageCardStatus = ({ status }: Props) => (
       /* Because it's in an overflow window */
       popperProps={{ positionFixed: true }}
       showArrow
-      content={<span className={styles.tooltip}>Generic Message</span>}
+      content={
+        <span className={styles.tooltip}>
+          <FormattedMessage {...MSG.messageState} values={{ status }} />
+        </span>
+      }
     >
       {/*
        * @NOTE The tooltip content needs to be wrapped inside a block
