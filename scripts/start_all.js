@@ -69,7 +69,7 @@ addProcess('ipfsd', () =>
       ipfsdProcess.stderr.pipe(process.stderr);
     }
     ipfsdProcess.on('error', e => {
-      webpackProcess.kill();
+      ipfsdProcess.kill();
       reject(e);
     });
   })
