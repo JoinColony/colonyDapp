@@ -1,22 +1,25 @@
 /* @flow */
 
+import type { FormikProps } from 'formik';
+
 import React from 'react';
 import { defineMessages } from 'react-intl';
+import * as yup from 'yup';
 
 import type { InProps } from './MessageCardControls';
 
 import Button from '~core/Button';
 import Alert from '~core/Alert';
+import { ActionForm } from '~core/Fields';
+import { ACTIONS } from '~redux';
 
 import styles from './MessageCardControls.css';
 
-const displayName = 'users.GasStation.MessageCardDetails.MessageCardControls';
+const displayName = 'users.GasStation.MessageCardControls';
 
 const MSG = defineMessages({
   walletPromptText: {
-    id:
-      // eslint-disable-next-line max-len
-      'users.GasStation.MessageCardDetails.MessageCardControls.walletPromptText',
+    id: 'users.GasStation.MessageCardControls.walletPromptText',
     defaultMessage: `Please finish the transaction on {walletType, select,
       metamask {Metamask}
       hardware {your hardware wallet}
@@ -28,9 +31,35 @@ type Props = {|
   walletNeedsAction?: 'metamask' | 'hardware',
 |} & InProps;
 
-const MessageCardControls = ({ walletNeedsAction }: Props) => (
+type FormValues = {|
+  id: string,
+|};
+
+const validationSchema = yup.object().shape({
+  id: yup.string(),
+});
+
+const MessageCardControls = ({ walletNeedsAction, message: { id } }: Props) => (
   <div className={styles.main}>
-    <Button text={{ id: 'button.confirm' }} type="submit" />
+    <ActionForm
+      submit={ACTIONS.MESSAGE_SIGN}
+      success={ACTIONS.MESSAGE_SIGNED}
+      error={ACTIONS.MESSAGE_ERROR}
+      validationSchema={validationSchema}
+      initialValues={{ id }}
+      transform={(action: *) => ({
+        ...action,
+        meta: { id },
+      })}
+    >
+      {({ isSubmitting }: FormikProps<FormValues>) => (
+        <Button
+          text={{ id: 'button.confirm' }}
+          type="submit"
+          loading={isSubmitting}
+        />
+      )}
+    </ActionForm>
     {walletNeedsAction && (
       <div className={styles.alert}>
         <Alert
