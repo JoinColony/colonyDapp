@@ -1,6 +1,7 @@
 /* @flow */
 
 import type { ActionTypeWithPayload } from '~redux';
+import type { ErrorActionType } from '../index';
 
 import { ACTIONS } from '../../index';
 
@@ -17,4 +18,5 @@ export type MessageActionTypes = {|
     typeof ACTIONS.MESSAGE_SIGNED,
     {| id: string, message: string, signature: string |},
   >,
+  MESSAGE_ERROR: ErrorActionType<typeof ACTIONS.MESSAGE_ERROR, void>,
 |};
