@@ -745,7 +745,7 @@ function* taskCommentAdd({
       type: ACTIONS.MESSAGE_CREATED,
       payload: {
         id: messageId,
-        for: 'taskComment',
+        purpose: 'taskComment',
         message,
       },
     });

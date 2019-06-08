@@ -12,7 +12,7 @@ export type MessageProps = {
    * Why is the message signature required, so we can attach a message
    * descriptor id to it and show a prettier name
    */
-  for: string,
+  purpose: string,
   message: string,
   signature?: string,
   status: 'created' | 'pending' | 'failed' | 'succeeded',
@@ -21,7 +21,7 @@ export type MessageProps = {
 const defaultValues: $Shape<MessageProps> = {
   id: `${nanoid(10)}-signMessage`,
   createdAt: new Date(),
-  for: 'generic',
+  purpose: 'generic',
   message: undefined,
   signature: undefined,
   status: 'created',
