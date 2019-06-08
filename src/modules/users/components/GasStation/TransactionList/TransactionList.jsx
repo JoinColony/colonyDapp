@@ -2,6 +2,11 @@
 
 import React from 'react';
 
+/*
+ * @TODO Remove blank data after wiring in the Redux state
+ */
+import { MessageRecord } from '~immutable';
+
 import CardList from '~core/CardList';
 
 import TransactionCard from '../TransactionCard';
@@ -31,8 +36,8 @@ const TransactionList = ({ onClickGroup, transactionGroups }: Props) => (
         />
       ),
     )}
-    <MessageCard />
-    <MessageCardDetails />
+    <MessageCard message={MessageRecord()} />
+    <MessageCardDetails message={MessageRecord()} />
   </CardList>
 );
 

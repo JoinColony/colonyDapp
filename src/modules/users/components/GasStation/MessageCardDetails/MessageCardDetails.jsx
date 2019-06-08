@@ -3,10 +3,7 @@
 import React from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 
-/*
- * @TODO Remove blank data after wiring in the Redux state
- */
-import { MessageRecord } from '~immutable';
+import type { MessageProps } from '~immutable';
 
 import Icon from '~core/Icon';
 import CardList from '~core/CardList';
@@ -17,6 +14,8 @@ import MessageCardControls from './MessageCardControls';
 
 import styles from './MessageCardDetails.css';
 
+const displayName = 'users.GasStation.MessageCardDetails';
+
 const MSG = defineMessages({
   returnToSummary: {
     id: 'users.GasStation.MessageCardDetails.returnToSummary',
@@ -24,9 +23,14 @@ const MSG = defineMessages({
   },
 });
 
-const displayName = 'users.GasStation.MessageCardDetails';
+type Props = {|
+  message: $ReadOnly<MessageProps>,
+|};
 
-const MessageCardDetails = () => (
+const MessageCardDetails = ({
+  message: { status, purpose },
+  message,
+}: Props) => (
   <div className={styles.main}>
     {/*
      * @TODO This might be worth extracting away now that both the transactions
@@ -48,7 +52,7 @@ const MessageCardDetails = () => (
               appearance={{ theme: 'dark', size: 'normal', margin: 'none' }}
               text={{ id: 'message.generic.title' }}
             />
-            <FormattedMessage id="message.generic.description" />
+            <FormattedMessage id={`message.${purpose}.description`} />
           </div>
           <MessageCardStatus status="created" />
         </div>
@@ -66,10 +70,9 @@ const MessageCardDetails = () => (
         </div>
       </Card>
     </CardList>
-    {/*
-     * @TODO This will need to be extracted in it's own Sub-Component
-     */}
-    <MessageCardControls message={MessageRecord()} />
+    {(status === 'created' || status === 'pending') && (
+      <MessageCardControls message={message} />
+    )}
   </div>
 );
 

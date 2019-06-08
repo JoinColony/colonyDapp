@@ -3,6 +3,8 @@
 import React from 'react';
 import { FormattedMessage } from 'react-intl';
 
+import type { MessageProps } from '~immutable';
+
 import Heading from '~core/Heading';
 import Card from '~core/Card';
 import MessageCardStatus from './MessageCardStatus.jsx';
@@ -11,7 +13,11 @@ import styles from './MessageCard.css';
 
 const displayName = 'users.GasStation.MessageCard';
 
-const MessageCard = () => (
+type Props = {|
+  message: $ReadOnly<MessageProps>,
+|};
+
+const MessageCard = ({ message: { status, purpose } }: Props) => (
   <Card className={styles.main}>
     <button type="button" className={styles.button}>
       <div className={styles.summary}>
@@ -20,9 +26,9 @@ const MessageCard = () => (
             appearance={{ theme: 'dark', size: 'normal', margin: 'none' }}
             text={{ id: 'message.generic.title' }}
           />
-          <FormattedMessage id="message.generic.description" />
+          <FormattedMessage id={`message.${purpose}.description`} />
         </div>
-        <MessageCardStatus status="created" />
+        <MessageCardStatus status={status} />
       </div>
     </button>
   </Card>
