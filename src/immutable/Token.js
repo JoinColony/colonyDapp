@@ -13,6 +13,7 @@ import type { Address } from '~types';
 type Shared = {|
   address: Address,
   decimals?: number,
+  isVerified?: boolean,
   name: string,
   symbol: string,
 |};
@@ -24,6 +25,7 @@ export type TokenRecordType = RecordOf<Shared>;
 const defaultValues: $Shape<Shared> = {
   address: undefined,
   decimals: undefined,
+  isVerified: false,
   name: undefined,
   symbol: undefined,
 };

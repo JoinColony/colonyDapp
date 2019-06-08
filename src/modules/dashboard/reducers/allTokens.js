@@ -16,8 +16,9 @@ const INITIAL_STATE = ImmutableMap([
     DataRecord({
       record: TokenRecord({
         address: ZERO_ADDRESS,
-        symbol: 'ETH',
+        isVerified: true,
         name: 'Ether',
+        symbol: 'ETH',
       }),
     }),
   ],
@@ -31,7 +32,14 @@ const tokensReducer: ReducerType<
 > = (state = INITIAL_STATE, action) => {
   switch (action.type) {
     case ACTIONS.TOKEN_INFO_FETCH_SUCCESS: {
-      const { name, symbol, decimals, tokenAddress } = action.payload;
+      const {
+        isVerified,
+        name,
+        symbol,
+        decimals,
+        tokenAddress,
+      } = action.payload;
+
       /*
        If the token is ether there is no data about it in the db
        we initialise it only here in the reducer
@@ -46,6 +54,7 @@ const tokensReducer: ReducerType<
       const record = TokenRecord({
         address: tokenAddress,
         decimals,
+        isVerified,
         name,
         symbol,
       });

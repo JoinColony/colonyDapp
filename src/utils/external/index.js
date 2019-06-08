@@ -2,6 +2,8 @@
 import BN from 'bn.js';
 import { fromWei } from 'ethjs-unit';
 
+import type { Address } from '~types';
+
 type EthUsdResponse = {
   status: string,
   message: string,
@@ -13,10 +15,22 @@ type EthUsdResponse = {
   },
 };
 
+type TokenDetailsError = {|
+  error: {
+    code: number,
+    message: string,
+  },
+|};
+
+type TokenDetails = {|
+  name: string,
+  symbol: string,
+  decimals: number,
+|};
+
 /*
   Request dollar conversion value from etherScan
 */
-// eslint-disable-next-line import/prefer-default-export
 export const getEthToUsd = (ethValue: BN): Promise<number | void> => {
   const ETH_USD_KEY = 'ethUsd';
   const ETH_USD_TIMESTAMP_KEY = 'ethUsdTimestamp';
@@ -63,4 +77,19 @@ export const getEthToUsd = (ethValue: BN): Promise<number | void> => {
       return fromWei(ethValue, 'ether') * parseFloat(ethUsd);
     })
     .catch(console.warn);
+};
+
+/*
+ * Lookup a token contract address to either get token details (verified)
+ * or an error (unverified). Useful for bring-your-own-token.
+ */
+export const getTokenDetails = async (
+  tokenAddress: Address,
+): Promise<TokenDetails | TokenDetailsError | void> => {
+  const response = await fetch(
+    `//api.ethplorer.io/getTokenInfo/${tokenAddress}?apiKey=${process.env
+      .ETHPLORER_API_KEY || ''}`,
+  );
+  const result = await response.json();
+  return result;
 };

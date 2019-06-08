@@ -13,6 +13,7 @@ import {
 
 import type { Action } from '~redux';
 
+import { getTokenDetails } from '~utils/external';
 import { putError, takeFrom } from '~utils/saga/effects';
 import { ZERO_ADDRESS, ETHER_INFO } from '~utils/web3/constants';
 import { CONTEXT, getContext } from '~context';
@@ -32,7 +33,10 @@ function* tokenInfoFetch({
   if (tokenAddress === ZERO_ADDRESS) {
     yield put<Action<typeof ACTIONS.TOKEN_INFO_FETCH_SUCCESS>>({
       type: ACTIONS.TOKEN_INFO_FETCH_SUCCESS,
-      payload: ETHER_INFO,
+      payload: {
+        isVerified: true,
+        ...ETHER_INFO,
+      },
       meta,
     });
   }
@@ -42,6 +46,8 @@ function* tokenInfoFetch({
 
   yield delay(1000);
 
+  let info;
+  let isVerified = false;
   try {
     /**
      * Given a token contract address, create a `TokenClient` with the minimal
@@ -53,16 +59,22 @@ function* tokenInfoFetch({
       [colonyManager, colonyManager.getTokenClient],
       tokenAddress,
     );
-    const info = yield call([client.getTokenInfo, client.getTokenInfo.call]);
+    info = yield call([client.getTokenInfo, client.getTokenInfo.call]);
+    const { decimals, error, name, symbol } = yield call(
+      getTokenDetails,
+      tokenAddress,
+    );
+    if (!error && (decimals && name && symbol)) {
+      isVerified = true;
+    }
     yield put<Action<typeof ACTIONS.TOKEN_INFO_FETCH_SUCCESS>>({
       type: ACTIONS.TOKEN_INFO_FETCH_SUCCESS,
-      payload: { ...info, tokenAddress },
+      payload: { ...info, isVerified, tokenAddress },
       meta,
     });
   } catch (error) {
-    return yield putError(ACTIONS.TOKEN_INFO_FETCH_ERROR, error, meta);
+    yield putError(ACTIONS.TOKEN_INFO_FETCH_ERROR, error, meta);
   }
-  return null;
 }
 
 function* tokenCreate({
