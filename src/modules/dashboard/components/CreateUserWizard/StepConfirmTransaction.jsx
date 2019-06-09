@@ -62,7 +62,7 @@ const StepConfirmTransaction = () => {
         {colonyTransaction && (
           <GasStationContent
             appearance={{ interactive: false }}
-            transactionGroups={[colonyTransaction]}
+            transactionAndMessageGroups={[colonyTransaction]}
           />
         )}
       </div>

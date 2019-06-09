@@ -1,10 +1,16 @@
 /* @flow */
 
-import type { TransactionType } from '~immutable';
+import type { TransactionType, MessageProps } from '~immutable';
 
 export type TransactionGroup = Array<TransactionType<*, *>>;
 
 export type TransactionGroups = Array<TransactionGroup>;
+
+export type TransactionOrMessageGroup = Array<
+  TransactionType<*, *> | MessageProps,
+>;
+
+export type TransactionOrMessageGroups = Array<TransactionOrMessageGroup>;
 
 // get the group id (mostly used as a unique identifier for the group)
 export const getGroupId = (txGroup: TransactionGroup) =>
@@ -60,3 +66,6 @@ export const getGroupStatus = (txGroup: TransactionGroup) => {
 // Get count of all transactions in the redux store
 export const transactionCount = (txGroups: Array<TransactionGroup>) =>
   txGroups.reduce((count, group) => count + group.length, 0);
+
+export const isMessageGroup = (txOrMessageGroup: TransactionOrMessageGroup) =>
+  !!txOrMessageGroup[0].purpose;

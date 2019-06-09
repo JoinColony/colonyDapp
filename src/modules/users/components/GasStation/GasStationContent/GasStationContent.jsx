@@ -32,7 +32,7 @@ type Props = {|
    */
   appearance: Appearance,
   close?: () => void,
-  transactionGroups: Array<TransactionGroup>,
+  transactionAndMessageGroups: Array<TransactionGroup>,
   currentUserGetBalance: () => void,
 |};
 
@@ -67,16 +67,16 @@ class GasStationContent extends Component<Props, State> {
   renderTransactions() {
     const { selectedGroupIdx } = this.state;
     const {
-      transactionGroups,
+      transactionAndMessageGroups,
       appearance: { interactive },
     } = this.props;
-    let detailsTransactionGroup = transactionGroups[selectedGroupIdx];
+    let detailsTransactionGroup = transactionAndMessageGroups[selectedGroupIdx];
 
     /*  If the GasStationContent is less interactive,
      * like in StepConfirmTransactions, we select the first group buy default
      */
     if (!interactive && selectedGroupIdx === -1) {
-      [detailsTransactionGroup] = transactionGroups;
+      [detailsTransactionGroup] = transactionAndMessageGroups;
     }
 
     return detailsTransactionGroup || !interactive ? (
@@ -87,7 +87,7 @@ class GasStationContent extends Component<Props, State> {
       />
     ) : (
       <TransactionList
-        transactionGroups={transactionGroups}
+        transactionAndMessageGroups={transactionAndMessageGroups}
         onClickGroup={this.selectTransactionGroup}
       />
     );
@@ -96,10 +96,11 @@ class GasStationContent extends Component<Props, State> {
   render() {
     const {
       close,
-      transactionGroups,
+      transactionAndMessageGroups,
       appearance: { interactive },
     } = this.props;
-    const isEmpty = !transactionGroups || !transactionGroups.length;
+    const isEmpty =
+      !transactionAndMessageGroups || !transactionAndMessageGroups.length;
     return (
       <div
         className={getMainClasses({}, styles, { isEmpty })}

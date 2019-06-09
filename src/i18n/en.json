@@ -100,5 +100,5 @@
     "message.generic.title": "Generic Message",
     "message.generic.description": "This needs your wallet's signature",
     "message.taskComment.title": "Task Comment",
-    "message.taskComment.description": "Sign the message to post your comment"
+    "message.taskComment.description": "Sign this message to post your comment"
   }
