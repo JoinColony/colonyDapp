@@ -747,6 +747,7 @@ function* taskCommentAdd({
         id: messageId,
         purpose: 'taskComment',
         message,
+        createdAt: new Date(),
       },
     });
 

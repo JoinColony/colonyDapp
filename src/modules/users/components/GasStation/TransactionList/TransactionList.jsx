@@ -36,8 +36,8 @@ const TransactionList = ({ onClickGroup, transactionGroups }: Props) => (
         />
       ),
     )}
-    <MessageCard message={MessageRecord({ status: 'succeeded' })} />
-    <MessageCardDetails message={MessageRecord({ status: 'succeeded' })} />
+    <MessageCard message={MessageRecord()} />
+    <MessageCardDetails message={MessageRecord()} />
   </CardList>
 );
 
