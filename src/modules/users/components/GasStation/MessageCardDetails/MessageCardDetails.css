@@ -23,16 +23,21 @@
 
 .themeMessage .title {
   display: block;
-  margin-bottom: 4px;
+  margin-bottom: 10px;
   font-size: var(--size-small);
   font-weight: var(--weight-medium);
+
+  &:hover .cancelButton {
+    display: inline;
+  }
 }
 
 .stateSucceeded {
   color: var(--grey-text);
 }
 
-.stateFailed {
+.stateFailed,
+.stateIsShowingCancelConfirmation {
   border-left-color: var(--danger);
   background-color: color-mod(var(--danger) alpha(20%));
 
@@ -40,4 +45,26 @@
     border-left-color: color-mod(var(--danger) alpha(90%));
     background-color: color-mod(var(--danger) alpha(15%));
   }
+}
+
+.confirmationButtonsWrapper {
+  display: inline;
+  margin: 1px 0 0;
+  float: right;
+}
+
+.button {
+  composes: button from '../TransactionCard/GroupedTransactionCard.css';
+}
+
+.cancelButton {
+  composes: cancelButton from '../TransactionCard/GroupedTransactionCard.css';
+}
+
+.confirmationButton {
+  composes: confirmationButton from '../TransactionCard/GroupedTransactionCard.css';
+}
+
+.cancelDecision {
+  composes: cancelDecision from '../TransactionCard/GroupedTransactionCard.css';
 }

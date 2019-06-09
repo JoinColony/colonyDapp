@@ -96,6 +96,7 @@ class GasStationContent extends Component<Props, State> {
         <MessageCardDetails
           message={detailsTransactionGroup[0]}
           onClose={this.unselectTransactionGroup}
+          cancelMessage={id => console.log('cancelled message', id)}
         />
       );
     }
