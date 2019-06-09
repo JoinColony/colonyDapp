@@ -11,6 +11,7 @@ import Heading from '~core/Heading';
 import Card from '~core/Card';
 import { MessageCardStatus } from '../MessageCard';
 import MessageCardControls from './MessageCardControls';
+import { getMainClasses } from '~utils/css';
 
 import styles from './MessageCardDetails.css';
 
@@ -54,9 +55,14 @@ const MessageCardDetails = ({
             />
             <FormattedMessage id={`message.${purpose}.description`} />
           </div>
-          <MessageCardStatus status="created" />
+          <MessageCardStatus status={status} />
         </div>
-        <div className={styles.message}>
+        <div
+          className={getMainClasses({ theme: 'message' }, styles, {
+            failed: status === 'failed',
+            succeeded: status === 'succeeded',
+          })}
+        >
           <span className={styles.title}>Message:</span>
           Prow scuttle parrel provost Sail ho shrouds spirits boom mizzenmast
           yardarm. Pinnace holystone mizzenmast quarter crows nest nipperkin

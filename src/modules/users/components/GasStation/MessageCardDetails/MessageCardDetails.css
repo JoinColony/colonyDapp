@@ -15,7 +15,7 @@
   composes: description from '../TransactionCard/TransactionCard.css';
 }
 
-.message {
+.themeMessage {
   margin-top: 15px;
   padding: 12px 15px 12px 20px;
   border-left: 3px solid var(--colony-blue);
@@ -24,9 +24,23 @@
   color: var(--grey-dark);
 }
 
-.message .title {
+.themeMessage .title {
   display: block;
   margin-bottom: 4px;
   font-size: var(--size-small);
   font-weight: var(--weight-medium);
+}
+
+.stateSucceeded {
+  color: var(--grey-text);
+}
+
+.stateFailed {
+  border-left-color: var(--danger);
+  background-color: color-mod(var(--danger) alpha(20%));
+
+  &:hover {
+    border-left-color: color-mod(var(--danger) alpha(90%));
+    background-color: color-mod(var(--danger) alpha(15%));
+  }
 }
