@@ -22,22 +22,28 @@ const MSG = defineMessages({
     id: 'users.GasStation.MessageCardDetails.returnToSummary',
     defaultMessage: 'See all pending actions',
   },
+  messageHeading: {
+    id: 'users.GasStation.MessageCardDetails.messageHeading',
+    defaultMessage: 'Message:',
+  },
 });
 
 type Props = {|
   message: $ReadOnly<MessageProps>,
+  onClose: (event: SyntheticMouseEvent<HTMLButtonElement>) => void,
 |};
 
 const MessageCardDetails = ({
   message: { status, purpose, message: messageContent },
   message,
+  onClose,
 }: Props) => (
-  <div className={styles.main}>
+  <div>
     {/*
      * @TODO This might be worth extracting away now that both the transactions
      * and the messages are using it
      */}
-    <button type="button" className={styles.returnToSummary}>
+    <button type="button" className={styles.returnToSummary} onClick={onClose}>
       <Icon
         appearance={{ size: 'small' }}
         name="caret-left"
@@ -63,7 +69,9 @@ const MessageCardDetails = ({
             succeeded: status === 'succeeded',
           })}
         >
-          <span className={styles.title}>Message:</span>
+          <span className={styles.title}>
+            <FormattedMessage {...MSG.messageHeading} />
+          </span>
           {messageContent}
         </div>
       </Card>

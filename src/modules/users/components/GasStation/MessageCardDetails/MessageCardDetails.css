@@ -21,6 +21,7 @@
   border-left: 3px solid var(--colony-blue);
   border-top: 1px solid var(--grey-blue-1);
   background-color: var(--temp-grey-blue-6);
+  word-break: break-all;
   color: var(--grey-dark);
 }
 
