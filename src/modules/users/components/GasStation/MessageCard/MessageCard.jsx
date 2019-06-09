@@ -24,7 +24,7 @@ const MessageCard = ({ message: { status, purpose } }: Props) => (
         <div className={styles.description}>
           <Heading
             appearance={{ theme: 'dark', size: 'normal', margin: 'none' }}
-            text={{ id: 'message.generic.title' }}
+            text={{ id: `message.${purpose}.title` }}
           />
           <FormattedMessage id={`message.${purpose}.description`} />
         </div>
