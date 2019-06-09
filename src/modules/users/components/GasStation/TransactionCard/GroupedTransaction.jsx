@@ -6,7 +6,7 @@ import { FormattedMessage } from 'react-intl';
 import Heading from '~core/Heading';
 import Card from '~core/Card';
 
-import type { TransactionGroup } from '../transactionGroup';
+import type { TransactionOrMessageGroup } from '../transactionGroup';
 import type { Appearance } from '../GasStationContent';
 
 import {
@@ -22,7 +22,7 @@ import TransactionStatus from './TransactionStatus.jsx';
 
 type Props = {
   appearance: Appearance,
-  transactionGroup: TransactionGroup,
+  transactionGroup: TransactionOrMessageGroup,
   selectedTransactionIdx: number,
 };
 

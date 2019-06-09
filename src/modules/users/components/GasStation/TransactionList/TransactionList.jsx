@@ -7,11 +7,14 @@ import CardList from '~core/CardList';
 import TransactionCard from '../TransactionCard';
 import MessageCard from '../MessageCard';
 
-import type { TransactionOrMessageGroup } from '../transactionGroup';
-import { getGroupId, isMessageGroup } from '../transactionGroup';
+import type {
+  TransactionOrMessageGroup,
+  TransactionOrMessageGroups,
+} from '../transactionGroup';
+import { getGroupId, isTxGroup } from '../transactionGroup';
 
 type Props = {
-  transactionAndMessageGroups: Array<TransactionOrMessageGroup>,
+  transactionAndMessageGroups: TransactionOrMessageGroups,
   onClickGroup: (idx: number) => void,
 };
 
@@ -25,19 +28,19 @@ const TransactionList = ({
   >
     {transactionAndMessageGroups.map(
       (transactionOrMessageGroup: TransactionOrMessageGroup, idx: number) =>
-        isMessageGroup(transactionOrMessageGroup) ? (
-          <MessageCard
-            key={getGroupId(transactionOrMessageGroup)}
-            message={transactionOrMessageGroup[0]}
-            onClick={onClickGroup}
-            idx={idx}
-          />
-        ) : (
+        isTxGroup(transactionOrMessageGroup) ? (
           <TransactionCard
             key={getGroupId(transactionOrMessageGroup)}
             transactionGroup={transactionOrMessageGroup}
             onClick={onClickGroup}
             idx={idx}
+          />
+        ) : (
+          <MessageCard
+            key={getGroupId(transactionOrMessageGroup)}
+            message={transactionOrMessageGroup[0]}
+            // onClick={onClickGroup}
+            // idx={idx}
           />
         ),
     )}

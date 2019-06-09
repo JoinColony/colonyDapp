@@ -9,13 +9,13 @@ import Popover from '~core/Popover';
 
 import { usePrevious } from '~utils/hooks';
 
-import type { TransactionGroup } from './transactionGroup';
+import type { TransactionOrMessageGroups } from './transactionGroup';
 
 import { transactionCount } from './transactionGroup';
 import GasStationContent from './GasStationContent';
 
 type Props = {|
-  transactionAndMessageGroups: Array<TransactionGroup>,
+  transactionAndMessageGroups: TransactionOrMessageGroups,
   children: React$Element<*> | PopoverTriggerType,
 |};
 

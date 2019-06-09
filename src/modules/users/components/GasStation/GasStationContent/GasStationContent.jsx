@@ -6,10 +6,10 @@ import { defineMessages } from 'react-intl';
 import Heading from '~core/Heading';
 import { getMainClasses } from '~utils/css';
 
-import type { TransactionGroup } from '../transactionGroup';
+import type { TransactionOrMessageGroups } from '../transactionGroup';
 
 import GasStationHeader from '../GasStationHeader';
-import TransactionDetails from '../TransactionDetails';
+// import TransactionDetails from '../TransactionDetails';
 import TransactionList from '../TransactionList';
 
 import styles from './GasStationContent.css';
@@ -32,7 +32,7 @@ type Props = {|
    */
   appearance: Appearance,
   close?: () => void,
-  transactionAndMessageGroups: Array<TransactionGroup>,
+  transactionAndMessageGroups: TransactionOrMessageGroups,
   currentUserGetBalance: () => void,
 |};
 
@@ -79,13 +79,12 @@ class GasStationContent extends Component<Props, State> {
       [detailsTransactionGroup] = transactionAndMessageGroups;
     }
 
-    return detailsTransactionGroup || !interactive ? (
-      <TransactionDetails
-        transactionGroup={detailsTransactionGroup}
-        onClose={this.unselectTransactionGroup}
-        appearance={{ interactive: true }}
-      />
-    ) : (
+    return detailsTransactionGroup || !interactive ? null : (
+      // <TransactionDetails
+      //   transactionGroup={detailsTransactionGroup}
+      //   onClose={this.unselectTransactionGroup}
+      //   appearance={{ interactive: true }}
+      // />
       <TransactionList
         transactionAndMessageGroups={transactionAndMessageGroups}
         onClickGroup={this.selectTransactionGroup}

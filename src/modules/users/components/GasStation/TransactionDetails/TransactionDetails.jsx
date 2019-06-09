@@ -8,7 +8,10 @@ import CardList from '~core/CardList';
 
 import styles from './TransactionDetails.css';
 
-import type { TransactionGroup } from '../transactionGroup';
+import type {
+  TransactionGroup,
+  TransactionOrMessageGroup,
+} from '../transactionGroup';
 import type { Appearance } from '../GasStationContent';
 
 import { getGroupKey, getActiveTransactionIdx } from '../transactionGroup';
@@ -29,7 +32,7 @@ type Props = {|
    * and no overview we do not need a back button
    */
   appearance: Appearance,
-  transactionGroup: TransactionGroup,
+  transactionGroup: TransactionGroup & TransactionOrMessageGroup,
   onClose: (event: SyntheticMouseEvent<HTMLButtonElement>) => void,
 |};
 
