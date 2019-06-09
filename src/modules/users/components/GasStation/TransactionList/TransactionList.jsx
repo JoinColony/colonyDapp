@@ -39,8 +39,8 @@ const TransactionList = ({
           <MessageCard
             key={getGroupId(transactionOrMessageGroup)}
             message={transactionOrMessageGroup[0]}
-            // onClick={onClickGroup}
-            // idx={idx}
+            onClick={onClickGroup}
+            idx={idx}
           />
         ),
     )}
