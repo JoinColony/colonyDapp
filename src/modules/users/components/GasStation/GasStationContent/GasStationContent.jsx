@@ -9,8 +9,10 @@ import { getMainClasses } from '~utils/css';
 import type { TransactionOrMessageGroups } from '../transactionGroup';
 
 import GasStationHeader from '../GasStationHeader';
-// import TransactionDetails from '../TransactionDetails';
+import TransactionDetails from '../TransactionDetails';
 import TransactionList from '../TransactionList';
+import MessageCardDetails from '../MessageCardDetails';
+import { isTxGroup } from '../transactionGroup';
 
 import styles from './GasStationContent.css';
 
@@ -79,12 +81,25 @@ class GasStationContent extends Component<Props, State> {
       [detailsTransactionGroup] = transactionAndMessageGroups;
     }
 
-    return detailsTransactionGroup || !interactive ? null : (
-      // <TransactionDetails
-      //   transactionGroup={detailsTransactionGroup}
-      //   onClose={this.unselectTransactionGroup}
-      //   appearance={{ interactive: true }}
-      // />
+    if (detailsTransactionGroup || !interactive) {
+      const isTx = isTxGroup(detailsTransactionGroup);
+      if (isTx) {
+        return (
+          <TransactionDetails
+            transactionGroup={detailsTransactionGroup}
+            onClose={this.unselectTransactionGroup}
+            appearance={{ interactive }}
+          />
+        );
+      }
+      return (
+        <MessageCardDetails
+          message={detailsTransactionGroup[0]}
+          onClose={this.unselectTransactionGroup}
+        />
+      );
+    }
+    return (
       <TransactionList
         transactionAndMessageGroups={transactionAndMessageGroups}
         onClickGroup={this.selectTransactionGroup}

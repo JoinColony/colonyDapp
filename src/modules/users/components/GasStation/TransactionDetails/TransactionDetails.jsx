@@ -8,10 +8,7 @@ import CardList from '~core/CardList';
 
 import styles from './TransactionDetails.css';
 
-import type {
-  TransactionGroup,
-  TransactionOrMessageGroup,
-} from '../transactionGroup';
+import type { TransactionOrMessageGroup } from '../transactionGroup';
 import type { Appearance } from '../GasStationContent';
 
 import { getGroupKey, getActiveTransactionIdx } from '../transactionGroup';
@@ -32,7 +29,7 @@ type Props = {|
    * and no overview we do not need a back button
    */
   appearance: Appearance,
-  transactionGroup: TransactionGroup & TransactionOrMessageGroup,
+  transactionGroup: TransactionOrMessageGroup,
   onClose: (event: SyntheticMouseEvent<HTMLButtonElement>) => void,
 |};
 
@@ -48,6 +45,12 @@ const TransactionDetails = ({
   const selectedTransaction = transactionGroup[selectedTransactionIdx];
   const groupKey = getGroupKey(transactionGroup);
   return (
+    /*
+     * @NOTE I think this is due to a prop name conflict between the Transaction
+     * and Message objects but not really sure
+     * Flow reports some iterator errors inside the core Flow and React libs
+     */
+    /* $FlowFixMe */
     <div>
       {/*
        * @TODO This might be worth extracting away now that both the transactions

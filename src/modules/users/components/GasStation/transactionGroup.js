@@ -7,7 +7,7 @@ export type TransactionGroup = Array<TransactionType<*, *>>;
 export type TransactionGroups = Array<TransactionGroup>;
 
 export type TransactionOrMessageGroup = Array<
-  MessageProps & TransactionType<*, *>,
+  TransactionType<*, *> & MessageProps,
 >;
 
 export type TransactionOrMessageGroups = Array<TransactionOrMessageGroup>;
