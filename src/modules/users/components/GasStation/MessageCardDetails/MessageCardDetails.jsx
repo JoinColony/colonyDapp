@@ -5,12 +5,12 @@ import { defineMessages, FormattedMessage } from 'react-intl';
 
 import type { MessageProps } from '~immutable';
 
-import Icon from '~core/Icon';
 import CardList from '~core/CardList';
 import Heading from '~core/Heading';
 import Card from '~core/Card';
 import { MessageCardStatus } from '../MessageCard';
 import MessageCardControls from './MessageCardControls';
+import { TransactionBackToList } from '../TransactionDetails';
 import { getMainClasses } from '~utils/css';
 
 import styles from './MessageCardDetails.css';
@@ -39,18 +39,7 @@ const MessageCardDetails = ({
   onClose,
 }: Props) => (
   <div>
-    {/*
-     * @TODO This might be worth extracting away now that both the transactions
-     * and the messages are using it
-     */}
-    <button type="button" className={styles.returnToSummary} onClick={onClose}>
-      <Icon
-        appearance={{ size: 'small' }}
-        name="caret-left"
-        title={MSG.returnToSummary}
-      />
-      <FormattedMessage {...MSG.returnToSummary} />
-    </button>
+    <TransactionBackToList onClose={onClose} />
     <CardList appearance={{ numCols: '1' }}>
       <Card className={styles.main}>
         <div className={styles.summary}>

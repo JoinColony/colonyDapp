@@ -1,12 +1,8 @@
 /* @flow */
 
 import React from 'react';
-import { defineMessages, FormattedMessage } from 'react-intl';
 
-import Icon from '~core/Icon';
 import CardList from '~core/CardList';
-
-import styles from './TransactionDetails.css';
 
 import type { TransactionOrMessageGroup } from '../transactionGroup';
 import type { Appearance } from '../GasStationContent';
@@ -16,13 +12,7 @@ import { getGroupKey, getActiveTransactionIdx } from '../transactionGroup';
 import { GroupedTransaction } from '../TransactionCard';
 import GasStationClaimCard from '../GasStationClaimCard';
 import GasStationPrice from '../GasStationPrice';
-
-const MSG = defineMessages({
-  returnToSummary: {
-    id: 'users.GasStationPopover.GasStationContent.returnToSummary',
-    defaultMessage: 'See all pending actions',
-  },
-});
+import TransactionBackToList from './TransactionBackToList.jsx';
 
 type Props = {|
   /* If we are only showing the transaction details
@@ -52,24 +42,7 @@ const TransactionDetails = ({
      */
     /* $FlowFixMe */
     <div>
-      {/*
-       * @TODO This might be worth extracting away now that both the transactions
-       * and the messages are using it
-       */}
-      {interactive && (
-        <button
-          type="button"
-          className={styles.returnToSummary}
-          onClick={onClose}
-        >
-          <Icon
-            appearance={{ size: 'small' }}
-            name="caret-left"
-            title={MSG.returnToSummary}
-          />
-          <FormattedMessage {...MSG.returnToSummary} />
-        </button>
-      )}
+      {interactive && <TransactionBackToList onClose={onClose} />}
       <CardList appearance={{ numCols: '1' }}>
         {groupKey === 'network.registerUserLabel' && <GasStationClaimCard />}
         <GroupedTransaction

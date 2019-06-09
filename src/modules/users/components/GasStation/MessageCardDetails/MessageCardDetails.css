@@ -1,7 +1,3 @@
-.returnToSummary {
-  composes: returnToSummary from '../TransactionDetails/TransactionDetails.css';
-}
-
 .main {
   composes: main from '../TransactionCard/TransactionCard.css';
   padding: 15px 0 0;
