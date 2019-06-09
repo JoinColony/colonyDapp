@@ -19,4 +19,8 @@ export type MessageActionTypes = {|
     {| id: string, message: string, signature: string |},
   >,
   MESSAGE_ERROR: ErrorActionType<typeof ACTIONS.MESSAGE_ERROR, void>,
+  MESSAGE_CANCEL: ActionTypeWithPayload<
+    typeof ACTIONS.MESSAGE_CANCEL,
+    {| id: string |},
+  >,
 |};
