@@ -16,6 +16,7 @@ const coreMessagesReducer: ReducerType<
     MESSAGE_CREATED: *,
     MESSAGE_SIGN: *,
     MESSAGE_SIGNED: *,
+    MESSAGE_CANCEL: *,
   |},
 > = (state = CoreMessages(), action) => {
   switch (action.type) {
@@ -39,6 +40,10 @@ const coreMessagesReducer: ReducerType<
           status: 'succeeded',
         }),
       );
+    }
+    case ACTIONS.MESSAGE_CANCEL: {
+      const { id } = action.payload;
+      return state.deleteIn([CORE_MESSAGES_LIST, id]);
     }
     default:
       return state;
