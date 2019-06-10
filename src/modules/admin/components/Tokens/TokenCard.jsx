@@ -12,10 +12,7 @@ import { SpinnerLoader } from '~core/Preloaders';
 import CopyableAddress from '~core/CopyableAddress';
 import TokenIcon from '~dashboard/HookedTokenIcon';
 
-import {
-  tokenIsETH,
-  tokenBalanceIsNotPositive,
-} from '../../../dashboard/checks';
+import { tokenIsETH, tokenBalanceIsNotPositive } from '../../../core/checks';
 
 import { tokenFetcher } from '../../../dashboard/fetchers';
 

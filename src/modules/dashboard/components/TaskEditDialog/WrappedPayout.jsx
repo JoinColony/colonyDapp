@@ -6,7 +6,7 @@ import React, { useCallback, useMemo } from 'react';
 import type { TaskType, TokenType } from '~immutable';
 import type { $Pick } from '~types';
 
-import { tokenIsETH } from '../../checks';
+import { tokenIsETH } from '../../../core/checks';
 
 import Payout from './Payout.jsx';
 

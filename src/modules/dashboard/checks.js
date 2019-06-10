@@ -1,29 +1,10 @@
 /* @flow */
 
-import type {
-  ColonyType,
-  TaskType,
-  TokenReferenceType,
-  TokenType,
-  TaskUserType,
-} from '~immutable';
+import type { ColonyType, TaskType, TaskUserType } from '~immutable';
 
 import type { Address } from '~types';
 
-import { ZERO_ADDRESS } from '~utils/web3/constants';
 import { TASK_STATE } from '~immutable';
-
-/*
- * Tokens
- */
-export const tokenBalanceIsPositive = ({ balance }: TokenReferenceType) =>
-  !!balance && balance.gten(0);
-
-export const tokenBalanceIsNotPositive = ({ balance }: TokenReferenceType) =>
-  !!balance && balance.lten(0);
-
-export const tokenIsETH = ({ address }: TokenType | TokenReferenceType) =>
-  address === ZERO_ADDRESS;
 
 /*
  * Colony
