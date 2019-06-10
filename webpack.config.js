@@ -89,7 +89,10 @@ const config = {
       {
         test: /\.(woff|woff2|png|jpg|gif)$/,
         use: 'file-loader',
-        include: [path.resolve('node_modules', 'eth-contract-metadata', 'images'), path.resolve('src')],
+        include: [
+          path.resolve('src'),
+          path.resolve('node_modules', 'eth-contract-metadata', 'images'),
+        ],
       },
       /*
        * To load company logo and token icons to import
@@ -97,7 +100,7 @@ const config = {
       {
         test: /\.svg$/,
         exclude: path.resolve(__dirname, 'src', 'img', 'icons'),
-        use: ['@svgr/webpack'],
+        use: ['@svgr/webpack']
       },
       /*
        * We are only parsing images inside `src/client/img/icons`. Doing so allows us to bundle the commonly-used icons.
@@ -106,11 +109,34 @@ const config = {
        */
       {
         test: /\.svg$/,
-        include: [path.resolve(__dirname, 'src', 'img', 'icons'), path.resolve('node_modules', 'eth-contract-metadata', 'images')],
+        include: [
+          path.resolve(__dirname, 'src', 'img', 'icons'),
+        ],
         use: [
           {
             loader: 'svg-sprite-loader',
           },
+          {
+            loader: 'svgo-loader',
+            options: {
+              plugins: [
+                { removeTitle: true },
+                { convertColors: { shorthex: false } },
+                { convertPathData: false },
+              ],
+            },
+          },
+        ],
+      },
+      /*
+       * Only parse svg images from the `eth-contract-metadata` package.
+       */
+      {
+        test: /\.svg$/,
+        include: [
+          path.resolve(__dirname, 'node_modules', 'eth-contract-metadata', 'images'),
+        ],
+        use: [
           {
             loader: 'svgo-loader',
             options: {
