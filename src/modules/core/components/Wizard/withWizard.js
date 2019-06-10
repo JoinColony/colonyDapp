@@ -25,7 +25,6 @@ type Steps = Array<StepType> | StepsFn<Object>;
 type WizardArgs = {
   stepCount?: number,
   steps: Steps,
-  hideQR?: boolean,
 };
 
 const all = (values: ValueList) =>
@@ -34,23 +33,26 @@ const all = (values: ValueList) =>
 const getStep = (steps: Steps, step: number, values: Object, props?: Object) =>
   typeof steps === 'function' ? steps(step, values, props) : steps[step];
 
-const withWizard = ({ steps, stepCount: maxSteps, hideQR }: WizardArgs) => (
+const withWizard = ({ steps, stepCount: maxSteps }: WizardArgs) => (
   OuterComponent: ComponentType<Object>,
 ) => {
   class Wizard extends Component<Props, State> {
     state = { step: 0, values: new List() };
 
-    next = (values: Values) => {
+    setValues = (values?: Values) => {
       this.setState(({ step, values: currentValues }) => ({
-        step: step + 1,
-        values: currentValues.set(step, values),
+        values:
+          values && Object.keys(values).length
+            ? currentValues.set(step, values)
+            : currentValues,
       }));
     };
 
-    /**
-     * @todo Retain wizard validation state when going back.
-     * @body When going back we could instead store the isValid state of the form when going back
-     */
+    next = (values: Values) => {
+      this.setValues(values);
+      this.setState(({ step }) => ({ step: step + 1 }));
+    };
+
     prev = (values?: Values) => {
       const { step: currentStep } = this.state;
       /* Inform developer if step has been changed
@@ -60,14 +62,8 @@ const withWizard = ({ steps, stepCount: maxSteps, hideQR }: WizardArgs) => (
       if (currentStep === 0) {
         return false;
       }
-      this.setState(({ step, values: currentValues }) => ({
-        step: step === 0 ? 0 : step - 1,
-        // Going back we only want to set values when we actually have some
-        values:
-          values && Object.keys(values).length
-            ? currentValues.set(step, values)
-            : currentValues,
-      }));
+      this.setValues(values);
+      this.setState(({ step }) => ({ step: step === 0 ? 0 : step - 1 }));
       return true;
     };
 
@@ -89,7 +85,6 @@ const withWizard = ({ steps, stepCount: maxSteps, hideQR }: WizardArgs) => (
           nextStep: this.next,
           previousStep: this.prev,
           wizardValues: allValues,
-          hideQR,
           ...this.props,
         },
         createElement(Step, {

@@ -20,7 +20,7 @@ import { withCurrentUser } from '../../../users/hocs';
 
 import styles from './WizardTemplateColony.css';
 
-type Props = {|
+export type Props = {|
   children: Node,
   currentUser: UserType,
   previousStep: (wizardValues?: Object) => void,
