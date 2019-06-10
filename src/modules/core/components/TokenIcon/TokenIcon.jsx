@@ -1,6 +1,7 @@
 /* @flow */
 
 import React from 'react';
+import type { Node as ReactNode } from 'react';
 
 import type { TokenReferenceType } from '~immutable';
 
@@ -17,21 +18,34 @@ export type Props = {|
   size?: 'xxs' | 'xs' | 's' | 'm' | 'l' | 'xl',
   /** Optional name for the icon title */
   name?: string,
+  /** Some token icons can where imported
+  manually ( without sprite-loader )
+  and will be shown directly */
+  component?: ReactNode,
 |};
 
 const displayName = 'TokenIcon';
 
-const TokenIcon = ({ token, iconURL, className, name, size }: Props) => {
+const TokenIcon = ({
+  token,
+  iconURL,
+  className,
+  name,
+  size,
+  component,
+}: Props) => {
   const { address } = token;
   return (
-    <Avatar
-      avatarURL={iconURL}
-      className={className}
-      placeholderIcon="circle-close"
-      seed={address}
-      size={size}
-      title={name || address}
-    />
+    component || (
+      <Avatar
+        avatarURL={iconURL}
+        className={className}
+        placeholderIcon="circle-close"
+        seed={address}
+        size={size}
+        title={name || address}
+      />
+    )
   );
 };
 
