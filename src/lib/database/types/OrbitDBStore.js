@@ -7,7 +7,7 @@ import type { Identity } from '~types';
 
 export interface OrbitDBStore {
   _oplog: {
-    _length: number,
+    length: number,
   };
   address: { root: string, path: string };
   key: any;

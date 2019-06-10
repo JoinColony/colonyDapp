@@ -103,6 +103,11 @@ jobs:
   integration-testing:
     docker:
       - image: circleci/node:10.12
+    environment:
+      LOADER: trufflepig
+      NETWORK: local
+      PINNING_ROOM: PINION_DEV_ROOM
+      PINNER_ID: QmQBF89g7VHjcQVNGEf5jKZnU5r6J8G2vfHzBpivKqgxs6
     working_directory: ~/colonyDapp
     steps:
       - checkout
@@ -134,10 +139,11 @@ jobs:
   e2e-testing:
     docker:
       - image: joincolony/circleci-cypress
-    parallelism: 2
     environment:
       LOADER: trufflepig
       NETWORK: local
+      PINNING_ROOM: PINION_DEV_ROOM
+      PINNER_ID: QmQBF89g7VHjcQVNGEf5jKZnU5r6J8G2vfHzBpivKqgxs6
       TERM: xterm
       CYPRESS_VIEWPORT_WIDTH: 1920
       CYPRESS_VIEWPORT_HEIGHT: 1080

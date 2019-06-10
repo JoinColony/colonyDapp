@@ -17,7 +17,10 @@ export const raceAgainstTimeout = async (
     timeout = setTimeout(() => reject(throwError), ms);
   });
   try {
-    return Promise.race([timeoutPromise, promise]);
+    // To be able to use the async error handling here, we need to explicitly
+    // use `await`
+    const result = await Promise.race([timeoutPromise, promise]);
+    return result;
   } finally {
     if (typeof cleanup == 'function') cleanup();
     clearTimeout(timeout);

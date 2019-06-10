@@ -13,18 +13,27 @@ const deployContracts = require('./deploy_contracts');
 
 const { PID_FILE } = require('./paths');
 
-const deployContractsPromise = () =>
+const processes = [];
+
+const addProcess = (name, startFn) => {
+  processes.push({ name, startFn });
+};
+
+addProcess('ganache', startGanache);
+
+addProcess('truffle', () =>
   new Promise((resolve, reject) => {
     const contractProcess = deployContracts();
     contractProcess.on(
       'exit',
       code =>
-        code ? reject(new Error('Contract deployment failed')) : resolve(true),
+        code ? reject(new Error('Contract deployment failed')) : resolve(contractProcess),
     );
     contractProcess.on('error', reject);
-  });
+  })
+);
 
-const trufflePigPromise = () =>
+addProcess('trufflepig', () =>
   new Promise((resolve, reject) => {
     const trufflepigProcess = spawn(
       path.resolve(__dirname, './start_trufflepig.js'),
@@ -43,14 +52,72 @@ const trufflePigPromise = () =>
       trufflepigProcess.kill();
       reject(e);
     });
-  });
+  })
+);
 
-const webpackPromise = () =>
+addProcess('ipfsd', () =>
+  new Promise((resolve, reject) => {
+    const ipfsdProcess = spawn('yarn', ['ipfsd-go'], {
+      cwd: path.resolve(__dirname, '..', 'src/lib/pinion'),
+      stdio: 'pipe',
+    });
+    ipfsdProcess.stdout.on('data', chunk => {
+      if (chunk.includes('Daemon is ready')) resolve(ipfsdProcess);
+    });
+    if (args.foreground) {
+      ipfsdProcess.stdout.pipe(process.stdout);
+      ipfsdProcess.stderr.pipe(process.stderr);
+    }
+    ipfsdProcess.on('error', e => {
+      ipfsdProcess.kill();
+      reject(e);
+    });
+  })
+);
+
+addProcess('pinion', () => 
+  new Promise((resolve, reject) => {
+    const pinionProcess = spawn('yarn', ['start'], {
+      cwd: path.resolve(__dirname, '..', 'src/lib/pinion'),
+      stdio: 'pipe',
+      env: {
+        ...process.env,
+        PINION_ROOM: 'PINION_DEV_ROOM',
+      },
+    });
+    // Wait a few seconds for pinion to settle in
+    setTimeout(() => resolve(pinionProcess), 4000);
+    if (args.foreground) {
+      pinionProcess.stdout.pipe(process.stdout);
+      pinionProcess.stderr.pipe(process.stderr);
+    }
+    pinionProcess.on('error', e => {
+      pinionProcess.kill();
+      reject(e);
+    });
+  })
+);
+
+addProcess('wss', async () => {
+  const wssProxyProcess = spawn(
+    path.resolve(__dirname, './start_wss_proxy.js'),
+    {
+      stdio: 'pipe',
+    },
+  );
+  await waitOn({ resources: ['tcp:4004'] });
+  return wssProxyProcess;
+});
+
+addProcess('star', startStarSignal);
+
+addProcess('webpack', () =>
   new Promise((resolve, reject) => {
     const webpackProcess = spawn('yarn', ['run', 'webpack'], {
       cwd: path.resolve(__dirname, '..'),
       stdio: 'pipe',
     });
+    setTimeout(() => console.info('Reticulating splines...'), 3000);
     webpackProcess.stdout.on('data', chunk => {
       if (chunk.includes('Compiled successfully')) resolve(webpackProcess);
     });
@@ -62,58 +129,35 @@ const webpackPromise = () =>
       webpackProcess.kill();
       reject(e);
     });
-  });
+  })
+);
 
-const wssProxyPromise = async () => {
-  const wssProxyProcess = spawn(
-    path.resolve(__dirname, './start_wss_proxy.js'),
-    {
-      stdio: 'pipe',
-    },
-  );
-  await waitOn({ resources: ['tcp:4003'] });
-  return wssProxyProcess;
-};
 
 const startAll = async () => {
+  const pids = {};
+
+  const startSerial = processes.reduce((promise, process) => {
+    if (`skip-${process.name}` in args) return promise;
+    return promise
+      .then(() => {
+        console.info(`Starting ${process.name}...`);
+        return process.startFn();
+      })
+      .then(proc => {
+        pids[process.name] = proc.pid;
+      });
+  }, Promise.resolve(true));
+
   try {
-    console.info('Starting ganache...');
-    const ganacheProcess = await startGanache();
-
-    console.info('Deploying contracts...');
-    await deployContractsPromise();
-
-    console.info(chalk.magentaBright('Starting trufflepig...'));
-    const trufflepigProcess = await trufflePigPromise();
-
-    // This will probably be replaced with pinion
-    console.info('Starting star signal...');
-    const starSignalProcess = await startStarSignal();
-
-    // This is temporarily disabled until we actually *really* need it
-    // console.info('Starting websocket proxy...');
-    // const wssProxyProcess = await wssProxyPromise();
-
-    console.info('Starting webpack...');
-    const webpackProcess = await webpackPromise();
-
-    const pids = {
-      ganache: ganacheProcess.pid,
-      trufflepig: trufflepigProcess.pid,
-      webpack: webpackProcess.pid,
-      starSignal: starSignalProcess.pid,
-      // wssProxy: wssProxyProcess.pid,
-    };
-
-    fs.writeFileSync(PID_FILE, JSON.stringify(pids));
-  } catch (e) {
+    await startSerial;
+  } catch (caughtError) {
     console.info(chalk.redBright('Stack start failed.'));
-    console.info(chalk.redBright(e.message));
+    console.info(chalk.redBright(caughtError.message));
     process.exit(1);
   }
-
-  console.info('Reticulating splines...');
-
+  
+  fs.writeFileSync(PID_FILE, JSON.stringify(pids));
+  
   console.info(chalk.greenBright('Stack started successfully.'));
 };
 

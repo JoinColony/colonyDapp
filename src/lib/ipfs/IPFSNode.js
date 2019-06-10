@@ -11,11 +11,11 @@ import prodConfig from './ipfsConfig.production';
 import type { B58String, IPFSNodeOptions, IPFSPeer } from './types';
 import PinnerConnector from './PinnerConnector';
 
-const PINNING_ROOM = process.env.PINNING_ROOM || 'COLONY_PINNING_ROOM';
-// The latter is the pinner id of our dev pinner
-const PINNER_ID =
-  process.env.PINNER_ID || 'QmQBF89g7VHjcQVNGEf5jKZnU5r6J8G2vfHzBpivKqgxs6';
-
+// process.env is a special object. Destructuring doesn't work
+// eslint-disable-next-line prefer-destructuring
+const PINNING_ROOM = process.env.PINNING_ROOM;
+// eslint-disable-next-line prefer-destructuring
+const PINNER_ID = process.env.PINNER_ID;
 const TIMEOUT = process.env.CI ? 50000 : 10000;
 
 class IPFSNode {
@@ -54,10 +54,11 @@ class IPFSNode {
   }
 
   async connectPinner() {
+    if (!PINNING_ROOM) {
+      throw new Error('No pinner room defined in environment variables.');
+    }
     if (!PINNER_ID) {
-      throw new Error(
-        'No pinner id specified in environment variables. But we need one.',
-      );
+      throw new Error('No pinner id specified in environment variables.');
     }
     this.pinner = new PinnerConnector(this.getIPFS(), PINNING_ROOM, PINNER_ID);
     await this.ready;
