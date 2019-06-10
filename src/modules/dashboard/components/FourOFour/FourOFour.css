@@ -10,7 +10,6 @@
   padding-top: 8px;
   height: 60px;
   width: 100%;
-  background-color: white;
 }
 
 .logo {
@@ -19,15 +18,28 @@
   max-width: 130px;
 }
 
-.content {
-  composes: flexContainerColumn flexAlignCenter flexJustifyCenter from '~styles/layout.css';
-  padding-bottom: 20px;
+.hero {
+  display: block;
+  margin: auto;
+  height: calc(100% - 120px);
+  min-height: min-content;
+  width: 660px;
 }
 
-.section .logo-loader svg {
-  max-width: 40%;
+.herowrapper {
+  padding-top: 100px;
 }
 
-.stepBarContainer {
-  padding-right: 20px;
+.title {
+  margin: 0;
+  text-align: center;
+}
+
+.description {
+  margin: 10px 0 0 0;
+  text-align: center;
+}
+
+.naked-mole {
+  width: 660px;
 }

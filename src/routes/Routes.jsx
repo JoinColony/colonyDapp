@@ -8,6 +8,7 @@ import CreateColonyWizard from '~dashboard/CreateColonyWizard';
 import CreateUserWizard from '~dashboard/CreateUserWizard';
 import ColonyHome from '~dashboard/ColonyHome';
 import Task from '~dashboard/Task';
+import FourOFour from '~dashboard/FourOFour';
 import Dashboard from '~dashboard/Dashboard';
 import Inbox from '~users/Inbox';
 import Wallet from '~dashboard/Wallet';
@@ -26,6 +27,7 @@ import {
   COLONY_HOME_ROUTE,
   CREATE_COLONY_ROUTE,
   CREATE_USER_ROUTE,
+  FOUR_O_FOUR_ROUTE,
   TASK_ROUTE,
   CREATE_WALLET_ROUTE,
   DASHBOARD_ROUTE,
@@ -53,6 +55,7 @@ const Routes = ({ walletAddress }) => {
           <Redirect to={isConnected ? DASHBOARD_ROUTE : CONNECT_ROUTE} />
         )}
       />
+      <Route exact path={FOUR_O_FOUR_ROUTE} component={FourOFour} />
       <DisconnectedOnlyRoute
         isConnected={isConnected}
         path={CONNECT_ROUTE}
