@@ -40,8 +40,6 @@ import { mergePayload } from '~utils/actions';
 
 import styles from './InboxItem.css';
 
-import { mockTask } from '../../../../dashboard/components/Task/__datamocks__/mockTask';
-
 import MSG from '../messages';
 
 const UserAvatar = HookedUserAvatar();
@@ -83,8 +81,6 @@ const UnreadIndicator = ({ type }: { type: EventType }) => (
   />
 );
 
-const getTask = () => mockTask;
-
 /* Some inbox items link somewhere, others open a modal so it's important to differentiate here */
 const ConditionalWrapper = ({
   to,
@@ -102,13 +98,14 @@ const ConditionalWrapper = ({
    * @body Make this happen dynamically, we can't create a condition for each inbox event
    */
   if (event === 'actionWorkerInviteReceived') {
-    const details = getTask();
+    const { colonyAddress, draftId } = event;
     return (
       <DialogLink
         to="TaskInviteDialog"
         props={{
           assignee: { profile: user },
-          task: details,
+          colonyAddress,
+          draftId,
         }}
       >
         {({ open }) => (

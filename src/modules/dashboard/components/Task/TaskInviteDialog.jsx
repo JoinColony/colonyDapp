@@ -35,14 +35,17 @@ const MSG = defineMessages({
 });
 
 type Props = {|
-  task: TaskType,
+  colonyAddress: string,
+  draftId: string,
   currentUser: UserType,
   cancel: () => void,
 |};
 
 const TaskInviteDialog = ({
   cancel,
-  task: { reputation, payouts, draftId, colonyAddress },
+  // @FIXME Do the task fetching here using a hook?
+  colonyAddress,
+  draftId,
   currentUser: {
     profile: { walletAddress },
   },
