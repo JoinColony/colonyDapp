@@ -11,6 +11,7 @@ type Shared = {|
   comment?: string,
   taskTitle?: string,
   event: string,
+  unread?: boolean,
   timestamp?: Date | number,
   colonyName?: string,
   colonyAddress?: string,
@@ -20,17 +21,19 @@ type Shared = {|
   tokenAddress?: string,
   sourceUserAddress?: string,
   targetUserAddress?: string,
+  onClickRoute?: string,
 |};
 
-export type UserActivityType = $ReadOnly<Shared>;
+export type InboxItemType = $ReadOnly<Shared>;
 
-export type UserActivityRecordType = RecordOf<Shared>;
+export type InboxItemRecordType = RecordOf<Shared>;
 
 const defaultValues: $Shape<Shared> = {
   id: undefined,
   comment: undefined,
   taskTitle: undefined,
   event: undefined,
+  unread: true,
   timestamp: new Date(),
   colonyName: undefined,
   colonyAddress: undefined,
@@ -40,8 +43,9 @@ const defaultValues: $Shape<Shared> = {
   tokenAddress: undefined,
   sourceUserAddress: undefined,
   targetUserAddress: undefined,
+  onClickRoute: undefined,
 };
 
-const UserActivityRecord: RecordFactory<Shared> = Record(defaultValues);
+const InboxItemRecord: RecordFactory<Shared> = Record(defaultValues);
 
-export default UserActivityRecord;
+export default InboxItemRecord;

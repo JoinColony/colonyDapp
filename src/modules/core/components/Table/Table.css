@@ -95,7 +95,7 @@
   composes: baseStyles;
   border-color: var(--grey-blue-1);
   background-color: white;
-  box-shadow: 0 0 20px -2px var(--temp-grey-blue-4);
+  box-shadow: 0px 2px 11px var(--drop-shadow);
 
   &.separatorsBorders td,
   &.separatorsBorders th {

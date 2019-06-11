@@ -4,31 +4,31 @@ import type { List as ListType } from 'immutable';
 
 import { List } from 'immutable';
 
-import { UserActivityRecord } from '~immutable';
+import { InboxItemRecord } from '~immutable';
 import { ACTIONS } from '~redux';
 
-import type { UserActivityRecordType } from '~immutable';
+import type { InboxItemRecordType } from '~immutable';
 import type { ReducerType } from '~redux';
 
-const currentUserActivitiesReducer: ReducerType<
-  ListType<UserActivityRecordType>,
+const inboxItemsReducer: ReducerType<
+  ListType<InboxItemRecordType>,
   {|
-    USER_ACTIVITIES_FETCH_SUCCESS: *,
-    USER_ACTIVITIES_ADD_SUCCESS: *,
+    INBOX_ITEMS_FETCH_SUCCESS: *,
+    INBOX_ITEMS_ADD_SUCCESS: *,
   |},
 > = (state = List(), action) => {
   switch (action.type) {
-    case ACTIONS.USER_ACTIVITIES_ADD_SUCCESS: {
+    case ACTIONS.INBOX_ITEMS_ADD_SUCCESS: {
       const { activity } = action.payload;
-      return state.push(UserActivityRecord(activity));
+      return state.push(InboxItemRecord(activity));
     }
-    case ACTIONS.USER_ACTIVITIES_FETCH_SUCCESS: {
+    case ACTIONS.INBOX_ITEMS_FETCH_SUCCESS: {
       const { activities } = action.payload;
-      return List(activities.map(activity => UserActivityRecord(activity)));
+      return List(activities.map(activity => InboxItemRecord(activity)));
     }
     default:
       return state;
   }
 };
 
-export default currentUserActivitiesReducer;
+export default inboxItemsReducer;

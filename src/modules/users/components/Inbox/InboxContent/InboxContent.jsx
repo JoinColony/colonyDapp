@@ -3,10 +3,13 @@
 import React from 'react';
 import { defineMessages } from 'react-intl';
 
-import type { InboxElement } from '../types';
+import type { InboxItemType } from '~immutable';
 
+import { ACTIONS } from '~redux';
+import { useAsyncFunction } from '~utils/hooks';
 import { Table, TableBody } from '~core/Table';
 import Heading from '~core/Heading';
+import Button from '~core/Button';
 import CenteredTemplate from '~pages/CenteredTemplate';
 import InboxItem from '../InboxItem';
 
@@ -26,46 +29,45 @@ const MSG = defineMessages({
 const displayName = 'users.Inbox.InboxContent';
 
 type Props = {
-  activities: Array<InboxElement>,
+  activities: Array<InboxItemType>,
 };
 
-const Inbox = ({ activities }: Props) => (
-  <CenteredTemplate appearance={{ theme: 'alt' }}>
-    <div className={styles.contentContainer}>
-      <div className={styles.inboxHeading}>
-        <Heading
-          appearance={{ size: 'medium', margin: 'small' }}
-          text={MSG.title}
-        />
-        {/*
-         * @todo Handle read/unread notifications (inbox content).
-         */}
-        {/* <Button
-          appearance={{ theme: 'blue' }}
-          text={MSG.markAllRead}
-          onClick={markAllRead}
-        /> */}
-      </div>
-      <div className={styles.inboxContainer}>
-        <Table scrollable appearance={{ separators: 'borders' }}>
-          <TableBody>
-            {activities.reverse().map(activity => (
-              <InboxItem
-                key={activity.id}
-                activity={activity}
-                /*
-                 * @todo Handle read/unread notifications.
-                 */
-                // markAsRead={markAsRead}
-              />
-            ))}
-          </TableBody>
-        </Table>
-      </div>
-    </div>
-  </CenteredTemplate>
-);
+const InboxContent = ({ activities }: Props) => {
+  const allReadActions = {
+    submit: ACTIONS.INBOX_MARK_ALL_NOTIFICATIONS_READ,
+    success: ACTIONS.INBOX_MARK_ALL_NOTIFICATIONS_READ_SUCCESS,
+    error: ACTIONS.INBOX_MARK_ALL_NOTIFICATIONS_READ_ERROR,
+  };
 
-Inbox.displayName = displayName;
+  const markAllRead = useAsyncFunction({ ...allReadActions });
+  return (
+    <CenteredTemplate appearance={{ theme: 'alt' }}>
+      <div className={styles.contentContainer}>
+        <div className={styles.inboxHeading}>
+          <Heading
+            appearance={{ size: 'medium', margin: 'small' }}
+            text={MSG.title}
+          />
+          <Button
+            appearance={{ theme: 'blue' }}
+            text={MSG.markAllRead}
+            onClick={markAllRead}
+          />
+        </div>
+        <div className={styles.inboxContainer}>
+          <Table scrollable appearance={{ separators: 'borders' }}>
+            <TableBody>
+              {activities.reverse().map(activity => (
+                <InboxItem key={activity.id} activity={activity} />
+              ))}
+            </TableBody>
+          </Table>
+        </div>
+      </div>
+    </CenteredTemplate>
+  );
+};
 
-export default Inbox;
+InboxContent.displayName = displayName;
+
+export default InboxContent;

@@ -1,5 +1,6 @@
 .inboxRowCell {
   width: 100%;
+  cursor: pointer;
 }
 
 .inboxDetails {

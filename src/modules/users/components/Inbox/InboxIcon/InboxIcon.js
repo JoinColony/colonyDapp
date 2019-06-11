@@ -5,22 +5,15 @@ import { compose, withProps } from 'recompose';
 
 import InboxIcon from './InboxIcon.jsx';
 
-import { currentUserActivitiesSelector } from '../../../selectors';
+import { inboxItemsSelector } from '../../../selectors';
 
 const enhanced = compose(
   connect((state: Object) => ({
-    activities: currentUserActivitiesSelector(state),
+    activities: inboxItemsSelector(state),
   })),
-  /*
-   * @todo Introduce handled logic for inbox icons.
-   */
-  // withProps(({ activities }) => ({
-  //   hasUnreadActivities: !!(
-  //     activities && activities.find(activity => !activity.handled)
-  //   ),
-  // })),
   withProps(({ activities }) => ({
-    hasUnreadActivities: !!(activities && activities.size > 0),
+    hasUnreadActivities:
+      activities && activities.some(activity => activity.unread),
   })),
 );
 

@@ -5,7 +5,7 @@ import * as yup from 'yup';
 import inboxMessages from '~users/Inbox/messages';
 
 export const MarkNotificationsAsReadCommandArgsSchema = yup.object({
-  readUntil: yup.string().required(),
+  readUntil: yup.number().required(),
   exceptFor: yup.array().of(yup.string().required()),
 });
 

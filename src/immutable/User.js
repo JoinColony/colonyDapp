@@ -6,16 +6,16 @@ import { List, Record } from 'immutable';
 
 import UserProfileRecord from './UserProfile';
 
-import type { UserActivityRecordType, UserActivityType } from './UserActivity';
+import type { InboxItemRecordType, InboxItemType } from './InboxItem';
 import type { UserProfileType, UserProfileRecordType } from './UserProfile';
 
 type UserRecordProps = {|
-  activities: List<UserActivityRecordType>,
+  activities: List<InboxItemRecordType>,
   profile: UserProfileRecordType,
 |};
 
 export type UserType = $ReadOnly<{|
-  activities: Array<UserActivityType>,
+  activities: Array<InboxItemType>,
   profile: UserProfileType,
 |}>;
 
@@ -23,7 +23,7 @@ export type UserRecordType = RecordOf<UserRecordProps>;
 
 const defaultValues: $Shape<UserRecordProps> = {
   profile: UserProfileRecord(),
-  activities: List<UserActivityRecordType>(),
+  activities: List<InboxItemRecordType>(),
 };
 
 const UserRecord: RecordFactory<UserRecordProps> = Record(defaultValues);

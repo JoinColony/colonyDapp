@@ -26,10 +26,11 @@ import {
   getUserBalance,
   getUserProfile,
   getUserColonies,
+  getUserNotificationMetadata,
 } from '../../users/data/queries';
 import setupAdminSagas from '../../admin/sagas';
 import setupDashboardSagas from '../../dashboard/sagas';
-import { getWallet, setupUsersSagas } from '../../users/sagas';
+import { getWallet, setupUsersSagas, setupInboxSagas } from '../../users/sagas';
 import setupTransactionsSagas from './transactions';
 import setupNetworkSagas from './network';
 import { getDDB, getGasPrices, getColonyManager, getWalletType } from './utils';
@@ -41,6 +42,7 @@ function* setupContextDependentSagas(): Saga<void> {
     call(setupAdminSagas),
     call(setupDashboardSagas),
     call(setupUsersSagas),
+    call(setupInboxSagas),
     call(setupTransactionsSagas),
     call(setupNetworkSagas),
   ]);
@@ -143,6 +145,25 @@ export default function* setupUserContext(
     });
 
     try {
+      const { readUntil = 0, exceptFor = [] } = yield* executeQuery(
+        getUserNotificationMetadata,
+        {
+          metadata: {
+            walletAddress,
+            metadataStoreAddress: profileData.metadataStoreAddress,
+          },
+        },
+      );
+      yield put<
+        Action<typeof ACTIONS.USER_NOTIFICATION_METADATA_FETCH_SUCCESS>,
+      >({
+        type: ACTIONS.USER_NOTIFICATION_METADATA_FETCH_SUCCESS,
+        payload: {
+          readUntil,
+          exceptFor,
+        },
+      });
+
       const userColonies = yield* executeQuery(getUserColonies, {
         metadata: {
           walletAddress,
@@ -150,9 +171,9 @@ export default function* setupUserContext(
         },
       });
 
-      const fetchActivitiesEffects = userColonies.map(colonyAddress =>
-        put<Action<typeof ACTIONS.USER_ACTIVITIES_FETCH>>({
-          type: ACTIONS.USER_ACTIVITIES_FETCH,
+      const fetchInboxItemsEffects = userColonies.map(colonyAddress =>
+        put<Action<typeof ACTIONS.INBOX_ITEMS_FETCH>>({
+          type: ACTIONS.INBOX_ITEMS_FETCH,
           payload: {
             colonyAddress,
           },
@@ -164,7 +185,7 @@ export default function* setupUserContext(
         }),
       );
 
-      yield all(fetchActivitiesEffects);
+      yield all(fetchInboxItemsEffects);
     } catch (caughtError) {
       // It's ok if the user store doesn't exist (yet)
       log.warn(caughtError);
