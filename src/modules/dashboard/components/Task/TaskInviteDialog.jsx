@@ -21,8 +21,6 @@ import { useColonyNativeToken } from '../../hooks/useColonyNativeToken';
 
 import styles from './TaskInviteDialog.css';
 
-import tokensMock from '../../../../__mocks__/mockTokens';
-
 import ACTIONS from '~redux/actions';
 
 const MSG = defineMessages({
@@ -97,8 +95,7 @@ const TaskInviteDialog = ({
                   <div>
                     {payouts &&
                       payouts.map((payout, index) => {
-                        const { amount } = payout;
-                        const token = tokensMock.get(index - 1) || {};
+                        const { amount, token } = payout;
                         return (
                           <Payout
                             key={token.address}
@@ -108,7 +105,9 @@ const TaskInviteDialog = ({
                             symbol={token.symbol}
                             reputation={
                               // $FlowFixMe this should be from TokenReference
-                              token.isNative ? reputation : undefined
+                              token.address === nativeTokenReference.address
+                                ? reputation
+                                : undefined
                             }
                             editPayout={false}
                           />
