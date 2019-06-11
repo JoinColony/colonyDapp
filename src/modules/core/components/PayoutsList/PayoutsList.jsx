@@ -4,7 +4,7 @@ import React from 'react';
 import { defineMessages, FormattedMessage, FormattedNumber } from 'react-intl';
 import cx from 'classnames';
 
-import type { TaskPayoutType } from '~immutable';
+import type { TaskPayoutType, TokenReferenceType } from '~immutable';
 
 import { tokenIsETH } from '../../checks';
 
@@ -26,20 +26,25 @@ type Props = {|
   /** Maximum lines to show before switching to popover */
   maxLines?: number,
   /** Native token of the displayed Colony */
-  nativeToken: string,
+  nativeToken: TokenReferenceType,
 |};
 
 const displayName = 'PayoutsList';
 
-const PayoutsList = ({ payouts, maxLines = 1, nativeToken }: Props) => {
+const PayoutsList = ({
+  payouts,
+  maxLines = 1,
+  nativeToken: { address: nativeTokenAddress },
+  nativeToken,
+}: Props) => {
   const sortedPayouts = payouts.sort(({ token: a }, { token: b }) => {
-    if (a.symbol === nativeToken && tokenIsETH(b)) {
+    if (a.address === nativeTokenAddress && tokenIsETH(b)) {
       return -1;
     }
-    if (b.symbol === nativeToken && tokenIsETH(a)) {
+    if (b.address === nativeTokenAddress && tokenIsETH(b)) {
       return 1;
     }
-    if (a.symbol === nativeToken || tokenIsETH(a)) {
+    if (a.address === nativeTokenAddress || tokenIsETH(b)) {
       return -1;
     }
     return 1;
@@ -54,13 +59,13 @@ const PayoutsList = ({ payouts, maxLines = 1, nativeToken }: Props) => {
         {firstPayouts.map(payout => (
           <Numeral
             className={cx(styles.payoutNumber, {
-              [styles.native]: payout.token.symbol === nativeToken,
+              [styles.native]: payout.token.address === nativeToken.address,
             })}
-            key={payout.token.symbol}
-            value={payout.amount}
-            unit="ether"
-            truncate={1}
+            key={payout.token.address}
             prefix={`${payout.token.symbol} `}
+            truncate={2}
+            unit={payout.token.decimals || 18}
+            value={payout.amount}
           />
         ))}
       </div>
@@ -73,10 +78,10 @@ const PayoutsList = ({ payouts, maxLines = 1, nativeToken }: Props) => {
                   className={cx(styles.payoutNumber, {
                     [styles.native]: payout.token.symbol === nativeToken,
                   })}
-                  key={payout.token.symbol}
+                  key={payout.token.address}
                   value={payout.amount}
-                  unit="ether"
-                  truncate={1}
+                  unit={payout.token.decimals || 18}
+                  truncate={2}
                   prefix={`${payout.token.symbol} `}
                 />
               ))}

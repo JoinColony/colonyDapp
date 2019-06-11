@@ -1,3 +1,3 @@
 /* @flow */
 
-export { default } from './TaskEditDialog';
+export { default } from './TaskEditDialog.jsx';

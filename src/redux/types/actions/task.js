@@ -1,5 +1,6 @@
 /* eslint-disable max-len */
 /* @flow */
+import type BigNumber from 'bn.js';
 
 import type { TaskType, TaskProps } from '~immutable';
 import type { $Required, Address } from '~types';
@@ -270,7 +271,7 @@ export type TaskActionTypes = {|
   >,
   TASK_SET_PAYOUT: TaskActionType<
     typeof ACTIONS.TASK_SET_PAYOUT,
-    {| token: string, amount: string |},
+    {| token: string, amount: BigNumber |},
   >,
   TASK_SET_PAYOUT_ERROR: TaskErrorActionType<
     typeof ACTIONS.TASK_SET_PAYOUT_ERROR,
@@ -308,6 +309,23 @@ export type TaskActionTypes = {|
     {| event: TaskEvents |},
   >,
   TASK_SUB_ERROR: TaskErrorActionType<typeof ACTIONS.TASK_SUB_ERROR>,
+  TASK_SET_WORKER_AND_PAYOUTS: TaskActionType<
+    typeof ACTIONS.TASK_SET_WORKER_AND_PAYOUTS,
+    {|
+      payouts?: Array<{| token: string, amount: BigNumber |}>,
+      workerAddress: Address,
+    |},
+  >,
+  TASK_SET_WORKER_AND_PAYOUTS_ERROR: TaskErrorActionType<
+    typeof ACTIONS.TASK_SET_WORKER_AND_PAYOUTS_ERROR,
+  >,
+  TASK_SET_WORKER_AND_PAYOUTS_SUCCESS: TaskActionType<
+    typeof ACTIONS.TASK_SET_WORKER_AND_PAYOUTS_SUCCESS,
+    {|
+      payouts?: Array<{| amount: BigNumber, token: string |}>,
+      workerAddress: Address,
+    |},
+  >,
   TASK_SUBMIT_DELIVERABLE: TaskActionType<
     typeof ACTIONS.TASK_SUBMIT_DELIVERABLE,
     void,

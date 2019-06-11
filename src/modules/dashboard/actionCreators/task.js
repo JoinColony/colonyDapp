@@ -55,20 +55,3 @@ export const taskSubStop = (
   payload: { colonyAddress, draftId },
   meta: { key: draftId },
 });
-
-/**
- * @todo Wire up setting the task worker.
- */
-export const taskSetWorker = (
-  colonyAddress: Address,
-  draftId: TaskDraftId,
-  workerAddress: Address,
-): Action<typeof ACTIONS.TASK_WORKER_ASSIGN> => ({
-  type: ACTIONS.TASK_WORKER_ASSIGN,
-  payload: {
-    colonyAddress,
-    draftId,
-    workerAddress,
-  },
-  meta: { key: draftId },
-});

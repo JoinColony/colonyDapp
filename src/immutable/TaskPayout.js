@@ -1,5 +1,6 @@
 /* @flow */
 
+import type BigNumber from 'bn.js';
 import type { RecordOf, RecordFactory } from 'immutable';
 
 import { Record } from 'immutable';
@@ -10,15 +11,15 @@ import type { TokenRecordType, TokenType } from './Token';
 
 /**
  * @todo Fix `TaskPayout` record props
- * @body `amount` should be a BigBumber, `token` should be an address
+ * @body `token` should be an address
  */
 export type TaskPayoutType = $ReadOnly<{|
-  amount: number,
+  amount: BigNumber,
   token: TokenType,
 |}>;
 
 type TaskPayoutRecordProps = {|
-  amount: number,
+  amount: BigNumber,
   token: TokenRecordType,
 |};
 

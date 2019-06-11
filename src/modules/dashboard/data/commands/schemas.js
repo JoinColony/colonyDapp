@@ -2,6 +2,8 @@
 
 import * as yup from 'yup';
 
+import { BigNumberSchemaType } from '../../../validations';
+
 export const CreateColonyProfileCommandArgsSchema = yup.object({
   colonyAddress: yup
     .string()
@@ -102,7 +104,7 @@ export const SendWorkRequestCommandArgsSchema = yup.object({
 });
 
 export const SetTaskPayoutCommandArgsSchema = yup.object({
-  amount: yup.string().required(),
+  amount: new BigNumberSchemaType().required(),
   token: yup.string().required(),
 });
 

@@ -1,5 +1,7 @@
 /* @flow */
 
+import type BigNumber from 'bn.js';
+
 import type { Address } from '~types';
 import type { TaskDraftId } from '~immutable';
 import type {
@@ -358,7 +360,7 @@ export const setTaskPayout: Command<
   TaskStore,
   TaskStoreMetadata,
   {|
-    amount: string,
+    amount: BigNumber,
     token: string,
   |},
   {|
@@ -386,8 +388,9 @@ export const assignWorker: Command<
   TaskStoreMetadata,
   {|
     workerAddress: Address,
+    currentWorkerAddress: ?Address,
   |},
-  {|
+  ?{|
     event: Event<typeof TASK_EVENT_TYPES.WORKER_ASSIGNED>,
     taskStore: TaskStore,
   |},
@@ -395,7 +398,10 @@ export const assignWorker: Command<
   name: 'assignWorker',
   context: [CONTEXT.COLONY_MANAGER, CONTEXT.DDB_INSTANCE, CONTEXT.WALLET],
   prepare: prepareTaskStoreCommand,
-  async execute(taskStore, { workerAddress }) {
+  async execute(taskStore, { workerAddress, currentWorkerAddress }) {
+    if (workerAddress === currentWorkerAddress) {
+      return null;
+    }
     const eventHash = await taskStore.append(
       createEvent(TASK_EVENT_TYPES.WORKER_ASSIGNED, {
         workerAddress,

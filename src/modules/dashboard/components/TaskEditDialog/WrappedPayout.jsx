@@ -1,38 +1,50 @@
 /* @flow */
 
+import type BigNumber from 'bn.js';
+
 // $FlowFixMe until hooks flow types
 import React, { useCallback, useMemo } from 'react';
 
-import type { TaskType, TokenType } from '~immutable';
+import type { TaskType, TokenReferenceType, TokenType } from '~immutable';
 import type { $Pick } from '~types';
 
 import { tokenIsETH } from '../../../core/checks';
+import { createAddress } from '../../../../types';
 
-import Payout from './Payout.jsx';
+import Payout from './Payout';
 
 type Props = {|
   ...$Exact<$Pick<TaskType, {| payouts: *, reputation: * |}>>,
   availableTokens: Array<TokenType>,
-  tokenOptions: Array<{ value: number, label: string }>,
-  payout: { amount: string, token: number },
-  arrayHelpers: *,
-  reputation: number,
-  index: number,
   canRemove: boolean,
+  index: number,
+  arrayHelpers: *,
+  payout: { amount: BigNumber, token: string },
+  reputation: number,
+  tokenOptions: Array<{ value: number, label: string }>,
+  tokenReferences: Array<TokenReferenceType>,
 |};
 
 const WrappedPayout = ({
+  arrayHelpers,
   availableTokens,
-  tokenOptions,
+  canRemove,
+  index,
   payout,
   payouts,
-  arrayHelpers,
   reputation,
-  index,
-  canRemove,
+  tokenOptions,
+  tokenReferences,
 }: Props) => {
-  const { amount, token: tokenIndex } = payout;
-  const token = availableTokens[tokenIndex - 1] || {};
+  const { amount, token: tokenAddress } = payout;
+
+  const token = availableTokens.find(
+    ({ address }) => address === tokenAddress,
+  ) || { address: createAddress(''), decimals: 18, name: '', symbol: '' }; // make flow happy for below
+
+  const tokenReference = tokenReferences.find(
+    ({ address }) => address === tokenAddress,
+  ) || { address: '' }; // make flow happy for below
 
   const removePayout = useCallback(() => arrayHelpers.remove(index), [
     arrayHelpers,
@@ -40,7 +52,10 @@ const WrappedPayout = ({
   ]);
 
   const resetPayout = useCallback(
-    () => arrayHelpers.replace(index, payouts[index]),
+    () =>
+      payouts.length > 0
+        ? arrayHelpers.replace(index, payouts[index])
+        : arrayHelpers.remove(index),
     [arrayHelpers, index, payouts],
   );
 
@@ -50,9 +65,9 @@ const WrappedPayout = ({
     <Payout
       name={`payouts.${index}`}
       amount={amount}
+      decimals={token.decimals}
       symbol={token.symbol}
-      // $FlowFixMe this should be from TokenReference
-      reputation={token.isNative ? reputation : undefined}
+      reputation={tokenReference.isNative ? reputation : undefined}
       isEth={isEth}
       tokenOptions={tokenOptions}
       canRemove={canRemove}

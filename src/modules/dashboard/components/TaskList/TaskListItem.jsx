@@ -3,7 +3,7 @@
 import React from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 
-import type { ENSName } from '~types';
+import type { Address, ENSName } from '~types';
 import type { TaskType } from '~immutable';
 
 import { useDataFetcher } from '~utils/hooks';
@@ -15,6 +15,8 @@ import PayoutsList from '~core/PayoutsList';
 import Link from '~core/Link';
 import HookedUserAvatar from '~users/HookedUserAvatar';
 import { SpinnerLoader } from '~core/Preloaders';
+
+import { useColonyNativeToken } from '../../hooks/useColonyNativeToken';
 
 import styles from './TaskListItem.css';
 
@@ -36,7 +38,7 @@ const displayName = 'dashboard.TaskList.TaskListItem';
 type Props = {|
   data: {|
     key: string,
-    entry: [string, string],
+    entry: [Address, string],
     data: ?TaskType,
     isFetching: boolean,
     error: boolean,
@@ -60,6 +62,8 @@ const TaskListItem = ({ data }: Props) => {
     [colonyAddress],
     [colonyAddress],
   );
+
+  const nativeTokenRef = useColonyNativeToken(colonyAddress);
 
   if (!task || !colonyName || isFetchingTask || isFetchingColonyName) {
     return (
@@ -90,7 +94,7 @@ const TaskListItem = ({ data }: Props) => {
         )}
       </TableCell>
       <TableCell className={styles.taskPayouts}>
-        <PayoutsList payouts={payouts} nativeToken="CLNY" />
+        <PayoutsList payouts={payouts} nativeToken={nativeTokenRef} />
       </TableCell>
       <TableCell className={styles.userAvatar}>
         {workerAddress && <UserAvatar size="xs" address={workerAddress} />}
