@@ -7,6 +7,8 @@ import type { TokenReferenceType } from '~immutable';
 
 import Avatar from '~core/Avatar';
 
+import styles from './TokenIcon.css';
+
 export type Props = {|
   /** Token reference to display */
   token: TokenReferenceType,
@@ -34,18 +36,19 @@ const TokenIcon = ({
   size,
   component,
 }: Props) => {
+  console.log(component);
   const { address } = token;
-  return (
-    component || (
-      <Avatar
-        avatarURL={iconURL}
-        className={className}
-        placeholderIcon="circle-close"
-        seed={address}
-        size={size}
-        title={name || address}
-      />
-    )
+  return component ? (
+    <div className={styles.svg}>{component()}</div>
+  ) : (
+    <Avatar
+      avatarURL={iconURL}
+      className={className}
+      placeholderIcon="circle-close"
+      seed={address}
+      size={size}
+      title={name || address}
+    />
   );
 };
 
