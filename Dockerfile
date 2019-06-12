@@ -31,6 +31,22 @@ RUN apt-get install -y \
 RUN echo "en_US.UTF-8 UTF-8" >> /etc/locale.gen
 RUN locale-gen
 
-RUN mkdir colonyDapp
+# Clone the repo
+RUN git clone "https://$GH_PAT@github.com/JoinColony/colonyDapp.git"
+WORKDIR colonyDapp
 
-RUN echo $GH_PAT
+# Install node_modules
+RUN yarn
+
+# Build the production bundle
+RUN yarn webpack:build
+
+# Copy the production bundle
+RUN mkdir ../colonyDappProd
+RUN cp -R ./dist/* ../colonyDappProd
+
+# Cleanup the source folder
+WORKDIR /
+RUN rm -Rf colonyDapp
+
+WORKDIR colonyDappProd
