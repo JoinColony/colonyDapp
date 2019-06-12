@@ -1,8 +1,6 @@
 FROM node:10.12
 
-# NOTE
-#
-# This Dockerfile pulls in a private repository
+# @NOTE This Dockerfile pulls in a private repository
 # In order to accomplish this, it makes use of a GH Personal Access Token:
 # https://github.com/settings/tokens (Make sure you have the `repo` scope)
 #
@@ -37,6 +35,10 @@ WORKDIR colonyDapp
 
 # Install node_modules
 RUN yarn
+
+# @TODO Replace with actual `production` values
+# Setup the repo's ENV file
+RUN echo "LOADER=trufflepig\nNETWORK=local" >> .env
 
 # Build the production bundle
 RUN yarn webpack:build
