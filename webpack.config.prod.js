@@ -5,10 +5,6 @@ const webpackBaseConfig = require('./webpack.config');
  */
 const webpackProdConfig = webpackBaseConfig();
 /*
- * Set mode to `production` to minify the codebase
- */
-webpackProdConfig.mode = 'production';
-/*
  * Remove the HMR plugins since we won't be needing it
  */
 webpackProdConfig.plugins.pop();
