@@ -87,7 +87,7 @@ const config = {
         use: ['style-loader', 'css-loader'],
       },
       {
-        test: /\.(woff|woff2|png|jpg|gif)$/,
+        test: /\.(woff|woff2|png|jpe?g|gif)$/,
         use: 'file-loader',
         include: [
           path.resolve('src'),
@@ -100,7 +100,7 @@ const config = {
       {
         test: /\.svg$/,
         exclude: path.resolve(__dirname, 'src', 'img', 'icons'),
-        use: ['@svgr/webpack']
+        use: ['@svgr/webpack'],
       },
       /*
        * We are only parsing images inside `src/client/img/icons`. Doing so allows us to bundle the commonly-used icons.
@@ -144,6 +144,8 @@ const config = {
                 { removeTitle: true },
                 { convertColors: { shorthex: false } },
                 { convertPathData: false },
+                { removeViewBox: false },
+                { removeDimensions: true }
               ],
             },
           },
