@@ -13,7 +13,11 @@ const config = () => ({
     },
     Discovery: {
       webRTCStar: {
-        enabled: true,
+        /*
+         * @TODO Fix the `webRTCStar` production config
+         * @BODY Disabled due to breaking the `production` build (expecting `undefined`)
+         */
+        /* enabled: true, */
       },
     },
   },
