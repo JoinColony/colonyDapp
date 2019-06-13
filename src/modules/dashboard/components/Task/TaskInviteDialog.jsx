@@ -4,7 +4,8 @@
 import React, { useCallback } from 'react';
 import { defineMessages } from 'react-intl';
 
-import type { UserType, TaskType } from '~immutable';
+import type { Address } from '~types';
+import type { UserType } from '~immutable';
 
 import { mergePayload } from '~utils/actions';
 
@@ -35,7 +36,7 @@ const MSG = defineMessages({
 });
 
 type Props = {|
-  colonyAddress: string,
+  colonyAddress: Address,
   draftId: string,
   currentUser: UserType,
   cancel: () => void,
@@ -43,7 +44,6 @@ type Props = {|
 
 const TaskInviteDialog = ({
   cancel,
-  // @FIXME Do the task fetching here using a hook?
   colonyAddress,
   draftId,
   currentUser: {
@@ -51,6 +51,16 @@ const TaskInviteDialog = ({
   },
   currentUser,
 }: Props) => {
+  // @TODO TaskInviteDialog: Fetch the task using a hook
+  // @BODY: We should also remove the locally mocked data below
+  //
+  // const { data: task } = useDataFetcher<TaskType>(
+  //   taskFetcher,
+  //   [taskId],
+  //   [taskId],
+  // );
+  const reputation = 0;
+  const payouts = [];
   const nativeTokenReference = useColonyNativeToken(colonyAddress);
   const transform = useCallback(
     mergePayload({
