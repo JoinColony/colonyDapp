@@ -96,6 +96,12 @@ We need to set the following [environment variables](https://github.com/JoinColo
 
 ### Dapp
 
-tbd
+The [dApp production](https://github.com/JoinColony/colonyDapp/blob/13b81e37cd08b16d0731448e03f3e5df5beec886/Dockerfile) docker image builds the production version of the bundle, moves it to separate folder, and serves it via a simple `nginx` server on port `80`
 
-Don't forget to add the `PINNER_ROOM` variable and to set the `PINNER_ID` to the `PeerID` of the IPFS node we are running.
+The `Dockerfile` just needs to be built, and run. The `nginx` service `CMD` will keep the container alive.
+
+In order for the `Dockerfile` to be able to pull in fresh data from the `colonyDapp` repo, it needs a Github Personal Access Token _(`GHPAT`)_ provided as a build argument:
+
+```bash
+docker build --build-arg GH_PAT='xxx' .
+```
