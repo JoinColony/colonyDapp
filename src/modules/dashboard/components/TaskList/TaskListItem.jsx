@@ -1,7 +1,9 @@
 /* @flow */
 
+import type { IntlShape } from 'react-intl';
+
 import React from 'react';
-import { defineMessages, FormattedMessage } from 'react-intl';
+import { defineMessages, FormattedMessage, injectIntl } from 'react-intl';
 
 import type { Address, ENSName } from '~types';
 import type { TaskType } from '~immutable';
@@ -43,15 +45,17 @@ type Props = {|
     isFetching: boolean,
     error: boolean,
   |},
+  intl: IntlShape,
 |};
 
-const TaskListItem = ({ data }: Props) => {
+const TaskListItem = ({ data, intl: { formatMessage } }: Props) => {
   const {
     data: task,
     entry: [colonyAddress, draftId],
     isFetching: isFetchingTask,
   } = data;
-  const { workerAddress, payouts, reputation, title = MSG.untitled } =
+  const defaultTitle = formatMessage(MSG.untitled);
+  const { workerAddress, payouts, reputation, title = defaultTitle } =
     task || {};
 
   const {
@@ -105,4 +109,4 @@ const TaskListItem = ({ data }: Props) => {
 
 TaskListItem.displayName = displayName;
 
-export default TaskListItem;
+export default injectIntl(TaskListItem);
