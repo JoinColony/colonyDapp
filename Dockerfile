@@ -51,7 +51,7 @@ RUN echo "LOADER=trufflepig\n" \
         "NETWORK=local" > .env
 
 # Build the production bundle
-RUN yarn webpack:build
+RUN yarn webpack:build:prod
 
 # Copy the production bundle
 RUN mkdir ../colonyDappProd
