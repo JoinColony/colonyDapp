@@ -45,10 +45,13 @@ WORKDIR /colonyDapp
 # Install node_modules
 RUN yarn
 
-# @TODO Replace with actual `production` values
 # Setup the repo's ENV file
-RUN echo "LOADER=trufflepig\n" \
-        "NETWORK=local" > .env
+RUN echo "LOADER=network\n" \
+        "NETWORK=goerli\n" \
+        "VERBOSE=true\n" \
+        "COLONY_NETWORK_ENS_NAME=joincolony.test\n" \
+        "PINNING_ROOM=PINION_DEV_ROOM\n" \
+        "PINNER_ID=QmQBF89g7VHjcQVNGEf5jKZnU5r6J8G2vfHzBpivKqgxs6\n" > .env
 
 # Build the production bundle
 RUN yarn webpack:build:prod
