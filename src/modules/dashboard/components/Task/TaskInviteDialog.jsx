@@ -95,6 +95,7 @@ const TaskInviteDialog = ({
                   reputation={reputation}
                   showFunding={false}
                   worker={currentUser}
+                  workerAddress={walletAddress}
                 />
               </DialogSection>
               <DialogSection>
