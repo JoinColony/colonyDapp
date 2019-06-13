@@ -4,7 +4,8 @@
 import React, { useCallback } from 'react';
 import { defineMessages } from 'react-intl';
 
-import type { UserType, TaskType } from '~immutable';
+import type { Address } from '~types';
+import type { UserType } from '~immutable';
 
 import { mergePayload } from '~utils/actions';
 
@@ -21,8 +22,6 @@ import { useColonyNativeToken } from '../../hooks/useColonyNativeToken';
 
 import styles from './TaskInviteDialog.css';
 
-import tokensMock from '../../../../__mocks__/mockTokens';
-
 import ACTIONS from '~redux/actions';
 
 const MSG = defineMessages({
@@ -37,19 +36,31 @@ const MSG = defineMessages({
 });
 
 type Props = {|
-  task: TaskType,
+  colonyAddress: Address,
+  draftId: string,
   currentUser: UserType,
   cancel: () => void,
 |};
 
 const TaskInviteDialog = ({
   cancel,
-  task: { reputation, payouts, draftId, colonyAddress },
+  colonyAddress,
+  draftId,
   currentUser: {
     profile: { walletAddress },
   },
   currentUser,
 }: Props) => {
+  // @TODO TaskInviteDialog: Fetch the task using a hook
+  // @BODY: We should also remove the locally mocked data below
+  //
+  // const { data: task } = useDataFetcher<TaskType>(
+  //   taskFetcher,
+  //   [taskId],
+  //   [taskId],
+  // );
+  const reputation = 0;
+  const payouts = [];
   const nativeTokenReference = useColonyNativeToken(colonyAddress);
   const transform = useCallback(
     mergePayload({
@@ -97,8 +108,7 @@ const TaskInviteDialog = ({
                   <div>
                     {payouts &&
                       payouts.map((payout, index) => {
-                        const { amount } = payout;
-                        const token = tokensMock.get(index - 1) || {};
+                        const { amount, token } = payout;
                         return (
                           <Payout
                             key={token.address}
@@ -108,7 +118,9 @@ const TaskInviteDialog = ({
                             symbol={token.symbol}
                             reputation={
                               // $FlowFixMe this should be from TokenReference
-                              token.isNative ? reputation : undefined
+                              token.address === nativeTokenReference.address
+                                ? reputation
+                                : undefined
                             }
                             editPayout={false}
                           />

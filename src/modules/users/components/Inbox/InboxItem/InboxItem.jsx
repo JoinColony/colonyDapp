@@ -18,8 +18,8 @@ import type {
 import TimeRelative from '~core/TimeRelative';
 import { TableRow, TableCell } from '~core/Table';
 import Numeral from '~core/Numeral';
-import Button from '~core/Button';
-import { DialogLink } from '~core/Dialog';
+// import Button from '~core/Button';
+// import { DialogLink } from '~core/Dialog';
 import Link from '~core/Link';
 import HookedUserAvatar from '~users/HookedUserAvatar';
 import { SpinnerLoader } from '~core/Preloaders';
@@ -39,8 +39,6 @@ import { ACTIONS } from '~redux';
 import { mergePayload } from '~utils/actions';
 
 import styles from './InboxItem.css';
-
-import { mockTask } from '../../../../dashboard/components/Task/__datamocks__/mockTask';
 
 import MSG from '../messages';
 
@@ -83,32 +81,30 @@ const UnreadIndicator = ({ type }: { type: EventType }) => (
   />
 );
 
-const getTask = () => mockTask;
-
 /* Some inbox items link somewhere, others open a modal so it's important to differentiate here */
 const ConditionalWrapper = ({
   to,
   children,
-  event,
-  user,
-}: {
+}: // event,
+// user,
+{
   to?: string,
   children: Node,
-  event: string,
-  user?: {},
+  // event: string,
+  // user?: {},
 }) => {
   /**
    * @todo Handle inbox event types dynamically.
    * @body Make this happen dynamically, we can't create a condition for each inbox event
-   */
   if (event === 'actionWorkerInviteReceived') {
-    const details = getTask();
+    const { colonyAddress, draftId } = event;
     return (
       <DialogLink
         to="TaskInviteDialog"
         props={{
           assignee: { profile: user },
-          task: details,
+          colonyAddress,
+          draftId,
         }}
       >
         {({ open }) => (
@@ -119,6 +115,7 @@ const ConditionalWrapper = ({
       </DialogLink>
     );
   }
+  */
   if (to) {
     return (
       <Link to={to} className={styles.fullWidthLink}>

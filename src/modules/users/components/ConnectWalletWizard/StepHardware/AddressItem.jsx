@@ -39,6 +39,8 @@ class AddressItem extends Component<Props, State> {
   }
 
   getWalletBalance = () => {
+    // @todo Fetch hardware wallet balance or remove timeout
+    // @body The timeout here seems to be just "simulating" the fetch
     const timeout = Math.floor(Math.random() * Math.floor(5)) * 1000 + 1000;
     this.timerHandle = setTimeout(() => {
       this.setState({ isLoading: false });
