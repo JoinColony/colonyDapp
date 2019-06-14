@@ -8,6 +8,15 @@ FROM node:10.12
 # Eg: docker build --build-arg GH_PAT='XXX' .
 ARG GH_PAT
 
+# Make the dapp's ENV values to have the option to be set at build time
+# But fall back to a default
+ARG LOADER=network
+ARG NETWORK=goerli
+ARG VERBOSE=false
+ARG COLONY_NETWORK_ENS_NAME=joincolony.eth
+ARG PINNING_ROOM=PINION_DEV_ROOM
+ARG PINNER_ID=QmXZKaLLuJzHZ3dnjHJiHLMHo4bFKaR3wWcf4ZbbqtxhBv
+
 # @FIX Debian Jessie / Docker issue with apt.
 # See: https://stackoverflow.com/questions/46406847/docker-how-to-add-backports-to-sources-list-via-dockerfile
 RUN echo "deb http://archive.debian.org/debian/ jessie main\n" \
@@ -46,12 +55,12 @@ WORKDIR /colonyDapp
 RUN yarn
 
 # Setup the repo's ENV file
-RUN echo "LOADER=network\n" \
-        "NETWORK=goerli\n" \
-        "VERBOSE=true\n" \
-        "COLONY_NETWORK_ENS_NAME=joincolony.test\n" \
-        "PINNING_ROOM=PINION_DEV_ROOM\n" \
-        "PINNER_ID=QmXZKaLLuJzHZ3dnjHJiHLMHo4bFKaR3wWcf4ZbbqtxhBv\n" > .env
+RUN echo "LOADER=$LOADER\n" \
+        "NETWORK=$NETWORK\n" \
+        "VERBOSE=$VERBOSE\n" \
+        "COLONY_NETWORK_ENS_NAME=$COLONY_NETWORK_ENS_NAME\n" \
+        "PINNING_ROOM=$PINNING_ROOM\n" \
+        "PINNER_ID=$PINNER_ID\n" > .env
 
 # Build the production bundle
 RUN yarn webpack:build:prod
@@ -62,7 +71,7 @@ RUN cp -R ./dist/* ../colonyDappProd
 
 # Cleanup the source folder
 WORKDIR /
-RUN rm -Rf colonyDapp
+# RUN rm -Rf colonyDapp
 WORKDIR /colonyDappProd
 
 # Setup a basic nginx config
