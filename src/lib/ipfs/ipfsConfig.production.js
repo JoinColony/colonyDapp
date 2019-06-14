@@ -9,7 +9,7 @@ const config = () => ({
   // config gets merged with the IPFS default config
   config: {
     Addresses: {
-      Swarm: [],
+      Swarm: ["/dns4/qa.colony.io/tcp/9090/wss/p2p-websocket-star/"],
     },
     Discovery: {
       webRTCStar: {
