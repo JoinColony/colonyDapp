@@ -4,7 +4,7 @@
   position: absolute;
   bottom: 0;
   left: 0;
-  z-index: 100;
+  z-index: var(--z-index-alert);
   background-color: var(--danger);
   font-weight: var(--weight-medium);
   text-align: center;

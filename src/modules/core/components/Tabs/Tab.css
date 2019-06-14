@@ -1,6 +1,6 @@
 .main {
   padding: 5px 10px 10px;
-  z-index: 0;
+  z-index: var(--z-index-selection);
   border-bottom: 1px solid transparent;
   font-size: var(--size-normal);
   font-weight: var(--weight-semi);

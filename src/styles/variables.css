@@ -64,16 +64,18 @@
   --pad-huge: 48px;
 
   /*
-   * Z-Index values
-   */
+  * Z-Index values
+  */
+  --z-index-background: -1;
+  --z-index-selection: 0;
   --z-index-positioning: 1; /* z-index for absolute positioning in elements */
-  --z-index-intercom: 2;
   --z-index-nav: 2;
   --z-index-modal-overlay: 3;
   --z-index-modal: 4;
   --z-index-dialog: 5;
   --z-index-popover: 6;
   --z-index-notification: 7;
+  --z-index-alert: 8;
 
   /*
    * Fonts
