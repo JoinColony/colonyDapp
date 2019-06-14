@@ -417,11 +417,7 @@ export const getUserInboxActivity: Query<
     const {
       adapter: { provider },
       contract: { address: colonyAddress },
-      events: {
-        ColonyAdministrationRoleSet,
-        ColonyLabelRegistered,
-        DomainAdded,
-      },
+      events: { ColonyRoleSet, ColonyLabelRegistered, DomainAdded },
       tokenClient,
       tokenClient: {
         events: { Mint, Transfer },
@@ -444,26 +440,25 @@ export const getUserInboxActivity: Query<
       },
       {
         blocksBack: 400000,
-        events: [
-          ColonyAdministrationRoleSet,
-          ColonyLabelRegistered,
-          DomainAdded,
-        ],
+        events: [ColonyRoleSet, ColonyLabelRegistered, DomainAdded],
       },
     );
     /*
      * @note These are "fake" colony client event names, only used for easier
      * separation of events.
      *
-     * As it stands in the contracts, we only have the `ColonyAdministrationRoleSet`
-     * event, the deciding factor being the `setTo` prop being true/false
+     * As it stands in the contracts, we only have the `ColonyRoleSet`
+     * event, the deciding factors being the `role` and `setTo` props
      *
      * We're changing this to make it easier to do 1-to-1 transformation of event names
      */
     let cleanedEvents = events
-      .map(({ eventName, setTo, ...restOfEvent }) => {
+      .map(({ eventName, setTo, role, ...restOfEvent }) => {
         let modifiedEventName = eventName;
-        if (eventName === 'ColonyAdministrationRoleSet') {
+        if (
+          eventName === 'ColonyRoleSet' &&
+          role === COLONY_ROLE_ADMINISTRATION
+        ) {
           if (setTo) {
             modifiedEventName = 'ColonyAdministrationRoleSetAdded';
           } else {

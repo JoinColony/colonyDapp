@@ -874,6 +874,17 @@
     babel-runtime "^6.26.0"
     ethers "3.0.27"
 
+"@colony/colony-js-adapter-ethers@^1.12.2":
+  version "1.12.2"
+  resolved "https://registry.yarnpkg.com/@colony/colony-js-adapter-ethers/-/colony-js-adapter-ethers-1.12.2.tgz#bcf69a6644ebd48b79992634c1ba7411e1273785"
+  integrity sha512-TmzYU8DfjsaLQOeRXYchLbszOTT9+59WY3uWT07HoCDbyJ5/rDFOOgkD6/tJ4Z858m6PBYMe6zUXQMf/rpvnrg==
+  dependencies:
+    "@colony/colony-js-adapter" "^1.12.0"
+    "@colony/colony-js-contract-loader" "^1.12.0"
+    "@colony/colony-js-utils" "^1.12.0"
+    babel-runtime "^6.26.0"
+    ethers "3.0.27"
+
 "@colony/colony-js-adapter@^1.12.0":
   version "1.12.0"
   resolved "https://registry.yarnpkg.com/@colony/colony-js-adapter/-/colony-js-adapter-1.12.0.tgz#58ba461a7dfd6410652d1bc3bbf200f313302327"
@@ -882,17 +893,17 @@
     "@colony/colony-js-contract-loader" "^1.12.0"
     bn.js "^4.11.8"
 
-"@colony/colony-js-client@^1.12.1":
-  version "1.12.1"
-  resolved "https://registry.yarnpkg.com/@colony/colony-js-client/-/colony-js-client-1.12.1.tgz#6fadc3cfcbc59e1fd881ccb3605df9e462f84629"
-  integrity sha512-1ppFKh2aWwyWD/ekTCErqCT0ceZuQ8/qgondW0HfCM5P2B126m59AICw3KE1QY+9P2G5DLDbNzP/tCXu+lRvQQ==
+"@colony/colony-js-client@^1.13.0-beta.0":
+  version "1.13.0-beta.0"
+  resolved "https://registry.yarnpkg.com/@colony/colony-js-client/-/colony-js-client-1.13.0-beta.0.tgz#434e2eb28edcf4d177093e29042b780209947858"
+  integrity sha512-6kwwVL9nSd5+KVFqVAqHcmmR2q+0B7Vt/iJCOwPL/MUX1ceRksskhTuUL28JX/4mj+Cnse9KgjFKIpyyvva/eA==
   dependencies:
     "@colony/colony-js-adapter" "^1.12.0"
-    "@colony/colony-js-adapter-ethers" "^1.12.1"
-    "@colony/colony-js-contract-client" "^1.12.0"
+    "@colony/colony-js-adapter-ethers" "^1.12.2"
+    "@colony/colony-js-contract-client" "^1.13.0-beta.0"
     "@colony/colony-js-contract-loader" "^1.12.0"
     "@colony/colony-js-contract-loader-http" "^1.12.0"
-    "@colony/colony-js-contract-loader-network" "^1.12.0"
+    "@colony/colony-js-contract-loader-network" "^1.13.0-beta.0"
     "@colony/colony-js-utils" "^1.12.0"
     "@colony/purser-core" "^2.1.0"
     assert "^2.0.0"
@@ -903,10 +914,10 @@
     isomorphic-fetch "^2.2.1"
     web3-utils "^1.0.0-beta.55"
 
-"@colony/colony-js-contract-client@^1.12.0":
-  version "1.12.0"
-  resolved "https://registry.yarnpkg.com/@colony/colony-js-contract-client/-/colony-js-contract-client-1.12.0.tgz#701a16c4eca66bd5c499ef9baa6b3d442dd29bec"
-  integrity sha512-X3do2L+rOozLbboL4gQQy3A1Um4zb4LNG7Q8wDGhZRagxdtNDApdHL7gXtu6iu67cnXxSb7qWKhKU8O7WkCpbA==
+"@colony/colony-js-contract-client@^1.13.0-beta.0":
+  version "1.13.0-beta.0"
+  resolved "https://registry.yarnpkg.com/@colony/colony-js-contract-client/-/colony-js-contract-client-1.13.0-beta.0.tgz#eac4a6e7a6a3555d3ec1de49d180ff182ea4ca0a"
+  integrity sha512-MKuS0HjjTn4ikxjJV/aqThgaZMvw4SMEXew9+YKrx5369LCTt6q0VgUYBZNjVcIWw+UQKUQBz11dGCqC9tgVvA==
   dependencies:
     "@colony/colony-js-adapter" "^1.12.0"
     "@colony/colony-js-contract-loader" "^1.12.0"
@@ -915,6 +926,7 @@
     babel-runtime "^6.26.0"
     bn.js "^4.11.8"
     bs58 "^4.0.1"
+    lodash.flatmap "^4.5.0"
     lodash.isequal "^4.5.0"
     lodash.isplainobject "^4.0.6"
     web3-utils "^1.0.0-beta.55"
@@ -933,6 +945,15 @@
   version "1.12.0"
   resolved "https://registry.yarnpkg.com/@colony/colony-js-contract-loader-network/-/colony-js-contract-loader-network-1.12.0.tgz#b9fd770db9c6156f3a6283a4fe31a157ead0e322"
   integrity sha512-U4Z3qgAOtYGvxO6uaESzlBEOjyxB0xLDqKdRNfriAwNJ3eFFXHm/vFq+ZUN0UZ6QHGYJXlurXTdEfIZneloG3w==
+  dependencies:
+    "@colony/colony-js-contract-loader" "^1.12.0"
+    assert "^2.0.0"
+    babel-runtime "^6.26.0"
+
+"@colony/colony-js-contract-loader-network@^1.13.0-beta.0":
+  version "1.13.0-beta.0"
+  resolved "https://registry.yarnpkg.com/@colony/colony-js-contract-loader-network/-/colony-js-contract-loader-network-1.13.0-beta.0.tgz#339f137ee27e393f68682b6d9b0df18bc290d46e"
+  integrity sha512-pU33gGm3XV+XnzmsskCYJ/WTXCDA4WV9YuefpqjPT+xUxG6BL4juLoUyqykY7abTEChkB6NzGf7Vvm1ml1PP5g==
   dependencies:
     "@colony/colony-js-contract-loader" "^1.12.0"
     assert "^2.0.0"
@@ -11602,6 +11623,11 @@ lodash.find@^4.6.0:
   version "4.6.0"
   resolved "https://registry.yarnpkg.com/lodash.find/-/lodash.find-4.6.0.tgz#cb0704d47ab71789ffa0de8b97dd926fb88b13b1"
   integrity sha1-ywcE1Hq3F4n/oN6Ll92Sb7iLE7E=
+
+lodash.flatmap@^4.5.0:
+  version "4.5.0"
+  resolved "https://registry.yarnpkg.com/lodash.flatmap/-/lodash.flatmap-4.5.0.tgz#ef8cbf408f6e48268663345305c6acc0b778702e"
+  integrity sha1-74y/QI9uSCaGYzRTBcaswLd4cC4=
 
 lodash.flatten@^4.2.0:
   version "4.4.0"
