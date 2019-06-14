@@ -51,7 +51,7 @@ RUN echo "LOADER=network\n" \
         "VERBOSE=true\n" \
         "COLONY_NETWORK_ENS_NAME=joincolony.test\n" \
         "PINNING_ROOM=PINION_DEV_ROOM\n" \
-        "PINNER_ID=QmQBF89g7VHjcQVNGEf5jKZnU5r6J8G2vfHzBpivKqgxs6\n" > .env
+        "PINNER_ID=QmXZKaLLuJzHZ3dnjHJiHLMHo4bFKaR3wWcf4ZbbqtxhBv\n" > .env
 
 # Build the production bundle
 RUN yarn webpack:build:prod
