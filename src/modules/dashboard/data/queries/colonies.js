@@ -1,5 +1,12 @@
 /* @flow */
 
+import {
+  COLONY_ROLE_ADMINISTRATION,
+  COLONY_ROLE_ARCHITECTURE,
+  COLONY_ROLE_FUNDING,
+  COLONY_ROLE_ROOT,
+} from '@colony/colony-js-client';
+
 import type { Address, ENSCache } from '~types';
 
 import type {
@@ -84,12 +91,7 @@ export const getColonyRoles: ContractEventQuery<
   prepare: prepareColonyClientQuery,
   async execute(colonyClient) {
     const {
-      events: {
-        ColonyAdministrationRoleSet,
-        ColonyArchitectureRoleSet,
-        ColonyFundingRoleSet,
-        ColonyRootRoleSet,
-      },
+      events: { ColonyRoleSet },
       contract: { address: colonyAddress },
     } = colonyClient;
     const events = await getEvents(
@@ -99,25 +101,16 @@ export const getColonyRoles: ContractEventQuery<
       },
       {
         blocksBack: 400000,
-        events: [
-          ColonyAdministrationRoleSet,
-          ColonyArchitectureRoleSet,
-          ColonyFundingRoleSet,
-          ColonyRootRoleSet,
-        ],
+        events: [ColonyRoleSet],
       },
     );
-    const { eventName: ADMINISTRATION_SET } = ColonyAdministrationRoleSet;
-    const { eventName: ARCHITECTURE_SET } = ColonyArchitectureRoleSet;
-    const { eventName: FUNDING_SET } = ColonyFundingRoleSet;
-    const { eventName: ROOT_SET } = ColonyRootRoleSet;
 
     // reduce events to { [address]: { [role]: boolean } }
-    const addressRoles = events.reduce((acc, { address, eventName, setTo }) => {
+    const addressRoles = events.reduce((acc, { address, setTo, role }) => {
       const normalizedAddress = createAddress(address).toString();
       return {
         ...acc,
-        [normalizedAddress]: { ...acc[normalizedAddress], [eventName]: setTo },
+        [normalizedAddress]: { ...acc[normalizedAddress], [role]: setTo },
       };
     }, {});
 
@@ -125,10 +118,10 @@ export const getColonyRoles: ContractEventQuery<
     const founder = createAddress(
       Object.keys(addressRoles).find(
         address =>
-          addressRoles[address][ADMINISTRATION_SET] &&
-          addressRoles[address][ARCHITECTURE_SET] &&
-          addressRoles[address][FUNDING_SET] &&
-          addressRoles[address][ROOT_SET],
+          addressRoles[address][COLONY_ROLE_ADMINISTRATION] &&
+          addressRoles[address][COLONY_ROLE_ARCHITECTURE] &&
+          addressRoles[address][COLONY_ROLE_FUNDING] &&
+          addressRoles[address][COLONY_ROLE_ROOT],
       ) || ZERO_ADDRESS,
     );
 
@@ -136,7 +129,8 @@ export const getColonyRoles: ContractEventQuery<
     const admins = Object.keys(addressRoles)
       .filter(
         address =>
-          addressRoles[address][ADMINISTRATION_SET] && address !== founder,
+          addressRoles[address][COLONY_ROLE_ADMINISTRATION] &&
+          address !== founder,
       )
       .map(createAddress);
 

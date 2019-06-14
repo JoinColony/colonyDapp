@@ -1,6 +1,7 @@
 /* @flow */
 
 import { padLeft, toHex } from 'web3-utils';
+import flatMap from 'lodash/flatMap';
 
 import type { IProvider, LogFilter } from '@colony/colony-js-adapter';
 
@@ -24,29 +25,19 @@ export const getFilterFormatted = (input: any) => padLeft(toHex(input), 64);
  * Returns an array of topics for the given ColonyJS events, and from/to
  * addresses, if given, for ERC20 transfers, or similar events.
  */
-const getTopics = ({ events = [], from, to }: LogFilterOptions) =>
-  [
-    events.reduce(
-      (acc, { interface: { topics } }) =>
-        Array.isArray(topics) ? [...acc, ...topics] : [...acc, topics],
-      [],
-    ),
+const getTopics = ({ events = [], from, to }: LogFilterOptions) => {
+  const topics = [
+    flatMap(events, ({ interface: { eventTopics } }) => eventTopics),
     // $FlowFixMe the LogFilter type should accept null for this
     from ? padTopicAddress(from) : null,
     // $FlowFixMe the LogFilter type should accept null for this
     to ? padTopicAddress(to) : null,
-  ].reduce(
-    (acc, topic) =>
-      // remove trailing null topics
-      topic === null
-        ? acc
-        : [
-            ...acc,
-            // single topics shouldn't be in arrays
-            Array.isArray(topic) && topic.length === 1 ? topic[0] : topic,
-          ],
-    [],
-  );
+  ];
+  while (topics[topics.length] === null) {
+    topics.pop();
+  }
+  return topics;
+};
 
 /*
  * Returns given filter with added `fromBlock` and `toBlock` components
