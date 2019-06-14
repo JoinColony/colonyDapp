@@ -97,7 +97,7 @@
   position: absolute;
   top: 35px;
   left: 10px;
-  z-index: 2;
+  z-index: var(--z-index-nav);
   border-bottom-left-radius: var(--radius-large);
   border-bottom-right-radius: var(--radius-large);
 }

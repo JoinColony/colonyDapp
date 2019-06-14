@@ -11,7 +11,7 @@
 
 .tabList {
   height: 100%;
-  z-index: 1; /* required to allow links to be clickable in case of transparent navigation */
+  z-index: var(--z-index-positioning); /* required to allow links to be clickable in case of transparent navigation */
   grid-column: 1;
   grid-row: 1;
 }
