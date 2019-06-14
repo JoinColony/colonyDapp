@@ -100,8 +100,20 @@ The [dApp production](https://github.com/JoinColony/colonyDapp/blob/13b81e37cd08
 
 The `Dockerfile` just needs to be built, and run. The `nginx` service `CMD` will keep the container alive.
 
-In order for the `Dockerfile` to be able to pull in fresh data from the `colonyDapp` repo, it needs a Github Personal Access Token _(`GHPAT`)_ provided as a build argument:
+#### Build Args
 
+This docker file allows you to pass in build time arguments to change the environment the dApp's bundle is being built with. The only one of these that is **required** is the `GH_PAT` one, without which, you won't be able to pull in the `colonyDapp` repo.
+
+Build args:
+- `GH_PAT`: the GitHub Personal Access Token **required** to authenticate and pull information from our private repo _(Note: you **have to** supply this yourself, otherwise it won't work)_.
+- `LOADER`: Loader value to be passed to the dApp's environment, defaults to `network`
+- `NETWORK`: Network value to be passed to the dApp's environment, defaults to `goerli`
+- `VERBOSE`: If the dApp's console output should be verbose or not, defaults to `false`
+- `COLONY_NETWORK_ENS_NAME`: The ENS name the dApp should use for users and colonies, defaults to `joincolony.eth`
+- `PINNING_ROOM`: The `pinion` pinning room's name to use, defaults to `PINION_DEV_ROOM`
+- `PINNER_ID`: The pinning id to use when pinning, defaults to `QmXZKaLLuJzHZ3dnjHJiHLMHo4bFKaR3wWcf4ZbbqtxhBv`
+
+Usage example: _(Build for a draft release)_
 ```bash
-docker build --build-arg GH_PAT='xxx' .
+docker build --build-arg GH_PAT='your-github-personal-access-token' --build-arg COLONY_NETWORK_ENS_NAME='joincolony.test' --build-arg VERBOSE='true' .
 ```
