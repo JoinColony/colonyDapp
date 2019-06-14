@@ -71,7 +71,7 @@ RUN cp -R ./dist/* ../colonyDappProd
 
 # Cleanup the source folder
 WORKDIR /
-# RUN rm -Rf colonyDapp
+RUN rm -Rf colonyDapp
 WORKDIR /colonyDappProd
 
 # Setup a basic nginx config
