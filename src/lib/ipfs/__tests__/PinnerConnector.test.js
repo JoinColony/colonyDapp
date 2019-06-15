@@ -38,10 +38,6 @@ describe('PinnerConnector', () => {
     );
     expect(RoomMonitorMock).toHaveBeenCalledWith(mockIpfs.pubsub, TEST_ROOM);
     expect(connector._roomMonitor.on).toHaveBeenCalledWith(
-      'join',
-      expect.any(Function),
-    );
-    expect(connector._roomMonitor.on).toHaveBeenCalledWith(
       'leave',
       expect.any(Function),
     );

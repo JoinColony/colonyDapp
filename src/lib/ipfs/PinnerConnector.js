@@ -23,14 +23,15 @@ type ReplicationRequest = {
 const PINNER_CONNECT_TIMEOUT = 20 * 1000; // This is just a number I came up with randomly. Adjust if necessary
 const PINNER_HAVE_HEADS_TIMEOUT = 30 * 1000; // Seems necessary to have this higher
 
-const PIN_ACTIONS = {
+const CLIENT_ACTIONS = {
+  ANNOUNCE_CLIENT: 'ANNOUNCE_CLIENT',
   REPLICATE: 'REPLICATE',
-  HAVE_HEADS: 'HAVE_HEADS',
   PIN_HASH: 'PIN_HASH',
 };
 
-const EVENTS = {
-  CONNECTED: 'CONNECTED',
+const PINNER_ACTIONS = {
+  ANNOUNCE_PINNER: 'ANNOUNCE_PINNER',
+  HAVE_HEADS: 'HAVE_HEADS',
 };
 
 class PinnerConnector {
@@ -44,8 +45,7 @@ class PinnerConnector {
 
   _outstandingPubsubMessages: Array<PinnerAction>;
 
-  // Can be an array in the future
-  _pinnerId: string;
+  _pinnerIds: Set<string>;
 
   _readyPromise: ?Promise<void>;
 
@@ -55,9 +55,7 @@ class PinnerConnector {
 
   _roomMonitor: PeerMonitor;
 
-  online: boolean;
-
-  constructor(ipfs: IPFS, room: string, pinnerId: string) {
+  constructor(ipfs: IPFS, room: string) {
     this._ipfs = ipfs;
     if (!this._ipfs.pubsub) {
       throw new Error("This IPFS instance doesn't support pubsub");
@@ -65,79 +63,34 @@ class PinnerConnector {
 
     this._events = new EventEmitter();
     this._room = room;
-    this._pinnerId = pinnerId;
-    this.online = false;
+    this._pinnerIds = new Set();
     this._outstandingPubsubMessages = [];
     this._openConnections = 0;
     this._replicationRequests = new Map();
   }
 
-  _handlePinnerMessage = (message: PubsubMessage) => {
-    // Don't process anything that doesn't come from a pinner
-    if (!this.isPinner(message.from)) return;
-    try {
-      const { type, to, payload } = JSON.parse(message.data);
-
-      switch (type) {
-        case PIN_ACTIONS.HAVE_HEADS: {
-          this._events.emit(PIN_ACTIONS.HAVE_HEADS, { to, payload });
-          return;
-        }
-        default:
-      }
-    } catch (caughtError) {
-      log.error(new Error(`Could not parse pinner message: ${message.data}`));
-    }
-  };
-
   get busy() {
     return !!this._openConnections || !!this._outstandingPubsubMessages.length;
   }
 
-  _handleNewPeer(peer: string) {
-    /**
-     * @todo Maintain multiple pinner IDs for the PinnerConnector
-     */
-    if (this.isPinner(peer)) {
-      this._setReady(peer);
-    }
-  }
-
-  _handleLeavePeer(peer: string) {
+  get online() {
     // When we have multiple pinner IDs, we are offline when the
     // last one leaves.
-    if (this.isPinner(peer)) {
-      this.online = false;
-    }
+    return this._pinnerIds.size > 0;
   }
 
-  _flushPinnerMessages() {
-    this._outstandingPubsubMessages.forEach(message =>
-      this._publishAction(message),
-    );
-    this._outstandingPubsubMessages = [];
+  get readyPromise() {
+    if (this._readyPromise) return this._readyPromise;
+
+    this._readyPromise = pEvent(this._events, PINNER_ACTIONS.ANNOUNCE_PINNER, {
+      timeout: PINNER_CONNECT_TIMEOUT,
+    }).then(() => true);
+
+    return this._readyPromise;
   }
 
-  _publishAction(action: PinnerAction) {
-    if (this.online) {
-      this._ipfs.pubsub
-        .publish(this._room, Buffer.from(JSON.stringify(action)))
-        // pubsub.publish returns a promise, so when calling it synchronously, we have to handle errors here
-        .catch(console.warn);
-    } else {
-      this._outstandingPubsubMessages.push(action);
-    }
-  }
-
-  _setReady(peer: string) {
-    this.online = true;
-    this._readyPromise = undefined;
-    this._events.emit(EVENTS.CONNECTED, peer);
-    this._flushPinnerMessages();
-  }
-
-  isPinner(peer: string) {
-    return peer === this._pinnerId;
+  get ready() {
+    return this.online || this.readyPromise;
   }
 
   async init() {
@@ -149,18 +102,11 @@ class PinnerConnector {
     await this._ipfs.pubsub.subscribe(this._room, this._handlePinnerMessage);
 
     this._roomMonitor = new PeerMonitor(this._ipfs.pubsub, this._room);
-    this._roomMonitor.on('join', this._handleNewPeer.bind(this));
     this._roomMonitor.on('leave', this._handleLeavePeer.bind(this));
     this._roomMonitor.on('error', log);
-  }
 
-  async ready() {
-    if (this.online) return true;
-    if (this._readyPromise) return this._readyPromise;
-    this._readyPromise = pEvent(this._events, EVENTS.CONNECTED, {
-      timeout: PINNER_CONNECT_TIMEOUT,
-    }).then(() => true);
-    return this._readyPromise;
+    this._announce();
+    this._listenForAnnouncements();
   }
 
   async disconnect() {
@@ -179,7 +125,7 @@ class PinnerConnector {
     }
 
     try {
-      await this.ready();
+      await this.ready;
     } catch (caughtError) {
       log.warn('Could not request replication. Pinner is offline.');
       return 0;
@@ -187,7 +133,7 @@ class PinnerConnector {
 
     const newRequest = {
       isPending: true,
-      promise: pEvent(this._events, PIN_ACTIONS.HAVE_HEADS, {
+      promise: pEvent(this._events, PINNER_ACTIONS.HAVE_HEADS, {
         timeout: PINNER_HAVE_HEADS_TIMEOUT,
         filter: ({ to }) => to === address,
       }).then(res => {
@@ -198,7 +144,7 @@ class PinnerConnector {
 
     this._replicationRequests.set(address, newRequest);
     this._publishAction({
-      type: PIN_ACTIONS.REPLICATE,
+      type: CLIENT_ACTIONS.REPLICATE,
       payload: { address },
     });
     const {
@@ -209,7 +155,7 @@ class PinnerConnector {
 
   async pinHash(ipfsHash: string) {
     this._publishAction({
-      type: PIN_ACTIONS.PIN_HASH,
+      type: CLIENT_ACTIONS.PIN_HASH,
       payload: { ipfsHash },
     });
     if (!isDev) {
@@ -222,6 +168,66 @@ class PinnerConnector {
         console.error(e);
       }
     }
+  }
+
+  _handlePinnerMessage = (message: PubsubMessage) => {
+    // Don't process anything that doesn't come from a pinner
+    if (!this._isPinner(message.from)) return;
+
+    try {
+      const { type, to, payload } = JSON.parse(message.data);
+
+      // Forward expected events from the pinner
+      if (PINNER_ACTIONS[type]) {
+        this._events.emit(type, { to, payload });
+      }
+    } catch (caughtError) {
+      log.error(new Error(`Could not parse pinner message: ${message.data}`));
+    }
+  };
+
+  _handleLeavePeer(peer: string) {
+    if (this._isPinner(peer)) {
+      this._pinnerIds.delete(peer);
+    }
+  }
+
+  _flushPinnerMessages() {
+    this._outstandingPubsubMessages.forEach(this._publishAction);
+    this._outstandingPubsubMessages = [];
+  }
+
+  _publishAction(action: PinnerAction) {
+    if (this.online) {
+      this._ipfs.pubsub
+        .publish(this._room, Buffer.from(JSON.stringify(action)))
+        // pubsub.publish returns a promise, so when calling it synchronously, we have to handle errors here
+        .catch(console.warn);
+    } else {
+      this._outstandingPubsubMessages.push(action);
+    }
+  }
+
+  _announce() {
+    this._publishAction({
+      type: CLIENT_ACTIONS.ANNOUNCE_CLIENT,
+      payload: { address: this._id },
+    });
+  }
+
+  _listenForAnnouncements() {
+    this._events.on(
+      PINNER_ACTIONS.ANNOUNCE_PINNER,
+      ({ payload: { address } }) => {
+        this._pinnerIds.add(address);
+        this._readyPromise = undefined;
+        this._flushPinnerMessages();
+      },
+    );
+  }
+
+  _isPinner(peer: string) {
+    return this._pinnerIds.has(peer);
   }
 }
 

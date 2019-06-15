@@ -14,8 +14,6 @@ import PinnerConnector from './PinnerConnector';
 // process.env is a special object. Destructuring doesn't work
 // eslint-disable-next-line prefer-destructuring
 const PINNING_ROOM = process.env.PINNING_ROOM;
-// eslint-disable-next-line prefer-destructuring
-const PINNER_ID = process.env.PINNER_ID;
 const TIMEOUT = process.env.CI ? 50000 : 10000;
 
 class IPFSNode {
@@ -57,10 +55,7 @@ class IPFSNode {
     if (!PINNING_ROOM) {
       throw new Error('No pinner room defined in environment variables.');
     }
-    if (!PINNER_ID) {
-      throw new Error('No pinner id specified in environment variables.');
-    }
-    this.pinner = new PinnerConnector(this.getIPFS(), PINNING_ROOM, PINNER_ID);
+    this.pinner = new PinnerConnector(this.getIPFS(), PINNING_ROOM);
     await this.ready;
     await this.pinner.init();
   }
