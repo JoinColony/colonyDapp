@@ -13,6 +13,7 @@
         "flow": "flow check",
         "flow:ci": "scripts/flow_ci.sh",
         "ganache": "scripts/start_ganache.js",
+        "ipfs:reset": "scripts/ipfs_reset.sh",
         "lint": "eslint --fix 'src/**/*.{js,jsx}' 'integration-testing/**/*.js' 'cypress/**/*.js'",
         "lint:ci": "eslint --format junit -o 'reports/eslint/eslint-results.xml' 'src/**/*.{js,jsx}' 'integration-testing/**/*.js' 'cypress/**/*.js'",
         "provision": "scripts/provision_submodules.sh",
