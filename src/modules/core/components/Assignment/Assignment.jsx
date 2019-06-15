@@ -9,6 +9,7 @@ import type { TaskPayoutType, TokenReferenceType, UserType } from '~immutable';
 import type { Address } from '~types';
 
 import Icon from '~core/Icon';
+import MaskedAddress from '~core/MaskedAddress';
 import PayoutsList from '~core/PayoutsList';
 import HookedUserAvatar from '~users/HookedUserAvatar';
 
@@ -40,10 +41,14 @@ const MSG = defineMessages({
 const UserAvatar = HookedUserAvatar({ fetchUser: false });
 
 type Props = {|
+  /** The worker that is assigned */
   worker: ?UserType,
+  /** The address of the above worker (used in the case of unclaimed worker profile) */
+  workerAddress: ?Address,
   /** List of payouts per token that has been set for a task */
   payouts?: Array<TaskPayoutType>,
-  renderAvatar?: (address: Address, user: UserType) => Node,
+  /** Provide a custom component to render the user avatar */
+  renderAvatar?: (address: Address, user: ?UserType) => Node,
   /** current user reputation */
   reputation?: number,
   /** The assignment has to be confirmed first and can therefore appear as pending,
@@ -52,10 +57,11 @@ type Props = {|
   pending?: boolean,
   /** We need to be aware of the native token to adjust the UI */
   nativeToken: TokenReferenceType,
+  /** Should the funding be rendered (if set) */
   showFunding?: boolean,
 |};
 
-const defaultRenderAvatar = (address: Address, user: UserType) => (
+const defaultRenderAvatar = (address: Address, user: ?UserType) => (
   <UserAvatar
     address={address}
     className={styles.recipientAvatar}
@@ -72,6 +78,7 @@ const Assignment = ({
   reputation,
   showFunding,
   worker,
+  workerAddress,
 }: Props) => {
   const fundingWithNativeToken =
     payouts &&
@@ -81,9 +88,9 @@ const Assignment = ({
   return (
     <div>
       <div className={styles.displayContainer}>
-        {worker ? (
+        {workerAddress ? (
           <div className={styles.avatarContainer}>
-            {renderAvatar(worker.profile.walletAddress, worker)}
+            {renderAvatar(workerAddress, worker)}
           </div>
         ) : (
           <Icon
@@ -107,7 +114,11 @@ const Assignment = ({
             </div>
           ) : (
             <div className={styles.placeholder}>
-              <FormattedMessage {...MSG.placeholder} />
+              {workerAddress ? (
+                <MaskedAddress address={workerAddress} />
+              ) : (
+                <FormattedMessage {...MSG.placeholder} />
+              )}
             </div>
           )}
         </div>

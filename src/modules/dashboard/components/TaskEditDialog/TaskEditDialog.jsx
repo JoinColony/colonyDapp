@@ -25,6 +25,7 @@ import DialogSection from '~core/Dialog/DialogSection.jsx';
 import Heading from '~core/Heading';
 import DialogBox from '~core/Dialog/DialogBox.jsx';
 import { SpinnerLoader } from '~core/Preloaders';
+import { UserProfileRecord, UserRecord } from '~immutable';
 import { ACTIONS } from '~redux';
 import HookedUserAvatar from '~users/HookedUserAvatar';
 import { mapPayload, mergePayload, pipe } from '~utils/actions';
@@ -183,9 +184,17 @@ const TaskEditDialog = ({
 
   // Get user (worker) assigned to this task
   const {
-    data: existingWorker,
+    data: existingWorkerObj,
     isFetching: isFetchingExistingWorker,
   } = useDataFetcher<UserType>(userFetcher, [workerAddress], [workerAddress]);
+  const existingWorker =
+    !!workerAddress && !existingWorkerObj
+      ? UserRecord({
+          profile: UserProfileRecord({
+            walletAddress: workerAddress,
+          }),
+        }).toJS()
+      : existingWorkerObj;
 
   const users = useMemo(
     () =>
