@@ -48,7 +48,7 @@ describe('PinnerConnector', () => {
     expect(connector._publishAction).toHaveBeenCalledWith(
       {
         type: 'ANNOUNCE_CLIENT',
-        payload: { address: 'fakeId' },
+        payload: { ipfsId: 'fakeId' },
       },
       true,
     );

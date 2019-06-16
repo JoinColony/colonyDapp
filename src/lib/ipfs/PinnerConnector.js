@@ -214,7 +214,7 @@ class PinnerConnector {
     this._publishAction(
       {
         type: CLIENT_ACTIONS.ANNOUNCE_CLIENT,
-        payload: { address: this._id },
+        payload: { ipfsId: this._id },
       },
       true,
     );
@@ -223,8 +223,8 @@ class PinnerConnector {
   _listenForAnnouncements() {
     this._events.on(
       PINNER_ACTIONS.ANNOUNCE_PINNER,
-      ({ payload: { address } }) => {
-        this._pinnerIds.add(address);
+      ({ payload: { ipfsId } }) => {
+        this._pinnerIds.add(ipfsId);
         this._readyPromise = undefined;
         this._flushPinnerMessages();
       },
