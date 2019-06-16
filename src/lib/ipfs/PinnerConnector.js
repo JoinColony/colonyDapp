@@ -73,9 +73,7 @@ class PinnerConnector {
     return !!this._openConnections || !!this._outstandingPubsubMessages.length;
   }
 
-  get online() {
-    // When we have multiple pinner IDs, we are offline when the
-    // last one leaves.
+  get connectedToPinner() {
     return this._pinnerIds.size > 0;
   }
 
@@ -90,7 +88,7 @@ class PinnerConnector {
   }
 
   get ready() {
-    return this.online || this.readyPromise;
+    return this.connectedToPinner || this.readyPromise;
   }
 
   async init() {
@@ -105,8 +103,8 @@ class PinnerConnector {
     this._roomMonitor.on('leave', this._handleLeavePeer.bind(this));
     this._roomMonitor.on('error', log);
 
-    this._announce();
     this._listenForAnnouncements();
+    this._announce();
   }
 
   async disconnect() {
@@ -164,20 +162,22 @@ class PinnerConnector {
         await fetch(
           `https://ipfs.infura.io:5001/api/v0/pin/add?arg=/ipfs/${ipfsHash}`,
         );
-      } catch (e) {
-        console.error(e);
+      } catch (caughtError) {
+        log.error(caughtError);
       }
     }
   }
 
   _handlePinnerMessage = (message: PubsubMessage) => {
-    // Don't process anything that doesn't come from a pinner
-    if (!this._isPinner(message.from)) return;
-
     try {
-      const { type, to, payload } = JSON.parse(message.data);
+      const parsed = JSON.parse(message.data);
 
-      // Forward expected events from the pinner
+      // The message could be anything; we're only interested in those
+      // with data that follows our format.
+      if (typeof parsed !== 'object') return;
+      const { type, to, payload } = parsed;
+
+      // Emit actions from the pinner and ignore everything else.
       if (PINNER_ACTIONS[type]) {
         this._events.emit(type, { to, payload });
       }
@@ -193,26 +193,31 @@ class PinnerConnector {
   }
 
   _flushPinnerMessages() {
-    this._outstandingPubsubMessages.forEach(this._publishAction);
+    this._outstandingPubsubMessages.forEach(message =>
+      this._publishAction(message),
+    );
     this._outstandingPubsubMessages = [];
   }
 
-  _publishAction(action: PinnerAction) {
-    if (this.online) {
+  _publishAction(action: PinnerAction, forcePublish?: boolean) {
+    if (this.connectedToPinner || forcePublish) {
       this._ipfs.pubsub
         .publish(this._room, Buffer.from(JSON.stringify(action)))
         // pubsub.publish returns a promise, so when calling it synchronously, we have to handle errors here
-        .catch(console.warn);
+        .catch(log.warn);
     } else {
       this._outstandingPubsubMessages.push(action);
     }
   }
 
   _announce() {
-    this._publishAction({
-      type: CLIENT_ACTIONS.ANNOUNCE_CLIENT,
-      payload: { address: this._id },
-    });
+    this._publishAction(
+      {
+        type: CLIENT_ACTIONS.ANNOUNCE_CLIENT,
+        payload: { address: this._id },
+      },
+      true,
+    );
   }
 
   _listenForAnnouncements() {
