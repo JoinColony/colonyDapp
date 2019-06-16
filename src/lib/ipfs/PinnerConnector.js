@@ -24,7 +24,6 @@ const PINNER_CONNECT_TIMEOUT = 20 * 1000; // This is just a number I came up wit
 const PINNER_HAVE_HEADS_TIMEOUT = 30 * 1000; // Seems necessary to have this higher
 
 const CLIENT_ACTIONS = {
-  ANNOUNCE_CLIENT: 'ANNOUNCE_CLIENT',
   REPLICATE: 'REPLICATE',
   PIN_HASH: 'PIN_HASH',
 };
@@ -67,6 +66,7 @@ class PinnerConnector {
     this._outstandingPubsubMessages = [];
     this._openConnections = 0;
     this._replicationRequests = new Map();
+    this._listenForAnnouncements();
   }
 
   get busy() {
@@ -82,7 +82,11 @@ class PinnerConnector {
 
     this._readyPromise = pEvent(this._events, PINNER_ACTIONS.ANNOUNCE_PINNER, {
       timeout: PINNER_CONNECT_TIMEOUT,
-    }).then(() => true);
+    })
+      .then(() => true)
+      .finally(() => {
+        this._readyPromise = undefined;
+      });
 
     return this._readyPromise;
   }
@@ -102,9 +106,6 @@ class PinnerConnector {
     this._roomMonitor = new PeerMonitor(this._ipfs.pubsub, this._room);
     this._roomMonitor.on('leave', this._handleLeavePeer.bind(this));
     this._roomMonitor.on('error', log);
-
-    this._listenForAnnouncements();
-    this._announce();
   }
 
   async disconnect() {
@@ -125,7 +126,7 @@ class PinnerConnector {
     try {
       await this.ready;
     } catch (caughtError) {
-      log.warn('Could not request replication. Pinner is offline.');
+      log.warn('Could not request replication; not connected to any pinners.');
       return 0;
     }
 
@@ -199,8 +200,8 @@ class PinnerConnector {
     this._outstandingPubsubMessages = [];
   }
 
-  _publishAction(action: PinnerAction, forcePublish?: boolean) {
-    if (this.connectedToPinner || forcePublish) {
+  _publishAction(action: PinnerAction) {
+    if (this.connectedToPinner) {
       this._ipfs.pubsub
         .publish(this._room, Buffer.from(JSON.stringify(action)))
         // pubsub.publish returns a promise, so when calling it synchronously, we have to handle errors here
@@ -210,22 +211,13 @@ class PinnerConnector {
     }
   }
 
-  _announce() {
-    this._publishAction(
-      {
-        type: CLIENT_ACTIONS.ANNOUNCE_CLIENT,
-        payload: { ipfsId: this._id },
-      },
-      true,
-    );
-  }
-
   _listenForAnnouncements() {
     this._events.on(
       PINNER_ACTIONS.ANNOUNCE_PINNER,
       ({ payload: { ipfsId } }) => {
+        if (this._pinnerIds.has(ipfsId)) return;
+
         this._pinnerIds.add(ipfsId);
-        this._readyPromise = undefined;
         this._flushPinnerMessages();
       },
     );
