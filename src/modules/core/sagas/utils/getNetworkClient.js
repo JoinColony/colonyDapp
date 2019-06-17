@@ -9,7 +9,7 @@ import ColonyNetworkClient, {
 
 import { CONTEXT, getContext } from '~context';
 
-import { defaultNetwork } from './getProvider';
+const defaultNetwork = process.env.NETWORK || 'goerli';
 
 /*
  * Return an initialized ColonyNetworkClient instance.
