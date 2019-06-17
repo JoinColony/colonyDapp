@@ -375,7 +375,7 @@ export const setTaskPayout: Command<
   async execute(taskStore, { amount, token }) {
     const eventHash = await taskStore.append(
       createEvent(TASK_EVENT_TYPES.PAYOUT_SET, {
-        amount,
+        amount: amount.toString(10),
         token,
       }),
     );

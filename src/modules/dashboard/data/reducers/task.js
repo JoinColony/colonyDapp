@@ -1,5 +1,7 @@
 /* @flow */
 
+import BigNumber from 'bn.js';
+
 import type { EventReducer } from '~data/types';
 
 import { TASK_EVENT_TYPES } from '~data/constants';
@@ -111,7 +113,7 @@ export const taskReducer: EventReducer<
       const { amount, token } = event.payload;
       return {
         ...task,
-        payout: amount,
+        payout: new BigNumber(amount),
         paymentTokenAddress: token,
       };
     }
