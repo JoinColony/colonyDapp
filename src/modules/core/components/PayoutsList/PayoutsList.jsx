@@ -26,17 +26,14 @@ type Props = {|
   /** Maximum lines to show before switching to popover */
   maxLines?: number,
   /** Native token of the displayed Colony */
-  nativeToken: TokenReferenceType,
+  nativeToken: ?TokenReferenceType,
 |};
 
 const displayName = 'PayoutsList';
 
-const PayoutsList = ({
-  payouts,
-  maxLines = 1,
-  nativeToken: { address: nativeTokenAddress },
-  nativeToken,
-}: Props) => {
+const PayoutsList = ({ payouts, maxLines = 1, nativeToken }: Props) => {
+  const { address: nativeTokenAddress } = nativeToken || {};
+
   const sortedPayouts = payouts.sort(({ token: a }, { token: b }) => {
     if (a.address === nativeTokenAddress && tokenIsETH(b)) {
       return -1;
@@ -59,7 +56,7 @@ const PayoutsList = ({
         {firstPayouts.map(payout => (
           <Numeral
             className={cx(styles.payoutNumber, {
-              [styles.native]: payout.token.address === nativeToken.address,
+              [styles.native]: payout.token.address === nativeTokenAddress,
             })}
             key={payout.token.address}
             prefix={`${payout.token.symbol} `}

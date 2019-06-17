@@ -56,7 +56,7 @@ type Props = {|
    */
   pending?: boolean,
   /** We need to be aware of the native token to adjust the UI */
-  nativeToken: TokenReferenceType,
+  nativeToken: ?TokenReferenceType,
   /** Should the funding be rendered (if set) */
   showFunding?: boolean,
 |};
@@ -132,7 +132,7 @@ const Assignment = ({
                 />
               </span>
             )}
-            {payouts && payouts.length > 0 ? (
+            {nativeToken && payouts && payouts.length > 0 ? (
               <PayoutsList
                 payouts={payouts}
                 nativeToken={nativeToken}
