@@ -119,9 +119,10 @@ class MetaMask extends Component<Props, State> {
   handleRetryClick = (evt: SyntheticEvent<HTMLButtonElement>) => {
     evt.preventDefault();
     this.setState({ isLoading: true });
-    // @todo MetaMask wizard step timeout
-    // @body Use Promise.race or remove timeout
-    // add a short timeout to show the loading spinner so the user knows there's something processing
+    /*
+     * This is here only to show a spinner on the button after being clicked
+     * Without this, the user can't tell if the click actually registered
+     */
     this.timerHandle = setTimeout(async () => {
       await this.connectMetaMask();
     }, 500);
