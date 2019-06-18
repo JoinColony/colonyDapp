@@ -544,7 +544,7 @@ export const getUserInboxActivity: Query<
     cleanedEvents = cleanedEvents
       .concat(cleanedMintEvents)
       .concat(transferEvents);
-    const transformedEvents = await Promise.all(
+    const transformedEvents = (await Promise.all(
       /*
        * @note Remove the first four log entries.
        *
@@ -592,7 +592,7 @@ export const getUserInboxActivity: Query<
           };
           return transformedEvent;
         }),
-    );
+    )).filter(({ event }) => !!event);
     return userInboxStore
       .all()
       .map(({ meta: { id, timestamp, sourceUserAddress }, payload }) =>
