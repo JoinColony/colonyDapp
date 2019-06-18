@@ -28,12 +28,11 @@ export const getFilterFormatted = (input: any) => padLeft(toHex(input), 64);
 const getTopics = ({ events = [], from, to }: LogFilterOptions) => {
   const topics = [
     flatMap(events, ({ interface: { eventTopics } }) => eventTopics),
-    // $FlowFixMe the LogFilter type should accept null for this
     from ? padTopicAddress(from) : null,
-    // $FlowFixMe the LogFilter type should accept null for this
     to ? padTopicAddress(to) : null,
   ];
-  while (topics[topics.length] === null) {
+  // Remove trailing null topics, since certain nodes don't like them
+  while (topics[topics.length - 1] === null) {
     topics.pop();
   }
   return topics;
