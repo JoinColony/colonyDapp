@@ -117,7 +117,9 @@ class StepHardware extends Component<Props> {
   static defaultProps = {
     availableAddresses: [],
     wizardValues: {
-      method: 'unknown',
+      method: 'ledger',
+      hardwareWalletChoice: '0x0',
+      hardwareWalletFilter: '0x0',
     },
   };
 
@@ -208,7 +210,6 @@ class StepHardware extends Component<Props> {
                 <AddressItem
                   address={address}
                   checked={hardwareWalletChoice === address}
-                  searchTerm={hardwareWalletFilter}
                   fetchAddressBalance={this.fetchAddressBalance}
                 />
               </div>
