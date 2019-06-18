@@ -135,6 +135,7 @@ const config = {
         test: /\.svg$/,
         include: [
           path.resolve(__dirname, 'node_modules', 'eth-contract-metadata', 'images'),
+          path.resolve(__dirname, 'src', 'img', 'tokens'),
         ],
         use: [
           {

@@ -7,6 +7,8 @@ import type { ComponentType } from 'react';
 import type { Props as TokenIconProps } from '~core/TokenIcon';
 import TokenIcon from '~core/TokenIcon';
 
+import { tokenIsETH } from '../../../core/checks';
+
 import { useDataFetcher } from '~utils/hooks';
 import { ipfsDataFetcher } from '../../../core/fetchers';
 
@@ -20,6 +22,7 @@ const loadTokenImages = async (
   logo,
 ): Promise<ImageType> /* eslint-disable max-len */ =>
   import(/* webpackMode: "eager" */ `../../../../../node_modules/eth-contract-metadata/images/${logo}`);
+
 const HookedTokenIcon = ({ token, ...props }: TokenIconProps) => {
   const { iconHash, address } = token;
   const [tokenImage, setTokenImage] = useState();
@@ -56,6 +59,10 @@ const HookedTokenIcon = ({ token, ...props }: TokenIconProps) => {
               setTokenImage(response.default);
             }
           }
+        }
+        if (tokenIsETH({ address })) {
+          const response = await import(/* webpackMode: "eager" */ `../../../../img/tokens/ether.svg`);
+          setTokenSVG(response.default);
         }
       };
       checkAndLoadImages();
