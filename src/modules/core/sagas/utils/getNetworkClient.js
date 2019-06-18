@@ -9,7 +9,7 @@ import ColonyNetworkClient, {
 
 import { CONTEXT, getContext } from '~context';
 
-const defaultNetwork = process.env.NETWORK || 'goerli';
+import { DEFAULT_NETWORK } from '../../constants';
 
 /*
  * Return an initialized ColonyNetworkClient instance.
@@ -17,5 +17,5 @@ const defaultNetwork = process.env.NETWORK || 'goerli';
 export default function* getClient(): Saga<ColonyNetworkClient> {
   const wallet = yield* getContext(CONTEXT.WALLET);
 
-  return yield call(getNetworkClient, defaultNetwork, wallet);
+  return yield call(getNetworkClient, DEFAULT_NETWORK, wallet);
 }

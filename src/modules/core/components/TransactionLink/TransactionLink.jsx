@@ -5,6 +5,7 @@ import type { MessageDescriptor, MessageValues } from 'react-intl';
 import React from 'react';
 
 import ExternalLink from '~core/ExternalLink';
+import { DEFAULT_NETWORK } from '../../constants';
 
 type Props = {|
   /*
@@ -27,7 +28,7 @@ const displayName = 'TransactionLink';
 const TransactionLink = ({
   className,
   hash,
-  network = process.env.NETWORK || 'homestead',
+  network = DEFAULT_NETWORK,
   text,
   textValues,
 }: Props) => {
