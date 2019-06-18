@@ -13,7 +13,10 @@ import HookedUserAvatar from '~users/HookedUserAvatar';
 
 import { userFetcher } from '../../../users/fetchers';
 import TextDecorator from '../../../../lib/TextDecorator';
-import { walletAddressSelector } from '../../../users/selectors';
+import {
+  friendlyUsernameSelector,
+  walletAddressSelector,
+} from '../../../users/selectors';
 
 import styles from './TaskFeedComment.css';
 
@@ -51,6 +54,9 @@ const TaskFeedComment = ({
     // This is a workaround for the broken `shouldFetch` guard
     { ttl: Infinity },
   );
+  const userDisplayName = useSelector(friendlyUsernameSelector, [
+    authorAddress,
+  ]);
   return (
     <div
       className={`${styles.comment} ${
@@ -66,7 +72,7 @@ const TaskFeedComment = ({
         {!isCurrentUser && creator && (
           <div className={styles.commentUsername}>
             <UserInfo user={creator}>
-              <span>{creator.profile.displayName}</span>
+              <span>{userDisplayName}</span>
             </UserInfo>
           </div>
         )}
