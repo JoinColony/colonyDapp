@@ -16,7 +16,7 @@ describe('PinnerConnector', () => {
   });
 
   const mockIpfs = {
-    id: jest.fn(() => 'fakeId'),
+    id: jest.fn(() => ({ id: 'fakeId' })),
     pubsub: {
       subscribe: jest.fn(() => Promise.resolve(true)),
       unsubscribe: jest.fn(() => Promise.resolve(true)),
@@ -30,17 +30,15 @@ describe('PinnerConnector', () => {
 
   test('Initialization', async () => {
     const connector = new PinnerConnector(mockIpfs, TEST_ROOM);
+
     await connector.init();
     expect(mockIpfs.id).toHaveBeenCalled();
+    expect(connector._id).toBe('fakeId');
     expect(mockIpfs.pubsub.subscribe).toHaveBeenCalledWith(
       TEST_ROOM,
       expect.any(Function),
     );
     expect(RoomMonitorMock).toHaveBeenCalledWith(mockIpfs.pubsub, TEST_ROOM);
-    expect(connector._roomMonitor.on).toHaveBeenCalledWith(
-      'join',
-      expect.any(Function),
-    );
     expect(connector._roomMonitor.on).toHaveBeenCalledWith(
       'leave',
       expect.any(Function),

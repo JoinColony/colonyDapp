@@ -66,7 +66,7 @@ describe('Claims a username', () => {
     /*
      * Check if the gas station is open
      */
-    cy.get('div[data-test="gasStation"]', { timeout: 2000 }).should(
+    cy.get('div[data-test="gasStation"]', { timeout: 30 * 1000 }).should(
       'be.visible',
     );
     /*
