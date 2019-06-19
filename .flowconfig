@@ -14,6 +14,7 @@
 .*/node_modules/draft-js/lib/DraftEditorLeaf.react.js.flow
 # https://github.com/atlassian/react-beautiful-dnd/issues/851
 .*/node_modules/react-beautiful-dnd/.*
+.*/node_modules/module-deps/.*
 
 [include]
 .*/src/.*
