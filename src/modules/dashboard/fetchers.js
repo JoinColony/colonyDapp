@@ -73,12 +73,6 @@ export const currentUserColoniesFetcher = Object.freeze({
   ttl: 1000 * 60,
 });
 
-export const taskFetcher = Object.freeze({
-  select: taskSelector,
-  fetch: fetchTask,
-  ttl: 1000 * 60, // 1 minute,
-});
-
 export const tasksByIdFetcher = Object.freeze({
   select: tasksByIdsSelector,
   fetch: fetchTaskByColonyAddressAndDraftId,

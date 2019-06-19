@@ -51,13 +51,13 @@ const TaskInviteDialog = ({
   },
   currentUser,
 }: Props) => {
-  // @TODO TaskInviteDialog: Fetch the task using a hook
-  // @BODY: We should also remove the locally mocked data below
+  // @todo TaskInviteDialog: Fetch the task using a subscription
+  // @body: We should also remove the locally mocked data below
   //
-  // const { data: task } = useDataFetcher<TaskType>(
-  //   taskFetcher,
-  //   [taskId],
-  //   [taskId],
+  // const { data: task, isFetching } = useDataSubscriber<TaskType>(
+  //   taskSubscriber,
+  //   [draftId],
+  //   [colonyAddress || undefined, draftId],
   // );
   const reputation = 0;
   const payouts = [];
