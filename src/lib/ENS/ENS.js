@@ -114,7 +114,14 @@ class ENS {
       throw new Error(`ENS Name not found for address "${address}"`);
     }
     const domain = punycode.encode(rawDomain);
-    return rawDomain === domain ? rawDomain : `${EXTERNAL_PREFIX}${domain}`;
+
+    // punycode.encode can add a hyphen to the end of the string
+    const domainsAreEqual =
+      rawDomain === domain ||
+      (domain.endsWith('-') &&
+        rawDomain === domain.slice(0, domain.length - 1));
+
+    return domainsAreEqual ? rawDomain : `${EXTERNAL_PREFIX}${domain}`;
   }
 
   async getOrbitDBAddress(
