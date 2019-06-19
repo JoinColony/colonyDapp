@@ -38,14 +38,14 @@ class EventStore extends Store {
 
   _observable: ?BehaviorSubject<Event<*>[]>;
 
-  get observable() {
+  get observable(): BehaviorSubject<Event<*>[]> {
     if (this._observable) {
       return this._observable;
     }
 
     this._observable = new BehaviorSubject<Event<*>[]>(this.all());
 
-    const next = () => this._observable.next(this.all());
+    const next = () => this.observable.next(this.all());
 
     // This isn't the most efficient way of getting the next value;
     // we're sacrificing performance for reliability.
@@ -54,7 +54,7 @@ class EventStore extends Store {
 
     // Overload the store's close method to unsubscribe the observable.
     this._orbitStore.close = async () => {
-      this._observable.unsubscribe();
+      this.observable.unsubscribe();
       return this._orbitStore.close();
     };
 

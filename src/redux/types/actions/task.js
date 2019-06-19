@@ -5,14 +5,13 @@ import type BigNumber from 'bn.js';
 import type { TaskType, TaskProps } from '~immutable';
 import type { $Required, Address } from '~types';
 import type { Event } from '~data/types';
-import type { TaskEvents } from '~data/types/TaskEvents';
+import type { TaskEvents, TaskFeedItemEvents } from '~data/types/TaskEvents';
 import type {
   ActionType,
   ActionTypeWithPayloadAndMeta,
   ErrorActionType,
   UniqueActionType,
 } from '~redux';
-import type { TaskFeedItemEvents } from '../../../modules/dashboard/data/queries/feedItems';
 
 import { ACTIONS } from '~redux';
 import { TASK_EVENT_TYPES } from '~data/constants';
@@ -306,7 +305,7 @@ export type TaskActionTypes = {|
   TASK_SUB_STOP: NonUniqueTaskActionType<typeof ACTIONS.TASK_SUB_STOP, void>,
   TASK_SUB_EVENTS: NonUniqueTaskActionType<
     typeof ACTIONS.TASK_SUB_EVENTS,
-    {| events: TaskEvents[] |},
+    {| events: $Values<TaskEvents>[] |},
   >,
   TASK_SUB_ERROR: TaskErrorActionType<typeof ACTIONS.TASK_SUB_ERROR>,
   TASK_SET_WORKER_AND_PAYOUTS: TaskActionType<

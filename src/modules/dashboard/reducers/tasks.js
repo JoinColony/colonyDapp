@@ -179,6 +179,7 @@ const tasksReducer: ReducerType<
       const { draftId, events } = action.payload;
       return state.setIn(
         [draftId, 'record'],
+        // $FlowFixMe this is fine...
         events.reduce(taskEventReducer, TaskRecord()),
       );
     }

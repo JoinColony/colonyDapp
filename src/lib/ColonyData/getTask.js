@@ -32,7 +32,6 @@ type Context = {|
 
 type Args = {|
   comments?: boolean,
-  continuous?: boolean,
 |};
 
 const {

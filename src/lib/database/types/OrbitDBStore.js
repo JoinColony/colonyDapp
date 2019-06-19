@@ -19,7 +19,11 @@ export interface OrbitDBStore {
     max: number,
   };
 
+  close: () => Promise<void>;
+
   events: EventEmitter;
+
+  close: () => Promise<void>;
 
   constructor(
     ipfs: IPFS,
@@ -31,7 +35,6 @@ export interface OrbitDBStore {
   load(): Promise<void>;
   load(amount: number): Promise<void>;
 
-  close(): Promise<void>;
   drop(): Promise<void>;
 
   _addOperation(data: any): void;

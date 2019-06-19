@@ -4,7 +4,7 @@ import type { BehaviorSubject } from 'rxjs';
 
 import type { ContextName } from '~context';
 import type { $Pick } from '~types';
-import type { EventsType } from './events';
+import type { EventsType, Event } from './events';
 
 /*
  * The specification for a data query.
@@ -30,12 +30,12 @@ export type Query<D, M, A, R> = {|
 // 'XQ3Ks' will eventually deprecate Query
 export type XtremeQuery3000<D, M, A, R> = {|
   context: ContextName[],
-  executeAsync: (deps: D, args: A) => Promise<R>,
-  executeObservable: (deps: D, args: A) => BehaviorSubject<R>,
+  executeAsync: (deps: D, args: A) => Promise<Event<*>[]>,
+  executeObservable: (deps: D, args: A) => BehaviorSubject<Event<*>[]>,
   name: string,
+  prepare: (context: *, metadata: M, args: A) => Promise<D>,
   reducer: (result: R, event: Event<*>) => R,
   seed: any,
-  prepare: (context: *, metadata: M, args: A) => Promise<D>,
 |};
 
 /*

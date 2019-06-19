@@ -46,14 +46,15 @@ export const subscriptionChannel = <R>(
 export const takeSubscription = (
   actions: SubscriptionActions,
   queryName: $Keys<$PropertyType<ColonyData, 'queries'>>,
-  getQueryArgs: (action: Object) => {| args?: *, metadata: * |},
+  getOptions: (action: Object) => {| args?: *, metadata: * |},
 ) =>
   takeEvery(actions.start, function* subscriptionSaga(action: *): Saga<void> {
     let channel;
     try {
       const colonyData = yield* getContext(CONTEXT.COLONY_DATA);
       const query = colonyData.queries[queryName];
-      const queryExecution = query(getQueryArgs(action));
+      const options = getOptions(action);
+      const queryExecution = query(options);
 
       channel = subscriptionChannel(queryExecution);
 

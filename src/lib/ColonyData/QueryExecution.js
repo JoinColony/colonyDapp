@@ -3,8 +3,9 @@
 import type { Observable, PartialObserver } from 'rxjs';
 
 import { from } from 'rxjs';
-import { flatMap, reduce } from 'rxjs/operators';
-import type { XtremeQuery3000 } from '~data/types';
+import { flatMap, map } from 'rxjs/operators';
+
+import type { Event, XtremeQuery3000 } from '~data/types';
 
 /*
  * @todo Improve types for QueryExecution
@@ -35,15 +36,15 @@ export default class QueryExecution {
 
   get promise(): Promise<*> {
     if (!this._promise) {
-      this._promise = async () => {
+      this._promise = (async () => {
         const deps = await this.query.prepare(
           this.context,
           this.metadata,
           this.args,
         );
         const events = await this.query.executeAsync(deps, this.args);
-        return events.reduce(this.query.reducer, this.query.seed);
-      };
+        return this.reduce(events);
+      })();
     }
 
     return this._promise;
@@ -79,9 +80,13 @@ export default class QueryExecution {
     return this.promise.finally(onFinally);
   }
 
+  reduce(events: Event<*>[]) {
+    return events.reduce(this.query.reducer, this.query.seed);
+  }
+
   subscribe(observer: PartialObserver<*>) {
     return this.observable
-      .pipe(reduce(this.query.reducer, this.query.seed))
+      .pipe(map(events => this.reduce(events)))
       .subscribe(observer);
   }
 

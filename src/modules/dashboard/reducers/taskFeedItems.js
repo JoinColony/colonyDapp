@@ -73,6 +73,7 @@ const insertFeedItem = (list: List<*>, record: TaskFeedItemRecordType) => {
 };
 
 const updateStateForSubscription = (state: *, draftId: string) =>
+  // $FlowFixMe this is fine...
   state.getIn([draftId, 'record']) ? state : state.set(draftId, DataRecord());
 
 const updateStateForEvent = (state: *, draftId: string, event: *) => {
@@ -98,7 +99,7 @@ const taskFeedItemsReducer: ReducerType<
     TASK_COMMENT_ADD_SUCCESS: *,
     TASK_CREATE_SUCCESS: *,
     TASK_FEED_ITEMS_SUB_START: *,
-    TASK_FEED_ITEMS_SUB_EVENT: *,
+    TASK_FEED_ITEMS_SUB_EVENTS: *,
     TASK_FINALIZE_SUCCESS: *,
     TASK_SEND_WORK_INVITE_SUCCESS: *,
     TASK_SEND_WORK_REQUEST_SUCCESS: *,
