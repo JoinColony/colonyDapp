@@ -114,6 +114,7 @@ pre {
 
 body {
   height: 100%;
+  overflow: hidden;
   font-size: 1rem;
   font-weight: var(--weight-normal);
   line-height: 1.428571428571429;
