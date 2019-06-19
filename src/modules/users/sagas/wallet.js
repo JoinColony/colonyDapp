@@ -12,11 +12,12 @@ import trezorWallet from '@colony/purser-trezor';
 import { TrufflepigLoader } from '@colony/colony-js-contract-loader-http';
 
 import type { Action } from '~redux';
+import type { Address } from '~types';
 
 import { create, putError } from '~utils/saga/effects';
 import { ACTIONS } from '~redux';
 import { createAddress } from '~types';
-import type { Address } from '~types';
+import { HARDWARE_WALLET_DEFAULT_ADDRESS_COUNT } from '../constants';
 
 // This should be typed better
 type WalletInstance = Object;
@@ -33,10 +34,7 @@ function* fetchAccounts(
 
   try {
     const wallet = yield call(hardwareWallets[walletType].open, {
-      /**
-       * @todo Determine proper `addressCount` for fetching wallet accounts.
-       */
-      addressCount: 100,
+      addressCount: HARDWARE_WALLET_DEFAULT_ADDRESS_COUNT,
     });
     yield put<Action<typeof ACTIONS.WALLET_FETCH_ACCOUNTS_SUCCESS>>({
       type: ACTIONS.WALLET_FETCH_ACCOUNTS_SUCCESS,

@@ -1,64 +1,46 @@
 /* @flow */
 
 import React, { Component, Fragment } from 'react';
+import BigNumber from 'bn.js';
 
-import { FormattedNumber } from 'react-intl';
-
-import styles from './AddressItem.css';
+import type { Address } from '~types';
 
 import Radio from '~core/Fields/Radio';
 import SpinnerLoader from '~core/Preloaders/SpinnerLoader.jsx';
+import Numeral from '~core/Numeral';
 
-import type { Address } from '~types';
+import styles from './AddressItem.css';
 
 type Props = {|
   address: Address,
   checked: boolean,
-  searchTerm: string,
+  fetchAddressBalance: string => BigNumber,
 |};
 
 type State = {|
   isLoading: boolean,
+  balance: BigNumber,
 |};
 
 class AddressItem extends Component<Props, State> {
-  timerHandle: TimeoutID; // for mocking balance lookup, so can clearTimeout in `componentWillUnmount`
-
   state = {
     isLoading: true,
+    balance: new BigNumber(0),
   };
 
   componentDidMount() {
     this.getWalletBalance();
   }
 
-  componentWillUnmount() {
-    if (this.timerHandle) {
-      clearTimeout(this.timerHandle);
-    }
-  }
-
-  getWalletBalance = () => {
-    // @todo Fetch hardware wallet balance or remove timeout
-    // @body The timeout here seems to be just "simulating" the fetch
-    const timeout = Math.floor(Math.random() * Math.floor(5)) * 1000 + 1000;
-    this.timerHandle = setTimeout(() => {
-      this.setState({ isLoading: false });
-    }, timeout);
+  getWalletBalance = async () => {
+    const { address, fetchAddressBalance } = this.props;
+    const balance = await fetchAddressBalance(address);
+    return this.setState({ balance, isLoading: false });
   };
 
   render() {
-    const { isLoading } = this.state;
+    const { isLoading, balance } = this.state;
     const { address, checked } = this.props;
-
-    const formattedNumberProps = {
-      value: 0,
-      style: 'currency',
-      maximumFractionDigits: 18,
-      currency: 'ETH',
-      currencyDisplay: 'name',
-    };
-
     return (
       <Fragment>
         <div className={styles.choiceInputContainer}>
@@ -75,7 +57,7 @@ class AddressItem extends Component<Props, State> {
           {isLoading ? (
             <SpinnerLoader appearance={{ size: 'small', theme: 'primary' }} />
           ) : (
-            <FormattedNumber {...formattedNumberProps} />
+            <Numeral value={balance} suffix=" ETH" unit={18} />
           )}
         </div>
       </Fragment>

@@ -6,6 +6,7 @@ import * as yup from 'yup';
 import { connect } from 'react-redux';
 import React, { Component, Fragment } from 'react';
 import { defineMessages } from 'react-intl';
+import { getNetworkClient } from '@colony/colony-js-client';
 
 import type { WizardProps } from '~core/Wizard';
 import type { Address } from '~types';
@@ -18,11 +19,13 @@ import { ActionForm, Input, InputLabel, FormStatus } from '~core/Fields';
 import Button from '~core/Button';
 import Heading from '~core/Heading';
 import Alert from '~core/Alert';
-import styles from './StepHardware.css';
+import AddressItem from './AddressItem.jsx';
 
 import { walletSelector } from '../../../selectors';
 import { fetchAccounts as fetchAccountsAction } from '../../../actionCreators';
-import AddressItem from './AddressItem.jsx';
+import { DEFAULT_NETWORK } from '../../../../core/constants';
+
+import styles from './StepHardware.css';
 
 const MSG = defineMessages({
   heading: {
@@ -113,6 +116,11 @@ class StepHardware extends Component<Props> {
 
   static defaultProps = {
     availableAddresses: [],
+    wizardValues: {
+      method: 'ledger',
+      hardwareWalletChoice: '0x0',
+      hardwareWalletFilter: '0x0',
+    },
   };
 
   componentDidMount() {
@@ -122,6 +130,24 @@ class StepHardware extends Component<Props> {
     } = this.props;
     fetchAccounts(method);
   }
+
+  fetchAddressBalance = async address => {
+    const {
+      wizardValues: { method },
+    } = this.props;
+    const networkClient = await getNetworkClient(
+      DEFAULT_NETWORK,
+      /*
+       * @NOTE We're faking a `purser` wallet instance
+       * @BODY As we really don't need the actual wallet, this is just to appease `colonyJS`
+       */
+      {
+        type: 'hardware',
+        subtype: method,
+      },
+    );
+    return networkClient.adapter.provider.getBalance(address);
+  };
 
   renderContent(formValues: FormValues) {
     const { availableAddresses, isLoading } = this.props;
@@ -184,7 +210,7 @@ class StepHardware extends Component<Props> {
                 <AddressItem
                   address={address}
                   checked={hardwareWalletChoice === address}
-                  searchTerm={hardwareWalletFilter}
+                  fetchAddressBalance={this.fetchAddressBalance}
                 />
               </div>
             ))}

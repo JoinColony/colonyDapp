@@ -14,3 +14,9 @@ export const USERS_CURRENT_USER_TASKS = 'tasks';
 export const USERS_CURRENT_USER_NOTIFICATION_METADATA = 'notifications';
 export const USERS_WALLET = 'wallet';
 export const USERS_USERS = 'users';
+
+/**
+ * @note The number of extra addresses to 'open' when opening a hardware wallet
+ * @todo Determine proper `addressCount` for fetching wallet accounts.
+ */
+export const HARDWARE_WALLET_DEFAULT_ADDRESS_COUNT = 100;

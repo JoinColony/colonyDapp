@@ -15,3 +15,5 @@ export {
   NETWORK_CONTEXT,
   TOKEN_CONTEXT,
 } from '../../lib/ColonyManager/constants';
+
+export const DEFAULT_NETWORK = process.env.NETWORK || 'goerli';
