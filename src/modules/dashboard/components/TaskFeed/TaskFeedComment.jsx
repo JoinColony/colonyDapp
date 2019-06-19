@@ -7,7 +7,6 @@ import type { TaskCommentType, UserType } from '~immutable';
 import { PreserveLinebreaks } from '~utils/components';
 import ExternalLink from '~core/ExternalLink';
 import TimeRelative from '~core/TimeRelative';
-import UserInfo from '~core/UserInfo';
 import UserMention from '~core/UserMention';
 import HookedUserAvatar from '~users/HookedUserAvatar';
 
@@ -71,9 +70,7 @@ const TaskFeedComment = ({
       <div className={styles.commentMain}>
         {!isCurrentUser && creator && (
           <div className={styles.commentUsername}>
-            <UserInfo user={creator}>
-              <span>{userDisplayName}</span>
-            </UserInfo>
+            <span>{userDisplayName}</span>
           </div>
         )}
         <div className={styles.commentBody}>
