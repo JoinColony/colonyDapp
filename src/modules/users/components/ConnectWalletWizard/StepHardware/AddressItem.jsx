@@ -23,8 +23,6 @@ type State = {|
 |};
 
 class AddressItem extends Component<Props, State> {
-  timerHandle: TimeoutID; // for mocking balance lookup, so can clearTimeout in `componentWillUnmount`
-
   state = {
     isLoading: true,
     balance: new BigNumber(0),
