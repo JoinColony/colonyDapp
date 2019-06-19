@@ -1,4 +1,4 @@
-import { of } from 'rxjs';
+import { BehaviorSubject } from 'rxjs';
 
 import createSandbox from 'jest-sandbox';
 import ColonyData from '../ColonyData';
@@ -8,48 +8,109 @@ describe('ColonyData', () => {
   afterEach(() => sandbox.clear());
   beforeEach(() => sandbox.clear());
 
-  const addOne = sandbox.fn(n => n + 1);
+  const events1 = [1, 2, 3];
+  const events2 = [7, 8, 9];
 
-  const simpleQuery = Object.freeze({
-    name: 'simpleQuery',
-    context: [],
-    async prepare() {
-      await new Promise(resolve => setTimeout(resolve, 100));
-      return { addOne };
-    },
-    execute(deps) {
-      return of(deps.addOne(1));
-    },
-  });
+  const dep = {};
+
+  const makeQueryAndSubject = () => {
+    const subject = new BehaviorSubject(events1);
+    const query = Object.freeze({
+      name: 'query',
+      context: ['foo'],
+      prepare: sandbox.fn(async () => ({})),
+      executeAsync: sandbox.fn(async () => events1),
+      executeObservable: sandbox.fn(() => subject),
+      reducer: sandbox.fn((acc, value) => value),
+      seed: [],
+    });
+    return [query, subject];
+  };
 
   test('Executing a query (async)', async () => {
-    const data = new ColonyData({});
+    const context = { foo: 'bar' };
+    const metadata = { bar: 'baz' };
+    const args = { quux: 'zap' };
 
-    const metadata = { colonyAddress: 'foo', draftId: 'bar' };
-    const args = { comments: false };
+    const data = new ColonyData(context);
+    sandbox.spyOn(data, 'validateContext');
 
-    const result = await data.executeQuery(simpleQuery, metadata, args);
-    expect(result).toBe(2);
+    const [query] = makeQueryAndSubject();
+
+    const queryExecution = data.executeQuery(query, { metadata, args });
+
+    const result = await queryExecution;
+
+    expect(data.validateContext).toHaveBeenCalledWith(query);
+
+    expect(result).toEqual(3); // we're just passing through the value
   });
 
   test('Executing a query (subscription)', async () => {
-    const data = new ColonyData({});
+    const context = { foo: 'bar' };
+    const metadata = { bar: 'baz' };
+    const args = { quux: 'zap' };
 
-    const metadata = { colonyAddress: 'foo', draftId: 'bar' };
-    const args = { comments: false };
+    const data = new ColonyData(context);
+    sandbox.spyOn(data, 'validateContext');
 
     const listener = sandbox.fn();
 
+    const [query, subject] = makeQueryAndSubject();
+
+    const execution = data.executeQuery(query, { metadata, args });
+
     await new Promise((resolve, reject) => {
-      data.executeQuery(simpleQuery, metadata, args).subscribe({
+      execution.subscribe({
         complete: resolve,
         error: reject,
         next: listener,
       });
+      setTimeout(() => {
+        subject.next(events2);
+        subject.complete();
+      }, 1000);
     });
 
-    expect(listener).toHaveBeenCalledWith(2);
-    expect(listener).toHaveBeenCalledTimes(1);
+    expect(data.validateContext).toHaveBeenCalledWith(query);
+
+    expect(listener).toHaveBeenCalledWith(3);
+    expect(listener).toHaveBeenCalledWith(9);
+    expect(listener).toHaveBeenCalledTimes(2);
+  });
+
+  test('Executing a query (tap events)', async () => {
+    const context = { foo: 'bar' };
+    const metadata = { bar: 'baz' };
+    const args = { quux: 'zap' };
+
+    const data = new ColonyData(context);
+    sandbox.spyOn(data, 'validateContext');
+
+    const listener = sandbox.fn();
+
+    const [query, subject] = makeQueryAndSubject();
+
+    await new Promise((resolve, reject) => {
+      data.executeQuery(query, { metadata, args }).tap({
+        complete: resolve,
+        error: reject,
+        next: listener,
+      });
+      setTimeout(() => {
+        subject.next(events2);
+        subject.complete();
+      }, 1000);
+    });
+
+    expect(data.validateContext).toHaveBeenCalledWith(query);
+    expect(query.prepare).toHaveBeenCalledWith(context, metadata, args);
+    expect(query.executeObservable).toHaveBeenCalledWith(dep, args);
+    expect(query.reducer).not.toHaveBeenCalled();
+
+    expect(listener).toHaveBeenCalledWith(events1);
+    expect(listener).toHaveBeenCalledWith(events2);
+    expect(listener).toHaveBeenCalledTimes(2);
   });
 
   test('Running predefined queries', async () => {
@@ -68,7 +129,7 @@ describe('ColonyData', () => {
     try {
       await data.queries.getTask(options);
     } catch (caughtError) {
-      // ignore
+      // ignore, we're just concerned with how it's called
     }
 
     expect(data.executeQuery).toHaveBeenCalledWith(
