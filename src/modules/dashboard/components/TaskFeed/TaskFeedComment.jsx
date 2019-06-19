@@ -7,13 +7,15 @@ import type { TaskCommentType, UserType } from '~immutable';
 import { PreserveLinebreaks } from '~utils/components';
 import ExternalLink from '~core/ExternalLink';
 import TimeRelative from '~core/TimeRelative';
-import UserInfo from '~core/UserInfo';
 import UserMention from '~core/UserMention';
 import HookedUserAvatar from '~users/HookedUserAvatar';
 
 import { userFetcher } from '../../../users/fetchers';
 import TextDecorator from '../../../../lib/TextDecorator';
-import { walletAddressSelector } from '../../../users/selectors';
+import {
+  friendlyUsernameSelector,
+  walletAddressSelector,
+} from '../../../users/selectors';
 
 import styles from './TaskFeedComment.css';
 
@@ -51,6 +53,9 @@ const TaskFeedComment = ({
     // This is a workaround for the broken `shouldFetch` guard
     { ttl: Infinity },
   );
+  const userDisplayName = useSelector(friendlyUsernameSelector, [
+    authorAddress,
+  ]);
   return (
     <div
       className={`${styles.comment} ${
@@ -59,15 +64,13 @@ const TaskFeedComment = ({
     >
       {!isCurrentUser && (
         <div className={styles.commentAvatar}>
-          <UserAvatar address={authorAddress} showInfo size="s" />
+          <UserAvatar address={authorAddress} showInfo showLink size="s" />
         </div>
       )}
       <div className={styles.commentMain}>
         {!isCurrentUser && creator && (
           <div className={styles.commentUsername}>
-            <UserInfo user={creator}>
-              <span>{creator.profile.displayName}</span>
-            </UserInfo>
+            <span>{userDisplayName}</span>
           </div>
         )}
         <div className={styles.commentBody}>

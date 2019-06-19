@@ -51,7 +51,7 @@ const UserAvatar = ({
         placeholderIcon="circle-person"
         seed={address}
         size={size}
-        title={username || address}
+        title={showInfo ? '' : username || address}
       />
     </UserInfo>
   );

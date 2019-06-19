@@ -48,6 +48,7 @@ const TaskFeedRating = ({
         address={raterWalletAddress}
         user={rater}
         showInfo
+        showLink
         size="xs"
       />
     </div>
