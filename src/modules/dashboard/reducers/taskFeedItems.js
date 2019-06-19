@@ -73,15 +73,7 @@ const insertFeedItem = (list: List<*>, record: TaskFeedItemRecordType) => {
 };
 
 const updateStateForSubscription = (state: *, draftId: string) =>
-  state.getIn([draftId, 'record'])
-    ? state
-    : state.set(
-        draftId,
-        // $FlowFixMe it's not clear why this isn't acceptable.
-        DataRecord({
-          record: List(),
-        }),
-      );
+  state.getIn([draftId, 'record']) ? state : state.set(draftId, DataRecord());
 
 const updateStateForEvent = (state: *, draftId: string, event: *) => {
   const newState = updateStateForSubscription(state, draftId);
