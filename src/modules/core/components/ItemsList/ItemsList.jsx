@@ -88,7 +88,12 @@ class ItemsList extends Component<Props, State> {
    * Handle clicking on each individual item in the list
    */
   handleSelectItem = (id: number) => {
-    this.setState({ selectedItem: id, listTouched: true });
+    /*
+     * Prevent selecting a negative index items
+     */
+    if (id >= 0) {
+      this.setState({ selectedItem: id, listTouched: true });
+    }
   };
 
   /*
@@ -120,24 +125,29 @@ class ItemsList extends Component<Props, State> {
     } = this;
     const { id: itemId, name } =
       list.find(({ id }) => id === selectedItemId) || {};
-    return this.setState(
-      {
-        setItem: selectedItemId,
-        selectedItem: undefined,
-        listTouched: false,
-      },
-      () => {
-        close();
-        /*
-         * @NOTE If we don't deconstruct here and filter the values passed down,
-         * the nested values will also be passed down
-         */
-        if (!connect) {
-          return callback({ id: itemId, name });
-        }
-        return setValue(selectedItemId);
-      },
-    );
+    /*
+     * Prevent setting a negative index items
+     */
+    if (selectedItemId && selectedItemId >= 0) {
+      this.setState(
+        {
+          setItem: selectedItemId,
+          selectedItem: undefined,
+          listTouched: false,
+        },
+        () => {
+          close();
+          /*
+           * @NOTE If we don't deconstruct here and filter the values passed down,
+           * the nested values will also be passed down
+           */
+          if (!connect) {
+            return callback({ id: itemId, name });
+          }
+          return setValue(selectedItemId);
+        },
+      );
+    }
   };
 
   /*
@@ -177,7 +187,7 @@ class ItemsList extends Component<Props, State> {
         >
           <button
             type="button"
-            className={styles.item}
+            className={id < 0 ? styles.itemHeading : styles.item}
             onClick={() => this.handleSelectItem(id)}
             title={decoratedName}
           >
