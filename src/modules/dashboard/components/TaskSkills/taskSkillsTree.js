@@ -177,7 +177,7 @@ const taskSkills: ConsumableItem[] = [
   },
   {
     id: 57,
-    name: 'Javascript',
+    name: 'JavaScript',
     parent: -3,
   },
   {
@@ -212,7 +212,7 @@ const taskSkills: ConsumableItem[] = [
   },
   {
     id: 64,
-    name: 'Typescript',
+    name: 'TypeScript',
     parent: -3,
   },
   {
