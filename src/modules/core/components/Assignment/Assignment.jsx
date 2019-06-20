@@ -64,6 +64,7 @@ type Props = {|
   nativeToken: ?TokenReferenceType,
   /** Should the funding be rendered (if set) */
   showFunding?: boolean,
+  /** Tokens available to the current colony */
   tokenOptions: Array<TokenType>,
 |};
 

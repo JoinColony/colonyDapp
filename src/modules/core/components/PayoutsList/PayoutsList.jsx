@@ -29,6 +29,7 @@ type Props = {|
   nativeToken: ?TokenReferenceType,
   /** Payouts list containing all the payouts */
   payouts: Array<TaskPayoutType>,
+  /** Tokens available to the current colony */
   tokenOptions: Array<TokenType>,
 |};
 
