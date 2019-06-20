@@ -2,8 +2,6 @@
 
 import * as yup from 'yup';
 
-import inboxMessages from '~users/Inbox/messages';
-
 export const MarkNotificationsAsReadCommandArgsSchema = yup.object({
   readUntil: yup.number().required(),
   exceptFor: yup.array().of(yup.string().required()),
@@ -31,10 +29,24 @@ export const SetUserAvatarCommandArgsSchema = yup.object({
     .required(),
 });
 
-export const createCommentMentionInboxEventSchema = yup.object({
-  event: yup.string().oneOf(Object.keys(inboxMessages)),
-  user: yup.string(),
-  task: yup.string(),
+export const CreateCommentMentionCommandArgsSchema = yup.object({
+  colonyAddress: yup.string(),
+  draftId: yup.string(),
+  taskTitle: yup.string(),
   comment: yup.string(),
-  colony: yup.string(),
+  sourceUserAddress: yup.string(),
+});
+
+export const CreateAssignedCommandArgsSchema = yup.object({
+  colonyAddress: yup.string(),
+  draftId: yup.string(),
+  taskTitle: yup.string(),
+  sourceUserAddress: yup.string(),
+});
+
+export const CreateWorkRequestommandArgsSchema = yup.object({
+  colonyAddress: yup.string(),
+  draftId: yup.string(),
+  taskTitle: yup.string(),
+  sourceUserAddress: yup.string(),
 });

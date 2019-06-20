@@ -39,6 +39,8 @@ export const USER_EVENT_TYPES = Object.freeze({
    * @NOTE We also have COMMENT event types in TASK_EVENT_TYPES
    */
   COMMENT_MENTION: 'COMMENT_MENTION',
+  ASSIGNED_TO_TASK: 'ASSIGNED_TO_TASK',
+  WORK_REQUEST: 'WORK_REQUEST',
 });
 
 export const USER_PROFILE_EVENT_TYPES = Object.freeze({

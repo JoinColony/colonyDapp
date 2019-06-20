@@ -16,8 +16,11 @@ const {
   TOKEN_ADDED,
   TOKEN_REMOVED,
   COMMENT_MENTION,
+  ASSIGNED_TO_TASK,
+  WORK_REQUEST,
 } = USER_EVENT_TYPES;
 
+// @todo Split UserEvents into metadata and inbox events
 export type UserEvents = {|
   READ_UNTIL: EventDefinition<
     typeof READ_UNTIL,
@@ -67,8 +70,25 @@ export type UserEvents = {|
       draftId: TaskDraftId,
       taskTitle: string,
       comment: string,
-      sourceUsername: string,
-      sourceUserWalletAddress: string,
+      sourceUserAddress: string,
+    |},
+  >,
+  ASSIGNED_TO_TASK: EventDefinition<
+    typeof ASSIGNED_TO_TASK,
+    {|
+      colonyAddress: Address,
+      draftId: TaskDraftId,
+      taskTitle: string,
+      sourceUserAddress: string,
+    |},
+  >,
+  WORK_REQUEST: EventDefinition<
+    typeof WORK_REQUEST,
+    {|
+      colonyAddress: Address,
+      draftId: TaskDraftId,
+      taskTitle: string,
+      sourceUserAddress: string,
     |},
   >,
 |};

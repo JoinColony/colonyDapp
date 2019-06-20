@@ -9,13 +9,22 @@ import { getUserProfileReducer, getUserTokensReducer } from './reducers';
 import {
   NOTIFICATION_EVENT_ADMIN_ADDED,
   NOTIFICATION_EVENT_ADMIN_REMOVED,
+  NOTIFICATION_EVENT_ASSIGNED,
   NOTIFICATION_EVENT_COLONY_ENS_CREATED,
   NOTIFICATION_EVENT_DOMAIN_ADDED,
+  NOTIFICATION_EVENT_REQUEST_WORK,
   NOTIFICATION_EVENT_TOKENS_MINTED,
+  NOTIFICATION_EVENT_USER_MENTIONED,
   NOTIFICATION_EVENT_USER_TRANSFER,
 } from '~users/Inbox/events';
 
-const { TOKEN_ADDED, TOKEN_REMOVED } = USER_EVENT_TYPES;
+const {
+  ASSIGNED_TO_TASK,
+  COMMENT_MENTION,
+  WORK_REQUEST,
+  TOKEN_ADDED,
+  TOKEN_REMOVED,
+} = USER_EVENT_TYPES;
 
 export const getUserTokenAddresses = (metadataStore: UserMetadataStore) =>
   metadataStore
@@ -31,6 +40,9 @@ export const transformNotificationEventNames = (eventName: string): string => {
     DomainAdded: NOTIFICATION_EVENT_DOMAIN_ADDED,
     Mint: NOTIFICATION_EVENT_TOKENS_MINTED,
     Transfer: NOTIFICATION_EVENT_USER_TRANSFER,
+    [ASSIGNED_TO_TASK]: NOTIFICATION_EVENT_ASSIGNED,
+    [COMMENT_MENTION]: NOTIFICATION_EVENT_USER_MENTIONED,
+    [WORK_REQUEST]: NOTIFICATION_EVENT_REQUEST_WORK,
   };
   return notificationsToEventsMapping[eventName];
 };
@@ -43,7 +55,7 @@ export const getUserInboxStoreByProfileAddress = (ddb: DDB) => async ({
   const profileStore = await getUserProfileStore(ddb)({ walletAddress });
   const { inboxStoreAddress } = profileStore
     .all()
-    .reduce(getUserProfileReducer);
+    .reduce(getUserProfileReducer, {});
   return getUserInboxStore(ddb)({
     inboxStoreAddress,
     walletAddress,

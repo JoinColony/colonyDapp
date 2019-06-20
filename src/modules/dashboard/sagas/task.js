@@ -31,11 +31,7 @@ import {
 import { generateUrlFriendlyId } from '~utils/data';
 import { ACTIONS } from '~redux';
 import { matchUsernames } from '~lib/TextDecorator';
-import {
-  usernameSelector,
-  walletAddressSelector,
-  userAddressByMultipleUsernameSelector,
-} from '../../users/selectors';
+import { usernameSelector, walletAddressSelector } from '../../users/selectors';
 import { fetchColonyTaskMetadata as createColonyTaskMetadataFetchAction } from '../actionCreators';
 import {
   allColonyNamesSelector,
@@ -68,7 +64,11 @@ import {
   subscribeTaskFeedItems,
   subscribeTask,
 } from '../data/queries';
-import { createCommentMention } from '../../users/data/commands';
+import {
+  createCommentMention,
+  createAssignedInboxEvent,
+  createWorkRequestInboxEvent,
+} from '../../users/data/commands';
 
 import { subscribeToTask } from '../../users/actionCreators';
 
@@ -532,6 +532,21 @@ function* taskSendWorkRequest({
       args: { workerAddress: walletAddress },
       metadata: { colonyAddress, draftId },
     });
+
+    // send a notification to the manager
+    const {
+      record: { managerAddress, title: taskTitle },
+    } = yield select(taskSelector, draftId);
+    yield* executeCommand(createWorkRequestInboxEvent, {
+      args: {
+        colonyAddress,
+        draftId,
+        taskTitle,
+        sourceUserAddress: walletAddress,
+      },
+      metadata: { managerAddress },
+    });
+
     yield put<Action<typeof ACTIONS.TASK_SEND_WORK_REQUEST_SUCCESS>>({
       type: ACTIONS.TASK_SEND_WORK_REQUEST_SUCCESS,
       payload: {
@@ -551,14 +566,26 @@ function* taskWorkerAssign({
   meta,
 }: Action<typeof ACTIONS.TASK_WORKER_ASSIGN>): Saga<void> {
   try {
+    const walletAddress = yield select(walletAddressSelector);
     const {
-      record: { workerAddress: currentWorkerAddress },
+      record: { workerAddress: currentWorkerAddress, title: taskTitle },
     } = yield select(taskSelector, draftId);
     const eventData = yield* executeCommand(assignWorker, {
       args: { workerAddress, currentWorkerAddress },
       metadata: { colonyAddress, draftId },
     });
     if (eventData) {
+      // send a notification to the worker
+      yield* executeCommand(createAssignedInboxEvent, {
+        args: {
+          colonyAddress,
+          draftId,
+          taskTitle,
+          sourceUserAddress: walletAddress,
+        },
+        metadata: { workerAddress },
+      });
+
       const { event } = eventData;
       yield put<Action<typeof ACTIONS.TASK_WORKER_ASSIGN_SUCCESS>>({
         type: ACTIONS.TASK_WORKER_ASSIGN_SUCCESS,
@@ -798,20 +825,15 @@ function* taskCommentAdd({
     });
 
     if (matches && matches.length) {
-      const cachedAddresses = yield select(
-        userAddressByMultipleUsernameSelector,
-        matches,
-      );
       yield* executeCommand(createCommentMention, {
         args: {
           colonyAddress,
           draftId,
           taskTitle,
           comment,
-          sourceUsername: currentUsername,
-          sourceUserWalletAddress: walletAddress,
+          sourceUserAddress: walletAddress,
         },
-        metadata: { matchingUsernames: matches, cachedAddresses },
+        metadata: { matchingUsernames: matches },
       });
     }
   } catch (error) {

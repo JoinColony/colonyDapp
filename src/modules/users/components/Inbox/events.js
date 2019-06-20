@@ -16,3 +16,5 @@ export const NOTIFICATION_EVENT_ADMIN_REMOVED = 'notificationAdminOtherRemoved';
 export const NOTIFICATION_EVENT_USER_MENTIONED = 'notificationUserMentioned';
 export const NOTIFICATION_EVENT_USER_TRANSFER =
   'notificationUserTransferReceived';
+export const NOTIFICATION_EVENT_ASSIGNED = 'notificationWorkerAssigned';
+export const NOTIFICATION_EVENT_REQUEST_WORK = 'notificationWorkRequested';

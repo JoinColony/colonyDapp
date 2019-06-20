@@ -595,8 +595,12 @@ export const getUserInboxActivity: Query<
     )).filter(({ event }) => !!event);
     return userInboxStore
       .all()
-      .map(({ meta: { id, timestamp, sourceUserAddress }, payload }) =>
-        Object.assign({}, payload, { id, timestamp, sourceUserAddress }),
+      .map(({ meta: { id, timestamp }, payload, type }) =>
+        Object.assign({}, payload, {
+          id,
+          timestamp,
+          event: transformNotificationEventNames(type),
+        }),
       )
       .concat(transformedEvents)
       .sort(
