@@ -58,9 +58,8 @@
         "@kironeducation/flow-junit-transformer": "^0.3.0",
         "@svgr/webpack": "^3.0.0",
         "ava": "^1.4.1",
-        "babel-core": "^7.0.0-0",
         "babel-eslint": "^10.0.1",
-        "babel-jest": "^23.6.0",
+        "babel-jest": "^24.8.0",
         "babel-loader": "^8.0.2",
         "babel-plugin-react-intl": "^3.0.0",
         "babel-plugin-react-remove-properties": "^0.2.5",
@@ -99,9 +98,9 @@
         "http-proxy": "^1.17.0",
         "husky": "^1.2.0",
         "ipfsd-ctl": "^0.42.0",
-        "jest": "^23.3.0",
-        "jest-enzyme": "^7.0.0",
-        "jest-junit": "^5.0.0",
+        "jest": "^24.8.0",
+        "jest-enzyme": "^7.0.2",
+        "jest-junit": "^6.4.0",
         "jest-sandbox": "^1.1.2",
         "libp2p-websocket-star-rendezvous": "^0.3.0",
         "lint-staged": "^8.0.0",
@@ -211,8 +210,5 @@
         "sugar-date": "^2.0.4",
         "web3-utils": "^1.0.0-beta.27",
         "yup": "^0.27.0"
-    },
-    "resolutions": {
-        "babel-core": "7.0.0-bridge.0"
     }
 }
