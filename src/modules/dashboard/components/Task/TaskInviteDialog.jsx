@@ -5,7 +5,7 @@ import React, { useCallback } from 'react';
 import { defineMessages } from 'react-intl';
 
 import type { Address } from '~types';
-import type { UserType } from '~immutable';
+import type { UserType, TaskType } from '~immutable';
 
 import { mergePayload } from '~utils/actions';
 
@@ -18,10 +18,13 @@ import Heading from '~core/Heading';
 import Payout from '~dashboard/TaskEditDialog/Payout';
 import DialogBox from '~core/Dialog/DialogBox.jsx';
 
+import { taskFetcher } from '../../fetchers';
+
 import { useColonyNativeToken } from '../../hooks/useColonyNativeToken';
 
 import styles from './TaskInviteDialog.css';
 
+import { useDataFetcher } from '~utils/hooks';
 import ACTIONS from '~redux/actions';
 
 const MSG = defineMessages({
@@ -51,16 +54,12 @@ const TaskInviteDialog = ({
   },
   currentUser,
 }: Props) => {
-  // @TODO TaskInviteDialog: Fetch the task using a hook
-  // @BODY: We should also remove the locally mocked data below
-  //
-  // const { data: task } = useDataFetcher<TaskType>(
-  //   taskFetcher,
-  //   [taskId],
-  //   [taskId],
-  // );
-  const reputation = 0;
-  const payouts = [];
+  const { data: taskData } = useDataFetcher<TaskType>(
+    taskFetcher,
+    [draftId],
+    [draftId],
+  );
+
   const nativeTokenReference = useColonyNativeToken(colonyAddress);
   const transform = useCallback(
     mergePayload({
@@ -73,7 +72,10 @@ const TaskInviteDialog = ({
   return (
     <FullscreenDialog cancel={cancel}>
       <ActionForm
-        initialValues={{ payouts: payouts || [], worker: currentUser }}
+        initialValues={{
+          payouts: (taskData && taskData.payouts) || [],
+          worker: currentUser,
+        }}
         submit={ACTIONS.TASK_WORKER_ASSIGN}
         success={ACTIONS.TASK_WORKER_ASSIGN_SUCCESS}
         error={ACTIONS.TASK_WORKER_ASSIGN_ERROR}
@@ -90,9 +92,13 @@ const TaskInviteDialog = ({
                 />
                 <Assignment
                   nativeToken={nativeTokenReference}
-                  payouts={payouts}
+                  payouts={(taskData && taskData.payouts) || []}
                   pending
-                  reputation={reputation}
+                  reputation={
+                    taskData && taskData.reputation
+                      ? taskData.reputation
+                      : undefined
+                  }
                   showFunding={false}
                   worker={currentUser}
                   workerAddress={walletAddress}
@@ -107,8 +113,9 @@ const TaskInviteDialog = ({
                     />
                   </div>
                   <div>
-                    {payouts &&
-                      payouts.map((payout, index) => {
+                    {taskData &&
+                      taskData.payouts &&
+                      taskData.payouts.map((payout, index) => {
                         const { amount, token } = payout;
                         return (
                           <Payout
@@ -119,8 +126,9 @@ const TaskInviteDialog = ({
                             symbol={token.symbol}
                             reputation={
                               // $FlowFixMe this should be from TokenReference
-                              token.address === nativeTokenReference.address
-                                ? reputation
+                              token.address === nativeTokenReference.address &&
+                              taskData
+                                ? taskData.reputation
                                 : undefined
                             }
                             editPayout={false}
