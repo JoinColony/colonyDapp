@@ -184,15 +184,8 @@ const getTaskFetchSuccessPayload = (
     payouts: paymentTokenAddress
       ? [
           {
-            // Consider using strings for amounts in TaskPayout
-            amount: parseInt(payout, 10),
-            // We should get the token name, or even alter TaskType so that we use
-            // token addresses and amounts only (not name or symbol)
-            token: {
-              address: paymentTokenAddress,
-              name: 'Token',
-              symbol: 'TKN',
-            },
+            amount: payout,
+            token: paymentTokenAddress,
           },
         ]
       : undefined,
@@ -502,7 +495,7 @@ function* taskFinalize({
         fromPot: 1, // root domain pot
         toPot,
         amount: new BigNumber(amount.toString()),
-        token: token.address,
+        token,
       },
       group: {
         key: batchKey,
@@ -517,7 +510,7 @@ function* taskFinalize({
       identifier: colonyAddress,
       params: {
         recipient: workerAddress,
-        token: token.address,
+        token,
         amount: new BigNumber(amount.toString()),
         domainId,
         skillId,
@@ -543,7 +536,7 @@ function* taskFinalize({
     // add finalize task event to task store
     const { event } = yield* executeCommand(finalizeTask, {
       args: {
-        paymentTokenAddress: token.address,
+        paymentTokenAddress: token,
         amountPaid: amount.toString(),
         workerAddress,
       },

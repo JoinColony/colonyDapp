@@ -19,6 +19,7 @@ import HookedUserAvatar from '~users/HookedUserAvatar';
 import { SpinnerLoader } from '~core/Preloaders';
 
 import { useColonyNativeToken } from '../../hooks/useColonyNativeToken';
+import { useColonyTokens } from '../../hooks/useColonyTokens';
 
 import styles from './TaskListItem.css';
 
@@ -68,6 +69,7 @@ const TaskListItem = ({ data, intl: { formatMessage } }: Props) => {
   );
 
   const nativeTokenRef = useColonyNativeToken(colonyAddress);
+  const [, availableTokens] = useColonyTokens(colonyAddress);
 
   if (!task || !colonyName || isFetchingTask || isFetchingColonyName) {
     return (
@@ -98,7 +100,13 @@ const TaskListItem = ({ data, intl: { formatMessage } }: Props) => {
         )}
       </TableCell>
       <TableCell className={styles.taskPayouts}>
-        <PayoutsList payouts={payouts} nativeToken={nativeTokenRef} />
+        {!!availableTokens && (
+          <PayoutsList
+            payouts={payouts}
+            nativeToken={nativeTokenRef}
+            tokenOptions={availableTokens}
+          />
+        )}
       </TableCell>
       <TableCell className={styles.userAvatar}>
         {workerAddress && <UserAvatar size="xs" address={workerAddress} />}

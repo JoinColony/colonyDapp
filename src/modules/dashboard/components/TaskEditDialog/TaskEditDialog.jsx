@@ -9,12 +9,7 @@ import nanoid from 'nanoid';
 import moveDecimal from 'move-decimal-point';
 import BigNumber from 'bn.js';
 
-import type {
-  ColonyType,
-  UserType,
-  TaskPayoutType,
-  TokenType,
-} from '~immutable';
+import type { ColonyType, UserType, TaskPayoutType } from '~immutable';
 import type { ItemDataType } from '~core/OmniPicker';
 
 import SingleUserPicker from '~core/SingleUserPicker';
@@ -33,12 +28,9 @@ import { useDataFetcher, useDataMapFetcher, useSelector } from '~utils/hooks';
 
 import WrappedPayout from './WrappedPayout.jsx';
 import { colonyFetcher } from '../../fetchers';
-import {
-  allFromColonyTokensSelector,
-  colonyTokensSelector,
-  taskSelector,
-  taskRequestsSelector,
-} from '../../selectors';
+import { taskSelector, taskRequestsSelector } from '../../selectors';
+import { useColonyTokens } from '../../hooks/useColonyTokens';
+
 import { userFetcher, usersByAddressFetcher } from '../../../users/fetchers';
 import { createAddress } from '../../../../types';
 
@@ -164,15 +156,9 @@ const TaskEditDialog = ({
     [colonyAddress],
     [colonyAddress],
   );
-  // Get this task's colony's token references
-  const colonyTokenReferences = useSelector(colonyTokensSelector, [
-    colonyAddress,
-  ]);
 
-  // Get tokens using token references
-  const availableTokens: Array<TokenType> = useSelector(
-    allFromColonyTokensSelector,
-    [colonyTokenReferences],
+  const [colonyTokenReferences, availableTokens] = useColonyTokens(
+    colonyAddress,
   );
 
   // Get users that have requested to work on this task
@@ -207,14 +193,13 @@ const TaskEditDialog = ({
     [userData],
   );
 
-  // consider using a selector for this in #1048
   const existingPayouts = useMemo(
     () =>
       taskPayouts.map(payout => {
         const { address } =
-          availableTokens.find(
-            token => token.address === payout.token.address,
-          ) || {};
+          (availableTokens &&
+            availableTokens.find(token => token.address === payout.token)) ||
+          {};
         return {
           token: address,
           amount: payout.amount,
@@ -267,6 +252,7 @@ const TaskEditDialog = ({
 
   const tokenOptions = useMemo(
     () =>
+      availableTokens &&
       availableTokens.map(({ address, symbol }) => ({
         value: address,
         label: symbol || MSG.unknownToken,
@@ -289,9 +275,11 @@ const TaskEditDialog = ({
       mapPayload(p => ({
         payouts: p.payouts.map(({ amount, token }) => {
           const { decimals } =
-            availableTokens.find(
-              ({ address: refAddress }) => refAddress === token,
-            ) || {};
+            (availableTokens &&
+              availableTokens.find(
+                ({ address: refAddress }) => refAddress === token,
+              )) ||
+            {};
           return {
             amount: new BigNumber(
               moveDecimal(amount, decimals ? parseInt(decimals, 10) : 18),
@@ -376,12 +364,13 @@ const TaskEditDialog = ({
                           </div>
                           {colonyData ? (
                             <>
-                              {values.payouts &&
+                              {colonyTokenReferences &&
+                                values.payouts &&
                                 values.payouts.map((payout, index) => (
                                   <WrappedPayout
                                     arrayHelpers={arrayHelpers}
-                                    availableTokens={availableTokens}
                                     canRemove={canRemove}
+                                    colonyAddress={colonyAddress}
                                     index={index}
                                     key={payout.id}
                                     payout={payout}

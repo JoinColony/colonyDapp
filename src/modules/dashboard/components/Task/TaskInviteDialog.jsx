@@ -21,6 +21,7 @@ import DialogBox from '~core/Dialog/DialogBox.jsx';
 import { taskFetcher } from '../../fetchers';
 
 import { useColonyNativeToken } from '../../hooks/useColonyNativeToken';
+import { useColonyTokens } from '../../hooks/useColonyTokens';
 
 import styles from './TaskInviteDialog.css';
 
@@ -61,6 +62,7 @@ const TaskInviteDialog = ({
   );
 
   const nativeTokenReference = useColonyNativeToken(colonyAddress);
+  const [, tokenOptions] = useColonyTokens(colonyAddress);
   const transform = useCallback(
     mergePayload({
       worker: walletAddress,
@@ -90,19 +92,22 @@ const TaskInviteDialog = ({
                   appearance={{ size: 'medium' }}
                   text={MSG.titleAssignment}
                 />
-                <Assignment
-                  nativeToken={nativeTokenReference}
-                  payouts={(taskData && taskData.payouts) || []}
-                  pending
-                  reputation={
-                    taskData && taskData.reputation
-                      ? taskData.reputation
-                      : undefined
-                  }
-                  showFunding={false}
-                  worker={currentUser}
-                  workerAddress={walletAddress}
-                />
+                {tokenOptions && (
+                  <Assignment
+                    nativeToken={nativeTokenReference}
+                    payouts={(taskData && taskData.payouts) || []}
+                    pending
+                    reputation={
+                      taskData && taskData.reputation
+                        ? taskData.reputation
+                        : undefined
+                    }
+                    showFunding={false}
+                    tokenOptions={tokenOptions}
+                    worker={currentUser}
+                    workerAddress={walletAddress}
+                  />
+                )}
               </DialogSection>
               <DialogSection>
                 <div className={styles.taskEditContainer}>
@@ -113,24 +118,23 @@ const TaskInviteDialog = ({
                     />
                   </div>
                   <div>
-                    {taskData &&
+                    {nativeTokenReference &&
+                      taskData &&
                       taskData.payouts &&
                       taskData.payouts.map((payout, index) => {
                         const { amount, token } = payout;
                         return (
                           <Payout
-                            key={token.address}
+                            key={token}
                             name={`payouts.${index}`}
                             amount={amount}
-                            decimals={token.decimals}
-                            symbol={token.symbol}
+                            colonyAddress={colonyAddress}
                             reputation={
-                              // $FlowFixMe this should be from TokenReference
-                              token.address === nativeTokenReference.address &&
-                              taskData
+                              token === nativeTokenReference.address && taskData
                                 ? taskData.reputation
                                 : undefined
                             }
+                            tokenAddress={token}
                             editPayout={false}
                           />
                         );

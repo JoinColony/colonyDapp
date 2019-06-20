@@ -10,6 +10,7 @@ import { useDataFetcher, useSelector } from '~utils/hooks';
 
 import { taskSelector } from '../../selectors';
 import { useColonyNativeToken } from '../../hooks/useColonyNativeToken';
+import { useColonyTokens } from '../../hooks/useColonyTokens';
 import { userFetcher } from '../../../users/fetchers';
 
 type Props = TaskProps<{
@@ -24,16 +25,18 @@ const TaskAssignment = ({ colonyAddress, draftId }: Props) => {
     record: { payouts, reputation, workerAddress },
   } = useSelector(taskSelector, [draftId]);
   const nativeTokenReference = useColonyNativeToken(colonyAddress);
+  const [, tokenOptions] = useColonyTokens(colonyAddress);
   const { data: worker } = useDataFetcher<UserType>(
     userFetcher,
     [workerAddress],
     [workerAddress],
   );
-  return nativeTokenReference ? (
+  return nativeTokenReference && tokenOptions ? (
     <Assignment
       nativeToken={nativeTokenReference}
       payouts={payouts}
       reputation={reputation}
+      tokenOptions={tokenOptions}
       worker={worker}
       workerAddress={workerAddress}
     />
