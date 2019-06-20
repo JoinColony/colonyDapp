@@ -175,6 +175,7 @@ const StepCreateToken = ({
                 name="tokenSymbol"
                 appearance={{ theme: 'fat' }}
                 maxLength="4"
+                formattingOptions={{ uppercase: true }}
                 label={MSG.labelTokenSymbol}
                 help={MSG.helpTokenSymbol}
               />
