@@ -91,11 +91,15 @@ const TaskSkills = ({ colonyAddress, draftId, disabled, skillId }: Props) => {
           )}
         </div>
       </ItemsList>
-      {!skillId && (
-        <span className={styles.notSet}>
-          <FormattedMessage {...MSG.notSet} />
-        </span>
-      )}
+      {!skillId ||
+        /*
+         * Prevent setting a negative index items
+         */
+        (skillId < 0 && (
+          <span className={styles.notSet}>
+            <FormattedMessage {...MSG.notSet} />
+          </span>
+        ))}
     </div>
   );
 };

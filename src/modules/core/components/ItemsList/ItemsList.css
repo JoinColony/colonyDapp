@@ -52,6 +52,15 @@
   color: color-mod(var(--colony-blue) alpha(70%));
 }
 
+.itemHeading {
+  composes: item;
+  cursor: default;
+}
+
+.itemHeading:hover {
+  color: var(--grey-dark);
+}
+
 .selectedItem .item {
   color: var(--colony-blue);
 }
