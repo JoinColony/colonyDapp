@@ -15,7 +15,6 @@ import {
 export const useColonyTokens = (
   colonyAddress: ?Address,
 ): [?(TokenReferenceType[]), ?(TokenType[])] => {
-  // Need to fetch the colony, to ensure all tokens are loaded as well
   const { data: fetchedColony } = useDataFetcher<ColonyType>(
     colonyFetcher,
     [colonyAddress],
