@@ -19,8 +19,9 @@ delete webpackProdConfig.devServer;
  * See: https://github.com/webpack/webpack-dev-server/issues/1433#issuecomment-473342612
  */
 webpackProdConfig.optimization = {
+  minimize: false, // @TODO Work out how to remove this and reenable Uglify
   splitChunks: {
-    chunks: 'all',
+    chunks: 'all'
   },
 };
 
