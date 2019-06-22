@@ -239,21 +239,28 @@ function* taskSetDescription({
   payload: { colonyAddress, draftId, description },
 }: Action<typeof ACTIONS.TASK_SET_DESCRIPTION>): Saga<void> {
   try {
-    const { event } = yield* executeCommand(setTaskDescription, {
+    const {
+      record: { description: currentDescription },
+    } = yield* selectAsJS(taskSelector, draftId);
+    const eventData = yield* executeCommand(setTaskDescription, {
       args: {
+        currentDescription,
         description,
       },
       metadata: { colonyAddress, draftId },
     });
-    yield put<Action<typeof ACTIONS.TASK_SET_DESCRIPTION_SUCCESS>>({
-      type: ACTIONS.TASK_SET_DESCRIPTION_SUCCESS,
-      meta,
-      payload: {
-        colonyAddress,
-        draftId,
-        event,
-      },
-    });
+    if (eventData) {
+      const { event } = eventData;
+      yield put<Action<typeof ACTIONS.TASK_SET_DESCRIPTION_SUCCESS>>({
+        type: ACTIONS.TASK_SET_DESCRIPTION_SUCCESS,
+        meta,
+        payload: {
+          colonyAddress,
+          draftId,
+          event,
+        },
+      });
+    }
   } catch (error) {
     yield putError(ACTIONS.TASK_SET_DESCRIPTION_ERROR, error, meta);
   }

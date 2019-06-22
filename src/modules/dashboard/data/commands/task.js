@@ -203,9 +203,10 @@ export const setTaskDescription: Command<
   TaskStore,
   TaskStoreMetadata,
   {|
+    currentDescription: ?string,
     description: string,
   |},
-  {|
+  ?{|
     event: Event<typeof TASK_EVENT_TYPES.TASK_DESCRIPTION_SET>,
     taskStore: TaskStore,
   |},
@@ -214,7 +215,10 @@ export const setTaskDescription: Command<
   context: [CONTEXT.COLONY_MANAGER, CONTEXT.DDB_INSTANCE, CONTEXT.WALLET],
   prepare: prepareTaskStoreCommand,
   schema: SetTaskDescriptionCommandArgsSchema,
-  async execute(taskStore, { description }) {
+  async execute(taskStore, { currentDescription, description }) {
+    if (description === currentDescription) {
+      return null;
+    }
     const eventHash = await taskStore.append(
       createEvent(TASK_EVENT_TYPES.TASK_DESCRIPTION_SET, {
         description,
