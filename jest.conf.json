@@ -20,7 +20,7 @@
         "<rootDir>/__tests__/setup.js",
         "<rootDir>/__tests__/shims.js"
     ],
-    "setupTestFrameworkScriptFile": "jest-enzyme",
+    "setupFilesAfterEnv": ["jest-enzyme"],
     "collectCoverageFrom" : ["**/*.{js,jsx}"],
     "coverageDirectory": "../coverage",
     "coverageThreshold": {
