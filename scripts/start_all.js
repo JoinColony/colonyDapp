@@ -55,6 +55,8 @@ addProcess('trufflepig', () =>
   })
 );
 
+addProcess('star', startStarSignal);
+
 addProcess('pinion', () => 
   new Promise((resolve, reject) => {
     const pinionProcess = spawn('yarn', ['start'], {
@@ -88,8 +90,6 @@ addProcess('wss', async () => {
   await waitOn({ resources: ['tcp:4004'] });
   return wssProxyProcess;
 });
-
-addProcess('star', startStarSignal);
 
 addProcess('webpack', () =>
   new Promise((resolve, reject) => {
