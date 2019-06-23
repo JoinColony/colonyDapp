@@ -6565,6 +6565,11 @@ etag@~1.8.1:
   resolved "https://registry.yarnpkg.com/etag/-/etag-1.8.1.tgz#41ae2eeb65efa62268aebfea83ac7d79299b0887"
   integrity sha1-Qa4u62XvpiJorr/qg6x9eSmbCIc=
 
+eth-contract-metadata@1.9.1:
+  version "1.9.1"
+  resolved "https://registry.yarnpkg.com/eth-contract-metadata/-/eth-contract-metadata-1.9.1.tgz#391ed3cc5929c1ae040fb12c3326e773653fd721"
+  integrity sha512-eF02fIKf/8iGL/6SwhEQbmZIzNsQcJloA4r+QrxG/TfwqJAD/ECYxshpaU7hjO0ATPQPpMaNhNvL/p/Rc/B83A==
+
 eth-ens-namehash-ms@^2.2.0:
   version "2.2.0"
   resolved "https://registry.yarnpkg.com/eth-ens-namehash-ms/-/eth-ens-namehash-ms-2.2.0.tgz#d9a771fbb590032161f6543f061be8241740f7d9"
