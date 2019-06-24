@@ -41,6 +41,7 @@ import {
 } from '../selectors';
 import { createTransaction, getTxChannel } from '../../core/sagas';
 import { COLONY_CONTEXT } from '../../core/constants';
+import { transactionReady } from '../../core/actionCreators';
 
 import {
   assignWorker,
@@ -65,8 +66,9 @@ import {
   subscribeTask,
 } from '../data/queries';
 import {
-  createCommentMention,
   createAssignedInboxEvent,
+  createCommentMention,
+  createFinalizedInboxEvent,
   createWorkRequestInboxEvent,
 } from '../../users/data/commands';
 
@@ -448,8 +450,15 @@ function* taskFinalize({
   meta,
 }: Action<typeof ACTIONS.TASK_FINALIZE>): Saga<void> {
   try {
+    const colonyManager = yield* getContext(CONTEXT.COLONY_MANAGER);
+    const colonyClient = yield call(
+      [colonyManager, colonyManager.getColonyClient],
+      colonyAddress,
+    );
+    const walletAddress = yield select(walletAddressSelector);
+
     const {
-      record: { workerAddress, payouts, domainId, skillId },
+      record: { workerAddress, payouts, domainId, skillId, title: taskTitle },
     }: { record: TaskType } = yield* selectAsJS(taskSelector, draftId);
     if (!workerAddress)
       throw new Error(`Worker not assigned for task ${draftId}`);
@@ -458,9 +467,44 @@ function* taskFinalize({
     if (!payouts.length) throw new Error(`No payout set for task ${draftId}`);
     const { amount, token } = payouts[0];
 
-    const txChannel = yield call(getTxChannel, meta.id);
+    // get the pot we need to fund
+    const { potId: toPot } = yield call(
+      [colonyClient.getDomain, colonyClient.getDomain.call],
+      {
+        domainId,
+      },
+    );
 
-    yield fork(createTransaction, meta.id, {
+    // setup batch ids and channels
+    const batchKey = 'transaction.batch.finalizeTask';
+    const moveFundsBetweenPots = {
+      id: `${meta.id}-moveFundsBetweenPots`,
+      channel: yield call(getTxChannel, `${meta.id}-moveFundsBetweenPots`),
+    };
+    const makePayment = {
+      id: `${meta.id}-makePayment`,
+      channel: yield call(getTxChannel, `${meta.id}-makePayment`),
+    };
+
+    // create transactions
+    yield fork(createTransaction, moveFundsBetweenPots.id, {
+      context: COLONY_CONTEXT,
+      methodName: 'moveFundsBetweenPots',
+      identifier: colonyAddress,
+      params: {
+        fromPot: 1, // root domain pot
+        toPot,
+        amount: new BigNumber(amount.toString()),
+        token: token.address,
+      },
+      group: {
+        key: batchKey,
+        id: meta.id,
+        index: 0,
+      },
+      ready: true,
+    });
+    yield fork(createTransaction, makePayment.id, {
       context: COLONY_CONTEXT,
       methodName: 'makePayment',
       identifier: colonyAddress,
@@ -469,21 +513,47 @@ function* taskFinalize({
         token: token.address,
         amount: new BigNumber(amount.toString()),
         domainId,
-        skillId,
+        // skillId,
       },
+      group: {
+        key: batchKey,
+        id: meta.id,
+        index: 1,
+      },
+      ready: false,
     });
 
-    yield takeFrom(txChannel, ACTIONS.TRANSACTION_CREATED);
+    // wait for txs to be created
+    yield takeFrom(moveFundsBetweenPots.channel, ACTIONS.TRANSACTION_CREATED);
+    yield takeFrom(makePayment.channel, ACTIONS.TRANSACTION_CREATED);
 
-    const { address: paymentTokenAddress } = token;
+    // send txs sequentially
+    yield put(transactionReady(moveFundsBetweenPots.id));
+    yield takeFrom(moveFundsBetweenPots.channel, ACTIONS.TRANSACTION_SUCCEEDED);
+    yield put(transactionReady(makePayment.id));
+    yield takeFrom(makePayment.channel, ACTIONS.TRANSACTION_SUCCEEDED);
+
+    // add finalize task event to task store
     const { event } = yield* executeCommand(finalizeTask, {
       args: {
-        paymentTokenAddress,
+        paymentTokenAddress: token.address,
         amountPaid: amount.toString(),
         workerAddress,
       },
       metadata: { colonyAddress, draftId },
     });
+
+    // send a notification to the worker
+    yield* executeCommand(createFinalizedInboxEvent, {
+      args: {
+        colonyAddress,
+        draftId,
+        taskTitle: taskTitle || '',
+        sourceUserAddress: walletAddress,
+      },
+      metadata: { workerAddress },
+    });
+
     yield put<Action<typeof ACTIONS.TASK_FINALIZE_SUCCESS>>({
       type: ACTIONS.TASK_FINALIZE_SUCCESS,
       payload: {

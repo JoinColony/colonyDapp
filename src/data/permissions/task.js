@@ -21,6 +21,7 @@ export default function loadModule(): PermissionsManifest {
     WORKER_UNASSIGNED: { inherits: 'remove-task-assignee' },
     'cancel-task': { inherits: 'is-colony-founder-or-admin' },
     'create-task': { inherits: 'is-colony-founder-or-admin' },
+    'finalize-task': { inherits: 'is-colony-founder-or-admin' },
     'remove-task-assignee': { inherits: 'is-colony-founder-or-admin' },
     'send-task-work-invite': { inherits: 'is-colony-founder-or-admin' },
     'send-task-work-request': async () => true,

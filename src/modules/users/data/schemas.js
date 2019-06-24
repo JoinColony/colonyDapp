@@ -44,7 +44,14 @@ export const CreateAssignedCommandArgsSchema = yup.object({
   sourceUserAddress: yup.string(),
 });
 
-export const CreateWorkRequestommandArgsSchema = yup.object({
+export const CreateWorkRequestCommandArgsSchema = yup.object({
+  colonyAddress: yup.string(),
+  draftId: yup.string(),
+  taskTitle: yup.string(),
+  sourceUserAddress: yup.string(),
+});
+
+export const CreateFinalizedCommandArgsSchema = yup.object({
   colonyAddress: yup.string(),
   draftId: yup.string(),
   taskTitle: yup.string(),

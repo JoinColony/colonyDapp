@@ -81,6 +81,8 @@
     "transaction.colony.cancelTask.title": "Cancel task",
     "transaction.colony.cancelTask.description": "Cancel task",
 
+    "transaction.group.transaction.batch.finalizeTask.title": "Finalize task",
+    "transaction.group.transaction.batch.finalizeTask.description": "Move funds and make payment",
     "transaction.colony.makePayment.title": "Make payment",
     "transaction.colony.makePayment.description": "Make payment",
 

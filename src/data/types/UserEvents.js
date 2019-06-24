@@ -8,15 +8,16 @@ import type { TaskDraftId } from '~immutable';
 import type { EventDefinition } from './events';
 
 const {
+  ASSIGNED_TO_TASK,
+  COMMENT_MENTION,
   READ_UNTIL,
   SUBSCRIBED_TO_COLONY,
   SUBSCRIBED_TO_TASK,
-  UNSUBSCRIBED_FROM_COLONY,
-  UNSUBSCRIBED_FROM_TASK,
+  TASK_FINALIZED_NOTIFICATION,
   TOKEN_ADDED,
   TOKEN_REMOVED,
-  COMMENT_MENTION,
-  ASSIGNED_TO_TASK,
+  UNSUBSCRIBED_FROM_COLONY,
+  UNSUBSCRIBED_FROM_TASK,
   WORK_REQUEST,
 } = USER_EVENT_TYPES;
 
@@ -84,6 +85,15 @@ export type UserEvents = {|
   >,
   WORK_REQUEST: EventDefinition<
     typeof WORK_REQUEST,
+    {|
+      colonyAddress: Address,
+      draftId: TaskDraftId,
+      taskTitle: string,
+      sourceUserAddress: string,
+    |},
+  >,
+  TASK_FINALIZED_NOTIFICATION: EventDefinition<
+    typeof TASK_FINALIZED_NOTIFICATION,
     {|
       colonyAddress: Address,
       draftId: TaskDraftId,

@@ -31,8 +31,9 @@ import {
 import {
   CreateAssignedCommandArgsSchema,
   CreateCommentMentionCommandArgsSchema,
+  CreateFinalizedCommandArgsSchema,
   CreateUserProfileCommandArgsSchema,
-  CreateWorkRequestommandArgsSchema,
+  CreateWorkRequestCommandArgsSchema,
   MarkNotificationsAsReadCommandArgsSchema,
   SetUserAvatarCommandArgsSchema,
   UpdateUserProfileCommandArgsSchema,
@@ -468,7 +469,7 @@ export const createWorkRequestInboxEvent: Command<
 > = {
   name: 'createWorkRequestInboxEvent',
   context: [CONTEXT.DDB_INSTANCE],
-  schema: CreateWorkRequestommandArgsSchema,
+  schema: CreateWorkRequestCommandArgsSchema,
   async prepare({ ddb }, { managerAddress }) {
     return getUserInboxStoreByProfileAddress(ddb)({
       walletAddress: managerAddress,
@@ -476,5 +477,33 @@ export const createWorkRequestInboxEvent: Command<
   },
   async execute(inboxStore, args) {
     await inboxStore.append(createEvent(USER_EVENT_TYPES.WORK_REQUEST, args));
+  },
+};
+
+export const createFinalizedInboxEvent: Command<
+  UserInboxStore,
+  {|
+    workerAddress: Address,
+  |},
+  {|
+    colonyAddress: Address,
+    draftId: TaskDraftId,
+    taskTitle: string,
+    sourceUserAddress: string,
+  |},
+  void,
+> = {
+  name: 'createFinalizedInboxEvent',
+  context: [CONTEXT.DDB_INSTANCE],
+  schema: CreateFinalizedCommandArgsSchema,
+  async prepare({ ddb }, { workerAddress }) {
+    return getUserInboxStoreByProfileAddress(ddb)({
+      walletAddress: workerAddress,
+    });
+  },
+  async execute(inboxStore, args) {
+    await inboxStore.append(
+      createEvent(USER_EVENT_TYPES.TASK_FINALIZED_NOTIFICATION, args),
+    );
   },
 };

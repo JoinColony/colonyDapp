@@ -18,3 +18,4 @@ export const NOTIFICATION_EVENT_USER_TRANSFER =
   'notificationUserTransferReceived';
 export const NOTIFICATION_EVENT_ASSIGNED = 'notificationWorkerAssigned';
 export const NOTIFICATION_EVENT_REQUEST_WORK = 'notificationWorkRequested';
+export const NOTIFICATION_EVENT_TASK_FINALIZED = 'notificationTaskFinalized';

@@ -225,5 +225,9 @@ const messages = defineMessages({
     id: 'dashboard.Inbox.InboxItem.notificationWorkRequested',
     defaultMessage: '{user} requested to work on {task}.',
   },
+  notificationTaskFinalized: {
+    id: 'dashboard.Inbox.InboxItem.notificationTaskFinalized',
+    defaultMessage: '{user} finalized {task} and payouts have been made.',
+  },
 });
 export default messages;
