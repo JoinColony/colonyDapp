@@ -20,7 +20,12 @@ type Props = ColonyProps<{ colonyAddress: * }>;
 const ColonyGridItem = ({ colonyAddress }: Props) => {
   const { isFetching, data: colony } = useColonyWithAddress(colonyAddress);
 
-  if (!colony || isFetching) return <SpinnerLoader />;
+  if (!colony || isFetching)
+    return (
+      <div className={styles.loader}>
+        <SpinnerLoader appearance={{ size: 'medium' }} />
+      </div>
+    );
 
   return (
     <div className={styles.main}>
