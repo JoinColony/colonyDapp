@@ -55,25 +55,7 @@ addProcess('trufflepig', () =>
   })
 );
 
-addProcess('ipfsd', () =>
-  new Promise((resolve, reject) => {
-    const ipfsdProcess = spawn('yarn', ['ipfsd-go'], {
-      cwd: path.resolve(__dirname, '..', 'src/lib/pinion'),
-      stdio: 'pipe',
-    });
-    ipfsdProcess.stdout.on('data', chunk => {
-      if (chunk.includes('Daemon is ready')) resolve(ipfsdProcess);
-    });
-    if (args.foreground) {
-      ipfsdProcess.stdout.pipe(process.stdout);
-      ipfsdProcess.stderr.pipe(process.stderr);
-    }
-    ipfsdProcess.on('error', e => {
-      ipfsdProcess.kill();
-      reject(e);
-    });
-  })
-);
+addProcess('star', startStarSignal);
 
 addProcess('pinion', () => 
   new Promise((resolve, reject) => {
@@ -108,8 +90,6 @@ addProcess('wss', async () => {
   await waitOn({ resources: ['tcp:4004'] });
   return wssProxyProcess;
 });
-
-addProcess('star', startStarSignal);
 
 addProcess('webpack', () =>
   new Promise((resolve, reject) => {

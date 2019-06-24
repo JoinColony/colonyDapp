@@ -7,6 +7,8 @@ const webpack = require('webpack');
 
 const utils = require('./scripts/utils');
 
+const mode = process.env.NODE_ENV || 'development'
+
 /*
  * Wrapper method to generate aliases for all the dapp's modules
  *
@@ -28,7 +30,7 @@ const generateModulesAliases = () => {
 
 const config = {
   entry: './src/index.js',
-  mode: 'development',
+  mode,
   devtool: 'source-map',
   output: {
     filename: 'bundle.js',
