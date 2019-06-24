@@ -49,18 +49,20 @@ const PayoutsList = ({
 
   const { address: nativeTokenAddress } = nativeToken || {};
 
-  const sortedPayouts = payouts.sort(({ token: a }, { token: b }) => {
-    if (a === nativeTokenAddress && b === ZERO_ADDRESS) {
-      return -1;
-    }
-    if (b === nativeTokenAddress && b === ZERO_ADDRESS) {
+  const sortedPayouts = payouts.sort(
+    ({ token: firstToken }, { token: secondToken }) => {
+      if (firstToken === nativeTokenAddress && secondToken === ZERO_ADDRESS) {
+        return -1;
+      }
+      if (secondToken === nativeTokenAddress && secondToken === ZERO_ADDRESS) {
+        return 1;
+      }
+      if (firstToken === nativeTokenAddress || secondToken === ZERO_ADDRESS) {
+        return -1;
+      }
       return 1;
-    }
-    if (a === nativeTokenAddress || b === ZERO_ADDRESS) {
-      return -1;
-    }
-    return 1;
-  });
+    },
+  );
 
   const firstPayouts = sortedPayouts.slice(0, maxLines);
   const extraPayouts = sortedPayouts.slice(maxLines);
