@@ -14,7 +14,7 @@ import styles from './MessageCard.css';
 const displayName = 'users.GasStation.MessageCard';
 
 type Props = {|
-  message: $ReadOnly<MessageProps>,
+  message: MessageProps,
   idx: number,
   onClick?: (idx: number) => void,
 |};

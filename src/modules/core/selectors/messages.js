@@ -18,7 +18,7 @@ export const getAllMessages = (state: RootStateRecord) =>
   state.getIn([ns, CORE_MESSAGES, CORE_MESSAGES_LIST], ImmutableMap());
 
 /*
- * @NOTE This selector just groups all messages by they're respective id
+ * @NOTE This selector just groups all messages by their respective id
  * (essentially creating unique groups of one message), in order for us to
  * be able to merge them with the transactions groups and display them in the
  * gas station properly
