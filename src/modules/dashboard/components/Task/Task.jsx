@@ -44,6 +44,7 @@ import {
   isCreator,
   isFinalized,
   isPayoutsSet,
+  isWorkerSet,
 } from '../../checks';
 import { currentUserSelector } from '../../../users/selectors';
 import { colonyAddressFetcher } from '../../fetchers';
@@ -131,7 +132,8 @@ const Task = ({
     [draftId],
     [colonyAddress || undefined, draftId],
   );
-  const { description, domainId, dueDate, skillId, title } = task || {};
+  const { description, domainId, dueDate, skillId, title, workerAddress } =
+    task || {};
 
   const onEditTask = useCallback(
     () => {
@@ -296,7 +298,7 @@ const Task = ({
               )}
             </>
           )}
-          {!isTaskCreator && (
+          {(!isTaskCreator || !isWorkerSet(workerAddress)) && (
             <TaskRequestWork
               currentUser={currentUser}
               task={task}
