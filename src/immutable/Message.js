@@ -2,7 +2,6 @@
 
 import type { RecordOf, RecordFactory } from 'immutable';
 
-import nanoid from 'nanoid';
 import { Record } from 'immutable';
 
 export type MessageProps = $ReadOnly<{|
@@ -19,7 +18,7 @@ export type MessageProps = $ReadOnly<{|
 |}>;
 
 const defaultValues: $Shape<MessageProps> = {
-  id: `${nanoid(10)}-signMessage`,
+  id: undefined,
   createdAt: new Date(),
   purpose: 'generic',
   message: undefined,
