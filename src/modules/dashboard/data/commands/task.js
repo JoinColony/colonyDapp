@@ -7,7 +7,7 @@ import type { TaskDraftId } from '~immutable';
 import type {
   CommentsStore,
   ColonyManager,
-  ColonyStore,
+  ColonyTaskIndexStore,
   Command,
   DDB,
   Event,
@@ -24,7 +24,7 @@ import {
 } from '~data/constants';
 import {
   createTaskStore,
-  getColonyStore,
+  getColonyTaskIndexStore,
   getCommentsStore,
   getTaskStore,
   getTaskStoreAddress,
@@ -90,7 +90,7 @@ const prepareTaskStoreCommand = async (
 
 export const createTask: Command<
   {|
-    colonyStore: ColonyStore,
+    colonyTaskIndexStore: ColonyTaskIndexStore,
     commentsStore: CommentsStore,
     taskStore: TaskStore,
   |},
@@ -129,18 +129,20 @@ export const createTask: Command<
       wallet,
     )(metadata);
 
-    const colonyStore = await getColonyStore(colonyClient, ddb, wallet)(
-      metadata,
-    );
+    const colonyTaskIndexStore = await getColonyTaskIndexStore(
+      colonyClient,
+      ddb,
+      wallet,
+    )(metadata);
 
     return {
-      colonyStore,
+      colonyTaskIndexStore,
       commentsStore,
       taskStore,
     };
   },
   async execute(
-    { colonyStore, commentsStore, taskStore },
+    { colonyTaskIndexStore, commentsStore, taskStore },
     { draftId, creatorAddress },
   ) {
     const commentsStoreAddress = commentsStore.address.toString();
@@ -157,7 +159,7 @@ export const createTask: Command<
       }),
     );
 
-    await colonyStore.append(
+    await colonyTaskIndexStore.append(
       createEvent(COLONY_EVENT_TYPES.TASK_STORE_REGISTERED, {
         commentsStoreAddress,
         draftId,
@@ -466,7 +468,7 @@ export const finalizeTask: Command<
 };
 
 export const cancelTask: Command<
-  {| colonyStore: ColonyStore, taskStore: TaskStore |},
+  {| colonyTaskIndexStore: ColonyTaskIndexStore, taskStore: TaskStore |},
   TaskStoreMetadata,
   {|
     draftId: TaskDraftId,
@@ -492,7 +494,11 @@ export const cancelTask: Command<
   ) {
     const { colonyAddress } = metadata;
     const colonyClient = await colonyManager.getColonyClient(colonyAddress);
-    const colonyStore = await getColonyStore(colonyClient, ddb, wallet)({
+    const colonyTaskIndexStore = await getColonyTaskIndexStore(
+      colonyClient,
+      ddb,
+      wallet,
+    )({
       colonyAddress,
     });
 
@@ -507,18 +513,18 @@ export const cancelTask: Command<
     });
 
     return {
-      colonyStore,
+      colonyTaskIndexStore,
       taskStore,
     };
   },
   schema: CancelTaskCommandArgsSchema,
-  async execute({ colonyStore, taskStore }, { draftId }) {
+  async execute({ colonyTaskIndexStore, taskStore }, { draftId }) {
     const eventHash = await taskStore.append(
       createEvent(TASK_EVENT_TYPES.TASK_CANCELLED, {
         status: TASK_STATUS.CANCELLED,
       }),
     );
-    await colonyStore.append(
+    await colonyTaskIndexStore.append(
       createEvent(COLONY_EVENT_TYPES.TASK_STORE_UNREGISTERED, {
         draftId,
         taskStoreAddress: taskStore.address.toString(),
