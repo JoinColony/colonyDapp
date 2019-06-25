@@ -14,7 +14,7 @@ import CardList from '~core/CardList';
 import Heading from '~core/Heading';
 import Card from '~core/Card';
 import { MessageCardStatus } from '../MessageCard';
-import MessageCardControls from './MessageCardControls';
+import MessageCardControls from './MessageCardControls.jsx';
 import { TransactionBackToList } from '../TransactionDetails';
 
 import { getMainClasses } from '~utils/css';
