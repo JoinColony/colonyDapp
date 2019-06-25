@@ -107,6 +107,7 @@ export const canRequestToWork = (task: TaskType, userAddress: Address) =>
   );
 
 export const canFinalizeTask = (task: TaskType, userAddress: Address) =>
+  task &&
   isManager(task, userAddress) &&
   isActive(task) &&
   isWorkerSet(task) &&

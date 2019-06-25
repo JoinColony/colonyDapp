@@ -132,8 +132,7 @@ const Task = ({
     [draftId],
     [colonyAddress || undefined, draftId],
   );
-  const { description, domainId, dueDate, skillId, title, workerAddress } =
-    task || {};
+  const { description, domainId, dueDate, skillId, title } = task || {};
 
   const onEditTask = useCallback(
     () => {
@@ -298,7 +297,7 @@ const Task = ({
               )}
             </>
           )}
-          {(!isTaskCreator || !isWorkerSet(workerAddress)) && (
+          {(!isTaskCreator || !isWorkerSet(task)) && (
             <TaskRequestWork
               currentUser={currentUser}
               task={task}
