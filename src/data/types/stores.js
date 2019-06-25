@@ -14,6 +14,7 @@ import { EventStore } from '../../lib/database/stores';
  * defines the possible event types for that store.
  */
 export type ColonyStore = EventStore;
+export type ColonyTaskIndexStore = EventStore;
 export type CommentsStore = EventStore;
 export type TaskStore = EventStore;
 export type UserInboxStore = EventStore;

@@ -12,6 +12,7 @@ const {
   DOMAIN_CREATED,
   COLONY_PROFILE_CREATED,
   COLONY_PROFILE_UPDATED,
+  TASK_INDEX_STORE_REGISTERED,
   TASK_STORE_REGISTERED,
   TASK_STORE_UNREGISTERED,
   TOKEN_INFO_ADDED,
@@ -54,6 +55,12 @@ export type ColonyEvents = {|
       guideline: *,
       website: *,
     }>,
+  >,
+  TASK_INDEX_STORE_REGISTERED: EventDefinition<
+    typeof TASK_INDEX_STORE_REGISTERED,
+    {|
+      taskIndexStoreAddress: string,
+    |},
   >,
   TASK_STORE_REGISTERED: EventDefinition<
     typeof TASK_STORE_REGISTERED,
