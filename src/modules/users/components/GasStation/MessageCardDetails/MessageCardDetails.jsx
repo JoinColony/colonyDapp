@@ -1,7 +1,6 @@
 /* @flow */
 
 import type { MessageProps } from '~immutable';
-import type { Action } from '~redux';
 
 /*
  * Due to our version of Flow no knowing about the existence of React Hooks
@@ -9,6 +8,7 @@ import type { Action } from '~redux';
 // $FlowFixMe
 import React, { Fragment, useCallback, useState } from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
+import { useDispatch } from 'redux-react-hook';
 
 import CardList from '~core/CardList';
 import Heading from '~core/Heading';
@@ -17,8 +17,8 @@ import { MessageCardStatus } from '../MessageCard';
 import MessageCardControls from './MessageCardControls';
 import { TransactionBackToList } from '../TransactionDetails';
 
-import { ACTIONS } from '~redux';
 import { getMainClasses } from '~utils/css';
+import { messageCancel } from '../../../../core/actionCreators';
 
 import styles from './MessageCardDetails.css';
 
@@ -36,7 +36,6 @@ const MSG = defineMessages({
 type Props = {|
   message: MessageProps,
   onClose: (event: SyntheticMouseEvent<HTMLButtonElement>) => void,
-  cancelMessage: (id: string) => Action<typeof ACTIONS.MESSAGE_CANCEL>,
 |};
 
 const displayName = 'users.GasStation.MessageCardDetails';
@@ -44,14 +43,14 @@ const displayName = 'users.GasStation.MessageCardDetails';
 const MessageCardDetails = ({
   message: { status, purpose, message: messageContent, id },
   message,
-  cancelMessage,
   onClose,
 }: Props) => {
+  const dispatch = useDispatch();
   const [isShowingCancelConfirmation, setShowCancelConfirmation] = useState(
     false,
   );
-  const cancelMessageSigning = useCallback(() => cancelMessage(id), [
-    cancelMessage,
+  const cancelMessageSigning = useCallback(() => dispatch(messageCancel(id)), [
+    dispatch,
     id,
   ]);
   const canBeCancelled = status === 'created';
