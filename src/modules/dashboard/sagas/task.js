@@ -763,7 +763,7 @@ function* taskCommentAdd({
       message,
     });
 
-    yield put({
+    yield put<Action<typeof ACTIONS.MESSAGE_SIGNED>>({
       type: 'MESSAGE_SIGNED',
       payload: { id: messageId, signature },
     });
