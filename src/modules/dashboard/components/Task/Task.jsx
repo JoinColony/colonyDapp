@@ -297,7 +297,7 @@ const Task = ({
               )}
             </>
           )}
-          {(!isTaskCreator || !isWorkerSet(task)) && (
+          {!isTaskCreator && !isWorkerSet(task) && (
             <TaskRequestWork
               currentUser={currentUser}
               task={task}
