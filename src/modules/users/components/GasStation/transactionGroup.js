@@ -26,7 +26,7 @@ export const getGroupKey = (txGroup: TransactionOrMessageGroup) =>
 export const findTransactionGroupByKey = (
   txGroups: TransactionOrMessageGroups,
   key: string,
-) => txGroups.find(transactionGroup => getGroupKey(transactionGroup) === key);
+) => txGroups.find(txGroup => getGroupKey(txGroup) === key);
 
 // Since we are not currently delete old transactions we sometimes need to check
 // for the newest one

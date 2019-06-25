@@ -17,7 +17,7 @@ import {
 
 import styles from './GroupedTransaction.css';
 
-import GroupedTransactionCard from './GroupedTransactionCard';
+import GroupedTransactionCard from './GroupedTransactionCard.jsx';
 import TransactionStatus from './TransactionStatus.jsx';
 
 type Props = {

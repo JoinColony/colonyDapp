@@ -1,18 +1,33 @@
 /* @flow */
 import type { FormikProps } from 'formik';
 
-import React, { Component, Fragment } from 'react';
+// $FlowFixMe
+import React, { useState, useEffect, useCallback } from 'react';
+import { useDispatch } from 'redux-react-hook';
 import BigNumber from 'bn.js';
 import { defineMessages, FormattedMessage } from 'react-intl';
 import nanoid from 'nanoid';
 import * as yup from 'yup';
 import { toWei } from 'ethjs-unit';
 
-import type { GasPricesProps, TransactionType } from '~immutable';
+import type { TransactionType } from '~immutable';
 import type { RadioOption } from '~core/Fields/RadioGroup';
 
 import { getMainClasses } from '~utils/css';
+import { withId } from '~utils/actions';
 import { ACTIONS } from '~redux';
+import { useSelector } from '~utils/hooks';
+
+import { gasPrices as gasPricesSelector } from '../../../../core/selectors';
+import {
+  transactionEstimateGas,
+  transactionUpdateGas,
+} from '../../../../core/actionCreators';
+import {
+  currentUserBalanceSelector,
+  walletTypeSelector,
+} from '../../../selectors';
+
 import Alert from '~core/Alert';
 import Button from '~core/Button';
 import EthUsd from '~core/EthUsd';
@@ -72,19 +87,7 @@ are expensive. We recommend waiting.`,
 });
 
 type Props = {|
-  estimateGas: (id: string) => void,
-  gasPrices: GasPricesProps,
-  balance: string,
-  isNetworkCongested: boolean,
   transaction: TransactionType<*, *>,
-  updateGas: (id: string, { gasPrice: BigNumber }) => void,
-  walletNeedsAction?: 'metamask' | 'hardware',
-|};
-
-type State = {|
-  isSpeedMenuOpen: boolean,
-  speedMenuId: string,
-  insufficientFunds: boolean,
 |};
 
 type FormValues = {|
@@ -106,187 +109,163 @@ const validationSchema = yup.object().shape({
     .oneOf(transactionSpeedOptions.map(speed => speed.value)),
 });
 
-class GasStationPrice extends Component<Props, State> {
-  static defaultProps = {
-    isNetworkCongested: false,
-  };
+const displayName = 'users.GasStation.GasStationPrice';
 
-  static displayName = 'users.GasStation.GasStationPrice';
+const GasStationPrice = ({ transaction: { id, gasLimit, errors } }: Props) => {
+  const dispatch = useDispatch();
 
-  state = {
-    isSpeedMenuOpen: false,
-    /*
-     * `speedMenuId` is used for the tx speed menu's id attribute for aria-* purposes.
-     */
-    speedMenuId: nanoid(),
-    insufficientFunds: false,
-  };
+  const [speedMenuId] = useState(nanoid());
+  const [isSpeedMenuOpen, setIsSpeedMenuOpen] = useState(false);
+  const [insufficientFunds, setInsufficientFunds] = useState(false);
+  // @todo Actually determine whether the network is congested (gas station).
+  const [isNetworkCongested] = useState(false);
 
-  componentDidMount() {
-    const {
-      estimateGas,
-      transaction: { id },
-    } = this.props;
-    estimateGas(id);
-  }
+  const gasPrices = useSelector(gasPricesSelector);
+  const balance = useSelector(currentUserBalanceSelector) || '0';
+  const walletType = useSelector(walletTypeSelector);
+  const walletNeedsAction = walletType !== 'software' ? walletType : undefined;
 
-  toggleSpeedMenu = () => {
-    const { isSpeedMenuOpen } = this.state;
-    this.setState({
-      isSpeedMenuOpen: !isSpeedMenuOpen,
-    });
-  };
-
-  isBalanceLessThanTxFee = (currentFeeInWei: BigNumber) => {
-    /* this is checking if the user can afford the transaction fee */
-    const { insufficientFunds } = this.state;
-    const { balance: balanceInEth = '0' } = this.props;
-    if (currentFeeInWei) {
-      const balanceInWei = toWei(balanceInEth, 'ether');
-      const enoughEth = currentFeeInWei.lte(balanceInWei);
-      if (!enoughEth && !insufficientFunds) {
-        this.setState({ insufficientFunds: true });
+  const transform = useCallback(withId(id), [id]);
+  const toggleSpeedMenu = useCallback(
+    () => setIsSpeedMenuOpen(!isSpeedMenuOpen),
+    [isSpeedMenuOpen],
+  );
+  const updateGas = useCallback(
+    (currentGasPrice: *) =>
+      dispatch(transactionUpdateGas(id, { gasPrice: currentGasPrice })),
+    [dispatch, id],
+  );
+  const isBalanceLessThanTxFee = useCallback(
+    (currentFeeInWei: BigNumber) => {
+      // Check if the user can afford the transaction fee
+      if (currentFeeInWei) {
+        const balanceInWei = toWei(balance, 'ether');
+        const enoughEth = currentFeeInWei.lte(balanceInWei);
+        if (!enoughEth && !insufficientFunds) {
+          setInsufficientFunds(true);
+        }
       }
-    }
-  };
+    },
+    [balance, insufficientFunds],
+  );
 
-  showAlert = () => {
-    const { isNetworkCongested, walletNeedsAction } = this.props;
-    const { insufficientFunds } = this.state;
-    return (
-      <>
-        {isNetworkCongested && <Alert text={MSG.networkCongestedWarning} />}
-        {walletNeedsAction && (
-          <Alert
-            appearance={{ theme: 'info' }}
-            text={MSG.walletPromptText}
-            textValues={{
-              walletType: walletNeedsAction,
-            }}
-          />
-        )}
-        {insufficientFunds && (
-          <Alert
-            appearance={{ theme: 'danger', size: 'small' }}
-            text={MSG.inSufficientFundsNotification}
-          />
-        )}
-      </>
-    );
-  };
+  useEffect(
+    () => {
+      dispatch(transactionEstimateGas(id));
+    },
+    [dispatch, id],
+  );
 
-  render() {
-    const {
-      gasPrices,
-      updateGas,
-      transaction: { id, gasLimit },
-    } = this.props;
-    const { isSpeedMenuOpen, speedMenuId } = this.state;
-    const initialFormValues: FormValues = {
-      id,
-      transactionSpeed: transactionSpeedOptions[0].value,
-    };
-    return (
-      <div className={getMainClasses({}, styles, { isSpeedMenuOpen })}>
-        <ActionForm
-          submit={ACTIONS.TRANSACTION_SEND}
-          success={ACTIONS.TRANSACTION_SENT}
-          error={ACTIONS.TRANSACTION_ERROR}
-          validationSchema={validationSchema}
-          isInitialValid={!!initialFormValues.transactionSpeed}
-          initialValues={initialFormValues}
-          transform={(action: *) => ({
-            ...action,
-            meta: { id },
-          })}
-        >
-          {({
-            isSubmitting,
-            isValid,
-            values: { transactionSpeed },
-          }: FormikProps<FormValues>) => {
-            const currentGasPrice = gasPrices[transactionSpeed];
-            const transactionFee =
-              currentGasPrice &&
-              gasLimit &&
-              currentGasPrice.mul(new BigNumber(gasLimit));
-            this.isBalanceLessThanTxFee(transactionFee);
-            const waitTime = gasPrices[`${transactionSpeed}Wait`];
-            return (
-              <Fragment>
-                <div
-                  aria-hidden={!isSpeedMenuOpen}
-                  className={styles.transactionSpeedContainerToggleable}
-                  id={speedMenuId}
-                >
-                  <div className={styles.transactionSpeedContainer}>
-                    <div className={styles.transactionSpeedLabel}>
-                      <FormattedMessage {...MSG.transactionSpeedLabel} />
+  const initialFormValues: FormValues = {
+    id,
+    transactionSpeed: transactionSpeedOptions[0].value,
+  };
+  return (
+    <div className={getMainClasses({}, styles, { isSpeedMenuOpen })}>
+      <ActionForm
+        submit={ACTIONS.TRANSACTION_SEND}
+        success={ACTIONS.TRANSACTION_SENT}
+        error={ACTIONS.TRANSACTION_ERROR}
+        validationSchema={validationSchema}
+        isInitialValid={!!initialFormValues.transactionSpeed}
+        initialValues={initialFormValues}
+        transform={transform}
+      >
+        {({
+          isSubmitting,
+          isValid,
+          values: { transactionSpeed },
+        }: FormikProps<FormValues>) => {
+          const currentGasPrice = gasPrices[transactionSpeed];
+          const transactionFee =
+            currentGasPrice &&
+            gasLimit &&
+            currentGasPrice.mul(new BigNumber(gasLimit));
+          isBalanceLessThanTxFee(transactionFee);
+          const waitTime = gasPrices[`${transactionSpeed}Wait`];
+          return (
+            <>
+              <div
+                aria-hidden={!isSpeedMenuOpen}
+                className={styles.transactionSpeedContainerToggleable}
+                id={speedMenuId}
+              >
+                <div className={styles.transactionSpeedContainer}>
+                  <div className={styles.transactionSpeedLabel}>
+                    <FormattedMessage {...MSG.transactionSpeedLabel} />
+                  </div>
+                  <RadioGroup
+                    appearance={{ theme: 'buttonGroup' }}
+                    currentlyCheckedValue={transactionSpeed}
+                    name="transactionSpeed"
+                    options={transactionSpeedOptions.map(option => ({
+                      ...option,
+                      onClick: () =>
+                        updateGas(id, { gasPrice: currentGasPrice }),
+                    }))}
+                  />
+                </div>
+              </div>
+              <div className={styles.transactionFeeContainer}>
+                <div className={styles.transactionFeeMenu}>
+                  <div className={styles.transactionSpeedMenuButtonContainer}>
+                    <button
+                      type="button"
+                      aria-controls={speedMenuId}
+                      aria-expanded={isSpeedMenuOpen}
+                      className={styles.transactionSpeedMenuButton}
+                      onClick={toggleSpeedMenu}
+                      disabled={!waitTime}
+                    >
+                      <Icon
+                        appearance={{ size: 'medium' }}
+                        name="caret-down-small"
+                        title={MSG.openTransactionSpeedMenuTitle}
+                        titleValues={{ disabled: !waitTime }}
+                      />
+                    </button>
+                  </div>
+                  <div className={styles.transactionFeeInfo}>
+                    <div className={styles.transactionFeeLabel}>
+                      <FormattedMessage {...MSG.transactionFeeLabel} />
                     </div>
-                    <RadioGroup
-                      appearance={{ theme: 'buttonGroup' }}
-                      currentlyCheckedValue={transactionSpeed}
-                      name="transactionSpeed"
-                      options={transactionSpeedOptions.map(option => ({
-                        ...option,
-                        onClick: () =>
-                          updateGas(id, { gasPrice: currentGasPrice }),
-                      }))}
-                    />
+                    <div className={styles.transactionDuration}>
+                      {waitTime && <Duration value={waitTime} />}
+                    </div>
                   </div>
                 </div>
-                <div className={styles.transactionFeeContainer}>
-                  <div className={styles.transactionFeeMenu}>
-                    <div className={styles.transactionSpeedMenuButtonContainer}>
-                      <button
-                        type="button"
-                        aria-controls={speedMenuId}
-                        aria-expanded={isSpeedMenuOpen}
-                        className={styles.transactionSpeedMenuButton}
-                        onClick={this.toggleSpeedMenu}
-                        disabled={!waitTime}
-                      >
-                        <Icon
-                          appearance={{ size: 'medium' }}
-                          name="caret-down-small"
-                          title={MSG.openTransactionSpeedMenuTitle}
-                          titleValues={{ disabled: !waitTime }}
+                <div className={styles.transactionFeeActions}>
+                  <div className={styles.transactionFeeAmount}>
+                    {transactionFee ? (
+                      <>
+                        <Numeral
+                          suffix=" ETH"
+                          truncate={6}
+                          unit="ether"
+                          value={transactionFee}
                         />
-                      </button>
-                    </div>
-                    <div className={styles.transactionFeeInfo}>
-                      <div className={styles.transactionFeeLabel}>
-                        <FormattedMessage {...MSG.transactionFeeLabel} />
-                      </div>
-                      <div className={styles.transactionDuration}>
-                        {waitTime && <Duration value={waitTime} />}
-                      </div>
-                    </div>
-                  </div>
-                  <div className={styles.transactionFeeActions}>
-                    <div className={styles.transactionFeeAmount}>
-                      {transactionFee ? (
-                        <Fragment>
-                          <Numeral
-                            suffix=" ETH"
-                            truncate={6}
+                        <div className={styles.transactionFeeEthUsd}>
+                          <EthUsd
+                            appearance={{ size: 'small', theme: 'grey' }}
+                            truncate={3}
                             unit="ether"
                             value={transactionFee}
                           />
-                          <div className={styles.transactionFeeEthUsd}>
-                            <EthUsd
-                              appearance={{ size: 'small', theme: 'grey' }}
-                              truncate={3}
-                              unit="ether"
-                              value={transactionFee}
-                            />
-                          </div>
-                        </Fragment>
-                      ) : (
-                        <SpinnerLoader />
-                      )}
-                    </div>
-                    <div>
+                        </div>
+                      </>
+                    ) : (
+                      <SpinnerLoader />
+                    )}
+                  </div>
+                  <div>
+                    {errors && errors.length ? (
+                      <Button
+                        disabled={!isValid}
+                        loading={!transactionFee || isSubmitting}
+                        text={{ id: 'button.retry' }}
+                        type="submit"
+                      />
+                    ) : (
                       <Button
                         disabled={!isValid}
                         loading={!transactionFee || isSubmitting}
@@ -294,17 +273,38 @@ class GasStationPrice extends Component<Props, State> {
                         type="submit"
                         data-test="gasStationConfirmTransaction"
                       />
-                    </div>
+                    )}
                   </div>
                 </div>
-              </Fragment>
-            );
-          }}
-        </ActionForm>
-        <div>{this.showAlert()}</div>
+              </div>
+            </>
+          );
+        }}
+      </ActionForm>
+      <div>
+        <>
+          {isNetworkCongested && <Alert text={MSG.networkCongestedWarning} />}
+          {walletNeedsAction && (
+            <Alert
+              appearance={{ theme: 'info' }}
+              text={MSG.walletPromptText}
+              textValues={{
+                walletType: walletNeedsAction,
+              }}
+            />
+          )}
+          {insufficientFunds && (
+            <Alert
+              appearance={{ theme: 'danger', size: 'small' }}
+              text={MSG.inSufficientFundsNotification}
+            />
+          )}
+        </>
       </div>
-    );
-  }
-}
+    </div>
+  );
+};
+
+GasStationPrice.displayName = displayName;
 
 export default GasStationPrice;
