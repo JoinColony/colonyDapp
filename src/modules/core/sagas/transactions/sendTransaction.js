@@ -65,7 +65,9 @@ async function getMethodTransactionPromise<
   return method.send(params, sendOptions);
 }
 
-export default function* sendTransaction(id: string): Saga<void> {
+export default function* sendTransaction({
+  meta: { id },
+}: Action<typeof ACTIONS.TRANSACTION_SEND>): Saga<void> {
   const transaction = yield* selectAsJS(oneTransaction, id);
 
   if (transaction.status !== 'ready') {

@@ -45,22 +45,31 @@ export function* createTransaction(
     throw new Error('Could not create transaction. No transaction id provided');
   }
 
-  // Put transaction into store
-  const txAction = createTxAction(id, address, config);
-  yield put<Action<typeof txAction.type>>(txAction);
+  yield put<
+    Action<
+      | typeof ACTIONS.TRANSACTION_CREATED
+      | typeof ACTIONS.MULTISIG_TRANSACTION_CREATED,
+    >,
+  >(createTxAction(id, address, config));
 
-  // Take the action where the user estimates the gas cost
-  const task = yield takeEvery(
+  // Create tasks for estimating and sending; the actions may be taken multiple times
+  const estimateGasTask = yield takeEvery(
     filterUniqueAction(id, ACTIONS.TRANSACTION_ESTIMATE_GAS),
     estimateGasCost,
   );
+  const sendTask = yield takeEvery(
+    filterUniqueAction(id, ACTIONS.TRANSACTION_SEND),
+    sendTransaction,
+  );
 
-  //  Take the action where the user sends off the transaction
-  yield take(filterUniqueAction(id, ACTIONS.TRANSACTION_SEND));
-
-  yield call(sendTransaction, id);
-
-  yield cancel(task);
+  // Wait for a success or cancel action before cancelling the tasks
+  yield take(
+    action =>
+      (action.type === ACTIONS.TRANSACTION_SUCCEEDED ||
+        action.type === ACTIONS.TRANSACTION_CANCEL) &&
+      action.meta.id === id,
+  );
+  yield cancel([estimateGasTask, sendTask]);
 }
 
 export function* getTxChannel(id: string): Saga<Channel<*>> {
