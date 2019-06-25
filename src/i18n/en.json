@@ -62,8 +62,8 @@
     "transaction.token.createTokenAuthority.title": "Deploy Token Authority",
     "transaction.token.setAuthority.title": "Set Token Authority",
     "transaction.colony.addExtension.title": "Add {contractName} Extension to Colony",
-    "transaction.colony.setRootRole.setOneTxRole.title": "Give Permission to OneTxPayment Extension",
     "transaction.colony.setRootRole.setOldRolesRole.title": "Give Permission to OldRoles Extension",
+    "transaction.colony.setAdminRole.setOneTxRole.title": "Give Permission to OneTxPayment Extension",
 
     "transaction.token.unlock.title": "Unlock Token",
 
