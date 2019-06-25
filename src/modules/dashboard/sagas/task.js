@@ -752,71 +752,68 @@ function* taskCommentAdd({
     });
 
     /*
-     * @NOTE Check/Wait for the message to be signed
-     *
-     * @TODO Maybe this will benefit in the future from converting into a channel
+     * @NOTE Wait (block) until there's a matching action
      */
-    yield takeEvery(ACTIONS.MESSAGE_SIGN, function* signCommentSaga({
-      payload: { id },
-    }) {
-      if (id === messageId) {
-        const signature = yield call([wallet, wallet.signMessage], {
-          message,
-        });
+    yield take(
+      ({ type, payload }) =>
+        type === ACTIONS.MESSAGE_SIGN && payload.id === messageId,
+    );
 
-        yield put({
-          type: 'MESSAGE_SIGNED',
-          payload: { id, signature },
-        });
-
-        const matches = (matchUsernames(comment) || []).filter(
-          username => username !== currentUsername,
-        );
-
-        const { event } = yield* executeCommand(postComment, {
-          args: {
-            signature,
-            content: {
-              id: nanoid(),
-              author: wallet.address,
-              body: comment,
-            },
-          },
-          metadata: {
-            colonyAddress,
-            draftId,
-          },
-        });
-
-        yield put<Action<typeof ACTIONS.TASK_COMMENT_ADD_SUCCESS>>({
-          type: ACTIONS.TASK_COMMENT_ADD_SUCCESS,
-          payload: {
-            colonyAddress,
-            draftId,
-            event,
-          },
-          meta,
-        });
-
-        if (matches && matches.length) {
-          const cachedAddresses = yield select(
-            userAddressByMultipleUsernameSelector,
-            matches,
-          );
-          yield* executeCommand(createCommentMention, {
-            args: {
-              colonyAddress,
-              draftId,
-              taskTitle,
-              comment,
-              sourceUsername: currentUsername,
-              sourceUserWalletAddress: walletAddress,
-            },
-            metadata: { matchingUsernames: matches, cachedAddresses },
-          });
-        }
-      }
+    const signature = yield call([wallet, wallet.signMessage], {
+      message,
     });
+
+    yield put({
+      type: 'MESSAGE_SIGNED',
+      payload: { id: messageId, signature },
+    });
+
+    const matches = (matchUsernames(comment) || []).filter(
+      username => username !== currentUsername,
+    );
+
+    const { event } = yield* executeCommand(postComment, {
+      args: {
+        signature,
+        content: {
+          id: nanoid(),
+          author: wallet.address,
+          body: comment,
+        },
+      },
+      metadata: {
+        colonyAddress,
+        draftId,
+      },
+    });
+
+    yield put<Action<typeof ACTIONS.TASK_COMMENT_ADD_SUCCESS>>({
+      type: ACTIONS.TASK_COMMENT_ADD_SUCCESS,
+      payload: {
+        colonyAddress,
+        draftId,
+        event,
+      },
+      meta,
+    });
+
+    if (matches && matches.length) {
+      const cachedAddresses = yield select(
+        userAddressByMultipleUsernameSelector,
+        matches,
+      );
+      yield* executeCommand(createCommentMention, {
+        args: {
+          colonyAddress,
+          draftId,
+          taskTitle,
+          comment,
+          sourceUsername: currentUsername,
+          sourceUserWalletAddress: walletAddress,
+        },
+        metadata: { matchingUsernames: matches, cachedAddresses },
+      });
+    }
   } catch (error) {
     yield putError(ACTIONS.TASK_COMMENT_ADD_ERROR, error, meta);
   }
