@@ -152,7 +152,7 @@ function* colonyCreate({
     fork(createTransaction, id, {
       ...config,
       group: {
-        key: 'transaction.batch.createColony',
+        key: 'createColony',
         id: meta.id,
         index,
       },

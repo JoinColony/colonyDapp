@@ -476,7 +476,7 @@ function* taskFinalize({
     );
 
     // setup batch ids and channels
-    const batchKey = 'transaction.batch.finalizeTask';
+    const batchKey = 'finalizeTask';
     const moveFundsBetweenPots = {
       id: `${meta.id}-moveFundsBetweenPots`,
       channel: yield call(getTxChannel, `${meta.id}-moveFundsBetweenPots`),
@@ -502,7 +502,7 @@ function* taskFinalize({
         id: meta.id,
         index: 0,
       },
-      ready: true,
+      ready: false,
     });
     yield fork(createTransaction, makePayment.id, {
       context: COLONY_CONTEXT,
@@ -513,7 +513,7 @@ function* taskFinalize({
         token: token.address,
         amount: new BigNumber(amount.toString()),
         domainId,
-        // skillId,
+        skillId,
       },
       group: {
         key: batchKey,
