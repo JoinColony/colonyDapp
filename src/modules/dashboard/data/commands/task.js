@@ -7,6 +7,7 @@ import type { TaskDraftId } from '~immutable';
 import type {
   CommentsStore,
   ColonyManager,
+  ColonyStore,
   ColonyTaskIndexStore,
   Command,
   DDB,
@@ -24,9 +25,11 @@ import {
 } from '~data/constants';
 import {
   createTaskStore,
+  getColonyStore,
   getColonyTaskIndexStore,
   getCommentsStore,
   getTaskStore,
+  getColonyTaskIndexStoreAddress,
   getTaskStoreAddress,
   getCommentsStoreAddress,
 } from '~data/stores';
@@ -90,7 +93,8 @@ const prepareTaskStoreCommand = async (
 
 export const createTask: Command<
   {|
-    colonyTaskIndexStore: ColonyTaskIndexStore,
+    colonyTaskIndexStore: ?ColonyTaskIndexStore,
+    colonyStore: ?ColonyStore,
     commentsStore: CommentsStore,
     taskStore: TaskStore,
   |},
@@ -128,23 +132,44 @@ export const createTask: Command<
       ddb,
       wallet,
     )(metadata);
-
-    const colonyTaskIndexStore = await getColonyTaskIndexStore(
+    const colonyTaskIndexStoreAddress = await getColonyTaskIndexStoreAddress(
       colonyClient,
       ddb,
       wallet,
     )(metadata);
+    const colonyTaskIndexStore = await getColonyTaskIndexStore(
+      colonyClient,
+      ddb,
+      wallet,
+    )({ colonyAddress, colonyTaskIndexStoreAddress });
+
+    let colonyStore;
+    if (!colonyTaskIndexStore) {
+      colonyStore = await getColonyStore(colonyClient, ddb, wallet)(metadata);
+    }
+
+    if (!(colonyStore || colonyTaskIndexStore)) {
+      throw new Error(
+        'Could not load colony task index or colony store either',
+      );
+    }
 
     return {
       colonyTaskIndexStore,
+      colonyStore,
       commentsStore,
       taskStore,
     };
   },
   async execute(
-    { colonyTaskIndexStore, commentsStore, taskStore },
+    { colonyTaskIndexStore, colonyStore, commentsStore, taskStore },
     { draftId, creatorAddress },
   ) {
+    // backwards-compatibility Colony task index store
+    if (!(colonyStore || colonyTaskIndexStore)) {
+      throw new Error('Couldnt locate the store to register this task');
+    }
+
     const commentsStoreAddress = commentsStore.address.toString();
     await taskStore.init(
       createEvent(TASK_EVENT_TYPES.COMMENT_STORE_CREATED, {
@@ -159,13 +184,15 @@ export const createTask: Command<
       }),
     );
 
-    await colonyTaskIndexStore.append(
-      createEvent(COLONY_EVENT_TYPES.TASK_STORE_REGISTERED, {
-        commentsStoreAddress,
-        draftId,
-        taskStoreAddress: taskStore.address.toString(),
-      }),
-    );
+    const event = createEvent(COLONY_EVENT_TYPES.TASK_STORE_REGISTERED, {
+      commentsStoreAddress,
+      draftId,
+      taskStoreAddress: taskStore.address.toString(),
+    });
+
+    // backwards-compatibility Colony task index store
+    const taskIndexStore = colonyTaskIndexStore || colonyStore;
+    await taskIndexStore.append(event);
 
     return {
       commentsStore,
@@ -494,37 +521,45 @@ export const cancelTask: Command<
   ) {
     const { colonyAddress } = metadata;
     const colonyClient = await colonyManager.getColonyClient(colonyAddress);
-    const colonyTaskIndexStore = await getColonyTaskIndexStore(
-      colonyClient,
-      ddb,
-      wallet,
-    )({
-      colonyAddress,
-    });
-
-    const taskStoreAddress = await getTaskStoreAddress(
+   const colonyTaskIndexStoreAddress = await getColonyTaskIndexStoreAddress(
       colonyClient,
       ddb,
       wallet,
     )(metadata);
-    const taskStore = await getTaskStore(colonyClient, ddb, wallet)({
-      ...metadata,
-      taskStoreAddress,
-    });
+    const colonyTaskIndexStore = await getColonyTaskIndexStore(
+      colonyClient,
+      ddb,
+      wallet,
+    )({ colonyAddress, colonyTaskIndexStoreAddress });
+
+    let colonyStore;
+    if (!colonyTaskIndexStore) {
+      colonyStore = await getColonyStore(colonyClient, ddb, wallet)(metadata);
+    }
+
+    if (!(colonyStore || colonyTaskIndexStore)) {
+      throw new Error(
+        'Could not load colony task index or colony store either',
+      );
+    }
 
     return {
+      colonyStore,
       colonyTaskIndexStore,
       taskStore,
     };
   },
   schema: CancelTaskCommandArgsSchema,
-  async execute({ colonyTaskIndexStore, taskStore }, { draftId }) {
+  async execute({ colonyStore, colonyTaskIndexStore, taskStore }, { draftId }) {
     const eventHash = await taskStore.append(
       createEvent(TASK_EVENT_TYPES.TASK_CANCELLED, {
         status: TASK_STATUS.CANCELLED,
       }),
     );
-    await colonyTaskIndexStore.append(
+
+    // backwards-compatibility Colony task index store
+    const taskIndexStore = colonyTaskIndexStore || colonyStore;
+    await taskIndexStore.append(
       createEvent(COLONY_EVENT_TYPES.TASK_STORE_UNREGISTERED, {
         draftId,
         taskStoreAddress: taskStore.address.toString(),

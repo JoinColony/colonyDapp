@@ -13,6 +13,7 @@ import type {
   ColonyManager,
   ColonyClient,
   ColonyStore,
+  ColonyTaskIndexStore,
   DDB,
   Event,
   NetworkClient,
@@ -26,7 +27,11 @@ import BigNumber from 'bn.js';
 import { CONTEXT } from '~context';
 import { COLONY_EVENT_TYPES } from '~data/constants';
 
-import { getColonyStore } from '~data/stores';
+import {
+  getColonyStore,
+  getColonyTaskIndexStore,
+  getColonyTaskIndexStoreAddress,
+} from '~data/stores';
 import { getEvents } from '~utils/web3/eventLogs';
 import { ZERO_ADDRESS } from '~utils/web3/constants';
 import { getTokenClient } from '~utils/web3/contracts';
@@ -43,6 +48,11 @@ const {
 type ColonyStoreMetadata = {|
   colonyAddress: Address,
 |};
+
+type ColonyTaskIndexStoreMetadata = {|
+  colonyAddress: Address,
+|};
+
 type ContractEventQuery<A, R> = Query<ColonyClient, ColonyStoreMetadata, A, R>;
 
 const context = [CONTEXT.COLONY_MANAGER];
@@ -80,6 +90,23 @@ const prepareColonyStoreQuery = async (
   const { colonyAddress } = metadata;
   const colonyClient = await colonyManager.getColonyClient(colonyAddress);
   return getColonyStore(colonyClient, ddb, wallet)(metadata);
+};
+
+const prepareColonyTaskIndexStoreQuery = async (
+  {
+    colonyManager,
+    ddb,
+    wallet,
+  }: {|
+    colonyManager: ColonyManager,
+    ddb: DDB,
+    wallet: Wallet,
+  |},
+  metadata: ColonyTaskIndexStoreMetadata,
+) => {
+  const { colonyAddress } = metadata;
+  const colonyClient = await colonyManager.getColonyClient(colonyAddress);
+  return getColonyTaskIndexStore(colonyClient, ddb, wallet)(metadata);
 };
 
 export const getColonyRoles: ContractEventQuery<
@@ -221,8 +248,8 @@ export const getColony: Query<
 
 // @NOTE: This is a separate query so we can, later on, cache the query result
 export const getColonyTasks: Query<
-  ColonyStore,
-  ColonyStoreMetadata,
+  {| colonyStore: ?ColonyStore, colonyTaskIndexStore: ?ColonyTaskIndexStore |},
+  ColonyTaskIndexStoreMetadata,
   void,
   {
     [draftId: string]: {|
@@ -233,15 +260,64 @@ export const getColonyTasks: Query<
 > = {
   name: 'getColonyTasks',
   context: colonyContext,
-  prepare: prepareColonyStoreQuery,
-  async execute(colonyStore) {
-    return colonyStore
-      .all()
-      .filter(
-        ({ type }) =>
-          type === TASK_STORE_REGISTERED || type === TASK_STORE_UNREGISTERED,
-      )
-      .reduce(colonyTasksReducer, {});
+  async prepare(
+    {
+      colonyManager,
+      ddb,
+      wallet,
+    }: {|
+      colonyManager: ColonyManager,
+      ddb: DDB,
+      wallet: Wallet,
+    |},
+    metadata: ColonyStoreMetadata,
+  ) {
+    const { colonyAddress } = metadata;
+    const colonyClient = await colonyManager.getColonyClient(colonyAddress);
+    const colonyTaskIndexStoreAddress = await getColonyTaskIndexStoreAddress(
+      colonyClient,
+      ddb,
+      wallet,
+    )(metadata);
+    const colonyTaskIndexStore = await getColonyTaskIndexStore(
+      colonyClient,
+      ddb,
+      wallet,
+    )({ colonyAddress, colonyTaskIndexStoreAddress });
+
+    let colonyStore;
+    if (!colonyTaskIndexStore) {
+      colonyStore = await getColonyStore(colonyClient, ddb, wallet)(metadata);
+    }
+
+    if (!(colonyStore || colonyTaskIndexStore)) {
+      throw new Error(
+        'Could not load colony task index or colony store either',
+      );
+    }
+
+    return {
+      colonyStore,
+      colonyTaskIndexStore,
+    };
+  },
+  async execute({ colonyStore, colonyTaskIndexStore }) {
+    if (!(colonyStore || colonyTaskIndexStore)) {
+      throw new Error(
+        'Could not load colony task index or colony store either',
+      );
+    }
+    const store = colonyTaskIndexStore || colonyStore;
+    return (
+      store
+        // $FlowFixMe seriously...?
+        .all()
+        .filter(
+          ({ type }) =>
+            type === TASK_STORE_REGISTERED || type === TASK_STORE_UNREGISTERED,
+        )
+        .reduce(colonyTasksReducer, {})
+    );
   },
 };
 
