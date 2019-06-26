@@ -101,7 +101,7 @@ const StepConfirmTransactions = ({ wizardValues: { colonyName } }: Props) => {
       <div className={styles.container}>
         {colonyTransaction && (
           <GasStationContent
-            appearance={{ interactive: false }}
+            appearance={{ interactive: false, required: true }}
             transactionAndMessageGroups={[colonyTransaction]}
           />
         )}

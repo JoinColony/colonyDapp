@@ -74,6 +74,7 @@ const GroupedTransaction = ({
             idx={idx}
             selected={idx === selectedTransactionIdx}
             transaction={transaction}
+            appearance={appearance}
           />
         ))}
       </ul>
