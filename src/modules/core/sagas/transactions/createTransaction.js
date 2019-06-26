@@ -29,10 +29,7 @@ import { createTxAction } from '../../actionCreators';
 import estimateGasCost from './estimateGasCost';
 import sendTransaction from './sendTransaction';
 
-export function* createTransaction(
-  id: string,
-  config: TxConfig<*>,
-): Saga<void> {
+export function* createTransaction(id: string, config: TxConfig): Saga<void> {
   const address = yield select(walletAddressSelector);
 
   if (!address) {

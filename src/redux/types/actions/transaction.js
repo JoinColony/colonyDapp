@@ -31,7 +31,7 @@ export type TransactionActionTypes = {|
   TRANSACTION_CREATED: ActionTypeWithPayloadAndMeta<
     typeof ACTIONS.TRANSACTION_CREATED,
     $Pick<
-      TransactionType<*, *>,
+      TransactionType,
       {
         context: *,
         createdAt: *,

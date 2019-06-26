@@ -7,11 +7,7 @@ import { call, put, take } from 'redux-saga/effects';
 import { ACTIONS } from '~redux';
 import { isDev } from '~utils/debug';
 import { selectAsJS } from '~utils/saga/effects';
-import type {
-  TransactionRecordType,
-  TransactionParams,
-  TransactionEventData,
-} from '~immutable';
+import type { TransactionRecordType } from '~immutable';
 import type { Action } from '~redux/types/actions';
 
 import type { MultisigSender, Sender } from '../../types';
@@ -27,13 +23,10 @@ import transactionChannel from './transactionChannel';
  * Given a method and a transaction record, create a promise for sending the
  * transaction with the method.
  */
-async function getMethodTransactionPromise<
-  P: TransactionParams,
-  E: TransactionEventData,
->(
-  method: Sender<P, E> | MultisigSender<P, E>,
-  tx: TransactionRecordType<P, E>,
-): Promise<ContractResponse<E>> {
+async function getMethodTransactionPromise(
+  method: Sender | MultisigSender,
+  tx: TransactionRecordType,
+): Promise<ContractResponse<*>> {
   const {
     multisig,
     options: {

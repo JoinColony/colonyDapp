@@ -34,7 +34,7 @@ const MSG = defineMessages({
 type Props = {
   groupCount?: number,
   hash?: string,
-  status: $PropertyType<TransactionType<*, *>, 'status'>,
+  status: $PropertyType<TransactionType, 'status'>,
 };
 
 const displayName = 'users.GasStation.TransactionStatus';

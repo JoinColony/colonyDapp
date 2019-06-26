@@ -12,7 +12,7 @@ export type MultisigActionTypes = {|
   MULTISIG_TRANSACTION_CREATED: ActionTypeWithPayloadAndMeta<
     typeof ACTIONS.MULTISIG_TRANSACTION_CREATED,
     $Pick<
-      TransactionType<*, *>,
+      TransactionType,
       {
         context: *,
         createdAt: *,

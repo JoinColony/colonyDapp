@@ -10,7 +10,7 @@ import type {
   TransactionParams,
 } from '~immutable';
 
-export type Sender<P: TransactionParams, E: TransactionEventData> = {
+export type Sender = {
   client: {
     adapter: {
       provider: {
@@ -20,21 +20,18 @@ export type Sender<P: TransactionParams, E: TransactionEventData> = {
       },
     },
   },
-  send(params: P, options: SendOptions): Promise<ContractResponse<E>>,
-  estimate(params: P): Promise<BigNumber>,
+  send(params: *, options: SendOptions): Promise<ContractResponse<*>>,
+  estimate(params: *): Promise<BigNumber>,
   restoreOperation: void,
 };
 
-export type MultisigSender<
-  P: TransactionParams,
-  E: TransactionEventData,
-> = Sender<P, E> & {
+export type MultisigSender = Sender & {
   restoreOperation: (
     operationJSON: string,
-  ) => Promise<(options: SendOptions) => Promise<ContractResponse<E>>>,
+  ) => Promise<(options: SendOptions) => Promise<ContractResponse<*>>>,
 };
 
-export type TxConfig<P> = {|
+export type TxConfig = {|
   context: ColonyContext,
   group?: {|
     key: string,
@@ -46,13 +43,13 @@ export type TxConfig<P> = {|
   methodName: string,
   multisig?: boolean | TransactionMultisig,
   options?: SendOptions,
-  params?: P,
+  params?: TransactionParams,
   ready?: boolean,
 |};
 
-export type TransactionResponse<E: TransactionEventData> = {
+export type TransactionResponse = {
   receipt?: TransactionReceipt,
-  eventData?: E,
+  eventData?: TransactionEventData,
   error?: Error,
 };
 

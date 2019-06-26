@@ -40,10 +40,10 @@ export type TransactionMultisig = {|
   signers?: Array<Object>,
 |};
 
-type Shared<P: TransactionParams, E: TransactionEventData> = {|
+type Shared = {|
   context: ColonyContext,
   createdAt: Date,
-  eventData?: E,
+  eventData?: TransactionEventData,
   from: string,
   gasLimit?: number,
   gasPrice?: BigNumber,
@@ -59,30 +59,24 @@ type Shared<P: TransactionParams, E: TransactionEventData> = {|
   methodName: string,
   multisig?: TransactionMultisig, // Indicates tx is multisig if set
   options: SendOptions,
-  params: P,
+  params: TransactionParams,
   receipt?: TransactionReceipt,
   status: 'created' | 'ready' | 'pending' | 'failed' | 'multisig' | 'succeeded',
 |};
 
-type TransactionRecordProps<P: TransactionParams, E: TransactionEventData> = {|
-  ...Shared<P, E>,
+type TransactionRecordProps = {|
+  ...Shared,
   errors: List<TransactionError>,
 |};
 
-export type TransactionType<
-  P: TransactionParams,
-  E: TransactionEventData,
-> = $ReadOnly<{|
-  ...Shared<P, E>,
+export type TransactionType = $ReadOnly<{|
+  ...Shared,
   errors: Array<TransactionError>,
 |}>;
 
-export type TransactionRecordType<
-  P: TransactionParams,
-  E: TransactionEventData,
-> = RecordOf<TransactionRecordProps<P, E>>;
+export type TransactionRecordType = RecordOf<TransactionRecordProps>;
 
-const defaultValues: $Shape<TransactionRecordProps<*, *>> = {
+const defaultValues: $Shape<TransactionRecordProps> = {
   context: undefined,
   createdAt: new Date(),
   errors: new List(),
@@ -103,7 +97,7 @@ const defaultValues: $Shape<TransactionRecordProps<*, *>> = {
   status: 'ready',
 };
 
-const TransactionRecord: RecordFactory<TransactionRecordProps<*, *>> = Record(
+const TransactionRecord: RecordFactory<TransactionRecordProps> = Record(
   defaultValues,
 );
 

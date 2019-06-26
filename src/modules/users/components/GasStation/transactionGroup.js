@@ -2,7 +2,7 @@
 
 import type { TransactionType, MessageProps } from '~immutable';
 
-export type TransactionGroup = Array<TransactionType<*, *>>;
+export type TransactionGroup = Array<TransactionType>;
 
 export type TransactionGroups = Array<TransactionGroup>;
 

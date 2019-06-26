@@ -87,7 +87,7 @@ are expensive. We recommend waiting.`,
 });
 
 type Props = {|
-  transaction: TransactionType<*, *>,
+  transaction: TransactionType,
 |};
 
 type FormValues = {|

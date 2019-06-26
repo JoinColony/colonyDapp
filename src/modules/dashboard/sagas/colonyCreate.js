@@ -115,7 +115,7 @@ function* colonyCreate({
 
   const createGroupedTransaction = (
     { id, index }: $Values<typeof channels>,
-    config: TxConfig<*>,
+    config: TxConfig,
   ) =>
     fork(createTransaction, id, {
       ...config,

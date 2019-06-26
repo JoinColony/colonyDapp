@@ -14,7 +14,7 @@ import type { ReducerType } from '~redux';
 /*
  * Helpers for transaction transformations
  */
-const transactionGroup = (tx: TransactionRecordType<*, *>) => {
+const transactionGroup = (tx: TransactionRecordType) => {
   if (!tx.group || typeof tx.group.id == 'string') return tx.group;
   const id = tx.group.id.reduce(
     (resultId, entry) => `${resultId}-${getObjectFromPath(tx, entry)}`,

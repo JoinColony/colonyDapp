@@ -19,7 +19,7 @@ export {
   NETWORK_CONTEXT,
 } from '../../../lib/ColonyManager/constants';
 
-export const createTxAction = <P>(
+export const createTxAction = (
   id: string,
   from: string,
   {
@@ -32,7 +32,7 @@ export const createTxAction = <P>(
     options,
     params,
     ready,
-  }: TxConfig<P>,
+  }: TxConfig,
 ) => ({
   type: multisigConfig
     ? ACTIONS.MULTISIG_TRANSACTION_CREATED

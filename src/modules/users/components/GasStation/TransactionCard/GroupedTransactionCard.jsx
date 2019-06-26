@@ -6,7 +6,6 @@ import { defineMessages, FormattedMessage } from 'react-intl';
 import { useDispatch } from 'redux-react-hook';
 
 import type { TransactionType } from '~immutable';
-import type { Action } from '~redux';
 import type { Appearance } from '../GasStationContent';
 
 import { getMainClasses } from '~utils/css';
@@ -43,7 +42,7 @@ type Props = {|
   appearance: Appearance,
   idx: number,
   selected: boolean,
-  transaction: TransactionType<*, *>,
+  transaction: TransactionType,
 |};
 
 const GroupedTransactionCard = ({
