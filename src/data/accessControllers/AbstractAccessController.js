@@ -8,6 +8,7 @@ import type { AccessController, Address, Entry } from '../../types';
 import PurserIdentity from '../PurserIdentity';
 import PurserIdentityProvider from '../PurserIdentityProvider';
 import { createAddress } from '../../types';
+import { log } from '../../utils/debug';
 
 /**
  * Abstract access controller class, for on Purser-based Ethereum wallets
@@ -23,6 +24,7 @@ export default class AbstractAccessController<
       signatures: { id, publicKey: signature },
     },
   }: Entry) {
+    log.verbose('Verifying orbit public key signature using wallet');
     const message = orbitPublicKey + id;
     return AbstractAccessController.verifyWalletSignature(
       walletAddress,
@@ -37,6 +39,10 @@ export default class AbstractAccessController<
       identity: { id: walletAddress, publicKey: orbitPublicKey, signatures },
     }: Entry,
   ): Promise<boolean> {
+    log.verbose(
+      // eslint-disable-next-line max-len
+      `Verifying wallet signature using orbit identity provider: "${walletAddress}"`,
+    );
     return provider.verify(signatures.id, orbitPublicKey, walletAddress);
   }
 
@@ -67,23 +73,35 @@ export default class AbstractAccessController<
    * - The identity provider should have verified the entry
    */
   async canAppend(entry: Entry, provider: P): Promise<boolean> {
+    log.verbose(
+      `Checking permission before appending entry: ${entry && entry.hash}`,
+    );
+
     const {
       identity: { type },
     } = entry;
-    /**
-     * @todo Add verbose mode for access controllers
-     * @body Add logs here with debug so we have a verbose mode that gives us a clue on what's going on Is the entry identity type valid?
-     */
+    log.verbose(`Using identity type: ${type}`);
+
     const isTypeValid = type === provider.type;
+    log.verbose('Is entry type valid?', isTypeValid);
     if (!isTypeValid) return false;
 
     const isWalletSignatureValid = this.constructor._walletDidVerifyOrbitKey(
       entry,
     );
+
+    log.verbose('Is wallet signature valid?', isWalletSignatureValid);
     if (!isWalletSignatureValid) return false;
 
     // Did the wallet allow the orbit key to write on its behalf and vice-versa?
-    return this.constructor._providerDidVerifyEntry(provider, entry);
+    // eslint-disable-next-line max-len
+    const isOrbitSignatureValid = await this.constructor._providerDidVerifyEntry(
+      provider,
+      entry,
+    );
+    log.verbose('Is orbit signature valid?', isOrbitSignatureValid);
+
+    return isOrbitSignatureValid;
   }
 
   /* eslint-disable no-unused-vars,class-methods-use-this */
