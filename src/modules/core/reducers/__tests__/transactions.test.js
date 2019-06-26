@@ -67,9 +67,9 @@ describe(`core: reducers (transactions)`, () => {
     type: 'receipt',
     message: 'oh no, receipt error',
   });
-  const eventDataError = transactionError(id, {
-    type: 'eventData',
-    message: 'oh no, event data error',
+  const estimateError = transactionError(id, {
+    type: 'estimate',
+    message: 'oh no, estimate error',
   });
 
   test('Sends successfully', () => {
@@ -318,14 +318,14 @@ describe(`core: reducers (transactions)`, () => {
     );
   });
 
-  test('Handles event data error', () => {
+  test('Handles estimate error', () => {
     testActions(
       [
         [createdTx],
         [sentTx],
         [receiptReceived],
         [
-          eventDataError,
+          estimateError,
           state => {
             expect(state.list.size).toBe(2);
 
@@ -341,8 +341,8 @@ describe(`core: reducers (transactions)`, () => {
               context,
               createdAt: expect.any(Date),
               error: {
-                type: 'eventData',
-                message: 'oh no, event data error',
+                type: 'estimate',
+                message: 'oh no, estimate error',
               },
               eventData: undefined,
               from,

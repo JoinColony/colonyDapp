@@ -11,7 +11,7 @@ import type { Action } from '~redux';
 
 import { oneTransaction } from '../../selectors';
 import { transactionUpdateGas, transactionError } from '../../actionCreators';
-import { getMethod, getGasPrices } from '../utils';
+import { getTransactionMethod, getGasPrices } from '../utils';
 
 /*
  * @area: including a bit of buffer on the gas sent can be a good thing.
@@ -25,15 +25,15 @@ export default function* estimateGasCost({
 }: Action<typeof ACTIONS.TRANSACTION_ESTIMATE_GAS>): Saga<void> {
   try {
     // Get the given transaction
-    const { context, methodName, identifier, params } = yield* selectAsJS(
-      oneTransaction,
-      id,
-    );
+    const transaction = yield* selectAsJS(oneTransaction, id);
 
-    const method = yield call(getMethod, context, methodName, identifier);
+    const method = yield call(getTransactionMethod, transaction);
 
     // Estimate the gas limit with the method.
-    const estimatedGas = yield call([method, method.estimate], params);
+    const estimatedGas = yield call(
+      [method, method.estimate],
+      transaction.params,
+    );
 
     // The suggested gas limit (briefly above the estimated gas cost)
     const suggestedGasLimit =
@@ -48,8 +48,6 @@ export default function* estimateGasCost({
       }),
     );
   } catch (error) {
-    yield put<Action<typeof ACTIONS.TRANSACTION_ERROR>>(
-      transactionError(id, error),
-    );
+    yield put(transactionError(id, 'estimate', error));
   }
 }

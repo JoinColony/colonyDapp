@@ -18,21 +18,16 @@ import {
   multisigTransactionSignError,
 } from '../../actionCreators';
 import { oneTransaction } from '../../selectors';
-import { getMethod } from '../utils';
+import { getTransactionMethod } from '../utils';
 
 export function* refreshMultisigTransaction({
   meta: { id },
 }: Action<typeof ACTIONS.MULTISIG_TRANSACTION_REFRESHED>): Saga<void> {
   try {
     // fetch the method, check it's multisig
-    const {
-      methodName,
-      context,
-      identifier,
-      multisig,
-      params,
-    } = yield* selectAsJS(oneTransaction, id);
-    const method = yield call(getMethod, context, methodName, identifier);
+    const transaction = yield* selectAsJS(oneTransaction, id);
+    const { methodName, multisig, params } = transaction;
+    const method = yield call(getTransactionMethod, transaction);
     if (!method.restoreOperation)
       throw new Error(`"${methodName}" is not a multisig method`);
 
@@ -61,15 +56,13 @@ export function* refreshMultisigTransaction({
 
     // if the nonce was invalidated, the tx has been reset
     if (multisig && multisig.nonce !== nonce)
-      yield put<Action<typeof ACTIONS.TRANSACTION_ERROR>>(
+      yield put(
         multisigTransactionNonceError(id, {
           message: 'Multisig nonce changed',
         }),
       );
   } catch (error) {
-    yield put<Action<typeof ACTIONS.TRANSACTION_ERROR>>(
-      multisigTransactionRefreshError(id, { message: error.message }),
-    );
+    yield put(multisigTransactionRefreshError(id, { message: error.message }));
   }
 }
 
@@ -78,14 +71,12 @@ export function* signMultisigTransaction({
 }: Action<typeof ACTIONS.MULTISIG_TRANSACTION_SIGN>): Saga<void> {
   try {
     // fetch from store
-    const { methodName, context, identifier, multisig } = yield* selectAsJS(
-      oneTransaction,
-      id,
-    );
+    const transaction = yield* selectAsJS(oneTransaction, id);
+    const { methodName, multisig } = transaction;
     if (!multisig) throw new Error('Transaction is not multisig');
 
     // restore
-    const method = yield call(getMethod, context, methodName, identifier);
+    const method = yield call(getTransactionMethod, transaction);
     if (!method.restoreOperation)
       throw new Error(`"${methodName}" is not a multisig method`);
     const multisigOperation = yield call(
@@ -119,9 +110,7 @@ export function* signMultisigTransaction({
       multisigTransactionSigned(id),
     );
   } catch (error) {
-    yield put<Action<typeof ACTIONS.TRANSACTION_ERROR>>(
-      multisigTransactionSignError(id, { message: error.message }),
-    );
+    yield put(multisigTransactionSignError(id, { message: error.message }));
   }
 }
 
@@ -134,9 +123,7 @@ export function* rejectMultisigTransaction({
      * @body Tell the other signees we rejected their sigs :(
      */
   } catch (error) {
-    yield put<Action<typeof ACTIONS.TRANSACTION_ERROR>>(
-      multisigTransactionRejectError(id, { message: error.message }),
-    );
+    yield put(multisigTransactionRejectError(id, { message: error.message }));
   }
 }
 
@@ -149,8 +136,6 @@ export function* signedMultisigTransaction({
      * @body If there are any remaining required signees, distribute to them
      */
   } catch (error) {
-    yield put<Action<typeof ACTIONS.TRANSACTION_ERROR>>(
-      multisigTransactionSignError(id, { message: error.message }),
-    );
+    yield put(multisigTransactionSignError(id, { message: error.message }));
   }
 }

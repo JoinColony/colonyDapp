@@ -6,12 +6,13 @@ import { call } from 'redux-saga/effects';
 
 import { CONTEXT, getContext } from '~context';
 
+import type { Transaction } from '~immutable';
 import type {
   AddressOrENSName,
   ColonyContext,
 } from '../../../../lib/ColonyManager/types';
 
-export default function* getMethod(
+export function* getMethod(
   context: ColonyContext,
   methodName: string,
   identifier?: AddressOrENSName,
@@ -23,4 +24,12 @@ export default function* getMethod(
     methodName,
     identifier,
   );
+}
+
+export function* getTransactionMethod({
+  context,
+  methodName,
+  identifier,
+}: Transaction): Saga<*> {
+  return yield call(getMethod, context, methodName, identifier);
 }

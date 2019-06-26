@@ -15,6 +15,7 @@ import type {
 
 export type TransactionError = {|
   type:
+    | 'estimate'
     | 'eventData'
     | 'multisigNonce'
     | 'multisigRefresh'

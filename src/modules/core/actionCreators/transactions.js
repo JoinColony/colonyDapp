@@ -53,45 +53,33 @@ export const createTxAction = (
   meta: { id },
 });
 
-export const multisigTransactionRefreshError = (
+export const transactionError = (
   id: string,
-  payload: { message: string },
+  type: $PropertyType<TransactionError, 'type'>,
+  error: Error,
 ): Action<typeof ACTIONS.TRANSACTION_ERROR> => ({
   type: ACTIONS.TRANSACTION_ERROR,
-  payload: { type: 'multisigRefresh', ...payload },
-  meta: { id },
+  payload: {
+    error: {
+      type,
+      message: error.message || error.toString(),
+    },
+  },
   error: true,
+  meta: { id },
 });
 
-export const multisigTransactionNonceError = (
-  id: string,
-  payload: { message: string },
-): Action<typeof ACTIONS.TRANSACTION_ERROR> => ({
-  type: ACTIONS.TRANSACTION_ERROR,
-  payload: { type: 'multisigNonce', ...payload },
-  meta: { id },
-  error: true,
-});
+export const multisigTransactionRefreshError = (id: string, error: Error) =>
+  transactionError(id, 'multisigRefresh', error);
 
-export const multisigTransactionSignError = (
-  id: string,
-  payload: { message: string },
-): Action<typeof ACTIONS.TRANSACTION_ERROR> => ({
-  type: ACTIONS.TRANSACTION_ERROR,
-  payload: { type: 'multisigSign', ...payload },
-  meta: { id },
-  error: true,
-});
+export const multisigTransactionNonceError = (id: string, error: Error) =>
+  transactionError(id, 'multisigNonce', error);
 
-export const multisigTransactionRejectError = (
-  id: string,
-  payload: { message: string },
-): Action<typeof ACTIONS.TRANSACTION_ERROR> => ({
-  type: ACTIONS.TRANSACTION_ERROR,
-  payload: { type: 'multisigReject', ...payload },
-  meta: { id },
-  error: true,
-});
+export const multisigTransactionSignError = (id: string, error: Error) =>
+  transactionError(id, 'multisigNonce', error);
+
+export const multisigTransactionRejectError = (id: string, error: Error) =>
+  transactionError(id, 'multisigReject', error);
 
 export const multisigTransactionRefreshed = (
   id: string,
@@ -123,22 +111,19 @@ export const multisigTransactionReject = (
   meta: { id },
 });
 
-export const transactionError = (
-  id: string,
-  error: TransactionError,
-): Action<typeof ACTIONS.TRANSACTION_ERROR> => ({
-  type: ACTIONS.TRANSACTION_ERROR,
-  payload: error,
-  error: true,
-  meta: { id },
-});
-
 export const transactionReceiptReceived = (
   id: string,
   payload: {| receipt: TransactionReceipt, params: Object |},
 ): Action<typeof ACTIONS.TRANSACTION_RECEIPT_RECEIVED> => ({
   type: ACTIONS.TRANSACTION_RECEIPT_RECEIVED,
   payload,
+  meta: { id },
+});
+
+export const transactionSend = (
+  id: string,
+): Action<typeof ACTIONS.TRANSACTION_SEND> => ({
+  type: ACTIONS.TRANSACTION_SEND,
   meta: { id },
 });
 

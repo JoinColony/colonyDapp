@@ -41,6 +41,7 @@ const coreTransactionsReducer: ReducerType<
     TRANSACTION_GAS_UPDATE: *,
     TRANSACTION_READY: *,
     TRANSACTION_RECEIPT_RECEIVED: *,
+    TRANSACTION_SEND: *,
     TRANSACTION_SENT: *,
     TRANSACTION_SUCCEEDED: *,
   |},
@@ -126,6 +127,16 @@ const coreTransactionsReducer: ReducerType<
       return state.mergeIn([CORE_TRANSACTIONS_LIST, id], fromJS(payload));
       // Do we want an 'estimated' state for TX?
     }
+    case ACTIONS.TRANSACTION_SEND: {
+      const {
+        meta: { id },
+      } = action;
+      // Clear errors and set to ready, because this action also retries sending
+      return state.mergeIn([CORE_TRANSACTIONS_LIST, id], {
+        error: undefined,
+        status: 'ready',
+      });
+    }
     case ACTIONS.TRANSACTION_SENT: {
       const {
         meta: { id },
@@ -167,7 +178,7 @@ const coreTransactionsReducer: ReducerType<
     case ACTIONS.TRANSACTION_ERROR: {
       const {
         meta: { id },
-        payload: error,
+        payload: { error },
       } = action;
       return state
         .setIn([CORE_TRANSACTIONS_LIST, id, 'error'], error)
