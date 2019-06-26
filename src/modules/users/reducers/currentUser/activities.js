@@ -22,16 +22,19 @@ const inboxItemsReducer: ReducerType<
       const { activity } = action.payload;
       const {
         type,
-        meta: { id, actorId, targetId, timestamp },
-        payload: context,
+        meta: { id, actorId, sourceType, sourceId, timestamp },
+        payload: { sourceUserAddress, targetUserAddress, ...context },
       } = activity;
       return state.push(
         InboxItemRecord({
           id,
           timestamp: new Date(timestamp),
           type,
-          sourceUserAddress: actorId,
-          targetUserAddress: targetId,
+          sourceType,
+          sourceId,
+          isBlockchainBased: sourceType === 'contract',
+          sourceAddress: sourceUserAddress || actorId,
+          targetAddress: targetUserAddress,
           context,
         }),
       );
@@ -42,15 +45,18 @@ const inboxItemsReducer: ReducerType<
         activities.map(
           ({
             type,
-            meta: { id, actorId, targetId, timestamp },
-            payload: context,
+            meta: { id, actorId, sourceType, sourceId, timestamp },
+            payload: { sourceUserAddress, targetUserAddress, ...context },
           }) =>
             InboxItemRecord({
               id,
               timestamp: new Date(timestamp),
               type,
-              sourceUserAddress: actorId,
-              targetUserAddress: targetId,
+              sourceId,
+              sourceType,
+              isBlockchainBased: sourceType === 'contract',
+              sourceAddress: sourceUserAddress || actorId,
+              targetAddress: targetUserAddress,
               context,
             }),
         ),

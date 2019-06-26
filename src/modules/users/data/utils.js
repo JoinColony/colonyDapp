@@ -8,7 +8,6 @@ import { getUserProfileStore, getUserInboxStore } from '~data/stores';
 import { getUserProfileReducer, getUserTokensReducer } from './reducers';
 import {
   NOTIFICATION_EVENT_ADMIN_ADDED,
-  NOTIFICATION_EVENT_ADMIN_REMOVED,
   NOTIFICATION_EVENT_ASSIGNED,
   NOTIFICATION_EVENT_COLONY_ENS_CREATED,
   NOTIFICATION_EVENT_DOMAIN_ADDED,
@@ -34,21 +33,20 @@ export const getUserTokenAddresses = (metadataStore: UserMetadataStore) =>
     .filter(({ type }) => type === TOKEN_ADDED || type === TOKEN_REMOVED)
     .reduce(getUserTokensReducer, []);
 
-export const transformNotificationEventNames = (eventName: string): string => {
-  const notificationsToEventsMapping = {
-    [ASSIGNED_TO_TASK]: NOTIFICATION_EVENT_ASSIGNED,
-    [COMMENT_MENTION]: NOTIFICATION_EVENT_USER_MENTIONED,
-    [TASK_FINALIZED_NOTIFICATION]: NOTIFICATION_EVENT_TASK_FINALIZED,
-    [WORK_REQUEST]: NOTIFICATION_EVENT_REQUEST_WORK,
-    ColonyAdministrationRoleSetAdded: NOTIFICATION_EVENT_ADMIN_ADDED,
-    ColonyAdministrationRoleSetRemoved: NOTIFICATION_EVENT_ADMIN_REMOVED,
-    ColonyLabelRegistered: NOTIFICATION_EVENT_COLONY_ENS_CREATED,
-    DomainAdded: NOTIFICATION_EVENT_DOMAIN_ADDED,
-    Mint: NOTIFICATION_EVENT_TOKENS_MINTED,
-    Transfer: NOTIFICATION_EVENT_USER_TRANSFER,
-  };
-  return notificationsToEventsMapping[eventName];
+const notificationsToEventsMapping = {
+  [ASSIGNED_TO_TASK]: NOTIFICATION_EVENT_ASSIGNED,
+  [COMMENT_MENTION]: NOTIFICATION_EVENT_USER_MENTIONED,
+  [TASK_FINALIZED_NOTIFICATION]: NOTIFICATION_EVENT_TASK_FINALIZED,
+  [WORK_REQUEST]: NOTIFICATION_EVENT_REQUEST_WORK,
+  ColonyRoleSet: NOTIFICATION_EVENT_ADMIN_ADDED,
+  ColonyLabelRegistered: NOTIFICATION_EVENT_COLONY_ENS_CREATED,
+  DomainAdded: NOTIFICATION_EVENT_DOMAIN_ADDED,
+  Mint: NOTIFICATION_EVENT_TOKENS_MINTED,
+  Transfer: NOTIFICATION_EVENT_USER_TRANSFER,
 };
+
+export const transformNotificationEventNames = (eventName: string): string =>
+  notificationsToEventsMapping[eventName];
 
 export const getUserInboxStoreByProfileAddress = (ddb: DDB) => async ({
   walletAddress,

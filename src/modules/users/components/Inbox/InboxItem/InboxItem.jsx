@@ -33,13 +33,16 @@ import {
   tokenFetcher,
 } from '../../../../dashboard/fetchers';
 import { friendlyColonyNameSelector } from '../../../../dashboard/selectors';
-import { friendlyUsernameSelector } from '../../../selectors';
+import {
+  friendlyUsernameSelector,
+  currentUserSelector,
+} from '../../../selectors';
+import { transformNotificationEventNames } from '../../../data/utils';
 
 import { ACTIONS } from '~redux';
 import { mergePayload } from '~utils/actions';
 
 import styles from './InboxItem.css';
-
 import MSG from '../messages';
 
 const UserAvatar = HookedUserAvatar();
@@ -59,8 +62,9 @@ type Props = {|
 
 const INBOX_REGEX = /[A-Z]/;
 
-const getType = (event: string): EventType => {
-  const type = event.split(INBOX_REGEX)[0];
+const getType = (eventType: string): EventType => {
+  const notificationId = transformNotificationEventNames(eventType);
+  const type = notificationId.split(INBOX_REGEX)[0];
   return type === 'action' || type === 'notification' ? type : 'notification';
 };
 
@@ -129,22 +133,49 @@ const ConditionalWrapper = ({
 const InboxItem = ({
   activity: {
     unread = true,
+    type: eventType,
     id,
-    amount,
-    tokenAddress,
-    colonyName,
-    colonyAddress,
-    comment,
-    domainName,
-    domainId,
-    event,
+    context: {
+      address,
+      colony: colonyArg,
+      amount,
+      comment,
+      taskTitle,
+      domainId,
+    },
     onClickRoute,
-    sourceUserAddress,
-    taskTitle,
-    targetUserAddress,
+    // sourceType,
+    sourceId,
+    sourceAddress: sourceUserAddress,
+    targetAddress: targetUserAddress,
     timestamp,
   },
 }: Props) => {
+  let colonyAddress;
+  let tokenAddress;
+  /*
+   * @NOTE:
+   *
+   * This will be fixed by the PR that closes issue colonyDapp#1170
+   *
+   * More: https://github.com/joincolony/colonyDapp#1170
+   */
+  switch (eventType) {
+    case 'ColonyRoleSet':
+    case 'DomainAdded':
+      colonyAddress = sourceId;
+      break;
+    case 'Mint':
+      colonyAddress = address;
+      tokenAddress = sourceId;
+      break;
+    case 'ColonyLabelRegistered':
+      colonyAddress = colonyArg;
+      break;
+    default:
+      break;
+  }
+
   const { data: user, isFetching: isFetchingUser } = useDataFetcher<UserType>(
     userFetcher,
     [sourceUserAddress],
@@ -153,9 +184,12 @@ const InboxItem = ({
   const sourceUserDisplayWithFallback = useSelector(friendlyUsernameSelector, [
     sourceUserAddress,
   ]);
+
+  const currentUser = useSelector(currentUserSelector);
   const targetUserDisplayWithFallback = useSelector(friendlyUsernameSelector, [
-    targetUserAddress,
+    targetUserAddress || currentUser.profile.walletAddress,
   ]);
+
   const {
     data: colony,
     isFetching: isFetchingColony,
@@ -168,20 +202,21 @@ const InboxItem = ({
     friendlyColonyNameSelector,
     [colonyAddress],
   );
-  const colonyNameWithFallback = (colony && colony.colonyName) || colonyName;
+  const colonyNameWithFallback = colony && colony.colonyName;
+
   const { data: domains, isFetching: isFetchingDomains } = useDataFetcher<
     DomainType[],
   >(domainsFetcher, [colonyAddress], [colonyAddress]);
+
   const {
     data: token,
     isFetching: isFetchingToken,
   } = useDataFetcher<TokenType>(tokenFetcher, [tokenAddress], [tokenAddress]);
   const currentDomain =
-    (domainName && { name: domainName }) ||
-    (domains &&
-      domains.find(
-        ({ id: currentDomainId }) => currentDomainId === domainId || 0,
-      ));
+    domains &&
+    domains.find(
+      ({ id: currentDomainId }) => currentDomainId === domainId || 0,
+    );
 
   const readActions = {
     submit: ACTIONS.INBOX_MARK_NOTIFICATION_READ,
@@ -210,10 +245,10 @@ const InboxItem = ({
         ) : (
           <ConditionalWrapper
             to={onClickRoute}
-            event={event}
+            event={transformNotificationEventNames(eventType)}
             user={(user && user.profile) || {}}
           >
-            {unread && <UnreadIndicator type={getType(event)} />}
+            {unread && <UnreadIndicator type={getType(eventType)} />}
             {user && (
               <UserAvatar
                 size="xxs"
@@ -228,7 +263,7 @@ const InboxItem = ({
                  * depending if the otherUser address is the same as the sourceUserAddress
                  * This is preffered as opposed to adding two notifications to the stores
                  */
-                {...MSG[event]}
+                {...MSG[transformNotificationEventNames(eventType)]}
                 values={{
                   amount: makeInboxDetail(amount, value => (
                     <Numeral
@@ -258,7 +293,7 @@ const InboxItem = ({
             </span>
 
             <span className={styles.additionalDetails}>
-              {colony && colony.colonyName && (domainName || currentDomain) && (
+              {colony && colony.colonyName && currentDomain && (
                 <FormattedMessage
                   {...MSG.metaColonyAndDomain}
                   values={{

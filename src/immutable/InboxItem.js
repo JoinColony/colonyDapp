@@ -9,11 +9,13 @@ import { Record } from 'immutable';
 type Shared = {|
   id?: string,
   type?: string,
-  timestamp?: Date | number,
-  sourceUserAddress?: string,
-  targetUserAddress?: string,
+  sourceId: string,
+  sourceType: string,
+  timestamp?: number,
+  sourceAddress?: string,
   onClickRoute?: string,
   context?: Object,
+  unread?: boolean,
 |};
 
 /*
@@ -40,10 +42,12 @@ const defaultValues: $Shape<Shared> = {
   id: undefined,
   type: undefined,
   timestamp: undefined,
-  sourceUserAddress: undefined,
-  targetUserAddress: undefined,
+  sourceId: undefined,
+  sourceType: undefined,
+  sourceAddress: undefined,
   onClickRoute: undefined,
   context: undefined,
+  unread: true,
 };
 
 const InboxItemRecord: RecordFactory<Shared> = Record(defaultValues);
