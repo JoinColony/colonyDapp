@@ -27,7 +27,7 @@ export const getFilterFormatted = (input: any) => padLeft(toHex(input), 64);
  */
 const getTopics = ({ events = [], from, to }: LogFilterOptions) => {
   const topics = [
-    flatMap(events, ({ interface: { eventTopics } }) => eventTopics),
+    flatMap(events, ({ interface: { topics: eventTopics } }) => eventTopics),
     from ? padTopicAddress(from) : null,
     to ? padTopicAddress(to) : null,
   ];

@@ -38,14 +38,50 @@ export const getEvents = async (
   client: ColonyClientType | TokenClientType,
   logFilter: LogFilter,
   logFilterOptions: LogFilterOptions,
-) =>
-  client.getEvents(
-    await getEventLogFilter(
-      client.adapter.provider,
-      logFilter,
-      logFilterOptions,
-    ),
+) => {
+  const filter = await getEventLogFilter(
+    client.adapter.provider,
+    logFilter,
+    logFilterOptions,
   );
+  return client.getEvents(filter);
+};
+
+export const getDecoratedEvents = async (
+  client: ColonyClientType | TokenClientType,
+  logFilter: LogFilter,
+  logFilterOptions: LogFilterOptions,
+) => {
+  const filter = await getEventLogFilter(
+    client.adapter.provider,
+    logFilter,
+    logFilterOptions,
+  );
+  const logs = await client.getLogs(filter);
+  if (!(logs && logs.length)) return [];
+
+  const events = await client.parseLogs(logs);
+  if (!(events && events.length && events.length === logs.length)) {
+    throw new Error('Something went wrong while parsing logs');
+  }
+
+  return Promise.all(
+    logs.map(async (log, index) => {
+      const { blockHash, transactionHash } = log;
+      const { timestamp } = await client.adapter.provider.getBlock(blockHash);
+      const transaction = await client.adapter.provider.getTransaction(
+        transactionHash,
+      );
+
+      return {
+        event: events[index],
+        log,
+        transaction,
+        timestamp: new Date(timestamp).getTime() * 1e3,
+      };
+    }),
+  );
+};
 
 export const getEventLogs = async (
   client: ColonyClientType | TokenClientType,
