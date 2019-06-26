@@ -127,12 +127,15 @@ const GasStationPrice = ({ transaction: { id, gasLimit, error } }: Props) => {
 
   const transform = useCallback(withId(id), [id]);
   const toggleSpeedMenu = useCallback(
-    () => setIsSpeedMenuOpen(!isSpeedMenuOpen),
+    () => {
+      setIsSpeedMenuOpen(!isSpeedMenuOpen);
+    },
     [isSpeedMenuOpen],
   );
   const updateGas = useCallback(
-    (currentGasPrice: *) =>
-      dispatch(transactionUpdateGas(id, { gasPrice: currentGasPrice })),
+    (currentGasPrice: *) => {
+      dispatch(transactionUpdateGas(id, { gasPrice: currentGasPrice }));
+    },
     [dispatch, id],
   );
   const isBalanceLessThanTxFee = useCallback(
@@ -259,12 +262,7 @@ const GasStationPrice = ({ transaction: { id, gasLimit, error } }: Props) => {
                   </div>
                   <div>
                     {error ? (
-                      <Button
-                        disabled={!isValid}
-                        loading={!transactionFee || isSubmitting}
-                        text={{ id: 'button.retry' }}
-                        type="submit"
-                      />
+                      <Button type="submit" text={{ id: 'button.retry' }} />
                     ) : (
                       <Button
                         disabled={!isValid}

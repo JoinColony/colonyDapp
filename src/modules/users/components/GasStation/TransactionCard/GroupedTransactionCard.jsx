@@ -10,31 +10,22 @@ import type { Appearance } from '../GasStationContent';
 
 import { getMainClasses } from '~utils/css';
 
-import {
-  transactionCancel,
-  transactionRetry,
-} from '../../../../core/actionCreators';
+import { transactionCancel } from '../../../../core/actionCreators';
 
 import { Tooltip } from '~core/Popover';
 
 import styles from './GroupedTransactionCard.css';
 
 import TransactionStatus from './TransactionStatus.jsx';
-import Button from '~core/Button';
 
 const MSG = defineMessages({
   hasDependentTx: {
     id: 'users.GasStation.GroupedTransactionCard.hasDependentTx',
     defaultMessage: 'Dependent transaction',
   },
-  // @fixme unused:
   failedTx: {
     id: 'users.GasStation.GroupedTransactionCard.failedTx',
-    defaultMessage: 'Failed transaction. Try again.',
-  },
-  retry: {
-    id: 'users.GasStation.GroupedTransactionCard.retry',
-    defaultMessage: 'Retry sending',
+    defaultMessage: '{type}: {message}',
   },
 });
 
@@ -49,18 +40,24 @@ const GroupedTransactionCard = ({
   appearance: { required },
   idx,
   selected,
-  transaction: { context, id, methodName, status, params, methodContext },
+  transaction: {
+    context,
+    error,
+    id,
+    methodContext,
+    methodName,
+    params,
+    status,
+  },
 }: Props) => {
   const dispatch = useDispatch();
 
-  const handleCancel = useCallback(() => dispatch(transactionCancel(id)), [
-    dispatch,
-    id,
-  ]);
-  const handleRetry = useCallback(() => dispatch(transactionRetry(id)), [
-    dispatch,
-    id,
-  ]);
+  const handleCancel = useCallback(
+    () => {
+      dispatch(transactionCancel(id));
+    },
+    [dispatch, id],
+  );
 
   const [
     isShowingCancelConfirmation,
@@ -68,7 +65,9 @@ const GroupedTransactionCard = ({
   ] = useState(false);
 
   const toggleCancelConfirmation = useCallback(
-    () => setIsShowingCancelConfirmation(!isShowingCancelConfirmation),
+    () => {
+      setIsShowingCancelConfirmation(!isShowingCancelConfirmation);
+    },
     [isShowingCancelConfirmation],
   );
 
@@ -112,9 +111,17 @@ const GroupedTransactionCard = ({
             />
             {failed && (
               <span className={styles.failedDescription}>
-                <Button onClick={handleRetry}>
-                  <FormattedMessage {...MSG.retry} />
-                </Button>
+                <FormattedMessage
+                  {...MSG.failedTx}
+                  values={{
+                    type: (
+                      <FormattedMessage
+                        id={`transaction.error.${error.type}`}
+                      />
+                    ),
+                    message: error.message,
+                  }}
+                />
               </span>
             )}
           </div>

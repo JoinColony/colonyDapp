@@ -51,9 +51,11 @@ const TransactionDetails = ({
           selectedTransactionIdx={selectedTransactionIdx}
         />
       </CardList>
-      {selectedTransaction && selectedTransaction.status === 'ready' && (
-        <GasStationPrice transaction={selectedTransaction} />
-      )}
+      {selectedTransaction &&
+        (selectedTransaction.status === 'ready' ||
+          selectedTransaction.status === 'failed') && (
+          <GasStationPrice transaction={selectedTransaction} />
+        )}
     </div>
   );
 };

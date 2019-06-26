@@ -42,7 +42,9 @@ export const getActiveTransactionIdx = (txGroup: TransactionOrMessageGroup) => {
     tx => tx.status === 'pending',
   );
   if (pendingTransactionIdx > -1) return pendingTransactionIdx;
-  return txGroup.findIndex(tx => tx.status === 'ready');
+  return txGroup.findIndex(
+    tx => tx.status === 'ready' || tx.status === 'failed',
+  );
 };
 
 // Get transaction values to show in title or description
