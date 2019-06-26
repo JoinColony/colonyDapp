@@ -22,12 +22,7 @@ import { executeQuery, putError } from '~utils/saga/effects';
 import { log } from '~utils/debug';
 import ENSCache from '~lib/ENS';
 
-import {
-  getUserBalance,
-  getUserProfile,
-  getUserColonies,
-  getUserNotificationMetadata,
-} from '../../users/data/queries';
+import { getUserBalance, getUserProfile } from '../../users/data/queries';
 import setupAdminSagas from '../../admin/sagas';
 import setupDashboardSagas from '../../dashboard/sagas';
 import { getWallet, setupUsersSagas, setupInboxSagas } from '../../users/sagas';
@@ -150,47 +145,13 @@ export default function* setupUserContext(
     });
 
     try {
-      const { readUntil = 0, exceptFor = [] } = yield* executeQuery(
-        getUserNotificationMetadata,
-        {
-          metadata: {
-            walletAddress,
-            metadataStoreAddress: profileData.metadataStoreAddress,
-          },
-        },
-      );
-      yield put<
-        Action<typeof ACTIONS.USER_NOTIFICATION_METADATA_FETCH_SUCCESS>,
-      >({
-        type: ACTIONS.USER_NOTIFICATION_METADATA_FETCH_SUCCESS,
+      yield put<Action<typeof ACTIONS.INBOX_ITEMS_FETCH>>({
+        type: ACTIONS.INBOX_ITEMS_FETCH,
         payload: {
-          readUntil,
-          exceptFor,
-        },
-      });
-
-      const userColonies = yield* executeQuery(getUserColonies, {
-        metadata: {
           walletAddress,
-          metadataStoreAddress: profileData.metadataStoreAddress,
         },
+        meta,
       });
-
-      const fetchInboxItemsEffects = userColonies.map(colonyAddress =>
-        put<Action<typeof ACTIONS.INBOX_ITEMS_FETCH>>({
-          type: ACTIONS.INBOX_ITEMS_FETCH,
-          payload: {
-            colonyAddress,
-          },
-          meta: {
-            ...meta,
-            key: walletAddress,
-            colonyAddress,
-          },
-        }),
-      );
-
-      yield all(fetchInboxItemsEffects);
     } catch (caughtError) {
       // It's ok if the user store doesn't exist (yet)
       log.warn(caughtError);
