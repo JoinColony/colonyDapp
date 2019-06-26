@@ -20,11 +20,41 @@ const inboxItemsReducer: ReducerType<
   switch (action.type) {
     case ACTIONS.INBOX_ITEMS_ADD_SUCCESS: {
       const { activity } = action.payload;
-      return state.push(InboxItemRecord(activity));
+      const {
+        type,
+        meta: { id, actorId, targetId, timestamp },
+        payload: context,
+      } = activity;
+      return state.push(
+        InboxItemRecord({
+          id,
+          timestamp: new Date(timestamp),
+          type,
+          sourceUserAddress: actorId,
+          targetUserAddress: targetId,
+          context,
+        }),
+      );
     }
     case ACTIONS.INBOX_ITEMS_FETCH_SUCCESS: {
       const { activities } = action.payload;
-      return List(activities.map(activity => InboxItemRecord(activity)));
+      return List(
+        activities.map(
+          ({
+            type,
+            meta: { id, actorId, targetId, timestamp },
+            payload: context,
+          }) =>
+            InboxItemRecord({
+              id,
+              timestamp: new Date(timestamp),
+              type,
+              sourceUserAddress: actorId,
+              targetUserAddress: targetId,
+              context,
+            }),
+        ),
+      );
     }
     case ACTIONS.USER_LOGOUT_SUCCESS: {
       return List();

@@ -2,12 +2,21 @@
 
 import type { RecordFactory, RecordOf } from 'immutable';
 
-import BN from 'bn.js';
+// import BN from 'bn.js';
 
 import { Record } from 'immutable';
 
 type Shared = {|
   id?: string,
+  type?: string,
+  timestamp?: Date | number,
+  sourceUserAddress?: string,
+  targetUserAddress?: string,
+  onClickRoute?: string,
+  context?: Object,
+|};
+
+/*
   // @TODO: InboxItem type should be more generic
   // @BODY: Have a "context" property for all these properties except for: id, timestamp, onClickRoute, sourceUserAddress, targetUserAddress, colonyAddress and unread
   comment?: string,
@@ -21,10 +30,7 @@ type Shared = {|
   domainId?: number,
   amount?: BN,
   tokenAddress?: string,
-  sourceUserAddress?: string,
-  targetUserAddress?: string,
-  onClickRoute?: string,
-|};
+*/
 
 export type InboxItemType = $ReadOnly<Shared>;
 
@@ -32,20 +38,12 @@ export type InboxItemRecordType = RecordOf<Shared>;
 
 const defaultValues: $Shape<Shared> = {
   id: undefined,
-  comment: undefined,
-  taskTitle: undefined,
-  event: undefined,
-  unread: true,
-  timestamp: new Date(),
-  colonyName: undefined,
-  colonyAddress: undefined,
-  domainName: undefined,
-  domainId: undefined,
-  amount: undefined,
-  tokenAddress: undefined,
+  type: undefined,
+  timestamp: undefined,
   sourceUserAddress: undefined,
   targetUserAddress: undefined,
   onClickRoute: undefined,
+  context: undefined,
 };
 
 const InboxItemRecord: RecordFactory<Shared> = Record(defaultValues);
