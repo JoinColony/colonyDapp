@@ -92,23 +92,6 @@ const prepareColonyStoreQuery = async (
   return getColonyStore(colonyClient, ddb, wallet)(metadata);
 };
 
-const prepareColonyTaskIndexStoreQuery = async (
-  {
-    colonyManager,
-    ddb,
-    wallet,
-  }: {|
-    colonyManager: ColonyManager,
-    ddb: DDB,
-    wallet: Wallet,
-  |},
-  metadata: ColonyTaskIndexStoreMetadata,
-) => {
-  const { colonyAddress } = metadata;
-  const colonyClient = await colonyManager.getColonyClient(colonyAddress);
-  return getColonyTaskIndexStore(colonyClient, ddb, wallet)(metadata);
-};
-
 export const getColonyRoles: ContractEventQuery<
   void,
   { admins: Address[], founder: Address },
@@ -285,6 +268,7 @@ export const getColonyTasks: Query<
       wallet,
     )({ colonyAddress, colonyTaskIndexStoreAddress });
 
+    // backwards-compatibility Colony task index store
     let colonyStore;
     if (!colonyTaskIndexStore) {
       colonyStore = await getColonyStore(colonyClient, ddb, wallet)(metadata);
@@ -307,6 +291,7 @@ export const getColonyTasks: Query<
         'Could not load colony task index or colony store either',
       );
     }
+    // backwards-compatibility Colony task index store
     const store = colonyTaskIndexStore || colonyStore;
     return (
       store

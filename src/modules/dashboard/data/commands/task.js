@@ -143,6 +143,7 @@ export const createTask: Command<
       wallet,
     )({ colonyAddress, colonyTaskIndexStoreAddress });
 
+    // backwards-compatibility Colony task index store
     let colonyStore;
     if (!colonyTaskIndexStore) {
       colonyStore = await getColonyStore(colonyClient, ddb, wallet)(metadata);
@@ -153,7 +154,6 @@ export const createTask: Command<
         'Could not load colony task index or colony store either',
       );
     }
-
     return {
       colonyTaskIndexStore,
       colonyStore,
@@ -192,6 +192,7 @@ export const createTask: Command<
 
     // backwards-compatibility Colony task index store
     const taskIndexStore = colonyTaskIndexStore || colonyStore;
+    // $FlowFixMe
     await taskIndexStore.append(event);
 
     return {
@@ -495,7 +496,11 @@ export const finalizeTask: Command<
 };
 
 export const cancelTask: Command<
-  {| colonyTaskIndexStore: ColonyTaskIndexStore, taskStore: TaskStore |},
+  {|
+    colonyStore: ?ColonyStore,
+    colonyTaskIndexStore: ?ColonyTaskIndexStore,
+    taskStore: TaskStore,
+  |},
   TaskStoreMetadata,
   {|
     draftId: TaskDraftId,
@@ -521,7 +526,7 @@ export const cancelTask: Command<
   ) {
     const { colonyAddress } = metadata;
     const colonyClient = await colonyManager.getColonyClient(colonyAddress);
-   const colonyTaskIndexStoreAddress = await getColonyTaskIndexStoreAddress(
+    const colonyTaskIndexStoreAddress = await getColonyTaskIndexStoreAddress(
       colonyClient,
       ddb,
       wallet,
@@ -532,6 +537,7 @@ export const cancelTask: Command<
       wallet,
     )({ colonyAddress, colonyTaskIndexStoreAddress });
 
+    // backwards-compatibility Colony task index store
     let colonyStore;
     if (!colonyTaskIndexStore) {
       colonyStore = await getColonyStore(colonyClient, ddb, wallet)(metadata);
@@ -542,6 +548,16 @@ export const cancelTask: Command<
         'Could not load colony task index or colony store either',
       );
     }
+
+    const taskStoreAddress = await getTaskStoreAddress(
+      colonyClient,
+      ddb,
+      wallet,
+    )(metadata);
+    const taskStore = await getTaskStore(colonyClient, ddb, wallet)({
+      ...metadata,
+      taskStoreAddress,
+    });
 
     return {
       colonyStore,
@@ -559,6 +575,7 @@ export const cancelTask: Command<
 
     // backwards-compatibility Colony task index store
     const taskIndexStore = colonyTaskIndexStore || colonyStore;
+    // $FlowFixMe
     await taskIndexStore.append(
       createEvent(COLONY_EVENT_TYPES.TASK_STORE_UNREGISTERED, {
         draftId,
