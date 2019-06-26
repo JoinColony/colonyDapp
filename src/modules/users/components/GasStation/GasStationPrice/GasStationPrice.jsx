@@ -111,7 +111,7 @@ const validationSchema = yup.object().shape({
 
 const displayName = 'users.GasStation.GasStationPrice';
 
-const GasStationPrice = ({ transaction: { id, gasLimit, errors } }: Props) => {
+const GasStationPrice = ({ transaction: { id, gasLimit, error } }: Props) => {
   const dispatch = useDispatch();
 
   const [speedMenuId] = useState(nanoid());
@@ -258,7 +258,7 @@ const GasStationPrice = ({ transaction: { id, gasLimit, errors } }: Props) => {
                     )}
                   </div>
                   <div>
-                    {errors && errors.length ? (
+                    {error ? (
                       <Button
                         disabled={!isValid}
                         loading={!transactionFee || isSubmitting}

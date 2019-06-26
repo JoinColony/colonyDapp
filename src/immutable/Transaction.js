@@ -4,7 +4,7 @@ import type { RecordFactory, RecordOf } from 'immutable';
 import type { SendOptions } from '@colony/colony-js-client';
 import type BigNumber from 'bn.js/lib/bn';
 
-import { Record, List } from 'immutable';
+import { Record } from 'immutable';
 
 import type {
   Address,
@@ -40,9 +40,10 @@ export type TransactionMultisig = {|
   signers?: Array<Object>,
 |};
 
-type Shared = {|
+type TransactionRecordProps = {|
   context: ColonyContext,
   createdAt: Date,
+  error?: TransactionError,
   eventData?: TransactionEventData,
   from: string,
   gasLimit?: number,
@@ -64,22 +65,14 @@ type Shared = {|
   status: 'created' | 'ready' | 'pending' | 'failed' | 'multisig' | 'succeeded',
 |};
 
-type TransactionRecordProps = {|
-  ...Shared,
-  errors: List<TransactionError>,
-|};
-
-export type TransactionType = $ReadOnly<{|
-  ...Shared,
-  errors: Array<TransactionError>,
-|}>;
+export type TransactionType = $ReadOnly<TransactionRecordProps>;
 
 export type TransactionRecordType = RecordOf<TransactionRecordProps>;
 
 const defaultValues: $Shape<TransactionRecordProps> = {
   context: undefined,
   createdAt: new Date(),
-  errors: new List(),
+  error: undefined,
   eventData: undefined,
   from: undefined,
   gasLimit: undefined,

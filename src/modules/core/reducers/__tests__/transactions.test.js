@@ -59,9 +59,18 @@ describe(`core: reducers (transactions)`, () => {
   const receiptReceived = transactionReceiptReceived(id, { receipt: { hash } });
   const eventDataReceived = transactionSucceeded(id, { eventData });
 
-  const sendError = transactionError(id, new Error('send error'));
-  const receiptError = transactionError(id, new Error('receipt error'));
-  const eventDataError = transactionError(id, new Error('event data error'));
+  const sendError = transactionError(id, {
+    type: 'send',
+    message: 'oh no, send error',
+  });
+  const receiptError = transactionError(id, {
+    type: 'receipt',
+    message: 'oh no, receipt error',
+  });
+  const eventDataError = transactionError(id, {
+    type: 'eventData',
+    message: 'oh no, event data error',
+  });
 
   test('Sends successfully', () => {
     testActions(
@@ -85,7 +94,7 @@ describe(`core: reducers (transactions)`, () => {
             expect(tx.toJS()).toEqual({
               context,
               createdAt: expect.any(Date),
-              errors: [],
+              error: undefined,
               eventData: undefined,
               from,
               gasLimit: undefined,
@@ -120,7 +129,7 @@ describe(`core: reducers (transactions)`, () => {
             expect(tx.toJS()).toEqual({
               context,
               createdAt: expect.any(Date),
-              errors: [],
+              error: undefined,
               eventData: undefined,
               from,
               gasLimit: undefined,
@@ -155,7 +164,7 @@ describe(`core: reducers (transactions)`, () => {
             expect(tx.toJS()).toEqual({
               context,
               createdAt: expect.any(Date),
-              errors: [],
+              error: undefined,
               eventData: undefined,
               from,
               gasLimit: undefined,
@@ -190,7 +199,7 @@ describe(`core: reducers (transactions)`, () => {
             expect(tx.toJS()).toEqual({
               context,
               createdAt: expect.any(Date),
-              errors: [],
+              error: undefined,
               eventData, // should have been set
               from,
               gasLimit: undefined,
@@ -234,7 +243,10 @@ describe(`core: reducers (transactions)`, () => {
             expect(tx.toJS()).toEqual({
               context,
               createdAt: expect.any(Date),
-              errors: [new Error('send error')],
+              error: {
+                type: 'send',
+                message: 'oh no, send error',
+              },
               eventData: undefined,
               from,
               gasLimit: undefined,
@@ -279,7 +291,10 @@ describe(`core: reducers (transactions)`, () => {
             expect(tx.toJS()).toEqual({
               context,
               createdAt: expect.any(Date),
-              errors: [new Error('receipt error')],
+              error: {
+                type: 'receipt',
+                message: 'oh no, receipt error',
+              },
               eventData: undefined,
               from,
               gasLimit: undefined,
@@ -325,7 +340,10 @@ describe(`core: reducers (transactions)`, () => {
             expect(tx.toJS()).toEqual({
               context,
               createdAt: expect.any(Date),
-              errors: [new Error('event data error')],
+              error: {
+                type: 'eventData',
+                message: 'oh no, event data error',
+              },
               eventData: undefined,
               from,
               gasLimit: undefined,

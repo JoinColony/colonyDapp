@@ -170,9 +170,7 @@ const coreTransactionsReducer: ReducerType<
         payload: error,
       } = action;
       return state
-        .updateIn([CORE_TRANSACTIONS_LIST, id, 'errors'], errors =>
-          errors.push(error),
-        )
+        .setIn([CORE_TRANSACTIONS_LIST, id, 'error'], error)
         .setIn([CORE_TRANSACTIONS_LIST, id, 'status'], 'failed');
     }
     case ACTIONS.TRANSACTION_CANCEL: {
@@ -187,10 +185,9 @@ const coreTransactionsReducer: ReducerType<
             // Keep all transactions with no group
             if (!filterTx.group) return true;
             // Keep all transactions with a different groupId
-            if (!filterTx.group.id !== tx.group.id) return true;
+            if (filterTx.group.id !== tx.group.id) return true;
             // Keep all transactions with the same groupId but a lower index
-            if (filterTx.group.index < tx.group.index) return true;
-            return false;
+            return filterTx.group.index < tx.group.index;
           }),
         );
       }
