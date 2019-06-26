@@ -29,11 +29,15 @@ import {
 } from './utils';
 
 import {
-  UserUpdateTokensCommandArgsSchema,
+  CreateAssignedCommandArgsSchema,
+  CreateCommentMentionCommandArgsSchema,
+  CreateFinalizedCommandArgsSchema,
   CreateUserProfileCommandArgsSchema,
+  CreateWorkRequestCommandArgsSchema,
   MarkNotificationsAsReadCommandArgsSchema,
   SetUserAvatarCommandArgsSchema,
   UpdateUserProfileCommandArgsSchema,
+  UserUpdateTokensCommandArgsSchema,
 } from './schemas';
 
 type UserProfileStoreMetadata = {|
@@ -349,26 +353,20 @@ export const createCommentMention: Command<
   UserInboxStore[],
   {|
     matchingUsernames: string[],
-    cachedAddresses: {
-      [username: string]: {|
-        walletAddress: Address,
-        inboxStoreAddress: string,
-      |},
-    },
   |},
   {|
     colonyAddress: Address,
     draftId: TaskDraftId,
     taskTitle: string,
     comment: string,
-    sourceUsername: string,
-    sourceUserWalletAddress: string,
+    sourceUserAddress: string,
   |},
   void,
 > = {
   name: 'commentMentionNotification',
   context: [CONTEXT.DDB_INSTANCE, CONTEXT.ENS_INSTANCE, CONTEXT.COLONY_MANAGER],
-  // $FlowFixMe I don't know why flow thinks that this is a sparse array
+  schema: CreateCommentMentionCommandArgsSchema,
+  // $FlowFixMe I don't know why flow thinks this is a sparse array
   async prepare(
     {
       ddb,
@@ -379,19 +377,16 @@ export const createCommentMention: Command<
       matchingUsernames = [],
     }: {|
       matchingUsernames: string[],
-      cachedAddresses: {
-        [username: string]: {|
-          walletAddress: Address,
-          inboxStoreAddress: string,
-        |},
-      },
     |},
   ) {
     if (!matchingUsernames.length) return [];
 
     const getWalletAddress = async (username: string) => {
       try {
-        const address = await ens.getAddress(username, networkClient);
+        const address = await ens.getAddress(
+          ens.constructor.getFullDomain('user', username),
+          networkClient,
+        );
         return address;
       } catch (caughtError) {
         log.warn(caughtError);
@@ -427,6 +422,88 @@ export const createCommentMention: Command<
       userInboxStores.map(inboxStore =>
         inboxStore.append(createEvent(USER_EVENT_TYPES.COMMENT_MENTION, args)),
       ),
+    );
+  },
+};
+
+export const createAssignedInboxEvent: Command<
+  UserInboxStore,
+  {|
+    workerAddress: Address,
+  |},
+  {|
+    colonyAddress: Address,
+    draftId: TaskDraftId,
+    taskTitle: string,
+    sourceUserAddress: string,
+  |},
+  void,
+> = {
+  name: 'createAssignedNotification',
+  context: [CONTEXT.DDB_INSTANCE],
+  schema: CreateAssignedCommandArgsSchema,
+  async prepare({ ddb }, { workerAddress }) {
+    return getUserInboxStoreByProfileAddress(ddb)({
+      walletAddress: workerAddress,
+    });
+  },
+  async execute(inboxStore, args) {
+    await inboxStore.append(
+      createEvent(USER_EVENT_TYPES.ASSIGNED_TO_TASK, args),
+    );
+  },
+};
+
+export const createWorkRequestInboxEvent: Command<
+  UserInboxStore,
+  {|
+    managerAddress: Address,
+  |},
+  {|
+    colonyAddress: Address,
+    draftId: TaskDraftId,
+    taskTitle: string,
+    sourceUserAddress: string,
+  |},
+  void,
+> = {
+  name: 'createWorkRequestInboxEvent',
+  context: [CONTEXT.DDB_INSTANCE],
+  schema: CreateWorkRequestCommandArgsSchema,
+  async prepare({ ddb }, { managerAddress }) {
+    return getUserInboxStoreByProfileAddress(ddb)({
+      walletAddress: managerAddress,
+    });
+  },
+  async execute(inboxStore, args) {
+    await inboxStore.append(createEvent(USER_EVENT_TYPES.WORK_REQUEST, args));
+  },
+};
+
+export const createFinalizedInboxEvent: Command<
+  UserInboxStore,
+  {|
+    workerAddress: Address,
+  |},
+  {|
+    colonyAddress: Address,
+    draftId: TaskDraftId,
+    taskTitle: string,
+    sourceUserAddress: string,
+  |},
+  void,
+> = {
+  name: 'createFinalizedInboxEvent',
+  context: [CONTEXT.DDB_INSTANCE],
+  schema: CreateFinalizedCommandArgsSchema,
+  async prepare({ ddb }, { workerAddress }) {
+    return getUserInboxStoreByProfileAddress(ddb)({
+      walletAddress: workerAddress,
+    });
+  },
+  async execute(inboxStore, args) {
+    await inboxStore.append(
+      createEvent(USER_EVENT_TYPES.TASK_FINALIZED_NOTIFICATION, args),
     );
   },
 };

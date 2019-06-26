@@ -62,8 +62,8 @@
     "transaction.token.createTokenAuthority.title": "Deploy Token Authority",
     "transaction.token.setAuthority.title": "Set Token Authority",
     "transaction.colony.addExtension.title": "Add {contractName} Extension to Colony",
-    "transaction.colony.setRootRole.setOneTxRole.title": "Give Permission to OneTxPayment Extension",
     "transaction.colony.setRootRole.setOldRolesRole.title": "Give Permission to OldRoles Extension",
+    "transaction.colony.setAdminRole.setOneTxRole.title": "Give Permission to OneTxPayment Extension",
 
     "transaction.token.unlock.title": "Unlock Token",
 
@@ -81,6 +81,8 @@
     "transaction.colony.cancelTask.title": "Cancel task",
     "transaction.colony.cancelTask.description": "Cancel task",
 
+    "transaction.group.finalizeTask.title": "Finalize task",
+    "transaction.group.finalizeTask.description": "Move funds and make payment",
     "transaction.colony.makePayment.title": "Make payment",
     "transaction.colony.makePayment.description": "Make payment",
 
@@ -88,6 +90,8 @@
     "transaction.colony.upgrade.description": "Update Colony",
     "transaction.colony.enterRecoveryMode.title": "Enter Recovery Mode",
     "transaction.colony.enterRecoveryMode.description": "Enter Recovery Mode",
+    "transaction.group.mintTokens.title": "Mint tokens",
+    "transaction.group.mintTokens.description": "Mint and claim native token",
     "transaction.colony.mintTokens.title": "Mint New Tokens",
     "transaction.colony.mintTokens.description": "Mint New Tokens",
     "transaction.colony.claimColonyFunds.title": "Claim Pending Transactions",

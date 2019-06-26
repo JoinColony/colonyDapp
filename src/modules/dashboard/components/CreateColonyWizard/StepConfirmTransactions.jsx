@@ -78,7 +78,7 @@ const StepConfirmTransactions = ({ wizardValues: { colonyName } }: Props) => {
   const newestGroup = findNewestGroup(transactionGroups);
   if (
     getGroupStatus(newestGroup) === 'succeeded' &&
-    getGroupKey(newestGroup) === 'group.transaction.batch.createColony'
+    getGroupKey(newestGroup) === 'group.createColony'
   ) {
     const normalizedColonyName = getNormalizedDomainText(colonyName);
     // This should never happen
@@ -89,7 +89,7 @@ const StepConfirmTransactions = ({ wizardValues: { colonyName } }: Props) => {
 
   const colonyTransaction = findTransactionGroupByKey(
     transactionGroups,
-    'group.transaction.batch.createColony',
+    'group.createColony',
   );
 
   return (

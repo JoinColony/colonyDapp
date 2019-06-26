@@ -8,16 +8,20 @@ import type { TaskDraftId } from '~immutable';
 import type { EventDefinition } from './events';
 
 const {
+  ASSIGNED_TO_TASK,
+  COMMENT_MENTION,
   READ_UNTIL,
   SUBSCRIBED_TO_COLONY,
   SUBSCRIBED_TO_TASK,
-  UNSUBSCRIBED_FROM_COLONY,
-  UNSUBSCRIBED_FROM_TASK,
+  TASK_FINALIZED_NOTIFICATION,
   TOKEN_ADDED,
   TOKEN_REMOVED,
-  COMMENT_MENTION,
+  UNSUBSCRIBED_FROM_COLONY,
+  UNSUBSCRIBED_FROM_TASK,
+  WORK_REQUEST,
 } = USER_EVENT_TYPES;
 
+// @todo Split UserEvents into metadata and inbox events
 export type UserEvents = {|
   READ_UNTIL: EventDefinition<
     typeof READ_UNTIL,
@@ -67,8 +71,34 @@ export type UserEvents = {|
       draftId: TaskDraftId,
       taskTitle: string,
       comment: string,
-      sourceUsername: string,
-      sourceUserWalletAddress: string,
+      sourceUserAddress: string,
+    |},
+  >,
+  ASSIGNED_TO_TASK: EventDefinition<
+    typeof ASSIGNED_TO_TASK,
+    {|
+      colonyAddress: Address,
+      draftId: TaskDraftId,
+      taskTitle: string,
+      sourceUserAddress: string,
+    |},
+  >,
+  WORK_REQUEST: EventDefinition<
+    typeof WORK_REQUEST,
+    {|
+      colonyAddress: Address,
+      draftId: TaskDraftId,
+      taskTitle: string,
+      sourceUserAddress: string,
+    |},
+  >,
+  TASK_FINALIZED_NOTIFICATION: EventDefinition<
+    typeof TASK_FINALIZED_NOTIFICATION,
+    {|
+      colonyAddress: Address,
+      draftId: TaskDraftId,
+      taskTitle: string,
+      sourceUserAddress: string,
     |},
   >,
 |};

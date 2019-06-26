@@ -117,9 +117,13 @@ export const CancelTaskCommandArgsSchema = yup.object({
 });
 
 export const FinalizeTaskCommandArgsSchema = yup.object({
-  worker: yup
+  amountPaid: yup.string().required(),
+  paymentTokenAddress: yup
     .string()
     .address()
     .required(),
-  amountPaid: yup.string().required(),
+  workerAddress: yup
+    .string()
+    .address()
+    .required(),
 });

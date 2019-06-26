@@ -216,5 +216,18 @@ const messages = defineMessages({
     defaultMessage:
       'Your first transaction is complete! Your username is {user}. Enjoy colony 🎉',
   },
+  // payments notifications
+  notificationWorkerAssigned: {
+    id: 'dashboard.Inbox.InboxItem.notificationWorkerAssigned',
+    defaultMessage: '{user} assigned you as worker for {task}.',
+  },
+  notificationWorkRequested: {
+    id: 'dashboard.Inbox.InboxItem.notificationWorkRequested',
+    defaultMessage: '{user} requested to work on {task}.',
+  },
+  notificationTaskFinalized: {
+    id: 'dashboard.Inbox.InboxItem.notificationTaskFinalized',
+    defaultMessage: '{user} finalized {task} and payouts have been made.',
+  },
 });
 export default messages;

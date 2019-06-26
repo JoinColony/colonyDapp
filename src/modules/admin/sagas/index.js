@@ -23,11 +23,13 @@ import {
 import { updateTokenInfo } from '../../dashboard/data/commands';
 import { createTransaction, getTxChannel } from '../../core/sagas';
 import { COLONY_CONTEXT } from '../../core/constants';
+import { transactionReady } from '../../core/actionCreators';
 import {
   fetchColonyTransactions,
   fetchColonyUnclaimedTransactions,
 } from '../actionCreators';
 import { fetchColony } from '../../dashboard/actionCreators';
+import { colonyNativeTokenSelector } from '../../dashboard/selectors';
 import { walletAddressSelector } from '../../users/selectors';
 
 import { NOTIFICATION_EVENT_TOKENS_MINTED } from '~users/Inbox/events';
@@ -159,21 +161,65 @@ function* colonyMintTokens({
      * Get the current user's wallet address (we need that for notifications)
      */
     const walletAddress = yield select(walletAddressSelector);
-    yield fork(createTransaction, meta.id, {
+    const { address: nativeTokenAddress } = yield select(
+      colonyNativeTokenSelector,
+      colonyAddress,
+    );
+
+    // setup batch ids and channels
+    const batchKey = 'mintTokens';
+    const mintTokens = {
+      id: `${meta.id}-mintTokens`,
+      channel: yield call(getTxChannel, `${meta.id}-mintTokens`),
+    };
+    const claimColonyFunds = {
+      id: `${meta.id}-claimColonyFunds`,
+      channel: yield call(getTxChannel, `${meta.id}-claimColonyFunds`),
+    };
+
+    // create transactions
+    yield fork(createTransaction, mintTokens.id, {
       context: COLONY_CONTEXT,
       methodName: 'mintTokens',
       identifier: colonyAddress,
       params: { amount },
+      group: {
+        key: batchKey,
+        id: meta.id,
+        index: 0,
+      },
+      ready: false,
+    });
+    yield fork(createTransaction, claimColonyFunds.id, {
+      context: COLONY_CONTEXT,
+      methodName: 'claimColonyFunds',
+      identifier: colonyAddress,
+      params: {
+        token: nativeTokenAddress,
+      },
+      group: {
+        key: batchKey,
+        id: meta.id,
+        index: 1,
+      },
+      ready: false,
     });
 
+    // wait for txs to be created
+    yield takeFrom(mintTokens.channel, ACTIONS.TRANSACTION_CREATED);
+    yield takeFrom(claimColonyFunds.channel, ACTIONS.TRANSACTION_CREATED);
     yield put({ type: ACTIONS.COLONY_MINT_TOKENS_SUBMITTED });
 
+    // send txs sequentially
+    yield put(transactionReady(mintTokens.id));
     const {
       payload: {
         params: { amount: mintedAmount },
         transaction: { receipt },
       },
-    } = yield takeFrom(txChannel, ACTIONS.TRANSACTION_SUCCEEDED);
+    } = yield takeFrom(mintTokens.channel, ACTIONS.TRANSACTION_SUCCEEDED);
+    yield put(transactionReady(claimColonyFunds.id));
+    yield takeFrom(claimColonyFunds.channel, ACTIONS.TRANSACTION_SUCCEEDED);
 
     /*
       if we got a Mint event log back (we will have on success) get the
