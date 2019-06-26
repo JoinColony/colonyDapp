@@ -54,8 +54,6 @@ class PurserIdentityProvider<I: PurserIdentity> implements IdentityProvider<I> {
       throw new Error('Could not get wallet address. Is it unlocked?');
     }
 
-    // Make sure the keystore is open
-    await this._keystore.open(this.walletAddress);
     // Always create a key per wallet address. This is stored on indexedDB
     const orbitKey =
       (await this._keystore.getKey(this.walletAddress)) ||
@@ -83,8 +81,6 @@ class PurserIdentityProvider<I: PurserIdentity> implements IdentityProvider<I> {
   }
 
   async sign(identity: PurserIdentity, data: any): Promise<string> {
-    // Make sure the keystore is open
-    await this._keystore.open();
     const signingKey = await this._keystore.getKey(identity.id);
     if (!signingKey)
       throw new Error(`Private signing key not found from Keystore`);
@@ -96,8 +92,6 @@ class PurserIdentityProvider<I: PurserIdentity> implements IdentityProvider<I> {
     publicKey: string,
     data: any,
   ): Promise<boolean> {
-    // Make sure the keystore is open
-    await this._keystore.open();
     return this._keystore.verify(signature, publicKey, data);
   }
 
