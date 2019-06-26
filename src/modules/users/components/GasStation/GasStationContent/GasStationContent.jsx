@@ -24,7 +24,18 @@ const MSG = defineMessages({
 });
 
 export type Appearance = {
-  interactive: boolean,
+  /**
+   * @NOTE Used to display the "Back to all transactions" link on the transaction's details view
+   * Usefull for cases like the Create Colony Wizard Flow, were the transactions details view
+   * is extracted out of the Gas Station, so you don't really have anywhere to go "back"
+   */
+  interactive?: boolean,
+  /**
+   * @NOTE Used to denote "important" transactions that shouldn't be cancelled
+   * We use this to disable the "Cancel" link on Transactions, for those that we deem as
+   * being important. Eg: The "Create Colony" group of transactions
+   */
+  required?: boolean,
 };
 
 type Props = {|
@@ -46,7 +57,10 @@ class GasStationContent extends Component<Props, State> {
   static displayName = 'users.GasStation.GasStationContent';
 
   static defaultProps = {
-    appearance: { interactive: true },
+    appearance: {
+      interactive: true,
+      required: false,
+    },
   };
 
   state = {
@@ -71,6 +85,7 @@ class GasStationContent extends Component<Props, State> {
     const {
       transactionAndMessageGroups,
       appearance: { interactive },
+      appearance,
     } = this.props;
     let detailsTransactionGroup = transactionAndMessageGroups[selectedGroupIdx];
 
@@ -88,7 +103,7 @@ class GasStationContent extends Component<Props, State> {
           <TransactionDetails
             transactionGroup={detailsTransactionGroup}
             onClose={this.unselectTransactionGroup}
-            appearance={{ interactive }}
+            appearance={appearance}
           />
         );
       }
