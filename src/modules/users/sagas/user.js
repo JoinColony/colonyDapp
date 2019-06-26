@@ -60,6 +60,7 @@ import {
   getUserTasks,
   getUserTokens,
   getUserInboxActivity,
+  getUserNotificationMetadata,
 } from '../data/queries';
 import { createTransaction, getTxChannel } from '../../core/sagas/transactions';
 import { userFetch as userFetchActionCreator } from '../actionCreators';
@@ -518,23 +519,49 @@ function* userTaskSubscribe({
     yield putError(ACTIONS.USER_TASK_SUBSCRIBE_ERROR, error);
   }
 }
+
 function* inboxItemsFetch({
-  payload: { colonyAddress },
+  payload: { walletAddress },
   meta,
 }: Action<typeof ACTIONS.INBOX_ITEMS_FETCH>): Saga<void> {
   try {
-    const walletAddress = yield select(walletAddressSelector);
-    const { inboxStoreAddress } = yield select(currentUserMetadataSelector);
-    const activities = yield* executeQuery(getUserInboxActivity, {
-      metadata: { inboxStoreAddress, walletAddress, colonyAddress },
+    const { inboxStoreAddress, metadataStoreAddress } = yield select(
+      currentUserMetadataSelector,
+    );
+    const userColonies = yield* executeQuery(getUserColonies, {
+      metadata: {
+        walletAddress,
+        metadataStoreAddress,
+      },
     });
+
+    const { readUntil = 0, exceptFor = [] } = yield* executeQuery(
+      getUserNotificationMetadata,
+      {
+        metadata: {
+          walletAddress,
+          metadataStoreAddress,
+        },
+      },
+    );
+
+    // @todo (reactivity) Make metadata and user inbox data reactive
+    yield put<Action<typeof ACTIONS.USER_NOTIFICATION_METADATA_FETCH_SUCCESS>>({
+      type: ACTIONS.USER_NOTIFICATION_METADATA_FETCH_SUCCESS,
+      payload: {
+        readUntil,
+        exceptFor,
+      },
+    });
+
+    const activities = yield* executeQuery(getUserInboxActivity, {
+      metadata: { inboxStoreAddress, walletAddress, userColonies },
+    });
+
     yield put<Action<typeof ACTIONS.INBOX_ITEMS_FETCH_SUCCESS>>({
       type: ACTIONS.INBOX_ITEMS_FETCH_SUCCESS,
       payload: { activities },
-      meta: {
-        ...meta,
-        colonyAddress,
-      },
+      meta,
     });
   } catch (error) {
     yield putError(ACTIONS.INBOX_ITEMS_FETCH_ERROR, error, meta);
