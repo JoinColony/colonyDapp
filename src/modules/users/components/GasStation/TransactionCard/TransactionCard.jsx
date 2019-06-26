@@ -6,7 +6,7 @@ import { FormattedMessage } from 'react-intl';
 import Heading from '~core/Heading';
 import Card from '~core/Card';
 
-import type { TransactionGroup } from '../transactionGroup';
+import type { TransactionOrMessageGroup } from '../transactionGroup';
 import {
   getGroupKey,
   getGroupStatus,
@@ -19,7 +19,7 @@ import TransactionStatus from './TransactionStatus.jsx';
 
 type Props = {
   idx: number,
-  transactionGroup: TransactionGroup,
+  transactionGroup: TransactionOrMessageGroup,
   onClick?: (idx: number) => void,
 };
 

@@ -1,0 +1,70 @@
+.main {
+  composes: main from '../TransactionCard/TransactionCard.css';
+  padding: 15px 0 0;
+}
+
+.summary {
+  composes: summary from '../TransactionCard/TransactionCard.css';
+}
+
+.description {
+  composes: description from '../TransactionCard/TransactionCard.css';
+}
+
+.themeMessage {
+  margin-top: 15px;
+  padding: 12px 15px 12px 20px;
+  border-left: 3px solid var(--colony-blue);
+  border-top: 1px solid var(--grey-blue-1);
+  background-color: var(--temp-grey-blue-6);
+  word-break: break-all;
+  color: var(--grey-dark);
+}
+
+.themeMessage .title {
+  display: block;
+  margin-bottom: 10px;
+  font-size: var(--size-small);
+  font-weight: var(--weight-medium);
+
+  &:hover .cancelButton {
+    display: inline;
+  }
+}
+
+.stateSucceeded {
+  color: var(--grey-text);
+}
+
+.stateFailed,
+.stateIsShowingCancelConfirmation {
+  border-left-color: var(--danger);
+  background-color: color-mod(var(--danger) alpha(20%));
+
+  &:hover {
+    border-left-color: color-mod(var(--danger) alpha(90%));
+    background-color: color-mod(var(--danger) alpha(15%));
+  }
+}
+
+.confirmationButtonsWrapper {
+  display: inline;
+  margin: 1px 0 0;
+  float: right;
+}
+
+.button {
+  composes: button from '../TransactionCard/GroupedTransactionCard.css';
+}
+
+.cancelButton {
+  composes: cancelButton from '../TransactionCard/GroupedTransactionCard.css';
+}
+
+.confirmationButton {
+  composes: confirmationButton from '../TransactionCard/GroupedTransactionCard.css';
+}
+
+.cancelDecision {
+  composes: cancelDecision from '../TransactionCard/GroupedTransactionCard.css';
+}

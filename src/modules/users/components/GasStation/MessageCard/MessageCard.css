@@ -1,0 +1,15 @@
+.main {
+  composes: main from '../TransactionCard/TransactionCard.css';
+}
+
+.button {
+  composes: button from '../TransactionCard/TransactionCard.css';
+}
+
+.summary {
+  composes: summary from '../TransactionCard/TransactionCard.css';
+}
+
+.description {
+  composes: description from '../TransactionCard/TransactionCard.css';
+}

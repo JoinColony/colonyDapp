@@ -735,11 +735,37 @@ function* taskCommentAdd({
     const walletAddress = yield select(walletAddressSelector);
     const currentUsername = yield select(usernameSelector, walletAddress);
     const wallet = yield* getContext(CONTEXT.WALLET);
+
     /*
-     * @todo Wire message signing to the Gas Station, once it's available
+     * @NOTE Initiate the message signing process
      */
+    const messageId = `${nanoid(10)}-signMessage`;
+    const message = JSON.stringify({ comment, author });
+    yield put<Action<typeof ACTIONS.MESSAGE_CREATED>>({
+      type: ACTIONS.MESSAGE_CREATED,
+      payload: {
+        id: messageId,
+        purpose: 'taskComment',
+        message,
+        createdAt: new Date(),
+      },
+    });
+
+    /*
+     * @NOTE Wait (block) until there's a matching action
+     */
+    yield take(
+      ({ type, payload }) =>
+        type === ACTIONS.MESSAGE_SIGN && payload.id === messageId,
+    );
+
     const signature = yield call([wallet, wallet.signMessage], {
-      message: JSON.stringify({ comment, author }),
+      message,
+    });
+
+    yield put<Action<typeof ACTIONS.MESSAGE_SIGNED>>({
+      type: 'MESSAGE_SIGNED',
+      payload: { id: messageId, signature },
     });
 
     const matches = (matchUsernames(comment) || []).filter(

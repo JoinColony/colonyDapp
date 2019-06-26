@@ -6,11 +6,13 @@ import { defineMessages } from 'react-intl';
 import Heading from '~core/Heading';
 import { getMainClasses } from '~utils/css';
 
-import type { TransactionGroup } from '../transactionGroup';
+import type { TransactionOrMessageGroups } from '../transactionGroup';
 
 import GasStationHeader from '../GasStationHeader';
 import TransactionDetails from '../TransactionDetails';
 import TransactionList from '../TransactionList';
+import MessageCardDetails from '../MessageCardDetails';
+import { isTxGroup } from '../transactionGroup';
 
 import styles from './GasStationContent.css';
 
@@ -32,7 +34,7 @@ type Props = {|
    */
   appearance: Appearance,
   close?: () => void,
-  transactionGroups: Array<TransactionGroup>,
+  transactionAndMessageGroups: TransactionOrMessageGroups,
   currentUserGetBalance: () => void,
 |};
 
@@ -67,27 +69,39 @@ class GasStationContent extends Component<Props, State> {
   renderTransactions() {
     const { selectedGroupIdx } = this.state;
     const {
-      transactionGroups,
+      transactionAndMessageGroups,
       appearance: { interactive },
     } = this.props;
-    let detailsTransactionGroup = transactionGroups[selectedGroupIdx];
+    let detailsTransactionGroup = transactionAndMessageGroups[selectedGroupIdx];
 
     /*  If the GasStationContent is less interactive,
      * like in StepConfirmTransactions, we select the first group buy default
      */
     if (!interactive && selectedGroupIdx === -1) {
-      [detailsTransactionGroup] = transactionGroups;
+      [detailsTransactionGroup] = transactionAndMessageGroups;
     }
 
-    return detailsTransactionGroup || !interactive ? (
-      <TransactionDetails
-        appearance={{ interactive: false }}
-        transactionGroup={detailsTransactionGroup}
-        onClose={this.unselectTransactionGroup}
-      />
-    ) : (
+    if (detailsTransactionGroup || !interactive) {
+      const isTx = isTxGroup(detailsTransactionGroup);
+      if (isTx) {
+        return (
+          <TransactionDetails
+            transactionGroup={detailsTransactionGroup}
+            onClose={this.unselectTransactionGroup}
+            appearance={{ interactive }}
+          />
+        );
+      }
+      return (
+        <MessageCardDetails
+          message={detailsTransactionGroup[0]}
+          onClose={this.unselectTransactionGroup}
+        />
+      );
+    }
+    return (
       <TransactionList
-        transactionGroups={transactionGroups}
+        transactionAndMessageGroups={transactionAndMessageGroups}
         onClickGroup={this.selectTransactionGroup}
       />
     );
@@ -96,10 +110,11 @@ class GasStationContent extends Component<Props, State> {
   render() {
     const {
       close,
-      transactionGroups,
+      transactionAndMessageGroups,
       appearance: { interactive },
     } = this.props;
-    const isEmpty = !transactionGroups || !transactionGroups.length;
+    const isEmpty =
+      !transactionAndMessageGroups || !transactionAndMessageGroups.length;
     return (
       <div
         className={getMainClasses({}, styles, { isEmpty })}

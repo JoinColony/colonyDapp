@@ -8,6 +8,7 @@ import type { RootStateRecord, TransactionRecordType } from '~immutable';
 
 import { walletAddressSelector } from '../../users/selectors';
 import { isMultisig, isPendingMultisig } from '../checks';
+import { messageGroups } from './messages';
 
 import {
   CORE_NAMESPACE as ns,
@@ -81,4 +82,22 @@ export const multisigTransactions = createSelector(
 export const pendingMultisigTransactions = createSelector(
   allTransactions,
   transactions => transactions.filter(isPendingMultisig).sort(createdAtDesc),
+);
+
+/*
+ * @NOTE This selector merges both the transaction groups and message groups
+ * into one list and sorts, in order to be digested by the Gas Station
+ */
+export const groupedTransactionsAndMessages = createSelector(
+  groupedTransactions,
+  messageGroups,
+  (transactions, messages) =>
+    transactions
+      .concat(messages)
+      /*
+       * Final sort is required since both the transactions and messages are
+       * sorted individually, so without this, the list will just show transactions
+       * at the top and messages at the bottom
+       */
+      .sortBy(group => group.first().createdAt),
 );

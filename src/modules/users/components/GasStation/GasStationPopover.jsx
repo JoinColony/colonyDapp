@@ -9,20 +9,23 @@ import Popover from '~core/Popover';
 
 import { usePrevious } from '~utils/hooks';
 
-import type { TransactionGroup } from './transactionGroup';
+import type { TransactionOrMessageGroups } from './transactionGroup';
 
 import { transactionCount } from './transactionGroup';
 import GasStationContent from './GasStationContent';
 
 type Props = {|
-  transactionGroups: Array<TransactionGroup>,
+  transactionAndMessageGroups: TransactionOrMessageGroups,
   children: React$Element<*> | PopoverTriggerType,
 |};
 
-const GasStationPopover = ({ children, transactionGroups }: Props) => {
+const GasStationPopover = ({
+  children,
+  transactionAndMessageGroups,
+}: Props) => {
   const [isOpen, setOpen] = useState(false);
-  const txCount = useMemo(() => transactionCount(transactionGroups), [
-    transactionGroups,
+  const txCount = useMemo(() => transactionCount(transactionAndMessageGroups), [
+    transactionAndMessageGroups,
   ]);
   const prevTxCount = usePrevious(txCount);
   useEffect(
@@ -39,7 +42,7 @@ const GasStationPopover = ({ children, transactionGroups }: Props) => {
       appearance={{ theme: 'grey' }}
       content={({ close }) => (
         <GasStationContent
-          transactionGroups={transactionGroups}
+          transactionAndMessageGroups={transactionAndMessageGroups}
           close={close}
         />
       )}
