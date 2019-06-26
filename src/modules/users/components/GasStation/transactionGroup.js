@@ -69,5 +69,13 @@ export const transactionCount = (
   txOrMessageGroups: TransactionOrMessageGroups,
 ) => txOrMessageGroups.reduce((count, group) => count + group.length, 0);
 
+/**
+ * @NOTE Determine if we're dealing with a group of Transactions or a group of Messages to be signed.
+ * @BODY Based on this we either show a `<TransactionCard />` or a `<MessageCard />`
+ */
 export const isTxGroup = (txOrMessageGroup: TransactionOrMessageGroup) =>
-  !!txOrMessageGroup[0].methodName;
+  /**
+   * @NOTE Uses `hasOwnProperty` because if the transaction group contains only one transaction
+   * the `group` prop will be set to `undefined`
+   */
+  Object.prototype.hasOwnProperty.call(txOrMessageGroup[0], 'group');
