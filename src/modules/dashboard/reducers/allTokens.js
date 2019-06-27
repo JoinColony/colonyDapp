@@ -38,6 +38,15 @@ const tokensReducer: ReducerType<
         name,
         symbol,
       });
+
+      /* If the token is ether there is no data about it in the db
+      we initialise it only here in the reducer
+      If we do not have this condition here the ether token info
+      gets overwritten with empty values.  */
+      if (tokenAddress === ZERO_ADDRESS) {
+        return INITIAL_STATE;
+      }
+
       return state.get(tokenAddress)
         ? state.setIn([tokenAddress, 'record'], record)
         : state.set(tokenAddress, DataRecord<TokenRecordType>({ record }));
