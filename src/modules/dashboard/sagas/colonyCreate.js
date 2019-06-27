@@ -58,7 +58,7 @@ function* colonyCreate({
     tokenSymbol,
     username,
   },
-}: Action<typeof ACTIONS.COLONY_CREATE>): Saga<void> {
+}: Action<typeof ACTIONS.COLONY_CREATE>): Saga<*> {
   /*
    * Get the current user's wallet address (needed for notifications).
    */
@@ -301,6 +301,7 @@ function* colonyCreate({
         new Error('Missing colony address'),
         meta,
       );
+      return null;
     }
 
     /*
@@ -444,8 +445,12 @@ function* colonyCreate({
       event: NOTIFICATION_EVENT_COLONY_ENS_CREATED,
       sourceUserAddress: walletAddress,
     });
+    return null;
   } catch (error) {
     yield putError(ACTIONS.COLONY_CREATE_ERROR, error, meta);
+    // For non-transaction errors (where something is probably irreversibly wrong),
+    // cancel the saga.
+    return null;
   } finally {
     /*
      * Close all transaction channels.
