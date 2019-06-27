@@ -157,18 +157,18 @@ export const transactionReceiptReceived = (
   meta: { id },
 });
 
-export const transactionSend = (
+export const transactionSent = (
   id: string,
-): Action<typeof ACTIONS.TRANSACTION_SEND> => ({
-  type: ACTIONS.TRANSACTION_SEND,
+): Action<typeof ACTIONS.TRANSACTION_SENT> => ({
+  type: ACTIONS.TRANSACTION_SENT,
   meta: { id },
 });
 
-export const transactionSent = (
+export const transactionHashReceived = (
   id: string,
   payload: {| hash: string, params: Object |},
-): Action<typeof ACTIONS.TRANSACTION_SENT> => ({
-  type: ACTIONS.TRANSACTION_SENT,
+): Action<typeof ACTIONS.TRANSACTION_HASH_RECEIVED> => ({
+  type: ACTIONS.TRANSACTION_HASH_RECEIVED,
   payload,
   meta: { id },
 });

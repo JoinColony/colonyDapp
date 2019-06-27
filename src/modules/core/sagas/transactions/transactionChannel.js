@@ -1,7 +1,7 @@
 /* @flow */
 
 import type { ContractResponse } from '@colony/colony-js-client';
-import { END, eventChannel } from 'redux-saga';
+import { buffers, END, eventChannel } from 'redux-saga';
 
 import type { TransactionRecordType } from '~immutable';
 
@@ -12,6 +12,7 @@ import {
   transactionUnsuccessfulError,
   transactionReceiptReceived,
   transactionSent,
+  transactionHashReceived,
   transactionSucceeded,
 } from '../../actionCreators';
 
@@ -22,9 +23,10 @@ const channelSendTransaction = async ({ id, params }, txPromise, emit) => {
   }
 
   try {
+    emit(transactionSent(id));
     const result = await txPromise;
     const { hash } = result.meta.transaction;
-    emit(transactionSent(id, { hash, params }));
+    emit(transactionHashReceived(id, { hash, params }));
     return result;
   } catch (caughtError) {
     emit(transactionSendError(id, caughtError));
@@ -118,6 +120,6 @@ const transactionChannel = (
   eventChannel(emit => {
     channelStart(tx, txPromise, emit);
     return () => {};
-  });
+  }, buffers.fixed());
 
 export default transactionChannel;

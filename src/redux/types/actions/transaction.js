@@ -60,6 +60,11 @@ export type TransactionActionTypes = {|
     typeof ACTIONS.TRANSACTION_ESTIMATE_GAS,
     WithId,
   >,
+  TRANSACTION_HASH_RECEIVED: ActionTypeWithPayloadAndMeta<
+    typeof ACTIONS.TRANSACTION_HASH_RECEIVED,
+    {| hash: string, params: Object |},
+    WithId,
+  >,
   TRANSACTION_GAS_UPDATE: ActionTypeWithPayloadAndMeta<
     typeof ACTIONS.TRANSACTION_GAS_UPDATE,
     {| gasLimit?: BigNumber, gasPrice?: BigNumber |},
@@ -71,11 +76,7 @@ export type TransactionActionTypes = {|
     WithId,
   >,
   TRANSACTION_SEND: ActionTypeWithMeta<typeof ACTIONS.TRANSACTION_SEND, WithId>,
-  TRANSACTION_SENT: ActionTypeWithPayloadAndMeta<
-    typeof ACTIONS.TRANSACTION_SENT,
-    {| hash: string, params: Object |},
-    WithId,
-  >,
+  TRANSACTION_SENT: ActionTypeWithMeta<typeof ACTIONS.TRANSACTION_SENT, WithId>,
   TRANSACTION_SUCCEEDED: ActionTypeWithPayloadAndMeta<
     typeof ACTIONS.TRANSACTION_SUCCEEDED,
     {| eventData: Object, params: Object |},

@@ -43,6 +43,7 @@ const coreTransactionsReducer: ReducerType<
     TRANSACTION_CREATED: *,
     TRANSACTION_ERROR: *,
     TRANSACTION_GAS_UPDATE: *,
+    TRANSACTION_HASH_RECEIVED: *,
     TRANSACTION_READY: *,
     TRANSACTION_RECEIPT_RECEIVED: *,
     TRANSACTION_SEND: *,
@@ -139,22 +140,27 @@ const coreTransactionsReducer: ReducerType<
         meta: { id },
       } = action;
       // Clear errors and set to ready, because this action also retries sending
-      return state.mergeIn([CORE_TRANSACTIONS_LIST, id], {
-        error: undefined,
-        status: TRANSACTION_STATUSES.READY,
-      });
+      return state
+        .setIn([CORE_TRANSACTIONS_LIST, id, 'error'], undefined)
+        .setIn(
+          [CORE_TRANSACTIONS_LIST, id, 'status'],
+          TRANSACTION_STATUSES.READY,
+        );
     }
-    case ACTIONS.TRANSACTION_SENT: {
+    case ACTIONS.TRANSACTION_HASH_RECEIVED: {
       const {
         meta: { id },
         payload: { hash },
       } = action;
-      return state.mergeIn(
-        [CORE_TRANSACTIONS_LIST, id],
-        fromJS({
-          hash,
-          status: TRANSACTION_STATUSES.PENDING,
-        }),
+      return state.setIn([CORE_TRANSACTIONS_LIST, id, 'hash'], hash);
+    }
+    case ACTIONS.TRANSACTION_SENT: {
+      const {
+        meta: { id },
+      } = action;
+      return state.setIn(
+        [CORE_TRANSACTIONS_LIST, id, 'status'],
+        TRANSACTION_STATUSES.PENDING,
       );
     }
     case ACTIONS.TRANSACTION_RECEIPT_RECEIVED: {
@@ -189,7 +195,7 @@ const coreTransactionsReducer: ReducerType<
       } = action;
       return state.mergeIn([CORE_TRANSACTIONS_LIST, id], {
         error,
-        status: TRANSACTION_STATUSES.READY,
+        status: TRANSACTION_STATUSES.FAILED,
       });
     }
     case ACTIONS.TRANSACTION_CANCEL: {
