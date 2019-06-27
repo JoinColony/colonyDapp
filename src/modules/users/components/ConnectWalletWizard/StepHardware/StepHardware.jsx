@@ -18,7 +18,7 @@ import Icon from '~core/Icon';
 import { ActionForm, Input, InputLabel, FormStatus } from '~core/Fields';
 import Button from '~core/Button';
 import Heading from '~core/Heading';
-import Alert from '~core/Alert';
+import WalletInteraction from '~users/GasStation/WalletInteraction';
 import AddressItem from './AddressItem.jsx';
 
 import { walletSelector } from '../../../selectors';
@@ -85,10 +85,6 @@ const MSG = defineMessages({
   loadingAddresses: {
     id: 'users.ConnectWalletWizard.StepHardware.loadingAddresses',
     defaultMessage: 'Loading available addresses...',
-  },
-  walletPromptText: {
-    id: 'users.ConnectWalletWizard.StepHardware.walletPromptText',
-    defaultMessage: `Please finish the transaction on your hardware wallet`,
   },
 });
 
@@ -256,10 +252,9 @@ class StepHardware extends Component<Props> {
             </section>
             <FormStatus status={status} />
             {isValid && (
-              <Alert
-                appearance={{ theme: 'info' }}
-                text={MSG.walletPromptText}
-              />
+              <div className={styles.interactionPrompt}>
+                <WalletInteraction walletType="hardware" />
+              </div>
             )}
             <div className={styles.actions}>
               <Button

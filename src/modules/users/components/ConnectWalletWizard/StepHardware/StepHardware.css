@@ -46,3 +46,13 @@
 .balanceHeading {
   margin-right: 20px;
 }
+
+.interactionPrompt {
+  margin-bottom: 20px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid var(--grey-blue-1);
+}
+
+.interactionPrompt > div {
+  margin: 0;
+}
