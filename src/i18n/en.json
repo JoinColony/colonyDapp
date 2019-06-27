@@ -34,16 +34,6 @@
     "placeholder.password": "Password",
     "transaction.debug.description": "DEBUG: context: {context} methodName: {methodName}",
 
-    "transaction.error.ESTIMATE": "Estimation error",
-    "transaction.error.EVENT_DATA": "Event data error",
-    "transaction.error.MULTISIG_NONCE": "Multisig nonce",
-    "transaction.error.MULTISIG_REFRESH": "Multisig refresh",
-    "transaction.error.MULTISIG_REJECT": "Multisig rejected",
-    "transaction.error.MULTISIG_SIGN": "Multisig signature",
-    "transaction.error.RECEIPT": "Receipt error",
-    "transaction.error.SEND": "Send error",
-    "transaction.error.UNSUCCESSFUL": "Unsuccessful",
-
     "transaction.network.registerUserLabel.title": "Claim Username",
     "transaction.network.registerUserLabel.description": "Confirm Your Username '{username}'",
 

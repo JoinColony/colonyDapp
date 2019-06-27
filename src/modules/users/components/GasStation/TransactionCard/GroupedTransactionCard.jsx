@@ -26,7 +26,17 @@ const MSG = defineMessages({
   },
   failedTx: {
     id: 'users.GasStation.GroupedTransactionCard.failedTx',
-    defaultMessage: '{type}: {message}',
+    defaultMessage: `{type, select,
+      ESTIMATE {Estimation error}
+      EVENT_DATA {Event data error}
+      MULTISIG_NONCE {Multisig nonce}
+      MULTISIG_REFRESH {Multisig refresh}
+      MULTISIG_REJECT {Multisig rejected}
+      MULTISIG_SIGN {Multisig signature}
+      RECEIPT {Receipt error}
+      SEND {Send error}
+      UNSUCCESSFUL {Unsuccessful}
+      }: {message}`,
   },
 });
 
@@ -112,17 +122,7 @@ const GroupedTransactionCard = ({
             />
             {failed && error && (
               <span className={styles.failedDescription}>
-                <FormattedMessage
-                  {...MSG.failedTx}
-                  values={{
-                    type: (
-                      <FormattedMessage
-                        id={`transaction.error.${error.type}`}
-                      />
-                    ),
-                    message: error.message,
-                  }}
-                />
+                <FormattedMessage {...MSG.failedTx} values={error} />
               </span>
             )}
           </div>

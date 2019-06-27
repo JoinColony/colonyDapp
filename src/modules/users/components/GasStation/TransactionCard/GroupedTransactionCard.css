@@ -87,7 +87,7 @@
    *
    * Because of this, we must *heavily* use negative margins to align text properly.
    */
-  margin: -1px 0 -12px 14px;
+  margin: -3px 0 -12px 14px;
   font-size: var(--size-unreadable);
   font-weight: var(--weight-medium);
   color: var(--danger);
