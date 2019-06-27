@@ -7,6 +7,7 @@ import reducer from '../transactions';
 import {
   createTxAction,
   transactionSent,
+  transactionHashReceived,
   transactionEstimateError,
   transactionReceiptError,
   transactionSendError,
@@ -57,7 +58,8 @@ describe(`core: reducers (transactions)`, () => {
     params,
   });
 
-  const sentTx = transactionSent(id, { hash });
+  const sentTx = transactionSent(id);
+  const hashReceived = transactionHashReceived(id, { hash, params });
   const receiptReceived = transactionReceiptReceived(id, { receipt: { hash } });
   const eventDataReceived = transactionSucceeded(id, { eventData });
 
@@ -134,7 +136,42 @@ describe(`core: reducers (transactions)`, () => {
               gasLimit: undefined,
               gasPrice: undefined,
               group: undefined,
-              hash, // hash should have been set
+              hash: undefined,
+              id,
+              methodName,
+              options,
+              params,
+              receipt: undefined,
+              /*
+               * During sending the transaction is set to 'PENDING'
+               */
+              status: 'PENDING',
+            });
+          },
+        ],
+        [
+          hashReceived,
+          state => {
+            expect(state.list.size).toBe(2);
+
+            const existingTx = state.list.get(existingTxId);
+            expect(Record.isRecord(existingTx)).toBe(true);
+            expect(existingTx.toJS()).toEqual(
+              initialState.list.get(existingTxId).toJS(),
+            );
+
+            const tx = state.list.get(id);
+            expect(Record.isRecord(tx)).toBe(true);
+            expect(tx.toJS()).toEqual({
+              context,
+              createdAt: expect.any(Date),
+              error: undefined,
+              eventData: undefined,
+              from,
+              gasLimit: undefined,
+              gasPrice: undefined,
+              group: undefined,
+              hash, // Hash should have been set
               id,
               methodName,
               options,
@@ -271,6 +308,7 @@ describe(`core: reducers (transactions)`, () => {
       [
         [createdTx],
         [sentTx],
+        [hashReceived],
         [
           receiptError,
           state => {
@@ -319,6 +357,7 @@ describe(`core: reducers (transactions)`, () => {
       [
         [createdTx],
         [sentTx],
+        [hashReceived],
         [receiptReceived],
         [
           estimateError,
