@@ -36,6 +36,7 @@ import Icon from '~core/Icon';
 import Numeral from '~core/Numeral';
 import Duration from '~core/Duration';
 import { SpinnerLoader } from '~core/Preloaders';
+import WalletInteraction from '../WalletInteraction';
 
 import styles from './GasStationPrice.css';
 
@@ -71,13 +72,6 @@ are expensive. We recommend waiting.`,
   transactionSpeedTypeFaster: {
     id: 'users.GasStation.GasStationPrice.transactionSpeedTypeFaster',
     defaultMessage: 'Faster',
-  },
-  walletPromptText: {
-    id: 'users.GasStation.GasStationPrice.walletPromptText',
-    defaultMessage: `Please finish the transaction on {walletType, select,
-      metamask {Metamask}
-      hardware {your hardware wallet}
-    }`,
   },
   inSufficientFundsNotification: {
     id: 'users.GasStation.GasStationFooter.insufficientFundsNotification',
@@ -123,7 +117,6 @@ const GasStationPrice = ({ transaction: { id, gasLimit, error } }: Props) => {
   const gasPrices = useSelector(gasPricesSelector);
   const balance = useSelector(currentUserBalanceSelector) || '0';
   const walletType = useSelector(walletTypeSelector);
-  const walletNeedsAction = walletType !== 'software' ? walletType : undefined;
 
   const transform = useCallback(withId(id), [id]);
   const toggleSpeedMenu = useCallback(
@@ -283,14 +276,8 @@ const GasStationPrice = ({ transaction: { id, gasLimit, error } }: Props) => {
       <div>
         <>
           {isNetworkCongested && <Alert text={MSG.networkCongestedWarning} />}
-          {walletNeedsAction && (
-            <Alert
-              appearance={{ theme: 'info' }}
-              text={MSG.walletPromptText}
-              textValues={{
-                walletType: walletNeedsAction,
-              }}
-            />
+          {walletType !== 'software' && (
+            <WalletInteraction walletType={walletType} />
           )}
           {insufficientFunds && (
             <Alert
