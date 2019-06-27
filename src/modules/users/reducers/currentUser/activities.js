@@ -26,6 +26,9 @@ const inboxItemsReducer: ReducerType<
       const { activities } = action.payload;
       return List(activities.map(activity => InboxItemRecord(activity)));
     }
+    case ACTIONS.USER_LOGOUT_SUCCESS: {
+      return List();
+    }
     default:
       return state;
   }
