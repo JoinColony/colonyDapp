@@ -2,13 +2,9 @@
 
 import type { TransactionType, MessageProps } from '~immutable';
 
-export type TransactionGroup = Array<TransactionType>;
+import { TRANSACTION_STATUSES } from '~immutable';
 
-export type TransactionGroups = Array<TransactionGroup>;
-
-export type TransactionOrMessageGroup = Array<
-  TransactionType<*, *> & MessageProps,
->;
+export type TransactionOrMessageGroup = Array<TransactionType & MessageProps>;
 
 export type TransactionOrMessageGroups = Array<TransactionOrMessageGroup>;
 
@@ -39,11 +35,13 @@ export const findNewestGroup = (txGroups: TransactionOrMessageGroups) => {
 export const getActiveTransactionIdx = (txGroup: TransactionOrMessageGroup) => {
   // Select the pending selection so that the user can't sign the next one
   const pendingTransactionIdx = txGroup.findIndex(
-    tx => tx.status === 'pending',
+    tx => tx.status === TRANSACTION_STATUSES.PENDING,
   );
   if (pendingTransactionIdx > -1) return pendingTransactionIdx;
   return txGroup.findIndex(
-    tx => tx.status === 'ready' || tx.status === 'failed',
+    tx =>
+      tx.status === TRANSACTION_STATUSES.READY ||
+      tx.status === TRANSACTION_STATUSES.FAILED,
   );
 };
 
@@ -54,16 +52,20 @@ export const getGroupValues = (txGroup: TransactionOrMessageGroup) =>
 
 // Get the joint status of the group
 export const getGroupStatus = (txGroup: TransactionOrMessageGroup) => {
-  if (txGroup.some(tx => tx.status === 'failed')) return 'failed';
+  if (txGroup.some(tx => tx.status === TRANSACTION_STATUSES.FAILED))
+    return TRANSACTION_STATUSES.FAILED;
 
   /**
    * @todo Identify waiting multisig transactions (gas station tx group).
    * @body This might not be how we identify a waiting mulitsig tx
    */
-  if (txGroup.some(tx => tx.status === 'multisig')) return 'multisig';
-  if (txGroup.some(tx => tx.status === 'pending')) return 'pending';
-  if (txGroup.every(tx => tx.status === 'succeeded')) return 'succeeded';
-  return 'ready';
+  if (txGroup.some(tx => tx.status === TRANSACTION_STATUSES.MULTISIG))
+    return TRANSACTION_STATUSES.MULTISIG;
+  if (txGroup.some(tx => tx.status === TRANSACTION_STATUSES.PENDING))
+    return TRANSACTION_STATUSES.PENDING;
+  if (txGroup.every(tx => tx.status === TRANSACTION_STATUSES.SUCCEEDED))
+    return TRANSACTION_STATUSES.SUCCEEDED;
+  return TRANSACTION_STATUSES.READY;
 };
 
 // Get count of all transactions in the redux store

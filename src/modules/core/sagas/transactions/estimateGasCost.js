@@ -10,7 +10,10 @@ import { selectAsJS } from '~utils/saga/effects';
 import type { Action } from '~redux';
 
 import { oneTransaction } from '../../selectors';
-import { transactionUpdateGas, transactionError } from '../../actionCreators';
+import {
+  transactionUpdateGas,
+  transactionEstimateError,
+} from '../../actionCreators';
 import { getTransactionMethod, getGasPrices } from '../utils';
 
 /*
@@ -48,6 +51,6 @@ export default function* estimateGasCost({
       }),
     );
   } catch (error) {
-    yield put(transactionError(id, 'estimate', error));
+    yield put(transactionEstimateError(id, error));
   }
 }

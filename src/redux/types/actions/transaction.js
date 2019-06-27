@@ -51,7 +51,7 @@ export type TransactionActionTypes = {|
   TRANSACTION_ERROR: {|
     ...ActionTypeWithPayloadAndMeta<
       typeof ACTIONS.TRANSACTION_ERROR,
-      TransactionError,
+      { error: TransactionError },
       { id: string },
     >,
     error: true,
@@ -62,7 +62,7 @@ export type TransactionActionTypes = {|
   >,
   TRANSACTION_GAS_UPDATE: ActionTypeWithPayloadAndMeta<
     typeof ACTIONS.TRANSACTION_GAS_UPDATE,
-    {| gasLimit: BigNumber, gasPrice: BigNumber |},
+    {| gasLimit?: BigNumber, gasPrice?: BigNumber |},
     WithId,
   >,
   TRANSACTION_RECEIPT_RECEIVED: ActionTypeWithPayloadAndMeta<

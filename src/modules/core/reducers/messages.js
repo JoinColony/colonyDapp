@@ -5,7 +5,7 @@ import type { ReducerType } from '~redux';
 
 import { fromJS } from 'immutable';
 
-import { MessageRecord, CoreMessages } from '~immutable';
+import { MessageRecord, CoreMessages, TRANSACTION_STATUSES } from '~immutable';
 import { ACTIONS } from '~redux';
 
 import { CORE_MESSAGES_LIST } from '../constants';
@@ -28,7 +28,7 @@ const coreMessagesReducer: ReducerType<
       const { id } = action.payload;
       return state.mergeIn(
         [CORE_MESSAGES_LIST, id],
-        fromJS({ status: 'pending' }),
+        fromJS({ status: TRANSACTION_STATUSES.PENDING }),
       );
     }
     case ACTIONS.MESSAGE_SIGNED: {
@@ -37,7 +37,7 @@ const coreMessagesReducer: ReducerType<
         [CORE_MESSAGES_LIST, id],
         fromJS({
           signature,
-          status: 'succeeded',
+          status: TRANSACTION_STATUSES.SUCCEEDED,
         }),
       );
     }

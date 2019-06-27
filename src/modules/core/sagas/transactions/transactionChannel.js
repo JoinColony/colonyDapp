@@ -6,7 +6,10 @@ import { END, eventChannel } from 'redux-saga';
 import type { TransactionRecordType } from '~immutable';
 
 import {
-  transactionError,
+  transactionSendError,
+  transactionEventDataError,
+  transactionReceiptError,
+  transactionUnsuccessfulError,
   transactionReceiptReceived,
   transactionSent,
   transactionSucceeded,
@@ -14,7 +17,7 @@ import {
 
 const channelSendTransaction = async ({ id, params }, txPromise, emit) => {
   if (!txPromise) {
-    emit(transactionError(id, 'send', new Error('No send promise found')));
+    emit(transactionSendError(id, new Error('No send promise found')));
     return null;
   }
 
@@ -24,7 +27,7 @@ const channelSendTransaction = async ({ id, params }, txPromise, emit) => {
     emit(transactionSent(id, { hash, params }));
     return result;
   } catch (caughtError) {
-    emit(transactionError(id, 'send', caughtError));
+    emit(transactionSendError(id, caughtError));
   }
 
   return null;
@@ -36,9 +39,7 @@ const channelGetTransactionReceipt = async (
   emit,
 ) => {
   if (!receiptPromise) {
-    emit(
-      transactionError(id, 'receipt', new Error('No receipt promise found')),
-    );
+    emit(transactionReceiptError(id, new Error('No receipt promise found')));
     return null;
   }
 
@@ -47,7 +48,7 @@ const channelGetTransactionReceipt = async (
     emit(transactionReceiptReceived(id, { receipt, params }));
     return receipt;
   } catch (caughtError) {
-    emit(transactionError(id, 'receipt', caughtError));
+    emit(transactionReceiptError(id, caughtError));
   }
 
   return null;
@@ -59,9 +60,7 @@ const channelGetEventData = async (
   emit,
 ) => {
   if (!eventDataPromise) {
-    emit(
-      transactionError(id, 'eventData', new Error('No event promise found')),
-    );
+    emit(transactionEventDataError(id, new Error('No event promise found')));
     return null;
   }
 
@@ -70,7 +69,7 @@ const channelGetEventData = async (
     emit(transactionSucceeded(id, { eventData, params }));
     return eventData;
   } catch (caughtError) {
-    emit(transactionError(id, 'eventData', caughtError));
+    emit(transactionEventDataError(id, caughtError));
   }
 
   return null;
@@ -90,9 +89,8 @@ const channelStart = async (tx, txPromise, emit) => {
        * @todo Use revert reason strings (once supported) in transactions.
        */
       emit(
-        transactionError(
+        transactionUnsuccessfulError(
           tx.id,
-          'unsuccessful',
           new Error('The transaction was unsuccessful'),
         ),
       );
@@ -102,7 +100,7 @@ const channelStart = async (tx, txPromise, emit) => {
   } catch (caughtError) {
     // This is unlikely to happen, since the functions called have their own
     // error handling, but worth doing for sanity.
-    emit(transactionError(tx.id, 'unsuccessful', caughtError));
+    emit(transactionUnsuccessfulError(tx.id, caughtError));
     return null;
   } finally {
     emit(END);

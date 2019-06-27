@@ -13,17 +13,31 @@ import type {
   TransactionReceipt,
 } from '~types';
 
+export const TRANSACTION_ERRORS = Object.freeze({
+  ESTIMATE: 'ESTIMATE',
+  EVENT_DATA: 'EVENT_DATA',
+  MULTISIG_NONCE: 'MULTISIG_NONCE',
+  MULTISIG_REFRESH: 'MULTISIG_REFRESH',
+  MULTISIG_REJECT: 'MULTISIG_REJECT',
+  MULTISIG_SIGN: 'MULTISIG_SIGN',
+  RECEIPT: 'RECEIPT',
+  SEND: 'SEND',
+  UNSUCCESSFUL: 'UNSUCCESSFUL',
+});
+
+export const TRANSACTION_STATUSES = Object.freeze({
+  CREATED: 'CREATED',
+  READY: 'READY',
+  PENDING: 'PENDING',
+  FAILED: 'FAILED',
+  MULTISIG: 'MULTISIG',
+  SUCCEEDED: 'SUCCEEDED',
+});
+
+export type TransactionStatusType = $Values<typeof TRANSACTION_STATUSES>;
+
 export type TransactionError = {|
-  type:
-    | 'estimate'
-    | 'eventData'
-    | 'multisigNonce'
-    | 'multisigRefresh'
-    | 'multisigReject'
-    | 'multisigSign'
-    | 'receipt'
-    | 'send'
-    | 'unsuccessful',
+  type: $Values<typeof TRANSACTION_ERRORS>,
   message: string,
 |};
 
@@ -63,7 +77,7 @@ type TransactionRecordProps = {|
   options: SendOptions,
   params: TransactionParams,
   receipt?: TransactionReceipt,
-  status: 'created' | 'ready' | 'pending' | 'failed' | 'multisig' | 'succeeded',
+  status: TransactionStatusType,
 |};
 
 export type TransactionType = $ReadOnly<TransactionRecordProps>;
@@ -88,7 +102,7 @@ const defaultValues: $Shape<TransactionRecordProps> = {
   options: {},
   params: {},
   receipt: undefined,
-  status: 'ready',
+  status: TRANSACTION_STATUSES.READY,
 };
 
 const TransactionRecord: RecordFactory<TransactionRecordProps> = Record(

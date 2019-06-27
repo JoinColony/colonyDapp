@@ -8,13 +8,14 @@ import { ACTIONS } from '~redux';
 import { isDev } from '~utils/debug';
 import { selectAsJS } from '~utils/saga/effects';
 import { mergePayload } from '~utils/actions';
+import { TRANSACTION_STATUSES } from '~immutable';
 
 import type { TransactionRecordType } from '~immutable';
 import type { Action } from '~redux/types/actions';
 
 import type { MultisigSender, Sender } from '../../types';
 
-import { transactionError } from '../../actionCreators';
+import { transactionSendError } from '../../actionCreators';
 import { oneTransaction } from '../../selectors';
 import { getTransactionMethod } from '../utils';
 
@@ -64,7 +65,7 @@ export default function* sendTransaction({
 }: Action<typeof ACTIONS.TRANSACTION_SEND>): Saga<void> {
   const transaction = yield* selectAsJS(oneTransaction, id);
 
-  if (transaction.status !== 'ready') {
+  if (transaction.status !== TRANSACTION_STATUSES.READY) {
     throw new Error('Transaction is not ready to send.');
   }
 
@@ -87,7 +88,7 @@ export default function* sendTransaction({
       yield put(mergePayload({ transaction: currentTransaction })(action));
     }
   } catch (error) {
-    yield put(transactionError(id, 'send', error));
+    yield put(transactionSendError(id, error));
   } finally {
     channel.close();
   }

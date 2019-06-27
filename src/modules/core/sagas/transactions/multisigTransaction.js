@@ -57,12 +57,10 @@ export function* refreshMultisigTransaction({
     // if the nonce was invalidated, the tx has been reset
     if (multisig && multisig.nonce !== nonce)
       yield put(
-        multisigTransactionNonceError(id, {
-          message: 'Multisig nonce changed',
-        }),
+        multisigTransactionNonceError(id, new Error('Multisig nonce changed')),
       );
   } catch (error) {
-    yield put(multisigTransactionRefreshError(id, { message: error.message }));
+    yield put(multisigTransactionRefreshError(id, error));
   }
 }
 
@@ -110,7 +108,7 @@ export function* signMultisigTransaction({
       multisigTransactionSigned(id),
     );
   } catch (error) {
-    yield put(multisigTransactionSignError(id, { message: error.message }));
+    yield put(multisigTransactionSignError(id, error));
   }
 }
 
@@ -123,7 +121,7 @@ export function* rejectMultisigTransaction({
      * @body Tell the other signees we rejected their sigs :(
      */
   } catch (error) {
-    yield put(multisigTransactionRejectError(id, { message: error.message }));
+    yield put(multisigTransactionRejectError(id, error));
   }
 }
 
@@ -136,6 +134,6 @@ export function* signedMultisigTransaction({
      * @body If there are any remaining required signees, distribute to them
      */
   } catch (error) {
-    yield put(multisigTransactionSignError(id, { message: error.message }));
+    yield put(multisigTransactionSignError(id, error));
   }
 }

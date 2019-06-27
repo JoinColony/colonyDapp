@@ -6,7 +6,7 @@ import { call } from 'redux-saga/effects';
 
 import { CONTEXT, getContext } from '~context';
 
-import type { Transaction } from '~immutable';
+import type { TransactionRecordType } from '~immutable';
 import type {
   AddressOrENSName,
   ColonyContext,
@@ -30,6 +30,6 @@ export function* getTransactionMethod({
   context,
   methodName,
   identifier,
-}: Transaction): Saga<*> {
+}: TransactionRecordType): Saga<*> {
   return yield call(getMethod, context, methodName, identifier);
 }

@@ -7,7 +7,9 @@ import reducer from '../transactions';
 import {
   createTxAction,
   transactionSent,
-  transactionError,
+  transactionEstimateError,
+  transactionReceiptError,
+  transactionSendError,
   transactionSucceeded,
   transactionReceiptReceived,
 } from '../../actionCreators';
@@ -59,18 +61,15 @@ describe(`core: reducers (transactions)`, () => {
   const receiptReceived = transactionReceiptReceived(id, { receipt: { hash } });
   const eventDataReceived = transactionSucceeded(id, { eventData });
 
-  const sendError = transactionError(id, {
-    type: 'send',
-    message: 'oh no, send error',
-  });
-  const receiptError = transactionError(id, {
-    type: 'receipt',
-    message: 'oh no, receipt error',
-  });
-  const estimateError = transactionError(id, {
-    type: 'estimate',
-    message: 'oh no, estimate error',
-  });
+  const sendError = transactionSendError(id, new Error('oh no, send error'));
+  const receiptError = transactionReceiptError(
+    id,
+    new Error('oh no, receipt error'),
+  );
+  const estimateError = transactionEstimateError(
+    id,
+    new Error('oh no, estimate error'),
+  );
 
   test('Sends successfully', () => {
     testActions(
@@ -107,9 +106,9 @@ describe(`core: reducers (transactions)`, () => {
               params,
               receipt: undefined,
               /*
-               * Initial status is set to `ready`
+               * Initial status is set to `READY`
                */
-              status: 'ready',
+              status: 'READY',
             });
           },
         ],
@@ -142,9 +141,9 @@ describe(`core: reducers (transactions)`, () => {
               params,
               receipt: undefined,
               /*
-               * During sending the transaction is set to 'pending'
+               * During sending the transaction is set to 'PENDING'
                */
-              status: 'pending',
+              status: 'PENDING',
             });
           },
         ],
@@ -176,10 +175,7 @@ describe(`core: reducers (transactions)`, () => {
               options,
               params,
               receipt: expect.any(Object), // should have been set
-              /*
-               * If it went through successfully, it's set to `succeeded`
-               */
-              status: 'pending',
+              status: 'PENDING',
             });
           },
         ],
@@ -212,9 +208,9 @@ describe(`core: reducers (transactions)`, () => {
               params,
               receipt: expect.any(Object),
               /*
-               * If it went through successfully, it's set to `succeeded`
+               * If it went through successfully, it's set to `SUCCEEDED`
                */
-              status: 'succeeded',
+              status: 'SUCCEEDED',
             });
           },
         ],
@@ -244,7 +240,7 @@ describe(`core: reducers (transactions)`, () => {
               context,
               createdAt: expect.any(Date),
               error: {
-                type: 'send',
+                type: 'SEND',
                 message: 'oh no, send error',
               },
               eventData: undefined,
@@ -261,7 +257,7 @@ describe(`core: reducers (transactions)`, () => {
               /*
                * If it failed, it's set to `failed`... obviously
                */
-              status: 'failed',
+              status: 'FAILED',
             });
           },
         ],
@@ -292,7 +288,7 @@ describe(`core: reducers (transactions)`, () => {
               context,
               createdAt: expect.any(Date),
               error: {
-                type: 'receipt',
+                type: 'RECEIPT',
                 message: 'oh no, receipt error',
               },
               eventData: undefined,
@@ -309,7 +305,7 @@ describe(`core: reducers (transactions)`, () => {
               /*
                * If it failed, it's set to `failed`... obviously
                */
-              status: 'failed',
+              status: 'FAILED',
             });
           },
         ],
@@ -341,7 +337,7 @@ describe(`core: reducers (transactions)`, () => {
               context,
               createdAt: expect.any(Date),
               error: {
-                type: 'estimate',
+                type: 'ESTIMATE',
                 message: 'oh no, estimate error',
               },
               eventData: undefined,
@@ -358,7 +354,7 @@ describe(`core: reducers (transactions)`, () => {
               /*
                * If it failed, it's set to `failed`... obviously
                */
-              status: 'failed',
+              status: 'FAILED',
             });
           },
         ],

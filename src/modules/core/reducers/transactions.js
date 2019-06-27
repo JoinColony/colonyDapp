@@ -5,7 +5,11 @@ import getObjectFromPath from 'lodash/get';
 
 import type { CoreTransactionsRecord, TransactionRecordType } from '~immutable';
 
-import { TransactionRecord, CoreTransactions } from '~immutable';
+import {
+  CoreTransactions,
+  TransactionRecord,
+  TRANSACTION_STATUSES,
+} from '~immutable';
 import { ACTIONS } from '~redux';
 
 import { CORE_TRANSACTIONS_LIST } from '../constants';
@@ -117,7 +121,10 @@ const coreTransactionsReducer: ReducerType<
       const {
         meta: { id },
       } = action;
-      return state.setIn([CORE_TRANSACTIONS_LIST, id, 'status'], 'ready');
+      return state.setIn(
+        [CORE_TRANSACTIONS_LIST, id, 'status'],
+        TRANSACTION_STATUSES.READY,
+      );
     }
     case ACTIONS.TRANSACTION_GAS_UPDATE: {
       const {
@@ -134,7 +141,7 @@ const coreTransactionsReducer: ReducerType<
       // Clear errors and set to ready, because this action also retries sending
       return state.mergeIn([CORE_TRANSACTIONS_LIST, id], {
         error: undefined,
-        status: 'ready',
+        status: TRANSACTION_STATUSES.READY,
       });
     }
     case ACTIONS.TRANSACTION_SENT: {
@@ -146,7 +153,7 @@ const coreTransactionsReducer: ReducerType<
         [CORE_TRANSACTIONS_LIST, id],
         fromJS({
           hash,
-          status: 'pending',
+          status: TRANSACTION_STATUSES.PENDING,
         }),
       );
     }
@@ -171,7 +178,7 @@ const coreTransactionsReducer: ReducerType<
         [CORE_TRANSACTIONS_LIST, id],
         fromJS({
           eventData,
-          status: 'succeeded',
+          status: TRANSACTION_STATUSES.SUCCEEDED,
         }),
       );
     }
@@ -180,9 +187,10 @@ const coreTransactionsReducer: ReducerType<
         meta: { id },
         payload: { error },
       } = action;
-      return state
-        .setIn([CORE_TRANSACTIONS_LIST, id, 'error'], error)
-        .setIn([CORE_TRANSACTIONS_LIST, id, 'status'], 'failed');
+      return state.mergeIn([CORE_TRANSACTIONS_LIST, id], {
+        error,
+        status: TRANSACTION_STATUSES.READY,
+      });
     }
     case ACTIONS.TRANSACTION_CANCEL: {
       const {
@@ -194,7 +202,7 @@ const coreTransactionsReducer: ReducerType<
         return state.update(CORE_TRANSACTIONS_LIST, list =>
           list.filter(filterTx => {
             // Keep all transactions with no group
-            if (!filterTx.group) return true;
+            if (!filterTx.group || !tx.group) return true;
             // Keep all transactions with a different groupId
             if (filterTx.group.id !== tx.group.id) return true;
             // Keep all transactions with the same groupId but a lower index

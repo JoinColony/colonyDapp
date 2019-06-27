@@ -203,8 +203,9 @@ const GasStationPrice = ({ transaction: { id, gasLimit, error } }: Props) => {
                     name="transactionSpeed"
                     options={transactionSpeedOptions.map(option => ({
                       ...option,
-                      onClick: () =>
-                        updateGas(id, { gasPrice: currentGasPrice }),
+                      onClick: () => {
+                        updateGas(id, { gasPrice: currentGasPrice });
+                      },
                     }))}
                   />
                 </div>

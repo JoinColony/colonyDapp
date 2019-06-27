@@ -17,6 +17,7 @@ import { Tooltip } from '~core/Popover';
 import styles from './GroupedTransactionCard.css';
 
 import TransactionStatus from './TransactionStatus.jsx';
+import { TRANSACTION_STATUSES } from '~immutable';
 
 const MSG = defineMessages({
   hasDependentTx: {
@@ -71,9 +72,9 @@ const GroupedTransactionCard = ({
     [isShowingCancelConfirmation],
   );
 
-  const ready = status === 'ready';
-  const failed = status === 'failed';
-  const succeeded = status === 'succeeded';
+  const ready = status === TRANSACTION_STATUSES.READY;
+  const failed = status === TRANSACTION_STATUSES.FAILED;
+  const succeeded = status === TRANSACTION_STATUSES.SUCCEEDED;
 
   // Only transactions that can be signed can be cancelled
   const canBeSigned = selected && ready;
@@ -109,7 +110,7 @@ const GroupedTransactionCard = ({
               }title`}
               values={params}
             />
-            {failed && (
+            {failed && error && (
               <span className={styles.failedDescription}>
                 <FormattedMessage
                   {...MSG.failedTx}

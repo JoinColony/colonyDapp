@@ -3,7 +3,9 @@
 import React from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 
-import type { TransactionType } from '~immutable';
+import type { TransactionStatusType } from '~immutable';
+
+import { TRANSACTION_STATUSES } from '~immutable';
 
 import { Tooltip } from '~core/Popover';
 import TransactionLink from '~core/TransactionLink';
@@ -16,10 +18,10 @@ const MSG = defineMessages({
   transactionState: {
     id: 'users.GasStationPopover.TransactionStatus.transactionState',
     defaultMessage: `{status, select,
-      multisig {Waiting on other party to sign}
-      failed {Failed transaction. Try again}
-      succeeded {Transaction succeeded}
-      ready {{groupCount, number} {groupCount, plural,
+      MULTISIG {Waiting on other party to sign}
+      FAILED {Failed transaction. Try again}
+      SUCCEEDED {Transaction succeeded}
+      READY {{groupCount, number} {groupCount, plural,
         one {transaction}
         other {transactions}
       } to sign}
@@ -34,7 +36,7 @@ const MSG = defineMessages({
 type Props = {
   groupCount?: number,
   hash?: string,
-  status: $PropertyType<TransactionType, 'status'>,
+  status: TransactionStatusType,
 };
 
 const displayName = 'users.GasStation.TransactionStatus';
@@ -70,10 +72,10 @@ const TransactionStatus = ({ hash, status, groupCount }: Props) => (
        * element otherwise it won't detect the hover event
        */}
       <div>
-        {groupCount && status === 'ready' && (
+        {groupCount && status === TRANSACTION_STATUSES.READY && (
           <span className={styles.counter}>{groupCount}</span>
         )}
-        {status === 'succeeded' && (
+        {status === TRANSACTION_STATUSES.SUCCEEDED && (
           <span
             className={styles.completed}
             data-test="gasStationTransactionSucceeded"
@@ -89,7 +91,7 @@ const TransactionStatus = ({ hash, status, groupCount }: Props) => (
             />
           </span>
         )}
-        {status === 'pending' && (
+        {status === TRANSACTION_STATUSES.PENDING && (
           <div
             className={styles.spinner}
             data-test="gasStationTransactionPending"
@@ -102,8 +104,12 @@ const TransactionStatus = ({ hash, status, groupCount }: Props) => (
             />
           </div>
         )}
-        {status === 'multisig' && <span className={styles.multisig} />}
-        {status === 'failed' && <span className={styles.failed}>!</span>}
+        {status === TRANSACTION_STATUSES.MULTISIG && (
+          <span className={styles.multisig} />
+        )}
+        {status === TRANSACTION_STATUSES.FAILED && (
+          <span className={styles.failed}>!</span>
+        )}
       </div>
     </Tooltip>
   </div>

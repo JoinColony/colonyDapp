@@ -14,8 +14,6 @@ import {
   takeEvery,
 } from 'redux-saga/effects';
 
-import type { Action } from '~redux';
-
 import { ACTIONS } from '~redux';
 
 import type { TxConfig } from '../../types';
@@ -42,12 +40,7 @@ export function* createTransaction(id: string, config: TxConfig): Saga<void> {
     throw new Error('Could not create transaction. No transaction id provided');
   }
 
-  yield put<
-    Action<
-      | typeof ACTIONS.TRANSACTION_CREATED
-      | typeof ACTIONS.MULTISIG_TRANSACTION_CREATED,
-    >,
-  >(createTxAction(id, address, config));
+  yield put(createTxAction(id, address, config));
 
   // Create tasks for estimating and sending; the actions may be taken multiple times
   const estimateGasTask = yield takeEvery(

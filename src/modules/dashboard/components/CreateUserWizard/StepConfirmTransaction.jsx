@@ -13,6 +13,7 @@ import Link from '~core/Link';
 
 import GasStationContent from '~users/GasStation/GasStationContent';
 import { useSelector } from '~utils/hooks';
+import { TRANSACTION_STATUSES } from '~immutable/Transaction';
 
 import { DASHBOARD_ROUTE } from '~routes';
 
@@ -41,7 +42,7 @@ const StepConfirmTransaction = () => {
   if (
     transactionGroups &&
     transactionGroups[0] &&
-    getGroupStatus(transactionGroups[0]) === 'succeeded' &&
+    getGroupStatus(transactionGroups[0]) === TRANSACTION_STATUSES.SUCCEEDED &&
     getGroupKey(transactionGroups[0]) === 'group.transaction.batch.createUser'
   ) {
     return <Redirect to={DASHBOARD_ROUTE} />;
