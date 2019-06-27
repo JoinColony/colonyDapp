@@ -20,7 +20,7 @@ import Button from '~core/Button';
 import { pipe, mergePayload, withKey } from '~utils/actions';
 import { ACTIONS } from '~redux';
 
-import { colony as colonyStoreBlueprint } from '../../../../data/blueprints';
+import { UpdateColonyProfileCommandArgsSchema } from '../../../dashboard/data/commands/schemas';
 import ENS from '~lib/ENS';
 
 import ColonyAvatarUploader from './ColonyAvatarUploader.jsx';
@@ -95,7 +95,7 @@ const ProfileEdit = ({ colony }: Props) => {
             guideline,
             website,
           }}
-          validationSchema={colonyStoreBlueprint.schema}
+          validationSchema={UpdateColonyProfileCommandArgsSchema}
         >
           {({ status, isSubmitting }) => (
             <Fragment>

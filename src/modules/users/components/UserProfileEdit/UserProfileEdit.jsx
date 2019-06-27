@@ -20,7 +20,7 @@ import {
 import Button from '~core/Button';
 import ProfileTemplate from '~pages/ProfileTemplate';
 
-import { userProfile as userProfileStoreBlueprint } from '../../../../data/blueprints';
+import { UpdateUserProfileCommandArgsSchema } from '../../data/schemas';
 import { currentUserSelector } from '../../selectors';
 
 import styles from './UserProfileEdit.css';
@@ -81,7 +81,7 @@ const UserProfileEdit = () => {
           website: user.profile.website,
           location: user.profile.location,
         }}
-        validationSchema={userProfileStoreBlueprint.schema}
+        validationSchema={UpdateUserProfileCommandArgsSchema}
       >
         {({ status, isSubmitting }) => (
           <div>
