@@ -3,6 +3,7 @@ import { END } from 'redux-saga';
 import transactionChannel from '../transactionChannel';
 
 import { ACTIONS } from '../../../../../redux';
+import { TRANSACTION_ERRORS } from '~immutable/Transaction';
 
 /*
  * Dummy values
@@ -74,18 +75,25 @@ describe('core: sagas (transactionChannel)', () => {
     // The events should be in this order
     const [
       sentAction,
+      hashReceivedAction,
       receiptReceivedAction,
       eventDataReceivedAction,
       channelEnd,
     ] = actions;
-    expect(actions.length).toBe(4);
+    expect(actions.length).toBe(5);
 
     expect(sentAction).toHaveProperty('type', ACTIONS.TRANSACTION_SENT);
-    expect(sentAction).toHaveProperty('payload', {
-      hash,
-      params,
-    });
     expect(sentAction).toHaveProperty('meta', { id });
+
+    expect(hashReceivedAction).toHaveProperty(
+      'type',
+      ACTIONS.TRANSACTION_HASH_RECEIVED,
+    );
+    expect(hashReceivedAction).toHaveProperty('payload', {
+      params,
+      hash,
+    });
+    expect(hashReceivedAction).toHaveProperty('meta', { id });
 
     expect(receiptReceivedAction).toHaveProperty(
       'type',
@@ -118,11 +126,16 @@ describe('core: sagas (transactionChannel)', () => {
 
     const actions = await takeAllFromChannel(channel);
     // The events should be in this order
-    const [errorAction, channelEnd] = actions;
-    expect(actions.length).toBe(2);
+    const [sentAction, errorAction, channelEnd] = actions;
+    expect(actions.length).toBe(3);
 
-    expect(errorAction).toBeInstanceOf(Error);
-    expect(errorAction).toHaveProperty('message', 'could not send');
+    expect(sentAction).toHaveProperty('type', ACTIONS.TRANSACTION_SENT);
+
+    expect(errorAction).toHaveProperty('type', ACTIONS.TRANSACTION_ERROR);
+    expect(errorAction).toHaveProperty('meta', { id });
+    expect(errorAction).toHaveProperty('payload', {
+      error: { message: 'could not send', type: TRANSACTION_ERRORS.SEND },
+    });
 
     expect(channelEnd).toBe(END);
   });
@@ -149,18 +162,25 @@ describe('core: sagas (transactionChannel)', () => {
     // The events should be in this order
     const [
       sentAction,
+      hashReceivedAction,
       receiptReceivedAction,
       errorAction,
       channelEnd,
     ] = actions;
-    expect(actions.length).toBe(4);
+    expect(actions.length).toBe(5);
 
     expect(sentAction).toHaveProperty('type', ACTIONS.TRANSACTION_SENT);
-    expect(sentAction).toHaveProperty('payload', {
-      hash,
-      params,
-    });
     expect(sentAction).toHaveProperty('meta', { id });
+
+    expect(hashReceivedAction).toHaveProperty(
+      'type',
+      ACTIONS.TRANSACTION_HASH_RECEIVED,
+    );
+    expect(hashReceivedAction).toHaveProperty('payload', {
+      params,
+      hash,
+    });
+    expect(hashReceivedAction).toHaveProperty('meta', { id });
 
     expect(receiptReceivedAction).toHaveProperty(
       'type',
@@ -172,11 +192,14 @@ describe('core: sagas (transactionChannel)', () => {
     });
     expect(receiptReceivedAction).toHaveProperty('meta', { id });
 
-    expect(errorAction).toBeInstanceOf(Error);
-    expect(errorAction).toHaveProperty(
-      'message',
-      'The transaction was unsuccessful',
-    );
+    expect(errorAction).toHaveProperty('type', ACTIONS.TRANSACTION_ERROR);
+    expect(errorAction).toHaveProperty('meta', { id });
+    expect(errorAction).toHaveProperty('payload', {
+      error: {
+        message: 'The transaction was unsuccessful',
+        type: TRANSACTION_ERRORS.UNSUCCESSFUL,
+      },
+    });
 
     expect(channelEnd).toBe(END);
   });
@@ -199,21 +222,38 @@ describe('core: sagas (transactionChannel)', () => {
 
     const actions = await takeAllFromChannel(channel);
     // The events should be in this order
-    const [sentAction, receiptErrorAction, channelEnd] = actions;
-    expect(actions.length).toBe(3);
+    const [
+      sentAction,
+      hashReceivedAction,
+      receiptErrorAction,
+      channelEnd,
+    ] = actions;
+    expect(actions.length).toBe(4);
 
     expect(sentAction).toHaveProperty('type', ACTIONS.TRANSACTION_SENT);
-    expect(sentAction).toHaveProperty('payload', {
-      hash,
-      params,
-    });
     expect(sentAction).toHaveProperty('meta', { id });
 
-    expect(receiptErrorAction).toBeInstanceOf(Error);
-    expect(receiptErrorAction).toHaveProperty(
-      'message',
-      'could not get receipt',
+    expect(hashReceivedAction).toHaveProperty(
+      'type',
+      ACTIONS.TRANSACTION_HASH_RECEIVED,
     );
+    expect(hashReceivedAction).toHaveProperty('payload', {
+      params,
+      hash,
+    });
+    expect(hashReceivedAction).toHaveProperty('meta', { id });
+
+    expect(receiptErrorAction).toHaveProperty(
+      'type',
+      ACTIONS.TRANSACTION_ERROR,
+    );
+    expect(receiptErrorAction).toHaveProperty('meta', { id });
+    expect(receiptErrorAction).toHaveProperty('payload', {
+      error: {
+        message: 'could not get receipt',
+        type: TRANSACTION_ERRORS.RECEIPT,
+      },
+    });
 
     expect(channelEnd).toBe(END);
   });
@@ -238,18 +278,25 @@ describe('core: sagas (transactionChannel)', () => {
     // The events should be in this order
     const [
       sentAction,
+      hashReceivedAction,
       receiptReceivedAction,
       eventDataErrorAction,
       channelEnd,
     ] = actions;
-    expect(actions.length).toBe(4);
+    expect(actions.length).toBe(5);
 
     expect(sentAction).toHaveProperty('type', ACTIONS.TRANSACTION_SENT);
-    expect(sentAction).toHaveProperty('payload', {
-      hash,
-      params,
-    });
     expect(sentAction).toHaveProperty('meta', { id });
+
+    expect(hashReceivedAction).toHaveProperty(
+      'type',
+      ACTIONS.TRANSACTION_HASH_RECEIVED,
+    );
+    expect(hashReceivedAction).toHaveProperty('payload', {
+      params,
+      hash,
+    });
+    expect(hashReceivedAction).toHaveProperty('meta', { id });
 
     expect(receiptReceivedAction).toHaveProperty(
       'type',
@@ -261,11 +308,17 @@ describe('core: sagas (transactionChannel)', () => {
     });
     expect(receiptReceivedAction).toHaveProperty('meta', { id });
 
-    expect(eventDataErrorAction).toBeInstanceOf(Error);
     expect(eventDataErrorAction).toHaveProperty(
-      'message',
-      'could not get eventData',
+      'type',
+      ACTIONS.TRANSACTION_ERROR,
     );
+    expect(eventDataErrorAction).toHaveProperty('meta', { id });
+    expect(eventDataErrorAction).toHaveProperty('payload', {
+      error: {
+        message: 'could not get eventData',
+        type: TRANSACTION_ERRORS.EVENT_DATA,
+      },
+    });
 
     expect(channelEnd).toBe(END);
   });

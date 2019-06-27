@@ -83,8 +83,9 @@ const channelStart = async (tx, txPromise, emit) => {
     if (!sentTx) return null;
 
     const receipt = await channelGetTransactionReceipt(tx, sentTx, emit);
+    if (!receipt) return null;
 
-    if (receipt && receipt.status === 1) {
+    if (receipt.status === 1) {
       await channelGetEventData(tx, sentTx, emit);
     } else {
       /**
