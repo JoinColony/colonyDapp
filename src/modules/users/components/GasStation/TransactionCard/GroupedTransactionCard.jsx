@@ -122,7 +122,7 @@ const GroupedTransactionCard = ({
             />
             {failed && error && (
               <span className={styles.failedDescription}>
-                <FormattedMessage {...MSG.failedTx} values={error} />
+                <FormattedMessage {...MSG.failedTx} values={{ ...error }} />
               </span>
             )}
           </div>
