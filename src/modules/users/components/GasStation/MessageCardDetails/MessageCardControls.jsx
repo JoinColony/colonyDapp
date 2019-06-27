@@ -3,14 +3,13 @@
 import type { FormikProps } from 'formik';
 
 import React from 'react';
-import { defineMessages } from 'react-intl';
 import * as yup from 'yup';
 
 import type { MessageProps } from '~immutable';
 
 import Button from '~core/Button';
-import Alert from '~core/Alert';
 import { ActionForm } from '~core/Fields';
+import WalletInteraction from '../WalletInteraction';
 import { ACTIONS } from '~redux';
 import { useSelector } from '~utils/hooks';
 
@@ -28,23 +27,12 @@ type FormValues = {|
 
 const displayName = 'users.GasStation.MessageCardControls';
 
-const MSG = defineMessages({
-  walletPromptText: {
-    id: 'users.GasStation.MessageCardControls.walletPromptText',
-    defaultMessage: `Please finish the transaction on {walletType, select,
-      metamask {Metamask}
-      hardware {your hardware wallet}
-    }`,
-  },
-});
-
 const validationSchema = yup.object().shape({
   id: yup.string(),
 });
 
 const MessageCardControls = ({ message: { id } }: Props) => {
   const walletType = useSelector(walletTypeSelector);
-  const walletNeedsAction = walletType !== 'software' ? walletType : undefined;
   return (
     <div className={styles.main}>
       <ActionForm
@@ -66,15 +54,9 @@ const MessageCardControls = ({ message: { id } }: Props) => {
           />
         )}
       </ActionForm>
-      {walletNeedsAction && (
+      {walletType !== 'software' && (
         <div className={styles.alert}>
-          <Alert
-            appearance={{ theme: 'info' }}
-            text={MSG.walletPromptText}
-            textValues={{
-              walletType: walletNeedsAction,
-            }}
-          />
+          <WalletInteraction walletType={walletType} />
         </div>
       )}
     </div>
