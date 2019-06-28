@@ -28,7 +28,7 @@ const displayName = 'users.GasStation.TransactionDetails';
 const TransactionDetails = ({
   onClose,
   transactionGroup,
-  appearance = { interactive: true },
+  appearance,
 }: Props) => {
   const { interactive } = appearance;
   const selectedTransactionIdx = getActiveTransactionIdx(transactionGroup) || 0;
@@ -46,7 +46,7 @@ const TransactionDetails = ({
       <CardList appearance={{ numCols: '1' }}>
         {groupKey === 'network.registerUserLabel' && <GasStationClaimCard />}
         <GroupedTransaction
-          appearance={{ interactive: false }}
+          appearance={appearance}
           transactionGroup={transactionGroup}
           selectedTransactionIdx={selectedTransactionIdx}
         />

@@ -29,7 +29,7 @@ type Props = {
 const displayName = 'users.GasStation.GroupedTransaction';
 
 const GroupedTransaction = ({
-  appearance = { interactive: true },
+  appearance,
   selectedTransactionIdx,
   transactionGroup,
 }: Props) => {
@@ -74,6 +74,7 @@ const GroupedTransaction = ({
             idx={idx}
             selected={idx === selectedTransactionIdx}
             transaction={transaction}
+            appearance={appearance}
           />
         ))}
       </ul>

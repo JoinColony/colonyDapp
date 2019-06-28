@@ -5,6 +5,7 @@ import { defineMessages, FormattedMessage } from 'react-intl';
 
 import type { TransactionType } from '~immutable';
 import type { Action } from '~redux';
+import type { Appearance } from '../GasStationContent';
 
 import { ACTIONS } from '~redux';
 import { getMainClasses } from '~utils/css';
@@ -27,6 +28,7 @@ const MSG = defineMessages({
 });
 
 type Props = {|
+  appearance: Appearance,
   cancelTransaction: (id: string) => Action<typeof ACTIONS.TRANSACTION_CANCEL>,
   idx: number,
   selected: boolean,
@@ -97,6 +99,7 @@ class GroupedTransactionCard extends Component<Props, State> {
       idx,
       selected,
       transaction: { context, methodName, status, params, methodContext },
+      appearance: { required },
     } = this.props;
     const { isShowingCancelConfirmation } = this.state;
     const ready = status === 'ready';
@@ -142,7 +145,7 @@ class GroupedTransactionCard extends Component<Props, State> {
             </div>
           </Tooltip>
         </div>
-        {canBeSigned ? (
+        {canBeSigned && !required ? (
           this.renderCancel()
         ) : (
           // multisig: pass proper multisig prop here

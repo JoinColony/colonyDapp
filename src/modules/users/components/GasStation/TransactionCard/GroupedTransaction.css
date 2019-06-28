@@ -12,6 +12,16 @@
 
 .description {
   flex: 1 1 auto;
+
+  /**
+   * @NOTE This manual width matches the gas station wrapper's manual width, without going over
+   * @BODY This is needed as a fail-safe to show text ellipsis for when the transaction's
+   * description is too long
+   */
+  width: 370px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
   letter-spacing: 0.25px;
 }
 
