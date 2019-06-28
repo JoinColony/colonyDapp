@@ -4,14 +4,14 @@ import React from 'react';
 import { defineMessages } from 'react-intl';
 
 import type { WizardProps } from '~core/Wizard';
+import type { WalletSpecificType } from '~immutable';
 
 import { isDev } from '~utils/debug';
 import Heading from '~core/Heading';
 import { Form } from '~core/Fields';
 import DecisionHub, { DecisionOption } from '~core/DecisionHub';
 import { CREATE_WALLET_ROUTE } from '~routes';
-
-import type { WalletMethod } from '../../../types';
+import { WALLET_SPECIFICS } from '~immutable';
 
 import styles from './StepStart.css';
 
@@ -85,38 +85,38 @@ const MSG = defineMessages({
 });
 
 type FormValues = {
-  method: WalletMethod,
+  method: WalletSpecificType,
 };
 
 const displayName = 'users.ConnectWalletWizard.StepStart';
 
 const options = [
   {
-    value: 'metamask',
+    value: WALLET_SPECIFICS.METAMASK,
     title: MSG.metaMaskTitle,
     subtitle: MSG.metaMaskSubtitle,
     icon: 'metamask',
   },
   {
-    value: 'ledger',
+    value: WALLET_SPECIFICS.LEDGER,
     title: MSG.ledgerTitle,
     subtitle: MSG.ledgerSubtitle,
     icon: 'wallet',
   },
   {
-    value: 'trezor',
+    value: WALLET_SPECIFICS.TREZOR,
     title: MSG.trezorTitle,
     subtitle: MSG.trezorSubtitle,
     icon: 'wallet',
   },
   {
-    value: 'mnemonic',
+    value: WALLET_SPECIFICS.MNEMONIC,
     title: MSG.mnemonicTitle,
     subtitle: MSG.mnemonicSubtitle,
     icon: 'wallet',
   },
   {
-    value: 'json',
+    value: WALLET_SPECIFICS.JSON,
     title: MSG.JSONTitle,
     subtitle: MSG.JSONSubtitle,
     icon: 'file',
@@ -125,7 +125,7 @@ const options = [
 
 if (isDev) {
   options.push({
-    value: 'trufflepig',
+    value: WALLET_SPECIFICS.TRUFFLEPIG,
     title: MSG.trufflepigTitle,
     subtitle: MSG.trufflepigSubtitle,
     icon: 'wallet',

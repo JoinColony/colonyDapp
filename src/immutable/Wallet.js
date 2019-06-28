@@ -35,7 +35,7 @@ export type WalletProps = {|
   availableAddresses?: Address[],
   currentAddress?: Address,
   isLoading: boolean,
-  walletType: WalletTypesType,
+  walletType: WalletCategoryType,
 |};
 
 export type WalletPropsJS = $ReadOnly<WalletProps>;
