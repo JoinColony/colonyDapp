@@ -67,7 +67,7 @@ const ColonyAvatarUploader = ({ colony: { colonyAddress }, colony }: Props) => {
            * But appends the current one to that
            */
           className={styles.main}
-          address={colonyAddress}
+          colonyAddress={colonyAddress}
           colony={colony}
           size="xl"
         />
