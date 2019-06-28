@@ -17,6 +17,7 @@ import type { Address } from '~types';
 import { create, putError } from '~utils/saga/effects';
 import { ACTIONS } from '~redux';
 import { createAddress } from '~types';
+import { WALLET_SPECIFICS } from '~immutable';
 import { HARDWARE_WALLET_DEFAULT_ADDRESS_COUNT } from '../constants';
 
 // This should be typed better
@@ -25,6 +26,10 @@ type WalletInstance = Object;
 const hardwareWallets = {
   ledger: ledgerWallet,
   trezor: trezorWallet,
+  json: softwareWallet,
+  mnemonic: softwareWallet,
+  metamask: metamaskWallet,
+  trufflepig: softwareWallet,
 };
 
 function* fetchAccounts(
@@ -141,17 +146,17 @@ export function* getWallet(
   switch (method) {
     case 'create':
       return yield call(createWallet, action);
-    case 'metamask':
+    case WALLET_SPECIFICS.METAMASK:
       return yield call(openMetamaskWallet, action);
-    case 'trezor':
+    case WALLET_SPECIFICS.TREZOR:
       return yield call(openHardwareWallet, action);
-    case 'ledger':
+    case WALLET_SPECIFICS.LEDGER:
       return yield call(openHardwareWallet, action);
-    case 'mnemonic':
+    case WALLET_SPECIFICS.MNEMONIC:
       return yield call(openMnemonicWallet, action);
-    case 'json':
+    case WALLET_SPECIFICS.JSON:
       return yield call(openKeystoreWallet, action);
-    case 'trufflepig':
+    case WALLET_SPECIFICS.TRUFFLEPIG:
       return yield call(openTrufflepigWallet, action);
     default:
       throw new Error(

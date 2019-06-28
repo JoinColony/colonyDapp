@@ -1,5 +1,6 @@
 /* @flow */
 
+import type { WalletSpecificType, WalletCategoryType } from '~immutable';
 import type { Address } from '~types';
 import type {
   ActionTypeWithPayload,
@@ -17,7 +18,7 @@ export type WalletActionTypes = {|
       connectwalletmnemonic?: *,
       hardwareWalletChoice?: *,
       keystore?: *,
-      method: string,
+      method: WalletSpecificType,
       mnemonic?: *,
       password?: *,
     |},
@@ -26,7 +27,7 @@ export type WalletActionTypes = {|
   WALLET_CREATE_SUCCESS: ActionTypeWithPayload<
     typeof ACTIONS.WALLET_CREATE_SUCCESS,
     {|
-      walletType: 'software' | 'metamask' | 'hardware',
+      walletType: WalletCategoryType,
     |},
   >,
   WALLET_CREATE_ERROR: ErrorActionType<
@@ -36,7 +37,7 @@ export type WalletActionTypes = {|
   WALLET_FETCH_ACCOUNTS: ActionTypeWithPayload<
     typeof ACTIONS.WALLET_FETCH_ACCOUNTS,
     {|
-      walletType: string,
+      walletType: WalletSpecificType,
     |},
   >,
   WALLET_FETCH_ACCOUNTS_ERROR: ErrorActionType<
