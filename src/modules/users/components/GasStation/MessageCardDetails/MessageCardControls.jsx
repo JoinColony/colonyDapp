@@ -12,6 +12,7 @@ import { ActionForm } from '~core/Fields';
 import WalletInteraction from '../WalletInteraction';
 import { ACTIONS } from '~redux';
 import { useSelector } from '~utils/hooks';
+import { WALLET_CATEGORIES } from '~immutable';
 
 import { walletTypeSelector } from '../../../selectors';
 
@@ -54,7 +55,7 @@ const MessageCardControls = ({ message: { id } }: Props) => {
           />
         )}
       </ActionForm>
-      {walletType !== 'software' && (
+      {walletType !== WALLET_CATEGORIES.SOFTWARE && (
         <div className={styles.alert}>
           <WalletInteraction walletType={walletType} />
         </div>

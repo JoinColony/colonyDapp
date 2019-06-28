@@ -3,7 +3,10 @@
 import React from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 
+import type { WalletCategoryType } from '~immutable';
+
 import Icon from '~core/Icon';
+import { WALLET_CATEGORIES } from '~immutable';
 
 import styles from './WalletInteraction.css';
 
@@ -26,26 +29,26 @@ const MSG = defineMessages({
 });
 
 type Props = {
-  walletType: 'metamask' | 'hardware' | 'software',
+  walletType: WalletCategoryType,
 };
 
 const displayName = 'users.GasStation.WalletInteraction';
 
 const WalletInteraction = ({ walletType }: Props) => {
-  if (walletType === 'software') {
+  if (walletType === WALLET_CATEGORIES.SOFTWARE) {
     return null;
   }
   return (
     <div className={styles.main}>
       <div className={styles.content}>
-        {walletType === 'metamask' && (
+        {walletType === WALLET_CATEGORIES.METAMASK && (
           <Icon
             name="metamask"
             title={MSG.metamask}
             appearance={{ size: 'medium' }}
           />
         )}
-        {walletType === 'hardware' && (
+        {walletType === WALLET_CATEGORIES.HARDWARE && (
           <Icon
             name="wallet"
             title={MSG.metamask}

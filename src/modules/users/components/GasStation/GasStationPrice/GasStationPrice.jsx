@@ -16,6 +16,7 @@ import type { RadioOption } from '~core/Fields/RadioGroup';
 import { getMainClasses } from '~utils/css';
 import { withId } from '~utils/actions';
 import { ACTIONS } from '~redux';
+import { WALLET_CATEGORIES } from '~immutable';
 import { useSelector } from '~utils/hooks';
 
 import { gasPrices as gasPricesSelector } from '../../../../core/selectors';
@@ -276,7 +277,7 @@ const GasStationPrice = ({ transaction: { id, gasLimit, error } }: Props) => {
       <div>
         <>
           {isNetworkCongested && <Alert text={MSG.networkCongestedWarning} />}
-          {walletType !== 'software' && (
+          {walletType !== WALLET_CATEGORIES.SOFTWARE && (
             <WalletInteraction walletType={walletType} />
           )}
           {insufficientFunds && (

@@ -10,8 +10,10 @@ import { getNetworkClient } from '@colony/colony-js-client';
 
 import type { WizardProps } from '~core/Wizard';
 import type { Address } from '~types';
+import type { WalletSpecificType } from '~immutable';
 
 import { ACTIONS } from '~redux';
+import { WALLET_CATEGORIES, WALLET_SPECIFICS } from '~immutable';
 import { mergePayload } from '~utils/actions';
 import { SpinnerLoader } from '~core/Preloaders';
 import Icon from '~core/Icon';
@@ -96,7 +98,7 @@ const validationSchema = yup.object({
 });
 
 type FormValues = {
-  method: 'ledger' | 'trezor',
+  method: WalletSpecificType,
   hardwareWalletChoice: string,
   hardwareWalletFilter: string,
 };
@@ -113,7 +115,7 @@ class StepHardware extends Component<Props> {
   static defaultProps = {
     availableAddresses: [],
     wizardValues: {
-      method: 'ledger',
+      method: WALLET_SPECIFICS.LEDGER,
       hardwareWalletChoice: '0x0',
       hardwareWalletFilter: '0x0',
     },
@@ -138,7 +140,7 @@ class StepHardware extends Component<Props> {
        * @BODY As we really don't need the actual wallet, this is just to appease `colonyJS`
        */
       {
-        type: 'hardware',
+        type: WALLET_CATEGORIES.HARDWARE,
         subtype: method,
       },
     );
