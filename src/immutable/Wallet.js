@@ -6,16 +6,30 @@ import { Record } from 'immutable';
 
 import type { Address } from '~types';
 
-export const WALLET_TYPES = Object.freeze({
+export const WALLET_CATEGORIES = Object.freeze({
   SOFTWARE: 'software',
-  METAMASK: 'metamask',
   HARDWARE: 'hardware',
+  /**
+   * @NOTE Metamask is a wallet category as well as a specific type
+   */
+  METAMASK: 'metamask',
 });
 
-/*
- * Yeah... I suck at naming things apparently
- */
-export type WalletTypesType = $Values<typeof WALLET_TYPES>;
+export type WalletCategoryType = $Values<typeof WALLET_CATEGORIES>;
+
+export const WALLET_SPECIFICS = Object.freeze({
+  JSON: 'json',
+  MNEMONIC: 'mnemonic',
+  TREZOR: 'trezor',
+  LEDGER: 'ledger',
+  METAMASK: 'metamask',
+  /**
+   * @NOTE Dev Only
+   */
+  TRUFFLEPIG: 'trufflepig',
+});
+
+export type WalletSpecificType = $Values<typeof WALLET_SPECIFICS>;
 
 export type WalletProps = {|
   availableAddresses?: Address[],
@@ -32,7 +46,7 @@ const defaultValues: $Shape<WalletProps> = {
   availableAddresses: [],
   currentAddress: undefined,
   isLoading: undefined,
-  walletType: WALLET_TYPES.SOFTWARE,
+  walletType: WALLET_CATEGORIES.SOFTWARE,
 };
 
 const WalletRecord: RecordFactory<WalletProps> = Record(defaultValues);
