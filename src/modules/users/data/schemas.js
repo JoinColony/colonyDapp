@@ -19,7 +19,7 @@ export const UpdateUserProfileCommandArgsSchema = yup.object({
   bio: yup.string(),
   displayName: yup.string(),
   location: yup.string(),
-  website: yup.string(),
+  website: yup.string().url(),
 });
 
 export const SetUserAvatarCommandArgsSchema = yup.object({

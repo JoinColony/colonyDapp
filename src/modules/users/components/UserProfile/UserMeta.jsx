@@ -4,6 +4,7 @@ import React from 'react';
 
 import type { UserType } from '~immutable';
 
+import { stripProtocol } from '~utils/strings';
 import CopyableAddress from '~core/CopyableAddress';
 import Heading from '~core/Heading';
 import UserMention from '~core/UserMention';
@@ -52,7 +53,7 @@ const UserMeta = ({
           target="_blank"
           data-test="userProfileWebsite"
         >
-          {website}
+          {stripProtocol(website)}
         </a>
       </div>
     )}
