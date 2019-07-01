@@ -4,6 +4,7 @@ import type { WalletObjectType } from '@colony/purser-core/flowtypes';
 import type { Entry, PermissionsManifest } from '../../types';
 
 import { createAddress } from '../../types';
+import { log } from '../../utils/debug';
 
 import { PermissionManager } from '../permissions';
 import AbstractAccessController from './AbstractAccessController';
@@ -32,6 +33,12 @@ class ColonyAccessController extends AbstractAccessController<
     permissionsManifest: PermissionsManifest,
   ) {
     super();
+
+    log.verbose(
+      'Instantiating colony access controller',
+      colonyAddress,
+      purserWallet.address,
+    );
     this._colonyAddress = colonyAddress;
     this._purserWallet = purserWallet;
     this._manager = new PermissionManager(permissionsManifest);
@@ -58,7 +65,9 @@ class ColonyAccessController extends AbstractAccessController<
       }
     }
 
-    return `/colony/${this._colonyAddress}`;
+    const accessControllerAddress = `/colony/${this._colonyAddress}`;
+    log.verbose(`Access controller address: "${accessControllerAddress}"`);
+    return accessControllerAddress;
   }
 
   async load() {
@@ -85,6 +94,7 @@ class ColonyAccessController extends AbstractAccessController<
     user: string,
     context: ?Context,
   ): Promise<boolean> {
+    log.verbose('Checking permission for action', actionId, user, context);
     return this._manager.can(
       actionId,
       user,

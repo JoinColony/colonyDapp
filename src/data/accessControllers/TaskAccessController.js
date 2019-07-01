@@ -9,6 +9,7 @@ import AbstractAccessController from './AbstractAccessController';
 import PurserIdentity from '../PurserIdentity';
 import PurserIdentityProvider from '../PurserIdentityProvider';
 import { createAddress } from '../../types';
+import { log } from '../../utils/debug';
 
 const TYPE = 'eth-contract/colony/task/purser';
 
@@ -38,6 +39,13 @@ class TaskAccessController extends AbstractAccessController<
     this._draftId = draftId;
     this._colonyAddress = colonyAddress;
     this._purserWallet = purserWallet;
+    log.verbose(
+      'Instantiating task access controller',
+      colonyAddress,
+      draftId,
+      purserWallet.address,
+    );
+
     this._manager = new PermissionManager(permissionsManifest);
   }
 
@@ -65,7 +73,12 @@ class TaskAccessController extends AbstractAccessController<
       }
     }
 
-    return `/colony/${this._colonyAddress}/task/${this._draftId}`;
+    // eslint-disable-next-line max-len
+    const accessControllerAddress = `/colony/${this._colonyAddress}/task/${
+      this._draftId
+    }`;
+    log.verbose(`Access controller address: "${accessControllerAddress}"`);
+    return accessControllerAddress;
   }
 
   async load() {
@@ -92,6 +105,7 @@ class TaskAccessController extends AbstractAccessController<
     user: string,
     context: ?Context,
   ): Promise<boolean> {
+    log.verbose('Checking permission for action', actionId, user, context);
     return this._manager.can(
       actionId,
       user,
