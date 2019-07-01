@@ -11,6 +11,7 @@ import type {
 } from '~immutable';
 
 import { ACTIONS } from '~redux';
+import { TRANSACTION_STATUSES, TRANSACTION_ERRORS } from '~immutable';
 
 import type { TxConfig } from '../types';
 
@@ -19,7 +20,7 @@ export {
   NETWORK_CONTEXT,
 } from '../../../lib/ColonyManager/constants';
 
-export const createTxAction = <P>(
+export const createTxAction = (
   id: string,
   from: string,
   {
@@ -32,7 +33,7 @@ export const createTxAction = <P>(
     options,
     params,
     ready,
-  }: TxConfig<P>,
+  }: TxConfig,
 ) => ({
   type: multisigConfig
     ? ACTIONS.MULTISIG_TRANSACTION_CREATED
@@ -48,50 +49,74 @@ export const createTxAction = <P>(
     multisig: typeof multisigConfig == 'boolean' ? {} : multisigConfig,
     options,
     params,
-    status: ready === false ? 'created' : 'ready',
+    status:
+      ready === false
+        ? TRANSACTION_STATUSES.CREATED
+        : TRANSACTION_STATUSES.READY,
   },
   meta: { id },
 });
 
-export const multisigTransactionRefreshError = (
+const transactionError = (
+  type: $PropertyType<TransactionError, 'type'>,
   id: string,
-  payload: { message: string },
+  error: Error,
 ): Action<typeof ACTIONS.TRANSACTION_ERROR> => ({
   type: ACTIONS.TRANSACTION_ERROR,
-  payload: { type: 'multisigRefresh', ...payload },
-  meta: { id },
+  payload: {
+    error: {
+      type,
+      message: error.message || error.toString(),
+    },
+  },
   error: true,
+  meta: { id },
 });
 
-export const multisigTransactionNonceError = (
-  id: string,
-  payload: { message: string },
-): Action<typeof ACTIONS.TRANSACTION_ERROR> => ({
-  type: ACTIONS.TRANSACTION_ERROR,
-  payload: { type: 'multisigNonce', ...payload },
-  meta: { id },
-  error: true,
-});
+export const transactionEstimateError = transactionError.bind(
+  null,
+  TRANSACTION_ERRORS.ESTIMATE,
+);
 
-export const multisigTransactionSignError = (
-  id: string,
-  payload: { message: string },
-): Action<typeof ACTIONS.TRANSACTION_ERROR> => ({
-  type: ACTIONS.TRANSACTION_ERROR,
-  payload: { type: 'multisigSign', ...payload },
-  meta: { id },
-  error: true,
-});
+export const transactionEventDataError = transactionError.bind(
+  null,
+  TRANSACTION_ERRORS.EVENT_DATA,
+);
 
-export const multisigTransactionRejectError = (
-  id: string,
-  payload: { message: string },
-): Action<typeof ACTIONS.TRANSACTION_ERROR> => ({
-  type: ACTIONS.TRANSACTION_ERROR,
-  payload: { type: 'multisigReject', ...payload },
-  meta: { id },
-  error: true,
-});
+export const transactionReceiptError = transactionError.bind(
+  null,
+  TRANSACTION_ERRORS.RECEIPT,
+);
+
+export const transactionSendError = transactionError.bind(
+  null,
+  TRANSACTION_ERRORS.SEND,
+);
+
+export const transactionUnsuccessfulError = transactionError.bind(
+  null,
+  TRANSACTION_ERRORS.UNSUCCESSFUL,
+);
+
+export const multisigTransactionRefreshError = transactionError.bind(
+  null,
+  TRANSACTION_ERRORS.MULTISIG_REFRESH,
+);
+
+export const multisigTransactionNonceError = transactionError.bind(
+  null,
+  TRANSACTION_ERRORS.MULTISIG_NONCE,
+);
+
+export const multisigTransactionSignError = transactionError.bind(
+  null,
+  TRANSACTION_ERRORS.MULTISIG_SIGN,
+);
+
+export const multisigTransactionRejectError = transactionError.bind(
+  null,
+  TRANSACTION_ERRORS.MULTISIG_REJECT,
+);
 
 export const multisigTransactionRefreshed = (
   id: string,
@@ -123,16 +148,6 @@ export const multisigTransactionReject = (
   meta: { id },
 });
 
-export const transactionError = (
-  id: string,
-  error: TransactionError,
-): Action<typeof ACTIONS.TRANSACTION_ERROR> => ({
-  type: ACTIONS.TRANSACTION_ERROR,
-  payload: error,
-  error: true,
-  meta: { id },
-});
-
 export const transactionReceiptReceived = (
   id: string,
   payload: {| receipt: TransactionReceipt, params: Object |},
@@ -144,9 +159,16 @@ export const transactionReceiptReceived = (
 
 export const transactionSent = (
   id: string,
-  payload: {| hash: string, params: Object |},
 ): Action<typeof ACTIONS.TRANSACTION_SENT> => ({
   type: ACTIONS.TRANSACTION_SENT,
+  meta: { id },
+});
+
+export const transactionHashReceived = (
+  id: string,
+  payload: {| hash: string, params: Object |},
+): Action<typeof ACTIONS.TRANSACTION_HASH_RECEIVED> => ({
+  type: ACTIONS.TRANSACTION_HASH_RECEIVED,
   payload,
   meta: { id },
 });
@@ -194,7 +216,7 @@ export const transactionEstimateGas = (
 
 export const transactionUpdateGas = (
   id: string,
-  data: {| gasLimit: BigNumber, gasPrice: BigNumber |},
+  data: {| gasLimit?: BigNumber, gasPrice?: BigNumber |},
 ): Action<typeof ACTIONS.TRANSACTION_GAS_UPDATE> => ({
   type: ACTIONS.TRANSACTION_GAS_UPDATE,
   payload: data,

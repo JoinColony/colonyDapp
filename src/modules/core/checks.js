@@ -11,8 +11,8 @@ import { ZERO_ADDRESS } from '~utils/web3/constants';
 /*
  * Transactions
  */
-export const isMultisig = (tx: TransactionType<*, *>) => !!tx.multisig;
-export const isPendingMultisig = (tx: TransactionType<*, *>) =>
+export const isMultisig = (tx: TransactionType) => !!tx.multisig;
+export const isPendingMultisig = (tx: TransactionType) =>
   !!tx.multisig &&
   !(tx.multisig.missingSignees && tx.multisig.missingSignees.length);
 

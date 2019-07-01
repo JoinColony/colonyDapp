@@ -21,6 +21,7 @@ import { getMainClasses } from '~utils/css';
 import { messageCancel } from '../../../../core/actionCreators';
 
 import styles from './MessageCardDetails.css';
+import { TRANSACTION_STATUSES } from '~immutable';
 
 const MSG = defineMessages({
   returnToSummary: {
@@ -53,7 +54,7 @@ const MessageCardDetails = ({
     dispatch,
     id,
   ]);
-  const canBeCancelled = status === 'created';
+  const canBeCancelled = status === TRANSACTION_STATUSES.CREATED;
   return (
     <div>
       <TransactionBackToList onClose={onClose} />
@@ -71,8 +72,8 @@ const MessageCardDetails = ({
           </div>
           <div
             className={getMainClasses({ theme: 'message' }, styles, {
-              failed: status === 'failed',
-              succeeded: status === 'succeeded',
+              failed: status === TRANSACTION_STATUSES.FAILED,
+              succeeded: status === TRANSACTION_STATUSES.SUCCEEDED,
               isShowingCancelConfirmation,
             })}
           >
@@ -114,7 +115,8 @@ const MessageCardDetails = ({
           </div>
         </Card>
       </CardList>
-      {(status === 'created' || status === 'pending') && (
+      {(status === TRANSACTION_STATUSES.CREATED ||
+        status === TRANSACTION_STATUSES.PENDING) && (
         <MessageCardControls message={message} />
       )}
     </div>

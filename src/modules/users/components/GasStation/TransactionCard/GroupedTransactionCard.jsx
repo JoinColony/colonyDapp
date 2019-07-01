@@ -1,159 +1,171 @@
 /* @flow */
 
-import React, { Component, Fragment } from 'react';
+// $FlowFixMe
+import React, { useState, useCallback } from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
+import { useDispatch } from 'redux-react-hook';
 
 import type { TransactionType } from '~immutable';
-import type { Action } from '~redux';
 import type { Appearance } from '../GasStationContent';
 
-import { ACTIONS } from '~redux';
 import { getMainClasses } from '~utils/css';
+
+import { transactionCancel } from '../../../../core/actionCreators';
 
 import { Tooltip } from '~core/Popover';
 
 import styles from './GroupedTransactionCard.css';
 
 import TransactionStatus from './TransactionStatus.jsx';
+import { TRANSACTION_STATUSES } from '~immutable';
 
 const MSG = defineMessages({
-  hasDepedentTx: {
-    id: 'users.GasStation.GroupedTransactionCard.hasDepedentTx',
+  hasDependentTx: {
+    id: 'users.GasStation.GroupedTransactionCard.hasDependentTx',
     defaultMessage: 'Dependent transaction',
   },
   failedTx: {
     id: 'users.GasStation.GroupedTransactionCard.failedTx',
-    defaultMessage: 'Failed transaction. Try again.',
+    defaultMessage: `{type, select,
+      ESTIMATE {Estimation error}
+      EVENT_DATA {Event data error}
+      MULTISIG_NONCE {Multisig nonce}
+      MULTISIG_REFRESH {Multisig refresh}
+      MULTISIG_REJECT {Multisig rejected}
+      MULTISIG_SIGN {Multisig signature}
+      RECEIPT {Receipt error}
+      SEND {Send error}
+      UNSUCCESSFUL {Unsuccessful}
+      }: {message}`,
   },
 });
 
 type Props = {|
   appearance: Appearance,
-  cancelTransaction: (id: string) => Action<typeof ACTIONS.TRANSACTION_CANCEL>,
   idx: number,
   selected: boolean,
-  transaction: TransactionType<*, *>,
+  transaction: TransactionType,
 |};
 
-type State = {|
-  isShowingCancelConfirmation: boolean,
-|};
+const GroupedTransactionCard = ({
+  appearance: { required },
+  idx,
+  selected,
+  transaction: {
+    context,
+    error,
+    id,
+    methodContext,
+    methodName,
+    params,
+    status,
+  },
+}: Props) => {
+  const dispatch = useDispatch();
 
-class GroupedTransactionCard extends Component<Props, State> {
-  static displayName = 'users.GasStation.GroupedTransactionCard';
+  const handleCancel = useCallback(
+    () => {
+      dispatch(transactionCancel(id));
+    },
+    [dispatch, id],
+  );
 
-  state = {
-    isShowingCancelConfirmation: false,
-  };
+  const [
+    isShowingCancelConfirmation,
+    setIsShowingCancelConfirmation,
+  ] = useState(false);
 
-  cancelTransaction = () => {
-    const {
-      transaction: { id },
-      cancelTransaction,
-    } = this.props;
-    cancelTransaction(id);
-  };
+  const toggleCancelConfirmation = useCallback(
+    () => {
+      setIsShowingCancelConfirmation(!isShowingCancelConfirmation);
+    },
+    [isShowingCancelConfirmation],
+  );
 
-  toggleCancelConfirmation = () =>
-    this.setState(({ isShowingCancelConfirmation }) => ({
-      isShowingCancelConfirmation: !isShowingCancelConfirmation,
-    }));
+  const ready = status === TRANSACTION_STATUSES.READY;
+  const failed = status === TRANSACTION_STATUSES.FAILED;
+  const succeeded = status === TRANSACTION_STATUSES.SUCCEEDED;
 
-  renderCancel() {
-    const { isShowingCancelConfirmation } = this.state;
-    return (
-      <Fragment>
-        {isShowingCancelConfirmation ? (
-          <Fragment>
-            <button
-              type="button"
-              className={styles.confirmationButton}
-              onClick={this.cancelTransaction}
-            >
-              <FormattedMessage {...{ id: 'button.yes' }} />
-            </button>
-            <span className={styles.cancelDecision}>/</span>
-            <button
-              type="button"
-              className={styles.confirmationButton}
-              onClick={this.toggleCancelConfirmation}
-            >
-              <FormattedMessage {...{ id: 'button.no' }} />
-            </button>
-          </Fragment>
-        ) : (
-          <button
-            type="button"
-            className={styles.cancelButton}
-            onClick={this.toggleCancelConfirmation}
-          >
-            <FormattedMessage {...{ id: 'button.cancel' }} />
-          </button>
-        )}
-      </Fragment>
-    );
-  }
+  // Only transactions that can be signed can be cancelled
+  const canBeSigned = selected && ready;
 
-  render() {
-    const {
-      idx,
-      selected,
-      transaction: { context, methodName, status, params, methodContext },
-      appearance: { required },
-    } = this.props;
-    const { isShowingCancelConfirmation } = this.state;
-    const ready = status === 'ready';
-    const failed = status === 'failed';
-    const succeeded = status === 'succeeded';
-    // Only transactions that can be signed can also be cancelled
-    const canBeSigned = selected && ready;
-    // A prior transaction was selected
-    const hasDependency = ready && !selected;
-    return (
-      <li
-        className={getMainClasses({}, styles, {
-          failed,
-          isShowingCancelConfirmation,
-          selected,
-          succeeded,
-        })}
-      >
-        <div className={styles.description}>
-          <Tooltip
-            placement="top"
-            showArrow
-            content={
-              <span className={styles.tooltip}>
-                <FormattedMessage {...MSG.hasDepedentTx} />
+  // A prior transaction was selected
+  const hasDependency = ready && !selected;
+
+  return (
+    <li
+      className={getMainClasses({}, styles, {
+        failed,
+        isShowingCancelConfirmation,
+        selected,
+        succeeded,
+      })}
+    >
+      <div className={styles.description}>
+        <Tooltip
+          placement="top"
+          showArrow
+          content={
+            <span className={styles.tooltip}>
+              <FormattedMessage {...MSG.hasDependentTx} />
+            </span>
+          }
+          trigger={hasDependency ? 'hover' : 'disabled'}
+        >
+          <div>
+            {`${idx + 1}. `}
+            <FormattedMessage
+              id={`transaction.${context ? `${context}.` : ''}${methodName}.${
+                methodContext ? `${methodContext}.` : ''
+              }title`}
+              values={params}
+            />
+            {failed && error && (
+              <span className={styles.failedDescription}>
+                <FormattedMessage {...MSG.failedTx} values={{ ...error }} />
               </span>
-            }
-            trigger={hasDependency ? 'hover' : 'disabled'}
-          >
-            <div>
-              {`${idx + 1}. `}
-              <FormattedMessage
-                id={`transaction.${context ? `${context}.` : ''}${methodName}.${
-                  methodContext ? `${methodContext}.` : ''
-                }title`}
-                values={params}
-              />
-              {failed && (
-                <span className={styles.failedDescription}>
-                  <FormattedMessage {...MSG.failedTx} />
-                </span>
-              )}
-            </div>
-          </Tooltip>
-        </div>
-        {canBeSigned && !required ? (
-          this.renderCancel()
-        ) : (
-          // multisig: pass proper multisig prop here
-          <TransactionStatus status={status} multisig={{}} />
-        )}
-      </li>
-    );
-  }
-}
+            )}
+          </div>
+        </Tooltip>
+      </div>
+      {canBeSigned && !required ? (
+        <>
+          {isShowingCancelConfirmation ? (
+            <>
+              <button
+                type="button"
+                className={styles.confirmationButton}
+                onClick={handleCancel}
+              >
+                <FormattedMessage {...{ id: 'button.yes' }} />
+              </button>
+              <span className={styles.cancelDecision}>/</span>
+              <button
+                type="button"
+                className={styles.confirmationButton}
+                onClick={toggleCancelConfirmation}
+              >
+                <FormattedMessage {...{ id: 'button.no' }} />
+              </button>
+            </>
+          ) : (
+            <button
+              type="button"
+              className={styles.cancelButton}
+              onClick={toggleCancelConfirmation}
+            >
+              <FormattedMessage {...{ id: 'button.cancel' }} />
+            </button>
+          )}
+        </>
+      ) : (
+        // multisig: pass proper multisig prop here
+        <TransactionStatus status={status} multisig={{}} />
+      )}
+    </li>
+  );
+};
+
+GroupedTransactionCard.displayName = 'users.GasStation.GroupedTransactionCard';
 
 export default GroupedTransactionCard;

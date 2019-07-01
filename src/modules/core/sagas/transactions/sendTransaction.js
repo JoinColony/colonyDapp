@@ -7,19 +7,17 @@ import { call, put, take } from 'redux-saga/effects';
 import { ACTIONS } from '~redux';
 import { isDev } from '~utils/debug';
 import { selectAsJS } from '~utils/saga/effects';
-import type {
-  TransactionRecordType,
-  TransactionParams,
-  TransactionEventData,
-} from '~immutable';
+import { mergePayload } from '~utils/actions';
+import { TRANSACTION_STATUSES } from '~immutable';
+
+import type { TransactionRecordType } from '~immutable';
 import type { Action } from '~redux/types/actions';
 
 import type { MultisigSender, Sender } from '../../types';
 
-import { transactionError } from '../../actionCreators';
+import { transactionSendError } from '../../actionCreators';
 import { oneTransaction } from '../../selectors';
-
-import { getMethod } from '../utils';
+import { getTransactionMethod } from '../utils';
 
 import transactionChannel from './transactionChannel';
 
@@ -27,13 +25,10 @@ import transactionChannel from './transactionChannel';
  * Given a method and a transaction record, create a promise for sending the
  * transaction with the method.
  */
-async function getMethodTransactionPromise<
-  P: TransactionParams,
-  E: TransactionEventData,
->(
-  method: Sender<P, E> | MultisigSender<P, E>,
-  tx: TransactionRecordType<P, E>,
-): Promise<ContractResponse<E>> {
+async function getMethodTransactionPromise(
+  method: Sender | MultisigSender,
+  tx: TransactionRecordType,
+): Promise<ContractResponse<*>> {
   const {
     multisig,
     options: {
@@ -65,15 +60,16 @@ async function getMethodTransactionPromise<
   return method.send(params, sendOptions);
 }
 
-export default function* sendTransaction(id: string): Saga<void> {
+export default function* sendTransaction({
+  meta: { id },
+}: Action<typeof ACTIONS.TRANSACTION_SEND>): Saga<void> {
   const transaction = yield* selectAsJS(oneTransaction, id);
 
-  if (transaction.status !== 'ready') {
+  if (transaction.status !== TRANSACTION_STATUSES.READY) {
     throw new Error('Transaction is not ready to send.');
   }
 
-  const { methodName, context, identifier } = transaction;
-  const method = yield call(getMethod, context, methodName, identifier);
+  const method = yield call(getTransactionMethod, transaction);
 
   // Create a promise to send the transaction with the given method.
 
@@ -81,25 +77,18 @@ export default function* sendTransaction(id: string): Saga<void> {
   const txPromise = getMethodTransactionPromise(method, transaction);
 
   const channel = yield call(transactionChannel, txPromise, transaction);
+
   try {
     while (true) {
       const action = yield take(channel);
       // Add the transaction to the payload (we need to get the most recent version of it)
-      const tx = yield* selectAsJS(oneTransaction, id);
+      const currentTransaction = yield* selectAsJS(oneTransaction, id);
 
       // Put the action to the store
-      yield put({
-        ...action,
-        payload: {
-          ...action.payload,
-          transaction: tx,
-        },
-      });
+      yield put(mergePayload({ transaction: currentTransaction })(action));
     }
   } catch (error) {
-    yield put<Action<typeof ACTIONS.TRANSACTION_ERROR>>(
-      transactionError(id, error),
-    );
+    yield put(transactionSendError(id, error));
   } finally {
     channel.close();
   }

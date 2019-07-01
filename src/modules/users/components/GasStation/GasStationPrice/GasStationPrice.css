@@ -111,3 +111,7 @@
 .transactionSpeedMenuButton[disabled] {
   cursor: not-allowed;
 }
+
+.transactionFeeEthUsd {
+  /* There is no style defined for this, but it is used in the component */
+}

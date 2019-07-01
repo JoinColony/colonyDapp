@@ -68,6 +68,7 @@
 .stateFailed,
 .stateIsShowingCancelConfirmation {
   border-left-color: var(--danger);
+  border-top-color: color-mod(var(--danger) alpha(20%));
   background-color: color-mod(var(--danger) alpha(20%));
 
   &:hover {
@@ -87,7 +88,7 @@
    *
    * Because of this, we must *heavily* use negative margins to align text properly.
    */
-  margin: -1px 0 -12px 14px;
+  margin: -4px 0 -12px 14px;
   font-size: var(--size-unreadable);
   font-weight: var(--weight-medium);
   color: var(--danger);

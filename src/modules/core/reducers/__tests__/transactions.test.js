@@ -7,7 +7,10 @@ import reducer from '../transactions';
 import {
   createTxAction,
   transactionSent,
-  transactionError,
+  transactionHashReceived,
+  transactionEstimateError,
+  transactionReceiptError,
+  transactionSendError,
   transactionSucceeded,
   transactionReceiptReceived,
 } from '../../actionCreators';
@@ -55,13 +58,20 @@ describe(`core: reducers (transactions)`, () => {
     params,
   });
 
-  const sentTx = transactionSent(id, { hash });
+  const sentTx = transactionSent(id);
+  const hashReceived = transactionHashReceived(id, { hash, params });
   const receiptReceived = transactionReceiptReceived(id, { receipt: { hash } });
   const eventDataReceived = transactionSucceeded(id, { eventData });
 
-  const sendError = transactionError(id, new Error('send error'));
-  const receiptError = transactionError(id, new Error('receipt error'));
-  const eventDataError = transactionError(id, new Error('event data error'));
+  const sendError = transactionSendError(id, new Error('oh no, send error'));
+  const receiptError = transactionReceiptError(
+    id,
+    new Error('oh no, receipt error'),
+  );
+  const estimateError = transactionEstimateError(
+    id,
+    new Error('oh no, estimate error'),
+  );
 
   test('Sends successfully', () => {
     testActions(
@@ -85,7 +95,7 @@ describe(`core: reducers (transactions)`, () => {
             expect(tx.toJS()).toEqual({
               context,
               createdAt: expect.any(Date),
-              errors: [],
+              error: undefined,
               eventData: undefined,
               from,
               gasLimit: undefined,
@@ -98,9 +108,9 @@ describe(`core: reducers (transactions)`, () => {
               params,
               receipt: undefined,
               /*
-               * Initial status is set to `ready`
+               * Initial status is set to `READY`
                */
-              status: 'ready',
+              status: 'READY',
             });
           },
         ],
@@ -120,22 +130,57 @@ describe(`core: reducers (transactions)`, () => {
             expect(tx.toJS()).toEqual({
               context,
               createdAt: expect.any(Date),
-              errors: [],
+              error: undefined,
               eventData: undefined,
               from,
               gasLimit: undefined,
               gasPrice: undefined,
               group: undefined,
-              hash, // hash should have been set
+              hash: undefined,
               id,
               methodName,
               options,
               params,
               receipt: undefined,
               /*
-               * During sending the transaction is set to 'pending'
+               * During sending the transaction is set to 'PENDING'
                */
-              status: 'pending',
+              status: 'PENDING',
+            });
+          },
+        ],
+        [
+          hashReceived,
+          state => {
+            expect(state.list.size).toBe(2);
+
+            const existingTx = state.list.get(existingTxId);
+            expect(Record.isRecord(existingTx)).toBe(true);
+            expect(existingTx.toJS()).toEqual(
+              initialState.list.get(existingTxId).toJS(),
+            );
+
+            const tx = state.list.get(id);
+            expect(Record.isRecord(tx)).toBe(true);
+            expect(tx.toJS()).toEqual({
+              context,
+              createdAt: expect.any(Date),
+              error: undefined,
+              eventData: undefined,
+              from,
+              gasLimit: undefined,
+              gasPrice: undefined,
+              group: undefined,
+              hash, // Hash should have been set
+              id,
+              methodName,
+              options,
+              params,
+              receipt: undefined,
+              /*
+               * During sending the transaction is set to 'PENDING'
+               */
+              status: 'PENDING',
             });
           },
         ],
@@ -155,7 +200,7 @@ describe(`core: reducers (transactions)`, () => {
             expect(tx.toJS()).toEqual({
               context,
               createdAt: expect.any(Date),
-              errors: [],
+              error: undefined,
               eventData: undefined,
               from,
               gasLimit: undefined,
@@ -167,10 +212,7 @@ describe(`core: reducers (transactions)`, () => {
               options,
               params,
               receipt: expect.any(Object), // should have been set
-              /*
-               * If it went through successfully, it's set to `succeeded`
-               */
-              status: 'pending',
+              status: 'PENDING',
             });
           },
         ],
@@ -190,7 +232,7 @@ describe(`core: reducers (transactions)`, () => {
             expect(tx.toJS()).toEqual({
               context,
               createdAt: expect.any(Date),
-              errors: [],
+              error: undefined,
               eventData, // should have been set
               from,
               gasLimit: undefined,
@@ -203,9 +245,9 @@ describe(`core: reducers (transactions)`, () => {
               params,
               receipt: expect.any(Object),
               /*
-               * If it went through successfully, it's set to `succeeded`
+               * If it went through successfully, it's set to `SUCCEEDED`
                */
-              status: 'succeeded',
+              status: 'SUCCEEDED',
             });
           },
         ],
@@ -234,7 +276,10 @@ describe(`core: reducers (transactions)`, () => {
             expect(tx.toJS()).toEqual({
               context,
               createdAt: expect.any(Date),
-              errors: [new Error('send error')],
+              error: {
+                type: 'SEND',
+                message: 'oh no, send error',
+              },
               eventData: undefined,
               from,
               gasLimit: undefined,
@@ -249,7 +294,7 @@ describe(`core: reducers (transactions)`, () => {
               /*
                * If it failed, it's set to `failed`... obviously
                */
-              status: 'failed',
+              status: 'FAILED',
             });
           },
         ],
@@ -263,6 +308,7 @@ describe(`core: reducers (transactions)`, () => {
       [
         [createdTx],
         [sentTx],
+        [hashReceived],
         [
           receiptError,
           state => {
@@ -279,7 +325,10 @@ describe(`core: reducers (transactions)`, () => {
             expect(tx.toJS()).toEqual({
               context,
               createdAt: expect.any(Date),
-              errors: [new Error('receipt error')],
+              error: {
+                type: 'RECEIPT',
+                message: 'oh no, receipt error',
+              },
               eventData: undefined,
               from,
               gasLimit: undefined,
@@ -294,7 +343,7 @@ describe(`core: reducers (transactions)`, () => {
               /*
                * If it failed, it's set to `failed`... obviously
                */
-              status: 'failed',
+              status: 'FAILED',
             });
           },
         ],
@@ -303,14 +352,15 @@ describe(`core: reducers (transactions)`, () => {
     );
   });
 
-  test('Handles event data error', () => {
+  test('Handles estimate error', () => {
     testActions(
       [
         [createdTx],
         [sentTx],
+        [hashReceived],
         [receiptReceived],
         [
-          eventDataError,
+          estimateError,
           state => {
             expect(state.list.size).toBe(2);
 
@@ -325,7 +375,10 @@ describe(`core: reducers (transactions)`, () => {
             expect(tx.toJS()).toEqual({
               context,
               createdAt: expect.any(Date),
-              errors: [new Error('event data error')],
+              error: {
+                type: 'ESTIMATE',
+                message: 'oh no, estimate error',
+              },
               eventData: undefined,
               from,
               gasLimit: undefined,
@@ -340,7 +393,7 @@ describe(`core: reducers (transactions)`, () => {
               /*
                * If it failed, it's set to `failed`... obviously
                */
-              status: 'failed',
+              status: 'FAILED',
             });
           },
         ],

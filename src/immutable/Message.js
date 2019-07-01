@@ -2,7 +2,10 @@
 
 import type { RecordOf, RecordFactory } from 'immutable';
 
+import type { TransactionStatusType } from '~immutable/Transaction';
+
 import { Record } from 'immutable';
+import { TRANSACTION_STATUSES } from '~immutable/Transaction';
 
 export type MessageProps = $ReadOnly<{|
   id: string,
@@ -14,7 +17,7 @@ export type MessageProps = $ReadOnly<{|
   purpose: string,
   message: string,
   signature?: string,
-  status: 'created' | 'pending' | 'failed' | 'succeeded',
+  status: TransactionStatusType,
 |}>;
 
 const defaultValues: $Shape<MessageProps> = {
@@ -23,7 +26,7 @@ const defaultValues: $Shape<MessageProps> = {
   purpose: 'generic',
   message: undefined,
   signature: undefined,
-  status: 'created',
+  status: TRANSACTION_STATUSES.CREATED,
 };
 
 const MessageRecord: RecordFactory<MessageProps> = Record(defaultValues);

@@ -5,7 +5,11 @@ import getObjectFromPath from 'lodash/get';
 
 import type { CoreTransactionsRecord, TransactionRecordType } from '~immutable';
 
-import { TransactionRecord, CoreTransactions } from '~immutable';
+import {
+  CoreTransactions,
+  TransactionRecord,
+  TRANSACTION_STATUSES,
+} from '~immutable';
 import { ACTIONS } from '~redux';
 
 import { CORE_TRANSACTIONS_LIST } from '../constants';
@@ -14,7 +18,7 @@ import type { ReducerType } from '~redux';
 /*
  * Helpers for transaction transformations
  */
-const transactionGroup = (tx: TransactionRecordType<*, *>) => {
+const transactionGroup = (tx: TransactionRecordType) => {
   if (!tx.group || typeof tx.group.id == 'string') return tx.group;
   const id = tx.group.id.reduce(
     (resultId, entry) => `${resultId}-${getObjectFromPath(tx, entry)}`,
@@ -39,8 +43,10 @@ const coreTransactionsReducer: ReducerType<
     TRANSACTION_CREATED: *,
     TRANSACTION_ERROR: *,
     TRANSACTION_GAS_UPDATE: *,
+    TRANSACTION_HASH_RECEIVED: *,
     TRANSACTION_READY: *,
     TRANSACTION_RECEIPT_RECEIVED: *,
+    TRANSACTION_SEND: *,
     TRANSACTION_SENT: *,
     TRANSACTION_SUCCEEDED: *,
   |},
@@ -116,7 +122,10 @@ const coreTransactionsReducer: ReducerType<
       const {
         meta: { id },
       } = action;
-      return state.setIn([CORE_TRANSACTIONS_LIST, id, 'status'], 'ready');
+      return state.setIn(
+        [CORE_TRANSACTIONS_LIST, id, 'status'],
+        TRANSACTION_STATUSES.READY,
+      );
     }
     case ACTIONS.TRANSACTION_GAS_UPDATE: {
       const {
@@ -126,17 +135,32 @@ const coreTransactionsReducer: ReducerType<
       return state.mergeIn([CORE_TRANSACTIONS_LIST, id], fromJS(payload));
       // Do we want an 'estimated' state for TX?
     }
-    case ACTIONS.TRANSACTION_SENT: {
+    case ACTIONS.TRANSACTION_SEND: {
+      const {
+        meta: { id },
+      } = action;
+      // Clear errors and set to ready, because this action also retries sending
+      return state
+        .setIn([CORE_TRANSACTIONS_LIST, id, 'error'], undefined)
+        .setIn(
+          [CORE_TRANSACTIONS_LIST, id, 'status'],
+          TRANSACTION_STATUSES.READY,
+        );
+    }
+    case ACTIONS.TRANSACTION_HASH_RECEIVED: {
       const {
         meta: { id },
         payload: { hash },
       } = action;
-      return state.mergeIn(
-        [CORE_TRANSACTIONS_LIST, id],
-        fromJS({
-          hash,
-          status: 'pending',
-        }),
+      return state.setIn([CORE_TRANSACTIONS_LIST, id, 'hash'], hash);
+    }
+    case ACTIONS.TRANSACTION_SENT: {
+      const {
+        meta: { id },
+      } = action;
+      return state.setIn(
+        [CORE_TRANSACTIONS_LIST, id, 'status'],
+        TRANSACTION_STATUSES.PENDING,
       );
     }
     case ACTIONS.TRANSACTION_RECEIPT_RECEIVED: {
@@ -160,20 +184,19 @@ const coreTransactionsReducer: ReducerType<
         [CORE_TRANSACTIONS_LIST, id],
         fromJS({
           eventData,
-          status: 'succeeded',
+          status: TRANSACTION_STATUSES.SUCCEEDED,
         }),
       );
     }
     case ACTIONS.TRANSACTION_ERROR: {
       const {
         meta: { id },
-        payload: error,
+        payload: { error },
       } = action;
-      return state
-        .updateIn([CORE_TRANSACTIONS_LIST, id, 'errors'], errors =>
-          errors.push(error),
-        )
-        .setIn([CORE_TRANSACTIONS_LIST, id, 'status'], 'failed');
+      return state.mergeIn([CORE_TRANSACTIONS_LIST, id], {
+        error,
+        status: TRANSACTION_STATUSES.FAILED,
+      });
     }
     case ACTIONS.TRANSACTION_CANCEL: {
       const {
@@ -185,12 +208,11 @@ const coreTransactionsReducer: ReducerType<
         return state.update(CORE_TRANSACTIONS_LIST, list =>
           list.filter(filterTx => {
             // Keep all transactions with no group
-            if (!filterTx.group) return true;
+            if (!filterTx.group || !tx.group) return true;
             // Keep all transactions with a different groupId
-            if (!filterTx.group.id !== tx.group.id) return true;
+            if (filterTx.group.id !== tx.group.id) return true;
             // Keep all transactions with the same groupId but a lower index
-            if (filterTx.group.index < tx.group.index) return true;
-            return false;
+            return filterTx.group.index < tx.group.index;
           }),
         );
       }

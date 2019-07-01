@@ -16,19 +16,13 @@ import { isDev, log } from '~utils/debug';
 import { ACTIONS } from '~redux';
 
 /*
- * Effect to take a specific action from a channel
+ * Effect to take a specific action from a channel.
  */
 export const takeFrom = (channel: Channel<*>, type: string) =>
   call(function* takeFromSaga() {
     while (true) {
       const action = yield take(channel);
-      // Take out errors that were previously handled and throw them again for better control flow
-      if (action.error) {
-        throw action.payload;
-      }
-      if (action.type === type) {
-        return action;
-      }
+      if (action.type === type) return action;
     }
   });
 

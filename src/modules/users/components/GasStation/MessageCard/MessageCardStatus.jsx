@@ -3,7 +3,9 @@
 import React from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 
-import type { MessageProps } from '~immutable';
+import type { TransactionStatusType } from '~immutable';
+
+import { TRANSACTION_STATUSES } from '~immutable';
 
 import { Tooltip } from '~core/Popover';
 import { SpinnerLoader } from '~core/Preloaders';
@@ -15,17 +17,17 @@ const MSG = defineMessages({
   messageState: {
     id: 'users.GasStation.MessageCard.MessageCardStatus.messageState',
     defaultMessage: `{status, select,
-      created {The message is ready to be signed}
-      pending {The message is being signed}
-      succeeded {The message was signed successfully}
-      failed {Failed to sign the message}
+      CREATED {The message is ready to be signed}
+      PENDING {The message is being signed}
+      SUCCEEDED {The message was signed successfully}
+      FAILED {Failed to sign the message}
       other {Can't report any status}
     }`,
   },
 });
 
 type Props = {
-  status: $PropertyType<MessageProps, 'status'>,
+  status: TransactionStatusType,
 };
 
 const displayName = 'users.GasStation.MessageCard.MessageCardStatus';
@@ -52,8 +54,10 @@ const MessageCardStatus = ({ status }: Props) => (
          * @NOTE There's never going to be more then a message to sign at a
          * given time, so the counter will always show 1
          */}
-        {status === 'created' && <span className={styles.counter}>1</span>}
-        {status === 'pending' && (
+        {status === TRANSACTION_STATUSES.CREATED && (
+          <span className={styles.counter}>1</span>
+        )}
+        {status === TRANSACTION_STATUSES.PENDING && (
           <div className={styles.spinner}>
             <SpinnerLoader
               appearance={{
@@ -63,7 +67,7 @@ const MessageCardStatus = ({ status }: Props) => (
             />
           </div>
         )}
-        {status === 'succeeded' && (
+        {status === TRANSACTION_STATUSES.SUCCEEDED && (
           <span
             className={styles.completed}
             data-test="gasStationTransactionSucceeded"
@@ -79,7 +83,9 @@ const MessageCardStatus = ({ status }: Props) => (
             />
           </span>
         )}
-        {status === 'failed' && <span className={styles.failed}>!</span>}
+        {status === TRANSACTION_STATUSES.FAILED && (
+          <span className={styles.failed}>!</span>
+        )}
       </div>
     </Tooltip>
   </div>

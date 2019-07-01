@@ -22,6 +22,7 @@ import {
   getGroupKey,
   findNewestGroup,
 } from '../../../users/components/GasStation/transactionGroup';
+import { TRANSACTION_STATUSES } from '~immutable/Transaction';
 
 const MSG = defineMessages({
   heading: {
@@ -74,10 +75,12 @@ type Props = WizardProps<FormValues>;
 const displayName = 'dashboard.CreateColonyWizard.StepConfirmTransactions';
 
 const StepConfirmTransactions = ({ wizardValues: { colonyName } }: Props) => {
-  const transactionGroups = useSelector(groupedTransactions);
-  const newestGroup = findNewestGroup(transactionGroups);
+  const txGroups = useSelector(groupedTransactions);
+  const newestGroup = findNewestGroup(txGroups);
+
+  // Redirect to the colony if a successful creteColony tx group is found
   if (
-    getGroupStatus(newestGroup) === 'succeeded' &&
+    getGroupStatus(newestGroup) === TRANSACTION_STATUSES.SUCCEEDED &&
     getGroupKey(newestGroup) === 'group.createColony'
   ) {
     const normalizedColonyName = getNormalizedDomainText(colonyName);
@@ -87,8 +90,8 @@ const StepConfirmTransactions = ({ wizardValues: { colonyName } }: Props) => {
     return <Redirect to={`/colony/${normalizedColonyName || colonyName}`} />;
   }
 
-  const colonyTransaction = findTransactionGroupByKey(
-    transactionGroups,
+  const createColonyTxGroup = findTransactionGroupByKey(
+    txGroups,
     'group.createColony',
   );
 
@@ -99,10 +102,10 @@ const StepConfirmTransactions = ({ wizardValues: { colonyName } }: Props) => {
         text={MSG.heading}
       />
       <div className={styles.container}>
-        {colonyTransaction && (
+        {createColonyTxGroup && (
           <GasStationContent
             appearance={{ interactive: false, required: true }}
-            transactionAndMessageGroups={[colonyTransaction]}
+            transactionAndMessageGroups={[createColonyTxGroup]}
           />
         )}
       </div>

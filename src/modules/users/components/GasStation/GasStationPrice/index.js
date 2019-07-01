@@ -1,3 +1,3 @@
 /* @flow */
 
-export { default } from './GasStationPrice';
+export { default } from './GasStationPrice.jsx';

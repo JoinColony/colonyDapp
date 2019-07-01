@@ -2,6 +2,8 @@
 
 import React from 'react';
 
+import { TRANSACTION_STATUSES } from '~immutable/Transaction';
+
 import CardList from '~core/CardList';
 
 import type { TransactionOrMessageGroup } from '../transactionGroup';
@@ -51,9 +53,11 @@ const TransactionDetails = ({
           selectedTransactionIdx={selectedTransactionIdx}
         />
       </CardList>
-      {selectedTransaction && selectedTransaction.status === 'ready' && (
-        <GasStationPrice transaction={selectedTransaction} />
-      )}
+      {selectedTransaction &&
+        (selectedTransaction.status === TRANSACTION_STATUSES.READY ||
+          selectedTransaction.status === TRANSACTION_STATUSES.FAILED) && (
+          <GasStationPrice transaction={selectedTransaction} />
+        )}
     </div>
   );
 };

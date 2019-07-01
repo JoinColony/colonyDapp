@@ -20,8 +20,8 @@ import {
  * Transactions sorting functions.
  */
 const createdAtDesc = (
-  { createdAt: createdAtA }: TransactionRecordType<*, *>,
-  { createdAt: createdAtB }: TransactionRecordType<*, *>,
+  { createdAt: createdAtA }: TransactionRecordType,
+  { createdAt: createdAtB }: TransactionRecordType,
 ) => createdAtB - createdAtA;
 
 /*

@@ -14,7 +14,7 @@ import { CORE_TRANSACTIONS_LIST } from '../../../modules/core/constants';
 
 export type TransactionsList = ImmutableMapType<
   TransactionId,
-  TransactionRecordType<*, *>,
+  TransactionRecordType,
 >;
 
 export type CoreTransactionsProps = {|

@@ -4,7 +4,7 @@ import type { RecordFactory, RecordOf } from 'immutable';
 import type { SendOptions } from '@colony/colony-js-client';
 import type BigNumber from 'bn.js/lib/bn';
 
-import { Record, List } from 'immutable';
+import { Record } from 'immutable';
 
 import type {
   Address,
@@ -13,16 +13,31 @@ import type {
   TransactionReceipt,
 } from '~types';
 
+export const TRANSACTION_ERRORS = Object.freeze({
+  ESTIMATE: 'ESTIMATE',
+  EVENT_DATA: 'EVENT_DATA',
+  MULTISIG_NONCE: 'MULTISIG_NONCE',
+  MULTISIG_REFRESH: 'MULTISIG_REFRESH',
+  MULTISIG_REJECT: 'MULTISIG_REJECT',
+  MULTISIG_SIGN: 'MULTISIG_SIGN',
+  RECEIPT: 'RECEIPT',
+  SEND: 'SEND',
+  UNSUCCESSFUL: 'UNSUCCESSFUL',
+});
+
+export const TRANSACTION_STATUSES = Object.freeze({
+  CREATED: 'CREATED',
+  READY: 'READY',
+  PENDING: 'PENDING',
+  FAILED: 'FAILED',
+  MULTISIG: 'MULTISIG',
+  SUCCEEDED: 'SUCCEEDED',
+});
+
+export type TransactionStatusType = $Values<typeof TRANSACTION_STATUSES>;
+
 export type TransactionError = {|
-  type:
-    | 'eventData'
-    | 'multisigNonce'
-    | 'multisigRefresh'
-    | 'multisigReject'
-    | 'multisigSign'
-    | 'receipt'
-    | 'send'
-    | 'unsuccessful',
+  type: $Values<typeof TRANSACTION_ERRORS>,
   message: string,
 |};
 
@@ -40,10 +55,11 @@ export type TransactionMultisig = {|
   signers?: Array<Object>,
 |};
 
-type Shared<P: TransactionParams, E: TransactionEventData> = {|
+type TransactionRecordProps = {|
   context: ColonyContext,
   createdAt: Date,
-  eventData?: E,
+  error?: TransactionError,
+  eventData?: TransactionEventData,
   from: string,
   gasLimit?: number,
   gasPrice?: BigNumber,
@@ -59,33 +75,19 @@ type Shared<P: TransactionParams, E: TransactionEventData> = {|
   methodName: string,
   multisig?: TransactionMultisig, // Indicates tx is multisig if set
   options: SendOptions,
-  params: P,
+  params: TransactionParams,
   receipt?: TransactionReceipt,
-  status: 'created' | 'ready' | 'pending' | 'failed' | 'multisig' | 'succeeded',
+  status: TransactionStatusType,
 |};
 
-type TransactionRecordProps<P: TransactionParams, E: TransactionEventData> = {|
-  ...Shared<P, E>,
-  errors: List<TransactionError>,
-|};
+export type TransactionType = $ReadOnly<TransactionRecordProps>;
 
-export type TransactionType<
-  P: TransactionParams,
-  E: TransactionEventData,
-> = $ReadOnly<{|
-  ...Shared<P, E>,
-  errors: Array<TransactionError>,
-|}>;
+export type TransactionRecordType = RecordOf<TransactionRecordProps>;
 
-export type TransactionRecordType<
-  P: TransactionParams,
-  E: TransactionEventData,
-> = RecordOf<TransactionRecordProps<P, E>>;
-
-const defaultValues: $Shape<TransactionRecordProps<*, *>> = {
+const defaultValues: $Shape<TransactionRecordProps> = {
   context: undefined,
   createdAt: new Date(),
-  errors: new List(),
+  error: undefined,
   eventData: undefined,
   from: undefined,
   gasLimit: undefined,
@@ -100,10 +102,10 @@ const defaultValues: $Shape<TransactionRecordProps<*, *>> = {
   options: {},
   params: {},
   receipt: undefined,
-  status: 'ready',
+  status: TRANSACTION_STATUSES.READY,
 };
 
-const TransactionRecord: RecordFactory<TransactionRecordProps<*, *>> = Record(
+const TransactionRecord: RecordFactory<TransactionRecordProps> = Record(
   defaultValues,
 );
 
