@@ -4,6 +4,7 @@ import type { Address } from '~types';
 import type {
   ColonyManager,
   ColonyStore,
+  ColonyTaskIndexStore,
   Command,
   DDB,
   Wallet,
@@ -46,7 +47,7 @@ const prepareColonyStoreQuery = async (
 };
 
 export const createColonyProfile: Command<
-  ColonyStore,
+  {| colonyStore: ColonyStore, colonyTaskIndexStore: ColonyTaskIndexStore |},
   ColonyStoreMetadata,
   {|
     colonyAddress: Address,
@@ -83,7 +84,7 @@ export const createColonyProfile: Command<
   },
   schema: CreateColonyProfileCommandArgsSchema,
   async execute(
-    colonyStore,
+    { colonyStore, colonyTaskIndexStore },
     {
       colonyAddress,
       colonyName,
@@ -91,6 +92,12 @@ export const createColonyProfile: Command<
       token: { iconHash, isNative, isExternal, ...token },
     },
   ) {
+    await colonyStore.init(
+      createEvent(COLONY_EVENT_TYPES.TASK_INDEX_STORE_REGISTERED, {
+        taskIndexStoreAddress: colonyTaskIndexStore.address.toString(),
+      }),
+    );
+
     const profileCreatedEvent = createEvent(
       COLONY_EVENT_TYPES.COLONY_PROFILE_CREATED,
       {

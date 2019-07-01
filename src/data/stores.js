@@ -8,6 +8,7 @@ import type { TaskDraftId } from '~immutable';
 import type { DDB } from '~lib/database';
 import type {
   ColonyStore,
+  ColonyTaskIndexStore,
   CommentsStore,
   TaskStore,
   UserMetadataStore,
@@ -17,12 +18,34 @@ import type {
 
 import {
   colony as colonyStoreBlueprint,
+  colonyTaskIndex as colonyTaskIndexStoreBlueprint,
   comments as commentsStoreBlueprint,
   task as taskStoreBlueprint,
   userInbox as userInboxStoreBlueprint,
   userMetadata as userMetadataStoreBlueprint,
   userProfile as userProfileStoreBlueprint,
 } from './blueprints';
+
+export const getColonyTaskIndexStore = (
+  colonyClient: ColonyClientType,
+  ddb: DDB,
+  wallet: WalletObjectType,
+) => async ({
+  colonyAddress,
+  colonyTaskIndexStoreAddress,
+}: {
+  colonyAddress: Address,
+  colonyTaskIndexStoreAddress: string,
+}) =>
+  ddb.getStore<ColonyTaskIndexStore>(
+    colonyTaskIndexStoreBlueprint,
+    colonyTaskIndexStoreAddress,
+    {
+      wallet,
+      colonyAddress,
+      colonyClient,
+    },
+  );
 
 export const getColonyStore = (
   colonyClient: ColonyClientType,
@@ -39,12 +62,24 @@ export const createColonyStore = (
   colonyClient: ColonyClientType,
   ddb: DDB,
   wallet: WalletObjectType,
-) => async ({ colonyAddress }: { colonyAddress: Address }) =>
-  ddb.createStore<ColonyStore>(colonyStoreBlueprint, {
+) => async ({ colonyAddress }: { colonyAddress: Address }) => {
+  const colonyStore = await ddb.createStore<ColonyStore>(colonyStoreBlueprint, {
     wallet,
     colonyAddress,
     colonyClient,
   });
+
+  const colonyTaskIndexStore = await ddb.createStore<ColonyTaskIndexStore>(
+    colonyTaskIndexStoreBlueprint,
+    {
+      wallet,
+      colonyAddress,
+      colonyClient,
+    },
+  );
+
+  return { colonyStore, colonyTaskIndexStore };
+};
 
 export const getTaskStore = (
   colonyClient: ColonyClientType,
@@ -216,4 +251,15 @@ export const getUserMetadataStoreAddress = (ddb: DDB) => async ({
 }) =>
   ddb.generateStoreAddress(userMetadataStoreBlueprint, {
     walletAddress,
+  });
+
+export const getColonyTaskIndexStoreAddress = (
+  colonyClient: ColonyClientType,
+  ddb: DDB,
+  wallet: WalletObjectType,
+) => async ({ colonyAddress }: { colonyAddress: Address }) =>
+  ddb.generateStoreAddress(colonyTaskIndexStoreBlueprint, {
+    colonyAddress,
+    colonyClient,
+    wallet,
   });
