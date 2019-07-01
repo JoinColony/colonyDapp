@@ -255,7 +255,7 @@ class StepHardware extends Component<Props> {
             <FormStatus status={status} />
             {isValid && (
               <div className={styles.interactionPrompt}>
-                <WalletInteraction walletType="hardware" />
+                <WalletInteraction walletType={WALLET_CATEGORIES.HARDWARE} />
               </div>
             )}
             <div className={styles.actions}>

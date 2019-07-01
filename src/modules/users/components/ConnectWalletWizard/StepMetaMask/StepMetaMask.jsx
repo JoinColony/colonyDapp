@@ -15,7 +15,11 @@ import Button from '~core/Button';
 import Heading from '~core/Heading';
 import Icon from '~core/Icon';
 import { ActionForm } from '~core/Fields';
+import WalletInteraction from '~users/GasStation/WalletInteraction';
+
 import { ACTIONS } from '~redux';
+import { WALLET_CATEGORIES } from '~immutable';
+
 import styles from './StepMetaMask.css';
 
 const MSG = defineMessages({
@@ -174,6 +178,11 @@ class MetaMask extends Component<Props, State> {
                 />
               )}
             </div>
+            {isValid && (
+              <div className={styles.interactionPrompt}>
+                <WalletInteraction walletType={WALLET_CATEGORIES.METAMASK} />
+              </div>
+            )}
             <div className={styles.actions}>
               <Button
                 text={MSG.buttonBack}
