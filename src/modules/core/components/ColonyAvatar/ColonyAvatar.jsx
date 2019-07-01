@@ -42,7 +42,7 @@ const ColonyAvatar = ({
       className={className}
       notSet={notSet}
       placeholderIcon="at-sign-circle"
-      seed={colonyAddress}
+      seed={colonyAddress && colonyAddress.toLowerCase()}
       size={size}
       title={colonyDisplayName || colonyName || colonyAddress}
     />

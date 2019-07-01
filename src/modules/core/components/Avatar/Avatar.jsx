@@ -36,7 +36,11 @@ const Avatar = ({
   title,
 }: Props) => {
   const avatar = notSet ? null : avatarURL || getIcon(seed);
-  const imageStyle = avatar ? { backgroundImage: `url(${avatar})` } : {};
+  // if using a blockie, do pixelated image scaling
+  const imageRendering = avatarURL ? undefined : 'pixelated';
+  const imageStyle = avatar
+    ? { backgroundImage: `url(${avatar})`, imageRendering }
+    : {};
   const mainClass = size ? styles[size] : styles.main;
   return (
     <figure

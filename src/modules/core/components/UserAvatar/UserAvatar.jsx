@@ -49,7 +49,7 @@ const UserAvatar = ({
         className={className}
         notSet={notSet}
         placeholderIcon="circle-person"
-        seed={address}
+        seed={address && address.toLowerCase()}
         size={size}
         title={showInfo ? '' : username || address}
       />
