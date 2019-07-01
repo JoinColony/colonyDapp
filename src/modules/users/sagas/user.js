@@ -18,6 +18,8 @@ import {
 import type { Action } from '~redux';
 import { getContext, CONTEXT } from '~context';
 
+import { getUserProfileStoreAddress } from '../../../data/stores';
+
 import {
   executeQuery,
   executeCommand,
@@ -41,8 +43,8 @@ import {
 } from '../../core/actionCreators';
 
 import {
-  updateTokens,
   createUserProfile,
+  updateTokens,
   removeUserAvatar,
   setUserAvatar,
   subscribeToColony,
@@ -62,6 +64,7 @@ import {
   getUserInboxActivity,
   getUserNotificationMetadata,
 } from '../data/queries';
+
 import { createTransaction, getTxChannel } from '../../core/sagas/transactions';
 import { userFetch as userFetchActionCreator } from '../actionCreators';
 
@@ -264,19 +267,25 @@ function* usernameCreate({
     });
 
     const walletAddress = yield select(walletAddressSelector);
-    const { profileStore, metadataStore, inboxStore } = yield* executeCommand(
+
+    const ddb = yield* getContext(CONTEXT.DDB_INSTANCE);
+
+    const getAddress = yield call(getUserProfileStoreAddress, ddb);
+    const profileStoreAddress = yield call(getAddress, { walletAddress });
+
+    const orbitDBPath = profileStoreAddress.toString();
+    yield put(transactionAddParams(id, { orbitDBPath }));
+    yield put(transactionReady(id));
+
+    yield takeFrom(txChannel, ACTIONS.TRANSACTION_SUCCEEDED);
+
+    const { metadataStore, inboxStore } = yield* executeCommand(
       createUserProfile,
       {
         args: { username, walletAddress },
         metadata: { walletAddress },
       },
     );
-
-    const orbitDBPath = profileStore.address.toString();
-    yield put(transactionAddParams(id, { orbitDBPath }));
-    yield put(transactionReady(id));
-
-    yield takeFrom(txChannel, ACTIONS.TRANSACTION_SUCCEEDED);
     yield put<Action<typeof ACTIONS.USERNAME_CREATE_SUCCESS>>({
       type: ACTIONS.USERNAME_CREATE_SUCCESS,
       payload: {
@@ -293,7 +302,6 @@ function* usernameCreate({
   }
   return null;
 }
-
 function* userLogout(): Saga<void> {
   const ddb = yield* getContext(CONTEXT.DDB_INSTANCE);
 
