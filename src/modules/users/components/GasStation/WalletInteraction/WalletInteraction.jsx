@@ -28,9 +28,9 @@ const MSG = defineMessages({
   },
 });
 
-type Props = {
+type Props = {|
   walletType: WalletCategoryType,
-};
+|};
 
 const displayName = 'users.GasStation.WalletInteraction';
 
