@@ -7,6 +7,7 @@ import { DialogActionButton } from '~core/Button';
 import { ACTIONS } from '~redux';
 
 import type { TaskPayoutType } from '~immutable';
+import type { Address } from '~types';
 
 const MSG = defineMessages({
   claimRewards: {
@@ -17,7 +18,7 @@ const MSG = defineMessages({
 
 // Can't seal this object because of HOC
 export type Props = {
-  colonyAddress: string,
+  colonyAddress: Address,
   draftId: string,
   lateRating: boolean,
   lateReveal: boolean,
@@ -47,6 +48,7 @@ const TaskClaimReward = ({
     text={MSG.claimRewards}
     dialog="TaskClaimRewardDialog"
     dialogProps={{
+      colonyAddress,
       lateRating,
       lateReveal,
       nativeTokenPayout,
@@ -62,7 +64,7 @@ const TaskClaimReward = ({
     values={{
       draftId,
       colonyAddress,
-      tokenAddresses: payouts.map(payout => payout.token.address),
+      tokenAddresses: payouts.map(payout => payout.token),
     }}
   />
 );

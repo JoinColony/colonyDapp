@@ -10,7 +10,6 @@ import {
   TASK_STATE,
   TaskPayoutRecord,
   TaskRecord,
-  TokenRecord,
 } from '~immutable';
 import { ACTIONS } from '~redux';
 import { withDataRecordMap } from '~utils/reducers';
@@ -103,7 +102,7 @@ const taskEventReducer = (task: TaskRecordType, event: *) => {
         payouts.push(
           TaskPayoutRecord({
             amount,
-            token: TokenRecord({ address: createAddress(token) }),
+            token: createAddress(token),
           }),
         ),
       );
@@ -166,7 +165,7 @@ const tasksReducer: ReducerType<
             invites: ImmutableSet(invites),
             payouts: List(
               payouts.map(({ amount, token }) =>
-                TaskPayoutRecord({ amount, token: TokenRecord(token) }),
+                TaskPayoutRecord({ amount, token }),
               ),
             ),
           }),

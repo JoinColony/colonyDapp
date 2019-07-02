@@ -5,29 +5,23 @@ import type { RecordOf, RecordFactory } from 'immutable';
 
 import { Record } from 'immutable';
 
-import TokenRecord from './Token';
+import type { Address } from '~types';
 
-import type { TokenRecordType, TokenType } from './Token';
-
-/**
- * @todo Fix `TaskPayout` record props
- * @body `token` should be an address
- */
 export type TaskPayoutType = $ReadOnly<{|
   amount: BigNumber,
-  token: TokenType,
+  token: Address,
 |}>;
 
 type TaskPayoutRecordProps = {|
   amount: BigNumber,
-  token: TokenRecordType,
+  token: Address,
 |};
 
 export type TaskPayoutRecordType = RecordOf<TaskPayoutRecordProps>;
 
 const defaultValues: $Shape<TaskPayoutRecordProps> = {
   amount: undefined,
-  token: TokenRecord(),
+  token: undefined,
 };
 
 const TaskPayoutRecord: RecordFactory<TaskPayoutRecordProps> = Record(

@@ -32,7 +32,6 @@ const colony = {
 <ColonyAvatar
   address="0x1234567890987654321234567890987654321234"
   colony={colony}
-  avatarURL={avatar}
   showLink
 />
 ```

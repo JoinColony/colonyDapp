@@ -1,10 +1,11 @@
 /* @flow */
 
-import React from 'react';
+// $FlowFixMe until hooks flow types
+import React, { useCallback } from 'react';
 import { defineMessages, FormattedMessage, FormattedNumber } from 'react-intl';
 
 import type { TaskPayoutType } from '~immutable';
-import type { Props as TaskClaimRewardProps } from './TaskClaimReward.jsx';
+import type { Address } from '~types';
 
 import Button from '~core/Button';
 import Dialog from '~core/Dialog';
@@ -14,7 +15,10 @@ import Numeral from '~core/Numeral';
 import StarRating from '~core/StarRating';
 import { useSelector } from '~utils/hooks';
 
+import type { Props as TaskClaimRewardProps } from './TaskClaimReward.jsx';
+
 import { networkFeeSelector } from '../../../core/selectors';
+import { useColonyTokens } from '../../hooks/useColonyTokens';
 
 import styles from './TaskClaimRewardDialog.css';
 
@@ -100,6 +104,7 @@ const displayName = 'dashboard.TaskClaimRewardDialog';
 const TaskClaimRewardDialog = ({
   cancel,
   close,
+  colonyAddress,
   rating,
   reputation,
   payouts,
@@ -110,6 +115,13 @@ const TaskClaimRewardDialog = ({
   nativeTokenPayout,
 }: Props) => {
   const networkFee = useSelector(networkFeeSelector);
+  const [, tokenOptions] = useColonyTokens(colonyAddress);
+  const getToken = useCallback(
+    (tokenAddress: Address) =>
+      tokenOptions &&
+      tokenOptions.find(({ address }) => address === tokenAddress),
+    [tokenOptions],
+  );
   return (
     <Dialog cancel={cancel}>
       <DialogSection appearance={{ border: 'bottom' }}>
@@ -179,16 +191,12 @@ const TaskClaimRewardDialog = ({
                     suffix={` ${nativeTokenPayout.symbol}`}
                   />
                 )}
-                {sortedPayouts.map(({ amount, token: { symbol } }) => (
-                  <Numeral
-                    /*
-                     * @NOTE Symbol appearance is unique, there can be only one
-                     */
-                    key={symbol}
-                    value={amount}
-                    suffix={` ${symbol}`}
-                  />
-                ))}
+                {sortedPayouts.map(({ amount, token }) => {
+                  const { symbol } = getToken(token);
+                  return (
+                    <Numeral key={token} value={amount} suffix={` ${symbol}`} />
+                  );
+                })}
               </span>
             </div>
             {/*
@@ -217,17 +225,17 @@ const TaskClaimRewardDialog = ({
                     suffix={` ${nativeTokenPayout.symbol}`}
                   />
                 )}
-                {sortedPayouts.map(payout => (
-                  <Numeral
-                    /*
-                     * @NOTE Symbol appearance is unique, there can be only one
-                     */
-                    key={payout.token.symbol}
-                    value={getTaskPayoutNetworkFee(payout, networkFee)}
-                    prefix="- "
-                    suffix={` ${payout.token.symbol}`}
-                  />
-                ))}
+                {sortedPayouts.map(payout => {
+                  const { symbol } = getToken(payout.token);
+                  return (
+                    <Numeral
+                      key={payout.token}
+                      value={getTaskPayoutNetworkFee(payout, networkFee)}
+                      prefix="- "
+                      suffix={` ${symbol}`}
+                    />
+                  );
+                })}
               </span>
             </div>
             {/*
@@ -247,19 +255,19 @@ const TaskClaimRewardDialog = ({
                     suffix={` ${nativeTokenPayout.token.symbol}`}
                   />
                 )}
-                {sortedPayouts.map(payout => (
-                  <Numeral
-                    /*
-                     * @NOTE Symbol appearance is unique, there can be only one
-                     */
-                    key={payout.token.symbol}
-                    value={getTaskPayoutAmountMinusNetworkFee(
-                      payout,
-                      networkFee,
-                    )}
-                    suffix={` ${payout.token.symbol}`}
-                  />
-                ))}
+                {sortedPayouts.map(payout => {
+                  const { symbol } = getToken(payout.token);
+                  return (
+                    <Numeral
+                      key={payout.token}
+                      value={getTaskPayoutAmountMinusNetworkFee(
+                        payout,
+                        networkFee,
+                      )}
+                      suffix={` ${symbol}`}
+                    />
+                  );
+                })}
               </span>
             </div>
           </section>

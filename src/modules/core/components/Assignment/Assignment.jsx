@@ -5,7 +5,12 @@ import type { Node } from 'react';
 import React from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 
-import type { TaskPayoutType, TokenReferenceType, UserType } from '~immutable';
+import type {
+  TaskPayoutType,
+  TokenReferenceType,
+  TokenType,
+  UserType,
+} from '~immutable';
 import type { Address } from '~types';
 
 import Icon from '~core/Icon';
@@ -59,6 +64,8 @@ type Props = {|
   nativeToken: ?TokenReferenceType,
   /** Should the funding be rendered (if set) */
   showFunding?: boolean,
+  /** Tokens available to the current colony */
+  tokenOptions: Array<TokenType>,
 |};
 
 const defaultRenderAvatar = (address: Address, user: ?UserType) => (
@@ -77,13 +84,14 @@ const Assignment = ({
   renderAvatar = defaultRenderAvatar,
   reputation,
   showFunding,
+  tokenOptions,
   worker,
   workerAddress,
 }: Props) => {
   const fundingWithNativeToken =
     payouts &&
     nativeToken &&
-    payouts.find(payout => payout.token.address === nativeToken.address);
+    payouts.find(payout => payout.token === nativeToken.address);
 
   return (
     <div>
@@ -134,9 +142,10 @@ const Assignment = ({
             )}
             {nativeToken && payouts && payouts.length > 0 ? (
               <PayoutsList
-                payouts={payouts}
-                nativeToken={nativeToken}
                 maxLines={2}
+                nativeToken={nativeToken}
+                payouts={payouts}
+                tokenOptions={tokenOptions}
               />
             ) : (
               <FormattedMessage {...MSG.fundingNotSet} />

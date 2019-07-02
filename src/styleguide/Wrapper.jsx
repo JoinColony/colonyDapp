@@ -18,6 +18,7 @@ import {
 } from '~immutable';
 
 import '../styles/main.css';
+import '../styles/styleguide.css';
 
 import messages from '../i18n/en.json';
 

@@ -1,9 +1,11 @@
 /* @flow */
 
 // $FlowFixMe until hooks flow types
-import React, { useCallback, useState } from 'react';
+import React, { useCallback, useMemo, useState } from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 import BigNumber from 'bn.js';
+
+import type { Address } from '~types';
 
 import Button from '~core/Button';
 import EthUsd from '~core/EthUsd';
@@ -13,6 +15,9 @@ import Select from '~core/Fields/Select';
 import Numeral from '~core/Numeral';
 
 import NetworkFee from '../NetworkFee';
+import { useColonyTokens } from '../../../hooks/useColonyTokens';
+import { tokenIsETH } from '../../../../core/checks';
+import { createAddress } from '../../../../../types';
 
 import styles from './Payout.css';
 
@@ -28,33 +33,31 @@ const MSG = defineMessages({
 });
 
 type Props = {|
-  name: string,
   amount?: number | BigNumber,
-  symbol?: string,
-  decimals?: number,
-  reputation?: number,
-  isEth?: boolean,
-  tokenOptions?: Array<{ value: number, label: string }>,
-  editPayout?: boolean,
-  remove?: () => void,
   canRemove?: boolean,
+  colonyAddress: Address,
+  editPayout?: boolean,
+  name: string,
+  remove?: () => void,
+  reputation?: number,
   reset?: () => void,
+  tokenAddress: Address,
+  tokenOptions?: Array<{ value: number, label: string }>,
 |};
 
 const displayName = 'dashboard.TaskEditDialog.Payout';
 
 const Payout = ({
   amount,
-  symbol,
-  decimals = 18,
-  reputation,
-  name,
-  tokenOptions,
-  isEth = false,
   canRemove = true,
-  remove,
-  reset,
+  colonyAddress,
   editPayout = true,
+  name,
+  remove,
+  reputation,
+  reset,
+  tokenAddress,
+  tokenOptions,
 }: Props) => {
   const [isEditing, setIsEditing] = useState(false);
 
@@ -67,6 +70,20 @@ const Payout = ({
     },
     [isEditing, reset],
   );
+
+  const [, availableTokens] = useColonyTokens(colonyAddress);
+
+  const token = (availableTokens &&
+    availableTokens.find(({ address }) => address === tokenAddress)) || {
+    address: createAddress(''),
+    decimals: 18,
+    name: '',
+    symbol: '',
+  }; // make flow happy for below
+
+  const isEth = useMemo(() => tokenIsETH(token), [token]);
+
+  const { decimals = 18, symbol } = token;
 
   return (
     <div>

@@ -17,8 +17,7 @@ import { useDataFetcher } from '~utils/hooks';
 
 import { rolesFetcher, tokenFetcher } from '../../../dashboard/fetchers';
 import { useColonyNativeToken } from '../../../dashboard/hooks/useColonyNativeToken';
-
-import { colonyTokensSelector } from '../../../dashboard/selectors';
+import { useColonyTokens } from '../../../dashboard/hooks/useColonyTokens';
 import { walletAddressSelector } from '../../../users/selectors';
 
 import { canEditTokens } from '../../checks';
@@ -66,11 +65,7 @@ const Tokens = ({ canMintNativeToken, colonyAddress, openDialog }: Props) => {
   ]);
 
   // get sorted tokens
-  const mapColonyTokens = useCallback(
-    state => colonyTokensSelector(state, colonyAddress),
-    [colonyAddress],
-  );
-  const tokens = useMappedState(mapColonyTokens);
+  const [tokens] = useColonyTokens(colonyAddress);
 
   const nativeTokenReference = useColonyNativeToken(colonyAddress);
   const nativeTokenAddress = nativeTokenReference
@@ -117,7 +112,7 @@ const Tokens = ({ canMintNativeToken, colonyAddress, openDialog }: Props) => {
             </Heading>
           )}
         </div>
-        <TokenList tokens={tokens} appearance={{ numCols: '3' }} />
+        {tokens && <TokenList tokens={tokens} appearance={{ numCols: '3' }} />}
       </main>
       <aside className={styles.sidebar}>
         <ul>
