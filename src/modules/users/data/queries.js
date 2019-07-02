@@ -263,17 +263,19 @@ export const getUserPermissions: Query<
   context: [CONTEXT.COLONY_MANAGER],
   prepare: prepareColonyClientQuery,
   async execute(colonyClient, { walletAddress }) {
-    const canEnterRecoveryMode = await colonyClient.hasColonyRole.call({
+    const {
+      hasRole: canEnterRecoveryMode,
+    } = await colonyClient.hasColonyRole.call({
       address: walletAddress,
       role: COLONY_ROLE_RECOVERY,
       domainId: 1,
     });
-    const isAdmin = await colonyClient.hasColonyRole.call({
+    const { hasRole: isAdmin } = await colonyClient.hasColonyRole.call({
       address: walletAddress,
       role: COLONY_ROLE_ADMINISTRATION,
       domainId: 1,
     });
-    const isFounder = await colonyClient.hasColonyRole.call({
+    const { hasRole: isFounder } = await colonyClient.hasColonyRole.call({
       address: walletAddress,
       role: COLONY_ROLE_ROOT,
       domainId: 1,
