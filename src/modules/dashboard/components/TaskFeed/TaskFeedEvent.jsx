@@ -8,13 +8,14 @@ import formatDate from 'sugar-date/date/format';
 import type { Address } from '~types';
 import type { TaskFeedItemType } from '~immutable';
 
+import UserMention from '~core/UserMention';
+import TimeRelative from '~core/TimeRelative';
+import taskSkillsTree from '../TaskSkills/taskSkillsTree';
+
 import { TASK_EVENT_TYPES } from '~data/constants';
 import { useSelector } from '~utils/hooks';
 import { domainSelector } from '../../selectors';
 import { friendlyUsernameSelector } from '../../../users/selectors';
-import taskSkillsTree from '../TaskSkills/taskSkillsTree';
-
-import TimeRelative from '~core/TimeRelative';
 
 import styles from '~dashboard/TaskFeed/TaskFeedEvent.css';
 
@@ -117,7 +118,7 @@ const TaskFeedEventDomainSet = ({
       {...MSG.domainSet}
       values={{
         domainName,
-        user: <span>{user}</span>,
+        user: <UserMention username={user} hasLink />,
       }}
     />
   );
@@ -130,7 +131,10 @@ const TaskFeedEventCreated = ({
 }: *) => {
   const user = useSelector(friendlyUsernameSelector, [userAddress]);
   return (
-    <FormattedMessage {...MSG.created} values={{ user: <span>{user}</span> }} />
+    <FormattedMessage
+      {...MSG.created}
+      values={{ user: <UserMention username={user} hasLink /> }}
+    />
   );
 };
 
@@ -145,7 +149,7 @@ const TaskFeedEventDueDateSet = ({
     <FormattedMessage
       {...MSG.dueDateSet}
       values={{
-        user: <span>{user}</span>,
+        user: <UserMention username={user} hasLink />,
         dueDate: formatDate(new Date(dueDate), '{short}'),
       }}
     />
@@ -162,7 +166,7 @@ const TaskFeedEventPayoutSet = ({
   return (
     <FormattedMessage
       {...MSG.payoutSet}
-      values={{ user: <span>{user}</span> }}
+      values={{ user: <UserMention username={user} hasLink /> }}
     />
   );
 };
@@ -181,7 +185,7 @@ const TaskFeedEventSkillSet = ({
   return (
     <FormattedMessage
       {...MSG.skillSet}
-      values={{ user: <span>{user}</span>, skillName }}
+      values={{ user: <UserMention username={user} hasLink />, skillName }}
     />
   );
 };
@@ -195,7 +199,7 @@ const TaskFeedEventCancelled = ({
   return (
     <FormattedMessage
       {...MSG.cancelled}
-      values={{ user: <span>{user}</span> }}
+      values={{ user: <UserMention username={user} hasLink /> }}
     />
   );
 };
@@ -207,7 +211,10 @@ const TaskFeedEventClosed = ({
 }: *) => {
   const user = useSelector(friendlyUsernameSelector, [userAddress]);
   return (
-    <FormattedMessage {...MSG.closed} values={{ user: <span>{user}</span> }} />
+    <FormattedMessage
+      {...MSG.closed}
+      values={{ user: <UserMention username={user} hasLink /> }}
+    />
   );
 };
 
@@ -221,7 +228,7 @@ const TaskFeedEventDescriptionSet = ({
   return (
     <FormattedMessage
       {...MSG.descriptionSet}
-      values={{ user: <span>{user}</span>, description }}
+      values={{ user: <UserMention username={user} hasLink />, description }}
     />
   );
 };
@@ -235,7 +242,7 @@ const TaskFeedEventFinalized = ({
   return (
     <FormattedMessage
       {...MSG.finalized}
-      values={{ user: <span>{user}</span> }}
+      values={{ user: <UserMention username={user} hasLink /> }}
     />
   );
 };
@@ -250,7 +257,7 @@ const TaskFeedEventTitleSet = ({
   return (
     <FormattedMessage
       {...MSG.titleSet}
-      values={{ user: <span>{user}</span>, title }}
+      values={{ user: <UserMention username={user} hasLink />, title }}
     />
   );
 };
@@ -267,7 +274,7 @@ const TaskFeedEventWorkInviteSent = ({
     <FormattedMessage
       {...MSG.workInviteSent}
       values={{
-        user: <span>{user}</span>,
+        user: <UserMention username={user} hasLink />,
         invitedUser: <span>{invitedUser}</span>,
       }}
     />
@@ -294,7 +301,10 @@ const TaskFeedEventWorkerAssigned = ({
   return (
     <FormattedMessage
       {...MSG.workerAssigned}
-      values={{ user: <span>{user}</span>, worker: <span>{worker}</span> }}
+      values={{
+        user: <UserMention username={user} hasLink />,
+        worker: <span>{worker}</span>,
+      }}
     />
   );
 };
@@ -309,7 +319,10 @@ const TaskFeedEventWorkerUnassigned = ({
   return (
     <FormattedMessage
       {...MSG.workerUnassigned}
-      values={{ user: <span>{user}</span>, worker: <span>{worker}</span> }}
+      values={{
+        user: <UserMention username={user} hasLink />,
+        worker: <span>{worker}</span>,
+      }}
     />
   );
 };
