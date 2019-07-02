@@ -37,6 +37,12 @@ const MSG = defineMessages({
     id: 'dashboard.ColonyTasks.newTaskDescription',
     defaultMessage: 'One small task for Man, one giant leap for Mankind',
   },
+  noTasksAvailable: {
+    id: 'dashboard.ColonyTasks.noTasksAvailable',
+    defaultMessage:
+      // eslint-disable-next-line max-len
+      'There are no tasks created yet. While you wait, we suggest subscribing to this Colony',
+  },
 });
 
 const displayName = 'dashboard.ColonyTasks';
@@ -100,7 +106,9 @@ const ColonyTasks = ({
         />
         <FormattedMessage tagName="p" {...MSG.newTaskDescription} />
       </div>
-    ) : null;
+    ) : (
+      <FormattedMessage tagName="p" {...MSG.noTasksAvailable} />
+    );
   }
 
   return (
