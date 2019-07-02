@@ -144,7 +144,8 @@ const ColonyHome = ({
           <TabPanel>
             {nativeTokenRef &&
             nativeTokenRef.balance &&
-            nativeTokenRef.balance.isZero() ? (
+            nativeTokenRef.balance.isZero() &&
+            colony.canMintNativeToken ? (
               <ColonyInitialFunding
                 colonyAddress={colonyAddress}
                 displayName={colony.displayName}
