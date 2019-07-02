@@ -53,7 +53,7 @@ function* tokenInfoFetch({
       [colonyManager, colonyManager.getTokenClient],
       tokenAddress,
     );
-    const info = client.getTokenInfo.call();
+    const info = yield call([client.getTokenInfo, client.getTokenInfo.call]);
     yield put<Action<typeof ACTIONS.TOKEN_INFO_FETCH_SUCCESS>>({
       type: ACTIONS.TOKEN_INFO_FETCH_SUCCESS,
       payload: { ...info, tokenAddress },
