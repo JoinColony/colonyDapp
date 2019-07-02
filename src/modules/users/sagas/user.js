@@ -23,6 +23,7 @@ import {
   executeCommand,
   putError,
   selectAsJS,
+  takeFrom,
 } from '~utils/saga/effects';
 import { ACTIONS } from '~redux';
 
@@ -241,29 +242,26 @@ function* usernameCheckAvailability({
     yield putError(ACTIONS.USERNAME_CHECK_AVAILABILITY_ERROR, error, meta);
   }
 }
+
 function* usernameCreate({
+  meta: { id },
   meta,
   payload: { username },
-}: Action<typeof ACTIONS.USERNAME_CREATE>): Saga<void> {
-  const txChannel = yield call(getTxChannel, meta.id);
+}: Action<typeof ACTIONS.USERNAME_CREATE>): Saga<*> {
+  const txChannel = yield call(getTxChannel, id);
   try {
-    yield fork(createTransaction, meta.id, {
+    yield fork(createTransaction, id, {
       context: NETWORK_CONTEXT,
       methodName: 'registerUserLabel',
       ready: false,
       params: { username },
       group: {
         key: 'transaction.batch.createUser',
-        id: meta.id,
+        id,
         index: 0,
       },
     });
-    /**
-     * @todo  should these stores be created after the transaction succeeded?
-     */
-    /*
-     * Create the profile store
-     */
+
     const walletAddress = yield select(walletAddressSelector);
     const { profileStore, metadataStore, inboxStore } = yield* executeCommand(
       createUserProfile,
@@ -273,6 +271,11 @@ function* usernameCreate({
       },
     );
 
+    const orbitDBPath = profileStore.address.toString();
+    yield put(transactionAddParams(id, { orbitDBPath }));
+    yield put(transactionReady(id));
+
+    yield takeFrom(txChannel, ACTIONS.TRANSACTION_SUCCEEDED);
     yield put<Action<typeof ACTIONS.USERNAME_CREATE_SUCCESS>>({
       type: ACTIONS.USERNAME_CREATE_SUCCESS,
       payload: {
@@ -282,18 +285,12 @@ function* usernameCreate({
       },
       meta,
     });
-    yield put(
-      transactionAddParams(meta.id, {
-        orbitDBPath: profileStore.address.toString(),
-      }),
-    );
-
-    yield put(transactionReady(meta.id));
   } catch (error) {
-    yield putError(ACTIONS.USERNAME_CREATE_ERROR, error, meta);
+    return yield putError(ACTIONS.USERNAME_CREATE_ERROR, error, meta);
   } finally {
     txChannel.close();
   }
+  return null;
 }
 
 function* userLogout(): Saga<void> {
