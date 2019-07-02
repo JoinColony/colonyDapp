@@ -33,7 +33,12 @@ import setupDashboardSagas from '../../dashboard/sagas';
 import { getWallet, setupUsersSagas, setupInboxSagas } from '../../users/sagas';
 import setupTransactionsSagas from './transactions';
 import setupNetworkSagas from './network';
-import { getDDB, getGasPrices, getColonyManager, getWalletType } from './utils';
+import {
+  getDDB,
+  getGasPrices,
+  getColonyManager,
+  getWalletCategory,
+} from './utils';
 import setupOnBeforeUnload from './setupOnBeforeUnload';
 import { createAddress } from '~types';
 
@@ -83,7 +88,7 @@ export default function* setupUserContext(
     yield put<Action<typeof ACTIONS.WALLET_CREATE_SUCCESS>>({
       type: ACTIONS.WALLET_CREATE_SUCCESS,
       payload: {
-        walletType: getWalletType(method),
+        walletType: getWalletCategory(method),
       },
     });
 

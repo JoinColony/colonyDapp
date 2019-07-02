@@ -4,12 +4,10 @@ import { compose, withProps } from 'recompose';
 import ledgerWallet from '@colony/purser-ledger';
 import trezorWallet from '@colony/purser-trezor';
 
+import type { WalletSpecificType } from '~immutable';
+
 import withWizard from '~core/Wizard/withWizard';
-
-import type { WalletMethod } from '../../types';
-
 import ConnectWalletWizard from './ConnectWalletWizard.jsx';
-
 import StepStart from './StepStart';
 import StepHardware from './StepHardware';
 import StepMetaMask from './StepMetaMask';
@@ -17,10 +15,12 @@ import StepMnemonic from './StepMnemonic';
 import StepJSONUpload from './StepJSONUpload';
 import StepTrufflePig from './StepTrufflePig';
 
+import { WALLET_SPECIFICS } from '~immutable';
+
 const stepArray = [StepStart, StepMetaMask];
 
 type StepValues = {
-  method: WalletMethod,
+  method: WalletSpecificType,
 };
 
 /*
@@ -36,17 +36,17 @@ const enhancedHardwareStep = (
 const stepFunction = (step: number, { method }: StepValues) => {
   if (step === 1) {
     switch (method) {
-      case 'trezor':
+      case WALLET_SPECIFICS.TREZOR:
         return enhancedHardwareStep(trezorWallet);
-      case 'ledger':
+      case WALLET_SPECIFICS.LEDGER:
         return enhancedHardwareStep(ledgerWallet);
-      case 'metamask':
+      case WALLET_SPECIFICS.METAMASK:
         return StepMetaMask;
-      case 'mnemonic':
+      case WALLET_SPECIFICS.MNEMONIC:
         return StepMnemonic;
-      case 'json':
+      case WALLET_SPECIFICS.JSON:
         return StepJSONUpload;
-      case 'trufflepig':
+      case WALLET_SPECIFICS.TRUFFLEPIG:
         return StepTrufflePig;
       default:
         break;

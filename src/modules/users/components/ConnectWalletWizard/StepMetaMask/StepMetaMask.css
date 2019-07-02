@@ -13,3 +13,7 @@
 .iconContainer {
   composes: marginBottomMedium from '~styles/layout.css';
 }
+
+.interactionPrompt {
+  composes: interactionPrompt from '../StepHardware/StepHardware.css';
+}

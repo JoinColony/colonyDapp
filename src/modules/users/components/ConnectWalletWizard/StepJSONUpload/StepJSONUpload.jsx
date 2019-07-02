@@ -9,15 +9,14 @@ import * as yup from 'yup';
 
 import type { WizardProps } from '~core/Wizard';
 import type { FileReaderFile, UploadFile } from '~core/FileUpload';
+import type { WalletSpecificType } from '~immutable';
 
 import { pipe, mapPayload, mergePayload } from '~utils/actions';
-import { ACTIONS } from '~redux';
 import Button from '~core/Button';
 import Heading from '~core/Heading';
 import FileUpload from '~core/FileUpload';
 import { ActionForm, Input, FormStatus } from '~core/Fields';
-
-import type { WalletMethod } from '../../../types';
+import { ACTIONS } from '~redux';
 
 import styles from './StepJSONUpload.css';
 
@@ -62,7 +61,7 @@ const MSG = defineMessages({
 });
 
 type FormValues = {
-  method: WalletMethod,
+  method: WalletSpecificType,
   walletJsonFileUpload: Array<UploadFile>,
   walletJsonPassword: string,
 };
