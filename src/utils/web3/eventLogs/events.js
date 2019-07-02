@@ -47,6 +47,31 @@ export const getEvents = async (
   return client.getEvents(filter);
 };
 
+export const decorateLog = async (
+  client: ColonyClientType | TokenClientType,
+  log: *,
+  event?: *,
+) => {
+  const { blockHash, transactionHash } = log;
+  const { timestamp } = await client.adapter.provider.getBlock(blockHash);
+  const transaction = await client.adapter.provider.getTransaction(
+    transactionHash,
+  );
+
+  let parsedEvent = event;
+  if (!parsedEvent) {
+    const events = await client.parseLogs([log]);
+    parsedEvent = events && events[0];
+  }
+
+  return {
+    event: parsedEvent,
+    log,
+    transaction,
+    timestamp: new Date(timestamp).getTime() * 1e3,
+  };
+};
+
 export const getDecoratedEvents = async (
   client: ColonyClientType | TokenClientType,
   logFilter: LogFilter,
@@ -57,6 +82,7 @@ export const getDecoratedEvents = async (
     logFilter,
     logFilterOptions,
   );
+
   const logs = await client.getLogs(filter);
   if (!(logs && logs.length)) return [];
 
@@ -66,20 +92,7 @@ export const getDecoratedEvents = async (
   }
 
   return Promise.all(
-    logs.map(async (log, index) => {
-      const { blockHash, transactionHash } = log;
-      const { timestamp } = await client.adapter.provider.getBlock(blockHash);
-      const transaction = await client.adapter.provider.getTransaction(
-        transactionHash,
-      );
-
-      return {
-        event: events[index],
-        log,
-        transaction,
-        timestamp: new Date(timestamp).getTime() * 1e3,
-      };
-    }),
+    logs.map((log, index) => decorateLog(client, log, events[index])),
   );
 };
 

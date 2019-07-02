@@ -1,7 +1,7 @@
 /* @flow */
 
 import type { Saga } from 'redux-saga';
-import { call, fork, put, takeEvery, select } from 'redux-saga/effects';
+import { call, fork, put, takeEvery } from 'redux-saga/effects';
 
 import type { Action } from '~redux';
 
@@ -13,17 +13,15 @@ import {
 } from '~utils/saga/effects';
 import { ACTIONS } from '~redux';
 
+import { decorateLog } from '~utils/web3/eventLogs/events';
+import { getContext, CONTEXT } from '~context';
+import { normalizeTransactionLog } from '~data/normalizers';
+
 import { getColonyRoles } from '../data/queries';
 import { createTransaction, getTxChannel } from '../../core/sagas';
 import { COLONY_CONTEXT } from '../../core/constants';
-import { walletAddressSelector } from '../../users/selectors';
 
 import { fetchRoles } from '../actionCreators';
-
-import {
-  NOTIFICATION_EVENT_ADMIN_ADDED,
-  NOTIFICATION_EVENT_ADMIN_REMOVED,
-} from '~users/Inbox/events';
 
 function* colonyRolesFetch({
   payload: { colonyAddress },
@@ -53,10 +51,6 @@ function* colonyAdminAdd({
   const txChannel = yield call(getTxChannel, meta.id);
   try {
     /*
-     * Get the current user's wallet address (we need that for notifications)
-     */
-    const walletAddress = yield select(walletAddressSelector);
-    /*
      * Set the admin on the contract level (transaction)
      */
     yield fork(createTransaction, meta.id, {
@@ -66,7 +60,15 @@ function* colonyAdminAdd({
       params: { address: newAdmin, setTo: true },
     });
 
-    yield takeFrom(txChannel, ACTIONS.TRANSACTION_SUCCEEDED);
+    const {
+      payload: {
+        transaction: {
+          receipt: {
+            logs: [colonyRoleSetLog],
+          },
+        },
+      },
+    } = yield takeFrom(txChannel, ACTIONS.TRANSACTION_SUCCEEDED);
 
     /*
      * Dispatch the action to the admin in the Redux store;
@@ -78,16 +80,21 @@ function* colonyAdminAdd({
       meta,
     });
 
+    const colonyManager = yield* getContext(CONTEXT.COLONY_MANAGER);
+    const colonyClient = yield call(
+      [colonyManager, colonyManager.getColonyClient],
+      colonyAddress,
+    );
+
     /*
      * Notification
      */
-    yield putNotification({
-      colonyAddress,
-      event: NOTIFICATION_EVENT_ADMIN_ADDED,
-      sourceUserAddress: walletAddress,
-      targetUserAddress: newAdmin,
-    });
-
+    const decoratedLog = yield call(
+      decorateLog,
+      colonyClient,
+      colonyRoleSetLog,
+    );
+    yield putNotification(normalizeTransactionLog(colonyAddress, decoratedLog));
     yield put(fetchRoles(colonyAddress));
   } catch (error) {
     yield putError(ACTIONS.COLONY_ADMIN_ADD_ERROR, error, meta);
@@ -105,11 +112,6 @@ function* colonyAdminRemove({
   try {
     txChannel = yield call(getTxChannel, meta.id);
     /*
-     * Get the current user's wallet address (we need that for notifications)
-     */
-    const walletAddress = yield select(walletAddressSelector);
-
-    /*
      * Remove the admin on the contract level (transaction)
      */
     yield fork(createTransaction, meta.id, {
@@ -119,7 +121,15 @@ function* colonyAdminRemove({
       params: { address: user, setTo: false },
     });
 
-    yield takeFrom(txChannel, ACTIONS.TRANSACTION_SUCCEEDED);
+    const {
+      payload: {
+        transaction: {
+          receipt: {
+            logs: [colonyRoleSetLog],
+          },
+        },
+      },
+    } = yield takeFrom(txChannel, ACTIONS.TRANSACTION_SUCCEEDED);
 
     yield put<Action<typeof ACTIONS.COLONY_ADMIN_REMOVE_SUCCESS>>({
       type: ACTIONS.COLONY_ADMIN_REMOVE_SUCCESS,
@@ -127,16 +137,21 @@ function* colonyAdminRemove({
       payload,
     });
 
+    const colonyManager = yield* getContext(CONTEXT.COLONY_MANAGER);
+    const colonyClient = yield call(
+      [colonyManager, colonyManager.getColonyClient],
+      colonyAddress,
+    );
+
     /*
      * Notification
      */
-    yield putNotification({
-      colonyAddress,
-      event: NOTIFICATION_EVENT_ADMIN_REMOVED,
-      sourceUserAddress: walletAddress,
-      targetUserAddress: user,
-    });
-
+    const decoratedLog = yield call(
+      decorateLog,
+      colonyClient,
+      colonyRoleSetLog,
+    );
+    yield putNotification(normalizeTransactionLog(colonyAddress, decoratedLog));
     yield put(fetchRoles(colonyAddress));
   } catch (error) {
     yield putError(ACTIONS.COLONY_ADMIN_REMOVE_ERROR, error, meta);

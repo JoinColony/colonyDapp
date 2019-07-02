@@ -142,17 +142,19 @@ const InboxItem = ({
       comment,
       taskTitle,
       domainId,
+      setTo,
     },
     onClickRoute,
     // sourceType,
     sourceId,
     sourceAddress: sourceUserAddress,
-    targetAddress: targetUserAddress,
+    targetAddress,
     timestamp,
   },
 }: Props) => {
   let colonyAddress;
   let tokenAddress;
+  let targetUserAddress = targetAddress;
   /*
    * @NOTE:
    *
@@ -162,6 +164,9 @@ const InboxItem = ({
    */
   switch (eventType) {
     case 'ColonyRoleSet':
+      colonyAddress = sourceId;
+      targetUserAddress = address;
+      break;
     case 'DomainAdded':
       colonyAddress = sourceId;
       break;
@@ -288,6 +293,7 @@ const InboxItem = ({
                     <TimeRelative value={value} />
                   )),
                   user: makeInboxDetail(sourceUserDisplayWithFallback),
+                  setTo,
                 }}
               />
             </span>

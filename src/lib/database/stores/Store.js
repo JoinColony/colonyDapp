@@ -74,7 +74,7 @@ class Store {
 
     const [heads] = await raceAgainstTimeout(
       Promise.all([headCountPromise, loadPromise]),
-      10000,
+      30000,
       new Error('Could not get store heads in time'),
     );
     return heads;

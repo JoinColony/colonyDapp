@@ -19,6 +19,8 @@ import { getNormalizedDomainText } from '~utils/strings';
 import { ACTIONS } from '~redux';
 import { CONTEXT, getContext } from '~context';
 
+import { decorateLog } from '~utils/web3/eventLogs/events';
+import { normalizeTransactionLog } from '~data/normalizers';
 import { createColonyProfile } from '../data/commands';
 
 import { createUserProfile } from '../../users/data/commands';
@@ -43,7 +45,6 @@ import {
 import { subscribeToColony } from '../../users/actionCreators';
 import { userDidClaimProfile } from '../../users/checks';
 
-import { NOTIFICATION_EVENT_COLONY_ENS_CREATED } from '~users/Inbox/events';
 import { createAddress } from '~types';
 
 function* colonyCreate({
@@ -362,8 +363,15 @@ function* colonyCreate({
      * Create label
      */
     yield put(transactionReady(createLabel.id));
-    yield takeFrom(createLabel.channel, ACTIONS.TRANSACTION_SUCCEEDED);
-
+    const {
+      payload: {
+        transaction: {
+          receipt: {
+            logs: [, , colonyLabelRegisteredLog],
+          },
+        },
+      },
+    } = yield takeFrom(createLabel.channel, ACTIONS.TRANSACTION_SUCCEEDED);
     if (deployTokenAuthority) {
       /*
        * Deploy TokenAuthority
@@ -439,12 +447,14 @@ function* colonyCreate({
     /*
      * Notification
      */
-    yield putNotification({
-      colonyAddress,
-      colonyName,
-      event: NOTIFICATION_EVENT_COLONY_ENS_CREATED,
-      sourceUserAddress: walletAddress,
-    });
+
+    // @TODO Add proper support for event normalization
+    const decoratedLog = yield call(
+      decorateLog,
+      colonyManager.networkClient,
+      colonyLabelRegisteredLog,
+    );
+    yield putNotification(normalizeTransactionLog(colonyAddress, decoratedLog));
     return null;
   } catch (error) {
     yield putError(ACTIONS.COLONY_CREATE_ERROR, error, meta);
