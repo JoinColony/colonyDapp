@@ -1,8 +1,11 @@
 /* @flow */
 
+import type { ColonyNetworkClient } from '@colony/colony-js-client';
+
 import type { DDB } from '~lib/database';
-import type { Address } from '~types';
+import type { Address, ENSCache } from '~types';
 import type { UserMetadataStore } from '~data/types';
+
 import { USER_EVENT_TYPES } from '~data/constants';
 import { getUserProfileStore, getUserInboxStore } from '~data/stores';
 import { getUserProfileReducer, getUserTokensReducer } from './reducers';
@@ -17,6 +20,7 @@ import {
   NOTIFICATION_EVENT_USER_MENTIONED,
   NOTIFICATION_EVENT_USER_TRANSFER,
 } from '~users/Inbox/events';
+import { log } from '~utils/debug';
 
 const {
   ASSIGNED_TO_TASK,
@@ -61,4 +65,19 @@ export const getUserInboxStoreByProfileAddress = (ddb: DDB) => async ({
     inboxStoreAddress,
     walletAddress,
   });
+};
+
+export const getUserAddressByUsername = (
+  ens: ENSCache,
+  networkClient: ColonyNetworkClient,
+) => async (username: string): Promise<?Address> => {
+  try {
+    return ens.getAddress(
+      ens.constructor.getFullDomain('user', username),
+      networkClient,
+    );
+  } catch (caughtError) {
+    log.warn(caughtError);
+    return null;
+  }
 };

@@ -26,6 +26,7 @@ import { USER_EVENT_TYPES, USER_PROFILE_EVENT_TYPES } from '~data/constants';
 import {
   getUserTokenAddresses,
   getUserInboxStoreByProfileAddress,
+  getUserAddressByUsername,
 } from './utils';
 
 import {
@@ -381,18 +382,7 @@ export const createCommentMention: Command<
   ) {
     if (!matchingUsernames.length) return [];
 
-    const getWalletAddress = async (username: string) => {
-      try {
-        const address = await ens.getAddress(
-          ens.constructor.getFullDomain('user', username),
-          networkClient,
-        );
-        return address;
-      } catch (caughtError) {
-        log.warn(caughtError);
-        return null;
-      }
-    };
+    const getUserAddress = getUserAddressByUsername(ens, networkClient);
 
     const getInboxStore = async (walletAddress: Address) => {
       try {
@@ -406,9 +396,7 @@ export const createCommentMention: Command<
       }
     };
 
-    const addresses = await Promise.all(
-      matchingUsernames.map(getWalletAddress),
-    );
+    const addresses = await Promise.all(matchingUsernames.map(getUserAddress));
 
     const inboxStores = await Promise.all(
       addresses.filter(Boolean).map(getInboxStore),

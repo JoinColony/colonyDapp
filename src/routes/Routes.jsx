@@ -27,7 +27,7 @@ import {
   COLONY_HOME_ROUTE,
   CREATE_COLONY_ROUTE,
   CREATE_USER_ROUTE,
-  FOUR_O_FOUR_ROUTE,
+  NOT_FOUND_ROUTE,
   TASK_ROUTE,
   CREATE_WALLET_ROUTE,
   DASHBOARD_ROUTE,
@@ -55,7 +55,7 @@ const Routes = ({ walletAddress }) => {
           <Redirect to={isConnected ? DASHBOARD_ROUTE : CONNECT_ROUTE} />
         )}
       />
-      <Route exact path={FOUR_O_FOUR_ROUTE} component={FourOFour} />
+      <Route exact path={NOT_FOUND_ROUTE} component={FourOFour} />
       <DisconnectedOnlyRoute
         isConnected={isConnected}
         path={CONNECT_ROUTE}

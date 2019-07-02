@@ -3,18 +3,23 @@
 import type { Match } from 'react-router-dom';
 
 import React from 'react';
+import { Redirect } from 'react-router';
 
 import type { Address } from '~types';
 import type { UserType } from '~immutable';
 
+import { NOT_FOUND_ROUTE } from '~routes';
 import { useDataFetcher } from '~utils/hooks';
+
+import { userFetcher } from '../../fetchers';
+import { currentUserColoniesFetcher } from '../../../dashboard/fetchers';
+import { useUserAddressFetcher } from '../../hooks';
+
 import ColonyGrid from '~dashboard/ColonyGrid';
 import ActivityFeed from '~core/ActivityFeed';
 import ProfileTemplate from '~pages/ProfileTemplate';
 
 import mockActivities from './__datamocks__/mockActivities';
-import { userByUsernameFetcher } from '../../fetchers';
-import { currentUserColoniesFetcher } from '../../../dashboard/fetchers';
 
 import UserMeta from './UserMeta.jsx';
 import UserProfileSpinner from './UserProfileSpinner.jsx';
@@ -30,19 +35,30 @@ const UserProfile = ({
     params: { username },
   },
 }: Props) => {
-  const { data: user } = useDataFetcher<UserType>(
-    userByUsernameFetcher,
-    [username],
-    [username],
+  const { userAddress, error: userAddressError } = useUserAddressFetcher(
+    username,
   );
 
+  const { error: userError, data: user, isFetching } = useDataFetcher<UserType>(
+    userFetcher,
+    [userAddress],
+    [userAddress],
+  );
+
+  // Tracked in colonyDapp#1472
   const { data: colonyAddresses } = useDataFetcher<Address[]>(
     currentUserColoniesFetcher,
     [],
     [],
   );
 
-  if (!user) return <UserProfileSpinner />;
+  if (userError || userAddressError) {
+    return <Redirect to={NOT_FOUND_ROUTE} />;
+  }
+
+  if (!user || isFetching) {
+    return <UserProfileSpinner />;
+  }
 
   return (
     <ProfileTemplate asideContent={<UserMeta user={user} />}>
