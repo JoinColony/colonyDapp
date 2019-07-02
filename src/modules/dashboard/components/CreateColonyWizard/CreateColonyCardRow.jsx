@@ -6,20 +6,19 @@ import type { UserType } from '~immutable';
 
 // $FlowFixMe Update flow
 import React, { useCallback } from 'react';
-import { compose } from 'recompose';
 
 import styles from './StepConfirmAllInput.css';
 
 import Heading from '~core/Heading';
 
 import { userDidClaimProfile } from '../../../users/checks';
-import { withCurrentUser } from '../../../users/hocs';
-import { withImmutablePropsToJS } from '~utils/hoc';
+import { currentUserSelector } from '../../../users/selectors';
 import { getNormalizedDomainText } from '~utils/strings';
+import { useSelector } from '~utils/hooks';
 
 type Row = {
   title: MessageDescriptor,
-  valueKey: string,
+  valueKey: string | [string, string],
 };
 
 type FormValues = {
@@ -33,7 +32,6 @@ type FormValues = {
 type CardProps = {
   cardOptions: Array<Row>,
   values: FormValues,
-  currentUser: UserType,
 };
 
 const normalize = (name): string => {
@@ -55,7 +53,9 @@ const formatColonyName = (values, option: { valueKey: string }) => {
   return `${values.displayName} (colony.io/colony/${normalized})`;
 };
 
-const CardRow = ({ cardOptions, values, currentUser }: CardProps): any[] => {
+const CardRow = ({ cardOptions, values }: CardProps): any[] => {
+  const currentUser: UserType = useSelector(currentUserSelector);
+
   const getHeadingPreviewText = useCallback(
     option => {
       switch (option.valueKey) {
@@ -86,7 +86,4 @@ const CardRow = ({ cardOptions, values, currentUser }: CardProps): any[] => {
   ));
 };
 
-export default compose(
-  withCurrentUser,
-  withImmutablePropsToJS,
-)(CardRow);
+export default CardRow;

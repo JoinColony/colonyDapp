@@ -103,6 +103,8 @@ export const usersByAddressesSelector = (
  */
 export const currentUserSelector = (state: RootStateRecord) =>
   state.getIn([ns, USERS_CURRENT_USER]);
+export const currentUsernameSelector = (state: RootStateRecord) =>
+  state.getIn([ns, USERS_CURRENT_USER, USERS_CURRENT_USER_PROFILE, 'username']);
 export const walletAddressSelector = (state: RootStateRecord) =>
   state.getIn([
     ns,
