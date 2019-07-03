@@ -381,6 +381,7 @@ export const getUserInboxActivity: Query<
   {|
     userInboxStore: UserInboxStore,
     colonyClients: ColonyClient[],
+    colonyNetworkClient: NetworkClient,
     walletAddress: Address,
   |},
   {|
@@ -467,7 +468,10 @@ export const getUserInboxActivity: Query<
         const getAdminRoleAssignmentTopicsFilter = () =>
           getLogTopicsFilter(
             ColonyRoleSet.interface.topics[0],
+            // @TODO: Allow null values on log topics filter
+            // $FlowFixMe: We should be able to pass in null values as part of the log topics filter!
             null,
+            // $FlowFixMe: We should be able to pass in null values as part of the log topics filter!
             null,
             encodeHexTopic('6'),
           );

@@ -7,15 +7,15 @@ import type { RecordFactory, RecordOf } from 'immutable';
 import { Record } from 'immutable';
 
 type Shared = {|
-  id?: string,
-  type?: string,
+  id: string,
+  type: string,
   sourceId: string,
   sourceType: string,
-  timestamp?: number,
-  sourceAddress?: string,
+  timestamp: number,
+  sourceAddress: string,
   onClickRoute?: string,
-  context?: Object,
-  unread?: boolean,
+  context: Object,
+  unread: boolean,
 |};
 
 /*

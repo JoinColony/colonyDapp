@@ -5,7 +5,7 @@ import type { Address, WithKey } from '~types';
 import type { UniqueActionType, ErrorActionType } from '../index';
 
 import { ACTIONS } from '../../index';
-import type { InboxItemType, UserActivityType } from '~immutable';
+// import type { UserActivityType } from '~immutable';
 
 export type InboxItemsActionTypes = {|
   INBOX_ITEMS_FETCH: UniqueActionType<
@@ -20,7 +20,7 @@ export type InboxItemsActionTypes = {|
   INBOX_ITEMS_FETCH_SUCCESS: UniqueActionType<
     typeof ACTIONS.INBOX_ITEMS_FETCH_SUCCESS,
     {|
-      activities: UserActivityType[],
+      activities: Array<Object>,
     |},
     void,
   >,
@@ -39,7 +39,7 @@ export type InboxItemsActionTypes = {|
   INBOX_ITEMS_ADD_SUCCESS: UniqueActionType<
     typeof ACTIONS.INBOX_ITEMS_ADD_SUCCESS,
     {|
-      activity: InboxItemType,
+      activity: Object,
     |},
     WithKey,
   >,

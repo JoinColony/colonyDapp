@@ -8,23 +8,23 @@ export const DDB_EVENT_SOURCE = 'ddb';
 // const GITHUB_SOURCE_TYPE
 // const OTHER_3RD_PARTY_SOURCE_TYPE
 
-opaque type EVENT_SOURCE_TYPES = CONTRACT_EVENT_SOURCE | DDB_EVENT_SOURCE;
+opaque type EVENT_SOURCE_TYPE = 'contract' | 'ddb';
 
-type NormalizedEvent<P: Object> = {|
+type NormalizedEvent = {|
   type: string, // Event type a.k.a event name
-  payload: P, // Orbit-db entry payload value or parsed tx log topics
+  payload: Object, // Orbit-db entry payload value or parsed tx log topics
   meta: {|
     id: string, // Orbit payload id or txHash_logIndex for tx logs
     sourceId: string, // Orbit store address or log transaction hash
     sourceType: EVENT_SOURCE_TYPE, // See above
     actorId: string, // Wallet address for orbit-db events or tx sender address for tx logs
     timestamp: number,
-    version: string,
+    version: typeof VERSION,
   |},
 |};
 
-type TransactionLog<P> = {|
-  event: { eventName: string } & P,
+type TransactionLog = {|
+  event: { eventName: string },
   log: {
     logIndex: number,
     transactionHash: string,
@@ -35,7 +35,7 @@ type TransactionLog<P> = {|
   },
 |};
 
-export const normalizeDDBStoreEvent = <P>(
+export const normalizeDDBStoreEvent = (
   storeAddress: string,
   {
     identity: { id: actorId },
@@ -44,8 +44,8 @@ export const normalizeDDBStoreEvent = <P>(
       value: args,
       meta: { timestamp, id },
     },
-  }: Event<P>,
-): NormalizedEvent<P> => ({
+  }: Event<*>,
+): NormalizedEvent => ({
   type,
   payload: args,
   meta: {
@@ -58,15 +58,15 @@ export const normalizeDDBStoreEvent = <P>(
   },
 });
 
-export const normalizeTransactionLog = <P>(
+export const normalizeTransactionLog = (
   contractAddress: string,
   {
     event: { eventName: type, ...args },
     log: { logIndex, transactionHash },
     timestamp,
     transaction: { from },
-  }: TransactionLog<P>,
-): NormalizedEvent<P> => ({
+  }: TransactionLog,
+): NormalizedEvent => ({
   type,
   payload: args,
   meta: {
@@ -79,12 +79,12 @@ export const normalizeTransactionLog = <P>(
   },
 });
 
-export const normalizeEvent = <P>(
+export const normalizeEvent = (
   eventSourceType: string,
 ): ((
   eventSourceId: string,
-  data: TransactionLog<P> | Event<P>,
-) => NormalizedEvent<P>) =>
+  data: TransactionLog | Event<*>,
+) => NormalizedEvent) =>
   ({
     CONTRACT_EVENT_SOURCE: normalizeTransactionLog,
     DDB_EVENT_SOURCE: normalizeDDBStoreEvent,

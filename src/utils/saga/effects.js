@@ -8,7 +8,7 @@ import { all, call, put, race, take, select } from 'redux-saga/effects';
 
 import type { ErrorActionType, TakeFilter, Action } from '~redux';
 import type { Command, Query, Subscription } from '../../data/types';
-import type { InboxItemType } from '~immutable';
+// import type { InboxItemType } from '~immutable';
 
 import { getContext, CONTEXT } from '~context';
 import { validateSync } from '~utils/yup';
@@ -225,10 +225,7 @@ export function* selectAsJS(
 /*
  * Effect (actually more of a helper) to put a Notification action
  */
-export const putNotification = (
-  payload?: InboxItemType,
-  meta?: Object = {},
-) => {
+export const putNotification = (payload?: *, meta?: Object = {}) => {
   try {
     const notificationAction: Action<typeof ACTIONS.INBOX_ITEMS_ADD_SUCCESS> = {
       type: ACTIONS.INBOX_ITEMS_ADD_SUCCESS,

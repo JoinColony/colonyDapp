@@ -2,6 +2,7 @@
 
 import type { LogFilter } from '@colony/colony-js-adapter';
 import type {
+  ColonyNetworkClient as ColonyNetworkClientType,
   ColonyClient as ColonyClientType,
   TokenClient as TokenClientType,
 } from '@colony/colony-js-client';
@@ -15,7 +16,7 @@ import { getEventLogFilter } from './logFilter';
  * return an object containing both the logs and ColonyJS-parsed events.
  */
 export const getLogsAndEvents = async (
-  client: ColonyClientType | TokenClientType,
+  client: ColonyClientType | TokenClientType | ColonyNetworkClientType,
   logFilter: LogFilter,
   logFilterOptions: LogFilterOptions,
 ) => {
@@ -35,7 +36,7 @@ export const getLogsAndEvents = async (
  * return the ColonyJS-parsed events.
  */
 export const getEvents = async (
-  client: ColonyClientType | TokenClientType,
+  client: ColonyClientType | TokenClientType | ColonyNetworkClientType,
   logFilter: LogFilter,
   logFilterOptions: LogFilterOptions,
 ) => {
@@ -48,7 +49,7 @@ export const getEvents = async (
 };
 
 export const decorateLog = async (
-  client: ColonyClientType | TokenClientType,
+  client: ColonyClientType | TokenClientType | ColonyNetworkClientType,
   log: *,
   event?: *,
 ) => {
@@ -73,7 +74,7 @@ export const decorateLog = async (
 };
 
 export const getDecoratedEvents = async (
-  client: ColonyClientType | TokenClientType,
+  client: ColonyClientType | TokenClientType | ColonyNetworkClientType,
   logFilter: LogFilter,
   logFilterOptions: LogFilterOptions,
 ) => {
@@ -97,7 +98,7 @@ export const getDecoratedEvents = async (
 };
 
 export const getEventLogs = async (
-  client: ColonyClientType | TokenClientType,
+  client: ColonyClientType | TokenClientType | ColonyNetworkClientType,
   logFilter: LogFilter,
   logFilterOptions: LogFilterOptions,
 ) =>

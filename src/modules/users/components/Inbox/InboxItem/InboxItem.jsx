@@ -143,12 +143,12 @@ const InboxItem = ({
       taskTitle,
       domainId,
       setTo,
+      targetUserAddress: targetAddress,
     },
     onClickRoute,
     // sourceType,
     sourceId,
     sourceAddress: sourceUserAddress,
-    targetAddress,
     timestamp,
   },
 }: Props) => {
