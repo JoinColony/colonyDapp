@@ -8,7 +8,6 @@ import formatDate from 'sugar-date/date/format';
 import type { Address } from '~types';
 import type { TaskFeedItemType } from '~immutable';
 
-import UserMention from '~core/UserMention';
 import TimeRelative from '~core/TimeRelative';
 import taskSkillsTree from '../TaskSkills/taskSkillsTree';
 
@@ -118,7 +117,7 @@ const TaskFeedEventDomainSet = ({
       {...MSG.domainSet}
       values={{
         domainName,
-        user: <UserMention username={user} />,
+        user: <span className={styles.highlight}>{user}</span>,
       }}
     />
   );
@@ -133,7 +132,7 @@ const TaskFeedEventCreated = ({
   return (
     <FormattedMessage
       {...MSG.created}
-      values={{ user: <UserMention username={user} /> }}
+      values={{ user: <span className={styles.highlight}>{user}</span> }}
     />
   );
 };
@@ -149,7 +148,7 @@ const TaskFeedEventDueDateSet = ({
     <FormattedMessage
       {...MSG.dueDateSet}
       values={{
-        user: <UserMention username={user} />,
+        user: <span className={styles.highlight}>{user}</span>,
         dueDate: formatDate(new Date(dueDate), '{short}'),
       }}
     />
@@ -166,7 +165,7 @@ const TaskFeedEventPayoutSet = ({
   return (
     <FormattedMessage
       {...MSG.payoutSet}
-      values={{ user: <UserMention username={user} /> }}
+      values={{ user: <span className={styles.highlight}>{user}</span> }}
     />
   );
 };
@@ -185,7 +184,10 @@ const TaskFeedEventSkillSet = ({
   return (
     <FormattedMessage
       {...MSG.skillSet}
-      values={{ user: <UserMention username={user} />, skillName }}
+      values={{
+        user: <span className={styles.highlight}>{user}</span>,
+        skillName,
+      }}
     />
   );
 };
@@ -199,7 +201,7 @@ const TaskFeedEventCancelled = ({
   return (
     <FormattedMessage
       {...MSG.cancelled}
-      values={{ user: <UserMention username={user} /> }}
+      values={{ user: <span className={styles.highlight}>{user}</span> }}
     />
   );
 };
@@ -213,7 +215,7 @@ const TaskFeedEventClosed = ({
   return (
     <FormattedMessage
       {...MSG.closed}
-      values={{ user: <UserMention username={user} /> }}
+      values={{ user: <span className={styles.highlight}>{user}</span> }}
     />
   );
 };
@@ -228,7 +230,10 @@ const TaskFeedEventDescriptionSet = ({
   return (
     <FormattedMessage
       {...MSG.descriptionSet}
-      values={{ user: <UserMention username={user} />, description }}
+      values={{
+        user: <span className={styles.highlight}>{user}</span>,
+        description,
+      }}
     />
   );
 };
@@ -242,7 +247,7 @@ const TaskFeedEventFinalized = ({
   return (
     <FormattedMessage
       {...MSG.finalized}
-      values={{ user: <UserMention username={user} /> }}
+      values={{ user: <span className={styles.highlight}>{user}</span> }}
     />
   );
 };
@@ -257,7 +262,7 @@ const TaskFeedEventTitleSet = ({
   return (
     <FormattedMessage
       {...MSG.titleSet}
-      values={{ user: <UserMention username={user} />, title }}
+      values={{ user: <span className={styles.highlight}>{user}</span>, title }}
     />
   );
 };
@@ -274,7 +279,7 @@ const TaskFeedEventWorkInviteSent = ({
     <FormattedMessage
       {...MSG.workInviteSent}
       values={{
-        user: <UserMention username={user} />,
+        user: <span className={styles.highlight}>{user}</span>,
         invitedUser: <span>{invitedUser}</span>,
       }}
     />
@@ -302,7 +307,7 @@ const TaskFeedEventWorkerAssigned = ({
     <FormattedMessage
       {...MSG.workerAssigned}
       values={{
-        user: <UserMention username={user} />,
+        user: <span className={styles.highlight}>{user}</span>,
         worker: <span>{worker}</span>,
       }}
     />
@@ -320,7 +325,7 @@ const TaskFeedEventWorkerUnassigned = ({
     <FormattedMessage
       {...MSG.workerUnassigned}
       values={{
-        user: <UserMention username={user} />,
+        user: <span className={styles.highlight}>{user}</span>,
         worker: <span>{worker}</span>,
       }}
     />
@@ -348,9 +353,11 @@ const TaskFeedEvent = ({ colonyAddress, createdAt, event }: Props) => {
   const FeedEventComponent = FEED_EVENT_COMPONENTS[event.type];
   return (
     <div className={styles.main}>
-      <FeedEventComponent event={event} colonyAddress={colonyAddress} />
-      &nbsp;
-      <TimeRelative value={createdAt} />
+      <div className={styles.event}>
+        <FeedEventComponent event={event} colonyAddress={colonyAddress} />
+        &nbsp;
+        <TimeRelative value={createdAt} />
+      </div>
     </div>
   );
 };
