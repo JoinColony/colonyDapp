@@ -1,21 +1,18 @@
 /* @flow */
 import type { MessageDescriptor, MessageValues } from 'react-intl';
 import type { Element } from 'react';
-import { compose } from 'recompose';
 
 import React, { cloneElement } from 'react';
 import { defineMessages } from 'react-intl';
-
-import type { UserType } from '~immutable';
 
 import Alert from '~core/Alert';
 import HistoryNavigation from './HistoryNavigation.jsx';
 import UserNavigation from './UserNavigation.jsx';
 
 import { getMainClasses } from '~utils/css';
-import { withImmutablePropsToJS } from '~utils/hoc';
+import { useSelector } from '~utils/hooks';
 
-import { withCurrentUser } from '../../../users/hocs';
+import { currentUsernameSelector } from '../../../users/selectors';
 
 import styles from './NavigationWrapper.css';
 
@@ -74,10 +71,6 @@ type Props = {|
    * this should always have a value
    */
   children: Element<*>,
-  /*
-   * Current User
-   */
-  currentUser: UserType,
 |};
 
 const NavigationWrapper = ({
@@ -89,56 +82,51 @@ const NavigationWrapper = ({
   children,
   className,
   appearance = { theme: 'main' },
-  currentUser: {
-    profile: { username },
-  },
   /*
    * All the remaining props are passed down to the the children
    */
   ...props
-}: Props) => (
-  <div className={className || getMainClasses(appearance, styles)}>
-    <div className={styles.wrapper}>
-      <nav className={styles.navigation}>
-        {hasBackLink && (
-          <div className={styles.history}>
-            <HistoryNavigation
-              backRoute={backRoute}
-              backText={backText}
-              backTextValues={backTextValues}
-            />
-          </div>
-        )}
-        {hasUserNavigation && (
-          <div className={styles.user}>
-            <UserNavigation />
-          </div>
-        )}
-      </nav>
-      <main className={styles.content}>
-        {children && cloneElement(children, { ...props })}
-        {!username && (
-          <div className={styles.alertBanner}>
-            <Alert
-              appearance={{
-                theme: 'danger',
-                borderRadius: 'round',
-              }}
-              text={MSG.mainnetAlert}
-              isDismissible
-            />
-          </div>
-        )}
-      </main>
+}: Props) => {
+  const username: ?string = useSelector(currentUsernameSelector);
+  return (
+    <div className={className || getMainClasses(appearance, styles)}>
+      <div className={styles.wrapper}>
+        <nav className={styles.navigation}>
+          {hasBackLink && (
+            <div className={styles.history}>
+              <HistoryNavigation
+                backRoute={backRoute}
+                backText={backText}
+                backTextValues={backTextValues}
+              />
+            </div>
+          )}
+          {hasUserNavigation && (
+            <div className={styles.user}>
+              <UserNavigation />
+            </div>
+          )}
+        </nav>
+        <main className={styles.content}>
+          {children && cloneElement(children, { ...props })}
+          {!username && (
+            <div className={styles.alertBanner}>
+              <Alert
+                appearance={{
+                  theme: 'danger',
+                  borderRadius: 'round',
+                }}
+                text={MSG.mainnetAlert}
+                isDismissible
+              />
+            </div>
+          )}
+        </main>
+      </div>
     </div>
-  </div>
-);
+  );
+};
 
 NavigationWrapper.displayName = displayName;
 
-const enhance = compose(
-  withCurrentUser,
-  withImmutablePropsToJS,
-);
-
-export default enhance(NavigationWrapper);
+export default NavigationWrapper;

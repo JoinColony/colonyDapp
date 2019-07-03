@@ -110,7 +110,7 @@ const StepUserName = ({ wizardValues, nextStep }: Props) => {
   return (
     <ActionForm
       submit={ACTIONS.USERNAME_CREATE}
-      success={ACTIONS.USERNAME_CREATE_SUCCESS}
+      success={ACTIONS.TRANSACTION_CREATED}
       error={ACTIONS.USERNAME_CREATE_ERROR}
       onSuccess={() => nextStep(wizardValues)}
       validate={validateDomain}
