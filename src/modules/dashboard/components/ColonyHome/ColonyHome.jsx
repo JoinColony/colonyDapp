@@ -142,10 +142,18 @@ const ColonyHome = ({
             </Tab>
           </TabList>
           <TabPanel>
-            {nativeTokenRef &&
-            nativeTokenRef.balance &&
-            nativeTokenRef.balance.isZero() &&
-            colony.canMintNativeToken ? (
+            {/*
+             * Either is native, can be minted and the balance is zero
+             */
+            (nativeTokenRef &&
+              !nativeTokenRef.isExternal &&
+              nativeTokenRef.balance &&
+              nativeTokenRef.balance.isZero() &&
+              colony.canMintNativeToken) ||
+            /*
+             * Or is external and can't be minted
+             */
+            (nativeTokenRef && nativeTokenRef.isExternal) ? (
               <ColonyInitialFunding
                 colonyAddress={colonyAddress}
                 displayName={colony.displayName}
