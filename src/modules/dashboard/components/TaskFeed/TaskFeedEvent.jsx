@@ -118,7 +118,7 @@ const TaskFeedEventDomainSet = ({
       {...MSG.domainSet}
       values={{
         domainName,
-        user: <UserMention username={user} hasLink />,
+        user: <UserMention username={user} />,
       }}
     />
   );
@@ -133,7 +133,7 @@ const TaskFeedEventCreated = ({
   return (
     <FormattedMessage
       {...MSG.created}
-      values={{ user: <UserMention username={user} hasLink /> }}
+      values={{ user: <UserMention username={user} /> }}
     />
   );
 };
@@ -149,7 +149,7 @@ const TaskFeedEventDueDateSet = ({
     <FormattedMessage
       {...MSG.dueDateSet}
       values={{
-        user: <UserMention username={user} hasLink />,
+        user: <UserMention username={user} />,
         dueDate: formatDate(new Date(dueDate), '{short}'),
       }}
     />
@@ -166,7 +166,7 @@ const TaskFeedEventPayoutSet = ({
   return (
     <FormattedMessage
       {...MSG.payoutSet}
-      values={{ user: <UserMention username={user} hasLink /> }}
+      values={{ user: <UserMention username={user} /> }}
     />
   );
 };
@@ -185,7 +185,7 @@ const TaskFeedEventSkillSet = ({
   return (
     <FormattedMessage
       {...MSG.skillSet}
-      values={{ user: <UserMention username={user} hasLink />, skillName }}
+      values={{ user: <UserMention username={user} />, skillName }}
     />
   );
 };
@@ -199,7 +199,7 @@ const TaskFeedEventCancelled = ({
   return (
     <FormattedMessage
       {...MSG.cancelled}
-      values={{ user: <UserMention username={user} hasLink /> }}
+      values={{ user: <UserMention username={user} /> }}
     />
   );
 };
@@ -213,7 +213,7 @@ const TaskFeedEventClosed = ({
   return (
     <FormattedMessage
       {...MSG.closed}
-      values={{ user: <UserMention username={user} hasLink /> }}
+      values={{ user: <UserMention username={user} /> }}
     />
   );
 };
@@ -228,7 +228,7 @@ const TaskFeedEventDescriptionSet = ({
   return (
     <FormattedMessage
       {...MSG.descriptionSet}
-      values={{ user: <UserMention username={user} hasLink />, description }}
+      values={{ user: <UserMention username={user} />, description }}
     />
   );
 };
@@ -242,7 +242,7 @@ const TaskFeedEventFinalized = ({
   return (
     <FormattedMessage
       {...MSG.finalized}
-      values={{ user: <UserMention username={user} hasLink /> }}
+      values={{ user: <UserMention username={user} /> }}
     />
   );
 };
@@ -257,7 +257,7 @@ const TaskFeedEventTitleSet = ({
   return (
     <FormattedMessage
       {...MSG.titleSet}
-      values={{ user: <UserMention username={user} hasLink />, title }}
+      values={{ user: <UserMention username={user} />, title }}
     />
   );
 };
@@ -274,7 +274,7 @@ const TaskFeedEventWorkInviteSent = ({
     <FormattedMessage
       {...MSG.workInviteSent}
       values={{
-        user: <UserMention username={user} hasLink />,
+        user: <UserMention username={user} />,
         invitedUser: <span>{invitedUser}</span>,
       }}
     />
@@ -302,7 +302,7 @@ const TaskFeedEventWorkerAssigned = ({
     <FormattedMessage
       {...MSG.workerAssigned}
       values={{
-        user: <UserMention username={user} hasLink />,
+        user: <UserMention username={user} />,
         worker: <span>{worker}</span>,
       }}
     />
@@ -320,7 +320,7 @@ const TaskFeedEventWorkerUnassigned = ({
     <FormattedMessage
       {...MSG.workerUnassigned}
       values={{
-        user: <UserMention username={user} hasLink />,
+        user: <UserMention username={user} />,
         worker: <span>{worker}</span>,
       }}
     />
