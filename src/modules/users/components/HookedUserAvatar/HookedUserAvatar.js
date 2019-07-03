@@ -21,10 +21,6 @@ export default withHooks<
       userFetcher,
       [address],
       [address],
-      /*
-       * @todo Remove avatar fetcher TTL workaround for the broken `shouldFetch` guard
-       */
-      { ttl: Infinity },
     );
     result.user = fetchedUser;
   }
