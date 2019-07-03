@@ -10,12 +10,12 @@ import { useDispatch, useMappedState } from 'redux-react-hook';
 import type { Action } from '~redux';
 import type { ActionTransformFnType } from '~utils/actions';
 import type { DataRecordType, RootStateRecord } from '~immutable';
-import type { AsyncFunction } from '../../createPromiseListener';
+import type { AsyncFunction } from '~redux/createPromiseListener';
 
 import { isFetchingData, shouldFetchData } from '~immutable/utils';
 import { getMainClasses } from '~utils/css';
 
-import promiseListener from '../../createPromiseListener';
+import promiseListener from '~redux/createPromiseListener';
 
 type DataFetcher<T> = {|
   select: (

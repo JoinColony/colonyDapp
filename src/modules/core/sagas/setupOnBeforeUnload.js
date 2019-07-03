@@ -5,7 +5,7 @@ import type { Saga } from 'redux-saga';
 import { getContext } from 'redux-saga/effects';
 
 // Do NOT do this at home! We import the store directly here because we need a sync API (that sagas don't provide)
-import store from '../../../createReduxStore';
+import store from '~redux/createReduxStore';
 
 import { DDB } from '../../../lib/database';
 import IPFSNode from '../../../lib/ipfs';

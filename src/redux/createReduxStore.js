@@ -5,9 +5,9 @@ import createSagaMiddleware from 'redux-saga';
 import { routerMiddleware } from 'connected-react-router';
 
 import context from '~context';
-import { middleware as persistMiddleware } from '~redux/persist';
+import { middleware as persistMiddleware } from './persist';
 
-import setupSagas from './modules/core/sagas';
+import setupSagas from '../modules/core/sagas';
 import history from './history';
 import reduxPromiseListener from './createPromiseListener';
 import createRootReducer from './createRootReducer';
