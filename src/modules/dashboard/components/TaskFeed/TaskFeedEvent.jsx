@@ -116,7 +116,9 @@ const TaskFeedEventDomainSet = ({
     <FormattedMessage
       {...MSG.domainSet}
       values={{
-        domainName,
+        domainName: (
+          <span className={styles.highlight}>{`#${domainName}`}</span>
+        ),
         user: <span className={styles.highlight}>{user}</span>,
       }}
     />
@@ -149,7 +151,11 @@ const TaskFeedEventDueDateSet = ({
       {...MSG.dueDateSet}
       values={{
         user: <span className={styles.highlight}>{user}</span>,
-        dueDate: formatDate(new Date(dueDate), '{short}'),
+        dueDate: (
+          <span className={styles.highlight}>
+            {formatDate(new Date(dueDate), '{short}')}
+          </span>
+        ),
       }}
     />
   );
@@ -186,7 +192,7 @@ const TaskFeedEventSkillSet = ({
       {...MSG.skillSet}
       values={{
         user: <span className={styles.highlight}>{user}</span>,
-        skillName,
+        skillName: <span className={styles.highlight}>{skillName}</span>,
       }}
     />
   );
@@ -232,7 +238,7 @@ const TaskFeedEventDescriptionSet = ({
       {...MSG.descriptionSet}
       values={{
         user: <span className={styles.highlight}>{user}</span>,
-        description,
+        description: <span className={styles.highlight}>{description}</span>,
       }}
     />
   );
@@ -262,7 +268,10 @@ const TaskFeedEventTitleSet = ({
   return (
     <FormattedMessage
       {...MSG.titleSet}
-      values={{ user: <span className={styles.highlight}>{user}</span>, title }}
+      values={{
+        user: <span className={styles.highlight}>{user}</span>,
+        title: <span className={styles.highlight}>{title}</span>,
+      }}
     />
   );
 };
@@ -280,7 +289,7 @@ const TaskFeedEventWorkInviteSent = ({
       {...MSG.workInviteSent}
       values={{
         user: <span className={styles.highlight}>{user}</span>,
-        invitedUser: <span>{invitedUser}</span>,
+        invitedUser: <span className={styles.highlight}>{invitedUser}</span>,
       }}
     />
   );
@@ -292,7 +301,12 @@ const TaskFeedEventWorkRequestCreated = ({
   },
 }: *) => {
   const user = useSelector(friendlyUsernameSelector, [userAddress]);
-  return <FormattedMessage {...MSG.workRequestCreated} values={{ user }} />;
+  return (
+    <FormattedMessage
+      {...MSG.workRequestCreated}
+      values={{ user: <span className={styles.highlight}>{user}</span> }}
+    />
+  );
 };
 
 const TaskFeedEventWorkerAssigned = ({
@@ -308,7 +322,7 @@ const TaskFeedEventWorkerAssigned = ({
       {...MSG.workerAssigned}
       values={{
         user: <span className={styles.highlight}>{user}</span>,
-        worker: <span>{worker}</span>,
+        worker: <span className={styles.highlight}>{worker}</span>,
       }}
     />
   );
@@ -326,7 +340,7 @@ const TaskFeedEventWorkerUnassigned = ({
       {...MSG.workerUnassigned}
       values={{
         user: <span className={styles.highlight}>{user}</span>,
-        worker: <span>{worker}</span>,
+        worker: <span className={styles.highlight}>{worker}</span>,
       }}
     />
   );
