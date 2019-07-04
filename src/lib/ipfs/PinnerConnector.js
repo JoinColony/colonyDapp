@@ -87,7 +87,12 @@ class PinnerConnector {
       .finally(() => {
         this._readyPromise = undefined;
       });
-
+    this._readyPromise.catch(error =>
+      log.warn(
+        'Could not request replication; not connected to any pinners.',
+        error,
+      ),
+    );
     return this._readyPromise;
   }
 
@@ -122,7 +127,6 @@ class PinnerConnector {
       } = await request.promise;
       return count;
     }
-
     try {
       await this.ready;
     } catch (caughtError) {
