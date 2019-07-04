@@ -1,11 +1,9 @@
 /* @flow */
 
 import type { Address, WithKey } from '~types';
-
 import type { UniqueActionType, ErrorActionType } from '../index';
 
 import { ACTIONS } from '../../index';
-// import type { UserActivityType } from '~immutable';
 
 export type InboxItemsActionTypes = {|
   INBOX_ITEMS_FETCH: UniqueActionType<

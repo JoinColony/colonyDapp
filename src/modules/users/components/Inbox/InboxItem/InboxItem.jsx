@@ -146,7 +146,6 @@ const InboxItem = ({
       targetUserAddress: targetAddress,
     },
     onClickRoute,
-    // sourceType,
     sourceId,
     sourceAddress: sourceUserAddress,
     timestamp,

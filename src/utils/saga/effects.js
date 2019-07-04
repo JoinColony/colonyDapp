@@ -8,7 +8,6 @@ import { all, call, put, race, take, select } from 'redux-saga/effects';
 
 import type { ErrorActionType, TakeFilter, Action } from '~redux';
 import type { Command, Query, Subscription } from '../../data/types';
-// import type { InboxItemType } from '~immutable';
 
 import { getContext, CONTEXT } from '~context';
 import { validateSync } from '~utils/yup';
