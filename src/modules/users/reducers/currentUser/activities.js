@@ -23,12 +23,13 @@ const inboxItemsReducer: ReducerType<
       const {
         type,
         meta: { id, actorId, sourceType, sourceId, timestamp },
-        payload: { sourceUserAddress, targetUserAddress, ...context },
+        payload: { sourceUserAddress },
+        payload: context,
       } = activity;
       return state.push(
         InboxItemRecord({
           id,
-          timestamp: new Date(timestamp),
+          timestamp,
           type,
           sourceType,
           sourceId,
@@ -44,11 +45,12 @@ const inboxItemsReducer: ReducerType<
           ({
             type,
             meta: { id, actorId, sourceType, sourceId, timestamp },
-            payload: { sourceUserAddress, targetUserAddress, ...context },
+            payload: { sourceUserAddress },
+            payload: context,
           }) =>
             InboxItemRecord({
               id,
-              timestamp: new Date(timestamp),
+              timestamp,
               type,
               sourceId,
               sourceType,
