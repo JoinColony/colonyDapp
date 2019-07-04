@@ -5,8 +5,6 @@ import { VERSION } from '../constants';
 
 export const CONTRACT_EVENT_SOURCE = 'contract';
 export const DDB_EVENT_SOURCE = 'ddb';
-// const GITHUB_SOURCE_TYPE
-// const OTHER_3RD_PARTY_SOURCE_TYPE
 
 opaque type EVENT_SOURCE_TYPE = 'contract' | 'ddb';
 
