@@ -30,7 +30,7 @@ import {
   COLONY_ROLE_RECOVERY,
   COLONY_ROLES,
 } from '@colony/colony-js-client';
-import flatMap from 'lodash/flatMap';
+import flatten from 'lodash/flatten';
 import BigNumber from 'bn.js';
 import { formatEther } from 'ethers/utils';
 
@@ -547,7 +547,7 @@ export const getUserInboxActivity: Query<
       }),
     );
 
-    const contractEvents = flatMap(aggregatedContractEvents, event => event);
+    const contractEvents = flatten(aggregatedContractEvents);
     const storeEvents = userInboxStore
       .all()
       .map(event =>
