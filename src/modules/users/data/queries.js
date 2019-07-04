@@ -28,6 +28,7 @@ import {
   COLONY_ROLE_ADMINISTRATION,
   COLONY_ROLE_ROOT,
   COLONY_ROLE_RECOVERY,
+  COLONY_ROLES,
 } from '@colony/colony-js-client';
 import flatMap from 'lodash/flatMap';
 import BigNumber from 'bn.js';
@@ -41,6 +42,8 @@ import {
   getDecoratedEvents,
   getEventLogs,
   parseUserTransferEvent,
+  padTopicAddress,
+  getFilterFormatted,
 } from '~utils/web3/eventLogs';
 import {
   getUserProfileStore,
@@ -433,23 +436,15 @@ export const getUserInboxActivity: Query<
     walletAddress,
   }) {
     const {
-      address: metaColonyAddress,
-    } = await colonyNetworkClient.getMetaColonyAddress.call();
-    const {
+      contract: { address: colonyNetworkAddress },
       events: { ColonyLabelRegistered },
     } = colonyNetworkClient;
 
-    const encodeHexTopic = (data: string) =>
-      data && data.slice(0, 2) === '0x'
-        ? `0x${data.slice(2).padStart(64, '0')}`
-        : `0x${data.padStart(64, '0')}`;
-
     const getLogTopicsFilter = (...args: *) => ({ topics: args });
-
     const getColonyLabelRegisteredTopicsFilter = (colonyAddress: Address) =>
       getLogTopicsFilter(
         ColonyLabelRegistered.interface.topics[0],
-        encodeHexTopic(colonyAddress),
+        padTopicAddress(colonyAddress),
       );
 
     // @TODO: Have a proper way to deal with "query fragments"
@@ -464,24 +459,24 @@ export const getUserInboxActivity: Query<
             contract: { address: tokenAddress },
           },
         } = colonyClient;
+
         // @TODO: Have a proper way to deal with query filters
-        const getAdminRoleAssignmentTopicsFilter = () =>
-          getLogTopicsFilter(
+        const getAdminRoleAssignmentTopicsFilter = address => ({
+          ...getLogTopicsFilter(
             ColonyRoleSet.interface.topics[0],
             // @TODO: Allow null values on log topics filter
             // $FlowFixMe: We should be able to pass in null values as part of the log topics filter!
             null,
             // $FlowFixMe: We should be able to pass in null values as part of the log topics filter!
             null,
-            encodeHexTopic('6'),
-          );
+            getFilterFormatted(COLONY_ROLES[COLONY_ROLE_ADMINISTRATION]),
+          ),
+          address,
+        });
 
         const eventsFromRoleAssignment = (await getDecoratedEvents(
           colonyClient,
-          {
-            address: colonyAddress,
-            ...getAdminRoleAssignmentTopicsFilter(),
-          },
+          getAdminRoleAssignmentTopicsFilter(colonyAddress),
           {
             blocksBack: 400000,
             events: [ColonyRoleSet],
@@ -501,6 +496,7 @@ export const getUserInboxActivity: Query<
             events: [DomainAdded],
           },
         )).filter(({ event }) => event.domainId !== 1);
+
         const eventsFromNetwork = await getDecoratedEvents(
           colonyNetworkClient,
           getColonyLabelRegisteredTopicsFilter(colonyAddress),
@@ -536,7 +532,7 @@ export const getUserInboxActivity: Query<
             normalizeTransactionLog(colonyAddress, event),
           ),
           ...eventsFromNetwork.map(event =>
-            normalizeTransactionLog(metaColonyAddress, event),
+            normalizeTransactionLog(colonyNetworkAddress, event),
           ),
           ...eventsFromToken.map(event =>
             normalizeTransactionLog(tokenAddress, event),

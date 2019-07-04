@@ -48,6 +48,9 @@ export const getEvents = async (
   return client.getEvents(filter);
 };
 
+/*
+ * Decorate logs with a timestamp, a transaction object and the parsed event data
+ */
 export const decorateLog = async (
   client: ColonyClientType | TokenClientType | ColonyNetworkClientType,
   log: *,
@@ -73,6 +76,9 @@ export const decorateLog = async (
   };
 };
 
+/*
+ * Get logs using a logFilter and decorate them with a transaction, a timestamp and parsed event data
+ */
 export const getDecoratedEvents = async (
   client: ColonyClientType | TokenClientType | ColonyNetworkClientType,
   logFilter: LogFilter,
@@ -89,7 +95,10 @@ export const getDecoratedEvents = async (
 
   const events = await client.parseLogs(logs);
   if (!(events && events.length && events.length === logs.length)) {
-    throw new Error('Something went wrong while parsing logs');
+    throw new Error(
+      // eslint-disable-next-line max-len
+      'Something went wrong while parsing logs, parsed events doesnt match the logs',
+    );
   }
 
   return Promise.all(
