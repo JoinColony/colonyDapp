@@ -113,8 +113,8 @@ class ENS {
     if (!rawDomain) {
       throw new Error(`ENS Name not found for address "${address}"`);
     }
-    const domain = punycode.encode(rawDomain);
-    return rawDomain === domain ? rawDomain : `${EXTERNAL_PREFIX}${domain}`;
+    const domain = punycode.toASCII(rawDomain);
+    return rawDomain === domain ? rawDomain : `${EXTERNAL_PREFIX}${rawDomain}`;
   }
 
   async getOrbitDBAddress(
