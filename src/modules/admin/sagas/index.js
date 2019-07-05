@@ -241,9 +241,7 @@ function* colonyMintTokens({
        * Notification
        */
       const decoratedLog = yield call(decorateLog, tokenClient, mintLog);
-      yield putNotification(
-        normalizeTransactionLog(tokenAddress, decoratedLog),
-      );
+      yield putNotification(normalizeTransactionLog(decoratedLog));
     }
 
     yield put<Action<typeof ACTIONS.COLONY_MINT_TOKENS_SUCCESS>>({

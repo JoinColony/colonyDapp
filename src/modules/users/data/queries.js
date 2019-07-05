@@ -436,7 +436,6 @@ export const getUserInboxActivity: Query<
     walletAddress,
   }) {
     const {
-      contract: { address: colonyNetworkAddress },
       events: { ColonyLabelRegistered },
     } = colonyNetworkClient;
 
@@ -528,31 +527,17 @@ export const getUserInboxActivity: Query<
         );
 
         return [
-          ...eventsFromColony.map(event =>
-            normalizeTransactionLog(colonyAddress, event),
-          ),
-          ...eventsFromNetwork.map(event =>
-            normalizeTransactionLog(colonyNetworkAddress, event),
-          ),
-          ...eventsFromToken.map(event =>
-            normalizeTransactionLog(tokenAddress, event),
-          ),
-          ...eventsFromTransfer.map(event =>
-            normalizeTransactionLog(tokenAddress, event),
-          ),
-          ...eventsFromRoleAssignment.map(event =>
-            normalizeTransactionLog(colonyAddress, event),
-          ),
+          ...eventsFromColony.map(normalizeTransactionLog),
+          ...eventsFromNetwork.map(normalizeTransactionLog),
+          ...eventsFromToken.map(normalizeTransactionLog),
+          ...eventsFromTransfer.map(normalizeTransactionLog),
+          ...eventsFromRoleAssignment.map(normalizeTransactionLog),
         ];
       }),
     );
 
     const contractEvents = flatten(aggregatedContractEvents);
-    const storeEvents = userInboxStore
-      .all()
-      .map(event =>
-        normalizeDDBStoreEvent(userInboxStore.address.toString(), event),
-      );
+    const storeEvents = userInboxStore.all().map(normalizeDDBStoreEvent);
 
     return storeEvents.concat(contractEvents);
   },

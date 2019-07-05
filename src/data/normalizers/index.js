@@ -1,6 +1,6 @@
 /* @flow */
 
-import type { Event } from '../types';
+import type { Entry } from '~types';
 import { VERSION } from '../constants';
 
 export const CONTRACT_EVENT_SOURCE = 'contract';
@@ -24,6 +24,7 @@ type NormalizedEvent = {|
 type TransactionLog = {|
   event: { eventName: string },
   log: {
+    address: string,
     logIndex: number,
     transactionHash: string,
   },
@@ -33,17 +34,19 @@ type TransactionLog = {|
   },
 |};
 
-export const normalizeDDBStoreEvent = (
-  storeAddress: string,
-  {
-    identity: { id: actorId },
-    payload: {
-      type,
-      value: args,
-      meta: { timestamp, id },
-    },
-  }: Event<*>,
-): NormalizedEvent => ({
+opaque type EventNormalizerFn = (
+  event: TransactionLog | Entry,
+) => NormalizedEvent;
+
+export const normalizeDDBStoreEvent: EventNormalizerFn = ({
+  id: storeAddress,
+  identity: { id: actorId },
+  payload: {
+    type,
+    value: args,
+    meta: { timestamp, id },
+  },
+}: Entry) => ({
   type,
   payload: args,
   meta: {
@@ -56,33 +59,25 @@ export const normalizeDDBStoreEvent = (
   },
 });
 
-export const normalizeTransactionLog = (
-  contractAddress: string,
-  {
-    event: { eventName: type, ...args },
-    log: { logIndex, transactionHash },
-    timestamp,
-    transaction: { from },
-  }: TransactionLog,
-): NormalizedEvent => ({
+export const normalizeTransactionLog: EventNormalizerFn = ({
+  event: { eventName: type, ...args },
+  log: { address, logIndex, transactionHash },
+  timestamp,
+  transaction: { from },
+}) => ({
   type,
   payload: args,
   meta: {
     id: `${transactionHash}_${logIndex}`,
     sourceType: CONTRACT_EVENT_SOURCE,
-    sourceId: contractAddress,
+    sourceId: address,
     actorId: from,
     timestamp,
     version: VERSION,
   },
 });
 
-export const normalizeEvent = (
-  eventSourceType: string,
-): ((
-  eventSourceId: string,
-  data: TransactionLog | Event<*>,
-) => NormalizedEvent) =>
+export const normalizeEvent = (eventSourceType: string): EventNormalizerFn =>
   ({
     CONTRACT_EVENT_SOURCE: normalizeTransactionLog,
     DDB_EVENT_SOURCE: normalizeDDBStoreEvent,

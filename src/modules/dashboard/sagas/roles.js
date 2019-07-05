@@ -94,7 +94,7 @@ function* colonyAdminAdd({
       colonyClient,
       colonyRoleSetLog,
     );
-    yield putNotification(normalizeTransactionLog(colonyAddress, decoratedLog));
+    yield putNotification(normalizeTransactionLog(decoratedLog));
     yield put(fetchRoles(colonyAddress));
   } catch (error) {
     yield putError(ACTIONS.COLONY_ADMIN_ADD_ERROR, error, meta);
@@ -151,7 +151,7 @@ function* colonyAdminRemove({
       colonyClient,
       colonyRoleSetLog,
     );
-    yield putNotification(normalizeTransactionLog(colonyAddress, decoratedLog));
+    yield putNotification(normalizeTransactionLog(decoratedLog));
     yield put(fetchRoles(colonyAddress));
   } catch (error) {
     yield putError(ACTIONS.COLONY_ADMIN_REMOVE_ERROR, error, meta);

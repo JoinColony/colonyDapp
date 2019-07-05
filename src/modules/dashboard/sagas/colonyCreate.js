@@ -454,7 +454,7 @@ function* colonyCreate({
       colonyManager.networkClient,
       colonyLabelRegisteredLog,
     );
-    yield putNotification(normalizeTransactionLog(colonyAddress, decoratedLog));
+    yield putNotification(normalizeTransactionLog(decoratedLog));
     return null;
   } catch (error) {
     yield putError(ACTIONS.COLONY_CREATE_ERROR, error, meta);

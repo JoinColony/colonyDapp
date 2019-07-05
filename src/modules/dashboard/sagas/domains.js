@@ -107,7 +107,7 @@ function* domainCreate({
      * Notification
      */
     const decoratedLog = yield call(decorateLog, colonyClient, domainAddedLog);
-    yield putNotification(normalizeTransactionLog(colonyAddress, decoratedLog));
+    yield putNotification(normalizeTransactionLog(decoratedLog));
   } catch (error) {
     yield putError(ACTIONS.DOMAIN_CREATE_ERROR, error, meta);
   } finally {
