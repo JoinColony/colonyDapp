@@ -8,8 +8,8 @@ import './styles/main.css';
 import './modules/validations';
 
 import App from './App.jsx';
-import store from './createReduxStore';
-import history from './history';
+import store from '~redux/createReduxStore';
+import history from '~redux/history';
 
 const rootNode = document.getElementById('root');
 
