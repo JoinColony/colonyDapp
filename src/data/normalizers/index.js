@@ -13,7 +13,7 @@ type NormalizedEvent = {|
   payload: Object, // Orbit-db entry payload value or parsed tx log topics
   meta: {|
     id: string, // Orbit payload id or txHash_logIndex for tx logs
-    sourceId: string, // Orbit store address or log transaction hash
+    sourceId: string, // Orbit store address or contract address
     sourceType: EVENT_SOURCE_TYPE, // See above
     actorId: string, // Wallet address for orbit-db events or tx sender address for tx logs
     timestamp: number,
