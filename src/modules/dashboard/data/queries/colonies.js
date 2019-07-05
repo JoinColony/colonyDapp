@@ -34,7 +34,6 @@ import {
 } from '~data/stores';
 import { getEvents } from '~utils/web3/eventLogs';
 import { ZERO_ADDRESS } from '~utils/web3/constants';
-import { getTokenClient } from '~utils/web3/contracts';
 import { createAddress } from '~types';
 
 import { colonyReducer, colonyTasksReducer } from '../reducers';
@@ -327,22 +326,21 @@ export const getColonyDomains: Query<
 };
 
 export const getColonyTokenBalance: Query<
-  NetworkClient,
+  ColonyManager,
   void,
   {| colonyAddress: Address, tokenAddress: Address |},
   BigNumber,
 > = {
   name: 'getColonyTokenBalance',
   context: colonyContext,
-  prepare: async ({
-    colonyManager: { networkClient },
-  }: {|
-    colonyManager: ColonyManager,
-  |}) => networkClient,
-  async execute(networkClient, { colonyAddress, tokenAddress }) {
+  prepare: async ({ colonyManager }: {| colonyManager: ColonyManager |}) =>
+    colonyManager,
+  async execute(colonyManager, { colonyAddress, tokenAddress }) {
     const {
-      adapter: { provider },
-    } = networkClient;
+      networkClient: {
+        adapter: { provider },
+      },
+    } = colonyManager;
     // if ether, handle differently
     if (tokenAddress === ZERO_ADDRESS) {
       const etherBalance = await provider.getBalance(colonyAddress);
@@ -352,7 +350,7 @@ export const getColonyTokenBalance: Query<
     }
 
     // otherwise handle as ERC 20
-    const tokenClient = await getTokenClient(tokenAddress, networkClient);
+    const tokenClient = await colonyManager.getTokenClient(tokenAddress);
     const { amount } = await tokenClient.getBalanceOf.call({
       sourceAddress: colonyAddress,
     });

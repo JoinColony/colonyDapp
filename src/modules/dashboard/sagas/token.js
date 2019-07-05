@@ -2,7 +2,6 @@
 
 import type { Saga } from 'redux-saga';
 
-import ColonyNetworkClient from '@colony/colony-js-client';
 import {
   call,
   delay,
@@ -15,27 +14,12 @@ import {
 import type { Action } from '~redux';
 
 import { putError, takeFrom } from '~utils/saga/effects';
-import { getTokenClient } from '~utils/web3/contracts';
 import { ZERO_ADDRESS, ETHER_INFO } from '~utils/web3/constants';
 import { CONTEXT, getContext } from '~context';
 import { ACTIONS } from '~redux';
 
 import { createTransaction, getTxChannel } from '../../core/sagas';
 import { NETWORK_CONTEXT } from '../../core/constants';
-
-/**
- * Given a token contract address, create a `TokenClient` with the minimal
- * token ABI loader and get the token info. The promise will be rejected if
- * the functions do not exist on the contract.
- */
-async function getTokenClientInfo(
-  contractAddress: string,
-  networkClient: ColonyNetworkClient,
-) {
-  const client = await getTokenClient(contractAddress, networkClient);
-
-  return client.getTokenInfo.call();
-}
 
 /**
  * Get the token info for a given `tokenAddress`.
@@ -58,20 +42,26 @@ function* tokenInfoFetch({
 
   yield delay(1000);
 
-  let info;
   try {
-    // Attempt to get the token info from a new `TokenClient` instance.
-    const { networkClient } = yield* getContext(CONTEXT.COLONY_MANAGER);
-    info = yield call(getTokenClientInfo, tokenAddress, networkClient);
+    /**
+     * Given a token contract address, create a `TokenClient` with the minimal
+     * token ABI loader and get the token info. The promise will be rejected if
+     * the functions do not exist on the contract.
+     */
+    const colonyManager = yield* getContext(CONTEXT.COLONY_MANAGER);
+    const client = yield call(
+      [colonyManager, colonyManager.getTokenClient],
+      tokenAddress,
+    );
+    const info = yield call([client.getTokenInfo, client.getTokenInfo.call]);
+    yield put<Action<typeof ACTIONS.TOKEN_INFO_FETCH_SUCCESS>>({
+      type: ACTIONS.TOKEN_INFO_FETCH_SUCCESS,
+      payload: { ...info, tokenAddress },
+      meta,
+    });
   } catch (error) {
     yield putError(ACTIONS.TOKEN_INFO_FETCH_ERROR, error, meta);
-    return;
   }
-  yield put<Action<typeof ACTIONS.TOKEN_INFO_FETCH_SUCCESS>>({
-    type: ACTIONS.TOKEN_INFO_FETCH_SUCCESS,
-    payload: { ...info, tokenAddress },
-    meta,
-  });
 }
 
 function* tokenCreate({

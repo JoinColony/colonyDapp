@@ -1,7 +1,7 @@
 /* @flow */
 
 import type { Saga } from 'redux-saga';
-import { call, fork, put, takeEvery, select } from 'redux-saga/effects';
+import { call, fork, put, takeEvery } from 'redux-saga/effects';
 
 import type { Action } from '~redux';
 
@@ -14,14 +14,14 @@ import {
 } from '~utils/saga/effects';
 import { ACTIONS } from '~redux';
 
+import { getContext, CONTEXT } from '~context';
+import { decorateLog } from '~utils/web3/eventLogs/events';
+import { normalizeTransactionLog } from '~data/normalizers';
+
 import { createTransaction, getTxChannel } from '../../core/sagas';
 import { COLONY_CONTEXT } from '../../core/constants';
-import { walletAddressSelector } from '../../users/selectors';
-
 import { createDomain } from '../data/commands';
 import { getColonyDomains } from '../data/queries';
-
-import { NOTIFICATION_EVENT_DOMAIN_ADDED } from '~users/Inbox/events';
 
 function* colonyDomainsFetch({
   meta,
@@ -54,10 +54,6 @@ function* domainCreate({
   const txChannel = yield call(getTxChannel, meta.id);
   try {
     /*
-     * Get the current user's wallet address (we need that for notifications)
-     */
-    const walletAddress = yield select(walletAddressSelector);
-    /*
      * @todo Create the domain on the colony with a transaction.
      * @body Idempotency could be improved here by looking for a pending transaction.
      */
@@ -74,6 +70,11 @@ function* domainCreate({
     const {
       payload: {
         eventData: { domainId: id },
+        transaction: {
+          receipt: {
+            logs: [, domainAddedLog],
+          },
+        },
       },
     } = yield takeFrom(txChannel, ACTIONS.TRANSACTION_SUCCEEDED);
 
@@ -96,15 +97,17 @@ function* domainCreate({
       payload: { colonyAddress, domain: { id, name } },
     });
 
+    const colonyManager = yield* getContext(CONTEXT.COLONY_MANAGER);
+    const colonyClient = yield call(
+      [colonyManager, colonyManager.getColonyClient],
+      colonyAddress,
+    );
+
     /*
      * Notification
      */
-    yield putNotification({
-      colonyAddress,
-      domainName: name,
-      event: NOTIFICATION_EVENT_DOMAIN_ADDED,
-      sourceUserAddress: walletAddress,
-    });
+    const decoratedLog = yield call(decorateLog, colonyClient, domainAddedLog);
+    yield putNotification(normalizeTransactionLog(colonyAddress, decoratedLog));
   } catch (error) {
     yield putError(ACTIONS.DOMAIN_CREATE_ERROR, error, meta);
   } finally {

@@ -32,20 +32,23 @@ const tokensReducer: ReducerType<
   switch (action.type) {
     case ACTIONS.TOKEN_INFO_FETCH_SUCCESS: {
       const { name, symbol, decimals, tokenAddress } = action.payload;
+      /*
+       If the token is ether there is no data about it in the db
+       we initialise it only here in the reducer
+
+       If we do not have this condition here the ether token info
+       gets overwritten with empty values.
+       */
+      if (tokenAddress === ZERO_ADDRESS) {
+        return state;
+      }
+
       const record = TokenRecord({
         address: tokenAddress,
         decimals,
         name,
         symbol,
       });
-
-      /* If the token is ether there is no data about it in the db
-      we initialise it only here in the reducer
-      If we do not have this condition here the ether token info
-      gets overwritten with empty values.  */
-      if (tokenAddress === ZERO_ADDRESS) {
-        return INITIAL_STATE;
-      }
 
       return state.get(tokenAddress)
         ? state.setIn([tokenAddress, 'record'], record)

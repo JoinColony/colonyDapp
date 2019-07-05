@@ -15,6 +15,10 @@ import {
 } from '~utils/saga/effects';
 import { ACTIONS } from '~redux';
 
+import { CONTEXT, getContext } from '~context';
+import { decorateLog } from '~utils/web3/eventLogs/events';
+import { normalizeTransactionLog } from '~data/normalizers';
+
 import { getColony } from '../../dashboard/data/queries';
 import {
   getColonyTransactions,
@@ -28,11 +32,9 @@ import {
   fetchColonyTransactions,
   fetchColonyUnclaimedTransactions,
 } from '../actionCreators';
+
 import { fetchColony } from '../../dashboard/actionCreators';
 import { colonyNativeTokenSelector } from '../../dashboard/selectors';
-import { walletAddressSelector } from '../../users/selectors';
-
-import { NOTIFICATION_EVENT_TOKENS_MINTED } from '~users/Inbox/events';
 
 function* colonyTransactionsFetch({
   payload: { colonyAddress },
@@ -157,10 +159,6 @@ function* colonyMintTokens({
   let txChannel;
   try {
     txChannel = yield call(getTxChannel, meta.id);
-    /*
-     * Get the current user's wallet address (we need that for notifications)
-     */
-    const walletAddress = yield select(walletAddressSelector);
     const { address: nativeTokenAddress } = yield select(
       colonyNativeTokenSelector,
       colonyAddress,
@@ -233,16 +231,19 @@ function* colonyMintTokens({
         payload: { colonyAddress, tokenAddress },
       });
 
+      const colonyManager = yield* getContext(CONTEXT.COLONY_MANAGER);
+      const tokenClient = yield call(
+        [colonyManager, colonyManager.getTokenClient],
+        tokenAddress,
+      );
+
       /*
        * Notification
        */
-      yield putNotification({
-        amount: mintedAmount,
-        colonyAddress,
-        tokenAddress,
-        event: NOTIFICATION_EVENT_TOKENS_MINTED,
-        sourceUserAddress: walletAddress,
-      });
+      const decoratedLog = yield call(decorateLog, tokenClient, mintLog);
+      yield putNotification(
+        normalizeTransactionLog(tokenAddress, decoratedLog),
+      );
     }
 
     yield put<Action<typeof ACTIONS.COLONY_MINT_TOKENS_SUCCESS>>({

@@ -2,6 +2,7 @@
 
 import type { LogFilter } from '@colony/colony-js-adapter';
 import type {
+  ColonyNetworkClient as ColonyNetworkClientType,
   ColonyClient as ColonyClientType,
   TokenClient as TokenClientType,
 } from '@colony/colony-js-client';
@@ -15,7 +16,7 @@ import { getEventLogFilter } from './logFilter';
  * return an object containing both the logs and ColonyJS-parsed events.
  */
 export const getLogsAndEvents = async (
-  client: ColonyClientType | TokenClientType,
+  client: ColonyClientType | TokenClientType | ColonyNetworkClientType,
   logFilter: LogFilter,
   logFilterOptions: LogFilterOptions,
 ) => {
@@ -35,20 +36,88 @@ export const getLogsAndEvents = async (
  * return the ColonyJS-parsed events.
  */
 export const getEvents = async (
-  client: ColonyClientType | TokenClientType,
+  client: ColonyClientType | TokenClientType | ColonyNetworkClientType,
   logFilter: LogFilter,
   logFilterOptions: LogFilterOptions,
-) =>
-  client.getEvents(
-    await getEventLogFilter(
-      client.adapter.provider,
-      logFilter,
-      logFilterOptions,
-    ),
+) => {
+  const filter = await getEventLogFilter(
+    client.adapter.provider,
+    logFilter,
+    logFilterOptions,
+  );
+  return client.getEvents(filter);
+};
+
+/*
+ * Decorate logs with a timestamp, a transaction object and the parsed event data
+ */
+export const decorateLog = async (
+  client: ColonyClientType | TokenClientType | ColonyNetworkClientType,
+  log: *,
+  event?: *,
+) => {
+  const { blockHash, transactionHash } = log;
+  const { timestamp } = await client.adapter.provider.getBlock(blockHash);
+  const transaction = await client.adapter.provider.getTransaction(
+    transactionHash,
   );
 
+  /**
+   * @NOTE: We have to cater for logs coming directly from transactions.
+   * This is needed because we have `putNotification` that adds to
+   * current user's activities on redux. So if we don't pass in an event,
+   * we try to parse it from the log.
+   */
+  let parsedEvent = event;
+  if (!parsedEvent) {
+    const events = await client.parseLogs([log]);
+    parsedEvent = events && events[0];
+  }
+
+  return {
+    event: parsedEvent,
+    log,
+    transaction,
+    timestamp: new Date(timestamp).getTime() * 1e3,
+  };
+};
+
+/*
+ * Get logs using a logFilter and decorate them with a transaction, a timestamp and parsed event data
+ */
+export const getDecoratedEvents = async (
+  client: ColonyClientType | TokenClientType | ColonyNetworkClientType,
+  logFilter: LogFilter,
+  logFilterOptions: LogFilterOptions,
+) => {
+  const filter = await getEventLogFilter(
+    client.adapter.provider,
+    logFilter,
+    logFilterOptions,
+  );
+
+  const logs = await client.getLogs(filter);
+  if (!(logs && logs.length)) return [];
+
+  const events = await client.parseLogs(logs);
+  if (!(events && events.length && events.length === logs.length)) {
+    throw new Error(
+      // eslint-disable-next-line max-len
+      'Something went wrong while parsing logs, parsed events doesnt match the logs',
+    );
+  }
+
+  /**
+   * @NOTE: Here we pass the event directly so we don't try to parse the log again
+   * on `decorateLog`
+   */
+  return Promise.all(
+    logs.map((log, index) => decorateLog(client, log, events[index])),
+  );
+};
+
 export const getEventLogs = async (
-  client: ColonyClientType | TokenClientType,
+  client: ColonyClientType | TokenClientType | ColonyNetworkClientType,
   logFilter: LogFilter,
   logFilterOptions: LogFilterOptions,
 ) =>

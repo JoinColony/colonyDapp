@@ -76,15 +76,10 @@ const messages = defineMessages({
     defaultMessage:
       '{user} has finalized the {task}. You can now claim your reward.',
   },
-  notificationAdminOtherAdded: {
+  notificationColonyRoleSet: {
     id: 'dashboard.Inbox.InboxItem.notificationAdminOtherAdded',
     defaultMessage:
-      '{user} added {otherUser} as an admin to {colonyDisplayName}.',
-  },
-  notificationAdminOtherRemoved: {
-    id: 'dashboard.Inbox.InboxItem.notificationAdminOtherRemoved',
-    defaultMessage:
-      '{user} removed {otherUser} as an admin from {colonyDisplayName}.',
+      '{setTo,select,true{{user} added {otherUser} as an admin to {colonyDisplayName}.}false{{user} removed {otherUser} as an admin from {colonyDisplayName}.}}',
   },
   notificationAdminENSCreated: {
     id: 'dashboard.Inbox.InboxItem.notificationAdminENSCreated',

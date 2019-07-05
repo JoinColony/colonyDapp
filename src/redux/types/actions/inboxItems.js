@@ -1,42 +1,26 @@
 /* @flow */
 
 import type { Address, WithKey } from '~types';
-
-import type {
-  UniqueActionType,
-  ErrorActionType,
-  ActionTypeWithPayloadAndMeta,
-} from '../index';
+import type { UniqueActionType, ErrorActionType } from '../index';
 
 import { ACTIONS } from '../../index';
-import type { InboxItemType } from '~immutable';
 
 export type InboxItemsActionTypes = {|
-  INBOX_ITEMS_FETCH: ActionTypeWithPayloadAndMeta<
+  INBOX_ITEMS_FETCH: UniqueActionType<
     typeof ACTIONS.INBOX_ITEMS_FETCH,
-    {|
-      colonyAddress: Address,
-    |},
-    {|
-      id: string,
-      key: *,
-      colonyAddress: Address,
-    |},
+    {| walletAddress: Address |},
+    void,
   >,
   INBOX_ITEMS_FETCH_ERROR: ErrorActionType<
     typeof ACTIONS.INBOX_ITEMS_FETCH_ERROR,
     WithKey,
   >,
-  INBOX_ITEMS_FETCH_SUCCESS: ActionTypeWithPayloadAndMeta<
+  INBOX_ITEMS_FETCH_SUCCESS: UniqueActionType<
     typeof ACTIONS.INBOX_ITEMS_FETCH_SUCCESS,
     {|
-      activities: InboxItemType[],
+      activities: Array<Object>,
     |},
-    {|
-      id: string,
-      key: *,
-      colonyAddress?: Address,
-    |},
+    void,
   >,
   INBOX_ITEMS_ADD: UniqueActionType<
     typeof ACTIONS.INBOX_ITEMS_ADD,
@@ -53,7 +37,7 @@ export type InboxItemsActionTypes = {|
   INBOX_ITEMS_ADD_SUCCESS: UniqueActionType<
     typeof ACTIONS.INBOX_ITEMS_ADD_SUCCESS,
     {|
-      activity: InboxItemType,
+      activity: Object,
     |},
     WithKey,
   >,
