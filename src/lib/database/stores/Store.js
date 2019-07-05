@@ -7,6 +7,7 @@ import PinnerConnector from '../../ipfs/PinnerConnector';
 
 const REPLICATION_HACK_INTERVAL = 1000;
 const REPLICATION_HACK_TIMEOUT = 60 * 1000;
+const LOAD_TIMEOUT = 30 * 1000;
 
 /**
  * A parent class for a wrapper around an orbit store that can load
@@ -74,7 +75,7 @@ class Store {
 
     const [heads] = await raceAgainstTimeout(
       Promise.all([headCountPromise, loadPromise]),
-      30000,
+      LOAD_TIMEOUT,
       new Error('Could not get store heads in time'),
     );
     return heads;
