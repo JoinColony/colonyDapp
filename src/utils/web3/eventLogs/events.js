@@ -62,6 +62,12 @@ export const decorateLog = async (
     transactionHash,
   );
 
+  /**
+   * @NOTE: We have to cater for logs coming directly from transactions.
+   * This is needed because we have `putNotification` that adds to
+   * current user's activities on redux. So if we don't pass in an event,
+   * we try to parse it from the log.
+   */
   let parsedEvent = event;
   if (!parsedEvent) {
     const events = await client.parseLogs([log]);
@@ -101,6 +107,10 @@ export const getDecoratedEvents = async (
     );
   }
 
+  /**
+   * @NOTE: Here we pass the event directly so we don't try to parse the log again
+   * on `decorateLog`
+   */
   return Promise.all(
     logs.map((log, index) => decorateLog(client, log, events[index])),
   );
