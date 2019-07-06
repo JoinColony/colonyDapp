@@ -32,7 +32,8 @@ const ColonyGridItem = ({ colonyAddress }: Props) => {
   );
 
   /**
-   * @NOTE: If the colonyName is not found, we should throw an error or render an error
+   * @TODO ColonyGridItem: error handling for colony not found
+   * @BODY If the colonyName is not found, we should throw an error or render an error message
    */
   if (!colony || !colonyName || isFetching || isFetchingColonyName)
     return (
