@@ -1,6 +1,11 @@
 ---
-title: 'Example: Show activity indicator for all async activity related to transactions (Colony Creation Wizard)'
+name: Feature
+about: Only the finest features go into our artisanal DAOs.
+title: 'Example: Show activity indicator for all async activity related to transactions
+  (Colony Creation Wizard)'
 labels: feature
+assignees: ''
+
 ---
 
 ## Specification

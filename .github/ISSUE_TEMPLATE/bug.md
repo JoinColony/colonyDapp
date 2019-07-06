@@ -1,6 +1,10 @@
 ---
+name: Bug
+about: Something wrong? Got a nasty error?
 title: 'Example: Unable to log in with MetaMask wallet'
 labels: bug
+assignees: JamesLefrere
+
 ---
 
 ## Steps to reproduce
