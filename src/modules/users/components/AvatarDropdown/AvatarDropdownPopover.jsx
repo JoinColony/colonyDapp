@@ -10,8 +10,6 @@ import type { OpenDialog } from '~core/Dialog/types';
 import { ActionButton } from '~core/Button';
 import { ACTIONS } from '~redux';
 
-import unfinishedProfileOpener from '~users/UnfinishedProfile';
-
 import styles from './AvatarDropdownPopover.css';
 
 import {
@@ -72,11 +70,6 @@ type Props = {
 
 class AvatarDropdownPopover extends Component<Props> {
   static displayName = 'users.AvatarDropdown.AvatarDropdownPopover';
-
-  handleSetup = () => {
-    const { history } = this.props;
-    return unfinishedProfileOpener(history);
-  };
 
   renderUserSection = () => {
     const {
