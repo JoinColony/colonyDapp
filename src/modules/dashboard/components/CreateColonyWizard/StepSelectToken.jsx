@@ -96,9 +96,9 @@ const StepSelectToken = ({
 
   const handleTokenSelect = (data: TokenData, setFieldValue: SetFieldValue) => {
     setTokenData(data);
-    if (tokenData) {
-      setFieldValue('tokenName', tokenData.name);
-      setFieldValue('tokenSymbol', tokenData.symbol);
+    if (data) {
+      setFieldValue('tokenName', data.name);
+      setFieldValue('tokenSymbol', data.symbol);
     }
   };
 
