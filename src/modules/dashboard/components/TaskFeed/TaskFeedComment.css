@@ -1,6 +1,6 @@
 .comment {
   display: flex;
-  margin: var(--pad-huge) 0;
+  margin: 0 0 var(--pad-large) 0;
 }
 
 .commentSelf {

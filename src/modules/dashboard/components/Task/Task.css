@@ -19,9 +19,10 @@
 }
 
 .container {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
+  /*
+   * Full Vertical Height minus App Header, minus Task Header
+   */
+  height: calc(100vh - 70px - 45px);
   width: calc(100% - sidbarWidth);
 }
 

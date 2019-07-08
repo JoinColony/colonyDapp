@@ -9,8 +9,8 @@ import Numeral from '~core/Numeral';
 import { SpinnerLoader } from '~core/Preloaders';
 import TimeRelative from '~core/TimeRelative';
 import TransactionLink from '~core/TransactionLink';
-import { useDataFetcher, useSelector } from '~utils/hooks';
 
+import { useDataFetcher, useSelector } from '~utils/hooks';
 import { useReputationEarned } from '../../hooks/useReputationEarned';
 import { tokenFetcher } from '../../fetchers';
 import { taskSelector } from '../../selectors';

@@ -8,13 +8,13 @@ import formatDate from 'sugar-date/date/format';
 import type { Address } from '~types';
 import type { TaskFeedItemType } from '~immutable';
 
+import TimeRelative from '~core/TimeRelative';
+import taskSkillsTree from '../TaskSkills/taskSkillsTree';
+
 import { TASK_EVENT_TYPES } from '~data/constants';
 import { useSelector } from '~utils/hooks';
 import { domainSelector } from '../../selectors';
 import { friendlyUsernameSelector } from '../../../users/selectors';
-import taskSkillsTree from '../TaskSkills/taskSkillsTree';
-
-import TimeRelative from '~core/TimeRelative';
 
 import styles from '~dashboard/TaskFeed/TaskFeedEvent.css';
 
@@ -116,8 +116,10 @@ const TaskFeedEventDomainSet = ({
     <FormattedMessage
       {...MSG.domainSet}
       values={{
-        domainName,
-        user: <span>{user}</span>,
+        domainName: (
+          <span className={styles.highlight}>{`#${domainName}`}</span>
+        ),
+        user: <span className={styles.highlight}>{user}</span>,
       }}
     />
   );
@@ -130,7 +132,10 @@ const TaskFeedEventCreated = ({
 }: *) => {
   const user = useSelector(friendlyUsernameSelector, [userAddress]);
   return (
-    <FormattedMessage {...MSG.created} values={{ user: <span>{user}</span> }} />
+    <FormattedMessage
+      {...MSG.created}
+      values={{ user: <span className={styles.highlight}>{user}</span> }}
+    />
   );
 };
 
@@ -145,8 +150,12 @@ const TaskFeedEventDueDateSet = ({
     <FormattedMessage
       {...MSG.dueDateSet}
       values={{
-        user: <span>{user}</span>,
-        dueDate: formatDate(new Date(dueDate), '{short}'),
+        user: <span className={styles.highlight}>{user}</span>,
+        dueDate: (
+          <span className={styles.highlight}>
+            {formatDate(new Date(dueDate), '{short}')}
+          </span>
+        ),
       }}
     />
   );
@@ -162,7 +171,7 @@ const TaskFeedEventPayoutSet = ({
   return (
     <FormattedMessage
       {...MSG.payoutSet}
-      values={{ user: <span>{user}</span> }}
+      values={{ user: <span className={styles.highlight}>{user}</span> }}
     />
   );
 };
@@ -181,7 +190,10 @@ const TaskFeedEventSkillSet = ({
   return (
     <FormattedMessage
       {...MSG.skillSet}
-      values={{ user: <span>{user}</span>, skillName }}
+      values={{
+        user: <span className={styles.highlight}>{user}</span>,
+        skillName: <span className={styles.highlight}>{skillName}</span>,
+      }}
     />
   );
 };
@@ -195,7 +207,7 @@ const TaskFeedEventCancelled = ({
   return (
     <FormattedMessage
       {...MSG.cancelled}
-      values={{ user: <span>{user}</span> }}
+      values={{ user: <span className={styles.highlight}>{user}</span> }}
     />
   );
 };
@@ -207,7 +219,10 @@ const TaskFeedEventClosed = ({
 }: *) => {
   const user = useSelector(friendlyUsernameSelector, [userAddress]);
   return (
-    <FormattedMessage {...MSG.closed} values={{ user: <span>{user}</span> }} />
+    <FormattedMessage
+      {...MSG.closed}
+      values={{ user: <span className={styles.highlight}>{user}</span> }}
+    />
   );
 };
 
@@ -221,7 +236,10 @@ const TaskFeedEventDescriptionSet = ({
   return (
     <FormattedMessage
       {...MSG.descriptionSet}
-      values={{ user: <span>{user}</span>, description }}
+      values={{
+        user: <span className={styles.highlight}>{user}</span>,
+        description: <span className={styles.highlight}>{description}</span>,
+      }}
     />
   );
 };
@@ -235,7 +253,7 @@ const TaskFeedEventFinalized = ({
   return (
     <FormattedMessage
       {...MSG.finalized}
-      values={{ user: <span>{user}</span> }}
+      values={{ user: <span className={styles.highlight}>{user}</span> }}
     />
   );
 };
@@ -250,7 +268,10 @@ const TaskFeedEventTitleSet = ({
   return (
     <FormattedMessage
       {...MSG.titleSet}
-      values={{ user: <span>{user}</span>, title }}
+      values={{
+        user: <span className={styles.highlight}>{user}</span>,
+        title: <span className={styles.highlight}>{title}</span>,
+      }}
     />
   );
 };
@@ -267,8 +288,8 @@ const TaskFeedEventWorkInviteSent = ({
     <FormattedMessage
       {...MSG.workInviteSent}
       values={{
-        user: <span>{user}</span>,
-        invitedUser: <span>{invitedUser}</span>,
+        user: <span className={styles.highlight}>{user}</span>,
+        invitedUser: <span className={styles.highlight}>{invitedUser}</span>,
       }}
     />
   );
@@ -280,7 +301,12 @@ const TaskFeedEventWorkRequestCreated = ({
   },
 }: *) => {
   const user = useSelector(friendlyUsernameSelector, [userAddress]);
-  return <FormattedMessage {...MSG.workRequestCreated} values={{ user }} />;
+  return (
+    <FormattedMessage
+      {...MSG.workRequestCreated}
+      values={{ user: <span className={styles.highlight}>{user}</span> }}
+    />
+  );
 };
 
 const TaskFeedEventWorkerAssigned = ({
@@ -294,7 +320,10 @@ const TaskFeedEventWorkerAssigned = ({
   return (
     <FormattedMessage
       {...MSG.workerAssigned}
-      values={{ user: <span>{user}</span>, worker: <span>{worker}</span> }}
+      values={{
+        user: <span className={styles.highlight}>{user}</span>,
+        worker: <span className={styles.highlight}>{worker}</span>,
+      }}
     />
   );
 };
@@ -309,7 +338,10 @@ const TaskFeedEventWorkerUnassigned = ({
   return (
     <FormattedMessage
       {...MSG.workerUnassigned}
-      values={{ user: <span>{user}</span>, worker: <span>{worker}</span> }}
+      values={{
+        user: <span className={styles.highlight}>{user}</span>,
+        worker: <span className={styles.highlight}>{worker}</span>,
+      }}
     />
   );
 };
@@ -335,9 +367,11 @@ const TaskFeedEvent = ({ colonyAddress, createdAt, event }: Props) => {
   const FeedEventComponent = FEED_EVENT_COMPONENTS[event.type];
   return (
     <div className={styles.main}>
-      <FeedEventComponent event={event} colonyAddress={colonyAddress} />
-      &nbsp;
-      <TimeRelative value={createdAt} />
+      <div className={styles.event}>
+        <FeedEventComponent event={event} colonyAddress={colonyAddress} />
+        &nbsp;
+        <TimeRelative value={createdAt} />
+      </div>
     </div>
   );
 };
