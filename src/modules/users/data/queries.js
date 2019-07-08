@@ -52,7 +52,7 @@ import {
   getUserProfileStoreAddress,
 } from '~data/stores';
 import { getUserTasksReducer, getUserProfileReducer } from './reducers';
-import { getUserTokenAddresses } from './utils';
+import { getUserAddressByUsername, getUserTokenAddresses } from './utils';
 
 const {
   READ_UNTIL,
@@ -259,6 +259,36 @@ export const getUserBalance: Query<
     } = networkClient;
     const balance = await provider.getBalance(walletAddress);
     return formatEther(balance);
+  },
+};
+
+export const getUserAddress: Query<
+  {| ens: ENSCache, networkClient: NetworkClient |},
+  void,
+  {| username: string |},
+  string,
+> = {
+  name: 'getUserAddress',
+  context: [CONTEXT.COLONY_MANAGER, CONTEXT.ENS_INSTANCE],
+  async prepare({
+    colonyManager: { networkClient },
+    ens,
+  }: {|
+    colonyManager: ColonyManager,
+    ens: ENSCache,
+  |}) {
+    return { ens, networkClient };
+  },
+  async execute({ ens, networkClient }, { username }) {
+    const userAddress = await getUserAddressByUsername(ens, networkClient)(
+      username,
+    );
+
+    if (!userAddress) {
+      throw new Error(`Address not found for username "${username}"`);
+    }
+
+    return userAddress;
   },
 };
 

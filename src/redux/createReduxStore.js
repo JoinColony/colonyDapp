@@ -24,7 +24,6 @@ const duplicateActionGuardMiddleware = createDuplicateActionGuardMiddleware(
   ACTIONS.COLONY_FETCH,
   ACTIONS.COLONY_NAME_FETCH,
   ACTIONS.TASK_FETCH,
-  ACTIONS.USER_BY_USERNAME_FETCH,
   ACTIONS.USER_FETCH,
 );
 

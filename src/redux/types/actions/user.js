@@ -51,9 +51,20 @@ export type UserActionTypes = {|
     |},
     void,
   >,
-  USER_BY_USERNAME_FETCH: ActionTypeWithPayload<
-    typeof ACTIONS.USER_BY_USERNAME_FETCH,
+  USER_ADDRESS_FETCH: UniqueActionType<
+    typeof ACTIONS.USER_ADDRESS_FETCH,
     {| username: string |},
+    void,
+  >,
+  USER_ADDRESS_FETCH_ERROR: ErrorActionType<
+    typeof ACTIONS.USER_ADDRESS_FETCH,
+    void,
+    void,
+  >,
+  USER_ADDRESS_FETCH_SUCCESS: UniqueActionType<
+    typeof ACTIONS.USER_ADDRESS_FETCH,
+    {| userAddress: string |},
+    void,
   >,
   USER_COLONY_SUBSCRIBE: UniqueActionType<
     typeof ACTIONS.USER_COLONY_SUBSCRIBE,

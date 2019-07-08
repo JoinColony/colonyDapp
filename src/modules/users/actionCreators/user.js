@@ -16,13 +16,6 @@ export const userFetch = (
   payload: { userAddress },
 });
 
-export const userByUsernameFetch = (
-  username: string,
-): Action<typeof ACTIONS.USER_BY_USERNAME_FETCH> => ({
-  type: ACTIONS.USER_BY_USERNAME_FETCH,
-  payload: { username },
-});
-
 export const userTokensFetch = (): Action<
   typeof ACTIONS.USER_TOKENS_FETCH,
 > => ({

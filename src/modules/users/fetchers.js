@@ -4,12 +4,10 @@ import {
   currentUserColonyPermissionsSelector,
   currentUserTokensSelector,
   currentUserTransactionsSelector,
-  userByUsernameSelector,
   userSelector,
   usersByAddressesSelector,
 } from './selectors';
 import {
-  userByUsernameFetch,
   userFetch,
   userPermissionsFetch,
   userTokensFetch,
@@ -37,12 +35,6 @@ export const currentUserTokenTransfersFetcher = Object.freeze({
 export const userFetcher = Object.freeze({
   fetch: userFetch,
   select: userSelector,
-  ttl: 60 * 1000,
-});
-
-export const userByUsernameFetcher = Object.freeze({
-  fetch: userByUsernameFetch,
-  select: userByUsernameSelector,
   ttl: 60 * 1000,
 });
 

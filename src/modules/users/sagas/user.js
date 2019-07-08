@@ -54,6 +54,7 @@ import {
 } from '../data/commands';
 import {
   checkUsernameIsAvailable,
+  getUserAddress,
   getUserBalance,
   getUserColonies,
   getUserColonyTransactions,
@@ -66,7 +67,6 @@ import {
 } from '../data/queries';
 
 import { createTransaction, getTxChannel } from '../../core/sagas/transactions';
-import { userFetch as userFetchActionCreator } from '../actionCreators';
 
 function* userTokenTransfersFetch(
   // eslint-disable-next-line no-unused-vars
@@ -89,42 +89,45 @@ function* userTokenTransfersFetch(
   }
 }
 
-function* userByUsernameFetch({
+function* userAddressFetch({
   payload: { username },
-}: Action<typeof ACTIONS.USER_BY_USERNAME_FETCH>): Saga<void> {
+  meta,
+}: Action<typeof ACTIONS.USER_ADDRESS_FETCH>): Saga<*> {
   try {
-    const { networkClient } = yield* getContext(CONTEXT.COLONY_MANAGER);
-    const ens = yield* getContext(CONTEXT.ENS_INSTANCE);
-    const userAddress = yield call(
-      [ens, ens.getAddress],
-      ens.constructor.getFullDomain('user', username),
-      networkClient,
-    );
-    yield put(userFetchActionCreator(userAddress));
+    const userAddress = yield* executeQuery(getUserAddress, {
+      args: { username },
+    });
+
+    yield put({
+      type: ACTIONS.USER_ADDRESS_FETCH_SUCCESS,
+      payload: { userAddress },
+      meta,
+    });
   } catch (error) {
-    yield putError(ACTIONS.USER_FETCH_ERROR, error);
+    return yield putError(ACTIONS.USER_ADDRESS_FETCH_ERROR, error, meta);
   }
+  return null;
 }
 
 function* userFetch({
   meta,
   payload: { userAddress },
-}: Action<typeof ACTIONS.USER_FETCH>): Saga<void> {
+}: Action<typeof ACTIONS.USER_FETCH>): Saga<*> {
   try {
     const user = yield* executeQuery(getUserProfile, {
       metadata: {
         walletAddress: userAddress,
       },
     });
-
     yield put<Action<typeof ACTIONS.USER_FETCH_SUCCESS>>({
       type: ACTIONS.USER_FETCH_SUCCESS,
       meta,
       payload: user,
     });
   } catch (error) {
-    yield putError(ACTIONS.USER_FETCH_ERROR, error, meta);
+    return yield putError(ACTIONS.USER_FETCH_ERROR, error, meta);
   }
+  return null;
 }
 
 function* currentUserGetBalance(
@@ -578,7 +581,7 @@ function* inboxItemsFetch({
 
 export default function* setupUsersSagas(): Saga<void> {
   yield takeEvery(ACTIONS.USER_FETCH, userFetch);
-  yield takeEvery(ACTIONS.USER_BY_USERNAME_FETCH, userByUsernameFetch);
+  yield takeEvery(ACTIONS.USER_ADDRESS_FETCH, userAddressFetch);
   yield takeEvery(ACTIONS.USER_PERMISSIONS_FETCH, userPermissionsFetch);
   yield takeEvery(ACTIONS.USER_TOKEN_TRANSFERS_FETCH, userTokenTransfersFetch);
   yield takeEvery(ACTIONS.USER_TOKENS_FETCH, userTokensFetch);
