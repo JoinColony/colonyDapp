@@ -38,7 +38,7 @@ export function* ipfsUpload(data: string): Saga<string> {
 function* ipfsDataUpload({
   meta,
   payload: { ipfsData },
-}: Action<typeof ACTIONS.IPFS_DATA_UPLOAD>): Saga<void> {
+}: Action<typeof ACTIONS.IPFS_DATA_UPLOAD>): Saga<*> {
   try {
     const ipfsNode = yield* getContext(CONTEXT.IPFS_NODE);
 
@@ -50,14 +50,15 @@ function* ipfsDataUpload({
       payload: { ipfsHash, ipfsData },
     });
   } catch (error) {
-    yield putError(ACTIONS.IPFS_DATA_UPLOAD_ERROR, error, meta);
+    return yield putError(ACTIONS.IPFS_DATA_UPLOAD_ERROR, error, meta);
   }
+  return null;
 }
 
 function* ipfsDataFetch({
   meta,
   payload: { ipfsHash },
-}: Action<typeof ACTIONS.IPFS_DATA_FETCH>): Saga<void> {
+}: Action<typeof ACTIONS.IPFS_DATA_FETCH>): Saga<*> {
   try {
     const ipfsNode = yield* getContext(CONTEXT.IPFS_NODE);
     const ipfsData = yield call([ipfsNode, ipfsNode.getString], ipfsHash);
@@ -68,8 +69,9 @@ function* ipfsDataFetch({
       payload: { ipfsHash, ipfsData },
     });
   } catch (error) {
-    yield putError(ACTIONS.IPFS_DATA_FETCH_ERROR, error, meta);
+    return yield putError(ACTIONS.IPFS_DATA_FETCH_ERROR, error, meta);
   }
+  return null;
 }
 
 export default function* ipfsSagas(): Saga<void> {

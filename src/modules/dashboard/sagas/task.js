@@ -109,7 +109,7 @@ export function* fetchColonyTaskMetadata(colonyAddress: Address): Saga<*> {
 function* taskCreate({
   meta,
   payload: { colonyAddress },
-}: Action<typeof ACTIONS.TASK_CREATE>): Saga<void> {
+}: Action<typeof ACTIONS.TASK_CREATE>): Saga<*> {
   try {
     const {
       record: { colonyName },
@@ -151,8 +151,9 @@ function* taskCreate({
       put(replace(`/colony/${colonyName}/task/${draftId}`)),
     ]);
   } catch (error) {
-    yield putError(ACTIONS.TASK_CREATE_ERROR, error, meta);
+    return yield putError(ACTIONS.TASK_CREATE_ERROR, error, meta);
   }
+  return null;
 }
 
 /**
@@ -199,7 +200,7 @@ const getTaskFetchSuccessPayload = (
 function* taskFetch({
   meta,
   payload: { colonyAddress, draftId },
-}: Action<typeof ACTIONS.TASK_FETCH>): Saga<void> {
+}: Action<typeof ACTIONS.TASK_FETCH>): Saga<*> {
   try {
     const taskData = yield* executeQuery(getTask, {
       metadata: { colonyAddress, draftId },
@@ -210,15 +211,16 @@ function* taskFetch({
       meta,
     });
   } catch (error) {
-    yield putError(ACTIONS.TASK_FETCH_ERROR, error, meta);
+    return yield putError(ACTIONS.TASK_FETCH_ERROR, error, meta);
   }
+  return null;
 }
 
 /*
  * Given all colonies in the current state, fetch all tasks for all
  * colonies (in parallel).
  */
-function* taskFetchAll(): Saga<void> {
+function* taskFetchAll(): Saga<*> {
   const colonyAddresss = yield select(allColonyNamesSelector);
   yield all(
     colonyAddresss.map(colonyAddress =>
@@ -230,7 +232,7 @@ function* taskFetchAll(): Saga<void> {
 function* taskSetDescription({
   meta,
   payload: { colonyAddress, draftId, description },
-}: Action<typeof ACTIONS.TASK_SET_DESCRIPTION>): Saga<void> {
+}: Action<typeof ACTIONS.TASK_SET_DESCRIPTION>): Saga<*> {
   try {
     const {
       record: { description: currentDescription },
@@ -255,14 +257,15 @@ function* taskSetDescription({
       });
     }
   } catch (error) {
-    yield putError(ACTIONS.TASK_SET_DESCRIPTION_ERROR, error, meta);
+    return yield putError(ACTIONS.TASK_SET_DESCRIPTION_ERROR, error, meta);
   }
+  return null;
 }
 
 function* taskSetTitle({
   meta,
   payload: { colonyAddress, draftId, title },
-}: Action<typeof ACTIONS.TASK_SET_TITLE>): Saga<void> {
+}: Action<typeof ACTIONS.TASK_SET_TITLE>): Saga<*> {
   try {
     const { event } = yield* executeCommand(setTaskTitle, {
       args: { title },
@@ -278,14 +281,15 @@ function* taskSetTitle({
       },
     });
   } catch (error) {
-    yield putError(ACTIONS.TASK_SET_TITLE_ERROR, error, meta);
+    return yield putError(ACTIONS.TASK_SET_TITLE_ERROR, error, meta);
   }
+  return null;
 }
 
 function* taskSetDomain({
   meta,
   payload: { colonyAddress, draftId, domainId },
-}: Action<typeof ACTIONS.TASK_SET_DOMAIN>): Saga<void> {
+}: Action<typeof ACTIONS.TASK_SET_DOMAIN>): Saga<*> {
   try {
     const { event } = yield* executeCommand(setTaskDomain, {
       args: { domainId },
@@ -301,8 +305,9 @@ function* taskSetDomain({
       },
     });
   } catch (error) {
-    yield putError(ACTIONS.TASK_SET_DOMAIN_ERROR, error, meta);
+    return yield putError(ACTIONS.TASK_SET_DOMAIN_ERROR, error, meta);
   }
+  return null;
 }
 
 /*
@@ -313,7 +318,7 @@ function* taskSetDomain({
 function* taskCancel({
   meta,
   payload: { colonyAddress, draftId },
-}: Action<typeof ACTIONS.TASK_CANCEL>): Saga<void> {
+}: Action<typeof ACTIONS.TASK_CANCEL>): Saga<*> {
   try {
     const { event } = yield* executeCommand(cancelTask, {
       args: { draftId },
@@ -330,8 +335,9 @@ function* taskCancel({
       },
     });
   } catch (error) {
-    yield putError(ACTIONS.TASK_CANCEL_ERROR, error, meta);
+    return yield putError(ACTIONS.TASK_CANCEL_ERROR, error, meta);
   }
+  return null;
 }
 
 /*
@@ -342,7 +348,7 @@ function* taskCancel({
 function* taskClose({
   meta,
   payload: { colonyAddress, draftId },
-}: Action<typeof ACTIONS.TASK_CLOSE>): Saga<void> {
+}: Action<typeof ACTIONS.TASK_CLOSE>): Saga<*> {
   try {
     const { event } = yield* executeCommand(closeTask, {
       metadata: { colonyAddress, draftId },
@@ -358,8 +364,9 @@ function* taskClose({
       },
     });
   } catch (error) {
-    yield putError(ACTIONS.TASK_CLOSE_ERROR, error, meta);
+    return yield putError(ACTIONS.TASK_CLOSE_ERROR, error, meta);
   }
+  return null;
 }
 
 /*
@@ -368,7 +375,7 @@ function* taskClose({
 function* taskSetSkill({
   payload: { colonyAddress, draftId, skillId },
   meta,
-}: Action<typeof ACTIONS.TASK_SET_SKILL>): Saga<void> {
+}: Action<typeof ACTIONS.TASK_SET_SKILL>): Saga<*> {
   try {
     const { event } = yield* executeCommand(setTaskSkill, {
       args: { skillId },
@@ -385,8 +392,9 @@ function* taskSetSkill({
       meta,
     });
   } catch (error) {
-    yield putError(ACTIONS.TASK_SET_SKILL_ERROR, error, meta);
+    return yield putError(ACTIONS.TASK_SET_SKILL_ERROR, error, meta);
   }
+  return null;
 }
 
 /*
@@ -395,7 +403,7 @@ function* taskSetSkill({
 function* taskSetPayout({
   payload: { colonyAddress, draftId, token, amount },
   meta,
-}: Action<typeof ACTIONS.TASK_SET_PAYOUT>): Saga<void> {
+}: Action<typeof ACTIONS.TASK_SET_PAYOUT>): Saga<*> {
   try {
     const { event } = yield* executeCommand(setTaskPayout, {
       args: { token, amount },
@@ -412,8 +420,9 @@ function* taskSetPayout({
       meta,
     });
   } catch (error) {
-    yield putError(ACTIONS.TASK_SET_PAYOUT_ERROR, error, meta);
+    return yield putError(ACTIONS.TASK_SET_PAYOUT_ERROR, error, meta);
   }
+  return null;
 }
 
 /*
@@ -422,7 +431,7 @@ function* taskSetPayout({
 function* taskSetDueDate({
   payload: { colonyAddress, draftId, dueDate },
   meta,
-}: Action<typeof ACTIONS.TASK_SET_DUE_DATE>): Saga<void> {
+}: Action<typeof ACTIONS.TASK_SET_DUE_DATE>): Saga<*> {
   try {
     const { event } = yield* executeCommand(setTaskDueDate, {
       args: { dueDate: dueDate.getTime() },
@@ -438,8 +447,9 @@ function* taskSetDueDate({
       meta,
     });
   } catch (error) {
-    yield putError(ACTIONS.TASK_SET_DUE_DATE_ERROR, error, meta);
+    return yield putError(ACTIONS.TASK_SET_DUE_DATE_ERROR, error, meta);
   }
+  return null;
 }
 
 /*
@@ -448,7 +458,7 @@ function* taskSetDueDate({
 function* taskFinalize({
   payload: { colonyAddress, draftId },
   meta,
-}: Action<typeof ACTIONS.TASK_FINALIZE>): Saga<void> {
+}: Action<typeof ACTIONS.TASK_FINALIZE>): Saga<*> {
   try {
     const colonyManager = yield* getContext(CONTEXT.COLONY_MANAGER);
     const colonyClient = yield call(
@@ -564,14 +574,15 @@ function* taskFinalize({
       meta,
     });
   } catch (error) {
-    yield putError(ACTIONS.TASK_FINALIZE_ERROR, error, meta);
+    return yield putError(ACTIONS.TASK_FINALIZE_ERROR, error, meta);
   }
+  return null;
 }
 
 function* taskSendWorkInvite({
   payload: { colonyAddress, draftId },
   meta,
-}: Action<typeof ACTIONS.TASK_SEND_WORK_INVITE>): Saga<void> {
+}: Action<typeof ACTIONS.TASK_SEND_WORK_INVITE>): Saga<*> {
   try {
     const { workerAddress } = yield select(taskSelector, draftId);
     const { event } = yield* executeCommand(sendWorkInvite, {
@@ -588,14 +599,15 @@ function* taskSendWorkInvite({
       meta,
     });
   } catch (error) {
-    yield putError(ACTIONS.TASK_SEND_WORK_INVITE_ERROR, error, meta);
+    return yield putError(ACTIONS.TASK_SEND_WORK_INVITE_ERROR, error, meta);
   }
+  return null;
 }
 
 function* taskSendWorkRequest({
   payload: { colonyAddress, draftId },
   meta,
-}: Action<typeof ACTIONS.TASK_SEND_WORK_REQUEST>): Saga<void> {
+}: Action<typeof ACTIONS.TASK_SEND_WORK_REQUEST>): Saga<*> {
   try {
     const walletAddress = yield select(walletAddressSelector);
     const { event } = yield* executeCommand(createWorkRequest, {
@@ -627,14 +639,15 @@ function* taskSendWorkRequest({
       meta,
     });
   } catch (error) {
-    yield putError(ACTIONS.TASK_SEND_WORK_REQUEST_ERROR, error, meta);
+    return yield putError(ACTIONS.TASK_SEND_WORK_REQUEST_ERROR, error, meta);
   }
+  return null;
 }
 
 function* taskWorkerAssign({
   payload: { colonyAddress, draftId, workerAddress },
   meta,
-}: Action<typeof ACTIONS.TASK_WORKER_ASSIGN>): Saga<void> {
+}: Action<typeof ACTIONS.TASK_WORKER_ASSIGN>): Saga<*> {
   try {
     const walletAddress = yield select(walletAddressSelector);
     const {
@@ -668,14 +681,15 @@ function* taskWorkerAssign({
       });
     }
   } catch (error) {
-    yield putError(ACTIONS.TASK_WORKER_ASSIGN_ERROR, error, meta);
+    return yield putError(ACTIONS.TASK_WORKER_ASSIGN_ERROR, error, meta);
   }
+  return null;
 }
 
 function* taskWorkerUnassign({
   payload: { colonyAddress, draftId, workerAddress },
   meta,
-}: Action<typeof ACTIONS.TASK_WORKER_UNASSIGN>): Saga<void> {
+}: Action<typeof ACTIONS.TASK_WORKER_UNASSIGN>): Saga<*> {
   try {
     const { event } = yield* executeCommand(unassignWorker, {
       args: { workerAddress },
@@ -691,14 +705,15 @@ function* taskWorkerUnassign({
       meta,
     });
   } catch (error) {
-    yield putError(ACTIONS.TASK_WORKER_UNASSIGN_ERROR, error, meta);
+    return yield putError(ACTIONS.TASK_WORKER_UNASSIGN_ERROR, error, meta);
   }
+  return null;
 }
 
 function* taskSetWorkerAndPayouts({
   payload: { colonyAddress, draftId, payouts, workerAddress },
   meta,
-}: Action<typeof ACTIONS.TASK_SET_WORKER_AND_PAYOUTS>): Saga<void> {
+}: Action<typeof ACTIONS.TASK_SET_WORKER_AND_PAYOUTS>): Saga<*> {
   try {
     yield call(taskWorkerAssign, {
       meta: { key: draftId },
@@ -737,14 +752,19 @@ function* taskSetWorkerAndPayouts({
       },
     });
   } catch (error) {
-    yield putError(ACTIONS.TASK_SET_WORKER_AND_PAYOUTS_ERROR, error, meta);
+    return yield putError(
+      ACTIONS.TASK_SET_WORKER_AND_PAYOUTS_ERROR,
+      error,
+      meta,
+    );
   }
+  return null;
 }
 
 function* taskFeedItemsSubStart({
   payload: { colonyAddress, draftId },
   meta,
-}: *): Saga<void> {
+}: *): Saga<*> {
   let channel;
   try {
     channel = yield call(executeSubscription, subscribeTaskFeedItems, {
@@ -773,7 +793,7 @@ function* taskFeedItemsSubStart({
       });
     }
   } catch (caughtError) {
-    yield putError(ACTIONS.TASK_FEED_ITEMS_SUB_ERROR, caughtError, meta);
+    return yield putError(ACTIONS.TASK_FEED_ITEMS_SUB_ERROR, caughtError, meta);
   } finally {
     if (channel && typeof channel.close == 'function') {
       channel.close();
@@ -784,7 +804,7 @@ function* taskFeedItemsSubStart({
 function* taskSubStart({
   payload: { colonyAddress, draftId },
   meta,
-}: *): Saga<void> {
+}: *): Saga<*> {
   // This could be generalised (it's very similar to the above function),
   // but it's probably worth waiting to see, as this pattern will likely change
   // as it gets used elsewhere.
@@ -816,7 +836,7 @@ function* taskSubStart({
       });
     }
   } catch (caughtError) {
-    yield putError(ACTIONS.TASK_SUB_ERROR, caughtError, meta);
+    return yield putError(ACTIONS.TASK_SUB_ERROR, caughtError, meta);
   } finally {
     if (channel && typeof channel.close == 'function') {
       channel.close();
@@ -827,7 +847,7 @@ function* taskSubStart({
 function* taskCommentAdd({
   payload: { author, colonyAddress, comment, draftId, taskTitle },
   meta,
-}: Action<typeof ACTIONS.TASK_COMMENT_ADD>): Saga<void> {
+}: Action<typeof ACTIONS.TASK_COMMENT_ADD>): Saga<*> {
   try {
     const walletAddress = yield select(walletAddressSelector);
     const currentUsername = yield select(usernameSelector, walletAddress);
@@ -907,11 +927,12 @@ function* taskCommentAdd({
       });
     }
   } catch (error) {
-    yield putError(ACTIONS.TASK_COMMENT_ADD_ERROR, error, meta);
+    return yield putError(ACTIONS.TASK_COMMENT_ADD_ERROR, error, meta);
   }
+  return null;
 }
 
-export default function* tasksSagas(): any {
+export default function* tasksSagas(): Saga<void> {
   yield takeEvery(ACTIONS.TASK_CANCEL, taskCancel);
   yield takeEvery(ACTIONS.TASK_CLOSE, taskClose);
   yield takeEvery(ACTIONS.TASK_COMMENT_ADD, taskCommentAdd);

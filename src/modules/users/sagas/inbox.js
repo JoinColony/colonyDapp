@@ -46,8 +46,12 @@ function* markAllNotificationsAsRead(): Saga<*> {
       },
     );
   } catch (error) {
-    yield putError(ACTIONS.INBOX_MARK_ALL_NOTIFICATIONS_READ_ERROR, error);
+    return yield putError(
+      ACTIONS.INBOX_MARK_ALL_NOTIFICATIONS_READ_ERROR,
+      error,
+    );
   }
+  return null;
 }
 
 /*  We use a timestamp here for the item being marked as read */
@@ -80,12 +84,9 @@ function* markNotificationAsRead({
       timestamp: activity.get('timestamp'),
     }));
     /* If the activity is not found, do nothing */
-    if (
-      !(
-        inboxItems && inboxItems.some(({ id: activityId }) => activityId === id)
-      )
-    )
-      return;
+    if (!(inboxItems && inboxItems.some(item => item.id === id))) {
+      return null;
+    }
 
     const exceptFor =
       Array.from(new Set([...inboxItems, ...currentExceptFor]))
@@ -102,7 +103,7 @@ function* markNotificationAsRead({
       exceptFor.every(item => currentExceptFor.includes(item)) &&
       timestamp <= currentReadUntil
     ) {
-      return;
+      return null;
     }
 
     const readUntil =
@@ -131,8 +132,9 @@ function* markNotificationAsRead({
       payload: { readUntil, exceptFor },
     });
   } catch (error) {
-    yield putError(ACTIONS.INBOX_MARK_NOTIFICATION_READ_ERROR, error);
+    return yield putError(ACTIONS.INBOX_MARK_NOTIFICATION_READ_ERROR, error);
   }
+  return null;
 }
 
 export default function* inboxSagas(): Saga<void> {

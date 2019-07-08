@@ -10,7 +10,7 @@ import { CONTEXT, getContext } from '~context';
 import { ACTIONS } from '~redux';
 import { putError } from '~utils/saga/effects';
 
-function* networkFetch(): Saga<void> {
+function* networkFetch(): Saga<*> {
   try {
     const colonyManager = yield* getContext(CONTEXT.COLONY_MANAGER);
 
@@ -35,8 +35,9 @@ function* networkFetch(): Saga<void> {
       },
     });
   } catch (error) {
-    yield putError(ACTIONS.NETWORK_FETCH_ERROR, error);
+    return yield putError(ACTIONS.NETWORK_FETCH_ERROR, error);
   }
+  return null;
 }
 
 export default function* networkSagas(): Saga<void> {

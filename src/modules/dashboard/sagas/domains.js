@@ -26,7 +26,7 @@ import { getColonyDomains } from '../data/queries';
 function* colonyDomainsFetch({
   meta,
   payload: { colonyAddress },
-}: Action<typeof ACTIONS.COLONY_DOMAINS_FETCH>): Saga<void> {
+}: Action<typeof ACTIONS.COLONY_DOMAINS_FETCH>): Saga<*> {
   try {
     const domains = yield* executeQuery(getColonyDomains, {
       metadata: { colonyAddress },
@@ -43,14 +43,15 @@ function* colonyDomainsFetch({
       },
     });
   } catch (error) {
-    yield putError(ACTIONS.COLONY_DOMAINS_FETCH_ERROR, error, meta);
+    return yield putError(ACTIONS.COLONY_DOMAINS_FETCH_ERROR, error, meta);
   }
+  return null;
 }
 
 function* domainCreate({
   payload: { colonyAddress, domainName: name, parentDomainId = 1 },
   meta,
-}: Action<typeof ACTIONS.DOMAIN_CREATE>): Saga<void> {
+}: Action<typeof ACTIONS.DOMAIN_CREATE>): Saga<*> {
   const txChannel = yield call(getTxChannel, meta.id);
   try {
     /*
@@ -109,10 +110,11 @@ function* domainCreate({
     const decoratedLog = yield call(decorateLog, colonyClient, domainAddedLog);
     yield putNotification(normalizeTransactionLog(colonyAddress, decoratedLog));
   } catch (error) {
-    yield putError(ACTIONS.DOMAIN_CREATE_ERROR, error, meta);
+    return yield putError(ACTIONS.DOMAIN_CREATE_ERROR, error, meta);
   } finally {
     txChannel.close();
   }
+  return null;
 }
 
 export default function* domainSagas(): Saga<void> {

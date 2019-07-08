@@ -52,7 +52,7 @@ function* setupDDBResolver(
   colonyManager: ColonyManagerType,
   ddb: DDBType,
   ens: ENSCache,
-) {
+): Saga<*> {
   const { networkClient } = colonyManager;
 
   yield call([ddb, ddb.registerResolver], (identifier: string) =>
@@ -67,7 +67,7 @@ function* setupDDBResolver(
  */
 export default function* setupUserContext(
   action: Action<typeof ACTIONS.WALLET_CREATE>,
-): Saga<void> {
+): Saga<*> {
   const {
     meta,
     payload: { method },
@@ -159,6 +159,7 @@ export default function* setupUserContext(
 
     yield call(setupOnBeforeUnload);
   } catch (caughtError) {
-    yield putError(ACTIONS.WALLET_CREATE_ERROR, caughtError, meta);
+    return yield putError(ACTIONS.WALLET_CREATE_ERROR, caughtError, meta);
   }
+  return null;
 }
