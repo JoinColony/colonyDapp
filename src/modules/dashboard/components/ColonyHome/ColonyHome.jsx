@@ -3,7 +3,7 @@
 import type { Match } from 'react-router';
 
 // $FlowFixMe update flow!
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useMemo } from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 import { Redirect } from 'react-router';
 
@@ -29,6 +29,7 @@ import { currentUserColonyPermissionsFetcher } from '../../../users/fetchers';
 import {
   canAdminister,
   canCreateTask as canCreateTaskCheck,
+  isFounder,
 } from '../../../users/checks';
 import { isInRecoveryMode as isInRecoveryModeCheck } from '../../checks';
 
@@ -103,6 +104,88 @@ const ColonyHome = ({
     colonyAddress,
   ]);
 
+  const canCreateTask = canCreateTaskCheck(permissions);
+  const isInRecoveryMode = isInRecoveryModeCheck(colony);
+
+  const renderFundingWidget = () => {
+    /*
+     * Since we're calling this before the Loader, we can't actually render
+     * if the colony data is not yet loaded
+     */
+    if (!colony) {
+      return null;
+    }
+    /*
+     * Small helpers to make the funding display logic easier to read
+     */
+    const isBalanceZero =
+      nativeTokenRef &&
+      nativeTokenRef.balance &&
+      nativeTokenRef.balance.isZero();
+    const isFounderOrAdmin =
+      canAdminister(permissions) && isFounder(permissions);
+    /*
+     * If it's a native token, balance is 0 and the user can mint it
+     */
+    if (
+      nativeTokenRef &&
+      !nativeTokenRef.isExternal &&
+      isBalanceZero &&
+      colony.canMintNativeToken
+    ) {
+      return (
+        <ColonyInitialFunding
+          colonyAddress={colonyAddress}
+          displayName={colony.displayName}
+          tokenAddress={nativeTokenRef.address}
+          isExternal={false}
+        />
+      );
+    }
+    /*
+     * If it's an external token, balance is zero, and the user is and Admin or Founder
+     */
+    if (
+      nativeTokenRef &&
+      nativeTokenRef.isExternal &&
+      isBalanceZero &&
+      isFounderOrAdmin
+    ) {
+      return (
+        <ColonyInitialFunding
+          colonyAddress={colonyAddress}
+          displayName={colony.displayName}
+          tokenAddress={nativeTokenRef.address}
+          isExternal
+        />
+      );
+    }
+    /*
+     * If it's not any of the above, show the tasks list
+     * (The list handles it's own empty state)
+     */
+    return (
+      <ColonyTasks
+        canCreateTask={canCreateTask}
+        colonyAddress={colonyAddress}
+        filteredDomainId={filteredDomainId}
+        filterOption={filterOption}
+        isInRecoveryMode={isInRecoveryMode}
+      />
+    );
+  };
+
+  const memoizedFundingWidget = useMemo(renderFundingWidget, [
+    nativeTokenRef,
+    permissions,
+    colony,
+    colonyAddress,
+    canCreateTask,
+    filteredDomainId,
+    filterOption,
+    isInRecoveryMode,
+  ]);
+
   if (colonyError) {
     return <Redirect to="/404" />;
   }
@@ -111,8 +194,6 @@ const ColonyHome = ({
     return <LoadingTemplate loadingText={MSG.loadingText} />;
   }
 
-  const canCreateTask = canCreateTaskCheck(permissions);
-  const isInRecoveryMode = isInRecoveryModeCheck(colony);
   const filterSelect = (
     <Select
       appearance={{ alignOptions: 'right', theme: 'alt' }}
@@ -126,6 +207,7 @@ const ColonyHome = ({
       $value={filterOption}
     />
   );
+
   return (
     <div className={styles.main}>
       <aside className={styles.colonyInfo}>
@@ -141,27 +223,7 @@ const ColonyHome = ({
               <FormattedMessage {...MSG.tabContribute} />
             </Tab>
           </TabList>
-          <TabPanel>
-            {nativeTokenRef &&
-            nativeTokenRef.balance &&
-            nativeTokenRef.balance.isZero() &&
-            colony.canMintNativeToken ? (
-              <ColonyInitialFunding
-                colonyAddress={colonyAddress}
-                displayName={colony.displayName}
-                isExternal={nativeTokenRef.isExternal}
-                tokenAddress={nativeTokenRef.address}
-              />
-            ) : (
-              <ColonyTasks
-                canCreateTask={canCreateTask}
-                colonyAddress={colonyAddress}
-                filteredDomainId={filteredDomainId}
-                filterOption={filterOption}
-                isInRecoveryMode={isInRecoveryMode}
-              />
-            )}
-          </TabPanel>
+          <TabPanel>{memoizedFundingWidget}</TabPanel>
         </Tabs>
       </main>
       <aside className={styles.sidebar}>
