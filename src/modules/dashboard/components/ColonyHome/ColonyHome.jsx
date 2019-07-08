@@ -223,7 +223,7 @@ const ColonyHome = ({
               <FormattedMessage {...MSG.tabContribute} />
             </Tab>
           </TabList>
-          <TabPanel>{memoizedFundingWidget()}</TabPanel>
+          <TabPanel>{memoizedFundingWidget}</TabPanel>
         </Tabs>
       </main>
       <aside className={styles.sidebar}>
