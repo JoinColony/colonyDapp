@@ -3,7 +3,7 @@
 import type { Match } from 'react-router';
 
 // $FlowFixMe update flow!
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useMemo } from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 import { Redirect } from 'react-router';
 
@@ -104,18 +104,17 @@ const ColonyHome = ({
     colonyAddress,
   ]);
 
-  if (colonyError) {
-    return <Redirect to="/404" />;
-  }
-
-  if (!colony || isFetchingColony) {
-    return <LoadingTemplate loadingText={MSG.loadingText} />;
-  }
-
   const canCreateTask = canCreateTaskCheck(permissions);
   const isInRecoveryMode = isInRecoveryModeCheck(colony);
 
-  const renderFundingMintingWidget = () => {
+  const renderFundingWidget = () => {
+    /*
+     * Since we're calling this before the Loader, we can't actually render
+     * if the colony data is not yet loaded
+     */
+    if (!colony) {
+      return null;
+    }
     /*
      * Small helpers to make the funding display logic easier to read
      */
@@ -176,6 +175,25 @@ const ColonyHome = ({
     );
   };
 
+  const memoizedFundingWidget = useMemo(renderFundingWidget, [
+    nativeTokenRef,
+    permissions,
+    colony,
+    colonyAddress,
+    canCreateTask,
+    filteredDomainId,
+    filterOption,
+    isInRecoveryMode,
+  ]);
+
+  if (colonyError) {
+    return <Redirect to="/404" />;
+  }
+
+  if (!colony || isFetchingColony) {
+    return <LoadingTemplate loadingText={MSG.loadingText} />;
+  }
+
   const filterSelect = (
     <Select
       appearance={{ alignOptions: 'right', theme: 'alt' }}
@@ -205,7 +223,7 @@ const ColonyHome = ({
               <FormattedMessage {...MSG.tabContribute} />
             </Tab>
           </TabList>
-          <TabPanel>{renderFundingMintingWidget()}</TabPanel>
+          <TabPanel>{memoizedFundingWidget()}</TabPanel>
         </Tabs>
       </main>
       <aside className={styles.sidebar}>
