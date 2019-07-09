@@ -26,17 +26,11 @@ describe('Claims a username', () => {
     cy.get('button[data-test="confirmTruffleAccount"]', { timeout: 2000 })
       .contains('Go to Colony')
       .click();
-  });
 
-  it('Open the Claim Username flow', () => {
     /*
-     * Click the Avatar Dropdown
+     * The app redirects to the 'claim username' flow
      */
-    cy.get('button[data-test="avatarDropdown"]').click();
-    /*
-     * Click on the Get Started link
-     */
-    cy.get('a[data-test="pickUserCreation"').click();
+    cy.location('pathname', { timeout: 10000 }).should('eq', '/create-user');
   });
 
   it('Go through the flow and claim a (ENS) username', () => {
