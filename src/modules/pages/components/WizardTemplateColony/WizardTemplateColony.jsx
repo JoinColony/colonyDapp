@@ -22,7 +22,6 @@ import styles from './WizardTemplateColony.css';
 export type Props = {|
   children: Node,
   previousStep: (wizardValues?: Object) => void,
-  wizardValues: Object,
   hideQR: boolean,
 |};
 
@@ -38,15 +37,11 @@ const displayName = 'pages.WizardTemplateColony';
 const WizardTemplateColony = ({
   children,
   previousStep,
-  wizardValues,
   hideQR = false,
 }: Props) => {
   const currentUser: UserType = useSelector(currentUserSelector);
   const { profile: { walletAddress, balance } = {} } = currentUser || {};
-  const customHandler = useCallback(() => previousStep(wizardValues), [
-    previousStep,
-    wizardValues,
-  ]);
+  const customHandler = useCallback(() => previousStep(), [previousStep]);
   const ethBalance = toWei(balance, 'ether');
   return (
     <main className={styles.layoutMain}>
