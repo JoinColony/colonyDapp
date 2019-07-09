@@ -39,7 +39,7 @@ import { colonyNativeTokenSelector } from '../../dashboard/selectors';
 function* colonyTransactionsFetch({
   payload: { colonyAddress },
   meta,
-}: Action<typeof ACTIONS.COLONY_TRANSACTIONS_FETCH>): Saga<void> {
+}: Action<typeof ACTIONS.COLONY_TRANSACTIONS_FETCH>): Saga<*> {
   try {
     const transactions = yield* executeQuery(getColonyTransactions, {
       metadata: {
@@ -53,14 +53,15 @@ function* colonyTransactionsFetch({
       payload: { colonyAddress, transactions },
     });
   } catch (error) {
-    yield putError(ACTIONS.COLONY_TRANSACTIONS_FETCH_ERROR, error, meta);
+    return yield putError(ACTIONS.COLONY_TRANSACTIONS_FETCH_ERROR, error, meta);
   }
+  return null;
 }
 
 function* colonyUnclaimedTransactionsFetch({
   payload: { colonyAddress },
   meta,
-}: Action<typeof ACTIONS.COLONY_UNCLAIMED_TRANSACTIONS_FETCH>): Saga<void> {
+}: Action<typeof ACTIONS.COLONY_UNCLAIMED_TRANSACTIONS_FETCH>): Saga<*> {
   try {
     const transactions = yield* executeQuery(getColonyUnclaimedTransactions, {
       metadata: { colonyAddress },
@@ -74,12 +75,13 @@ function* colonyUnclaimedTransactionsFetch({
       payload: { colonyAddress, transactions },
     });
   } catch (error) {
-    yield putError(
+    return yield putError(
       ACTIONS.COLONY_UNCLAIMED_TRANSACTIONS_FETCH_ERROR,
       error,
       meta,
     );
   }
+  return null;
 }
 
 /*
@@ -88,7 +90,7 @@ function* colonyUnclaimedTransactionsFetch({
 function* colonyClaimToken({
   payload: { colonyAddress, tokenAddress },
   meta,
-}: Action<typeof ACTIONS.COLONY_CLAIM_TOKEN>): Saga<void> {
+}: Action<typeof ACTIONS.COLONY_CLAIM_TOKEN>): Saga<*> {
   let txChannel;
   try {
     txChannel = yield call(getTxChannel, meta.id);
@@ -116,17 +118,18 @@ function* colonyClaimToken({
       fetchColonyUnclaimedTransactions(colonyAddress),
     );
   } catch (error) {
-    yield putError(ACTIONS.COLONY_CLAIM_TOKEN_ERROR, error, meta);
+    return yield putError(ACTIONS.COLONY_CLAIM_TOKEN_ERROR, error, meta);
   } finally {
     if (txChannel) txChannel.close();
   }
+  return null;
 }
 
 function* colonyUpdateTokens({
   payload: { colonyAddress, tokens },
   payload,
   meta,
-}: Action<typeof ACTIONS.COLONY_UPDATE_TOKENS>): Saga<void> {
+}: Action<typeof ACTIONS.COLONY_UPDATE_TOKENS>): Saga<*> {
   try {
     /*
      * @todo Consider fetching tokens from state
@@ -148,14 +151,15 @@ function* colonyUpdateTokens({
     // successfully updating them
     yield put({ type: ACTIONS.COLONY_UPDATE_TOKENS_SUCCESS, payload });
   } catch (error) {
-    yield putError(ACTIONS.COLONY_UPDATE_TOKENS_ERROR, error, meta);
+    return yield putError(ACTIONS.COLONY_UPDATE_TOKENS_ERROR, error, meta);
   }
+  return null;
 }
 
 function* colonyMintTokens({
   payload: { amount, colonyAddress },
   meta,
-}: Action<typeof ACTIONS.COLONY_MINT_TOKENS>): Saga<void> {
+}: Action<typeof ACTIONS.COLONY_MINT_TOKENS>): Saga<*> {
   let txChannel;
   try {
     txChannel = yield call(getTxChannel, meta.id);
@@ -252,10 +256,11 @@ function* colonyMintTokens({
       meta,
     });
   } catch (error) {
-    yield putError(ACTIONS.COLONY_MINT_TOKENS_ERROR, error, meta);
+    return yield putError(ACTIONS.COLONY_MINT_TOKENS_ERROR, error, meta);
   } finally {
     if (txChannel) txChannel.close();
   }
+  return null;
 }
 
 export default function* adminSagas(): Saga<void> {

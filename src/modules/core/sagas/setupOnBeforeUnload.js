@@ -21,7 +21,7 @@ const pinnerIsBusy = (ipfsNode: IPFSNode) => ipfsNode.pinner.busy;
 
 const ddbIsBusy = (ddb: DDB) => ddb.busy;
 
-export default function* setupOnBeforeUnload(): Saga<void> {
+export default function* setupOnBeforeUnload(): Saga<*> {
   const ipfsNode = yield getContext('ipfsNode');
   const ddb = yield getContext('ddb');
   const handleBeforeunload = evt => {

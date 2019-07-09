@@ -40,14 +40,15 @@ function* colonyRolesFetch({
       payload: roles,
     });
   } catch (error) {
-    yield putError(ACTIONS.COLONY_ROLES_FETCH_ERROR, error, meta);
+    return yield putError(ACTIONS.COLONY_ROLES_FETCH_ERROR, error, meta);
   }
+  return null;
 }
 
 function* colonyAdminAdd({
   payload: { newAdmin, colonyAddress },
   meta,
-}: Action<typeof ACTIONS.COLONY_ADMIN_ADD>): Saga<void> {
+}: Action<typeof ACTIONS.COLONY_ADMIN_ADD>): Saga<*> {
   const txChannel = yield call(getTxChannel, meta.id);
   try {
     /*
@@ -97,17 +98,18 @@ function* colonyAdminAdd({
     yield putNotification(normalizeTransactionLog(colonyAddress, decoratedLog));
     yield put(fetchRoles(colonyAddress));
   } catch (error) {
-    yield putError(ACTIONS.COLONY_ADMIN_ADD_ERROR, error, meta);
+    return yield putError(ACTIONS.COLONY_ADMIN_ADD_ERROR, error, meta);
   } finally {
     if (txChannel) txChannel.close();
   }
+  return null;
 }
 
 function* colonyAdminRemove({
   payload: { user, colonyAddress },
   payload,
   meta,
-}: Action<typeof ACTIONS.COLONY_ADMIN_REMOVE>): Saga<void> {
+}: Action<typeof ACTIONS.COLONY_ADMIN_REMOVE>): Saga<*> {
   let txChannel;
   try {
     txChannel = yield call(getTxChannel, meta.id);
@@ -154,10 +156,11 @@ function* colonyAdminRemove({
     yield putNotification(normalizeTransactionLog(colonyAddress, decoratedLog));
     yield put(fetchRoles(colonyAddress));
   } catch (error) {
-    yield putError(ACTIONS.COLONY_ADMIN_REMOVE_ERROR, error, meta);
+    return yield putError(ACTIONS.COLONY_ADMIN_REMOVE_ERROR, error, meta);
   } finally {
     if (txChannel) txChannel.close();
   }
+  return null;
 }
 
 export default function* rolesSagas(): Saga<void> {

@@ -27,7 +27,7 @@ import { NETWORK_CONTEXT } from '../../core/constants';
 function* tokenInfoFetch({
   payload: { tokenAddress },
   meta,
-}: Action<typeof ACTIONS.TOKEN_INFO_FETCH>): Saga<void> {
+}: Action<typeof ACTIONS.TOKEN_INFO_FETCH>): Saga<*> {
   // if trying to fetch info for Ether, return hardcoded
   if (tokenAddress === ZERO_ADDRESS) {
     yield put<Action<typeof ACTIONS.TOKEN_INFO_FETCH_SUCCESS>>({
@@ -60,14 +60,15 @@ function* tokenInfoFetch({
       meta,
     });
   } catch (error) {
-    yield putError(ACTIONS.TOKEN_INFO_FETCH_ERROR, error, meta);
+    return yield putError(ACTIONS.TOKEN_INFO_FETCH_ERROR, error, meta);
   }
+  return null;
 }
 
 function* tokenCreate({
   payload: { tokenName: name, tokenSymbol: symbol },
   meta,
-}: Action<typeof ACTIONS.TOKEN_CREATE>): Saga<void> {
+}: Action<typeof ACTIONS.TOKEN_CREATE>): Saga<*> {
   const txChannel = yield call(getTxChannel, meta.id);
 
   try {
@@ -99,10 +100,11 @@ function* tokenCreate({
 
     yield takeFrom(txChannel, ACTIONS.TRANSACTION_SUCCEEDED);
   } catch (error) {
-    yield putError(ACTIONS.TOKEN_CREATE_ERROR, error, meta);
+    return yield putError(ACTIONS.TOKEN_CREATE_ERROR, error, meta);
   } finally {
     txChannel.close();
   }
+  return null;
 }
 
 export default function* tokenSagas(): Saga<void> {

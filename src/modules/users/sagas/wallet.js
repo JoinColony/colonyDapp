@@ -34,7 +34,7 @@ const hardwareWallets = {
 
 function* fetchAccounts(
   action: Action<typeof ACTIONS.WALLET_FETCH_ACCOUNTS>,
-): Saga<void> {
+): Saga<*> {
   const { walletType } = action.payload;
 
   try {
@@ -46,13 +46,14 @@ function* fetchAccounts(
       payload: { allAddresses: wallet.otherAddresses.map(createAddress) },
     });
   } catch (err) {
-    yield putError(ACTIONS.WALLET_FETCH_ACCOUNTS_ERROR, err);
+    return yield putError(ACTIONS.WALLET_FETCH_ACCOUNTS_ERROR, err);
   }
+  return null;
 }
 
 function* openMnemonicWallet(
   action: Action<typeof ACTIONS.WALLET_CREATE>,
-): Saga<void> {
+): Saga<*> {
   const { connectwalletmnemonic } = action.payload;
   return yield call(softwareWallet.open, {
     mnemonic: connectwalletmnemonic,
@@ -62,7 +63,7 @@ function* openMnemonicWallet(
 /**
  * Watch for changes in Metamask account, and log the user out when they happen.
  */
-function* metamaskWatch(walletAddress: Address): Saga<void> {
+function* metamaskWatch(walletAddress: Address): Saga<*> {
   const channel = eventChannel(emit => {
     accountChangeHook(({ selectedAddress }: { selectedAddress: string }) =>
       emit(createAddress(selectedAddress)),
@@ -87,7 +88,7 @@ function* metamaskWatch(walletAddress: Address): Saga<void> {
   }
 }
 
-function* openMetamaskWallet(): Saga<void> {
+function* openMetamaskWallet(): Saga<*> {
   const wallet = yield call(metamaskWallet.open);
   yield spawn(metamaskWatch, createAddress(wallet.address));
   return wallet;
@@ -95,7 +96,7 @@ function* openMetamaskWallet(): Saga<void> {
 
 function* openHardwareWallet(
   action: Action<typeof ACTIONS.WALLET_CREATE>,
-): Saga<void> {
+): Saga<*> {
   const { hardwareWalletChoice, method } = action.payload;
   const wallet = yield call(hardwareWallets[method].open, {
     /**
@@ -112,7 +113,7 @@ function* openHardwareWallet(
 
 function* openKeystoreWallet(
   action: Action<typeof ACTIONS.WALLET_CREATE>,
-): Saga<void> {
+): Saga<*> {
   const { keystore, password } = action.payload;
   return yield call(softwareWallet.open, {
     keystore,
@@ -122,7 +123,7 @@ function* openKeystoreWallet(
 
 function* openTrufflepigWallet({
   payload: { accountIndex },
-}: Action<typeof ACTIONS.WALLET_CREATE>): Saga<void> {
+}: Action<typeof ACTIONS.WALLET_CREATE>): Saga<*> {
   const loader = yield create(TrufflepigLoader);
   const { privateKey } = yield call([loader, loader.getAccount], accountIndex);
   return yield call(softwareWallet.open, {
@@ -130,9 +131,7 @@ function* openTrufflepigWallet({
   });
 }
 
-function* createWallet(
-  action: Action<typeof ACTIONS.WALLET_CREATE>,
-): Saga<void> {
+function* createWallet(action: Action<typeof ACTIONS.WALLET_CREATE>): Saga<*> {
   const { mnemonic } = action.payload;
   return yield call(softwareWallet.open, {
     mnemonic,

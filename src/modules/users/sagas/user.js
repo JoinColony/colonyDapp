@@ -71,7 +71,7 @@ import { createTransaction, getTxChannel } from '../../core/sagas/transactions';
 function* userTokenTransfersFetch(
   // eslint-disable-next-line no-unused-vars
   action: Action<typeof ACTIONS.USER_TOKEN_TRANSFERS_FETCH>,
-): Saga<void> {
+): Saga<*> {
   try {
     const userColonyAddresses = yield* selectAsJS(currentUserColoniesSelector);
     const transactions = yield* executeQuery(getUserColonyTransactions, {
@@ -85,8 +85,9 @@ function* userTokenTransfersFetch(
       payload: { transactions },
     });
   } catch (error) {
-    yield putError(ACTIONS.USER_TOKEN_TRANSFERS_FETCH_ERROR, error);
+    return yield putError(ACTIONS.USER_TOKEN_TRANSFERS_FETCH_ERROR, error);
   }
+  return null;
 }
 
 function* userAddressFetch({
@@ -133,7 +134,7 @@ function* userFetch({
 function* currentUserGetBalance(
   // eslint-disable-next-line no-unused-vars
   action: Action<typeof ACTIONS.CURRENT_USER_GET_BALANCE>,
-): Saga<void> {
+): Saga<*> {
   try {
     const walletAddress = yield select(walletAddressSelector);
     if (!walletAddress) {
@@ -148,13 +149,15 @@ function* currentUserGetBalance(
       payload: { balance },
     });
   } catch (error) {
-    yield putError(ACTIONS.CURRENT_USER_GET_BALANCE_ERROR, error);
+    return yield putError(ACTIONS.CURRENT_USER_GET_BALANCE_ERROR, error);
   }
+  return null;
 }
+
 function* userProfileUpdate({
   meta,
   payload,
-}: Action<typeof ACTIONS.USER_PROFILE_UPDATE>): Saga<void> {
+}: Action<typeof ACTIONS.USER_PROFILE_UPDATE>): Saga<*> {
   try {
     const walletAddress = yield select(walletAddressSelector);
     yield* executeCommand(updateUserProfile, {
@@ -175,12 +178,14 @@ function* userProfileUpdate({
       payload: user,
     });
   } catch (error) {
-    yield putError(ACTIONS.USER_PROFILE_UPDATE_ERROR, error, meta);
+    return yield putError(ACTIONS.USER_PROFILE_UPDATE_ERROR, error, meta);
   }
+  return null;
 }
+
 function* userAvatarRemove({
   meta,
-}: Action<typeof ACTIONS.USER_AVATAR_REMOVE>): Saga<void> {
+}: Action<typeof ACTIONS.USER_AVATAR_REMOVE>): Saga<*> {
   try {
     const walletAddress = yield select(walletAddressSelector);
     yield* executeCommand(removeUserAvatar, {
@@ -195,13 +200,15 @@ function* userAvatarRemove({
       meta,
     });
   } catch (error) {
-    yield putError(ACTIONS.USER_AVATAR_REMOVE_ERROR, error, meta);
+    return yield putError(ACTIONS.USER_AVATAR_REMOVE_ERROR, error, meta);
   }
+  return null;
 }
+
 function* userAvatarUpload({
   meta,
   payload,
-}: Action<typeof ACTIONS.USER_AVATAR_UPLOAD>): Saga<void> {
+}: Action<typeof ACTIONS.USER_AVATAR_UPLOAD>): Saga<*> {
   try {
     const walletAddress = yield select(walletAddressSelector);
     const ipfsHash = yield call(ipfsUpload, payload.data);
@@ -222,13 +229,15 @@ function* userAvatarUpload({
       },
     });
   } catch (error) {
-    yield putError(ACTIONS.USER_AVATAR_UPLOAD_ERROR, error, meta);
+    return yield putError(ACTIONS.USER_AVATAR_UPLOAD_ERROR, error, meta);
   }
+  return null;
 }
+
 function* usernameCheckAvailability({
   meta,
   payload: { username },
-}: Action<typeof ACTIONS.USERNAME_CHECK_AVAILABILITY>): Saga<void> {
+}: Action<typeof ACTIONS.USERNAME_CHECK_AVAILABILITY>): Saga<*> {
   try {
     yield delay(300);
 
@@ -246,8 +255,13 @@ function* usernameCheckAvailability({
       payload: undefined,
     });
   } catch (error) {
-    yield putError(ACTIONS.USERNAME_CHECK_AVAILABILITY_ERROR, error, meta);
+    return yield putError(
+      ACTIONS.USERNAME_CHECK_AVAILABILITY_ERROR,
+      error,
+      meta,
+    );
   }
+  return null;
 }
 
 function* usernameCreate({
@@ -305,7 +319,8 @@ function* usernameCreate({
   }
   return null;
 }
-function* userLogout(): Saga<void> {
+
+function* userLogout(): Saga<*> {
   const ddb = yield* getContext(CONTEXT.DDB_INSTANCE);
 
   try {
@@ -332,14 +347,15 @@ function* userLogout(): Saga<void> {
       put(push(`/dashboard`)),
     ]);
   } catch (error) {
-    yield putError(ACTIONS.USER_LOGOUT_ERROR, error);
+    return yield putError(ACTIONS.USER_LOGOUT_ERROR, error);
   }
+  return null;
 }
 
 function* userPermissionsFetch({
   payload: { colonyAddress },
   meta,
-}: Action<typeof ACTIONS.USER_PERMISSIONS_FETCH>): Saga<void> {
+}: Action<typeof ACTIONS.USER_PERMISSIONS_FETCH>): Saga<*> {
   try {
     const walletAddress = yield select(walletAddressSelector);
     if (!walletAddress) {
@@ -355,10 +371,12 @@ function* userPermissionsFetch({
       meta,
     });
   } catch (error) {
-    yield putError(ACTIONS.USER_PERMISSIONS_FETCH_ERROR, error, meta);
+    return yield putError(ACTIONS.USER_PERMISSIONS_FETCH_ERROR, error, meta);
   }
+  return null;
 }
-function* userTokensFetch(): Saga<void> {
+
+function* userTokensFetch(): Saga<*> {
   try {
     const walletAddress = yield select(walletAddressSelector);
     const { metadataStoreAddress } = yield select(currentUserMetadataSelector);
@@ -377,9 +395,11 @@ function* userTokensFetch(): Saga<void> {
       payload: { tokens },
     });
   } catch (error) {
-    yield putError(ACTIONS.USER_TOKENS_FETCH_ERROR, error);
+    return yield putError(ACTIONS.USER_TOKENS_FETCH_ERROR, error);
   }
+  return null;
 }
+
 /**
  * Diff the current user tokens and the list sent as payload, and work out
  * which tokens need adding and which need removing. Then append the relevant
@@ -387,7 +407,7 @@ function* userTokensFetch(): Saga<void> {
  */
 function* userTokensUpdate(
   action: Action<typeof ACTIONS.USER_TOKENS_UPDATE>,
-): Saga<void> {
+): Saga<*> {
   try {
     const { tokens } = action.payload;
     const walletAddress = yield select(walletAddressSelector);
@@ -404,9 +424,11 @@ function* userTokensUpdate(
     yield put({ type: ACTIONS.USER_TOKENS_FETCH });
     yield put({ type: ACTIONS.USER_TOKENS_UPDATE_SUCCESS });
   } catch (error) {
-    yield putError(ACTIONS.USER_TOKENS_UPDATE_ERROR, error);
+    return yield putError(ACTIONS.USER_TOKENS_UPDATE_ERROR, error);
   }
+  return null;
 }
+
 function* userSubscribedColoniesFetch(): Saga<*> {
   try {
     const walletAddress = yield select(walletAddressSelector);
@@ -422,8 +444,12 @@ function* userSubscribedColoniesFetch(): Saga<*> {
       payload: colonyAddresses,
     });
   } catch (error) {
-    yield putError(ACTIONS.USER_SUBSCRIBED_COLONIES_FETCH_SUCCESS, error);
+    return yield putError(
+      ACTIONS.USER_SUBSCRIBED_COLONIES_FETCH_SUCCESS,
+      error,
+    );
   }
+  return null;
 }
 
 function* userColonySubscribe({
@@ -450,8 +476,13 @@ function* userColonySubscribe({
       meta,
     });
   } catch (caughtError) {
-    yield putError(ACTIONS.USER_COLONY_SUBSCRIBE_ERROR, caughtError, meta);
+    return yield putError(
+      ACTIONS.USER_COLONY_SUBSCRIBE_ERROR,
+      caughtError,
+      meta,
+    );
   }
+  return null;
 }
 
 function* userColonyUnsubscribe({
@@ -479,8 +510,13 @@ function* userColonyUnsubscribe({
       meta,
     });
   } catch (caughtError) {
-    yield putError(ACTIONS.USER_COLONY_UNSUBSCRIBE_ERROR, caughtError, meta);
+    return yield putError(
+      ACTIONS.USER_COLONY_UNSUBSCRIBE_ERROR,
+      caughtError,
+      meta,
+    );
   }
+  return null;
 }
 
 function* userSubscribedTasksFetch(): Saga<*> {
@@ -499,9 +535,11 @@ function* userSubscribedTasksFetch(): Saga<*> {
       payload: userTasks,
     });
   } catch (error) {
-    yield putError(ACTIONS.USER_SUBSCRIBED_TASKS_FETCH_ERROR, error);
+    return yield putError(ACTIONS.USER_SUBSCRIBED_TASKS_FETCH_ERROR, error);
   }
+  return null;
 }
+
 function* userTaskSubscribe({
   payload,
 }: Action<typeof ACTIONS.USER_TASK_SUBSCRIBE>): Saga<*> {
@@ -527,14 +565,15 @@ function* userTaskSubscribe({
       });
     }
   } catch (error) {
-    yield putError(ACTIONS.USER_TASK_SUBSCRIBE_ERROR, error);
+    return yield putError(ACTIONS.USER_TASK_SUBSCRIBE_ERROR, error);
   }
+  return null;
 }
 
 function* inboxItemsFetch({
   payload: { walletAddress },
   meta,
-}: Action<typeof ACTIONS.INBOX_ITEMS_FETCH>): Saga<void> {
+}: Action<typeof ACTIONS.INBOX_ITEMS_FETCH>): Saga<*> {
   try {
     const { inboxStoreAddress, metadataStoreAddress } = yield select(
       currentUserMetadataSelector,
@@ -575,8 +614,9 @@ function* inboxItemsFetch({
       meta,
     });
   } catch (error) {
-    yield putError(ACTIONS.INBOX_ITEMS_FETCH_ERROR, error, meta);
+    return yield putError(ACTIONS.INBOX_ITEMS_FETCH_ERROR, error, meta);
   }
+  return null;
 }
 
 export default function* setupUsersSagas(): Saga<void> {

@@ -51,7 +51,7 @@ import { createAddress } from '~types';
 function* colonyNameCheckAvailability({
   payload: { colonyName },
   meta,
-}: Action<typeof ACTIONS.COLONY_NAME_CHECK_AVAILABILITY>): Saga<void> {
+}: Action<typeof ACTIONS.COLONY_NAME_CHECK_AVAILABILITY>): Saga<*> {
   try {
     yield delay(300);
 
@@ -69,12 +69,13 @@ function* colonyNameCheckAvailability({
       payload: undefined,
     });
   } catch (caughtError) {
-    yield putError(
+    return yield putError(
       ACTIONS.COLONY_NAME_CHECK_AVAILABILITY_ERROR,
       caughtError,
       meta,
     );
   }
+  return null;
 }
 
 function* colonyProfileUpdate({
@@ -87,7 +88,7 @@ function* colonyProfileUpdate({
     guideline,
     website,
   },
-}: Action<typeof ACTIONS.COLONY_PROFILE_UPDATE>): Saga<void> {
+}: Action<typeof ACTIONS.COLONY_PROFILE_UPDATE>): Saga<*> {
   try {
     yield* executeCommand(updateColonyProfile, {
       args: {
@@ -112,14 +113,15 @@ function* colonyProfileUpdate({
       },
     });
   } catch (error) {
-    yield putError(ACTIONS.COLONY_PROFILE_UPDATE_ERROR, error, meta);
+    return yield putError(ACTIONS.COLONY_PROFILE_UPDATE_ERROR, error, meta);
   }
+  return null;
 }
 
 function* colonyFetch({
   payload: { colonyAddress },
   meta,
-}: Action<typeof ACTIONS.COLONY_FETCH>): Saga<void> {
+}: Action<typeof ACTIONS.COLONY_FETCH>): Saga<*> {
   try {
     const payload = yield* executeQuery(getColony, {
       args: { colonyAddress },
@@ -155,14 +157,15 @@ function* colonyFetch({
       payload: { colonyAddress },
     });
   } catch (error) {
-    yield putError(ACTIONS.COLONY_FETCH_ERROR, error, meta);
+    return yield putError(ACTIONS.COLONY_FETCH_ERROR, error, meta);
   }
+  return null;
 }
 
 function* colonyAddressFetch({
   payload: { colonyName },
   meta,
-}: Action<typeof ACTIONS.COLONY_ADDRESS_FETCH>): Saga<void> {
+}: Action<typeof ACTIONS.COLONY_ADDRESS_FETCH>): Saga<*> {
   try {
     const colonyAddress = yield call(getColonyAddress, colonyName);
 
@@ -175,14 +178,15 @@ function* colonyAddressFetch({
       payload: { colonyAddress, colonyName },
     });
   } catch (error) {
-    yield putError(ACTIONS.COLONY_ADDRESS_FETCH_ERROR, error, meta);
+    return yield putError(ACTIONS.COLONY_ADDRESS_FETCH_ERROR, error, meta);
   }
+  return null;
 }
 
 function* colonyNameFetch({
   payload: { colonyAddress },
   meta,
-}: Action<typeof ACTIONS.COLONY_NAME_FETCH>): Saga<void> {
+}: Action<typeof ACTIONS.COLONY_NAME_FETCH>): Saga<*> {
   try {
     const colonyName = yield call(getColonyName, colonyAddress);
     yield put<Action<typeof ACTIONS.COLONY_NAME_FETCH_SUCCESS>>({
@@ -191,14 +195,15 @@ function* colonyNameFetch({
       payload: { colonyAddress, colonyName },
     });
   } catch (error) {
-    yield putError(ACTIONS.COLONY_NAME_FETCH_ERROR, error, meta);
+    return yield putError(ACTIONS.COLONY_NAME_FETCH_ERROR, error, meta);
   }
+  return null;
 }
 
 function* colonyAvatarUpload({
   meta,
   payload: { colonyAddress, data },
-}: Action<typeof ACTIONS.COLONY_AVATAR_UPLOAD>): Saga<void> {
+}: Action<typeof ACTIONS.COLONY_AVATAR_UPLOAD>): Saga<*> {
   try {
     // first attempt upload to IPFS
     const ipfsHash = yield call(ipfsUpload, data);
@@ -222,14 +227,15 @@ function* colonyAvatarUpload({
       payload: { hash: ipfsHash },
     });
   } catch (error) {
-    yield putError(ACTIONS.COLONY_AVATAR_UPLOAD_ERROR, error, meta);
+    return yield putError(ACTIONS.COLONY_AVATAR_UPLOAD_ERROR, error, meta);
   }
+  return null;
 }
 
 function* colonyAvatarRemove({
   meta,
   payload: { colonyAddress },
-}: Action<typeof ACTIONS.COLONY_AVATAR_REMOVE>): Saga<void> {
+}: Action<typeof ACTIONS.COLONY_AVATAR_REMOVE>): Saga<*> {
   try {
     const ipfsHash = yield select(colonyAvatarHashSelector, colonyAddress);
     /*
@@ -251,8 +257,9 @@ function* colonyAvatarRemove({
       payload: undefined,
     });
   } catch (error) {
-    yield putError(ACTIONS.COLONY_AVATAR_REMOVE_ERROR, error, meta);
+    return yield putError(ACTIONS.COLONY_AVATAR_REMOVE_ERROR, error, meta);
   }
+  return null;
 }
 
 function* colonyRecoveryModeEnter({
@@ -279,10 +286,15 @@ function* colonyRecoveryModeEnter({
 
     yield put(fetchColony(colonyAddress));
   } catch (error) {
-    yield putError(ACTIONS.COLONY_RECOVERY_MODE_ENTER_ERROR, error, meta);
+    return yield putError(
+      ACTIONS.COLONY_RECOVERY_MODE_ENTER_ERROR,
+      error,
+      meta,
+    );
   } finally {
     txChannel.close();
   }
+  return null;
 }
 
 function* colonyUpgradeContract({
@@ -312,10 +324,11 @@ function* colonyUpgradeContract({
 
     yield put(fetchColony(colonyAddress));
   } catch (error) {
-    yield putError(ACTIONS.COLONY_VERSION_UPGRADE_ERROR, error, meta);
+    return yield putError(ACTIONS.COLONY_VERSION_UPGRADE_ERROR, error, meta);
   } finally {
     txChannel.close();
   }
+  return null;
 }
 
 function* colonyTokenBalanceFetch({
@@ -338,8 +351,9 @@ function* colonyTokenBalanceFetch({
       },
     });
   } catch (error) {
-    yield putError(ACTIONS.COLONY_TOKEN_BALANCE_FETCH_ERROR, error);
+    return yield putError(ACTIONS.COLONY_TOKEN_BALANCE_FETCH_ERROR, error);
   }
+  return null;
 }
 
 /*
@@ -349,7 +363,7 @@ function* colonyTokenBalanceFetch({
 function* colonyTaskMetadataFetch({
   meta,
   payload: { colonyAddress },
-}: Action<typeof ACTIONS.COLONY_TASK_METADATA_FETCH>): Saga<void> {
+}: Action<typeof ACTIONS.COLONY_TASK_METADATA_FETCH>): Saga<*> {
   try {
     const colonyTasks = yield* executeQuery(getColonyTasks, {
       metadata: { colonyAddress },
@@ -360,14 +374,19 @@ function* colonyTaskMetadataFetch({
       payload: { colonyAddress, colonyTasks },
     });
   } catch (error) {
-    yield putError(ACTIONS.COLONY_TASK_METADATA_FETCH_ERROR, error, meta);
+    return yield putError(
+      ACTIONS.COLONY_TASK_METADATA_FETCH_ERROR,
+      error,
+      meta,
+    );
   }
+  return null;
 }
 
 function* colonyCanMintNativeTokenFetch({
   meta,
   payload: { colonyAddress },
-}: Action<typeof ACTIONS.COLONY_CAN_MINT_NATIVE_TOKEN_FETCH>): Saga<void> {
+}: Action<typeof ACTIONS.COLONY_CAN_MINT_NATIVE_TOKEN_FETCH>): Saga<*> {
   try {
     const canMintNativeToken = yield* executeQuery(
       getColonyCanMintNativeToken,
@@ -383,18 +402,19 @@ function* colonyCanMintNativeTokenFetch({
       payload: { canMintNativeToken, colonyAddress },
     });
   } catch (error) {
-    yield putError(
+    return yield putError(
       ACTIONS.COLONY_CAN_MINT_NATIVE_TOKEN_FETCH_ERROR,
       error,
       meta,
     );
   }
+  return null;
 }
 
 function* colonyNativeTokenUnlock({
   meta,
   payload: { colonyAddress },
-}: Action<typeof ACTIONS.COLONY_NATIVE_TOKEN_UNLOCK>): Saga<void> {
+}: Action<typeof ACTIONS.COLONY_NATIVE_TOKEN_UNLOCK>): Saga<*> {
   const txChannel = yield call(getTxChannel, meta.id);
 
   try {
@@ -413,10 +433,15 @@ function* colonyNativeTokenUnlock({
 
     yield put(fetchColony(colonyAddress));
   } catch (error) {
-    yield putError(ACTIONS.COLONY_NATIVE_TOKEN_UNLOCK_ERROR, error, meta);
+    return yield putError(
+      ACTIONS.COLONY_NATIVE_TOKEN_UNLOCK_ERROR,
+      error,
+      meta,
+    );
   } finally {
     txChannel.close();
   }
+  return null;
 }
 
 export default function* colonySagas(): Saga<void> {

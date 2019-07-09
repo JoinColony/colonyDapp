@@ -297,12 +297,11 @@ function* colonyCreate({
     } = yield takeFrom(createColony.channel, ACTIONS.TRANSACTION_SUCCEEDED);
 
     if (!colonyAddress) {
-      yield putError(
+      return yield putError(
         ACTIONS.COLONY_CREATE_ERROR,
         new Error('Missing colony address'),
         meta,
       );
-      return null;
     }
 
     /*
