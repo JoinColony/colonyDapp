@@ -83,7 +83,7 @@ export const subscribeTask: Subscription<
   TaskStore,
   TaskStoreMetadata,
   void,
-  TaskEvents,
+  TaskEvents[],
 > = {
   name: 'subscribeTask',
   context: [CONTEXT.COLONY_MANAGER, CONTEXT.DDB_INSTANCE, CONTEXT.WALLET],

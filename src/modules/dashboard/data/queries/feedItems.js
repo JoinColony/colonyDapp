@@ -1,6 +1,6 @@
 /* @flow */
 
-import type { Address, $Pick, Subscription } from '~types';
+import type { Address, $Pick, Event, Subscription } from '~types';
 import type { TaskDraftId } from '~immutable';
 import type {
   ColonyManager,
@@ -18,25 +18,6 @@ import {
   getTaskStore,
   getTaskStoreAddress,
 } from '~data/stores';
-import { TASK_EVENT_TYPES } from '~data/constants';
-
-const {
-  COMMENT_POSTED,
-  DOMAIN_SET,
-  DUE_DATE_SET,
-  PAYOUT_SET,
-  SKILL_SET,
-  TASK_CANCELLED,
-  TASK_CLOSED,
-  TASK_CREATED,
-  TASK_DESCRIPTION_SET,
-  TASK_FINALIZED,
-  TASK_TITLE_SET,
-  WORK_INVITE_SENT,
-  WORK_REQUEST_CREATED,
-  WORKER_ASSIGNED,
-  WORKER_UNASSIGNED,
-} = TASK_EVENT_TYPES;
 
 export type TaskFeedItemEvents = $Values<
   $Pick<
@@ -99,41 +80,40 @@ const prepare = async (
   };
 };
 
-const FEED_ITEM_TYPES = [
-  DOMAIN_SET,
-  DUE_DATE_SET,
-  PAYOUT_SET,
-  SKILL_SET,
-  TASK_CANCELLED,
-  TASK_CLOSED,
-  TASK_CREATED,
-  TASK_DESCRIPTION_SET,
-  TASK_FINALIZED,
-  TASK_TITLE_SET,
-  WORK_INVITE_SENT,
-  WORK_REQUEST_CREATED,
-  WORKER_ASSIGNED,
-  WORKER_UNASSIGNED,
-];
-
 // eslint-disable-next-line import/prefer-default-export
 export const subscribeTaskFeedItems: Subscription<
   {| taskStore: TaskStore, commentsStore: CommentsStore |},
   Metadata,
   void,
-  TaskFeedItemEvents,
+  TaskFeedItemEvents[],
 > = {
   name: 'subscribeTaskFeedItems',
   context: [CONTEXT.COLONY_MANAGER, CONTEXT.DDB_INSTANCE, CONTEXT.WALLET],
   prepare,
   execute({ commentsStore, taskStore }, args, emitter) {
-    return [
-      commentsStore.subscribe(emitter, {
-        filter: ({ type }) => type === COMMENT_POSTED,
-      }),
-      taskStore.subscribe(emitter, {
-        filter: ({ type }) => FEED_ITEM_TYPES.includes(type),
-      }),
-    ];
+    // Store previous events for each store so that the events can be combined
+    let commentsEvents: Event<*> = [];
+    let taskEvents: Event<*> = [];
+
+    const emitCombinedEvents = () => {
+      emitter(
+        // Interleave events such that they are sorted chronologically
+        [...commentsEvents, ...taskEvents].sort(
+          (eventA, eventB) => eventA.meta.timestamp - eventB.meta.timestamp,
+        ),
+      );
+    };
+
+    const commentsSub = commentsStore.subscribe(events => {
+      commentsEvents = events;
+      emitCombinedEvents();
+    });
+
+    const taskSub = taskStore.subscribe(events => {
+      taskEvents = events;
+      emitCombinedEvents();
+    });
+
+    return [commentsSub, taskSub];
   },
 };

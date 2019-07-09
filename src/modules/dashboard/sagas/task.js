@@ -781,14 +781,14 @@ function* taskFeedItemsSubStart({
     });
 
     while (true) {
-      const event = yield take(channel);
+      const events = yield take(channel);
       yield put({
-        type: ACTIONS.TASK_FEED_ITEMS_SUB_EVENT,
+        type: ACTIONS.TASK_FEED_ITEMS_SUB_EVENTS,
         meta,
         payload: {
           colonyAddress,
           draftId,
-          event,
+          events,
         },
       });
     }
@@ -824,14 +824,14 @@ function* taskSubStart({
     });
 
     while (true) {
-      const event = yield take(channel);
+      const events = yield take(channel);
       yield put({
-        type: ACTIONS.TASK_SUB_EVENT,
+        type: ACTIONS.TASK_SUB_EVENTS,
         meta,
         payload: {
           colonyAddress,
           draftId,
-          event,
+          events,
         },
       });
     }

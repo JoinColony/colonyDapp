@@ -173,9 +173,10 @@ const tasksReducer: ReducerType<
       );
     }
 
-    case ACTIONS.TASK_SUB_EVENT: {
-      const { colonyAddress, draftId, event } = action.payload;
+    case ACTIONS.TASK_SUB_EVENTS: {
+      const { colonyAddress, draftId, events } = action.payload;
       const path = [draftId, 'record'];
+
       const nextState = state.getIn(path)
         ? state
         : // $FlowFixMe just flow being silly
@@ -184,10 +185,11 @@ const tasksReducer: ReducerType<
             // $FlowFixMe this is all the data we have yet
             DataRecord({ record: TaskRecord({ colonyAddress, draftId }) }),
           );
+
       // $FlowFixMe just flow being silly
       return nextState.updateIn(
         path,
-        task => task && taskEventReducer(task, event),
+        task => task && events.reduce(taskEventReducer, nextState.getIn(path)),
       );
     }
 
