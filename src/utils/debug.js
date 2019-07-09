@@ -6,7 +6,9 @@ export const isVerbose = process.env.VERBOSE === 'true';
 export const log = (
   logger: any => void = console.error.bind(console),
   ...args: any
-) => (isDev ? logger(...args) : null);
+) =>
+  // This should be more configurable: tracked in colonyDapp#1435
+  isDev || isVerbose ? logger(...args) : null;
 
 log.warn = (...args: any) => log(console.warn.bind(console), ...args);
 
