@@ -237,13 +237,8 @@ const TaskEditDialog = ({
                 ),
             }),
           )
-          .when('worker', {
-            is: workerShape,
-            then: yup
-              .array()
-              .min(minTokens)
-              .max(maxTokens),
-          }),
+          .min(minTokens)
+          .max(maxTokens),
         worker: workerShape,
       });
     },
