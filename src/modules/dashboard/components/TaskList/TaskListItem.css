@@ -10,12 +10,6 @@ td.taskDetails {
   font-weight: var(--weight-semi);
 }
 
-td.empty {
-  flex-wrap: wrap;
-  padding: cellPaddingVertical cellPaddingHorizontal;
-  font-weight: var(--weight-semi);
-}
-
 .taskDetailsTitle {
   composes: inlineEllipsis from '~styles/text.css';
   max-width: 80ch;
@@ -40,4 +34,28 @@ td.userAvatar {
   justify-content: center;
   padding: cellPaddingVertical 0;
   width: 60px;
+}
+
+.noTask {
+  display: block;
+  margin: 60px auto 0px auto;
+  height: 120px;
+  width: 120px;
+  cursor: none;
+  user-select: none;
+}
+
+.emptyStateElements {
+  margin-top: 25px;
+  width: 432 px;
+  font-size: var(--size-medium-l);
+  text-align: center;
+}
+
+.subscribe {
+  border: none;
+  background-color: rgb(0, 0, 0, 0);
+  font-size: var(--size-medium-l);
+  color: var(--primary);
+  cursor: pointer;
 }

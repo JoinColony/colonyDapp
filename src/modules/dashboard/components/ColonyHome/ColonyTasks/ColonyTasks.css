@@ -10,7 +10,7 @@
 
 .newTaskButton {
   display: block;
-  margin: 70px auto;
+  margin: 60px auto 30px auto;
   height: 150px;
   width: 150px;
   cursor: pointer;
@@ -19,15 +19,13 @@
 
 .newTaskButton svg {
   fill: var(--grey-4);
-  stroke: var(--grey-4);
-}
-
-.newTaskButton:hover svg {
-  fill: var(--grey-3);
-  stroke: var(--grey-3);
 }
 
 .newTaskButton:active svg {
   fill: var(--primary);
   stroke: var(--primary);
+}
+
+.noTaskAddition {
+  margin-top: 20px;
 }

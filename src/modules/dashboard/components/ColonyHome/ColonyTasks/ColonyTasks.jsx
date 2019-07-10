@@ -26,6 +26,7 @@ import styles from './ColonyTasks.css';
 
 type Props = {|
   canCreateTask: boolean,
+  isFounder: boolean,
   colonyAddress: Address,
   isInRecoveryMode: boolean,
   filterOption: string,
@@ -35,11 +36,11 @@ type Props = {|
 const MSG = defineMessages({
   newTask: {
     id: 'dashboard.ColonyTasks.newTask',
-    defaultMessage: 'New task',
+    defaultMessage: 'Create a new task',
   },
   newTaskDescription: {
     id: 'dashboard.ColonyTasks.newTaskDescription',
-    defaultMessage: 'One small task for Man, one giant leap for Mankind',
+    defaultMessage: 'Create a new task',
   },
   noTasksAvailable: {
     id: 'dashboard.ColonyTasks.noTasksAvailable',
@@ -64,6 +65,7 @@ const NewTaskButton = ({
   disabled: boolean,
   loading: boolean,
 }) => {
+  const [iconName, setIconName] = useState('empty-task');
   if (disabled) {
     return null;
   }
@@ -89,7 +91,9 @@ const NewTaskButton = ({
     >
       <Icon
         className={styles.newTaskButton}
-        name="circle-add"
+        name={iconName}
+        onMouseEnter={() => setIconName('active-task')}
+        onMouseLeave={() => setIconName('empty-task')}
         title={MSG.newTask}
         viewBox="0 0 132 132"
       />
@@ -163,6 +167,7 @@ const ColonyTasks = ({
 
   return (
     <TaskList
+      colonyAddress={colonyAddress}
       draftIds={draftIds}
       filteredDomainId={filteredDomainId}
       filterOption={filterOption}
