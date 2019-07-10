@@ -43,11 +43,8 @@ function* tokenInfoFetch({
 
   // Debounce with 1000ms, since this is intended to run directly following
   // user keyboard input.
-
   yield delay(1000);
 
-  let info;
-  let isVerified = false;
   try {
     /**
      * Given a token contract address, create a `TokenClient` with the minimal
@@ -59,17 +56,20 @@ function* tokenInfoFetch({
       [colonyManager, colonyManager.getTokenClient],
       tokenAddress,
     );
-    info = yield call([client.getTokenInfo, client.getTokenInfo.call]);
-    const { decimals, error, name, symbol } = yield call(
-      getTokenDetails,
-      tokenAddress,
-    );
-    if (!error && (decimals && name && symbol)) {
-      isVerified = true;
-    }
+    const tokenInfo = yield call([
+      client.getTokenInfo,
+      client.getTokenInfo.call,
+    ]);
+    const tokenDetails = yield call(getTokenDetails, tokenAddress);
+    const tokenData = {
+      name: tokenInfo.name || tokenDetails.name,
+      decimals: tokenInfo.decimals || tokenDetails.decimals,
+      symbol: tokenInfo.symbol || tokenDetails.symbol,
+      isVerified: tokenDetails.isVerified || false,
+    };
     yield put<Action<typeof ACTIONS.TOKEN_INFO_FETCH_SUCCESS>>({
       type: ACTIONS.TOKEN_INFO_FETCH_SUCCESS,
-      payload: { ...info, isVerified, tokenAddress },
+      payload: { ...tokenData, tokenAddress },
       meta,
     });
   } catch (error) {
