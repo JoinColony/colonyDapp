@@ -12,7 +12,7 @@ import type {
   ErrorActionType,
   UniqueActionType,
 } from '~redux';
-import type { TaskFeedItemEvents } from '../../../modules/dashboard/data/queries';
+import type { AllTaskEvents } from '../../../modules/dashboard/data/queries';
 
 import { ACTIONS } from '~redux';
 import { TASK_EVENT_TYPES } from '~data/constants';
@@ -146,9 +146,9 @@ export type TaskActionTypes = {|
     typeof ACTIONS.TASK_FEED_ITEMS_SUB_STOP,
     void,
   >,
-  TASK_FEED_ITEMS_SUB_EVENT: NonUniqueTaskActionType<
-    typeof ACTIONS.TASK_FEED_ITEMS_SUB_EVENT,
-    {| event: TaskFeedItemEvents |},
+  TASK_FEED_ITEMS_SUB_EVENTS: NonUniqueTaskActionType<
+    typeof ACTIONS.TASK_FEED_ITEMS_SUB_EVENTS,
+    {| events: AllTaskEvents[] |},
   >,
   TASK_FEED_ITEMS_SUB_ERROR: TaskErrorActionType<
     typeof ACTIONS.TASK_FEED_ITEMS_SUB_ERROR,
@@ -304,9 +304,9 @@ export type TaskActionTypes = {|
   >,
   TASK_SUB_START: NonUniqueTaskActionType<typeof ACTIONS.TASK_SUB_START, void>,
   TASK_SUB_STOP: NonUniqueTaskActionType<typeof ACTIONS.TASK_SUB_STOP, void>,
-  TASK_SUB_EVENT: NonUniqueTaskActionType<
-    typeof ACTIONS.TASK_SUB_EVENT,
-    {| event: TaskEvents |},
+  TASK_SUB_EVENTS: NonUniqueTaskActionType<
+    typeof ACTIONS.TASK_SUB_EVENTS,
+    {| events: $Values<TaskEvents>[] |},
   >,
   TASK_SUB_ERROR: TaskErrorActionType<typeof ACTIONS.TASK_SUB_ERROR>,
   TASK_SET_WORKER_AND_PAYOUTS: TaskActionType<

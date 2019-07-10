@@ -32,7 +32,7 @@ const {
   WORKER_UNASSIGNED,
 } = TASK_EVENT_TYPES;
 
-const taskEventReducer = (task: TaskRecordType, event: *) => {
+const taskEventReducer = (task: TaskRecordType, event: *): TaskRecordType => {
   switch (event.type) {
     case TASK_CREATED: {
       const {
@@ -116,21 +116,9 @@ const taskEventReducer = (task: TaskRecordType, event: *) => {
 const tasksReducer: ReducerType<
   TasksMap,
   {|
-    TASK_CANCEL_SUCCESS: *,
-    TASK_COMMENT_ADD_SUCCESS: *,
     TASK_CREATE_SUCCESS: *,
     TASK_FETCH_SUCCESS: *,
-    TASK_FINALIZE_SUCCESS: *,
-    TASK_SEND_WORK_INVITE_SUCCESS: *,
-    TASK_SEND_WORK_REQUEST_SUCCESS: *,
-    TASK_SET_DESCRIPTION_SUCCESS: *,
-    TASK_SET_DOMAIN_SUCCESS: *,
-    TASK_SET_DUE_DATE_SUCCESS: *,
-    TASK_SET_PAYOUT_SUCCESS: *,
-    TASK_SET_SKILL_SUCCESS: *,
-    TASK_SET_TITLE_SUCCESS: *,
-    TASK_WORKER_ASSIGN_SUCCESS: *,
-    TASK_WORKER_UNASSIGN_SUCCESS: *,
+    TASK_SUB_EVENTS: *,
   |},
 > = (state = ImmutableMap(), action) => {
   switch (action.type) {
@@ -173,41 +161,14 @@ const tasksReducer: ReducerType<
       );
     }
 
-    case ACTIONS.TASK_SUB_EVENT: {
-      const { colonyAddress, draftId, event } = action.payload;
-      const path = [draftId, 'record'];
-      const nextState = state.getIn(path)
-        ? state
-        : // $FlowFixMe just flow being silly
-          state.set(
-            draftId,
-            // $FlowFixMe this is all the data we have yet
-            DataRecord({ record: TaskRecord({ colonyAddress, draftId }) }),
-          );
-      // $FlowFixMe just flow being silly
-      return nextState.updateIn(
-        path,
-        task => task && taskEventReducer(task, event),
-      );
-    }
+    case ACTIONS.TASK_SUB_EVENTS: {
+      const { colonyAddress, draftId, events } = action.payload;
 
-    case ACTIONS.TASK_CANCEL_SUCCESS:
-    case ACTIONS.TASK_FINALIZE_SUCCESS:
-    case ACTIONS.TASK_SEND_WORK_INVITE_SUCCESS:
-    case ACTIONS.TASK_SEND_WORK_REQUEST_SUCCESS:
-    case ACTIONS.TASK_SET_DESCRIPTION_SUCCESS:
-    case ACTIONS.TASK_SET_DOMAIN_SUCCESS:
-    case ACTIONS.TASK_SET_DUE_DATE_SUCCESS:
-    case ACTIONS.TASK_SET_PAYOUT_SUCCESS:
-    case ACTIONS.TASK_SET_SKILL_SUCCESS:
-    case ACTIONS.TASK_SET_TITLE_SUCCESS:
-    case ACTIONS.TASK_WORKER_ASSIGN_SUCCESS:
-    case ACTIONS.TASK_WORKER_UNASSIGN_SUCCESS: {
-      const { draftId, event } = action.payload;
-      const path = [draftId, 'record'];
-      return state.getIn(path)
-        ? state.updateIn(path, task => task && taskEventReducer(task, event))
-        : state;
+      const record: TaskRecordType = events.reduce(
+        taskEventReducer,
+        TaskRecord({ colonyAddress, draftId }),
+      );
+      return state.set(draftId, DataRecord({ record }));
     }
 
     default:

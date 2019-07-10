@@ -1,7 +1,5 @@
 /* @flow */
 
-import debounce from 'lodash/debounce';
-
 import Store from './Store';
 
 import type {
@@ -66,51 +64,21 @@ class EventStore extends Store {
       .map(entry => this.constructor.decorateEntry(entry));
   }
 
-  /*
-   * Given a callback for handling events, and optional options,
-   * create a subscription that calls the callback with all
-   * unique events, and provide a means to stop the subscription.
-   */
-  subscribe(
-    callback: (event: Event<*>) => void,
-    { filter }: {| filter?: (event: Event<*>) => boolean |} = {},
-  ): {| stop: () => void |} {
-    // This naïve state is used over Orbit querying (e.g. with `gt`) because
-    // events earlier than the local heads may come in with `replicated` events
-    const taken = new Set<$PropertyType<Entry, 'hash'>>();
+  // Get the result of `EventStore.all()` when any entry is added
+  subscribe(callback: (events: Event<*>[]) => void): {| stop: () => void |} {
+    const allEvents = () => callback(this.all());
 
-    const takeEntry = (entry: Entry) => {
-      taken.add(entry.hash);
-      const event = this.constructor.decorateEntry(entry);
-      if (!filter || filter(event)) {
-        callback(event);
-      }
-    };
+    this._orbitStore.events.on('replicated', allEvents);
+    this._orbitStore.events.on('write', allEvents);
 
-    const takeEntries = () =>
-      this._orbitStore
-        .iterator({ limit: -1 })
-        .collect()
-        .filter(({ hash }) => !taken.has(hash))
-        .forEach(takeEntry);
-
-    const onReplicated = debounce(takeEntries, 1000);
-    const onWrite = (address: string, entry: Entry) =>
-      taken.has(entry.hash) || takeEntry(entry);
-
-    this._orbitStore.events.on('replicated', onReplicated);
-    this._orbitStore.events.on('write', onWrite);
-
-    // Take all entries when the sub starts; this has the same effect as
-    // receiving the first `replicated` event (but that might not
-    // happen immediately).
-    takeEntries();
+    // Emit all events when the subscription starts
+    allEvents();
 
     return {
       // The consumer is expected to stop the event listeners.
       stop: () => {
-        this._orbitStore.events.removeListener('replicated', onReplicated);
-        this._orbitStore.events.removeListener('write', onWrite);
+        this._orbitStore.events.removeListener('replicated', allEvents);
+        this._orbitStore.events.removeListener('write', allEvents);
       },
     };
   }
