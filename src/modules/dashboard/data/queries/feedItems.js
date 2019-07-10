@@ -19,7 +19,7 @@ import {
   getTaskStoreAddress,
 } from '~data/stores';
 
-export type TaskFeedItemEvents = $Values<
+export type AllTaskEvents = $Values<
   $Pick<
     TaskEvents,
     {|
@@ -85,7 +85,7 @@ export const subscribeTaskFeedItems: Subscription<
   {| taskStore: TaskStore, commentsStore: CommentsStore |},
   Metadata,
   void,
-  TaskFeedItemEvents[],
+  AllTaskEvents[],
 > = {
   name: 'subscribeTaskFeedItems',
   context: [CONTEXT.COLONY_MANAGER, CONTEXT.DDB_INSTANCE, CONTEXT.WALLET],

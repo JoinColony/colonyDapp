@@ -12,7 +12,7 @@ import type {
   ErrorActionType,
   UniqueActionType,
 } from '~redux';
-import type { TaskFeedItemEvents } from '../../../modules/dashboard/data/queries';
+import type { AllTaskEvents } from '../../../modules/dashboard/data/queries';
 
 import { ACTIONS } from '~redux';
 import { TASK_EVENT_TYPES } from '~data/constants';
@@ -148,7 +148,7 @@ export type TaskActionTypes = {|
   >,
   TASK_FEED_ITEMS_SUB_EVENTS: NonUniqueTaskActionType<
     typeof ACTIONS.TASK_FEED_ITEMS_SUB_EVENTS,
-    {| events: TaskFeedItemEvents[] |},
+    {| events: AllTaskEvents[] |},
   >,
   TASK_FEED_ITEMS_SUB_ERROR: TaskErrorActionType<
     typeof ACTIONS.TASK_FEED_ITEMS_SUB_ERROR,

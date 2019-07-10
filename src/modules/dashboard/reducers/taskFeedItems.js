@@ -4,7 +4,7 @@ import { Map as ImmutableMap, List } from 'immutable';
 
 import type { ReducerType } from '~redux';
 import type { TaskFeedItemsMap, TaskFeedItemRecordType } from '~immutable';
-import type { TaskFeedItemEvents } from '../data/queries';
+import type { AllTaskEvents } from '../data/queries';
 
 import {
   DataRecord,
@@ -84,7 +84,7 @@ const getTaskFeedItemRecordProps = (event: *) => {
 };
 
 const mapTaskFeedItemEvent = (
-  event: TaskFeedItemEvents,
+  event: AllTaskEvents,
 ): TaskFeedItemRecordType =>
   TaskFeedItemRecord({
     createdAt: new Date(event.meta.timestamp),
