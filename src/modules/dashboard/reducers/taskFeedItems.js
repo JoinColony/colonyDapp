@@ -83,9 +83,7 @@ const getTaskFeedItemRecordProps = (event: *) => {
   }
 };
 
-const mapTaskFeedItemEvent = (
-  event: AllTaskEvents,
-): TaskFeedItemRecordType =>
+const mapTaskFeedItemEvent = (event: AllTaskEvents): TaskFeedItemRecordType =>
   TaskFeedItemRecord({
     createdAt: new Date(event.meta.timestamp),
     id: event.meta.id,

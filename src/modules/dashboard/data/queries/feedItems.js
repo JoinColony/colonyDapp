@@ -92,6 +92,7 @@ export const subscribeTaskFeedItems: Subscription<
   prepare,
   execute({ commentsStore, taskStore }, args, emitter) {
     // Store previous events for each store so that the events can be combined
+    // @todo Simplify and improve performance of task feed items subscription
     let commentsEvents: Event<*> = [];
     let taskEvents: Event<*> = [];
 
