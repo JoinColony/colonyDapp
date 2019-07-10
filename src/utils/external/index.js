@@ -18,12 +18,12 @@ type EthUsdResponse = {
   },
 };
 
-type TokenDetails = {|
-  name: string,
-  symbol: string,
-  decimals: number,
-  isVerified: boolean,
-|};
+type TokenDetails = {
+  name?: string,
+  symbol?: string,
+  decimals?: number,
+  isVerified?: boolean,
+};
 
 /*
   Request dollar conversion value from etherScan
@@ -84,7 +84,7 @@ export const getEthToUsd = (ethValue: BN): Promise<number | void> => {
  */
 export const getTokenDetails = async (
   tokenAddress: Address,
-): Promise<TokenDetails | void> => {
+): Promise<TokenDetails> => {
   const TOKEN_DETAILS_KEY = `tokenDetails_${tokenAddress}`;
   const TOKEN_TIMESTAMP_KEY = `tokenTimestamp_${tokenAddress}`;
 
@@ -129,5 +129,5 @@ export const getTokenDetails = async (
   } catch (caughtError) {
     log.warn(caughtError);
   }
-  return undefined;
+  return {};
 };
