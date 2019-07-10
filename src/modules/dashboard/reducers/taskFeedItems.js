@@ -90,14 +90,6 @@ const mapTaskFeedItemEvent = (event: AllTaskEvents): TaskFeedItemRecordType =>
     ...getTaskFeedItemRecordProps(event),
   });
 
-const updateStateForSubscription = (
-  state: TaskFeedItemsMap,
-  draftId: string,
-): TaskFeedItemsMap =>
-  state.getIn([draftId, 'record'])
-    ? state
-    : state.set(draftId, DataRecord({ record: List() }));
-
 const taskFeedItemsReducer: ReducerType<
   TaskFeedItemsMap,
   {
@@ -106,24 +98,15 @@ const taskFeedItemsReducer: ReducerType<
   },
 > = (state = ImmutableMap(), action) => {
   switch (action.type) {
-    case ACTIONS.TASK_FEED_ITEMS_SUB_START: {
-      const { draftId } = action.payload;
-      return updateStateForSubscription(state, draftId);
-    }
-
     case ACTIONS.TASK_FEED_ITEMS_SUB_EVENTS: {
       const { draftId, events } = action.payload;
 
-      const newState = updateStateForSubscription(state, draftId);
-
-      return newState.setIn(
-        [draftId, 'record'],
-        List<TaskFeedItemRecordType>(
-          events
-            .filter(event => FEED_ITEM_TYPES.has(event.type))
-            .map(mapTaskFeedItemEvent),
-        ),
+      const record = List<TaskFeedItemRecordType>(
+        events
+          .filter(event => FEED_ITEM_TYPES.has(event.type))
+          .map(mapTaskFeedItemEvent),
       );
+      return state.set(draftId, DataRecord({ record }));
     }
 
     default:

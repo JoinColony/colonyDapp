@@ -11,7 +11,11 @@ import {
   taskSubStart,
   taskSubStop,
 } from './actionCreators';
-import { taskFeedItemsSelector, taskSelector } from './selectors';
+import {
+  taskFeedItemsSelector,
+  taskSelector,
+  tasksByIdsSelector,
+} from './selectors';
 
 export const taskFeedItemsSubscriber = Object.freeze({
   select: taskFeedItemsSelector,
@@ -21,6 +25,12 @@ export const taskFeedItemsSubscriber = Object.freeze({
 
 export const taskSubscriber = Object.freeze({
   select: taskSelector,
+  start: taskSubStart,
+  stop: taskSubStop,
+});
+
+export const tasksByIdSubscriber = Object.freeze({
+  select: tasksByIdsSelector,
   start: taskSubStart,
   stop: taskSubStop,
 });

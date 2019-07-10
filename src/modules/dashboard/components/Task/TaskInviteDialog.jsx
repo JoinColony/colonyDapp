@@ -18,14 +18,14 @@ import Heading from '~core/Heading';
 import Payout from '~dashboard/TaskEditDialog/Payout';
 import DialogBox from '~core/Dialog/DialogBox.jsx';
 
-import { taskFetcher } from '../../fetchers';
+import { taskSubscriber } from '../../subscribers';
 
 import { useColonyNativeToken } from '../../hooks/useColonyNativeToken';
 import { useColonyTokens } from '../../hooks/useColonyTokens';
 
 import styles from './TaskInviteDialog.css';
 
-import { useDataFetcher } from '~utils/hooks';
+import { useDataSubscriber } from '~utils/hooks';
 import ACTIONS from '~redux/actions';
 
 const MSG = defineMessages({
@@ -55,10 +55,10 @@ const TaskInviteDialog = ({
   },
   currentUser,
 }: Props) => {
-  const { data: taskData } = useDataFetcher<TaskType>(
-    taskFetcher,
+  const { data: taskData } = useDataSubscriber<TaskType>(
+    taskSubscriber,
     [draftId],
-    [draftId],
+    [colonyAddress || undefined, draftId],
   );
 
   const nativeTokenReference = useColonyNativeToken(colonyAddress);

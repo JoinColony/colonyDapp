@@ -91,8 +91,8 @@ const TransactionListItem = ({
   /**
    * @todo Support fetching of tasks by `taskId`
    * */
-  // const { data: task } = useDataFetcher<TokenType>(
-  //   taskFetcher,
+  // const { data: task } = useDataSubscriber<TokenType>(
+  //   taskSubscriber,
   //   [taskId],
   //   [taskId],
   // );

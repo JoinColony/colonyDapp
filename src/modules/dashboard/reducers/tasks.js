@@ -42,6 +42,7 @@ const taskEventReducer = (task: TaskRecordType, event: *): TaskRecordType => {
       return task.merge({
         createdAt: new Date(timestamp),
         creatorAddress,
+        currentState: TASK_STATE.ACTIVE,
         draftId,
         managerAddress: creatorAddress,
       });
