@@ -306,7 +306,7 @@ export type TaskActionTypes = {|
   TASK_SUB_STOP: NonUniqueTaskActionType<typeof ACTIONS.TASK_SUB_STOP, void>,
   TASK_SUB_EVENTS: NonUniqueTaskActionType<
     typeof ACTIONS.TASK_SUB_EVENTS,
-    {| events: TaskEvents[] |},
+    {| events: $Values<TaskEvents>[] |},
   >,
   TASK_SUB_ERROR: TaskErrorActionType<typeof ACTIONS.TASK_SUB_ERROR>,
   TASK_SET_WORKER_AND_PAYOUTS: TaskActionType<
