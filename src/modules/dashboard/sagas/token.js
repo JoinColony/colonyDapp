@@ -13,6 +13,7 @@ import {
 
 import type { Action } from '~redux';
 
+import { getTokenDetails } from '~utils/external';
 import { putError, takeFrom } from '~utils/saga/effects';
 import { ZERO_ADDRESS, ETHER_INFO } from '~utils/web3/constants';
 import { CONTEXT, getContext } from '~context';
@@ -32,14 +33,16 @@ function* tokenInfoFetch({
   if (tokenAddress === ZERO_ADDRESS) {
     yield put<Action<typeof ACTIONS.TOKEN_INFO_FETCH_SUCCESS>>({
       type: ACTIONS.TOKEN_INFO_FETCH_SUCCESS,
-      payload: ETHER_INFO,
+      payload: {
+        isVerified: true,
+        ...ETHER_INFO,
+      },
       meta,
     });
   }
 
   // Debounce with 1000ms, since this is intended to run directly following
   // user keyboard input.
-
   yield delay(1000);
 
   try {
@@ -53,16 +56,25 @@ function* tokenInfoFetch({
       [colonyManager, colonyManager.getTokenClient],
       tokenAddress,
     );
-    const info = yield call([client.getTokenInfo, client.getTokenInfo.call]);
+    const tokenInfo = yield call([
+      client.getTokenInfo,
+      client.getTokenInfo.call,
+    ]);
+    const tokenDetails = yield call(getTokenDetails, tokenAddress);
+    const tokenData = {
+      name: tokenInfo.name || tokenDetails.name,
+      decimals: tokenInfo.decimals || tokenDetails.decimals,
+      symbol: tokenInfo.symbol || tokenDetails.symbol,
+      isVerified: tokenDetails.isVerified || false,
+    };
     yield put<Action<typeof ACTIONS.TOKEN_INFO_FETCH_SUCCESS>>({
       type: ACTIONS.TOKEN_INFO_FETCH_SUCCESS,
-      payload: { ...info, tokenAddress },
+      payload: { ...tokenData, tokenAddress },
       meta,
     });
   } catch (error) {
-    return yield putError(ACTIONS.TOKEN_INFO_FETCH_ERROR, error, meta);
+    yield putError(ACTIONS.TOKEN_INFO_FETCH_ERROR, error, meta);
   }
-  return null;
 }
 
 function* tokenCreate({

@@ -31,6 +31,7 @@ export type TokenActionTypes = {|
     typeof ACTIONS.TOKEN_INFO_FETCH_SUCCESS,
     {|
       decimals: number,
+      isVerified: boolean,
       name: string,
       symbol: string,
       tokenAddress: Address,
