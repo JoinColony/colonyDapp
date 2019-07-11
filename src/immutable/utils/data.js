@@ -11,6 +11,7 @@ export const shouldFetchData = (
   ttl: number,
   isFirstMount: boolean,
   fetchArgs: any[] = [],
+  alwaysFetch?: boolean,
 ): boolean => {
   // If there are arguments in the fetch args that are still undefined, don't fetch yet
   // Useful when using multiple fetchers consecutively (with depedencies on each other)
@@ -26,7 +27,8 @@ export const shouldFetchData = (
   if (data.get('error') && isFirstMount) return true;
 
   // If there's no record (and it's not fetching) and it's the first mount, fetch
-  if (typeof data.get('record') == 'undefined' && isFirstMount) return true;
+  if ((typeof data.get('record') == 'undefined' || alwaysFetch) && isFirstMount)
+    return true;
 
   // Check if the TTL is passed, if so, fetch again
   return !!(

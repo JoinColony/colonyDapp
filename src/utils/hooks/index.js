@@ -44,13 +44,13 @@ type DataMapFetcher<T> = {|
   ttl?: number,
 |};
 
-type DataTupleFetcher<T> = {|
+type DataTupleSubscriber<T> = {|
   select: (
     rootState: RootStateRecord,
-    args: [any, any][],
+    keys: [any, any][],
   ) => ImmutableMapType<string, ?DataRecordType<T>>,
-  fetch: ([any, any]) => Action<*>,
-  ttl?: number,
+  start: (...subArgs: any[]) => Action<*>,
+  stop: (...subArgs: any[]) => Action<*>,
 |};
 
 type DependantSelector = (
@@ -277,86 +277,13 @@ export const useDataMapFetcher = <T>(
 };
 
 /*
- * Given a `DataTupleFetcher` object and a tuple with the items
- * to fetch data for, select the data and fetch the parts that need
- * to be (re-)fetched.
- */
-export const useDataTupleFetcher = <T>(
-  { fetch, select, ttl: ttlDefault = 0 }: DataTupleFetcher<T>,
-  keys: Array<*>,
-  { ttl: ttlOverride }: DataFetcherOptions = {},
-): {|
-  data: ?T,
-  key: string,
-  isFetching: boolean,
-  error: ?string,
-|}[] => {
-  /*
-   * Created memoized keys to guard the rest of the function against
-   * unnecessary updates.
-   */
-  const memoizedKeys = useMemoWithTupleArray(() => keys, keys);
-  const dispatch = useDispatch();
-  const allData: ImmutableMapType<string, DataRecordType<*>> = useMappedState(
-    useCallback(state => select(state, memoizedKeys), [select, memoizedKeys]),
-  );
-
-  const isFirstMount = useRef(true);
-  const ttl = ttlOverride || ttlDefault;
-
-  /*
-   * Use with the array of keys we want data for, get the data from `allData`
-   * and use `shouldFetchData` to obtain an array of keys we should
-   * dispatch fetch actions for.
-   */
-  const keysToFetchFor = useMemo(
-    () =>
-      memoizedKeys.filter(entry =>
-        shouldFetchData(allData.get(entry[1]), ttl, isFirstMount.current, [
-          entry,
-        ]),
-      ),
-    [allData, memoizedKeys, ttl],
-  );
-
-  /*
-   * Set the `isFirstMount` ref and dispatch any needed fetch actions.
-   */
-  useEffect(
-    () => {
-      isFirstMount.current = false;
-      keysToFetchFor.map(key => dispatch(fetch(key)));
-    },
-    [keysToFetchFor, dispatch, fetch, memoizedKeys],
-  );
-
-  /*
-   * Return an array of data objects with keys by mapping over the keys
-   * and getting the data from `allData`.
-   */
-  return useMemo(
-    () =>
-      memoizedKeys.map(entry => {
-        const data = allData.get(entry[1]);
-        return {
-          key: entry[1],
-          entry,
-          data: transformFetchedData(data),
-          isFetching: keysToFetchFor.includes(entry[1]) && isFetchingData(data),
-          error: data ? data.error : null,
-        };
-      }),
-    [allData, memoizedKeys, keysToFetchFor],
-  );
-};
-
-/*
  * T: JS type of the fetched and transformed data, e.g. ColonyType
  */
 export const useDataSubscriber = <T>(
   { start, stop, select }: DataSubscriber<T>,
   selectArgs: any[],
   subArgs: any[],
+  { alwaysSubscribe = true }: { alwaysSubscribe?: boolean } = {},
 ): {|
   data: ?T,
   isFetching: boolean,
@@ -376,6 +303,7 @@ export const useDataSubscriber = <T>(
     Infinity,
     isFirstMount.current,
     subArgs,
+    alwaysSubscribe,
   );
 
   useEffect(
@@ -399,6 +327,74 @@ export const useDataSubscriber = <T>(
     isFetching: shouldSubscribe && isFetchingData(data),
     error: data ? data.error : null,
   };
+};
+
+/*
+ * Given a `DataTupleSubscriber` object and a tuple with the items
+ * to fetch data for, select the data and subscribe to any future data.
+ */
+export const useDataTupleSubscriber = <T>(
+  { start, stop, select }: DataTupleSubscriber<T>,
+  keys: Array<*>,
+  { alwaysSubscribe = true }: { alwaysSubscribe?: boolean } = {},
+): {|
+  data: ?T,
+  key: string,
+  isFetching: boolean,
+  error: ?string,
+|}[] => {
+  const memoizedKeys = useMemoWithTupleArray(() => keys, keys);
+  const dispatch = useDispatch();
+  const allData: ImmutableMapType<string, DataRecordType<*>> = useMappedState(
+    useCallback(state => select(state, memoizedKeys), [select, memoizedKeys]),
+  );
+
+  const isFirstMount = useRef(true);
+
+  const keysToFetchFor = useMemo(
+    () =>
+      memoizedKeys.filter(entry =>
+        shouldFetchData(
+          allData.get(entry[1]),
+          Infinity,
+          isFirstMount.current,
+          [entry],
+          alwaysSubscribe,
+        ),
+      ),
+    [allData, alwaysSubscribe, memoizedKeys],
+  );
+
+  useEffect(
+    () => {
+      isFirstMount.current = false;
+      keysToFetchFor.map(key => dispatch(start(...key)));
+    },
+    [keysToFetchFor, dispatch, memoizedKeys, start],
+  );
+
+  useEffect(
+    () => () => {
+      keysToFetchFor.map(key => dispatch(stop(...key)));
+    },
+    // eslint-disable-next-line
+    [],
+  );
+
+  return useMemo(
+    () =>
+      memoizedKeys.map(entry => {
+        const data = allData.get(entry[1]);
+        return {
+          key: entry[1],
+          entry,
+          data: transformFetchedData(data),
+          isFetching: keysToFetchFor.includes(entry[1]) && isFetchingData(data),
+          error: data ? data.error : null,
+        };
+      }),
+    [allData, memoizedKeys, keysToFetchFor],
+  );
 };
 
 export const useFeatureFlags = (
