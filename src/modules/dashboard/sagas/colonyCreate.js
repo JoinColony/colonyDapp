@@ -324,8 +324,6 @@ function* colonyCreate({
       },
     });
 
-    yield put(subscribeToColony(colonyAddress));
-
     /*
      * Pass through colonyStore Address after colony store creation to colonyName creation
      */
@@ -454,6 +452,9 @@ function* colonyCreate({
       colonyLabelRegisteredLog,
     );
     yield putNotification(normalizeTransactionLog(colonyAddress, decoratedLog));
+
+    // Subscribe to the colony last, after successful colony creation
+    yield put(subscribeToColony(colonyAddress));
     return null;
   } catch (error) {
     yield putError(ACTIONS.COLONY_CREATE_ERROR, error, meta);
