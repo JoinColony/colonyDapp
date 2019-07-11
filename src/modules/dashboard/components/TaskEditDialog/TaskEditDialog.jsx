@@ -32,6 +32,7 @@ import { taskSelector, taskRequestsSelector } from '../../selectors';
 import { useColonyTokens } from '../../hooks/useColonyTokens';
 
 import { userFetcher, usersByAddressFetcher } from '../../../users/fetchers';
+import { allUsersAddressesSelector } from '../../../users/selectors';
 import { createAddress } from '../../../../types';
 
 import styles from './TaskEditDialog.css';
@@ -163,9 +164,16 @@ const TaskEditDialog = ({
 
   // Get users that have requested to work on this task
   const userAddressesRequested = useSelector(taskRequestsSelector, [draftId]);
+  const userAddressesInStore = useSelector(allUsersAddressesSelector);
+
+  const userAddressesToPickFrom = userAddressesRequested.concat(
+    userAddressesInStore,
+  );
+  const uniqueUserAddressesToPickFrom = new Set(userAddressesToPickFrom);
+
   const userData = useDataMapFetcher<UserType>(
     usersByAddressFetcher,
-    userAddressesRequested,
+    Array.from(uniqueUserAddressesToPickFrom),
   );
 
   // Get user (worker) assigned to this task

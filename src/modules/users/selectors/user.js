@@ -3,6 +3,7 @@
 import { createSelector } from 'reselect';
 
 import { Map as ImmutableMap } from 'immutable';
+import { isAddress } from 'web3-utils';
 
 import type {
   DataRecordType,
@@ -29,13 +30,28 @@ import {
 import { sortObjectsBy } from '~utils/arrays';
 
 /*
- * Username/address getters
+ * Username getters
  */
 const getUsernameFromUserData = (user?: DataRecordType<UserRecordType>) =>
   user && user.getIn(['record', 'profile', 'username']);
 
 /*
- * Username/address input selectors
+ * Address getters
+ */
+const getWalletAddressFromUserData = (
+  users: ImmutableMap<string, DataRecordType<UserRecordType>>,
+) => Object.keys(users.toJS()).filter(key => isAddress(key));
+
+export const allUsersSelector = (state: RootStateRecord) =>
+  state.getIn([ns, USERS_ALL_USERS, USERS_USERS], ImmutableMap());
+
+export const allUsersAddressesSelector = createSelector(
+  allUsersSelector,
+  users => getWalletAddressFromUserData(users),
+);
+
+/*
+ * Username input selectors
  */
 export const userAddressSelector = (state: RootStateRecord, username: string) =>
   state
@@ -54,8 +70,7 @@ export const userSelector = (state: RootStateRecord, address: Address) =>
   state.getIn([ns, USERS_ALL_USERS, USERS_USERS, address]);
 
 export const usersExceptSelector = createSelector(
-  (state: RootStateRecord) =>
-    state.getIn([ns, USERS_ALL_USERS, USERS_USERS], ImmutableMap()),
+  allUsersSelector,
   (allUsers, except: string[] | string = []) =>
     allUsers.filter((user, address) => ![].concat(except).includes(address)),
 );
