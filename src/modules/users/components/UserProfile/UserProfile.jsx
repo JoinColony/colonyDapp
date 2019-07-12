@@ -43,6 +43,7 @@ const UserProfile = ({
     userFetcher,
     [userAddress],
     [userAddress],
+    { ttl: 0 },
   );
 
   // Tracked in colonyDapp#1472
@@ -52,7 +53,8 @@ const UserProfile = ({
     [],
   );
 
-  if (userError || userAddressError) {
+  // Sometimes userAddress is not defined (because it is being fetched). Only if it *is* defined we should care about the error
+  if (userAddressError || (userAddress && userError)) {
     return <Redirect to={NOT_FOUND_ROUTE} />;
   }
 
