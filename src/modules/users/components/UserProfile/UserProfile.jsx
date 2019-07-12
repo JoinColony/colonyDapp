@@ -52,12 +52,14 @@ const UserProfile = ({
     [],
   );
 
-  if (userError || userAddressError) {
-    return <Redirect to={NOT_FOUND_ROUTE} />;
-  }
-
   if (!user || isFetching) {
     return <UserProfileSpinner />;
+  }
+
+  if (!isFetching && (userError || userAddressError)) {
+    console.log(userError);
+    console.log(userAddressError);
+    return <Redirect to={NOT_FOUND_ROUTE} />;
   }
 
   return (
