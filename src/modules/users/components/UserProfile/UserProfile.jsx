@@ -70,12 +70,12 @@ const UserProfile = ({
     [],
   );
 
-  if (!user || isFetching) {
-    return <UserProfileSpinner />;
+  if (!isFetching && (userAddressError || (userAddress && userError))) {
+    return <Redirect to={NOT_FOUND_ROUTE} />;
   }
 
-  if (!isFetching && (userError || userAddressError)) {
-    return <Redirect to={NOT_FOUND_ROUTE} />;
+  if (!user || isFetching) {
+    return <UserProfileSpinner />;
   }
 
   return (
