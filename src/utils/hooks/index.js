@@ -319,8 +319,8 @@ export const useDataSubscriber = <T>(
     () => () => {
       dispatch(stop(...subArgs), subArgs);
     },
-    // eslint-disable-next-line
-    []
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [],
   );
 
   return {
@@ -378,8 +378,8 @@ export const useDataTupleSubscriber = <T>(
     () => () => {
       keysToFetchFor.map(key => dispatch(stop(...key)));
     },
-    // eslint-disable-next-line
-    []
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [],
   );
 
   return useMemo(
