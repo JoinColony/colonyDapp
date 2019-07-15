@@ -17,13 +17,17 @@ import { friendlyUsernameSelector } from '../../../users/selectors';
 
 import styles from './TaskFeedCompleteInfo.css';
 
-const getTaskPayoutTransactionFee = (amount: BigNumber, fee: number) =>
-  amount.mul(new BigNumber(fee));
+const getTaskPayoutTransactionFee = (
+  amount: BigNumber,
+  fee: number,
+  decimals: number,
+) => amount.mul(fee).div(new BigNumber(10).pow(new BigNumber(decimals)));
 
 const getTaskPayoutAmountMinusTransactionFee = (
   amount: BigNumber,
   fee: number,
-) => amount.sub(getTaskPayoutTransactionFee(amount, fee));
+  decimals: number,
+) => amount.sub(getTaskPayoutTransactionFee(amount, fee, decimals));
 
 const MSG = defineMessages({
   eventTaskSentMessage: {
@@ -77,7 +81,7 @@ const TaskFeedCompleteInfo = ({
     [paymentTokenAddress],
     [paymentTokenAddress],
   );
-  const { decimals, symbol } = token || {};
+  const { decimals = 18, symbol } = token || {};
   const transactionFee =
     gasPrice && gasLimit && gasPrice.mul(new BigNumber(gasLimit));
 
@@ -116,11 +120,12 @@ const TaskFeedCompleteInfo = ({
                   amount: (
                     <Numeral
                       integerSeparator=""
-                      truncate={2}
-                      unit={decimals || 18}
+                      truncate={4}
+                      unit={decimals}
                       value={getTaskPayoutAmountMinusTransactionFee(
                         new BigNumber(amountPaid),
                         transactionFee,
+                        decimals,
                       )}
                     />
                   ),
@@ -133,11 +138,12 @@ const TaskFeedCompleteInfo = ({
                 values={{
                   amount: (
                     <Numeral
-                      truncate={2}
+                      truncate={4}
                       unit={decimals}
                       value={getTaskPayoutTransactionFee(
                         new BigNumber(amountPaid),
                         transactionFee,
+                        decimals,
                       )}
                     />
                   ),
