@@ -114,12 +114,37 @@ export const getColonyRoles: ContractEventQuery<
       },
     );
 
+    // get extension addresses for the colony
+    const {
+      address: oldRolesAddress,
+    } = await colonyClient.getExtensionAddress.call({
+      contractName: 'OldRoles',
+    });
+    const {
+      address: oneTxAddress,
+    } = await colonyClient.getExtensionAddress.call({
+      contractName: 'OneTxPayment',
+    });
+    const extensionAddresses = [
+      createAddress(oldRolesAddress),
+      createAddress(oneTxAddress),
+    ];
+
     // reduce events to { [address]: { [role]: boolean } }
     const addressRoles = events.reduce((acc, { address, setTo, role }) => {
-      const normalizedAddress = createAddress(address).toString();
+      const normalizedAddress = createAddress(address);
+
+      // don't include roles of extensions
+      if (extensionAddresses.includes(normalizedAddress)) {
+        return acc;
+      }
+
       return {
         ...acc,
-        [normalizedAddress]: { ...acc[normalizedAddress], [role]: setTo },
+        [(normalizedAddress: string)]: {
+          ...acc[(normalizedAddress: string)],
+          [role]: setTo,
+        },
       };
     }, {});
 
