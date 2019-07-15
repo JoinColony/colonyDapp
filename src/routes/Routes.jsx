@@ -3,6 +3,7 @@
 import React from 'react';
 import { withRouter, Route, Redirect, Switch } from 'react-router-dom';
 import { connect } from 'react-redux';
+import { defineMessages } from 'react-intl';
 
 import CreateColonyWizard from '~dashboard/CreateColonyWizard';
 import CreateUserWizard from '~dashboard/CreateUserWizard';
@@ -44,114 +45,145 @@ import {
 import ConnectedOnlyRoute from './ConnectedOnlyRoute.jsx';
 import DisconnectedOnlyRoute from './DisconnectedOnlyRoute.jsx';
 
+const MSG = defineMessages({
+  taskBack: {
+    id: 'routes.Routes.taskBack',
+    defaultMessage: 'Go to {colonyName}',
+  },
+  userProfileEditBack: {
+    id: 'routes.Routes.userProfileEditBack',
+    defaultMessage: 'Go to profile',
+  },
+});
+
 // We cannot add types to this component's props because of how we're using
 // `connect` and importing it elsewhere: https://github.com/flow-typed/flow-typed/issues/1946
 // eslint-disable-next-line react/prop-types
-const Routes = ({ isConnected, didClaimProfile }) => (
-  <Switch>
-    <Route
-      exact
-      path="/"
-      render={() => {
-        const connectedRoute = didClaimProfile
-          ? DASHBOARD_ROUTE
-          : CREATE_USER_ROUTE;
-        return <Redirect to={isConnected ? connectedRoute : CONNECT_ROUTE} />;
-      }}
-    />
-    <Route exact path={NOT_FOUND_ROUTE} component={FourOFour} />
-    <DisconnectedOnlyRoute
-      isConnected={isConnected}
-      didClaimProfile={didClaimProfile}
-      path={CONNECT_ROUTE}
-      component={ConnectWalletWizard}
-    />
-    <DisconnectedOnlyRoute
-      isConnected={isConnected}
-      didClaimProfile={didClaimProfile}
-      path={CREATE_WALLET_ROUTE}
-      component={CreateWalletWizard}
-    />
-    <ConnectedOnlyRoute
-      exact
-      isConnected={isConnected}
-      didClaimProfile={didClaimProfile}
-      path={COLONY_HOME_ROUTE}
-      component={ColonyHome}
-      backRoute={DASHBOARD_ROUTE}
-    />
-    <ConnectedOnlyRoute
-      isConnected={isConnected}
-      didClaimProfile={didClaimProfile}
-      path={INBOX_ROUTE}
-      component={Inbox}
-    />
-    <ConnectedOnlyRoute
-      isConnected={isConnected}
-      didClaimProfile={didClaimProfile}
-      path={WALLET_ROUTE}
-      component={Wallet}
-      hasBackLink={false}
-      appearance={{ theme: 'transparent' }}
-    />
-    <ConnectedOnlyRoute
-      isConnected={isConnected}
-      didClaimProfile={didClaimProfile}
-      path={DASHBOARD_ROUTE}
-      component={Dashboard}
-      hasBackLink={false}
-      appearance={{ theme: 'transparent' }}
-    />
-    <ConnectedOnlyRoute
-      exact
-      isConnected={isConnected}
-      didClaimProfile={didClaimProfile}
-      path={ADMIN_DASHBOARD_ROUTE}
-      component={AdminDashboard}
-      appearance={{ theme: 'transparent' }}
-      hasBackLink={false}
-    />
-    <ConnectedOnlyRoute
-      exact
-      isConnected={isConnected}
-      didClaimProfile={didClaimProfile}
-      path={TASK_ROUTE}
-      component={Task}
-    />
-    <ConnectedOnlyRoute
-      isConnected={isConnected}
-      didClaimProfile={didClaimProfile}
-      path={CREATE_COLONY_ROUTE}
-      component={CreateColonyWizard}
-      hasNavigation={false}
-    />
-    <ConnectedOnlyRoute
-      isConnected={isConnected}
-      didClaimProfile={didClaimProfile}
-      path={CREATE_USER_ROUTE}
-      component={CreateUserWizard}
-      hasNavigation={false}
-    />
-    <ConnectedOnlyRoute
-      isConnected={isConnected}
-      didClaimProfile={didClaimProfile}
-      path={USER_ROUTE}
-      component={UserProfile}
-      appearance={{ theme: 'transparent' }}
-    />
-    <ConnectedOnlyRoute
-      isConnected={isConnected}
-      didClaimProfile={didClaimProfile}
-      path={USER_EDIT_ROUTE}
-      component={UserProfileEdit}
-      appearance={{ theme: 'transparent' }}
-    />
-  </Switch>
-);
+const Routes = ({ isConnected, username }) => {
+  const didClaimProfile = !!username;
+  return (
+    <Switch>
+      <Route
+        exact
+        path="/"
+        render={() => {
+          const connectedRoute = didClaimProfile
+            ? DASHBOARD_ROUTE
+            : CREATE_USER_ROUTE;
+          return <Redirect to={isConnected ? connectedRoute : CONNECT_ROUTE} />;
+        }}
+      />
+      <Route exact path={NOT_FOUND_ROUTE} component={FourOFour} />
+      <DisconnectedOnlyRoute
+        isConnected={isConnected}
+        didClaimProfile={didClaimProfile}
+        path={CONNECT_ROUTE}
+        component={ConnectWalletWizard}
+      />
+      <DisconnectedOnlyRoute
+        isConnected={isConnected}
+        didClaimProfile={didClaimProfile}
+        path={CREATE_WALLET_ROUTE}
+        component={CreateWalletWizard}
+      />
+      <ConnectedOnlyRoute
+        exact
+        isConnected={isConnected}
+        didClaimProfile={didClaimProfile}
+        path={COLONY_HOME_ROUTE}
+        component={ColonyHome}
+        hasBackLink={false}
+      />
+      <ConnectedOnlyRoute
+        isConnected={isConnected}
+        didClaimProfile={didClaimProfile}
+        path={INBOX_ROUTE}
+        component={Inbox}
+        hasBackLink={false}
+      />
+      <ConnectedOnlyRoute
+        isConnected={isConnected}
+        didClaimProfile={didClaimProfile}
+        path={WALLET_ROUTE}
+        component={Wallet}
+        hasBackLink={false}
+        appearance={{ theme: 'transparent' }}
+      />
+      <ConnectedOnlyRoute
+        isConnected={isConnected}
+        didClaimProfile={didClaimProfile}
+        path={DASHBOARD_ROUTE}
+        component={Dashboard}
+        hasBackLink={false}
+        appearance={{ theme: 'transparent' }}
+      />
+      <ConnectedOnlyRoute
+        exact
+        isConnected={isConnected}
+        didClaimProfile={didClaimProfile}
+        path={ADMIN_DASHBOARD_ROUTE}
+        component={AdminDashboard}
+        appearance={{ theme: 'transparent' }}
+        hasBackLink={false}
+      />
+      <ConnectedOnlyRoute
+        exact
+        isConnected={isConnected}
+        didClaimProfile={didClaimProfile}
+        path={TASK_ROUTE}
+        component={Task}
+        backText={MSG.taskBack}
+        backTextValues={({
+          computedMatch: {
+            params: { colonyName },
+          },
+        }) => ({ colonyName })}
+        backRoute={({
+          computedMatch: {
+            params: { colonyName },
+          },
+        }) => `/colony/${colonyName}`}
+        hasBackLink
+      />
+      <ConnectedOnlyRoute
+        isConnected={isConnected}
+        didClaimProfile={didClaimProfile}
+        path={CREATE_COLONY_ROUTE}
+        component={CreateColonyWizard}
+        hasNavigation={false}
+      />
+      <ConnectedOnlyRoute
+        isConnected={isConnected}
+        didClaimProfile={didClaimProfile}
+        path={CREATE_USER_ROUTE}
+        component={CreateUserWizard}
+        hasNavigation={false}
+      />
+      <ConnectedOnlyRoute
+        isConnected={isConnected}
+        didClaimProfile={didClaimProfile}
+        path={USER_ROUTE}
+        component={UserProfile}
+        hasBackLink={false}
+        appearance={{ theme: 'transparent' }}
+      />
+      <ConnectedOnlyRoute
+        isConnected={isConnected}
+        didClaimProfile={didClaimProfile}
+        path={USER_EDIT_ROUTE}
+        component={UserProfileEdit}
+        appearance={{ theme: 'transparent' }}
+        backText={MSG.userProfileEditBack}
+        backRoute={`/user/${username}`}
+        hasBackLink
+      />
+    </Switch>
+  );
+};
 
 const RoutesContainer = connect(
   state => ({
-    didClaimProfile: !!currentUsernameSelector(state),
+    username: currentUsernameSelector(state),
     isConnected: !!walletAddressSelector(state),
   }),
   null,
