@@ -36,9 +36,9 @@ const ConnectedOnlyRoute = ({
           <NavigationWrapper
             {...rest}
             hasBackLink={
-              hasBackLink === false
-                ? false
-                : location.state && location.state.hasBackLink
+              hasBackLink === undefined
+                ? location.state && location.state.hasBackLink
+                : hasBackLink
             }
           >
             <Component {...props} params={params} />

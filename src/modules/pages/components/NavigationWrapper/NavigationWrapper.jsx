@@ -43,7 +43,7 @@ type Props = {|
   /*
    * If set, the the back link will redirect back to a specific route
    */
-  backRoute?: string,
+  backRoute?: string | ((props: Object) => string),
   /*
    * If set, it will change the default back link text
    */
@@ -51,7 +51,7 @@ type Props = {|
   /*
    * Works in conjuction with the above to provide message descriptor selector values
    */
-  backTextValues?: MessageValues,
+  backTextValues?: MessageValues | ((props: Object) => MessageValues),
   /*
    * Appearance object
    *
@@ -95,9 +95,15 @@ const NavigationWrapper = ({
           {hasBackLink && (
             <div className={styles.history}>
               <HistoryNavigation
-                backRoute={backRoute}
+                backRoute={
+                  typeof backRoute === 'function' ? backRoute(props) : backRoute
+                }
                 backText={backText}
-                backTextValues={backTextValues}
+                backTextValues={
+                  typeof backTextValues === 'function'
+                    ? backTextValues(props)
+                    : backTextValues
+                }
               />
             </div>
           )}
