@@ -208,9 +208,10 @@ export const setTaskTitle: Command<
   TaskStore,
   TaskStoreMetadata,
   {|
+    currentTitle: ?string,
     title: string,
   |},
-  {|
+  ?{|
     event: Event<typeof TASK_EVENT_TYPES.TASK_TITLE_SET>,
     taskStore: TaskStore,
   |},
@@ -219,7 +220,8 @@ export const setTaskTitle: Command<
   context: [CONTEXT.COLONY_MANAGER, CONTEXT.DDB_INSTANCE, CONTEXT.WALLET],
   prepare: prepareTaskStoreCommand,
   schema: SetTaskTitleCommandArgsSchema,
-  async execute(taskStore, { title }) {
+  async execute(taskStore, { currentTitle, title }) {
+    if (title === currentTitle) return null;
     const eventHash = await taskStore.append(
       createEvent(TASK_EVENT_TYPES.TASK_TITLE_SET, {
         title,
