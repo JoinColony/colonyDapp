@@ -1,5 +1,7 @@
 /* @flow */
 
+import type { FormikProps } from 'formik';
+
 // $FlowFixMe upgrade react
 import React, { useCallback } from 'react';
 import { defineMessages } from 'react-intl';
@@ -37,12 +39,15 @@ const TaskTitle = ({ disabled, title, colonyAddress, draftId }: Props) => {
       transform={transform}
       initialValues={{ title }}
     >
-      <SingleLineEdit
-        maxLength={90}
-        name="title"
-        placeholder={MSG.placeholder}
-        readOnly={disabled}
-      />
+      {({ submitForm }: FormikProps<*>) => (
+        <SingleLineEdit
+          maxLength={90}
+          name="title"
+          placeholder={MSG.placeholder}
+          readOnly={disabled}
+          onBlur={() => setTimeout(submitForm, 0)}
+        />
+      )}
     </ActionForm>
   );
 };

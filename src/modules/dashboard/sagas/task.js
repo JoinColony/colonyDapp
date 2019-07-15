@@ -267,19 +267,25 @@ function* taskSetTitle({
   payload: { colonyAddress, draftId, title },
 }: Action<typeof ACTIONS.TASK_SET_TITLE>): Saga<*> {
   try {
-    const { event } = yield* executeCommand(setTaskTitle, {
-      args: { title },
+    const {
+      record: { title: currentTitle },
+    }: { record: TaskType } = yield* selectAsJS(taskSelector, draftId);
+    const eventData = yield* executeCommand(setTaskTitle, {
+      args: { currentTitle, title },
       metadata: { colonyAddress, draftId },
     });
-    yield put<Action<typeof ACTIONS.TASK_SET_TITLE_SUCCESS>>({
-      type: ACTIONS.TASK_SET_TITLE_SUCCESS,
-      meta,
-      payload: {
-        colonyAddress,
-        draftId,
-        event,
-      },
-    });
+    if (eventData) {
+      const { event } = eventData;
+      yield put<Action<typeof ACTIONS.TASK_SET_TITLE_SUCCESS>>({
+        type: ACTIONS.TASK_SET_TITLE_SUCCESS,
+        meta,
+        payload: {
+          colonyAddress,
+          draftId,
+          event,
+        },
+      });
+    }
   } catch (error) {
     return yield putError(ACTIONS.TASK_SET_TITLE_ERROR, error, meta);
   }
