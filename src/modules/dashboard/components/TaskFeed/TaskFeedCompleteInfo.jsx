@@ -20,18 +20,6 @@ import { networkFeeInverseSelector } from '../../../core/selectors';
 
 import styles from './TaskFeedCompleteInfo.css';
 
-// const getTaskPayoutTransactionFee = (
-//   amount: BigNumber,
-//   fee: number,
-//   decimals: number,
-// ) => amount.mul(fee).div(new BigNumber(10).pow(new BigNumber(decimals)));
-
-// const getTaskPayoutAmountMinusTransactionFee = (
-//   amount: BigNumber,
-//   fee: number,
-//   decimals: number,
-// ) => amount.sub(getTaskPayoutTransactionFee(amount, fee, decimals));
-
 const MSG = defineMessages({
   eventTaskSentMessage: {
     id: 'dashboard.TaskFeed.TaskFeedCompleteInfo.eventTaskSentMessage',
@@ -67,8 +55,6 @@ const TaskFeedCompleteInfo = ({
   event: {
     payload: {
       amountPaid,
-      // gasLimit,
-      // gasPrice,
       paymentTokenAddress,
       workerAddress,
       transactionHash,
