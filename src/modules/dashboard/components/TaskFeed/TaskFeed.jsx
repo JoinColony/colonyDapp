@@ -75,16 +75,20 @@ const TaskFeed = ({ colonyAddress, draftId }: Props) => {
                 if (event && event.type === 'TASK_FINALIZED') {
                   return (
                     <>
+                      {/*
+                       * @NOTE This needs manual IDs since using the same task event
+                       * to display both the receipt and the completed event
+                       */}
                       <TaskFeedCompleteInfo
-                        key={id}
+                        key={`${id}_payment`}
                         event={event}
                         createdAt={createdAt}
                       />
                       <TaskFeedEvent
+                        key={`${id}_finalized`}
                         colonyAddress={colonyAddress}
                         createdAt={createdAt}
                         event={event}
-                        key={id}
                       />
                     </>
                   );
