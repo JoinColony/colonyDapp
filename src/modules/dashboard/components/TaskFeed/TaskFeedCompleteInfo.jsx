@@ -1,9 +1,10 @@
 /* @flow */
+
 import React from 'react';
-import { defineMessages, FormattedMessage, FormattedNumber } from 'react-intl';
+import { defineMessages, FormattedMessage } from 'react-intl';
 import BigNumber from 'bn.js';
 
-import type { ContractTransactionType, TokenType } from '~immutable';
+import type { TokenType, TaskFeedItemType } from '~immutable';
 
 import Numeral from '~core/Numeral';
 import { SpinnerLoader } from '~core/Preloaders';
@@ -11,21 +12,18 @@ import TimeRelative from '~core/TimeRelative';
 import TransactionLink from '~core/TransactionLink';
 
 import { useDataFetcher, useSelector } from '~utils/hooks';
-import { useReputationEarned } from '../../hooks/useReputationEarned';
 import { tokenFetcher } from '../../fetchers';
-import { taskSelector } from '../../selectors';
 import { friendlyUsernameSelector } from '../../../users/selectors';
-import { transactionByHash } from '../../../core/selectors';
 
 import styles from './TaskFeedCompleteInfo.css';
 
 const getTaskPayoutTransactionFee = (amount: BigNumber, fee: number) =>
-  amount.multipliedBy(new BigNumber(fee));
+  amount.mul(new BigNumber(fee));
 
 const getTaskPayoutAmountMinusTransactionFee = (
   amount: BigNumber,
   fee: number,
-) => amount.minus(getTaskPayoutTransactionFee(amount, fee));
+) => amount.sub(getTaskPayoutTransactionFee(amount, fee));
 
 const MSG = defineMessages({
   eventTaskSentMessage: {
@@ -44,11 +42,6 @@ const MSG = defineMessages({
     id: 'dashboard.TaskFeed.TaskFeedCompleteInfo.receiptRecipientText',
     defaultMessage: 'Recipient: {address}',
   },
-  receiptReputationText: {
-    id: 'dashboard.TaskFeed.TaskFeedCompleteInfo.receiptReputationText',
-    defaultMessage: `Reputation:
-{isNonNegative, select, true {+} false {}}{reputationAmount} rep`,
-  },
   receiptViewTxLinkText: {
     id: 'dashboard.TaskFeed.TaskFeedCompleteInfo.receiptViewTxLinkText',
     defaultMessage: 'View the task on Etherscan',
@@ -56,38 +49,38 @@ const MSG = defineMessages({
 });
 
 type Props = {|
-  transaction: ContractTransactionType,
+  createdAt: Date,
+  event: $NonMaybeType<$PropertyType<TaskFeedItemType, 'event'>>,
 |};
 
 const displayName = 'dashboard.TaskFeed.TaskFeedCompleteInfo';
 
 const TaskFeedCompleteInfo = ({
-  transaction: { amount, date, hash, taskId, to, token: tokenAddress },
+  createdAt,
+  event: {
+    payload: {
+      amountPaid,
+      gasLimit,
+      gasPrice,
+      paymentTokenAddress,
+      workerAddress,
+      transactionHash,
+    },
+  },
 }: Props) => {
-  const {
-    record: { reputation: taskReputation = 0 },
-  } = useSelector(taskSelector, [taskId]);
-  const user = useSelector(friendlyUsernameSelector, [to]);
+  const user = useSelector(friendlyUsernameSelector, [workerAddress]);
   const {
     data: token,
     isFetching: isFetchingToken,
-  } = useDataFetcher<TokenType>(tokenFetcher, [tokenAddress], [tokenAddress]);
-
-  const { decimals, symbol } = token || {};
-
-  // For MVP, rating is always 2 stars and rating never fails
-  const rating = 2;
-  const didFailToRate = false;
-
-  const reputationEarned = useReputationEarned(
-    taskReputation,
-    rating,
-    didFailToRate,
+  } = useDataFetcher<TokenType>(
+    tokenFetcher,
+    [paymentTokenAddress],
+    [paymentTokenAddress],
   );
-  const { gasPrice, gasLimit } = useSelector(transactionByHash, [hash]);
-
+  const { decimals, symbol } = token || {};
   const transactionFee =
     gasPrice && gasLimit && gasPrice.mul(new BigNumber(gasLimit));
+
   return (
     <div className={styles.main}>
       <div className={styles.transactionSentCopy}>
@@ -99,7 +92,7 @@ const TaskFeedCompleteInfo = ({
             }}
           />
           <span className={styles.timeSinceTx}>
-            <TimeRelative value={date} />
+            <TimeRelative value={createdAt} />
           </span>
         </p>
       </div>
@@ -113,7 +106,7 @@ const TaskFeedCompleteInfo = ({
               <FormattedMessage
                 {...MSG.receiptRecipientText}
                 values={{
-                  address: to,
+                  address: workerAddress,
                 }}
               />
               <br />
@@ -122,10 +115,11 @@ const TaskFeedCompleteInfo = ({
                 values={{
                   amount: (
                     <Numeral
+                      integerSeparator=""
                       truncate={2}
-                      unit={decimals}
+                      unit={decimals || 18}
                       value={getTaskPayoutAmountMinusTransactionFee(
-                        amount,
+                        new BigNumber(amountPaid),
                         transactionFee,
                       )}
                     />
@@ -142,7 +136,7 @@ const TaskFeedCompleteInfo = ({
                       truncate={2}
                       unit={decimals}
                       value={getTaskPayoutTransactionFee(
-                        amount,
+                        new BigNumber(amountPaid),
                         transactionFee,
                       )}
                     />
@@ -150,22 +144,12 @@ const TaskFeedCompleteInfo = ({
                   symbol,
                 }}
               />
-              <br />
-              <FormattedMessage
-                {...MSG.receiptReputationText}
-                values={{
-                  isNonNegative: reputationEarned >= 0,
-                  reputationAmount: (
-                    <FormattedNumber value={reputationEarned} />
-                  ),
-                }}
-              />
-              {hash && (
+              {transactionHash && (
                 <>
                   <br />
                   <TransactionLink
                     className={styles.receiptLink}
-                    hash={hash}
+                    hash={transactionHash}
                     text={MSG.receiptViewTxLinkText}
                   />
                 </>
