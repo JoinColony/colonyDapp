@@ -28,7 +28,7 @@ const getTaskPayoutAmountMinusTransactionFee = (
 const MSG = defineMessages({
   eventTaskSentMessage: {
     id: 'dashboard.TaskFeed.TaskFeedCompleteInfo.eventTaskSentMessage',
-    defaultMessage: 'The task has been completed and payment sent to {user}',
+    defaultMessage: 'Task payment has been sent to {user}',
   },
   receiptAmountText: {
     id: 'dashboard.TaskFeed.TaskFeedCompleteInfo.receiptAmountText',
@@ -40,7 +40,7 @@ const MSG = defineMessages({
   },
   receiptRecipientText: {
     id: 'dashboard.TaskFeed.TaskFeedCompleteInfo.receiptRecipientText',
-    defaultMessage: 'Recipient: {address}',
+    defaultMessage: 'Recipient Address: {address}',
   },
   receiptViewTxLinkText: {
     id: 'dashboard.TaskFeed.TaskFeedCompleteInfo.receiptViewTxLinkText',
