@@ -98,6 +98,9 @@ export type TaskEvents = {|
       amountPaid: string,
       paymentTokenAddress?: Address,
       workerAddress: Address,
+      gasLimit: string,
+      gasPrice: string,
+      transactionHash: string,
     |},
   >,
   TASK_TITLE_SET: EventDefinition<

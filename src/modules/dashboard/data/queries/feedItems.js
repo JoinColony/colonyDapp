@@ -33,7 +33,6 @@ export type AllTaskEvents = $Values<
       TASK_CREATED: *,
       TASK_DESCRIPTION_SET: *,
       TASK_FINALIZED: *,
-      TASK_PAYMENT_MADE: *,
       TASK_TITLE_SET: *,
       WORK_INVITE_SENT: *,
       WORK_REQUEST_CREATED: *,

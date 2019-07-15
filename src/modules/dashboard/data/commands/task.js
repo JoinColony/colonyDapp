@@ -479,6 +479,9 @@ export const finalizeTask: Command<
     amountPaid: string,
     paymentTokenAddress?: Address,
     workerAddress: Address,
+    gasLimit: BigNumber,
+    gasPrice: BigNumber,
+    transactionHash: string,
   |},
   {|
     event: Event<typeof TASK_EVENT_TYPES.TASK_FINALIZED>,
