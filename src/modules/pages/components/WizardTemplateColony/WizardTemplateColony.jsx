@@ -22,8 +22,8 @@ import styles from './WizardTemplateColony.css';
 export type Props = {|
   children: Node,
   previousStep: (wizardValues?: Object) => void,
-  wizardValues: Object,
   hideQR: boolean,
+  wizardValues: Object,
 |};
 
 const MSG = defineMessages({
@@ -38,8 +38,8 @@ const displayName = 'pages.WizardTemplateColony';
 const WizardTemplateColony = ({
   children,
   previousStep,
-  wizardValues,
   hideQR = false,
+  wizardValues,
 }: Props) => {
   const currentUser: UserType = useSelector(currentUserSelector);
   const { profile: { walletAddress, balance } = {} } = currentUser || {};
