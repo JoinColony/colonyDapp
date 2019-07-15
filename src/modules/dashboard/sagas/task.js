@@ -549,7 +549,7 @@ function* taskFinalize({
     yield put(transactionReady(makePayment.id));
     const {
       payload: {
-        transaction: { gasPrice, gasLimit, hash },
+        transaction: { hash },
       },
     } = yield takeFrom(makePayment.channel, ACTIONS.TRANSACTION_SUCCEEDED);
 
@@ -559,8 +559,6 @@ function* taskFinalize({
         paymentTokenAddress: token,
         amountPaid: amount.toString(),
         workerAddress,
-        gasPrice,
-        gasLimit,
         transactionHash: hash,
       },
       metadata: { colonyAddress, draftId },

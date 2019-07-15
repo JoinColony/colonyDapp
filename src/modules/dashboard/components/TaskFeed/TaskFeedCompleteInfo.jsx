@@ -17,17 +17,17 @@ import { friendlyUsernameSelector } from '../../../users/selectors';
 
 import styles from './TaskFeedCompleteInfo.css';
 
-const getTaskPayoutTransactionFee = (
-  amount: BigNumber,
-  fee: number,
-  decimals: number,
-) => amount.mul(fee).div(new BigNumber(10).pow(new BigNumber(decimals)));
+// const getTaskPayoutTransactionFee = (
+//   amount: BigNumber,
+//   fee: number,
+//   decimals: number,
+// ) => amount.mul(fee).div(new BigNumber(10).pow(new BigNumber(decimals)));
 
-const getTaskPayoutAmountMinusTransactionFee = (
-  amount: BigNumber,
-  fee: number,
-  decimals: number,
-) => amount.sub(getTaskPayoutTransactionFee(amount, fee, decimals));
+// const getTaskPayoutAmountMinusTransactionFee = (
+//   amount: BigNumber,
+//   fee: number,
+//   decimals: number,
+// ) => amount.sub(getTaskPayoutTransactionFee(amount, fee, decimals));
 
 const MSG = defineMessages({
   eventTaskSentMessage: {
@@ -64,8 +64,8 @@ const TaskFeedCompleteInfo = ({
   event: {
     payload: {
       amountPaid,
-      gasLimit,
-      gasPrice,
+      // gasLimit,
+      // gasPrice,
       paymentTokenAddress,
       workerAddress,
       transactionHash,
@@ -82,8 +82,8 @@ const TaskFeedCompleteInfo = ({
     [paymentTokenAddress],
   );
   const { decimals = 18, symbol } = token || {};
-  const transactionFee =
-    gasPrice && gasLimit && gasPrice.mul(new BigNumber(gasLimit));
+  // const transactionFee =
+  //   gasPrice && gasLimit && gasPrice.mul(new BigNumber(gasLimit));
 
   return (
     <div className={styles.main}>
@@ -122,11 +122,12 @@ const TaskFeedCompleteInfo = ({
                       integerSeparator=""
                       truncate={4}
                       unit={decimals}
-                      value={getTaskPayoutAmountMinusTransactionFee(
-                        new BigNumber(amountPaid),
-                        transactionFee,
-                        decimals,
-                      )}
+                      // value={getTaskPayoutAmountMinusTransactionFee(
+                      //   new BigNumber(amountPaid),
+                      //   transactionFee,
+                      //   decimals,
+                      // )}
+                      value={1}
                     />
                   ),
                   symbol,
@@ -140,11 +141,12 @@ const TaskFeedCompleteInfo = ({
                     <Numeral
                       truncate={4}
                       unit={decimals}
-                      value={getTaskPayoutTransactionFee(
-                        new BigNumber(amountPaid),
-                        transactionFee,
-                        decimals,
-                      )}
+                      // value={getTaskPayoutTransactionFee(
+                      //   new BigNumber(amountPaid),
+                      //   transactionFee,
+                      //   decimals,
+                      // )}
+                      value={1}
                     />
                   ),
                   symbol,
