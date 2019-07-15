@@ -1,6 +1,7 @@
 /* @flow */
 
-import React from 'react';
+// $FlowFixMe until hooks flow types
+import React, { useMemo } from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 import BigNumber from 'bn.js';
 
@@ -12,8 +13,10 @@ import TimeRelative from '~core/TimeRelative';
 import TransactionLink from '~core/TransactionLink';
 
 import { useDataFetcher, useSelector } from '~utils/hooks';
+
 import { tokenFetcher } from '../../fetchers';
 import { friendlyUsernameSelector } from '../../../users/selectors';
+import { networkFeeInverseSelector } from '../../../core/selectors';
 
 import styles from './TaskFeedCompleteInfo.css';
 
@@ -73,6 +76,7 @@ const TaskFeedCompleteInfo = ({
   },
 }: Props) => {
   const user = useSelector(friendlyUsernameSelector, [workerAddress]);
+  const networkFeeInverse = useSelector(networkFeeInverseSelector);
   const {
     data: token,
     isFetching: isFetchingToken,
@@ -82,8 +86,21 @@ const TaskFeedCompleteInfo = ({
     [paymentTokenAddress],
   );
   const { decimals = 18, symbol } = token || {};
-  // const transactionFee =
-  //   gasPrice && gasLimit && gasPrice.mul(new BigNumber(gasLimit));
+  const getMetaColonyFee = useMemo(
+    () => {
+      if (new BigNumber(amountPaid).isZero() || networkFeeInverse === 1) {
+        return amountPaid;
+      }
+      return new BigNumber(amountPaid).div(
+        new BigNumber(networkFeeInverse).add(new BigNumber(1)),
+      );
+    },
+    [amountPaid, networkFeeInverse],
+  );
+  const getWorkerPayout = useMemo(
+    () => new BigNumber(amountPaid).sub(getMetaColonyFee),
+    [amountPaid, getMetaColonyFee],
+  );
 
   return (
     <div className={styles.main}>
@@ -122,12 +139,7 @@ const TaskFeedCompleteInfo = ({
                       integerSeparator=""
                       truncate={4}
                       unit={decimals}
-                      // value={getTaskPayoutAmountMinusTransactionFee(
-                      //   new BigNumber(amountPaid),
-                      //   transactionFee,
-                      //   decimals,
-                      // )}
-                      value={1}
+                      value={getWorkerPayout}
                     />
                   ),
                   symbol,
@@ -141,12 +153,7 @@ const TaskFeedCompleteInfo = ({
                     <Numeral
                       truncate={4}
                       unit={decimals}
-                      // value={getTaskPayoutTransactionFee(
-                      //   new BigNumber(amountPaid),
-                      //   transactionFee,
-                      //   decimals,
-                      // )}
-                      value={1}
+                      value={getMetaColonyFee}
                     />
                   ),
                   symbol,
