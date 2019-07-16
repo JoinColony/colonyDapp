@@ -36,12 +36,9 @@ type TransactionLog = {|
 export const normalizeDDBStoreEvent = (
   storeAddress: string,
   {
-    identity: { id: actorId },
-    payload: {
-      type,
-      value: args,
-      meta: { timestamp, id },
-    },
+    meta: { timestamp, id, userAddress: actorId },
+    payload: args,
+    type,
   }: Event<*>,
 ): NormalizedEvent => ({
   type,
