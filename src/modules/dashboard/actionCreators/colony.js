@@ -36,3 +36,19 @@ export const fetchColonyTaskMetadata = (
   payload: { colonyAddress },
   meta: { key: colonyAddress },
 });
+
+export const colonySubStart = (
+  colonyAddress: Address,
+): Action<typeof ACTIONS.COLONY_SUB_START> => ({
+  type: ACTIONS.COLONY_SUB_START,
+  payload: { colonyAddress },
+  meta: { key: colonyAddress },
+});
+
+export const colonySubStop = (
+  colonyAddress: Address,
+): Action<typeof ACTIONS.COLONY_SUB_STOP> => ({
+  type: ACTIONS.COLONY_SUB_STOP,
+  payload: { colonyAddress },
+  meta: { key: colonyAddress },
+});
