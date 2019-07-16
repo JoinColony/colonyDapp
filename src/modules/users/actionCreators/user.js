@@ -69,6 +69,11 @@ export const currentUserFetchTasks = () => ({
   type: ACTIONS.USER_SUBSCRIBED_TASKS_FETCH,
 });
 
-export const currentUserFetchColonies = () => ({
+export const fetchUserColonies = (
+  walletAddress: Address,
+  metadataStoreAddress: string,
+) => ({
   type: ACTIONS.USER_SUBSCRIBED_COLONIES_FETCH,
+  payload: { walletAddress, metadataStoreAddress },
+  meta: { key: walletAddress },
 });

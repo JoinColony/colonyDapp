@@ -51,6 +51,7 @@ import {
   getUserMetadataStore,
   getUserProfileStoreAddress,
 } from '~data/stores';
+import { createAddress } from '~types';
 import { getUserTasksReducer, getUserProfileReducer } from './reducers';
 import { getUserAddressByUsername, getUserTokenAddresses } from './utils';
 
@@ -172,7 +173,7 @@ export const getUserColonies: Query<
           ({ type }) => type,
         )
           .filter(([, type]) => type === SUBSCRIBED_TO_COLONY)
-          .map(([colonyAddress]) => colonyAddress)
+          .map(([colonyAddress]) => createAddress(colonyAddress))
       : [];
   },
 };

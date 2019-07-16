@@ -12,7 +12,7 @@ import {
   tokenSelector,
 } from './selectors';
 import {
-  currentUserColoniesSelector,
+  userColoniesSelector,
   currentUserDraftIdsSelector,
 } from '../users/selectors';
 import {
@@ -27,7 +27,7 @@ import {
   fetchColonyTaskMetadata,
 } from './actionCreators';
 import {
-  currentUserFetchColonies,
+  fetchUserColonies,
   currentUserFetchTasks,
 } from '../users/actionCreators';
 
@@ -67,9 +67,9 @@ export const currentUserDraftIdsFetcher = Object.freeze({
   ttl: 1000 * 60,
 });
 
-export const currentUserColoniesFetcher = Object.freeze({
-  select: currentUserColoniesSelector,
-  fetch: currentUserFetchColonies,
+export const userColoniesFetcher = Object.freeze({
+  select: userColoniesSelector,
+  fetch: fetchUserColonies,
   ttl: 1000 * 60,
 });
 

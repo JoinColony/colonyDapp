@@ -5,7 +5,7 @@ import React, { useCallback } from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 
 import { stripProtocol } from '~utils/strings';
-import { useDataFetcher } from '~utils/hooks';
+import { useDataFetcher, useSelector } from '~utils/hooks';
 import { mergePayload } from '~utils/actions';
 import { ACTIONS } from '~redux';
 
@@ -17,7 +17,8 @@ import { Tooltip } from '~core/Popover';
 import HookedColonyAvatar from '~dashboard/HookedColonyAvatar';
 import HookedUserAvatar from '~users/HookedUserAvatar';
 
-import { currentUserColoniesFetcher, rolesFetcher } from '../../../fetchers';
+import { currentUserSelector } from '../../../../users/selectors';
+import { userColoniesFetcher, rolesFetcher } from '../../../fetchers';
 
 import styles from './ColonyMeta.css';
 
@@ -80,11 +81,17 @@ const ColonyMeta = ({
     [colonyAddress],
     [colonyAddress],
   );
+
+  const currentUser = useSelector(currentUserSelector);
   const { data: colonyAddresses } = useDataFetcher<Address[]>(
-    currentUserColoniesFetcher,
-    [],
-    [],
+    userColoniesFetcher,
+    [currentUser.profile.walletAddress],
+    [
+      currentUser.profile.walletAddress,
+      currentUser.profile.metadataStoreAddress,
+    ],
   );
+
   const isSubscribed = (colonyAddresses || []).includes(colonyAddress);
   const transform = useCallback(mergePayload({ colonyAddress }), [
     colonyAddress,

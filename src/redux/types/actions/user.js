@@ -77,7 +77,7 @@ export type UserActionTypes = {|
   >,
   USER_COLONY_SUBSCRIBE_SUCCESS: UniqueActionType<
     typeof ACTIONS.USER_COLONY_SUBSCRIBE,
-    {| colonyAddress: Address |},
+    {| colonyAddress: Address, walletAddress: Address |},
     void,
   >,
   USER_COLONY_UNSUBSCRIBE: UniqueActionType<
@@ -91,7 +91,7 @@ export type UserActionTypes = {|
   >,
   USER_COLONY_UNSUBSCRIBE_SUCCESS: UniqueActionType<
     typeof ACTIONS.USER_COLONY_UNSUBSCRIBE,
-    {| colonyAddress: Address |},
+    {| colonyAddress: Address, walletAddress: Address |},
     void,
   >,
   USER_FETCH: ActionTypeWithPayloadAndMeta<
@@ -157,16 +157,19 @@ export type UserActionTypes = {|
     UserProfileType,
     void,
   >,
-  USER_SUBSCRIBED_COLONIES_FETCH: ActionType<
+  USER_SUBSCRIBED_COLONIES_FETCH: ActionTypeWithPayloadAndMeta<
     typeof ACTIONS.USER_SUBSCRIBED_COLONIES_FETCH,
+    {| walletAddress: Address, metadataStoreAddress: string |},
+    WithKey,
   >,
   USER_SUBSCRIBED_COLONIES_FETCH_ERROR: ErrorActionType<
     typeof ACTIONS.USER_SUBSCRIBED_COLONIES_FETCH_ERROR,
-    void,
+    WithKey,
   >,
-  USER_SUBSCRIBED_COLONIES_FETCH_SUCCESS: ActionTypeWithPayload<
+  USER_SUBSCRIBED_COLONIES_FETCH_SUCCESS: ActionTypeWithPayloadAndMeta<
     typeof ACTIONS.USER_SUBSCRIBED_COLONIES_FETCH_SUCCESS,
-    Address[],
+    {| colonyAddresses: Address[], walletAddress: Address |},
+    WithKey,
   >,
   USER_SUBSCRIBED_TASKS_FETCH: ActionType<
     typeof ACTIONS.USER_SUBSCRIBED_TASKS_FETCH,

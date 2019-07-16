@@ -33,7 +33,7 @@ import { NETWORK_CONTEXT } from '../../../lib/ColonyManager/constants';
 import {
   walletAddressSelector,
   currentUserMetadataSelector,
-  currentUserColoniesSelector,
+  userColoniesSelector,
 } from '../selectors';
 
 import { ipfsUpload } from '../../core/sagas/ipfs';
@@ -73,10 +73,14 @@ function* userTokenTransfersFetch(
   action: Action<typeof ACTIONS.USER_TOKEN_TRANSFERS_FETCH>,
 ): Saga<*> {
   try {
-    const userColonyAddresses = yield* selectAsJS(currentUserColoniesSelector);
+    const walletAddress = yield select(walletAddressSelector);
+    const userColonyAddresses = yield* selectAsJS(
+      userColoniesSelector,
+      walletAddress,
+    );
     const transactions = yield* executeQuery(getUserColonyTransactions, {
       args: {
-        walletAddress: yield select(walletAddressSelector),
+        walletAddress,
         userColonyAddresses: userColonyAddresses.record || [],
       },
     });
@@ -429,10 +433,14 @@ function* userTokensUpdate(
   return null;
 }
 
-function* userSubscribedColoniesFetch(): Saga<*> {
+function* userSubscribedColoniesFetch(
+  action: Action<typeof ACTIONS.USER_SUBSCRIBED_COLONIES_FETCH>,
+): Saga<*> {
   try {
-    const walletAddress = yield select(walletAddressSelector);
-    const { metadataStoreAddress } = yield select(currentUserMetadataSelector);
+    const {
+      payload: { walletAddress, metadataStoreAddress },
+      meta,
+    } = action;
     const colonyAddresses = yield* executeQuery(getUserColonies, {
       metadata: {
         walletAddress,
@@ -441,7 +449,8 @@ function* userSubscribedColoniesFetch(): Saga<*> {
     });
     yield put<Action<typeof ACTIONS.USER_SUBSCRIBED_COLONIES_FETCH_SUCCESS>>({
       type: ACTIONS.USER_SUBSCRIBED_COLONIES_FETCH_SUCCESS,
-      payload: colonyAddresses,
+      payload: { walletAddress, colonyAddresses },
+      meta,
     });
   } catch (error) {
     return yield putError(
@@ -453,7 +462,7 @@ function* userSubscribedColoniesFetch(): Saga<*> {
 }
 
 function* userColonySubscribe({
-  payload,
+  payload: { colonyAddress },
   meta,
 }: Action<typeof ACTIONS.USER_COLONY_SUBSCRIBE>): Saga<*> {
   try {
@@ -467,12 +476,12 @@ function* userColonySubscribe({
       metadata,
     });
     yield* executeCommand(subscribeToColony, {
-      args: { ...payload, userColonyAddresses },
+      args: { colonyAddress, userColonyAddresses },
       metadata,
     });
     yield put<Action<typeof ACTIONS.USER_COLONY_SUBSCRIBE_SUCCESS>>({
       type: ACTIONS.USER_COLONY_SUBSCRIBE_SUCCESS,
-      payload,
+      payload: { colonyAddress, walletAddress },
       meta,
     });
   } catch (caughtError) {
@@ -486,7 +495,7 @@ function* userColonySubscribe({
 }
 
 function* userColonyUnsubscribe({
-  payload,
+  payload: { colonyAddress },
   meta,
 }: Action<typeof ACTIONS.USER_COLONY_UNSUBSCRIBE>): Saga<*> {
   try {
@@ -501,12 +510,12 @@ function* userColonyUnsubscribe({
     });
 
     yield* executeCommand(unsubscribeToColony, {
-      args: { ...payload, userColonyAddresses },
+      args: { colonyAddress, userColonyAddresses },
       metadata,
     });
     yield put<Action<typeof ACTIONS.USER_COLONY_UNSUBSCRIBE_SUCCESS>>({
       type: ACTIONS.USER_COLONY_UNSUBSCRIBE_SUCCESS,
-      payload,
+      payload: { colonyAddress, walletAddress },
       meta,
     });
   } catch (caughtError) {

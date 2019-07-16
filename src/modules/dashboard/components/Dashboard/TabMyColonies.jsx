@@ -5,13 +5,14 @@ import { defineMessages, FormattedMessage } from 'react-intl';
 
 import type { Address } from '~types';
 
-import { useDataFetcher } from '~utils/hooks';
+import { useDataFetcher, useSelector } from '~utils/hooks';
 
 import { SpinnerLoader } from '~core/Preloaders';
 import ColonyGrid from '~dashboard/ColonyGrid';
 import Link from '~core/Link';
 
-import { currentUserColoniesFetcher } from '../../fetchers';
+import { currentUserSelector } from '../../../users/selectors';
+import { userColoniesFetcher } from '../../fetchers';
 import { CREATE_COLONY_ROUTE } from '~routes';
 
 import styles from './TabMyColonies.css';
@@ -29,12 +30,17 @@ const MSG = defineMessages({
 });
 
 const TabMyColonies = () => {
-  const {
-    isFetching: isFetchingColonies,
-    data: colonyAddresses,
-  } = useDataFetcher<Address[]>(currentUserColoniesFetcher, [], []);
+  const currentUser = useSelector(currentUserSelector);
+  const { data: colonyAddresses, isFetching } = useDataFetcher<Address[]>(
+    userColoniesFetcher,
+    [currentUser.profile.walletAddress],
+    [
+      currentUser.profile.walletAddress,
+      currentUser.profile.metadataStoreAddress,
+    ],
+  );
 
-  if (isFetchingColonies) return <SpinnerLoader />;
+  if (isFetching) return <SpinnerLoader />;
 
   return colonyAddresses && colonyAddresses.length ? (
     <ColonyGrid colonyAddresses={colonyAddresses} />
