@@ -93,7 +93,7 @@ const validateDataSpec = <D, M, A, R>(
     throw new Error('Cannot prepare, "prepare" function not defined');
   }
 
-  if (!spec.execute) {
+  if (!(spec.execute || spec.createSubscription)) {
     throw new Error('Cannot execute, "execute" function not defined');
   }
 
@@ -148,7 +148,7 @@ export function* executeQuery<D, M, A, R>(
 }
 
 export function* executeSubscription<D, M, A, R>(
-  subscription: Subscription<D, M, A, R>,
+  subscriber: Subscription<D, M, A, R>,
   {
     args,
     metadata,
@@ -157,24 +157,31 @@ export function* executeSubscription<D, M, A, R>(
     metadata: M,
   },
 ): Saga<EventChannel<R | typeof END>> {
-  log.verbose(`Starting subscription "${subscription.name}"`, {
+  log.verbose(`Starting subscription "${subscriber.name}"`, {
     args,
     metadata,
   });
 
-  const executeDeps = yield call(getExecuteDependencies, subscription, {
+  const executeDeps = yield call(getExecuteDependencies, subscriber, {
     // The metadata object is cloned to satisfy flow.
     ...metadata,
   });
 
+  const subscription = yield call(
+    [subscriber, subscriber.createSubscription],
+    executeDeps,
+    args,
+  );
+
   return eventChannel(emitter => {
     let subs = [];
     try {
-      subs = subscription.execute(executeDeps, args, emitter);
+      subs = subscription(emitter);
     } catch (caughtError) {
       emitter(END);
       throw caughtError;
     }
+
     return () => {
       log.verbose(`Stopping subscription "${subscription.name}"`, {
         args,

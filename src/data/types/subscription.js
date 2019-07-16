@@ -2,6 +2,8 @@
 
 import type { ContextName } from '~context';
 
+export type EventEmitter<R> = R => void;
+
 /*
  * The specification for a data subscription.
  *
@@ -18,11 +20,10 @@ import type { ContextName } from '~context';
  */
 export type Subscription<D, M, A, R> = {|
   context: ContextName[],
-  execute: (
+  createSubscription: (
     deps: D,
     args: ?A,
-    emitter: (R) => void,
-  ) => {| stop: () => void |}[],
+  ) => Promise<(emitter: EventEmitter<R>) => {| stop: () => void |}[]>,
   name: string,
   prepare: (context: *, metadata: M) => Promise<D>,
 |};
