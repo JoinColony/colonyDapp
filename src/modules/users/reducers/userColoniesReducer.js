@@ -33,7 +33,7 @@ const userColoniesReducer: ReducerType<
     case ACTIONS.USER_COLONY_UNSUBSCRIBE_SUCCESS: {
       const { colonyAddress, walletAddress } = action.payload;
       return state.updateIn([walletAddress, 'record'], addrs =>
-        addrs ? addrs.subtract([colonyAddress]) : ImmutableSet(),
+        addrs ? addrs.delete(colonyAddress) : ImmutableSet(),
       );
     }
     case ACTIONS.USER_SUBSCRIBED_COLONIES_FETCH_SUCCESS: {
@@ -50,6 +50,6 @@ const userColoniesReducer: ReducerType<
 };
 
 export default withDataRecordMap<ColoniesMap, Address[]>(
-  new Set([ACTIONS.USER_SUBSCRIBED_COLONIES_FETCH]),
+  ACTIONS.USER_SUBSCRIBED_COLONIES_FETCH,
   ImmutableMap(),
 )(userColoniesReducer);
