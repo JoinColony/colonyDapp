@@ -65,14 +65,16 @@ export const subscribeToTask = (
   payload: { colonyAddress, draftId },
 });
 
-export const currentUserFetchTasks = () => ({
+export const currentUserFetchTasks = (): Action<
+  typeof ACTIONS.USER_SUBSCRIBED_TASKS_FETCH,
+> => ({
   type: ACTIONS.USER_SUBSCRIBED_TASKS_FETCH,
 });
 
 export const fetchUserColonies = (
   walletAddress: Address,
   metadataStoreAddress: string,
-) => ({
+): Action<typeof ACTIONS.USER_SUBSCRIBED_COLONIES_FETCH> => ({
   type: ACTIONS.USER_SUBSCRIBED_COLONIES_FETCH,
   payload: { walletAddress, metadataStoreAddress },
   meta: { key: walletAddress },
