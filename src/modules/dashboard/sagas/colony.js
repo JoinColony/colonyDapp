@@ -468,13 +468,13 @@ function* colonySubStart({ payload: { colonyAddress }, meta }: *): Saga<*> {
     });
 
     while (true) {
-      const events = yield take(channel);
+      const colony = yield take(channel);
       yield put({
         type: ACTIONS.COLONY_SUB_EVENTS,
         meta,
         payload: {
           colonyAddress,
-          events,
+          colony,
         },
       });
     }

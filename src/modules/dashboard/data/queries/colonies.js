@@ -205,7 +205,7 @@ export const subscribeToColony: Subscription<
       colonyStore,
     };
   },
-  async execute({ colonyStore, colonyClient }, args, emitter) {
+  async createSubscription({ colonyStore, colonyClient }) {
     const {
       contract: { address: colonyAddress },
     } = colonyClient;
@@ -231,29 +231,31 @@ export const subscribeToColony: Subscription<
       canUnlockNativeToken = false;
     }
 
-    const filterAndReduceEvents = events =>
-      events &&
-      events
-        .filter(({ type: eventType }) => COLONY_EVENT_TYPES[eventType])
-        .reduce(colonyReducer, {
-          avatarHash: undefined,
-          colonyAddress,
-          colonyName: '',
-          displayName: '',
-          inRecoveryMode,
-          isNativeTokenLocked,
-          canUnlockNativeToken,
-          tokens: {
-            // also include Ether
-            [ZERO_ADDRESS.toString()]: {
-              address: ZERO_ADDRESS,
-            },
-          },
-          version,
-        });
-
-    return [
-      colonyStore.subscribe(events => emitter(filterAndReduceEvents(events))),
+    // @TODO Normalize colony subscription events
+    return emitter => [
+      colonyStore.subscribe(events =>
+        emitter(
+          events &&
+            events
+              .filter(({ type: eventType }) => COLONY_EVENT_TYPES[eventType])
+              .reduce(colonyReducer, {
+                avatarHash: undefined,
+                colonyAddress,
+                colonyName: '',
+                displayName: '',
+                inRecoveryMode,
+                isNativeTokenLocked,
+                canUnlockNativeToken,
+                tokens: {
+                  // also include Ether
+                  [ZERO_ADDRESS.toString()]: {
+                    address: ZERO_ADDRESS,
+                  },
+                },
+                version,
+              }),
+        ),
+      ),
     ];
   },
 };
