@@ -1,0 +1,30 @@
+.subscribe, .unsubscribe {
+  padding: 0;
+  height: 26px;
+  width: 26px;
+  position: relative;
+  top: -10px;
+  left: -26px;
+  border: none;
+  border-radius: 100%;
+  font-size: 18px;
+  line-height: 100%;
+  color: white;
+  cursor: pointer;
+}
+
+.subscribe::before, .unsubscribe::before {
+  width: 100%;
+  position: absolute;
+  top: 4px;
+  left: 0;
+  content: '\2605';
+}
+
+.subscribe {
+  background: var(--temp-grey-12);
+}
+
+.unsubscribe {
+  background: var(--golden);
+}
