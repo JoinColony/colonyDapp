@@ -32,7 +32,6 @@ export const shouldFetchData = (
 
   // Check if the TTL is passed, if so, fetch again
   return !!(
-    ttl &&
     data.get('lastFetchedAt') > 0 &&
     Date.now() - data.get('lastFetchedAt') > ttl
   );

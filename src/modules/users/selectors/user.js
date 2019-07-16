@@ -14,6 +14,7 @@ import type { Address } from '~types';
 
 import {
   USERS_ALL_USERS,
+  USERS_COLONIES,
   USERS_CURRENT_USER,
   USERS_CURRENT_USER_PROFILE,
   USERS_CURRENT_USER_TOKENS,
@@ -21,7 +22,6 @@ import {
   USERS_CURRENT_USER_PERMISSIONS,
   USERS_NAMESPACE as ns,
   USERS_USERS,
-  USERS_CURRENT_USER_SUBSCRIBED_COLONIES,
   USERS_CURRENT_USER_TASKS,
   USERS_INBOX_ITEMS,
   USERS_CURRENT_USER_NOTIFICATION_METADATA,
@@ -57,6 +57,11 @@ export const userAddressSelector = (state: RootStateRecord, username: string) =>
   state
     .getIn([ns, USERS_ALL_USERS, USERS_USERS], ImmutableMap())
     .findKey(user => getUsernameFromUserData(user) === username);
+
+export const userColoniesSelector = (
+  state: RootStateRecord,
+  address: Address,
+) => state.getIn([ns, USERS_ALL_USERS, USERS_COLONIES, address]);
 
 export const usernameSelector = (state: RootStateRecord, address: Address) =>
   getUsernameFromUserData(
@@ -130,9 +135,6 @@ export const currentUserMetadataSelector = (state: RootStateRecord) => {
     state.getIn([ns, USERS_CURRENT_USER, USERS_CURRENT_USER_PROFILE]) || {};
   return { inboxStoreAddress, metadataStoreAddress };
 };
-
-export const currentUserColoniesSelector = (state: RootStateRecord) =>
-  state.getIn([ns, USERS_CURRENT_USER, USERS_CURRENT_USER_SUBSCRIBED_COLONIES]);
 
 export const currentUserDraftIdsSelector = (state: RootStateRecord) =>
   state.getIn([ns, USERS_CURRENT_USER, USERS_CURRENT_USER_TASKS]);

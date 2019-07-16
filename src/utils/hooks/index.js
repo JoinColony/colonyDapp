@@ -184,7 +184,8 @@ export const useDataFetcher = <T>(
    */
   const shouldFetch = shouldFetchData(
     data,
-    ttlOverride || ttl,
+    // I don't know whether there's a nicer way to do this and make flow happy at the same time
+    ttlOverride === 0 ? 0 : ttlOverride || ttl,
     isFirstMount.current,
     fetchArgs,
   );
@@ -318,7 +319,7 @@ export const useDataSubscriber = <T>(
     () => () => {
       dispatch(stop(...subArgs), subArgs);
     },
-    // eslint-disable-next-line
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     [],
   );
 
@@ -377,7 +378,7 @@ export const useDataTupleSubscriber = <T>(
     () => () => {
       keysToFetchFor.map(key => dispatch(stop(...key)));
     },
-    // eslint-disable-next-line
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     [],
   );
 

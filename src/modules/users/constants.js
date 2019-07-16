@@ -3,12 +3,12 @@
 export const USERS_NAMESPACE = 'users';
 
 export const USERS_ALL_USERS = 'allUsers';
+export const USERS_COLONIES = 'colonies';
 export const USERS_CURRENT_USER = 'currentUser';
 export const USERS_CURRENT_USER_PROFILE = 'profile';
 export const USERS_CURRENT_USER_TOKENS = 'tokens';
 export const USERS_CURRENT_USER_TRANSACTIONS = 'transactions';
 export const USERS_CURRENT_USER_PERMISSIONS = 'permissions';
-export const USERS_CURRENT_USER_SUBSCRIBED_COLONIES = 'colonies';
 export const USERS_INBOX_ITEMS = 'activities';
 export const USERS_CURRENT_USER_TASKS = 'tasks';
 export const USERS_CURRENT_USER_NOTIFICATION_METADATA = 'notifications';
