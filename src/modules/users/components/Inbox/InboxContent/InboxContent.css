@@ -1,6 +1,7 @@
 .contentContainer {
   display: flex;
   flex-direction: column;
+  padding-top: 70px; /* pad space for transparent navbar */
   width: 100%;
   max-width: 940px;
 }

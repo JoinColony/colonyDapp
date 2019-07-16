@@ -93,6 +93,7 @@ const Routes = ({ isConnected, username }) => {
         path={COLONY_HOME_ROUTE}
         component={ColonyHome}
         hasBackLink={false}
+        appearance={{ theme: 'transparent' }}
       />
       <ConnectedOnlyRoute
         isConnected={isConnected}
@@ -100,6 +101,7 @@ const Routes = ({ isConnected, username }) => {
         path={INBOX_ROUTE}
         component={Inbox}
         hasBackLink={false}
+        appearance={{ theme: 'transparent' }}
       />
       <ConnectedOnlyRoute
         isConnected={isConnected}
