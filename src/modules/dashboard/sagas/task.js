@@ -547,7 +547,11 @@ function* taskFinalize({
     yield put(transactionReady(moveFundsBetweenPots.id));
     yield takeFrom(moveFundsBetweenPots.channel, ACTIONS.TRANSACTION_SUCCEEDED);
     yield put(transactionReady(makePayment.id));
-    yield takeFrom(makePayment.channel, ACTIONS.TRANSACTION_SUCCEEDED);
+    const {
+      payload: {
+        transaction: { hash },
+      },
+    } = yield takeFrom(makePayment.channel, ACTIONS.TRANSACTION_SUCCEEDED);
 
     // add finalize task event to task store
     const { event } = yield* executeCommand(finalizeTask, {
@@ -555,6 +559,7 @@ function* taskFinalize({
         paymentTokenAddress: token,
         amountPaid: amount.toString(),
         workerAddress,
+        transactionHash: hash,
       },
       metadata: { colonyAddress, draftId },
     });
