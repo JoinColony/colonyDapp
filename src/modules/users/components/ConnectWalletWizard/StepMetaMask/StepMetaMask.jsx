@@ -147,7 +147,7 @@ class MetaMask extends Component<Props, State> {
         transform={mergePayload(wizardValues)}
         {...wizardForm}
       >
-        {({ isSubmitting, status, values }) => (
+        {({ isSubmitting, status }) => (
           <main>
             <div className={styles.content}>
               <div className={styles.iconContainer}>
@@ -187,7 +187,7 @@ class MetaMask extends Component<Props, State> {
               <Button
                 text={MSG.buttonBack}
                 appearance={{ theme: 'secondary', size: 'large' }}
-                onClick={() => previousStep(values)}
+                onClick={() => previousStep()}
               />
               {isValid ? (
                 <Button

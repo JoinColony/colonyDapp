@@ -28,7 +28,7 @@ type WizardArgs = {
 };
 
 const all = (values: ValueList) =>
-  values.reduce((map, curr) => map.merge(curr), ImmutableMap()).toJS();
+  values.reduceRight((map, curr) => map.merge(curr), ImmutableMap()).toJS();
 
 const getStep = (steps: Steps, step: number, values: Object, props?: Object) =>
   typeof steps === 'function' ? steps(step, values, props) : steps[step];
@@ -53,7 +53,7 @@ const withWizard = ({ steps, stepCount: maxSteps }: WizardArgs) => (
       this.setValues(values);
     };
 
-    prev = (values?: Values) => {
+    prev = () => {
       const { step: currentStep } = this.state;
       /* Inform developer if step has been changed
        * if we are already in the first step there
@@ -63,7 +63,6 @@ const withWizard = ({ steps, stepCount: maxSteps }: WizardArgs) => (
         return false;
       }
       this.setState(({ step }) => ({ step: step === 0 ? 0 : step - 1 }));
-      this.setValues(values);
       return true;
     };
 

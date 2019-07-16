@@ -131,7 +131,7 @@ const StepTrufflePig = ({ previousStep, wizardForm, wizardValues }: Props) => {
       transform={transform}
       {...wizardForm}
     >
-      {({ status, isSubmitting, values }) => (
+      {({ status, isSubmitting }) => (
         <main>
           <div className={styles.content}>
             <div className={styles.iconContainer}>
@@ -174,7 +174,7 @@ const StepTrufflePig = ({ previousStep, wizardForm, wizardValues }: Props) => {
             <Button
               text={MSG.buttonBack}
               appearance={{ theme: 'secondary', size: 'large' }}
-              onClick={() => previousStep(values)}
+              onClick={() => previousStep()}
             />
             {isValid ? (
               <Button

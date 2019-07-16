@@ -81,7 +81,7 @@ const StepMnemonic = ({
       transform={transform}
       {...wizardForm}
     >
-      {({ isSubmitting, isValid, status, values }) => (
+      {({ isSubmitting, isValid, status }) => (
         <main>
           <div className={styles.content}>
             <Heading text={MSG.heading} appearance={{ size: 'medium' }} />
@@ -95,7 +95,7 @@ const StepMnemonic = ({
             <Button
               appearance={{ theme: 'secondary', size: 'large' }}
               text={MSG.buttonBackText}
-              onClick={() => previousStep(values)}
+              onClick={() => previousStep()}
             />
             <Button
               appearance={{ theme: 'primary', size: 'large' }}
