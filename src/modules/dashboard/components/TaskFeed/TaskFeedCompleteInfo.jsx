@@ -77,9 +77,9 @@ const TaskFeedCompleteInfo = ({
       if (new BigNumber(amountPaid).isZero() || networkFeeInverse === 1) {
         return amountPaid;
       }
-      return new BigNumber(amountPaid).div(
-        new BigNumber(networkFeeInverse).add(new BigNumber(1)),
-      );
+      return new BigNumber(amountPaid)
+        .div(new BigNumber(networkFeeInverse))
+        .add(new BigNumber(1));
     },
     [amountPaid, networkFeeInverse],
   );
