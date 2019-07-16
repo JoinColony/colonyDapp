@@ -72,7 +72,7 @@ const TaskFeedCompleteInfo = ({
     [paymentTokenAddress],
   );
   const { decimals = 18, symbol } = token || {};
-  const getMetaColonyFee = useMemo(
+  const metaColonyFee = useMemo(
     () => {
       if (new BigNumber(amountPaid).isZero() || networkFeeInverse === 1) {
         return amountPaid;
@@ -83,9 +83,9 @@ const TaskFeedCompleteInfo = ({
     },
     [amountPaid, networkFeeInverse],
   );
-  const getWorkerPayout = useMemo(
-    () => new BigNumber(amountPaid).sub(getMetaColonyFee),
-    [amountPaid, getMetaColonyFee],
+  const workerPayout = useMemo(
+    () => new BigNumber(amountPaid).sub(metaColonyFee),
+    [amountPaid, metaColonyFee],
   );
 
   return (
@@ -125,7 +125,7 @@ const TaskFeedCompleteInfo = ({
                       integerSeparator=""
                       truncate={4}
                       unit={decimals}
-                      value={getWorkerPayout}
+                      value={workerPayout}
                     />
                   ),
                   symbol,
@@ -139,7 +139,7 @@ const TaskFeedCompleteInfo = ({
                     <Numeral
                       truncate={4}
                       unit={decimals}
-                      value={getMetaColonyFee}
+                      value={metaColonyFee}
                     />
                   ),
                   symbol,
