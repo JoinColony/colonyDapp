@@ -8,10 +8,11 @@ import { defineMessages, FormattedMessage } from 'react-intl';
 import { Redirect } from 'react-router';
 
 import type { TokenReferenceType, UserPermissionsType } from '~immutable';
+import type { Address } from '~types';
 import type { TasksFilterOptionType } from '../shared/tasksFilter';
 
 import { ACTIONS } from '~redux';
-import { useDataFetcher, useSelector } from '~utils/hooks';
+import { useDataFetcher, useDataSubscriber, useSelector } from '~utils/hooks';
 import { mergePayload } from '~utils/actions';
 import { Tab, Tabs, TabList, TabPanel } from '~core/Tabs';
 import { Select } from '~core/Fields';
@@ -23,9 +24,10 @@ import {
   tasksFilterSelectOptions,
 } from '../shared/tasksFilter';
 
-import { useColonyWithName } from '../../hooks/useColony';
 import { colonyNativeTokenSelector } from '../../selectors';
 import { currentUserColonyPermissionsFetcher } from '../../../users/fetchers';
+import { colonyAddressFetcher } from '../../fetchers';
+import { colonySubscriber } from '../../subscribers';
 import {
   canAdminister,
   canCreateTask as canCreateTaskCheck,
@@ -82,12 +84,17 @@ const ColonyHome = ({
     [setFilterOption],
   );
 
+  const { data: colonyAddress, error: addressError } = useDataFetcher<Address>(
+    colonyAddressFetcher,
+    [colonyName],
+    [colonyName],
+  );
+
   const {
     data: colony,
     isFetching: isFetchingColony,
     error: colonyError,
-  } = useColonyWithName(colonyName);
-  const { colonyAddress } = colony || {};
+  } = useDataSubscriber<*>(colonySubscriber, [colonyAddress], [colonyAddress]);
 
   const { data: permissions } = useDataFetcher<UserPermissionsType>(
     currentUserColonyPermissionsFetcher,
@@ -112,7 +119,7 @@ const ColonyHome = ({
      * Since we're calling this before the Loader, we can't actually render
      * if the colony data is not yet loaded
      */
-    if (!colony) {
+    if (!(colony && colonyAddress)) {
       return null;
     }
     /*
@@ -186,11 +193,11 @@ const ColonyHome = ({
     isInRecoveryMode,
   ]);
 
-  if (colonyError) {
+  if (colonyError || addressError) {
     return <Redirect to="/404" />;
   }
 
-  if (!colony || isFetchingColony) {
+  if (!(colony && colonyAddress) || isFetchingColony) {
     return <LoadingTemplate loadingText={MSG.loadingText} />;
   }
 
