@@ -45,14 +45,6 @@ const MSG = defineMessages({
     id: 'dashboard.ColonyHome.ColonyMeta.editColonyTitle',
     defaultMessage: 'Edit Colony',
   },
-  subscribe: {
-    id: 'dashboard.ColonyHome.ColonyMeta.subscribe',
-    defaultMessage: 'Add to My Colonies',
-  },
-  unsubscribe: {
-    id: 'dashboard.ColonyHome.ColonyMeta.unsubscribe',
-    defaultMessage: 'Remove from My Colonies',
-  },
 });
 
 const ColonyAvatar = HookedColonyAvatar({ fetchColony: false });
