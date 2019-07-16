@@ -416,7 +416,6 @@ export const getUserInboxActivity: Query<
     userInboxStore: UserInboxStore,
     colonyClients: ColonyClient[],
     colonyNetworkClient: NetworkClient,
-    walletAddress: Address,
   |},
   {|
     userColonies: Address[],
@@ -457,15 +456,9 @@ export const getUserInboxActivity: Query<
       colonyClients,
       colonyNetworkClient: colonyManager.networkClient,
       userInboxStore,
-      walletAddress,
     };
   },
-  async execute({
-    userInboxStore,
-    colonyClients,
-    colonyNetworkClient,
-    walletAddress,
-  }) {
+  async execute({ userInboxStore, colonyClients, colonyNetworkClient }) {
     const {
       contract: { address: colonyNetworkAddress },
       events: { ColonyLabelRegistered },
@@ -486,7 +479,7 @@ export const getUserInboxActivity: Query<
           events: { DomainAdded, ColonyRoleSet },
           tokenClient,
           tokenClient: {
-            events: { Mint, Transfer },
+            events: { Mint },
             contract: { address: tokenAddress },
           },
         } = colonyClient;
@@ -548,16 +541,6 @@ export const getUserInboxActivity: Query<
           },
         );
 
-        const eventsFromTransfer = await getDecoratedEvents(
-          tokenClient,
-          {},
-          {
-            blocksBack: 400000,
-            to: walletAddress,
-            events: [Transfer],
-          },
-        );
-
         return [
           ...eventsFromColony.map(event =>
             normalizeTransactionLog(colonyAddress, event),
@@ -566,9 +549,6 @@ export const getUserInboxActivity: Query<
             normalizeTransactionLog(colonyNetworkAddress, event),
           ),
           ...eventsFromToken.map(event =>
-            normalizeTransactionLog(tokenAddress, event),
-          ),
-          ...eventsFromTransfer.map(event =>
             normalizeTransactionLog(tokenAddress, event),
           ),
           ...eventsFromRoleAssignment.map(event =>
