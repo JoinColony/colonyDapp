@@ -53,7 +53,7 @@ const withWizard = ({ steps, stepCount: maxSteps }: WizardArgs) => (
       this.setValues(values);
     };
 
-    prev = (values?: Values) => {
+    prev = () => {
       const { step: currentStep } = this.state;
       /* Inform developer if step has been changed
        * if we are already in the first step there
@@ -63,7 +63,6 @@ const withWizard = ({ steps, stepCount: maxSteps }: WizardArgs) => (
         return false;
       }
       this.setState(({ step }) => ({ step: step === 0 ? 0 : step - 1 }));
-      this.setValues(values);
       return true;
     };
 

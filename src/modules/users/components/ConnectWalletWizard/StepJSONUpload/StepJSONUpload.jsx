@@ -124,7 +124,7 @@ const StepJSONUpload = ({
       transform={transform}
       {...wizardForm}
     >
-      {({ status, isValid, values }) => (
+      {({ status, isValid }) => (
         <main>
           <div className={styles.content}>
             <Heading text={MSG.heading} appearance={{ size: 'medium' }} />
@@ -149,7 +149,7 @@ const StepJSONUpload = ({
             <Button
               appearance={{ theme: 'secondary', size: 'large' }}
               text={MSG.buttonBack}
-              onClick={() => previousStep(values)}
+              onClick={() => previousStep()}
             />
             <Button
               appearance={{ theme: 'primary', size: 'large' }}

@@ -116,7 +116,7 @@ const StepCreateToken = ({
         https://github.com/JoinColony/colonyDapp/issues/1057
       */
       const wizardValuesCopy = Object.assign({}, wizardValues);
-      previousStep(wizardValuesCopy);
+      previousStep();
       wizardValuesCopy.tokenChoice = 'select';
       nextStep(wizardValuesCopy);
     },

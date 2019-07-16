@@ -101,7 +101,7 @@ const StepProveMnemonic = ({
         validateOnChange={false}
         {...wizardForm}
       >
-        {({ isSubmitting, status, values }) => (
+        {({ isSubmitting, status }) => (
           <Fragment>
             <section className={styles.titleSection}>
               <Heading
@@ -140,7 +140,7 @@ const StepProveMnemonic = ({
                 appearance={{ theme: 'secondary', size: 'large' }}
                 disabled={isSubmitting}
                 text={MSG.backButton}
-                onClick={() => previousStep(values)}
+                onClick={() => previousStep()}
               />
               <Button
                 appearance={{ theme: 'primary', size: 'large' }}

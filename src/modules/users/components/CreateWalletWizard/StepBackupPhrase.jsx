@@ -84,7 +84,7 @@ class StepBackupPhrase extends Component<Props, State> {
     return (
       <main className={styles.content}>
         <Form onSubmit={nextStep} {...wizardForm}>
-          {({ values }) => (
+          {() => (
             <Fragment>
               <div className={styles.title}>
                 <Heading
@@ -117,7 +117,7 @@ class StepBackupPhrase extends Component<Props, State> {
                 <Button
                   appearance={{ theme: 'ghost', colorSchema: 'noBorder' }}
                   text={MSG.backButton}
-                  onClick={() => previousStep(values)}
+                  onClick={() => previousStep()}
                 />
                 <Button
                   type="submit"
