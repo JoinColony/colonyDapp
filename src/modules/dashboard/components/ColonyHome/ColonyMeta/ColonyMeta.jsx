@@ -2,12 +2,12 @@
 
 // $FlowFixMe
 import React from 'react';
-import { defineMessages, FormattedMessage } from 'react-intl';
+import { defineMessages } from 'react-intl';
 
 import { stripProtocol } from '~utils/strings';
-import { useDataFetcher, useSelector } from '~utils/hooks';
-import { mergePayload } from '~utils/actions';
-import { ACTIONS } from '~redux';
+import { useDataFetcher } from '~utils/hooks';
+
+import type { ColonyType, RolesType } from '~immutable';
 
 import Heading from '~core/Heading';
 import Icon from '~core/Icon';
@@ -16,13 +16,9 @@ import HookedColonyAvatar from '~dashboard/HookedColonyAvatar';
 import HookedUserAvatar from '~users/HookedUserAvatar';
 import ColonySubscribe from './ColonySubscribe.jsx';
 
-import { currentUserSelector } from '../../../../users/selectors';
-import { userColoniesFetcher, rolesFetcher } from '../../../fetchers';
+import { rolesFetcher } from '../../../fetchers';
 
 import styles from './ColonyMeta.css';
-
-import type { ColonyType, RolesType } from '~immutable';
-import type { Address } from '~types';
 
 const MSG = defineMessages({
   websiteLabel: {
@@ -72,17 +68,6 @@ const ColonyMeta = ({
     [colonyAddress],
     [colonyAddress],
   );
-
-  const currentUser = useSelector(currentUserSelector);
-  const { data: colonyAddresses } = useDataFetcher<Address[]>(
-    userColoniesFetcher,
-    [currentUser.profile.walletAddress],
-    [
-      currentUser.profile.walletAddress,
-      currentUser.profile.metadataStoreAddress,
-    ],
-  );
-
   const { admins, founder } = roles || {};
 
   return (

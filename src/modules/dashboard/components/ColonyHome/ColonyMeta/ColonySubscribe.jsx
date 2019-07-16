@@ -13,8 +13,8 @@ import { ACTIONS } from '~redux';
 import { ActionButton } from '~core/Button';
 import { Tooltip } from '~core/Popover';
 
-import { currentUserColoniesFetcher } from '../../../fetchers';
-import { currentUsernameSelector } from '../../../../users/selectors';
+import { userColoniesFetcher } from '../../../fetchers';
+import { currentUserSelector } from '../../../../users/selectors';
 
 import styles from './ColonySubscribe.css';
 
@@ -34,18 +34,21 @@ type Props = {|
 |};
 
 const ColonySubscribe = ({ colonyAddress }: Props) => {
+  const currentUser = useSelector(currentUserSelector);
   const { data: colonyAddresses } = useDataFetcher<Address[]>(
-    currentUserColoniesFetcher,
-    [],
-    [],
+    userColoniesFetcher,
+    [currentUser.profile.walletAddress],
+    [
+      currentUser.profile.walletAddress,
+      currentUser.profile.metadataStoreAddress,
+    ],
   );
   const isSubscribed = (colonyAddresses || []).includes(colonyAddress);
   const transform = useCallback(mergePayload({ colonyAddress }), [
     colonyAddress,
   ]);
-  const username: ?string = useSelector(currentUsernameSelector);
 
-  if (!username) {
+  if (!currentUser.profile.username) {
     return null;
   }
 
