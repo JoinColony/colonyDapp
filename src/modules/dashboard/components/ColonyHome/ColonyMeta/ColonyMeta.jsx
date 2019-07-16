@@ -1,7 +1,7 @@
 /* @flow */
 
 // $FlowFixMe
-import React, { useCallback } from 'react';
+import React from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 
 import { stripProtocol } from '~utils/strings';
@@ -12,10 +12,9 @@ import { ACTIONS } from '~redux';
 import Heading from '~core/Heading';
 import Icon from '~core/Icon';
 import Link from '~core/Link';
-import { ActionButton } from '~core/Button';
-import { Tooltip } from '~core/Popover';
 import HookedColonyAvatar from '~dashboard/HookedColonyAvatar';
 import HookedUserAvatar from '~users/HookedUserAvatar';
+import ColonySubscribe from './ColonySubscribe.jsx';
 
 import { currentUserSelector } from '../../../../users/selectors';
 import { userColoniesFetcher, rolesFetcher } from '../../../fetchers';
@@ -92,11 +91,6 @@ const ColonyMeta = ({
     ],
   );
 
-  const isSubscribed = (colonyAddresses || []).includes(colonyAddress);
-  const transform = useCallback(mergePayload({ colonyAddress }), [
-    colonyAddress,
-  ]);
-
   const { admins, founder } = roles || {};
 
   return (
@@ -108,39 +102,7 @@ const ColonyMeta = ({
           colony={colony}
           size="xl"
         />
-        {isSubscribed ? (
-          <Tooltip
-            content={
-              <span>
-                <FormattedMessage {...MSG.unsubscribe} />
-              </span>
-            }
-          >
-            <ActionButton
-              className={styles.unsubscribe}
-              error={ACTIONS.USER_COLONY_UNSUBSCRIBE_ERROR}
-              submit={ACTIONS.USER_COLONY_UNSUBSCRIBE}
-              success={ACTIONS.USER_COLONY_UNSUBSCRIBE_SUCCESS}
-              transform={transform}
-            />
-          </Tooltip>
-        ) : (
-          <Tooltip
-            content={
-              <span>
-                <FormattedMessage {...MSG.subscribe} />
-              </span>
-            }
-          >
-            <ActionButton
-              className={styles.subscribe}
-              error={ACTIONS.USER_COLONY_SUBSCRIBE_ERROR}
-              submit={ACTIONS.USER_COLONY_SUBSCRIBE}
-              success={ACTIONS.USER_COLONY_SUBSCRIBE_SUCCESS}
-              transform={transform}
-            />
-          </Tooltip>
-        )}
+        <ColonySubscribe colonyAddress={colonyAddress} />
       </div>
       <section className={styles.headingWrapper}>
         <Heading appearance={{ margin: 'none', size: 'medium', theme: 'dark' }}>
