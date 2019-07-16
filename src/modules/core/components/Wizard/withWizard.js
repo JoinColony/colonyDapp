@@ -28,7 +28,7 @@ type WizardArgs = {
 };
 
 const all = (values: ValueList) =>
-  values.reduce((map, curr) => map.merge(curr), ImmutableMap()).toJS();
+  values.reduceRight((map, curr) => map.merge(curr), ImmutableMap()).toJS();
 
 const getStep = (steps: Steps, step: number, values: Object, props?: Object) =>
   typeof steps === 'function' ? steps(step, values, props) : steps[step];
