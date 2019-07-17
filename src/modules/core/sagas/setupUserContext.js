@@ -147,9 +147,7 @@ export default function* setupUserContext(
     try {
       yield put<Action<typeof ACTIONS.INBOX_ITEMS_FETCH>>({
         type: ACTIONS.INBOX_ITEMS_FETCH,
-        payload: {
-          walletAddress,
-        },
+        payload: undefined,
         meta,
       });
     } catch (caughtError) {
