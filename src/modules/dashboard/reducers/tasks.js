@@ -20,6 +20,7 @@ const {
   DOMAIN_SET,
   DUE_DATE_SET,
   PAYOUT_SET,
+  PAYOUT_REMOVED,
   SKILL_SET,
   TASK_CANCELLED,
   TASK_CREATED,
@@ -109,6 +110,10 @@ const taskEventReducer = (task: TaskRecordType, event: *): TaskRecordType => {
           }),
         ]),
       );
+    }
+
+    case PAYOUT_REMOVED: {
+      return task.set('payouts', List());
     }
 
     default:
