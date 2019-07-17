@@ -11,7 +11,8 @@ export const getLogDate = async (
   { blockHash }: { blockHash: string },
 ) => {
   const { timestamp } = await provider.getBlock(blockHash);
-  return new Date(timestamp);
+  // timestamp is seconds, Date wants ms
+  return new Date(timestamp * 1000);
 };
 
 /*

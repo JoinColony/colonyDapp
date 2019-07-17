@@ -81,7 +81,8 @@ function* userTokenTransfersFetch(
     const transactions = yield* executeQuery(getUserColonyTransactions, {
       args: {
         walletAddress,
-        userColonyAddresses: userColonyAddresses.record || [],
+        userColonyAddresses:
+          (userColonyAddresses && userColonyAddresses.record) || [],
       },
     });
     yield put<Action<typeof ACTIONS.USER_TOKEN_TRANSFERS_FETCH_SUCCESS>>({

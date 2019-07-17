@@ -70,5 +70,5 @@ const tokensReducer: ReducerType<
 
 export default withDataRecordMap<AllTokensMap, TokenRecordType>(
   ACTIONS.TOKEN_INFO_FETCH,
-  ImmutableMap(),
+  INITIAL_STATE,
 )(tokensReducer);

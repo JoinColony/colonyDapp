@@ -145,7 +145,10 @@ export const currentUserRecentTokensSelector = createSelector(
   (tokens, transactions) =>
     Array.from(
       new Map([
-        ...((tokens && tokens.record && tokens.record.entries()) || []),
+        ...((tokens &&
+          tokens.record &&
+          tokens.record.map(token => [token.address, token])) ||
+          []),
         ...((transactions && transactions.record) || []).map(({ token }) => [
           token,
           { address: token },
