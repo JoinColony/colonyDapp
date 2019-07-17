@@ -776,6 +776,15 @@ function* taskSetWorkerOrPayouts({
         payload: { ...payload, workerAddress },
         type: ACTIONS.TASK_WORKER_ASSIGN,
       });
+    } else {
+      const {
+        record: { workerAddress: currentWorkerAddress },
+      } = yield select(taskSelector, draftId);
+      yield call(taskWorkerUnassign, {
+        meta: { key: draftId },
+        payload: { ...payload, workerAddress: currentWorkerAddress },
+        type: ACTIONS.TASK_WORKER_UNASSIGN,
+      });
     }
 
     if (payouts && payouts.length) {

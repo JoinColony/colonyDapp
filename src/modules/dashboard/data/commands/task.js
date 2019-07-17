@@ -481,7 +481,6 @@ export const unassignWorker: Command<
   name: 'unassignWorker',
   context: [CONTEXT.COLONY_MANAGER, CONTEXT.DDB_INSTANCE, CONTEXT.WALLET],
   prepare: prepareTaskStoreCommand,
-  schema: SetTaskPayoutCommandArgsSchema,
   async execute(taskStore, { workerAddress }) {
     const eventHash = await taskStore.append(
       createEvent(TASK_EVENT_TYPES.WORKER_UNASSIGNED, {

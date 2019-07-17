@@ -417,7 +417,7 @@ const taskSkills: ConsumableItem[] = [
     parent: -7,
   },
   {
-    id: 102,
+    id: 3,
     name: 'Architecture',
     parent: -7,
   },

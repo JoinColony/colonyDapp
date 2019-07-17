@@ -398,14 +398,14 @@ export type TaskActionTypes = {|
     typeof ACTIONS.TASK_WORKER_REVEAL_MANAGER_RATING_SUCCESS,
     void,
   >,
-  TASK_WORKER_UNASSIGN: TaskActionType<
+  TASK_WORKER_UNASSIGN: NonUniqueTaskActionType<
     typeof ACTIONS.TASK_WORKER_UNASSIGN,
     $Required<TaskProps<{ workerAddress: * }>>,
   >,
   TASK_WORKER_UNASSIGN_ERROR: TaskErrorActionType<
     typeof ACTIONS.TASK_WORKER_UNASSIGN_ERROR,
   >,
-  TASK_WORKER_UNASSIGN_SUCCESS: TaskActionType<
+  TASK_WORKER_UNASSIGN_SUCCESS: NonUniqueTaskActionType<
     typeof ACTIONS.TASK_WORKER_UNASSIGN_SUCCESS,
     {| event: Event<typeof WORKER_UNASSIGNED> |},
   >,
