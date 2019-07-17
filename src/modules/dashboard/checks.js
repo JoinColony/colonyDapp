@@ -111,4 +111,5 @@ export const canFinalizeTask = (task: TaskType, userAddress: Address) =>
   isManager(task, userAddress) &&
   isActive(task) &&
   isWorkerSet(task) &&
-  isDomainSet(task);
+  isDomainSet(task) &&
+  isPayoutsSet(task);
