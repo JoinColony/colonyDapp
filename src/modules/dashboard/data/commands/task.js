@@ -419,6 +419,27 @@ export const setTaskPayout: Command<
   },
 };
 
+export const removeTaskPayout: Command<
+  TaskStore,
+  TaskStoreMetadata,
+  void,
+  {|
+    event: Event<typeof TASK_EVENT_TYPES.PAYOUT_REMOVED>,
+    taskStore: TaskStore,
+  |},
+> = {
+  name: 'removeTaskPayout',
+  context: [CONTEXT.COLONY_MANAGER, CONTEXT.DDB_INSTANCE, CONTEXT.WALLET],
+  prepare: prepareTaskStoreCommand,
+  schema: SetTaskPayoutCommandArgsSchema,
+  async execute(taskStore) {
+    const eventHash = await taskStore.append(
+      createEvent(TASK_EVENT_TYPES.PAYOUT_REMOVED),
+    );
+    return { taskStore, event: taskStore.getEvent(eventHash) };
+  },
+};
+
 export const assignWorker: Command<
   TaskStore,
   TaskStoreMetadata,

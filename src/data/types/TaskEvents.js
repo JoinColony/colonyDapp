@@ -11,6 +11,7 @@ const {
   DOMAIN_SET,
   DUE_DATE_SET,
   PAYOUT_SET,
+  PAYOUT_REMOVED,
   SKILL_SET,
   TASK_CANCELLED,
   TASK_CLOSED,
@@ -61,6 +62,7 @@ export type TaskEvents = {|
       token: string,
     |},
   >,
+  PAYOUT_REMOVED: EventDefinition<typeof PAYOUT_REMOVED, void>,
   SKILL_SET: EventDefinition<
     typeof SKILL_SET,
     {|
