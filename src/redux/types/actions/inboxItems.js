@@ -8,7 +8,7 @@ import { ACTIONS } from '../../index';
 export type InboxItemsActionTypes = {|
   INBOX_ITEMS_FETCH: UniqueActionType<
     typeof ACTIONS.INBOX_ITEMS_FETCH,
-    {| walletAddress: Address |},
+    void,
     void,
   >,
   INBOX_ITEMS_FETCH_ERROR: ErrorActionType<

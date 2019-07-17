@@ -580,10 +580,10 @@ function* userTaskSubscribe({
 }
 
 function* inboxItemsFetch({
-  payload: { walletAddress },
   meta,
 }: Action<typeof ACTIONS.INBOX_ITEMS_FETCH>): Saga<*> {
   try {
+    const walletAddress = yield select(walletAddressSelector);
     const { inboxStoreAddress, metadataStoreAddress } = yield select(
       currentUserMetadataSelector,
     );

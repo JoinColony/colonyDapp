@@ -13,7 +13,6 @@ const userProfilesReducer: ReducerType<
   UsersMap,
   {|
     CURRENT_USER_CREATE: *,
-    INBOX_ITEMS_FETCH_SUCCESS: *,
     USER_AVATAR_UPLOAD_SUCCESS: *,
     USER_FETCH_SUCCESS: *,
     USER_PROFILE_UPDATE_SUCCESS: *,
@@ -66,6 +65,6 @@ const userProfilesReducer: ReducerType<
 };
 
 export default withDataRecordMap<UsersMap, UserRecordType>(
-  new Set([ACTIONS.USER_FETCH, ACTIONS.INBOX_ITEMS_FETCH]),
+  new Set([ACTIONS.USER_FETCH]),
   ImmutableMap(),
 )(userProfilesReducer);
