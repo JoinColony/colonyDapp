@@ -22,6 +22,7 @@ const {
   DOMAIN_SET,
   DUE_DATE_SET,
   PAYOUT_SET,
+  PAYOUT_REMOVED,
   SKILL_SET,
   TASK_CANCELLED,
   TASK_CLOSED,
@@ -51,7 +52,11 @@ const MSG = defineMessages({
   },
   payoutSet: {
     id: 'dashboard.TaskFeedEvent.payoutSet',
-    defaultMessage: 'Task payout added by {user}', // Add other text in #943
+    defaultMessage: 'Task payout was added by {user}', // Add other text in #943
+  },
+  payoutRemoved: {
+    id: 'dashboard.TaskFeedEvent.payoutRemoved',
+    defaultMessage: 'Task payout was removed by {user}',
   },
   skillSet: {
     id: 'dashboard.TaskFeedEvent.skillSet',
@@ -179,11 +184,27 @@ const TaskFeedEventPayoutSet = ({
     meta: { userAddress },
     // Use more from the action payload in #943
   },
+  event,
 }: *) => {
+  console.log(event);
   const user = useSelector(friendlyUsernameSelector, [userAddress]);
   return (
     <FormattedMessage
       {...MSG.payoutSet}
+      values={{ user: <span className={styles.highlight}>{user}</span> }}
+    />
+  );
+};
+
+const TaskFeedEventPayoutRemoved = ({
+  event: {
+    meta: { userAddress },
+  },
+}: *) => {
+  const user = useSelector(friendlyUsernameSelector, [userAddress]);
+  return (
+    <FormattedMessage
+      {...MSG.payoutRemoved}
       values={{ user: <span className={styles.highlight}>{user}</span> }}
     />
   );
@@ -364,6 +385,7 @@ const FEED_EVENT_COMPONENTS = {
   [DOMAIN_SET]: injectIntl(TaskFeedEventDomainSet),
   [DUE_DATE_SET]: TaskFeedEventDueDateSet,
   [PAYOUT_SET]: TaskFeedEventPayoutSet,
+  [PAYOUT_REMOVED]: TaskFeedEventPayoutRemoved,
   [SKILL_SET]: TaskFeedEventSkillSet,
   [TASK_CANCELLED]: TaskFeedEventCancelled,
   [TASK_CLOSED]: TaskFeedEventClosed,
