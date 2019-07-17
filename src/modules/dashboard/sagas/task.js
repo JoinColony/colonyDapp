@@ -68,6 +68,7 @@ import {
 } from '../data/queries';
 import {
   createAssignedInboxEvent,
+  createUnassignedInboxEvent,
   createCommentMention,
   createFinalizedInboxEvent,
   createWorkRequestInboxEvent,
@@ -767,19 +768,37 @@ function* taskWorkerUnassign({
      */
     if (workerAddress) {
       const userAddress = yield select(walletAddressSelector);
-      const { event } = yield* executeCommand(unassignWorker, {
+      const {
+        record: { title: taskTitle },
+      } = yield select(taskSelector, draftId);
+      const eventData = yield* executeCommand(unassignWorker, {
         args: { workerAddress, userAddress },
         metadata: { colonyAddress, draftId },
       });
-      yield put<Action<typeof ACTIONS.TASK_WORKER_UNASSIGN_SUCCESS>>({
-        type: ACTIONS.TASK_WORKER_UNASSIGN_SUCCESS,
-        payload: {
-          colonyAddress,
-          draftId,
-          event,
-        },
-        meta,
-      });
+
+      if (eventData) {
+        // send a notification to the worker
+        yield* executeCommand(createUnassignedInboxEvent, {
+          args: {
+            colonyAddress,
+            draftId,
+            taskTitle,
+            sourceUserAddress: userAddress,
+          },
+          metadata: { workerAddress },
+        });
+
+        const { event } = eventData;
+        yield put<Action<typeof ACTIONS.TASK_WORKER_UNASSIGN_SUCCESS>>({
+          type: ACTIONS.TASK_WORKER_UNASSIGN_SUCCESS,
+          payload: {
+            colonyAddress,
+            draftId,
+            event,
+          },
+          meta,
+        });
+      }
     }
   } catch (error) {
     return yield putError(ACTIONS.TASK_WORKER_UNASSIGN_ERROR, error, meta);

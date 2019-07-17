@@ -9,6 +9,7 @@ import type { EventDefinition } from './events';
 
 const {
   ASSIGNED_TO_TASK,
+  UNASSIGNED_FROM_TASK,
   COMMENT_MENTION,
   READ_UNTIL,
   SUBSCRIBED_TO_COLONY,

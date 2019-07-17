@@ -465,7 +465,6 @@ export const createUnassignedInboxEvent: Command<
     });
   },
   async execute(inboxStore, args) {
-    console.log('executed');
     await inboxStore.append(
       createEvent(USER_EVENT_TYPES.UNASSIGNED_FROM_TASK, args),
     );
