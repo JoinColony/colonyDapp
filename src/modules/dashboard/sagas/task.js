@@ -56,6 +56,7 @@ import {
   setTaskDomain,
   setTaskDueDate,
   setTaskPayout,
+  removeTaskPayout,
   setTaskSkill,
   setTaskTitle,
   unassignWorker,
@@ -432,6 +433,33 @@ function* taskSetPayout({
 }
 
 /*
+ * As worker or manager, I want to be able to remove the payout
+ */
+function* taskRemovePayout({
+  payload: { colonyAddress, draftId },
+  meta,
+}: Action<typeof ACTIONS.TASK_REMOVE_PAYOUT>): Saga<*> {
+  try {
+    const { event } = yield* executeCommand(removeTaskPayout, {
+      metadata: { colonyAddress, draftId },
+    });
+
+    yield put<Action<typeof ACTIONS.TASK_REMOVE_PAYOUT_SUCCESS>>({
+      type: ACTIONS.TASK_REMOVE_PAYOUT_SUCCESS,
+      payload: {
+        colonyAddress,
+        draftId,
+        event,
+      },
+      meta,
+    });
+  } catch (error) {
+    return yield putError(ACTIONS.TASK_REMOVE_PAYOUT_ERROR, error, meta);
+  }
+  return null;
+}
+
+/*
  * As worker or manager, I want to be able to set a date
  */
 function* taskSetDueDate({
@@ -735,39 +763,41 @@ function* taskSetWorkerOrPayouts({
   meta,
 }: Action<typeof ACTIONS.TASK_SET_WORKER_OR_PAYOUT>): Saga<*> {
   try {
-    const payloadBase = {
-      colonyAddress,
-      draftId,
-    };
-    let payload = { ...payloadBase };
+    const payload = { colonyAddress, draftId };
 
     if (workerAddress) {
-      payload = { ...payload, workerAddress };
       yield call(taskWorkerAssign, {
         meta: { key: draftId },
-        payload,
+        payload: { ...payload, workerAddress },
         type: ACTIONS.TASK_WORKER_ASSIGN,
       });
     }
 
     if (payouts && payouts.length) {
-      const { amount, token } = payouts[0];
-      payload = { ...payload, payouts };
       yield call(taskSetPayout, {
         meta,
-        payload: {
-          ...payloadBase,
-          amount,
-          token,
-        },
+        payload: { ...payload, ...payouts[0] },
         type: ACTIONS.TASK_SET_PAYOUT,
+      });
+    } else {
+      /*
+       * Last payout, remove it whole
+       */
+      yield call(taskRemovePayout, {
+        meta,
+        payload,
+        type: ACTIONS.TASK_REMOVE_PAYOUT,
       });
     }
 
     yield put<Action<typeof ACTIONS.TASK_SET_WORKER_OR_PAYOUT_SUCCESS>>({
       type: ACTIONS.TASK_SET_WORKER_OR_PAYOUT_SUCCESS,
       meta,
-      payload,
+      payload: {
+        ...payload,
+        payouts,
+        workerAddress,
+      },
     });
   } catch (error) {
     return yield putError(ACTIONS.TASK_SET_WORKER_OR_PAYOUT_ERROR, error, meta);
@@ -960,6 +990,7 @@ export default function* tasksSagas(): Saga<void> {
   yield takeEvery(ACTIONS.TASK_SET_DOMAIN, taskSetDomain);
   yield takeEvery(ACTIONS.TASK_SET_DUE_DATE, taskSetDueDate);
   yield takeEvery(ACTIONS.TASK_SET_PAYOUT, taskSetPayout);
+  yield takeEvery(ACTIONS.TASK_REMOVE_PAYOUT, taskRemovePayout);
   yield takeEvery(ACTIONS.TASK_SET_SKILL, taskSetSkill);
   yield takeEvery(ACTIONS.TASK_SET_TITLE, taskSetTitle);
   yield takeEvery(ACTIONS.TASK_SUB_START, taskSubStart);
