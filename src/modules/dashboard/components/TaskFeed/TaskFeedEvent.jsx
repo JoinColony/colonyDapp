@@ -2,7 +2,7 @@
 
 // $FlowFixMe
 import React, { useMemo } from 'react';
-import { defineMessages, FormattedMessage } from 'react-intl';
+import { defineMessages, FormattedMessage, injectIntl } from 'react-intl';
 import formatDate from 'sugar-date/date/format';
 
 import type { Address } from '~types';
@@ -44,7 +44,10 @@ const MSG = defineMessages({
   },
   dueDateSet: {
     id: 'dashboard.TaskFeedEvent.dueDateSet',
-    defaultMessage: 'Task due date set to {dueDate} by {user}',
+    defaultMessage: `Task due date {dueDateSet, select,
+      true {set to {dueDate}}
+      false {unset}
+    } by {user}`,
   },
   payoutSet: {
     id: 'dashboard.TaskFeedEvent.payoutSet',
@@ -52,7 +55,10 @@ const MSG = defineMessages({
   },
   skillSet: {
     id: 'dashboard.TaskFeedEvent.skillSet',
-    defaultMessage: 'Task skill set to {skillName} by {user}',
+    defaultMessage: `Task skill {skillSet, select,
+      true {set to {skillName}}
+      false {unset}
+    } by {user}`,
   },
   cancelled: {
     id: 'dashboard.TaskFeedEvent.cancelled',
@@ -73,6 +79,10 @@ const MSG = defineMessages({
   finalized: {
     id: 'dashboard.TaskFeedEvent.finalized',
     defaultMessage: 'Task finalized by {user}',
+  },
+  rootDomain: {
+    id: 'dashboard.TaskFeedEvent.rootDomain',
+    defaultMessage: 'Root',
   },
   titleSet: {
     id: 'dashboard.TaskFeedEvent.titleSet',
@@ -108,10 +118,12 @@ const TaskFeedEventDomainSet = ({
     meta: { userAddress },
     payload: { domainId },
   },
+  intl: { formatMessage },
 }: *) => {
   const user = useSelector(friendlyUsernameSelector, [userAddress]);
-  const { name: domainName } =
-    useSelector(domainSelector, [colonyAddress, domainId]) || {};
+  const domain = useSelector(domainSelector, [colonyAddress, domainId]) || {};
+  const domainName =
+    domainId === 1 ? formatMessage(MSG.rootDomain) : domain.name;
   return (
     <FormattedMessage
       {...MSG.domainSet}
@@ -151,11 +163,12 @@ const TaskFeedEventDueDateSet = ({
       {...MSG.dueDateSet}
       values={{
         user: <span className={styles.highlight}>{user}</span>,
-        dueDate: (
+        dueDate: dueDate && (
           <span className={styles.highlight}>
             {formatDate(new Date(dueDate), '{short}')}
           </span>
         ),
+        dueDateSet: !!dueDate,
       }}
     />
   );
@@ -182,10 +195,10 @@ const TaskFeedEventSkillSet = ({
     payload: { skillId },
   },
 }: *) => {
-  const { name: skillName } = useMemo(
-    () => taskSkillsTree.find(({ id }) => id === skillId),
-    [skillId],
-  );
+  const skill = useMemo(() => taskSkillsTree.find(({ id }) => id === skillId), [
+    skillId,
+  ]);
+  const { name: skillName } = skill || {};
   const user = useSelector(friendlyUsernameSelector, [userAddress]);
   return (
     <FormattedMessage
@@ -193,6 +206,7 @@ const TaskFeedEventSkillSet = ({
       values={{
         user: <span className={styles.highlight}>{user}</span>,
         skillName: <span className={styles.highlight}>{skillName}</span>,
+        skillSet: !!skillName,
       }}
     />
   );
@@ -347,7 +361,7 @@ const TaskFeedEventWorkerUnassigned = ({
 };
 
 const FEED_EVENT_COMPONENTS = {
-  [DOMAIN_SET]: TaskFeedEventDomainSet,
+  [DOMAIN_SET]: injectIntl(TaskFeedEventDomainSet),
   [DUE_DATE_SET]: TaskFeedEventDueDateSet,
   [PAYOUT_SET]: TaskFeedEventPayoutSet,
   [SKILL_SET]: TaskFeedEventSkillSet,

@@ -1,8 +1,10 @@
 /* @flow */
 
+import type { IntlShape } from 'react-intl';
+
 // $FlowFixMe upgrade flow
-import React, { useCallback, useState } from 'react';
-import { defineMessages, FormattedMessage } from 'react-intl';
+import React, { useCallback, useMemo, useState } from 'react';
+import { defineMessages, FormattedMessage, injectIntl } from 'react-intl';
 
 import type { DomainType, TaskProps } from '~immutable';
 
@@ -34,23 +36,34 @@ const MSG = defineMessages({
       other {Modify}
     }`,
   },
+  rootDomain: {
+    id: 'dashboard.TaskDomains.rootDomain',
+    defaultMessage: 'Root',
+  },
 });
 
 type Props = {|
   disabled?: boolean,
+  intl: IntlShape,
   ...TaskProps<{ colonyAddress: *, domainId: *, draftId: * }>,
 |};
 
 const displayName = 'dashboard.TaskDomains';
 
-const TaskDomains = ({ colonyAddress, domainId, draftId, disabled }: Props) => {
+const TaskDomains = ({
+  colonyAddress,
+  domainId,
+  draftId,
+  disabled,
+  intl: { formatMessage },
+}: Props) => {
   const setDomain = useAsyncFunction({
     submit: ACTIONS.TASK_SET_DOMAIN,
     success: ACTIONS.TASK_SET_DOMAIN_SUCCESS,
     error: ACTIONS.TASK_SET_DOMAIN_ERROR,
   });
 
-  const [selectedDomainId, setSelectedDomainId] = useState();
+  const [selectedDomainId, setSelectedDomainId] = useState(domainId);
 
   const handleSetDomain = useCallback(
     async (domainValue: Object) => {
@@ -73,16 +86,23 @@ const TaskDomains = ({ colonyAddress, domainId, draftId, disabled }: Props) => {
     { children?: *, parent?: *, ...DomainType }[],
   >(domainsFetcher, [colonyAddress], [colonyAddress]);
 
+  const domainsWithRoot = useMemo(
+    () =>
+      domains && [{ id: 1, name: formatMessage(MSG.rootDomain) }, ...domains],
+    [domains, formatMessage],
+  );
+
   return (
     <div className={styles.main}>
       <ItemsList
-        list={domains || []}
+        list={domainsWithRoot || []}
         itemDisplayPrefix="#"
         handleSetItem={handleSetDomain}
         name="taskDomains"
         connect={false}
         showArrow={false}
         itemId={domainId}
+        disabled={disabled}
       >
         <div className={styles.controls}>
           <Heading
@@ -109,4 +129,4 @@ const TaskDomains = ({ colonyAddress, domainId, draftId, disabled }: Props) => {
 
 TaskDomains.displayName = displayName;
 
-export default TaskDomains;
+export default injectIntl(TaskDomains);

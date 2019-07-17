@@ -55,7 +55,7 @@ const TaskSkills = ({ colonyAddress, draftId, disabled, skillId }: Props) => {
         await setSkill({
           colonyAddress,
           draftId,
-          skillId: skillValue.id,
+          skillId: skillValue ? skillValue.id : undefined,
         });
       } catch (caughtError) {
         /**
@@ -76,6 +76,8 @@ const TaskSkills = ({ colonyAddress, draftId, disabled, skillId }: Props) => {
         connect={false}
         showArrow={false}
         itemId={skillId}
+        disabled={disabled}
+        nullable
       >
         <div className={styles.controls}>
           <Heading

@@ -238,7 +238,7 @@ export type TaskActionTypes = {|
   >,
   TASK_SET_DUE_DATE: TaskActionType<
     typeof ACTIONS.TASK_SET_DUE_DATE,
-    $Required<TaskProps<{ dueDate: * }>>,
+    TaskProps<{ dueDate: * }>,
   >,
   TASK_SET_DUE_DATE_ERROR: TaskErrorActionType<
     typeof ACTIONS.TASK_SET_DUE_DATE_ERROR,
@@ -282,7 +282,7 @@ export type TaskActionTypes = {|
   >,
   TASK_SET_SKILL: TaskActionType<
     typeof ACTIONS.TASK_SET_SKILL,
-    $Required<TaskProps<{ skillId: * }>>,
+    TaskProps<{ skillId: * }>,
   >,
   TASK_SET_SKILL_ERROR: TaskErrorActionType<
     typeof ACTIONS.TASK_SET_SKILL_ERROR,

@@ -264,7 +264,7 @@ export const setTaskDueDate: Command<
   TaskStore,
   TaskStoreMetadata,
   {|
-    dueDate: number,
+    dueDate?: number,
   |},
   {|
     event: Event<typeof TASK_EVENT_TYPES.DUE_DATE_SET>,
@@ -289,7 +289,7 @@ export const setTaskSkill: Command<
   TaskStore,
   TaskStoreMetadata,
   {|
-    skillId: number,
+    skillId?: number,
   |},
   {|
     event: Event<typeof TASK_EVENT_TYPES.SKILL_SET>,

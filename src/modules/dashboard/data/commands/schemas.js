@@ -50,11 +50,11 @@ export const RemoveColonyAvatarCommandArgsSchema = yup.object({
 });
 
 export const SetTaskDueDateCommandArgsSchema = yup.object({
-  dueDate: yup.number().required(),
+  dueDate: yup.number(),
 });
 
 export const SetTaskSkillCommandArgsSchema = yup.object({
-  skillId: yup.number().required(),
+  skillId: yup.number(),
 });
 
 export const CreateTaskCommandArgsSchema = yup.object({
