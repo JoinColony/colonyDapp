@@ -309,21 +309,21 @@ export type TaskActionTypes = {|
     {| events: $Values<TaskEvents>[] |},
   >,
   TASK_SUB_ERROR: TaskErrorActionType<typeof ACTIONS.TASK_SUB_ERROR>,
-  TASK_SET_WORKER_AND_PAYOUTS: TaskActionType<
-    typeof ACTIONS.TASK_SET_WORKER_AND_PAYOUTS,
+  TASK_SET_WORKER_OR_PAYOUT: TaskActionType<
+    typeof ACTIONS.TASK_SET_WORKER_OR_PAYOUT,
     {|
       payouts?: Array<{| token: string, amount: BigNumber |}>,
-      workerAddress: Address,
+      workerAddress?: Address,
     |},
   >,
-  TASK_SET_WORKER_AND_PAYOUTS_ERROR: TaskErrorActionType<
-    typeof ACTIONS.TASK_SET_WORKER_AND_PAYOUTS_ERROR,
+  TASK_SET_WORKER_OR_PAYOUT_ERROR: TaskErrorActionType<
+    typeof ACTIONS.TASK_SET_WORKER_OR_PAYOUT_ERROR,
   >,
-  TASK_SET_WORKER_AND_PAYOUTS_SUCCESS: TaskActionType<
-    typeof ACTIONS.TASK_SET_WORKER_AND_PAYOUTS_SUCCESS,
+  TASK_SET_WORKER_OR_PAYOUT_SUCCESS: TaskActionType<
+    typeof ACTIONS.TASK_SET_WORKER_OR_PAYOUT_SUCCESS,
     {|
       payouts?: Array<{| amount: BigNumber, token: string |}>,
-      workerAddress: Address,
+      workerAddress?: Address,
     |},
   >,
   TASK_SUBMIT_DELIVERABLE: TaskActionType<

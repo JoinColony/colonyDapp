@@ -730,10 +730,10 @@ function* taskWorkerUnassign({
   return null;
 }
 
-function* taskSetWorkerAndPayouts({
+function* taskSetWorkerOrPayouts({
   payload: { colonyAddress, draftId, payouts, workerAddress },
   meta,
-}: Action<typeof ACTIONS.TASK_SET_WORKER_AND_PAYOUTS>): Saga<*> {
+}: Action<typeof ACTIONS.TASK_SET_WORKER_OR_PAYOUT>): Saga<*> {
   try {
     yield call(taskWorkerAssign, {
       meta: { key: draftId },
@@ -761,8 +761,8 @@ function* taskSetWorkerAndPayouts({
       );
     }
 
-    yield put<Action<typeof ACTIONS.TASK_SET_WORKER_AND_PAYOUTS_SUCCESS>>({
-      type: ACTIONS.TASK_SET_WORKER_AND_PAYOUTS_SUCCESS,
+    yield put<Action<typeof ACTIONS.TASK_SET_WORKER_OR_PAYOUT_SUCCESS>>({
+      type: ACTIONS.TASK_SET_WORKER_OR_PAYOUT_SUCCESS,
       meta,
       payload: {
         colonyAddress,
@@ -772,11 +772,7 @@ function* taskSetWorkerAndPayouts({
       },
     });
   } catch (error) {
-    return yield putError(
-      ACTIONS.TASK_SET_WORKER_AND_PAYOUTS_ERROR,
-      error,
-      meta,
-    );
+    return yield putError(ACTIONS.TASK_SET_WORKER_OR_PAYOUT_ERROR, error, meta);
   }
   return null;
 }
@@ -969,7 +965,7 @@ export default function* tasksSagas(): Saga<void> {
   yield takeEvery(ACTIONS.TASK_SET_SKILL, taskSetSkill);
   yield takeEvery(ACTIONS.TASK_SET_TITLE, taskSetTitle);
   yield takeEvery(ACTIONS.TASK_SUB_START, taskSubStart);
-  yield takeEvery(ACTIONS.TASK_SET_WORKER_AND_PAYOUTS, taskSetWorkerAndPayouts);
+  yield takeEvery(ACTIONS.TASK_SET_WORKER_OR_PAYOUT, taskSetWorkerOrPayouts);
   yield takeEvery(ACTIONS.TASK_WORKER_ASSIGN, taskWorkerAssign);
   yield takeEvery(ACTIONS.TASK_WORKER_UNASSIGN, taskWorkerUnassign);
   yield takeLeading(ACTIONS.TASK_FETCH_ALL, taskFetchAll);

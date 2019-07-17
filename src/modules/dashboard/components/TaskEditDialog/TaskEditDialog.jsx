@@ -317,9 +317,9 @@ const TaskEditDialog = ({
             payouts: existingPayouts,
             worker: existingWorker,
           }}
-          error={ACTIONS.TASK_SET_WORKER_AND_PAYOUTS_ERROR}
-          submit={ACTIONS.TASK_SET_WORKER_AND_PAYOUTS}
-          success={ACTIONS.TASK_SET_WORKER_AND_PAYOUTS_SUCCESS}
+          error={ACTIONS.TASK_SET_WORKER_OR_PAYOUT_ERROR}
+          submit={ACTIONS.TASK_SET_WORKER_OR_PAYOUT}
+          success={ACTIONS.TASK_SET_WORKER_OR_PAYOUT_SUCCESS}
           transform={transform}
           onSuccess={closeDialog}
           validationSchema={validateForm}
