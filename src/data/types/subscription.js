@@ -2,7 +2,7 @@
 
 import type { ContextName } from '~context';
 
-export type EventEmitter<R> = R => void;
+export type EventCallback<R> = R => void;
 
 /*
  * The specification for a data subscription.
@@ -23,7 +23,7 @@ export type Subscription<D, M, A, R> = {|
   execute: (
     deps: D,
     args: ?A,
-  ) => Promise<(emitter: EventEmitter<R>) => {| stop: () => void |}[]>,
+  ) => Promise<(emitter: EventCallback<R>) => {| stop: () => void |}[]>,
   name: string,
   prepare: (context: *, metadata: M) => Promise<D>,
 |};

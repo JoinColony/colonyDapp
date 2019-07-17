@@ -324,7 +324,7 @@ export type ColonyActionTypes = {|
     {| colony: ColonyType, colonyAddress: Address |},
     WithKey,
   >,
-  COLONY_SUB_ERROR: ErrorActionType<typeof ACTIONS.COLONY_SUB_ERROR, void>,
+  COLONY_SUB_ERROR: ErrorActionType<typeof ACTIONS.COLONY_SUB_ERROR, WithKey>,
   COLONY_VERSION_UPGRADE: UniqueActionType<
     typeof ACTIONS.COLONY_VERSION_UPGRADE,
     {| colonyAddress: Address |},

@@ -176,7 +176,11 @@ export const getColonyRoles: ContractEventQuery<
 };
 
 export const subscribeToColony: Subscription<
-  {| colonyClient: ColonyClient, colonyStore: ColonyStore |},
+  {|
+    colonyClient: ColonyClient,
+    colonyStore: ColonyStore,
+    colonyAddress: Address,
+  |},
   ColonyStoreMetadata,
   *,
   ColonyType,
@@ -203,12 +207,10 @@ export const subscribeToColony: Subscription<
     return {
       colonyClient,
       colonyStore,
+      colonyAddress,
     };
   },
-  async execute({ colonyStore, colonyClient }) {
-    const {
-      contract: { address: colonyAddress },
-    } = colonyClient;
+  async execute({ colonyStore, colonyClient, colonyAddress }) {
     const { inRecoveryMode } = await colonyClient.isInRecoveryMode.call();
     const { version } = await colonyClient.getVersion.call();
 
@@ -237,7 +239,7 @@ export const subscribeToColony: Subscription<
         emitter(
           events &&
             events
-              .filter(({ type: eventType }) => COLONY_EVENT_TYPES[eventType])
+              .filter(({ type }) => COLONY_EVENT_TYPES[type])
               .reduce(colonyReducer, {
                 avatarHash: undefined,
                 colonyAddress,
