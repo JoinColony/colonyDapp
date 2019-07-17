@@ -412,20 +412,29 @@ function* taskSetPayout({
   meta,
 }: Action<typeof ACTIONS.TASK_SET_PAYOUT>): Saga<*> {
   try {
-    const { event } = yield* executeCommand(setTaskPayout, {
-      args: { token, amount },
-      metadata: { colonyAddress, draftId },
-    });
+    const {
+      record: { payouts },
+    }: { record: TaskType } = yield* selectAsJS(taskSelector, draftId);
+    if (
+      !payouts ||
+      !payouts.length ||
+      !amount.eq(new BigNumber(payouts[0].amount))
+    ) {
+      const { event } = yield* executeCommand(setTaskPayout, {
+        args: { token, amount },
+        metadata: { colonyAddress, draftId },
+      });
 
-    yield put<Action<typeof ACTIONS.TASK_SET_PAYOUT_SUCCESS>>({
-      type: ACTIONS.TASK_SET_PAYOUT_SUCCESS,
-      payload: {
-        colonyAddress,
-        draftId,
-        event,
-      },
-      meta,
-    });
+      yield put<Action<typeof ACTIONS.TASK_SET_PAYOUT_SUCCESS>>({
+        type: ACTIONS.TASK_SET_PAYOUT_SUCCESS,
+        payload: {
+          colonyAddress,
+          draftId,
+          event,
+        },
+        meta,
+      });
+    }
   } catch (error) {
     return yield putError(ACTIONS.TASK_SET_PAYOUT_ERROR, error, meta);
   }
