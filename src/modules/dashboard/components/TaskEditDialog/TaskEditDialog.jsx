@@ -204,13 +204,16 @@ const TaskEditDialog = ({
   const existingPayouts = useMemo(
     () =>
       taskPayouts.map(payout => {
-        const { address } =
+        const { address, decimals } =
           (availableTokens &&
             availableTokens.find(token => token.address === payout.token)) ||
           {};
         return {
           token: address,
-          amount: payout.amount,
+          amount: moveDecimal(
+            new BigNumber(payout.amount).toString(10),
+            -1 * parseInt(decimals, 10),
+          ),
           id: payout.token.address,
         };
       }),
@@ -219,14 +222,14 @@ const TaskEditDialog = ({
 
   const validateForm = useMemo(
     () => {
-      const workerShape = yup
-        .object()
-        .shape({
-          profile: yup.object().shape({
-            walletAddress: yup.string().required(MSG.workerRequiredError),
-          }),
-        })
-        .default(null);
+      // const workerShape = yup
+      //   .object()
+      //   .shape({
+      //     profile: yup.object().shape({
+      //       walletAddress: yup.string().required(MSG.workerRequiredError),
+      //     }),
+      //   })
+      //   .default(null);
       return yup.object().shape({
         payouts: yup
           .array()
@@ -384,13 +387,6 @@ const TaskEditDialog = ({
                                     reputation={reputation}
                                     tokenOptions={tokenOptions}
                                     tokenReferences={colonyTokenReferences}
-                                    /*
-                                     * @NOTE Of course it's a hack :(
-                                     *
-                                     * Needed in order to format decimal values inside the input
-                                     * This is because Cleave isn't of much use in thiscase
-                                     */
-                                    wasTouched={dirty}
                                   />
                                 ))}
                             </>

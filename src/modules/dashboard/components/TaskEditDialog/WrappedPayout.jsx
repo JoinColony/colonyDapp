@@ -18,7 +18,6 @@ type Props = {|
   reputation: number,
   tokenOptions: Array<{ value: number, label: string }>,
   tokenReferences: Array<TokenReferenceType>,
-  wasTouched: boolean,
 |};
 
 const WrappedPayout = ({
@@ -31,7 +30,6 @@ const WrappedPayout = ({
   reputation,
   tokenOptions,
   tokenReferences,
-  wasTouched,
 }: Props) => {
   const { amount, token: tokenAddress } = payout;
 
@@ -63,13 +61,6 @@ const WrappedPayout = ({
       remove={removePayout}
       reset={resetPayout}
       tokenAddress={tokenAddress}
-      /*
-       * @NOTE Of course it's a hack :(
-       *
-       * Needed in order to format decimal values inside the input
-       * This is because Cleave isn't of much use in thiscase
-       */
-      wasTouched={wasTouched}
     />
   );
 };

@@ -4,7 +4,6 @@
 import React, { useCallback, useMemo, useState } from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 import BigNumber from 'bn.js';
-import moveDecimal from 'move-decimal-point';
 
 import type { Address } from '~types';
 
@@ -44,7 +43,6 @@ type Props = {|
   reset?: () => void,
   tokenAddress: Address,
   tokenOptions?: Array<{ value: number, label: string }>,
-  wasTouched?: boolean,
 |};
 
 const displayName = 'dashboard.TaskEditDialog.Payout';
@@ -60,7 +58,6 @@ const Payout = ({
   reset,
   tokenAddress,
   tokenOptions,
-  wasTouched = false,
 }: Props) => {
   const [isEditing, setIsEditing] = useState(false);
 
@@ -116,27 +113,6 @@ const Payout = ({
             <Input
               appearance={{ theme: 'minimal', align: 'right' }}
               name={`${name}.amount`}
-              /*
-               * @NOTE Of course it's a hack :(
-               *
-               * The amount values comes in as 1^18 initially (example only)
-               * But if we pass that directly into `Input` it will be displayed whole,
-               * since Cleave doesn't know what to do with all the numbers
-               *
-               * But when we submit it, we do so in human read-able format
-               *
-               * Because of this, we first (untouched), convert from long form to
-               * human-readable, then, just use the human read-able form, once the
-               * user starts typing.
-               *
-               * This is not fun. We really need a better solution here
-               *
-               */
-              $value={
-                wasTouched
-                  ? amount
-                  : moveDecimal(new BigNumber(amount).toString(10), -decimals)
-              }
               formattingOptions={{
                 delimiter: ',',
                 numeral: true,
@@ -164,7 +140,6 @@ const Payout = ({
                       size: 'medium',
                       theme: 'grey',
                     }}
-                    unit={decimals}
                     value={amount}
                   />
                 </span>
