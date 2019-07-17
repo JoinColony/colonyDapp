@@ -440,19 +440,24 @@ function* taskRemovePayout({
   meta,
 }: Action<typeof ACTIONS.TASK_REMOVE_PAYOUT>): Saga<*> {
   try {
-    const { event } = yield* executeCommand(removeTaskPayout, {
-      metadata: { colonyAddress, draftId },
-    });
+    const {
+      record: { payouts: currentPayouts },
+    } = yield select(taskSelector, draftId);
+    if (currentPayouts && currentPayouts.size) {
+      const { event } = yield* executeCommand(removeTaskPayout, {
+        metadata: { colonyAddress, draftId },
+      });
 
-    yield put<Action<typeof ACTIONS.TASK_REMOVE_PAYOUT_SUCCESS>>({
-      type: ACTIONS.TASK_REMOVE_PAYOUT_SUCCESS,
-      payload: {
-        colonyAddress,
-        draftId,
-        event,
-      },
-      meta,
-    });
+      yield put<Action<typeof ACTIONS.TASK_REMOVE_PAYOUT_SUCCESS>>({
+        type: ACTIONS.TASK_REMOVE_PAYOUT_SUCCESS,
+        payload: {
+          colonyAddress,
+          draftId,
+          event,
+        },
+        meta,
+      });
+    }
   } catch (error) {
     return yield putError(ACTIONS.TASK_REMOVE_PAYOUT_ERROR, error, meta);
   }
