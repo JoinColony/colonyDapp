@@ -4,6 +4,7 @@
 import React, { useMemo } from 'react';
 import { defineMessages, FormattedMessage, FormattedNumber } from 'react-intl';
 import BigNumber from 'bn.js';
+import moveDecimal from 'move-decimal-point';
 
 import Icon from '~core/Icon';
 import Numeral from '~core/Numeral';
@@ -50,14 +51,20 @@ const NetworkFee = ({ amount, decimals, symbol }: Props) => {
   const networkFeeInverse = useSelector(networkFeeInverseSelector);
   const metaColonyFee = useMemo(
     () => {
-      if (new BigNumber(amount).isZero() || networkFeeInverse === 1) {
-        return amount;
+      const decimalConvertedAmount = new BigNumber(
+        moveDecimal(amount, parseInt(decimals, 10)),
+      );
+      if (
+        new BigNumber(decimalConvertedAmount).isZero() ||
+        networkFeeInverse === 1
+      ) {
+        return decimalConvertedAmount;
       }
-      return new BigNumber(amount)
+      return new BigNumber(decimalConvertedAmount)
         .div(new BigNumber(networkFeeInverse))
         .add(new BigNumber(1));
     },
-    [amount, networkFeeInverse],
+    [amount, decimals, networkFeeInverse],
   );
   return (
     <>
