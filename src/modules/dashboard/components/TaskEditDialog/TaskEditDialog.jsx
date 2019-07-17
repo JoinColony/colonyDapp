@@ -222,14 +222,15 @@ const TaskEditDialog = ({
 
   const validateForm = useMemo(
     () => {
-      // const workerShape = yup
-      //   .object()
-      //   .shape({
-      //     profile: yup.object().shape({
-      //       walletAddress: yup.string().required(MSG.workerRequiredError),
-      //     }),
-      //   })
-      //   .default(null);
+      const workerShape = yup
+        .object()
+        .shape({
+          profile: yup.object().shape({
+            walletAddress: yup.string().required(MSG.workerRequiredError),
+          }),
+        })
+        .nullable()
+        .default(null);
       return yup.object().shape({
         payouts: yup
           .array()
@@ -249,8 +250,10 @@ const TaskEditDialog = ({
             }),
           )
           .min(minTokens)
-          .max(maxTokens),
-        // worker: workerShape,
+          .max(maxTokens)
+          .nullable()
+          .default(null),
+        worker: workerShape,
       });
     },
     [availableTokens, colonyTokenReferences, maxTokens, minTokens],
