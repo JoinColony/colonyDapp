@@ -735,41 +735,39 @@ function* taskSetWorkerOrPayouts({
   meta,
 }: Action<typeof ACTIONS.TASK_SET_WORKER_OR_PAYOUT>): Saga<*> {
   try {
-    yield call(taskWorkerAssign, {
-      meta: { key: draftId },
-      payload: { colonyAddress, draftId, workerAddress },
-      type: ACTIONS.TASK_WORKER_ASSIGN,
-    });
+    const payloadBase = {
+      colonyAddress,
+      draftId,
+    };
+    let payload = { ...payloadBase };
 
-    const {
-      record: { payouts: existingPayouts },
-    } = yield select(taskSelector, draftId);
-    if (payouts && !(existingPayouts && existingPayouts.length > 0)) {
-      yield all(
-        payouts.map(({ amount, token }) =>
-          call(taskSetPayout, {
-            meta,
-            payload: {
-              colonyAddress,
-              draftId,
-              amount,
-              token,
-            },
-            type: ACTIONS.TASK_SET_PAYOUT,
-          }),
-        ),
-      );
+    if (workerAddress) {
+      payload = { ...payload, workerAddress };
+      yield call(taskWorkerAssign, {
+        meta: { key: draftId },
+        payload,
+        type: ACTIONS.TASK_WORKER_ASSIGN,
+      });
+    }
+
+    if (payouts && payouts.length) {
+      const { amount, token } = payouts[0];
+      payload = { ...payload, payouts };
+      call(taskSetPayout, {
+        meta,
+        payload: {
+          ...payloadBase,
+          amount,
+          token,
+        },
+        type: ACTIONS.TASK_SET_PAYOUT,
+      });
     }
 
     yield put<Action<typeof ACTIONS.TASK_SET_WORKER_OR_PAYOUT_SUCCESS>>({
       type: ACTIONS.TASK_SET_WORKER_OR_PAYOUT_SUCCESS,
       meta,
-      payload: {
-        colonyAddress,
-        draftId,
-        payouts,
-        workerAddress,
-      },
+      payload,
     });
   } catch (error) {
     return yield putError(ACTIONS.TASK_SET_WORKER_OR_PAYOUT_ERROR, error, meta);
