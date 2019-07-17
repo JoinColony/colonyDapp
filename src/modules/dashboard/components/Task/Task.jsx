@@ -144,7 +144,7 @@ const Task = ({
       openDialog('TaskEditDialog', {
         draftId,
         maxTokens: 1,
-        minTokens: 1,
+        minTokens: 0,
       });
     },
     [draftId, openDialog, task],

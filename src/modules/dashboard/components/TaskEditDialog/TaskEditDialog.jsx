@@ -247,7 +247,7 @@ const TaskEditDialog = ({
           )
           .min(minTokens)
           .max(maxTokens),
-        worker: workerShape,
+        // worker: workerShape,
       });
     },
     [availableTokens, colonyTokenReferences, maxTokens, minTokens],
@@ -290,7 +290,10 @@ const TaskEditDialog = ({
             token,
           };
         }),
-        workerAddress: createAddress(p.worker.profile.walletAddress),
+        workerAddress:
+          p.worker && p.worker.profile && p.worker.profile.walletAddress
+            ? createAddress(p.worker.profile.walletAddress)
+            : undefined,
       })),
       mergePayload({ colonyAddress, draftId }),
     ),
@@ -381,6 +384,13 @@ const TaskEditDialog = ({
                                     reputation={reputation}
                                     tokenOptions={tokenOptions}
                                     tokenReferences={colonyTokenReferences}
+                                    /*
+                                     * @NOTE Of course it's a hack :(
+                                     *
+                                     * Needed in order to format decimal values inside the input
+                                     * This is because Cleave isn't of much use in thiscase
+                                     */
+                                    wasTouched={dirty}
                                   />
                                 ))}
                             </>
