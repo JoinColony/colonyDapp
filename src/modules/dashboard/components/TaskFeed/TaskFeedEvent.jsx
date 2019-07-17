@@ -204,7 +204,6 @@ const TaskFeedEventPayoutSet = ({
           <span className={styles.highlightNumeral}>
             <Numeral
               integerSeparator=""
-              truncate={2}
               unit={decimals}
               value={amount}
               suffix={` ${symbol}`}

@@ -123,7 +123,6 @@ const TaskFeedCompleteInfo = ({
                   amount: (
                     <Numeral
                       integerSeparator=""
-                      truncate={4}
                       unit={decimals}
                       value={workerPayout}
                     />
@@ -135,13 +134,7 @@ const TaskFeedCompleteInfo = ({
               <FormattedMessage
                 {...MSG.receiptColonyFeeText}
                 values={{
-                  amount: (
-                    <Numeral
-                      truncate={4}
-                      unit={decimals}
-                      value={metaColonyFee}
-                    />
-                  ),
+                  amount: <Numeral unit={decimals} value={metaColonyFee} />,
                   symbol,
                 }}
               />

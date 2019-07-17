@@ -33,6 +33,9 @@ td.taskPayouts {
   justify-content: flex-end;
   padding: cellPaddingVertical 0;
   width: 150px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 td.userAvatar {

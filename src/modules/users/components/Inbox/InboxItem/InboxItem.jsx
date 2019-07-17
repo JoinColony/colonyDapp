@@ -273,7 +273,6 @@ const InboxItem = ({
                     <Numeral
                       suffix={` ${token ? token.symbol : ''}`}
                       integerSeparator=""
-                      truncate={2}
                       unit={(token && token.decimals) || 18}
                       value={value}
                     />
@@ -323,7 +322,6 @@ const InboxItem = ({
                     <Numeral
                       suffix={` ${token ? token.symbol : ''}`}
                       integerSeparator=""
-                      truncate={2}
                       unit={(token && token.decimals) || 18}
                       value={amount}
                       appearance={{ size: 'small', theme: 'grey' }}
