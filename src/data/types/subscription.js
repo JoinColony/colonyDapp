@@ -20,7 +20,7 @@ export type EventEmitter<R> = R => void;
  */
 export type Subscription<D, M, A, R> = {|
   context: ContextName[],
-  createSubscription: (
+  execute: (
     deps: D,
     args: ?A,
   ) => Promise<(emitter: EventEmitter<R>) => {| stop: () => void |}[]>,

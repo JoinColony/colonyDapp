@@ -93,7 +93,7 @@ const validateDataSpec = <D, M, A, R>(
     throw new Error('Cannot prepare, "prepare" function not defined');
   }
 
-  if (!(spec.execute || spec.createSubscription)) {
+  if (!spec.execute) {
     throw new Error('Cannot execute, "execute" function not defined');
   }
 
@@ -168,7 +168,7 @@ export function* executeSubscription<D, M, A, R>(
   });
 
   const subscription = yield call(
-    [subscriber, subscriber.createSubscription],
+    [subscriber, subscriber.execute],
     executeDeps,
     args,
   );

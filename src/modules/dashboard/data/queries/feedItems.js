@@ -90,7 +90,7 @@ export const subscribeTaskFeedItems: Subscription<
   name: 'subscribeTaskFeedItems',
   context: [CONTEXT.COLONY_MANAGER, CONTEXT.DDB_INSTANCE, CONTEXT.WALLET],
   prepare,
-  async createSubscription({ commentsStore, taskStore }) {
+  async execute({ commentsStore, taskStore }) {
     // Store previous events for each store so that the events can be combined
     // @todo Simplify and improve performance of task feed items subscription
     let commentsEvents: Event<*> = [];

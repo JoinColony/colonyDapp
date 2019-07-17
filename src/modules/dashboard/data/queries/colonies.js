@@ -205,7 +205,7 @@ export const subscribeToColony: Subscription<
       colonyStore,
     };
   },
-  async createSubscription({ colonyStore, colonyClient }) {
+  async execute({ colonyStore, colonyClient }) {
     const {
       contract: { address: colonyAddress },
     } = colonyClient;
