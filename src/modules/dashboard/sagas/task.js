@@ -753,7 +753,7 @@ function* taskSetWorkerOrPayouts({
     if (payouts && payouts.length) {
       const { amount, token } = payouts[0];
       payload = { ...payload, payouts };
-      call(taskSetPayout, {
+      yield call(taskSetPayout, {
         meta,
         payload: {
           ...payloadBase,

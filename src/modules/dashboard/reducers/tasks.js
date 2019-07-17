@@ -100,13 +100,14 @@ const taskEventReducer = (task: TaskRecordType, event: *): TaskRecordType => {
 
     case PAYOUT_SET: {
       const { amount, token } = event.payload;
-      return task.update('payouts', payouts =>
-        payouts.push(
+      return task.set(
+        'payouts',
+        List([
           TaskPayoutRecord({
             amount,
             token: createAddress(token),
           }),
-        ),
+        ]),
       );
     }
 
