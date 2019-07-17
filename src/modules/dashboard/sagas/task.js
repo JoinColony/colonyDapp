@@ -744,8 +744,9 @@ function* taskWorkerUnassign({
   meta,
 }: Action<typeof ACTIONS.TASK_WORKER_UNASSIGN>): Saga<*> {
   try {
+    const userAddress = yield select(walletAddressSelector);
     const { event } = yield* executeCommand(unassignWorker, {
-      args: { workerAddress },
+      args: { workerAddress, userAddress },
       metadata: { colonyAddress, draftId },
     });
     yield put<Action<typeof ACTIONS.TASK_WORKER_UNASSIGN_SUCCESS>>({

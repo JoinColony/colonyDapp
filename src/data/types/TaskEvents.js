@@ -131,6 +131,7 @@ export type TaskEvents = {|
     typeof WORKER_UNASSIGNED,
     {|
       workerAddress: Address,
+      userAddress: Address,
     |},
   >,
 |};

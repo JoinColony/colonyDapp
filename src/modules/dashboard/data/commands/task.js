@@ -472,6 +472,7 @@ export const unassignWorker: Command<
   TaskStoreMetadata,
   {|
     workerAddress: Address,
+    userAddress: Address,
   |},
   {|
     event: Event<typeof TASK_EVENT_TYPES.WORKER_UNASSIGNED>,
@@ -481,10 +482,11 @@ export const unassignWorker: Command<
   name: 'unassignWorker',
   context: [CONTEXT.COLONY_MANAGER, CONTEXT.DDB_INSTANCE, CONTEXT.WALLET],
   prepare: prepareTaskStoreCommand,
-  async execute(taskStore, { workerAddress }) {
+  async execute(taskStore, { workerAddress, userAddress }) {
     const eventHash = await taskStore.append(
       createEvent(TASK_EVENT_TYPES.WORKER_UNASSIGNED, {
         workerAddress,
+        userAddress,
       }),
     );
     return { taskStore, event: taskStore.getEvent(eventHash) };
