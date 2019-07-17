@@ -79,7 +79,6 @@ const PayoutsList = ({
               })}
               key={payout.token}
               suffix={` ${token.symbol} `}
-              truncate={2}
               unit={token.decimals || 18}
               value={payout.amount}
             />
@@ -100,7 +99,6 @@ const PayoutsList = ({
                     key={payout.token}
                     value={payout.amount}
                     unit={token.decimals || 18}
-                    truncate={2}
                     suffix={` ${token.symbol} `}
                   />
                 ) : null;
