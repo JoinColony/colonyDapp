@@ -415,6 +415,10 @@ function* taskSetPayout({
     const {
       record: { payouts },
     }: { record: TaskType } = yield* selectAsJS(taskSelector, draftId);
+    /*
+     * Edge case, but prevent triggering this saga and subseqent event, if the
+     * payment is the same as the previous one
+     */
     if (
       !payouts ||
       !payouts.length ||
@@ -452,6 +456,10 @@ function* taskRemovePayout({
     const {
       record: { payouts: currentPayouts },
     } = yield select(taskSelector, draftId);
+    /*
+     * Prevent triggering this saga and subseqent event,
+     * if there isnt' a payment set
+     */
     if (currentPayouts && currentPayouts.size) {
       const { event } = yield* executeCommand(removeTaskPayout, {
         metadata: { colonyAddress, draftId },
@@ -753,20 +761,26 @@ function* taskWorkerUnassign({
   meta,
 }: Action<typeof ACTIONS.TASK_WORKER_UNASSIGN>): Saga<*> {
   try {
-    const userAddress = yield select(walletAddressSelector);
-    const { event } = yield* executeCommand(unassignWorker, {
-      args: { workerAddress, userAddress },
-      metadata: { colonyAddress, draftId },
-    });
-    yield put<Action<typeof ACTIONS.TASK_WORKER_UNASSIGN_SUCCESS>>({
-      type: ACTIONS.TASK_WORKER_UNASSIGN_SUCCESS,
-      payload: {
-        colonyAddress,
-        draftId,
-        event,
-      },
-      meta,
-    });
+    /*
+     * Edge case, but prevent triggering this saga and subseqent event, if there
+     * isnt' a user already assigned
+     */
+    if (workerAddress) {
+      const userAddress = yield select(walletAddressSelector);
+      const { event } = yield* executeCommand(unassignWorker, {
+        args: { workerAddress, userAddress },
+        metadata: { colonyAddress, draftId },
+      });
+      yield put<Action<typeof ACTIONS.TASK_WORKER_UNASSIGN_SUCCESS>>({
+        type: ACTIONS.TASK_WORKER_UNASSIGN_SUCCESS,
+        payload: {
+          colonyAddress,
+          draftId,
+          event,
+        },
+        meta,
+      });
+    }
   } catch (error) {
     return yield putError(ACTIONS.TASK_WORKER_UNASSIGN_ERROR, error, meta);
   }
@@ -779,7 +793,9 @@ function* taskSetWorkerOrPayouts({
 }: Action<typeof ACTIONS.TASK_SET_WORKER_OR_PAYOUT>): Saga<*> {
   try {
     const payload = { colonyAddress, draftId };
-
+    const {
+      record: { workerAddress: currentWorkerAddress },
+    } = yield select(taskSelector, draftId);
     if (workerAddress) {
       yield call(taskWorkerAssign, {
         meta: { key: draftId },
@@ -787,9 +803,6 @@ function* taskSetWorkerOrPayouts({
         type: ACTIONS.TASK_WORKER_ASSIGN,
       });
     } else {
-      const {
-        record: { workerAddress: currentWorkerAddress },
-      } = yield select(taskSelector, draftId);
       yield call(taskWorkerUnassign, {
         meta: { key: draftId },
         payload: { ...payload, workerAddress: currentWorkerAddress },
