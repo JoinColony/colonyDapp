@@ -83,6 +83,15 @@ export type UserEvents = {|
       sourceUserAddress: string,
     |},
   >,
+  UNASSIGNED_FROM_TASK: EventDefinition<
+    typeof UNASSIGNED_FROM_TASK,
+    {|
+      colonyAddress: Address,
+      draftId: TaskDraftId,
+      taskTitle: string,
+      sourceUserAddress: string,
+    |},
+  >,
   WORK_REQUEST: EventDefinition<
     typeof WORK_REQUEST,
     {|
