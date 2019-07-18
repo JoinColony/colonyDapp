@@ -51,7 +51,7 @@ export type TaskEvents = {|
   DUE_DATE_SET: EventDefinition<
     typeof DUE_DATE_SET,
     {|
-      dueDate: number,
+      dueDate?: number,
     |},
   >,
   PAYOUT_SET: EventDefinition<
@@ -64,7 +64,7 @@ export type TaskEvents = {|
   SKILL_SET: EventDefinition<
     typeof SKILL_SET,
     {|
-      skillId: number,
+      skillId?: number,
     |},
   >,
   TASK_CANCELLED: EventDefinition<

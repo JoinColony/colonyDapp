@@ -69,7 +69,7 @@ const TaskDate = ({ colonyAddress, draftId, dueDate, disabled }: Props) => {
             error={ACTIONS.TASK_SET_DUE_DATE_ERROR}
             transform={transform}
           >
-            {({ submitForm }) => (
+            {({ submitForm, setFormikState }) => (
               <DatePicker
                 elementOnly
                 name="taskDueDate"
@@ -90,6 +90,24 @@ const TaskDate = ({ colonyAddress, draftId, dueDate, disabled }: Props) => {
                       appearance={{ theme: 'secondary' }}
                       text={{ id: 'button.cancel' }}
                       onClick={() => close(null, { cancelled: true })}
+                    />
+                    <Button
+                      appearance={{ theme: 'danger' }}
+                      disabled={!dueDate}
+                      text={{ id: 'button.remove' }}
+                      onClick={() => {
+                        setFormikState(state => ({
+                          ...state,
+                          values: {},
+                        }));
+                        const result = submitForm();
+                        // use of condition to make flow happy
+                        if (result) {
+                          result.then(() => {
+                            close();
+                          });
+                        }
+                      }}
                     />
                     <Button
                       appearance={{ theme: 'primary' }}

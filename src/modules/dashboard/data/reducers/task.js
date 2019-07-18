@@ -66,6 +66,7 @@ export const taskReducer: EventReducer<
         managerAddress: creatorAddress, // @NOTE: At least for the draft version, the creator will also be the manager
         draftId,
         status: TASK_STATE.ACTIVE,
+        domainId: 1,
       };
     }
     case TASK_TITLE_SET: {
@@ -121,7 +122,7 @@ export const taskReducer: EventReducer<
       const { dueDate } = event.payload;
       return {
         ...task,
-        dueDate: new Date(dueDate),
+        dueDate: dueDate ? new Date(dueDate) : undefined,
       };
     }
     case DOMAIN_SET: {

@@ -38,9 +38,13 @@ type Props = {|
   /** Suffix to display after the individual item when rendering it */
   itemDisplaySuffix?: string,
   /** Callback to call when setting a new item (only when the Form isn't connected) */
-  handleSetItem?: (value: ConsumableItem) => void,
+  handleSetItem?: (value?: ConsumableItem) => void,
   /** The item ID given to the form as the current ID */
   itemId: number | void,
+  /** Whether the selector should be disabled */
+  disabled?: boolean,
+  /** Whether the value can be unset */
+  nullable?: boolean,
   /** @ignore Will be injected by `asField` */
   $id: string,
   /** @ignore Will be injected by `asField` */
@@ -151,6 +155,33 @@ class ItemsList extends Component<Props, State> {
   };
 
   /*
+   * Set the item when clicking the confirm button
+   */
+  handleUnset = (close: () => void) => {
+    const {
+      props: {
+        handleSetItem: callback = (value?: ConsumableItem) => value,
+        connect,
+        setValue,
+      },
+    } = this;
+    this.setState(
+      {
+        setItem: undefined,
+        selectedItem: undefined,
+        listTouched: false,
+      },
+      () => {
+        close();
+        if (!connect) {
+          return callback();
+        }
+        return setValue();
+      },
+    );
+  };
+
+  /*
    * Helper to render an entry in the items list
    *
    * @NOTE This will recursevly render nested children
@@ -210,8 +241,11 @@ class ItemsList extends Component<Props, State> {
         itemDisplayPrefix = '',
         itemDisplaySuffix = '',
         itemId,
+        disabled,
+        nullable,
       },
       handleSet,
+      handleUnset,
       renderListItem,
     } = this;
     const currentItem: ConsumableItem | void = list.find(
@@ -221,7 +255,7 @@ class ItemsList extends Component<Props, State> {
     return (
       <div className={styles.main}>
         <Popover
-          trigger="click"
+          trigger={disabled ? 'disabled' : 'click'}
           placement="bottom"
           onClose={this.handleCleanup}
           showArrow={showArrow}
@@ -238,6 +272,14 @@ class ItemsList extends Component<Props, State> {
                   text={{ id: 'button.cancel' }}
                   onClick={() => this.handleCleanup(close)}
                 />
+                {nullable && (
+                  <Button
+                    appearance={{ theme: 'danger' }}
+                    text={{ id: 'button.remove' }}
+                    disabled={!currentItem}
+                    onClick={() => handleUnset(close)}
+                  />
+                )}
                 <Button
                   appearance={{ theme: 'primary' }}
                   text={{ id: 'button.confirm' }}

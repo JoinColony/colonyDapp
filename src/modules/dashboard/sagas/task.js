@@ -440,7 +440,7 @@ function* taskSetDueDate({
 }: Action<typeof ACTIONS.TASK_SET_DUE_DATE>): Saga<*> {
   try {
     const { event } = yield* executeCommand(setTaskDueDate, {
-      args: { dueDate: dueDate.getTime() },
+      args: { dueDate: dueDate ? dueDate.getTime() : undefined },
       metadata: { colonyAddress, draftId },
     });
     yield put<Action<typeof ACTIONS.TASK_SET_DUE_DATE_SUCCESS>>({
@@ -479,7 +479,6 @@ function* taskFinalize({
     if (!workerAddress)
       throw new Error(`Worker not assigned for task ${draftId}`);
     if (!domainId) throw new Error(`Domain not set for task ${draftId}`);
-    if (!skillId) throw new Error(`Skill not set for task ${draftId}`);
     if (!payouts.length) throw new Error(`No payout set for task ${draftId}`);
     const { amount, token } = payouts[0];
 
@@ -503,23 +502,26 @@ function* taskFinalize({
     };
 
     // create transactions
-    yield fork(createTransaction, moveFundsBetweenPots.id, {
-      context: COLONY_CONTEXT,
-      methodName: 'moveFundsBetweenPots',
-      identifier: colonyAddress,
-      params: {
-        fromPot: 1, // root domain pot
-        toPot,
-        amount: new BigNumber(amount.toString()),
-        token,
-      },
-      group: {
-        key: batchKey,
-        id: meta.id,
-        index: 0,
-      },
-      ready: false,
-    });
+    if (domainId !== 1) {
+      yield fork(createTransaction, moveFundsBetweenPots.id, {
+        context: COLONY_CONTEXT,
+        methodName: 'moveFundsBetweenPots',
+        identifier: colonyAddress,
+        params: {
+          fromPot: 1, // root domain pot
+          toPot,
+          amount: new BigNumber(amount.toString()),
+          token,
+        },
+        group: {
+          key: batchKey,
+          id: meta.id,
+          index: 0,
+        },
+        ready: false,
+      });
+    }
+
     yield fork(createTransaction, makePayment.id, {
       context: COLONY_CONTEXT,
       methodName: 'makePayment',
@@ -529,7 +531,7 @@ function* taskFinalize({
         token,
         amount: new BigNumber(amount.toString()),
         domainId,
-        skillId,
+        skillId: skillId || 0,
       },
       group: {
         key: batchKey,
@@ -540,12 +542,19 @@ function* taskFinalize({
     });
 
     // wait for txs to be created
-    yield takeFrom(moveFundsBetweenPots.channel, ACTIONS.TRANSACTION_CREATED);
+    if (domainId !== 1) {
+      yield takeFrom(moveFundsBetweenPots.channel, ACTIONS.TRANSACTION_CREATED);
+    }
     yield takeFrom(makePayment.channel, ACTIONS.TRANSACTION_CREATED);
 
     // send txs sequentially
-    yield put(transactionReady(moveFundsBetweenPots.id));
-    yield takeFrom(moveFundsBetweenPots.channel, ACTIONS.TRANSACTION_SUCCEEDED);
+    if (domainId !== 1) {
+      yield put(transactionReady(moveFundsBetweenPots.id));
+      yield takeFrom(
+        moveFundsBetweenPots.channel,
+        ACTIONS.TRANSACTION_SUCCEEDED,
+      );
+    }
     yield put(transactionReady(makePayment.id));
     const {
       payload: {

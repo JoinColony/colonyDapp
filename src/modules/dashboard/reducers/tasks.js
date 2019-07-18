@@ -45,12 +45,13 @@ const taskEventReducer = (task: TaskRecordType, event: *): TaskRecordType => {
         currentState: TASK_STATE.ACTIVE,
         draftId,
         managerAddress: creatorAddress,
+        domainId: 1,
       });
     }
 
     case DUE_DATE_SET: {
       const { dueDate } = event.payload;
-      return task.set('dueDate', new Date(dueDate));
+      return task.set('dueDate', dueDate ? new Date(dueDate) : undefined);
     }
 
     case DOMAIN_SET: {
