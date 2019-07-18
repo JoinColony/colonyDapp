@@ -41,6 +41,9 @@ const TaskDescription = ({
     ),
     [colonyAddress, draftId],
   );
+  if (disabled && !description) {
+    return null;
+  }
   return (
     <ActionForm
       enableReinitialize

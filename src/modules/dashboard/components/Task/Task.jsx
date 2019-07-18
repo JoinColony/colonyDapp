@@ -43,7 +43,6 @@ import {
   isCancelled,
   isCreator,
   isFinalized,
-  isPayoutsSet,
   isWorkerSet,
 } from '../../checks';
 import { currentUserSelector } from '../../../users/selectors';
@@ -145,7 +144,7 @@ const Task = ({
       openDialog('TaskEditDialog', {
         draftId,
         maxTokens: 1,
-        minTokens: 1,
+        minTokens: 0,
       });
     },
     [draftId, openDialog, task],
@@ -177,7 +176,7 @@ const Task = ({
             <div>
               <TaskAssignment colonyAddress={colonyAddress} draftId={draftId} />
             </div>
-            {canEdit && !isPayoutsSet(task) && (
+            {canEdit && (
               <div className={styles.assignmentDetailsButton}>
                 <Button
                   appearance={{ theme: 'blue' }}

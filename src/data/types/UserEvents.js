@@ -9,6 +9,7 @@ import type { EventDefinition } from './events';
 
 const {
   ASSIGNED_TO_TASK,
+  UNASSIGNED_FROM_TASK,
   COMMENT_MENTION,
   READ_UNTIL,
   SUBSCRIBED_TO_COLONY,
@@ -76,6 +77,15 @@ export type UserEvents = {|
   >,
   ASSIGNED_TO_TASK: EventDefinition<
     typeof ASSIGNED_TO_TASK,
+    {|
+      colonyAddress: Address,
+      draftId: TaskDraftId,
+      taskTitle: string,
+      sourceUserAddress: string,
+    |},
+  >,
+  UNASSIGNED_FROM_TASK: EventDefinition<
+    typeof UNASSIGNED_FROM_TASK,
     {|
       colonyAddress: Address,
       draftId: TaskDraftId,

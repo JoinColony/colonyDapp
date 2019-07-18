@@ -238,14 +238,12 @@ const GasStationPrice = ({ transaction: { id, gasLimit, error } }: Props) => {
                       <>
                         <Numeral
                           suffix=" ETH"
-                          truncate={6}
                           unit="ether"
                           value={transactionFee}
                         />
                         <div className={styles.transactionFeeEthUsd}>
                           <EthUsd
                             appearance={{ size: 'small', theme: 'grey' }}
-                            truncate={3}
                             unit="ether"
                             value={transactionFee}
                           />

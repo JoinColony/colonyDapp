@@ -8,6 +8,7 @@ export default function loadModule(): PermissionsManifest {
     DUE_DATE_SET: { inherits: 'set-task-due-date' },
     DOMAIN_SET: { inherits: 'set-task-domain' },
     PAYOUT_SET: { inherits: 'set-task-payout' },
+    PAYOUT_REMOVED: { inherits: 'set-task-payout' },
     SKILL_SET: { inherits: 'set-task-skill' },
     TASK_CANCELLED: { inherits: 'cancel-task' },
     TASK_CLOSED: { inherits: 'close-task' },

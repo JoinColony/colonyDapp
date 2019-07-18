@@ -12,3 +12,9 @@
   font-weight: var(--weight-semi);
   color: var(--text);
 }
+
+.highlightNumeral span {
+  font-size: var(--size-small);
+  font-weight: var(--weight-semi);
+  color: var(--text);
+}

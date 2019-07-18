@@ -56,6 +56,7 @@ import {
   setTaskDomain,
   setTaskDueDate,
   setTaskPayout,
+  removeTaskPayout,
   setTaskSkill,
   setTaskTitle,
   unassignWorker,
@@ -67,6 +68,7 @@ import {
 } from '../data/queries';
 import {
   createAssignedInboxEvent,
+  createUnassignedInboxEvent,
   createCommentMention,
   createFinalizedInboxEvent,
   createWorkRequestInboxEvent,
@@ -406,27 +408,85 @@ function* taskSetSkill({
 /*
  * As worker or manager, I want to be able to set a payout
  */
+/*
+ * @NOTE There's a case to be made here about simplifying the `taskSetPayout`
+ * and `taskRemovePayout` sagas, by refactoring them into one, and deling
+ * with the undefined values
+ *
+ * This will cut down on code, but make sure you handle all edge cases
+ * especially when you deal with notification stores, where you don't have
+ * a worker address to fetch them for
+ */
 function* taskSetPayout({
   payload: { colonyAddress, draftId, token, amount },
   meta,
 }: Action<typeof ACTIONS.TASK_SET_PAYOUT>): Saga<*> {
   try {
-    const { event } = yield* executeCommand(setTaskPayout, {
-      args: { token, amount },
-      metadata: { colonyAddress, draftId },
-    });
+    const {
+      record: { payouts },
+    }: { record: TaskType } = yield* selectAsJS(taskSelector, draftId);
+    /*
+     * Edge case, but prevent triggering this saga and subseqent event, if the
+     * payment is the same as the previous one
+     */
+    if (
+      !payouts ||
+      !payouts.length ||
+      !amount.eq(new BigNumber(payouts[0].amount))
+    ) {
+      const { event } = yield* executeCommand(setTaskPayout, {
+        args: { token, amount },
+        metadata: { colonyAddress, draftId },
+      });
 
-    yield put<Action<typeof ACTIONS.TASK_SET_PAYOUT_SUCCESS>>({
-      type: ACTIONS.TASK_SET_PAYOUT_SUCCESS,
-      payload: {
-        colonyAddress,
-        draftId,
-        event,
-      },
-      meta,
-    });
+      yield put<Action<typeof ACTIONS.TASK_SET_PAYOUT_SUCCESS>>({
+        type: ACTIONS.TASK_SET_PAYOUT_SUCCESS,
+        payload: {
+          colonyAddress,
+          draftId,
+          event,
+        },
+        meta,
+      });
+    }
   } catch (error) {
     return yield putError(ACTIONS.TASK_SET_PAYOUT_ERROR, error, meta);
+  }
+  return null;
+}
+
+/*
+ * As worker or manager, I want to be able to remove the payout
+ */
+function* taskRemovePayout({
+  payload: { colonyAddress, draftId },
+  meta,
+}: Action<typeof ACTIONS.TASK_REMOVE_PAYOUT>): Saga<*> {
+  try {
+    const {
+      record: { payouts: currentPayouts },
+    } = yield select(taskSelector, draftId);
+    /*
+     * Prevent triggering this saga and subseqent event,
+     * if there isnt' a payment set
+     */
+    if (currentPayouts && currentPayouts.size) {
+      const { event } = yield* executeCommand(removeTaskPayout, {
+        metadata: { colonyAddress, draftId },
+      });
+
+      yield put<Action<typeof ACTIONS.TASK_REMOVE_PAYOUT_SUCCESS>>({
+        type: ACTIONS.TASK_REMOVE_PAYOUT_SUCCESS,
+        payload: {
+          colonyAddress,
+          draftId,
+          event,
+        },
+        meta,
+      });
+    }
+  } catch (error) {
+    return yield putError(ACTIONS.TASK_REMOVE_PAYOUT_ERROR, error, meta);
   }
   return null;
 }
@@ -664,6 +724,15 @@ function* taskSendWorkRequest({
   return null;
 }
 
+/*
+ * @NOTE There's a case to be made here about simplifying the `taskWorkerAssign`
+ * and `taskWorkerUnassign` sagas, by refactoring them into one, and deling
+ * with the undefined values
+ *
+ * This will cut down on code, but make sure you handle all edge cases
+ * especially when you deal with notification stores, where you don't have
+ * a worker address to fetch them for
+ */
 function* taskWorkerAssign({
   payload: { colonyAddress, draftId, workerAddress },
   meta,
@@ -711,72 +780,101 @@ function* taskWorkerUnassign({
   meta,
 }: Action<typeof ACTIONS.TASK_WORKER_UNASSIGN>): Saga<*> {
   try {
-    const { event } = yield* executeCommand(unassignWorker, {
-      args: { workerAddress },
-      metadata: { colonyAddress, draftId },
-    });
-    yield put<Action<typeof ACTIONS.TASK_WORKER_UNASSIGN_SUCCESS>>({
-      type: ACTIONS.TASK_WORKER_UNASSIGN_SUCCESS,
-      payload: {
-        colonyAddress,
-        draftId,
-        event,
-      },
-      meta,
-    });
+    /*
+     * Edge case, but prevent triggering this saga and subseqent event, if there
+     * isnt' a user already assigned
+     */
+    if (workerAddress) {
+      const userAddress = yield select(walletAddressSelector);
+      const {
+        record: { title: taskTitle },
+      } = yield select(taskSelector, draftId);
+      const eventData = yield* executeCommand(unassignWorker, {
+        args: { workerAddress, userAddress },
+        metadata: { colonyAddress, draftId },
+      });
+
+      if (eventData) {
+        // send a notification to the worker
+        yield* executeCommand(createUnassignedInboxEvent, {
+          args: {
+            colonyAddress,
+            draftId,
+            taskTitle,
+            sourceUserAddress: userAddress,
+          },
+          metadata: { workerAddress },
+        });
+
+        const { event } = eventData;
+        yield put<Action<typeof ACTIONS.TASK_WORKER_UNASSIGN_SUCCESS>>({
+          type: ACTIONS.TASK_WORKER_UNASSIGN_SUCCESS,
+          payload: {
+            colonyAddress,
+            draftId,
+            event,
+          },
+          meta,
+        });
+      }
+    }
   } catch (error) {
     return yield putError(ACTIONS.TASK_WORKER_UNASSIGN_ERROR, error, meta);
   }
   return null;
 }
 
-function* taskSetWorkerAndPayouts({
+function* taskSetWorkerOrPayouts({
   payload: { colonyAddress, draftId, payouts, workerAddress },
   meta,
-}: Action<typeof ACTIONS.TASK_SET_WORKER_AND_PAYOUTS>): Saga<*> {
+}: Action<typeof ACTIONS.TASK_SET_WORKER_OR_PAYOUT>): Saga<*> {
   try {
-    yield call(taskWorkerAssign, {
-      meta: { key: draftId },
-      payload: { colonyAddress, draftId, workerAddress },
-      type: ACTIONS.TASK_WORKER_ASSIGN,
-    });
-
+    const payload = { colonyAddress, draftId };
     const {
-      record: { payouts: existingPayouts },
+      record: { workerAddress: currentWorkerAddress },
     } = yield select(taskSelector, draftId);
-    if (payouts && !(existingPayouts && existingPayouts.length > 0)) {
-      yield all(
-        payouts.map(({ amount, token }) =>
-          call(taskSetPayout, {
-            meta,
-            payload: {
-              colonyAddress,
-              draftId,
-              amount,
-              token,
-            },
-            type: ACTIONS.TASK_SET_PAYOUT,
-          }),
-        ),
-      );
+    if (workerAddress) {
+      yield call(taskWorkerAssign, {
+        meta: { key: draftId },
+        payload: { ...payload, workerAddress },
+        type: ACTIONS.TASK_WORKER_ASSIGN,
+      });
+    } else {
+      yield call(taskWorkerUnassign, {
+        meta: { key: draftId },
+        payload: { ...payload, workerAddress: currentWorkerAddress },
+        type: ACTIONS.TASK_WORKER_UNASSIGN,
+      });
     }
 
-    yield put<Action<typeof ACTIONS.TASK_SET_WORKER_AND_PAYOUTS_SUCCESS>>({
-      type: ACTIONS.TASK_SET_WORKER_AND_PAYOUTS_SUCCESS,
+    if (payouts && payouts.length) {
+      yield call(taskSetPayout, {
+        meta,
+        payload: { ...payload, ...payouts[0] },
+        type: ACTIONS.TASK_SET_PAYOUT,
+      });
+    } else {
+      /*
+       * Last payout, remove it whole
+       */
+      yield call(taskRemovePayout, {
+        meta,
+        payload,
+        type: ACTIONS.TASK_REMOVE_PAYOUT,
+      });
+    }
+
+    yield put<Action<typeof ACTIONS.TASK_SET_WORKER_OR_PAYOUT_SUCCESS>>({
+      type: ACTIONS.TASK_SET_WORKER_OR_PAYOUT_SUCCESS,
       meta,
       payload: {
-        colonyAddress,
-        draftId,
+        ...payload,
         payouts,
         workerAddress,
       },
     });
   } catch (error) {
-    return yield putError(
-      ACTIONS.TASK_SET_WORKER_AND_PAYOUTS_ERROR,
-      error,
-      meta,
-    );
+    return yield putError(ACTIONS.TASK_SET_WORKER_OR_PAYOUT_ERROR, error, meta);
   }
   return null;
 }
@@ -966,10 +1064,11 @@ export default function* tasksSagas(): Saga<void> {
   yield takeEvery(ACTIONS.TASK_SET_DOMAIN, taskSetDomain);
   yield takeEvery(ACTIONS.TASK_SET_DUE_DATE, taskSetDueDate);
   yield takeEvery(ACTIONS.TASK_SET_PAYOUT, taskSetPayout);
+  yield takeEvery(ACTIONS.TASK_REMOVE_PAYOUT, taskRemovePayout);
   yield takeEvery(ACTIONS.TASK_SET_SKILL, taskSetSkill);
   yield takeEvery(ACTIONS.TASK_SET_TITLE, taskSetTitle);
   yield takeEvery(ACTIONS.TASK_SUB_START, taskSubStart);
-  yield takeEvery(ACTIONS.TASK_SET_WORKER_AND_PAYOUTS, taskSetWorkerAndPayouts);
+  yield takeEvery(ACTIONS.TASK_SET_WORKER_OR_PAYOUT, taskSetWorkerOrPayouts);
   yield takeEvery(ACTIONS.TASK_WORKER_ASSIGN, taskWorkerAssign);
   yield takeEvery(ACTIONS.TASK_WORKER_UNASSIGN, taskWorkerUnassign);
   yield takeLeading(ACTIONS.TASK_FETCH_ALL, taskFetchAll);

@@ -20,6 +20,7 @@ const {
   DOMAIN_SET,
   DUE_DATE_SET,
   PAYOUT_SET,
+  PAYOUT_REMOVED,
   SKILL_SET,
   TASK_CANCELLED,
   TASK_CREATED,
@@ -100,14 +101,19 @@ const taskEventReducer = (task: TaskRecordType, event: *): TaskRecordType => {
 
     case PAYOUT_SET: {
       const { amount, token } = event.payload;
-      return task.update('payouts', payouts =>
-        payouts.push(
+      return task.set(
+        'payouts',
+        List([
           TaskPayoutRecord({
             amount,
             token: createAddress(token),
           }),
-        ),
+        ]),
       );
+    }
+
+    case PAYOUT_REMOVED: {
+      return task.set('payouts', List());
     }
 
     default:

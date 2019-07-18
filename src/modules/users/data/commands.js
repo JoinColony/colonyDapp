@@ -31,6 +31,7 @@ import {
 
 import {
   CreateAssignedCommandArgsSchema,
+  CreateUnassignedCommandArgsSchema,
   CreateCommentMentionCommandArgsSchema,
   CreateFinalizedCommandArgsSchema,
   CreateUserProfileCommandArgsSchema,
@@ -438,6 +439,34 @@ export const createAssignedInboxEvent: Command<
   async execute(inboxStore, args) {
     await inboxStore.append(
       createEvent(USER_EVENT_TYPES.ASSIGNED_TO_TASK, args),
+    );
+  },
+};
+
+export const createUnassignedInboxEvent: Command<
+  UserInboxStore,
+  {|
+    workerAddress: Address,
+  |},
+  {|
+    colonyAddress: Address,
+    draftId: TaskDraftId,
+    taskTitle: string,
+    sourceUserAddress: string,
+  |},
+  void,
+> = {
+  name: 'createUnassignedNotification',
+  context: [CONTEXT.DDB_INSTANCE],
+  schema: CreateUnassignedCommandArgsSchema,
+  async prepare({ ddb }, { workerAddress }) {
+    return getUserInboxStoreByProfileAddress(ddb)({
+      walletAddress: workerAddress,
+    });
+  },
+  async execute(inboxStore, args) {
+    await inboxStore.append(
+      createEvent(USER_EVENT_TYPES.UNASSIGNED_FROM_TASK, args),
     );
   },
 };

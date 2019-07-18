@@ -1,8 +1,10 @@
 /* @flow */
 
-import React from 'react';
+// $FlowFixMe until hooks flow types
+import React, { useMemo } from 'react';
 import { defineMessages, FormattedMessage, FormattedNumber } from 'react-intl';
-import BN from 'bn.js';
+import BigNumber from 'bn.js';
+import moveDecimal from 'move-decimal-point';
 
 import Icon from '~core/Icon';
 import Numeral from '~core/Numeral';
@@ -36,11 +38,8 @@ const MSG = defineMessages({
   },
 });
 
-const getNetworkFee = (amount: BN | number, feeInverse: number): BN =>
-  new BN(amount.toString()).div(new BN(feeInverse));
-
 type Props = {|
-  amount: BN | number,
+  amount: BigNumber | number,
   decimals: number,
   symbol: string,
 |};
@@ -50,7 +49,23 @@ const displayName = 'dashboard.Task.Payout.NetworkFee';
 const NetworkFee = ({ amount, decimals, symbol }: Props) => {
   const networkFee = useSelector(networkFeeSelector);
   const networkFeeInverse = useSelector(networkFeeInverseSelector);
-  const feeAmount: BN = getNetworkFee(amount, networkFeeInverse);
+  const metaColonyFee = useMemo(
+    () => {
+      const decimalConvertedAmount = new BigNumber(
+        moveDecimal(amount, parseInt(decimals, 10)),
+      );
+      if (
+        new BigNumber(decimalConvertedAmount).isZero() ||
+        networkFeeInverse === 1
+      ) {
+        return decimalConvertedAmount;
+      }
+      return new BigNumber(decimalConvertedAmount)
+        .div(new BigNumber(networkFeeInverse))
+        .add(new BigNumber(1));
+    },
+    [amount, decimals, networkFeeInverse],
+  );
   return (
     <>
       <div className={styles.amount}>
@@ -61,7 +76,7 @@ const NetworkFee = ({ amount, decimals, symbol }: Props) => {
               <Numeral
                 suffix={` ${symbol}`}
                 unit={decimals}
-                value={feeAmount}
+                value={metaColonyFee}
               />
             ),
           }}

@@ -214,7 +214,11 @@ const messages = defineMessages({
   // payments notifications
   notificationWorkerAssigned: {
     id: 'dashboard.Inbox.InboxItem.notificationWorkerAssigned',
-    defaultMessage: '{user} assigned you as worker for {task}.',
+    defaultMessage: '{user} assigned you as a worker for {task}.',
+  },
+  notificationWorkerUnassigned: {
+    id: 'dashboard.Inbox.InboxItem.notificationWorkerUnassigned',
+    defaultMessage: '{user} removed you as a worker from {task}.',
   },
   notificationWorkRequested: {
     id: 'dashboard.Inbox.InboxItem.notificationWorkRequested',

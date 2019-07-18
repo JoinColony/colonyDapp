@@ -159,7 +159,6 @@ const TransactionListItem = ({
         <Numeral
           value={amount}
           unit="ether"
-          truncate={1}
           /**
            * @todo : what should we show when we don't recognise the token?
            */

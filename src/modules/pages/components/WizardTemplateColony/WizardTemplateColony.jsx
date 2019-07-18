@@ -4,7 +4,6 @@ import { defineMessages, FormattedMessage } from 'react-intl';
 
 // $FlowFixMe upgrade flow
 import React, { useCallback } from 'react';
-import BN from 'bn.js';
 import { toWei } from 'ethjs-unit';
 
 import Numeral from '~core/Numeral';
@@ -58,23 +57,13 @@ const WizardTemplateColony = ({
               <CopyableAddress>{walletAddress}</CopyableAddress>
             </div>
             <div className={styles.moneyContainer}>
-              {new BN(balance).isZero() ? (
+              {ethBalance.isZero() ? (
                 <div className={styles.noMoney}>
-                  <Numeral
-                    suffix=" ETH"
-                    truncate={0}
-                    unit="ether"
-                    value={ethBalance}
-                  />
+                  <Numeral suffix=" ETH" unit="ether" value={ethBalance} />
                 </div>
               ) : (
                 <div className={styles.yeihMoney}>
-                  <Numeral
-                    suffix=" ETH"
-                    truncate={2}
-                    unit="ether"
-                    value={ethBalance}
-                  />
+                  <Numeral suffix=" ETH" unit="ether" value={ethBalance} />
                 </div>
               )}
             </div>

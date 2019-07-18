@@ -204,13 +204,16 @@ const TaskEditDialog = ({
   const existingPayouts = useMemo(
     () =>
       taskPayouts.map(payout => {
-        const { address } =
+        const { address, decimals } =
           (availableTokens &&
             availableTokens.find(token => token.address === payout.token)) ||
           {};
         return {
           token: address,
-          amount: payout.amount,
+          amount: moveDecimal(
+            new BigNumber(payout.amount).toString(10),
+            -1 * parseInt(decimals, 10),
+          ),
           id: payout.token.address,
         };
       }),
@@ -226,6 +229,7 @@ const TaskEditDialog = ({
             walletAddress: yup.string().required(MSG.workerRequiredError),
           }),
         })
+        .nullable()
         .default(null);
       return yup.object().shape({
         payouts: yup
@@ -246,7 +250,9 @@ const TaskEditDialog = ({
             }),
           )
           .min(minTokens)
-          .max(maxTokens),
+          .max(maxTokens)
+          .nullable()
+          .default(null),
         worker: workerShape,
       });
     },
@@ -290,7 +296,10 @@ const TaskEditDialog = ({
             token,
           };
         }),
-        workerAddress: createAddress(p.worker.profile.walletAddress),
+        workerAddress:
+          p.worker && p.worker.profile && p.worker.profile.walletAddress
+            ? createAddress(p.worker.profile.walletAddress)
+            : undefined,
       })),
       mergePayload({ colonyAddress, draftId }),
     ),
@@ -317,9 +326,9 @@ const TaskEditDialog = ({
             payouts: existingPayouts,
             worker: existingWorker,
           }}
-          error={ACTIONS.TASK_SET_WORKER_AND_PAYOUTS_ERROR}
-          submit={ACTIONS.TASK_SET_WORKER_AND_PAYOUTS}
-          success={ACTIONS.TASK_SET_WORKER_AND_PAYOUTS_SUCCESS}
+          error={ACTIONS.TASK_SET_WORKER_OR_PAYOUT_ERROR}
+          submit={ACTIONS.TASK_SET_WORKER_OR_PAYOUT}
+          success={ACTIONS.TASK_SET_WORKER_OR_PAYOUT_SUCCESS}
           transform={transform}
           onSuccess={closeDialog}
           validationSchema={validateForm}

@@ -140,7 +140,6 @@ const Payout = ({
                       size: 'medium',
                       theme: 'grey',
                     }}
-                    unit={decimals}
                     value={amount}
                   />
                 </span>

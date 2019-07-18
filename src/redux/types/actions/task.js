@@ -22,6 +22,7 @@ const {
   DOMAIN_SET,
   DUE_DATE_SET,
   PAYOUT_SET,
+  PAYOUT_REMOVED,
   SKILL_SET,
   TASK_CANCELLED,
   TASK_CLOSED,
@@ -214,6 +215,14 @@ export type TaskActionTypes = {|
     typeof ACTIONS.TASK_MODIFY_WORKER_PAYOUT_SUCCESS,
     void,
   >,
+  TASK_REMOVE_PAYOUT: TaskActionType<typeof ACTIONS.TASK_REMOVE_PAYOUT, void>,
+  TASK_REMOVE_PAYOUT_ERROR: TaskErrorActionType<
+    typeof ACTIONS.TASK_REMOVE_PAYOUT_ERROR,
+  >,
+  TASK_REMOVE_PAYOUT_SUCCESS: TaskActionType<
+    typeof ACTIONS.TASK_REMOVE_PAYOUT_SUCCESS,
+    {| event: Event<typeof PAYOUT_REMOVED> |},
+  >,
   TASK_SEND_WORK_INVITE: TaskActionType<
     typeof ACTIONS.TASK_SEND_WORK_INVITE,
     TaskProps<{ workerAddress: * }>,
@@ -309,21 +318,21 @@ export type TaskActionTypes = {|
     {| events: $Values<TaskEvents>[] |},
   >,
   TASK_SUB_ERROR: TaskErrorActionType<typeof ACTIONS.TASK_SUB_ERROR>,
-  TASK_SET_WORKER_AND_PAYOUTS: TaskActionType<
-    typeof ACTIONS.TASK_SET_WORKER_AND_PAYOUTS,
+  TASK_SET_WORKER_OR_PAYOUT: TaskActionType<
+    typeof ACTIONS.TASK_SET_WORKER_OR_PAYOUT,
     {|
       payouts?: Array<{| token: string, amount: BigNumber |}>,
-      workerAddress: Address,
+      workerAddress?: Address,
     |},
   >,
-  TASK_SET_WORKER_AND_PAYOUTS_ERROR: TaskErrorActionType<
-    typeof ACTIONS.TASK_SET_WORKER_AND_PAYOUTS_ERROR,
+  TASK_SET_WORKER_OR_PAYOUT_ERROR: TaskErrorActionType<
+    typeof ACTIONS.TASK_SET_WORKER_OR_PAYOUT_ERROR,
   >,
-  TASK_SET_WORKER_AND_PAYOUTS_SUCCESS: TaskActionType<
-    typeof ACTIONS.TASK_SET_WORKER_AND_PAYOUTS_SUCCESS,
+  TASK_SET_WORKER_OR_PAYOUT_SUCCESS: TaskActionType<
+    typeof ACTIONS.TASK_SET_WORKER_OR_PAYOUT_SUCCESS,
     {|
       payouts?: Array<{| amount: BigNumber, token: string |}>,
-      workerAddress: Address,
+      workerAddress?: Address,
     |},
   >,
   TASK_SUBMIT_DELIVERABLE: TaskActionType<
@@ -389,14 +398,14 @@ export type TaskActionTypes = {|
     typeof ACTIONS.TASK_WORKER_REVEAL_MANAGER_RATING_SUCCESS,
     void,
   >,
-  TASK_WORKER_UNASSIGN: TaskActionType<
+  TASK_WORKER_UNASSIGN: NonUniqueTaskActionType<
     typeof ACTIONS.TASK_WORKER_UNASSIGN,
     $Required<TaskProps<{ workerAddress: * }>>,
   >,
   TASK_WORKER_UNASSIGN_ERROR: TaskErrorActionType<
     typeof ACTIONS.TASK_WORKER_UNASSIGN_ERROR,
   >,
-  TASK_WORKER_UNASSIGN_SUCCESS: TaskActionType<
+  TASK_WORKER_UNASSIGN_SUCCESS: NonUniqueTaskActionType<
     typeof ACTIONS.TASK_WORKER_UNASSIGN_SUCCESS,
     {| event: Event<typeof WORKER_UNASSIGNED> |},
   >,

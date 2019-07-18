@@ -6,15 +6,18 @@ import { defineMessages, FormattedMessage, injectIntl } from 'react-intl';
 import formatDate from 'sugar-date/date/format';
 
 import type { Address } from '~types';
-import type { TaskFeedItemType } from '~immutable';
+import type { TokenType, TaskFeedItemType } from '~immutable';
 
 import TimeRelative from '~core/TimeRelative';
+import Numeral from '~core/Numeral';
 import taskSkillsTree from '../TaskSkills/taskSkillsTree';
 
 import { TASK_EVENT_TYPES } from '~data/constants';
-import { useSelector } from '~utils/hooks';
+import { useDataFetcher, useSelector } from '~utils/hooks';
 import { domainSelector } from '../../selectors';
+
 import { friendlyUsernameSelector } from '../../../users/selectors';
+import { tokenFetcher } from '../../fetchers';
 
 import styles from '~dashboard/TaskFeed/TaskFeedEvent.css';
 
@@ -22,6 +25,7 @@ const {
   DOMAIN_SET,
   DUE_DATE_SET,
   PAYOUT_SET,
+  PAYOUT_REMOVED,
   SKILL_SET,
   TASK_CANCELLED,
   TASK_CLOSED,
@@ -51,7 +55,11 @@ const MSG = defineMessages({
   },
   payoutSet: {
     id: 'dashboard.TaskFeedEvent.payoutSet',
-    defaultMessage: 'Task payout added by {user}', // Add other text in #943
+    defaultMessage: 'Task payout was set to {payout} by {user}',
+  },
+  payoutRemoved: {
+    id: 'dashboard.TaskFeedEvent.payoutRemoved',
+    defaultMessage: 'Task payout was removed by {user}',
   },
   skillSet: {
     id: 'dashboard.TaskFeedEvent.skillSet',
@@ -177,13 +185,45 @@ const TaskFeedEventDueDateSet = ({
 const TaskFeedEventPayoutSet = ({
   event: {
     meta: { userAddress },
-    // Use more from the action payload in #943
+    payload: { amount, token: tokenAddress },
+  },
+}: *) => {
+  const user = useSelector(friendlyUsernameSelector, [userAddress]);
+  const { data: token } = useDataFetcher<TokenType>(
+    tokenFetcher,
+    [tokenAddress],
+    [tokenAddress],
+  );
+  const { decimals = 18, symbol = '' } = token || {};
+  return (
+    <FormattedMessage
+      {...MSG.payoutSet}
+      values={{
+        user: <span className={styles.highlight}>{user}</span>,
+        payout: (
+          <span className={styles.highlightNumeral}>
+            <Numeral
+              integerSeparator=""
+              unit={decimals}
+              value={amount}
+              suffix={` ${symbol}`}
+            />
+          </span>
+        ),
+      }}
+    />
+  );
+};
+
+const TaskFeedEventPayoutRemoved = ({
+  event: {
+    meta: { userAddress },
   },
 }: *) => {
   const user = useSelector(friendlyUsernameSelector, [userAddress]);
   return (
     <FormattedMessage
-      {...MSG.payoutSet}
+      {...MSG.payoutRemoved}
       values={{ user: <span className={styles.highlight}>{user}</span> }}
     />
   );
@@ -364,6 +404,7 @@ const FEED_EVENT_COMPONENTS = {
   [DOMAIN_SET]: injectIntl(TaskFeedEventDomainSet),
   [DUE_DATE_SET]: TaskFeedEventDueDateSet,
   [PAYOUT_SET]: TaskFeedEventPayoutSet,
+  [PAYOUT_REMOVED]: TaskFeedEventPayoutRemoved,
   [SKILL_SET]: TaskFeedEventSkillSet,
   [TASK_CANCELLED]: TaskFeedEventCancelled,
   [TASK_CLOSED]: TaskFeedEventClosed,
