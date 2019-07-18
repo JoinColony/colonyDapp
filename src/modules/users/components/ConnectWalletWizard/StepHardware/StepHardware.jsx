@@ -6,7 +6,7 @@ import * as yup from 'yup';
 import { connect } from 'react-redux';
 import React, { Component, Fragment } from 'react';
 import { defineMessages } from 'react-intl';
-import { getNetworkClient } from '@colony/colony-js-client';
+import BigNumber from 'bn.js';
 
 import type { WizardProps } from '~core/Wizard';
 import type { Address } from '~types';
@@ -25,7 +25,6 @@ import AddressItem from './AddressItem.jsx';
 
 import { walletSelector } from '../../../selectors';
 import { fetchAccounts as fetchAccountsAction } from '../../../actionCreators';
-import { DEFAULT_NETWORK } from '../../../../core/constants';
 
 import styles from './StepHardware.css';
 
@@ -106,7 +105,7 @@ type FormValues = {
 type Props = WizardProps<FormValues> & {
   fetchAccounts: typeof fetchAccountsAction,
   isLoading: boolean,
-  availableAddresses: Address[],
+  availableAddresses: Array<{ address: Address, balance: BigNumber }>,
 };
 
 class StepHardware extends Component<Props> {
@@ -129,24 +128,6 @@ class StepHardware extends Component<Props> {
     fetchAccounts(method);
   }
 
-  fetchAddressBalance = async address => {
-    const {
-      wizardValues: { method },
-    } = this.props;
-    const networkClient = await getNetworkClient(
-      DEFAULT_NETWORK,
-      /*
-       * @NOTE We're faking a `purser` wallet instance
-       * @BODY As we really don't need the actual wallet, this is just to appease `colonyJS`
-       */
-      {
-        type: WALLET_CATEGORIES.HARDWARE,
-        subtype: method,
-      },
-    );
-    return networkClient.adapter.provider.getBalance(address);
-  };
-
   renderContent(formValues: FormValues) {
     const { availableAddresses, isLoading } = this.props;
     const { hardwareWalletChoice = '', hardwareWalletFilter = '' } = formValues;
@@ -161,7 +142,7 @@ class StepHardware extends Component<Props> {
     }
 
     if (availableAddresses.length) {
-      const filteredWalletChoices = availableAddresses.filter(address =>
+      const filteredWalletChoices = availableAddresses.filter(({ address }) =>
         address
           .toLocaleLowerCase()
           .includes(hardwareWalletFilter.toLowerCase()),
@@ -203,12 +184,12 @@ class StepHardware extends Component<Props> {
                   appearance={{ size: 'normal' }}
                 />
               )}
-            {filteredWalletChoices.map(address => (
+            {filteredWalletChoices.map(({ address, balance }) => (
               <div className={styles.choiceRow} key={address}>
                 <AddressItem
                   address={address}
                   checked={hardwareWalletChoice === address}
-                  fetchAddressBalance={this.fetchAddressBalance}
+                  balance={balance}
                 />
               </div>
             ))}
@@ -253,7 +234,7 @@ class StepHardware extends Component<Props> {
               {this.renderContent(values)}
             </section>
             <FormStatus status={status} />
-            {isValid && (
+            {isValid && values.hardwareWalletChoice && (
               <div className={styles.interactionPrompt}>
                 <WalletInteraction walletType={WALLET_CATEGORIES.HARDWARE} />
               </div>
