@@ -206,7 +206,7 @@ class DDB {
     }
 
     const name = address.path;
-    if (name !== expectedStoreName) {
+    if (name.toLowerCase() !== expectedStoreName.toLowerCase()) {
       throw new Error(
         // eslint-disable-next-line max-len
         `Expected name matching blueprint "${expectedStoreName}" for store "${name}"`,
