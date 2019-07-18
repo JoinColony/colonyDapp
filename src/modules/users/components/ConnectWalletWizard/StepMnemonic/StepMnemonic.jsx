@@ -62,7 +62,7 @@ const displayName = 'users.ConnectWalletWizard.StepMnemonic';
 
 const StepMnemonic = ({
   nextStep,
-  previousStep,
+  resetStep,
   wizardForm,
   wizardValues,
 }: Props) => {
@@ -95,7 +95,7 @@ const StepMnemonic = ({
             <Button
               appearance={{ theme: 'secondary', size: 'large' }}
               text={MSG.buttonBackText}
-              onClick={() => previousStep()}
+              onClick={resetStep}
             />
             <Button
               appearance={{ theme: 'primary', size: 'large' }}

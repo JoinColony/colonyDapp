@@ -230,7 +230,7 @@ class StepHardware extends Component<Props> {
     const {
       nextStep,
       availableAddresses,
-      previousStep,
+      resetStep,
       wizardForm,
       wizardValues,
     } = this.props;
@@ -262,7 +262,7 @@ class StepHardware extends Component<Props> {
               <Button
                 text={MSG.buttonBack}
                 appearance={{ theme: 'secondary', size: 'large' }}
-                onClick={() => previousStep()}
+                onClick={resetStep}
               />
               <Button
                 text={

@@ -100,7 +100,7 @@ const readKeystoreFromFileData = (file: FileReaderFile) => {
 
 const StepJSONUpload = ({
   nextStep,
-  previousStep,
+  resetStep,
   wizardForm,
   wizardValues,
 }: Props) => {
@@ -149,7 +149,7 @@ const StepJSONUpload = ({
             <Button
               appearance={{ theme: 'secondary', size: 'large' }}
               text={MSG.buttonBack}
-              onClick={() => previousStep()}
+              onClick={resetStep}
             />
             <Button
               appearance={{ theme: 'primary', size: 'large' }}
