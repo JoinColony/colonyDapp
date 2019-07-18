@@ -3,13 +3,22 @@
 import type { Saga } from 'redux-saga';
 
 import { eventChannel } from 'redux-saga';
-import { call, put, spawn, take, takeLatest } from 'redux-saga/effects';
+import {
+  call,
+  put,
+  spawn,
+  take,
+  takeLatest,
+  all,
+  delay,
+} from 'redux-saga/effects';
 
 import softwareWallet from '@colony/purser-software';
 import metamaskWallet, { accountChangeHook } from '@colony/purser-metamask';
 import ledgerWallet from '@colony/purser-ledger';
 import trezorWallet from '@colony/purser-trezor';
 import { TrufflepigLoader } from '@colony/colony-js-contract-loader-http';
+import { getNetworkClient } from '@colony/colony-js-client';
 
 import type { Action } from '~redux';
 import type { Address } from '~types';
@@ -17,8 +26,9 @@ import type { Address } from '~types';
 import { create, putError } from '~utils/saga/effects';
 import { ACTIONS } from '~redux';
 import { createAddress } from '~types';
-import { WALLET_SPECIFICS } from '~immutable';
+import { WALLET_SPECIFICS, WALLET_CATEGORIES } from '~immutable';
 import { HARDWARE_WALLET_DEFAULT_ADDRESS_COUNT } from '../constants';
+import { DEFAULT_NETWORK } from '../../core/constants';
 
 // This should be typed better
 type WalletInstance = Object;
@@ -32,18 +42,48 @@ const hardwareWallets = {
   trufflepig: softwareWallet,
 };
 
+function* fetchAddressBalance(address, provider) {
+  const checkSumedAddress = yield call(createAddress, address);
+  /*
+   * Some... level of not hitting the provider very hard, could be improved
+   */
+  yield delay(2000);
+  const balance = yield call(
+    [provider, provider.getBalance],
+    checkSumedAddress,
+  );
+  return {
+    address: checkSumedAddress,
+    balance,
+  };
+}
+
 function* fetchAccounts(
   action: Action<typeof ACTIONS.WALLET_FETCH_ACCOUNTS>,
 ): Saga<*> {
   const { walletType } = action.payload;
 
   try {
-    const wallet = yield call(hardwareWallets[walletType].open, {
+    const { otherAddresses } = yield call(hardwareWallets[walletType].open, {
       addressCount: HARDWARE_WALLET_DEFAULT_ADDRESS_COUNT,
     });
+
+    const {
+      adapter: { provider },
+    } = yield call(getNetworkClient, DEFAULT_NETWORK, {
+      type: WALLET_CATEGORIES.HARDWARE,
+      subtype: walletType,
+    });
+
+    const addressesWithBalance = yield all(
+      otherAddresses.map(address =>
+        call(fetchAddressBalance, address, provider),
+      ),
+    );
+
     yield put<Action<typeof ACTIONS.WALLET_FETCH_ACCOUNTS_SUCCESS>>({
       type: ACTIONS.WALLET_FETCH_ACCOUNTS_SUCCESS,
-      payload: { allAddresses: wallet.otherAddresses.map(createAddress) },
+      payload: { allAddresses: addressesWithBalance },
     });
   } catch (err) {
     return yield putError(ACTIONS.WALLET_FETCH_ACCOUNTS_ERROR, err);
