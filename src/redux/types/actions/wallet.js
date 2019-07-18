@@ -1,5 +1,4 @@
 /* @flow */
-import type BigNumber from 'bn.js';
 
 import type { WalletSpecificType, WalletCategoryType } from '~immutable';
 import type { Address } from '~types';
@@ -48,7 +47,7 @@ export type WalletActionTypes = {|
   WALLET_FETCH_ACCOUNTS_SUCCESS: ActionTypeWithPayload<
     typeof ACTIONS.WALLET_FETCH_ACCOUNTS_SUCCESS,
     {|
-      allAddresses: Array<{| address: Address, balance: BigNumber |}>,
+      allAddresses: Address[],
     |},
   >,
 |};
