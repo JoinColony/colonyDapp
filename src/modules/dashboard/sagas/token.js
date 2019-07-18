@@ -31,7 +31,7 @@ function* tokenInfoFetch({
 }: Action<typeof ACTIONS.TOKEN_INFO_FETCH>): Saga<*> {
   // if trying to fetch info for Ether, return hardcoded
   if (tokenAddress === ZERO_ADDRESS) {
-    yield put<Action<typeof ACTIONS.TOKEN_INFO_FETCH_SUCCESS>>({
+    return yield put<Action<typeof ACTIONS.TOKEN_INFO_FETCH_SUCCESS>>({
       type: ACTIONS.TOKEN_INFO_FETCH_SUCCESS,
       payload: {
         isVerified: true,
@@ -73,8 +73,9 @@ function* tokenInfoFetch({
       meta,
     });
   } catch (error) {
-    yield putError(ACTIONS.TOKEN_INFO_FETCH_ERROR, error, meta);
+    return yield putError(ACTIONS.TOKEN_INFO_FETCH_ERROR, error, meta);
   }
+  return null;
 }
 
 function* tokenCreate({
