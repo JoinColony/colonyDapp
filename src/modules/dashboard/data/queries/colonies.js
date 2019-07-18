@@ -18,9 +18,9 @@ import type {
   Event,
   NetworkClient,
   Query,
+  Subscription,
   Wallet,
 } from '~data/types';
-
 import type { ColonyType, DomainType } from '~immutable';
 
 import BigNumber from 'bn.js';
@@ -172,6 +172,93 @@ export const getColonyRoles: ContractEventQuery<
       admins,
       founder,
     };
+  },
+};
+
+export const subscribeToColony: Subscription<
+  {|
+    colonyClient: ColonyClient,
+    colonyStore: ColonyStore,
+    colonyAddress: Address,
+  |},
+  ColonyStoreMetadata,
+  *,
+  ColonyType,
+> = {
+  name: 'subscribeToColony',
+  context: colonyContext,
+  async prepare(
+    {
+      colonyManager,
+      ddb,
+      wallet,
+    }: {|
+      colonyManager: ColonyManager,
+      ddb: DDB,
+      wallet: Wallet,
+    |},
+    metadata: ColonyStoreMetadata,
+  ) {
+    const { colonyAddress } = metadata;
+    const colonyClient = await colonyManager.getColonyClient(colonyAddress);
+    const colonyStore = await getColonyStore(colonyClient, ddb, wallet)(
+      metadata,
+    );
+    return {
+      colonyClient,
+      colonyStore,
+      colonyAddress,
+    };
+  },
+  async execute({ colonyStore, colonyClient, colonyAddress }) {
+    const { inRecoveryMode } = await colonyClient.isInRecoveryMode.call();
+    const { version } = await colonyClient.getVersion.call();
+
+    // wrap this in a try/catch since it will fail if token doesn't support locking
+    let isNativeTokenLocked;
+    try {
+      ({
+        locked: isNativeTokenLocked,
+      } = await colonyClient.tokenClient.isLocked.call());
+    } catch (error) {
+      isNativeTokenLocked = false;
+    }
+
+    // estimate will throw if we're unable to unlock
+    let canUnlockNativeToken;
+    try {
+      await colonyClient.tokenClient.unlock.estimate({});
+      canUnlockNativeToken = isNativeTokenLocked;
+    } catch (error) {
+      canUnlockNativeToken = false;
+    }
+
+    // @TODO Normalize colony subscription events
+    return emitter => [
+      colonyStore.subscribe(events =>
+        emitter(
+          events &&
+            events
+              .filter(({ type }) => COLONY_EVENT_TYPES[type])
+              .reduce(colonyReducer, {
+                avatarHash: undefined,
+                colonyAddress,
+                colonyName: '',
+                displayName: '',
+                inRecoveryMode,
+                isNativeTokenLocked,
+                canUnlockNativeToken,
+                tokens: {
+                  // also include Ether
+                  [ZERO_ADDRESS.toString()]: {
+                    address: ZERO_ADDRESS,
+                  },
+                },
+                version,
+              }),
+        ),
+      ),
+    ];
   },
 };
 

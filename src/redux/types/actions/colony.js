@@ -309,6 +309,22 @@ export type ColonyActionTypes = {|
     { admins: Address[], founder: Address },
     WithKey,
   >,
+  COLONY_SUB_START: ActionTypeWithPayloadAndMeta<
+    typeof ACTIONS.COLONY_SUB_START,
+    {| colonyAddress: Address |},
+    WithKey,
+  >,
+  COLONY_SUB_STOP: ActionTypeWithPayloadAndMeta<
+    typeof ACTIONS.COLONY_SUB_STOP,
+    {| colonyAddress: Address |},
+    WithKey,
+  >,
+  COLONY_SUB_EVENTS: ActionTypeWithPayloadAndMeta<
+    typeof ACTIONS.COLONY_SUB_EVENTS,
+    {| colony: ColonyType, colonyAddress: Address |},
+    WithKey,
+  >,
+  COLONY_SUB_ERROR: ErrorActionType<typeof ACTIONS.COLONY_SUB_ERROR, WithKey>,
   COLONY_VERSION_UPGRADE: UniqueActionType<
     typeof ACTIONS.COLONY_VERSION_UPGRADE,
     {| colonyAddress: Address |},

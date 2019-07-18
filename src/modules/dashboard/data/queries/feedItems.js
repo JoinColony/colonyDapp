@@ -90,31 +90,32 @@ export const subscribeTaskFeedItems: Subscription<
   name: 'subscribeTaskFeedItems',
   context: [CONTEXT.COLONY_MANAGER, CONTEXT.DDB_INSTANCE, CONTEXT.WALLET],
   prepare,
-  execute({ commentsStore, taskStore }, args, emitter) {
+  async execute({ commentsStore, taskStore }) {
     // Store previous events for each store so that the events can be combined
     // @todo Simplify and improve performance of task feed items subscription
     let commentsEvents: Event<*> = [];
     let taskEvents: Event<*> = [];
 
-    const emitCombinedEvents = () => {
+    const emitCombinedEvents = emitter =>
       emitter(
         // Interleave events such that they are sorted chronologically
         [...commentsEvents, ...taskEvents].sort(
           (eventA, eventB) => eventA.meta.timestamp - eventB.meta.timestamp,
         ),
       );
+
+    return emitter => {
+      const commentsSub = commentsStore.subscribe(events => {
+        commentsEvents = events;
+        emitCombinedEvents(emitter);
+      });
+
+      const taskSub = taskStore.subscribe(events => {
+        taskEvents = events;
+        emitCombinedEvents(emitter);
+      });
+
+      return [commentsSub, taskSub];
     };
-
-    const commentsSub = commentsStore.subscribe(events => {
-      commentsEvents = events;
-      emitCombinedEvents();
-    });
-
-    const taskSub = taskStore.subscribe(events => {
-      taskEvents = events;
-      emitCombinedEvents();
-    });
-
-    return [commentsSub, taskSub];
   },
 };

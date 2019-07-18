@@ -8,6 +8,7 @@ import {
   delay,
   fork,
   put,
+  take,
   takeEvery,
   takeLatest,
   select,
@@ -20,6 +21,7 @@ import {
   takeFrom,
   executeCommand,
   executeQuery,
+  executeSubscription,
 } from '~utils/saga/effects';
 import { ACTIONS } from '~redux';
 
@@ -35,6 +37,7 @@ import {
   getColonyCanMintNativeToken,
   getColonyTasks,
   getColonyTokenBalance,
+  subscribeToColony,
 } from '../data/queries';
 
 import { createTransaction, getTxChannel } from '../../core/sagas';
@@ -444,6 +447,46 @@ function* colonyNativeTokenUnlock({
   return null;
 }
 
+function* colonySubStart({ payload: { colonyAddress }, meta }: *): Saga<*> {
+  // @TODO: Generalize subscription sagas
+  // @BODY This could be generalised (it's very similar to the above function),
+  // but it's probably worth waiting to see, as this pattern will likely change
+  // as it gets used elsewhere.
+  let channel;
+  try {
+    channel = yield call(executeSubscription, subscribeToColony, {
+      metadata: { colonyAddress },
+    });
+
+    yield fork(function* stopSubscription() {
+      yield take(
+        action =>
+          action.type === ACTIONS.COLONY_SUB_STOP &&
+          action.payload.colonyAddress === colonyAddress,
+      );
+      channel.close();
+    });
+
+    while (true) {
+      const colony = yield take(channel);
+      yield put({
+        type: ACTIONS.COLONY_SUB_EVENTS,
+        meta,
+        payload: {
+          colonyAddress,
+          colony,
+        },
+      });
+    }
+  } catch (caughtError) {
+    return yield putError(ACTIONS.COLONY_SUB_ERROR, caughtError, meta);
+  } finally {
+    if (channel && typeof channel.close == 'function') {
+      channel.close();
+    }
+  }
+}
+
 export default function* colonySagas(): Saga<void> {
   yield takeEvery(ACTIONS.COLONY_ADDRESS_FETCH, colonyAddressFetch);
   yield takeEvery(
@@ -468,4 +511,5 @@ export default function* colonySagas(): Saga<void> {
     ACTIONS.COLONY_NAME_CHECK_AVAILABILITY,
     colonyNameCheckAvailability,
   );
+  yield takeEvery(ACTIONS.COLONY_SUB_START, colonySubStart);
 }

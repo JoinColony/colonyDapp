@@ -2,6 +2,8 @@
 
 import type { ContextName } from '~context';
 
+export type EventCallback<R> = R => void;
+
 /*
  * The specification for a data subscription.
  *
@@ -21,8 +23,7 @@ export type Subscription<D, M, A, R> = {|
   execute: (
     deps: D,
     args: ?A,
-    emitter: (R) => void,
-  ) => {| stop: () => void |}[],
+  ) => Promise<(emitter: EventCallback<R>) => {| stop: () => void |}[]>,
   name: string,
   prepare: (context: *, metadata: M) => Promise<D>,
 |};

@@ -10,11 +10,15 @@ import {
   taskFeedItemsSubStop,
   taskSubStart,
   taskSubStop,
+  colonySubStart,
+  colonySubStop,
 } from './actionCreators';
+
 import {
   taskFeedItemsSelector,
   taskSelector,
   tasksByIdsSelector,
+  colonySelector,
 } from './selectors';
 
 export const taskFeedItemsSubscriber = Object.freeze({
@@ -33,4 +37,10 @@ export const tasksByIdSubscriber = Object.freeze({
   select: tasksByIdsSelector,
   start: taskSubStart,
   stop: taskSubStop,
+});
+
+export const colonySubscriber = Object.freeze({
+  select: colonySelector,
+  start: colonySubStart,
+  stop: colonySubStop,
 });
