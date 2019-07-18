@@ -871,18 +871,7 @@
     exec-sh "^0.3.2"
     minimist "^1.2.0"
 
-"@colony/colony-js-adapter-ethers@^1.12.1":
-  version "1.12.1"
-  resolved "https://registry.yarnpkg.com/@colony/colony-js-adapter-ethers/-/colony-js-adapter-ethers-1.12.1.tgz#7a2c4cf093d98f91896edc70da64142d3c14c473"
-  integrity sha512-G/E6c3+VjEA7gSbrLjPJZ00OvK54IohEU1k1ri3xrglNFA13g3ONpd5J4axC7GD181Kk9gYQS0qWbqmyxfGA/Q==
-  dependencies:
-    "@colony/colony-js-adapter" "^1.12.0"
-    "@colony/colony-js-contract-loader" "^1.12.0"
-    "@colony/colony-js-utils" "^1.12.0"
-    babel-runtime "^6.26.0"
-    ethers "3.0.27"
-
-"@colony/colony-js-adapter-ethers@^1.12.2":
+"@colony/colony-js-adapter-ethers@^1.12.1", "@colony/colony-js-adapter-ethers@^1.12.2":
   version "1.12.2"
   resolved "https://registry.yarnpkg.com/@colony/colony-js-adapter-ethers/-/colony-js-adapter-ethers-1.12.2.tgz#bcf69a6644ebd48b79992634c1ba7411e1273785"
   integrity sha512-TmzYU8DfjsaLQOeRXYchLbszOTT9+59WY3uWT07HoCDbyJ5/rDFOOgkD6/tJ4Z858m6PBYMe6zUXQMf/rpvnrg==
@@ -7760,10 +7749,10 @@ g-status@^2.0.2:
     matcher "^1.0.0"
     simple-git "^1.85.0"
 
-ganache-cli@6.4.1:
-  version "6.4.1"
-  resolved "https://registry.yarnpkg.com/ganache-cli/-/ganache-cli-6.4.1.tgz#77c1682883a544dcad160b0e8155e282aefb4f1f"
-  integrity sha512-MUZ1DNnmlTrXnH6EuINuew75AI9d/wbIC0WpZCJo5Endsf6ZwEvfnfxGMpEnVizRri1mon2WWxLGAmALDxVcRQ==
+ganache-cli@^6.5.0:
+  version "6.5.0"
+  resolved "https://registry.yarnpkg.com/ganache-cli/-/ganache-cli-6.5.0.tgz#5b2198c2931d3f2d3a2e239943a7b7073f9df651"
+  integrity sha512-z0NAozUg/JFWhisIxYlRLyCoZfO+X2W2ao6BAyCkgwAON1Xvj1n+xSZb8YQm1ShOPQQXFrodsYasYGHwvf+PMQ==
   dependencies:
     bn.js "4.11.8"
     source-map-support "0.5.9"
