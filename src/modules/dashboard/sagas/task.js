@@ -408,6 +408,15 @@ function* taskSetSkill({
 /*
  * As worker or manager, I want to be able to set a payout
  */
+/*
+ * @NOTE There's a case to be made here about simplifying the `taskSetPayout`
+ * and `taskRemovePayout` sagas, by refactoring them into one, and deling
+ * with the undefined values
+ *
+ * This will cut down on code, but make sure you handle all edge cases
+ * especially when you deal with notification stores, where you don't have
+ * a worker address to fetch them for
+ */
 function* taskSetPayout({
   payload: { colonyAddress, draftId, token, amount },
   meta,
@@ -715,6 +724,15 @@ function* taskSendWorkRequest({
   return null;
 }
 
+/*
+ * @NOTE There's a case to be made here about simplifying the `taskWorkerAssign`
+ * and `taskWorkerUnassign` sagas, by refactoring them into one, and deling
+ * with the undefined values
+ *
+ * This will cut down on code, but make sure you handle all edge cases
+ * especially when you deal with notification stores, where you don't have
+ * a worker address to fetch them for
+ */
 function* taskWorkerAssign({
   payload: { colonyAddress, draftId, workerAddress },
   meta,
