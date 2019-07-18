@@ -6,6 +6,7 @@ import { EventStore } from '~lib/database/stores';
 import { PermissiveAccessController } from '../accessControllers';
 
 export type UserInboxStoreProps = {|
+  chainId: string,
   walletAddress: Address,
 |};
 
@@ -16,7 +17,8 @@ export type UserInboxStoreBlueprint = StoreBlueprint<
 
 const userInboxStoreBlueprint: UserInboxStoreBlueprint = Object.freeze({
   getAccessController: () => new PermissiveAccessController(),
-  getName: ({ walletAddress }) => `userInbox.${walletAddress}`,
+  getName: ({ chainId, walletAddress }) =>
+    `network.${chainId}.userInbox.${walletAddress}`,
   type: EventStore,
 });
 

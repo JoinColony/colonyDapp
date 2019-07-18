@@ -11,6 +11,7 @@ import loadPermissionManifest from '../permissions';
 
 export type TaskStoreProps = {|
   colonyAddress: Address,
+  chainId: string,
   draftId: TaskDraftId,
   wallet: WalletObjectType,
   colonyClient: ColonyClientType,
@@ -51,11 +52,8 @@ export type TaskStoreBlueprint = StoreBlueprint<
 
 const taskStoreBlueprint: TaskStoreBlueprint = Object.freeze({
   getAccessController: getTaskStoreAccessController,
-  getName: ({ colonyAddress, draftId }) => {
-    if (!(colonyAddress && draftId))
-      throw new Error('Could not generate task store name');
-    return `colony.${colonyAddress}.task.${draftId}`;
-  },
+  getName: ({ chainId, colonyAddress, draftId }) =>
+    `network.${chainId}.colony.${colonyAddress}.task.${draftId}`,
   type: EventStore,
 });
 

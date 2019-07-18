@@ -8,6 +8,7 @@ import { PermissiveAccessController } from '../accessControllers';
 
 export type CommentsStoreProps = {|
   colonyAddress: Address,
+  chainId: string,
   draftId: TaskDraftId,
 |};
 
@@ -18,12 +19,8 @@ export type CommentsStoreBlueprint = StoreBlueprint<
 
 const commentsStoreBlueprint: CommentsStoreBlueprint = Object.freeze({
   getAccessController: () => new PermissiveAccessController(),
-  getName: ({ colonyAddress, draftId }) => {
-    if (!(colonyAddress && draftId)) {
-      throw new Error('Could not generate task comments store name');
-    }
-    return `colony.${colonyAddress}.task.${draftId}.comments`;
-  },
+  getName: ({ chainId, colonyAddress, draftId }) =>
+    `network.${chainId}.colony.${colonyAddress}.task.${draftId}.comments`,
   type: EventStore,
 });
 
