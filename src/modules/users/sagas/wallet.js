@@ -44,10 +44,6 @@ const hardwareWallets = {
 
 function* fetchAddressBalance(address, provider) {
   const checkSumedAddress = yield call(createAddress, address);
-  /*
-   * Some... level of not hitting the provider very hard, could be improved
-   */
-  yield delay(2000);
   const balance = yield call(
     [provider, provider.getBalance],
     checkSumedAddress,
