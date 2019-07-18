@@ -3,15 +3,7 @@
 import type { Saga } from 'redux-saga';
 
 import { eventChannel } from 'redux-saga';
-import {
-  call,
-  put,
-  spawn,
-  take,
-  takeLatest,
-  all,
-  delay,
-} from 'redux-saga/effects';
+import { call, put, spawn, take, takeLatest, all } from 'redux-saga/effects';
 
 import softwareWallet from '@colony/purser-software';
 import metamaskWallet, { accountChangeHook } from '@colony/purser-metamask';
