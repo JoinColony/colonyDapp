@@ -90,21 +90,22 @@ const ColonyHome = ({
     [colonyName],
   );
 
+  const colonyArgs = [colonyAddress || undefined];
   const {
     data: colony,
     isFetching: isFetchingColony,
     error: colonyError,
-  } = useDataSubscriber<*>(colonySubscriber, [colonyAddress], [colonyAddress]);
+  } = useDataSubscriber<*>(colonySubscriber, colonyArgs, colonyArgs);
 
   const { data: permissions } = useDataFetcher<UserPermissionsType>(
     currentUserColonyPermissionsFetcher,
-    [colonyAddress],
-    [colonyAddress],
+    colonyArgs,
+    colonyArgs,
   );
 
   const nativeTokenRef: ?TokenReferenceType = useSelector(
     colonyNativeTokenSelector,
-    [colonyAddress],
+    colonyArgs,
   );
 
   const transform = useCallback(mergePayload({ colonyAddress }), [
