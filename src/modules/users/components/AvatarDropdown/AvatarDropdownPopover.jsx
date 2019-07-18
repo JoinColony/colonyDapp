@@ -1,12 +1,10 @@
 /* @flow */
 
 import React, { Component } from 'react';
-import { defineMessages, FormattedMessage } from 'react-intl';
+import { defineMessages } from 'react-intl';
 import compose from 'recompose/compose';
 import { withRouter } from 'react-router-dom';
 
-import type { IBrowserHistory } from 'history';
-import type { OpenDialog } from '~core/Dialog/types';
 import { ActionButton } from '~core/Button';
 import { ACTIONS } from '~redux';
 
@@ -21,8 +19,8 @@ import DropdownMenu, {
   DropdownMenuSection,
   DropdownMenuItem,
 } from '~core/DropdownMenu';
-import Link from '~core/Link';
 import NavLink from '~core/NavLink';
+import ExternalLink from '~core/ExternalLink';
 
 import type { UserType } from '~immutable';
 
@@ -64,8 +62,6 @@ const MSG = defineMessages({
 type Props = {
   closePopover: () => void,
   user: UserType,
-  openDialog: OpenDialog,
-  history: IBrowserHistory,
 };
 
 class AvatarDropdownPopover extends Component<Props> {
@@ -117,19 +113,25 @@ class AvatarDropdownPopover extends Component<Props> {
   renderHelperSection = () => (
     <DropdownMenuSection separator>
       <DropdownMenuItem>
-        <Link to="/" text={MSG.requestFeatures} />
+        <ExternalLink
+          href="https://help.colony.io/hc/en-us/community/topics/360001237594"
+          text={MSG.requestFeatures}
+          className={styles.externalLink}
+        />
       </DropdownMenuItem>
       <DropdownMenuItem>
-        <Link to="/" text={MSG.reportBugs} />
+        <ExternalLink
+          href="https://help.colony.io/hc/en-us/community/topics/360001293833"
+          text={MSG.reportBugs}
+          className={styles.externalLink}
+        />
       </DropdownMenuItem>
       <DropdownMenuItem>
-        <a
+        <ExternalLink
           href="https://help.colony.io/"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <FormattedMessage {...MSG.helpCenter} />
-        </a>
+          text={MSG.helpCenter}
+          className={styles.externalLink}
+        />
       </DropdownMenuItem>
     </DropdownMenuSection>
   );
