@@ -72,7 +72,7 @@ const accountIndexOptions = Array.from({ length: 10 }).map((_, value) => ({
 
 const displayName = 'users.ConnectWalletWizard.StepTrufflePig';
 
-const StepTrufflePig = ({ previousStep, wizardForm, wizardValues }: Props) => {
+const StepTrufflePig = ({ resetWizard, wizardForm, wizardValues }: Props) => {
   const [isLoading, setIsLoading] = useState(true);
   const [isValid, setIsValid] = useState(false);
   const [accountIndex, setAccountIndex] = useState(0);
@@ -174,7 +174,7 @@ const StepTrufflePig = ({ previousStep, wizardForm, wizardValues }: Props) => {
             <Button
               text={MSG.buttonBack}
               appearance={{ theme: 'secondary', size: 'large' }}
-              onClick={() => previousStep()}
+              onClick={resetWizard}
             />
             {isValid ? (
               <Button

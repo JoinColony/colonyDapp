@@ -7,7 +7,7 @@ import trezorWallet from '@colony/purser-trezor';
 import type { WalletSpecificType } from '~immutable';
 
 import withWizard from '~core/Wizard/withWizard';
-import ConnectWalletWizard from './ConnectWalletWizard.jsx';
+import WizardTemplate from '~pages/WizardTemplate/WizardTemplate.jsx';
 import StepStart from './StepStart';
 import StepHardware from './StepHardware';
 import StepMetaMask from './StepMetaMask';
@@ -16,8 +16,6 @@ import StepJSONUpload from './StepJSONUpload';
 import StepTrufflePig from './StepTrufflePig';
 
 import { WALLET_SPECIFICS } from '~immutable';
-
-const stepArray = [StepStart, StepMetaMask];
 
 type StepValues = {
   method: WalletSpecificType,
@@ -34,25 +32,25 @@ const enhancedHardwareStep = (
 // This is a step function to allow the wizard flow to branch
 // off into two instead of just stepping through an array in a linear manner
 const stepFunction = (step: number, { method }: StepValues) => {
-  if (step === 1) {
-    switch (method) {
-      case WALLET_SPECIFICS.TREZOR:
-        return enhancedHardwareStep(trezorWallet);
-      case WALLET_SPECIFICS.LEDGER:
-        return enhancedHardwareStep(ledgerWallet);
-      case WALLET_SPECIFICS.METAMASK:
-        return StepMetaMask;
-      case WALLET_SPECIFICS.MNEMONIC:
-        return StepMnemonic;
-      case WALLET_SPECIFICS.JSON:
-        return StepJSONUpload;
-      case WALLET_SPECIFICS.TRUFFLEPIG:
-        return StepTrufflePig;
-      default:
-        break;
-    }
+  if (!step) {
+    return StepStart;
   }
-  return stepArray[step];
+  switch (method) {
+    case WALLET_SPECIFICS.TREZOR:
+      return enhancedHardwareStep(trezorWallet);
+    case WALLET_SPECIFICS.LEDGER:
+      return enhancedHardwareStep(ledgerWallet);
+    case WALLET_SPECIFICS.METAMASK:
+      return StepMetaMask;
+    case WALLET_SPECIFICS.MNEMONIC:
+      return StepMnemonic;
+    case WALLET_SPECIFICS.JSON:
+      return StepJSONUpload;
+    case WALLET_SPECIFICS.TRUFFLEPIG:
+      return StepTrufflePig;
+    default:
+      return StepStart;
+  }
 };
 
 const ConnectWalletContainer = compose(
@@ -60,6 +58,6 @@ const ConnectWalletContainer = compose(
     steps: stepFunction,
     stepCount: 3,
   }),
-)(ConnectWalletWizard);
+)(WizardTemplate);
 
 export default ConnectWalletContainer;

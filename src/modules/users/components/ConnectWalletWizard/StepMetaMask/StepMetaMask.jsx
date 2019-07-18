@@ -133,7 +133,7 @@ class MetaMask extends Component<Props, State> {
   };
 
   render() {
-    const { nextStep, previousStep, wizardForm, wizardValues } = this.props;
+    const { nextStep, resetWizard, wizardForm, wizardValues } = this.props;
     const { isLoading, isValid, metamaskError } = this.state;
     return (
       <ActionForm
@@ -187,7 +187,7 @@ class MetaMask extends Component<Props, State> {
               <Button
                 text={MSG.buttonBack}
                 appearance={{ theme: 'secondary', size: 'large' }}
-                onClick={() => previousStep()}
+                onClick={resetWizard}
               />
               {isValid ? (
                 <Button
