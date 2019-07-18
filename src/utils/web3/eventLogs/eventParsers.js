@@ -6,6 +6,7 @@ import type {
 } from '@colony/colony-js-client';
 
 import BigNumber from 'bn.js';
+import { FUNDING_POT_TYPE_PAYMENT } from '@colony/colony-js-client';
 
 import type { ContractTransactionType } from '~immutable';
 import type { Address } from '~types';
@@ -108,7 +109,7 @@ export const parseColonyFundsMovedBetweenFundingPotsEvent = async ({
  * parsed, and ColonyClient, return a ContractTransactionType object.
  */
 export const parsePayoutClaimedEvent = async ({
-  event: { taskId, role, amount, token },
+  event: { potId, amount, token },
   log: { transactionHash: hash },
   log,
   colonyClient,
@@ -116,16 +117,18 @@ export const parsePayoutClaimedEvent = async ({
   colonyClient: ColonyClientType,
   event: Object,
   log: Object,
-}): Promise<ContractTransactionType> => {
+}): Promise<?ContractTransactionType> => {
   const date = await getLogDate(colonyClient.adapter.provider, log);
-
-  const { address: to } = await colonyClient.getTaskRole.call({ taskId, role });
+  const { typeId: paymentId, type } = await colonyClient.getFundingPot.call({
+    potId,
+  });
+  if (type !== FUNDING_POT_TYPE_PAYMENT) return undefined;
+  const { recipient: to } = await colonyClient.getPayment.call({ paymentId });
   return createContractTxObj({
     amount,
     date,
     hash,
     incoming: false,
-    taskId,
     to,
     token,
   });
