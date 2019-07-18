@@ -66,6 +66,11 @@ const withWizard = ({ steps, stepCount: maxSteps }: WizardArgs) => (
       return true;
     };
 
+    reset = () => {
+      this.setState({ step: 0, values: new List() });
+      this.setValues(new List());
+    };
+
     render() {
       const { step, values } = this.state;
       const allValues = all(values);
@@ -83,6 +88,7 @@ const withWizard = ({ steps, stepCount: maxSteps }: WizardArgs) => (
           stepCount,
           nextStep: this.next,
           previousStep: this.prev,
+          resetStep: this.reset,
           wizardValues: allValues,
           ...this.props,
         },
@@ -91,6 +97,7 @@ const withWizard = ({ steps, stepCount: maxSteps }: WizardArgs) => (
           stepCount,
           nextStep: this.next,
           previousStep: this.prev,
+          resetStep: this.reset,
           wizardValues: allValues,
           // Wizard form helpers to take some shortcuts if needed
           wizardForm: {
