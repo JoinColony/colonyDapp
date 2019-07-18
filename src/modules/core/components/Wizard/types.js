@@ -5,7 +5,7 @@ export type WizardProps<FormValues> = {
   stepCount: number,
   nextStep: (values: FormValues) => void,
   previousStep: () => void,
-  resetStep: () => void,
+  resetWizard: () => void,
   wizardValues: FormValues,
   wizardForm: {
     initialValues: { [formValue: string]: any },

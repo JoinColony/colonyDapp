@@ -88,7 +88,7 @@ const withWizard = ({ steps, stepCount: maxSteps }: WizardArgs) => (
           stepCount,
           nextStep: this.next,
           previousStep: this.prev,
-          resetStep: this.reset,
+          resetWizard: this.reset,
           wizardValues: allValues,
           ...this.props,
         },
@@ -97,7 +97,7 @@ const withWizard = ({ steps, stepCount: maxSteps }: WizardArgs) => (
           stepCount,
           nextStep: this.next,
           previousStep: this.prev,
-          resetStep: this.reset,
+          resetWizard: this.reset,
           wizardValues: allValues,
           // Wizard form helpers to take some shortcuts if needed
           wizardForm: {
