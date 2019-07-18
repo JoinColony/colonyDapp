@@ -7,7 +7,7 @@ import trezorWallet from '@colony/purser-trezor';
 import type { WalletSpecificType } from '~immutable';
 
 import withWizard from '~core/Wizard/withWizard';
-import ConnectWalletWizard from './ConnectWalletWizard.jsx';
+import WizardTemplate from '~pages/WizardTemplate/WizardTemplate.jsx';
 import StepStart from './StepStart';
 import StepHardware from './StepHardware';
 import StepMetaMask from './StepMetaMask';
@@ -60,6 +60,6 @@ const ConnectWalletContainer = compose(
     steps: stepFunction,
     stepCount: 3,
   }),
-)(ConnectWalletWizard);
+)(WizardTemplate);
 
 export default ConnectWalletContainer;
