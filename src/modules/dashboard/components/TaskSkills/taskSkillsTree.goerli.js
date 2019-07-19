@@ -123,7 +123,7 @@ const taskSkills: ConsumableItem[] = [
   },
   {
     id: -2,
-    name: 'Engineering & Technology ',
+    name: 'Engineering & Technology',
   },
   {
     id: 47,
@@ -167,7 +167,7 @@ const taskSkills: ConsumableItem[] = [
   },
   {
     id: -3,
-    name: 'Programming, Scripting, and Markup Languages',
+    name: 'Programming, Scripting, & Markup Languages',
   },
   {
     id: 55,
@@ -300,7 +300,7 @@ const taskSkills: ConsumableItem[] = [
   },
   {
     id: -5,
-    name: 'Tools, Frameworks, and Libraries',
+    name: 'Tools, Frameworks, & Libraries',
   },
   {
     id: 80,
@@ -378,7 +378,7 @@ const taskSkills: ConsumableItem[] = [
   },
   {
     id: 94,
-    name: 'Research and Development',
+    name: 'Research & Development',
     parent: -6,
   },
   {
