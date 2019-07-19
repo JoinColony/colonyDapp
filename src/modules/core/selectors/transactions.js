@@ -1,15 +1,14 @@
 /* @flow */
 
-import { Map as ImmutableMap } from 'immutable';
-
 import { createSelector } from 'reselect';
+import { Map as ImmutableMap } from 'immutable';
 
 import type { RootStateRecord, TransactionRecordType } from '~immutable';
 
+import { TRANSACTION_STATUSES } from '~immutable';
 import { walletAddressSelector } from '../../users/selectors';
 import { isMultisig, isPendingMultisig } from '../checks';
 import { messageGroups } from './messages';
-
 import {
   CORE_NAMESPACE as ns,
   CORE_TRANSACTIONS,
@@ -71,7 +70,9 @@ export const groupedTransactions = createSelector(
 export const pendingTransactions = createSelector(
   allTransactions,
   transactions =>
-    transactions.filter(tx => tx.status === 'pending').sort(createdAtDesc),
+    transactions
+      .filter(tx => tx.status === TRANSACTION_STATUSES.PENDING)
+      .sort(createdAtDesc),
 );
 
 export const multisigTransactions = createSelector(
