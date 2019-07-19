@@ -36,11 +36,11 @@ const MSG = defineMessages({
   },
   labelAdminList: {
     id: 'admin.Organizations.labelAdminList',
-    defaultMessage: 'Name',
+    defaultMessage: 'Users',
   },
   labelDomainList: {
     id: 'admin.Organizations.labelDomainList',
-    defaultMessage: 'Name',
+    defaultMessage: 'Domains',
   },
   noCurrentAdmins: {
     id: 'admin.Organizations.noCurrentAdmins',

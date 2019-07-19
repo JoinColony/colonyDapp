@@ -65,8 +65,7 @@ const MSG = defineMessages({
   },
   networkError: {
     id: 'dashboard.TaskClaimRewardDialog.networkError',
-    defaultMessage:
-      'There was an error with the network. Please try again later.',
+    defaultMessage: 'There was an error with the network. Try again.',
   },
   networkFee: {
     id: 'dashboard.TaskClaimRewardDialog.networkFee',

@@ -27,7 +27,7 @@ import styles from './OrganizationAddAdmins.css';
 const MSG = defineMessages({
   labelAddAdmins: {
     id: 'admin.Organizations.OrganizationAddAdmins.labelAddAdmins',
-    defaultMessage: 'Add new admin',
+    defaultMessage: 'Add New Admin',
   },
   placeholderAddAdmins: {
     id: 'admin.Organizations.OrganizationAddAdmins.placeholderAddAdmins',

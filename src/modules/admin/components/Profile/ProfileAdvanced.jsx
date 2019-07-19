@@ -34,17 +34,17 @@ const MSG = defineMessages({
   },
   buttonRecoveryMode: {
     id: 'admin.Profile.ProfileAdvanced.buttonRecoveryMode',
-    defaultMessage: 'Turn on recovery Mode',
+    defaultMessage: 'Turn on Recovery mode',
   },
   headingRecoveryMode: {
     id: 'admin.Profile.ProfileAdvanced.headingRecoveryMode',
-    defaultMessage: 'Recovery Mode',
+    defaultMessage: 'Recovery mode',
   },
   inRecoveryMode: {
     id: 'admin.Profile.ProfileAdvanced.inRecoveryMode',
     defaultMessage: `{inRecoveryMode, select,
-      true {Colony is in recovery mode}
-      false {Colony is not in recovery mode}
+      true {Colony is in Recovery mode}
+      false {Colony is not in Recovery mode}
     }`,
   },
   tokenLockedHeading: {

@@ -8,7 +8,7 @@ import styles from './RecoveryModeAlert.css';
 const MSG = defineMessages({
   message: {
     id: 'admin.RecoveryModeAlert.message',
-    defaultMessage: 'This colony is in recovery mode!',
+    defaultMessage: 'This colony is in Recovery mode!',
   },
 });
 
