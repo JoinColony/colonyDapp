@@ -44,7 +44,7 @@ const MSG = defineMessages({
   },
   linkEditToken: {
     id: 'dashboard.Wallet.linkEditToken',
-    defaultMessage: 'Edit Tokens',
+    defaultMessage: 'Edit tokens',
   },
   linkViewTransactions: {
     id: 'dashboard.Wallet.linkViewTransactions',
