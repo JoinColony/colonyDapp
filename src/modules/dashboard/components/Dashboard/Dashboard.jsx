@@ -42,7 +42,7 @@ const MSG = defineMessages({
   },
   helpText: {
     id: 'dashboard.Dashboard.helpText',
-    defaultMessage: 'Need help using Colony? Visit our Help Center',
+    defaultMessage: 'Need help using Colony? Visit our {helpCenter}',
   },
   linkHelpCenter: {
     id: 'dashboard.Dashboard.linkHelpCenter',
@@ -137,10 +137,17 @@ class Dashboard extends Component<Props, State> {
         </main>
         <aside className={styles.sidebar}>
           <p className={styles.helpText}>
-            <FormattedMessage {...MSG.helpText} />
-            <br />
-            <br />
-            <ExternalLink text={MSG.linkHelpCenter} href="#" />
+            <FormattedMessage
+              {...MSG.helpText}
+              values={{
+                helpCenter: (
+                  <ExternalLink
+                    text={MSG.linkHelpCenter}
+                    href="https://help.colony.io/"
+                  />
+                ),
+              }}
+            />
           </p>
         </aside>
       </div>
