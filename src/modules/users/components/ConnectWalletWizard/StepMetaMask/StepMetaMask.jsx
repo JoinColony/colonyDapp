@@ -34,10 +34,10 @@ const MSG = defineMessages({
   errorHeading: {
     id: 'users.ConnectWalletWizard.StepMetaMask.errorHeading',
     defaultMessage: `{metamaskError, select,
-      notAuthorized {MetaMask is not authorized to access this domain}
-      cancelSign {Signing of the MetaMask authorization message was cancelled}
-      notAvailable {The MetaMask extension is not available}
-      other {Oops we couldn't detect MetaMask}
+      notAuthorized {MetaMask is not authorized to access this domain.}
+      cancelSign {Signing of the MetaMask authorization message was cancelled.}
+      notAvailable {The MetaMask extension is not available.}
+      other {Oops! We were unable to detect MetaMask.}
     }`,
   },
   errorOpenMetamask: {
@@ -46,7 +46,7 @@ const MSG = defineMessages({
   },
   buttonAdvance: {
     id: 'users.ConnectWalletWizard.StepMetaMask.button.advance',
-    defaultMessage: 'Go to Colony',
+    defaultMessage: 'Continue',
   },
   buttonBack: {
     id: 'users.ConnectWalletWizard.StepMetaMask.button.back',

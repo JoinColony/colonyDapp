@@ -38,7 +38,7 @@ const MSG = defineMessages({
   },
   buttonAdvance: {
     id: 'users.ConnectWalletWizard.StepTrufflePig.button.advance',
-    defaultMessage: 'Go to Colony',
+    defaultMessage: 'Continue',
   },
   buttonBack: {
     id: 'users.ConnectWalletWizard.StepTrufflePig.button.back',

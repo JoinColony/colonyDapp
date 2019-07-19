@@ -148,7 +148,12 @@ const StepTokenChoice = ({ nextStep, wizardForm, wizardValues }: Props) => (
             }}
             text={MSG.notSure}
           />
-          <ExternalLink className={styles.link} text={MSG.learnMore} href="#" />
+          <ExternalLink
+            className={styles.link}
+            text={MSG.learnMore}
+            // eslint-disable-next-line max-len
+            href="https://help.colony.io/hc/en-us/articles/360024589073-How-to-choose-a-native-token"
+          />
         </div>
       </section>
     }
