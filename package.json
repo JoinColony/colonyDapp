@@ -211,6 +211,7 @@
         "scroll-into-view-if-needed": "^2.2.16",
         "sugar-core": "^2.0.4",
         "sugar-date": "^2.0.4",
+        "web3-eth-abi": "1.0.0-beta.36",
         "web3-utils": "^1.0.0-beta.27",
         "yup": "^0.27.0"
     }

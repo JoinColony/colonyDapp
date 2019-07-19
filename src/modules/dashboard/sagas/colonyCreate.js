@@ -20,6 +20,7 @@ import { ACTIONS } from '~redux';
 import { CONTEXT, getContext } from '~context';
 
 import { decorateLog } from '~utils/web3/eventLogs/events';
+import { parseExtensionDeployedLog } from '~utils/web3/eventLogs/eventParsers';
 import { normalizeTransactionLog } from '~data/normalizers';
 import { createColonyProfile } from '../data/commands';
 
@@ -351,10 +352,6 @@ function* colonyCreate({
     );
 
     const colonyManager = yield* getContext(CONTEXT.COLONY_MANAGER);
-    const colonyClient = yield call(
-      [colonyManager, colonyManager.getColonyClient],
-      colonyAddress,
-    );
 
     /*
      * Create label
@@ -407,11 +404,17 @@ function* colonyCreate({
      * Deploy OldRoles
      */
     yield put(transactionReady(deployOldRoles.id));
-    yield takeFrom(deployOldRoles.channel, ACTIONS.TRANSACTION_SUCCEEDED);
-    const { address: oldRolesAddress } = yield call(
-      [colonyClient.getExtensionAddress, colonyClient.getExtensionAddress.call],
-      { contractName: 'OldRoles' },
-    );
+
+    const {
+      payload: {
+        transaction: {
+          receipt: {
+            logs: [deployOldRolesLog],
+          },
+        },
+      },
+    } = yield takeFrom(deployOldRoles.channel, ACTIONS.TRANSACTION_SUCCEEDED);
+    const oldRolesAddress = parseExtensionDeployedLog(deployOldRolesLog);
 
     /*
      * Set OldRoles role
@@ -428,11 +431,17 @@ function* colonyCreate({
      * Deploy OneTx
      */
     yield put(transactionReady(deployOneTx.id));
-    yield takeFrom(deployOneTx.channel, ACTIONS.TRANSACTION_SUCCEEDED);
-    const { address: oneTxAddress } = yield call(
-      [colonyClient.getExtensionAddress, colonyClient.getExtensionAddress.call],
-      { contractName: 'OneTxPayment' },
-    );
+
+    const {
+      payload: {
+        transaction: {
+          receipt: {
+            logs: [deployOneTxLog],
+          },
+        },
+      },
+    } = yield takeFrom(deployOneTx.channel, ACTIONS.TRANSACTION_SUCCEEDED);
+    const oneTxAddress = parseExtensionDeployedLog(deployOneTxLog);
 
     /*
      * Set OneTx role

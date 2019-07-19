@@ -4,6 +4,7 @@ import type {
   ColonyClient as ColonyClientType,
   TokenClient as TokenClientType,
 } from '@colony/colony-js-client';
+import Web3EthAbi from 'web3-eth-abi';
 
 import BigNumber from 'bn.js';
 import { FUNDING_POT_TYPE_PAYMENT } from '@colony/colony-js-client';
@@ -215,4 +216,27 @@ export const parseUserTransferEvent = async ({
     to,
     token,
   });
+};
+
+// Obtain the deployed extension address from an `ExtensionDeployed` log
+export const parseExtensionDeployedLog = (log: *) => {
+  const { _extension: extensionAddress } = Web3EthAbi.decodeLog(
+    [
+      {
+        type: 'string',
+        name: '_name',
+      },
+      {
+        type: 'address',
+        name: '_colony',
+      },
+      {
+        type: 'address',
+        name: '_extension',
+      },
+    ],
+    log.data,
+    log.topics,
+  );
+  return extensionAddress;
 };
