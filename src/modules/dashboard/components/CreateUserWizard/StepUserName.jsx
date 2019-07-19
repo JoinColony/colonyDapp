@@ -37,7 +37,7 @@ const MSG = defineMessages({
     id: 'dashboard.CreateUserWizard.StepUserName.descriptionOne',
     defaultMessage:
       // eslint-disable-next-line max-len
-      `Let's get your account set up. All we need is a username.`,
+      `Let's get your account set up. Pick a username.`,
   },
   label: {
     id: 'dashboard.CreateUserWizard.StepUserName.label',
@@ -61,9 +61,8 @@ const MSG = defineMessages({
   },
   tooltip: {
     id: 'dashboard.CreateUserWizard.StepUserName.tooltip',
-    defaultMessage: `We use ENS to create a .joincolony.eth subdomain for
-      your wallet address. This allows us to provide a good user experience
-      while using a fully decentralized architecture.`,
+    // eslint-disable-next-line max-len
+    defaultMessage: `We use ENS to create a .joincolony.eth subdomain for your colony. You can use this to create a custom URL and invite people to join your colony.`,
   },
   statusText: {
     id: 'users.CreateUserWizard.StepUserName.statusText',

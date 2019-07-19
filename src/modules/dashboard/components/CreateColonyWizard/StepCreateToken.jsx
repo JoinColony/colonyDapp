@@ -45,11 +45,11 @@ const MSG = defineMessages({
   },
   helpTokenSymbol: {
     id: 'dashboard.CreateColonyWizard.StepCreateToken.helpTokenSymbol',
-    defaultMessage: 'E.g.: (MAT), up to 4 characters',
+    defaultMessage: 'e.g., MAT, AMEX',
   },
   helpTokenName: {
     id: 'dashboard.CreateColonyWizard.StepCreateToken.helpTokenName',
-    defaultMessage: 'E.g.: My Awesome Token',
+    defaultMessage: 'e.g., My Awesome Token',
   },
   labelTokenIcon: {
     id: 'dashboard.CreateColonyWizard.StepCreateToken.labelTokenIcon',
