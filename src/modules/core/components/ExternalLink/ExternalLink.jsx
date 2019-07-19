@@ -31,7 +31,8 @@ const ExternalLink = ({
   className,
 }: Props) => {
   // eslint-disable-next-line max-len
-  const typeOfText = typeof text == 'string' ? text : text && formatMessage(text, textValues);
+  const typeOfText =
+    typeof text == 'string' ? text : text && formatMessage(text, textValues);
   const linkText = typeOfText || href;
   return (
     <a

@@ -21,6 +21,11 @@
   overflow-wrap: break-word;
 }
 
+.dynamicSection a {
+  font-weight: var(--weight-normal);
+  color: var(--text);
+}
+
 .editColony {
   display: inline-block;
 
