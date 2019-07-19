@@ -33,6 +33,8 @@
     "placeholder.email": "handle@domain.com",
     "placeholder.password": "Password",
 
+    "wallet.metamask": "MetaMask",
+
     "transaction.debug.description": "DEBUG: context: {context} methodName: {methodName}",
 
     "transaction.network.registerUserLabel.title": "Claim Username",

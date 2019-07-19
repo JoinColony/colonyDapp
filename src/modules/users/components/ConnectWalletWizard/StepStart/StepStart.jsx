@@ -34,10 +34,6 @@ const MSG = defineMessages({
     id: 'users.ConnectWalletWizard.StepStart.createWalletSubtitle',
     defaultMessage: 'Create an Etherum wallet to join',
   },
-  metaMaskTitle: {
-    id: 'users.ConnectWalletWizard.StepStart.metaMaskTitle',
-    defaultMessage: 'MetaMask',
-  },
   trezorTitle: {
     id: 'users.ConnectWalletWizard.StepStart.trezorTitle',
     defaultMessage: 'Trezor Hardware Wallet',
@@ -93,7 +89,7 @@ const displayName = 'users.ConnectWalletWizard.StepStart';
 const options = [
   {
     value: WALLET_SPECIFICS.METAMASK,
-    title: MSG.metaMaskTitle,
+    title: { id: 'wallet.metamask' },
     subtitle: MSG.metaMaskSubtitle,
     icon: 'metamask',
   },

@@ -14,13 +14,9 @@ const MSG = defineMessages({
   walletPromptText: {
     id: 'users.GasStation.WalletInteraction.walletPromptText',
     defaultMessage: `Please finish the transaction on {walletType, select,
-      metamask {Metamask}
+      metamask {MetaMask}
       hardware {your hardware wallet}
     }`,
-  },
-  metamask: {
-    id: 'users.GasStation.WalletInteraction.metamask',
-    defaultMessage: 'Metamask Wallet',
   },
   hardware: {
     id: 'users.GasStation.WalletInteraction.hardware',
@@ -44,14 +40,14 @@ const WalletInteraction = ({ walletType }: Props) => {
         {walletType === WALLET_CATEGORIES.METAMASK && (
           <Icon
             name="metamask"
-            title={MSG.metamask}
+            title={{ id: 'wallet.metamask' }}
             appearance={{ size: 'medium' }}
           />
         )}
         {walletType === WALLET_CATEGORIES.HARDWARE && (
           <Icon
             name="wallet"
-            title={MSG.metamask}
+            title={MSG.hardware}
             appearance={{ size: 'medium' }}
           />
         )}

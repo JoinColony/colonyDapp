@@ -153,7 +153,7 @@ class MetaMask extends Component<Props, State> {
               <div className={styles.iconContainer}>
                 <Icon
                   name="metamask"
-                  title="metamask"
+                  title={{ id: 'wallet.metamask' }}
                   appearance={{ size: 'medium' }}
                 />
               </div>
