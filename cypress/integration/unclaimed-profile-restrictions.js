@@ -25,7 +25,7 @@ describe('Unclaimed Profile Restrictions', () => {
       /*
        * Here we also test the copy
        */
-      .should('have.text', 'Go to Colony')
+      .should('have.text', 'Continue')
       .click();
   });
 
