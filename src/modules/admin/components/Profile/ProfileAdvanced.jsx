@@ -159,7 +159,11 @@ const ProfileAdvanced = ({
                 {...MSG.tokenLockedInfo}
                 values={{
                   link: (
-                    <ExternalLink text={MSG.tokenLockedLearnMore} href="#" />
+                    <ExternalLink
+                      text={MSG.tokenLockedLearnMore}
+                      // eslint-disable-next-line max-len
+                      href="https://help.colony.io/hc/en-us/articles/360025429094-How-to-unlock-your-colony-s-native-token"
+                    />
                   ),
                 }}
               />
