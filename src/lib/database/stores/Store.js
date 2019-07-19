@@ -5,8 +5,8 @@ import { raceAgainstTimeout } from '../../../utils/async';
 import { log } from '../../../utils/debug';
 import PinnerConnector from '../../ipfs/PinnerConnector';
 
-const REPLICATION_HACK_INTERVAL = 1000;
-const REPLICATION_HACK_TIMEOUT = 60 * 1000;
+const REPLICATION_KEEP_ALIVE_TIMEOUT = 3 * 1000;
+const REPLICATION_TIMEOUT = 10 * 1000;
 const LOAD_TIMEOUT = 30 * 1000;
 
 /**
@@ -24,8 +24,16 @@ class Store {
 
   _busyPromise: ?Promise<void>;
 
+  _replicationTimeout: TimeoutID | null;
+
   constructor(orbitStore: OrbitDBStore, name: string, pinner: PinnerConnector) {
     this._orbitStore = orbitStore;
+    this._orbitStore.events.on('replicate', () =>
+      this._renewReplicationTimeout(REPLICATION_KEEP_ALIVE_TIMEOUT),
+    );
+    this._orbitStore.events.on('replicate.progress', () =>
+      this._renewReplicationTimeout(REPLICATION_KEEP_ALIVE_TIMEOUT),
+    );
     this._name = name;
     this._pinner = pinner;
     this._busyPromise = null;
@@ -44,20 +52,18 @@ class Store {
     return this._orbitStore._oplog.length;
   }
 
-  async _loadHeads() {
-    const address = this.address.toString();
-    // Let's see whether we have local heads already
-    const heads = await this.ready();
+  _renewReplicationTimeout(ms: number) {
+    if (this._replicationTimeout) clearTimeout(this._replicationTimeout);
+    this._replicationTimeout = setTimeout(() => {
+      if (this._replicationTimeout) {
+        clearTimeout(this._replicationTimeout);
+        this._replicationTimeout = null;
+      }
+    }, ms);
+  }
 
-    if (heads && heads.length) {
-      log.verbose(`we have heads for store ${address}`);
-      /**
-       * @todo Improve error modes for failed pinned store requests
-       * @body We have *some* heads and just assume it's going to be ok. We request the pinned store anyways but don't have to wait for any count. We'll replicate whenever it's convenient. We're calling this synchronously as we don't care about the result _right now_. This could be dangerous in case of an unfinished replication. We have to account for that Quick fix could be to just also wait for the full replication, which might be a performance hit
-       */
-      this.replicate().catch(log.warn);
-      return;
-    }
+  async _loadEntries() {
+    await this.ready();
 
     try {
       await this.replicate();
@@ -89,38 +95,25 @@ class Store {
         this.length
       } for store ${address}`,
     );
-    /**
-     * @todo Improve replication check
-     * @body This is not super accurate as the pinner could have the same number of heads but different ones. This can be improved but checking other internal states (like orbit stores do?). For now it's probably ok. Also, maybe it doesn't really need to be super accurate, as we're replicating anyways.
-     */
-    // We only block this call if we have 0 heads and the pinner has some
-    if (!this.length && headCount) {
-      log.verbose(`Waiting for partial replication for store ${address}`);
 
-      /*
-       * This is our way of dealing with replication anxiety.
-       *
-       * If Orbit had a reliable way of determining when a store was replicated
-       * (preferably that worked in parallel with other replication requests?)
-       * then we would absolutely use that.
-       *
-       * https://media.giphy.com/media/WQguiWV2XdbDq/giphy.gif
-       */
+    if (this.length < headCount) {
+      log.verbose(`Replicating store ${address}`);
+      // Wait for a store replication to start
+      this._renewReplicationTimeout(5000);
       let interval;
       await raceAgainstTimeout(
         new Promise(resolve => {
           interval = setInterval(() => {
-            if (this.length) {
+            if (!this._replicationTimeout) {
               clearInterval(interval);
               resolve();
             }
-          }, REPLICATION_HACK_INTERVAL);
+          }, 500);
         }),
-        REPLICATION_HACK_TIMEOUT,
-        new Error('Replication error'),
+        REPLICATION_TIMEOUT,
+        new Error('Replication timeout (Pinner might still have more heads)'),
         () => clearInterval(interval),
       );
-
       log.verbose(`Store sucessfully replicated: ${address}`);
     }
   }
@@ -130,7 +123,7 @@ class Store {
       return this._busyPromise;
     }
     try {
-      this._busyPromise = this._loadHeads();
+      this._busyPromise = this._loadEntries();
       return this._busyPromise;
     } catch (caughtError) {
       // We just throw the error again. We're just using this to be able to set the busy indicator easily
