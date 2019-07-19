@@ -11,7 +11,7 @@ type Props = {|
   /** The page it should link to */
   href: string,
   /** A string or a `messageDescriptor` that make up the link's text */
-  text: MessageDescriptor | string,
+  text?: MessageDescriptor | string,
   /** Values for text (react-intl interpolation) */
   textValues?: MessageValues,
   /** @ignore injected by `react-intl` */
@@ -30,8 +30,9 @@ const ExternalLink = ({
   intl: { formatMessage },
   className,
 }: Props) => {
-  const linkText =
-    typeof text == 'string' ? text : text && formatMessage(text, textValues);
+  // eslint-disable-next-line max-len
+  const typeOfText = typeof text == 'string' ? text : text && formatMessage(text, textValues);
+  const linkText = typeOfText || href;
   return (
     <a
       className={className || styles.main}
