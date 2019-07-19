@@ -1,5 +1,7 @@
 /* @flow */
 
+import BigNumber from 'bn.js';
+
 import type { Address } from '~types';
 import type { ColonyManager, ColonyClient, Query } from '~data/types';
 import type { ContractTransactionType } from '~immutable';
@@ -11,6 +13,7 @@ import {
   parsePayoutClaimedEvent,
   parseUnclaimedTransferEvent,
 } from '~utils/web3/eventLogs';
+import { ZERO_ADDRESS } from '~utils/web3/constants';
 
 import { CONTEXT } from '~context';
 
@@ -42,7 +45,7 @@ export const getColonyTransactions: ContractEventQuery<
       contract: { address: colonyAddress },
       events: {
         ColonyFundsClaimed,
-        ColonyFundsMovedBetweenFundingPots,
+        // ColonyFundsMovedBetweenFundingPots,
         PayoutClaimed,
       },
     } = colonyClient;
@@ -55,7 +58,13 @@ export const getColonyTransactions: ContractEventQuery<
         blocksBack: 400000,
         events: [
           ColonyFundsClaimed,
-          ColonyFundsMovedBetweenFundingPots,
+          /*
+            @todo Refactor Colony transactions
+            @body The Colony transactions list is currently really just
+            events, vaguely displayed as transactions. It should be refactored
+            along with the user wallet transactions list.
+           */
+          // ColonyFundsMovedBetweenFundingPots,
           PayoutClaimed,
         ],
       },
@@ -122,6 +131,36 @@ export const getColonyUnclaimedTransactions: ContractEventQuery<
         }),
       ),
     );
+
+    // Get ether balance and add a fake transaction if there's any unclaimed
+    const colonyEtherBalance = await colonyClient.adapter.provider.getBalance(
+      colonyAddress,
+    );
+    const {
+      total: colonyNonRewardsPotsTotal,
+    } = await colonyClient.getNonRewardPotsTotal.call({ token: ZERO_ADDRESS });
+    const {
+      balance: colonyRewardsPotTotal,
+    } = await colonyClient.getFundingPotBalance.call({
+      potId: 0,
+      token: ZERO_ADDRESS,
+    });
+    const unclaimedEther = new BigNumber(
+      colonyEtherBalance
+        .sub(colonyNonRewardsPotsTotal)
+        .sub(colonyRewardsPotTotal)
+        .toString(10),
+    );
+    if (unclaimedEther.gtn(0)) {
+      unclaimedTransfers.push({
+        amount: unclaimedEther,
+        colonyAddress,
+        date: new Date(),
+        hash: '0x0',
+        incoming: true,
+        token: ZERO_ADDRESS,
+      });
+    }
 
     return unclaimedTransfers.filter(Boolean);
   },
