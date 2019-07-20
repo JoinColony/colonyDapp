@@ -19,19 +19,27 @@ const TASKS_FILTER_MSG = defineMessages({
     id: 'dashboard.tasksFilter.filterOptionCompleted',
     defaultMessage: 'Completed',
   },
+  filterOptionDiscarded: {
+    id: 'dashboard.tasksFilter.filterOptionDiscarded',
+    defaultMessage: 'Discarded',
+  },
 });
 
 export const TASKS_FILTER_OPTIONS = Object.freeze({
-  ALL: 'ALL',
+  ALL_OPEN: 'ALL_OPEN',
   CREATED: 'CREATED',
   ASSIGNED: 'ASSIGNED',
   COMPLETED: 'COMPLETED',
+  DISCARDED: 'DISCARDED',
 });
 
 export type TasksFilterOptionType = $Keys<typeof TASKS_FILTER_OPTIONS>;
 
 export const tasksFilterSelectOptions = [
-  { label: TASKS_FILTER_MSG.filterOptionAll, value: TASKS_FILTER_OPTIONS.ALL },
+  {
+    label: TASKS_FILTER_MSG.filterOptionAll,
+    value: TASKS_FILTER_OPTIONS.ALL_OPEN,
+  },
   {
     label: TASKS_FILTER_MSG.filterOptionCreated,
     value: TASKS_FILTER_OPTIONS.CREATED,
@@ -43,5 +51,9 @@ export const tasksFilterSelectOptions = [
   {
     label: TASKS_FILTER_MSG.filterOptionCompleted,
     value: TASKS_FILTER_OPTIONS.COMPLETED,
+  },
+  {
+    label: TASKS_FILTER_MSG.filterOptionDiscarded,
+    value: TASKS_FILTER_OPTIONS.DISCARDED,
   },
 ];

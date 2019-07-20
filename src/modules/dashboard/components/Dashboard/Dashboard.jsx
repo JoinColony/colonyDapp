@@ -67,7 +67,7 @@ class Dashboard extends Component<Props, State> {
   static displayName = 'dashboard.Dashboard';
 
   state = {
-    filterOption: TASKS_FILTER_OPTIONS.ALL,
+    filterOption: TASKS_FILTER_OPTIONS.ALL_OPEN,
     tabIndex: 0,
   };
 
