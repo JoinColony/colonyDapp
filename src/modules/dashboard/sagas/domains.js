@@ -10,13 +10,13 @@ import {
   takeFrom,
   executeQuery,
   executeCommand,
-  putNotification,
+  // putNotification,
 } from '~utils/saga/effects';
 import { ACTIONS } from '~redux';
 
-import { getContext, CONTEXT } from '~context';
-import { decorateLog } from '~utils/web3/eventLogs/events';
-import { normalizeTransactionLog } from '~data/normalizers';
+// import { getContext, CONTEXT } from '~context';
+// import { decorateLog } from '~utils/web3/eventLogs/events';
+// import { normalizeTransactionLog } from '~data/normalizers';
 
 import { createTransaction, getTxChannel } from '../../core/sagas';
 import { COLONY_CONTEXT } from '../../core/constants';
@@ -71,11 +71,11 @@ function* domainCreate({
     const {
       payload: {
         eventData: { domainId: id },
-        transaction: {
-          receipt: {
-            logs: [, domainAddedLog],
-          },
-        },
+        // transaction: {
+        //   receipt: {
+        //     logs: [, domainAddedLog],
+        //   },
+        // },
       },
     } = yield takeFrom(txChannel, ACTIONS.TRANSACTION_SUCCEEDED);
 
@@ -98,17 +98,17 @@ function* domainCreate({
       payload: { colonyAddress, domain: { id, name } },
     });
 
-    const colonyManager = yield* getContext(CONTEXT.COLONY_MANAGER);
-    const colonyClient = yield call(
-      [colonyManager, colonyManager.getColonyClient],
-      colonyAddress,
-    );
+    // const colonyManager = yield* getContext(CONTEXT.COLONY_MANAGER);
+    // const colonyClient = yield call(
+    //   [colonyManager, colonyManager.getColonyClient],
+    //   colonyAddress,
+    // );
 
     /*
      * Notification
      */
-    const decoratedLog = yield call(decorateLog, colonyClient, domainAddedLog);
-    yield putNotification(normalizeTransactionLog(colonyAddress, decoratedLog));
+    // const decoratedLog = yield call(decorateLog, colonyClient, domainAddedLog);
+    // yield putNotification(normalizeTransactionLog(colonyAddress, decoratedLog));
   } catch (error) {
     return yield putError(ACTIONS.DOMAIN_CREATE_ERROR, error, meta);
   } finally {

@@ -5,17 +5,10 @@ import { call, fork, put, takeEvery } from 'redux-saga/effects';
 
 import type { Action } from '~redux';
 
-import {
-  executeQuery,
-  putError,
-  takeFrom,
-  putNotification,
-} from '~utils/saga/effects';
+import { executeQuery, putError, takeFrom } from '~utils/saga/effects';
 import { ACTIONS } from '~redux';
 
-import { decorateLog } from '~utils/web3/eventLogs/events';
-import { getContext, CONTEXT } from '~context';
-import { normalizeTransactionLog } from '~data/normalizers';
+// import { getContext, CONTEXT } from '~context';
 
 import { getColonyRoles } from '../data/queries';
 import { createTransaction, getTxChannel } from '../../core/sagas';
@@ -61,15 +54,16 @@ function* colonyAdminAdd({
       params: { address: newAdmin, setTo: true },
     });
 
-    const {
-      payload: {
-        transaction: {
-          receipt: {
-            logs: [colonyRoleSetLog],
-          },
-        },
-      },
-    } = yield takeFrom(txChannel, ACTIONS.TRANSACTION_SUCCEEDED);
+    // const {
+    //   payload: {
+    //     transaction: {
+    //       receipt: {
+    //         logs: [colonyRoleSetLog],
+    //       },
+    //     },
+    //   },
+    // } =
+    yield takeFrom(txChannel, ACTIONS.TRANSACTION_SUCCEEDED);
 
     /*
      * Dispatch the action to the admin in the Redux store;
@@ -81,21 +75,21 @@ function* colonyAdminAdd({
       meta,
     });
 
-    const colonyManager = yield* getContext(CONTEXT.COLONY_MANAGER);
-    const colonyClient = yield call(
-      [colonyManager, colonyManager.getColonyClient],
-      colonyAddress,
-    );
+    // const colonyManager = yield* getContext(CONTEXT.COLONY_MANAGER);
+    // const colonyClient = yield call(
+    //   [colonyManager, colonyManager.getColonyClient],
+    //   colonyAddress,
+    // );
 
     /*
-     * Notification
+     * @TODO Add dismissable notifications
      */
-    const decoratedLog = yield call(
-      decorateLog,
-      colonyClient,
-      colonyRoleSetLog,
-    );
-    yield putNotification(normalizeTransactionLog(colonyAddress, decoratedLog));
+    // const decoratedLog = yield call(
+    //   decorateLog,
+    //   colonyClient,
+    //   colonyRoleSetLog,
+    // );
+    // yield putNotification(normalizeTransactionLog(colonyAddress, decoratedLog));
     yield put(fetchRoles(colonyAddress));
   } catch (error) {
     return yield putError(ACTIONS.COLONY_ADMIN_ADD_ERROR, error, meta);
@@ -123,15 +117,16 @@ function* colonyAdminRemove({
       params: { address: user, setTo: false },
     });
 
-    const {
-      payload: {
-        transaction: {
-          receipt: {
-            logs: [colonyRoleSetLog],
-          },
-        },
-      },
-    } = yield takeFrom(txChannel, ACTIONS.TRANSACTION_SUCCEEDED);
+    // const {
+    //   payload: {
+    //     transaction: {
+    //       receipt: {
+    //         logs: [colonyRoleSetLog],
+    //       },
+    //     },
+    //   },
+    // } =
+    yield takeFrom(txChannel, ACTIONS.TRANSACTION_SUCCEEDED);
 
     yield put<Action<typeof ACTIONS.COLONY_ADMIN_REMOVE_SUCCESS>>({
       type: ACTIONS.COLONY_ADMIN_REMOVE_SUCCESS,
@@ -139,21 +134,21 @@ function* colonyAdminRemove({
       payload,
     });
 
-    const colonyManager = yield* getContext(CONTEXT.COLONY_MANAGER);
-    const colonyClient = yield call(
-      [colonyManager, colonyManager.getColonyClient],
-      colonyAddress,
-    );
+    // const colonyManager = yield* getContext(CONTEXT.COLONY_MANAGER);
+    // const colonyClient = yield call(
+    //   [colonyManager, colonyManager.getColonyClient],
+    //   colonyAddress,
+    // );
 
     /*
      * Notification
      */
-    const decoratedLog = yield call(
-      decorateLog,
-      colonyClient,
-      colonyRoleSetLog,
-    );
-    yield putNotification(normalizeTransactionLog(colonyAddress, decoratedLog));
+    // const decoratedLog = yield call(
+    //   decorateLog,
+    //   colonyClient,
+    //   colonyRoleSetLog,
+    // );
+    // yield putNotification(normalizeTransactionLog(colonyAddress, decoratedLog));
     yield put(fetchRoles(colonyAddress));
   } catch (error) {
     return yield putError(ACTIONS.COLONY_ADMIN_REMOVE_ERROR, error, meta);
