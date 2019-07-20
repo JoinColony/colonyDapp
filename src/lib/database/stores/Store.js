@@ -5,8 +5,13 @@ import { raceAgainstTimeout } from '../../../utils/async';
 import { log } from '../../../utils/debug';
 import PinnerConnector from '../../ipfs/PinnerConnector';
 
+// How long should we wait for the next replication message unntil we assume it's done
 const REPLICATION_KEEP_ALIVE_TIMEOUT = 3 * 1000;
+// How long should we wait for replication in general
 const REPLICATION_TIMEOUT = 10 * 1000;
+// How often should we check whether a store is replicating
+const REPLICATION_CHECK_INTERVAL = 500;
+// How long should we wait for a store to load
 const LOAD_TIMEOUT = 30 * 1000;
 
 /**
@@ -99,7 +104,7 @@ class Store {
     if (this.length < headCount) {
       log.verbose(`Replicating store ${address}`);
       // Wait for a store replication to start
-      this._renewReplicationTimeout(5000);
+      this._renewReplicationTimeout(2 * REPLICATION_KEEP_ALIVE_TIMEOUT);
       let interval;
       await raceAgainstTimeout(
         new Promise(resolve => {
@@ -108,7 +113,7 @@ class Store {
               clearInterval(interval);
               resolve();
             }
-          }, 500);
+          }, REPLICATION_CHECK_INTERVAL);
         }),
         REPLICATION_TIMEOUT,
         new Error('Replication timeout (Pinner might still have more heads)'),
