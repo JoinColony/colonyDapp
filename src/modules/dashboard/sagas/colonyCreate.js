@@ -454,7 +454,8 @@ function* colonyCreate({
      * Notification
      */
 
-    // @TODO Add proper support for event normalization
+    // @NOTE Here we actually wanna emit the notification because that's gonna be
+    // on the colony founder inbox
     const decoratedLog = yield call(
       decorateLog,
       colonyManager.networkClient,

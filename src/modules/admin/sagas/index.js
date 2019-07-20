@@ -11,13 +11,13 @@ import {
   putError,
   executeCommand,
   executeQuery,
-  putNotification,
+  // putNotification,
 } from '~utils/saga/effects';
 import { ACTIONS } from '~redux';
 
-import { CONTEXT, getContext } from '~context';
-import { decorateLog } from '~utils/web3/eventLogs/events';
-import { normalizeTransactionLog } from '~data/normalizers';
+// import { CONTEXT, getContext } from '~context';
+// import { decorateLog } from '~utils/web3/eventLogs/events';
+// import { normalizeTransactionLog } from '~data/normalizers';
 
 import { getColony } from '../../dashboard/data/queries';
 import {
@@ -235,19 +235,19 @@ function* colonyMintTokens({
         payload: { colonyAddress, tokenAddress },
       });
 
-      const colonyManager = yield* getContext(CONTEXT.COLONY_MANAGER);
-      const tokenClient = yield call(
-        [colonyManager, colonyManager.getTokenClient],
-        tokenAddress,
-      );
+      // const colonyManager = yield* getContext(CONTEXT.COLONY_MANAGER);
+      // const tokenClient = yield call(
+      //   [colonyManager, colonyManager.getTokenClient],
+      //   tokenAddress,
+      // );
 
       /*
        * Notification
        */
-      const decoratedLog = yield call(decorateLog, tokenClient, mintLog);
-      yield putNotification(
-        normalizeTransactionLog(tokenAddress, decoratedLog),
-      );
+      // const decoratedLog = yield call(decorateLog, tokenClient, mintLog);
+      // yield putNotification(
+      //   normalizeTransactionLog(tokenAddress, decoratedLog),
+      // );
     }
 
     yield put<Action<typeof ACTIONS.COLONY_MINT_TOKENS_SUCCESS>>({
