@@ -13,6 +13,8 @@ const REPLICATION_TIMEOUT = 10 * 1000;
 const REPLICATION_CHECK_INTERVAL = 500;
 // How long should we wait for a store to load
 const LOAD_TIMEOUT = 30 * 1000;
+// How long we should wait after a write to be considered 'busy'
+const WRITE_TIMEOUT = 10 * 1000;
 
 /**
  * A parent class for a wrapper around an orbit store that can load
@@ -31,6 +33,8 @@ class Store {
 
   _replicationTimeout: TimeoutID | null;
 
+  _writeTimeout: TimeoutID | null;
+
   constructor(orbitStore: OrbitDBStore, name: string, pinner: PinnerConnector) {
     this._orbitStore = orbitStore;
     this._orbitStore.events.on('replicate', () =>
@@ -39,6 +43,13 @@ class Store {
     this._orbitStore.events.on('replicate.progress', () =>
       this._renewReplicationTimeout(REPLICATION_KEEP_ALIVE_TIMEOUT),
     );
+    // After a write to a store, wait for some time to give replication a chance to be done
+    this._orbitStore.events.on('write', () => {
+      if (this._writeTimeout) clearTimeout(this._writeTimeout);
+      this._writeTimeout = setTimeout(() => {
+        this._writeTimeout = null;
+      }, WRITE_TIMEOUT);
+    });
     this._name = name;
     this._pinner = pinner;
     this._busyPromise = null;
@@ -49,7 +60,9 @@ class Store {
   }
 
   get busy() {
-    return !!this._busyPromise;
+    return (
+      !!this._busyPromise || !!this._replicationTimeout || !!this._writeTimeout
+    );
   }
 
   get length() {
