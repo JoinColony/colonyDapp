@@ -68,9 +68,9 @@ const MSG = defineMessages({
     id: 'dashboard.Task.completed',
     defaultMessage: 'Task completed',
   },
-  cancelled: {
-    id: 'dashboard.Task.cancelled',
-    defaultMessage: 'Task cancelled',
+  disacarded: {
+    id: 'dashboard.Task.disacarded',
+    defaultMessage: 'Task disacarded',
   },
   finalizeTask: {
     id: 'dashboard.Task.finalizeTask',
@@ -291,7 +291,7 @@ const Task = ({
               )}
               {isCancelled(task) && (
                 <p className={styles.completedDescription}>
-                  <FormattedMessage {...MSG.cancelled} />
+                  <FormattedMessage {...MSG.disacarded} />
                 </p>
               )}
             </>
