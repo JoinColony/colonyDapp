@@ -19,6 +19,10 @@ const TASKS_FILTER_MSG = defineMessages({
     id: 'dashboard.tasksFilter.filterOptionCompleted',
     defaultMessage: 'Completed',
   },
+  filterOptionDiscarded: {
+    id: 'dashboard.tasksFilter.filterOptionDiscarded',
+    defaultMessage: 'Discarded',
+  },
 });
 
 export const TASKS_FILTER_OPTIONS = Object.freeze({
@@ -26,6 +30,7 @@ export const TASKS_FILTER_OPTIONS = Object.freeze({
   CREATED: 'CREATED',
   ASSIGNED: 'ASSIGNED',
   COMPLETED: 'COMPLETED',
+  DISCARDED: 'DISCARDED',
 });
 
 export type TasksFilterOptionType = $Keys<typeof TASKS_FILTER_OPTIONS>;
@@ -46,5 +51,9 @@ export const tasksFilterSelectOptions = [
   {
     label: TASKS_FILTER_MSG.filterOptionCompleted,
     value: TASKS_FILTER_OPTIONS.COMPLETED,
+  },
+  {
+    label: TASKS_FILTER_MSG.filterOptionDiscarded,
+    value: TASKS_FILTER_OPTIONS.DISCARDED,
   },
 ];

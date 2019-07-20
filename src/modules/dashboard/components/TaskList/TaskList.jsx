@@ -59,8 +59,11 @@ const TaskList = ({
         case TASKS_FILTER_OPTIONS.COMPLETED:
           return currentState === TASK_STATE.FINALIZED;
 
+        case TASKS_FILTER_OPTIONS.DISCARDED:
+          return currentState === TASK_STATE.CANCELLED;
+
         case TASKS_FILTER_OPTIONS.ALL_OPEN:
-          return currentState !== TASK_STATE.FINALIZED;
+          return currentState === TASK_STATE.ACTIVE;
 
         default:
           return true;
