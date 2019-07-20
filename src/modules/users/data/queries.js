@@ -416,6 +416,7 @@ export const getUserInboxActivity: Query<
     userInboxStore: UserInboxStore,
     colonyClients: ColonyClient[],
     colonyNetworkClient: NetworkClient,
+    walletAddress: Address,
   |},
   {|
     userColonies: Address[],
@@ -456,9 +457,15 @@ export const getUserInboxActivity: Query<
       colonyClients,
       colonyNetworkClient: colonyManager.networkClient,
       userInboxStore,
+      walletAddress,
     };
   },
-  async execute({ userInboxStore, colonyClients, colonyNetworkClient }) {
+  async execute({
+    colonyClients,
+    colonyNetworkClient,
+    userInboxStore,
+    walletAddress,
+  }) {
     const {
       contract: { address: colonyNetworkAddress },
       events: { ColonyLabelRegistered },
@@ -484,6 +491,22 @@ export const getUserInboxActivity: Query<
           },
         } = colonyClient;
 
+        // get extension addresses for the colony
+        const {
+          address: oldRolesAddress,
+        } = await colonyClient.getExtensionAddress.call({
+          contractName: 'OldRoles',
+        });
+        const {
+          address: oneTxAddress,
+        } = await colonyClient.getExtensionAddress.call({
+          contractName: 'OneTxPayment',
+        });
+        const extensionAddresses = [
+          createAddress(oldRolesAddress),
+          createAddress(oneTxAddress),
+        ];
+
         // @TODO: Have a proper way to deal with query filters
         const getAdminRoleAssignmentTopicsFilter = address => ({
           ...getLogTopicsFilter(
@@ -507,7 +530,8 @@ export const getUserInboxActivity: Query<
           },
         )).filter(
           ({ transaction: { from }, event: { address: assigneeAddress } }) =>
-            assigneeAddress !== from,
+            from !== assigneeAddress &&
+            !extensionAddresses.includes(assigneeAddress),
         );
 
         const eventsFromColony = (await getDecoratedEvents(
@@ -565,7 +589,10 @@ export const getUserInboxActivity: Query<
         normalizeDDBStoreEvent(userInboxStore.address.toString(), event),
       );
 
-    return storeEvents.concat(contractEvents);
+    return storeEvents
+      .concat(contractEvents)
+      .filter(Boolean)
+      .filter(({ meta: { actorId } }) => actorId !== walletAddress);
   },
 };
 
