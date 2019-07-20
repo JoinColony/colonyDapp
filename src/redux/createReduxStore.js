@@ -3,6 +3,7 @@
 import { createStore, compose, applyMiddleware } from 'redux';
 import createSagaMiddleware from 'redux-saga';
 import { routerMiddleware } from 'connected-react-router';
+import { middleware as actionWatchMiddleWare } from 'redux-action-watch';
 
 import context from '~context';
 import { middleware as persistMiddleware } from './persist';
@@ -40,6 +41,7 @@ const store = createStore(
       sagaMiddleware,
       reduxPromiseListener.middleware,
       persistMiddleware,
+      actionWatchMiddleWare('watcher'),
     ),
   ),
 );
