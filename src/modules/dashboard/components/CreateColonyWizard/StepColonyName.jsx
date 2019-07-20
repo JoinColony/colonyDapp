@@ -33,7 +33,7 @@ type Props = WizardProps<FormValues>;
 const MSG = defineMessages({
   heading: {
     id: 'dashboard.CreateColonyWizard.StepColonyName.heading',
-    defaultMessage: "Welcome @{username}, Let's create your colony.",
+    defaultMessage: "Welcome @{username}, let's create your colony.",
   },
   descriptionOne: {
     id: 'dashboard.CreateColonyWizard.StepColonyName.descriptionOne',

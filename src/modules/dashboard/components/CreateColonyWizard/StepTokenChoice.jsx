@@ -67,13 +67,13 @@ const MSG = defineMessages({
     id: 'dashboard.CreateColonyWizard.StepTokenChoice.tooltipCreate',
     defaultMessage:
       // eslint-disable-next-line max-len
-      'Good for new projects or admins that want more control over their tokens.',
+      "Good for projects that don't already have a token or who want more control over their token",
   },
   tooltipSelect: {
     id: 'dashboard.CreateColonyWizard.StepTokenChoice.tooltipSelect',
     defaultMessage:
       // eslint-disable-next-line max-len
-      'Good for established projects or projects wanting to use existing market forces.',
+      'Good for projects that already have their own token or want to use an existing one like DAI.',
   },
 });
 
