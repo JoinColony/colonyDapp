@@ -40,8 +40,6 @@ class PinnerConnector {
 
   _ipfs: IPFS;
 
-  _openConnections: number;
-
   _outstandingPubsubMessages: Array<PinnerAction>;
 
   _pinnerIds: Set<string>;
@@ -64,13 +62,15 @@ class PinnerConnector {
     this._room = room;
     this._pinnerIds = new Set();
     this._outstandingPubsubMessages = [];
-    this._openConnections = 0;
     this._replicationRequests = new Map();
     this._listenForAnnouncements();
   }
 
   get busy() {
-    return !!this._openConnections || !!this._outstandingPubsubMessages.length;
+    const hasPendingRequests = Array.from(
+      this._replicationRequests.values(),
+    ).some(req => req.isPending);
+    return !!this._outstandingPubsubMessages.length || hasPendingRequests;
   }
 
   get connectedToPinner() {
