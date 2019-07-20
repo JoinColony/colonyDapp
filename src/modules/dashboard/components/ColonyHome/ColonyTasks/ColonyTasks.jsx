@@ -1,8 +1,10 @@
 /* @flow */
 
 // $FlowFixMe
-import React, { useCallback, useMemo } from 'react';
+import React, { useCallback, useMemo, useEffect, useState } from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
+import { subscribeActions as subscribeToReduxActions } from 'redux-action-watch/lib/actionCreators';
+import { useDispatch } from 'redux-react-hook';
 
 import type { Address } from '~types';
 import type { TaskMetadataMap } from '~immutable';
@@ -72,6 +74,23 @@ const ColonyTasks = ({
 }: Props) => {
   const walletAddress = useSelector(walletAddressSelector, []);
 
+  const dispatch = useDispatch();
+  const [isTaskBeingCreated, setIsTaskBeingCreated] = useState(false);
+
+  /*
+   * @NOTE this needs to return the `subscribeToReduxActions` function, since that returns an
+   * unsubscriber, and that gets called when the component is unmounted
+   */
+  useEffect(
+    () =>
+      subscribeToReduxActions(dispatch)({
+        [ACTIONS.TASK_CREATE]: () => setIsTaskBeingCreated(true),
+        [ACTIONS.TASK_CREATE_SUCCESS]: () => setIsTaskBeingCreated(false),
+        [ACTIONS.TASK_CREATE_ERROR]: () => setIsTaskBeingCreated(false),
+      }),
+    [dispatch, setIsTaskBeingCreated],
+  );
+
   const { data: taskMetadata, isFetching } = useDataFetcher<TaskMetadataMap>(
     colonyTaskMetadataFetcher,
     [colonyAddress],
@@ -103,6 +122,7 @@ const ColonyTasks = ({
           submit={ACTIONS.TASK_CREATE}
           success={ACTIONS.TASK_CREATE_SUCCESS}
           transform={transform}
+          loading={isTaskBeingCreated}
         />
         <FormattedMessage tagName="p" {...MSG.newTaskDescription} />
       </div>
