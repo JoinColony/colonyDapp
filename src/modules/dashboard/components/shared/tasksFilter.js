@@ -22,7 +22,7 @@ const TASKS_FILTER_MSG = defineMessages({
 });
 
 export const TASKS_FILTER_OPTIONS = Object.freeze({
-  ALL: 'ALL',
+  ALL_OPEN: 'ALL_OPEN',
   CREATED: 'CREATED',
   ASSIGNED: 'ASSIGNED',
   COMPLETED: 'COMPLETED',
@@ -31,7 +31,10 @@ export const TASKS_FILTER_OPTIONS = Object.freeze({
 export type TasksFilterOptionType = $Keys<typeof TASKS_FILTER_OPTIONS>;
 
 export const tasksFilterSelectOptions = [
-  { label: TASKS_FILTER_MSG.filterOptionAll, value: TASKS_FILTER_OPTIONS.ALL },
+  {
+    label: TASKS_FILTER_MSG.filterOptionAll,
+    value: TASKS_FILTER_OPTIONS.ALL_OPEN,
+  },
   {
     label: TASKS_FILTER_MSG.filterOptionCreated,
     value: TASKS_FILTER_OPTIONS.CREATED,

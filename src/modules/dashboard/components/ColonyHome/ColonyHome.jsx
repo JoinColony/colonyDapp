@@ -79,7 +79,9 @@ const ColonyHome = ({
     params: { colonyName },
   },
 }: Props) => {
-  const [filterOption, setFilterOption] = useState(TASKS_FILTER_OPTIONS.ALL);
+  const [filterOption, setFilterOption] = useState(
+    TASKS_FILTER_OPTIONS.ALL_OPEN,
+  );
   const [filteredDomainId, setFilteredDomainId] = useState();
   const [isTaskBeingCreated, setIsTaskBeingCreated] = useState(false);
 
