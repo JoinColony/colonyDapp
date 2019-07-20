@@ -105,11 +105,11 @@ const ColonyTasks = ({
   filteredDomainId,
   isInRecoveryMode,
 }: Props) => {
+  const [isTaskBeingCreated, setIsTaskBeingCreated] = useState(false);
+
   const walletAddress = useSelector(walletAddressSelector, []);
 
   const dispatch = useDispatch();
-  const [isTaskBeingCreated, setIsTaskBeingCreated] = useState(false);
-
   /*
    * @NOTE this needs to return the `subscribeToReduxActions` function, since that returns an
    * unsubscriber, and that gets called when the component is unmounted
