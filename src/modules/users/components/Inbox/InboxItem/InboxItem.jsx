@@ -277,6 +277,7 @@ const InboxItem = ({
                       value={value}
                     />
                   )),
+                  colonyAddress: makeInboxDetail(colonyAddress),
                   colonyDisplayName: makeInboxDetail(
                     colonyDisplayNameWithFallback,
                   ),
