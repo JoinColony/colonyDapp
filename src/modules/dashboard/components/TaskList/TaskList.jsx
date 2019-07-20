@@ -10,9 +10,9 @@ import type { Address } from '~types';
 import type { DomainId, TaskDraftId, TaskType } from '~immutable';
 
 import { TASK_STATE } from '~immutable';
-import { useDataTupleSubscriber } from '~utils/hooks';
+import { useDataTupleFetcher } from '~utils/hooks';
 import { TASKS_FILTER_OPTIONS } from '../shared/tasksFilter';
-import { tasksByIdSubscriber } from '../../subscribers';
+import { tasksByIdFetcher } from '../../fetchers';
 
 import { Table, TableBody, TableCell, TableRow } from '~core/Table';
 import TaskListItem from './TaskListItem.jsx';
@@ -41,10 +41,7 @@ const TaskList = ({
   filterOption,
   walletAddress,
 }: Props) => {
-  const tasksData = useDataTupleSubscriber<TaskType>(
-    tasksByIdSubscriber,
-    draftIds,
-  );
+  const tasksData = useDataTupleFetcher<TaskType>(tasksByIdFetcher, draftIds);
   const filter = useCallback(
     ({ creatorAddress, workerAddress, currentState, domainId }: TaskType) => {
       if (filteredDomainId && filteredDomainId !== domainId) return false;
