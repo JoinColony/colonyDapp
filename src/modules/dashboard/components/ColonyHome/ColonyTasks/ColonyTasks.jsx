@@ -5,6 +5,7 @@ import React, { useCallback, useMemo, useEffect, useState } from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 import { subscribeActions as subscribeToReduxActions } from 'redux-action-watch/lib/actionCreators';
 import { useDispatch } from 'redux-react-hook';
+import throttle from 'lodash/throttle';
 
 import type { Address } from '~types';
 import type { TaskMetadataMap } from '~immutable';
@@ -19,6 +20,7 @@ import TaskList from '../../TaskList';
 
 import { ActionButton } from '~core/Button';
 import Icon from '~core/Icon';
+import { SpinnerLoader } from '~core/Preloaders';
 
 import styles from './ColonyTasks.css';
 
@@ -45,25 +47,56 @@ const MSG = defineMessages({
       // eslint-disable-next-line max-len
       'There are no tasks created yet. While you wait, we suggest subscribing to this Colony',
   },
+  creatingTask: {
+    id: 'dashboard.ColonyTasks.creatingTask',
+    defaultMessage: 'Creating your task...',
+  },
 });
 
 const displayName = 'dashboard.ColonyTasks';
 
-const NewTaskButton = ({ onClick }: { onClick: Function }) => (
-  /*
-   * Ordinarily this wouldn't be necessary, but we can't use <button>
-   * because of the style requirements.
-   */
-  // eslint-disable-next-line jsx-a11y/click-events-have-key-events,jsx-a11y/no-static-element-interactions
-  <div onClick={onClick}>
-    <Icon
-      className={styles.newTaskButton}
-      name="circle-add"
-      title={MSG.newTask}
-      viewBox="0 0 132 132"
-    />
-  </div>
-);
+const NewTaskButton = ({
+  onClick,
+  disabled,
+  loading,
+}: {
+  onClick: Function,
+  disabled: boolean,
+  loading: boolean,
+}) => {
+  if (disabled) {
+    return null;
+  }
+  if (loading) {
+    return (
+      <div className={styles.newTaskSpinnerContainer}>
+        <SpinnerLoader
+          appearance={{ theme: 'primary', size: 'massive' }}
+          loadingText={MSG.creatingTask}
+        />
+      </div>
+    );
+  }
+  return (
+    /*
+     * Ordinarily this wouldn't be necessary, but we can't use <button>
+     * because of the style requirements.
+     */
+    // eslint-disable-next-line jsx-a11y/click-events-have-key-events,jsx-a11y/no-static-element-interactions
+    <div
+      onClick={throttle(onClick, 2000)}
+      className={styles.newTaskButtonContainer}
+    >
+      <Icon
+        className={styles.newTaskButton}
+        name="circle-add"
+        title={MSG.newTask}
+        viewBox="0 0 132 132"
+      />
+      <FormattedMessage tagName="p" {...MSG.newTaskDescription} />
+    </div>
+  );
+};
 
 const ColonyTasks = ({
   canCreateTask,
@@ -114,18 +147,15 @@ const ColonyTasks = ({
 
   if (draftIds.length === 0) {
     return canCreateTask ? (
-      <div className={styles.newTaskContainer}>
-        <ActionButton
-          button={NewTaskButton}
-          disabled={isInRecoveryMode}
-          error={ACTIONS.TASK_CREATE_ERROR}
-          submit={ACTIONS.TASK_CREATE}
-          success={ACTIONS.TASK_CREATE_SUCCESS}
-          transform={transform}
-          loading={isTaskBeingCreated}
-        />
-        <FormattedMessage tagName="p" {...MSG.newTaskDescription} />
-      </div>
+      <ActionButton
+        button={NewTaskButton}
+        disabled={isInRecoveryMode}
+        error={ACTIONS.TASK_CREATE_ERROR}
+        submit={ACTIONS.TASK_CREATE}
+        success={ACTIONS.TASK_CREATE_SUCCESS}
+        transform={transform}
+        loading={isTaskBeingCreated}
+      />
     ) : (
       <FormattedMessage tagName="p" {...MSG.noTasksAvailable} />
     );
