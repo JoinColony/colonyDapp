@@ -24,6 +24,7 @@
   letter-spacing: 0.25px;
   transition: background-color 50ms ease-in;
   cursor: pointer;
+  user-select: none;
 }
 
 .main:active {

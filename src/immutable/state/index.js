@@ -26,6 +26,7 @@ export type RootStateProps = {|
   dashboard: DashboardStateRecord,
   router: RouterState,
   users: UsersStateRecord,
+  watcher: *,
 |};
 
 const defaultValues: $Shape<RootStateProps> = {
@@ -34,6 +35,7 @@ const defaultValues: $Shape<RootStateProps> = {
   [DASHBOARD_NAMESPACE]: undefined,
   [USERS_NAMESPACE]: undefined,
   router: undefined,
+  watcher: undefined,
 };
 
 export const RootState: RecordFactory<RootStateProps> = Record(defaultValues);

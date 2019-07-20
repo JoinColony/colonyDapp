@@ -3,9 +3,12 @@
 import type { Match } from 'react-router';
 
 // $FlowFixMe update flow!
-import React, { useState, useCallback, useMemo } from 'react';
+import React, { useState, useCallback, useEffect, useMemo } from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 import { Redirect } from 'react-router';
+import { subscribeActions as subscribeToReduxActions } from 'redux-action-watch/lib/actionCreators';
+import { useDispatch } from 'redux-react-hook';
+import throttle from 'lodash/throttle';
 
 import type { TokenReferenceType, UserPermissionsType } from '~immutable';
 import type { Address } from '~types';
@@ -16,7 +19,7 @@ import { useDataFetcher, useDataSubscriber, useSelector } from '~utils/hooks';
 import { mergePayload } from '~utils/actions';
 import { Tab, Tabs, TabList, TabPanel } from '~core/Tabs';
 import { Select } from '~core/Fields';
-import { ActionButton } from '~core/Button';
+import Button, { ActionButton } from '~core/Button';
 import RecoveryModeAlert from '~admin/RecoveryModeAlert';
 import LoadingTemplate from '~pages/LoadingTemplate';
 import {
@@ -78,6 +81,22 @@ const ColonyHome = ({
 }: Props) => {
   const [filterOption, setFilterOption] = useState(TASKS_FILTER_OPTIONS.ALL);
   const [filteredDomainId, setFilteredDomainId] = useState();
+  const [isTaskBeingCreated, setIsTaskBeingCreated] = useState(false);
+
+  const dispatch = useDispatch();
+  /*
+   * @NOTE this needs to return the `subscribeToReduxActions` function, since that returns an
+   * unsubscriber, and that gets called when the component is unmounted
+   */
+  useEffect(
+    () =>
+      subscribeToReduxActions(dispatch)({
+        [ACTIONS.TASK_CREATE]: () => setIsTaskBeingCreated(true),
+        [ACTIONS.TASK_CREATE_SUCCESS]: () => setIsTaskBeingCreated(false),
+        [ACTIONS.TASK_CREATE_ERROR]: () => setIsTaskBeingCreated(false),
+      }),
+    [dispatch, setIsTaskBeingCreated],
+  );
 
   const formSetFilter = useCallback(
     (_: string, value: TasksFilterOptionType) => setFilterOption(value),
@@ -237,13 +256,21 @@ const ColonyHome = ({
       <aside className={styles.sidebar}>
         {canCreateTask && (
           <ActionButton
-            appearance={{ theme: 'primary', size: 'large' }}
+            button={({ onClick, disabld, loading }) => (
+              <Button
+                appearance={{ theme: 'primary', size: 'large' }}
+                text={MSG.newTaskButton}
+                disabld={disabld}
+                loading={loading}
+                onClick={throttle(onClick, 2000)}
+              />
+            )}
             disabled={isInRecoveryMode}
             error={ACTIONS.TASK_CREATE_ERROR}
             submit={ACTIONS.TASK_CREATE}
             success={ACTIONS.TASK_CREATE_SUCCESS}
-            text={MSG.newTaskButton}
             transform={transform}
+            loading={isTaskBeingCreated}
           />
         )}
         <ColonyDomains
