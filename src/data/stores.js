@@ -26,6 +26,19 @@ import {
   userProfile as userProfileStoreBlueprint,
 } from './blueprints';
 
+/*
+ * @NOTE:
+ * 5 is the chainId for goerli: https://github.com/ethereum/EIPs/blob/master/EIPS/eip-155.md#list-of-chain-ids
+ *
+ * This shouldn't be used anywhere else. This is just about adding chainIds to
+ * store addresses. DO NOT USE IT.
+ *
+ * If you use it somewhere else, I'll give you this look:
+ * https://media.tenor.com/images/fbd6b74410e14c0ac96517eba36d44d0/tenor.gif
+ *
+ */
+const CHAIN_ID = process.env.CHAIN_ID || '5';
+
 export const getColonyTaskIndexStore = (
   colonyClient: ColonyClientType,
   ddb: DDB,
@@ -41,9 +54,10 @@ export const getColonyTaskIndexStore = (
     colonyTaskIndexStoreBlueprint,
     colonyTaskIndexStoreAddress,
     {
-      wallet,
+      chainId: CHAIN_ID,
       colonyAddress,
       colonyClient,
+      wallet,
     },
   );
 
@@ -53,9 +67,10 @@ export const getColonyStore = (
   wallet: WalletObjectType,
 ) => async ({ colonyAddress }: { colonyAddress: Address }) =>
   ddb.getStore<ColonyStore>(colonyStoreBlueprint, colonyAddress, {
-    wallet,
+    chainId: CHAIN_ID,
     colonyAddress,
     colonyClient,
+    wallet,
   });
 
 export const createColonyStore = (
@@ -63,18 +78,21 @@ export const createColonyStore = (
   ddb: DDB,
   wallet: WalletObjectType,
 ) => async ({ colonyAddress }: { colonyAddress: Address }) => {
+  const chainId = CHAIN_ID;
   const colonyStore = await ddb.createStore<ColonyStore>(colonyStoreBlueprint, {
-    wallet,
+    chainId,
     colonyAddress,
     colonyClient,
+    wallet,
   });
 
   const colonyTaskIndexStore = await ddb.createStore<ColonyTaskIndexStore>(
     colonyTaskIndexStoreBlueprint,
     {
-      wallet,
+      chainId,
       colonyAddress,
       colonyClient,
+      wallet,
     },
   );
 
@@ -95,6 +113,7 @@ export const getTaskStore = (
   taskStoreAddress: string,
 }) =>
   ddb.getStore<TaskStore>(taskStoreBlueprint, taskStoreAddress, {
+    chainId: CHAIN_ID,
     colonyAddress,
     colonyClient,
     draftId,
@@ -111,6 +130,7 @@ export const getCommentsStore = (ddb: DDB) => async ({
   draftId: TaskDraftId,
 }) =>
   ddb.getStore<CommentsStore>(commentsStoreBlueprint, commentsStoreAddress, {
+    chainId: CHAIN_ID,
     colonyAddress,
     draftId,
   });
@@ -126,14 +146,17 @@ export const createTaskStore = (
   draftId: TaskDraftId,
   colonyAddress: Address,
 }) => {
+  const chainId = CHAIN_ID;
   const [taskStore, commentsStore] = await Promise.all([
     ddb.createStore<TaskStore>(taskStoreBlueprint, {
+      chainId,
       colonyAddress,
       colonyClient,
       draftId,
       wallet,
     }),
     ddb.createStore<CommentsStore>(commentsStoreBlueprint, {
+      chainId,
       colonyAddress,
       draftId,
     }),
@@ -147,6 +170,7 @@ export const getUserProfileStore = (ddb: DDB) => async ({
   walletAddress: Address,
 }) =>
   ddb.getStore<UserProfileStore>(userProfileStoreBlueprint, walletAddress, {
+    chainId: CHAIN_ID,
     walletAddress,
   });
 
@@ -158,6 +182,7 @@ export const getUserInboxStore = (ddb: DDB) => async ({
   walletAddress: Address,
 }) =>
   ddb.getStore<UserInboxStore>(userInboxStoreBlueprint, inboxStoreAddress, {
+    chainId: CHAIN_ID,
     walletAddress,
   });
 
@@ -172,6 +197,7 @@ export const getUserMetadataStore = (ddb: DDB) => async ({
     userMetadataStoreBlueprint,
     metadataStoreAddress,
     {
+      chainId: CHAIN_ID,
       walletAddress,
     },
   );
@@ -181,14 +207,18 @@ export const createUserProfileStore = (ddb: DDB) => async ({
 }: {
   walletAddress: Address,
 }) => {
+  const chainId = CHAIN_ID;
   const [profileStore, inboxStore, metadataStore] = await Promise.all([
     ddb.createStore<UserProfileStore>(userProfileStoreBlueprint, {
+      chainId,
       walletAddress,
     }),
     ddb.createStore<UserInboxStore>(userInboxStoreBlueprint, {
+      chainId,
       walletAddress,
     }),
     ddb.createStore<UserMetadataStore>(userMetadataStoreBlueprint, {
+      chainId,
       walletAddress,
     }),
   ]);
@@ -208,6 +238,7 @@ export const getTaskStoreAddress = (
   colonyAddress: Address,
 }) =>
   ddb.generateStoreAddress(taskStoreBlueprint, {
+    chainId: CHAIN_ID,
     colonyAddress,
     colonyClient,
     draftId,
@@ -222,6 +253,7 @@ export const getCommentsStoreAddress = (ddb: DDB) => async ({
   colonyAddress: Address,
 }) =>
   ddb.generateStoreAddress(commentsStoreBlueprint, {
+    chainId: CHAIN_ID,
     colonyAddress,
     draftId,
   });
@@ -232,6 +264,7 @@ export const getUserProfileStoreAddress = (ddb: DDB) => async ({
   walletAddress: Address,
 }) =>
   ddb.generateStoreAddress(userProfileStoreBlueprint, {
+    chainId: CHAIN_ID,
     walletAddress,
   });
 
@@ -241,6 +274,7 @@ export const getUserInboxStoreAddress = (ddb: DDB) => async ({
   walletAddress: Address,
 }) =>
   ddb.generateStoreAddress(userInboxStoreBlueprint, {
+    chainId: CHAIN_ID,
     walletAddress,
   });
 
@@ -250,6 +284,7 @@ export const getUserMetadataStoreAddress = (ddb: DDB) => async ({
   walletAddress: Address,
 }) =>
   ddb.generateStoreAddress(userMetadataStoreBlueprint, {
+    chainId: CHAIN_ID,
     walletAddress,
   });
 
@@ -259,6 +294,7 @@ export const getColonyTaskIndexStoreAddress = (
   wallet: WalletObjectType,
 ) => async ({ colonyAddress }: { colonyAddress: Address }) =>
   ddb.generateStoreAddress(colonyTaskIndexStoreBlueprint, {
+    chainId: CHAIN_ID,
     colonyAddress,
     colonyClient,
     wallet,
