@@ -10,6 +10,7 @@ import loadPermissionManifest from '../permissions';
 
 export type ColonyStoreProps = {|
   colonyAddress: Address,
+  chainId: string,
   wallet: WalletObjectType,
   colonyClient: ColonyClientType,
 |};
@@ -44,7 +45,8 @@ export type ColonyStoreBlueprint = StoreBlueprint<
 
 const colonyStoreBlueprint: ColonyStoreBlueprint = Object.freeze({
   getAccessController: getColonyStoreAccessController,
-  getName: ({ colonyAddress }) => `colony.${colonyAddress}`,
+  getName: ({ colonyAddress, chainId }) =>
+    `network.${chainId}.colony.${colonyAddress}`,
   type: EventStore,
 });
 

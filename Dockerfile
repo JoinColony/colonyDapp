@@ -12,10 +12,10 @@ ARG GH_PAT
 # But fall back to a default
 ARG LOADER=network
 ARG NETWORK=goerli
+ARG CHAIN_ID=5
 ARG VERBOSE=false
 ARG COLONY_NETWORK_ENS_NAME=joincolony.eth
 ARG PINNING_ROOM=PINION_DEV_ROOM
-ARG PINNER_ID=QmXZKaLLuJzHZ3dnjHJiHLMHo4bFKaR3wWcf4ZbbqtxhBv
 
 # @FIX Debian Jessie / Docker issue with apt.
 # See: https://stackoverflow.com/questions/46406847/docker-how-to-add-backports-to-sources-list-via-dockerfile
@@ -56,11 +56,11 @@ RUN yarn
 
 # Setup the repo's ENV file
 RUN echo "LOADER=$LOADER\n" \
+        "CHAIN_ID=$CHAIN_ID\n" \
         "NETWORK=$NETWORK\n" \
         "VERBOSE=$VERBOSE\n" \
         "COLONY_NETWORK_ENS_NAME=$COLONY_NETWORK_ENS_NAME\n" \
-        "PINNING_ROOM=$PINNING_ROOM\n" \
-        "PINNER_ID=$PINNER_ID\n" > .env
+        "PINNING_ROOM=$PINNING_ROOM\n" > .env
 
 # Build the production bundle
 RUN yarn webpack:build:prod

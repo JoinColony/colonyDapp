@@ -6,6 +6,7 @@ import { EventStore } from '../../lib/database/stores';
 import { EthereumWalletAccessController } from '../accessControllers';
 
 export type UserProfileStoreProps = {|
+  chainId: string,
   walletAddress: Address,
 |};
 
@@ -27,7 +28,8 @@ const getEthereumWalletStoreAccessController = ({
 
 const userProfileStoreBlueprint: UserProfileStoreBlueprint = Object.freeze({
   getAccessController: getEthereumWalletStoreAccessController,
-  getName: ({ walletAddress }) => `userProfile.${walletAddress}`,
+  getName: ({ chainId, walletAddress }) =>
+    `network.${chainId}.userProfile.${walletAddress}`,
   type: EventStore,
 });
 

@@ -566,18 +566,18 @@ export const getUserInboxActivity: Query<
         );
 
         return [
-          ...eventsFromColony.map(event =>
-            normalizeTransactionLog(colonyAddress, event),
-          ),
+          ...eventsFromColony
+            .map(event => normalizeTransactionLog(colonyAddress, event))
+            .filter(({ meta: { actorId } }) => actorId !== walletAddress),
           ...eventsFromNetwork.map(event =>
             normalizeTransactionLog(colonyNetworkAddress, event),
           ),
-          ...eventsFromToken.map(event =>
-            normalizeTransactionLog(tokenAddress, event),
-          ),
-          ...eventsFromRoleAssignment.map(event =>
-            normalizeTransactionLog(colonyAddress, event),
-          ),
+          ...eventsFromToken
+            .map(event => normalizeTransactionLog(tokenAddress, event))
+            .filter(({ meta: { actorId } }) => actorId !== walletAddress),
+          ...eventsFromRoleAssignment
+            .map(event => normalizeTransactionLog(colonyAddress, event))
+            .filter(({ meta: { actorId } }) => actorId !== walletAddress),
         ];
       }),
     );
@@ -589,10 +589,7 @@ export const getUserInboxActivity: Query<
         normalizeDDBStoreEvent(userInboxStore.address.toString(), event),
       );
 
-    return storeEvents
-      .concat(contractEvents)
-      .filter(Boolean)
-      .filter(({ meta: { actorId } }) => actorId !== walletAddress);
+    return storeEvents.concat(contractEvents).filter(Boolean);
   },
 };
 

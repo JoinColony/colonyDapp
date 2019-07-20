@@ -66,7 +66,7 @@ const TaskList = ({
           return currentState === TASK_STATE.ACTIVE;
 
         default:
-          return true;
+          return currentState !== TASK_STATE.CANCELLED;
       }
     },
     [filterOption, walletAddress, filteredDomainId],
