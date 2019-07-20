@@ -256,11 +256,11 @@ const ColonyHome = ({
       <aside className={styles.sidebar}>
         {canCreateTask && (
           <ActionButton
-            button={({ onClick, disabld, loading }) => (
+            button={({ onClick, disabled, loading }) => (
               <Button
                 appearance={{ theme: 'primary', size: 'large' }}
                 text={MSG.newTaskButton}
-                disabld={disabld}
+                disabld={disabled}
                 loading={loading}
                 onClick={throttle(onClick, 2000)}
               />
