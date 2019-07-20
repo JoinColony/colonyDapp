@@ -588,6 +588,9 @@ function* inboxItemsFetch({
     const { inboxStoreAddress, metadataStoreAddress } = yield select(
       currentUserMetadataSelector,
     );
+
+    if (!(inboxStoreAddress && metadataStoreAddress)) return null;
+
     const userColonies = yield* executeQuery(getUserColonies, {
       metadata: {
         walletAddress,
