@@ -15,7 +15,7 @@ import type {
 class EventStore extends Store {
   static orbitType = 'eventlog';
 
-  static decorateEntry({
+  static transformEntry({
     identity: { id: userAddress },
     payload: {
       value: { meta, ...event },
@@ -48,7 +48,7 @@ class EventStore extends Store {
   }
 
   getEvent(hash: string) {
-    return this.constructor.decorateEntry(this._orbitStore.get(hash));
+    return this.constructor.transformEntry(this._orbitStore.get(hash));
   }
 
   get(hashOrOptions: string | EventIteratorOptions) {
@@ -61,7 +61,7 @@ class EventStore extends Store {
     return this._orbitStore
       .iterator(options)
       .collect()
-      .map(entry => this.constructor.decorateEntry(entry));
+      .map(entry => this.constructor.transformEntry(entry));
   }
 
   // Get the result of `EventStore.all()` when any entry is added

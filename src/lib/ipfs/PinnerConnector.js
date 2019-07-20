@@ -206,8 +206,10 @@ class PinnerConnector {
 
   _publishAction(action: PinnerAction) {
     if (this.connectedToPinner) {
+      const stringifiedAction = JSON.stringify(action);
+      log.verbose(`Publishing action: ${stringifiedAction}`);
       this._ipfs.pubsub
-        .publish(this._room, Buffer.from(JSON.stringify(action)))
+        .publish(this._room, Buffer.from(stringifiedAction))
         // pubsub.publish returns a promise, so when calling it synchronously, we have to handle errors here
         .catch(log.warn);
     } else {
