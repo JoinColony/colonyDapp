@@ -117,6 +117,10 @@ function* colonyClaimToken({
     yield put<Action<typeof ACTIONS.COLONY_UNCLAIMED_TRANSACTIONS_FETCH>>(
       fetchColonyUnclaimedTransactions(colonyAddress),
     );
+    yield put<Action<typeof ACTIONS.COLONY_TOKEN_BALANCE_FETCH>>({
+      type: ACTIONS.COLONY_TOKEN_BALANCE_FETCH,
+      payload: { colonyAddress, tokenAddress },
+    });
   } catch (error) {
     return yield putError(ACTIONS.COLONY_CLAIM_TOKEN_ERROR, error, meta);
   } finally {

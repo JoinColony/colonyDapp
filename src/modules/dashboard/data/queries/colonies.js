@@ -438,37 +438,25 @@ export const getColonyDomains: Query<
 };
 
 export const getColonyTokenBalance: Query<
-  ColonyManager,
-  void,
-  {| colonyAddress: Address, tokenAddress: Address |},
+  ColonyClient,
+  {| colonyAddress: Address |},
+  {| tokenAddress: Address |},
   BigNumber,
 > = {
   name: 'getColonyTokenBalance',
   context: colonyContext,
-  prepare: async ({ colonyManager }: {| colonyManager: ColonyManager |}) =>
-    colonyManager,
-  async execute(colonyManager, { colonyAddress, tokenAddress }) {
+  prepare: async (
+    { colonyManager }: {| colonyManager: ColonyManager |},
+    { colonyAddress },
+  ) => colonyManager.getColonyClient(colonyAddress),
+  async execute(colonyClient, { tokenAddress: token }) {
     const {
-      networkClient: {
-        adapter: { provider },
-      },
-    } = colonyManager;
-    // if ether, handle differently
-    if (tokenAddress === ZERO_ADDRESS) {
-      const etherBalance = await provider.getBalance(colonyAddress);
-
-      // convert from Ethers BN
-      return new BigNumber(etherBalance.toString());
-    }
-
-    // otherwise handle as ERC 20
-    const tokenClient = await colonyManager.getTokenClient(tokenAddress);
-    const { amount } = await tokenClient.getBalanceOf.call({
-      sourceAddress: colonyAddress,
-    });
-
-    // convert from Ethers BN
-    return new BigNumber(amount.toString());
+      total: nonRewardsPotsTotal,
+    } = await colonyClient.getNonRewardPotsTotal.call({ token });
+    const {
+      balance: rewardsPotTotal,
+    } = await colonyClient.getFundingPotBalance.call({ potId: 0, token });
+    return new BigNumber(nonRewardsPotsTotal.add(rewardsPotTotal).toString(10));
   },
 };
 
