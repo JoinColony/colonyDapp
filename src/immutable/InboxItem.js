@@ -4,13 +4,15 @@ import type { RecordFactory, RecordOf } from 'immutable';
 
 import { Record } from 'immutable';
 
+import type { Address } from '~types';
+
 type Shared = {|
   id: string,
   type: string,
   sourceId: string,
   sourceType: string,
   timestamp: number,
-  sourceAddress: string,
+  sourceAddress: Address,
   onClickRoute?: string,
   context: Object,
   unread: boolean,

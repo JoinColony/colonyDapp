@@ -72,7 +72,7 @@ export type UserEvents = {|
       draftId: TaskDraftId,
       taskTitle: string,
       comment: string,
-      sourceUserAddress: string,
+      sourceUserAddress: Address,
     |},
   >,
   ASSIGNED_TO_TASK: EventDefinition<
@@ -81,7 +81,7 @@ export type UserEvents = {|
       colonyAddress: Address,
       draftId: TaskDraftId,
       taskTitle: string,
-      sourceUserAddress: string,
+      sourceUserAddress: Address,
     |},
   >,
   UNASSIGNED_FROM_TASK: EventDefinition<
@@ -90,7 +90,7 @@ export type UserEvents = {|
       colonyAddress: Address,
       draftId: TaskDraftId,
       taskTitle: string,
-      sourceUserAddress: string,
+      sourceUserAddress: Address,
     |},
   >,
   WORK_REQUEST: EventDefinition<
@@ -99,7 +99,7 @@ export type UserEvents = {|
       colonyAddress: Address,
       draftId: TaskDraftId,
       taskTitle: string,
-      sourceUserAddress: string,
+      sourceUserAddress: Address,
     |},
   >,
   TASK_FINALIZED_NOTIFICATION: EventDefinition<
@@ -108,7 +108,7 @@ export type UserEvents = {|
       colonyAddress: Address,
       draftId: TaskDraftId,
       taskTitle: string,
-      sourceUserAddress: string,
+      sourceUserAddress: Address,
     |},
   >,
 |};
