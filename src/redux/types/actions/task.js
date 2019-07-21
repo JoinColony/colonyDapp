@@ -100,7 +100,7 @@ export type TaskActionTypes = {|
     typeof ACTIONS.TASK_COMMENT_ADD,
     {|
       comment: string,
-      author: string,
+      author: Address,
       draftIt: string,
       colonyAddress: Address,
       taskTitle: string,
