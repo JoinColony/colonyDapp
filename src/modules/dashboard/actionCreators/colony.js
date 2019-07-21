@@ -3,6 +3,7 @@
 import type { Address, ENSName } from '~types';
 import type { Action } from '~redux';
 
+import { createAddress } from '~types';
 import { ACTIONS } from '~redux';
 
 export const fetchColony = (
@@ -10,7 +11,7 @@ export const fetchColony = (
 ): Action<typeof ACTIONS.COLONY_FETCH> => ({
   type: ACTIONS.COLONY_FETCH,
   payload: { colonyAddress },
-  meta: { key: colonyAddress },
+  meta: { key: createAddress(colonyAddress) },
 });
 
 export const fetchColonyAddress = (
@@ -26,7 +27,7 @@ export const fetchColonyName = (
 ): Action<typeof ACTIONS.COLONY_NAME_FETCH> => ({
   type: ACTIONS.COLONY_NAME_FETCH,
   payload: { colonyAddress },
-  meta: { key: colonyAddress },
+  meta: { key: createAddress(colonyAddress) },
 });
 
 export const fetchColonyTaskMetadata = (
@@ -34,7 +35,7 @@ export const fetchColonyTaskMetadata = (
 ): Action<typeof ACTIONS.COLONY_TASK_METADATA_FETCH> => ({
   type: ACTIONS.COLONY_TASK_METADATA_FETCH,
   payload: { colonyAddress },
-  meta: { key: colonyAddress },
+  meta: { key: createAddress(colonyAddress) },
 });
 
 export const colonySubStart = (
@@ -42,7 +43,7 @@ export const colonySubStart = (
 ): Action<typeof ACTIONS.COLONY_SUB_START> => ({
   type: ACTIONS.COLONY_SUB_START,
   payload: { colonyAddress },
-  meta: { key: colonyAddress },
+  meta: { key: createAddress(colonyAddress) },
 });
 
 export const colonySubStop = (
@@ -50,5 +51,5 @@ export const colonySubStop = (
 ): Action<typeof ACTIONS.COLONY_SUB_STOP> => ({
   type: ACTIONS.COLONY_SUB_STOP,
   payload: { colonyAddress },
-  meta: { key: colonyAddress },
+  meta: { key: createAddress(colonyAddress) },
 });
