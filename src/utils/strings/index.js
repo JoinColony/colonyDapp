@@ -29,7 +29,7 @@ export const multiLineTextEllipsis = (
   string: string,
   maxCharLength: number,
 ) => {
-  if (string.length > maxCharLength) {
+  if (string && string.length > maxCharLength) {
     return `${string.substring(0, maxCharLength)}...`;
   }
   return string;
