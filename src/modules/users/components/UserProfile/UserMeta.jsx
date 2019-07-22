@@ -33,12 +33,16 @@ const UserMeta = ({
         user={user}
       />
     </div>
-    <Heading
-      appearance={{ margin: 'none', size: 'large' }}
-      text={displayName}
-      data-test="userProfileName"
-    />
-    <UserMention username={username || walletAddress} hasLink={false} />
+    <div className={styles.headingContainer}>
+      <Heading
+        appearance={{ margin: 'none', size: 'medium', theme: 'dark' }}
+        text={displayName}
+        data-test="userProfileName"
+      />
+    </div>
+    <div className={styles.usernameContainer}>
+      <UserMention username={username || walletAddress} hasLink={false} />
+    </div>
     <CopyableAddress>{walletAddress}</CopyableAddress>
     {bio && (
       <div className={styles.bioContainer}>
