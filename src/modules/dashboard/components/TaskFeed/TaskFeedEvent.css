@@ -9,6 +9,10 @@
 }
 
 .highlight {
+  composes: inlineEllipsis from '~styles/text.css';
+  display: inline-block;
+  max-width: 64ch;
+  vertical-align: bottom;
   font-weight: var(--weight-semi);
   color: var(--text);
 }

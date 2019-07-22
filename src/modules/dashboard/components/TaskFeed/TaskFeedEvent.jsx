@@ -137,9 +137,15 @@ const TaskFeedEventDomainSet = ({
       {...MSG.domainSet}
       values={{
         domainName: (
-          <span className={styles.highlight}>{`#${domainName}`}</span>
+          <span title={domainName} className={styles.highlight}>
+            {`#${domainName}`}
+          </span>
         ),
-        user: <span className={styles.highlight}>{user}</span>,
+        user: (
+          <span title={user} className={styles.highlight}>
+            {user}
+          </span>
+        ),
       }}
     />
   );
@@ -154,7 +160,13 @@ const TaskFeedEventCreated = ({
   return (
     <FormattedMessage
       {...MSG.created}
-      values={{ user: <span className={styles.highlight}>{user}</span> }}
+      values={{
+        user: (
+          <span title={user} className={styles.highlight}>
+            {user}
+          </span>
+        ),
+      }}
     />
   );
 };
@@ -170,9 +182,16 @@ const TaskFeedEventDueDateSet = ({
     <FormattedMessage
       {...MSG.dueDateSet}
       values={{
-        user: <span className={styles.highlight}>{user}</span>,
+        user: (
+          <span title={user} className={styles.highlight}>
+            {user}
+          </span>
+        ),
         dueDate: dueDate && (
-          <span className={styles.highlight}>
+          <span
+            title={formatDate(new Date(dueDate), '{short}')}
+            className={styles.highlight}
+          >
             {formatDate(new Date(dueDate), '{short}')}
           </span>
         ),
@@ -199,7 +218,11 @@ const TaskFeedEventPayoutSet = ({
     <FormattedMessage
       {...MSG.payoutSet}
       values={{
-        user: <span className={styles.highlight}>{user}</span>,
+        user: (
+          <span title={user} className={styles.highlight}>
+            {user}
+          </span>
+        ),
         payout: (
           <span className={styles.highlightNumeral}>
             <Numeral
@@ -224,7 +247,13 @@ const TaskFeedEventPayoutRemoved = ({
   return (
     <FormattedMessage
       {...MSG.payoutRemoved}
-      values={{ user: <span className={styles.highlight}>{user}</span> }}
+      values={{
+        user: (
+          <span title={user} className={styles.highlight}>
+            {user}
+          </span>
+        ),
+      }}
     />
   );
 };
@@ -244,8 +273,16 @@ const TaskFeedEventSkillSet = ({
     <FormattedMessage
       {...MSG.skillSet}
       values={{
-        user: <span className={styles.highlight}>{user}</span>,
-        skillName: <span className={styles.highlight}>{skillName}</span>,
+        user: (
+          <span title={user} className={styles.highlight}>
+            {user}
+          </span>
+        ),
+        skillName: (
+          <span title={skillName} className={styles.highlight}>
+            {skillName}
+          </span>
+        ),
         skillSet: !!skillName,
       }}
     />
@@ -261,7 +298,13 @@ const TaskFeedEventCancelled = ({
   return (
     <FormattedMessage
       {...MSG.cancelled}
-      values={{ user: <span className={styles.highlight}>{user}</span> }}
+      values={{
+        user: (
+          <span title={user} className={styles.highlight}>
+            {user}
+          </span>
+        ),
+      }}
     />
   );
 };
@@ -275,7 +318,13 @@ const TaskFeedEventClosed = ({
   return (
     <FormattedMessage
       {...MSG.closed}
-      values={{ user: <span className={styles.highlight}>{user}</span> }}
+      values={{
+        user: (
+          <span title={user} className={styles.highlight}>
+            {user}
+          </span>
+        ),
+      }}
     />
   );
 };
@@ -291,8 +340,16 @@ const TaskFeedEventDescriptionSet = ({
     <FormattedMessage
       {...MSG.descriptionSet}
       values={{
-        user: <span className={styles.highlight}>{user}</span>,
-        description: <span className={styles.highlight}>{description}</span>,
+        user: (
+          <span title={user} className={styles.highlight}>
+            {user}
+          </span>
+        ),
+        description: (
+          <span title={description} className={styles.highlight}>
+            {description}
+          </span>
+        ),
       }}
     />
   );
@@ -307,7 +364,13 @@ const TaskFeedEventFinalized = ({
   return (
     <FormattedMessage
       {...MSG.finalized}
-      values={{ user: <span className={styles.highlight}>{user}</span> }}
+      values={{
+        user: (
+          <span title={user} className={styles.highlight}>
+            {user}
+          </span>
+        ),
+      }}
     />
   );
 };
@@ -323,8 +386,16 @@ const TaskFeedEventTitleSet = ({
     <FormattedMessage
       {...MSG.titleSet}
       values={{
-        user: <span className={styles.highlight}>{user}</span>,
-        title: <span className={styles.highlight}>{title}</span>,
+        user: (
+          <span title={user} className={styles.highlight}>
+            {user}
+          </span>
+        ),
+        title: (
+          <span title={title} className={styles.highlight}>
+            {title}
+          </span>
+        ),
       }}
     />
   );
@@ -342,8 +413,16 @@ const TaskFeedEventWorkInviteSent = ({
     <FormattedMessage
       {...MSG.workInviteSent}
       values={{
-        user: <span className={styles.highlight}>{user}</span>,
-        invitedUser: <span className={styles.highlight}>{invitedUser}</span>,
+        user: (
+          <span title={user} className={styles.highlight}>
+            {user}
+          </span>
+        ),
+        invitedUser: (
+          <span title={invitedUser} className={styles.highlight}>
+            {invitedUser}
+          </span>
+        ),
       }}
     />
   );
@@ -358,7 +437,13 @@ const TaskFeedEventWorkRequestCreated = ({
   return (
     <FormattedMessage
       {...MSG.workRequestCreated}
-      values={{ user: <span className={styles.highlight}>{user}</span> }}
+      values={{
+        user: (
+          <span title={user} className={styles.highlight}>
+            {user}
+          </span>
+        ),
+      }}
     />
   );
 };
@@ -375,8 +460,16 @@ const TaskFeedEventWorkerAssigned = ({
     <FormattedMessage
       {...MSG.workerAssigned}
       values={{
-        user: <span className={styles.highlight}>{user}</span>,
-        worker: <span className={styles.highlight}>{worker}</span>,
+        user: (
+          <span title={user} className={styles.highlight}>
+            {user}
+          </span>
+        ),
+        worker: (
+          <span title={worker} className={styles.highlight}>
+            {worker}
+          </span>
+        ),
       }}
     />
   );
@@ -393,8 +486,16 @@ const TaskFeedEventWorkerUnassigned = ({
     <FormattedMessage
       {...MSG.workerUnassigned}
       values={{
-        user: <span className={styles.highlight}>{user}</span>,
-        worker: <span className={styles.highlight}>{worker}</span>,
+        user: (
+          <span title={user} className={styles.highlight}>
+            {user}
+          </span>
+        ),
+        worker: (
+          <span title={worker} className={styles.highlight}>
+            {worker}
+          </span>
+        ),
       }}
     />
   );
