@@ -361,7 +361,7 @@ export const createCommentMention: Command<
     draftId: TaskDraftId,
     taskTitle: string,
     comment: string,
-    sourceUserAddress: string,
+    sourceUserAddress: Address,
   |},
   void,
 > = {
@@ -424,7 +424,7 @@ export const createAssignedInboxEvent: Command<
     colonyAddress: Address,
     draftId: TaskDraftId,
     taskTitle: string,
-    sourceUserAddress: string,
+    sourceUserAddress: Address,
   |},
   void,
 > = {
@@ -452,7 +452,7 @@ export const createUnassignedInboxEvent: Command<
     colonyAddress: Address,
     draftId: TaskDraftId,
     taskTitle: string,
-    sourceUserAddress: string,
+    sourceUserAddress: Address,
   |},
   void,
 > = {
@@ -480,7 +480,7 @@ export const createWorkRequestInboxEvent: Command<
     colonyAddress: Address,
     draftId: TaskDraftId,
     taskTitle: string,
-    sourceUserAddress: string,
+    sourceUserAddress: Address,
   |},
   void,
 > = {
@@ -506,7 +506,7 @@ export const createFinalizedInboxEvent: Command<
     colonyAddress: Address,
     draftId: TaskDraftId,
     taskTitle: string,
-    sourceUserAddress: string,
+    sourceUserAddress: Address,
   |},
   void,
 > = {

@@ -267,7 +267,7 @@ export const getUserAddress: Query<
   {| ens: ENSCache, networkClient: NetworkClient |},
   void,
   {| username: string |},
-  string,
+  Address,
 > = {
   name: 'getUserAddress',
   context: [CONTEXT.COLONY_MANAGER, CONTEXT.ENS_INSTANCE],
@@ -289,7 +289,7 @@ export const getUserAddress: Query<
       throw new Error(`Address not found for username "${username}"`);
     }
 
-    return userAddress;
+    return createAddress(userAddress);
   },
 };
 

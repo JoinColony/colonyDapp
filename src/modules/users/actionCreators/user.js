@@ -5,6 +5,7 @@ import nanoid from 'nanoid';
 import type { Action } from '~redux';
 import type { Address } from '~types';
 
+import { createAddress } from '~types';
 import { ACTIONS } from '~redux';
 import type { TaskDraftId } from '~immutable';
 
@@ -12,7 +13,7 @@ export const userFetch = (
   userAddress: Address,
 ): Action<typeof ACTIONS.USER_FETCH> => ({
   type: ACTIONS.USER_FETCH,
-  meta: { key: userAddress },
+  meta: { key: createAddress(userAddress) },
   payload: { userAddress },
 });
 
@@ -38,8 +39,8 @@ export const userPermissionsFetch = (
   colonyAddress: Address,
 ): Action<typeof ACTIONS.USER_PERMISSIONS_FETCH> => ({
   type: ACTIONS.USER_PERMISSIONS_FETCH,
+  meta: { key: createAddress(colonyAddress) },
   payload: { colonyAddress },
-  meta: { key: colonyAddress },
 });
 
 export const userTokensUpdate = (
@@ -76,6 +77,6 @@ export const fetchUserColonies = (
   metadataStoreAddress: string,
 ): Action<typeof ACTIONS.USER_SUBSCRIBED_COLONIES_FETCH> => ({
   type: ACTIONS.USER_SUBSCRIBED_COLONIES_FETCH,
+  meta: { key: createAddress(walletAddress) },
   payload: { walletAddress, metadataStoreAddress },
-  meta: { key: walletAddress },
 });

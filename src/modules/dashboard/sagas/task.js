@@ -1012,7 +1012,7 @@ function* taskCommentAdd({
         signature,
         content: {
           id: nanoid(),
-          author: wallet.address,
+          author: walletAddress,
           body: comment,
         },
       },
