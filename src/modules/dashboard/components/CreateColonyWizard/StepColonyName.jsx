@@ -128,21 +128,36 @@ const StepColonyName = ({ wizardForm, nextStep, wizardValues }: Props) => {
         const normalized = getNormalizedDomainText(colonyName);
         return (
           <section className={styles.main}>
-            <Heading
-              appearance={{ size: 'medium', weight: 'medium' }}
-              text={MSG.heading}
-              textValues={{
-                /*
-                 * @NOTE We need to use a JS string truncate here, rather then CSS,
-                 * since we're dealing with a string that needs to be truncated,
-                 * inside a sentence that does not
-                 */
-                username: multiLineTextEllipsis(
-                  getNormalizedDomainText(username || wizardValues.username),
-                  38,
-                ),
-              }}
-            />
+            <Heading appearance={{ size: 'medium', weight: 'medium' }}>
+              <FormattedMessage
+                {...MSG.heading}
+                values={{
+                  /*
+                   * @NOTE We need to use a JS string truncate here, rather then CSS,
+                   * since we're dealing with a string that needs to be truncated,
+                   * inside a sentence that does not
+                   */
+                  username: (
+                    <span
+                      /*
+                       * @NOTE Needed so the user can get the full username on hover
+                       * (But still, if it's too long, the browser will trucate it)
+                       */
+                      title={getNormalizedDomainText(
+                        username || wizardValues.username,
+                      )}
+                    >
+                      {multiLineTextEllipsis(
+                        getNormalizedDomainText(
+                          username || wizardValues.username,
+                        ),
+                        38,
+                      )}
+                    </span>
+                  ),
+                }}
+              />
+            </Heading>
             <p className={styles.paragraph}>
               <FormattedMessage {...MSG.descriptionOne} />
             </p>
