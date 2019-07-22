@@ -10,3 +10,9 @@
   margin-bottom: 20px;
   min-height: 65px;
 }
+
+.displayName {
+  composes: multiLineEllipsis from '~styles/text.css';
+  max-width: 200px;
+  overflow-wrap: break-word;
+}
