@@ -128,7 +128,9 @@ class PinnerConnector {
       return count;
     }
     try {
+      log.verbose('Waiting for pinner to be ready...');
       await this.ready;
+      log.verbose('Pinner is ready now!');
     } catch (caughtError) {
       log.warn('Could not request replication; not connected to any pinners.');
       return 0;

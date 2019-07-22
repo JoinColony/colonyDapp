@@ -11,7 +11,7 @@ import type { Command, Query, Subscription } from '../../data/types';
 
 import { getContext, CONTEXT } from '~context';
 import { validateSync } from '~utils/yup';
-import { isDev, log } from '~utils/debug';
+import { log } from '~utils/debug';
 import { ACTIONS } from '~redux';
 
 /*
@@ -41,15 +41,13 @@ export const putError = (type: string, error: Error, meta?: Object = {}) => {
     error: true,
     payload: error,
   };
-  if (isDev) {
-    log.error(error);
-    Object.assign(action.meta, {
-      error: {
-        message: error.message,
-        stack: error.stack,
-      },
-    });
-  }
+  log.error(error);
+  Object.assign(action.meta, {
+    error: {
+      message: error.message,
+      stack: error.stack,
+    },
+  });
   return put(action);
 };
 
