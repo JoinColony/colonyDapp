@@ -44,6 +44,15 @@ type DataMapFetcher<T> = {|
   ttl?: number,
 |};
 
+type DataTupleFetcher<T> = {|
+  select: (
+    rootState: RootStateRecord,
+    args: [any, any][],
+  ) => ImmutableMapType<string, ?DataRecordType<T>>,
+  fetch: ([any, any]) => Action<*>,
+  ttl?: number,
+|};
+
 type DataTupleSubscriber<T> = {|
   select: (
     rootState: RootStateRecord,
@@ -382,6 +391,80 @@ export const useDataTupleSubscriber = <T>(
     [],
   );
 
+  return useMemo(
+    () =>
+      memoizedKeys.map(entry => {
+        const data = allData.get(entry[1]);
+        return {
+          key: entry[1],
+          entry,
+          data: transformFetchedData(data),
+          isFetching: keysToFetchFor.includes(entry[1]) && isFetchingData(data),
+          error: data ? data.error : null,
+        };
+      }),
+    [allData, memoizedKeys, keysToFetchFor],
+  );
+};
+
+/*
+ * Given a `DataTupleFetcher` object and a tuple with the items
+ * to fetch data for, select the data and fetch the parts that need
+ * to be (re-)fetched.
+ */
+export const useDataTupleFetcher = <T>(
+  { fetch, select, ttl: ttlDefault = 0 }: DataTupleFetcher<T>,
+  keys: Array<*>,
+  { ttl: ttlOverride }: DataFetcherOptions = {},
+): {|
+  data: ?T,
+  key: string,
+  isFetching: boolean,
+  error: ?string,
+|}[] => {
+  /*
+   * Created memoized keys to guard the rest of the function against
+   * unnecessary updates.
+   */
+  const memoizedKeys = useMemoWithTupleArray(() => keys, keys);
+  const dispatch = useDispatch();
+  const allData: ImmutableMapType<string, DataRecordType<*>> = useMappedState(
+    useCallback(state => select(state, memoizedKeys), [select, memoizedKeys]),
+  );
+
+  const isFirstMount = useRef(true);
+  const ttl = ttlOverride || ttlDefault;
+
+  /*
+   * Use with the array of keys we want data for, get the data from `allData`
+   * and use `shouldFetchData` to obtain an array of keys we should
+   * dispatch fetch actions for.
+   */
+  const keysToFetchFor = useMemo(
+    () =>
+      memoizedKeys.filter(entry =>
+        shouldFetchData(allData.get(entry[1]), ttl, isFirstMount.current, [
+          entry,
+        ]),
+      ),
+    [allData, memoizedKeys, ttl],
+  );
+
+  /*
+   * Set the `isFirstMount` ref and dispatch any needed fetch actions.
+   */
+  useEffect(
+    () => {
+      isFirstMount.current = false;
+      keysToFetchFor.map(key => dispatch(fetch(key)));
+    },
+    [keysToFetchFor, dispatch, fetch, memoizedKeys],
+  );
+
+  /*
+   * Return an array of data objects with keys by mapping over the keys
+   * and getting the data from `allData`.
+   */
   return useMemo(
     () =>
       memoizedKeys.map(entry => {
