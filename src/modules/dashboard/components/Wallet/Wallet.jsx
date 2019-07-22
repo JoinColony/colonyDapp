@@ -5,23 +5,19 @@ import React, { useCallback } from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 
 import type { DialogType } from '~core/Dialog';
-import type { ContractTransactionType, TokenReferenceType } from '~immutable';
+import type { TokenReferenceType } from '~immutable';
 import type { Address } from '~types';
 
-import { Tab, Tabs, TabList, TabPanel } from '~core/Tabs';
 import CopyableAddress from '~core/CopyableAddress';
 import Button from '~core/Button';
 import Heading from '~core/Heading';
 import QRCode from '~core/QRCode';
+import WalletLink from '~core/WalletLink';
 import { SpinnerLoader } from '~core/Preloaders';
-import WalletTransactions from '../WalletTransactions';
 import TokenList from '~admin/Tokens/TokenList.jsx';
 
 import { useDataFetcher } from '~utils/hooks';
-import {
-  currentUserTokenTransfersFetcher,
-  currentUserTokensFetcher,
-} from '../../../users/fetchers';
+import { currentUserTokensFetcher } from '../../../users/fetchers';
 
 import styles from './Wallet.css';
 
@@ -42,9 +38,17 @@ const MSG = defineMessages({
     id: 'dashboard.Wallet.helpText',
     defaultMessage: "Don't see the tokens you are looking for?",
   },
+  linkText: {
+    id: 'dashboard.Wallet.linkText',
+    defaultMessage: 'View your transactions on Etherscan {link}',
+  },
   linkEditToken: {
     id: 'dashboard.Wallet.linkEditToken',
     defaultMessage: 'Edit Tokens Here',
+  },
+  linkViewTransactions: {
+    id: 'dashboard.Wallet.linkViewTransactions',
+    defaultMessage: 'Here',
   },
 });
 
@@ -57,14 +61,6 @@ const Wallet = ({ walletAddress, openDialog }: Props) => {
   const { isFetching: isFetchingTokens, data: tokens } = useDataFetcher<
     TokenReferenceType[],
   >(currentUserTokensFetcher, [], []);
-  const {
-    isFetching: isFetchingTransactions,
-    data: transactions,
-  } = useDataFetcher<ContractTransactionType[]>(
-    currentUserTokenTransfersFetcher,
-    [],
-    [],
-  );
   const editTokens = useCallback(
     () =>
       openDialog('UserTokenEditDialog', {
@@ -87,29 +83,11 @@ const Wallet = ({ walletAddress, openDialog }: Props) => {
             </CopyableAddress>
           </div>
         </div>
-        <Tabs>
-          <TabList>
-            <Tab>
-              <FormattedMessage {...MSG.tabTokens} />
-            </Tab>
-            <Tab>
-              <FormattedMessage {...MSG.tabTransactions} />
-            </Tab>
-          </TabList>
-          <TabPanel>
-            {isFetchingTokens ? (
-              <SpinnerLoader />
-            ) : (
-              <TokenList tokens={tokens || []} appearance={{ numCols: '3' }} />
-            )}
-          </TabPanel>
-          <TabPanel>
-            <WalletTransactions
-              transactions={transactions || undefined}
-              isLoading={isFetchingTransactions}
-            />
-          </TabPanel>
-        </Tabs>
+        {isFetchingTokens ? (
+          <SpinnerLoader />
+        ) : (
+          <TokenList tokens={tokens || []} appearance={{ numCols: '3' }} />
+        )}
       </main>
       <aside className={styles.sidebar}>
         <p className={styles.helpText}>
@@ -118,6 +96,20 @@ const Wallet = ({ walletAddress, openDialog }: Props) => {
             appearance={{ theme: 'blue', size: 'small' }}
             text={MSG.linkEditToken}
             onClick={editTokens}
+          />
+        </p>
+        <p className={styles.linkText}>
+          <FormattedMessage
+            {...MSG.linkText}
+            values={{
+              link: (
+                <WalletLink
+                  className={styles.walletLink}
+                  walletAddress={walletAddress}
+                  text={MSG.linkViewTransactions}
+                />
+              ),
+            }}
           />
         </p>
       </aside>

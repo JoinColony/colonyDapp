@@ -23,6 +23,10 @@
   margin-top: 65px;
 }
 
+.linkText {
+  margin-top: 75px;
+}
+
 .walletDetails {
   display: flex;
   margin-bottom: 40px;
@@ -30,6 +34,18 @@
 
 .tokenLink {
   font-weight: var(--weight-medium);
+  color: var(--sky-blue);
+}
+
+.walletLink {
+  margin-left: 5px;
+  font-size: var(--size-tiny);
+  font-weight: var(--weight-semi);
+  color: var(--sky-blue);
+}
+
+.walletLink:hover {
+  text-decoration: underline;
   color: var(--sky-blue);
 }
 
