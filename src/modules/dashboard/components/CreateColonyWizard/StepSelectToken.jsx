@@ -125,6 +125,11 @@ const StepSelectToken = ({
           <FormattedMessage
             {...MSG.heading}
             values={{
+              /*
+               * @NOTE We need to use a JS string truncate here, rather then CSS,
+               * since we're dealing with a string that needs to be truncated,
+               * inside a sentence that does not
+               */
               colony: (
                 <span title={getNormalizedDomainText(wizardValues.colonyName)}>
                   {multiLineTextEllipsis(
