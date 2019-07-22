@@ -1,7 +1,7 @@
 /* @flow */
 
 import React from 'react';
-import { defineMessages } from 'react-intl';
+import { defineMessages, FormattedMessage } from 'react-intl';
 
 import type { WizardProps } from '~core/Wizard';
 import type { WalletSpecificType } from '~immutable';
@@ -9,6 +9,7 @@ import type { WalletSpecificType } from '~immutable';
 import { isDev } from '~utils/debug';
 import Heading from '~core/Heading';
 import { Form } from '~core/Fields';
+import ExternalLink from '~core/ExternalLink';
 import DecisionHub, { DecisionOption } from '~core/DecisionHub';
 import { CREATE_WALLET_ROUTE } from '~routes';
 import { WALLET_SPECIFICS } from '~immutable';
@@ -77,6 +78,14 @@ const MSG = defineMessages({
   trufflepigSubtitle: {
     id: 'users.ConnectWalletWizard.StepStart.trufflepigSubtitle',
     defaultMessage: 'Use wallet from TrufflePig (dev mode only)',
+  },
+  agreeToUseDapp: {
+    id: 'users.ConnectWalletWizard.StepStart.agreeToUseDapp',
+    defaultMessage: 'By using our App, you agree to our {tos}.',
+  },
+  termsOfService: {
+    id: 'users.ConnectWalletWizard.StepStart.termsOfService',
+    defaultMessage: 'Terms and Conditions of Use',
   },
 });
 
@@ -151,6 +160,21 @@ const StepStart = ({ nextStep, wizardValues }: Props) => (
           appearance={{ size: 'normal', weight: 'thin' }}
           text={MSG.subTitle}
         />
+      </div>
+      <div className={styles.subtitle}>
+        <Heading appearance={{ size: 'normal', weight: 'thin' }}>
+          <FormattedMessage
+            {...MSG.agreeToUseDapp}
+            values={{
+              tos: (
+                <ExternalLink
+                  text={MSG.termsOfService}
+                  href="https://colony.io/terms.pdf"
+                />
+              ),
+            }}
+          />
+        </Heading>
       </div>
       <DecisionHub name="method" options={options} />
       <div className={styles.createWalletLink} data-test="createWalletLink">
