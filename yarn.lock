@@ -14362,10 +14362,10 @@ orbit-db-store@~2.6.0:
     p-each-series "^1.0.0"
     readable-stream "~2.3.5"
 
-orbit-db@^0.21.3:
-  version "0.21.3"
-  resolved "https://registry.yarnpkg.com/orbit-db/-/orbit-db-0.21.3.tgz#5eb7a2252c5b8a4399a1164b25206eed9e5e9430"
-  integrity sha512-LS4l+HbHg5Kx/d7KUZp1FQK0+/CNlbr2kyZsf7GU6b3cU5Vi46pMFAl0SG30bqIWfdDLxkNb3JG6isW/sIUNyg==
+orbit-db@^0.21.4:
+  version "0.21.4"
+  resolved "https://registry.yarnpkg.com/orbit-db/-/orbit-db-0.21.4.tgz#0b15d9f23a73e9cd7c673f31d69de152e0753b5f"
+  integrity sha512-3iIUlZT+HSplZCvV7MqMT0n39FrnOXKH899jMfkpml11vf23lYa62K5rDZ3R3odXF/83e1VFVNkclndDaZsofQ==
   dependencies:
     cids "^0.7.1"
     ipfs-pubsub-1on1 "~0.0.4"
