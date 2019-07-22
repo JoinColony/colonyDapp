@@ -30,8 +30,11 @@ import styles from './ProfileEdit.css';
 const MSG = defineMessages({
   labelAddress: {
     id: 'admin.Profile.ProfileEdit.labelAddress',
-    defaultMessage:
-      'Colony address (send tokens to this address to fund your Colony)',
+    defaultMessage: 'Colony Address',
+  },
+  sendTokens: {
+    id: 'admin.Profile.ProfileEdit.sendTokens',
+    defaultMessage: 'Send tokens to this address to fund your colony',
   },
   labelEnsName: {
     id: 'admin.Profile.ProfileEdit.labelEnsName',
@@ -51,7 +54,7 @@ const MSG = defineMessages({
   },
   labelGuidelines: {
     id: 'admin.Profile.ProfileEdit.labelGuidelines',
-    defaultMessage: 'Contribution Guidelines',
+    defaultMessage: 'Contribution Guidelines URL',
   },
 });
 
@@ -100,7 +103,7 @@ const ProfileEdit = ({ colony }: Props) => {
           {({ status, isSubmitting }) => (
             <Fragment>
               <FieldSet className={styles.section}>
-                <InputLabel label={MSG.labelAddress} />
+                <InputLabel label={MSG.labelAddress} help={MSG.sendTokens} />
                 <CopyableAddress appearance={{ theme: 'big' }} full>
                   {colonyAddress}
                 </CopyableAddress>

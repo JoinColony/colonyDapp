@@ -13,11 +13,11 @@ const MSG = defineMessages({
   },
   description: {
     id: 'admin.UnlockTokenDialog.description',
-    defaultMessage: 'This cannot be undone. Learn more {link}.',
+    defaultMessage: 'This cannot be undone. {learnMore}.',
   },
-  descriptionLink: {
-    id: 'admin.UnlockTokenDialog.descriptionLink',
-    defaultMessage: 'here',
+  learnMore: {
+    id: 'admin.UnlockTokenDialog.learnMore',
+    defaultMessage: 'Learn more',
   },
   unlockButton: {
     id: 'admin.UnlockTokenDialog.unlockButton',
@@ -47,7 +47,15 @@ const UnlockTokenDialog = ({ cancel, close }: Props) => (
   >
     <FormattedMessage
       {...MSG.description}
-      values={{ link: <ExternalLink href="#" text={MSG.descriptionLink} /> }}
+      values={{
+        learnMore: (
+          <ExternalLink
+            // eslint-disable-next-line max-len
+            href="https://help.colony.io/hc/en-us/articles/360025429094-How-to-unlock-your-colony-s-native-token"
+            text={MSG.learnMore}
+          />
+        ),
+      }}
     />
   </ConfirmDialog>
 );

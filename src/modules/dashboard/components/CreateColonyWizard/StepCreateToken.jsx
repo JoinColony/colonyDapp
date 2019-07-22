@@ -45,11 +45,11 @@ const MSG = defineMessages({
   },
   helpTokenSymbol: {
     id: 'dashboard.CreateColonyWizard.StepCreateToken.helpTokenSymbol',
-    defaultMessage: 'E.g.: (MAT), up to 4 characters',
+    defaultMessage: 'e.g., MAT, AMEX',
   },
   helpTokenName: {
     id: 'dashboard.CreateColonyWizard.StepCreateToken.helpTokenName',
-    defaultMessage: 'E.g.: My Awesome Token',
+    defaultMessage: 'e.g., My Awesome Token',
   },
   labelTokenIcon: {
     id: 'dashboard.CreateColonyWizard.StepCreateToken.labelTokenIcon',
@@ -66,7 +66,7 @@ const MSG = defineMessages({
   errorTokenSymbol: {
     id: 'dashboard.CreateColonyWizard.StepCreateToken.errorTokenSymbol',
     defaultMessage: `The token symbol can only contain letters and numbers, and
-      can only have a length of 4`,
+      can only have a length of 5`,
   },
   errorTokenIcon: {
     id: 'dashboard.CreateColonyWizard.StepCreateToken.errorTokenIcon',
@@ -83,7 +83,7 @@ const validationSchema = yup.object({
   tokenSymbol: yup
     .string()
     .required()
-    .max(4, MSG.errorTokenSymbol),
+    .max(5, MSG.errorTokenSymbol),
   tokenIcon: yup.array().min(1, MSG.errorTokenIcon),
 });
 
@@ -174,7 +174,7 @@ const StepCreateToken = ({
               <Input
                 name="tokenSymbol"
                 appearance={{ theme: 'fat' }}
-                maxLength="4"
+                maxLength="5"
                 formattingOptions={{ uppercase: true }}
                 label={MSG.labelTokenSymbol}
                 help={MSG.helpTokenSymbol}

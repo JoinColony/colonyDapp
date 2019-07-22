@@ -37,11 +37,11 @@ const MSG = defineMessages({
   },
   navItemMintNewTokens: {
     id: 'dashboard.Tokens.navItemMintNewTokens',
-    defaultMessage: 'Mint New Tokens',
+    defaultMessage: 'Mint New tokens',
   },
   navItemEditTokens: {
     id: 'dashboard.Tokens.navItemEditTokens',
-    defaultMessage: 'Edit Tokens',
+    defaultMessage: 'Edit tokens',
   },
 });
 

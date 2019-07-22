@@ -44,7 +44,7 @@ const MSG = defineMessages({
   },
   linkEditToken: {
     id: 'dashboard.Wallet.linkEditToken',
-    defaultMessage: 'Edit Tokens Here',
+    defaultMessage: 'Edit tokens',
   },
   linkViewTransactions: {
     id: 'dashboard.Wallet.linkViewTransactions',
@@ -92,6 +92,8 @@ const Wallet = ({ walletAddress, openDialog }: Props) => {
       <aside className={styles.sidebar}>
         <p className={styles.helpText}>
           <FormattedMessage {...MSG.helpText} />
+          <br />
+          <br />
           <Button
             appearance={{ theme: 'blue', size: 'small' }}
             text={MSG.linkEditToken}

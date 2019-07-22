@@ -25,8 +25,7 @@ const MSG = defineMessages({
   },
   labelError: {
     id: 'FileUpload.labelError',
-    defaultMessage:
-      'There was an error processing your file. Hover over its icon',
+    defaultMessage: 'There was an error processing your file. Try again.',
   },
   dropzoneTextBrowseAction: {
     id: 'FileUpload.dropzoneTextBrowseAction',

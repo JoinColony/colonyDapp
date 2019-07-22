@@ -1,6 +1,5 @@
 /* @flow */
 
-// $FlowFixMe
 import React from 'react';
 import { defineMessages } from 'react-intl';
 
@@ -12,6 +11,7 @@ import type { ColonyType, RolesType } from '~immutable';
 import Heading from '~core/Heading';
 import Icon from '~core/Icon';
 import Link from '~core/Link';
+import ExternalLink from '~core/ExternalLink';
 import HookedColonyAvatar from '~dashboard/HookedColonyAvatar';
 import HookedUserAvatar from '~users/HookedUserAvatar';
 import ColonySubscribe from './ColonySubscribe.jsx';
@@ -107,9 +107,7 @@ const ColonyMeta = ({
             appearance={{ margin: 'none', size: 'small', theme: 'dark' }}
             text={MSG.websiteLabel}
           />
-          <a href={website} rel="noopener noreferrer" target="_blank">
-            {stripProtocol(website)}
-          </a>
+          <ExternalLink href={stripProtocol(website)} />
         </section>
       )}
       {guideline && (
@@ -118,9 +116,7 @@ const ColonyMeta = ({
             appearance={{ margin: 'none', size: 'small', theme: 'dark' }}
             text={MSG.guidelineLabel}
           />
-          <a href={guideline} rel="noopener noreferrer" target="_blank">
-            {stripProtocol(guideline)}
-          </a>
+          <ExternalLink href={stripProtocol(guideline)} />
         </section>
       )}
       {founder && (

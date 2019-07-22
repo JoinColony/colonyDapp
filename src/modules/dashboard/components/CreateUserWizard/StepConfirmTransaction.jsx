@@ -26,8 +26,8 @@ import {
 const MSG = defineMessages({
   heading: {
     id: 'dashboard.CreateUserWizard.StepConfirmTransaction.heading',
-    defaultMessage: `Complete this transaction to
-      finish setting up your account.`,
+    defaultMessage: `Complete this transaction to continue
+      setting up your account`,
   },
   later: {
     id: 'dashboard.CreateUserWizard.StepUserName.later',

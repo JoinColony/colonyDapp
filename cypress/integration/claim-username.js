@@ -24,7 +24,7 @@ describe('Claims a username', () => {
      * Click on the button to go to the dApp
      */
     cy.get('button[data-test="confirmTruffleAccount"]', { timeout: 2000 })
-      .contains('Go to Colony')
+      .contains('Continue')
       .click();
 
     /*

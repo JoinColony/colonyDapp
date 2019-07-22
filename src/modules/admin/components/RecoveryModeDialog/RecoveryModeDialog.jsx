@@ -14,13 +14,13 @@ const MSG = defineMessages({
     id: 'admin.RecoveryModeDialog.description',
     defaultMessage: `
       Your Colony will be disabled and all users will be unable to interact
-      with your Colony. Exiting recovery mode requires you to interact directly
+      with your Colony. Exiting Recovery mode requires you to interact directly
       with the contracts. This is an advanced feature and should only be used
       in emergencies.`,
   },
   recoveryModeButton: {
     id: 'admin.RecoveryModeDialog.recoveryModeButton',
-    defaultMessage: 'Enter Recovery Mode',
+    defaultMessage: 'Enter Recovery mode',
   },
 });
 

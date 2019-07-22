@@ -34,17 +34,17 @@ const MSG = defineMessages({
   },
   buttonRecoveryMode: {
     id: 'admin.Profile.ProfileAdvanced.buttonRecoveryMode',
-    defaultMessage: 'Turn on recovery Mode',
+    defaultMessage: 'Turn on Recovery mode',
   },
   headingRecoveryMode: {
     id: 'admin.Profile.ProfileAdvanced.headingRecoveryMode',
-    defaultMessage: 'Recovery Mode',
+    defaultMessage: 'Recovery mode',
   },
   inRecoveryMode: {
     id: 'admin.Profile.ProfileAdvanced.inRecoveryMode',
     defaultMessage: `{inRecoveryMode, select,
-      true {Colony is in recovery mode}
-      false {Colony is not in recovery mode}
+      true {Colony is in Recovery mode}
+      false {Colony is not in Recovery mode}
     }`,
   },
   tokenLockedHeading: {
@@ -159,7 +159,11 @@ const ProfileAdvanced = ({
                 {...MSG.tokenLockedInfo}
                 values={{
                   link: (
-                    <ExternalLink text={MSG.tokenLockedLearnMore} href="#" />
+                    <ExternalLink
+                      text={MSG.tokenLockedLearnMore}
+                      // eslint-disable-next-line max-len
+                      href="https://help.colony.io/hc/en-us/articles/360025429094-How-to-unlock-your-colony-s-native-token"
+                    />
                   ),
                 }}
               />

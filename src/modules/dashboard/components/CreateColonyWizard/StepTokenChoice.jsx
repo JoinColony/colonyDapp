@@ -2,7 +2,7 @@
 
 import React from 'react';
 
-import { defineMessages } from 'react-intl';
+import { defineMessages, FormattedMessage } from 'react-intl';
 
 import styles from './StepTokenChoice.css';
 
@@ -18,21 +18,22 @@ import { getNormalizedDomainText } from '~utils/strings';
 const MSG = defineMessages({
   heading: {
     id: 'dashboard.CreateColonyWizard.StepTokenChoice.heading',
-    defaultMessage:
-      /* eslint-disable max-len */
-      'Choose a native token for {colony}',
+    defaultMessage: 'Choose a native token for {colony}',
   },
   subtitle: {
     id: 'dashboard.CreateColonyWizard.StepTokenChoice.subtitle',
     defaultMessage:
-      /* eslint-disable max-len */
-      `Colonies need a native token to calculate reputation at the end of a task.
-      Choose which token is right for {colony}.`,
+      // eslint-disable-next-line max-len
+      'Colonies need a native token to calculate Reputation at the end of a task.',
+  },
+  callToAction: {
+    id: 'dashboard.CreateColonyWizard.StepTokenChoice.callToAction',
+    defaultMessage: 'Choose which token is right for {colony}.',
   },
   subtitleWithExample: {
     id: 'dashboard.CreateColonyWizard.StepTokenChoice.subtitleWithExample',
     defaultMessage: `E.g.: Leia has completed a task worth 1.5 ETH and 5 CLNY.
-      If CLNY is the native token then she also earns +5 reputation points.`,
+      If CLNY is the native token then she also earns +5 Reputation points.`,
   },
   button: {
     id: 'dashboard.CreateColonyWizard.StepTokenChoice.button',
@@ -64,13 +65,15 @@ const MSG = defineMessages({
   },
   tooltipCreate: {
     id: 'dashboard.CreateColonyWizard.StepTokenChoice.tooltipCreate',
-    defaultMessage: `You’ll be able to mint new tokens at any time.
-      Good for new projects or projects that want more control over their tokens.`,
+    defaultMessage:
+      // eslint-disable-next-line max-len
+      "Good for projects that don't already have a token or who want more control over their token",
   },
   tooltipSelect: {
     id: 'dashboard.CreateColonyWizard.StepTokenChoice.tooltipSelect',
-    defaultMessage: `Use a token that already has some value.
-      Good for established projects or projects wanting to use existing market forces.`,
+    defaultMessage:
+      // eslint-disable-next-line max-len
+      'Good for projects that already have their own token or want to use an existing one like DAI.',
   },
 });
 
@@ -117,7 +120,7 @@ const StepTokenChoice = ({ nextStep, wizardForm, wizardValues }: Props) => (
           <Heading
             appearance={{ size: 'normal', weight: 'thin' }}
             text={MSG.subtitle}
-            textValues={{ colony: wizardValues.colonyName }}
+            // textValues={{ colony: wizardValues.colonyName }}
           />
         </div>
         <div className={styles.subtitleWithExampleBox}>
@@ -125,6 +128,14 @@ const StepTokenChoice = ({ nextStep, wizardForm, wizardValues }: Props) => (
             className={styles.subtitleWithExample}
             appearance={{ size: 'normal', weight: 'thin' }}
             text={MSG.subtitleWithExample}
+          />
+        </div>
+        <div className={styles.subtitleWithExampleBox}>
+          <FormattedMessage
+            {...MSG.callToAction}
+            values={{
+              colony: getNormalizedDomainText(wizardValues.colonyName),
+            }}
           />
         </div>
         <DecisionHub name="tokenChoice" options={options} />
@@ -137,7 +148,12 @@ const StepTokenChoice = ({ nextStep, wizardForm, wizardValues }: Props) => (
             }}
             text={MSG.notSure}
           />
-          <ExternalLink className={styles.link} text={MSG.learnMore} href="#" />
+          <ExternalLink
+            className={styles.link}
+            text={MSG.learnMore}
+            // eslint-disable-next-line max-len
+            href="https://help.colony.io/hc/en-us/articles/360024589073-How-to-choose-a-native-token"
+          />
         </div>
       </section>
     }

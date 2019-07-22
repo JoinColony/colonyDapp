@@ -40,7 +40,7 @@ const MSG = defineMessages({
   },
   buttonAdvanceText: {
     id: 'users.ConnectWalletWizard.StepMnemonic.button.advance',
-    defaultMessage: 'Go to Colony',
+    defaultMessage: 'Continue',
   },
   buttonBackText: {
     id: 'users.ConnectWalletWizard.StepMnemonic.button.back',

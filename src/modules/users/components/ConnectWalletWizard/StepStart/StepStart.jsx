@@ -24,19 +24,15 @@ const MSG = defineMessages({
     id: 'users.ConnectWalletWizard.StepStart.subTitle',
     defaultMessage:
       /* eslint-disable max-len */
-      'Each Colony account is accessed through an associated Ethereum wallet. Each Colony account is accessed through an associated Ethereum wallet. You can use an existing wallet that you own, or create a new wallet below.',
+      'Each Colony account is accessed through an associated Ethereum wallet. You can use an existing wallet that you own, or create a new wallet below.',
   },
   createWalletTitle: {
     id: 'users.ConnectWalletWizard.StepStart.createWalletTitle',
-    defaultMessage: 'Need a wallet? Let us help',
+    defaultMessage: 'Need a wallet? Let us help.',
   },
   createWalletSubtitle: {
     id: 'users.ConnectWalletWizard.StepStart.createWalletSubtitle',
-    defaultMessage: 'Create an etherum wallet to join',
-  },
-  metaMaskTitle: {
-    id: 'users.ConnectWalletWizard.StepStart.metaMaskTitle',
-    defaultMessage: 'MetaMask',
+    defaultMessage: 'Create an Etherum wallet to join',
   },
   trezorTitle: {
     id: 'users.ConnectWalletWizard.StepStart.trezorTitle',
@@ -44,7 +40,7 @@ const MSG = defineMessages({
   },
   trezorSubtitle: {
     id: 'users.ConnectWalletWizard.StepStart.trezorSubtitle',
-    defaultMessage: 'Login using the Trezor hardware wallet',
+    defaultMessage: 'Log in using the Trezor hardware wallet',
   },
   ledgerTitle: {
     id: 'users.ConnectWalletWizard.StepStart.ledgerTitle',
@@ -56,7 +52,7 @@ const MSG = defineMessages({
   },
   ledgerSubtitle: {
     id: 'users.ConnectWalletWizard.StepStart.ledgerSubtitle',
-    defaultMessage: 'Login using the Ledger hardware wallet',
+    defaultMessage: 'Log in using the Ledger hardware wallet',
   },
   mnemonicTitle: {
     id: 'users.ConnectWalletWizard.StepStart.mnemonicTitle',
@@ -68,7 +64,7 @@ const MSG = defineMessages({
   },
   metaMaskSubtitle: {
     id: 'users.ConnectWalletWizard.StepStart.metaMaskSubtitle',
-    defaultMessage: 'Require MetaMask browser extension',
+    defaultMessage: 'Requires MetaMask browser extension',
   },
   mnemonicSubtitle: {
     id: 'users.ConnectWalletWizard.StepStart.mnemonicSubtitle',
@@ -93,7 +89,7 @@ const displayName = 'users.ConnectWalletWizard.StepStart';
 const options = [
   {
     value: WALLET_SPECIFICS.METAMASK,
-    title: MSG.metaMaskTitle,
+    title: { id: 'wallet.metamask' },
     subtitle: MSG.metaMaskSubtitle,
     icon: 'metamask',
   },

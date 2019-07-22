@@ -33,7 +33,7 @@ type Props = WizardProps<FormValues>;
 const MSG = defineMessages({
   heading: {
     id: 'dashboard.CreateColonyWizard.StepColonyName.heading',
-    defaultMessage: 'Welcome @{username}, let’s begin creating your colony.',
+    defaultMessage: "Welcome @{username}, let's create your colony.",
   },
   descriptionOne: {
     id: 'dashboard.CreateColonyWizard.StepColonyName.descriptionOne',
@@ -67,9 +67,9 @@ const MSG = defineMessages({
   },
   tooltip: {
     id: 'users.CreateColonyWizard.StepColonyName.tooltip',
-    defaultMessage: `We use ENS to create a .joincolony.eth subdomain for your
-      colony. This will also allow us to create a custom URL for inviting people
-      to your colony.`,
+    defaultMessage:
+      // eslint-disable-next-line max-len
+      'We use ENS to create a .joincolony.eth subdomain for your colony. You can use this to create a custom URL and invite people to join your colony.',
   },
 });
 

@@ -20,7 +20,7 @@ describe('Update Claim Profile Metadata', () => {
      * Click on the button to go to the dApp
      */
     cy.get('button')
-      .contains('Go to Colony')
+      .contains('Continue')
       .click();
   });
 

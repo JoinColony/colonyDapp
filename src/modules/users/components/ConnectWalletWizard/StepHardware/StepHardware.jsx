@@ -73,7 +73,7 @@ const MSG = defineMessages({
   },
   buttonAdvance: {
     id: 'users.ConnectWalletWizard.StepHardware.buttonAdvance',
-    defaultMessage: 'Unlock Wallet',
+    defaultMessage: 'Continue',
   },
   buttonBack: {
     id: 'users.ConnectWalletWizard.StepHardware.buttonBack',

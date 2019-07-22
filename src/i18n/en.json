@@ -32,7 +32,9 @@
     "label.password": "Password",
     "placeholder.email": "handle@domain.com",
     "placeholder.password": "Password",
-    
+
+    "wallet.metamask": "MetaMask",
+
     "transaction.debug.description": "DEBUG: context: {context} methodName: {methodName}",
 
     "transaction.network.registerUserLabel.title": "Claim Username",
@@ -69,8 +71,8 @@
 
     "transaction.colony.upgrade.title": "Update Colony",
     "transaction.colony.upgrade.description": "Update Colony",
-    "transaction.colony.enterRecoveryMode.title": "Enter Recovery Mode",
-    "transaction.colony.enterRecoveryMode.description": "Enter Recovery Mode",
+    "transaction.colony.enterRecoveryMode.title": "Enter Recovery mode",
+    "transaction.colony.enterRecoveryMode.description": "Enter Recovery mode",
     "transaction.group.mintTokens.title": "Mint tokens",
     "transaction.group.mintTokens.description": "Mint and claim native token",
     "transaction.colony.mintTokens.title": "Mint New Tokens",

@@ -51,7 +51,7 @@ const MSG = defineMessages({
   },
   tabOrganisation: {
     id: 'dashboard.Admin.tabOrganisation',
-    defaultMessage: 'Organisation',
+    defaultMessage: 'Organization',
   },
 });
 

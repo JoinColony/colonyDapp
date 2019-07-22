@@ -34,11 +34,11 @@ const MSG = defineMessages({
   },
   labelWallet: {
     id: 'users.UserProfileEdit.labelWallet',
-    defaultMessage: 'Your wallet',
+    defaultMessage: 'Your Wallet',
   },
   labelUsername: {
     id: 'users.UserProfileEdit.labelUsername',
-    defaultMessage: 'Unique username',
+    defaultMessage: 'Unique Username',
   },
   labelName: {
     id: 'users.UserProfileEdit.labelName',
