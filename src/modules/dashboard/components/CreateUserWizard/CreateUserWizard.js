@@ -2,19 +2,28 @@
 
 import compose from 'recompose/compose';
 
-import { withWizard } from '../../../core/components/Wizard';
-import CreateUser from './CreateUserWizard.jsx';
+import { userDidClaimProfile } from '../../../users/checks';
+import { withCurrentUser } from '../../../users/hocs';
 
+import { withWizard } from '~core/Wizard';
+
+import CreateUser from './CreateUserWizard.jsx';
 import StepUserName from './StepUserName.jsx';
 import StepConfirmTransaction from './StepConfirmTransaction.jsx';
 
-const stepArray = [StepUserName, StepConfirmTransaction];
+const wizardSteps = [StepUserName, StepConfirmTransaction];
 
-const stepFunction = (step: number) => stepArray[step];
+const steps = (step: number, formValues: Object, props: *) => {
+  if (props && props.currentUser && userDidClaimProfile(props.currentUser)) {
+    return StepConfirmTransaction;
+  }
+  return wizardSteps[step];
+};
 
 const CreateUserContainer = compose(
+  withCurrentUser,
   withWizard({
-    steps: stepFunction,
+    steps,
   }),
 )(CreateUser);
 

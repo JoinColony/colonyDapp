@@ -141,6 +141,7 @@ jobs:
     environment:
       LOADER: trufflepig
       NETWORK: local
+      CHAIN_ID: 1337
       PINNING_ROOM: PINION_DEV_ROOM
       TERM: xterm
       CYPRESS_VIEWPORT_WIDTH: 1920

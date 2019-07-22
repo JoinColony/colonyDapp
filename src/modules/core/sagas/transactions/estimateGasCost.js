@@ -25,7 +25,7 @@ const SAFE_GAS_LIMIT_MULTIPLIER = 1.1;
 
 export default function* estimateGasCost({
   meta: { id },
-}: Action<typeof ACTIONS.TRANSACTION_ESTIMATE_GAS>): Saga<void> {
+}: Action<typeof ACTIONS.TRANSACTION_ESTIMATE_GAS>): Saga<*> {
   try {
     // Get the given transaction
     const transaction = yield* selectAsJS(oneTransaction, id);
@@ -39,8 +39,9 @@ export default function* estimateGasCost({
     );
 
     // The suggested gas limit (briefly above the estimated gas cost)
-    const suggestedGasLimit =
-      estimatedGas.toNumber() * SAFE_GAS_LIMIT_MULTIPLIER;
+    const suggestedGasLimit = Math.ceil(
+      estimatedGas.toNumber() * SAFE_GAS_LIMIT_MULTIPLIER,
+    ).toString();
 
     const { network, suggested } = yield call(getGasPrices);
 
@@ -51,6 +52,7 @@ export default function* estimateGasCost({
       }),
     );
   } catch (error) {
-    yield put(transactionEstimateError(id, error));
+    return yield put(transactionEstimateError(id, error));
   }
+  return null;
 }

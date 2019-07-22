@@ -4,24 +4,19 @@ import React from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 import { Redirect } from 'react-router';
 
-import styles from './StepConfirmTransaction.css';
+import { DASHBOARD_ROUTE } from '~routes';
+import { useSelector } from '~utils/hooks';
 
+import { currentUserSelector } from '../../../users/selectors';
+import { userDidClaimProfile } from '../../../users/checks';
 import { groupedTransactions } from '../../../core/selectors';
 
+import { findTransactionGroupByKey } from '~users/GasStation/transactionGroup';
 import Heading from '~core/Heading';
 import Link from '~core/Link';
-
 import GasStationContent from '~users/GasStation/GasStationContent';
-import { useSelector } from '~utils/hooks';
-import { TRANSACTION_STATUSES } from '~immutable/Transaction';
 
-import { DASHBOARD_ROUTE } from '~routes';
-
-import {
-  getGroupStatus,
-  findTransactionGroupByKey,
-  getGroupKey,
-} from '~users/GasStation/transactionGroup';
+import styles from './StepConfirmTransaction.css';
 
 const MSG = defineMessages({
   heading: {
@@ -39,12 +34,9 @@ const displayName = 'dashboard.CreateUserWizard.StepConfirmTransaction';
 
 const StepConfirmTransaction = () => {
   const transactionGroups = useSelector(groupedTransactions);
-  if (
-    transactionGroups &&
-    transactionGroups[0] &&
-    getGroupStatus(transactionGroups[0]) === TRANSACTION_STATUSES.SUCCEEDED &&
-    getGroupKey(transactionGroups[0]) === 'group.transaction.batch.createUser'
-  ) {
+  const currentUser = useSelector(currentUserSelector);
+
+  if (currentUser && userDidClaimProfile(currentUser)) {
     return <Redirect to={DASHBOARD_ROUTE} />;
   }
 
