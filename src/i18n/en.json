@@ -62,10 +62,6 @@
     "transaction.token.unlock.title": "Unlock Token",
     "transaction.token.unlock.description": "Unlock Token",
 
-    "transaction.group.finalizeTask.title": "Finalize task",
-    "transaction.group.finalizeTask.description": "Move funds and make payment",
-    "transaction.colony.moveFundsBetweenPots.title": "Move Funds",
-    "transaction.colony.moveFundsBetweenPots.description": "Move Funds",
     "transaction.colony.makePayment.title": "Make payment",
     "transaction.colony.makePayment.description": "Make payment",
 
