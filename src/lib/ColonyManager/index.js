@@ -79,6 +79,7 @@ export default class ColonyManager {
     const client = new TokenClient({
       adapter,
       query: { contractAddress },
+      verbose: false,
     });
 
     await client.init();

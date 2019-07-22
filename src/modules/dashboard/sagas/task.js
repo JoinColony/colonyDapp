@@ -41,7 +41,6 @@ import {
 } from '../selectors';
 import { createTransaction, getTxChannel } from '../../core/sagas';
 import { COLONY_CONTEXT } from '../../core/constants';
-import { transactionReady } from '../../core/actionCreators';
 
 import {
   assignWorker,
@@ -526,11 +525,6 @@ function* taskFinalize({
   meta,
 }: Action<typeof ACTIONS.TASK_FINALIZE>): Saga<*> {
   try {
-    const colonyManager = yield* getContext(CONTEXT.COLONY_MANAGER);
-    const colonyClient = yield call(
-      [colonyManager, colonyManager.getColonyClient],
-      colonyAddress,
-    );
     const walletAddress = yield select(walletAddressSelector);
 
     const {
@@ -542,47 +536,8 @@ function* taskFinalize({
     if (!payouts.length) throw new Error(`No payout set for task ${draftId}`);
     const { amount, token } = payouts[0];
 
-    // get the pot we need to fund
-    const { potId: toPot } = yield call(
-      [colonyClient.getDomain, colonyClient.getDomain.call],
-      {
-        domainId,
-      },
-    );
-
-    // setup batch ids and channels
-    const batchKey = 'finalizeTask';
-    const moveFundsBetweenPots = {
-      id: `${meta.id}-moveFundsBetweenPots`,
-      channel: yield call(getTxChannel, `${meta.id}-moveFundsBetweenPots`),
-    };
-    const makePayment = {
-      id: `${meta.id}-makePayment`,
-      channel: yield call(getTxChannel, `${meta.id}-makePayment`),
-    };
-
-    // create transactions
-    if (domainId !== 1) {
-      yield fork(createTransaction, moveFundsBetweenPots.id, {
-        context: COLONY_CONTEXT,
-        methodName: 'moveFundsBetweenPots',
-        identifier: colonyAddress,
-        params: {
-          fromPot: 1, // root domain pot
-          toPot,
-          amount: new BigNumber(amount.toString()),
-          token,
-        },
-        group: {
-          key: batchKey,
-          id: meta.id,
-          index: 0,
-        },
-        ready: false,
-      });
-    }
-
-    yield fork(createTransaction, makePayment.id, {
+    const txChannel = yield call(getTxChannel, meta.id);
+    yield fork(createTransaction, meta.id, {
       context: COLONY_CONTEXT,
       methodName: 'makePayment',
       identifier: colonyAddress,
@@ -593,34 +548,14 @@ function* taskFinalize({
         domainId,
         skillId: skillId || 0,
       },
-      group: {
-        key: batchKey,
-        id: meta.id,
-        index: 1,
-      },
-      ready: false,
     });
 
-    // wait for txs to be created
-    if (domainId !== 1) {
-      yield takeFrom(moveFundsBetweenPots.channel, ACTIONS.TRANSACTION_CREATED);
-    }
-    yield takeFrom(makePayment.channel, ACTIONS.TRANSACTION_CREATED);
-
-    // send txs sequentially
-    if (domainId !== 1) {
-      yield put(transactionReady(moveFundsBetweenPots.id));
-      yield takeFrom(
-        moveFundsBetweenPots.channel,
-        ACTIONS.TRANSACTION_SUCCEEDED,
-      );
-    }
-    yield put(transactionReady(makePayment.id));
+    // wait for tx to succeed
     const {
       payload: {
         transaction: { hash },
       },
-    } = yield takeFrom(makePayment.channel, ACTIONS.TRANSACTION_SUCCEEDED);
+    } = yield takeFrom(txChannel, ACTIONS.TRANSACTION_SUCCEEDED);
 
     // add finalize task event to task store
     const { event } = yield* executeCommand(finalizeTask, {
