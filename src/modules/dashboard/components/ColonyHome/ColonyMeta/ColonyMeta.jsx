@@ -18,6 +18,8 @@ import ColonySubscribe from './ColonySubscribe.jsx';
 
 import { rolesFetcher } from '../../../fetchers';
 
+import { multiLineTextEllipsis } from '~utils/strings';
+
 import styles from './ColonyMeta.css';
 
 const MSG = defineMessages({
@@ -84,7 +86,16 @@ const ColonyMeta = ({
       <section className={styles.headingWrapper}>
         <Heading appearance={{ margin: 'none', size: 'medium', theme: 'dark' }}>
           <>
-            <span title={displayName}>{displayName}</span>
+            <span title={displayName}>
+              {/*
+               * @NOTE We need to use a JS string truncate here, rather then CSS as we do with the other fields,
+               * since we also have to show the settings icon, after the truncated name, otherwise the icon
+               * will be hidden with the rest of the text
+               *
+               * To fix this properly (ie: without JS), we'll need a re-design
+               */
+              multiLineTextEllipsis(displayName, 65)}
+            </span>
             {canAdminister && (
               <Link
                 className={styles.editColony}

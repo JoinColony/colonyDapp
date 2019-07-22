@@ -12,7 +12,6 @@
 }
 
 .headingWrapper {
-  composes: multiLineEllipsis from '~styles/text.css';
 }
 
 .description {
