@@ -12,7 +12,7 @@ const REPLICATION_TIMEOUT = 10 * 1000;
 // How often should we check whether a store is replicating
 const REPLICATION_CHECK_INTERVAL = 500;
 // How long should we wait for a store to load
-const LOAD_TIMEOUT = 30 * 1000;
+const LOAD_TIMEOUT = 20 * 1000;
 // How long we should wait after a write to be considered 'busy'
 const WRITE_TIMEOUT = 10 * 1000;
 
@@ -95,7 +95,9 @@ class Store {
     const headCountPromise = new Promise(resolve =>
       this._orbitStore.events.once('ready', (dbname, heads) => resolve(heads)),
     );
-    const loadPromise = this._orbitStore.load();
+    const loadPromise = this._orbitStore.load(-1, {
+      fetchEntryTimeout: LOAD_TIMEOUT,
+    });
 
     const [heads] = await raceAgainstTimeout(
       Promise.all([headCountPromise, loadPromise]),
