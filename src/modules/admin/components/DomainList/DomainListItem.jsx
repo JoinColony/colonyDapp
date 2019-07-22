@@ -53,7 +53,14 @@ const DomainListItem = ({
         </span>
       )}
     </TableCell>
-    {!viewOnly && (
+
+    {/*
+     *
+     * We want to prevent rendering the table cell if it can't be acted upon
+     * Unfortunately, `TableRow` expects specifically a `TableCell` type, not a boolean
+     */
+    /* $FlowFixMe */
+    !viewOnly && (
       <TableCell className={styles.userRemove}>
         <Button
           className={styles.customRemoveButton}
