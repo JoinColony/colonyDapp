@@ -17,10 +17,8 @@ td.empty {
 }
 
 .taskDetailsTitle {
-  width: 100%;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+  composes: inlineEllipsis from '~styles/text.css';
+  max-width: 80ch;
   color: var(--colony-black);
 }
 
