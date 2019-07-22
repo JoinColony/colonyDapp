@@ -18,7 +18,7 @@ import Icon from '~core/Icon';
 import { Tooltip } from '~core/Popover';
 import { ACTIONS } from '~redux';
 
-import { getNormalizedDomainText } from '~utils/strings';
+import { getNormalizedDomainText, multiLineTextEllipsis } from '~utils/strings';
 
 import { currentUserSelector } from '../../../users/selectors';
 
@@ -128,60 +128,64 @@ const StepColonyName = ({ wizardForm, nextStep, wizardValues }: Props) => {
         const normalized = getNormalizedDomainText(colonyName);
         return (
           <section className={styles.main}>
-            <div className={styles.title}>
-              <Heading
-                appearance={{ size: 'medium', weight: 'medium' }}
-                text={MSG.heading}
-                textValues={{
-                  username: getNormalizedDomainText(
-                    username || wizardValues.username,
-                  ),
-                }}
+            <Heading
+              appearance={{ size: 'medium', weight: 'medium' }}
+              text={MSG.heading}
+              textValues={{
+                /*
+                 * @NOTE We need to use a JS string truncate here, rather then CSS,
+                 * since we're dealing with a string that needs to be truncated,
+                 * inside a sentence that does not
+                 */
+                username: multiLineTextEllipsis(
+                  getNormalizedDomainText(username || wizardValues.username),
+                  38,
+                ),
+              }}
+            />
+            <p className={styles.paragraph}>
+              <FormattedMessage {...MSG.descriptionOne} />
+            </p>
+            <div className={styles.nameForm}>
+              <Input
+                appearance={{ theme: 'fat' }}
+                name="displayName"
+                label={MSG.labelDisplay}
               />
-              <p className={styles.paragraph}>
-                <FormattedMessage {...MSG.descriptionOne} />
-              </p>
-              <div className={styles.nameForm}>
-                <Input
-                  appearance={{ theme: 'fat' }}
-                  name="displayName"
-                  label={MSG.labelDisplay}
+              <Input
+                appearance={{ theme: 'fat' }}
+                name="colonyName"
+                extensionString=".colony.joincolony.eth"
+                label={MSG.label}
+                status={normalized !== colonyName ? MSG.statusText : null}
+                statusValues={{ normalized }}
+                extra={
+                  <Tooltip
+                    placement="right"
+                    content={
+                      <span className={styles.tooltip}>
+                        <FormattedMessage {...MSG.tooltip} />
+                      </span>
+                    }
+                  >
+                    <div className={styles.iconContainer}>
+                      <Icon
+                        name="question-mark"
+                        title="helper"
+                        appearance={{ size: 'small' }}
+                      />
+                    </div>
+                  </Tooltip>
+                }
+              />
+              <div className={styles.buttons}>
+                <Button
+                  appearance={{ theme: 'primary', size: 'large' }}
+                  type="submit"
+                  disabled={!isValid}
+                  loading={isSubmitting}
+                  text={MSG.continue}
                 />
-                <Input
-                  appearance={{ theme: 'fat' }}
-                  name="colonyName"
-                  extensionString=".colony.joincolony.eth"
-                  label={MSG.label}
-                  status={normalized !== colonyName ? MSG.statusText : null}
-                  statusValues={{ normalized }}
-                  extra={
-                    <Tooltip
-                      placement="right"
-                      content={
-                        <span className={styles.tooltip}>
-                          <FormattedMessage {...MSG.tooltip} />
-                        </span>
-                      }
-                    >
-                      <div className={styles.iconContainer}>
-                        <Icon
-                          name="question-mark"
-                          title="helper"
-                          appearance={{ size: 'small' }}
-                        />
-                      </div>
-                    </Tooltip>
-                  }
-                />
-                <div className={styles.buttons}>
-                  <Button
-                    appearance={{ theme: 'primary', size: 'large' }}
-                    type="submit"
-                    disabled={!isValid}
-                    loading={isSubmitting}
-                    text={MSG.continue}
-                  />
-                </div>
               </div>
             </div>
           </section>
