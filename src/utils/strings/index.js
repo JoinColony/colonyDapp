@@ -26,10 +26,10 @@ export const rmLineBreaks = (str: string) => str.replace(/(\r\n|\n|\r)/gm, ' ');
  * @return {string} based on maxCharLength either the cut down string or the original one
  */
 export const multiLineTextEllipsis = (
-  string: string,
+  string: ?string,
   maxCharLength: number,
 ) => {
-  if (string.length > maxCharLength) {
+  if (string && string.length > maxCharLength) {
     return `${string.substring(0, maxCharLength)}...`;
   }
   return string;

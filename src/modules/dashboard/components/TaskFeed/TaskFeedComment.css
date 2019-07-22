@@ -4,11 +4,7 @@
 }
 
 .commentSelf {
-  margin-left: 20%;
-}
-
-.commentOther {
-  margin-right: 20%;
+  justify-content: flex-end;
 }
 
 .commentAvatar {
@@ -16,7 +12,7 @@
 }
 
 .commentMain {
-  flex-grow: 1;
+  width: 80%;
 }
 
 .commentUsername {
@@ -28,6 +24,7 @@
   margin: var(--pad-tiny) 0;
   padding: var(--pad-medium);
   border-radius: var(--radius-normal);
+  overflow-wrap: break-word;
 }
 
 .commentSelf .commentBody {

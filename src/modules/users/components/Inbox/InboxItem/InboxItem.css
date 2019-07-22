@@ -13,10 +13,11 @@
 }
 
 .inboxDetail {
-  overflow: hidden;
+  composes: inlineEllipsis from '~styles/text.css';
+  display: inline-block;
+  max-width: 38ch;
+  vertical-align: bottom;
   font-weight: 500;
-  text-overflow: ellipsis;
-  white-space: nowrap;
   color: var(--colony-black);
 }
 
@@ -96,4 +97,11 @@
 
 .noStyleButton:focus {
   outline: none;
+}
+
+.additionalDetailsTruncate {
+  composes: inlineEllipsis from '~styles/text.css';
+  display: inline-block;
+  max-width: 38ch;
+  vertical-align: bottom;
 }

@@ -21,7 +21,10 @@ td.domainRemove {
 }
 
 .domainName {
+  composes: inlineEllipsis from '~styles/text.css';
+  display: inline-block;
   margin-right: name-margin;
+  max-width: 80ch;
   font-weight: var(--weight-medium);
 }
 

@@ -1,5 +1,9 @@
 @import 'variables.css';
 
+.main {
+  overflow-wrap: break-word;
+}
+
 .avatar {
   margin-bottom: 10px;
   border-radius: 50%;
@@ -7,18 +11,12 @@
   box-shadow: 0 0 20px var(--temp-grey-blue-2);
 }
 
-.headingWrapper {
-  overflow-wrap: break-word;
-}
-
 .description {
   margin-top: 15px;
-  overflow-wrap: break-word;
 }
 
 .dynamicSection {
   margin-top: 25px;
-  overflow-wrap: break-word;
 }
 
 .dynamicSection a {
@@ -45,4 +43,9 @@
 
 .colonyAvatar {
   position: relative;
+}
+
+.dynamicTextSection {
+  composes: dynamicSection;
+  composes: multiLineEllipsis from '~styles/text.css';
 }

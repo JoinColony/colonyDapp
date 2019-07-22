@@ -13,7 +13,7 @@ import { Form } from '~core/Fields';
 
 import type { WizardProps } from '~core/Wizard';
 
-import { getNormalizedDomainText } from '~utils/strings';
+import { getNormalizedDomainText, multiLineTextEllipsis } from '~utils/strings';
 
 const MSG = defineMessages({
   heading: {
@@ -108,19 +108,33 @@ const StepTokenChoice = ({ nextStep, wizardForm, wizardValues }: Props) => (
     {
       <section className={styles.content}>
         <div className={styles.title}>
-          <Heading
-            appearance={{ size: 'medium', weight: 'medium' }}
-            text={MSG.heading}
-            textValues={{
-              colony: getNormalizedDomainText(wizardValues.colonyName),
-            }}
-          />
+          <Heading appearance={{ size: 'medium', weight: 'bold' }}>
+            <FormattedMessage
+              {...MSG.heading}
+              values={{
+                /*
+                 * @NOTE We need to use a JS string truncate here, rather then CSS,
+                 * since we're dealing with a string that needs to be truncated,
+                 * inside a sentence that does not
+                 */
+                colony: (
+                  <span
+                    title={getNormalizedDomainText(wizardValues.colonyName)}
+                  >
+                    {multiLineTextEllipsis(
+                      getNormalizedDomainText(wizardValues.colonyName),
+                      29,
+                    )}
+                  </span>
+                ),
+              }}
+            />
+          </Heading>
         </div>
         <div className={styles.subtitle}>
           <Heading
             appearance={{ size: 'normal', weight: 'thin' }}
             text={MSG.subtitle}
-            // textValues={{ colony: wizardValues.colonyName }}
           />
         </div>
         <div className={styles.subtitleWithExampleBox}>
@@ -134,7 +148,19 @@ const StepTokenChoice = ({ nextStep, wizardForm, wizardValues }: Props) => (
           <FormattedMessage
             {...MSG.callToAction}
             values={{
-              colony: getNormalizedDomainText(wizardValues.colonyName),
+              /*
+               * @NOTE We need to use a JS string truncate here, rather then CSS,
+               * since we're dealing with a string that needs to be truncated,
+               * inside a sentence that does not
+               */
+              colony: (
+                <span title={getNormalizedDomainText(wizardValues.colonyName)}>
+                  {multiLineTextEllipsis(
+                    getNormalizedDomainText(wizardValues.colonyName),
+                    42,
+                  )}
+                </span>
+              ),
             }}
           />
         </div>

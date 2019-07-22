@@ -52,3 +52,22 @@
   text-align: left;
   line-height: calc(var(--size-small) + 2px);
 }
+
+/*
+ * Warning! While this is all nice and good, please do note that this
+ * works on Chrome based browsers only... which is a drag
+ */
+.multiLineEllipsis {
+  display: -webkit-box;
+  overflow: hidden;
+  -webkit-line-clamp: 3;
+
+  /* autoprefixer: ignore next */
+  -webkit-box-orient: vertical;
+}
+
+.inlineEllipsis {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}

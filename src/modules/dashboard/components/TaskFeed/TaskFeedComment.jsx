@@ -71,7 +71,7 @@ const TaskFeedComment = ({
             <span>{userDisplayName}</span>
           </div>
         )}
-        <div className={styles.commentBody}>
+        <div title={body} className={styles.commentBody}>
           <Decorate tagName={PreserveLinebreaks}>{body}</Decorate>
         </div>
         <div className={styles.commentTimestamp}>

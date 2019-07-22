@@ -1,0 +1,34 @@
+.cardRow {
+  composes: cardRow from './StepConfirmAllInput.css';
+}
+
+.firstValue {
+  composes: inlineEllipsis from '~styles/text.css';
+  display: inline-block;
+  margin-right: 4px;
+  max-width: 208px;
+}
+
+.secondValue {
+  composes: inlineEllipsis from '~styles/text.css';
+  display: inline-block;
+  max-width: 208px;
+}
+
+.username {
+  composes: inlineEllipsis from '~styles/text.css';
+  display: inline-block;
+  max-width: 420px;
+}
+
+.tokenSymbol {
+  display: inline-block;
+  margin-right: 4px;
+}
+
+.tokenName {
+  composes: inlineEllipsis from '~styles/text.css';
+  display: inline-block;
+  max-width: 365px;
+  vertical-align: bottom;
+}

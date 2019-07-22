@@ -70,7 +70,10 @@ const getType = (eventType: string): EventType => {
 
 const makeInboxDetail = (value: any, formatFn?: (value: any) => any) =>
   value ? (
-    <span className={styles.inboxDetail}>
+    <span
+      title={formatFn ? formatFn(value) : value}
+      className={styles.inboxDetail}
+    >
       {formatFn ? formatFn(value) : value}
     </span>
   ) : null;
@@ -299,21 +302,31 @@ const InboxItem = ({
 
             <span className={styles.additionalDetails}>
               {colony && colony.colonyName && currentDomain && (
-                <FormattedMessage
-                  {...MSG.metaColonyAndDomain}
-                  values={{
-                    colonyName: colonyNameWithFallback,
-                    domainName: currentDomain && currentDomain.name,
-                  }}
-                />
+                <span
+                  title={colonyNameWithFallback}
+                  className={styles.additionalDetailsTruncate}
+                >
+                  <FormattedMessage
+                    {...MSG.metaColonyAndDomain}
+                    values={{
+                      colonyName: colonyNameWithFallback,
+                      domainName: currentDomain && currentDomain.name,
+                    }}
+                  />
+                </span>
               )}
               {colony && colony.colonyName && !currentDomain && (
-                <FormattedMessage
-                  {...MSG.metaColonyOnly}
-                  values={{
-                    colonyName: colonyNameWithFallback,
-                  }}
-                />
+                <span
+                  title={colonyNameWithFallback}
+                  className={styles.additionalDetailsTruncate}
+                >
+                  <FormattedMessage
+                    {...MSG.metaColonyOnly}
+                    values={{
+                      colonyName: colonyNameWithFallback,
+                    }}
+                  />
+                </span>
               )}
 
               {amount && token && (

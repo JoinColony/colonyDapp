@@ -3,8 +3,10 @@
 }
 
 .filterItem {
+  composes: inlineEllipsis from '~styles/text.css';
   margin: 0 0 20px 10px;
   padding: 0;
+  max-width: 23ch;
   border: none;
   background: none;
   font-weight: var(--weight-semi);

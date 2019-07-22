@@ -262,7 +262,7 @@ const ColonyHome = ({
               <Button
                 appearance={{ theme: 'primary', size: 'large' }}
                 text={MSG.newTaskButton}
-                disabld={disabled}
+                disabled={disabled}
                 loading={loading}
                 onClick={throttle(onClick, 2000)}
               />

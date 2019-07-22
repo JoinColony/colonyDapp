@@ -1,14 +1,29 @@
 @value contentMargin: 12px;
 
+.main {
+  width: 240px;
+  word-wrap: break-word;
+}
+
+.headingContainer {
+  composes: multiLineEllipsis from '~styles/text.css';
+}
+
+.usernameContainer {
+  composes: multiLineEllipsis from '~styles/text.css';
+}
+
 .bioContainer {
   margin-top: contentMargin;
 }
 
 .websiteContainer {
+  composes: multiLineEllipsis from '~styles/text.css';
   margin-top: contentMargin;
 }
 
 .locationContainer {
+  composes: multiLineEllipsis from '~styles/text.css';
   margin-top: contentMargin;
 }
 

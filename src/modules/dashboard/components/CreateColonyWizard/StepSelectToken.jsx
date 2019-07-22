@@ -18,7 +18,7 @@ import styles from './StepSelectToken.css';
 
 import TokenSelector from './TokenSelector.jsx';
 
-import { getNormalizedDomainText } from '~utils/strings';
+import { getNormalizedDomainText, multiLineTextEllipsis } from '~utils/strings';
 
 type TokenData = ?{|
   name: string,
@@ -121,13 +121,26 @@ const StepSelectToken = ({
   return (
     <section className={styles.main}>
       <div className={styles.title}>
-        <Heading
-          appearance={{ size: 'medium', weight: 'bold' }}
-          text={MSG.heading}
-          textValues={{
-            colony: getNormalizedDomainText(wizardValues.colonyName),
-          }}
-        />
+        <Heading appearance={{ size: 'medium', weight: 'bold' }}>
+          <FormattedMessage
+            {...MSG.heading}
+            values={{
+              /*
+               * @NOTE We need to use a JS string truncate here, rather then CSS,
+               * since we're dealing with a string that needs to be truncated,
+               * inside a sentence that does not
+               */
+              colony: (
+                <span title={getNormalizedDomainText(wizardValues.colonyName)}>
+                  {multiLineTextEllipsis(
+                    getNormalizedDomainText(wizardValues.colonyName),
+                    38,
+                  )}
+                </span>
+              ),
+            }}
+          />
+        </Heading>
       </div>
       <Form
         className={styles.nameForm}

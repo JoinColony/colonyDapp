@@ -164,6 +164,17 @@ const TaskComments = ({
               onKeyDown={event => handleKeyboardSubmit(event, handleSubmit)}
               value={values.comment || ''}
               disabled={!didClaimProfile || isSubmitting}
+              /*
+               * @NOTE This is a UGLY silent restriction placed on the comment textarea
+               *
+               * It's needed because the Trezor wallet can't sign messages with payloads larger then 1024 bytes
+               * and all other wallets submit to this limitation
+               *
+               * The value below, represents the max numbers of characts you can comment with, the rest,
+               * up until 1024 represent the json data we wrap the comment with.
+               * ie: {"comment":"aaa...","author":"0x1234...1234"}
+               */
+              maxlength={956}
             />
             <FormStatus status={status} />
             <div className={styles.commentControls}>

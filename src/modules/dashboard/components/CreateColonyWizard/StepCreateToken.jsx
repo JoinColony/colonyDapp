@@ -14,7 +14,7 @@ import { ActionFileUpload } from '~core/FileUpload';
 import { ACTIONS } from '~redux';
 import { mapPayload } from '~utils/actions';
 
-import { getNormalizedDomainText } from '~utils/strings';
+import { getNormalizedDomainText, multiLineTextEllipsis } from '~utils/strings';
 
 import styles from './StepCreateToken.css';
 
@@ -143,13 +143,28 @@ const StepCreateToken = ({
       {({ isSubmitting, isValid, status }) => (
         <div className={styles.main}>
           <section className={styles.titleSection}>
-            <Heading
-              appearance={{ size: 'medium', weight: 'bold' }}
-              text={MSG.heading}
-              textValues={{
-                colony: getNormalizedDomainText(wizardValues.colonyName),
-              }}
-            />
+            <Heading appearance={{ size: 'medium', weight: 'bold' }}>
+              <FormattedMessage
+                {...MSG.heading}
+                values={{
+                  /*
+                   * @NOTE We need to use a JS string truncate here, rather then CSS,
+                   * since we're dealing with a string that needs to be truncated,
+                   * inside a sentence that does not
+                   */
+                  colony: (
+                    <span
+                      title={getNormalizedDomainText(wizardValues.colonyName)}
+                    >
+                      {multiLineTextEllipsis(
+                        getNormalizedDomainText(wizardValues.colonyName),
+                        40,
+                      )}
+                    </span>
+                  ),
+                }}
+              />
+            </Heading>
           </section>
           <section className={styles.inputFields}>
             <div className={styles.inputFieldWrapper}>
