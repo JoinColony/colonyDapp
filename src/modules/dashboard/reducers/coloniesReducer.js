@@ -9,6 +9,7 @@ import { createAddress } from '~types';
 
 import type { AllColoniesMap, ColonyRecordType } from '~immutable';
 import type { ReducerType } from '~redux';
+import type { Address } from '~types';
 
 const coloniesReducer: ReducerType<
   AllColoniesMap,
@@ -98,14 +99,33 @@ const coloniesReducer: ReducerType<
           colonyAddress,
         },
       } = action;
+      const canMintNativeToken = state.getIn([
+        colonyAddress,
+        'record',
+        'canMintNativeToken',
+      ]);
+      const previousTokens: ?ImmutableMap<
+        Address,
+        TokenReferenceRecord,
+      > = state.getIn([colonyAddress, 'record', 'tokens']);
       const record = ColonyRecord({
+        canMintNativeToken,
         ...colony,
         colonyAddress,
         tokens: ImmutableMap(
-          Object.entries(tokens).map(([tokenAddress, token]) => [
-            createAddress(tokenAddress),
-            TokenReferenceRecord(token),
-          ]),
+          Object.entries(tokens).map(([tokenAddress, token]) => {
+            const normalizedTokenAddress = createAddress(tokenAddress);
+
+            // get any previous balance for the token, so that we don't overwrite it
+            const balance = previousTokens
+              ? previousTokens.getIn([normalizedTokenAddress, 'balance'])
+              : undefined;
+
+            return [
+              normalizedTokenAddress,
+              TokenReferenceRecord({ balance, ...token }),
+            ];
+          }),
         ),
       });
       return state.get(colonyAddress)

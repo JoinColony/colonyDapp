@@ -339,7 +339,8 @@ function* colonyTokenBalanceFetch({
 }: Action<typeof ACTIONS.COLONY_TOKEN_BALANCE_FETCH>) {
   try {
     const balance = yield* executeQuery(getColonyTokenBalance, {
-      args: { colonyAddress, tokenAddress },
+      args: { tokenAddress },
+      metadata: { colonyAddress },
     });
 
     yield put({
