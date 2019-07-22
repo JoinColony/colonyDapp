@@ -27,6 +27,13 @@
   margin-bottom: 50px;
 }
 
+.sectionENSName {
+  composes: section;
+  composes: multiLineEllipsis from '~styles/text.css';
+  max-width: 760px;
+  overflow-wrap: break-word;
+}
+
 .divider {
   composes: section;
   height: 1px;

@@ -108,7 +108,7 @@ const ProfileEdit = ({ colony }: Props) => {
                   {colonyAddress}
                 </CopyableAddress>
               </FieldSet>
-              <FieldSet className={styles.section}>
+              <div className={styles.sectionENSName}>
                 <InputLabel label={MSG.labelEnsName} />
                 <Heading
                   appearance={{
@@ -116,9 +116,14 @@ const ProfileEdit = ({ colony }: Props) => {
                     size: 'medium',
                     weight: 'thin',
                   }}
+                  /*
+                   * @NOTE For the next improvement, we'll need to strip out the ENS subdomain part,
+                   * and just truncate the actual name, so it'll look something like this:
+                   * aaaaaaaaaaaaaaaa... .colony.joincolony.eth
+                   */
                   text={ENS.getFullDomain('colony', colonyName)}
                 />
-              </FieldSet>
+              </div>
               <div className={styles.divider} />
               <FieldSet className={styles.inputSection}>
                 <Input
