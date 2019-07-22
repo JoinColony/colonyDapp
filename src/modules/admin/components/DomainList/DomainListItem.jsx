@@ -53,16 +53,16 @@ const DomainListItem = ({
         </span>
       )}
     </TableCell>
-    <TableCell className={styles.userRemove}>
-      {!viewOnly && (
+    {!viewOnly && (
+      <TableCell className={styles.userRemove}>
         <Button
           className={styles.customRemoveButton}
           appearance={{ theme: 'primary' }}
           text={MSG.buttonRemove}
           onClick={onRemove}
         />
-      )}
-    </TableCell>
+      </TableCell>
+    )}
   </TableRow>
 );
 
