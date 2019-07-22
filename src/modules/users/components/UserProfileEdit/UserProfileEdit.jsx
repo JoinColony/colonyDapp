@@ -84,21 +84,22 @@ const UserProfileEdit = () => {
         validationSchema={UpdateUserProfileCommandArgsSchema}
       >
         {({ status, isSubmitting }) => (
-          <div>
+          <div className={styles.main}>
             <FieldSet>
               <InputLabel label={MSG.labelWallet} />
               <CopyableAddress appearance={{ theme: 'big' }} full>
                 {user.profile.walletAddress}
               </CopyableAddress>
             </FieldSet>
-            <FieldSet>
+            <div className={styles.usernameContainer}>
               <InputLabel label={MSG.labelUsername} />
               <UserMention
                 username={user.profile.username || user.profile.walletAddress}
+                title={user.profile.username || user.profile.walletAddress}
                 hasLink={false}
                 data-test="userProfileUsername"
               />
-            </FieldSet>
+            </div>
             <FieldSet className={styles.inputFieldSet}>
               <Input
                 label={MSG.labelName}

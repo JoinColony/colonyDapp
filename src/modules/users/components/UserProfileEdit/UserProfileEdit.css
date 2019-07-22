@@ -1,3 +1,12 @@
+.main {
+  word-wrap: break-word;
+}
+
 .inputFieldSet {
   max-width: 360px;
+}
+
+.usernameContainer {
+  composes: multiLineEllipsis from '~styles/text.css';
+  margin: 15px 0;
 }
