@@ -3,7 +3,7 @@
 import React from 'react';
 import { defineMessages } from 'react-intl';
 
-import { stripProtocol } from '~utils/strings';
+import { stripProtocol, multiLineTextEllipsis } from '~utils/strings';
 import { useDataFetcher } from '~utils/hooks';
 
 import type { ColonyType, RolesType } from '~immutable';
@@ -17,8 +17,6 @@ import HookedUserAvatar from '~users/HookedUserAvatar';
 import ColonySubscribe from './ColonySubscribe.jsx';
 
 import { rolesFetcher } from '../../../fetchers';
-
-import { multiLineTextEllipsis } from '~utils/strings';
 
 import styles from './ColonyMeta.css';
 
