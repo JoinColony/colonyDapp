@@ -2,10 +2,21 @@
   padding: 6px;
 }
 
+.ellipsis {
+  composes: inlineEllipsis from '~styles/text.css';
+  display: block;
+  width: 360px;
+}
+
 .displayName {
+  composes: ellipsis;
   font-size: var(--size-small);
   font-weight: var(--weight-medium);
   color: white;
+}
+
+.userName {
+  composes: ellipsis;
 }
 
 .walletAddress {
