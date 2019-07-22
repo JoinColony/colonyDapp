@@ -42,10 +42,11 @@ const normalize = (name): string => {
 };
 
 const formatUsername = (currentUser, values, option) => {
-  let username = normalize(values[option.valueKey.toString()]);
-  if (userDidClaimProfile(currentUser)) {
-    username = normalize(currentUser.profile.username);
-  }
+  const username = normalize(
+    userDidClaimProfile(currentUser)
+      ? currentUser.profile.username
+      : values[option.valueKey.toString()],
+  );
   return (
     <span title={`@${username}`} className={styles.username}>
       {`@${username}`}
