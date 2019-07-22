@@ -125,7 +125,6 @@ const ProfileEdit = ({ colony }: Props) => {
                   appearance={{ theme: 'fat' }}
                   label={MSG.labelDisplayName}
                   name="displayName"
-                  maxLength={50}
                 />
               </FieldSet>
               <FieldSet className={styles.inputSection}>
@@ -142,7 +141,6 @@ const ProfileEdit = ({ colony }: Props) => {
                   appearance={{ theme: 'fat' }}
                   label={MSG.labelWebsite}
                   name="website"
-                  maxLength={100}
                 />
               </FieldSet>
               <FieldSet className={styles.inputSection}>
@@ -150,7 +148,6 @@ const ProfileEdit = ({ colony }: Props) => {
                   appearance={{ theme: 'fat' }}
                   label={MSG.labelGuidelines}
                   name="guideline"
-                  maxLength={100}
                 />
               </FieldSet>
               <FieldSet>

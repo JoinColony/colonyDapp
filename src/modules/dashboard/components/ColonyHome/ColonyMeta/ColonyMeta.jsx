@@ -71,7 +71,7 @@ const ColonyMeta = ({
   const { admins, founder } = roles || {};
 
   return (
-    <div>
+    <div className={styles.main}>
       <div className={styles.colonyAvatar}>
         <ColonyAvatar
           className={styles.avatar}
@@ -84,7 +84,7 @@ const ColonyMeta = ({
       <section className={styles.headingWrapper}>
         <Heading appearance={{ margin: 'none', size: 'medium', theme: 'dark' }}>
           <>
-            <span>{displayName}</span>
+            <span title={displayName}>{displayName}</span>
             {canAdminister && (
               <Link
                 className={styles.editColony}
@@ -102,21 +102,25 @@ const ColonyMeta = ({
         </section>
       )}
       {website && (
-        <section className={styles.dynamicSection}>
+        <section className={styles.dynamicTextSection}>
           <Heading
             appearance={{ margin: 'none', size: 'small', theme: 'dark' }}
             text={MSG.websiteLabel}
           />
-          <ExternalLink href={stripProtocol(website)} />
+          <span title={stripProtocol(website)}>
+            <ExternalLink href={stripProtocol(website)} />
+          </span>
         </section>
       )}
       {guideline && (
-        <section className={styles.dynamicSection}>
+        <section className={styles.dynamicTextSection}>
           <Heading
             appearance={{ margin: 'none', size: 'small', theme: 'dark' }}
             text={MSG.guidelineLabel}
           />
-          <ExternalLink href={stripProtocol(guideline)} />
+          <span title={stripProtocol(guideline)}>
+            <ExternalLink href={stripProtocol(guideline)} />
+          </span>
         </section>
       )}
       {founder && (
