@@ -43,8 +43,7 @@ class EventStore extends Store {
   }
 
   async append(value: {}) {
-    await this._orbitStore.add(value);
-    return this.replicate();
+    return this._orbitStore.add(value);
   }
 
   getEvent(hash: string) {

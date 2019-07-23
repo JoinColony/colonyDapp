@@ -45,6 +45,7 @@ class Store {
     );
     // After a write to a store, wait for some time to give replication a chance to be done
     this._orbitStore.events.on('write', () => {
+      this.replicate(true).catch(log.warn);
       if (this._writeTimeout) clearTimeout(this._writeTimeout);
       this._writeTimeout = setTimeout(() => {
         this._writeTimeout = null;
@@ -107,8 +108,13 @@ class Store {
     return heads;
   }
 
-  async replicate() {
+  async replicate(fireAndForget?: boolean = false) {
     const address = this.address.toString();
+    if (fireAndForget) {
+      // We're probably "just" sending data _to_ the pinner. No need to wait for its response.
+      this._pinner.requestReplication(address).catch(log.warn);
+      return;
+    }
     const headCount = await this._pinner.requestReplication(address);
     log.verbose(
       `Pinner has ${headCount} heads, we have ${
