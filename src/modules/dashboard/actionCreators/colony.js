@@ -38,6 +38,22 @@ export const fetchColonyTaskMetadata = (
   meta: { key: createAddress(colonyAddress) },
 });
 
+export const fetchColonyTokenBalance = (
+  colonyAddress: Address,
+  tokenAddress: Address,
+): Action<typeof ACTIONS.COLONY_TOKEN_BALANCE_FETCH> => ({
+  type: ACTIONS.COLONY_TOKEN_BALANCE_FETCH,
+  payload: { colonyAddress, tokenAddress },
+});
+
+export const fetchColonyCanMintNativeToken = (
+  colonyAddress: Address,
+): Action<typeof ACTIONS.COLONY_CAN_MINT_NATIVE_TOKEN_FETCH> => ({
+  type: ACTIONS.COLONY_CAN_MINT_NATIVE_TOKEN_FETCH,
+  payload: { colonyAddress },
+  meta: { key: createAddress(colonyAddress) },
+});
+
 export const colonySubStart = (
   colonyAddress: Address,
 ): Action<typeof ACTIONS.COLONY_SUB_START> => ({

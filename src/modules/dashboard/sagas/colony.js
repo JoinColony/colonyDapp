@@ -45,8 +45,13 @@ import { ipfsUpload } from '../../core/sagas/ipfs';
 import { COLONY_CONTEXT, TOKEN_CONTEXT } from '../../core/constants';
 import { networkVersionSelector } from '../../core/selectors';
 
-import { fetchColony, fetchToken } from '../actionCreators';
-import { colonyAvatarHashSelector } from '../selectors';
+import {
+  fetchColony,
+  fetchToken,
+  fetchColonyCanMintNativeToken,
+  fetchColonyTokenBalance,
+} from '../actionCreators';
+import { colonyAvatarHashSelector, colonySelector } from '../selectors';
 import { getColonyAddress, getColonyName } from './shared';
 
 import { createAddress } from '~types';
@@ -468,6 +473,11 @@ function* colonySubStart({ payload: { colonyAddress }, meta }: *): Saga<*> {
       channel.close();
     });
 
+    const reduceTokenToDispatch = (acc, token) =>
+      token.balance === undefined
+        ? [...acc, put(fetchColonyTokenBalance(colonyAddress, token.address))]
+        : acc;
+
     while (true) {
       const colony = yield take(channel);
       yield put({
@@ -478,6 +488,24 @@ function* colonySubStart({ payload: { colonyAddress }, meta }: *): Saga<*> {
           colony,
         },
       });
+
+      // select the freshly updated colony
+      const { record: colonyFromState } = yield select(
+        colonySelector,
+        colonyAddress,
+      );
+
+      // fetch canMintNativeToken if we didn't already
+      if (colonyFromState.canMintNativeToken === undefined) {
+        yield put(fetchColonyCanMintNativeToken(colonyAddress));
+      }
+
+      // fetch token balances for those which we have loaded
+      if (colonyFromState.tokens) {
+        yield all(
+          colonyFromState.tokens.toList().reduce(reduceTokenToDispatch, []),
+        );
+      }
     }
   } catch (caughtError) {
     return yield putError(ACTIONS.COLONY_SUB_ERROR, caughtError, meta);
