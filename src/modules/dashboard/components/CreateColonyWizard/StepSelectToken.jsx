@@ -13,12 +13,12 @@ import { Form, Input } from '~core/Fields';
 import Heading from '~core/Heading';
 import Button from '~core/Button';
 import FileUpload from '~core/FileUpload';
+import { multiLineTextEllipsis } from '~utils/strings';
+import ENS from '~lib/ENS';
 
 import styles from './StepSelectToken.css';
 
 import TokenSelector from './TokenSelector.jsx';
-
-import { getNormalizedDomainText, multiLineTextEllipsis } from '~utils/strings';
 
 type TokenData = ?{|
   name: string,
@@ -131,9 +131,9 @@ const StepSelectToken = ({
                * inside a sentence that does not
                */
               colony: (
-                <span title={getNormalizedDomainText(wizardValues.colonyName)}>
+                <span title={ENS.normalizeAsText(wizardValues.colonyName)}>
                   {multiLineTextEllipsis(
-                    getNormalizedDomainText(wizardValues.colonyName),
+                    ENS.normalizeAsText(wizardValues.colonyName),
                     38,
                   )}
                 </span>

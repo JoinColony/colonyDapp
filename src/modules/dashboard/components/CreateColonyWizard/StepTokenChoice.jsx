@@ -4,16 +4,16 @@ import React from 'react';
 
 import { defineMessages, FormattedMessage } from 'react-intl';
 
-import styles from './StepTokenChoice.css';
+import type { WizardProps } from '~core/Wizard';
 
 import Heading from '~core/Heading';
 import ExternalLink from '~core/ExternalLink';
 import DecisionHub from '~core/DecisionHub';
 import { Form } from '~core/Fields';
+import { multiLineTextEllipsis } from '~utils/strings';
+import ENS from '~lib/ENS';
 
-import type { WizardProps } from '~core/Wizard';
-
-import { getNormalizedDomainText, multiLineTextEllipsis } from '~utils/strings';
+import styles from './StepTokenChoice.css';
 
 const MSG = defineMessages({
   heading: {
@@ -118,11 +118,9 @@ const StepTokenChoice = ({ nextStep, wizardForm, wizardValues }: Props) => (
                  * inside a sentence that does not
                  */
                 colony: (
-                  <span
-                    title={getNormalizedDomainText(wizardValues.colonyName)}
-                  >
+                  <span title={ENS.normalizeAsText(wizardValues.colonyName)}>
                     {multiLineTextEllipsis(
-                      getNormalizedDomainText(wizardValues.colonyName),
+                      ENS.normalizeAsText(wizardValues.colonyName),
                       29,
                     )}
                   </span>
@@ -154,9 +152,9 @@ const StepTokenChoice = ({ nextStep, wizardForm, wizardValues }: Props) => (
                * inside a sentence that does not
                */
               colony: (
-                <span title={getNormalizedDomainText(wizardValues.colonyName)}>
+                <span title={ENS.normalizeAsText(wizardValues.colonyName)}>
                   {multiLineTextEllipsis(
-                    getNormalizedDomainText(wizardValues.colonyName),
+                    ENS.normalizeAsText(wizardValues.colonyName),
                     42,
                   )}
                 </span>

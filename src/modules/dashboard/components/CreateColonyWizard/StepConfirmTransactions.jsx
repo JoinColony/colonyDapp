@@ -13,8 +13,8 @@ import { groupedTransactions } from '../../../core/selectors';
 import Heading from '~core/Heading';
 import GasStationContent from '../../../users/components/GasStation/GasStationContent';
 import { useSelector } from '~utils/hooks';
-import { getNormalizedDomainText } from '~utils/strings';
 import { log } from '~utils/debug';
+import ENS from '~lib/ENS';
 
 import {
   getGroupStatus,
@@ -83,7 +83,7 @@ const StepConfirmTransactions = ({ wizardValues: { colonyName } }: Props) => {
     getGroupStatus(newestGroup) === TRANSACTION_STATUSES.SUCCEEDED &&
     getGroupKey(newestGroup) === 'group.createColony'
   ) {
-    const normalizedColonyName = getNormalizedDomainText(colonyName);
+    const normalizedColonyName = ENS.normalizeAsText(colonyName);
     // This should never happen
     if (!normalizedColonyName)
       log.error(`The colonyName '${colonyName}' could not be normalized`);
