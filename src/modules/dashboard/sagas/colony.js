@@ -131,19 +131,19 @@ function* colonyFetch({
   meta,
 }: Action<typeof ACTIONS.COLONY_FETCH>): Saga<*> {
   try {
-    const payload = yield* executeQuery(getColony, {
+    const colony = yield* executeQuery(getColony, {
       args: { colonyAddress },
       metadata: { colonyAddress },
     });
     yield put<Action<typeof ACTIONS.COLONY_FETCH_SUCCESS>>({
       type: ACTIONS.COLONY_FETCH_SUCCESS,
       meta,
-      payload,
+      payload: colony,
     });
 
     // dispatch actions to fetch info and balances for each colony token
     yield all(
-      Object.keys(payload.tokens || {})
+      Object.keys(colony.tokens || {})
         .map(createAddress)
         .reduce(
           (effects, tokenAddress) => [
