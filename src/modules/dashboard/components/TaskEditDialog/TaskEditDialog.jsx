@@ -1,13 +1,15 @@
 /* @flow */
 
 // $FlowFixMe until we have new react flow types with hooks
-import React, { useCallback, useMemo } from 'react';
+import React, { useCallback, useMemo, useEffect } from 'react';
 import { defineMessages } from 'react-intl';
 import * as yup from 'yup';
 import { FieldArray } from 'formik';
 import nanoid from 'nanoid';
 import moveDecimal from 'move-decimal-point';
 import BigNumber from 'bn.js';
+import { subscribeActions as subscribeToReduxActions } from 'redux-action-watch/lib/actionCreators';
+import { useDispatch } from 'redux-react-hook';
 
 import type { ColonyType, UserType, TaskPayoutType } from '~immutable';
 import type { ItemDataType } from '~core/OmniPicker';
@@ -146,6 +148,30 @@ const TaskEditDialog = ({
   maxTokens,
   minTokens,
 }: Props) => {
+  const dispatch = useDispatch();
+  /*
+   * @NOTE this needs to return the `subscribeToReduxActions` function, since that returns an
+   * unsubscriber, and that gets called when the component is unmounted
+   */
+  useEffect(
+    () =>
+      subscribeToReduxActions(dispatch)({
+        /*
+         * @NOTE All this is needed in order to shortcircuit re-rendering the TaskEditDialog
+         * There's a edge case that's happening here:
+         * - ActionForm submits the values
+         * - Formik after submitting the values causes this component to re-render
+         * - In some cases it happens so fast, it actually re-renders before the success action being dispatched
+         * - That prevents ActionForm from acting on the success action so the `onSuccess` callback never gets called
+         *
+         * This works, since only one payout success will ever be dispatched while this Dialog is opened
+         * so there's no danger of this being closed prematurely
+         */
+        [ACTIONS.TASK_SET_WORKER_OR_PAYOUT_SUCCESS]: () => closeDialog(),
+      }),
+    [dispatch, closeDialog],
+  );
+
   const {
     record: { colonyAddress, payouts: taskPayouts, reputation, workerAddress },
   } = useSelector(taskSelector, [draftId]);
