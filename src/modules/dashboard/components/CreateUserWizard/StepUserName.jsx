@@ -133,6 +133,7 @@ const StepUserName = ({ wizardValues, nextStep }: Props) => {
                   statusValues={{
                     normalized,
                   }}
+                  formattingOptions={{ lowercase: true }}
                   data-test="claimUsernameInput"
                   extra={
                     <Tooltip

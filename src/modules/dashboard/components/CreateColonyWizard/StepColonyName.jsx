@@ -171,6 +171,7 @@ const StepColonyName = ({ wizardForm, nextStep, wizardValues }: Props) => {
                 extensionString=".colony.joincolony.eth"
                 label={MSG.label}
                 status={normalized !== colonyName ? MSG.statusText : null}
+                formattingOptions={{ lowercase: true }}
                 statusValues={{ normalized }}
                 extra={
                   <Tooltip
