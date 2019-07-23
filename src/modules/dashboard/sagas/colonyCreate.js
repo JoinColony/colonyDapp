@@ -15,9 +15,9 @@ import {
   selectAsJS,
   putNotification,
 } from '~utils/saga/effects';
-import { getNormalizedDomainText } from '~utils/strings';
 import { ACTIONS } from '~redux';
 import { CONTEXT, getContext } from '~context';
+import ENS from '~lib/ENS';
 
 import { decorateLog } from '~utils/web3/eventLogs/events';
 import { parseExtensionDeployedLog } from '~utils/web3/eventLogs/eventParsers';
@@ -66,8 +66,7 @@ function* colonyCreate({
    */
   const walletAddress = yield select(walletAddressSelector);
   const currentUser = yield* selectAsJS(currentUserSelector);
-  const colonyName = yield call(getNormalizedDomainText, givenColonyName);
-  if (!colonyName) throw new Error(`Invalid colonyName '${givenColonyName}'`);
+  const colonyName = ENS.normalize(givenColonyName);
 
   /*
    * Define a manifest of transaction ids and their respective channels.

@@ -18,6 +18,17 @@ class ENS {
   static getFullDomain = (scope: 'user' | 'colony', name: string) =>
     isAddress(name) ? name : `${name}.${scope}.${COLONY_NETWORK_ENS_NAME}`;
 
+  static normalize = namehash.normalize.bind(namehash);
+
+  static normalizeAsText = (domain?: string) => {
+    if (!domain) return domain;
+    try {
+      return namehash.normalize(domain);
+    } catch (e) {
+      return null;
+    }
+  };
+
   _domainCache: Map<string, Address>;
 
   _addressCache: Map<Address, string>;
@@ -34,17 +45,23 @@ class ENS {
     domain: string,
     networkClient: ColonyNetworkClient,
   ): Promise<?Address> {
-    if (this._domainCache.has(domain)) {
+    let normalizedDomain;
+    try {
+      normalizedDomain = namehash.normalize(domain);
+    } catch (e) {
+      return null;
+    }
+    if (this._domainCache.has(normalizedDomain)) {
       // The default value is here to satisfy flow.
-      return createAddress(this._domainCache.get(domain) || '');
+      return createAddress(this._domainCache.get(normalizedDomain) || '');
     }
     const { ensAddress } = await networkClient.getAddressForENSHash.call({
-      nameHash: namehash.hash(domain),
+      nameHash: namehash.hash(normalizedDomain),
     });
 
     if (ensAddress) {
       const address = createAddress(ensAddress);
-      this._updateCaches(domain, address);
+      this._updateCaches(normalizedDomain, address);
       return address;
     }
 
