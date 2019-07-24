@@ -90,8 +90,12 @@ const NetworkFee = ({ amount, decimals, symbol }: Props) => {
                 {...MSG.helpText}
                 values={{
                   percentage: (
-                    // eslint-disable-next-line react/style-prop-object
-                    <FormattedNumber style="percent" value={networkFee} />
+                    <FormattedNumber
+                      // eslint-disable-next-line react/style-prop-object
+                      style="percent"
+                      value={networkFee}
+                      minimumFractionDigits={1}
+                    />
                   ),
                 }}
               />

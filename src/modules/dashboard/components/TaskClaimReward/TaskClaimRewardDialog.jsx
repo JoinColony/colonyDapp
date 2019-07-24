@@ -211,6 +211,7 @@ const TaskClaimRewardDialog = ({
                         // eslint-disable-next-line react/style-prop-object
                         style="percent"
                         value={networkFee}
+                        minimumFractionDigits={1}
                       />
                     ),
                   }}
