@@ -66,7 +66,7 @@ const ColonyDomains = ({
             className={getActiveDomainFilterClass(id, filteredDomainId)}
             onClick={() => setFilteredDomainId(id)}
           >
-            #{name}
+            {name}
           </Button>
         </li>
       ))}

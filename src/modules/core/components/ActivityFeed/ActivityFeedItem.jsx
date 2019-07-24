@@ -74,7 +74,7 @@ const ActivityFeedItem = ({
                  * @todo Add core component for domains
                  * @body Make this domain (I think that's what this is...?) a core component, like `UserMention`
                  */
-                domain: <Link to="/">#{domainTag}</Link>,
+                domain: <Link to="/">{domainTag}</Link>,
               }}
             />
           </b>

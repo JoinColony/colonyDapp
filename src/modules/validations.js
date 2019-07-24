@@ -96,16 +96,6 @@ function cid(msg) {
   });
 }
 
-function domainName(msg) {
-  return this.test({
-    name: 'domainName',
-    message: msg || en.string.domainName,
-    test(value) {
-      return value && !value.includes('#');
-    },
-  });
-}
-
 function ensAddress(msg) {
   return this.test({
     name: 'ensAddress',
@@ -145,7 +135,6 @@ export class BigNumberSchemaType extends yup.object {
 yup.addMethod(yup.mixed, 'equalTo', equalTo);
 yup.addMethod(yup.mixed, 'lessThanPot', lessThanPot);
 yup.addMethod(yup.string, 'address', address);
-yup.addMethod(yup.string, 'domainName', domainName);
 yup.addMethod(yup.string, 'ensAddress', ensAddress);
 yup.addMethod(yup.array, 'includes', includes);
 yup.addMethod(yup.string, 'orbitDBAddress', orbitDBAddress);

@@ -14,7 +14,7 @@ const messages = defineMessages({
   },
   metaColonyAndDomain: {
     id: 'dashboard.Inbox.InboxItem.metaColonyAndDomain',
-    defaultMessage: '#{domainName} in {colonyName}',
+    defaultMessage: '{domainName} in {colonyName}',
   },
   actionColonyFundingReceived: {
     id: 'dashboard.Inbox.InboxItem.actionColonyFundingReceived',
@@ -89,7 +89,7 @@ const messages = defineMessages({
   notificationAdminColonyLabelAdded: {
     id: 'dashboard.Inbox.InboxItem.notificationAdminColonyLabelAdded',
     defaultMessage:
-      '{user} added a new domain titled #{domainName} to {colonyDisplayName}.',
+      '{user} added a new domain titled {domainName} to {colonyDisplayName}.',
   },
   notificationAdminTokensGenerated: {
     id: 'dashboard.Inbox.InboxItem.notificationAdminTokensGenerated',
