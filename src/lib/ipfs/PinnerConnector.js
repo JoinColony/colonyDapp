@@ -141,10 +141,16 @@ class PinnerConnector {
       promise: pEvent(this._events, PINNER_ACTIONS.HAVE_HEADS, {
         timeout: PINNER_HAVE_HEADS_TIMEOUT,
         filter: ({ to }) => to === address,
-      }).then(res => {
-        newRequest.isPending = false;
-        return res;
-      }),
+      })
+        .then(res => {
+          newRequest.isPending = false;
+          return res;
+        })
+        .catch(() => {
+          // Let's just try again, shall we?
+          this.requestReplication(address).catch(log.warn);
+          log.warn('Could not replicate, pinner did not respond in time.');
+        }),
     };
 
     this._replicationRequests.set(address, newRequest);
