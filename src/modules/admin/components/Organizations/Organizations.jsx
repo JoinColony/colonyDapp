@@ -152,7 +152,7 @@ const Organizations = ({ colonyAddress }: Props) => {
               {domains && domains.length ? (
                 <DomainList
                   domains={domains}
-                  label={MSG.labelAdminList}
+                  label={MSG.labelDomainList}
                   // eslint-disable-next-line no-console
                   onRemove={console.log}
                 />
