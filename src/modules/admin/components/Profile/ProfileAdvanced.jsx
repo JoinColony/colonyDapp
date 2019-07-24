@@ -19,14 +19,26 @@ import { canBeUpgraded, isInRecoveryMode } from '../../../dashboard/checks';
 
 import styles from './ProfileAdvanced.css';
 
+const chainId = process.env.CHAIN_ID;
+
+const { version: dappVersion } = require('../../../../../package.json');
+
 const MSG = defineMessages({
   labelVersion: {
     id: 'admin.Profile.ProfileAdvanced.labelVersion',
     defaultMessage: 'Colony Version',
   },
+  labelDappVersion: {
+    id: 'admin.Profile.ProfileAdvanced.labelDappVersion',
+    defaultMessage: 'Dapp Version',
+  },
   labelId: {
     id: 'admin.Profile.ProfileAdvanced.labelId',
     defaultMessage: 'Colony ID',
+  },
+  labelNetworkId: {
+    id: 'admin.Profile.ProfileAdvanced.labelNetworkId',
+    defaultMessage: 'Network ID',
   },
   buttonUpdate: {
     id: 'admin.Profile.ProfileAdvanced.buttonUpdate',
@@ -109,6 +121,22 @@ const ProfileAdvanced = ({
           values={{ colonyAddress }}
           disabled={!networkVersion || !canBeUpgraded(colony, networkVersion)}
         />
+      </section>
+      <section className={styles.section}>
+        <div>
+          <Heading
+            appearance={{ size: 'small', margin: 'none' }}
+            text={MSG.labelDappVersion}
+          />
+          <p className={styles.bigInfoText}>{dappVersion}</p>
+        </div>
+      </section>
+      <section className={styles.section}>
+        <Heading
+          appearance={{ size: 'small', margin: 'none' }}
+          text={MSG.labelNetworkId}
+        />
+        <p className={styles.bigInfoText}>{chainId}</p>
       </section>
       <section className={styles.section}>
         <Heading
