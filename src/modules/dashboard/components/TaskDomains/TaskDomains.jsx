@@ -96,7 +96,6 @@ const TaskDomains = ({
     <div className={styles.main}>
       <ItemsList
         list={domainsWithRoot || []}
-        itemDisplayPrefix="#"
         handleSetItem={handleSetDomain}
         name="taskDomains"
         connect={false}

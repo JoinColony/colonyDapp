@@ -164,7 +164,7 @@ const Organizations = ({ colonyAddress }: Props) => {
                       weight: 'bold',
                       margin: 'small',
                     }}
-                    text={MSG.labelAdminList}
+                    text={MSG.labelDomainList}
                   />
                   <p className={styles.noCurrent}>
                     <FormattedMessage {...MSG.noCurrentDomains} />

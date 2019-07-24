@@ -45,7 +45,7 @@ const DomainListItem = ({
   <TableRow className={styles.main}>
     <TableCell className={styles.domainDetails}>
       <span className={styles.domainName} title={domain.name}>
-        #{domain.name}
+        {domain.name}
       </span>
       {contributions && (
         <span className={styles.contributions}>
