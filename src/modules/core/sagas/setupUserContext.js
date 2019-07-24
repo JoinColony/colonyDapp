@@ -128,9 +128,14 @@ export default function* setupUserContext(
     const ens = yield getContext(CONTEXT.ENS_INSTANCE);
     yield call(setupDDBResolver, colonyManager, ddb, ens);
 
-    let profileData = yield* executeQuery(getUserProfile, {
-      metadata: { walletAddress },
-    });
+    let profileData = {};
+    try {
+      profileData = yield* executeQuery(getUserProfile, {
+        metadata: { walletAddress },
+      });
+    } catch (e) {
+      log.verbose(`Could not find user profile for ${walletAddress}`);
+    }
 
     if (!profileData.username) {
       // Try to recover a user profile as it might already have been registered on ENS

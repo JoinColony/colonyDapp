@@ -297,7 +297,7 @@ export const getUsername: Query<
   {| ens: ENSCache, networkClient: NetworkClient |},
   void,
   { walletAddress: Address },
-  string,
+  ?string,
 > = {
   name: 'getUsername',
   context: [CONTEXT.COLONY_MANAGER, CONTEXT.ENS_INSTANCE],
@@ -311,8 +311,12 @@ export const getUsername: Query<
     return { ens, networkClient };
   },
   async execute({ ens, networkClient }, { walletAddress }) {
-    const domain = await ens.getDomain(walletAddress, networkClient);
-    return ens.constructor.stripDomainParts('user', domain);
+    try {
+      const domain = await ens.getDomain(walletAddress, networkClient);
+      return ens.constructor.stripDomainParts('user', domain);
+    } catch (e) {
+      return null;
+    }
   },
 };
 
