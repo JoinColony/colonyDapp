@@ -53,9 +53,16 @@ td.userAvatar {
 }
 
 .subscribe {
+  padding: 0px;
   border: none;
   background-color: rgb(0, 0, 0, 0);
   font-size: var(--size-medium-l);
   color: var(--primary);
   cursor: pointer;
+}
+
+td.empty {
+  flex-wrap: wrap;
+  padding: cellPaddingVertical cellPaddingHorizontal;
+  font-weight: var(--weight-semi);
 }

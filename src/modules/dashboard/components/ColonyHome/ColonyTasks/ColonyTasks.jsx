@@ -26,7 +26,6 @@ import styles from './ColonyTasks.css';
 
 type Props = {|
   canCreateTask: boolean,
-  isFounder: boolean,
   colonyAddress: Address,
   isInRecoveryMode: boolean,
   filterOption: string,
