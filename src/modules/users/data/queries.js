@@ -293,6 +293,29 @@ export const getUserAddress: Query<
   },
 };
 
+export const getUsername: Query<
+  {| ens: ENSCache, networkClient: NetworkClient |},
+  void,
+  { walletAddress: Address },
+  string,
+> = {
+  name: 'getUsername',
+  context: [CONTEXT.COLONY_MANAGER, CONTEXT.ENS_INSTANCE],
+  async prepare({
+    colonyManager: { networkClient },
+    ens,
+  }: {|
+    colonyManager: ColonyManager,
+    ens: ENSCache,
+  |}) {
+    return { ens, networkClient };
+  },
+  async execute({ ens, networkClient }, { walletAddress }) {
+    const domain = await ens.getDomain(walletAddress, networkClient);
+    return ens.constructor.stripDomainParts('user', domain);
+  },
+};
+
 export const getUserPermissions: Query<
   ColonyClient,
   {| colonyAddress: Address |},

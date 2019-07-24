@@ -18,11 +18,16 @@ import type { DDB as DDBType } from '../../../lib/database';
 
 import { CONTEXT } from '~context';
 import { ACTIONS } from '~redux';
-import { executeQuery, putError } from '~utils/saga/effects';
+import { executeCommand, executeQuery, putError } from '~utils/saga/effects';
 import { log } from '~utils/debug';
 import ENSCache from '~lib/ENS';
 
-import { getUserBalance, getUserProfile } from '../../users/data/queries';
+import {
+  getUserBalance,
+  getUsername,
+  getUserProfile,
+} from '../../users/data/queries';
+import { createUserProfile } from '../../users/data/commands';
 import setupAdminSagas from '../../admin/sagas';
 import setupDashboardSagas from '../../dashboard/sagas';
 import { getWallet, setupUsersSagas, setupInboxSagas } from '../../users/sagas';
@@ -58,6 +63,25 @@ function* setupDDBResolver(
   yield call([ddb, ddb.registerResolver], (identifier: string) =>
     ens.getOrbitDBAddress(identifier, networkClient),
   );
+}
+
+function* recoverUserProfile(walletAddress) {
+  const username = yield* executeQuery(getUsername, {
+    args: { walletAddress },
+  });
+  if (!username) return {};
+  const { metadataStore, inboxStore } = yield* executeCommand(
+    createUserProfile,
+    {
+      args: { username, walletAddress },
+      metadata: { walletAddress },
+    },
+  );
+  return {
+    username,
+    metadataStoreAddress: metadataStore.address.toString(),
+    inboxStoreAddress: inboxStore.address.toString(),
+  };
 }
 
 /*
@@ -104,19 +128,15 @@ export default function* setupUserContext(
     const ens = yield getContext(CONTEXT.ENS_INSTANCE);
     yield call(setupDDBResolver, colonyManager, ddb, ens);
 
-    let profileData = {};
-    try {
-      profileData = yield* executeQuery(getUserProfile, {
-        metadata: { walletAddress },
-      });
-    } catch (caughtError) {
-      // It's ok if the user store doesn't exist (yet)
-      log.warn(caughtError);
+    let profileData = yield* executeQuery(getUserProfile, {
+      metadata: { walletAddress },
+    });
+
+    if (!profileData.username) {
+      // Try to recover a user profile as it might already have been registered on ENS
+      profileData = yield call(recoverUserProfile, walletAddress);
     }
 
-    /*
-     * Get the user's wallet balance
-     */
     const balance = yield* executeQuery(getUserBalance, {
       args: {
         walletAddress,
