@@ -1,6 +1,7 @@
 /* @flow */
 
 import React from 'react';
+import { defineMessages, FormattedMessage } from 'react-intl';
 
 import type { TokenReferenceType, TokenType } from '~immutable';
 
@@ -24,24 +25,45 @@ type Props = {|
 
 const displayName = 'admin.Tokens.TokenCard';
 
+const MSG = defineMessages({
+  unknownToken: {
+    id: 'admin.TokenCard.unknownToken',
+    defaultMessage: 'Unknown Token',
+  },
+});
+
 const TokenCard = ({
   token: { address, isNative, balance },
   token: tokenReference,
 }: Props) => {
-  const { data: token } = useDataFetcher<TokenType>(
+  const { data: token, isFetching } = useDataFetcher<TokenType>(
     tokenFetcher,
     [address],
     [address],
   );
-  // balance is fetched seperately to rest of token
-  return token && balance !== undefined ? (
+
+  // The balance is fetched seperately to the rest of the token.
+  if (!address || isFetching || balance === undefined) {
+    return <SpinnerLoader />;
+  }
+
+  // Even if the token didn't fetch, the card should still be shown,
+  // because the address and balance are known.
+  return (
     <Card key={address} className={styles.main}>
       <div className={styles.cardHeading}>
-        <TokenIcon token={tokenReference} name={token.name} size="xs" />
+        <TokenIcon
+          token={tokenReference}
+          name={token ? token.name : undefined}
+          size="xs"
+        />
         <div className={styles.tokenSymbol}>
-          {token.symbol || (
+          {token ? (
+            token.symbol
+          ) : (
             <>
-              Unknown Token<CopyableAddress>{address}</CopyableAddress>
+              <FormattedMessage {...MSG.unknownToken} />
+              <CopyableAddress>{address}</CopyableAddress>
             </>
           )}
           {isNative && <span>*</span>}
@@ -57,12 +79,12 @@ const TokenCard = ({
         <Numeral
           className={styles.balanceNumeral}
           integerSeparator=""
-          unit={token.decimals || 18}
+          unit={token ? token.decimals : 18}
           value={balance || 0}
         />
       </div>
       <div className={styles.cardFooter}>
-        {tokenIsETH(token) && (
+        {tokenIsETH(tokenReference) && (
           <EthUsd
             className={styles.ethUsdText}
             value={balance || 0}
@@ -71,8 +93,6 @@ const TokenCard = ({
         )}
       </div>
     </Card>
-  ) : (
-    <SpinnerLoader />
   );
 };
 
