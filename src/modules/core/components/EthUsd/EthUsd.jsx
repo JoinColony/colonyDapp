@@ -109,10 +109,10 @@ class EthUsd extends Component<Props, State> {
     return valueUsd || valueUsd === 0 ? (
       <Numeral
         appearance={appearance}
-        prefix={showPrefix ? '~ ' : ''}
+        prefix={showPrefix && valueUsd ? '~ ' : ''}
         suffix={showSuffix ? ` ${suffixText}` : ''}
         truncate={truncate}
-        value={valueUsd}
+        value={valueUsd || '-'}
         {...rest}
       />
     ) : (
