@@ -16,13 +16,12 @@
   flex-direction: row;
   justify-content: flex-start;
   flex-wrap: wrap;
-  max-height: 165px;
   overflow: auto;
 }
 
 .colonyGridItem {
   margin: 0 containerMarginLeft;
-  width: 68px;
+  width: 66px;
 }
 
 .loader {
