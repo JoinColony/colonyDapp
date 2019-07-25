@@ -17,5 +17,12 @@ import { DEFAULT_NETWORK } from '../../constants';
 export default function* getClient(): Saga<ColonyNetworkClient> {
   const wallet = yield* getContext(CONTEXT.WALLET);
 
-  return yield call(getNetworkClient, DEFAULT_NETWORK, wallet);
+  return yield call(
+    getNetworkClient,
+    DEFAULT_NETWORK,
+    wallet,
+    // $FlowFixMe this _can_ be undefined, it's ok
+    process.env.INFURA_ID,
+    !!process.env.VERBOSE,
+  );
 }

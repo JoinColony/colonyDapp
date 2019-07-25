@@ -39,6 +39,7 @@ This docker file allows you to pass in build time arguments to change the enviro
 
 Build args:
 - `GH_PAT`: the GitHub Personal Access Token **required** to authenticate and pull information from our private repo _(Note: you **have to** supply this yourself, otherwise it won't work)_.
+- `INFURA_ID`: The infura project id we are using in the dApp. This is **required** as we don't provide a default for it in the `Dockerfile`. See the _Infura Dashboard_ for the correct project id
 - `LOADER`: Loader value to be passed to the dApp's environment, defaults to `network`
 - `CHAIN_ID`: Chain id value to be passed to the dApp's environment, defaults to `5`.
 - `NETWORK`: Network value to be passed to the dApp's environment, defaults to `goerli`

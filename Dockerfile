@@ -7,6 +7,11 @@ FROM node:10.12
 # Make sure you either set it in your environment or build the docker image with it
 # Eg: docker build --build-arg GH_PAT='XXX' .
 ARG GH_PAT
+# @NOTE This is required to be set at build time, otherwise calls to infura might fail
+# Also, due to security considerations, we're not storing it here
+#
+# Eg: docker build --build-arg INFURA_ID='XXX' .
+ARG INFURA_ID
 
 # Make the dapp's ENV values to have the option to be set at build time
 # But fall back to a default
@@ -25,7 +30,6 @@ RUN echo "deb http://archive.debian.org/debian/ jessie main\n" \
         "deb-src http://security.debian.org jessie/updates main" > /etc/apt/sources.list
 
 # @FIX Allow the nginx service to start at build time, so that the installation will work
-# Otherwise nginx-common and nginx-full fails to install, and won't set up the service
 # See: https://askubuntu.com/questions/365911/why-the-services-do-not-start-at-installation
 RUN sed -i "s|exit 101|exit 0|g" /usr/sbin/policy-rc.d
 
@@ -35,13 +39,13 @@ RUN apt-get update
 
 # Apt-utils needs to be in before installing the rest
 RUN apt-get install -y \
-  locales \
-  apt-utils \
-  build-essential \
-  curl \
-  file \
-  zip \
-  nginx
+        locales \
+        apt-utils \
+        build-essential \
+        curl \
+        file \
+        zip \
+        nginx
 
 # Reconfigure locales
 RUN echo "en_US.UTF-8 UTF-8" >> /etc/locale.gen
@@ -57,6 +61,7 @@ RUN yarn
 # Setup the repo's ENV file
 RUN echo "LOADER=$LOADER\n" \
         "CHAIN_ID=$CHAIN_ID\n" \
+        "INFURA_ID=$INFURA_ID\n" \
         "NETWORK=$NETWORK\n" \
         "VERBOSE=$VERBOSE\n" \
         "COLONY_NETWORK_ENS_NAME=$COLONY_NETWORK_ENS_NAME\n" \

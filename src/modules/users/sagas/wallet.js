@@ -58,10 +58,17 @@ function* fetchAccounts(
 
     const {
       adapter: { provider },
-    } = yield call(getNetworkClient, DEFAULT_NETWORK, {
-      type: WALLET_CATEGORIES.HARDWARE,
-      subtype: walletType,
-    });
+    } = yield call(
+      getNetworkClient,
+      DEFAULT_NETWORK,
+      {
+        type: WALLET_CATEGORIES.HARDWARE,
+        subtype: walletType,
+      },
+      // $FlowFixMe this _can_ be undefined, it's ok
+      process.env.INFURA_ID,
+      !!process.env.VERBOSE,
+    );
 
     const addressesWithBalance = yield all(
       otherAddresses.map(address =>
