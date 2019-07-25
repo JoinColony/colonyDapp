@@ -3,7 +3,7 @@
 import type { Match } from 'react-router';
 
 // $FlowFixMe update flow!
-import React, { useState, useCallback, useEffect, useMemo } from 'react';
+import React, { useState, useCallback, useEffect } from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 import { Redirect } from 'react-router';
 import { subscribeActions as subscribeToReduxActions } from 'redux-action-watch/lib/actionCreators';
@@ -34,14 +34,12 @@ import { colonySubscriber } from '../../subscribers';
 import {
   canAdminister,
   canCreateTask as canCreateTaskCheck,
-  isFounder,
 } from '../../../users/checks';
 import { isInRecoveryMode as isInRecoveryModeCheck } from '../../checks';
 
 import ColonyDomains from './ColonyDomains';
-import ColonyInitialFunding from './ColonyInitialFunding';
 import ColonyMeta from './ColonyMeta';
-import ColonyTasks from './ColonyTasks';
+import TabContribute from './TabContribute';
 
 import styles from './ColonyHome.css';
 
@@ -118,13 +116,16 @@ const ColonyHome = ({
     error: colonyError,
   } = useDataSubscriber<*>(colonySubscriber, colonyArgs, colonyArgs);
 
-  const { data: permissions } = useDataFetcher<UserPermissionsType>(
+  const {
+    data: permissions,
+    isFetching: isFetchingPermissions,
+  } = useDataFetcher<UserPermissionsType>(
     currentUserColonyPermissionsFetcher,
     colonyArgs,
     colonyArgs,
   );
 
-  const nativeTokenRef: ?TokenReferenceType = useSelector(
+  const nativeToken: ?TokenReferenceType = useSelector(
     colonyNativeTokenSelector,
     colonyArgs,
   );
@@ -136,90 +137,17 @@ const ColonyHome = ({
   const canCreateTask = canCreateTaskCheck(permissions);
   const isInRecoveryMode = isInRecoveryModeCheck(colony);
 
-  const renderFundingWidget = () => {
-    /*
-     * Since we're calling this before the Loader, we can't actually render
-     * if the colony data is not yet loaded
-     */
-    if (!(colony && colonyAddress)) {
-      return null;
-    }
-    /*
-     * Small helpers to make the funding display logic easier to read
-     */
-    const isBalanceZero =
-      nativeTokenRef &&
-      nativeTokenRef.balance &&
-      nativeTokenRef.balance.isZero();
-    const isFounderOrAdmin =
-      canAdminister(permissions) && isFounder(permissions);
-    /*
-     * If it's a native token, balance is 0 and the user can mint it
-     */
-    if (
-      nativeTokenRef &&
-      !nativeTokenRef.isExternal &&
-      isBalanceZero &&
-      colony.canMintNativeToken
-    ) {
-      return (
-        <ColonyInitialFunding
-          colonyAddress={colonyAddress}
-          displayName={colony.displayName}
-          tokenAddress={nativeTokenRef.address}
-          isExternal={false}
-        />
-      );
-    }
-    /*
-     * If it's an external token, balance is zero, and the user is and Admin or Founder
-     */
-    if (
-      nativeTokenRef &&
-      nativeTokenRef.isExternal &&
-      isBalanceZero &&
-      isFounderOrAdmin
-    ) {
-      return (
-        <ColonyInitialFunding
-          colonyAddress={colonyAddress}
-          displayName={colony.displayName}
-          tokenAddress={nativeTokenRef.address}
-          isExternal
-        />
-      );
-    }
-    /*
-     * If it's not any of the above, show the tasks list
-     * (The list handles it's own empty state)
-     */
-    return (
-      <ColonyTasks
-        canCreateTask={canCreateTask}
-        colonyAddress={colonyAddress}
-        filteredDomainId={filteredDomainId}
-        filterOption={filterOption}
-        isInRecoveryMode={isInRecoveryMode}
-      />
-    );
-  };
-
-  const memoizedFundingWidget = useMemo(renderFundingWidget, [
-    nativeTokenRef,
-    permissions,
-    colony,
-    colonyAddress,
-    canCreateTask,
-    filteredDomainId,
-    filterOption,
-    isInRecoveryMode,
-  ]);
-
   if (colonyError || addressError) {
     return <Redirect to="/404" />;
   }
 
-  if (!(colony && colonyAddress) || isFetchingColony) {
+  if (
+    !(colony && colonyAddress) ||
+    isFetchingColony ||
+    !permissions ||
+    isFetchingPermissions ||
+    !nativeToken
+  ) {
     return <LoadingTemplate loadingText={MSG.loadingText} />;
   }
 
@@ -252,7 +180,15 @@ const ColonyHome = ({
               <FormattedMessage {...MSG.tabContribute} />
             </Tab>
           </TabList>
-          <TabPanel>{memoizedFundingWidget}</TabPanel>
+          <TabPanel>
+            <TabContribute
+              colony={colony}
+              filteredDomainId={filteredDomainId}
+              filterOption={filterOption}
+              nativeToken={nativeToken}
+              permissions={permissions}
+            />
+          </TabPanel>
         </Tabs>
       </main>
       <aside className={styles.sidebar}>
