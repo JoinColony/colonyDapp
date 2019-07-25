@@ -69,12 +69,29 @@ const TaskList = ({
     [filterOption, walletAddress, filteredDomainId],
   );
 
+  const sortingOrderOption = 'desc';
+  const sort = useCallback(
+    (
+      { data: first }: { data: TaskType },
+      { data: second }: { data: TaskType },
+    ) => {
+      if (!(first && second)) return 0;
+
+      return sortingOrderOption === 'desc'
+        ? second.createdAt - first.createdAt
+        : first.createdAt - second.createdAt;
+    },
+    [sortingOrderOption],
+  );
+
   const filteredTasksData = useMemo(
     () =>
       filter
-        ? tasksData.filter(({ data }) => (data ? filter(data) : true))
+        ? tasksData
+            .sort(sort)
+            .filter(({ data }) => (data ? filter(data) : true))
         : tasksData,
-    [tasksData, filter],
+    [filter, tasksData, sort],
   );
 
   return (
