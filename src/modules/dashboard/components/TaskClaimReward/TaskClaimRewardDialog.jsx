@@ -2,7 +2,7 @@
 
 // $FlowFixMe until hooks flow types
 import React, { useCallback } from 'react';
-import { defineMessages, FormattedMessage, FormattedNumber } from 'react-intl';
+import { defineMessages, FormattedMessage } from 'react-intl';
 
 import type { TaskPayoutType } from '~immutable';
 import type { Address } from '~types';
@@ -207,10 +207,10 @@ const TaskClaimRewardDialog = ({
                   {...MSG.networkFee}
                   values={{
                     percentage: (
-                      <FormattedNumber
-                        // eslint-disable-next-line react/style-prop-object
-                        style="percent"
-                        value={networkFee}
+                      <Numeral
+                        value={networkFee * 1e2}
+                        suffix="%"
+                        truncate={1}
                       />
                     ),
                   }}

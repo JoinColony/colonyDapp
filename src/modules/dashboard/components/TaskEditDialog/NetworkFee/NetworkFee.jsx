@@ -2,7 +2,7 @@
 
 // $FlowFixMe until hooks flow types
 import React, { useMemo } from 'react';
-import { defineMessages, FormattedMessage, FormattedNumber } from 'react-intl';
+import { defineMessages, FormattedMessage } from 'react-intl';
 import BigNumber from 'bn.js';
 import moveDecimal from 'move-decimal-point';
 
@@ -90,8 +90,7 @@ const NetworkFee = ({ amount, decimals, symbol }: Props) => {
                 {...MSG.helpText}
                 values={{
                   percentage: (
-                    // eslint-disable-next-line react/style-prop-object
-                    <FormattedNumber style="percent" value={networkFee} />
+                    <Numeral value={networkFee * 1e2} suffix="%" truncate={1} />
                   ),
                 }}
               />
