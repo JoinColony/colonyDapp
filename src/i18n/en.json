@@ -37,8 +37,10 @@
 
     "transaction.debug.description": "DEBUG: context: {context} methodName: {methodName}",
 
+    "transaction.group.transaction.batch.createUser.title": "Claim Username",
+    "transaction.group.transaction.batch.createUser.description": "Claim Your Username \"{username}\"",
     "transaction.network.registerUserLabel.title": "Claim Username",
-    "transaction.network.registerUserLabel.description": "Confirm Your Username '{username}'",
+    "transaction.network.registerUserLabel.description": "Confirm Your Username \"{username}\"",
 
     "transaction.group.createColony.title": "Create Colony",
     "transaction.group.createColony.description": "Create Colony",
