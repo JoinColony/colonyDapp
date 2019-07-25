@@ -16,8 +16,7 @@ import Button from '~core/Button';
 import Icon from '~core/Icon';
 import { Tooltip } from '~core/Popover';
 import { ACTIONS } from '~redux';
-
-import { getNormalizedDomainText } from '~utils/strings';
+import ENS from '~lib/ENS';
 
 type FormValues = {
   username: string,
@@ -113,7 +112,7 @@ const StepUserName = ({ wizardForm, nextStep }: Props) => {
       {...wizardForm}
     >
       {({ isValid, isSubmitting, values: { username } }) => {
-        const normalized = getNormalizedDomainText(username);
+        const normalized = ENS.normalizeAsText(username);
         return (
           <section className={styles.main}>
             <div className={styles.title}>
@@ -131,6 +130,7 @@ const StepUserName = ({ wizardForm, nextStep }: Props) => {
                   statusValues={{
                     normalized,
                   }}
+                  formattingOptions={{ lowercase: true }}
                   data-test="claimUsernameInput"
                   extra={
                     <Tooltip

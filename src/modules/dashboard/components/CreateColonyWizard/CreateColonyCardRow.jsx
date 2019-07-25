@@ -11,8 +11,8 @@ import Heading from '~core/Heading';
 
 import { userDidClaimProfile } from '../../../users/checks';
 import { currentUserSelector } from '../../../users/selectors';
-import { getNormalizedDomainText } from '~utils/strings';
 import { useSelector } from '~utils/hooks';
+import ENS from '~lib/ENS';
 
 import styles from './CreateColonyCardRow.css';
 
@@ -36,7 +36,7 @@ type CardProps = {
 
 const normalize = (name): string => {
   if (name) {
-    return getNormalizedDomainText(name) || '';
+    return ENS.normalizeAsText(name) || '';
   }
   return '';
 };

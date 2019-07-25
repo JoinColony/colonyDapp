@@ -15,9 +15,9 @@ import {
   selectAsJS,
   putNotification,
 } from '~utils/saga/effects';
-import { getNormalizedDomainText } from '~utils/strings';
 import { ACTIONS } from '~redux';
 import { CONTEXT, getContext } from '~context';
+import ENS from '~lib/ENS';
 
 import { decorateLog } from '~utils/web3/eventLogs/events';
 import { parseExtensionDeployedLog } from '~utils/web3/eventLogs/eventParsers';
@@ -58,7 +58,7 @@ function* colonyCreate({
     tokenIcon,
     tokenName,
     tokenSymbol,
-    username,
+    username: givenUsername,
   },
 }: Action<typeof ACTIONS.COLONY_CREATE>): Saga<*> {
   /*
@@ -66,8 +66,6 @@ function* colonyCreate({
    */
   const walletAddress = yield select(walletAddressSelector);
   const currentUser = yield* selectAsJS(currentUserSelector);
-  const colonyName = yield call(getNormalizedDomainText, givenColonyName);
-  if (!colonyName) throw new Error(`Invalid colonyName '${givenColonyName}'`);
 
   /*
    * Define a manifest of transaction ids and their respective channels.
@@ -132,6 +130,9 @@ function* colonyCreate({
    * Create all transactions for the group.
    */
   try {
+    const colonyName = ENS.normalize(givenColonyName);
+    const username = ENS.normalize(givenUsername);
+
     if (createUser) {
       yield createGroupedTransaction(createUser, {
         context: NETWORK_CONTEXT,

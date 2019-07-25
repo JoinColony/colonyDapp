@@ -14,7 +14,8 @@ import { ActionFileUpload } from '~core/FileUpload';
 import { ACTIONS } from '~redux';
 import { mapPayload } from '~utils/actions';
 
-import { getNormalizedDomainText, multiLineTextEllipsis } from '~utils/strings';
+import { multiLineTextEllipsis } from '~utils/strings';
+import ENS from '~lib/ENS';
 
 import styles from './StepCreateToken.css';
 
@@ -153,11 +154,9 @@ const StepCreateToken = ({
                    * inside a sentence that does not
                    */
                   colony: (
-                    <span
-                      title={getNormalizedDomainText(wizardValues.colonyName)}
-                    >
+                    <span title={ENS.normalizeAsText(wizardValues.colonyName)}>
                       {multiLineTextEllipsis(
-                        getNormalizedDomainText(wizardValues.colonyName),
+                        ENS.normalizeAsText(wizardValues.colonyName),
                         40,
                       )}
                     </span>

@@ -17,6 +17,7 @@ import {
 
 import type { Action } from '~redux';
 import { getContext, CONTEXT } from '~context';
+import ENS from '~lib/ENS';
 
 import { getUserProfileStoreAddress } from '../../../data/stores';
 
@@ -272,10 +273,13 @@ function* usernameCheckAvailability({
 function* usernameCreate({
   meta: { id },
   meta,
-  payload: { username },
+  payload: { username: givenUsername },
 }: Action<typeof ACTIONS.USERNAME_CREATE>): Saga<*> {
   const txChannel = yield call(getTxChannel, id);
   try {
+    // Normalize again, just to be sure
+    const username = ENS.normalize(givenUsername);
+
     yield fork(createTransaction, id, {
       context: NETWORK_CONTEXT,
       methodName: 'registerUserLabel',

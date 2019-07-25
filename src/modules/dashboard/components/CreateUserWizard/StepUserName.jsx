@@ -17,8 +17,7 @@ import Icon from '~core/Icon';
 import Link from '~core/Link';
 import { Tooltip } from '~core/Popover';
 import { ACTIONS } from '~redux';
-
-import { getNormalizedDomainText } from '~utils/strings';
+import ENS from '~lib/ENS';
 
 import { DASHBOARD_ROUTE } from '~routes';
 
@@ -116,7 +115,7 @@ const StepUserName = ({ wizardValues, nextStep }: Props) => {
       validationSchema={validationSchema}
     >
       {({ isValid, isSubmitting, values: { username } }) => {
-        const normalized = getNormalizedDomainText(username);
+        const normalized = ENS.normalizeAsText(username);
         return (
           <section className={styles.main}>
             <div className={styles.title}>
@@ -134,6 +133,7 @@ const StepUserName = ({ wizardValues, nextStep }: Props) => {
                   statusValues={{
                     normalized,
                   }}
+                  formattingOptions={{ lowercase: true }}
                   data-test="claimUsernameInput"
                   extra={
                     <Tooltip

@@ -8,8 +8,6 @@ import * as yup from 'yup';
 import type { WizardProps } from '~core/Wizard';
 import type { UserType } from '~immutable';
 
-import styles from './StepColonyName.css';
-
 import { useAsyncFunction, useSelector } from '~utils/hooks';
 import { Form, Input } from '~core/Fields';
 import Heading from '~core/Heading';
@@ -17,8 +15,10 @@ import Button from '~core/Button';
 import Icon from '~core/Icon';
 import { Tooltip } from '~core/Popover';
 import { ACTIONS } from '~redux';
+import { multiLineTextEllipsis } from '~utils/strings';
+import ENS from '~lib/ENS';
 
-import { getNormalizedDomainText, multiLineTextEllipsis } from '~utils/strings';
+import styles from './StepColonyName.css';
 
 import { currentUserSelector } from '../../../users/selectors';
 
@@ -125,7 +125,7 @@ const StepColonyName = ({ wizardForm, nextStep, wizardValues }: Props) => {
       {...wizardForm}
     >
       {({ isValid, isSubmitting, values: { colonyName } }) => {
-        const normalized = getNormalizedDomainText(colonyName);
+        const normalized = ENS.normalizeAsText(colonyName);
         return (
           <section className={styles.main}>
             <Heading appearance={{ size: 'medium', weight: 'medium' }}>
@@ -143,14 +143,12 @@ const StepColonyName = ({ wizardForm, nextStep, wizardValues }: Props) => {
                        * @NOTE Needed so the user can get the full username on hover
                        * (But still, if it's too long, the browser will trucate it)
                        */
-                      title={getNormalizedDomainText(
+                      title={ENS.normalizeAsText(
                         username || wizardValues.username,
                       )}
                     >
                       {multiLineTextEllipsis(
-                        getNormalizedDomainText(
-                          username || wizardValues.username,
-                        ),
+                        ENS.normalizeAsText(username || wizardValues.username),
                         38,
                       )}
                     </span>
@@ -173,6 +171,7 @@ const StepColonyName = ({ wizardForm, nextStep, wizardValues }: Props) => {
                 extensionString=".colony.joincolony.eth"
                 label={MSG.label}
                 status={normalized !== colonyName ? MSG.statusText : null}
+                formattingOptions={{ lowercase: true }}
                 statusValues={{ normalized }}
                 extra={
                   <Tooltip

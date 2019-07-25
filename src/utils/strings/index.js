@@ -3,8 +3,6 @@
 import { addressValidator } from '@colony/purser-core/validators';
 import { addressNormalizer } from '@colony/purser-core/normalizers';
 
-import { normalize as ensNormalize } from 'eth-ens-namehash-ms';
-
 import type { Address } from '~types';
 
 const HTTP_PROTOCOL: string = 'http://';
@@ -118,15 +116,5 @@ export const splitAddress = (address: Address): AddressElements | Error => {
     };
   } catch (caughtError) {
     return caughtError;
-  }
-};
-
-export const getNormalizedDomainText = (domain: string) => {
-  if (!domain) return domain;
-  try {
-    const normalized: string = ensNormalize(domain);
-    return normalized;
-  } catch (e) {
-    return null;
   }
 };
