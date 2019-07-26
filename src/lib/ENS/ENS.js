@@ -16,7 +16,7 @@ const EXTERNAL_PREFIX = '$';
 
 class ENS {
   static getFullDomain = (scope: 'user' | 'colony', name: string) =>
-    `${name}.${scope}.${COLONY_NETWORK_ENS_NAME}`;
+    isAddress(name) ? name : `${name}.${scope}.${COLONY_NETWORK_ENS_NAME}`;
 
   static stripDomainParts = (scope: 'user' | 'colony', domain: string) =>
     domain.split(`.${scope}.${COLONY_NETWORK_ENS_NAME}`)[0];
