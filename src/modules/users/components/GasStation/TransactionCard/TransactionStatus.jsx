@@ -37,11 +37,17 @@ type Props = {
   groupCount?: number,
   hash?: string,
   status: TransactionStatusType,
+  loadingRelated?: boolean,
 };
 
 const displayName = 'users.GasStation.TransactionStatus';
 
-const TransactionStatus = ({ hash, status, groupCount }: Props) => (
+const TransactionStatus = ({
+  hash,
+  status,
+  groupCount,
+  loadingRelated,
+}: Props) => (
   <div className={styles.main}>
     {hash && (
       <TransactionLink
@@ -75,7 +81,7 @@ const TransactionStatus = ({ hash, status, groupCount }: Props) => (
         {groupCount && status === TRANSACTION_STATUSES.READY && (
           <span className={styles.counter}>{groupCount}</span>
         )}
-        {status === TRANSACTION_STATUSES.SUCCEEDED && (
+        {status === TRANSACTION_STATUSES.SUCCEEDED && !loadingRelated && (
           <span
             className={styles.completed}
             data-test="gasStationTransactionSucceeded"
@@ -91,7 +97,7 @@ const TransactionStatus = ({ hash, status, groupCount }: Props) => (
             />
           </span>
         )}
-        {status === TRANSACTION_STATUSES.PENDING && (
+        {(status === TRANSACTION_STATUSES.PENDING || loadingRelated) && (
           <div
             className={styles.spinner}
             data-test="gasStationTransactionPending"

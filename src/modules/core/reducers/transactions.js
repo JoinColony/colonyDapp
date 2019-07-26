@@ -127,6 +127,16 @@ const coreTransactionsReducer: ReducerType<
         TRANSACTION_STATUSES.READY,
       );
     }
+    case ACTIONS.TRANSACTION_LOAD_RELATED: {
+      const {
+        meta: { id },
+        payload: { loading },
+      } = action;
+      return state.setIn(
+        [CORE_TRANSACTIONS_LIST, id, 'loadingRelated'],
+        loading,
+      );
+    }
     case ACTIONS.TRANSACTION_GAS_UPDATE: {
       const {
         meta: { id },
