@@ -11,6 +11,7 @@ const config = () => ({
     Addresses: {
       Swarm: ['/dns4/qa.colony.io/tcp/9090/wss/p2p-websocket-star/'],
     },
+    Bootstrap: [],
     Discovery: {
       webRTCStar: {
         Enabled: true,
