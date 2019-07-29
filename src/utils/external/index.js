@@ -53,30 +53,27 @@ export const getEthToUsd = (ethValue: BN): Promise<number | void> => {
     }
   }
 
-  return fetch(conversionRateEndpoint).then(response => {
-    if (!response.ok) {
-      throw Error(response.statusText);
-    }
-    return response
-      .json()
-      .then((res: EthUsdResponse) => {
-        const {
-          result: { ethusd: ethUsd },
-          status,
-        } = res;
-        if (status !== '1') {
-          throw Error(`Invalid response data for getEthToUsd().`);
-        }
+  return fetch(conversionRateEndpoint)
+    .then(response => {
+      if (!response.ok) {
+        throw Error(response.statusText);
+      }
+      return response.json();
+    })
+    .then((response: EthUsdResponse) => {
+      const {
+        result: { ethusd: ethUsd },
+        status,
+      } = response;
+      if (status !== '1') {
+        throw Error(`Invalid response data for getEthToUsd().`);
+      }
 
-        localStorage.setItem(ETH_USD_KEY, ethUsd);
-        localStorage.setItem(
-          ETH_USD_TIMESTAMP_KEY,
-          currentTimestamp.toString(),
-        );
-        return fromWei(ethValue, 'ether') * parseFloat(ethUsd);
-      })
-      .catch(console.warn);
-  });
+      localStorage.setItem(ETH_USD_KEY, ethUsd);
+      localStorage.setItem(ETH_USD_TIMESTAMP_KEY, currentTimestamp.toString());
+      return fromWei(ethValue, 'ether') * parseFloat(ethUsd);
+    })
+    .catch(console.warn);
 };
 
 /*

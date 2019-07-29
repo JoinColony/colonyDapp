@@ -41,6 +41,7 @@ type Props = {
 
 type State = {
   valueUsd: number | null,
+  requested: boolean,
 };
 
 class EthUsd extends Component<Props, State> {
@@ -55,6 +56,7 @@ class EthUsd extends Component<Props, State> {
 
   state = {
     valueUsd: null,
+    requested: false,
   };
 
   componentDidMount() {
@@ -84,17 +86,22 @@ class EthUsd extends Component<Props, State> {
       valueToConvert = toWei(fixedNum, unit);
     }
     this.mounted = true;
-    getEthToUsd(valueToConvert).then(valueUsd => {
-      if (this.mounted) {
-        this.setState({
-          valueUsd,
-        });
-      }
-    });
+    getEthToUsd(valueToConvert)
+      .then(valueUsd => {
+        this.setState({ requested: true });
+        if (this.mounted) {
+          this.setState({
+            valueUsd,
+          });
+        }
+      })
+      .catch(() => {
+        this.setState({ requested: true });
+      });
   };
 
   render() {
-    const { valueUsd } = this.state;
+    const { valueUsd, requested } = this.state;
     const {
       appearance,
       intl: { formatMessage },
@@ -106,7 +113,7 @@ class EthUsd extends Component<Props, State> {
       ...rest
     } = this.props;
     const suffixText = formatMessage(MSG.usdAbbreviation);
-    return valueUsd || valueUsd === 0 ? (
+    return requested ? (
       <Numeral
         appearance={appearance}
         prefix={showPrefix && valueUsd ? '~ ' : ''}
