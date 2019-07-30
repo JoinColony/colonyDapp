@@ -475,7 +475,11 @@ function* colonySubStart({ payload: { colonyAddress }, meta }: *): Saga<*> {
 
     const reduceTokenToDispatch = (acc, token) =>
       token.balance === undefined
-        ? [...acc, put(fetchColonyTokenBalance(colonyAddress, token.address))]
+        ? [
+            ...acc,
+            put(fetchColonyTokenBalance(colonyAddress, token.address)),
+            put(fetchToken(token.address)),
+          ]
         : acc;
 
     while (true) {
