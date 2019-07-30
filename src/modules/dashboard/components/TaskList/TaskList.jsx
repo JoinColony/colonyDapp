@@ -9,12 +9,20 @@ import { defineMessages, FormattedMessage } from 'react-intl';
 import type { Address } from '~types';
 import type { DomainId, TaskDraftId, TaskType } from '~immutable';
 
+import { mergePayload } from '~utils/actions';
 import { TASK_STATE } from '~immutable';
-import { useDataTupleFetcher } from '~utils/hooks';
-import { TASKS_FILTER_OPTIONS } from '../shared/tasksFilter';
-import { tasksByIdFetcher } from '../../fetchers';
 
+import { useDataTupleFetcher, useSelector } from '~utils/hooks';
+
+import { TASKS_FILTER_OPTIONS } from '../shared/tasksFilter';
+
+import { tasksByIdFetcher } from '../../fetchers';
+import { ACTIONS } from '~redux';
+import { colonyNameSelector } from '../../selectors';
+
+import Icon from '~core/Icon';
 import { Table, TableBody, TableCell, TableRow } from '~core/Table';
+import { ActionButton } from '~core/Button';
 import TaskListItem from './TaskListItem.jsx';
 
 import taskListItemStyles from './TaskListItem.css';
@@ -24,6 +32,31 @@ const MSG = defineMessages({
     id: 'dashboard.TaskList.noTasks',
     defaultMessage: 'There are no tasks here.',
   },
+  subscribe: {
+    id: 'dashboard.TaskList.subscribe',
+    defaultMessage: 'Subscribe to Colony',
+  },
+  myColonies: {
+    id: 'dashboard.TaskList.myColonies',
+    defaultMessage: 'My Colonies',
+  },
+  noTaskDescription: {
+    id: 'dashboard.ColonyTasks.noTaskDescription',
+    defaultMessage: 'No tasks here!',
+  },
+  noTaskAddition: {
+    id: 'dashboard.ColonyTasks.noTaskAddition',
+    defaultMessage: 'Change Domains or filters to check for other tasks.',
+  },
+  emptyFilterDescription: {
+    id: 'dashboard.ColonyTasks.emptyFilterDescription',
+    defaultMessage: 'Welcome to {colonyName}!',
+  },
+  emptyFilterAddition: {
+    id: 'dashboard.ColonyTasks.emptyFilterAddition',
+    defaultMessage: `It looks like there are no open tasks right now.
+      Add this colony to {myColonies}, grab a coffee, and check again later.`,
+  },
 });
 
 type Props = {|
@@ -32,14 +65,16 @@ type Props = {|
   filteredDomainId?: DomainId,
   filterOption: string,
   walletAddress: Address,
+  colonyAddress?: Address,
 |};
 
 const TaskList = ({
   draftIds = [],
-  emptyState,
   filteredDomainId,
   filterOption,
+  emptyState,
   walletAddress,
+  colonyAddress,
 }: Props) => {
   const tasksData = useDataTupleFetcher<TaskType>(tasksByIdFetcher, draftIds);
   const filter = useCallback(
@@ -94,26 +129,91 @@ const TaskList = ({
     [filter, tasksData, sort],
   );
 
+  const transform = useCallback(mergePayload({ colonyAddress }), [
+    colonyAddress,
+  ]);
+
+  const { record: colonyName } = useSelector(colonyNameSelector, [
+    colonyAddress,
+  ]);
   return (
     <>
-      <Table data-test="dashboardTaskList" scrollable>
-        <TableBody>
-          {filteredTasksData.map(taskData => (
-            <TaskListItem key={taskData.key} data={taskData} />
-          ))}
-          {filteredTasksData.length === 0 && (
-            <TableRow>
-              <TableCell className={taskListItemStyles.empty}>
-                {emptyState || (
-                  <p>
-                    <FormattedMessage {...MSG.noTasks} />
-                  </p>
-                )}
-              </TableCell>
-            </TableRow>
+      {filteredTasksData.length === 0 && colonyAddress ? (
+        <div>
+          {filteredDomainId ? (
+            <div>
+              <Icon
+                className={taskListItemStyles.noTask}
+                name="empty-task"
+                title={MSG.noTasks}
+                viewBox="0 0 120 120"
+              />
+              <div className={taskListItemStyles.emptyStateElements}>
+                <FormattedMessage tagName="p" {...MSG.noTaskDescription} />
+              </div>
+              <div className={taskListItemStyles.emptyStateElements}>
+                <FormattedMessage tagName="p" {...MSG.noTaskAddition} />
+              </div>
+            </div>
+          ) : (
+            <div>
+              <Icon
+                className={taskListItemStyles.noTask}
+                name="cup"
+                title={MSG.noTasks}
+                viewBox="0 0 120 120"
+              />
+              <div className={taskListItemStyles.emptyStateElements}>
+                <FormattedMessage
+                  tagName="p"
+                  {...MSG.emptyFilterDescription}
+                  values={{
+                    colonyName,
+                  }}
+                />
+              </div>
+              <div className={taskListItemStyles.emptyStateElements}>
+                <FormattedMessage
+                  tagName="p"
+                  {...MSG.emptyFilterAddition}
+                  values={{
+                    myColonies: (
+                      <ActionButton
+                        className={taskListItemStyles.subscribe}
+                        error={ACTIONS.USER_COLONY_SUBSCRIBE_ERROR}
+                        submit={ACTIONS.USER_COLONY_SUBSCRIBE}
+                        success={ACTIONS.USER_COLONY_SUBSCRIBE_SUCCESS}
+                        transform={transform}
+                      >
+                        <FormattedMessage tagName="span" {...MSG.myColonies} />
+                      </ActionButton>
+                    ),
+                  }}
+                />
+              </div>
+            </div>
           )}
-        </TableBody>
-      </Table>
+        </div>
+      ) : (
+        <Table data-test="dashboardTaskList" scrollable>
+          <TableBody>
+            {filteredTasksData.map(taskData => (
+              <TaskListItem key={taskData.key} data={taskData} />
+            ))}
+            {filteredTasksData.length === 0 && (
+              <TableRow>
+                <TableCell className={taskListItemStyles.empty}>
+                  {emptyState || (
+                    <p>
+                      <FormattedMessage {...MSG.noTasks} />
+                    </p>
+                  )}
+                </TableCell>
+              </TableRow>
+            )}
+          </TableBody>
+        </Table>
+      )}
     </>
   );
 };

@@ -1,5 +1,6 @@
 {
   "icons": [
+    "active-task",
     "archive",
     "arrow-wallet",
     "at-sign-circle",
@@ -21,6 +22,8 @@
     "circle-person",
     "circle-plus",
     "close",
+    "cup",
+    "empty-task",
     "envelope",
     "file",
     "forbidden-signal",
@@ -29,6 +32,7 @@
     "home",
     "line-arrow-circle",
     "lock",
+    "no-task",
     "pencil",
     "person",
     "phrase",
