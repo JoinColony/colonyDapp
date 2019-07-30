@@ -1,11 +1,11 @@
 describe('Update Claim Profile Metadata', () => {
-  it('Use a TrufflePig wallet', () => {
+  it.skip('Use a TrufflePig wallet', () => {
     cy.get('button')
       .contains('TrufflePig')
       .click();
   });
 
-  it('Select the second account and Log in', () => {
+  it.skip('Select the second account and Log in', () => {
     /*
      * Click on the Button disguised as a Select
      */
@@ -24,7 +24,7 @@ describe('Update Claim Profile Metadata', () => {
       .click();
   });
 
-  it('Check that the account is already claimed', () => {
+  it.skip('Check that the account is already claimed', () => {
     /*
      * Click the Avatar Dropdown
      */
@@ -40,7 +40,7 @@ describe('Update Claim Profile Metadata', () => {
   /*
    * Update profile metadata
    */
-  it('Update the User Profile Values', () => {
+  it.skip('Update the User Profile Values', () => {
     cy.goToUserProfileSettings();
 
     cy.fixture('users').then(({ displayName, bio, website, location }) => {
@@ -95,7 +95,7 @@ describe('Update Claim Profile Metadata', () => {
   /*
    * Update the avatar
    */
-  it('Update the User Avatar', () => {
+  it.skip('Update the User Avatar', () => {
     cy.goToUserProfileSettings();
 
     cy.get('div[data-test="avatarUploaderDrop"]').uploadAvatar(
@@ -114,7 +114,7 @@ describe('Update Claim Profile Metadata', () => {
   /*
    * Remove the Avatar
    */
-  it('Remove the current User Avatar', () => {
+  it.skip('Remove the current User Avatar', () => {
     cy.goToUserProfileSettings();
 
     cy.get('button[data-test="avatarUploaderRemove"]').click();
