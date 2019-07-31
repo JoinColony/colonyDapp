@@ -21,6 +21,7 @@ const config = () => ({
       },
     },
   },
+  preload: { enabled: false, addresses: [] },
   EXPERIMENTAL: {
     pubsub: true,
   },
