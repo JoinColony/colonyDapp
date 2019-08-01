@@ -30,7 +30,7 @@ import taskListItemStyles from './TaskListItem.css';
 const MSG = defineMessages({
   noTasks: {
     id: 'dashboard.TaskList.noTasks',
-    defaultMessage: 'There are no tasks here.',
+    defaultMessage: `It looks like you don't have any tasks.`,
   },
   subscribe: {
     id: 'dashboard.TaskList.subscribe',
