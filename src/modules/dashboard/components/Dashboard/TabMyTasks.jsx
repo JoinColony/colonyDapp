@@ -9,7 +9,7 @@ import { useDataFetcher } from '~utils/hooks';
 import type { Address } from '~types';
 import type { TaskDraftId } from '~immutable';
 
-import { SpinnerLoader } from '~core/Preloaders';
+import { SpinnerLoader, DotsLoader } from '~core/Preloaders';
 import TaskList from '~dashboard/TaskList';
 
 import type { InitialTaskType } from './InitialTask.jsx';
@@ -24,7 +24,7 @@ import styles from './TabMyTasks.css';
 const MSG = defineMessages({
   loadingTaskList: {
     id: 'dashboard.Dashboard.TabMyTasks.loadingTaskList',
-    defaultMessage: 'Loading Task List...',
+    defaultMessage: 'Loading Task List',
   },
 });
 
@@ -74,6 +74,7 @@ const TabMyTasks = ({
     <>
       <p className={styles.emptyText}>
         <FormattedMessage {...MSG.loadingTaskList} />
+        <DotsLoader />
       </p>
     </>
   );

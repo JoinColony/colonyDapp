@@ -7,7 +7,7 @@ import type { Address } from '~types';
 
 import { useDataFetcher, useSelector } from '~utils/hooks';
 
-import { SpinnerLoader } from '~core/Preloaders';
+import { SpinnerLoader, DotsLoader } from '~core/Preloaders';
 import ColonyGrid from '~dashboard/ColonyGrid';
 
 import { currentUserSelector } from '../../../users/selectors';
@@ -18,7 +18,7 @@ import styles from './TabMyColonies.css';
 const MSG = defineMessages({
   loadingColonyList: {
     id: 'dashboard.Dashboard.TabMyColonies.loadingColonyList',
-    defaultMessage: 'Loading Colony List...',
+    defaultMessage: 'Loading Colony List',
   },
 });
 
@@ -36,11 +36,14 @@ const TabMyColonies = () => {
   if (isFetching) return <SpinnerLoader />;
 
   return colonyAddresses ? (
-    <ColonyGrid colonyAddresses={colonyAddresses} />
+    <div>
+      <ColonyGrid colonyAddresses={colonyAddresses} />
+    </div>
   ) : (
     <>
       <p className={styles.emptyText}>
         <FormattedMessage {...MSG.loadingColonyList} />
+        <DotsLoader />
       </p>
     </>
   );

@@ -1,4 +1,7 @@
 .emptyText {
+  display: flex;
+  align-items: flex-end;
+  margin-top: 10px;
   font-size: var(--size-medium-l);
-  line-height: 2em;
+  line-height: 1em;
 }
