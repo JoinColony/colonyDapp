@@ -26,6 +26,7 @@ const PINNER_HAVE_HEADS_TIMEOUT = 30 * 1000; // Seems necessary to have this hig
 const CLIENT_ACTIONS = {
   REPLICATE: 'REPLICATE',
   PIN_HASH: 'PIN_HASH',
+  ANNOUNCE_CLIENT: 'ANNOUNCE_CLIENT',
 };
 
 const PINNER_ACTIONS = {
@@ -107,6 +108,10 @@ class PinnerConnector {
     this._id = id;
 
     await this._ipfs.pubsub.subscribe(this._room, this._handlePinnerMessage);
+    this._publishAction({
+      type: CLIENT_ACTIONS.ANNOUNCE_CLIENT,
+      payload: { id },
+    });
 
     this._roomMonitor = new PeerMonitor(this._ipfs.pubsub, this._room);
     this._roomMonitor.on('leave', this._handleLeavePeer.bind(this));

@@ -7,8 +7,6 @@ import PinnerConnector from '../../ipfs/PinnerConnector';
 
 // How long should we wait for the next replication message unntil we assume it's done
 const REPLICATION_KEEP_ALIVE_TIMEOUT = 3 * 1000;
-// How long should we wait for replication in general
-const REPLICATION_TIMEOUT = 10 * 1000;
 // How often should we check whether a store is replicating
 const REPLICATION_CHECK_INTERVAL = 500;
 // How long should we wait for a store to load
@@ -108,7 +106,7 @@ class Store {
     return heads;
   }
 
-  async deferReplicate() {
+  deferReplicate() {
     // We're probably "just" sending data _to_ the pinner. No need to wait for its response.
     const address = this.address.toString();
     this._pinner.requestReplication(address).catch(log.warn);
@@ -116,33 +114,29 @@ class Store {
 
   async replicate() {
     const address = this.address.toString();
-    const headCount = await this._pinner.requestReplication(address);
-    log.verbose(
-      `Pinner has ${headCount} heads, we have ${
-        this.length
-      } for store ${address}`,
-    );
+    this._pinner
+      .requestReplication(address)
+      .then(headCount => {
+        log.verbose(
+          `Pinner has ${headCount} heads, we have ${
+            this.length
+          } for store ${address}`,
+        );
+      })
+      .catch(log.warn);
 
-    if (this.length < headCount) {
-      log.verbose(`Replicating store ${address}`);
-      // Wait for a store replication to start
-      this._renewReplicationTimeout(2 * REPLICATION_KEEP_ALIVE_TIMEOUT);
-      let interval;
-      await raceAgainstTimeout(
-        new Promise(resolve => {
-          interval = setInterval(() => {
-            if (!this._replicationTimeout) {
-              clearInterval(interval);
-              resolve();
-            }
-          }, REPLICATION_CHECK_INTERVAL);
-        }),
-        REPLICATION_TIMEOUT,
-        new Error('Replication timeout (Pinner might still have more heads)'),
-        () => clearInterval(interval),
-      );
-      log.verbose(`Store sucessfully replicated: ${address}`);
-    }
+    log.verbose(`Replicating store ${address}`);
+    // Wait for a store replication to start
+    this._renewReplicationTimeout(REPLICATION_KEEP_ALIVE_TIMEOUT);
+    await new Promise(resolve => {
+      const interval = setInterval(() => {
+        if (!this._replicationTimeout) {
+          clearInterval(interval);
+          log.verbose(`Store sucessfully replicated: ${address}`);
+          resolve();
+        }
+      }, REPLICATION_CHECK_INTERVAL);
+    });
   }
 
   async load() {
