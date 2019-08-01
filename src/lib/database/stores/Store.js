@@ -21,13 +21,15 @@ const WRITE_TIMEOUT = 10 * 1000;
 class Store {
   static orbitType: string;
 
+  _busyPromise: ?Promise<void>;
+
   +_orbitStore: OrbitDBStore;
 
   _name: string;
 
   _pinner: PinnerConnector;
 
-  _busyPromise: ?Promise<void>;
+  _ready: boolean = false;
 
   _replicationTimeout: TimeoutID | null;
 
@@ -48,6 +50,9 @@ class Store {
       this._writeTimeout = setTimeout(() => {
         this._writeTimeout = null;
       }, WRITE_TIMEOUT);
+    });
+    this._orbitStore.events.once('ready', () => {
+      this._ready = true;
     });
     this._name = name;
     this._pinner = pinner;
@@ -79,7 +84,7 @@ class Store {
     }, ms);
   }
 
-  async _loadEntries() {
+  async loadEntries() {
     const startLoading = Date.now();
     await this.ready();
     log.verbose(
@@ -94,6 +99,8 @@ class Store {
 
   async ready() {
     log.verbose(`Loading store "${this._name}"`);
+    // eslint-disable-next-line no-underscore-dangle
+    if (this._ready) return this._orbitStore._oplog.length;
     const headCountPromise = new Promise(resolve =>
       this._orbitStore.events.once('ready', (dbname, heads) => resolve(heads)),
     );
@@ -147,7 +154,7 @@ class Store {
       return this._busyPromise;
     }
     try {
-      this._busyPromise = this._loadEntries();
+      this._busyPromise = this.loadEntries();
       return this._busyPromise;
     } catch (caughtError) {
       // We just throw the error again. We're just using this to be able to set the busy indicator easily
