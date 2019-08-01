@@ -12,6 +12,7 @@ import Heading from '~core/Heading';
 import Icon from '~core/Icon';
 import Link from '~core/Link';
 import ExternalLink from '~core/ExternalLink';
+import CopyableAddress from '~core/CopyableAddress';
 import HookedColonyAvatar from '~dashboard/HookedColonyAvatar';
 import HookedUserAvatar from '~users/HookedUserAvatar';
 import ColonySubscribe from './ColonySubscribe.jsx';
@@ -21,6 +22,10 @@ import { rolesFetcher } from '../../../fetchers';
 import styles from './ColonyMeta.css';
 
 const MSG = defineMessages({
+  addressLabel: {
+    id: 'dashboard.ColonyHome.ColonyMeta.addressLabel',
+    defaultMessage: 'Address',
+  },
   websiteLabel: {
     id: 'dashboard.ColonyHome.ColonyMeta.websiteLabel',
     defaultMessage: 'Website',
@@ -81,7 +86,7 @@ const ColonyMeta = ({
         />
         <ColonySubscribe colonyAddress={colonyAddress} />
       </div>
-      <section className={styles.headingWrapper}>
+      <section>
         <Heading appearance={{ margin: 'none', size: 'medium', theme: 'dark' }}>
           <>
             <span title={displayName}>
@@ -110,6 +115,13 @@ const ColonyMeta = ({
           <p>{description}</p>
         </section>
       )}
+      <section className={styles.dynamicTextSection}>
+        <Heading
+          appearance={{ margin: 'none', size: 'small', theme: 'dark' }}
+          text={MSG.addressLabel}
+        />
+        <CopyableAddress>{colonyAddress}</CopyableAddress>
+      </section>
       {website && (
         <section className={styles.dynamicTextSection}>
           <Heading
