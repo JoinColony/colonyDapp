@@ -128,9 +128,11 @@ class PinnerConnector {
     log.verbose(`Requesting replication for store ${address}`);
     const request = this._replicationRequests.get(address);
     if (request && request.isPending) {
+      const res = await request.promise;
+      if (!res) return 0;
       const {
         payload: { count },
-      } = await request.promise;
+      } = res;
       return count;
     }
     try {
