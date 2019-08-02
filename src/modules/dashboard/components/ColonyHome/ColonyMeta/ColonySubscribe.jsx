@@ -97,12 +97,11 @@ const ColonySubscribe = ({ colonyAddress }: Props) => {
           <ActionButton
             button={({ onClick, disabled, loading }) =>
               loading ? (
-                // @FIXME: Fix my position!
-                <SpinnerLoader
-                  className={styles.unsubscribe}
-                  appearance={{ theme: 'primary', size: 'small' }}
-                  loadingText={MSG.changingSubscription}
-                />
+                <div className={styles.spinnerContainer}>
+                  <SpinnerLoader
+                    appearance={{ theme: 'primary', size: 'medium' }}
+                  />
+                </div>
               ) : (
                 <Button
                   className={styles.unsubscribe}
@@ -130,12 +129,11 @@ const ColonySubscribe = ({ colonyAddress }: Props) => {
           <ActionButton
             button={({ onClick, disabled, loading }) =>
               loading ? (
-                <SpinnerLoader
-                  className={styles.subscribe}
-                  // @FIXME: Fix my position!
-                  appearance={{ theme: 'primary', size: 'small' }}
-                  loadingText={MSG.changingSubscription}
-                />
+                <div className={styles.spinnerContainer}>
+                  <SpinnerLoader
+                    appearance={{ theme: 'primary', size: 'medium' }}
+                  />
+                </div>
               ) : (
                 <Button
                   className={styles.subscribe}

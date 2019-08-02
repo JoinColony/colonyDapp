@@ -28,3 +28,9 @@
 .unsubscribe {
   background: var(--golden);
 }
+
+.spinnerContainer {
+  position: absolute;
+  top: 132px;
+  left: 134px;
+}
