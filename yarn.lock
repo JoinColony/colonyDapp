@@ -871,33 +871,33 @@
     exec-sh "^0.3.2"
     minimist "^1.2.0"
 
-"@colony/colony-js-adapter-ethers@^1.12.1", "@colony/colony-js-adapter-ethers@^1.12.2":
-  version "1.12.2"
-  resolved "https://registry.yarnpkg.com/@colony/colony-js-adapter-ethers/-/colony-js-adapter-ethers-1.12.2.tgz#bcf69a6644ebd48b79992634c1ba7411e1273785"
-  integrity sha512-TmzYU8DfjsaLQOeRXYchLbszOTT9+59WY3uWT07HoCDbyJ5/rDFOOgkD6/tJ4Z858m6PBYMe6zUXQMf/rpvnrg==
+"@colony/colony-js-adapter-ethers@^1.14.0-beta.2":
+  version "1.14.0-beta.2"
+  resolved "https://registry.yarnpkg.com/@colony/colony-js-adapter-ethers/-/colony-js-adapter-ethers-1.14.0-beta.2.tgz#9065bedafb4b2e2274616a67aeb88ec10a591368"
+  integrity sha512-0Cmy0RTHdyIerKXgruqRXgfVKIPOzapEY1SxJ+Z6KqCdpSK8jgjwLw5dg2XgZyxbbdQjg75RlRFRv+BKH7hq4A==
   dependencies:
-    "@colony/colony-js-adapter" "^1.12.0"
+    "@colony/colony-js-adapter" "^1.14.0-beta.2"
     "@colony/colony-js-contract-loader" "^1.12.0"
     "@colony/colony-js-utils" "^1.12.0"
     babel-runtime "^6.26.0"
     ethers "3.0.27"
 
-"@colony/colony-js-adapter@^1.12.0":
-  version "1.12.0"
-  resolved "https://registry.yarnpkg.com/@colony/colony-js-adapter/-/colony-js-adapter-1.12.0.tgz#58ba461a7dfd6410652d1bc3bbf200f313302327"
-  integrity sha512-XICeok627ww+0ehXZ/8REugvVBPiV+SzgfCepPC9xfDzUmwBLKblrE5WE4qvA7SIfN5pXhysXQe/QIAoso39IA==
+"@colony/colony-js-adapter@^1.14.0-beta.2":
+  version "1.14.0-beta.2"
+  resolved "https://registry.yarnpkg.com/@colony/colony-js-adapter/-/colony-js-adapter-1.14.0-beta.2.tgz#369ed87688ccfda9f3ae0b3322d2bf9debb4420a"
+  integrity sha512-QT6EqgDuSQweSMb/10PqQ/a1qJyxnEp/gR8bFcWQ1dDWBfXjg/cCccAffeVBCOVMks0Sssmibzp+2BYJzVcpWg==
   dependencies:
     "@colony/colony-js-contract-loader" "^1.12.0"
     bn.js "^4.11.8"
 
-"@colony/colony-js-client@^1.14.0-beta.1":
-  version "1.14.0-beta.1"
-  resolved "https://registry.yarnpkg.com/@colony/colony-js-client/-/colony-js-client-1.14.0-beta.1.tgz#eb310b362bad7404e5514721da52cb0e175549be"
-  integrity sha512-SMUyv1H6b86UFnCZjMxcVhrjmIJprbIeObDeN68keZwUT2Y9Y57wgBeXPfV5YTUQmFdRyCLmHZgIaj+XbZfF1A==
+"@colony/colony-js-client@^1.14.0-beta.2":
+  version "1.14.0-beta.2"
+  resolved "https://registry.yarnpkg.com/@colony/colony-js-client/-/colony-js-client-1.14.0-beta.2.tgz#86b81a65a0963987fa947d0aaff05757a074a53e"
+  integrity sha512-SLQVOviMhcWemaVQ7JcuJu7EJbzhUmHbqXGEVCVAfCNCtOKlSj5wms0uIT4h79FWRrX18q9H7nNsukvFwMiitA==
   dependencies:
-    "@colony/colony-js-adapter" "^1.12.0"
-    "@colony/colony-js-adapter-ethers" "^1.12.2"
-    "@colony/colony-js-contract-client" "^1.13.2"
+    "@colony/colony-js-adapter" "^1.14.0-beta.2"
+    "@colony/colony-js-adapter-ethers" "^1.14.0-beta.2"
+    "@colony/colony-js-contract-client" "^1.14.0-beta.2"
     "@colony/colony-js-contract-loader" "^1.12.0"
     "@colony/colony-js-contract-loader-http" "^1.14.0-beta.0"
     "@colony/colony-js-contract-loader-network" "^1.14.0-beta.0"
@@ -912,18 +912,19 @@
     promise-retry "^1.1.1"
     web3-utils "^1.0.0-beta.55"
 
-"@colony/colony-js-contract-client@^1.13.2":
-  version "1.13.2"
-  resolved "https://registry.yarnpkg.com/@colony/colony-js-contract-client/-/colony-js-contract-client-1.13.2.tgz#25e7c75a172993346791d3ec32395ba3bbbe77cf"
-  integrity sha512-apIGTLjkm8n2+rEcAXpDssLGt2N8lS6n6jcVd2ivtzG96MygyfaLL+gToX71LAUDywrHX8RqFWXT7fs5nwLqLA==
+"@colony/colony-js-contract-client@^1.14.0-beta.2":
+  version "1.14.0-beta.2"
+  resolved "https://registry.yarnpkg.com/@colony/colony-js-contract-client/-/colony-js-contract-client-1.14.0-beta.2.tgz#2f4886772b423ace48d0f8354493ed642b66f4e5"
+  integrity sha512-D62Cn7V61mw3M6GWRUD2izpks84799aO+i7yax+nkVT5r4sNE3lMOCnF3LIpx9EjAFzQMhdi/Jc1Ve68AXJZRA==
   dependencies:
-    "@colony/colony-js-adapter" "^1.12.0"
+    "@colony/colony-js-adapter" "^1.14.0-beta.2"
     "@colony/colony-js-contract-loader" "^1.12.0"
     "@colony/colony-js-utils" "^1.12.0"
     assert "^2.0.0"
     babel-runtime "^6.26.0"
     bn.js "^4.11.8"
     bs58 "^4.0.1"
+    ethers "3.0.27"
     lodash.flatmap "^4.5.0"
     lodash.isequal "^4.5.0"
     lodash.isplainobject "^4.0.6"
