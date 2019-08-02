@@ -133,9 +133,10 @@ const TaskList = ({
     colonyAddress,
   ]);
 
-  const { record: colonyName } = useSelector(colonyNameSelector, [
-    colonyAddress,
-  ]);
+  const data = useSelector(colonyNameSelector, [colonyAddress]);
+
+  const colonyName = colonyAddress ? data.record : undefined;
+
   return (
     <>
       {filteredTasksData.length === 0 && colonyAddress ? (
