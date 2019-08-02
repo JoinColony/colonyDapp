@@ -224,10 +224,10 @@ export const subscribeToColony: Subscription<
       isNativeTokenLocked = false;
     }
 
-    // estimate will throw if we're unable to unlock
+    // wrap this in a try/catch since it will fail if token can't be unlocked
     let canUnlockNativeToken;
     try {
-      await colonyClient.tokenClient.unlock.estimate({});
+      await colonyClient.tokenClient.unlock.call({});
       canUnlockNativeToken = isNativeTokenLocked;
     } catch (error) {
       canUnlockNativeToken = false;
@@ -309,10 +309,10 @@ export const getColony: Query<
       isNativeTokenLocked = false;
     }
 
-    // estimate will throw if we're unable to unlock
+    // wrap this in a try/catch since it will fail if token can't be unlocked
     let canUnlockNativeToken;
     try {
-      await colonyClient.tokenClient.unlock.estimate({});
+      await colonyClient.tokenClient.unlock.call({});
       canUnlockNativeToken = isNativeTokenLocked;
     } catch (error) {
       canUnlockNativeToken = false;
@@ -480,8 +480,9 @@ export const getColonyCanMintNativeToken: Query<
     return colonyManager.getColonyClient(colonyAddress);
   },
   async execute(colonyClient) {
+    // wrap this in a try/catch since it will fail if tokens can't be minted
     try {
-      await colonyClient.mintTokens.estimate({ amount: new BigNumber(1) });
+      await colonyClient.mintTokens.call({ amount: new BigNumber(1) });
     } catch (error) {
       return false;
     }
