@@ -85,17 +85,17 @@ const NetworkHealth = ({
     {
       itemHealth: 'good',
       itemTitle: MSG.ipfsPing,
-      itemTitleValues: { ipfsPing: `${ping}ms` },
+      itemTitleValues: { ipfsPing: `${ping}ms` || '∞' },
     },
     {
       itemHealth: 'mean',
       itemTitle: MSG.pinners,
-      itemTitleValues: { pinners: pinners.length },
+      itemTitleValues: { pinners: pinners.length || '0' },
     },
     {
       itemHealth: 'critical',
       itemTitle: MSG.pubsubPeers,
-      itemTitleValues: { pubSubPeers: pubsubPeers.length },
+      itemTitleValues: { pubSubPeers: pubsubPeers.length || '0' },
     },
   ];
   return (
