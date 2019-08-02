@@ -280,7 +280,7 @@ export type TaskActionTypes = {|
   >,
   TASK_SET_PAYOUT: TaskActionType<
     typeof ACTIONS.TASK_SET_PAYOUT,
-    {| token: string, amount: BigNumber |},
+    {| token: Address, amount: BigNumber |},
   >,
   TASK_SET_PAYOUT_ERROR: TaskErrorActionType<
     typeof ACTIONS.TASK_SET_PAYOUT_ERROR,
@@ -321,7 +321,7 @@ export type TaskActionTypes = {|
   TASK_SET_WORKER_OR_PAYOUT: TaskActionType<
     typeof ACTIONS.TASK_SET_WORKER_OR_PAYOUT,
     {|
-      payouts?: Array<{| token: string, amount: BigNumber |}>,
+      payouts?: Array<{| token: Address, amount: BigNumber |}>,
       workerAddress?: Address,
     |},
   >,
@@ -331,7 +331,7 @@ export type TaskActionTypes = {|
   TASK_SET_WORKER_OR_PAYOUT_SUCCESS: TaskActionType<
     typeof ACTIONS.TASK_SET_WORKER_OR_PAYOUT_SUCCESS,
     {|
-      payouts?: Array<{| amount: BigNumber, token: string |}>,
+      payouts?: Array<{| amount: BigNumber, token: Address |}>,
       workerAddress?: Address,
     |},
   >,

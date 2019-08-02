@@ -59,7 +59,7 @@ export type TaskEvents = {|
     typeof PAYOUT_SET,
     {|
       amount: string,
-      token: string,
+      token: Address,
     |},
   >,
   PAYOUT_REMOVED: EventDefinition<typeof PAYOUT_REMOVED, void>,

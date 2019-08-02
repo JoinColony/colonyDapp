@@ -397,7 +397,7 @@ export const setTaskPayout: Command<
   TaskStoreMetadata,
   {|
     amount: BigNumber,
-    token: string,
+    token: Address,
   |},
   {|
     event: Event<typeof TASK_EVENT_TYPES.PAYOUT_SET>,
