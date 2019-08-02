@@ -40,6 +40,11 @@
   padding: 0;
 }
 
+.navigationItemHealth:hover svg {
+  fill: var(--text);
+  stroke: var(--text);
+}
+
 .navigationItemHealth button {
   padding: 8px 10px 0px 10px;
   cursor: pointer;
