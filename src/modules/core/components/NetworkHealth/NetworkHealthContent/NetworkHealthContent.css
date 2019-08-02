@@ -1,0 +1,57 @@
+.main {
+  width: 350px;
+  text-align: left;
+}
+
+.main:hover svg {
+  stroke: var(--text);
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  padding: 15px 10px;
+  border-bottom: 2px solid var(--grey-blue-1);
+}
+
+.healthDetailsWrapper {
+  align-self: center;
+}
+
+.healthIconWrapper {
+  display: inline-block;
+  margin-right: 10px;
+  vertical-align: bottom;
+}
+
+.healthTitle, .healthDetails {
+  display: inline-block;
+}
+
+.healthDetails {
+  margin-top: 8px;
+  line-height: 18px;
+}
+
+.actionsContainer {
+  display: flex;
+  align-items: flex-start;
+  align-self: flex-start;
+}
+
+.actionsContainer button {
+  padding: 0;
+}
+
+.closeButton {
+  composes: button from '~styles/reset.css';
+  stroke: var(--text);
+}
+
+.closeButton i {
+  padding: 0;
+}
+
+.content {
+  padding: 10px 10px 15px 10px;
+}

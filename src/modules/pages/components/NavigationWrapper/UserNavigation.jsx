@@ -11,6 +11,7 @@ import NavLink from '~core/NavLink';
 import { GasStationPopover } from '~users/GasStation';
 import AvatarDropdown from '~users/AvatarDropdown';
 import { InboxIcon } from '~users/Inbox';
+import NetworkHealth from '~core/NetworkHealth';
 
 import styles from './UserNavigation.css';
 
@@ -33,6 +34,10 @@ const displayName = 'pages.NavigationWrapper.UserNavigation';
 
 const UserNavigation = () => (
   <div className={styles.main}>
+    <NetworkHealth
+      className={styles.navigationItemHealth}
+      appearance={{ size: 'small' }}
+    />
     <NavLink
       to={DASHBOARD_ROUTE}
       className={styles.navigationItem}

@@ -35,6 +35,21 @@
   padding: 8px 0;
 }
 
+.navigationItemHealth {
+  composes: navigationItem;
+  padding: 0;
+}
+
+.navigationItemHealth:hover svg {
+  fill: var(--text);
+  stroke: var(--text);
+}
+
+.navigationItemHealth button {
+  padding: 8px 10px 0px 10px;
+  cursor: pointer;
+}
+
 .navigationItemActive svg {
   fill: navigationIconBlue;
   stroke: navigationIconBlue;
