@@ -35,6 +35,15 @@
   padding: 8px 0;
 }
 
+.navigationItemHealth {
+  composes: navigationItem;
+  padding: 8px 10px 0px 10px;
+}
+
+.navigationItemHealth button {
+  cursor: pointer;
+}
+
 .navigationItemActive svg {
   fill: navigationIconBlue;
   stroke: navigationIconBlue;
