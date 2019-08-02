@@ -8,6 +8,7 @@ import type { RootStateRecord } from '~immutable';
 
 import { sortObjectsBy, sortTokensByEth } from '~utils/arrays';
 
+import { tokenIsETH } from '../../core/checks';
 import {
   DASHBOARD_ALL_COLONIES,
   DASHBOARD_COLONIES,
@@ -94,6 +95,14 @@ export const colonyNativeTokenSelector = createSelector(
       ? colony
           .getIn(['record', 'tokens'], ImmutableMap())
           .find(token => !!token && token.isNative)
+      : null,
+);
+
+export const colonyEthTokenSelector = createSelector(
+  colonySelector,
+  colony =>
+    colony
+      ? colony.getIn(['record', 'tokens'], ImmutableMap()).find(tokenIsETH)
       : null,
 );
 
