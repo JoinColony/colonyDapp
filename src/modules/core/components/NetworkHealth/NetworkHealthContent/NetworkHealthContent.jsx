@@ -3,16 +3,18 @@
 import React from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 
+import type { NetworkHealth, NetworkHealthItems } from '../types';
+
 import Icon from '~core/Icon';
 import Heading from '~core/Heading';
 import NetworkHealthIcon from '../NetworkHealthIcon';
+import NetworkHealthContentItem from './NetworkHealthContentItem.jsx';
+
+import { capitalize } from '~utils/strings';
 
 import styles from './NetworkHealthContent.css';
 
 const MSG = defineMessages({
-  /*
-   * Shown by the default Browser title on hover
-   */
   healthTitle: {
     id: 'core.NetworkHealth.NetworkHealthContent.healthTitle',
     defaultMessage: 'Network Health: {health}',
@@ -33,28 +35,24 @@ const MSG = defineMessages({
 
 type Props = {|
   close?: () => void,
-  health: 'good' | 'mean' | 'critical',
+  health: NetworkHealth,
+  networkItems?: NetworkHealthItems,
 |};
 
 const displayName = 'NetworkHealth.NetworkHealthContent';
 
-const NetworkHealthContent = ({ close, health }: Props) => (
+const NetworkHealthContent = ({ close, health, networkItems = [] }: Props) => (
   <div className={styles.main}>
     <div className={styles.header}>
       <div className={styles.healthDetailsWrapper}>
         <div className={styles.healthTitle}>
           <Heading appearance={{ margin: 'none', size: 'normal' }}>
             <span className={styles.healthIconWrapper}>
-              <NetworkHealthIcon
-                health={health}
-                appearance={{ size: 'tiny' }}
-              />
+              <NetworkHealthIcon health={health} appearance={{ size: 'pea' }} />
             </span>
             <FormattedMessage
               {...MSG.healthTitle}
-              values={{
-                health: health.charAt(0).toUpperCase() + health.slice(1),
-              }}
+              values={{ health: capitalize(health) }}
             />
           </Heading>
         </div>
@@ -74,6 +72,11 @@ const NetworkHealthContent = ({ close, health }: Props) => (
         )}
       </div>
     </div>
+    <ul className={styles.content}>
+      {networkItems.map(networkHealthItem => (
+        <NetworkHealthContentItem networkHealthItem={networkHealthItem} />
+      ))}
+    </ul>
   </div>
 );
 

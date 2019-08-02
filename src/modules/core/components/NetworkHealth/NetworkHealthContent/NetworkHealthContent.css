@@ -1,5 +1,5 @@
 .main {
-  width: 450px;
+  width: 350px;
   text-align: left;
 }
 
@@ -20,12 +20,7 @@
 
 .healthIconWrapper {
   display: inline-block;
-
-  /*
-   * @NOTE Negative Margins
-   * In order to better align the icon with the inline text
-   */
-  margin: 0 7px -2px 0;
+  margin-right: 10px;
   vertical-align: bottom;
 }
 
@@ -55,4 +50,8 @@
 
 .closeButton i {
   padding: 0;
+}
+
+.content {
+  padding: 10px 10px 15px 10px;
 }
