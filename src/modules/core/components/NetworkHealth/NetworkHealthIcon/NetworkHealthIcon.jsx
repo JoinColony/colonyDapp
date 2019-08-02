@@ -8,7 +8,7 @@ import styles from './NetworkHealthIcon.css';
 
 type Appearance = {|
   /** Size of the main network health icon that's being wrapped in the popover. */
-  size?: 'tiny' | 'small' | 'normal' | 'medium' | 'large' | 'huge',
+  size?: 'pea' | 'tiny' | 'small' | 'normal' | 'medium' | 'large' | 'huge',
 |};
 
 type Props = {|

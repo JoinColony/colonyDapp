@@ -8,6 +8,11 @@
  * Sizing
  */
 
+.sizePea {
+  height: 10px;
+  width: 10px;
+}
+
 .sizeTiny {
   height: 14px;
   width: 14px;
