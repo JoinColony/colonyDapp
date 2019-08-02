@@ -27,7 +27,10 @@ import {
   tasksFilterSelectOptions,
 } from '../shared/tasksFilter';
 
-import { colonyNativeTokenSelector } from '../../selectors';
+import {
+  colonyNativeTokenSelector,
+  colonyEthTokenSelector,
+} from '../../selectors';
 import { currentUserColonyPermissionsFetcher } from '../../../users/fetchers';
 import { colonyAddressFetcher } from '../../fetchers';
 import { colonySubscriber } from '../../subscribers';
@@ -125,8 +128,12 @@ const ColonyHome = ({
     colonyArgs,
   );
 
-  const nativeToken: ?TokenReferenceType = useSelector(
+  const nativeTokenRef: ?TokenReferenceType = useSelector(
     colonyNativeTokenSelector,
+    colonyArgs,
+  );
+  const ethTokenRef: ?TokenReferenceType = useSelector(
+    colonyEthTokenSelector,
     colonyArgs,
   );
 
@@ -146,7 +153,7 @@ const ColonyHome = ({
     isFetchingColony ||
     !permissions ||
     isFetchingPermissions ||
-    !nativeToken
+    !nativeTokenRef
   ) {
     return <LoadingTemplate loadingText={MSG.loadingText} />;
   }
@@ -185,7 +192,8 @@ const ColonyHome = ({
               colony={colony}
               filteredDomainId={filteredDomainId}
               filterOption={filterOption}
-              nativeToken={nativeToken}
+              ethTokenRef={ethTokenRef}
+              nativeTokenRef={nativeTokenRef}
               permissions={permissions}
             />
           </TabPanel>

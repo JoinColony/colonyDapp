@@ -22,9 +22,11 @@ import styles from './ColonyInitialFunding.css';
 import CopyableAddress from '~core/CopyableAddress';
 
 type Props = {|
+  canMintTokens: boolean,
   colonyAddress: Address,
   displayName: string,
   isExternal?: boolean,
+  showQrCode: boolean,
   tokenAddress: Address,
 |};
 
@@ -60,6 +62,8 @@ const MSG = defineMessages({
 });
 
 const ColonyInitialFunding = ({
+  canMintTokens,
+  showQrCode,
   colonyAddress,
   isExternal,
   displayName,
@@ -77,7 +81,7 @@ const ColonyInitialFunding = ({
 
   return (
     <>
-      {isExternal ? null : (
+      {canMintTokens && (
         <div className={styles.container}>
           <Heading
             appearance={{ size: 'medium' }}
@@ -132,21 +136,23 @@ const ColonyInitialFunding = ({
           </TokenMintForm>
         </div>
       )}
-      <div className={styles.qrCodeContainer}>
-        <div className={styles.qrCode}>
-          <QRCode address={colonyAddress} width={50} />
+      {showQrCode && (
+        <div className={styles.qrCodeContainer}>
+          <div className={styles.qrCode}>
+            <QRCode address={colonyAddress} width={50} />
+          </div>
+          <div className={styles.qrCodeAddress}>
+            <FormattedMessage
+              className={styles.qrCodeDescription}
+              tagName="p"
+              {...MSG[
+                isExternal ? 'qrCodeDescriptionExternal' : 'qrCodeDescription'
+              ]}
+            />
+            <CopyableAddress full>{colonyAddress}</CopyableAddress>
+          </div>
         </div>
-        <div className={styles.qrCodeAddress}>
-          <FormattedMessage
-            className={styles.qrCodeDescription}
-            tagName="p"
-            {...MSG[
-              isExternal ? 'qrCodeDescriptionExternal' : 'qrCodeDescription'
-            ]}
-          />
-          <CopyableAddress full>{colonyAddress}</CopyableAddress>
-        </div>
-      </div>
+      )}
     </>
   );
 };
