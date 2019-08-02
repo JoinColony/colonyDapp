@@ -9,8 +9,8 @@ jobs:
       - checkout
       - restore_cache:
           keys:
-          - node-modules-{{ checksum "package.json" }}
-          - node-modules-
+          - node-modules-v1-{{ checksum "package.json" }}
+          - node-modules-v1-
       - run:
           name: "Set up global packages"
           command: |
@@ -24,7 +24,7 @@ jobs:
       - save_cache:
           paths:
             - node_modules
-          key: node-modules-{{ checksum "package.json" }}
+          key: node-modules-v1-{{ checksum "package.json" }}
       - run:
           name: "Updating lockfile"
           command: $HOME/.config/yarn/global/node_modules/.bin/greenkeeper-lockfile-update
@@ -64,8 +64,8 @@ jobs:
       - checkout
       - restore_cache:
           keys:
-          - node-modules-{{ checksum "package.json" }}
-          - node-modules-
+          - node-modules-v1-{{ checksum "package.json" }}
+          - node-modules-v1-
       - run:
           name: "Installing modules"
           command: |
@@ -74,7 +74,7 @@ jobs:
       - save_cache:
           paths:
             - node_modules
-          key: node-modules-{{ checksum "package.json" }}
+          key: node-modules-v1-{{ checksum "package.json" }}
       - run:
           name: "Checking correct types"
           command: |
@@ -112,8 +112,8 @@ jobs:
       - checkout
       - restore_cache:
           keys:
-          - node-modules-{{ checksum "package.json" }}
-          - node-modules-
+          - node-modules-v1-{{ checksum "package.json" }}
+          - node-modules-v1-
       - run:
           name: "Installing modules"
           command: |
@@ -122,7 +122,7 @@ jobs:
       - save_cache:
           paths:
             - node_modules
-          key: node-modules-{{ checksum "package.json" }}
+          key: node-modules-v1-{{ checksum "package.json" }}
       - run:
           name: "Linting Javascript"
           command: yarn lint:ci
