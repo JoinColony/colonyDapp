@@ -61,6 +61,7 @@ import {
   unassignWorker,
 } from '../data/commands';
 import {
+  getColonyTokenBalance,
   getTask,
   subscribeTaskFeedItems,
   subscribeTask,
@@ -409,7 +410,7 @@ function* taskSetSkill({
  */
 /*
  * @NOTE There's a case to be made here about simplifying the `taskSetPayout`
- * and `taskRemovePayout` sagas, by refactoring them into one, and deling
+ * and `taskRemovePayout` sagas, by refactoring them into one, and dealing
  * with the undefined values
  *
  * This will cut down on code, but make sure you handle all edge cases
@@ -421,12 +422,21 @@ function* taskSetPayout({
   meta,
 }: Action<typeof ACTIONS.TASK_SET_PAYOUT>): Saga<*> {
   try {
+    // Validate that the balance exists in the colony pot for the token
+    const balance = yield* executeQuery(getColonyTokenBalance, {
+      args: { tokenAddress: token },
+      metadata: { colonyAddress },
+    });
+    if (balance.lt(amount)) {
+      throw new Error('Insufficient funds to set payout');
+    }
+
     const {
       record: { payouts },
     }: { record: TaskType } = yield* selectAsJS(taskSelector, draftId);
     /*
-     * Edge case, but prevent triggering this saga and subseqent event, if the
-     * payment is the same as the previous one
+     * Edge case: prevent triggering this saga and subsequent event if the
+     * payment is the same as the previous one.
      */
     if (
       !payouts ||
