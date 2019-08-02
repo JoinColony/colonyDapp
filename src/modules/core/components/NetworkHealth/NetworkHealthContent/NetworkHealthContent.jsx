@@ -2,6 +2,7 @@
 
 import React from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
+import nanoid from 'nanoid';
 
 import type { NetworkHealth, NetworkHealthItems } from '../types';
 
@@ -73,8 +74,15 @@ const NetworkHealthContent = ({ close, health, networkItems = [] }: Props) => (
       </div>
     </div>
     <ul className={styles.content}>
-      {networkItems.map(networkHealthItem => (
-        <NetworkHealthContentItem networkHealthItem={networkHealthItem} />
+      {networkItems.map((networkHealthItem, itemIndex) => (
+        <NetworkHealthContentItem
+          networkHealthItem={networkHealthItem}
+          /*
+           * @NOTE I really don't have a better idea from what
+           * seed value to generate the key :()
+           */
+          key={nanoid(itemIndex)}
+        />
       ))}
     </ul>
   </div>
