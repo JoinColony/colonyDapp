@@ -22,7 +22,8 @@ type Props = {
   colony: ColonyType,
   filteredDomainId: number,
   filterOption: string,
-  nativeToken: TokenReferenceType,
+  nativeTokenRef: ?TokenReferenceType,
+  ethTokenRef: ?TokenReferenceType,
   permissions: UserPermissionsType,
 };
 
@@ -30,33 +31,40 @@ const TabContribute = ({
   colony,
   filteredDomainId,
   filterOption,
-  nativeToken,
+  ethTokenRef,
+  nativeTokenRef,
   permissions,
 }: Props) => {
-  /*
-   * Small helpers to make the funding display logic easier to read
-   */
-  const isBalanceZero =
-    nativeToken && nativeToken.balance && nativeToken.balance.isZero();
-  const isFounderOrAdmin = canAdminister(permissions) && isFounder(permissions);
+  const isColonyTokenBalanceZero =
+    nativeTokenRef && nativeTokenRef.balance && nativeTokenRef.balance.isZero();
+  const isEthBalanceZero =
+    ethTokenRef && ethTokenRef.balance && ethTokenRef.balance.isZero();
 
-  /*
-   * If it's a native token, balance is 0 and the user can mint it. If it's an external token, balance is zero, and the user is and Admin or Founder
-   */
-  const showFundingPanel =
-    nativeToken &&
-    isBalanceZero &&
-    ((!nativeToken.isExternal && colony.canMintNativeToken) ||
-      (nativeToken.isExternal && isFounderOrAdmin));
+  const canMintTokens = !!(
+    nativeTokenRef &&
+    !nativeTokenRef.isExternal &&
+    colony.canMintNativeToken
+  );
+  const showQrCode = !!(
+    nativeTokenRef &&
+    canAdminister(permissions) &&
+    isFounder(permissions)
+  );
 
   return (
     <>
-      {showFundingPanel && (
+      {nativeTokenRef && isColonyTokenBalanceZero && isEthBalanceZero && (
+        /*
+         * The funding panel should be shown if the colony's balance of
+         * both the native token and ETH is zero.
+         */
         <ColonyInitialFunding
+          canMintTokens={canMintTokens}
           colonyAddress={colony.colonyAddress}
           displayName={colony.displayName}
-          tokenAddress={nativeToken.address}
-          isExternal={nativeToken.isExternal}
+          isExternal={nativeTokenRef.isExternal}
+          showQrCode={showQrCode}
+          tokenAddress={nativeTokenRef.address}
         />
       )}
       <ColonyTasks
