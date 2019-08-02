@@ -99,6 +99,8 @@ class Store {
 
   async ready() {
     log.verbose(`Loading store "${this._name}"`);
+    // This *should* be fine. If we loaded the store once we don't need to load it again
+    // Replication will do the rest
     // eslint-disable-next-line no-underscore-dangle
     if (this._ready) return this._orbitStore._oplog.length;
     const headCountPromise = new Promise(resolve =>

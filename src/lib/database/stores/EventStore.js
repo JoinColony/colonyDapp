@@ -37,7 +37,7 @@ class EventStore extends Store {
   // https://github.com/babel/babel/issues/8417#issuecomment-415508558
   +_orbitStore: OrbitDBEventStore = this._orbitStore;
 
-  _cache: ?(Entry[]);
+  _cache: ?(Event<*>[]);
 
   constructor(orbitStore: OrbitDBStore, name: string, pinner: PinnerConnector) {
     super(orbitStore, name, pinner);
@@ -67,6 +67,10 @@ class EventStore extends Store {
   async loadEntries() {
     if (!this._ready && !this._cache) {
       this._cache = await this.getLSCache();
+      if (!this._cache) {
+        await super.loadEntries();
+        return;
+      }
     }
     super.loadEntries().catch(console.error);
   }
