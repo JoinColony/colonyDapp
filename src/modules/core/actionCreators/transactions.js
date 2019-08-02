@@ -223,6 +223,15 @@ export const transactionUpdateGas = (
   meta: { id },
 });
 
+export const transactionLoadRelated = (
+  id: string,
+  loading: boolean,
+): Action<typeof ACTIONS.TRANSACTION_LOAD_RELATED> => ({
+  type: ACTIONS.TRANSACTION_LOAD_RELATED,
+  payload: { loading },
+  meta: { id },
+});
+
 export const transactionCancel = (
   id: string,
 ): Action<typeof ACTIONS.TRANSACTION_CANCEL> => ({

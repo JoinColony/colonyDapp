@@ -59,6 +59,7 @@ const GroupedTransactionCard = ({
     methodName,
     params,
     status,
+    loadingRelated,
   },
 }: Props) => {
   const dispatch = useDispatch();
@@ -160,7 +161,11 @@ const GroupedTransactionCard = ({
         </>
       ) : (
         // multisig: pass proper multisig prop here
-        <TransactionStatus status={status} multisig={{}} />
+        <TransactionStatus
+          status={status}
+          multisig={{}}
+          loadingRelated={loadingRelated}
+        />
       )}
     </li>
   );

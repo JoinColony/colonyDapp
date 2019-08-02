@@ -41,6 +41,7 @@ import { ipfsUpload } from '../../core/sagas/ipfs';
 import {
   transactionAddParams,
   transactionReady,
+  transactionLoadRelated,
 } from '../../core/actionCreators';
 
 import {
@@ -305,6 +306,8 @@ function* usernameCreate({
 
     yield takeFrom(txChannel, ACTIONS.TRANSACTION_SUCCEEDED);
 
+    yield put(transactionLoadRelated(id, true));
+
     const { metadataStore, inboxStore } = yield* executeCommand(
       createUserProfile,
       {
@@ -312,6 +315,9 @@ function* usernameCreate({
         metadata: { walletAddress },
       },
     );
+
+    yield put(transactionLoadRelated(id, false));
+
     yield put<Action<typeof ACTIONS.USERNAME_CREATE_SUCCESS>>({
       type: ACTIONS.USERNAME_CREATE_SUCCESS,
       payload: {

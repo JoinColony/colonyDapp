@@ -78,6 +78,7 @@ type TransactionRecordProps = {|
   params: TransactionParams,
   receipt?: TransactionReceipt,
   status: TransactionStatusType,
+  loadingRelated?: boolean,
 |};
 
 export type TransactionType = $ReadOnly<TransactionRecordProps>;
@@ -103,6 +104,7 @@ const defaultValues: $Shape<TransactionRecordProps> = {
   params: {},
   receipt: undefined,
   status: TRANSACTION_STATUSES.READY,
+  loadingRelated: false,
 };
 
 const TransactionRecord: RecordFactory<TransactionRecordProps> = Record(

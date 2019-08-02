@@ -70,6 +70,11 @@ export type TransactionActionTypes = {|
     {| gasLimit?: BigNumber, gasPrice?: BigNumber |},
     WithId,
   >,
+  TRANSACTION_LOAD_RELATED: ActionTypeWithPayloadAndMeta<
+    typeof ACTIONS.TRANSACTION_LOAD_RELATED,
+    {| loading: boolean |},
+    WithId,
+  >,
   TRANSACTION_RECEIPT_RECEIVED: ActionTypeWithPayloadAndMeta<
     typeof ACTIONS.TRANSACTION_RECEIPT_RECEIVED,
     {| receipt: TransactionReceipt, params: Object |},

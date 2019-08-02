@@ -31,6 +31,7 @@ import {
   transactionAddParams,
   transactionAddIdentifier,
   transactionReady,
+  transactionLoadRelated,
 } from '../../core/actionCreators';
 import { createTransaction, createTransactionChannels } from '../../core/sagas';
 import {
@@ -244,6 +245,8 @@ function* colonyCreate({
        */
       yield takeFrom(createUser.channel, ACTIONS.TRANSACTION_SUCCEEDED);
 
+      yield put(transactionLoadRelated(createUser.id, true));
+
       const { metadataStore, inboxStore } = yield* executeCommand(
         createUserProfile,
         {
@@ -251,6 +254,8 @@ function* colonyCreate({
           metadata: { walletAddress },
         },
       );
+
+      yield put(transactionLoadRelated(createUser.id, false));
 
       yield put<Action<typeof ACTIONS.USERNAME_CREATE_SUCCESS>>({
         type: ACTIONS.USERNAME_CREATE_SUCCESS,
@@ -306,6 +311,7 @@ function* colonyCreate({
       );
     }
 
+    yield put(transactionLoadRelated(createColony.id, true));
     /*
      * Create the colony store
      */
@@ -325,6 +331,8 @@ function* colonyCreate({
         },
       },
     });
+
+    yield put(transactionLoadRelated(createColony.id, false));
 
     /*
      * Pass through colonyStore Address after colony store creation to colonyName creation
