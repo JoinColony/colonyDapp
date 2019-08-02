@@ -12,11 +12,14 @@ import Popover from '~core/Popover';
 import NetworkHealthIcon from './NetworkHealthIcon';
 import NetworkHealthContent from './NetworkHealthContent';
 import { capitalize } from '~utils/strings';
+import { useSelector } from '~utils/hooks';
 
 import type {
   NetworkHealth as NetworkHealthType,
   NetworkHealthIconSize,
 } from './types';
+
+import { connection as connectionStatsSelector } from '../../selectors';
 
 import styles from './NetworkHealth.css';
 
@@ -26,22 +29,22 @@ const MSG = defineMessages({
    */
   statusTitle: {
     id: 'core.NetworkHealth.statusTitle',
-    defaultMessage: 'Network Health: {health}',
+    defaultMessage: 'Network health: {health}',
   },
   /*
    * @TODO Create actual health items message descriptors
    */
   ipfsPing: {
     id: 'core.NetworkHealth.ipfsPing',
-    defaultMessage: 'IPFS Ping: {ipfsPing}',
+    defaultMessage: 'IPFS ping: {ipfsPing}',
   },
-  pinnerHeads: {
-    id: 'core.NetworkHealth.pinnerHeads',
-    defaultMessage: 'Pinner Heads: {heads}',
+  pinners: {
+    id: 'core.NetworkHealth.pinners',
+    defaultMessage: 'Pinners connected to: {pinners}',
   },
   pubsubPeers: {
     id: 'core.NetworkHealth.pubsubPeers',
-    defaultMessage: 'Pubsub Peers: {pubSubPeers}',
+    defaultMessage: 'Pubsub peers: {pubSubPeers}',
   },
 });
 
@@ -72,6 +75,8 @@ const NetworkHealth = ({
     [dispatch],
   );
 
+  const { ping, pinners, pubsubPeers } = useSelector(connectionStatsSelector);
+
   /*
    * @TODO Replace with actual aggregated health status
    */
@@ -80,17 +85,17 @@ const NetworkHealth = ({
     {
       itemHealth: 'good',
       itemTitle: MSG.ipfsPing,
-      itemTitleValues: { ipfsPing: '1000ms' },
+      itemTitleValues: { ipfsPing: `${ping}ms` },
     },
     {
       itemHealth: 'mean',
-      itemTitle: MSG.pinnerHeads,
-      itemTitleValues: { heads: '5' },
+      itemTitle: MSG.pinners,
+      itemTitleValues: { pinners: pinners.length },
     },
     {
       itemHealth: 'critical',
       itemTitle: MSG.pubsubPeers,
-      itemTitleValues: { pubSubPeers: '0' },
+      itemTitleValues: { pubSubPeers: pubsubPeers.length },
     },
   ];
   return (

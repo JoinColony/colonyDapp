@@ -17,7 +17,7 @@ export type ConnectionActionTypes = {|
     {|
       ping: number,
       pinners: string[],
-      pinnerBusy: string[],
+      pinnerBusy: boolean,
       pubsubPeers: string[],
       swarmPeers: string[],
     |},
