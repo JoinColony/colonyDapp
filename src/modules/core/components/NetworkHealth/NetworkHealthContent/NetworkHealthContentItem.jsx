@@ -1,39 +1,30 @@
 /* @flow */
 
-import type { MessageDescriptor, MessageValues } from 'react-intl';
-
 // $FlowFixMe until hooks flow types
 import React, { useMemo } from 'react';
 import { FormattedMessage } from 'react-intl';
+
+import type { NetworkHealthItem } from '../types';
 
 import NetworkHealthIcon from '../NetworkHealthIcon';
 
 import styles from './NetworkHealthContentItem.css';
 
 type Props = {|
-  itemHealth: 'good' | 'mean' | 'critical',
-  /** A string or a `MessageDescriptor` that make up the headings's text */
-  itemTitle?: MessageDescriptor | string,
-  /** Values for text (react-intl interpolation) */
-  itemTitleValues?: MessageValues,
+  networkHealthItem: NetworkHealthItem,
 |};
 
 const displayName = 'NetworkHealth.NetworkHealthContentItem';
 
 const NetworkHealthContentItem = ({
-  itemTitle,
-  itemTitleValues,
-  itemHealth,
+  networkHealthItem: { itemTitle, itemTitleValues, itemHealth },
 }: Props) => {
   const highlightedItem = useMemo(
     () => {
-      if (!itemTitle) {
-        return null;
-      }
       if (typeof itemTitle == 'string') {
         return <span>{itemTitle}</span>;
       }
-      if (itemTitle.id && itemTitleValues) {
+      if (itemTitle && itemTitle.id && itemTitleValues) {
         const highlightedValues = Object.keys(itemTitleValues)
           .map(itemKey =>
             itemTitleValues && itemTitleValues[itemKey]

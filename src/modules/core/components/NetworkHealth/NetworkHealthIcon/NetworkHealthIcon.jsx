@@ -4,15 +4,17 @@ import React from 'react';
 
 import { getMainClasses } from '~utils/css';
 
+import type { NetworkHealth, NetworkHealthIconSize } from '../types';
+
 import styles from './NetworkHealthIcon.css';
 
 type Appearance = {|
   /** Size of the main network health icon that's being wrapped in the popover. */
-  size?: 'pea' | 'tiny' | 'small' | 'normal' | 'medium' | 'large' | 'huge',
+  size?: NetworkHealthIconSize,
 |};
 
 type Props = {|
-  health: 'good' | 'mean' | 'critical',
+  health: NetworkHealth,
   appearance?: Appearance,
 |};
 
