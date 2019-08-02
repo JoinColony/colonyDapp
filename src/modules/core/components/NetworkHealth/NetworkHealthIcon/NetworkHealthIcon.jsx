@@ -16,9 +16,13 @@ type Props = {|
   appearance?: Appearance,
 |};
 
+const displayName = 'NetworkHealth.NetworkHealthIcon';
+
 const NetworkHealthIcon = ({
   health,
   appearance: { size } = { size: 'normal' },
 }: Props) => <span className={getMainClasses({ health, size }, styles)} />;
+
+NetworkHealthIcon.displayName = displayName;
 
 export default NetworkHealthIcon;
