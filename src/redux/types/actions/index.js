@@ -7,6 +7,7 @@ import type { $Pick } from '~types';
 import { ACTIONS } from '../../index';
 
 import type { ColonyActionTypes } from './colony';
+import type { ConnectionActionTypes } from './connection';
 import type { CurrentUserActionTypes } from './currentUser';
 import type { DomainActionTypes } from './domain';
 import type { GasPricesActionTypes } from './gasPrices';
@@ -82,6 +83,7 @@ export type ErrorActionType<T, M> = {|
  */
 export type ActionsType = {|
   ...ColonyActionTypes,
+  ...ConnectionActionTypes,
   ...CurrentUserActionTypes,
   ...DomainActionTypes,
   ...GasPricesActionTypes,

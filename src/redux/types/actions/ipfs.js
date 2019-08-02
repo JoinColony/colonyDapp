@@ -2,8 +2,6 @@
 
 import type { WithKey } from '~types';
 import type {
-  ActionType,
-  ActionTypeWithPayload,
   ActionTypeWithPayloadAndMeta,
   ErrorActionType,
   UniqueActionType,
@@ -50,17 +48,4 @@ export type IpfsActionTypes = {|
     |},
     WithKey,
   >,
-  IPFS_STATS_SUB_ERROR: ErrorActionType<typeof ACTIONS.IPFS_STATS_SUB_ERROR>,
-  IPFS_STATS_SUB_EVENT: ActionTypeWithPayload<
-    typeof ACTIONS.IPFS_STATS_SUB_EVENT,
-    {|
-      ping: number,
-      pinners: string[],
-      pinnerBusy: string[],
-      pubsubPeers: string[],
-      swarmPeers: string[],
-    |},
-  >,
-  IPFS_STATS_SUB_START: ActionType<typeof ACTIONS.IPFS_STATS_SUB_START>,
-  IPFS_STATS_SUB_STOP: ActionType<typeof ACTIONS.IPFS_STATS_SUB_STOP>,
 |};

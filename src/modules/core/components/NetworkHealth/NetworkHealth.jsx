@@ -2,19 +2,21 @@
 
 import type { IntlShape } from 'react-intl';
 
-import React from 'react';
+// $FlowFixMe upgrade flow
+import React, { useEffect } from 'react';
 import { injectIntl, defineMessages } from 'react-intl';
+import { useDispatch } from 'redux-react-hook';
+
+import { ACTIONS } from '~redux';
+import Popover from '~core/Popover';
+import NetworkHealthIcon from './NetworkHealthIcon';
+import NetworkHealthContent from './NetworkHealthContent';
+import { capitalize } from '~utils/strings';
 
 import type {
   NetworkHealth as NetworkHealthType,
   NetworkHealthIconSize,
 } from './types';
-
-import Popover from '~core/Popover';
-import NetworkHealthIcon from './NetworkHealthIcon';
-import NetworkHealthContent from './NetworkHealthContent';
-
-import { capitalize } from '~utils/strings';
 
 import styles from './NetworkHealth.css';
 
@@ -62,6 +64,14 @@ const NetworkHealth = ({
   className,
   intl: { formatMessage },
 }: Props) => {
+  const dispatch = useDispatch();
+  useEffect(
+    () => {
+      dispatch({ type: ACTIONS.CONNECTION_STATS_SUB_START });
+    },
+    [dispatch],
+  );
+
   /*
    * @TODO Replace with actual aggregated health status
    */
