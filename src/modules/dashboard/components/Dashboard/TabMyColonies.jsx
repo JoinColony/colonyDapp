@@ -41,7 +41,7 @@ const TabMyColonies = () => {
     </div>
   ) : (
     <>
-      <p className={styles.emptyText}>
+      <p className={styles.loadingText}>
         <FormattedMessage {...MSG.loadingColonyList} />
         <DotsLoader />
       </p>

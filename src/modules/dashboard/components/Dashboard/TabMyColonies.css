@@ -1,7 +1,7 @@
-.emptyText {
+.loadingText {
   display: flex;
   align-items: flex-end;
   margin-top: 10px;
-  font-size: var(--size-medium-l);
+  font-size: var(--size-normal);
   line-height: 1em;
 }

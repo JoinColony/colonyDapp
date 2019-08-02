@@ -21,7 +21,7 @@ import { ACTIONS } from '~redux';
 import { colonyNameSelector } from '../../selectors';
 
 import Icon from '~core/Icon';
-import { Table, TableBody, TableCell, TableRow } from '~core/Table';
+import { Table, TableBody } from '~core/Table';
 import { ActionButton } from '~core/Button';
 import TaskListItem from './TaskListItem.jsx';
 
@@ -30,7 +30,8 @@ import taskListItemStyles from './TaskListItem.css';
 const MSG = defineMessages({
   noTasks: {
     id: 'dashboard.TaskList.noTasks',
-    defaultMessage: `It looks like you don't have any tasks.`,
+    defaultMessage: `It looks like you don't have any tasks.
+      Visit your colonies to find a task to work on.`,
   },
   subscribe: {
     id: 'dashboard.TaskList.subscribe',
@@ -139,6 +140,19 @@ const TaskList = ({
 
   return (
     <>
+      {/* These empty states are getting a bit out of hand.
+        We have now 4 different empty states for different occurences
+        of the task list and different filter states
+      */}
+      {filteredTasksData.length === 0 && !colonyAddress && (
+        <div className={taskListItemStyles.empty}>
+          {emptyState || (
+            <p>
+              <FormattedMessage {...MSG.noTasks} />
+            </p>
+          )}
+        </div>
+      )}
       {filteredTasksData.length === 0 && colonyAddress ? (
         <div>
           {filteredDomainId ? (
@@ -201,17 +215,6 @@ const TaskList = ({
             {filteredTasksData.map(taskData => (
               <TaskListItem key={taskData.key} data={taskData} />
             ))}
-            {filteredTasksData.length === 0 && (
-              <TableRow>
-                <TableCell className={taskListItemStyles.empty}>
-                  {emptyState || (
-                    <p>
-                      <FormattedMessage {...MSG.noTasks} />
-                    </p>
-                  )}
-                </TableCell>
-              </TableRow>
-            )}
           </TableBody>
         </Table>
       )}

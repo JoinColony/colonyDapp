@@ -72,7 +72,7 @@ const TabMyTasks = ({
     />
   ) : (
     <>
-      <p className={styles.emptyText}>
+      <p className={styles.loadingText}>
         <FormattedMessage {...MSG.loadingTaskList} />
         <DotsLoader />
       </p>

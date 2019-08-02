@@ -61,8 +61,8 @@ td.userAvatar {
   cursor: pointer;
 }
 
-td.empty {
+.empty {
   flex-wrap: wrap;
-  padding: cellPaddingVertical cellPaddingHorizontal;
+  padding: cellPaddingVertical cellPaddingHorizontal cellPaddingVertical 0px;
   font-weight: var(--weight-semi);
 }
