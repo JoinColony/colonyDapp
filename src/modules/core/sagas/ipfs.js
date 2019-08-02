@@ -120,10 +120,10 @@ function* ipfsStatsSubStart(): Saga<*> {
     });
 
     while (true) {
-      const action = yield take(channel);
+      const event = yield take(channel);
       yield put({
         type: ACTIONS.IPFS_STATS_SUB_EVENT,
-        payload: action,
+        payload: event,
       });
     }
   } catch (caughtError) {
