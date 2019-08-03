@@ -133,6 +133,7 @@ export function* executeQuery<D, M, A, R>(
   },
 ): Saga<R> {
   log.verbose(`Executing query "${query.name}"`, { args, metadata });
+  const startQuery = Date.now();
 
   const executeDeps = yield call(getExecuteDependencies, query, {
     // The metadata object is cloned to satisfy flow.
@@ -141,7 +142,10 @@ export function* executeQuery<D, M, A, R>(
 
   const result = yield call(query.execute, executeDeps, { ...args });
 
-  log.verbose(`Executed query "${query.name}"`, result);
+  log.verbose(
+    `Executed query "${query.name}" in ${Date.now() - startQuery} ms`,
+    result,
+  );
   return result;
 }
 
@@ -201,6 +205,7 @@ export function* executeCommand<D, M, A, R>(
   |},
 ): Saga<R> {
   log.verbose(`Executing command "${command.name}"`, { args, metadata });
+  const startCommand = Date.now();
 
   // The args and metadata objects are cloned to satisfy flow.
   const maybeSanitizedArgs = {
@@ -212,7 +217,10 @@ export function* executeCommand<D, M, A, R>(
 
   const result = yield call(command.execute, executeDeps, maybeSanitizedArgs);
 
-  log.verbose(`Executed command "${command.name}"`, result);
+  log.verbose(
+    `Executed command "${command.name}" in ${Date.now() - startCommand} ms`,
+    result,
+  );
   return result;
 }
 

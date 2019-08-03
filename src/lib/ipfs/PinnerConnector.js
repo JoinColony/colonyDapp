@@ -124,6 +124,7 @@ class PinnerConnector {
   }
 
   async requestReplication(address: string) {
+    const startRequesting = Date.now();
     log.verbose(`Requesting replication for store ${address}`);
     const request = this._replicationRequests.get(address);
     if (request && request.isPending) {
@@ -135,7 +136,7 @@ class PinnerConnector {
     try {
       log.verbose('Waiting for pinner to be ready...');
       await this.ready;
-      log.verbose('Pinner is ready now!');
+      log.verbose(`Pinner is ready now in ${Date.now() - startRequesting} ms!`);
     } catch (caughtError) {
       log.warn('Could not request replication; not connected to any pinners.');
       return 0;

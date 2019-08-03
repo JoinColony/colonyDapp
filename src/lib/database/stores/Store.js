@@ -80,8 +80,11 @@ class Store {
   }
 
   async _loadEntries() {
+    const startLoading = Date.now();
     await this.ready();
-
+    log.verbose(
+      `Loaded store "${this._name}" in ${Date.now() - startLoading} ms`,
+    );
     try {
       await this.replicate();
     } catch (caughtError) {
