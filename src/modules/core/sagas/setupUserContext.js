@@ -32,6 +32,7 @@ import setupAdminSagas from '../../admin/sagas';
 import setupDashboardSagas from '../../dashboard/sagas';
 import { getWallet, setupUsersSagas, setupInboxSagas } from '../../users/sagas';
 import setupTransactionsSagas from './transactions';
+import setupConnectionSagas from './connection';
 import setupNetworkSagas from './network';
 import {
   getDDB,
@@ -45,6 +46,7 @@ import { createAddress } from '~types';
 function* setupContextDependentSagas(): Saga<void> {
   yield all([
     call(setupAdminSagas),
+    call(setupConnectionSagas),
     call(setupDashboardSagas),
     call(setupUsersSagas),
     call(setupInboxSagas),

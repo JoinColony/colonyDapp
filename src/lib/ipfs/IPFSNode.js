@@ -30,6 +30,7 @@ class IPFSNode {
   ready: Promise<boolean>;
 
   constructor(ipfs: IPFS, { timeout = TIMEOUT }: IPFSNodeOptions = {}) {
+    window.ipfs = ipfs;
     this._ipfs = ipfs;
     this.ready = new Promise((resolve, reject) => {
       // Check whether IPFS is already connected?

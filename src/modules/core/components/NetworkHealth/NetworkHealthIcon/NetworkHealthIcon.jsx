@@ -4,7 +4,7 @@ import React from 'react';
 
 import { getMainClasses } from '~utils/css';
 
-import type { NetworkHealth, NetworkHealthIconSize } from '../types';
+import type { NetworkHealthIconSize } from '../types';
 
 import styles from './NetworkHealthIcon.css';
 
@@ -14,16 +14,26 @@ type Appearance = {|
 |};
 
 type Props = {|
-  health: NetworkHealth,
+  health: number,
   appearance?: Appearance,
 |};
 
 const displayName = 'NetworkHealth.NetworkHealthIcon';
 
+const healthMap = {
+  '3': 'good',
+  '2': 'soso',
+  '1': 'poor',
+};
+
 const NetworkHealthIcon = ({
   health,
   appearance: { size } = { size: 'normal' },
-}: Props) => <span className={getMainClasses({ health, size }, styles)} />;
+}: Props) => (
+  <span
+    className={getMainClasses({ health: healthMap[health], size }, styles)}
+  />
+);
 
 NetworkHealthIcon.displayName = displayName;
 

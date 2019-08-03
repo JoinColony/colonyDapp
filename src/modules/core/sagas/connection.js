@@ -14,6 +14,7 @@ function* connectionStatsSubStart(): Saga<*> {
   let channel;
   try {
     const ipfsNode = yield* getContext(CONTEXT.IPFS_NODE);
+    const ddb = yield* getContext(CONTEXT.DDB_INSTANCE);
 
     channel = eventChannel(emitter => {
       let timeout;
@@ -24,13 +25,24 @@ function* connectionStatsSubStart(): Saga<*> {
             pinner: { _pinnerIds },
             pinner,
           } = ipfsNode;
-          // const ping = await _ipfs.ping('STAR_SERVER');
-          const ping = 5;
+          const { _stores } = ddb;
           const pinnerBusy = pinner.busy;
           const pinners = Array.from(_pinnerIds);
           const swarmPeers = await _ipfs.swarm.peers();
           const pubsubPeers = await _ipfs.pubsub.peers();
+          const pingAnswers = await Promise.all(
+            pinners.map(id => _ipfs.ping(id, { count: 1 })),
+          );
+          const openStores = _stores.size;
+          const busyStores = Array.from(_stores.values())
+            .filter(store => store.busy)
+            .map(store => store.address.toString());
+          const ping =
+            pingAnswers.reduce((sum, current) => sum + current[1].time, 0) /
+            pingAnswers.length;
           emitter({
+            busyStores,
+            openStores,
             ping,
             pinners,
             pinnerBusy,

@@ -51,10 +51,10 @@
   background-color: var(--secondary);
 }
 
-.healthMean {
+.healthSoso {
   background-color: var(--golden);
 }
 
-.healthCritical {
+.healthPoor {
   background-color: var(--danger);
 }

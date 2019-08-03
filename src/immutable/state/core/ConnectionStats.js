@@ -5,6 +5,8 @@ import type { RecordOf, RecordFactory } from 'immutable';
 import { Record } from 'immutable';
 
 export type ConnectionStatsProps = {
+  busyStores: string[],
+  openStores: number,
   ping: number,
   pinners: string[],
   pinnerBusy: boolean,
@@ -13,6 +15,8 @@ export type ConnectionStatsProps = {
 };
 
 const defaultValues: $Shape<ConnectionStatsProps> = {
+  busyStores: [],
+  openStores: 0,
   ping: Infinity,
   pinners: [],
   pinnerBusy: false,

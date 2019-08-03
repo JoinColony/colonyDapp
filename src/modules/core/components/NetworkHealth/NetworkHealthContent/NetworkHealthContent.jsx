@@ -2,23 +2,24 @@
 
 import React from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
-import nanoid from 'nanoid';
 
-import type { NetworkHealth, NetworkHealthItems } from '../types';
+import type { NetworkHealthItems } from '../types';
 
 import Icon from '~core/Icon';
 import Heading from '~core/Heading';
 import NetworkHealthIcon from '../NetworkHealthIcon';
 import NetworkHealthContentItem from './NetworkHealthContentItem.jsx';
 
-import { capitalize } from '~utils/strings';
-
 import styles from './NetworkHealthContent.css';
 
 const MSG = defineMessages({
   healthTitle: {
     id: 'core.NetworkHealth.NetworkHealthContent.healthTitle',
-    defaultMessage: 'Network Health: {health}',
+    defaultMessage: `Network Health: {health, select,
+      3 {good}
+      2 {so so}
+      1 {poor}
+    }`,
   },
   /*
    * @TODO We might want to update this copy
@@ -26,9 +27,9 @@ const MSG = defineMessages({
   healthDetails: {
     id: 'core.NetworkHealth.NetworkHealthContent.healthDetails',
     defaultMessage: `The network's health is {health, select,
-      good {good. All systems are operational.}
-      mean {average. You might experience reduced data loading.}
-      critical {critical. Your data will probably fail to load.}
+      3 {good. All systems are operational.}
+      2 {so so. You might experience reduced data loading.}
+      1 {poor. Your data will probably fail to load.}
       other {unknown. Hold tight until we check it.}
     }`,
   },
@@ -36,7 +37,7 @@ const MSG = defineMessages({
 
 type Props = {|
   close?: () => void,
-  health: NetworkHealth,
+  health: number,
   networkItems?: NetworkHealthItems,
 |};
 
@@ -51,10 +52,7 @@ const NetworkHealthContent = ({ close, health, networkItems = [] }: Props) => (
             <span className={styles.healthIconWrapper}>
               <NetworkHealthIcon health={health} appearance={{ size: 'pea' }} />
             </span>
-            <FormattedMessage
-              {...MSG.healthTitle}
-              values={{ health: capitalize(health) }}
-            />
+            <FormattedMessage {...MSG.healthTitle} values={{ health }} />
           </Heading>
         </div>
         <div className={styles.healthDetails}>
@@ -74,14 +72,15 @@ const NetworkHealthContent = ({ close, health, networkItems = [] }: Props) => (
       </div>
     </div>
     <ul className={styles.content}>
-      {networkItems.map((networkHealthItem, itemIndex) => (
+      {networkItems.map(networkHealthItem => (
         <NetworkHealthContentItem
           networkHealthItem={networkHealthItem}
-          /*
-           * @NOTE I really don't have a better idea from what
-           * seed value to generate the key :()
-           */
-          key={nanoid(itemIndex)}
+          // Flow ¯\_(ツ)_/¯
+          key={
+            typeof networkHealthItem.itemTitle.id == 'string'
+              ? networkHealthItem.itemTitle.id
+              : networkHealthItem.itemTitle.toString()
+          }
         />
       ))}
     </ul>
