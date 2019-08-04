@@ -80,3 +80,19 @@ export const fetchUserColonies = (
   meta: { key: createAddress(walletAddress) },
   payload: { walletAddress, metadataStoreAddress },
 });
+
+export const userSubStart = (
+  userAddress: Address,
+): Action<typeof ACTIONS.USER_SUB_START> => ({
+  type: ACTIONS.USER_SUB_START,
+  meta: { key: createAddress(userAddress) },
+  payload: { userAddress },
+});
+
+export const userSubStop = (
+  userAddress: Address,
+): Action<typeof ACTIONS.USER_SUB_STOP> => ({
+  type: ACTIONS.USER_SUB_STOP,
+  meta: { key: createAddress(userAddress) },
+  payload: { userAddress },
+});

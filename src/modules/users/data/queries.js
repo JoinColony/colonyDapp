@@ -8,6 +8,7 @@ import type {
   ENSCache,
   NetworkClient,
   Query,
+  Subscription,
   UserProfileStore,
   UserInboxStore,
   UserMetadataStore,
@@ -661,5 +662,30 @@ export const getUserNotificationMetadata: Query<
       readUntil,
       exceptFor,
     };
+  },
+};
+
+export const subscribeToUser: Subscription<
+  UserProfileStore,
+  UserProfileStoreMetadata,
+  void,
+  UserProfileType,
+> = {
+  name: 'subscribeToUser',
+  context: [CONTEXT.DDB_INSTANCE],
+  prepare: prepareProfileStoreQuery,
+  async execute(profileStore) {
+    return emitter => [
+      profileStore.subscribe(events =>
+        emitter(
+          events &&
+            events.reduce(getUserProfileReducer, {
+              walletAddress: ZERO_ADDRESS,
+              inboxStoreAddress: '',
+              metadataStoreAddress: '',
+            }),
+        ),
+      ),
+    ];
   },
 };

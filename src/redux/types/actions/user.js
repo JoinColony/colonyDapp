@@ -157,6 +157,22 @@ export type UserActionTypes = {|
     UserProfileType,
     void,
   >,
+  USER_SUB_START: ActionTypeWithPayloadAndMeta<
+    typeof ACTIONS.USER_SUB_START,
+    {| userAddress: Address |},
+    WithKey,
+  >,
+  USER_SUB_STOP: ActionTypeWithPayloadAndMeta<
+    typeof ACTIONS.USER_SUB_STOP,
+    {| userAddress: Address |},
+    WithKey,
+  >,
+  USER_SUB_EVENTS: ActionTypeWithPayloadAndMeta<
+    typeof ACTIONS.USER_SUB_EVENTS,
+    UserProfileType,
+    WithKey,
+  >,
+  USER_SUB_ERROR: ErrorActionType<typeof ACTIONS.USER_SUB_ERROR, WithKey>,
   USER_SUBSCRIBED_COLONIES_FETCH: ActionTypeWithPayloadAndMeta<
     typeof ACTIONS.USER_SUBSCRIBED_COLONIES_FETCH,
     {| walletAddress: Address, metadataStoreAddress: string |},

@@ -10,7 +10,7 @@ import TimeRelative from '~core/TimeRelative';
 import UserMention from '~core/UserMention';
 import HookedUserAvatar from '~users/HookedUserAvatar';
 
-import { userFetcher } from '../../../users/fetchers';
+import { userSubscriber } from '../../../users/subscribers';
 import TextDecorator from '../../../../lib/TextDecorator';
 import {
   friendlyUsernameSelector,
@@ -19,7 +19,7 @@ import {
 
 import styles from './TaskFeedComment.css';
 
-import { useDataFetcher, useSelector } from '~utils/hooks';
+import { useDataSubscriber, useSelector } from '~utils/hooks';
 
 const UserAvatar = HookedUserAvatar();
 
@@ -46,10 +46,11 @@ const TaskFeedComment = ({
 
   const isCurrentUser = authorAddress === walletAddress;
 
-  const { data: creator } = useDataFetcher<UserType>(
-    userFetcher,
+  const { data: creator } = useDataSubscriber<UserType>(
+    userSubscriber,
     [authorAddress],
     [authorAddress],
+    { alwaysSubscribe: false },
   );
   const userDisplayName = useSelector(friendlyUsernameSelector, [
     authorAddress,

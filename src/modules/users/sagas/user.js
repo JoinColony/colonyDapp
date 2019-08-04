@@ -9,6 +9,7 @@ import {
   fork,
   put,
   select,
+  take,
   takeEvery,
   takeLatest,
   setContext,
@@ -24,6 +25,7 @@ import { getUserProfileStoreAddress } from '../../../data/stores';
 import {
   executeQuery,
   executeCommand,
+  executeSubscription,
   putError,
   selectAsJS,
   takeFrom,
@@ -66,6 +68,7 @@ import {
   getUserTokens,
   getUserInboxActivity,
   getUserNotificationMetadata,
+  subscribeToUser,
 } from '../data/queries';
 
 import { createTransaction, getTxChannel } from '../../core/sagas/transactions';
@@ -642,6 +645,39 @@ function* inboxItemsFetch({
   return null;
 }
 
+function* userSubStart({ meta, payload: { userAddress } }: *): Saga<*> {
+  let channel;
+  try {
+    channel = yield call(executeSubscription, subscribeToUser, {
+      metadata: { walletAddress: userAddress },
+    });
+
+    yield fork(function* stopSubscription() {
+      yield take(
+        action =>
+          action.type === ACTIONS.USER_SUB_STOP &&
+          action.payload.userAddress === userAddress,
+      );
+      channel.close();
+    });
+
+    while (true) {
+      const userProfile = yield take(channel);
+      yield put({
+        type: ACTIONS.USER_SUB_EVENTS,
+        meta,
+        payload: userProfile,
+      });
+    }
+  } catch (caughtError) {
+    return yield putError(ACTIONS.USER_SUB_ERROR, caughtError, meta);
+  } finally {
+    if (channel && typeof channel.close == 'function') {
+      channel.close();
+    }
+  }
+}
+
 export default function* setupUsersSagas(): Saga<void> {
   yield takeEvery(ACTIONS.USER_FETCH, userFetch);
   yield takeEvery(ACTIONS.USER_ADDRESS_FETCH, userAddressFetch);
@@ -671,4 +707,5 @@ export default function* setupUsersSagas(): Saga<void> {
   yield takeLatest(ACTIONS.USER_AVATAR_REMOVE, userAvatarRemove);
   yield takeLatest(ACTIONS.USER_AVATAR_UPLOAD, userAvatarUpload);
   yield takeLatest(ACTIONS.USER_TOKENS_UPDATE, userTokensUpdate);
+  yield takeLatest(ACTIONS.USER_SUB_START, userSubStart);
 }

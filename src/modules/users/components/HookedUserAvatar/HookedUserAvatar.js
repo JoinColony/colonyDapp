@@ -3,11 +3,11 @@
 import type { UserType } from '~immutable';
 import type { Props as UserAvatarProps } from '~core/UserAvatar';
 
-import { useDataFetcher } from '~utils/hooks';
+import { useDataFetcher, useDataSubscriber } from '~utils/hooks';
 import { withHooks } from '~utils/hoc';
 import UserAvatar from '~core/UserAvatar';
 
-import { userFetcher } from '../../fetchers';
+import { userSubscriber } from '../../subscribers';
 import { ipfsDataFetcher } from '../../../core/fetchers';
 
 export default withHooks<
@@ -17,10 +17,11 @@ export default withHooks<
 >(({ fetchUser = true } = {}, { user, address } = {}) => {
   const result = { user, avatarURL: undefined };
   if (fetchUser) {
-    const { data: fetchedUser } = useDataFetcher<UserType>(
-      userFetcher,
+    const { data: fetchedUser } = useDataSubscriber<UserType>(
+      userSubscriber,
       [address],
       [address],
+      { alwaysSubscribe: false },
     );
     result.user = fetchedUser;
   }

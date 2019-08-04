@@ -31,7 +31,7 @@ import {
   useAsyncFunction,
 } from '~utils/hooks';
 
-import { userFetcher } from '../../../fetchers';
+import { userSubscriber } from '../../../subscribers';
 import { domainsFetcher, tokenFetcher } from '../../../../dashboard/fetchers';
 import { colonySubscriber } from '../../../../dashboard/subscribers';
 import { friendlyColonyNameSelector } from '../../../../dashboard/selectors';
@@ -125,10 +125,14 @@ const InboxItem = ({
     timestamp,
   },
 }: Props) => {
-  const { data: user, isFetching: isFetchingUser } = useDataFetcher<UserType>(
-    userFetcher,
+  const {
+    data: user,
+    isFetching: isFetchingUser,
+  } = useDataSubscriber<UserType>(
+    userSubscriber,
     [sourceUserAddress],
     [sourceUserAddress],
+    { alwaysSubscribe: false },
   );
   const sourceUserDisplayWithFallback = useSelector(friendlyUsernameSelector, [
     sourceUserAddress,

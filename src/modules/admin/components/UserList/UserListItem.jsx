@@ -7,8 +7,8 @@ import { TableRow, TableCell } from '~core/Table';
 import UserMention from '~core/UserMention';
 import MaskedAddress from '~core/MaskedAddress';
 import Button from '~core/Button';
-import { useDataFetcher } from '~utils/hooks';
-import { userFetcher } from '../../../users/fetchers';
+import { useDataSubscriber } from '~utils/hooks';
+import { userSubscriber } from '../../../users/subscribers';
 import HookedUserAvatar from '~users/HookedUserAvatar';
 
 import styles from './UserListItem.css';
@@ -68,10 +68,11 @@ const UserListItem = ({
   viewOnly = true,
   onRemove,
 }: Props) => {
-  const { data: user } = useDataFetcher<UserType>(
-    userFetcher,
+  const { data: user } = useDataSubscriber<UserType>(
+    userSubscriber,
     [address],
     [address],
+    { alwaysSubscribe: false },
   );
 
   const { profile: { username, displayName } = {} } = user || {};

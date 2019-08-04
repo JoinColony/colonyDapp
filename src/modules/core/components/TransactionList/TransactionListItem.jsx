@@ -13,10 +13,10 @@ import Icon from '~core/Icon';
 import TransactionLink from '~core/TransactionLink';
 import { ACTIONS } from '~redux';
 import { mergePayload } from '~utils/actions';
-import { useDataFetcher } from '~utils/hooks';
+import { useDataFetcher, useDataSubscriber } from '~utils/hooks';
 
 import { tokenFetcher } from '../../../dashboard/fetchers';
-import { userFetcher } from '../../../users/fetchers';
+import { userSubscriber } from '../../../users/subscribers';
 
 import TransactionDetails from './TransactionDetails.jsx';
 
@@ -76,10 +76,11 @@ const TransactionListItem = ({
   transaction,
 }: Props) => {
   const userAddress = incoming ? senderAddress : recipientAddress;
-  const { data: user } = useDataFetcher<UserType>(
-    userFetcher,
+  const { data: user } = useDataSubscriber<UserType>(
+    userSubscriber,
     [userAddress],
     [userAddress],
+    { alwaysSubscribe: false },
   );
 
   const { data: token } = useDataFetcher<TokenType>(

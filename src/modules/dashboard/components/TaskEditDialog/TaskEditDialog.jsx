@@ -27,7 +27,6 @@ import { ACTIONS } from '~redux';
 import HookedUserAvatar from '~users/HookedUserAvatar';
 import { mapPayload, mergePayload, pipe } from '~utils/actions';
 import {
-  useDataFetcher,
   useDataSubscriber,
   useDataMapFetcher,
   useSelector,
@@ -38,7 +37,8 @@ import { colonySubscriber } from '../../subscribers';
 import { taskSelector, taskRequestsSelector } from '../../selectors';
 import { useColonyTokens } from '../../hooks/useColonyTokens';
 
-import { userFetcher, usersByAddressFetcher } from '../../../users/fetchers';
+import { usersByAddressFetcher } from '../../../users/fetchers';
+import { userSubscriber } from '../../../users/subscribers';
 import { allUsersAddressesSelector } from '../../../users/selectors';
 import { createAddress } from '../../../../types';
 
@@ -212,7 +212,12 @@ const TaskEditDialog = ({
   const {
     data: existingWorkerObj,
     isFetching: isFetchingExistingWorker,
-  } = useDataFetcher<UserType>(userFetcher, [workerAddress], [workerAddress]);
+  } = useDataSubscriber<UserType>(
+    userSubscriber,
+    [workerAddress],
+    [workerAddress],
+    { alwaysSubscribe: false },
+  );
   const existingWorker =
     !!workerAddress && !existingWorkerObj
       ? UserRecord({
