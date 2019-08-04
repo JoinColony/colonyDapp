@@ -26,10 +26,15 @@ import { UserProfileRecord, UserRecord } from '~immutable';
 import { ACTIONS } from '~redux';
 import HookedUserAvatar from '~users/HookedUserAvatar';
 import { mapPayload, mergePayload, pipe } from '~utils/actions';
-import { useDataFetcher, useDataMapFetcher, useSelector } from '~utils/hooks';
+import {
+  useDataFetcher,
+  useDataSubscriber,
+  useDataMapFetcher,
+  useSelector,
+} from '~utils/hooks';
 
 import WrappedPayout from './WrappedPayout.jsx';
-import { colonyFetcher } from '../../fetchers';
+import { colonySubscriber } from '../../subscribers';
 import { taskSelector, taskRequestsSelector } from '../../selectors';
 import { useColonyTokens } from '../../hooks/useColonyTokens';
 
@@ -178,10 +183,11 @@ const TaskEditDialog = ({
   const {
     data: colonyData,
     isFetching: isFetchingColony,
-  } = useDataFetcher<ColonyType>(
-    colonyFetcher,
+  } = useDataSubscriber<ColonyType>(
+    colonySubscriber,
     [colonyAddress],
     [colonyAddress],
+    { alwaysSubscribe: false },
   );
 
   const [colonyTokenReferences, availableTokens] = useColonyTokens(

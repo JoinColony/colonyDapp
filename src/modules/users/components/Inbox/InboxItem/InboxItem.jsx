@@ -24,14 +24,16 @@ import Link from '~core/Link';
 import HookedUserAvatar from '~users/HookedUserAvatar';
 import { SpinnerLoader } from '~core/Preloaders';
 
-import { useDataFetcher, useSelector, useAsyncFunction } from '~utils/hooks';
+import {
+  useDataFetcher,
+  useDataSubscriber,
+  useSelector,
+  useAsyncFunction,
+} from '~utils/hooks';
 
 import { userFetcher } from '../../../fetchers';
-import {
-  colonyFetcher,
-  domainsFetcher,
-  tokenFetcher,
-} from '../../../../dashboard/fetchers';
+import { domainsFetcher, tokenFetcher } from '../../../../dashboard/fetchers';
+import { colonySubscriber } from '../../../../dashboard/subscribers';
 import { friendlyColonyNameSelector } from '../../../../dashboard/selectors';
 import {
   friendlyUsernameSelector,
@@ -144,10 +146,11 @@ const InboxItem = ({
   const {
     data: colony,
     isFetching: isFetchingColony,
-  } = useDataFetcher<ColonyType>(
-    colonyFetcher,
+  } = useDataSubscriber<ColonyType>(
+    colonySubscriber,
     [colonyAddress],
     [colonyAddress],
+    { alwaysSubscribe: false },
   );
   const colonyDisplayNameWithFallback = useSelector(
     friendlyColonyNameSelector,

@@ -3,8 +3,8 @@
 import React from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 
-import { useDataFetcher } from '~utils/hooks';
-import { colonyFetcher } from '../../../dashboard/fetchers';
+import { useDataSubscriber } from '~utils/hooks';
+import { colonySubscriber } from '../../../dashboard/subscribers';
 
 import MaskedAddress from '~core/MaskedAddress';
 import Link from '~core/Link';
@@ -271,10 +271,11 @@ const TransactionDetails = ({
   transaction,
   user,
 }: Props) => {
-  const { data: colony } = useDataFetcher<ColonyType>(
-    colonyFetcher,
+  const { data: colony } = useDataSubscriber<ColonyType>(
+    colonySubscriber,
     [colonyAddress],
     [colonyAddress],
+    { alwaysSubscribe: false },
   );
   const TransactionComponent = incoming
     ? IncomingTransaction

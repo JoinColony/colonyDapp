@@ -3,11 +3,16 @@
 import type { Address, ENSName } from '~types';
 import type { ColonyType } from '~immutable';
 
-import { useDataFetcher } from '~utils/hooks';
-import { colonyFetcher, colonyAddressFetcher } from '../fetchers';
+import { useDataFetcher, useDataSubscriber } from '~utils/hooks';
+import { colonyAddressFetcher } from '../fetchers';
+import { colonySubscriber } from '../subscribers';
 
 export const useColonyWithAddress = (colonyAddress: ?Address) =>
-  useDataFetcher<ColonyType>(colonyFetcher, [colonyAddress], [colonyAddress]);
+  useDataSubscriber<ColonyType>(
+    colonySubscriber,
+    [colonyAddress],
+    [colonyAddress],
+  );
 
 export const useColonyWithName = (colonyName: ?ENSName) => {
   const { error: addressError, data: address } = useDataFetcher<Address>(
@@ -17,8 +22,8 @@ export const useColonyWithName = (colonyName: ?ENSName) => {
   );
 
   const args = [address || undefined];
-  const { error: colonyError, ...colonyData } = useDataFetcher<ColonyType>(
-    colonyFetcher,
+  const { error: colonyError, ...colonyData } = useDataSubscriber<ColonyType>(
+    colonySubscriber,
     args,
     args,
   );
