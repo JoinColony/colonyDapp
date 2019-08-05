@@ -207,7 +207,7 @@ class PinnerConnector {
         this.events.emit(type, { to, payload });
       }
     } catch (caughtError) {
-      log.error(new Error(`Could not parse pinner message: ${message.data}`));
+      log.error(new Error('Could not parse pinner message'));
     }
   };
 
