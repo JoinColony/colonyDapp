@@ -1,6 +1,5 @@
 /* @flow */
 
-// $FlowFixMe until hooks flow types
 import React from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 
@@ -9,7 +8,7 @@ import { useDataFetcher } from '~utils/hooks';
 import type { Address } from '~types';
 import type { TaskDraftId } from '~immutable';
 
-import { SpinnerLoader } from '~core/Preloaders';
+import { SpinnerLoader, DotsLoader } from '~core/Preloaders';
 import TaskList from '~dashboard/TaskList';
 
 import type { InitialTaskType } from './InitialTask.jsx';
@@ -22,10 +21,9 @@ import { currentUserDraftIdsFetcher } from '../../fetchers';
 import styles from './TabMyTasks.css';
 
 const MSG = defineMessages({
-  emptyText: {
-    id: 'dashboard.Dashboard.TabMyTasks.emptyText',
-    // eslint-disable-next-line max-len
-    defaultMessage: `It looks like you don't have any tasks. Visit your colonies to find a task to work on.`,
+  loadingTaskList: {
+    id: 'dashboard.Dashboard.TabMyTasks.loadingTaskList',
+    defaultMessage: 'Loading Task List',
   },
 });
 
@@ -65,7 +63,7 @@ const TabMyTasks = ({
     );
   }
 
-  return draftIds && draftIds.length ? (
+  return draftIds ? (
     <TaskList
       draftIds={draftIds}
       filterOption={filterOption}
@@ -73,9 +71,10 @@ const TabMyTasks = ({
     />
   ) : (
     <>
-      <p className={styles.emptyText}>
-        <FormattedMessage {...MSG.emptyText} />
-      </p>
+      <div className={styles.loadingText}>
+        <FormattedMessage {...MSG.loadingTaskList} />
+        <DotsLoader />
+      </div>
     </>
   );
 };

@@ -11,6 +11,7 @@ import type { ColonyType, RolesType } from '~immutable';
 import Heading from '~core/Heading';
 import Icon from '~core/Icon';
 import Link from '~core/Link';
+import { SpinnerLoader } from '~core/Preloaders';
 import ExternalLink from '~core/ExternalLink';
 import CopyableAddress from '~core/CopyableAddress';
 import HookedColonyAvatar from '~dashboard/HookedColonyAvatar';
@@ -144,12 +145,12 @@ const ColonyMeta = ({
           </span>
         </section>
       )}
-      {founder && (
-        <section className={styles.dynamicSection}>
-          <Heading
-            appearance={{ margin: 'none', size: 'small', theme: 'dark' }}
-            text={MSG.founderLabel}
-          />
+      <section className={styles.dynamicSection}>
+        <Heading
+          appearance={{ margin: 'none', size: 'small', theme: 'dark' }}
+          text={MSG.founderLabel}
+        />
+        {founder ? (
           <UserAvatar
             key={`founder_${founder}`}
             address={founder}
@@ -157,23 +158,36 @@ const ColonyMeta = ({
             showInfo
             showLink
           />
-        </section>
-      )}
+        ) : (
+          <div className={styles.spinnerContainer}>
+            <SpinnerLoader appearance={{ size: 'large' }} />
+          </div>
+        )}
+      </section>
       {admins && admins.length ? (
         <section className={styles.dynamicSection}>
           <Heading
             appearance={{ margin: 'none', size: 'small', theme: 'dark' }}
             text={MSG.adminsLabel}
           />
-          {admins.map((adminAddress: string) => (
-            <UserAvatar
-              key={`admin_${adminAddress}`}
-              address={adminAddress}
-              className={styles.userAvatar}
-              showInfo
-              showLink
-            />
-          ))}
+          {admins.map((adminAddress: string) => {
+            if (admins && adminAddress) {
+              return (
+                <UserAvatar
+                  key={`admin_${adminAddress}`}
+                  address={adminAddress}
+                  className={styles.userAvatar}
+                  showInfo
+                  showLink
+                />
+              );
+            }
+            return (
+              <div className={styles.spinnerContainer}>
+                <SpinnerLoader appearance={{ size: 'large' }} />
+              </div>
+            );
+          })}
         </section>
       ) : null}
     </div>

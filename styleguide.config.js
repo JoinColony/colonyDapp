@@ -135,6 +135,7 @@ module.exports = {
       components: [
         './src/modules/core/components/Preloaders/LogoLoader.jsx',
         './src/modules/core/components/Preloaders/SpinnerLoader.jsx',
+        './src/modules/core/components/Preloaders/DotsLoader.jsx',
         './src/modules/core/components/ProgressBar/ProgressBar.jsx',
         './src/modules/core/components/ProgressBar/StepBar.jsx',
       ],

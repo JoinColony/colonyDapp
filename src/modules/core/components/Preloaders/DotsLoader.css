@@ -1,0 +1,38 @@
+.dotLoader {
+  margin-left: 10px;
+  height: 2px;
+  width: 10px;
+  transform: translateX(-50%) translateY(-50%);
+}
+
+.dotLoaderDot {
+  height: 3px;
+  width: 3px;
+  position: absolute;
+  border-radius: 50%;
+  background-color: var(--text);
+  will-change: transform;
+  animation: grow 1s ease-in-out infinite alternate;
+}
+
+.dot1 {
+  left: 0;
+  transform-origin: 100% 50%;
+}
+
+.dot2 {
+  left: 50%;
+  transform: translateX(-50%) scale(1);
+  animation-delay: 0.33s;
+}
+
+.dot3 {
+  right: 0;
+  animation-delay: 0.66s;
+}
+
+@keyframes grow {
+  to {
+    transform: translateX(-50%) scale(0);
+  }
+}

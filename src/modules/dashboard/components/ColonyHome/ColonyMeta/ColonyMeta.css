@@ -49,3 +49,7 @@
   composes: dynamicSection;
   composes: multiLineEllipsis from '~styles/text.css';
 }
+
+.spinnerContainer {
+  margin-top: 14px;
+}
