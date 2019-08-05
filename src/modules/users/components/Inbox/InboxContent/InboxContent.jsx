@@ -59,10 +59,10 @@ const InboxContent = () => {
         </div>
         <div className={styles.inboxContainer}>
           {inboxItems.length === 0 ? (
-            <p className={styles.loadingText}>
+            <div className={styles.loadingText}>
               <FormattedMessage {...MSG.loadingInbox} />
               <DotsLoader />
-            </p>
+            </div>
           ) : (
             <Table scrollable appearance={{ separators: 'borders' }}>
               <TableBody>

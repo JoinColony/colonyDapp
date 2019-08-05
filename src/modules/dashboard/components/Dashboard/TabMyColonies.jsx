@@ -41,10 +41,10 @@ const TabMyColonies = () => {
     </div>
   ) : (
     <>
-      <p className={styles.loadingText}>
+      <div className={styles.loadingText}>
         <FormattedMessage {...MSG.loadingColonyList} />
         <DotsLoader />
-      </p>
+      </div>
     </>
   );
 };

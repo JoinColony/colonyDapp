@@ -1,6 +1,5 @@
 /* @flow */
 
-// $FlowFixMe until hooks flow types
 import React from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 
@@ -72,10 +71,10 @@ const TabMyTasks = ({
     />
   ) : (
     <>
-      <p className={styles.loadingText}>
+      <div className={styles.loadingText}>
         <FormattedMessage {...MSG.loadingTaskList} />
         <DotsLoader />
-      </p>
+      </div>
     </>
   );
 };
