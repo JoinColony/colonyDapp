@@ -53,6 +53,13 @@ class PinnerConnector {
 
   events: EventEmitter;
 
+  static async getHeadsCount(
+    promise: Promise<?{ payload: { count: number } }>,
+  ): Promise<number> {
+    const resolved = await promise;
+    return resolved ? resolved.payload.count : 0;
+  }
+
   constructor(ipfs: IPFS, room: string) {
     this._ipfs = ipfs;
     if (!this._ipfs.pubsub) {
@@ -127,20 +134,18 @@ class PinnerConnector {
   async requestReplication(address: string) {
     const startRequesting = Date.now();
     log.verbose(`Requesting replication for store ${address}`);
+
     const request = this._replicationRequests.get(address);
     if (request && request.isPending) {
-      const res = await request.promise;
-      if (!res) return 0;
-      const {
-        payload: { count },
-      } = res;
-      return count;
+      return this.constructor.getHeadsCount(request.promise);
     }
+
     try {
       log.verbose('Waiting for pinner to be ready...');
       await this.ready;
       log.verbose(`Pinner is ready now in ${Date.now() - startRequesting} ms!`);
     } catch (caughtError) {
+      this.events.emit('error', 'pinner:replication', caughtError);
       log.warn('Could not request replication; not connected to any pinners.');
       return 0;
     }
@@ -155,9 +160,10 @@ class PinnerConnector {
           newRequest.isPending = false;
           return res;
         })
-        .catch(() => {
+        .catch(caughtError => {
           // Let's just try again, shall we?
           this.requestReplication(address).catch(log.warn);
+          this.events.emit('error', 'pinner:replication', caughtError);
           log.warn('Could not replicate, pinner did not respond in time.');
         }),
     };
@@ -167,10 +173,7 @@ class PinnerConnector {
       type: CLIENT_ACTIONS.REPLICATE,
       payload: { address },
     });
-    const {
-      payload: { count },
-    } = await newRequest.promise;
-    return count;
+    return this.constructor.getHeadsCount(newRequest.promise);
   }
 
   async pinHash(ipfsHash: string) {
@@ -204,7 +207,7 @@ class PinnerConnector {
         this.events.emit(type, { to, payload });
       }
     } catch (caughtError) {
-      log.error(new Error(`Could not parse pinner message: ${message.data}`));
+      log.error(new Error('Could not parse pinner message'));
     }
   };
 
