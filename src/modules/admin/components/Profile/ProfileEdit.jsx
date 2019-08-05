@@ -5,6 +5,7 @@ import React, { Fragment, useCallback } from 'react';
 import { defineMessages } from 'react-intl';
 
 import type { ColonyType } from '~immutable';
+import type { Address } from '~types';
 
 import Heading from '~core/Heading';
 import CopyableAddress from '~core/CopyableAddress';
@@ -48,6 +49,10 @@ const MSG = defineMessages({
     id: 'admin.Profile.ProfileEdit.labelAbout',
     defaultMessage: 'About',
   },
+  labelTokenAddress: {
+    id: 'admin.Profile.ProfileEdit.labelTokenAddress',
+    defaultMessage: 'Token Address',
+  },
   labelWebsite: {
     id: 'admin.Profile.ProfileEdit.labelWebsite',
     defaultMessage: 'Website',
@@ -75,6 +80,7 @@ const ProfileEdit = ({ colony }: Props) => {
     displayName,
     guideline,
     website,
+    tokens = {},
   } = colony;
   const transform = useCallback(
     pipe(
@@ -83,6 +89,13 @@ const ProfileEdit = ({ colony }: Props) => {
     ),
     [colonyAddress],
   );
+
+  const tokenValues = Object.values(tokens);
+
+  // $FlowFixMe
+  const nativeTokenAddress: Address = tokenValues.find(token => token.isNative)
+    .address;
+
   return (
     <div className={styles.main}>
       <main className={styles.content}>
@@ -124,6 +137,14 @@ const ProfileEdit = ({ colony }: Props) => {
                   text={ENS.getFullDomain('colony', colonyName)}
                 />
               </div>
+              {nativeTokenAddress && (
+                <div className={styles.section}>
+                  <InputLabel label={MSG.labelTokenAddress} />
+                  <CopyableAddress appearance={{ theme: 'big' }} full>
+                    {nativeTokenAddress}
+                  </CopyableAddress>
+                </div>
+              )}
               <div className={styles.divider} />
               <FieldSet className={styles.inputSection}>
                 <Input
