@@ -38,6 +38,7 @@ import {
   getColonyTasks,
   getColonyTokenBalance,
   subscribeToColony,
+  subscribeToColonyTasks,
 } from '../data/queries';
 
 import { createTransaction, getTxChannel } from '../../core/sagas';
@@ -520,6 +521,49 @@ function* colonySubStart({ payload: { colonyAddress }, meta }: *): Saga<*> {
   }
 }
 
+function* colonyTaskMetadataSubStart({
+  meta,
+  payload: { colonyAddress },
+}: Action<typeof ACTIONS.COLONY_TASK_METADATA_SUB_START>): Saga<*> {
+  let channel;
+  try {
+    channel = yield call(executeSubscription, subscribeToColonyTasks, {
+      metadata: { colonyAddress },
+    });
+
+    yield fork(function* stopSubscription() {
+      yield take(
+        action =>
+          action.type === ACTIONS.COLONY_TASK_METADATA_SUB_STOP &&
+          action.payload.colonyAddress === colonyAddress,
+      );
+      channel.close();
+    });
+
+    while (true) {
+      const colonyTasks = yield take(channel);
+      yield put({
+        type: ACTIONS.COLONY_TASK_METADATA_SUB_EVENTS,
+        meta,
+        payload: {
+          colonyAddress,
+          colonyTasks,
+        },
+      });
+    }
+  } catch (caughtError) {
+    return yield putError(
+      ACTIONS.COLONY_TASK_METADATA_SUB_ERROR,
+      caughtError,
+      meta,
+    );
+  } finally {
+    if (channel && typeof channel.close == 'function') {
+      channel.close();
+    }
+  }
+}
+
 export default function* colonySagas(): Saga<void> {
   yield takeEvery(ACTIONS.COLONY_ADDRESS_FETCH, colonyAddressFetch);
   yield takeEvery(
@@ -545,4 +589,8 @@ export default function* colonySagas(): Saga<void> {
     colonyNameCheckAvailability,
   );
   yield takeEvery(ACTIONS.COLONY_SUB_START, colonySubStart);
+  yield takeEvery(
+    ACTIONS.COLONY_TASK_METADATA_SUB_START,
+    colonyTaskMetadataSubStart,
+  );
 }

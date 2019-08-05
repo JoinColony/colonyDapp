@@ -68,10 +68,12 @@ const taskMetadataReducer: ReducerType<
     TASK_FETCH: *,
     COLONY_TASK_METADATA_FETCH: *,
     COLONY_TASK_METADATA_FETCH_SUCCESS: *,
+    COLONY_TASK_METADATA_SUB_EVENTS: *,
   |},
 > = (state = ImmutableMap(), action) => {
   switch (action.type) {
-    case ACTIONS.COLONY_TASK_METADATA_FETCH_SUCCESS: {
+    case ACTIONS.COLONY_TASK_METADATA_FETCH_SUCCESS:
+    case ACTIONS.COLONY_TASK_METADATA_SUB_EVENTS: {
       const { colonyAddress, colonyTasks } = action.payload;
       return updateState(state, colonyAddress, colonyTasks);
     }
@@ -86,7 +88,10 @@ const taskMetadataReducer: ReducerType<
       const colonyTasks = {
         [draftId]: { commentsStoreAddress, taskStoreAddress },
       };
-      return updateState(state, colonyAddress, colonyTasks);
+      return updateState(state, colonyAddress, colonyTasks).setIn(
+        [colonyAddress, 'isFetching'],
+        false,
+      );
     }
 
     default:
@@ -95,6 +100,9 @@ const taskMetadataReducer: ReducerType<
 };
 
 export default withDataRecordMap<AllTaskMetadataMap, TaskMetadataMap>(
-  ACTIONS.COLONY_TASK_METADATA_FETCH,
+  new Set([
+    ACTIONS.COLONY_TASK_METADATA_FETCH,
+    ACTIONS.COLONY_TASK_METADATA_SUB_START,
+  ]),
   ImmutableMap(),
 )(taskMetadataReducer);

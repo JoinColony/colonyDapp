@@ -511,3 +511,84 @@ export const checkColonyNameIsAvailable: Query<
     return ens.isENSNameAvailable('colony', colonyName, networkClient);
   },
 };
+
+export const subscribeToColonyTasks: Subscription<
+  {| colonyStore: ?ColonyStore, colonyTaskIndexStore: ?ColonyTaskIndexStore |},
+  ColonyTaskIndexStoreMetadata,
+  void,
+  {
+    [draftId: string]: {|
+      commentsStoreAddress: string,
+      taskStoreAddress: string,
+    |},
+  },
+> = {
+  name: 'getColonyTasks',
+  context: colonyContext,
+  async prepare(
+    {
+      colonyManager,
+      ddb,
+      wallet,
+    }: {|
+      colonyManager: ColonyManager,
+      ddb: DDB,
+      wallet: Wallet,
+    |},
+    metadata: ColonyStoreMetadata,
+  ) {
+    const { colonyAddress } = metadata;
+    const colonyClient = await colonyManager.getColonyClient(colonyAddress);
+    const colonyTaskIndexStoreAddress = await getColonyTaskIndexStoreAddress(
+      colonyClient,
+      ddb,
+      wallet,
+    )(metadata);
+    const colonyTaskIndexStore = await getColonyTaskIndexStore(
+      colonyClient,
+      ddb,
+      wallet,
+    )({ colonyAddress, colonyTaskIndexStoreAddress });
+
+    // backwards-compatibility Colony task index store
+    let colonyStore;
+    if (!colonyTaskIndexStore) {
+      colonyStore = await getColonyStore(colonyClient, ddb, wallet)(metadata);
+    }
+
+    if (!(colonyStore || colonyTaskIndexStore)) {
+      throw new Error(
+        'Could not load colony task index or colony store either',
+      );
+    }
+
+    return {
+      colonyStore,
+      colonyTaskIndexStore,
+    };
+  },
+  async execute({ colonyStore, colonyTaskIndexStore }) {
+    if (!(colonyStore || colonyTaskIndexStore)) {
+      throw new Error(
+        'Could not load colony task index or colony store either',
+      );
+    }
+    // backwards-compatibility Colony task index store
+    const store = colonyTaskIndexStore || colonyStore;
+    return emitter => [
+      // $FlowFixMe store will not be void
+      store.subscribe(events =>
+        emitter(
+          events &&
+            events
+              .filter(
+                ({ type }) =>
+                  type === TASK_STORE_REGISTERED ||
+                  type === TASK_STORE_UNREGISTERED,
+              )
+              .reduce(colonyTasksReducer, {}),
+        ),
+      ),
+    ];
+  },
+};

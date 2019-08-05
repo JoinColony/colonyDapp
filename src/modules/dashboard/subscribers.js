@@ -6,19 +6,22 @@
 // to exclusive action creators.
 
 import {
+  colonySubStart,
+  colonySubStop,
+  colonyTaskMetadataSubStart,
+  colonyTaskMetadataSubStop,
   taskFeedItemsSubStart,
   taskFeedItemsSubStop,
   taskSubStart,
   taskSubStop,
-  colonySubStart,
-  colonySubStop,
 } from './actionCreators';
 
 import {
-  taskFeedItemsSelector,
-  taskSelector,
-  tasksByIdsSelector,
   colonySelector,
+  colonyTaskMetadataSelector,
+  taskFeedItemsSelector,
+  tasksByIdsSelector,
+  taskSelector,
 } from './selectors';
 
 export const taskFeedItemsSubscriber = Object.freeze({
@@ -43,4 +46,10 @@ export const colonySubscriber = Object.freeze({
   select: colonySelector,
   start: colonySubStart,
   stop: colonySubStop,
+});
+
+export const colonyTaskMetadataSubscriber = Object.freeze({
+  select: colonyTaskMetadataSelector,
+  start: colonyTaskMetadataSubStart,
+  stop: colonyTaskMetadataSubStop,
 });

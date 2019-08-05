@@ -361,6 +361,33 @@ export type ColonyActionTypes = {|
     |},
     WithKey,
   >,
+  COLONY_TASK_METADATA_SUB_START: ActionTypeWithPayloadAndMeta<
+    typeof ACTIONS.COLONY_TASK_METADATA_SUB_START,
+    {| colonyAddress: Address |},
+    WithKey,
+  >,
+  COLONY_TASK_METADATA_SUB_STOP: ActionTypeWithPayloadAndMeta<
+    typeof ACTIONS.COLONY_TASK_METADATA_SUB_STOP,
+    {| colonyAddress: Address |},
+    WithKey,
+  >,
+  COLONY_TASK_METADATA_SUB_EVENTS: ActionTypeWithPayloadAndMeta<
+    typeof ACTIONS.COLONY_TASK_METADATA_SUB_EVENTS,
+    {|
+      colonyAddress: Address,
+      colonyTasks: {
+        [draftId: string]: {|
+          commentsStoreAddress: string,
+          taskStoreAddress: string,
+        |},
+      },
+    |},
+    WithKey,
+  >,
+  COLONY_TASK_METADATA_SUB_ERROR: ErrorActionType<
+    typeof ACTIONS.COLONY_TASK_METADATA_SUB_ERROR,
+    WithKey,
+  >,
   COLONY_TOKEN_BALANCE_FETCH: ActionTypeWithPayload<
     typeof ACTIONS.COLONY_TOKEN_BALANCE_FETCH,
     {| colonyAddress: Address, tokenAddress: Address |},
