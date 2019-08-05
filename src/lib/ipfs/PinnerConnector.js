@@ -141,6 +141,7 @@ class PinnerConnector {
       await this.ready;
       log.verbose(`Pinner is ready now in ${Date.now() - startRequesting} ms!`);
     } catch (caughtError) {
+      this.events.emit('error', 'pinner:replication', caughtError);
       log.warn('Could not request replication; not connected to any pinners.');
       return 0;
     }
@@ -155,9 +156,10 @@ class PinnerConnector {
           newRequest.isPending = false;
           return res;
         })
-        .catch(() => {
+        .catch(caughtError => {
           // Let's just try again, shall we?
           this.requestReplication(address).catch(log.warn);
+          this.events.emit('error', 'pinner:replication', caughtError);
           log.warn('Could not replicate, pinner did not respond in time.');
         }),
     };
