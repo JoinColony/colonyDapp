@@ -85,11 +85,7 @@ const TokenCard = ({
       </div>
       <div className={styles.cardFooter}>
         {tokenIsETH(tokenReference) && (
-          <EthUsd
-            className={styles.ethUsdText}
-            value={balance || 0}
-            truncate={3}
-          />
+          <EthUsd className={styles.ethUsdText} value={balance || 0} />
         )}
       </div>
     </Card>
