@@ -159,7 +159,9 @@ const ColonyMeta = ({
             showLink
           />
         ) : (
-          <SpinnerLoader appearance={{ size: 'medium' }} />
+          <div className={styles.spinnerContainer}>
+            <SpinnerLoader appearance={{ size: 'large' }} />
+          </div>
         )}
       </section>
       {admins && admins.length ? (
@@ -180,7 +182,11 @@ const ColonyMeta = ({
                 />
               );
             }
-            return <SpinnerLoader appearance={{ size: 'medium' }} />;
+            return (
+              <div className={styles.spinnerContainer}>
+                <SpinnerLoader appearance={{ size: 'large' }} />
+              </div>
+            );
           })}
         </section>
       ) : null}
