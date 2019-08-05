@@ -35,8 +35,6 @@ const PINNER_ACTIONS = {
 };
 
 class PinnerConnector {
-  _events: EventEmitter;
-
   _id: string;
 
   _ipfs: IPFS;
@@ -53,13 +51,16 @@ class PinnerConnector {
 
   _roomMonitor: PeerMonitor;
 
+  events: EventEmitter;
+
   constructor(ipfs: IPFS, room: string) {
     this._ipfs = ipfs;
     if (!this._ipfs.pubsub) {
       throw new Error("This IPFS instance doesn't support pubsub");
     }
 
-    this._events = new EventEmitter();
+    this.events = new EventEmitter();
+
     this._room = room;
     this._pinnerIds = new Set();
     this._outstandingPubsubMessages = [];
@@ -81,7 +82,7 @@ class PinnerConnector {
   get readyPromise() {
     if (this._readyPromise) return this._readyPromise;
 
-    this._readyPromise = pEvent(this._events, PINNER_ACTIONS.ANNOUNCE_PINNER, {
+    this._readyPromise = pEvent(this.events, PINNER_ACTIONS.ANNOUNCE_PINNER, {
       timeout: PINNER_CONNECT_TIMEOUT,
     })
       .then(() => true)
@@ -128,9 +129,11 @@ class PinnerConnector {
     log.verbose(`Requesting replication for store ${address}`);
     const request = this._replicationRequests.get(address);
     if (request && request.isPending) {
+      const res = await request.promise;
+      if (!res) return 0;
       const {
         payload: { count },
-      } = await request.promise;
+      } = res;
       return count;
     }
     try {
@@ -144,7 +147,7 @@ class PinnerConnector {
 
     const newRequest = {
       isPending: true,
-      promise: pEvent(this._events, PINNER_ACTIONS.HAVE_HEADS, {
+      promise: pEvent(this.events, PINNER_ACTIONS.HAVE_HEADS, {
         timeout: PINNER_HAVE_HEADS_TIMEOUT,
         filter: ({ to }) => to === address,
       })
@@ -198,7 +201,7 @@ class PinnerConnector {
 
       // Emit actions from the pinner and ignore everything else.
       if (PINNER_ACTIONS[type]) {
-        this._events.emit(type, { to, payload });
+        this.events.emit(type, { to, payload });
       }
     } catch (caughtError) {
       log.error(new Error(`Could not parse pinner message: ${message.data}`));
@@ -232,7 +235,7 @@ class PinnerConnector {
   }
 
   _listenForAnnouncements() {
-    this._events.on(
+    this.events.on(
       PINNER_ACTIONS.ANNOUNCE_PINNER,
       ({ payload: { ipfsId } }) => {
         if (this._pinnerIds.has(ipfsId)) return;

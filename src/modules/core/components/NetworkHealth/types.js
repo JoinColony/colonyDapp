@@ -2,8 +2,6 @@
 
 import type { MessageDescriptor, MessageValues } from 'react-intl';
 
-export type NetworkHealth = 'good' | 'mean' | 'critical';
-
 export type NetworkHealthIconSize =
   | 'pea'
   | 'tiny'
@@ -14,7 +12,7 @@ export type NetworkHealthIconSize =
   | 'huge';
 
 export type NetworkHealthItem = {|
-  itemHealth: NetworkHealth,
+  itemHealth: number,
   /** A string or a `MessageDescriptor` that make up the headings's text */
   itemTitle: MessageDescriptor | string,
   /** Values for text (react-intl interpolation) */

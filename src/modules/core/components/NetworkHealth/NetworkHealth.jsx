@@ -2,19 +2,21 @@
 
 import type { IntlShape } from 'react-intl';
 
-import React from 'react';
+// $FlowFixMe upgrade flow
+import React, { useEffect } from 'react';
 import { injectIntl, defineMessages } from 'react-intl';
+import { useDispatch } from 'redux-react-hook';
 
-import type {
-  NetworkHealth as NetworkHealthType,
-  NetworkHealthIconSize,
-} from './types';
-
+import { ACTIONS } from '~redux';
 import Popover from '~core/Popover';
+import { useSelector } from '~utils/hooks';
+
+import type { NetworkHealthIconSize } from './types';
+
+import { connection as connectionSelector } from '../../selectors';
+import getNetworkHealth from './getNetworkHealth';
 import NetworkHealthIcon from './NetworkHealthIcon';
 import NetworkHealthContent from './NetworkHealthContent';
-
-import { capitalize } from '~utils/strings';
 
 import styles from './NetworkHealth.css';
 
@@ -24,22 +26,11 @@ const MSG = defineMessages({
    */
   statusTitle: {
     id: 'core.NetworkHealth.statusTitle',
-    defaultMessage: 'Network Health: {health}',
-  },
-  /*
-   * @TODO Create actual health items message descriptors
-   */
-  ipfsPing: {
-    id: 'core.NetworkHealth.ipfsPing',
-    defaultMessage: 'IPFS Ping: {ipfsPing}',
-  },
-  pinnerHeads: {
-    id: 'core.NetworkHealth.pinnerHeads',
-    defaultMessage: 'Pinner Heads: {heads}',
-  },
-  pubsubPeers: {
-    id: 'core.NetworkHealth.pubsubPeers',
-    defaultMessage: 'Pubsub Peers: {pubSubPeers}',
+    defaultMessage: `Network Health: {health, select,
+      3 {good}
+      2 {so so}
+      1 {poor}
+    }`,
   },
 });
 
@@ -62,27 +53,27 @@ const NetworkHealth = ({
   className,
   intl: { formatMessage },
 }: Props) => {
-  /*
-   * @TODO Replace with actual aggregated health status
-   */
-  const health: NetworkHealthType = 'mean';
-  const networkItems = [
-    {
-      itemHealth: 'good',
-      itemTitle: MSG.ipfsPing,
-      itemTitleValues: { ipfsPing: '1000ms' },
+  const dispatch = useDispatch();
+  useEffect(
+    () => {
+      dispatch({ type: ACTIONS.CONNECTION_STATS_SUB_START });
+      return () => dispatch({ type: ACTIONS.CONNECTION_STATS_SUB_STOP });
     },
-    {
-      itemHealth: 'mean',
-      itemTitle: MSG.pinnerHeads,
-      itemTitleValues: { heads: '5' },
-    },
-    {
-      itemHealth: 'critical',
-      itemTitle: MSG.pubsubPeers,
-      itemTitleValues: { pubSubPeers: '0' },
-    },
-  ];
+    [dispatch],
+  );
+
+  const connection = useSelector(connectionSelector);
+  const networkItems = getNetworkHealth(connection);
+
+  // Errors are important so we set the whole thing to 3 if there are a lot (> 1)
+  const health =
+    connection.errors.length > 1
+      ? 3
+      : Math.round(
+          networkItems.reduce((sum, current) => sum + current.itemHealth, 0) /
+            networkItems.length,
+        );
+
   return (
     <div className={className}>
       <Popover
@@ -100,7 +91,7 @@ const NetworkHealth = ({
         <button
           type="button"
           className={styles.main}
-          title={formatMessage(MSG.statusTitle, { health: capitalize(health) })}
+          title={formatMessage(MSG.statusTitle, { health })}
         >
           <NetworkHealthIcon health={health} appearance={appearance} />
         </button>
