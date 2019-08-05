@@ -1,8 +1,11 @@
 /* @flow */
 
 // $FlowFixMe
-import React, { useCallback } from 'react';
+import React, { useCallback, useState, useEffect } from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
+import { subscribeActions as subscribeToReduxActions } from 'redux-action-watch/lib/actionCreators';
+import { useDispatch } from 'redux-react-hook';
+import throttle from 'lodash/throttle';
 
 import type { Address } from '~types';
 
@@ -10,8 +13,9 @@ import { useDataFetcher, useSelector } from '~utils/hooks';
 import { mergePayload } from '~utils/actions';
 import { ACTIONS } from '~redux';
 
-import { ActionButton } from '~core/Button';
+import Button, { ActionButton } from '~core/Button';
 import { Tooltip } from '~core/Popover';
+import { SpinnerLoader } from '~core/Preloaders';
 
 import { userColoniesFetcher } from '../../../fetchers';
 import { currentUserSelector } from '../../../../users/selectors';
@@ -19,6 +23,10 @@ import { currentUserSelector } from '../../../../users/selectors';
 import styles from './ColonySubscribe.css';
 
 const MSG = defineMessages({
+  changingSubscription: {
+    id: 'dashboard.ColonyHome.ColonySubscribe.changingSubscription',
+    defaultMessage: 'Please wait',
+  },
   subscribe: {
     id: 'dashboard.ColonyHome.ColonySubscribe.subscribe',
     defaultMessage: 'Add to My Colonies',
@@ -34,6 +42,30 @@ type Props = {|
 |};
 
 const ColonySubscribe = ({ colonyAddress }: Props) => {
+  const [
+    isUserColonySubscriptionChanging,
+    setUserColonySubscriptionChanging,
+  ] = useState(false);
+  const dispatch = useDispatch();
+  useEffect(
+    () =>
+      subscribeToReduxActions(dispatch)({
+        [ACTIONS.USER_COLONY_SUBSCRIBE]: () =>
+          setUserColonySubscriptionChanging(true),
+        [ACTIONS.USER_COLONY_UNSUBSCRIBE]: () =>
+          setUserColonySubscriptionChanging(true),
+        [ACTIONS.USER_COLONY_SUBSCRIBE_ERROR]: () =>
+          setUserColonySubscriptionChanging(false),
+        [ACTIONS.USER_COLONY_SUBSCRIBE_SUCCESS]: () =>
+          setUserColonySubscriptionChanging(false),
+        [ACTIONS.USER_COLONY_UNSUBSCRIBE_ERROR]: () =>
+          setUserColonySubscriptionChanging(false),
+        [ACTIONS.USER_COLONY_UNSUBSCRIBE_SUCCESS]: () =>
+          setUserColonySubscriptionChanging(false),
+      }),
+    [dispatch, setUserColonySubscriptionChanging],
+  );
+
   const currentUser = useSelector(currentUserSelector);
   const { data: colonyAddresses } = useDataFetcher<Address[]>(
     userColoniesFetcher,
@@ -63,11 +95,27 @@ const ColonySubscribe = ({ colonyAddress }: Props) => {
           }
         >
           <ActionButton
-            className={styles.unsubscribe}
+            button={({ onClick, disabled, loading }) =>
+              loading ? (
+                <div className={styles.spinnerContainer}>
+                  <SpinnerLoader
+                    appearance={{ theme: 'primary', size: 'medium' }}
+                  />
+                </div>
+              ) : (
+                <Button
+                  className={styles.unsubscribe}
+                  disabled={disabled}
+                  loading={loading}
+                  onClick={throttle(onClick, 2000)}
+                />
+              )
+            }
             error={ACTIONS.USER_COLONY_UNSUBSCRIBE_ERROR}
             submit={ACTIONS.USER_COLONY_UNSUBSCRIBE}
             success={ACTIONS.USER_COLONY_UNSUBSCRIBE_SUCCESS}
             transform={transform}
+            loading={isUserColonySubscriptionChanging}
           />
         </Tooltip>
       ) : (
@@ -79,11 +127,27 @@ const ColonySubscribe = ({ colonyAddress }: Props) => {
           }
         >
           <ActionButton
-            className={styles.subscribe}
+            button={({ onClick, disabled, loading }) =>
+              loading ? (
+                <div className={styles.spinnerContainer}>
+                  <SpinnerLoader
+                    appearance={{ theme: 'primary', size: 'medium' }}
+                  />
+                </div>
+              ) : (
+                <Button
+                  className={styles.subscribe}
+                  disabled={disabled}
+                  loading={loading}
+                  onClick={throttle(onClick, 2000)}
+                />
+              )
+            }
             error={ACTIONS.USER_COLONY_SUBSCRIBE_ERROR}
             submit={ACTIONS.USER_COLONY_SUBSCRIBE}
             success={ACTIONS.USER_COLONY_SUBSCRIBE_SUCCESS}
             transform={transform}
+            loading={isUserColonySubscriptionChanging}
           />
         </Tooltip>
       )}
