@@ -6,6 +6,9 @@ import React from 'react';
 import { Redirect } from 'react-router';
 import { defineMessages } from 'react-intl';
 
+import type { NavigationItem } from '~pages/VerticalNavigation/VerticalNavigation.jsx';
+import type { ColonyType, UserPermissionsType } from '~immutable';
+
 import Heading from '~core/Heading';
 import LoadingTemplate from '~pages/LoadingTemplate';
 import Organizations from '~admin/Organizations';
@@ -18,11 +21,11 @@ import { HistoryNavigation } from '~pages/NavigationWrapper';
 
 import { isInRecoveryMode } from '../../../dashboard/checks';
 import { useColonyWithName } from '../../../dashboard/hooks/useColony';
+import { canAdminister } from '../../../users/checks';
+import { useDataFetcher } from '~utils/hooks';
+import { currentUserColonyPermissionsFetcher } from '../../../users/fetchers';
 
 import styles from './AdminDashboard.css';
-
-import type { NavigationItem } from '~pages/VerticalNavigation/VerticalNavigation.jsx';
-import type { ColonyType } from '~immutable';
 
 const MSG = defineMessages({
   loadingText: {
@@ -98,14 +101,32 @@ const AdminDashboard = ({
     params: { colonyName },
   },
 }: Props) => {
+  const CURRENT_COLONY_ROUTE = colonyName ? `/colony/${colonyName}` : null;
+
   const { data: colony, isFetching, error } = useColonyWithName(colonyName);
+
+  const colonyArgs =
+    colony && colony.colonyAddress ? [colony.colonyAddress] : [undefined];
+
+  const {
+    data: permissions,
+    isFetching: isFetchingPermissions,
+  } = useDataFetcher<UserPermissionsType>(
+    currentUserColonyPermissionsFetcher,
+    colonyArgs,
+    colonyArgs,
+  );
 
   if (!colonyName || error) {
     return <Redirect to="/404" />;
   }
 
-  if (!colony || isFetching) {
+  if (!colony || isFetching || !permissions || isFetchingPermissions) {
     return <LoadingTemplate loadingText={MSG.loadingText} />;
+  }
+
+  if (!canAdminister(permissions)) {
+    return <Redirect to={CURRENT_COLONY_ROUTE} />;
   }
 
   const { displayName } = colony;
@@ -121,7 +142,7 @@ const AdminDashboard = ({
       >
         <div className={styles.backNavigation}>
           <HistoryNavigation
-            backRoute={`/colony/${colonyName}`}
+            backRoute={CURRENT_COLONY_ROUTE}
             backText={MSG.backButton}
             backTextValues={{ displayName }}
           />
