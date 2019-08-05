@@ -65,10 +65,10 @@ const NetworkHealth = ({
   const connection = useSelector(connectionSelector);
   const networkItems = getNetworkHealth(connection);
 
-  // Errors are important so we set the whole thing to 3 if there are a lot (> 1)
+  // Errors are important so we set the whole thing to 1 if there are a lot (> 1)
   const health =
     connection.errors.length > 1
-      ? 3
+      ? 1
       : Math.round(
           networkItems.reduce((sum, current) => sum + current.itemHealth, 0) /
             networkItems.length,
