@@ -11,6 +11,8 @@ const REPLICATION_KEEP_ALIVE_TIMEOUT = 3 * 1000;
 const REPLICATION_CHECK_INTERVAL = 500;
 // How long should we wait for a store to load
 const LOAD_TIMEOUT = 20 * 1000;
+// How long should we wait for a single entry to load
+const LOAD_ENTRY_TIMEOUT = 5 * 1000;
 // How long we should wait after a write to be considered 'busy'
 const WRITE_TIMEOUT = 10 * 1000;
 
@@ -93,6 +95,7 @@ class Store {
     try {
       await this.replicate();
     } catch (caughtError) {
+      this._pinner.events.emit('error', 'store:load', caughtError);
       log.warn(`Could not request pinned store`, caughtError);
     }
   }
@@ -107,15 +110,21 @@ class Store {
       this._orbitStore.events.once('ready', (dbname, heads) => resolve(heads)),
     );
     const loadPromise = this._orbitStore.load(-1, {
-      fetchEntryTimeout: LOAD_TIMEOUT,
+      fetchEntryTimeout: LOAD_ENTRY_TIMEOUT,
     });
 
-    const [heads] = await raceAgainstTimeout(
-      Promise.all([headCountPromise, loadPromise]),
-      LOAD_TIMEOUT,
-      new Error('Could not get store heads in time'),
-    );
-    return heads;
+    try {
+      const [heads] = await raceAgainstTimeout(
+        Promise.all([headCountPromise, loadPromise]),
+        LOAD_TIMEOUT,
+        new Error('Could not get store heads in time'),
+      );
+      return heads;
+    } catch (caughtError) {
+      this._pinner.events.emit('error', 'store:load', caughtError);
+      log.warn(caughtError);
+      return 0;
+    }
   }
 
   deferReplicate() {

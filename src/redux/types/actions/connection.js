@@ -11,10 +11,13 @@ import { ACTIONS } from '../../index';
 export type ConnectionActionTypes = {|
   CONNECTION_STATS_SUB_ERROR: ErrorActionType<
     typeof ACTIONS.CONNECTION_STATS_SUB_ERROR,
+    {| scope: string |},
   >,
   CONNECTION_STATS_SUB_EVENT: ActionTypeWithPayload<
     typeof ACTIONS.CONNECTION_STATS_SUB_EVENT,
     {|
+      busyStores: string[],
+      openStores: number,
       ping: number,
       pinners: string[],
       pinnerBusy: boolean,

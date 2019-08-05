@@ -15,17 +15,17 @@ function* connectionStatsSubStart(): Saga<*> {
   try {
     const ipfsNode = yield* getContext(CONTEXT.IPFS_NODE);
     const ddb = yield* getContext(CONTEXT.DDB_INSTANCE);
+    const {
+      _ipfs,
+      pinner: { _pinnerIds },
+      pinner,
+    } = ipfsNode;
+    const { _stores } = ddb;
 
     channel = eventChannel(emitter => {
       let timeout;
-      const listener = async () => {
+      const intervalListener = async () => {
         try {
-          const {
-            _ipfs,
-            pinner: { _pinnerIds },
-            pinner,
-          } = ipfsNode;
-          const { _stores } = ddb;
           const pinnerBusy = pinner.busy;
           const pinners = Array.from(_pinnerIds);
           const swarmPeers = await _ipfs.swarm.peers();
@@ -52,12 +52,24 @@ function* connectionStatsSubStart(): Saga<*> {
         } catch (caughtError) {
           log.warn(caughtError);
         } finally {
-          timeout = setTimeout(listener, 5000);
+          timeout = setTimeout(intervalListener, 5000);
         }
       };
-      listener();
 
-      return () => clearTimeout(timeout);
+      const errorListener = (scope: string, error: Error) => {
+        emitter({
+          scope,
+          error,
+        });
+      };
+
+      pinner.events.addListener('error', errorListener);
+      intervalListener();
+
+      return () => {
+        clearTimeout(timeout);
+        pinner.events.removeListener('error', errorListener);
+      };
     });
 
     yield fork(function* stopSubscription() {
@@ -66,14 +78,22 @@ function* connectionStatsSubStart(): Saga<*> {
     });
 
     while (true) {
-      const event = yield take(channel);
-      yield put({
-        type: ACTIONS.CONNECTION_STATS_SUB_EVENT,
-        payload: event,
-      });
+      const payload = yield take(channel);
+      if (payload.error) {
+        yield putError(ACTIONS.CONNECTION_STATS_SUB_ERROR, payload.error, {
+          scope: payload.scope || 'channel',
+        });
+      } else {
+        yield put({
+          type: ACTIONS.CONNECTION_STATS_SUB_EVENT,
+          payload,
+        });
+      }
     }
   } catch (caughtError) {
-    return yield putError(ACTIONS.CONNECTION_STATS_SUB_ERROR, caughtError);
+    return yield putError(ACTIONS.CONNECTION_STATS_SUB_ERROR, caughtError, {
+      scope: 'default',
+    });
   } finally {
     if (channel) channel.close();
   }

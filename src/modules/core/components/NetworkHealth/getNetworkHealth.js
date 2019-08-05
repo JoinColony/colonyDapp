@@ -2,7 +2,7 @@
 
 import { defineMessages } from 'react-intl';
 
-import type { ConnectionStatsProps } from '~immutable';
+import type { ConnectionType } from '~immutable';
 
 const MSG = defineMessages({
   busyStores: {
@@ -32,6 +32,10 @@ const MSG = defineMessages({
   pubsubPeers: {
     id: 'core.NetworkHealth.pubsubPeers',
     defaultMessage: 'Pubsub peers: {pubsubPeers}',
+  },
+  errors: {
+    id: 'core.NetworkHealth.errors',
+    defaultMessage: 'Store load errors: {errors}',
   },
 });
 
@@ -66,15 +70,23 @@ const swarmPeersHealth = swarmPeers => {
   return swarmPeers.length < 5 ? 2 : 3;
 };
 
+const errorsHealth = errors => {
+  if (!errors.length) return 3;
+  return errors.length < 2 ? 2 : 1;
+};
+
 const calculateNetworkHealth = ({
-  busyStores,
-  openStores,
-  ping,
-  pinners,
-  pinnerBusy,
-  pubsubPeers,
-  swarmPeers,
-}: ConnectionStatsProps) => [
+  stats: {
+    busyStores = [],
+    openStores = 0,
+    ping = 0,
+    pinners = [],
+    pinnerBusy = false,
+    pubsubPeers = [],
+    swarmPeers = [],
+  },
+  errors,
+}: ConnectionType) => [
   {
     itemTitle: MSG.busyStores,
     itemHealth: busyStoresHealth(busyStores),
@@ -111,6 +123,11 @@ const calculateNetworkHealth = ({
     itemTitle: MSG.pubsubPeers,
     itemHealth: pubsubPeersHealth(pubsubPeers),
     itemTitleValues: { pubsubPeers: pubsubPeers.length || '0' },
+  },
+  {
+    itemTitle: MSG.errors,
+    itemHealth: errorsHealth(errors),
+    itemTitleValues: { errors: errors.length || '0' },
   },
 ];
 

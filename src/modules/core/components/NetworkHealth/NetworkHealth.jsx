@@ -13,7 +13,7 @@ import { useSelector } from '~utils/hooks';
 
 import type { NetworkHealthIconSize } from './types';
 
-import { connection as connectionStatsSelector } from '../../selectors';
+import { connection as connectionSelector } from '../../selectors';
 import getNetworkHealth from './getNetworkHealth';
 import NetworkHealthIcon from './NetworkHealthIcon';
 import NetworkHealthContent from './NetworkHealthContent';
@@ -61,13 +61,17 @@ const NetworkHealth = ({
     [dispatch],
   );
 
-  const connectionStats = useSelector(connectionStatsSelector);
-  const networkItems = getNetworkHealth(connectionStats);
+  const connection = useSelector(connectionSelector);
+  const networkItems = getNetworkHealth(connection);
 
-  const health = Math.round(
-    networkItems.reduce((sum, current) => sum + current.itemHealth, 0) /
-      networkItems.length,
-  );
+  // Errors are important so we set the whole thing to 3 if there are a lot (> 1)
+  const health =
+    connection.errors.length > 1
+      ? 3
+      : Math.round(
+          networkItems.reduce((sum, current) => sum + current.itemHealth, 0) /
+            networkItems.length,
+        );
 
   return (
     <div className={className}>
