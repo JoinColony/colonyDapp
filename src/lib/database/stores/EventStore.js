@@ -1,5 +1,9 @@
 /* @flow */
 
+import localStorage from 'localforage';
+
+import type { OrbitDBStore } from '../types';
+import PinnerConnector from '../../ipfs/PinnerConnector';
 import Store from './Store';
 
 import type {
@@ -33,6 +37,44 @@ class EventStore extends Store {
   // https://github.com/babel/babel/issues/8417#issuecomment-415508558
   +_orbitStore: OrbitDBEventStore = this._orbitStore;
 
+  _cache: ?(Event<*>[]);
+
+  constructor(orbitStore: OrbitDBStore, name: string, pinner: PinnerConnector) {
+    super(orbitStore, name, pinner);
+    this._orbitStore.events.on('ready', () => {
+      this._cache = undefined;
+      this.setLSCache().catch(console.error);
+    });
+    this._orbitStore.events.on('write', () => {
+      this.setLSCache().catch(console.error);
+    });
+    this._orbitStore.events.on('replicated', () => {
+      this.setLSCache().catch(console.error);
+    });
+  }
+
+  async getLSCache() {
+    return localStorage.getItem(`colony.orbitCache.${this.address.toString()}`);
+  }
+
+  async setLSCache() {
+    return localStorage.setItem(
+      `colony.orbitCache.${this.address.toString()}`,
+      this.all(),
+    );
+  }
+
+  async loadEntries() {
+    if (!this._ready && !this._cache) {
+      this._cache = await this.getLSCache();
+      if (!this._cache) {
+        await super.loadEntries();
+        return;
+      }
+    }
+    super.loadEntries().catch(console.error);
+  }
+
   /*
    @NOTE: for initialization purposes. The convention we're creating is that
    from within "infrastructure" layer we can only initialize. "service" layer
@@ -57,6 +99,10 @@ class EventStore extends Store {
   }
 
   all(options: EventIteratorOptions = { limit: -1 }) {
+    if (!this._ready && this._cache) {
+      return this._cache;
+    }
+
     return this._orbitStore
       .iterator(options)
       .collect()
@@ -67,6 +113,7 @@ class EventStore extends Store {
   subscribe(callback: (events: Event<*>[]) => void): {| stop: () => void |} {
     const allEvents = () => callback(this.all());
 
+    this._orbitStore.events.on('ready', allEvents);
     this._orbitStore.events.on('replicated', allEvents);
     this._orbitStore.events.on('write', allEvents);
 
