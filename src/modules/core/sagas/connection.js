@@ -24,6 +24,14 @@ function* connectionStatsSubStart(): Saga<*> {
 
     channel = eventChannel(emitter => {
       let timeout;
+
+      const errorListener = (scope: string, error: Error) => {
+        emitter({
+          scope,
+          error,
+        });
+      };
+
       const intervalListener = async () => {
         try {
           const pinnerBusy = pinner.busy;
@@ -51,16 +59,10 @@ function* connectionStatsSubStart(): Saga<*> {
           });
         } catch (caughtError) {
           log.warn(caughtError);
+          errorListener('interval', caughtError);
         } finally {
           timeout = setTimeout(intervalListener, 5000);
         }
-      };
-
-      const errorListener = (scope: string, error: Error) => {
-        emitter({
-          scope,
-          error,
-        });
       };
 
       pinner.events.addListener('error', errorListener);
