@@ -57,6 +57,7 @@ const NetworkHealth = ({
   useEffect(
     () => {
       dispatch({ type: ACTIONS.CONNECTION_STATS_SUB_START });
+      return () => dispatch({ type: ACTIONS.CONNECTION_STATS_SUB_STOP });
     },
     [dispatch],
   );
