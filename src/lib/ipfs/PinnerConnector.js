@@ -53,6 +53,13 @@ class PinnerConnector {
 
   events: EventEmitter;
 
+  static async getHeadsCount(
+    promise: Promise<?{ payload: { count: number } }>,
+  ): Promise<number> {
+    const resolved = await promise;
+    return resolved ? resolved.payload.count : 0;
+  }
+
   constructor(ipfs: IPFS, room: string) {
     this._ipfs = ipfs;
     if (!this._ipfs.pubsub) {
@@ -127,15 +134,12 @@ class PinnerConnector {
   async requestReplication(address: string) {
     const startRequesting = Date.now();
     log.verbose(`Requesting replication for store ${address}`);
+
     const request = this._replicationRequests.get(address);
     if (request && request.isPending) {
-      const res = await request.promise;
-      if (!res) return 0;
-      const {
-        payload: { count },
-      } = res;
-      return count;
+      return this.constructor.getHeadsCount(request.promise);
     }
+
     try {
       log.verbose('Waiting for pinner to be ready...');
       await this.ready;
@@ -169,10 +173,7 @@ class PinnerConnector {
       type: CLIENT_ACTIONS.REPLICATE,
       payload: { address },
     });
-    const {
-      payload: { count },
-    } = await newRequest.promise;
-    return count;
+    return this.constructor.getHeadsCount(newRequest.promise);
   }
 
   async pinHash(ipfsHash: string) {
