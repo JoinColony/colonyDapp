@@ -7,6 +7,8 @@ import React, { useEffect } from 'react';
 import { injectIntl, defineMessages } from 'react-intl';
 import { useDispatch } from 'redux-react-hook';
 
+import type { ConnectionType } from '~immutable';
+
 import { ACTIONS } from '~redux';
 import Popover from '~core/Popover';
 import { useSelector } from '~utils/hooks';
@@ -62,12 +64,12 @@ const NetworkHealth = ({
     [dispatch],
   );
 
-  const connection = useSelector(connectionSelector);
+  const connection: ConnectionType = useSelector(connectionSelector);
   const networkItems = getNetworkHealth(connection);
 
   // Errors are important so we set the whole thing to 1 if there are a lot (> 1)
   const health =
-    connection.errors.length > 1
+    connection.errors.length > 1 || connection.stats.pinners.length < 1
       ? 1
       : Math.round(
           networkItems.reduce((sum, current) => sum + current.itemHealth, 0) /
