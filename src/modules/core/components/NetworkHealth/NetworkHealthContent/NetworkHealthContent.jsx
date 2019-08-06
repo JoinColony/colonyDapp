@@ -17,7 +17,7 @@ const MSG = defineMessages({
     id: 'core.NetworkHealth.NetworkHealthContent.healthTitle',
     defaultMessage: `Network Health: {health, select,
       3 {good}
-      2 {so so}
+      2 {fair}
       1 {poor}
     }`,
   },
@@ -28,7 +28,7 @@ const MSG = defineMessages({
     id: 'core.NetworkHealth.NetworkHealthContent.healthDetails',
     defaultMessage: `The network's health is {health, select,
       3 {good. All systems are operational.}
-      2 {so so. You might experience reduced data loading.}
+      2 {fair. You might experience reduced data loading.}
       1 {poor. Your data will probably fail to load.}
       other {unknown. Hold tight until we check it.}
     }`,

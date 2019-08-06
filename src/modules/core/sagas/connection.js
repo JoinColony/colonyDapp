@@ -58,8 +58,7 @@ function* connectionStatsSubStart(): Saga<*> {
             pubsubPeers,
           });
         } catch (caughtError) {
-          log.warn(caughtError);
-          errorListener('interval', caughtError);
+          log.verbose(`Interval listener error: ${caughtError}`);
         } finally {
           timeout = setTimeout(intervalListener, 5000);
         }
