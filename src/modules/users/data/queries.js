@@ -689,3 +689,63 @@ export const subscribeToUser: Subscription<
     ];
   },
 };
+
+export const subscribeToUserTasks: Subscription<
+  ?UserMetadataStore,
+  UserMetadataStoreMetadata,
+  void,
+  *,
+> = {
+  name: 'subscribeToUserTasks',
+  context: [CONTEXT.COLONY_MANAGER, CONTEXT.DDB_INSTANCE, CONTEXT.WALLET],
+  prepare: prepareMetadataStoreQuery,
+  async execute(metadataStore) {
+    if (!metadataStore) throw new Error('No such user metadata store');
+    return emitter => [
+      metadataStore.subscribe(events =>
+        emitter(
+          events &&
+            events
+              .filter(
+                ({ type }) =>
+                  type === SUBSCRIBED_TO_TASK ||
+                  type === UNSUBSCRIBED_FROM_TASK,
+              )
+              .reduce(getUserTasksReducer, []),
+        ),
+      ),
+    ];
+  },
+};
+
+export const subscribeToUserColonies: Subscription<
+  ?UserMetadataStore,
+  UserMetadataStoreMetadata,
+  void,
+  *,
+> = {
+  name: 'subscribeToUserColonies',
+  context: [CONTEXT.COLONY_MANAGER, CONTEXT.DDB_INSTANCE, CONTEXT.WALLET],
+  prepare: prepareMetadataStoreQuery,
+  async execute(metadataStore) {
+    if (!metadataStore) throw new Error('No such user metadata store');
+    return emitter => [
+      metadataStore.subscribe(events =>
+        emitter(
+          events &&
+            reduceToLastState(
+              events.filter(
+                ({ type }) =>
+                  type === SUBSCRIBED_TO_COLONY ||
+                  type === UNSUBSCRIBED_FROM_COLONY,
+              ),
+              ({ payload: { colonyAddress } }) => colonyAddress,
+              ({ type }) => type,
+            )
+              .filter(([, type]) => type === SUBSCRIBED_TO_COLONY)
+              .map(([colonyAddress]) => createAddress(colonyAddress)),
+        ),
+      ),
+    ];
+  },
+};

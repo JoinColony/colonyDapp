@@ -69,6 +69,8 @@ import {
   getUserInboxActivity,
   getUserNotificationMetadata,
   subscribeToUser,
+  subscribeToUserTasks,
+  subscribeToUserColonies,
 } from '../data/queries';
 
 import { createTransaction, getTxChannel } from '../../core/sagas/transactions';
@@ -678,6 +680,81 @@ function* userSubStart({ meta, payload: { userAddress } }: *): Saga<*> {
   }
 }
 
+function* userSubscribedTasksSubStart(): Saga<*> {
+  const walletAddress = yield select(walletAddressSelector);
+  const { metadataStoreAddress } = yield select(currentUserMetadataSelector);
+  let channel;
+  try {
+    channel = yield call(executeSubscription, subscribeToUserTasks, {
+      metadata: { walletAddress, metadataStoreAddress },
+    });
+
+    yield fork(function* stopSubscription() {
+      yield take(
+        action => action.type === ACTIONS.USER_SUBSCRIBED_TASKS_SUB_STOP,
+      );
+      channel.close();
+    });
+
+    while (true) {
+      const userTasks = yield take(channel);
+      yield put({
+        type: ACTIONS.USER_SUBSCRIBED_TASKS_SUB_EVENTS,
+        payload: userTasks,
+      });
+    }
+  } catch (caughtError) {
+    return yield putError(ACTIONS.USER_SUBSCRIBED_TASKS_SUB_ERROR, caughtError);
+  } finally {
+    if (channel && typeof channel.close == 'function') {
+      channel.close();
+    }
+  }
+}
+
+function* userSubscribedColoniesSubStart({
+  meta,
+  payload: { walletAddress, metadataStoreAddress },
+}: *): Saga<*> {
+  let channel;
+  try {
+    channel = yield call(executeSubscription, subscribeToUserColonies, {
+      metadata: { walletAddress, metadataStoreAddress },
+    });
+
+    yield fork(function* stopSubscription() {
+      yield take(
+        action =>
+          action.type === ACTIONS.USER_SUBSCRIBED_COLONIES_SUB_STOP &&
+          action.payload.walletAddress === walletAddress,
+      );
+      channel.close();
+    });
+
+    while (true) {
+      const colonyAddresses = yield take(channel);
+      yield put({
+        type: ACTIONS.USER_SUBSCRIBED_COLONIES_SUB_EVENTS,
+        meta,
+        payload: {
+          colonyAddresses,
+          walletAddress,
+        },
+      });
+    }
+  } catch (caughtError) {
+    return yield putError(
+      ACTIONS.USER_SUBSCRIBED_COLONIES_SUB_ERROR,
+      caughtError,
+      meta,
+    );
+  } finally {
+    if (channel && typeof channel.close == 'function') {
+      channel.close();
+    }
+  }
+}
+
 export default function* setupUsersSagas(): Saga<void> {
   yield takeEvery(ACTIONS.USER_FETCH, userFetch);
   yield takeEvery(ACTIONS.USER_ADDRESS_FETCH, userAddressFetch);
@@ -708,4 +785,12 @@ export default function* setupUsersSagas(): Saga<void> {
   yield takeLatest(ACTIONS.USER_AVATAR_UPLOAD, userAvatarUpload);
   yield takeLatest(ACTIONS.USER_TOKENS_UPDATE, userTokensUpdate);
   yield takeLatest(ACTIONS.USER_SUB_START, userSubStart);
+  yield takeLatest(
+    ACTIONS.USER_SUBSCRIBED_TASKS_SUB_START,
+    userSubscribedTasksSubStart,
+  );
+  yield takeLatest(
+    ACTIONS.USER_SUBSCRIBED_COLONIES_SUB_START,
+    userSubscribedColoniesSubStart,
+  );
 }

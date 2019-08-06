@@ -3,7 +3,7 @@
 import React from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 
-import { useDataFetcher } from '~utils/hooks';
+import { useDataSubscriber } from '~utils/hooks';
 
 import type { Address } from '~types';
 import type { TaskDraftId } from '~immutable';
@@ -16,7 +16,7 @@ import type { TasksFilterOptionType } from '../shared/tasksFilter';
 
 import InitialTask from './InitialTask.jsx';
 
-import { currentUserDraftIdsFetcher } from '../../fetchers';
+import { currentUserTasksSubscriber } from '../../subscribers';
 
 import styles from './TabMyTasks.css';
 
@@ -40,9 +40,9 @@ const TabMyTasks = ({
   userClaimedProfile,
   walletAddress,
 }: Props) => {
-  const { isFetching: isFetchingTasks, data: draftIds } = useDataFetcher<
+  const { isFetching: isFetchingTasks, data: draftIds } = useDataSubscriber<
     [Address, TaskDraftId][],
-  >(currentUserDraftIdsFetcher, [], []);
+  >(currentUserTasksSubscriber, [], []);
 
   if (isFetchingTasks) {
     return <SpinnerLoader />;

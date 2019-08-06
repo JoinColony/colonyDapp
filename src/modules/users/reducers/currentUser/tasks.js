@@ -16,6 +16,7 @@ type Actions = {
   USER_SUBSCRIBED_TASKS_FETCH: *,
   USER_SUBSCRIBED_TASKS_FETCH_ERROR: *,
   USER_SUBSCRIBED_TASKS_FETCH_SUCCESS: *,
+  USER_SUBSCRIBED_TASKS_SUB_EVENTS: *,
 };
 
 const currentUserTasksReducer: ReducerType<State, Actions> = (
@@ -39,6 +40,7 @@ const currentUserTasksReducer: ReducerType<State, Actions> = (
         isFetching: false,
       });
     }
+    case ACTIONS.USER_SUBSCRIBED_TASKS_SUB_EVENTS:
     case ACTIONS.USER_SUBSCRIBED_TASKS_FETCH_SUCCESS: {
       const record = ImmutableSet(action.payload);
       return state.merge({ error: undefined, record, isFetching: false });
@@ -49,5 +51,8 @@ const currentUserTasksReducer: ReducerType<State, Actions> = (
 };
 
 export default withDataRecord<State, Actions>(
-  ACTIONS.USER_SUBSCRIBED_TASKS_FETCH,
+  new Set([
+    ACTIONS.USER_SUBSCRIBED_TASKS_FETCH,
+    ACTIONS.USER_SUBSCRIBED_TASKS_SUB_START,
+  ]),
 )(currentUserTasksReducer);

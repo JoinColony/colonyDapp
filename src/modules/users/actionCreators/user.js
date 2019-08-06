@@ -96,3 +96,32 @@ export const userSubStop = (
   meta: { key: createAddress(userAddress) },
   payload: { userAddress },
 });
+
+export const currentUserTasksSubStart = (): Action<
+  typeof ACTIONS.USER_SUBSCRIBED_TASKS_SUB_START,
+> => ({
+  type: ACTIONS.USER_SUBSCRIBED_TASKS_SUB_START,
+});
+
+export const currentUserTasksSubStop = (): Action<
+  typeof ACTIONS.USER_SUBSCRIBED_TASKS_SUB_STOP,
+> => ({
+  type: ACTIONS.USER_SUBSCRIBED_TASKS_SUB_STOP,
+});
+
+export const userColoniesSubStart = (
+  walletAddress: Address,
+  metadataStoreAddress: string,
+): Action<typeof ACTIONS.USER_SUBSCRIBED_COLONIES_SUB_START> => ({
+  type: ACTIONS.USER_SUBSCRIBED_COLONIES_SUB_START,
+  meta: { key: createAddress(walletAddress) },
+  payload: { walletAddress, metadataStoreAddress },
+});
+
+export const userColoniesSubStop = (
+  walletAddress: Address,
+): Action<typeof ACTIONS.USER_SUBSCRIBED_COLONIES_SUB_STOP> => ({
+  type: ACTIONS.USER_SUBSCRIBED_COLONIES_SUB_STOP,
+  meta: { key: createAddress(walletAddress) },
+  payload: { walletAddress },
+});
