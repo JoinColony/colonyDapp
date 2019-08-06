@@ -39,6 +39,13 @@ export type ColonyEvents = {|
       name: string,
     |},
   >,
+  DOMAIN_EDITED: EventDefinition<
+    typeof DOMAIN_EDITED,
+    {|
+      domainId: number,
+      name: string,
+    |},
+  >,
   COLONY_PROFILE_CREATED: EventDefinition<
     typeof COLONY_PROFILE_CREATED,
     ColonyProps<{

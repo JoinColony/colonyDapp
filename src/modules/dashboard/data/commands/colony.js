@@ -20,6 +20,7 @@ import { createAddress } from '~types';
 import {
   CreateColonyProfileCommandArgsSchema,
   CreateDomainCommandArgsSchema,
+  EditDomainCommandArgsSchema,
   RemoveColonyAvatarCommandArgsSchema,
   SetColonyAvatarCommandArgsSchema,
   UpdateColonyProfileCommandArgsSchema,
@@ -138,6 +139,27 @@ export const createDomain: Command<
   async execute(colonyStore, args) {
     await colonyStore.append(
       createEvent(COLONY_EVENT_TYPES.DOMAIN_CREATED, args),
+    );
+    return colonyStore;
+  },
+};
+
+export const editDomain: Command<
+  ColonyStore,
+  ColonyStoreMetadata,
+  {|
+    name: string,
+    domainId: number,
+  |},
+  ColonyStore,
+> = {
+  name: 'editDomain',
+  context: [CONTEXT.COLONY_MANAGER, CONTEXT.DDB_INSTANCE, CONTEXT.WALLET],
+  prepare: prepareColonyStoreQuery,
+  schema: EditDomainCommandArgsSchema,
+  async execute(colonyStore, args) {
+    await colonyStore.append(
+      createEvent(COLONY_EVENT_TYPES.DOMAIN_EDITED, args),
     );
     return colonyStore;
   },
