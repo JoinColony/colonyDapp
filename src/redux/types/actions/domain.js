@@ -24,7 +24,12 @@ export type DomainActionTypes = {|
   >,
   DOMAIN_EDIT: UniqueActionType<
     typeof ACTIONS.DOMAIN_EDIT,
-    {| colonyAddress: Address, domainName: string, parentDomainId?: number |},
+    {|
+      colonyAddress: Address,
+      domainName: string,
+      parentDomainId?: number,
+      domainId: number,
+    |},
     void,
   >,
   DOMAIN_EDIT_ERROR: ErrorActionType<typeof ACTIONS.DOMAIN_EDIT_ERROR, void>,

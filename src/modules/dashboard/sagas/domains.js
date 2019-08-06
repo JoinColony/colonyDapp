@@ -123,10 +123,6 @@ function* domainEdit({
 }: Action<typeof ACTIONS.DOMAIN_EDIT>): Saga<*> {
   const txChannel = yield call(getTxChannel, meta.id);
   try {
-    /*
-     * @todo Create the domain on the colony with a transaction.
-     * @body Idempotency could be improved here by looking for a pending transaction.
-     */
     yield fork(createTransaction, meta.id, {
       context: COLONY_CONTEXT,
       methodName: 'editDomain',
@@ -134,22 +130,16 @@ function* domainEdit({
       params: { parentDomainId, domainId },
     });
 
-    /*
-     * Get the new domain ID from the successful transaction.
-     */
-    const {
-      payload: {
-        eventData: { domainId: id },
-      },
-    } = yield takeFrom(txChannel, ACTIONS.TRANSACTION_SUCCEEDED);
+    yield takeFrom(txChannel, ACTIONS.TRANSACTION_SUCCEEDED);
 
     /*
      * Add an entry to the colony store.
+     * Get the domain ID from the payload
      */
     yield* executeCommand(editDomain, {
       metadata: { colonyAddress },
       args: {
-        domainId: id,
+        domainId,
         name,
       },
     });
@@ -159,7 +149,7 @@ function* domainEdit({
     yield put<Action<typeof ACTIONS.DOMAIN_EDIT_SUCCESS>>({
       type: ACTIONS.DOMAIN_EDIT_SUCCESS,
       meta,
-      payload: { colonyAddress, domain: { id, name } },
+      payload: { colonyAddress, domain: { id: domainId, name } },
     });
   } catch (error) {
     return yield putError(ACTIONS.DOMAIN_EDIT_ERROR, error, meta);
