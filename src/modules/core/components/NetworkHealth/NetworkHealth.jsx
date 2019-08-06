@@ -30,7 +30,7 @@ const MSG = defineMessages({
     id: 'core.NetworkHealth.statusTitle',
     defaultMessage: `Network Health: {health, select,
       3 {good}
-      2 {so so}
+      2 {fair}
       1 {poor}
     }`,
   },
