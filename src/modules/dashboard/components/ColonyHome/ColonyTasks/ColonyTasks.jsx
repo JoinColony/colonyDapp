@@ -15,6 +15,7 @@ import { mergePayload } from '~utils/actions';
 import { useDataFetcher, useSelector } from '~utils/hooks';
 import { colonyTaskMetadataFetcher } from '../../../fetchers';
 import { walletAddressSelector } from '../../../../users/selectors';
+import { colonyNameSelector } from '../../../selectors';
 
 import TaskList from '../../TaskList';
 
@@ -23,6 +24,7 @@ import Icon from '~core/Icon';
 import { SpinnerLoader } from '~core/Preloaders';
 
 import styles from './ColonyTasks.css';
+import taskListItemStyles from '../../TaskList/TaskListItem.css';
 
 type Props = {|
   canCreateTask: boolean,
@@ -41,15 +43,25 @@ const MSG = defineMessages({
     id: 'dashboard.ColonyTasks.newTaskDescription',
     defaultMessage: 'Create a new task',
   },
-  noTasksAvailable: {
-    id: 'dashboard.ColonyTasks.noTasksAvailable',
-    defaultMessage:
-      // eslint-disable-next-line max-len
-      'There are no tasks created yet. While you wait, we suggest subscribing to this Colony',
+  noTasks: {
+    id: 'dashboard.ColonyTasks.noTasks',
+    defaultMessage: `It looks like you don't have any tasks.
+      Visit your colonies to find a task to work on.`,
+  },
+  welcomeToColony: {
+    id: 'dashboard.ColonyTasks.welcomeToColony',
+    defaultMessage: `Welcome to {colonyNameExists, select,
+      true {{colonyName}}
+      other {the Colony}
+    }!`,
   },
   creatingTask: {
     id: 'dashboard.ColonyTasks.creatingTask',
     defaultMessage: 'Creating your task...',
+  },
+  noCurrentlyOpenTasks: {
+    id: 'dashboard.TaskList.noCurrentlyOpenTasks',
+    defaultMessage: 'It looks like there are no open tasks right now.',
   },
 });
 
@@ -144,6 +156,10 @@ const ColonyTasks = ({
     colonyAddress,
   ]);
 
+  const data = useSelector(colonyNameSelector, [colonyAddress]);
+
+  const colonyName = colonyAddress ? data.record : undefined;
+
   if (isFetching) {
     return null;
   }
@@ -160,7 +176,27 @@ const ColonyTasks = ({
         loading={isTaskBeingCreated}
       />
     ) : (
-      <FormattedMessage tagName="p" {...MSG.noTasksAvailable} />
+      <div>
+        <Icon
+          className={taskListItemStyles.noTask}
+          name="cup"
+          title={MSG.noTasks}
+          viewBox="0 0 120 120"
+        />
+        <div className={taskListItemStyles.emptyStateElements}>
+          <FormattedMessage
+            tagName="p"
+            {...MSG.welcomeToColony}
+            values={{
+              colonyNameExists: !!colonyName,
+              colonyName,
+            }}
+          />
+        </div>
+        <div className={taskListItemStyles.emptyStateElements}>
+          <FormattedMessage tagName="p" {...MSG.noCurrentlyOpenTasks} />
+        </div>
+      </div>
     );
   }
 
