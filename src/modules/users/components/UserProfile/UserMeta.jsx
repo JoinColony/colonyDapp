@@ -9,6 +9,7 @@ import CopyableAddress from '~core/CopyableAddress';
 import Heading from '~core/Heading';
 import UserMention from '~core/UserMention';
 import HookedUserAvatar from '~users/HookedUserAvatar';
+import ExternalLink from '~core/ExternalLink';
 
 import styles from './UserMeta.css';
 
@@ -50,15 +51,8 @@ const UserMeta = ({
       </div>
     )}
     {website && (
-      <div className={styles.websiteContainer}>
-        <a
-          href={website}
-          rel="noopener noreferrer"
-          target="_blank"
-          data-test="userProfileWebsite"
-        >
-          {stripProtocol(website)}
-        </a>
+      <div className={styles.websiteContainer} title={stripProtocol(website)}>
+        <ExternalLink href={website} text={stripProtocol(website)} />
       </div>
     )}
     {location && (
