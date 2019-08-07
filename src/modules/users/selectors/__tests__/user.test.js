@@ -53,6 +53,6 @@ describe('Transaction selectors', () => {
     expect(result[0].context.colonyAddress).toEqual(
       '0xEc46E0d7208FF021CDb5B9D47196adb8bbe07a3D',
     );
-    expect(result[0].type).toEqual('iceCreamInTheFridge');
+    expect(result[0].type).toEqual('dinnerIsReady');
   });
 });
