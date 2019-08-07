@@ -36,6 +36,7 @@ import { friendlyColonyNameSelector } from '../../../../dashboard/selectors';
 import {
   friendlyUsernameSelector,
   currentUserSelector,
+  usernameSelector,
 } from '../../../selectors';
 import { transformNotificationEventNames } from '../../../data/utils';
 
@@ -70,10 +71,7 @@ const getType = (eventType: string): EventType => {
 
 const makeInboxDetail = (value: any, formatFn?: (value: any) => any) =>
   value ? (
-    <span
-      title={formatFn ? formatFn(value) : value}
-      className={styles.inboxDetail}
-    >
+    <span title={formatFn ? '' : value} className={styles.inboxDetail}>
       {formatFn ? formatFn(value) : value}
     </span>
   ) : null;
@@ -133,6 +131,12 @@ const ConditionalWrapper = ({
   return <div className={styles.inboxDetails}>{children}</div>;
 };
 
+const readActions = {
+  submit: ACTIONS.INBOX_MARK_NOTIFICATION_READ,
+  success: ACTIONS.INBOX_MARK_NOTIFICATION_READ_SUCCESS,
+  error: ACTIONS.INBOX_MARK_NOTIFICATION_READ_ERROR,
+};
+
 const InboxItem = ({
   activity: {
     unread = true,
@@ -141,6 +145,7 @@ const InboxItem = ({
     context: {
       address,
       colony: colonyArg,
+      draftId,
       amount,
       comment,
       taskTitle,
@@ -191,9 +196,13 @@ const InboxItem = ({
   const sourceUserDisplayWithFallback = useSelector(friendlyUsernameSelector, [
     sourceUserAddress,
   ]);
+  const sourceUsername = user && user.profile && user.profile.username;
 
   const currentUser = useSelector(currentUserSelector);
   const targetUserDisplayWithFallback = useSelector(friendlyUsernameSelector, [
+    targetUserAddress || currentUser.profile.walletAddress,
+  ]);
+  const targetUsername = useSelector(usernameSelector, [
     targetUserAddress || currentUser.profile.walletAddress,
   ]);
 
@@ -209,7 +218,7 @@ const InboxItem = ({
     friendlyColonyNameSelector,
     [colonyAddress],
   );
-  const colonyNameWithFallback = colony && colony.colonyName;
+  const colonyName = colony && colony.colonyName;
 
   const { data: domains, isFetching: isFetchingDomains } = useDataFetcher<
     DomainType[],
@@ -225,19 +234,13 @@ const InboxItem = ({
       ({ id: currentDomainId }) => currentDomainId === domainId || 0,
     );
 
-  const readActions = {
-    submit: ACTIONS.INBOX_MARK_NOTIFICATION_READ,
-    success: ACTIONS.INBOX_MARK_NOTIFICATION_READ_SUCCESS,
-    error: ACTIONS.INBOX_MARK_NOTIFICATION_READ_ERROR,
-  };
-
   const transform = useCallback(mergePayload({ id, timestamp }), [
     id,
     timestamp,
   ]);
   const markAsRead = useAsyncFunction({ ...readActions, transform });
   return (
-    <TableRow className={styles.inboxRow} onClick={() => markAsRead(id)}>
+    <TableRow onClick={() => markAsRead(id)}>
       <TableCell className={styles.inboxRowCell}>
         {isFetchingUser ||
         isFetchingColony ||
@@ -283,70 +286,97 @@ const InboxItem = ({
                   colonyAddress: makeInboxDetail(colonyAddress),
                   colonyDisplayName: makeInboxDetail(
                     colonyDisplayNameWithFallback,
+                    value =>
+                      colonyName ? (
+                        <Link to={`colony/${colonyName}`}>{value}</Link>
+                      ) : (
+                        value
+                      ),
                   ),
-                  colonyName: makeInboxDetail(colonyNameWithFallback),
                   comment: makeInboxDetail(comment),
                   domainName: makeInboxDetail(
                     currentDomain && currentDomain.name,
                   ),
-                  otherUser: makeInboxDetail(targetUserDisplayWithFallback),
-                  task: makeInboxDetail(taskTitle),
+                  otherUser: makeInboxDetail(
+                    targetUserDisplayWithFallback,
+                    value =>
+                      targetUsername ? (
+                        <Link to={`user/${targetUsername}`}>{value}</Link>
+                      ) : (
+                        value
+                      ),
+                  ),
+                  task: makeInboxDetail(taskTitle, value =>
+                    colonyName && draftId ? (
+                      <Link to={`colony/${colonyName}/task/${draftId}`}>
+                        {value}
+                      </Link>
+                    ) : (
+                      value
+                    ),
+                  ),
                   time: makeInboxDetail(timestamp, value => (
                     <TimeRelative value={value} />
                   )),
-                  user: makeInboxDetail(sourceUserDisplayWithFallback),
+                  user: makeInboxDetail(sourceUserDisplayWithFallback, value =>
+                    sourceUsername ? (
+                      <Link to={`user/${sourceUsername}`}>{value}</Link>
+                    ) : (
+                      value
+                    ),
+                  ),
                   setTo,
                 }}
               />
             </span>
 
             <span className={styles.additionalDetails}>
-              {colony && colony.colonyName && currentDomain && (
+              {colonyName && (
                 <span
-                  title={colonyNameWithFallback}
+                  title={colonyDisplayNameWithFallback}
                   className={styles.additionalDetailsTruncate}
                 >
-                  <FormattedMessage
-                    {...MSG.metaColonyAndDomain}
-                    values={{
-                      colonyName: colonyNameWithFallback,
-                      domainName: currentDomain && currentDomain.name,
-                    }}
-                  />
-                </span>
-              )}
-              {colony && colony.colonyName && !currentDomain && (
-                <span
-                  title={colonyNameWithFallback}
-                  className={styles.additionalDetailsTruncate}
-                >
-                  <FormattedMessage
-                    {...MSG.metaColonyOnly}
-                    values={{
-                      colonyName: colonyNameWithFallback,
-                    }}
-                  />
+                  {currentDomain ? (
+                    <FormattedMessage
+                      {...MSG.metaColonyAndDomain}
+                      values={{
+                        colonyDisplayName: (
+                          <Link to={`colony/${colonyName}`}>
+                            {colonyDisplayNameWithFallback}
+                          </Link>
+                        ),
+                        domainName: currentDomain && currentDomain.name,
+                      }}
+                    />
+                  ) : (
+                    <FormattedMessage
+                      {...MSG.metaColonyOnly}
+                      values={{
+                        colonyDisplayName: (
+                          <Link to={`colony/${colonyName}`}>
+                            {colonyDisplayNameWithFallback}
+                          </Link>
+                        ),
+                      }}
+                    />
+                  )}
                 </span>
               )}
 
               {amount && token && (
                 <span>
                   <span className={styles.pipe}>|</span>
-                  <span className={styles.amount}>
-                    <Numeral
-                      suffix={` ${token ? token.symbol : ''}`}
-                      integerSeparator=""
-                      unit={(token && token.decimals) || 18}
-                      value={amount}
-                      appearance={{ size: 'small', theme: 'grey' }}
-                    />
-                  </span>
+                  <Numeral
+                    suffix={` ${token ? token.symbol : ''}`}
+                    integerSeparator=""
+                    unit={(token && token.decimals) || 18}
+                    value={amount}
+                    appearance={{ size: 'small', theme: 'grey' }}
+                  />
                 </span>
               )}
 
-              {((colony && colony.colonyName) || amount) && (
-                <span className={styles.pipe}>|</span>
-              )}
+              {(colonyName || amount) && <span className={styles.pipe}>|</span>}
               <span className={styles.time}>
                 {timestamp && <TimeRelative value={new Date(timestamp)} />}
               </span>

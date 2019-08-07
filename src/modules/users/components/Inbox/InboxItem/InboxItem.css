@@ -12,6 +12,10 @@
   font-weight: var(--weight-semi);
 }
 
+.inboxDetails a:hover {
+  color: var(--colony-blue);
+}
+
 .inboxDetail {
   composes: inlineEllipsis from '~styles/text.css';
   display: inline-block;

@@ -32,15 +32,14 @@ const MSG = defineMessages({
 
 const displayName = 'users.Inbox.InboxContent';
 
+const allReadActions = {
+  submit: ACTIONS.INBOX_MARK_ALL_NOTIFICATIONS_READ,
+  success: ACTIONS.INBOX_MARK_ALL_NOTIFICATIONS_READ_SUCCESS,
+  error: ACTIONS.INBOX_MARK_ALL_NOTIFICATIONS_READ_ERROR,
+};
+
 const InboxContent = () => {
-  const allReadActions = {
-    submit: ACTIONS.INBOX_MARK_ALL_NOTIFICATIONS_READ,
-    success: ACTIONS.INBOX_MARK_ALL_NOTIFICATIONS_READ_SUCCESS,
-    error: ACTIONS.INBOX_MARK_ALL_NOTIFICATIONS_READ_ERROR,
-  };
-
-  const markAllRead = useAsyncFunction({ ...allReadActions });
-
+  const markAllRead = useAsyncFunction(allReadActions);
   const inboxItems = useSelector(inboxItemsSelector);
 
   return (
