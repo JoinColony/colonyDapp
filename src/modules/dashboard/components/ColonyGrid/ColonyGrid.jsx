@@ -2,7 +2,7 @@
 
 import React, { Fragment } from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
-import type { MessageDescriptor, MessageValues } from 'react-intl';
+import type { MessageDescriptor } from 'react-intl';
 
 import type { Address } from '~types';
 
@@ -36,7 +36,7 @@ type Props = {|
   colonyAddresses?: Address[],
   emptyStateDescription?: MessageDescriptor,
   /** Object is added as a type, since MessageValues apparently don't include React Elements */
-  emptyStateDescriptionValues?: MessageValues | Object,
+  emptyStateDescriptionValues?: Object,
 |};
 
 const displayName = 'ColonyGrid';
