@@ -275,7 +275,6 @@ const TransactionDetails = ({
     colonySubscriber,
     [colonyAddress],
     [colonyAddress],
-    { alwaysSubscribe: false },
   );
   const TransactionComponent = incoming
     ? IncomingTransaction

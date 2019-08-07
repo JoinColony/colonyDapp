@@ -19,7 +19,6 @@ export const useColonyTokens = (
     colonySubscriber,
     [colonyAddress],
     [colonyAddress],
-    { alwaysSubscribe: false },
   );
   const { colonyAddress: fetchedColonyAddress } = fetchedColony || {};
 

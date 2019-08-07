@@ -80,7 +80,6 @@ const TransactionListItem = ({
     userSubscriber,
     [userAddress],
     [userAddress],
-    { alwaysSubscribe: false },
   );
 
   const { data: token } = useDataFetcher<TokenType>(

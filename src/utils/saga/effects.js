@@ -185,7 +185,7 @@ export function* executeSubscription<D, M, A, R>(
     }
 
     return () => {
-      log.verbose(`Stopping subscription "${subscription.name}"`, {
+      log.verbose(`Stopping subscription "${subscriber.name}"`, {
         args,
         metadata,
       });

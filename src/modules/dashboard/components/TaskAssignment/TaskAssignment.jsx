@@ -30,7 +30,6 @@ const TaskAssignment = ({ colonyAddress, draftId }: Props) => {
     userSubscriber,
     [workerAddress],
     [workerAddress],
-    { alwaysSubscribe: false },
   );
   return nativeTokenReference && tokenOptions ? (
     <Assignment

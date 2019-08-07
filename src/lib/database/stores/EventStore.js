@@ -123,6 +123,7 @@ class EventStore extends Store {
     return {
       // The consumer is expected to stop the event listeners.
       stop: () => {
+        this._orbitStore.events.removeListener('ready', allEvents);
         this._orbitStore.events.removeListener('replicated', allEvents);
         this._orbitStore.events.removeListener('write', allEvents);
       },

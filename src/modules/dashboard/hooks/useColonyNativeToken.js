@@ -20,7 +20,6 @@ export const useColonyNativeToken = (
     colonySubscriber,
     [colonyAddress],
     [colonyAddress],
-    { alwaysSubscribe: false },
   );
   const { colonyAddress: fetchedColonyAddress } = fetchedColony || {};
 

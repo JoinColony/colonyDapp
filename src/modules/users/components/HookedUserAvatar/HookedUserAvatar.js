@@ -21,7 +21,6 @@ export default withHooks<
       userSubscriber,
       [address],
       [address],
-      { alwaysSubscribe: false },
     );
     result.user = fetchedUser;
   }

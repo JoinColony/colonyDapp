@@ -13,6 +13,7 @@ import history from './history';
 import reduxPromiseListener from './createPromiseListener';
 import createRootReducer from './createRootReducer';
 import { createDuplicateActionGuardMiddleware } from './createDuplicateActionGuardMiddleware';
+import { createSubscriberMiddleware } from './createSubscriberMiddleware';
 import ACTIONS from './actions';
 
 const sagaMiddleware = createSagaMiddleware({ context });
@@ -28,6 +29,29 @@ const duplicateActionGuardMiddleware = createDuplicateActionGuardMiddleware(
   ACTIONS.USER_FETCH,
 );
 
+// Allows useDataSubsctiber to always dispatch, and prevents those actions from
+// propagating while something is already being subscribed to, or other
+// instances of useDataSubscriber are still reliant on a subscription.
+const subscriberMiddleware = createSubscriberMiddleware(
+  [ACTIONS.COLONY_SUB_START, ACTIONS.COLONY_SUB_STOP],
+  [
+    ACTIONS.COLONY_TASK_METADATA_SUB_START,
+    ACTIONS.COLONY_TASK_METADATA_SUB_STOP,
+  ],
+  [ACTIONS.CONNECTION_STATS_SUB_START, ACTIONS.CONNECTION_STATS_SUB_STOP],
+  [ACTIONS.TASK_FEED_ITEMS_SUB_START, ACTIONS.TASK_FEED_ITEMS_SUB_STOP],
+  [ACTIONS.TASK_SUB_START, ACTIONS.TASK_SUB_STOP],
+  [ACTIONS.USER_SUB_START, ACTIONS.USER_SUB_STOP],
+  [
+    ACTIONS.USER_SUBSCRIBED_COLONIES_SUB_START,
+    ACTIONS.USER_SUBSCRIBED_COLONIES_SUB_STOP,
+  ],
+  [
+    ACTIONS.USER_SUBSCRIBED_TASKS_SUB_START,
+    ACTIONS.USER_SUBSCRIBED_TASKS_SUB_STOP,
+  ],
+);
+
 const composeEnhancer: Function =
   // eslint-disable-next-line no-underscore-dangle
   window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
@@ -38,6 +62,7 @@ const store = createStore(
     applyMiddleware(
       routerMiddleware(history),
       duplicateActionGuardMiddleware,
+      subscriberMiddleware,
       sagaMiddleware,
       reduxPromiseListener.middleware,
       persistMiddleware,

@@ -187,7 +187,6 @@ const TaskEditDialog = ({
     colonySubscriber,
     [colonyAddress],
     [colonyAddress],
-    { alwaysSubscribe: false },
   );
 
   const [colonyTokenReferences, availableTokens] = useColonyTokens(
@@ -216,7 +215,6 @@ const TaskEditDialog = ({
     userSubscriber,
     [workerAddress],
     [workerAddress],
-    { alwaysSubscribe: false },
   );
   const existingWorker =
     !!workerAddress && !existingWorkerObj

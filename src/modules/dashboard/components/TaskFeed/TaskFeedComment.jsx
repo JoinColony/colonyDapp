@@ -50,7 +50,6 @@ const TaskFeedComment = ({
     userSubscriber,
     [authorAddress],
     [authorAddress],
-    { alwaysSubscribe: false },
   );
   const userDisplayName = useSelector(friendlyUsernameSelector, [
     authorAddress,

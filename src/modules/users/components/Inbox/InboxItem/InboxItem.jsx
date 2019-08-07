@@ -132,7 +132,6 @@ const InboxItem = ({
     userSubscriber,
     [sourceUserAddress],
     [sourceUserAddress],
-    { alwaysSubscribe: false },
   );
   const sourceUserDisplayWithFallback = useSelector(friendlyUsernameSelector, [
     sourceUserAddress,
@@ -154,7 +153,6 @@ const InboxItem = ({
     colonySubscriber,
     [colonyAddress],
     [colonyAddress],
-    { alwaysSubscribe: false },
   );
   const colonyDisplayNameWithFallback = useSelector(
     friendlyColonyNameSelector,

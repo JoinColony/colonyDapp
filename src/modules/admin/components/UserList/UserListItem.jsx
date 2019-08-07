@@ -72,7 +72,6 @@ const UserListItem = ({
     userSubscriber,
     [address],
     [address],
-    { alwaysSubscribe: false },
   );
 
   const { profile: { username, displayName } = {} } = user || {};

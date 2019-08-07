@@ -74,7 +74,6 @@ const ColonySubscribe = ({ colonyAddress }: Props) => {
       currentUser.profile.walletAddress,
       currentUser.profile.metadataStoreAddress,
     ],
-    { alwaysSubscribe: false },
   );
   const isSubscribed = (colonyAddresses || []).includes(colonyAddress);
   const transform = useCallback(mergePayload({ colonyAddress }), [
