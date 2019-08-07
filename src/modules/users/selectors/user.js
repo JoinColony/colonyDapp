@@ -196,6 +196,7 @@ export const inboxItemsSelector = createSelector(
     activities &&
     activities
       .sort(sortObjectsBy('timestamp'))
+      .reverse()
       .map(
         activity =>
           activity &&

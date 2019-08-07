@@ -66,7 +66,7 @@ const InboxContent = () => {
           ) : (
             <Table scrollable appearance={{ separators: 'borders' }}>
               <TableBody>
-                {inboxItems.reverse().map(activity => (
+                {inboxItems.map(activity => (
                   <InboxItem key={activity.id} activity={activity} />
                 ))}
               </TableBody>
