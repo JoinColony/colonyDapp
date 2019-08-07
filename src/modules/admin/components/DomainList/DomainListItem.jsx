@@ -2,10 +2,11 @@
 import React from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 
-import type { DataType, DomainType } from '~immutable';
+import type { DomainType } from '~immutable';
 
+import { ACTIONS } from '~redux';
 import { TableRow, TableCell } from '~core/Table';
-import Button from '~core/Button';
+import { DialogActionButton } from '~core/Button';
 
 import styles from './DomainListItem.css';
 
@@ -33,18 +34,12 @@ type Props = {|
    */
   domain: DomainType,
   viewOnly: boolean,
-  /*
-   * Method to call when clicking the edit button
-   * Gets passed down to `DomainListItem`
-   */
-  onEdit: (DataType<DomainType>) => any,
 |};
 
 const DomainListItem = ({
   domain,
   contributions = 25,
   viewOnly = true,
-  onEdit,
 }: Props) => (
   <TableRow className={styles.main}>
     <TableCell className={styles.domainDetails}>
@@ -56,11 +51,17 @@ const DomainListItem = ({
           className={styles.editDomain}
           title={MSG.buttonEdit.defaultMessage}
         >
-          <Button
+          <DialogActionButton
+            dialog="DomainEditDialog"
+            dialogProps={{
+              domain,
+            }}
             className={styles.customEditButton}
             appearance={{ theme: 'blue' }}
             text={MSG.buttonEdit}
-            onClick={onEdit}
+            submit={ACTIONS.DOMAIN_EDIT}
+            success={ACTIONS.DOMAIN_EDIT_SUCCESS}
+            error={ACTIONS.DOMAIN_EDIT_ERROR}
           />
         </span>
       )}

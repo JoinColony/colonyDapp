@@ -1,14 +1,13 @@
 /* @flow */
 
-import React, { Fragment, useCallback } from 'react';
+import React, { Fragment } from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 
 import type { Address } from '~types';
 import type { DomainType, RolesType, UserPermissionsType } from '~immutable';
 
 import { ACTIONS } from '~redux';
-import { pipe, mergePayload, withKey } from '~utils/actions';
-import { useDataFetcher, useAsyncFunction } from '~utils/hooks';
+import { useDataFetcher } from '~utils/hooks';
 import { Tab, Tabs, TabList, TabPanel } from '~core/Tabs';
 import Heading from '~core/Heading';
 import { SpinnerLoader } from '~core/Preloaders';
@@ -85,24 +84,6 @@ const Organizations = ({ colonyAddress }: Props) => {
     currentUserColonyPermissionsFetcher,
     [colonyAddress || undefined],
     [colonyAddress || undefined],
-  );
-
-  const transform = pipe(
-    withKey(colonyAddress),
-    mergePayload({ colonyAddress }),
-  );
-
-  const editFn = useAsyncFunction({
-    submit: ACTIONS.DOMAIN_EDIT,
-    success: ACTIONS.DOMAIN_EDIT_SUCCESS,
-    error: ACTIONS.DOMAIN_EDIT_ERROR,
-    transform,
-  });
-
-  const handleEdit = useCallback(
-    (domainId: number) => editFn({ domainId }),
-    // This is unnecessary because the ref is never changing. The linter isn't smart enough to know that though
-    [editFn],
   );
 
   if (!domains || !roles) {
@@ -182,7 +163,6 @@ const Organizations = ({ colonyAddress }: Props) => {
                   domains={domains}
                   label={MSG.labelDomainList}
                   viewOnly={!canAdminister(permissions)}
-                  onEdit={handleEdit}
                 />
               ) : (
                 <Fragment>

@@ -144,7 +144,7 @@ function* domainEdit({
       },
     });
     /*
-     * Dispatch a success action with the newly-added domain.
+     * Dispatch a success action with the newly-edited domain.
      */
     yield put<Action<typeof ACTIONS.DOMAIN_EDIT_SUCCESS>>({
       type: ACTIONS.DOMAIN_EDIT_SUCCESS,

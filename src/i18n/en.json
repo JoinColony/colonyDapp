@@ -81,6 +81,8 @@
     "transaction.colony.setAdminRole.description": "{setTo, select, true { Add Admin ({ address }) } false { Remove Admin ({ address }) } }",
     "transaction.colony.addDomain.title": "Create Domain",
     "transaction.colony.addDomain.description": "Create Domain",
+    "transaction.colony.editDomain.title": "Edit Domain",
+    "transaction.colony.editDomain.description": "Edit Domain",
 
     "message.generic.title": "Generic Message",
     "message.generic.description": "This needs your wallet's signature",

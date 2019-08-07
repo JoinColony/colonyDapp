@@ -17,6 +17,7 @@ import { UserTokenEditDialog } from '~dashboard/Wallet';
 import TaskEditDialog from '~dashboard/TaskEditDialog';
 import TaskInviteDialog from '~dashboard/Task/TaskInviteDialog.jsx';
 import { TaskClaimRewardDialog } from '~dashboard/TaskClaimReward';
+import DomainEditDialog from '~admin/DomainEditDialog';
 import RecoveryModeDialog from '~admin/RecoveryModeDialog';
 import UnlockTokenDialog from '~admin/Profile/UnlockTokenDialog.jsx';
 import UpgradeContractDialog from '~admin/UpgradeContractDialog';
@@ -25,6 +26,7 @@ const dialogComponents: Object = {
   ActivityBarExample,
   ColonyTokenEditDialog,
   ConfirmDialog,
+  DomainEditDialog,
   ManagerRatingDialog,
   RecoveryModeDialog,
   TaskClaimRewardDialog,

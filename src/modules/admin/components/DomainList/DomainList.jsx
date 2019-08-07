@@ -27,16 +27,11 @@ type Props = {|
    * Title to show before the list
    */
   label?: string | MessageDescriptor,
-  /*
-   * Method to call when removing the domain
-   * Gets passed down to `DomainListItem`
-   */
-  onEdit: number => any,
 |};
 
 const displayName: string = 'admin.DomainList';
 
-const DomainList = ({ domains, viewOnly = true, label, onEdit }: Props) => (
+const DomainList = ({ domains, viewOnly = true, label }: Props) => (
   <div className={styles.main}>
     {label && (
       <Heading
@@ -53,7 +48,6 @@ const DomainList = ({ domains, viewOnly = true, label, onEdit }: Props) => (
                 key={nanoid(currentIndex)}
                 domain={domain}
                 viewOnly={viewOnly}
-                onEdit={() => onEdit(domain.id)}
               />
             ))
           ) : (
