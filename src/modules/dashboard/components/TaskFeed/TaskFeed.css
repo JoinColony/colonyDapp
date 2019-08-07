@@ -14,3 +14,11 @@
   justify-content: flex-end;
   min-height: 100%;
 }
+
+.eventsLoader {
+  padding-bottom: 10px;
+}
+
+.eventsLoaderText {
+  margin-left: 10px;
+}
