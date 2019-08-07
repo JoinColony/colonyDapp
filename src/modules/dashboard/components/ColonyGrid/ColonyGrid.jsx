@@ -2,6 +2,7 @@
 
 import React, { Fragment } from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
+import type { MessageDescriptor, MessageValues } from 'react-intl';
 
 import type { Address } from '~types';
 
@@ -33,26 +34,33 @@ const MSG = defineMessages({
 type Props = {|
   /** List of Colony addresses */
   colonyAddresses?: Address[],
+  emptyStateDescription?: MessageDescriptor,
+  /** Object is added as a type, since MessageValues apparently don't include React Elements */
+  emptyStateDescriptionValues?: MessageValues | Object,
 |};
 
 const displayName = 'ColonyGrid';
 
-const ColonyGrid = ({ colonyAddresses = [] }: Props) => (
+const ColonyGrid = ({
+  colonyAddresses = [],
+  emptyStateDescription = MSG.emptyText,
+  emptyStateDescriptionValues = {
+    link: (
+      <Link
+        to={CREATE_COLONY_ROUTE}
+        text={MSG.createColonyLink}
+        className={styles.createColonyLink}
+      />
+    ),
+  },
+}: Props) => (
   <>
     {colonyAddresses.length === 0 ? (
       <Fragment>
         <p className={styles.emptyText}>
           <FormattedMessage
-            {...MSG.emptyText}
-            values={{
-              link: (
-                <Link
-                  to={CREATE_COLONY_ROUTE}
-                  text={MSG.createColonyLink}
-                  className={styles.createColonyLink}
-                />
-              ),
-            }}
+            {...emptyStateDescription}
+            values={emptyStateDescriptionValues}
           />
         </p>
       </Fragment>
