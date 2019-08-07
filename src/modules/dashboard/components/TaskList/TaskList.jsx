@@ -52,7 +52,10 @@ const MSG = defineMessages({
   },
   emptyFilterDescription: {
     id: 'dashboard.ColonyTasks.emptyFilterDescription',
-    defaultMessage: 'Welcome to {colonyName}!',
+    defaultMessage: `Welcome to {colonyNameExists, select,
+      true {{colonyName}}
+      other {the Colony}
+    }!`,
   },
   emptyFilterAddition: {
     id: 'dashboard.ColonyTasks.emptyFilterAddition',
@@ -197,6 +200,7 @@ const TaskList = ({
                   tagName="p"
                   {...MSG.emptyFilterDescription}
                   values={{
+                    colonyNameExists: !!colonyName,
                     colonyName,
                   }}
                 />
