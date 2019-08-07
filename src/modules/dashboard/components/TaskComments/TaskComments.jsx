@@ -174,7 +174,7 @@ const TaskComments = ({
                * up until 1024 represent the json data we wrap the comment with.
                * ie: {"comment":"aaa...","author":"0x1234...1234"}
                */
-              maxlength={956}
+              maxLength={956}
             />
             <FormStatus status={status} />
             <div className={styles.commentControls}>
