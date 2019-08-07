@@ -41,7 +41,7 @@ td.userAvatar {
   margin: 60px auto 0px auto;
   height: 120px;
   width: 120px;
-  cursor: none;
+  /* cursor: none; */
   user-select: none;
 }
 
