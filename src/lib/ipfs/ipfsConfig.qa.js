@@ -10,8 +10,8 @@ const config = () => ({
   config: {
     Addresses: {
       Swarm: [
-        '/dns4/colony.io/tcp/9090/wss/p2p-websocket-star/',
-        '/dns4/colony.io/tcp/9091/wss/p2p-webrtc-star/',
+        '/dns4/qa.colony.io/tcp/9090/wss/p2p-websocket-star/',
+        '/dns4/qa.colony.io/tcp/9091/wss/p2p-webrtc-star/',
       ],
     },
     Bootstrap: [],
