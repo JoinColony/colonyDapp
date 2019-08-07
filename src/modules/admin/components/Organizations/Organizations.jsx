@@ -1,18 +1,22 @@
 /* @flow */
 
-import React, { Fragment } from 'react';
+import React, { Fragment, useCallback } from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 
 import type { Address } from '~types';
-import type { DomainType, RolesType } from '~immutable';
+import type { DomainType, RolesType, UserPermissionsType } from '~immutable';
 
 import { ACTIONS } from '~redux';
-import { useDataFetcher } from '~utils/hooks';
+import { pipe, mergePayload, withKey } from '~utils/actions';
+import { useDataFetcher, useAsyncFunction } from '~utils/hooks';
 import { Tab, Tabs, TabList, TabPanel } from '~core/Tabs';
 import Heading from '~core/Heading';
 import { SpinnerLoader } from '~core/Preloaders';
 
+import { canAdminister } from '../../../users/checks';
 import { rolesFetcher, domainsFetcher } from '../../../dashboard/fetchers';
+
+import { currentUserColonyPermissionsFetcher } from '../../../users/fetchers';
 
 import UserList from '../UserList';
 import DomainList from '../DomainList';
@@ -75,6 +79,30 @@ const Organizations = ({ colonyAddress }: Props) => {
     domainsFetcher,
     [colonyAddress],
     [colonyAddress],
+  );
+
+  const { data: permissions } = useDataFetcher<UserPermissionsType>(
+    currentUserColonyPermissionsFetcher,
+    [colonyAddress || undefined],
+    [colonyAddress || undefined],
+  );
+
+  const transform = pipe(
+    withKey(colonyAddress),
+    mergePayload({ colonyAddress }),
+  );
+
+  const editFn = useAsyncFunction({
+    submit: ACTIONS.DOMAIN_EDIT,
+    success: ACTIONS.DOMAIN_EDIT_SUCCESS,
+    error: ACTIONS.DOMAIN_EDIT_ERROR,
+    transform,
+  });
+
+  const handleEdit = useCallback(
+    (domainId: number) => editFn({ domainId }),
+    // This is unnecessary because the ref is never changing. The linter isn't smart enough to know that though
+    [editFn],
   );
 
   if (!domains || !roles) {
@@ -153,8 +181,8 @@ const Organizations = ({ colonyAddress }: Props) => {
                 <DomainList
                   domains={domains}
                   label={MSG.labelDomainList}
-                  // eslint-disable-next-line no-console
-                  onRemove={console.log}
+                  viewOnly={!canAdminister(permissions)}
+                  onEdit={handleEdit}
                 />
               ) : (
                 <Fragment>

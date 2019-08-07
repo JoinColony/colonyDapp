@@ -9,6 +9,23 @@ tr.main:hover .customRemoveButton {
   display: inline-block;
 }
 
+.customRemoveButton {
+  composes: themePrimary from '~core/Button/Button.css';
+  display: none;
+  width: 100%;
+}
+
+tr.main:hover .customEditButton {
+  display: inline-block;
+}
+
+.customEditButton {
+  composes: themeBlue from '~core/Button/Button.css';
+  display: none;
+  padding: none;
+  width: 100%;
+}
+
 td.domainDetails {
   flex-wrap: wrap;
   padding: cell-padding;
@@ -31,10 +48,4 @@ td.domainRemove {
 .contributions {
   width: 100%;
   font-size: var(--size-small);
-}
-
-.customRemoveButton {
-  composes: themePrimary from '~core/Button/Button.css';
-  display: none;
-  width: 100%;
 }

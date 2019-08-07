@@ -31,12 +31,12 @@ type Props = {|
    * Method to call when removing the domain
    * Gets passed down to `DomainListItem`
    */
-  onRemove: DomainType => any,
+  onEdit: number => any,
 |};
 
 const displayName: string = 'admin.DomainList';
 
-const DomainList = ({ domains, viewOnly = true, label, onRemove }: Props) => (
+const DomainList = ({ domains, viewOnly = true, label, onEdit }: Props) => (
   <div className={styles.main}>
     {label && (
       <Heading
@@ -53,7 +53,7 @@ const DomainList = ({ domains, viewOnly = true, label, onRemove }: Props) => (
                 key={nanoid(currentIndex)}
                 domain={domain}
                 viewOnly={viewOnly}
-                onRemove={() => onRemove(domain)}
+                onEdit={() => onEdit(domain.id)}
               />
             ))
           ) : (

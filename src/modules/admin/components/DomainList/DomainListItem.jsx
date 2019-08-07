@@ -16,7 +16,11 @@ const MSG = defineMessages({
   },
   contributions: {
     id: 'admin.DomainList.DomainListItem.contributions',
-    defaultMessage: `Contributions: {contributions}`,
+    defaultMessage: `{contributions} Contributions`,
+  },
+  buttonEdit: {
+    id: 'admin.DomainList.DomainListItem.buttonEdit',
+    defaultMessage: 'Edit name',
   },
 });
 
@@ -30,46 +34,42 @@ type Props = {|
   domain: DomainType,
   viewOnly: boolean,
   /*
-   * Method to call when clicking the remove button
+   * Method to call when clicking the edit button
    * Gets passed down to `DomainListItem`
    */
-  onRemove: (DataType<DomainType>) => any,
+  onEdit: (DataType<DomainType>) => any,
 |};
 
 const DomainListItem = ({
   domain,
-  contributions,
+  contributions = 25,
   viewOnly = true,
-  onRemove,
+  onEdit,
 }: Props) => (
   <TableRow className={styles.main}>
     <TableCell className={styles.domainDetails}>
       <span className={styles.domainName} title={domain.name}>
         {domain.name}
       </span>
+      {!viewOnly && (
+        <span
+          className={styles.editDomain}
+          title={MSG.buttonEdit.defaultMessage}
+        >
+          <Button
+            className={styles.customEditButton}
+            appearance={{ theme: 'blue' }}
+            text={MSG.buttonEdit}
+            onClick={onEdit}
+          />
+        </span>
+      )}
       {contributions && (
         <span className={styles.contributions}>
           <FormattedMessage values={{ contributions }} {...MSG.contributions} />
         </span>
       )}
     </TableCell>
-
-    {/*
-     *
-     * We want to prevent rendering the table cell if it can't be acted upon
-     * Unfortunately, `TableRow` expects specifically a `TableCell` type, not a boolean
-     */
-    /* $FlowFixMe */
-    !viewOnly && (
-      <TableCell className={styles.userRemove}>
-        <Button
-          className={styles.customRemoveButton}
-          appearance={{ theme: 'primary' }}
-          text={MSG.buttonRemove}
-          onClick={onRemove}
-        />
-      </TableCell>
-    )}
   </TableRow>
 );
 

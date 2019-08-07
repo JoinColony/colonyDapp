@@ -40,6 +40,7 @@ import { colonyReducer, colonyTasksReducer } from '../reducers';
 
 const {
   DOMAIN_CREATED,
+  DOMAIN_EDITED,
   TASK_STORE_REGISTERED,
   TASK_STORE_UNREGISTERED,
 } = COLONY_EVENT_TYPES;
@@ -429,7 +430,7 @@ export const getColonyDomains: Query<
   async execute(colonyStore) {
     return colonyStore
       .all()
-      .filter(({ type }) => type === DOMAIN_CREATED)
+      .filter(({ type }) => type === DOMAIN_CREATED || type === DOMAIN_EDITED)
       .map(({ payload: { domainId, name } }: Event<typeof DOMAIN_CREATED>) => ({
         id: domainId,
         name,
