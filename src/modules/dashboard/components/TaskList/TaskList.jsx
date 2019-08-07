@@ -43,22 +43,22 @@ const MSG = defineMessages({
     defaultMessage: 'My Colonies',
   },
   noTaskDescription: {
-    id: 'dashboard.ColonyTasks.noTaskDescription',
+    id: 'dashboard.TaskList.noTaskDescription',
     defaultMessage: 'No tasks here!',
   },
   noTaskAddition: {
-    id: 'dashboard.ColonyTasks.noTaskAddition',
+    id: 'dashboard.TaskList.noTaskAddition',
     defaultMessage: 'Change Domains or filters to check for other tasks.',
   },
-  emptyFilterDescription: {
-    id: 'dashboard.ColonyTasks.emptyFilterDescription',
+  welcomeToColony: {
+    id: 'dashboard.TaskList.welcomeToColony',
     defaultMessage: `Welcome to {colonyNameExists, select,
       true {{colonyName}}
       other {the Colony}
     }!`,
   },
-  emptyFilterAddition: {
-    id: 'dashboard.ColonyTasks.emptyFilterAddition',
+  subscribeToColony: {
+    id: 'dashboard.TaskList.subscribeToColony',
     defaultMessage: `It looks like there are no open tasks right now.
       {isSubscribed, select,
         true {}
@@ -198,7 +198,7 @@ const TaskList = ({
               <div className={taskListItemStyles.emptyStateElements}>
                 <FormattedMessage
                   tagName="p"
-                  {...MSG.emptyFilterDescription}
+                  {...MSG.welcomeToColony}
                   values={{
                     colonyNameExists: !!colonyName,
                     colonyName,
@@ -208,7 +208,7 @@ const TaskList = ({
               <div className={taskListItemStyles.emptyStateElements}>
                 <FormattedMessage
                   tagName="p"
-                  {...MSG.emptyFilterAddition}
+                  {...MSG.subscribeToColony}
                   values={{
                     isSubscribed,
                     myColonies: (
