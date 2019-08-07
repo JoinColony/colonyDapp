@@ -12,13 +12,14 @@ import type { DomainId, TaskDraftId, TaskType } from '~immutable';
 import { mergePayload } from '~utils/actions';
 import { TASK_STATE } from '~immutable';
 
-import { useDataTupleFetcher, useSelector } from '~utils/hooks';
+import { useDataTupleFetcher, useSelector, useDataFetcher } from '~utils/hooks';
 
 import { TASKS_FILTER_OPTIONS } from '../shared/tasksFilter';
-
-import { tasksByIdFetcher } from '../../fetchers';
 import { ACTIONS } from '~redux';
+
+import { tasksByIdFetcher, userColoniesFetcher } from '../../fetchers';
 import { colonyNameSelector } from '../../selectors';
+import { currentUserSelector } from '../../../users/selectors';
 
 import Icon from '~core/Icon';
 import { Table, TableBody } from '~core/Table';
@@ -56,7 +57,10 @@ const MSG = defineMessages({
   emptyFilterAddition: {
     id: 'dashboard.ColonyTasks.emptyFilterAddition',
     defaultMessage: `It looks like there are no open tasks right now.
-      Add this colony to {myColonies}, grab a coffee, and check again later.`,
+      {isSubscribed, select,
+        true {}
+        false {Add this colony to {myColonies},
+          grab a coffee, and check again later.}}`,
   },
 });
 
@@ -130,6 +134,16 @@ const TaskList = ({
     [filter, tasksData, sort],
   );
 
+  const currentUser = useSelector(currentUserSelector);
+  const { data: colonyAddresses } = useDataFetcher<Address[]>(
+    userColoniesFetcher,
+    [currentUser.profile.walletAddress],
+    [
+      currentUser.profile.walletAddress,
+      currentUser.profile.metadataStoreAddress,
+    ],
+  );
+  const isSubscribed = (colonyAddresses || []).includes(colonyAddress);
   const transform = useCallback(mergePayload({ colonyAddress }), [
     colonyAddress,
   ]);
@@ -192,6 +206,7 @@ const TaskList = ({
                   tagName="p"
                   {...MSG.emptyFilterAddition}
                   values={{
+                    isSubscribed,
                     myColonies: (
                       <ActionButton
                         className={taskListItemStyles.subscribe}
