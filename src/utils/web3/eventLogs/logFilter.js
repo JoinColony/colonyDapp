@@ -9,18 +9,25 @@ import { getBlockNumberForDelta } from '~utils/web3/eventLogs/blocks';
 
 import type { LogFilterOptions } from './types';
 
-/*
- * Returns a padded hex string of the size expected for a contract event topic,
- * for the given address.
+/**
+ * Given a string topic (or null), normalize the string
+ * with the expected format/padded length (or return null).
  */
-export const padTopicAddress = (address: string) =>
-  padLeft(address.toLowerCase(), 64);
+const formatTopic = (topic: string | void): string | null =>
+  topic ? padLeft(topic.toLowerCase(), 64) : null;
+
+/**
+ * Given arguments, return an object with formatted topics.
+ */
+export const mapTopics = (...topics: *) => ({
+  topics: topics.map(formatTopic),
+});
 
 /**
  * Returns a padded hex string of the size expected for a contract event topic,
  * for the given input. Uses Buffer for hex string conversion.
  */
-export const getFilterFormatted = (input: any) => padLeft(toHex(input), 64);
+export const formatFilterTopic = (input: any) => padLeft(toHex(input), 64);
 
 /*
  * Returns an array of topics for the given ColonyJS events, and from/to
@@ -29,8 +36,8 @@ export const getFilterFormatted = (input: any) => padLeft(toHex(input), 64);
 const getTopics = ({ events = [], from, to }: LogFilterOptions) => {
   const topics = [
     flatMap(events, ({ interface: { topics: eventTopics } }) => eventTopics),
-    from ? padTopicAddress(from) : null,
-    to ? padTopicAddress(to) : null,
+    from ? formatTopic(from) : null,
+    to ? formatTopic(to) : null,
   ];
   // Remove trailing null topics, since certain nodes don't like them
   while (topics[topics.length - 1] === null) {
