@@ -93,16 +93,13 @@ const NewTaskButton = ({
      * Ordinarily this wouldn't be necessary, but we can't use <button>
      * because of the style requirements.
      */
-    // eslint-disable-next-line jsx-a11y/click-events-have-key-events,jsx-a11y/no-static-element-interactions
-    <div
-      onClick={throttle(onClick, 2000)}
-      className={styles.newTaskButtonContainer}
-    >
+    <div className={styles.newTaskButtonContainer}>
       <Icon
         className={styles.newTaskButton}
         name={iconName}
         onMouseEnter={() => setIconName('active-task')}
         onMouseLeave={() => setIconName('empty-task')}
+        onClick={throttle(onClick, 2000)}
         title={MSG.newTask}
         viewBox="0 0 132 132"
       />
