@@ -79,7 +79,7 @@ const TokenCard = ({
         <Numeral
           className={styles.balanceNumeral}
           integerSeparator=""
-          unit={token ? token.decimals : 18}
+          unit={token && token.decimals ? token.decimals : 18}
           value={balance || 0}
         />
       </div>
