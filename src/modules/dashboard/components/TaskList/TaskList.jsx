@@ -210,7 +210,13 @@ const TaskList = ({
                   tagName="p"
                   {...MSG.subscribeToColony}
                   values={{
-                    isSubscribed,
+                    /*
+                     * @NOTE If the current user hasn't claimed a profile yet, then don't show the
+                     * subscribe to colony call to action
+                     */
+                    isSubscribed: currentUser.profile.username
+                      ? isSubscribed
+                      : true,
                     myColonies: (
                       <ActionButton
                         className={taskListItemStyles.subscribe}
