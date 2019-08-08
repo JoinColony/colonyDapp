@@ -15,7 +15,6 @@ import { mergePayload } from '~utils/actions';
 import { useDataFetcher, useSelector } from '~utils/hooks';
 import { colonyTaskMetadataFetcher } from '../../../fetchers';
 import { walletAddressSelector } from '../../../../users/selectors';
-import { colonyNameSelector } from '../../../selectors';
 
 import TaskList from '../../TaskList';
 
@@ -24,7 +23,6 @@ import Icon from '~core/Icon';
 import { SpinnerLoader } from '~core/Preloaders';
 
 import styles from './ColonyTasks.css';
-import taskListItemStyles from '../../TaskList/TaskListItem.css';
 
 type Props = {|
   canCreateTask: boolean,
@@ -156,16 +154,12 @@ const ColonyTasks = ({
     colonyAddress,
   ]);
 
-  const data = useSelector(colonyNameSelector, [colonyAddress]);
-
-  const colonyName = colonyAddress ? data.record : undefined;
-
   if (isFetching) {
     return null;
   }
 
-  if (draftIds.length === 0) {
-    return canCreateTask ? (
+  if (draftIds.length === 0 && canCreateTask) {
+    return (
       <ActionButton
         button={NewTaskButton}
         disabled={isInRecoveryMode}
@@ -175,31 +169,12 @@ const ColonyTasks = ({
         transform={transform}
         loading={isTaskBeingCreated}
       />
-    ) : (
-      <div>
-        <Icon
-          className={taskListItemStyles.noTask}
-          name="cup"
-          title={MSG.noTasks}
-          viewBox="0 0 120 120"
-        />
-        <div className={taskListItemStyles.emptyStateElements}>
-          <FormattedMessage
-            tagName="p"
-            {...MSG.welcomeToColony}
-            values={{
-              colonyNameExists: !!colonyName,
-              colonyName,
-            }}
-          />
-        </div>
-        <div className={taskListItemStyles.emptyStateElements}>
-          <FormattedMessage tagName="p" {...MSG.noCurrentlyOpenTasks} />
-        </div>
-      </div>
     );
   }
 
+  /*
+   * @NOTE Let TaskList handle the empty states
+   */
   return (
     <TaskList
       colonyAddress={colonyAddress}
