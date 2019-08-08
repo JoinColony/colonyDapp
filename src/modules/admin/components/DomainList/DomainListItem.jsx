@@ -40,6 +40,7 @@ const DomainListItem = ({
   domain,
   contributions = 25,
   viewOnly = true,
+  colonyAddress,
 }: Props) => (
   <TableRow className={styles.main}>
     <TableCell className={styles.domainDetails}>
@@ -55,6 +56,7 @@ const DomainListItem = ({
             dialog="DomainEditDialog"
             dialogProps={{
               domain,
+              colonyAddress,
             }}
             className={styles.customEditButton}
             appearance={{ theme: 'blue' }}

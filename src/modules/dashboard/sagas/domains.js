@@ -118,20 +118,10 @@ function* domainCreate({
 }
 
 function* domainEdit({
-  payload: { colonyAddress, domainName: name, parentDomainId = 1, domainId },
+  payload: { colonyAddress, domainName, domainId },
   meta,
 }: Action<typeof ACTIONS.DOMAIN_EDIT>): Saga<*> {
-  const txChannel = yield call(getTxChannel, meta.id);
   try {
-    yield fork(createTransaction, meta.id, {
-      context: COLONY_CONTEXT,
-      methodName: 'editDomain',
-      identifier: colonyAddress,
-      params: { parentDomainId, domainId },
-    });
-
-    yield takeFrom(txChannel, ACTIONS.TRANSACTION_SUCCEEDED);
-
     /*
      * Add an entry to the colony store.
      * Get the domain ID from the payload
@@ -140,7 +130,7 @@ function* domainEdit({
       metadata: { colonyAddress },
       args: {
         domainId,
-        name,
+        name: domainName,
       },
     });
     /*
@@ -149,12 +139,10 @@ function* domainEdit({
     yield put<Action<typeof ACTIONS.DOMAIN_EDIT_SUCCESS>>({
       type: ACTIONS.DOMAIN_EDIT_SUCCESS,
       meta,
-      payload: { colonyAddress, domain: { id: domainId, name } },
+      payload: { colonyAddress, domainId, domainName },
     });
   } catch (error) {
     return yield putError(ACTIONS.DOMAIN_EDIT_ERROR, error, meta);
-  } finally {
-    txChannel.close();
   }
   return null;
 }

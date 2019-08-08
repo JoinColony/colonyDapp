@@ -160,6 +160,7 @@ const Organizations = ({ colonyAddress }: Props) => {
                */}
               {domains && domains.length ? (
                 <DomainList
+                  colonyAddress={colonyAddress}
                   domains={domains}
                   label={MSG.labelDomainList}
                   viewOnly={!canAdminister(permissions)}
