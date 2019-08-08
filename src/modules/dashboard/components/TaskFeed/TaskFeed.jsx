@@ -71,7 +71,7 @@ const TaskFeed = ({ colonyAddress, draftId }: Props) => {
             {/*
              * @NOTE We always have at least one task event: task created
              */
-            feedItems.length <= 1 ? (
+            feedItems.length < 1 ? (
               <div className={styles.eventsLoader}>
                 <SpinnerLoader appearance={{ size: 'small' }} />
                 <span className={styles.eventsLoaderText}>
