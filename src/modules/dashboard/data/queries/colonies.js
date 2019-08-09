@@ -15,7 +15,6 @@ import type {
   ColonyStore,
   ColonyTaskIndexStore,
   DDB,
-  Event,
   NetworkClient,
   Query,
   Subscription,
@@ -431,39 +430,21 @@ export const getColonyDomains: Query<
     return colonyStore
       .all()
       .filter(({ type }) => type === DOMAIN_CREATED || type === DOMAIN_EDITED)
-      .map(
-        ({
-          payload: { domainId, name },
-          type,
-          meta: { timestamp },
-        }: Event<typeof DOMAIN_CREATED>) => ({
-          id: domainId,
-          name,
-          type,
-          timestamp,
-        }),
-      )
-      .sort((first, second) => first.id - second.id)
-      .reduce((uniqueEvents, current) => {
-        /*
-         * This one was a bit tricky for some reason
-         * since we have now a list of edited and created events with duplicate ids.
-         * If there's duplicates we want to replace with the newer edited domain.
-         */
-        const duplicate = uniqueEvents.find(item => item.id === current.id);
+      .sort((first, second) => first.meta.timestamp - second.meta.timestamp)
+      .reduce((domains, event) => {
+        const {
+          payload: { domainId: currentDomainId },
+        } = event;
+        const difference = domains.filter(
+          ({ payload: { domainId } }) => currentDomainId !== domainId,
+        );
 
-        if (duplicate) {
-          const indexOfDuplicate = uniqueEvents.indexOf(duplicate);
-          if (duplicate.timestamp < current.timestamp) {
-            // eslint-disable-next-line no-param-reassign
-            uniqueEvents[indexOfDuplicate] = current;
-          }
-        } else {
-          uniqueEvents.push(current);
-        }
-
-        return uniqueEvents;
-      }, []);
+        return [...difference, event];
+      }, [])
+      .map(({ payload: { domainId, name } }) => ({
+        id: domainId,
+        name,
+      }));
   },
 };
 
