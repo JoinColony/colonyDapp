@@ -11,6 +11,10 @@
   height: 525px;
 }
 
+.inboxContainer tbody {
+  overflow: hidden;
+}
+
 .inboxHeading {
   display: flex;
   justify-content: space-between;

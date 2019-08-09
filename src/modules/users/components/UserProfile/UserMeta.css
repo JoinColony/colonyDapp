@@ -22,6 +22,11 @@
   margin-top: contentMargin;
 }
 
+.websiteContainer a {
+  font-weight: var(--weight-normal);
+  color: var(--text);
+}
+
 .locationContainer {
   composes: multiLineEllipsis from '~styles/text.css';
   margin-top: contentMargin;

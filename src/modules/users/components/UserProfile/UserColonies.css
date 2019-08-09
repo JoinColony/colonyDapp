@@ -1,0 +1,7 @@
+.createColonyLink {
+  color: var(--sky-blue);
+}
+
+.userHighlight {
+  font-weight: var(--weight-semi);
+}

@@ -130,7 +130,7 @@ const ColonyMeta = ({
             text={MSG.websiteLabel}
           />
           <span title={stripProtocol(website)}>
-            <ExternalLink href={stripProtocol(website)} />
+            <ExternalLink href={website} text={stripProtocol(website)} />
           </span>
         </section>
       )}
@@ -141,7 +141,7 @@ const ColonyMeta = ({
             text={MSG.guidelineLabel}
           />
           <span title={stripProtocol(guideline)}>
-            <ExternalLink href={stripProtocol(guideline)} />
+            <ExternalLink href={guideline} text={stripProtocol(guideline)} />
           </span>
         </section>
       )}

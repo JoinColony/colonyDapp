@@ -12,13 +12,14 @@ import type { DomainId, TaskDraftId, TaskType } from '~immutable';
 import { mergePayload } from '~utils/actions';
 import { TASK_STATE } from '~immutable';
 
-import { useDataTupleFetcher, useSelector } from '~utils/hooks';
+import { useDataTupleFetcher, useSelector, useDataFetcher } from '~utils/hooks';
 
 import { TASKS_FILTER_OPTIONS } from '../shared/tasksFilter';
-
-import { tasksByIdFetcher } from '../../fetchers';
 import { ACTIONS } from '~redux';
+
+import { tasksByIdFetcher, userColoniesFetcher } from '../../fetchers';
 import { colonyNameSelector } from '../../selectors';
+import { currentUserSelector } from '../../../users/selectors';
 
 import Icon from '~core/Icon';
 import { Table, TableBody } from '~core/Table';
@@ -42,21 +43,27 @@ const MSG = defineMessages({
     defaultMessage: 'My Colonies',
   },
   noTaskDescription: {
-    id: 'dashboard.ColonyTasks.noTaskDescription',
+    id: 'dashboard.TaskList.noTaskDescription',
     defaultMessage: 'No tasks here!',
   },
   noTaskAddition: {
-    id: 'dashboard.ColonyTasks.noTaskAddition',
+    id: 'dashboard.TaskList.noTaskAddition',
     defaultMessage: 'Change Domains or filters to check for other tasks.',
   },
-  emptyFilterDescription: {
-    id: 'dashboard.ColonyTasks.emptyFilterDescription',
-    defaultMessage: 'Welcome to {colonyName}!',
+  welcomeToColony: {
+    id: 'dashboard.TaskList.welcomeToColony',
+    defaultMessage: `Welcome to {colonyNameExists, select,
+      true {{colonyName}}
+      other {the Colony}
+    }!`,
   },
-  emptyFilterAddition: {
-    id: 'dashboard.ColonyTasks.emptyFilterAddition',
+  subscribeToColony: {
+    id: 'dashboard.TaskList.subscribeToColony',
     defaultMessage: `It looks like there are no open tasks right now.
-      Add this colony to {myColonies}, grab a coffee, and check again later.`,
+      {isSubscribed, select,
+        true {}
+        false {Add this colony to {myColonies},
+          grab a coffee, and check again later.}}`,
   },
 });
 
@@ -130,6 +137,16 @@ const TaskList = ({
     [filter, tasksData, sort],
   );
 
+  const currentUser = useSelector(currentUserSelector);
+  const { data: colonyAddresses } = useDataFetcher<Address[]>(
+    userColoniesFetcher,
+    [currentUser.profile.walletAddress],
+    [
+      currentUser.profile.walletAddress,
+      currentUser.profile.metadataStoreAddress,
+    ],
+  );
+  const isSubscribed = (colonyAddresses || []).includes(colonyAddress);
   const transform = useCallback(mergePayload({ colonyAddress }), [
     colonyAddress,
   ]);
@@ -181,8 +198,9 @@ const TaskList = ({
               <div className={taskListItemStyles.emptyStateElements}>
                 <FormattedMessage
                   tagName="p"
-                  {...MSG.emptyFilterDescription}
+                  {...MSG.welcomeToColony}
                   values={{
+                    colonyNameExists: !!colonyName,
                     colonyName,
                   }}
                 />
@@ -190,8 +208,15 @@ const TaskList = ({
               <div className={taskListItemStyles.emptyStateElements}>
                 <FormattedMessage
                   tagName="p"
-                  {...MSG.emptyFilterAddition}
+                  {...MSG.subscribeToColony}
                   values={{
+                    /*
+                     * @NOTE If the current user hasn't claimed a profile yet, then don't show the
+                     * subscribe to colony call to action
+                     */
+                    isSubscribed: currentUser.profile.username
+                      ? isSubscribed
+                      : true,
                     myColonies: (
                       <ActionButton
                         className={taskListItemStyles.subscribe}

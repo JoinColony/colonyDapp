@@ -41,15 +41,25 @@ const MSG = defineMessages({
     id: 'dashboard.ColonyTasks.newTaskDescription',
     defaultMessage: 'Create a new task',
   },
-  noTasksAvailable: {
-    id: 'dashboard.ColonyTasks.noTasksAvailable',
-    defaultMessage:
-      // eslint-disable-next-line max-len
-      'There are no tasks created yet. While you wait, we suggest subscribing to this Colony',
+  noTasks: {
+    id: 'dashboard.ColonyTasks.noTasks',
+    defaultMessage: `It looks like you don't have any tasks.
+      Visit your colonies to find a task to work on.`,
+  },
+  welcomeToColony: {
+    id: 'dashboard.ColonyTasks.welcomeToColony',
+    defaultMessage: `Welcome to {colonyNameExists, select,
+      true {{colonyName}}
+      other {the Colony}
+    }!`,
   },
   creatingTask: {
     id: 'dashboard.ColonyTasks.creatingTask',
     defaultMessage: 'Creating your task...',
+  },
+  noCurrentlyOpenTasks: {
+    id: 'dashboard.TaskList.noCurrentlyOpenTasks',
+    defaultMessage: 'It looks like there are no open tasks right now.',
   },
 });
 
@@ -83,16 +93,13 @@ const NewTaskButton = ({
      * Ordinarily this wouldn't be necessary, but we can't use <button>
      * because of the style requirements.
      */
-    // eslint-disable-next-line jsx-a11y/click-events-have-key-events,jsx-a11y/no-static-element-interactions
-    <div
-      onClick={throttle(onClick, 2000)}
-      className={styles.newTaskButtonContainer}
-    >
+    <div className={styles.newTaskButtonContainer}>
       <Icon
         className={styles.newTaskButton}
         name={iconName}
         onMouseEnter={() => setIconName('active-task')}
         onMouseLeave={() => setIconName('empty-task')}
+        onClick={throttle(onClick, 2000)}
         title={MSG.newTask}
         viewBox="0 0 132 132"
       />
@@ -148,8 +155,8 @@ const ColonyTasks = ({
     return null;
   }
 
-  if (draftIds.length === 0) {
-    return canCreateTask ? (
+  if (draftIds.length === 0 && canCreateTask) {
+    return (
       <ActionButton
         button={NewTaskButton}
         disabled={isInRecoveryMode}
@@ -159,11 +166,12 @@ const ColonyTasks = ({
         transform={transform}
         loading={isTaskBeingCreated}
       />
-    ) : (
-      <FormattedMessage tagName="p" {...MSG.noTasksAvailable} />
     );
   }
 
+  /*
+   * @NOTE Let TaskList handle the empty states
+   */
   return (
     <TaskList
       colonyAddress={colonyAddress}
