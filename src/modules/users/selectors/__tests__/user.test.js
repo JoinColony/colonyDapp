@@ -50,9 +50,9 @@ describe('Transaction selectors', () => {
   test('inboxItems selector', () => {
     const found = inboxItemsSelector(state);
     const result = found.toJS();
-    expect(result[0].context.colonyAddress).toEqual(
+    expect(result[1].context.colonyAddress).toEqual(
       '0xEc46E0d7208FF021CDb5B9D47196adb8bbe07a3D',
     );
-    expect(result[0].type).toEqual('dinnerIsReady');
+    expect(result[1].type).toEqual('dinnerIsReady');
   });
 });
