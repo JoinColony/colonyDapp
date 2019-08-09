@@ -27,8 +27,6 @@ import {
   USERS_CURRENT_USER_NOTIFICATION_METADATA,
 } from '../constants';
 
-import { sortObjectsBy } from '~utils/arrays';
-
 /*
  * Username getters
  */
@@ -194,16 +192,13 @@ export const inboxItemsSelector = createSelector(
   getCurrentUserNotificationMetadata,
   (activities, { readUntil = 0, exceptFor = [] }) =>
     activities &&
-    activities
-      .sort(sortObjectsBy('timestamp'))
-      .reverse()
-      .map(
-        activity =>
-          activity &&
-          activity.set(
-            'unread',
-            new Date(activity.timestamp) > new Date(readUntil) ||
-              exceptFor.includes(activity.id),
-          ),
-      ),
+    activities.map(
+      activity =>
+        activity &&
+        activity.set(
+          'unread',
+          new Date(activity.timestamp) > new Date(readUntil) ||
+            exceptFor.includes(activity.id),
+        ),
+    ),
 );

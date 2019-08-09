@@ -39,11 +39,11 @@ import { USER_EVENT_TYPES } from '~data/constants';
 import { ZERO_ADDRESS } from '~utils/web3/constants';
 import { reduceToLastState } from '~utils/reducers';
 import {
+  formatFilterTopic,
   getDecoratedEvents,
   getEventLogs,
+  mapTopics,
   parseUserTransferEvent,
-  padTopicAddress,
-  getFilterFormatted,
 } from '~utils/web3/eventLogs';
 import {
   getUserProfileStore,
@@ -53,7 +53,12 @@ import {
 } from '~data/stores';
 import { createAddress } from '~types';
 import { getUserTasksReducer, getUserProfileReducer } from './reducers';
-import { getUserAddressByUsername, getUserTokenAddresses } from './utils';
+import {
+  decorateColonyEventPayload,
+  getExtensionAddresses,
+  getUserAddressByUsername,
+  getUserTokenAddresses,
+} from './utils';
 
 const {
   READ_UNTIL,
@@ -438,11 +443,121 @@ export const checkUsernameIsAvailable: Query<
   },
 };
 
+const getColonyEventsForUserInbox = async (
+  colonyClient: ColonyClient,
+  walletAddress: Address,
+) => {
+  const {
+    contract: { address: colonyAddress },
+    events: { DomainAdded, ColonyRoleSet },
+    tokenClient,
+    tokenClient: {
+      events: { Mint },
+      contract: { address: tokenAddress },
+    },
+    networkClient: {
+      contract: { address: colonyNetworkAddress },
+      events: { ColonyLabelRegistered },
+    },
+    networkClient,
+  } = colonyClient;
+
+  const extensionAddresses = await getExtensionAddresses(colonyClient);
+
+  const colonyLabelRegisteredEvents = await getDecoratedEvents(
+    networkClient,
+    // $FlowFixMe
+    mapTopics(ColonyLabelRegistered.interface.topics[0], colonyAddress),
+    {
+      blocksBack: 400000,
+      events: [ColonyLabelRegistered],
+    },
+  );
+
+  const roleAssignmentEvents = await getDecoratedEvents(
+    colonyClient,
+    {
+      // @TODO: Allow null values on log topics filter
+      // $FlowFixMe
+      ...mapTopics(
+        ColonyRoleSet.interface.topics[0],
+        // $FlowFixMe
+        null,
+        // $FlowFixMe
+        null,
+        formatFilterTopic(COLONY_ROLES[COLONY_ROLE_ADMINISTRATION]),
+      ),
+      address: colonyAddress,
+    },
+    {
+      blocksBack: 400000,
+      events: [ColonyRoleSet],
+    },
+  );
+
+  const domainAddedEvents = await getDecoratedEvents(
+    colonyClient,
+    {
+      address: colonyAddress,
+    },
+    {
+      blocksBack: 400000,
+      events: [DomainAdded],
+    },
+  );
+
+  const tokenMintedEvents = await getDecoratedEvents(
+    tokenClient,
+    {
+      address: tokenAddress,
+    },
+    {
+      blocksBack: 400000,
+      events: [Mint],
+    },
+  );
+
+  const colonyEvents = [
+    ...tokenMintedEvents,
+    ...domainAddedEvents.filter(
+      // Filter out the root domain added event
+      ({ event }) => event.domainId !== 1,
+    ),
+    ...roleAssignmentEvents.filter(
+      ({ transaction: { from }, event }) =>
+        // Filter out assignments from/to the same user, and assignments
+        // for extension contracts
+        from !== event.address && !extensionAddresses.includes(event.address),
+    ),
+    // Filter out events from this user
+  ].filter(({ transaction: { from } }) => from !== walletAddress);
+
+  const normalized = [
+    ...colonyLabelRegisteredEvents.map(event =>
+      normalizeTransactionLog(colonyNetworkAddress, event),
+    ),
+    ...colonyEvents.map(event => normalizeTransactionLog(colonyAddress, event)),
+  ];
+
+  return normalized.map(decorateColonyEventPayload).filter(Boolean);
+};
+
+const getAllColonyEventsForUserInbox = async (
+  colonyClients: ColonyClient[],
+  walletAddress: Address,
+) => {
+  const events = await Promise.all(
+    colonyClients.map(colonyClient =>
+      getColonyEventsForUserInbox(colonyClient, walletAddress),
+    ),
+  );
+  return flatten(events);
+};
+
 export const getUserInboxActivity: Query<
   {|
     userInboxStore: UserInboxStore,
     colonyClients: ColonyClient[],
-    colonyNetworkClient: NetworkClient,
     walletAddress: Address,
   |},
   {|
@@ -482,141 +597,26 @@ export const getUserInboxActivity: Query<
     );
     return {
       colonyClients,
-      colonyNetworkClient: colonyManager.networkClient,
       userInboxStore,
       walletAddress,
     };
   },
-  async execute({
-    colonyClients,
-    colonyNetworkClient,
-    userInboxStore,
-    walletAddress,
-  }) {
-    const {
-      contract: { address: colonyNetworkAddress },
-      events: { ColonyLabelRegistered },
-    } = colonyNetworkClient;
-
-    const getLogTopicsFilter = (...args: *) => ({ topics: args });
-    const getColonyLabelRegisteredTopicsFilter = (colonyAddress: Address) =>
-      getLogTopicsFilter(
-        ColonyLabelRegistered.interface.topics[0],
-        padTopicAddress(colonyAddress),
-      );
-
-    // @TODO: Have a proper way to deal with "query fragments"
-    const aggregatedContractEvents = await Promise.all(
-      colonyClients.map(async colonyClient => {
-        const {
-          contract: { address: colonyAddress },
-          events: { DomainAdded, ColonyRoleSet },
-          tokenClient,
-          tokenClient: {
-            events: { Mint },
-            contract: { address: tokenAddress },
-          },
-        } = colonyClient;
-
-        // get extension addresses for the colony
-        const {
-          address: oldRolesAddress,
-        } = await colonyClient.getExtensionAddress.call({
-          contractName: 'OldRoles',
-        });
-        const {
-          address: oneTxAddress,
-        } = await colonyClient.getExtensionAddress.call({
-          contractName: 'OneTxPayment',
-        });
-        const extensionAddresses = [
-          createAddress(oldRolesAddress),
-          createAddress(oneTxAddress),
-        ];
-
-        // @TODO: Have a proper way to deal with query filters
-        const getAdminRoleAssignmentTopicsFilter = address => ({
-          ...getLogTopicsFilter(
-            ColonyRoleSet.interface.topics[0],
-            // @TODO: Allow null values on log topics filter
-            // $FlowFixMe: We should be able to pass in null values as part of the log topics filter!
-            null,
-            // $FlowFixMe: We should be able to pass in null values as part of the log topics filter!
-            null,
-            getFilterFormatted(COLONY_ROLES[COLONY_ROLE_ADMINISTRATION]),
-          ),
-          address,
-        });
-
-        const eventsFromRoleAssignment = (await getDecoratedEvents(
-          colonyClient,
-          getAdminRoleAssignmentTopicsFilter(colonyAddress),
-          {
-            blocksBack: 400000,
-            events: [ColonyRoleSet],
-          },
-        )).filter(
-          ({ transaction: { from }, event: { address: assigneeAddress } }) =>
-            from !== assigneeAddress &&
-            !extensionAddresses.includes(assigneeAddress),
-        );
-
-        const eventsFromColony = (await getDecoratedEvents(
-          colonyClient,
-          {
-            address: colonyAddress,
-          },
-          {
-            blocksBack: 400000,
-            events: [DomainAdded],
-          },
-        )).filter(({ event }) => event.domainId !== 1);
-
-        const eventsFromNetwork = await getDecoratedEvents(
-          colonyNetworkClient,
-          getColonyLabelRegisteredTopicsFilter(colonyAddress),
-          {
-            blocksBack: 400000,
-            events: [ColonyLabelRegistered],
-          },
-        );
-
-        const eventsFromToken = await getDecoratedEvents(
-          tokenClient,
-          {
-            address: tokenAddress,
-          },
-          {
-            blocksBack: 400000,
-            events: [Mint],
-          },
-        );
-
-        return [
-          ...eventsFromColony
-            .map(event => normalizeTransactionLog(colonyAddress, event))
-            .filter(({ meta: { actorId } }) => actorId !== walletAddress),
-          ...eventsFromNetwork.map(event =>
-            normalizeTransactionLog(colonyNetworkAddress, event),
-          ),
-          ...eventsFromToken
-            .map(event => normalizeTransactionLog(tokenAddress, event))
-            .filter(({ meta: { actorId } }) => actorId !== walletAddress),
-          ...eventsFromRoleAssignment
-            .map(event => normalizeTransactionLog(colonyAddress, event))
-            .filter(({ meta: { actorId } }) => actorId !== walletAddress),
-        ];
-      }),
+  async execute({ colonyClients, userInboxStore, walletAddress }) {
+    const colonyEvents = await getAllColonyEventsForUserInbox(
+      colonyClients,
+      walletAddress,
     );
 
-    const contractEvents = flatten(aggregatedContractEvents);
     const storeEvents = userInboxStore
       .all()
       .map(event =>
         normalizeDDBStoreEvent(userInboxStore.address.toString(), event),
       );
 
-    return storeEvents.concat(contractEvents).filter(Boolean);
+    // Sort all events in descending date order
+    return [...storeEvents, ...colonyEvents].sort(
+      (a, b) => b.meta.timestamp - a.meta.timestamp,
+    );
   },
 };
 

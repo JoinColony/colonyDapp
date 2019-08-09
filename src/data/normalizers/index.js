@@ -35,19 +35,15 @@ type TransactionLog = {|
 
 export const normalizeDDBStoreEvent = (
   storeAddress: string,
-  {
-    meta: { timestamp, id, userAddress: actorId },
-    payload: args,
-    type,
-  }: Event<*>,
+  { meta: { timestamp, id, userAddress }, payload, type }: Event<*>,
 ): NormalizedEvent => ({
   type,
-  payload: args,
+  payload,
   meta: {
     id,
     sourceType: DDB_EVENT_SOURCE,
     sourceId: storeAddress,
-    actorId,
+    actorId: userAddress,
     timestamp,
     version: VERSION,
   },
@@ -56,14 +52,14 @@ export const normalizeDDBStoreEvent = (
 export const normalizeTransactionLog = (
   contractAddress: string,
   {
-    event: { eventName: type, ...args },
+    event: { eventName, ...event },
     log: { logIndex, transactionHash },
     timestamp,
     transaction: { from },
   }: TransactionLog,
 ): NormalizedEvent => ({
-  type,
-  payload: args,
+  type: eventName,
+  payload: event,
   meta: {
     id: `${transactionHash}_${logIndex}`,
     sourceType: CONTRACT_EVENT_SOURCE,

@@ -3,7 +3,7 @@
 import type { ColonyNetworkClient } from '@colony/colony-js-client';
 
 import type { DDB } from '~lib/database';
-import type { Address, ENSCache } from '~types';
+import type { Address, ColonyClient, ENSCache } from '~types';
 import type { UserMetadataStore } from '~data/types';
 
 import { USER_EVENT_TYPES } from '~data/constants';
@@ -22,6 +22,7 @@ import {
   NOTIFICATION_EVENT_USER_TRANSFER,
 } from '~users/Inbox/events';
 import { log } from '~utils/debug';
+import { createAddress } from '~types';
 
 const {
   ASSIGNED_TO_TASK,
@@ -84,3 +85,51 @@ export const getUserAddressByUsername = (
     return null;
   }
 };
+
+export const getExtensionAddresses = async (
+  colonyClient: ColonyClient,
+): Promise<[Address, Address]> => {
+  const {
+    address: oldRolesAddress,
+  } = await colonyClient.getExtensionAddress.call({
+    contractName: 'OldRoles',
+  });
+  const { address: oneTxAddress } = await colonyClient.getExtensionAddress.call(
+    {
+      contractName: 'OneTxPayment',
+    },
+  );
+
+  return [createAddress(oldRolesAddress), createAddress(oneTxAddress)];
+};
+
+export const decorateColonyEventPayload = ({ payload, ...event }: *) => ({
+  ...event,
+  payload: {
+    ...payload,
+    ...(() => {
+      switch (event.type) {
+        case 'ColonyRoleSet':
+          return {
+            colonyAddress: payload.sourceId,
+            targetUserAddress: payload.address,
+          };
+        case 'DomainAdded':
+          return {
+            colonyAddress: payload.sourceId,
+          };
+        case 'Mint':
+          return {
+            colonyAddress: payload.address,
+            tokenAddress: payload.sourceId,
+          };
+        case 'ColonyLabelRegistered':
+          return {
+            colonyAddress: payload.colony,
+          };
+        default:
+          return {};
+      }
+    })(),
+  },
+});

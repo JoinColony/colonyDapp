@@ -60,9 +60,8 @@ const inboxItemsReducer: ReducerType<
         ),
       );
     }
-    case ACTIONS.USER_LOGOUT_SUCCESS: {
+    case ACTIONS.USER_LOGOUT_SUCCESS:
       return List();
-    }
     default:
       return state;
   }

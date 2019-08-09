@@ -36,6 +36,7 @@ import { friendlyColonyNameSelector } from '../../../../dashboard/selectors';
 import {
   friendlyUsernameSelector,
   currentUserSelector,
+  usernameSelector,
 } from '../../../selectors';
 import { transformNotificationEventNames } from '../../../data/utils';
 
@@ -68,12 +69,10 @@ const getType = (eventType: string): EventType => {
   return type === 'action' || type === 'notification' ? type : 'notification';
 };
 
+// Suggestion: consider adding an optional <Link> wrapper in this component?
 const makeInboxDetail = (value: any, formatFn?: (value: any) => any) =>
   value ? (
-    <span
-      title={formatFn ? formatFn(value) : value}
-      className={styles.inboxDetail}
-    >
+    <span title={formatFn ? '' : value} className={styles.inboxDetail}>
       {formatFn ? formatFn(value) : value}
     </span>
   ) : null;
@@ -88,49 +87,19 @@ const UnreadIndicator = ({ type }: { type: EventType }) => (
   />
 );
 
-/* Some inbox items link somewhere, others open a modal so it's important to differentiate here */
-const ConditionalWrapper = ({
-  to,
-  children,
-}: // event,
-// user,
-{
-  to?: string,
-  children: Node,
-  // event: string,
-  // user?: {},
-}) => {
-  /**
-   * @todo Handle inbox event types dynamically.
-   * @body Make this happen dynamically, we can't create a condition for each inbox event
-  if (event === 'actionWorkerInviteReceived') {
-    const { colonyAddress, draftId } = event;
-    return (
-      <DialogLink
-        to="TaskInviteDialog"
-        props={{
-          assignee: { profile: user },
-          colonyAddress,
-          draftId,
-        }}
-      >
-        {({ open }) => (
-          <Button className={styles.noStyleButton} onClick={open}>
-            <div className={styles.inboxDetails}>{children}</div>
-          </Button>
-        )}
-      </DialogLink>
-    );
-  }
-  */
-  if (to) {
-    return (
-      <Link to={to} className={styles.fullWidthLink}>
-        <div className={styles.inboxDetails}>{children}</div>
-      </Link>
-    );
-  }
-  return <div className={styles.inboxDetails}>{children}</div>;
+const WithLink = ({ to, children }: { to?: string, children: Node }) =>
+  to ? (
+    <Link to={to} className={styles.fullWidthLink}>
+      <div className={styles.inboxDetails}>{children}</div>
+    </Link>
+  ) : (
+    <div className={styles.inboxDetails}>{children}</div>
+  );
+
+const readActions = {
+  submit: ACTIONS.INBOX_MARK_NOTIFICATION_READ,
+  success: ACTIONS.INBOX_MARK_NOTIFICATION_READ_SUCCESS,
+  error: ACTIONS.INBOX_MARK_NOTIFICATION_READ_ERROR,
 };
 
 const InboxItem = ({
@@ -139,50 +108,21 @@ const InboxItem = ({
     type: eventType,
     id,
     context: {
-      address,
-      colony: colonyArg,
       amount,
+      colonyAddress,
       comment,
-      taskTitle,
       domainId,
+      draftId,
       setTo,
-      targetUserAddress: targetAddress,
+      targetUserAddress,
+      taskTitle,
+      tokenAddress,
     },
     onClickRoute,
-    sourceId,
     sourceAddress: sourceUserAddress,
     timestamp,
   },
 }: Props) => {
-  let colonyAddress;
-  let tokenAddress;
-  let targetUserAddress = targetAddress;
-  /*
-   * @NOTE:
-   *
-   * This will be fixed by the PR that closes issue colonyDapp#1170
-   *
-   * More: https://github.com/joincolony/colonyDapp#1170
-   */
-  switch (eventType) {
-    case 'ColonyRoleSet':
-      colonyAddress = sourceId;
-      targetUserAddress = address;
-      break;
-    case 'DomainAdded':
-      colonyAddress = sourceId;
-      break;
-    case 'Mint':
-      colonyAddress = address;
-      tokenAddress = sourceId;
-      break;
-    case 'ColonyLabelRegistered':
-      colonyAddress = colonyArg;
-      break;
-    default:
-      break;
-  }
-
   const { data: user, isFetching: isFetchingUser } = useDataFetcher<UserType>(
     userFetcher,
     [sourceUserAddress],
@@ -191,9 +131,13 @@ const InboxItem = ({
   const sourceUserDisplayWithFallback = useSelector(friendlyUsernameSelector, [
     sourceUserAddress,
   ]);
+  const sourceUsername = user && user.profile && user.profile.username;
 
   const currentUser = useSelector(currentUserSelector);
   const targetUserDisplayWithFallback = useSelector(friendlyUsernameSelector, [
+    targetUserAddress || currentUser.profile.walletAddress,
+  ]);
+  const targetUsername = useSelector(usernameSelector, [
     targetUserAddress || currentUser.profile.walletAddress,
   ]);
 
@@ -209,40 +153,32 @@ const InboxItem = ({
     friendlyColonyNameSelector,
     [colonyAddress],
   );
-  const colonyNameWithFallback = colony && colony.colonyName;
+  const colonyName = colony && colony.colonyName;
 
   const { data: domains, isFetching: isFetchingDomains } = useDataFetcher<
     DomainType[],
   >(domainsFetcher, [colonyAddress], [colonyAddress]);
+  const currentDomain =
+    domains && domains.find(domain => domain.id === domainId || 0);
 
   const {
     data: token,
     isFetching: isFetchingToken,
   } = useDataFetcher<TokenType>(tokenFetcher, [tokenAddress], [tokenAddress]);
-  const currentDomain =
-    domains &&
-    domains.find(
-      ({ id: currentDomainId }) => currentDomainId === domainId || 0,
-    );
-
-  const readActions = {
-    submit: ACTIONS.INBOX_MARK_NOTIFICATION_READ,
-    success: ACTIONS.INBOX_MARK_NOTIFICATION_READ_SUCCESS,
-    error: ACTIONS.INBOX_MARK_NOTIFICATION_READ_ERROR,
-  };
 
   const transform = useCallback(mergePayload({ id, timestamp }), [
     id,
     timestamp,
   ]);
   const markAsRead = useAsyncFunction({ ...readActions, transform });
+
+  const isFetching =
+    isFetchingUser || isFetchingColony || isFetchingDomains || isFetchingToken;
+
   return (
-    <TableRow className={styles.inboxRow} onClick={() => markAsRead(id)}>
+    <TableRow onClick={() => markAsRead(id)}>
       <TableCell className={styles.inboxRowCell}>
-        {isFetchingUser ||
-        isFetchingColony ||
-        isFetchingDomains ||
-        isFetchingToken ? (
+        {isFetching ? (
           <div className={styles.spinnerWrapper}>
             <SpinnerLoader
               loadingText={LOCAL_MSG.loadingText}
@@ -250,11 +186,7 @@ const InboxItem = ({
             />
           </div>
         ) : (
-          <ConditionalWrapper
-            to={onClickRoute}
-            event={transformNotificationEventNames(eventType)}
-            user={(user && user.profile) || {}}
-          >
+          <WithLink to={onClickRoute}>
             {unread && <UnreadIndicator type={getType(eventType)} />}
             {user && (
               <UserAvatar
@@ -283,75 +215,102 @@ const InboxItem = ({
                   colonyAddress: makeInboxDetail(colonyAddress),
                   colonyDisplayName: makeInboxDetail(
                     colonyDisplayNameWithFallback,
+                    value =>
+                      colonyName ? (
+                        <Link to={`colony/${colonyName}`}>{value}</Link>
+                      ) : (
+                        value
+                      ),
                   ),
-                  colonyName: makeInboxDetail(colonyNameWithFallback),
                   comment: makeInboxDetail(comment),
                   domainName: makeInboxDetail(
                     currentDomain && currentDomain.name,
                   ),
-                  otherUser: makeInboxDetail(targetUserDisplayWithFallback),
-                  task: makeInboxDetail(taskTitle),
+                  otherUser: makeInboxDetail(
+                    targetUserDisplayWithFallback,
+                    value =>
+                      targetUsername ? (
+                        <Link to={`user/${targetUsername}`}>{value}</Link>
+                      ) : (
+                        value
+                      ),
+                  ),
+                  task: makeInboxDetail(taskTitle, value =>
+                    colonyName && draftId ? (
+                      <Link to={`colony/${colonyName}/task/${draftId}`}>
+                        {value}
+                      </Link>
+                    ) : (
+                      value
+                    ),
+                  ),
                   time: makeInboxDetail(timestamp, value => (
                     <TimeRelative value={value} />
                   )),
-                  user: makeInboxDetail(sourceUserDisplayWithFallback),
+                  user: makeInboxDetail(sourceUserDisplayWithFallback, value =>
+                    sourceUsername ? (
+                      <Link to={`user/${sourceUsername}`}>{value}</Link>
+                    ) : (
+                      value
+                    ),
+                  ),
                   setTo,
                 }}
               />
             </span>
 
             <span className={styles.additionalDetails}>
-              {colony && colony.colonyName && currentDomain && (
+              {colonyName && (
                 <span
-                  title={colonyNameWithFallback}
+                  title={colonyName}
                   className={styles.additionalDetailsTruncate}
                 >
-                  <FormattedMessage
-                    {...MSG.metaColonyAndDomain}
-                    values={{
-                      colonyName: colonyNameWithFallback,
-                      domainName: currentDomain && currentDomain.name,
-                    }}
-                  />
-                </span>
-              )}
-              {colony && colony.colonyName && !currentDomain && (
-                <span
-                  title={colonyNameWithFallback}
-                  className={styles.additionalDetailsTruncate}
-                >
-                  <FormattedMessage
-                    {...MSG.metaColonyOnly}
-                    values={{
-                      colonyName: colonyNameWithFallback,
-                    }}
-                  />
+                  {currentDomain ? (
+                    <FormattedMessage
+                      {...MSG.metaColonyAndDomain}
+                      values={{
+                        colonyDisplayName: (
+                          <Link to={`colony/${colonyName}`}>
+                            {colonyDisplayNameWithFallback}
+                          </Link>
+                        ),
+                        domainName: currentDomain && currentDomain.name,
+                      }}
+                    />
+                  ) : (
+                    <FormattedMessage
+                      {...MSG.metaColonyOnly}
+                      values={{
+                        colonyDisplayName: (
+                          <Link to={`colony/${colonyName}`}>
+                            {colonyDisplayNameWithFallback}
+                          </Link>
+                        ),
+                      }}
+                    />
+                  )}
                 </span>
               )}
 
               {amount && token && (
                 <span>
                   <span className={styles.pipe}>|</span>
-                  <span className={styles.amount}>
-                    <Numeral
-                      suffix={` ${token ? token.symbol : ''}`}
-                      integerSeparator=""
-                      unit={(token && token.decimals) || 18}
-                      value={amount}
-                      appearance={{ size: 'small', theme: 'grey' }}
-                    />
-                  </span>
+                  <Numeral
+                    suffix={` ${token ? token.symbol : ''}`}
+                    integerSeparator=""
+                    unit={(token && token.decimals) || 18}
+                    value={amount}
+                    appearance={{ size: 'small', theme: 'grey' }}
+                  />
                 </span>
               )}
 
-              {((colony && colony.colonyName) || amount) && (
-                <span className={styles.pipe}>|</span>
-              )}
+              {(colonyName || amount) && <span className={styles.pipe}>|</span>}
               <span className={styles.time}>
                 {timestamp && <TimeRelative value={new Date(timestamp)} />}
               </span>
             </span>
-          </ConditionalWrapper>
+          </WithLink>
         )}
       </TableCell>
     </TableRow>
