@@ -37,6 +37,10 @@ const MSG = defineMessages({
     id: 'dashboard.TaskFeed.TaskFeedCompleteInfo.receiptRecipientText',
     defaultMessage: 'Recipient Address: {address}',
   },
+  tokenAddressText: {
+    id: 'dashboard.TaskFeed.TaskFeedCompleteInfo.tokenAddressText',
+    defaultMessage: 'Token Address: {tokenAddress}',
+  },
   receiptViewTxLinkText: {
     id: 'dashboard.TaskFeed.TaskFeedCompleteInfo.receiptViewTxLinkText',
     defaultMessage: 'View the task on Etherscan',
@@ -114,6 +118,13 @@ const TaskFeedCompleteInfo = ({
                 {...MSG.receiptRecipientText}
                 values={{
                   address: workerAddress,
+                }}
+              />
+              <br />
+              <FormattedMessage
+                {...MSG.tokenAddressText}
+                values={{
+                  tokenAddress: paymentTokenAddress,
                 }}
               />
               <br />
