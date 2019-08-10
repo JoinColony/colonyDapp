@@ -1,9 +1,12 @@
 /* @flow */
 
 import type { FormikProps } from 'formik';
-
+// $FlowFixMe upgrade flow
 import React, { useCallback } from 'react';
 import { defineMessages } from 'react-intl';
+
+import type { DomainType } from '~immutable';
+import type { Address } from '~types';
 
 import type { ActionTypeString } from '~redux';
 import type { ActionTransformFnType } from '~utils/actions';
@@ -13,8 +16,6 @@ import Button from '~core/Button';
 import Dialog, { DialogSection } from '~core/Dialog';
 import { ActionForm, InputLabel, Input } from '~core/Fields';
 import Heading from '~core/Heading';
-
-// import styles from './DomainEditDialog.css';
 
 const MSG = defineMessages({
   title: {
@@ -36,6 +37,8 @@ const MSG = defineMessages({
 });
 
 type Props = {|
+  domain: DomainType,
+  colonyAddress: Address,
   cancel: () => void,
   close: () => void,
   submit: ActionTypeString,
@@ -43,6 +46,8 @@ type Props = {|
   error: ActionTypeString,
   transform?: ActionTransformFnType,
 |};
+
+const displayName = 'core.DomainEditDialog';
 
 const DomainEditDialog = ({
   domain,
@@ -105,6 +110,6 @@ const DomainEditDialog = ({
   );
 };
 
-DomainEditDialog.displayName = 'core.DomainEditDialog';
+DomainEditDialog.displayName = displayName;
 
 export default DomainEditDialog;

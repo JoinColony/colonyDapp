@@ -3,6 +3,7 @@ import React from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 
 import type { DomainType } from '~immutable';
+import type { Address } from '~types';
 
 import { ACTIONS } from '~redux';
 import { TableRow, TableCell } from '~core/Table';
@@ -34,11 +35,12 @@ type Props = {|
    */
   domain: DomainType,
   viewOnly: boolean,
+  colonyAddress: Address,
 |};
 
 const DomainListItem = ({
+  contributions,
   domain,
-  contributions = 25,
   viewOnly = true,
   colonyAddress,
 }: Props) => (
