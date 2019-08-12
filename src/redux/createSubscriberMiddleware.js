@@ -6,10 +6,14 @@ type Next = (Action<*>) => any;
 
 // eslint-disable-next-line import/prefer-default-export
 export const createSubscriberMiddleware = (...actionPairs: string[][]) => {
-  const startActions = new Set<string>(actionPairs.map(([start]) => start));
-  const stopActions = new Map<string, string>(
-    actionPairs.map(([start, stop]) => [stop, start]),
+  const [startActions, stopActions] = actionPairs.reduce(
+    ([startSet, stopMap], [start, stop]) => [
+      startSet.add(start),
+      stopMap.set(stop, start),
+    ],
+    [new Set<string>(), new Map<string, string>()],
   );
+
   const subscriptionCounts = new Map<string, number>();
 
   return () => (next: Next) => (action: Action<*>) => {

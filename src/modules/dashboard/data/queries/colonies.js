@@ -523,7 +523,7 @@ export const subscribeToColonyTasks: Subscription<
     |},
   },
 > = {
-  name: 'getColonyTasks',
+  name: 'subscribeToColonyTasks',
   context: colonyContext,
   async prepare(
     {

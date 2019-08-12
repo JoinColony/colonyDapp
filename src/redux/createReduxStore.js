@@ -18,6 +18,13 @@ import ACTIONS from './actions';
 
 const sagaMiddleware = createSagaMiddleware({ context });
 
+/*
+ * @todo Remove action black-hole Redux middlewares
+ * @body We're using some custom middleware which swallows up actions. This can
+ * end up being really confusing, so we should seek to remove them in favour of
+ * more proper solutions.
+ */
+
 // This is symptom-fighting for #1299 and the underlying issue has not
 // been resolved yet. For now, only fetch actions with a key are guarded against.
 const duplicateActionGuardMiddleware = createDuplicateActionGuardMiddleware(

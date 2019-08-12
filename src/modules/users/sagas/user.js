@@ -773,6 +773,15 @@ export default function* setupUsersSagas(): Saga<void> {
     userSubscribedColoniesFetch,
   );
   yield takeEvery(ACTIONS.INBOX_ITEMS_FETCH, inboxItemsFetch);
+  yield takeEvery(ACTIONS.USER_SUB_START, userSubStart);
+  yield takeEvery(
+    ACTIONS.USER_SUBSCRIBED_TASKS_SUB_START,
+    userSubscribedTasksSubStart,
+  );
+  yield takeEvery(
+    ACTIONS.USER_SUBSCRIBED_COLONIES_SUB_START,
+    userSubscribedColoniesSubStart,
+  );
   yield takeLatest(
     ACTIONS.USERNAME_CHECK_AVAILABILITY,
     usernameCheckAvailability,
@@ -784,13 +793,4 @@ export default function* setupUsersSagas(): Saga<void> {
   yield takeLatest(ACTIONS.USER_AVATAR_REMOVE, userAvatarRemove);
   yield takeLatest(ACTIONS.USER_AVATAR_UPLOAD, userAvatarUpload);
   yield takeLatest(ACTIONS.USER_TOKENS_UPDATE, userTokensUpdate);
-  yield takeLatest(ACTIONS.USER_SUB_START, userSubStart);
-  yield takeLatest(
-    ACTIONS.USER_SUBSCRIBED_TASKS_SUB_START,
-    userSubscribedTasksSubStart,
-  );
-  yield takeLatest(
-    ACTIONS.USER_SUBSCRIBED_COLONIES_SUB_START,
-    userSubscribedColoniesSubStart,
-  );
 }
