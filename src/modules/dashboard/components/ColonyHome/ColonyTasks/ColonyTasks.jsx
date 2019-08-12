@@ -12,8 +12,8 @@ import type { TaskMetadataMap } from '~immutable';
 
 import { ACTIONS } from '~redux';
 import { mergePayload } from '~utils/actions';
-import { useDataFetcher, useSelector } from '~utils/hooks';
-import { colonyTaskMetadataFetcher } from '../../../fetchers';
+import { useDataSubscriber, useSelector } from '~utils/hooks';
+import { colonyTaskMetadataSubscriber } from '../../../subscribers';
 import { walletAddressSelector } from '../../../../users/selectors';
 
 import TaskList from '../../TaskList';
@@ -134,8 +134,8 @@ const ColonyTasks = ({
     [dispatch, setIsTaskBeingCreated],
   );
 
-  const { data: taskMetadata, isFetching } = useDataFetcher<TaskMetadataMap>(
-    colonyTaskMetadataFetcher,
+  const { data: taskMetadata, isFetching } = useDataSubscriber<TaskMetadataMap>(
+    colonyTaskMetadataSubscriber,
     [colonyAddress],
     [colonyAddress],
   );

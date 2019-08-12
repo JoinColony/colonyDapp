@@ -26,14 +26,19 @@ import { UserProfileRecord, UserRecord } from '~immutable';
 import { ACTIONS } from '~redux';
 import HookedUserAvatar from '~users/HookedUserAvatar';
 import { mapPayload, mergePayload, pipe } from '~utils/actions';
-import { useDataFetcher, useDataMapFetcher, useSelector } from '~utils/hooks';
+import {
+  useDataSubscriber,
+  useDataMapFetcher,
+  useSelector,
+} from '~utils/hooks';
 
 import WrappedPayout from './WrappedPayout.jsx';
-import { colonyFetcher } from '../../fetchers';
+import { colonySubscriber } from '../../subscribers';
 import { taskSelector, taskRequestsSelector } from '../../selectors';
 import { useColonyTokens } from '../../hooks/useColonyTokens';
 
-import { userFetcher, usersByAddressFetcher } from '../../../users/fetchers';
+import { usersByAddressFetcher } from '../../../users/fetchers';
+import { userSubscriber } from '../../../users/subscribers';
 import { allUsersAddressesSelector } from '../../../users/selectors';
 import { createAddress } from '../../../../types';
 
@@ -178,8 +183,8 @@ const TaskEditDialog = ({
   const {
     data: colonyData,
     isFetching: isFetchingColony,
-  } = useDataFetcher<ColonyType>(
-    colonyFetcher,
+  } = useDataSubscriber<ColonyType>(
+    colonySubscriber,
     [colonyAddress],
     [colonyAddress],
   );
@@ -206,7 +211,11 @@ const TaskEditDialog = ({
   const {
     data: existingWorkerObj,
     isFetching: isFetchingExistingWorker,
-  } = useDataFetcher<UserType>(userFetcher, [workerAddress], [workerAddress]);
+  } = useDataSubscriber<UserType>(
+    userSubscriber,
+    [workerAddress],
+    [workerAddress],
+  );
   const existingWorker =
     !!workerAddress && !existingWorkerObj
       ? UserRecord({

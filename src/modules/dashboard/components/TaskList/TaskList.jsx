@@ -12,12 +12,16 @@ import type { DomainId, TaskDraftId, TaskType } from '~immutable';
 import { mergePayload } from '~utils/actions';
 import { TASK_STATE } from '~immutable';
 
-import { useDataTupleFetcher, useSelector, useDataFetcher } from '~utils/hooks';
+import {
+  useDataTupleSubscriber,
+  useSelector,
+  useDataSubscriber,
+} from '~utils/hooks';
 
-import { TASKS_FILTER_OPTIONS } from '../shared/tasksFilter';
 import { ACTIONS } from '~redux';
 
-import { tasksByIdFetcher, userColoniesFetcher } from '../../fetchers';
+import { TASKS_FILTER_OPTIONS } from '../shared/tasksFilter';
+import { tasksByIdSubscriber, userColoniesSubscriber } from '../../subscribers';
 import { colonyNameSelector } from '../../selectors';
 import { currentUserSelector } from '../../../users/selectors';
 
@@ -84,7 +88,10 @@ const TaskList = ({
   walletAddress,
   colonyAddress,
 }: Props) => {
-  const tasksData = useDataTupleFetcher<TaskType>(tasksByIdFetcher, draftIds);
+  const tasksData = useDataTupleSubscriber<TaskType>(
+    tasksByIdSubscriber,
+    draftIds,
+  );
   const filter = useCallback(
     ({ creatorAddress, workerAddress, currentState, domainId }: TaskType) => {
       if (filteredDomainId && filteredDomainId !== domainId) return false;
@@ -138,8 +145,8 @@ const TaskList = ({
   );
 
   const currentUser = useSelector(currentUserSelector);
-  const { data: colonyAddresses } = useDataFetcher<Address[]>(
-    userColoniesFetcher,
+  const { data: colonyAddresses } = useDataSubscriber<Address[]>(
+    userColoniesSubscriber,
     [currentUser.profile.walletAddress],
     [
       currentUser.profile.walletAddress,

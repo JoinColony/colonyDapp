@@ -8,6 +8,7 @@ import type {
   ENSCache,
   NetworkClient,
   Query,
+  Subscription,
   UserProfileStore,
   UserInboxStore,
   UserMetadataStore,
@@ -661,5 +662,90 @@ export const getUserNotificationMetadata: Query<
       readUntil,
       exceptFor,
     };
+  },
+};
+
+export const subscribeToUser: Subscription<
+  UserProfileStore,
+  UserProfileStoreMetadata,
+  void,
+  UserProfileType,
+> = {
+  name: 'subscribeToUser',
+  context: [CONTEXT.DDB_INSTANCE],
+  prepare: prepareProfileStoreQuery,
+  async execute(profileStore) {
+    return emitter => [
+      profileStore.subscribe(events =>
+        emitter(
+          events &&
+            events.reduce(getUserProfileReducer, {
+              walletAddress: ZERO_ADDRESS,
+              inboxStoreAddress: '',
+              metadataStoreAddress: '',
+            }),
+        ),
+      ),
+    ];
+  },
+};
+
+export const subscribeToUserTasks: Subscription<
+  ?UserMetadataStore,
+  UserMetadataStoreMetadata,
+  void,
+  *,
+> = {
+  name: 'subscribeToUserTasks',
+  context: [CONTEXT.COLONY_MANAGER, CONTEXT.DDB_INSTANCE, CONTEXT.WALLET],
+  prepare: prepareMetadataStoreQuery,
+  async execute(metadataStore) {
+    if (!metadataStore) throw new Error('No such user metadata store');
+    return emitter => [
+      metadataStore.subscribe(events =>
+        emitter(
+          events &&
+            events
+              .filter(
+                ({ type }) =>
+                  type === SUBSCRIBED_TO_TASK ||
+                  type === UNSUBSCRIBED_FROM_TASK,
+              )
+              .reduce(getUserTasksReducer, []),
+        ),
+      ),
+    ];
+  },
+};
+
+export const subscribeToUserColonies: Subscription<
+  ?UserMetadataStore,
+  UserMetadataStoreMetadata,
+  void,
+  *,
+> = {
+  name: 'subscribeToUserColonies',
+  context: [CONTEXT.COLONY_MANAGER, CONTEXT.DDB_INSTANCE, CONTEXT.WALLET],
+  prepare: prepareMetadataStoreQuery,
+  async execute(metadataStore) {
+    if (!metadataStore) throw new Error('No such user metadata store');
+    return emitter => [
+      metadataStore.subscribe(events =>
+        emitter(
+          events &&
+            reduceToLastState(
+              events.filter(
+                ({ type }) =>
+                  type === SUBSCRIBED_TO_COLONY ||
+                  type === UNSUBSCRIBED_FROM_COLONY,
+              ),
+              ({ payload: { colonyAddress } }) => colonyAddress,
+              ({ type }) => type,
+            )
+              .filter(([, type]) => type === SUBSCRIBED_TO_COLONY)
+              .map(([colonyAddress]) => createAddress(colonyAddress)),
+        ),
+      ),
+    ];
   },
 };

@@ -6,11 +6,11 @@ import { defineMessages } from 'react-intl';
 import type { Address } from '~types';
 import type { UserType } from '~immutable';
 
-import { useDataFetcher, useSelector } from '~utils/hooks';
+import { useDataSubscriber, useSelector } from '~utils/hooks';
 import ColonyGrid from '~dashboard/ColonyGrid';
 import Link from '~core/Link';
 
-import { userColoniesFetcher } from '../../../dashboard/fetchers';
+import { userColoniesSubscriber } from '../../../dashboard/subscribers';
 import { currentUserSelector, friendlyUsernameSelector } from '../../selectors';
 
 import { CREATE_COLONY_ROUTE } from '~routes';
@@ -41,8 +41,8 @@ const MSG = defineMessages({
 const displayName = 'users.UserProfile.UserColonies';
 
 const UserColonies = ({ user }: Props) => {
-  const { data: colonyAddresses } = useDataFetcher<Address[]>(
-    userColoniesFetcher,
+  const { data: colonyAddresses } = useDataSubscriber<Address[]>(
+    userColoniesSubscriber,
     [user.profile.walletAddress],
     [user.profile.walletAddress, user.profile.metadataStoreAddress],
   );

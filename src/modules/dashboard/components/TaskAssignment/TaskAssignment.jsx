@@ -6,12 +6,12 @@ import type { TaskProps, UserType } from '~immutable';
 
 import Assignment from '~core/Assignment';
 import { SpinnerLoader } from '~core/Preloaders';
-import { useDataFetcher, useSelector } from '~utils/hooks';
+import { useDataSubscriber, useSelector } from '~utils/hooks';
 
 import { taskSelector } from '../../selectors';
 import { useColonyNativeToken } from '../../hooks/useColonyNativeToken';
 import { useColonyTokens } from '../../hooks/useColonyTokens';
-import { userFetcher } from '../../../users/fetchers';
+import { userSubscriber } from '../../../users/subscribers';
 
 type Props = TaskProps<{
   colonyAddress: *,
@@ -26,8 +26,8 @@ const TaskAssignment = ({ colonyAddress, draftId }: Props) => {
   } = useSelector(taskSelector, [draftId]);
   const nativeTokenReference = useColonyNativeToken(colonyAddress);
   const [, tokenOptions] = useColonyTokens(colonyAddress);
-  const { data: worker } = useDataFetcher<UserType>(
-    userFetcher,
+  const { data: worker } = useDataSubscriber<UserType>(
+    userSubscriber,
     [workerAddress],
     [workerAddress],
   );

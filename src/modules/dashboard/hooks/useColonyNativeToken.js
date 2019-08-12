@@ -7,17 +7,17 @@ import { useMappedState } from 'redux-react-hook';
 import type { ColonyType, TokenReferenceType } from '~immutable';
 import type { Address } from '~types';
 
-import { useDataFetcher } from '~utils/hooks';
+import { useDataSubscriber } from '~utils/hooks';
 
-import { colonyFetcher } from '../fetchers';
+import { colonySubscriber } from '../subscribers';
 import { colonyNativeTokenSelector } from '../selectors';
 
 // eslint-disable-next-line import/prefer-default-export
 export const useColonyNativeToken = (
   colonyAddress: ?Address,
 ): ?TokenReferenceType => {
-  const { data: fetchedColony } = useDataFetcher<ColonyType>(
-    colonyFetcher,
+  const { data: fetchedColony } = useDataSubscriber<ColonyType>(
+    colonySubscriber,
     [colonyAddress],
     [colonyAddress],
   );

@@ -3,9 +3,9 @@
 import type { ColonyType, TokenReferenceType, TokenType } from '~immutable';
 import type { Address } from '~types';
 
-import { useDataFetcher, useSelector } from '~utils/hooks';
+import { useDataSubscriber, useSelector } from '~utils/hooks';
 
-import { colonyFetcher } from '../fetchers';
+import { colonySubscriber } from '../subscribers';
 import {
   allFromColonyTokensSelector,
   colonyTokensSelector,
@@ -15,8 +15,8 @@ import {
 export const useColonyTokens = (
   colonyAddress: ?Address,
 ): [?(TokenReferenceType[]), ?(TokenType[])] => {
-  const { data: fetchedColony } = useDataFetcher<ColonyType>(
-    colonyFetcher,
+  const { data: fetchedColony } = useDataSubscriber<ColonyType>(
+    colonySubscriber,
     [colonyAddress],
     [colonyAddress],
   );

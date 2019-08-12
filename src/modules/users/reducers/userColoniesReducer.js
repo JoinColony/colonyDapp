@@ -21,6 +21,7 @@ const userColoniesReducer: ReducerType<
     USER_COLONY_SUBSCRIBE_SUCCESS: *,
     USER_COLONY_UNSUBSCRIBE_SUCCESS: *,
     USER_SUBSCRIBED_COLONIES_FETCH_SUCCESS: *,
+    USER_SUBSCRIBED_COLONIES_SUB_EVENTS: *,
   |},
 > = (state = ImmutableMap(), action) => {
   switch (action.type) {
@@ -36,12 +37,12 @@ const userColoniesReducer: ReducerType<
         addrs ? addrs.delete(colonyAddress) : ImmutableSet(),
       );
     }
+    case ACTIONS.USER_SUBSCRIBED_COLONIES_SUB_EVENTS:
     case ACTIONS.USER_SUBSCRIBED_COLONIES_FETCH_SUCCESS: {
       const { colonyAddresses, walletAddress } = action.payload;
-      return state.setIn(
-        [walletAddress, 'record'],
-        ImmutableSet(colonyAddresses),
-      );
+      return state
+        .setIn([walletAddress, 'record'], ImmutableSet(colonyAddresses))
+        .setIn([walletAddress, 'isFetching'], false);
     }
     default: {
       return state;
@@ -50,6 +51,9 @@ const userColoniesReducer: ReducerType<
 };
 
 export default withDataRecordMap<ColoniesMap, Address[]>(
-  ACTIONS.USER_SUBSCRIBED_COLONIES_FETCH,
+  new Set([
+    ACTIONS.USER_SUBSCRIBED_COLONIES_FETCH,
+    ACTIONS.USER_SUBSCRIBED_COLONIES_SUB_START,
+  ]),
   ImmutableMap(),
 )(userColoniesReducer);

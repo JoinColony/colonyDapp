@@ -157,6 +157,22 @@ export type UserActionTypes = {|
     UserProfileType,
     void,
   >,
+  USER_SUB_START: ActionTypeWithPayloadAndMeta<
+    typeof ACTIONS.USER_SUB_START,
+    {| userAddress: Address |},
+    WithKey,
+  >,
+  USER_SUB_STOP: ActionTypeWithPayloadAndMeta<
+    typeof ACTIONS.USER_SUB_STOP,
+    {| userAddress: Address |},
+    WithKey,
+  >,
+  USER_SUB_EVENTS: ActionTypeWithPayloadAndMeta<
+    typeof ACTIONS.USER_SUB_EVENTS,
+    UserProfileType,
+    WithKey,
+  >,
+  USER_SUB_ERROR: ErrorActionType<typeof ACTIONS.USER_SUB_ERROR, WithKey>,
   USER_SUBSCRIBED_COLONIES_FETCH: ActionTypeWithPayloadAndMeta<
     typeof ACTIONS.USER_SUBSCRIBED_COLONIES_FETCH,
     {| walletAddress: Address, metadataStoreAddress: string |},
@@ -171,6 +187,28 @@ export type UserActionTypes = {|
     {| colonyAddresses: Address[], walletAddress: Address |},
     WithKey,
   >,
+  USER_SUBSCRIBED_COLONIES_SUB_START: ActionTypeWithPayloadAndMeta<
+    typeof ACTIONS.USER_SUBSCRIBED_COLONIES_SUB_START,
+    {| walletAddress: Address, metadataStoreAddress: string |},
+    WithKey,
+  >,
+  USER_SUBSCRIBED_COLONIES_SUB_STOP: ActionTypeWithPayloadAndMeta<
+    typeof ACTIONS.USER_SUBSCRIBED_COLONIES_SUB_STOP,
+    {| walletAddress: Address |},
+    WithKey,
+  >,
+  USER_SUBSCRIBED_COLONIES_SUB_EVENTS: ActionTypeWithPayloadAndMeta<
+    typeof ACTIONS.USER_SUBSCRIBED_COLONIES_SUB_EVENTS,
+    {|
+      colonyAddresses: Address[],
+      walletAddress: Address,
+    |},
+    WithKey,
+  >,
+  USER_SUBSCRIBED_COLONIES_SUB_ERROR: ErrorActionType<
+    typeof ACTIONS.USER_SUBSCRIBED_COLONIES_SUB_ERROR,
+    WithKey,
+  >,
   USER_SUBSCRIBED_TASKS_FETCH: ActionType<
     typeof ACTIONS.USER_SUBSCRIBED_TASKS_FETCH,
   >,
@@ -181,6 +219,20 @@ export type UserActionTypes = {|
   USER_SUBSCRIBED_TASKS_FETCH_SUCCESS: ActionTypeWithPayload<
     typeof ACTIONS.USER_SUBSCRIBED_TASKS_FETCH_SUCCESS,
     [Address, TaskDraftId][],
+  >,
+  USER_SUBSCRIBED_TASKS_SUB_START: ActionType<
+    typeof ACTIONS.USER_SUBSCRIBED_TASKS_SUB_START,
+  >,
+  USER_SUBSCRIBED_TASKS_SUB_STOP: ActionType<
+    typeof ACTIONS.USER_SUBSCRIBED_TASKS_SUB_STOP,
+  >,
+  USER_SUBSCRIBED_TASKS_SUB_EVENTS: ActionTypeWithPayload<
+    typeof ACTIONS.USER_SUBSCRIBED_TASKS_SUB_EVENTS,
+    [Address, TaskDraftId][],
+  >,
+  USER_SUBSCRIBED_TASKS_SUB_ERROR: ErrorActionType<
+    typeof ACTIONS.USER_SUBSCRIBED_TASKS_SUB_ERROR,
+    void,
   >,
   USER_TASK_SUBSCRIBE: ActionTypeWithPayload<
     typeof ACTIONS.USER_TASK_SUBSCRIBE,

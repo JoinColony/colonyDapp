@@ -16,6 +16,7 @@ const userProfilesReducer: ReducerType<
     USER_AVATAR_UPLOAD_SUCCESS: *,
     USER_FETCH_SUCCESS: *,
     USER_PROFILE_UPDATE_SUCCESS: *,
+    USER_SUB_EVENTS: *,
   |},
 > = (state = ImmutableMap(), action) => {
   switch (action.type) {
@@ -59,12 +60,26 @@ const userProfilesReducer: ReducerType<
       return state.setIn([address, 'record', 'profile', 'avatarHash'], hash);
     }
 
+    case ACTIONS.USER_SUB_EVENTS: {
+      const {
+        payload,
+        payload: { walletAddress },
+      } = action;
+      const profile = UserProfileRecord(payload);
+      const recordPath = [walletAddress, 'record'];
+      return state.getIn(recordPath)
+        ? state.setIn([...recordPath, 'profile'], profile)
+        : state
+            .setIn([walletAddress, 'isFetching'], false)
+            .setIn(recordPath, UserRecord({ profile }));
+    }
+
     default:
       return state;
   }
 };
 
 export default withDataRecordMap<UsersMap, UserRecordType>(
-  new Set([ACTIONS.USER_FETCH]),
+  new Set([ACTIONS.USER_FETCH, ACTIONS.USER_SUB_START]),
   ImmutableMap(),
 )(userProfilesReducer);

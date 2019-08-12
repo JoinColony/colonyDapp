@@ -9,7 +9,7 @@ import throttle from 'lodash/throttle';
 
 import type { Address } from '~types';
 
-import { useDataFetcher, useSelector } from '~utils/hooks';
+import { useDataSubscriber, useSelector } from '~utils/hooks';
 import { mergePayload } from '~utils/actions';
 import { ACTIONS } from '~redux';
 
@@ -17,7 +17,7 @@ import Button, { ActionButton } from '~core/Button';
 import { Tooltip } from '~core/Popover';
 import { SpinnerLoader } from '~core/Preloaders';
 
-import { userColoniesFetcher } from '../../../fetchers';
+import { userColoniesSubscriber } from '../../../subscribers';
 import { currentUserSelector } from '../../../../users/selectors';
 
 import styles from './ColonySubscribe.css';
@@ -67,8 +67,8 @@ const ColonySubscribe = ({ colonyAddress }: Props) => {
   );
 
   const currentUser = useSelector(currentUserSelector);
-  const { data: colonyAddresses } = useDataFetcher<Address[]>(
-    userColoniesFetcher,
+  const { data: colonyAddresses } = useDataSubscriber<Address[]>(
+    userColoniesSubscriber,
     [currentUser.profile.walletAddress],
     [
       currentUser.profile.walletAddress,

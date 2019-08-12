@@ -129,7 +129,9 @@ const coloniesReducer: ReducerType<
         ),
       });
       return state.get(colonyAddress)
-        ? state.setIn([colonyAddress, 'record'], record)
+        ? state
+            .setIn([colonyAddress, 'record'], record)
+            .setIn([colonyAddress, 'isFetching'], false)
         : state.set(colonyAddress, DataRecord<ColonyRecordType>({ record }));
     }
     default:

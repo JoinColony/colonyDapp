@@ -293,7 +293,6 @@ export const useDataSubscriber = <T>(
   { start, stop, select }: DataSubscriber<T>,
   selectArgs: any[],
   subArgs: any[],
-  { alwaysSubscribe = true }: { alwaysSubscribe?: boolean } = {},
 ): {|
   data: ?T,
   isFetching: boolean,
@@ -313,7 +312,7 @@ export const useDataSubscriber = <T>(
     Infinity,
     isFirstMount.current,
     subArgs,
-    alwaysSubscribe,
+    true,
   );
 
   useEffect(
@@ -346,7 +345,6 @@ export const useDataSubscriber = <T>(
 export const useDataTupleSubscriber = <T>(
   { start, stop, select }: DataTupleSubscriber<T>,
   keys: Array<*>,
-  { alwaysSubscribe = true }: { alwaysSubscribe?: boolean } = {},
 ): {|
   data: ?T,
   key: string,
@@ -369,10 +367,10 @@ export const useDataTupleSubscriber = <T>(
           Infinity,
           isFirstMount.current,
           [entry],
-          alwaysSubscribe,
+          true,
         ),
       ),
-    [allData, alwaysSubscribe, memoizedKeys],
+    [allData, memoizedKeys],
   );
 
   useEffect(
