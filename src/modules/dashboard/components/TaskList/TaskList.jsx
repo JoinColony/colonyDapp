@@ -15,14 +15,13 @@ import { TASK_STATE } from '~immutable';
 import {
   useDataTupleSubscriber,
   useSelector,
-  useDataFetcher,
+  useDataSubscriber,
 } from '~utils/hooks';
 
 import { ACTIONS } from '~redux';
 
 import { TASKS_FILTER_OPTIONS } from '../shared/tasksFilter';
-import { tasksByIdSubscriber } from '../../subscribers';
-import { userColoniesFetcher } from '../../fetchers';
+import { tasksByIdSubscriber, userColoniesSubscriber } from '../../subscribers';
 import { colonyNameSelector } from '../../selectors';
 import { currentUserSelector } from '../../../users/selectors';
 
@@ -146,8 +145,8 @@ const TaskList = ({
   );
 
   const currentUser = useSelector(currentUserSelector);
-  const { data: colonyAddresses } = useDataFetcher<Address[]>(
-    userColoniesFetcher,
+  const { data: colonyAddresses } = useDataSubscriber<Address[]>(
+    userColoniesSubscriber,
     [currentUser.profile.walletAddress],
     [
       currentUser.profile.walletAddress,
