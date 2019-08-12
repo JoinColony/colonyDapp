@@ -19,7 +19,7 @@ import { useDataFetcher, useDataSubscriber, useSelector } from '~utils/hooks';
 import { mergePayload } from '~utils/actions';
 import { Tab, Tabs, TabList, TabPanel } from '~core/Tabs';
 import { Select } from '~core/Fields';
-import Button, { ActionButton } from '~core/Button';
+import Button, { ActionButton, DialogActionButton } from '~core/Button';
 import RecoveryModeAlert from '~admin/RecoveryModeAlert';
 import LoadingTemplate from '~pages/LoadingTemplate';
 import {
@@ -67,6 +67,28 @@ const MSG = defineMessages({
     id: 'dashboard.ColonyHome.newTaskButton',
     defaultMessage: 'New Task',
   },
+  recoverColonyButton: {
+    id: 'dashboard.ColonyHome.recoverColonyButton',
+    defaultMessage: 'Recover Colony?',
+  },
+  recoverColonyHeading: {
+    id: 'dashboard.ColonyHome.recoverColonyHeading',
+    defaultMessage: 'Really recover this Colony?',
+  },
+  recoverColonyParagraph: {
+    id: 'dashboard.ColonyHome.recoverColonyParagraph',
+    defaultMessage: `Please ONLY do this if you know what you're doing.
+    This will effectively DELETE all of your Colony's metadata
+    and recreate it from scratch.`,
+  },
+  recoverColonyConfirmButton: {
+    id: 'dashboard.ColonyHome.recoverColonyConfirmButton',
+    defaultMessage: 'Yes, RECOVER this Colony',
+  },
+  recoverColonyCancelButton: {
+    id: 'dashboard.ColonyHome.recoverColonyCancelButton',
+    defaultMessage: 'Hell NO! Let me out!',
+  },
 });
 
 type Props = {|
@@ -85,6 +107,7 @@ const ColonyHome = ({
   );
   const [filteredDomainId, setFilteredDomainId] = useState();
   const [isTaskBeingCreated, setIsTaskBeingCreated] = useState(false);
+  const [showRecoverOption, setRecoverOption] = useState(false);
 
   const dispatch = useDispatch();
   /*
@@ -100,6 +123,13 @@ const ColonyHome = ({
       }),
     [dispatch, setIsTaskBeingCreated],
   );
+
+  useEffect(() => {
+    const timeout = setTimeout(() => {
+      setRecoverOption(true);
+    }, 10 * 1000);
+    return () => clearTimeout(timeout);
+  });
 
   const formSetFilter = useCallback(
     (_: string, value: TasksFilterOptionType) => setFilterOption(value),
@@ -155,7 +185,27 @@ const ColonyHome = ({
     isFetchingPermissions ||
     !nativeTokenRef
   ) {
-    return <LoadingTemplate loadingText={MSG.loadingText} />;
+    return (
+      <LoadingTemplate loadingText={MSG.loadingText}>
+        {showRecoverOption && colonyAddress && (
+          <DialogActionButton
+            dialog="ConfirmDialog"
+            dialogProps={{
+              appearance: { theme: 'danger' },
+              heading: MSG.recoverColonyHeading,
+              children: <FormattedMessage {...MSG.recoverColonyParagraph} />,
+              cancelButtonText: MSG.recoverColonyCancelButton,
+              confirmButtonText: MSG.recoverColonyConfirmButton,
+            }}
+            submit={ACTIONS.COLONY_RECOVER_DB}
+            error={ACTIONS.COLONY_RECOVER_DB_ERROR}
+            success={ACTIONS.COLONY_RECOVER_DB_SUCCESS}
+            text={MSG.recoverColonyButton}
+            values={{ colonyAddress }}
+          />
+        )}
+      </LoadingTemplate>
+    );
   }
 
   const filterSelect = (

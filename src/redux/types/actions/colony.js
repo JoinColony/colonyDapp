@@ -281,6 +281,20 @@ export type ColonyActionTypes = {|
     ColonyType,
     WithKey,
   >,
+  COLONY_RECOVER_DB: UniqueActionType<
+    typeof ACTIONS.COLONY_RECOVER_DB,
+    {| colonyAddress: Address |},
+    void,
+  >,
+  COLONY_RECOVER_DB_ERROR: ErrorActionType<
+    typeof ACTIONS.COLONY_RECOVER_DB_ERROR,
+    void,
+  >,
+  COLONY_RECOVER_DB_SUCCESS: UniqueActionType<
+    typeof ACTIONS.COLONY_RECOVER_DB_SUCCESS,
+    void,
+    void,
+  >,
   COLONY_RECOVERY_MODE_ENTER: UniqueActionType<
     typeof ACTIONS.COLONY_RECOVERY_MODE_ENTER,
     {| colonyAddress: Address |},
