@@ -90,7 +90,7 @@ const MSG = defineMessages({
   },
   rootDomain: {
     id: 'dashboard.TaskFeedEvent.rootDomain',
-    defaultMessage: 'Root',
+    defaultMessage: 'root',
   },
   titleSet: {
     id: 'dashboard.TaskFeedEvent.titleSet',
