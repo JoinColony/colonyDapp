@@ -138,7 +138,7 @@ const TaskFeedEventDomainSet = ({
       values={{
         domainName: (
           <span title={domainName} className={styles.highlight}>
-            {`#${domainName}`}
+            {domainName}
           </span>
         ),
         user: (
