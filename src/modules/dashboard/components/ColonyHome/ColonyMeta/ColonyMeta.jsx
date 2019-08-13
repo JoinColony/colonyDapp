@@ -151,7 +151,6 @@ const ColonyMeta = ({
             address={founder}
             className={styles.userAvatar}
             showInfo
-            showLink
           />
         ) : (
           <div className={styles.spinnerContainer}>
@@ -173,7 +172,6 @@ const ColonyMeta = ({
                   address={adminAddress}
                   className={styles.userAvatar}
                   showInfo
-                  showLink
                 />
               );
             }

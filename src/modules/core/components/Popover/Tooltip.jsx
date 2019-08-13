@@ -44,7 +44,7 @@ const Tooltip = ({
   isOpen,
 }: Props) => (
   <Popover
-    appearance={{ theme: 'dark' }}
+    // appearance={{ theme: 'dark' }}
     trigger={content ? trigger : 'disabled'}
     openDelay={200}
     content={renderContent(content)}

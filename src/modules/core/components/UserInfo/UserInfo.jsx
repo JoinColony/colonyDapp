@@ -6,7 +6,7 @@ import type { UserType } from '~immutable';
 
 import { Tooltip } from '~core/Popover';
 import UserMention from '~core/UserMention';
-import MaskedAddress from '~core/MaskedAddress';
+import CopyableAddress from '~core/CopyableAddress';
 
 import styles from './UserInfo.css';
 
@@ -38,16 +38,12 @@ const renderTooltipContent = (user?: UserType) => {
           <UserMention username={username} hasLink={false} />
         </span>
       )}
-      {walletAddress && (
-        <p className={styles.walletAddress}>
-          <MaskedAddress address={walletAddress} />
-        </p>
-      )}
+      {walletAddress && <CopyableAddress full>{walletAddress}</CopyableAddress>}
     </div>
   );
 };
 
-const UserInfo = ({ user, children, trigger = 'hover' }: Props) => (
+const UserInfo = ({ user, children, trigger = 'click' }: Props) => (
   <Tooltip
     content={renderTooltipContent(user)}
     trigger={user ? trigger : 'disabled'}

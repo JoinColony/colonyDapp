@@ -62,7 +62,7 @@ const TaskFeedComment = ({
     >
       {!isCurrentUser && (
         <div className={styles.commentAvatar}>
-          <UserAvatar address={authorAddress} showInfo showLink size="s" />
+          <UserAvatar address={authorAddress} showInfo size="s" />
         </div>
       )}
       <div className={styles.commentMain}>

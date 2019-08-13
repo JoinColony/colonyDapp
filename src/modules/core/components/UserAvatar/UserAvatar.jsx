@@ -42,8 +42,9 @@ const UserAvatar = ({
   user,
 }: Props) => {
   const username = user && user.profile.username;
+
   const avatar = (
-    <UserInfo trigger={user && showInfo ? 'hover' : 'disabled'} user={user}>
+    <UserInfo trigger={user && showInfo ? 'click' : 'disabled'} user={user}>
       <Avatar
         avatarURL={avatarURL}
         className={className}
