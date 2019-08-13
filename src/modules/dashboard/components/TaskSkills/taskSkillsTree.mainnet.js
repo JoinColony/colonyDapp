@@ -156,12 +156,12 @@ const taskSkills: ConsumableItem[] = [
     parent: -2,
   },
   {
-    id: 31,
+    id: 85,
     name: 'Quality Assurance',
     parent: -2,
   },
   {
-    id: 32,
+    id: 86,
     name: 'Developer Relations',
     parent: -2,
   },
