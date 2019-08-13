@@ -5,7 +5,7 @@ import React from 'react';
 import type { UserType } from '~immutable';
 
 import Avatar from '~core/Avatar';
-import UserInfo from '~core/UserInfo';
+import InfoPopover from '~core/InfoPopover';
 import Link from '~core/NavLink';
 
 import type { Address } from '~types';
@@ -21,7 +21,7 @@ export type Props = {|
   notSet?: boolean,
   /** If true the UserAvatar links to the user's profile */
   showLink?: boolean,
-  /** Whether to show or not show the UserInfo tooltip over the avatar */
+  /** Whether to show or not show the InfoPopover tooltip over the avatar */
   showInfo?: boolean,
   /** Avatar size (default is between `s` and `m`) */
   size?: 'xxs' | 'xs' | 's' | 'm' | 'l' | 'xl',
@@ -44,7 +44,7 @@ const UserAvatar = ({
   const username = user && user.profile.username;
 
   const avatar = (
-    <UserInfo trigger={user && showInfo ? 'click' : 'disabled'} user={user}>
+    <InfoPopover trigger={user && showInfo ? 'click' : 'disabled'} user={user}>
       <Avatar
         avatarURL={avatarURL}
         className={className}
@@ -54,7 +54,7 @@ const UserAvatar = ({
         size={size}
         title={showInfo ? '' : username || address}
       />
-    </UserInfo>
+    </InfoPopover>
   );
   if (showLink && username) {
     // Won't this always be lowercase?

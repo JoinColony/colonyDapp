@@ -25,6 +25,7 @@ type Props = {|
   showArrow: boolean,
   /** Set the open state from outside */
   isOpen?: boolean,
+  darkTheme?: boolean,
 |};
 
 const renderContent = content => (
@@ -42,9 +43,10 @@ const Tooltip = ({
   showArrow,
   trigger,
   isOpen,
+  darkTheme = true,
 }: Props) => (
   <Popover
-    // appearance={{ theme: 'dark' }}
+    appearance={darkTheme ? { theme: 'dark' } : undefined}
     trigger={content ? trigger : 'disabled'}
     openDelay={200}
     content={renderContent(content)}

@@ -10,13 +10,17 @@ import type { TokenType, TaskFeedItemType } from '~immutable';
 
 import TimeRelative from '~core/TimeRelative';
 import Numeral from '~core/Numeral';
+import InfoPopover from '~core/InfoPopover';
 import taskSkillsTree from '../TaskSkills/taskSkillsTree';
 
 import { TASK_EVENT_TYPES } from '~data/constants';
 import { useDataFetcher, useSelector } from '~utils/hooks';
 import { domainSelector } from '../../selectors';
 
-import { friendlyUsernameSelector } from '../../../users/selectors';
+import {
+  friendlyUsernameSelector,
+  userSelector,
+} from '../../../users/selectors';
 import { tokenFetcher } from '../../fetchers';
 
 import styles from '~dashboard/TaskFeed/TaskFeedEvent.css';
@@ -156,14 +160,23 @@ const TaskFeedEventCreated = ({
     meta: { userAddress },
   },
 }: *) => {
-  const user = useSelector(friendlyUsernameSelector, [userAddress]);
+  const userRecord = useSelector(userSelector, [userAddress]);
+  const {
+    profile: { displayName, username },
+  } = userRecord;
+  const showInfo = true;
   return (
     <FormattedMessage
       {...MSG.created}
       values={{
         user: (
-          <span title={user} className={styles.highlight}>
-            {user}
+          <span title={displayName} className={styles.highlight}>
+            <InfoPopover
+              trigger={username && showInfo ? 'click' : 'disabled'}
+              user={userRecord}
+            >
+              <span>{displayName}</span>
+            </InfoPopover>
           </span>
         ),
       }}
