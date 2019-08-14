@@ -22,6 +22,22 @@ export type DomainActionTypes = {|
     {| colonyAddress: string, domain: DomainType |},
     void,
   >,
+  DOMAIN_EDIT: UniqueActionType<
+    typeof ACTIONS.DOMAIN_EDIT,
+    {|
+      colonyAddress: Address,
+      domainName: string,
+      parentDomainId?: number,
+      domainId: number,
+    |},
+    void,
+  >,
+  DOMAIN_EDIT_ERROR: ErrorActionType<typeof ACTIONS.DOMAIN_EDIT_ERROR, void>,
+  DOMAIN_EDIT_SUCCESS: UniqueActionType<
+    typeof ACTIONS.DOMAIN_EDIT_SUCCESS,
+    {| colonyAddress: string, domainId: number, domainName: string |},
+    void,
+  >,
   DOMAIN_CREATE_TX: ActionType<typeof ACTIONS.DOMAIN_CREATE_TX>,
   DOMAIN_CREATE_TX_ERROR: ErrorActionType<
     typeof ACTIONS.DOMAIN_CREATE_TX_ERROR,

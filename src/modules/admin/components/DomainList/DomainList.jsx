@@ -5,6 +5,7 @@ import React from 'react';
 import nanoid from 'nanoid';
 
 import type { DomainType } from '~immutable';
+import type { Address } from '~types';
 
 import { Table, TableBody } from '~core/Table';
 import Heading from '~core/Heading';
@@ -27,16 +28,17 @@ type Props = {|
    * Title to show before the list
    */
   label?: string | MessageDescriptor,
-  /*
-   * Method to call when removing the domain
-   * Gets passed down to `DomainListItem`
-   */
-  onRemove: DomainType => any,
+  colonyAddress: Address,
 |};
 
 const displayName: string = 'admin.DomainList';
 
-const DomainList = ({ domains, viewOnly = true, label, onRemove }: Props) => (
+const DomainList = ({
+  domains,
+  viewOnly = true,
+  label,
+  colonyAddress,
+}: Props) => (
   <div className={styles.main}>
     {label && (
       <Heading
@@ -53,7 +55,7 @@ const DomainList = ({ domains, viewOnly = true, label, onRemove }: Props) => (
                 key={nanoid(currentIndex)}
                 domain={domain}
                 viewOnly={viewOnly}
-                onRemove={() => onRemove(domain)}
+                colonyAddress={colonyAddress}
               />
             ))
           ) : (

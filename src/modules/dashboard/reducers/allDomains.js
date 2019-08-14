@@ -11,6 +11,7 @@ import type { ReducerType } from '~redux';
 
 type DomainActions = {
   DOMAIN_CREATE_SUCCESS: *,
+  DOMAIN_EDIT_SUCCESS: *,
   COLONY_DOMAINS_FETCH: *,
   COLONY_DOMAINS_FETCH_SUCCESS: *,
   COLONY_DOMAINS_FETCH_ERROR: *,
@@ -36,7 +37,18 @@ const allDomainsReducer: ReducerType<AllDomainsMap, DomainActions> = (
             }),
           );
     }
-
+    case ACTIONS.DOMAIN_EDIT_SUCCESS: {
+      const { colonyAddress, domainName, domainId } = action.payload;
+      const path = [colonyAddress, 'record'];
+      return state.updateIn(
+        path,
+        domains =>
+          domains &&
+          domains
+            .filter(domain => domain.id !== domainId)
+            .add(DomainRecord({ id: domainId, name: domainName })),
+      );
+    }
     case ACTIONS.COLONY_DOMAINS_FETCH_SUCCESS: {
       const {
         meta: { key },

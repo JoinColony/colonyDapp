@@ -2,10 +2,12 @@
 import React from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 
-import type { DataType, DomainType } from '~immutable';
+import type { DomainType } from '~immutable';
+import type { Address } from '~types';
 
+import { ACTIONS } from '~redux';
 import { TableRow, TableCell } from '~core/Table';
-import Button from '~core/Button';
+import { DialogActionButton } from '~core/Button';
 
 import styles from './DomainListItem.css';
 
@@ -16,7 +18,11 @@ const MSG = defineMessages({
   },
   contributions: {
     id: 'admin.DomainList.DomainListItem.contributions',
-    defaultMessage: `Contributions: {contributions}`,
+    defaultMessage: `{contributions} Contributions`,
+  },
+  buttonEdit: {
+    id: 'admin.DomainList.DomainListItem.buttonEdit',
+    defaultMessage: 'Edit name',
   },
 });
 
@@ -29,47 +35,46 @@ type Props = {|
    */
   domain: DomainType,
   viewOnly: boolean,
-  /*
-   * Method to call when clicking the remove button
-   * Gets passed down to `DomainListItem`
-   */
-  onRemove: (DataType<DomainType>) => any,
+  colonyAddress: Address,
 |};
 
 const DomainListItem = ({
-  domain,
   contributions,
+  domain,
   viewOnly = true,
-  onRemove,
+  colonyAddress,
 }: Props) => (
   <TableRow className={styles.main}>
     <TableCell className={styles.domainDetails}>
       <span className={styles.domainName} title={domain.name}>
         {domain.name}
       </span>
+      {!viewOnly && (
+        <span
+          className={styles.editDomain}
+          title={MSG.buttonEdit.defaultMessage}
+        >
+          <DialogActionButton
+            dialog="DomainEditDialog"
+            dialogProps={{
+              domain,
+              colonyAddress,
+            }}
+            className={styles.customEditButton}
+            appearance={{ theme: 'blue' }}
+            text={MSG.buttonEdit}
+            submit={ACTIONS.DOMAIN_EDIT}
+            success={ACTIONS.DOMAIN_EDIT_SUCCESS}
+            error={ACTIONS.DOMAIN_EDIT_ERROR}
+          />
+        </span>
+      )}
       {contributions && (
         <span className={styles.contributions}>
           <FormattedMessage values={{ contributions }} {...MSG.contributions} />
         </span>
       )}
     </TableCell>
-
-    {/*
-     *
-     * We want to prevent rendering the table cell if it can't be acted upon
-     * Unfortunately, `TableRow` expects specifically a `TableCell` type, not a boolean
-     */
-    /* $FlowFixMe */
-    !viewOnly && (
-      <TableCell className={styles.userRemove}>
-        <Button
-          className={styles.customRemoveButton}
-          appearance={{ theme: 'primary' }}
-          text={MSG.buttonRemove}
-          onClick={onRemove}
-        />
-      </TableCell>
-    )}
   </TableRow>
 );
 

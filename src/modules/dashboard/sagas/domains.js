@@ -20,7 +20,7 @@ import { ACTIONS } from '~redux';
 
 import { createTransaction, getTxChannel } from '../../core/sagas';
 import { COLONY_CONTEXT } from '../../core/constants';
-import { createDomain } from '../data/commands';
+import { createDomain, editDomain } from '../data/commands';
 import { getColonyDomains } from '../data/queries';
 
 function* colonyDomainsFetch({
@@ -117,7 +117,38 @@ function* domainCreate({
   return null;
 }
 
+function* domainEdit({
+  payload: { colonyAddress, domainName, domainId },
+  meta,
+}: Action<typeof ACTIONS.DOMAIN_EDIT>): Saga<*> {
+  try {
+    /*
+     * Add an entry to the colony store.
+     * Get the domain ID from the payload
+     */
+    yield* executeCommand(editDomain, {
+      metadata: { colonyAddress },
+      args: {
+        domainId,
+        name: domainName,
+      },
+    });
+    /*
+     * Dispatch a success action with the newly-edited domain.
+     */
+    yield put<Action<typeof ACTIONS.DOMAIN_EDIT_SUCCESS>>({
+      type: ACTIONS.DOMAIN_EDIT_SUCCESS,
+      meta,
+      payload: { colonyAddress, domainId, domainName },
+    });
+  } catch (error) {
+    return yield putError(ACTIONS.DOMAIN_EDIT_ERROR, error, meta);
+  }
+  return null;
+}
+
 export default function* domainSagas(): Saga<void> {
   yield takeEvery(ACTIONS.COLONY_DOMAINS_FETCH, colonyDomainsFetch);
   yield takeEvery(ACTIONS.DOMAIN_CREATE, domainCreate);
+  yield takeEvery(ACTIONS.DOMAIN_EDIT, domainEdit);
 }

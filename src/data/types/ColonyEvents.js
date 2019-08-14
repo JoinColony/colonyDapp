@@ -10,6 +10,7 @@ const {
   COLONY_AVATAR_REMOVED,
   COLONY_AVATAR_UPLOADED,
   DOMAIN_CREATED,
+  DOMAIN_EDITED,
   COLONY_PROFILE_CREATED,
   COLONY_PROFILE_UPDATED,
   TASK_INDEX_STORE_REGISTERED,
@@ -34,6 +35,13 @@ export type ColonyEvents = {|
   >,
   DOMAIN_CREATED: EventDefinition<
     typeof DOMAIN_CREATED,
+    {|
+      domainId: number,
+      name: string,
+    |},
+  >,
+  DOMAIN_EDITED: EventDefinition<
+    typeof DOMAIN_EDITED,
     {|
       domainId: number,
       name: string,

@@ -15,7 +15,6 @@ import type {
   ColonyStore,
   ColonyTaskIndexStore,
   DDB,
-  Event,
   NetworkClient,
   Query,
   Subscription,
@@ -40,6 +39,7 @@ import { colonyReducer, colonyTasksReducer } from '../reducers';
 
 const {
   DOMAIN_CREATED,
+  DOMAIN_EDITED,
   TASK_STORE_REGISTERED,
   TASK_STORE_UNREGISTERED,
 } = COLONY_EVENT_TYPES;
@@ -429,8 +429,19 @@ export const getColonyDomains: Query<
   async execute(colonyStore) {
     return colonyStore
       .all()
-      .filter(({ type }) => type === DOMAIN_CREATED)
-      .map(({ payload: { domainId, name } }: Event<typeof DOMAIN_CREATED>) => ({
+      .filter(({ type }) => type === DOMAIN_CREATED || type === DOMAIN_EDITED)
+      .sort((first, second) => first.meta.timestamp - second.meta.timestamp)
+      .reduce((domains, event) => {
+        const {
+          payload: { domainId: currentDomainId },
+        } = event;
+        const difference = domains.filter(
+          ({ payload: { domainId } }) => currentDomainId !== domainId,
+        );
+
+        return [...difference, event];
+      }, [])
+      .map(({ payload: { domainId, name } }) => ({
         id: domainId,
         name,
       }));
