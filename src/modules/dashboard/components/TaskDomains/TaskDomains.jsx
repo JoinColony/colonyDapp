@@ -38,7 +38,7 @@ const MSG = defineMessages({
   },
   rootDomain: {
     id: 'dashboard.TaskDomains.rootDomain',
-    defaultMessage: 'Root',
+    defaultMessage: 'root',
   },
 });
 
