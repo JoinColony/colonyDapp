@@ -1,11 +1,6 @@
 /* @flow */
 
-import {
-  COLONY_ROLE_ADMINISTRATION,
-  COLONY_ROLE_ARCHITECTURE,
-  COLONY_ROLE_FUNDING,
-  COLONY_ROLE_ROOT,
-} from '@colony/colony-js-client';
+import { COLONY_ROLES } from '@colony/colony-js-client';
 
 import type { Address, ENSCache } from '~types';
 
@@ -93,7 +88,11 @@ const prepareColonyStoreQuery = async (
 
 export const getColonyRoles: ContractEventQuery<
   void,
-  { admins: Address[], founder: Address },
+  {
+    [domainId: number]: {
+      [address: Address]: { [role: $Keys<typeof COLONY_ROLES>]: boolean },
+    },
+  },
 > = {
   name: 'getColonyRoles',
   context,
@@ -130,8 +129,8 @@ export const getColonyRoles: ContractEventQuery<
       createAddress(oneTxAddress),
     ];
 
-    // reduce events to { [address]: { [role]: boolean } }
-    const addressRoles = events.reduce((acc, { address, setTo, role }) => {
+    // reduce events to { [domainId]: { [address]: { [role]: boolean } } }
+    return events.reduce((acc, { address, setTo, role, domainId }) => {
       const normalizedAddress = createAddress(address);
 
       // don't include roles of extensions
@@ -141,37 +140,15 @@ export const getColonyRoles: ContractEventQuery<
 
       return {
         ...acc,
-        [(normalizedAddress: string)]: {
-          ...acc[(normalizedAddress: string)],
-          [role]: setTo,
+        [domainId]: {
+          ...acc[domainId],
+          [(normalizedAddress: string)]: {
+            ...(acc[domainId] || {})[(normalizedAddress: string)],
+            [role]: setTo,
+          },
         },
       };
     }, {});
-
-    // find user with all the roles OldRoles sets for founder
-    const founder = createAddress(
-      Object.keys(addressRoles).find(
-        address =>
-          addressRoles[address][COLONY_ROLE_ADMINISTRATION] &&
-          addressRoles[address][COLONY_ROLE_ARCHITECTURE] &&
-          addressRoles[address][COLONY_ROLE_FUNDING] &&
-          addressRoles[address][COLONY_ROLE_ROOT],
-      ) || ZERO_ADDRESS,
-    );
-
-    // find users with administration role
-    const admins = Object.keys(addressRoles)
-      .filter(
-        address =>
-          addressRoles[address][COLONY_ROLE_ADMINISTRATION] &&
-          address !== founder,
-      )
-      .map(createAddress);
-
-    return {
-      admins,
-      founder,
-    };
   },
 };
 

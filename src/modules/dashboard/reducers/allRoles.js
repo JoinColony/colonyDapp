@@ -1,8 +1,8 @@
 /* @flow */
 
-import { fromJS, Map as ImmutableMap, Set as ImmutableSet } from 'immutable';
+import { Map as ImmutableMap, Set as ImmutableSet } from 'immutable';
 
-import { DataRecord, RolesRecord } from '~immutable';
+import { DataRecord } from '~immutable';
 import { withDataRecordMap } from '~utils/reducers';
 import { ACTIONS } from '~redux';
 
@@ -25,12 +25,25 @@ const allRolesReducer: ReducerType<AllRolesMap, RolesActions> = (
         meta: { key },
         payload: roles,
       } = action;
-      return state.set(
-        key,
-        DataRecord({
-          record: RolesRecord(fromJS(roles)),
-        }),
+      const record = ImmutableMap(
+        Object.entries(roles).map(([domainId, domainRoles]) => [
+          parseInt(domainId, 10),
+          ImmutableMap(
+            Object.entries(domainRoles).map(([userAddress, userRoles]) => [
+              userAddress,
+              ImmutableMap(Object.entries(userRoles)),
+            ]),
+          ),
+        ]),
       );
+      return state.get(key)
+        ? state.mergeIn([key, 'record'], record)
+        : state.set(
+            key,
+            DataRecord({
+              record,
+            }),
+          );
     }
     default:
       return state;

@@ -2,6 +2,8 @@
 
 import type BigNumber from 'bn.js';
 
+import { COLONY_ROLES } from '@colony/colony-js-client';
+
 import type { Address, ENSName, WithKey } from '~types';
 import type {
   ColonyType,
@@ -320,7 +322,11 @@ export type ColonyActionTypes = {|
   >,
   COLONY_ROLES_FETCH_SUCCESS: ActionTypeWithPayloadAndMeta<
     typeof ACTIONS.COLONY_ROLES_FETCH_SUCCESS,
-    { admins: Address[], founder: Address },
+    {
+      [domainId: number]: {
+        [address: Address]: { [role: $Keys<typeof COLONY_ROLES>]: boolean },
+      },
+    },
     WithKey,
   >,
   COLONY_SUB_START: ActionTypeWithPayloadAndMeta<

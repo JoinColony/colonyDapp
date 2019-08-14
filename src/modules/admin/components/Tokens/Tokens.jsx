@@ -6,16 +6,16 @@ import { defineMessages, FormattedMessage } from 'react-intl';
 import { useMappedState } from 'redux-react-hook';
 
 import type { DialogType } from '~core/Dialog';
-import type { RolesType, TokenType } from '~immutable';
+import type { TokenType } from '~immutable';
 import type { Address } from '~types';
 
 import Button from '~core/Button';
 import Heading from '~core/Heading';
 import withDialog from '~core/Dialog/withDialog';
 
-import { useDataFetcher } from '~utils/hooks';
+import { useDataFetcher, useOldRoles } from '~utils/hooks';
 
-import { rolesFetcher, tokenFetcher } from '../../../dashboard/fetchers';
+import { tokenFetcher } from '../../../dashboard/fetchers';
 import { useColonyNativeToken } from '../../../dashboard/hooks/useColonyNativeToken';
 import { useColonyTokens } from '../../../dashboard/hooks/useColonyTokens';
 import { walletAddressSelector } from '../../../users/selectors';
@@ -53,11 +53,7 @@ type Props = {
 
 const Tokens = ({ canMintNativeToken, colonyAddress, openDialog }: Props) => {
   // permissions checks
-  const { data: roles } = useDataFetcher<RolesType>(
-    rolesFetcher,
-    [colonyAddress],
-    [colonyAddress],
-  );
+  const { data: roles } = useOldRoles(colonyAddress);
   const walletAddress = useMappedState(walletAddressSelector);
   const canEdit = useMemo(() => canEditTokens(roles, walletAddress), [
     roles,

@@ -4,16 +4,16 @@ import React, { Fragment } from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 
 import type { Address } from '~types';
-import type { DomainType, RolesType, UserPermissionsType } from '~immutable';
+import type { DomainType, UserPermissionsType } from '~immutable';
 
 import { ACTIONS } from '~redux';
-import { useDataFetcher } from '~utils/hooks';
+import { useDataFetcher, useOldRoles } from '~utils/hooks';
 import { Tab, Tabs, TabList, TabPanel } from '~core/Tabs';
 import Heading from '~core/Heading';
 import { SpinnerLoader } from '~core/Preloaders';
 
 import { canAdminister } from '../../../users/checks';
-import { rolesFetcher, domainsFetcher } from '../../../dashboard/fetchers';
+import { domainsFetcher } from '../../../dashboard/fetchers';
 
 import { currentUserColonyPermissionsFetcher } from '../../../users/fetchers';
 
@@ -68,11 +68,7 @@ type Props = {|
 |};
 
 const Organizations = ({ colonyAddress }: Props) => {
-  const { data: roles } = useDataFetcher<RolesType>(
-    rolesFetcher,
-    [colonyAddress],
-    [colonyAddress],
-  );
+  const { data: roles } = useOldRoles(colonyAddress);
 
   const { data: domains } = useDataFetcher<DomainType[]>(
     domainsFetcher,
