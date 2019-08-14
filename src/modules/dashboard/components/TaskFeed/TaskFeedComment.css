@@ -9,6 +9,7 @@
 
 .commentAvatar {
   margin-right: var(--pad-medium);
+  cursor: pointer;
 }
 
 .commentMain {
