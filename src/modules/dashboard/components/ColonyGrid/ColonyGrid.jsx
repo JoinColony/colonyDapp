@@ -71,7 +71,7 @@ const ColonyGrid = ({
         </div>
         <div className={styles.colonyGrid}>
           {colonyAddresses.map(colonyAddress => (
-              <ColonyGridItem colonyAddress={colonyAddress} key={colonyAddress} />
+            <ColonyGridItem colonyAddress={colonyAddress} key={colonyAddress} />
           ))}
         </div>
       </div>
