@@ -1,14 +1,17 @@
 
 .main {
   composes: alignCenter from '~styles/text.css';
+  margin: 0 20px;
+  width: 66px;
 }
 
 .loader {
   display: flex;
   justify-content: center;
   align-items: center;
-  margin-bottom: 20px;
+  margin: 0 20px 20px 20px;
   min-height: 65px;
+  width: 66px;
 }
 
 .displayName {

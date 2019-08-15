@@ -19,11 +19,6 @@
   overflow: auto;
 }
 
-.colonyGridItem {
-  margin: 0 containerMarginLeft;
-  width: 66px;
-}
-
 .loader {
   display: flex;
   justify-content: center;
