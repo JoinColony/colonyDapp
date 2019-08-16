@@ -1,6 +1,15 @@
 /* @flow */
 
-import { COLONY_ROLES } from '@colony/colony-js-client';
+import {
+  COLONY_ROLES,
+  COLONY_ROLE_ADMINISTRATION,
+  COLONY_ROLE_ARBITRATION,
+  COLONY_ROLE_ARCHITECTURE,
+  COLONY_ROLE_ARCHITECTURE_SUBDOMAIN,
+  COLONY_ROLE_FUNDING,
+  COLONY_ROLE_RECOVERY,
+  COLONY_ROLE_ROOT,
+} from '@colony/colony-js-client';
 
 import type { Address, ENSCache } from '~types';
 
@@ -149,6 +158,72 @@ export const getColonyRoles: ContractEventQuery<
         },
       };
     }, {});
+  },
+};
+
+export const getColonyDomainUserRoles: ContractEventQuery<
+  { userAddress: Address, domainId: number },
+  { [role: $Keys<typeof COLONY_ROLES>]: boolean },
+> = {
+  name: 'getColonyDomainUserRoles',
+  context,
+  prepare: prepareColonyClientQuery,
+  async execute(colonyClient, { userAddress: address, domainId }) {
+    const [
+      ADMINISTRATION,
+      ARBITRATION,
+      ARCHITECTURE,
+      ARCHITECTURE_SUBDOMAIN,
+      FUNDING,
+      RECOVERY,
+      ROOT,
+    ] = await Promise.all([
+      colonyClient.hasColonyRole.call({
+        address,
+        domainId,
+        role: COLONY_ROLE_ADMINISTRATION,
+      }),
+      colonyClient.hasColonyRole.call({
+        address,
+        domainId,
+        role: COLONY_ROLE_ARBITRATION,
+      }),
+      colonyClient.hasColonyRole.call({
+        address,
+        domainId,
+        role: COLONY_ROLE_ARCHITECTURE,
+      }),
+      colonyClient.hasColonyRole.call({
+        address,
+        domainId,
+        role: COLONY_ROLE_ARCHITECTURE_SUBDOMAIN,
+      }),
+      colonyClient.hasColonyRole.call({
+        address,
+        domainId,
+        role: COLONY_ROLE_FUNDING,
+      }),
+      colonyClient.hasColonyRole.call({
+        address,
+        domainId,
+        role: COLONY_ROLE_RECOVERY,
+      }),
+      colonyClient.hasColonyRole.call({
+        address,
+        domainId,
+        role: COLONY_ROLE_ROOT,
+      }),
+    ]).then(results => results.map(({ hasRole }) => hasRole));
+
+    return {
+      ADMINISTRATION,
+      ARBITRATION,
+      ARCHITECTURE,
+      ARCHITECTURE_SUBDOMAIN,
+      FUNDING,
+      RECOVERY,
+      ROOT,
+    };
   },
 };
 

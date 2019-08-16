@@ -329,6 +329,25 @@ export type ColonyActionTypes = {|
     },
     WithKey,
   >,
+  COLONY_DOMAIN_USER_ROLES_FETCH: ActionTypeWithPayloadAndMeta<
+    typeof ACTIONS.COLONY_DOMAIN_USER_ROLES_FETCH,
+    {| colonyAddress: Address, domainId: number, userAddress: Address |},
+    WithKey,
+  >,
+  COLONY_DOMAIN_USER_ROLES_FETCH_ERROR: ErrorActionType<
+    typeof ACTIONS.COLONY_DOMAIN_USER_ROLES_FETCH_ERROR,
+    WithKey,
+  >,
+  COLONY_DOMAIN_USER_ROLES_FETCH_SUCCESS: ActionTypeWithPayloadAndMeta<
+    typeof ACTIONS.COLONY_DOMAIN_USER_ROLES_FETCH_SUCCESS,
+    {
+      roles: { [role: $Keys<typeof COLONY_ROLES>]: boolean },
+      colonyAddress: Address,
+      domainId: number,
+      userAddress: Address,
+    },
+    WithKey,
+  >,
   COLONY_SUB_START: ActionTypeWithPayloadAndMeta<
     typeof ACTIONS.COLONY_SUB_START,
     {| colonyAddress: Address |},

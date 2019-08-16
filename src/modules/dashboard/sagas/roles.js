@@ -10,7 +10,7 @@ import { ACTIONS } from '~redux';
 
 // import { getContext, CONTEXT } from '~context';
 
-import { getColonyRoles } from '../data/queries';
+import { getColonyRoles, getColonyDomainUserRoles } from '../data/queries';
 import { createTransaction, getTxChannel } from '../../core/sagas';
 import { COLONY_CONTEXT } from '../../core/constants';
 
@@ -34,6 +34,33 @@ function* colonyRolesFetch({
     });
   } catch (error) {
     return yield putError(ACTIONS.COLONY_ROLES_FETCH_ERROR, error, meta);
+  }
+  return null;
+}
+
+function* colonyDomainUserRolesFetch({
+  payload: { colonyAddress, domainId, userAddress },
+  meta,
+}: Action<typeof ACTIONS.COLONY_DOMAIN_USER_ROLES_FETCH>) {
+  try {
+    const roles = yield* executeQuery(getColonyDomainUserRoles, {
+      metadata: { colonyAddress },
+      args: { domainId, userAddress },
+    });
+    /*
+     * Dispatch the success action.
+     */
+    yield put<Action<typeof ACTIONS.COLONY_DOMAIN_USER_ROLES_FETCH_SUCCESS>>({
+      type: ACTIONS.COLONY_DOMAIN_USER_ROLES_FETCH_SUCCESS,
+      meta,
+      payload: { roles, colonyAddress, domainId, userAddress },
+    });
+  } catch (error) {
+    return yield putError(
+      ACTIONS.COLONY_DOMAIN_USER_ROLES_FETCH_ERROR,
+      error,
+      meta,
+    );
   }
   return null;
 }
@@ -162,4 +189,8 @@ export default function* rolesSagas(): Saga<void> {
   yield takeEvery(ACTIONS.COLONY_ROLES_FETCH, colonyRolesFetch);
   yield takeEvery(ACTIONS.COLONY_ADMIN_ADD, colonyAdminAdd);
   yield takeEvery(ACTIONS.COLONY_ADMIN_REMOVE, colonyAdminRemove);
+  yield takeEvery(
+    ACTIONS.COLONY_DOMAIN_USER_ROLES_FETCH,
+    colonyDomainUserRolesFetch,
+  );
 }

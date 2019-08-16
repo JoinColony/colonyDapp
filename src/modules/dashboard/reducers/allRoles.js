@@ -2,7 +2,6 @@
 
 import { Map as ImmutableMap, Set as ImmutableSet } from 'immutable';
 
-import { DataRecord } from '~immutable';
 import { withDataRecordMap } from '~utils/reducers';
 import { ACTIONS } from '~redux';
 
@@ -36,14 +35,22 @@ const allRolesReducer: ReducerType<AllRolesMap, RolesActions> = (
           ),
         ]),
       );
-      return state.get(key)
+      return state.getIn([key, 'record'])
         ? state.mergeIn([key, 'record'], record)
-        : state.set(
-            key,
-            DataRecord({
-              record,
-            }),
-          );
+        : // $FlowFixMe not sure why this is happening
+          state.setIn([key, 'record'], record);
+    }
+    case ACTIONS.COLONY_DOMAIN_USER_ROLES_FETCH_SUCCESS: {
+      const {
+        payload: { roles, colonyAddress, domainId, userAddress },
+      } = action;
+      const record = ImmutableMap(Object.entries(roles));
+      return state.getIn([colonyAddress, 'record'])
+        ? state.mergeIn(
+            [colonyAddress, 'record', domainId, userAddress],
+            record,
+          )
+        : state.setIn([colonyAddress, 'record', domainId, userAddress], record);
     }
     default:
       return state;
@@ -51,6 +58,9 @@ const allRolesReducer: ReducerType<AllRolesMap, RolesActions> = (
 };
 
 export default withDataRecordMap<AllRolesMap, ImmutableSet<string>>(
-  ACTIONS.COLONY_ROLES_FETCH,
+  new Set([
+    ACTIONS.COLONY_ROLES_FETCH,
+    ACTIONS.COLONY_DOMAIN_USER_ROLES_FETCH_SUCCESS,
+  ]),
   ImmutableMap(),
 )(allRolesReducer);
