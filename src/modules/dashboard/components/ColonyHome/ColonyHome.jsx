@@ -79,7 +79,7 @@ const MSG = defineMessages({
     id: 'dashboard.ColonyHome.recoverColonyParagraph',
     defaultMessage: `Please ONLY do this if you know what you're doing.
     This will effectively DELETE all of your Colony's metadata
-    and recreate it from scratch.`,
+    and recreate it from scratch. After that, the page will be reloaded!`,
   },
   recoverColonyConfirmButton: {
     id: 'dashboard.ColonyHome.recoverColonyConfirmButton',
@@ -87,13 +87,15 @@ const MSG = defineMessages({
   },
   recoverColonyCancelButton: {
     id: 'dashboard.ColonyHome.recoverColonyCancelButton',
-    defaultMessage: 'Hell NO! Let me out!',
+    defaultMessage: 'Nope! Take me back, please',
   },
 });
 
 type Props = {|
   match: Match,
 |};
+
+const COLONY_DB_RECOVER_BUTTON_TIMEOUT = 20 * 1000;
 
 const displayName = 'dashboard.ColonyHome';
 
@@ -127,7 +129,7 @@ const ColonyHome = ({
   useEffect(() => {
     const timeout = setTimeout(() => {
       setRecoverOption(true);
-    }, 10 * 1000);
+    }, COLONY_DB_RECOVER_BUTTON_TIMEOUT);
     return () => clearTimeout(timeout);
   });
 
