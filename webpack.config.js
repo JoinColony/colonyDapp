@@ -1,13 +1,12 @@
-/* eslint-disable flowtype/require-valid-file-annotation */
-
 const path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
+const ForkTsCheckerWebpackPlugin = require('fork-ts-checker-webpack-plugin');
 const Dotenv = require('dotenv-webpack');
 const webpack = require('webpack');
 
 const utils = require('./scripts/utils');
 
-const mode = process.env.NODE_ENV || 'development'
+const mode = process.env.NODE_ENV || 'development';
 
 /*
  * Wrapper method to generate aliases for all the dapp's modules
@@ -29,13 +28,14 @@ const generateModulesAliases = () => {
 };
 
 const config = {
-  entry: './src/index.js',
+  entry: './src/index.ts',
   mode,
   devtool: 'source-map',
   output: {
     filename: 'bundle.js',
     path: path.resolve(__dirname, 'dist'),
     publicPath: '/',
+    pathinfo: false,
   },
   resolve: {
     alias: Object.assign(
@@ -49,19 +49,25 @@ const config = {
         '~utils': path.resolve(__dirname, 'src/utils/'),
         '~styles': path.resolve(__dirname, 'src/styles/shared'),
         '~types': path.resolve(__dirname, 'src/types/'),
-        '~immutable': path.resolve(__dirname, 'src/immutable/'),
+        '~immutable': path.resolve(__dirname, 'src/immutable\/'),
       },
       generateModulesAliases(),
     ),
+    extensions: ['.tsx', '.ts', '.jsx', '.js'],
   },
   module: {
     rules: [
       {
-        test: /\.jsx?$/,
+        test: /\.tsx?$/,
         exclude: /node_modules/,
-        use: {
-          loader: 'babel-loader',
-        },
+        use: [
+          {
+            loader: 'ts-loader',
+            options: {
+              transpileOnly: true,
+            },
+          },
+        ],
       },
       {
         test: /\.css$/,
@@ -72,9 +78,10 @@ const config = {
         use: [
           'style-loader',
           {
-            loader: 'css-loader',
+            loader: 'typings-for-css-modules-loader',
             options: {
               modules: true,
+              namedExport: true,
               camelCase: true,
               importLoaders: 1,
               localIdentName: '[name]_[local]_[hash:base64:8]',
@@ -167,6 +174,10 @@ const config = {
     new HtmlWebpackPlugin({
       template: 'src/templates/index.html',
       favicon: 'src/img/favicon.png',
+    }),
+    new ForkTsCheckerWebpackPlugin({
+      checkSyntacticErrors: true,
+      useTypescriptIncrementalApi: true,
     }),
     new webpack.HotModuleReplacementPlugin(),
   ],

@@ -1,0 +1,46 @@
+{
+  "compilerOptions": {
+    "baseUrl": ".",
+    "paths": {
+      "~admin/*": ["src/modules/admin/components/*"],
+      "~context/*": ["src/context/*"],
+      "~core/*": ["src/modules/core/components/*"],
+      "~dashboard/*": ["src/modules/dashboard/components/*"],
+      "~data/*": ["src/data/*"],
+      "~immutable/*": ["src/immutable/*"],
+      "~lib/*": ["src/lib/*"],
+      "~pages/*": ["src/modules/pages/components/*"],
+      "~redux/*": ["src/redux/*"],
+      "~routes/*": ["src/routes/*"],
+      "~styles/*": ["src/styles/shared/*"],
+      "~types/*": ["src/types/*"],
+      "~users/*": ["src/modules/users/components/*"],
+      "~utils/*": ["src/utils/*"]
+    },
+    "allowSyntheticDefaultImports": true,
+    "downlevelIteration": true,
+    "esModuleInterop": true,
+    "jsx": "react",
+    "lib": [
+      "dom",
+      "es2018"
+    ],
+    "module": "commonjs",
+    "moduleResolution": "node",
+    "noEmit": true,
+    "noImplicitAny": false,
+    "resolveJsonModule": true,
+    "skipLibCheck": true,
+    "target": "es6",
+    "types": ["node", "events", "jest"]
+  },
+  "include": [
+    "globals.d.ts",
+    "src"
+  ],
+  "exclude": [
+    "node_modules",
+    "src/lib/pinion",
+    "src/lib/colonyNetwork"
+  ]
+}

@@ -1,0 +1,61 @@
+import { Map as ImmutableMap, Set as ImmutableSet } from 'immutable';
+
+import { AllRolesMap } from '~immutable/index';
+import { withDataRecordMap } from '~utils/reducers';
+import { ActionTypes, ReducerType } from '~redux/index';
+
+const allRolesReducer: ReducerType<AllRolesMap> = (
+  state = ImmutableMap(),
+  action,
+) => {
+  switch (action.type) {
+    case ActionTypes.COLONY_ROLES_FETCH_SUCCESS: {
+      const {
+        meta: { key },
+        payload: roles,
+      } = action;
+      const record = ImmutableMap(
+        Object.entries(roles).map(([domainId, domainRoles]) => [
+          parseInt(domainId, 10),
+          ImmutableMap(
+            Object.entries(domainRoles).map(([userAddress, userRoles]) => [
+              userAddress,
+              ImmutableMap(Object.entries(userRoles)),
+            ]),
+          ),
+        ]),
+      );
+      return state.getIn([key, 'record'])
+        ? state.mergeIn([key, 'record'], record)
+        : state.setIn([key, 'record'], record);
+    }
+    case ActionTypes.COLONY_DOMAIN_USER_ROLES_FETCH_SUCCESS: {
+      const {
+        payload: { roles, colonyAddress, domainId, userAddress },
+      } = action;
+      // Map keys instead of doing entries to appease the type gods
+      const record = ImmutableMap(
+        Object.keys(roles).map(role => [role, roles[role]]),
+      );
+      return state.getIn([colonyAddress, 'record'])
+        ? state.mergeIn(
+            [colonyAddress, 'record', domainId, userAddress],
+            record,
+          )
+        : state.setIn(
+            [colonyAddress, 'record'],
+            ImmutableMap([[domainId, ImmutableMap([[userAddress, record]])]]),
+          );
+    }
+    default:
+      return state;
+  }
+};
+
+export default withDataRecordMap<AllRolesMap, ImmutableSet<string>>(
+  new Set([
+    ActionTypes.COLONY_ROLES_FETCH,
+    ActionTypes.COLONY_DOMAIN_USER_ROLES_FETCH_SUCCESS,
+  ]),
+  ImmutableMap(),
+)(allRolesReducer);

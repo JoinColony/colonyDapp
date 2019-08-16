@@ -1,14 +1,14 @@
 {
   "linters": {
-    "src/**/*.{js,jsx}": [
+    "src/**/*.{js,jsx,ts,tsx}": [
       "eslint --fix",
       "git add"
     ],
-    "integration-testing/**/*.js": [
+    "integration-testing/**/*.ts": [
       "eslint --fix",
       "git add"
     ],
-    "cypress/**/*.js": [
+    "cypress/**/*.ts": [
       "eslint --fix",
       "git add"
     ],

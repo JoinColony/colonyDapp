@@ -66,6 +66,10 @@
   }
 }
 
+.inputInvalid {
+  border-color: var(--danger);
+}
+
 .input {
   composes: baseInput;
   padding: 3px;

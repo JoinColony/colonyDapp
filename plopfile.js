@@ -5,10 +5,9 @@ const prompts = {
     message: 'which module?',
     choices: [
       { name: 'admin', value: 'admin' },
-      { name: 'accounts', value: 'accounts' },
-      { name: 'boardView', value: 'boardView' },
       { name: 'core', value: 'core' },
       { name: 'dashboard', value: 'dashboard' },
+      { name: 'users', value: 'users' },
       { name: 'pages', value: 'pages' },
     ],
   },
@@ -36,17 +35,17 @@ const prompts = {
 const actions = {
   component: (module, componentName) => ({
     type: 'add',
-    path: `src/modules/${module}/components/${componentName}/${componentName}.jsx`,
-    templateFile: 'plop-templates/componentJsx.hbs',
+    path: `src/modules/${module}/components/${componentName}/${componentName}.tsx`,
+    templateFile: 'plop-templates/componentTsx.hbs',
   }),
   componentIndex: (module, componentName) => ({
     type: 'add',
-    path: `src/modules/${module}/components/${componentName}/index.js`,
+    path: `src/modules/${module}/components/${componentName}/index.ts`,
     templateFile: 'plop-templates/componentIndex.hbs',
   }),
   componentContainer: (module, componentName) => ({
     type: 'add',
-    path: `src/modules/${module}/components/${componentName}/${componentName}.js`,
+    path: `src/modules/${module}/components/${componentName}/${componentName}.ts`,
     templateFile: 'plop-templates/componentContainer.hbs',
   }),
   componentStyles: (module, componentName) => ({
@@ -56,7 +55,7 @@ const actions = {
   }),
   componentTest: (module, componentName, subComponentName) => ({
     type: 'add',
-    path: `src/modules/${module}/components/${componentName}/__tests__/${subComponentName}.test.js`,
+    path: `src/modules/${module}/components/${componentName}/__tests__/${subComponentName}.test.ts`,
     templateFile: 'plop-templates/componentTests.hbs',
   }),
 };

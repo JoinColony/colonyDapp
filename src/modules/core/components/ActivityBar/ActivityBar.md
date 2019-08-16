@@ -22,7 +22,7 @@ You can toggle the mode to `isDismissable={false}` which makes the backdrop opaq
 
 
 ```js
-import ActivityBarExample from './ActivityBarExample.jsx';
+import ActivityBarExample from './ActivityBarExample.tsx';
 import { withDialog, DialogProvider } from '../Dialog';
 import Button from '../Button';
 

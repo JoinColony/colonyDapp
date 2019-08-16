@@ -1,0 +1,25 @@
+import React from 'react';
+import { defineMessages } from 'react-intl';
+
+import styles from './{{componentName}}.css';
+
+const MSG = defineMessages({
+  exampleLabel: {
+    id: '{{componentName}}.exampleLabel',
+    defaultMessage: 'This is an example label',
+  },
+});
+
+const displayName = '{{module}}.{{componentName}}';
+
+interface Props = {
+  // props go here
+}
+
+const {{componentName}} = ({}: Props) => (
+  <span>{{componentName}}</span>
+);
+
+{{componentName}}.displayName = displayName;
+
+export default {{componentName}};

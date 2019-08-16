@@ -4,8 +4,10 @@
         "lessThanPot": "Not enough funds in the pot"
     },
     "string": {
+        "cid": "This is not a valid CID",
         "address": "This is not a valid address",
         "domainName": "This is not a valid domain name",
+        "orbitDBAddress": "This is not a valid OrbitDB address",
         "ensAddress": "This is not a valid ENS address"
     },
     "array": {
