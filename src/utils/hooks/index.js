@@ -6,6 +6,7 @@ import type { InputSelector } from 'reselect';
 // $FlowFixMe (not possible until we upgrade flow to 0.87)
 import { useEffect, useCallback, useMemo, useRef } from 'react';
 import { useDispatch, useMappedState } from 'redux-react-hook';
+import { ContentState, EditorState } from 'draft-js';
 
 import type { Action } from '~redux';
 import type { ActionTransformFnType } from '~utils/actions';
@@ -572,3 +573,22 @@ export const useMainClasses = (
     className,
     styles,
   ]);
+
+/*
+ * This hook initializes the editor state for draft-js from a string
+ * so that it works properly when used with formiks enableReinitialze property
+ */
+export const useInitEditorState = (text: string = '') => {
+  const prevText = usePrevious(text);
+  let editorState;
+  if (prevText !== text) {
+    editorState = EditorState.createWithContent(
+      ContentState.createFromText(text),
+    );
+  }
+  const prevEditorState = usePrevious(editorState);
+  if (prevText === text) {
+    return prevEditorState;
+  }
+  return editorState;
+};
