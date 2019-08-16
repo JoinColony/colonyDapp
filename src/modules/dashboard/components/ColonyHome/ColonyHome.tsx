@@ -31,7 +31,11 @@ import {
   canAdminister,
   canCreateTask as canCreateTaskCheck,
 } from '../../../users/checks';
-import { isInRecoveryMode as isInRecoveryModeCheck } from '../../checks';
+import {
+  isInRecoveryMode as isInRecoveryModeCheck,
+  isFounder,
+} from '../../checks';
+
 import ColonyDomains from './ColonyDomains';
 import ColonyMeta from './ColonyMeta';
 import TabContribute from './TabContribute';
@@ -179,7 +183,7 @@ const ColonyHome = ({
   ) {
     return (
       <LoadingTemplate loadingText={MSG.loadingText}>
-        {showRecoverOption && colonyAddress && (
+        {showRecoverOption && colonyAddress && isFounder(permissions as UserPermissionsType) && (
           <DialogActionButton
             dialog="ConfirmDialog"
             dialogProps={{
