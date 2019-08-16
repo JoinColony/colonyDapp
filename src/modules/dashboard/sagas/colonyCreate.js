@@ -2,10 +2,18 @@
 
 import type { Channel, Saga } from 'redux-saga';
 
-import { all, call, fork, put, takeEvery, select } from 'redux-saga/effects';
+import {
+  all,
+  call,
+  fork,
+  put,
+  take,
+  takeEvery,
+  select,
+} from 'redux-saga/effects';
+import BigNumber from 'bn.js';
 
 import type { Action } from '~redux';
-import type { TxConfig } from '../../core/types';
 
 import {
   putError,
@@ -18,11 +26,13 @@ import {
 import { ACTIONS } from '~redux';
 import { CONTEXT, getContext } from '~context';
 import ENS from '~lib/ENS';
+import { createAddress } from '~types';
 
 import { decorateLog } from '~utils/web3/eventLogs/events';
 import { parseExtensionDeployedLog } from '~utils/web3/eventLogs/eventParsers';
 import { normalizeTransactionLog } from '~data/normalizers';
-import { createColonyProfile } from '../data/commands';
+
+import type { TxConfig } from '../../core/types';
 
 import { createUserProfile } from '../../users/data/commands';
 import { getProfileStoreAddress } from '../../users/data/queries';
@@ -44,10 +54,14 @@ import {
   currentUserSelector,
   walletAddressSelector,
 } from '../../users/selectors';
-import { subscribeToColony } from '../../users/actionCreators';
+import {
+  subscribeToColony,
+  userPermissionsFetch,
+} from '../../users/actionCreators';
 import { userDidClaimProfile } from '../../users/checks';
 
-import { createAddress } from '~types';
+import { createColonyProfile } from '../data/commands';
+import { getColonyName } from './shared';
 
 function* colonyCreate({
   meta,
@@ -492,6 +506,78 @@ function* colonyCreate({
   }
 }
 
+// This function assumes that the founder is calling it
+function* hasExternalToken(colonyClient) {
+  let isExternal = false;
+  try {
+    yield call([colonyClient.mintTokens, colonyClient.mintTokens.estimate], {
+      amount: new BigNumber(1),
+    });
+  } catch (caughtError) {
+    isExternal = true;
+  }
+  return isExternal;
+}
+
+function* colonyRecover({
+  meta,
+  payload: { colonyAddress },
+}: Action<typeof ACTIONS.COLONY_RECOVER_DB>): Saga<*> {
+  const colonyManager = yield* getContext(CONTEXT.COLONY_MANAGER);
+  const colonyClient = yield call(
+    [colonyManager, colonyManager.getColonyClient],
+    colonyAddress,
+  );
+  try {
+    yield put(userPermissionsFetch(colonyAddress));
+    const {
+      payload: {
+        permissions: { isFounder },
+      },
+    } = yield take(ACTIONS.USER_PERMISSIONS_FETCH_SUCCESS);
+
+    if (!isFounder) throw new Error('Founder permission required');
+
+    const colonyName = yield call(getColonyName, colonyAddress);
+    const displayName = `Recovered: ${colonyName}`;
+
+    const {
+      tokenClient,
+      tokenClient: {
+        contract: { address: tokenAddress },
+      },
+    } = colonyClient;
+    const { name, symbol } = yield call([
+      tokenClient.getTokenInfo,
+      tokenClient.getTokenInfo.call,
+    ]);
+
+    const isExternalToken = yield call(hasExternalToken, colonyClient);
+
+    yield* executeCommand(createColonyProfile, {
+      metadata: { colonyAddress },
+      args: {
+        colonyAddress,
+        colonyName,
+        displayName,
+        token: {
+          address: tokenAddress,
+          isExternal: isExternalToken,
+          isNative: true,
+          name,
+          symbol,
+        },
+      },
+    });
+
+    // After a reload everything should be fine again.
+    window.location.reload();
+  } catch (caughtError) {
+    yield putError(ACTIONS.COLONY_RECOVER_DB_ERROR, caughtError, meta);
+  }
+}
+
 export default function* colonyCreateSaga(): Saga<void> {
   yield takeEvery(ACTIONS.COLONY_CREATE, colonyCreate);
+  yield takeEvery(ACTIONS.COLONY_RECOVER_DB, colonyRecover);
 }

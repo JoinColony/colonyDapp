@@ -24,6 +24,5 @@ export function* getColonyName(colonyAddress: Address): Saga<?string> {
   const { networkClient } = yield* getContext(CONTEXT.COLONY_MANAGER);
 
   const domain = yield call([ens, ens.getDomain], colonyAddress, networkClient);
-  const [colonyName] = domain.split('.');
-  return colonyName;
+  return ens.constructor.stripDomainParts('colony', domain);
 }
