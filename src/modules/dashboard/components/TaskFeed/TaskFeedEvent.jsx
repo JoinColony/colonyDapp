@@ -17,10 +17,7 @@ import { TASK_EVENT_TYPES } from '~data/constants';
 import { useDataFetcher, useSelector } from '~utils/hooks';
 import { domainSelector } from '../../selectors';
 
-import {
-  friendlyUsernameSelector,
-  userSelector,
-} from '../../../users/selectors';
+import { userSelector } from '../../../users/selectors';
 import { tokenFetcher } from '../../fetchers';
 
 import styles from '~dashboard/TaskFeed/TaskFeedEvent.css';
@@ -124,13 +121,18 @@ type Props = {|
   event: $NonMaybeType<$PropertyType<TaskFeedItemType, 'event'>>,
 |};
 
-const renderInteractiveUsername = (username, userRecord, displayName) => (
-  <InfoPopover trigger={username ? 'click' : 'disabled'} user={userRecord}>
-    <span title={username} className={styles.highlight}>
-      {displayName || username}
-    </span>
-  </InfoPopover>
-);
+const renderInteractiveUsername = userRecord => {
+  const {
+    profile: { displayName, username },
+  } = userRecord;
+  return (
+    <InfoPopover trigger={username ? 'click' : 'disabled'} user={userRecord}>
+      <span title={username} className={styles.highlightCursor}>
+        {displayName || username}
+      </span>
+    </InfoPopover>
+  );
+};
 
 const TaskFeedEventDomainSet = ({
   colonyAddress,
@@ -141,9 +143,6 @@ const TaskFeedEventDomainSet = ({
   intl: { formatMessage },
 }: *) => {
   const { record } = useSelector(userSelector, [userAddress]);
-  const {
-    profile: { displayName, username },
-  } = record;
   const domain = useSelector(domainSelector, [colonyAddress, domainId]) || {};
   const domainName =
     domainId === 1 ? formatMessage(MSG.rootDomain) : domain.name;
@@ -156,7 +155,7 @@ const TaskFeedEventDomainSet = ({
             {domainName}
           </span>
         ),
-        user: renderInteractiveUsername(username, record, displayName),
+        user: renderInteractiveUsername(record),
       }}
     />
   );
@@ -168,14 +167,11 @@ const TaskFeedEventCreated = ({
   },
 }: *) => {
   const { record } = useSelector(userSelector, [userAddress]);
-  const {
-    profile: { displayName, username },
-  } = record;
   return (
     <FormattedMessage
       {...MSG.created}
       values={{
-        user: renderInteractiveUsername(username, record, displayName),
+        user: renderInteractiveUsername(record),
       }}
     />
   );
@@ -188,14 +184,11 @@ const TaskFeedEventDueDateSet = ({
   },
 }: *) => {
   const { record } = useSelector(userSelector, [userAddress]);
-  const {
-    profile: { displayName, username },
-  } = record;
   return (
     <FormattedMessage
       {...MSG.dueDateSet}
       values={{
-        user: renderInteractiveUsername(username, record, displayName),
+        user: renderInteractiveUsername(record),
         dueDate: dueDate && (
           <span
             title={formatDate(new Date(dueDate), '{short}')}
@@ -217,9 +210,6 @@ const TaskFeedEventPayoutSet = ({
   },
 }: *) => {
   const { record } = useSelector(userSelector, [userAddress]);
-  const {
-    profile: { displayName, username },
-  } = record;
   const { data: token } = useDataFetcher<TokenType>(
     tokenFetcher,
     [tokenAddress],
@@ -230,7 +220,7 @@ const TaskFeedEventPayoutSet = ({
     <FormattedMessage
       {...MSG.payoutSet}
       values={{
-        user: renderInteractiveUsername(username, record, displayName),
+        user: renderInteractiveUsername(record),
         payout: (
           <span className={styles.highlightNumeral}>
             <Numeral
@@ -252,14 +242,11 @@ const TaskFeedEventPayoutRemoved = ({
   },
 }: *) => {
   const { record } = useSelector(userSelector, [userAddress]);
-  const {
-    profile: { displayName, username },
-  } = record;
   return (
     <FormattedMessage
       {...MSG.payoutRemoved}
       values={{
-        user: renderInteractiveUsername(username, record, displayName),
+        user: renderInteractiveUsername(record),
       }}
     />
   );
@@ -276,14 +263,11 @@ const TaskFeedEventSkillSet = ({
   ]);
   const { name: skillName } = skill || {};
   const { record } = useSelector(userSelector, [userAddress]);
-  const {
-    profile: { displayName, username },
-  } = record;
   return (
     <FormattedMessage
       {...MSG.skillSet}
       values={{
-        user: renderInteractiveUsername(username, record, displayName),
+        user: renderInteractiveUsername(record),
         skillName: (
           <span title={skillName} className={styles.highlight}>
             {skillName}
@@ -301,14 +285,11 @@ const TaskFeedEventCancelled = ({
   },
 }: *) => {
   const { record } = useSelector(userSelector, [userAddress]);
-  const {
-    profile: { displayName, username },
-  } = record;
   return (
     <FormattedMessage
       {...MSG.cancelled}
       values={{
-        user: renderInteractiveUsername(username, record, displayName),
+        user: renderInteractiveUsername(record),
       }}
     />
   );
@@ -320,14 +301,11 @@ const TaskFeedEventClosed = ({
   },
 }: *) => {
   const { record } = useSelector(userSelector, [userAddress]);
-  const {
-    profile: { displayName, username },
-  } = record;
   return (
     <FormattedMessage
       {...MSG.closed}
       values={{
-        user: renderInteractiveUsername(username, record, displayName),
+        user: renderInteractiveUsername(record),
       }}
     />
   );
@@ -340,14 +318,11 @@ const TaskFeedEventDescriptionSet = ({
   },
 }: *) => {
   const { record } = useSelector(userSelector, [userAddress]);
-  const {
-    profile: { displayName, username },
-  } = record;
   return (
     <FormattedMessage
       {...MSG.descriptionSet}
       values={{
-        user: renderInteractiveUsername(username, record, displayName),
+        user: renderInteractiveUsername(record),
         description: (
           <span title={description} className={styles.highlight}>
             {description}
@@ -364,14 +339,11 @@ const TaskFeedEventFinalized = ({
   },
 }: *) => {
   const { record } = useSelector(userSelector, [userAddress]);
-  const {
-    profile: { displayName, username },
-  } = record;
   return (
     <FormattedMessage
       {...MSG.finalized}
       values={{
-        user: renderInteractiveUsername(username, record, displayName),
+        user: renderInteractiveUsername(record),
       }}
     />
   );
@@ -384,14 +356,11 @@ const TaskFeedEventTitleSet = ({
   },
 }: *) => {
   const { record } = useSelector(userSelector, [userAddress]);
-  const {
-    profile: { displayName, username },
-  } = record;
   return (
     <FormattedMessage
       {...MSG.titleSet}
       values={{
-        user: renderInteractiveUsername(username, record, displayName),
+        user: renderInteractiveUsername(record),
         title: (
           <span title={title} className={styles.highlight}>
             {title}
@@ -409,20 +378,15 @@ const TaskFeedEventWorkInviteSent = ({
   },
 }: *) => {
   const { record } = useSelector(userSelector, [userAddress]);
-  const {
-    profile: { displayName, username },
-  } = record;
-  const invitedUser = useSelector(friendlyUsernameSelector, [workerAddress]);
+  const { record: invitedUserRecord } = useSelector(userSelector, [
+    workerAddress,
+  ]);
   return (
     <FormattedMessage
       {...MSG.workInviteSent}
       values={{
-        user: renderInteractiveUsername(username, record, displayName),
-        invitedUser: (
-          <span title={invitedUser} className={styles.highlight}>
-            {invitedUser}
-          </span>
-        ),
+        user: renderInteractiveUsername(record),
+        invitedUser: renderInteractiveUsername(invitedUserRecord),
       }}
     />
   );
@@ -434,14 +398,11 @@ const TaskFeedEventWorkRequestCreated = ({
   },
 }: *) => {
   const { record } = useSelector(userSelector, [userAddress]);
-  const {
-    profile: { displayName, username },
-  } = record;
   return (
     <FormattedMessage
       {...MSG.workRequestCreated}
       values={{
-        user: renderInteractiveUsername(username, record, displayName),
+        user: renderInteractiveUsername(record),
       }}
     />
   );
@@ -454,20 +415,13 @@ const TaskFeedEventWorkerAssigned = ({
   },
 }: *) => {
   const { record } = useSelector(userSelector, [userAddress]);
-  const {
-    profile: { displayName, username },
-  } = record;
-  const worker = useSelector(friendlyUsernameSelector, [workerAddress]);
+  const { record: workerRecord } = useSelector(userSelector, [workerAddress]);
   return (
     <FormattedMessage
       {...MSG.workerAssigned}
       values={{
-        user: renderInteractiveUsername(username, record, displayName),
-        worker: (
-          <span title={worker} className={styles.highlight}>
-            {worker}
-          </span>
-        ),
+        user: renderInteractiveUsername(record),
+        worker: renderInteractiveUsername(workerRecord),
       }}
     />
   );
@@ -479,20 +433,13 @@ const TaskFeedEventWorkerUnassigned = ({
   },
 }: *) => {
   const { record } = useSelector(userSelector, [userAddress]);
-  const {
-    profile: { displayName, username },
-  } = record;
-  const worker = useSelector(friendlyUsernameSelector, [workerAddress]);
+  const { record: workerRecord } = useSelector(userSelector, [workerAddress]);
   return (
     <FormattedMessage
       {...MSG.workerUnassigned}
       values={{
-        user: renderInteractiveUsername(username, record, displayName),
-        worker: (
-          <span title={worker} className={styles.highlight}>
-            {worker}
-          </span>
-        ),
+        user: renderInteractiveUsername(record),
+        worker: renderInteractiveUsername(workerRecord),
       }}
     />
   );

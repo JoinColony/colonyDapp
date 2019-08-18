@@ -15,6 +15,10 @@
   vertical-align: bottom;
   font-weight: var(--weight-semi);
   color: var(--text);
+}
+
+.highlightCursor {
+  composes: highlight;
   cursor: pointer;
 }
 
