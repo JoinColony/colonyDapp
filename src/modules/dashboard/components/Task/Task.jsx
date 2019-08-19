@@ -317,14 +317,14 @@ const Task = ({
                   <FormattedMessage {...MSG.discarded} />
                 </p>
               )}
+              {!isTaskCreator && !isWorkerSet(task) && (
+                <TaskRequestWork
+                  currentUser={currentUser}
+                  task={task}
+                  history={history}
+                />
+              )}
             </>
-          )}
-          {!isTaskCreator && !isWorkerSet(task) && (
-            <TaskRequestWork
-              currentUser={currentUser}
-              task={task}
-              history={history}
-            />
           )}
           {/*
             Use these components for the full on-chain task workflow
