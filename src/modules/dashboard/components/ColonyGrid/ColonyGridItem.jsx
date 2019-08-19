@@ -7,6 +7,7 @@ import Heading from '~core/Heading';
 import Link from '~core/Link';
 import { SpinnerLoader } from '~core/Preloaders';
 import HookedColonyAvatar from '~dashboard/HookedColonyAvatar';
+import { log } from '~utils/debug';
 
 import { useColonyWithAddress } from '../../hooks/useColony';
 import { colonyNameFetcher } from '../../fetchers';
@@ -31,16 +32,18 @@ const ColonyGridItem = ({ colonyAddress }: Props) => {
     [colonyAddress],
   );
 
-  /**
-   * @TODO ColonyGridItem: error handling for colony not found
-   * @BODY If the colonyName is not found, we should throw an error or render an error message
-   */
-  if (!colony || !colonyName || isFetching || isFetchingColonyName)
+  if (!isFetchingColonyName && !colonyName) {
+    log.error(`Could not find colony ENS name for address ${colonyAddress}`);
+    return null;
+  }
+
+  if (!colony || !colonyName || isFetching || isFetchingColonyName) {
     return (
       <div className={styles.loader}>
         <SpinnerLoader appearance={{ size: 'medium' }} />
       </div>
     );
+  }
 
   return (
     <div className={styles.main}>
