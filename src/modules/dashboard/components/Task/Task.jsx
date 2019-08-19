@@ -15,6 +15,7 @@ import { useDataFetcher, useDataSubscriber, useSelector } from '~utils/hooks';
 // Temporary, please remove when wiring in the rating modals
 import type { OpenDialog } from '~core/Dialog/types';
 
+import type { UserPermissionsType } from '~immutable';
 import type { Address } from '~types';
 
 import { mergePayload } from '~utils/actions';
@@ -46,6 +47,7 @@ import {
   isWorkerSet,
 } from '../../checks';
 import { currentUserSelector } from '../../../users/selectors';
+import { currentUserColonyPermissionsFetcher } from '../../../users/fetchers';
 import { colonyAddressFetcher } from '../../fetchers';
 import { taskSubscriber } from '../../subscribers';
 
@@ -126,6 +128,16 @@ const Task = ({
     [colonyName],
   );
 
+  const colonyArgs = [colonyAddress || undefined];
+  const {
+    data: permissions,
+    isFetching: isFetchingPermissions,
+  } = useDataFetcher<UserPermissionsType>(
+    currentUserColonyPermissionsFetcher,
+    colonyArgs,
+    colonyArgs,
+  );
+
   const { data: task, isFetching: isFetchingTask } = useDataSubscriber<*>(
     taskSubscriber,
     [draftId],
@@ -155,12 +167,18 @@ const Task = ({
     draftId,
   ]);
 
-  if (isFetchingTask || !task || !colonyAddress) {
+  if (
+    isFetchingTask ||
+    isFetchingPermissions ||
+    !task ||
+    !colonyAddress ||
+    !permissions
+  ) {
     return <LoadingTemplate loadingText={MSG.loadingText} />;
   }
 
   const isTaskCreator = isCreator(task, walletAddress);
-  const canEdit = canEditTask(task, walletAddress);
+  const canEdit = canEditTask(task, permissions, walletAddress);
 
   return (
     <div className={styles.main}>
@@ -264,7 +282,7 @@ const Task = ({
               </div>
             </Tooltip>
           )}
-          {canCancelTask(task, walletAddress) && (
+          {canCancelTask(task, permissions, walletAddress) && (
             <ActionButton
               appearance={{ theme: 'secondary', size: 'small' }}
               button={ConfirmButton}
@@ -280,7 +298,7 @@ const Task = ({
           {/* Hide when discard confirm is displayed */}
           {!isDiscardConfirmDisplayed && (
             <>
-              {canFinalizeTask(task, walletAddress) && (
+              {canFinalizeTask(task, permissions, walletAddress) && (
                 <ActionButton
                   text={MSG.finalizeTask}
                   submit={ACTIONS.TASK_FINALIZE}
@@ -299,14 +317,14 @@ const Task = ({
                   <FormattedMessage {...MSG.discarded} />
                 </p>
               )}
+              {!isTaskCreator && !isWorkerSet(task) && !isCancelled(task) && (
+                <TaskRequestWork
+                  currentUser={currentUser}
+                  task={task}
+                  history={history}
+                />
+              )}
             </>
-          )}
-          {!isTaskCreator && !isWorkerSet(task) && (
-            <TaskRequestWork
-              currentUser={currentUser}
-              task={task}
-              history={history}
-            />
           )}
           {/*
             Use these components for the full on-chain task workflow
