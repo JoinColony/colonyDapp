@@ -34,7 +34,8 @@ const WalletLink = ({
 }: Props) => {
   const linkText = text || walletAddress;
   const tld = network === 'tobalaba' ? 'com' : 'io';
-  const networkSubdomain = network === 'homestead' ? '' : `${network}.`;
+  const networkSubdomain =
+    network === 'homestead' || network === 'mainnet' ? '' : `${network}.`;
   // eslint-disable-next-line max-len
   const href = `https://${networkSubdomain}etherscan.${tld}/address/${walletAddress}`;
   return (
