@@ -13,7 +13,6 @@
 
 .inboxContainer tbody {
   overflow-y: hidden;
-  overflow-x: visible;
 }
 
 .inboxHeading {

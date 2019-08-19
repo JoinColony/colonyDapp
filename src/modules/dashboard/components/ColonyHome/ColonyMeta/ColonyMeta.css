@@ -39,6 +39,7 @@
 .userAvatar {
   display: inline-block;
   margin: 9px 9px 0 0;
+  cursor: pointer;
 }
 
 .colonyAvatar {

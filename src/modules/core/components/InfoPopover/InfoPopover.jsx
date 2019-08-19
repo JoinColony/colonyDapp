@@ -35,7 +35,7 @@ const renderTooltipContent = (user?: UserType) => {
       )}
       {username && (
         <span title={username} className={styles.userName}>
-          <UserMention username={username} hasLink={false} />
+          <UserMention username={username} hasLink />
         </span>
       )}
       {walletAddress && <CopyableAddress full>{walletAddress}</CopyableAddress>}
