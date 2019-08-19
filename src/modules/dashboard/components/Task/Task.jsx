@@ -317,7 +317,7 @@ const Task = ({
                   <FormattedMessage {...MSG.discarded} />
                 </p>
               )}
-              {!isTaskCreator && !isWorkerSet(task) && (
+              {!isTaskCreator && !isWorkerSet(task) && !isCancelled(task) && (
                 <TaskRequestWork
                   currentUser={currentUser}
                   task={task}
