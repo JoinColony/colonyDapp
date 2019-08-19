@@ -1,6 +1,11 @@
 /* @flow */
 
-import type { ColonyType, TaskType, TaskUserType } from '~immutable';
+import type {
+  ColonyType,
+  TaskType,
+  TaskUserType,
+  UserPermissionsType,
+} from '~immutable';
 
 import type { Address } from '~types';
 
@@ -63,6 +68,9 @@ export const canEditTask = (task: TaskType, userAddress: Address) =>
 export const isDomainSet = ({ domainId }: TaskType) => !!domainId;
 
 export const isSkillSet = ({ skillId }: TaskType) => !!skillId;
+
+export const isFounder = (permissions: ?UserPermissionsType) =>
+  permissions && permissions.isFounder;
 
 /**
  * @todo Fix task rating checks logic.
