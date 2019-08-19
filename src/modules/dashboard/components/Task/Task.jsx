@@ -236,7 +236,7 @@ const Task = ({
             isDiscardConfirmDisplayed ? styles.headerConfirm : ''
           }`}
         >
-          {!isTaskCreator && !isDiscardConfirmDisplayed && (
+          {!isDiscardConfirmDisplayed && (
             <Tooltip
               content={
                 <div className={styles.trustInfoTooltip}>
@@ -253,7 +253,12 @@ const Task = ({
               <div className={styles.trustInfoIcon}>
                 <Icon
                   name="unlock"
-                  title={MSG.trustInfoTooltipHeading}
+                  /*
+                   * @NOTE Set to an empty string to prevent rendering
+                   * Otherwise it will overlap with the tooltip which is already
+                   * providing this functionality
+                   */
+                  title=""
                   appearance={{ size: 'small', theme: 'primary' }}
                 />
               </div>
