@@ -236,7 +236,7 @@ const Task = ({
             isDiscardConfirmDisplayed ? styles.headerConfirm : ''
           }`}
         >
-          {!isTaskCreator && !isDiscardConfirmDisplayed && (
+          {!isDiscardConfirmDisplayed && (
             <Tooltip
               content={
                 <div className={styles.trustInfoTooltip}>
