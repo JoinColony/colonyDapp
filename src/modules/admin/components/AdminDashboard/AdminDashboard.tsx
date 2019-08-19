@@ -12,6 +12,8 @@ import Tokens from '~admin/Tokens';
 import Transactions from '~admin/Transactions';
 import Domains from '~admin/Domains';
 import Permissions from '~admin/Permissions';
+import Integrations from '~admin/Integrations';
+
 import VerticalNavigation from '~pages/VerticalNavigation';
 import { HistoryNavigation } from '~pages/NavigationWrapper';
 import { useDataFetcher, useDataSubscriber } from '~utils/hooks';
@@ -58,6 +60,10 @@ const MSG = defineMessages({
     id: 'dashboard.Admin.tabTransaction',
     defaultMessage: 'Transactions',
   },
+  tabIntegration: {
+    id: 'dashboard.Admin.tabIntegration',
+    defaultMessage: 'Integrations',
+  },
 });
 
 interface Props {
@@ -95,6 +101,11 @@ const navigationItems = (colony: ColonyType): NavigationItem[] => [
     id: 5,
     title: MSG.tabTransaction,
     content: <Transactions colonyAddress={colony.colonyAddress} />,
+  },
+  {
+    id: 6,
+    title: MSG.tabIntegration,
+    content: <Integrations colonyAddress={colony.colonyAddress} />,
   },
 ];
 
@@ -162,7 +173,6 @@ const AdminDashboard = ({
             appearance={{
               size: 'normal',
               weight: 'medium',
-              margin: 'small',
               theme: 'dark',
             }}
             text={MSG.colonySettings}

@@ -1,0 +1,28 @@
+.main {
+  display: flex;
+  flex-direction: column;
+  min-height: 220px;
+  min-width: 220px;
+}
+
+.cardHeading {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 20px;
+  width: 70px;
+}
+
+.cardBody {
+  display: flex;
+  justify-content: space-between;
+  height: 110px;
+}
+
+.cardFooter {
+  composes: marginBottomMedium from '~styles/layout.css';
+  display: flex;
+  justify-content: flex-end;
+  height: 5px;
+  font-weight: var(--weight-thin);
+  color: var(--grey-3);
+}
