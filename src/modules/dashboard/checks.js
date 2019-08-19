@@ -39,6 +39,12 @@ export const isWorker = ({ workerAddress }: TaskType, userAddress: Address) =>
 export const isCreator = ({ creatorAddress }: TaskType, userAddress: Address) =>
   creatorAddress === userAddress;
 
+export const isFounder = (permissions: ?UserPermissionsType) =>
+  permissions && permissions.isFounder;
+
+export const isAdmin = (permissions: ?UserPermissionsType) =>
+  permissions && permissions.isAdmin;
+
 export const isPayoutsSet = ({ payouts }: TaskType) =>
   !!payouts && payouts.length > 0;
 
@@ -62,15 +68,20 @@ export const didDueDateElapse = ({ dueDate }: TaskType) =>
 
 export const isWorkerSet = ({ workerAddress }: TaskType) => !!workerAddress;
 
-export const canEditTask = (task: TaskType, userAddress: Address) =>
-  !isFinalized(task) && !isCancelled(task) && isCreator(task, userAddress);
+export const canEditTask = (
+  task: TaskType,
+  permissions: ?UserPermissionsType,
+  userAddress: Address,
+) =>
+  !isFinalized(task) &&
+  !isCancelled(task) &&
+  (isCreator(task, userAddress) ||
+    isFounder(permissions) ||
+    isAdmin(permissions));
 
 export const isDomainSet = ({ domainId }: TaskType) => !!domainId;
 
 export const isSkillSet = ({ skillId }: TaskType) => !!skillId;
-
-export const isFounder = (permissions: ?UserPermissionsType) =>
-  permissions && permissions.isFounder;
 
 /**
  * @todo Fix task rating checks logic.
@@ -99,8 +110,15 @@ export const managerCanRevealWorkerRating = (
   userAddress: Address,
 ) => isManager(task, userAddress) && isReveal(task);
 
-export const canCancelTask = (task: TaskType, userAddress: Address) =>
-  isManager(task, userAddress) && isActive(task);
+export const canCancelTask = (
+  task: TaskType,
+  permissions: ?UserPermissionsType,
+  userAddress: Address,
+) =>
+  isActive(task) &&
+  (isManager(task, userAddress) ||
+    isFounder(permissions) ||
+    isAdmin(permissions));
 
 export const hasRequestedToWork = (
   { requests = [] }: TaskType,
@@ -114,10 +132,16 @@ export const canRequestToWork = (task: TaskType, userAddress: Address) =>
     hasRequestedToWork(task, userAddress)
   );
 
-export const canFinalizeTask = (task: TaskType, userAddress: Address) =>
+export const canFinalizeTask = (
+  task: TaskType,
+  permissions: ?UserPermissionsType,
+  userAddress: Address,
+) =>
   task &&
-  isManager(task, userAddress) &&
   isActive(task) &&
   isWorkerSet(task) &&
   isDomainSet(task) &&
-  isPayoutsSet(task);
+  isPayoutsSet(task) &&
+  (isManager(task, userAddress) ||
+    isFounder(permissions) ||
+    isAdmin(permissions));
