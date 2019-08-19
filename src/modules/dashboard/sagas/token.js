@@ -2,14 +2,7 @@
 
 import type { Saga } from 'redux-saga';
 
-import {
-  call,
-  delay,
-  fork,
-  put,
-  takeEvery,
-  takeLatest,
-} from 'redux-saga/effects';
+import { call, fork, put, takeEvery } from 'redux-saga/effects';
 
 import type { Action } from '~redux';
 
@@ -40,10 +33,6 @@ function* tokenInfoFetch({
       meta,
     });
   }
-
-  // Debounce with 1000ms, since this is intended to run directly following
-  // user keyboard input.
-  yield delay(1000);
 
   try {
     /**
@@ -124,5 +113,5 @@ export default function* tokenSagas(): Saga<void> {
   yield takeEvery(ACTIONS.TOKEN_CREATE, tokenCreate);
   // Note that this is `takeLatest` because it runs on user keyboard input
   // and uses the `delay` saga helper.
-  yield takeLatest(ACTIONS.TOKEN_INFO_FETCH, tokenInfoFetch);
+  yield takeEvery(ACTIONS.TOKEN_INFO_FETCH, tokenInfoFetch);
 }
