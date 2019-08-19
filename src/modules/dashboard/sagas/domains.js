@@ -95,7 +95,8 @@ function* domainCreate({
     yield put<Action<typeof ACTIONS.DOMAIN_CREATE_SUCCESS>>({
       type: ACTIONS.DOMAIN_CREATE_SUCCESS,
       meta,
-      payload: { colonyAddress, domain: { id, name } },
+      // For now parentId is just root domain
+      payload: { colonyAddress, domain: { id, name, parentId: 1 } },
     });
 
     // const colonyManager = yield* getContext(CONTEXT.COLONY_MANAGER);
@@ -139,7 +140,8 @@ function* domainEdit({
     yield put<Action<typeof ACTIONS.DOMAIN_EDIT_SUCCESS>>({
       type: ACTIONS.DOMAIN_EDIT_SUCCESS,
       meta,
-      payload: { colonyAddress, domainId, domainName },
+      // For now parentId is just root domain
+      payload: { colonyAddress, domainId, domainName, parentId: 1 },
     });
   } catch (error) {
     return yield putError(ACTIONS.DOMAIN_EDIT_ERROR, error, meta);

@@ -496,6 +496,8 @@ export const getColonyDomains: Query<
       .map(({ payload: { domainId, name } }) => ({
         id: domainId,
         name,
+        // All will have parent of root for now
+        parentId: 1,
       }));
   },
 };

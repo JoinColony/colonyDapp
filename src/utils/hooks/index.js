@@ -11,16 +11,17 @@ import { ContentState, EditorState } from 'draft-js';
 import type { Action } from '~redux';
 import type { Address } from '~types';
 import type { ActionTransformFnType } from '~utils/actions';
-import type { DataRecordType, RootStateRecord } from '~immutable';
+import type { DataRecordType, DomainType, RootStateRecord } from '~immutable';
 import type { AsyncFunction } from '~redux/createPromiseListener';
 
+import { ACTIONS } from '~redux';
 import { isFetchingData, shouldFetchData } from '~immutable/utils';
 import { getMainClasses } from '~utils/css';
-import { proxyOldRoles } from '~utils/data';
+import { proxyOldRoles, includeParentRoles } from '~utils/data';
 
 import promiseListener from '~redux/createPromiseListener';
 
-import { rolesFetcher } from '../../modules/dashboard/fetchers';
+import { rolesFetcher, domainsFetcher } from '../../modules/dashboard/fetchers';
 
 type DataFetcher<T> = {|
   select: (
@@ -609,4 +610,85 @@ export const useOldRoles = (colonyAddress: Address) => {
   );
   const roles = useMemo(() => proxyOldRoles(newRoles), [newRoles]);
   return { data: roles, isFetching, error };
+};
+
+/*
+ * Fetch an object of all domains with users who have roles in them. If
+ * includeParents is true, it also includes effective roles that users have in
+ * those domains as a result of parent domain roles. Note that this will not
+ * include child domains where the user has no roles - in such cases where data
+ * is needed for a specific domain and user, the useUserDomainRoles hook should
+ * be used.
+ *
+ * Returns in the format { [domainId]: { [userAddress]: { [role]: boolean } } }
+ */
+export const useRoles = (
+  colonyAddress: Address,
+  includeParents: boolean = false, // This should not change
+) => {
+  const {
+    data: rolesFromState,
+    isFetching: isFetchingRoles,
+    error,
+  } = useDataFetcher<*>(rolesFetcher, [colonyAddress], [colonyAddress]);
+
+  const { data: domains, isFetching: isFetchingDomains } = useDataFetcher<
+    DomainType[],
+  >(
+    domainsFetcher,
+    // Setting these to undefined will prevent fetching when we don't want it
+    [includeParents ? colonyAddress : undefined],
+    [includeParents ? colonyAddress : undefined],
+  );
+
+  // Include root domains (not in redux state)
+  const domainsWithRoot = Array.isArray(domains)
+    ? [{ id: 1, name: 'root' }, ...domains]
+    : domains;
+
+  const permissions =
+    includeParents && rolesFromState && domainsWithRoot
+      ? includeParentRoles(rolesFromState, domainsWithRoot)
+      : rolesFromState;
+  return {
+    data: permissions,
+    isFetching: isFetchingRoles || (isFetchingDomains && includeParents),
+    error,
+  };
+};
+
+/*
+ * Fetch the roles which a single user has in a specific domain. If
+ * includeParents is true, it will also check for any roles that the user has
+ * in this domain by effect of them being set in parent domains.
+ *
+ * Returns in the format { [role]: boolean }
+ */
+export const useUserDomainRoles = (
+  colonyAddress: Address,
+  domainId: number,
+  userAddress: Address,
+  includeParents: boolean = false, // This should not change
+) => {
+  const dispatch = useDispatch();
+  const { data: roles, isFetching, error } = useRoles(
+    colonyAddress,
+    includeParents,
+  );
+  useEffect(
+    () => {
+      if (colonyAddress && domainId && userAddress) {
+        dispatch<typeof ACTIONS.COLONY_DOMAIN_USER_ROLES_FETCH>({
+          type: ACTIONS.COLONY_DOMAIN_USER_ROLES_FETCH,
+          meta: { key: colonyAddress },
+          payload: { colonyAddress, domainId, userAddress },
+        });
+      }
+    },
+    [colonyAddress, dispatch, domainId, userAddress],
+  );
+  const userDomainRoles = roles
+    ? (roles[domainId] || {})[(userAddress: string)] || {}
+    : {};
+  return { data: userDomainRoles, isFetching, error };
 };
