@@ -1,7 +1,7 @@
 /* @flow */
 
 // $FlowFixMe upgrade flow
-import React, { useCallback } from 'react';
+import React, { useCallback, useState } from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 import * as yup from 'yup';
 
@@ -95,8 +95,13 @@ const StepColonyName = ({ wizardForm, nextStep, wizardValues }: Props) => {
     profile: { username },
   } = currentUser;
 
+  const [currentENSName, setCurrentENSName] = useState(undefined);
+
   const validateDomain = useCallback(
     async (values: FormValues) => {
+      if (values && currentENSName === values.colonyName) {
+        return;
+      }
       try {
         // Let's check whether this is even valid first
         validationSchema.validateSyncAt('colonyName', values);
@@ -107,6 +112,7 @@ const StepColonyName = ({ wizardForm, nextStep, wizardValues }: Props) => {
       }
       try {
         await checkDomainTaken(values);
+        setCurrentENSName(values.colonyName);
       } catch (e) {
         const error = {
           colonyName: MSG.errorDomainTaken,
@@ -114,7 +120,7 @@ const StepColonyName = ({ wizardForm, nextStep, wizardValues }: Props) => {
         throw error;
       }
     },
-    [checkDomainTaken],
+    [checkDomainTaken, currentENSName, setCurrentENSName],
   );
 
   return (
