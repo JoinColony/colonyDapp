@@ -2,7 +2,6 @@
 
 import generate from 'nanoid/generate';
 import urlDictionary from 'nanoid/url';
-import { Map as ImmutableMap, Set as ImmutableSet } from 'immutable';
 import {
   COLONY_ROLE_ADMINISTRATION,
   COLONY_ROLE_ARCHITECTURE,
@@ -10,9 +9,8 @@ import {
   COLONY_ROLE_ROOT,
 } from '@colony/colony-js-client';
 
-import type { ColonyRolesMap, RolesRecordType } from '~immutable';
+import type { RolesType } from '~immutable';
 
-import { RolesRecord } from '~immutable';
 import { ZERO_ADDRESS } from '~utils/web3/constants';
 
 export opaque type RandomId: string = string;
@@ -21,26 +19,39 @@ export opaque type RandomId: string = string;
 export const generateUrlFriendlyId = (): RandomId =>
   generate(urlDictionary, 21);
 
-export const proxyOldRoles = (domainRoles: ColonyRolesMap): RolesRecordType => {
-  const rootDomainRoles = domainRoles.get(1, ImmutableMap());
+/*
+ * Eventually we'll switch all of the dApp to using new roles, but until then
+ * we still need to be able to get the old roles `admins` and `founder`. This
+ * util can be removed once the DLP project is completed.
+ */
+export const proxyOldRoles = (domainRoles: *): ?RolesType => {
+  if (!domainRoles) {
+    return null;
+  }
+
+  const rootDomainRoles = domainRoles[1] || {};
+
   const founder =
-    rootDomainRoles.findKey(
-      roles =>
-        roles.get(COLONY_ROLE_ADMINISTRATION) &&
-        roles.get(COLONY_ROLE_ARCHITECTURE) &&
-        roles.get(COLONY_ROLE_FUNDING) &&
-        roles.get(COLONY_ROLE_ROOT),
-    ) || ZERO_ADDRESS;
-  const admins = rootDomainRoles.reduce(
-    (acc, roles, address) =>
-      roles.get(COLONY_ROLE_ADMINISTRATION) && address !== founder
+    Object.keys(rootDomainRoles).find(address => {
+      const roles = rootDomainRoles[address];
+      return (
+        roles[COLONY_ROLE_ADMINISTRATION] &&
+        roles[COLONY_ROLE_ARCHITECTURE] &&
+        roles[COLONY_ROLE_FUNDING] &&
+        roles[COLONY_ROLE_ROOT]
+      );
+    }) || ZERO_ADDRESS;
+  const admins = Object.keys(rootDomainRoles).reduce(
+    (acc, address) =>
+      rootDomainRoles[address][COLONY_ROLE_ADMINISTRATION] &&
+      address !== founder
         ? acc.add(address)
         : acc,
-    ImmutableSet(),
+    new Set(),
   );
 
-  return RolesRecord({
+  return {
     founder,
-    admins,
-  });
+    admins: Array.from(admins),
+  };
 };

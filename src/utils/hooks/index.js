@@ -11,12 +11,7 @@ import { ContentState, EditorState } from 'draft-js';
 import type { Action } from '~redux';
 import type { Address } from '~types';
 import type { ActionTransformFnType } from '~utils/actions';
-import type {
-  ColonyRolesMap,
-  DataRecordType,
-  RootStateRecord,
-  RolesType,
-} from '~immutable';
+import type { DataRecordType, RootStateRecord } from '~immutable';
 import type { AsyncFunction } from '~redux/createPromiseListener';
 
 import { isFetchingData, shouldFetchData } from '~immutable/utils';
@@ -85,7 +80,6 @@ export type Given = (
 
 type DataFetcherOptions = {
   ttl?: number,
-  convertToJs?: boolean,
 };
 
 export const usePrevious = (value: any) => {
@@ -96,16 +90,11 @@ export const usePrevious = (value: any) => {
   return ref.current;
 };
 
-const transformFetchedData = (
-  data: ?DataRecordType<*>,
-  convertToJs: boolean,
-) => {
+const transformFetchedData = (data: ?DataRecordType<*>) => {
   if (!data) return null;
   const record =
     typeof data.get == 'function' ? data.get('record') : data.record;
-  return record && typeof record.toJS == 'function' && convertToJs
-    ? record.toJS()
-    : record;
+  return record && typeof record.toJS == 'function' ? record.toJS() : record;
 };
 
 const defaultTransform = (obj: Collection<*, *>) =>
@@ -189,7 +178,7 @@ export const useDataFetcher = <T>(
   { fetch, select, ttl = 0 }: DataFetcher<T>,
   selectArgs: any[],
   fetchArgs: any[],
-  { ttl: ttlOverride, convertToJs = false }: DataFetcherOptions = {},
+  { ttl: ttlOverride }: DataFetcherOptions = {},
 ): {|
   data: ?T,
   isFetching: boolean,
@@ -224,7 +213,7 @@ export const useDataFetcher = <T>(
   );
 
   return {
-    data: transformFetchedData(data, convertToJs),
+    data: transformFetchedData(data),
     isFetching: shouldFetch && isFetchingData(data),
     error: data ? data.error : null,
   };
@@ -238,7 +227,7 @@ export const useDataFetcher = <T>(
 export const useDataMapFetcher = <T>(
   { fetch, select, ttl: ttlDefault = 0 }: DataMapFetcher<T>,
   keys: string[],
-  { ttl: ttlOverride, convertToJs = false }: DataFetcherOptions = {},
+  { ttl: ttlOverride }: DataFetcherOptions = {},
 ): {|
   data: ?T,
   key: string,
@@ -293,12 +282,12 @@ export const useDataMapFetcher = <T>(
         const data = allData.get(key);
         return {
           key,
-          data: transformFetchedData(data, convertToJs),
+          data: transformFetchedData(data),
           isFetching: keysToFetchFor.includes(key) && isFetchingData(data),
           error: data ? data.error : null,
         };
       }),
-    [memoizedKeys, allData, convertToJs, keysToFetchFor],
+    [memoizedKeys, allData, keysToFetchFor],
   );
 };
 
@@ -348,7 +337,7 @@ export const useDataSubscriber = <T>(
   );
 
   return {
-    data: transformFetchedData(data, true),
+    data: transformFetchedData(data),
     isFetching: shouldSubscribe && isFetchingData(data),
     error: data ? data.error : null,
   };
@@ -412,7 +401,7 @@ export const useDataTupleSubscriber = <T>(
         return {
           key: entry[1],
           entry,
-          data: transformFetchedData(data, true),
+          data: transformFetchedData(data),
           isFetching: keysToFetchFor.includes(entry[1]) && isFetchingData(data),
           error: data ? data.error : null,
         };
@@ -429,7 +418,7 @@ export const useDataTupleSubscriber = <T>(
 export const useDataTupleFetcher = <T>(
   { fetch, select, ttl: ttlDefault = 0 }: DataTupleFetcher<T>,
   keys: Array<*>,
-  { ttl: ttlOverride, convertToJs = true }: DataFetcherOptions = {},
+  { ttl: ttlOverride }: DataFetcherOptions = {},
 ): {|
   data: ?T,
   key: string,
@@ -486,12 +475,12 @@ export const useDataTupleFetcher = <T>(
         return {
           key: entry[1],
           entry,
-          data: transformFetchedData(data, convertToJs),
+          data: transformFetchedData(data),
           isFetching: keysToFetchFor.includes(entry[1]) && isFetchingData(data),
           error: data ? data.error : null,
         };
       }),
-    [memoizedKeys, allData, convertToJs, keysToFetchFor],
+    [memoizedKeys, allData, keysToFetchFor],
   );
 };
 
@@ -606,23 +595,18 @@ export const useInitEditorState = (text: string = '') => {
     return prevEditorState;
   }
   return editorState;
-}
+};
 
 /*
  * Proxy the new redux state of roles to the old structure of founder and
  * admins.
  */
 export const useOldRoles = (colonyAddress: Address) => {
-  const { data: newRoles, isFetching, error } = useDataFetcher<ColonyRolesMap>(
+  const { data: newRoles, isFetching, error } = useDataFetcher<*>(
     rolesFetcher,
     [colonyAddress],
     [colonyAddress],
-    { convertToJs: false },
   );
-  const roles = useMemo(
-    // $FlowFixMe thinks toJS is not available
-    () => (newRoles ? (proxyOldRoles(newRoles).toJS(): RolesType) : null),
-    [newRoles],
-  );
+  const roles = useMemo(() => proxyOldRoles(newRoles), [newRoles]);
   return { data: roles, isFetching, error };
 };
