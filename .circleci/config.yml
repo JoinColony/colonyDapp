@@ -3,7 +3,7 @@ version: 2
 jobs:
   build-with-lockfile:
     docker:
-      - image: circleci/node:10.13
+      - image: circleci/node:10.16.3
     working_directory: ~/colonyDapp
     steps:
       - checkout
@@ -58,7 +58,7 @@ jobs:
           command: $HOME/.config/yarn/global/node_modules/.bin/greenkeeper-lockfile-upload
   nightly-build:
     docker:
-      - image: circleci/node:10.13
+      - image: circleci/node:10.16.3
     working_directory: ~/colonyDapp
     steps:
       - checkout
@@ -100,7 +100,7 @@ jobs:
           command: yarn webpack:build
   integration-testing:
     docker:
-      - image: circleci/node:10.13
+      - image: circleci/node:10.16.3
     environment:
       LOADER: trufflepig
       NETWORK: local
@@ -176,7 +176,7 @@ jobs:
           path: reports
   build-styleguide:
     docker:
-      - image: circleci/node:10.13
+      - image: circleci/node:10.16.3
     working_directory: ~/repo
     steps:
       - checkout
@@ -197,7 +197,7 @@ jobs:
           key: v1-dependencies-{{ checksum "yarn.lock" }}
   deploy-styleguide:
     docker:
-      - image: circleci/node:10.13
+      - image: circleci/node:10.16.3
     working_directory: ~/repo
     steps:
       - add_ssh_keys:
