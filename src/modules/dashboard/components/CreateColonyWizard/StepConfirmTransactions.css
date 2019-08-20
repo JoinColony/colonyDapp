@@ -1,6 +1,10 @@
 .main {
-  padding-top: 158px;
+  padding-top: 100px;
   width: 460px;
+}
+
+.main div {
+  max-height: none;
 }
 
 .container {
