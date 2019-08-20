@@ -33,7 +33,7 @@ import {
 } from '../../../users/checks';
 import {
   isInRecoveryMode as isInRecoveryModeCheck,
-  isFounder,
+  canRecoverColony,
 } from '../../checks';
 
 import ColonyDomains from './ColonyDomains';
@@ -183,7 +183,7 @@ const ColonyHome = ({
   ) {
     return (
       <LoadingTemplate loadingText={MSG.loadingText}>
-        {showRecoverOption && colonyAddress && isFounder(permissions as UserPermissionsType) && (
+        {showRecoverOption && colonyAddress && canRecoverColony(permissions as UserPermissionsType) && (
           <DialogActionButton
             dialog="ConfirmDialog"
             dialogProps={{

@@ -146,3 +146,9 @@ export const canFinalizeTask = (
   (isManager(task, userAddress) ||
     isFounder(permissions) ||
     isAdmin(permissions));
+
+/*
+ * Permissions
+ */
+export const canRecoverColony = (permissions: ?UserPermissionsType) =>
+  permissions && permissions.canEnterRecoveryMode && isFounder(permissions);
