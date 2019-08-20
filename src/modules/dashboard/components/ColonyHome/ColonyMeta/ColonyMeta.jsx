@@ -1,12 +1,13 @@
 /* @flow */
 
+// $FlowFixMe
 import React from 'react';
 import { defineMessages } from 'react-intl';
 
 import { stripProtocol, multiLineTextEllipsis } from '~utils/strings';
-import { useDataFetcher } from '~utils/hooks';
+import { useOldRoles } from '~utils/hooks';
 
-import type { ColonyType, RolesType } from '~immutable';
+import type { ColonyType } from '~immutable';
 
 import Heading from '~core/Heading';
 import Icon from '~core/Icon';
@@ -17,8 +18,6 @@ import CopyableAddress from '~core/CopyableAddress';
 import HookedColonyAvatar from '~dashboard/HookedColonyAvatar';
 import HookedUserAvatar from '~users/HookedUserAvatar';
 import ColonySubscribe from './ColonySubscribe.jsx';
-
-import { rolesFetcher } from '../../../fetchers';
 
 import styles from './ColonyMeta.css';
 
@@ -69,11 +68,7 @@ const ColonyMeta = ({
   colony,
   canAdminister,
 }: Props) => {
-  const { data: roles } = useDataFetcher<RolesType>(
-    rolesFetcher,
-    [colonyAddress],
-    [colonyAddress],
-  );
+  const { data: roles } = useOldRoles(colonyAddress);
   const { admins, founder } = roles || {};
 
   return (

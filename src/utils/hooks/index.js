@@ -9,14 +9,18 @@ import { useDispatch, useMappedState } from 'redux-react-hook';
 import { ContentState, EditorState } from 'draft-js';
 
 import type { Action } from '~redux';
+import type { Address } from '~types';
 import type { ActionTransformFnType } from '~utils/actions';
 import type { DataRecordType, RootStateRecord } from '~immutable';
 import type { AsyncFunction } from '~redux/createPromiseListener';
 
 import { isFetchingData, shouldFetchData } from '~immutable/utils';
 import { getMainClasses } from '~utils/css';
+import { proxyOldRoles } from '~utils/data';
 
 import promiseListener from '~redux/createPromiseListener';
+
+import { rolesFetcher } from '../../modules/dashboard/fetchers';
 
 type DataFetcher<T> = {|
   select: (
@@ -283,7 +287,7 @@ export const useDataMapFetcher = <T>(
           error: data ? data.error : null,
         };
       }),
-    [allData, memoizedKeys, keysToFetchFor],
+    [memoizedKeys, allData, keysToFetchFor],
   );
 };
 
@@ -476,7 +480,7 @@ export const useDataTupleFetcher = <T>(
           error: data ? data.error : null,
         };
       }),
-    [allData, memoizedKeys, keysToFetchFor],
+    [memoizedKeys, allData, keysToFetchFor],
   );
 };
 
@@ -591,4 +595,18 @@ export const useInitEditorState = (text: string = '') => {
     return prevEditorState;
   }
   return editorState;
+};
+
+/*
+ * Proxy the new redux state of roles to the old structure of founder and
+ * admins.
+ */
+export const useOldRoles = (colonyAddress: Address) => {
+  const { data: newRoles, isFetching, error } = useDataFetcher<*>(
+    rolesFetcher,
+    [colonyAddress],
+    [colonyAddress],
+  );
+  const roles = useMemo(() => proxyOldRoles(newRoles), [newRoles]);
+  return { data: roles, isFetching, error };
 };

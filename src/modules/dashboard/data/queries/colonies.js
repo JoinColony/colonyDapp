@@ -1,9 +1,13 @@
 /* @flow */
 
 import {
+  COLONY_ROLES,
   COLONY_ROLE_ADMINISTRATION,
+  COLONY_ROLE_ARBITRATION,
   COLONY_ROLE_ARCHITECTURE,
+  COLONY_ROLE_ARCHITECTURE_SUBDOMAIN,
   COLONY_ROLE_FUNDING,
+  COLONY_ROLE_RECOVERY,
   COLONY_ROLE_ROOT,
 } from '@colony/colony-js-client';
 
@@ -93,7 +97,11 @@ const prepareColonyStoreQuery = async (
 
 export const getColonyRoles: ContractEventQuery<
   void,
-  { admins: Address[], founder: Address },
+  {
+    [domainId: number]: {
+      [address: Address]: { [role: $Keys<typeof COLONY_ROLES>]: boolean },
+    },
+  },
 > = {
   name: 'getColonyRoles',
   context,
@@ -130,8 +138,8 @@ export const getColonyRoles: ContractEventQuery<
       createAddress(oneTxAddress),
     ];
 
-    // reduce events to { [address]: { [role]: boolean } }
-    const addressRoles = events.reduce((acc, { address, setTo, role }) => {
+    // reduce events to { [domainId]: { [address]: { [role]: boolean } } }
+    return events.reduce((acc, { address, setTo, role, domainId }) => {
       const normalizedAddress = createAddress(address);
 
       // don't include roles of extensions
@@ -141,36 +149,80 @@ export const getColonyRoles: ContractEventQuery<
 
       return {
         ...acc,
-        [(normalizedAddress: string)]: {
-          ...acc[(normalizedAddress: string)],
-          [role]: setTo,
+        [domainId]: {
+          ...acc[domainId],
+          [(normalizedAddress: string)]: {
+            ...(acc[domainId] || {})[(normalizedAddress: string)],
+            [role]: setTo,
+          },
         },
       };
     }, {});
+  },
+};
 
-    // find user with all the roles OldRoles sets for founder
-    const founder = createAddress(
-      Object.keys(addressRoles).find(
-        address =>
-          addressRoles[address][COLONY_ROLE_ADMINISTRATION] &&
-          addressRoles[address][COLONY_ROLE_ARCHITECTURE] &&
-          addressRoles[address][COLONY_ROLE_FUNDING] &&
-          addressRoles[address][COLONY_ROLE_ROOT],
-      ) || ZERO_ADDRESS,
-    );
-
-    // find users with administration role
-    const admins = Object.keys(addressRoles)
-      .filter(
-        address =>
-          addressRoles[address][COLONY_ROLE_ADMINISTRATION] &&
-          address !== founder,
-      )
-      .map(createAddress);
+export const getColonyDomainUserRoles: ContractEventQuery<
+  { userAddress: Address, domainId: number },
+  { [role: $Keys<typeof COLONY_ROLES>]: boolean },
+> = {
+  name: 'getColonyDomainUserRoles',
+  context,
+  prepare: prepareColonyClientQuery,
+  async execute(colonyClient, { userAddress: address, domainId }) {
+    const [
+      ADMINISTRATION,
+      ARBITRATION,
+      ARCHITECTURE,
+      ARCHITECTURE_SUBDOMAIN,
+      FUNDING,
+      RECOVERY,
+      ROOT,
+    ] = await Promise.all([
+      colonyClient.hasColonyRole.call({
+        address,
+        domainId,
+        role: COLONY_ROLE_ADMINISTRATION,
+      }),
+      colonyClient.hasColonyRole.call({
+        address,
+        domainId,
+        role: COLONY_ROLE_ARBITRATION,
+      }),
+      colonyClient.hasColonyRole.call({
+        address,
+        domainId,
+        role: COLONY_ROLE_ARCHITECTURE,
+      }),
+      colonyClient.hasColonyRole.call({
+        address,
+        domainId,
+        role: COLONY_ROLE_ARCHITECTURE_SUBDOMAIN,
+      }),
+      colonyClient.hasColonyRole.call({
+        address,
+        domainId,
+        role: COLONY_ROLE_FUNDING,
+      }),
+      colonyClient.hasColonyRole.call({
+        address,
+        domainId,
+        role: COLONY_ROLE_RECOVERY,
+      }),
+      colonyClient.hasColonyRole.call({
+        address,
+        domainId,
+        role: COLONY_ROLE_ROOT,
+      }),
+    ]).then(results => results.map(({ hasRole }) => hasRole));
 
     return {
-      admins,
-      founder,
+      ADMINISTRATION,
+      ARBITRATION,
+      ARCHITECTURE,
+      ARCHITECTURE_SUBDOMAIN,
+      FUNDING,
+      RECOVERY,
+      ROOT,
     };
   },
 };
