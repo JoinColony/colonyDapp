@@ -164,8 +164,6 @@ const TaskList = ({
 
   const colonyName = colonyAddress ? data.record : undefined;
 
-  console.log('show empty state', showEmptyState)
-
   return (
     <>
       {/* These empty states are getting a bit out of hand.
