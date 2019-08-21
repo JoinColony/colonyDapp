@@ -255,6 +255,30 @@ export type ColonyActionTypes =
       { admins: Address[]; founder: Address },
       WithKey
     >
+  | UniqueActionType<
+      ActionTypes.COLONY_DOMAIN_USER_ROLES_SET,
+      {
+        colonyAddress: Address;
+        domainId: number;
+        roles: { [role: string]: boolean };
+        userAddress: Address;
+      },
+      WithKey
+    >
+  | ErrorActionType<
+      typeof ActionTypes.COLONY_DOMAIN_USER_ROLES_SET_ERROR,
+      WithKey
+    >
+  | UniqueActionType<
+      typeof ActionTypes.COLONY_DOMAIN_USER_ROLES_SET_SUCCESS,
+      {
+        colonyAddress: Address;
+        domainId: number;
+        roles: { [role: string]: boolean };
+        userAddress: Address;
+      },
+      WithKey
+    >
   | ActionTypeWithPayloadAndMeta<
       ActionTypes.COLONY_SUB_START,
       { colonyAddress: Address },
