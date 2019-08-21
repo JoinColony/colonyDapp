@@ -11,6 +11,8 @@ import Profile from '~admin/Profile';
 import RecoveryModeAlert from '~admin/RecoveryModeAlert';
 import Tokens from '~admin/Tokens';
 import Transactions from '~admin/Transactions';
+import Domains from '~admin/Domains';
+import Permissions from '~admin/Permissions';
 import VerticalNavigation from '~pages/VerticalNavigation';
 import { HistoryNavigation } from '~pages/NavigationWrapper';
 import { isInRecoveryMode } from '../../../dashboard/checks';
@@ -32,6 +34,14 @@ const MSG = defineMessages({
   colonySettings: {
     id: 'dashboard.Admin.colonySettings',
     defaultMessage: 'Colony Settings',
+  },
+  tabDomains: {
+    id: 'dashboard.Admin.tabDomains',
+    defaultMessage: 'Domains',
+  },
+  tabPermissions: {
+    id: 'dashboard.Admin.tabPermissions',
+    defaultMessage: 'Permissions',
   },
   tabProfile: {
     id: 'dashboard.Admin.tabProfile',
@@ -74,11 +84,21 @@ const navigationItems = (colony: ColonyType): NavigationItem[] => [
   },
   {
     id: 3,
+    title: MSG.tabDomains,
+    content: <Domains colonyAddress={colony.colonyAddress} />,
+  },
+  {
+    id: 4,
+    title: MSG.tabPermissions,
+    content: <Permissions colonyAddress={colony.colonyAddress} />,
+  },
+  {
+    id: 5,
     title: MSG.tabTransaction,
     content: <Transactions colonyAddress={colony.colonyAddress} />,
   },
   {
-    id: 4,
+    id: 6,
     title: MSG.tabOrganisation,
     content: <Organizations colonyAddress={colony.colonyAddress} />,
   },
