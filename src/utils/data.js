@@ -9,13 +9,17 @@ import {
   COLONY_ROLE_ROOT,
 } from '@colony/colony-js-client';
 
-import type { RolesType } from '~immutable';
+import type {
+  DomainType,
+  RolesType,
+  ColonyRolesObject,
+  UserRolesObject,
+} from '~immutable';
 
 import { ZERO_ADDRESS } from '~utils/web3/constants';
 
 export opaque type RandomId: string = string;
 
-// eslint-disable-next-line import/prefer-default-export
 export const generateUrlFriendlyId = (): RandomId =>
   generate(urlDictionary, 21);
 
@@ -55,3 +59,64 @@ export const proxyOldRoles = (domainRoles: *): ?RolesType => {
     admins: Array.from(admins),
   };
 };
+
+// Return parent of a domain or undefined
+const getParentDomainId = (domains, domainId) =>
+  (domains.find(({ id }) => id === domainId) || {}).parentId;
+
+// Combine user roles object with user roles from another domain
+const combineUserDomainRoles = (
+  userDomainRoles,
+  roles,
+  domainId,
+  userAddress,
+) =>
+  roles[domainId] && roles[domainId][userAddress]
+    ? Object.keys(roles[domainId][userAddress]).reduce(
+        (acc, role) => ({
+          ...acc,
+          [role]: acc[role] || roles[domainId][userAddress][role],
+        }),
+        ({ ...userDomainRoles }: UserRolesObject),
+      )
+    : userDomainRoles;
+
+export const includeParentRoles = (
+  roles: ColonyRolesObject,
+  domains: DomainType[],
+) =>
+  domains.reduce(
+    (rolesObject, { id: domainId }) => ({
+      ...rolesObject,
+      [domainId]: Object.keys(roles[domainId] || {}).reduce(
+        (domainObject, userAddress) => {
+          let userDomainRoles = roles[domainId][userAddress];
+          let parentDomainId = getParentDomainId(domains, domainId);
+
+          /*
+           * Traverse up the domains tree until there are no more parents, or we
+           * have all permissions.
+           */
+          while (
+            parentDomainId &&
+            Object.values(userDomainRoles).find(hasRole => !hasRole) !==
+              undefined
+          ) {
+            // Combine permissions we already found with those of the parent
+            userDomainRoles = combineUserDomainRoles(
+              userDomainRoles,
+              roles,
+              parentDomainId,
+              userAddress,
+            );
+
+            // Get parent of the current domain
+            parentDomainId = getParentDomainId(domains, parentDomainId);
+          }
+          return { ...domainObject, [userAddress]: userDomainRoles };
+        },
+        {},
+      ),
+    }),
+    {},
+  );

@@ -35,7 +35,12 @@ export type DomainActionTypes = {|
   DOMAIN_EDIT_ERROR: ErrorActionType<typeof ACTIONS.DOMAIN_EDIT_ERROR, void>,
   DOMAIN_EDIT_SUCCESS: UniqueActionType<
     typeof ACTIONS.DOMAIN_EDIT_SUCCESS,
-    {| colonyAddress: string, domainId: number, domainName: string |},
+    {|
+      colonyAddress: string,
+      domainId: number,
+      domainName: string,
+      parentId: number,
+    |},
     void,
   >,
   DOMAIN_CREATE_TX: ActionType<typeof ACTIONS.DOMAIN_CREATE_TX>,

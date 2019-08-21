@@ -44,13 +44,19 @@ const allRolesReducer: ReducerType<AllRolesMap, RolesActions> = (
       const {
         payload: { roles, colonyAddress, domainId, userAddress },
       } = action;
-      const record = ImmutableMap(Object.entries(roles));
+      // Map keys instead of doing entries to appease the type gods
+      const record = ImmutableMap(
+        Object.keys(roles).map(role => [role, roles[role]]),
+      );
       return state.getIn([colonyAddress, 'record'])
         ? state.mergeIn(
             [colonyAddress, 'record', domainId, userAddress],
             record,
           )
-        : state.setIn([colonyAddress, 'record', domainId, userAddress], record);
+        : state.setIn(
+            [colonyAddress, 'record'],
+            ImmutableMap([[domainId, ImmutableMap([[userAddress, record]])]]),
+          );
     }
     default:
       return state;

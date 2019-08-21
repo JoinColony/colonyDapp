@@ -38,7 +38,7 @@ const allDomainsReducer: ReducerType<AllDomainsMap, DomainActions> = (
           );
     }
     case ACTIONS.DOMAIN_EDIT_SUCCESS: {
-      const { colonyAddress, domainName, domainId } = action.payload;
+      const { colonyAddress, domainName, domainId, parentId } = action.payload;
       const path = [colonyAddress, 'record'];
       return state.updateIn(
         path,
@@ -46,7 +46,7 @@ const allDomainsReducer: ReducerType<AllDomainsMap, DomainActions> = (
           domains &&
           domains
             .filter(domain => domain.id !== domainId)
-            .add(DomainRecord({ id: domainId, name: domainName })),
+            .add(DomainRecord({ id: domainId, name: domainName, parentId })),
       );
     }
     case ACTIONS.COLONY_DOMAINS_FETCH_SUCCESS: {
