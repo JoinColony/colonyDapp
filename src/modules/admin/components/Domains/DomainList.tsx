@@ -1,26 +1,29 @@
+/* @flow */
 import { MessageDescriptor } from 'react-intl';
+
 import React from 'react';
 import nanoid from 'nanoid';
 
 import { DomainType } from '~immutable/index';
+import { Address } from '~types/index';
+
 import { Table, TableBody } from '~core/Table';
 import Heading from '~core/Heading';
-import { Address } from '~types/index';
+
 import DomainListItem from './DomainListItem';
+
 import styles from './DomainList.css';
 
 interface Props {
   /*
    * Array of domain data
    */
-  domains?: DomainType[];
-
+  domains?: Array<DomainType>;
   /*
    * Whether to show the remove button
    * Gets passed down to `DomainListItem`
    */
   viewOnly?: boolean;
-
   /*
    * Title to show before the list
    */
