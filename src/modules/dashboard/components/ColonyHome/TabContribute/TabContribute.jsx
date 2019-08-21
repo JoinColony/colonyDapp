@@ -73,6 +73,14 @@ const TabContribute = ({
         filteredDomainId={filteredDomainId}
         filterOption={filterOption}
         isInRecoveryMode={isInRecoveryMode(colony)}
+        canMintTokens={canMintTokens}
+        showEmptyState={
+          /*
+           * @NOTE I couldn't assign this to a variable and re-use it because
+           * of Flow not properly inferring values
+           */
+          !(nativeTokenRef && isColonyTokenBalanceZero && isEthBalanceZero)
+        }
       />
     </>
   );
