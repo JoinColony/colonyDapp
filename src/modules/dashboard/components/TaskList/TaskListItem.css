@@ -3,15 +3,26 @@
 @value cellPaddingVertical: 25px;
 @value cellPaddingHorizontal: 40px;
 
+.globalLink:nth-child(n+2) tr {
+  border-width: 1px;
+  border-style: solid;
+  border-left: 0;
+  border-right: 0;
+  border-bottom: 0;
+  border-color: var(--grey-blue-1);
+}
+
 td.taskDetails {
   flex-wrap: wrap;
-  padding: cellPaddingVertical cellPaddingHorizontal;
+  padding-left: cellPaddingHorizontal;
+  min-height: 70px;
   width: calc(100% - 230px);
   font-weight: var(--weight-semi);
 }
 
 .taskDetailsTitle {
   composes: inlineEllipsis from '~styles/text.css';
+  padding: cellPaddingVertical cellPaddingHorizontal cellPaddingVertical 0;
   max-width: 80ch;
   color: var(--colony-black);
 }

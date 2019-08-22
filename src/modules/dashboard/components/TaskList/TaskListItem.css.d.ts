@@ -1,5 +1,6 @@
 export const cellPaddingVertical: string;
 export const cellPaddingHorizontal: string;
+export const globalLink: string;
 export const taskDetails: string;
 export const taskDetailsTitle: string;
 export const taskDetailsReputation: string;

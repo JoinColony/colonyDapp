@@ -77,38 +77,41 @@ const TaskListItem = ({ data, intl: { formatMessage } }: Props) => {
   }
 
   return (
-    <TableRow>
-      <TableCell className={styles.taskDetails}>
-        <Link
-          title={title || defaultTitle}
-          className={styles.taskDetailsTitle}
-          to={`/colony/${colonyName}/task/${draftId}`}
-          text={title || defaultTitle}
-        />
-        {reputation && (
-          <span className={styles.taskDetailsReputation}>
-            <FormattedMessage
-              {...MSG.reputation}
-              values={{ reputation: reputation.toString() }}
-            />
-          </span>
-        )}
-      </TableCell>
-      <TableCell className={styles.taskPayouts}>
-        {!!availableTokens && (
-          <PayoutsList
-            payouts={payouts as TaskPayoutType[]}
-            nativeToken={nativeTokenRef}
-            tokenOptions={availableTokens}
+    <Link
+      className={styles.globalLink}
+      to={`/colony/${colonyName}/task/${draftId}`}
+    >
+      <TableRow>
+        <TableCell className={styles.taskDetails}>
+          <Link
+            title={title || defaultTitle}
+            className={styles.taskDetailsTitle}
+            to={`/colony/${colonyName}/task/${draftId}`}
+            text={title || defaultTitle}
           />
-        )}
-      </TableCell>
-      <TableCell className={styles.userAvatar}>
-        {workerAddress && (
-          <UserAvatar showInfo size="xs" address={workerAddress} />
-        )}
-      </TableCell>
-    </TableRow>
+          {reputation && (
+            <span className={styles.taskDetailsReputation}>
+              <FormattedMessage
+                {...MSG.reputation}
+                values={{ reputation: reputation.toString() }}
+              />
+            </span>
+          )}
+        </TableCell>
+        <TableCell className={styles.taskPayouts}>
+          {!!availableTokens && (
+            <PayoutsList
+              payouts={payouts}
+              nativeToken={nativeTokenRef}
+              tokenOptions={availableTokens}
+            />
+          )}
+        </TableCell>
+        <TableCell className={styles.userAvatar}>
+          {workerAddress && <UserAvatar size="xs" address={workerAddress} />}
+        </TableCell>
+      </TableRow>
+    </Link>
   );
 };
 
