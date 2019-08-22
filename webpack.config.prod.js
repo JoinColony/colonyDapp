@@ -16,15 +16,9 @@ webpackProdConfig.plugins.pop();
  */
 delete webpackProdConfig.devServer;
 /*
- * Remove ts-loader since it's just for watching (babel-loader does the build)
+ * Add babel-loader to the ts/tsx files
  */
-webpackProdConfig.module.rules.splice(0, 1, {
-  test: /\.(js|tsx?)$/,
-  exclude: /node_modules/,
-  use: [
-    { loader: 'babel-loader' },
-  ],
-});
+webpackProdConfig.module.rules[0].use.push( { loader: 'babel-loader' } );
 /*
  * Add chunk splitting optimization
  * This is not employing any code splitting or tree shaking ...yet
