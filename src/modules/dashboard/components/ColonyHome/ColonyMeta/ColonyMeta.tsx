@@ -43,7 +43,7 @@ const MSG = defineMessages({
 });
 
 const ColonyAvatar = HookedColonyAvatar({ fetchColony: false });
-const UserAvatar = HookedUserAvatar(null);
+const UserAvatar = HookedUserAvatar();
 
 interface Props {
   colony: ColonyType;

@@ -12,7 +12,7 @@ import { Table, TableBody, TableRow, TableCell } from '~core/Table';
 import HookedUserAvatar from '~users/HookedUserAvatar';
 import styles from './InitialTask.css';
 
-const UserAvatar = HookedUserAvatar(null);
+const UserAvatar = HookedUserAvatar();
 
 export interface InitialTaskType {
   title: MessageDescriptor;

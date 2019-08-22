@@ -40,7 +40,7 @@ import { mergePayload } from '~utils/actions';
 import styles from './InboxItem.css';
 import MSG from '../messages';
 
-const UserAvatar = HookedUserAvatar(null);
+const UserAvatar = HookedUserAvatar();
 
 const LOCAL_MSG = defineMessages({
   loadingText: {

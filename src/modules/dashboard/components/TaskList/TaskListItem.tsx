@@ -30,7 +30,7 @@ const MSG = defineMessages({
   },
 });
 
-const UserAvatar = HookedUserAvatar(null);
+const UserAvatar = HookedUserAvatar();
 
 const displayName = 'dashboard.TaskList.TaskListItem';
 

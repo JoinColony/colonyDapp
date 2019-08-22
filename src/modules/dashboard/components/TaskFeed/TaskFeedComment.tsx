@@ -19,7 +19,7 @@ import styles from './TaskFeedComment.css';
 
 import { useDataSubscriber, useSelector } from '~utils/hooks';
 
-const UserAvatar = HookedUserAvatar(null);
+const UserAvatar = HookedUserAvatar();
 
 const displayName = 'dashboard.TaskFeed.TaskFeedComment';
 

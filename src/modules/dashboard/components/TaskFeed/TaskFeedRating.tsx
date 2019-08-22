@@ -18,7 +18,7 @@ const MSG = defineMessages({
   },
 });
 
-const UserAvatar = HookedUserAvatar(null);
+const UserAvatar = HookedUserAvatar();
 
 interface Props {
   rating: TaskRatingType;
