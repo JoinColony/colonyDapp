@@ -21,7 +21,7 @@
         "stylelint": "stylelint --fix \"src/**/*.css\"",
         "stylelint:ci": "stylelint --custom-formatter './node_modules/stylelint-formatter-relative-junit' \"src/**/*.css\" > reports/stylelint/stylelint-results.xml",
         "test": "jest --config=jest.conf.json",
-        "test:ci": "jest --clearCache && NODE_ENV=test jest -w 1 --ci --updateSnapshot --verbose=true --config=jest.conf.json --reporters='jest-junit'",
+        "test:ci": "jest --clearCache && NODE_ENV=test jest -w 1 --ci --verbose=true --config=jest.conf.json --reporters='jest-junit'",
         "test:integration": "ava --serial",
         "test:integration:ci": "yarn test:integration --tap | tap-xunit > reports/ava/ava-results.xml",
         "test:e2e": "rimraf .dappPids.json && scripts/start_all.js & wait-on .dappPids.json && scripts/run_cypress_based_on_browser.sh; scripts/stop_all.js",
