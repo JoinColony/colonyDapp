@@ -85,7 +85,7 @@ const validationSchema = yup.object({
     .string()
     .required()
     .max(5, MSG.errorTokenSymbol),
-  tokenIcon: yup.array().min(1, MSG.errorTokenIcon),
+  tokenIcon: yup.array().max(1, MSG.errorTokenIcon),
 });
 
 type FormValues = {
