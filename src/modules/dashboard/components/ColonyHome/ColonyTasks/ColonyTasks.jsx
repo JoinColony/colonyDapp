@@ -30,6 +30,8 @@ type Props = {|
   isInRecoveryMode: boolean,
   filterOption: string,
   filteredDomainId: number,
+  showEmptyState?: boolean,
+  canMintTokens?: boolean,
 |};
 
 const MSG = defineMessages({
@@ -114,6 +116,8 @@ const ColonyTasks = ({
   filterOption,
   filteredDomainId,
   isInRecoveryMode,
+  showEmptyState = true,
+  canMintTokens,
 }: Props) => {
   const [isTaskBeingCreated, setIsTaskBeingCreated] = useState(false);
 
@@ -155,7 +159,14 @@ const ColonyTasks = ({
     return null;
   }
 
-  if (draftIds.length === 0 && canCreateTask) {
+  /*
+   * @NOTE If we can create tasks, but tokens are not yet minted, don't show the
+   * create task action button
+   */
+  if (
+    (draftIds.length === 0 && (canCreateTask && showEmptyState)) ||
+    (canCreateTask && !canMintTokens)
+  ) {
     return (
       <ActionButton
         button={NewTaskButton}
@@ -179,6 +190,12 @@ const ColonyTasks = ({
       filteredDomainId={filteredDomainId}
       filterOption={filterOption}
       walletAddress={walletAddress}
+      /*
+       * @NOTE
+       * - If we can create tasks, but no tokens minted, don't show the empty state
+       * - If we can't create tasks, and no tokens minted show the empty state
+       */
+      showEmptyState={!canCreateTask}
     />
   );
 };

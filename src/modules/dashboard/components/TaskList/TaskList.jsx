@@ -78,6 +78,7 @@ type Props = {|
   filterOption: string,
   walletAddress: Address,
   colonyAddress?: Address,
+  showEmptyState?: boolean,
 |};
 
 const TaskList = ({
@@ -87,6 +88,7 @@ const TaskList = ({
   emptyState,
   walletAddress,
   colonyAddress,
+  showEmptyState = true,
 }: Props) => {
   const tasksData = useDataTupleSubscriber<TaskType>(
     tasksByIdSubscriber,
@@ -179,66 +181,73 @@ const TaskList = ({
       )}
       {filteredTasksData.length === 0 && colonyAddress ? (
         <div>
-          {filteredDomainId ? (
-            <div>
-              <Icon
-                className={taskListItemStyles.noTask}
-                name="empty-task"
-                title={MSG.noTasks}
-                viewBox="0 0 120 120"
-              />
-              <div className={taskListItemStyles.emptyStateElements}>
-                <FormattedMessage tagName="p" {...MSG.noTaskDescription} />
-              </div>
-              <div className={taskListItemStyles.emptyStateElements}>
-                <FormattedMessage tagName="p" {...MSG.noTaskAddition} />
-              </div>
-            </div>
-          ) : (
-            <div>
-              <Icon
-                className={taskListItemStyles.noTask}
-                name="cup"
-                title={MSG.noTasks}
-                viewBox="0 0 120 120"
-              />
-              <div className={taskListItemStyles.emptyStateElements}>
-                <FormattedMessage
-                  tagName="p"
-                  {...MSG.welcomeToColony}
-                  values={{
-                    colonyNameExists: !!colonyName,
-                    colonyName,
-                  }}
-                />
-              </div>
-              <div className={taskListItemStyles.emptyStateElements}>
-                <FormattedMessage
-                  tagName="p"
-                  {...MSG.subscribeToColony}
-                  values={{
-                    /*
-                     * @NOTE If the current user hasn't claimed a profile yet, then don't show the
-                     * subscribe to colony call to action
-                     */
-                    isSubscribed: currentUser.profile.username
-                      ? isSubscribed
-                      : true,
-                    myColonies: (
-                      <ActionButton
-                        className={taskListItemStyles.subscribe}
-                        error={ACTIONS.USER_COLONY_SUBSCRIBE_ERROR}
-                        submit={ACTIONS.USER_COLONY_SUBSCRIBE}
-                        success={ACTIONS.USER_COLONY_SUBSCRIBE_SUCCESS}
-                        transform={transform}
-                      >
-                        <FormattedMessage tagName="span" {...MSG.myColonies} />
-                      </ActionButton>
-                    ),
-                  }}
-                />
-              </div>
-            </div>
+          {showEmptyState && (
+            <>
+              {filteredDomainId ? (
+                <div>
+                  <Icon
+                    className={taskListItemStyles.noTask}
+                    name="empty-task"
+                    title={MSG.noTasks}
+                    viewBox="0 0 120 120"
+                  />
+                  <div className={taskListItemStyles.emptyStateElements}>
+                    <FormattedMessage tagName="p" {...MSG.noTaskDescription} />
+                  </div>
+                  <div className={taskListItemStyles.emptyStateElements}>
+                    <FormattedMessage tagName="p" {...MSG.noTaskAddition} />
+                  </div>
+                </div>
+              ) : (
+                <div>
+                  <Icon
+                    className={taskListItemStyles.noTask}
+                    name="cup"
+                    title={MSG.noTasks}
+                    viewBox="0 0 120 120"
+                  />
+                  <div className={taskListItemStyles.emptyStateElements}>
+                    <FormattedMessage
+                      tagName="p"
+                      {...MSG.welcomeToColony}
+                      values={{
+                        colonyNameExists: !!colonyName,
+                        colonyName,
+                      }}
+                    />
+                  </div>
+                  <div className={taskListItemStyles.emptyStateElements}>
+                    <FormattedMessage
+                      tagName="p"
+                      {...MSG.subscribeToColony}
+                      values={{
+                        /*
+                         * @NOTE If the current user hasn't claimed a profile yet, then don't show the
+                         * subscribe to colony call to action
+                         */
+                        isSubscribed: currentUser.profile.username
+                          ? isSubscribed
+                          : true,
+                        myColonies: (
+                          <ActionButton
+                            className={taskListItemStyles.subscribe}
+                            error={ACTIONS.USER_COLONY_SUBSCRIBE_ERROR}
+                            submit={ACTIONS.USER_COLONY_SUBSCRIBE}
+                            success={ACTIONS.USER_COLONY_SUBSCRIBE_SUCCESS}
+                            transform={transform}
+                          >
+                            <FormattedMessage
+                              tagName="span"
+                              {...MSG.myColonies}
+                            />
+                          </ActionButton>
+                        ),
+                      }}
+                    />
+                  </div>
+                </div>
+              )}
+            </>
           )}
         </div>
       ) : (
