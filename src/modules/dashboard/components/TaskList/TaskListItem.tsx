@@ -83,12 +83,7 @@ const TaskListItem = ({ data, intl: { formatMessage } }: Props) => {
     >
       <TableRow>
         <TableCell className={styles.taskDetails}>
-          <Link
-            title={title || defaultTitle}
-            className={styles.taskDetailsTitle}
-            to={`/colony/${colonyName}/task/${draftId}`}
-            text={title || defaultTitle}
-          />
+          <p className={styles.taskDetailsTitle}>{title || defaultTitle}</p>
           {reputation && (
             <span className={styles.taskDetailsReputation}>
               <FormattedMessage

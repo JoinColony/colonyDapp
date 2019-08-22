@@ -14,15 +14,13 @@
 
 td.taskDetails {
   flex-wrap: wrap;
-  padding-left: cellPaddingHorizontal;
-  min-height: 70px;
+  padding: cellPaddingVertical cellPaddingHorizontal;
   width: calc(100% - 230px);
   font-weight: var(--weight-semi);
 }
 
 .taskDetailsTitle {
   composes: inlineEllipsis from '~styles/text.css';
-  padding: cellPaddingVertical cellPaddingHorizontal cellPaddingVertical 0;
   max-width: 80ch;
   color: var(--colony-black);
 }
