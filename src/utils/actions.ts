@@ -1,10 +1,11 @@
+import pipe from 'lodash/fp/pipe';
 import { UniqueActionType } from '~redux/index';
 
 export type ActionTransformFnType = (
   arg0: UniqueActionType<any, any, any>,
 ) => UniqueActionType<any, any, object>;
 
-export { default as pipe } from 'lodash/fp/pipe';
+export { pipe };
 
 export const mergePayload = (payload: object) => (
   action: UniqueActionType<any, any, any>,
