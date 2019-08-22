@@ -13,7 +13,7 @@ import styles from './WalletInteraction.css';
 const MSG = defineMessages({
   walletPromptText: {
     id: 'users.GasStation.WalletInteraction.walletPromptText',
-    defaultMessage: `Please finish the transaction on {walletType, select,
+    defaultMessage: `Please finish this action on {walletType, select,
       metamask {MetaMask}
       hardware {your hardware wallet}
     }`,
