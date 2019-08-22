@@ -1,5 +1,5 @@
 import { FormikBag } from 'formik';
-import React, { useCallback } from 'react';
+import React, { DependencyList, useCallback } from 'react';
 import { defineMessages } from 'react-intl';
 import * as yup from 'yup';
 import moveDecimal from 'move-decimal-point';
@@ -57,7 +57,7 @@ const TokenMintForm = ({
       withKey(colonyAddress),
       mergePayload({ colonyAddress }),
     ),
-    [decimals, colonyAddress],
+    [decimals, colonyAddress] as DependencyList,
   );
 
   return (

@@ -1,4 +1,4 @@
-import React, { ReactNode, useMemo, useCallback } from 'react';
+import React, { ReactNode, useMemo, useCallback, DependencyList } from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 
 import { Address } from '~types/index';
@@ -109,7 +109,8 @@ const TaskList = ({
           return currentState !== TASK_STATE.CANCELLED;
       }
     },
-    [filterOption, walletAddress, filteredDomainId] as any,
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [filterOption, filteredDomainId, walletAddress] as DependencyList,
   );
 
   const sortingOrderOption = 'desc';
@@ -124,7 +125,8 @@ const TaskList = ({
         ? (second as any).createdAt - (first as any).createdAt
         : (first as any).createdAt - (second as any).createdAt;
     },
-    [sortingOrderOption] as any,
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [sortingOrderOption] as DependencyList,
   );
 
   const filteredTasksData = useMemo(
@@ -134,7 +136,8 @@ const TaskList = ({
             .sort(sort as any)
             .filter(({ data }) => (data ? filter(data) : true))
         : tasksData,
-    [filter, tasksData, sort] as any,
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [filter, sort, tasksData] as DependencyList,
   );
 
   const currentUser = useSelector(currentUserSelector);
@@ -149,7 +152,7 @@ const TaskList = ({
   const isSubscribed = (colonyAddresses || []).includes(colonyAddress);
   const transform = useCallback(mergePayload({ colonyAddress }), [
     colonyAddress,
-  ] as any);
+  ] as DependencyList);
 
   const data = useSelector(colonyNameSelector, [colonyAddress]);
 

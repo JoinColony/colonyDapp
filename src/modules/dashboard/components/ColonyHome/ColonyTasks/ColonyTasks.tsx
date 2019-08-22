@@ -129,7 +129,7 @@ const ColonyTasks = ({
         [ActionTypes.TASK_CREATE_SUCCESS]: () => setIsTaskBeingCreated(false),
         [ActionTypes.TASK_CREATE_ERROR]: () => setIsTaskBeingCreated(false),
       }),
-    [dispatch, setIsTaskBeingCreated] as any,
+    [dispatch],
   );
 
   const { data: taskMetadata, isFetching } = useDataSubscriber<TaskMetadataMap>(
@@ -142,7 +142,7 @@ const ColonyTasks = ({
   const draftIds = useMemo(
     () =>
       Object.keys(taskMetadata || {}).map(draftId => [colonyAddress, draftId]),
-    [taskMetadata, colonyAddress] as any,
+    [colonyAddress, taskMetadata],
   ) as [Address, TaskDraftId][];
 
   const transform = useCallback(mergePayload({ colonyAddress }), [
