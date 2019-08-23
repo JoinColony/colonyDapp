@@ -11,3 +11,4 @@ export const assigneeName: string;
 export const fundingContainer: string;
 export const payout: string;
 export const reputation: string;
+export const recipientAvatar: string;
