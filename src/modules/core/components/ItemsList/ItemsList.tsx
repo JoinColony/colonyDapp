@@ -204,7 +204,7 @@ class ItemsList extends Component<Props, State> {
    */
   renderListItem = (
     { id, name, children }: ConsumableItem,
-    nestingCounter: number = 0,
+    nestingCounter = 0,
   ) => {
     const { selectedItem } = this.state;
     const { itemDisplayPrefix = '', itemDisplaySuffix = '' } = this.props;

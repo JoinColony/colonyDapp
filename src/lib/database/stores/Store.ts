@@ -1,5 +1,3 @@
-/* eslint-disable no-underscore-dangle */
-
 import { OrbitDBStore } from '../types';
 import { raceAgainstTimeout } from '../../../utils/async';
 import { log } from '../../../utils/debug';
@@ -33,7 +31,7 @@ class Store {
 
   _pinner: PinnerConnector;
 
-  _ready: boolean = false;
+  _ready = false;
 
   _replicationTimeout: TimeoutID | null;
 

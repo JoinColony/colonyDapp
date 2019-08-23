@@ -12,10 +12,10 @@ module.exports = {
     es6: true,
   },
   extends: [
-    '@colony/eslint-config-colony',
     'plugin:@typescript-eslint/recommended',
     'eslint-config-airbnb/rules/react',
     'eslint-config-airbnb/rules/react-a11y',
+    '@colony/eslint-config-colony',
     'prettier/react',
     'prettier/@typescript-eslint',
   ],
@@ -60,7 +60,10 @@ module.exports = {
     },
   ],
   rules: {
+    'eslint-comments/disable-enable-pair': ['error', { allowWholeFile: true }],
+
     // @typescript-eslint
+    '@typescript-eslint/ban-ts-ignore': 'off',
     '@typescript-eslint/no-unused-vars': 'error',
     '@typescript-eslint/explicit-member-accessibility': 'off',
     '@typescript-eslint/no-object-literal-type-assertion': 'off',
@@ -100,6 +103,7 @@ module.exports = {
       'warn',
       { extensions: ['.test.js', '.tsx'] },
     ],
+    'react/jsx-one-expression-per-line': 'off',
     'react/jsx-props-no-spreading': 'off',
     'react/jsx-wrap-multilines': 'off',
     'react/require-default-props': 'off',
@@ -115,11 +119,11 @@ module.exports = {
         ],
       },
     ],
-    'react/jsx-one-expression-per-line': 'off',
+
+    'react/state-in-constructor': ['error', 'never'],
+    'react/static-property-placement': 'off',
     'react-hooks/rules-of-hooks': 'error',
     'react-hooks/exhaustive-deps': 'warn',
-    'react/jsx-props-no-spreading': 'off',
-    'react/static-property-placement': 'off',
 
     // miscellaneous
     'import/no-extraneous-dependencies': [

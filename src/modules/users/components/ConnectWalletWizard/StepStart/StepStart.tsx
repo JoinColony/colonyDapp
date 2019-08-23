@@ -18,9 +18,7 @@ const MSG = defineMessages({
   },
   subTitle: {
     id: 'users.ConnectWalletWizard.StepStart.subTitle',
-    defaultMessage:
-      /* eslint-disable max-len */
-      'Each Colony account is accessed through an associated Ethereum wallet. You can use an existing wallet that you own, or create a new wallet below.',
+    defaultMessage: `Each Colony account is accessed through an associated Ethereum wallet. You can use an existing wallet that you own, or create a new wallet below.`,
   },
   createWalletTitle: {
     id: 'users.ConnectWalletWizard.StepStart.createWalletTitle',

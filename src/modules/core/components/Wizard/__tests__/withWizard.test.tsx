@@ -13,7 +13,6 @@ const Wrapper = ({ children, step }) => (
   </div>
 );
 
-// eslint-disable-next-line react/prop-types
 const createStep = (number, customValues) => ({ nextStep }) => (
   <div>
     <h2>Step number {number}</h2>

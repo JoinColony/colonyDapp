@@ -1,3 +1,5 @@
+/* eslint-disable no-unused-vars, @typescript-eslint/no-unused-vars, class-methods-use-this */
+
 import { Address, Entry, createAddress } from '~types/index';
 
 import AbstractAccessController from './AbstractAccessController';
@@ -18,7 +20,6 @@ class EthereumWalletAccessController extends AbstractAccessController<
     return TYPE;
   }
 
-  // eslint-disable-next-line class-methods-use-this
   get type() {
     return EthereumWalletAccessController.type;
   }
@@ -51,7 +52,6 @@ class EthereumWalletAccessController extends AbstractAccessController<
     return accessControllerAddress;
   }
 
-  /* eslint-disable @typescript-eslint/no-unused-vars,class-methods-use-this */
   async grant(actionId: string, address: Address): Promise<boolean> {
     throw new Error(
       'The wallet owner is the only one allowed to write to this database',
@@ -63,7 +63,6 @@ class EthereumWalletAccessController extends AbstractAccessController<
       'The wallet owner is the only one allowed to write to this database',
     );
   }
-  /* eslint-enable @typescript-eslint/no-unused-vars,class-methods-use-this */
 }
 
 export default EthereumWalletAccessController;

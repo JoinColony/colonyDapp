@@ -49,7 +49,6 @@ export default class TextDecorator {
       return key;
     });
 
-    // eslint-disable-next-line no-underscore-dangle
     if (Object.keys(this._linkify.__compiled__).length === 1) {
       throw new Error('No decorators defined');
     }

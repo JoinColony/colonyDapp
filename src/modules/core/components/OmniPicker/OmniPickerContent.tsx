@@ -1,3 +1,4 @@
+/* eslint-disable jsx-a11y/click-events-have-key-events */
 import React from 'react';
 
 import { Choose, EmptyRenderFnType, ItemRenderFnType, Select } from './types';
@@ -16,7 +17,6 @@ interface Props {
 }
 
 // The key events are handled by the OmniPickerBase class
-/* eslint-disable jsx-a11y/click-events-have-key-events */
 const OmniPickerContent = ({
   onChoose,
   filteredData = [],
@@ -31,19 +31,17 @@ const OmniPickerContent = ({
     <ul onClick={onChoose} role="listbox" id={`omnipicker-${id}-listbox`}>
       {filteredData.length
         ? filteredData.map((itemData, idx) => (
-          /* eslint-disable prettier/prettier */
-          <OmniPickerItem
-            key={itemData.id}
-            idx={idx}
-            keyUsed={keyUsed}
-            selected={selected === idx}
-            itemData={itemData}
-            onSelect={onSelect}
-            renderItem={renderItem}
-          />))
-        : renderEmpty()
-        /* eslint-enable prettier/prettier */
-      }
+            <OmniPickerItem
+              key={itemData.id}
+              idx={idx}
+              keyUsed={keyUsed}
+              selected={selected === idx}
+              itemData={itemData}
+              onSelect={onSelect}
+              renderItem={renderItem}
+            />
+          ))
+        : renderEmpty()}
     </ul>
   </div>
 );

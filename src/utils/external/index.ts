@@ -6,23 +6,25 @@ import { Address } from '~types/index';
 
 import { log } from '~utils/debug';
 
-type EthUsdResponse = {
+interface EthUsdResponse {
   status: string;
   message: string;
   result: {
     ethbtc: string;
+    /* eslint-disable camelcase */
     ethbtc_timestamp: string;
     ethusd: string;
     ethusd_timestamp: string;
+    /* eslint-enable camelcase */
   };
-};
+}
 
-type TokenDetails = {
+interface TokenDetails {
   name?: string;
   symbol?: string;
   decimals?: number;
   isVerified?: boolean;
-};
+}
 
 /*
   Request dollar conversion value from etherScan

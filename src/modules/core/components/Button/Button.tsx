@@ -1,3 +1,5 @@
+/* eslint-disable react/button-has-type */
+
 import React, { ReactNode } from 'react';
 import {
   IntlShape,
@@ -74,7 +76,6 @@ interface Props {
  *
  * After a non-workaround has been found for this.
  */
-/* eslint-disable react/button-has-type */
 const Button = ({
   appearance = { theme: 'primary' },
   children,
