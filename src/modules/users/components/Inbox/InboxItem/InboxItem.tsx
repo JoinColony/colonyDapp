@@ -205,6 +205,7 @@ const InboxItem = ({
                     />
                   )),
                   colonyAddress: makeInboxDetail(colonyAddress),
+                  colonyName: makeInboxDetail(colonyName),
                   colonyDisplayName: makeInboxDetail(
                     colonyDisplayNameWithFallback,
                     value =>

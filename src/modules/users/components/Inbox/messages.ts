@@ -39,7 +39,7 @@ const messages = defineMessages({
   notificationAdminENSCreated: {
     id: 'dashboard.Inbox.InboxItem.notificationAdminENSCreated',
     defaultMessage:
-      'Colony {colonyAddress} was registered on ENS as {colonyDisplayName}.',
+      'Colony {colonyAddress} was registered on ENS as {colonyName}.',
   },
   notificationAdminColonyLabelAdded: {
     id: 'dashboard.Inbox.InboxItem.notificationAdminColonyLabelAdded',
