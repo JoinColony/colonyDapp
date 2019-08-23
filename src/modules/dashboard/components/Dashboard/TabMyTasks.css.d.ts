@@ -1,2 +1,2 @@
-export const loadingText: string;
+export const emptyText: string;
 export const coloniesContainer: string;

@@ -1,20 +1,21 @@
 import React from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 
-import { useDataSubscriber } from '~utils/hooks';
+import { useDataFetcher } from '~utils/hooks';
 import { Address } from '~types/index';
 import { TaskDraftId } from '~immutable/index';
-import { SpinnerLoader, DotsLoader } from '~core/Preloaders';
+import { SpinnerLoader } from '~core/Preloaders';
 import TaskList from '~dashboard/TaskList';
 import InitialTask, { InitialTaskType } from './InitialTask';
 import { TasksFilterOptionType } from '../shared/tasksFilter';
-import { currentUserTasksSubscriber } from '../../subscribers';
+import { currentUserDraftIdsFetcher } from '../../fetchers';
 import styles from './TabMyTasks.css';
 
 const MSG = defineMessages({
-  loadingTaskList: {
-    id: 'dashboard.Dashboard.TabMyTasks.loadingTaskList',
-    defaultMessage: 'Loading Task List',
+  emptyText: {
+    id: 'dashboard.Dashboard.TabMyTasks.emptyText',
+    // eslint-disable-next-line max-len
+    defaultMessage: `It looks like you don't have any tasks. Visit your colonies to find a task to work on.`,
   },
 });
 
@@ -31,9 +32,9 @@ const TabMyTasks = ({
   userClaimedProfile,
   walletAddress,
 }: Props) => {
-  const { isFetching: isFetchingTasks, data: draftIds } = useDataSubscriber<
+  const { isFetching: isFetchingTasks, data: draftIds } = useDataFetcher<
     [Address, TaskDraftId][]
-  >(currentUserTasksSubscriber, [], []);
+  >(currentUserDraftIdsFetcher, [], []);
 
   if (isFetchingTasks) {
     return <SpinnerLoader />;
@@ -53,8 +54,7 @@ const TabMyTasks = ({
       </>
     );
   }
-
-  return draftIds ? (
+  return draftIds && draftIds.length ? (
     <TaskList
       draftIds={draftIds}
       filterOption={filterOption}
@@ -62,12 +62,10 @@ const TabMyTasks = ({
     />
   ) : (
     <>
-      <div className={styles.loadingText}>
-        <FormattedMessage {...MSG.loadingTaskList} />
-        <DotsLoader />
-      </div>
+      <p className={styles.emptyText}>
+        <FormattedMessage {...MSG.emptyText} />
+      </p>
     </>
   );
 };
-
 export default TabMyTasks;
