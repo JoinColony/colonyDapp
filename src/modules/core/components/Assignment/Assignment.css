@@ -90,3 +90,7 @@
   font-weight: var(--weight-medium);
   color: var(--violet);
 }
+
+.recipientAvatar {
+  cursor: pointer;
+}

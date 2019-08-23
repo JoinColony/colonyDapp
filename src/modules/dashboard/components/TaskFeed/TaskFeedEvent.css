@@ -17,6 +17,11 @@
   color: var(--text);
 }
 
+.highlightCursor {
+  composes: highlight;
+  cursor: pointer;
+}
+
 .highlightNumeral span {
   font-size: var(--size-small);
   font-weight: var(--weight-semi);

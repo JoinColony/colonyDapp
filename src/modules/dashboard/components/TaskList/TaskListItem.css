@@ -34,6 +34,7 @@ td.userAvatar {
   justify-content: center;
   padding: cellPaddingVertical 0;
   width: 60px;
+  cursor: pointer;
 }
 
 .noTask {

@@ -12,7 +12,7 @@
 }
 
 .inboxContainer tbody {
-  overflow: hidden;
+  overflow-y: hidden;
 }
 
 .inboxHeading {

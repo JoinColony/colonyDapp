@@ -109,7 +109,9 @@ const TaskListItem = ({ data, intl: { formatMessage } }: Props) => {
         )}
       </TableCell>
       <TableCell className={styles.userAvatar}>
-        {workerAddress && <UserAvatar size="xs" address={workerAddress} />}
+        {workerAddress && (
+          <UserAvatar showInfo size="xs" address={workerAddress} />
+        )}
       </TableCell>
     </TableRow>
   );

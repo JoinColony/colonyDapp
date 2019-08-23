@@ -195,6 +195,7 @@ const InboxItem = ({
             {unread && <UnreadIndicator type={getType(eventType)} />}
             {user && (
               <UserAvatar
+                showInfo
                 size="xxs"
                 address={user.profile.walletAddress}
                 className={styles.userAvatar}

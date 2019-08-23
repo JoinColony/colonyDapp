@@ -73,6 +73,7 @@ const defaultRenderAvatar = (address: Address, user: ?UserType) => (
     address={address}
     className={styles.recipientAvatar}
     user={user}
+    showInfo
     size="xs"
   />
 );

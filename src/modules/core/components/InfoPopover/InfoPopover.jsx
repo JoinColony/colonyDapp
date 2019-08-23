@@ -6,11 +6,11 @@ import type { UserType } from '~immutable';
 
 import { Tooltip } from '~core/Popover';
 import UserMention from '~core/UserMention';
-import MaskedAddress from '~core/MaskedAddress';
+import CopyableAddress from '~core/CopyableAddress';
 
-import styles from './UserInfo.css';
+import styles from './InfoPopover.css';
 
-const componentDisplayName: string = 'UserInfo';
+const componentDisplayName: string = 'InfoPopover';
 
 type Props = {|
   /** Children elemnts or components to wrap the tooltip around */
@@ -35,22 +35,19 @@ const renderTooltipContent = (user?: UserType) => {
       )}
       {username && (
         <span title={username} className={styles.userName}>
-          <UserMention username={username} hasLink={false} />
+          <UserMention username={username} hasLink />
         </span>
       )}
-      {walletAddress && (
-        <p className={styles.walletAddress}>
-          <MaskedAddress address={walletAddress} />
-        </p>
-      )}
+      {walletAddress && <CopyableAddress full>{walletAddress}</CopyableAddress>}
     </div>
   );
 };
 
-const UserInfo = ({ user, children, trigger = 'hover' }: Props) => (
+const InfoPopover = ({ user, children, trigger = 'click' }: Props) => (
   <Tooltip
     content={renderTooltipContent(user)}
     trigger={user ? trigger : 'disabled'}
+    darkTheme={false}
   >
     {/*
      * This wrapper is needed because, if the child in an in-line element, the
@@ -60,6 +57,6 @@ const UserInfo = ({ user, children, trigger = 'hover' }: Props) => (
   </Tooltip>
 );
 
-UserInfo.displayName = componentDisplayName;
+InfoPopover.displayName = componentDisplayName;
 
-export default UserInfo;
+export default InfoPopover;
