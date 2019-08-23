@@ -168,6 +168,9 @@ const config = {
     new webpack.ProvidePlugin({
       regeneratorRuntime: '@babel/runtime/regenerator',
     }),
+    new webpack.WatchIgnorePlugin([
+      /css\.d\.ts$/
+    ]),
     new Dotenv({
       systemvars: !!process.env.CI,
     }),
