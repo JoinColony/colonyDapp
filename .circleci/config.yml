@@ -3,14 +3,14 @@ version: 2
 jobs:
   build-with-lockfile:
     docker:
-      - image: circleci/node:10.12
+      - image: circleci/node:10.13
     working_directory: ~/colonyDapp
     steps:
       - checkout
       - restore_cache:
           keys:
-          - node-modules-v1-{{ checksum "package.json" }}
-          - node-modules-v1-
+          - node-modules-v2-{{ checksum "package.json" }}
+          - node-modules-v2-
       - run:
           name: "Set up global packages"
           command: |
@@ -24,18 +24,18 @@ jobs:
       - save_cache:
           paths:
             - node_modules
-          key: node-modules-v1-{{ checksum "package.json" }}
+          key: node-modules-v2-{{ checksum "package.json" }}
       - run:
           name: "Updating lockfile"
           command: $HOME/.config/yarn/global/node_modules/.bin/greenkeeper-lockfile-update
       - run:
-          name: "Checking correct types"
-          command: |
-            mkdir -p reports/flow
-            yarn flow:ci
+          name: "Checking TypeScript types"
+          command: yarn typecheck
       - run:
-          name: "Linting Javascript"
-          command: yarn lint:ci
+          name: "Linting TypeScript"
+          command: |
+            mkdir -p reports/typescript
+            yarn lint:ci
       - run:
           name: "Linting Style sheets"
           command: |
@@ -58,14 +58,14 @@ jobs:
           command: $HOME/.config/yarn/global/node_modules/.bin/greenkeeper-lockfile-upload
   nightly-build:
     docker:
-      - image: circleci/node:10.12
+      - image: circleci/node:10.13
     working_directory: ~/colonyDapp
     steps:
       - checkout
       - restore_cache:
           keys:
-          - node-modules-v1-{{ checksum "package.json" }}
-          - node-modules-v1-
+          - node-modules-v2-{{ checksum "package.json" }}
+          - node-modules-v2-
       - run:
           name: "Installing modules"
           command: |
@@ -74,14 +74,12 @@ jobs:
       - save_cache:
           paths:
             - node_modules
-          key: node-modules-v1-{{ checksum "package.json" }}
+          key: node-modules-v2-{{ checksum "package.json" }}
       - run:
-          name: "Checking correct types"
-          command: |
-            mkdir -p reports/flow
-            yarn flow:ci
+          name: "Checking TypeScript types"
+          command: yarn typecheck
       - run:
-          name: "Linting Javascript"
+          name: "Linting TypeScript"
           command: yarn lint:ci
       - run:
           name: "Linting Style sheets"
@@ -102,7 +100,7 @@ jobs:
           command: yarn webpack:build
   integration-testing:
     docker:
-      - image: circleci/node:10.12
+      - image: circleci/node:10.13
     environment:
       LOADER: trufflepig
       NETWORK: local
@@ -112,8 +110,8 @@ jobs:
       - checkout
       - restore_cache:
           keys:
-          - node-modules-v1-{{ checksum "package.json" }}
-          - node-modules-v1-
+          - node-modules-v2-{{ checksum "package.json" }}
+          - node-modules-v2-
       - run:
           name: "Installing modules"
           command: |
@@ -122,9 +120,9 @@ jobs:
       - save_cache:
           paths:
             - node_modules
-          key: node-modules-v1-{{ checksum "package.json" }}
+          key: node-modules-v2-{{ checksum "package.json" }}
       - run:
-          name: "Linting Javascript"
+          name: "Linting TypeScript"
           command: yarn lint:ci
       - run:
           name: "Running Integration Tests"
@@ -178,7 +176,7 @@ jobs:
           path: reports
   build-styleguide:
     docker:
-      - image: circleci/node:10.12
+      - image: circleci/node:10.13
     working_directory: ~/repo
     steps:
       - checkout
@@ -199,7 +197,7 @@ jobs:
           key: v1-dependencies-{{ checksum "yarn.lock" }}
   deploy-styleguide:
     docker:
-      - image: circleci/node:10.12
+      - image: circleci/node:10.13
     working_directory: ~/repo
     steps:
       - add_ssh_keys:

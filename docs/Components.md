@@ -5,9 +5,9 @@ Here we discuss some general component conventions and best practices.
 ### File imports
 File imports for each file should appear in the correct order. The order is as follows (each of these blocks should be separated by a blank line):
 
-1) Flow Types from external packages
+1) Types from external packages
 ```js static
-import type { FormikProps } from 'formik';
+import { FormikProps } from 'formik';
 ```
 
 2) External packages
@@ -25,9 +25,9 @@ import { getMainClasses } from '~utils/css';
 import styles from './StepCreateToken.css';
 ```
 
-5) Flow Types of our own libs / files
+5) Types of our own libs / files
 ```js static
-import type { SomeTypes } from '../../../lib/...‘;
+import { SomeTypes } from '../../../lib/...‘;
 ```
 
 6) Our own files

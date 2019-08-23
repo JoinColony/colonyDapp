@@ -1,8 +1,6 @@
-/* eslint-disable flowtype/require-valid-file-annotation */
-
 export default function factory() {
   return {
-    files: ['integration-testing/**/*.test.js'],
+    files: ['integration-testing/**/*.test.ts'],
     require: ['@babel/register'],
   };
 }

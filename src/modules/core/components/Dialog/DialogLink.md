@@ -7,7 +7,7 @@ When using the `DialogLink`, there is no need to use the withDialog HoC, yet you
 ```js
 import Button from '../Button';
 import { DialogProvider } from '../Dialog';
-import ConfirmDialog from './ConfirmDialog.jsx'
+import ConfirmDialog from './ConfirmDialog.tsx'
 
 const ComponentThatOpensADialog = () => (
   <div>

@@ -7,13 +7,18 @@ const webpackBaseConfig = require('./webpack.config');
  */
 const webpackProdConfig = webpackBaseConfig();
 /*
- * Remove the HMR plugins since we won't be needing it
+ * Remove the TS checker and HMR plugins since we won't be needing them
  */
+webpackProdConfig.plugins.pop();
 webpackProdConfig.plugins.pop();
 /*
  * Remove the dev server since we won't be needing it
  */
 delete webpackProdConfig.devServer;
+/*
+ * Add babel-loader to the ts/tsx files
+ */
+webpackProdConfig.module.rules[0].use.push( { loader: 'babel-loader' } );
 /*
  * Add chunk splitting optimization
  * This is not employing any code splitting or tree shaking ...yet

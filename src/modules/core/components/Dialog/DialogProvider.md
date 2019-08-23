@@ -43,7 +43,7 @@ const Task = ({ openDialog } => (
 ```js
 import { withDialog, DialogProvider } from '.';
 import Button from '../Button'
-import ConfirmDialog from './ConfirmDialog.jsx'
+import ConfirmDialog from './ConfirmDialog.tsx'
 
 const ComponentThatOpensADialog = ({ openDialog }) => (
   <div>
