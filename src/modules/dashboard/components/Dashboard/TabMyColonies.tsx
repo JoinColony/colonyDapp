@@ -2,24 +2,31 @@ import React from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 
 import { Address } from '~types/index';
-import { useDataSubscriber, useSelector } from '~utils/hooks';
-import { SpinnerLoader, DotsLoader } from '~core/Preloaders';
+import { useDataFetcher, useSelector } from '~utils/hooks';
+import { SpinnerLoader } from '~core/Preloaders';
 import ColonyGrid from '~dashboard/ColonyGrid';
+import Link from '~core/Link';
 import { currentUserSelector } from '../../../users/selectors';
-import { userColoniesSubscriber } from '../../subscribers';
+import { userColoniesFetcher } from '../../fetchers';
+import { CREATE_COLONY_ROUTE } from '~routes/index';
 import styles from './TabMyColonies.css';
 
 const MSG = defineMessages({
-  loadingColonyList: {
-    id: 'dashboard.Dashboard.TabMyColonies.loadingColonyList',
-    defaultMessage: 'Loading Colony List',
+  emptyText: {
+    id: 'dashboard.Dashboard.TabMyColonies.emptyText',
+    // eslint-disable-next-line max-len
+    defaultMessage: `It looks like you don’t have any colonies. You’ll need an invite link to join a colony. Ask your community for a link or {link}.`,
+  },
+  createColonyLink: {
+    id: 'dashboard.Dashboard.TabMyColonies.createColonyLink',
+    defaultMessage: `create a new colony`,
   },
 });
 
 const TabMyColonies = () => {
   const currentUser = useSelector(currentUserSelector);
-  const { data: colonyAddresses, isFetching } = useDataSubscriber<Address[]>(
-    userColoniesSubscriber,
+  const { data: colonyAddresses, isFetching } = useDataFetcher<Address[]>(
+    userColoniesFetcher,
     [currentUser.profile.walletAddress],
     [
       currentUser.profile.walletAddress,
@@ -29,16 +36,24 @@ const TabMyColonies = () => {
 
   if (isFetching) return <SpinnerLoader />;
 
-  return colonyAddresses ? (
-    <div>
-      <ColonyGrid colonyAddresses={colonyAddresses} />
-    </div>
+  return colonyAddresses && colonyAddresses.length ? (
+    <ColonyGrid colonyAddresses={colonyAddresses} />
   ) : (
     <>
-      <div className={styles.loadingText}>
-        <FormattedMessage {...MSG.loadingColonyList} />
-        <DotsLoader />
-      </div>
+      <p className={styles.emptyText}>
+        <FormattedMessage
+          {...MSG.emptyText}
+          values={{
+            link: (
+              <Link
+                to={CREATE_COLONY_ROUTE}
+                text={MSG.createColonyLink}
+                className={styles.createColonyLink}
+              />
+            ),
+          }}
+        />
+      </p>
     </>
   );
 };

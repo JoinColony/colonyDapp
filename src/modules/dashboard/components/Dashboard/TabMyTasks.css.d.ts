@@ -1,2 +1,2 @@
 export const emptyText: string;
-export const coloniesContainer: string;
+export const createColonyLink: string;
