@@ -31,7 +31,11 @@ import {
   canAdminister,
   canCreateTask as canCreateTaskCheck,
 } from '../../../users/checks';
-import { isInRecoveryMode as isInRecoveryModeCheck } from '../../checks';
+import {
+  isInRecoveryMode as isInRecoveryModeCheck,
+  canRecoverColony,
+} from '../../checks';
+
 import ColonyDomains from './ColonyDomains';
 import ColonyMeta from './ColonyMeta';
 import TabContribute from './TabContribute';
@@ -179,23 +183,25 @@ const ColonyHome = ({
   ) {
     return (
       <LoadingTemplate loadingText={MSG.loadingText}>
-        {showRecoverOption && colonyAddress && (
-          <DialogActionButton
-            dialog="ConfirmDialog"
-            dialogProps={{
-              appearance: { theme: 'danger' },
-              heading: MSG.recoverColonyHeading,
-              children: <FormattedMessage {...MSG.recoverColonyParagraph} />,
-              cancelButtonText: MSG.recoverColonyCancelButton,
-              confirmButtonText: MSG.recoverColonyConfirmButton,
-            }}
-            submit={ActionTypes.COLONY_RECOVER_DB}
-            error={ActionTypes.COLONY_RECOVER_DB_ERROR}
-            success={ActionTypes.COLONY_RECOVER_DB_SUCCESS}
-            text={MSG.recoverColonyButton}
-            values={{ colonyAddress }}
-          />
-        )}
+        {showRecoverOption &&
+          colonyAddress &&
+          canRecoverColony(permissions as UserPermissionsType) && (
+            <DialogActionButton
+              dialog="ConfirmDialog"
+              dialogProps={{
+                appearance: { theme: 'danger' },
+                heading: MSG.recoverColonyHeading,
+                children: <FormattedMessage {...MSG.recoverColonyParagraph} />,
+                cancelButtonText: MSG.recoverColonyCancelButton,
+                confirmButtonText: MSG.recoverColonyConfirmButton,
+              }}
+              submit={ActionTypes.COLONY_RECOVER_DB}
+              error={ActionTypes.COLONY_RECOVER_DB_ERROR}
+              success={ActionTypes.COLONY_RECOVER_DB_SUCCESS}
+              text={MSG.recoverColonyButton}
+              values={{ colonyAddress }}
+            />
+          )}
       </LoadingTemplate>
     );
   }
