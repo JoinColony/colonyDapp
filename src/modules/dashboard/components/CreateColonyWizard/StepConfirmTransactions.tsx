@@ -1,6 +1,7 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { defineMessages } from 'react-intl';
 import { Redirect } from 'react-router';
+import { useDispatch } from 'redux-react-hook';
 
 import { WizardProps } from '~core/Wizard';
 import { groupedTransactions } from '../../../core/selectors';
@@ -16,6 +17,8 @@ import {
   findNewestGroup,
 } from '../../../users/components/GasStation/transactionGroup';
 import { TRANSACTION_STATUSES } from '~immutable/Transaction';
+import { ActionTypes } from '~redux/index';
+
 import styles from './StepConfirmTransactions.css';
 
 const MSG = defineMessages({
@@ -71,6 +74,13 @@ type Props = WizardProps<FormValues>;
 const displayName = 'dashboard.CreateColonyWizard.StepConfirmTransactions';
 
 const StepConfirmTransactions = ({ wizardValues: { colonyName } }: Props) => {
+  const dispatch = useDispatch();
+
+  // Cancel the saga when the component unmounts
+  useEffect(() => () => dispatch({ type: ActionTypes.COLONY_CREATE_CANCEL }), [
+    dispatch,
+  ]);
+
   const txGroups = useSelector(groupedTransactions);
   const newestGroup = findNewestGroup(txGroups);
 
