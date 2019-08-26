@@ -14,6 +14,7 @@ import { updateGasPrices } from '../../actionCreators';
 interface EthGasStationAPIResponse {
   average: number;
   avgWait: number;
+  // eslint-disable-next-line camelcase
   block_time: number;
   blockNum: number;
   fast: number;

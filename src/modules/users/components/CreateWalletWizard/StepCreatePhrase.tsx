@@ -20,9 +20,7 @@ const MSG = defineMessages({
   },
   subTitle: {
     id: 'CreateWalletWizard.StepCreatePhrase.subTitle',
-    defaultMessage:
-      /* eslint-disable max-len */
-      'The key to your wallet is your mnemonic phrase. Write it down and put it in a safe place; you’ll use it to access Colony. Once you’ve safely stored your mnemonic, we’ll go to the next step.',
+    defaultMessage: `The key to your wallet is your mnemonic phrase. Write it down and put it in a safe place; you’ll use it to access Colony. Once you’ve safely stored your mnemonic, we’ll go to the next step.`,
   },
   confirmButton: {
     id: 'CreateWalletWizard.StepCreatePhrase.confirmButton',

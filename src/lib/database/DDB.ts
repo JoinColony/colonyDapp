@@ -1,5 +1,3 @@
-/* eslint-disable no-underscore-dangle */
-
 import { ObjectSchema } from 'yup';
 import OrbitDB from 'orbit-db';
 

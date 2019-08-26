@@ -25,9 +25,7 @@ const MSG = defineMessages({
   },
   subTitle: {
     id: 'CreateWallet.StepBackupPhrase.subTitle',
-    defaultMessage:
-      /* eslint-disable max-len */
-      'Colony does not store your mnemonic phrase anywhere which means we cannot recover it for any reason. Make an alternative backup to keep it extra safe.',
+    defaultMessage: `Colony does not store your mnemonic phrase anywhere which means we cannot recover it for any reason. Make an alternative backup to keep it extra safe.`,
   },
   confirmButton: {
     id: 'CreateWallet.StepBackupPhrase.confirmButton',

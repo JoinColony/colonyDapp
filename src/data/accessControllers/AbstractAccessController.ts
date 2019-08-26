@@ -1,4 +1,4 @@
-/* eslint-disable no-underscore-dangle */
+/* eslint-disable no-underscore-dangle, no-unused-vars, @typescript-eslint/no-unused-vars, class-methods-use-this */
 
 import { Wallet } from 'ethers';
 
@@ -65,7 +65,6 @@ export default class AbstractAccessController<
     throw new Error('Not implemented');
   }
 
-  // eslint-disable-next-line class-methods-use-this
   get type(): string {
     return AbstractAccessController.type;
   }
@@ -77,7 +76,6 @@ export default class AbstractAccessController<
    * - The signed message of the entry should be verified against the address
    * - The identity provider should have verified the entry
    */
-  // eslint-disable-next-line class-methods-use-this
   async canAppend(entry: Entry, provider: P): Promise<boolean> {
     log.verbose(
       `Checking permission before appending entry: ${entry && entry.hash}`,
@@ -111,28 +109,23 @@ export default class AbstractAccessController<
     return isOrbitSignatureValid;
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars,class-methods-use-this
   async grant(actionId: string, address: Address): Promise<boolean> {
     throw new Error('Not implemented');
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars,class-methods-use-this
   async revoke(actionId: string, address: Address): Promise<boolean> {
     throw new Error('Not implemented');
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars,class-methods-use-this
   async save(options: any): Promise<string> {
     throw new Error('Not implemented');
   }
 
-  // eslint-disable-next-line class-methods-use-this
   async close() {
     return Promise.resolve();
   }
 
   // No setup required
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars,class-methods-use-this
   async load(options: any): Promise<void> {
     return Promise.resolve();
   }

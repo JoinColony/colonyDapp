@@ -520,7 +520,7 @@ export const useMainClasses = (
  * This hook initializes the editor state for draft-js from a string
  * so that it works properly when used with formiks enableReinitialze property
  */
-export const useInitEditorState = (text: string = '') => {
+export const useInitEditorState = (text = '') => {
   const prevText = usePrevious(text);
   let editorState;
   if (prevText !== text) {
@@ -561,7 +561,7 @@ export const useOldRoles = (colonyAddress: Address) => {
  */
 export const useRoles = (
   colonyAddress: Address,
-  includeParents: boolean = false, // This should not change
+  includeParents = false, // This should not change
 ) => {
   const {
     data: rolesFromState,
@@ -605,7 +605,7 @@ export const useUserDomainRoles = (
   colonyAddress: Address,
   domainId: number,
   userAddress: Address,
-  includeParents: boolean = false, // This should not change
+  includeParents = false, // This should not change
 ) => {
   const dispatch = useDispatch();
   const { data: roles, isFetching, error } = useRoles(

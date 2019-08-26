@@ -14,9 +14,7 @@ const checkSVG = (fileName: string) =>
   fileName &&
   fileName.substring(fileName.length - 3, fileName.length) === 'svg';
 
-const loadTokenImages = async (
-  logo,
-): Promise<ImageType> /* eslint-disable max-len */ =>
+const loadTokenImages = async (logo): Promise<ImageType> =>
   import(
     /* webpackMode: "eager" */ `../../../../../node_modules/eth-contract-metadata/images/${logo}`
   );

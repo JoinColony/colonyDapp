@@ -77,7 +77,7 @@ class EthUsd extends Component<Props, State> {
     this.mounted = false;
   }
 
-  mounted: boolean = false;
+  mounted = false;
 
   convertEthToUsd = () => {
     const { unit, value } = this.props;

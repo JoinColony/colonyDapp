@@ -174,7 +174,7 @@ type ConsumableItem = {
 };
 export const recursiveNestChildren = (
   items: ConsumableItem[] = [],
-  firstParentLevel: number = 0,
+  firstParentLevel = 0,
 ) => {
   const collapsedItems = [];
   items.forEach(item => {

@@ -26,9 +26,10 @@ export const canBeUpgraded = (
 /**
  * @todo Wire task payouts.
  */
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-const didClaimPayout = (taskUser: TaskUserType | null, userAddress: Address) =>
-  taskUser && taskUser.didClaimPayout && taskUser.address === userAddress;
+export const didClaimPayout = (
+  taskUser: TaskUserType | null,
+  userAddress: Address,
+) => taskUser && taskUser.didClaimPayout && taskUser.address === userAddress;
 
 export const isManager = ({ managerAddress }: TaskType, userAddress: Address) =>
   managerAddress === userAddress;
@@ -88,7 +89,7 @@ export const isSkillSet = ({ skillId }: TaskType) => !!skillId;
  * @todo Fix task rating checks logic.
  * @body Fix this logic in #169
  */
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
+// eslint-disable-next-line no-unused-vars, @typescript-eslint/no-unused-vars
 export const workerCanRateManager = (task: TaskType, userAddress: Address) =>
   false;
 

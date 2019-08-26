@@ -85,11 +85,7 @@ class MnemonicDnDSorter extends Component<Props, State> {
   /**
    * Get items to sort from
    */
-  static getItems(
-    phrase: string,
-    count: number,
-    offset: number = 0,
-  ): Droppable[] {
+  static getItems(phrase: string, count: number, offset = 0): Droppable[] {
     const phraseArray = phrase.split(' ');
     const shuffled = shuffle(phraseArray);
     return Array.from({ length: count }, (word, index) => index).map(index => ({

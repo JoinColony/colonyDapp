@@ -26,7 +26,7 @@ const MSG = defineMessages({
   },
 });
 
-const getActiveDomainFilterClass = (id: number = 0, filteredDomainId: number) =>
+const getActiveDomainFilterClass = (id = 0, filteredDomainId: number) =>
   filteredDomainId === id ? styles.filterItemActive : styles.filterItem;
 
 const displayName = 'dashboard.ColonyDomains';
