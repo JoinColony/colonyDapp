@@ -341,15 +341,11 @@ const TaskFeedEventTitleSet = ({
       <FormattedMessage
         {...MSG.titleRemoved}
         values={{
-          user: (
-            <span title={user} className={styles.highlight}>
-              {user}
-            </span>
-          ),
+          user: renderInteractiveUsername(userRecord),
         }}
       />
     );
-  }  
+  }
   return (
     <FormattedMessage
       {...MSG.titleSet}
