@@ -73,6 +73,10 @@ const MSG = defineMessages({
     id: 'dashboard.TaskFeedEvent.titleSet',
     defaultMessage: 'Task title set to {title} by {user}',
   },
+  titleRemoved: {
+    id: 'dashboard.TaskFeedEvent.titleRemoved',
+    defaultMessage: 'Task title removed by {user}',
+  },
   workInviteSent: {
     id: 'dashboard.TaskFeedEvent.workInviteSent',
     defaultMessage: '{user} invited {invitedUser} to work on the task',
@@ -332,6 +336,16 @@ const TaskFeedEventTitleSet = ({
   },
 }: any) => {
   const { record: userRecord } = useSelector(userSelector, [userAddress]);
+  if (!title) {
+    return (
+      <FormattedMessage
+        {...MSG.titleRemoved}
+        values={{
+          user: renderInteractiveUsername(userRecord),
+        }}
+      />
+    );
+  }
   return (
     <FormattedMessage
       {...MSG.titleSet}

@@ -3,6 +3,15 @@
 @value cellPaddingVertical: 25px;
 @value cellPaddingHorizontal: 40px;
 
+.globalLink:nth-child(n+2) tr {
+  border-width: 1px;
+  border-style: solid;
+  border-left: 0;
+  border-right: 0;
+  border-bottom: 0;
+  border-color: var(--grey-blue-1);
+}
+
 td.taskDetails {
   flex-wrap: wrap;
   padding: cellPaddingVertical cellPaddingHorizontal;
