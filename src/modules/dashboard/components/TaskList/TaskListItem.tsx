@@ -7,7 +7,7 @@ import {
 import React from 'react';
 
 import { Address, ENSName } from '~types/index';
-import { TaskPayoutType, TaskType } from '~immutable/index';
+import { TaskType } from '~immutable/index';
 import { useDataFetcher } from '~utils/hooks';
 import { colonyNameFetcher } from '../../fetchers';
 import { TableRow, TableCell } from '~core/Table';
