@@ -533,7 +533,7 @@ export const getColonyCanMintNativeToken: Query<
   async execute(colonyClient) {
     // wrap this in a try/catch since it will fail if tokens can't be minted
     try {
-      await colonyClient.mintTokens.call({ amount: new BigNumber(1) });
+      await colonyClient.mintTokens.estimate({ amount: new BigNumber(1) });
     } catch (error) {
       return false;
     }
