@@ -7,7 +7,10 @@ import { useSelector } from '~utils/hooks';
 import { currentUserSelector } from '../../../users/selectors';
 import { userDidClaimProfile } from '../../../users/checks';
 import { groupedTransactions } from '../../../core/selectors';
-import { findTransactionGroupByKey } from '~users/GasStation/transactionGroup';
+import {
+  findTransactionGroupByKey,
+  findNewestGroup,
+} from '~users/GasStation/transactionGroup';
 import Heading from '~core/Heading';
 import Link from '~core/Link';
 import GasStationContent from '~users/GasStation/GasStationContent';
@@ -36,7 +39,7 @@ const StepConfirmTransaction = () => {
   }
 
   const colonyTransaction = findTransactionGroupByKey(
-    transactionGroups,
+    [findNewestGroup(transactionGroups)],
     'group.transaction.batch.createUser',
   );
 
