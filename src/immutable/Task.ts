@@ -1,4 +1,4 @@
-import { $Keys, $ReadOnly } from 'utility-types';
+import { $Keys } from 'utility-types';
 
 import { RecordOf, Record, List, Set as ImmutableSet } from 'immutable';
 
@@ -18,7 +18,7 @@ export type TaskCurrentState = $Keys<typeof TASK_STATE>;
  * @todo Support full task workflow for taskId
  * @todo Support full task workflow for evaluator
  */
-type Shared = {
+interface Shared {
   colonyAddress: Address;
   createdAt: Date;
   creatorAddress: string; // Address of the task creator
@@ -34,21 +34,19 @@ type Shared = {
   workerAddress: Address;
   // specificationHash?: string,
   // taskId?: number, // On-chain ID, when the task is all grown up :'-)
-};
+}
 
-export type TaskType = $ReadOnly<
-  Shared & {
-    invites: Address[];
-    payouts: TaskPayoutType[];
-    requests: Address[];
-  }
->;
+export interface TaskType extends Shared {
+  invites: Address[];
+  payouts: TaskPayoutType[];
+  requests: Address[];
+}
 
-type TaskRecordProps = Shared & {
+interface TaskRecordProps extends Shared {
   invites: ImmutableSet<Address>;
   payouts: List<TaskPayoutRecordType>;
   requests: ImmutableSet<Address>;
-};
+}
 
 export type TaskProps<T extends keyof TaskType> = Pick<TaskType, T>;
 
