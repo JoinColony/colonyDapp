@@ -12,9 +12,9 @@ module.exports = {
     es6: true,
   },
   extends: [
-    'plugin:@typescript-eslint/recommended',
     'eslint-config-airbnb/rules/react',
     'eslint-config-airbnb/rules/react-a11y',
+    'plugin:@typescript-eslint/recommended',
     '@colony/eslint-config-colony',
     'prettier/react',
     'prettier/@typescript-eslint',
@@ -23,10 +23,8 @@ module.exports = {
     '@typescript-eslint',
     'react',
     'jsx-a11y',
-    'import',
     'jsdoc',
     'react-hooks',
-    'prettier',
   ],
   overrides: [
     {
@@ -51,10 +49,6 @@ module.exports = {
       rules: {
         'no-param-reassign': 'off',
         'no-underscore-dangle': 'off',
-        'import/no-extraneous-dependencies': [
-          'error',
-          { devDependencies: true },
-        ],
         'max-len': 'off',
       },
     },
@@ -71,28 +65,6 @@ module.exports = {
     '@typescript-eslint/camelcase': 'off',
     '@typescript-eslint/explicit-function-return-type': 'off',
     '@typescript-eslint/no-explicit-any': 'off',
-
-    // import
-    'import/extensions': [
-      'error',
-      {
-        js: 'off',
-        tsx: 'off',
-        json: 'always',
-      },
-    ],
-    'import/no-extraneous-dependencies': [
-      'error',
-      {
-        devDependencies: [
-          '**/*.test.js',
-          './src/__tests__/*.js',
-          './src/__mocks__/*.js',
-          './*.js',
-          './cypress/**/*.js',
-        ],
-      },
-    ],
 
     // jsx
     'jsx-a11y/label-has-for': 'off',
@@ -125,37 +97,13 @@ module.exports = {
     'react-hooks/rules-of-hooks': 'error',
     'react-hooks/exhaustive-deps': 'warn',
 
-    // miscellaneous
-    'import/no-extraneous-dependencies': [
-      'error',
-      {
-        devDependencies: [
-          '**/*.test.js',
-          '**/*.test.ts',
-          '**/*.test.tsx',
-          './src/__tests__/*.js',
-          './src/__tests__/*.ts',
-          './src/__tests__/*.tsx',
-          './src/__mocks__/*.js',
-          './*.js',
-          './cypress/**/*.js',
-        ],
-      },
-    ],
+    // import plugin (resolvers disabled in favour of using typescript)
+    'import/no-unresolved': 'off',
+    'import/no-extraneous-dependencies': 'off',
     'import/prefer-default-export': 'off',
 
     // Disallow TODO but not @todo; these are expected to be handled by the jsdoc plugin
     'no-warning-comments': ['error', { terms: ['fixme', 'todo', 'xxx', '@fixme'], location: 'start' }],
     'jsdoc/check-indentation': 'off',
-  },
-  settings: {
-    'import/resolver': {
-      jest: {
-        jestConfigFile: './jest.conf.json',
-      },
-      webpack: {
-        config: './webpack.config.js',
-      },
-    },
   },
 };
