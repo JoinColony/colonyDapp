@@ -5,9 +5,9 @@ import {
   call,
   fork,
   put,
+  select,
   take,
   takeEvery,
-  select,
 } from 'redux-saga/effects';
 import BigNumber from 'bn.js';
 
@@ -19,6 +19,7 @@ import {
   executeQuery,
   selectAsJS,
   putNotification,
+  takeLatestCancellable,
 } from '~utils/saga/effects';
 import { Context, getContext } from '~context/index';
 import ENS from '~lib/ENS';
@@ -584,6 +585,10 @@ function* colonyRecover({
 }
 
 export default function* colonyCreateSaga() {
-  yield takeEvery(ActionTypes.COLONY_CREATE, colonyCreate);
   yield takeEvery(ActionTypes.COLONY_RECOVER_DB, colonyRecover);
+  yield takeLatestCancellable(
+    ActionTypes.COLONY_CREATE,
+    ActionTypes.COLONY_CREATE_CANCEL,
+    colonyCreate,
+  );
 }
