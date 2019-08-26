@@ -150,5 +150,5 @@ export const canFinalizeTask = (
 /*
  * Permissions
  */
-export const canRecoverColony = (permissions: ?UserPermissionsType) =>
+export const canRecoverColony = (permissions: UserPermissionsType | null) =>
   permissions && permissions.canEnterRecoveryMode && isFounder(permissions);
