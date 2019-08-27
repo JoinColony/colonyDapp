@@ -45,6 +45,9 @@ interface Props {
 
   /** Function to handle the actual uploading of the file */
   upload: (fileData: FileReaderFile) => Promise<string>;
+
+  /** Used to control the state of the remove button (don't fire the remove action if not avatar is set) */
+  isSet?: boolean;
 }
 
 class AvatarUploader extends Component<Props> {
@@ -75,6 +78,7 @@ class AvatarUploader extends Component<Props> {
       placeholder,
       remove,
       upload,
+      isSet = true,
     } = this.props;
     // Formik is used for state and error handling through FileUpload, nothing else
     return (
@@ -101,6 +105,7 @@ class AvatarUploader extends Component<Props> {
               appearance={{ theme: 'danger' }}
               text={{ id: 'button.remove' }}
               onClick={remove}
+              disabled={!isSet}
               data-test="avatarUploaderRemove"
             />
             <Button
