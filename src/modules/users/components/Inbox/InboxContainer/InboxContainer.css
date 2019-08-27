@@ -18,17 +18,31 @@
 .contentContainerPopup {
   display: flex;
   flex-direction: column;
-  padding-top: 50px; /* pad space for transparent navbar */
+  padding-top: 17px;
+  max-height: 446px;
   width: 100%;
   max-width: 477px;
-  max-height: 446px;
+  overflow: scroll;
 }
 
-
-.inboxHeading {
+.inboxHeadingFull {
   display: flex;
   justify-content: space-between;
   align-items: baseline;
+}
+
+.inboxHeadingPopover {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  padding: 0 13px 0 13px;
+}
+
+.inboxFooter {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 46px;
 }
 
 .loadingText {

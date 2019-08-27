@@ -4,7 +4,7 @@ import React from 'react';
 
 import { defineMessages, FormattedMessage } from 'react-intl';
 
-// import { INBOX_ROUTE } from '~routes';
+import { INBOX_ROUTE } from '~routes';
 
 import { useSelector, useAsyncFunction } from '~utils/hooks';
 import { ACTIONS } from '~redux';
@@ -12,6 +12,7 @@ import Heading from '~core/Heading';
 import Button from '~core/Button';
 import { DotsLoader } from '~core/Preloaders';
 import { Table, TableBody } from '~core/Table';
+import NavLink from '~core/NavLink';
 
 import InboxItem from '../InboxItem';
 
@@ -21,15 +22,10 @@ import styles from './InboxContainer.css';
 
 const displayName = 'users.Inbox.InboxContainer';
 
-// Link to fullscreen for later
-/* <NavLink
-to={INBOX_ROUTE}
-className={hasUnreadActivities ? styles.inboxIconWCircle : styles.inboxIcon}
-activeClassName={activeClassName}
-
->
-</NavLink>
-*/
+type Props = {
+  full: boolean,
+  close?: () => void,
+};
 
 const MSG = defineMessages({
   loadingInbox: {
@@ -44,6 +40,10 @@ const MSG = defineMessages({
     id: 'users.Inbox.InboxContainer.markAllRead',
     defaultMessage: 'Mark all as read',
   },
+  seeAll: {
+    id: 'users.Inbox.InboxContainer.seeAll',
+    defaultMessage: 'See All',
+  },
 });
 
 const allReadActions = {
@@ -52,7 +52,7 @@ const allReadActions = {
   error: ACTIONS.INBOX_MARK_ALL_NOTIFICATIONS_READ_ERROR,
 };
 
-const InboxContainer = ({ full }) => {
+const InboxContainer = ({ full, close }: Props) => {
   const inboxItems = useSelector(inboxItemsSelector);
   const markAllRead = useAsyncFunction(allReadActions);
   return (
@@ -61,7 +61,9 @@ const InboxContainer = ({ full }) => {
         full ? styles.contentContainerFull : styles.contentContainerPopup
       }
     >
-      <div className={styles.inboxHeading}>
+      <div
+        className={full ? styles.inboxHeadingFull : styles.inboxHeadingPopover}
+      >
         <Heading
           appearance={{ size: 'medium', margin: 'small' }}
           text={MSG.title}
@@ -86,6 +88,17 @@ const InboxContainer = ({ full }) => {
               ))}
             </TableBody>
           </Table>
+        )}
+        {!full && (
+          <div className={styles.inboxFooter}>
+            <NavLink to={INBOX_ROUTE}>
+              <Button
+                appearance={{ theme: 'blue' }}
+                text={MSG.seeAll}
+                onClick={close}
+              />
+            </NavLink>
+          </div>
         )}
       </div>
     </div>
