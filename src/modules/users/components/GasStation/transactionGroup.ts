@@ -10,8 +10,8 @@ export type TransactionOrMessageGroups = TransactionOrMessageGroup[];
 
 // get the group id (mostly used as a unique identifier for the group)
 export const getGroupId = (txOrMessageGroup: TransactionOrMessageGroup) =>
-  (txOrMessageGroup[0].group && txOrMessageGroup[0].group.key) ||
-  txOrMessageGroup[0].id;
+  txOrMessageGroup[0].id ||
+  (txOrMessageGroup[0].group && txOrMessageGroup[0].group.key);
 
 // Get the group key (mostly used for i18n)
 export const getGroupKey = (txGroup: TransactionOrMessageGroup) =>
