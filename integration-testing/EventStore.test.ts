@@ -1,4 +1,4 @@
-import test from 'ava';
+import anyTest, { TestInterface } from 'ava';
 import { create as createWallet } from '@colony/purser-software';
 
 import '../src/modules/validations';
@@ -7,6 +7,7 @@ import { DDB } from '../src/lib/database';
 import PurserIdentityProvider from '../src/data/PurserIdentityProvider';
 import { PermissiveAccessController } from '../src/data/accessControllers';
 import { EventStore } from '../src/lib/database/stores';
+import IPFSNode from '../src/lib/ipfs/IPFSNode';
 
 import createIPFSNode from './utils/createIPFSNode';
 
@@ -15,6 +16,12 @@ const storeBlueprint = {
   getName: () => 'activity',
   type: EventStore,
 };
+
+const test = anyTest as TestInterface<{
+  ipfsNode: IPFSNode;
+  ddb: DDB;
+  wallet: any;
+}>;
 
 test.before(async t => {
   const wallet = await createWallet();
@@ -36,8 +43,8 @@ test.after.always(async (t: any) => {
 });
 
 test('The all() method returns events in the order added', async t => {
-  const { ddb } = t.context as any;
-  const store = await ddb.createStore(storeBlueprint);
+  const { ddb } = t.context;
+  const store = await ddb.createStore(storeBlueprint, {});
   const firstActivity = {
     colonyName: 'Zombies',
     userAction: 'joinedColony',
@@ -59,8 +66,8 @@ test('The all() method returns events in the order added', async t => {
 });
 
 test('The all() method can limit to most recent events', async t => {
-  const { ddb } = t.context as any;
-  const store = await ddb.createStore(storeBlueprint);
+  const { ddb } = t.context;
+  const store = await ddb.createStore(storeBlueprint, {});
   const firstActivity = {
     colonyName: 'Zombies',
     userAction: 'joinedColony',
