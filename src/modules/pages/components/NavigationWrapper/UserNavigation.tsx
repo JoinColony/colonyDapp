@@ -8,6 +8,7 @@ import NavLink from '~core/NavLink';
 import { GasStationPopover } from '~users/GasStation';
 import AvatarDropdown from '~users/AvatarDropdown';
 import { InboxIcon } from '~users/Inbox';
+import InboxPopover from '~users/Inbox/InboxPopover';
 import NetworkHealth from '~core/NetworkHealth';
 
 import styles from './UserNavigation.css';
@@ -61,10 +62,27 @@ const UserNavigation = () => (
         </button>
       )}
     </GasStationPopover>
-    <InboxIcon
-      activeClassName={styles.navigationItemActive}
-      title={MSG.inboxTitle}
-    />
+    <InboxPopover>
+      {({ isOpen, toggle, ref }) => (
+        <button
+          type="button"
+          className={styles.navigationItemButton}
+          ref={ref}
+          onClick={toggle}
+        >
+          <div
+            className={`${styles.navigationItem} ${
+              isOpen ? styles.navigationItemActive : ''
+            }`}
+          >
+            <InboxIcon
+              activeClassName={styles.navigationItemActive}
+              title={MSG.inboxTitle}
+            />
+          </div>
+        </button>
+      )}
+    </InboxPopover>
     <AvatarDropdown />
   </div>
 );
