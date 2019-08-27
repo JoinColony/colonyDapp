@@ -54,6 +54,7 @@ const UserAvatarUploader = ({ user }: Props) => {
       }
       upload={upload}
       remove={remove}
+      isSet={user && user.profile && !!user.profile.avatarHash}
     />
   );
 };
