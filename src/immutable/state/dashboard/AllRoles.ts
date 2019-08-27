@@ -12,7 +12,7 @@ export type ColonyRolesObject = { [domainId: number]: DomainRolesObject };
 
 export type ColonyRolesMap = ImmutableMap<
   number,
-  ImmutableMap<Address, ImmutableMap<keyof COLONY_ROLES, boolean>>
+  ImmutableMap<Address, ImmutableMap<keyof COLONY_ROLES | 'pending', boolean>>
 >;
 
 export type AllRolesMap = ImmutableMap<Address, DataRecordType<ColonyRolesMap>>;

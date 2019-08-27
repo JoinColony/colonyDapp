@@ -29,14 +29,30 @@ const allRolesReducer: ReducerType<AllRolesMap> = (
         ? state.mergeIn([key, 'record'], record)
         : state.setIn([key, 'record'], record);
     }
-    case ActionTypes.COLONY_DOMAIN_USER_ROLES_FETCH_SUCCESS: {
+    case ActionTypes.COLONY_DOMAIN_USER_ROLES_SET: {
+      const {
+        payload: { colonyAddress, domainId, userAddress },
+      } = action;
+      const record = ImmutableMap([['pending', true]]);
+      return state.getIn([colonyAddress, 'record'])
+        ? state.mergeIn(
+            [colonyAddress, 'record', domainId, userAddress],
+            record,
+          )
+        : state.setIn(
+            [colonyAddress, 'record'],
+            ImmutableMap([[domainId, ImmutableMap([[userAddress, record]])]]),
+          );
+    }
+    case ActionTypes.COLONY_DOMAIN_USER_ROLES_FETCH_SUCCESS:
+    case ActionTypes.COLONY_DOMAIN_USER_ROLES_SET_SUCCESS: {
       const {
         payload: { roles, colonyAddress, domainId, userAddress },
       } = action;
-      // Map keys instead of doing entries to appease the type gods
-      const record = ImmutableMap(
-        Object.keys(roles).map(role => [role, roles[role]]),
-      );
+      const record = ImmutableMap([
+        ['pending', false],
+        ...Object.entries(roles),
+      ]);
       return state.getIn([colonyAddress, 'record'])
         ? state.mergeIn(
             [colonyAddress, 'record', domainId, userAddress],
