@@ -1,4 +1,5 @@
-export const inboxRowCell: string;
+export const inboxRowCellFull: string;
+export const inboxRowCellPopover: string;
 export const inboxDetails: string;
 export const inboxDetail: string;
 export const inboxAction: string;

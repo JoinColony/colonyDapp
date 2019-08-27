@@ -1,10 +1,18 @@
-.inboxContainer {
+.inboxContainerFull {
   flex: 0 1;
   height: 525px;
 }
 
-.inboxContainer tbody {
+.inboxContainerFull tbody {
   overflow: hidden;
+}
+
+.inboxContainerPopover {
+  height: 400px;
+}
+
+.inboxContainerPopover table {
+  height: 347px;
 }
 
 .contentContainerFull {
@@ -20,9 +28,7 @@
   flex-direction: column;
   padding-top: 17px;
   max-height: 446px;
-  width: 100%;
-  max-width: 477px;
-  overflow: scroll;
+  width: 477px;
 }
 
 .inboxHeadingFull {

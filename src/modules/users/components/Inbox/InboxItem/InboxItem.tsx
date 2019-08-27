@@ -53,6 +53,7 @@ const displayName = 'users.Inbox.InboxItem';
 
 interface Props {
   activity: InboxItemType;
+  full?: boolean;
 }
 
 const INBOX_REGEX = /[A-Z]/;
@@ -116,6 +117,7 @@ const InboxItem = ({
     sourceAddress: sourceUserAddress,
     timestamp,
   },
+  full,
 }: Props) => {
   const { data: user, isFetching: isFetchingUser } = useDataSubscriber<
     UserType
@@ -163,7 +165,9 @@ const InboxItem = ({
 
   return (
     <TableRow onClick={() => markAsRead(id)}>
-      <TableCell className={styles.inboxRowCell}>
+      <TableCell
+        className={full ? styles.inboxRowCellFull : styles.inboxRowCellPopover}
+      >
         {isFetching ? (
           <div className={styles.spinnerWrapper}>
             <SpinnerLoader

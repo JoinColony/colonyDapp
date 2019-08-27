@@ -40,9 +40,9 @@ myModule/
 └── components/
     └── MyComponent/
        ├── MyComponent.css
-       ├── MyComponent.jsx
+       ├── MyComponent.tsx
        ├── MyComponent.md
-       └── MyComponentExample.jsx
+       └── MyComponentExample.tsx
 ```
 
 ## Redux conventions
