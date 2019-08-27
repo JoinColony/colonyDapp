@@ -22,13 +22,6 @@ ARG VERBOSE=false
 ARG COLONY_NETWORK_ENS_NAME=joincolony.eth
 ARG PINNING_ROOM=PINION_DEV_ROOM
 
-# @FIX Debian Jessie / Docker issue with apt.
-# See: https://stackoverflow.com/questions/46406847/docker-how-to-add-backports-to-sources-list-via-dockerfile
-RUN echo "deb http://archive.debian.org/debian/ jessie main\n" \
-        "deb-src http://archive.debian.org/debian/ jessie main\n" \
-        "deb http://security.debian.org jessie/updates main\n" \
-        "deb-src http://security.debian.org jessie/updates main" > /etc/apt/sources.list
-
 # @FIX Allow the nginx service to start at build time, so that the installation will work
 # See: https://askubuntu.com/questions/365911/why-the-services-do-not-start-at-installation
 RUN sed -i "s|exit 101|exit 0|g" /usr/sbin/policy-rc.d
