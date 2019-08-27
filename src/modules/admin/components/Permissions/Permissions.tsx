@@ -7,6 +7,8 @@ import Heading from '~core/Heading';
 import { Select } from '~core/Fields';
 import { SpinnerLoader } from '~core/Preloaders';
 import { Table, TableBody, TableCell } from '~core/Table';
+import Button from '~core/Button';
+import withDialog from '~core/Dialog/withDialog';
 import { useDataFetcher, useRoles } from '~utils/hooks';
 
 import UserListItem from '../UserListItem';
@@ -21,22 +23,30 @@ const MSG = defineMessages({
     id: 'dashboard.Permissions.title',
     defaultMessage: `Permissions{domainLabel, select,
       root {}
-      other {: {domainLabel}} 
+      other {: {domainLabel}}
     }`,
   },
   labelFilter: {
     id: 'dashboard.Permissions.labelFilter',
     defaultMessage: 'Filter',
   },
+  addRole: {
+    id: 'dashboard.Permissions.addRole',
+    defaultMessage: 'Add Role',
+  },
 });
 
 interface Props {
   colonyAddress: Address;
+  openDialog: (
+    dialogName: string,
+    dialogProps?: Record<string, any>,
+  ) => DialogType;
 }
 
 const displayName = 'admin.Permissions';
 
-const Permissions = ({ colonyAddress }: Props) => {
+const Permissions = ({ colonyAddress, openDialog }: Props) => {
   const [selectedDomain, setSelectedDomain] = useState(1);
 
   const { data: domainsData, isFetching: isFetchingDomains } = useDataFetcher<
@@ -79,13 +89,23 @@ const Permissions = ({ colonyAddress }: Props) => {
     [getPermissionsForUser],
   );
 
+  const handleEditPermissions = useCallback(
+    userAddress =>
+      openDialog('ColonyPermissionEditDialog', {
+        colonyAddress,
+        domain: selectedDomain,
+        clickedUser: userAddress || null,
+      }),
+    [openDialog, colonyAddress, selectedDomain],
+  );
+
   const handleOnClick = useCallback(
     (userAddress: Address) => {
       // eslint-disable-next-line no-console
       console.log(userAddress, colonyAddress, selectedDomain);
-      // open dialog here in #1709
+      handleEditPermissions(userAddress);
     },
-    [colonyAddress, selectedDomain],
+    [colonyAddress, handleEditPermissions, selectedDomain],
   );
 
   const users = useMemo(
@@ -153,7 +173,11 @@ const Permissions = ({ colonyAddress }: Props) => {
       <aside className={styles.sidebar}>
         <ul>
           <li>
-            <p>Placeholder for sidebar</p>
+            <Button
+              appearance={{ theme: 'blue' }}
+              text={MSG.addRole}
+              onClick={handleEditPermissions}
+            />
           </li>
         </ul>
       </aside>
@@ -163,4 +187,4 @@ const Permissions = ({ colonyAddress }: Props) => {
 
 Permissions.displayName = displayName;
 
-export default Permissions;
+export default withDialog()(Permissions);
