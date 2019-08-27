@@ -18,6 +18,7 @@ import { getContext, Context } from '~context/index';
 import ENS from '~lib/ENS';
 
 import { getUserProfileStoreAddress } from '../../../data/stores';
+import { inboxItemsFetch } from '../actionCreators';
 
 import {
   executeQuery,
@@ -62,8 +63,6 @@ import {
   getUserProfile,
   getUserTasks,
   getUserTokens,
-  getUserInboxActivity,
-  getUserNotificationMetadata,
   subscribeToUser,
   subscribeToUserTasks,
   subscribeToUserColonies,
@@ -324,6 +323,9 @@ function* usernameCreate({
       },
       meta,
     });
+
+    // Dispatch an action to fetch the inbox items (see JoinColony/colonyDapp#1462)
+    yield put(inboxItemsFetch());
   } catch (error) {
     return yield putError(ActionTypes.USERNAME_CREATE_ERROR, error, meta);
   } finally {
@@ -495,6 +497,9 @@ function* userColonySubscribe({
       payload: { colonyAddress, walletAddress },
       meta,
     });
+
+    // Dispatch an action to fetch the inbox items (see JoinColony/colonyDapp#1462)
+    yield put(inboxItemsFetch());
   } catch (caughtError) {
     return yield putError(
       ActionTypes.USER_COLONY_SUBSCRIBE_ERROR,
@@ -586,56 +591,6 @@ function* userTaskSubscribe({
     }
   } catch (error) {
     return yield putError(ActionTypes.USER_TASK_SUBSCRIBE_ERROR, error);
-  }
-  return null;
-}
-
-function* inboxItemsFetch({ meta }: Action<ActionTypes.INBOX_ITEMS_FETCH>) {
-  try {
-    const walletAddress = yield select(walletAddressSelector);
-    const { inboxStoreAddress, metadataStoreAddress } = yield select(
-      currentUserMetadataSelector,
-    );
-
-    if (!(inboxStoreAddress && metadataStoreAddress)) return null;
-
-    const userColonies = yield executeQuery(getUserColonies, {
-      metadata: {
-        walletAddress,
-        metadataStoreAddress,
-      },
-    });
-
-    const { readUntil = 0, exceptFor = [] } = yield executeQuery(
-      getUserNotificationMetadata,
-      {
-        metadata: {
-          walletAddress,
-          metadataStoreAddress,
-        },
-      },
-    );
-
-    // @todo (reactivity) Make metadata and user inbox data reactive
-    yield put<AllActions>({
-      type: ActionTypes.USER_NOTIFICATION_METADATA_FETCH_SUCCESS,
-      payload: {
-        readUntil,
-        exceptFor,
-      },
-    });
-
-    const activities = yield executeQuery(getUserInboxActivity, {
-      metadata: { inboxStoreAddress, walletAddress, userColonies },
-    });
-
-    yield put<AllActions>({
-      type: ActionTypes.INBOX_ITEMS_FETCH_SUCCESS,
-      payload: { activities },
-      meta,
-    });
-  } catch (error) {
-    return yield putError(ActionTypes.INBOX_ITEMS_FETCH_ERROR, error, meta);
   }
   return null;
 }
@@ -756,11 +711,8 @@ function* userSubscribedColoniesSubStart({
 
 /* eslint-disable max-len,prettier/prettier */
 export function* setupUsersSagas() {
-  yield takeEvery(ActionTypes.INBOX_ITEMS_FETCH, inboxItemsFetch);
   yield takeEvery(ActionTypes.USER_ADDRESS_FETCH, userAddressFetch);
   yield takeEvery(ActionTypes.USER_COLONY_SUBSCRIBE, userColonySubscribe);
-  yield takeEvery(ActionTypes.USER_COLONY_SUBSCRIBE, userColonySubscribe);
-  yield takeEvery(ActionTypes.USER_COLONY_UNSUBSCRIBE, userColonyUnsubscribe);
   yield takeEvery(ActionTypes.USER_COLONY_UNSUBSCRIBE, userColonyUnsubscribe);
   yield takeEvery(ActionTypes.USER_FETCH, userFetch);
   yield takeEvery(ActionTypes.USER_PERMISSIONS_FETCH, userPermissionsFetch);
@@ -771,8 +723,6 @@ export function* setupUsersSagas() {
   yield takeEvery(ActionTypes.USER_SUBSCRIBED_TASKS_SUB_START, userSubscribedTasksSubStart);
   yield takeEvery(ActionTypes.USER_TASK_SUBSCRIBE, userTaskSubscribe);
   yield takeEvery(ActionTypes.USER_TOKEN_TRANSFERS_FETCH, userTokenTransfersFetch);
-  yield takeEvery(ActionTypes.USER_TOKEN_TRANSFERS_FETCH, userTokenTransfersFetch);
-  yield takeEvery(ActionTypes.USER_TOKENS_FETCH, userTokensFetch);
   yield takeEvery(ActionTypes.USER_TOKENS_FETCH, userTokensFetch);
   yield takeLatest(ActionTypes.USERNAME_CHECK_AVAILABILITY, usernameCheckAvailability);
   yield takeLatest(ActionTypes.CURRENT_USER_GET_BALANCE, currentUserGetBalance);

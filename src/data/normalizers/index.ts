@@ -7,9 +7,8 @@ export const DDB_EVENT_SOURCE = 'ddb';
 // This should be opaque
 type EVENT_SOURCE_TYPE = 'contract' | 'ddb';
 
-type NormalizedEvent = {
+interface NormalizedEvent {
   type: string; // Event type a.k.a event name
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   payload: object; // Orbit-db entry payload value or parsed tx log topics
   meta: {
     id: string; // Orbit payload id or txHash_logIndex for tx logs
@@ -19,9 +18,9 @@ type NormalizedEvent = {
     timestamp: number;
     version: typeof VERSION;
   };
-};
+}
 
-type TransactionLog = {
+interface TransactionLog {
   event: { eventName: string };
   log: {
     logIndex: number;
@@ -32,11 +31,10 @@ type TransactionLog = {
   transaction: {
     from: string;
   };
-};
+}
 
 export const normalizeDDBStoreEvent = (
   storeAddress: string,
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   { meta: { timestamp, id, userAddress }, payload, type }: Event<any>,
 ): NormalizedEvent => ({
   type,
@@ -80,7 +78,6 @@ export const normalizeEvent = (
   eventSourceType: string,
 ): ((
   eventSourceId: string,
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   data: TransactionLog | Event<any>,
 ) => NormalizedEvent) =>
   ({

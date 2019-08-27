@@ -1,6 +1,5 @@
 import { ActionPattern } from '@redux-saga/types';
 import { Channel, eventChannel, buffers, END } from 'redux-saga';
-import nanoid from 'nanoid';
 import {
   all,
   call,
@@ -12,7 +11,7 @@ import {
   select,
 } from 'redux-saga/effects';
 
-import { ActionTypes, ErrorActionType, TakeFilter, Action } from '~redux/index';
+import { ErrorActionType, TakeFilter, Action } from '~redux/index';
 import { Command, Query, Subscription } from '../../data/types';
 
 import { getContext, Context } from '~context/index';
@@ -233,31 +232,6 @@ export function* selectAsJS(
     ? selected.toJS()
     : selected;
 }
-
-/*
- * Effect (actually more of a helper) to put a Notification action
- */
-export const putNotification = (
-  payload: any,
-  meta: { id: string; key: string },
-) => {
-  try {
-    const notificationAction: Action<ActionTypes.INBOX_ITEMS_ADD_SUCCESS> = {
-      type: ActionTypes.INBOX_ITEMS_ADD_SUCCESS,
-      payload: {
-        activity: {
-          id: nanoid(),
-          timestamp: new Date(),
-          ...payload,
-        },
-      },
-      meta,
-    };
-    return put(notificationAction);
-  } catch (caughtError) {
-    return putError(ActionTypes.INBOX_ITEMS_ADD_ERROR, caughtError, meta);
-  }
-};
 
 export const takeLatestCancellable = (
   actionOrPattern: ActionPattern,

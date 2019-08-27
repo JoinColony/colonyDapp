@@ -1,15 +1,17 @@
 import React from 'react';
+import { List } from 'immutable';
 import { defineMessages, FormattedMessage } from 'react-intl';
+import { InboxItemRecordType } from '~immutable/InboxItem';
 
 import { ActionTypes } from '~redux/index';
-import { useAsyncFunction, useSelector } from '~utils/hooks';
+import { useAsyncFunction, useDataFetcher } from '~utils/hooks';
 import { Table, TableBody } from '~core/Table';
 import Heading from '~core/Heading';
 import Button from '~core/Button';
 import { DotsLoader } from '~core/Preloaders';
 import CenteredTemplate from '~pages/CenteredTemplate';
+import { inboxItemsFetcher } from '../../../fetchers';
 import InboxItem from '../InboxItem';
-import { inboxItemsSelector } from '../../../selectors';
 
 import styles from './InboxContent.css';
 
@@ -38,7 +40,11 @@ const allReadActions = {
 
 const InboxContent = () => {
   const markAllRead = useAsyncFunction(allReadActions);
-  const inboxItems = useSelector(inboxItemsSelector);
+  const { data: inboxItems } = useDataFetcher<List<InboxItemRecordType>>(
+    inboxItemsFetcher,
+    [],
+    [],
+  );
 
   return (
     <CenteredTemplate appearance={{ theme: 'alt' }}>
@@ -55,12 +61,7 @@ const InboxContent = () => {
           />
         </div>
         <div className={styles.inboxContainer}>
-          {inboxItems.length === 0 ? (
-            <div className={styles.loadingText}>
-              <FormattedMessage {...MSG.loadingInbox} />
-              <DotsLoader />
-            </div>
-          ) : (
+          {inboxItems ? (
             <Table scrollable appearance={{ separators: 'borders' }}>
               <TableBody>
                 {inboxItems.map(activity => (
@@ -68,6 +69,11 @@ const InboxContent = () => {
                 ))}
               </TableBody>
             </Table>
+          ) : (
+            <div className={styles.loadingText}>
+              <FormattedMessage {...MSG.loadingInbox} />
+              <DotsLoader />
+            </div>
           )}
         </div>
       </div>

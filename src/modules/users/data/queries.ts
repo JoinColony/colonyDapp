@@ -541,13 +541,14 @@ const getAllColonyEventsForUserInbox = async (
 
 export const getUserInboxActivity: Query<
   {
-    userInboxStore: UserInboxStore;
+    userInboxStore: UserInboxStore | void;
+    userProfileStore: UserProfileStore | void;
     colonyClients: ColonyClient[];
     walletAddress: Address;
   },
   {
     userColonies: Address[];
-    inboxStoreAddress: string;
+    inboxStoreAddress: string | void;
     walletAddress: Address;
   },
   void,
@@ -556,50 +557,64 @@ export const getUserInboxActivity: Query<
   name: 'getUserInboxActivity',
   context: [Context.COLONY_MANAGER, Context.DDB_INSTANCE],
   async prepare(
-    {
-      colonyManager,
-      ddb,
-    }: {
-      colonyManager: ColonyManager;
-      ddb: DDB;
-    },
-    {
-      userColonies,
-      inboxStoreAddress,
-      walletAddress,
-    }: {
-      userColonies: Address[];
-      inboxStoreAddress: string;
-      walletAddress: Address;
-    },
+    { colonyManager, ddb },
+    { userColonies, inboxStoreAddress, walletAddress },
   ) {
-    const userInboxStore = await getUserInboxStore(ddb)({
-      inboxStoreAddress,
-      walletAddress,
-    });
+    let userProfileStore;
+    try {
+      userProfileStore = await getUserProfileStore(ddb)({ walletAddress });
+    } catch {
+      // Ignore the error; it's ok if the store doesn't exist yet
+    }
+
+    const userInboxStore = inboxStoreAddress
+      ? await getUserInboxStore(ddb)({
+          inboxStoreAddress,
+          walletAddress,
+        })
+      : null;
+
     const colonyClients = await Promise.all(
       userColonies.map(address => colonyManager.getColonyClient(address)),
     );
+
     return {
       colonyClients,
       userInboxStore,
+      userProfileStore,
       walletAddress,
     };
   },
-  async execute({ colonyClients, userInboxStore, walletAddress }) {
+  async execute({
+    colonyClients,
+    userInboxStore,
+    userProfileStore,
+    walletAddress,
+  }) {
     const colonyEvents = await getAllColonyEventsForUserInbox(
       colonyClients,
       walletAddress,
     );
 
-    const storeEvents = userInboxStore
-      .all()
-      .map(event =>
-        normalizeDDBStoreEvent(userInboxStore.address.toString(), event),
-      );
+    const inboxStoreEvents = userInboxStore
+      ? userInboxStore
+          .all()
+          .map(event =>
+            normalizeDDBStoreEvent(userInboxStore.address.toString(), event),
+          )
+      : [];
+
+    const profileStoreEvents = userProfileStore
+      ? userProfileStore
+          .all()
+          .filter(({ type }) => type === EventTypes.USER_PROFILE_CREATED)
+          .map(event =>
+            normalizeDDBStoreEvent(userProfileStore.address.toString(), event),
+          )
+      : [];
 
     // Sort all events in descending date order
-    return [...storeEvents, ...colonyEvents].sort(
+    return [...profileStoreEvents, ...inboxStoreEvents, ...colonyEvents].sort(
       (a, b) => b.meta.timestamp - a.meta.timestamp,
     );
   },
