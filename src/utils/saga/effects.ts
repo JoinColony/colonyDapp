@@ -1,15 +1,16 @@
-import {
-  Channel,
-  // EventChannel,
-  // Saga,
-  eventChannel,
-  buffers,
-  END,
-} from 'redux-saga';
-
+import { ActionPattern } from '@redux-saga/types';
+import { Channel, eventChannel, buffers, END } from 'redux-saga';
 import nanoid from 'nanoid';
-
-import { all, call, put, race, take, select } from 'redux-saga/effects';
+import {
+  all,
+  call,
+  cancel,
+  fork,
+  put,
+  race,
+  take,
+  select,
+} from 'redux-saga/effects';
 
 import { ActionTypes, ErrorActionType, TakeFilter, Action } from '~redux/index';
 import { Command, Query, Subscription } from '../../data/types';
@@ -256,4 +257,32 @@ export const putNotification = (
   } catch (caughtError) {
     return putError(ActionTypes.INBOX_ITEMS_ADD_ERROR, caughtError, meta);
   }
+};
+
+export const takeLatestCancellable = (
+  actionOrPattern: ActionPattern,
+  cancelActionOrPattern: ActionPattern,
+  saga: (action: Action<any>) => IterableIterator<any>,
+) => {
+  let currentTask;
+
+  return all([
+    fork(function* takeLatest() {
+      while (true) {
+        const action = yield take(actionOrPattern);
+        if (currentTask) {
+          yield cancel(currentTask); // cancel is no-op if the task has already terminated
+        }
+        currentTask = yield fork(saga, action);
+      }
+    }),
+    fork(function* cancelCurrent() {
+      while (true) {
+        yield take(cancelActionOrPattern);
+        if (currentTask) {
+          yield cancel(currentTask);
+        }
+      }
+    }),
+  ]);
 };

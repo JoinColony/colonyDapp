@@ -10,6 +10,7 @@ import {
   TokenReferenceType,
 } from '~immutable/index';
 import {
+  ActionType,
   ActionTypeWithPayload,
   ActionTypeWithPayloadAndMeta,
   ErrorActionType,
@@ -101,6 +102,7 @@ export type ColonyActionTypes =
       },
       object
     >
+  | ActionType<typeof ActionTypes.COLONY_CREATE_CANCEL>
   | ErrorActionType<ActionTypes.COLONY_CREATE_ERROR, object>
   | UniqueActionType<ActionTypes.COLONY_CREATE_SUCCESS, object, object>
   | ActionTypeWithPayloadAndMeta<
