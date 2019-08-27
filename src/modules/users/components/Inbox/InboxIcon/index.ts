@@ -1,2 +1,1 @@
-// @ts-ignore
-export { default } from './InboxIcon.ts';
+export { default } from './InboxIcon';

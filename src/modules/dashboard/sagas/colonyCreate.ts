@@ -18,15 +18,12 @@ import {
   executeCommand,
   executeQuery,
   selectAsJS,
-  putNotification,
   takeLatestCancellable,
 } from '~utils/saga/effects';
 import { Context, getContext } from '~context/index';
 import ENS from '~lib/ENS';
 import { createAddress } from '~types/index';
-import { decorateLog } from '~utils/web3/eventLogs/events';
 import { parseExtensionDeployedLog } from '~utils/web3/eventLogs/eventParsers';
-import { normalizeTransactionLog } from '~data/normalizers';
 import { TxConfig } from '../../core/types';
 import { createUserProfile } from '../../users/data/commands';
 import { getProfileStoreAddress } from '../../users/data/queries';
@@ -47,6 +44,7 @@ import {
   walletAddressSelector,
 } from '../../users/selectors';
 import {
+  inboxItemsFetch,
   subscribeToColony,
   userPermissionsFetch,
 } from '../../users/actionCreators';
@@ -251,10 +249,8 @@ function* colonyCreate({
        * before creating the profile store and dispatching a success action.
        */
       yield takeFrom(createUser.channel, ActionTypes.TRANSACTION_SUCCEEDED);
+      yield put<AllActions>(transactionLoadRelated(createUser.id, true));
 
-      yield put(transactionLoadRelated(createUser.id, true));
-
-      // @ts-ignore
       const { metadataStore, inboxStore } = yield executeCommand(
         createUserProfile,
         {
@@ -263,8 +259,7 @@ function* colonyCreate({
         },
       );
 
-      yield put(transactionLoadRelated(createUser.id, false));
-
+      yield put<AllActions>(transactionLoadRelated(createUser.id, false));
       yield put<AllActions>({
         type: ActionTypes.USERNAME_CREATE_SUCCESS,
         payload: {
@@ -274,6 +269,9 @@ function* colonyCreate({
         },
         meta,
       });
+
+      // Dispatch an action to fetch the inbox items (see JoinColony/colonyDapp#1462)
+      yield put(inboxItemsFetch());
     }
 
     /*
@@ -327,7 +325,6 @@ function* colonyCreate({
     /*
      * Create the colony store
      */
-    // @ts-ignore
     const colonyStore = yield executeCommand(createColonyProfile, {
       metadata: { colonyAddress },
       args: {
@@ -373,22 +370,12 @@ function* colonyCreate({
         .map(({ id }) => put(transactionAddIdentifier(id, colonyAddress))),
     );
 
-    // @ts-ignore
-    const colonyManager = yield getContext(Context.COLONY_MANAGER);
-
     /*
      * Create label
      */
     yield put(transactionReady(createLabel.id));
-    const {
-      payload: {
-        transaction: {
-          receipt: {
-            logs: [, , colonyLabelRegisteredLog],
-          },
-        },
-      },
-    } = yield takeFrom(createLabel.channel, ActionTypes.TRANSACTION_SUCCEEDED);
+    yield takeFrom(createLabel.channel, ActionTypes.TRANSACTION_SUCCEEDED);
+
     if (deployTokenAuthority) {
       /*
        * Deploy TokenAuthority
@@ -478,20 +465,6 @@ function* colonyCreate({
     yield put(transactionAddParams(setOneTxRole.id, { address: oneTxAddress }));
     yield put(transactionReady(setOneTxRole.id));
     yield takeFrom(setOneTxRole.channel, ActionTypes.TRANSACTION_SUCCEEDED);
-
-    /*
-     * Notification
-     */
-
-    // @NOTE Here we actually wanna emit the notification because that's gonna be
-    // on the colony founder inbox
-    const decoratedLog = yield call(
-      decorateLog,
-      colonyManager.networkClient,
-      colonyLabelRegisteredLog,
-    );
-    // @ts-ignore
-    yield putNotification(normalizeTransactionLog(colonyAddress, decoratedLog));
 
     // Subscribe to the colony last, after successful colony creation
     yield put(subscribeToColony(colonyAddress));

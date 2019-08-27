@@ -119,12 +119,7 @@ const InboxItem = ({
 }: Props) => {
   const { data: user, isFetching: isFetchingUser } = useDataSubscriber<
     UserType
-  >(
-    userSubscriber,
-    [sourceUserAddress],
-    [sourceUserAddress],
-    // eslint-disable-next-line prettier/prettier
-  );
+  >(userSubscriber, [sourceUserAddress], [sourceUserAddress]);
   const sourceUserDisplayWithFallback = useSelector(friendlyUsernameSelector, [
     sourceUserAddress,
   ]);

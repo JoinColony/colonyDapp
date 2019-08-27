@@ -579,6 +579,11 @@ export default function* colonySagas() {
     colonyTokenBalanceFetch,
   );
   yield takeEvery(ActionTypes.COLONY_VERSION_UPGRADE, colonyUpgradeContract);
+  yield takeEvery(ActionTypes.COLONY_SUB_START, colonySubStart);
+  yield takeEvery(
+    ActionTypes.COLONY_TASK_METADATA_SUB_START,
+    colonyTaskMetadataSubStart,
+  );
 
   /*
    * Note that the following actions use `takeLatest` because they are
@@ -589,10 +594,5 @@ export default function* colonySagas() {
   yield takeLatest(
     ActionTypes.COLONY_NAME_CHECK_AVAILABILITY,
     colonyNameCheckAvailability,
-  );
-  yield takeEvery(ActionTypes.COLONY_SUB_START, colonySubStart);
-  yield takeEvery(
-    ActionTypes.COLONY_TASK_METADATA_SUB_START,
-    colonyTaskMetadataSubStart,
   );
 }
