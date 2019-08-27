@@ -17,10 +17,10 @@ interface Props {
 
 const displayName = 'users.Inbox.InboxIcon';
 
-const Inbox = ({ title = MSG.fallbackTitle }: Props) => (
+const InboxIcon = ({ title = MSG.fallbackTitle }: Props) => (
   <Icon name="envelope" title={title} />
 );
 
-Inbox.displayName = displayName;
+InboxIcon.displayName = displayName;
 
-export default Inbox;
+export default InboxIcon;

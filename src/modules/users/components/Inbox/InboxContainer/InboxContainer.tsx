@@ -1,13 +1,11 @@
-/* @flow */
-
 import React from 'react';
 
 import { defineMessages, FormattedMessage } from 'react-intl';
 
-import { INBOX_ROUTE } from '~routes';
+import { INBOX_ROUTE } from '~routes/index';
 
 import { useSelector, useAsyncFunction } from '~utils/hooks';
-import { ACTIONS } from '~redux';
+import { ActionTypes } from '~redux/index';
 import Heading from '~core/Heading';
 import Button from '~core/Button';
 import { DotsLoader } from '~core/Preloaders';
@@ -22,10 +20,10 @@ import styles from './InboxContainer.css';
 
 const displayName = 'users.Inbox.InboxContainer';
 
-type Props = {
-  full: boolean,
-  close?: () => void,
-};
+interface Props {
+  full?: boolean;
+  close?: () => void;
+}
 
 const MSG = defineMessages({
   loadingInbox: {
@@ -47,9 +45,9 @@ const MSG = defineMessages({
 });
 
 const allReadActions = {
-  submit: ACTIONS.INBOX_MARK_ALL_NOTIFICATIONS_READ,
-  success: ACTIONS.INBOX_MARK_ALL_NOTIFICATIONS_READ_SUCCESS,
-  error: ACTIONS.INBOX_MARK_ALL_NOTIFICATIONS_READ_ERROR,
+  submit: ActionTypes.INBOX_MARK_ALL_NOTIFICATIONS_READ,
+  success: ActionTypes.INBOX_MARK_ALL_NOTIFICATIONS_READ_SUCCESS,
+  error: ActionTypes.INBOX_MARK_ALL_NOTIFICATIONS_READ_ERROR,
 };
 
 const InboxContainer = ({ full, close }: Props) => {
@@ -74,7 +72,11 @@ const InboxContainer = ({ full, close }: Props) => {
           onClick={markAllRead}
         />
       </div>
-      <div className={styles.inboxContainer}>
+      <div
+        className={
+          full ? styles.inboxContainerFull : styles.inboxContainerPopover
+        }
+      >
         {inboxItems.length === 0 ? (
           <div className={styles.loadingText}>
             <FormattedMessage {...MSG.loadingInbox} />
@@ -84,7 +86,7 @@ const InboxContainer = ({ full, close }: Props) => {
           <Table scrollable appearance={{ separators: 'borders' }}>
             <TableBody>
               {inboxItems.map(activity => (
-                <InboxItem key={activity.id} activity={activity} />
+                <InboxItem full={full} key={activity.id} activity={activity} />
               ))}
             </TableBody>
           </Table>

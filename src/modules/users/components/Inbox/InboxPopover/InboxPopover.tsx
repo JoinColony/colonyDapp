@@ -1,17 +1,12 @@
-/* @flow */
+import React, { useState, ReactNode } from 'react';
 
-// $FlowFixMe (not possible until we upgrade flow to 0.87)
-import React, { useState } from 'react';
-
-import type { PopoverTriggerType } from '~core/Popover';
-
-import Popover from '~core/Popover';
+import Popover, { PopoverTriggerType } from '~core/Popover';
 
 import InboxContainer from '../InboxContainer';
 
-type Props = {|
-  children: React$Element<*> | PopoverTriggerType,
-|};
+interface Props {
+  children: ReactNode | PopoverTriggerType;
+}
 
 const InboxPopover = ({ children }: Props) => {
   const [isOpen, setOpen] = useState(false);
