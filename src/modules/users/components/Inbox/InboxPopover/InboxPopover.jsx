@@ -10,7 +10,6 @@ import Popover from '~core/Popover';
 import InboxContainer from '../InboxContainer';
 
 type Props = {|
-  transactionAndMessageGroups: TransactionOrMessageGroups,
   children: React$Element<*> | PopoverTriggerType,
 |};
 
@@ -20,7 +19,7 @@ const InboxPopover = ({ children }: Props) => {
   return (
     <Popover
       appearance={{ theme: 'grey' }}
-      content={({ close }) => <InboxContainer close={close}/>}
+      content={({ close }) => <InboxContainer close={close} />}
       placement="bottom"
       showArrow={false}
       isOpen={isOpen}
