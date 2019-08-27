@@ -70,6 +70,7 @@ const ColonyAvatarUploader = ({ colony: { colonyAddress }, colony }: Props) => {
       }
       upload={upload}
       remove={remove}
+      isSet={colony && !!colony.avatarHash}
     />
   );
 };
