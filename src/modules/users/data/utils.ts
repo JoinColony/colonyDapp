@@ -104,7 +104,7 @@ export const decorateColonyEventPayload = ({ payload, ...event }: any) => ({
           };
         case 'DomainAdded':
           return {
-            colonyAddress: payload.sourceId,
+            colonyAddress: event.meta.sourceId,
           };
         case 'Mint':
           return {
