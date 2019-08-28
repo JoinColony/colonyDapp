@@ -99,7 +99,7 @@ export const decorateColonyEventPayload = ({ payload, ...event }: any) => ({
       switch (event.type) {
         case 'ColonyRoleSet':
           return {
-            colonyAddress: payload.sourceId,
+            colonyAddress: event.meta.sourceId,
             targetUserAddress: payload.address,
           };
         case 'DomainAdded':
