@@ -3,6 +3,6 @@ export default function factory() {
     files: ['integration-testing/*.test.ts'],
     compileEnhancements: false,
     extensions: ['ts'],
-    require: ['ts-node/register'],
+    require: ['ts-node/register', 'tsconfig-paths/register'],
   };
 }
