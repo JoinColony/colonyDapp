@@ -109,7 +109,7 @@ export const decorateColonyEventPayload = ({ payload, ...event }: any) => ({
         case 'Mint':
           return {
             colonyAddress: payload.address,
-            tokenAddress: event.meta.tokenAddress,
+            tokenAddress: payload.tokenAddress,
           };
         case 'ColonyLabelRegistered':
           return {
