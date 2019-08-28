@@ -18,7 +18,7 @@ type NormalizedEvent = {
     actorId: string; // Wallet address for orbit-db events or tx sender address for tx logs
     timestamp: number;
     version: typeof VERSION;
-    tokenAddress?: string,
+    tokenAddress?: string;
   };
 };
 
