@@ -18,7 +18,6 @@ type NormalizedEvent = {
     actorId: string; // Wallet address for orbit-db events or tx sender address for tx logs
     timestamp: number;
     version: typeof VERSION;
-    tokenAddress?: string;
   };
 };
 
@@ -62,7 +61,10 @@ export const normalizeTransactionLog = (
   }: TransactionLog,
 ): NormalizedEvent => ({
   type: eventName,
-  payload: event,
+  payload: {
+    ...event,
+    tokenAddress,
+  },
   meta: {
     id: `${transactionHash}_${logIndex}`,
     sourceType: CONTRACT_EVENT_SOURCE,
@@ -70,7 +72,6 @@ export const normalizeTransactionLog = (
     actorId: from,
     timestamp,
     version: VERSION,
-    tokenAddress,
   },
 });
 
