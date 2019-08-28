@@ -18,6 +18,7 @@ type NormalizedEvent = {
     actorId: string; // Wallet address for orbit-db events or tx sender address for tx logs
     timestamp: number;
     version: typeof VERSION;
+    tokenAddress?: string,
   };
 };
 
@@ -26,6 +27,7 @@ type TransactionLog = {
   log: {
     logIndex: number;
     transactionHash: string;
+    address: string;
   };
   timestamp: number;
   transaction: {
@@ -54,7 +56,7 @@ export const normalizeTransactionLog = (
   contractAddress: string,
   {
     event: { eventName, ...event },
-    log: { logIndex, transactionHash },
+    log: { logIndex, transactionHash, address: tokenAddress },
     timestamp,
     transaction: { from },
   }: TransactionLog,
@@ -68,6 +70,7 @@ export const normalizeTransactionLog = (
     actorId: from,
     timestamp,
     version: VERSION,
+    tokenAddress,
   },
 });
 
