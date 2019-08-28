@@ -25,7 +25,7 @@
         "test:integration": "ava --serial",
         "test:integration:ci": "yarn test:integration --tap | tap-xunit > reports/ava/ava-results.xml",
         "test:e2e": "rimraf .dappPids.json && scripts/start_all.js & wait-on .dappPids.json && scripts/run_cypress_based_on_browser.sh; scripts/stop_all.js",
-        "test:e2e:ci": "yarn dev & wait-on .dappPids.json && cypress run",
+        "test:e2e:ci": "yarn dev & wait-on .dappPids.json && cypress run --browser chrome",
         "truffle": "yarn --cwd ./src/lib/colonyNetwork truffle",
         "trufflepig": "scripts/start_trufflepig.js",
         "typecheck": "tsc --noEmit",
