@@ -55,13 +55,14 @@ export const normalizeTransactionLog = (
   contractAddress: string,
   {
     event: { eventName, ...event },
-    log: { logIndex, transactionHash, address: tokenAddress },
+    log: { logIndex, transactionHash, address: tokenAddress, ...log },
     timestamp,
     transaction: { from },
   }: TransactionLog,
 ): NormalizedEvent => ({
   type: eventName,
   payload: {
+    ...log,
     ...event,
     tokenAddress,
   },
