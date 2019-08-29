@@ -1,15 +1,17 @@
 import { FormikProps } from 'formik';
-import React, { KeyboardEvent, SyntheticEvent } from 'react';
+import React, { useCallback, KeyboardEvent, SyntheticEvent } from 'react';
+
 import { defineMessages } from 'react-intl';
 import * as yup from 'yup';
+import { UserType } from '~immutable/index';
+import { mergePayload } from '~utils/actions';
 
 import { OpenDialog } from '~core/Dialog/types';
 import { Address } from '~types/index';
-import { UserType } from '~immutable/index';
+
 import { ActionTypes } from '~redux/index';
-import { useAsyncFunction } from '~utils/hooks';
 import withDialog from '~core/Dialog/withDialog';
-import { Form, FormStatus, TextareaAutoresize } from '~core/Fields';
+import { ActionForm, FormStatus, TextareaAutoresize } from '~core/Fields';
 import Button from '~core/Button';
 import unfinishedProfileOpener from '~users/UnfinishedProfile';
 
@@ -60,6 +62,22 @@ const validationSchema = yup.object().shape({
   comment: yup.string().required(),
 });
 
+const handleKeyboardSubmit = (
+  capturedEvent: KeyboardEvent<any>,
+  callback: (e: SyntheticEvent<any>) => any,
+) => {
+  const { key, ctrlKey, metaKey } = capturedEvent;
+
+  /*
+   * The meta key is interpreted on MacOS as the command ⌘ key
+   */
+  if ((ctrlKey || metaKey) && key === ENTER) {
+    capturedEvent.preventDefault();
+    return callback(capturedEvent);
+  }
+  return false;
+};
+
 const TaskComments = ({
   currentUser: {
     profile: { walletAddress },
@@ -70,49 +88,19 @@ const TaskComments = ({
   draftId,
   history,
 }: Props) => {
-  const addComment = useAsyncFunction({
-    submit: ActionTypes.TASK_COMMENT_ADD,
-    success: ActionTypes.TASK_COMMENT_ADD_SUCCESS,
-    error: ActionTypes.TASK_COMMENT_ADD_ERROR,
-  });
-
   const didClaimProfile = userDidClaimProfile(currentUser);
 
-  const handleKeyboardSubmit = (
-    capturedEvent: KeyboardEvent<any>,
-    callback: (e: SyntheticEvent<any>) => any,
-  ) => {
-    const { key, ctrlKey, metaKey } = capturedEvent;
+  const transform = useCallback(
+    mergePayload({ colonyAddress, author: walletAddress, draftId, taskTitle }),
+    [colonyAddress, draftId],
+  );
 
-    /*
-     * The meta key is interpreted on MacOS as the command ⌘ key
-     */
-    if ((ctrlKey || metaKey) && key === ENTER) {
-      capturedEvent.preventDefault();
-      return callback(capturedEvent);
-    }
-    return false;
-  };
-
-  const handleCommentSubmit = ({ comment }: FormValues, actions) => {
-    addComment({
-      comment,
-      author: walletAddress,
-      draftId,
-      colonyAddress,
-      taskTitle,
-    }).then(() => {
-      actions.setSubmitting(false);
-      actions.resetForm({});
-    });
-  };
-
-  const handleUnclaimedProfile = () => {
+  const handleUnclaimedProfile = useCallback(() => {
     if (!didClaimProfile) {
       return unfinishedProfileOpener(history);
     }
     return false;
-  };
+  }, [didClaimProfile, history]);
 
   return (
     <div
@@ -132,10 +120,13 @@ const TaskComments = ({
       role="textbox"
       tabIndex={0}
     >
-      <Form
+      <ActionForm
+        submit={ActionTypes.TASK_COMMENT_ADD}
+        success={ActionTypes.TASK_COMMENT_ADD_SUCCESS}
+        error={ActionTypes.TASK_COMMENT_ADD_ERROR}
         initialValues={{ comment: '' }}
         validationSchema={validationSchema}
-        onSubmit={handleCommentSubmit}
+        transform={transform}
       >
         {({
           isSubmitting,
@@ -186,7 +177,7 @@ const TaskComments = ({
             </div>
           </>
         )}
-      </Form>
+      </ActionForm>
     </div>
   );
 };
