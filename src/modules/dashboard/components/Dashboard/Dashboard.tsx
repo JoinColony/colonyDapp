@@ -1,16 +1,19 @@
 import React, { Component } from 'react';
-import { defineMessages, FormattedMessage } from 'react-intl';
+import { defineMessages } from 'react-intl';
 
 import { UserType } from '~immutable/index';
+
 import { Select } from '~core/Fields';
-import ExternalLink from '~core/ExternalLink';
 import { userDidClaimProfile } from '../../../users/checks';
 import {
   TasksFilterOptionType,
   TasksFilterOptions,
   tasksFilterSelectOptions,
 } from '../shared/tasksFilter';
+
 import TabMyTasks from './TabMyTasks';
+import ColoniesList from './ColoniesList';
+
 import styles from './Dashboard.css';
 
 const MSG = defineMessages({
@@ -90,19 +93,7 @@ class Dashboard extends Component<Props, State> {
           />
         </main>
         <aside className={styles.sidebar}>
-          <p className={styles.helpText}>
-            <FormattedMessage
-              {...MSG.helpText}
-              values={{
-                helpCenter: (
-                  <ExternalLink
-                    text={MSG.linkHelpCenter}
-                    href="https://help.colony.io/"
-                  />
-                ),
-              }}
-            />
-          </p>
+          <ColoniesList />
         </aside>
       </div>
     );
