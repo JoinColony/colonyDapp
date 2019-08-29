@@ -111,7 +111,7 @@ function* colonyDomainUserRolesSet({
         fork(createTransaction, `${meta.id}_${getRoleSetFunctionName(role)}`, {
           context: COLONY_CONTEXT,
           identifier: colonyAddress,
-          methodName: getRoleSetFunctionName(role),
+          methodNaeme: getRoleSetFunctionName(role),
           params: { address: userAddress, domainId, setTo },
           ready: true,
           group: {
