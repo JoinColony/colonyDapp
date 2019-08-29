@@ -1,11 +1,12 @@
-import test from 'ava';
+import anyTest, { TestInterface } from 'ava';
 
 import IPFSNode from '../src/lib/ipfs/IPFSNode';
-
 import createIPFSNode from './utils/createIPFSNode';
 
+const test = anyTest as TestInterface<{ node1: IPFSNode }>;
+
 test.before(async t => {
-  const node1 = await createIPFSNode();
+  const node1 = await createIPFSNode({});
   t.context = {
     node1,
   };
