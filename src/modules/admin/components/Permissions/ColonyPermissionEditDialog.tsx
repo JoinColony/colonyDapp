@@ -1,6 +1,6 @@
 import { FormikProps } from 'formik';
 
-import React, { useCallback, useMemo } from 'react';
+import React, { useCallback, useMemo, useState } from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 
 import { Address } from '~types/index';
@@ -9,7 +9,11 @@ import { mergePayload, withKey, mapPayload, pipe } from '~utils/actions';
 
 import { DomainType } from '~immutable/index';
 import { ActionTypeString, ActionTypes } from '~redux/index';
-import { useSelector, useDataMapFetcher } from '~utils/hooks';
+import {
+  useSelector,
+  useDataMapFetcher,
+  useUserDomainRoles,
+} from '~utils/hooks';
 
 import { usersByAddressFetcher } from '../../../users/fetchers';
 
@@ -150,7 +154,10 @@ const ColonyPermissionEditDialog = ({
     but can not be set yet
    */
   const checkIfCanBeSet = role => {
-    return role !== 'Arbitration' || role !== 'Root';
+    if (role !== 'Arbitration' || role !== 'Root') {
+      return false;
+    }
+    return true;
   };
 
   const transform = useCallback(
@@ -172,12 +179,31 @@ const ColonyPermissionEditDialog = ({
   );
 
   // When updating the selected user fetch that user's Roles
+  const [currentUser, setCurrentUser] = useState(null);
 
-  /* const userRoles = useUserDomainRoles(
-    colonyAddress,
-    domain.id,
-    '0x9F2f9863d091eF86801afaae6F4d6DBEFC772790',
-  ); */
+  const updateCurrentUser = useCallback(({ profile: { walletAddress } }) => {
+    setCurrentUser(walletAddress);
+  }, []);
+
+  // Get current user roles to populate the checkboxes
+  const useCurrentUserForRoles = (): Array<string> => {
+    const { data } = useUserDomainRoles(colonyAddress, domain.id, currentUser);
+    if (data) {
+      return Object.keys(data).reduce((accumulator, role) => {
+        if (data[role]) {
+          // Role is capitalised in the ddb and needs to be readable
+          const roleLow = role.toLowerCase();
+          const readableRole =
+            roleLow.charAt(0).toUpperCase() + roleLow.slice(1);
+          accumulator.push(readableRole);
+          return accumulator;
+        }
+        return accumulator;
+      }, []);
+    }
+    return undefined;
+  };
+  const selectedRoles = useCurrentUserForRoles();
 
   return (
     <Dialog cancel={cancel}>
@@ -185,7 +211,7 @@ const ColonyPermissionEditDialog = ({
         initialValues={{
           domainId: domain.id,
           colonyAddress,
-          roles,
+          roles: selectedRoles,
           userAddress: null,
         }}
         onSuccess={close}
@@ -210,6 +236,7 @@ const ColonyPermissionEditDialog = ({
                   name="user"
                   placeholder={MSG.search}
                   filter={supFilter}
+                  onSelected={user => updateCurrentUser(user)}
                 />
               </div>
               <InputLabel label={MSG.permissionsLabel} />
@@ -220,7 +247,7 @@ const ColonyPermissionEditDialog = ({
                     key={role}
                     value={role}
                     name="roles"
-                    disabled={!checkIfCanBeSet(role)}
+                    disabled={!!checkIfCanBeSet(role)}
                   >
                     <span className={styles.permissionChoiceDescription}>
                       <Heading
