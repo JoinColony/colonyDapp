@@ -20,6 +20,7 @@ const MSG = defineMessages({
 const displayName = 'Form.ActionForm';
 
 type OnError = (error: any, bag: FormikBag<any, any>, values?: any) => void;
+type OnSuccess = (result: any, bag: FormikBag<any, any>, values: any) => void;
 
 interface ExtendedFormikConfig {
   validateOnChange?: boolean;
@@ -48,7 +49,7 @@ interface Props extends ExtendedFormikConfig {
   error: ActionTypeString;
 
   /** Function to call after successful action was dispatched */
-  onSuccess?: (result: any, bag: FormikBag<any, any>, values: any) => void;
+  onSuccess?: OnSuccess;
 
   /** Function to call after error action was dispatched */
   onError?: OnError;
@@ -62,11 +63,15 @@ const defaultOnError: OnError = (err, { setStatus }) => {
   setStatus({ error: MSG.defaultError });
 };
 
+const defaultOnSuccess: OnSuccess = (err, { setStatus }) => {
+  setStatus({});
+};
+
 const ActionForm = ({
   submit,
   success,
   error,
-  onSuccess,
+  onSuccess = defaultOnSuccess,
   onError = defaultOnError,
   transform,
   ...props
@@ -77,7 +82,8 @@ const ActionForm = ({
     success,
     transform,
   });
-  const handleSubmit = (values, formikBag) =>
+  const handleSubmit = (values, formikBag) => {
+    formikBag.setStatus({});
     asyncFunction(values).then(
       res => {
         formikBag.setSubmitting(false);
@@ -90,6 +96,7 @@ const ActionForm = ({
         if (typeof onError === 'function') onError(err, formikBag, values);
       },
     );
+  };
   return <Form {...props} onSubmit={handleSubmit} />;
 };
 
