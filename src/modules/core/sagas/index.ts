@@ -18,3 +18,4 @@ export default function* rootSaga() {
 }
 
 export * from './transactions';
+export * from './messages';

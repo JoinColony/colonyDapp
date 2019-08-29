@@ -35,6 +35,13 @@ const coreMessagesReducer: ReducerType<CoreMessagesRecord> = (
         }),
       );
     }
+    case ActionTypes.MESSAGE_ERROR: {
+      const { messageId } = action.meta;
+      return state.updateIn(
+        [CORE_MESSAGES_LIST, messageId, 'status'],
+        () => TRANSACTION_STATUSES.FAILED,
+      );
+    }
     case ActionTypes.MESSAGE_CANCEL: {
       const { id } = action.payload;
       return state.deleteIn([CORE_MESSAGES_LIST, id]);

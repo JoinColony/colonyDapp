@@ -47,12 +47,6 @@ export const putError = (type: string, error: Error, meta: object = {}) => {
     payload: error,
   };
   log.error(error);
-  Object.assign(action.meta, {
-    error: {
-      message: error.message,
-      stack: error.stack,
-    },
-  });
   return put(action);
 };
 
