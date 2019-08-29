@@ -93,6 +93,9 @@ interface Props extends OmniPickerProps {
   /** Placeholder for input */
   placeholder?: string;
 
+  /** Callback for things that happend after selection  */
+  onSelected?: () => void;
+
   /** @ignore Will be injected by `asField` */
   $error?: string;
 
@@ -119,6 +122,7 @@ const SingleUserPicker = ({
   help,
   label,
   placeholder,
+  onSelected,
   // OmniPicker
   inputProps,
   OmniPicker,
@@ -143,8 +147,9 @@ const SingleUserPicker = ({
   const handlePick = useCallback(
     (user: UserType) => {
       setValue(user);
+      onSelected(user);
     },
-    [setValue],
+    [onSelected, setValue],
   );
   const resetSelection = useCallback(() => {
     if (!disabled) {
