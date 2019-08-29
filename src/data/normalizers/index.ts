@@ -26,6 +26,7 @@ type TransactionLog = {
   log: {
     logIndex: number;
     transactionHash: string;
+    address: string;
   };
   timestamp: number;
   transaction: {
@@ -54,13 +55,17 @@ export const normalizeTransactionLog = (
   contractAddress: string,
   {
     event: { eventName, ...event },
-    log: { logIndex, transactionHash },
+    log: { logIndex, transactionHash, address: tokenAddress, ...log },
     timestamp,
     transaction: { from },
   }: TransactionLog,
 ): NormalizedEvent => ({
   type: eventName,
-  payload: event,
+  payload: {
+    ...log,
+    ...event,
+    tokenAddress,
+  },
   meta: {
     id: `${transactionHash}_${logIndex}`,
     sourceType: CONTRACT_EVENT_SOURCE,
