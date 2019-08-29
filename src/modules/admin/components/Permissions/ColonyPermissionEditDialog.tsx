@@ -1,18 +1,21 @@
-/* @flow */
-
 import { FormikProps } from 'formik';
 
-import React from 'react';
+import React, { useCallback, useMemo } from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 
-import { DomainPermissionType } from '~immutable/index';
-import { ActionTypeString } from '~redux/index';
-import { useSelector } from '~utils/hooks';
-import { ActionTransformFnType } from '~utils/actions';
+import { Address } from '~types/index';
+
+import { mergePayload, withKey, mapPayload, pipe } from '~utils/actions';
+
+import { DomainType } from '~immutable/index';
+import { ActionTypeString, ActionTypes } from '~redux/index';
+import { useSelector, useDataMapFetcher } from '~utils/hooks';
+
+import { usersByAddressFetcher } from '../../../users/fetchers';
 
 import SingleUserPicker from '~core/SingleUserPicker';
-import Button from '~core/Button';
 import Heading from '~core/Heading';
+import Button from '~core/Button';
 import Dialog, { DialogSection } from '~core/Dialog';
 import { ActionForm, InputLabel, Checkbox } from '~core/Fields';
 
@@ -23,7 +26,7 @@ import styles from './ColonyPermissionEditDialog.css';
 const MSG = defineMessages({
   title: {
     id: 'core.ColonyPermissionEditDialog.title',
-    defaultMessage: 'Add New Role in Product',
+    defaultMessage: 'Add New Role in {domain}',
   },
   selectUser: {
     id: 'core.ColonyPermissionEditDialog.selectUser',
@@ -71,11 +74,11 @@ const MSG = defineMessages({
 interface Props {
   cancel: () => void;
   close: () => void;
-  permissions: DomainPermissionType;
+  domain: DomainType;
+  colonyAddress: Address;
   submit: ActionTypeString;
   success: ActionTypeString;
   error: ActionTypeString;
-  transform?: ActionTransformFnType;
 }
 
 const supFilter = (data, filterValue) => {
@@ -107,58 +110,119 @@ const supFilter = (data, filterValue) => {
 };
 
 const ColonyPermissionEditDialog = ({
-  permissions = {},
+  domain,
+  colonyAddress,
   cancel,
   close,
-  submit,
-  error,
-  success,
-  transform,
 }: Props) => {
+  // Prepare userData for SingleUserPicker
   const userAddressesInStore = useSelector(allUsersAddressesSelector);
-  const userPermissions = Object.values(permissions)[0];
-  const availableRoles = Object.keys(userPermissions);
+
+  const userData = useDataMapFetcher<UserType>(
+    usersByAddressFetcher,
+    Array.from(userAddressesInStore),
+  );
+
+  const users = useMemo(
+    () =>
+      userData
+        .filter(({ data }) => !!data)
+        .map(({ data, key }) => ({
+          id: key,
+          ...data,
+        })),
+    [userData],
+  );
+
+  /* const userPermissions = Object.values(permissions)[0];
+  const availableRoles = Object.keys(userPermissions); */
+
+  // This will be coming from the fetched data of the permissions screen
+  const roles = [
+    'Root',
+    'Administration',
+    'Architecture',
+    'Funding',
+    'Arbitration',
+  ];
+
+  /* Currently arbitration should appear in the list of roles
+    but can not be set yet
+   */
+  const checkIfCanBeSet = role => {
+    return role !== 'Arbitration' || role !== 'Root';
+  };
+
+  const transform = useCallback(
+    pipe(
+      withKey(colonyAddress),
+      mapPayload(p => ({
+        userAddress: p.user.profile.walletAddress,
+        domainId: p.domainId,
+        roles: p.roles.reduce((accumulator, role) => {
+          if (checkIfCanBeSet(role)) {
+            accumulator[role.toUpperCase()] = true;
+          }
+          return accumulator;
+        }, {}),
+      })),
+      mergePayload({ colonyAddress }),
+    ),
+    [colonyAddress],
+  );
+
+  // When updating the selected user fetch that user's Roles
+
+  /* const userRoles = useUserDomainRoles(
+    colonyAddress,
+    domain.id,
+    '0x9F2f9863d091eF86801afaae6F4d6DBEFC772790',
+  ); */
+
   return (
     <Dialog cancel={cancel}>
       <ActionForm
         initialValues={{
-          roles: availableRoles,
+          domainId: domain.id,
+          colonyAddress,
+          roles,
+          userAddress: null,
         }}
         onSuccess={close}
-        submit={submit}
-        error={error}
-        success={success}
+        submit={ActionTypes.COLONY_DOMAIN_USER_ROLES_SET}
+        error={ActionTypes.COLONY_DOMAIN_USER_ROLES_SET_ERROR}
+        success={ActionTypes.COLONY_DOMAIN_USER_ROLES_SUCCESS}
         transform={transform}
       >
-        {({ isSubmitting }: FormikProps<any>) => (
-          <>
-            <DialogSection>
+        {({ isSubmitting }: FormikProps<any>) => {
+          return (
+            <div className={styles.dialogContainer}>
               <Heading
                 appearance={{ size: 'medium', margin: 'none' }}
                 text={MSG.title}
+                textValues={{ domain: domain.name }}
               />
-            </DialogSection>
-            <DialogSection>
-              <InputLabel label={MSG.selectUser} />
-              <SingleUserPicker
-                data={userAddressesInStore}
-                isResettable
-                name="user"
-                placeholder={MSG.search}
-                filter={supFilter}
-              />
-            </DialogSection>
-            <DialogSection>
+              <div className={styles.titleContainer}>
+                <InputLabel label={MSG.selectUser} />
+                <SingleUserPicker
+                  data={users}
+                  isResettable
+                  name="user"
+                  placeholder={MSG.search}
+                  filter={supFilter}
+                />
+              </div>
               <InputLabel label={MSG.permissionsLabel} />
-              <div className={styles.tokenChoiceContainer}>
-                {availableRoles.map((role, id) => (
+              {roles.map((role, id) => (
+                <div className={styles.permissionChoiceContainer}>
                   <Checkbox
+                    className={styles.permissionChoice}
                     key={role}
                     value={role}
                     name="roles"
-                    disabled={false}
+                    disabled={!checkIfCanBeSet(role)}
                   >
-                    <span className={styles.tokenChoiceSymbol}>
+                    <span className={styles.permissionChoiceDescription}>
                       <Heading
                         text={role}
                         appearance={{ size: 'small', margin: 'none' }}
@@ -166,24 +230,24 @@ const ColonyPermissionEditDialog = ({
                       <FormattedMessage {...MSG[`roleDescription${id}`]} />
                     </span>
                   </Checkbox>
-                ))}
-              </div>
-            </DialogSection>
-            <DialogSection appearance={{ align: 'right' }}>
-              <Button
-                appearance={{ theme: 'secondary', size: 'large' }}
-                onClick={cancel}
-                text={MSG.buttonCancel}
-              />
-              <Button
-                appearance={{ theme: 'primary', size: 'large' }}
-                loading={isSubmitting}
-                text={MSG.buttonConfirm}
-                type="submit"
-              />
-            </DialogSection>
-          </>
-        )}
+                </div>
+              ))}
+              <DialogSection appearance={{ align: 'right' }}>
+                <Button
+                  appearance={{ theme: 'secondary', size: 'large' }}
+                  onClick={cancel}
+                  text={MSG.buttonCancel}
+                />
+                <Button
+                  appearance={{ theme: 'primary', size: 'large' }}
+                  loading={isSubmitting}
+                  text={MSG.buttonConfirm}
+                  type="submit"
+                />
+              </DialogSection>
+            </div>
+          );
+        }}
       </ActionForm>
     </Dialog>
   );
