@@ -15,7 +15,6 @@ import BigNumber from 'bn.js';
 import { Action, ActionTypes } from '~redux/index';
 import { Address } from '~types/index';
 import { TaskType } from '~immutable/index';
-import { Context, getContext } from '~context/index';
 import {
   executeCommand,
   executeQuery,
@@ -36,7 +35,7 @@ import {
   colonyTaskMetadataSelector,
   taskSelector,
 } from '../selectors';
-import { createTransaction, getTxChannel } from '../../core/sagas';
+import { createTransaction, getTxChannel, signMessage } from '../../core/sagas';
 import { COLONY_CONTEXT } from '../../core/constants';
 
 import {
@@ -917,39 +916,10 @@ function* taskCommentAdd({
   try {
     const walletAddress = yield select(walletAddressSelector);
     const currentUsername = yield select(usernameSelector, walletAddress);
-    const wallet = yield getContext(Context.WALLET);
 
-    /*
-     * @NOTE Initiate the message signing process
-     */
-    const messageId = `${nanoid(10)}-signMessage`;
-    const message = JSON.stringify({ comment, author });
-    yield put<AllActions>({
-      type: ActionTypes.MESSAGE_CREATED,
-      payload: {
-        id: messageId,
-        purpose: 'taskComment',
-        message,
-        createdAt: new Date(),
-      },
-    });
-
-    /*
-     * @NOTE Wait (block) until there's a matching action
-     */
-    yield take(
-      (action: AllActions) =>
-        action.type === ActionTypes.MESSAGE_SIGN &&
-        action.payload.id === messageId,
-    );
-
-    const signature = yield call([wallet, wallet.signMessage], {
-      message,
-    });
-
-    yield put<AllActions>({
-      type: ActionTypes.MESSAGE_SIGNED,
-      payload: { id: messageId, signature },
+    const signature = yield call(signMessage, 'taskComment', {
+      comment,
+      author,
     });
 
     const matches = (matchUsernames(comment) || []).filter(
@@ -994,9 +964,8 @@ function* taskCommentAdd({
       });
     }
   } catch (error) {
-    return yield putError(ActionTypes.TASK_COMMENT_ADD_ERROR, error, meta);
+    yield putError(ActionTypes.TASK_COMMENT_ADD_ERROR, error, meta);
   }
-  return null;
 }
 
 export default function* tasksSagas() {

@@ -11,5 +11,8 @@ export type MessageActionTypes =
       ActionTypes.MESSAGE_SIGNED,
       { id: string; message?: string; signature: string }
     >
-  | ErrorActionType<ActionTypes.MESSAGE_ERROR, void>
+  | ErrorActionType<
+      ActionTypes.MESSAGE_ERROR,
+      { id: string; messageId: string }
+    >
   | ActionTypeWithPayload<ActionTypes.MESSAGE_CANCEL, { id: string }>;
