@@ -1,10 +1,10 @@
 import IPFS from 'ipfs';
 
 import { sleep } from '../../utils/time';
-import { isDev } from '../../utils/debug';
 
 import devConfig from './ipfsConfig.development';
 import prodConfig from './ipfsConfig.production';
+import qaConfig from './ipfsConfig.qa';
 
 import { B58String, IPFSNodeOptions, IPFSPeer } from './types';
 import PinnerConnector from './PinnerConnector';
@@ -14,8 +14,14 @@ import PinnerConnector from './PinnerConnector';
 const PINNING_ROOM = process.env.PINNING_ROOM;
 const TIMEOUT = process.env.CI ? 50000 : 10000;
 
+const configMap = {
+  mainnet: prodConfig,
+  local: devConfig,
+  goerli: qaConfig,
+};
+
 class IPFSNode {
-  static getIpfsConfig = isDev ? devConfig : prodConfig;
+  static getIpfsConfig = configMap[process.env.NETWORK];
 
   /** Turn a `swarm.peers()` result item into its B58 representation (Qm....) */
   static peerToB58String = (peerItem: IPFSPeer): B58String =>
