@@ -1,3 +1,13 @@
 .main {
   display: block;
 }
+
+.loader {
+  display: flex;
+  align-items: center;
+  margin-top: 32px;
+}
+
+.loaderText {
+  margin-left: 10px;
+}
