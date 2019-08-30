@@ -1,7 +1,7 @@
 /* Use td.className to be able to overwrite table styles */
 
-@value cellPaddingVertical: 25px;
-@value cellPaddingHorizontal: 40px;
+@value cellPaddingVertical: 27px;
+@value cellPaddingHorizontal: 25px;
 
 .globalLink:nth-child(n+2) tr {
   border-width: 1px;
@@ -12,16 +12,23 @@
   border-color: var(--grey-blue-1);
 }
 
+td.taskLoading {
+  padding: cellPaddingVertical cellPaddingHorizontal;
+  height: 88px;
+  width: 100%;
+  border-top: 1px solid var(--grey-blue-1);
+}
+
 td.taskDetails {
   flex-wrap: wrap;
-  padding: cellPaddingVertical cellPaddingHorizontal;
-  width: calc(100% - 230px);
+  padding: cellPaddingVertical 0 cellPaddingVertical cellPaddingHorizontal;
+  width: calc(85% - 74px);
   font-weight: var(--weight-semi);
 }
 
 .taskDetailsTitle {
   composes: inlineEllipsis from '~styles/text.css';
-  max-width: 80ch;
+  max-width: 80%;
   color: var(--colony-black);
 }
 
@@ -33,7 +40,7 @@ td.taskDetails {
 td.taskPayouts {
   justify-content: flex-end;
   padding: cellPaddingVertical 0;
-  width: 150px;
+  width: 15%;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -41,8 +48,9 @@ td.taskPayouts {
 
 td.userAvatar {
   justify-content: center;
-  padding: cellPaddingVertical 0;
-  width: 60px;
+  padding: cellPaddingVertical cellPaddingHorizontal calc(cellPaddingVertical - 6px);
+  height: 88px;
+  width: 84px;
   cursor: pointer;
 }
 
