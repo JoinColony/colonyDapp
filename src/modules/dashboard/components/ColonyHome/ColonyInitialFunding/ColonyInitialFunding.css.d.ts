@@ -8,3 +8,4 @@ export const qrCodeContainer: string;
 export const qrCode: string;
 export const qrCodeDescription: string;
 export const qrCodeAddress: string;
+export const colonyName: string;
