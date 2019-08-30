@@ -39,10 +39,8 @@ const ColoniesListItem = ({ colonyAddress }: Props) => {
     <div className={styles.main}>
       <Link to={`/colony/${colonyName}`} className={styles.linkAlignment}>
         <ColonyAvatar colonyAddress={colonyAddress} colony={colony} size="s" />
-        <p
-          title={colony.displayName}
-          className={styles.displayName}>
-            {colony.displayName}
+        <p title={colony.displayName} className={styles.displayName}>
+          {colony.displayName}
         </p>
       </Link>
     </div>
