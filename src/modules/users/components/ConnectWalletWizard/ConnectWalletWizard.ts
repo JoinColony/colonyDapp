@@ -1,4 +1,4 @@
-import { compose, withProps } from 'recompose';
+import { withProps } from 'recompose';
 import ledgerWallet from '@colony/purser-ledger';
 import trezorWallet from '@colony/purser-trezor';
 
@@ -48,11 +48,9 @@ const stepFunction = (step: number, { method }: StepValues) => {
   }
 };
 
-const ConnectWalletContainer = compose(
-  withWizard({
-    steps: stepFunction,
-    stepCount: 3,
-  }),
-)(WizardTemplate);
+const ConnectWalletContainer = withWizard({
+  steps: stepFunction,
+  stepCount: 3,
+})(WizardTemplate);
 
 export default ConnectWalletContainer;

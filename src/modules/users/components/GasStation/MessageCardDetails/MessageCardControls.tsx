@@ -35,10 +35,6 @@ const MessageCardControls = ({ message: { id } }: Props) => {
         error={ActionTypes.MESSAGE_ERROR}
         validationSchema={validationSchema}
         initialValues={{ id }}
-        transform={(action: any) => ({
-          ...action,
-          meta: { id },
-        })}
       >
         {({ isSubmitting }: FormikProps<FormValues>) => (
           <Button
