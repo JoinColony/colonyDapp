@@ -2,12 +2,13 @@ import { FormikProps } from 'formik';
 
 import React, { useCallback, useMemo, useState } from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
+import * as yup from 'yup';
 
 import { Address } from '~types/index';
 
 import { mergePayload, withKey, mapPayload, pipe } from '~utils/actions';
 
-import { DomainType } from '~immutable/index';
+import { DomainType, UserType } from '~immutable/index';
 import { ActionTypeString, ActionTypes } from '~redux/index';
 import {
   useSelector,
@@ -58,7 +59,7 @@ const MSG = defineMessages({
     defaultMessage: 'Fund tasks and transfer funds between domains.',
   },
   roleDescription4: {
-    id: 'core.ColonyPermissionEditDialog.roleDescription3',
+    id: 'core.ColonyPermissionEditDialog.roleDescription4',
     defaultMessage: 'Coming soon...',
   },
   search: {
@@ -79,6 +80,7 @@ interface Props {
   cancel: () => void;
   close: () => void;
   domain: DomainType;
+  /*   selectedUser?: UserType; */
   colonyAddress: Address;
   submit: ActionTypeString;
   success: ActionTypeString;
@@ -113,8 +115,16 @@ const supFilter = (data, filterValue) => {
   return [customValue].concat(filtered);
 };
 
+const validationSchema = yup.object({
+  user: yup.object().required(),
+  domainId: yup.number(),
+  colonyAddress: yup.string().required(),
+  roles: yup.array().of(yup.string().required()),
+});
+
 const ColonyPermissionEditDialog = ({
   domain,
+  /* selectedUser, */
   colonyAddress,
   cancel,
   close,
@@ -138,11 +148,7 @@ const ColonyPermissionEditDialog = ({
     [userData],
   );
 
-  /* const userPermissions = Object.values(permissions)[0];
-  const availableRoles = Object.keys(userPermissions); */
-
-  // This will be coming from the fetched data of the permissions screen
-  const roles = [
+  const availableRoles = [
     'Root',
     'Administration',
     'Architecture',
@@ -154,7 +160,7 @@ const ColonyPermissionEditDialog = ({
     but can not be set yet
    */
   const checkIfCanBeSet = role => {
-    if (role !== 'Arbitration' || role !== 'Root') {
+    if (role === 'Arbitration' || role === 'Root') {
       return false;
     }
     return true;
@@ -169,6 +175,7 @@ const ColonyPermissionEditDialog = ({
         roles: p.roles.reduce((accumulator, role) => {
           if (checkIfCanBeSet(role)) {
             accumulator[role.toUpperCase()] = true;
+            return accumulator;
           }
           return accumulator;
         }, {}),
@@ -187,8 +194,13 @@ const ColonyPermissionEditDialog = ({
 
   // Get current user roles to populate the checkboxes
   const useCurrentUserForRoles = (): Array<string> => {
-    const { data } = useUserDomainRoles(colonyAddress, domain.id, currentUser);
-    if (data) {
+    const { data } = useUserDomainRoles(
+      colonyAddress,
+      domain.id,
+      // selectedUser ||
+      currentUser,
+    );
+    if (data && Object.keys(data).length !== 0) {
       return Object.keys(data).reduce((accumulator, role) => {
         if (data[role]) {
           // Role is capitalised in the ddb and needs to be readable
@@ -201,7 +213,7 @@ const ColonyPermissionEditDialog = ({
         return accumulator;
       }, []);
     }
-    return undefined;
+    return [];
   };
   const selectedRoles = useCurrentUserForRoles();
 
@@ -217,10 +229,11 @@ const ColonyPermissionEditDialog = ({
         onSuccess={close}
         submit={ActionTypes.COLONY_DOMAIN_USER_ROLES_SET}
         error={ActionTypes.COLONY_DOMAIN_USER_ROLES_SET_ERROR}
-        success={ActionTypes.COLONY_DOMAIN_USER_ROLES_SUCCESS}
+        success={ActionTypes.COLONY_DOMAIN_USER_ROLES_SET_SUCCESS}
         transform={transform}
+        validationSchema={validationSchema}
       >
-        {({ isSubmitting }: FormikProps<any>) => {
+        {({ isSubmitting, isValid }: FormikProps<any>) => {
           return (
             <div className={styles.dialogContainer}>
               <Heading
@@ -231,6 +244,7 @@ const ColonyPermissionEditDialog = ({
               <div className={styles.titleContainer}>
                 <InputLabel label={MSG.selectUser} />
                 <SingleUserPicker
+                  appearance={{ width: 'wide' }}
                   data={users}
                   isResettable
                   name="user"
@@ -240,14 +254,13 @@ const ColonyPermissionEditDialog = ({
                 />
               </div>
               <InputLabel label={MSG.permissionsLabel} />
-              {roles.map((role, id) => (
-                <div className={styles.permissionChoiceContainer}>
+              {availableRoles.map((role, id) => (
+                <div key={role} className={styles.permissionChoiceContainer}>
                   <Checkbox
                     className={styles.permissionChoice}
-                    key={role}
                     value={role}
                     name="roles"
-                    disabled={!!checkIfCanBeSet(role)}
+                    disabled={role === 'Arbitration' || role === 'Root'}
                   >
                     <span className={styles.permissionChoiceDescription}>
                       <Heading
@@ -269,6 +282,7 @@ const ColonyPermissionEditDialog = ({
                   appearance={{ theme: 'primary', size: 'large' }}
                   loading={isSubmitting}
                   text={MSG.buttonConfirm}
+                  disabled={!isValid}
                   type="submit"
                 />
               </DialogSection>

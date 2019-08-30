@@ -1,4 +1,3 @@
-/* @flow */
 import React from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 
