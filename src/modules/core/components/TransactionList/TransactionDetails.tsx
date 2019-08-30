@@ -24,7 +24,7 @@ const MSG = defineMessages({
     defaultMessage: 'To {recipientString}',
   },
   untitled: {
-    id: 'dashboard.TaskList.TaskListItem.untitled',
+    id: 'admin.TransactionList.TransactionDetails.untitled',
     defaultMessage: 'Untitled task',
   },
 });
