@@ -19,6 +19,11 @@
   }
 }
 
+.stateDisabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
 .themeAlt {
   composes: main;
   border: none;
