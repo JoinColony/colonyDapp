@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { ReactNode } from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 
 import { useDataFetcher } from '~utils/hooks';
@@ -15,8 +15,7 @@ import styles from './UserTasks.css';
 const MSG = defineMessages({
   emptyText: {
     id: 'dashboard.Dashboard.UserTasks.emptyText',
-    // eslint-disable-next-line max-len
-    defaultMessage: `It looks like you don't have any tasks. Visit your colonies to find a task to work on.`,
+    defaultMessage: "It looks like you don't have any tasks.",
   },
 });
 
@@ -25,6 +24,7 @@ interface Props {
   initialTask: InitialTaskType;
   userClaimedProfile: boolean;
   walletAddress: Address;
+  filter?: ReactNode;
 }
 
 const displayName: string = 'dashboard.Dashboard.UserTasks';
@@ -34,6 +34,7 @@ const UserTasks = ({
   initialTask,
   userClaimedProfile,
   walletAddress,
+  filter: FilterComponent,
 }: Props) => {
   const { isFetching: isFetchingTasks, data: draftIds } = useDataFetcher<
     [Address, TaskDraftId][]
@@ -46,6 +47,7 @@ const UserTasks = ({
   if (!userClaimedProfile) {
     return (
       <>
+        {FilterComponent}
         <InitialTask task={initialTask} />
         {draftIds && draftIds.length ? (
           <TaskList
@@ -58,17 +60,18 @@ const UserTasks = ({
     );
   }
   return draftIds && draftIds.length ? (
-    <TaskList
-      draftIds={draftIds}
-      filterOption={filterOption}
-      walletAddress={walletAddress}
-    />
-  ) : (
     <>
-      <p className={styles.emptyText}>
-        <FormattedMessage {...MSG.emptyText} />
-      </p>
+      {FilterComponent}
+      <TaskList
+        draftIds={draftIds}
+        filterOption={filterOption}
+        walletAddress={walletAddress}
+      />
     </>
+  ) : (
+    <p className={styles.emptyText}>
+      <FormattedMessage {...MSG.emptyText} />
+    </p>
   );
 };
 

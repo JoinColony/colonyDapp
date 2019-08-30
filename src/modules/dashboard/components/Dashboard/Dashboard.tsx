@@ -69,24 +69,26 @@ const Dashboard = () => {
             text={MSG.myTasks}
           />
         </div>
-        <div className={styles.selectWrapper}>
-          <Select
-            appearance={{ alignOptions: 'right', theme: 'alt' }}
-            connect={false}
-            elementOnly
-            label={MSG.labelFilter}
-            name="filter"
-            options={tasksFilterSelectOptions}
-            placeholder={MSG.placeholderFilter}
-            form={{ setFieldValue: handleSetFilterOption }}
-            $value={filterOption}
-          />
-        </div>
         <UserTasks
           initialTask={{
             title: MSG.initialTaskTitle,
             walletAddress,
           }}
+          filter={(
+            <div className={styles.selectWrapper}>
+              <Select
+                appearance={{ alignOptions: 'right', theme: 'alt' }}
+                connect={false}
+                elementOnly
+                label={MSG.labelFilter}
+                name="filter"
+                options={tasksFilterSelectOptions}
+                placeholder={MSG.placeholderFilter}
+                form={{ setFieldValue: handleSetFilterOption }}
+                $value={filterOption}
+              />
+            </div>
+          )}
           userClaimedProfile={userDidClaimProfile(currentUser)}
           filterOption={filterOption}
           walletAddress={walletAddress}
