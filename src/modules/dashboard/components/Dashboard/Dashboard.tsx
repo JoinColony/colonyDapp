@@ -11,7 +11,7 @@ import {
   tasksFilterSelectOptions,
 } from '../shared/tasksFilter';
 
-import TabMyTasks from './TabMyTasks';
+import UserTasks from './UserTasks';
 import ColoniesList from './ColoniesList';
 
 import styles from './Dashboard.css';
@@ -82,7 +82,7 @@ class Dashboard extends Component<Props, State> {
             form={{ setFieldValue: this.setFilterOption }}
             $value={filterOption}
           />
-          <TabMyTasks
+          <UserTasks
             initialTask={{
               title: MSG.initialTaskTitle,
               walletAddress,

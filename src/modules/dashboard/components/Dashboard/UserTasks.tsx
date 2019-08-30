@@ -9,11 +9,12 @@ import TaskList from '~dashboard/TaskList';
 import InitialTask, { InitialTaskType } from './InitialTask';
 import { TasksFilterOptionType } from '../shared/tasksFilter';
 import { currentUserDraftIdsFetcher } from '../../fetchers';
-import styles from './TabMyTasks.css';
+
+import styles from './UserTasks.css';
 
 const MSG = defineMessages({
   emptyText: {
-    id: 'dashboard.Dashboard.TabMyTasks.emptyText',
+    id: 'dashboard.Dashboard.UserTasks.emptyText',
     // eslint-disable-next-line max-len
     defaultMessage: `It looks like you don't have any tasks. Visit your colonies to find a task to work on.`,
   },
@@ -26,7 +27,9 @@ interface Props {
   walletAddress: Address;
 }
 
-const TabMyTasks = ({
+const displayName: string = 'dashboard.Dashboard.UserTasks';
+
+const UserTasks = ({
   filterOption,
   initialTask,
   userClaimedProfile,
@@ -68,4 +71,7 @@ const TabMyTasks = ({
     </>
   );
 };
-export default TabMyTasks;
+
+UserTasks.displayName = displayName;
+
+export default UserTasks;
