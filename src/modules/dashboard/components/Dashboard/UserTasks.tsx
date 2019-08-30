@@ -27,7 +27,7 @@ interface Props {
   filter?: ReactNode;
 }
 
-const displayName: string = 'dashboard.Dashboard.UserTasks';
+const displayName = 'dashboard.Dashboard.UserTasks';
 
 const UserTasks = ({
   filterOption,

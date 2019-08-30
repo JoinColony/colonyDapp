@@ -54,7 +54,9 @@ const Dashboard = () => {
   );
 
   const currentUser: UserType = useSelector(currentUserSelector);
-  const { profile: { walletAddress = undefined } } = currentUser;
+  const {
+    profile: { walletAddress = undefined },
+  } = currentUser;
 
   return (
     <div className={styles.layoutMain} data-test="dashboard">
@@ -74,7 +76,7 @@ const Dashboard = () => {
             title: MSG.initialTaskTitle,
             walletAddress,
           }}
-          filter={(
+          filter={
             <div className={styles.selectWrapper}>
               <Select
                 appearance={{ alignOptions: 'right', theme: 'alt' }}
@@ -88,7 +90,7 @@ const Dashboard = () => {
                 $value={filterOption}
               />
             </div>
-          )}
+          }
           userClaimedProfile={userDidClaimProfile(currentUser)}
           filterOption={filterOption}
           walletAddress={walletAddress}

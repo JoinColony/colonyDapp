@@ -58,11 +58,8 @@ const ColoniesList = () => {
     return (
       <div className={styles.main}>
         {colonyAddresses.map(colonyAddress => (
-          <ColoniesListItem
-            key={colonyAddress}
-            colonyAddress={colonyAddress}
-          />)
-        )}
+          <ColoniesListItem key={colonyAddress} colonyAddress={colonyAddress} />
+        ))}
       </div>
     );
   }
