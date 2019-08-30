@@ -1,0 +1,61 @@
+.inboxContainerFull {
+  flex: 0 1;
+  height: 525px;
+}
+
+.inboxContainerFull tbody {
+  overflow: hidden;
+}
+
+.inboxContainerPopover {
+  height: 400px;
+}
+
+.inboxContainerPopover table {
+  height: 347px;
+}
+
+.contentContainerFull {
+  display: flex;
+  flex-direction: column;
+  padding-top: 70px; /* pad space for transparent navbar */
+  width: 100%;
+  max-width: 940px;
+}
+
+.contentContainerPopup {
+  display: flex;
+  flex-direction: column;
+  padding-top: 17px;
+  max-height: 446px;
+  width: 477px;
+}
+
+.inboxHeadingFull {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+}
+
+.inboxHeadingPopover {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  padding: 0 13px 0 13px;
+}
+
+.inboxFooter {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 46px;
+}
+
+.loadingText {
+  display: flex;
+  align-items: flex-end;
+  margin-top: 10px;
+  font-size: var(--size-normal);
+  font-weight: var(--weight-semi);
+  line-height: 1em;
+}

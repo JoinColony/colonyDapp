@@ -1,12 +1,16 @@
-.inboxRowCell {
+.inboxRowCellFull {
+  width: 100%;
+  cursor: pointer;
+}
+
+.inboxRowCellPopover {
+  height: 89px;
   width: 100%;
   cursor: pointer;
 }
 
 .inboxDetails {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
+  display: inline-block;
   padding: 24px 20px;
   position: relative;
   font-weight: var(--weight-semi);
@@ -34,7 +38,6 @@
   overflow: hidden;
   font-weight: 400;
   text-overflow: ellipsis;
-  white-space: nowrap;
   color: var(--grey-3);
 }
 
@@ -47,7 +50,7 @@
 
 .userAvatar {
   margin-right: 10px;
-  cursor: pointer;
+  vertical-align: text-bottom;
 }
 
 .time {
