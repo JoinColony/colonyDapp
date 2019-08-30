@@ -49,3 +49,8 @@
 .qrCodeAddress {
   min-width: 0;
 }
+
+.colonyName {
+  composes: inlineEllipsis from '~styles/text.css';
+  display: block;
+}
