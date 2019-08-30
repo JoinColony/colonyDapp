@@ -70,17 +70,14 @@ const DecisionOptionIcon = ({ icon, tooltip, title }: Props['option']) => {
 
 const DecisionOption = ({
   appearance,
-  option: { title, subtitle, disabled },
+  option: { title, subtitle, disabled, value },
   option,
   setValue,
   link,
 }: Props) => {
-  const makeDecision = useCallback(
-    (value: string) => {
-      if (!disabled) setValue(value);
-    },
-    [setValue, disabled],
-  );
+  const makeDecision = useCallback(() => {
+    if (!disabled) setValue(value);
+  }, [setValue, value, disabled]);
 
   const Element = link ? Link : 'button';
   const elmProps = link
