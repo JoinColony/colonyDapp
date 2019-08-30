@@ -1,7 +1,7 @@
 .layoutMain {
   composes: stretchVertical stretchHorizontal from '~styles/layout.css';
   display: grid;
-  padding: 60px 15%;
+  padding: 170px 15% 60px;
   grid-template-columns: auto 180px;
   grid-template-rows: auto;
   column-gap: 80px;
@@ -12,6 +12,13 @@
   height: 100%;
   grid-column: 1;
   grid-row: 1;
+}
+
+.selectWrapper {
+  display: inline-block;
+  margin-top: 26px;
+  width: 105px;
+  float: right;
 }
 
 .sidebar {
