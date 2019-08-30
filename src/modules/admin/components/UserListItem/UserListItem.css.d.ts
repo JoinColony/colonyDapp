@@ -1,5 +1,4 @@
 export const cellPadding: string;
-export const nameMargin: string;
 export const main: string;
 export const customRemoveButton: string;
 export const userAvatar: string;
