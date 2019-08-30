@@ -15,6 +15,10 @@
   height: 347px;
 }
 
+.inboxContainerPopover tbody {
+  overflow: hidden;
+}
+
 .contentContainerFull {
   display: flex;
   flex-direction: column;
