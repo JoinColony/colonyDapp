@@ -5,6 +5,7 @@ import { UserType } from '~immutable/index';
 import { useSelector } from '~utils/hooks';
 
 import { Select } from '~core/Fields';
+import Heading from '~core/Heading';
 import { userDidClaimProfile } from '../../../users/checks';
 import { currentUserSelector } from '../../../users/selectors';
 import {
@@ -38,6 +39,14 @@ const MSG = defineMessages({
     id: 'dashboard.Dashboard.initialTaskTitle',
     defaultMessage: 'Get started with Colony',
   },
+  myTasks: {
+    id: 'dashboard.Dashboard.myTasks',
+    defaultMessage: 'My Tasks',
+  },
+  myColonies: {
+    id: 'dashboard.Dashboard.myColonies',
+    defaultMessage: `My Colonies`,
+  },
 });
 
 const displayName = 'dashboard.Dashboard';
@@ -58,6 +67,16 @@ const Dashboard = () => {
   return (
     <div className={styles.layoutMain} data-test="dashboard">
       <main className={styles.content}>
+        <div className={styles.sectionTitle}>
+          <Heading
+            appearance={{
+              size: 'normal',
+              margin: 'none',
+              theme: 'dark',
+            }}
+            text={MSG.myTasks}
+          />
+        </div>
         <div className={styles.selectWrapper}>
           <Select
             appearance={{ alignOptions: 'right', theme: 'alt' }}
@@ -82,6 +101,16 @@ const Dashboard = () => {
         />
       </main>
       <aside className={styles.sidebar}>
+        <div className={styles.sectionTitle}>
+          <Heading
+            appearance={{
+              size: 'normal',
+              margin: 'none',
+              theme: 'dark',
+            }}
+            text={MSG.myColonies}
+          />
+        </div>
         <ColoniesList />
       </aside>
     </div>
