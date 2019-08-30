@@ -11,7 +11,7 @@ import { Address } from '~types/index';
 
 import { ActionTypes } from '~redux/index';
 import withDialog from '~core/Dialog/withDialog';
-import { ActionForm, FormStatus, TextareaAutoresize } from '~core/Fields';
+import { ActionForm, TextareaAutoresize } from '~core/Fields';
 import Button from '~core/Button';
 import unfinishedProfileOpener from '~users/UnfinishedProfile';
 
@@ -131,7 +131,6 @@ const TaskComments = ({
         {({
           isSubmitting,
           isValid,
-          status,
           handleSubmit,
           values,
         }: FormikProps<FormValues>) => (
@@ -165,7 +164,6 @@ const TaskComments = ({
                */
               maxLength={956}
             />
-            <FormStatus status={status} />
             <div className={styles.commentControls}>
               <Button
                 loading={isSubmitting}
