@@ -11,6 +11,10 @@
   border-bottom: 1px solid var(--temp-grey-5);
 }
 
+.tableWrapper {
+  margin-top: 35px;
+}
+
 .sidebar {
   margin-top: 80px;
 }
