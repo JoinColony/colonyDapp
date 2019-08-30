@@ -1,0 +1,22 @@
+.main {
+  margin-top: 18px;
+}
+
+.linkAlignment {
+  display: flex;
+  align-items: center;
+}
+
+.displayName {
+  composes: inlineEllipsis from '~styles/text.css';
+  display: inline-block;
+  margin-left: 14px;
+  max-width: 172px;
+  font-size: var(--size-normal);
+  font-weight: var(--weight-medium);
+  color: var(--grey-1);
+}
+
+.displayName:hover {
+  opacity: 0.8;
+}

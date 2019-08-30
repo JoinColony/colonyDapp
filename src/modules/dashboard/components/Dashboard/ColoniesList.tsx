@@ -6,8 +6,8 @@ import { useDataFetcher, useSelector } from '~utils/hooks';
 
 import { SpinnerLoader } from '~core/Preloaders';
 
-// import ColonyGrid from '~dashboard/ColonyGrid';
 import Link from '~core/Link';
+import ColoniesListItem from './ColoniesListItem';
 
 import { currentUserSelector } from '../../../users/selectors';
 import { userColoniesFetcher } from '../../fetchers';
@@ -54,9 +54,18 @@ const ColoniesList = () => {
     );
   }
 
-  // if (colonyAddresses) {
-  //   return 'Colonies'
-  // }
+  if (colonyAddresses) {
+    return (
+      <div className={styles.main}>
+        {colonyAddresses.map(colonyAddress => (
+          <ColoniesListItem
+            key={colonyAddress}
+            colonyAddress={colonyAddress}
+          />)
+        )}
+      </div>
+    );
+  }
 
   return (
     <p className={styles.emptyText}>
