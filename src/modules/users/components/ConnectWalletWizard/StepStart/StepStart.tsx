@@ -34,7 +34,9 @@ const MSG = defineMessages({
   },
   trezorSubtitle: {
     id: 'users.ConnectWalletWizard.StepStart.trezorSubtitle',
-    defaultMessage: 'Log in using the Trezor hardware wallet',
+    defaultMessage: 'Coming soon',
+    // To be re-enabled for colonyDapp#1760
+    // defaultMessage: 'Log in using the Trezor hardware wallet',
   },
   ledgerTitle: {
     id: 'users.ConnectWalletWizard.StepStart.ledgerTitle',
@@ -46,7 +48,9 @@ const MSG = defineMessages({
   },
   ledgerSubtitle: {
     id: 'users.ConnectWalletWizard.StepStart.ledgerSubtitle',
-    defaultMessage: 'Log in using the Ledger hardware wallet',
+    defaultMessage: 'Coming soon',
+    // To be re-enabled for colonyDapp#1760
+    // defaultMessage: 'Log in using the Ledger hardware wallet',
   },
   mnemonicTitle: {
     id: 'users.ConnectWalletWizard.StepStart.mnemonicTitle',
@@ -96,18 +100,6 @@ const options = [
     icon: 'metamask',
   },
   {
-    value: WALLET_SPECIFICS.LEDGER,
-    title: MSG.ledgerTitle,
-    subtitle: MSG.ledgerSubtitle,
-    icon: 'wallet',
-  },
-  {
-    value: WALLET_SPECIFICS.TREZOR,
-    title: MSG.trezorTitle,
-    subtitle: MSG.trezorSubtitle,
-    icon: 'wallet',
-  },
-  {
     value: WALLET_SPECIFICS.MNEMONIC,
     title: MSG.mnemonicTitle,
     subtitle: MSG.mnemonicSubtitle,
@@ -118,6 +110,22 @@ const options = [
     title: MSG.JSONTitle,
     subtitle: MSG.JSONSubtitle,
     icon: 'file',
+  },
+  {
+    value: WALLET_SPECIFICS.LEDGER,
+    title: MSG.ledgerTitle,
+    subtitle: MSG.ledgerSubtitle,
+    icon: 'wallet',
+    // To be re-enabled for colonyDapp#1760
+    disabled: true,
+  },
+  {
+    value: WALLET_SPECIFICS.TREZOR,
+    title: MSG.trezorTitle,
+    subtitle: MSG.trezorSubtitle,
+    icon: 'wallet',
+    // To be re-enabled for colonyDapp#1760
+    disabled: true,
   },
 ];
 
