@@ -7,7 +7,11 @@ import {
   currentUserMetadataSelector,
   inboxItemsSelector,
 } from '../selectors';
-import { getUserNotificationMetadata } from '../data/queries';
+import {
+  getUserNotificationMetadata,
+  getUserInboxActivity,
+  getUserColonies,
+} from '../data/queries';
 import { markNotificationsAsRead } from '../data/commands';
 
 function* markAllNotificationsAsRead() {
@@ -49,7 +53,7 @@ function* markNotificationAsRead({
   payload: { id, timestamp },
 }: Action<ActionTypes.INBOX_MARK_NOTIFICATION_READ>) {
   try {
-    const activities = yield select(inboxItemsSelector);
+    const { record: activities = [] } = yield select(inboxItemsSelector);
     const walletAddress = yield select(walletAddressSelector);
     const { metadataStoreAddress } = yield select(currentUserMetadataSelector);
     const metadata = {
@@ -132,6 +136,57 @@ function* markNotificationAsRead({
   return null;
 }
 
+function* inboxItemsFetch({ meta }: Action<ActionTypes.INBOX_ITEMS_FETCH>) {
+  try {
+    let userColonies = [];
+
+    const walletAddress = yield select(walletAddressSelector);
+    const { inboxStoreAddress, metadataStoreAddress } = yield select(
+      currentUserMetadataSelector,
+    );
+
+    if (metadataStoreAddress) {
+      userColonies = yield executeQuery(getUserColonies, {
+        metadata: {
+          walletAddress,
+          metadataStoreAddress,
+        },
+      });
+      const { readUntil = 0, exceptFor = [] } = yield executeQuery(
+        getUserNotificationMetadata,
+        {
+          metadata: {
+            walletAddress,
+            metadataStoreAddress,
+          },
+        },
+      );
+
+      // @todo (reactivity) Make metadata and user inbox data reactive
+      yield put<AllActions>({
+        type: ActionTypes.USER_NOTIFICATION_METADATA_FETCH_SUCCESS,
+        payload: {
+          readUntil,
+          exceptFor,
+        },
+      });
+    }
+
+    const activities = yield executeQuery(getUserInboxActivity, {
+      metadata: { inboxStoreAddress, walletAddress, userColonies },
+    });
+
+    yield put<AllActions>({
+      type: ActionTypes.INBOX_ITEMS_FETCH_SUCCESS,
+      payload: { activities },
+      meta,
+    });
+  } catch (error) {
+    return yield putError(ActionTypes.INBOX_ITEMS_FETCH_ERROR, error, meta);
+  }
+  return null;
+}
+
 export function* setupInboxSagas() {
   yield takeEvery(
     ActionTypes.INBOX_MARK_NOTIFICATION_READ,
@@ -141,4 +196,5 @@ export function* setupInboxSagas() {
     ActionTypes.INBOX_MARK_ALL_NOTIFICATIONS_READ,
     markAllNotificationsAsRead,
   );
+  yield takeEvery(ActionTypes.INBOX_ITEMS_FETCH, inboxItemsFetch);
 }

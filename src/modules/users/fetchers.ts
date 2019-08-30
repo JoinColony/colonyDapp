@@ -4,12 +4,14 @@ import {
   currentUserTransactionsSelector,
   userSelector,
   usersByAddressesSelector,
+  inboxItemsSelector,
 } from './selectors';
 import {
   userFetch,
   userPermissionsFetch,
   userTokensFetch,
   userTokenTransfersFetch,
+  inboxItemsFetch,
 } from './actionCreators';
 
 export const currentUserColonyPermissionsFetcher = Object.freeze({
@@ -39,5 +41,11 @@ export const userFetcher = Object.freeze({
 export const usersByAddressFetcher = Object.freeze({
   fetch: userFetch,
   select: usersByAddressesSelector,
+  ttl: 60 * 1000,
+});
+
+export const inboxItemsFetcher = Object.freeze({
+  fetch: inboxItemsFetch,
+  select: inboxItemsSelector,
   ttl: 60 * 1000,
 });

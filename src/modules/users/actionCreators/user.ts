@@ -94,3 +94,9 @@ export const userColoniesSubStop = (walletAddress: Address): AllActions => ({
   meta: { key: createAddress(walletAddress) },
   payload: { walletAddress },
 });
+
+export const inboxItemsFetch = (): AllActions => ({
+  type: ActionTypes.INBOX_ITEMS_FETCH,
+  payload: {},
+  meta: { id: nanoid() },
+});

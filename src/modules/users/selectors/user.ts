@@ -195,15 +195,19 @@ const getCurrentUserNotificationMetadata = (state: RootStateRecord) =>
 export const inboxItemsSelector = createSelector(
   getInboxItems,
   getCurrentUserNotificationMetadata,
-  (activities, { readUntil = 0, exceptFor = [] }) =>
-    activities &&
-    activities.map(
-      activity =>
-        activity &&
-        activity.set(
-          'unread',
-          new Date(activity.timestamp) > new Date(readUntil) ||
-            exceptFor.includes(activity.id),
-        ),
+  (data, { readUntil = 0, exceptFor = [] }) =>
+    data &&
+    data.update('record', list =>
+      list
+        ? list.map(
+            activity =>
+              activity &&
+              activity.set(
+                'unread',
+                new Date(activity.timestamp) > new Date(readUntil) ||
+                  exceptFor.includes(activity.id),
+              ),
+          )
+        : list,
     ),
 );
