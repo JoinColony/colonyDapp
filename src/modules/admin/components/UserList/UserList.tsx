@@ -6,7 +6,7 @@ import { pipe, mergePayload, withKey } from '~utils/actions';
 import { useAsyncFunction } from '~utils/hooks';
 import { Table, TableBody } from '~core/Table';
 import Heading from '~core/Heading';
-import UserListItem from './UserListItem';
+import UserListItem from '../UserListItem/UserListItem';
 import styles from './UserList.css';
 
 interface Props {

@@ -6,9 +6,10 @@ import { DomainType } from '~immutable/index';
 import Heading from '~core/Heading';
 import { Select } from '~core/Fields';
 import { SpinnerLoader } from '~core/Preloaders';
+import { Table, TableBody } from '~core/Table';
 import { useDataFetcher, useRoles } from '~utils/hooks';
 
-import UserList from '../UserList';
+import UserListItem from '../UserListItem';
 import { domainsFetcher } from '../../../dashboard/fetchers';
 
 import styles from './Permissions.css';
@@ -16,7 +17,10 @@ import styles from './Permissions.css';
 const MSG = defineMessages({
   title: {
     id: 'dashboard.Permissions.title',
-    defaultMessage: 'Permissions',
+    defaultMessage: `Permissions{domainLabel, select,
+      root {}
+      other {: {domainLabel}} 
+    }`,
   },
   labelFilter: {
     id: 'dashboard.Permissions.labelFilter',
@@ -53,12 +57,19 @@ const Permissions = ({ colonyAddress }: Props) => {
     () => Object.keys((roles || {})[selectedDomain] || {}).map(createAddress),
     [roles, selectedDomain],
   );
+
+  const domainLabel = useMemo(
+    () => domains.find(({ value }) => value === selectedDomain).label,
+    [domains, selectedDomain],
+  );
+
   return (
     <div className={styles.main}>
       <main>
         <div className={styles.titleContainer}>
           <Heading
             text={MSG.title}
+            textValues={{ domainLabel }}
             appearance={{ size: 'medium', theme: 'dark' }}
           />
           <Select
@@ -72,11 +83,25 @@ const Permissions = ({ colonyAddress }: Props) => {
             $value={selectedDomain}
           />
         </div>
-        {isFetchingRoles || isFetchingDomains ? (
-          <SpinnerLoader />
-        ) : (
-          <UserList colonyAddress={colonyAddress} users={users} />
-        )}
+        <div className={styles.tableWrapper}>
+          {isFetchingRoles || isFetchingDomains ? (
+            <SpinnerLoader />
+          ) : (
+            <Table scrollable>
+              <TableBody>
+                {users.map(user => (
+                  <UserListItem
+                    address={user}
+                    key={user}
+                    showDisplayName
+                    showMaskedAddress
+                    showUsername
+                  />
+                ))}
+              </TableBody>
+            </Table>
+          )}
+        </div>
       </main>
       <aside className={styles.sidebar}>
         <ul>
