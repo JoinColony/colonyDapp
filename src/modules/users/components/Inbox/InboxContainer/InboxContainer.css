@@ -3,20 +3,12 @@
   height: 525px;
 }
 
-.inboxContainerFull tbody {
-  overflow: hidden;
-}
-
 .inboxContainerPopover {
   height: 400px;
 }
 
 .inboxContainerPopover table {
   height: 347px;
-}
-
-.inboxContainerPopover tbody {
-  overflow: hidden;
 }
 
 .contentContainerFull {
