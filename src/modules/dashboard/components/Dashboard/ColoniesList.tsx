@@ -54,7 +54,7 @@ const ColoniesList = () => {
     );
   }
 
-  if (colonyAddresses) {
+  if (colonyAddresses && colonyAddresses.length) {
     return (
       <div className={styles.main}>
         {colonyAddresses.map(colonyAddress => (
