@@ -32,7 +32,7 @@ const MSG = defineMessages({
     defaultMessage: 'Unassigned',
   },
   reputation: {
-    id: 'dashboard.TaskList.TaskListItem.reputation',
+    id: 'Assignment.reputation',
     defaultMessage: '+{reputation} max rep',
   },
 });
