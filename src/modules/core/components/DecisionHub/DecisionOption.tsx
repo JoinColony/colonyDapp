@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { useCallback } from 'react';
 import {
   MessageDescriptor,
   defineMessages,
@@ -32,6 +32,7 @@ interface Props {
     subtitle: MessageDescriptor | string;
     icon?: string;
     tooltip?: MessageDescriptor;
+    disabled?: boolean;
   };
   link?: string;
 
@@ -41,77 +42,70 @@ interface Props {
 
 const displayName = 'DecisionOption';
 
-class DecisionOption extends Component<Props> {
-  makeDecision = () => {
-    const {
-      option: { value },
-      setValue,
-    } = this.props;
-    setValue(value);
-  };
-
-  renderIcon = (tooltip, icon, title) => {
-    /* Wrap icon in tooltip wrapper only if tooltip propert exists */
-    if (tooltip && icon) {
-      return (
-        <Tooltip
-          placement="left"
-          trigger="hover"
-          content={
-            <span className={styles.tooltip}>
-              <FormattedMessage {...tooltip} />
-            </span>
-          }
-        >
-          <div className={styles.rowIcon}>
-            <Icon name={icon} title={title} appearance={{ size: 'small' }} />
-          </div>
-        </Tooltip>
-      );
-    }
-    if (icon) {
-      return (
-        <div className={styles.rowIcon}>
-          <Icon name={icon} title={title} />
-        </div>
-      );
-    }
-    return null;
-  };
-
-  render() {
-    const {
-      appearance,
-      option: { icon, subtitle, title, tooltip },
-      link,
-    } = this.props;
-    const Element = link ? Link : 'button';
-    const elmProps = link ? { to: link } : { onClick: this.makeDecision };
-
-    return (
-      <Element
-        type="submit"
-        className={getMainClasses(appearance, styles)}
-        {...elmProps}
+const DecisionOptionIcon = ({ icon, tooltip, title }: Props['option']) => {
+  if (icon) {
+    // Wrap the icon in a Tooltip wrapper only if the tooltip property exists
+    return tooltip ? (
+      <Tooltip
+        placement="left"
+        trigger="hover"
+        content={
+          <span className={styles.tooltip}>
+            <FormattedMessage {...tooltip} />
+          </span>
+        }
       >
-        {this.renderIcon(tooltip, icon, title)}
-        <div className={styles.rowContent}>
-          <Heading
-            appearance={{ size: 'small', weight: 'bold', margin: 'small' }}
-            text={title}
-          />
-          <Heading
-            appearance={{ size: 'tiny', weight: 'thin', margin: 'small' }}
-            text={subtitle}
-          />
+        <div className={styles.rowIcon}>
+          <Icon name={icon} title={title} appearance={{ size: 'small' }} />
         </div>
-        <Icon name="caret-right" title={MSG.iconTitle} />
-      </Element>
+      </Tooltip>
+    ) : (
+      <div className={styles.rowIcon}>
+        <Icon name={icon} title={title} />
+      </div>
     );
   }
-}
+  return null;
+};
 
-// @ts-ignore
+const DecisionOption = ({
+  appearance,
+  option: { title, subtitle, disabled, value },
+  option,
+  setValue,
+  link,
+}: Props) => {
+  const makeDecision = useCallback(() => {
+    if (!disabled) setValue(value);
+  }, [setValue, value, disabled]);
+
+  const Element = link ? Link : 'button';
+  const elmProps = link
+    ? { to: disabled ? '' : link }
+    : { onClick: makeDecision, disabled };
+
+  return (
+    <Element
+      type="submit"
+      className={getMainClasses(appearance, styles, { disabled })}
+      {...elmProps}
+    >
+      <DecisionOptionIcon {...option} />
+      <div className={styles.rowContent}>
+        <Heading
+          appearance={{ size: 'small', weight: 'bold', margin: 'small' }}
+          text={title}
+        />
+        <Heading
+          appearance={{ size: 'tiny', weight: 'thin', margin: 'small' }}
+          text={subtitle}
+        />
+      </div>
+      <Icon name="caret-right" title={MSG.iconTitle} />
+    </Element>
+  );
+};
+
 DecisionOption.displayName = displayName;
 
 export default asField({ initialValue: '' })(DecisionOption);
