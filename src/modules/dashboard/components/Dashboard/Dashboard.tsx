@@ -1,12 +1,13 @@
-import React, { Component } from 'react';
+import React, { useState, useCallback } from 'react';
 import { defineMessages } from 'react-intl';
 
 import { UserType } from '~immutable/index';
+import { useSelector } from '~utils/hooks';
 
 import { Select } from '~core/Fields';
 import { userDidClaimProfile } from '../../../users/checks';
+import { currentUserSelector } from '../../../users/selectors';
 import {
-  TasksFilterOptionType,
   TasksFilterOptions,
   tasksFilterSelectOptions,
 } from '../shared/tasksFilter';
@@ -39,65 +40,52 @@ const MSG = defineMessages({
   },
 });
 
-interface Props {
-  currentUser: UserType;
-}
+const displayName = 'dashboard.Dashboard';
 
-interface State {
-  filterOption: TasksFilterOptionType;
-}
+const Dashboard = () => {
+  const [filterOption, setFilterOption] = useState(TasksFilterOptions.ALL_OPEN);
 
-class Dashboard extends Component<Props, State> {
-  static displayName = 'dashboard.Dashboard';
+  const handleSetFilterOption = useCallback(
+    (_: string, value: TasksFilterOptions) => {
+      setFilterOption(value);
+    },
+    [setFilterOption],
+  );
 
-  state = {
-    filterOption: TasksFilterOptions.ALL_OPEN,
-  };
+  const currentUser: UserType = useSelector(currentUserSelector);
+  const { profile: { walletAddress = undefined } } = currentUser;
 
-  setFilterOption = (_: string, value: State['filterOption']) => {
-    this.setState({
-      filterOption: value,
-    });
-  };
+  return (
+    <div className={styles.layoutMain} data-test="dashboard">
+      <main className={styles.content}>
+        <Select
+          appearance={{ alignOptions: 'right', theme: 'alt' }}
+          connect={false}
+          elementOnly
+          label={MSG.labelFilter}
+          name="filter"
+          options={tasksFilterSelectOptions}
+          placeholder={MSG.placeholderFilter}
+          form={{ setFieldValue: handleSetFilterOption }}
+          $value={filterOption}
+        />
+        <UserTasks
+          initialTask={{
+            title: MSG.initialTaskTitle,
+            walletAddress,
+          }}
+          userClaimedProfile={userDidClaimProfile(currentUser)}
+          filterOption={filterOption}
+          walletAddress={walletAddress}
+        />
+      </main>
+      <aside className={styles.sidebar}>
+        <ColoniesList />
+      </aside>
+    </div>
+  );
+};
 
-  render() {
-    const { filterOption } = this.state;
-    const {
-      currentUser = { profile: {} },
-      currentUser: {
-        profile: { walletAddress = undefined },
-      },
-    } = this.props;
-    return (
-      <div className={styles.layoutMain} data-test="dashboard">
-        <main className={styles.content}>
-          <Select
-            appearance={{ alignOptions: 'right', theme: 'alt' }}
-            connect={false}
-            elementOnly
-            label={MSG.labelFilter}
-            name="filter"
-            options={tasksFilterSelectOptions}
-            placeholder={MSG.placeholderFilter}
-            form={{ setFieldValue: this.setFilterOption }}
-            $value={filterOption}
-          />
-          <UserTasks
-            initialTask={{
-              title: MSG.initialTaskTitle,
-              walletAddress,
-            }}
-            userClaimedProfile={userDidClaimProfile(currentUser as UserType)}
-            filterOption={filterOption}
-            walletAddress={walletAddress}
-          />
-        </main>
-        <aside className={styles.sidebar}>
-          <ColoniesList />
-        </aside>
-      </div>
-    );
-  }
-}
+Dashboard.displayName = displayName;
 
 export default Dashboard;
