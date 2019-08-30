@@ -58,17 +58,19 @@ const Dashboard = () => {
   return (
     <div className={styles.layoutMain} data-test="dashboard">
       <main className={styles.content}>
-        <Select
-          appearance={{ alignOptions: 'right', theme: 'alt' }}
-          connect={false}
-          elementOnly
-          label={MSG.labelFilter}
-          name="filter"
-          options={tasksFilterSelectOptions}
-          placeholder={MSG.placeholderFilter}
-          form={{ setFieldValue: handleSetFilterOption }}
-          $value={filterOption}
-        />
+        <div className={styles.selectWrapper}>
+          <Select
+            appearance={{ alignOptions: 'right', theme: 'alt' }}
+            connect={false}
+            elementOnly
+            label={MSG.labelFilter}
+            name="filter"
+            options={tasksFilterSelectOptions}
+            placeholder={MSG.placeholderFilter}
+            form={{ setFieldValue: handleSetFilterOption }}
+            $value={filterOption}
+          />
+        </div>
         <UserTasks
           initialTask={{
             title: MSG.initialTaskTitle,
