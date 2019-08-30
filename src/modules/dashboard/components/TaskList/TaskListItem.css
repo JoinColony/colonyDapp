@@ -51,7 +51,6 @@ td.userAvatar {
   padding: cellPaddingVertical cellPaddingHorizontal calc(cellPaddingVertical - 6px);
   height: 88px;
   width: 84px;
-  cursor: pointer;
 }
 
 .noTask {
