@@ -1,0 +1,9 @@
+.emptyText {
+  margin-top: 32px;
+  font-size: var(--size-normal);
+  line-height: 18px;
+}
+
+.coloniesContainer {
+  margin-top: 40px;
+}

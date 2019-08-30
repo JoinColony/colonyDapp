@@ -69,8 +69,8 @@ const TaskListItem = ({ data, intl: { formatMessage } }: Props) => {
   if (!task || !colonyName || isFetchingTask || isFetchingColonyName) {
     return (
       <TableRow>
-        <TableCell className={styles.taskDetails}>
-          <SpinnerLoader />
+        <TableCell className={styles.taskLoading}>
+          <SpinnerLoader appearance={{ size: 'medium' }} />
         </TableCell>
       </TableRow>
     );
@@ -103,7 +103,7 @@ const TaskListItem = ({ data, intl: { formatMessage } }: Props) => {
           )}
         </TableCell>
         <TableCell className={styles.userAvatar}>
-          {workerAddress && <UserAvatar size="xs" address={workerAddress} />}
+          {workerAddress && <UserAvatar size="s" address={workerAddress} />}
         </TableCell>
       </TableRow>
     </Link>

@@ -79,11 +79,13 @@ const ColonyInitialFunding = ({
     <>
       {canMintTokens && (
         <div className={styles.container}>
-          <Heading
-            appearance={{ size: 'medium' }}
-            text={MSG.title}
-            textValues={{ displayName }}
-          />
+          <span className={styles.colonyName}>
+            <Heading
+              appearance={{ size: 'medium' }}
+              text={MSG.title}
+              textValues={{ displayName }}
+            />
+          </span>
           <p className={styles.fundingPrompt}>
             <FormattedMessage {...MSG.fundingPrompt} />
           </p>

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { ReactNode } from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 
 import { useDataFetcher } from '~utils/hooks';
@@ -9,13 +9,13 @@ import TaskList from '~dashboard/TaskList';
 import InitialTask, { InitialTaskType } from './InitialTask';
 import { TasksFilterOptionType } from '../shared/tasksFilter';
 import { currentUserDraftIdsFetcher } from '../../fetchers';
-import styles from './TabMyTasks.css';
+
+import styles from './UserTasks.css';
 
 const MSG = defineMessages({
   emptyText: {
-    id: 'dashboard.Dashboard.TabMyTasks.emptyText',
-    // eslint-disable-next-line max-len
-    defaultMessage: `It looks like you don't have any tasks. Visit your colonies to find a task to work on.`,
+    id: 'dashboard.Dashboard.UserTasks.emptyText',
+    defaultMessage: "It looks like you don't have any tasks.",
   },
 });
 
@@ -24,13 +24,17 @@ interface Props {
   initialTask: InitialTaskType;
   userClaimedProfile: boolean;
   walletAddress: Address;
+  filter?: ReactNode;
 }
 
-const TabMyTasks = ({
+const displayName = 'dashboard.Dashboard.UserTasks';
+
+const UserTasks = ({
   filterOption,
   initialTask,
   userClaimedProfile,
   walletAddress,
+  filter: FilterComponent,
 }: Props) => {
   const { isFetching: isFetchingTasks, data: draftIds } = useDataFetcher<
     [Address, TaskDraftId][]
@@ -43,6 +47,7 @@ const TabMyTasks = ({
   if (!userClaimedProfile) {
     return (
       <>
+        {FilterComponent}
         <InitialTask task={initialTask} />
         {draftIds && draftIds.length ? (
           <TaskList
@@ -55,17 +60,21 @@ const TabMyTasks = ({
     );
   }
   return draftIds && draftIds.length ? (
-    <TaskList
-      draftIds={draftIds}
-      filterOption={filterOption}
-      walletAddress={walletAddress}
-    />
-  ) : (
     <>
-      <p className={styles.emptyText}>
-        <FormattedMessage {...MSG.emptyText} />
-      </p>
+      {FilterComponent}
+      <TaskList
+        draftIds={draftIds}
+        filterOption={filterOption}
+        walletAddress={walletAddress}
+      />
     </>
+  ) : (
+    <p className={styles.emptyText}>
+      <FormattedMessage {...MSG.emptyText} />
+    </p>
   );
 };
-export default TabMyTasks;
+
+UserTasks.displayName = displayName;
+
+export default UserTasks;

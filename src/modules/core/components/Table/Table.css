@@ -102,7 +102,7 @@
     border-color: var(--grey-blue-1);
   }
 
-  & tbody tr:hover {
+  & tbody tr:hover td {
     background-color: var(--colony-white);
   }
 }
@@ -121,5 +121,50 @@
 
   & tbody tr:hover {
     background-color: var(--grey-4);
+  }
+}
+
+.themeRounder {
+  composes: main;
+  border-radius: var(--radius-large);
+
+  /* top left cell */
+  & tbody tr:first-child td:first-child {
+    border-top-left-radius: var(--radius-large);
+  }
+
+  /* top left cell (of tbody) if thead */
+  & thead + tbody tr:first-child td:first-child {
+    border-top-left-radius: 0;
+  }
+
+  /* top right cell */
+  & tbody tr:first-child td:last-child {
+    border-top-right-radius: var(--radius-large);
+  }
+
+  /* top right cell (of tbody) if thead */
+  & thead + tbody tr:first-child td:last-child {
+    border-top-right-radius: 0;
+  }
+
+  /* top left table header */
+  & thead tr:first-child th:first-child {
+    border-top-left-radius: var(--radius-large);
+  }
+
+  /* top right table header */
+  & thead tr:first-child th:last-child {
+    border-top-right-radius: var(--radius-large);
+  }
+
+  /* bottom left cell */
+  & tbody tr:last-child td:first-child {
+    border-bottom-left-radius: var(--radius-large);
+  }
+
+  /* bottom right cell */
+  & tbody tr:last-child td:last-child {
+    border-bottom-right-radius: var(--radius-large);
   }
 }
