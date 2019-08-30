@@ -129,7 +129,7 @@ const TaskFeedEventDomainSet = ({
   },
   intl: { formatMessage },
 }: any) => {
-  const { record: userRecord } = useSelector(userSelector, [userAddress]);
+  const { record: userRecord } = useSelector(userSelector, [userAddress]) || {};
   const domain = useSelector(domainSelector, [colonyAddress, domainId]) || {};
   const domainName =
     domainId === 1 ? formatMessage(MSG.rootDomain) : domain.name;
@@ -153,7 +153,7 @@ const TaskFeedEventCreated = ({
     meta: { userAddress },
   },
 }: any) => {
-  const { record: userRecord } = useSelector(userSelector, [userAddress]);
+  const { record: userRecord } = useSelector(userSelector, [userAddress]) || {};
   return (
     <FormattedMessage
       {...MSG.created}
@@ -170,12 +170,12 @@ const TaskFeedEventDueDateSet = ({
     payload: { dueDate },
   },
 }: any) => {
-  const { record: userRecord } = useSelector(userSelector, [userAddress]);
+  const { record: userRecord } = useSelector(userSelector, [userAddress]) || {};
   return (
     <FormattedMessage
       {...MSG.dueDateSet}
       values={{
-        user: renderInteractiveUsername(userRecord, userAddress),
+        user: renderInteractiveUsername(userRecord, userAddress) || {},
         dueDate: dueDate && (
           <span
             title={formatDate(new Date(dueDate), '{short}')}
@@ -196,7 +196,7 @@ const TaskFeedEventPayoutSet = ({
     payload: { amount, token: tokenAddress },
   },
 }: any) => {
-  const { record: userRecord } = useSelector(userSelector, [userAddress]);
+  const { record: userRecord } = useSelector(userSelector, [userAddress]) || {};
   const { data: token } = useDataFetcher<TokenType>(
     tokenFetcher,
     [tokenAddress],
@@ -228,7 +228,7 @@ const TaskFeedEventPayoutRemoved = ({
     meta: { userAddress },
   },
 }: any) => {
-  const { record: userRecord } = useSelector(userSelector, [userAddress]);
+  const { record: userRecord } = useSelector(userSelector, [userAddress]) || {};
   return (
     <FormattedMessage
       {...MSG.payoutRemoved}
@@ -249,7 +249,7 @@ const TaskFeedEventSkillSet = ({
     skillId,
   ]);
   const { name: skillName = undefined } = skill || {};
-  const { record: userRecord } = useSelector(userSelector, [userAddress]);
+  const { record: userRecord } = useSelector(userSelector, [userAddress]) || {};
   return (
     <FormattedMessage
       {...MSG.skillSet}
@@ -271,7 +271,7 @@ const TaskFeedEventCancelled = ({
     meta: { userAddress },
   },
 }: any) => {
-  const { record: userRecord } = useSelector(userSelector, [userAddress]);
+  const { record: userRecord } = useSelector(userSelector, [userAddress]) || {};
   return (
     <FormattedMessage
       {...MSG.cancelled}
@@ -287,7 +287,7 @@ const TaskFeedEventClosed = ({
     meta: { userAddress },
   },
 }: any) => {
-  const { record: userRecord } = useSelector(userSelector, [userAddress]);
+  const { record: userRecord } = useSelector(userSelector, [userAddress]) || {};
   return (
     <FormattedMessage
       {...MSG.closed}
@@ -304,7 +304,7 @@ const TaskFeedEventDescriptionSet = ({
     payload: { description },
   },
 }: any) => {
-  const { record: userRecord } = useSelector(userSelector, [userAddress]);
+  const { record: userRecord } = useSelector(userSelector, [userAddress]) || {};
   return (
     <FormattedMessage
       {...MSG.descriptionSet}
@@ -325,7 +325,7 @@ const TaskFeedEventFinalized = ({
     meta: { userAddress },
   },
 }: any) => {
-  const { record: userRecord } = useSelector(userSelector, [userAddress]);
+  const { record: userRecord } = useSelector(userSelector, [userAddress]) || {};
   return (
     <FormattedMessage
       {...MSG.finalized}
@@ -342,7 +342,7 @@ const TaskFeedEventTitleSet = ({
     payload: { title },
   },
 }: any) => {
-  const { record: userRecord } = useSelector(userSelector, [userAddress]);
+  const { record: userRecord } = useSelector(userSelector, [userAddress]) || {};
   if (!title) {
     return (
       <FormattedMessage
@@ -374,7 +374,7 @@ const TaskFeedEventWorkInviteSent = ({
     payload: { workerAddress },
   },
 }: any) => {
-  const { record: userRecord } = useSelector(userSelector, [userAddress]);
+  const { record: userRecord } = useSelector(userSelector, [userAddress]) || {};
   const { record: invitedUserRecord } = useSelector(userSelector, [
     workerAddress,
   ]);
@@ -397,7 +397,7 @@ const TaskFeedEventWorkRequestCreated = ({
     meta: { userAddress },
   },
 }: any) => {
-  const { record: userRecord } = useSelector(userSelector, [userAddress]);
+  const { record: userRecord } = useSelector(userSelector, [userAddress]) || {};
   return (
     <FormattedMessage
       {...MSG.workRequestCreated}
@@ -414,8 +414,9 @@ const TaskFeedEventWorkerAssigned = ({
     payload: { workerAddress },
   },
 }: any) => {
-  const { record: userRecord } = useSelector(userSelector, [userAddress]);
-  const { record: workerRecord } = useSelector(userSelector, [workerAddress]);
+  const { record: userRecord } = useSelector(userSelector, [userAddress]) || {};
+  const { record: workerRecord } =
+    useSelector(userSelector, [workerAddress]) || {};
   return (
     <FormattedMessage
       {...MSG.workerAssigned}
@@ -432,8 +433,9 @@ const TaskFeedEventWorkerUnassigned = ({
     payload: { userAddress, workerAddress },
   },
 }: any) => {
-  const { record: userRecord } = useSelector(userSelector, [userAddress]);
-  const { record: workerRecord } = useSelector(userSelector, [workerAddress]);
+  const { record: userRecord } = useSelector(userSelector, [userAddress]) || {};
+  const { record: workerRecord } =
+    useSelector(userSelector, [workerAddress]) || {};
   return (
     <FormattedMessage
       {...MSG.workerUnassigned}
