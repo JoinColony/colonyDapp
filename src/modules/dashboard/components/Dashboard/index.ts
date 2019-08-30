@@ -1,2 +1,1 @@
-// @ts-ignore
-export { default } from './Dashboard.ts';
+export { default } from './Dashboard';
