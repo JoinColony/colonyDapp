@@ -10,7 +10,9 @@ import compose from 'recompose/compose';
 import unfinishedProfileOpener from '~users/UnfinishedProfile';
 import { Table, TableBody, TableRow, TableCell } from '~core/Table';
 import HookedUserAvatar from '~users/HookedUserAvatar';
+
 import styles from './InitialTask.css';
+import taskListItemStyles from '../TaskList/TaskListItem.css';
 
 const UserAvatar = HookedUserAvatar();
 
@@ -32,20 +34,20 @@ const InitialTask = ({
   history,
 }: Props) => (
   <div className={styles.main}>
-    <Table>
+    <Table appearance={{ theme: 'rounder' }}>
       <TableBody>
         <TableRow>
           <TableCell className={styles.taskDetails}>
             <button
-              className={styles.taskDetailsTitle}
+              className={styles.callToAction}
               type="button"
               onClick={() => unfinishedProfileOpener(history)}
             >
               <FormattedMessage {...title} values={titleValues} />
             </button>
           </TableCell>
-          <TableCell className={styles.userAvatar}>
-            <UserAvatar size="xs" address={walletAddress} />
+          <TableCell className={taskListItemStyles.userAvatar}>
+            <UserAvatar size="s" address={walletAddress} />
           </TableCell>
         </TableRow>
       </TableBody>

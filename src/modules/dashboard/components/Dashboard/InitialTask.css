@@ -1,19 +1,16 @@
-/* Use td.className to be able to overwrite table styles */
-
 .main {
   margin-bottom: 20px;
 }
 
-td.taskDetails {
+.taskDetails {
   flex-wrap: wrap;
-  width: calc(100% - 230px);
-  vertical-align: middle;
+  width: calc(100% - 74px);
 }
 
-.taskDetailsTitle {
+.callToAction {
+  composes: taskDetailsTitle from '../TaskList/TaskListItem.css';
   margin: 0;
-  padding: 0 0 0 40px;
-  height: 87px;
+  padding: 37px 25px;
   width: 100%;
   overflow: hidden;
   border: none;
@@ -23,13 +20,6 @@ td.taskDetails {
   text-align: left;
   text-overflow: ellipsis;
   white-space: nowrap;
-  color: var(--colony-black);
   cursor: pointer;
   outline: none;
-}
-
-td.userAvatar {
-  justify-content: center;
-  padding: 30px 0 25px;
-  width: 60px;
 }
