@@ -4,7 +4,7 @@
   padding: 170px 15% 60px;
   grid-template-columns: auto 220px;
   grid-template-rows: auto;
-  column-gap: 80px;
+  column-gap: 140px;
 }
 
 .content {
@@ -16,7 +16,7 @@
 
 .selectWrapper {
   display: inline-block;
-  margin-top: 25px;
+  margin: 20px 0 6px;
   width: 105px;
   float: right;
 }
@@ -24,10 +24,6 @@
 .sidebar {
   grid-column: 2;
   grid-row: 1;
-}
-
-.helpText {
-  margin-top: 65px;
 }
 
 .sectionTitle {

@@ -27,14 +27,6 @@ const MSG = defineMessages({
     id: 'dashboard.Dashboard.placeholderFilter',
     defaultMessage: 'Filter',
   },
-  helpText: {
-    id: 'dashboard.Dashboard.helpText',
-    defaultMessage: 'Need help using Colony? Visit our {helpCenter}',
-  },
-  linkHelpCenter: {
-    id: 'dashboard.Dashboard.linkHelpCenter',
-    defaultMessage: 'Help Center',
-  },
   initialTaskTitle: {
     id: 'dashboard.Dashboard.initialTaskTitle',
     defaultMessage: 'Get started with Colony',
