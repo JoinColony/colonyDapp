@@ -1,13 +1,29 @@
+@value top-spacing: 32px;
+
 .main {
-  display: block;
+  margin-top: top-spacing;
 }
 
 .loader {
   display: flex;
   align-items: center;
-  margin-top: 32px;
+  margin-top: top-spacing;
 }
 
 .loaderText {
   margin-left: 10px;
+}
+
+.emptyText {
+  margin-top: top-spacing;
+  font-size: var(--size-normal);
+  line-height: 18px;
+}
+
+.createColonyLink {
+  display: block;
+  margin-top: 20px;
+  font-size: var(--size-small);
+  font-weight: var(--weight-medium);
+  color: var(--sky-blue);
 }
