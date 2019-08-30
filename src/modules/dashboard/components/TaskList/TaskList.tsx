@@ -248,7 +248,7 @@ const TaskList = ({
         <Table data-test="dashboardTaskList" scrollable>
           <TableBody>
             {filteredTasksData.map((taskData: any) => (
-              <TaskListItem key={taskData} data={taskData} />
+              <TaskListItem key={taskData.key} data={taskData} />
             ))}
           </TableBody>
         </Table>
