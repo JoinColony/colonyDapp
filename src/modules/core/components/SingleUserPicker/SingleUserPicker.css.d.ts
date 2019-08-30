@@ -1,5 +1,6 @@
 export const main: string;
 export const directionHorizontal: string;
+export const widthWide: string;
 export const labelWrap: string;
 export const container: string;
 export const inputContainer: string;
