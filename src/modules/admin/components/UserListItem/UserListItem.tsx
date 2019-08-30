@@ -16,18 +16,18 @@ import { Address } from '~types/index';
 
 const MSG = defineMessages({
   buttonRemove: {
-    id: 'admin.UserList.UserListItem.buttonRemove',
+    id: 'admin.UserListItem.buttonRemove',
     defaultMessage: 'Remove',
   },
   pending: {
-    id: 'admin.UserList.UserListItem.pending',
+    id: 'admin.UserListItem.pending',
     defaultMessage: 'Transaction pending',
   },
 });
 
 const UserAvatar = HookedUserAvatar({ fetchUser: false });
 
-const componentDisplayName = 'admin.UserList.UserListItem';
+const componentDisplayName = 'admin.UserListItem';
 
 interface Props {
   /*
@@ -54,13 +54,13 @@ interface Props {
   /*
    * Whether to show the remove button
    */
-  viewOnly: boolean;
+  viewOnly?: boolean;
 
   /*
    * Method to call when clicking the remove button
    * Gets passed down to `UserListItem`
    */
-  onRemove: (arg0: ColonyAdminType) => any;
+  onRemove?: (arg0: ColonyAdminType) => any;
 }
 
 const UserListItem = ({
@@ -103,16 +103,16 @@ const UserListItem = ({
           )}
         </span>
       </TableCell>
-      <TableCell className={styles.userRemove}>
-        {!viewOnly && (
+      {!viewOnly && (
+        <TableCell className={styles.userRemove}>
           <Button
             className={styles.customRemoveButton}
             appearance={{ theme: 'primary' }}
             text={MSG.buttonRemove}
             onClick={onRemove}
           />
-        )}
-      </TableCell>
+        </TableCell>
+      )}
     </TableRow>
   );
 };
