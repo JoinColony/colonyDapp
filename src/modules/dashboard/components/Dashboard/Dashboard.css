@@ -2,7 +2,7 @@
   composes: stretchVertical stretchHorizontal from '~styles/layout.css';
   display: grid;
   padding: 170px 15% 60px;
-  grid-template-columns: auto 180px;
+  grid-template-columns: auto 220px;
   grid-template-rows: auto;
   column-gap: 80px;
 }
@@ -16,7 +16,7 @@
 
 .selectWrapper {
   display: inline-block;
-  margin-top: 26px;
+  margin-top: 25px;
   width: 105px;
   float: right;
 }
@@ -28,4 +28,9 @@
 
 .helpText {
   margin-top: 65px;
+}
+
+.sectionTitle {
+  padding: 0 0 14px 7px;
+  border-bottom: 1px solid var(--temp-grey-6);
 }
