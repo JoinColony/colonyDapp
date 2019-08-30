@@ -4,7 +4,7 @@ import formatDate from 'sugar-date/date/format';
 import { TaskEvents } from '~data/types/TaskEvents';
 
 import { Address } from '~types/index';
-import { TokenType } from '~immutable/index';
+import { TokenType, UserRecord } from '~immutable/index';
 import TimeRelative from '~core/TimeRelative';
 import Numeral from '~core/Numeral';
 import InfoPopover from '~core/InfoPopover';
@@ -101,14 +101,21 @@ interface Props {
   event: TaskEvents;
 }
 
-const renderInteractiveUsername = userRecord => {
+const renderInteractiveUsername = (
+  /*
+   * @NOTE There may be a better way here, but I have to flatten the record, since TS complains otherwise
+   * But this was the most "sensible" way to add defaults to the user record
+   */
+  userRecord = UserRecord().toJS(),
+  userAddress,
+) => {
   const {
     profile: { displayName, username },
   } = userRecord;
   return (
     <InfoPopover trigger={username ? 'click' : 'disabled'} user={userRecord}>
-      <span title={username} className={styles.highlightCursor}>
-        {displayName || username}
+      <span title={username || userAddress} className={styles.highlightCursor}>
+        {displayName || username || userAddress}
       </span>
     </InfoPopover>
   );
@@ -135,7 +142,7 @@ const TaskFeedEventDomainSet = ({
             {domainName}
           </span>
         ),
-        user: renderInteractiveUsername(userRecord),
+        user: renderInteractiveUsername(userRecord, userAddress),
       }}
     />
   );
@@ -151,7 +158,7 @@ const TaskFeedEventCreated = ({
     <FormattedMessage
       {...MSG.created}
       values={{
-        user: renderInteractiveUsername(userRecord),
+        user: renderInteractiveUsername(userRecord, userAddress),
       }}
     />
   );
@@ -168,7 +175,7 @@ const TaskFeedEventDueDateSet = ({
     <FormattedMessage
       {...MSG.dueDateSet}
       values={{
-        user: renderInteractiveUsername(userRecord),
+        user: renderInteractiveUsername(userRecord, userAddress),
         dueDate: dueDate && (
           <span
             title={formatDate(new Date(dueDate), '{short}')}
@@ -200,7 +207,7 @@ const TaskFeedEventPayoutSet = ({
     <FormattedMessage
       {...MSG.payoutSet}
       values={{
-        user: renderInteractiveUsername(userRecord),
+        user: renderInteractiveUsername(userRecord, userAddress),
         payout: (
           <span className={styles.highlightNumeral}>
             <Numeral
@@ -226,7 +233,7 @@ const TaskFeedEventPayoutRemoved = ({
     <FormattedMessage
       {...MSG.payoutRemoved}
       values={{
-        user: renderInteractiveUsername(userRecord),
+        user: renderInteractiveUsername(userRecord, userAddress),
       }}
     />
   );
@@ -247,7 +254,7 @@ const TaskFeedEventSkillSet = ({
     <FormattedMessage
       {...MSG.skillSet}
       values={{
-        user: renderInteractiveUsername(userRecord),
+        user: renderInteractiveUsername(userRecord, userAddress),
         skillName: (
           <span title={skillName} className={styles.highlight}>
             {skillName}
@@ -269,7 +276,7 @@ const TaskFeedEventCancelled = ({
     <FormattedMessage
       {...MSG.cancelled}
       values={{
-        user: renderInteractiveUsername(userRecord),
+        user: renderInteractiveUsername(userRecord, userAddress),
       }}
     />
   );
@@ -285,7 +292,7 @@ const TaskFeedEventClosed = ({
     <FormattedMessage
       {...MSG.closed}
       values={{
-        user: renderInteractiveUsername(userRecord),
+        user: renderInteractiveUsername(userRecord, userAddress),
       }}
     />
   );
@@ -302,7 +309,7 @@ const TaskFeedEventDescriptionSet = ({
     <FormattedMessage
       {...MSG.descriptionSet}
       values={{
-        user: renderInteractiveUsername(userRecord),
+        user: renderInteractiveUsername(userRecord, userAddress),
         description: (
           <span title={description} className={styles.highlight}>
             {description}
@@ -323,7 +330,7 @@ const TaskFeedEventFinalized = ({
     <FormattedMessage
       {...MSG.finalized}
       values={{
-        user: renderInteractiveUsername(userRecord),
+        user: renderInteractiveUsername(userRecord, userAddress),
       }}
     />
   );
@@ -341,7 +348,7 @@ const TaskFeedEventTitleSet = ({
       <FormattedMessage
         {...MSG.titleRemoved}
         values={{
-          user: renderInteractiveUsername(userRecord),
+          user: renderInteractiveUsername(userRecord, userAddress),
         }}
       />
     );
@@ -350,7 +357,7 @@ const TaskFeedEventTitleSet = ({
     <FormattedMessage
       {...MSG.titleSet}
       values={{
-        user: renderInteractiveUsername(userRecord),
+        user: renderInteractiveUsername(userRecord, userAddress),
         title: (
           <span title={title} className={styles.highlight}>
             {title}
@@ -375,8 +382,11 @@ const TaskFeedEventWorkInviteSent = ({
     <FormattedMessage
       {...MSG.workInviteSent}
       values={{
-        user: renderInteractiveUsername(userRecord),
-        invitedUser: renderInteractiveUsername(invitedUserRecord),
+        user: renderInteractiveUsername(userRecord, userAddress),
+        invitedUser: renderInteractiveUsername(
+          invitedUserRecord,
+          workerAddress,
+        ),
       }}
     />
   );
@@ -392,7 +402,7 @@ const TaskFeedEventWorkRequestCreated = ({
     <FormattedMessage
       {...MSG.workRequestCreated}
       values={{
-        user: renderInteractiveUsername(userRecord),
+        user: renderInteractiveUsername(userRecord, userAddress),
       }}
     />
   );
@@ -410,8 +420,8 @@ const TaskFeedEventWorkerAssigned = ({
     <FormattedMessage
       {...MSG.workerAssigned}
       values={{
-        user: renderInteractiveUsername(userRecord),
-        worker: renderInteractiveUsername(workerRecord),
+        user: renderInteractiveUsername(userRecord, userAddress),
+        worker: renderInteractiveUsername(workerRecord, workerAddress),
       }}
     />
   );
@@ -428,8 +438,8 @@ const TaskFeedEventWorkerUnassigned = ({
     <FormattedMessage
       {...MSG.workerUnassigned}
       values={{
-        user: renderInteractiveUsername(userRecord),
-        worker: renderInteractiveUsername(workerRecord),
+        user: renderInteractiveUsername(userRecord, userAddress),
+        worker: renderInteractiveUsername(workerRecord, workerAddress),
       }}
     />
   );
