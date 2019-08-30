@@ -51,6 +51,7 @@ const defaultRenderItem = (
 
 interface Appearance {
   direction?: 'horizontal';
+  width?: 'wide';
 }
 
 interface Props extends OmniPickerProps {
@@ -94,7 +95,7 @@ interface Props extends OmniPickerProps {
   placeholder?: string;
 
   /** Callback for things that happend after selection  */
-  onSelected?: () => void;
+  onSelected?: (user: UserType) => void;
 
   /** @ignore Will be injected by `asField` */
   $error?: string;

@@ -1,4 +1,6 @@
+
 import React, { useCallback, useMemo, useState } from 'react';
+
 import { defineMessages } from 'react-intl';
 
 import { Address, createAddress } from '~types/index';
@@ -38,7 +40,7 @@ const MSG = defineMessages({
 
 interface Props {
   colonyAddress: Address;
-  openDialog: (
+  openDialog?: (
     dialogName: string,
     dialogProps?: Record<string, any>,
   ) => DialogType;
@@ -187,4 +189,4 @@ const Permissions = ({ colonyAddress, openDialog }: Props) => {
 
 Permissions.displayName = displayName;
 
-export default withDialog()(Permissions);
+export default (withDialog() as any)(Permissions);

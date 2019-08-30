@@ -6,6 +6,10 @@
   composes: main;
 }
 
+.widthWide input {
+  width: 330px;
+}
+
 .labelWrap {
   flex: 0 0 100%;
 }
@@ -57,7 +61,7 @@
   border: none;
   border-bottom: 1px solid var(--colony-black);
   background-color: transparent;
-  font-size: var(--size-medium-l);
+  font-size: var(--size-normal);
   color: var(--colony-black);
   outline: none;
 
