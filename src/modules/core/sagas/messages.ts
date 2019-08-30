@@ -1,5 +1,5 @@
 import nanoid from 'nanoid';
-import { call, put, take } from 'redux-saga/effects';
+import { call, put, race, take } from 'redux-saga/effects';
 
 import { putError } from '~utils/saga/effects';
 import { ActionTypes } from '~redux/index';
@@ -25,15 +25,27 @@ export function* signMessage(purpose, message) {
 
   /*
    * @NOTE Wait (block) until there's a matching action
-   * and get its generated id for the async listener
+   * for sign or cancel and get its generated id for the async listener
    */
+  const [signAction, cancelAction] = yield race([
+    take(
+      (action: AllActions) =>
+        action.type === ActionTypes.MESSAGE_SIGN &&
+        action.payload.id === messageId,
+    ),
+    take(
+      (action: AllActions) =>
+        action.type === ActionTypes.MESSAGE_CANCEL &&
+        action.payload.id === messageId,
+    ),
+  ]);
+
+  if (cancelAction) throw new Error('User cancelled signing of message');
+
   const {
     meta: { id },
-  } = yield take(
-    (action: AllActions) =>
-      action.type === ActionTypes.MESSAGE_SIGN &&
-      action.payload.id === messageId,
-  );
+  } = signAction;
+
   try {
     const signature = yield call([wallet, wallet.signMessage], {
       message: messageString,
