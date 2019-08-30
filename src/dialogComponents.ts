@@ -15,6 +15,7 @@ import TaskEditDialog from '~dashboard/TaskEditDialog';
 import TaskInviteDialog from '~dashboard/Task/TaskInviteDialog';
 import { TaskClaimRewardDialog } from '~dashboard/TaskClaimReward';
 import DomainEditDialog from '~admin/DomainEditDialog';
+import { ColonyPermissionEditDialog } from '~admin/Permissions';
 import RecoveryModeDialog from '~admin/RecoveryModeDialog';
 import UnlockTokenDialog from '~admin/Profile/UnlockTokenDialog';
 import UpgradeContractDialog from '~admin/UpgradeContractDialog';
@@ -24,6 +25,7 @@ const dialogComponents: { [k: string]: DialogComponent } = {
   ColonyTokenEditDialog,
   ConfirmDialog,
   DomainEditDialog,
+  ColonyPermissionEditDialog,
   ManagerRatingDialog,
   RecoveryModeDialog,
   TaskClaimRewardDialog,
