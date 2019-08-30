@@ -245,7 +245,11 @@ const TaskList = ({
           )}
         </div>
       ) : (
-        <Table data-test="dashboardTaskList" scrollable>
+        <Table
+          data-test="dashboardTaskList"
+          appearance={{ theme: 'rounder' }}
+          scrollable
+        >
           <TableBody>
             {filteredTasksData.map((taskData: any) => (
               <TaskListItem key={taskData.key} data={taskData} />
