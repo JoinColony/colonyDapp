@@ -6,11 +6,13 @@ import { DomainType } from '~immutable/index';
 import Heading from '~core/Heading';
 import { Select } from '~core/Fields';
 import { SpinnerLoader } from '~core/Preloaders';
-import { Table, TableBody } from '~core/Table';
+import { Table, TableBody, TableCell } from '~core/Table';
 import { useDataFetcher, useRoles } from '~utils/hooks';
 
 import UserListItem from '../UserListItem';
 import { domainsFetcher } from '../../../dashboard/fetchers';
+
+import UserPermissions from './UserPermissions';
 
 import styles from './Permissions.css';
 
@@ -35,6 +37,8 @@ interface Props {
 const displayName = 'admin.Permissions';
 
 const Permissions = ({ colonyAddress }: Props) => {
+  const [selectedDomain, setSelectedDomain] = useState(1);
+
   const { data: domainsData, isFetching: isFetchingDomains } = useDataFetcher<
     DomainType[]
   >(domainsFetcher, [colonyAddress], [colonyAddress]);
@@ -48,14 +52,39 @@ const Permissions = ({ colonyAddress }: Props) => {
     ],
     [domainsData],
   );
-  const [selectedDomain, setSelectedDomain] = useState(1);
-  const setFieldValue = useCallback((e, value) => setSelectedDomain(value), [
+
+  const { data: roles, isFetching: isFetchingRoles } = useRoles(colonyAddress);
+
+  const setFieldValue = useCallback((_, value) => setSelectedDomain(value), [
     setSelectedDomain,
   ]);
-  const { data: roles, isFetching: isFetchingRoles } = useRoles(colonyAddress);
-  const users = useMemo(
-    () => Object.keys((roles || {})[selectedDomain] || {}).map(createAddress),
+
+  const getPermissionsForUser = useCallback(
+    (user: Address) => roles && roles[selectedDomain][user],
     [roles, selectedDomain],
+  );
+
+  const sortRootUsersFirst = useCallback(
+    (userA, userB) => {
+      const userAPermissions = getPermissionsForUser(userA);
+      const userBPermissions = getPermissionsForUser(userB);
+      if (
+        (userAPermissions.ROOT && userBPermissions.ROOT) ||
+        (!userAPermissions.ROOT && !userBPermissions.ROOT)
+      ) {
+        return 0;
+      }
+      return userAPermissions.ROOT ? -1 : 1;
+    },
+    [getPermissionsForUser],
+  );
+
+  const users = useMemo(
+    () =>
+      Object.keys((roles || {})[selectedDomain] || {})
+        .map(createAddress)
+        .sort(sortRootUsersFirst),
+    [roles, selectedDomain, sortRootUsersFirst],
   );
 
   const domainLabel = useMemo(
@@ -96,7 +125,15 @@ const Permissions = ({ colonyAddress }: Props) => {
                     showDisplayName
                     showMaskedAddress
                     showUsername
-                  />
+                  >
+                    <TableCell>
+                      <UserPermissions
+                        colonyAddress={colonyAddress}
+                        domainId={selectedDomain}
+                        userAddress={user}
+                      />
+                    </TableCell>
+                  </UserListItem>
                 ))}
               </TableBody>
             </Table>
