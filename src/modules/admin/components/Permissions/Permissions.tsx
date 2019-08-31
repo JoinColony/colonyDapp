@@ -79,6 +79,15 @@ const Permissions = ({ colonyAddress }: Props) => {
     [getPermissionsForUser],
   );
 
+  const handleOnClick = useCallback(
+    (userAddress: Address) => {
+      // eslint-disable-next-line no-console
+      console.log(userAddress, colonyAddress, selectedDomain);
+      // open dialog here in #1709
+    },
+    [colonyAddress, selectedDomain],
+  );
+
   const users = useMemo(
     () =>
       Object.keys((roles || {})[selectedDomain] || {})
@@ -122,6 +131,7 @@ const Permissions = ({ colonyAddress }: Props) => {
                   <UserListItem
                     address={user}
                     key={user}
+                    onClick={handleOnClick}
                     showDisplayName
                     showMaskedAddress
                     showUsername

@@ -1,4 +1,4 @@
-import React, { ReactNode } from 'react';
+import React, { ReactNode, useCallback } from 'react';
 import { defineMessages } from 'react-intl';
 
 import { TableRow, TableCell } from '~core/Table';
@@ -62,8 +62,12 @@ interface Props {
   viewOnly?: boolean;
 
   /*
+   * Method to call when the table row is clicked
+   */
+  onClick?: (address: Address) => any;
+
+  /*
    * Method to call when clicking the remove button
-   * Gets passed down to `UserListItem`
    */
   onRemove?: (arg0: ColonyAdminType) => any;
 }
@@ -75,6 +79,7 @@ const UserListItem = ({
   showUsername = false,
   showMaskedAddress = false,
   viewOnly = true,
+  onClick,
   onRemove,
 }: Props) => {
   const { data: user } = useDataSubscriber<UserType>(
@@ -85,8 +90,15 @@ const UserListItem = ({
 
   const { profile: { username = undefined, displayName = undefined } = {} } =
     user || {};
+
+  const handleClick = useCallback(() => {
+    if (typeof onClick === 'function') {
+      onClick(address);
+    }
+  }, [address, onClick]);
+
   return (
-    <TableRow className={styles.main}>
+    <TableRow className={styles.main} onClick={handleClick}>
       <TableCell className={styles.userAvatar}>
         <UserAvatar size="xs" address={address} user={user} />
       </TableCell>
