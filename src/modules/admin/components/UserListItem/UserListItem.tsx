@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { ReactNode } from 'react';
 import { defineMessages } from 'react-intl';
 
 import { TableRow, TableCell } from '~core/Table';
@@ -36,6 +36,11 @@ interface Props {
   address: Address;
 
   /*
+   * Children
+   */
+  children?: ReactNode;
+
+  /*
    * Whether to show the fullname
    */
   showDisplayName?: boolean;
@@ -65,6 +70,7 @@ interface Props {
 
 const UserListItem = ({
   address,
+  children,
   showDisplayName = false,
   showUsername = false,
   showMaskedAddress = false,
@@ -103,7 +109,8 @@ const UserListItem = ({
           )}
         </span>
       </TableCell>
-      {!viewOnly && (
+      {children}
+      {!viewOnly && onRemove && (
         <TableCell className={styles.userRemove}>
           <Button
             className={styles.customRemoveButton}
