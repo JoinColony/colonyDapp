@@ -1,14 +1,12 @@
 import { FormikProps } from 'formik';
 import React, { useCallback, KeyboardEvent, SyntheticEvent } from 'react';
-
 import { defineMessages } from 'react-intl';
 import * as yup from 'yup';
+
 import { UserType } from '~immutable/index';
 import { mergePayload } from '~utils/actions';
-
 import { OpenDialog } from '~core/Dialog/types';
-import { Address } from '~types/index';
-
+import { Address, ENTER } from '~types/index';
 import { ActionTypes } from '~redux/index';
 import withDialog from '~core/Dialog/withDialog';
 import { ActionForm, TextareaAutoresize } from '~core/Fields';
@@ -16,8 +14,6 @@ import Button from '~core/Button';
 import unfinishedProfileOpener from '~users/UnfinishedProfile';
 
 import { userDidClaimProfile } from '../../../users/checks';
-
-import { ENTER } from './keyTypes';
 
 import styles from './TaskComments.css';
 

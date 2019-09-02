@@ -10,7 +10,7 @@ import nanoid from 'nanoid';
 
 import OmniPicker, { Props as OmniPickerProps } from './OmniPicker';
 import { OmniPickerData } from './types';
-import { ESC, TAB, UP, DOWN, ENTER } from './keyTypes';
+import { ESC, TAB, UP, DOWN, ENTER } from '~types/index';
 
 interface Props {
   data: (arg0: any) => any;

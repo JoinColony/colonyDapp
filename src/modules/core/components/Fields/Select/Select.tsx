@@ -16,7 +16,7 @@ import { Appearance } from './types';
 
 import SelectListBox from './SelectListBox';
 
-import { DOWN, ENTER, ESC, SPACE, UP, TAB } from './keyTypes';
+import { DOWN, ENTER, ESC, SPACE, UP, TAB } from '~types/index';
 
 const MSG = defineMessages({
   expandIconHTMLTitle: {
