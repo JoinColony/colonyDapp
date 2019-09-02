@@ -15,10 +15,10 @@ td.userAvatar {
 td.userDetails {
   flex-wrap: wrap;
   padding: cellPadding cellPadding cellPadding 0;
-  width: 100%;
 }
 
 td.userRemove {
+  margin-left: auto;
   padding: cellPadding cellPadding;
   width: 150px;
 }
@@ -61,4 +61,15 @@ td.userRemove {
   width: 10px;
   border-radius: 50%;
   background-color: var(--golden);
+}
+
+/* State */
+
+.stateHasCallbackFn {
+  cursor: pointer;
+}
+
+.stateHasCallbackFn:focus {
+  /* negative offset to correctly provide table-row outlines */
+  outline-offset: -4px;
 }

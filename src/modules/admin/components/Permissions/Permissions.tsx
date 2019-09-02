@@ -126,7 +126,7 @@ const Permissions = ({ colonyAddress }: Props) => {
             <SpinnerLoader />
           ) : (
             <Table scrollable>
-              <TableBody>
+              <TableBody className={styles.tableBody}>
                 {users.map(user => (
                   <UserListItem
                     address={user}
@@ -136,7 +136,7 @@ const Permissions = ({ colonyAddress }: Props) => {
                     showMaskedAddress
                     showUsername
                   >
-                    <TableCell>
+                    <TableCell className={styles.userPermissionsCell}>
                       <UserPermissions
                         colonyAddress={colonyAddress}
                         domainId={selectedDomain}

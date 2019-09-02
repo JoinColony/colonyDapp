@@ -10,3 +10,4 @@ export const address: string;
 export const pendingDotWrapper: string;
 export const pendingDotClickArea: string;
 export const pendingDot: string;
+export const stateHasCallbackFn: string;
