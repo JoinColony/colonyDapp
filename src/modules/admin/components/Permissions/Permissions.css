@@ -22,3 +22,16 @@
 .sidebar li {
   padding: 10px 0;
 }
+
+.userPermissionsCell {
+  margin-left: auto;
+}
+
+.main table .tableBody {
+  overflow-y: auto;
+  overflow-x: none;
+}
+
+.main table .tableBody tr {
+  overflow-x: auto;
+}
