@@ -1,18 +1,19 @@
-import React, { ReactNode, useCallback } from 'react';
+import React, { KeyboardEvent, ReactNode, useCallback } from 'react';
 import { defineMessages } from 'react-intl';
 
+import Button from '~core/Button';
+import MaskedAddress from '~core/MaskedAddress';
 import { TableRow, TableCell } from '~core/Table';
 import UserMention from '~core/UserMention';
-import MaskedAddress from '~core/MaskedAddress';
-import Button from '~core/Button';
-import { useDataSubscriber } from '~utils/hooks';
-import { userSubscriber } from '../../../users/subscribers';
+import { ColonyAdminType, UserType } from '~immutable/index';
+import { Address, ENTER } from '~types/index';
 import HookedUserAvatar from '~users/HookedUserAvatar';
+import { getMainClasses } from '~utils/css';
+import { useDataSubscriber } from '~utils/hooks';
+
+import { userSubscriber } from '../../../users/subscribers';
 
 import styles from './UserListItem.css';
-
-import { ColonyAdminType, UserType } from '~immutable/index';
-import { Address } from '~types/index';
 
 const MSG = defineMessages({
   buttonRemove: {
@@ -79,7 +80,7 @@ const UserListItem = ({
   showUsername = false,
   showMaskedAddress = false,
   viewOnly = true,
-  onClick,
+  onClick: callbackFn,
   onRemove,
 }: Props) => {
   const { data: user } = useDataSubscriber<UserType>(
@@ -92,13 +93,33 @@ const UserListItem = ({
     user || {};
 
   const handleClick = useCallback(() => {
-    if (typeof onClick === 'function') {
-      onClick(address);
+    if (typeof callbackFn === 'function') {
+      callbackFn(address);
     }
-  }, [address, onClick]);
+  }, [address, callbackFn]);
+
+  const handleKeyPress = useCallback(
+    (evt: KeyboardEvent<HTMLElement>) => {
+      if (evt.key === ENTER) {
+        callbackFn(address);
+      }
+    },
+    [address, callbackFn],
+  );
+
+  const rowProps = callbackFn
+    ? {
+        onClick: handleClick,
+        onKeyPress: handleKeyPress,
+        tabIndex: 0,
+      }
+    : {};
 
   return (
-    <TableRow className={styles.main} onClick={handleClick}>
+    <TableRow
+      className={getMainClasses({}, styles, { hasCallbackFn: !!callbackFn })}
+      {...rowProps}
+    >
       <TableCell className={styles.userAvatar}>
         <UserAvatar size="xs" address={address} user={user} showInfo />
       </TableCell>
