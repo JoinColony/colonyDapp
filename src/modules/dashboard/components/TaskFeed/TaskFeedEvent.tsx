@@ -108,12 +108,8 @@ interface InteractiveUsernameProps {
 const InteractiveUsername = ({ userAddress }: InteractiveUsernameProps) => {
   const {
     record: userRecord,
-    record: {
-      profile: { displayName, username },
-    },
-  } = useSelector(userSelector, [userAddress]) || {
-    record: UserRecord().toJS(),
-  };
+    record: { profile: { displayName, username } } = UserRecord().toJS(),
+  } = useSelector(userSelector, [userAddress]) || {};
   return (
     <InfoPopover trigger={username ? 'click' : 'disabled'} user={userRecord}>
       <span title={username || userAddress} className={styles.highlightCursor}>
