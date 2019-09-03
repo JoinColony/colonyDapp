@@ -400,7 +400,7 @@ const taskSkills: ConsumableItem[] = [
   },
   {
     id: 74,
-    name: 'V  ideo Production',
+    name: 'Video Production',
     parent: -7,
   },
   {
