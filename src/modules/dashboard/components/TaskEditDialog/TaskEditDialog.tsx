@@ -112,14 +112,17 @@ const supFilter = (data, filterValue) => {
 
   const filtered = data.filter(
     user =>
-      user &&
       filterValue &&
-      (user.profile.username
-        .toLowerCase()
-        .includes(filterValue.toLowerCase()) ||
-        user.profile.walletAddress
+      user &&
+      user.profile &&
+      ((user.profile.username &&
+        user.profile.username
           .toLowerCase()
-          .includes(filterValue.toLowerCase())),
+          .includes(filterValue.toLowerCase())) ||
+        (user.profile.walletAddress &&
+          user.profile.walletAddress
+            .toLowerCase()
+            .includes(filterValue.toLowerCase()))),
   );
 
   const customValue = {
