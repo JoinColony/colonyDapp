@@ -3,10 +3,6 @@
   height: 525px;
 }
 
-.inboxContainerFull tbody {
-  overflow: hidden;
-}
-
 .inboxContainerPopover {
   height: 400px;
 }

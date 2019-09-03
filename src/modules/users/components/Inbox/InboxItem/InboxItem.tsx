@@ -209,7 +209,7 @@ const InboxItem = ({
                     colonyDisplayNameWithFallback,
                     value =>
                       colonyName ? (
-                        <Link to={`colony/${colonyName}`}>{value}</Link>
+                        <Link to={`/colony/${colonyName}`}>{value}</Link>
                       ) : (
                         value
                       ),
@@ -222,14 +222,14 @@ const InboxItem = ({
                     targetUserDisplayWithFallback,
                     value =>
                       targetUsername ? (
-                        <Link to={`user/${targetUsername}`}>{value}</Link>
+                        <Link to={`/user/${targetUsername}`}>{value}</Link>
                       ) : (
                         value
                       ),
                   ),
                   task: makeInboxDetail(taskTitle, value =>
                     colonyName && draftId ? (
-                      <Link to={`colony/${colonyName}/task/${draftId}`}>
+                      <Link to={`/colony/${colonyName}/task/${draftId}`}>
                         {value}
                       </Link>
                     ) : (
@@ -241,7 +241,7 @@ const InboxItem = ({
                   )),
                   user: makeInboxDetail(sourceUserDisplayWithFallback, value =>
                     sourceUsername ? (
-                      <Link to={`user/${sourceUsername}`}>{value}</Link>
+                      <Link to={`/user/${sourceUsername}`}>{value}</Link>
                     ) : (
                       value
                     ),
@@ -262,7 +262,7 @@ const InboxItem = ({
                       {...MSG.metaColonyAndDomain}
                       values={{
                         colonyDisplayName: (
-                          <Link to={`colony/${colonyName}`}>
+                          <Link to={`/colony/${colonyName}`}>
                             {colonyDisplayNameWithFallback}
                           </Link>
                         ),
@@ -274,7 +274,7 @@ const InboxItem = ({
                       {...MSG.metaColonyOnly}
                       values={{
                         colonyDisplayName: (
-                          <Link to={`colony/${colonyName}`}>
+                          <Link to={`/colony/${colonyName}`}>
                             {colonyDisplayNameWithFallback}
                           </Link>
                         ),

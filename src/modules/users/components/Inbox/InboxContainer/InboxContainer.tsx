@@ -51,7 +51,7 @@ const allReadActions = {
 };
 
 const InboxContainer = ({ full, close }: Props) => {
-  const inboxItems = useSelector(inboxItemsSelector);
+  const { record: inboxItems } = useSelector(inboxItemsSelector);
   const markAllRead = useAsyncFunction(allReadActions);
   return (
     <div
@@ -77,7 +77,7 @@ const InboxContainer = ({ full, close }: Props) => {
           full ? styles.inboxContainerFull : styles.inboxContainerPopover
         }
       >
-        {inboxItems.length === 0 ? (
+        {!inboxItems || (inboxItems && inboxItems.length === 0) ? (
           <div className={styles.loadingText}>
             <FormattedMessage {...MSG.loadingInbox} />
             <DotsLoader />
