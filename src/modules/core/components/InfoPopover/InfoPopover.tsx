@@ -49,7 +49,7 @@ const InfoPopover = ({ user, children, trigger = 'click' }: Props) => (
      * This wrapper is needed because, if the child in an in-line element, the
      * tooltip component won't trigger
      */}
-    <div className={styles.content}>{children}</div>
+    {children && <div className={styles.content}>{children}</div>}
   </Tooltip>
 );
 
