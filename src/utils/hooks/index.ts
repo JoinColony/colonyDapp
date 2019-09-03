@@ -2,7 +2,6 @@ import { Collection, Map as ImmutableMapType } from 'immutable';
 import { Selector } from 'reselect';
 import { useEffect, useCallback, useMemo, useRef } from 'react';
 import { useDispatch, useMappedState } from 'redux-react-hook';
-import { ContentState, EditorState } from 'draft-js';
 
 import { Action, AllActions, ActionTypes } from '~redux/index';
 import { Address } from '~types/index';
@@ -515,25 +514,6 @@ export const useMainClasses = (
     className,
     styles,
   ]);
-
-/*
- * This hook initializes the editor state for draft-js from a string
- * so that it works properly when used with formiks enableReinitialze property
- */
-export const useInitEditorState = (text = '') => {
-  const prevText = usePrevious(text);
-  let editorState;
-  if (prevText !== text) {
-    editorState = EditorState.createWithContent(
-      ContentState.createFromText(text),
-    );
-  }
-  const prevEditorState = usePrevious(editorState);
-  if (prevText === text) {
-    return prevEditorState;
-  }
-  return editorState;
-};
 
 /*
  * Proxy the new redux state of roles to the old structure of founder and

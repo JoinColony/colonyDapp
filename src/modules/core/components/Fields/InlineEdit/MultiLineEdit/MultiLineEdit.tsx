@@ -1,6 +1,5 @@
-import React, { ReactNode, Component, FocusEvent } from 'react';
+import React, { ReactNode, useCallback, useState } from 'react';
 import {
-  Editor as EditorType,
   EditorState as EditorStateType,
   ContentState,
   Editor,
@@ -13,6 +12,8 @@ import 'draft-js/dist/Draft.css';
 import { asField, InputLabel } from '~core/Fields';
 import InputStatus from '~core/Fields/InputStatus';
 import { getMainClasses } from '~utils/css';
+import { usePrevious } from '~utils/hooks';
+
 import styles from './MultiLineEdit.css';
 
 // eslint-disable-next-line @typescript-eslint/no-empty-interface
@@ -65,7 +66,7 @@ interface Props {
   $error?: string;
 
   /** Will be injected by `asField`, or must be supplied if unconnected */
-  $value: EditorStateType;
+  $value: string;
 
   /** @ignore Will be injected by `asField` */
   formatIntl: (
@@ -74,10 +75,7 @@ interface Props {
   ) => string;
 
   /** Called when the editor loses focus */
-  onEditorBlur?: (
-    evt: FocusEvent<EditorType>,
-    editorState: EditorStateType,
-  ) => void;
+  onEditorBlur?: (evt: FocusEvent, value: string) => void;
 
   /** Will be injected by `asField`, or must be manually supplied if unconnected */
   setValue: (val: any) => void;
@@ -92,112 +90,86 @@ interface Props {
 const HANDLED = 'handled';
 const NOT_HANDLED = 'not-handled';
 
-class MultiLineEdit extends Component<Props> {
-  static displayName = 'MultiLineEdit';
-
-  static defaultProps = {
-    allowReturns: true,
-    elementOnly: true,
-    readOnly: false,
-    spellCheck: false,
-  };
-
-  editorHasContent = () => {
-    const { $value: editorState } = this.props;
-    const currentContent = editorState.getCurrentContent();
-    return (
-      currentContent.hasText() && currentContent.getPlainText().trim() !== ''
-    );
-  };
-
-  handleReturn = () => {
-    const { allowReturns } = this.props;
-    if (!allowReturns) {
-      return HANDLED;
-    }
-    return NOT_HANDLED;
-  };
-
-  onBlur = (evt: FocusEvent<EditorType>) => {
-    const { onEditorBlur, setValue, $value } = this.props;
-    let editorState = $value;
-    if (!this.editorHasContent()) {
-      editorState = EditorState.push(
-        editorState,
-        ContentState.createFromText(''),
-        'remove-range',
-      );
-      setValue(editorState);
-    }
-    if (onEditorBlur) {
-      onEditorBlur(evt, editorState);
-    }
-  };
-
-  onChange = (editorState: EditorStateType) => {
-    const { setValue } = this.props;
-    setValue(editorState);
-  };
-
-  render() {
-    const {
-      appearance,
-      elementOnly,
-      $error,
-      extra,
-      formatIntl,
-      help,
-      helpValues,
-      $id,
-      label,
-      labelValues,
-      name,
-      placeholder,
-      placeholderValues,
-      readOnly,
-      spellCheck,
-      status,
-      statusValues,
-      $value,
-    } = this.props;
-    const placeholderText =
-      typeof placeholder === 'object'
-        ? formatIntl(placeholder, placeholderValues)
-        : placeholder;
-    return (
-      <div className={getMainClasses(appearance, styles)}>
-        {!elementOnly && (
-          <InputLabel
-            error={$error}
-            help={help}
-            helpValues={helpValues}
-            extra={extra}
-            label={label}
-            labelValues={labelValues}
-          />
-        )}
-        <Editor
-          name={name}
-          editorKey={$id}
-          editorState={$value}
-          handleReturn={this.handleReturn}
-          onBlur={this.onBlur}
-          onChange={this.onChange}
-          placeholder={placeholderText}
-          readOnly={readOnly}
-          spellCheck={spellCheck}
-          stripPastedStyles
-        />
-        <InputStatus
-          status={status}
-          statusValues={statusValues}
+const MultiLineEdit = ({
+  $error,
+  $id,
+  $value,
+  allowReturns = true,
+  appearance,
+  extra,
+  formatIntl,
+  help,
+  helpValues,
+  label,
+  labelValues,
+  name,
+  onEditorBlur,
+  placeholder,
+  placeholderValues,
+  setValue,
+  status,
+  statusValues,
+  elementOnly = true,
+  readOnly = false,
+  spellCheck = false,
+}: Props) => {
+  const prevValue = usePrevious($value);
+  const initialEditorState =
+    $value && prevValue !== $value
+      ? EditorState.createWithContent(ContentState.createFromText($value))
+      : EditorState.createEmpty();
+  const [editorState, setEditorState] = useState<EditorStateType>(
+    initialEditorState,
+  );
+  const handleReturn = useCallback(
+    () => (!allowReturns ? HANDLED : NOT_HANDLED),
+    [allowReturns],
+  );
+  const onBlur = useCallback(
+    (evt: FocusEvent) => {
+      if (onEditorBlur) {
+        const content = editorState.getCurrentContent();
+        const newValue =
+          (content.hasText() && content.getPlainText().trim()) || '';
+        if (newValue !== $value) setValue(newValue);
+        onEditorBlur(evt, newValue);
+      }
+    },
+    [$value, editorState, onEditorBlur, setValue],
+  );
+  const placeholderText =
+    typeof placeholder === 'object'
+      ? formatIntl(placeholder, placeholderValues)
+      : placeholder;
+  return (
+    <div className={getMainClasses(appearance, styles)}>
+      {!elementOnly && (
+        <InputLabel
           error={$error}
+          help={help}
+          helpValues={helpValues}
+          extra={extra}
+          label={label}
+          labelValues={labelValues}
         />
-      </div>
-    );
-  }
-}
+      )}
+      <Editor
+        name={name}
+        editorKey={$id}
+        editorState={editorState}
+        handleReturn={handleReturn}
+        onBlur={onBlur}
+        onChange={setEditorState}
+        placeholder={placeholderText}
+        readOnly={readOnly}
+        spellCheck={spellCheck}
+        stripPastedStyles
+      />
+      <InputStatus status={status} statusValues={statusValues} error={$error} />
+    </div>
+  );
+};
 
 export default (asField({
-  initialValue: EditorState.createEmpty(),
+  initialValue: '',
 }) as any)(MultiLineEdit);
