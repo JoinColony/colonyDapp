@@ -17,6 +17,7 @@ import { useColonyNativeToken } from '../../../dashboard/hooks/useColonyNativeTo
 import { useColonyTokens } from '../../../dashboard/hooks/useColonyTokens';
 import { walletAddressSelector } from '../../../users/selectors';
 import { canEditTokens } from '../../checks';
+import FundingBanner from './FundingBanner';
 import TokenList from './TokenList';
 
 import styles from './Tokens.css';
@@ -78,10 +79,11 @@ const Tokens = ({ canMintNativeToken, colonyAddress, openDialog }: Props) => {
     [domainsData],
   );
 
-  const domainLabel = useMemo(
-    () => domains.find(({ value }) => value === selectedDomain).label,
-    [domains, selectedDomain],
-  );
+  const domainLabel = useMemo(() => {
+    const { label = '' } =
+      domains.find(({ value }) => value === selectedDomain) || {};
+    return label;
+  }, [domains, selectedDomain]);
 
   const setFieldValue = useCallback((_, value) => setSelectedDomain(value), [
     setSelectedDomain,
@@ -122,34 +124,39 @@ const Tokens = ({ canMintNativeToken, colonyAddress, openDialog }: Props) => {
   return (
     <div className={styles.main}>
       <main>
-        <div className={styles.titleContainer}>
-          <Heading
-            text={MSG.title}
-            textValues={{ domainLabel }}
-            appearance={{ size: 'medium', theme: 'dark' }}
-          />
-          {isFetchingDomains ? (
-            <SpinnerLoader />
-          ) : (
-            <Select
-              appearance={{ alignOptions: 'right', theme: 'alt' }}
-              connect={false}
-              elementOnly
-              label={MSG.labelSelectDomain}
-              name="selectDomain"
-              options={domains}
-              form={{ setFieldValue }}
-              $value={selectedDomain}
+        <div className={styles.mainContent}>
+          <div className={styles.titleContainer}>
+            <Heading
+              text={MSG.title}
+              textValues={{ domainLabel }}
+              appearance={{ size: 'medium', theme: 'dark' }}
+            />
+            {isFetchingDomains ? (
+              <SpinnerLoader />
+            ) : (
+              <Select
+                appearance={{ alignOptions: 'right', theme: 'alt' }}
+                connect={false}
+                elementOnly
+                label={MSG.labelSelectDomain}
+                name="selectDomain"
+                options={domains}
+                form={{ setFieldValue }}
+                $value={selectedDomain}
+              />
+            )}
+          </div>
+          {tokens && (
+            <TokenList
+              domainId={selectedDomain}
+              tokens={tokens}
+              appearance={{ numCols: '3' }}
             />
           )}
         </div>
-        {tokens && (
-          <TokenList
-            domainId={selectedDomain}
-            tokens={tokens}
-            appearance={{ numCols: '3' }}
-          />
-        )}
+        <div>
+          <FundingBanner colonyAddress={colonyAddress} />
+        </div>
       </main>
       <aside className={styles.sidebar}>
         <ul>
