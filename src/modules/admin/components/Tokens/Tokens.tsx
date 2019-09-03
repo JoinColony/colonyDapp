@@ -40,7 +40,10 @@ const MSG = defineMessages({
   },
   title: {
     id: 'dashboard.Tokens.title',
-    defaultMessage: 'Token Balances',
+    defaultMessage: `Tokens{domainLabel, select,
+      root {}
+      other {: {domainLabel}} 
+    }`,
   },
 });
 
@@ -73,6 +76,11 @@ const Tokens = ({ canMintNativeToken, colonyAddress, openDialog }: Props) => {
       })),
     ],
     [domainsData],
+  );
+
+  const domainLabel = useMemo(
+    () => domains.find(({ value }) => value === selectedDomain).label,
+    [domains, selectedDomain],
   );
 
   const setFieldValue = useCallback((_, value) => setSelectedDomain(value), [
@@ -117,6 +125,7 @@ const Tokens = ({ canMintNativeToken, colonyAddress, openDialog }: Props) => {
         <div className={styles.titleContainer}>
           <Heading
             text={MSG.title}
+            textValues={{ domainLabel }}
             appearance={{ size: 'medium', theme: 'dark' }}
           />
           {isFetchingDomains ? (
