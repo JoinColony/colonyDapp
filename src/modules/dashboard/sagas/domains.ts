@@ -1,4 +1,4 @@
-import { call, fork, put, takeEvery } from 'redux-saga/effects';
+import { all, call, fork, put, takeEvery } from 'redux-saga/effects';
 
 import { Action, ActionTypes, AllActions } from '~redux/index';
 import {
@@ -7,13 +7,10 @@ import {
   executeQuery,
   executeCommand,
 } from '~utils/saga/effects';
-// import { getContext, Context } from '~context/index';
-// import { decorateLog } from '~utils/web3/eventLogs/events';
-// import { normalizeTransactionLog } from '~data/normalizers';
 import { createTransaction, getTxChannel } from '../../core/sagas';
 import { COLONY_CONTEXT } from '../../core/constants';
 import { createDomain, editDomain } from '../data/commands';
-import { getColonyDomains } from '../data/queries';
+import { getDomain, getColonyDomains } from '../data/queries';
 
 function* colonyDomainsFetch({
   meta,
@@ -121,7 +118,7 @@ function* domainEdit({
      * Add an entry to the colony store.
      * Get the domain ID from the payload
      */
-    yield* executeCommand(editDomain, {
+    yield executeCommand(editDomain, {
       metadata: { colonyAddress },
       args: {
         domainId,
@@ -143,8 +140,50 @@ function* domainEdit({
   return null;
 }
 
+function* moveFundsBetweenPots({
+  payload: { colonyAddress, fromDomain, toDomain, amount, tokenAddress },
+  meta,
+}: Action<ActionTypes.MOVE_FUNDS_BETWEEN_POTS>) {
+  let txChannel;
+  try {
+    txChannel = yield call(getTxChannel, meta.id);
+    const [{ potId: fromPot }, { potId: toPot }] = yield all([
+      executeQuery(getDomain, {
+        args: { domainId: fromDomain },
+        metadata: { colonyAddress },
+      }),
+      executeQuery(getDomain, {
+        args: { domainId: toDomain },
+        metadata: { colonyAddress },
+      }),
+    ]);
+
+    yield fork(createTransaction, meta.id, {
+      context: COLONY_CONTEXT,
+      methodName: 'moveFundsBetweenPots',
+      identifier: colonyAddress,
+      params: { token: tokenAddress, fromPot, toPot, amount },
+    });
+
+    // Replace with TRANSACTION_CREATED if
+    // you want the saga to be done as soon as the tx is created
+    yield takeFrom(txChannel, ActionTypes.TRANSACTION_SUCCEEDED);
+
+    yield put<AllActions>({
+      type: ActionTypes.MOVE_FUNDS_BETWEEN_POTS_SUCCESS,
+      payload: { colonyAddress, tokenAddress, fromPot, toPot, amount },
+      meta,
+    });
+  } catch (caughtError) {
+    putError(ActionTypes.MOVE_FUNDS_BETWEEN_POTS_ERROR, caughtError, meta);
+  } finally {
+    txChannel.close();
+  }
+}
+
 export default function* domainSagas() {
   yield takeEvery(ActionTypes.COLONY_DOMAINS_FETCH, colonyDomainsFetch);
   yield takeEvery(ActionTypes.DOMAIN_CREATE, domainCreate);
   yield takeEvery(ActionTypes.DOMAIN_EDIT, domainEdit);
+  yield takeEvery(ActionTypes.MOVE_FUNDS_BETWEEN_POTS, moveFundsBetweenPots);
 }

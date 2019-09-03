@@ -1,9 +1,33 @@
+import BigNumber from 'bn.js';
 import { Address } from '~types/index';
 import { DomainType } from '~immutable/index';
 import { ActionType, ErrorActionType, UniqueActionType } from './index';
 import { ActionTypes } from '../../index';
 
 export type DomainActionTypes =
+  | UniqueActionType<
+      ActionTypes.MOVE_FUNDS_BETWEEN_POTS,
+      {
+        colonyAddress: string;
+        tokenAddress: string;
+        fromDomain: number;
+        toDomain: number;
+        amount: BigNumber;
+      },
+      object
+    >
+  | ErrorActionType<ActionTypes.MOVE_FUNDS_BETWEEN_POTS_ERROR, object>
+  | UniqueActionType<
+      ActionTypes.MOVE_FUNDS_BETWEEN_POTS_SUCCESS,
+      {
+        tokenAddress: string;
+        colonyAddress: string;
+        fromPot: number;
+        toPot: number;
+        amount: BigNumber;
+      },
+      object
+    >
   | UniqueActionType<
       ActionTypes.DOMAIN_CREATE,
       { colonyAddress: Address; domainName: string; parentDomainId?: number },
