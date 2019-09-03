@@ -83,3 +83,48 @@ Cypress.Commands.add(
           ),
       ),
 );
+
+Cypress.Commands.add('confirmTx', () => {
+  cy.get('button[data-test="gasStationConfirmTransaction"]', {
+    timeout: 60000,
+  }).click();
+});
+
+Cypress.Commands.add('verifyTxByIndex', index => {
+  cy.get('span[data-test="gasStationTransactionSucceeded"]', {
+    timeout: 120000,
+  });
+  cy.log(index);
+});
+
+Cypress.Commands.add('initState', () => {
+  /*
+   * Dev Helper method to reset the state with no currentUser set
+   */
+  cy.fixture('initialState').then(initState => {
+    cy.visit('/connect', {
+      onBeforeLoad: win => {
+        // eslint-disable-next-line eslint-comments/disable-enable-pair
+        /* eslint-disable no-param-reassign */
+        win.initialState = initState;
+      },
+    });
+  });
+});
+
+Cypress.Commands.add('getState', () => {
+  cy.window()
+    .its('store')
+    .invoke('getState')
+    .then(state => state.toJS());
+});
+
+/* This works only after colonyDapp#755 has been merged */
+Cypress.Commands.add('logout', () => {
+  /*
+   * Dev Helper method to logout
+   */
+  cy.window()
+    .its('store')
+    .invoke('dispatch', { type: 'USER_LOGOUT' });
+});

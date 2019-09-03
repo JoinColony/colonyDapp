@@ -165,6 +165,7 @@ const StepCreateToken = ({
                 appearance={{ theme: 'fat' }}
                 label={MSG.labelTokenName}
                 help={MSG.helpTokenName}
+                data-test="defineTokenName"
                 extra={
                   <button
                     type="button"
@@ -182,6 +183,7 @@ const StepCreateToken = ({
                 name="tokenSymbol"
                 appearance={{ theme: 'fat' }}
                 maxLength="5"
+                data-test="defineTokenSymbol"
                 formattingOptions={{ uppercase: true }}
                 label={MSG.labelTokenSymbol}
                 help={MSG.helpTokenSymbol}
@@ -205,6 +207,7 @@ const StepCreateToken = ({
               appearance={{ theme: 'primary', size: 'large' }}
               text={MSG.nextButton}
               type="submit"
+              data-test="definedTokenConfirm"
               disabled={!isValid}
               loading={isSubmitting}
             />

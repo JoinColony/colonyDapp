@@ -164,11 +164,13 @@ const StepColonyName = ({ wizardForm, nextStep, wizardValues }: Props) => {
               <Input
                 appearance={{ theme: 'fat' }}
                 name="displayName"
+                data-test="claimColonyDisplayNameInput"
                 label={MSG.labelDisplay}
               />
               <Input
                 appearance={{ theme: 'fat' }}
                 name="colonyName"
+                data-test="claimColonyNameInput"
                 extensionString=".colony.joincolony.eth"
                 label={MSG.label}
                 status={normalized !== colonyName ? MSG.statusText : null}
@@ -197,6 +199,7 @@ const StepColonyName = ({ wizardForm, nextStep, wizardValues }: Props) => {
                 <Button
                   appearance={{ theme: 'primary', size: 'large' }}
                   type="submit"
+                  data-test="claimColonyNameConfirm"
                   disabled={!isValid}
                   loading={isSubmitting}
                   text={MSG.continue}
