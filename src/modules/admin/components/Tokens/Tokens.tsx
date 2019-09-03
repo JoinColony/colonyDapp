@@ -1,26 +1,30 @@
-import React, { useCallback, useMemo } from 'react';
-import { defineMessages, FormattedMessage } from 'react-intl';
+import React, { useCallback, useMemo, useState } from 'react';
+import { defineMessages } from 'react-intl';
 import { useMappedState } from 'redux-react-hook';
 
 import { DialogType } from '~core/Dialog';
-import { TokenType } from '~immutable/index';
-import { Address } from '~types/index';
 import Button from '~core/Button';
-import Heading from '~core/Heading';
 import withDialog from '~core/Dialog/withDialog';
+import Heading from '~core/Heading';
+import { Select } from '~core/Fields';
+import { SpinnerLoader } from '~core/Preloaders';
+import { DomainType, TokenType } from '~immutable/index';
+import { Address } from '~types/index';
 import { useDataFetcher, useOldRoles } from '~utils/hooks';
-import { tokenFetcher } from '../../../dashboard/fetchers';
+
+import { domainsFetcher, tokenFetcher } from '../../../dashboard/fetchers';
 import { useColonyNativeToken } from '../../../dashboard/hooks/useColonyNativeToken';
 import { useColonyTokens } from '../../../dashboard/hooks/useColonyTokens';
 import { walletAddressSelector } from '../../../users/selectors';
 import { canEditTokens } from '../../checks';
 import TokenList from './TokenList';
+
 import styles from './Tokens.css';
 
 const MSG = defineMessages({
-  title: {
-    id: 'dashboard.Tokens.title',
-    defaultMessage: 'Token Balances',
+  labelSelectDomain: {
+    id: 'dashboard.Tokens.labelSelectDomain',
+    defaultMessage: 'Select a domain',
   },
   nativeTokenText: {
     id: 'dashboard.Tokens.nativeTokenText',
@@ -33,6 +37,10 @@ const MSG = defineMessages({
   navItemEditTokens: {
     id: 'dashboard.Tokens.navItemEditTokens',
     defaultMessage: 'Edit tokens',
+  },
+  title: {
+    id: 'dashboard.Tokens.title',
+    defaultMessage: 'Token Balances',
   },
 });
 
@@ -51,8 +59,25 @@ const Tokens = ({ canMintNativeToken, colonyAddress, openDialog }: Props) => {
     walletAddress,
   ]);
 
-  // @TODO replace with selected domain from dropdown via #1799
-  const domainId = 1;
+  // domains
+  const [selectedDomain, setSelectedDomain] = useState(1);
+  const { data: domainsData, isFetching: isFetchingDomains } = useDataFetcher<
+    DomainType[]
+  >(domainsFetcher, [colonyAddress], [colonyAddress]);
+  const domains = useMemo(
+    () => [
+      { value: 1, label: 'root' },
+      ...(domainsData || []).map(({ name, id }) => ({
+        label: name,
+        value: id,
+      })),
+    ],
+    [domainsData],
+  );
+
+  const setFieldValue = useCallback((_, value) => setSelectedDomain(value), [
+    setSelectedDomain,
+  ]);
 
   // get sorted tokens
   const [tokens] = useColonyTokens(colonyAddress);
@@ -94,18 +119,24 @@ const Tokens = ({ canMintNativeToken, colonyAddress, openDialog }: Props) => {
             text={MSG.title}
             appearance={{ size: 'medium', theme: 'dark' }}
           />
-          {nativeToken && (
-            <Heading appearance={{ size: 'normal' }}>
-              <FormattedMessage
-                {...MSG.nativeTokenText}
-                values={{ nativeToken: nativeToken.symbol }}
-              />
-            </Heading>
+          {isFetchingDomains ? (
+            <SpinnerLoader />
+          ) : (
+            <Select
+              appearance={{ alignOptions: 'right', theme: 'alt' }}
+              connect={false}
+              elementOnly
+              label={MSG.labelSelectDomain}
+              name="selectDomain"
+              options={domains}
+              form={{ setFieldValue }}
+              $value={selectedDomain}
+            />
           )}
         </div>
         {tokens && (
           <TokenList
-            domainId={domainId}
+            domainId={selectedDomain}
             tokens={tokens}
             appearance={{ numCols: '3' }}
           />
