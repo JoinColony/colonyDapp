@@ -7,6 +7,7 @@ import { UserType } from '~immutable/index';
 import { ItemDataType } from '~core/OmniPicker';
 import { pipe, mapPayload, mergePayload, withKey } from '~utils/actions';
 import { useSelector } from '~utils/hooks';
+import { filterUserSelection } from '~utils/arrays';
 import { ActionTypes } from '~redux/index';
 import SingleUserPicker from '~core/SingleUserPicker';
 import Button from '~core/Button';
@@ -34,27 +35,6 @@ const MSG = defineMessages({
 });
 
 const UserAvatar = HookedUserAvatar({ fetchUser: false });
-
-const supFilter = (data, filterValue) => {
-  const filtered = data.filter(
-    user =>
-      user &&
-      filterValue &&
-      user.profile.username.toLowerCase().includes(filterValue.toLowerCase()),
-  );
-
-  if (!filterValue) return filtered;
-
-  const customValue = {
-    id: 'filterValue',
-    profile: {
-      walletAddress: filterValue,
-      displayName: filterValue,
-    },
-  };
-
-  return [customValue].concat(filtered);
-};
 
 const supRenderAvatar = (address: string, item: ItemDataType<UserType>) => {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -118,7 +98,7 @@ const OrganizationAddAdmins = ({ colonyAddress }: Props) => {
                   ...user,
                   id: user.profile.walletAddress,
                 }))}
-                filter={supFilter}
+                filter={filterUserSelection}
                 renderAvatar={supRenderAvatar}
               />
             </div>
