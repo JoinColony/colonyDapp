@@ -34,6 +34,7 @@ import {
   useDataMapFetcher,
   useSelector,
 } from '~utils/hooks';
+import { filterUserSelection } from '~utils/arrays';
 import WrappedPayout from './WrappedPayout';
 import { colonySubscriber } from '../../subscribers';
 import { taskSelector, taskRequestsSelector } from '../../selectors';
@@ -104,37 +105,6 @@ interface Props {
 }
 
 const UserAvatar = HookedUserAvatar({ fetchUser: false });
-
-const supFilter = (data, filterValue) => {
-  if (!filterValue) {
-    return data;
-  }
-
-  const filtered = data.filter(
-    user =>
-      filterValue &&
-      user &&
-      user.profile &&
-      ((user.profile.username &&
-        user.profile.username
-          .toLowerCase()
-          .includes(filterValue.toLowerCase())) ||
-        (user.profile.walletAddress &&
-          user.profile.walletAddress
-            .toLowerCase()
-            .includes(filterValue.toLowerCase()))),
-  );
-
-  const customValue = {
-    id: 'filterValue',
-    profile: {
-      walletAddress: filterValue,
-      displayName: filterValue,
-    },
-  };
-
-  return [customValue].concat(filtered);
-};
 
 const supRenderAvatar = (address: string, item: ItemDataType<UserType>) => {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -383,7 +353,7 @@ const TaskEditDialog = ({
                       isResettable
                       label={MSG.selectAssignee}
                       name="worker"
-                      filter={supFilter}
+                      filter={filterUserSelection}
                       placeholder={MSG.search}
                       renderAvatar={supRenderAvatar}
                     />

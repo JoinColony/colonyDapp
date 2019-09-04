@@ -201,3 +201,27 @@ export const recursiveNestChildren = (
   });
   return collapsedItems;
 };
+
+/*
+Extracts the required values to be used in the SingleUserPicker
+on selection
+*/
+export const filterUserSelection = (data, filterValue) => {
+  const filtered = data.filter(
+    user =>
+      user &&
+      filterValue &&
+      user.profile.username.toLowerCase().includes(filterValue.toLowerCase()),
+  );
+
+  if (!filterValue) return filtered;
+
+  const customValue = {
+    id: 'filterValue',
+    profile: {
+      walletAddress: filterValue,
+      displayName: filterValue,
+    },
+  };
+  return [customValue].concat(filtered);
+};

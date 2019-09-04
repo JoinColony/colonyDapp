@@ -1,4 +1,3 @@
-
 import React, { useCallback, useMemo, useState } from 'react';
 
 import { defineMessages } from 'react-intl';
@@ -11,6 +10,7 @@ import { SpinnerLoader } from '~core/Preloaders';
 import { Table, TableBody, TableCell } from '~core/Table';
 import Button from '~core/Button';
 import withDialog from '~core/Dialog/withDialog';
+import { DialogType } from '~core/Dialog';
 import { useDataFetcher, useRoles } from '~utils/hooks';
 
 import UserListItem from '../UserListItem';
