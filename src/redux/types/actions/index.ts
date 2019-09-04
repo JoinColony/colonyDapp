@@ -68,10 +68,19 @@ export interface ActionTypeWithPayloadAndMeta<
 /*
  * Type that represents a unique action (e.g. from `ActionForm`).
  */
-export interface UniqueActionType<T extends string, P, M extends {}>
-  extends ActionTypeWithPayloadAndMeta<T, P, M> {
+export interface UniqueActionType<T extends string, P, M> {
   type: T;
   payload: P;
+  meta: {
+    id: string;
+  } & M;
+}
+
+/*
+ * Type that represents a unique action without a payload
+ */
+export interface UniqueActionTypeWithoutPayload<T extends string, M> {
+  type: T;
   meta: {
     id: string;
   } & M;

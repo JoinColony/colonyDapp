@@ -13,8 +13,8 @@ export type SkillType = $ReadOnly<Shared>;
 export type SkillRecordType = RecordOf<Shared>;
 
 const defaultValues: Shared = {
-  id: undefined,
-  name: undefined,
+  id: 0,
+  name: '',
   parent: undefined,
 };
 

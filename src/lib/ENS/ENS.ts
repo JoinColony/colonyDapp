@@ -138,12 +138,12 @@ class ENS {
   async getOrbitDBAddress(
     addressOrDomain: string,
     networkClient: ColonyNetworkClient,
-  ): Promise<string | null> {
+  ): Promise<string | undefined> {
     const domain = isAddress(addressOrDomain)
       ? await this._getRawDomain(createAddress(addressOrDomain), networkClient)
       : addressOrDomain;
 
-    if (!domain) return null;
+    if (!domain) return undefined;
 
     let normalizedDomain = domain;
     if (domain.startsWith(EXTERNAL_PREFIX)) {

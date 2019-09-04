@@ -28,10 +28,10 @@ const defaultProps: Shared = {
   displayName: undefined,
   location: undefined,
   username: undefined,
-  walletAddress: undefined,
+  walletAddress: '',
   website: undefined,
-  inboxStoreAddress: undefined,
-  metadataStoreAddress: undefined,
+  inboxStoreAddress: '',
+  metadataStoreAddress: '',
 };
 
 export const UserProfileRecord: Record.Factory<Shared> = Record(defaultProps);

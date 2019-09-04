@@ -3,13 +3,10 @@ import { call } from 'redux-saga/effects';
 import { Context, getContext } from '~context/index';
 
 import { TransactionRecordType } from '~immutable/index';
-import {
-  AddressOrENSName,
-  ColonyContext,
-} from '../../../../lib/ColonyManager/types';
+import { AddressOrENSName, ContractContexts } from '~types/index';
 
 export function* getMethod(
-  context: ColonyContext,
+  context: ContractContexts,
   methodName: string,
   identifier?: AddressOrENSName,
 ) {

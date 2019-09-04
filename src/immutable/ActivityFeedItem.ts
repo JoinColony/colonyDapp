@@ -2,10 +2,14 @@ import { $ReadOnly } from 'utility-types';
 
 import { Record } from 'immutable';
 
-export type ActivityAction = 'addedSkillTag' | 'assignedUser' | 'commentedOn';
+export enum ActivityActions {
+  ADDED_SKILL_TAG = 'addedSkillTag',
+  ASSIGNED_USER = 'assignedUser',
+  COMMENTED_ON = 'commentedOn',
+}
 
 interface Shared {
-  actionType: ActivityAction;
+  actionType: ActivityActions;
   date: Date;
   domainTag: string;
   id: number;
@@ -17,12 +21,12 @@ interface Shared {
 export type ActivityFeedItemType = $ReadOnly<Shared>;
 
 const defaultValues: Shared = {
-  actionType: undefined,
-  date: undefined,
-  domainTag: undefined,
-  id: undefined,
-  organization: undefined,
-  task: undefined,
+  actionType: ActivityActions.ASSIGNED_USER,
+  date: new Date(),
+  domainTag: '',
+  id: 0,
+  organization: '',
+  task: '',
   user: undefined,
 };
 

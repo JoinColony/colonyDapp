@@ -7,8 +7,11 @@ import {
   executeQuery,
   executeCommand,
 } from '~utils/saga/effects';
+import { ContractContexts } from '~types/index';
+// import { getContext, Context } from '~context/index';
+// import { decorateLog } from '~utils/web3/eventLogs/events';
+// import { normalizeTransactionLog } from '~data/normalizers';
 import { createTransaction, getTxChannel } from '../../core/sagas';
-import { COLONY_CONTEXT } from '../../core/constants';
 import { createDomain, editDomain } from '../data/commands';
 import { getDomain, getColonyDomains } from '../data/queries';
 
@@ -18,6 +21,7 @@ function* colonyDomainsFetch({
 }: Action<ActionTypes.COLONY_DOMAINS_FETCH>) {
   try {
     const domains = yield executeQuery(getColonyDomains, {
+      args: undefined,
       metadata: { colonyAddress },
     });
 
@@ -49,7 +53,7 @@ function* domainCreate({
      * @body Idempotency could be improved here by looking for a pending transaction.
      */
     yield fork(createTransaction, meta.id, {
-      context: COLONY_CONTEXT,
+      context: ContractContexts.COLONY_CONTEXT,
       methodName: 'addDomain',
       identifier: colonyAddress,
       params: { parentDomainId },
@@ -159,7 +163,7 @@ function* moveFundsBetweenPots({
     ]);
 
     yield fork(createTransaction, meta.id, {
-      context: COLONY_CONTEXT,
+      context: ContractContexts.COLONY_CONTEXT,
       methodName: 'moveFundsBetweenPots',
       identifier: colonyAddress,
       params: { token: tokenAddress, fromPot, toPot, amount },

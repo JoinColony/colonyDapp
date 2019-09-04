@@ -73,6 +73,7 @@ const validationSchema = yup.object({
   colonyName: yup
     .string()
     .required()
+    // @ts-ignore
     .ensAddress(),
   displayName: yup.string().required(),
 });
@@ -89,7 +90,7 @@ const StepColonyName = ({ wizardForm, nextStep, wizardValues }: Props) => {
     profile: { username },
   } = currentUser;
 
-  const [currentENSName, setCurrentENSName] = useState(undefined);
+  const [currentENSName, setCurrentENSName] = useState();
 
   const validateDomain = useCallback(
     async (values: FormValues) => {

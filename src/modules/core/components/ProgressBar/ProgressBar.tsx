@@ -9,7 +9,7 @@ interface Props {
 
 /* Trying to use an actual ProgressBar here to be semantic and accessible */
 const ProgressBar = ({ value = 0, max = 100 }: Props) => (
-  <progress className={styles.main} value={value || null} max={max} />
+  <progress className={styles.main} value={value} max={max} />
 );
 
 export default ProgressBar;

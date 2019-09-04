@@ -84,7 +84,7 @@ const readKeystoreFromFileData = (file: FileReaderFile) => {
   if (!file || !file.data) {
     throw new Error('No file data received');
   }
-  const base64Str = file.data.split('base64,').pop();
+  const base64Str = file.data.split('base64,').pop() || '';
   let keystore;
   try {
     keystore = atob(base64Str);

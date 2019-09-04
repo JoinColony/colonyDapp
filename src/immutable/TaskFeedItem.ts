@@ -37,9 +37,9 @@ export type TaskFeedItemRecordType = RecordOf<TaskFeedItemRecordProps>;
 
 const defaultValues: TaskFeedItemRecordProps = {
   comment: undefined,
-  createdAt: undefined,
+  createdAt: new Date(),
   event: undefined,
-  id: undefined,
+  id: '',
   rating: undefined,
   transaction: undefined,
 };

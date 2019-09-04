@@ -3,7 +3,7 @@
 import BigNumber from 'bn.js';
 
 import { TaskType, TaskProps } from '~immutable/index';
-import { $Required, Address, AllEvents } from '~types/index';
+import { Address, AllEvents } from '~types/index';
 import { Event } from '~data/types';
 import {
   ActionTypes,
@@ -123,7 +123,7 @@ export type TaskActionTypes =
   | TaskErrorActionType<ActionTypes.TASK_FEED_ITEMS_SUB_ERROR>
   | TaskActionType<
       ActionTypes.TASK_FINALIZE,
-      $Required<TaskProps<'workerAddress'>> & {
+      Required<TaskProps<'workerAddress'>> & {
         amountPaid: number;
       }
     >
@@ -179,17 +179,14 @@ export type TaskActionTypes =
     >
   | TaskActionType<
       ActionTypes.TASK_SET_DESCRIPTION,
-      $Required<TaskProps<'description'>>
+      Required<TaskProps<'description'>>
     >
   | TaskErrorActionType<ActionTypes.TASK_SET_DESCRIPTION_ERROR>
   | TaskActionType<
       ActionTypes.TASK_SET_DESCRIPTION_SUCCESS,
       { event: Event<EventTypes.TASK_DESCRIPTION_SET> }
     >
-  | TaskActionType<
-      ActionTypes.TASK_SET_DOMAIN,
-      $Required<TaskProps<'domainId'>>
-    >
+  | TaskActionType<ActionTypes.TASK_SET_DOMAIN, Required<TaskProps<'domainId'>>>
   | TaskErrorActionType<ActionTypes.TASK_SET_DOMAIN_ERROR>
   | TaskActionType<
       ActionTypes.TASK_SET_DOMAIN_SUCCESS,
@@ -210,7 +207,7 @@ export type TaskActionTypes =
       ActionTypes.TASK_SET_SKILL_SUCCESS,
       { event: Event<EventTypes.SKILL_SET> }
     >
-  | TaskActionType<ActionTypes.TASK_SET_TITLE, $Required<TaskProps<'title'>>>
+  | TaskActionType<ActionTypes.TASK_SET_TITLE, Required<TaskProps<'title'>>>
   | TaskErrorActionType<ActionTypes.TASK_SET_TITLE_ERROR>
   | TaskActionType<
       ActionTypes.TASK_SET_TITLE_SUCCESS,
@@ -243,7 +240,7 @@ export type TaskActionTypes =
   | TaskActionType<ActionTypes.TASK_SUBMIT_DELIVERABLE_SUCCESS, object>
   | NonUniqueTaskActionType<
       ActionTypes.TASK_WORKER_ASSIGN,
-      $Required<TaskProps<'workerAddress'>>
+      Required<TaskProps<'workerAddress'>>
     >
   | TaskErrorActionType<ActionTypes.TASK_WORKER_ASSIGN_ERROR>
   | NonUniqueTaskActionType<
@@ -267,7 +264,7 @@ export type TaskActionTypes =
     >
   | NonUniqueTaskActionType<
       ActionTypes.TASK_WORKER_UNASSIGN,
-      $Required<TaskProps<'workerAddress'>>
+      Required<TaskProps<'workerAddress'>>
     >
   | TaskErrorActionType<ActionTypes.TASK_WORKER_UNASSIGN_ERROR>
   | NonUniqueTaskActionType<

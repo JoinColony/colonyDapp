@@ -48,7 +48,7 @@ interface Props {
 }
 
 interface HookedProps extends Props {
-  colony: ColonyType | void;
+  colony?: ColonyType;
 }
 
 const UserDetails = ({
@@ -194,7 +194,7 @@ const OutgoingTransaction = ({
   transaction: { from, to },
   user,
 }: Props & {
-  colony: ColonyType | null;
+  colony?: ColonyType;
 }) => (
   <div>
     <p className={styles.primaryText}>
@@ -279,7 +279,7 @@ const TransactionDetails = ({
     : OutgoingTransaction;
   return (
     <TransactionComponent
-      colony={colony}
+      colony={colony as ColonyType}
       showMaskedAddress={showMaskedAddress}
       task={task}
       transaction={transaction}

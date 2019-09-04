@@ -13,7 +13,7 @@ import { replace } from 'connected-react-router';
 import BigNumber from 'bn.js';
 
 import { Action, ActionTypes } from '~redux/index';
-import { Address } from '~types/index';
+import { Address, ContractContexts } from '~types/index';
 import { TaskType } from '~immutable/index';
 import {
   executeCommand,
@@ -36,7 +36,6 @@ import {
   taskSelector,
 } from '../selectors';
 import { createTransaction, getTxChannel, signMessage } from '../../core/sagas';
-import { COLONY_CONTEXT } from '../../core/constants';
 
 import {
   assignWorker,
@@ -204,6 +203,7 @@ function* taskFetch({
 }: Action<ActionTypes.TASK_FETCH>) {
   try {
     const taskData = yield executeQuery(getTask, {
+      args: undefined,
       metadata: { colonyAddress, draftId },
     });
     yield put<AllActions>({
@@ -541,7 +541,7 @@ function* taskFinalize({
 
     const txChannel = yield call(getTxChannel, meta.id);
     yield fork(createTransaction, meta.id, {
-      context: COLONY_CONTEXT,
+      context: ContractContexts.COLONY_CONTEXT,
       methodName: 'makePayment',
       identifier: colonyAddress,
       params: {

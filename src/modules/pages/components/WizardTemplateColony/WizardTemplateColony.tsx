@@ -32,7 +32,7 @@ const WizardTemplateColony = ({
   hideQR = false,
 }: Props) => {
   const currentUser: UserType = useSelector(currentUserSelector);
-  const { profile: { walletAddress = undefined, balance = undefined } = {} } =
+  const { profile: { walletAddress = '', balance = undefined } = {} } =
     currentUser || {};
   const customHandler = useCallback(() => previousStep(), [previousStep]);
   const ethBalance = toWei(balance, 'ether');

@@ -22,8 +22,9 @@ import {
 } from '~utils/saga/effects';
 import { Context, getContext } from '~context/index';
 import ENS from '~lib/ENS';
-import { createAddress } from '~types/index';
+import { createAddress, ContractContexts } from '~types/index';
 import { parseExtensionDeployedLog } from '~utils/web3/eventLogs/eventParsers';
+
 import { TxConfig } from '../../core/types';
 import { createUserProfile } from '../../users/data/commands';
 import { getProfileStoreAddress } from '../../users/data/queries';
@@ -34,11 +35,6 @@ import {
   transactionLoadRelated,
 } from '../../core/actionCreators';
 import { createTransaction, createTransactionChannels } from '../../core/sagas';
-import {
-  COLONY_CONTEXT,
-  NETWORK_CONTEXT,
-  TOKEN_CONTEXT,
-} from '../../core/constants';
 import {
   currentUserSelector,
   walletAddressSelector,
@@ -138,7 +134,7 @@ function* colonyCreate({
 
     if (createUser) {
       yield createGroupedTransaction(createUser, {
-        context: NETWORK_CONTEXT,
+        context: ContractContexts.NETWORK_CONTEXT,
         methodName: 'registerUserLabel',
         params: { username },
         ready: false,
@@ -158,20 +154,20 @@ function* colonyCreate({
 
     if (createToken) {
       yield createGroupedTransaction(createToken, {
-        context: NETWORK_CONTEXT,
+        context: ContractContexts.NETWORK_CONTEXT,
         methodName: 'createToken',
         params: { name: tokenName, symbol: tokenSymbol, decimals: 18 },
       });
     }
 
     yield createGroupedTransaction(createColony, {
-      context: NETWORK_CONTEXT,
+      context: ContractContexts.NETWORK_CONTEXT,
       methodName: 'createColony',
       ready: false,
     });
 
     yield createGroupedTransaction(createLabel, {
-      context: COLONY_CONTEXT,
+      context: ContractContexts.COLONY_CONTEXT,
       methodName: 'registerColonyLabel',
       params: { colonyName },
       ready: false,
@@ -179,28 +175,28 @@ function* colonyCreate({
 
     if (createToken) {
       yield createGroupedTransaction(deployTokenAuthority, {
-        context: TOKEN_CONTEXT,
+        context: ContractContexts.TOKEN_CONTEXT,
         methodName: 'createTokenAuthority',
         params: { allowedToTransfer: [] },
         ready: false,
       });
 
       yield createGroupedTransaction(setTokenAuthority, {
-        context: TOKEN_CONTEXT,
+        context: ContractContexts.TOKEN_CONTEXT,
         methodName: 'setAuthority',
         ready: false,
       });
     }
 
     yield createGroupedTransaction(deployOneTx, {
-      context: COLONY_CONTEXT,
+      context: ContractContexts.COLONY_CONTEXT,
       methodName: 'addExtension',
       params: { contractName: 'OneTxPayment' },
       ready: false,
     });
 
     yield createGroupedTransaction(setOneTxRoleAdministration, {
-      context: COLONY_CONTEXT,
+      context: ContractContexts.COLONY_CONTEXT,
       methodContext: 'setOneTxRoles',
       methodName: 'setAdministrationRole',
       params: { setTo: true, domainId: 1 },
@@ -208,7 +204,7 @@ function* colonyCreate({
     });
 
     yield createGroupedTransaction(setOneTxRoleFunding, {
-      context: COLONY_CONTEXT,
+      context: ContractContexts.COLONY_CONTEXT,
       methodContext: 'setOneTxRoles',
       methodName: 'setFundingRole',
       params: { setTo: true, domainId: 1 },

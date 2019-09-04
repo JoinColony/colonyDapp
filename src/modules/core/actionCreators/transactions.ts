@@ -12,11 +12,6 @@ import {
 
 import { TxConfig } from '../types';
 
-export {
-  COLONY_CONTEXT,
-  NETWORK_CONTEXT,
-} from '../../../lib/ColonyManager/constants';
-
 export const createTxAction = (
   id: string,
   from: string,

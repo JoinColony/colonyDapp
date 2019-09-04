@@ -18,6 +18,8 @@ import {
   executeQuery,
   executeSubscription,
 } from '~utils/saga/effects';
+import { ContractContexts, createAddress } from '~types/index';
+
 import {
   removeColonyAvatar,
   setColonyAvatar,
@@ -34,7 +36,6 @@ import {
 } from '../data/queries';
 import { createTransaction, getTxChannel } from '../../core/sagas';
 import { ipfsUpload } from '../../core/sagas/ipfs';
-import { COLONY_CONTEXT, TOKEN_CONTEXT } from '../../core/constants';
 import { networkVersionSelector } from '../../core/selectors';
 import {
   fetchColony,
@@ -44,7 +45,6 @@ import {
 } from '../actionCreators';
 import { colonyAvatarHashSelector, colonySelector } from '../selectors';
 import { getColonyAddress, getColonyName } from './shared';
-import { createAddress } from '~types/index';
 
 function* colonyNameCheckAvailability({
   payload: { colonyName },
@@ -269,7 +269,7 @@ function* colonyRecoveryModeEnter({
 
   try {
     yield fork(createTransaction, meta.id, {
-      context: COLONY_CONTEXT,
+      context: ContractContexts.COLONY_CONTEXT,
       methodName: 'enterRecoveryMode',
       identifier: colonyAddress,
     });
@@ -306,7 +306,7 @@ function* colonyUpgradeContract({
 
   try {
     yield fork(createTransaction, meta.id, {
-      context: COLONY_CONTEXT,
+      context: ContractContexts.COLONY_CONTEXT,
       methodName: 'upgrade',
       identifier: colonyAddress,
       params: { newVersion },
@@ -370,6 +370,7 @@ function* colonyTaskMetadataFetch({
 }: Action<ActionTypes.COLONY_TASK_METADATA_FETCH>) {
   try {
     const colonyTasks = yield executeQuery(getColonyTasks, {
+      args: undefined,
       metadata: { colonyAddress },
     });
     yield put<AllActions>({
@@ -393,6 +394,7 @@ function* colonyCanMintNativeTokenFetch({
 }: Action<ActionTypes.COLONY_CAN_MINT_NATIVE_TOKEN_FETCH>) {
   try {
     const canMintNativeToken = yield executeQuery(getColonyCanMintNativeToken, {
+      args: undefined,
       metadata: { colonyAddress },
     });
     yield put<AllActions>({
@@ -418,7 +420,7 @@ function* colonyNativeTokenUnlock({
 
   try {
     yield fork(createTransaction, meta.id, {
-      context: TOKEN_CONTEXT,
+      context: ContractContexts.TOKEN_CONTEXT,
       methodName: 'unlock',
       identifier: colonyAddress,
     });

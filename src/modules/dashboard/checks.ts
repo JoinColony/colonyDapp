@@ -1,8 +1,8 @@
+import { TaskStates } from '~data/constants';
 import {
   ColonyType,
   TaskType,
   TaskUserType,
-  TASK_STATE,
   UserPermissionsType,
 } from '~immutable/index';
 import { Address } from '~types/index';
@@ -50,19 +50,19 @@ export const isPayoutsSet = ({ payouts }: TaskType) =>
   !!payouts && payouts.length > 0;
 
 export const isFinalized = ({ currentState }: TaskType) =>
-  currentState === TASK_STATE.FINALIZED;
+  currentState === TaskStates.FINALIZED;
 
 export const isCancelled = ({ currentState }: TaskType) =>
-  currentState === TASK_STATE.CANCELLED;
+  currentState === TaskStates.CANCELLED;
 
 export const isRating = ({ currentState }: TaskType) =>
-  currentState === TASK_STATE.RATING;
+  currentState === TaskStates.RATING;
 
 export const isActive = ({ currentState }: TaskType) =>
-  currentState === TASK_STATE.ACTIVE;
+  currentState === TaskStates.ACTIVE;
 
 export const isReveal = ({ currentState }: TaskType) =>
-  currentState === TASK_STATE.REVEAL;
+  currentState === TaskStates.REVEAL;
 
 export const didDueDateElapse = ({ dueDate }: TaskType) =>
   !!(dueDate && dueDate < new Date());

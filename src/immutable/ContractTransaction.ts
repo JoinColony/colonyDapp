@@ -23,15 +23,15 @@ export type ContractTransactionType = $ReadOnly<Shared>;
 export type ContractTransactionRecordType = RecordOf<Shared>;
 
 const defaultValues: Shared = {
-  amount: undefined,
+  amount: new BigNumber(0),
   colonyAddress: undefined,
-  date: undefined,
+  date: new Date(),
   from: undefined,
-  hash: undefined,
-  incoming: undefined,
+  hash: '',
+  incoming: false,
   taskId: undefined,
   to: undefined,
-  token: undefined,
+  token: '',
 };
 
 export const ContractTransactionRecord: Record.Factory<Shared> = Record(

@@ -16,13 +16,13 @@ interface LogFilter {
  * Given a string topic (or null), normalize the string
  * with the expected format/padded length (or return null).
  */
-const formatTopic = (topic: string | void): string | null =>
+const formatTopic = (topic: string | null): string | null =>
   topic ? padLeft(topic.toLowerCase(), 64) : null;
 
 /**
  * Given arguments, return an object with formatted topics.
  */
-export const mapTopics = (...topics: string[]) => ({
+export const mapTopics = (...topics: (string | null)[]) => ({
   topics: topics.map(formatTopic),
 });
 

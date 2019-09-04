@@ -5,7 +5,7 @@ import { DataRecordType } from '../Data';
  * the data should be fetched.
  */
 export const shouldFetchData = (
-  data: DataRecordType<any> | null,
+  data: DataRecordType<any> | void,
   ttl: number,
   isFirstMount: boolean,
   fetchArgs: any[] = [],
@@ -39,5 +39,5 @@ export const shouldFetchData = (
   );
 };
 
-export const isFetchingData = (data: DataRecordType<any> | null) =>
+export const isFetchingData = (data: DataRecordType<any> | undefined) =>
   !data || data.isFetching;

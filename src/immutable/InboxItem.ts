@@ -21,12 +21,12 @@ export type InboxItemType = $ReadOnly<Shared>;
 export type InboxItemRecordType = RecordOf<Shared>;
 
 const defaultValues: Shared = {
-  id: undefined,
-  type: undefined,
-  timestamp: undefined,
-  sourceId: undefined,
-  sourceType: undefined,
-  sourceAddress: undefined,
+  id: '',
+  type: '',
+  timestamp: Date.now(),
+  sourceId: '',
+  sourceType: '',
+  sourceAddress: '',
   onClickRoute: undefined,
   context: undefined,
   unread: true,

@@ -13,6 +13,7 @@ import PinnerConnector from './PinnerConnector';
 // eslint-disable-next-line prefer-destructuring
 const PINNING_ROOM = process.env.PINNING_ROOM;
 const TIMEOUT = process.env.CI ? 50000 : 10000;
+const NETWORK = process.env.NETWORK || 'local';
 
 const configMap = {
   mainnet: prodConfig,
@@ -21,7 +22,7 @@ const configMap = {
 };
 
 class IPFSNode {
-  static getIpfsConfig = configMap[process.env.NETWORK];
+  static getIpfsConfig = configMap[NETWORK];
 
   /** Turn a `swarm.peers()` result item into its B58 representation (Qm....) */
   static peerToB58String = (peerItem: IPFSPeer): B58String =>

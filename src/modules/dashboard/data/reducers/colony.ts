@@ -43,7 +43,7 @@ export const colonyReducer: EventReducer<ColonyType> = (colony, event) => {
       const { address } = event.payload;
       return {
         ...colony,
-        tokens: Object.entries(colony.tokens)
+        tokens: Object.entries(colony.tokens || {})
           .filter(([tokenAddress]) => tokenAddress !== address)
           .reduce(
             (acc, [tokenAddress, token]) => ({

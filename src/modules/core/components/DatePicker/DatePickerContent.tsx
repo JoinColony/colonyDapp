@@ -1,5 +1,5 @@
 import React, { ReactNode, useCallback } from 'react';
-// @ts-ignore
+// @ts-ignore (version troubles?)
 import DayPicker, { DateUtils } from 'react-day-picker';
 
 import { Close } from './DatePicker';
@@ -11,10 +11,10 @@ import styles from './DatePickerContent.css';
 interface Props {
   close: Close;
   closeOnDayPick?: boolean;
-  currentDate: Date | null;
+  currentDate?: Date;
   onDayPick: (day: Date) => void;
-  selectedDay: Date | null;
-  renderContentFooter?: (close: Close, currentDate: Date | null) => ReactNode;
+  selectedDay?: Date;
+  renderContentFooter?: (close: Close, currentDate?: Date) => ReactNode;
 }
 
 const displayName = 'DatePicker.DatePickerContent';
@@ -40,9 +40,7 @@ const DatePickerContent = ({
   return (
     <div>
       <DayPicker
-        // @ts-ignore
         classNames={styles}
-        enableOutsideDays
         month={currentDate || new Date()}
         onDayClick={handleDayPick}
         selectedDays={day => DateUtils.isSameDay(selectedDay, day)}

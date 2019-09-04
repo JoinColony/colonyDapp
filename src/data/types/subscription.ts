@@ -20,7 +20,7 @@ export type Subscription<D, M, A, R> = {
   context: ContextName[];
   execute: (
     deps: D,
-    args: A | null,
+    args: A | undefined,
   ) => Promise<(emitter: EventCallback<R>) => { stop: () => void }[]>;
   name: string;
   prepare: (context: any, metadata: M) => Promise<D>;

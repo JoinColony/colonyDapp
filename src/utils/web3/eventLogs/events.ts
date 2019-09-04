@@ -1,4 +1,4 @@
-// import { LogFilter } from '@colony/colony-js-adapter';
+import BigNumber from 'bn.js';
 import {
   ColonyNetworkClient as ColonyNetworkClientType,
   ColonyClient as ColonyClientType,
@@ -82,14 +82,49 @@ export const decorateLog = async (
   };
 };
 
+interface EventTransaction {
+  blockHash: string;
+  blockNumber: number;
+  creates: string | null;
+  data: string;
+  from: string;
+  gasLimit: BigNumber;
+  gasPrice: BigNumber;
+  hash: string;
+  networkId: number;
+  nonce: number;
+  r: string;
+  raw: string;
+  s: string;
+  to: string;
+  transactionIndex: number;
+  v: number;
+}
+
+interface DecoratedEvent<T, P> {
+  event: { eventName: T } & P;
+  log: {
+    address: string;
+    blockHash: string;
+    blockNumber: number;
+    data: string;
+    logIndex: number;
+    topics: string[];
+    transactionHash: string;
+    transactionIndex: number;
+  };
+  timestamp: number;
+  transaction: EventTransaction;
+}
+
 /*
  * Get logs using a logFilter and decorate them with a transaction, a timestamp and parsed event data
  */
-export const getDecoratedEvents = async (
+export const getDecoratedEvents = async <T, P>(
   client: ColonyClientType | TokenClientType | ColonyNetworkClientType,
   logFilter: LogFilter,
   logFilterOptions: LogFilterOptions,
-) => {
+): Promise<DecoratedEvent<T, P>[]> => {
   const filter = await getEventLogFilter(
     client.adapter.provider,
     logFilter,

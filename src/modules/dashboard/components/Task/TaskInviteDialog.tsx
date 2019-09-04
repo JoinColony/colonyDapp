@@ -112,27 +112,27 @@ const TaskInviteDialog = ({
                     />
                   </div>
                   <div>
-                    {nativeTokenReference &&
-                      taskData &&
-                      taskData.payouts &&
-                      taskData.payouts.map((payout, index) => {
-                        const { amount, token } = payout;
-                        return (
-                          <Payout
-                            key={token}
-                            name={`payouts.${index}`}
-                            amount={amount}
-                            colonyAddress={colonyAddress}
-                            reputation={
-                              token === nativeTokenReference.address && taskData
-                                ? taskData.reputation
-                                : undefined
-                            }
-                            tokenAddress={token}
-                            editPayout={false}
-                          />
-                        );
-                      })}
+                    {nativeTokenReference && taskData && taskData.payouts
+                      ? taskData.payouts.map((payout, index) => {
+                          const { amount, token } = payout;
+                          return (
+                            <Payout
+                              key={token}
+                              name={`payouts.${index}`}
+                              amount={amount}
+                              colonyAddress={colonyAddress}
+                              reputation={
+                                token === nativeTokenReference.address &&
+                                taskData
+                                  ? taskData.reputation
+                                  : undefined
+                              }
+                              tokenAddress={token}
+                              editPayout={false}
+                            />
+                          );
+                        })
+                      : null}
                   </div>
                 </div>
               </DialogSection>

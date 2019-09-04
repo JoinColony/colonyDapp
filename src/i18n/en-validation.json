@@ -1,6 +1,8 @@
 {
     "mixed": {
-        "equalTo": "${path} must be the same as ${reference}",
+      "equalTo": "${path} must be the same as ${reference}"
+    },
+    "number": {
         "lessThanPot": "Not enough funds in the pot"
     },
     "string": {

@@ -32,7 +32,7 @@ const MSG = defineMessages({
 });
 
 const TaskFeed = ({ colonyAddress, draftId }: Props) => {
-  const bottomEl = useRef();
+  const bottomEl = useRef(null);
 
   const scrollToEnd = () => {
     if (bottomEl.current) {

@@ -16,8 +16,8 @@ export type DomainRecordType = RecordOf<Shared>;
 export type DomainId = DomainRecordType['id'];
 
 const defaultValues: Shared = {
-  id: undefined,
-  name: undefined,
+  id: 0,
+  name: '',
   parentId: undefined,
 };
 

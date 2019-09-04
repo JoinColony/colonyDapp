@@ -69,6 +69,7 @@ const validationSchema = yup.object({
   username: yup
     .string()
     .required()
+    // @ts-ignore
     .ensAddress(),
 });
 
@@ -169,5 +170,6 @@ const StepUserName = ({ wizardForm, nextStep }: Props) => {
 };
 
 StepUserName.displayName = displayName;
+StepUserName.stepName = 'StepUserName';
 
 export default StepUserName;

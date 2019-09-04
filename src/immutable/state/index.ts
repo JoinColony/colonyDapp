@@ -16,11 +16,11 @@ export * from './dashboard';
 export * from './users';
 
 export interface RootStateProps {
-  admin: AdminStateRecord;
-  core: CoreStateRecord;
-  dashboard: DashboardStateRecord;
-  router: RouterState;
-  users: UsersStateRecord;
+  admin?: AdminStateRecord;
+  core?: CoreStateRecord;
+  dashboard?: DashboardStateRecord;
+  router?: RouterState;
+  users?: UsersStateRecord;
   watcher: any;
 }
 

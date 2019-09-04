@@ -27,7 +27,7 @@ type DataFetcher<T> = {
   select: (
     rootState: RootStateRecord,
     ...selectArgs: any[]
-  ) => DataRecordType<T> | null;
+  ) => DataRecordType<T> | undefined;
   fetch: (...fetchArgs: any[]) => Action<any>;
   ttl?: number;
 };
@@ -36,7 +36,7 @@ type DataSubscriber<T> = {
   select: (
     rootState: RootStateRecord,
     ...selectArgs: any[]
-  ) => DataRecordType<T> | null;
+  ) => DataRecordType<T> | undefined;
   start: (...subArgs: any[]) => Action<any>;
   stop: (...subArgs: any[]) => Action<any>;
 };
@@ -45,7 +45,7 @@ type DataMapFetcher<T> = {
   select: (
     rootState: RootStateRecord,
     keys: string[],
-  ) => ImmutableMapType<string, DataRecordType<T> | null>;
+  ) => ImmutableMapType<string, DataRecordType<T>>;
   fetch: (key: any) => Action<any>;
   ttl?: number;
 };
@@ -54,7 +54,7 @@ type DataTupleFetcher<T> = {
   select: (
     rootState: RootStateRecord,
     args: [any, any][],
-  ) => ImmutableMapType<string, DataRecordType<T> | null>;
+  ) => ImmutableMapType<string, DataRecordType<T>>;
   fetch: (arg0: [any, any]) => Action<any>;
   ttl?: number;
 };
@@ -63,7 +63,7 @@ type DataTupleSubscriber<T> = {
   select: (
     rootState: RootStateRecord,
     keys: [any, any][],
-  ) => ImmutableMapType<string, DataRecordType<T> | null>;
+  ) => ImmutableMapType<string, DataRecordType<T>>;
   start: (...subArgs: any[]) => Action<any>;
   stop: (...subArgs: any[]) => Action<any>;
 };
@@ -91,8 +91,8 @@ export const usePrevious = (value: any) => {
   return ref.current;
 };
 
-const transformFetchedData = (data: DataRecordType<any> | null) => {
-  if (!data) return null;
+const transformFetchedData = (data?: DataRecordType<any>) => {
+  if (!data) return undefined;
   const record =
     typeof data.get === 'function' ? data.get('record') : data.record;
   return record && typeof record.toJS === 'function' ? record.toJS() : record;
@@ -212,7 +212,7 @@ export const useDataFetcher = <T>(
   return {
     data: transformFetchedData(data),
     isFetching: shouldFetch && isFetchingData(data),
-    error: data && data.error ? data.error : null,
+    error: data && data.error ? data.error : undefined,
   };
 };
 
@@ -324,7 +324,7 @@ export const useDataSubscriber = <T>(
   return {
     data: transformFetchedData(data),
     isFetching: shouldSubscribe && isFetchingData(data),
-    error: data && data.error ? data.error : null,
+    error: data && data.error ? data.error : undefined,
   };
 };
 

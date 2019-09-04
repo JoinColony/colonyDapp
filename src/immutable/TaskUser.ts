@@ -17,7 +17,7 @@ export type TaskUserType = $ReadOnly<Shared>;
 export type TaskUserRecordType = RecordOf<Shared>;
 
 const defaultValues: Shared = {
-  address: undefined,
+  address: '',
   didClaimPayout: false,
   didFailToRate: false,
   didRate: false,

@@ -15,7 +15,7 @@ export const withConsumerFactory = (Consumer: ConsumerType<any>) => () => (
     createElement(Component, { ...value, ...props }),
   );
 
-export const withHooks = <H, P extends {}, R>(hookFn: HookFn<H, P, R>) => (
+export const withHooks = <H, P, R>(hookFn: HookFn<H, P, R>) => (
   Component: ComponentType<P>,
 ) => (hookParams: H) => (props: P) => {
   const results = hookFn(hookParams, props);

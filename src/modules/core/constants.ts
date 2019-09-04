@@ -18,10 +18,4 @@ export const CORE_IPFS_DATA = 'ipfsData';
 export const CORE_MESSAGES = 'messages';
 export const CORE_MESSAGES_LIST = 'list';
 
-export {
-  COLONY_CONTEXT,
-  NETWORK_CONTEXT,
-  TOKEN_CONTEXT,
-} from '../../lib/ColonyManager/constants';
-
 export const DEFAULT_NETWORK = process.env.NETWORK || 'goerli';

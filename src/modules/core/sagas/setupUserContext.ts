@@ -130,6 +130,7 @@ export default function* setupUserContext(
     let profileData = {};
     try {
       profileData = yield executeQuery(getUserProfile, {
+        args: undefined,
         metadata: { walletAddress },
       });
     } catch (e) {
@@ -174,8 +175,6 @@ export default function* setupUserContext(
     try {
       yield put<AllActions>({
         type: ActionTypes.INBOX_ITEMS_FETCH,
-        payload: undefined,
-        meta,
       });
     } catch (caughtError) {
       // It's ok if the user store doesn't exist (yet)

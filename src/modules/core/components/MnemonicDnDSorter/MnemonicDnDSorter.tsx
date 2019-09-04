@@ -98,7 +98,7 @@ class MnemonicDnDSorter extends Component<Props, State> {
   state = {
     // eslint-disable-next-line react/destructuring-assignment
     selected: MnemonicDnDSorter.getItems(this.props.passphrase, 12),
-    items: [],
+    items: [] as Droppable[],
   };
 
   id2List = {

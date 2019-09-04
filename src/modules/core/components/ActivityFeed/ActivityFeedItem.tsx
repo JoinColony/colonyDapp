@@ -6,7 +6,7 @@ import { TableRow, TableCell } from '~core/Table';
 import Link from '~core/Link';
 import TimeRelative from '~core/TimeRelative';
 import UserMention from '~core/UserMention';
-import { ActivityFeedItemType, ActivityAction } from '~immutable/index';
+import { ActivityFeedItemType, ActivityActions } from '~immutable/index';
 import styles from './ActivityFeedItem.css';
 
 const MSG = defineMessages({
@@ -32,7 +32,7 @@ interface Props {
   activity: ActivityFeedItemType;
 }
 
-const getEventActionKey = (actionType: ActivityAction) =>
+const getEventActionKey = (actionType: ActivityActions) =>
   camelcase(`action-${actionType}`);
 
 const ActivityFeedItem = ({

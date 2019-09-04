@@ -45,7 +45,7 @@ export type WalletRecordType = RecordOf<WalletProps>;
 const defaultValues: WalletProps = {
   availableAddresses: [],
   currentAddress: undefined,
-  isLoading: undefined,
+  isLoading: false,
   walletType: WALLET_CATEGORIES.SOFTWARE,
 };
 

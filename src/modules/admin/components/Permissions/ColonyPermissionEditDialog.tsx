@@ -227,9 +227,9 @@ const ColonyPermissionEditDialog = ({
     [colonyAddress, domain],
   );
 
-  const [selectedUser, setSelectedUser] = useState(null);
+  const [selectedUser, setSelectedUser] = useState();
   const [selectedRoles, setSelectedRoles] = useState({});
-  const [userRoles, setUserRoles] = useState([]);
+  const [userRoles, setUserRoles] = useState([] as Role[]);
 
   // When user clicked on a specific user entry
   useEffect(() => {

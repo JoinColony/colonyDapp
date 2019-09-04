@@ -75,7 +75,9 @@ export const userSelector = (state: RootStateRecord, address: Address) =>
 export const usersExceptSelector = createSelector(
   allUsersSelector,
   (allUsers, except: string[] | string = []) =>
-    allUsers.filter((user, address) => ![].concat(except).includes(address)),
+    allUsers.filter(
+      (user, address) => !([] as string[]).concat(except).includes(address),
+    ),
 );
 
 // @ts-ignore

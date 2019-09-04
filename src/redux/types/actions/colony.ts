@@ -1,4 +1,3 @@
-import { $Shape } from 'utility-types';
 import BigNumber from 'bn.js';
 
 import { ActionTypes } from '~redux/index';
@@ -24,7 +23,7 @@ export type ColonyActionTypes =
       WithKey
     >
   | ErrorActionType<ActionTypes.COLONY_AVATAR_REMOVE_ERROR, WithKey>
-  | UniqueActionType<ActionTypes.COLONY_AVATAR_REMOVE_SUCCESS, object, WithKey>
+  | UniqueActionType<ActionTypes.COLONY_AVATAR_REMOVE_SUCCESS, void, WithKey>
   | UniqueActionType<
       ActionTypes.COLONY_AVATAR_UPLOAD,
       { colonyAddress: Address; data: string },
@@ -77,7 +76,7 @@ export type ColonyActionTypes =
     >
   | ActionType<typeof ActionTypes.COLONY_CREATE_CANCEL>
   | ErrorActionType<ActionTypes.COLONY_CREATE_ERROR, object>
-  | UniqueActionType<ActionTypes.COLONY_CREATE_SUCCESS, object, object>
+  | UniqueActionType<ActionTypes.COLONY_CREATE_SUCCESS, void, object>
   | ActionTypeWithPayloadAndMeta<
       ActionTypes.COLONY_DOMAINS_FETCH,
       { colonyAddress: Address },
@@ -113,7 +112,7 @@ export type ColonyActionTypes =
   | ErrorActionType<ActionTypes.COLONY_NAME_CHECK_AVAILABILITY_ERROR, object>
   | UniqueActionType<
       ActionTypes.COLONY_NAME_CHECK_AVAILABILITY_SUCCESS,
-      object,
+      void,
       object
     >
   | ActionTypeWithPayloadAndMeta<
@@ -199,13 +198,27 @@ export type ColonyActionTypes =
   | UniqueActionType<ActionTypes.COLONY_MINT_TOKENS_SUBMITTED, object, object>
   | UniqueActionType<
       ActionTypes.COLONY_PROFILE_UPDATE,
-      $Shape<ColonyType>,
+      {
+        colonyAddress: string;
+        colonyName: string;
+        description: string;
+        displayName: string;
+        guideline: string;
+        website: string;
+      },
       WithKey
     >
   | ErrorActionType<ActionTypes.COLONY_PROFILE_UPDATE_ERROR, object>
   | UniqueActionType<
       ActionTypes.COLONY_PROFILE_UPDATE_SUCCESS,
-      ColonyType,
+      {
+        colonyAddress: string;
+        colonyName: string;
+        description: string;
+        displayName: string;
+        guideline: string;
+        website: string;
+      },
       WithKey
     >
   | UniqueActionType<

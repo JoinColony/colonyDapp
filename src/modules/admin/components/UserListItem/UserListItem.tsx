@@ -101,7 +101,7 @@ const UserListItem = ({
   const handleKeyPress = useCallback(
     (evt: KeyboardEvent<HTMLElement>) => {
       if (evt.key === ENTER) {
-        callbackFn(address);
+        if (callbackFn) callbackFn(address);
       }
     },
     [address, callbackFn],

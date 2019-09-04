@@ -10,8 +10,8 @@ export type TaskMetadataRecordProps = $ReadOnly<{
 export type TaskMetadataRecordType = RecordOf<TaskMetadataRecordProps>;
 
 const defaultValues: TaskMetadataRecordProps = {
-  commentsStoreAddress: undefined,
-  taskStoreAddress: undefined,
+  commentsStoreAddress: '',
+  taskStoreAddress: '',
 };
 
 export const TaskMetadataRecord: Record.Factory<

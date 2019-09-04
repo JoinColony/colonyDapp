@@ -2,8 +2,7 @@ import BigNumber from 'bn.js';
 
 import { EventReducer } from '~data/types';
 
-import { EventTypes } from '~data/constants';
-import { TASK_STATE } from '~immutable/constants';
+import { EventTypes, TaskStates } from '~data/constants';
 
 export const taskReducer: EventReducer<{
   commentsStoreAddress?: string;
@@ -30,7 +29,7 @@ export const taskReducer: EventReducer<{
         creatorAddress,
         managerAddress: creatorAddress, // @NOTE: At least for the draft version, the creator will also be the manager
         draftId,
-        status: TASK_STATE.ACTIVE,
+        status: TaskStates.ACTIVE,
         domainId: 1,
       };
     }

@@ -5,8 +5,7 @@ import { isAddress } from 'web3-utils';
 
 import ENS from '~lib/ENS';
 import { Address } from '~types/index';
-import { AddressOrENSName, ColonyContext } from './types';
-import { COLONY_CONTEXT, NETWORK_CONTEXT, TOKEN_CONTEXT } from './constants';
+import { AddressOrENSName, ContractContexts } from './types';
 import tokenABILoader from './tokenABILoader';
 import ens from '../../context/ensContext';
 
@@ -111,19 +110,19 @@ export default class ColonyManager {
       | ColonyNetworkClient.ColonyClient.TokenClient.Caller<any, any, any>
       | ColonyNetworkClient.ColonyClient.TokenClient.Sender<any, any, any>
   >(
-    context: ColonyContext,
+    context: ContractContexts,
     methodName: string,
     identifier?: AddressOrENSName,
   ): Promise<M> {
     let method;
     switch (context) {
-      case COLONY_CONTEXT:
+      case ContractContexts.COLONY_CONTEXT:
         method = this.getColonyMethod(methodName, identifier);
         break;
-      case NETWORK_CONTEXT:
+      case ContractContexts.NETWORK_CONTEXT:
         method = this.getNetworkMethod(methodName);
         break;
-      case TOKEN_CONTEXT:
+      case ContractContexts.TOKEN_CONTEXT:
         method = this.getTokenMethod(methodName, identifier);
         break;
       default:

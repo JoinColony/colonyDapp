@@ -15,7 +15,7 @@ export type ColonyAdminRecordType = RecordOf<Shared>;
 
 const defaultProps: Shared = {
   state: 'pending',
-  address: undefined,
+  address: '',
 };
 
 export const ColonyAdminRecord: Record.Factory<Shared> = Record(defaultProps);

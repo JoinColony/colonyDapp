@@ -35,7 +35,7 @@ interface ConnectionErrorRecordProps {
 }
 const errorDefaultValues: ConnectionErrorRecordProps = {
   error: undefined,
-  scope: undefined,
+  scope: '',
 };
 export const ConnectionError: Record.Factory<
   ConnectionErrorRecordProps

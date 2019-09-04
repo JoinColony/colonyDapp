@@ -7,6 +7,7 @@ import {
   executeCommand,
   executeQuery,
 } from '~utils/saga/effects';
+import { ContractContexts } from '~types/index';
 // import { Context, getContext } from '~context/index';
 // import { decorateLog } from '~utils/web3/eventLogs/events';
 // import { normalizeTransactionLog } from '~data/normalizers';
@@ -17,7 +18,6 @@ import {
 } from '../data/queries';
 import { updateTokenInfo } from '../../dashboard/data/commands';
 import { createTransaction, getTxChannel } from '../../core/sagas';
-import { COLONY_CONTEXT } from '../../core/constants';
 import { transactionReady } from '../../core/actionCreators';
 import {
   fetchColonyTransactions,
@@ -32,6 +32,7 @@ function* colonyTransactionsFetch({
 }: Action<ActionTypes.COLONY_TRANSACTIONS_FETCH>) {
   try {
     const transactions = yield executeQuery(getColonyTransactions, {
+      args: undefined,
       metadata: {
         colonyAddress,
       },
@@ -58,6 +59,7 @@ function* colonyUnclaimedTransactionsFetch({
 }: Action<ActionTypes.COLONY_UNCLAIMED_TRANSACTIONS_FETCH>) {
   try {
     const transactions = yield executeQuery(getColonyUnclaimedTransactions, {
+      args: undefined,
       metadata: { colonyAddress },
     });
 
@@ -87,7 +89,7 @@ function* colonyClaimToken({
   try {
     txChannel = yield call(getTxChannel, meta.id);
     yield fork(createTransaction, meta.id, {
-      context: COLONY_CONTEXT,
+      context: ContractContexts.COLONY_CONTEXT,
       methodName: 'claimColonyFunds',
       identifier: colonyAddress,
       params: { token: tokenAddress },
@@ -130,6 +132,7 @@ function* colonyUpdateTokens({
     const { tokens: currentTokenReferences = {} } = yield executeQuery(
       getColony,
       {
+        args: undefined,
         metadata: { colonyAddress },
       },
     );
@@ -173,7 +176,7 @@ function* colonyMintTokens({
 
     // create transactions
     yield fork(createTransaction, mintTokens.id, {
-      context: COLONY_CONTEXT,
+      context: ContractContexts.COLONY_CONTEXT,
       methodName: 'mintTokens',
       identifier: colonyAddress,
       params: { amount },
@@ -185,7 +188,7 @@ function* colonyMintTokens({
       ready: false,
     });
     yield fork(createTransaction, claimColonyFunds.id, {
-      context: COLONY_CONTEXT,
+      context: ContractContexts.COLONY_CONTEXT,
       methodName: 'claimColonyFunds',
       identifier: colonyAddress,
       params: {
