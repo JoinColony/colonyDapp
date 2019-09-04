@@ -1,9 +1,11 @@
 import React, { useMemo } from 'react';
 import { FormattedMessage } from 'react-intl';
-import camelcase from 'camelcase';
+import { COLONY_ROLE_ROOT } from '@colony/colony-js-client';
 
 import { Address } from '~types/strings';
 import { useUserDomainRoles } from '~utils/hooks';
+
+import { ROLE_MESSAGES } from '../../constants';
 
 import styles from './UserPermissions.css';
 
@@ -27,8 +29,8 @@ const UserPermissions = ({ colonyAddress, domainId, userAddress }: Props) => {
       Object.keys(userPermissions)
         .filter(key => !!userPermissions[key])
         .sort((a, b) => {
-          if (a === 'ROOT' || b === 'ROOT') {
-            return a === 'ROOT' ? 1 : -1;
+          if (a === COLONY_ROLE_ROOT || b === COLONY_ROLE_ROOT) {
+            return a === COLONY_ROLE_ROOT ? 1 : -1;
           }
           return 0;
         }),
@@ -43,7 +45,7 @@ const UserPermissions = ({ colonyAddress, domainId, userAddress }: Props) => {
         <>
           {sortedUserPermissionlabels.map(userPermission => (
             <span className={styles.permission} key={userPermission}>
-              <FormattedMessage id={`role.${camelcase(userPermission)}`} />
+              <FormattedMessage id={ROLE_MESSAGES[userPermission]} />
             </span>
           ))}
         </>
