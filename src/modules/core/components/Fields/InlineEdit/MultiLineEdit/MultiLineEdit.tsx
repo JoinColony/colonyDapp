@@ -1,4 +1,4 @@
-import React, { ReactNode, useCallback, useState } from 'react';
+import React, { ReactNode, useCallback, useEffect, useState } from 'react';
 import {
   EditorState as EditorStateType,
   ContentState,
@@ -12,7 +12,6 @@ import 'draft-js/dist/Draft.css';
 import { asField, InputLabel } from '~core/Fields';
 import InputStatus from '~core/Fields/InputStatus';
 import { getMainClasses } from '~utils/css';
-import { usePrevious } from '~utils/hooks';
 
 import styles from './MultiLineEdit.css';
 
@@ -90,6 +89,11 @@ interface Props {
 const HANDLED = 'handled';
 const NOT_HANDLED = 'not-handled';
 
+const createEditorState = ($value: string) =>
+  $value
+    ? EditorState.createWithContent(ContentState.createFromText($value))
+    : EditorState.createEmpty();
+
 const MultiLineEdit = ({
   $error,
   $id,
@@ -113,14 +117,10 @@ const MultiLineEdit = ({
   readOnly = false,
   spellCheck = false,
 }: Props) => {
-  const prevValue = usePrevious($value);
-  const initialEditorState =
-    $value && prevValue !== $value
-      ? EditorState.createWithContent(ContentState.createFromText($value))
-      : EditorState.createEmpty();
-  const [editorState, setEditorState] = useState<EditorStateType>(
-    initialEditorState,
+  const [editorState, setEditorState] = useState<EditorStateType>(() =>
+    createEditorState($value),
   );
+  useEffect(() => setEditorState(createEditorState($value)), [$value]);
   const handleReturn = useCallback(
     () => (!allowReturns ? HANDLED : NOT_HANDLED),
     [allowReturns],
