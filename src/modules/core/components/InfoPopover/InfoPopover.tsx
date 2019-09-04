@@ -1,57 +1,76 @@
 import React, { ReactNode } from 'react';
 
-import { UserType } from '~immutable/index';
+import { Address } from '~types/index';
+import { UserType, UserRecord } from '~immutable/index';
+import { useSelector } from '~utils/hooks';
+import { userSelector } from '../../../users/selectors';
+
 import { Tooltip } from '~core/Popover';
 import UserMention from '~core/UserMention';
 import CopyableAddress from '~core/CopyableAddress';
+
 import styles from './InfoPopover.css';
 
 const componentDisplayName = 'InfoPopover';
 
 interface Props {
   /** Children elemnts or components to wrap the tooltip around */
-  children: ReactNode;
-  /** The user object */
-  user?: UserType | void;
+  children?: ReactNode;
+  /** The address */
+  address: Address;
   /** How the popover gets triggered */
   trigger?: 'hover' | 'click' | 'disabled';
 }
 
-const renderTooltipContent = (user?: UserType | void) => {
-  if (!user) return null;
-  const {
-    profile: { displayName, username, walletAddress },
-  } = user;
-  return (
-    <div className={styles.main}>
-      {displayName && (
-        <p title={displayName} className={styles.displayName}>
-          {displayName}
-        </p>
-      )}
-      {username && (
-        <span title={username} className={styles.userName}>
-          <UserMention username={username} hasLink />
-        </span>
-      )}
-      {walletAddress && <CopyableAddress full>{walletAddress}</CopyableAddress>}
-    </div>
-  );
+interface TooltipProps {
+  displayName?: string;
+  username?: string;
+  walletAddress: Address;
 };
 
-const InfoPopover = ({ user, children, trigger = 'click' }: Props) => (
-  <Tooltip
-    content={renderTooltipContent(user)}
-    trigger={user ? trigger : 'disabled'}
-    darkTheme={false}
-  >
-    {/*
+const renderTooltipContent = ({
+  displayName,
+  username,
+  walletAddress,
+}: TooltipProps) => (
+  <div className={styles.main}>
+    {displayName && (
+      <p title={displayName} className={styles.displayName}>
+        {displayName}
+      </p>
+    )}
+    {username && (
+      <span title={username} className={styles.userName}>
+        <UserMention username={username} hasLink />
+      </span>
+    )}
+    <CopyableAddress full>{walletAddress}</CopyableAddress>
+  </div>
+);
+
+const InfoPopover = ({ address, children, trigger = 'click' }: Props) => {
+  const {
+    record: { profile: { displayName, username } } = UserRecord().toJS(),
+  } = useSelector(userSelector, [address]) || {};
+  return (
+    <Tooltip
+      content={
+        renderTooltipContent({
+          displayName,
+          username,
+          walletAddress: address,
+      })}
+      trigger={trigger}
+      darkTheme={false}
+    >
+      {/*
      * This wrapper is needed because, if the child in an in-line element, the
      * tooltip component won't trigger
      */}
-    {children && <div className={styles.content}>{children}</div>}
-  </Tooltip>
-);
+      {children && <div className={styles.content}>{children}</div>}
+    </Tooltip>
+  );
+};
 
 InfoPopover.displayName = componentDisplayName;
 

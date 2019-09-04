@@ -46,7 +46,7 @@ const UserAvatar = ({
 }: Props) => {
   const username = user && (user as UserType).profile.username;
   const avatar = (
-    <InfoPopover trigger={user && showInfo ? 'click' : 'disabled'} user={user}>
+    <InfoPopover trigger={showInfo ? 'click' : 'disabled'} address={address}>
       <Avatar
         avatarURL={avatarURL}
         className={className}
