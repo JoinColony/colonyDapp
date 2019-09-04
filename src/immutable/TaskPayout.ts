@@ -18,8 +18,8 @@ interface TaskPayoutRecordProps {
 export type TaskPayoutRecordType = RecordOf<TaskPayoutRecordProps>;
 
 const defaultValues: TaskPayoutRecordProps = {
-  amount: undefined,
-  token: undefined,
+  amount: new BigNumber(0),
+  token: '',
 };
 
 export const TaskPayoutRecord: Record.Factory<TaskPayoutRecordProps> = Record(

@@ -99,7 +99,7 @@ class ItemsList extends Component<Props, State> {
   state = {
     listTouched: false,
     setItem: undefined,
-    selectedItem: undefined,
+    selectedItem: -1,
   };
 
   /*
@@ -147,7 +147,7 @@ class ItemsList extends Component<Props, State> {
     /*
      * Prevent setting a negative index items
      */
-    if (selectedItemId && selectedItemId >= 0) {
+    if (selectedItemId >= 0) {
       this.setState(
         {
           setItem: selectedItemId,
@@ -161,7 +161,7 @@ class ItemsList extends Component<Props, State> {
            * @NOTE If we don't deconstruct here and filter the values passed down,
            * the nested values will also be passed down
            */
-          if (!connect) {
+          if (!connect && itemId && name) {
             return callback({ id: itemId, name });
           }
           return setValue(selectedItemId);
@@ -184,7 +184,7 @@ class ItemsList extends Component<Props, State> {
     this.setState(
       {
         setItem: undefined,
-        selectedItem: undefined,
+        selectedItem: -1,
         listTouched: false,
       },
       () => {
@@ -226,7 +226,7 @@ class ItemsList extends Component<Props, State> {
     return (
       <Fragment key={id}>
         <li
-          className={selectedItem === id ? styles.selectedItem : null}
+          className={selectedItem === id ? styles.selectedItem : undefined}
           style={{
             paddingLeft: `${nestingCounter *
               parseInt(styles.paddingValue, 10)}px`,
@@ -325,11 +325,12 @@ class ItemsList extends Component<Props, State> {
         <div
           className={styles.selectedItemDisplay}
           title={
-            currentItem &&
-            `${itemDisplayPrefix}${currentItem.name}${itemDisplaySuffix}`
+            currentItem
+              ? `${itemDisplayPrefix}${currentItem.name}${itemDisplaySuffix}`
+              : undefined
           }
         >
-          {currentItem &&
+          {!!currentItem &&
             `${itemDisplayPrefix}${currentItem.name}${itemDisplaySuffix}`}
         </div>
       </div>

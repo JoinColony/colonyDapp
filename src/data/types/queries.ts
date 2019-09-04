@@ -15,6 +15,7 @@ import { AllEvents } from './events';
  *
  * R: Return type for the execute function.
  */
+
 export interface Query<D, M, A, R> {
   context: ContextName[];
   execute: (deps: D, args: A) => Promise<R>;

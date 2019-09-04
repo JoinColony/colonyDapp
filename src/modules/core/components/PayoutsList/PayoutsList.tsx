@@ -25,7 +25,7 @@ interface Props {
   maxLines?: number;
 
   /** Native token of the displayed Colony */
-  nativeToken: TokenReferenceType | null;
+  nativeToken?: TokenReferenceType;
 
   /** Payouts list containing all the payouts */
   payouts: TaskPayoutType[];

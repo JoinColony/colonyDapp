@@ -425,7 +425,7 @@ export const getColonyTasks: Query<
     };
   },
   async execute({ colonyStore, colonyTaskIndexStore }) {
-    if (!(colonyStore || colonyTaskIndexStore)) {
+    if (!colonyStore || !colonyTaskIndexStore) {
       throw new Error(
         'Could not load colony task index or colony store either',
       );

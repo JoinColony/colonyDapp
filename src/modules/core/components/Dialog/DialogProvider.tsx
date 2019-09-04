@@ -24,7 +24,7 @@ class DialogProvider extends Component<Props, State> {
   };
 
   state = {
-    openDialogs: [],
+    openDialogs: [] as DialogType[],
   };
 
   componentDidUpdate({ location: prevLocation }: Props) {

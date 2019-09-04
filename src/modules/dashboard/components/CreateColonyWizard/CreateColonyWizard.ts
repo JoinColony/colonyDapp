@@ -3,9 +3,8 @@ import { $Values } from 'utility-types';
 import compose from 'recompose/compose';
 
 import { withWizard } from '../../../core/components/Wizard';
-import { StepsFn } from '~core/Wizard/withWizard';
-// @ts-ignore
-import CreateColony from './CreateColonyWizard.tsx';
+import { StepsFn, StepType } from '~core/Wizard/withWizard';
+import WizardTemplate from '~pages/WizardTemplateColony';
 import StepTokenChoice from './StepTokenChoice';
 import StepColonyName from './StepColonyName';
 import StepSelectToken from './StepSelectToken';
@@ -16,7 +15,7 @@ import StepConfirmTransactions from './StepConfirmTransactions';
 import { userDidClaimProfile } from '../../../users/checks';
 import { withCurrentUser } from '../../../users/hocs';
 
-const stepArray = [
+const stepArray: StepType[] = [
   StepUserName,
   StepColonyName,
   StepTokenChoice,
@@ -61,7 +60,7 @@ const stepFunction: StepsFn<any> = (
 
     /* Standard wizard flow  */
     if (step === 0) {
-      if (usernameCreated && stepArray[0] === StepUserName) {
+      if (usernameCreated && stepArray[0].stepName === 'StepUserName') {
         stepArray.shift();
         return stepArray[step] as ComponentType<any>;
       }
@@ -78,6 +77,6 @@ const CreateColonyContainer = compose(
   withWizard({
     steps: stepFunction,
   }),
-)(CreateColony);
+)(WizardTemplate);
 
 export default CreateColonyContainer;

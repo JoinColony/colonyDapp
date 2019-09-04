@@ -19,7 +19,7 @@ const coloniesReducer: ReducerType<AllColoniesMap> = (
   switch (action.type) {
     case ActionTypes.COLONY_FETCH_SUCCESS: {
       const {
-        payload: { tokens, colonyAddress, ...colony },
+        payload: { tokens = {}, colonyAddress, ...colony },
       } = action;
       const record = ColonyRecord({
         ...colony,
@@ -87,7 +87,7 @@ const coloniesReducer: ReducerType<AllColoniesMap> = (
     case ActionTypes.COLONY_SUB_EVENTS: {
       const {
         payload: {
-          colony: { tokens, ...colony },
+          colony: { tokens = {}, ...colony },
           colonyAddress,
         },
       } = action;

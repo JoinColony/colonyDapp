@@ -47,13 +47,7 @@ interface Props {
 }
 
 const InputLabel = ({
-  appearance = {
-    theme: undefined,
-    colorSchema: undefined,
-    direction: undefined,
-    helpAlign: undefined,
-    size: undefined,
-  },
+  appearance,
   help,
   helpValues,
   extra,
@@ -71,8 +65,8 @@ const InputLabel = ({
   return (
     <label
       className={getMainClasses(appearance, styles)}
-      id={inputId ? `${inputId}-label` : null}
-      htmlFor={inputId || null}
+      id={inputId ? `${inputId}-label` : undefined}
+      htmlFor={inputId || undefined}
     >
       <span className={styles.labelText}>{labelText}</span>
       {helpText && <span className={styles.help}>{helpText}</span>}

@@ -102,7 +102,7 @@ class AvatarUploadItem extends Component<Props> {
         {!$error ? (
           <div
             className={styles.previewImage}
-            style={{ backgroundImage: preview ? `url(${preview}` : null }}
+            style={{ backgroundImage: preview ? `url(${preview}` : undefined }}
           >
             <div className={styles.overlay}>
               <div className={styles.loader} />

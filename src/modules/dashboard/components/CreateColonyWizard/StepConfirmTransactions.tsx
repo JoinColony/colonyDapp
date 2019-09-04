@@ -77,9 +77,12 @@ const StepConfirmTransactions = ({ wizardValues: { colonyName } }: Props) => {
   const dispatch = useDispatch();
 
   // Cancel the saga when the component unmounts
-  useEffect(() => () => dispatch({ type: ActionTypes.COLONY_CREATE_CANCEL }), [
-    dispatch,
-  ]);
+  useEffect(
+    () => () => {
+      dispatch({ type: ActionTypes.COLONY_CREATE_CANCEL });
+    },
+    [dispatch],
+  );
 
   const txGroups = useSelector(groupedTransactions);
   const newestGroup = findNewestGroup(txGroups);

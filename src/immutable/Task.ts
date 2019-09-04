@@ -1,15 +1,8 @@
-import { $Keys } from 'utility-types';
-
 import { RecordOf, Record, List, Set as ImmutableSet } from 'immutable';
 
-import { TASK_STATE } from './constants';
-
-// eslint-disable-next-line import/no-cycle
+import { TaskStates } from '~data/constants';
 import { Address } from '~types/index';
-// eslint-disable-next-line import/no-cycle
 import { TaskPayoutRecordType, TaskPayoutType } from './TaskPayout';
-
-export type TaskCurrentState = $Keys<typeof TASK_STATE>;
 
 /**
  * @todo Support full task workflow for ratings
@@ -22,7 +15,7 @@ interface Shared {
   colonyAddress: Address;
   createdAt: Date;
   creatorAddress: string; // Address of the task creator
-  currentState: TaskCurrentState;
+  currentState: TaskStates;
   description?: string;
   domainId?: number;
   draftId: string; // Draft task ID, when the task is a little babby
@@ -55,22 +48,22 @@ export type TaskRecordType = RecordOf<TaskRecordProps>;
 export type TaskDraftId = TaskRecordType['draftId'];
 
 const defaultValues: TaskRecordProps = {
-  colonyAddress: undefined,
-  createdAt: undefined,
-  creatorAddress: undefined,
-  currentState: undefined,
+  colonyAddress: '',
+  createdAt: new Date(),
+  creatorAddress: '',
+  currentState: TaskStates.ACTIVE,
   description: undefined,
   domainId: undefined,
-  draftId: undefined,
+  draftId: '',
   dueDate: undefined,
   invites: ImmutableSet(),
-  managerAddress: undefined,
+  managerAddress: '',
   payouts: List(),
-  reputation: undefined,
+  reputation: 0,
   requests: ImmutableSet(),
   skillId: undefined,
   title: undefined,
-  workerAddress: undefined,
+  workerAddress: '',
 };
 
 export const TaskRecord: Record.Factory<TaskRecordProps> = Record(

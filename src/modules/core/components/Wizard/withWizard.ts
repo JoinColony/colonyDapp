@@ -13,7 +13,7 @@ type State = {
   values: ValueList;
 };
 
-type StepType = ComponentType<any>;
+export type StepType = ComponentType<any> & { stepName?: string };
 
 export type StepsFn<T> = (step: number, values: any, props?: T) => StepType;
 

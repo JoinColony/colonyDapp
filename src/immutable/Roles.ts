@@ -20,7 +20,7 @@ export type RolesRecordType = RecordOf<ImmutableType>;
 
 const defaultValues: ImmutableType = {
   admins: ImmutableSet(),
-  founder: undefined,
+  founder: '',
 };
 
 export const RolesRecord: Record.Factory<ImmutableType> = Record(defaultValues);

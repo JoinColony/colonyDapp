@@ -107,7 +107,7 @@ class Checkbox extends Component<Props, State> {
     });
     const classNames = className ? `${mainClasses} ${className}` : mainClasses;
     return (
-      <label className={classNames} htmlFor={elementOnly ? inputId : null}>
+      <label className={classNames} htmlFor={elementOnly ? inputId : undefined}>
         <>
           <input
             id={inputId}

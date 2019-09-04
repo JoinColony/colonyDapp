@@ -1,4 +1,4 @@
-import { EventTypes, TaskState } from '../constants';
+import { EventTypes, TaskStates } from '../constants';
 import { EventDefinition } from './events';
 import { Address } from '~types/index';
 
@@ -49,13 +49,13 @@ export type TaskEvents =
   | EventDefinition<
       EventTypes.TASK_CANCELLED,
       {
-        status: TaskState.CANCELLED;
+        status: TaskStates.CANCELLED;
       }
     >
   | EventDefinition<
       EventTypes.TASK_CLOSED,
       {
-        status: TaskState.CLOSED;
+        status: TaskStates.CLOSED;
       }
     >
   | EventDefinition<

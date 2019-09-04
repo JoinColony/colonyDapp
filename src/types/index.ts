@@ -12,4 +12,6 @@ export type WithKey = {
   key: any;
 };
 
+export type ExcludesNull = <T>(x: T | null) => x is T;
+
 export * from './Required';

@@ -7,7 +7,7 @@ import BigNumber from 'bn.js';
 import {
   Address,
   AddressOrENSName,
-  ColonyContext,
+  ContractContexts,
   TransactionReceipt,
 } from '~types/index';
 
@@ -54,7 +54,7 @@ export interface TransactionMultisig {
 }
 
 export interface TransactionRecordProps {
-  context: ColonyContext;
+  context: ContractContexts;
   createdAt: Date;
   error?: TransactionError;
   eventData?: TransactionEventData;
@@ -84,19 +84,20 @@ export type TransactionType = $ReadOnly<TransactionRecordProps>;
 export type TransactionRecordType = RecordOf<TransactionRecordProps>;
 
 const defaultValues: TransactionRecordProps = {
-  context: undefined,
+  // Just because we have to pick one
+  context: ContractContexts.NETWORK_CONTEXT,
   createdAt: new Date(),
   error: undefined,
   eventData: undefined,
-  from: undefined,
+  from: '',
   gasLimit: undefined,
   gasPrice: undefined,
   group: undefined,
   hash: undefined,
-  id: undefined,
+  id: '',
   identifier: undefined,
   methodContext: undefined,
-  methodName: undefined,
+  methodName: '',
   multisig: undefined,
   options: {},
   params: {},

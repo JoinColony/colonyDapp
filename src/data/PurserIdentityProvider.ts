@@ -62,11 +62,12 @@ class PurserIdentityProvider<I extends PurserIdentity>
       throw new Error('Could not get wallet address. Is it unlocked?');
     }
 
-    let cachedIdentity: PurserIdentity;
+    let cachedIdentity: PurserIdentity | undefined;
 
     try {
       cachedIdentity = await this._localCache.getItem(this.walletAddress);
     } catch (e) {
+      cachedIdentity = undefined;
       console.warn(
         `Could not initialize local storage. If we're not in a browser, that's fine.`,
         e,

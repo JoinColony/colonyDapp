@@ -29,7 +29,7 @@ export const generateUrlFriendlyId = (): RandomId =>
  */
 export const proxyOldRoles = (domainRoles: any): RolesType | void => {
   if (!domainRoles) {
-    return null;
+    return undefined;
   }
 
   const rootDomainRoles = domainRoles[1] || {};

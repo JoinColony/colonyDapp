@@ -15,3 +15,7 @@ export const selected: string;
 export const today: string;
 export const outside: string;
 export const disabled: string;
+export const navBar: string;
+export const navButtonPrev: string;
+export const navButtonNext: string;
+export const caption: string;

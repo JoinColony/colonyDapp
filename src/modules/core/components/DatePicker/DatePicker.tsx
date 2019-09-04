@@ -48,7 +48,7 @@ interface Props {
   placeholder?: string;
 
   /** Render content below the date picker, inside the popover. Useful to combine with `preventClose` */
-  renderContentFooter?: (close: Close, currentDate: Date | null) => ReactNode;
+  renderContentFooter?: (close: Close, currentDate?: Date) => ReactNode;
 
   /** Custom trigger to render (render prop), see [Popover](#popover) for details */
   renderTrigger?: PopoverTriggerType;
@@ -57,10 +57,10 @@ interface Props {
   showArrow?: boolean;
 
   /** @ignore Will be injected by `asField` */
-  $value?: Date | null;
+  $value?: Date;
 
   /** @ignore Will be injected by `asField` */
-  setValue: (val: Date | null) => void;
+  setValue: (val?: Date) => void;
 
   /** Should it set the form value on pick. Useful when using a button to confirm choice & submit in rendered footer */
   setValueOnPick?: boolean;
@@ -119,7 +119,7 @@ const DatePicker = ({
       // User cancelled using ESC
       if (cancelled) {
         setInputValue($value ? getShortDate($value) : '');
-        setCurrentDate($value || null);
+        setCurrentDate($value);
         return;
       }
 
@@ -132,14 +132,14 @@ const DatePicker = ({
       if (date) {
         setValue(date);
         setInputValue(getShortDate(date));
-        setCurrentDate(null);
+        setCurrentDate(undefined);
         return;
       }
       // User removed the input value and closed
       if (!inputValue) {
-        setValue(null);
+        setValue(undefined);
         setInputValue('');
-        setCurrentDate(null);
+        setCurrentDate(undefined);
       }
     },
     [$value, currentDate, inputValue, setValue],

@@ -14,7 +14,7 @@ import {
   TaskRecord,
 } from '~immutable/index';
 import { withDataRecordMap } from '~utils/reducers';
-import { EventTypes, TaskState } from '~data/constants';
+import { EventTypes, TaskStates } from '~data/constants';
 import { AllEvents, createAddress } from '~types/index';
 
 const taskEventReducer = (
@@ -31,7 +31,7 @@ const taskEventReducer = (
         fromJS({
           createdAt: new Date(timestamp),
           creatorAddress,
-          currentState: TaskState.ACTIVE,
+          currentState: TaskStates.ACTIVE,
           draftId,
           managerAddress: creatorAddress,
           domainId: 1,
@@ -65,10 +65,10 @@ const taskEventReducer = (
     }
 
     case EventTypes.TASK_FINALIZED:
-      return task.set('currentState', TaskState.FINALIZED);
+      return task.set('currentState', TaskStates.FINALIZED);
 
     case EventTypes.TASK_CANCELLED:
-      return task.set('currentState', TaskState.CANCELLED);
+      return task.set('currentState', TaskStates.CANCELLED);
 
     case EventTypes.WORK_INVITE_SENT: {
       const { workerAddress } = event.payload;

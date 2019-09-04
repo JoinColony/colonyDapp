@@ -95,7 +95,7 @@ const Radio = ({
       isChecked: checked,
       isDisabled: !!disabled,
     })}
-    htmlFor={elementOnly ? inputId : null}
+    htmlFor={elementOnly ? inputId : undefined}
   >
     <>
       <input

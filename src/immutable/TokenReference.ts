@@ -18,7 +18,7 @@ export type TokenReferenceType = $ReadOnly<Shared>;
 export type TokenReferenceRecordType = RecordOf<Shared>;
 
 const defaultProps: Shared = {
-  address: undefined,
+  address: '',
   balance: undefined,
   isExternal: undefined,
   isNative: undefined,

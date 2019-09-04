@@ -2,7 +2,8 @@ import React, { ReactNode, useMemo, useCallback, DependencyList } from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 
 import { Address } from '~types/index';
-import { DomainId, TaskDraftId, TaskType, TASK_STATE } from '~immutable/index';
+import { DomainId, TaskDraftId, TaskType } from '~immutable/index';
+import { TaskStates } from '~data/constants';
 import { mergePayload } from '~utils/actions';
 import {
   useDataTupleSubscriber,
@@ -97,16 +98,16 @@ const TaskList = ({
           return workerAddress === walletAddress;
 
         case TasksFilterOptions.COMPLETED:
-          return currentState === TASK_STATE.FINALIZED;
+          return currentState === TaskStates.FINALIZED;
 
         case TasksFilterOptions.DISCARDED:
-          return currentState === TASK_STATE.CANCELLED;
+          return currentState === TaskStates.CANCELLED;
 
         case TasksFilterOptions.ALL_OPEN:
-          return currentState === TASK_STATE.ACTIVE;
+          return currentState === TaskStates.ACTIVE;
 
         default:
-          return currentState !== TASK_STATE.CANCELLED;
+          return currentState !== TaskStates.CANCELLED;
       }
     },
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -149,7 +150,10 @@ const TaskList = ({
       currentUser.profile.metadataStoreAddress,
     ],
   );
-  const isSubscribed = (colonyAddresses || []).includes(colonyAddress);
+  const isSubscribed = (colonyAddresses || []).includes(
+    // Casting should be ok here as we don't have any sparse arrays
+    colonyAddress as string,
+  );
   const transform = useCallback(mergePayload({ colonyAddress }), [
     colonyAddress,
   ] as DependencyList);

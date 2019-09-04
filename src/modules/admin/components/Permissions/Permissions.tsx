@@ -40,7 +40,7 @@ const MSG = defineMessages({
 
 interface Props {
   colonyAddress: Address;
-  openDialog?: (
+  openDialog: (
     dialogName: string,
     dialogProps?: Record<string, any>,
   ) => DialogType;
@@ -91,10 +91,10 @@ const Permissions = ({ colonyAddress, openDialog }: Props) => {
     [getPermissionsForUser],
   );
 
-  const domainLabel = useMemo(
-    () => domains.find(({ value }) => value === selectedDomain).label,
-    [domains, selectedDomain],
-  );
+  const domainLabel = useMemo(() => {
+    const domain = domains.find(({ value }) => value === selectedDomain);
+    return domain ? domain.label : undefined;
+  }, [domains, selectedDomain]);
 
   const handleEditPermissions = useCallback(
     userAddress =>

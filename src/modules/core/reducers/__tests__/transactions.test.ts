@@ -1,6 +1,7 @@
 import { Map as ImmutableMap, Record } from 'immutable';
 
 import { CoreTransactions, TransactionRecord } from '~immutable/index';
+import { ContractContexts } from '~types/index';
 
 import reducer from '../transactions';
 
@@ -39,7 +40,7 @@ describe(`core: reducers (transactions)`, () => {
   const params = { param1: 123 };
   const id = 'my transaction id';
   const existingTxId = 'my existing tx id';
-  const context = 'network';
+  const context = ContractContexts.NETWORK_CONTEXT;
   const methodName = 'createColony';
 
   // @ts-ignore

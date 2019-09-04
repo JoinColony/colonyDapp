@@ -120,7 +120,7 @@ export const parsePayoutClaimedEvent = async ({
   const { typeId: paymentId, type } = await colonyClient.getFundingPot.call({
     potId,
   });
-  if (type !== FUNDING_POT_TYPE_PAYMENT) return undefined;
+  if (type !== FUNDING_POT_TYPE_PAYMENT) return null;
   const { recipient: to } = await colonyClient.getPayment.call({ paymentId });
   return createContractTxObj({
     amount,

@@ -61,7 +61,7 @@ interface Props {
   pending?: boolean;
 
   /** We need to be aware of the native token to adjust the UI */
-  nativeToken: TokenReferenceType | void;
+  nativeToken?: TokenReferenceType;
 
   /** Should the funding be rendered (if set) */
   showFunding?: boolean;

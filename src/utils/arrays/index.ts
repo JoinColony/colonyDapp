@@ -33,8 +33,9 @@ export const shuffle = (array: string[]) => {
 type ValidSortByType = boolean | number | string;
 
 interface SortByPropertyConfig {
+  // Name is mandatory, otherwise you could just use the array sort function
+  name: string;
   compareFn?: (prevVal: any, nextVal: any) => number;
-  name?: string;
   reverse?: boolean;
 }
 
@@ -76,18 +77,8 @@ export const sortObjectsBy = (
     return valA < valB ? -1 : 1;
   };
 
-  const sortByConfigs: { name?: string }[] = sortByPropertyNames.map(
-    sortKey => {
-      let sortItem = {
-        name: undefined,
-      };
-      if (typeof sortKey === 'string') {
-        sortItem.name = sortKey;
-      } else {
-        sortItem = { ...sortKey } as any;
-      }
-      return sortItem;
-    },
+  const sortByConfigs = sortByPropertyNames.map(sortKey =>
+    typeof sortKey === 'string' ? { name: sortKey } : sortKey,
   );
 
   return (prev: object, next: object): number => {
@@ -95,8 +86,8 @@ export const sortObjectsBy = (
 
     for (let i = 0; i < sortByConfigs.length; i += 1) {
       const {
-        compareFn = defaultCompare,
         name,
+        compareFn = defaultCompare,
         reverse = false,
       }: SortByPropertyConfig = sortByConfigs[i];
 
@@ -166,17 +157,22 @@ export const sortTokensByEth = (
  *   },
  * ]
  */
-type ConsumableItem = {
+interface ConsumableItem {
   id: number;
   name: string;
   parent?: number;
   children?: ConsumableItem[];
-};
+}
+interface CollapsedItem {
+  id: number;
+  name: string;
+  children?: CollapsedItem[];
+}
 export const recursiveNestChildren = (
   items: ConsumableItem[] = [],
   firstParentLevel = 0,
 ) => {
-  const collapsedItems = [];
+  const collapsedItems: CollapsedItem[] = [];
   items.forEach(item => {
     if (!item.parent) {
       /*

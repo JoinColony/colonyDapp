@@ -2,7 +2,6 @@ import React, { useCallback } from 'react';
 import { defineMessages } from 'react-intl';
 
 import { ColonyType } from '~immutable/index';
-import { Address } from '~types/index';
 import Heading from '~core/Heading';
 import CopyableAddress from '~core/CopyableAddress';
 import {
@@ -84,8 +83,8 @@ const ProfileEdit = ({ colony }: Props) => {
   );
 
   const tokenValues = Object.values(tokens);
-  const nativeTokenAddress: Address = tokenValues.find(token => token.isNative)
-    .address;
+  const nativeToken = tokenValues.find(token => token.isNative);
+  const nativeTokenAddress = nativeToken ? nativeToken.address : undefined;
 
   return (
     <div className={styles.main}>

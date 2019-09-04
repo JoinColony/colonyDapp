@@ -21,7 +21,7 @@ export type TaskRatingRecordType = RecordOf<TaskRatingRecordProps>;
 const defaultValues = {
   ratee: UserRecord(),
   rater: UserRecord(),
-  rating: undefined,
+  rating: -1,
 };
 
 export const TaskRatingRecord: Record.Factory<TaskRatingRecordProps> = Record(

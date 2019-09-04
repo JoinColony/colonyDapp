@@ -31,6 +31,7 @@ const MockState = Record({
   users: undefined,
 });
 
+// @ts-ignore
 const initialState = MockState({
   admin: {
     transactions: ImmutableMap(),

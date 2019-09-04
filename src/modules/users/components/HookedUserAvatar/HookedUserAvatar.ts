@@ -9,8 +9,11 @@ export default withHooks<
   { fetchUser: boolean } | void,
   UserAvatarProps,
   { user: UserType | void; avatarURL: string | void }
->((hookParams, { user, address } = { user: undefined, address: undefined }) => {
-  const result = { user, avatarURL: undefined };
+>((hookParams, { user, address }) => {
+  const result: { user: UserType | void; avatarURL: string | void } = {
+    user,
+    avatarURL: undefined,
+  };
   const { fetchUser } = hookParams || { fetchUser: true };
   if (fetchUser) {
     const { data: fetchedUser } = useDataSubscriber<UserType>(

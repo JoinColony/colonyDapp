@@ -1,4 +1,4 @@
-import { Address } from '~types/index';
+import { Address, ExcludesNull } from '~types/index';
 import { TaskDraftId } from '~immutable/index';
 import {
   Command,
@@ -400,7 +400,7 @@ export const createCommentMention: Command<
       addresses.filter(Boolean).map(getInboxStore),
     );
 
-    return inboxStores.filter(Boolean);
+    return inboxStores.filter((Boolean as any) as ExcludesNull);
   },
   async execute(userInboxStores, args) {
     if (!(userInboxStores && userInboxStores.length)) return;

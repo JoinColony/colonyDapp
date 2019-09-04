@@ -91,7 +91,7 @@ class MetaMask extends Component<Props, State> {
       cancelMessageSign,
       metamaskNotAvailable,
     } = metamaskMessages;
-    let metamaskError = null;
+    let metamaskError;
     let wallet;
     try {
       wallet = await open();

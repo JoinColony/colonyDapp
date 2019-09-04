@@ -24,5 +24,5 @@ export type Command<D, M, A, R> = {
   execute: (deps: D, args: A) => Promise<R>;
   name: string;
   prepare: (context: any, metadata: M) => Promise<D>;
-  schema?: SchemaType;
+  schema?: SchemaType<any>;
 };

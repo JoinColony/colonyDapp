@@ -23,4 +23,4 @@ export type OrbitStoreOpenOpts = {
   replicate?: boolean;
 };
 
-export type ResolverFn = (identifier: string) => Promise<string | null>;
+export type ResolverFn = (identifier: string) => Promise<string | undefined>;

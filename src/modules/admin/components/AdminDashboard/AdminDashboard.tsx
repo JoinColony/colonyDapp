@@ -100,7 +100,7 @@ const AdminDashboard = ({
     params: { colonyName },
   },
 }: Props) => {
-  const CURRENT_COLONY_ROUTE = colonyName ? `/colony/${colonyName}` : null;
+  const CURRENT_COLONY_ROUTE = colonyName ? `/colony/${colonyName}` : '';
 
   const { data: colony, isFetching, error } = useColonyWithName(colonyName);
 

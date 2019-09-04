@@ -8,10 +8,12 @@ import { useColonyWithAddress } from '../../hooks/useColony';
 export default withHooks<
   { fetchColony: boolean },
   ColonyAvatarProps,
-  { colony?: ColonyType; avatarURL?: string }
-  // @ts-ignore
->(({ fetchColony = true } = {}, { colony, colonyAddress } = {}) => {
-  const result = { colony, avatarURL: undefined };
+  { colony?: ColonyType; avatarURL: string | void }
+>(({ fetchColony = true }, { colony, colonyAddress }) => {
+  const result: { colony?: ColonyType; avatarURL: string | void } = {
+    colony,
+    avatarURL: undefined,
+  };
 
   if (fetchColony) {
     const { data: fetchedColony } = useColonyWithAddress(colonyAddress);

@@ -21,11 +21,11 @@ export type TokenType = $ReadOnly<Shared>;
 export type TokenRecordType = RecordOf<Shared>;
 
 const defaultValues: Shared = {
-  address: undefined,
+  address: '',
   decimals: undefined,
   isVerified: false,
-  name: undefined,
-  symbol: undefined,
+  name: '',
+  symbol: '',
 };
 
 export const TokenRecord: Record.Factory<Shared> = Record(defaultValues);

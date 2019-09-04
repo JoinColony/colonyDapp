@@ -29,7 +29,7 @@ import {
   takeFrom,
 } from '~utils/saga/effects';
 
-import { NETWORK_CONTEXT } from '../../../lib/ColonyManager/constants';
+import { ContractContexts } from '../../../lib/ColonyManager/constants';
 import {
   walletAddressSelector,
   currentUserMetadataSelector,
@@ -121,6 +121,7 @@ function* userFetch({
 }: Action<ActionTypes.USER_FETCH>) {
   try {
     const user = yield executeQuery(getUserProfile, {
+      args: undefined,
       metadata: {
         walletAddress: userAddress,
       },
@@ -150,6 +151,7 @@ function* userProfileUpdate({
     });
 
     const user = yield executeQuery(getUserProfile, {
+      args: undefined,
       metadata: {
         walletAddress,
       },
@@ -255,7 +257,7 @@ function* usernameCreate({
     const username = ENS.normalize(givenUsername);
 
     yield fork(createTransaction, id, {
-      context: NETWORK_CONTEXT,
+      context: ContractContexts.NETWORK_CONTEXT,
       methodName: 'registerUserLabel',
       ready: false,
       params: { username },
@@ -432,6 +434,7 @@ function* userSubscribedColoniesFetch(
       meta,
     } = action;
     const colonyAddresses = yield executeQuery(getUserColonies, {
+      args: undefined,
       metadata: {
         walletAddress,
         metadataStoreAddress,
@@ -463,6 +466,7 @@ function* userColonySubscribe({
       metadataStoreAddress,
     };
     const userColonyAddresses = yield executeQuery(getUserColonies, {
+      args: undefined,
       metadata,
     });
     yield executeCommand(subscribeToColony, {
@@ -499,6 +503,7 @@ function* userColonyUnsubscribe({
       metadataStoreAddress,
     };
     const userColonyAddresses = yield executeQuery(getUserColonies, {
+      args: undefined,
       metadata,
     });
 
@@ -530,6 +535,7 @@ function* userSubscribedTasksFetch() {
       metadataStoreAddress,
     };
     const userTasks = yield executeQuery(getUserTasks, {
+      args: undefined,
       metadata,
     });
     yield put<AllActions>({
@@ -553,6 +559,7 @@ function* userTaskSubscribe({
       metadataStoreAddress,
     };
     const userDraftIds = yield executeQuery(getUserTasks, {
+      args: undefined,
       metadata,
     });
     if (
@@ -694,12 +701,27 @@ export function* setupUsersSagas() {
   yield takeEvery(ActionTypes.USER_FETCH, userFetch);
   yield takeEvery(ActionTypes.USER_PERMISSIONS_FETCH, userPermissionsFetch);
   yield takeEvery(ActionTypes.USER_SUB_START, userSubStart);
-  yield takeEvery(ActionTypes.USER_SUBSCRIBED_COLONIES_FETCH, userSubscribedColoniesFetch);
-  yield takeEvery(ActionTypes.USER_SUBSCRIBED_COLONIES_SUB_START, userSubscribedColoniesSubStart);
-  yield takeEvery(ActionTypes.USER_SUBSCRIBED_TASKS_FETCH, userSubscribedTasksFetch);
-  yield takeEvery(ActionTypes.USER_SUBSCRIBED_TASKS_SUB_START, userSubscribedTasksSubStart);
+  yield takeEvery(
+    ActionTypes.USER_SUBSCRIBED_COLONIES_FETCH,
+    userSubscribedColoniesFetch
+  );
+  yield takeEvery(
+    ActionTypes.USER_SUBSCRIBED_COLONIES_SUB_START,
+    userSubscribedColoniesSubStart
+  );
+  yield takeEvery(
+    ActionTypes.USER_SUBSCRIBED_TASKS_FETCH,
+    userSubscribedTasksFetch
+  );
+  yield takeEvery(
+    ActionTypes.USER_SUBSCRIBED_TASKS_SUB_START,
+    userSubscribedTasksSubStart
+  );
   yield takeEvery(ActionTypes.USER_TASK_SUBSCRIBE, userTaskSubscribe);
-  yield takeEvery(ActionTypes.USER_TOKEN_TRANSFERS_FETCH, userTokenTransfersFetch);
+  yield takeEvery(
+    ActionTypes.USER_TOKEN_TRANSFERS_FETCH,
+    userTokenTransfersFetch
+  );
   yield takeEvery(ActionTypes.USER_TOKENS_FETCH, userTokensFetch);
   yield takeLatest(ActionTypes.USERNAME_CHECK_AVAILABILITY, usernameCheckAvailability);
   yield takeLatest(ActionTypes.USER_AVATAR_REMOVE, userAvatarRemove);

@@ -5,7 +5,6 @@ export * from './ActivityFeedItem';
 export * from './Colony';
 export * from './ColonyAdmin';
 export * from './TokenReference';
-export * from './constants';
 export * from './ContractTransaction';
 export * from './Data';
 export * from './Domain';

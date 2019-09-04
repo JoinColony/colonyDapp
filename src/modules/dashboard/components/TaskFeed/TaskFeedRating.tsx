@@ -45,7 +45,7 @@ const TaskFeedRating = ({
     <div className={styles.ratingPart}>
       <UserAvatar
         address={raterWalletAddress}
-        user={rater as UserType | null}
+        user={rater as UserType | undefined}
         showInfo
         showLink
         size="xs"

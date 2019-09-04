@@ -71,6 +71,7 @@
         "@types/react-router-dom": "^4.3.1",
         "@types/recompose": "^0.30.0",
         "@types/reselect": "^2.2.0",
+        "@types/yup": "^0.26.23",
         "@typescript-eslint/eslint-plugin": "^2.0.0",
         "@typescript-eslint/parser": "^2.0.0",
         "ava": "^1.4.1",

@@ -31,6 +31,7 @@
     "noImplicitAny": false,
     "resolveJsonModule": true,
     "skipLibCheck": true,
+    "strictNullChecks": true,
     "target": "es6",
     "types": ["node", "events", "jest"]
   },
