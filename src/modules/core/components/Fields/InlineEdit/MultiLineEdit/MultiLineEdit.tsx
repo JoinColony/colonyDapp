@@ -127,11 +127,13 @@ const MultiLineEdit = ({
   );
   const onBlur = useCallback(
     (evt: FocusEvent) => {
+      const content = editorState.getCurrentContent();
+      const newValue =
+        (content.hasText() && content.getPlainText().trim()) || '';
+      if (newValue !== $value) {
+        setValue(newValue);
+      }
       if (onEditorBlur) {
-        const content = editorState.getCurrentContent();
-        const newValue =
-          (content.hasText() && content.getPlainText().trim()) || '';
-        if (newValue !== $value) setValue(newValue);
         onEditorBlur(evt, newValue);
       }
     },
