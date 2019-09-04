@@ -4,9 +4,18 @@ import React, { useCallback, useMemo, useState } from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 import * as yup from 'yup';
 
+import {
+  COLONY_ROLE_ROOT,
+  COLONY_ROLE_ADMINISTRATION,
+  COLONY_ROLE_ARCHITECTURE,
+  COLONY_ROLE_FUNDING,
+  COLONY_ROLE_ARBITRATION,
+} from '@colony/colony-js-client';
+
 import { Address } from '~types/index';
 
 import { mergePayload, withKey, mapPayload, pipe } from '~utils/actions';
+import { filterUserSelection } from '~utils/arrays';
 
 import { DomainType, UserType } from '~immutable/index';
 import { ActionTypeString, ActionTypes } from '~redux/index';
@@ -15,6 +24,7 @@ import {
   useDataMapFetcher,
   useUserDomainRoles,
 } from '~utils/hooks';
+import { capitalize } from '~utils/strings';
 
 import { usersByAddressFetcher } from '../../../users/fetchers';
 
@@ -80,40 +90,12 @@ interface Props {
   cancel: () => void;
   close: () => void;
   domain: DomainType;
-  /*   selectedUser?: UserType; */
+  /*   clickedUser?: UserType; */
   colonyAddress: Address;
   submit: ActionTypeString;
   success: ActionTypeString;
   error: ActionTypeString;
 }
-
-const supFilter = (data, filterValue) => {
-  if (!filterValue) {
-    return data;
-  }
-
-  const filtered = data.filter(
-    user =>
-      user &&
-      filterValue &&
-      (user.profile.username
-        .toLowerCase()
-        .includes(filterValue.toLowerCase()) ||
-        user.profile.walletAddress
-          .toLowerCase()
-          .includes(filterValue.toLowerCase())),
-  );
-
-  const customValue = {
-    id: 'filterValue',
-    profile: {
-      walletAddress: filterValue,
-      displayName: filterValue,
-    },
-  };
-
-  return [customValue].concat(filtered);
-};
 
 const validationSchema = yup.object({
   user: yup.object().required(),
@@ -124,7 +106,7 @@ const validationSchema = yup.object({
 
 const ColonyPermissionEditDialog = ({
   domain,
-  /* selectedUser, */
+  /* clickedUser, */
   colonyAddress,
   cancel,
   close,
@@ -149,12 +131,15 @@ const ColonyPermissionEditDialog = ({
   );
 
   const availableRoles = [
-    'Root',
-    'Administration',
-    'Architecture',
-    'Funding',
-    'Arbitration',
-  ];
+    COLONY_ROLE_ROOT,
+    COLONY_ROLE_ADMINISTRATION,
+    COLONY_ROLE_ARCHITECTURE,
+    COLONY_ROLE_FUNDING,
+    COLONY_ROLE_ARBITRATION,
+  ].map(word => {
+    const roleKey = word.toLowerCase();
+    return capitalize(roleKey);
+  });
 
   /* Currently arbitration should appear in the list of roles
     but can not be set yet
@@ -186,45 +171,51 @@ const ColonyPermissionEditDialog = ({
   );
 
   // When updating the selected user fetch that user's Roles
-  const [currentUser, setCurrentUser] = useState(null);
+  const [selectedUser, setSelectedUser] = useState(null);
+  const [selectedRoles, setSelectedRoles] = useState({});
+  const [userRoles, setUserRoles] = useState([]);
+  // clickedUser && setSelectedUser(clickedUser);
 
-  const updateCurrentUser = useCallback(({ profile: { walletAddress } }) => {
-    setCurrentUser(walletAddress);
+  const updateSelectedUser = useCallback(({ profile: { walletAddress } }) => {
+    setSelectedUser(walletAddress);
   }, []);
 
   // Get current user roles to populate the checkboxes
-  const useCurrentUserForRoles = (): Array<string> => {
-    const { data } = useUserDomainRoles(
-      colonyAddress,
-      domain.id,
-      // selectedUser ||
-      currentUser,
-    );
-    if (data && Object.keys(data).length !== 0) {
-      return Object.keys(data).reduce((accumulator, role) => {
-        if (data[role]) {
+  const useSelectedUserForRoles = (): Array<string> => {
+    const { data } = useUserDomainRoles(colonyAddress, domain.id, selectedUser);
+
+    // Avoid too many rerenders when no new data has loaded with the following condition
+    if (
+      selectedRoles &&
+      Object.keys(selectedRoles).length !== Object.keys(data).length &&
+      selectedUser
+    ) {
+      setSelectedRoles(data);
+      const array = Object.keys(selectedRoles).reduce((accumulator, role) => {
+        if (selectedRoles[role]) {
           // Role is capitalised in the ddb and needs to be readable
           const roleLow = role.toLowerCase();
-          const readableRole =
-            roleLow.charAt(0).toUpperCase() + roleLow.slice(1);
+          const readableRole = capitalize(roleLow);
           accumulator.push(readableRole);
           return accumulator;
         }
         return accumulator;
       }, []);
+      setUserRoles(array);
     }
     return [];
   };
-  const selectedRoles = useCurrentUserForRoles();
+  useSelectedUserForRoles();
 
   return (
     <Dialog cancel={cancel}>
       <ActionForm
+        enableReinitialize
         initialValues={{
           domainId: domain.id,
           colonyAddress,
-          roles: selectedRoles,
-          userAddress: null,
+          roles: userRoles,
+          userAddress: selectedUser || null,
         }}
         onSuccess={close}
         submit={ActionTypes.COLONY_DOMAIN_USER_ROLES_SET}
@@ -249,8 +240,8 @@ const ColonyPermissionEditDialog = ({
                   isResettable
                   name="user"
                   placeholder={MSG.search}
-                  filter={supFilter}
-                  onSelected={user => updateCurrentUser(user)}
+                  filter={filterUserSelection}
+                  onSelected={user => updateSelectedUser(user)}
                 />
               </div>
               <InputLabel label={MSG.permissionsLabel} />
@@ -260,7 +251,7 @@ const ColonyPermissionEditDialog = ({
                     className={styles.permissionChoice}
                     value={role}
                     name="roles"
-                    disabled={role === 'Arbitration' || role === 'Root'}
+                    disabled={!checkIfCanBeSet(role)}
                   >
                     <span className={styles.permissionChoiceDescription}>
                       <Heading
