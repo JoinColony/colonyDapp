@@ -19,7 +19,7 @@
   margin-top: 25px;
 }
 
-.dynamicSection a {
+.link {
   font-weight: var(--weight-normal);
   color: var(--text);
 }
@@ -36,9 +36,13 @@
   vertical-align: -webkit-baseline-middle;
 }
 
-.userAvatar {
+.avatarWrapper {
   display: inline-block;
-  margin: 9px 9px 0 0;
+  margin: 0 9px 0 0;
+}
+
+.userAvatar {
+  margin-top: 9px;
   cursor: pointer;
 }
 
