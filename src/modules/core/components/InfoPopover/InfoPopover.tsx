@@ -44,7 +44,9 @@ const renderTooltipContent = ({
         <UserMention username={username} hasLink />
       </p>
     )}
-    <CopyableAddress full>{walletAddress}</CopyableAddress>
+    <div title={walletAddress} className={styles.address}>
+      <CopyableAddress full>{walletAddress}</CopyableAddress>
+    </div>
   </div>
 );
 
