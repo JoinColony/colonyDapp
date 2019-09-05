@@ -15,17 +15,24 @@ import {
 import { Address } from '~types/index';
 
 import { mergePayload, withKey, mapPayload, pipe } from '~utils/actions';
-import { filterUserSelection } from '~utils/arrays';
 
-import { DomainType, UserType } from '~immutable/index';
+import {
+  DomainType,
+  UserType,
+  UserRecord,
+  UserProfileRecord,
+} from '~immutable/index';
 import { ActionTypeString, ActionTypes } from '~redux/index';
 import {
   useSelector,
+  useDataSubscriber,
   useDataMapFetcher,
   useUserDomainRoles,
 } from '~utils/hooks';
 import { capitalize } from '~utils/strings';
+import { filterUserSelection } from '~utils/arrays';
 
+import { userSubscriber } from '../../../users/subscribers';
 import { usersByAddressFetcher } from '../../../users/fetchers';
 
 import SingleUserPicker from '~core/SingleUserPicker';
@@ -90,7 +97,7 @@ interface Props {
   cancel: () => void;
   close: () => void;
   domain: DomainType;
-  /*   clickedUser?: UserType; */
+  clickedUser?: UserType;
   colonyAddress: Address;
   submit: ActionTypeString;
   success: ActionTypeString;
@@ -106,7 +113,7 @@ const validationSchema = yup.object({
 
 const ColonyPermissionEditDialog = ({
   domain,
-  /* clickedUser, */
+  clickedUser,
   colonyAddress,
   cancel,
   close,
@@ -170,17 +177,19 @@ const ColonyPermissionEditDialog = ({
     [colonyAddress],
   );
 
-  // When updating the selected user fetch that user's Roles
   const [selectedUser, setSelectedUser] = useState(null);
   const [selectedRoles, setSelectedRoles] = useState({});
   const [userRoles, setUserRoles] = useState([]);
-  // clickedUser && setSelectedUser(clickedUser);
+  /*  if (clickedUser) {
+    setSelectedUser(clickedUser);
+  } */
 
   const updateSelectedUser = useCallback(({ profile: { walletAddress } }) => {
     setSelectedUser(walletAddress);
   }, []);
 
-  // Get current user roles to populate the checkboxes
+  // When selected user gets updates get that user's roles
+  // to populate the checkboxes
   const useSelectedUserForRoles = (): Array<string> => {
     const { data } = useUserDomainRoles(colonyAddress, domain.id, selectedUser);
 
@@ -191,8 +200,8 @@ const ColonyPermissionEditDialog = ({
       selectedUser
     ) {
       setSelectedRoles(data);
-      const array = Object.keys(selectedRoles).reduce((accumulator, role) => {
-        if (selectedRoles[role]) {
+      const array = Object.keys(data).reduce((accumulator, role) => {
+        if (data[role]) {
           // Role is capitalised in the ddb and needs to be readable
           const roleLow = role.toLowerCase();
           const readableRole = capitalize(roleLow);
@@ -207,6 +216,24 @@ const ColonyPermissionEditDialog = ({
   };
   useSelectedUserForRoles();
 
+  // Set user whose roles should be edited
+  const {
+    data: selectedUserObj,
+    isFetching: isFetchingselectedUser,
+  } = useDataSubscriber<UserType>(
+    userSubscriber,
+    [selectedUser],
+    [selectedUser],
+  );
+  const selectedUserData =
+    !!selectedUser && !selectedUserObj
+      ? UserRecord({
+          profile: UserProfileRecord({
+            walletAddress: selectedUser,
+          }),
+        }).toJS()
+      : selectedUserObj;
+
   return (
     <Dialog cancel={cancel}>
       <ActionForm
@@ -215,7 +242,8 @@ const ColonyPermissionEditDialog = ({
           domainId: domain.id,
           colonyAddress,
           roles: userRoles,
-          userAddress: selectedUser || null,
+          userAddress: selectedUser,
+          user: !isFetchingselectedUser && selectedUserData,
         }}
         onSuccess={close}
         submit={ActionTypes.COLONY_DOMAIN_USER_ROLES_SET}
