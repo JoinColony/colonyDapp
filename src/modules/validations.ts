@@ -14,8 +14,7 @@ import en from '../i18n/en-validation.json';
 yup.setLocale(en);
 
 // eslint-disable-next-line import/prefer-default-export
-export const ENS_DOMAIN_REGEX =
-  '^([A-Za-z0-9](?:[A-Za-z0-9-.]{0,255}[A-Za-z0-9])?)';
+export const ENS_DOMAIN_REGEX = '^[A-Za-z0-9][^.]{1,255}$';
 
 /* Custom validators */
 function equalTo(ref, msg) {
