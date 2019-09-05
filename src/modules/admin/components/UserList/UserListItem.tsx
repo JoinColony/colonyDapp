@@ -82,7 +82,7 @@ const UserListItem = ({
   return (
     <TableRow className={styles.main}>
       <TableCell className={styles.userAvatar}>
-        <UserAvatar size="xs" address={address} user={user} />
+        <UserAvatar size="xs" address={address} user={user} showInfo />
       </TableCell>
       <TableCell className={styles.userDetails}>
         {showDisplayName && displayName && (
