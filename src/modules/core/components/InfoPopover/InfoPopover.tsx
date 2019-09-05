@@ -1,7 +1,7 @@
 import React, { ReactNode } from 'react';
 
 import { Address } from '~types/index';
-import { UserType, UserRecord } from '~immutable/index';
+import { UserRecord } from '~immutable/index';
 import { useSelector } from '~utils/hooks';
 import { userSelector } from '../../../users/selectors';
 
@@ -26,7 +26,7 @@ interface TooltipProps {
   displayName?: string;
   username?: string;
   walletAddress: Address;
-};
+}
 
 const renderTooltipContent = ({
   displayName,
@@ -56,19 +56,18 @@ const InfoPopover = ({ address, children, trigger = 'click' }: Props) => {
   } = useSelector(userSelector, [address]) || {};
   return (
     <Tooltip
-      content={
-        renderTooltipContent({
-          displayName,
-          username,
-          walletAddress: address,
+      content={renderTooltipContent({
+        displayName,
+        username,
+        walletAddress: address,
       })}
       trigger={trigger}
       darkTheme={false}
     >
       {/*
-     * This wrapper is needed because, if the child in an in-line element, the
-     * tooltip component won't trigger
-     */}
+       * This wrapper is needed because, if the child in an in-line element, the
+       * tooltip component won't trigger
+       */}
       {children}
     </Tooltip>
   );
