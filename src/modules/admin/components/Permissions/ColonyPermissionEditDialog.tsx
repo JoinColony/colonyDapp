@@ -1,6 +1,6 @@
 import { FormikProps } from 'formik';
 
-import React, { useCallback, useMemo, useState } from 'react';
+import React, { useCallback, useMemo, useState, useEffect } from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 import * as yup from 'yup';
 
@@ -180,9 +180,11 @@ const ColonyPermissionEditDialog = ({
   const [selectedUser, setSelectedUser] = useState(null);
   const [selectedRoles, setSelectedRoles] = useState({});
   const [userRoles, setUserRoles] = useState([]);
-  /*  if (clickedUser) {
+
+  // When user clicked on a specific user entry
+  useEffect(() => {
     setSelectedUser(clickedUser);
-  } */
+  });
 
   const updateSelectedUser = useCallback(({ profile: { walletAddress } }) => {
     setSelectedUser(walletAddress);
