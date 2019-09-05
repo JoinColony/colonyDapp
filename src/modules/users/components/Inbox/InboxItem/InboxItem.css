@@ -48,7 +48,6 @@
 }
 
 .userAvatar {
-  margin-right: 10px;
   vertical-align: text-bottom;
 }
 
@@ -111,4 +110,9 @@
   display: inline-block;
   max-width: 38ch;
   vertical-align: bottom;
+}
+
+.avatarWrapper {
+  display: inline-block;
+  margin-right: 10px;
 }
