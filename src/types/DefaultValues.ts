@@ -1,8 +1,4 @@
-type KeyOfUndefined<T> = {
-  [P in keyof T]-?: undefined extends T[P] ? P : never;
-}[keyof T];
-
 /*
- * Pick only values that are optional and create a new type from it
+ Pick all the values from an object and make them `any` (handy for immutable default props)
  */
-export type DefaultValues<T> = Partial<Pick<T, KeyOfUndefined<T>>>;
+export type DefaultValues<V> = Record<keyof V, any>;

@@ -32,7 +32,6 @@ const colonyNamesReducer: ReducerType<AllColonyNamesMap> = (
 };
 
 export default withDataRecordMap(
-  // @ts-ignore
   new Set([ActionTypes.COLONY_NAME_FETCH, ActionTypes.COLONY_ADDRESS_FETCH]),
   ImmutableMap(),
 )(colonyNamesReducer);
