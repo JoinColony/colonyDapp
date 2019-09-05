@@ -2,6 +2,7 @@ import React, { useCallback, useMemo, useState } from 'react';
 
 import { defineMessages } from 'react-intl';
 
+import { DialogType } from '~core/Dialog';
 import { Address, createAddress } from '~types/index';
 import { DomainType } from '~immutable/index';
 import Heading from '~core/Heading';
