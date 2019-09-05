@@ -40,9 +40,9 @@ const renderTooltipContent = ({
       </p>
     )}
     {username && (
-      <span title={username} className={styles.userName}>
+      <p title={username} className={styles.userName}>
         <UserMention username={username} hasLink />
-      </span>
+      </p>
     )}
     <CopyableAddress full>{walletAddress}</CopyableAddress>
   </div>
@@ -67,7 +67,7 @@ const InfoPopover = ({ address, children, trigger = 'click' }: Props) => {
      * This wrapper is needed because, if the child in an in-line element, the
      * tooltip component won't trigger
      */}
-      {children && <div className={styles.content}>{children}</div>}
+      {children}
     </Tooltip>
   );
 };
