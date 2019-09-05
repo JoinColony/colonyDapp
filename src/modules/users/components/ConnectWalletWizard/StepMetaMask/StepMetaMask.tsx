@@ -63,7 +63,7 @@ interface State {
 }
 
 class MetaMask extends Component<Props, State> {
-  timerHandle: number;
+  timerHandle!: ReturnType<typeof setTimeout>;
 
   static displayName = 'users.ConnectWalletWizard.StepMetaMask';
 
@@ -122,7 +122,6 @@ class MetaMask extends Component<Props, State> {
      * This is here only to show a spinner on the button after being clicked
      * Without this, the user can't tell if the click actually registered
      */
-    // @ts-ignore
     this.timerHandle = setTimeout(async () => {
       await this.connectMetaMask();
     }, 500);

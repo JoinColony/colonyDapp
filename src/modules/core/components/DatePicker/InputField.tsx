@@ -21,7 +21,7 @@ interface Props {
 }
 
 class InputField extends Component<Props> {
-  inputNode: HTMLInputElement | null;
+  inputNode?: HTMLInputElement | null;
 
   registerInputNode = (ref: HTMLInputElement | null) => {
     const { innerRef } = this.props;
