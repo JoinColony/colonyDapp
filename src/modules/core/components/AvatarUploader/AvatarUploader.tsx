@@ -51,7 +51,7 @@ interface Props {
 }
 
 class AvatarUploader extends Component<Props> {
-  dropzoneRef: Dropzone | null;
+  dropzoneRef?: Dropzone | null;
 
   registerDropzone = (dropzone: Dropzone | null) => {
     this.dropzoneRef = dropzone;

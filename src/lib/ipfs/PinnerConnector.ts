@@ -28,7 +28,7 @@ enum PinnerActions {
 }
 
 class PinnerConnector {
-  _id: string;
+  _id?: string;
 
   _ipfs: IPFS;
 
@@ -36,7 +36,7 @@ class PinnerConnector {
 
   _pinnerIds: Set<string>;
 
-  _readyPromise: Promise<boolean> | void;
+  _readyPromise?: Promise<boolean> | void;
 
   _replicationRequests: Map<string, ReplicationRequest>;
 

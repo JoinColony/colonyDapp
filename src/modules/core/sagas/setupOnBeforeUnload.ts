@@ -13,7 +13,8 @@ const hasPendingTransactions = () => {
   return !!transactions.size;
 };
 
-const pinnerIsBusy = (ipfsNode: IPFSNode) => ipfsNode.pinner.busy;
+const pinnerIsBusy = (ipfsNode: IPFSNode) =>
+  !ipfsNode.pinner || ipfsNode.pinner.busy;
 
 const ddbIsBusy = (ddb: DDB) => ddb.busy;
 

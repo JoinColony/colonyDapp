@@ -29,9 +29,9 @@ const getClass = WrappedComponent => {
   class OmniPickerBase extends Component<Props, State> {
     id: string;
 
-    inputNode: HTMLInputElement | null;
+    inputNode?: HTMLInputElement | null;
 
-    omniPicker: OmniPicker | null;
+    omniPicker?: OmniPicker | null;
 
     static defaultProps = {
       getItem: (filteredData: OmniPickerData[], selectedIdx: number) =>

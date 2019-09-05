@@ -29,7 +29,7 @@ class EventStore extends Store {
     };
   }
 
-  _cache: AllEvents[] | void;
+  _cache?: AllEvents[] | void;
 
   constructor(orbitStore: OrbitDBStore, name: string, pinner: PinnerConnector) {
     super(orbitStore, name, pinner);

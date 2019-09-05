@@ -30,7 +30,7 @@ class IPFSNode {
 
   _ipfs: IPFS;
 
-  pinner: PinnerConnector;
+  pinner?: PinnerConnector;
 
   ready: Promise<boolean>;
 

@@ -72,9 +72,9 @@ type State = {
 };
 
 class Popover extends Component<Props, State> {
-  refNode: HTMLElement | null;
+  refNode?: HTMLElement | null;
 
-  contentNode: HTMLElement | null;
+  contentNode?: HTMLElement | null;
 
   id: string;
 
