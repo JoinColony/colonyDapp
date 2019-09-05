@@ -2,8 +2,8 @@ import { Map as ImmutableMap, fromJS } from 'immutable';
 
 import {
   AllColoniesMap,
+  Colony,
   ColonyRecord,
-  ColonyRecordType,
   DataRecord,
   TokenReferenceRecord,
   TokenReferenceRecordType,
@@ -21,7 +21,7 @@ const coloniesReducer: ReducerType<AllColoniesMap> = (
       const {
         payload: { tokens = {}, colonyAddress, ...colony },
       } = action;
-      const record = ColonyRecord({
+      const record = Colony({
         ...colony,
         colonyAddress,
         tokens: ImmutableMap(
@@ -33,7 +33,7 @@ const coloniesReducer: ReducerType<AllColoniesMap> = (
       });
       return state.get(colonyAddress)
         ? state.setIn([colonyAddress, 'record'], record)
-        : state.set(colonyAddress, DataRecord<ColonyRecordType>({ record }));
+        : state.set(colonyAddress, DataRecord<ColonyRecord>({ record }));
     }
     case ActionTypes.COLONY_PROFILE_UPDATE_SUCCESS: {
       const {
@@ -100,7 +100,7 @@ const coloniesReducer: ReducerType<AllColoniesMap> = (
         Address,
         TokenReferenceRecordType
       > | null = state.getIn([colonyAddress, 'record', 'tokens']);
-      const record = ColonyRecord({
+      const record = Colony({
         canMintNativeToken,
         ...colony,
         colonyAddress,
@@ -124,14 +124,14 @@ const coloniesReducer: ReducerType<AllColoniesMap> = (
         ? state
             .setIn([colonyAddress, 'record'], record)
             .setIn([colonyAddress, 'isFetching'], false)
-        : state.set(colonyAddress, DataRecord<ColonyRecordType>({ record }));
+        : state.set(colonyAddress, DataRecord<ColonyRecord>({ record }));
     }
     default:
       return state;
   }
 };
 
-export default withDataRecordMap<AllColoniesMap, ColonyRecordType>(
+export default withDataRecordMap<AllColoniesMap, ColonyRecord>(
   // @ts-ignore
   new Set([ActionTypes.COLONY_FETCH, ActionTypes.COLONY_SUB_START]),
   ImmutableMap(),
