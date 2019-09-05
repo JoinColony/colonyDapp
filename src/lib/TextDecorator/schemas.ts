@@ -1,8 +1,7 @@
 /* eslint import/prefer-default-export: 0 */
 
-import { ENS_DOMAIN_REGEX } from '../../modules/validations';
-
 const USER_PREFIX = '@';
+const ENS_DOMAIN_REGEX = '^([A-Za-z0-9](?:[A-Za-z0-9-.]{0,255}[A-Za-z0-9])?)';
 
 export const USERNAME_SCHEMA = {
   prefix: USER_PREFIX,
