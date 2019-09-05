@@ -3,8 +3,7 @@ import { FormikProps } from 'formik';
 import { defineMessages } from 'react-intl';
 
 import { TaskProps } from '~immutable/index';
-import { pipe, mapPayload, mergePayload } from '~utils/actions';
-import { useInitEditorState } from '~utils/hooks';
+import { pipe, mergePayload } from '~utils/actions';
 import { MultiLineEdit, ActionForm } from '~core/Fields';
 import { ActionTypes } from '~redux/index';
 
@@ -26,25 +25,15 @@ const TaskDescription = ({
   draftId,
 }: Props) => {
   const transform = useCallback(
-    pipe(
-      mapPayload(({ description: editor }) => ({
-        description: editor.getCurrentContent().getPlainText(),
-      })),
-      mergePayload({ colonyAddress, draftId }),
-    ),
+    pipe(mergePayload({ colonyAddress, draftId })),
     [colonyAddress, draftId],
   );
 
-  const descriptionValue = useInitEditorState(description);
-
-  if (disabled && !description) {
-    return null;
-  }
   return (
     <ActionForm
       enableReinitialize
       initialValues={{
-        description: descriptionValue,
+        description,
       }}
       submit={ActionTypes.TASK_SET_DESCRIPTION}
       success={ActionTypes.TASK_SET_DESCRIPTION_SUCCESS}
