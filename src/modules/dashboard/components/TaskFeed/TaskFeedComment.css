@@ -17,6 +17,7 @@
 }
 
 .commentUsername {
+  composes: inlineEllipsis from '~styles/text.css';
   font-size: var(--size-small);
   font-weight: var(--weight-medium);
 }
