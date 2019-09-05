@@ -91,14 +91,19 @@ const Permissions = ({ colonyAddress, openDialog }: Props) => {
     [getPermissionsForUser],
   );
 
+  const domainLabel = useMemo(
+    () => domains.find(({ value }) => value === selectedDomain).label,
+    [domains, selectedDomain],
+  );
+
   const handleEditPermissions = useCallback(
     userAddress =>
       openDialog('ColonyPermissionEditDialog', {
         colonyAddress,
-        domain: selectedDomain,
+        domain: { name: domainLabel, id: selectedDomain },
         clickedUser: userAddress || null,
       }),
-    [openDialog, colonyAddress, selectedDomain],
+    [openDialog, colonyAddress, selectedDomain, domainLabel],
   );
 
   const handleOnClick = useCallback(
@@ -116,11 +121,6 @@ const Permissions = ({ colonyAddress, openDialog }: Props) => {
         .map(createAddress)
         .sort(sortRootUsersFirst),
     [roles, selectedDomain, sortRootUsersFirst],
-  );
-
-  const domainLabel = useMemo(
-    () => domains.find(({ value }) => value === selectedDomain).label,
-    [domains, selectedDomain],
   );
 
   return (
@@ -178,7 +178,7 @@ const Permissions = ({ colonyAddress, openDialog }: Props) => {
             <Button
               appearance={{ theme: 'blue' }}
               text={MSG.addRole}
-              onClick={handleEditPermissions}
+              onClick={() => handleEditPermissions(null)}
             />
           </li>
         </ul>
