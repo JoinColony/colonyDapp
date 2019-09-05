@@ -4,7 +4,7 @@ import { defineMessages } from 'react-intl';
 import * as yup from 'yup';
 
 import { OpenDialog } from '~core/Dialog/types';
-import { Address } from '~types/index';
+import { Address, ENTER } from '~types/index';
 import { UserType } from '~immutable/index';
 import { ActionTypes } from '~redux/index';
 import { useAsyncFunction } from '~utils/hooks';
@@ -14,8 +14,6 @@ import Button from '~core/Button';
 import unfinishedProfileOpener from '~users/UnfinishedProfile';
 
 import { userDidClaimProfile } from '../../../users/checks';
-
-import { ENTER } from './keyTypes';
 
 import styles from './TaskComments.css';
 

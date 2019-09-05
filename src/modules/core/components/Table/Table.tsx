@@ -1,4 +1,4 @@
-import React, { ReactElement } from 'react';
+import React, { TableHTMLAttributes } from 'react';
 
 import { getMainClasses } from '~utils/css';
 import styles from './Table.css';
@@ -8,16 +8,12 @@ interface Appearance {
   separators?: 'borders' | 'none' | 'rows';
 }
 
-interface Props {
+interface Props extends TableHTMLAttributes<HTMLTableElement> {
   /** Appearance object */
   appearance?: Appearance;
 
-  /** Child elements to render */
-  children: ReactElement | ReactElement[];
-
   /** If table is expected to be larger than its parent, and will need to scroll to show all rows */
   scrollable?: boolean;
-  'data-test'?: string;
 }
 
 const displayName = 'Table';

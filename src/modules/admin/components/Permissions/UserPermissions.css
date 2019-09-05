@@ -1,0 +1,20 @@
+
+.main {
+  padding: 0 30px;
+  font-size: var(--size-tiny);
+  font-weight: var(--weight-semi);
+  white-space: nowrap;
+}
+
+.permission + .permission::before {
+  margin: 0 10px;
+  content: '/';
+}
+
+.pendingDot {
+  display: inline-block;
+  height: 10px;
+  width: 10px;
+  border-radius: 50%;
+  background-color: var(--golden);
+}

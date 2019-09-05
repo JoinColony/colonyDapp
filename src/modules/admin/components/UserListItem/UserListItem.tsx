@@ -1,39 +1,45 @@
-import React from 'react';
+import React, { KeyboardEvent, ReactNode, useCallback } from 'react';
 import { defineMessages } from 'react-intl';
 
+import Button from '~core/Button';
+import MaskedAddress from '~core/MaskedAddress';
 import { TableRow, TableCell } from '~core/Table';
 import UserMention from '~core/UserMention';
-import MaskedAddress from '~core/MaskedAddress';
-import Button from '~core/Button';
-import { useDataSubscriber } from '~utils/hooks';
-import { userSubscriber } from '../../../users/subscribers';
+import { ColonyAdminType, UserType } from '~immutable/index';
+import { Address, ENTER } from '~types/index';
 import HookedUserAvatar from '~users/HookedUserAvatar';
+import { getMainClasses } from '~utils/css';
+import { useDataSubscriber } from '~utils/hooks';
+
+import { userSubscriber } from '../../../users/subscribers';
 
 import styles from './UserListItem.css';
 
-import { ColonyAdminType, UserType } from '~immutable/index';
-import { Address } from '~types/index';
-
 const MSG = defineMessages({
   buttonRemove: {
-    id: 'admin.UserList.UserListItem.buttonRemove',
+    id: 'admin.UserListItem.buttonRemove',
     defaultMessage: 'Remove',
   },
   pending: {
-    id: 'admin.UserList.UserListItem.pending',
+    id: 'admin.UserListItem.pending',
     defaultMessage: 'Transaction pending',
   },
 });
 
 const UserAvatar = HookedUserAvatar({ fetchUser: false });
 
-const componentDisplayName = 'admin.UserList.UserListItem';
+const componentDisplayName = 'admin.UserListItem';
 
 interface Props {
   /*
    * User address
    */
   address: Address;
+
+  /*
+   * Children
+   */
+  children?: ReactNode;
 
   /*
    * Whether to show the fullname
@@ -54,21 +60,27 @@ interface Props {
   /*
    * Whether to show the remove button
    */
-  viewOnly: boolean;
+  viewOnly?: boolean;
+
+  /*
+   * Method to call when the table row is clicked
+   */
+  onClick?: (address: Address) => any;
 
   /*
    * Method to call when clicking the remove button
-   * Gets passed down to `UserListItem`
    */
-  onRemove: (arg0: ColonyAdminType) => any;
+  onRemove?: (arg0: ColonyAdminType) => any;
 }
 
 const UserListItem = ({
   address,
+  children,
   showDisplayName = false,
   showUsername = false,
   showMaskedAddress = false,
   viewOnly = true,
+  onClick: callbackFn,
   onRemove,
 }: Props) => {
   const { data: user } = useDataSubscriber<UserType>(
@@ -79,8 +91,35 @@ const UserListItem = ({
 
   const { profile: { username = undefined, displayName = undefined } = {} } =
     user || {};
+
+  const handleClick = useCallback(() => {
+    if (typeof callbackFn === 'function') {
+      callbackFn(address);
+    }
+  }, [address, callbackFn]);
+
+  const handleKeyPress = useCallback(
+    (evt: KeyboardEvent<HTMLElement>) => {
+      if (evt.key === ENTER) {
+        callbackFn(address);
+      }
+    },
+    [address, callbackFn],
+  );
+
+  const rowProps = callbackFn
+    ? {
+        onClick: handleClick,
+        onKeyPress: handleKeyPress,
+        tabIndex: 0,
+      }
+    : {};
+
   return (
-    <TableRow className={styles.main}>
+    <TableRow
+      className={getMainClasses({}, styles, { hasCallbackFn: !!callbackFn })}
+      {...rowProps}
+    >
       <TableCell className={styles.userAvatar}>
         <UserAvatar size="xs" address={address} user={user} />
       </TableCell>
@@ -103,16 +142,17 @@ const UserListItem = ({
           )}
         </span>
       </TableCell>
-      <TableCell className={styles.userRemove}>
-        {!viewOnly && (
+      {children}
+      {!viewOnly && onRemove && (
+        <TableCell className={styles.userRemove}>
           <Button
             className={styles.customRemoveButton}
             appearance={{ theme: 'primary' }}
             text={MSG.buttonRemove}
             onClick={onRemove}
           />
-        )}
-      </TableCell>
+        </TableCell>
+      )}
     </TableRow>
   );
 };

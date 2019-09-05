@@ -1,39 +1,37 @@
 /* Use td.className to be able to overwrite table styles */
 
 @value cellPadding: 20px;
-@value nameMargin: 10px;
 
 tr.main:hover .customRemoveButton {
   display: inline-block;
 }
 
 td.userAvatar {
-  padding: cellPadding cellPadding;
-  width: 76px;
+  padding: cellPadding;
 }
 
 td.userDetails {
   flex-wrap: wrap;
   padding: cellPadding cellPadding cellPadding 0;
-  width: calc(100% - 226px);
 }
 
 td.userRemove {
+  margin-left: auto;
   padding: cellPadding cellPadding;
   width: 150px;
 }
 
 .displayName {
-  margin-right: nameMargin;
   font-weight: var(--weight-medium);
   color: var(--grey-1);
 }
 
-.username {
-  margin-right: nameMargin;
+.displayName + .username {
+  margin-left: 5px;
 }
 
 .address {
+  display: block;
   width: 100%;
   font-size: var(--size-small);
 }
@@ -61,4 +59,15 @@ td.userRemove {
   width: 10px;
   border-radius: 50%;
   background-color: var(--golden);
+}
+
+/* State */
+
+.stateHasCallbackFn {
+  cursor: pointer;
+}
+
+.stateHasCallbackFn:focus {
+  /* negative offset to correctly provide table-row outlines */
+  outline-offset: -4px;
 }

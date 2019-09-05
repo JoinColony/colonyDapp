@@ -11,10 +11,27 @@
   border-bottom: 1px solid var(--temp-grey-5);
 }
 
+.tableWrapper {
+  margin-top: 35px;
+}
+
 .sidebar {
   margin-top: 80px;
 }
 
 .sidebar li {
   padding: 10px 0;
+}
+
+.userPermissionsCell {
+  margin-left: auto;
+}
+
+.main table .tableBody {
+  overflow-y: auto;
+  overflow-x: none;
+}
+
+.main table .tableBody tr {
+  overflow-x: auto;
 }
