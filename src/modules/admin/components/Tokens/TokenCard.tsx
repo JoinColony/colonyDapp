@@ -30,6 +30,10 @@ interface Props<T> {
 const displayName = 'admin.Tokens.TokenCard';
 
 const MSG = defineMessages({
+  nativeToken: {
+    id: 'dashboard.TokenCard.nativeToken',
+    defaultMessage: ' (Native Token)',
+  },
   unknownToken: {
     id: 'admin.TokenCard.unknownToken',
     defaultMessage: 'Unknown Token',
@@ -80,7 +84,9 @@ const TokenCard = <
           )}
           {'isNative' in tokenReference &&
             (tokenReference as ColonyTokenReferenceType).isNative && (
-              <span>*</span>
+              <span className={styles.nativeTokenText}>
+                <FormattedMessage {...MSG.nativeToken} />
+              </span>
             )}
         </div>
       </div>

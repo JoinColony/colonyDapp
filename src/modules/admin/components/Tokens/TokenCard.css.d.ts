@@ -3,6 +3,7 @@ export const main: string;
 export const cardHeading: string;
 export const iconContainer: string;
 export const tokenSymbol: string;
+export const nativeTokenText: string;
 export const balanceContent: string;
 export const balanceNumeral: string;
 export const balanceNotPositive: string;

@@ -27,10 +27,6 @@ const MSG = defineMessages({
     id: 'dashboard.Tokens.labelSelectDomain',
     defaultMessage: 'Select a domain',
   },
-  nativeTokenText: {
-    id: 'dashboard.Tokens.nativeTokenText',
-    defaultMessage: '*Native token: {nativeToken}',
-  },
   navItemMintNewTokens: {
     id: 'dashboard.Tokens.navItemMintNewTokens',
     defaultMessage: 'Mint New tokens',
