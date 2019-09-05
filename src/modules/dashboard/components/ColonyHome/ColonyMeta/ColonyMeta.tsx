@@ -118,7 +118,7 @@ const ColonyMeta = ({
             appearance={{ margin: 'none', size: 'small', theme: 'dark' }}
             text={MSG.websiteLabel}
           />
-          <span title={stripProtocol(website)}>
+          <span className={styles.link} title={stripProtocol(website)}>
             <ExternalLink href={website} text={stripProtocol(website)} />
           </span>
         </section>
@@ -129,7 +129,7 @@ const ColonyMeta = ({
             appearance={{ margin: 'none', size: 'small', theme: 'dark' }}
             text={MSG.guidelineLabel}
           />
-          <span title={stripProtocol(guideline)}>
+          <span className={styles.link} title={stripProtocol(guideline)}>
             <ExternalLink href={guideline} text={stripProtocol(guideline)} />
           </span>
         </section>
@@ -140,12 +140,14 @@ const ColonyMeta = ({
           text={MSG.founderLabel}
         />
         {founder ? (
-          <UserAvatar
-            key={`founder_${founder}`}
-            address={founder}
-            className={styles.userAvatar}
-            showInfo
-          />
+          <div className={styles.avatarWrapper}>
+            <UserAvatar
+              key={`founder_${founder}`}
+              address={founder}
+              className={styles.userAvatar}
+              showInfo
+            />
+          </div>
         ) : (
           <div className={styles.spinnerContainer}>
             <SpinnerLoader appearance={{ size: 'large' }} />
@@ -161,12 +163,14 @@ const ColonyMeta = ({
           {admins.map((adminAddress: string) => {
             if (admins && adminAddress) {
               return (
-                <UserAvatar
-                  key={`admin_${adminAddress}`}
-                  address={adminAddress}
-                  className={styles.userAvatar}
-                  showInfo
-                />
+                <div className={styles.avatarWrapper}>
+                  <UserAvatar
+                    key={`admin_${adminAddress}`}
+                    address={adminAddress}
+                    className={styles.userAvatar}
+                    showInfo
+                  />
+                </div>
               );
             }
             return (
