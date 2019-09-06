@@ -2,8 +2,8 @@ import { List, fromJS } from 'immutable';
 
 import {
   CurrentUserTransactionsType,
+  ContractTransaction,
   ContractTransactionRecord,
-  ContractTransactionRecordType,
   DataRecord,
 } from '~immutable/index';
 import { ReducerType, ActionTypes } from '~redux/index';
@@ -17,8 +17,8 @@ const currentUserTransactionsReducer: ReducerType<
       const { transactions } = action.payload;
       return state.set(
         'record',
-        List<ContractTransactionRecordType>(
-          transactions.map(tx => ContractTransactionRecord(fromJS(tx))),
+        List<ContractTransactionRecord>(
+          transactions.map(tx => ContractTransaction(fromJS(tx))),
         ),
       );
     }

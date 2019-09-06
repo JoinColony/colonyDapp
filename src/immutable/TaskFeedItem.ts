@@ -3,7 +3,7 @@ import { $ReadOnly } from 'utility-types';
 import { RecordOf, Record } from 'immutable';
 
 import {
-  ContractTransactionRecordType,
+  ContractTransactionRecord,
   ContractTransactionType,
 } from './ContractTransaction';
 import { TaskCommentRecordType, TaskCommentType } from './TaskComment';
@@ -19,7 +19,7 @@ export type TaskFeedItemRecordProps = Shared & {
   comment?: TaskCommentRecordType;
   event?: TaskEventRecordType;
   rating?: TaskRatingRecordType;
-  transaction?: ContractTransactionRecordType;
+  transaction?: ContractTransactionRecord;
 };
 
 export type TaskFeedItemType = $ReadOnly<

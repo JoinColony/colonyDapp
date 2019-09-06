@@ -8,7 +8,7 @@ import {
 
 import { Address, ENSName } from '~types/index';
 import { AllUsersRecord } from './AllUsers';
-import { ContractTransactionRecordType } from '../../ContractTransaction';
+import { ContractTransactionRecord } from '../../ContractTransaction';
 import { DataRecordType } from '../../Data';
 import { TokenReferenceRecordType } from '../../TokenReference';
 import { InboxItemRecordType } from '../../InboxItem';
@@ -20,7 +20,7 @@ import { TaskDraftId } from '~immutable/Task';
 export * from './AllUsers';
 
 export type CurrentUserTransactionsType = DataRecordType<
-  List<ContractTransactionRecordType>
+  List<ContractTransactionRecord>
 >;
 
 export type CurrentUserPermissionsType = ImmutableMap<
