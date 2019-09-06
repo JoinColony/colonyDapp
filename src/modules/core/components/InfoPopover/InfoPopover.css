@@ -1,25 +1,26 @@
 .main {
-  padding: 6px;
-  line-height: 18px;
-}
-
-.ellipsis {
-  composes: inlineEllipsis from '~styles/text.css';
-  display: block;
-  width: 360px;
+  padding: 9px 4px;
+  max-width: 430px;
+  font-size: var(--size-small);
 }
 
 .displayName {
-  composes: ellipsis;
-  font-size: var(--size-normal);
+  composes: inlineEllipsis from '~styles/text.css';
+  margin: 0 0 6px 0;
   font-weight: var(--weight-semi);
   color: var(--colony-black);
 }
 
 .userName {
-  composes: ellipsis;
+  composes: inlineEllipsis from '~styles/text.css';
+  margin: 0 0 6px 0;
 }
 
-.content {
-  display: inline-block;
+.userName a {
+  font-weight: var(--weight-semi);
+  color: var(--pink);
+}
+
+.address button {
+  height: auto;
 }

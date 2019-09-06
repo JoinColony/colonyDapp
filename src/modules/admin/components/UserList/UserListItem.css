@@ -10,6 +10,7 @@ tr.main:hover .customRemoveButton {
 td.userAvatar {
   padding: cellPadding cellPadding;
   width: 76px;
+  cursor: pointer;
 }
 
 td.userDetails {

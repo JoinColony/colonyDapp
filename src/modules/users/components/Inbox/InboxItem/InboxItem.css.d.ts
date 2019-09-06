@@ -15,3 +15,4 @@ export const fullWidthLink: string;
 export const spinnerWrapper: string;
 export const noStyleButton: string;
 export const additionalDetailsTruncate: string;
+export const avatarWrapper: string;

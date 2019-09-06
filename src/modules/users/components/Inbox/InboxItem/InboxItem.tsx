@@ -179,12 +179,14 @@ const InboxItem = ({
           <WithLink to={onClickRoute}>
             {unread && <UnreadIndicator type={getType(eventType)} />}
             {user && (
-              <UserAvatar
-                showInfo
-                size="xxs"
-                address={user.profile.walletAddress}
-                className={styles.userAvatar}
-              />
+              <div className={styles.avatarWrapper}>
+                <UserAvatar
+                  showInfo
+                  size="xxs"
+                  address={user.profile.walletAddress}
+                  className={styles.userAvatar}
+                />
+              </div>
             )}
             <span className={styles.inboxAction}>
               <FormattedMessage

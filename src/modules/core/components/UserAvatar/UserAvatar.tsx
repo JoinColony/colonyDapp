@@ -46,16 +46,18 @@ const UserAvatar = ({
 }: Props) => {
   const username = user && (user as UserType).profile.username;
   const avatar = (
-    <InfoPopover trigger={user && showInfo ? 'click' : 'disabled'} user={user}>
-      <Avatar
-        avatarURL={avatarURL}
-        className={className}
-        notSet={notSet}
-        placeholderIcon="circle-person"
-        seed={address && address.toLowerCase()}
-        size={size}
-        title={showInfo ? '' : username || address}
-      />
+    <InfoPopover trigger={showInfo ? 'click' : 'disabled'} address={address}>
+      <div>
+        <Avatar
+          avatarURL={avatarURL}
+          className={className}
+          notSet={notSet}
+          placeholderIcon="circle-person"
+          seed={address && address.toLowerCase()}
+          size={size}
+          title={showInfo ? '' : username || address}
+        />
+      </div>
     </InfoPopover>
   );
   if (showLink && username) {
