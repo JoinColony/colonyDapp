@@ -4,15 +4,15 @@ import { ReducerType, ActionTypes } from '~redux/index';
 import {
   AllTokensMap,
   TokenRecordType,
-  DataRecord,
+  FetchableData,
   TokenRecord,
 } from '~immutable/index';
 
 import { ZERO_ADDRESS } from '~utils/web3/constants';
-import { withDataRecordMap } from '~utils/reducers';
+import { withFetchableDataMap } from '~utils/reducers';
 
 const INITIAL_STATE: AllTokensMap = ImmutableMap({
-  [ZERO_ADDRESS]: DataRecord<TokenRecordType>({
+  [ZERO_ADDRESS]: FetchableData<TokenRecordType>({
     record: TokenRecord(
       fromJS({
         address: ZERO_ADDRESS,
@@ -58,14 +58,14 @@ const tokensReducer: ReducerType<AllTokensMap> = (
 
       return state.get(tokenAddress)
         ? state.setIn([tokenAddress, 'record'], record)
-        : state.set(tokenAddress, DataRecord<TokenRecordType>({ record }));
+        : state.set(tokenAddress, FetchableData<TokenRecordType>({ record }));
     }
     default:
       return state;
   }
 };
 
-export default withDataRecordMap<AllTokensMap, TokenRecordType>(
+export default withFetchableDataMap<AllTokensMap, TokenRecordType>(
   ActionTypes.TOKEN_INFO_FETCH,
   INITIAL_STATE,
 )(tokensReducer);

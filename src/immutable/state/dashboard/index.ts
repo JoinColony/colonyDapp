@@ -10,7 +10,7 @@ import { AllColoniesRecord } from './AllColonies';
 import { AllDomainsMap } from './AllDomains';
 import { AllRolesMap } from './AllRoles';
 import { AllTokensMap } from './AllTokens';
-import { DataRecordType } from '../../Data';
+import { FetchableDataRecord } from '../../FetchableData';
 import { TaskCommentRecordType } from '../../TaskComment';
 import { TaskDraftId, TaskRecordType } from '../../Task';
 import { TaskFeedItemRecordType } from '../../TaskFeedItem';
@@ -31,17 +31,17 @@ export type TaskMetadataMap = ImmutableMapType<
 
 export type AllTaskMetadataMap = ImmutableMapType<
   Address,
-  DataRecordType<TaskMetadataMap | null>
+  FetchableDataRecord<TaskMetadataMap | null>
 >;
 
 export type TasksMap = ImmutableMapType<
   TaskDraftId,
-  DataRecordType<TaskRecordType | null>
+  FetchableDataRecord<TaskRecordType | null>
 >;
 
 export type TaskFeedItemsMap = ImmutableMapType<
   TaskDraftId,
-  DataRecordType<ListType<TaskFeedItemRecordType>>
+  FetchableDataRecord<ListType<TaskFeedItemRecordType>>
 >;
 
 export type DashboardStateProps = {

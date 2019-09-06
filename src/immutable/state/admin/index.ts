@@ -1,16 +1,19 @@
 import { Collection, List, Map as ImmutableMap, RecordOf } from 'immutable';
 
 import { ENSName } from '~types/index';
-import { ContractTransactionRecord, DataRecordType } from '~immutable/index';
+import {
+  ContractTransactionRecord,
+  FetchableDataRecord,
+} from '~immutable/index';
 
 export type AdminTransactionsState = ImmutableMap<
   ENSName,
-  DataRecordType<List<ContractTransactionRecord>>
+  FetchableDataRecord<List<ContractTransactionRecord>>
 >;
 
 export type AdminUnclaimedTransactionsState = ImmutableMap<
   ENSName,
-  DataRecordType<List<ContractTransactionRecord>>
+  FetchableDataRecord<List<ContractTransactionRecord>>
 >;
 
 export interface AdminStateProps {

@@ -1,8 +1,8 @@
 import { Map as ImmutableMap } from 'immutable';
 
-import { DataRecord, IpfsDataType } from '~immutable/index';
+import { FetchableData, IpfsDataType } from '~immutable/index';
 
-import { withDataRecordMap } from '~utils/reducers';
+import { withFetchableDataMap } from '~utils/reducers';
 
 import { ActionTypes, ReducerType } from '~redux/index';
 
@@ -16,14 +16,14 @@ const ipfsDatasReducer: ReducerType<IpfsDataType> = (
       const { ipfsHash, ipfsData } = action.payload;
       return state.getIn([ipfsHash, 'record'])
         ? state
-        : state.set(ipfsHash, DataRecord({ record: ipfsData }));
+        : state.set(ipfsHash, FetchableData({ record: ipfsData }));
     }
     default:
       return state;
   }
 };
 
-export default withDataRecordMap<IpfsDataType, string>(
+export default withFetchableDataMap<IpfsDataType, string>(
   ActionTypes.IPFS_DATA_FETCH,
   ImmutableMap(),
 )(ipfsDatasReducer);

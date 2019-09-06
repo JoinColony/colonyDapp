@@ -9,7 +9,7 @@ import {
 import { Address, ENSName } from '~types/index';
 import { AllUsersRecord } from './AllUsers';
 import { ContractTransactionRecord } from '../../ContractTransaction';
-import { DataRecordType } from '../../Data';
+import { FetchableDataRecord } from '../../FetchableData';
 import { TokenReferenceRecordType } from '../../TokenReference';
 import { InboxItemRecordType } from '../../InboxItem';
 import { UserPermissionsRecordType } from '../../UserPermissions';
@@ -19,29 +19,29 @@ import { TaskDraftId } from '~immutable/Task';
 
 export * from './AllUsers';
 
-export type CurrentUserTransactionsType = DataRecordType<
+export type CurrentUserTransactionsType = FetchableDataRecord<
   List<ContractTransactionRecord>
 >;
 
 export type CurrentUserPermissionsType = ImmutableMap<
   ENSName,
-  DataRecordType<ImmutableMap<Address, UserPermissionsRecordType>>
+  FetchableDataRecord<ImmutableMap<Address, UserPermissionsRecordType>>
 >;
 
 export type CurrentUserColoniesType = ImmutableSet<Address>;
 
 export type CurrentUserTasksType = ImmutableSet<[Address, TaskDraftId]>;
 
-export type CurrentUserTokensType = DataRecordType<
+export type CurrentUserTokensType = FetchableDataRecord<
   List<TokenReferenceRecordType>
 >;
 
 export interface CurrentUser {
   activities: List<InboxItemRecordType>;
-  colonies: DataRecordType<CurrentUserColoniesType>;
+  colonies: FetchableDataRecord<CurrentUserColoniesType>;
   permissions: CurrentUserPermissionsType;
   profile: UserProfileRecordType;
-  tasks: DataRecordType<CurrentUserTasksType>;
+  tasks: FetchableDataRecord<CurrentUserTasksType>;
   tokens: CurrentUserTokensType;
   transactions: CurrentUserTransactionsType;
 }

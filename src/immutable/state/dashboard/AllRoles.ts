@@ -2,7 +2,7 @@ import { Map as ImmutableMap } from 'immutable';
 import { COLONY_ROLES } from '@colony/colony-js-client';
 
 import { Address } from '~types/index';
-import { DataRecordType } from '../../Data';
+import { FetchableDataRecord } from '../../FetchableData';
 
 export type UserRolesObject = { [role: string]: boolean };
 
@@ -15,4 +15,7 @@ export type ColonyRolesMap = ImmutableMap<
   ImmutableMap<Address, ImmutableMap<keyof COLONY_ROLES | 'pending', boolean>>
 >;
 
-export type AllRolesMap = ImmutableMap<Address, DataRecordType<ColonyRolesMap>>;
+export type AllRolesMap = ImmutableMap<
+  Address,
+  FetchableDataRecord<ColonyRolesMap>
+>;

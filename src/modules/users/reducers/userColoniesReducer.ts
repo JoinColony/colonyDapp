@@ -5,13 +5,13 @@ import {
 } from 'immutable';
 
 import { Address } from '~types/index';
-import { DataRecordType } from '~immutable/index';
+import { FetchableDataRecord } from '~immutable/index';
 import { ReducerType, ActionTypes } from '~redux/index';
-import { withDataRecordMap } from '~utils/reducers';
+import { withFetchableDataMap } from '~utils/reducers';
 
 type ColoniesMap = ImmutableMapType<
   Address,
-  DataRecordType<ImmutableSet<Address>>
+  FetchableDataRecord<ImmutableSet<Address>>
 >;
 
 const userColoniesReducer: ReducerType<ColoniesMap> = (
@@ -43,7 +43,7 @@ const userColoniesReducer: ReducerType<ColoniesMap> = (
   }
 };
 
-export default withDataRecordMap<ColoniesMap, Address[]>(
+export default withFetchableDataMap<ColoniesMap, Address[]>(
   new Set([
     ActionTypes.USER_SUBSCRIBED_COLONIES_FETCH,
     ActionTypes.USER_SUBSCRIBED_COLONIES_SUB_START,

@@ -2,11 +2,11 @@ import { List as ListType, Map as ImmutableMap, List, fromJS } from 'immutable';
 
 import {
   ContractTransaction,
-  DataRecord,
+  FetchableData,
   AdminTransactionsState,
   ContractTransactionRecord,
 } from '~immutable/index';
-import { withDataRecordMap } from '~utils/reducers';
+import { withFetchableDataMap } from '~utils/reducers';
 import { ActionTypes, ReducerType } from '~redux/index';
 
 const adminTransactionsReducer: ReducerType<AdminTransactionsState> = (
@@ -21,7 +21,7 @@ const adminTransactionsReducer: ReducerType<AdminTransactionsState> = (
       } = action;
       return state.set(
         key,
-        DataRecord<ListType<ContractTransactionRecord>>({
+        FetchableData<ListType<ContractTransactionRecord>>({
           record: List(transactions.map(tx => ContractTransaction(fromJS(tx)))),
         }),
       );
@@ -31,7 +31,7 @@ const adminTransactionsReducer: ReducerType<AdminTransactionsState> = (
   }
 };
 
-export default withDataRecordMap<
+export default withFetchableDataMap<
   AdminTransactionsState,
   ContractTransactionRecord
 >(ActionTypes.COLONY_TRANSACTIONS_FETCH, ImmutableMap())(

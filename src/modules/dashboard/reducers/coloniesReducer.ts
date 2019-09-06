@@ -4,11 +4,11 @@ import {
   AllColoniesMap,
   Colony,
   ColonyRecord,
-  DataRecord,
+  FetchableData,
   TokenReferenceRecord,
   TokenReferenceRecordType,
 } from '~immutable/index';
-import { withDataRecordMap } from '~utils/reducers';
+import { withFetchableDataMap } from '~utils/reducers';
 import { ActionTypes, ReducerType } from '~redux/index';
 import { createAddress, Address } from '~types/index';
 
@@ -33,7 +33,7 @@ const coloniesReducer: ReducerType<AllColoniesMap> = (
       });
       return state.get(colonyAddress)
         ? state.setIn([colonyAddress, 'record'], record)
-        : state.set(colonyAddress, DataRecord<ColonyRecord>({ record }));
+        : state.set(colonyAddress, FetchableData<ColonyRecord>({ record }));
     }
     case ActionTypes.COLONY_PROFILE_UPDATE_SUCCESS: {
       const {
@@ -124,14 +124,14 @@ const coloniesReducer: ReducerType<AllColoniesMap> = (
         ? state
             .setIn([colonyAddress, 'record'], record)
             .setIn([colonyAddress, 'isFetching'], false)
-        : state.set(colonyAddress, DataRecord<ColonyRecord>({ record }));
+        : state.set(colonyAddress, FetchableData<ColonyRecord>({ record }));
     }
     default:
       return state;
   }
 };
 
-export default withDataRecordMap<AllColoniesMap, ColonyRecord>(
+export default withFetchableDataMap<AllColoniesMap, ColonyRecord>(
   // @ts-ignore
   new Set([ActionTypes.COLONY_FETCH, ActionTypes.COLONY_SUB_START]),
   ImmutableMap(),

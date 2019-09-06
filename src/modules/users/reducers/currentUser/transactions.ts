@@ -4,14 +4,14 @@ import {
   CurrentUserTransactionsType,
   ContractTransaction,
   ContractTransactionRecord,
-  DataRecord,
+  FetchableData,
 } from '~immutable/index';
 import { ReducerType, ActionTypes } from '~redux/index';
-import { withDataRecord } from '~utils/reducers';
+import { withFetchableData } from '~utils/reducers';
 
 const currentUserTransactionsReducer: ReducerType<
   CurrentUserTransactionsType
-> = (state = DataRecord(), action) => {
+> = (state = FetchableData(), action) => {
   switch (action.type) {
     case ActionTypes.USER_TOKEN_TRANSFERS_FETCH_SUCCESS: {
       const { transactions } = action.payload;
@@ -27,6 +27,6 @@ const currentUserTransactionsReducer: ReducerType<
   }
 };
 
-export default withDataRecord<CurrentUserTransactionsType>(
+export default withFetchableData<CurrentUserTransactionsType>(
   ActionTypes.USER_TOKEN_TRANSFERS_FETCH,
 )(currentUserTransactionsReducer);

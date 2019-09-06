@@ -1,11 +1,11 @@
-import { DataRecordType } from '../Data';
+import { FetchableDataRecord } from '../FetchableData';
 
 /*
  * Given a data record and an optional TTL value, determine whether
  * the data should be fetched.
  */
 export const shouldFetchData = (
-  data: DataRecordType<any> | void,
+  data: FetchableDataRecord<any> | void,
   ttl: number,
   isFirstMount: boolean,
   fetchArgs: any[] = [],
@@ -32,12 +32,14 @@ export const shouldFetchData = (
     return true;
 
   // Check if the TTL is passed, if so, fetch again
+
+  const lastFetchedAt = data.get('lastFetchedAt');
   return !!(
-    data.get('lastFetchedAt') &&
-    (data.get('lastFetchedAt').getTime() > 0 &&
-      Date.now() - data.get('lastFetchedAt').getTime() > ttl)
+    lastFetchedAt &&
+    lastFetchedAt.getTime() > 0 &&
+    Date.now() - lastFetchedAt.getTime() > ttl
   );
 };
 
-export const isFetchingData = (data: DataRecordType<any> | undefined) =>
+export const isFetchingData = (data: FetchableDataRecord<any> | undefined) =>
   !data || data.isFetching;

@@ -3,7 +3,7 @@
 // eslint-disable-next-line import/no-extraneous-dependencies
 import createSandbox from 'jest-sandbox';
 
-import { DataRecord } from '../../Data';
+import { FetchableData } from '../../FetchableData';
 import { DomainRecord } from '../../Domain';
 
 import { shouldFetchData } from '../data';
@@ -43,7 +43,7 @@ describe('immutable utils - shouldFetchData', () => {
     sandbox.spyOn(global.Date, 'now').mockImplementation(() => now);
 
     // @ts-ignore
-    expect(shouldFetchData(DataRecord({ record, lastFetchedAt }), ttl)).toBe(
+    expect(shouldFetchData(FetchableData({ record, lastFetchedAt }), ttl)).toBe(
       true,
     );
   });
@@ -51,13 +51,13 @@ describe('immutable utils - shouldFetchData', () => {
   test('it should fetch when there is an error and it is the first mount', () => {
     const ttl = 1000 * 60 * 60; // one hour
     // @ts-ignore
-    expect(shouldFetchData(DataRecord({ error }), ttl, true)).toBe(true);
+    expect(shouldFetchData(FetchableData({ error }), ttl, true)).toBe(true);
   });
   // eslint-disable-next-line max-len
   test('it should fetch when record is undefined and it is the first mount', () => {
     const ttl = 1000 * 60 * 60; // one hour
     // @ts-ignore
-    expect(shouldFetchData(DataRecord(), ttl, true)).toBe(true);
+    expect(shouldFetchData(FetchableData(), ttl, true)).toBe(true);
   });
 
   /*
@@ -65,15 +65,15 @@ describe('immutable utils - shouldFetchData', () => {
    */
   test('it should not fetch when data is fetching', () => {
     // @ts-ignore
-    expect(shouldFetchData(DataRecord({ isFetching: true }))).toBe(false);
+    expect(shouldFetchData(FetchableData({ isFetching: true }))).toBe(false);
   });
   test('it should not fetch when data is loaded and no ttl is given', () => {
     // @ts-ignore
-    expect(shouldFetchData(DataRecord({ record }))).toBe(false);
+    expect(shouldFetchData(FetchableData({ record }))).toBe(false);
   });
   test('it should not fetch when there is an error', () => {
     // @ts-ignore
-    expect(shouldFetchData(DataRecord({ error }))).toBe(false);
+    expect(shouldFetchData(FetchableData({ error }))).toBe(false);
   });
   test('it should not fetch when a refresh is not needed', () => {
     const now = new Date(2018, 0, 1, 12, 30, 0).getTime();
@@ -83,12 +83,12 @@ describe('immutable utils - shouldFetchData', () => {
     sandbox.spyOn(global.Date, 'now').mockImplementation(() => now);
 
     // @ts-ignore
-    expect(shouldFetchData(DataRecord({ record, lastFetchedAt }), ttl)).toBe(
+    expect(shouldFetchData(FetchableData({ record, lastFetchedAt }), ttl)).toBe(
       false,
     );
   });
   test('it should not fetch when record is undefined', () => {
     // @ts-ignore
-    expect(shouldFetchData(DataRecord())).toBe(false);
+    expect(shouldFetchData(FetchableData())).toBe(false);
   });
 });
