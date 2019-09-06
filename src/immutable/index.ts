@@ -3,7 +3,6 @@
 export * from './utils/index';
 export * from './ActivityFeedItem';
 export * from './Colony';
-export * from './ColonyAdmin';
 export * from './TokenReference';
 export * from './ContractTransaction';
 export * from './Data';
