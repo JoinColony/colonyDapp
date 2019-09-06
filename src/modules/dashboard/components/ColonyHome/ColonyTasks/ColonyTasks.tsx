@@ -158,8 +158,8 @@ const ColonyTasks = ({
    * create task action button
    */
   if (
-    (draftIds.length === 0 && (canCreateTask && showEmptyState)) ||
-    (canCreateTask && !canMintTokens)
+    draftIds.length === 0 &&
+    ((canCreateTask && showEmptyState) || (canCreateTask && !canMintTokens))
   ) {
     return (
       <ActionButton
