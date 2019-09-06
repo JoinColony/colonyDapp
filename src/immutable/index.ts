@@ -5,7 +5,7 @@ export * from './ActivityFeedItem';
 export * from './Colony';
 export * from './TokenReference';
 export * from './ContractTransaction';
-export * from './Data';
+export * from './FetchableData';
 export * from './Domain';
 export * from './Message';
 export * from './Roles';

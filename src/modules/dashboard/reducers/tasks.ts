@@ -9,11 +9,11 @@ import { ReducerType, ActionTypes } from '~redux/index';
 import {
   TaskRecordType,
   TasksMap,
-  DataRecord,
+  FetchableData,
   TaskPayoutRecord,
   TaskRecord,
 } from '~immutable/index';
-import { withDataRecordMap } from '~utils/reducers';
+import { withFetchableDataMap } from '~utils/reducers';
 import { EventTypes, TaskStates } from '~data/constants';
 import { AllEvents, createAddress } from '~types/index';
 
@@ -124,7 +124,7 @@ const tasksReducer: ReducerType<TasksMap> = (
       } = action.payload;
       return state.set(
         draftId,
-        DataRecord<TaskRecordType>({
+        FetchableData<TaskRecordType>({
           error: undefined,
           isFetching: false,
           record: TaskRecord(
@@ -141,7 +141,7 @@ const tasksReducer: ReducerType<TasksMap> = (
       } = action.payload;
       return state.set(
         draftId,
-        DataRecord<TaskRecordType>({
+        FetchableData<TaskRecordType>({
           error: undefined,
           isFetching: false,
           record: TaskRecord(
@@ -167,7 +167,7 @@ const tasksReducer: ReducerType<TasksMap> = (
         taskEventReducer,
         TaskRecord(fromJS({ colonyAddress, draftId })),
       );
-      return state.set(draftId, DataRecord({ record }));
+      return state.set(draftId, FetchableData({ record }));
     }
 
     default:
@@ -175,7 +175,7 @@ const tasksReducer: ReducerType<TasksMap> = (
   }
 };
 
-export default withDataRecordMap<TasksMap, TaskRecordType>(
+export default withFetchableDataMap<TasksMap, TaskRecordType>(
   // @ts-ignore
   new Set([ActionTypes.TASK_FETCH, ActionTypes.TASK_SUB_START]),
   ImmutableMap(),

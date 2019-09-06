@@ -1,7 +1,7 @@
 import { Map as ImmutableMapType, fromJS } from 'immutable';
 
 import { ActionTypeString, AllActions } from '~redux/types/actions';
-import { DataRecord, DataRecordType } from '../../immutable';
+import { FetchableData, FetchableDataType } from '../../immutable';
 import { getActionTypes } from './utils';
 
 export type DataReducer<S extends ImmutableMapType<any, any>> = (
@@ -12,10 +12,10 @@ export type DataReducer<S extends ImmutableMapType<any, any>> = (
 const getNextState = <S extends ImmutableMapType<any, any>, V extends any>(
   state: S,
   key: any,
-  payload: Partial<DataRecordType<V>>,
+  payload: Partial<FetchableDataType<V>>,
 ) => {
-  const immutablePayload: typeof payload = fromJS(payload);
-  const data = DataRecord<V>(immutablePayload);
+  const immutablePayload = fromJS(payload);
+  const data = FetchableData<V>(immutablePayload);
 
   return state.has(key)
     ? state.mergeDeepIn([key], immutablePayload)
@@ -77,16 +77,19 @@ const handleError = <S extends ImmutableMapType<any, any>, V extends any>(
  * -----------------------------------------------------------------------------
  * Generics
  * -----------------------------------------------------------------------------
- * {S} The state this reducer handles, e.g. `ImmutableMapType<ENSName, DataRecord<ColonyRecord>>`
+ * {S} The state this reducer handles, e.g. `ImmutableMapType<ENSName, FetchableData<ColonyRecord>>`
  *
  * {V} The value wrapped in the data record, e.g. `ColonyRecord` or `ListType<TransationRecord>`
  */
-const withDataRecordMap = <S extends ImmutableMapType<any, any>, V extends any>(
+const withFetchableDataMap = <
+  S extends ImmutableMapType<any, any>,
+  V extends any
+>(
   actionTypes: ActionTypeString | Set<ActionTypeString>,
   initialState: S,
 ) =>
   /*
-   * @todo Remove initialState arg for `withDataRecordMap.
+   * @todo Remove initialState arg for `withFetchableDataMap.
    */
   (wrappedReducer: DataReducer<S>) => {
     const { fetchTypes, successTypes, errorTypes } = getActionTypes(
@@ -108,4 +111,4 @@ const withDataRecordMap = <S extends ImmutableMapType<any, any>, V extends any>(
     };
   };
 
-export default withDataRecordMap;
+export default withFetchableDataMap;

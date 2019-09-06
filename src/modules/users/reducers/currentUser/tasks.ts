@@ -3,16 +3,16 @@ import { Set as ImmutableSet } from 'immutable';
 import { Address } from '~types/index';
 import { ActionTypes, ReducerType } from '~redux/index';
 import {
-  DataRecord,
-  DataRecordType,
+  FetchableData,
+  FetchableDataRecord,
   CurrentUserTasksType,
 } from '~immutable/index';
-import { withDataRecord } from '~utils/reducers';
+import { withFetchableData } from '~utils/reducers';
 
-type State = DataRecordType<CurrentUserTasksType>;
+type State = FetchableDataRecord<CurrentUserTasksType>;
 
 const currentUserTasksReducer: ReducerType<State> = (
-  state = DataRecord<CurrentUserTasksType>(),
+  state = FetchableData<CurrentUserTasksType>(),
   action,
 ) => {
   switch (action.type) {
@@ -41,7 +41,7 @@ const currentUserTasksReducer: ReducerType<State> = (
   }
 };
 
-export default withDataRecord<State>(
+export default withFetchableData<State>(
   new Set([
     ActionTypes.USER_SUBSCRIBED_TASKS_FETCH,
     ActionTypes.USER_SUBSCRIBED_TASKS_SUB_START,

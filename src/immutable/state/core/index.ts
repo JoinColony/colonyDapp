@@ -7,7 +7,7 @@ import {
 import { CoreTransactionsRecord } from './CoreTransactions';
 import { GasPricesRecord } from './GasPrices';
 import { NetworkRecordType } from './Network';
-import { DataRecordType } from '../../Data';
+import { FetchableDataRecord } from '../../FetchableData';
 import { CoreMessagesRecord } from './Messages';
 import { ConnectionRecordType } from './Connection';
 
@@ -17,12 +17,15 @@ export * from './Network';
 export * from './Messages';
 export * from './Connection';
 
-export type IpfsDataType = ImmutableMapType<string, DataRecordType<string>>;
+export type IpfsDataType = ImmutableMapType<
+  string,
+  FetchableDataRecord<string>
+>;
 
 export type CoreStateProps = {
   gasPrices: GasPricesRecord;
   transactions: CoreTransactionsRecord;
-  network: DataRecordType<NetworkRecordType>;
+  network: FetchableDataRecord<NetworkRecordType>;
   ipfsData: IpfsDataType;
   messages: CoreMessagesRecord;
   connection: ConnectionRecordType;

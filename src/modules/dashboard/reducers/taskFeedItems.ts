@@ -4,12 +4,12 @@ import { ReducerType, ActionTypes } from '~redux/index';
 import {
   TaskFeedItemsMap,
   TaskFeedItemRecordType,
-  DataRecord,
+  FetchableData,
   TaskCommentRecord,
   TaskEventRecord,
   TaskFeedItemRecord,
 } from '~immutable/index';
-import { withDataRecordMap } from '~utils/reducers';
+import { withFetchableDataMap } from '~utils/reducers';
 import { EventTypes } from '~data/constants';
 import { AllEvents } from '~data/types';
 
@@ -85,7 +85,7 @@ const taskFeedItemsReducer: ReducerType<TaskFeedItemsMap> = (
           .filter(event => FEED_ITEM_TYPES.has(event.type))
           .map(mapTaskFeedItemEvent),
       );
-      return state.set(draftId, DataRecord({ record }));
+      return state.set(draftId, FetchableData({ record }));
     }
 
     default:
@@ -93,7 +93,7 @@ const taskFeedItemsReducer: ReducerType<TaskFeedItemsMap> = (
   }
 };
 
-export default withDataRecordMap(
+export default withFetchableDataMap(
   ActionTypes.TASK_FEED_ITEMS_SUB_START,
   ImmutableMap(),
 )(taskFeedItemsReducer);

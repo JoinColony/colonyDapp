@@ -1,15 +1,15 @@
 import { Map as ImmutableMap, RecordOf } from 'immutable';
 
-import { UserRecordType, DataRecordType } from '~immutable/index';
+import { UserRecordType, FetchableDataRecord } from '~immutable/index';
 
 export type UsernamesMap = ImmutableMap<
   string, // address
-  DataRecordType<string>
+  FetchableDataRecord<string>
 >;
 
 export type UsersMap = ImmutableMap<
   string, // address
-  DataRecordType<UserRecordType>
+  FetchableDataRecord<UserRecordType>
 >;
 
 export interface AllUsersProps {

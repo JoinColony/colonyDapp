@@ -1,16 +1,16 @@
 import { List } from 'immutable';
 
 import {
-  DataRecord,
-  DataRecordType,
+  FetchableData,
+  FetchableDataRecord,
   InboxItemRecord,
   InboxItemRecordType,
 } from '~immutable/index';
 import { ActionTypes } from '~redux/index';
-import { withDataRecord } from '~utils/reducers';
+import { withFetchableData } from '~utils/reducers';
 
 const inboxItemsReducer = (
-  state = DataRecord<List<InboxItemRecordType>>(),
+  state = FetchableData<List<InboxItemRecordType>>(),
   action,
 ) => {
   switch (action.type) {
@@ -46,6 +46,6 @@ const inboxItemsReducer = (
   }
 };
 
-export default withDataRecord<DataRecordType<List<InboxItemRecordType>>>(
-  ActionTypes.INBOX_ITEMS_FETCH,
-)(inboxItemsReducer);
+export default withFetchableData<
+  FetchableDataRecord<List<InboxItemRecordType>>
+>(ActionTypes.INBOX_ITEMS_FETCH)(inboxItemsReducer);

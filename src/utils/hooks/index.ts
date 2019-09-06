@@ -6,7 +6,11 @@ import { useDispatch, useMappedState } from 'redux-react-hook';
 import { Action, AllActions, ActionTypes } from '~redux/index';
 import { Address } from '~types/index';
 import { ActionTransformFnType } from '~utils/actions';
-import { DataRecordType, DomainType, RootStateRecord } from '~immutable/index';
+import {
+  FetchableDataRecord,
+  DomainType,
+  RootStateRecord,
+} from '~immutable/index';
 import promiseListener, { AsyncFunction } from '~redux/createPromiseListener';
 import { isFetchingData, shouldFetchData } from '~immutable/utils';
 import { getMainClasses } from '~utils/css';
@@ -27,7 +31,7 @@ type DataFetcher<T> = {
   select: (
     rootState: RootStateRecord,
     ...selectArgs: any[]
-  ) => DataRecordType<T> | undefined;
+  ) => FetchableDataRecord<T> | undefined;
   fetch: (...fetchArgs: any[]) => Action<any>;
   ttl?: number;
 };
@@ -36,7 +40,7 @@ type DataSubscriber<T> = {
   select: (
     rootState: RootStateRecord,
     ...selectArgs: any[]
-  ) => DataRecordType<T> | undefined;
+  ) => FetchableDataRecord<T> | undefined;
   start: (...subArgs: any[]) => Action<any>;
   stop: (...subArgs: any[]) => Action<any>;
 };
@@ -45,7 +49,7 @@ type DataMapFetcher<T> = {
   select: (
     rootState: RootStateRecord,
     keys: string[],
-  ) => ImmutableMapType<string, DataRecordType<T>>;
+  ) => ImmutableMapType<string, FetchableDataRecord<T>>;
   fetch: (key: any) => Action<any>;
   ttl?: number;
 };
@@ -54,7 +58,7 @@ type DataTupleFetcher<T> = {
   select: (
     rootState: RootStateRecord,
     args: [any, any][],
-  ) => ImmutableMapType<string, DataRecordType<T>>;
+  ) => ImmutableMapType<string, FetchableDataRecord<T>>;
   fetch: (arg0: [any, any]) => Action<any>;
   ttl?: number;
 };
@@ -63,7 +67,7 @@ type DataTupleSubscriber<T> = {
   select: (
     rootState: RootStateRecord,
     keys: [any, any][],
-  ) => ImmutableMapType<string, DataRecordType<T>>;
+  ) => ImmutableMapType<string, FetchableDataRecord<T>>;
   start: (...subArgs: any[]) => Action<any>;
   stop: (...subArgs: any[]) => Action<any>;
 };
@@ -91,7 +95,7 @@ export const usePrevious = (value: any) => {
   return ref.current;
 };
 
-const transformFetchedData = (data?: DataRecordType<any>) => {
+const transformFetchedData = (data?: FetchableDataRecord<any>) => {
   if (!data) return undefined;
   const record =
     typeof data.get === 'function' ? data.get('record') : data.record;
@@ -211,7 +215,7 @@ export const useDataFetcher = <T>(
 
   return {
     data: transformFetchedData(data),
-    isFetching: shouldFetch && isFetchingData(data),
+    isFetching: !!(shouldFetch && isFetchingData(data)),
     error: data && data.error ? data.error : undefined,
   };
 };
@@ -233,7 +237,10 @@ export const useDataMapFetcher = <T>(
   const memoizedKeys = useMemoWithFlatArray(() => keys, keys);
 
   const dispatch = useDispatch();
-  const allData: ImmutableMapType<string, DataRecordType<any>> = useMappedState(
+  const allData: ImmutableMapType<
+    string,
+    FetchableDataRecord<any>
+  > = useMappedState(
     useCallback(state => select(state, memoizedKeys), [select, memoizedKeys]),
   );
 
@@ -323,7 +330,7 @@ export const useDataSubscriber = <T>(
 
   return {
     data: transformFetchedData(data),
-    isFetching: shouldSubscribe && isFetchingData(data),
+    isFetching: !!(shouldSubscribe && isFetchingData(data)),
     error: data && data.error ? data.error : undefined,
   };
 };
@@ -338,7 +345,10 @@ export const useDataTupleSubscriber = <T>(
 ): DataObject<T>[] => {
   const memoizedKeys = useMemoWithTupleArray(() => keys, keys);
   const dispatch = useDispatch();
-  const allData: ImmutableMapType<string, DataRecordType<any>> = useMappedState(
+  const allData: ImmutableMapType<
+    string,
+    FetchableDataRecord<any>
+  > = useMappedState(
     useCallback(state => select(state, memoizedKeys), [select, memoizedKeys]),
   );
 
@@ -402,7 +412,10 @@ export const useDataTupleFetcher = <T>(
    */
   const memoizedKeys = useMemoWithTupleArray(() => keys, keys);
   const dispatch = useDispatch();
-  const allData: ImmutableMapType<string, DataRecordType<any>> = useMappedState(
+  const allData: ImmutableMapType<
+    string,
+    FetchableDataRecord<any>
+  > = useMappedState(
     useCallback(state => select(state, memoizedKeys), [select, memoizedKeys]),
   );
 

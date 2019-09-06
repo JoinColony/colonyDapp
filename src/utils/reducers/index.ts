@@ -1,8 +1,8 @@
 import findLast from 'lodash/findLast';
 
-export * from './withDataRecordMap';
-export { default as withDataRecordMap } from './withDataRecordMap';
-export { default as withDataRecord } from './withDataRecord';
+export * from './withFetchableDataMap';
+export { default as withFetchableDataMap } from './withFetchableDataMap';
+export { default as withFetchableData } from './withFetchableData';
 
 export const reduceToLastState = (events: any[], getKey, getValue) =>
   Array.from(

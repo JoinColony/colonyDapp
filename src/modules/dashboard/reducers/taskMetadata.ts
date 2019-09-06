@@ -6,10 +6,10 @@ import {
   TaskMetadataMap,
   AllTaskMetadataMap,
   TaskMetadataRecord,
-  DataRecord,
+  FetchableData,
 } from '~immutable/index';
 
-import { withDataRecordMap } from '~utils/reducers';
+import { withFetchableDataMap } from '~utils/reducers';
 
 type ColonyTasks = {
   [draftId: string]: {
@@ -50,7 +50,7 @@ const updateState = (
 
   return state.set(
     colonyAddress,
-    DataRecord({
+    FetchableData({
       error: undefined,
       isFetching: false,
       record,
@@ -90,7 +90,7 @@ const taskMetadataReducer: ReducerType<AllTaskMetadataMap> = (
   }
 };
 
-export default withDataRecordMap<AllTaskMetadataMap, TaskMetadataMap>(
+export default withFetchableDataMap<AllTaskMetadataMap, TaskMetadataMap>(
   new Set([
     ActionTypes.COLONY_TASK_METADATA_FETCH,
     ActionTypes.COLONY_TASK_METADATA_SUB_START,

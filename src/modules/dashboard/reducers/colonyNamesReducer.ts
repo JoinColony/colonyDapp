@@ -1,13 +1,13 @@
 import { Map as ImmutableMap } from 'immutable';
 
 import { ActionTypes, ReducerType } from '~redux/index';
-import { DataRecord, AllColonyNamesMap } from '~immutable/index';
-import { withDataRecordMap } from '~utils/reducers';
+import { FetchableData, AllColonyNamesMap } from '~immutable/index';
+import { withFetchableDataMap } from '~utils/reducers';
 
 const updateState = (state: AllColonyNamesMap, key: any, value: string) =>
   state.getIn([key, 'record'])
     ? state
-    : state.set(key, DataRecord({ record: value }));
+    : state.set(key, FetchableData({ record: value }));
 
 const colonyNamesReducer: ReducerType<AllColonyNamesMap> = (
   state = ImmutableMap(),
@@ -21,7 +21,7 @@ const colonyNamesReducer: ReducerType<AllColonyNamesMap> = (
 
       /*
        * Maintain a two-directional map, so that we can look up by colonyName
-       * or colonyAddress and get the same DataRecord interface.
+       * or colonyAddress and get the same FetchableData interface.
        */
       const updated = updateState(state, colonyAddress, colonyName);
       return updateState(updated, colonyName, colonyAddress);
@@ -31,7 +31,7 @@ const colonyNamesReducer: ReducerType<AllColonyNamesMap> = (
   }
 };
 
-export default withDataRecordMap(
+export default withFetchableDataMap(
   new Set([ActionTypes.COLONY_NAME_FETCH, ActionTypes.COLONY_ADDRESS_FETCH]),
   ImmutableMap(),
 )(colonyNamesReducer);

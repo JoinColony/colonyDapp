@@ -2,16 +2,16 @@ import { List, fromJS } from 'immutable';
 
 import {
   CurrentUserTokensType,
-  DataRecord,
+  FetchableData,
   TokenReferenceRecord,
   TokenReferenceRecordType,
 } from '~immutable/index';
 import { ReducerType, ActionTypes } from '~redux/index';
 
-import { withDataRecord } from '~utils/reducers';
+import { withFetchableData } from '~utils/reducers';
 
 const currentUserTokensReducer: ReducerType<CurrentUserTokensType> = (
-  state = DataRecord(),
+  state = FetchableData(),
   action,
 ) => {
   switch (action.type) {
@@ -29,6 +29,6 @@ const currentUserTokensReducer: ReducerType<CurrentUserTokensType> = (
   }
 };
 
-export default withDataRecord<CurrentUserTokensType>(
+export default withFetchableData<CurrentUserTokensType>(
   ActionTypes.USER_TOKENS_FETCH,
 )(currentUserTokensReducer);

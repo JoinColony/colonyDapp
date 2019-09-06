@@ -1,10 +1,10 @@
 import { Map as ImmutableMap, fromJS } from 'immutable';
 
-import { withDataRecordMap } from '~utils/reducers';
+import { withFetchableDataMap } from '~utils/reducers';
 import {
   UserRecord,
   UserProfileRecord,
-  DataRecord,
+  FetchableData,
   UserRecordType,
   UsersMap,
 } from '~immutable/index';
@@ -19,7 +19,7 @@ const userProfilesReducer: ReducerType<UsersMap> = (
       const { profileData, walletAddress, balance } = action.payload;
       return state.mergeDeepIn(
         [walletAddress],
-        DataRecord({
+        FetchableData({
           error: undefined,
           lastFetchedAt: new Date(),
           record: UserRecord({
@@ -76,7 +76,7 @@ const userProfilesReducer: ReducerType<UsersMap> = (
   }
 };
 
-export default withDataRecordMap<UsersMap, UserRecordType>(
+export default withFetchableDataMap<UsersMap, UserRecordType>(
   new Set([ActionTypes.USER_FETCH, ActionTypes.USER_SUB_START]),
   ImmutableMap(),
 )(userProfilesReducer);

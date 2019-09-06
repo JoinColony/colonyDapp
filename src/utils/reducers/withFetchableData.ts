@@ -1,20 +1,20 @@
-import { DataRecordType } from '../../immutable';
+import { FetchableDataRecord } from '../../immutable';
 import { AllActions, ActionTypeString } from '~redux/types/actions';
 import { ReducerType } from '~redux/types';
 
 import { getActionTypes } from './utils';
 
-const handleFetch = <T extends DataRecordType<any>>(state: T) =>
+const handleFetch = <T extends FetchableDataRecord<any>>(state: T) =>
   state.set('isFetching', true);
 
-const handleSuccess = <T extends DataRecordType<any>>(state: T) =>
+const handleSuccess = <T extends FetchableDataRecord<any>>(state: T) =>
   state.merge({
     error: undefined,
     isFetching: false,
     lastFetchedAt: new Date(),
   });
 
-const handleError = <T extends DataRecordType<any>>(
+const handleError = <T extends FetchableDataRecord<any>>(
   state: T,
   { payload: error }: any,
 ) =>
@@ -23,7 +23,7 @@ const handleError = <T extends DataRecordType<any>>(
     error: error.message || error.toString(),
   });
 
-const withDataRecord = <T extends DataRecordType<any>>(
+const withFetchableData = <T extends FetchableDataRecord<any>>(
   actionTypes: ActionTypeString | Set<ActionTypeString>,
 ) => (wrappedReducer: ReducerType<T>) => {
   // Set up fetch/success/error types according to the usual pattern
@@ -44,4 +44,4 @@ const withDataRecord = <T extends DataRecordType<any>>(
   };
 };
 
-export default withDataRecord;
+export default withFetchableData;
