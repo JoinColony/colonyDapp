@@ -64,10 +64,6 @@ const InfoPopover = ({ address, children, trigger = 'click' }: Props) => {
       trigger={trigger}
       darkTheme={false}
     >
-      {/*
-       * This wrapper is needed because, if the child in an in-line element, the
-       * tooltip component won't trigger
-       */}
       {children}
     </Tooltip>
   );
