@@ -14,6 +14,7 @@ interface Appearance {
   align?: 'right';
   direction?: 'horizontal';
   colorSchema?: 'dark' | 'grey' | 'transparent';
+  helpAlign?: 'right';
   size?: 'small';
 }
 
