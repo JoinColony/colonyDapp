@@ -25,6 +25,6 @@ describe('InputLabel intl={intl} component', () => {
     const wrapper = shallowWithIntl(
       <InputLabel id="foo" help="halp" label="awesome" />,
     );
-    expect(wrapper.html()).toContain('(halp)');
+    expect(wrapper.html()).toContain('<span>(</span>halp<span>)</span>');
   });
 });
