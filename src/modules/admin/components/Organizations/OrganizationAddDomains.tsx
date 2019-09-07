@@ -18,6 +18,10 @@ const MSG = defineMessages({
     id: 'admin.Organizations.OrganizationAddDomains.labelAddDomain',
     defaultMessage: 'Add New Domain',
   },
+  helpText: {
+    id: 'admin.Organizations.OrganizationAddDomains.helpText',
+    defaultMessage: 'This cannot be undone',
+  },
   placeholderAddAdmins: {
     id: 'admin.Organizations.OrganizationAddDomains.placeholderAddAdmins',
     defaultMessage: 'Search for a user or paste a wallet address',
@@ -60,11 +64,16 @@ const OrganizationAddDomains = ({ colonyAddress }: Props) => {
         {({ status, isSubmitting, isValid }) => (
           <div className={styles.inputWrapper}>
             <div className={styles.domainInput}>
-              <Input name="domainName" label={MSG.labelAddDomain} />
+              <Input
+                appearance={{ helpAlign: 'right', theme: 'fat' }}
+                help={MSG.helpText}
+                label={MSG.labelAddDomain}
+                name="domainName"
+              />
             </div>
             <div className={styles.submitButton}>
               <Button
-                appearance={{ theme: 'primary', size: 'medium' }}
+                appearance={{ theme: 'primary', size: 'large' }}
                 style={{ width: styles.wideButton }}
                 text={MSG.buttonAddDomain}
                 type="submit"
