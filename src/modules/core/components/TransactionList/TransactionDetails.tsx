@@ -1,17 +1,21 @@
 import React from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 
-import { useDataSubscriber } from '~utils/hooks';
-import { colonySubscriber } from '../../../dashboard/subscribers';
-import MaskedAddress from '~core/MaskedAddress';
-import Link from '~core/Link';
-import { Address, ENSName } from '~types/index';
 import {
+  UserRecord,
+  ColonyRecord,
+  TaskRecord,
   ColonyType,
   ContractTransactionType,
   TaskType,
   UserProfileType,
 } from '~immutable/index';
+import { useDataSubscriber } from '~utils/hooks';
+import { colonySubscriber } from '../../../dashboard/subscribers';
+import MaskedAddress from '~core/MaskedAddress';
+import Link from '~core/Link';
+import { Address, ENSName } from '~types/index';
+
 import styles from './TransactionDetails.css';
 
 const MSG = defineMessages({
@@ -48,7 +52,11 @@ interface HookedProps extends Props {
 }
 
 const UserDetails = ({
-  user: { displayName: userDisplayName = '', username = '', walletAddress },
+  user: {
+    displayName: userDisplayName = '',
+    username = '',
+    walletAddress,
+  } = UserRecord().profile,
   address = walletAddress,
   showMaskedAddress,
 }: {
@@ -68,7 +76,10 @@ const UserDetails = ({
 );
 
 const ColonyDetails = ({
-  colony: { displayName: colonyDisplayName, colonyAddress },
+  colony: {
+    displayName: colonyDisplayName,
+    colonyAddress,
+  } = ColonyRecord().toJS(),
   address = colonyAddress,
   showMaskedAddress,
 }: {
@@ -88,7 +99,7 @@ const ColonyDetails = ({
 
 const TaskDetails = ({
   colonyName,
-  task: { draftId, title },
+  task: { draftId, title } = TaskRecord().toJS(),
 }: {
   task: TaskType;
   colonyName: ENSName;
