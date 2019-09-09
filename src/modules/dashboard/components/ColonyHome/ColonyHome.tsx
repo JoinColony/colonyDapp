@@ -226,10 +226,20 @@ const ColonyHome = ({
   return (
     <div className={styles.main}>
       <aside className={styles.colonyInfo}>
-        <ColonyMeta
-          colony={colony}
-          canAdminister={!isInRecoveryMode && canAdminister(permissions)}
-        />
+        <div className={styles.metaContainer}>
+          <ColonyMeta
+            colony={colony}
+            canAdminister={!isInRecoveryMode && canAdminister(permissions)}
+          />
+        </div>
+        <div className={styles.domainContainer}>
+          <ColonyDomains
+            noTitle
+            colonyAddress={colonyAddress}
+            filteredDomainId={filteredDomainId}
+            setFilteredDomainId={setFilteredDomainId}
+          />
+        </div>
       </aside>
       <main className={styles.content}>
         <Tabs>
@@ -270,11 +280,6 @@ const ColonyHome = ({
             loading={isTaskBeingCreated}
           />
         )}
-        <ColonyDomains
-          colonyAddress={colonyAddress}
-          filteredDomainId={filteredDomainId}
-          setFilteredDomainId={setFilteredDomainId}
-        />
       </aside>
       {isInRecoveryMode && <RecoveryModeAlert />}
     </div>

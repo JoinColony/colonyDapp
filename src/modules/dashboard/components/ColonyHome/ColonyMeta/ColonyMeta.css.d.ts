@@ -6,6 +6,7 @@ export const link: string;
 export const editColony: string;
 export const avatarWrapper: string;
 export const userAvatar: string;
-export const colonyAvatar: string;
+export const colonyAvatarAndName: string;
 export const dynamicTextSection: string;
+export const simpleLink: string;
 export const spinnerContainer: string;

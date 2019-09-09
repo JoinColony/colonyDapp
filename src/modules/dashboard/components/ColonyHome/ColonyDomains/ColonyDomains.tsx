@@ -13,12 +13,13 @@ interface Props {
   colonyAddress: Address;
   filteredDomainId: number;
   setFilteredDomainId: Function;
+  noTitle?: boolean;
 }
 
 const MSG = defineMessages({
   allDomains: {
     id: 'dashboard.ColonyDomains.allDomains',
-    defaultMessage: 'All',
+    defaultMessage: 'All Domains',
   },
   title: {
     id: 'dashboard.ColonyDomains.title',
@@ -35,6 +36,7 @@ const ColonyDomains = ({
   colonyAddress,
   setFilteredDomainId,
   filteredDomainId,
+  noTitle,
 }: Props) => {
   // eslint-disable-next-line prettier/prettier
   const { data: domains } = useDataFetcher<DomainType[]>(
@@ -44,11 +46,13 @@ const ColonyDomains = ({
   );
 
   return (
-    <ul className={styles.domainsFilters}>
-      <Heading
-        appearance={{ size: 'normal', weight: 'bold' }}
-        text={MSG.title}
-      />
+    <ul>
+      {!noTitle && (
+        <Heading
+          appearance={{ size: 'normal', weight: 'bold' }}
+          text={MSG.title}
+        />
+      )}
       <li>
         <Button
           className={getActiveDomainFilterClass(0, filteredDomainId)}

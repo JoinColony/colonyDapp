@@ -13,10 +13,12 @@
 
 .description {
   margin-top: 15px;
+  margin-left: 52px;
 }
 
 .dynamicSection {
   margin-top: 25px;
+  margin-left: 52px;
 }
 
 .link {
@@ -46,13 +48,19 @@
   cursor: pointer;
 }
 
-.colonyAvatar {
+.colonyAvatarAndName {
   position: relative;
+  display: flex;
 }
 
 .dynamicTextSection {
   composes: dynamicSection;
   composes: multiLineEllipsis from '~styles/text.css';
+}
+
+.simpleLink {
+  font-weight: var(--weight-normal);
+  color: var(--text);
 }
 
 .spinnerContainer {

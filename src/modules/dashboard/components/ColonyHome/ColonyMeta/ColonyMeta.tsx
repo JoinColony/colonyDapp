@@ -1,17 +1,14 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { defineMessages } from 'react-intl';
 
 import { stripProtocol, multiLineTextEllipsis } from '~utils/strings';
-import { useOldRoles } from '~utils/hooks';
 import { ColonyType } from '~immutable/index';
+import Button from '~core/Button';
 import Heading from '~core/Heading';
 import Icon from '~core/Icon';
 import Link from '~core/Link';
-import { SpinnerLoader } from '~core/Preloaders';
 import ExternalLink from '~core/ExternalLink';
-import CopyableAddress from '~core/CopyableAddress';
 import HookedColonyAvatar from '~dashboard/HookedColonyAvatar';
-import HookedUserAvatar from '~users/HookedUserAvatar';
 import ColonySubscribe from './ColonySubscribe';
 import styles from './ColonyMeta.css';
 
@@ -28,22 +25,21 @@ const MSG = defineMessages({
     id: 'dashboard.ColonyHome.ColonyMeta.guidelineLabel',
     defaultMessage: 'Contribute Guidelines',
   },
-  founderLabel: {
-    id: 'dashboard.ColonyHome.ColonyMeta.founderLabel',
-    defaultMessage: 'Colony Founder',
-  },
-  adminsLabel: {
-    id: 'dashboard.ColonyHome.ColonyMeta.adminsLabel',
-    defaultMessage: 'Colony Admins',
-  },
   editColonyTitle: {
     id: 'dashboard.ColonyHome.ColonyMeta.editColonyTitle',
     defaultMessage: 'Edit Colony',
   },
+  more: {
+    id: 'dashboard.ColonyHome.ColonyMeta.more',
+    defaultMessage: 'More',
+  },
+  hide: {
+    id: 'dashboard.ColonyHome.ColonyMeta.hide',
+    defaultMessage: 'Hide',
+  },
 });
 
 const ColonyAvatar = HookedColonyAvatar({ fetchColony: false });
-const UserAvatar = HookedUserAvatar();
 
 interface Props {
   colony: ColonyType;
@@ -62,21 +58,17 @@ const ColonyMeta = ({
   colony,
   canAdminister,
 }: Props) => {
-  const { data: roles } = useOldRoles(colonyAddress);
-  const { admins = [], founder = undefined } = roles || {};
-
+  const [expanded, expandDescription] = useState(false);
   return (
     <div className={styles.main}>
-      <div className={styles.colonyAvatar}>
+      <section className={styles.colonyAvatarAndName}>
         <ColonyAvatar
           className={styles.avatar}
           colonyAddress={colonyAddress}
           colony={colony}
-          size="xl"
+          size="s"
         />
         <ColonySubscribe colonyAddress={colonyAddress} />
-      </div>
-      <section>
         <Heading appearance={{ margin: 'none', size: 'medium', theme: 'dark' }}>
           <>
             <span title={displayName}>
@@ -102,85 +94,43 @@ const ColonyMeta = ({
       </section>
       {description && (
         <section className={styles.description}>
-          <p>{description}</p>
-        </section>
-      )}
-      <section className={styles.dynamicTextSection}>
-        <Heading
-          appearance={{ margin: 'none', size: 'small', theme: 'dark' }}
-          text={MSG.addressLabel}
-        />
-        <CopyableAddress>{colonyAddress}</CopyableAddress>
-      </section>
-      {website && (
-        <section className={styles.dynamicTextSection}>
-          <Heading
-            appearance={{ margin: 'none', size: 'small', theme: 'dark' }}
-            text={MSG.websiteLabel}
-          />
-          <span className={styles.link} title={stripProtocol(website)}>
-            <ExternalLink href={website} text={stripProtocol(website)} />
-          </span>
-        </section>
-      )}
-      {guideline && (
-        <section className={styles.dynamicTextSection}>
-          <Heading
-            appearance={{ margin: 'none', size: 'small', theme: 'dark' }}
-            text={MSG.guidelineLabel}
-          />
-          <span className={styles.link} title={stripProtocol(guideline)}>
-            <ExternalLink href={guideline} text={stripProtocol(guideline)} />
-          </span>
-        </section>
-      )}
-      <section className={styles.dynamicSection}>
-        <Heading
-          appearance={{ margin: 'none', size: 'small', theme: 'dark' }}
-          text={MSG.founderLabel}
-        />
-        {founder ? (
-          <div className={styles.avatarWrapper}>
-            <UserAvatar
-              key={`founder_${founder}`}
-              address={founder}
-              className={styles.userAvatar}
-              showInfo
+          <p>
+            {multiLineTextEllipsis(description, 88)}
+            {!expanded && (
+              <Button
+                onClick={() => {
+                  expandDescription(true);
+                }}
+                text={MSG.more}
+                appearance={{ theme: 'blue' }}
+              />
+            )}
+          </p>
+          {expanded && website && (
+            <ExternalLink
+              className={styles.simpleLink}
+              href={website}
+              text={stripProtocol(website)}
             />
-          </div>
-        ) : (
-          <div className={styles.spinnerContainer}>
-            <SpinnerLoader appearance={{ size: 'large' }} />
-          </div>
-        )}
-      </section>
-      {admins && admins.length ? (
-        <section className={styles.dynamicSection}>
-          <Heading
-            appearance={{ margin: 'none', size: 'small', theme: 'dark' }}
-            text={MSG.adminsLabel}
-          />
-          {admins.map((adminAddress: string) => {
-            if (admins && adminAddress) {
-              return (
-                <div className={styles.avatarWrapper}>
-                  <UserAvatar
-                    key={`admin_${adminAddress}`}
-                    address={adminAddress}
-                    className={styles.userAvatar}
-                    showInfo
-                  />
-                </div>
-              );
-            }
-            return (
-              <div className={styles.spinnerContainer}>
-                <SpinnerLoader appearance={{ size: 'large' }} />
-              </div>
-            );
-          })}
+          )}
+          {expanded && guideline && (
+            <ExternalLink
+              className={styles.simpleLink}
+              href={guideline}
+              text={stripProtocol(guideline)}
+            />
+          )}
+          {expanded && (
+            <Button
+              onClick={() => {
+                expandDescription(false);
+              }}
+              text={MSG.hide}
+              appearance={{ theme: 'blue' }}
+            />
+          )}
         </section>
-      ) : null}
+      )}
     </div>
   );
 };
