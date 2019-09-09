@@ -1,13 +1,13 @@
 .subscribe, .unsubscribe {
   padding: 0;
-  height: 26px;
-  width: 26px;
+  height: 15px;
+  width: 15px;
   position: relative;
-  top: -10px;
-  left: -26px;
+  top: 19px;
+  left: -11px;
   border: none;
   border-radius: 100%;
-  font-size: 18px;
+  font-size: 13px;
   line-height: 100%;
   color: white;
   cursor: pointer;
@@ -16,7 +16,7 @@
 .subscribe::before, .unsubscribe::before {
   width: 100%;
   position: absolute;
-  top: 4px;
+  top: 1px;
   left: 0;
   content: '\2605';
 }

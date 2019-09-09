@@ -3,10 +3,10 @@
 .main {
   composes: stretchVertical stretchHorizontal from '~styles/layout.css';
   display: grid;
-  padding: 130px 80px; /* vertical padding of 60px + nav height (70px) */
+  padding: 16px 18px; /* vertical padding of 60px + nav height (70px) */
   overflow: auto;
   background: var(--gradient-default);
-  grid-template-columns: minmax(200px, 260px) minmax(360px, auto) minmax(120px, 200px);
+  grid-template-columns: minmax(275px, 260px) minmax(360px, auto) minmax(120px, 200px);
   grid-template-rows: auto;
   column-gap: 80px;
 }
@@ -14,6 +14,17 @@
 .colonyInfo {
   grid-column: 1;
   grid-row: 1;
+}
+
+.domainContainer {
+  margin-bottom: 40px;
+  margin-left: 43px;
+  padding-top: 19px;
+  border-top: 1px solid var(--temp-grey-5);
+}
+
+.metaContainer {
+  padding-bottom: 17px;
 }
 
 .content {
