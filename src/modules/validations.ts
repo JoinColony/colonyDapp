@@ -13,9 +13,16 @@ import en from '../i18n/en-validation.json';
 
 yup.setLocale(en);
 
+/*
+ * The ens domain regex is composed of
+ * ^ start match
+ * [A-Za-z0-9] allow upper case, lower case, numerals
+ * [^.] negate to not allow dots / periods
+ * {1,255} match at least 1 and at most 255 chars
+ * $ end match
+ */
 // eslint-disable-next-line import/prefer-default-export
-export const ENS_DOMAIN_REGEX =
-  '^([A-Za-z0-9](?:[A-Za-z0-9-.]{0,255}[A-Za-z0-9])?)';
+export const ENS_DOMAIN_REGEX = '^[A-Za-z0-9][^.]{1,255}$';
 
 /* Custom validators */
 function equalTo(ref, msg) {
