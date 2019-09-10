@@ -16,7 +16,7 @@ function* connectionStatsSubStart() {
       pinner: { _pinnerIds },
       pinner,
     } = ipfsNode;
-    const { _stores } = ddb;
+    const { stores } = ddb;
 
     channel = eventChannel(emitter => {
       let timeout;
@@ -37,8 +37,8 @@ function* connectionStatsSubStart() {
           const pingAnswers = await Promise.all(
             pinners.map(id => _ipfs.ping(id, { count: 1 })),
           );
-          const openStores = _stores.size;
-          const busyStores = Array.from(_stores.values())
+          const openStores = stores.size;
+          const busyStores = Array.from(stores.values())
             .filter((store: any) => store.busy)
             .map((store: any) => store.address.toString());
           const ping =

@@ -1,5 +1,3 @@
-/* eslint-disable no-underscore-dangle */
-
 import localStorage from 'localforage';
 
 import { OrbitDBStore } from '../types';
@@ -29,23 +27,23 @@ class EventStore extends Store {
     };
   }
 
-  _cache?: AllEvents[] | void;
+  _cache: AllEvents[] | void;
 
   constructor(orbitStore: OrbitDBStore, name: string, pinner: PinnerConnector) {
     super(orbitStore, name, pinner);
-    this._orbitStore.events.on('ready', () => {
-      this._cache = undefined;
+    this.orbitStore.events.on('ready', () => {
+      this.cache = undefined;
       this.setLSCache().catch(console.error);
     });
-    this._orbitStore.events.on('write', () => {
+    this.orbitStore.events.on('write', () => {
       this.setLSCache().catch(console.error);
     });
-    this._orbitStore.events.on('replicated', () => {
+    this.orbitStore.events.on('replicated', () => {
       this.setLSCache().catch(console.error);
     });
   }
 
-  async getLSCache(): Promise<AllEvents[] | void> {
+  private async getLSCache(): Promise<AllEvents[] | void> {
     try {
       await localStorage.ready();
     } catch (e) {
@@ -58,7 +56,7 @@ class EventStore extends Store {
     return localStorage.getItem(`colony.orbitCache.${this.address.toString()}`);
   }
 
-  async setLSCache() {
+  private async setLSCache() {
     try {
       await localStorage.ready();
     } catch (e) {
@@ -75,9 +73,9 @@ class EventStore extends Store {
   }
 
   async loadEntries() {
-    if (!this._ready && !this._cache) {
-      this._cache = await this.getLSCache();
-      if (!this._cache) {
+    if (!this.ready && !this.cache) {
+      this.cache = await this.getLSCache();
+      if (!this.cache) {
         await super.loadEntries();
         return;
       }
@@ -85,47 +83,40 @@ class EventStore extends Store {
     super.loadEntries().catch(console.error);
   }
 
-  /*
-   @NOTE: for initialization purposes. The convention we're creating is that
-   from within "infrastructure" layer we can only initialize. "service" layer
-   can really append and fetch data
-   */
-  async init(value: {}) {
-    return this.append(value);
-  }
-
-  async append(value: {}) {
-    return this._orbitStore.add(value);
+  async append(event: Event<any>) {
+    return this.orbitStore.add(event);
   }
 
   getEvent(hash: string) {
-    return EventStore.transformEntry(this._orbitStore.get(hash));
+    return transformEntry(this.orbitStore.get(hash));
   }
 
   get(hashOrOptions: string | EventIteratorOptions) {
-    return typeof hashOrOptions === 'string'
+    return typeof hashOrOptions == 'string'
       ? this.getEvent(hashOrOptions)
       : this.all(hashOrOptions);
   }
 
-  all(options: EventIteratorOptions = { limit: -1 }) {
-    if (!this._ready && this._cache) {
-      return this._cache;
+  all(options: EventIteratorOptions = { limit: -1 }): AllCurrentEvents[] {
+    if (!this.ready && this.cache) {
+      return this.cache;
     }
 
-    return this._orbitStore
+    return this.orbitStore
       .iterator(options)
       .collect()
-      .map(entry => EventStore.transformEntry(entry));
+      .map(transformEntry);
   }
 
   // Get the result of `EventStore.all()` when any entry is added
-  subscribe(callback: (events: AllEvents[]) => void): { stop: () => void } {
+  subscribe(
+    callback: (events: AllCurrentEvents[]) => void,
+  ): { stop: () => void } {
     const allEvents = () => callback(this.all());
 
-    this._orbitStore.events.on('ready', allEvents);
-    this._orbitStore.events.on('replicated', allEvents);
-    this._orbitStore.events.on('write', allEvents);
+    this.orbitStore.events.on('ready', allEvents);
+    this.orbitStore.events.on('replicated', allEvents);
+    this.orbitStore.events.on('write', allEvents);
 
     // Emit all events when the subscription starts
     allEvents();
@@ -133,9 +124,9 @@ class EventStore extends Store {
     return {
       // The consumer is expected to stop the event listeners.
       stop: () => {
-        this._orbitStore.events.removeListener('ready', allEvents);
-        this._orbitStore.events.removeListener('replicated', allEvents);
-        this._orbitStore.events.removeListener('write', allEvents);
+        this.orbitStore.events.removeListener('ready', allEvents);
+        this.orbitStore.events.removeListener('replicated', allEvents);
+        this.orbitStore.events.removeListener('write', allEvents);
       },
     };
   }

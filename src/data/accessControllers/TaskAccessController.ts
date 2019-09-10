@@ -1,5 +1,3 @@
-/* eslint-disable no-underscore-dangle */
-
 // import { WalletObjectType } from '@colony/purser-core';
 import { Entry, PermissionsManifest, createAddress } from '../../types/index';
 
@@ -18,13 +16,15 @@ class TaskAccessController extends AbstractAccessController<
   PurserIdentity,
   PurserIdentityProvider<PurserIdentity>
 > {
-  _draftId: string;
+  private readonly draftId: string;
 
-  _colonyAddress: string;
+  private readonly colonyAddress: Address;
 
-  _manager: PermissionManager;
+  private readonly initialDomainId: number | null;
 
-  _purserWallet: WalletObjectType;
+  private readonly manager: PermissionManager;
+
+  private readonly wallet: WalletObjectType;
 
   static get type() {
     return TYPE;
@@ -38,33 +38,42 @@ class TaskAccessController extends AbstractAccessController<
   constructor(
     draftId: string,
     colonyAddress: string,
-    purserWallet: WalletObjectType,
-    permissionsManifest: PermissionsManifest,
+    initialDomainId: number | null,
+    wallet: WalletObjectType,
+    permissionsManifest: PermissionsManifest<any>,
   ) {
     super();
-    this._draftId = draftId;
-    this._colonyAddress = colonyAddress;
-    this._purserWallet = purserWallet;
+    this.draftId = draftId;
+    this.colonyAddress = colonyAddress;
+    this.wallet = wallet;
+    this.initialDomainId = initialDomainId;
+
     log.verbose(
       'Instantiating task access controller',
       colonyAddress,
       draftId,
-      purserWallet.address,
+      initialDomainId,
+      wallet.address,
     );
 
-    this._manager = new PermissionManager(permissionsManifest);
+    this.manager = new PermissionManager(permissionsManifest);
   }
 
   get walletAddress() {
-    return createAddress(this._purserWallet.address);
+    return createAddress(this.wallet.address);
   }
 
-  _extendVerifyContext<Context extends {}>(context: Context | null) {
-    return { ...context, colonyAddress: this._colonyAddress };
+  private extendVerifyContext<C extends object | void>(
+    context: C,
+  ): C & { colonyAddress: Address } {
+    return {
+      ...context,
+      colonyAddress: this.colonyAddress,
+    };
   }
 
-  _checkWalletAddress() {
-    if (!this._purserWallet.address)
+  private checkWalletAddress() {
+    if (!this.wallet.address)
       throw new Error('Could not get wallet address. Is it unlocked?');
   }
 
@@ -81,13 +90,13 @@ class TaskAccessController extends AbstractAccessController<
     }
 
     // eslint-disable-next-line max-len
-    const accessControllerAddress = `/colony/${this._colonyAddress}/task/${this._draftId}`;
+    const accessControllerAddress = `/colony/${this.colonyAddress}/task/${this.draftId}`;
     log.verbose(`Access controller address: "${accessControllerAddress}"`);
     return accessControllerAddress;
   }
 
   async load() {
-    this._checkWalletAddress();
+    this.checkWalletAddress();
   }
 
   async canAppend(
@@ -105,16 +114,16 @@ class TaskAccessController extends AbstractAccessController<
     return this.can(event.type, user, event);
   }
 
-  async can<Context extends {}>(
+  async can<C extends object | void>(
     actionId: string,
     user: string,
-    context: Context | null,
+    context?: C,
   ): Promise<boolean> {
     log.verbose('Checking permission for action', actionId, user, context);
-    return this._manager.can(
+    return this.manager.can(
       actionId,
       user,
-      this._extendVerifyContext<Context>(context),
+      this.extendVerifyContext<C>(context),
     );
   }
 }
