@@ -3,10 +3,10 @@ import { Address, StoreBlueprint } from '~types/index';
 import { EventStore } from '~lib/database/stores';
 import { EthereumWalletAccessController } from '../accessControllers/index';
 
-export type UserMetadataStoreProps = {
+export interface UserMetadataStoreProps {
   chainId: string;
   walletAddress: Address;
-};
+}
 
 const getEthereumWalletStoreAccessController = ({
   walletAddress,

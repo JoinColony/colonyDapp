@@ -1,4 +1,10 @@
-export const VERSION: number = Number(process.env.VERSION) || 1;
+export const VERSION = parseInt(process.env.VERSION, 10);
+
+export enum Versions {
+  V1 = 1,
+  V2 = 2,
+  CURRENT = 2,
+}
 
 export enum TaskStates {
   ACTIVE = 'ACTIVE',

@@ -1,5 +1,11 @@
 // import { WalletObjectType } from '@colony/purser-core';
-import { Entry, PermissionsManifest, createAddress } from '../../types/index';
+import { transformEntry } from '~data/utils';
+import {
+  Entry,
+  PermissionsManifest,
+  createAddress,
+  Address,
+} from '../../types/index';
 
 import { PermissionManager } from '../permissions';
 import AbstractAccessController from './AbstractAccessController';
@@ -79,10 +85,16 @@ class TaskAccessController extends AbstractAccessController<
 
   async save({ onlyDetermineAddress }: { onlyDetermineAddress: boolean }) {
     if (!onlyDetermineAddress) {
+      if (!this.initialDomainId) {
+        throw new Error(
+          'TaskAccessController must be initialized with a domain ID to save',
+        );
+      }
+
       const isAllowed = await this.can(
-        'is-colony-founder-or-admin',
+        'is-founder-or-admin',
         this.walletAddress,
-        null,
+        { domainId: this.initialDomainId },
       );
       if (!isAllowed) {
         throw new Error('Cannot create task database, user not allowed');
@@ -106,12 +118,8 @@ class TaskAccessController extends AbstractAccessController<
     const isAuthorized = await super.canAppend(entry, provider);
     if (!isAuthorized) return false;
 
-    // Is the wallet signature valid?
-    const {
-      payload: { value: event },
-      identity: { id: user },
-    } = entry;
-    return this.can(event.type, user, event);
+    const event = transformEntry(entry);
+    return this.can(event.type, event.meta.userAddress, { event });
   }
 
   async can<C extends object | void>(

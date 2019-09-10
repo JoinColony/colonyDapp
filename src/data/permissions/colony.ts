@@ -1,6 +1,10 @@
-import { PermissionsManifest } from '~types/index';
+import { ColonyEvents } from '~data/types/ColonyEvents';
+import { Address, PermissionsManifest } from '~types/index';
 
-export default function loadModule(): PermissionsManifest {
+export default function loadModule(): PermissionsManifest<{
+  colonyAddress: Address;
+  event: ColonyEvents;
+}> {
   return {
     // @TODO Provide a proper mapping from event types to action permission
     COLONY_AVATAR_REMOVED: { inherits: 'set-colony-avatar' },
@@ -14,12 +18,12 @@ export default function loadModule(): PermissionsManifest {
     TASK_STORE_UNREGISTERED: { inherits: 'register-task-store' },
     TOKEN_INFO_ADDED: { inherits: 'add-token' },
     TOKEN_INFO_REMOVED: { inherits: 'add-token' },
-    'add-domain': { inherits: 'is-colony-founder-or-admin' },
-    'edit-domain': { inherits: 'is-colony-founder-or-admin' },
-    'add-token': { inherits: 'is-colony-founder' },
-    'create-colony-profile': { inherits: 'is-colony-founder' },
-    'register-task-store': { inherits: 'is-colony-founder-or-admin' },
-    'set-colony-avatar': { inherits: 'is-colony-founder-or-admin' },
-    'update-colony-profile': { inherits: 'is-colony-founder-or-admin' },
+    'add-domain': { inherits: 'is-founder-or-admin' },
+    'edit-domain': { inherits: 'is-founder-or-admin' },
+    'add-token': { inherits: 'is-founder' },
+    'create-colony-profile': { inherits: 'is-founder' },
+    'register-task-store': { inherits: 'is-founder-or-admin' },
+    'set-colony-avatar': { inherits: 'is-founder-or-admin' },
+    'update-colony-profile': { inherits: 'is-founder-or-admin' },
   };
 }

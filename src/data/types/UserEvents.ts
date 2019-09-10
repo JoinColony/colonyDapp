@@ -1,6 +1,6 @@
 import { Address } from '~types/index';
 import { TaskDraftId } from '~immutable/index';
-import { EventTypes } from '../constants';
+import { EventTypes, Versions } from '../constants';
 import { EventDefinition } from './events';
 
 // @todo Split UserEvents into metadata and inbox events
@@ -10,38 +10,48 @@ export type UserEvents =
       {
         readUntil: number;
         exceptFor: string[];
-      }
+      },
+      Versions.CURRENT
     >
-  | EventDefinition<EventTypes.SUBSCRIBED_TO_COLONY, { colonyAddress: Address }>
+  | EventDefinition<
+      EventTypes.SUBSCRIBED_TO_COLONY,
+      { colonyAddress: Address },
+      Versions.CURRENT
+    >
   | EventDefinition<
       EventTypes.UNSUBSCRIBED_FROM_COLONY,
-      { colonyAddress: Address }
+      { colonyAddress: Address },
+      Versions.CURRENT
     >
   | EventDefinition<
       EventTypes.SUBSCRIBED_TO_TASK,
       {
         colonyAddress: Address;
         draftId: TaskDraftId;
-      }
+      },
+      Versions.CURRENT
     >
   | EventDefinition<
       EventTypes.UNSUBSCRIBED_FROM_TASK,
       {
         colonyAddress: Address;
         draftId: TaskDraftId;
-      }
+      },
+      Versions.CURRENT
     >
   | EventDefinition<
       EventTypes.TOKEN_ADDED,
       {
         address: Address;
-      }
+      },
+      Versions.CURRENT
     >
   | EventDefinition<
       EventTypes.TOKEN_REMOVED,
       {
         address: Address;
-      }
+      },
+      Versions.CURRENT
     >
   | EventDefinition<
       EventTypes.COMMENT_MENTION,
@@ -51,7 +61,8 @@ export type UserEvents =
         taskTitle: string;
         comment: string;
         sourceUserAddress: Address;
-      }
+      },
+      Versions.CURRENT
     >
   | EventDefinition<
       EventTypes.ASSIGNED_TO_TASK,
@@ -60,7 +71,8 @@ export type UserEvents =
         draftId: TaskDraftId;
         taskTitle: string;
         sourceUserAddress: Address;
-      }
+      },
+      Versions.CURRENT
     >
   | EventDefinition<
       EventTypes.UNASSIGNED_FROM_TASK,
@@ -69,7 +81,8 @@ export type UserEvents =
         draftId: TaskDraftId;
         taskTitle: string;
         sourceUserAddress: Address;
-      }
+      },
+      Versions.CURRENT
     >
   | EventDefinition<
       EventTypes.WORK_REQUEST,
@@ -78,7 +91,8 @@ export type UserEvents =
         draftId: TaskDraftId;
         taskTitle: string;
         sourceUserAddress: Address;
-      }
+      },
+      Versions.CURRENT
     >
   | EventDefinition<
       EventTypes.TASK_FINALIZED_NOTIFICATION,
@@ -87,5 +101,6 @@ export type UserEvents =
         draftId: TaskDraftId;
         taskTitle: string;
         sourceUserAddress: Address;
-      }
+      },
+      Versions.CURRENT
     >;
