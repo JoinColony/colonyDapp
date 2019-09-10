@@ -1,10 +1,10 @@
 import { Map as ImmutableMap, Set as ImmutableSet } from 'immutable';
 
 import {
-  DomainRecord,
+  Domain,
   FetchableData,
   AllDomainsMap,
-  DomainRecordType,
+  DomainRecord,
 } from '~immutable/index';
 import { withFetchableDataMap } from '~utils/reducers';
 import { ActionTypes, ReducerType } from '~redux/index';
@@ -20,12 +20,12 @@ const allDomainsReducer: ReducerType<AllDomainsMap> = (
       return state.getIn(path)
         ? state.updateIn(
             path,
-            domains => domains && domains.add(DomainRecord(domain)),
+            domains => domains && domains.add(Domain(domain)),
           )
         : state.set(
             colonyAddress,
             FetchableData({
-              record: ImmutableSet.of(DomainRecord(domain)),
+              record: ImmutableSet.of(Domain(domain)),
             }),
           );
     }
@@ -38,7 +38,7 @@ const allDomainsReducer: ReducerType<AllDomainsMap> = (
           domains &&
           domains
             .filter(domain => domain.id !== domainId)
-            .add(DomainRecord({ id: domainId, name: domainName, parentId })),
+            .add(Domain({ id: domainId, name: domainName, parentId })),
       );
     }
     case ActionTypes.COLONY_DOMAINS_FETCH_SUCCESS: {
@@ -49,7 +49,7 @@ const allDomainsReducer: ReducerType<AllDomainsMap> = (
       return state.set(
         key,
         FetchableData({
-          record: ImmutableSet(domains.map(domain => DomainRecord(domain))),
+          record: ImmutableSet(domains.map(domain => Domain(domain))),
         }),
       );
     }
@@ -58,7 +58,7 @@ const allDomainsReducer: ReducerType<AllDomainsMap> = (
   }
 };
 
-export default withFetchableDataMap<
-  AllDomainsMap,
-  ImmutableSet<DomainRecordType>
->(ActionTypes.COLONY_DOMAINS_FETCH, ImmutableMap())(allDomainsReducer);
+export default withFetchableDataMap<AllDomainsMap, ImmutableSet<DomainRecord>>(
+  ActionTypes.COLONY_DOMAINS_FETCH,
+  ImmutableMap(),
+)(allDomainsReducer);
