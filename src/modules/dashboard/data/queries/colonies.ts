@@ -9,7 +9,13 @@ import {
 } from '@colony/colony-js-client';
 import BigNumber from 'bn.js';
 
-import { Address, createAddress, ENSCache, Event } from '~types/index';
+import {
+  Address,
+  createAddress,
+  CurrentEvents,
+  ENSCache,
+  Event,
+} from '~types/index';
 import {
   ColonyClient,
   ColonyManager,
@@ -21,8 +27,11 @@ import {
   Subscription,
   Wallet,
 } from '~data/types';
+import { ColonyEvents } from '~data/types/ColonyEvents';
+import { TaskIndexEvents } from '~data/types/TaskIndexEvents';
 import { ColonyType, DomainType } from '~immutable/index';
 import { Context } from '~context/index';
+import EventStore from '~lib/database/stores/EventStore';
 import { EventTypes } from '~data/constants';
 import {
   getColonyStore,
@@ -605,7 +614,9 @@ export const subscribeToColonyTasks: Subscription<
   },
   async execute({ colonyStore, colonyTaskIndexStore }) {
     // backwards-compatibility Colony task index store
-    const store = colonyStore || colonyTaskIndexStore;
+    const store = (colonyTaskIndexStore || colonyStore) as EventStore<
+      CurrentEvents<ColonyEvents | TaskIndexEvents>
+    >;
     if (!store) {
       throw new Error(
         'Could not load colony task index or colony store either',

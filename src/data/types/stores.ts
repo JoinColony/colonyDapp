@@ -1,23 +1,25 @@
 import { ObjectSchema } from 'yup';
-import { AccessController } from './accessControllers/index';
 
+import { ColonyEvents } from '~data/types/ColonyEvents';
+import { CurrentEvents } from '~data/types/events';
+import { TaskIndexEvents } from '~data/types/TaskIndexEvents';
+import { CommentEvents } from '~data/types/CommentEvents';
+import { TaskEvents } from '~data/types/TaskEvents';
+import { UserInboxEvents } from '~data/types/UserInboxEvents';
+import { UserMetadataEvents } from '~data/types/UserMetadataEvents';
+import { UserProfileEvents } from '~data/types/UserProfileEvents';
+import { AccessController } from './accessControllers/index';
 import { EventStore } from '../../lib/database/stores/index';
 
-/*
- * This perhaps slightly redundant when every store is of the
- * same type, but these could change, and at least we know
- * which store we're dealing with.
- *
- * If we were really clever, we'd consider adding a generic that
- * defines the possible event types for that store.
- */
-export type ColonyStore = EventStore;
-export type ColonyTaskIndexStore = EventStore;
-export type CommentsStore = EventStore;
-export type TaskStore = EventStore;
-export type UserInboxStore = EventStore;
-export type UserMetadataStore = EventStore;
-export type UserProfileStore = EventStore;
+export type ColonyStore = EventStore<
+  CurrentEvents<ColonyEvents | TaskIndexEvents>
+>;
+export type ColonyTaskIndexStore = EventStore<CurrentEvents<TaskIndexEvents>>;
+export type CommentsStore = EventStore<CurrentEvents<CommentEvents>>;
+export type TaskStore = EventStore<CurrentEvents<TaskEvents>>;
+export type UserInboxStore = EventStore<CurrentEvents<UserInboxEvents>>;
+export type UserMetadataStore = EventStore<CurrentEvents<UserMetadataEvents>>;
+export type UserProfileStore = EventStore<CurrentEvents<UserProfileEvents>>;
 
 type StoreClassWrapper = typeof EventStore;
 

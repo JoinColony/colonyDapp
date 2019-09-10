@@ -1,6 +1,6 @@
 import localStorage from 'localforage';
 
-import { AllCurrentEvents, Event, EventIteratorOptions } from '~types/index';
+import { Event, EventIteratorOptions } from '~types/index';
 import { transformEntry } from '~data/utils';
 import { OrbitDBStore } from '../types';
 import PinnerConnector from '../../ipfs/PinnerConnector';
@@ -9,10 +9,10 @@ import Store from './Store';
 /**
  * The wrapper Store class for orbit's eventlog store.
  */
-class EventStore extends Store {
+class EventStore<E extends Event<any>> extends Store {
   static orbitType = 'eventlog';
 
-  private cache: AllCurrentEvents[] | void;
+  private cache?: E[] | void;
 
   constructor(orbitStore: OrbitDBStore, name: string, pinner: PinnerConnector) {
     super(orbitStore, name, pinner);
@@ -28,7 +28,7 @@ class EventStore extends Store {
     });
   }
 
-  private async getLSCache(): Promise<AllCurrentEvents[] | void> {
+  private async getLSCache(): Promise<E[] | void> {
     try {
       await localStorage.ready();
     } catch (e) {
@@ -68,12 +68,12 @@ class EventStore extends Store {
     super.loadEntries().catch(console.error);
   }
 
-  async append(event: Event<any>) {
+  async append(event: E) {
     return this.orbitStore.add(event);
   }
 
-  getEvent(hash: string) {
-    return transformEntry(this.orbitStore.get(hash));
+  getEvent(hash: string): E {
+    return transformEntry<E>(this.orbitStore.get(hash));
   }
 
   get(hashOrOptions: string | EventIteratorOptions) {
@@ -82,7 +82,7 @@ class EventStore extends Store {
       : this.all(hashOrOptions);
   }
 
-  all(options: EventIteratorOptions = { limit: -1 }): AllCurrentEvents[] {
+  all(options: EventIteratorOptions = { limit: -1 }): E[] {
     if (!this.ready && this.cache) {
       return this.cache;
     }
@@ -90,13 +90,11 @@ class EventStore extends Store {
     return this.orbitStore
       .iterator(options)
       .collect()
-      .map(transformEntry);
+      .map(entry => transformEntry<E>(entry));
   }
 
   // Get the result of `EventStore.all()` when any entry is added
-  subscribe(
-    callback: (events: AllCurrentEvents[]) => void,
-  ): { stop: () => void } {
+  subscribe(callback: (events: E[]) => void): { stop: () => void } {
     const allEvents = () => callback(this.all());
 
     this.orbitStore.events.on('ready', allEvents);

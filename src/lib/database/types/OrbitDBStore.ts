@@ -34,7 +34,7 @@ export interface OrbitDBStore {
   load(amount: number, opts: LoadOptions): Promise<void>;
   close(): Promise<void>;
   drop(): Promise<void>;
-  add(value: object): Promise<string>;
+  add(value: any): Promise<string>;
   get(hash: string): Entry;
   iterator(options: any): { collect: () => Entry[] };
   _addOperation(data: any): void;

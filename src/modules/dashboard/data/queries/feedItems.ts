@@ -1,3 +1,5 @@
+import { CommentEvents } from '~data/types/CommentEvents';
+import { TaskEvents } from '~data/types/TaskEvents';
 import { Address, Subscription, AllEvents } from '~types/index';
 import { TaskDraftId } from '~immutable/index';
 import {
@@ -66,8 +68,8 @@ export const subscribeTaskFeedItems: Subscription<
   async execute({ commentsStore, taskStore }) {
     // Store previous events for each store so that the events can be combined
     // @todo Simplify and improve performance of task feed items subscription
-    let commentsEvents: AllEvents[] = [];
-    let taskEvents: AllEvents[] = [];
+    let commentsEvents: CommentEvents[] = [];
+    let taskEvents: TaskEvents[] = [];
 
     const emitCombinedEvents = emitter =>
       emitter(

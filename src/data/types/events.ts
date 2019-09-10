@@ -1,8 +1,11 @@
 import { EventTypes, Versions } from '~data/constants';
 import { Address } from '~types/index';
 import { ColonyEvents } from './ColonyEvents';
+import { CommentEvents } from './CommentEvents';
 import { TaskEvents } from './TaskEvents';
-import { UserEvents } from './UserEvents';
+import { TaskIndexEvents } from './TaskIndexEvents';
+import { UserInboxEvents } from './UserInboxEvents';
+import { UserMetadataEvents } from './UserMetadataEvents';
 import { UserProfileEvents } from './UserProfileEvents';
 
 /*
@@ -29,8 +32,11 @@ export interface EventDefinition<
 
 export type AllEvents =
   | ColonyEvents
+  | CommentEvents
+  | TaskIndexEvents
   | TaskEvents
-  | UserEvents
+  | UserMetadataEvents
+  | UserInboxEvents
   | UserProfileEvents;
 
 export type Event<T extends EventTypes> = Extract<
@@ -43,9 +49,11 @@ export type VersionedEvent<V extends Versions, T extends EventTypes> = Extract<
   { meta: { version: V } }
 >;
 
-export type AllCurrentEvents = Extract<
-  AllEvents,
+export type CurrentEvents<E extends Event<any>> = Extract<
+  E,
   {
     meta: { version: Versions.CURRENT };
   }
 >;
+
+export type AllCurrentEvents = CurrentEvents<AllEvents>;

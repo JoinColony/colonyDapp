@@ -1,4 +1,6 @@
 import { Map as ImmutableMap, List, fromJS } from 'immutable';
+import { CommentEvents } from '~data/types/CommentEvents';
+import { TaskEvents } from '~data/types/TaskEvents';
 
 import { ReducerType, ActionTypes } from '~redux/index';
 import {
@@ -10,7 +12,7 @@ import {
 } from '~immutable/index';
 import { withFetchableDataMap } from '~utils/reducers';
 import { EventTypes } from '~data/constants';
-import { AllEvents } from '~data/types';
+import { CurrentEvents } from '~data/types';
 
 import { TaskFeedItemsMap } from '../state/index';
 
@@ -64,7 +66,9 @@ const getTaskFeedItemRecordProps = (event: any) => {
   }
 };
 
-const mapTaskFeedItemEvent = (event: AllEvents): TaskFeedItemRecord =>
+const mapTaskFeedItemEvent = (
+  event: CurrentEvents<TaskEvents | CommentEvents>,
+): TaskFeedItemRecord =>
   TaskFeedItem(
     fromJS({
       createdAt: new Date(event.meta.timestamp),
