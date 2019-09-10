@@ -1,37 +1,35 @@
 import { $ReadOnly } from 'utility-types';
 
-import { RecordOf, Record } from 'immutable';
+import { Record } from 'immutable';
 
-import { Address } from '~types/index';
+import { Address, DefaultValues } from '~types/index';
 
 interface Shared {
   id: string;
   type: string;
   sourceId: string;
   sourceType: string;
-  timestamp: number;
+  timestamp?: number;
   sourceAddress: Address;
   onClickRoute?: string;
   context: any;
-  unread: boolean;
+  unread?: boolean;
 }
 
 export type InboxItemType = $ReadOnly<Shared>;
 
-export type InboxItemRecordType = RecordOf<Shared>;
-
-const defaultValues: Shared = {
-  id: '',
-  type: '',
+const defaultValues: DefaultValues<Shared> = {
+  id: undefined,
+  type: undefined,
   timestamp: Date.now(),
-  sourceId: '',
-  sourceType: '',
-  sourceAddress: '',
+  sourceId: undefined,
+  sourceType: undefined,
+  sourceAddress: undefined,
   onClickRoute: undefined,
   context: undefined,
   unread: true,
 };
 
-export const InboxItemRecord: Record.Factory<Shared> = Record(defaultValues);
+export class InboxItemRecord extends Record<Shared>(defaultValues) {}
 
-export default InboxItemRecord;
+export const InboxItem = (p: Shared) => new InboxItemRecord(p);

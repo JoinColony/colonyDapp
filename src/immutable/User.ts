@@ -8,10 +8,10 @@ import {
   UserProfileRecordType,
 } from './UserProfile';
 
-import { InboxItemRecordType, InboxItemType } from './InboxItem';
+import { InboxItemRecord, InboxItemType } from './InboxItem';
 
 interface UserRecordProps {
-  activities: List<InboxItemRecordType>;
+  activities: List<InboxItemRecord>;
   profile: UserProfileRecordType;
 }
 

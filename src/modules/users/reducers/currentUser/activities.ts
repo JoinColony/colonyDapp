@@ -3,14 +3,14 @@ import { List } from 'immutable';
 import {
   FetchableData,
   FetchableDataRecord,
+  InboxItem,
   InboxItemRecord,
-  InboxItemRecordType,
 } from '~immutable/index';
 import { ActionTypes } from '~redux/index';
 import { withFetchableData } from '~utils/reducers';
 
 const inboxItemsReducer = (
-  state = FetchableData<List<InboxItemRecordType>>(),
+  state = FetchableData<List<InboxItemRecord>>(),
   action,
 ) => {
   switch (action.type) {
@@ -26,7 +26,7 @@ const inboxItemsReducer = (
               payload: { sourceUserAddress },
               payload: context,
             }) =>
-              InboxItemRecord({
+              InboxItem({
                 id,
                 timestamp,
                 type,
@@ -46,6 +46,6 @@ const inboxItemsReducer = (
   }
 };
 
-export default withFetchableData<
-  FetchableDataRecord<List<InboxItemRecordType>>
->(ActionTypes.INBOX_ITEMS_FETCH)(inboxItemsReducer);
+export default withFetchableData<FetchableDataRecord<List<InboxItemRecord>>>(
+  ActionTypes.INBOX_ITEMS_FETCH,
+)(inboxItemsReducer);
