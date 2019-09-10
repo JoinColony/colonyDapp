@@ -1,1 +1,1 @@
-export { default } from './CreateWalletWizard';
+export { default } from './CreateWalletWizard.ts';
