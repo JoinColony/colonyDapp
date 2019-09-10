@@ -141,11 +141,6 @@ export const createTask: Command<
       colonyStore = await getColonyStore(colonyClient, ddb, wallet)(metadata);
     }
 
-    if (!(colonyStore || colonyTaskIndexStore)) {
-      throw new Error(
-        'Could not load colony task index or colony store either',
-      );
-    }
     return {
       colonyTaskIndexStore,
       colonyStore,
@@ -158,7 +153,8 @@ export const createTask: Command<
     { draftId, creatorAddress },
   ) {
     // backwards-compatibility Colony task index store
-    if (!colonyStore || !colonyTaskIndexStore) {
+    const taskIndexStore = colonyTaskIndexStore || colonyStore;
+    if (!taskIndexStore) {
       throw new Error('Couldnt locate the store to register this task');
     }
 
@@ -182,8 +178,6 @@ export const createTask: Command<
       taskStoreAddress: taskStore.address.toString(),
     });
 
-    // backwards-compatibility Colony task index store
-    const taskIndexStore = colonyTaskIndexStore || colonyStore;
     await taskIndexStore.append(event);
 
     return {
@@ -559,12 +553,6 @@ export const cancelTask: Command<
       colonyStore = await getColonyStore(colonyClient, ddb, wallet)(metadata);
     }
 
-    if (!colonyStore || !colonyTaskIndexStore) {
-      throw new Error(
-        'Could not load colony task index or colony store either',
-      );
-    }
-
     const taskStoreAddress = await getTaskStoreAddress(
       colonyClient,
       ddb,
@@ -583,7 +571,9 @@ export const cancelTask: Command<
   },
   schema: CancelTaskCommandArgsSchema,
   async execute({ colonyStore, colonyTaskIndexStore, taskStore }, { draftId }) {
-    if (!colonyStore || !colonyTaskIndexStore) {
+    // backwards-compatibility Colony task index store
+    const store = colonyTaskIndexStore || colonyStore;
+    if (!store) {
       throw new Error(
         'Could not load colony task index or colony store either',
       );
@@ -593,10 +583,7 @@ export const cancelTask: Command<
         status: TaskStates.CANCELLED,
       }),
     );
-
-    // backwards-compatibility Colony task index store
-    const taskIndexStore = colonyTaskIndexStore || colonyStore;
-    await taskIndexStore.append(
+    await store.append(
       createEvent(EventTypes.TASK_STORE_UNREGISTERED, {
         draftId,
         taskStoreAddress: taskStore.address.toString(),
