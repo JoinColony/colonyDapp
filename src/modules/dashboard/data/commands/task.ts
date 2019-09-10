@@ -1,31 +1,36 @@
 import BigNumber from 'bn.js';
-
-import { Address } from '~types/index';
-import { TaskDraftId } from '~immutable/index';
 import {
-  CommentsStore,
+  COLONY_ROLE_ROOT,
+  COLONY_ROLE_ADMINISTRATION,
+} from '@colony/colony-js-client';
+
+import { Context } from '~context/index';
+import { EventTypes, TaskStates, Versions } from '~data/constants';
+import {
   ColonyManager,
   ColonyStore,
   ColonyTaskIndexStore,
   Command,
+  CommentsStore,
   DDB,
   Event,
   TaskStore,
+  VersionedEvent,
   Wallet,
 } from '~data/types';
-import { Context } from '~context/index';
-import { TaskStates, EventTypes } from '~data/constants';
 import {
   createTaskStore,
-  getColonyStore,
-  getColonyTaskIndexStore,
+  getColonyTaskStores,
   getCommentsStore,
   getTaskStore,
-  getColonyTaskIndexStoreAddress,
   getTaskStoreAddress,
   getCommentsStoreAddress,
 } from '~data/stores';
 import { createEvent } from '~data/utils';
+import { TaskDraftId } from '~immutable/index';
+
+import { Address, ColonyClient } from '~types/index';
+import { ROOT_DOMAIN } from '../../../core/constants';
 
 import {
   CancelTaskCommandArgsSchema,
@@ -45,7 +50,15 @@ import {
  * @todo Better wording for metadata and context
  * @body There's a confusion around query metadata, store metadata, this is a mess!
  */
-type TaskStoreMetadata = { colonyAddress: Address; draftId: TaskDraftId };
+interface TaskStoreMetadata {
+  colonyAddress: Address;
+  draftId: TaskDraftId;
+}
+
+interface CreateTaskStoreMetadata extends TaskStoreMetadata {
+  domainId: number;
+}
+
 type CommentsStoreMetadata = TaskStoreMetadata;
 
 const prepareCommentsStoreCommand = async (
@@ -90,14 +103,16 @@ export const createTask: Command<
     commentsStore: CommentsStore;
     taskStore: TaskStore;
   },
-  TaskStoreMetadata,
+  CreateTaskStoreMetadata,
   {
     creatorAddress: Address;
     draftId: string;
+    domainId: number;
   },
   {
     commentsStore: CommentsStore;
     draftId: TaskDraftId;
+    domainId: number;
     event: Event<EventTypes.TASK_CREATED>;
     taskStore: TaskStore;
   }
@@ -105,41 +120,20 @@ export const createTask: Command<
   name: 'createTask',
   context: [Context.COLONY_MANAGER, Context.DDB_INSTANCE, Context.WALLET],
   schema: CreateTaskCommandArgsSchema,
-  async prepare(
-    {
-      colonyManager,
-      ddb,
-      wallet,
-    }: {
-      colonyManager: ColonyManager;
-      ddb: DDB;
-      wallet: Wallet;
-    },
-    metadata: TaskStoreMetadata,
-  ) {
+  async prepare({ colonyManager, ddb, wallet }, metadata) {
     const { colonyAddress } = metadata;
     const colonyClient = await colonyManager.getColonyClient(colonyAddress);
+
     const { taskStore, commentsStore } = await createTaskStore(
       colonyClient,
       ddb,
       wallet,
     )(metadata);
-    const colonyTaskIndexStoreAddress = await getColonyTaskIndexStoreAddress(
-      colonyClient,
-      ddb,
-      wallet,
-    )(metadata);
-    const colonyTaskIndexStore = await getColonyTaskIndexStore(
-      colonyClient,
-      ddb,
-      wallet,
-    )({ colonyAddress, colonyTaskIndexStoreAddress });
 
-    // backwards-compatibility Colony task index store
-    let colonyStore;
-    if (!colonyTaskIndexStore) {
-      colonyStore = await getColonyStore(colonyClient, ddb, wallet)(metadata);
-    }
+    const { colonyTaskIndexStore, colonyStore } = await getColonyTaskStores(
+      { colonyClient, ddb, wallet },
+      metadata,
+    );
 
     return {
       colonyTaskIndexStore,
@@ -150,7 +144,7 @@ export const createTask: Command<
   },
   async execute(
     { colonyTaskIndexStore, colonyStore, commentsStore, taskStore },
-    { draftId, creatorAddress },
+    { draftId, domainId, creatorAddress },
   ) {
     // backwards-compatibility Colony task index store
     const taskIndexStore = colonyTaskIndexStore || colonyStore;
@@ -159,7 +153,7 @@ export const createTask: Command<
     }
 
     const commentsStoreAddress = commentsStore.address.toString();
-    await taskStore.init(
+    await taskStore.append(
       createEvent(EventTypes.COMMENT_STORE_CREATED, {
         commentsStoreAddress,
       }),
@@ -169,6 +163,7 @@ export const createTask: Command<
       createEvent(EventTypes.TASK_CREATED, {
         creatorAddress,
         draftId,
+        domainId,
       }),
     );
 
@@ -183,7 +178,8 @@ export const createTask: Command<
     return {
       commentsStore,
       draftId,
-      event: taskStore.getEvent(eventHash),
+      domainId,
+      event: taskStore.getEvent(eventHash) as Event<EventTypes.TASK_CREATED>,
       taskStore,
     };
   },
@@ -212,7 +208,10 @@ export const setTaskTitle: Command<
         title,
       }),
     );
-    return { taskStore, event: taskStore.getEvent(eventHash) };
+    return {
+      taskStore,
+      event: taskStore.getEvent(eventHash) as Event<EventTypes.TASK_TITLE_SET>,
+    };
   },
 };
 
@@ -241,7 +240,12 @@ export const setTaskDescription: Command<
         description,
       }),
     );
-    return { taskStore, event: taskStore.getEvent(eventHash) };
+    return {
+      taskStore,
+      event: taskStore.getEvent(eventHash) as Event<
+        EventTypes.TASK_DESCRIPTION_SET
+      >,
+    };
   },
 };
 
@@ -266,7 +270,10 @@ export const setTaskDueDate: Command<
         dueDate,
       }),
     );
-    return { taskStore, event: taskStore.getEvent(eventHash) };
+    return {
+      taskStore,
+      event: taskStore.getEvent(eventHash) as Event<EventTypes.DUE_DATE_SET>,
+    };
   },
 };
 
@@ -291,7 +298,10 @@ export const setTaskSkill: Command<
         skillId,
       }),
     );
-    return { taskStore, event: taskStore.getEvent(eventHash) };
+    return {
+      taskStore,
+      event: taskStore.getEvent(eventHash) as Event<EventTypes.SKILL_SET>,
+    };
   },
 };
 
@@ -315,7 +325,12 @@ export const createWorkRequest: Command<
         workerAddress,
       }),
     );
-    return { taskStore, event: taskStore.getEvent(eventHash) };
+    return {
+      taskStore,
+      event: taskStore.getEvent(eventHash) as Event<
+        EventTypes.WORK_REQUEST_CREATED
+      >,
+    };
   },
 };
 
@@ -340,7 +355,12 @@ export const sendWorkInvite: Command<
         workerAddress,
       }),
     );
-    return { taskStore, event: taskStore.getEvent(eventHash) };
+    return {
+      taskStore,
+      event: taskStore.getEvent(eventHash) as Event<
+        EventTypes.WORK_INVITE_SENT
+      >,
+    };
   },
 };
 
@@ -374,7 +394,12 @@ export const postComment: Command<
     const eventHash = await commentsStore.append(
       createEvent(EventTypes.COMMENT_POSTED, args),
     );
-    return { commentsStore, event: commentsStore.getEvent(eventHash) };
+    return {
+      commentsStore,
+      event: commentsStore.getEvent(eventHash) as Event<
+        EventTypes.COMMENT_POSTED
+      >,
+    };
   },
 };
 
@@ -401,7 +426,10 @@ export const setTaskPayout: Command<
         token,
       }),
     );
-    return { taskStore, event: taskStore.getEvent(eventHash) };
+    return {
+      taskStore,
+      event: taskStore.getEvent(eventHash) as Event<EventTypes.PAYOUT_SET>,
+    };
   },
 };
 
@@ -421,7 +449,10 @@ export const removeTaskPayout: Command<
     const eventHash = await taskStore.append(
       createEvent(EventTypes.PAYOUT_REMOVED),
     );
-    return { taskStore, event: taskStore.getEvent(eventHash) };
+    return {
+      taskStore,
+      event: taskStore.getEvent(eventHash) as Event<EventTypes.PAYOUT_REMOVED>,
+    };
   },
 };
 
@@ -449,7 +480,10 @@ export const assignWorker: Command<
         workerAddress,
       }),
     );
-    return { taskStore, event: taskStore.getEvent(eventHash) };
+    return {
+      taskStore,
+      event: taskStore.getEvent(eventHash) as Event<EventTypes.WORKER_ASSIGNED>,
+    };
   },
 };
 
@@ -475,7 +509,12 @@ export const unassignWorker: Command<
         userAddress,
       }),
     );
-    return { taskStore, event: taskStore.getEvent(eventHash) };
+    return {
+      taskStore,
+      event: taskStore.getEvent(eventHash) as Event<
+        EventTypes.WORKER_UNASSIGNED
+      >,
+    };
   },
 };
 
@@ -501,7 +540,10 @@ export const finalizeTask: Command<
     const eventHash = await taskStore.append(
       createEvent(EventTypes.TASK_FINALIZED, args),
     );
-    return { taskStore, event: taskStore.getEvent(eventHash) };
+    return {
+      taskStore,
+      event: taskStore.getEvent(eventHash) as Event<EventTypes.TASK_FINALIZED>,
+    };
   },
 };
 
@@ -536,22 +578,6 @@ export const cancelTask: Command<
   ) {
     const { colonyAddress } = metadata;
     const colonyClient = await colonyManager.getColonyClient(colonyAddress);
-    const colonyTaskIndexStoreAddress = await getColonyTaskIndexStoreAddress(
-      colonyClient,
-      ddb,
-      wallet,
-    )(metadata);
-    const colonyTaskIndexStore = await getColonyTaskIndexStore(
-      colonyClient,
-      ddb,
-      wallet,
-    )({ colonyAddress, colonyTaskIndexStoreAddress });
-
-    // backwards-compatibility Colony task index store
-    let colonyStore;
-    if (!colonyTaskIndexStore) {
-      colonyStore = await getColonyStore(colonyClient, ddb, wallet)(metadata);
-    }
 
     const taskStoreAddress = await getTaskStoreAddress(
       colonyClient,
@@ -562,6 +588,11 @@ export const cancelTask: Command<
       ...metadata,
       taskStoreAddress,
     });
+
+    const { colonyTaskIndexStore, colonyStore } = await getColonyTaskStores(
+      { colonyClient, ddb, wallet },
+      metadata,
+    );
 
     return {
       colonyStore,
@@ -589,7 +620,10 @@ export const cancelTask: Command<
         taskStoreAddress: taskStore.address.toString(),
       }),
     );
-    return { taskStore, event: taskStore.getEvent(eventHash) };
+    return {
+      taskStore,
+      event: taskStore.getEvent(eventHash) as Event<EventTypes.TASK_CANCELLED>,
+    };
   },
 };
 
@@ -612,12 +646,15 @@ export const closeTask: Command<
         status: TaskStates.CLOSED,
       }),
     );
-    return { taskStore, event: taskStore.getEvent(eventHash) };
+    return {
+      taskStore,
+      event: taskStore.getEvent(eventHash) as Event<EventTypes.TASK_CLOSED>,
+    };
   },
 };
 
 export const setTaskDomain: Command<
-  TaskStore,
+  { taskStore: TaskStore; colonyClient: ColonyClient; walletAddress: Address },
   TaskStoreMetadata,
   {
     domainId: number;
@@ -629,14 +666,75 @@ export const setTaskDomain: Command<
 > = {
   name: 'setTaskDomain',
   context: [Context.COLONY_MANAGER, Context.DDB_INSTANCE, Context.WALLET],
-  prepare: prepareTaskStoreCommand,
+  async prepare({ colonyManager, ddb, wallet }, metadata) {
+    const colonyClient = await colonyManager.getColonyClient(
+      metadata.colonyAddress,
+    );
+    const taskStoreAddress = await getTaskStoreAddress(
+      colonyClient,
+      ddb,
+      wallet,
+    )(metadata);
+    const taskStore = await getTaskStore(colonyClient, ddb, wallet)({
+      ...metadata,
+      taskStoreAddress,
+    });
+    return {
+      colonyClient,
+      taskStore,
+      walletAddress: wallet.address,
+    };
+  },
   schema: SetTaskDomainCommandArgsSchema,
-  async execute(taskStore, { domainId }) {
+  async execute({ colonyClient, taskStore, walletAddress }, { domainId }) {
+    /*
+     * @todo: Check current domain permissions in the task access controller when setting a domain
+     */
+    const canAppend = await (async (): Promise<boolean> => {
+      const {
+        payload: { domainId: currentDomainId },
+      } = taskStore
+        .all()
+        .filter(
+          ({ type }) =>
+            type === EventTypes.TASK_CREATED || type === EventTypes.DOMAIN_SET,
+        )
+        .pop() as VersionedEvent<
+        Versions.CURRENT,
+        EventTypes.TASK_CREATED | EventTypes.DOMAIN_SET
+      >;
+
+      const { hasRole: isFounder } = await colonyClient.hasColonyRole.call({
+        address: walletAddress,
+        role: COLONY_ROLE_ROOT,
+        domainId: ROOT_DOMAIN,
+      });
+      if (isFounder) return true;
+
+      const {
+        hasRole: isAdminOfCurrentDomain,
+      } = await colonyClient.hasColonyRole.call({
+        address: walletAddress,
+        role: COLONY_ROLE_ADMINISTRATION,
+        domainId: currentDomainId,
+      });
+      return isAdminOfCurrentDomain;
+    })();
+
+    if (!canAppend) {
+      throw new Error(
+        'Unable to set domain; not an admin of the current domain',
+      );
+    }
+
     const eventHash = await taskStore.append(
       createEvent(EventTypes.DOMAIN_SET, {
         domainId,
       }),
     );
-    return { taskStore, event: taskStore.getEvent(eventHash) };
+    return {
+      taskStore,
+      event: taskStore.getEvent(eventHash) as Event<EventTypes.DOMAIN_SET>,
+    };
   },
 };
