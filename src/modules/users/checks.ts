@@ -1,16 +1,15 @@
-import { UserPermissionsType, UserType } from '~immutable/index';
+import { UserType } from '~immutable/index';
+import { ColonyRole } from '~types/index';
 
-export const canEnterRecoveryMode = (permissions: UserPermissionsType | void) =>
-  !!(permissions && permissions.canEnterRecoveryMode);
+type Roles = Record<ColonyRole, boolean>;
 
-export const canCreateTask = (permissions: UserPermissionsType | void) =>
-  !!(permissions && permissions.isAdmin);
+export const canEnterRecoveryMode = (roles: Roles | void) =>
+  !!(roles && roles.RECOVERY);
 
-export const canAdminister = (permissions: UserPermissionsType | void) =>
-  !!(permissions && permissions.isAdmin);
+export const canAdminister = (roles: Roles | void) =>
+  !!(roles && roles.ADMINISTRATION);
 
-export const isFounder = (permissions: UserPermissionsType | void) =>
-  !!(permissions && permissions.isFounder);
+export const isFounder = (roles: Roles | void) => !!(roles && roles.ROOT);
 
 export const userDidClaimProfile = ({ profile: { username } }: UserType) =>
   !!username;

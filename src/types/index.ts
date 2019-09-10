@@ -6,6 +6,15 @@ export * from './TransactionReceipt';
 export * from './strings';
 export * from './roles';
 
+export type ColonyRole =
+  | 'ADMINISTRATION'
+  | 'ARBITRATION'
+  | 'ARCHITECTURE'
+  | 'ARCHITECTURE_SUBDOMAIN'
+  | 'FUNDING'
+  | 'RECOVERY'
+  | 'ROOT';
+
 export type WithKey = {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   key: any;

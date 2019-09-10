@@ -58,7 +58,6 @@ import {
   getUserAddress,
   getUserColonies,
   getUserColonyTransactions,
-  getUserPermissions,
   getUserProfile,
   getUserTasks,
   getUserTokens,
@@ -342,34 +341,6 @@ function* userLogout() {
     ]);
   } catch (error) {
     return yield putError(ActionTypes.USER_LOGOUT_ERROR, error);
-  }
-  return null;
-}
-
-function* userPermissionsFetch({
-  payload: { colonyAddress },
-  meta,
-}: Action<ActionTypes.USER_PERMISSIONS_FETCH>) {
-  try {
-    const walletAddress = yield select(walletAddressSelector);
-    if (!walletAddress) {
-      throw new Error('Could not get wallet address for current user');
-    }
-    const permissions = yield executeQuery(getUserPermissions, {
-      metadata: { colonyAddress },
-      args: { walletAddress },
-    });
-    yield put<AllActions>({
-      type: ActionTypes.USER_PERMISSIONS_FETCH_SUCCESS,
-      payload: { permissions, colonyAddress },
-      meta,
-    });
-  } catch (error) {
-    return yield putError(
-      ActionTypes.USER_PERMISSIONS_FETCH_ERROR,
-      error,
-      meta,
-    );
   }
   return null;
 }
@@ -699,7 +670,6 @@ export function* setupUsersSagas() {
   yield takeEvery(ActionTypes.USER_COLONY_SUBSCRIBE, userColonySubscribe);
   yield takeEvery(ActionTypes.USER_COLONY_UNSUBSCRIBE, userColonyUnsubscribe);
   yield takeEvery(ActionTypes.USER_FETCH, userFetch);
-  yield takeEvery(ActionTypes.USER_PERMISSIONS_FETCH, userPermissionsFetch);
   yield takeEvery(ActionTypes.USER_SUB_START, userSubStart);
   yield takeEvery(
     ActionTypes.USER_SUBSCRIBED_COLONIES_FETCH,

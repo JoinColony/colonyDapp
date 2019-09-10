@@ -10,20 +10,22 @@ import { subscribeActions as subscribeToReduxActions } from 'redux-action-watch/
 import { useDispatch } from 'redux-react-hook';
 import throttle from 'lodash/throttle';
 
-import {
-  ColonyTokenReferenceType,
-  UserPermissionsType,
-  DomainType,
-} from '~immutable/index';
+import { ColonyTokenReferenceType, DomainType } from '~immutable/index';
 import { Address } from '~types/index';
 import { ROOT_DOMAIN } from '../../../core/constants';
+import { walletAddressSelector } from '../../../users/selectors';
 import {
   TasksFilterOptionType,
   TasksFilterOptions,
   tasksFilterSelectOptions,
 } from '../shared/tasksFilter';
 import { ActionTypes } from '~redux/index';
-import { useDataFetcher, useDataSubscriber, useSelector } from '~utils/hooks';
+import {
+  useDataFetcher,
+  useDataSubscriber,
+  useSelector,
+  useUserDomainRoles,
+} from '~utils/hooks';
 import { mergePayload } from '~utils/actions';
 import { Tab, Tabs, TabList, TabPanel } from '~core/Tabs';
 import { Select } from '~core/Fields';
@@ -35,13 +37,9 @@ import {
   colonyNativeTokenSelector,
   colonyEthTokenSelector,
 } from '../../selectors';
-import { currentUserColonyPermissionsFetcher } from '../../../users/fetchers';
 import { colonyAddressFetcher, domainsFetcher } from '../../fetchers';
 import { colonySubscriber } from '../../subscribers';
-import {
-  canAdminister,
-  canCreateTask as canCreateTaskCheck,
-} from '../../../users/checks';
+import { canAdminister, isFounder } from '../../../users/checks';
 import {
   isInRecoveryMode as isInRecoveryModeCheck,
   canRecoverColony,
@@ -159,13 +157,11 @@ const ColonyHome = ({
     error: colonyError,
   } = useDataSubscriber<any>(colonySubscriber, colonyArgs, colonyArgs);
 
-  const {
-    data: permissions,
-    isFetching: isFetchingPermissions,
-  } = useDataFetcher<UserPermissionsType>(
-    currentUserColonyPermissionsFetcher,
-    colonyArgs,
-    colonyArgs,
+  const walletAddress = useSelector(walletAddressSelector);
+  const { data: roles, isFetching: isFetchingRoles } = useUserDomainRoles(
+    colonyAddress || undefined,
+    filteredDomainId || ROOT_DOMAIN,
+    walletAddress,
   );
 
   const { data: domains } = useDataFetcher<DomainType[]>(
@@ -202,7 +198,7 @@ const ColonyHome = ({
     [colonyAddress, filteredDomainId],
   );
 
-  const canCreateTask = canCreateTaskCheck(permissions as UserPermissionsType);
+  const canCreateTask = canAdminister(roles) || isFounder(roles);
   const isInRecoveryMode = isInRecoveryModeCheck(colony);
 
   if (colonyError || addressError) {
@@ -212,15 +208,13 @@ const ColonyHome = ({
   if (
     !(colony && colonyAddress) ||
     isFetchingColony ||
-    !permissions ||
-    isFetchingPermissions ||
+    !roles ||
+    isFetchingRoles ||
     !nativeTokenRef
   ) {
     return (
       <LoadingTemplate loadingText={MSG.loadingText}>
-        {showRecoverOption &&
-        colonyAddress &&
-        canRecoverColony(permissions as UserPermissionsType) ? (
+        {showRecoverOption && colonyAddress && canRecoverColony(roles) ? (
           <DialogActionButton
             dialog="ConfirmDialog"
             dialogProps={{
@@ -285,7 +279,7 @@ const ColonyHome = ({
         <div className={styles.metaContainer}>
           <ColonyMeta
             colony={colony}
-            canAdminister={!isInRecoveryMode && canAdminister(permissions)}
+            canAdminister={!isInRecoveryMode && canAdminister(roles)}
             filteredDomainId={filteredDomainId}
             setFilteredDomainId={setFilteredDomainId}
           />
@@ -311,7 +305,7 @@ const ColonyHome = ({
               filterOption={filterOption}
               ethTokenRef={ethTokenRef}
               nativeTokenRef={nativeTokenRef}
-              permissions={permissions}
+              roles={roles}
             />
           </TabPanel>
         </Tabs>
