@@ -75,13 +75,7 @@ const InputLabel = ({
       htmlFor={inputId || null}
     >
       <span className={styles.labelText}>{labelText}</span>
-      {helpText && (
-        <span className={styles.help}>
-          <span className={styles.paren}>(</span>
-          {helpText}
-          <span className={styles.paren}>)</span>
-        </span>
-      )}
+      {helpText && <span className={styles.help}>{helpText}</span>}
       {extra && <span className={styles.extra}>{extra}</span>}
     </label>
   );

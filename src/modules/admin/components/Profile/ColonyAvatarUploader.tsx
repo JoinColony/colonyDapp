@@ -17,7 +17,7 @@ const MSG = defineMessages({
   },
   labelUploader: {
     id: 'admin.Profile.ColonyAvatarUploader.labelUploader',
-    defaultMessage: 'at least 250px by 250px, up to 1MB',
+    defaultMessage: '(at least 250px by 250px, up to 1MB)',
   },
 });
 

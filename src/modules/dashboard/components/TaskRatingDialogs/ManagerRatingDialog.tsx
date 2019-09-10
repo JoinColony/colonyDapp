@@ -40,8 +40,9 @@ const MSG = defineMessages({
   },
   workDescriptionHelp: {
     id: 'dashboard.ManagerRatingDialog.workDescriptionHelp',
-    defaultMessage:
-      'Please enter a short description or URL of the work you are submitting',
+    defaultMessage: `
+      (Please enter a short description or URL of the work you are submitting)
+    `,
   },
   workDescriptionError: {
     id: 'dashboard.ManagerRatingDialog.workDescriptionError',
