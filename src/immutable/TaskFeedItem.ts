@@ -15,21 +15,19 @@ interface Shared {
   id: string;
 }
 
-export type TaskFeedItemRecordProps = Shared & {
+export interface TaskFeedItemRecordProps extends Shared {
   comment?: TaskCommentRecord;
   event?: TaskEventRecord;
   rating?: TaskRatingRecord;
   transaction?: ContractTransactionRecord;
-};
+}
 
-export type TaskFeedItemType = Readonly<
-  Shared & {
-    comment?: TaskCommentType;
-    event?: TaskEventType;
-    rating?: TaskRatingType;
-    transaction?: ContractTransactionType;
-  }
->;
+export interface TaskFeedItemType extends Readonly<Shared> {
+  comment?: TaskCommentType;
+  event?: TaskEventType;
+  rating?: TaskRatingType;
+  transaction?: ContractTransactionType;
+}
 
 export type TaskFeedItemId = TaskFeedItemType['id'];
 

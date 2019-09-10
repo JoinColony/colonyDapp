@@ -4,18 +4,6 @@ import { Address } from '~types/index';
 
 export type TaskEvents =
   | EventDefinition<
-      EventTypes.COMMENT_POSTED,
-      {
-        signature: string;
-        content: {
-          id: string;
-          author: Address;
-          body: string;
-        };
-      },
-      Versions.CURRENT
-    >
-  | EventDefinition<
       EventTypes.COMMENT_STORE_CREATED,
       {
         commentsStoreAddress: Address;

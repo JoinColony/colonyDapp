@@ -3,7 +3,6 @@
 
 import createSandbox from 'jest-sandbox';
 import { EventTypes, Versions } from '~data/constants';
-import { VersionedEvent } from '~data/types';
 
 import createMockOrbitStore from './mockOrbitStore';
 import EventStore from '../EventStore';
