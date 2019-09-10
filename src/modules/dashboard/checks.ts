@@ -1,11 +1,7 @@
 import { TaskStates } from '~data/constants';
-import {
-  ColonyType,
-  TaskType,
-  TaskUserType,
-  UserPermissionsType,
-} from '~immutable/index';
-import { Address } from '~types/index';
+import { ColonyType, TaskType, TaskUserType } from '~immutable/index';
+import { Address, ColonyRole } from '~types/index';
+import { isFounder, canAdminister } from '../users/checks';
 
 /*
  * Colony
@@ -40,12 +36,6 @@ export const isWorker = ({ workerAddress }: TaskType, userAddress: Address) =>
 export const isCreator = ({ creatorAddress }: TaskType, userAddress: Address) =>
   creatorAddress === userAddress;
 
-export const isFounder = (permissions: UserPermissionsType | null) =>
-  permissions && permissions.isFounder;
-
-export const isAdmin = (permissions: UserPermissionsType | null) =>
-  permissions && permissions.isAdmin;
-
 export const isPayoutsSet = ({ payouts }: TaskType) =>
   !!payouts && payouts.length > 0;
 
@@ -71,14 +61,12 @@ export const isWorkerSet = ({ workerAddress }: TaskType) => !!workerAddress;
 
 export const canEditTask = (
   task: TaskType,
-  permissions: UserPermissionsType | null,
+  roles: Record<ColonyRole, boolean> | void,
   userAddress: Address,
 ) =>
   !isFinalized(task) &&
   !isCancelled(task) &&
-  (isCreator(task, userAddress) ||
-    isFounder(permissions) ||
-    isAdmin(permissions));
+  (isCreator(task, userAddress) || isFounder(roles) || canAdminister(roles));
 
 export const isDomainSet = ({ domainId }: TaskType) => !!domainId;
 
@@ -114,13 +102,11 @@ export const managerCanRevealWorkerRating = (
 
 export const canCancelTask = (
   task: TaskType,
-  permissions: UserPermissionsType | null,
+  roles: Record<ColonyRole, boolean> | void,
   userAddress: Address,
 ) =>
   isActive(task) &&
-  (isManager(task, userAddress) ||
-    isFounder(permissions) ||
-    isAdmin(permissions));
+  (isManager(task, userAddress) || isFounder(roles) || canAdminister(roles));
 
 export const hasRequestedToWork = (
   { requests = [] }: TaskType,
@@ -136,7 +122,7 @@ export const canRequestToWork = (task: TaskType, userAddress: Address) =>
 
 export const canFinalizeTask = (
   task: TaskType,
-  permissions: UserPermissionsType | null,
+  roles: Record<ColonyRole, boolean> | void,
   userAddress: Address,
 ) =>
   task &&
@@ -144,12 +130,7 @@ export const canFinalizeTask = (
   isWorkerSet(task) &&
   isDomainSet(task) &&
   isPayoutsSet(task) &&
-  (isManager(task, userAddress) ||
-    isFounder(permissions) ||
-    isAdmin(permissions));
+  (isManager(task, userAddress) || isFounder(roles) || canAdminister(roles));
 
-/*
- * Permissions
- */
-export const canRecoverColony = (permissions: UserPermissionsType | null) =>
-  permissions && permissions.canEnterRecoveryMode && isFounder(permissions);
+export const canRecoverColony = (roles: Record<ColonyRole, boolean> | void) =>
+  roles && roles.RECOVERY && isFounder(roles);

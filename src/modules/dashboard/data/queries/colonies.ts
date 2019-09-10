@@ -41,6 +41,7 @@ import {
 } from '~data/stores';
 import { getEvents } from '~utils/web3/eventLogs';
 import { ZERO_ADDRESS } from '~utils/web3/constants';
+import { ROOT_DOMAIN } from '../../../core/constants';
 import { colonyReducer, colonyTasksReducer } from '../reducers';
 import { COLONY_TOTAL_BALANCE_DOMAIN_ID } from '../../../admin/constants';
 
@@ -198,7 +199,7 @@ export const getColonyDomainUserRoles: ContractEventQuery<
       }),
       colonyClient.hasColonyRole.call({
         address,
-        domainId,
+        domainId: ROOT_DOMAIN, // The root role only applies to the root domain
         role: COLONY_ROLE_ROOT,
       }),
     ]).then(results => results.map(({ hasRole }) => hasRole));

@@ -23,12 +23,6 @@ export const currentUserBalance = (balance: string): AllActions => ({
   payload: { balance },
 });
 
-export const userPermissionsFetch = (colonyAddress: Address): AllActions => ({
-  type: ActionTypes.USER_PERMISSIONS_FETCH,
-  meta: { key: createAddress(colonyAddress) },
-  payload: { colonyAddress },
-});
-
 export const userTokensUpdate = (tokens: Address[]): AllActions => ({
   type: ActionTypes.USER_TOKENS_UPDATE,
   payload: { tokens },

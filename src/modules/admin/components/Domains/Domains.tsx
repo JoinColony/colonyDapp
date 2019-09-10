@@ -1,17 +1,18 @@
 import React from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 
-import { canAdminister } from '../../../users/checks';
-import { domainsFetcher } from '../../../dashboard/fetchers';
-import { currentUserColonyPermissionsFetcher } from '../../../users/fetchers';
-import { useDataFetcher } from '~utils/hooks';
+import { DomainType } from '~immutable/index';
+import { useDataFetcher, useSelector, useUserDomainRoles } from '~utils/hooks';
 import Heading from '~core/Heading';
 import { SpinnerLoader } from '~core/Preloaders';
+import { Address } from '~types/index';
+
+import { ROOT_DOMAIN } from '../../../core/constants';
+import { canAdminister } from '../../../users/checks';
+import { walletAddressSelector } from '../../../users/selectors';
+import { domainsFetcher } from '../../../dashboard/fetchers';
 import OrganizationAddDomains from '../Domains/OrganizationAddDomains';
 import DomainList from './DomainList';
-
-import { Address } from '~types/index';
-import { DomainType, UserPermissionsType } from '~immutable/index';
 
 import styles from './Domains.css';
 
@@ -36,16 +37,18 @@ const MSG = defineMessages({
 const displayName = 'admin.Domains';
 
 const Domains = ({ colonyAddress }: Props) => {
+  const walletAddress = useSelector(walletAddressSelector);
+
   const { data: domains } = useDataFetcher<DomainType[]>(
     domainsFetcher,
     [colonyAddress],
     [colonyAddress],
   );
 
-  const { data: permissions } = useDataFetcher<UserPermissionsType>(
-    currentUserColonyPermissionsFetcher,
-    [colonyAddress || undefined],
-    [colonyAddress || undefined],
+  const { data: newRoles } = useUserDomainRoles(
+    colonyAddress,
+    ROOT_DOMAIN,
+    walletAddress,
   );
 
   if (!domains) {
@@ -72,7 +75,7 @@ const Domains = ({ colonyAddress }: Props) => {
             colonyAddress={colonyAddress}
             domains={domains}
             label={MSG.title}
-            viewOnly={!canAdminister(permissions)}
+            viewOnly={!canAdminister(newRoles)}
           />
         ) : (
           <>

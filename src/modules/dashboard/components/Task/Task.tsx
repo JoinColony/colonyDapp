@@ -4,10 +4,14 @@ import compose from 'recompose/compose';
 import { withRouter } from 'react-router-dom';
 
 import { ActionTypes } from '~redux/index';
-import { useDataFetcher, useDataSubscriber, useSelector } from '~utils/hooks';
+import {
+  useDataFetcher,
+  useDataSubscriber,
+  useSelector,
+  useUserDomainRoles,
+} from '~utils/hooks';
 // Temporary, please remove when wiring in the rating modals
 import { OpenDialog } from '~core/Dialog/types';
-import { UserPermissionsType } from '~immutable/index';
 import { Address } from '~types/index';
 import { mergePayload } from '~utils/actions';
 import Heading from '~core/Heading';
@@ -35,7 +39,6 @@ import {
   isWorkerSet,
 } from '../../checks';
 import { currentUserSelector } from '../../../users/selectors';
-import { currentUserColonyPermissionsFetcher } from '../../../users/fetchers';
 import { colonyAddressFetcher } from '../../fetchers';
 import { taskSubscriber } from '../../subscribers';
 import styles from './Task.css';
@@ -107,23 +110,14 @@ const Task = ({
   const [isDiscardConfirmDisplayed, setDiscardConfirmDisplay] = useState(false);
 
   const currentUser = useSelector(currentUserSelector);
+  const walletAddress =
+    currentUser && currentUser.profile && currentUser.profile.walletAddress;
 
   const { data: colonyAddress } = useDataFetcher<Address>(
     colonyAddressFetcher,
     [colonyName],
     [colonyName],
   );
-
-  const colonyArgs = [colonyAddress || undefined];
-  const {
-    data: permissions,
-    isFetching: isFetchingPermissions,
-  } = useDataFetcher<UserPermissionsType>(
-    currentUserColonyPermissionsFetcher,
-    colonyArgs,
-    colonyArgs,
-  );
-
   const { data: task, isFetching: isFetchingTask } = useDataSubscriber<any>(
     taskSubscriber,
     [draftId],
@@ -136,6 +130,12 @@ const Task = ({
     skillId = undefined,
     title = undefined,
   } = task || {};
+
+  const { data: roles, isFetching: isFetchingRoles } = useUserDomainRoles(
+    colonyAddress || undefined,
+    domainId,
+    walletAddress,
+  );
 
   const onEditTask = useCallback(() => {
     // If you've managed to click on the button that runs this without the
@@ -156,22 +156,19 @@ const Task = ({
     draftId,
   ]);
 
-  const walletAddress =
-    currentUser && currentUser.profile && currentUser.profile.walletAddress;
-
   if (
     isFetchingTask ||
-    isFetchingPermissions ||
+    isFetchingRoles ||
     !task ||
     !colonyAddress ||
-    !permissions ||
+    !roles ||
     !walletAddress
   ) {
     return <LoadingTemplate loadingText={MSG.loadingText} />;
   }
 
   const isTaskCreator = isCreator(task, walletAddress);
-  const canEdit = canEditTask(task, permissions, walletAddress);
+  const canEdit = canEditTask(task, roles, walletAddress);
 
   return (
     <div className={styles.main}>
@@ -275,7 +272,7 @@ const Task = ({
               </div>
             </Tooltip>
           )}
-          {canCancelTask(task, permissions, walletAddress) && (
+          {canCancelTask(task, roles, walletAddress) && (
             <ActionButton
               appearance={{ theme: 'secondary', size: 'small' }}
               button={ConfirmButton}
@@ -291,7 +288,7 @@ const Task = ({
           {/* Hide when discard confirm is displayed */}
           {!isDiscardConfirmDisplayed && (
             <>
-              {canFinalizeTask(task, permissions, walletAddress) && (
+              {canFinalizeTask(task, roles, walletAddress) && (
                 <ActionButton
                   text={MSG.finalizeTask}
                   submit={ActionTypes.TASK_FINALIZE}

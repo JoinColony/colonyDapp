@@ -4,7 +4,7 @@ import { useEffect, useCallback, useMemo, useRef } from 'react';
 import { useDispatch, useMappedState } from 'redux-react-hook';
 
 import { Action, AllActions, ActionTypes } from '~redux/index';
-import { Address } from '~types/index';
+import { Address, ColonyRole } from '~types/index';
 import { ActionTransformFnType } from '~utils/actions';
 import { FetchableDataRecord, DomainType } from '~immutable/index';
 import promiseListener, { AsyncFunction } from '~redux/createPromiseListener';
@@ -596,7 +596,11 @@ export const useUserDomainRoles = (
   domainId: number,
   userAddress: Address,
   includeParents = false, // This should not change
-) => {
+): {
+  data: Record<ColonyRole, boolean>;
+  isFetching: boolean;
+  error: string | void;
+} => {
   const dispatch = useDispatch();
   const { data: roles, isFetching, error } = useRoles(
     colonyAddress,

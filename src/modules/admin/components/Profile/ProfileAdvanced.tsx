@@ -1,16 +1,17 @@
 import React from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 
-import { ColonyType, UserPermissionsType } from '~immutable/index';
-import { useDataFetcher, useSelector } from '~utils/hooks';
+import { ColonyType } from '~immutable/index';
+import { useSelector, useUserDomainRoles } from '~utils/hooks';
 import { ActionTypes } from '~redux/index';
 import { DialogActionButton } from '~core/Button';
 import Heading from '~core/Heading';
 import ExternalLink from '~core/ExternalLink';
-import { currentUserColonyPermissionsFetcher } from '../../../users/fetchers';
+import { ROOT_DOMAIN } from '../../../core/constants';
 import { networkVersionSelector } from '../../../core/selectors';
 import { canEnterRecoveryMode } from '../../../users/checks';
 import { canBeUpgraded, isInRecoveryMode } from '../../../dashboard/checks';
+import { walletAddressSelector } from '../../../users/selectors';
 
 import styles from './ProfileAdvanced.css';
 
@@ -89,15 +90,12 @@ const ProfileAdvanced = ({
   colony: { colonyAddress, id, version, canUnlockNativeToken },
   colony,
 }: Props) => {
+  const walletAddress = useSelector(walletAddressSelector);
   const {
-    isFetching: isFetchingUserPermissions,
-    data: permissions,
-    error: userPermissionsError,
-  } = useDataFetcher<UserPermissionsType>(
-    currentUserColonyPermissionsFetcher,
-    [colonyAddress],
-    [colonyAddress],
-  );
+    isFetching: isFetchingRoles,
+    data: roles,
+    error: userRolesError,
+  } = useUserDomainRoles(colonyAddress, ROOT_DOMAIN, walletAddress);
 
   const networkVersion = useSelector(networkVersionSelector);
 
@@ -166,11 +164,11 @@ const ProfileAdvanced = ({
           success={ActionTypes.COLONY_RECOVERY_MODE_ENTER_SUCCESS}
           error={ActionTypes.COLONY_RECOVERY_MODE_ENTER_ERROR}
           values={{ colonyAddress }}
-          loading={isFetchingUserPermissions}
+          loading={isFetchingRoles}
           disabled={
-            !!userPermissionsError ||
+            !!userRolesError ||
             isInRecoveryMode(colony) ||
-            !canEnterRecoveryMode(permissions)
+            !canEnterRecoveryMode(roles)
           }
         />
       </section>

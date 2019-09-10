@@ -1,7 +1,5 @@
 import {
   COLONY_ROLE_ADMINISTRATION,
-  COLONY_ROLE_RECOVERY,
-  COLONY_ROLE_ROOT,
   COLONY_ROLES,
 } from '@colony/colony-js-client';
 import flatten from 'lodash/flatten';
@@ -21,11 +19,7 @@ import {
   UserMetadataStore,
   UserProfileStore,
 } from '~data/types';
-import {
-  ContractTransactionType,
-  UserPermissionsType,
-  UserProfileType,
-} from '~immutable/index';
+import { ContractTransactionType, UserProfileType } from '~immutable/index';
 import {
   normalizeDDBStoreEvent,
   normalizeTransactionLog,
@@ -48,7 +42,6 @@ import {
   getUserProfileStore,
   getUserProfileStoreAddress,
 } from '~data/stores';
-import { ROOT_DOMAIN } from '../../core/constants';
 import { getUserProfileReducer, getUserTasksReducer } from './reducers';
 import {
   decorateColonyEventPayload,
@@ -65,15 +58,6 @@ interface UserMetadataStoreMetadata {
   metadataStoreAddress: string;
   walletAddress: Address;
 }
-
-const prepareColonyClientQuery = async (
-  {
-    colonyManager,
-  }: {
-    colonyManager: ColonyManager;
-  },
-  { colonyAddress }: { colonyAddress: Address },
-) => colonyManager.getColonyClient(colonyAddress);
 
 const prepareMetaColonyClientQuery = async ({
   colonyManager,
@@ -312,37 +296,6 @@ export const getUsername: Query<
     } catch (e) {
       return null;
     }
-  },
-};
-
-export const getUserPermissions: Query<
-  ColonyClient,
-  { colonyAddress: Address },
-  { walletAddress: string },
-  UserPermissionsType
-> = {
-  name: 'getUserPermissions',
-  context: [Context.COLONY_MANAGER],
-  prepare: prepareColonyClientQuery,
-  async execute(colonyClient, { walletAddress }) {
-    const {
-      hasRole: canEnterRecoveryMode,
-    } = await colonyClient.hasColonyRole.call({
-      address: walletAddress,
-      role: COLONY_ROLE_RECOVERY,
-      domainId: ROOT_DOMAIN,
-    });
-    const { hasRole: isAdmin } = await colonyClient.hasColonyRole.call({
-      address: walletAddress,
-      role: COLONY_ROLE_ADMINISTRATION,
-      domainId: ROOT_DOMAIN,
-    });
-    const { hasRole: isFounder } = await colonyClient.hasColonyRole.call({
-      address: walletAddress,
-      role: COLONY_ROLE_ROOT,
-      domainId: ROOT_DOMAIN,
-    });
-    return { canEnterRecoveryMode, isAdmin, isFounder };
   },
 };
 

@@ -1,3 +1,4 @@
+import { COLONY_ROLE_ROOT } from '@colony/colony-js-client';
 import { $Values } from 'utility-types';
 import { Channel } from 'redux-saga';
 import {
@@ -35,15 +36,12 @@ import {
   transactionLoadRelated,
 } from '../../core/actionCreators';
 import { createTransaction, createTransactionChannels } from '../../core/sagas';
+import { ROOT_DOMAIN } from '../../core/constants';
 import {
   currentUserSelector,
   walletAddressSelector,
 } from '../../users/selectors';
-import {
-  inboxItemsFetch,
-  subscribeToColony,
-  userPermissionsFetch,
-} from '../../users/actionCreators';
+import { inboxItemsFetch, subscribeToColony } from '../../users/actionCreators';
 import { userDidClaimProfile } from '../../users/checks';
 import { createColonyProfile } from '../data/commands';
 import { getColonyName } from './shared';
@@ -484,13 +482,23 @@ function* colonyRecover({
     colonyAddress,
   );
   try {
-    yield put(userPermissionsFetch(colonyAddress));
+    const walletAddress = yield select(walletAddressSelector);
+    yield put<AllActions>({
+      type: ActionTypes.COLONY_DOMAIN_USER_ROLES_FETCH,
+      meta: { key: colonyAddress },
+      payload: {
+        colonyAddress,
+        domainId: ROOT_DOMAIN,
+        userAddress: walletAddress,
+      },
+    });
     const {
       payload: {
-        permissions: { isFounder },
+        roles: { [COLONY_ROLE_ROOT]: isFounder },
       },
-    } = yield take(ActionTypes.USER_PERMISSIONS_FETCH_SUCCESS);
-
+    } = yield take<Action<ActionTypes.COLONY_DOMAIN_USER_ROLES_FETCH_SUCCESS>>(
+      ActionTypes.COLONY_DOMAIN_USER_ROLES_FETCH_SUCCESS,
+    );
     if (!isFounder) throw new Error('Founder permission required');
 
     const colonyName = yield call(getColonyName, colonyAddress);

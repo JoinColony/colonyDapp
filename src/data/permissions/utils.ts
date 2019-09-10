@@ -1,9 +1,7 @@
-import { ColonyClient, COLONY_ROLES } from '@colony/colony-js-client';
-import { Address } from '~types/strings';
+import { ColonyClient } from '@colony/colony-js-client';
+import { Address, ColonyRole } from '~types/index';
 
 import { PermissionModuleLoader } from '../types';
-
-type ColonyRole = keyof [typeof COLONY_ROLES];
 
 export const buildManifest = (
   colonyClient: ColonyClient,
