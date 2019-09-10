@@ -1,3 +1,5 @@
+/* eslint-disable dot-notation */
+
 import anyTest, { TestInterface } from 'ava';
 
 import { create as createWallet } from '@colony/purser-software';
@@ -37,6 +39,6 @@ test.after.always(async t => {
 
 test('Using purser', t => {
   const { ddb } = t.context;
-  t.truthy(ddb._orbitNode instanceof OrbitDB);
-  t.truthy(ddb._orbitNode.identity instanceof PurserIdentity);
+  t.truthy(ddb['orbitNode'] instanceof OrbitDB);
+  t.truthy(ddb['orbitNode'].identity instanceof PurserIdentity);
 });

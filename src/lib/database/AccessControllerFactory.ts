@@ -1,5 +1,5 @@
 /**
- * @NOTE: The destructuring on both methods bellow is only necessary to pass
+ * @NOTE: The destructuring on both methods below is only necessary to pass
  * the whole access controller object to orbit-db
  */
 

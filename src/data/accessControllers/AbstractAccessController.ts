@@ -21,7 +21,7 @@ export default class AbstractAccessController<
   I extends PurserIdentity,
   P extends PurserIdentityProvider<I>
 > implements AccessController<I, P> {
-  static _walletDidVerifyOrbitKey({
+  static walletDidVerifyOrbitKey({
     identity: {
       id: walletAddress,
       publicKey: orbitPublicKey,
@@ -37,7 +37,7 @@ export default class AbstractAccessController<
     );
   }
 
-  static async _providerDidVerifyEntry<P extends PurserIdentityProvider<any>>(
+  static async providerDidVerifyEntry<P extends PurserIdentityProvider<any>>(
     provider: P,
     {
       identity: { id: walletAddress, publicKey: orbitPublicKey, signatures },
@@ -50,7 +50,7 @@ export default class AbstractAccessController<
     return provider.verify(signatures.id, orbitPublicKey, walletAddress);
   }
 
-  static verifyWalletSignature(
+  private static verifyWalletSignature(
     walletAddress: string, // Likely to be an Address type, but might not be
     message: string,
     signature: string,
@@ -91,7 +91,7 @@ export default class AbstractAccessController<
     if (!isTypeValid) return false;
 
     // eslint-disable-next-line max-len
-    const isWalletSignatureValid = AbstractAccessController._walletDidVerifyOrbitKey(
+    const isWalletSignatureValid = AbstractAccessController.walletDidVerifyOrbitKey(
       entry,
     );
 
@@ -100,7 +100,7 @@ export default class AbstractAccessController<
 
     // Did the wallet allow the orbit key to write on its behalf and vice-versa?
     // eslint-disable-next-line max-len
-    const isOrbitSignatureValid: boolean = await AbstractAccessController._providerDidVerifyEntry(
+    const isOrbitSignatureValid: boolean = await AbstractAccessController.providerDidVerifyEntry(
       provider,
       entry,
     );

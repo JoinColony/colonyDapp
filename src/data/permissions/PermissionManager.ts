@@ -6,17 +6,17 @@ import { log } from '~utils/debug';
 
 // NOTE: I know this is a terrible name, we need to refactor it to favour composition over inheritance at some point
 export default class PermissionManager {
-  _permissions: PermissionsManifest;
+  private readonly permissions: PermissionsManifest<any>;
 
-  constructor(permissions: PermissionsManifest) {
+  constructor(permissions: PermissionsManifest<any>) {
     if (!(permissions && Object.keys(permissions).length)) {
       throw new Error('Invalid configuration');
     }
 
-    this._permissions = permissions;
+    this.permissions = permissions;
   }
 
-  static inheritsFromAnotherPermission(permission: Permission) {
+  static inheritsFromAnotherPermission(permission: Permission<any>) {
     return (
       isPlainObject(permission) &&
       isString((permission as any).inherits) &&
@@ -24,32 +24,24 @@ export default class PermissionManager {
     );
   }
 
-  async _verify<Context extends {}>(
-    permission: Permission,
+  private async verify<C extends object>(
+    permission: Permission<C>,
     user: string,
-    context?: Context,
+    context?: C,
   ) {
     if (typeof permission === 'function') {
       return permission(user, context);
     }
 
     if (PermissionManager.inheritsFromAnotherPermission(permission)) {
-      return this._verify(
-        this._permissions[permission.inherits],
-        user,
-        context,
-      );
+      return this.verify(this.permissions[permission.inherits], user, context);
     }
 
     return false;
   }
 
-  async can<Context extends object>(
-    actionId: ActionId,
-    user: string,
-    context?: Context,
-  ) {
-    if (!(this._permissions && Object.keys(this._permissions).length)) {
+  async can<C extends object>(actionId: ActionId, user: string, context?: C) {
+    if (!(this.permissions && Object.keys(this.permissions).length)) {
       throw new Error('Could not verify permission');
     }
 
@@ -57,13 +49,13 @@ export default class PermissionManager {
       throw new Error('User is invalid or was not found');
     }
 
-    const permission = this._permissions[actionId];
+    const permission = this.permissions[actionId];
     if (!permission) {
       throw new Error(`Permission for action "${actionId}" not found`);
     }
 
     try {
-      return this._verify<Context>(permission, user, context);
+      return this.verify<C>(permission, user, context);
     } catch (caughtError) {
       log.error(
         // eslint-disable-next-line max-len

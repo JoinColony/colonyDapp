@@ -6,18 +6,18 @@ import { Identity } from '~types/index';
 import PurserIdentityProvider from './PurserIdentityProvider';
 
 class PurserIdentity implements Identity {
-  _id: string;
+  readonly id: string;
 
-  _provider: PurserIdentityProvider<any>;
+  readonly provider: PurserIdentityProvider<any>;
 
-  _publicKey: string;
+  readonly publicKey: string;
 
-  _signatures: {
+  readonly signatures: {
     id: string;
     publicKey: string;
   };
 
-  _type: string;
+  readonly type: string;
 
   constructor(
     id: string,
@@ -51,46 +51,22 @@ class PurserIdentity implements Identity {
       throw new Error('Identity provider is required');
     }
 
-    this._id = id;
-    this._provider = provider;
-    this._publicKey = publicKey;
-    this._signatures = {
+    this.id = id;
+    this.provider = provider;
+    this.publicKey = publicKey;
+    this.signatures = {
       id: idSignature,
       publicKey: pubKeyIdSignature,
     };
-    this._type = type;
-  }
-
-  /**
-   * This is only used as a fallback to the clock id when necessary
-   * @return {string} public key hex encoded
-   */
-  get id() {
-    return this._id;
-  }
-
-  get publicKey() {
-    return this._publicKey;
-  }
-
-  get signatures() {
-    return this._signatures;
-  }
-
-  get type() {
-    return this._type;
-  }
-
-  get provider() {
-    return this._provider;
+    this.type = type;
   }
 
   toJSON() {
     return {
-      id: this._id,
-      publicKey: this._publicKey,
-      signatures: this._signatures,
-      type: this._type,
+      id: this.id,
+      publicKey: this.publicKey,
+      signatures: this.signatures,
+      type: this.type,
     };
   }
 }

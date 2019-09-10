@@ -25,15 +25,15 @@ const { isValidAddress, parseAddress } = OrbitDB;
  * means to add add a resolver for resolving store addresses
  */
 class DDB {
-  _identityProvider: IdentityProvider<Identity>;
+  private readonly identityProvider: IdentityProvider<Identity>;
 
-  _ipfsNode: IPFSNode;
+  private readonly ipfsNode: IPFSNode;
 
-  _orbitNode: OrbitDB;
+  readonly stores: Map<string, any>;
 
-  _stores: Map<string, any>;
+  private orbitNode: OrbitDB;
 
-  _resolver: ResolverFn | null;
+  private resolver: ResolverFn | null;
 
   static getAccessController<
     P extends object,
@@ -58,10 +58,10 @@ class DDB {
       throw new Error('No pinner connected - but we need it!');
     }
 
-    this._ipfsNode = ipfsNode;
-    this._stores = new Map();
-    this._resolver = null;
-    this._identityProvider = identityProvider;
+    this.ipfsNode = ipfsNode;
+    this.stores = new Map();
+    this.resolver = null;
+    this.identityProvider = identityProvider;
   }
 
   /**
@@ -70,7 +70,7 @@ class DDB {
    */
   get busy() {
     // eslint-disable-next-line no-restricted-syntax
-    for (const [, store] of this._stores) {
+    for (const [, store] of this.stores) {
       if (store.busy) {
         return true;
       }
@@ -78,7 +78,7 @@ class DDB {
     return false;
   }
 
-  _makeStore(
+  private makeStore(
     orbitStore: any,
     {
       name,
@@ -89,34 +89,34 @@ class DDB {
     const store = new StoreClass(
       orbitStore,
       name,
-      this._ipfsNode.pinner,
+      this.ipfsNode.pinner,
       schema,
     );
     const { root, path } = store.address;
-    this._stores.set(`${root}/${path}`, store);
+    this.stores.set(`${root}/${path}`, store);
     return store;
   }
 
-  _getCachedStore(address: OrbitDBAddress) {
+  private getCachedStore(address: OrbitDBAddress) {
     const { root, path } = address;
-    return this._stores.has(`${root}/${path}`)
-      ? this._stores.get(`${root}/${path}`)
+    return this.stores.has(`${root}/${path}`)
+      ? this.stores.get(`${root}/${path}`)
       : null;
   }
 
-  async _getStoreAddress(
+  private async getStoreAddress(
     identifier: StoreIdentifier,
   ): Promise<OrbitDBAddress | null> {
     log.verbose(`Getting store address for identifier`, identifier);
-    if (typeof identifier === 'string') {
+    if (typeof identifier == 'string') {
       // If it's already a valid address we parse it
       if (isValidAddress(identifier)) {
         return parseAddress(identifier);
       }
       // Otherwise it might be something to pass into the resolver
       const addressString =
-        typeof this._resolver === 'function'
-          ? await this._resolver(identifier)
+        typeof this.resolver == 'function'
+          ? await this.resolver(identifier)
           : null;
 
       log.verbose(
@@ -135,7 +135,7 @@ class DDB {
   }
 
   registerResolver(resolverFn: ResolverFn) {
-    this._resolver = resolverFn;
+    this.resolver = resolverFn;
   }
 
   async createStore<T extends any>(
@@ -156,7 +156,7 @@ class DDB {
       blueprint,
       storeProps,
     );
-    const orbitStore: OrbitDBStore = await this._orbitNode.create(
+    const orbitStore: OrbitDBStore = await this.orbitNode.create(
       name,
       StoreClass.orbitType, // We might want to use more options in the future. Just add them here
       {
@@ -167,7 +167,7 @@ class DDB {
     );
 
     const { type, schema } = blueprint;
-    const store: T = this._makeStore(orbitStore, { name, schema, type });
+    const store: T = this.makeStore(orbitStore, { name, schema, type });
     await store.ready();
 
     return store;
@@ -179,7 +179,7 @@ class DDB {
     storeProps: object,
   ): Promise<T> {
     const { getName, type } = blueprint;
-    const address = await this._getStoreAddress(identifier);
+    const address = await this.getStoreAddress(identifier);
     if (!address) {
       throw new Error(
         `Address not found for store with identifier ${
@@ -190,7 +190,7 @@ class DDB {
       );
     }
 
-    const cachedStore: T | null = this._getCachedStore(address);
+    const cachedStore: T | null = this.getCachedStore(address);
     if (cachedStore) {
       log.verbose(`Getting store from cache`, address);
       await cachedStore.load();
@@ -221,7 +221,7 @@ class DDB {
       storeProps,
     );
     // @ts-ignore
-    const orbitStore: any = await this._orbitNode.open(address, {
+    const orbitStore: any = await this.orbitNode.open(address, {
       accessController: { controller: storeAccessController },
     });
     if (orbitStore.type !== type.orbitType) {
@@ -230,7 +230,7 @@ class DDB {
       );
     }
     const { schema } = blueprint;
-    const store: T = this._makeStore(orbitStore, { name, type, schema });
+    const store: T = this.makeStore(orbitStore, { name, type, schema });
 
     await store.load();
     return store;
@@ -248,7 +248,7 @@ class DDB {
 
     log.verbose(`Generating address for store "${name}"`);
     const controller = DDB.getAccessController(name, blueprint, storeProps);
-    const address = await this._orbitNode.determineAddress(
+    const address = await this.orbitNode.determineAddress(
       name,
       StoreClass.orbitType, // We might want to use more options in the future. Just add them here
       {
@@ -267,38 +267,15 @@ class DDB {
     return address && address.toString();
   }
 
-  // Taken from https://github.com/orbitdb/orbit-db/commit/50dcd71411fbc96b1bcd2ab0625a3c0b76acbb7e
-  async storeExists(identifier: StoreIdentifier): Promise<boolean> {
-    const address = await this._getStoreAddress(identifier);
-
-    /**
-     * @todo Fix `DDB.storeExists` error modes
-     * @body If there's no address, it should return an error. Also, this method is unused...
-     */
-    if (!address) {
-      return false;
-    }
-    // eslint-disable-next-line no-underscore-dangle
-    const cache = await this._orbitNode._loadCache(
-      this._orbitNode.directory,
-      address,
-    );
-    if (!cache) {
-      return false;
-    }
-    const data = await cache.get(`${address.toString()}/_manifest`);
-    return data !== undefined && data !== null;
-  }
-
   async init() {
-    const identity = await this._identityProvider.createIdentity();
-    await this._ipfsNode.ready;
-    const ipfs = this._ipfsNode.getIPFS();
+    const identity = await this.identityProvider.createIdentity();
+    await this.ipfsNode.ready;
+    const ipfs = this.ipfsNode.getIPFS();
 
-    this._orbitNode = await OrbitDB.createInstance(ipfs, {
+    this.orbitNode = await OrbitDB.createInstance(ipfs, {
       AccessControllers: AccessControllerFactory,
       identity,
-      keystore: this._identityProvider.keystore,
+      keystore: this.identityProvider.keystore,
 
       /**
        * @todo : is there a case where this could not be the default? This be a constant, or configurable? and `colonyOrbitDB`?
@@ -308,8 +285,8 @@ class DDB {
   }
 
   async stop() {
-    if (this._identityProvider) await this._identityProvider.close();
-    return this._orbitNode.stop();
+    if (this.identityProvider) await this.identityProvider.close();
+    return this.orbitNode.stop();
   }
 }
 

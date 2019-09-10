@@ -4,7 +4,7 @@ import AbstractAccessController from './AbstractAccessController';
 import PurserIdentity from '../PurserIdentity';
 import PurserIdentityProvider from '../PurserIdentityProvider';
 
-/* eslint-disable class-methods-use-this, no-underscore-dangle */
+/* eslint-disable class-methods-use-this */
 const TYPE = 'permissive';
 
 export default class PermissiveAccessController extends AbstractAccessController<
@@ -27,13 +27,13 @@ export default class PermissiveAccessController extends AbstractAccessController
     entry: Entry,
     provider: PurserIdentityProvider<PurserIdentity>,
   ): Promise<boolean> {
-    const isWalletSigValid = AbstractAccessController._walletDidVerifyOrbitKey(
+    const isWalletSigValid = AbstractAccessController.walletDidVerifyOrbitKey(
       entry,
     );
     if (!isWalletSigValid) return false;
 
     // Did the wallet allow the orbit key to write on its behalf and vice-versa?
-    return AbstractAccessController._providerDidVerifyEntry(provider, entry);
+    return AbstractAccessController.providerDidVerifyEntry(provider, entry);
   }
 }
-/* eslint-enable class-methods-use-this, no-underscore-dangle */
+/* eslint-enable class-methods-use-this */

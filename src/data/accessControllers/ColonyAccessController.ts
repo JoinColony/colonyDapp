@@ -1,9 +1,8 @@
-/* eslint-disable no-underscore-dangle */
 import { WalletObjectType } from '@colony/purser-core';
+
+import { transformEntry } from '~data/utils';
 import { Entry, PermissionsManifest, createAddress } from '../../types/index';
-
 import { log } from '../../utils/debug';
-
 import { PermissionManager } from '../permissions';
 import AbstractAccessController from './AbstractAccessController';
 import PurserIdentity from '../PurserIdentity';
@@ -15,11 +14,11 @@ class ColonyAccessController extends AbstractAccessController<
   PurserIdentity,
   PurserIdentityProvider<PurserIdentity>
 > {
-  _colonyAddress: string;
+  private readonly colonyAddress: string;
 
-  _manager: PermissionManager;
+  private readonly manager: PermissionManager;
 
-  _purserWallet: WalletObjectType;
+  private readonly wallet: WalletObjectType;
 
   static get type(): string {
     return TYPE;
@@ -33,7 +32,7 @@ class ColonyAccessController extends AbstractAccessController<
   constructor(
     colonyAddress: string,
     purserWallet: WalletObjectType,
-    permissionsManifest: PermissionsManifest,
+    permissionsManifest: PermissionsManifest<any>,
   ) {
     super();
 
@@ -42,43 +41,39 @@ class ColonyAccessController extends AbstractAccessController<
       colonyAddress,
       purserWallet.address,
     );
-    this._colonyAddress = colonyAddress;
-    this._purserWallet = purserWallet;
-    this._manager = new PermissionManager(permissionsManifest);
+    this.colonyAddress = colonyAddress;
+    this.wallet = purserWallet;
+    this.manager = new PermissionManager(permissionsManifest);
   }
 
   get walletAddress() {
-    return createAddress(this._purserWallet.address);
+    return createAddress(this.wallet.address);
   }
 
-  _extendVerifyContext<Context extends {}>(context: Context | null) {
-    return { ...context, colonyAddress: this._colonyAddress };
+  private extendVerifyContext<C extends object | void>(context: C) {
+    return { ...context, colonyAddress: this.colonyAddress };
   }
 
-  _checkWalletAddress() {
-    if (!this._purserWallet.address)
+  private checkWalletAddress() {
+    if (!this.wallet.address)
       throw new Error('Could not get wallet address. Is it unlocked?');
   }
 
   async save({ onlyDetermineAddress }: { onlyDetermineAddress: boolean }) {
     if (!onlyDetermineAddress) {
-      const isAllowed = await this.can(
-        'is-colony-founder',
-        this.walletAddress,
-        {},
-      );
+      const isAllowed = await this.can('is-founder', this.walletAddress);
       if (!isAllowed) {
         throw new Error('Cannot create colony database, user not allowed');
       }
     }
 
-    const accessControllerAddress = `/colony/${this._colonyAddress}`;
+    const accessControllerAddress = `/colony/${this.colonyAddress}`;
     log.verbose(`Access controller address: "${accessControllerAddress}"`);
     return accessControllerAddress;
   }
 
   async load() {
-    this._checkWalletAddress();
+    this.checkWalletAddress();
   }
 
   async canAppend(
@@ -88,24 +83,20 @@ class ColonyAccessController extends AbstractAccessController<
     const isAuthorized = await super.canAppend(entry, provider);
     if (!isAuthorized) return false;
 
-    // Is the wallet signature valid?
-    const {
-      payload: { value: event },
-      identity: { id: user },
-    } = entry;
-    return this.can(event.type, user, event);
+    const event = transformEntry(entry);
+    return this.can(event.type, event.meta.userAddress, { event });
   }
 
-  async can<Context extends {}>(
+  async can<C extends object | void>(
     actionId: string,
     user: string,
-    context: Context | null,
+    context?: C,
   ): Promise<boolean> {
     log.verbose('Checking permission for action', actionId, user, context);
-    return this._manager.can(
+    return this.manager.can(
       actionId,
       user,
-      this._extendVerifyContext<Context>(context),
+      this.extendVerifyContext<C>(context),
     );
   }
 }

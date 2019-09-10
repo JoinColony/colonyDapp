@@ -23,65 +23,65 @@ type TimeoutID = any;
 class Store {
   static orbitType: string;
 
-  _busyPromise: Promise<void> | null;
+  private busyPromise: Promise<void> | null;
 
-  _orbitStore: OrbitDBStore;
+  readonly orbitStore: OrbitDBStore;
 
-  _name: string;
+  readonly name: string;
 
-  _pinner: PinnerConnector;
+  private readonly pinner: PinnerConnector;
 
-  _ready = false;
+  private isReady = false;
 
-  _replicationTimeout: TimeoutID | null;
+  private replicationTimeout: TimeoutID | null;
 
-  _writeTimeout: TimeoutID | null;
+  private writeTimeout: TimeoutID | null;
 
   constructor(orbitStore: OrbitDBStore, name: string, pinner: PinnerConnector) {
-    this._orbitStore = orbitStore;
-    this._orbitStore.events.on('replicate', () =>
-      this._renewReplicationTimeout(REPLICATION_KEEP_ALIVE_TIMEOUT),
+    this.orbitStore = orbitStore;
+    this.orbitStore.events.on('replicate', () =>
+      this.renewReplicationTimeout(REPLICATION_KEEP_ALIVE_TIMEOUT),
     );
-    this._orbitStore.events.on('replicate.progress', () =>
-      this._renewReplicationTimeout(REPLICATION_KEEP_ALIVE_TIMEOUT),
+    this.orbitStore.events.on('replicate.progress', () =>
+      this.renewReplicationTimeout(REPLICATION_KEEP_ALIVE_TIMEOUT),
     );
     // After a write to a store, wait for some time to give replication a chance to be done
-    this._orbitStore.events.on('write', () => {
+    this.orbitStore.events.on('write', () => {
       this.deferReplicate();
-      if (this._writeTimeout) clearTimeout(this._writeTimeout);
-      this._writeTimeout = setTimeout(() => {
-        this._writeTimeout = null;
+      if (this.writeTimeout) clearTimeout(this.writeTimeout);
+      this.writeTimeout = setTimeout(() => {
+        this.writeTimeout = null;
       }, WRITE_TIMEOUT);
     });
-    this._orbitStore.events.once('ready', () => {
-      this._ready = true;
+    this.orbitStore.events.once('ready', () => {
+      this.isReady = true;
     });
-    this._name = name;
-    this._pinner = pinner;
-    this._busyPromise = null;
+    this.name = name;
+    this.pinner = pinner;
+    this.busyPromise = null;
   }
 
   get address() {
-    return this._orbitStore.address;
+    return this.orbitStore.address;
   }
 
   get busy() {
     return (
-      !!this._busyPromise || !!this._replicationTimeout || !!this._writeTimeout
+      !!this.busyPromise || !!this.replicationTimeout || !!this.writeTimeout
     );
   }
 
   get length() {
     // eslint-disable-next-line no-underscore-dangle
-    return this._orbitStore._oplog.length;
+    return this.orbitStore._oplog.length;
   }
 
-  _renewReplicationTimeout(ms: number) {
-    if (this._replicationTimeout) clearTimeout(this._replicationTimeout);
-    this._replicationTimeout = setTimeout(() => {
-      if (this._replicationTimeout) {
-        clearTimeout(this._replicationTimeout);
-        this._replicationTimeout = null;
+  private renewReplicationTimeout(ms: number) {
+    if (this.replicationTimeout) clearTimeout(this.replicationTimeout);
+    this.replicationTimeout = setTimeout(() => {
+      if (this.replicationTimeout) {
+        clearTimeout(this.replicationTimeout);
+        this.replicationTimeout = null;
       }
     }, ms);
   }
@@ -90,26 +90,26 @@ class Store {
     const startLoading = Date.now();
     await this.ready();
     log.verbose(
-      `Loaded store "${this._name}" in ${Date.now() - startLoading} ms`,
+      `Loaded store "${this.name}" in ${Date.now() - startLoading} ms`,
     );
     try {
       await this.replicate();
     } catch (caughtError) {
-      this._pinner.events.emit('error', 'store:load', caughtError);
+      this.pinner.events.emit('error', 'store:load', caughtError);
       log.warn(`Could not request pinned store`, caughtError);
     }
   }
 
   async ready() {
-    log.verbose(`Loading store "${this._name}"`);
+    log.verbose(`Loading store "${this.name}"`);
     // This *should* be fine. If we loaded the store once we don't need to load it again
     // Replication will do the rest
     // eslint-disable-next-line no-underscore-dangle
-    if (this._ready) return this._orbitStore._oplog.length;
+    if (this.isReady) return this.orbitStore._oplog.length;
     const headCountPromise = new Promise(resolve =>
-      this._orbitStore.events.once('ready', (dbname, heads) => resolve(heads)),
+      this.orbitStore.events.once('ready', (dbname, heads) => resolve(heads)),
     );
-    const loadPromise = this._orbitStore.load(-1, {
+    const loadPromise = this.orbitStore.load(-1, {
       fetchEntryTimeout: LOAD_ENTRY_TIMEOUT,
     });
 
@@ -121,21 +121,21 @@ class Store {
       );
       return heads;
     } catch (caughtError) {
-      this._pinner.events.emit('error', 'store:load', caughtError);
+      this.pinner.events.emit('error', 'store:load', caughtError);
       log.warn(caughtError);
       return 0;
     }
   }
 
-  deferReplicate() {
+  private deferReplicate() {
     // We're probably "just" sending data _to_ the pinner. No need to wait for its response.
     const address = this.address.toString();
-    this._pinner.requestReplication(address).catch(log.warn);
+    this.pinner.requestReplication(address).catch(log.warn);
   }
 
-  async replicate() {
+  private async replicate() {
     const address = this.address.toString();
-    this._pinner
+    this.pinner
       .requestReplication(address)
       .then(headCount => {
         log.verbose(
@@ -147,10 +147,10 @@ class Store {
 
     log.verbose(`Replicating store ${address}`);
     // Wait for a store replication to start
-    this._renewReplicationTimeout(REPLICATION_KEEP_ALIVE_TIMEOUT);
+    this.renewReplicationTimeout(REPLICATION_KEEP_ALIVE_TIMEOUT);
     await new Promise(resolve => {
       const interval = setInterval(() => {
-        if (!this._replicationTimeout) {
+        if (!this.replicationTimeout) {
           clearInterval(interval);
           log.verbose(`Store sucessfully replicated: ${address}`);
           resolve();
@@ -160,14 +160,14 @@ class Store {
   }
 
   async load() {
-    if (this._busyPromise) {
-      return this._busyPromise;
+    if (this.busyPromise) {
+      return this.busyPromise;
     }
     try {
-      this._busyPromise = this.loadEntries();
-      return this._busyPromise;
+      this.busyPromise = this.loadEntries();
+      return this.busyPromise;
     } finally {
-      this._busyPromise = null;
+      this.busyPromise = null;
     }
   }
 
@@ -178,7 +178,7 @@ class Store {
    */
   async drop() {
     await this.unpin();
-    return this._orbitStore.drop();
+    return this.orbitStore.drop();
   }
 
   // eslint-disable-next-line class-methods-use-this
