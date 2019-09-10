@@ -28,7 +28,7 @@ const MSG = defineMessages({
   },
   sendTokens: {
     id: 'admin.Profile.ProfileEdit.sendTokens',
-    defaultMessage: 'Send tokens to this address to fund your colony',
+    defaultMessage: '(Send tokens to this address to fund your colony)',
   },
   labelEnsName: {
     id: 'admin.Profile.ProfileEdit.labelEnsName',

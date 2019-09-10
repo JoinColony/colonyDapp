@@ -23,8 +23,8 @@ describe('InputLabel intl={intl} component', () => {
 
   test('If error is false, and help is true, returns help field', () => {
     const wrapper = shallowWithIntl(
-      <InputLabel id="foo" help="halp" label="awesome" />,
+      <InputLabel id="foo" help="(halp)" label="awesome" />,
     );
-    expect(wrapper.html()).toContain('<span>(</span>halp<span>)</span>');
+    expect(wrapper.html()).toContain('(halp)');
   });
 });

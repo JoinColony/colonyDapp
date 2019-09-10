@@ -10,7 +10,7 @@ const upload = (file) => new Promise(resolve => setTimeout(resolve, 3000));
 
 <AvatarUploader
   label="Upload your avatar!"
-  help="It must be at least 250px by 250px"
+  help="(It must be at least 250px by 250px)"
   placeholder={
     <UserAvatar
       size="xl"
