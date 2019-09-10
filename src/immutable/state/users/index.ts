@@ -11,7 +11,7 @@ import { AllUsersRecord } from './AllUsers';
 import { ContractTransactionRecord } from '../../ContractTransaction';
 import { FetchableDataRecord } from '../../FetchableData';
 import { TokenReferenceRecordType } from '../../TokenReference';
-import { InboxItemRecordType } from '../../InboxItem';
+import { InboxItemRecord } from '../../InboxItem';
 import { UserPermissionsRecordType } from '../../UserPermissions';
 import { UserProfileRecordType } from '../../UserProfile';
 import { WalletRecordType } from '../../Wallet';
@@ -37,7 +37,7 @@ export type CurrentUserTokensType = FetchableDataRecord<
 >;
 
 export interface CurrentUser {
-  activities: List<InboxItemRecordType>;
+  activities: List<InboxItemRecord>;
   colonies: FetchableDataRecord<CurrentUserColoniesType>;
   permissions: CurrentUserPermissionsType;
   profile: UserProfileRecordType;
