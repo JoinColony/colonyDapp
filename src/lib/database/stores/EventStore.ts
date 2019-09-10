@@ -1,10 +1,10 @@
 import localStorage from 'localforage';
 
+import { AllCurrentEvents, Event, EventIteratorOptions } from '~types/index';
+import { transformEntry } from '~data/utils';
 import { OrbitDBStore } from '../types';
 import PinnerConnector from '../../ipfs/PinnerConnector';
 import Store from './Store';
-
-import { AllEvents, Entry, EventIteratorOptions } from '~types/index';
 
 /**
  * The wrapper Store class for orbit's eventlog store.
@@ -12,22 +12,7 @@ import { AllEvents, Entry, EventIteratorOptions } from '~types/index';
 class EventStore extends Store {
   static orbitType = 'eventlog';
 
-  static transformEntry({
-    identity: { id: userAddress },
-    payload: {
-      value: { meta, ...event },
-    },
-  }: Entry) {
-    return {
-      ...event,
-      meta: {
-        ...meta,
-        userAddress,
-      },
-    };
-  }
-
-  _cache: AllEvents[] | void;
+  private cache: AllCurrentEvents[] | void;
 
   constructor(orbitStore: OrbitDBStore, name: string, pinner: PinnerConnector) {
     super(orbitStore, name, pinner);
@@ -43,7 +28,7 @@ class EventStore extends Store {
     });
   }
 
-  private async getLSCache(): Promise<AllEvents[] | void> {
+  private async getLSCache(): Promise<AllCurrentEvents[] | void> {
     try {
       await localStorage.ready();
     } catch (e) {

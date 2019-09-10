@@ -1,5 +1,5 @@
 import { ContextName } from '~context/index';
-import { AllEvents } from './events';
+import { AllCurrentEvents } from './events';
 
 /*
  * The specification for a data query.
@@ -29,4 +29,4 @@ export interface Query<D, M, A, R> {
  *
  * T: State for the reducer, e.g. ImmutableMap<>
  */
-export type EventReducer<T> = (currentValue: T, event: AllEvents) => T;
+export type EventReducer<T> = (currentValue: T, event: AllCurrentEvents) => T;

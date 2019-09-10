@@ -4,7 +4,7 @@ import { Address, StoreBlueprint } from '~types/index';
 
 import { EventStore } from '~lib/database/stores';
 import { ColonyAccessController } from '../accessControllers/index';
-import loadPermissionManifest from '../permissions/index';
+import loadPermissionManifest, { MANIFEST_LOADERS } from '../permissions/index';
 
 export interface ColonyStoreProps {
   colonyAddress: Address;
@@ -31,7 +31,10 @@ export const getColonyStoreAccessController = ({
       'Could not create access controller, colony client is required',
     );
 
-  const manifest = loadPermissionManifest(colonyClient);
+  const manifest = loadPermissionManifest(colonyClient, [
+    MANIFEST_LOADERS.COMMON,
+    MANIFEST_LOADERS.COLONY,
+  ]);
   return new ColonyAccessController(colonyAddress, wallet, manifest);
 };
 

@@ -1,6 +1,6 @@
 import { Address } from '~types/index';
 import { EventDefinition } from './events';
-import { EventTypes } from '../constants';
+import { EventTypes, Versions } from '../constants';
 
 export type UserProfileEvents =
   | EventDefinition<
@@ -10,7 +10,8 @@ export type UserProfileEvents =
         metadataStoreAddress: string;
         username: string;
         walletAddress: Address;
-      }
+      },
+      Versions.CURRENT
     >
   | EventDefinition<
       EventTypes.USER_PROFILE_UPDATED,
@@ -19,12 +20,19 @@ export type UserProfileEvents =
         displayName?: string;
         location?: string;
         website?: string;
-      }
+      },
+      Versions.CURRENT
     >
   | EventDefinition<
       EventTypes.USER_AVATAR_UPLOADED,
       {
         avatarHash: string;
-      }
+      },
+      Versions.CURRENT
     >
-  | EventDefinition<EventTypes.USER_AVATAR_REMOVED, null>;
+  | EventDefinition<
+      // forcing a line break for visual consistency
+      EventTypes.USER_AVATAR_REMOVED,
+      null,
+      Versions.CURRENT
+    >;
