@@ -35,7 +35,8 @@ const TransactionLink = ({
 }: Props) => {
   const linkText = text || hash;
   const tld = network === 'tobalaba' ? 'com' : 'io';
-  const networkSubdomain = network === 'homestead' ? '' : `${network}.`;
+  const networkSubdomain =
+    network === 'homestead' || network === 'mainnet' ? '' : `${network}.`;
   const href = `https://${networkSubdomain}etherscan.${tld}/tx/${hash}`;
   return (
     <ExternalLink
