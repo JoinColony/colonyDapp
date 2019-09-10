@@ -4,7 +4,7 @@
 import createSandbox from 'jest-sandbox';
 
 import { FetchableData } from '../../FetchableData';
-import { DomainRecord } from '../../Domain';
+import { Domain } from '../../Domain';
 
 import { shouldFetchData } from '../data';
 
@@ -21,7 +21,7 @@ describe('immutable utils - shouldFetchData', () => {
   /*
    * Test values
    */
-  const record = DomainRecord({ id: 1, name: 'My Domain' });
+  const record = Domain({ id: 1, name: 'My Domain' });
   const error = 'could not load';
 
   /*
