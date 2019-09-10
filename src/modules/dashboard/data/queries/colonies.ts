@@ -24,7 +24,6 @@ import {
 import { ColonyType, DomainType } from '~immutable/index';
 import { Context } from '~context/index';
 import { EventTypes } from '~data/constants';
-import EventStore from '~lib/database/stores/EventStore';
 import {
   getColonyStore,
   getColonyTaskIndexStore,
@@ -413,25 +412,19 @@ export const getColonyTasks: Query<
       colonyStore = await getColonyStore(colonyClient, ddb, wallet)(metadata);
     }
 
-    if (!(colonyStore || colonyTaskIndexStore)) {
-      throw new Error(
-        'Could not load colony task index or colony store either',
-      );
-    }
-
     return {
       colonyStore,
       colonyTaskIndexStore,
     };
   },
   async execute({ colonyStore, colonyTaskIndexStore }) {
-    if (!colonyStore || !colonyTaskIndexStore) {
+    // backwards-compatibility Colony task index store
+    const store = colonyTaskIndexStore || colonyStore;
+    if (!store) {
       throw new Error(
         'Could not load colony task index or colony store either',
       );
     }
-    // backwards-compatibility Colony task index store
-    const store = colonyTaskIndexStore || colonyStore;
     return store
       .all()
       .filter(
@@ -602,25 +595,19 @@ export const subscribeToColonyTasks: Subscription<
       colonyStore = await getColonyStore(colonyClient, ddb, wallet)(metadata);
     }
 
-    if (!(colonyStore || colonyTaskIndexStore)) {
-      throw new Error(
-        'Could not load colony task index or colony store either',
-      );
-    }
-
     return {
       colonyStore,
       colonyTaskIndexStore,
     };
   },
   async execute({ colonyStore, colonyTaskIndexStore }) {
-    if (!(colonyStore || colonyTaskIndexStore)) {
+    // backwards-compatibility Colony task index store
+    const store = colonyStore || colonyTaskIndexStore;
+    if (!store) {
       throw new Error(
         'Could not load colony task index or colony store either',
       );
     }
-    // backwards-compatibility Colony task index store
-    const store = (colonyTaskIndexStore || colonyStore) as EventStore;
     return emitter => [
       store.subscribe(events =>
         emitter(
