@@ -56,10 +56,6 @@
   align-items: baseline;
 }
 
-.helpAlignRight .help .paren {
-  display: none;
-}
-
 .extra {
   position: absolute;
   top: 0;
