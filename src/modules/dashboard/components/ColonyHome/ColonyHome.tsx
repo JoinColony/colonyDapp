@@ -16,6 +16,7 @@ import {
   DomainType,
 } from '~immutable/index';
 import { Address } from '~types/index';
+import { ROOT_DOMAIN } from '../../../core/constants';
 import {
   TasksFilterOptionType,
   TasksFilterOptions,
@@ -196,9 +197,10 @@ const ColonyHome = ({
     colonyArgs,
   );
 
-  const transform = useCallback(mergePayload({ colonyAddress }), [
-    colonyAddress,
-  ]);
+  const transform = useCallback(
+    mergePayload({ colonyAddress, domainId: filteredDomainId || ROOT_DOMAIN }),
+    [colonyAddress, filteredDomainId],
+  );
 
   const canCreateTask = canCreateTaskCheck(permissions as UserPermissionsType);
   const isInRecoveryMode = isInRecoveryModeCheck(colony);

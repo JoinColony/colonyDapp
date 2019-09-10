@@ -90,7 +90,7 @@ export type TaskActionTypes =
     >
   | UniqueActionType<
       ActionTypes.TASK_CREATE,
-      TaskProps<'colonyAddress'>,
+      TaskProps<'colonyAddress' | 'domainId'>,
       object
     >
   | ErrorActionType<ActionTypes.TASK_CREATE_ERROR, object>

@@ -9,15 +9,18 @@ import { ReducerType, ActionTypes } from '~redux/index';
 import { TaskRecord, FetchableData, TaskPayout, Task } from '~immutable/index';
 import { withFetchableDataMap } from '~utils/reducers';
 import { EventTypes, TaskStates } from '~data/constants';
-import { AllEvents, createAddress } from '~types/index';
+import { AllCurrentEvents, createAddress } from '~types/index';
 
 import { TasksMap } from '../state/index';
 
-const taskEventReducer = (task: TaskRecord, event: AllEvents): TaskRecord => {
+const taskEventReducer = (
+  task: TaskRecord,
+  event: AllCurrentEvents,
+): TaskRecord => {
   switch (event.type) {
     case EventTypes.TASK_CREATED: {
       const {
-        payload: { creatorAddress, draftId },
+        payload: { creatorAddress, draftId, domainId },
         meta: { timestamp },
       } = event;
       return task.merge(
@@ -27,7 +30,7 @@ const taskEventReducer = (task: TaskRecord, event: AllEvents): TaskRecord => {
           currentState: TaskStates.ACTIVE,
           draftId,
           managerAddress: creatorAddress,
-          domainId: 1,
+          domainId,
         }),
       );
     }

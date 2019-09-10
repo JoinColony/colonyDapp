@@ -13,6 +13,7 @@ import Icon from '~core/Icon';
 import { SpinnerLoader } from '~core/Preloaders';
 import { useDataSubscriber, useSelector } from '~utils/hooks';
 
+import { ROOT_DOMAIN } from '../../../../core/constants';
 import { colonyTaskMetadataSubscriber } from '../../../subscribers';
 import { walletAddressSelector } from '../../../../users/selectors';
 import { TaskMetadataMap } from '../../../state/index';
@@ -147,9 +148,10 @@ const ColonyTasks = ({
     [colonyAddress, taskMetadata],
   ) as [Address, TaskDraftId][];
 
-  const transform = useCallback(mergePayload({ colonyAddress }), [
-    colonyAddress,
-  ] as any);
+  const transform = useCallback(
+    mergePayload({ colonyAddress, domainId: filteredDomainId || ROOT_DOMAIN }),
+    [filteredDomainId, colonyAddress],
+  );
 
   if (isFetching) {
     return null;

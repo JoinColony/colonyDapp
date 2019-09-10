@@ -86,7 +86,7 @@ export const createColonyProfile: Command<
       token: { iconHash, isNative, isExternal, ...token },
     },
   ) {
-    await colonyStore.init(
+    await colonyStore.append(
       createEvent(EventTypes.TASK_INDEX_STORE_REGISTERED, {
         taskIndexStoreAddress: colonyTaskIndexStore.address.toString(),
       }),

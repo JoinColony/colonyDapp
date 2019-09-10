@@ -48,6 +48,7 @@ import {
   getUserProfileStore,
   getUserProfileStoreAddress,
 } from '~data/stores';
+import { ROOT_DOMAIN } from '../../core/constants';
 import { getUserProfileReducer, getUserTasksReducer } from './reducers';
 import {
   decorateColonyEventPayload,
@@ -329,17 +330,17 @@ export const getUserPermissions: Query<
     } = await colonyClient.hasColonyRole.call({
       address: walletAddress,
       role: COLONY_ROLE_RECOVERY,
-      domainId: 1,
+      domainId: ROOT_DOMAIN,
     });
     const { hasRole: isAdmin } = await colonyClient.hasColonyRole.call({
       address: walletAddress,
       role: COLONY_ROLE_ADMINISTRATION,
-      domainId: 1,
+      domainId: ROOT_DOMAIN,
     });
     const { hasRole: isFounder } = await colonyClient.hasColonyRole.call({
       address: walletAddress,
       role: COLONY_ROLE_ROOT,
-      domainId: 1,
+      domainId: ROOT_DOMAIN,
     });
     return { canEnterRecoveryMode, isAdmin, isFounder };
   },

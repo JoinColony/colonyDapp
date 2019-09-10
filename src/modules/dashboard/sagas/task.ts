@@ -105,7 +105,7 @@ export function* fetchColonyTaskMetadata(colonyAddress: Address) {
 
 function* taskCreate({
   meta,
-  payload: { colonyAddress },
+  payload: { colonyAddress, domainId },
 }: Action<ActionTypes.TASK_CREATE>) {
   try {
     const {
@@ -119,8 +119,8 @@ function* taskCreate({
     const { taskStore, commentsStore, event } = yield executeCommand(
       createTask,
       {
-        metadata: { colonyAddress, draftId },
-        args: { creatorAddress, draftId },
+        metadata: { colonyAddress, draftId, domainId },
+        args: { creatorAddress, draftId, domainId },
       },
     );
     const successAction: Action<ActionTypes.TASK_CREATE_SUCCESS> = {
