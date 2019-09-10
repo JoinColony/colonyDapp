@@ -104,6 +104,18 @@ interface Props {
   error: ActionTypeString;
 }
 
+enum Roles {
+  ADMIN = 'Admin',
+  ARCHITECTURE = 'Architecture',
+  ARBITRATION = 'Arbitration',
+  ROOT = 'Root',
+  FUNDING = 'Funding',
+}
+
+type Role = keyof typeof Roles;
+
+type SelectedRoles = Partial<Record<Role, boolean>>;
+
 const validationSchema = yup.object({
   user: yup.object().required(),
   domainId: yup.number(),
@@ -184,11 +196,16 @@ const ColonyPermissionEditDialog = ({
   // When user clicked on a specific user entry
   useEffect(() => {
     setSelectedUser(clickedUser);
-  });
+  }, [clickedUser]);
 
   const updateSelectedUser = useCallback(({ profile: { walletAddress } }) => {
     setSelectedUser(walletAddress);
   }, []);
+
+  const getRoles = (roles: SelectedRoles): Roles[] =>
+    Object.keys(roles)
+      .filter(role => roles[role as Role])
+      .map(role => Roles[role as Role]);
 
   // When selected user gets updates get that user's roles
   // to populate the checkboxes
@@ -202,17 +219,8 @@ const ColonyPermissionEditDialog = ({
       selectedUser
     ) {
       setSelectedRoles(data);
-      const array = Object.keys(data).reduce((accumulator, role) => {
-        if (data[role]) {
-          // Role is capitalised in the ddb and needs to be readable
-          const roleLow = role.toLowerCase();
-          const readableRole = capitalize(roleLow);
-          accumulator.push(readableRole);
-          return accumulator;
-        }
-        return accumulator;
-      }, []);
-      setUserRoles(array);
+
+      setUserRoles(getRoles(data));
     }
     return [];
   };
