@@ -49,8 +49,8 @@
 }
 
 .colonyAvatarAndName {
-  position: relative;
   display: flex;
+  position: relative;
 }
 
 .dynamicTextSection {

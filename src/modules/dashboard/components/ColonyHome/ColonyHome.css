@@ -40,6 +40,11 @@
   line-height: 2em;
 }
 
+.breadCrumbContainer {
+  margin-top: 58px;
+  margin-bottom: 16px;
+}
+
 .sidebar {
   grid-column: 3;
   grid-row: 1;

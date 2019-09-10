@@ -21,6 +21,7 @@ import { mergePayload } from '~utils/actions';
 import { Tab, Tabs, TabList, TabPanel } from '~core/Tabs';
 import { Select } from '~core/Fields';
 import Button, { ActionButton, DialogActionButton } from '~core/Button';
+import BreadCrumb from '~core/BreadCrumb';
 import RecoveryModeAlert from '~admin/RecoveryModeAlert';
 import LoadingTemplate from '~pages/LoadingTemplate';
 import {
@@ -103,7 +104,7 @@ const ColonyHome = ({
   },
 }: Props) => {
   const [filterOption, setFilterOption] = useState(TasksFilterOptions.ALL_OPEN);
-  const [filteredDomainId, setFilteredDomainId] = useState();
+  const [filteredDomainId, setFilteredDomainId] = useState(0);
   const [isTaskBeingCreated, setIsTaskBeingCreated] = useState(false);
   const [showRecoverOption, setRecoverOption] = useState(false);
 
@@ -242,6 +243,12 @@ const ColonyHome = ({
         </div>
       </aside>
       <main className={styles.content}>
+        <div className={styles.breadCrumbContainer}>
+          <BreadCrumb
+            colonyAddress={colonyAddress}
+            filteredDomainId={filteredDomainId}
+          />
+        </div>
         <Tabs>
           <TabList extra={filterSelect}>
             <Tab>
