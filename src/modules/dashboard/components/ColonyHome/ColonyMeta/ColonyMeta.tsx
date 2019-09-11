@@ -1,9 +1,10 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { defineMessages } from 'react-intl';
 
 import { stripProtocol, multiLineTextEllipsis } from '~utils/strings';
 import { ColonyType } from '~immutable/index';
 import Button from '~core/Button';
+import ExpandedParagraph from '~core/ExpandedParagraph';
 import Heading from '~core/Heading';
 import Icon from '~core/Icon';
 import Link from '~core/Link';
@@ -58,7 +59,25 @@ const ColonyMeta = ({
   colony,
   canAdminister,
 }: Props) => {
-  const [expanded, expandDescription] = useState(false);
+
+  const renderExpandedElements = (
+    <>
+      {website && (
+        <ExternalLink
+          className={styles.simpleLinkWebsite}
+          href={website}
+          text={stripProtocol(website)}
+        />
+      )}
+      {guideline && (
+        <ExternalLink
+          className={styles.simpleLinkGuideline}
+          href={guideline}
+          text={stripProtocol(guideline)}
+        />
+      )}
+    </>
+  );
   return (
     <div className={styles.main}>
       <section className={styles.colonyAvatarAndName}>
@@ -94,41 +113,12 @@ const ColonyMeta = ({
       </section>
       {description && (
         <section className={styles.description}>
-          <p>
-            {multiLineTextEllipsis(description, 88)}
-            {!expanded && (
-              <Button
-                onClick={() => {
-                  expandDescription(true);
-                }}
-                text={MSG.more}
-                appearance={{ theme: 'blue' }}
-              />
-            )}
-          </p>
-          {expanded && website && (
-            <ExternalLink
-              className={styles.simpleLink}
-              href={website}
-              text={stripProtocol(website)}
-            />
-          )}
-          {expanded && guideline && (
-            <ExternalLink
-              className={styles.simpleLink}
-              href={guideline}
-              text={stripProtocol(guideline)}
-            />
-          )}
-          {expanded && (
-            <Button
-              onClick={() => {
-                expandDescription(false);
-              }}
-              text={MSG.hide}
-              appearance={{ theme: 'blue' }}
-            />
-          )}
+          <ExpandedParagraph
+            characterLimit={88}
+            maximumCharacters={180}
+            paragraph={description}
+            expandedElements={renderExpandedElements}
+          />
         </section>
       )}
     </div>
