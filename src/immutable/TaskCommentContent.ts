@@ -5,7 +5,7 @@ import { Address, DefaultValues } from '~types/index';
 
 import {
   TaskCommentMetaRecord,
-  TaskCommentMetaRecordType,
+  TaskCommentMeta,
   TaskCommentMetaType,
 } from './TaskCommentMeta';
 
@@ -17,7 +17,7 @@ type Shared = {
 };
 
 type TaskCommentContentRecordProps = Shared & {
-  metadata?: TaskCommentMetaRecordType;
+  metadata?: TaskCommentMetaRecord;
 };
 
 export type TaskCommentContentType = $ReadOnly<
@@ -30,7 +30,7 @@ const defaultValues: DefaultValues<TaskCommentContentRecordProps> = {
   author: undefined,
   body: undefined,
   id: undefined,
-  metadata: TaskCommentMetaRecord(),
+  metadata: TaskCommentMeta(),
   timestamp: new Date(),
 };
 
