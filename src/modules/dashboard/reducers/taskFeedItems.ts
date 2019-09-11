@@ -5,7 +5,7 @@ import {
   TaskFeedItemsMap,
   TaskFeedItemRecordType,
   FetchableData,
-  TaskCommentRecord,
+  TaskComment,
   TaskEventRecord,
   TaskFeedItemRecord,
 } from '~immutable/index';
@@ -47,7 +47,7 @@ const getTaskFeedItemRecordProps = (event: any) => {
         content: { author, body },
       } = event.payload;
       return {
-        comment: TaskCommentRecord({
+        comment: TaskComment({
           authorAddress: author,
           body,
           signature,
