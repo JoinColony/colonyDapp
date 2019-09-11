@@ -12,7 +12,7 @@ import { AllRolesMap } from './AllRoles';
 import { AllTokensMap } from './AllTokens';
 import { FetchableDataRecord } from '../../FetchableData';
 import { TaskCommentRecordType } from '../../TaskComment';
-import { TaskDraftId, TaskRecordType } from '../../Task';
+import { TaskDraftId, TaskRecord } from '../../Task';
 import { TaskFeedItemRecordType } from '../../TaskFeedItem';
 import { TaskMetadataRecordType } from '../../TaskMetadata';
 
@@ -36,7 +36,7 @@ export type AllTaskMetadataMap = ImmutableMapType<
 
 export type TasksMap = ImmutableMapType<
   TaskDraftId,
-  FetchableDataRecord<TaskRecordType | null>
+  FetchableDataRecord<TaskRecord | null>
 >;
 
 export type TaskFeedItemsMap = ImmutableMapType<

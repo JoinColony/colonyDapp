@@ -7,20 +7,17 @@ import {
 
 import { ReducerType, ActionTypes } from '~redux/index';
 import {
-  TaskRecordType,
+  TaskRecord,
   TasksMap,
   FetchableData,
   TaskPayoutRecord,
-  TaskRecord,
+  Task,
 } from '~immutable/index';
 import { withFetchableDataMap } from '~utils/reducers';
 import { EventTypes, TaskStates } from '~data/constants';
 import { AllEvents, createAddress } from '~types/index';
 
-const taskEventReducer = (
-  task: TaskRecordType,
-  event: AllEvents,
-): TaskRecordType => {
+const taskEventReducer = (task: TaskRecord, event: AllEvents): TaskRecord => {
   switch (event.type) {
     case EventTypes.TASK_CREATED: {
       const {
@@ -124,12 +121,10 @@ const tasksReducer: ReducerType<TasksMap> = (
       } = action.payload;
       return state.set(
         draftId,
-        FetchableData<TaskRecordType>({
+        FetchableData<TaskRecord>({
           error: undefined,
           isFetching: false,
-          record: TaskRecord(
-            fromJS({ colonyAddress, creatorAddress, draftId }),
-          ),
+          record: Task(fromJS({ colonyAddress, creatorAddress, draftId })),
         }),
       );
     }
@@ -141,10 +136,10 @@ const tasksReducer: ReducerType<TasksMap> = (
       } = action.payload;
       return state.set(
         draftId,
-        FetchableData<TaskRecordType>({
+        FetchableData<TaskRecord>({
           error: undefined,
           isFetching: false,
-          record: TaskRecord(
+          record: Task(
             fromJS({
               ...task,
               requests: ImmutableSet(requests),
@@ -163,9 +158,9 @@ const tasksReducer: ReducerType<TasksMap> = (
     case ActionTypes.TASK_SUB_EVENTS: {
       const { colonyAddress, draftId, events } = action.payload;
 
-      const record: TaskRecordType = events.reduce(
+      const record: TaskRecord = events.reduce(
         taskEventReducer,
-        TaskRecord(fromJS({ colonyAddress, draftId })),
+        Task(fromJS({ colonyAddress, draftId })),
       );
       return state.set(draftId, FetchableData({ record }));
     }
@@ -175,8 +170,7 @@ const tasksReducer: ReducerType<TasksMap> = (
   }
 };
 
-export default withFetchableDataMap<TasksMap, TaskRecordType>(
-  // @ts-ignore
+export default withFetchableDataMap<TasksMap, TaskRecord>(
   new Set([ActionTypes.TASK_FETCH, ActionTypes.TASK_SUB_START]),
   ImmutableMap(),
 )(tasksReducer);
