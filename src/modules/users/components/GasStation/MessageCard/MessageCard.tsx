@@ -1,7 +1,7 @@
 import React from 'react';
 import { FormattedMessage } from 'react-intl';
 
-import { MessageProps } from '~immutable/index';
+import { MessageType } from '~immutable/index';
 import Heading from '~core/Heading';
 import Card from '~core/Card';
 import MessageCardStatus from './MessageCardStatus';
@@ -10,7 +10,7 @@ import styles from './MessageCard.css';
 const displayName = 'users.GasStation.MessageCard';
 
 interface Props {
-  message: MessageProps;
+  message: MessageType;
   idx: number;
   onClick?: (idx: number) => void;
 }

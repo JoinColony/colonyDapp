@@ -4,17 +4,17 @@ import { FormattedMessage } from 'react-intl';
 import Heading from '~core/Heading';
 import Card from '~core/Card';
 import {
-  TransactionOrMessageGroup,
   getGroupKey,
   getGroupStatus,
   getGroupValues,
 } from '../transactionGroup';
 import styles from './TransactionCard.css';
 import TransactionStatus from './TransactionStatus';
+import { TransactionType } from '~immutable/index';
 
 interface Props {
   idx: number;
-  transactionGroup: TransactionOrMessageGroup;
+  transactionGroup: TransactionType[];
   onClick?: (idx: number) => void;
 }
 
@@ -30,7 +30,7 @@ class TransactionCard extends Component<Props> {
     const { transactionGroup, onClick } = this.props;
     const groupKey = getGroupKey(transactionGroup);
     const status = getGroupStatus(transactionGroup);
-    const values = getGroupValues(transactionGroup);
+    const values = getGroupValues<TransactionType>(transactionGroup);
     return (
       <Card className={styles.main}>
         <button
