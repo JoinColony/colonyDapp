@@ -22,6 +22,7 @@ import { Tab, Tabs, TabList, TabPanel } from '~core/Tabs';
 import { Select } from '~core/Fields';
 import Button, { ActionButton, DialogActionButton } from '~core/Button';
 import BreadCrumb from '~core/BreadCrumb';
+import Heading from '~core/Heading';
 import RecoveryModeAlert from '~admin/RecoveryModeAlert';
 import LoadingTemplate from '~pages/LoadingTemplate';
 import {
@@ -52,7 +53,7 @@ const MSG = defineMessages({
   },
   tabContribute: {
     id: 'dashboard.ColonyHome.tabContribute',
-    defaultMessage: 'Contribute',
+    defaultMessage: 'Tasks',
   },
   labelFilter: {
     id: 'dashboard.ColonyHome.labelFilter',
@@ -65,6 +66,14 @@ const MSG = defineMessages({
   newTaskButton: {
     id: 'dashboard.ColonyHome.newTaskButton',
     defaultMessage: 'New Task',
+  },
+  availableFunds: {
+    id: 'dashboard.ColonyHome.availableFunds',
+    defaultMessage: 'Available Funds',
+  },
+  fund: {
+    id: 'dashboard.ColonyHome.fund',
+    defaultMessage: 'Fund',
   },
   recoverColonyButton: {
     id: 'dashboard.ColonyHome.recoverColonyButton',
@@ -224,6 +233,30 @@ const ColonyHome = ({
     />
   );
 
+  const renderNewTaskButton = (
+    <>
+      {canCreateTask && (
+        <ActionButton
+          button={({ onClick, disabled, loading }) => (
+            <Button
+              appearance={{ theme: 'primary', size: 'large' }}
+              text={MSG.newTaskButton}
+              disabled={disabled}
+              loading={loading}
+              onClick={throttle(onClick, 2000)}
+            />
+          )}
+          disabled={isInRecoveryMode}
+          error={ActionTypes.TASK_CREATE_ERROR}
+          submit={ActionTypes.TASK_CREATE}
+          success={ActionTypes.TASK_CREATE_SUCCESS}
+          transform={transform}
+          loading={isTaskBeingCreated}
+        />
+      )}
+    </>
+  );
+
   return (
     <div className={styles.main}>
       <aside className={styles.colonyInfo}>
@@ -250,11 +283,14 @@ const ColonyHome = ({
           />
         </div>
         <Tabs>
-          <TabList extra={filterSelect}>
+          <TabList>
             <Tab>
               <FormattedMessage {...MSG.tabContribute} />
             </Tab>
           </TabList>
+          <div className={styles.interactiveBar}>
+            {filterSelect} {renderNewTaskButton}
+          </div>
           <TabPanel>
             <TabContribute
               colony={colony}
@@ -268,25 +304,8 @@ const ColonyHome = ({
         </Tabs>
       </main>
       <aside className={styles.sidebar}>
-        {canCreateTask && (
-          <ActionButton
-            button={({ onClick, disabled, loading }) => (
-              <Button
-                appearance={{ theme: 'primary', size: 'large' }}
-                text={MSG.newTaskButton}
-                disabled={disabled}
-                loading={loading}
-                onClick={throttle(onClick, 2000)}
-              />
-            )}
-            disabled={isInRecoveryMode}
-            error={ActionTypes.TASK_CREATE_ERROR}
-            submit={ActionTypes.TASK_CREATE}
-            success={ActionTypes.TASK_CREATE_SUCCESS}
-            transform={transform}
-            loading={isTaskBeingCreated}
-          />
-        )}
+        <Heading appearance={{ size: 'normal' }} text={MSG.availableFunds} />
+        <Button text={MSG.fund} appearance={{ theme: 'blue' }} />
       </aside>
       {isInRecoveryMode && <RecoveryModeAlert />}
     </div>
