@@ -3,7 +3,6 @@ import { defineMessages } from 'react-intl';
 
 import { stripProtocol, multiLineTextEllipsis } from '~utils/strings';
 import { ColonyType } from '~immutable/index';
-import Button from '~core/Button';
 import ExpandedParagraph from '~core/ExpandedParagraph';
 import Heading from '~core/Heading';
 import Icon from '~core/Icon';
@@ -30,14 +29,6 @@ const MSG = defineMessages({
     id: 'dashboard.ColonyHome.ColonyMeta.editColonyTitle',
     defaultMessage: 'Edit Colony',
   },
-  more: {
-    id: 'dashboard.ColonyHome.ColonyMeta.more',
-    defaultMessage: 'More',
-  },
-  hide: {
-    id: 'dashboard.ColonyHome.ColonyMeta.hide',
-    defaultMessage: 'Hide',
-  },
 });
 
 const ColonyAvatar = HookedColonyAvatar({ fetchColony: false });
@@ -59,7 +50,6 @@ const ColonyMeta = ({
   colony,
   canAdminister,
 }: Props) => {
-
   const renderExpandedElements = (
     <>
       {website && (

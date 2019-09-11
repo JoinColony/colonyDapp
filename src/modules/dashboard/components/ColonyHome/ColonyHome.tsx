@@ -6,8 +6,9 @@ import { useDispatch } from 'redux-react-hook';
 import throttle from 'lodash/throttle';
 
 import {
-  ColonyTokenReferenceType,
+  TokenReferenceType,
   UserPermissionsType,
+  DomainType,
 } from '~immutable/index';
 import { Address } from '~types/index';
 import {
@@ -30,7 +31,7 @@ import {
   colonyEthTokenSelector,
 } from '../../selectors';
 import { currentUserColonyPermissionsFetcher } from '../../../users/fetchers';
-import { colonyAddressFetcher } from '../../fetchers';
+import { colonyAddressFetcher, domainsFetcher } from '../../fetchers';
 import { colonySubscriber } from '../../subscribers';
 import {
   canAdminister,
@@ -167,7 +168,13 @@ const ColonyHome = ({
     colonyArgs,
   );
 
-  const nativeTokenRef: ColonyTokenReferenceType | null = useSelector(
+  const { data: domains } = useDataFetcher<DomainType[]>(
+    domainsFetcher,
+    [colonyAddress],
+    [colonyAddress],
+  );
+
+  const nativeTokenRef: TokenReferenceType | null = useSelector(
     colonyNativeTokenSelector,
     colonyArgs,
   );
@@ -257,6 +264,18 @@ const ColonyHome = ({
     </>
   );
 
+  const crumbs = (domains || [])
+    .sort((a, b) => a.id - b.id)
+    .reduce(
+      (accumulator, element) => {
+        if (element.id <= filteredDomainId) {
+          accumulator.push(element.name);
+        }
+        return accumulator;
+      },
+      ['Root'],
+    );
+
   return (
     <div className={styles.main}>
       <aside className={styles.colonyInfo}>
@@ -277,10 +296,7 @@ const ColonyHome = ({
       </aside>
       <main className={styles.content}>
         <div className={styles.breadCrumbContainer}>
-          <BreadCrumb
-            colonyAddress={colonyAddress}
-            filteredDomainId={filteredDomainId}
-          />
+          <BreadCrumb elements={crumbs} />
         </div>
         <Tabs>
           <TabList>
