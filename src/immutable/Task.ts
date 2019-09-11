@@ -1,7 +1,7 @@
-import { RecordOf, Record, List, Set as ImmutableSet } from 'immutable';
+import { Record, List, Set as ImmutableSet } from 'immutable';
 
 import { TaskStates } from '~data/constants';
-import { Address } from '~types/index';
+import { Address, DefaultValues } from '~types/index';
 import { TaskPayoutRecordType, TaskPayoutType } from './TaskPayout';
 
 /**
@@ -43,31 +43,27 @@ interface TaskRecordProps extends Shared {
 
 export type TaskProps<T extends keyof TaskType> = Pick<TaskType, T>;
 
-export type TaskRecordType = RecordOf<TaskRecordProps>;
+export type TaskDraftId = Shared['draftId'];
 
-export type TaskDraftId = TaskRecordType['draftId'];
-
-const defaultValues: TaskRecordProps = {
-  colonyAddress: '',
+const defaultValues: DefaultValues<TaskRecordProps> = {
+  colonyAddress: undefined,
   createdAt: new Date(),
-  creatorAddress: '',
+  creatorAddress: undefined,
   currentState: TaskStates.ACTIVE,
   description: undefined,
   domainId: undefined,
-  draftId: '',
+  draftId: undefined,
   dueDate: undefined,
   invites: ImmutableSet(),
-  managerAddress: '',
+  managerAddress: undefined,
   payouts: List(),
   reputation: 0,
   requests: ImmutableSet(),
   skillId: undefined,
   title: undefined,
-  workerAddress: '',
+  workerAddress: undefined,
 };
 
-export const TaskRecord: Record.Factory<TaskRecordProps> = Record(
-  defaultValues,
-);
+export class TaskRecord extends Record<TaskRecordProps>(defaultValues) {}
 
-export default TaskRecord;
+export const Task = (p: TaskRecordProps) => new TaskRecord(p);
