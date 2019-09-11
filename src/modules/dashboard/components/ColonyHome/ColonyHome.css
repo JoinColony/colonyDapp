@@ -16,6 +16,12 @@
   grid-row: 1;
 }
 
+.interactiveBar {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 12px;
+}
+
 .domainContainer {
   margin-bottom: 40px;
   margin-left: 43px;
@@ -46,6 +52,10 @@
 }
 
 .sidebar {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 156px;
+  padding-right: 25px;
   grid-column: 3;
   grid-row: 1;
 }
