@@ -1,21 +1,22 @@
 import { $ReadOnly } from 'utility-types';
+import { Record } from 'immutable';
 
-import { RecordOf, Record } from 'immutable';
+import { Address, DefaultValues } from '~types/index';
 
-import { Address } from '~types/index';
 import {
+  TaskCommentMetaRecord,
   TaskCommentMetaRecordType,
   TaskCommentMetaType,
 } from './TaskCommentMeta';
 
 type Shared = {
-  id: string;
   author: Address;
-  timestamp: Date;
   body: string;
+  id: string;
+  timestamp: Date;
 };
 
-type TaskCommentContentProps = Shared & {
+type TaskCommentContentRecordProps = Shared & {
   metadata?: TaskCommentMetaRecordType;
 };
 
@@ -25,17 +26,14 @@ export type TaskCommentContentType = $ReadOnly<
   }
 >;
 
-export type TaskCommentContentRecordType = RecordOf<TaskCommentContentProps>;
-
-const defaultValues: Partial<TaskCommentContentProps> = {
-  id: undefined,
+const defaultValues: DefaultValues<TaskCommentContentRecordProps> = {
   author: undefined,
-  timestamp: new Date(),
   body: undefined,
+  id: undefined,
+  metadata: TaskCommentMetaRecord(),
+  timestamp: new Date(),
 };
 
-export const TaskCommentContentRecord: Record.Factory<
-  Partial<TaskCommentContentProps>
-> = Record(defaultValues);
-
-export default TaskCommentContentRecord;
+export class TaskCommentContent extends Record<TaskCommentContentRecordProps>(
+  defaultValues,
+) {}

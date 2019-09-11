@@ -1,8 +1,8 @@
 import { $ReadOnly } from 'utility-types';
 
-import { RecordOf, List as ListType, List, Record } from 'immutable';
+import { List as ListType, List, Record } from 'immutable';
 
-import { Address } from '~types/index';
+import { Address, DefaultValues } from '~types/index';
 
 type Shared = {
   authorAddress: Address;
@@ -12,25 +12,24 @@ type Shared = {
 
 export type TaskCommentType = $ReadOnly<
   Shared & {
-    mentions: string[];
+    mentions?: string[];
   }
 >;
 
 type TaskCommentRecordProps = Shared & {
-  mentions: ListType<string>;
+  mentions?: ListType<string>;
 };
 
-export type TaskCommentRecordType = RecordOf<TaskCommentRecordProps>;
-
-const defaultValues: Partial<TaskCommentRecordProps> = {
+const defaultValues: DefaultValues<TaskCommentRecordProps> = {
   authorAddress: undefined,
   body: undefined,
   mentions: List(),
   signature: undefined,
 };
 
-export const TaskCommentRecord: Record.Factory<
-  Partial<TaskCommentRecordProps>
-> = Record(defaultValues);
+export class TaskCommentRecord extends Record<TaskCommentRecordProps>(
+  defaultValues,
+) {}
 
-export default TaskCommentRecord;
+export const TaskComment = (p: TaskCommentRecordProps) =>
+  new TaskCommentRecord(p);
