@@ -9,7 +9,6 @@ import {
 
 import {
   DomainType,
-  RolesType,
   ColonyRolesObject,
   UserRolesObject,
 } from '~immutable/index';
@@ -27,7 +26,9 @@ export const generateUrlFriendlyId = (): RandomId =>
  * we still need to be able to get the old roles `admins` and `founder`. This
  * util can be removed once the DLP project is completed.
  */
-export const proxyOldRoles = (domainRoles: any): RolesType | void => {
+export const proxyOldRoles = (
+  domainRoles: any,
+): { founder: Address; admins: Address[] } | void => {
   if (!domainRoles) {
     return undefined;
   }
