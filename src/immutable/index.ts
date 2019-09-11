@@ -8,7 +8,6 @@ export * from './ContractTransaction';
 export * from './FetchableData';
 export * from './Domain';
 export * from './Message';
-export * from './Roles';
 export * from './Skill';
 export * from './state/index';
 export * from './Task';
