@@ -8,5 +8,6 @@ export const avatarWrapper: string;
 export const userAvatar: string;
 export const colonyAvatarAndName: string;
 export const dynamicTextSection: string;
-export const simpleLink: string;
+export const simpleLinkWebsite: string;
+export const simpleLinkGuideline: string;
 export const spinnerContainer: string;
