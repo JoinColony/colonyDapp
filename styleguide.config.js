@@ -34,6 +34,7 @@ module.exports = {
         './src/modules/core/components/Numeral/Numeral.tsx',
         './src/modules/core/components/Duration/Duration.tsx',
         './src/modules/core/components/TimeRelative/TimeRelative.tsx',
+        './src/modules/core/components/ExpandedParagraph/ExpandedParagraph.tsx',
       ],
     },
     {

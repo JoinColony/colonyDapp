@@ -59,17 +59,17 @@
 }
 
 .simpleLinkWebsite {
-  font-weight: var(--weight-normal);
-  color: var(--text);
   display: block;
   margin-top: 20px;
+  font-weight: var(--weight-normal);
+  color: var(--text);
 }
 
 .simpleLinkGuideline {
-  font-weight: var(--weight-normal);
-  color: var(--text);
   display: block;
   margin-bottom: 40px;
+  font-weight: var(--weight-normal);
+  color: var(--text);
 }
 
 .spinnerContainer {

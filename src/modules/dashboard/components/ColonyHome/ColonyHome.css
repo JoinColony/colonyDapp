@@ -12,9 +12,9 @@
 }
 
 .colonyInfo {
+  z-index: var(--z-index-nav);
   grid-column: 1;
   grid-row: 1;
-  z-index: var(--z-index-nav);
 }
 
 .interactiveBar {
