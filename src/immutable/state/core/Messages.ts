@@ -1,8 +1,8 @@
 import { RecordOf, Record, Map as ImmutableMap } from 'immutable';
 
-import { MessageRecordType, TransactionId } from '~immutable/index';
+import { MessageRecord, TransactionId } from '~immutable/index';
 
-export type MessagesList = ImmutableMap<TransactionId, MessageRecordType>;
+export type MessagesList = ImmutableMap<TransactionId, MessageRecord>;
 
 export interface CoreMessagesProps {
   list: MessagesList;

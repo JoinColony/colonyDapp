@@ -1,23 +1,36 @@
 import {
   TransactionType,
-  MessageProps,
+  MessageType,
   TRANSACTION_STATUSES,
 } from '~immutable/index';
 
-export type TransactionOrMessageGroup = (TransactionType & MessageProps)[];
+export type TransactionOrMessageGroup = (TransactionType | MessageType)[];
 
 export type TransactionOrMessageGroups = TransactionOrMessageGroup[];
 
 // get the group id (mostly used as a unique identifier for the group)
 export const getGroupId = (txOrMessageGroup: TransactionOrMessageGroup) =>
   txOrMessageGroup[0].id ||
-  (txOrMessageGroup[0].group && txOrMessageGroup[0].group.key);
+  ((txOrMessageGroup[0] as TransactionType).group &&
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+    (txOrMessageGroup[0] as TransactionType).group!.key);
 
 // Get the group key (mostly used for i18n)
-export const getGroupKey = (txGroup: TransactionOrMessageGroup) =>
-  txGroup[0].group
-    ? `group.${txGroup[0].group.key}`
-    : `${txGroup[0].context}.${txGroup[0].methodName}`;
+export const getGroupKey = (txGroup: TransactionOrMessageGroup) => {
+  if ((txGroup[0] as TransactionType).group) {
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+    return `group.${(txGroup[0] as TransactionType).group!.key}`;
+  }
+  if (
+    (txGroup[0] as TransactionType).context &&
+    (txGroup[0] as TransactionType).methodName
+  ) {
+    return `${(txGroup[0] as TransactionType).context}.${
+      (txGroup[0] as TransactionType).methodName
+    }`;
+  }
+  return txGroup[0].id;
+};
 
 export const findTransactionGroupByKey = (
   txGroups: TransactionOrMessageGroups,
@@ -47,8 +60,8 @@ export const getActiveTransactionIdx = (txGroup: TransactionOrMessageGroup) => {
 };
 
 // Get transaction values to show in title or description
-export const getGroupValues = (
-  txGroup: TransactionOrMessageGroup, // For now, just returns the first transaction if we have one
+export const getGroupValues = <T>(
+  txGroup: T[], // For now, just returns the first transaction if we have one
 ) => txGroup[0];
 
 // Get the joint status of the group
@@ -81,6 +94,6 @@ export const transactionCount = (
 export const isTxGroup = (txOrMessageGroup: TransactionOrMessageGroup) =>
   /**
    * @NOTE Uses `hasOwnProperty` because if the transaction group contains only one transaction
-   * the `group` prop will be set to `undefined`
+   * the `context` prop will be set to `undefined`. Typescript will be happy this way
    */
-  Object.prototype.hasOwnProperty.call(txOrMessageGroup[0], 'group');
+  Object.prototype.hasOwnProperty.call(txOrMessageGroup[0], 'context');

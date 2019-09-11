@@ -2,7 +2,7 @@ import { FormikProps } from 'formik';
 import React from 'react';
 import * as yup from 'yup';
 
-import { MessageProps, WALLET_CATEGORIES } from '~immutable/index';
+import { MessageType, WALLET_CATEGORIES } from '~immutable/index';
 import Button from '~core/Button';
 import { ActionForm } from '~core/Fields';
 import WalletInteraction from '../WalletInteraction';
@@ -12,7 +12,7 @@ import { walletTypeSelector } from '../../../selectors';
 import styles from './MessageCardControls.css';
 
 interface Props {
-  message: MessageProps;
+  message: MessageType;
 }
 
 interface FormValues {

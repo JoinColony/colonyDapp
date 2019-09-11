@@ -3,8 +3,9 @@ import { FormattedMessage } from 'react-intl';
 
 import Heading from '~core/Heading';
 import Card from '~core/Card';
+import { TransactionType } from '~immutable/index';
+
 import {
-  TransactionOrMessageGroup,
   getGroupKey,
   getGroupStatus,
   getGroupValues,
@@ -16,7 +17,7 @@ import styles from './GroupedTransaction.css';
 
 interface Props {
   appearance: Appearance;
-  transactionGroup: TransactionOrMessageGroup;
+  transactionGroup: TransactionType[];
   selectedTransactionIdx: number;
 }
 
@@ -30,7 +31,7 @@ const GroupedTransaction = ({
   const { interactive } = appearance;
   const groupKey = getGroupKey(transactionGroup);
   const status = getGroupStatus(transactionGroup);
-  const values = getGroupValues(transactionGroup);
+  const values = getGroupValues<TransactionType>(transactionGroup);
   return (
     <Card className={styles.main}>
       {interactive && (

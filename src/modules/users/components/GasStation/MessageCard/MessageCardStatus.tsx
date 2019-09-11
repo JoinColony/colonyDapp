@@ -23,7 +23,7 @@ const MSG = defineMessages({
 });
 
 interface Props {
-  status: TransactionStatusType;
+  status?: TransactionStatusType;
 }
 
 const displayName = 'users.GasStation.MessageCard.MessageCardStatus';

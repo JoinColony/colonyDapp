@@ -1,7 +1,7 @@
 import { fromJS } from 'immutable';
 import {
   CoreMessagesRecord,
-  MessageRecord,
+  Message,
   CoreMessages,
   TRANSACTION_STATUSES,
 } from '~immutable/index';
@@ -15,7 +15,7 @@ const coreMessagesReducer: ReducerType<CoreMessagesRecord> = (
 ) => {
   switch (action.type) {
     case ActionTypes.MESSAGE_CREATED: {
-      const message = MessageRecord(action.payload);
+      const message = Message(action.payload);
       return state.setIn([CORE_MESSAGES_LIST, message.id], message);
     }
     case ActionTypes.MESSAGE_SIGN: {
