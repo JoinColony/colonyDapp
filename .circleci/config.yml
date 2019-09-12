@@ -220,7 +220,7 @@ jobs:
       - run: sudo apt-get update && sudo apt-get install google-cloud-sdk
       - run: bash ./scripts/authGoogle.sh
       - run: gcloud docker -- push eu.gcr.io/${PROJECT_NAME}/dapp-goerli:$CIRCLE_SHA1
-  build-deploy-mainnet-image:
+  build-mainnet-image:
     docker:
       - image: circleci/node:10.16.3
     working_directory: ~/repo
@@ -245,7 +245,6 @@ jobs:
       - run: sudo apt-get update && sudo apt-get install google-cloud-sdk
       - run: bash ./scripts/authGoogle.sh
       - run: gcloud docker -- push eu.gcr.io/${PROJECT_NAME}/dapp-mainnet:$CIRCLE_SHA1
-      - run: kubectl patch deployment dapp-red -p '{"spec":{"template":{"spec":{"containers":[{"name":"dapp","image":"eu.gcr.io/${PROJECT_NAME}/dapp-mainnet:${CIRCLE_SHA1}"}]}}}}'
   deploy-styleguide:
     docker:
       - image: circleci/node:10.16.3
