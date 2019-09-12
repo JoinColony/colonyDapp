@@ -18,11 +18,11 @@ yup.setLocale(en);
  * ^ start match
  * [A-Za-z0-9] allow upper case, lower case, numerals
  * [^.] negate to not allow dots / periods
- * {1,255} match at least 1 and at most 255 chars
+ * {0,255} match at least 1 and at most 255 chars
  * $ end match
  */
 // eslint-disable-next-line import/prefer-default-export
-export const ENS_DOMAIN_REGEX = '^[A-Za-z0-9][^.]{1,255}$';
+export const ENS_DOMAIN_REGEX = '^[A-Za-z0-9][^.]{0,255}$';
 
 /* Custom validators */
 function equalTo(ref, msg) {
