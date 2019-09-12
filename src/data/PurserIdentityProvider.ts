@@ -62,10 +62,17 @@ class PurserIdentityProvider<I extends PurserIdentity>
       throw new Error('Could not get wallet address. Is it unlocked?');
     }
 
-    await this._localCache.ready();
-    const cachedIdentity: PurserIdentity = await this._localCache.getItem(
-      this.walletAddress,
-    );
+    let cachedIdentity: PurserIdentity;
+
+    try {
+      cachedIdentity = await this._localCache.getItem(this.walletAddress);
+    } catch (e) {
+      console.warn(
+        `Could not initialize local storage. If we're not in a browser, that's fine.`,
+        e,
+      );
+    }
+
     if (cachedIdentity) {
       return new PurserIdentity(
         cachedIdentity.id,
@@ -101,6 +108,15 @@ class PurserIdentityProvider<I extends PurserIdentity>
       this._type,
       this,
     );
+    try {
+      await this._localCache.ready();
+    } catch (e) {
+      console.warn(
+        `Could not initialize local storage. If we're not in a browser, that's fine.`,
+        e,
+      );
+      return identity;
+    }
     await this._localCache.setItem(this.walletAddress, identity.toJSON());
     return identity;
   }

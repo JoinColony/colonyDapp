@@ -46,10 +46,28 @@ class EventStore extends Store {
   }
 
   async getLSCache(): Promise<AllEvents[] | void> {
+    try {
+      await localStorage.ready();
+    } catch (e) {
+      console.warn(
+        `Could not initialize local storage. If we're not in a browser, that's fine.`,
+        e,
+      );
+      return undefined;
+    }
     return localStorage.getItem(`colony.orbitCache.${this.address.toString()}`);
   }
 
   async setLSCache() {
+    try {
+      await localStorage.ready();
+    } catch (e) {
+      console.warn(
+        `Could not initialize local storage. If we're not in a browser, that's fine.`,
+        e,
+      );
+      return undefined;
+    }
     return localStorage.setItem(
       `colony.orbitCache.${this.address.toString()}`,
       this.all(),
