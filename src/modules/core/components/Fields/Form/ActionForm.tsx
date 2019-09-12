@@ -19,8 +19,16 @@ const MSG = defineMessages({
 
 const displayName = 'Form.ActionForm';
 
-type OnError = (error: any, bag: FormikBag<any, any>, values?: any) => void;
-type OnSuccess = (result: any, bag: FormikBag<any, any>, values: any) => void;
+export type OnError = (
+  error: any,
+  bag: FormikBag<any, any>,
+  values?: any,
+) => void;
+export type OnSuccess = (
+  result: any,
+  bag: FormikBag<any, any>,
+  values: any,
+) => void;
 
 interface ExtendedFormikConfig {
   validateOnChange?: boolean;
