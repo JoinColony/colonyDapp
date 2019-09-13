@@ -9,7 +9,11 @@ import {
   ManagerRatingDialog,
   WorkerRatingDialog,
 } from '~dashboard/TaskRatingDialogs';
-import { ColonyTokenEditDialog, TokenMintDialog } from '~admin/Tokens';
+import {
+  ColonyTokenEditDialog,
+  TokenMintDialog,
+  TokensMoveDialog,
+} from '~admin/Tokens';
 import { UserTokenEditDialog } from '~dashboard/Wallet';
 import TaskEditDialog from '~dashboard/TaskEditDialog';
 import TaskInviteDialog from '~dashboard/Task/TaskInviteDialog';
@@ -32,6 +36,7 @@ const dialogComponents: { [k: string]: DialogComponent } = {
   TaskEditDialog,
   TaskInviteDialog,
   TokenMintDialog,
+  TokensMoveDialog,
   UnlockTokenDialog,
   UpgradeContractDialog,
   UserTokenEditDialog,
