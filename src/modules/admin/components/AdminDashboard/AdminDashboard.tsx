@@ -6,7 +6,6 @@ import { NavigationItem } from '~pages/VerticalNavigation/VerticalNavigation';
 import { ColonyType, UserPermissionsType } from '~immutable/index';
 import Heading from '~core/Heading';
 import LoadingTemplate from '~pages/LoadingTemplate';
-import Organizations from '~admin/Organizations';
 import Profile from '~admin/Profile';
 import RecoveryModeAlert from '~admin/RecoveryModeAlert';
 import Tokens from '~admin/Tokens';
@@ -55,10 +54,6 @@ const MSG = defineMessages({
     id: 'dashboard.Admin.tabTransaction',
     defaultMessage: 'Transactions',
   },
-  tabOrganisation: {
-    id: 'dashboard.Admin.tabOrganisation',
-    defaultMessage: 'Organization',
-  },
 });
 
 interface Props {
@@ -96,11 +91,6 @@ const navigationItems = (colony: ColonyType): NavigationItem[] => [
     id: 5,
     title: MSG.tabTransaction,
     content: <Transactions colonyAddress={colony.colonyAddress} />,
-  },
-  {
-    id: 6,
-    title: MSG.tabOrganisation,
-    content: <Organizations colonyAddress={colony.colonyAddress} />,
   },
 ];
 
