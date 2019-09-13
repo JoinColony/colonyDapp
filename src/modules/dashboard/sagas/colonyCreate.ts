@@ -100,8 +100,6 @@ function* colonyCreate({
     /*
      * Always create the following transactions.
      */
-    'deployOldRoles',
-    'setOldRolesRole',
     'deployOneTx',
     'setOneTxRole',
   ]);
@@ -110,10 +108,8 @@ function* colonyCreate({
     createLabel,
     createToken,
     createUser,
-    deployOldRoles,
     deployOneTx,
     deployTokenAuthority,
-    setOldRolesRole,
     setOneTxRole,
     setTokenAuthority,
   } = channels;
@@ -193,21 +189,6 @@ function* colonyCreate({
         ready: false,
       });
     }
-
-    yield createGroupedTransaction(deployOldRoles, {
-      context: COLONY_CONTEXT,
-      methodName: 'addExtension',
-      params: { contractName: 'OldRoles' },
-      ready: false,
-    });
-
-    yield createGroupedTransaction(setOldRolesRole, {
-      context: COLONY_CONTEXT,
-      methodContext: 'setOldRolesRole',
-      methodName: 'setRootRole',
-      params: { setTo: true },
-      ready: false,
-    });
 
     yield createGroupedTransaction(deployOneTx, {
       context: COLONY_CONTEXT,
@@ -363,8 +344,6 @@ function* colonyCreate({
         setTokenAuthority,
         deployOneTx,
         setOneTxRole,
-        deployOldRoles,
-        setOldRolesRole,
       ]
         .filter(Boolean)
         .map(({ id }) => put(transactionAddIdentifier(id, colonyAddress))),
@@ -412,36 +391,6 @@ function* colonyCreate({
         ActionTypes.TRANSACTION_SUCCEEDED,
       );
     }
-
-    /*
-     * Deploy OldRoles
-     */
-    yield put(transactionReady(deployOldRoles.id));
-
-    const {
-      payload: {
-        transaction: {
-          receipt: {
-            logs: [deployOldRolesLog],
-          },
-        },
-      },
-    } = yield takeFrom(
-      deployOldRoles.channel,
-      ActionTypes.TRANSACTION_SUCCEEDED,
-    );
-    const oldRolesAddress = parseExtensionDeployedLog(deployOldRolesLog);
-
-    /*
-     * Set OldRoles role
-     */
-    yield put(
-      transactionAddParams(setOldRolesRole.id, {
-        address: oldRolesAddress,
-      }),
-    );
-    yield put(transactionReady(setOldRolesRole.id));
-    yield takeFrom(setOldRolesRole.channel, ActionTypes.TRANSACTION_SUCCEEDED);
 
     /*
      * Deploy OneTx

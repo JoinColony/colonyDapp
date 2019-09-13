@@ -22,10 +22,6 @@ const MSG = defineMessages({
     id: 'admin.Organizations.OrganizationAddDomains.helpText',
     defaultMessage: 'This cannot be undone',
   },
-  placeholderAddAdmins: {
-    id: 'admin.Organizations.OrganizationAddDomains.placeholderAddAdmins',
-    defaultMessage: 'Search for a user or paste a wallet address',
-  },
   buttonAddDomain: {
     id: 'admin.Organizations.OrganizationAddDomains.buttonAddDomain',
     defaultMessage: 'Add Domain',
