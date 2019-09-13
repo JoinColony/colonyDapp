@@ -1,6 +1,7 @@
 /* eslint-disable class-methods-use-this */
 
 import OrbitDBKeystore from 'orbit-db-keystore';
+import localForage from 'localforage';
 import { IdentityProvider } from './types';
 
 import PurserIdentity from './PurserIdentity';
@@ -16,6 +17,8 @@ const PROVIDER_TYPE = 'ethereum';
 class PurserIdentityProvider<I extends PurserIdentity>
   implements IdentityProvider<I> {
   _options: Options;
+
+  _localCache: LocalForage;
 
   _type: ProviderType;
 
@@ -34,6 +37,12 @@ class PurserIdentityProvider<I extends PurserIdentity>
     this._options = options;
     this._purserWallet = purserWallet;
     this._keystore = OrbitDBKeystore.create(`./keystore/${this.walletAddress}`);
+    this._localCache = localForage.createInstance({
+      // Make sure it uses indexedDB
+      driver: localForage.INDEXEDDB,
+      name: 'purser-identity-cache',
+      storeName: 'purser-identity-cache',
+    });
   }
 
   get type() {
@@ -53,6 +62,28 @@ class PurserIdentityProvider<I extends PurserIdentity>
       throw new Error('Could not get wallet address. Is it unlocked?');
     }
 
+    let cachedIdentity: PurserIdentity;
+
+    try {
+      cachedIdentity = await this._localCache.getItem(this.walletAddress);
+    } catch (e) {
+      console.warn(
+        `Could not initialize local storage. If we're not in a browser, that's fine.`,
+        e,
+      );
+    }
+
+    if (cachedIdentity) {
+      return new PurserIdentity(
+        cachedIdentity.id,
+        cachedIdentity.publicKey,
+        cachedIdentity.signatures.id,
+        cachedIdentity.signatures.publicKey,
+        cachedIdentity.type,
+        this,
+      );
+    }
+
     // Always create a key per wallet address. This is stored on indexedDB
     const orbitKey =
       (await this._keystore.getKey(this.walletAddress)) ||
@@ -69,7 +100,7 @@ class PurserIdentityProvider<I extends PurserIdentity>
       message: publicKey + idSignature,
     });
 
-    return new PurserIdentity(
+    const identity = new PurserIdentity(
       this.walletAddress,
       publicKey,
       idSignature,
@@ -77,6 +108,17 @@ class PurserIdentityProvider<I extends PurserIdentity>
       this._type,
       this,
     );
+    try {
+      await this._localCache.ready();
+    } catch (e) {
+      console.warn(
+        `Could not initialize local storage. If we're not in a browser, that's fine.`,
+        e,
+      );
+      return identity;
+    }
+    await this._localCache.setItem(this.walletAddress, identity.toJSON());
+    return identity;
   }
 
   async sign(identity: PurserIdentity, data: any): Promise<string> {
