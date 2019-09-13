@@ -14,6 +14,7 @@ import { ContractContexts } from '~types/index';
 import { createTransaction, getTxChannel } from '../../core/sagas';
 import { createDomain, editDomain } from '../data/commands';
 import { getDomain, getColonyDomains } from '../data/queries';
+import { fetchColonyTokenBalance } from '../actionCreators';
 
 function* colonyDomainsFetch({
   meta,
@@ -172,6 +173,10 @@ function* moveFundsBetweenPots({
     // Replace with TRANSACTION_CREATED if
     // you want the saga to be done as soon as the tx is created
     yield takeFrom(txChannel, ActionTypes.TRANSACTION_SUCCEEDED);
+
+    // Refetch token balances for the domains involved
+    yield put(fetchColonyTokenBalance(colonyAddress, tokenAddress, fromDomain));
+    yield put(fetchColonyTokenBalance(colonyAddress, tokenAddress, toDomain));
 
     yield put<AllActions>({
       type: ActionTypes.MOVE_FUNDS_BETWEEN_POTS_SUCCESS,
