@@ -19,33 +19,6 @@ import {
 
 export type ColonyActionTypes =
   | UniqueActionType<
-      ActionTypes.COLONY_ADMIN_ADD,
-      { newAdmin: Address; colonyAddress: Address },
-      WithKey
-    >
-  | ErrorActionType<
-      ActionTypes.COLONY_ADMIN_ADD_ERROR,
-      WithKey & {
-        userAddress: Address;
-      }
-    >
-  | UniqueActionType<
-      ActionTypes.COLONY_ADMIN_ADD_SUCCESS,
-      { user: Address },
-      WithKey
-    >
-  | UniqueActionType<
-      ActionTypes.COLONY_ADMIN_REMOVE,
-      { user: Address; colonyAddress: Address },
-      WithKey
-    >
-  | ErrorActionType<ActionTypes.COLONY_ADMIN_REMOVE_ERROR, WithKey>
-  | UniqueActionType<
-      ActionTypes.COLONY_ADMIN_REMOVE_SUCCESS,
-      { user: Address; colonyAddress: Address },
-      WithKey
-    >
-  | UniqueActionType<
       ActionTypes.COLONY_AVATAR_REMOVE,
       { user: Address; colonyAddress: Address },
       WithKey
