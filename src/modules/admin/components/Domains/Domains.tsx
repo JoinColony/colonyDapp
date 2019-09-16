@@ -7,7 +7,7 @@ import { currentUserColonyPermissionsFetcher } from '../../../users/fetchers';
 import { useDataFetcher } from '~utils/hooks';
 import Heading from '~core/Heading';
 import { SpinnerLoader } from '~core/Preloaders';
-import OrganizationAddDomains from '../Organizations/OrganizationAddDomains';
+import OrganizationAddDomains from '../Domains/OrganizationAddDomains';
 import DomainList from './DomainList';
 
 import { Address } from '~types/index';

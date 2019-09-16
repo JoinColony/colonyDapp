@@ -15,7 +15,7 @@ interface Props {
 
 const MSG = defineMessages({
   labelAddDomain: {
-    id: 'admin.Organizations.OrganizationAddDomains.labelAddDomain',
+    id: 'admin.Domains.OrganizationAddDomains.labelAddDomain',
     defaultMessage: 'Add New Domain',
   },
   helpText: {
@@ -23,12 +23,12 @@ const MSG = defineMessages({
     defaultMessage: 'This cannot be undone',
   },
   buttonAddDomain: {
-    id: 'admin.Organizations.OrganizationAddDomains.buttonAddDomain',
+    id: 'admin.Domains.OrganizationAddDomains.buttonAddDomain',
     defaultMessage: 'Add Domain',
   },
 });
 
-const displayName = 'admin.Organizations.OrganizationAddDomains';
+const displayName = 'admin.Domains.OrganizationAddDomains';
 
 const validationSchema = yup.object({
   domainName: yup.string().required(),
