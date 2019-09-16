@@ -1,18 +1,18 @@
 import { ActionTypes, ReducerType } from '~redux/index';
 import {
+  UserNotificationMetadata,
   UserNotificationMetadataRecord,
-  UserNotificationMetadataRecordType,
 } from '~immutable/index';
 
 const currentUserNotificationsReducer: ReducerType<
-  UserNotificationMetadataRecordType
-> = (state = UserNotificationMetadataRecord(), action) => {
+  UserNotificationMetadataRecord
+> = (state = UserNotificationMetadata(), action) => {
   switch (action.type) {
     case ActionTypes.INBOX_MARK_ALL_NOTIFICATIONS_READ_SUCCESS:
     case ActionTypes.INBOX_MARK_NOTIFICATION_READ_SUCCESS:
     case ActionTypes.USER_NOTIFICATION_METADATA_FETCH_SUCCESS: {
       const { readUntil, exceptFor } = action.payload;
-      return UserNotificationMetadataRecord({ readUntil, exceptFor });
+      return UserNotificationMetadata({ readUntil, exceptFor });
     }
     case ActionTypes.USER_LOGOUT_SUCCESS:
       return state.clear();
