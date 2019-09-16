@@ -13,7 +13,7 @@ import {
   TaskPayoutType,
   TokenReferenceType,
   TokenType,
-  UserProfileRecord,
+  UserProfile,
   User,
   UserType,
 } from '~immutable/index';
@@ -191,7 +191,7 @@ const TaskEditDialog = ({
   const existingWorker =
     !!workerAddress && !existingWorkerObj
       ? User({
-          profile: UserProfileRecord({
+          profile: UserProfile({
             walletAddress: workerAddress,
           }),
         }).toJS()

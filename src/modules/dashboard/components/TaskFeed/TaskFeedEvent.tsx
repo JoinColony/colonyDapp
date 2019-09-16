@@ -4,7 +4,7 @@ import formatDate from 'sugar-date/date/format';
 import { TaskEvents } from '~data/types/TaskEvents';
 
 import { Address } from '~types/index';
-import { TokenType, User } from '~immutable/index';
+import { TokenType } from '~immutable/index';
 import TimeRelative from '~core/TimeRelative';
 import Numeral from '~core/Numeral';
 import InfoPopover from '~core/InfoPopover';
@@ -106,8 +106,13 @@ interface InteractiveUsernameProps {
 }
 
 const InteractiveUsername = ({ userAddress }: InteractiveUsernameProps) => {
-  const { record: { profile: { displayName, username } } = User().toJS() } =
-    useSelector(userSelector, [userAddress]) || {};
+  const user = useSelector(userSelector, [userAddress]);
+  if (!user) return null;
+  const {
+    record: {
+      profile: { displayName, username },
+    },
+  } = user;
   return (
     <InfoPopover address={userAddress}>
       <span

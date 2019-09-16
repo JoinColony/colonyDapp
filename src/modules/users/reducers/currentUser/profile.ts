@@ -1,16 +1,18 @@
 import { fromJS } from 'immutable';
 
-import { UserProfileRecord, UserProfileRecordType } from '~immutable/index';
+import { UserProfile, UserProfileRecord } from '~immutable/index';
 import { ActionTypes, ReducerType } from '~redux/index';
 
-const currentUserProfileReducer: ReducerType<UserProfileRecordType> = (
-  state = UserProfileRecord(),
+const currentUserProfileReducer: ReducerType<UserProfileRecord> = (
+  state = UserProfile({
+    walletAddress: '',
+  }),
   action,
 ) => {
   switch (action.type) {
     case ActionTypes.CURRENT_USER_CREATE: {
       const { profileData, walletAddress, balance } = action.payload;
-      return UserProfileRecord({ ...profileData, walletAddress, balance });
+      return UserProfile({ ...profileData, walletAddress, balance });
     }
     case ActionTypes.USER_LOGOUT: {
       /* Set values back to default */
