@@ -1,6 +1,6 @@
-import { $ReadOnly } from 'utility-types';
+import { Record } from 'immutable';
 
-import { RecordOf, Record } from 'immutable';
+import { DefaultValues } from '~types/index';
 
 import {
   ContractTransactionRecord,
@@ -22,7 +22,7 @@ export type TaskFeedItemRecordProps = Shared & {
   transaction?: ContractTransactionRecord;
 };
 
-export type TaskFeedItemType = $ReadOnly<
+export type TaskFeedItemType = Readonly<
   Shared & {
     comment?: TaskCommentType;
     event?: TaskEventType;
@@ -33,19 +33,18 @@ export type TaskFeedItemType = $ReadOnly<
 
 export type TaskFeedItemId = TaskFeedItemType['id'];
 
-export type TaskFeedItemRecordType = RecordOf<TaskFeedItemRecordProps>;
-
-const defaultValues: TaskFeedItemRecordProps = {
+const defaultValues: DefaultValues<TaskFeedItemRecordProps> = {
   comment: undefined,
   createdAt: new Date(),
   event: undefined,
-  id: '',
+  id: undefined,
   rating: undefined,
   transaction: undefined,
 };
 
-export const TaskFeedItemRecord: Record.Factory<
-  TaskFeedItemRecordProps
-> = Record(defaultValues);
+export class TaskFeedItemRecord extends Record<TaskFeedItemRecordProps>(
+  defaultValues,
+) {}
 
-export default TaskFeedItemRecord;
+export const TaskFeedItem = (p: TaskFeedItemRecordProps) =>
+  new TaskFeedItemRecord(p);

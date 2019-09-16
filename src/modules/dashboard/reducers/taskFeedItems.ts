@@ -3,11 +3,11 @@ import { Map as ImmutableMap, List, fromJS } from 'immutable';
 import { ReducerType, ActionTypes } from '~redux/index';
 import {
   TaskFeedItemsMap,
-  TaskFeedItemRecordType,
+  TaskFeedItemRecord,
   FetchableData,
   TaskComment,
   TaskEvent,
-  TaskFeedItemRecord,
+  TaskFeedItem,
 } from '~immutable/index';
 import { withFetchableDataMap } from '~utils/reducers';
 import { EventTypes } from '~data/constants';
@@ -33,7 +33,7 @@ const FEED_ITEM_TYPES = new Set([
 ]);
 
 /*
- * Given a task event, return props needed for a `TaskFeedItemRecord`
+ * Given a task event, return props needed for a `TaskFeedItem`
  * depending on that event's `type` and `payload`.
  */
 const getTaskFeedItemRecordProps = (event: any) => {
@@ -63,8 +63,8 @@ const getTaskFeedItemRecordProps = (event: any) => {
   }
 };
 
-const mapTaskFeedItemEvent = (event: AllEvents): TaskFeedItemRecordType =>
-  TaskFeedItemRecord(
+const mapTaskFeedItemEvent = (event: AllEvents): TaskFeedItemRecord =>
+  TaskFeedItem(
     fromJS({
       createdAt: new Date(event.meta.timestamp),
       id: event.meta.id,
@@ -80,7 +80,7 @@ const taskFeedItemsReducer: ReducerType<TaskFeedItemsMap> = (
     case ActionTypes.TASK_FEED_ITEMS_SUB_EVENTS: {
       const { draftId, events } = action.payload;
 
-      const record = List<TaskFeedItemRecordType>(
+      const record = List<TaskFeedItemRecord>(
         events
           .filter(event => FEED_ITEM_TYPES.has(event.type))
           .map(mapTaskFeedItemEvent),
