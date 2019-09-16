@@ -13,7 +13,7 @@ import { AllTokensMap } from './AllTokens';
 import { FetchableDataRecord } from '../../FetchableData';
 import { TaskCommentRecord } from '../../TaskComment';
 import { TaskDraftId, TaskRecord } from '../../Task';
-import { TaskFeedItemRecordType } from '../../TaskFeedItem';
+import { TaskFeedItemRecord } from '../../TaskFeedItem';
 import { TaskMetadataRecordType } from '../../TaskMetadata';
 
 export * from './AllColonies';
@@ -41,7 +41,7 @@ export type TasksMap = ImmutableMapType<
 
 export type TaskFeedItemsMap = ImmutableMapType<
   TaskDraftId,
-  FetchableDataRecord<ListType<TaskFeedItemRecordType>>
+  FetchableDataRecord<ListType<TaskFeedItemRecord>>
 >;
 
 export type DashboardStateProps = {
