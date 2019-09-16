@@ -3,7 +3,7 @@ import { Record } from 'immutable';
 
 import { DefaultValues } from '~types/index';
 
-import { TransactionStatusType, TRANSACTION_STATUSES } from './Transaction';
+import { TRANSACTION_STATUSES } from './Transaction';
 
 interface Shared {
   id: string;
@@ -16,7 +16,7 @@ interface Shared {
   purpose?: string;
   message: string;
   signature?: string;
-  status?: TransactionStatusType;
+  status?: TRANSACTION_STATUSES;
 }
 
 export type MessageType = $ReadOnly<Shared>;

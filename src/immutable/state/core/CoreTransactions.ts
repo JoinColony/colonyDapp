@@ -1,13 +1,10 @@
 import { RecordOf, Record, Map as ImmutableMap } from 'immutable';
 
-import { TransactionRecordType, TransactionId } from '~immutable/index';
+import { TransactionRecord, TransactionId } from '~immutable/index';
 
 import { CORE_TRANSACTIONS_LIST } from '../../../modules/core/constants';
 
-export type TransactionsList = ImmutableMap<
-  TransactionId,
-  TransactionRecordType
->;
+export type TransactionsList = ImmutableMap<TransactionId, TransactionRecord>;
 
 export interface CoreTransactionsProps {
   list: TransactionsList;

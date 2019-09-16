@@ -1,6 +1,6 @@
 import { Map as ImmutableMap, fromJS } from 'immutable';
 
-import { TransactionRecord } from '~immutable/index';
+import { Transaction } from '~immutable/index';
 
 import { CORE_NAMESPACE as ns } from '../../constants';
 
@@ -63,13 +63,13 @@ describe('Transaction selectors', () => {
         transactions: {
           list: ImmutableMap({
             // @ts-ignore
-            tx4: TransactionRecord(tx4),
+            tx4: Transaction(tx4),
             // @ts-ignore
-            tx3: TransactionRecord(tx3),
+            tx3: Transaction(tx3),
             // @ts-ignore
-            tx2: TransactionRecord(tx2),
+            tx2: Transaction(tx2),
             // @ts-ignore
-            tx1: TransactionRecord(tx1),
+            tx1: Transaction(tx1),
           }),
         },
       },
@@ -95,9 +95,9 @@ describe('Transaction selectors', () => {
         transactions: {
           list: ImmutableMap({
             // @ts-ignore
-            tx1: TransactionRecord(tx1),
+            tx1: Transaction(tx1),
             // @ts-ignore
-            tx2: TransactionRecord(tx2),
+            tx2: Transaction(tx2),
           }),
         },
       },
@@ -118,9 +118,9 @@ describe('Transaction selectors', () => {
         transactions: {
           list: ImmutableMap({
             // @ts-ignore
-            tx1: TransactionRecord(tx1),
+            tx1: Transaction(tx1),
             // @ts-ignore
-            tx2: TransactionRecord(tx2),
+            tx2: Transaction(tx2),
           }),
         },
       },

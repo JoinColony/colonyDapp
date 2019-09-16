@@ -5,7 +5,7 @@ import { ActionTypes } from '~redux/index';
 import { isDev } from '~utils/debug';
 import { selectAsJS } from '~utils/saga/effects';
 import { mergePayload } from '~utils/actions';
-import { TRANSACTION_STATUSES, TransactionRecordType } from '~immutable/index';
+import { TRANSACTION_STATUSES, TransactionRecord } from '~immutable/index';
 
 import { Action } from '~redux/types/actions';
 
@@ -21,7 +21,7 @@ import transactionChannel from './transactionChannel';
  */
 async function getMethodTransactionPromise(
   method: any,
-  tx: TransactionRecordType,
+  tx: TransactionRecord,
 ): Promise<ContractResponse<any>> {
   const {
     multisig,

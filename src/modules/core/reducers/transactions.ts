@@ -2,9 +2,9 @@ import getObjectFromPath from 'lodash/get';
 
 import {
   CoreTransactionsRecord,
-  TransactionRecordType,
-  CoreTransactions,
   TransactionRecord,
+  CoreTransactions,
+  Transaction,
   TRANSACTION_STATUSES,
   TransactionRecordProps,
 } from '~immutable/index';
@@ -13,7 +13,7 @@ import { ActionTypes, ReducerType } from '~redux/index';
 
 import { CORE_TRANSACTIONS_LIST } from '../constants';
 
-const transactionGroup = (tx: TransactionRecordType) => {
+const transactionGroup = (tx: TransactionRecord) => {
   if (!tx.group || typeof tx.group.id === 'string') return tx.group;
   const id = tx.group.id.reduce(
     (resultId, entry) => `${resultId}-${getObjectFromPath(tx, entry)}`,
@@ -49,7 +49,7 @@ const coreTransactionsReducer: ReducerType<CoreTransactionsRecord> = (
         },
       } = action;
 
-      const tx = TransactionRecord({
+      const tx = Transaction({
         context,
         createdAt,
         from,
