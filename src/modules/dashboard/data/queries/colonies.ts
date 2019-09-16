@@ -110,19 +110,11 @@ export const getColonyRoles: ContractEventQuery<
 
     // get extension addresses for the colony
     const {
-      address: oldRolesAddress,
-    } = await colonyClient.getExtensionAddress.call({
-      contractName: 'OldRoles',
-    });
-    const {
       address: oneTxAddress,
     } = await colonyClient.getExtensionAddress.call({
       contractName: 'OneTxPayment',
     });
-    const extensionAddresses = [
-      createAddress(oldRolesAddress),
-      createAddress(oneTxAddress),
-    ];
+    const extensionAddresses = [createAddress(oneTxAddress)];
 
     // reduce events to { [domainId]: { [address]: { [role]: boolean } } }
     return events.reduce((acc, { address, setTo, role, domainId }) => {
