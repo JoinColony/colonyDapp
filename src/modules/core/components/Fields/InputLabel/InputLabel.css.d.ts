@@ -7,4 +7,5 @@ export const colorSchemaDark: string;
 export const labelText: string;
 export const error: string;
 export const help: string;
+export const helpAlignRight: string;
 export const extra: string;
