@@ -2,7 +2,7 @@ import { Record, List, Set as ImmutableSet } from 'immutable';
 
 import { TaskStates } from '~data/constants';
 import { Address, DefaultValues } from '~types/index';
-import { TaskPayoutRecordType, TaskPayoutType } from './TaskPayout';
+import { TaskPayoutRecord, TaskPayoutType } from './TaskPayout';
 
 /**
  * @todo Support full task workflow for ratings
@@ -37,7 +37,7 @@ export interface TaskType extends Shared {
 
 interface TaskRecordProps extends Shared {
   invites: ImmutableSet<Address>;
-  payouts: List<TaskPayoutRecordType>;
+  payouts: List<TaskPayoutRecord>;
   requests: ImmutableSet<Address>;
 }
 

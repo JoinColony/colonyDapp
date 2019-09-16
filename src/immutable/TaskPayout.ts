@@ -1,5 +1,5 @@
 import BigNumber from 'bn.js';
-import { RecordOf, Record } from 'immutable';
+import { Record } from 'immutable';
 
 import { Address, DefaultValues } from '~types/index';
 
@@ -12,8 +12,6 @@ interface TaskPayoutRecordProps {
   amount: BigNumber;
   token: Address;
 }
-
-export type TaskPayoutRecordType = RecordOf<TaskPayoutRecordProps>;
 
 const defaultValues: DefaultValues<TaskPayoutRecordProps> = {
   amount: undefined,
