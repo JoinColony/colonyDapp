@@ -10,7 +10,7 @@ import { Address, ENSName } from '~types/index';
 import { AllUsersRecord } from './AllUsers';
 import { ContractTransactionRecord } from '../../ContractTransaction';
 import { FetchableDataRecord } from '../../FetchableData';
-import { TokenReferenceRecordType } from '../../TokenReference';
+import { TokenReferenceRecord } from '../../TokenReference';
 import { InboxItemRecord } from '../../InboxItem';
 import { UserPermissionsRecordType } from '../../UserPermissions';
 import { UserProfileRecordType } from '../../UserProfile';
@@ -33,7 +33,7 @@ export type CurrentUserColoniesType = ImmutableSet<Address>;
 export type CurrentUserTasksType = ImmutableSet<[Address, TaskDraftId]>;
 
 export type CurrentUserTokensType = FetchableDataRecord<
-  List<TokenReferenceRecordType>
+  List<TokenReferenceRecord>
 >;
 
 export interface CurrentUser {
