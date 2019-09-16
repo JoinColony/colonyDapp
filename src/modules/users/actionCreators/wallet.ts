@@ -1,8 +1,8 @@
 import { ActionTypes, AllActions } from '~redux/index';
 
-import { WalletSpecificType } from '~immutable/index';
+import { WALLET_SPECIFICS } from '~immutable/index';
 
-export const fetchAccounts = (walletType: WalletSpecificType): AllActions => ({
+export const fetchAccounts = (walletType: WALLET_SPECIFICS): AllActions => ({
   type: ActionTypes.WALLET_FETCH_ACCOUNTS,
   payload: { walletType },
 });

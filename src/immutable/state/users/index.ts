@@ -14,7 +14,7 @@ import { TokenReferenceRecord } from '../../TokenReference';
 import { InboxItemRecord } from '../../InboxItem';
 import { UserPermissionsRecord } from '../../UserPermissions';
 import { UserProfileRecord } from '../../UserProfile';
-import { WalletRecordType } from '../../Wallet';
+import { WalletRecord } from '../../Wallet';
 import { TaskDraftId } from '~immutable/Task';
 
 export * from './AllUsers';
@@ -49,7 +49,7 @@ export interface CurrentUser {
 export interface UsersStateProps {
   allUsers: AllUsersRecord;
   currentUser: CurrentUser;
-  wallet: WalletRecordType;
+  wallet: WalletRecord;
 }
 
 export type UsersStateRecord = Collection<any, any> & RecordOf<UsersStateProps>;

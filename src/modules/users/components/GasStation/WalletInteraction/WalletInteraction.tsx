@@ -1,7 +1,7 @@
 import React from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 
-import { WalletCategoryType, WALLET_CATEGORIES } from '~immutable/index';
+import { WALLET_CATEGORIES } from '~immutable/index';
 
 import Icon from '~core/Icon';
 
@@ -22,7 +22,7 @@ const MSG = defineMessages({
 });
 
 interface Props {
-  walletType: WalletCategoryType;
+  walletType: WALLET_CATEGORIES;
 }
 
 const displayName = 'users.GasStation.WalletInteraction';

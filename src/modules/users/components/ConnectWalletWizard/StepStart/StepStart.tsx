@@ -2,7 +2,7 @@ import React from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 
 import { WizardProps } from '~core/Wizard';
-import { WalletSpecificType, WALLET_SPECIFICS } from '~immutable/index';
+import { WALLET_SPECIFICS } from '~immutable/index';
 import { isDev } from '~utils/debug';
 import Heading from '~core/Heading';
 import { Form } from '~core/Fields';
@@ -87,7 +87,7 @@ const MSG = defineMessages({
 });
 
 type FormValues = {
-  method: WalletSpecificType;
+  method: WALLET_SPECIFICS;
 };
 
 const displayName = 'users.ConnectWalletWizard.StepStart';

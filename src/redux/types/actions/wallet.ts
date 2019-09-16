@@ -1,4 +1,4 @@
-import { WalletSpecificType, WalletCategoryType } from '~immutable/index';
+import { WALLET_SPECIFICS, WALLET_CATEGORIES } from '~immutable/index';
 import { Address } from '~types/index';
 import {
   ActionTypeWithPayload,
@@ -16,7 +16,7 @@ export type WalletActionTypes =
         connectwalletmnemonic?: any;
         hardwareWalletChoice?: any;
         keystore?: any;
-        method: WalletSpecificType;
+        method: WALLET_SPECIFICS | 'create';
         mnemonic?: any;
         password?: any;
       },
@@ -25,14 +25,14 @@ export type WalletActionTypes =
   | ActionTypeWithPayload<
       ActionTypes.WALLET_CREATE_SUCCESS,
       {
-        walletType: WalletCategoryType;
+        walletType: WALLET_CATEGORIES;
       }
     >
   | ErrorActionType<ActionTypes.WALLET_CREATE_ERROR, object>
   | ActionTypeWithPayload<
       ActionTypes.WALLET_FETCH_ACCOUNTS,
       {
-        walletType: WalletSpecificType;
+        walletType: WALLET_SPECIFICS;
       }
     >
   | ErrorActionType<ActionTypes.WALLET_FETCH_ACCOUNTS_ERROR, object>

@@ -10,7 +10,8 @@ import {
   CoreTransactions,
   User,
   UserProfile,
-  WalletRecord,
+  Wallet,
+  WALLET_CATEGORIES,
 } from '~immutable/index';
 
 import '../styles/main.css';
@@ -60,9 +61,8 @@ const initialState = MockState({
         metadataStoreAddress: '',
       }),
     }),
-    wallet: WalletRecord({
-      availableAddresses: [],
-      isLoading: false,
+    wallet: Wallet({
+      walletType: WALLET_CATEGORIES.SOFTWARE,
     }),
     allUsers: ImmutableMap(),
   },
