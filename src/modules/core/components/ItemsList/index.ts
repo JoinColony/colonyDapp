@@ -7,6 +7,7 @@ import { sortObjectsBy, recursiveNestChildren } from '~utils/arrays';
 import ItemsList from './ItemsList';
 
 export interface ConsumableItem {
+  disabled?: boolean;
   id: number;
   name: string;
   parent?: number;

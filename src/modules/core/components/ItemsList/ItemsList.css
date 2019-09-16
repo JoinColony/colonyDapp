@@ -52,6 +52,12 @@
   color: color-mod(var(--colony-blue) alpha(70%));
 }
 
+.item:disabled,
+.item:disabled:hover {
+  color: var(--grey-4);
+  cursor: default;
+}
+
 .itemHeading {
   composes: item;
   cursor: default;
