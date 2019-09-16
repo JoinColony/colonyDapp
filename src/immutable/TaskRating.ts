@@ -1,6 +1,6 @@
-import { $ReadOnly } from 'utility-types';
+import { Record } from 'immutable';
 
-import { RecordOf, Record } from 'immutable';
+import { DefaultValues } from '~types/index';
 
 import { UserRecord, UserType, UserRecordType } from './User';
 
@@ -10,22 +10,20 @@ interface TaskRatingRecordProps {
   rating: number;
 }
 
-export type TaskRatingType = $ReadOnly<{
+export type TaskRatingType = Readonly<{
   ratee: UserType;
   rater: UserType;
   rating: number;
 }>;
 
-export type TaskRatingRecordType = RecordOf<TaskRatingRecordProps>;
-
-const defaultValues = {
+const defaultValues: DefaultValues<TaskRatingRecordProps> = {
   ratee: UserRecord(),
   rater: UserRecord(),
   rating: -1,
 };
 
-export const TaskRatingRecord: Record.Factory<TaskRatingRecordProps> = Record(
+export class TaskRatingRecord extends Record<TaskRatingRecordProps>(
   defaultValues,
-);
+) {}
 
-export default TaskRatingRecord;
+export const TaskRating = (p: TaskRatingRecordProps) => new TaskRatingRecord(p);

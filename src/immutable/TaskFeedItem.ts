@@ -8,7 +8,7 @@ import {
 } from './ContractTransaction';
 import { TaskCommentRecord, TaskCommentType } from './TaskComment';
 import { TaskEventRecord, TaskEventType } from './TaskEvent';
-import { TaskRatingRecordType, TaskRatingType } from './TaskRating';
+import { TaskRatingRecord, TaskRatingType } from './TaskRating';
 
 interface Shared {
   createdAt: Date;
@@ -18,7 +18,7 @@ interface Shared {
 export type TaskFeedItemRecordProps = Shared & {
   comment?: TaskCommentRecord;
   event?: TaskEventRecord;
-  rating?: TaskRatingRecordType;
+  rating?: TaskRatingRecord;
   transaction?: ContractTransactionRecord;
 };
 
