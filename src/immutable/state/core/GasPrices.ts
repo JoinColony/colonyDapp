@@ -1,5 +1,7 @@
 import BigNumber from 'bn.js';
-import { RecordOf, Record } from 'immutable';
+import { Record } from 'immutable';
+
+import { DefaultValues } from '~types/index';
 
 export interface GasPricesProps {
   cheaper?: BigNumber;
@@ -12,7 +14,7 @@ export interface GasPricesProps {
   timestamp?: number;
 }
 
-const defaultValues: Partial<GasPricesProps> = {
+const defaultValues: DefaultValues<GasPricesProps> = {
   cheaper: undefined,
   cheaperWait: undefined,
   faster: undefined,
@@ -23,8 +25,6 @@ const defaultValues: Partial<GasPricesProps> = {
   timestamp: undefined,
 };
 
-export const GasPrices: Record.Factory<Partial<GasPricesProps>> = Record(
-  defaultValues,
-);
+export class GasPricesRecord extends Record<GasPricesProps>(defaultValues) {}
 
-export type GasPricesRecord = RecordOf<GasPricesProps>;
+export const GasPrices = (p?: GasPricesProps) => new GasPricesRecord(p);

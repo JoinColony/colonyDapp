@@ -103,9 +103,8 @@ describe(`core: reducers (transactions)`, () => {
 
             const existingTx = state.list.get(existingTxId);
             expect(Record.isRecord(existingTx)).toBe(true);
-            expect(existingTx.toJS()).toEqual(
-              initialState.list.get(existingTxId).toJS(),
-            );
+            const expectedTx = initialState.list.get(existingTxId);
+            expect(existingTx.toJS()).toEqual(expectedTx && expectedTx.toJS());
 
             const tx = state.list.get(id);
             expect(Record.isRecord(tx)).toBe(true);
@@ -140,9 +139,8 @@ describe(`core: reducers (transactions)`, () => {
 
             const existingTx = state.list.get(existingTxId);
             expect(Record.isRecord(existingTx)).toBe(true);
-            expect(existingTx.toJS()).toEqual(
-              initialState.list.get(existingTxId).toJS(),
-            );
+            const expectedTx = initialState.list.get(existingTxId);
+            expect(existingTx.toJS()).toEqual(expectedTx && expectedTx.toJS());
 
             const tx = state.list.get(id);
             expect(Record.isRecord(tx)).toBe(true);
@@ -177,9 +175,8 @@ describe(`core: reducers (transactions)`, () => {
 
             const existingTx = state.list.get(existingTxId);
             expect(Record.isRecord(existingTx)).toBe(true);
-            expect(existingTx.toJS()).toEqual(
-              initialState.list.get(existingTxId).toJS(),
-            );
+            const expectedTx = initialState.list.get(existingTxId);
+            expect(existingTx.toJS()).toEqual(expectedTx && expectedTx.toJS());
 
             const tx = state.list.get(id);
             expect(Record.isRecord(tx)).toBe(true);
@@ -214,9 +211,8 @@ describe(`core: reducers (transactions)`, () => {
 
             const existingTx = state.list.get(existingTxId);
             expect(Record.isRecord(existingTx)).toBe(true);
-            expect(existingTx.toJS()).toEqual(
-              initialState.list.get(existingTxId).toJS(),
-            );
+            const expectedTx = initialState.list.get(existingTxId);
+            expect(existingTx.toJS()).toEqual(expectedTx && expectedTx.toJS());
 
             const tx = state.list.get(id);
             expect(Record.isRecord(tx)).toBe(true);
@@ -247,9 +243,8 @@ describe(`core: reducers (transactions)`, () => {
 
             const existingTx = state.list.get(existingTxId);
             expect(Record.isRecord(existingTx)).toBe(true);
-            expect(existingTx.toJS()).toEqual(
-              initialState.list.get(existingTxId).toJS(),
-            );
+            const expectedTx = initialState.list.get(existingTxId);
+            expect(existingTx.toJS()).toEqual(expectedTx && expectedTx.toJS());
 
             const tx = state.list.get(id);
             expect(Record.isRecord(tx)).toBe(true);
@@ -293,9 +288,8 @@ describe(`core: reducers (transactions)`, () => {
 
             const existingTx = state.list.get(existingTxId);
             expect(Record.isRecord(existingTx)).toBe(true);
-            expect(existingTx.toJS()).toEqual(
-              initialState.list.get(existingTxId).toJS(),
-            );
+            const expectedTx = initialState.list.get(existingTxId);
+            expect(existingTx.toJS()).toEqual(expectedTx && expectedTx.toJS());
 
             const tx = state.list.get(id);
             expect(Record.isRecord(tx)).toBe(true);
@@ -344,9 +338,8 @@ describe(`core: reducers (transactions)`, () => {
 
             const existingTx = state.list.get(existingTxId);
             expect(Record.isRecord(existingTx)).toBe(true);
-            expect(existingTx.toJS()).toEqual(
-              initialState.list.get(existingTxId).toJS(),
-            );
+            const expectedTx = initialState.list.get(existingTxId);
+            expect(existingTx.toJS()).toEqual(expectedTx && expectedTx.toJS());
 
             const tx = state.list.get(id);
             expect(Record.isRecord(tx)).toBe(true);
@@ -396,9 +389,8 @@ describe(`core: reducers (transactions)`, () => {
 
             const existingTx = state.list.get(existingTxId);
             expect(Record.isRecord(existingTx)).toBe(true);
-            expect(existingTx.toJS()).toEqual(
-              initialState.list.get(existingTxId).toJS(),
-            );
+            const expectedTx = initialState.list.get(existingTxId);
+            expect(existingTx.toJS()).toEqual(expectedTx && expectedTx.toJS());
 
             const tx = state.list.get(id);
             expect(Record.isRecord(tx)).toBe(true);

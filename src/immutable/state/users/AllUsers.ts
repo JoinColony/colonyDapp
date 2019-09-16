@@ -1,4 +1,4 @@
-import { Map as ImmutableMap, RecordOf } from 'immutable';
+import { Map as ImmutableMap, Record } from 'immutable';
 
 import { UserRecord, FetchableDataRecord } from '~immutable/index';
 
@@ -17,4 +17,7 @@ export interface AllUsersProps {
   users: UsersMap;
 }
 
-export type AllUsersRecord = RecordOf<AllUsersProps>;
+export class AllUsersRecord extends Record<AllUsersProps>({
+  usernames: ImmutableMap(),
+  users: ImmutableMap(),
+}) {}
