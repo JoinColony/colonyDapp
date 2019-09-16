@@ -63,8 +63,10 @@
     "transaction.token.setAuthority.description": "Set Token Authority",
     "transaction.colony.addExtension.title": "Add {contractName} Extension to Colony",
     "transaction.colony.addExtension.description": "Add {contractName} Extension to Colony",
-    "transaction.colony.setAdminRole.setOneTxRole.title": "Give Permission to OneTxPayment Extension",
-    "transaction.colony.setAdminRole.setOneTxRole.description": "Give Permission to OneTxPayment Extension",
+    "transaction.colony.setAdministrationRole.setOneTxRoles.title": "Give Administration Permission to OneTxPayment Extension",
+    "transaction.colony.setAdministrationRole.setOneTxRoles.description": "Give Administration Permission to OneTxPayment Extension",
+    "transaction.colony.setFundingRole.setOneTxRoles.title": "Give Funding Permission to OneTxPayment Extension",
+    "transaction.colony.setFundingRole.setOneTxRoles.description": "Give Funding Permission to OneTxPayment Extension",
 
     "transaction.token.unlock.title": "Unlock Token",
     "transaction.token.unlock.description": "Unlock Token",
