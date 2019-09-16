@@ -6,7 +6,7 @@ import {
   TaskFeedItemRecordType,
   FetchableData,
   TaskComment,
-  TaskEventRecord,
+  TaskEvent,
   TaskFeedItemRecord,
 } from '~immutable/index';
 import { withFetchableDataMap } from '~utils/reducers';
@@ -57,7 +57,7 @@ const getTaskFeedItemRecordProps = (event: any) => {
 
     default: {
       return {
-        event: TaskEventRecord(event),
+        event: TaskEvent(event),
       };
     }
   }
