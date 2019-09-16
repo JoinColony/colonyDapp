@@ -12,7 +12,7 @@ import { ContractTransactionRecord } from '../../ContractTransaction';
 import { FetchableDataRecord } from '../../FetchableData';
 import { TokenReferenceRecord } from '../../TokenReference';
 import { InboxItemRecord } from '../../InboxItem';
-import { UserPermissionsRecordType } from '../../UserPermissions';
+import { UserPermissionsRecord } from '../../UserPermissions';
 import { UserProfileRecordType } from '../../UserProfile';
 import { WalletRecordType } from '../../Wallet';
 import { TaskDraftId } from '~immutable/Task';
@@ -25,7 +25,7 @@ export type CurrentUserTransactionsType = FetchableDataRecord<
 
 export type CurrentUserPermissionsType = ImmutableMap<
   ENSName,
-  FetchableDataRecord<ImmutableMap<Address, UserPermissionsRecordType>>
+  FetchableDataRecord<ImmutableMap<Address, UserPermissionsRecord>>
 >;
 
 export type CurrentUserColoniesType = ImmutableSet<Address>;

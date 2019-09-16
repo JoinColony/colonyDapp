@@ -2,8 +2,8 @@ import { Map as ImmutableMap, fromJS } from 'immutable';
 
 import {
   CurrentUserPermissionsType,
-  UserPermissionsRecordType,
   UserPermissionsRecord,
+  UserPermissions,
   FetchableData,
 } from '~immutable/index';
 
@@ -21,8 +21,8 @@ const userPermissionsReducer: ReducerType<CurrentUserPermissionsType> = (
       } = action;
       return state.mergeIn(
         [colonyAddress],
-        FetchableData<UserPermissionsRecordType>({
-          record: UserPermissionsRecord(fromJS(permissions)),
+        FetchableData<UserPermissionsRecord>({
+          record: UserPermissions(fromJS(permissions)),
         }),
       );
     }
@@ -33,5 +33,5 @@ const userPermissionsReducer: ReducerType<CurrentUserPermissionsType> = (
 
 export default withFetchableDataMap<
   CurrentUserPermissionsType,
-  UserPermissionsRecordType
+  UserPermissionsRecord
 >(ActionTypes.USER_PERMISSIONS_FETCH, ImmutableMap())(userPermissionsReducer);
