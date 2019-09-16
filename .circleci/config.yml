@@ -294,7 +294,7 @@ workflows:
           filters:
             branches:
               ignore: master
-      - build-deploy-mainnet-image:
+      - build-mainnet-image:
           requires:
             - build-with-lockfile
             - integration-testing
