@@ -112,11 +112,11 @@ export const colonyRecentTokensSelector = createSelector(
   (colonyTokens, transactions, unclaimedTransactions) =>
     Array.from(
       new Map([
-        ...colonyTokens.map(token => [token.address, token]),
         ...[
           ...((transactions && transactions.record) || []),
           ...((unclaimedTransactions && unclaimedTransactions.record) || []),
         ].map(({ token }) => [token, { address: token }]),
+        ...colonyTokens.map(token => [token.address, token]),
       ]).values(),
     ),
 );
