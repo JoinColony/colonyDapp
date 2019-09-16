@@ -3,8 +3,6 @@ import { defineMessages, FormattedMessage } from 'react-intl';
 
 import {
   UserRecord,
-  ColonyRecord,
-  TaskRecord,
   ColonyType,
   ContractTransactionType,
   TaskType,
@@ -76,10 +74,7 @@ const UserDetails = ({
 );
 
 const ColonyDetails = ({
-  colony: {
-    displayName: colonyDisplayName,
-    colonyAddress,
-  } = ColonyRecord().toJS(),
+  colony: { displayName: colonyDisplayName, colonyAddress },
   address = colonyAddress,
   showMaskedAddress,
 }: {
@@ -99,7 +94,7 @@ const ColonyDetails = ({
 
 const TaskDetails = ({
   colonyName,
-  task: { draftId, title } = TaskRecord().toJS(),
+  task: { draftId, title },
 }: {
   task: TaskType;
   colonyName: ENSName;
@@ -274,12 +269,13 @@ const TransactionDetails = ({
     [colonyAddress],
     [colonyAddress],
   );
+  if (!colony) return null;
   const TransactionComponent = incoming
     ? IncomingTransaction
     : OutgoingTransaction;
   return (
     <TransactionComponent
-      colony={colony as ColonyType}
+      colony={colony}
       showMaskedAddress={showMaskedAddress}
       task={task}
       transaction={transaction}
