@@ -3,7 +3,7 @@ import { $ReadOnly } from 'utility-types';
 import { Record, Map as ImmutableMap } from 'immutable';
 
 import { Address, DefaultValues, ENSName } from '~types/index';
-import { TokenReferenceRecordType, TokenReferenceType } from './index';
+import { TokenReferenceRecord, TokenReferenceType } from './index';
 
 interface Shared {
   avatarHash?: string;
@@ -33,7 +33,7 @@ export type ColonyType = $ReadOnly<
 export type ColonyProps<T extends keyof ColonyType> = Pick<ColonyType, T>;
 
 type ColonyRecordProps = Shared & {
-  tokens?: ImmutableMap<Address, TokenReferenceRecordType>;
+  tokens?: ImmutableMap<Address, TokenReferenceRecord>;
 };
 
 const defaultValues: DefaultValues<ColonyRecordProps> = {

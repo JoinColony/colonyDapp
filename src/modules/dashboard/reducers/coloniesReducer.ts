@@ -5,8 +5,8 @@ import {
   Colony,
   ColonyRecord,
   FetchableData,
+  TokenReference,
   TokenReferenceRecord,
-  TokenReferenceRecordType,
 } from '~immutable/index';
 import { withFetchableDataMap } from '~utils/reducers';
 import { ActionTypes, ReducerType } from '~redux/index';
@@ -27,7 +27,7 @@ const coloniesReducer: ReducerType<AllColoniesMap> = (
         tokens: ImmutableMap(
           Object.entries(tokens).map(([tokenAddress, token]) => [
             createAddress(tokenAddress),
-            TokenReferenceRecord(token),
+            TokenReference(token),
           ]),
         ),
       });
@@ -69,7 +69,7 @@ const coloniesReducer: ReducerType<AllColoniesMap> = (
       ]);
       const record = previousRecord
         ? previousRecord.merge(token)
-        : TokenReferenceRecord(token);
+        : TokenReference(token);
       return state.setIn(
         [colonyAddress, 'record', 'tokens', tokenAddress],
         record,
@@ -98,7 +98,7 @@ const coloniesReducer: ReducerType<AllColoniesMap> = (
       ]);
       const previousTokens: ImmutableMap<
         Address,
-        TokenReferenceRecordType
+        TokenReferenceRecord
       > | null = state.getIn([colonyAddress, 'record', 'tokens']);
       const record = Colony({
         canMintNativeToken,
@@ -115,7 +115,7 @@ const coloniesReducer: ReducerType<AllColoniesMap> = (
 
             return [
               normalizedTokenAddress,
-              TokenReferenceRecord({ balance, ...token }),
+              TokenReference({ balance, ...token }),
             ];
           }),
         ),
