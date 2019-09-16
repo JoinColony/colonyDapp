@@ -2,10 +2,10 @@ import { Map as ImmutableMap, fromJS } from 'immutable';
 
 import { withFetchableDataMap } from '~utils/reducers';
 import {
-  UserRecord,
+  User,
   UserProfileRecord,
   FetchableData,
-  UserRecordType,
+  UserRecord,
   UsersMap,
 } from '~immutable/index';
 import { ActionTypes, ReducerType } from '~redux/index';
@@ -22,7 +22,7 @@ const userProfilesReducer: ReducerType<UsersMap> = (
         FetchableData({
           error: undefined,
           lastFetchedAt: new Date(),
-          record: UserRecord({
+          record: User({
             profile: UserProfileRecord(
               fromJS({
                 ...profileData,
@@ -49,7 +49,7 @@ const userProfilesReducer: ReducerType<UsersMap> = (
       const recordPath = [key, 'record'];
       return state.getIn(recordPath)
         ? state.setIn([...recordPath, 'profile'], profile)
-        : state.setIn(recordPath, UserRecord({ profile }));
+        : state.setIn(recordPath, User({ profile }));
     }
 
     case ActionTypes.USER_AVATAR_UPLOAD_SUCCESS: {
@@ -68,7 +68,7 @@ const userProfilesReducer: ReducerType<UsersMap> = (
         ? state.setIn([...recordPath, 'profile'], profile)
         : state
             .setIn([walletAddress, 'isFetching'], false)
-            .setIn(recordPath, UserRecord({ profile }));
+            .setIn(recordPath, User({ profile }));
     }
 
     default:
@@ -76,7 +76,7 @@ const userProfilesReducer: ReducerType<UsersMap> = (
   }
 };
 
-export default withFetchableDataMap<UsersMap, UserRecordType>(
+export default withFetchableDataMap<UsersMap, UserRecord>(
   new Set([ActionTypes.USER_FETCH, ActionTypes.USER_SUB_START]),
   ImmutableMap(),
 )(userProfilesReducer);

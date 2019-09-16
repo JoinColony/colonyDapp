@@ -1,12 +1,11 @@
 import { createSelector } from 'reselect';
-
 import { Map as ImmutableMap } from 'immutable';
 import { isAddress } from 'web3-utils';
 
 import {
   FetchableDataRecord,
   RootStateRecord,
-  UserRecordType,
+  UserRecord,
 } from '~immutable/index';
 import { Address } from '~types/index';
 
@@ -28,14 +27,14 @@ import {
 /*
  * Username getters
  */
-const getUsernameFromUserData = (user?: FetchableDataRecord<UserRecordType>) =>
+const getUsernameFromUserData = (user?: FetchableDataRecord<UserRecord>) =>
   user && user.getIn(['record', 'profile', 'username']);
 
 /*
  * Address getters
  */
 const getWalletAddressFromUserData = (
-  users: ImmutableMap<string, FetchableDataRecord<UserRecordType>>,
+  users: ImmutableMap<string, FetchableDataRecord<UserRecord>>,
 ) => Object.keys(users.toJS()).filter(key => isAddress(key));
 
 export const allUsersSelector = (state: RootStateRecord) =>
@@ -82,7 +81,7 @@ export const usersExceptSelector = createSelector(
 
 // @ts-ignore
 usersExceptSelector.transform = (
-  input: ImmutableMap<string, FetchableDataRecord<UserRecordType>>,
+  input: ImmutableMap<string, FetchableDataRecord<UserRecord>>,
 ) =>
   input
     .map(user => user.record)

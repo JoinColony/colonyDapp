@@ -8,7 +8,7 @@ import { Map as ImmutableMap, Record } from 'immutable';
 
 import {
   CoreTransactions,
-  UserRecord,
+  User,
   UserProfileRecord,
   WalletRecord,
 } from '~immutable/index';
@@ -52,7 +52,7 @@ const initialState = MockState({
     },
   },
   users: {
-    currentUser: UserRecord({
+    currentUser: User({
       profile: UserProfileRecord({
         username: 'piglet',
       }),

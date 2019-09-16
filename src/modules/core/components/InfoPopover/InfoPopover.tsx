@@ -1,7 +1,6 @@
 import React, { ReactNode } from 'react';
 
 import { Address } from '~types/index';
-import { UserRecord } from '~immutable/index';
 import { useSelector } from '~utils/hooks';
 import { userSelector } from '../../../users/selectors';
 
@@ -51,9 +50,13 @@ const renderTooltipContent = ({
 );
 
 const InfoPopover = ({ address, children, trigger = 'click' }: Props) => {
+  const user = useSelector(userSelector, [address]);
+  if (!user) return null;
   const {
-    record: { profile: { displayName, username } } = UserRecord().toJS(),
-  } = useSelector(userSelector, [address]) || {};
+    record: {
+      profile: { displayName, username },
+    },
+  } = user;
   return (
     <Tooltip
       content={renderTooltipContent({
