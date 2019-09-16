@@ -14,7 +14,7 @@ import { FetchableDataRecord } from '../../FetchableData';
 import { TaskCommentRecord } from '../../TaskComment';
 import { TaskDraftId, TaskRecord } from '../../Task';
 import { TaskFeedItemRecord } from '../../TaskFeedItem';
-import { TaskMetadataRecordType } from '../../TaskMetadata';
+import { TaskMetadataRecord } from '../../TaskMetadata';
 
 export * from './AllColonies';
 export * from './AllTokens';
@@ -24,10 +24,7 @@ export * from './AllRoles';
 export type CommentsList = ListType<TaskCommentRecord>;
 export type AllCommentsMap = ImmutableMapType<TaskDraftId, CommentsList>;
 
-export type TaskMetadataMap = ImmutableMapType<
-  TaskDraftId,
-  TaskMetadataRecordType
->;
+export type TaskMetadataMap = ImmutableMapType<TaskDraftId, TaskMetadataRecord>;
 
 export type AllTaskMetadataMap = ImmutableMapType<
   Address,
