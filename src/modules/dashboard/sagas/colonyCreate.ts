@@ -101,6 +101,8 @@ function* colonyCreate({
      * Always create the following transactions.
      */
     'deployOneTx',
+    'setOneTxRoleAdministration',
+    'setOneTxRoleFunding',
   ]);
   const {
     createColony,
@@ -108,7 +110,7 @@ function* colonyCreate({
     createToken,
     createUser,
     deployOneTx,
-    setOneTxRoleAdmin,
+    setOneTxRoleAdministration,
     setOneTxRoleFunding,
     deployTokenAuthority,
     setTokenAuthority,
@@ -197,17 +199,19 @@ function* colonyCreate({
       ready: false,
     });
 
-    yield createGroupedTransaction(setOneTxRoleAdmin, {
+    yield createGroupedTransaction(setOneTxRoleAdministration, {
       context: COLONY_CONTEXT,
+      methodContext: 'setOneTxRoles',
       methodName: 'setAdministrationRole',
-      params: { setTo: true },
+      params: { setTo: true, domainId: 1 },
       ready: false,
     });
 
     yield createGroupedTransaction(setOneTxRoleFunding, {
       context: COLONY_CONTEXT,
+      methodContext: 'setOneTxRoles',
       methodName: 'setFundingRole',
-      params: { setTo: true },
+      params: { setTo: true, domainId: 1 },
       ready: false,
     });
 
@@ -349,7 +353,7 @@ function* colonyCreate({
         deployTokenAuthority,
         setTokenAuthority,
         deployOneTx,
-        setOneTxRoleAdmin,
+        setOneTxRoleAdministration,
         setOneTxRoleFunding,
       ]
         .filter(Boolean)
@@ -416,17 +420,22 @@ function* colonyCreate({
     const oneTxAddress = parseExtensionDeployedLog(deployOneTxLog);
 
     /*
-     * Set OneTx roles
+     * Set OneTx administration role
      */
     yield put(
-      transactionAddParams(setOneTxRoleAdmin.id, { address: oneTxAddress }),
+      transactionAddParams(setOneTxRoleAdministration.id, {
+        address: oneTxAddress,
+      }),
     );
-    yield put(transactionReady(setOneTxRoleAdmin.id));
+    yield put(transactionReady(setOneTxRoleAdministration.id));
     yield takeFrom(
-      setOneTxRoleAdmin.channel,
+      setOneTxRoleAdministration.channel,
       ActionTypes.TRANSACTION_SUCCEEDED,
     );
 
+    /*
+     * Set OneTx funding role
+     */
     yield put(
       transactionAddParams(setOneTxRoleFunding.id, { address: oneTxAddress }),
     );
