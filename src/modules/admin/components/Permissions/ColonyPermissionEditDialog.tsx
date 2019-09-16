@@ -29,7 +29,6 @@ import {
   useDataMapFetcher,
   useUserDomainRoles,
 } from '~utils/hooks';
-import { capitalize } from '~utils/strings';
 import { filterUserSelection } from '~utils/arrays';
 
 import { userSubscriber } from '../../../users/subscribers';
@@ -41,7 +40,10 @@ import Button from '~core/Button';
 import Dialog, { DialogSection } from '~core/Dialog';
 import { ActionForm, InputLabel, Checkbox } from '~core/Fields';
 
-import { allUsersAddressesSelector } from '../../../users/selectors';
+import {
+  allUsersAddressesSelector,
+  walletAddressSelector,
+} from '../../../users/selectors';
 
 import styles from './ColonyPermissionEditDialog.css';
 
@@ -58,22 +60,42 @@ const MSG = defineMessages({
     id: 'core.ColonyPermissionEditDialog.permissionsLabel',
     defaultMessage: 'Permissions',
   },
+  role0: {
+    id: 'core.ColonyPermissionEditDialog.role0',
+    defaultMessage: 'Root',
+  },
   roleDescription0: {
     id: 'core.ColonyPermissionEditDialog.roleDescription0',
     defaultMessage:
       'The highest permission, control all aspects of running a colony.',
   },
+  role1: {
+    id: 'core.ColonyPermissionEditDialog.role1',
+    defaultMessage: 'Administration',
+  },
   roleDescription1: {
     id: 'core.ColonyPermissionEditDialog.roleDescription1',
     defaultMessage: 'Create and manage new tasks.',
+  },
+  role2: {
+    id: 'core.ColonyPermissionEditDialog.role2',
+    defaultMessage: 'Architecture',
   },
   roleDescription2: {
     id: 'core.ColonyPermissionEditDialog.roleDescription2',
     defaultMessage: 'Set the administration, funding, and architecture roles.',
   },
+  role3: {
+    id: 'core.ColonyPermissionEditDialog.role3',
+    defaultMessage: 'Funding',
+  },
   roleDescription3: {
     id: 'core.ColonyPermissionEditDialog.roleDescription3',
     defaultMessage: 'Fund tasks and transfer funds between domains.',
+  },
+  role4: {
+    id: 'core.ColonyPermissionEditDialog.role4',
+    defaultMessage: 'Arbitration',
   },
   roleDescription4: {
     id: 'core.ColonyPermissionEditDialog.roleDescription4',
@@ -104,22 +126,27 @@ interface Props {
   error: ActionTypeString;
 }
 
+// Ideally these types would come from colonyJS but can't get it to work
 enum Roles {
-  ADMIN = 'Admin',
-  ARCHITECTURE = 'Architecture',
-  ARBITRATION = 'Arbitration',
-  ROOT = 'Root',
-  FUNDING = 'Funding',
+  ADMINISTRATION = 'ADMINISTRATION',
+  ARCHITECTURE = 'ARCHITECTURE',
+  ARBITRATION = 'ARBITRATION',
+  ROOT = 'ROOT',
+  FUNDING = 'FUNDING',
 }
-
 type Role = keyof typeof Roles;
-
 type SelectedRoles = Partial<Record<Role, boolean>>;
+
+const availableRoles: Role[] = [
+  COLONY_ROLE_ROOT,
+  COLONY_ROLE_ADMINISTRATION,
+  COLONY_ROLE_ARCHITECTURE,
+  COLONY_ROLE_FUNDING,
+  COLONY_ROLE_ARBITRATION,
+];
 
 const validationSchema = yup.object({
   user: yup.object().required(),
-  domainId: yup.number(),
-  colonyAddress: yup.string().required(),
   roles: yup.array().of(yup.string().required()),
 });
 
@@ -149,44 +176,55 @@ const ColonyPermissionEditDialog = ({
     [userData],
   );
 
-  const availableRoles = [
-    COLONY_ROLE_ROOT,
-    COLONY_ROLE_ADMINISTRATION,
-    COLONY_ROLE_ARCHITECTURE,
-    COLONY_ROLE_FUNDING,
-    COLONY_ROLE_ARBITRATION,
-  ].map(word => {
-    const roleKey = word.toLowerCase();
-    return capitalize(roleKey);
-  });
+  // Get the current user's roles in the selected domain
+  const currentUserAddress = useSelector(walletAddressSelector);
+  const { data: currentUserDomainRoles } = useUserDomainRoles(
+    colonyAddress,
+    domain.id,
+    currentUserAddress,
+    true,
+  );
 
-  /* Currently arbitration should appear in the list of roles
-    but can not be set yet
-   */
-  const checkIfCanBeSet = role => {
-    if (role === 'Arbitration' || role === 'Root') {
-      return false;
-    }
-    return true;
-  };
+  // Check which roles the current user is allowed to set in this domain
+  const checkIfCanBeSet = useCallback(
+    (role: Role) => {
+      switch (role) {
+        // Can't set arbitration at all yet
+        case COLONY_ROLE_ARBITRATION:
+          return false;
+
+        // Must be root for these
+        case COLONY_ROLE_ROOT:
+        case COLONY_ROLE_ADMINISTRATION:
+        case COLONY_ROLE_FUNDING:
+        case COLONY_ROLE_ARCHITECTURE:
+          return !!currentUserDomainRoles[COLONY_ROLE_ROOT];
+
+        default:
+          return false;
+      }
+    },
+    [currentUserDomainRoles],
+  );
 
   const transform = useCallback(
     pipe(
       withKey(colonyAddress),
       mapPayload(p => ({
         userAddress: p.user.profile.walletAddress,
-        domainId: p.domainId,
-        roles: p.roles.reduce((accumulator, role) => {
-          if (checkIfCanBeSet(role)) {
-            accumulator[role.toUpperCase()] = true;
-            return accumulator;
-          }
-          return accumulator;
-        }, {}),
+        domainId: domain.id,
+        colonyAddress,
+        roles: availableRoles.reduce(
+          (acc, role) => ({
+            ...acc,
+            [role]: p.roles.includes(role),
+          }),
+          {},
+        ),
       })),
       mergePayload({ colonyAddress }),
     ),
-    [colonyAddress],
+    [colonyAddress, domain],
   );
 
   const [selectedUser, setSelectedUser] = useState(null);
@@ -202,10 +240,8 @@ const ColonyPermissionEditDialog = ({
     setSelectedUser(walletAddress);
   }, []);
 
-  const getRoles = (roles: SelectedRoles): Roles[] =>
-    Object.keys(roles)
-      .filter(role => roles[role as Role])
-      .map(role => Roles[role as Role]);
+  const getRoles = (roles: SelectedRoles): Role[] =>
+    Object.keys(roles).filter(role => roles[role]) as Role[];
 
   // When selected user gets updates get that user's roles
   // to populate the checkboxes
@@ -250,9 +286,7 @@ const ColonyPermissionEditDialog = ({
         enableReinitialize
         initialValues={{
           domainId: domain.id,
-          colonyAddress,
           roles: userRoles,
-          userAddress: selectedUser,
           user: !isFetchingselectedUser && selectedUserData,
         }}
         onSuccess={close}
@@ -293,7 +327,7 @@ const ColonyPermissionEditDialog = ({
                   >
                     <span className={styles.permissionChoiceDescription}>
                       <Heading
-                        text={role}
+                        text={MSG[`role${id}`]}
                         appearance={{ size: 'small', margin: 'none' }}
                       />
                       <FormattedMessage {...MSG[`roleDescription${id}`]} />
