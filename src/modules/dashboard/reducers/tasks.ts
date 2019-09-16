@@ -10,7 +10,7 @@ import {
   TaskRecord,
   TasksMap,
   FetchableData,
-  TaskPayoutRecord,
+  TaskPayout,
   Task,
 } from '~immutable/index';
 import { withFetchableDataMap } from '~utils/reducers';
@@ -90,7 +90,7 @@ const taskEventReducer = (task: TaskRecord, event: AllEvents): TaskRecord => {
       return task.set(
         'payouts',
         List([
-          TaskPayoutRecord(
+          TaskPayout(
             fromJS({
               amount,
               token: createAddress(token),
@@ -146,7 +146,7 @@ const tasksReducer: ReducerType<TasksMap> = (
               invites: ImmutableSet(invites),
               payouts: List(
                 payouts.map(({ amount, token }) =>
-                  TaskPayoutRecord({ amount, token }),
+                  TaskPayout({ amount, token }),
                 ),
               ),
             }),

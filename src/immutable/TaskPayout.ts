@@ -1,11 +1,9 @@
-import { $ReadOnly } from 'utility-types';
-
 import BigNumber from 'bn.js';
 import { RecordOf, Record } from 'immutable';
 
-import { Address } from '~types/index';
+import { Address, DefaultValues } from '~types/index';
 
-export type TaskPayoutType = $ReadOnly<{
+export type TaskPayoutType = Readonly<{
   amount: BigNumber;
   token: Address;
 }>;
@@ -17,13 +15,13 @@ interface TaskPayoutRecordProps {
 
 export type TaskPayoutRecordType = RecordOf<TaskPayoutRecordProps>;
 
-const defaultValues: TaskPayoutRecordProps = {
-  amount: new BigNumber(0),
-  token: '',
+const defaultValues: DefaultValues<TaskPayoutRecordProps> = {
+  amount: undefined,
+  token: undefined,
 };
 
-export const TaskPayoutRecord: Record.Factory<TaskPayoutRecordProps> = Record(
+export class TaskPayoutRecord extends Record<TaskPayoutRecordProps>(
   defaultValues,
-);
+) {}
 
-export default TaskPayoutRecord;
+export const TaskPayout = (p: TaskPayoutRecordProps) => new TaskPayoutRecord(p);
