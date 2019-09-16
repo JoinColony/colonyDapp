@@ -5,7 +5,7 @@ import { ReducerType, ActionTypes } from '~redux/index';
 import {
   TaskMetadataMap,
   AllTaskMetadataMap,
-  TaskMetadataRecord,
+  TaskMetadata,
   FetchableData,
 } from '~immutable/index';
 
@@ -44,7 +44,7 @@ const updateState = (
     draftIds
       .filter(draftId => !mutable.has(draftId))
       .forEach(draftId => {
-        mutable.set(draftId, TaskMetadataRecord(fromJS(colonyTasks[draftId])));
+        mutable.set(draftId, TaskMetadata(fromJS(colonyTasks[draftId])));
       });
   });
 
