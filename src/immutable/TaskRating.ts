@@ -2,7 +2,7 @@ import { Record } from 'immutable';
 
 import { DefaultValues } from '~types/index';
 
-import { User, UserType, UserRecord } from './User';
+import { UserType, UserRecord } from './User';
 
 interface TaskRatingRecordProps {
   ratee: UserRecord;
@@ -17,8 +17,8 @@ export type TaskRatingType = Readonly<{
 }>;
 
 const defaultValues: DefaultValues<TaskRatingRecordProps> = {
-  ratee: User(),
-  rater: User(),
+  ratee: undefined,
+  rater: undefined,
   rating: -1,
 };
 

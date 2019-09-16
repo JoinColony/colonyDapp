@@ -13,7 +13,7 @@ import { FetchableDataRecord } from '../../FetchableData';
 import { TokenReferenceRecord } from '../../TokenReference';
 import { InboxItemRecord } from '../../InboxItem';
 import { UserPermissionsRecord } from '../../UserPermissions';
-import { UserProfileRecordType } from '../../UserProfile';
+import { UserProfileRecord } from '../../UserProfile';
 import { WalletRecordType } from '../../Wallet';
 import { TaskDraftId } from '~immutable/Task';
 
@@ -40,7 +40,7 @@ export interface CurrentUser {
   activities: List<InboxItemRecord>;
   colonies: FetchableDataRecord<CurrentUserColoniesType>;
   permissions: CurrentUserPermissionsType;
-  profile: UserProfileRecordType;
+  profile: UserProfileRecord;
   tasks: FetchableDataRecord<CurrentUserTasksType>;
   tokens: CurrentUserTokensType;
   transactions: CurrentUserTransactionsType;

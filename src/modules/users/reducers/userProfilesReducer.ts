@@ -3,7 +3,7 @@ import { Map as ImmutableMap, fromJS } from 'immutable';
 import { withFetchableDataMap } from '~utils/reducers';
 import {
   User,
-  UserProfileRecord,
+  UserProfile,
   FetchableData,
   UserRecord,
   UsersMap,
@@ -23,7 +23,7 @@ const userProfilesReducer: ReducerType<UsersMap> = (
           error: undefined,
           lastFetchedAt: new Date(),
           record: User({
-            profile: UserProfileRecord(
+            profile: UserProfile(
               fromJS({
                 ...profileData,
                 walletAddress,
@@ -45,7 +45,7 @@ const userProfilesReducer: ReducerType<UsersMap> = (
         meta: { key },
         payload,
       } = action;
-      const profile = UserProfileRecord(fromJS(payload));
+      const profile = UserProfile(fromJS(payload));
       const recordPath = [key, 'record'];
       return state.getIn(recordPath)
         ? state.setIn([...recordPath, 'profile'], profile)
@@ -62,7 +62,7 @@ const userProfilesReducer: ReducerType<UsersMap> = (
         payload,
         payload: { walletAddress },
       } = action;
-      const profile = UserProfileRecord(payload);
+      const profile = UserProfile(payload);
       const recordPath = [walletAddress, 'record'];
       return state.getIn(recordPath)
         ? state.setIn([...recordPath, 'profile'], profile)
