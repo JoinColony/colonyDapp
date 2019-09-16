@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import { useDispatch, useMappedState } from 'redux-react-hook';
-import { TokenReferenceType } from '~immutable/TokenReference';
 
+import { UserTokenReferenceType } from '~immutable/index';
 import { Address } from '~types/strings';
 import { ActionTypes } from '~redux/index';
 import { currentUserRecentTokensSelector } from '../../../users/selectors';
@@ -25,7 +25,7 @@ const UserTokenEditDialog = ({ selectedTokens = [], cancel, close }: Props) => {
 
   const availableTokens = useMappedState(
     currentUserRecentTokensSelector,
-  ) as TokenReferenceType[];
+  ) as UserTokenReferenceType[];
 
   return (
     <TokenEditDialog

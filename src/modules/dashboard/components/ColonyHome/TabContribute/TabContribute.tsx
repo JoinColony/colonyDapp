@@ -2,7 +2,7 @@ import React from 'react';
 
 import {
   ColonyType,
-  TokenReferenceType,
+  ColonyTokenReferenceType,
   UserPermissionsType,
 } from '~immutable/index';
 import { isInRecoveryMode } from '../../../checks';
@@ -18,8 +18,8 @@ interface Props {
   colony: ColonyType;
   filteredDomainId: number;
   filterOption: string;
-  nativeTokenRef: TokenReferenceType | null;
-  ethTokenRef: TokenReferenceType | null;
+  nativeTokenRef: ColonyTokenReferenceType | null;
+  ethTokenRef: ColonyTokenReferenceType | null;
   permissions: UserPermissionsType;
 }
 
@@ -32,9 +32,15 @@ const TabContribute = ({
   permissions,
 }: Props) => {
   const isColonyTokenBalanceZero =
-    nativeTokenRef && nativeTokenRef.balance && nativeTokenRef.balance.isZero();
+    nativeTokenRef &&
+    nativeTokenRef.balances &&
+    nativeTokenRef.balances[0] &&
+    nativeTokenRef.balances[0].isZero();
   const isEthBalanceZero =
-    ethTokenRef && ethTokenRef.balance && ethTokenRef.balance.isZero();
+    ethTokenRef &&
+    ethTokenRef.balances &&
+    ethTokenRef.balances[0] &&
+    ethTokenRef.balances[0].isZero();
 
   const canMintTokens = !!(
     nativeTokenRef &&

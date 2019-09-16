@@ -1,15 +1,19 @@
 import React from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 
-import { TokenReferenceType, TokenType } from '~immutable/index';
+import {
+  ColonyTokenReferenceType,
+  TokenType,
+  UserTokenReferenceType,
+} from '~immutable/index';
 
-import { useDataFetcher } from '~utils/hooks';
 import Card from '~core/Card';
 import EthUsd from '~core/EthUsd';
 import Numeral from '~core/Numeral';
 import { SpinnerLoader } from '~core/Preloaders';
 import CopyableAddress from '~core/CopyableAddress';
 import TokenIcon from '~dashboard/HookedTokenIcon';
+import { useDataFetcher } from '~utils/hooks';
 
 import { tokenIsETH, tokenBalanceIsNotPositive } from '../../../core/checks';
 
@@ -18,7 +22,8 @@ import { tokenFetcher } from '../../../dashboard/fetchers';
 import styles from './TokenCard.css';
 
 interface Props {
-  token: TokenReferenceType;
+  domainId?: number;
+  token: ColonyTokenReferenceType | UserTokenReferenceType;
 }
 
 const displayName = 'admin.Tokens.TokenCard';
@@ -31,7 +36,8 @@ const MSG = defineMessages({
 });
 
 const TokenCard = ({
-  token: { address, isNative, balance },
+  domainId,
+  token: { address },
   token: tokenReference,
 }: Props) => {
   const { data: token, isFetching } = useDataFetcher<TokenType>(
@@ -39,6 +45,14 @@ const TokenCard = ({
     [address],
     [address],
   );
+
+  let balance;
+  if ('balances' in tokenReference && domainId) {
+    balance = tokenReference.balances[domainId];
+  }
+  if ('balance' in tokenReference) {
+    balance = tokenReference.balance;
+  }
 
   // The balance is fetched seperately to the rest of the token.
   if (!address || isFetching || balance === undefined) {
@@ -64,12 +78,14 @@ const TokenCard = ({
               <CopyableAddress>{address}</CopyableAddress>
             </>
           )}
-          {isNative && <span>*</span>}
+          {'isNative' in tokenReference && tokenReference.isNative && (
+            <span>*</span>
+          )}
         </div>
       </div>
       <div
         className={
-          tokenBalanceIsNotPositive(tokenReference)
+          tokenBalanceIsNotPositive(tokenReference, domainId)
             ? styles.balanceNotPositive
             : styles.balanceContent
         }

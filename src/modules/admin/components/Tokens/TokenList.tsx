@@ -1,6 +1,9 @@
 import React from 'react';
 
-import { TokenReferenceType } from '~immutable/index';
+import {
+  ColonyTokenReferenceType,
+  UserTokenReferenceType,
+} from '~immutable/index';
 import CardList from '~core/CardList';
 import TokenCard from './TokenCard';
 import styles from './TokenList.css';
@@ -14,14 +17,15 @@ interface Appearance {
 
 interface Props {
   appearance?: Appearance;
-  tokens: TokenReferenceType[];
+  domainId?: number;
+  tokens: Array<ColonyTokenReferenceType | UserTokenReferenceType>;
 }
 
-const TokenList = ({ tokens, appearance }: Props) => (
+const TokenList = ({ domainId, tokens, appearance }: Props) => (
   <div className={styles.tokenCardContainer}>
     <CardList appearance={appearance}>
       {tokens.map(token => (
-        <TokenCard key={token.address} token={token} />
+        <TokenCard domainId={domainId} key={token.address} token={token} />
       ))}
     </CardList>
   </div>

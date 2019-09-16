@@ -2,7 +2,7 @@ import React, { useCallback } from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 
 import { DialogType } from '~core/Dialog';
-import { TokenReferenceType } from '~immutable/index';
+import { UserTokenReferenceType } from '~immutable/index';
 import { Address } from '~types/index';
 import CopyableAddress from '~core/CopyableAddress';
 import Button from '~core/Button';
@@ -53,7 +53,7 @@ interface Props {
 
 const Wallet = ({ walletAddress, openDialog }: Props) => {
   const { isFetching: isFetchingTokens, data: tokens } = useDataFetcher<
-    TokenReferenceType[]
+    UserTokenReferenceType[]
   >(currentUserTokensFetcher, [], []);
   const editTokens = useCallback(
     () =>

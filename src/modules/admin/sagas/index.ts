@@ -109,7 +109,7 @@ function* colonyClaimToken({
     yield put<AllActions>(fetchColonyUnclaimedTransactions(colonyAddress));
     yield put<AllActions>({
       type: ActionTypes.COLONY_TOKEN_BALANCE_FETCH,
-      payload: { colonyAddress, tokenAddress },
+      payload: { colonyAddress, domainId: 1, tokenAddress },
     });
   } catch (error) {
     return yield putError(ActionTypes.COLONY_CLAIM_TOKEN_ERROR, error, meta);
@@ -227,7 +227,7 @@ function* colonyMintTokens({
       const tokenAddress = mintLog.address;
       yield put<AllActions>({
         type: ActionTypes.COLONY_TOKEN_BALANCE_FETCH,
-        payload: { colonyAddress, tokenAddress },
+        payload: { colonyAddress, domainId: 1, tokenAddress },
       });
 
       // const colonyManager = yield getContext(Context.COLONY_MANAGER);

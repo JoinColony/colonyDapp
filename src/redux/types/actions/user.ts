@@ -2,7 +2,7 @@ import { Address, WithKey } from '~types/index';
 import {
   ContractTransactionType,
   TaskDraftId,
-  TokenReferenceType,
+  UserTokenReferenceType,
   UserProfileType,
 } from '~immutable/index';
 
@@ -160,7 +160,7 @@ export type UserActionTypes =
   | ActionTypeWithPayload<
       ActionTypes.USER_TOKENS_FETCH_SUCCESS,
       {
-        tokens: TokenReferenceType[];
+        tokens: UserTokenReferenceType[];
       }
     >
   | ActionTypeWithPayload<

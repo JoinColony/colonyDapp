@@ -30,9 +30,10 @@ export const fetchColonyTaskMetadata = (
 export const fetchColonyTokenBalance = (
   colonyAddress: Address,
   tokenAddress: Address,
+  domainId: number,
 ): AllActions => ({
   type: ActionTypes.COLONY_TOKEN_BALANCE_FETCH,
-  payload: { colonyAddress, tokenAddress },
+  payload: { colonyAddress, domainId, tokenAddress },
 });
 
 export const fetchColonyCanMintNativeToken = (

@@ -29,6 +29,7 @@ import {
   checkColonyNameIsAvailable,
   getColony,
   getColonyCanMintNativeToken,
+  getColonyDomains,
   getColonyTasks,
   getColonyTokenBalance,
   subscribeToColony,
@@ -131,6 +132,10 @@ function* colonyFetch({
       payload: colony,
     });
 
+    const domains = yield executeQuery(getColonyDomains, {
+      metadata: { colonyAddress },
+    });
+
     // dispatch actions to fetch info and balances for each colony token
     yield all(
       Object.keys(colony.tokens || {})
@@ -139,10 +144,13 @@ function* colonyFetch({
           (effects, tokenAddress) => [
             ...effects,
             put(fetchToken(tokenAddress)),
-            put<AllActions>({
-              type: ActionTypes.COLONY_TOKEN_BALANCE_FETCH,
-              payload: { colonyAddress, tokenAddress },
-            }),
+            ...domains.map(({ id: domainId }) =>
+              put(
+                fetchColonyTokenBalance(colonyAddress, tokenAddress, domainId),
+              ),
+            ),
+            put(fetchColonyTokenBalance(colonyAddress, tokenAddress, 0)),
+            put(fetchColonyTokenBalance(colonyAddress, tokenAddress, 1)),
           ],
           [],
         ),
@@ -335,11 +343,11 @@ function* colonyUpgradeContract({
 }
 
 function* colonyTokenBalanceFetch({
-  payload: { colonyAddress, tokenAddress },
+  payload: { colonyAddress, domainId, tokenAddress },
 }: Action<ActionTypes.COLONY_TOKEN_BALANCE_FETCH>) {
   try {
     const balance = yield executeQuery(getColonyTokenBalance, {
-      args: { tokenAddress },
+      args: { domainId, tokenAddress },
       metadata: { colonyAddress },
     });
 
@@ -348,7 +356,9 @@ function* colonyTokenBalanceFetch({
       payload: {
         token: {
           address: tokenAddress,
-          balance,
+          balances: {
+            [domainId]: balance,
+          },
         },
         tokenAddress,
         colonyAddress,
@@ -465,11 +475,21 @@ function* colonySubStart({ payload: { colonyAddress }, meta }: any) {
       channel.close();
     });
 
+    const domains = yield executeQuery(getColonyDomains, {
+      metadata: { colonyAddress },
+    });
+
     const reduceTokenToDispatch = (acc, token) =>
       token.balance === undefined
         ? [
             ...acc,
-            put(fetchColonyTokenBalance(colonyAddress, token.address)),
+            ...domains.map(({ id: domainId }) =>
+              put(
+                fetchColonyTokenBalance(colonyAddress, token.address, domainId),
+              ),
+            ),
+            put(fetchColonyTokenBalance(colonyAddress, token.address, 0)),
+            put(fetchColonyTokenBalance(colonyAddress, token.address, 1)),
             put(fetchToken(token.address)),
           ]
         : acc;
