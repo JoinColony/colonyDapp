@@ -1,6 +1,6 @@
-import { $ReadOnly } from 'utility-types';
+import { Record } from 'immutable';
 
-import { RecordOf, Record } from 'immutable';
+import { DefaultValues } from '~types/index';
 
 interface Shared {
   canEnterRecoveryMode: boolean;
@@ -8,18 +8,14 @@ interface Shared {
   isFounder: false;
 }
 
-export type UserPermissionsType = $ReadOnly<Shared>;
+export type UserPermissionsType = Readonly<Shared>;
 
-export type UserPermissionsRecordType = RecordOf<Shared>;
-
-const defaultProps: Shared = {
+const defaultValues: DefaultValues<Shared> = {
   canEnterRecoveryMode: false,
   isAdmin: false,
   isFounder: false,
 };
 
-export const UserPermissionsRecord: Record.Factory<Shared> = Record(
-  defaultProps,
-);
+export class UserPermissionsRecord extends Record<Shared>(defaultValues) {}
 
-export default UserPermissionsRecord;
+export const UserPermissions = (p: Shared) => new UserPermissionsRecord(p);
