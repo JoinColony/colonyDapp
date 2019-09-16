@@ -4,7 +4,7 @@ import cx from 'classnames';
 
 import {
   TaskPayoutType,
-  TokenReferenceType,
+  ColonyTokenReferenceType,
   TokenType,
 } from '~immutable/index';
 import { Address } from '~types/index';
@@ -25,7 +25,7 @@ interface Props {
   maxLines?: number;
 
   /** Native token of the displayed Colony */
-  nativeToken?: TokenReferenceType;
+  nativeToken?: ColonyTokenReferenceType;
 
   /** Payouts list containing all the payouts */
   payouts: TaskPayoutType[];

@@ -61,6 +61,24 @@ export const colonyAvatarHashSelector = (
     'avatar',
   ]);
 
+export const tokenBalanceSelector = (
+  state: RootStateRecord,
+  colonyAddress: Address,
+  tokenAddress: Address,
+  domainId: number,
+) =>
+  state.getIn([
+    ns,
+    DASHBOARD_ALL_COLONIES,
+    DASHBOARD_COLONIES,
+    colonyAddress,
+    'record',
+    'tokens',
+    tokenAddress,
+    'balances',
+    domainId,
+  ]);
+
 /*
  * Selectors
  */

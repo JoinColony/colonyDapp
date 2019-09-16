@@ -1,7 +1,10 @@
+import BigNumber from 'bn.js';
+
 import {
-  TokenReferenceType,
+  ColonyTokenReferenceType,
   TokenType,
   TransactionType,
+  UserTokenReferenceType,
 } from '~immutable/index';
 
 import { ZERO_ADDRESS } from '~utils/web3/constants';
@@ -17,11 +20,35 @@ export const isPendingMultisig = (tx: TransactionType) =>
 /*
  * Tokens
  */
-export const tokenBalanceIsPositive = ({ balance }: TokenReferenceType) =>
-  !!balance && balance.gten(0);
+export const tokenBalanceIsPositive = (
+  tokenReference: ColonyTokenReferenceType | UserTokenReferenceType,
+  domainId: number,
+) => {
+  let balance = new BigNumber(0);
+  if ('balances' in tokenReference) {
+    balance = tokenReference.balances[domainId];
+  }
+  if ('balance' in tokenReference) {
+    balance = tokenReference.balance;
+  }
+  return balance.gten(0);
+};
 
-export const tokenBalanceIsNotPositive = ({ balance }: TokenReferenceType) =>
-  !!balance && balance.lten(0);
+export const tokenBalanceIsNotPositive = (
+  tokenReference: ColonyTokenReferenceType | UserTokenReferenceType,
+  domainId: number,
+) => {
+  let balance = new BigNumber(0);
+  if ('balances' in tokenReference) {
+    balance = tokenReference.balances[domainId];
+  }
+  if ('balance' in tokenReference) {
+    balance = tokenReference.balance;
+  }
+  return balance.lten(0);
+};
 
-export const tokenIsETH = ({ address }: TokenType | TokenReferenceType) =>
+export const tokenIsETH = ({
+  address,
+}: TokenType | ColonyTokenReferenceType | UserTokenReferenceType) =>
   address === ZERO_ADDRESS;

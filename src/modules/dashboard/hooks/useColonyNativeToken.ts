@@ -1,6 +1,6 @@
 import { useCallback } from 'react';
 import { useMappedState } from 'redux-react-hook';
-import { ColonyType, TokenReferenceType } from '~immutable/index';
+import { ColonyType, ColonyTokenReferenceType } from '~immutable/index';
 import { Address } from '~types/index';
 import { useDataSubscriber } from '~utils/hooks';
 
@@ -9,7 +9,7 @@ import { colonyNativeTokenSelector } from '../selectors';
 
 export const useColonyNativeToken = (
   colonyAddress: Address | null,
-): TokenReferenceType | undefined => {
+): ColonyTokenReferenceType | undefined => {
   const { data: fetchedColony } = useDataSubscriber<ColonyType>(
     colonySubscriber,
     [colonyAddress],

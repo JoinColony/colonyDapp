@@ -5,7 +5,10 @@ import { subscribeActions as subscribeToReduxActions } from 'redux-action-watch/
 import { useDispatch } from 'redux-react-hook';
 import throttle from 'lodash/throttle';
 
-import { TokenReferenceType, UserPermissionsType } from '~immutable/index';
+import {
+  ColonyTokenReferenceType,
+  UserPermissionsType,
+} from '~immutable/index';
 import { Address } from '~types/index';
 import {
   TasksFilterOptionType,
@@ -154,11 +157,11 @@ const ColonyHome = ({
     colonyArgs,
   );
 
-  const nativeTokenRef: TokenReferenceType | null = useSelector(
+  const nativeTokenRef: ColonyTokenReferenceType | null = useSelector(
     colonyNativeTokenSelector,
     colonyArgs,
   );
-  const ethTokenRef: TokenReferenceType | null = useSelector(
+  const ethTokenRef: ColonyTokenReferenceType | null = useSelector(
     colonyEthTokenSelector,
     colonyArgs,
   );

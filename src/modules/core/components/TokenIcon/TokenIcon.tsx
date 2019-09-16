@@ -1,12 +1,15 @@
 import React, { ReactNode } from 'react';
 
-import { TokenReferenceType } from '~immutable/index';
+import {
+  ColonyTokenReferenceType,
+  UserTokenReferenceType,
+} from '~immutable/index';
 import Avatar from '~core/Avatar';
 import styles from './TokenIcon.css';
 
 export interface Props {
   /** Token reference to display */
-  token: TokenReferenceType;
+  token: ColonyTokenReferenceType | UserTokenReferenceType;
 
   /** Icon image URL (can be a base64 encoded url string) */
   iconURL?: string;

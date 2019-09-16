@@ -2,7 +2,10 @@ import { FormikProps } from 'formik';
 import React from 'react';
 import { defineMessages } from 'react-intl';
 
-import { TokenReferenceType } from '~immutable/index';
+import {
+  ColonyTokenReferenceType,
+  UserTokenReferenceType,
+} from '~immutable/index';
 import { ActionTypeString } from '~redux/index';
 import { ActionTransformFnType } from '~utils/actions';
 import Button from '~core/Button';
@@ -43,7 +46,7 @@ const MSG = defineMessages({
 interface Props {
   cancel: () => void;
   close: () => void;
-  availableTokens: TokenReferenceType[];
+  availableTokens: Array<ColonyTokenReferenceType | UserTokenReferenceType>;
   selectedTokens: Address[];
   submit: ActionTypeString;
   success: ActionTypeString;

@@ -1,7 +1,10 @@
 import difference from 'lodash/difference';
 
 import { Address } from '~types/index';
-import { TokenReferenceType } from '~immutable/index';
+import {
+  ColonyTokenReferenceType,
+  UserTokenReferenceType,
+} from '~immutable/index';
 
 import { ZERO_ADDRESS } from '../web3/constants';
 
@@ -116,8 +119,8 @@ export const diffAddresses = (
  * Sort an array of TokenReferences so that any of address `0x0` are first.
  */
 export const sortTokensByEth = (
-  a: TokenReferenceType,
-  b: TokenReferenceType,
+  a: ColonyTokenReferenceType | UserTokenReferenceType,
+  b: ColonyTokenReferenceType | UserTokenReferenceType,
 ) => {
   if (a.address === ZERO_ADDRESS) return -1;
   if (b.address === ZERO_ADDRESS) return 1;

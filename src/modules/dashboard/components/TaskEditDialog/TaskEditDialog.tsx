@@ -11,7 +11,7 @@ import { useDispatch } from 'redux-react-hook';
 import {
   ColonyType,
   TaskPayoutType,
-  TokenReferenceType,
+  ColonyTokenReferenceType,
   TokenType,
   UserProfile,
   User,
@@ -153,15 +153,22 @@ const TaskEditDialog = ({
   );
 
   const {
-    record: { colonyAddress, payouts: taskPayouts, reputation, workerAddress },
+    record: {
+      colonyAddress,
+      domainId,
+      payouts: taskPayouts,
+      reputation,
+      workerAddress,
+    },
   } = useSelector(taskSelector, [draftId]);
+
   const { data: colonyData, isFetching: isFetchingColony } = useDataSubscriber<
     ColonyType
   >(colonySubscriber, [colonyAddress], [colonyAddress]);
 
   const [colonyTokenReferences, availableTokens] = useColonyTokens(
     colonyAddress,
-  ) as [TokenReferenceType[], TokenType[]];
+  ) as [ColonyTokenReferenceType[], TokenType[]];
 
   // Get users that have requested to work on this task
   const userAddressesRequested = useSelector(taskRequestsSelector, [draftId]);
@@ -251,6 +258,7 @@ const TaskEditDialog = ({
               // @ts-ignore
               .lessThanPot(
                 colonyTokenReferences,
+                domainId,
                 availableTokens,
                 MSG.insufficientFundsError,
               ),
@@ -262,7 +270,7 @@ const TaskEditDialog = ({
         .default(null),
       worker: workerShape,
     });
-  }, [availableTokens, colonyTokenReferences, maxTokens, minTokens]);
+  }, [availableTokens, colonyTokenReferences, domainId, maxTokens, minTokens]);
 
   const tokenOptions = useMemo(
     () =>
