@@ -108,11 +108,9 @@ const Permissions = ({ colonyAddress, openDialog }: Props) => {
 
   const handleOnClick = useCallback(
     (userAddress: Address) => {
-      // eslint-disable-next-line no-console
-      console.log(userAddress, colonyAddress, selectedDomain);
       handleEditPermissions(userAddress);
     },
-    [colonyAddress, handleEditPermissions, selectedDomain],
+    [handleEditPermissions],
   );
 
   const users = useMemo(
