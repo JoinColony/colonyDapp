@@ -14,7 +14,7 @@ import {
   TokenReferenceType,
   TokenType,
   UserProfileRecord,
-  UserRecord,
+  User,
   UserType,
 } from '~immutable/index';
 import { ItemDataType } from '~core/OmniPicker';
@@ -190,7 +190,7 @@ const TaskEditDialog = ({
   );
   const existingWorker =
     !!workerAddress && !existingWorkerObj
-      ? UserRecord({
+      ? User({
           profile: UserProfileRecord({
             walletAddress: workerAddress,
           }),

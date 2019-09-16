@@ -2,7 +2,6 @@ import React from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 
 import {
-  UserRecord,
   ColonyType,
   ContractTransactionType,
   TaskType,
@@ -50,17 +49,13 @@ interface HookedProps extends Props {
 }
 
 const UserDetails = ({
-  user: {
-    displayName: userDisplayName = '',
-    username = '',
-    walletAddress,
-  } = UserRecord().profile,
+  user: { displayName: userDisplayName = '', username = '', walletAddress },
   address = walletAddress,
   showMaskedAddress,
 }: {
   address: Address;
   showMaskedAddress?: boolean;
-  user?: UserProfileType;
+  user: UserProfileType;
 }) => (
   <span>
     {userDisplayName && <span>{`${userDisplayName} `}</span>}
@@ -120,7 +115,7 @@ const IncomingTransaction = ({
       {/*
        * From a user
        */}
-      {from && !(to && colony) && (
+      {from && !(to && colony) && user && (
         <FormattedMessage
           {...MSG.fromText}
           values={{
@@ -196,7 +191,7 @@ const OutgoingTransaction = ({
       {/*
        * To a user
        */}
-      {to && !(from && colony) && (
+      {to && !(from && colony) && user && (
         <FormattedMessage
           {...MSG.toText}
           values={{

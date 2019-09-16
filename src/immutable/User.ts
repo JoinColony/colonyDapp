@@ -1,34 +1,29 @@
-import { $ReadOnly } from 'utility-types';
+import { List, Record } from 'immutable';
 
-import { RecordOf, List, Record } from 'immutable';
+import { DefaultValues } from '~types/index';
 
 import {
   UserProfileRecord,
   UserProfileType,
   UserProfileRecordType,
 } from './UserProfile';
-
 import { InboxItemRecord, InboxItemType } from './InboxItem';
 
 interface UserRecordProps {
-  activities: List<InboxItemRecord>;
-  profile: UserProfileRecordType;
+  activities?: List<InboxItemRecord>;
+  profile?: UserProfileRecordType;
 }
 
-export type UserType = $ReadOnly<{
+export type UserType = Readonly<{
   activities: InboxItemType[];
   profile: UserProfileType;
 }>;
 
-export type UserRecordType = RecordOf<UserRecordProps>;
-
-const defaultValues: UserRecordProps = {
+const defaultValues: DefaultValues<UserRecordProps> = {
   profile: UserProfileRecord(),
   activities: List(),
 };
 
-export const UserRecord: Record.Factory<UserRecordProps> = Record(
-  defaultValues,
-);
+export class UserRecord extends Record<UserRecordProps>(defaultValues) {}
 
-export default UserRecord;
+export const User = (p?: UserRecordProps) => new UserRecord(p);
