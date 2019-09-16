@@ -1,10 +1,7 @@
 @value cellPadding: 20px;
 
 tr.main:hover .etherscanButtonWrapper {
-  display: block;
-  padding: 10px 15px 10px 20px;
-  position: absolute;
-  background-color: var(--colony-white);
+  margin-right: 0;
 }
 
 .main td {
@@ -68,5 +65,6 @@ td.transactionAmountActions {
 
 .etherscanButtonWrapper {
   composes: buttonWrapper;
-  display: none;
+  margin-right: -160px;
+  transition: 0.2s margin-right ease;
 }
