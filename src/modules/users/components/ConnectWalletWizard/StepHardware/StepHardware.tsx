@@ -7,11 +7,7 @@ import BigNumber from 'bn.js';
 
 import { WizardProps } from '~core/Wizard';
 import { Address } from '~types/index';
-import {
-  WalletSpecificType,
-  WALLET_CATEGORIES,
-  WALLET_SPECIFICS,
-} from '~immutable/index';
+import { WALLET_CATEGORIES, WALLET_SPECIFICS } from '~immutable/index';
 import { ActionTypes } from '~redux/index';
 import { mergePayload } from '~utils/actions';
 import { SpinnerLoader } from '~core/Preloaders';
@@ -95,7 +91,7 @@ const validationSchema = yup.object({
 });
 
 interface FormValues {
-  method: WalletSpecificType;
+  method: WALLET_SPECIFICS;
   hardwareWalletChoice: string;
   hardwareWalletFilter: string;
 }

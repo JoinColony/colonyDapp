@@ -1,16 +1,11 @@
-import {
-  WalletSpecificType,
-  WalletCategoryType,
-  WALLET_CATEGORIES,
-  WALLET_SPECIFICS,
-} from '~immutable/index';
+import { WALLET_CATEGORIES, WALLET_SPECIFICS } from '~immutable/index';
 
 /**
  * Helper for putting specific wallet types into categories
  */
 export default function getWalletCategory(
-  method: WalletSpecificType,
-): WalletCategoryType {
+  method: WALLET_SPECIFICS | 'create',
+): WALLET_CATEGORIES {
   switch (method) {
     case WALLET_SPECIFICS.TREZOR:
     case WALLET_SPECIFICS.LEDGER:
