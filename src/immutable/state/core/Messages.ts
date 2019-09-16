@@ -1,19 +1,21 @@
-import { RecordOf, Record, Map as ImmutableMap } from 'immutable';
+import { Record, Map as ImmutableMap } from 'immutable';
 
 import { MessageRecord, TransactionId } from '~immutable/index';
+import { DefaultValues } from '~types/index';
 
 export type MessagesList = ImmutableMap<TransactionId, MessageRecord>;
 
 export interface CoreMessagesProps {
-  list: MessagesList;
+  list?: MessagesList;
 }
 
-const defaultValues: Partial<CoreMessagesProps> = {
+const defaultValues: DefaultValues<CoreMessagesProps> = {
   list: ImmutableMap(),
 };
 
-export const CoreMessages: Record.Factory<Partial<CoreMessagesProps>> = Record(
+export class CoreMessagesRecord extends Record<CoreMessagesProps>(
   defaultValues,
-);
+) {}
 
-export type CoreMessagesRecord = RecordOf<Partial<CoreMessagesProps>>;
+export const CoreMessages = (p?: CoreMessagesProps) =>
+  new CoreMessagesRecord(p);

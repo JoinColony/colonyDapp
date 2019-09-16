@@ -2,22 +2,22 @@ import { ReducerType, ActionTypes } from '~redux/index';
 
 import {
   FetchableDataRecord,
-  NetworkRecordType,
   NetworkRecord,
+  Network,
   FetchableData,
 } from '~immutable/index';
 
 import { withFetchableData } from '~utils/reducers';
 
-type State = FetchableDataRecord<NetworkRecordType>;
+type State = FetchableDataRecord<NetworkRecord>;
 
 const coreNetworkReducer: ReducerType<State> = (
-  state = FetchableData<NetworkRecordType>({ record: NetworkRecord() }),
+  state = FetchableData<NetworkRecord>({ record: Network() }),
   action,
 ) => {
   switch (action.type) {
     case ActionTypes.NETWORK_FETCH_SUCCESS:
-      return state.set('record', NetworkRecord(action.payload));
+      return state.set('record', Network(action.payload));
     default:
       return state;
   }

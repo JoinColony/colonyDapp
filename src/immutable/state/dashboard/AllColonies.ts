@@ -1,6 +1,6 @@
-import { Map as ImmutableMap, RecordOf } from 'immutable';
+import { Map as ImmutableMap, Record } from 'immutable';
 
-import { Address, ENSName } from '~types/index';
+import { Address, DefaultValues, ENSName } from '~types/index';
 import { ColonyRecord, FetchableDataRecord } from '~immutable/index';
 
 export type AllColoniesMap = ImmutableMap<
@@ -21,4 +21,12 @@ export interface AllColoniesProps {
   colonyNames: AllColonyNamesMap;
 }
 
-export type AllColoniesRecord = RecordOf<AllColoniesProps>;
+const defaultValues: DefaultValues<AllColoniesProps> = {
+  avatars: ImmutableMap(),
+  colonies: ImmutableMap(),
+  colonyNames: ImmutableMap(),
+};
+
+export class AllColoniesRecord extends Record<AllColoniesProps>(
+  defaultValues,
+) {}

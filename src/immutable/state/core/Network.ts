@@ -1,4 +1,6 @@
-import { RecordOf, Record } from 'immutable';
+import { Record } from 'immutable';
+
+import { DefaultValues } from '~types/index';
 
 export interface NetworkProps {
   /*
@@ -15,14 +17,12 @@ export interface NetworkProps {
   version?: number;
 }
 
-const defaultValues: NetworkProps = {
+const defaultValues: DefaultValues<NetworkProps> = {
   fee: undefined,
   feeInverse: undefined,
   version: undefined,
 };
 
-export const NetworkRecord: Record.Factory<NetworkProps> = Record(
-  defaultValues,
-);
+export class NetworkRecord extends Record<NetworkProps>(defaultValues) {}
 
-export type NetworkRecordType = RecordOf<NetworkProps>;
+export const Network = (p?: NetworkProps) => new NetworkRecord(p);

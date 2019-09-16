@@ -1,4 +1,4 @@
-import { Collection, List, Map as ImmutableMap, RecordOf } from 'immutable';
+import { List, Map as ImmutableMap, Record } from 'immutable';
 
 import { ENSName } from '~types/index';
 import {
@@ -21,4 +21,7 @@ export interface AdminStateProps {
   unclaimedTransactions: AdminUnclaimedTransactionsState;
 }
 
-export type AdminStateRecord = Collection<any, any> & RecordOf<AdminStateProps>;
+export class AdminStateRecord extends Record<AdminStateProps>({
+  transactions: ImmutableMap(),
+  unclaimedTransactions: ImmutableMap(),
+}) {}
