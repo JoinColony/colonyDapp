@@ -1,7 +1,4 @@
-import { $ReadOnly } from 'utility-types';
-
 import { Record } from 'immutable';
-
 import BigNumber from 'bn.js';
 
 import { Address, DefaultValues } from '~types/index';
@@ -18,7 +15,7 @@ interface Shared {
   token: Address; // 0x0 is ether
 }
 
-export type ContractTransactionType = $ReadOnly<Shared>;
+export type ContractTransactionType = Readonly<Shared>;
 
 const defaultValues: DefaultValues<Shared> = {
   amount: undefined,

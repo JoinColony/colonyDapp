@@ -1,5 +1,3 @@
-import { $ReadOnly } from 'utility-types';
-
 import { Record } from 'immutable';
 
 import { Address, DefaultValues } from '~types/index';
@@ -16,7 +14,7 @@ interface Shared {
   unread?: boolean;
 }
 
-export type InboxItemType = $ReadOnly<Shared>;
+export type InboxItemType = Readonly<Shared>;
 
 const defaultValues: DefaultValues<Shared> = {
   id: undefined,

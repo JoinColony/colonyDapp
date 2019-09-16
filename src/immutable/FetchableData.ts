@@ -1,4 +1,3 @@
-import { $ReadOnly } from 'utility-types';
 import { Record } from 'immutable';
 
 import { DefaultValues } from '~types/index';
@@ -10,7 +9,7 @@ interface Shared<R> {
   lastFetchedAt?: Date;
 }
 
-export type FetchableDataType<R> = $ReadOnly<Shared<R>>;
+export type FetchableDataType<R> = Readonly<Shared<R>>;
 
 const defaultValues: DefaultValues<Shared<any>> = {
   record: undefined,

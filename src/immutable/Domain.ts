@@ -1,5 +1,3 @@
-import { $ReadOnly } from 'utility-types';
-
 import { Record } from 'immutable';
 
 import { DefaultValues } from '~types/index';
@@ -11,7 +9,7 @@ interface Shared {
   parentId?: number;
 }
 
-export type DomainType = $ReadOnly<Shared>;
+export type DomainType = Readonly<Shared>;
 
 export type DomainId = Shared['id'];
 
