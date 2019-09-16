@@ -203,7 +203,7 @@ class ItemsList extends Component<Props, State> {
    * @NOTE This will recursevly render nested children
    */
   renderListItem = (
-    { id, name, children }: ConsumableItem,
+    { disabled, id, name, children }: ConsumableItem,
     nestingCounter = 0,
   ) => {
     const { selectedItem } = this.state;
@@ -233,6 +233,7 @@ class ItemsList extends Component<Props, State> {
           }}
         >
           <button
+            disabled={disabled}
             type="button"
             className={id < 0 ? styles.itemHeading : styles.item}
             onClick={() => this.handleSelectItem(id)}
