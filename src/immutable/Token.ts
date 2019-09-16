@@ -1,8 +1,6 @@
-import { $ReadOnly } from 'utility-types';
+import { Record } from 'immutable';
 
-import { RecordOf, Record } from 'immutable';
-
-import { Address } from '~types/index';
+import { Address, DefaultValues } from '~types/index';
 
 /**
  * @todo Fix Token record required props
@@ -16,18 +14,16 @@ interface Shared {
   symbol: string;
 }
 
-export type TokenType = $ReadOnly<Shared>;
+export type TokenType = Readonly<Shared>;
 
-export type TokenRecordType = RecordOf<Shared>;
-
-const defaultValues: Shared = {
-  address: '',
+const defaultValues: DefaultValues<Shared> = {
+  address: undefined,
   decimals: undefined,
   isVerified: false,
-  name: '',
-  symbol: '',
+  name: undefined,
+  symbol: undefined,
 };
 
-export const TokenRecord: Record.Factory<Shared> = Record(defaultValues);
+export class TokenRecord extends Record<Shared>(defaultValues) {}
 
-export default TokenRecord;
+export const Token = (p: Shared) => new TokenRecord(p);
