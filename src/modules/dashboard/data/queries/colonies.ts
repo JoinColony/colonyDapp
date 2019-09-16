@@ -476,7 +476,7 @@ export const getColonyDomains: Query<
 export const getColonyTokenBalance: Query<
   ColonyClient,
   { colonyAddress: Address },
-  { tokenAddress: Address },
+  { domainId: number; tokenAddress: Address },
   BigNumber
 > = {
   name: 'getColonyTokenBalance',
@@ -485,14 +485,20 @@ export const getColonyTokenBalance: Query<
     { colonyManager }: { colonyManager: ColonyManager },
     { colonyAddress },
   ) => colonyManager.getColonyClient(colonyAddress),
-  async execute(colonyClient, { tokenAddress: token }) {
-    const {
-      total: nonRewardsPotsTotal,
-    } = await colonyClient.getNonRewardPotsTotal.call({ token });
+  async execute(colonyClient, { domainId, tokenAddress: token }) {
+    const { potId } = await colonyClient.getDomain.call({ domainId });
     const {
       balance: rewardsPotTotal,
-    } = await colonyClient.getFundingPotBalance.call({ potId: 0, token });
-    return new BigNumber(nonRewardsPotsTotal.add(rewardsPotTotal).toString(10));
+    } = await colonyClient.getFundingPotBalance.call({ potId, token });
+    if (domainId === 0) {
+      const {
+        total: nonRewardsPotsTotal,
+      } = await colonyClient.getNonRewardPotsTotal.call({ token });
+      return new BigNumber(
+        nonRewardsPotsTotal.add(rewardsPotTotal).toString(10),
+      );
+    }
+    return new BigNumber(rewardsPotTotal.toString(10));
   },
 };
 
