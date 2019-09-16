@@ -1,7 +1,7 @@
 import React from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 
-import { TransactionStatusType, TRANSACTION_STATUSES } from '~immutable/index';
+import { TRANSACTION_STATUSES } from '~immutable/index';
 
 import { Tooltip } from '~core/Popover';
 import TransactionLink from '~core/TransactionLink';
@@ -32,7 +32,7 @@ const MSG = defineMessages({
 interface Props {
   groupCount?: number;
   hash?: string;
-  status: TransactionStatusType;
+  status: TRANSACTION_STATUSES;
   loadingRelated?: boolean;
 }
 

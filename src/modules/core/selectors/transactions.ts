@@ -3,7 +3,7 @@ import { Map as ImmutableMap } from 'immutable';
 
 import {
   RootStateRecord,
-  TransactionRecordType,
+  TransactionRecord,
   TRANSACTION_STATUSES,
 } from '~immutable/index';
 
@@ -20,8 +20,8 @@ import {
  * Transactions sorting functions.
  */
 const createdAtDesc = (
-  { createdAt: createdAtA }: TransactionRecordType,
-  { createdAt: createdAtB }: TransactionRecordType,
+  { createdAt: createdAtA }: TransactionRecord,
+  { createdAt: createdAtB }: TransactionRecord,
 ) => createdAtB.getTime() - createdAtA.getTime();
 
 /*

@@ -1,7 +1,7 @@
 import React from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 
-import { TransactionStatusType, TRANSACTION_STATUSES } from '~immutable/index';
+import { TRANSACTION_STATUSES } from '~immutable/index';
 
 import { Tooltip } from '~core/Popover';
 import { SpinnerLoader } from '~core/Preloaders';
@@ -23,7 +23,7 @@ const MSG = defineMessages({
 });
 
 interface Props {
-  status?: TransactionStatusType;
+  status?: TRANSACTION_STATUSES;
 }
 
 const displayName = 'users.GasStation.MessageCard.MessageCardStatus';
