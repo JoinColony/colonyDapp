@@ -1,8 +1,7 @@
-/* eslint-disable import/no-cycle */
-
 export * from './utils/index';
 export * from './ActivityFeedItem';
 export * from './Colony';
+export * from './Connection';
 export * from './TokenReference';
 export * from './ContractTransaction';
 export * from './FetchableData';
