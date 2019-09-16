@@ -154,7 +154,7 @@ module.exports = {
     {
       name: 'Errors',
       components: [
-        './src/modules/core/components/ErrorBoundry/ErrorBoundry.tsx',
+        './src/modules/core/components/ErrorBoundary/ErrorBoundary.tsx',
       ],
     },
   ],
