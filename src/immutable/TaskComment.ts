@@ -1,5 +1,3 @@
-import { $ReadOnly } from 'utility-types';
-
 import { List as ListType, List, Record } from 'immutable';
 
 import { Address, DefaultValues } from '~types/index';
@@ -10,7 +8,7 @@ type Shared = {
   signature: string;
 };
 
-export type TaskCommentType = $ReadOnly<
+export type TaskCommentType = Readonly<
   Shared & {
     mentions?: string[];
   }

@@ -1,4 +1,3 @@
-import { $ReadOnly } from 'utility-types';
 import { Record } from 'immutable';
 
 import { Address, DefaultValues } from '~types/index';
@@ -20,7 +19,7 @@ type TaskCommentContentRecordProps = Shared & {
   metadata?: TaskCommentMetaRecord;
 };
 
-export type TaskCommentContentType = $ReadOnly<
+export type TaskCommentContentType = Readonly<
   Shared & {
     metadata?: TaskCommentMetaType;
   }

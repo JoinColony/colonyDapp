@@ -1,5 +1,3 @@
-import { $ReadOnly } from 'utility-types';
-
 import { Record } from 'immutable';
 
 import { DefaultValues } from '~types/index';
@@ -20,7 +18,7 @@ interface Shared {
   user?: string;
 }
 
-export type ActivityFeedItemType = $ReadOnly<Shared>;
+export type ActivityFeedItemType = Readonly<Shared>;
 
 const defaultValues: DefaultValues<Shared> = {
   actionType: undefined,

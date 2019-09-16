@@ -1,5 +1,3 @@
-import { $ReadOnly } from 'utility-types';
-
 import { Record, Map as ImmutableMap } from 'immutable';
 
 import { Address, DefaultValues, ENSName } from '~types/index';
@@ -21,7 +19,7 @@ interface Shared {
   website?: string;
 }
 
-export type ColonyType = $ReadOnly<
+export type ColonyType = Readonly<
   Shared & {
     tokens?: {
       // Opaque implementation can't be used as an index type

@@ -1,4 +1,3 @@
-import { $ReadOnly } from 'utility-types';
 import { Record, List } from 'immutable';
 
 import { DefaultValues } from '~types/index';
@@ -7,7 +6,7 @@ type TaskCommentMetaRecordProps = {
   mentions?: List<string>;
 };
 
-export type TaskCommentMetaType = $ReadOnly<{
+export type TaskCommentMetaType = Readonly<{
   mentions?: string[];
 }>;
 

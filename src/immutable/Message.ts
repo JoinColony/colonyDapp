@@ -1,4 +1,3 @@
-import { $ReadOnly } from 'utility-types';
 import { Record } from 'immutable';
 
 import { DefaultValues } from '~types/index';
@@ -19,7 +18,7 @@ interface Shared {
   status?: TRANSACTION_STATUSES;
 }
 
-export type MessageType = $ReadOnly<Shared>;
+export type MessageType = Readonly<Shared>;
 
 const defaultValues: DefaultValues<Shared> = {
   id: undefined,
