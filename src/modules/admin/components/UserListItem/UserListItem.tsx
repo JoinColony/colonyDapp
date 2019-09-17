@@ -71,7 +71,7 @@ interface Props {
   /*
    * Method to call when clicking the remove button
    */
-  onRemove: (evt: MouseEvent) => void;
+  onRemove?: (evt: MouseEvent) => void;
 }
 
 const UserListItem = ({
