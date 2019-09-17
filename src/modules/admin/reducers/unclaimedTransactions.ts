@@ -1,13 +1,14 @@
 import { List as ListType, Map as ImmutableMap, List, fromJS } from 'immutable';
 
 import {
-  AdminUnclaimedTransactionsState,
   ContractTransaction,
   ContractTransactionRecord,
   FetchableData,
 } from '~immutable/index';
 import { withFetchableDataMap } from '~utils/reducers';
 import { ActionTypes, ReducerType } from '~redux/index';
+
+import { AdminUnclaimedTransactionsState } from '../state/index';
 
 const colonyUnclaimedTransactionsReducer: ReducerType<
   AdminUnclaimedTransactionsState
