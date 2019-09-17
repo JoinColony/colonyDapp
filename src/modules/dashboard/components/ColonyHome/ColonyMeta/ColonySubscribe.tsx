@@ -92,7 +92,7 @@ const ColonySubscribe = ({ colonyAddress }: Props) => {
               loading ? (
                 <div className={styles.spinnerContainer}>
                   <SpinnerLoader
-                    appearance={{ theme: 'primary', size: 'medium' }}
+                    appearance={{ theme: 'primary', size: 'small' }}
                   />
                 </div>
               ) : (
@@ -124,7 +124,7 @@ const ColonySubscribe = ({ colonyAddress }: Props) => {
               loading ? (
                 <div className={styles.spinnerContainer}>
                   <SpinnerLoader
-                    appearance={{ theme: 'primary', size: 'medium' }}
+                    appearance={{ theme: 'primary', size: 'small' }}
                   />
                 </div>
               ) : (

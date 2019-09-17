@@ -100,7 +100,7 @@
 }
 
 .sizeMedium {
-  padding: 2px 5px;
+  padding: 2px 15px;
   height: 30px;
   font-size: var(--size-normal);
 }

@@ -228,7 +228,7 @@ const ColonyHome = ({
 
   const filterSelect = (
     <Select
-      appearance={{ alignOptions: 'right', theme: 'alt' }}
+      appearance={{ alignOptions: 'left', theme: 'alt' }}
       connect={false}
       elementOnly
       label={MSG.labelFilter}
@@ -246,7 +246,7 @@ const ColonyHome = ({
         <ActionButton
           button={({ onClick, disabled, loading }) => (
             <Button
-              appearance={{ theme: 'primary', size: 'large' }}
+              appearance={{ theme: 'primary', size: 'medium' }}
               text={MSG.newTaskButton}
               disabled={disabled}
               loading={loading}
