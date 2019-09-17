@@ -18,8 +18,9 @@ export const userTokenTransfersFetch = (): AllActions => ({
   type: ActionTypes.USER_TOKEN_TRANSFERS_FETCH,
 });
 
-export const currentUserGetBalance = (): AllActions => ({
-  type: ActionTypes.CURRENT_USER_GET_BALANCE,
+export const currentUserBalance = (balance: string): AllActions => ({
+  type: ActionTypes.CURRENT_USER_BALANCE,
+  payload: { balance },
 });
 
 export const userPermissionsFetch = (colonyAddress: Address): AllActions => ({
