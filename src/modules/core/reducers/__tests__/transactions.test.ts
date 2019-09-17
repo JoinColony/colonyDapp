@@ -1,13 +1,10 @@
 import { Map as ImmutableMap, Record } from 'immutable';
 
-import {
-  CoreTransactions,
-  Transaction,
-  TRANSACTION_STATUSES,
-} from '~immutable/index';
+import { Transaction, TRANSACTION_STATUSES } from '~immutable/index';
 import { ContractContexts } from '~types/index';
 
 import reducer from '../transactions';
+import { CoreTransactions } from '../../state/index';
 
 import {
   createTxAction,

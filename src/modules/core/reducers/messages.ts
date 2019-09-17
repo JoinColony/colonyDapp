@@ -1,12 +1,8 @@
 import { fromJS } from 'immutable';
-import {
-  CoreMessagesRecord,
-  Message,
-  CoreMessages,
-  TRANSACTION_STATUSES,
-} from '~immutable/index';
+import { Message, TRANSACTION_STATUSES } from '~immutable/index';
 import { ReducerType, ActionTypes } from '~redux/index';
 
+import { CoreMessages, CoreMessagesRecord } from '../state/index';
 import { CORE_MESSAGES_LIST } from '../constants';
 
 const coreMessagesReducer: ReducerType<CoreMessagesRecord> = (

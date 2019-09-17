@@ -1,13 +1,17 @@
+// FIXME remove next line
+export * from './state/index';
 export * from './utils/index';
+
 export * from './ActivityFeedItem';
 export * from './Colony';
 export * from './Connection';
 export * from './TokenReference';
 export * from './ContractTransaction';
-export * from './FetchableData';
 export * from './Domain';
+export * from './FetchableData';
+export * from './GasPrices';
 export * from './Message';
-export * from './state/index';
+export * from './Network';
 export * from './Task';
 export * from './TaskComment';
 export * from './TaskEvent';

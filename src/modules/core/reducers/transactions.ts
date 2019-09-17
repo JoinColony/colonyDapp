@@ -1,16 +1,14 @@
 import getObjectFromPath from 'lodash/get';
 
 import {
-  CoreTransactionsRecord,
   TransactionRecord,
-  CoreTransactions,
   Transaction,
   TRANSACTION_STATUSES,
   TransactionRecordProps,
 } from '~immutable/index';
-
 import { ActionTypes, ReducerType } from '~redux/index';
 
+import { CoreTransactions, CoreTransactionsRecord } from '../state/index';
 import { CORE_TRANSACTIONS_LIST } from '../constants';
 
 const transactionGroup = (tx: TransactionRecord) => {
