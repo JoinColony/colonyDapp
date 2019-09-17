@@ -12,8 +12,7 @@ import {
  * Input selectors
  */
 export const allCommentsSelector = (state: RootStateRecord) =>
-  // @ts-ignore
-  state.getIn([ns, DASHBOARD_ALL_COMMENTS], ImmutableMap());
+  state.getIn([ns, DASHBOARD_ALL_COMMENTS]);
 
 export const taskCommentsSelector = createSelector(
   allCommentsSelector,

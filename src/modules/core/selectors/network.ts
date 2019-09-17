@@ -1,5 +1,3 @@
-import { Map as ImmutableMap } from 'immutable';
-
 import { createSelector } from 'reselect';
 
 import { RootStateRecord } from '~immutable/index';
@@ -16,8 +14,7 @@ import {
  * Input selectors
  */
 export const networkSelector = (state: RootStateRecord) =>
-  // @ts-ignore
-  state.getIn([ns, CORE_NETWORK], ImmutableMap());
+  state.getIn([ns, CORE_NETWORK]);
 
 export const networkFeeSelector = createSelector(
   networkSelector,

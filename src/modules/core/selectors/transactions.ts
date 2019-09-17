@@ -32,11 +32,7 @@ export const oneTransaction = (state: RootStateRecord, id: string) =>
 
 export const allTransactions = createSelector(
   (state: RootStateRecord) =>
-    state.getIn(
-      [ns, CORE_TRANSACTIONS, CORE_TRANSACTIONS_LIST],
-      // @ts-ignore
-      ImmutableMap(),
-    ),
+    state.getIn([ns, CORE_TRANSACTIONS, CORE_TRANSACTIONS_LIST]),
   walletAddressSelector,
   (transactions, walletAddress) =>
     transactions.filter(tx => tx.from === walletAddress),
