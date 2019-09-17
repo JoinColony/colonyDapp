@@ -1,4 +1,4 @@
-import { call, fork, put, takeEvery, select } from 'redux-saga/effects';
+import { all, call, fork, put, takeEvery, select } from 'redux-saga/effects';
 
 import { AllActions, Action, ActionTypes } from '~redux/index';
 import {
@@ -225,10 +225,16 @@ function* colonyMintTokens({
     const mintLog = receipt.logs[0];
     if (mintLog) {
       const tokenAddress = mintLog.address;
-      yield put<AllActions>({
-        type: ActionTypes.COLONY_TOKEN_BALANCE_FETCH,
-        payload: { colonyAddress, domainId: 1, tokenAddress },
-      });
+      yield all([
+        put<AllActions>({
+          type: ActionTypes.COLONY_TOKEN_BALANCE_FETCH,
+          payload: { colonyAddress, domainId: 0, tokenAddress },
+        }),
+        put<AllActions>({
+          type: ActionTypes.COLONY_TOKEN_BALANCE_FETCH,
+          payload: { colonyAddress, domainId: 1, tokenAddress },
+        }),
+      ]);
 
       // const colonyManager = yield getContext(Context.COLONY_MANAGER);
       // const tokenClient = yield call(
