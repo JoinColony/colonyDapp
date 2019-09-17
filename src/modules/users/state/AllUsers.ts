@@ -1,23 +1,23 @@
-import { Map as ImmutableMap, Record } from 'immutable';
+import { Map as ImmutableMap, Record, Set as ImmutableSet } from 'immutable';
 
+import { Address } from '~types/index';
 import { UserRecord, FetchableDataRecord } from '~immutable/index';
 
-export type UsernamesMap = ImmutableMap<
-  string, // address
-  FetchableDataRecord<string>
+import { USERS_USERS, USERS_COLONIES } from '../constants';
+
+export type ColoniesMap = ImmutableMap<
+  Address,
+  FetchableDataRecord<ImmutableSet<Address>>
 >;
 
-export type UsersMap = ImmutableMap<
-  string, // address
-  FetchableDataRecord<UserRecord>
->;
+export type UsersMap = ImmutableMap<Address, FetchableDataRecord<UserRecord>>;
 
 export interface AllUsersProps {
-  usernames: UsernamesMap;
-  users: UsersMap;
+  [USERS_COLONIES]: ColoniesMap;
+  [USERS_USERS]: UsersMap;
 }
 
 export class AllUsersRecord extends Record<AllUsersProps>({
-  usernames: ImmutableMap(),
-  users: ImmutableMap(),
+  [USERS_COLONIES]: ImmutableMap(),
+  [USERS_USERS]: ImmutableMap(),
 }) {}

@@ -10,6 +10,15 @@ import {
   Network,
   NetworkRecord,
 } from '~immutable/index';
+
+import {
+  CORE_CONNECTION,
+  CORE_GAS_PRICES,
+  CORE_IPFS_DATA,
+  CORE_MESSAGES,
+  CORE_NETWORK,
+  CORE_TRANSACTIONS,
+} from '../constants';
 import { CoreTransactions, CoreTransactionsRecord } from './CoreTransactions';
 import { CoreMessages, CoreMessagesRecord } from './Messages';
 
@@ -19,22 +28,21 @@ export * from './Messages';
 export type IpfsDataType = ImmutableMap<string, FetchableDataRecord<string>>;
 
 export type CoreStateProps = {
-  connection: ConnectionRecord;
-  gasPrices: GasPricesRecord;
-  ipfsData: IpfsDataType;
-  messages: CoreMessagesRecord;
-  network: FetchableDataRecord<NetworkRecord>;
-  transactions: CoreTransactionsRecord;
+  [CORE_CONNECTION]: ConnectionRecord;
+  [CORE_GAS_PRICES]: GasPricesRecord;
+  [CORE_IPFS_DATA]: IpfsDataType;
+  [CORE_MESSAGES]: CoreMessagesRecord;
+  [CORE_NETWORK]: FetchableDataRecord<NetworkRecord>;
+  [CORE_TRANSACTIONS]: CoreTransactionsRecord;
 };
 
-// FIXME use constants for state everywhere
 export class CoreStateRecord extends Record<CoreStateProps>({
-  connection: Connection(),
-  gasPrices: GasPrices(),
-  ipfsData: ImmutableMap(),
-  messages: CoreMessages(),
-  network: FetchableData({
+  [CORE_CONNECTION]: Connection(),
+  [CORE_GAS_PRICES]: GasPrices(),
+  [CORE_IPFS_DATA]: ImmutableMap(),
+  [CORE_MESSAGES]: CoreMessages(),
+  [CORE_NETWORK]: FetchableData({
     record: Network(),
   }),
-  transactions: CoreTransactions(),
+  [CORE_TRANSACTIONS]: CoreTransactions(),
 }) {}

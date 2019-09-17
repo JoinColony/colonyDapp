@@ -12,11 +12,23 @@ import {
   FetchableDataRecord,
   TokenReferenceRecord,
   InboxItemRecord,
+  UserNotificationMetadata,
+  UserNotificationMetadataRecord,
   UserPermissionsRecord,
   UserProfile,
   UserProfileRecord,
   TaskDraftId,
 } from '~immutable/index';
+
+import {
+  USERS_INBOX_ITEMS,
+  USERS_CURRENT_USER_NOTIFICATION_METADATA,
+  USERS_CURRENT_USER_PERMISSIONS,
+  USERS_CURRENT_USER_PROFILE,
+  USERS_CURRENT_USER_TASKS,
+  USERS_CURRENT_USER_TOKENS,
+  USERS_CURRENT_USER_TRANSACTIONS,
+} from '../constants';
 
 export type CurrentUserTransactionsType = FetchableDataRecord<
   List<ContractTransactionRecord>
@@ -36,31 +48,29 @@ export type CurrentUserTokensType = FetchableDataRecord<
 >;
 
 interface CurrentUserProps {
-  activities: List<InboxItemRecord>;
-  colonies: FetchableDataRecord<CurrentUserColoniesType>;
-  permissions: CurrentUserPermissionsType;
-  profile: UserProfileRecord;
-  tasks: FetchableDataRecord<CurrentUserTasksType>;
-  tokens: CurrentUserTokensType;
-  transactions: CurrentUserTransactionsType;
+  [USERS_INBOX_ITEMS]: List<InboxItemRecord>;
+  [USERS_CURRENT_USER_NOTIFICATION_METADATA]: UserNotificationMetadataRecord;
+  [USERS_CURRENT_USER_PERMISSIONS]: CurrentUserPermissionsType;
+  [USERS_CURRENT_USER_PROFILE]: UserProfileRecord;
+  [USERS_CURRENT_USER_TASKS]: FetchableDataRecord<CurrentUserTasksType>;
+  [USERS_CURRENT_USER_TOKENS]: CurrentUserTokensType;
+  [USERS_CURRENT_USER_TRANSACTIONS]: CurrentUserTransactionsType;
 }
 
 export class CurrentUserRecord extends Record<CurrentUserProps>({
-  activities: List(),
-  colonies: FetchableData({
-    record: ImmutableSet(),
-  }),
-  permissions: ImmutableMap(),
-  profile: UserProfile({
+  [USERS_INBOX_ITEMS]: List(),
+  [USERS_CURRENT_USER_NOTIFICATION_METADATA]: UserNotificationMetadata(),
+  [USERS_CURRENT_USER_PERMISSIONS]: ImmutableMap(),
+  [USERS_CURRENT_USER_PROFILE]: UserProfile({
     walletAddress: '',
   }),
-  tasks: FetchableData({
+  [USERS_CURRENT_USER_TASKS]: FetchableData({
     record: ImmutableSet(),
   }),
-  tokens: FetchableData({
+  [USERS_CURRENT_USER_TOKENS]: FetchableData({
     record: List(),
   }),
-  transactions: FetchableData({
+  [USERS_CURRENT_USER_TRANSACTIONS]: FetchableData({
     record: List(),
   }),
 }) {}

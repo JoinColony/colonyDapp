@@ -6,6 +6,8 @@ import {
   FetchableDataRecord,
 } from '~immutable/index';
 
+import { ADMIN_TRANSACTIONS, ADMIN_UNCLAIMED_TRANSACTIONS } from '../constants';
+
 export type AdminTransactionsState = ImmutableMap<
   ENSName,
   FetchableDataRecord<List<ContractTransactionRecord>>
@@ -17,11 +19,11 @@ export type AdminUnclaimedTransactionsState = ImmutableMap<
 >;
 
 export interface AdminStateProps {
-  transactions: AdminTransactionsState;
-  unclaimedTransactions: AdminUnclaimedTransactionsState;
+  [ADMIN_TRANSACTIONS]: AdminTransactionsState;
+  [ADMIN_UNCLAIMED_TRANSACTIONS]: AdminUnclaimedTransactionsState;
 }
 
 export class AdminStateRecord extends Record<AdminStateProps>({
-  transactions: ImmutableMap(),
-  unclaimedTransactions: ImmutableMap(),
+  [ADMIN_TRANSACTIONS]: ImmutableMap(),
+  [ADMIN_UNCLAIMED_TRANSACTIONS]: ImmutableMap(),
 }) {}

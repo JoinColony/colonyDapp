@@ -1,6 +1,6 @@
 import { combineReducers } from 'redux-immutable';
 
-import currentUserReducer from './currentUser';
+import currentUserReducer from './currentUserReducer';
 import usersReducer from './usersReducer';
 import walletReducer from './walletReducer';
 
