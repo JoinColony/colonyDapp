@@ -23,11 +23,7 @@ import {
  * Input selectors
  */
 export const colonyNamesSelector = (state: RootStateRecord) =>
-  state.getIn(
-    [ns, DASHBOARD_ALL_COLONIES, DASHBOARD_COLONY_NAMES],
-    // @ts-ignore
-    ImmutableMap(),
-  );
+  state.getIn([ns, DASHBOARD_ALL_COLONIES, DASHBOARD_COLONY_NAMES]);
 
 export const colonyNameSelector = (
   state: RootStateRecord,
