@@ -56,7 +56,6 @@ import {
 import {
   checkUsernameIsAvailable,
   getUserAddress,
-  getUserBalance,
   getUserColonies,
   getUserColonyTransactions,
   getUserPermissions,
@@ -133,28 +132,6 @@ function* userFetch({
     });
   } catch (error) {
     return yield putError(ActionTypes.USER_FETCH_ERROR, error, meta);
-  }
-  return null;
-}
-
-function* currentUserGetBalance( // eslint-disable-next-line @typescript-eslint/no-unused-vars,no-unused-vars
-  action: Action<ActionTypes.CURRENT_USER_GET_BALANCE>,
-) {
-  try {
-    const walletAddress = yield select(walletAddressSelector);
-    if (!walletAddress) {
-      throw new Error('Could not get wallet address for current user');
-    }
-
-    const balance = yield executeQuery(getUserBalance, {
-      args: { walletAddress },
-    });
-    yield put<AllActions>({
-      type: ActionTypes.CURRENT_USER_GET_BALANCE_SUCCESS,
-      payload: { balance },
-    });
-  } catch (error) {
-    return yield putError(ActionTypes.CURRENT_USER_GET_BALANCE_ERROR, error);
   }
   return null;
 }
@@ -725,7 +702,6 @@ export function* setupUsersSagas() {
   yield takeEvery(ActionTypes.USER_TOKEN_TRANSFERS_FETCH, userTokenTransfersFetch);
   yield takeEvery(ActionTypes.USER_TOKENS_FETCH, userTokensFetch);
   yield takeLatest(ActionTypes.USERNAME_CHECK_AVAILABILITY, usernameCheckAvailability);
-  yield takeLatest(ActionTypes.CURRENT_USER_GET_BALANCE, currentUserGetBalance);
   yield takeLatest(ActionTypes.USER_AVATAR_REMOVE, userAvatarRemove);
   yield takeLatest(ActionTypes.USER_AVATAR_UPLOAD, userAvatarUpload);
   yield takeLatest(ActionTypes.USER_LOGOUT, userLogout);

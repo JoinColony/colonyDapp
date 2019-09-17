@@ -37,6 +37,7 @@ import {
   getWalletCategory,
 } from './utils';
 import setupOnBeforeUnload from './setupOnBeforeUnload';
+import { setupUserBalanceListener } from './setupUserBalanceListener';
 import { createAddress, Address } from '~types/index';
 
 function* setupContextDependentSagas() {
@@ -153,6 +154,9 @@ export default function* setupUserContext(
      * but we then do not wait for a return value (which will never come).
      */
     yield fork(setupContextDependentSagas);
+
+    // Start a forked task to listen for user balance events
+    yield fork(setupUserBalanceListener, walletAddress);
 
     yield put<AllActions>({
       type: ActionTypes.CURRENT_USER_CREATE,

@@ -27,7 +27,7 @@ const currentUserProfileReducer: ReducerType<UserProfileRecordType> = (
     case ActionTypes.USER_AVATAR_REMOVE_SUCCESS: {
       return state.delete('avatarHash');
     }
-    case ActionTypes.CURRENT_USER_GET_BALANCE_SUCCESS: {
+    case ActionTypes.CURRENT_USER_BALANCE: {
       const { balance } = action.payload;
       return state.set('balance', balance);
     }
