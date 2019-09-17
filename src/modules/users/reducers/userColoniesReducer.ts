@@ -1,18 +1,10 @@
-import {
-  Set as ImmutableSet,
-  Map as ImmutableMap,
-  Map as ImmutableMapType,
-} from 'immutable';
+import { Set as ImmutableSet, Map as ImmutableMap } from 'immutable';
 
 import { Address } from '~types/index';
-import { FetchableDataRecord } from '~immutable/index';
 import { ReducerType, ActionTypes } from '~redux/index';
 import { withFetchableDataMap } from '~utils/reducers';
 
-type ColoniesMap = ImmutableMapType<
-  Address,
-  FetchableDataRecord<ImmutableSet<Address>>
->;
+import { ColoniesMap } from '../state/index';
 
 const userColoniesReducer: ReducerType<ColoniesMap> = (
   state = ImmutableMap(),
