@@ -1,14 +1,10 @@
 import { Map as ImmutableMap, fromJS } from 'immutable';
 
 import { withFetchableDataMap } from '~utils/reducers';
-import {
-  User,
-  UserProfile,
-  FetchableData,
-  UserRecord,
-  UsersMap,
-} from '~immutable/index';
+import { User, UserProfile, FetchableData, UserRecord } from '~immutable/index';
 import { ActionTypes, ReducerType } from '~redux/index';
+
+import { UsersMap } from '../state/index';
 
 const userProfilesReducer: ReducerType<UsersMap> = (
   state = ImmutableMap(),

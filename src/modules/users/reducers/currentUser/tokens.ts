@@ -1,14 +1,14 @@
 import { List, fromJS } from 'immutable';
 
 import {
-  CurrentUserTokensType,
   FetchableData,
   TokenReference,
   TokenReferenceRecord,
 } from '~immutable/index';
 import { ReducerType, ActionTypes } from '~redux/index';
-
 import { withFetchableData } from '~utils/reducers';
+
+import { CurrentUserTokensType } from '../../state/index';
 
 const currentUserTokensReducer: ReducerType<CurrentUserTokensType> = (
   state = FetchableData(),

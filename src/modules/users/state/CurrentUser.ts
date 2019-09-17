@@ -6,13 +6,17 @@ import {
 } from 'immutable';
 
 import { Address, ENSName } from '~types/index';
-import { ContractTransactionRecord } from '../../ContractTransaction';
-import { FetchableData, FetchableDataRecord } from '../../FetchableData';
-import { TokenReferenceRecord } from '../../TokenReference';
-import { InboxItemRecord } from '../../InboxItem';
-import { UserPermissionsRecord } from '../../UserPermissions';
-import { UserProfile, UserProfileRecord } from '../../UserProfile';
-import { TaskDraftId } from '~immutable/Task';
+import {
+  ContractTransactionRecord,
+  FetchableData,
+  FetchableDataRecord,
+  TokenReferenceRecord,
+  InboxItemRecord,
+  UserPermissionsRecord,
+  UserProfile,
+  UserProfileRecord,
+  TaskDraftId,
+} from '~immutable/index';
 
 export type CurrentUserTransactionsType = FetchableDataRecord<
   List<ContractTransactionRecord>

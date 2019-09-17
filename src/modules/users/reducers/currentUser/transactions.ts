@@ -1,13 +1,14 @@
 import { List, fromJS } from 'immutable';
 
 import {
-  CurrentUserTransactionsType,
   ContractTransaction,
   ContractTransactionRecord,
   FetchableData,
 } from '~immutable/index';
 import { ReducerType, ActionTypes } from '~redux/index';
 import { withFetchableData } from '~utils/reducers';
+
+import { CurrentUserTransactionsType } from '../../state/index';
 
 const currentUserTransactionsReducer: ReducerType<
   CurrentUserTransactionsType

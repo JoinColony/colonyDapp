@@ -2,7 +2,7 @@ import { Record } from 'immutable';
 
 import { AllUsersRecord } from './AllUsers';
 import { CurrentUserRecord } from './CurrentUser';
-import { WalletRecord } from '../../Wallet';
+import { WalletRecord } from '~immutable/index';
 
 export * from './AllUsers';
 export * from './CurrentUser';
