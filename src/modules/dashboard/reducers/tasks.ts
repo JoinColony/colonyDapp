@@ -6,16 +6,12 @@ import {
 } from 'immutable';
 
 import { ReducerType, ActionTypes } from '~redux/index';
-import {
-  TaskRecord,
-  TasksMap,
-  FetchableData,
-  TaskPayout,
-  Task,
-} from '~immutable/index';
+import { TaskRecord, FetchableData, TaskPayout, Task } from '~immutable/index';
 import { withFetchableDataMap } from '~utils/reducers';
 import { EventTypes, TaskStates } from '~data/constants';
 import { AllEvents, createAddress } from '~types/index';
+
+import { TasksMap } from '../state/index';
 
 const taskEventReducer = (task: TaskRecord, event: AllEvents): TaskRecord => {
   switch (event.type) {

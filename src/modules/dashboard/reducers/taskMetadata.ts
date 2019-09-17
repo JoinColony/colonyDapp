@@ -2,14 +2,10 @@ import { Map as ImmutableMap, fromJS } from 'immutable';
 
 import { Address } from '~types/index';
 import { ReducerType, ActionTypes } from '~redux/index';
-import {
-  TaskMetadataMap,
-  AllTaskMetadataMap,
-  TaskMetadata,
-  FetchableData,
-} from '~immutable/index';
-
+import { TaskMetadata, FetchableData } from '~immutable/index';
 import { withFetchableDataMap } from '~utils/reducers';
+
+import { TaskMetadataMap, AllTaskMetadataMap } from '../state/index';
 
 type ColonyTasks = {
   [draftId: string]: {

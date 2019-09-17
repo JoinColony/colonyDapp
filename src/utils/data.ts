@@ -7,12 +7,8 @@ import {
   COLONY_ROLE_ROOT,
 } from '@colony/colony-js-client';
 
-import {
-  DomainType,
-  ColonyRolesObject,
-  UserRolesObject,
-} from '~immutable/index';
-import { Address } from '~types/strings';
+import { DomainType } from '~immutable/index';
+import { Address, ColonyRolesObject, UserRolesObject } from '~types/index';
 import { ZERO_ADDRESS } from '~utils/web3/constants';
 
 // This should be opaque

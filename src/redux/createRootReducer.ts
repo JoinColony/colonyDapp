@@ -23,7 +23,7 @@ const createRootReducer = (history: any) =>
       router: connectRouter(history),
       watcher: actionWatchReducer,
     },
-    new RootStateRecord(),
+    () => new RootStateRecord(),
   );
 
 export default createRootReducer;

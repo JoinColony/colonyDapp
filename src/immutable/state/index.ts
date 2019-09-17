@@ -3,16 +3,15 @@ import { RouterState } from 'connected-react-router';
 
 import { AdminStateRecord } from './admin';
 import { CoreStateRecord } from './core';
-import { DashboardStateRecord } from './dashboard';
 import { UsersStateRecord } from './users';
 import { ADMIN_NAMESPACE } from '../../modules/admin/constants';
 import { CORE_NAMESPACE } from '../../modules/core/constants';
 import { DASHBOARD_NAMESPACE } from '../../modules/dashboard/constants';
+import { DashboardStateRecord } from '../../modules/dashboard/state/index';
 import { USERS_NAMESPACE } from '../../modules/users/constants';
 
 export * from './admin';
 export * from './core';
-export * from './dashboard';
 export * from './users';
 
 export interface RootStateProps {

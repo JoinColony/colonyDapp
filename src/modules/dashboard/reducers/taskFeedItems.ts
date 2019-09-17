@@ -2,7 +2,6 @@ import { Map as ImmutableMap, List, fromJS } from 'immutable';
 
 import { ReducerType, ActionTypes } from '~redux/index';
 import {
-  TaskFeedItemsMap,
   TaskFeedItemRecord,
   FetchableData,
   TaskComment,
@@ -12,6 +11,8 @@ import {
 import { withFetchableDataMap } from '~utils/reducers';
 import { EventTypes } from '~data/constants';
 import { AllEvents } from '~data/types';
+
+import { TaskFeedItemsMap } from '../state/index';
 
 const FEED_ITEM_TYPES = new Set([
   EventTypes.COMMENT_POSTED,

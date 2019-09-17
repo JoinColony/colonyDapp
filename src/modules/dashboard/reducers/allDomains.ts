@@ -1,13 +1,10 @@
 import { Map as ImmutableMap, Set as ImmutableSet } from 'immutable';
 
-import {
-  Domain,
-  FetchableData,
-  AllDomainsMap,
-  DomainRecord,
-} from '~immutable/index';
+import { Domain, FetchableData, DomainRecord } from '~immutable/index';
 import { withFetchableDataMap } from '~utils/reducers';
 import { ActionTypes, ReducerType } from '~redux/index';
+
+import { AllDomainsMap } from '../state/index';
 
 const allDomainsReducer: ReducerType<AllDomainsMap> = (
   state = ImmutableMap(),
