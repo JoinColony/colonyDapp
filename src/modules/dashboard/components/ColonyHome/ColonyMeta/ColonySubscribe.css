@@ -4,7 +4,7 @@
   width: 15px;
   position: relative;
   top: 19px;
-  left: -11px;
+  left: -11px; /* Subscribe icon is overlapping avatar a tiny bit */
   border: none;
   border-radius: 100%;
   font-size: 13px;

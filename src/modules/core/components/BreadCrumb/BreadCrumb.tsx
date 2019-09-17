@@ -1,4 +1,5 @@
 import React from 'react';
+import { FormattedMessage, MessageDescriptor } from 'react-intl';
 
 import styles from './BreadCrumb.css';
 
@@ -8,8 +9,10 @@ interface Props {
    * array of elements outside of this components and just an array
    * of strings gets passed in. The last active element gets highlighted.
    */
-  elements: string[];
+  elements: MessageDescriptor[];
 }
+
+const displayName = 'core.BreadCrumb';
 
 const BreadCrumb = ({ elements }: Props) => {
   return (
@@ -18,14 +21,18 @@ const BreadCrumb = ({ elements }: Props) => {
         <>
           {elements.length > 1 && i < elements.length - 1 ? (
             <>
-              <p className={styles.breadCrumble}>{crumb}</p>
+              <p className={styles.breadCrumble}>
+                <FormattedMessage {...Object.values(crumb)[0]} />
+              </p>
               <p className={styles.arrow}>&gt;</p>
             </>
           ) : null}
           <>
             {i === elements.length - 1 || elements.length === 1 ? (
               <>
-                <b className={styles.breadCrumble}>{crumb}</b>
+                <b className={styles.breadCrumble}>
+                  <FormattedMessage {...Object.values(crumb)[0]} />
+                </b>
               </>
             ) : null}
           </>
@@ -34,5 +41,7 @@ const BreadCrumb = ({ elements }: Props) => {
     </div>
   );
 };
+
+BreadCrumb.displayName = displayName;
 
 export default BreadCrumb;

@@ -19,7 +19,7 @@ interface Props {
 const MSG = defineMessages({
   allDomains: {
     id: 'dashboard.ColonyDomains.allDomains',
-    defaultMessage: 'All Domains',
+    defaultMessage: 'root',
   },
   title: {
     id: 'dashboard.ColonyDomains.title',
@@ -36,7 +36,7 @@ const ColonyDomains = ({
   colonyAddress,
   setFilteredDomainId,
   filteredDomainId,
-  noTitle,
+  noTitle = false,
 }: Props) => {
   // eslint-disable-next-line prettier/prettier
   const { data: domains } = useDataFetcher<DomainType[]>(

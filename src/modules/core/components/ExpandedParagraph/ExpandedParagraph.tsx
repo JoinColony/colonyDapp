@@ -44,6 +44,8 @@ interface Props {
   maximumCharacters: number;
 }
 
+const displayName = 'core.ExpandedParagraph';
+
 const ExpandedParagraph = ({
   paragraph,
   elements,
@@ -83,5 +85,7 @@ const ExpandedParagraph = ({
     </>
   );
 };
+
+ExpandedParagraph.displayName = displayName;
 
 export default ExpandedParagraph;

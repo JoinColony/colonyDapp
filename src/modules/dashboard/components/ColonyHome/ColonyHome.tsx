@@ -268,12 +268,18 @@ const ColonyHome = ({
     .sort((a, b) => a.id - b.id)
     .reduce(
       (accumulator, element) => {
-        if (element.id <= filteredDomainId) {
-          accumulator.push(element.name);
+        if (element.id <= filteredDomainId && element.name) {
+          const message = {};
+          message[element.name] = {
+            id: element.name,
+            defaultMessage: element.name,
+          };
+          const messageDescriptor = defineMessages(message);
+          accumulator.push(messageDescriptor);
         }
         return accumulator;
       },
-      ['Root'],
+      [defineMessages({ root: { id: 'root', defaultMessage: 'root' } })],
     );
 
   return (
