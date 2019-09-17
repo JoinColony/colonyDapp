@@ -5,16 +5,18 @@ import { useDispatch } from 'redux-react-hook';
 import throttle from 'lodash/throttle';
 
 import { Address } from '~types/index';
-import { TaskDraftId, TaskMetadataMap } from '~immutable/index';
+import { TaskDraftId } from '~immutable/index';
 import { ActionTypes } from '~redux/index';
 import { mergePayload } from '~utils/actions';
-import { useDataSubscriber, useSelector } from '~utils/hooks';
-import { colonyTaskMetadataSubscriber } from '../../../subscribers';
-import { walletAddressSelector } from '../../../../users/selectors';
-import TaskList from '../../TaskList';
 import { ActionButton } from '~core/Button';
 import Icon from '~core/Icon';
 import { SpinnerLoader } from '~core/Preloaders';
+import { useDataSubscriber, useSelector } from '~utils/hooks';
+
+import { colonyTaskMetadataSubscriber } from '../../../subscribers';
+import { walletAddressSelector } from '../../../../users/selectors';
+import { TaskMetadataMap } from '../../../state/index';
+import TaskList from '../../TaskList';
 import styles from './ColonyTasks.css';
 
 interface Props {

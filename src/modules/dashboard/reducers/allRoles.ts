@@ -1,8 +1,9 @@
 import { Map as ImmutableMap, Set as ImmutableSet } from 'immutable';
 
-import { AllRolesMap } from '~immutable/index';
 import { withFetchableDataMap } from '~utils/reducers';
 import { ActionTypes, ReducerType } from '~redux/index';
+
+import { AllRolesMap } from '../state/index';
 
 const allRolesReducer: ReducerType<AllRolesMap> = (
   state = ImmutableMap(),

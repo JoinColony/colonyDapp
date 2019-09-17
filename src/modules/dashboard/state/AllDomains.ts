@@ -2,8 +2,7 @@ import { Map as ImmutableMapType, Set as ImmutableSet } from 'immutable';
 
 import { ENSName } from '~types/index';
 
-import { FetchableDataRecord } from '../../FetchableData';
-import { DomainRecord } from '../../Domain';
+import { FetchableDataRecord, DomainRecord } from '~immutable/index';
 
 type DomainsSet = ImmutableSet<DomainRecord>;
 

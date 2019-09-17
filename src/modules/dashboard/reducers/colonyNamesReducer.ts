@@ -1,8 +1,10 @@
 import { Map as ImmutableMap } from 'immutable';
 
 import { ActionTypes, ReducerType } from '~redux/index';
-import { FetchableData, AllColonyNamesMap } from '~immutable/index';
+import { FetchableData } from '~immutable/index';
 import { withFetchableDataMap } from '~utils/reducers';
+
+import { AllColonyNamesMap } from '../state/index';
 
 const updateState = (state: AllColonyNamesMap, key: any, value: string) =>
   state.getIn([key, 'record'])

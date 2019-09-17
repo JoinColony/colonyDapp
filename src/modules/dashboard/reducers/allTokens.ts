@@ -1,15 +1,11 @@
 import { Map as ImmutableMap, fromJS } from 'immutable';
 
 import { ReducerType, ActionTypes } from '~redux/index';
-import {
-  AllTokensMap,
-  TokenRecord,
-  FetchableData,
-  Token,
-} from '~immutable/index';
-
+import { TokenRecord, FetchableData, Token } from '~immutable/index';
 import { ZERO_ADDRESS } from '~utils/web3/constants';
 import { withFetchableDataMap } from '~utils/reducers';
+
+import { AllTokensMap } from '../state/index';
 
 const INITIAL_STATE: AllTokensMap = ImmutableMap({
   [ZERO_ADDRESS]: FetchableData<TokenRecord>({

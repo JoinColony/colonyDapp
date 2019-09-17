@@ -1,7 +1,6 @@
 import { Map as ImmutableMap, fromJS } from 'immutable';
 
 import {
-  AllColoniesMap,
   Colony,
   ColonyRecord,
   FetchableData,
@@ -11,6 +10,8 @@ import {
 import { withFetchableDataMap } from '~utils/reducers';
 import { ActionTypes, ReducerType } from '~redux/index';
 import { createAddress, Address } from '~types/index';
+
+import { AllColoniesMap } from '../state/index';
 
 const coloniesReducer: ReducerType<AllColoniesMap> = (
   state = ImmutableMap(),
