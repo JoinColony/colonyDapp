@@ -27,7 +27,7 @@ const MSG = defineMessages({
   },
   fileUploadHelp: {
     id: 'users.ConnectWalletWizard.StepJSONUpload.fileUploadHelp',
-    defaultMessage: '.json',
+    defaultMessage: '(.json)',
   },
   filePasswordLabel: {
     id: 'users.ConnectWalletWizard.StepJSONUpload.filePasswordLabel',
@@ -35,7 +35,7 @@ const MSG = defineMessages({
   },
   filePasswordHelp: {
     id: 'users.ConnectWalletWizard.StepJSONUpload.filePasswordHelp',
-    defaultMessage: 'Optional',
+    defaultMessage: '(Optional)',
   },
   errorKeystore: {
     id: 'users.ConnectWalletWizard.StepJSONUpload.errorKeystore',

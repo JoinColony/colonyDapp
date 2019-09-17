@@ -15,20 +15,20 @@ interface Props {
 
 const MSG = defineMessages({
   labelAddDomain: {
-    id: 'admin.Organizations.OrganizationAddDomains.labelAddDomain',
+    id: 'admin.Domains.OrganizationAddDomains.labelAddDomain',
     defaultMessage: 'Add New Domain',
   },
-  placeholderAddAdmins: {
-    id: 'admin.Organizations.OrganizationAddDomains.placeholderAddAdmins',
-    defaultMessage: 'Search for a user or paste a wallet address',
+  helpText: {
+    id: 'admin.Organizations.OrganizationAddDomains.helpText',
+    defaultMessage: 'This cannot be undone',
   },
   buttonAddDomain: {
-    id: 'admin.Organizations.OrganizationAddDomains.buttonAddDomain',
+    id: 'admin.Domains.OrganizationAddDomains.buttonAddDomain',
     defaultMessage: 'Add Domain',
   },
 });
 
-const displayName = 'admin.Organizations.OrganizationAddDomains';
+const displayName = 'admin.Domains.OrganizationAddDomains';
 
 const validationSchema = yup.object({
   domainName: yup.string().required(),
@@ -60,11 +60,16 @@ const OrganizationAddDomains = ({ colonyAddress }: Props) => {
         {({ status, isSubmitting, isValid }) => (
           <div className={styles.inputWrapper}>
             <div className={styles.domainInput}>
-              <Input name="domainName" label={MSG.labelAddDomain} />
+              <Input
+                appearance={{ helpAlign: 'right', theme: 'fat' }}
+                help={MSG.helpText}
+                label={MSG.labelAddDomain}
+                name="domainName"
+              />
             </div>
             <div className={styles.submitButton}>
               <Button
-                appearance={{ theme: 'primary', size: 'medium' }}
+                appearance={{ theme: 'primary', size: 'large' }}
                 style={{ width: styles.wideButton }}
                 text={MSG.buttonAddDomain}
                 type="submit"

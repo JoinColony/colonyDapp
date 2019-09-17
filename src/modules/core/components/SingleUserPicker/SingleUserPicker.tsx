@@ -51,6 +51,7 @@ const defaultRenderItem = (
 
 interface Appearance {
   direction?: 'horizontal';
+  width?: 'wide';
 }
 
 interface Props extends OmniPickerProps {
@@ -93,6 +94,9 @@ interface Props extends OmniPickerProps {
   /** Placeholder for input */
   placeholder?: string;
 
+  /** Callback for things that happend after selection  */
+  onSelected?: (user: UserType) => void;
+
   /** @ignore Will be injected by `asField` */
   $error?: string;
 
@@ -119,6 +123,7 @@ const SingleUserPicker = ({
   help,
   label,
   placeholder,
+  onSelected,
   // OmniPicker
   inputProps,
   OmniPicker,
@@ -143,8 +148,9 @@ const SingleUserPicker = ({
   const handlePick = useCallback(
     (user: UserType) => {
       setValue(user);
+      onSelected(user);
     },
-    [setValue],
+    [onSelected, setValue],
   );
   const resetSelection = useCallback(() => {
     if (!disabled) {

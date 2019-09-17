@@ -100,21 +100,19 @@ function* colonyCreate({
     /*
      * Always create the following transactions.
      */
-    'deployOldRoles',
-    'setOldRolesRole',
     'deployOneTx',
-    'setOneTxRole',
+    'setOneTxRoleAdministration',
+    'setOneTxRoleFunding',
   ]);
   const {
     createColony,
     createLabel,
     createToken,
     createUser,
-    deployOldRoles,
     deployOneTx,
+    setOneTxRoleAdministration,
+    setOneTxRoleFunding,
     deployTokenAuthority,
-    setOldRolesRole,
-    setOneTxRole,
     setTokenAuthority,
   } = channels;
 
@@ -194,21 +192,6 @@ function* colonyCreate({
       });
     }
 
-    yield createGroupedTransaction(deployOldRoles, {
-      context: COLONY_CONTEXT,
-      methodName: 'addExtension',
-      params: { contractName: 'OldRoles' },
-      ready: false,
-    });
-
-    yield createGroupedTransaction(setOldRolesRole, {
-      context: COLONY_CONTEXT,
-      methodContext: 'setOldRolesRole',
-      methodName: 'setRootRole',
-      params: { setTo: true },
-      ready: false,
-    });
-
     yield createGroupedTransaction(deployOneTx, {
       context: COLONY_CONTEXT,
       methodName: 'addExtension',
@@ -216,11 +199,19 @@ function* colonyCreate({
       ready: false,
     });
 
-    yield createGroupedTransaction(setOneTxRole, {
+    yield createGroupedTransaction(setOneTxRoleAdministration, {
       context: COLONY_CONTEXT,
-      methodContext: 'setOneTxRole',
-      methodName: 'setAdminRole',
-      params: { setTo: true },
+      methodContext: 'setOneTxRoles',
+      methodName: 'setAdministrationRole',
+      params: { setTo: true, domainId: 1 },
+      ready: false,
+    });
+
+    yield createGroupedTransaction(setOneTxRoleFunding, {
+      context: COLONY_CONTEXT,
+      methodContext: 'setOneTxRoles',
+      methodName: 'setFundingRole',
+      params: { setTo: true, domainId: 1 },
       ready: false,
     });
 
@@ -362,9 +353,8 @@ function* colonyCreate({
         deployTokenAuthority,
         setTokenAuthority,
         deployOneTx,
-        setOneTxRole,
-        deployOldRoles,
-        setOldRolesRole,
+        setOneTxRoleAdministration,
+        setOneTxRoleFunding,
       ]
         .filter(Boolean)
         .map(({ id }) => put(transactionAddIdentifier(id, colonyAddress))),
@@ -414,36 +404,6 @@ function* colonyCreate({
     }
 
     /*
-     * Deploy OldRoles
-     */
-    yield put(transactionReady(deployOldRoles.id));
-
-    const {
-      payload: {
-        transaction: {
-          receipt: {
-            logs: [deployOldRolesLog],
-          },
-        },
-      },
-    } = yield takeFrom(
-      deployOldRoles.channel,
-      ActionTypes.TRANSACTION_SUCCEEDED,
-    );
-    const oldRolesAddress = parseExtensionDeployedLog(deployOldRolesLog);
-
-    /*
-     * Set OldRoles role
-     */
-    yield put(
-      transactionAddParams(setOldRolesRole.id, {
-        address: oldRolesAddress,
-      }),
-    );
-    yield put(transactionReady(setOldRolesRole.id));
-    yield takeFrom(setOldRolesRole.channel, ActionTypes.TRANSACTION_SUCCEEDED);
-
-    /*
      * Deploy OneTx
      */
     yield put(transactionReady(deployOneTx.id));
@@ -460,11 +420,30 @@ function* colonyCreate({
     const oneTxAddress = parseExtensionDeployedLog(deployOneTxLog);
 
     /*
-     * Set OneTx role
+     * Set OneTx administration role
      */
-    yield put(transactionAddParams(setOneTxRole.id, { address: oneTxAddress }));
-    yield put(transactionReady(setOneTxRole.id));
-    yield takeFrom(setOneTxRole.channel, ActionTypes.TRANSACTION_SUCCEEDED);
+    yield put(
+      transactionAddParams(setOneTxRoleAdministration.id, {
+        address: oneTxAddress,
+      }),
+    );
+    yield put(transactionReady(setOneTxRoleAdministration.id));
+    yield takeFrom(
+      setOneTxRoleAdministration.channel,
+      ActionTypes.TRANSACTION_SUCCEEDED,
+    );
+
+    /*
+     * Set OneTx funding role
+     */
+    yield put(
+      transactionAddParams(setOneTxRoleFunding.id, { address: oneTxAddress }),
+    );
+    yield put(transactionReady(setOneTxRoleFunding.id));
+    yield takeFrom(
+      setOneTxRoleFunding.channel,
+      ActionTypes.TRANSACTION_SUCCEEDED,
+    );
 
     // Subscribe to the colony last, after successful colony creation
     yield put(subscribeToColony(colonyAddress));

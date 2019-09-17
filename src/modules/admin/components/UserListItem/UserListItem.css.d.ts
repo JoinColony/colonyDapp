@@ -1,5 +1,4 @@
 export const cellPadding: string;
-export const nameMargin: string;
 export const main: string;
 export const customRemoveButton: string;
 export const userAvatar: string;
@@ -11,3 +10,4 @@ export const address: string;
 export const pendingDotWrapper: string;
 export const pendingDotClickArea: string;
 export const pendingDot: string;
+export const stateHasCallbackFn: string;

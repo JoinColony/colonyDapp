@@ -6,7 +6,7 @@ import { pipe, mergePayload, withKey } from '~utils/actions';
 import { useAsyncFunction } from '~utils/hooks';
 import { Table, TableBody } from '~core/Table';
 import Heading from '~core/Heading';
-import UserListItem from './UserListItem';
+import UserListItem from '../UserListItem/UserListItem';
 import styles from './UserList.css';
 
 interface Props {
@@ -46,16 +46,16 @@ interface Props {
   label?: string | MessageDescriptor;
 
   /** Redux action to dispatch on submit (e.g. CREATE_XXX) */
-  remove: string;
+  remove?: string;
 
   /** Redux action listener for successful action (e.g. CREATE_XXX_SUCCESS) */
-  removeSuccess: string;
+  removeSuccess?: string;
 
   /** Redux action listener for unsuccessful action (e.g. CREATE_XXX_ERROR) */
-  removeError: string;
+  removeError?: string;
 
   /* Colony address to use when removing the user */
-  colonyAddress: Address;
+  colonyAddress?: Address;
 }
 
 const displayName = 'admin.UserList';
@@ -85,9 +85,9 @@ const UserList = ({
   });
 
   const handleRemove = useCallback(
-    (user: string) => removeFn({ user }),
-    // This is unnecessary because the ref is never changing. The linter isn't smart enough to know that though
-    [removeFn],
+    (user: string) =>
+      remove && removeSuccess && removeError ? removeFn({ user }) : () => {},
+    [remove, removeSuccess, removeError, removeFn],
   );
 
   return (

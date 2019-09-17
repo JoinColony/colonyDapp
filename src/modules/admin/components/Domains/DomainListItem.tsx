@@ -3,9 +3,11 @@ import { defineMessages, FormattedMessage } from 'react-intl';
 
 import { DomainType } from '~immutable/index';
 import { Address } from '~types/index';
+
 import { ActionTypes } from '~redux/index';
 import { TableRow, TableCell } from '~core/Table';
 import { DialogActionButton } from '~core/Button';
+
 import styles from './DomainListItem.css';
 
 const MSG = defineMessages({
@@ -27,7 +29,6 @@ const displayName = 'admin.DomainList.DomainListItem';
 
 interface Props {
   contributions?: number;
-
   /*
    * Domain data object, follows the same format as UserPicker
    */
@@ -55,6 +56,7 @@ const DomainListItem = ({
               domain,
               colonyAddress,
             }}
+            className={styles.customEditButton}
             appearance={{ theme: 'blue' }}
             text={MSG.buttonEdit}
             submit={ActionTypes.DOMAIN_EDIT}

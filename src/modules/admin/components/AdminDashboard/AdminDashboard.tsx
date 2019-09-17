@@ -6,11 +6,12 @@ import { NavigationItem } from '~pages/VerticalNavigation/VerticalNavigation';
 import { ColonyType, UserPermissionsType } from '~immutable/index';
 import Heading from '~core/Heading';
 import LoadingTemplate from '~pages/LoadingTemplate';
-import Organizations from '~admin/Organizations';
 import Profile from '~admin/Profile';
 import RecoveryModeAlert from '~admin/RecoveryModeAlert';
 import Tokens from '~admin/Tokens';
 import Transactions from '~admin/Transactions';
+import Domains from '~admin/Domains';
+import Permissions from '~admin/Permissions';
 import VerticalNavigation from '~pages/VerticalNavigation';
 import { HistoryNavigation } from '~pages/NavigationWrapper';
 import { isInRecoveryMode } from '../../../dashboard/checks';
@@ -33,6 +34,14 @@ const MSG = defineMessages({
     id: 'dashboard.Admin.colonySettings',
     defaultMessage: 'Colony Settings',
   },
+  tabDomains: {
+    id: 'dashboard.Admin.tabDomains',
+    defaultMessage: 'Domains',
+  },
+  tabPermissions: {
+    id: 'dashboard.Admin.tabPermissions',
+    defaultMessage: 'Permissions',
+  },
   tabProfile: {
     id: 'dashboard.Admin.tabProfile',
     defaultMessage: 'Profile',
@@ -44,10 +53,6 @@ const MSG = defineMessages({
   tabTransaction: {
     id: 'dashboard.Admin.tabTransaction',
     defaultMessage: 'Transactions',
-  },
-  tabOrganisation: {
-    id: 'dashboard.Admin.tabOrganisation',
-    defaultMessage: 'Organization',
   },
 });
 
@@ -74,13 +79,18 @@ const navigationItems = (colony: ColonyType): NavigationItem[] => [
   },
   {
     id: 3,
-    title: MSG.tabTransaction,
-    content: <Transactions colonyAddress={colony.colonyAddress} />,
+    title: MSG.tabDomains,
+    content: <Domains colonyAddress={colony.colonyAddress} />,
   },
   {
     id: 4,
-    title: MSG.tabOrganisation,
-    content: <Organizations colonyAddress={colony.colonyAddress} />,
+    title: MSG.tabPermissions,
+    content: <Permissions colonyAddress={colony.colonyAddress} />,
+  },
+  {
+    id: 5,
+    title: MSG.tabTransaction,
+    content: <Transactions colonyAddress={colony.colonyAddress} />,
   },
 ];
 

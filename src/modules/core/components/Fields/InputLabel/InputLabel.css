@@ -50,6 +50,12 @@
   color: var(--text);
 }
 
+.helpAlignRight {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+}
+
 .extra {
   position: absolute;
   top: 0;

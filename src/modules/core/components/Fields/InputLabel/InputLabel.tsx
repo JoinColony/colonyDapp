@@ -15,6 +15,7 @@ interface Appearance {
   readonly theme: 'fat' | 'underlined' | 'minimal' | 'dotted';
   readonly direction: 'horizontal';
   readonly colorSchema: 'dark' | 'grey' | 'transparent';
+  readonly helpAlign: 'right';
   readonly size: 'small';
 }
 
@@ -50,6 +51,7 @@ const InputLabel = ({
     theme: undefined,
     colorSchema: undefined,
     direction: undefined,
+    helpAlign: undefined,
     size: undefined,
   },
   help,
@@ -73,7 +75,7 @@ const InputLabel = ({
       htmlFor={inputId || null}
     >
       <span className={styles.labelText}>{labelText}</span>
-      {helpText && <span className={styles.help}>({helpText})</span>}
+      {helpText && <span className={styles.help}>{helpText}</span>}
       {extra && <span className={styles.extra}>{extra}</span>}
     </label>
   );
