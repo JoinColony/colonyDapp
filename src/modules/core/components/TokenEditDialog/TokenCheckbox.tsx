@@ -1,7 +1,11 @@
 import React from 'react';
 import { defineMessages } from 'react-intl';
 
-import { TokenReferenceType, TokenType } from '~immutable/index';
+import {
+  ColonyTokenReferenceType,
+  TokenType,
+  UserTokenReferenceType,
+} from '~immutable/index';
 
 import { useDataFetcher } from '~utils/hooks';
 import { Checkbox } from '~core/Fields';
@@ -22,10 +26,10 @@ const MSG = defineMessages({
 });
 
 const TokenCheckbox = ({
-  token: { address, isNative = false },
+  token: { address },
   token: tokenReference,
 }: {
-  token: TokenReferenceType;
+  token: ColonyTokenReferenceType | UserTokenReferenceType;
 }) => {
   const { data: token } = useDataFetcher<TokenType>(
     tokenFetcher,
@@ -37,7 +41,10 @@ const TokenCheckbox = ({
       className={styles.tokenChoice}
       value={address}
       name="tokens"
-      disabled={isNative || tokenIsETH(token)}
+      disabled={
+        ('isNative' in tokenReference && !!tokenReference.isNative) ||
+        tokenIsETH(token)
+      }
     >
       <TokenIcon token={tokenReference} name={token.name} />
       <span className={styles.tokenChoiceSymbol}>
