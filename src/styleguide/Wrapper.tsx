@@ -6,13 +6,9 @@ import { BrowserRouter } from 'react-router-dom';
 import en from 'react-intl/locale-data/en';
 import { Map as ImmutableMap, Record } from 'immutable';
 
-import {
-  CoreTransactions,
-  User,
-  UserProfile,
-  Wallet,
-  WALLET_CATEGORIES,
-} from '~immutable/index';
+import { User, UserProfile, Wallet, WALLET_CATEGORIES } from '~immutable/index';
+
+import { CoreTransactions } from '../modules/core/state/index';
 
 import '../styles/main.css';
 import '../styles/styleguide.css';

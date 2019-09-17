@@ -1,10 +1,10 @@
 import { Map as ImmutableMap } from 'immutable';
 
-import { FetchableData, IpfsDataType } from '~immutable/index';
-
+import { FetchableData } from '~immutable/index';
 import { withFetchableDataMap } from '~utils/reducers';
-
 import { ActionTypes, ReducerType } from '~redux/index';
+
+import { IpfsDataType } from '../state/index';
 
 const ipfsDatasReducer: ReducerType<IpfsDataType> = (
   state = ImmutableMap(),
