@@ -7,6 +7,7 @@ export const editColony: string;
 export const avatarWrapper: string;
 export const userAvatar: string;
 export const colonyAvatarAndName: string;
+export const headingAndSettings: string;
 export const dynamicTextSection: string;
 export const simpleLinkWebsite: string;
 export const simpleLinkGuideline: string;

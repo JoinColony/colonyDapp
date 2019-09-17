@@ -1,0 +1,9 @@
+.moreButtonContainer {
+  margin-left: 5px;
+}
+
+.hideButtonContainer {
+  position: relative;
+  float: right;
+  bottom: 21px;
+}

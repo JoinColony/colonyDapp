@@ -5,8 +5,9 @@
   display: grid;
   padding: 16px 18px; /* vertical padding of 16px + nav height (70px) */
   overflow: auto;
+  overflow: hidden;
   background: var(--gradient-default);
-  grid-template-columns: minmax(275px, 260px) minmax(360px, auto) minmax(120px, 200px);
+  grid-template-columns: minmax(275px, 260px) minmax(360px, 700px) minmax(275px, 260px);
   grid-template-rows: auto;
   column-gap: 80px;
 }
@@ -21,13 +22,13 @@
   display: flex;
   justify-content: space-between;
   margin-top: 12px;
+  margin-bottom: -6px; /* We want to use a negative margin here since the taskList comes with a high one */
 }
 
 .domainContainer {
   margin-bottom: 40px;
   margin-left: 43px;
   padding-top: 19px;
-  border-top: 1px solid var(--temp-grey-5);
 }
 
 .metaContainer {
@@ -55,8 +56,8 @@
 .sidebar {
   display: flex;
   justify-content: space-between;
-  margin-top: 156px;
-  padding-right: 25px;
+  margin-top: 165px;
+  padding-right: 112px;
   grid-column: 3;
   grid-row: 1;
 }

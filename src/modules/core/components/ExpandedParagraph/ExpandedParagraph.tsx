@@ -4,6 +4,7 @@ import { defineMessages } from 'react-intl';
 import Button from '~core/Button';
 
 import { multiLineTextEllipsis } from '~utils/strings';
+import styles from './ExpandedParagraph.css';
 
 const MSG = defineMessages({
   more: {
@@ -62,24 +63,28 @@ const ExpandedParagraph = ({
       )}
       {elements && elements}
       {!expanded && (
-        <Button
-          onClick={() => {
-            expandDescription(true);
-          }}
-          text={MSG.more}
-          appearance={{ theme: 'blue' }}
-        />
+        <span className={styles.moreButtonContainer}>
+          <Button
+            onClick={() => {
+              expandDescription(true);
+            }}
+            text={MSG.more}
+            appearance={{ theme: 'blue' }}
+          />
+        </span>
       )}
       {expanded && (
         <>
           {expandedElements}
-          <Button
-            onClick={() => {
-              expandDescription(false);
-            }}
-            text={MSG.hide}
-            appearance={{ theme: 'blue' }}
-          />
+          <span className={styles.hideButtonContainer}>
+            <Button
+              onClick={() => {
+                expandDescription(false);
+              }}
+              text={MSG.hide}
+              appearance={{ theme: 'blue' }}
+            />
+          </span>
         </>
       )}
     </>

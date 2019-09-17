@@ -56,14 +56,14 @@ const ColonyMeta = ({
         <ExternalLink
           className={styles.simpleLinkWebsite}
           href={website}
-          text={stripProtocol(website)}
+          text={stripProtocol(multiLineTextEllipsis(website, 30))}
         />
       )}
       {guideline && (
         <ExternalLink
           className={styles.simpleLinkGuideline}
           href={guideline}
-          text={stripProtocol(guideline)}
+          text={stripProtocol(multiLineTextEllipsis(guideline, 30))}
         />
       )}
     </>
@@ -79,7 +79,7 @@ const ColonyMeta = ({
         />
         <ColonySubscribe colonyAddress={colonyAddress} />
         <Heading appearance={{ margin: 'none', size: 'medium', theme: 'dark' }}>
-          <>
+          <div className={styles.headingAndSettings}>
             <span title={displayName}>
               {/*
                * @NOTE We need to use a JS string truncate here, rather then CSS as we do with the other fields,
@@ -88,7 +88,7 @@ const ColonyMeta = ({
                *
                * To fix this properly (ie: without JS), we'll need a re-design
                */
-              multiLineTextEllipsis(displayName, 65)}
+              multiLineTextEllipsis(displayName, 18)}
             </span>
             {canAdminister && (
               <Link
@@ -98,13 +98,13 @@ const ColonyMeta = ({
                 <Icon name="settings" title={MSG.editColonyTitle} />
               </Link>
             )}
-          </>
+          </div>
         </Heading>
       </section>
       {description && (
         <section className={styles.description}>
           <ExpandedParagraph
-            characterLimit={88}
+            characterLimit={85}
             maximumCharacters={180}
             paragraph={description}
             expandedElements={renderExpandedElements}
