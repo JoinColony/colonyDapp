@@ -36,6 +36,14 @@ export const fetchColonyTokenBalance = (
   payload: { colonyAddress, domainId, tokenAddress },
 });
 
+export const fetchColonyTokenBalances = (
+  colonyAddress: Address,
+  tokenAddress: Address,
+): AllActions => ({
+  type: ActionTypes.COLONY_TOKEN_BALANCES_FETCH,
+  payload: { colonyAddress, tokenAddress },
+});
+
 export const fetchColonyCanMintNativeToken = (
   colonyAddress: Address,
 ): AllActions => ({

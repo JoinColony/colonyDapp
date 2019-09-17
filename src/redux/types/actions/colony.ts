@@ -323,6 +323,12 @@ export type ColonyActionTypes =
         colonyAddress: Address;
       }
     >
+  | ActionTypeWithPayload<
+      ActionTypes.COLONY_TOKEN_BALANCES_FETCH,
+      { colonyAddress: Address; tokenAddress: Address }
+    >
+  | ErrorActionType<ActionTypes.COLONY_TOKEN_BALANCES_FETCH_ERROR, object>
+  | ActionTypeWithPayload<ActionTypes.COLONY_TOKEN_BALANCES_FETCH_SUCCESS, null>
   | UniqueActionType<
       ActionTypes.COLONY_UPDATE_TOKENS,
       { colonyAddress: Address; tokens: Address[] },
