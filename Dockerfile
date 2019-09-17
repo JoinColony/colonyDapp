@@ -12,6 +12,8 @@ ARG GH_PAT
 #
 # Eg: docker build --build-arg INFURA_ID='XXX' .
 ARG INFURA_ID
+# @NOTE Declare the commit hash build variable, so that it gets picked up by the conditional
+ARG COMMIT_HASH
 
 # Make the dapp's ENV values to have the option to be set at build time
 # But fall back to a default
@@ -47,6 +49,7 @@ RUN locale-gen
 # Clone the repo
 RUN git clone "https://$GH_PAT@github.com/JoinColony/colonyDapp.git"
 WORKDIR /colonyDapp
+RUN if [ ! -z "$COMMIT_HASH" ]; then git checkout $COMMIT_HASH; fi
 
 # Install node_modules
 RUN yarn
