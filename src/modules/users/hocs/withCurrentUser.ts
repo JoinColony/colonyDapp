@@ -1,8 +1,9 @@
 import { connect } from 'react-redux';
 import compose from 'recompose/compose';
 
-import { RootStateRecord } from '~immutable/state';
 import { withImmutablePropsToJS } from '~utils/hoc';
+
+import { RootStateRecord } from '../../state';
 import { currentUserSelector } from '../selectors';
 
 const withCurrentUser = compose(

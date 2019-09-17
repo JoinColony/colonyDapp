@@ -1,9 +1,10 @@
 import { createSelector } from 'reselect';
 import { Map as ImmutableMap } from 'immutable';
 
-import { RootStateRecord, TokenReferenceType } from '~immutable/index';
+import { TokenReferenceType } from '~immutable/index';
 import { Address } from '~types/index';
 
+import { RootStateRecord } from '../../state';
 import { DASHBOARD_ALL_TOKENS, DASHBOARD_NAMESPACE as ns } from '../constants';
 
 /*

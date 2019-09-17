@@ -2,10 +2,10 @@ import { createSelector } from 'reselect';
 import { Map as ImmutableMap } from 'immutable';
 
 import { Address, ENSName } from '~types/index';
-import { RootStateRecord } from '~immutable/index';
 
 import { sortObjectsBy, sortTokensByEth } from '~utils/arrays';
 
+import { RootStateRecord } from '../../state';
 import { tokenIsETH } from '../../core/checks';
 import {
   DASHBOARD_ALL_COLONIES,

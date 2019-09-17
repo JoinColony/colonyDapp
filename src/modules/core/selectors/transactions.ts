@@ -1,15 +1,12 @@
 import { createSelector } from 'reselect';
 import { Map as ImmutableMap } from 'immutable';
 
-import {
-  RootStateRecord,
-  TransactionRecord,
-  TRANSACTION_STATUSES,
-} from '~immutable/index';
+import { TransactionRecord, TRANSACTION_STATUSES } from '~immutable/index';
 
 import { walletAddressSelector } from '../../users/selectors';
 import { isMultisig, isPendingMultisig } from '../checks';
 import { messageGroups } from './messages';
+import { RootStateRecord } from '../../state';
 import {
   CORE_NAMESPACE as ns,
   CORE_TRANSACTIONS,

@@ -2,13 +2,10 @@ import { createSelector } from 'reselect';
 import { Map as ImmutableMap } from 'immutable';
 import { isAddress } from 'web3-utils';
 
-import {
-  FetchableDataRecord,
-  RootStateRecord,
-  UserRecord,
-} from '~immutable/index';
+import { FetchableDataRecord, UserRecord } from '~immutable/index';
 import { Address } from '~types/index';
 
+import { RootStateRecord } from '../../state';
 import {
   USERS_ALL_USERS,
   USERS_COLONIES,

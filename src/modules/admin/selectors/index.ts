@@ -1,6 +1,6 @@
 import { Address } from '~types/index';
-import { RootStateRecord } from '~immutable/index';
 
+import { RootStateRecord } from '../../state';
 import {
   ADMIN_NAMESPACE as ns,
   ADMIN_TRANSACTIONS,

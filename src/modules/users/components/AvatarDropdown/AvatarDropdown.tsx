@@ -2,12 +2,15 @@ import React from 'react';
 import compose from 'recompose/compose';
 import { connect } from 'react-redux';
 
-import { RootStateRecord, UserType } from '~immutable/index';
+import { UserType } from '~immutable/index';
 import { withImmutablePropsToJS } from '~utils/hoc';
 import Popover from '~core/Popover';
 import HookedUserAvatar from '~users/HookedUserAvatar';
+
+import { RootStateRecord } from '../../../state';
 import { currentUserSelector } from '../../selectors';
 import AvatarDropdownPopover from './AvatarDropdownPopover';
+
 import styles from './AvatarDropdown.css';
 
 const UserAvatar = HookedUserAvatar({ fetchUser: false });

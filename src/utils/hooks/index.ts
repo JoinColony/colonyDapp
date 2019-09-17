@@ -6,16 +6,14 @@ import { useDispatch, useMappedState } from 'redux-react-hook';
 import { Action, AllActions, ActionTypes } from '~redux/index';
 import { Address } from '~types/index';
 import { ActionTransformFnType } from '~utils/actions';
-import {
-  FetchableDataRecord,
-  DomainType,
-  RootStateRecord,
-} from '~immutable/index';
+import { FetchableDataRecord, DomainType } from '~immutable/index';
 import promiseListener, { AsyncFunction } from '~redux/createPromiseListener';
 import { isFetchingData, shouldFetchData } from '~immutable/utils';
 import { getMainClasses } from '~utils/css';
 import { proxyOldRoles, includeParentRoles } from '~utils/data';
+
 import { rolesFetcher, domainsFetcher } from '../../modules/dashboard/fetchers';
+import { RootStateRecord } from '../../modules/state';
 
 interface DataObject<T> {
   data: T | void;
