@@ -2,12 +2,10 @@ import { Set as ImmutableSet } from 'immutable';
 
 import { Address } from '~types/index';
 import { ActionTypes, ReducerType } from '~redux/index';
-import {
-  FetchableData,
-  FetchableDataRecord,
-  CurrentUserTasksType,
-} from '~immutable/index';
+import { FetchableData, FetchableDataRecord } from '~immutable/index';
 import { withFetchableData } from '~utils/reducers';
+
+import { CurrentUserTasksType } from '../../state/index';
 
 type State = FetchableDataRecord<CurrentUserTasksType>;
 

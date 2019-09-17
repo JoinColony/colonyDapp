@@ -1,14 +1,14 @@
 import { Map as ImmutableMap, fromJS } from 'immutable';
 
 import {
-  CurrentUserPermissionsType,
   UserPermissionsRecord,
   UserPermissions,
   FetchableData,
 } from '~immutable/index';
-
 import { withFetchableDataMap } from '~utils/reducers';
 import { ActionTypes, ReducerType } from '~redux/index';
+
+import { CurrentUserPermissionsType } from '../../state/index';
 
 const userPermissionsReducer: ReducerType<CurrentUserPermissionsType> = (
   state = ImmutableMap(),
