@@ -1,16 +1,15 @@
 import { Record } from 'immutable';
 import { RouterState } from 'connected-react-router';
 
-import { AdminStateRecord } from './admin';
 import { UsersStateRecord } from './users';
 import { ADMIN_NAMESPACE } from '../../modules/admin/constants';
+import { AdminStateRecord } from '../../modules/admin/state/index';
 import { CORE_NAMESPACE } from '../../modules/core/constants';
 import { CoreStateRecord } from '../../modules/core/state/index';
 import { DASHBOARD_NAMESPACE } from '../../modules/dashboard/constants';
 import { DashboardStateRecord } from '../../modules/dashboard/state/index';
 import { USERS_NAMESPACE } from '../../modules/users/constants';
 
-export * from './admin';
 export * from './users';
 
 export interface RootStateProps {

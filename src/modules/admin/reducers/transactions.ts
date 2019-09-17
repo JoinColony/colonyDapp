@@ -3,11 +3,12 @@ import { List as ListType, Map as ImmutableMap, List, fromJS } from 'immutable';
 import {
   ContractTransaction,
   FetchableData,
-  AdminTransactionsState,
   ContractTransactionRecord,
 } from '~immutable/index';
 import { withFetchableDataMap } from '~utils/reducers';
 import { ActionTypes, ReducerType } from '~redux/index';
+
+import { AdminTransactionsState } from '../state/index';
 
 const adminTransactionsReducer: ReducerType<AdminTransactionsState> = (
   state = ImmutableMap(),
