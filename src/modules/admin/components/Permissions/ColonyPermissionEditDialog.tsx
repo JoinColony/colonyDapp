@@ -16,12 +16,7 @@ import { Address } from '~types/index';
 
 import { mergePayload, withKey, mapPayload, pipe } from '~utils/actions';
 
-import {
-  DomainType,
-  UserType,
-  UserRecord,
-  UserProfileRecord,
-} from '~immutable/index';
+import { DomainType, UserType, User, UserProfile } from '~immutable/index';
 import { ActionTypeString, ActionTypes } from '~redux/index';
 import {
   useSelector,
@@ -273,8 +268,8 @@ const ColonyPermissionEditDialog = ({
   );
   const selectedUserData =
     !!selectedUser && !selectedUserObj
-      ? UserRecord({
-          profile: UserProfileRecord({
+      ? User({
+          profile: UserProfile({
             walletAddress: selectedUser,
           }),
         }).toJS()
