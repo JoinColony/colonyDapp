@@ -1,7 +1,6 @@
 import { createSelector } from 'reselect';
 
-import { RootStateRecord } from '~immutable/index';
-
+import { RootStateRecord } from '../../state';
 import {
   CORE_NAMESPACE as ns,
   CORE_MESSAGES,

@@ -1,6 +1,6 @@
-import { RootStateRecord } from '~immutable/index';
 import { Address } from '~types/index';
 
+import { RootStateRecord } from '../../state';
 import { DASHBOARD_NAMESPACE as ns, DASHBOARD_ALL_ROLES } from '../constants';
 
 /*

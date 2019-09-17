@@ -1,8 +1,9 @@
 import { Set as ImmutableSet } from 'immutable';
 
-import { DomainId, RootStateRecord } from '~immutable/index';
+import { DomainId } from '~immutable/index';
 import { Address } from '~types/index';
 
+import { RootStateRecord } from '../../state';
 import { DASHBOARD_NAMESPACE as ns, DASHBOARD_ALL_DOMAINS } from '../constants';
 
 /*

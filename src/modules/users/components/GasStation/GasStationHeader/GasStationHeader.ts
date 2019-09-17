@@ -2,13 +2,14 @@ import { compose } from 'recompose';
 import { connect } from 'react-redux';
 
 import { withImmutablePropsToJS } from '~utils/hoc';
+
+import { RootStateRecord } from '../../../../state';
 import {
   walletAddressSelector,
   currentUserBalanceSelector,
 } from '../../../selectors';
 // @ts-ignore
 import GasStationHeader from './GasStationHeader.tsx';
-import { RootStateRecord } from '~immutable/index';
 
 export type InProps = {
   close: () => void;

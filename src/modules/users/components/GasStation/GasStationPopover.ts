@@ -1,9 +1,9 @@
 import { connect } from 'react-redux';
-import { RootStateRecord } from '~immutable/state';
 
 // @ts-ignore
 import GasStationPopover from './GasStationPopover.tsx';
 
+import { RootStateRecord } from '../../../state';
 import { groupedTransactionsAndMessages } from '../../../core/selectors';
 
 export default connect((state: RootStateRecord) => ({

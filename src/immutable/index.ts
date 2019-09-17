@@ -1,5 +1,3 @@
-// FIXME remove next line
-export * from './state/index';
 export * from './utils/index';
 
 export * from './ActivityFeedItem';
