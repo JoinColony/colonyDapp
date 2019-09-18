@@ -1,6 +1,6 @@
 import { combineReducers } from 'redux-immutable';
 
-import activities from './activities';
+import inboxItems from './inboxItems';
 import notifications from './notifications';
 import permissions from './permissions';
 import profile from './profile';
@@ -19,7 +19,7 @@ import {
 } from '../../constants';
 
 export default combineReducers({
-  [USERS_INBOX_ITEMS]: activities,
+  [USERS_INBOX_ITEMS]: inboxItems,
   [USERS_CURRENT_USER_NOTIFICATION_METADATA]: notifications,
   [USERS_CURRENT_USER_PERMISSIONS]: permissions,
   [USERS_CURRENT_USER_PROFILE]: profile,
