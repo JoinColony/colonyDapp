@@ -51,12 +51,12 @@ const renderTooltipContent = ({
 
 const InfoPopover = ({ address, children, trigger = 'click' }: Props) => {
   const user = useSelector(userSelector, [address]);
-  if (!user) return null;
-  const {
-    record: {
-      profile: { displayName, username },
-    },
-  } = user;
+  let username;
+  let displayName;
+  if (user && user.record && user.record.profile) {
+    username = user.record.profile.username;
+    displayName = user.record.profile.displayName;
+  }
   return (
     <Tooltip
       content={renderTooltipContent({
