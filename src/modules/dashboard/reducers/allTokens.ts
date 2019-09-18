@@ -1,29 +1,11 @@
-import { Map as ImmutableMap, fromJS } from 'immutable';
-
 import { ReducerType, ActionTypes } from '~redux/index';
 import { TokenRecord, FetchableData, Token } from '~immutable/index';
 import { ZERO_ADDRESS } from '~utils/web3/constants';
 import { withFetchableDataMap } from '~utils/reducers';
 
-import { AllTokensMap } from '../state/index';
+import { AllTokensMap, AllTokensInitialState } from '../state/index';
 
-const INITIAL_STATE: AllTokensMap = ImmutableMap({
-  [ZERO_ADDRESS]: FetchableData<TokenRecord>({
-    record: Token(
-      fromJS({
-        address: ZERO_ADDRESS,
-        isVerified: true,
-        name: 'Ether',
-        symbol: 'ETH',
-      }),
-    ),
-  }),
-});
-
-const tokensReducer: ReducerType<AllTokensMap> = (
-  state = INITIAL_STATE,
-  action,
-) => {
+const tokensReducer: ReducerType<AllTokensMap> = (state, action) => {
   switch (action.type) {
     case ActionTypes.TOKEN_INFO_FETCH_SUCCESS: {
       const {
@@ -63,5 +45,5 @@ const tokensReducer: ReducerType<AllTokensMap> = (
 
 export default withFetchableDataMap<AllTokensMap, TokenRecord>(
   ActionTypes.TOKEN_INFO_FETCH,
-  INITIAL_STATE,
+  AllTokensInitialState,
 )(tokensReducer);
