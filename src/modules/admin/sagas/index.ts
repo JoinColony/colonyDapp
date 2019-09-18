@@ -11,6 +11,7 @@ import { ContractContexts } from '~types/index';
 // import { Context, getContext } from '~context/index';
 // import { decorateLog } from '~utils/web3/eventLogs/events';
 // import { normalizeTransactionLog } from '~data/normalizers';
+import { COLONY_TOTAL_BALANCE_DOMAIN_ID } from '../constants';
 import { getColony } from '../../dashboard/data/queries';
 import {
   getColonyTransactions,
@@ -228,7 +229,11 @@ function* colonyMintTokens({
       yield all([
         put<AllActions>({
           type: ActionTypes.COLONY_TOKEN_BALANCE_FETCH,
-          payload: { colonyAddress, domainId: 0, tokenAddress },
+          payload: {
+            colonyAddress,
+            domainId: COLONY_TOTAL_BALANCE_DOMAIN_ID,
+            tokenAddress,
+          },
         }),
         put<AllActions>({
           type: ActionTypes.COLONY_TOKEN_BALANCE_FETCH,

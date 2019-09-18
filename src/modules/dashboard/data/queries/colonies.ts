@@ -32,6 +32,7 @@ import {
 import { getEvents } from '~utils/web3/eventLogs';
 import { ZERO_ADDRESS } from '~utils/web3/constants';
 import { colonyReducer, colonyTasksReducer } from '../reducers';
+import { COLONY_TOTAL_BALANCE_DOMAIN_ID } from '../../../admin/constants';
 
 interface ColonyStoreMetadata {
   colonyAddress: Address;
@@ -490,7 +491,7 @@ export const getColonyTokenBalance: Query<
     const {
       balance: rewardsPotTotal,
     } = await colonyClient.getFundingPotBalance.call({ potId, token });
-    if (domainId === 0) {
+    if (domainId === COLONY_TOTAL_BALANCE_DOMAIN_ID) {
       const {
         total: nonRewardsPotsTotal,
       } = await colonyClient.getNonRewardPotsTotal.call({ token });

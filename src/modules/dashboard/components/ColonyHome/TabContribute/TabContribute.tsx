@@ -5,6 +5,7 @@ import {
   ColonyTokenReferenceType,
   UserPermissionsType,
 } from '~immutable/index';
+import { COLONY_TOTAL_BALANCE_DOMAIN_ID } from '../../../../admin/constants';
 import { isInRecoveryMode } from '../../../checks';
 import {
   canAdminister,
@@ -34,13 +35,13 @@ const TabContribute = ({
   const isColonyTokenBalanceZero =
     nativeTokenRef &&
     nativeTokenRef.balances &&
-    nativeTokenRef.balances[0] &&
-    nativeTokenRef.balances[0].isZero();
+    nativeTokenRef.balances[COLONY_TOTAL_BALANCE_DOMAIN_ID] &&
+    nativeTokenRef.balances[COLONY_TOTAL_BALANCE_DOMAIN_ID].isZero();
   const isEthBalanceZero =
     ethTokenRef &&
     ethTokenRef.balances &&
-    ethTokenRef.balances[0] &&
-    ethTokenRef.balances[0].isZero();
+    ethTokenRef.balances[COLONY_TOTAL_BALANCE_DOMAIN_ID] &&
+    ethTokenRef.balances[COLONY_TOTAL_BALANCE_DOMAIN_ID].isZero();
 
   const canMintTokens = !!(
     nativeTokenRef &&
