@@ -129,14 +129,14 @@ const Assignment = ({
         </div>
         {showFunding && (
           <div className={styles.fundingContainer}>
-            {reputation && fundingWithNativeToken && (
+            {reputation && fundingWithNativeToken ? (
               <span className={styles.reputation}>
                 <FormattedMessage
                   {...MSG.reputation}
                   values={{ reputation: reputation.toString() }}
                 />
               </span>
-            )}
+            ) : null}
             {nativeToken && payouts && payouts.length > 0 ? (
               <PayoutsList
                 maxLines={2}
