@@ -1,15 +1,15 @@
-import { Map as ImmutableMapType, fromJS } from 'immutable';
+import { Map as ImmutableMap, fromJS } from 'immutable';
 
 import { ActionTypeString, AllActions } from '~redux/types/actions';
 import { FetchableData, FetchableDataType } from '../../immutable';
 import { getActionTypes } from './utils';
 
-export type DataReducer<S extends ImmutableMapType<any, any>> = (
+export type DataReducer<S extends ImmutableMap<any, any>> = (
   state: S,
   action: any,
 ) => S;
 
-const getNextState = <S extends ImmutableMapType<any, any>, V extends any>(
+const getNextState = <S extends ImmutableMap<any, any>, V extends any>(
   state: S,
   key: any,
   payload: Partial<FetchableDataType<V>>,
@@ -22,7 +22,7 @@ const getNextState = <S extends ImmutableMapType<any, any>, V extends any>(
     : state.set(key, data);
 };
 
-const handleFetch = <S extends ImmutableMapType<any, any>, V extends any>(
+const handleFetch = <S extends ImmutableMap<any, any>, V extends any>(
   state: S,
   action: any,
 ) => {
@@ -32,7 +32,7 @@ const handleFetch = <S extends ImmutableMapType<any, any>, V extends any>(
   return getNextState<S, V>(state, key, { isFetching: true });
 };
 
-const handleSuccess = <S extends ImmutableMapType<any, any>, V extends any>(
+const handleSuccess = <S extends ImmutableMap<any, any>, V extends any>(
   state: S,
   action: any,
 ) => {
@@ -46,7 +46,7 @@ const handleSuccess = <S extends ImmutableMapType<any, any>, V extends any>(
   });
 };
 
-const handleError = <S extends ImmutableMapType<any, any>, V extends any>(
+const handleError = <S extends ImmutableMap<any, any>, V extends any>(
   state: S,
   { meta: { key }, payload: error }: any,
 ) =>
@@ -77,14 +77,11 @@ const handleError = <S extends ImmutableMapType<any, any>, V extends any>(
  * -----------------------------------------------------------------------------
  * Generics
  * -----------------------------------------------------------------------------
- * {S} The state this reducer handles, e.g. `ImmutableMapType<ENSName, FetchableData<ColonyRecord>>`
+ * {S} The state this reducer handles, e.g. `ImmutableMap<ENSName, FetchableData<ColonyRecord>>`
  *
  * {V} The value wrapped in the data record, e.g. `ColonyRecord` or `ListType<TransationRecord>`
  */
-const withFetchableDataMap = <
-  S extends ImmutableMapType<any, any>,
-  V extends any
->(
+const withFetchableDataMap = <S extends ImmutableMap<any, any>, V extends any>(
   actionTypes: ActionTypeString | Set<ActionTypeString>,
   initialState: S,
 ) =>

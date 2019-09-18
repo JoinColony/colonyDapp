@@ -1,4 +1,4 @@
-import { Collection, Map as ImmutableMapType } from 'immutable';
+import { Collection, Map as ImmutableMap } from 'immutable';
 import { Selector } from 'reselect';
 import { useEffect, useCallback, useMemo, useRef } from 'react';
 import { useDispatch, useMappedState } from 'redux-react-hook';
@@ -47,7 +47,7 @@ type DataMapFetcher<T> = {
   select: (
     rootState: RootStateRecord,
     keys: string[],
-  ) => ImmutableMapType<string, FetchableDataRecord<T>>;
+  ) => ImmutableMap<string, FetchableDataRecord<T>>;
   fetch: (key: any) => Action<any>;
   ttl?: number;
 };
@@ -56,7 +56,7 @@ type DataTupleFetcher<T> = {
   select: (
     rootState: RootStateRecord,
     args: [any, any][],
-  ) => ImmutableMapType<string, FetchableDataRecord<T>>;
+  ) => ImmutableMap<string, FetchableDataRecord<T>>;
   fetch: (arg0: [any, any]) => Action<any>;
   ttl?: number;
 };
@@ -65,7 +65,7 @@ type DataTupleSubscriber<T> = {
   select: (
     rootState: RootStateRecord,
     keys: [any, any][],
-  ) => ImmutableMapType<string, FetchableDataRecord<T>>;
+  ) => ImmutableMap<string, FetchableDataRecord<T>>;
   start: (...subArgs: any[]) => Action<any>;
   stop: (...subArgs: any[]) => Action<any>;
 };
@@ -235,7 +235,7 @@ export const useDataMapFetcher = <T>(
   const memoizedKeys = useMemoWithFlatArray(() => keys, keys);
 
   const dispatch = useDispatch();
-  const allData: ImmutableMapType<
+  const allData: ImmutableMap<
     string,
     FetchableDataRecord<any>
   > = useMappedState(
@@ -343,7 +343,7 @@ export const useDataTupleSubscriber = <T>(
 ): DataObject<T>[] => {
   const memoizedKeys = useMemoWithTupleArray(() => keys, keys);
   const dispatch = useDispatch();
-  const allData: ImmutableMapType<
+  const allData: ImmutableMap<
     string,
     FetchableDataRecord<any>
   > = useMappedState(
@@ -410,7 +410,7 @@ export const useDataTupleFetcher = <T>(
    */
   const memoizedKeys = useMemoWithTupleArray(() => keys, keys);
   const dispatch = useDispatch();
-  const allData: ImmutableMapType<
+  const allData: ImmutableMap<
     string,
     FetchableDataRecord<any>
   > = useMappedState(
