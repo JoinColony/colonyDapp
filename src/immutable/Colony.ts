@@ -36,8 +36,8 @@ type ColonyRecordProps = Shared & {
 
 const defaultValues: DefaultValues<ColonyRecordProps> = {
   avatarHash: undefined,
-  canMintNativeToken: false,
-  canUnlockNativeToken: false,
+  canMintNativeToken: undefined,
+  canUnlockNativeToken: undefined,
   colonyAddress: undefined,
   colonyName: undefined,
   description: undefined,
