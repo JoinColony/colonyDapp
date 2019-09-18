@@ -107,7 +107,6 @@ const Task = ({
   const [isDiscardConfirmDisplayed, setDiscardConfirmDisplay] = useState(false);
 
   const currentUser = useSelector(currentUserSelector);
-  const { walletAddress } = currentUser.profile;
 
   const { data: colonyAddress } = useDataFetcher<Address>(
     colonyAddressFetcher,
@@ -157,12 +156,16 @@ const Task = ({
     draftId,
   ]);
 
+  const walletAddress =
+    currentUser && currentUser.profile && currentUser.profile.walletAddress;
+
   if (
     isFetchingTask ||
     isFetchingPermissions ||
     !task ||
     !colonyAddress ||
-    !permissions
+    !permissions ||
+    !walletAddress
   ) {
     return <LoadingTemplate loadingText={MSG.loadingText} />;
   }
