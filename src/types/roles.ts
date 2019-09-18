@@ -1,5 +1,11 @@
-export type UserRolesObject = { [role: string]: boolean };
+import { COLONY_ROLES } from '@colony/colony-js-client';
 
-export type DomainRolesObject = { [userAddress: string]: UserRolesObject };
+export type UserRolesObject = Record<keyof COLONY_ROLES, boolean>;
 
-export type ColonyRolesObject = { [domainId: number]: DomainRolesObject };
+export interface DomainRolesObject {
+  [userAddress: string]: UserRolesObject;
+}
+
+export interface ColonyRolesObject {
+  [domainId: number]: DomainRolesObject;
+}
