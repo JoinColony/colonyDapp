@@ -63,20 +63,20 @@ describe('Transaction selectors', () => {
         transactions: {
           list: ImmutableMap({
             // @ts-ignore
-            tx1: TransactionRecord(tx1),
-            // @ts-ignore
-            tx2: TransactionRecord(tx2),
+            tx4: TransactionRecord(tx4),
             // @ts-ignore
             tx3: TransactionRecord(tx3),
             // @ts-ignore
-            tx4: TransactionRecord(tx4),
+            tx2: TransactionRecord(tx2),
+            // @ts-ignore
+            tx1: TransactionRecord(tx1),
           }),
         },
       },
     });
     const grouped = groupedTransactions(state);
     const result = grouped.toList().toJS();
-    expect(result[0][0].createdAt).toEqual(0);
+    expect(result[0][0].createdAt).toEqual(10);
     expect(result[1][0].group).toEqual({
       key: 'taskLifecycle',
       id: 'taskLifecycle-1',

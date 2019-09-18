@@ -51,18 +51,26 @@ export const transactionByHash = (state: RootStateRecord, hash: string) =>
 export const groupedTransactions = createSelector(
   allTransactions,
   transactions =>
-    transactions // Create groups of transations which have 'em
-      .groupBy(tx => tx.group && tx.group.id) // Convert groups to lists and sort by no in group
-      .map(txGroup => txGroup.toList().sortBy(tx => tx.group && tx.group.index)) // Merge the ungrouped transactions into the ordered map. It's important that all iterators here have the same type (OrderedMap)
-      // For proper typing we create single value arrays for all of the single transactions
-      // We're using key.toString() here to not confuse flow. The output of allTransactions always has a string id in group
+    transactions
+      // Create groups of transations which have 'em
+      .groupBy(tx => tx.group && tx.group.id)
+      // Convert groups to lists and sort by no in group
+      .map(txGroup => txGroup.toList().sortBy(tx => tx.group && tx.group.index))
+      // Merge the ungrouped transactions into the ordered map.
+      // It's important that all iterators here have the same type (OrderedMap)
+      // For proper typing we create single value arrays for all of the
+      // single transactions.
+      // The output of allTransactions always has a string id in group.
       .flatMap((value, key) =>
-        !key
-          ? value.groupBy(tx => tx.id)
-          : ImmutableMap({ [key.toString()]: value }),
+        !key ? value.groupBy(tx => tx.id) : ImmutableMap({ [key]: value }),
       )
-      .toList() // Finally sort by the createdAt field in the first transaction of the group
-      .sortBy(group => group.first().createdAt),
+      .toList()
+      // Finally sort by the createdAt field in the first transaction of the group
+      .sortBy(
+        group => group.first().createdAt,
+        // Descending createdAt order (most recent groups first)
+        (createdAtA, createdAtB) => createdAtB - createdAtA,
+      ),
 );
 
 export const pendingTransactions = createSelector(
@@ -98,5 +106,9 @@ export const groupedTransactionsAndMessages = createSelector(
        * sorted individually, so without this, the list will just show transactions
        * at the top and messages at the bottom
        */
-      .sortBy(group => group.first().createdAt),
+      .sortBy(
+        group => group.first().createdAt,
+        // Descending createdAt order (most recent groups first)
+        (createdAtA, createdAtB) => createdAtB - createdAtA,
+      ),
 );
