@@ -107,12 +107,12 @@ interface InteractiveUsernameProps {
 
 const InteractiveUsername = ({ userAddress }: InteractiveUsernameProps) => {
   const user = useSelector(userSelector, [userAddress]);
-  if (!user) return null;
-  const {
-    record: {
-      profile: { displayName, username },
-    },
-  } = user;
+  let username;
+  let displayName;
+  if (user && user.record && user.record.profile) {
+    username = user.record.profile.username;
+    displayName = user.record.profile.displayName;
+  }
   return (
     <InfoPopover address={userAddress}>
       <span
