@@ -8,7 +8,7 @@ import {
 
 const MSG = defineMessages({
   somethingWentWrong: {
-    id: 'ErrorBoundry.somethingWentWrong',
+    id: 'ErrorBoundary.somethingWentWrong',
     defaultMessage: 'Something went wrong while rendering',
   },
 });
@@ -35,8 +35,7 @@ interface State {
   hasError: boolean;
 }
 
-// This component has a typo (ErrorBoundary)
-class ErrorBoundry extends Component<Props, State> {
+class ErrorBoundary extends Component<Props, State> {
   static displayName = 'ErrorBoundry';
 
   state = {
@@ -75,4 +74,4 @@ class ErrorBoundry extends Component<Props, State> {
   }
 }
 
-export default injectIntl(ErrorBoundry);
+export default injectIntl(ErrorBoundary);

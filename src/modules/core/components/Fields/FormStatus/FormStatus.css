@@ -1,9 +1,9 @@
 .main {
-  padding-bottom: 20px;
+  padding: 20px 0;
 }
 
 .text {
-  font-size: var(--size-normal);
+  font-size: var(--size-tiny);
   font-weight: var(--weight-semi);
 }
 
