@@ -113,8 +113,7 @@ export const useSelector = (
   transform?: (obj: Collection<any, any>) => any,
 ) => {
   const mapState = useCallback(state => select(state, ...args), [args, select]);
-  // @ts-ignore
-  const data = useMappedState(mapState, [mapState]);
+  const data = useMappedState(mapState);
   const transformFn =
     typeof transform === 'function'
       ? transform
@@ -312,18 +311,16 @@ export const useDataSubscriber = <T>(
 
   useEffect(() => {
     if (shouldSubscribe) {
-      // @ts-ignore
-      dispatch(start(...subArgs), subArgs);
+      dispatch(start(...subArgs));
     }
     isFirstMount.current = false;
   }, [dispatch, shouldSubscribe, start, stop, subArgs]);
 
   useEffect(
     () => () => {
-      // @ts-ignore
-      dispatch(stop(...subArgs), subArgs);
-    }, // eslint-disable-next-line react-hooks/exhaustive-deps
-    [],
+      dispatch(stop(...subArgs));
+    },
+    [dispatch, stop, subArgs],
   );
 
   return {
@@ -374,8 +371,8 @@ export const useDataTupleSubscriber = <T>(
   useEffect(
     () => () => {
       keysToFetchFor.map(key => dispatch(stop(...key)));
-    }, // eslint-disable-next-line react-hooks/exhaustive-deps
-    [],
+    },
+    [dispatch, keysToFetchFor, stop],
   );
 
   return useMemo(
