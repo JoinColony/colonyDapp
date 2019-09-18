@@ -48,7 +48,7 @@ export type CurrentUserTokensType = FetchableDataRecord<
 >;
 
 interface CurrentUserProps {
-  [USERS_INBOX_ITEMS]: List<InboxItemRecord>;
+  [USERS_INBOX_ITEMS]: FetchableDataRecord<List<InboxItemRecord>>;
   [USERS_CURRENT_USER_NOTIFICATION_METADATA]: UserNotificationMetadataRecord;
   [USERS_CURRENT_USER_PERMISSIONS]: CurrentUserPermissionsType;
   [USERS_CURRENT_USER_PROFILE]: UserProfileRecord;
@@ -58,7 +58,9 @@ interface CurrentUserProps {
 }
 
 export class CurrentUserRecord extends Record<CurrentUserProps>({
-  [USERS_INBOX_ITEMS]: List(),
+  [USERS_INBOX_ITEMS]: FetchableData({
+    record: List(),
+  }),
   [USERS_CURRENT_USER_NOTIFICATION_METADATA]: UserNotificationMetadata(),
   [USERS_CURRENT_USER_PERMISSIONS]: ImmutableMap(),
   [USERS_CURRENT_USER_PROFILE]: UserProfile({

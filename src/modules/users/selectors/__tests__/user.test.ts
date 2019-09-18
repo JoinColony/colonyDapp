@@ -1,6 +1,6 @@
 import { List, fromJS } from 'immutable';
 import { InboxItem } from '~immutable/index';
-import { USERS_NAMESPACE as ns } from '../../constants';
+import { USERS_NAMESPACE as ns, USERS_INBOX_ITEMS } from '../../constants';
 
 import { inboxItemsSelector } from '../user';
 
@@ -39,7 +39,7 @@ describe('Transaction selectors', () => {
   const state = fromJS({
     [ns]: {
       currentUser: {
-        activities: List([
+        [USERS_INBOX_ITEMS]: List([
           InboxItem(fromJS(activity1)),
           InboxItem(fromJS(activity2)),
         ]),
