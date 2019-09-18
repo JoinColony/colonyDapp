@@ -12,7 +12,7 @@ import {
 import { AllColoniesRecord } from './AllColonies';
 import { AllDomainsMap } from './AllDomains';
 import { AllRolesMap } from './AllRoles';
-import { AllTokensMap } from './AllTokens';
+import { AllTokensMap, AllTokensInitialState } from './AllTokens';
 import {
   DASHBOARD_ALL_COLONIES,
   DASHBOARD_ALL_DOMAINS,
@@ -60,7 +60,7 @@ export class DashboardStateRecord extends Record<DashboardStateProps>({
   [DASHBOARD_ALL_DOMAINS]: ImmutableMap(),
   [DASHBOARD_ALL_ROLES]: ImmutableMap(),
   [DASHBOARD_TASK_METADATA]: ImmutableMap(),
-  [DASHBOARD_ALL_TOKENS]: ImmutableMap(),
+  [DASHBOARD_ALL_TOKENS]: AllTokensInitialState,
   [DASHBOARD_TASK_FEED_ITEMS]: ImmutableMap(),
   [DASHBOARD_TASKS]: ImmutableMap(),
 }) {}
