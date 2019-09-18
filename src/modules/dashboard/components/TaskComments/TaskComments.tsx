@@ -10,6 +10,7 @@ import { Address, ENTER } from '~types/index';
 import { ActionTypes } from '~redux/index';
 import withDialog from '~core/Dialog/withDialog';
 import { ActionForm, TextareaAutoresize } from '~core/Fields';
+import { OnSuccess } from '~core/Fields/Form/ActionForm';
 import Button from '~core/Button';
 import unfinishedProfileOpener from '~users/UnfinishedProfile';
 
@@ -86,6 +87,14 @@ const TaskComments = ({
 }: Props) => {
   const didClaimProfile = userDidClaimProfile(currentUser);
 
+  const onSuccess: OnSuccess = useCallback(
+    (result, { resetForm, setStatus }) => {
+      setStatus({});
+      resetForm({ comment: '' });
+    },
+    [],
+  );
+
   const transform = useCallback(
     mergePayload({ colonyAddress, author: walletAddress, draftId, taskTitle }),
     [colonyAddress, draftId],
@@ -122,6 +131,7 @@ const TaskComments = ({
         error={ActionTypes.TASK_COMMENT_ADD_ERROR}
         initialValues={{ comment: '' }}
         validationSchema={validationSchema}
+        onSuccess={onSuccess}
         transform={transform}
       >
         {({
