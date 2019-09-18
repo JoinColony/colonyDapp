@@ -133,7 +133,6 @@ const coloniesReducer: ReducerType<AllColoniesMap> = (
 };
 
 export default withFetchableDataMap<AllColoniesMap, ColonyRecord>(
-  // @ts-ignore
   new Set([ActionTypes.COLONY_FETCH, ActionTypes.COLONY_SUB_START]),
   ImmutableMap(),
 )(coloniesReducer);
