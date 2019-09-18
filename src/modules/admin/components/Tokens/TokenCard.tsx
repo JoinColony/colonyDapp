@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 
 import {
@@ -14,6 +14,7 @@ import { SpinnerLoader } from '~core/Preloaders';
 import CopyableAddress from '~core/CopyableAddress';
 import TokenIcon from '~dashboard/HookedTokenIcon';
 import { useDataFetcher } from '~utils/hooks';
+import { getTokenBalanceFromReference } from '~utils/tokens';
 
 import { tokenIsETH, tokenBalanceIsNotPositive } from '../../../core/checks';
 
@@ -21,9 +22,9 @@ import { tokenFetcher } from '../../../dashboard/fetchers';
 
 import styles from './TokenCard.css';
 
-interface Props {
-  domainId?: number;
-  token: ColonyTokenReferenceType | UserTokenReferenceType;
+interface Props<T> {
+  token: T;
+  domainId: T extends ColonyTokenReferenceType ? number : never;
 }
 
 const displayName = 'admin.Tokens.TokenCard';
@@ -35,24 +36,23 @@ const MSG = defineMessages({
   },
 });
 
-const TokenCard = ({
+const TokenCard = <
+  T extends ColonyTokenReferenceType | UserTokenReferenceType
+>({
   domainId,
   token: { address },
   token: tokenReference,
-}: Props) => {
+}: Props<T>) => {
   const { data: token, isFetching } = useDataFetcher<TokenType>(
     tokenFetcher,
     [address],
     [address],
   );
 
-  let balance;
-  if ('balances' in tokenReference && domainId) {
-    balance = tokenReference.balances[domainId];
-  }
-  if ('balance' in tokenReference) {
-    balance = tokenReference.balance;
-  }
+  const balance = useMemo(
+    () => getTokenBalanceFromReference(tokenReference, domainId),
+    [domainId, tokenReference],
+  );
 
   // The balance is fetched seperately to the rest of the token.
   if (!address || isFetching || balance === undefined) {
@@ -78,9 +78,10 @@ const TokenCard = ({
               <CopyableAddress>{address}</CopyableAddress>
             </>
           )}
-          {'isNative' in tokenReference && tokenReference.isNative && (
-            <span>*</span>
-          )}
+          {'isNative' in tokenReference &&
+            (tokenReference as ColonyTokenReferenceType).isNative && (
+              <span>*</span>
+            )}
         </div>
       </div>
       <div

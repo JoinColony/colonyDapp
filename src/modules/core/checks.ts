@@ -1,5 +1,3 @@
-import BigNumber from 'bn.js';
-
 import {
   ColonyTokenReferenceType,
   TokenType,
@@ -7,6 +5,7 @@ import {
   UserTokenReferenceType,
 } from '~immutable/index';
 
+import { getTokenBalanceFromReference } from '~utils/tokens';
 import { ZERO_ADDRESS } from '~utils/web3/constants';
 
 /*
@@ -24,13 +23,7 @@ export const tokenBalanceIsPositive = (
   tokenReference: ColonyTokenReferenceType | UserTokenReferenceType,
   domainId: number,
 ) => {
-  let balance = new BigNumber(0);
-  if ('balances' in tokenReference) {
-    balance = tokenReference.balances[domainId];
-  }
-  if ('balance' in tokenReference) {
-    balance = tokenReference.balance;
-  }
+  const balance = getTokenBalanceFromReference(tokenReference, domainId);
   return balance.gten(0);
 };
 
@@ -38,13 +31,7 @@ export const tokenBalanceIsNotPositive = (
   tokenReference: ColonyTokenReferenceType | UserTokenReferenceType,
   domainId: number,
 ) => {
-  let balance = new BigNumber(0);
-  if ('balances' in tokenReference) {
-    balance = tokenReference.balances[domainId];
-  }
-  if ('balance' in tokenReference) {
-    balance = tokenReference.balance;
-  }
+  const balance = getTokenBalanceFromReference(tokenReference, domainId);
   return balance.lten(0);
 };
 
