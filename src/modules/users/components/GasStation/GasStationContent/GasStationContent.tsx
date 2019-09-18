@@ -44,7 +44,6 @@ interface Props {
   appearance: Appearance;
   close?: () => void;
   transactionAndMessageGroups: TransactionOrMessageGroups;
-  currentUserGetBalance: () => void;
 }
 
 type State = {
@@ -66,11 +65,6 @@ class GasStationContent extends Component<Props, State> {
   state = {
     selectedGroupIdx: -1,
   };
-
-  componentDidMount() {
-    const { currentUserGetBalance } = this.props;
-    currentUserGetBalance();
-  }
 
   unselectTransactionGroup = () => {
     this.setState({ selectedGroupIdx: -1 });
