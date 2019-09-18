@@ -35,6 +35,7 @@ import {
   subscribeToColony,
   subscribeToColonyTasks,
 } from '../data/queries';
+import { COLONY_TOTAL_BALANCE_DOMAIN_ID } from '../../admin/constants';
 import { createTransaction, getTxChannel } from '../../core/sagas';
 import { ipfsUpload } from '../../core/sagas/ipfs';
 import { networkVersionSelector } from '../../core/selectors';
@@ -381,8 +382,17 @@ function* colonyTokenBalancesFetch({
     );
 
     yield all([
-      put(fetchColonyTokenBalance(colonyAddress, tokenAddress, 0)),
+      // fetch balances for rewards pots and non-rewards pots
+      put(
+        fetchColonyTokenBalance(
+          colonyAddress,
+          tokenAddress,
+          COLONY_TOTAL_BALANCE_DOMAIN_ID,
+        ),
+      ),
+      // fetch balances for root domain
       put(fetchColonyTokenBalance(colonyAddress, tokenAddress, 1)),
+      // fetch balances for other domains
       ...domains.map(({ id: domainId }) =>
         put(fetchColonyTokenBalance(colonyAddress, tokenAddress, domainId)),
       ),
