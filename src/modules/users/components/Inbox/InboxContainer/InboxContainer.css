@@ -1,3 +1,5 @@
+@value tableHeight: 347px;
+
 .inboxContainerFull {
   flex: 0 1;
   height: 525px;
@@ -8,7 +10,7 @@
 }
 
 .inboxContainerPopover table {
-  height: 347px;
+  height: tableHeight;
 }
 
 .contentContainerFull {
@@ -45,6 +47,18 @@
   justify-content: center;
   align-items: center;
   height: 46px;
+}
+
+.emptyPopoverPlaceholder {
+  padding: 15px;
+  height: tableHeight;
+  border-color: var(--grey-blue-1);
+  background-color: white;
+  box-shadow: 0px 2px 11px var(--drop-shadow);
+}
+
+.emptyPopoverPlaceholder .emptyText {
+  font-size: var(--size-medium);
 }
 
 .loadingText {
