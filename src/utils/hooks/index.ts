@@ -205,10 +205,10 @@ export const useDataFetcher = <T>(
   useEffect(() => {
     isFirstMount.current = false;
     if (shouldFetch) {
-      // @ts-ignore
-      dispatch(fetch(...fetchArgs), fetchArgs);
+      dispatch(fetch(...fetchArgs));
     }
-  }, [dispatch, fetch, fetchArgs, shouldFetch]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [dispatch, fetch, shouldFetch, ...fetchArgs]);
 
   return {
     data: transformFetchedData(data),
@@ -314,13 +314,15 @@ export const useDataSubscriber = <T>(
       dispatch(start(...subArgs));
     }
     isFirstMount.current = false;
-  }, [dispatch, shouldSubscribe, start, stop, subArgs]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [dispatch, shouldSubscribe, start, stop, ...subArgs]);
 
   useEffect(
     () => () => {
       dispatch(stop(...subArgs));
     },
-    [dispatch, stop, subArgs],
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [dispatch, stop, ...subArgs],
   );
 
   return {
