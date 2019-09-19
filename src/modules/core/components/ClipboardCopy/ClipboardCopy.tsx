@@ -7,7 +7,7 @@ import Button from '../Button';
 interface Props {
   text?: MessageDescriptor;
   value: string;
-};
+}
 
 const MSG = defineMessages({
   copyLabel: {
@@ -21,17 +21,14 @@ const MSG = defineMessages({
 
 const displayName = 'ClipboardCopy';
 
-const ClipboardCopy = ({
-  value,
-  text = MSG.copyLabel,
-}: Props) => {
+const ClipboardCopy = ({ value, text = MSG.copyLabel }: Props) => {
   const [valueIsCopied, setValueIsCopied] = useState(false);
   const handleClipboardCopy = useCallback(() => {
     setValueIsCopied(true);
     copyToClipboard(value);
     const timer = setTimeout(() => setValueIsCopied(false), 2000);
     return () => clearTimeout(timer);
-  }, [value, copyToClipboard, setValueIsCopied]);
+  }, [value, setValueIsCopied]);
   return (
     <Button
       appearance={{ size: 'small', theme: 'blue' }}

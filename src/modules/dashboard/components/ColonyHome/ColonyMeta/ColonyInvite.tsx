@@ -35,10 +35,7 @@ const ColonyInvite = ({ colonyName }: Props) => {
       <FormattedMessage {...MSG.inviteLabel} tagName="p" />
       <p className={styles.linkDisplay}>
         <span>{colonyLink}</span>
-        <ClipboardCopy
-          text={MSG.copyLabel}
-          value={`https://${colonyLink}`}
-        />
+        <ClipboardCopy text={MSG.copyLabel} value={`https://${colonyLink}`} />
       </p>
     </section>
   );

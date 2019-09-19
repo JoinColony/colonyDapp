@@ -32,23 +32,20 @@ const CopyableAddress = ({
   full,
   hideAddress = false,
 }: Props) => {
-  const getAddress = useCallback(
-    () => {
-      const addressElements = splitAddress(address);
-      if (full && !(addressElements instanceof Error)) {
-        return (
-          <div>
-            <span className={styles.boldAddress}>{addressElements.header}</span>
-            <span className={styles.boldAddress}>{addressElements.start}</span>
-            <span className={styles.address}>{addressElements.middle}</span>
-            <span className={styles.boldAddress}>{addressElements.end}</span>
-          </div>
-        );
-      }
-      return <MaskedAddress address={address} />;
-    },
-    [address, splitAddress, full],
-  );
+  const getAddress = useCallback(() => {
+    const addressElements = splitAddress(address);
+    if (full && !(addressElements instanceof Error)) {
+      return (
+        <div>
+          <span className={styles.boldAddress}>{addressElements.header}</span>
+          <span className={styles.boldAddress}>{addressElements.start}</span>
+          <span className={styles.address}>{addressElements.middle}</span>
+          <span className={styles.boldAddress}>{addressElements.end}</span>
+        </div>
+      );
+    }
+    return <MaskedAddress address={address} />;
+  }, [address, full]);
   return (
     <div className={getMainClasses(appearance, styles)}>
       <div className={styles.addressContainer}>
