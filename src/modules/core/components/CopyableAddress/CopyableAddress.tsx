@@ -1,5 +1,4 @@
-import React, { Component, SyntheticEvent } from 'react';
-import copy from 'copy-to-clipboard';
+import React, { useCallback } from 'react';
 import { splitAddress } from '~utils/strings';
 
 import { Address } from '~types/index';
@@ -17,51 +16,51 @@ interface Appearance {
 interface Props {
   /** Appearance object */
   appearance?: Appearance;
-
   /** Address to display */
   children: Address;
-
   /** Indicates that the full address should be shown instead of an abbreviated one */
   full?: boolean;
-
   /** In some occasions we want to show the button to copy only */
   hideAddress?: boolean;
 }
 
-class CopyableAddress extends Component<Props> {
-  static defaultProps = {
-    hideAddress: false,
-  };
+const displyName = 'CopyableAddress';
 
-  getAddress = () => {
-    const { children: address, full } = this.props;
-    const addressElements = splitAddress(address);
-    if (full && !(addressElements instanceof Error)) {
-      return (
-        <div>
-          <span className={styles.boldAddress}>{addressElements.header}</span>
-          <span className={styles.boldAddress}>{addressElements.start}</span>
-          <span className={styles.address}>{addressElements.middle}</span>
-          <span className={styles.boldAddress}>{addressElements.end}</span>
-        </div>
-      );
-    }
-    return <MaskedAddress address={address} />;
-  };
-
-  render() {
-    const { appearance, hideAddress, children: address } = this.props;
-    return (
-      <div className={getMainClasses(appearance, styles)}>
-        <div className={styles.addressContainer}>
-          {!hideAddress && this.getAddress()}
-        </div>
-        <span className={styles.copyButton}>
-          <ClipboardCopy value={address} />
-        </span>
+const CopyableAddress = ({
+  appearance,
+  children: address,
+  full,
+  hideAddress = false,
+}: Props) => {
+  const getAddress = useCallback(
+    () => {
+      const addressElements = splitAddress(address);
+      if (full && !(addressElements instanceof Error)) {
+        return (
+          <div>
+            <span className={styles.boldAddress}>{addressElements.header}</span>
+            <span className={styles.boldAddress}>{addressElements.start}</span>
+            <span className={styles.address}>{addressElements.middle}</span>
+            <span className={styles.boldAddress}>{addressElements.end}</span>
+          </div>
+        );
+      }
+      return <MaskedAddress address={address} />;
+    },
+    [address, splitAddress, full],
+  );
+  return (
+    <div className={getMainClasses(appearance, styles)}>
+      <div className={styles.addressContainer}>
+        {!hideAddress && getAddress()}
       </div>
-    );
-  }
-}
+      <span className={styles.copyButton}>
+        <ClipboardCopy value={address} />
+      </span>
+    </div>
+  );
+};
+
+CopyableAddress.displayName = displyName;
 
 export default CopyableAddress;
