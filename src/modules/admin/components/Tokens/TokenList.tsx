@@ -15,17 +15,38 @@ interface Appearance {
   numCols: ValidCols;
 }
 
-interface Props {
+interface Props<T> {
   appearance?: Appearance;
   domainId?: number;
-  tokens: Array<ColonyTokenReferenceType | UserTokenReferenceType>;
+  tokens: T[];
 }
 
-const TokenList = ({ domainId, tokens, appearance }: Props) => (
+const TokenList = <
+  T extends ColonyTokenReferenceType | UserTokenReferenceType
+>({
+  domainId = 1,
+  tokens,
+  appearance,
+}: Props<T>) => (
   <div className={styles.tokenCardContainer}>
     <CardList appearance={appearance}>
       {tokens.map(token => (
-        <TokenCard domainId={domainId} key={token.address} token={token} />
+        <>
+          {'balances' in token && (
+            <TokenCard
+              domainId={domainId}
+              key={token.address}
+              token={token as ColonyTokenReferenceType}
+            />
+          )}
+          {'balance' in token && (
+            <TokenCard
+              domainId={domainId}
+              key={token.address}
+              token={token as UserTokenReferenceType}
+            />
+          )}
+        </>
       ))}
     </CardList>
   </div>

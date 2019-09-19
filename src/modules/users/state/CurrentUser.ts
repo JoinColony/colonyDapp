@@ -10,13 +10,13 @@ import {
   ContractTransactionRecord,
   FetchableData,
   FetchableDataRecord,
-  TokenReferenceRecord,
   InboxItemRecord,
   UserNotificationMetadata,
   UserNotificationMetadataRecord,
   UserPermissionsRecord,
   UserProfile,
   UserProfileRecord,
+  UserTokenReferenceRecord,
   TaskDraftId,
 } from '~immutable/index';
 
@@ -44,7 +44,7 @@ export type CurrentUserColoniesType = ImmutableSet<Address>;
 export type CurrentUserTasksType = ImmutableSet<[Address, TaskDraftId]>;
 
 export type CurrentUserTokensType = FetchableDataRecord<
-  List<TokenReferenceRecord>
+  List<UserTokenReferenceRecord>
 >;
 
 interface CurrentUserProps {

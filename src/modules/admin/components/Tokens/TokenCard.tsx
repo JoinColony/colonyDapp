@@ -50,7 +50,7 @@ const TokenCard = <
   );
 
   const balance = useMemo(
-    () => getTokenBalanceFromReference(tokenReference, domainId),
+    () => getTokenBalanceFromReference<T>(tokenReference, domainId),
     [domainId, tokenReference],
   );
 
