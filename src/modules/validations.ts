@@ -57,7 +57,7 @@ function lessThanPot(
     test(value) {
       const tokenAddress = this.resolve(yup.ref('token'));
       if (!tokenAddress) return true;
-      const { balances = undefined } =
+      const { balances = {} } =
         tokenReferences.find(
           ({ address: refAddress }) => refAddress === tokenAddress,
         ) || {};
