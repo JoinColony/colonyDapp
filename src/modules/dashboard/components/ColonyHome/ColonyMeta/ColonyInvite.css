@@ -1,0 +1,16 @@
+.main {
+  display: block;
+  padding: 25px 0;
+  border-top: 1px solid var(--temp-grey-5);
+  font-size: var(--size-small);
+  font-weight: var(--weight-medium);
+  color: var(--grey-dark);
+}
+
+.linkDisplay {
+  color: var(--grey-4);
+}
+
+.linkDisplay span {
+  margin-right: 4px;
+}
