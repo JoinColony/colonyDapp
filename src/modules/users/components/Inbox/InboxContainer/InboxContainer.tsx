@@ -42,6 +42,11 @@ const MSG = defineMessages({
     id: 'users.Inbox.InboxContainer.seeAll',
     defaultMessage: 'See All',
   },
+  noItems: {
+    id: 'users.Inbox.InboxContainer.noItems',
+    /* eslint-disable-next-line max-len */
+    defaultMessage: 'It looks like you don’t have any notifications. Don’t worry, we’ll let you know when anything important happens.',
+  },
 });
 
 const allReadActions = {
@@ -51,8 +56,13 @@ const allReadActions = {
 };
 
 const InboxContainer = ({ full, close }: Props) => {
-  const { record: inboxItems } = useSelector(inboxItemsSelector);
+  const { record: inboxItems, isFetching } = useSelector(inboxItemsSelector);
   const markAllRead = useAsyncFunction(allReadActions);
+  const hasInboxItems =
+    !!(inboxItems && inboxItems.length && inboxItems.length > 0);
+  // console.log(hasInboxItems);
+  // console.log(isFetching);
+  // console.log(inboxItems);
   return (
     <div
       className={
@@ -77,12 +87,7 @@ const InboxContainer = ({ full, close }: Props) => {
           full ? styles.inboxContainerFull : styles.inboxContainerPopover
         }
       >
-        {!inboxItems || (inboxItems && inboxItems.length === 0) ? (
-          <div className={styles.loadingText}>
-            <FormattedMessage {...MSG.loadingInbox} />
-            <DotsLoader />
-          </div>
-        ) : (
+        {hasInboxItems && !isFetching && (
           <Table scrollable appearance={{ separators: 'borders' }}>
             <TableBody>
               {inboxItems.map(activity => (
@@ -90,6 +95,17 @@ const InboxContainer = ({ full, close }: Props) => {
               ))}
             </TableBody>
           </Table>
+        )}
+        {!hasInboxItems && isFetching && (
+          <div className={styles.loadingText}>
+            <FormattedMessage {...MSG.loadingInbox} />
+            <DotsLoader />
+          </div>
+        )}
+        {!hasInboxItems && !isFetching && (
+          <div className={styles.emptyText}>
+            <FormattedMessage {...MSG.noItems} />
+          </div>
         )}
         {!full && (
           <div className={styles.inboxFooter}>
