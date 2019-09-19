@@ -6,3 +6,4 @@ export const inboxHeadingFull: string;
 export const inboxHeadingPopover: string;
 export const inboxFooter: string;
 export const loadingText: string;
+export const emptyText: string;

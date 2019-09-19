@@ -55,3 +55,9 @@
   font-weight: var(--weight-semi);
   line-height: 1em;
 }
+
+.emptyText {
+  max-width: 700px;
+  font-size: var(--size-medium-l);
+  font-weight: var(--weight-normal);
+}
