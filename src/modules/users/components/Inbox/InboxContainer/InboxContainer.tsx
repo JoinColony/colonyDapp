@@ -60,9 +60,6 @@ const InboxContainer = ({ full, close }: Props) => {
   const markAllRead = useAsyncFunction(allReadActions);
   const hasInboxItems =
     !!(inboxItems && inboxItems.length && inboxItems.length > 0);
-  // console.log(hasInboxItems);
-  // console.log(isFetching);
-  // console.log(inboxItems);
   return (
     <div
       className={
