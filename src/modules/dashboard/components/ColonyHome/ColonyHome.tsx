@@ -42,7 +42,6 @@ import {
   canRecoverColony,
 } from '../../checks';
 
-import ColonyDomains from './ColonyDomains';
 import ColonyMeta from './ColonyMeta';
 import TabContribute from './TabContribute';
 import styles from './ColonyHome.css';
@@ -268,7 +267,7 @@ const ColonyHome = ({
     .sort((a, b) => a.id - b.id)
     .reduce(
       (accumulator, element) => {
-        if (element.id <= filteredDomainId && element.name) {
+        if (element && element.id <= filteredDomainId && element.name) {
           const message = {};
           message[element.name] = {
             id: element.name,
@@ -289,12 +288,6 @@ const ColonyHome = ({
           <ColonyMeta
             colony={colony}
             canAdminister={!isInRecoveryMode && canAdminister(permissions)}
-          />
-        </div>
-        <div className={styles.domainContainer}>
-          <ColonyDomains
-            noTitle
-            colonyAddress={colonyAddress}
             filteredDomainId={filteredDomainId}
             setFilteredDomainId={setFilteredDomainId}
           />

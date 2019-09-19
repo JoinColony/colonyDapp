@@ -19,16 +19,6 @@
   border-bottom: 1px solid var(--temp-grey-5);
 }
 
-.dynamicSection {
-  margin-top: 25px;
-  margin-left: 52px;
-}
-
-.link {
-  font-weight: var(--weight-normal);
-  color: var(--text);
-}
-
 .editColony {
   display: inline-block;
 
@@ -41,16 +31,6 @@
   vertical-align: -webkit-baseline-middle;
 }
 
-.avatarWrapper {
-  display: inline-block;
-  margin: 0 9px 0 0;
-}
-
-.userAvatar {
-  margin-top: 9px;
-  cursor: pointer;
-}
-
 .colonyAvatarAndName {
   display: flex;
   position: relative;
@@ -60,11 +40,6 @@
   margin-top: 3px;
   position: absolute;
   left: 49px;
-}
-
-.dynamicTextSection {
-  composes: dynamicSection;
-  composes: multiLineEllipsis from '~styles/text.css';
 }
 
 .simpleLinkWebsite {
@@ -83,4 +58,33 @@
 
 .spinnerContainer {
   margin-top: 14px;
+}
+
+.domainContainer {
+  margin-bottom: 40px;
+  margin-left: 52px;
+  padding-top: 19px;
+}
+
+.filterItem {
+  composes: inlineEllipsis from '~styles/text.css';
+  margin: 0 0 20px 0;
+  padding: 0;
+  max-width: 23ch;
+  border: none;
+  background: none;
+  font-size: var(--size-normal);
+  color: var(--text);
+  cursor: pointer;
+  outline: none;
+}
+
+.filterItem:hover {
+  color: var(--primary);
+  opacity: 0.8;
+}
+
+.filterItemActive {
+  composes: filterItem;
+  color: var(--primary);
 }
