@@ -1,34 +1,14 @@
 import React, { Component, SyntheticEvent } from 'react';
-import { defineMessages } from 'react-intl';
 import copy from 'copy-to-clipboard';
 import { splitAddress } from '~utils/strings';
 
-import { getMainClasses } from '~utils/css';
-
-import MaskedAddress from '~core/MaskedAddress';
-
-import styles from './CopyableAddress.css';
-
-import Button from '../Button';
-
 import { Address } from '~types/index';
 
-const MSG = defineMessages({
-  buttonCopy: {
-    id: 'CopyableAddress.buttonCopy',
-    defaultMessage: `{copiedAddress, select,
-      true {Copied}
-      false {Copy}
-    }`,
-  },
-  buttonCopyLong: {
-    id: 'CopyableAddress.buttonCopyLong',
-    defaultMessage: `{copiedAddress, select,
-      true {Copied Wallet Address}
-      false {Copy Wallet Address}
-    }`,
-  },
-});
+import { getMainClasses } from '~utils/css';
+import MaskedAddress from '~core/MaskedAddress';
+import ClipboardCopy from '~core/ClipboardCopy';
+
+import styles from './CopyableAddress.css';
 
 interface Appearance {
   theme: 'big';
@@ -48,35 +28,9 @@ interface Props {
   hideAddress?: boolean;
 }
 
-interface State {
-  copiedAddress: boolean;
-}
-
-class CopyableAddress extends Component<Props, State> {
-  timeout: any;
-
+class CopyableAddress extends Component<Props> {
   static defaultProps = {
     hideAddress: false,
-  };
-
-  state = {
-    copiedAddress: false,
-  };
-
-  componentWillUnmount() {
-    clearTimeout(this.timeout);
-  }
-
-  handleCopyAddress = (evt: SyntheticEvent<HTMLButtonElement>) => {
-    const { children: address } = this.props;
-    evt.preventDefault();
-    copy(address);
-    this.setState({ copiedAddress: true });
-    this.timeout = setTimeout(() => {
-      this.setState({
-        copiedAddress: false,
-      });
-    }, 2000);
   };
 
   getAddress = () => {
@@ -96,22 +50,14 @@ class CopyableAddress extends Component<Props, State> {
   };
 
   render() {
-    const { appearance, hideAddress } = this.props;
-    const { copiedAddress } = this.state;
-
+    const { appearance, hideAddress, children: address } = this.props;
     return (
       <div className={getMainClasses(appearance, styles)}>
         <div className={styles.addressContainer}>
           {!hideAddress && this.getAddress()}
         </div>
         <span className={styles.copyButton}>
-          <Button
-            appearance={{ size: 'small', theme: 'blue' }}
-            disabled={copiedAddress}
-            onClick={this.handleCopyAddress}
-            text={{ ...MSG.buttonCopy }}
-            textValues={{ copiedAddress }}
-          />
+          <ClipboardCopy value={address} />
         </span>
       </div>
     );
