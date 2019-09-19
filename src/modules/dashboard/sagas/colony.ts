@@ -376,7 +376,7 @@ function* colonyTokenBalancesFetch({
   payload: { colonyAddress, tokenAddress },
 }: Action<ActionTypes.COLONY_TOKEN_BALANCES_FETCH>) {
   try {
-    const { record: domains } = yield selectAsJS(
+    const { record: domains = [] } = yield selectAsJS(
       colonyDomainsSelector,
       colonyAddress,
     );
