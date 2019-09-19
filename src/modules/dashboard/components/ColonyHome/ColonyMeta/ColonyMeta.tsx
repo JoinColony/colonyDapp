@@ -1,15 +1,20 @@
 import React from 'react';
-import { defineMessages } from 'react-intl';
+import { defineMessages, FormattedMessage } from 'react-intl';
 
 import { stripProtocol, multiLineTextEllipsis } from '~utils/strings';
-import { ColonyType } from '~immutable/index';
 import ExpandedParagraph from '~core/ExpandedParagraph';
 import Heading from '~core/Heading';
 import Icon from '~core/Icon';
+import Button from '~core/Button';
 import Link from '~core/Link';
 import ExternalLink from '~core/ExternalLink';
 import HookedColonyAvatar from '~dashboard/HookedColonyAvatar';
 import ColonySubscribe from './ColonySubscribe';
+import { useDataFetcher } from '~utils/hooks';
+import { domainsFetcher } from '../../../fetchers';
+
+import { ColonyType, DomainType } from '~immutable/index';
+
 import styles from './ColonyMeta.css';
 
 const MSG = defineMessages({
@@ -29,6 +34,14 @@ const MSG = defineMessages({
     id: 'dashboard.ColonyHome.ColonyMeta.editColonyTitle',
     defaultMessage: 'Edit Colony',
   },
+  allDomains: {
+    id: 'dashboard.ColonyHome.ColonyMeta.allDomains',
+    defaultMessage: 'root',
+  },
+  title: {
+    id: 'dashboard.ColonyHome.ColonyMeta.title',
+    defaultMessage: 'All Domains',
+  },
 });
 
 const ColonyAvatar = HookedColonyAvatar({ fetchColony: false });
@@ -36,7 +49,12 @@ const ColonyAvatar = HookedColonyAvatar({ fetchColony: false });
 interface Props {
   colony: ColonyType;
   canAdminister: boolean;
+  setFilteredDomainId: Function;
+  filteredDomainId: number;
 }
+
+const getActiveDomainFilterClass = (id = 0, filteredDomainId: number) =>
+  filteredDomainId === id ? styles.filterItemActive : styles.filterItem;
 
 const ColonyMeta = ({
   colony: {
@@ -47,9 +65,17 @@ const ColonyMeta = ({
     displayName,
     website,
   },
+  setFilteredDomainId,
+  filteredDomainId,
   colony,
   canAdminister,
 }: Props) => {
+  // eslint-disable-next-line prettier/prettier
+  const { data: domains } = useDataFetcher<DomainType[]>(
+    domainsFetcher,
+    [colonyAddress],
+    [colonyAddress],
+  );
   const renderExpandedElements = (
     <>
       {website && (
@@ -88,7 +114,7 @@ const ColonyMeta = ({
                *
                * To fix this properly (ie: without JS), we'll need a re-design
                */
-              multiLineTextEllipsis(displayName, 18)}
+              multiLineTextEllipsis(displayName, 16)}
             </span>
             {canAdminister && (
               <Link
@@ -111,6 +137,32 @@ const ColonyMeta = ({
           />
         </section>
       )}
+      <div className={styles.domainContainer}>
+        <ul>
+          <Heading
+            appearance={{ size: 'normal', weight: 'thin' }}
+            text={MSG.title}
+          />
+          <li>
+            <Button
+              className={getActiveDomainFilterClass(0, filteredDomainId)}
+              onClick={() => setFilteredDomainId()}
+            >
+              <FormattedMessage {...MSG.allDomains} />
+            </Button>
+          </li>
+          {(domains || []).map(({ name, id }) => (
+            <li key={`domain_${id}`}>
+              <Button
+                className={getActiveDomainFilterClass(id, filteredDomainId)}
+                onClick={() => setFilteredDomainId(id)}
+              >
+                {name}
+              </Button>
+            </li>
+          ))}
+        </ul>
+      </div>
     </div>
   );
 };
