@@ -10,3 +10,4 @@ export const noMoney: string;
 export const yeihMoney: string;
 export const moneyContainer: string;
 export const hello: string;
+export const copy: string;
