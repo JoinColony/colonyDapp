@@ -19,6 +19,8 @@ const MSG = defineMessages({
   },
 });
 
+const displayName = 'ClipboardCopy';
+
 const ClipboardCopy = ({
   value,
   text = MSG.copyLabel,
@@ -40,5 +42,7 @@ const ClipboardCopy = ({
     />
   );
 };
+
+ClipboardCopy.displayName = displayName;
 
 export default ClipboardCopy;
