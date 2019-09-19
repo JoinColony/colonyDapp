@@ -31,22 +31,20 @@ const TokenList = <
   <div className={styles.tokenCardContainer}>
     <CardList appearance={appearance}>
       {tokens.map(token => (
-        <>
+        <div key={token.address}>
           {'balances' in token && (
             <TokenCard
               domainId={domainId}
-              key={token.address}
               token={token as ColonyTokenReferenceType}
             />
           )}
           {'balance' in token && (
             <TokenCard
               domainId={domainId}
-              key={token.address}
               token={token as UserTokenReferenceType}
             />
           )}
-        </>
+        </div>
       ))}
     </CardList>
   </div>
