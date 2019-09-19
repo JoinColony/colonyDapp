@@ -14,8 +14,6 @@ import { getColonyStore, createColonyStore } from '~data/stores';
 import { diffAddresses } from '~utils/arrays';
 import {
   CreateColonyProfileCommandArgsSchema,
-  CreateDomainCommandArgsSchema,
-  EditDomainCommandArgsSchema,
   RemoveColonyAvatarCommandArgsSchema,
   SetColonyAvatarCommandArgsSchema,
   UpdateColonyProfileCommandArgsSchema,
@@ -108,44 +106,6 @@ export const createColonyProfile: Command<
     await colonyStore.append(profileCreatedEvent);
     await colonyStore.append(tokenInfoAddedEvent);
     await colonyStore.load();
-    return colonyStore;
-  },
-};
-
-export const createDomain: Command<
-  ColonyStore,
-  ColonyStoreMetadata,
-  {
-    name: string;
-    domainId: number;
-  },
-  ColonyStore
-> = {
-  name: 'createDomain',
-  context: [Context.COLONY_MANAGER, Context.DDB_INSTANCE, Context.WALLET],
-  prepare: prepareColonyStoreQuery,
-  schema: CreateDomainCommandArgsSchema,
-  async execute(colonyStore, args) {
-    await colonyStore.append(createEvent(EventTypes.DOMAIN_CREATED, args));
-    return colonyStore;
-  },
-};
-
-export const editDomain: Command<
-  ColonyStore,
-  ColonyStoreMetadata,
-  {
-    name: string;
-    domainId: number;
-  },
-  ColonyStore
-> = {
-  name: 'editDomain',
-  context: [Context.COLONY_MANAGER, Context.DDB_INSTANCE, Context.WALLET],
-  prepare: prepareColonyStoreQuery,
-  schema: EditDomainCommandArgsSchema,
-  async execute(colonyStore, args) {
-    await colonyStore.append(createEvent(EventTypes.DOMAIN_EDITED, args));
     return colonyStore;
   },
 };
