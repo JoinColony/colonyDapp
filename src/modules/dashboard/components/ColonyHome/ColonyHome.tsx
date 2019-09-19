@@ -49,6 +49,7 @@ import {
 
 import ColonyMeta from './ColonyMeta';
 import TabContribute from './TabContribute';
+import ColonyInvite from './ColonyMeta/ColonyInvite';
 import styles from './ColonyHome.css';
 
 const MSG = defineMessages({
@@ -300,6 +301,11 @@ const ColonyHome = ({
             setFilteredDomainId={setFilteredDomainId}
           />
         </div>
+        {/*
+         * @NOTE This is just temporary until `ColonyDomains` get moved into `ColonyMeta`
+         * Then this component will too, be moved in there
+         */}
+        <ColonyInvite colonyName={colony && colony.colonyName} />
       </aside>
       <main className={styles.content}>
         <div className={styles.breadCrumbContainer}>
