@@ -13,8 +13,8 @@ import {
   TaskPayoutType,
   TokenReferenceType,
   TokenType,
-  UserProfileRecord,
-  UserRecord,
+  UserProfile,
+  User,
   UserType,
 } from '~immutable/index';
 import { ItemDataType } from '~core/OmniPicker';
@@ -124,8 +124,8 @@ const TaskEditDialog = ({
   cancel,
   close: closeDialog,
   draftId,
-  maxTokens,
-  minTokens,
+  maxTokens = Infinity,
+  minTokens = 0,
 }: Props) => {
   const dispatch = useDispatch();
 
@@ -190,8 +190,8 @@ const TaskEditDialog = ({
   );
   const existingWorker =
     !!workerAddress && !existingWorkerObj
-      ? UserRecord({
-          profile: UserProfileRecord({
+      ? User({
+          profile: UserProfile({
             walletAddress: workerAddress,
           }),
         }).toJS()
@@ -211,7 +211,7 @@ const TaskEditDialog = ({
   const existingPayouts = useMemo(
     () =>
       taskPayouts.map(payout => {
-        const { address = undefined, decimals = undefined } =
+        const { address = undefined, decimals = 18 } =
           (availableTokens &&
             availableTokens.find(token => token.address === payout.token)) ||
           {};
@@ -248,6 +248,7 @@ const TaskEditDialog = ({
               .typeError(MSG.amountPositiveError)
               .required(MSG.amountRequiredError)
               .moreThan(0, MSG.amountPositiveError)
+              // @ts-ignore
               .lessThanPot(
                 colonyTokenReferences,
                 availableTokens,

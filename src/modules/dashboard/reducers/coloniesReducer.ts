@@ -1,16 +1,17 @@
 import { Map as ImmutableMap, fromJS } from 'immutable';
 
 import {
-  AllColoniesMap,
+  Colony,
   ColonyRecord,
-  ColonyRecordType,
-  DataRecord,
+  FetchableData,
+  TokenReference,
   TokenReferenceRecord,
-  TokenReferenceRecordType,
 } from '~immutable/index';
-import { withDataRecordMap } from '~utils/reducers';
+import { withFetchableDataMap } from '~utils/reducers';
 import { ActionTypes, ReducerType } from '~redux/index';
 import { createAddress, Address } from '~types/index';
+
+import { AllColoniesMap } from '../state/index';
 
 const coloniesReducer: ReducerType<AllColoniesMap> = (
   state = ImmutableMap(),
@@ -19,21 +20,21 @@ const coloniesReducer: ReducerType<AllColoniesMap> = (
   switch (action.type) {
     case ActionTypes.COLONY_FETCH_SUCCESS: {
       const {
-        payload: { tokens, colonyAddress, ...colony },
+        payload: { tokens = {}, colonyAddress, ...colony },
       } = action;
-      const record = ColonyRecord({
+      const record = Colony({
         ...colony,
         colonyAddress,
         tokens: ImmutableMap(
           Object.entries(tokens).map(([tokenAddress, token]) => [
             createAddress(tokenAddress),
-            TokenReferenceRecord(token),
+            TokenReference(token),
           ]),
         ),
       });
       return state.get(colonyAddress)
         ? state.setIn([colonyAddress, 'record'], record)
-        : state.set(colonyAddress, DataRecord<ColonyRecordType>({ record }));
+        : state.set(colonyAddress, FetchableData<ColonyRecord>({ record }));
     }
     case ActionTypes.COLONY_PROFILE_UPDATE_SUCCESS: {
       const {
@@ -69,7 +70,7 @@ const coloniesReducer: ReducerType<AllColoniesMap> = (
       ]);
       const record = previousRecord
         ? previousRecord.merge(token)
-        : TokenReferenceRecord(token);
+        : TokenReference(token);
       return state.setIn(
         [colonyAddress, 'record', 'tokens', tokenAddress],
         record,
@@ -87,7 +88,7 @@ const coloniesReducer: ReducerType<AllColoniesMap> = (
     case ActionTypes.COLONY_SUB_EVENTS: {
       const {
         payload: {
-          colony: { tokens, ...colony },
+          colony: { tokens = {}, ...colony },
           colonyAddress,
         },
       } = action;
@@ -98,9 +99,9 @@ const coloniesReducer: ReducerType<AllColoniesMap> = (
       ]);
       const previousTokens: ImmutableMap<
         Address,
-        TokenReferenceRecordType
+        TokenReferenceRecord
       > | null = state.getIn([colonyAddress, 'record', 'tokens']);
-      const record = ColonyRecord({
+      const record = Colony({
         canMintNativeToken,
         ...colony,
         colonyAddress,
@@ -115,7 +116,7 @@ const coloniesReducer: ReducerType<AllColoniesMap> = (
 
             return [
               normalizedTokenAddress,
-              TokenReferenceRecord({ balance, ...token }),
+              TokenReference({ balance, ...token }),
             ];
           }),
         ),
@@ -124,15 +125,14 @@ const coloniesReducer: ReducerType<AllColoniesMap> = (
         ? state
             .setIn([colonyAddress, 'record'], record)
             .setIn([colonyAddress, 'isFetching'], false)
-        : state.set(colonyAddress, DataRecord<ColonyRecordType>({ record }));
+        : state.set(colonyAddress, FetchableData<ColonyRecord>({ record }));
     }
     default:
       return state;
   }
 };
 
-export default withDataRecordMap<AllColoniesMap, ColonyRecordType>(
-  // @ts-ignore
+export default withFetchableDataMap<AllColoniesMap, ColonyRecord>(
   new Set([ActionTypes.COLONY_FETCH, ActionTypes.COLONY_SUB_START]),
   ImmutableMap(),
 )(coloniesReducer);

@@ -1,6 +1,6 @@
-import { $ReadOnly } from 'utility-types';
+import { Record } from 'immutable';
 
-import { RecordOf, Record } from 'immutable';
+import { DefaultValues } from '~types/index';
 
 interface Shared {
   id: number;
@@ -9,18 +9,16 @@ interface Shared {
   parentId?: number;
 }
 
-export type DomainType = $ReadOnly<Shared>;
+export type DomainType = Readonly<Shared>;
 
-export type DomainRecordType = RecordOf<Shared>;
+export type DomainId = Shared['id'];
 
-export type DomainId = DomainRecordType['id'];
-
-const defaultValues: Shared = {
+const defaultValues: DefaultValues<Shared> = {
   id: undefined,
   name: undefined,
   parentId: undefined,
 };
 
-export const DomainRecord: Record.Factory<Shared> = Record(defaultValues);
+export class DomainRecord extends Record<Shared>(defaultValues) {}
 
-export default DomainRecord;
+export const Domain = (p: Shared) => new DomainRecord(p);

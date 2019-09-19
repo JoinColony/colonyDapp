@@ -15,7 +15,7 @@ export const createEvent = <
   type: T,
   payload?: P,
 ): {
-  payload: P;
+  payload?: P;
   meta: {
     userAddress: Address;
     id: string;

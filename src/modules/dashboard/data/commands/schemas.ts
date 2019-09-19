@@ -5,6 +5,7 @@ import { BigNumberSchemaType } from '../../../validations';
 export const CreateColonyProfileCommandArgsSchema = yup.object({
   colonyAddress: yup
     .string()
+    // @ts-ignore
     .address()
     .required(),
   colonyName: yup.string().required(),
@@ -13,7 +14,10 @@ export const CreateColonyProfileCommandArgsSchema = yup.object({
   website: yup.string().url(),
   guideline: yup.string().url(),
   token: yup.object({
-    address: yup.string().address(),
+    address: yup
+      .string()
+      // @ts-ignore
+      .address(),
     icon: yup.string(),
     name: yup.string(),
     symbol: yup.string(),
@@ -22,7 +26,7 @@ export const CreateColonyProfileCommandArgsSchema = yup.object({
 });
 
 export const UpdateColonyProfileCommandArgsSchema = yup.object({
-  displayName: yup.string().required(),
+  displayName: yup.string(),
   description: yup.string(),
   website: yup.string().url(),
   guideline: yup.string().url(),
@@ -41,6 +45,7 @@ export const EditDomainCommandArgsSchema = yup.object({
 export const SetColonyAvatarCommandArgsSchema = yup.object({
   ipfsHash: yup
     .string()
+    // @ts-ignore
     .cid()
     .required(),
 });
@@ -48,6 +53,7 @@ export const SetColonyAvatarCommandArgsSchema = yup.object({
 export const RemoveColonyAvatarCommandArgsSchema = yup.object({
   ipfsHash: yup
     .string()
+    // @ts-ignore
     .cid()
     .required(),
 });
@@ -79,6 +85,7 @@ export const PostCommentCommandArgsSchema = yup.object({
       id: yup.string().required(),
       author: yup
         .string()
+        // @ts-ignore
         .address()
         .required(),
       body: yup.string().required(),
@@ -95,6 +102,7 @@ export const PostCommentCommandArgsSchema = yup.object({
 export const SendWorkInviteCommandArgsSchema = yup.object({
   worker: yup
     .string()
+    // @ts-ignore
     .address()
     .required(),
 });
@@ -102,6 +110,7 @@ export const SendWorkInviteCommandArgsSchema = yup.object({
 export const SendWorkRequestCommandArgsSchema = yup.object({
   worker: yup
     .string()
+    // @ts-ignore
     .address()
     .required(),
 });
@@ -124,10 +133,12 @@ export const FinalizeTaskCommandArgsSchema = yup.object({
   amountPaid: yup.string().required(),
   paymentTokenAddress: yup
     .string()
+    // @ts-ignore
     .address()
     .required(),
   workerAddress: yup
     .string()
+    // @ts-ignore
     .address()
     .required(),
 });

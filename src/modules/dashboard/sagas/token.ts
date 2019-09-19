@@ -3,10 +3,11 @@ import { call, fork, put, takeEvery } from 'redux-saga/effects';
 import { Action, ActionTypes, AllActions } from '~redux/index';
 import { getTokenDetails } from '~utils/external';
 import { putError, takeFrom } from '~utils/saga/effects';
+import { ContractContexts } from '~types/index';
+
 import { ZERO_ADDRESS, ETHER_INFO } from '~utils/web3/constants';
 import { Context, getContext } from '~context/index';
 import { createTransaction, getTxChannel } from '../../core/sagas';
-import { NETWORK_CONTEXT } from '../../core/constants';
 
 /**
  * Get the token info for a given `tokenAddress`.
@@ -68,7 +69,7 @@ function* tokenCreate({
 
   try {
     yield fork(createTransaction, meta.id, {
-      context: NETWORK_CONTEXT,
+      context: ContractContexts.NETWORK_CONTEXT,
       methodName: 'createToken',
       params: { name, symbol },
     });

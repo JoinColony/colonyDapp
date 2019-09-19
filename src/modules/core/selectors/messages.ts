@@ -1,8 +1,6 @@
-import { Map as ImmutableMap } from 'immutable';
 import { createSelector } from 'reselect';
 
-import { RootStateRecord } from '~immutable/index';
-
+import { RootStateRecord } from '../../state';
 import {
   CORE_NAMESPACE as ns,
   CORE_MESSAGES,
@@ -13,8 +11,7 @@ export const messageById = (state: RootStateRecord, id: string) =>
   state.getIn([ns, CORE_MESSAGES, CORE_MESSAGES_LIST, id]);
 
 export const getAllMessages = (state: RootStateRecord) =>
-  // @ts-ignore
-  state.getIn([ns, CORE_MESSAGES, CORE_MESSAGES_LIST], ImmutableMap());
+  state.getIn([ns, CORE_MESSAGES, CORE_MESSAGES_LIST]);
 
 /*
  * @NOTE This selector just groups all messages by their respective id

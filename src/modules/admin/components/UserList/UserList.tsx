@@ -46,16 +46,16 @@ interface Props {
   label?: string | MessageDescriptor;
 
   /** Redux action to dispatch on submit (e.g. CREATE_XXX) */
-  remove?: string;
+  remove: string;
 
   /** Redux action listener for successful action (e.g. CREATE_XXX_SUCCESS) */
-  removeSuccess?: string;
+  removeSuccess: string;
 
   /** Redux action listener for unsuccessful action (e.g. CREATE_XXX_ERROR) */
-  removeError?: string;
+  removeError: string;
 
   /* Colony address to use when removing the user */
-  colonyAddress?: Address;
+  colonyAddress: Address;
 }
 
 const displayName = 'admin.UserList';

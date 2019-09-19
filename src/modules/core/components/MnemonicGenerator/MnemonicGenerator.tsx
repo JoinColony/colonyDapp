@@ -113,6 +113,7 @@ class MnemonicGenerator extends Component<Props, State> {
 
   copyToClipboard = () => {
     const { $value } = this.props;
+    if (!$value) return;
     copy($value);
     this.setState({ copied: true });
     this.timeout = setTimeout(() => this.setState({ copied: false }), 4000);

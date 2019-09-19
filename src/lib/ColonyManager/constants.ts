@@ -1,5 +1,5 @@
-export const COLONY_CONTEXT: 'colony' = 'colony';
-
-export const NETWORK_CONTEXT: 'network' = 'network';
-
-export const TOKEN_CONTEXT: 'token' = 'token';
+export enum ContractContexts {
+  COLONY_CONTEXT = 'colony',
+  NETWORK_CONTEXT = 'network',
+  TOKEN_CONTEXT = 'token',
+}

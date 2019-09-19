@@ -5,7 +5,6 @@ import Button from '~core/Button';
 import MaskedAddress from '~core/MaskedAddress';
 import { TableRow, TableCell } from '~core/Table';
 import UserMention from '~core/UserMention';
-import { ColonyAdminType, UserType } from '~immutable/index';
 import { Address, ENTER } from '~types/index';
 import HookedUserAvatar from '~users/HookedUserAvatar';
 import { getMainClasses } from '~utils/css';
@@ -14,6 +13,8 @@ import { useDataSubscriber } from '~utils/hooks';
 import { userSubscriber } from '../../../users/subscribers';
 
 import styles from './UserListItem.css';
+
+import { UserType } from '~immutable/index';
 
 const MSG = defineMessages({
   buttonRemove: {
@@ -70,7 +71,7 @@ interface Props {
   /*
    * Method to call when clicking the remove button
    */
-  onRemove?: (arg0: ColonyAdminType) => any;
+  onRemove?: (evt: MouseEvent) => void;
 }
 
 const UserListItem = ({
@@ -101,7 +102,7 @@ const UserListItem = ({
   const handleKeyPress = useCallback(
     (evt: KeyboardEvent<HTMLElement>) => {
       if (evt.key === ENTER) {
-        callbackFn(address);
+        if (callbackFn) callbackFn(address);
       }
     },
     [address, callbackFn],

@@ -72,9 +72,9 @@ type State = {
 };
 
 class Popover extends Component<Props, State> {
-  refNode: HTMLElement | null;
+  refNode?: HTMLElement | null;
 
-  contentNode: HTMLElement | null;
+  contentNode?: HTMLElement | null;
 
   id: string;
 
@@ -122,7 +122,7 @@ class Popover extends Component<Props, State> {
       // Maybe there's a better way that I'm not seeing right now
       // eslint-disable-next-line react/no-did-update-set-state
       this.setState({
-        isOpen: isOpenProp,
+        isOpen: !!isOpenProp,
       });
     }
   }
@@ -289,10 +289,7 @@ class Popover extends Component<Props, State> {
           >
             {({ ref, style, placement, arrowProps }) => (
               <PopoverWrapper
-                appearance={{
-                  ...appearance,
-                  placement: placement as PopoverPlacementType,
-                }}
+                appearance={appearance}
                 id={this.id}
                 innerRef={ref}
                 style={style}

@@ -7,13 +7,8 @@ import {
   COLONY_ROLE_ROOT,
 } from '@colony/colony-js-client';
 
-import {
-  DomainType,
-  RolesType,
-  ColonyRolesObject,
-  UserRolesObject,
-} from '~immutable/index';
-import { Address } from '~types/strings';
+import { DomainType } from '~immutable/index';
+import { Address, ColonyRolesObject, UserRolesObject } from '~types/index';
 import { ZERO_ADDRESS } from '~utils/web3/constants';
 
 // This should be opaque
@@ -27,9 +22,11 @@ export const generateUrlFriendlyId = (): RandomId =>
  * we still need to be able to get the old roles `admins` and `founder`. This
  * util can be removed once the DLP project is completed.
  */
-export const proxyOldRoles = (domainRoles: any): RolesType | void => {
+export const proxyOldRoles = (
+  domainRoles: any,
+): { founder: Address; admins: Address[] } | void => {
   if (!domainRoles) {
-    return null;
+    return undefined;
   }
 
   const rootDomainRoles = domainRoles[1] || {};

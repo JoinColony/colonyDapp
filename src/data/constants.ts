@@ -1,10 +1,12 @@
 export const VERSION: number = Number(process.env.VERSION) || 1;
 
-export enum TaskState {
+export enum TaskStates {
   ACTIVE = 'ACTIVE',
   CANCELLED = 'CANCELLED',
   CLOSED = 'CLOSED',
   FINALIZED = 'FINALIZED',
+  RATING = 'RATING',
+  REVEAL = 'REVEAL',
 }
 
 export enum EventTypes {

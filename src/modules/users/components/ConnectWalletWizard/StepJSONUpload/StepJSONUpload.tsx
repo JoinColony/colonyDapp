@@ -5,7 +5,7 @@ import * as yup from 'yup';
 
 import { WizardProps } from '~core/Wizard';
 import FileUpload, { FileReaderFile, UploadFile } from '~core/FileUpload';
-import { WalletSpecificType } from '~immutable/index';
+import { WALLET_SPECIFICS } from '~immutable/index';
 
 import { pipe, mapPayload, mergePayload } from '~utils/actions';
 import Button from '~core/Button';
@@ -57,7 +57,7 @@ const MSG = defineMessages({
 });
 
 type FormValues = {
-  method: WalletSpecificType;
+  method: WALLET_SPECIFICS;
   walletJsonFileUpload: UploadFile[];
   walletJsonPassword: string;
 };
@@ -84,7 +84,7 @@ const readKeystoreFromFileData = (file: FileReaderFile) => {
   if (!file || !file.data) {
     throw new Error('No file data received');
   }
-  const base64Str = file.data.split('base64,').pop();
+  const base64Str = file.data.split('base64,').pop() || '';
   let keystore;
   try {
     keystore = atob(base64Str);

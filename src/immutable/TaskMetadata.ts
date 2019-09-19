@@ -1,21 +1,20 @@
-import { $ReadOnly } from 'utility-types';
+import { Record } from 'immutable';
 
-import { RecordOf, Record } from 'immutable';
+import { DefaultValues } from '~types/index';
 
-export type TaskMetadataRecordProps = $ReadOnly<{
+export type TaskMetadataRecordProps = Readonly<{
   commentsStoreAddress: string;
   taskStoreAddress: string;
 }>;
 
-export type TaskMetadataRecordType = RecordOf<TaskMetadataRecordProps>;
-
-const defaultValues: TaskMetadataRecordProps = {
+const defaultValues: DefaultValues<TaskMetadataRecordProps> = {
   commentsStoreAddress: undefined,
   taskStoreAddress: undefined,
 };
 
-export const TaskMetadataRecord: Record.Factory<
-  TaskMetadataRecordProps
-> = Record(defaultValues);
+export class TaskMetadataRecord extends Record<TaskMetadataRecordProps>(
+  defaultValues,
+) {}
 
-export default TaskMetadataRecord;
+export const TaskMetadata = (p: TaskMetadataRecordProps) =>
+  new TaskMetadataRecord(p);

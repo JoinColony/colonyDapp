@@ -1,10 +1,7 @@
-import { $ReadOnly } from 'utility-types';
-
-import { RecordOf, Record } from 'immutable';
-
+import { Record } from 'immutable';
 import BigNumber from 'bn.js';
 
-import { Address } from '~types/index';
+import { Address, DefaultValues } from '~types/index';
 
 interface Shared {
   amount: BigNumber;
@@ -18,24 +15,21 @@ interface Shared {
   token: Address; // 0x0 is ether
 }
 
-export type ContractTransactionType = $ReadOnly<Shared>;
+export type ContractTransactionType = Readonly<Shared>;
 
-export type ContractTransactionRecordType = RecordOf<Shared>;
-
-const defaultValues: Shared = {
+const defaultValues: DefaultValues<Shared> = {
   amount: undefined,
   colonyAddress: undefined,
-  date: undefined,
+  date: new Date(),
   from: undefined,
   hash: undefined,
-  incoming: undefined,
+  incoming: false,
   taskId: undefined,
   to: undefined,
   token: undefined,
 };
 
-export const ContractTransactionRecord: Record.Factory<Shared> = Record(
-  defaultValues,
-);
+export class ContractTransactionRecord extends Record<Shared>(defaultValues) {}
 
-export default ContractTransactionRecord;
+export const ContractTransaction = (p: Shared) =>
+  new ContractTransactionRecord(p);

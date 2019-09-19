@@ -1,11 +1,8 @@
-import { WalletRecordType, WalletRecord } from '~immutable/index';
+import { WalletRecord, Wallet } from '~immutable/index';
 
 import { ReducerType, ActionTypes } from '~redux/index';
 
-const walletReducer: ReducerType<WalletRecordType> = (
-  state = WalletRecord(),
-  action,
-) => {
+const walletReducer: ReducerType<WalletRecord> = (state = Wallet(), action) => {
   switch (action.type) {
     case ActionTypes.WALLET_FETCH_ACCOUNTS:
       return state.set('isLoading', true);

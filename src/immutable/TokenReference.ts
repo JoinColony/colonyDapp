@@ -1,9 +1,7 @@
-import { $ReadOnly } from 'utility-types';
-
 import BigNumber from 'bn.js';
-import { RecordOf, Record } from 'immutable';
+import { Record } from 'immutable';
 
-import { Address } from '~types/index';
+import { Address, DefaultValues } from '~types/index';
 
 type Shared = {
   address: Address;
@@ -13,11 +11,9 @@ type Shared = {
   iconHash?: string;
 };
 
-export type TokenReferenceType = $ReadOnly<Shared>;
+export type TokenReferenceType = Readonly<Shared>;
 
-export type TokenReferenceRecordType = RecordOf<Shared>;
-
-const defaultProps: Shared = {
+const defaultValues: DefaultValues<Shared> = {
   address: undefined,
   balance: undefined,
   isExternal: undefined,
@@ -25,8 +21,6 @@ const defaultProps: Shared = {
   iconHash: undefined,
 };
 
-export const TokenReferenceRecord: Record.Factory<Shared> = Record(
-  defaultProps,
-);
+export class TokenReferenceRecord extends Record<Shared>(defaultValues) {}
 
-export default TokenReferenceRecord;
+export const TokenReference = (p: Shared) => new TokenReferenceRecord(p);

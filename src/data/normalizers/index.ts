@@ -9,7 +9,7 @@ type EVENT_SOURCE_TYPE = 'contract' | 'ddb';
 
 interface NormalizedEvent {
   type: string; // Event type a.k.a event name
-  payload: object; // Orbit-db entry payload value or parsed tx log topics
+  payload: object | null; // Orbit-db entry payload value or parsed tx log topics
   meta: {
     id: string; // Orbit payload id or txHash_logIndex for tx logs
     sourceId: string; // Orbit store address or contract address

@@ -22,7 +22,7 @@ export default class AsyncComponentLoader extends Component<Props, State> {
   static displayName = 'AsyncComponentLoader';
 
   state = {
-    loadedComponent: null,
+    loadedComponent: null as ElementType | null,
   };
 
   componentDidMount() {

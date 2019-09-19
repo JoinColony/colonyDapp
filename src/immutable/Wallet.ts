@@ -1,54 +1,45 @@
-import { $Values, $ReadOnly } from 'utility-types';
+import { Record } from 'immutable';
 
-import { RecordOf, Record } from 'immutable';
+import { Address, DefaultValues } from '~types/index';
 
-import { Address } from '~types/index';
-
-export const WALLET_CATEGORIES = Object.freeze({
-  SOFTWARE: 'software',
-  HARDWARE: 'hardware',
-
+export enum WALLET_CATEGORIES {
+  SOFTWARE = 'software',
+  HARDWARE = 'hardware',
   /**
    * @NOTE Metamask is a wallet category as well as a specific type
    */
-  METAMASK: 'metamask',
-});
+  METAMASK = 'metamask',
+}
 
-export type WalletCategoryType = $Values<typeof WALLET_CATEGORIES>;
-
-export const WALLET_SPECIFICS = Object.freeze({
-  JSON: 'json',
-  MNEMONIC: 'mnemonic',
-  TREZOR: 'trezor',
-  LEDGER: 'ledger',
-  METAMASK: 'metamask',
+export enum WALLET_SPECIFICS {
+  JSON = 'json',
+  MNEMONIC = 'mnemonic',
+  TREZOR = 'trezor',
+  LEDGER = 'ledger',
+  METAMASK = 'metamask',
 
   /**
    * @NOTE Dev Only
    */
-  TRUFFLEPIG: 'trufflepig',
-});
-
-export type WalletSpecificType = $Values<typeof WALLET_SPECIFICS>;
+  TRUFFLEPIG = 'trufflepig',
+}
 
 export interface WalletProps {
   availableAddresses?: Address[];
   currentAddress?: Address;
-  isLoading: boolean;
-  walletType: WalletCategoryType;
+  isLoading?: boolean;
+  walletType?: WALLET_CATEGORIES;
 }
 
-export type WalletPropsJS = $ReadOnly<WalletProps>;
+export type WalletType = Readonly<WalletProps>;
 
-export type WalletRecordType = RecordOf<WalletProps>;
-
-const defaultValues: WalletProps = {
+const defaultValues: DefaultValues<WalletProps> = {
   availableAddresses: [],
   currentAddress: undefined,
-  isLoading: undefined,
+  isLoading: false,
   walletType: WALLET_CATEGORIES.SOFTWARE,
 };
 
-export const WalletRecord: Record.Factory<WalletProps> = Record(defaultValues);
+export class WalletRecord extends Record<WalletProps>(defaultValues) {}
 
-export default WalletRecord;
+export const Wallet = (p?: WalletProps) => new WalletRecord(p);

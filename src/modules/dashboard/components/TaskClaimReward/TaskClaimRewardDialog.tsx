@@ -119,8 +119,10 @@ const TaskClaimRewardDialog = ({
   const [, tokenOptions] = useColonyTokens(colonyAddress);
   const getToken = useCallback(
     (tokenAddress: Address) =>
-      tokenOptions &&
-      tokenOptions.find(({ address }) => address === tokenAddress),
+      (tokenOptions &&
+        tokenOptions.find(({ address }) => address === tokenAddress)) || {
+        symbol: '',
+      },
     [tokenOptions],
   );
   return (

@@ -1,21 +1,17 @@
 import React, { ReactNode, FocusEvent } from 'react';
 import { PopperArrowProps } from 'react-popper';
-import { PopoverAppearanceType, PopoverPlacementType } from './types';
+import { PopoverAppearanceType } from './types';
 import { getMainClasses } from '~utils/css';
 import getPopoverArrowClasses from './getPopoverArrowClasses';
 
 import styles from './PopoverWrapper.css';
-
-interface Appearance extends PopoverAppearanceType {
-  placement?: PopoverPlacementType;
-}
 
 interface ArrowProps extends PopperArrowProps {
   showArrow: boolean;
 }
 
 interface Props {
-  appearance?: Appearance;
+  appearance?: PopoverAppearanceType;
   arrowProps: ArrowProps;
   children: ReactNode;
   id: string;
@@ -47,7 +43,7 @@ const PopoverWrapper = ({
     ref={innerRef}
     style={style}
     data-placement={placement}
-    tabIndex={retainRefFocus ? -1 : null}
+    tabIndex={retainRefFocus ? -1 : undefined}
     onFocus={onFocus}
   >
     {children}

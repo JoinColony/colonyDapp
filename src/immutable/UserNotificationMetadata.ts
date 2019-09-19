@@ -1,23 +1,22 @@
-import { $ReadOnly } from 'utility-types';
+import { Record } from 'immutable';
 
-import { RecordOf, Record } from 'immutable';
+import { DefaultValues } from '~types/index';
 
 type Shared = {
   readUntil?: number;
   exceptFor?: string[];
 };
 
-export type UserNotificationMetadataType = $ReadOnly<Shared>;
+export type UserNotificationMetadataType = Readonly<Shared>;
 
-export type UserNotificationMetadataRecordType = RecordOf<Shared>;
-
-const defaultProps: Shared = {
+const defaultValues: DefaultValues<Shared> = {
   readUntil: undefined,
   exceptFor: undefined,
 };
 
-export const UserNotificationMetadataRecord: Record.Factory<Shared> = Record(
-  defaultProps,
-);
+export class UserNotificationMetadataRecord extends Record<Shared>(
+  defaultValues,
+) {}
 
-export default UserNotificationMetadataRecord;
+export const UserNotificationMetadata = (p?: Shared) =>
+  new UserNotificationMetadataRecord(p);

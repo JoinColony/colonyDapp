@@ -1,15 +1,7 @@
-import { $ReadOnly } from 'utility-types';
+import { Record, Map as ImmutableMap } from 'immutable';
 
-import {
-  RecordOf,
-  Map as ImmutableMapType,
-  Record,
-  Map as ImmutableMap,
-} from 'immutable';
-
-import { Address, ENSName } from '~types/index';
-// eslint-disable-next-line import/no-cycle
-import { TokenReferenceRecordType, TokenReferenceType } from './index';
+import { Address, DefaultValues, ENSName } from '~types/index';
+import { TokenReferenceRecord, TokenReferenceType } from './index';
 
 interface Shared {
   avatarHash?: string;
@@ -27,11 +19,10 @@ interface Shared {
   website?: string;
 }
 
-export type ColonyType = $ReadOnly<
+export type ColonyType = Readonly<
   Shared & {
     tokens?: {
       // Opaque implementation can't be used as an index type
-      // [tokenAddress: Address]: TokenReferenceType;
       [tokenAddress: string]: TokenReferenceType;
     };
   }
@@ -40,10 +31,10 @@ export type ColonyType = $ReadOnly<
 export type ColonyProps<T extends keyof ColonyType> = Pick<ColonyType, T>;
 
 type ColonyRecordProps = Shared & {
-  tokens?: ImmutableMapType<Address, TokenReferenceRecordType>;
+  tokens?: ImmutableMap<Address, TokenReferenceRecord>;
 };
 
-const defaultValues: ColonyRecordProps = {
+const defaultValues: DefaultValues<ColonyRecordProps> = {
   avatarHash: undefined,
   canMintNativeToken: undefined,
   canUnlockNativeToken: undefined,
@@ -60,10 +51,6 @@ const defaultValues: ColonyRecordProps = {
   website: undefined,
 };
 
-export const ColonyRecord: Record.Factory<ColonyRecordProps> = Record(
-  defaultValues,
-);
+export class ColonyRecord extends Record<ColonyRecordProps>(defaultValues) {}
 
-export type ColonyRecordType = RecordOf<ColonyRecordProps>;
-
-export default ColonyRecord;
+export const Colony = (p: ColonyRecordProps) => new ColonyRecord(p);

@@ -2,7 +2,7 @@ import { withProps } from 'recompose';
 import ledgerWallet from '@colony/purser-ledger';
 import trezorWallet from '@colony/purser-trezor';
 
-import { WalletSpecificType, WALLET_SPECIFICS } from '~immutable/index';
+import { WALLET_SPECIFICS } from '~immutable/index';
 import withWizard from '~core/Wizard/withWizard';
 import WizardTemplate from '~pages/WizardTemplate/WizardTemplate';
 import StepStart from './StepStart';
@@ -13,7 +13,7 @@ import StepJSONUpload from './StepJSONUpload';
 import StepTrufflePig from './StepTrufflePig';
 
 interface StepValues {
-  method: WalletSpecificType;
+  method: WALLET_SPECIFICS;
 }
 
 /*

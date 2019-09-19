@@ -6,12 +6,9 @@ import { BrowserRouter } from 'react-router-dom';
 import en from 'react-intl/locale-data/en';
 import { Map as ImmutableMap, Record } from 'immutable';
 
-import {
-  CoreTransactions,
-  UserRecord,
-  UserProfileRecord,
-  WalletRecord,
-} from '~immutable/index';
+import { User, UserProfile, Wallet, WALLET_CATEGORIES } from '~immutable/index';
+
+import { CoreTransactions } from '../modules/core/state/index';
 
 import '../styles/main.css';
 import '../styles/styleguide.css';
@@ -31,6 +28,7 @@ const MockState = Record({
   users: undefined,
 });
 
+// @ts-ignore
 const initialState = MockState({
   admin: {
     transactions: ImmutableMap(),
@@ -51,14 +49,16 @@ const initialState = MockState({
     },
   },
   users: {
-    currentUser: UserRecord({
-      profile: UserProfileRecord({
+    currentUser: User({
+      profile: UserProfile({
         username: 'piglet',
+        walletAddress: '0xdeadbeef',
+        inboxStoreAddress: '',
+        metadataStoreAddress: '',
       }),
     }),
-    wallet: WalletRecord({
-      availableAddresses: [],
-      isLoading: false,
+    wallet: Wallet({
+      walletType: WALLET_CATEGORIES.SOFTWARE,
     }),
     allUsers: ImmutableMap(),
   },

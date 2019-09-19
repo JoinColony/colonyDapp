@@ -1,14 +1,14 @@
-import { $ReadOnly } from 'utility-types';
+import { Record } from 'immutable';
 
-import { RecordOf, Record } from 'immutable';
+import { DefaultValues } from '~types/index';
 
 import {
-  ContractTransactionRecordType,
+  ContractTransactionRecord,
   ContractTransactionType,
 } from './ContractTransaction';
-import { TaskCommentRecordType, TaskCommentType } from './TaskComment';
-import { TaskEventRecordType, TaskEventType } from './TaskEvent';
-import { TaskRatingRecordType, TaskRatingType } from './TaskRating';
+import { TaskCommentRecord, TaskCommentType } from './TaskComment';
+import { TaskEventRecord, TaskEventType } from './TaskEvent';
+import { TaskRatingRecord, TaskRatingType } from './TaskRating';
 
 interface Shared {
   createdAt: Date;
@@ -16,13 +16,13 @@ interface Shared {
 }
 
 export type TaskFeedItemRecordProps = Shared & {
-  comment?: TaskCommentRecordType;
-  event?: TaskEventRecordType;
-  rating?: TaskRatingRecordType;
-  transaction?: ContractTransactionRecordType;
+  comment?: TaskCommentRecord;
+  event?: TaskEventRecord;
+  rating?: TaskRatingRecord;
+  transaction?: ContractTransactionRecord;
 };
 
-export type TaskFeedItemType = $ReadOnly<
+export type TaskFeedItemType = Readonly<
   Shared & {
     comment?: TaskCommentType;
     event?: TaskEventType;
@@ -33,19 +33,18 @@ export type TaskFeedItemType = $ReadOnly<
 
 export type TaskFeedItemId = TaskFeedItemType['id'];
 
-export type TaskFeedItemRecordType = RecordOf<TaskFeedItemRecordProps>;
-
-const defaultValues: TaskFeedItemRecordProps = {
+const defaultValues: DefaultValues<TaskFeedItemRecordProps> = {
   comment: undefined,
-  createdAt: undefined,
+  createdAt: new Date(),
   event: undefined,
   id: undefined,
   rating: undefined,
   transaction: undefined,
 };
 
-export const TaskFeedItemRecord: Record.Factory<
-  TaskFeedItemRecordProps
-> = Record(defaultValues);
+export class TaskFeedItemRecord extends Record<TaskFeedItemRecordProps>(
+  defaultValues,
+) {}
 
-export default TaskFeedItemRecord;
+export const TaskFeedItem = (p: TaskFeedItemRecordProps) =>
+  new TaskFeedItemRecord(p);

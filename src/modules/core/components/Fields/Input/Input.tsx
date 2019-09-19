@@ -125,7 +125,7 @@ const Input = ({
     innerRef,
     name,
     onChange,
-    value: undefined,
+    value: undefined as (string | undefined),
     ...props,
   };
 

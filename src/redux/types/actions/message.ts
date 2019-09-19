@@ -4,7 +4,7 @@ import { ErrorActionType } from './index';
 export type MessageActionTypes =
   | ActionTypeWithPayload<
       ActionTypes.MESSAGE_CREATED,
-      { id?: string; purpose?: string; message: string; createdAt?: Date }
+      { id: string; purpose?: string; message: string; createdAt?: Date }
     >
   | ActionTypeWithPayload<ActionTypes.MESSAGE_SIGN, { id: string }>
   | ActionTypeWithPayload<

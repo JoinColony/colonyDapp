@@ -1,40 +1,29 @@
-import { RecordOf, Record } from 'immutable';
+import { Record } from 'immutable';
 import { RouterState } from 'connected-react-router';
 
-import { AdminStateRecord } from './admin';
-import { CoreStateRecord } from './core';
-import { DashboardStateRecord } from './dashboard';
-import { UsersStateRecord } from './users';
 import { ADMIN_NAMESPACE } from '../../modules/admin/constants';
+import { AdminStateRecord } from '../../modules/admin/state/index';
 import { CORE_NAMESPACE } from '../../modules/core/constants';
+import { CoreStateRecord } from '../../modules/core/state/index';
 import { DASHBOARD_NAMESPACE } from '../../modules/dashboard/constants';
+import { DashboardStateRecord } from '../../modules/dashboard/state/index';
 import { USERS_NAMESPACE } from '../../modules/users/constants';
-
-export * from './admin';
-export * from './core';
-export * from './dashboard';
-export * from './users';
+import { UsersStateRecord } from '../../modules/users/state/index';
 
 export interface RootStateProps {
   admin: AdminStateRecord;
   core: CoreStateRecord;
   dashboard: DashboardStateRecord;
-  router: RouterState;
   users: UsersStateRecord;
+  router?: RouterState;
   watcher: any;
 }
 
-const defaultValues: RootStateProps = {
-  [ADMIN_NAMESPACE]: undefined,
-  [CORE_NAMESPACE]: undefined,
-  [DASHBOARD_NAMESPACE]: undefined,
-  [USERS_NAMESPACE]: undefined,
+export class RootStateRecord extends Record<RootStateProps>({
+  [ADMIN_NAMESPACE]: new AdminStateRecord(),
+  [CORE_NAMESPACE]: new CoreStateRecord(),
+  [DASHBOARD_NAMESPACE]: new DashboardStateRecord(),
+  [USERS_NAMESPACE]: new UsersStateRecord(),
   router: undefined,
   watcher: undefined,
-};
-
-export const RootState: Record.Factory<RootStateProps> = Record(defaultValues);
-
-export type RootStateRecord = RecordOf<RootStateProps>;
-
-export default RootState;
+}) {}

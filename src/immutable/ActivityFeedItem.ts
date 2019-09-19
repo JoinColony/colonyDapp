@@ -1,12 +1,16 @@
-import { $ReadOnly } from 'utility-types';
-
 import { Record } from 'immutable';
 
-export type ActivityAction = 'addedSkillTag' | 'assignedUser' | 'commentedOn';
+import { DefaultValues } from '~types/index';
+
+export enum ActivityActions {
+  ADDED_SKILL_TAG = 'ADDED_SKILL_TAG',
+  ASSIGNED_USER = 'ASSIGNED_USER',
+  COMMENTED_ON = 'COMMENTED_ON',
+}
 
 interface Shared {
-  actionType: ActivityAction;
-  date: Date;
+  actionType: ActivityActions;
+  date?: Date;
   domainTag: string;
   id: number;
   organization: string;
@@ -14,11 +18,11 @@ interface Shared {
   user?: string;
 }
 
-export type ActivityFeedItemType = $ReadOnly<Shared>;
+export type ActivityFeedItemType = Readonly<Shared>;
 
-const defaultValues: Shared = {
+const defaultValues: DefaultValues<Shared> = {
   actionType: undefined,
-  date: undefined,
+  date: new Date(),
   domainTag: undefined,
   id: undefined,
   organization: undefined,
@@ -26,8 +30,6 @@ const defaultValues: Shared = {
   user: undefined,
 };
 
-export const ActivityFeedItemRecord: Record.Factory<Shared> = Record(
-  defaultValues,
-);
+export class ActivityFeedItemRecord extends Record<Shared>(defaultValues) {}
 
-export default ActivityFeedItemRecord;
+export const ActivityFeedItem = (p: Shared) => new ActivityFeedItemRecord(p);

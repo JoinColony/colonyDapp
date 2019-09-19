@@ -15,6 +15,7 @@ import { AllEvents } from './events';
  *
  * R: Return type for the execute function.
  */
+
 export interface Query<D, M, A, R> {
   context: ContextName[];
   execute: (deps: D, args: A) => Promise<R>;
@@ -26,6 +27,6 @@ export interface Query<D, M, A, R> {
  * This type, when assigned to a reducer, ensures that the events specified
  * exist in `AllEvents`, and that the event objects are fully typed.
  *
- * T: State for the reducer, e.g. ImmutableMapType<>
+ * T: State for the reducer, e.g. ImmutableMap<>
  */
 export type EventReducer<T> = (currentValue: T, event: AllEvents) => T;

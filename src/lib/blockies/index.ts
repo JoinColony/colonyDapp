@@ -53,9 +53,9 @@ function createImageData(size) {
   const dataWidth = Math.ceil(width / 2);
   const mirrorWidth = width - dataWidth;
 
-  const data = [];
+  const data = [] as number[];
   for (let y = 0; y < height; y++) {
-    let row = [];
+    let row = [] as number[];
     for (let x = 0; x < dataWidth; x++) {
       // this makes foreground and background color to have a 43% (1/2.3) probability
       // spot color has 13% chance
@@ -80,6 +80,7 @@ function createCanvas(imageData, color, scale, bgcolor, spotcolor) {
   c.width = c.height = width * scale;
 
   const cc = c.getContext('2d');
+  if (!cc) return undefined;
   cc.fillStyle = bgcolor;
   cc.fillRect(0, 0, c.width, c.height);
   cc.fillStyle = color;

@@ -1,7 +1,7 @@
 import React from 'react';
 import { List } from 'immutable';
 import { defineMessages, FormattedMessage } from 'react-intl';
-import { InboxItemRecordType } from '~immutable/InboxItem';
+import { InboxItemRecord } from '~immutable/InboxItem';
 
 import { ActionTypes } from '~redux/index';
 import { useAsyncFunction, useDataFetcher } from '~utils/hooks';
@@ -40,7 +40,7 @@ const allReadActions = {
 
 const InboxContent = () => {
   const markAllRead = useAsyncFunction(allReadActions);
-  const { data: inboxItems } = useDataFetcher<List<InboxItemRecordType>>(
+  const { data: inboxItems } = useDataFetcher<List<InboxItemRecord>>(
     inboxItemsFetcher,
     [],
     [],

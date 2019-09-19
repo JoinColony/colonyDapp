@@ -1,15 +1,11 @@
 import { createSelector } from 'reselect';
-
 import { Map as ImmutableMap } from 'immutable';
 import { isAddress } from 'web3-utils';
 
-import {
-  DataRecordType,
-  RootStateRecord,
-  UserRecordType,
-} from '~immutable/index';
+import { FetchableDataRecord, UserRecord } from '~immutable/index';
 import { Address } from '~types/index';
 
+import { RootStateRecord } from '../../state';
 import {
   USERS_ALL_USERS,
   USERS_COLONIES,
@@ -28,14 +24,14 @@ import {
 /*
  * Username getters
  */
-const getUsernameFromUserData = (user?: DataRecordType<UserRecordType>) =>
+const getUsernameFromUserData = (user?: FetchableDataRecord<UserRecord>) =>
   user && user.getIn(['record', 'profile', 'username']);
 
 /*
  * Address getters
  */
 const getWalletAddressFromUserData = (
-  users: ImmutableMap<string, DataRecordType<UserRecordType>>,
+  users: ImmutableMap<string, FetchableDataRecord<UserRecord>>,
 ) => Object.keys(users.toJS()).filter(key => isAddress(key));
 
 export const allUsersSelector = (state: RootStateRecord) =>
@@ -75,12 +71,14 @@ export const userSelector = (state: RootStateRecord, address: Address) =>
 export const usersExceptSelector = createSelector(
   allUsersSelector,
   (allUsers, except: string[] | string = []) =>
-    allUsers.filter((user, address) => ![].concat(except).includes(address)),
+    allUsers.filter(
+      (user, address) => !([] as string[]).concat(except).includes(address),
+    ),
 );
 
 // @ts-ignore
 usersExceptSelector.transform = (
-  input: ImmutableMap<string, DataRecordType<UserRecordType>>,
+  input: ImmutableMap<string, FetchableDataRecord<UserRecord>>,
 ) =>
   input
     .map(user => user.record)

@@ -1,5 +1,5 @@
 import {
-  ConnectionRecordType,
+  Connection,
   ConnectionRecord,
   ConnectionStats,
   ConnectionError,
@@ -9,8 +9,8 @@ import { ActionTypes, ReducerType } from '~redux/index';
 
 import { CORE_CONNECTION_STATS, CORE_CONNECTION_ERRORS } from '../constants';
 
-const connectionStatsReducer: ReducerType<ConnectionRecordType> = (
-  state = ConnectionRecord(),
+const connectionStatsReducer: ReducerType<ConnectionRecord> = (
+  state = Connection(),
   action,
 ) => {
   switch (action.type) {

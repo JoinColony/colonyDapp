@@ -48,10 +48,11 @@ const NetworkHealth = ({
   intl: { formatMessage },
 }: Props) => {
   const dispatch = useDispatch();
-  useEffect(// eslint-disable-next-line prettier/prettier
-    () => {
+  useEffect(() => {
     dispatch({ type: ActionTypes.CONNECTION_STATS_SUB_START });
-    return () => dispatch({ type: ActionTypes.CONNECTION_STATS_SUB_STOP });
+    return () => {
+      dispatch({ type: ActionTypes.CONNECTION_STATS_SUB_STOP });
+    };
   }, [dispatch]);
 
   const connection: ConnectionType = useSelector(connectionSelector);

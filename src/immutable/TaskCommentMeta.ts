@@ -1,23 +1,22 @@
-import { $ReadOnly } from 'utility-types';
+import { Record, List } from 'immutable';
 
-import { RecordOf, Record, List } from 'immutable';
+import { DefaultValues } from '~types/index';
 
 type TaskCommentMetaRecordProps = {
-  mentions: List<string>;
+  mentions?: List<string>;
 };
 
-export type TaskCommentMetaType = $ReadOnly<{
-  mentions: string[];
+export type TaskCommentMetaType = Readonly<{
+  mentions?: string[];
 }>;
 
-export type TaskCommentMetaRecordType = RecordOf<TaskCommentMetaRecordProps>;
-
-const defaultValues: Partial<TaskCommentMetaRecordProps> = {
+const defaultValues: DefaultValues<TaskCommentMetaRecordProps> = {
   mentions: List(),
 };
 
-export const TaskCommentMetaRecord: Record.Factory<
-  Partial<TaskCommentMetaRecordProps>
-> = Record(defaultValues);
+export class TaskCommentMetaRecord extends Record<TaskCommentMetaRecordProps>(
+  defaultValues,
+) {}
 
-export default TaskCommentMetaRecord;
+export const TaskCommentMeta = (p?: TaskCommentMetaRecordProps) =>
+  new TaskCommentMetaRecord(p);

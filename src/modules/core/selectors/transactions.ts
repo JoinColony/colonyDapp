@@ -1,15 +1,12 @@
 import { createSelector } from 'reselect';
 import { Map as ImmutableMap } from 'immutable';
 
-import {
-  RootStateRecord,
-  TransactionRecordType,
-  TRANSACTION_STATUSES,
-} from '~immutable/index';
+import { TransactionRecord, TRANSACTION_STATUSES } from '~immutable/index';
 
 import { walletAddressSelector } from '../../users/selectors';
 import { isMultisig, isPendingMultisig } from '../checks';
 import { messageGroups } from './messages';
+import { RootStateRecord } from '../../state';
 import {
   CORE_NAMESPACE as ns,
   CORE_TRANSACTIONS,
@@ -20,8 +17,8 @@ import {
  * Transactions sorting functions.
  */
 const createdAtDesc = (
-  { createdAt: createdAtA }: TransactionRecordType,
-  { createdAt: createdAtB }: TransactionRecordType,
+  { createdAt: createdAtA }: TransactionRecord,
+  { createdAt: createdAtB }: TransactionRecord,
 ) => createdAtB.getTime() - createdAtA.getTime();
 
 /*
@@ -32,11 +29,7 @@ export const oneTransaction = (state: RootStateRecord, id: string) =>
 
 export const allTransactions = createSelector(
   (state: RootStateRecord) =>
-    state.getIn(
-      [ns, CORE_TRANSACTIONS, CORE_TRANSACTIONS_LIST],
-      // @ts-ignore
-      ImmutableMap(),
-    ),
+    state.getIn([ns, CORE_TRANSACTIONS, CORE_TRANSACTIONS_LIST]),
   walletAddressSelector,
   (transactions, walletAddress) =>
     transactions.filter(tx => tx.from === walletAddress),

@@ -87,7 +87,7 @@ const DecisionOption = ({
   return (
     <Element
       type="submit"
-      className={getMainClasses(appearance, styles, { disabled })}
+      className={getMainClasses(appearance, styles, { disabled: !!disabled })}
       {...elmProps}
     >
       <DecisionOptionIcon {...option} />

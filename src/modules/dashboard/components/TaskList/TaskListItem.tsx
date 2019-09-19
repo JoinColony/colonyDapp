@@ -84,14 +84,14 @@ const TaskListItem = ({ data, intl: { formatMessage } }: Props) => {
       <TableRow>
         <TableCell className={styles.taskDetails}>
           <p className={styles.taskDetailsTitle}>{title || defaultTitle}</p>
-          {reputation && (
+          {reputation ? (
             <span className={styles.taskDetailsReputation}>
               <FormattedMessage
                 {...MSG.reputation}
                 values={{ reputation: reputation.toString() }}
               />
             </span>
-          )}
+          ) : null}
         </TableCell>
         <TableCell className={styles.taskPayouts}>
           {!!availableTokens && (

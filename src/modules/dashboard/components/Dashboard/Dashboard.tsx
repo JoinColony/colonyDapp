@@ -55,7 +55,7 @@ const Dashboard = () => {
 
   const currentUser: UserType = useSelector(currentUserSelector);
   const {
-    profile: { walletAddress = undefined },
+    profile: { walletAddress = '' },
   } = currentUser;
 
   return (

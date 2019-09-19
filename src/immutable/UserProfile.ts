@@ -1,8 +1,6 @@
-import { $ReadOnly } from 'utility-types';
+import { Record } from 'immutable';
 
-import { RecordOf, Record } from 'immutable';
-
-import { Address } from '~types/index';
+import { Address, DefaultValues } from '~types/index';
 
 interface Shared {
   avatarHash?: string | null;
@@ -13,15 +11,13 @@ interface Shared {
   username?: string;
   walletAddress: Address;
   website?: string;
-  inboxStoreAddress: string;
-  metadataStoreAddress: string;
+  inboxStoreAddress?: string;
+  metadataStoreAddress?: string;
 }
 
-export type UserProfileType = $ReadOnly<Shared>;
+export type UserProfileType = Readonly<Shared>;
 
-export type UserProfileRecordType = RecordOf<Shared>;
-
-const defaultProps: Shared = {
+const defaultValues: DefaultValues<Shared> = {
   avatarHash: undefined,
   balance: undefined,
   bio: undefined,
@@ -34,6 +30,6 @@ const defaultProps: Shared = {
   metadataStoreAddress: undefined,
 };
 
-export const UserProfileRecord: Record.Factory<Shared> = Record(defaultProps);
+export class UserProfileRecord extends Record<Shared>(defaultValues) {}
 
-export default UserProfileRecord;
+export const UserProfile = (p: Shared) => new UserProfileRecord(p);

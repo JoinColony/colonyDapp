@@ -1,7 +1,7 @@
 import { SendOptions, ContractResponse } from '@colony/colony-js-client';
 import BigNumber from 'bn.js';
 
-import { ColonyContext, TransactionReceipt } from '~types/index';
+import { ContractContexts, TransactionReceipt } from '~types/index';
 import {
   TransactionEventData,
   TransactionMultisig,
@@ -30,7 +30,7 @@ export type MultisigSender = Sender & {
 };
 
 export type TxConfig = {
-  context: ColonyContext;
+  context: ContractContexts;
   group?: {
     key: string;
     id: string | string[];

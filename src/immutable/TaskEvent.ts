@@ -1,21 +1,25 @@
-import { $ReadOnly } from 'utility-types';
-
-import { RecordOf, Record } from 'immutable';
+import { Record } from 'immutable';
 
 import { TaskEvents } from '~data/types/TaskEvents';
+import { EventTypes } from '~data/constants';
+import { DefaultValues } from '~types/index';
 
-export type TaskEventType = $ReadOnly<TaskEvents>;
+export type TaskEventType = Readonly<TaskEvents>;
 
-export type TaskEventRecordType = RecordOf<TaskEvents>;
-
-const defaultValues: TaskEvents = {
-  meta: undefined,
-  payload: undefined,
-  type: undefined,
+const defaultValues: DefaultValues<TaskEvents> = {
+  meta: {
+    id: undefined,
+    timestamp: Date.now(),
+    userAddress: undefined,
+    version: undefined,
+  },
+  payload: {
+    creatorAddress: undefined,
+    draftId: undefined,
+  },
+  type: EventTypes.TASK_CREATED,
 };
 
-export const TaskEventRecord: Record.Factory<TaskEvents> = Record(
-  defaultValues,
-);
+export class TaskEventRecord extends Record(defaultValues) {}
 
-export default TaskEventRecord;
+export const TaskEvent = (p: TaskEvents) => new TaskEventRecord(p);

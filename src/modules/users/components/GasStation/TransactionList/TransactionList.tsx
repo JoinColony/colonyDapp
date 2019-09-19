@@ -12,6 +12,8 @@ import {
   isTxGroup,
 } from '../transactionGroup';
 
+import { TransactionType, MessageType } from '~immutable/index';
+
 interface Props {
   transactionAndMessageGroups: TransactionOrMessageGroups;
   onClickGroup: (idx: number) => void;
@@ -30,14 +32,14 @@ const TransactionList = ({
         isTxGroup(transactionOrMessageGroup) ? (
           <TransactionCard
             key={getGroupId(transactionOrMessageGroup)}
-            transactionGroup={transactionOrMessageGroup}
+            transactionGroup={transactionOrMessageGroup as TransactionType[]}
             onClick={onClickGroup}
             idx={idx}
           />
         ) : (
           <MessageCard
             key={getGroupId(transactionOrMessageGroup)}
-            message={transactionOrMessageGroup[0]}
+            message={transactionOrMessageGroup[0] as MessageType}
             onClick={onClickGroup}
             idx={idx}
           />

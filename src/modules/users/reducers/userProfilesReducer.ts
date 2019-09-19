@@ -1,14 +1,10 @@
 import { Map as ImmutableMap, fromJS } from 'immutable';
 
-import { withDataRecordMap } from '~utils/reducers';
-import {
-  UserRecord,
-  UserProfileRecord,
-  DataRecord,
-  UserRecordType,
-  UsersMap,
-} from '~immutable/index';
+import { withFetchableDataMap } from '~utils/reducers';
+import { User, UserProfile, FetchableData, UserRecord } from '~immutable/index';
 import { ActionTypes, ReducerType } from '~redux/index';
+
+import { UsersMap } from '../state/index';
 
 const userProfilesReducer: ReducerType<UsersMap> = (
   state = ImmutableMap(),
@@ -19,11 +15,11 @@ const userProfilesReducer: ReducerType<UsersMap> = (
       const { profileData, walletAddress, balance } = action.payload;
       return state.mergeDeepIn(
         [walletAddress],
-        DataRecord({
+        FetchableData({
           error: undefined,
           lastFetchedAt: new Date(),
-          record: UserRecord({
-            profile: UserProfileRecord(
+          record: User({
+            profile: UserProfile(
               fromJS({
                 ...profileData,
                 walletAddress,
@@ -45,11 +41,11 @@ const userProfilesReducer: ReducerType<UsersMap> = (
         meta: { key },
         payload,
       } = action;
-      const profile = UserProfileRecord(fromJS(payload));
+      const profile = UserProfile(fromJS(payload));
       const recordPath = [key, 'record'];
       return state.getIn(recordPath)
         ? state.setIn([...recordPath, 'profile'], profile)
-        : state.setIn(recordPath, UserRecord({ profile }));
+        : state.setIn(recordPath, User({ profile }));
     }
 
     case ActionTypes.USER_AVATAR_UPLOAD_SUCCESS: {
@@ -62,13 +58,13 @@ const userProfilesReducer: ReducerType<UsersMap> = (
         payload,
         payload: { walletAddress },
       } = action;
-      const profile = UserProfileRecord(payload);
+      const profile = UserProfile(payload);
       const recordPath = [walletAddress, 'record'];
       return state.getIn(recordPath)
         ? state.setIn([...recordPath, 'profile'], profile)
         : state
             .setIn([walletAddress, 'isFetching'], false)
-            .setIn(recordPath, UserRecord({ profile }));
+            .setIn(recordPath, User({ profile }));
     }
 
     default:
@@ -76,7 +72,7 @@ const userProfilesReducer: ReducerType<UsersMap> = (
   }
 };
 
-export default withDataRecordMap<UsersMap, UserRecordType>(
+export default withFetchableDataMap<UsersMap, UserRecord>(
   new Set([ActionTypes.USER_FETCH, ActionTypes.USER_SUB_START]),
   ImmutableMap(),
 )(userProfilesReducer);

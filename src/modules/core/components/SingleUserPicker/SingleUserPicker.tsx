@@ -148,7 +148,7 @@ const SingleUserPicker = ({
   const handlePick = useCallback(
     (user: UserType) => {
       setValue(user);
-      onSelected(user);
+      if (onSelected) onSelected(user);
     },
     [onSelected, setValue],
   );

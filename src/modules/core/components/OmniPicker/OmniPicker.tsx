@@ -115,7 +115,7 @@ export interface Props {
 }
 
 class OmniPicker extends Component<Props> {
-  elm: HTMLElement | null;
+  elm?: HTMLElement | null;
 
   static displayName = 'OmniPicker';
 

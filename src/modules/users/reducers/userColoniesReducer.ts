@@ -1,18 +1,10 @@
-import {
-  Set as ImmutableSet,
-  Map as ImmutableMap,
-  Map as ImmutableMapType,
-} from 'immutable';
+import { Set as ImmutableSet, Map as ImmutableMap } from 'immutable';
 
 import { Address } from '~types/index';
-import { DataRecordType } from '~immutable/index';
 import { ReducerType, ActionTypes } from '~redux/index';
-import { withDataRecordMap } from '~utils/reducers';
+import { withFetchableDataMap } from '~utils/reducers';
 
-type ColoniesMap = ImmutableMapType<
-  Address,
-  DataRecordType<ImmutableSet<Address>>
->;
+import { ColoniesMap } from '../state/index';
 
 const userColoniesReducer: ReducerType<ColoniesMap> = (
   state = ImmutableMap(),
@@ -43,7 +35,7 @@ const userColoniesReducer: ReducerType<ColoniesMap> = (
   }
 };
 
-export default withDataRecordMap<ColoniesMap, Address[]>(
+export default withFetchableDataMap<ColoniesMap, Address[]>(
   new Set([
     ActionTypes.USER_SUBSCRIBED_COLONIES_FETCH,
     ActionTypes.USER_SUBSCRIBED_COLONIES_SUB_START,

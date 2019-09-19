@@ -2,14 +2,10 @@ import { Map as ImmutableMap, fromJS } from 'immutable';
 
 import { Address } from '~types/index';
 import { ReducerType, ActionTypes } from '~redux/index';
-import {
-  TaskMetadataMap,
-  AllTaskMetadataMap,
-  TaskMetadataRecord,
-  DataRecord,
-} from '~immutable/index';
+import { TaskMetadata, FetchableData } from '~immutable/index';
+import { withFetchableDataMap } from '~utils/reducers';
 
-import { withDataRecordMap } from '~utils/reducers';
+import { TaskMetadataMap, AllTaskMetadataMap } from '../state/index';
 
 type ColonyTasks = {
   [draftId: string]: {
@@ -44,13 +40,13 @@ const updateState = (
     draftIds
       .filter(draftId => !mutable.has(draftId))
       .forEach(draftId => {
-        mutable.set(draftId, TaskMetadataRecord(fromJS(colonyTasks[draftId])));
+        mutable.set(draftId, TaskMetadata(fromJS(colonyTasks[draftId])));
       });
   });
 
   return state.set(
     colonyAddress,
-    DataRecord({
+    FetchableData({
       error: undefined,
       isFetching: false,
       record,
@@ -90,7 +86,7 @@ const taskMetadataReducer: ReducerType<AllTaskMetadataMap> = (
   }
 };
 
-export default withDataRecordMap<AllTaskMetadataMap, TaskMetadataMap>(
+export default withFetchableDataMap<AllTaskMetadataMap, TaskMetadataMap>(
   new Set([
     ActionTypes.COLONY_TASK_METADATA_FETCH,
     ActionTypes.COLONY_TASK_METADATA_SUB_START,

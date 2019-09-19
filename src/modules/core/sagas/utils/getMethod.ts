@@ -2,14 +2,11 @@ import { call } from 'redux-saga/effects';
 
 import { Context, getContext } from '~context/index';
 
-import { TransactionRecordType } from '~immutable/index';
-import {
-  AddressOrENSName,
-  ColonyContext,
-} from '../../../../lib/ColonyManager/types';
+import { TransactionRecord } from '~immutable/index';
+import { AddressOrENSName, ContractContexts } from '~types/index';
 
 export function* getMethod(
-  context: ColonyContext,
+  context: ContractContexts,
   methodName: string,
   identifier?: AddressOrENSName,
 ) {
@@ -26,6 +23,6 @@ export function* getTransactionMethod({
   context,
   methodName,
   identifier,
-}: TransactionRecordType) {
+}: TransactionRecord) {
   return yield call(getMethod, context, methodName, identifier);
 }

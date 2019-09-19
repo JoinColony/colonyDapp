@@ -14,7 +14,7 @@ import {
   Wallet,
 } from '~data/types';
 import { Context } from '~context/index';
-import { TaskState, EventTypes } from '~data/constants';
+import { TaskStates, EventTypes } from '~data/constants';
 import {
   createTaskStore,
   getColonyStore,
@@ -141,11 +141,6 @@ export const createTask: Command<
       colonyStore = await getColonyStore(colonyClient, ddb, wallet)(metadata);
     }
 
-    if (!(colonyStore || colonyTaskIndexStore)) {
-      throw new Error(
-        'Could not load colony task index or colony store either',
-      );
-    }
     return {
       colonyTaskIndexStore,
       colonyStore,
@@ -158,7 +153,8 @@ export const createTask: Command<
     { draftId, creatorAddress },
   ) {
     // backwards-compatibility Colony task index store
-    if (!(colonyStore || colonyTaskIndexStore)) {
+    const taskIndexStore = colonyTaskIndexStore || colonyStore;
+    if (!taskIndexStore) {
       throw new Error('Couldnt locate the store to register this task');
     }
 
@@ -182,8 +178,6 @@ export const createTask: Command<
       taskStoreAddress: taskStore.address.toString(),
     });
 
-    // backwards-compatibility Colony task index store
-    const taskIndexStore = colonyTaskIndexStore || colonyStore;
     await taskIndexStore.append(event);
 
     return {
@@ -199,7 +193,7 @@ export const setTaskTitle: Command<
   TaskStore,
   TaskStoreMetadata,
   {
-    currentTitle: string | null;
+    currentTitle: string | void;
     title: string;
   },
   {
@@ -226,7 +220,7 @@ export const setTaskDescription: Command<
   TaskStore,
   TaskStoreMetadata,
   {
-    currentDescription: string | null;
+    currentDescription: string | void;
     description: string;
   },
   {
@@ -559,12 +553,6 @@ export const cancelTask: Command<
       colonyStore = await getColonyStore(colonyClient, ddb, wallet)(metadata);
     }
 
-    if (!(colonyStore || colonyTaskIndexStore)) {
-      throw new Error(
-        'Could not load colony task index or colony store either',
-      );
-    }
-
     const taskStoreAddress = await getTaskStoreAddress(
       colonyClient,
       ddb,
@@ -583,15 +571,19 @@ export const cancelTask: Command<
   },
   schema: CancelTaskCommandArgsSchema,
   async execute({ colonyStore, colonyTaskIndexStore, taskStore }, { draftId }) {
+    // backwards-compatibility Colony task index store
+    const store = colonyTaskIndexStore || colonyStore;
+    if (!store) {
+      throw new Error(
+        'Could not load colony task index or colony store either',
+      );
+    }
     const eventHash = await taskStore.append(
       createEvent(EventTypes.TASK_CANCELLED, {
-        status: TaskState.CANCELLED,
+        status: TaskStates.CANCELLED,
       }),
     );
-
-    // backwards-compatibility Colony task index store
-    const taskIndexStore = colonyTaskIndexStore || colonyStore;
-    await taskIndexStore.append(
+    await store.append(
       createEvent(EventTypes.TASK_STORE_UNREGISTERED, {
         draftId,
         taskStoreAddress: taskStore.address.toString(),
@@ -617,7 +609,7 @@ export const closeTask: Command<
   async execute(taskStore) {
     const eventHash = await taskStore.append(
       createEvent(EventTypes.TASK_CLOSED, {
-        status: TaskState.CLOSED,
+        status: TaskStates.CLOSED,
       }),
     );
     return { taskStore, event: taskStore.getEvent(eventHash) };

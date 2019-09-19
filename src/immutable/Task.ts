@@ -1,15 +1,8 @@
-import { $Keys } from 'utility-types';
+import { Record, List, Set as ImmutableSet } from 'immutable';
 
-import { RecordOf, Record, List, Set as ImmutableSet } from 'immutable';
-
-import { TASK_STATE } from './constants';
-
-// eslint-disable-next-line import/no-cycle
-import { Address } from '~types/index';
-// eslint-disable-next-line import/no-cycle
-import { TaskPayoutRecordType, TaskPayoutType } from './TaskPayout';
-
-export type TaskCurrentState = $Keys<typeof TASK_STATE>;
+import { TaskStates } from '~data/constants';
+import { Address, DefaultValues } from '~types/index';
+import { TaskPayoutRecord, TaskPayoutType } from './TaskPayout';
 
 /**
  * @todo Support full task workflow for ratings
@@ -22,7 +15,7 @@ interface Shared {
   colonyAddress: Address;
   createdAt: Date;
   creatorAddress: string; // Address of the task creator
-  currentState: TaskCurrentState;
+  currentState: TaskStates;
   description?: string;
   domainId?: number;
   draftId: string; // Draft task ID, when the task is a little babby
@@ -44,21 +37,19 @@ export interface TaskType extends Shared {
 
 interface TaskRecordProps extends Shared {
   invites: ImmutableSet<Address>;
-  payouts: List<TaskPayoutRecordType>;
+  payouts: List<TaskPayoutRecord>;
   requests: ImmutableSet<Address>;
 }
 
 export type TaskProps<T extends keyof TaskType> = Pick<TaskType, T>;
 
-export type TaskRecordType = RecordOf<TaskRecordProps>;
+export type TaskDraftId = Shared['draftId'];
 
-export type TaskDraftId = TaskRecordType['draftId'];
-
-const defaultValues: TaskRecordProps = {
+const defaultValues: DefaultValues<TaskRecordProps> = {
   colonyAddress: undefined,
-  createdAt: undefined,
+  createdAt: new Date(),
   creatorAddress: undefined,
-  currentState: undefined,
+  currentState: TaskStates.ACTIVE,
   description: undefined,
   domainId: undefined,
   draftId: undefined,
@@ -66,15 +57,13 @@ const defaultValues: TaskRecordProps = {
   invites: ImmutableSet(),
   managerAddress: undefined,
   payouts: List(),
-  reputation: undefined,
+  reputation: 0,
   requests: ImmutableSet(),
   skillId: undefined,
   title: undefined,
   workerAddress: undefined,
 };
 
-export const TaskRecord: Record.Factory<TaskRecordProps> = Record(
-  defaultValues,
-);
+export class TaskRecord extends Record<TaskRecordProps>(defaultValues) {}
 
-export default TaskRecord;
+export const Task = (p: TaskRecordProps) => new TaskRecord(p);

@@ -106,9 +106,9 @@ type State = {
 };
 
 class Select extends Component<Props, State> {
-  comboboxNode: HTMLElement | null;
+  comboboxNode?: HTMLElement | null;
 
-  wrapperNode: HTMLElement | null;
+  wrapperNode?: HTMLElement | null;
 
   static displayName = 'Select';
 

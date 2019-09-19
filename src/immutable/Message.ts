@@ -1,24 +1,26 @@
-import { $ReadOnly } from 'utility-types';
+import { Record } from 'immutable';
 
-import { RecordOf, Record } from 'immutable';
+import { DefaultValues } from '~types/index';
 
-import { TransactionStatusType, TRANSACTION_STATUSES } from './Transaction';
+import { TRANSACTION_STATUSES } from './Transaction';
 
-export type MessageProps = $ReadOnly<{
+interface Shared {
   id: string;
-  createdAt: Date;
+  createdAt?: Date;
 
   /*
    * Why is the message signature required, so we can attach a message
    * descriptor id to it and show a prettier name
    */
-  purpose: string;
+  purpose?: string;
   message: string;
   signature?: string;
-  status: TransactionStatusType;
-}>;
+  status?: TRANSACTION_STATUSES;
+}
 
-const defaultValues: Partial<MessageProps> = {
+export type MessageType = Readonly<Shared>;
+
+const defaultValues: DefaultValues<Shared> = {
   id: undefined,
   createdAt: new Date(),
   purpose: 'generic',
@@ -27,10 +29,6 @@ const defaultValues: Partial<MessageProps> = {
   status: TRANSACTION_STATUSES.CREATED,
 };
 
-export const MessageRecord: Record.Factory<Partial<MessageProps>> = Record(
-  defaultValues,
-);
+export class MessageRecord extends Record<Shared>(defaultValues) {}
 
-export type MessageRecordType = RecordOf<MessageProps>;
-
-export default MessageRecord;
+export const Message = (p: Shared) => new MessageRecord(p);

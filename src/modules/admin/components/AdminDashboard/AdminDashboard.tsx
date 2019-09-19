@@ -14,11 +14,15 @@ import Domains from '~admin/Domains';
 import Permissions from '~admin/Permissions';
 import VerticalNavigation from '~pages/VerticalNavigation';
 import { HistoryNavigation } from '~pages/NavigationWrapper';
+import { useDataFetcher, useDataSubscriber } from '~utils/hooks';
+import { Address } from '~types/index';
+
 import { isInRecoveryMode } from '../../../dashboard/checks';
-import { useColonyWithName } from '../../../dashboard/hooks/useColony';
 import { canAdminister } from '../../../users/checks';
-import { useDataFetcher } from '~utils/hooks';
 import { currentUserColonyPermissionsFetcher } from '../../../users/fetchers';
+import { colonyAddressFetcher } from '../../../dashboard/fetchers';
+import { colonySubscriber } from '../../../dashboard/subscribers';
+
 import styles from './AdminDashboard.css';
 
 const MSG = defineMessages({
@@ -100,27 +104,34 @@ const AdminDashboard = ({
     params: { colonyName },
   },
 }: Props) => {
-  const CURRENT_COLONY_ROUTE = colonyName ? `/colony/${colonyName}` : null;
+  const CURRENT_COLONY_ROUTE = colonyName ? `/colony/${colonyName}` : '';
 
-  const { data: colony, isFetching, error } = useColonyWithName(colonyName);
+  const { error: addressError, data: colonyAddress } = useDataFetcher<Address>(
+    colonyAddressFetcher,
+    [colonyName],
+    [colonyName],
+  );
 
-  const colonyArgs =
-    colony && colony.colonyAddress ? [colony.colonyAddress] : [undefined];
+  const { error: colonyError, data: colony } = useDataSubscriber<ColonyType>(
+    colonySubscriber,
+    [colonyAddress],
+    [colonyAddress],
+  );
 
   const {
     data: permissions,
     isFetching: isFetchingPermissions,
   } = useDataFetcher<UserPermissionsType>(
     currentUserColonyPermissionsFetcher,
-    colonyArgs,
-    colonyArgs,
+    [colony ? colony.colonyAddress : undefined],
+    [colony ? colony.colonyAddress : undefined],
   );
 
-  if (!colonyName || error) {
+  if (!colonyName || addressError || colonyError) {
     return <Redirect to="/404" />;
   }
 
-  if (!colony || isFetching || !permissions || isFetchingPermissions) {
+  if (!colony || !permissions || isFetchingPermissions) {
     return <LoadingTemplate loadingText={MSG.loadingText} />;
   }
 

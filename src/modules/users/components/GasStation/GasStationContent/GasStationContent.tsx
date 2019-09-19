@@ -3,9 +3,9 @@ import { defineMessages } from 'react-intl';
 
 import Heading from '~core/Heading';
 import { getMainClasses } from '~utils/css';
+import { TransactionType, MessageType } from '~immutable/index';
 
 import { TransactionOrMessageGroups, isTxGroup } from '../transactionGroup';
-
 import GasStationHeader from '../GasStationHeader';
 import TransactionDetails from '../TransactionDetails';
 import TransactionList from '../TransactionList';
@@ -95,7 +95,7 @@ class GasStationContent extends Component<Props, State> {
       if (isTx) {
         return (
           <TransactionDetails
-            transactionGroup={detailsTransactionGroup}
+            transactionGroup={detailsTransactionGroup as TransactionType[]}
             onClose={this.unselectTransactionGroup}
             appearance={appearance}
           />
@@ -103,7 +103,7 @@ class GasStationContent extends Component<Props, State> {
       }
       return (
         <MessageCardDetails
-          message={detailsTransactionGroup[0]}
+          message={detailsTransactionGroup[0] as MessageType}
           onClose={this.unselectTransactionGroup}
         />
       );

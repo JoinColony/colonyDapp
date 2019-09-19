@@ -1,13 +1,14 @@
 import { List as ListType, Map as ImmutableMap, List, fromJS } from 'immutable';
 
 import {
+  ContractTransaction,
   ContractTransactionRecord,
-  DataRecord,
-  AdminUnclaimedTransactionsState,
-  ContractTransactionRecordType,
+  FetchableData,
 } from '~immutable/index';
-import { withDataRecordMap } from '~utils/reducers';
+import { withFetchableDataMap } from '~utils/reducers';
 import { ActionTypes, ReducerType } from '~redux/index';
+
+import { AdminUnclaimedTransactionsState } from '../state/index';
 
 const colonyUnclaimedTransactionsReducer: ReducerType<
   AdminUnclaimedTransactionsState
@@ -20,10 +21,8 @@ const colonyUnclaimedTransactionsReducer: ReducerType<
       } = action;
       return state.set(
         key,
-        DataRecord<ListType<ContractTransactionRecordType>>({
-          record: List(
-            transactions.map(tx => ContractTransactionRecord(fromJS(tx))),
-          ),
+        FetchableData<ListType<ContractTransactionRecord>>({
+          record: List(transactions.map(tx => ContractTransaction(fromJS(tx)))),
         }),
       );
     }
@@ -32,9 +31,9 @@ const colonyUnclaimedTransactionsReducer: ReducerType<
   }
 };
 
-export default withDataRecordMap<
+export default withFetchableDataMap<
   AdminUnclaimedTransactionsState,
-  ContractTransactionRecordType
+  ContractTransactionRecord
 >(ActionTypes.COLONY_UNCLAIMED_TRANSACTIONS_FETCH, ImmutableMap())(
   colonyUnclaimedTransactionsReducer,
 );

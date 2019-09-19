@@ -1,24 +1,25 @@
 import React, { MouseEvent } from 'react';
 
-import { TRANSACTION_STATUSES } from '~immutable/Transaction';
+import { TRANSACTION_STATUSES, TransactionType } from '~immutable/index';
 import CardList from '~core/CardList';
-import {
-  TransactionOrMessageGroup,
-  getGroupKey,
-  getActiveTransactionIdx,
-} from '../transactionGroup';
+import { getGroupKey, getActiveTransactionIdx } from '../transactionGroup';
 import { Appearance } from '../GasStationContent';
 import { GroupedTransaction } from '../TransactionCard';
 import GasStationClaimCard from '../GasStationClaimCard';
 import GasStationPrice from '../GasStationPrice';
 import TransactionBackToList from './TransactionBackToList';
 
+const showPrice = (tx?: TransactionType) =>
+  !!tx &&
+  (tx.status === TRANSACTION_STATUSES.READY ||
+    tx.status === TRANSACTION_STATUSES.FAILED);
+
 interface Props {
   /* If we are only showing the transaction details
    * and no overview we do not need a back button
    */
   appearance: Appearance;
-  transactionGroup: TransactionOrMessageGroup;
+  transactionGroup: TransactionType[];
   onClose: (event: MouseEvent<HTMLButtonElement>) => void;
 }
 
@@ -34,12 +35,6 @@ const TransactionDetails = ({
   const selectedTransaction = transactionGroup[selectedTransactionIdx];
   const groupKey = getGroupKey(transactionGroup);
   return (
-    /*
-     * @NOTE I think this is due to a prop name conflict between the Transaction
-     * and Message objects but not really sure
-     * Flow reports some iterator errors inside the core Flow and React libs
-     */
-
     <div>
       {interactive && <TransactionBackToList onClose={onClose} />}
       <CardList appearance={{ numCols: '1' }}>
@@ -50,11 +45,9 @@ const TransactionDetails = ({
           selectedTransactionIdx={selectedTransactionIdx}
         />
       </CardList>
-      {selectedTransaction &&
-        (selectedTransaction.status === TRANSACTION_STATUSES.READY ||
-          selectedTransaction.status === TRANSACTION_STATUSES.FAILED) && (
-          <GasStationPrice transaction={selectedTransaction} />
-        )}
+      {showPrice(selectedTransaction) && (
+        <GasStationPrice transaction={selectedTransaction as TransactionType} />
+      )}
     </div>
   );
 };

@@ -11,6 +11,7 @@ import { bnLessThan } from '../utils/numbers';
 
 import en from '../i18n/en-validation.json';
 
+// @ts-ignore
 yup.setLocale(en);
 
 /*
@@ -47,7 +48,7 @@ function lessThanPot(
 ) {
   return this.test({
     name: 'lessThanPot',
-    message: msg || en.mixed.lessThanPot,
+    message: msg || en.number.lessThanPot,
     params: {
       tokenReferences,
     },
@@ -130,6 +131,7 @@ function includes(searchVal, msg) {
 
 export class BigNumberSchemaType extends yup.object {
   _typeCheck(value: any) {
+    // @ts-ignore (_typeCheck is not typed in external types)
     // eslint-disable-next-line no-underscore-dangle
     return super._typeCheck(value) || BigNumber.isBN(value);
   }

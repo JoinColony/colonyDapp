@@ -2,9 +2,6 @@ import React from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 
 import {
-  UserRecord,
-  ColonyRecord,
-  TaskRecord,
   ColonyType,
   ContractTransactionType,
   TaskType,
@@ -48,21 +45,17 @@ interface Props {
 }
 
 interface HookedProps extends Props {
-  colony: ColonyType | void;
+  colony?: ColonyType;
 }
 
 const UserDetails = ({
-  user: {
-    displayName: userDisplayName = '',
-    username = '',
-    walletAddress,
-  } = UserRecord().profile,
+  user: { displayName: userDisplayName = '', username = '', walletAddress },
   address = walletAddress,
   showMaskedAddress,
 }: {
   address: Address;
   showMaskedAddress?: boolean;
-  user?: UserProfileType;
+  user: UserProfileType;
 }) => (
   <span>
     {userDisplayName && <span>{`${userDisplayName} `}</span>}
@@ -76,10 +69,7 @@ const UserDetails = ({
 );
 
 const ColonyDetails = ({
-  colony: {
-    displayName: colonyDisplayName,
-    colonyAddress,
-  } = ColonyRecord().toJS(),
+  colony: { displayName: colonyDisplayName, colonyAddress },
   address = colonyAddress,
   showMaskedAddress,
 }: {
@@ -99,7 +89,7 @@ const ColonyDetails = ({
 
 const TaskDetails = ({
   colonyName,
-  task: { draftId, title } = TaskRecord().toJS(),
+  task: { draftId, title },
 }: {
   task: TaskType;
   colonyName: ENSName;
@@ -125,7 +115,7 @@ const IncomingTransaction = ({
       {/*
        * From a user
        */}
-      {from && !(to && colony) && (
+      {from && !(to && colony) && user && (
         <FormattedMessage
           {...MSG.fromText}
           values={{
@@ -194,14 +184,14 @@ const OutgoingTransaction = ({
   transaction: { from, to },
   user,
 }: Props & {
-  colony: ColonyType | null;
+  colony?: ColonyType;
 }) => (
   <div>
     <p className={styles.primaryText}>
       {/*
        * To a user
        */}
-      {to && !(from && colony) && (
+      {to && !(from && colony) && user && (
         <FormattedMessage
           {...MSG.toText}
           values={{
@@ -274,6 +264,7 @@ const TransactionDetails = ({
     [colonyAddress],
     [colonyAddress],
   );
+  if (!colony) return null;
   const TransactionComponent = incoming
     ? IncomingTransaction
     : OutgoingTransaction;

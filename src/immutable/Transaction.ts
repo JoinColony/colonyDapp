@@ -1,41 +1,38 @@
-import { $Values, $ReadOnly } from 'utility-types';
-
-import { RecordOf, Record } from 'immutable';
+import { Record } from 'immutable';
 import { SendOptions } from '@colony/colony-js-client';
 import BigNumber from 'bn.js';
 
 import {
   Address,
   AddressOrENSName,
-  ColonyContext,
+  ContractContexts,
+  DefaultValues,
   TransactionReceipt,
 } from '~types/index';
 
-export const TRANSACTION_ERRORS = Object.freeze({
-  ESTIMATE: 'ESTIMATE',
-  EVENT_DATA: 'EVENT_DATA',
-  MULTISIG_NONCE: 'MULTISIG_NONCE',
-  MULTISIG_REFRESH: 'MULTISIG_REFRESH',
-  MULTISIG_REJECT: 'MULTISIG_REJECT',
-  MULTISIG_SIGN: 'MULTISIG_SIGN',
-  RECEIPT: 'RECEIPT',
-  SEND: 'SEND',
-  UNSUCCESSFUL: 'UNSUCCESSFUL',
-});
+export enum TRANSACTION_ERRORS {
+  ESTIMATE = 'ESTIMATE',
+  EVENT_DATA = 'EVENT_DATA',
+  MULTISIG_NONCE = 'MULTISIG_NONCE',
+  MULTISIG_REFRESH = 'MULTISIG_REFRESH',
+  MULTISIG_REJECT = 'MULTISIG_REJECT',
+  MULTISIG_SIGN = 'MULTISIG_SIGN',
+  RECEIPT = 'RECEIPT',
+  SEND = 'SEND',
+  UNSUCCESSFUL = 'UNSUCCESSFUL',
+}
 
-export const TRANSACTION_STATUSES = Object.freeze({
-  CREATED: 'CREATED',
-  READY: 'READY',
-  PENDING: 'PENDING',
-  FAILED: 'FAILED',
-  MULTISIG: 'MULTISIG',
-  SUCCEEDED: 'SUCCEEDED',
-});
-
-export type TransactionStatusType = $Values<typeof TRANSACTION_STATUSES>;
+export enum TRANSACTION_STATUSES {
+  CREATED = 'CREATED',
+  READY = 'READY',
+  PENDING = 'PENDING',
+  FAILED = 'FAILED',
+  MULTISIG = 'MULTISIG',
+  SUCCEEDED = 'SUCCEEDED',
+}
 
 export interface TransactionError {
-  type: $Values<typeof TRANSACTION_ERRORS>;
+  type: TRANSACTION_ERRORS;
   message: string;
 }
 
@@ -54,18 +51,18 @@ export interface TransactionMultisig {
 }
 
 export interface TransactionRecordProps {
-  context: ColonyContext;
+  context: ContractContexts;
   createdAt: Date;
   error?: TransactionError;
   eventData?: TransactionEventData;
   from: string;
   gasLimit?: number;
   gasPrice?: BigNumber;
-  group?: RecordOf<{
+  group?: {
     key: string;
     id: string | string[];
     index: number;
-  }>;
+  };
   hash?: string;
   id: TransactionId;
   identifier?: AddressOrENSName;
@@ -75,15 +72,14 @@ export interface TransactionRecordProps {
   options: SendOptions;
   params: TransactionParams;
   receipt?: TransactionReceipt;
-  status: TransactionStatusType;
+  status: TRANSACTION_STATUSES;
   loadingRelated?: boolean;
 }
 
-export type TransactionType = $ReadOnly<TransactionRecordProps>;
+export type TransactionType = Readonly<TransactionRecordProps>;
 
-export type TransactionRecordType = RecordOf<TransactionRecordProps>;
-
-const defaultValues: TransactionRecordProps = {
+const defaultValues: DefaultValues<TransactionRecordProps> = {
+  // Just because we have to pick one
   context: undefined,
   createdAt: new Date(),
   error: undefined,
@@ -101,12 +97,13 @@ const defaultValues: TransactionRecordProps = {
   options: {},
   params: {},
   receipt: undefined,
-  status: TRANSACTION_STATUSES.READY,
+  status: undefined,
   loadingRelated: false,
 };
 
-export const TransactionRecord: Record.Factory<TransactionRecordProps> = Record(
+export class TransactionRecord extends Record<TransactionRecordProps>(
   defaultValues,
-);
+) {}
 
-export default TransactionRecord;
+export const Transaction = (p: TransactionRecordProps) =>
+  new TransactionRecord(p);

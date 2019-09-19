@@ -8,12 +8,12 @@ export type UsernameActionTypes =
       {
         username: string;
       },
-      object
+      void
     >
   | ErrorActionType<ActionTypes.USERNAME_CHECK_AVAILABILITY_ERROR, object>
   | UniqueActionType<
       ActionTypes.USERNAME_CHECK_AVAILABILITY_SUCCESS,
-      object,
+      void,
       object
     >
   | UniqueActionType<ActionTypes.USERNAME_CREATE, { username: string }, object>

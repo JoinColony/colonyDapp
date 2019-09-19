@@ -70,6 +70,7 @@ function* markNotificationAsRead({
       readUntil: currentReadUntil = 0,
       exceptFor: currentExceptFor = [],
     } = yield executeQuery(getUserNotificationMetadata, {
+      args: undefined,
       metadata,
     });
 
@@ -136,7 +137,7 @@ function* markNotificationAsRead({
   return null;
 }
 
-function* inboxItemsFetch({ meta }: Action<ActionTypes.INBOX_ITEMS_FETCH>) {
+function* inboxItemsFetch() {
   try {
     let userColonies = [];
 
@@ -147,6 +148,7 @@ function* inboxItemsFetch({ meta }: Action<ActionTypes.INBOX_ITEMS_FETCH>) {
 
     if (metadataStoreAddress) {
       userColonies = yield executeQuery(getUserColonies, {
+        args: undefined,
         metadata: {
           walletAddress,
           metadataStoreAddress,
@@ -155,6 +157,7 @@ function* inboxItemsFetch({ meta }: Action<ActionTypes.INBOX_ITEMS_FETCH>) {
       const { readUntil = 0, exceptFor = [] } = yield executeQuery(
         getUserNotificationMetadata,
         {
+          args: undefined,
           metadata: {
             walletAddress,
             metadataStoreAddress,
@@ -173,16 +176,16 @@ function* inboxItemsFetch({ meta }: Action<ActionTypes.INBOX_ITEMS_FETCH>) {
     }
 
     const activities = yield executeQuery(getUserInboxActivity, {
+      args: undefined,
       metadata: { inboxStoreAddress, walletAddress, userColonies },
     });
 
     yield put<AllActions>({
       type: ActionTypes.INBOX_ITEMS_FETCH_SUCCESS,
       payload: { activities },
-      meta,
     });
   } catch (error) {
-    return yield putError(ActionTypes.INBOX_ITEMS_FETCH_ERROR, error, meta);
+    return yield putError(ActionTypes.INBOX_ITEMS_FETCH_ERROR, error);
   }
   return null;
 }

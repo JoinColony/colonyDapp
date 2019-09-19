@@ -194,7 +194,7 @@ export const getUserTokens: Query<
     metadata: UserMetadataStoreMetadata,
   ) {
     const { metadataStoreAddress } = metadata;
-    let metadataStore = null;
+    let metadataStore: UserMetadataStore | null = null;
     if (metadataStoreAddress)
       metadataStore = await getUserMetadataStore(ddb)(metadata);
     return { metadataStore, colonyManager };
@@ -452,7 +452,10 @@ const getColonyEventsForUserInbox = async (
 
   const extensionAddresses = await getExtensionAddresses(colonyClient);
 
-  const colonyLabelRegisteredEvents = await getDecoratedEvents(
+  const colonyLabelRegisteredEvents = await getDecoratedEvents<
+    'ColonyLabelRegistered',
+    { colony: string; label: string; tokenAddress: string }
+  >(
     networkClient,
     mapTopics(ColonyLabelRegistered.interface.topics[0], colonyAddress),
     {
@@ -461,7 +464,16 @@ const getColonyEventsForUserInbox = async (
     },
   );
 
-  const roleAssignmentEvents = await getDecoratedEvents(
+  const roleAssignmentEvents = await getDecoratedEvents<
+    'ColonyRoleSet',
+    {
+      address: string;
+      domainId: number;
+      // In the future we might want to use an enum here
+      role: string;
+      setTo: boolean;
+    }
+  >(
     colonyClient,
     {
       // @TODO: Allow null values on log topics filter
@@ -479,7 +491,12 @@ const getColonyEventsForUserInbox = async (
     },
   );
 
-  const domainAddedEvents = await getDecoratedEvents(
+  const domainAddedEvents = await getDecoratedEvents<
+    'DomainAdded',
+    {
+      domainId: number;
+    }
+  >(
     colonyClient,
     {
       address: colonyAddress,
@@ -490,7 +507,10 @@ const getColonyEventsForUserInbox = async (
     },
   );
 
-  const tokenMintedEvents = await getDecoratedEvents(
+  const tokenMintedEvents = await getDecoratedEvents<
+    'Mint',
+    { address: string; amount: BigNumber }
+  >(
     tokenClient,
     {
       address: tokenAddress,
@@ -517,7 +537,6 @@ const getColonyEventsForUserInbox = async (
   ].filter(({ transaction: { from } }) => from !== walletAddress);
 
   const normalized = [
-    // @ts-ignore
     ...colonyLabelRegisteredEvents.map(event =>
       normalizeTransactionLog(colonyNetworkAddress, event),
     ),
@@ -572,7 +591,7 @@ export const getUserInboxActivity: Query<
           inboxStoreAddress,
           walletAddress,
         })
-      : null;
+      : undefined;
 
     const colonyClients = await Promise.all(
       userColonies.map(address => colonyManager.getColonyClient(address)),

@@ -1,8 +1,9 @@
 import { Map as ImmutableMap, Set as ImmutableSet } from 'immutable';
 
-import { AllRolesMap } from '~immutable/index';
-import { withDataRecordMap } from '~utils/reducers';
+import { withFetchableDataMap } from '~utils/reducers';
 import { ActionTypes, ReducerType } from '~redux/index';
+
+import { AllRolesMap } from '../state/index';
 
 const allRolesReducer: ReducerType<AllRolesMap> = (
   state = ImmutableMap(),
@@ -68,7 +69,7 @@ const allRolesReducer: ReducerType<AllRolesMap> = (
   }
 };
 
-export default withDataRecordMap<AllRolesMap, ImmutableSet<string>>(
+export default withFetchableDataMap<AllRolesMap, ImmutableSet<string>>(
   new Set([
     ActionTypes.COLONY_ROLES_FETCH,
     ActionTypes.COLONY_DOMAIN_USER_ROLES_FETCH_SUCCESS,

@@ -10,9 +10,9 @@ import {
 
 import { Action, ActionTypes, AllActions } from '~redux/index';
 import { executeQuery, putError } from '~utils/saga/effects';
+import { ContractContexts } from '~types/index';
 import { getColonyRoles, getColonyDomainUserRoles } from '../data/queries';
 import { createTransaction } from '../../core/sagas';
-import { COLONY_CONTEXT } from '../../core/constants';
 
 function* colonyRolesFetch({
   payload: { colonyAddress },
@@ -20,6 +20,7 @@ function* colonyRolesFetch({
 }: Action<ActionTypes.COLONY_ROLES_FETCH>) {
   try {
     const roles = yield executeQuery(getColonyRoles, {
+      args: undefined,
       metadata: { colonyAddress },
     });
 
@@ -108,7 +109,7 @@ function* colonyDomainUserRolesSet({
     yield all(
       toChange.map(([role, setTo], index) =>
         fork(createTransaction, `${meta.id}_${getRoleSetFunctionName(role)}`, {
-          context: COLONY_CONTEXT,
+          context: ContractContexts.COLONY_CONTEXT,
           identifier: colonyAddress,
           methodName: getRoleSetFunctionName(role),
           params: { address: userAddress, domainId, setTo },

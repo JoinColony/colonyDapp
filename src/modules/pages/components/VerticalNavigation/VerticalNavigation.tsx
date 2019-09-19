@@ -43,7 +43,7 @@ interface Props {
   /*
    * Index of tab that should be open initially
    */
-  initialTab?: number;
+  initialTab: number;
 }
 
 class VerticalNavigation extends Component<Props, State> {

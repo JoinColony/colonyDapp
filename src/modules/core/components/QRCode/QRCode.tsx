@@ -13,7 +13,7 @@ interface Props {
 const displayName = 'QRCode';
 
 const QRCode = ({ address, width }: Props) => {
-  const canvas = useRef();
+  const canvas = useRef(null);
   useLayoutEffect(() => {
     if (canvas.current) {
       QRCodeGenerator.toCanvas(

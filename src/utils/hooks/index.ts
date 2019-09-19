@@ -1,4 +1,4 @@
-import { Collection, Map as ImmutableMapType } from 'immutable';
+import { Collection, Map as ImmutableMap } from 'immutable';
 import { Selector } from 'reselect';
 import { useEffect, useCallback, useMemo, useRef } from 'react';
 import { useDispatch, useMappedState } from 'redux-react-hook';
@@ -6,17 +6,19 @@ import { useDispatch, useMappedState } from 'redux-react-hook';
 import { Action, AllActions, ActionTypes } from '~redux/index';
 import { Address } from '~types/index';
 import { ActionTransformFnType } from '~utils/actions';
-import { DataRecordType, DomainType, RootStateRecord } from '~immutable/index';
+import { FetchableDataRecord, DomainType } from '~immutable/index';
 import promiseListener, { AsyncFunction } from '~redux/createPromiseListener';
 import { isFetchingData, shouldFetchData } from '~immutable/utils';
 import { getMainClasses } from '~utils/css';
 import { proxyOldRoles, includeParentRoles } from '~utils/data';
+
 import { rolesFetcher, domainsFetcher } from '../../modules/dashboard/fetchers';
+import { RootStateRecord } from '../../modules/state';
 
 interface DataObject<T> {
-  data: T | void;
+  data?: T;
   isFetching: boolean;
-  error: string | void;
+  error?: string;
 }
 
 interface KeyedDataObject<T> extends DataObject<T> {
@@ -27,7 +29,7 @@ type DataFetcher<T> = {
   select: (
     rootState: RootStateRecord,
     ...selectArgs: any[]
-  ) => DataRecordType<T> | null;
+  ) => FetchableDataRecord<T> | undefined;
   fetch: (...fetchArgs: any[]) => Action<any>;
   ttl?: number;
 };
@@ -36,7 +38,7 @@ type DataSubscriber<T> = {
   select: (
     rootState: RootStateRecord,
     ...selectArgs: any[]
-  ) => DataRecordType<T> | null;
+  ) => FetchableDataRecord<T> | undefined;
   start: (...subArgs: any[]) => Action<any>;
   stop: (...subArgs: any[]) => Action<any>;
 };
@@ -45,7 +47,7 @@ type DataMapFetcher<T> = {
   select: (
     rootState: RootStateRecord,
     keys: string[],
-  ) => ImmutableMapType<string, DataRecordType<T> | null>;
+  ) => ImmutableMap<string, FetchableDataRecord<T>>;
   fetch: (key: any) => Action<any>;
   ttl?: number;
 };
@@ -54,7 +56,7 @@ type DataTupleFetcher<T> = {
   select: (
     rootState: RootStateRecord,
     args: [any, any][],
-  ) => ImmutableMapType<string, DataRecordType<T> | null>;
+  ) => ImmutableMap<string, FetchableDataRecord<T>>;
   fetch: (arg0: [any, any]) => Action<any>;
   ttl?: number;
 };
@@ -63,7 +65,7 @@ type DataTupleSubscriber<T> = {
   select: (
     rootState: RootStateRecord,
     keys: [any, any][],
-  ) => ImmutableMapType<string, DataRecordType<T> | null>;
+  ) => ImmutableMap<string, FetchableDataRecord<T>>;
   start: (...subArgs: any[]) => Action<any>;
   stop: (...subArgs: any[]) => Action<any>;
 };
@@ -91,8 +93,8 @@ export const usePrevious = (value: any) => {
   return ref.current;
 };
 
-const transformFetchedData = (data: DataRecordType<any> | null) => {
-  if (!data) return null;
+const transformFetchedData = (data?: FetchableDataRecord<any>) => {
+  if (!data) return undefined;
   const record =
     typeof data.get === 'function' ? data.get('record') : data.record;
   return record && typeof record.toJS === 'function' ? record.toJS() : record;
@@ -111,8 +113,7 @@ export const useSelector = (
   transform?: (obj: Collection<any, any>) => any,
 ) => {
   const mapState = useCallback(state => select(state, ...args), [args, select]);
-  // @ts-ignore
-  const data = useMappedState(mapState, [mapState]);
+  const data = useMappedState(mapState);
   const transformFn =
     typeof transform === 'function'
       ? transform
@@ -204,15 +205,15 @@ export const useDataFetcher = <T>(
   useEffect(() => {
     isFirstMount.current = false;
     if (shouldFetch) {
-      // @ts-ignore
-      dispatch(fetch(...fetchArgs), fetchArgs);
+      dispatch(fetch(...fetchArgs));
     }
-  }, [dispatch, fetch, fetchArgs, shouldFetch]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [dispatch, fetch, shouldFetch, ...fetchArgs]);
 
   return {
     data: transformFetchedData(data),
-    isFetching: shouldFetch && isFetchingData(data),
-    error: data && data.error ? data.error : null,
+    isFetching: !!(shouldFetch && isFetchingData(data)),
+    error: data && data.error ? data.error : undefined,
   };
 };
 
@@ -233,7 +234,10 @@ export const useDataMapFetcher = <T>(
   const memoizedKeys = useMemoWithFlatArray(() => keys, keys);
 
   const dispatch = useDispatch();
-  const allData: ImmutableMapType<string, DataRecordType<any>> = useMappedState(
+  const allData: ImmutableMap<
+    string,
+    FetchableDataRecord<any>
+  > = useMappedState(
     useCallback(state => select(state, memoizedKeys), [select, memoizedKeys]),
   );
 
@@ -307,24 +311,24 @@ export const useDataSubscriber = <T>(
 
   useEffect(() => {
     if (shouldSubscribe) {
-      // @ts-ignore
-      dispatch(start(...subArgs), subArgs);
+      dispatch(start(...subArgs));
     }
     isFirstMount.current = false;
-  }, [dispatch, shouldSubscribe, start, stop, subArgs]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [dispatch, shouldSubscribe, start, stop, ...subArgs]);
 
   useEffect(
     () => () => {
-      // @ts-ignore
-      dispatch(stop(...subArgs), subArgs);
-    }, // eslint-disable-next-line react-hooks/exhaustive-deps
-    [],
+      dispatch(stop(...subArgs));
+    },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [dispatch, stop, ...subArgs],
   );
 
   return {
     data: transformFetchedData(data),
-    isFetching: shouldSubscribe && isFetchingData(data),
-    error: data && data.error ? data.error : null,
+    isFetching: !!(shouldSubscribe && isFetchingData(data)),
+    error: data && data.error ? data.error : undefined,
   };
 };
 
@@ -338,7 +342,10 @@ export const useDataTupleSubscriber = <T>(
 ): DataObject<T>[] => {
   const memoizedKeys = useMemoWithTupleArray(() => keys, keys);
   const dispatch = useDispatch();
-  const allData: ImmutableMapType<string, DataRecordType<any>> = useMappedState(
+  const allData: ImmutableMap<
+    string,
+    FetchableDataRecord<any>
+  > = useMappedState(
     useCallback(state => select(state, memoizedKeys), [select, memoizedKeys]),
   );
 
@@ -366,8 +373,8 @@ export const useDataTupleSubscriber = <T>(
   useEffect(
     () => () => {
       keysToFetchFor.map(key => dispatch(stop(...key)));
-    }, // eslint-disable-next-line react-hooks/exhaustive-deps
-    [],
+    },
+    [dispatch, keysToFetchFor, stop],
   );
 
   return useMemo(
@@ -402,7 +409,10 @@ export const useDataTupleFetcher = <T>(
    */
   const memoizedKeys = useMemoWithTupleArray(() => keys, keys);
   const dispatch = useDispatch();
-  const allData: ImmutableMapType<string, DataRecordType<any>> = useMappedState(
+  const allData: ImmutableMap<
+    string,
+    FetchableDataRecord<any>
+  > = useMappedState(
     useCallback(state => select(state, memoizedKeys), [select, memoizedKeys]),
   );
 

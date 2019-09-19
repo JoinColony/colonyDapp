@@ -126,3 +126,19 @@
   color: rgb(220, 224, 224);
   cursor: default;
 }
+
+.navBar {
+  /* Needed for react-day-picker */
+}
+
+.navButtonPrev {
+  /* Needed for react-day-picker */
+}
+
+.navButtonNext {
+  /* Needed for react-day-picker */
+}
+
+.caption {
+  /* Needed for react-day-picker */
+}

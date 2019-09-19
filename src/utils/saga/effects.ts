@@ -123,23 +123,14 @@ function* getExecuteDependencies<D, M, A, R>(
 
 export function* executeQuery<D, M, A, R>(
   query: Query<D, M, A, R>,
-  {
-    args,
-    metadata,
-  }: {
-    args?: A;
-    metadata?: M;
-  },
+  { args, metadata }: { args: A; metadata?: M },
 ): IterableIterator<any> {
   log.verbose(`Executing query "${query.name}"`, { args, metadata });
   const startQuery = Date.now();
 
-  const executeDeps = yield call(getExecuteDependencies, query, {
-    // The metadata object is cloned to satisfy flow.
-    ...metadata,
-  });
+  const executeDeps = yield call(getExecuteDependencies, query, metadata);
 
-  const result = yield call(query.execute, executeDeps, { ...args });
+  const result = yield call(query.execute, executeDeps, args);
 
   log.verbose(
     `Executed query "${query.name}" in ${Date.now() - startQuery} ms`,
@@ -172,9 +163,9 @@ export function* executeSubscription<D, M, A, R>(
   );
 
   return eventChannel(emitter => {
-    let subs = [];
+    let subs;
     try {
-      subs = (subscription as any)(emitter);
+      subs = subscription(emitter);
     } catch (caughtError) {
       emitter(END);
       throw caughtError;

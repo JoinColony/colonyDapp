@@ -1,9 +1,10 @@
-import { Map as ImmutableMap, Set as ImmutableSet } from 'immutable';
+import { Set as ImmutableSet } from 'immutable';
 import { createSelector } from 'reselect';
 
 import { Address } from '~types/index';
-import { RootStateRecord, TaskDraftId } from '~immutable/index';
+import { TaskDraftId } from '~immutable/index';
 
+import { RootStateRecord } from '../../state';
 import {
   DASHBOARD_NAMESPACE as ns,
   DASHBOARD_TASK_FEED_ITEMS,
@@ -35,8 +36,7 @@ export const tasksByIdsSelector = (
   draftIds: [Address, TaskDraftId][],
 ) =>
   state
-    // @ts-ignore
-    .getIn([ns, DASHBOARD_TASKS], ImmutableMap())
+    .getIn([ns, DASHBOARD_TASKS])
     .filter((task, draftId) => draftIds.find(entry => entry[1] === draftId));
 
 export const taskFeedItemsSelector = (

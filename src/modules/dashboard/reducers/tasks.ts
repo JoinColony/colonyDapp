@@ -6,21 +6,14 @@ import {
 } from 'immutable';
 
 import { ReducerType, ActionTypes } from '~redux/index';
-import {
-  TaskRecordType,
-  TasksMap,
-  DataRecord,
-  TaskPayoutRecord,
-  TaskRecord,
-} from '~immutable/index';
-import { withDataRecordMap } from '~utils/reducers';
-import { EventTypes, TaskState } from '~data/constants';
+import { TaskRecord, FetchableData, TaskPayout, Task } from '~immutable/index';
+import { withFetchableDataMap } from '~utils/reducers';
+import { EventTypes, TaskStates } from '~data/constants';
 import { AllEvents, createAddress } from '~types/index';
 
-const taskEventReducer = (
-  task: TaskRecordType,
-  event: AllEvents,
-): TaskRecordType => {
+import { TasksMap } from '../state/index';
+
+const taskEventReducer = (task: TaskRecord, event: AllEvents): TaskRecord => {
   switch (event.type) {
     case EventTypes.TASK_CREATED: {
       const {
@@ -31,7 +24,7 @@ const taskEventReducer = (
         fromJS({
           createdAt: new Date(timestamp),
           creatorAddress,
-          currentState: TaskState.ACTIVE,
+          currentState: TaskStates.ACTIVE,
           draftId,
           managerAddress: creatorAddress,
           domainId: 1,
@@ -65,10 +58,10 @@ const taskEventReducer = (
     }
 
     case EventTypes.TASK_FINALIZED:
-      return task.set('currentState', TaskState.FINALIZED);
+      return task.set('currentState', TaskStates.FINALIZED);
 
     case EventTypes.TASK_CANCELLED:
-      return task.set('currentState', TaskState.CANCELLED);
+      return task.set('currentState', TaskStates.CANCELLED);
 
     case EventTypes.WORK_INVITE_SENT: {
       const { workerAddress } = event.payload;
@@ -93,7 +86,7 @@ const taskEventReducer = (
       return task.set(
         'payouts',
         List([
-          TaskPayoutRecord(
+          TaskPayout(
             fromJS({
               amount,
               token: createAddress(token),
@@ -124,12 +117,10 @@ const tasksReducer: ReducerType<TasksMap> = (
       } = action.payload;
       return state.set(
         draftId,
-        DataRecord<TaskRecordType>({
+        FetchableData<TaskRecord>({
           error: undefined,
           isFetching: false,
-          record: TaskRecord(
-            fromJS({ colonyAddress, creatorAddress, draftId }),
-          ),
+          record: Task(fromJS({ colonyAddress, creatorAddress, draftId })),
         }),
       );
     }
@@ -141,17 +132,17 @@ const tasksReducer: ReducerType<TasksMap> = (
       } = action.payload;
       return state.set(
         draftId,
-        DataRecord<TaskRecordType>({
+        FetchableData<TaskRecord>({
           error: undefined,
           isFetching: false,
-          record: TaskRecord(
+          record: Task(
             fromJS({
               ...task,
               requests: ImmutableSet(requests),
               invites: ImmutableSet(invites),
               payouts: List(
                 payouts.map(({ amount, token }) =>
-                  TaskPayoutRecord({ amount, token }),
+                  TaskPayout({ amount, token }),
                 ),
               ),
             }),
@@ -163,11 +154,11 @@ const tasksReducer: ReducerType<TasksMap> = (
     case ActionTypes.TASK_SUB_EVENTS: {
       const { colonyAddress, draftId, events } = action.payload;
 
-      const record: TaskRecordType = events.reduce(
+      const record: TaskRecord = events.reduce(
         taskEventReducer,
-        TaskRecord(fromJS({ colonyAddress, draftId })),
+        Task(fromJS({ colonyAddress, draftId })),
       );
-      return state.set(draftId, DataRecord({ record }));
+      return state.set(draftId, FetchableData({ record }));
     }
 
     default:
@@ -175,8 +166,7 @@ const tasksReducer: ReducerType<TasksMap> = (
   }
 };
 
-export default withDataRecordMap<TasksMap, TaskRecordType>(
-  // @ts-ignore
+export default withFetchableDataMap<TasksMap, TaskRecord>(
   new Set([ActionTypes.TASK_FETCH, ActionTypes.TASK_SUB_START]),
   ImmutableMap(),
 )(tasksReducer);

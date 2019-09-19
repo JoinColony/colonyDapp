@@ -1,7 +1,7 @@
 import React, { MouseEvent, useCallback, useState } from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 import { useDispatch } from 'redux-react-hook';
-import { MessageProps, TRANSACTION_STATUSES } from '~immutable/index';
+import { MessageType, TRANSACTION_STATUSES } from '~immutable/index';
 
 import CardList from '~core/CardList';
 import Heading from '~core/Heading';
@@ -27,7 +27,7 @@ const MSG = defineMessages({
 });
 
 interface Props {
-  message: MessageProps;
+  message: MessageType;
   onClose: (event: MouseEvent) => void;
 }
 

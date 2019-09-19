@@ -1,8 +1,6 @@
-import { $ReadOnly } from 'utility-types';
+import { Record } from 'immutable';
 
-import { RecordOf, Record } from 'immutable';
-
-import { Address } from '~types/index';
+import { Address, DefaultValues } from '~types/index';
 
 type Shared = {
   address: Address;
@@ -12,11 +10,9 @@ type Shared = {
   rating?: number;
 };
 
-export type TaskUserType = $ReadOnly<Shared>;
+export type TaskUserType = Readonly<Shared>;
 
-export type TaskUserRecordType = RecordOf<Shared>;
-
-const defaultValues: Shared = {
+const defaultValues: DefaultValues<Shared> = {
   address: undefined,
   didClaimPayout: false,
   didFailToRate: false,
@@ -24,6 +20,6 @@ const defaultValues: Shared = {
   rating: undefined,
 };
 
-export const TaskUserRecord: Record.Factory<Shared> = Record(defaultValues);
+export class TaskUserRecord extends Record<Shared>(defaultValues) {}
 
-export default TaskUserRecord;
+export const TaskUser = (p: Shared) => new TaskUserRecord(p);

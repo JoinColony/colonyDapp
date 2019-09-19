@@ -3,7 +3,7 @@ import { END } from 'redux-saga';
 import transactionChannel from '../transactionChannel';
 
 import { ActionTypes } from '../../../../../redux';
-import TransactionRecord, { TRANSACTION_ERRORS } from '~immutable/Transaction';
+import { Transaction, TRANSACTION_ERRORS } from '~immutable/Transaction';
 
 /*
  * Dummy values
@@ -22,7 +22,7 @@ const eventData = {
 const id = 'the tx id';
 const params = { test: 123 };
 // @ts-ignore
-const tx = TransactionRecord({ id, params });
+const tx = Transaction({ id, params });
 
 /*
  * Note that these tests run the transactionChannel outside of any redux-saga/
