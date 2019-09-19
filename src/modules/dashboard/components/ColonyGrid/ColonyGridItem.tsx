@@ -1,23 +1,29 @@
 import React from 'react';
 
-import { useDataFetcher } from '~utils/hooks';
+import { useDataFetcher, useDataSubscriber } from '~utils/hooks';
 import Heading from '~core/Heading';
 import Link from '~core/Link';
 import { SpinnerLoader } from '~core/Preloaders';
 import HookedColonyAvatar from '~dashboard/HookedColonyAvatar';
 import { log } from '~utils/debug';
-
-import { useColonyWithAddress } from '../../hooks/useColony';
-import { colonyNameFetcher } from '../../fetchers';
+import { ColonyProps, ColonyType } from '~immutable/index';
 import { ENSName } from '~types/index';
-import { ColonyProps } from '~immutable/index';
+
+import { colonyNameFetcher } from '../../fetchers';
 import styles from './ColonyGridItem.css';
 
-const ColonyAvatar = HookedColonyAvatar({ fetchColony: false });
+import { colonySubscriber } from '../../subscribers';
+
 type Props = ColonyProps<'colonyAddress'>;
 
+const ColonyAvatar = HookedColonyAvatar({ fetchColony: false });
+
 const ColonyGridItem = ({ colonyAddress }: Props) => {
-  const { isFetching, data: colony } = useColonyWithAddress(colonyAddress);
+  const { isFetching, data: colony } = useDataSubscriber<ColonyType>(
+    colonySubscriber,
+    [colonyAddress],
+    [colonyAddress],
+  );
   const { data: colonyName, isFetching: isFetchingColonyName } = useDataFetcher<
     ENSName
   >(colonyNameFetcher, [colonyAddress], [colonyAddress]);

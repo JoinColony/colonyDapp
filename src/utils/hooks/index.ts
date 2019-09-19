@@ -16,9 +16,9 @@ import { rolesFetcher, domainsFetcher } from '../../modules/dashboard/fetchers';
 import { RootStateRecord } from '../../modules/state';
 
 interface DataObject<T> {
-  data: T | void;
+  data?: T;
   isFetching: boolean;
-  error: string | void;
+  error?: string;
 }
 
 interface KeyedDataObject<T> extends DataObject<T> {
