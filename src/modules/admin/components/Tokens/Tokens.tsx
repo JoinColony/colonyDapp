@@ -1,5 +1,6 @@
 import React, { useCallback, useMemo, useState } from 'react';
-import { defineMessages } from 'react-intl';
+import { defineMessages, injectIntl, IntlShape } from 'react-intl';
+import { compose } from 'recompose';
 import { useMappedState } from 'redux-react-hook';
 
 import { DialogType } from '~core/Dialog';
@@ -12,6 +13,7 @@ import { DomainType, TokenType } from '~immutable/index';
 import { Address } from '~types/index';
 import { useDataFetcher, useOldRoles } from '~utils/hooks';
 
+import { COLONY_TOTAL_BALANCE_DOMAIN_ID } from '../../../admin/constants';
 import { domainsFetcher, tokenFetcher } from '../../../dashboard/fetchers';
 import { useColonyNativeToken } from '../../../dashboard/hooks/useColonyNativeToken';
 import { useColonyTokens } from '../../../dashboard/hooks/useColonyTokens';
@@ -47,10 +49,16 @@ const MSG = defineMessages({
 interface Props {
   canMintNativeToken?: boolean;
   colonyAddress: Address;
+  intl: IntlShape;
   openDialog: (dialogName: string, dialogProps?: object) => DialogType;
 }
 
-const Tokens = ({ canMintNativeToken, colonyAddress, openDialog }: Props) => {
+const Tokens = ({
+  canMintNativeToken,
+  colonyAddress,
+  intl: { formatMessage },
+  openDialog,
+}: Props) => {
   // permissions checks
   const { data: roles } = useOldRoles(colonyAddress);
   const walletAddress = useMappedState(walletAddressSelector);
@@ -60,13 +68,14 @@ const Tokens = ({ canMintNativeToken, colonyAddress, openDialog }: Props) => {
   ]);
 
   // domains
-  const [selectedDomain, setSelectedDomain] = useState(1);
+  const [selectedDomain, setSelectedDomain] = useState<number>(1);
   const { data: domainsData, isFetching: isFetchingDomains } = useDataFetcher<
     DomainType[]
   >(domainsFetcher, [colonyAddress], [colonyAddress]);
   const domains = useMemo(
     () => [
-      { value: 1, label: 'root' },
+      { value: COLONY_TOTAL_BALANCE_DOMAIN_ID, label: { id: 'domain.all' } },
+      { value: 1, label: { id: 'domain.root' } },
       ...(domainsData || []).map(({ name, id }) => ({
         label: name,
         value: id,
@@ -75,11 +84,11 @@ const Tokens = ({ canMintNativeToken, colonyAddress, openDialog }: Props) => {
     [domainsData],
   );
 
-  const domainLabel = useMemo(() => {
+  const domainLabel: string = useMemo(() => {
     const { label = '' } =
       domains.find(({ value }) => value === selectedDomain) || {};
-    return label;
-  }, [domains, selectedDomain]);
+    return typeof label === 'string' ? label : formatMessage(label);
+  }, [domains, formatMessage, selectedDomain]);
 
   const setFieldValue = useCallback((_, value) => setSelectedDomain(value), [
     setSelectedDomain,
@@ -96,7 +105,6 @@ const Tokens = ({ canMintNativeToken, colonyAddress, openDialog }: Props) => {
     tokenFetcher,
     [nativeTokenAddress],
     [nativeTokenAddress],
-    // eslint-disable-next-line prettier/prettier
   );
 
   // handle opening of dialogs
@@ -182,4 +190,9 @@ const Tokens = ({ canMintNativeToken, colonyAddress, openDialog }: Props) => {
 
 Tokens.displayName = 'admin.Tokens';
 
-export default (withDialog() as any)(Tokens);
+const enhance = compose(
+  withDialog(),
+  injectIntl,
+) as any;
+
+export default enhance(Tokens);
