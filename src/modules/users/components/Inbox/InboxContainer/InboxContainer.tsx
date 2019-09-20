@@ -99,7 +99,7 @@ const InboxContainer = ({ full, close }: Props) => {
         )}
 
         {!hasInboxItems && isFetching && (
-          <div className={!full && styles.emptyPopoverPlaceholder}>
+          <div className={!full ? styles.emptyPopoverPlaceholder : undefined}>
             <div className={styles.loadingText}>
               <FormattedMessage {...MSG.loadingInbox} />
               <DotsLoader />
@@ -107,7 +107,7 @@ const InboxContainer = ({ full, close }: Props) => {
           </div>
         )}
         {!hasInboxItems && !isFetching && (
-          <div className={!full && styles.emptyPopoverPlaceholder}>
+          <div className={!full ? styles.emptyPopoverPlaceholder : undefined}>
             <div className={styles.emptyText}>
               <FormattedMessage {...MSG.noItems} />
             </div>
