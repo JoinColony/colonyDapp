@@ -44,8 +44,9 @@ const MSG = defineMessages({
   },
   noItems: {
     id: 'users.Inbox.InboxContainer.noItems',
-    /* eslint-disable-next-line max-len */
-    defaultMessage: 'It looks like you don’t have any notifications. Don’t worry, we’ll let you know when anything important happens.',
+    defaultMessage:
+      /* eslint-disable-next-line max-len */
+      'It looks like you don’t have any notifications. Don’t worry, we’ll let you know when anything important happens.',
   },
 });
 
@@ -58,8 +59,11 @@ const allReadActions = {
 const InboxContainer = ({ full, close }: Props) => {
   const { record: inboxItems, isFetching } = useSelector(inboxItemsSelector);
   const markAllRead = useAsyncFunction(allReadActions);
-  const hasInboxItems =
-    !!(inboxItems && inboxItems.length && inboxItems.length > 0);
+  const hasInboxItems = !!(
+    inboxItems &&
+    inboxItems.length &&
+    inboxItems.length > 0
+  );
   return (
     <div
       className={
