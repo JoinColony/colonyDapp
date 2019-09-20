@@ -1,6 +1,8 @@
 {
     "home": "Home",
     "wallet": "Wallet",
+    "domain.all": "All Domains",
+    "domain.root": "root",
     "role.disabled": "Disabled",
     "role.member": "Member",
     "role.admin": "Admin",
