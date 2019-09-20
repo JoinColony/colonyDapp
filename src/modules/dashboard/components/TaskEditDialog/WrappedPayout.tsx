@@ -1,6 +1,10 @@
 import React, { useCallback } from 'react';
 
-import { TaskPayoutType, TaskType, TokenReferenceType } from '~immutable/index';
+import {
+  TaskPayoutType,
+  TaskType,
+  ColonyTokenReferenceType,
+} from '~immutable/index';
 import { Address } from '~types/index';
 import Payout from './Payout';
 
@@ -12,7 +16,7 @@ interface Props extends Pick<TaskType, 'payouts' | 'reputation'> {
   payout: TaskPayoutType;
   reputation: number;
   tokenOptions: { value: number; label: string }[];
-  tokenReferences: TokenReferenceType[];
+  tokenReferences: ColonyTokenReferenceType[];
 }
 
 const WrappedPayout = ({

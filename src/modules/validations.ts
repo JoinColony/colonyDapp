@@ -6,7 +6,7 @@ import { normalize as ensNormalize } from 'eth-ens-namehash-ms';
 import BigNumber from 'bn.js';
 import moveDecimal from 'move-decimal-point';
 
-import { TokenReferenceType, TokenType } from '~immutable/index';
+import { ColonyTokenReferenceType, TokenType } from '~immutable/index';
 import { bnLessThan } from '../utils/numbers';
 
 import en from '../i18n/en-validation.json';
@@ -42,7 +42,8 @@ function equalTo(ref, msg) {
 // Used by `TaskEditDialog` to check there are sufficient funds for the
 // selected token.
 function lessThanPot(
-  tokenReferences: TokenReferenceType[],
+  tokenReferences: ColonyTokenReferenceType[],
+  domainId: number,
   colonyTokens: TokenType[],
   msg,
 ) {
@@ -50,12 +51,13 @@ function lessThanPot(
     name: 'lessThanPot',
     message: msg || en.number.lessThanPot,
     params: {
+      domainId,
       tokenReferences,
     },
     test(value) {
       const tokenAddress = this.resolve(yup.ref('token'));
       if (!tokenAddress) return true;
-      const { balance = undefined } =
+      const { balances = {} } =
         tokenReferences.find(
           ({ address: refAddress }) => refAddress === tokenAddress,
         ) || {};
@@ -66,7 +68,10 @@ function lessThanPot(
       const amount = new BigNumber(
         moveDecimal(value, decimals ? Math.floor(decimals) : 18),
       );
-      return balance === undefined || bnLessThan(amount, balance);
+      return (
+        balances[domainId] === undefined ||
+        bnLessThan(amount, balances[domainId])
+      );
     },
   });
 }

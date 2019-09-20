@@ -1,15 +1,20 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 
-import { TokenReferenceType, TokenType } from '~immutable/index';
+import {
+  ColonyTokenReferenceType,
+  TokenType,
+  UserTokenReferenceType,
+} from '~immutable/index';
 
-import { useDataFetcher } from '~utils/hooks';
 import Card from '~core/Card';
 import EthUsd from '~core/EthUsd';
 import Numeral from '~core/Numeral';
 import { SpinnerLoader } from '~core/Preloaders';
 import CopyableAddress from '~core/CopyableAddress';
 import TokenIcon from '~dashboard/HookedTokenIcon';
+import { useDataFetcher } from '~utils/hooks';
+import { getTokenBalanceFromReference } from '~utils/tokens';
 
 import { tokenIsETH, tokenBalanceIsNotPositive } from '../../../core/checks';
 
@@ -17,8 +22,9 @@ import { tokenFetcher } from '../../../dashboard/fetchers';
 
 import styles from './TokenCard.css';
 
-interface Props {
-  token: TokenReferenceType;
+interface Props<T> {
+  token: T;
+  domainId: T extends ColonyTokenReferenceType ? number : never;
 }
 
 const displayName = 'admin.Tokens.TokenCard';
@@ -30,14 +36,22 @@ const MSG = defineMessages({
   },
 });
 
-const TokenCard = ({
-  token: { address, isNative, balance },
+const TokenCard = <
+  T extends ColonyTokenReferenceType | UserTokenReferenceType
+>({
+  domainId,
+  token: { address },
   token: tokenReference,
-}: Props) => {
+}: Props<T>) => {
   const { data: token, isFetching } = useDataFetcher<TokenType>(
     tokenFetcher,
     [address],
     [address],
+  );
+
+  const balance = useMemo(
+    () => getTokenBalanceFromReference<T>(tokenReference, domainId),
+    [domainId, tokenReference],
   );
 
   // The balance is fetched seperately to the rest of the token.
@@ -64,12 +78,15 @@ const TokenCard = ({
               <CopyableAddress>{address}</CopyableAddress>
             </>
           )}
-          {isNative && <span>*</span>}
+          {'isNative' in tokenReference &&
+            (tokenReference as ColonyTokenReferenceType).isNative && (
+              <span>*</span>
+            )}
         </div>
       </div>
       <div
         className={
-          tokenBalanceIsNotPositive(tokenReference)
+          tokenBalanceIsNotPositive(tokenReference, domainId)
             ? styles.balanceNotPositive
             : styles.balanceContent
         }

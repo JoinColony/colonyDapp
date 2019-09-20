@@ -1,7 +1,7 @@
 import { createSelector } from 'reselect';
 import { Map as ImmutableMap } from 'immutable';
 
-import { TokenReferenceType } from '~immutable/index';
+import { ColonyTokenReferenceType } from '~immutable/index';
 import { Address } from '~types/index';
 
 import { RootStateRecord } from '../../state';
@@ -34,7 +34,7 @@ export const tokenSelector = (state: RootStateRecord, tokenAddress: Address) =>
  */
 export const allFromColonyTokensSelector = createSelector<
   RootStateRecord,
-  TokenReferenceType[],
+  ColonyTokenReferenceType[],
   any,
   any,
   any
@@ -54,7 +54,7 @@ allFromColonyTokensSelector.transform = input =>
 
 export const nativeFromColonyTokensSelector = createSelector<
   RootStateRecord,
-  TokenReferenceType[],
+  ColonyTokenReferenceType[],
   any,
   any,
   any

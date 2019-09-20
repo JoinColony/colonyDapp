@@ -51,6 +51,9 @@ const Tokens = ({ canMintNativeToken, colonyAddress, openDialog }: Props) => {
     walletAddress,
   ]);
 
+  // @TODO replace with selected domain from dropdown via #1799
+  const domainId = 1;
+
   // get sorted tokens
   const [tokens] = useColonyTokens(colonyAddress);
 
@@ -100,7 +103,13 @@ const Tokens = ({ canMintNativeToken, colonyAddress, openDialog }: Props) => {
             </Heading>
           )}
         </div>
-        {tokens && <TokenList tokens={tokens} appearance={{ numCols: '3' }} />}
+        {tokens && (
+          <TokenList
+            domainId={domainId}
+            tokens={tokens}
+            appearance={{ numCols: '3' }}
+          />
+        )}
       </main>
       <aside className={styles.sidebar}>
         <ul>

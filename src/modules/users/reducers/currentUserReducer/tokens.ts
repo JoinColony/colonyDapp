@@ -2,8 +2,8 @@ import { List, fromJS } from 'immutable';
 
 import {
   FetchableData,
-  TokenReference,
-  TokenReferenceRecord,
+  UserTokenReference,
+  UserTokenReferenceRecord,
 } from '~immutable/index';
 import { ReducerType, ActionTypes } from '~redux/index';
 import { withFetchableData } from '~utils/reducers';
@@ -19,8 +19,8 @@ const currentUserTokensReducer: ReducerType<CurrentUserTokensType> = (
       const { tokens } = action.payload;
       return state.set(
         'record',
-        List<TokenReferenceRecord>(
-          tokens.map(token => TokenReference(fromJS(token))),
+        List<UserTokenReferenceRecord>(
+          tokens.map(token => UserTokenReference(fromJS(token))),
         ),
       );
     }

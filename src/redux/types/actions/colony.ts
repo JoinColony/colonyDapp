@@ -6,7 +6,7 @@ import {
   ColonyType,
   ContractTransactionType,
   DomainType,
-  TokenReferenceType,
+  ColonyTokenReferenceType,
 } from '~immutable/index';
 import {
   ActionType,
@@ -311,17 +311,24 @@ export type ColonyActionTypes =
     >
   | ActionTypeWithPayload<
       ActionTypes.COLONY_TOKEN_BALANCE_FETCH,
-      { colonyAddress: Address; tokenAddress: Address }
+      { colonyAddress: Address; domainId: number; tokenAddress: Address }
     >
   | ErrorActionType<ActionTypes.COLONY_TOKEN_BALANCE_FETCH_ERROR, object>
   | ActionTypeWithPayload<
       ActionTypes.COLONY_TOKEN_BALANCE_FETCH_SUCCESS,
       {
-        token: TokenReferenceType;
+        domainId: number;
+        token: ColonyTokenReferenceType;
         tokenAddress: Address;
         colonyAddress: Address;
       }
     >
+  | ActionTypeWithPayload<
+      ActionTypes.COLONY_TOKEN_BALANCES_FETCH,
+      { colonyAddress: Address; tokenAddress: Address }
+    >
+  | ErrorActionType<ActionTypes.COLONY_TOKEN_BALANCES_FETCH_ERROR, object>
+  | ActionTypeWithPayload<ActionTypes.COLONY_TOKEN_BALANCES_FETCH_SUCCESS, null>
   | UniqueActionType<
       ActionTypes.COLONY_UPDATE_TOKENS,
       { colonyAddress: Address; tokens: Address[] },

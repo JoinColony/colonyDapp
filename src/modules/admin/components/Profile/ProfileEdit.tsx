@@ -16,6 +16,7 @@ import Button from '~core/Button';
 import { pipe, mergePayload, withKey } from '~utils/actions';
 import { ActionTypes } from '~redux/index';
 import { UpdateColonyProfileCommandArgsSchema } from '../../../dashboard/data/commands/schemas';
+import { useColonyNativeToken } from '../../../dashboard/hooks/useColonyNativeToken';
 import ENS from '~lib/ENS';
 import ColonyAvatarUploader from './ColonyAvatarUploader';
 import styles from './ProfileEdit.css';
@@ -72,7 +73,6 @@ const ProfileEdit = ({ colony }: Props) => {
     displayName,
     guideline,
     website,
-    tokens = {},
   } = colony;
   const transform = useCallback(
     pipe(
@@ -82,9 +82,8 @@ const ProfileEdit = ({ colony }: Props) => {
     [colonyAddress],
   );
 
-  const tokenValues = Object.values(tokens);
-  const nativeToken = tokenValues.find(token => token.isNative);
-  const nativeTokenAddress = nativeToken ? nativeToken.address : undefined;
+  const { address: nativeTokenAddress = '' } =
+    useColonyNativeToken(colonyAddress) || {};
 
   return (
     <div className={styles.main}>

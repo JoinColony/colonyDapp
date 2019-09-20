@@ -1,7 +1,7 @@
 import { Record, Map as ImmutableMap } from 'immutable';
 
 import { Address, DefaultValues, ENSName } from '~types/index';
-import { TokenReferenceRecord, TokenReferenceType } from './index';
+import { ColonyTokenReferenceRecord, ColonyTokenReferenceType } from './index';
 
 interface Shared {
   avatarHash?: string;
@@ -23,7 +23,7 @@ export type ColonyType = Readonly<
   Shared & {
     tokens?: {
       // Opaque implementation can't be used as an index type
-      [tokenAddress: string]: TokenReferenceType;
+      [tokenAddress: string]: ColonyTokenReferenceType;
     };
   }
 >;
@@ -31,7 +31,7 @@ export type ColonyType = Readonly<
 export type ColonyProps<T extends keyof ColonyType> = Pick<ColonyType, T>;
 
 type ColonyRecordProps = Shared & {
-  tokens?: ImmutableMap<Address, TokenReferenceRecord>;
+  tokens?: ImmutableMap<Address, ColonyTokenReferenceRecord>;
 };
 
 const defaultValues: DefaultValues<ColonyRecordProps> = {

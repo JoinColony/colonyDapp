@@ -61,6 +61,24 @@ export const colonyAvatarHashSelector = (
     'avatar',
   ]);
 
+export const tokenBalanceSelector = (
+  state: RootStateRecord,
+  colonyAddress: Address,
+  tokenAddress: Address,
+  domainId: number,
+) =>
+  state.getIn([
+    ns,
+    DASHBOARD_ALL_COLONIES,
+    DASHBOARD_COLONIES,
+    colonyAddress,
+    'record',
+    'tokens',
+    tokenAddress,
+    'balances',
+    domainId,
+  ]);
+
 /*
  * Selectors
  */
@@ -112,11 +130,11 @@ export const colonyRecentTokensSelector = createSelector(
   (colonyTokens, transactions, unclaimedTransactions) =>
     Array.from(
       new Map([
-        ...colonyTokens.map(token => [token.address, token]),
         ...[
           ...((transactions && transactions.record) || []),
           ...((unclaimedTransactions && unclaimedTransactions.record) || []),
         ].map(({ token }) => [token, { address: token }]),
+        ...colonyTokens.map(token => [token.address, token]),
       ]).values(),
     ),
 );

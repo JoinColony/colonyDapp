@@ -17,6 +17,7 @@ import {
   executeCommand,
   executeQuery,
   executeSubscription,
+  selectAsJS,
 } from '~utils/saga/effects';
 import { ContractContexts, createAddress } from '~types/index';
 
@@ -34,16 +35,23 @@ import {
   subscribeToColony,
   subscribeToColonyTasks,
 } from '../data/queries';
+import { COLONY_TOTAL_BALANCE_DOMAIN_ID } from '../../admin/constants';
 import { createTransaction, getTxChannel } from '../../core/sagas';
 import { ipfsUpload } from '../../core/sagas/ipfs';
 import { networkVersionSelector } from '../../core/selectors';
 import {
   fetchColony,
+  fetchDomains,
   fetchToken,
   fetchColonyCanMintNativeToken,
   fetchColonyTokenBalance,
+  fetchColonyTokenBalances,
 } from '../actionCreators';
-import { colonyAvatarHashSelector, colonySelector } from '../selectors';
+import {
+  colonyDomainsSelector,
+  colonyAvatarHashSelector,
+  colonySelector,
+} from '../selectors';
 import { getColonyAddress, getColonyName } from './shared';
 
 function* colonyNameCheckAvailability({
@@ -131,6 +139,8 @@ function* colonyFetch({
       payload: colony,
     });
 
+    yield put<AllActions>(fetchDomains(colonyAddress));
+
     // dispatch actions to fetch info and balances for each colony token
     yield all(
       Object.keys(colony.tokens || {})
@@ -139,10 +149,7 @@ function* colonyFetch({
           (effects, tokenAddress) => [
             ...effects,
             put(fetchToken(tokenAddress)),
-            put<AllActions>({
-              type: ActionTypes.COLONY_TOKEN_BALANCE_FETCH,
-              payload: { colonyAddress, tokenAddress },
-            }),
+            put(fetchColonyTokenBalances(colonyAddress, tokenAddress)),
           ],
           [],
         ),
@@ -335,11 +342,11 @@ function* colonyUpgradeContract({
 }
 
 function* colonyTokenBalanceFetch({
-  payload: { colonyAddress, tokenAddress },
+  payload: { colonyAddress, domainId, tokenAddress },
 }: Action<ActionTypes.COLONY_TOKEN_BALANCE_FETCH>) {
   try {
     const balance = yield executeQuery(getColonyTokenBalance, {
-      args: { tokenAddress },
+      args: { domainId, tokenAddress },
       metadata: { colonyAddress },
     });
 
@@ -348,14 +355,57 @@ function* colonyTokenBalanceFetch({
       payload: {
         token: {
           address: tokenAddress,
-          balance,
+          balances: {
+            [domainId]: balance,
+          },
         },
         tokenAddress,
         colonyAddress,
       },
     });
-  } catch (error) {
-    return yield putError(ActionTypes.COLONY_TOKEN_BALANCE_FETCH_ERROR, error);
+  } catch (caughtError) {
+    return yield putError(
+      ActionTypes.COLONY_TOKEN_BALANCE_FETCH_ERROR,
+      caughtError,
+    );
+  }
+  return null;
+}
+
+function* colonyTokenBalancesFetch({
+  payload: { colonyAddress, tokenAddress },
+}: Action<ActionTypes.COLONY_TOKEN_BALANCES_FETCH>) {
+  try {
+    const { record: domains = [] } = yield selectAsJS(
+      colonyDomainsSelector,
+      colonyAddress,
+    );
+
+    yield all([
+      // fetch balances for rewards pots and non-rewards pots
+      put(
+        fetchColonyTokenBalance(
+          colonyAddress,
+          tokenAddress,
+          COLONY_TOTAL_BALANCE_DOMAIN_ID,
+        ),
+      ),
+      // fetch balances for root domain
+      put(fetchColonyTokenBalance(colonyAddress, tokenAddress, 1)),
+      // fetch balances for other domains
+      ...domains.map(({ id: domainId }) =>
+        put(fetchColonyTokenBalance(colonyAddress, tokenAddress, domainId)),
+      ),
+    ]);
+
+    yield put({
+      type: ActionTypes.COLONY_TOKEN_BALANCES_FETCH_SUCCESS,
+    });
+  } catch (caughtError) {
+    return yield putError(
+      ActionTypes.COLONY_TOKEN_BALANCES_FETCH_ERROR,
+      caughtError,
+    );
   }
   return null;
 }
@@ -469,7 +519,7 @@ function* colonySubStart({ payload: { colonyAddress }, meta }: any) {
       token.balance === undefined
         ? [
             ...acc,
-            put(fetchColonyTokenBalance(colonyAddress, token.address)),
+            put(fetchColonyTokenBalances(colonyAddress, token.address)),
             put(fetchToken(token.address)),
           ]
         : acc;
@@ -495,6 +545,9 @@ function* colonySubStart({ payload: { colonyAddress }, meta }: any) {
       if (colonyFromState.canMintNativeToken === undefined) {
         yield put(fetchColonyCanMintNativeToken(colonyAddress));
       }
+
+      // fetch colony domains for token balances
+      yield put<AllActions>(fetchDomains(colonyAddress));
 
       // fetch token balances for those which we have loaded
       if (colonyFromState.tokens) {
@@ -579,6 +632,10 @@ export default function* colonySagas() {
   yield takeEvery(
     ActionTypes.COLONY_TOKEN_BALANCE_FETCH,
     colonyTokenBalanceFetch,
+  );
+  yield takeEvery(
+    ActionTypes.COLONY_TOKEN_BALANCES_FETCH,
+    colonyTokenBalancesFetch,
   );
   yield takeEvery(ActionTypes.COLONY_VERSION_UPGRADE, colonyUpgradeContract);
   yield takeEvery(ActionTypes.COLONY_SUB_START, colonySubStart);

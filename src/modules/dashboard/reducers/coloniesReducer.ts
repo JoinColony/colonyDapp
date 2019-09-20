@@ -4,8 +4,8 @@ import {
   Colony,
   ColonyRecord,
   FetchableData,
-  TokenReference,
-  TokenReferenceRecord,
+  ColonyTokenReference,
+  ColonyTokenReferenceRecord,
 } from '~immutable/index';
 import { withFetchableDataMap } from '~utils/reducers';
 import { ActionTypes, ReducerType } from '~redux/index';
@@ -28,7 +28,7 @@ const coloniesReducer: ReducerType<AllColoniesMap> = (
         tokens: ImmutableMap(
           Object.entries(tokens).map(([tokenAddress, token]) => [
             createAddress(tokenAddress),
-            TokenReference(token),
+            ColonyTokenReference(token),
           ]),
         ),
       });
@@ -69,8 +69,8 @@ const coloniesReducer: ReducerType<AllColoniesMap> = (
         tokenAddress,
       ]);
       const record = previousRecord
-        ? previousRecord.merge(token)
-        : TokenReference(token);
+        ? previousRecord.mergeDeep(token)
+        : ColonyTokenReference(token);
       return state.setIn(
         [colonyAddress, 'record', 'tokens', tokenAddress],
         record,
@@ -99,7 +99,7 @@ const coloniesReducer: ReducerType<AllColoniesMap> = (
       ]);
       const previousTokens: ImmutableMap<
         Address,
-        TokenReferenceRecord
+        ColonyTokenReferenceRecord
       > | null = state.getIn([colonyAddress, 'record', 'tokens']);
       const record = Colony({
         canMintNativeToken,
@@ -109,14 +109,14 @@ const coloniesReducer: ReducerType<AllColoniesMap> = (
           Object.entries(tokens).map(([tokenAddress, token]) => {
             const normalizedTokenAddress = createAddress(tokenAddress);
 
-            // get any previous balance for the token, so that we don't overwrite it
-            const balance = previousTokens
-              ? previousTokens.getIn([normalizedTokenAddress, 'balance'])
+            // get any previous balances for the token, so that we don't overwrite them
+            const balances = previousTokens
+              ? previousTokens.getIn([normalizedTokenAddress, 'balances'])
               : undefined;
 
             return [
               normalizedTokenAddress,
-              TokenReference({ balance, ...token }),
+              ColonyTokenReference({ balances, ...token }),
             ];
           }),
         ),

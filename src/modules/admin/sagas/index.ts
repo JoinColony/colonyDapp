@@ -1,4 +1,4 @@
-import { call, fork, put, takeEvery, select } from 'redux-saga/effects';
+import { all, call, fork, put, takeEvery, select } from 'redux-saga/effects';
 
 import { AllActions, Action, ActionTypes } from '~redux/index';
 import {
@@ -11,6 +11,7 @@ import { ContractContexts } from '~types/index';
 // import { Context, getContext } from '~context/index';
 // import { decorateLog } from '~utils/web3/eventLogs/events';
 // import { normalizeTransactionLog } from '~data/normalizers';
+import { COLONY_TOTAL_BALANCE_DOMAIN_ID } from '../constants';
 import { getColony } from '../../dashboard/data/queries';
 import {
   getColonyTransactions,
@@ -109,7 +110,7 @@ function* colonyClaimToken({
     yield put<AllActions>(fetchColonyUnclaimedTransactions(colonyAddress));
     yield put<AllActions>({
       type: ActionTypes.COLONY_TOKEN_BALANCE_FETCH,
-      payload: { colonyAddress, tokenAddress },
+      payload: { colonyAddress, domainId: 1, tokenAddress },
     });
   } catch (error) {
     return yield putError(ActionTypes.COLONY_CLAIM_TOKEN_ERROR, error, meta);
@@ -225,10 +226,20 @@ function* colonyMintTokens({
     const mintLog = receipt.logs[0];
     if (mintLog) {
       const tokenAddress = mintLog.address;
-      yield put<AllActions>({
-        type: ActionTypes.COLONY_TOKEN_BALANCE_FETCH,
-        payload: { colonyAddress, tokenAddress },
-      });
+      yield all([
+        put<AllActions>({
+          type: ActionTypes.COLONY_TOKEN_BALANCE_FETCH,
+          payload: {
+            colonyAddress,
+            domainId: COLONY_TOTAL_BALANCE_DOMAIN_ID,
+            tokenAddress,
+          },
+        }),
+        put<AllActions>({
+          type: ActionTypes.COLONY_TOKEN_BALANCE_FETCH,
+          payload: { colonyAddress, domainId: 1, tokenAddress },
+        }),
+      ]);
 
       // const colonyManager = yield getContext(Context.COLONY_MANAGER);
       // const tokenClient = yield call(
