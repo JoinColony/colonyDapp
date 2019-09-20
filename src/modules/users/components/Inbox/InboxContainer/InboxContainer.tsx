@@ -45,8 +45,8 @@ const MSG = defineMessages({
   noItems: {
     id: 'users.Inbox.InboxContainer.noItems',
     defaultMessage:
-      /* eslint-disable-next-line max-len */
-      'It looks like you don’t have any notifications. Don’t worry, we’ll let you know when anything important happens.',
+      `It looks like you don't have any notifications. Don't worry, we'll let
+      you know when anything important happens.`,
   },
 });
 
