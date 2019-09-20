@@ -8,4 +8,4 @@ export const inboxHeadingPopover: string;
 export const inboxFooter: string;
 export const emptyPopoverPlaceholder: string;
 export const emptyText: string;
-export const loadingText: string;
+export const loadingPopoverPlaceholder: string;

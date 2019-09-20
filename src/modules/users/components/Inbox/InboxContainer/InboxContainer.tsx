@@ -8,7 +8,7 @@ import { useSelector, useAsyncFunction } from '~utils/hooks';
 import { ActionTypes } from '~redux/index';
 import Heading from '~core/Heading';
 import Button from '~core/Button';
-import { DotsLoader } from '~core/Preloaders';
+import { SpinnerLoader } from '~core/Preloaders';
 import { Table, TableBody } from '~core/Table';
 import NavLink from '~core/NavLink';
 
@@ -28,7 +28,7 @@ interface Props {
 const MSG = defineMessages({
   loadingInbox: {
     id: 'users.Inbox.InboxContainer.loadingInbox',
-    defaultMessage: 'Loading Inbox',
+    defaultMessage: 'Loading...',
   },
   title: {
     id: 'users.Inbox.InboxContainer.title',
@@ -44,9 +44,8 @@ const MSG = defineMessages({
   },
   noItems: {
     id: 'users.Inbox.InboxContainer.noItems',
-    defaultMessage:
-      `It looks like you don't have any notifications. Don't worry, we'll let
-      you know when anything important happens.`,
+    defaultMessage: `It looks like you don't have any notifications.
+Don't worry, we'll let you know when anything important happens.`,
   },
 });
 
@@ -81,6 +80,7 @@ const InboxContainer = ({ full, close }: Props) => {
           appearance={{ theme: 'blue' }}
           text={MSG.markAllRead}
           onClick={markAllRead}
+          disabled={!hasInboxItems || isFetching}
         />
       </div>
       <div
@@ -100,10 +100,10 @@ const InboxContainer = ({ full, close }: Props) => {
 
         {!hasInboxItems && isFetching && (
           <div className={!full ? styles.emptyPopoverPlaceholder : undefined}>
-            <div className={styles.loadingText}>
-              <FormattedMessage {...MSG.loadingInbox} />
-              <DotsLoader />
-            </div>
+            <SpinnerLoader
+              loadingText={MSG.loadingInbox}
+              appearance={{ size: 'massive', theme: 'primary' }}
+            />
           </div>
         )}
         {!hasInboxItems && !isFetching && (
