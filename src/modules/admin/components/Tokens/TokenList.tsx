@@ -21,6 +21,8 @@ interface Props<T> {
   tokens: T[];
 }
 
+const displayName = 'admin.Tokens.TokenList';
+
 const TokenList = <
   T extends ColonyTokenReferenceType | UserTokenReferenceType
 >({
@@ -49,5 +51,7 @@ const TokenList = <
     </CardList>
   </div>
 );
+
+TokenList.displayName = displayName;
 
 export default TokenList;
