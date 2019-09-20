@@ -61,13 +61,9 @@
   font-size: var(--size-medium);
 }
 
-.loadingText {
-  display: flex;
-  align-items: flex-end;
-  margin-top: 10px;
-  font-size: var(--size-normal);
-  font-weight: var(--weight-semi);
-  line-height: 1em;
+.loadingPopoverPlaceholder {
+  composes: emptyPopoverPlaceholder;
+  padding: 68px 0;
 }
 
 .emptyText {
