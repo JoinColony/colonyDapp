@@ -39,10 +39,7 @@ const MSG = defineMessages({
   },
   title: {
     id: 'dashboard.Tokens.title',
-    defaultMessage: `Tokens{domainLabel, select,
-      root {}
-      other {: {domainLabel}} 
-    }`,
+    defaultMessage: 'Tokens: {selectedDomainLabel}',
   },
 });
 
@@ -84,7 +81,7 @@ const Tokens = ({
     [domainsData],
   );
 
-  const domainLabel: string = useMemo(() => {
+  const selectedDomainLabel: string = useMemo(() => {
     const { label = '' } =
       domains.find(({ value }) => value === selectedDomain) || {};
     return typeof label === 'string' ? label : formatMessage(label);
@@ -132,7 +129,7 @@ const Tokens = ({
           <div className={styles.titleContainer}>
             <Heading
               text={MSG.title}
-              textValues={{ domainLabel }}
+              textValues={{ selectedDomainLabel }}
               appearance={{ size: 'medium', theme: 'dark' }}
             />
             {isFetchingDomains ? (
