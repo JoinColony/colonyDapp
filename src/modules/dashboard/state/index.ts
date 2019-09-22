@@ -1,6 +1,6 @@
 import { List as ListType, Map as ImmutableMap, Record } from 'immutable';
 
-import { Address } from '~types/index';
+import { Address, DefaultValues } from '~types/index';
 import {
   FetchableDataRecord,
   TaskDraftId,
@@ -45,7 +45,7 @@ export type TaskFeedItemsMap = ImmutableMap<
   FetchableDataRecord<ListType<TaskFeedItemRecord>>
 >;
 
-export type DashboardStateProps = {
+interface DashboardStateProps {
   [DASHBOARD_ALL_COLONIES]: AllColoniesRecord;
   [DASHBOARD_ALL_DOMAINS]: AllDomainsMap;
   [DASHBOARD_ALL_ROLES]: AllRolesMap;
@@ -53,9 +53,9 @@ export type DashboardStateProps = {
   [DASHBOARD_ALL_TOKENS]: AllTokensMap;
   [DASHBOARD_TASK_FEED_ITEMS]: TaskFeedItemsMap;
   [DASHBOARD_TASKS]: TasksMap;
-};
+}
 
-export class DashboardStateRecord extends Record<DashboardStateProps>({
+const defaultValues: DefaultValues<DashboardStateProps> = {
   [DASHBOARD_ALL_COLONIES]: new AllColoniesRecord(),
   [DASHBOARD_ALL_DOMAINS]: ImmutableMap(),
   [DASHBOARD_ALL_ROLES]: ImmutableMap(),
@@ -63,4 +63,8 @@ export class DashboardStateRecord extends Record<DashboardStateProps>({
   [DASHBOARD_ALL_TOKENS]: AllTokensInitialState,
   [DASHBOARD_TASK_FEED_ITEMS]: ImmutableMap(),
   [DASHBOARD_TASKS]: ImmutableMap(),
-}) {}
+};
+
+export class DashboardStateRecord extends Record<DashboardStateProps>(
+  defaultValues,
+) {}

@@ -7,7 +7,6 @@ import {
   FetchableDataRecord,
   GasPrices,
   GasPricesRecord,
-  Network,
   NetworkRecord,
 } from '~immutable/index';
 
@@ -27,7 +26,7 @@ export * from './Messages';
 
 export type IpfsDataType = ImmutableMap<string, FetchableDataRecord<string>>;
 
-export type CoreStateProps = {
+type CoreStateProps = {
   [CORE_CONNECTION]: ConnectionRecord;
   [CORE_GAS_PRICES]: GasPricesRecord;
   [CORE_IPFS_DATA]: IpfsDataType;
@@ -41,8 +40,6 @@ export class CoreStateRecord extends Record<CoreStateProps>({
   [CORE_GAS_PRICES]: GasPrices(),
   [CORE_IPFS_DATA]: ImmutableMap(),
   [CORE_MESSAGES]: CoreMessages(),
-  [CORE_NETWORK]: FetchableData({
-    record: Network(),
-  }),
+  [CORE_NETWORK]: FetchableData(),
   [CORE_TRANSACTIONS]: CoreTransactions(),
 }) {}
