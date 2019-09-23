@@ -3,7 +3,6 @@
 }
 
 .hideButtonContainer {
-  position: relative;
-  float: right;
-  bottom: 21px;
+  display: flex;
+  justify-content: flex-end;
 }

@@ -18,13 +18,13 @@ const BreadCrumb = ({ elements }: Props) => {
   return (
     <div className={styles.crumbContainer}>
       {elements.map((crumb, i) => (
-        <>
+        <div className={styles.element} key={`breadCrumb_${crumb}`}>
           {elements.length > 1 && i < elements.length - 1 ? (
             <>
-              <p className={styles.breadCrumble}>
+              <span className={styles.breadCrumble}>
                 <FormattedMessage {...Object.values(crumb)[0]} />
-              </p>
-              <p className={styles.arrow}>&gt;</p>
+              </span>
+              <span className={styles.arrow}>&gt;</span>
             </>
           ) : null}
           <>
@@ -36,7 +36,7 @@ const BreadCrumb = ({ elements }: Props) => {
               </>
             ) : null}
           </>
-        </>
+        </div>
       ))}
     </div>
   );

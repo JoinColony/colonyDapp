@@ -51,9 +51,17 @@
 
 .simpleLinkGuideline {
   display: block;
-  margin-bottom: 40px;
+  margin-bottom: 10px;
   font-weight: var(--weight-normal);
   color: var(--text);
+}
+
+.simpleLinkWebsite:hover {
+  text-decoration: underline;
+}
+
+.simpleLinkGuideline:hover {
+  text-decoration: underline;
 }
 
 .spinnerContainer {
@@ -80,11 +88,10 @@
 }
 
 .filterItem:hover {
-  color: var(--primary);
   opacity: 0.8;
 }
 
 .filterItemActive {
   composes: filterItem;
-  color: var(--primary);
+  font-weight: var(--weight-medium);
 }

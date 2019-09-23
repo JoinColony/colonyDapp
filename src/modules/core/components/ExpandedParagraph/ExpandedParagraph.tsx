@@ -76,7 +76,7 @@ const ExpandedParagraph = ({
       {expanded && (
         <>
           {expandedElements}
-          <span className={styles.hideButtonContainer}>
+          <div className={styles.hideButtonContainer}>
             <Button
               onClick={() => {
                 expandDescription(false);
@@ -84,7 +84,7 @@ const ExpandedParagraph = ({
               text={MSG.hide}
               appearance={{ theme: 'blue' }}
             />
-          </span>
+          </div>
         </>
       )}
     </>

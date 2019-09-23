@@ -6,7 +6,7 @@ import { useDispatch } from 'redux-react-hook';
 import throttle from 'lodash/throttle';
 
 import {
-  TokenReferenceType,
+  ColonyTokenReferenceType,
   UserPermissionsType,
   DomainType,
 } from '~immutable/index';
@@ -173,7 +173,7 @@ const ColonyHome = ({
     [colonyAddress],
   );
 
-  const nativeTokenRef: TokenReferenceType | null = useSelector(
+  const nativeTokenRef: ColonyTokenReferenceType | null = useSelector(
     colonyNativeTokenSelector,
     colonyArgs,
   );
@@ -295,7 +295,7 @@ const ColonyHome = ({
       </aside>
       <main className={styles.content}>
         <div className={styles.breadCrumbContainer}>
-          <BreadCrumb elements={crumbs} />
+          {crumbs && <BreadCrumb elements={crumbs} />}
         </div>
         <Tabs>
           <TabList>

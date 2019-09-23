@@ -7,7 +7,7 @@
   overflow: auto;
   overflow: hidden;
   background: var(--gradient-default);
-  grid-template-columns: minmax(275px, 300px) minmax(360px, auto) minmax(275px, 300px);
+  grid-template-columns: 300px minmax(360px, auto) minmax(275px, 300px);
   grid-template-rows: auto;
   column-gap: 80px;
 }
