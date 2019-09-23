@@ -170,7 +170,7 @@ const StepStart = ({ nextStep, wizardValues }: Props) => (
               tos: (
                 <ExternalLink
                   text={MSG.termsOfService}
-                  href="https://colony.io/terms.pdf"
+                  href="https://colony.io/pdf/terms.pdf"
                 />
               ),
             }}
