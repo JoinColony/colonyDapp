@@ -8,7 +8,7 @@ import { useSelector, useAsyncFunction } from '~utils/hooks';
 import { ActionTypes } from '~redux/index';
 import Heading from '~core/Heading';
 import Button from '~core/Button';
-import { DotsLoader } from '~core/Preloaders';
+import { SpinnerLoader } from '~core/Preloaders';
 import { Table, TableBody } from '~core/Table';
 import NavLink from '~core/NavLink';
 
@@ -28,7 +28,7 @@ interface Props {
 const MSG = defineMessages({
   loadingInbox: {
     id: 'users.Inbox.InboxContainer.loadingInbox',
-    defaultMessage: 'Loading Inbox',
+    defaultMessage: 'Loading...',
   },
   title: {
     id: 'users.Inbox.InboxContainer.title',
@@ -42,6 +42,11 @@ const MSG = defineMessages({
     id: 'users.Inbox.InboxContainer.seeAll',
     defaultMessage: 'See All',
   },
+  noItems: {
+    id: 'users.Inbox.InboxContainer.noItems',
+    defaultMessage: `It looks like you don't have any notifications.
+Don't worry, we'll let you know when anything important happens.`,
+  },
 });
 
 const allReadActions = {
@@ -51,8 +56,13 @@ const allReadActions = {
 };
 
 const InboxContainer = ({ full, close }: Props) => {
-  const { record: inboxItems } = useSelector(inboxItemsSelector);
+  const { record: inboxItems, isFetching } = useSelector(inboxItemsSelector);
   const markAllRead = useAsyncFunction(allReadActions);
+  const hasInboxItems = !!(
+    inboxItems &&
+    inboxItems.length &&
+    inboxItems.length > 0
+  );
   return (
     <div
       className={
@@ -70,6 +80,7 @@ const InboxContainer = ({ full, close }: Props) => {
           appearance={{ theme: 'blue' }}
           text={MSG.markAllRead}
           onClick={markAllRead}
+          disabled={!hasInboxItems || isFetching}
         />
       </div>
       <div
@@ -77,12 +88,7 @@ const InboxContainer = ({ full, close }: Props) => {
           full ? styles.inboxContainerFull : styles.inboxContainerPopover
         }
       >
-        {!inboxItems || (inboxItems && inboxItems.length === 0) ? (
-          <div className={styles.loadingText}>
-            <FormattedMessage {...MSG.loadingInbox} />
-            <DotsLoader />
-          </div>
-        ) : (
+        {hasInboxItems && !isFetching && (
           <Table scrollable appearance={{ separators: 'borders' }}>
             <TableBody>
               {inboxItems.map(activity => (
@@ -90,6 +96,22 @@ const InboxContainer = ({ full, close }: Props) => {
               ))}
             </TableBody>
           </Table>
+        )}
+
+        {!hasInboxItems && isFetching && (
+          <div className={!full ? styles.emptyPopoverPlaceholder : undefined}>
+            <SpinnerLoader
+              loadingText={MSG.loadingInbox}
+              appearance={{ size: 'massive', theme: 'primary' }}
+            />
+          </div>
+        )}
+        {!hasInboxItems && !isFetching && (
+          <div className={!full ? styles.emptyPopoverPlaceholder : undefined}>
+            <div className={styles.emptyText}>
+              <FormattedMessage {...MSG.noItems} />
+            </div>
+          </div>
         )}
         {!full && (
           <div className={styles.inboxFooter}>
