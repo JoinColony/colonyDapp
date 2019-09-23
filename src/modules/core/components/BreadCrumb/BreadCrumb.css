@@ -2,6 +2,10 @@
   font-size: var(--size-medium-l);
 }
 
+.element {
+  flex-shrink: 0;
+}
+
 .crumbContainer {
   display: flex;
 }
