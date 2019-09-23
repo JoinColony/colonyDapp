@@ -13,7 +13,7 @@ import {
 export * from './AllUsers';
 export * from './CurrentUser';
 
-export interface UsersStateProps {
+interface UsersStateProps {
   [USERS_ALL_USERS]: AllUsersRecord;
   [USERS_CURRENT_USER]: CurrentUserRecord;
   [USERS_WALLET]: WalletRecord;

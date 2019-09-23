@@ -58,21 +58,13 @@ interface CurrentUserProps {
 }
 
 export class CurrentUserRecord extends Record<CurrentUserProps>({
-  [USERS_INBOX_ITEMS]: FetchableData({
-    record: List(),
-  }),
+  [USERS_INBOX_ITEMS]: FetchableData(),
   [USERS_CURRENT_USER_NOTIFICATION_METADATA]: UserNotificationMetadata(),
   [USERS_CURRENT_USER_PERMISSIONS]: ImmutableMap(),
   [USERS_CURRENT_USER_PROFILE]: UserProfile({
     walletAddress: '',
   }),
-  [USERS_CURRENT_USER_TASKS]: FetchableData({
-    record: ImmutableSet(),
-  }),
-  [USERS_CURRENT_USER_TOKENS]: FetchableData({
-    record: List(),
-  }),
-  [USERS_CURRENT_USER_TRANSACTIONS]: FetchableData({
-    record: List(),
-  }),
+  [USERS_CURRENT_USER_TASKS]: FetchableData(),
+  [USERS_CURRENT_USER_TOKENS]: FetchableData(),
+  [USERS_CURRENT_USER_TRANSACTIONS]: FetchableData(),
 }) {}
