@@ -72,14 +72,6 @@ const MSG = defineMessages({
     id: 'dashboard.ColonyHome.newTaskButton',
     defaultMessage: 'New Task',
   },
-  availableFunds: {
-    id: 'dashboard.ColonyHome.availableFunds',
-    defaultMessage: 'Available Funds',
-  },
-  fund: {
-    id: 'dashboard.ColonyHome.fund',
-    defaultMessage: 'Fund',
-  },
   recoverColonyButton: {
     id: 'dashboard.ColonyHome.recoverColonyButton',
     defaultMessage: 'Recover Colony?',
