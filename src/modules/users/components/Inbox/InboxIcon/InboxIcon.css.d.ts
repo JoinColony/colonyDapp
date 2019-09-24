@@ -1,2 +1,1 @@
-export const inboxIcon: string;
-export const inboxIconWCircle: string;
+export const inboxNotification: string;
