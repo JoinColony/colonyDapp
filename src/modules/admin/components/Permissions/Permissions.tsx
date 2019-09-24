@@ -156,7 +156,7 @@ const Permissions = ({ colonyAddress, openDialog }: Props) => {
                     showMaskedAddress
                     showUsername
                   >
-                    <TableCell className={styles.userPermissionsCell}>
+                    <TableCell>
                       <UserPermissions
                         colonyAddress={colonyAddress}
                         domainId={selectedDomain}
