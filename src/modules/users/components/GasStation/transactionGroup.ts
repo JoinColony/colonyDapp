@@ -9,11 +9,21 @@ export type TransactionOrMessageGroup = (TransactionType | MessageType)[];
 export type TransactionOrMessageGroups = TransactionOrMessageGroup[];
 
 // get the group id (mostly used as a unique identifier for the group)
-export const getGroupId = (txOrMessageGroup: TransactionOrMessageGroup) =>
-  txOrMessageGroup[0].id ||
-  ((txOrMessageGroup[0] as TransactionType).group &&
+export const getGroupId = (txOrMessageGroup: TransactionOrMessageGroup) => {
+  // Typescripts flow inference totall seems to fall apart here
+  if (!txOrMessageGroup[0]) return undefined;
+  if ((txOrMessageGroup[0] as TransactionType).group) {
     // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-    (txOrMessageGroup[0] as TransactionType).group!.key);
+    return Array.isArray((txOrMessageGroup[0] as TransactionType).group!.id)
+      ? // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+        ((txOrMessageGroup[0] as TransactionType).group!.id as string[]).join(
+          '.',
+        )
+      : // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+        ((txOrMessageGroup[0] as TransactionType).group!.id as string);
+  }
+  return txOrMessageGroup[0].id;
+};
 
 // Get the group key (mostly used for i18n)
 export const getGroupKey = (txGroup: TransactionOrMessageGroup) => {
