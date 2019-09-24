@@ -31,6 +31,10 @@
   color: var(--grey-dark);
 }
 
+.nativeTokenText {
+  color: var(--grey-3);
+}
+
 .balanceContent {
   display: flex;
   justify-content: center;

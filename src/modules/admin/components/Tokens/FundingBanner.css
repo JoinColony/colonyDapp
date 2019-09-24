@@ -1,0 +1,16 @@
+.main {
+  padding: 30px 0 0;
+  border-top: 1px solid var(--temp-grey-5);
+  font-size: var(--size-normal);
+  text-align: center;
+}
+
+.address {
+  margin-top: 10px;
+  font-family: var(--family-monospace);
+  font-weight: var(--weight-medium);
+}
+
+.address > span + span {
+  margin-left: 10px;
+}

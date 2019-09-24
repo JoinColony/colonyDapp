@@ -1,7 +1,14 @@
 .main {
   display: grid;
+  height: 100%;
   grid-template-columns: minmax(700px, auto) 180px;
+  grid-template-rows: 1fr;
   column-gap: 80px;
+}
+
+.main main {
+  display: flex;
+  flex-direction: column;
 }
 
 .titleContainer {
@@ -17,4 +24,8 @@
 
 .sidebar li {
   padding: 10px 0;
+}
+
+.mainContent {
+  flex: 1;
 }
