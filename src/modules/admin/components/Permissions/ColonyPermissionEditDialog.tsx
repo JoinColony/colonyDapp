@@ -17,6 +17,7 @@ import { Address } from '~types/index';
 import { mergePayload, withKey, mapPayload, pipe } from '~utils/actions';
 
 import { DomainType, UserType, User, UserProfile } from '~immutable/index';
+import { ItemDataType } from '~core/OmniPicker';
 import { ActionTypeString, ActionTypes } from '~redux/index';
 import {
   useSelector,
@@ -34,6 +35,7 @@ import Heading from '~core/Heading';
 import Button from '~core/Button';
 import Dialog, { DialogSection } from '~core/Dialog';
 import { ActionForm, InputLabel, Checkbox } from '~core/Fields';
+import HookedUserAvatar from '~users/HookedUserAvatar';
 
 import {
   allUsersAddressesSelector,
@@ -144,6 +146,14 @@ const validationSchema = yup.object({
   user: yup.object().required(),
   roles: yup.array().of(yup.string().required()),
 });
+
+const UserAvatar = HookedUserAvatar({ fetchUser: false });
+
+const supRenderAvatar = (address: string, item: ItemDataType<UserType>) => {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const { id, ...user } = item;
+  return <UserAvatar address={address} user={user} size="xs" />;
+};
 
 const ColonyPermissionEditDialog = ({
   domain,
@@ -309,6 +319,7 @@ const ColonyPermissionEditDialog = ({
                   placeholder={MSG.search}
                   filter={filterUserSelection}
                   onSelected={user => updateSelectedUser(user)}
+                  renderAvatar={supRenderAvatar}
                 />
               </div>
               <InputLabel label={MSG.permissionsLabel} />
