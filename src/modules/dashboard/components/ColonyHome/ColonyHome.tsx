@@ -28,7 +28,6 @@ import { Tab, Tabs, TabList, TabPanel } from '~core/Tabs';
 import { Select } from '~core/Fields';
 import Button, { ActionButton, DialogActionButton } from '~core/Button';
 import BreadCrumb from '~core/BreadCrumb';
-import Heading from '~core/Heading';
 import RecoveryModeAlert from '~admin/RecoveryModeAlert';
 import LoadingTemplate from '~pages/LoadingTemplate';
 import {
@@ -38,6 +37,7 @@ import {
 import { currentUserColonyPermissionsFetcher } from '../../../users/fetchers';
 import { colonyAddressFetcher, domainsFetcher } from '../../fetchers';
 import { colonySubscriber } from '../../subscribers';
+import { COLONY_TOTAL_BALANCE_DOMAIN_ID } from '../../../admin/constants';
 import {
   canAdminister,
   canCreateTask as canCreateTaskCheck,
@@ -47,6 +47,7 @@ import {
   canRecoverColony,
 } from '../../checks';
 
+import ColonyFunding from './ColonyFunding';
 import ColonyMeta from './ColonyMeta';
 import TabContribute from './TabContribute';
 import styles from './ColonyHome.css';
@@ -117,7 +118,9 @@ const ColonyHome = ({
   intl: { formatMessage },
 }: Props) => {
   const [filterOption, setFilterOption] = useState(TasksFilterOptions.ALL_OPEN);
-  const [filteredDomainId, setFilteredDomainId] = useState(0);
+  const [filteredDomainId, setFilteredDomainId] = useState(
+    COLONY_TOTAL_BALANCE_DOMAIN_ID,
+  );
   const [isTaskBeingCreated, setIsTaskBeingCreated] = useState(false);
   const [showRecoverOption, setRecoverOption] = useState(false);
 
@@ -319,8 +322,10 @@ const ColonyHome = ({
         </Tabs>
       </main>
       <aside className={styles.sidebar}>
-        <Heading appearance={{ size: 'normal' }} text={MSG.availableFunds} />
-        <Button text={MSG.fund} appearance={{ theme: 'blue' }} />
+        <ColonyFunding
+          colonyAddress={colonyAddress}
+          currentDomainId={filteredDomainId}
+        />
       </aside>
       {isInRecoveryMode && <RecoveryModeAlert />}
     </div>
