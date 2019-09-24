@@ -74,6 +74,15 @@
   overflow: auto;
 }
 
+.stateScrollable tr td:last-child {
+  /*
+   * Last cell expand to fill any remaining space in row (useful for `td` hover styles).
+   *
+   * Can be overridden when this is undesirable.
+   */
+  flex: 1 0 auto;
+}
+
 /* Appearance */
 
 .separatorsBorders th,
@@ -119,7 +128,7 @@
     border-color: color-mod(var(--grey-blue-1) alpha(30%));
   }
 
-  & tbody tr:hover {
+  & tbody tr:hover td {
     background-color: var(--grey-4);
   }
 }

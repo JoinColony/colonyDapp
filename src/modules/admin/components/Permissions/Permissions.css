@@ -23,10 +23,6 @@
   padding: 10px 0;
 }
 
-.userPermissionsCell {
-  margin-left: auto;
-}
-
 .main table .tableBody {
   overflow-y: auto;
   overflow-x: none;
