@@ -52,7 +52,6 @@
   display: flex;
   justify-content: space-between;
   margin-top: 165px;
-  padding-right: 140px;
   grid-column: 3;
   grid-row: 1;
 }
