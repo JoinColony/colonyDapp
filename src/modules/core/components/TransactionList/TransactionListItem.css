@@ -2,6 +2,9 @@
 
 tr.main:hover .etherscanButtonWrapper {
   display: block;
+  position: absolute;
+  background-color: var(--colony-white);
+  padding: 10px 15px 10px 20px;
 }
 
 .main td {
@@ -48,7 +51,7 @@ td.transactionDetails {
 td.transactionAmountActions {
   flex-direction: row-reverse;
   padding-right: 30px;
-  width: 50%;
+  width: 60%;
 }
 
 .customButton {
