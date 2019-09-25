@@ -19,7 +19,10 @@ import { domainsFetcher, tokenFetcher } from '../../../dashboard/fetchers';
 import { useColonyNativeToken } from '../../../dashboard/hooks/useColonyNativeToken';
 import { useColonyTokens } from '../../../dashboard/hooks/useColonyTokens';
 import { walletAddressSelector } from '../../../users/selectors';
-import { canEditTokens, canMintTokens } from '../../checks';
+import {
+  canEditTokens,
+  canMoveTokens as canMoveTokensCheck,
+} from '../../checks';
 
 import FundingBanner from './FundingBanner';
 import TokenList from './TokenList';
@@ -69,10 +72,10 @@ const Tokens = ({
     () => canEditTokens(proxyOldRoles(roles), walletAddress),
     [roles, walletAddress],
   );
-  const canMoveTokens = useMemo(() => canMintTokens(roles, walletAddress), [
-    roles,
-    walletAddress,
-  ]);
+  const canMoveTokens = useMemo(
+    () => canMoveTokensCheck(roles, walletAddress),
+    [roles, walletAddress],
+  );
 
   // domains
   const [selectedDomain, setSelectedDomain] = useState<number>(1);
@@ -135,9 +138,9 @@ const Tokens = ({
     () =>
       openDialog('TokensMoveDialog', {
         colonyAddress,
-        toDomain: 1, // @todo Open TokensMoveDialog with selected domain
+        toDomain: selectedDomain,
       }),
-    [openDialog, colonyAddress],
+    [openDialog, colonyAddress, selectedDomain],
   );
 
   return (

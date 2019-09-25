@@ -7,12 +7,14 @@ export const canEditTokens = (
   walletAddress: Address,
 ) => roles && roles.founder === walletAddress;
 
-export const canMintTokens = (
-  domainRoles: object | void,
+export const canMoveTokens = (
+  domainRoles: {
+    [domainId: number]: { [userAddress: string]: { [role: string]: boolean } };
+  },
   walletAddress: Address,
 ) =>
   domainRoles &&
-  !!Object.values(domainRoles).find((users: object) =>
+  !!Object.values(domainRoles).find(users =>
     Object.entries(users).find(
       ([userAddress, roles]) =>
         userAddress === walletAddress && roles[COLONY_ROLE_FUNDING],
