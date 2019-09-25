@@ -1,6 +1,11 @@
 import { Redirect } from 'react-router';
 import React, { useState, useCallback, useEffect } from 'react';
-import { defineMessages, FormattedMessage } from 'react-intl';
+import {
+  defineMessages,
+  FormattedMessage,
+  injectIntl,
+  IntlShape,
+} from 'react-intl';
 import { subscribeActions as subscribeToReduxActions } from 'redux-action-watch/lib/actionCreators';
 import { useDispatch } from 'redux-react-hook';
 import throttle from 'lodash/throttle';
@@ -97,10 +102,16 @@ const MSG = defineMessages({
     id: 'dashboard.ColonyHome.recoverColonyCancelButton',
     defaultMessage: 'Nope! Take me back, please',
   },
+  root: {
+    id: 'root',
+    defaultMessage: 'root',
+  },
 });
 
 interface Props {
   match: any;
+  /** @ignore injected by `injectIntl` */
+  intl: IntlShape;
 }
 
 const COLONY_DB_RECOVER_BUTTON_TIMEOUT = 20 * 1000;
@@ -111,6 +122,7 @@ const ColonyHome = ({
   match: {
     params: { colonyName },
   },
+  intl: { formatMessage },
 }: Props) => {
   const [filterOption, setFilterOption] = useState(TasksFilterOptions.ALL_OPEN);
   const [filteredDomainId, setFilteredDomainId] = useState(0);
@@ -172,6 +184,20 @@ const ColonyHome = ({
     [colonyAddress],
     [colonyAddress],
   );
+
+  const crumbs =
+    domains &&
+    domains
+      .sort((a, b) => a.id - b.id)
+      .reduce(
+        (accumulator, domain) => {
+          if (domain && domain.name && domain.id <= filteredDomainId) {
+            accumulator.push(domain.name);
+          }
+          return accumulator;
+        },
+        [formatMessage(MSG.root)],
+      );
 
   const nativeTokenRef: ColonyTokenReferenceType | null = useSelector(
     colonyNativeTokenSelector,
@@ -263,24 +289,6 @@ const ColonyHome = ({
     </>
   );
 
-  const crumbs = (domains || [])
-    .sort((a, b) => a.id - b.id)
-    .reduce(
-      (accumulator, element) => {
-        if (element && element.id <= filteredDomainId && element.name) {
-          const message = {};
-          message[element.name] = {
-            id: element.name,
-            defaultMessage: element.name,
-          };
-          const messageDescriptor = defineMessages(message);
-          accumulator.push(messageDescriptor);
-        }
-        return accumulator;
-      },
-      [defineMessages({ root: { id: 'root', defaultMessage: 'root' } })],
-    );
-
   return (
     <div className={styles.main}>
       <aside className={styles.colonyInfo}>
@@ -295,7 +303,7 @@ const ColonyHome = ({
       </aside>
       <main className={styles.content}>
         <div className={styles.breadCrumbContainer}>
-          {crumbs && <BreadCrumb elements={crumbs} />}
+          {domains && crumbs && <BreadCrumb elements={crumbs} />}
         </div>
         <Tabs>
           <TabList>
@@ -329,4 +337,4 @@ const ColonyHome = ({
 
 ColonyHome.displayName = displayName;
 
-export default ColonyHome;
+export default injectIntl(ColonyHome);
