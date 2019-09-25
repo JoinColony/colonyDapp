@@ -6,12 +6,12 @@ import { NavigationItem } from '~pages/VerticalNavigation/VerticalNavigation';
 import { ColonyType } from '~immutable/index';
 import Heading from '~core/Heading';
 import LoadingTemplate from '~pages/LoadingTemplate';
-import Profile from '~admin/Profile';
+import ProfileEdit from '~admin/Profile/ProfileEdit';
 import RecoveryModeAlert from '~admin/RecoveryModeAlert';
 import Tokens from '~admin/Tokens';
-import Transactions from '~admin/Transactions';
 import Domains from '~admin/Domains';
 import Permissions from '~admin/Permissions';
+import ProfileAdvanced from '~admin/Profile/ProfileAdvanced';
 import VerticalNavigation from '~pages/VerticalNavigation';
 import { HistoryNavigation } from '~pages/NavigationWrapper';
 import {
@@ -61,9 +61,9 @@ const MSG = defineMessages({
     id: 'dashboard.Admin.tabTokens',
     defaultMessage: 'Tokens',
   },
-  tabTransaction: {
-    id: 'dashboard.Admin.tabTransaction',
-    defaultMessage: 'Transactions',
+  tabAdvanced: {
+    id: 'dashboard.Admin.tabAdvanced',
+    defaultMessage: 'Advanced',
   },
 });
 
@@ -76,7 +76,7 @@ const navigationItems = (colony: ColonyType): NavigationItem[] => [
   {
     id: 1,
     title: MSG.tabProfile,
-    content: <Profile colony={colony} />,
+    content: <ProfileEdit colony={colony} />,
   },
   {
     id: 2,
@@ -100,8 +100,8 @@ const navigationItems = (colony: ColonyType): NavigationItem[] => [
   },
   {
     id: 5,
-    title: MSG.tabTransaction,
-    content: <Transactions colonyAddress={colony.colonyAddress} />,
+    title: MSG.tabAdvanced,
+    content: <ProfileAdvanced colony={colony} />,
   },
 ];
 
