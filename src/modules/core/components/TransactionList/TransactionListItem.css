@@ -1,9 +1,5 @@
 @value cellPadding: 20px;
 
-tr.main:hover {
-  background-color: var(--colony-white);
-}
-
 tr.main:hover .etherscanButtonWrapper {
   display: block;
 }
