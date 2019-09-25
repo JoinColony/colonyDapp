@@ -29,6 +29,7 @@ import {
 import { mergePayload } from '~utils/actions';
 import { Tab, Tabs, TabList, TabPanel } from '~core/Tabs';
 import { Select } from '~core/Fields';
+import Heading from '~core/Heading';
 import Button, { ActionButton, DialogActionButton } from '~core/Button';
 import BreadCrumb from '~core/BreadCrumb';
 import RecoveryModeAlert from '~admin/RecoveryModeAlert';
@@ -48,6 +49,7 @@ import {
 import ColonyFunding from './ColonyFunding';
 import ColonyMeta from './ColonyMeta';
 import TabContribute from './TabContribute';
+import TabTransactions from './TabTransactions';
 import styles from './ColonyHome.css';
 
 const MSG = defineMessages({
@@ -58,6 +60,10 @@ const MSG = defineMessages({
   tabContribute: {
     id: 'dashboard.ColonyHome.tabContribute',
     defaultMessage: 'Tasks',
+  },
+  tabTransactions: {
+    id: 'dashboard.ColonyHome.tabTransactions',
+    defaultMessage: 'Transactions',
   },
   labelFilter: {
     id: 'dashboard.ColonyHome.labelFilter',
@@ -115,6 +121,7 @@ const ColonyHome = ({
   const [filteredDomainId, setFilteredDomainId] = useState(0);
   const [isTaskBeingCreated, setIsTaskBeingCreated] = useState(false);
   const [showRecoverOption, setRecoverOption] = useState(false);
+  const [activeTab, setActiveTab] = useState<'tasks' | 'transactions'>('tasks');
 
   const dispatch = useDispatch();
 
@@ -276,6 +283,13 @@ const ColonyHome = ({
     </>
   );
 
+  const noFilter = (
+    <Heading
+      text={MSG.noFilter}
+      appearance={{ size: 'tiny', margin: 'small' }}
+    />
+  );
+
   return (
     <div className={styles.main}>
       <aside className={styles.colonyInfo}>
@@ -293,13 +307,16 @@ const ColonyHome = ({
           {domains && crumbs && <BreadCrumb elements={crumbs} />}
         </div>
         <Tabs>
-          <TabList>
-            <Tab>
+          <TabList extra={activeTab === 'tasks' ? null : noFilter}>
+            <Tab onClick={() => setActiveTab('tasks')}>
               <FormattedMessage {...MSG.tabContribute} />
+            </Tab>
+            <Tab onClick={() => setActiveTab('transactions')}>
+              <FormattedMessage {...MSG.tabTransactions} />
             </Tab>
           </TabList>
           <div className={styles.interactiveBar}>
-            {filterSelect} {renderNewTaskButton}
+            {activeTab === 'tasks' ? [filterSelect, renderNewTaskButton] : null}
           </div>
           <TabPanel>
             <TabContribute
@@ -310,6 +327,9 @@ const ColonyHome = ({
               nativeTokenRef={nativeTokenRef}
               roles={roles}
             />
+          </TabPanel>
+          <TabPanel>
+            <TabTransactions colony={colony} />
           </TabPanel>
         </Tabs>
       </main>
