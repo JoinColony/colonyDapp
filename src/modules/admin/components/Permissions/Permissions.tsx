@@ -1,6 +1,7 @@
 import React, { useCallback, useMemo, useState } from 'react';
 
-import { defineMessages } from 'react-intl';
+import { defineMessages, injectIntl, IntlShape } from 'react-intl';
+import { compose } from 'recompose';
 
 import { Address, createAddress } from '~types/index';
 import { DomainType } from '~immutable/index';
@@ -40,6 +41,7 @@ const MSG = defineMessages({
 
 interface Props {
   colonyAddress: Address;
+  intl: IntlShape;
   openDialog: (
     dialogName: string,
     dialogProps?: Record<string, any>,
@@ -48,7 +50,11 @@ interface Props {
 
 const displayName = 'admin.Permissions';
 
-const Permissions = ({ colonyAddress, openDialog }: Props) => {
+const Permissions = ({
+  colonyAddress,
+  intl: { formatMessage },
+  openDialog,
+}: Props) => {
   const [selectedDomain, setSelectedDomain] = useState(1);
 
   const { data: domainsData, isFetching: isFetchingDomains } = useDataFetcher<
@@ -56,7 +62,7 @@ const Permissions = ({ colonyAddress, openDialog }: Props) => {
   >(domainsFetcher, [colonyAddress], [colonyAddress]);
   const domains = useMemo(
     () => [
-      { value: 1, label: 'root' },
+      { value: 1, label: { id: 'domain.root' } },
       ...(domainsData || []).map(({ name, id }) => ({
         label: name,
         value: id,
@@ -91,10 +97,11 @@ const Permissions = ({ colonyAddress, openDialog }: Props) => {
     [getPermissionsForUser],
   );
 
-  const domainLabel = useMemo(() => {
-    const domain = domains.find(({ value }) => value === selectedDomain);
-    return domain ? domain.label : undefined;
-  }, [domains, selectedDomain]);
+  const domainLabel: string = useMemo(() => {
+    const { label = '' } =
+      domains.find(({ value }) => value === selectedDomain) || {};
+    return typeof label === 'string' ? label : formatMessage(label);
+  }, [domains, formatMessage, selectedDomain]);
 
   const handleEditPermissions = useCallback(
     userAddress =>
@@ -187,4 +194,9 @@ const Permissions = ({ colonyAddress, openDialog }: Props) => {
 
 Permissions.displayName = displayName;
 
-export default (withDialog() as any)(Permissions);
+const enhance = compose(
+  withDialog(),
+  injectIntl,
+) as any;
+
+export default enhance(Permissions);
