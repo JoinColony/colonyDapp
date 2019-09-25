@@ -1,10 +1,9 @@
-import React, { useCallback } from 'react';
+import React, { useCallback, useMemo } from 'react';
 import { FormikProps } from 'formik';
 import * as yup from 'yup';
 import moveDecimal from 'move-decimal-point';
 import BigNumber from 'bn.js';
 
-import { ZERO_ADDRESS } from '~utils/web3/constants';
 import { pipe, mapPayload, withKey } from '~utils/actions';
 import { Address } from '~types/index';
 import { ActionTypes } from '~redux/index';
@@ -44,6 +43,16 @@ const TokensMoveDialog = ({
   // Fetch colony tokens here since we need them for form submission
   const [colonyTokenRefs, colonyTokens] = useColonyTokens(colonyAddress);
 
+  const nativeTokenAddress = useMemo(
+    () =>
+      (
+        (colonyTokenRefs || []).find(({ isNative }) => !!isNative) || {
+          address: undefined,
+        }
+      ).address,
+    [colonyTokenRefs],
+  );
+
   const transform = useCallback(
     pipe(
       mapPayload(payload => {
@@ -73,7 +82,7 @@ const TokensMoveDialog = ({
         fromDomain: undefined,
         toDomain,
         amount: '',
-        tokenAddress: ZERO_ADDRESS,
+        tokenAddress: nativeTokenAddress,
       }}
       validationSchema={validationSchema}
       submit={ActionTypes.MOVE_FUNDS_BETWEEN_POTS}

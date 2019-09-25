@@ -353,7 +353,7 @@ class Select extends Component<Props, State> {
         </button>
         {!elementOnly && (
           <InputStatus
-            appearance={appearance}
+            appearance={{ theme: 'minimal' }}
             status={status}
             statusValues={statusValues}
             error={$error}

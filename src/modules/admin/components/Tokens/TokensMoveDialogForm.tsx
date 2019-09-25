@@ -17,7 +17,7 @@ import { domainsFetcher } from '../../../dashboard/fetchers';
 import { tokenBalanceSelector } from '../../../dashboard/selectors';
 import { walletAddressSelector } from '../../../users/selectors';
 
-import styles from './TokensMoveDialog.css';
+import styles from './TokensMoveDialogForm.css';
 import { FormValues } from './TokensMoveDialog';
 import EthUsd from '~core/EthUsd';
 import Numeral from '~core/Numeral';
@@ -25,39 +25,39 @@ import { ZERO_ADDRESS } from '~utils/web3/constants';
 
 const MSG = defineMessages({
   title: {
-    id: 'admin.Tokens.TokensMoveDialog.title',
+    id: 'admin.Tokens.TokensMoveDialogForm.title',
     defaultMessage: 'Move Funds',
   },
   from: {
-    id: 'admin.Tokens.TokensMoveDialog.from',
+    id: 'admin.Tokens.TokensMoveDialogForm.from',
     defaultMessage: 'From',
   },
   to: {
-    id: 'admin.Tokens.TokensMoveDialog.to',
+    id: 'admin.Tokens.TokensMoveDialogForm.to',
     defaultMessage: 'To',
   },
   amount: {
-    id: 'admin.Tokens.TokensMoveDialog.amount',
+    id: 'admin.Tokens.TokensMoveDialogForm.amount',
     defaultMessage: 'Amount',
   },
   domainTokenAmount: {
-    id: 'admin.Tokens.TokensMoveDialog.domainTokenAmount',
+    id: 'admin.Tokens.TokensMoveDialogForm.domainTokenAmount',
     defaultMessage: 'Amount: {amount} {symbol}',
   },
   noBalance: {
-    id: 'admin.Tokens.TokensMoveDialog.noBalance',
+    id: 'admin.Tokens.TokensMoveDialogForm.noBalance',
     defaultMessage: 'Insufficient balance in from domain pot',
   },
   noPermissionFrom: {
-    id: 'admin.Tokens.TokensMoveDialog.noPermissionFrom',
+    id: 'admin.Tokens.TokensMoveDialogForm.noPermissionFrom',
     defaultMessage: 'No permission in from domain',
   },
   noPermissionTo: {
-    id: 'admin.Tokens.TokensMoveDialog.noPermissionTo',
+    id: 'admin.Tokens.TokensMoveDialogForm.noPermissionTo',
     defaultMessage: 'No permission in to domain',
   },
   samePot: {
-    id: 'admin.Tokens.TokensMoveDialog.samePot',
+    id: 'admin.Tokens.TokensMoveDialogForm.samePot',
     defaultMessage: 'Cannot move to same domain pot',
   },
 });
@@ -115,7 +115,7 @@ const TokensMoveDialogForm = ({
   // Map the colony's domains to Select options
   const domainOptions = useMemo(
     () => [
-      { value: 1, label: 'root' },
+      { value: 1, label: { id: 'domain.root' } },
       ...(domains || []).map(({ id, name }) => ({ value: id, label: name })),
     ],
     [domains],
@@ -283,7 +283,12 @@ const TokensMoveDialogForm = ({
             />
           </div>
           <div className={styles.tokenAmountSelect}>
-            <Select options={tokenOptions} name="tokenAddress" elementOnly />
+            <Select
+              options={tokenOptions}
+              name="tokenAddress"
+              elementOnly
+              appearance={{ alignOptions: 'right', theme: 'default' }}
+            />
           </div>
           {values.tokenAddress === ZERO_ADDRESS && (
             <div className={styles.tokenAmountUsd}>
