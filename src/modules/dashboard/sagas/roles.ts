@@ -62,7 +62,7 @@ function* colonyDomainUserRolesFetch({
   return null;
 }
 
-const getRoleSetFunctionName = role => {
+const getRoleSetFunctionName = (role: string, setTo: boolean) => {
   switch (role) {
     case COLONY_ROLE_ADMINISTRATION:
       return 'setAdministrationRole';
@@ -78,7 +78,7 @@ const getRoleSetFunctionName = role => {
       return 'setFundingRole';
 
     case COLONY_ROLE_RECOVERY:
-      return 'setRecoveryRole';
+      return setTo ? 'setRecoveryRole' : 'removeRecoveryRole';
 
     case COLONY_ROLE_ROOT:
       return 'setRootRole';
@@ -98,28 +98,32 @@ function* colonyDomainUserRolesSet({
       args: { domainId, userAddress },
     });
 
-    const toChange = Object.keys(roles).reduce(
+    const toChange: [string, boolean][] = Object.keys(roles).reduce(
       (acc, role) =>
         existingRoles[role] !== roles[role]
           ? [...acc, [role, roles[role]]]
           : acc,
-      [],
+      [] as [string, boolean][],
     );
 
     yield all(
       toChange.map(([role, setTo], index) =>
-        fork(createTransaction, `${meta.id}_${getRoleSetFunctionName(role)}`, {
-          context: ContractContexts.COLONY_CONTEXT,
-          identifier: colonyAddress,
-          methodName: getRoleSetFunctionName(role),
-          params: { address: userAddress, domainId, setTo },
-          ready: true,
-          group: {
-            key: 'setRoles',
-            id: meta.id,
-            index,
+        fork(
+          createTransaction,
+          `${meta.id}_${getRoleSetFunctionName(role, setTo)}`,
+          {
+            context: ContractContexts.COLONY_CONTEXT,
+            identifier: colonyAddress,
+            methodName: getRoleSetFunctionName(role, setTo),
+            params: { address: userAddress, domainId, setTo },
+            ready: true,
+            group: {
+              key: 'setRoles',
+              id: meta.id,
+              index,
+            },
           },
-        }),
+        ),
       ),
     );
 
