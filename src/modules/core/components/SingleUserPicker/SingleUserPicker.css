@@ -1,5 +1,6 @@
 .main {
   composes: field from '~styles/fields.css';
+  width: 100%;
 }
 
 .directionHorizontal {
@@ -101,7 +102,7 @@
 
 .omniPickerContainer {
   width: 100%;
-  max-width: 450px;
+  max-width: 330px;
   position: absolute;
   top: 35px;
   left: 10px;
