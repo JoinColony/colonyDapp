@@ -2,9 +2,9 @@
 
 tr.main:hover .etherscanButtonWrapper {
   display: block;
+  padding: 10px 15px 10px 20px;
   position: absolute;
   background-color: var(--colony-white);
-  padding: 10px 15px 10px 20px;
 }
 
 .main td {
