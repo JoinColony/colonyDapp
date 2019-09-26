@@ -133,7 +133,7 @@ function* colonyUpdateTokens({
     const { tokens: currentTokenReferences = {} } = yield executeQuery(
       getColony,
       {
-        args: undefined,
+        args: { colonyAddress },
         metadata: { colonyAddress },
       },
     );
