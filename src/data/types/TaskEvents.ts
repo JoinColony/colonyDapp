@@ -13,7 +13,8 @@ export type TaskEvents =
   | EventDefinition<
       EventTypes.DOMAIN_SET,
       {
-        domainId: number;
+        // XXXX changeme
+        domainId: string | number;
       },
       Versions.CURRENT
     >

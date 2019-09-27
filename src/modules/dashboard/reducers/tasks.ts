@@ -30,7 +30,7 @@ const taskEventReducer = (
           currentState: TaskStates.ACTIVE,
           draftId,
           managerAddress: creatorAddress,
-          domainId,
+          domainId: domainId || '1',
         }),
       );
     }
@@ -42,7 +42,8 @@ const taskEventReducer = (
 
     case EventTypes.DOMAIN_SET: {
       const { domainId } = event.payload;
-      return task.set('domainId', domainId);
+      // Older events used a number, and there isn't a migration for this
+      return task.set('domainId', domainId.toString());
     }
 
     case EventTypes.SKILL_SET: {
