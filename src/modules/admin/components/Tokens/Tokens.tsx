@@ -11,14 +11,19 @@ import { Select } from '~core/Fields';
 import { SpinnerLoader } from '~core/Preloaders';
 import { DomainType, TokenType } from '~immutable/index';
 import { Address } from '~types/index';
-import { useDataFetcher, useOldRoles } from '~utils/hooks';
+import { useDataFetcher, useRoles } from '~utils/hooks';
+import { proxyOldRoles } from '~utils/data';
 
 import { COLONY_TOTAL_BALANCE_DOMAIN_ID } from '../../../admin/constants';
 import { domainsFetcher, tokenFetcher } from '../../../dashboard/fetchers';
 import { useColonyNativeToken } from '../../../dashboard/hooks/useColonyNativeToken';
 import { useColonyTokens } from '../../../dashboard/hooks/useColonyTokens';
 import { walletAddressSelector } from '../../../users/selectors';
-import { canEditTokens } from '../../checks';
+import {
+  canEditTokens,
+  canMoveTokens as canMoveTokensCheck,
+} from '../../checks';
+
 import FundingBanner from './FundingBanner';
 import TokenList from './TokenList';
 
@@ -28,6 +33,10 @@ const MSG = defineMessages({
   labelSelectDomain: {
     id: 'dashboard.Tokens.labelSelectDomain',
     defaultMessage: 'Select a domain',
+  },
+  navItemMoveTokens: {
+    id: 'dashboard.Tokens.navItemMoveTokens',
+    defaultMessage: 'Move funds',
   },
   navItemMintNewTokens: {
     id: 'dashboard.Tokens.navItemMintNewTokens',
@@ -57,12 +66,16 @@ const Tokens = ({
   openDialog,
 }: Props) => {
   // permissions checks
-  const { data: roles } = useOldRoles(colonyAddress);
+  const { data: roles } = useRoles(colonyAddress);
   const walletAddress = useMappedState(walletAddressSelector);
-  const canEdit = useMemo(() => canEditTokens(roles, walletAddress), [
-    roles,
-    walletAddress,
-  ]);
+  const canEdit = useMemo(
+    () => canEditTokens(proxyOldRoles(roles), walletAddress),
+    [roles, walletAddress],
+  );
+  const canMoveTokens = useMemo(
+    () => canMoveTokensCheck(roles, walletAddress),
+    [roles, walletAddress],
+  );
 
   // domains
   const [selectedDomain, setSelectedDomain] = useState<number>(1);
@@ -121,6 +134,14 @@ const Tokens = ({
       }),
     [openDialog, nativeToken, colonyAddress],
   );
+  const handleMoveTokens = useCallback(
+    () =>
+      openDialog('TokensMoveDialog', {
+        colonyAddress,
+        toDomain: selectedDomain,
+      }),
+    [openDialog, colonyAddress, selectedDomain],
+  );
 
   return (
     <div className={styles.main}>
@@ -161,6 +182,15 @@ const Tokens = ({
       </main>
       <aside className={styles.sidebar}>
         <ul>
+          {canMoveTokens && (
+            <li>
+              <Button
+                text={MSG.navItemMoveTokens}
+                appearance={{ theme: 'blue' }}
+                onClick={handleMoveTokens}
+              />
+            </li>
+          )}
           {canMintNativeToken && (
             <li>
               <Button

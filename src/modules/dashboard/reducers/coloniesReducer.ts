@@ -13,6 +13,18 @@ import { createAddress, Address } from '~types/index';
 
 import { AllColoniesMap } from '../state/index';
 
+/**
+ * Convert a JS object of balances { 1: '...' } where keys may be number or
+ * string, to an ImmutableMap of balances keyed by numbers.
+ */
+const balancesMapFromObject = balances =>
+  ImmutableMap(
+    Object.entries(balances).map(([domainId, balance]) => [
+      parseInt(domainId, 10),
+      balance,
+    ]) || [],
+  );
+
 const coloniesReducer: ReducerType<AllColoniesMap> = (
   state = ImmutableMap(),
   action,
@@ -28,7 +40,10 @@ const coloniesReducer: ReducerType<AllColoniesMap> = (
         tokens: ImmutableMap(
           Object.entries(tokens).map(([tokenAddress, token]) => [
             createAddress(tokenAddress),
-            ColonyTokenReference(token),
+            ColonyTokenReference({
+              ...token,
+              balances: balancesMapFromObject(token.balances),
+            }),
           ]),
         ),
       });
@@ -60,7 +75,7 @@ const coloniesReducer: ReducerType<AllColoniesMap> = (
     }
     case ActionTypes.COLONY_TOKEN_BALANCE_FETCH_SUCCESS: {
       const {
-        payload: { colonyAddress, tokenAddress, token },
+        payload: { colonyAddress, tokenAddress, token: tokenObject },
       } = action;
       const previousRecord = state.getIn([
         colonyAddress,
@@ -68,6 +83,10 @@ const coloniesReducer: ReducerType<AllColoniesMap> = (
         'tokens',
         tokenAddress,
       ]);
+      const token = {
+        ...tokenObject,
+        balances: balancesMapFromObject(tokenObject.balances),
+      };
       const record = previousRecord
         ? previousRecord.mergeDeep(token)
         : ColonyTokenReference(token);

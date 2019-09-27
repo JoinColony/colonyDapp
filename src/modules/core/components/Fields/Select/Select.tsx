@@ -11,6 +11,7 @@ import Icon from '../../Icon';
 
 import asField from '../asField';
 import InputLabel from '../InputLabel';
+import InputStatus from '../InputStatus';
 
 import { Appearance } from './types';
 
@@ -71,6 +72,12 @@ interface Props {
 
   /** Will be injected by `asField`, or must be manually supplied if unconnected */
   setValue: (val: any) => void;
+
+  /** Will be injected by `asField`, used for InputStatus */
+  status?: string | MessageDescriptor;
+
+  /** Will be injected by `asField`, used for InputStatus */
+  statusValues?: MessageValues;
 
   /** @ignore Will be injected by `asField` */
   $id: string;
@@ -294,6 +301,8 @@ class Select extends Component<Props, State> {
       options,
       placeholder,
       name,
+      status,
+      statusValues,
       /* eslint-disable @typescript-eslint/no-unused-vars */
       $error,
       $value,
@@ -342,7 +351,15 @@ class Select extends Component<Props, State> {
             </span>
           </div>
         </button>
-        {isOpen && options.length && (
+        {!elementOnly && (
+          <InputStatus
+            appearance={{ theme: 'minimal' }}
+            status={status}
+            statusValues={statusValues}
+            error={$error}
+          />
+        )}
+        {isOpen && !!options.length && (
           <SelectListBox
             checkedOption={checkedOption}
             selectedOption={selectedOption}

@@ -90,6 +90,8 @@
     "transaction.colony.setAdminRole.description": "{setTo, select, true { Add Admin ({ address }) } false { Remove Admin ({ address }) } }",
     "transaction.colony.addDomain.title": "Create Domain",
     "transaction.colony.addDomain.description": "Create Domain",
+    "transaction.colony.moveFundsBetweenPots.title": "Move Funds Between Pots",
+    "transaction.colony.moveFundsBetweenPots.description": "Move tokens from one domain pot to another",
 
     "transaction.group.setRoles.title": "Set roles",
     "transaction.group.setRoles.description": "Sign the transactions required to set the selected roles.",
