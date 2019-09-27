@@ -1,14 +1,7 @@
 import generate from 'nanoid/generate';
 import urlDictionary from 'nanoid/url';
-import {
-  COLONY_ROLE_ADMINISTRATION,
-  COLONY_ROLE_ARCHITECTURE,
-  COLONY_ROLE_FUNDING,
-  COLONY_ROLE_ROOT,
-} from '@colony/colony-js-client';
 
-import { DomainType } from '~immutable/index';
-import { Address, ColonyRolesObject, UserRolesObject } from '~types/index';
+import { Address, ColonyRoles, DomainRolesObject } from '~types/index';
 import { ZERO_ADDRESS } from '~utils/web3/constants';
 
 // This should be opaque
@@ -23,27 +16,22 @@ export const generateUrlFriendlyId = (): RandomId =>
  * util can be removed once the DLP project is completed.
  */
 export const proxyOldRoles = (
-  domainRoles: any,
+  rootDomainRoles: DomainRolesObject,
 ): { founder: Address; admins: Address[] } | void => {
-  if (!domainRoles) {
-    return undefined;
-  }
-
-  const rootDomainRoles = domainRoles[1] || {};
-
   const founder =
     Object.keys(rootDomainRoles).find(address => {
       const roles = rootDomainRoles[address];
       return (
-        roles[COLONY_ROLE_ADMINISTRATION] &&
-        roles[COLONY_ROLE_ARCHITECTURE] &&
-        roles[COLONY_ROLE_FUNDING] &&
-        roles[COLONY_ROLE_ROOT]
+        roles.has(ColonyRoles.ROOT) &&
+        roles.has(ColonyRoles.ADMINISTRATION) &&
+        roles.has(ColonyRoles.ARCHITECTURE) &&
+        roles.has(ColonyRoles.FUNDING)
       );
     }) || ZERO_ADDRESS;
+
   const admins = Object.keys(rootDomainRoles).reduce(
     (acc, address) =>
-      rootDomainRoles[address][COLONY_ROLE_ADMINISTRATION] &&
+      rootDomainRoles[address].has(ColonyRoles.ADMINISTRATION) &&
       address !== founder
         ? acc.add(address)
         : acc,
@@ -55,64 +43,3 @@ export const proxyOldRoles = (
     admins: Array.from(admins) as string[],
   };
 };
-
-// Return parent of a domain or undefined
-const getParentDomainId = (domains, domainId) =>
-  (domains.find(({ id }) => id === domainId) || {}).parentId;
-
-// Combine user roles object with user roles from another domain
-const combineUserDomainRoles = (
-  userDomainRoles: UserRolesObject,
-  roles: ColonyRolesObject,
-  domainId: number,
-  userAddress: Address,
-): UserRolesObject =>
-  roles[domainId] && roles[domainId][userAddress]
-    ? Object.keys(roles[domainId][userAddress]).reduce(
-        (acc, role) => ({
-          ...acc,
-          [role]: acc[role] || roles[domainId][userAddress][role],
-        }),
-        { ...userDomainRoles },
-      )
-    : userDomainRoles;
-
-export const includeParentRoles = (
-  roles: ColonyRolesObject,
-  domains: DomainType[],
-) =>
-  domains.reduce(
-    (rolesObject, { id: domainId }) => ({
-      ...rolesObject,
-      [domainId]: Object.keys(roles[domainId] || {}).reduce(
-        (domainObject, userAddress) => {
-          let userDomainRoles = roles[domainId][userAddress];
-          let parentDomainId = getParentDomainId(domains, domainId);
-
-          /*
-           * Traverse up the domains tree until there are no more parents, or we
-           * have all permissions.
-           */
-          while (
-            parentDomainId &&
-            Object.values(userDomainRoles).find(hasRole => !hasRole) !==
-              undefined
-          ) {
-            // Combine permissions we already found with those of the parent
-            userDomainRoles = combineUserDomainRoles(
-              userDomainRoles,
-              roles,
-              parentDomainId,
-              userAddress,
-            );
-
-            // Get parent of the current domain
-            parentDomainId = getParentDomainId(domains, parentDomainId);
-          }
-          return { ...domainObject, [userAddress]: userDomainRoles };
-        },
-        {},
-      ),
-    }),
-    {},
-  );

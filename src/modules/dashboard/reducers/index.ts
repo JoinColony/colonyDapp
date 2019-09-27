@@ -1,6 +1,5 @@
 import { combineReducers } from 'redux-immutable';
 
-import allRolesReducer from './allRoles';
 import allColoniesReducer from './allColonies';
 import allDomainsReducer from './allDomains';
 import allTokensReducer from './allTokens';
@@ -11,7 +10,6 @@ import taskMetadataReducer from './taskMetadata';
 import {
   DASHBOARD_ALL_COLONIES,
   DASHBOARD_ALL_DOMAINS,
-  DASHBOARD_ALL_ROLES,
   DASHBOARD_ALL_TOKENS,
   DASHBOARD_TASK_FEED_ITEMS,
   DASHBOARD_TASK_METADATA,
@@ -21,7 +19,6 @@ import {
 const dashboardReducer = combineReducers({
   [DASHBOARD_ALL_COLONIES]: allColoniesReducer,
   [DASHBOARD_ALL_DOMAINS]: allDomainsReducer,
-  [DASHBOARD_ALL_ROLES]: allRolesReducer,
   [DASHBOARD_ALL_TOKENS]: allTokensReducer,
   [DASHBOARD_TASK_FEED_ITEMS]: taskFeedItemsReducer,
   [DASHBOARD_TASK_METADATA]: taskMetadataReducer,

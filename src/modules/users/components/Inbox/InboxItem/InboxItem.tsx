@@ -145,10 +145,10 @@ const InboxItem = ({
   const colonyName = colony && colony.colonyName;
 
   const { data: domains, isFetching: isFetchingDomains } = useDataFetcher<
-    DomainType[]
+    Record<string, DomainType>
   >(domainsFetcher, [colonyAddress], [colonyAddress]);
-  const currentDomain =
-    domains && domains.find(domain => domain.id === (domainId || 0));
+  const currentDomain: DomainType | undefined =
+    domainId && domains && domains[domainId];
 
   const { data: token, isFetching: isFetchingToken } = useDataFetcher<
     TokenType

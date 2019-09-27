@@ -18,7 +18,7 @@ import { fetchColonyTokenBalance } from '../actionCreators';
 
 function* colonyDomainsFetch({
   meta,
-  payload: { colonyAddress },
+  payload: { colonyAddress, options: { fetchRoles } = { fetchRoles: false } },
 }: Action<ActionTypes.COLONY_DOMAINS_FETCH>) {
   try {
     const domains = yield executeQuery(getColonyDomains, {
@@ -26,9 +26,6 @@ function* colonyDomainsFetch({
       metadata: { colonyAddress },
     });
 
-    /*
-     * Dispatch the success action.
-     */
     yield put<AllActions>({
       type: ActionTypes.COLONY_DOMAINS_FETCH_SUCCESS,
       meta,
@@ -37,6 +34,14 @@ function* colonyDomainsFetch({
         domains,
       },
     });
+
+    if (fetchRoles) {
+      yield put<AllActions>({
+        type: ActionTypes.COLONY_ROLES_FETCH,
+        payload: { colonyAddress },
+        meta,
+      });
+    }
   } catch (error) {
     return yield putError(ActionTypes.COLONY_DOMAINS_FETCH_ERROR, error, meta);
   }

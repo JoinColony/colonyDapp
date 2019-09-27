@@ -23,10 +23,6 @@ function* colonyRolesFetch({
       args: undefined,
       metadata: { colonyAddress },
     });
-
-    /*
-     * Dispatch the success action.
-     */
     yield put<AllActions>({
       type: ActionTypes.COLONY_ROLES_FETCH_SUCCESS,
       meta,
