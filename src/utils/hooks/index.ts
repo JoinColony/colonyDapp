@@ -108,9 +108,12 @@ const defaultTransform = (obj: Collection<any, any>) =>
  * Given a redux selector and optional selector arguments, get the
  * (immutable) redux state and return a mutable version of it.
  */
-export const useSelector = (
-  select: any,
-  args: any[] = [],
+export const useSelector = <
+  S extends (...args: any) => any & { transform?: <T>(obj: T) => any },
+  A extends RemoveFirstFromTuple<Parameters<S>> // Omit the first arg (state)
+>(
+  select: S,
+  args: A = ([] as unknown) as A,
   transform?: (obj: Collection<any, any>) => any,
 ) => {
   const mapState = useCallback(state => select(state, ...args), [args, select]);
@@ -118,9 +121,10 @@ export const useSelector = (
   const transformFn =
     typeof transform === 'function'
       ? transform
-      : select.transform || defaultTransform;
+      : (select as { transform?: <T>(obj: T) => any }).transform ||
+        defaultTransform;
 
-  return useMemo(() => transformFn(data), [data, transformFn]);
+  return useMemo(() => transformFn<ReturnType<S>>(data), [data, transformFn]);
 };
 
 /*
