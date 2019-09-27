@@ -4,6 +4,7 @@ import { defineMessages, FormattedMessage } from 'react-intl';
 import { COLONY_ROLE_FUNDING } from '@colony/colony-js-client';
 import BigNumber from 'bn.js';
 import { useMappedState } from 'redux-react-hook';
+import moveDecimal from 'move-decimal-point';
 
 import { Address } from '~types/index';
 import { DomainType } from '~immutable/index';
@@ -43,6 +44,10 @@ const MSG = defineMessages({
   domainTokenAmount: {
     id: 'admin.Tokens.TokensMoveDialogForm.domainTokenAmount',
     defaultMessage: 'Amount: {amount} {symbol}',
+  },
+  noAmount: {
+    id: 'admin.Tokens.TokensMoveDialogForm.noAmount',
+    defaultMessage: 'Amount must be greater than zero',
   },
   noBalance: {
     id: 'admin.Tokens.TokensMoveDialogForm.noBalance',
@@ -168,11 +173,26 @@ const TokensMoveDialogForm = ({
 
   // Perform form validations
   useEffect(() => {
-    if (
-      fromDomainTokenBalance &&
-      fromDomainTokenBalance.lt(new BigNumber(values.amount))
-    ) {
-      setErrors({ amount: MSG.noBalance });
+    const errors: {
+      amount?: any;
+      fromDomain?: any;
+      toDomain?: any;
+    } = {};
+
+    if (!(values.amount && values.amount.length)) {
+      errors.amount = undefined; // silent error
+    } else {
+      const convertedAmount = new BigNumber(
+        moveDecimal(values.amount, selectedToken.decimals || 18),
+      );
+      if (convertedAmount.eqn(0)) {
+        errors.amount = MSG.noAmount;
+      } else if (
+        fromDomainTokenBalance &&
+        fromDomainTokenBalance.lt(convertedAmount)
+      ) {
+        errors.amount = MSG.noBalance;
+      }
     }
 
     if (
@@ -180,7 +200,7 @@ const TokensMoveDialogForm = ({
       !isFetchingFromDomainPermissions &&
       !fromDomainPermissions[COLONY_ROLE_FUNDING]
     ) {
-      setErrors({ fromDomain: MSG.noPermissionFrom });
+      errors.fromDomain = MSG.noPermissionFrom;
     }
 
     if (
@@ -188,20 +208,23 @@ const TokensMoveDialogForm = ({
       !isFetchingToDomainPermissions &&
       !toDomainPermissions[COLONY_ROLE_FUNDING]
     ) {
-      setErrors({ toDomain: MSG.noPermissionTo });
+      errors.toDomain = MSG.noPermissionTo;
     }
 
     if (
       values.toDomain !== undefined &&
       values.toDomain === values.fromDomain
     ) {
-      setErrors({ toDomain: MSG.samePot });
+      errors.toDomain = MSG.samePot;
     }
+
+    setErrors(errors);
   }, [
     fromDomainPermissions,
     fromDomainTokenBalance,
     isFetchingFromDomainPermissions,
     isFetchingToDomainPermissions,
+    selectedToken.decimals,
     selectedTokenRef,
     setErrors,
     toDomainPermissions,

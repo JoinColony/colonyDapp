@@ -34,9 +34,9 @@ const TokensMoveDialog = ({
   close,
 }: Props) => {
   const validationSchema = yup.object().shape({
-    fromDomain: yup.string().required(),
-    toDomain: yup.string().required(),
-    amount: yup.number().required(),
+    fromDomain: yup.number().required(),
+    toDomain: yup.number().required(),
+    amount: yup.string().required(),
     tokenAddress: yup.string().required(),
   });
 
