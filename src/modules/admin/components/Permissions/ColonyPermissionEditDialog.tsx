@@ -267,9 +267,9 @@ const ColonyPermissionEditDialog = ({
 
   // When selected user gets updates get that user's roles
   // to populate the checkboxes
-  const useSelectedUserForRoles = (): Array<string> => {
-    const { data } = useUserDomainRoles(colonyAddress, domain.id, selectedUser);
+  const { data } = useUserDomainRoles(colonyAddress, domain.id, selectedUser);
 
+  useEffect(() => {
     // Avoid too many rerenders when no new data has loaded with the following condition
     if (
       selectedRoles &&
@@ -280,9 +280,7 @@ const ColonyPermissionEditDialog = ({
 
       setUserRoles(getRoles(data));
     }
-    return [];
-  };
-  useSelectedUserForRoles();
+  }, [data, selectedRoles, selectedUser]);
 
   // Set user whose roles should be edited
   const {
