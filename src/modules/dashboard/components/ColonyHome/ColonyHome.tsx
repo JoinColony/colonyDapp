@@ -161,7 +161,7 @@ const ColonyHome = ({
     [colonyName],
   );
 
-  const colonyArgs = [colonyAddress || undefined];
+  const colonyArgs: [Address | undefined] = [colonyAddress || undefined];
   const {
     data: colony,
     isFetching: isFetchingColony,
