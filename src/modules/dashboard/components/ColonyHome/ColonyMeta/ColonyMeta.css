@@ -95,3 +95,7 @@
   composes: filterItem;
   font-weight: var(--weight-medium);
 }
+
+.inviteContainer {
+  padding-left: 52px;
+}

@@ -10,6 +10,8 @@ import Link from '~core/Link';
 import ExternalLink from '~core/ExternalLink';
 import HookedColonyAvatar from '~dashboard/HookedColonyAvatar';
 import ColonySubscribe from './ColonySubscribe';
+import ColonyInvite from './ColonyInvite';
+
 import { useDataFetcher } from '~utils/hooks';
 import { domainsFetcher } from '../../../fetchers';
 
@@ -151,6 +153,9 @@ const ColonyMeta = ({
           ))}
         </ul>
       </div>
+      <section className={styles.inviteContainer}>
+        <ColonyInvite colonyName={colony && colony.colonyName} />
+      </section>
     </div>
   );
 };

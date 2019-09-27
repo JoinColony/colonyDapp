@@ -10,3 +10,4 @@ export const spinnerContainer: string;
 export const domainContainer: string;
 export const filterItem: string;
 export const filterItemActive: string;
+export const inviteContainer: string;
