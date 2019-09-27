@@ -22,4 +22,4 @@ export const ROLE_MESSAGES = {
   [COLONY_ROLE_ROOT]: 'role.root',
 };
 
-export const COLONY_TOTAL_BALANCE_DOMAIN_ID = 0;
+export const COLONY_TOTAL_BALANCE_DOMAIN_ID = '0';

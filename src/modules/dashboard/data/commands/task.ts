@@ -657,7 +657,7 @@ export const setTaskDomain: Command<
   { taskStore: TaskStore; colonyClient: ColonyClient; walletAddress: Address },
   TaskStoreMetadata,
   {
-    domainId: number;
+    domainId: string;
   },
   {
     event: Event<EventTypes.DOMAIN_SET>;
