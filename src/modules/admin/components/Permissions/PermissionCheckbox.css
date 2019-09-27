@@ -1,0 +1,12 @@
+.permissionChoice {
+  display: flex;
+  align-items: center;
+}
+
+.permissionChoiceDescription {
+  padding-left: 14px;
+}
+
+.popoverContent {
+  padding: 10px;
+}
