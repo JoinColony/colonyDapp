@@ -1,7 +1,7 @@
 import { FormikProps } from 'formik';
 
 import React, { useCallback, useMemo, useState, useEffect } from 'react';
-import { defineMessages, FormattedMessage } from 'react-intl';
+import { defineMessages } from 'react-intl';
 import * as yup from 'yup';
 
 import {
@@ -28,6 +28,7 @@ import {
 } from '~utils/hooks';
 import { filterUserSelection } from '~utils/arrays';
 
+import PermissionCheckbox from './PermissionCheckbox';
 import { userSubscriber } from '../../../users/subscribers';
 import { usersByAddressFetcher } from '../../../users/fetchers';
 
@@ -35,7 +36,7 @@ import SingleUserPicker from '~core/SingleUserPicker';
 import Heading from '~core/Heading';
 import Button from '~core/Button';
 import Dialog, { DialogSection } from '~core/Dialog';
-import { ActionForm, InputLabel, Checkbox } from '~core/Fields';
+import { ActionForm, InputLabel } from '~core/Fields';
 import HookedUserAvatar from '~users/HookedUserAvatar';
 
 import {
@@ -58,26 +59,14 @@ const MSG = defineMessages({
     id: 'core.ColonyPermissionEditDialog.permissionsLabel',
     defaultMessage: 'Permissions',
   },
-  role0: {
-    id: 'core.ColonyPermissionEditDialog.role0',
-    defaultMessage: 'Root',
-  },
   roleDescription0: {
     id: 'core.ColonyPermissionEditDialog.roleDescription0',
     defaultMessage:
       'The highest permission, control all aspects of running a colony.',
   },
-  role1: {
-    id: 'core.ColonyPermissionEditDialog.role1',
-    defaultMessage: 'Administration',
-  },
   roleDescription1: {
     id: 'core.ColonyPermissionEditDialog.roleDescription1',
     defaultMessage: 'Create and manage new tasks.',
-  },
-  role2: {
-    id: 'core.ColonyPermissionEditDialog.role2',
-    defaultMessage: 'Architecture',
   },
   roleDescription2: {
     id: 'core.ColonyPermissionEditDialog.roleDescription2',
@@ -85,25 +74,13 @@ const MSG = defineMessages({
       // eslint-disable-next-line max-len
       'Set the administration, funding, and architecture roles in any subdomain.',
   },
-  role3: {
-    id: 'core.ColonyPermissionEditDialog.role3',
-    defaultMessage: 'Funding',
-  },
   roleDescription3: {
     id: 'core.ColonyPermissionEditDialog.roleDescription3',
     defaultMessage: 'Fund tasks and transfer funds between domains.',
   },
-  role4: {
-    id: 'core.ColonyPermissionEditDialog.role4',
-    defaultMessage: 'Recovery',
-  },
   roleDescription4: {
     id: 'core.ColonyPermissionEditDialog.roleDescription4',
     defaultMessage: 'Put the Colony into recovery mode.',
-  },
-  role5: {
-    id: 'core.ColonyPermissionEditDialog.role5',
-    defaultMessage: 'Arbitration',
   },
   roleDescription5: {
     id: 'core.ColonyPermissionEditDialog.roleDescription5',
@@ -112,14 +89,6 @@ const MSG = defineMessages({
   search: {
     id: 'core.ColonyPermissionEditDialog.search',
     defaultMessage: 'Search for a user or paste a wallet address',
-  },
-  buttonCancel: {
-    id: 'core.ColonyPermissionEditDialog.buttonCancel',
-    defaultMessage: 'Cancel',
-  },
-  buttonConfirm: {
-    id: 'core.ColonyPermissionEditDialog.buttonConfirm',
-    defaultMessage: 'Confirm',
   },
 });
 
@@ -338,34 +307,25 @@ const ColonyPermissionEditDialog = ({
                 />
               </div>
               <InputLabel label={MSG.permissionsLabel} />
-              {availableRoles.map((role, id) => (
+              {availableRoles.map((role, idx) => (
                 <div key={role} className={styles.permissionChoiceContainer}>
-                  <Checkbox
-                    className={styles.permissionChoice}
-                    value={role}
-                    name="roles"
+                  <PermissionCheckbox
                     disabled={!checkIfCanBeSet(role)}
-                  >
-                    <span className={styles.permissionChoiceDescription}>
-                      <Heading
-                        text={MSG[`role${id}`]}
-                        appearance={{ size: 'small', margin: 'none' }}
-                      />
-                      <FormattedMessage {...MSG[`roleDescription${id}`]} />
-                    </span>
-                  </Checkbox>
+                    role={role}
+                    roleDescription={MSG[`roleDescription${idx}`]}
+                  />
                 </div>
               ))}
               <DialogSection appearance={{ align: 'right' }}>
                 <Button
                   appearance={{ theme: 'secondary', size: 'large' }}
                   onClick={cancel}
-                  text={MSG.buttonCancel}
+                  text={{ id: 'button.cancel' }}
                 />
                 <Button
                   appearance={{ theme: 'primary', size: 'large' }}
                   loading={isSubmitting}
-                  text={MSG.buttonConfirm}
+                  text={{ id: 'button.confirm' }}
                   disabled={!isValid}
                   type="submit"
                 />

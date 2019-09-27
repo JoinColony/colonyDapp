@@ -1,10 +1,5 @@
 @value borderColor: var(--grey-blue-0);
 
-.permissionChoice {
-  display: flex;
-  align-items: center;
-}
-
 .dialogContainer {
   padding: 27px 19px 17px 19px;
 }
@@ -18,10 +13,6 @@
 .permissionChoiceContainer {
   padding: 15px 0px;
   border-bottom: 1px solid borderColor;
-}
-
-.permissionChoiceDescription {
-  padding-left: 14px;
 }
 
 .titleContainer {
