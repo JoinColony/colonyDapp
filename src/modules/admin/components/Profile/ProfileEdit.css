@@ -45,3 +45,8 @@
   composes: section;
   padding-right: 120px;
 }
+
+.titleContainer {
+  margin-bottom: 30px;
+  border-bottom: 1px solid var(--temp-grey-5);
+}

@@ -6,3 +6,4 @@ export const smallInfoText: string;
 export const version: string;
 export const versionAction: string;
 export const unlockButton: string;
+export const titleContainer: string;
