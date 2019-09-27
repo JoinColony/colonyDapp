@@ -1,16 +1,9 @@
-import {
-  COLONY_ROLE_ADMINISTRATION,
-  COLONY_ROLE_ARBITRATION,
-  COLONY_ROLE_ARCHITECTURE,
-  COLONY_ROLE_ARCHITECTURE_SUBDOMAIN,
-  COLONY_ROLE_FUNDING,
-  COLONY_ROLE_RECOVERY,
-  COLONY_ROLE_ROOT,
-} from '@colony/colony-js-client';
 import BigNumber from 'bn.js';
 
 import {
   Address,
+  ColonyRolesObject,
+  ColonyRoles,
   createAddress,
   CurrentEvents,
   ENSCache,
@@ -41,7 +34,6 @@ import {
 } from '~data/stores';
 import { getEvents } from '~utils/web3/eventLogs';
 import { ZERO_ADDRESS } from '~utils/web3/constants';
-import { ROOT_DOMAIN } from '../../../core/constants';
 import { colonyReducer, colonyTasksReducer } from '../reducers';
 import { COLONY_TOTAL_BALANCE_DOMAIN_ID } from '../../../admin/constants';
 
@@ -92,14 +84,7 @@ const prepareColonyStoreQuery = async (
   return getColonyStore(colonyClient, ddb, wallet)(metadata);
 };
 
-export const getColonyRoles: ContractEventQuery<
-  void,
-  {
-    [domainId: number]: {
-      [address: string]: { [role: string]: boolean };
-    };
-  }
-> = {
+export const getColonyRoles: ContractEventQuery<void, ColonyRolesObject> = {
   name: 'getColonyRoles',
   context,
   prepare: prepareColonyClientQuery,
@@ -127,92 +112,76 @@ export const getColonyRoles: ContractEventQuery<
     });
     const extensionAddresses = [createAddress(oneTxAddress)];
 
-    // reduce events to { [domainId]: { [address]: { [role]: boolean } } }
-    return events.reduce((acc, { address, setTo, role, domainId }) => {
-      const normalizedAddress = createAddress(address);
-
-      // don't include roles of extensions
-      if (extensionAddresses.includes(normalizedAddress)) {
-        return acc;
-      }
-
-      return {
-        ...acc,
-        [domainId]: {
-          ...acc[domainId],
-          [normalizedAddress as string]: {
-            ...(acc[domainId] || {})[normalizedAddress],
-            [role]: setTo,
+    return (
+      events
+        // Normalize the address
+        .map(event => ({ ...event, address: createAddress(event.address) }))
+        // Don't include roles of extensions
+        .filter(({ address }) => !extensionAddresses.includes(address))
+        // Reduce events to { [domainId]: { [address]: Set<Role> } }
+        .reduce(
+          (colonyRoles, { address, setTo, role, domainId }) => {
+            const domainRoles = colonyRoles[domainId] || {};
+            const roles = new Set(
+              // If the role is already set, and it is being unset, filter it from the set
+              [...domainRoles[address], role].filter(r => r !== role || !setTo),
+            );
+            return {
+              ...colonyRoles,
+              [domainId]: {
+                ...domainRoles,
+                [address as string]: roles,
+              },
+            };
           },
-        },
-      };
-    }, {});
+          {} as ColonyRolesObject,
+        )
+    );
   },
 };
 
 export const getColonyDomainUserRoles: ContractEventQuery<
-  { userAddress: Address; domainId: number },
-  { [role: string]: boolean }
+  {
+    domainId: string;
+    roles?: ColonyRoles[];
+    userAddress: Address;
+  },
+  Set<ColonyRoles>
 > = {
   name: 'getColonyDomainUserRoles',
   context,
   prepare: prepareColonyClientQuery,
-  async execute(colonyClient, { userAddress: address, domainId }) {
-    const [
-      ADMINISTRATION,
-      ARBITRATION,
-      ARCHITECTURE,
-      ARCHITECTURE_SUBDOMAIN,
-      FUNDING,
-      RECOVERY,
-      ROOT,
-    ] = await Promise.all([
-      colonyClient.hasColonyRole.call({
-        address,
-        domainId,
-        role: COLONY_ROLE_ADMINISTRATION,
-      }),
-      colonyClient.hasColonyRole.call({
-        address,
-        domainId,
-        role: COLONY_ROLE_ARBITRATION,
-      }),
-      colonyClient.hasColonyRole.call({
-        address,
-        domainId,
-        role: COLONY_ROLE_ARCHITECTURE,
-      }),
-      colonyClient.hasColonyRole.call({
-        address,
-        domainId,
-        role: COLONY_ROLE_ARCHITECTURE_SUBDOMAIN,
-      }),
-      colonyClient.hasColonyRole.call({
-        address,
-        domainId,
-        role: COLONY_ROLE_FUNDING,
-      }),
-      colonyClient.hasColonyRole.call({
-        address,
-        domainId,
-        role: COLONY_ROLE_RECOVERY,
-      }),
-      colonyClient.hasColonyRole.call({
-        address,
-        domainId: ROOT_DOMAIN, // The root role only applies to the root domain
-        role: COLONY_ROLE_ROOT,
-      }),
-    ]).then(results => results.map(({ hasRole }) => hasRole));
+  async execute(
+    colonyClient,
+    {
+      domainId,
+      roles = [
+        ColonyRoles.ADMINISTRATION,
+        ColonyRoles.ARBITRATION,
+        ColonyRoles.ARCHITECTURE,
+        ColonyRoles.ARCHITECTURE_SUBDOMAIN,
+        ColonyRoles.FUNDING,
+        ColonyRoles.RECOVERY,
+        ColonyRoles.ROOT,
+      ],
+      userAddress,
+    },
+  ) {
+    const domainRoles = await Promise.all(
+      roles.map(role =>
+        colonyClient.hasColonyRole.call({
+          address: userAddress,
+          domainId,
+          role,
+        }),
+      ),
+    );
 
-    return {
-      ADMINISTRATION,
-      ARBITRATION,
-      ARCHITECTURE,
-      ARCHITECTURE_SUBDOMAIN,
-      FUNDING,
-      RECOVERY,
-      ROOT,
-    };
+    return domainRoles.reduce(
+      (userRoles, { hasRole }, index) =>
+        hasRole ? userRoles.add(roles[index]) : userRoles,
+      new Set<ColonyRoles>(),
+    );
   },
 };
 
@@ -458,7 +427,7 @@ export const getColonyDomains: Query<
   context: colonyContext,
   prepare: prepareColonyStoreQuery,
   async execute(colonyStore) {
-    return colonyStore
+    const colonyDomains = colonyStore
       .all()
       .filter(
         ({ type }) =>
@@ -482,12 +451,26 @@ export const getColonyDomains: Query<
         },
         [],
       )
-      .map(({ payload: { domainId, name } }) => ({
-        id: domainId,
-        name,
-        // All will have parent of root for now
-        parentId: 1,
-      }));
+      .map(
+        ({ payload: { domainId, name } }): DomainType => ({
+          id: domainId,
+          name,
+          // All will have parent of root for now; later, the parent domain ID
+          // will probably a parameter of the event (and of the on-chain event).
+          parentId: '1',
+          roles: {},
+        }),
+      );
+
+    // Add the root domain at the start
+    const rootDomain: DomainType = {
+      id: '1',
+      name: 'root',
+      parentId: null,
+      roles: {},
+    };
+
+    return [rootDomain, ...colonyDomains];
   },
 };
 

@@ -1,9 +1,4 @@
-import {
-  defineMessages,
-  FormattedMessage,
-  injectIntl,
-  IntlShape,
-} from 'react-intl';
+import { defineMessages, FormattedMessage, injectIntl } from 'react-intl';
 import React, { useCallback, useMemo, useState } from 'react';
 
 import Heading from '~core/Heading';
@@ -40,15 +35,10 @@ const MSG = defineMessages({
       other {Modify}
     }`,
   },
-  rootDomain: {
-    id: 'dashboard.TaskDomains.rootDomain',
-    defaultMessage: 'root',
-  },
 });
 
 interface Props extends TaskProps<'colonyAddress' | 'domainId' | 'draftId'> {
   disabled?: boolean;
-  intl: IntlShape;
 }
 
 // This odd typing makes DomainType compatible with ConsumableItem
@@ -61,13 +51,7 @@ type ConsumableDomainArray = ConsumableDomainType[];
 
 const displayName = 'dashboard.TaskDomains';
 
-const TaskDomains = ({
-  colonyAddress,
-  domainId,
-  draftId,
-  disabled,
-  intl: { formatMessage },
-}: Props) => {
+const TaskDomains = ({ colonyAddress, domainId, draftId, disabled }: Props) => {
   const setDomain = useAsyncFunction({
     submit: ActionTypes.TASK_SET_DOMAIN,
     success: ActionTypes.TASK_SET_DOMAIN_SUCCESS,
@@ -94,7 +78,7 @@ const TaskDomains = ({
     [colonyAddress, draftId, setDomain],
   );
 
-  const { data: domains } = useDataFetcher<ConsumableDomainArray>(
+  const { data: domains } = useDataFetcher(
     domainsFetcher,
     [colonyAddress],
     [colonyAddress],
@@ -114,32 +98,22 @@ const TaskDomains = ({
     [payouts, tokens],
   );
 
-  const domainsWithRoot = useMemo(() => {
-    return (
-      domains && [
-        {
-          disabled: !domainHasEnoughFunds(1),
-          disabledText: !domainHasEnoughFunds(1)
-            ? MSG.insufficientFundsInDomain
-            : undefined,
-          id: 1,
-          name: formatMessage(MSG.rootDomain),
-        },
-        ...domains.map(domain => ({
-          disabled: !domainHasEnoughFunds(domain.id),
-          disabledText: !domainHasEnoughFunds(domain.id)
-            ? MSG.insufficientFundsInDomain
-            : undefined,
-          ...domain,
+  const consumableDomains: ConsumableDomainArray = useMemo(
+    () =>
+      Object.keys(domains || {})
+        .sort()
+        .map(id => ({
+          ...(domains || {})[id],
+          disabled: !domainHasEnoughFunds(id),
+          id: parseInt(id, 10),
         })),
-      ]
-    );
-  }, [domainHasEnoughFunds, domains, formatMessage]);
+    [domainHasEnoughFunds, domains],
+  );
 
   return (
     <div className={styles.main}>
       <ItemsList
-        list={domainsWithRoot || []}
+        list={consumableDomains}
         handleSetItem={handleSetDomain}
         name="taskDomains"
         connect={false}

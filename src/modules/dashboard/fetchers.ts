@@ -2,7 +2,6 @@ import {
   colonyAddressSelector,
   colonyDomainsSelector,
   colonyNameSelector,
-  colonyRolesSelector,
   colonySelector,
   colonyTaskMetadataSelector,
   tasksByIdsSelector,
@@ -18,7 +17,6 @@ import {
   fetchColonyAddress,
   fetchColonyName,
   fetchDomains,
-  fetchRoles,
   fetchTask,
   fetchTaskByColonyAddressAndDraftId,
   fetchToken,
@@ -51,12 +49,6 @@ export const domainsFetcher = Object.freeze({
   select: colonyDomainsSelector,
   fetch: fetchDomains,
   ttl: 1000 * 60, // 1 minute,
-});
-
-export const rolesFetcher = Object.freeze({
-  select: colonyRolesSelector,
-  fetch: fetchRoles,
-  ttl: 1000 * 60,
 });
 
 export const currentUserDraftIdsFetcher = Object.freeze({

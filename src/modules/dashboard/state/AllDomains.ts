@@ -1,12 +1,12 @@
-import { Map as ImmutableMap, Set as ImmutableSet } from 'immutable';
+import { Map as ImmutableMap } from 'immutable';
 
-import { ENSName } from '~types/index';
+import { Address } from '~types/index';
 
 import { FetchableDataRecord, DomainRecord } from '~immutable/index';
 
-type DomainsSet = ImmutableSet<DomainRecord>;
+export type DomainsMap = ImmutableMap<DomainRecord['id'], DomainRecord>;
 
 export type AllDomainsMap = ImmutableMap<
-  ENSName,
-  FetchableDataRecord<DomainsSet>
+  Address,
+  FetchableDataRecord<DomainsMap>
 >;

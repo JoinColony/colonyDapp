@@ -1,71 +1,56 @@
 import React, { useMemo } from 'react';
 import { FormattedMessage } from 'react-intl';
-import {
-  COLONY_ROLE_ROOT,
-  COLONY_ROLE_ARCHITECTURE_SUBDOMAIN,
-} from '@colony/colony-js-client';
 
+import { ColonyRoles } from '~types/roles';
 import { Address } from '~types/strings';
-import { useUserDomainRoles } from '~utils/hooks';
-
+import { useSelector } from '~utils/hooks';
+import { inheritedRolesSelector } from '../../../dashboard/selectors';
 import { ROLE_MESSAGES } from '../../constants';
 
 import styles from './UserPermissions.css';
 
 interface Props {
   colonyAddress: Address;
-  domainId: number;
+  domainId: string;
   userAddress: Address;
 }
 
 const displayName = 'admin.Permissions.UserPermissions';
 
 const UserPermissions = ({ colonyAddress, domainId, userAddress }: Props) => {
-  const { data: userPermissions } = useUserDomainRoles(
+  const roles: Set<ColonyRoles> = useSelector(inheritedRolesSelector, [
     colonyAddress,
     domainId,
     userAddress,
-  );
+  ]);
 
-  const { data: userPermissionsWithParents } = useUserDomainRoles(
-    colonyAddress,
-    domainId,
-    userAddress,
-    true,
-  );
-
-  const sortedUserPermissionlabels = useMemo(
+  const sortedRoles: ColonyRoles[] = useMemo(
     () =>
-      Object.keys(userPermissionsWithParents)
+      [...roles]
         .filter(
-          key =>
-            !!userPermissionsWithParents[key] &&
+          role =>
             // Don't display ARCHITECTURE_SUBDOMAIN in listed roles
-            key !== COLONY_ROLE_ARCHITECTURE_SUBDOMAIN,
+            role !== ColonyRoles.ARCHITECTURE_SUBDOMAIN,
         )
         .sort((a, b) => {
-          if (a === COLONY_ROLE_ROOT || b === COLONY_ROLE_ROOT) {
-            return a === COLONY_ROLE_ROOT ? 1 : -1;
+          if (a === ColonyRoles.ROOT || b === ColonyRoles.ROOT) {
+            return a === ColonyRoles.ROOT ? 1 : -1;
           }
           return 0;
         }),
-    [userPermissionsWithParents],
+    [roles],
   );
 
   return (
     <div className={styles.main}>
-      {userPermissions.pending ? (
-        <div className={styles.pendingDot} />
-      ) : (
-        <>
-          {sortedUserPermissionlabels.map(userPermission => (
-            <span className={styles.permission} key={userPermission}>
-              <FormattedMessage id={ROLE_MESSAGES[userPermission]} />
-              {!userPermissions[userPermission] && <span>*</span>}
-            </span>
-          ))}
-        </>
-      )}
+      {/* @TODO restore pending role indicator */}
+      {/* {userPermissions.pending ? ( */}
+      {/*  <div className={styles.pendingDot} /> */}
+      {sortedRoles.map(role => (
+        <span className={styles.permission} key={role}>
+          <FormattedMessage id={ROLE_MESSAGES[role]} />
+        </span>
+      ))}
     </div>
   );
 };

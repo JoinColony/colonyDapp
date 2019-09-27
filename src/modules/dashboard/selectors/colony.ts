@@ -27,14 +27,16 @@ export const colonyNamesSelector = (state: RootStateRecord) =>
 
 export const colonyNameSelector = (
   state: RootStateRecord,
-  colonyAddress: Address,
+  colonyAddress: Address | undefined,
 ) =>
-  state.getIn([
-    ns,
-    DASHBOARD_ALL_COLONIES,
-    DASHBOARD_COLONY_NAMES,
-    colonyAddress,
-  ]);
+  colonyAddress
+    ? state.getIn([
+        ns,
+        DASHBOARD_ALL_COLONIES,
+        DASHBOARD_COLONY_NAMES,
+        colonyAddress,
+      ])
+    : null;
 
 export const colonyAddressSelector = (
   state: RootStateRecord,
@@ -44,9 +46,16 @@ export const colonyAddressSelector = (
 
 export const colonySelector = (
   state: RootStateRecord,
-  colonyAddress: Address,
+  colonyAddress: Address | undefined,
 ) =>
-  state.getIn([ns, DASHBOARD_ALL_COLONIES, DASHBOARD_COLONIES, colonyAddress]);
+  colonyAddress
+    ? state.getIn([
+        ns,
+        DASHBOARD_ALL_COLONIES,
+        DASHBOARD_COLONIES,
+        colonyAddress,
+      ])
+    : null;
 
 export const colonyAvatarHashSelector = (
   state: RootStateRecord,
