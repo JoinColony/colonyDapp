@@ -44,13 +44,14 @@ export const allFromColonyTokensSelector = createSelector<
   tokensByAddressesSelector,
 );
 
-// @ts-ignoresssss
-allFromColonyTokensSelector.transform = input =>
-  input
-    .map(token => token.record)
-    .filter(Boolean)
-    .toList()
-    .toJS();
+Object.defineProperty(allFromColonyTokensSelector, 'transform', {
+  value: input =>
+    input
+      .map(token => token.record)
+      .filter(Boolean)
+      .toList()
+      .toJS(),
+});
 
 export const nativeFromColonyTokensSelector = createSelector<
   RootStateRecord,
