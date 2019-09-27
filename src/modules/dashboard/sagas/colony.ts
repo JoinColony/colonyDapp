@@ -391,7 +391,7 @@ function* colonyTokenBalancesFetch({
         ),
       ),
       // fetch balances for root domain
-      put(fetchColonyTokenBalance(colonyAddress, tokenAddress, 1)),
+      put(fetchColonyTokenBalance(colonyAddress, tokenAddress, '1')),
       // fetch balances for other domains
       ...domains.map(({ id: domainId }) =>
         put(fetchColonyTokenBalance(colonyAddress, tokenAddress, domainId)),

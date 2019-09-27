@@ -494,7 +494,7 @@ export const getColonyDomains: Query<
 export const getColonyTokenBalance: Query<
   ColonyClient,
   { colonyAddress: Address },
-  { domainId: number; tokenAddress: Address },
+  { domainId: string; tokenAddress: Address },
   BigNumber
 > = {
   name: 'getColonyTokenBalance',

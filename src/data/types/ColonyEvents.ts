@@ -22,7 +22,7 @@ export type ColonyEvents =
   | EventDefinition<
       EventTypes.DOMAIN_CREATED,
       {
-        domainId: number;
+        domainId: string;
         name: string;
       },
       Versions.CURRENT
@@ -30,7 +30,7 @@ export type ColonyEvents =
   | EventDefinition<
       EventTypes.DOMAIN_EDITED,
       {
-        domainId: number;
+        domainId: string;
         name: string;
       },
       Versions.CURRENT
