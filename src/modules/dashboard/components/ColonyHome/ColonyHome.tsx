@@ -191,7 +191,7 @@ const ColonyHome = ({
       .sort((a, b) => a.id - b.id)
       .reduce(
         (accumulator, domain) => {
-          if (domain && domain.name && domain.id <= filteredDomainId) {
+          if (domain && domain.name && domain.id === filteredDomainId) {
             accumulator.push(domain.name);
           }
           return accumulator;
