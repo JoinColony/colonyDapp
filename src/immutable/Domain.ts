@@ -3,7 +3,7 @@ import { Record } from 'immutable';
 import { DefaultValues } from '~types/index';
 
 interface Shared {
-  id: number;
+  id: string;
   name: string;
   // Empty if root, but we don't actually store root domain yet anyway
   parentId?: number;

@@ -52,7 +52,8 @@ interface Props extends TaskProps<'colonyAddress' | 'domainId' | 'draftId'> {
 }
 
 // This odd typing makes DomainType compatible with ConsumableItem
-interface ConsumableDomainType extends DomainType {
+interface ConsumableDomainType extends Omit<DomainType, 'id'> {
+  id: number;
   children?: any;
   parent?: any;
 }
@@ -73,7 +74,9 @@ const TaskDomains = ({
     error: ActionTypes.TASK_SET_DOMAIN_ERROR,
   });
 
-  const [selectedDomainId, setSelectedDomainId] = useState(domainId);
+  const [selectedDomainId, setSelectedDomainId] = useState<string | undefined>(
+    domainId,
+  );
 
   const handleSetDomain = useCallback(
     async (domainValue: any) => {
@@ -101,11 +104,11 @@ const TaskDomains = ({
   const tokens = useSelector(colonyTokensSelector, [colonyAddress]);
 
   const domainHasEnoughFunds = useCallback(
-    (domain: number) =>
+    (id: string) =>
       payouts.every(({ amount, token }) => {
         const payoutToken = tokens.find(({ address }) => address === token);
         const tokenBalanceInDomain =
-          payoutToken && payoutToken.balances && payoutToken.balances[domain];
+          payoutToken && payoutToken.balances && payoutToken.balances[id];
         return !bnLessThan(tokenBalanceInDomain, amount);
       }),
     [payouts, tokens],
@@ -141,7 +144,7 @@ const TaskDomains = ({
         name="taskDomains"
         connect={false}
         showArrow={false}
-        itemId={domainId}
+        itemId={parseInt(domainId || '0', 10)}
         disabled={disabled}
       >
         <div className={styles.controls}>

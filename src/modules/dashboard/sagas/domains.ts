@@ -84,14 +84,14 @@ function* domainCreate({
       },
     });
 
-    /*
-     * Dispatch a success action with the newly-added domain.
-     */
     yield put<AllActions>({
       type: ActionTypes.DOMAIN_CREATE_SUCCESS,
       meta,
       // For now parentId is just root domain
-      payload: { colonyAddress, domain: { id, name, parentId: 1 } },
+      payload: {
+        colonyAddress,
+        domain: { id, name, parentId: '1', roles: {} },
+      },
     });
 
     // const colonyManager = yield getContext(Context.COLONY_MANAGER);
@@ -130,14 +130,11 @@ function* domainEdit({
         name: domainName,
       },
     });
-    /*
-     * Dispatch a success action with the newly-edited domain.
-     */
     yield put<AllActions>({
       type: ActionTypes.DOMAIN_EDIT_SUCCESS,
       meta,
       // For now parentId is just root domain
-      payload: { colonyAddress, domainId, domainName, parentId: 1 },
+      payload: { colonyAddress, domainId, domainName, parentId: '1' },
     });
   } catch (error) {
     return yield putError(ActionTypes.DOMAIN_EDIT_ERROR, error, meta);
