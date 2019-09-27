@@ -1,4 +1,4 @@
-import React, { ReactNode } from 'react';
+import React from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 
 import {
@@ -8,10 +8,8 @@ import {
   UserType,
 } from '~immutable/index';
 import { Address } from '~types/index';
-import Icon from '~core/Icon';
-import MaskedAddress from '~core/MaskedAddress';
 import PayoutsList from '~core/PayoutsList';
-import HookedUserAvatar from '~users/HookedUserAvatar';
+import UserInfo from '~users/UserInfo';
 import styles from './Assignment.css';
 
 const MSG = defineMessages({
@@ -37,27 +35,20 @@ const MSG = defineMessages({
   },
 });
 
-const UserAvatar = HookedUserAvatar({ fetchUser: false });
-
 interface Props {
   /** The worker that is assigned */
-  worker: UserType | void;
+  worker?: UserType;
 
   /** The address of the above worker (used in the case of unclaimed worker profile) */
-  workerAddress: Address | void;
+  workerAddress?: Address;
 
   /** List of payouts per token that has been set for a task */
   payouts?: TaskPayoutType[];
 
-  /** Provide a custom component to render the user avatar */
-  renderAvatar?: (address: Address, user: UserType | void) => ReactNode;
-
   /** current user reputation */
   reputation?: number;
 
-  /** The assignment has to be confirmed first and can therefore appear as pending,
-   * since this component is only
-   */
+  /** The assignment has to be confirmed first and can therefore appear as pending */
   pending?: boolean;
 
   /** We need to be aware of the native token to adjust the UI */
@@ -70,15 +61,10 @@ interface Props {
   tokenOptions: TokenType[];
 }
 
-const defaultRenderAvatar = (address: Address, user: UserType | void) => (
-  <UserAvatar address={address} user={user} showInfo size="xs" />
-);
-
 const Assignment = ({
   nativeToken,
   payouts,
   pending,
-  renderAvatar = defaultRenderAvatar,
   reputation,
   showFunding,
   tokenOptions,
@@ -92,64 +78,42 @@ const Assignment = ({
 
   return (
     <div>
-      <div className={styles.displayContainer}>
-        {workerAddress ? (
-          <div className={styles.avatarContainer}>
-            {renderAvatar(workerAddress, worker)}
-          </div>
-        ) : (
-          <Icon
-            className={styles.icon}
-            name="circle-person"
-            title={MSG.selectMember}
-          />
+      <UserInfo
+        userAddress={workerAddress}
+        user={worker}
+        placeholder={MSG.placeholder}
+      >
+        {worker
+          ? worker.profile.displayName || worker.profile.username
+          : workerAddress}
+        {pending && (
+          <span className={styles.pendingLabel}>
+            <FormattedMessage {...MSG.pendingAssignment} />
+          </span>
         )}
-        <div className={styles.container}>
-          {worker ? (
-            <div
-              role="button"
-              className={pending ? styles.pending : styles.assigneeName}
-            >
-              {worker.profile.displayName || worker.profile.username}
-              {pending && (
-                <span className={styles.pendingLabel}>
-                  <FormattedMessage {...MSG.pendingAssignment} />
-                </span>
-              )}
-            </div>
+      </UserInfo>
+      {showFunding && (
+        <div className={styles.fundingContainer}>
+          {reputation && fundingWithNativeToken ? (
+            <span className={styles.reputation}>
+              <FormattedMessage
+                {...MSG.reputation}
+                values={{ reputation: reputation.toString() }}
+              />
+            </span>
+          ) : null}
+          {nativeToken && payouts && payouts.length > 0 ? (
+            <PayoutsList
+              maxLines={2}
+              nativeToken={nativeToken}
+              payouts={payouts}
+              tokenOptions={tokenOptions}
+            />
           ) : (
-            <div className={styles.placeholder}>
-              {workerAddress ? (
-                <MaskedAddress address={workerAddress} />
-              ) : (
-                <FormattedMessage {...MSG.placeholder} />
-              )}
-            </div>
+            <FormattedMessage {...MSG.fundingNotSet} />
           )}
         </div>
-        {showFunding && (
-          <div className={styles.fundingContainer}>
-            {reputation && fundingWithNativeToken ? (
-              <span className={styles.reputation}>
-                <FormattedMessage
-                  {...MSG.reputation}
-                  values={{ reputation: reputation.toString() }}
-                />
-              </span>
-            ) : null}
-            {nativeToken && payouts && payouts.length > 0 ? (
-              <PayoutsList
-                maxLines={2}
-                nativeToken={nativeToken}
-                payouts={payouts}
-                tokenOptions={tokenOptions}
-              />
-            ) : (
-              <FormattedMessage {...MSG.fundingNotSet} />
-            )}
-          </div>
-        )}
-      </div>
+      )}
     </div>
   );
 };
