@@ -1,75 +1,8 @@
-
-.placeholder {
-  margin-top: 10px;
-  margin-left: 18px;
-  padding-bottom: 5px;
-  border-bottom: 1px solid var(--grey-1);
-}
-
-.container {
-  flex: 1 0 auto;
-  margin-bottom: 5px;
-  position: relative;
-}
-
-.displayContainer {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  margin-top: 10px;
-  width: 322px;
-}
-
-.inputContainer > label {
-  margin-bottom: 20px;
-}
-
-.avatarContainer {
-  flex: 0 0 26px;
-}
-
-.icon {
-  flex: 0 0 26px;
-  height: 26px;
-  width: 26px;
-
-  & svg {
-    fill: var(--grey-5);
-    stroke: var(--grey-5);
-  }
-}
-
-.display {
-  flex: 1 1 0;
-  margin-left: 10px;
-  width: 100%;
-  vertical-align: baseline;
-  background-color: transparent;
-  font-size: var(--size-medium-l);
-  color: var(--colony-black);
-  outline: none;
-}
-
-.pending {
-  composes: display;
-  font-size: var(--size-normal);
-  font-weight: var(--weight-medium);
-  color: var(--text);
-}
-
 .pendingLabel {
   margin-left: 15px;
   font-size: var(--size-normal);
   font-weight: var(--weight-medium);
   color: var(--danger);
-}
-
-.assigneeName {
-  composes: display;
-  composes: inlineEllipsis from '~styles/text.css';
-  max-width: 32ch;
-  font-size: var(--size-normal);
-  font-weight: var(--weight-medium);
 }
 
 .fundingContainer {
@@ -80,17 +13,9 @@
   font-size: var(--size-small);
 }
 
-.payout {
-  color: var(--sky-blue);
-}
-
 .reputation {
   margin-right: 20px;
   font-size: inherit;
   font-weight: var(--weight-medium);
   color: var(--violet);
-}
-
-.recipientAvatar {
-  cursor: pointer;
 }
