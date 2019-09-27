@@ -1,36 +1,21 @@
 import { FormikProps } from 'formik';
-
 import React, { useCallback, useMemo, useState, useEffect } from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 import * as yup from 'yup';
 
-import {
-  COLONY_ROLE_ROOT,
-  COLONY_ROLE_ADMINISTRATION,
-  COLONY_ROLE_ARCHITECTURE,
-  COLONY_ROLE_FUNDING,
-  COLONY_ROLE_RECOVERY,
-  COLONY_ROLE_ARBITRATION,
-} from '@colony/colony-js-client';
-
-import { Address } from '~types/index';
-
+import { Address, ColonyRoles } from '~types/index';
 import { mergePayload, withKey, mapPayload, pipe } from '~utils/actions';
-
-import { DomainType, UserType, User, UserProfile } from '~immutable/index';
+import { UserType } from '~immutable/index';
 import { ItemDataType } from '~core/OmniPicker';
 import { ActionTypeString, ActionTypes } from '~redux/index';
 import {
   useSelector,
   useDataSubscriber,
   useDataMapFetcher,
-  useUserDomainRoles,
 } from '~utils/hooks';
 import { filterUserSelection } from '~utils/arrays';
 
 import PermissionCheckbox from './PermissionCheckbox';
-import { userSubscriber } from '../../../users/subscribers';
-import { usersByAddressFetcher } from '../../../users/fetchers';
 
 import SingleUserPicker from '~core/SingleUserPicker';
 import Heading from '~core/Heading';
@@ -40,6 +25,13 @@ import { ActionForm, InputLabel } from '~core/Fields';
 import ExternalLink from '~core/ExternalLink';
 import HookedUserAvatar from '~users/HookedUserAvatar';
 
+import {
+  domainSelector,
+  directRolesSelector,
+  inheritedRolesSelector,
+} from '../../../dashboard/selectors';
+import { userSubscriber } from '../../../users/subscribers';
+import { usersByAddressFetcher } from '../../../users/fetchers';
 import {
   allUsersAddressesSelector,
   walletAddressSelector,
@@ -81,38 +73,26 @@ const MSG = defineMessages({
 interface Props {
   cancel: () => void;
   close: () => void;
-  domain: DomainType;
-  clickedUser?: UserType;
+  domainId: string;
+  clickedUser?: Address;
   colonyAddress: Address;
   submit: ActionTypeString;
   success: ActionTypeString;
   error: ActionTypeString;
 }
 
-// Ideally these types would come from colonyJS but can't get it to work
-enum Roles {
-  ADMINISTRATION = 'ADMINISTRATION',
-  ARBITRATION = 'ARBITRATION',
-  ARCHITECTURE = 'ARCHITECTURE',
-  FUNDING = 'FUNDING',
-  RECOVERY = 'RECOVERY',
-  ROOT = 'ROOT',
-}
-type Role = keyof typeof Roles;
-type SelectedRoles = Partial<Record<Role, boolean>>;
-
-const availableRoles: Role[] = [
-  COLONY_ROLE_ROOT,
-  COLONY_ROLE_ADMINISTRATION,
-  COLONY_ROLE_ARCHITECTURE,
-  COLONY_ROLE_FUNDING,
-  COLONY_ROLE_RECOVERY,
-  COLONY_ROLE_ARBITRATION,
+const availableRoles: ColonyRoles[] = [
+  ColonyRoles.ROOT,
+  ColonyRoles.ADMINISTRATION,
+  ColonyRoles.ARCHITECTURE,
+  ColonyRoles.FUNDING,
+  ColonyRoles.RECOVERY,
+  ColonyRoles.ARBITRATION,
 ];
 
 const validationSchema = yup.object({
   user: yup.object().required(),
-  roles: yup.array().of(yup.string().required()),
+  roles: yup.array().of(yup.number().required()),
 });
 
 const UserAvatar = HookedUserAvatar({ fetchUser: false });
@@ -124,20 +104,27 @@ const supRenderAvatar = (address: string, item: ItemDataType<UserType>) => {
 };
 
 const ColonyPermissionEditDialog = ({
-  domain,
   clickedUser,
   colonyAddress,
   cancel,
   close,
+  domainId,
 }: Props) => {
+  const [selectedUserAddress, setSelectedUser] = useState<
+    Address | undefined
+  >();
+
+  // Overwrite the selected user whenever the prop changes
+  useEffect(() => {
+    setSelectedUser(clickedUser);
+  }, [clickedUser]);
+
   // Prepare userData for SingleUserPicker
   const userAddressesInStore = useSelector(allUsersAddressesSelector);
-
-  const userData = useDataMapFetcher<UserType>(
+  const userData = useDataMapFetcher(
     usersByAddressFetcher,
     Array.from(userAddressesInStore),
   );
-
   const users = useMemo(
     () =>
       userData
@@ -150,38 +137,42 @@ const ColonyPermissionEditDialog = ({
   );
 
   // Get the current user's roles in the selected domain
-  const currentUserAddress = useSelector(walletAddressSelector);
-  const { data: currentUserDomainRoles } = useUserDomainRoles(
+  const walletAddress = useSelector(walletAddressSelector);
+  const inheritedRoles = useSelector(inheritedRolesSelector, [
     colonyAddress,
-    domain.id,
-    currentUserAddress,
-    true,
-  );
+    domainId,
+    walletAddress,
+  ]);
+  const directRoles = useSelector(directRolesSelector, [
+    colonyAddress,
+    domainId,
+    walletAddress,
+  ]);
 
   // Check which roles the current user is allowed to set in this domain
-  const checkIfCanBeSet = useCallback(
-    (role: Role) => {
+  const canRoleBeSet = useCallback(
+    (role: ColonyRoles) => {
       switch (role) {
         // Can't set arbitration at all yet
-        case COLONY_ROLE_ARBITRATION:
+        case ColonyRoles.ARBITRATION:
           return false;
 
         // Can only be set by root and in root domain
-        case COLONY_ROLE_ROOT:
-        case COLONY_ROLE_RECOVERY:
-          return domain.id === 1 && !!currentUserDomainRoles[COLONY_ROLE_ROOT];
+        case ColonyRoles.ROOT:
+        case ColonyRoles.RECOVERY:
+          return domainId === '1' && inheritedRoles.has(ColonyRoles.ROOT);
 
         // Must be root for these
-        case COLONY_ROLE_ADMINISTRATION:
-        case COLONY_ROLE_FUNDING:
-        case COLONY_ROLE_ARCHITECTURE:
-          return !!currentUserDomainRoles[COLONY_ROLE_ROOT];
+        case ColonyRoles.ADMINISTRATION:
+        case ColonyRoles.FUNDING:
+        case ColonyRoles.ARCHITECTURE:
+          return inheritedRoles.has(ColonyRoles.ROOT);
 
         default:
           return false;
       }
     },
-    [currentUserDomainRoles, domain.id],
+    [inheritedRoles, domainId],
   );
 
   const transform = useCallback(
@@ -189,7 +180,7 @@ const ColonyPermissionEditDialog = ({
       withKey(colonyAddress),
       mapPayload(p => ({
         userAddress: p.user.profile.walletAddress,
-        domainId: domain.id,
+        domainId,
         colonyAddress,
         roles: availableRoles.reduce(
           (acc, role) => ({
@@ -201,79 +192,41 @@ const ColonyPermissionEditDialog = ({
       })),
       mergePayload({ colonyAddress }),
     ),
-    [colonyAddress, domain],
+    [colonyAddress, domainId],
   );
 
-  const [selectedUser, setSelectedUser] = useState();
-  const [selectedRoles, setSelectedRoles] = useState({});
-  const [userRoles, setUserRoles] = useState([] as Role[]);
+  const domain = useSelector(domainSelector, [colonyAddress, domainId]);
 
-  // When user clicked on a specific user entry
-  useEffect(() => {
-    setSelectedUser(clickedUser);
-  }, [clickedUser]);
-
-  const updateSelectedUser = useCallback(({ profile: { walletAddress } }) => {
-    setSelectedUser(walletAddress);
+  const updateSelectedUser = useCallback((user: UserType) => {
+    setSelectedUser(user.profile.walletAddress);
   }, []);
 
-  const getRoles = (roles: SelectedRoles): Role[] =>
-    Object.keys(roles).filter(role => roles[role]) as Role[];
-
-  // When selected user gets updates get that user's roles
-  // to populate the checkboxes
-  const { data: userPermissions } = useUserDomainRoles(
-    colonyAddress,
-    domain.id,
-    selectedUser,
-  );
-  const { data: userPermissionsWithParents } = useUserDomainRoles(
-    colonyAddress,
-    domain.id,
-    selectedUser,
-    true,
-  );
-
-  useEffect(() => {
-    // Avoid too many rerenders when no new data has loaded with the following condition
-    if (
-      selectedRoles &&
-      Object.keys(selectedRoles).length !==
-        Object.keys(userPermissions).length &&
-      selectedUser
-    ) {
-      setSelectedRoles(userPermissions);
-
-      setUserRoles(getRoles(userPermissions));
-    }
-  }, [userPermissions, selectedRoles, selectedUser]);
+  const roles: ColonyRoles[] = selectedUserAddress
+    ? [...(domain ? domain.roles[selectedUserAddress] || [] : [])]
+    : [];
 
   // Set user whose roles should be edited
   const {
-    data: selectedUserObj,
+    data: selectedUserData,
     isFetching: isFetchingselectedUser,
-  } = useDataSubscriber<UserType>(
-    userSubscriber,
-    [selectedUser],
-    [selectedUser],
-  );
-  const selectedUserData =
-    !!selectedUser && !selectedUserObj
-      ? User({
-          profile: UserProfile({
-            walletAddress: selectedUser,
-          }),
-        }).toJS()
-      : selectedUserObj;
+  } = useDataSubscriber(userSubscriber, [selectedUserAddress] as [string], [
+    selectedUserAddress,
+  ]);
+
+  const selectedUser = selectedUserData || {
+    profile: {
+      walletAddress: selectedUserAddress,
+    },
+  };
 
   return (
     <Dialog cancel={cancel}>
       <ActionForm
         enableReinitialize
         initialValues={{
-          domainId: domain.id,
-          roles: userRoles,
-          user: !isFetchingselectedUser && selectedUserData,
+          domainId,
+          roles,
+          user: !isFetchingselectedUser && selectedUser,
         }}
         onSuccess={close}
         submit={ActionTypes.COLONY_DOMAIN_USER_ROLES_SET}
@@ -288,7 +241,7 @@ const ColonyPermissionEditDialog = ({
               <Heading
                 appearance={{ size: 'medium', margin: 'none' }}
                 text={MSG.title}
-                textValues={{ domain: domain.name }}
+                textValues={{ domain: domain ? domain.name : '' }}
               />
               <div className={styles.titleContainer}>
                 <InputLabel label={MSG.selectUser} />
@@ -299,7 +252,7 @@ const ColonyPermissionEditDialog = ({
                   name="user"
                   placeholder={MSG.search}
                   filter={filterUserSelection}
-                  onSelected={user => updateSelectedUser(user)}
+                  onSelected={updateSelectedUser}
                   renderAvatar={supRenderAvatar}
                 />
               </div>
@@ -307,13 +260,10 @@ const ColonyPermissionEditDialog = ({
               {availableRoles.map(role => (
                 <div key={role} className={styles.permissionChoiceContainer}>
                   <PermissionCheckbox
-                    disabled={!checkIfCanBeSet(role)}
+                    disabled={!canRoleBeSet(role)}
                     role={role}
                     asterisk={
-                      userPermissions &&
-                      !userPermissions[role] &&
-                      userPermissionsWithParents &&
-                      userPermissionsWithParents[role]
+                      !directRoles.has(role) && inheritedRoles.has(role)
                     }
                   />
                 </div>

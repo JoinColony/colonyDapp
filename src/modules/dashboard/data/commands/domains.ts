@@ -58,7 +58,7 @@ export const editDomain: Command<
   ColonyStoreMetadata,
   {
     name: string;
-    domainId: number;
+    domainId: string;
   },
   ColonyStore
 > = {

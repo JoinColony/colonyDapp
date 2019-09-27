@@ -3,17 +3,14 @@ import { Selector } from 'reselect';
 import { useEffect, useCallback, useMemo, useRef } from 'react';
 import { useDispatch, useMappedState } from 'redux-react-hook';
 
-import { Action, AllActions, ActionTypes } from '~redux/index';
-import { Address } from '~types/index';
+import { Action } from '~redux/index';
+import { RemoveFirstFromTuple } from '~types/index';
 import { ActionTransformFnType } from '~utils/actions';
-import { FetchableDataRecord, DomainType } from '~immutable/index';
+import { FetchableDataRecord } from '~immutable/index';
 import promiseListener, { AsyncFunction } from '~redux/createPromiseListener';
 import { isFetchingData, shouldFetchData } from '~immutable/utils';
 import { getMainClasses } from '~utils/css';
-import { proxyOldRoles, includeParentRoles } from '~utils/data';
 
-import { ColonyRoles } from '../../modules/dashboard/state/AllRoles';
-import { rolesFetcher, domainsFetcher } from '../../modules/dashboard/fetchers';
 import { RootStateRecord } from '../../modules/state';
 
 interface DataObject<T> {
@@ -101,8 +98,11 @@ const transformFetchedData = (data?: FetchableDataRecord<any>) => {
   return record && typeof record.toJS === 'function' ? record.toJS() : record;
 };
 
-const defaultTransform = (obj: Collection<any, any>) =>
-  obj && typeof obj.toJS === 'function' ? obj.toJS() : obj;
+const defaultTransform = <T extends { toJS?(): Readonly<T> }>(
+  obj: T,
+  // The return type of this could be improved if there was a way
+  // to map from immutable to non-immutable types
+): Readonly<T> => (obj && typeof obj.toJS === 'function' ? obj.toJS() : obj);
 
 /*
  * Given a redux selector and optional selector arguments, get the
@@ -529,99 +529,3 @@ export const useMainClasses = (
     className,
     styles,
   ]);
-
-/*
- * Proxy the new redux state of roles to the old structure of founder and
- * admins.
- */
-export const useOldRoles = (colonyAddress: Address) => {
-  const { data: newRoles, isFetching, error } = useDataFetcher<any>(
-    rolesFetcher,
-    [colonyAddress],
-    [colonyAddress],
-  );
-  const roles = useMemo(() => proxyOldRoles(newRoles), [newRoles]);
-  return { data: roles, isFetching, error };
-};
-
-/*
- * Fetch an object of all domains with users who have roles in them. If
- * includeParents is true, it also includes effective roles that users have in
- * those domains as a result of parent domain roles. Note that this will not
- * include child domains where the user has no roles - in such cases where data
- * is needed for a specific domain and user, the useUserDomainRoles hook should
- * be used.
- *
- * Returns in the format { [domainId]: { [userAddress]: { [role]: boolean } } }
- */
-export const useRoles = (
-  colonyAddress?: Address,
-  includeParents = false, // This should not change
-) => {
-  const {
-    data: rolesFromState,
-    isFetching: isFetchingRoles,
-    error,
-  } = useDataFetcher<any>(rolesFetcher, [colonyAddress], [colonyAddress]);
-
-  const { data: domains, isFetching: isFetchingDomains } = useDataFetcher<
-    DomainType[]
-  >(
-    domainsFetcher,
-    // Setting these to undefined will prevent fetching when we don't want it
-    [includeParents ? colonyAddress : undefined],
-    [includeParents ? colonyAddress : undefined],
-  );
-
-  // Include root domains (not in redux state)
-  const domainsWithRoot = Array.isArray(domains)
-    ? [{ id: 1, name: 'root' }, ...domains]
-    : domains;
-
-  const permissions =
-    includeParents && rolesFromState && domainsWithRoot
-      ? includeParentRoles(rolesFromState, domainsWithRoot)
-      : rolesFromState;
-  return {
-    data: permissions,
-    isFetching: isFetchingRoles || (isFetchingDomains && includeParents),
-    error,
-  };
-};
-
-/*
- * Fetch the roles which a single user has in a specific domain. If
- * includeParents is true, it will also check for any roles that the user has
- * in this domain by effect of them being set in parent domains.
- *
- * Returns in the format { [role]: boolean }
- */
-export const useUserDomainRoles = (
-  colonyAddress: Address | undefined,
-  domainId: number,
-  userAddress: Address,
-  includeParents = false, // This should not change
-): {
-  data: Record<ColonyRoles, boolean>;
-  isFetching: boolean;
-  error: string | void;
-} => {
-  const dispatch = useDispatch();
-  const { data: roles, isFetching, error } = useRoles(
-    colonyAddress,
-    includeParents,
-  );
-  useEffect(() => {
-    if (colonyAddress && domainId && userAddress) {
-      dispatch<AllActions>({
-        type: ActionTypes.COLONY_DOMAIN_USER_ROLES_FETCH,
-        meta: { key: colonyAddress },
-        payload: { colonyAddress, domainId, userAddress },
-      });
-    }
-  }, [colonyAddress, dispatch, domainId, userAddress]);
-  const userDomainRoles = roles
-    ? (roles[domainId] || {})[userAddress] || {}
-    : {};
-  return { data: userDomainRoles, isFetching, error };
-};

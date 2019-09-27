@@ -8,7 +8,7 @@ import {
 } from 'react-intl';
 import { compose } from 'recompose';
 
-import { Address, createAddress } from '~types/index';
+import { Address, ColonyRoles } from '~types/index';
 import { DomainType } from '~immutable/index';
 import Heading from '~core/Heading';
 import { Select } from '~core/Fields';
@@ -18,11 +18,11 @@ import Button from '~core/Button';
 import withDialog from '~core/Dialog/withDialog';
 import { DialogType } from '~core/Dialog';
 import ExternalLink from '~core/ExternalLink';
-import { useDataFetcher, useRoles } from '~utils/hooks';
+import { useDataFetcher, useSelector } from '~utils/hooks';
 
 import UserListItem from '../UserListItem';
 import { domainsFetcher } from '../../../dashboard/fetchers';
-
+import { domainSelector } from '../../../dashboard/selectors';
 import UserPermissions from './UserPermissions';
 
 import styles from './Permissions.css';
@@ -66,85 +66,59 @@ interface Props {
 
 const displayName = 'admin.Permissions';
 
-const Permissions = ({
-  colonyAddress,
-  intl: { formatMessage },
-  openDialog,
-}: Props) => {
-  const [selectedDomain, setSelectedDomain] = useState(1);
+const Permissions = ({ colonyAddress, openDialog }: Props) => {
+  const [selectedDomainId, setSelectedDomainId] = useState<string>('1');
 
-  const { data: domainsData, isFetching: isFetchingDomains } = useDataFetcher<
-    DomainType[]
-  >(domainsFetcher, [colonyAddress], [colonyAddress]);
-  const domains = useMemo(
-    () => [
-      { value: 1, label: { id: 'domain.root' } },
-      ...(domainsData || []).map(({ name, id }) => ({
-        label: name,
-        value: id,
-      })),
-    ],
-    [domainsData],
+  const {
+    data: domainsObj = {},
+    isFetching: isFetchingDomains,
+  } = useDataFetcher<Record<string, DomainType>>(
+    domainsFetcher,
+    [colonyAddress],
+    [colonyAddress, { fetchRoles: true }],
   );
 
-  const { data: roles, isFetching: isFetchingRoles } = useRoles(
-    colonyAddress,
-    true,
+  const domains = useMemo<{ label: string; value: number }[]>(
+    () =>
+      (Object.values(domainsObj) as DomainType[])
+        .map(({ id, name }) => ({ value: parseInt(id, 10), label: name }))
+        .sort((a, b) => a.value - b.value),
+    [domainsObj],
   );
 
-  const setFieldValue = useCallback((_, value) => setSelectedDomain(value), [
-    setSelectedDomain,
+  const setFieldValue = useCallback((_, value) => setSelectedDomainId(value), [
+    setSelectedDomainId,
   ]);
 
-  const getPermissionsForUser = useCallback(
-    (user: Address) => roles && roles[selectedDomain][user],
-    [roles, selectedDomain],
-  );
-
-  const sortRootUsersFirst = useCallback(
-    (userA, userB) => {
-      const userAPermissions = getPermissionsForUser(userA);
-      const userBPermissions = getPermissionsForUser(userB);
-      if (
-        (userAPermissions.ROOT && userBPermissions.ROOT) ||
-        (!userAPermissions.ROOT && !userBPermissions.ROOT)
-      ) {
-        return 0;
-      }
-      return userAPermissions.ROOT ? -1 : 1;
-    },
-    [getPermissionsForUser],
-  );
-
-  const domainLabel: string = useMemo(() => {
-    const { label = '' } =
-      domains.find(({ value }) => value === selectedDomain) || {};
-    return typeof label === 'string' ? label : formatMessage(label);
-  }, [domains, formatMessage, selectedDomain]);
-
   const handleEditPermissions = useCallback(
-    userAddress =>
+    (userAddress?: Address) =>
       openDialog('ColonyPermissionEditDialog', {
         colonyAddress,
-        domain: { name: domainLabel, id: selectedDomain },
+        domainId: selectedDomainId,
         clickedUser: userAddress || null,
       }),
-    [openDialog, colonyAddress, selectedDomain, domainLabel],
+    [openDialog, colonyAddress, selectedDomainId],
   );
 
-  const handleOnClick = useCallback(
-    (userAddress: Address) => {
-      handleEditPermissions(userAddress);
-    },
-    [handleEditPermissions],
-  );
+  const selectedDomain: DomainType | null = useSelector(domainSelector, [
+    colonyAddress,
+    selectedDomainId,
+  ]);
 
-  const users = useMemo(
+  // Sort the users for the selected role such that those with root are first
+  const userAddresses = useMemo<Address[]>(
     () =>
-      Object.keys((roles || {})[selectedDomain] || {})
-        .map(createAddress)
-        .sort(sortRootUsersFirst),
-    [roles, selectedDomain, sortRootUsersFirst],
+      selectedDomain
+        ? Object.keys(selectedDomain.roles).sort((a, b) => {
+            const rootA = selectedDomain.roles[a].has(ColonyRoles.ROOT);
+            const rootB = selectedDomain.roles[b].has(ColonyRoles.ROOT);
+            if ((rootA && rootB) || (!rootA && !rootB)) {
+              return 0;
+            }
+            return rootA ? -1 : 1;
+          })
+        : [],
+    [selectedDomain],
   );
 
   return (
@@ -153,7 +127,9 @@ const Permissions = ({
         <div className={styles.titleContainer}>
           <Heading
             text={MSG.title}
-            textValues={{ domainLabel }}
+            textValues={{
+              domainLabel: selectedDomain ? selectedDomain.name : undefined,
+            }}
             appearance={{ size: 'medium', theme: 'dark' }}
           />
           <Select
@@ -164,21 +140,21 @@ const Permissions = ({
             name="filter"
             options={domains}
             form={{ setFieldValue }}
-            $value={selectedDomain}
+            $value={selectedDomainId}
           />
         </div>
         <div className={styles.tableWrapper}>
-          {isFetchingRoles || isFetchingDomains ? (
+          {isFetchingDomains ? (
             <SpinnerLoader />
           ) : (
             <>
               <Table scrollable>
                 <TableBody className={styles.tableBody}>
-                  {users.map(user => (
+                  {userAddresses.map(userAddress => (
                     <UserListItem
-                      address={user}
-                      key={user}
-                      onClick={handleOnClick}
+                      address={userAddress}
+                      key={userAddress}
+                      onClick={handleEditPermissions}
                       showDisplayName
                       showMaskedAddress
                       showUsername
@@ -186,8 +162,8 @@ const Permissions = ({
                       <TableCell>
                         <UserPermissions
                           colonyAddress={colonyAddress}
-                          domainId={selectedDomain}
-                          userAddress={user}
+                          domainId={selectedDomainId}
+                          userAddress={userAddress}
                         />
                       </TableCell>
                     </UserListItem>
@@ -217,7 +193,7 @@ const Permissions = ({
             <Button
               appearance={{ theme: 'blue' }}
               text={MSG.addRole}
-              onClick={() => handleEditPermissions(null)}
+              onClick={handleEditPermissions}
             />
           </li>
         </ul>
