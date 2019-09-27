@@ -78,6 +78,10 @@ const MSG = defineMessages({
     id: 'admin.Profile.ProfileAdvanced.buttonUnlockToken',
     defaultMessage: 'Unlock token',
   },
+  title: {
+    id: 'admin.Profile.ProfileAdvanced.title',
+    defaultMessage: 'Colony Advanced Settings',
+  },
 });
 
 const displayName = 'admin.Profile.ProfileAdvanced';
@@ -102,6 +106,12 @@ const ProfileAdvanced = ({
   return (
     <div className={styles.main}>
       <section className={styles.section}>
+        <div className={styles.titleContainer}>
+          <Heading
+            text={MSG.title}
+            appearance={{ size: 'medium', theme: 'dark' }}
+          />
+        </div>
         <div className={styles.withInlineButton}>
           <Heading
             appearance={{ size: 'small', margin: 'none' }}

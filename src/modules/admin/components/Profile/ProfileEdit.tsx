@@ -54,6 +54,10 @@ const MSG = defineMessages({
     id: 'admin.Profile.ProfileEdit.labelGuidelines',
     defaultMessage: 'Contribution Guidelines URL',
   },
+  title: {
+    id: 'admin.Profile.ProfileEdit.title',
+    defaultMessage: 'Colony Profile',
+  },
 });
 
 /*
@@ -105,6 +109,12 @@ const ProfileEdit = ({ colony }: Props) => {
           {({ status, isSubmitting }) => (
             <>
               <FieldSet className={styles.section}>
+                <div className={styles.titleContainer}>
+                  <Heading
+                    text={MSG.title}
+                    appearance={{ size: 'medium', theme: 'dark' }}
+                  />
+                </div>
                 <InputLabel label={MSG.labelAddress} help={MSG.sendTokens} />
                 <CopyableAddress appearance={{ theme: 'big' }} full>
                   {colonyAddress}

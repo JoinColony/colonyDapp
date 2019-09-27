@@ -9,3 +9,4 @@ export const sectionENSName: string;
 export const sectionEnsName: string;
 export const divider: string;
 export const inputSection: string;
+export const titleContainer: string;
