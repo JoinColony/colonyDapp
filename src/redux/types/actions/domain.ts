@@ -47,8 +47,8 @@ export type DomainActionTypes =
       {
         colonyAddress: Address;
         domainName: string;
-        parentDomainId?: number;
-        domainId: number;
+        parentDomainId?: string;
+        domainId: string;
       },
       null
     >
@@ -57,9 +57,9 @@ export type DomainActionTypes =
       ActionTypes.DOMAIN_EDIT_SUCCESS,
       {
         colonyAddress: string;
-        domainId: number;
+        domainId: string;
         domainName: string;
-        parentId?: number;
+        parentId?: string;
       },
       null
     >;

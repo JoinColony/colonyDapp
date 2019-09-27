@@ -10,7 +10,7 @@ import ColonyTasks from '../ColonyTasks';
 
 interface Props {
   colony: ColonyType;
-  filteredDomainId: number;
+  filteredDomainId: string;
   filterOption: string;
   nativeTokenRef: ColonyTokenReferenceType | null;
   ethTokenRef: ColonyTokenReferenceType | null;
