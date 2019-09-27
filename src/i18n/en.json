@@ -101,8 +101,10 @@
     "transaction.colony.setArchitectureRole.description": "{setTo, select, true { Give role to ({ address }) } false { Remove role from ({ address }) } }",
     "transaction.colony.setFundingRole.title": "{setTo, select, true { Add funding role } false { Remove funding role } }",
     "transaction.colony.setFundingRole.description": "{setTo, select, true { Give role to ({ address }) } false { Remove role from ({ address }) } }",
-    "transaction.colony.setRecoveryRole.title": "{setTo, select, true { Add recovery role } false { Remove recovery role } }",
-    "transaction.colony.setRecoveryRole.description": "{setTo, select, true { Give role to ({ address }) } false { Remove role from ({ address }) } }",
+    "transaction.colony.setRecoveryRole.title": "Add recovery role",
+    "transaction.colony.setRecoveryRole.description": "Give role to ({ address })",
+    "transaction.colony.removeRecoveryRole.title": "Remove recovery role",
+    "transaction.colony.removeRecoveryRole.description": "Remove role from ({ address })",
     "transaction.colony.setRootRole.title": "{setTo, select, true { Add root role } false { Remove root role } }",
     "transaction.colony.setRootRole.description": "{setTo, select, true { Give role to ({ address }) } false { Remove role from ({ address }) } }",
 

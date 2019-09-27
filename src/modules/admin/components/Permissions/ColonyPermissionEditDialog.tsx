@@ -9,6 +9,7 @@ import {
   COLONY_ROLE_ADMINISTRATION,
   COLONY_ROLE_ARCHITECTURE,
   COLONY_ROLE_FUNDING,
+  COLONY_ROLE_RECOVERY,
   COLONY_ROLE_ARBITRATION,
 } from '@colony/colony-js-client';
 
@@ -80,7 +81,9 @@ const MSG = defineMessages({
   },
   roleDescription2: {
     id: 'core.ColonyPermissionEditDialog.roleDescription2',
-    defaultMessage: 'Set the administration, funding, and architecture roles.',
+    defaultMessage:
+      // eslint-disable-next-line max-len
+      'Set the administration, funding, and architecture roles in any subdomain.',
   },
   role3: {
     id: 'core.ColonyPermissionEditDialog.role3',
@@ -92,10 +95,18 @@ const MSG = defineMessages({
   },
   role4: {
     id: 'core.ColonyPermissionEditDialog.role4',
-    defaultMessage: 'Arbitration',
+    defaultMessage: 'Recovery',
   },
   roleDescription4: {
     id: 'core.ColonyPermissionEditDialog.roleDescription4',
+    defaultMessage: 'Put the Colony into recovery mode.',
+  },
+  role5: {
+    id: 'core.ColonyPermissionEditDialog.role5',
+    defaultMessage: 'Arbitration',
+  },
+  roleDescription5: {
+    id: 'core.ColonyPermissionEditDialog.roleDescription5',
     defaultMessage: 'Coming soon...',
   },
   search: {
@@ -126,10 +137,11 @@ interface Props {
 // Ideally these types would come from colonyJS but can't get it to work
 enum Roles {
   ADMINISTRATION = 'ADMINISTRATION',
-  ARCHITECTURE = 'ARCHITECTURE',
   ARBITRATION = 'ARBITRATION',
-  ROOT = 'ROOT',
+  ARCHITECTURE = 'ARCHITECTURE',
   FUNDING = 'FUNDING',
+  RECOVERY = 'RECOVERY',
+  ROOT = 'ROOT',
 }
 type Role = keyof typeof Roles;
 type SelectedRoles = Partial<Record<Role, boolean>>;
@@ -139,6 +151,7 @@ const availableRoles: Role[] = [
   COLONY_ROLE_ADMINISTRATION,
   COLONY_ROLE_ARCHITECTURE,
   COLONY_ROLE_FUNDING,
+  COLONY_ROLE_RECOVERY,
   COLONY_ROLE_ARBITRATION,
 ];
 
@@ -198,8 +211,12 @@ const ColonyPermissionEditDialog = ({
         case COLONY_ROLE_ARBITRATION:
           return false;
 
-        // Must be root for these
+        // Can only be set by root and in root domain
         case COLONY_ROLE_ROOT:
+        case COLONY_ROLE_RECOVERY:
+          return domain.id === 1 && !!currentUserDomainRoles[COLONY_ROLE_ROOT];
+
+        // Must be root for these
         case COLONY_ROLE_ADMINISTRATION:
         case COLONY_ROLE_FUNDING:
         case COLONY_ROLE_ARCHITECTURE:
@@ -209,7 +226,7 @@ const ColonyPermissionEditDialog = ({
           return false;
       }
     },
-    [currentUserDomainRoles],
+    [currentUserDomainRoles, domain.id],
   );
 
   const transform = useCallback(
