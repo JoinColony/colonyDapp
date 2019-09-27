@@ -90,7 +90,7 @@ const ColonyMeta = ({
   );
   return (
     <div className={styles.main}>
-      <section className={styles.colonyAvatarAndName}>
+      <div className={styles.colonyAvatarAndName}>
         <ColonyAvatar
           className={styles.avatar}
           colonyAddress={colonyAddress}
@@ -120,7 +120,7 @@ const ColonyMeta = ({
             )}
           </div>
         </Heading>
-      </section>
+      </div>
       {description && (
         <section className={styles.description}>
           <ExpandedParagraph
@@ -131,7 +131,7 @@ const ColonyMeta = ({
           />
         </section>
       )}
-      <div className={styles.domainContainer}>
+      <section className={styles.domainContainer}>
         <ul>
           <li>
             <Button
@@ -152,10 +152,8 @@ const ColonyMeta = ({
             </li>
           ))}
         </ul>
-      </div>
-      <section className={styles.inviteContainer}>
-        <ColonyInvite colonyName={colony && colony.colonyName} />
       </section>
+      <ColonyInvite colonyName={colony && colony.colonyName} />
     </div>
   );
 };

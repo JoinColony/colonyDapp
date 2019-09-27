@@ -4,6 +4,10 @@
   overflow-wrap: break-word;
 }
 
+.main section {
+  margin-left: 52px;
+}
+
 .avatar {
   margin-bottom: 10px;
   border-radius: 50%;
@@ -13,7 +17,6 @@
 
 .description {
   margin-top: 15px;
-  margin-left: 52px;
   padding-bottom: 15px;
   min-height: 75px;
   border-bottom: 1px solid var(--temp-grey-5);
@@ -33,6 +36,7 @@
 
 .colonyAvatarAndName {
   display: flex;
+  margin: 0;
   position: relative;
 }
 
@@ -69,9 +73,7 @@
 }
 
 .domainContainer {
-  margin-bottom: 40px;
-  margin-left: 52px;
-  padding-top: 19px;
+  margin-top: 19px;
 }
 
 .filterItem {
@@ -94,8 +96,4 @@
 .filterItemActive {
   composes: filterItem;
   font-weight: var(--weight-medium);
-}
-
-.inviteContainer {
-  padding-left: 52px;
 }
