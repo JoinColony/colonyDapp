@@ -1,4 +1,5 @@
 import { createSelector } from 'reselect';
+import { NetworkRecord } from '~immutable/Network';
 
 import { RootStateRecord } from '../../state';
 import {
@@ -12,7 +13,7 @@ import {
 /*
  * Input selectors
  */
-export const networkSelector = (state: RootStateRecord) =>
+export const networkSelector = (state: RootStateRecord): NetworkRecord =>
   state.getIn([ns, CORE_NETWORK]);
 
 export const networkFeeSelector = createSelector(

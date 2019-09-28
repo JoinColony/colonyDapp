@@ -3,7 +3,6 @@ import { defineMessages, FormattedMessage } from 'react-intl';
 
 import {
   ColonyTokenReferenceType,
-  TokenType,
   UserTokenReferenceType,
 } from '~immutable/index';
 
@@ -24,7 +23,7 @@ import styles from './TokenCard.css';
 
 interface Props<T> {
   token: T;
-  domainId: T extends ColonyTokenReferenceType ? number : never;
+  domainId: T extends ColonyTokenReferenceType ? string : never;
 }
 
 const displayName = 'admin.Tokens.TokenCard';
@@ -47,7 +46,7 @@ const TokenCard = <
   token: { address },
   token: tokenReference,
 }: Props<T>) => {
-  const { data: token, isFetching } = useDataFetcher<TokenType>(
+  const { data: token, isFetching } = useDataFetcher(
     tokenFetcher,
     [address],
     [address],

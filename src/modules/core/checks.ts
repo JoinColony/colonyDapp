@@ -21,7 +21,7 @@ export const isPendingMultisig = (tx: TransactionType) =>
  */
 export const tokenBalanceIsPositive = (
   tokenReference: ColonyTokenReferenceType | UserTokenReferenceType,
-  domainId: number,
+  domainId: string,
 ) => {
   const balance = getTokenBalanceFromReference(tokenReference, domainId);
   return balance.gten(0);
@@ -29,7 +29,7 @@ export const tokenBalanceIsPositive = (
 
 export const tokenBalanceIsNotPositive = (
   tokenReference: ColonyTokenReferenceType | UserTokenReferenceType,
-  domainId: number,
+  domainId: string,
 ) => {
   const balance = getTokenBalanceFromReference(tokenReference, domainId);
   return balance.lten(0);

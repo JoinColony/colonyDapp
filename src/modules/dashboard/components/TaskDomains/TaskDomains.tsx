@@ -74,7 +74,7 @@ const TaskDomains = ({ colonyAddress, domainId, draftId, disabled }: Props) => {
     [colonyAddress, draftId, setDomain],
   );
 
-  const { data: domains } = useDataFetcher<Record<string, DomainType>>(
+  const { data: domains } = useDataFetcher(
     domainsFetcher,
     [colonyAddress],
     [colonyAddress],

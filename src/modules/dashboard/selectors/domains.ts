@@ -65,7 +65,7 @@ export const directRolesSelector = (
   colonyAddress: Address,
   domainId: string,
   userAddress: Address,
-) => {
+): Set<ColonyRoles> => {
   const domain = domainSelector(state, colonyAddress, domainId);
   const roles = domain && domain.roles && domain.roles.get(userAddress);
   return roles || new Set<ColonyRoles>();

@@ -1,7 +1,7 @@
 import { Record } from 'immutable';
 import BigNumber from 'bn.js';
 
-import { Address, DefaultValues } from '~types/index';
+import { Address, DefaultValues, RecordToJS } from '~types/index';
 
 interface Shared {
   amount: BigNumber;
@@ -29,7 +29,8 @@ const defaultValues: DefaultValues<Shared> = {
   token: undefined,
 };
 
-export class ContractTransactionRecord extends Record<Shared>(defaultValues) {}
+export class ContractTransactionRecord extends Record<Shared>(defaultValues)
+  implements RecordToJS<ContractTransactionType> {}
 
 export const ContractTransaction = (p: Shared) =>
   new ContractTransactionRecord(p);

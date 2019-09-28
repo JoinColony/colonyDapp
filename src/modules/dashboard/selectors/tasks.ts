@@ -2,7 +2,12 @@ import { List as ImmutableList, Set as ImmutableSet } from 'immutable';
 import { createSelector } from 'reselect';
 
 import { Address } from '~types/index';
-import { TaskDraftId } from '~immutable/index';
+import {
+  FetchableDataRecord,
+  TaskDraftId,
+  TaskMetadataRecord,
+  TaskRecord,
+} from '~immutable/index';
 
 import { RootStateRecord } from '../../state';
 import {
@@ -20,16 +25,13 @@ import {
 export const colonyTaskMetadataSelector = (
   state: RootStateRecord,
   colonyAddress: Address,
-) => state.getIn([ns, DASHBOARD_TASK_METADATA, colonyAddress]);
+): FetchableDataRecord<TaskMetadataRecord> | undefined =>
+  state.getIn([ns, DASHBOARD_TASK_METADATA, colonyAddress]);
 
-export const taskMetadataSelector = (
+export const taskSelector = (
   state: RootStateRecord,
-  colonyAddress: Address,
   draftId: TaskDraftId,
-) =>
-  state.getIn([ns, DASHBOARD_TASK_METADATA, colonyAddress, 'record', draftId]);
-
-export const taskSelector = (state: RootStateRecord, draftId: TaskDraftId) =>
+): FetchableDataRecord<TaskRecord> | undefined =>
   state.getIn([ns, DASHBOARD_TASKS, draftId]);
 
 export const tasksByIdsSelector = (
@@ -49,7 +51,7 @@ export const taskPayoutsSelector = createSelector(
   taskSelector,
   task =>
     task
-      ? task.getIn(['record', DASHBOARD_TASK_PAYOUTS], ImmutableList())
+      ? task.getIn(['record', DASHBOARD_TASK_PAYOUTS]) || ImmutableList()
       : ImmutableList(),
 );
 
@@ -57,6 +59,6 @@ export const taskRequestsSelector = createSelector(
   taskSelector,
   task =>
     task
-      ? task.getIn(['record', DASHBOARD_TASK_REQUESTS], ImmutableSet())
+      ? task.getIn(['record', DASHBOARD_TASK_REQUESTS]) || ImmutableSet()
       : ImmutableSet(),
 );

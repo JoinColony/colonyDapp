@@ -6,7 +6,7 @@ import {
 } from 'react-intl';
 import React from 'react';
 
-import { Address, ENSName } from '~types/index';
+import { Address } from '~types/index';
 import { TaskType } from '~immutable/index';
 import { useDataFetcher } from '~utils/hooks';
 import { colonyNameFetcher } from '../../fetchers';
@@ -59,9 +59,11 @@ const TaskListItem = ({ data, intl: { formatMessage } }: Props) => {
     title = defaultTitle,
   } = task || {};
 
-  const { data: colonyName, isFetching: isFetchingColonyName } = useDataFetcher<
-    ENSName
-  >(colonyNameFetcher, [colonyAddress], [colonyAddress]);
+  const { data: colonyName, isFetching: isFetchingColonyName } = useDataFetcher(
+    colonyNameFetcher,
+    [colonyAddress],
+    [colonyAddress],
+  );
 
   const nativeTokenRef = useColonyNativeToken(colonyAddress);
   const [, availableTokens] = useColonyTokens(colonyAddress);

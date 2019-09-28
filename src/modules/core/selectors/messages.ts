@@ -1,16 +1,22 @@
 import { createSelector } from 'reselect';
 
+import { MessageRecord } from '~immutable/Message';
+
 import { RootStateRecord } from '../../state';
 import {
   CORE_NAMESPACE as ns,
   CORE_MESSAGES,
   CORE_MESSAGES_LIST,
 } from '../constants';
+import { MessagesListMap } from '../state';
 
-export const messageById = (state: RootStateRecord, id: string) =>
+export const messageById = (
+  state: RootStateRecord,
+  id: string,
+): MessageRecord | undefined =>
   state.getIn([ns, CORE_MESSAGES, CORE_MESSAGES_LIST, id]);
 
-export const getAllMessages = (state: RootStateRecord) =>
+export const getAllMessages = (state: RootStateRecord): MessagesListMap =>
   state.getIn([ns, CORE_MESSAGES, CORE_MESSAGES_LIST]);
 
 /*
@@ -36,5 +42,7 @@ export const messageGroups = createSelector(
        * Sort everything by the 'first' (and only) entry in the group
        * This is only useful if this selector is to be used individually
        */
-      .sortBy(messageGroup => messageGroup.first().createdAt),
+      .sortBy(
+        messageGroup => (messageGroup.first() as MessageRecord).createdAt,
+      ),
 );

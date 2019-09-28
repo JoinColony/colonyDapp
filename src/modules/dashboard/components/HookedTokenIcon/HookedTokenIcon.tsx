@@ -23,9 +23,9 @@ const HookedTokenIcon = ({ token, ...props }: TokenIconProps) => {
   const { iconHash, address } = token;
   const [tokenImage, setTokenImage] = useState();
   const [tokenSVG, setTokenSVG] = useState();
-  const { data: ipfsIcon } = useDataFetcher<string>(
+  const { data: ipfsIcon } = useDataFetcher(
     ipfsDataFetcher,
-    [iconHash],
+    [iconHash as string], // Technically a bug, shouldn't need type override
     [iconHash],
   );
 

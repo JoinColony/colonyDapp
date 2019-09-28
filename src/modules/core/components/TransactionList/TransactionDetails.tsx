@@ -259,7 +259,7 @@ const TransactionDetails = ({
   transaction,
   user,
 }: Props) => {
-  const { data: colony } = useDataSubscriber<ColonyType>(
+  const { data: colony } = useDataSubscriber(
     colonySubscriber,
     [colonyAddress],
     [colonyAddress],

@@ -14,21 +14,12 @@ import Permissions from '~admin/Permissions';
 import ProfileAdvanced from '~admin/Profile/ProfileAdvanced';
 import VerticalNavigation from '~pages/VerticalNavigation';
 import { HistoryNavigation } from '~pages/NavigationWrapper';
-import {
-  useDataFetcher,
-  useDataSubscriber,
-  useSelector,
-  useUserDomainRoles,
-} from '~utils/hooks';
-import { Address } from '~types/index';
+import { useDataFetcher, useDataSubscriber } from '~utils/hooks';
 
-import { ROOT_DOMAIN } from '../../../core/constants';
 import { isInRecoveryMode } from '../../../dashboard/checks';
 import { canAdminister } from '../../../users/checks';
 import { colonyAddressFetcher } from '../../../dashboard/fetchers';
 import { colonySubscriber } from '../../../dashboard/subscribers';
-
-import { walletAddressSelector } from '../../../users/selectors';
 
 import styles from './AdminDashboard.css';
 
@@ -113,34 +104,36 @@ const AdminDashboard = ({
 }: Props) => {
   const CURRENT_COLONY_ROUTE = colonyName ? `/colony/${colonyName}` : '';
 
-  const { error: addressError, data: colonyAddress } = useDataFetcher<Address>(
+  const { error: addressError, data: colonyAddress } = useDataFetcher(
     colonyAddressFetcher,
     [colonyName],
     [colonyName],
   );
 
-  const { error: colonyError, data: colony } = useDataSubscriber<ColonyType>(
+  const { error: colonyError, data: colony } = useDataSubscriber(
     colonySubscriber,
     [colonyAddress],
     [colonyAddress],
   );
 
-  const walletAddress = useSelector(walletAddressSelector);
-  const { data: roles, isFetching: isFetchingRoles } = useUserDomainRoles(
-    colony ? colony.colonyAddress : undefined,
-    ROOT_DOMAIN,
-    walletAddress,
+  const {
+    data: permissions,
+    isFetching: isFetchingPermissions,
+  } = useDataFetcher(
+    currentUserColonyPermissionsFetcher,
+    [colony ? colony.colonyAddress : undefined] as [string], // Technically a bug, shouldn't need type override
+    [colony ? colony.colonyAddress : undefined],
   );
 
   if (!colonyName || addressError || colonyError) {
     return <Redirect to="/404" />;
   }
 
-  if (!colony || !roles || isFetchingRoles) {
+  if (!colony || !permissions || isFetchingPermissions) {
     return <LoadingTemplate loadingText={MSG.loadingText} />;
   }
 
-  if (!canAdminister(roles)) {
+  if (!canAdminister(permissions)) {
     return <Redirect to={CURRENT_COLONY_ROUTE} />;
   }
 

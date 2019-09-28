@@ -17,7 +17,7 @@ interface Appearance {
 
 interface Props<T> {
   appearance?: Appearance;
-  domainId?: number;
+  domainId?: string;
   tokens: T[];
 }
 
@@ -26,7 +26,7 @@ const displayName = 'admin.Tokens.TokenList';
 const TokenList = <
   T extends ColonyTokenReferenceType | UserTokenReferenceType
 >({
-  domainId = 1,
+  domainId = '1',
   tokens,
   appearance,
 }: Props<T>) => (

@@ -60,7 +60,7 @@ const ColonySubscribe = ({ colonyAddress }: Props) => {
   );
 
   const currentUser = useSelector(currentUserSelector);
-  const { data: colonyAddresses } = useDataSubscriber<Address[]>(
+  const { data: colonyAddresses } = useDataSubscriber(
     userColoniesSubscriber,
     [currentUser.profile.walletAddress],
     [

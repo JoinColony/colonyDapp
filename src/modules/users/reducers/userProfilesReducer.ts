@@ -7,7 +7,7 @@ import { ActionTypes, ReducerType } from '~redux/index';
 import { UsersMap } from '../state/index';
 
 const userProfilesReducer: ReducerType<UsersMap> = (
-  state = ImmutableMap(),
+  state = ImmutableMap() as UsersMap,
   action,
 ) => {
   switch (action.type) {
@@ -74,5 +74,5 @@ const userProfilesReducer: ReducerType<UsersMap> = (
 
 export default withFetchableDataMap<UsersMap, UserRecord>(
   new Set([ActionTypes.USER_FETCH, ActionTypes.USER_SUB_START]),
-  ImmutableMap(),
+  ImmutableMap() as UsersMap,
 )(userProfilesReducer);

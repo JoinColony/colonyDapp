@@ -1,7 +1,6 @@
 import React from 'react';
 import { defineMessages } from 'react-intl';
 
-import { Address } from '~types/index';
 import { UserType } from '~immutable/index';
 import { useDataSubscriber, useSelector } from '~utils/hooks';
 import ColonyGrid from '~dashboard/ColonyGrid';
@@ -35,7 +34,7 @@ const MSG = defineMessages({
 const displayName = 'users.UserProfile.UserColonies';
 
 const UserColonies = ({ user }: Props) => {
-  const { data: colonyAddresses } = useDataSubscriber<Address[]>(
+  const { data: colonyAddresses } = useDataSubscriber(
     userColoniesSubscriber,
     [user.profile.walletAddress],
     [user.profile.walletAddress, user.profile.metadataStoreAddress],
@@ -43,9 +42,9 @@ const UserColonies = ({ user }: Props) => {
   const {
     profile: { walletAddress: currentUserWalletAddress },
   } = useSelector(currentUserSelector);
-  const friendlyUsername: string = useSelector(friendlyUsernameSelector, [
+  const friendlyUsername = useSelector(friendlyUsernameSelector, [
     user.profile.walletAddress,
-  ]);
+  ]) as string;
   const isCurrentUser = currentUserWalletAddress === user.profile.walletAddress;
   return (
     <ColonyGrid

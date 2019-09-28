@@ -1,18 +1,16 @@
 import React from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 
-import { DomainType } from '~immutable/index';
-import { useDataFetcher, useSelector, useUserDomainRoles } from '~utils/hooks';
+import { useDataFetcher } from '~utils/hooks';
 import Heading from '~core/Heading';
 import { SpinnerLoader } from '~core/Preloaders';
-import { Address } from '~types/index';
 
-import { ROOT_DOMAIN } from '../../../core/constants';
 import { canAdminister } from '../../../users/checks';
-import { walletAddressSelector } from '../../../users/selectors';
 import { domainsFetcher } from '../../../dashboard/fetchers';
 import OrganizationAddDomains from '../Domains/OrganizationAddDomains';
 import DomainList from './DomainList';
+
+import { Address } from '~types/index';
 
 import styles from './Domains.css';
 
@@ -37,18 +35,16 @@ const MSG = defineMessages({
 const displayName = 'admin.Domains';
 
 const Domains = ({ colonyAddress }: Props) => {
-  const walletAddress = useSelector(walletAddressSelector);
-
-  const { data: domains } = useDataFetcher<DomainType[]>(
+  const { data: domains } = useDataFetcher(
     domainsFetcher,
     [colonyAddress],
     [colonyAddress],
   );
 
-  const { data: newRoles } = useUserDomainRoles(
-    colonyAddress,
-    ROOT_DOMAIN,
-    walletAddress,
+  const { data: permissions } = useDataFetcher(
+    currentUserColonyPermissionsFetcher,
+    [colonyAddress || undefined] as [string], // Technically a bug, shouldn't need type override
+    [colonyAddress || undefined],
   );
 
   if (!domains) {
@@ -70,12 +66,12 @@ const Domains = ({ colonyAddress }: Props) => {
          * but if it turns out we're going to use this in multiple places,
          * we should consider moving it to core
          */}
-        {domains && domains.length ? (
+        {domains && (domains as any).length ? (
           <DomainList
             colonyAddress={colonyAddress}
-            domains={domains}
+            domains={domains as any}
             label={MSG.title}
-            viewOnly={!canAdminister(newRoles)}
+            viewOnly={!canAdminister(permissions)}
           />
         ) : (
           <>

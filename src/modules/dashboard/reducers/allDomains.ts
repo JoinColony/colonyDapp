@@ -15,7 +15,7 @@ import { ActionTypes, ReducerType } from '~redux/index';
 import { AllDomainsMap } from '../state/index';
 
 const allDomainsReducer: ReducerType<AllDomainsMap> = (
-  state = ImmutableMap(),
+  state = ImmutableMap() as AllDomainsMap,
   action,
 ) => {
   switch (action.type) {
@@ -79,7 +79,7 @@ const allDomainsReducer: ReducerType<AllDomainsMap> = (
           )
         : state.set(
             colonyAddress,
-            FetchableData({
+            FetchableData<any>({
               record: ImmutableMap([[domain.id, Domain(domain)]]),
             }),
           );
@@ -128,4 +128,6 @@ const allDomainsReducer: ReducerType<AllDomainsMap> = (
 export default withFetchableDataMap<
   AllDomainsMap,
   ImmutableMap<DomainRecord['id'], DomainRecord>
->(ActionTypes.COLONY_DOMAINS_FETCH, ImmutableMap())(allDomainsReducer);
+>(ActionTypes.COLONY_DOMAINS_FETCH, ImmutableMap() as AllDomainsMap)(
+  allDomainsReducer,
+);

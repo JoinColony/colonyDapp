@@ -5,6 +5,7 @@ import {
   ConnectionRecord,
   FetchableData,
   FetchableDataRecord,
+  FetchableDataType,
   GasPrices,
   GasPricesRecord,
   NetworkRecord,
@@ -24,7 +25,9 @@ import { CoreMessages, CoreMessagesRecord } from './Messages';
 export * from './CoreTransactions';
 export * from './Messages';
 
-export type IpfsDataType = ImmutableMap<string, FetchableDataRecord<string>>;
+export type IpfsDataType = ImmutableMap<string, FetchableDataRecord<string>> & {
+  toJS(): { [hash: string]: FetchableDataType<string> };
+};
 
 type CoreStateProps = {
   [CORE_CONNECTION]: ConnectionRecord;
@@ -38,7 +41,7 @@ type CoreStateProps = {
 export class CoreStateRecord extends Record<CoreStateProps>({
   [CORE_CONNECTION]: Connection(),
   [CORE_GAS_PRICES]: GasPrices(),
-  [CORE_IPFS_DATA]: ImmutableMap(),
+  [CORE_IPFS_DATA]: ImmutableMap() as IpfsDataType,
   [CORE_MESSAGES]: CoreMessages(),
   [CORE_NETWORK]: FetchableData(),
   [CORE_TRANSACTIONS]: CoreTransactions(),

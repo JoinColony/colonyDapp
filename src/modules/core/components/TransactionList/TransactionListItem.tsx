@@ -1,7 +1,7 @@
 import React, { useCallback } from 'react';
 import { defineMessages, FormattedDate } from 'react-intl';
 
-import { ContractTransactionType, TokenType, UserType } from '~immutable/index';
+import { ContractTransactionType } from '~immutable/index';
 import { TableRow, TableCell } from '~core/Table';
 import { ActionButton } from '~core/Button';
 import Numeral from '~core/Numeral';
@@ -71,13 +71,13 @@ const TransactionListItem = ({
   transaction,
 }: Props) => {
   const userAddress = incoming ? senderAddress : recipientAddress;
-  const { data: user } = useDataSubscriber<UserType>(
+  const { data: user } = useDataSubscriber(
     userSubscriber,
-    [userAddress],
+    [userAddress as string],
     [userAddress],
   );
 
-  const { data: token } = useDataFetcher<TokenType>(
+  const { data: token } = useDataFetcher(
     tokenFetcher,
     [tokenAddress],
     [tokenAddress],
@@ -86,7 +86,7 @@ const TransactionListItem = ({
   /**
    * @todo Support fetching of tasks by `taskId`
    * */
-  // const { data: task } = useDataSubscriber<TokenType>(
+  // const { data: task } = useDataSubscriber(
   //   taskSubscriber,
   //   [taskId],
   //   [taskId],

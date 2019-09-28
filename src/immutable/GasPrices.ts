@@ -1,7 +1,7 @@
 import BigNumber from 'bn.js';
 import { Record } from 'immutable';
 
-import { DefaultValues } from '~types/index';
+import { DefaultValues, RecordToJS } from '~types/index';
 
 export interface GasPricesProps {
   cheaper?: BigNumber;
@@ -25,6 +25,7 @@ const defaultValues: DefaultValues<GasPricesProps> = {
   timestamp: undefined,
 };
 
-export class GasPricesRecord extends Record<GasPricesProps>(defaultValues) {}
+export class GasPricesRecord extends Record<GasPricesProps>(defaultValues)
+  implements RecordToJS<GasPricesProps> {}
 
 export const GasPrices = (p?: GasPricesProps) => new GasPricesRecord(p);

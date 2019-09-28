@@ -1,7 +1,6 @@
 import React, { useCallback, useMemo, useState } from 'react';
 import { defineMessages, injectIntl, IntlShape } from 'react-intl';
 import { compose } from 'recompose';
-import { useMappedState } from 'redux-react-hook';
 
 import { DialogType } from '~core/Dialog';
 import Button from '~core/Button';
@@ -9,21 +8,17 @@ import withDialog from '~core/Dialog/withDialog';
 import Heading from '~core/Heading';
 import { Select } from '~core/Fields';
 import { SpinnerLoader } from '~core/Preloaders';
-import { DomainType, TokenType } from '~immutable/index';
-import { Address } from '~types/index';
-import { useDataFetcher, useRoles } from '~utils/hooks';
+import { Address, ColonyRoles } from '~types/index';
+import { useDataFetcher, useSelector } from '~utils/hooks';
 import { proxyOldRoles } from '~utils/data';
 
 import { COLONY_TOTAL_BALANCE_DOMAIN_ID } from '../../../admin/constants';
 import { domainsFetcher, tokenFetcher } from '../../../dashboard/fetchers';
 import { useColonyNativeToken } from '../../../dashboard/hooks/useColonyNativeToken';
 import { useColonyTokens } from '../../../dashboard/hooks/useColonyTokens';
+import { userHasRole } from '../../../dashboard/selectors';
 import { walletAddressSelector } from '../../../users/selectors';
-import {
-  canEditTokens,
-  canMoveTokens as canMoveTokensCheck,
-} from '../../checks';
-
+import { canEditTokens } from '../../checks';
 import FundingBanner from './FundingBanner';
 import TokenList from './TokenList';
 
@@ -65,31 +60,38 @@ const Tokens = ({
   intl: { formatMessage },
   openDialog,
 }: Props) => {
-  // permissions checks
-  const { data: roles } = useRoles(colonyAddress);
-  const walletAddress = useMappedState(walletAddressSelector);
-  const canEdit = useMemo(
-    () => canEditTokens(proxyOldRoles(roles), walletAddress),
-    [roles, walletAddress],
-  );
-  const canMoveTokens = useMemo(
-    () => canMoveTokensCheck(roles, walletAddress),
-    [roles, walletAddress],
+  const [selectedDomain, setSelectedDomain] = useState('1');
+
+  const walletAddress = useSelector(walletAddressSelector);
+
+  const { data: domainsData, isFetching: isFetchingDomains } = useDataFetcher(
+    domainsFetcher,
+    [colonyAddress],
+    [colonyAddress],
   );
 
-  // domains
-  const [selectedDomain, setSelectedDomain] = useState<number>(1);
-  const { data: domainsData, isFetching: isFetchingDomains } = useDataFetcher<
-    DomainType[]
-  >(domainsFetcher, [colonyAddress], [colonyAddress]);
+  const { roles: rootDomainRoles = {} } = (domainsData || {})['1'] || {};
+  const canEdit = useMemo(
+    () => canEditTokens(proxyOldRoles(rootDomainRoles), walletAddress),
+    [rootDomainRoles, walletAddress],
+  );
+
+  const canMoveTokens = useSelector(userHasRole, [
+    colonyAddress,
+    '1',
+    walletAddress,
+    ColonyRoles.FUNDING,
+  ]);
+
   const domains = useMemo(
     () => [
       { value: COLONY_TOTAL_BALANCE_DOMAIN_ID, label: { id: 'domain.all' } },
-      { value: 1, label: { id: 'domain.root' } },
-      ...(domainsData || []).map(({ name, id }) => ({
-        label: name,
-        value: id,
-      })),
+      ...Object.keys(domainsData || {})
+        .sort()
+        .map(domainId => ({
+          label: domainsData[domainId].name,
+          value: domainId,
+        })),
     ],
     [domainsData],
   );
@@ -111,7 +113,7 @@ const Tokens = ({
   const nativeTokenAddress = nativeTokenReference
     ? nativeTokenReference.address
     : '';
-  const { data: nativeToken } = useDataFetcher<TokenType>(
+  const { data: nativeToken } = useDataFetcher(
     tokenFetcher,
     [nativeTokenAddress],
     [nativeTokenAddress],

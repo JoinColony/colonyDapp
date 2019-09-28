@@ -10,8 +10,8 @@ export type DomainActionTypes =
       {
         colonyAddress: string;
         tokenAddress: string;
-        fromDomain: number;
-        toDomain: number;
+        fromDomain: string;
+        toDomain: string;
         amount: BigNumber;
       },
       object
