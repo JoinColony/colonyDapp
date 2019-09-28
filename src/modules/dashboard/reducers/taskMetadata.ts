@@ -55,7 +55,7 @@ const updateState = (
 };
 
 const taskMetadataReducer: ReducerType<AllTaskMetadataMap> = (
-  state = ImmutableMap(),
+  state = ImmutableMap() as AllTaskMetadataMap,
   action,
 ) => {
   switch (action.type) {
@@ -91,5 +91,5 @@ export default withFetchableDataMap<AllTaskMetadataMap, TaskMetadataMap>(
     ActionTypes.COLONY_TASK_METADATA_FETCH,
     ActionTypes.COLONY_TASK_METADATA_SUB_START,
   ]),
-  ImmutableMap(),
+  ImmutableMap() as AllTaskMetadataMap,
 )(taskMetadataReducer);

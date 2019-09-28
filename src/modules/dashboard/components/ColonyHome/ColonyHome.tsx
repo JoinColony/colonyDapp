@@ -10,22 +10,14 @@ import { subscribeActions as subscribeToReduxActions } from 'redux-action-watch/
 import { useDispatch } from 'redux-react-hook';
 import throttle from 'lodash/throttle';
 
-import { ColonyTokenReferenceType, DomainType } from '~immutable/index';
 import { Address } from '~types/index';
-import { ROOT_DOMAIN } from '../../../core/constants';
-import { walletAddressSelector } from '../../../users/selectors';
 import {
   TasksFilterOptionType,
   TasksFilterOptions,
   tasksFilterSelectOptions,
 } from '../shared/tasksFilter';
 import { ActionTypes } from '~redux/index';
-import {
-  useDataFetcher,
-  useDataSubscriber,
-  useSelector,
-  useUserDomainRoles,
-} from '~utils/hooks';
+import { useDataFetcher, useDataSubscriber, useSelector } from '~utils/hooks';
 import { mergePayload } from '~utils/actions';
 import { Tab, Tabs, TabList, TabPanel } from '~core/Tabs';
 import { Select } from '~core/Fields';
@@ -119,10 +111,9 @@ const ColonyHome = ({
   match: {
     params: { colonyName },
   },
-  intl: { formatMessage },
 }: Props) => {
   const [filterOption, setFilterOption] = useState(TasksFilterOptions.ALL_OPEN);
-  const [filteredDomainId, setFilteredDomainId] = useState(0);
+  const [filteredDomainId, setFilteredDomainId] = useState('0');
   const [isTaskBeingCreated, setIsTaskBeingCreated] = useState(false);
   const [showRecoverOption, setRecoverOption] = useState(false);
   const [activeTab, setActiveTab] = useState<'tasks' | 'transactions'>('tasks');
@@ -155,7 +146,7 @@ const ColonyHome = ({
     [setFilterOption],
   );
 
-  const { data: colonyAddress, error: addressError } = useDataFetcher<Address>(
+  const { data: colonyAddress, error: addressError } = useDataFetcher(
     colonyAddressFetcher,
     [colonyName],
     [colonyName],
@@ -166,53 +157,40 @@ const ColonyHome = ({
     data: colony,
     isFetching: isFetchingColony,
     error: colonyError,
-  } = useDataSubscriber<any>(colonySubscriber, colonyArgs, colonyArgs);
+  } = useDataSubscriber(colonySubscriber, colonyArgs, colonyArgs);
 
-  const walletAddress = useSelector(walletAddressSelector);
-  const { data: roles, isFetching: isFetchingRoles } = useUserDomainRoles(
-    colonyAddress || undefined,
-    filteredDomainId || ROOT_DOMAIN,
-    walletAddress,
+  const {
+    data: permissions,
+    isFetching: isFetchingPermissions,
+  } = useDataFetcher(
+    currentUserColonyPermissionsFetcher,
+    colonyArgs as [string], // Technically a bug, shouldn't need type override
+    colonyArgs,
   );
 
-  const { data: domains } = useDataFetcher<DomainType[]>(
+  const { data: domains } = useDataFetcher(
     domainsFetcher,
     [colonyAddress],
     [colonyAddress],
   );
 
-  const crumbs = useMemo(() => {
-    const selectedDomain =
-      !!domains && domains.find(domain => domain.id === filteredDomainId);
-    switch (filteredDomainId) {
-      case 0:
-        return [formatMessage({ id: 'domain.all' })];
-
-      case 1:
-        return [formatMessage({ id: 'domain.root' })];
-
-      default:
-        return selectedDomain
-          ? [formatMessage({ id: 'domain.root' }), selectedDomain.name]
-          : [formatMessage({ id: 'domain.root' })];
-    }
-  }, [domains, filteredDomainId, formatMessage]);
-
-  const nativeTokenRef: ColonyTokenReferenceType | null = useSelector(
-    colonyNativeTokenSelector,
-    colonyArgs,
-  );
-  const ethTokenRef: ColonyTokenReferenceType | null = useSelector(
-    colonyEthTokenSelector,
-    colonyArgs,
+  const crumbs = useMemo<string[]>(
+    () =>
+      Object.keys(domains || {})
+        .sort()
+        .filter(id => id === '1' && id === filteredDomainId && domains[id].name)
+        .map(id => domains[id].name),
+    [domains, filteredDomainId],
   );
 
-  const transform = useCallback(
-    mergePayload({ colonyAddress, domainId: filteredDomainId }),
-    [colonyAddress, filteredDomainId],
-  );
+  const nativeTokenRef = useSelector(colonyNativeTokenSelector, colonyArgs);
+  const ethTokenRef = useSelector(colonyEthTokenSelector, colonyArgs);
 
-  const canCreateTask = canAdminister(roles) || isFounder(roles);
+  const transform = useCallback(mergePayload({ colonyAddress }), [
+    colonyAddress,
+  ]);
+
+  const canCreateTask = canAdminister(permissions) || isFounder(permissions);
   const isInRecoveryMode = isInRecoveryModeCheck(colony);
 
   if (colonyError || addressError) {
@@ -222,13 +200,13 @@ const ColonyHome = ({
   if (
     !(colony && colonyAddress) ||
     isFetchingColony ||
-    !roles ||
-    isFetchingRoles ||
+    !permissions ||
+    isFetchingPermissions ||
     !nativeTokenRef
   ) {
     return (
       <LoadingTemplate loadingText={MSG.loadingText}>
-        {showRecoverOption && colonyAddress && canRecoverColony(roles) ? (
+        {showRecoverOption && colonyAddress && canRecoverColony(permissions) ? (
           <DialogActionButton
             dialog="ConfirmDialog"
             dialogProps={{
@@ -300,7 +278,7 @@ const ColonyHome = ({
         <div className={styles.metaContainer}>
           <ColonyMeta
             colony={colony}
-            canAdminister={!isInRecoveryMode && canAdminister(roles)}
+            canAdminister={!isInRecoveryMode && canAdminister(permissions)}
             filteredDomainId={filteredDomainId}
             setFilteredDomainId={setFilteredDomainId}
           />
@@ -329,7 +307,7 @@ const ColonyHome = ({
               filterOption={filterOption}
               ethTokenRef={ethTokenRef}
               nativeTokenRef={nativeTokenRef}
-              roles={roles}
+              roles={permissions}
             />
           </TabPanel>
           <TabPanel>

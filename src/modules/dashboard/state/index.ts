@@ -1,4 +1,4 @@
-import { List as ListType, Map as ImmutableMap, Record } from 'immutable';
+import { List, Map as ImmutableMap, Record } from 'immutable';
 
 import { Address, DefaultValues } from '~types/index';
 import {
@@ -7,6 +7,10 @@ import {
   TaskRecord,
   TaskFeedItemRecord,
   TaskMetadataRecord,
+  FetchableDataType,
+  TaskMetadataRecordProps,
+  TaskType,
+  TaskFeedItemType,
 } from '~immutable/index';
 
 import { AllColoniesRecord } from './AllColonies';
@@ -25,24 +29,42 @@ export * from './AllColonies';
 export * from './AllTokens';
 export * from './AllDomains';
 
-export type TaskMetadataMap = ImmutableMap<TaskDraftId, TaskMetadataRecord>;
+type TaskMetadataObject = { [draftId: string]: TaskMetadataRecord };
+
+export type TaskMetadataMap = ImmutableMap<TaskDraftId, TaskMetadataRecord> & {
+  toJS(): TaskMetadataObject;
+};
+
+type AllTaskMetadataObject = {
+  [colonyAddress: string]: FetchableDataType<TaskMetadataRecordProps>;
+};
 
 export type AllTaskMetadataMap = ImmutableMap<
   Address,
-  FetchableDataRecord<TaskMetadataMap | null>
->;
+  FetchableDataRecord<TaskMetadataMap>
+> & { toJS(): AllTaskMetadataObject };
+
+type TasksObject = { [draftId: string]: FetchableDataType<TaskType> };
 
 export type TasksMap = ImmutableMap<
   TaskDraftId,
-  FetchableDataRecord<TaskRecord | null>
->;
+  FetchableDataRecord<TaskRecord>
+> & { toJS(): TasksObject };
+
+type TaskFeedItemsObject = {
+  [draftId: string]: FetchableDataType<TaskFeedItemType[]>;
+};
+
+type TaskFeedItemsList = List<TaskFeedItemRecord> & {
+  toJS(): TaskFeedItemType[];
+};
 
 export type TaskFeedItemsMap = ImmutableMap<
   TaskDraftId,
-  FetchableDataRecord<ListType<TaskFeedItemRecord>>
->;
+  FetchableDataRecord<TaskFeedItemsList>
+> & { toJS(): TaskFeedItemsObject };
 
-interface DashboardStateProps {
+export interface DashboardStateProps {
   [DASHBOARD_ALL_COLONIES]: AllColoniesRecord;
   [DASHBOARD_ALL_DOMAINS]: AllDomainsMap;
   [DASHBOARD_TASK_METADATA]: AllTaskMetadataMap;
@@ -53,11 +75,11 @@ interface DashboardStateProps {
 
 const defaultValues: DefaultValues<DashboardStateProps> = {
   [DASHBOARD_ALL_COLONIES]: new AllColoniesRecord(),
-  [DASHBOARD_ALL_DOMAINS]: ImmutableMap(),
-  [DASHBOARD_TASK_METADATA]: ImmutableMap(),
+  [DASHBOARD_ALL_DOMAINS]: ImmutableMap() as AllDomainsMap,
+  [DASHBOARD_TASK_METADATA]: ImmutableMap() as AllTaskMetadataMap,
   [DASHBOARD_ALL_TOKENS]: AllTokensInitialState,
-  [DASHBOARD_TASK_FEED_ITEMS]: ImmutableMap(),
-  [DASHBOARD_TASKS]: ImmutableMap(),
+  [DASHBOARD_TASK_FEED_ITEMS]: ImmutableMap() as TaskFeedItemsMap,
+  [DASHBOARD_TASKS]: ImmutableMap() as TasksMap,
 };
 
 export class DashboardStateRecord extends Record<DashboardStateProps>(

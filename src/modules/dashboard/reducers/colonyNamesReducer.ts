@@ -12,7 +12,7 @@ const updateState = (state: AllColonyNamesMap, key: any, value: string) =>
     : state.set(key, FetchableData({ record: value }));
 
 const colonyNamesReducer: ReducerType<AllColonyNamesMap> = (
-  state = ImmutableMap(),
+  state = ImmutableMap() as AllColonyNamesMap,
   action,
 ) => {
   switch (action.type) {
@@ -35,5 +35,5 @@ const colonyNamesReducer: ReducerType<AllColonyNamesMap> = (
 
 export default withFetchableDataMap(
   new Set([ActionTypes.COLONY_NAME_FETCH, ActionTypes.COLONY_ADDRESS_FETCH]),
-  ImmutableMap(),
+  ImmutableMap() as AllColonyNamesMap,
 )(colonyNamesReducer);

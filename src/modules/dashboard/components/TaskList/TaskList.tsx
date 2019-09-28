@@ -142,7 +142,7 @@ const TaskList = ({
   );
 
   const currentUser = useSelector(currentUserSelector);
-  const { data: colonyAddresses } = useDataSubscriber<Address[]>(
+  const { data: colonyAddresses } = useDataSubscriber(
     userColoniesSubscriber,
     [currentUser.profile.walletAddress],
     [
@@ -160,7 +160,7 @@ const TaskList = ({
 
   const data = useSelector(colonyNameSelector, [colonyAddress]);
 
-  const colonyName = colonyAddress ? data.record : undefined;
+  const colonyName = colonyAddress ? data && data.record : undefined;
 
   /*
    * These empty states are getting a bit out of hand. We have now 4 different

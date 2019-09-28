@@ -11,7 +11,7 @@ import { withFetchableData } from '~utils/reducers';
 import { CurrentUserTokensType } from '../../state/index';
 
 const currentUserTokensReducer: ReducerType<CurrentUserTokensType> = (
-  state = FetchableData(),
+  state = FetchableData() as CurrentUserTokensType,
   action,
 ) => {
   switch (action.type) {

@@ -2,7 +2,6 @@ import { List, Set as ImmutableSet, Record } from 'immutable';
 
 import { Address } from '~types/index';
 import {
-  ContractTransactionRecord,
   FetchableData,
   FetchableDataRecord,
   InboxItemRecord,
@@ -12,7 +11,10 @@ import {
   UserProfileRecord,
   UserTokenReferenceRecord,
   TaskDraftId,
+  InboxItemType,
+  UserTokenReferenceType,
 } from '~immutable/index';
+import { FetchableContractTransactionList } from '../../admin/state/index';
 
 import {
   USERS_INBOX_ITEMS,
@@ -23,34 +25,46 @@ import {
   USERS_CURRENT_USER_TRANSACTIONS,
 } from '../constants';
 
-export type CurrentUserTransactionsType = FetchableDataRecord<
-  List<ContractTransactionRecord>
->;
-
 export type CurrentUserColoniesType = ImmutableSet<Address>;
 
-export type CurrentUserTasksType = ImmutableSet<[Address, TaskDraftId]>;
+export type CurrentUserTasksType = ImmutableSet<[Address, TaskDraftId]> & {
+  toJS(): [Address, TaskDraftId][];
+};
 
-export type CurrentUserTokensType = FetchableDataRecord<
-  List<UserTokenReferenceRecord>
+type CurrentUserTokensList = List<UserTokenReferenceRecord> & {
+  toJS(): UserTokenReferenceType[];
+};
+
+export type CurrentUserTokensType = FetchableDataRecord<CurrentUserTokensList>;
+
+type CurrentUserInboxItemsList = List<InboxItemRecord> & {
+  toJS(): InboxItemType[];
+};
+
+export type CurrentUserInboxItemsType = FetchableDataRecord<
+  CurrentUserInboxItemsList
 >;
 
 interface CurrentUserProps {
-  [USERS_INBOX_ITEMS]: FetchableDataRecord<List<InboxItemRecord>>;
+  [USERS_INBOX_ITEMS]: CurrentUserInboxItemsType;
   [USERS_CURRENT_USER_NOTIFICATION_METADATA]: UserNotificationMetadataRecord;
   [USERS_CURRENT_USER_PROFILE]: UserProfileRecord;
   [USERS_CURRENT_USER_TASKS]: FetchableDataRecord<CurrentUserTasksType>;
   [USERS_CURRENT_USER_TOKENS]: CurrentUserTokensType;
-  [USERS_CURRENT_USER_TRANSACTIONS]: CurrentUserTransactionsType;
+  [USERS_CURRENT_USER_TRANSACTIONS]: FetchableContractTransactionList;
 }
 
 export class CurrentUserRecord extends Record<CurrentUserProps>({
-  [USERS_INBOX_ITEMS]: FetchableData(),
+  [USERS_INBOX_ITEMS]: FetchableData() as CurrentUserInboxItemsType,
   [USERS_CURRENT_USER_NOTIFICATION_METADATA]: UserNotificationMetadata(),
   [USERS_CURRENT_USER_PROFILE]: UserProfile({
     walletAddress: '',
   }),
-  [USERS_CURRENT_USER_TASKS]: FetchableData(),
-  [USERS_CURRENT_USER_TOKENS]: FetchableData(),
-  [USERS_CURRENT_USER_TRANSACTIONS]: FetchableData(),
+  // eslint-disable-next-line max-len
+  [USERS_CURRENT_USER_TASKS]: FetchableData() as FetchableDataRecord<
+    CurrentUserTasksType
+  >,
+  [USERS_CURRENT_USER_TOKENS]: FetchableData() as CurrentUserTokensType,
+  // eslint-disable-next-line max-len
+  [USERS_CURRENT_USER_TRANSACTIONS]: FetchableData() as FetchableContractTransactionList,
 }) {}

@@ -2,7 +2,7 @@
 
 import { Record, Set as ImmutableSet } from 'immutable';
 
-import { DefaultValues } from '~types/index';
+import { DefaultValues, RecordToJS } from '~types/index';
 
 // ConnectionStats
 interface ConnectionStatsRecordProps {
@@ -51,7 +51,7 @@ export const ConnectionError = (p: ConnectionErrorRecordProps) =>
 
 // Connection
 interface ConnectionRecordProps {
-  stats?: ConnectionStatsRecord;
+  stats: ConnectionStatsRecord;
   errors: ImmutableSet<ConnectionErrorRecord>;
 }
 
@@ -60,9 +60,9 @@ const defaultValues: DefaultValues<ConnectionRecordProps> = {
   errors: ImmutableSet(),
 };
 
-export class ConnectionRecord extends Record<ConnectionRecordProps>(
-  defaultValues,
-) {}
+export class ConnectionRecord
+  extends Record<ConnectionRecordProps>(defaultValues)
+  implements RecordToJS<ConnectionType> {}
 
 export const Connection = (p?: ConnectionRecordProps) =>
   new ConnectionRecord(p);

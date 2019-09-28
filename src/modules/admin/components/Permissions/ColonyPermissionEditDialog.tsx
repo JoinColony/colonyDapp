@@ -202,7 +202,7 @@ const ColonyPermissionEditDialog = ({
   }, []);
 
   const roles: ColonyRoles[] = selectedUserAddress
-    ? [...(domain ? domain.roles[selectedUserAddress] || [] : [])]
+    ? [...((domain && domain.roles[selectedUserAddress]) || [])]
     : [];
 
   // Set user whose roles should be edited
@@ -241,7 +241,7 @@ const ColonyPermissionEditDialog = ({
               <Heading
                 appearance={{ size: 'medium', margin: 'none' }}
                 text={MSG.title}
-                textValues={{ domain: domain ? domain.name : '' }}
+                textValues={{ domain: domain && domain.name }}
               />
               <div className={styles.titleContainer}>
                 <InputLabel label={MSG.selectUser} />

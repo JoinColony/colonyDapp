@@ -1,7 +1,7 @@
 import BigNumber from 'bn.js';
 import { Record } from 'immutable';
 
-import { Address, DefaultValues } from '~types/index';
+import { Address, DefaultValues, RecordToJS } from '~types/index';
 
 export type TaskPayoutType = Readonly<{
   amount: BigNumber;
@@ -18,8 +18,8 @@ const defaultValues: DefaultValues<TaskPayoutRecordProps> = {
   token: undefined,
 };
 
-export class TaskPayoutRecord extends Record<TaskPayoutRecordProps>(
-  defaultValues,
-) {}
+export class TaskPayoutRecord
+  extends Record<TaskPayoutRecordProps>(defaultValues)
+  implements RecordToJS<TaskPayoutRecordProps> {}
 
 export const TaskPayout = (p: TaskPayoutRecordProps) => new TaskPayoutRecord(p);

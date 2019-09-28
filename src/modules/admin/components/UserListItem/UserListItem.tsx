@@ -14,8 +14,6 @@ import { userSubscriber } from '../../../users/subscribers';
 
 import styles from './UserListItem.css';
 
-import { UserType } from '~immutable/index';
-
 const MSG = defineMessages({
   buttonRemove: {
     id: 'admin.UserListItem.buttonRemove',
@@ -84,7 +82,7 @@ const UserListItem = ({
   onClick: callbackFn,
   onRemove,
 }: Props) => {
-  const { data: user } = useDataSubscriber<UserType>(
+  const { data: user } = useDataSubscriber(
     userSubscriber,
     [address],
     [address],

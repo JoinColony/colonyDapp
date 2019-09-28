@@ -17,7 +17,7 @@ export default withHooks<
   };
 
   if (fetchColony) {
-    const { data: fetchedColony } = useDataSubscriber<ColonyType>(
+    const { data: fetchedColony } = useDataSubscriber(
       colonySubscriber,
       [colonyAddress],
       [colonyAddress],
@@ -25,9 +25,9 @@ export default withHooks<
     result.colony = fetchedColony;
   }
   const avatarHash = result.colony ? result.colony.avatarHash : undefined;
-  const { data: avatarURL } = useDataFetcher<string>(
+  const { data: avatarURL } = useDataFetcher(
     ipfsDataFetcher,
-    [avatarHash],
+    [avatarHash as string], // Technically a bug, shouldn't need type override
     [avatarHash],
   );
   result.avatarURL = avatarURL;

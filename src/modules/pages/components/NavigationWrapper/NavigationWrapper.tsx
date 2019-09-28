@@ -88,7 +88,7 @@ const NavigationWrapper = ({
    */
   ...props
 }: Props) => {
-  const username: string | null = useSelector(currentUsernameSelector);
+  const username = useSelector(currentUsernameSelector);
   return (
     <div className={className || getMainClasses(appearance, styles)}>
       <div className={styles.wrapper}>

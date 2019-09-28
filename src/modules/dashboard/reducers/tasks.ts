@@ -110,7 +110,7 @@ const taskEventReducer = (
 };
 
 const tasksReducer: ReducerType<TasksMap> = (
-  state = ImmutableMap(),
+  state = ImmutableMap() as TasksMap,
   action,
 ) => {
   switch (action.type) {
@@ -174,5 +174,5 @@ const tasksReducer: ReducerType<TasksMap> = (
 
 export default withFetchableDataMap<TasksMap, TaskRecord>(
   new Set([ActionTypes.TASK_FETCH, ActionTypes.TASK_SUB_START]),
-  ImmutableMap(),
+  ImmutableMap() as TasksMap,
 )(tasksReducer);

@@ -23,11 +23,6 @@ export const currentUserBalance = (balance: string): AllActions => ({
   payload: { balance },
 });
 
-export const userTokensUpdate = (tokens: Address[]): AllActions => ({
-  type: ActionTypes.USER_TOKENS_UPDATE,
-  payload: { tokens },
-});
-
 export const subscribeToColony = (colonyAddress: Address): AllActions => ({
   type: ActionTypes.USER_COLONY_SUBSCRIBE,
   payload: { colonyAddress },
@@ -65,14 +60,6 @@ export const userSubStop = (userAddress: Address): AllActions => ({
   type: ActionTypes.USER_SUB_STOP,
   meta: { key: createAddress(userAddress) },
   payload: { userAddress },
-});
-
-export const currentUserTasksSubStart = (): AllActions => ({
-  type: ActionTypes.USER_SUBSCRIBED_TASKS_SUB_START,
-});
-
-export const currentUserTasksSubStop = (): AllActions => ({
-  type: ActionTypes.USER_SUBSCRIBED_TASKS_SUB_STOP,
 });
 
 export const userColoniesSubStart = (

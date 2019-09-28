@@ -1,6 +1,6 @@
 import { Record } from 'immutable';
 
-import { Address, DefaultValues } from '~types/index';
+import { Address, DefaultValues, RecordToJS } from '~types/index';
 
 export enum WALLET_CATEGORIES {
   SOFTWARE = 'software',
@@ -40,6 +40,7 @@ const defaultValues: DefaultValues<WalletProps> = {
   walletType: WALLET_CATEGORIES.SOFTWARE,
 };
 
-export class WalletRecord extends Record<WalletProps>(defaultValues) {}
+export class WalletRecord extends Record<WalletProps>(defaultValues)
+  implements RecordToJS<WalletType> {}
 
 export const Wallet = (p?: WalletProps) => new WalletRecord(p);
