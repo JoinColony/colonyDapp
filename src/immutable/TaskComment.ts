@@ -1,6 +1,6 @@
 import { List as ListType, List, Record } from 'immutable';
 
-import { Address, DefaultValues } from '~types/index';
+import { Address, DefaultValues, RecordToJS } from '~types/index';
 
 type Shared = {
   authorAddress: Address;
@@ -25,9 +25,9 @@ const defaultValues: DefaultValues<TaskCommentRecordProps> = {
   signature: undefined,
 };
 
-export class TaskCommentRecord extends Record<TaskCommentRecordProps>(
-  defaultValues,
-) {}
+export class TaskCommentRecord
+  extends Record<TaskCommentRecordProps>(defaultValues)
+  implements RecordToJS<TaskCommentType> {}
 
 export const TaskComment = (p: TaskCommentRecordProps) =>
   new TaskCommentRecord(p);

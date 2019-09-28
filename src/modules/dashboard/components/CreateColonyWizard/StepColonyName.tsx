@@ -3,7 +3,6 @@ import { defineMessages, FormattedMessage } from 'react-intl';
 import * as yup from 'yup';
 
 import { WizardProps } from '~core/Wizard';
-import { UserType } from '~immutable/index';
 import { useAsyncFunction, useSelector } from '~utils/hooks';
 import { Form, Input } from '~core/Fields';
 import Heading from '~core/Heading';
@@ -85,7 +84,7 @@ const StepColonyName = ({ wizardForm, nextStep, wizardValues }: Props) => {
     error: ActionTypes.COLONY_NAME_CHECK_AVAILABILITY_ERROR,
   });
 
-  const currentUser: UserType = useSelector(currentUserSelector);
+  const currentUser = useSelector(currentUserSelector);
   const {
     profile: { username },
   } = currentUser;

@@ -11,8 +11,6 @@ import {
 import {
   userColoniesSubStart,
   userColoniesSubStop,
-  currentUserTasksSubStart,
-  currentUserTasksSubStop,
 } from '../users/actionCreators';
 import {
   colonySelector,
@@ -21,10 +19,7 @@ import {
   tasksByIdsSelector,
   taskSelector,
 } from './selectors';
-import {
-  userColoniesSelector,
-  currentUserDraftIdsSelector,
-} from '../users/selectors';
+import { userColoniesSelector } from '../users/selectors';
 
 export const taskFeedItemsSubscriber = Object.freeze({
   select: taskFeedItemsSelector,
@@ -60,10 +55,4 @@ export const userColoniesSubscriber = Object.freeze({
   select: userColoniesSelector,
   start: userColoniesSubStart,
   stop: userColoniesSubStop,
-});
-
-export const currentUserTasksSubscriber = Object.freeze({
-  select: currentUserDraftIdsSelector,
-  start: currentUserTasksSubStart,
-  stop: currentUserTasksSubStop,
 });

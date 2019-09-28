@@ -1,7 +1,6 @@
 import React from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 
-import { Address } from '~types/index';
 import { useDataFetcher, useSelector } from '~utils/hooks';
 
 import { SpinnerLoader } from '~core/Preloaders';
@@ -34,7 +33,7 @@ const displayName = 'dashboard.Dashboard.ColoniesList';
 
 const ColoniesList = () => {
   const currentUser = useSelector(currentUserSelector);
-  const { data: colonyAddresses, isFetching } = useDataFetcher<Address[]>(
+  const { data: colonyAddresses, isFetching } = useDataFetcher(
     userColoniesFetcher,
     [currentUser.profile.walletAddress],
     [

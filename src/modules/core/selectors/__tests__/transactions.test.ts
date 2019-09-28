@@ -1,6 +1,6 @@
 import { Map as ImmutableMap, fromJS } from 'immutable';
 
-import { Transaction } from '~immutable/index';
+import { Transaction, TransactionRecord } from '~immutable/index';
 
 import { CORE_NAMESPACE as ns } from '../../constants';
 
@@ -106,7 +106,7 @@ describe('Transaction selectors', () => {
       state,
       '0x910ffad854fe8957f8ba2e581c891cdc8bacbcfdb1af3fc359c3ad1118175e26',
     );
-    const result = found.toJS();
+    const result = (found as TransactionRecord).toJS();
     expect(result.hash).toEqual(
       '0x910ffad854fe8957f8ba2e581c891cdc8bacbcfdb1af3fc359c3ad1118175e26',
     );
@@ -127,7 +127,7 @@ describe('Transaction selectors', () => {
     });
     const found = oneTransaction(state, 'tx2');
 
-    const result = found.toJS();
+    const result = (found as TransactionRecord).toJS();
     expect(result.from).toEqual('0xdeadbeef');
     expect(result.identifier).toEqual('othercolony');
   });

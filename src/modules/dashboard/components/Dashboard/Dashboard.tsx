@@ -1,7 +1,6 @@
 import React, { useState, useCallback } from 'react';
 import { defineMessages } from 'react-intl';
 
-import { UserType } from '~immutable/index';
 import { useSelector } from '~utils/hooks';
 
 import { Select } from '~core/Fields';
@@ -53,7 +52,7 @@ const Dashboard = () => {
     [setFilterOption],
   );
 
-  const currentUser: UserType = useSelector(currentUserSelector);
+  const currentUser = useSelector(currentUserSelector);
   const {
     profile: { walletAddress = '' },
   } = currentUser;

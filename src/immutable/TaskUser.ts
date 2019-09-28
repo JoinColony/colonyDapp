@@ -1,14 +1,14 @@
 import { Record } from 'immutable';
 
-import { Address, DefaultValues } from '~types/index';
+import { Address, DefaultValues, RecordToJS } from '~types/index';
 
-type Shared = {
+interface Shared {
   address: Address;
   didClaimPayout: boolean;
   didFailToRate: boolean;
   didRate: boolean;
   rating?: number;
-};
+}
 
 export type TaskUserType = Readonly<Shared>;
 
@@ -20,6 +20,7 @@ const defaultValues: DefaultValues<Shared> = {
   rating: undefined,
 };
 
-export class TaskUserRecord extends Record<Shared>(defaultValues) {}
+export class TaskUserRecord extends Record<Shared>(defaultValues)
+  implements RecordToJS<TaskUserType> {}
 
 export const TaskUser = (p: Shared) => new TaskUserRecord(p);

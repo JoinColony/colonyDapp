@@ -1,6 +1,6 @@
 import { Record } from 'immutable';
 
-import { DefaultValues } from '~types/index';
+import { DefaultValues, RecordToJS } from '~types/index';
 
 import { TRANSACTION_STATUSES } from './Transaction';
 
@@ -29,6 +29,7 @@ const defaultValues: DefaultValues<Shared> = {
   status: TRANSACTION_STATUSES.CREATED,
 };
 
-export class MessageRecord extends Record<Shared>(defaultValues) {}
+export class MessageRecord extends Record<Shared>(defaultValues)
+  implements RecordToJS<MessageType> {}
 
 export const Message = (p: Shared) => new MessageRecord(p);

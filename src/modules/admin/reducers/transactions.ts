@@ -11,7 +11,7 @@ import { ActionTypes, ReducerType } from '~redux/index';
 import { AdminTransactionsState } from '../state/index';
 
 const adminTransactionsReducer: ReducerType<AdminTransactionsState> = (
-  state = ImmutableMap(),
+  state = ImmutableMap() as AdminTransactionsState,
   action,
 ) => {
   switch (action.type) {
@@ -35,6 +35,7 @@ const adminTransactionsReducer: ReducerType<AdminTransactionsState> = (
 export default withFetchableDataMap<
   AdminTransactionsState,
   ContractTransactionRecord
->(ActionTypes.COLONY_TRANSACTIONS_FETCH, ImmutableMap())(
-  adminTransactionsReducer,
-);
+>(
+  ActionTypes.COLONY_TRANSACTIONS_FETCH,
+  ImmutableMap() as AdminTransactionsState,
+)(adminTransactionsReducer);

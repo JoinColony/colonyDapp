@@ -1,6 +1,6 @@
 import { Record } from 'immutable';
 
-import { DefaultValues } from '~types/index';
+import { DefaultValues, RecordToJS } from '~types/index';
 
 export interface NetworkProps {
   /*
@@ -23,6 +23,7 @@ const defaultValues: DefaultValues<NetworkProps> = {
   version: undefined,
 };
 
-export class NetworkRecord extends Record<NetworkProps>(defaultValues) {}
+export class NetworkRecord extends Record<NetworkProps>(defaultValues)
+  implements RecordToJS<NetworkProps> {}
 
 export const Network = (p?: NetworkProps) => new NetworkRecord(p);

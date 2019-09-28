@@ -1,6 +1,6 @@
 import { Record } from 'immutable';
 
-import { DefaultValues } from '~types/index';
+import { DefaultValues, RecordToJS } from '~types/index';
 
 export enum ActivityActions {
   ADDED_SKILL_TAG = 'ADDED_SKILL_TAG',
@@ -30,6 +30,7 @@ const defaultValues: DefaultValues<Shared> = {
   user: undefined,
 };
 
-export class ActivityFeedItemRecord extends Record<Shared>(defaultValues) {}
+export class ActivityFeedItemRecord extends Record<Shared>(defaultValues)
+  implements RecordToJS<ActivityFeedItemType> {}
 
 export const ActivityFeedItem = (p: Shared) => new ActivityFeedItemRecord(p);

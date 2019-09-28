@@ -4,15 +4,9 @@ import compose from 'recompose/compose';
 import { withRouter } from 'react-router-dom';
 
 import { ActionTypes } from '~redux/index';
-import {
-  useDataFetcher,
-  useDataSubscriber,
-  useSelector,
-  useUserDomainRoles,
-} from '~utils/hooks';
+import { useDataFetcher, useDataSubscriber, useSelector } from '~utils/hooks';
 // Temporary, please remove when wiring in the rating modals
 import { OpenDialog } from '~core/Dialog/types';
-import { Address } from '~types/index';
 import { mergePayload } from '~utils/actions';
 import Heading from '~core/Heading';
 import withDialog from '~core/Dialog/withDialog';
@@ -123,12 +117,23 @@ const Task = ({
   const walletAddress =
     currentUser && currentUser.profile && currentUser.profile.walletAddress;
 
-  const { data: colonyAddress } = useDataFetcher<Address>(
+  const { data: colonyAddress } = useDataFetcher(
     colonyAddressFetcher,
     [colonyName],
     [colonyName],
   );
-  const { data: task, isFetching: isFetchingTask } = useDataSubscriber<any>(
+
+  const colonyArgs = [colonyAddress || undefined];
+  const {
+    data: permissions,
+    isFetching: isFetchingPermissions,
+  } = useDataFetcher(
+    currentUserColonyPermissionsFetcher,
+    colonyArgs as [string], // Technically a bug, shouldn't need type override
+    colonyArgs,
+  );
+
+  const { data: task, isFetching: isFetchingTask } = useDataSubscriber(
     taskSubscriber,
     [draftId],
     [colonyAddress || undefined, draftId],
@@ -140,12 +145,6 @@ const Task = ({
     skillId = undefined,
     title = undefined,
   } = task || {};
-
-  const { data: roles, isFetching: isFetchingRoles } = useUserDomainRoles(
-    colonyAddress || undefined,
-    domainId,
-    walletAddress,
-  );
 
   const onEditTask = useCallback(() => {
     // If you've managed to click on the button that runs this without the
@@ -168,17 +167,17 @@ const Task = ({
 
   if (
     isFetchingTask ||
-    isFetchingRoles ||
+    isFetchingPermissions ||
     !task ||
     !colonyAddress ||
-    !roles ||
+    !permissions ||
     !walletAddress
   ) {
     return <LoadingTemplate loadingText={MSG.loadingText} />;
   }
 
   const isTaskCreator = isCreator(task, walletAddress);
-  const canEdit = canEditTask(task, roles, walletAddress);
+  const canEdit = canEditTask(task, permissions, walletAddress);
 
   return (
     <div className={styles.main}>
@@ -301,7 +300,7 @@ const Task = ({
               </div>
             </Tooltip>
           )}
-          {canCancelTask(task, roles, walletAddress) && (
+          {canCancelTask(task, permissions, walletAddress) && (
             <ActionButton
               appearance={{ theme: 'secondary', size: 'small' }}
               button={ConfirmButton}
@@ -317,7 +316,7 @@ const Task = ({
           {/* Hide when discard confirm is displayed */}
           {!isDiscardConfirmDisplayed && (
             <>
-              {canFinalizeTask(task, roles, walletAddress) && (
+              {canFinalizeTask(task, permissions, walletAddress) && (
                 <ActionButton
                   text={MSG.finalizeTask}
                   submit={ActionTypes.TASK_FINALIZE}

@@ -23,23 +23,17 @@ interface KeyedDataObject<T> extends DataObject<T> {
   key: string;
 }
 
-type DataFetcher<T> = {
-  select: (
-    rootState: RootStateRecord,
-    ...selectArgs: any[]
-  ) => FetchableDataRecord<T> | undefined;
+interface DataFetcher<S> {
+  select: S;
   fetch: (...fetchArgs: any[]) => Action<any>;
   ttl?: number;
-};
+}
 
-type DataSubscriber<T> = {
-  select: (
-    rootState: RootStateRecord,
-    ...selectArgs: any[]
-  ) => FetchableDataRecord<T> | undefined;
+interface DataSubscriber<S> {
+  select: S;
   start: (...subArgs: any[]) => Action<any>;
   stop: (...subArgs: any[]) => Action<any>;
-};
+}
 
 type DataMapFetcher<T> = {
   select: (
@@ -83,6 +77,27 @@ type DataFetcherOptions = {
   ttl?: number;
 };
 
+// This conditional type allows data to be undefined/null, but uses
+// further conditional types in order to get the possibly-toJS'ed type
+// of the record property.
+type MaybeFetchedData<T extends undefined | null | { record: any }> = T extends
+  | undefined
+  | null
+  ? T
+  : (T extends { record: any }
+      ? (T extends { record: { toJS: Function } }
+          ? ReturnType<T['record']['toJS']>
+          : T['record'])
+      : T);
+
+// This conditional type allows data to be undefined/null, but uses a
+// further conditional type in order to get the possibly-toJS'ed type.
+type MaybeSelected<
+  T extends undefined | null | { toJS: (...args: any[]) => any }
+> = T extends undefined | null
+  ? T
+  : (T extends { toJS: Function } ? ReturnType<T['toJS']> : T);
+
 export const usePrevious = (value: any) => {
   const ref = useRef();
   useEffect(() => {
@@ -91,18 +106,18 @@ export const usePrevious = (value: any) => {
   return ref.current;
 };
 
-const transformFetchedData = (data?: FetchableDataRecord<any>) => {
+const transformFetchedData = (data?: any) => {
   if (!data) return undefined;
   const record =
     typeof data.get === 'function' ? data.get('record') : data.record;
   return record && typeof record.toJS === 'function' ? record.toJS() : record;
 };
 
-const defaultTransform = <T extends { toJS?(): Readonly<T> }>(
+const defaultTransform = <T extends { toJS(): any }>(
   obj: T,
   // The return type of this could be improved if there was a way
   // to map from immutable to non-immutable types
-): Readonly<T> => (obj && typeof obj.toJS === 'function' ? obj.toJS() : obj);
+) => (obj && typeof obj.toJS === 'function' ? obj.toJS() : obj);
 
 /*
  * Given a redux selector and optional selector arguments, get the
@@ -117,14 +132,19 @@ export const useSelector = <
   transform?: (obj: Collection<any, any>) => any,
 ) => {
   const mapState = useCallback(state => select(state, ...args), [args, select]);
-  const data = useMappedState(mapState);
+
+  const data: ReturnType<typeof select> = useMappedState(mapState);
+
   const transformFn =
     typeof transform === 'function'
       ? transform
       : (select as { transform?: <T>(obj: T) => any }).transform ||
         defaultTransform;
 
-  return useMemo(() => transformFn<ReturnType<S>>(data), [data, transformFn]);
+  return useMemo<MaybeSelected<typeof data>>(() => transformFn(data), [
+    data,
+    transformFn,
+  ]);
 };
 
 /*
@@ -179,21 +199,21 @@ const areTupleArraysEqual = (arr1: [any, any][], arr2: [any, any][]) => {
 export const useMemoWithFlatArray = createCustomMemo(areFlatArraysEqual);
 export const useMemoWithTupleArray = createCustomMemo(areTupleArraysEqual);
 
-/*
- * T: JS type of the fetched and transformed data, e.g. ColonyType
- */
-export const useDataFetcher = <T>(
-  { fetch, select, ttl = 0 }: DataFetcher<T>,
-  selectArgs: any[],
+export const useDataFetcher = <
+  S extends (...args: any[]) => any,
+  A extends RemoveFirstFromTuple<Parameters<S>>
+>(
+  { fetch, select, ttl = 0 }: DataFetcher<S>,
+  selectArgs: A,
   fetchArgs: any[],
   { ttl: ttlOverride }: DataFetcherOptions = {},
-): DataObject<T> => {
+) => {
   const dispatch = useDispatch();
   const mapState = useCallback(state => select(state, ...selectArgs), [
     select,
     selectArgs,
   ]);
-  const data = useMappedState(mapState);
+  const data: ReturnType<typeof select> = useMappedState(mapState);
 
   const isFirstMount = useRef(true);
 
@@ -216,7 +236,7 @@ export const useDataFetcher = <T>(
   }, [dispatch, fetch, shouldFetch, ...fetchArgs]);
 
   return {
-    data: transformFetchedData(data),
+    data: transformFetchedData(data) as MaybeFetchedData<typeof data>,
     isFetching: !!(shouldFetch && isFetchingData(data)),
     error: data && data.error ? data.error : undefined,
   };
@@ -292,17 +312,20 @@ export const useDataMapFetcher = <T>(
 /*
  * T: JS type of the fetched and transformed data, e.g. ColonyType
  */
-export const useDataSubscriber = <T>(
-  { start, stop, select }: DataSubscriber<T>,
-  selectArgs: any[],
+export const useDataSubscriber = <
+  S extends (...args: any[]) => any,
+  A extends RemoveFirstFromTuple<Parameters<S>>
+>(
+  { start, stop, select }: DataSubscriber<S>,
+  selectArgs: A,
   subArgs: any[],
-): DataObject<T> => {
+) => {
   const dispatch = useDispatch();
   const mapState = useCallback(state => select(state, ...selectArgs), [
     select,
     selectArgs,
   ]);
-  const data = useMappedState(mapState);
+  const data: ReturnType<typeof select> = useMappedState(mapState);
 
   const isFirstMount = useRef(true);
 
@@ -331,7 +354,7 @@ export const useDataSubscriber = <T>(
   );
 
   return {
-    data: transformFetchedData(data),
+    data: transformFetchedData(data) as MaybeFetchedData<typeof data>,
     isFetching: !!(shouldSubscribe && isFetchingData(data)),
     error: data && data.error ? data.error : undefined,
   };
@@ -389,7 +412,7 @@ export const useDataTupleSubscriber = <T>(
         return {
           key: entry[1],
           entry,
-          data: transformFetchedData(data),
+          data: transformFetchedData(data) as MaybeFetchedData<typeof data>,
           isFetching: keysToFetchFor.includes(entry[1]) && isFetchingData(data),
           error: data ? data.error : null,
         };
@@ -458,7 +481,7 @@ export const useDataTupleFetcher = <T>(
         return {
           key: entry[1],
           entry,
-          data: transformFetchedData(data),
+          data: transformFetchedData(data) as MaybeFetchedData<typeof data>,
           isFetching: keysToFetchFor.includes(entry[1]) && isFetchingData(data),
           error: data ? data.error : null,
         };

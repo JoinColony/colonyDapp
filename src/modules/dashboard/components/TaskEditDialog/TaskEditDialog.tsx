@@ -9,7 +9,6 @@ import { subscribeActions as subscribeToReduxActions } from 'redux-action-watch/
 import { useDispatch } from 'redux-react-hook';
 
 import {
-  ColonyType,
   TaskPayoutType,
   ColonyTokenReferenceType,
   TokenType,
@@ -165,19 +164,15 @@ const TaskEditDialog = ({
     [dispatch, closeDialog],
   );
 
-  const {
-    record: {
-      colonyAddress,
-      domainId,
-      payouts: taskPayouts,
-      reputation,
-      workerAddress,
-    },
-  } = useSelector(taskSelector, [draftId]);
+  const task = useSelector(taskSelector, [draftId]);
 
-  const { data: colonyData, isFetching: isFetchingColony } = useDataSubscriber<
-    ColonyType
-  >(colonySubscriber, [colonyAddress], [colonyAddress]);
+  const colonyAddress =
+    task && task.record ? task.record.colonyAddress : undefined;
+  const { data: colonyData, isFetching: isFetchingColony } = useDataSubscriber(
+    colonySubscriber,
+    [colonyAddress],
+    [colonyAddress],
+  );
 
   const [colonyTokenReferences, availableTokens] = useColonyTokens(
     colonyAddress,
@@ -194,20 +189,18 @@ const TaskEditDialog = ({
     userAddressesToPickFrom,
   );
 
-  const userData = useDataMapFetcher<UserType>(
+  const userData = useDataMapFetcher(
     usersByAddressFetcher,
     Array.from(uniqueUserAddressesToPickFrom),
   );
 
   // Get user (worker) assigned to this task
+  const workerAddress =
+    task && task.record ? task.record.workerAddress : undefined;
   const {
     data: existingWorkerObj,
     isFetching: isFetchingExistingWorker,
-  } = useDataSubscriber<UserType>(
-    userSubscriber,
-    [workerAddress],
-    [workerAddress],
-  );
+  } = useDataSubscriber(userSubscriber, [workerAddress], [workerAddress]);
   const existingWorker =
     !!workerAddress && !existingWorkerObj
       ? User({
@@ -228,6 +221,7 @@ const TaskEditDialog = ({
     [userData],
   );
 
+  const taskPayouts = task && task.record ? task.record.payouts : [];
   const existingPayouts = useMemo(
     () =>
       taskPayouts.map(payout => {
@@ -244,9 +238,10 @@ const TaskEditDialog = ({
           id: payout.token.address,
         };
       }),
-    [taskPayouts, availableTokens],
+    [availableTokens, taskPayouts],
   );
 
+  const domainId = task && task.record ? task.record.domainId : undefined;
   const validateForm = useMemo(() => {
     const workerShape = yup
       .object()
@@ -435,7 +430,11 @@ const TaskEditDialog = ({
                                     key={payout.id}
                                     payout={payout}
                                     payouts={existingPayouts}
-                                    reputation={reputation}
+                                    reputation={
+                                      task && task.record
+                                        ? task.record.reputation
+                                        : undefined
+                                    }
                                     tokenOptions={tokenOptions as any}
                                     tokenReferences={colonyTokenReferences}
                                   />

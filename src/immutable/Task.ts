@@ -1,7 +1,7 @@
 import { Record, List, Set as ImmutableSet } from 'immutable';
 
 import { TaskStates } from '~data/constants';
-import { Address, DefaultValues } from '~types/index';
+import { Address, DefaultValues, RecordToJS } from '~types/index';
 import { TaskPayoutRecord, TaskPayoutType } from './TaskPayout';
 
 /**
@@ -64,6 +64,7 @@ const defaultValues: DefaultValues<TaskRecordProps> = {
   workerAddress: undefined,
 };
 
-export class TaskRecord extends Record<TaskRecordProps>(defaultValues) {}
+export class TaskRecord extends Record<TaskRecordProps>(defaultValues)
+  implements RecordToJS<TaskType> {}
 
 export const Task = (p: TaskRecordProps) => new TaskRecord(p);

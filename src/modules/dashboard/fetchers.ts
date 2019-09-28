@@ -3,9 +3,6 @@ import {
   colonyDomainsSelector,
   colonyNameSelector,
   colonySelector,
-  colonyTaskMetadataSelector,
-  tasksByIdsSelector,
-  taskSelector,
   tokenSelector,
 } from './selectors';
 import {
@@ -17,10 +14,7 @@ import {
   fetchColonyAddress,
   fetchColonyName,
   fetchDomains,
-  fetchTask,
-  fetchTaskByColonyAddressAndDraftId,
   fetchToken,
-  fetchColonyTaskMetadata,
 } from './actionCreators';
 import {
   fetchUserColonies,
@@ -61,24 +55,6 @@ export const userColoniesFetcher = Object.freeze({
   select: userColoniesSelector,
   fetch: fetchUserColonies,
   ttl: 1000 * 60,
-});
-
-export const taskFetcher = Object.freeze({
-  select: taskSelector,
-  fetch: fetchTask,
-  ttl: 1000 * 60, // 1 minute,
-});
-
-export const tasksByIdFetcher = Object.freeze({
-  select: tasksByIdsSelector,
-  fetch: fetchTaskByColonyAddressAndDraftId,
-  ttl: 1000 * 60, // 1 minute,
-});
-
-export const colonyTaskMetadataFetcher = Object.freeze({
-  select: colonyTaskMetadataSelector,
-  fetch: fetchColonyTaskMetadata,
-  ttl: 1000 * 60, // 1 minute,
 });
 
 export const tokenFetcher = Object.freeze({

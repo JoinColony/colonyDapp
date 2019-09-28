@@ -1,6 +1,6 @@
 import { Record } from 'immutable';
 
-import { Address, DefaultValues } from '~types/index';
+import { Address, DefaultValues, RecordToJS } from '~types/index';
 
 interface Shared {
   id: string;
@@ -28,6 +28,7 @@ const defaultValues: DefaultValues<Shared> = {
   unread: true,
 };
 
-export class InboxItemRecord extends Record<Shared>(defaultValues) {}
+export class InboxItemRecord extends Record<Shared>(defaultValues)
+  implements RecordToJS<InboxItemType> {}
 
 export const InboxItem = (p: Shared) => new InboxItemRecord(p);

@@ -1,6 +1,6 @@
 import { Record } from 'immutable';
 
-import { DefaultValues } from '~types/index';
+import { DefaultValues, RecordToJS } from '~types/index';
 
 export type TaskMetadataRecordProps = Readonly<{
   commentsStoreAddress: string;
@@ -12,9 +12,9 @@ const defaultValues: DefaultValues<TaskMetadataRecordProps> = {
   taskStoreAddress: undefined,
 };
 
-export class TaskMetadataRecord extends Record<TaskMetadataRecordProps>(
-  defaultValues,
-) {}
+export class TaskMetadataRecord
+  extends Record<TaskMetadataRecordProps>(defaultValues)
+  implements RecordToJS<TaskMetadataRecordProps> {}
 
 export const TaskMetadata = (p: TaskMetadataRecordProps) =>
   new TaskMetadataRecord(p);

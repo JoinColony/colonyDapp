@@ -1,7 +1,6 @@
 import { MessageDescriptor } from 'react-intl';
 import React, { useCallback } from 'react';
 
-import { UserType } from '~immutable/index';
 import Heading from '~core/Heading';
 import { userDidClaimProfile } from '../../../users/checks';
 import { currentUserSelector } from '../../../users/selectors';
@@ -86,7 +85,7 @@ const formatGeneralEntry = (values, { valueKey }) => (
 );
 
 const CardRow = ({ cardOptions, values }: CardProps) => {
-  const currentUser: UserType = useSelector(currentUserSelector);
+  const currentUser = useSelector(currentUserSelector);
 
   const getHeadingPreviewText = useCallback(
     option => {

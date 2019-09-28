@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { TaskCommentType, UserType } from '~immutable/index';
+import { TaskCommentType } from '~immutable/index';
 
 import { PreserveLinebreaks } from '~utils/components';
 import ExternalLink from '~core/ExternalLink';
@@ -44,7 +44,7 @@ const TaskFeedComment = ({
 
   const isCurrentUser = authorAddress === walletAddress;
 
-  const { data: creator } = useDataSubscriber<UserType>(
+  const { data: creator } = useDataSubscriber(
     userSubscriber,
     [authorAddress],
     [authorAddress],

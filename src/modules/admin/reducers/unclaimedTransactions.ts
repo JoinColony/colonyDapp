@@ -12,7 +12,10 @@ import { AdminUnclaimedTransactionsState } from '../state/index';
 
 const colonyUnclaimedTransactionsReducer: ReducerType<
   AdminUnclaimedTransactionsState
-> = (state = ImmutableMap(), action): AdminUnclaimedTransactionsState => {
+> = (
+  state = ImmutableMap() as AdminUnclaimedTransactionsState,
+  action,
+): AdminUnclaimedTransactionsState => {
   switch (action.type) {
     case ActionTypes.COLONY_UNCLAIMED_TRANSACTIONS_FETCH_SUCCESS: {
       const {
@@ -34,6 +37,7 @@ const colonyUnclaimedTransactionsReducer: ReducerType<
 export default withFetchableDataMap<
   AdminUnclaimedTransactionsState,
   ContractTransactionRecord
->(ActionTypes.COLONY_UNCLAIMED_TRANSACTIONS_FETCH, ImmutableMap())(
-  colonyUnclaimedTransactionsReducer,
-);
+>(
+  ActionTypes.COLONY_UNCLAIMED_TRANSACTIONS_FETCH,
+  ImmutableMap() as AdminUnclaimedTransactionsState,
+)(colonyUnclaimedTransactionsReducer);

@@ -7,7 +7,7 @@ import { withFetchableDataMap } from '~utils/reducers';
 import { ColoniesMap } from '../state/index';
 
 const userColoniesReducer: ReducerType<ColoniesMap> = (
-  state = ImmutableMap(),
+  state = ImmutableMap() as ColoniesMap,
   action,
 ) => {
   switch (action.type) {
@@ -40,5 +40,5 @@ export default withFetchableDataMap<ColoniesMap, Address[]>(
     ActionTypes.USER_SUBSCRIBED_COLONIES_FETCH,
     ActionTypes.USER_SUBSCRIBED_COLONIES_SUB_START,
   ]),
-  ImmutableMap(),
+  ImmutableMap() as ColoniesMap,
 )(userColoniesReducer);

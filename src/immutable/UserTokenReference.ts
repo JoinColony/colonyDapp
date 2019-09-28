@@ -1,13 +1,13 @@
 import BigNumber from 'bn.js';
 import { Record } from 'immutable';
 
-import { Address, DefaultValues } from '~types/index';
+import { Address, DefaultValues, RecordToJS } from '~types/index';
 
-type Shared = {
+interface Shared {
   address: Address;
   balance?: BigNumber;
   iconHash?: string;
-};
+}
 
 export type UserTokenReferenceType = Readonly<Shared>;
 
@@ -17,7 +17,8 @@ const defaultValues: DefaultValues<Shared> = {
   iconHash: undefined,
 };
 
-export class UserTokenReferenceRecord extends Record<Shared>(defaultValues) {}
+export class UserTokenReferenceRecord extends Record<Shared>(defaultValues)
+  implements RecordToJS<UserTokenReferenceType> {}
 
 export const UserTokenReference = (p: Shared) =>
   new UserTokenReferenceRecord(p);

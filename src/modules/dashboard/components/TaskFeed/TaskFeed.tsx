@@ -3,11 +3,7 @@ import { defineMessages, FormattedMessage } from 'react-intl';
 import { EventTypes } from '~data/constants';
 
 import { Address } from '~types/index';
-import {
-  TaskCommentType,
-  TaskDraftId,
-  TaskFeedItemType,
-} from '~immutable/index';
+import { TaskCommentType, TaskDraftId } from '~immutable/index';
 import { SpinnerLoader } from '~core/Preloaders';
 import { useDataSubscriber } from '~utils/hooks';
 import TaskFeedCompleteInfo from './TaskFeedCompleteInfo';
@@ -48,7 +44,7 @@ const TaskFeed = ({ colonyAddress, draftId }: Props) => {
   const {
     data: feedItems,
     isFetching: isFetchingFeedItems,
-  } = useDataSubscriber<TaskFeedItemType[]>(
+  } = useDataSubscriber(
     taskFeedItemsSubscriber,
     [draftId],
     [colonyAddress, draftId],

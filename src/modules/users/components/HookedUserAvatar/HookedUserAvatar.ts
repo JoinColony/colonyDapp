@@ -16,7 +16,7 @@ export default withHooks<
   };
   const { fetchUser } = hookParams || { fetchUser: true };
   if (fetchUser) {
-    const { data: fetchedUser } = useDataSubscriber<UserType>(
+    const { data: fetchedUser } = useDataSubscriber(
       userSubscriber,
       [address],
       [address],
@@ -24,9 +24,9 @@ export default withHooks<
     result.user = fetchedUser as UserType;
   }
   const avatarHash = result.user ? result.user.profile.avatarHash : undefined;
-  const { data: avatarURL } = useDataFetcher<string>(
+  const { data: avatarURL } = useDataFetcher(
     ipfsDataFetcher,
-    [avatarHash],
+    [avatarHash as string], // Technically a bug
     [avatarHash],
   );
   result.avatarURL = avatarURL;
