@@ -2,7 +2,7 @@ import React, { useCallback } from 'react';
 import { defineMessages } from 'react-intl';
 
 import { Address } from '~types/index';
-import { UserType, TaskType, TaskPayoutType } from '~immutable/index';
+import { UserType, TaskPayoutType } from '~immutable/index';
 import { mergePayload } from '~utils/actions';
 import Assignment from '~core/Assignment';
 import Button from '~core/Button';
@@ -47,7 +47,7 @@ const TaskInviteDialog = ({
   },
   currentUser,
 }: Props) => {
-  const { data: taskData } = useDataSubscriber<TaskType>(
+  const { data: taskData } = useDataSubscriber(
     taskSubscriber,
     [draftId],
     [colonyAddress || undefined, draftId],

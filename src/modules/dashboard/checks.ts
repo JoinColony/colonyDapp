@@ -6,11 +6,11 @@ import { isFounder, canAdminister } from '../users/checks';
 /*
  * Colony
  */
-export const isInRecoveryMode = (colony: ColonyType | null) =>
+export const isInRecoveryMode = (colony: ColonyType | undefined) =>
   !!(colony && colony.inRecoveryMode);
 
 export const canBeUpgraded = (
-  colony: ColonyType | null,
+  colony: ColonyType | undefined,
   networkVersion: number | null,
 ) =>
   colony && colony.version && networkVersion && networkVersion > colony.version;
@@ -23,7 +23,7 @@ export const canBeUpgraded = (
  * @todo Wire task payouts.
  */
 export const didClaimPayout = (
-  taskUser: TaskUserType | null,
+  taskUser: TaskUserType | undefined,
   userAddress: Address,
 ) => taskUser && taskUser.didClaimPayout && taskUser.address === userAddress;
 

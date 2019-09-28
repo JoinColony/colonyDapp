@@ -5,6 +5,8 @@ export * from './keyTypes';
 export * from './TransactionReceipt';
 export * from './strings';
 export * from './roles';
+export * from './DefaultValues';
+export * from './RecordToJS';
 
 export type ColonyRole =
   | 'ADMINISTRATION'
@@ -26,5 +28,3 @@ export type ExcludesNull = <T>(x: T | null) => x is T;
 export type RemoveFirstFromTuple<T extends any[]> = T['length'] extends 0
   ? []
   : (((...b: T) => void) extends (a, ...b: infer I) => void ? I : []);
-
-export * from './DefaultValues';

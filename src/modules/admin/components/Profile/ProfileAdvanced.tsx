@@ -2,16 +2,14 @@ import React from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 
 import { ColonyType } from '~immutable/index';
-import { useSelector, useUserDomainRoles } from '~utils/hooks';
+import { useDataFetcher, useSelector } from '~utils/hooks';
 import { ActionTypes } from '~redux/index';
 import { DialogActionButton } from '~core/Button';
 import Heading from '~core/Heading';
 import ExternalLink from '~core/ExternalLink';
-import { ROOT_DOMAIN } from '../../../core/constants';
 import { networkVersionSelector } from '../../../core/selectors';
 import { canEnterRecoveryMode } from '../../../users/checks';
 import { canBeUpgraded, isInRecoveryMode } from '../../../dashboard/checks';
-import { walletAddressSelector } from '../../../users/selectors';
 
 import styles from './ProfileAdvanced.css';
 
@@ -94,12 +92,15 @@ const ProfileAdvanced = ({
   colony: { colonyAddress, id, version, canUnlockNativeToken },
   colony,
 }: Props) => {
-  const walletAddress = useSelector(walletAddressSelector);
   const {
-    isFetching: isFetchingRoles,
-    data: roles,
-    error: userRolesError,
-  } = useUserDomainRoles(colonyAddress, ROOT_DOMAIN, walletAddress);
+    isFetching: isFetchingUserPermissions,
+    data: permissions,
+    error: userPermissionsError,
+  } = useDataFetcher(
+    currentUserColonyPermissionsFetcher,
+    [colonyAddress],
+    [colonyAddress],
+  );
 
   const networkVersion = useSelector(networkVersionSelector);
 
@@ -174,11 +175,11 @@ const ProfileAdvanced = ({
           success={ActionTypes.COLONY_RECOVERY_MODE_ENTER_SUCCESS}
           error={ActionTypes.COLONY_RECOVERY_MODE_ENTER_ERROR}
           values={{ colonyAddress }}
-          loading={isFetchingRoles}
+          loading={isFetchingUserPermissions}
           disabled={
-            !!userRolesError ||
+            !!userPermissionsError ||
             isInRecoveryMode(colony) ||
-            !canEnterRecoveryMode(roles)
+            !canEnterRecoveryMode(permissions)
           }
         />
       </section>

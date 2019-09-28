@@ -1,6 +1,6 @@
 import { Record } from 'immutable';
 
-import { Address, DefaultValues } from '~types/index';
+import { Address, DefaultValues, RecordToJS } from '~types/index';
 
 import {
   TaskCommentMetaRecord,
@@ -33,6 +33,6 @@ const defaultValues: DefaultValues<TaskCommentContentRecordProps> = {
   timestamp: new Date(),
 };
 
-export class TaskCommentContent extends Record<TaskCommentContentRecordProps>(
-  defaultValues,
-) {}
+export class TaskCommentContent
+  extends Record<TaskCommentContentRecordProps>(defaultValues)
+  implements RecordToJS<TaskCommentContentType> {}

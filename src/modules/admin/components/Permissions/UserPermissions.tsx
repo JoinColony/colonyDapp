@@ -18,7 +18,7 @@ interface Props {
 const displayName = 'admin.Permissions.UserPermissions';
 
 const UserPermissions = ({ colonyAddress, domainId, userAddress }: Props) => {
-  const roles: Set<ColonyRoles> = useSelector(inheritedRolesSelector, [
+  const roles = useSelector(inheritedRolesSelector, [
     colonyAddress,
     domainId,
     userAddress,
@@ -26,7 +26,7 @@ const UserPermissions = ({ colonyAddress, domainId, userAddress }: Props) => {
 
   const sortedRoles: ColonyRoles[] = useMemo(
     () =>
-      [...roles]
+      [...(roles || [])]
         .filter(
           role =>
             // Don't display ARCHITECTURE_SUBDOMAIN in listed roles

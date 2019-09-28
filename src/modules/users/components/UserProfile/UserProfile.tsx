@@ -1,7 +1,6 @@
 import React from 'react';
 import { Redirect } from 'react-router';
 
-import { UserType } from '~immutable/index';
 import { NOT_FOUND_ROUTE } from '~routes/index';
 import { useDataSubscriber } from '~utils/hooks';
 import { userSubscriber } from '../../subscribers';
@@ -25,9 +24,11 @@ const UserProfile = ({
     username,
   );
 
-  const { error: userError, data: user, isFetching } = useDataSubscriber<
-    UserType
-  >(userSubscriber, [userAddress], [userAddress]);
+  const { error: userError, data: user, isFetching } = useDataSubscriber(
+    userSubscriber,
+    [userAddress as string],
+    [userAddress],
+  );
 
   // Sometimes userAddress is not defined (because it is being fetched). Only if it *is* defined we should care about the error
   if (userAddressError || (userAddress && userError)) {

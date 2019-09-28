@@ -1,8 +1,4 @@
-import {
-  ColonyType,
-  ColonyTokenReferenceType,
-  TokenType,
-} from '~immutable/index';
+import { ColonyTokenReferenceType, TokenType } from '~immutable/index';
 import { Address } from '~types/index';
 import { useDataSubscriber, useSelector } from '~utils/hooks';
 import { colonySubscriber } from '../subscribers';
@@ -14,23 +10,21 @@ import {
 export const useColonyTokens = (
   colonyAddress: Address | null,
 ): [ColonyTokenReferenceType[] | null, TokenType[] | null] => {
-  const { data: fetchedColony } = useDataSubscriber<ColonyType>(
+  const { data: fetchedColony } = useDataSubscriber(
     colonySubscriber,
-    [colonyAddress],
+    [colonyAddress as string],
     [colonyAddress],
   );
   const { colonyAddress: fetchedColonyAddress = undefined } =
     fetchedColony || {};
 
-  const colonyTokenReferences: ColonyTokenReferenceType[] = useSelector(
-    colonyTokensSelector,
-    [fetchedColonyAddress],
-  );
+  const colonyTokenReferences = useSelector(colonyTokensSelector, [
+    fetchedColonyAddress,
+  ]);
 
-  const availableTokens: TokenType[] = useSelector(
-    allFromColonyTokensSelector,
-    [colonyTokenReferences],
-  );
+  const availableTokens = useSelector(allFromColonyTokensSelector, [
+    colonyTokenReferences,
+  ]);
 
   return [colonyTokenReferences, availableTokens];
 };

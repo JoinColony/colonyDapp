@@ -78,7 +78,7 @@ const mapTaskFeedItemEvent = (
   );
 
 const taskFeedItemsReducer: ReducerType<TaskFeedItemsMap> = (
-  state = ImmutableMap(),
+  state = ImmutableMap() as TaskFeedItemsMap,
   action,
 ) => {
   switch (action.type) {
@@ -100,5 +100,5 @@ const taskFeedItemsReducer: ReducerType<TaskFeedItemsMap> = (
 
 export default withFetchableDataMap(
   ActionTypes.TASK_FEED_ITEMS_SUB_START,
-  ImmutableMap(),
+  ImmutableMap() as TaskFeedItemsMap,
 )(taskFeedItemsReducer);

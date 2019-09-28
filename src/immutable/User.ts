@@ -1,6 +1,6 @@
 import { List, Record } from 'immutable';
 
-import { DefaultValues } from '~types/index';
+import { DefaultValues, RecordToJS } from '~types/index';
 
 import { UserProfileType, UserProfileRecord } from './UserProfile';
 import { InboxItemRecord, InboxItemType } from './InboxItem';
@@ -11,7 +11,7 @@ interface UserRecordProps {
 }
 
 export type UserType = Readonly<{
-  activities: InboxItemType[];
+  activities?: InboxItemType[];
   profile: UserProfileType;
 }>;
 
@@ -20,6 +20,7 @@ const defaultValues: DefaultValues<UserRecordProps> = {
   activities: List(),
 };
 
-export class UserRecord extends Record<UserRecordProps>(defaultValues) {}
+export class UserRecord extends Record<UserRecordProps>(defaultValues)
+  implements RecordToJS<UserType> {}
 
 export const User = (p: UserRecordProps) => new UserRecord(p);

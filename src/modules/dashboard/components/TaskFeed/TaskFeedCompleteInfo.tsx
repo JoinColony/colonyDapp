@@ -4,7 +4,6 @@ import BigNumber from 'bn.js';
 
 import { EventTypes } from '~data/constants';
 import { Event } from '~data/types';
-import { TokenType } from '~immutable/index';
 import Numeral from '~core/Numeral';
 import { SpinnerLoader } from '~core/Preloaders';
 import TimeRelative from '~core/TimeRelative';
@@ -62,9 +61,11 @@ const TaskFeedCompleteInfo = ({
 }: Props) => {
   const user = useSelector(friendlyUsernameSelector, [workerAddress]);
   const networkFeeInverse = useSelector(networkFeeInverseSelector);
-  const { data: token, isFetching: isFetchingToken } = useDataFetcher<
-    TokenType
-  >(tokenFetcher, [paymentTokenAddress], [paymentTokenAddress]);
+  const { data: token, isFetching: isFetchingToken } = useDataFetcher(
+    tokenFetcher,
+    [paymentTokenAddress as string], // Technically a bug, shouldn't need type override
+    [paymentTokenAddress],
+  );
   const { decimals = 18, symbol = undefined } = token || {};
   const metaColonyFee = useMemo(() => {
     if (new BigNumber(amountPaid).isZero() || networkFeeInverse === 1) {

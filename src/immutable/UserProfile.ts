@@ -1,6 +1,6 @@
 import { Record } from 'immutable';
 
-import { Address, DefaultValues } from '~types/index';
+import { Address, DefaultValues, RecordToJS } from '~types/index';
 
 interface Shared {
   avatarHash?: string | null;
@@ -30,6 +30,7 @@ const defaultValues: DefaultValues<Shared> = {
   metadataStoreAddress: undefined,
 };
 
-export class UserProfileRecord extends Record<Shared>(defaultValues) {}
+export class UserProfileRecord extends Record<Shared>(defaultValues)
+  implements RecordToJS<UserProfileType> {}
 
 export const UserProfile = (p: Shared) => new UserProfileRecord(p);

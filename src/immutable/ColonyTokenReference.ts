@@ -1,29 +1,42 @@
 import BigNumber from 'bn.js';
 import { Map as ImmutableMap, Record } from 'immutable';
 
-import { Address, DefaultValues } from '~types/index';
+import { Address, DefaultValues, RecordToJS } from '~types/index';
 
-type Shared = {
+interface Shared {
   address: Address;
-  balances?: {
-    [domainId: number]: BigNumber;
-  };
   isExternal?: boolean;
   isNative?: boolean;
   iconHash?: string;
+}
+
+interface ColonyTokenReferenceBalancesObject {
+  [domainId: string]: BigNumber;
+}
+
+type ColonyTokenReferenceBalancesMap = ImmutableMap<string, BigNumber> & {
+  toJS(): ColonyTokenReferenceBalancesObject;
 };
 
-export type ColonyTokenReferenceType = Readonly<Shared>;
+export interface ColonyTokenReferenceType extends Readonly<Shared> {
+  balances?: ColonyTokenReferenceBalancesObject;
+}
 
-const defaultValues: DefaultValues<Shared> = {
+interface ColonyTokenReferenceProps extends Shared {
+  balances?: ColonyTokenReferenceBalancesMap;
+}
+
+const defaultValues: DefaultValues<ColonyTokenReferenceProps> = {
   address: undefined,
-  balances: ImmutableMap(),
+  balances: ImmutableMap() as ColonyTokenReferenceBalancesMap,
   isExternal: undefined,
   isNative: undefined,
   iconHash: undefined,
 };
 
-export class ColonyTokenReferenceRecord extends Record<Shared>(defaultValues) {}
+export class ColonyTokenReferenceRecord
+  extends Record<ColonyTokenReferenceProps>(defaultValues)
+  implements RecordToJS<ColonyTokenReferenceType> {}
 
-export const ColonyTokenReference = (p: Shared) =>
+export const ColonyTokenReference = (p: ColonyTokenReferenceProps) =>
   new ColonyTokenReferenceRecord(p);

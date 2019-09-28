@@ -7,7 +7,7 @@ import { ActionTypes, ReducerType } from '~redux/index';
 import { IpfsDataType } from '../state/index';
 
 const ipfsDatasReducer: ReducerType<IpfsDataType> = (
-  state = ImmutableMap(),
+  state = ImmutableMap() as IpfsDataType,
   action,
 ) => {
   switch (action.type) {
@@ -25,5 +25,5 @@ const ipfsDatasReducer: ReducerType<IpfsDataType> = (
 
 export default withFetchableDataMap<IpfsDataType, string>(
   ActionTypes.IPFS_DATA_FETCH,
-  ImmutableMap(),
+  ImmutableMap() as IpfsDataType,
 )(ipfsDatasReducer);

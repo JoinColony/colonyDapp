@@ -11,7 +11,7 @@ const colonyContext = [
 export const getDomain: Query<
   ColonyClient,
   { colonyAddress: Address },
-  { domainId: number },
+  { domainId: string },
   { skillId: number; potId: number }
 > = {
   name: 'getDomain',
@@ -21,6 +21,6 @@ export const getDomain: Query<
     { colonyAddress },
   ) => colonyManager.getColonyClient(colonyAddress),
   async execute(colonyClient, { domainId }) {
-    return colonyClient.getDomain.call({ domainId });
+    return colonyClient.getDomain.call({ domainId: parseInt(domainId, 10) });
   },
 };

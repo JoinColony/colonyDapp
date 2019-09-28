@@ -81,7 +81,7 @@ export const applyDomainRoleChanges = (
   );
 };
 
-export const Domain = ({ roles, ...props }: DomainType) =>
+export const Domain = ({ roles, ...props }: DomainType): DomainRecord =>
   new DomainRecord({
     ...props,
     roles: rolesFromJS(roles),
