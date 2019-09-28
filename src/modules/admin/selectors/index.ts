@@ -6,6 +6,7 @@ import {
   ADMIN_TRANSACTIONS,
   ADMIN_UNCLAIMED_TRANSACTIONS,
 } from '../constants';
+import { FetchableContractTransactionList } from '../state';
 
 /*
  * Input selectors
@@ -13,9 +14,11 @@ import {
 export const colonyTransactionsSelector = (
   state: RootStateRecord,
   colonyAddress: Address,
-) => state.getIn([ns, ADMIN_TRANSACTIONS, colonyAddress]);
+): FetchableContractTransactionList =>
+  state.getIn([ns, ADMIN_TRANSACTIONS, colonyAddress]);
 
 export const colonyUnclaimedTransactionsSelector = (
   state: RootStateRecord,
   colonyAddress: Address,
-) => state.getIn([ns, ADMIN_UNCLAIMED_TRANSACTIONS, colonyAddress]);
+): FetchableContractTransactionList =>
+  state.getIn([ns, ADMIN_UNCLAIMED_TRANSACTIONS, colonyAddress]);

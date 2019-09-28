@@ -72,7 +72,7 @@ const Permissions = ({ colonyAddress, openDialog }: Props) => {
   const {
     data: domainsObj = {},
     isFetching: isFetchingDomains,
-  } = useDataFetcher<Record<string, DomainType>>(
+  } = useDataFetcher(
     domainsFetcher,
     [colonyAddress],
     [colonyAddress, { fetchRoles: true }],
@@ -100,7 +100,7 @@ const Permissions = ({ colonyAddress, openDialog }: Props) => {
     [openDialog, colonyAddress, selectedDomainId],
   );
 
-  const selectedDomain: DomainType | null = useSelector(domainSelector, [
+  const selectedDomain = useSelector(domainSelector, [
     colonyAddress,
     selectedDomainId,
   ]);

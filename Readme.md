@@ -119,9 +119,12 @@ yarn stylelint
 
 ## Type checking
 
-Type checking using `flow` can be accessed using this npm script:
+Type checking using TypeScript can be accessed using this npm script:
 ```bash
-yarn flow
+yarn typecheck
+
+# Or, with file watching (or any other `tsc optional arguments`)
+yarn typecheck --watch
 ```
 
 ## Testing

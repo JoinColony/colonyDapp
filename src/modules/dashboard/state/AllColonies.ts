@@ -1,21 +1,32 @@
 import { Map as ImmutableMap, Record } from 'immutable';
 
-import { Address, DefaultValues, ENSName } from '~types/index';
-import { ColonyRecord, FetchableDataRecord } from '~immutable/index';
+import { Address, DefaultValues, RecordToJS } from '~types/index';
+import {
+  ColonyRecord,
+  ColonyType,
+  FetchableDataRecord,
+  FetchableDataType,
+} from '~immutable/index';
 
 import { DASHBOARD_COLONY_NAMES, DASHBOARD_COLONIES } from '../constants';
 
-export type AllColoniesMap = ImmutableMap<
-  ENSName,
-  FetchableDataRecord<ColonyRecord>
->;
+type AllColoniesObject = {
+  [colonyAddress: string]: FetchableDataType<ColonyType>;
+};
 
-export type AllColonyAvatarsMap = ImmutableMap<string, string>;
+export type AllColoniesMap = ImmutableMap<
+  Address,
+  FetchableDataRecord<ColonyRecord>
+> & { toJS(): AllColoniesObject };
+
+type AllColonyNamesObject = {
+  [nameOrAddress: string]: FetchableDataType<string>;
+};
 
 export type AllColonyNamesMap = ImmutableMap<
-  Address,
-  FetchableDataRecord<ENSName>
->;
+  string,
+  FetchableDataRecord<string>
+> & { toJS(): AllColonyNamesObject };
 
 export interface AllColoniesProps {
   [DASHBOARD_COLONIES]: AllColoniesMap;
@@ -23,10 +34,13 @@ export interface AllColoniesProps {
 }
 
 const defaultValues: DefaultValues<AllColoniesProps> = {
-  [DASHBOARD_COLONIES]: ImmutableMap(),
-  [DASHBOARD_COLONY_NAMES]: ImmutableMap(),
+  [DASHBOARD_COLONIES]: ImmutableMap() as AllColoniesMap,
+  [DASHBOARD_COLONY_NAMES]: ImmutableMap() as AllColonyNamesMap,
 };
 
-export class AllColoniesRecord extends Record<AllColoniesProps>(
-  defaultValues,
-) {}
+export class AllColoniesRecord extends Record<AllColoniesProps>(defaultValues)
+  implements
+    RecordToJS<{
+      [DASHBOARD_COLONIES]: AllColoniesObject;
+      [DASHBOARD_COLONY_NAMES]: AllColonyNamesObject;
+    }> {}

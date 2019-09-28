@@ -1,10 +1,11 @@
 import { createSelector } from 'reselect';
-import { Map as ImmutableMap } from 'immutable';
+import { Map as ImmutableMap, List } from 'immutable';
 
 import { TransactionRecord, TRANSACTION_STATUSES } from '~immutable/index';
 
 import { walletAddressSelector } from '../../users/selectors';
 import { isMultisig, isPendingMultisig } from '../checks';
+import { TransactionsListMap } from '../state';
 import { messageGroups } from './messages';
 import { RootStateRecord } from '../../state';
 import {
@@ -24,11 +25,14 @@ const createdAtDesc = (
 /*
  * Transactions selectors.
  */
-export const oneTransaction = (state: RootStateRecord, id: string) =>
+export const oneTransaction = (
+  state: RootStateRecord,
+  id: string,
+): TransactionRecord | undefined =>
   state.getIn([ns, CORE_TRANSACTIONS, CORE_TRANSACTIONS_LIST, id]);
 
 export const allTransactions = createSelector(
-  (state: RootStateRecord) =>
+  (state: RootStateRecord): TransactionsListMap =>
     state.getIn([ns, CORE_TRANSACTIONS, CORE_TRANSACTIONS_LIST]),
   walletAddressSelector,
   (transactions, walletAddress) =>
@@ -54,15 +58,15 @@ export const groupedTransactions = createSelector(
       // For proper typing we create single value arrays for all of the
       // single transactions.
       // The output of allTransactions always has a string id in group.
-      .flatMap((value, key) =>
+      .flatMap((value: List<TransactionRecord>, key: string) =>
         !key ? value.groupBy(tx => tx.id) : ImmutableMap({ [key]: value }),
       )
       .toList()
       // Finally sort by the createdAt field in the first transaction of the group
       .sortBy(
-        group => group.first().createdAt,
+        group => (group.first() as TransactionRecord).createdAt,
         // Descending createdAt order (most recent groups first)
-        (createdAtA, createdAtB) => createdAtB - createdAtA,
+        (createdAtA, createdAtB) => Number(createdAtB) - Number(createdAtA),
       ),
 );
 
@@ -100,8 +104,8 @@ export const groupedTransactionsAndMessages = createSelector(
        * at the top and messages at the bottom
        */
       .sortBy(
-        group => group.first().createdAt,
+        group => (group.first() as TransactionRecord).createdAt,
         // Descending createdAt order (most recent groups first)
-        (createdAtA, createdAtB) => createdAtB - createdAtA,
+        (createdAtA, createdAtB) => Number(createdAtB) - Number(createdAtA),
       ),
 );

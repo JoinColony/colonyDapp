@@ -1,6 +1,6 @@
 import { Record, List } from 'immutable';
 
-import { DefaultValues } from '~types/index';
+import { DefaultValues, RecordToJS } from '~types/index';
 
 type TaskCommentMetaRecordProps = {
   mentions?: List<string>;
@@ -14,9 +14,9 @@ const defaultValues: DefaultValues<TaskCommentMetaRecordProps> = {
   mentions: List(),
 };
 
-export class TaskCommentMetaRecord extends Record<TaskCommentMetaRecordProps>(
-  defaultValues,
-) {}
+export class TaskCommentMetaRecord
+  extends Record<TaskCommentMetaRecordProps>(defaultValues)
+  implements RecordToJS<TaskCommentMetaType> {}
 
 export const TaskCommentMeta = (p?: TaskCommentMetaRecordProps) =>
   new TaskCommentMetaRecord(p);

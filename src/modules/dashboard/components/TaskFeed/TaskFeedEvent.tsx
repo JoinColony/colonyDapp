@@ -4,7 +4,6 @@ import formatDate from 'sugar-date/date/format';
 import { TaskEvents } from '~data/types/TaskEvents';
 
 import { Address } from '~types/index';
-import { TokenType } from '~immutable/index';
 import TimeRelative from '~core/TimeRelative';
 import Numeral from '~core/Numeral';
 import InfoPopover from '~core/InfoPopover';
@@ -133,9 +132,9 @@ const TaskFeedEventDomainSet = ({
   },
   intl: { formatMessage },
 }: any) => {
-  const domain = useSelector(domainSelector, [colonyAddress, domainId]) || {};
+  const domain = useSelector(domainSelector, [colonyAddress, domainId]);
   const domainName =
-    domainId === 1 ? formatMessage(MSG.rootDomain) : domain.name;
+    domainId === '1' ? formatMessage(MSG.rootDomain) : domain && domain.name;
   return (
     <FormattedMessage
       {...MSG.domainSet}
@@ -193,7 +192,7 @@ const TaskFeedEventPayoutSet = ({
     payload: { amount, token: tokenAddress },
   },
 }: any) => {
-  const { data: token } = useDataFetcher<TokenType>(
+  const { data: token } = useDataFetcher(
     tokenFetcher,
     [tokenAddress],
     [tokenAddress],

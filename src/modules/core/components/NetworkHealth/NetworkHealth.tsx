@@ -7,7 +7,6 @@ import {
 } from 'react-intl';
 import { useDispatch } from 'redux-react-hook';
 
-import { ConnectionType } from '~immutable/index';
 import { ActionTypes } from '~redux/index';
 import Popover from '~core/Popover';
 import { useSelector } from '~utils/hooks';
@@ -65,7 +64,7 @@ const NetworkHealth = ({
     };
   }, [dispatch]);
 
-  const connection: ConnectionType = useSelector(connectionSelector);
+  const connection = useSelector(connectionSelector);
   const networkItems = getNetworkHealth(connection);
   const busyItems = getNetworkBusyState(connection);
 

@@ -1,7 +1,6 @@
 import React from 'react';
 
 import { Address } from '~types/index';
-import { ContractTransactionType } from '~immutable/index';
 
 import { useDataFetcher } from '~utils/hooks';
 import {
@@ -22,7 +21,7 @@ const Transactions = ({ colonyAddress }: Props) => {
     data: transactions,
     isFetching: isFetchingTransactions,
     // eslint-disable-next-line prettier/prettier
-  } = useDataFetcher<ContractTransactionType[]>(
+  } = useDataFetcher(
     colonyTransactionsFetcher,
     [colonyAddress],
     [colonyAddress],
@@ -31,7 +30,7 @@ const Transactions = ({ colonyAddress }: Props) => {
   const {
     data: unclaimedTransactions,
     isFetching: isFetchingUnclaimedTransactions,
-  } = useDataFetcher<ContractTransactionType[]>(
+  } = useDataFetcher(
     colonyUnclaimedTransactionsFetcher,
     [colonyAddress],
     [colonyAddress],

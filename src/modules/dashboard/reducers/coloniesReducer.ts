@@ -1,4 +1,5 @@
 import { Map as ImmutableMap, fromJS } from 'immutable';
+import BigNumber from 'bn.js';
 
 import {
   Colony,
@@ -20,13 +21,13 @@ import { AllColoniesMap } from '../state/index';
 const balancesMapFromObject = balances =>
   ImmutableMap(
     Object.entries(balances).map(([domainId, balance]) => [
-      parseInt(domainId, 10),
-      balance,
+      domainId,
+      balance as BigNumber,
     ]) || [],
-  );
+  ) as ColonyTokenReferenceRecord['balances'];
 
 const coloniesReducer: ReducerType<AllColoniesMap> = (
-  state = ImmutableMap(),
+  state = ImmutableMap() as AllColoniesMap,
   action,
 ) => {
   switch (action.type) {
@@ -153,5 +154,5 @@ const coloniesReducer: ReducerType<AllColoniesMap> = (
 
 export default withFetchableDataMap<AllColoniesMap, ColonyRecord>(
   new Set([ActionTypes.COLONY_FETCH, ActionTypes.COLONY_SUB_START]),
-  ImmutableMap(),
+  ImmutableMap() as AllColoniesMap,
 )(coloniesReducer);

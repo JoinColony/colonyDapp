@@ -6,8 +6,7 @@ import Link from '~core/Link';
 import { SpinnerLoader } from '~core/Preloaders';
 import HookedColonyAvatar from '~dashboard/HookedColonyAvatar';
 import { log } from '~utils/debug';
-import { ColonyProps, ColonyType } from '~immutable/index';
-import { ENSName } from '~types/index';
+import { ColonyProps } from '~immutable/index';
 
 import { colonyNameFetcher } from '../../fetchers';
 import styles from './ColonyGridItem.css';
@@ -19,14 +18,16 @@ type Props = ColonyProps<'colonyAddress'>;
 const ColonyAvatar = HookedColonyAvatar({ fetchColony: false });
 
 const ColonyGridItem = ({ colonyAddress }: Props) => {
-  const { isFetching, data: colony } = useDataSubscriber<ColonyType>(
+  const { isFetching, data: colony } = useDataSubscriber(
     colonySubscriber,
     [colonyAddress],
     [colonyAddress],
   );
-  const { data: colonyName, isFetching: isFetchingColonyName } = useDataFetcher<
-    ENSName
-  >(colonyNameFetcher, [colonyAddress], [colonyAddress]);
+  const { data: colonyName, isFetching: isFetchingColonyName } = useDataFetcher(
+    colonyNameFetcher,
+    [colonyAddress],
+    [colonyAddress],
+  );
 
   if (!isFetchingColonyName && !colonyName) {
     log.error(`Could not find colony ENS name for address ${colonyAddress}`);

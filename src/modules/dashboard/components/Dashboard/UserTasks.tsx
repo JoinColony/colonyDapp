@@ -3,7 +3,6 @@ import { defineMessages, FormattedMessage } from 'react-intl';
 
 import { useDataFetcher } from '~utils/hooks';
 import { Address } from '~types/index';
-import { TaskDraftId } from '~immutable/index';
 import { SpinnerLoader } from '~core/Preloaders';
 import TaskList from '~dashboard/TaskList';
 import InitialTask, { InitialTaskType } from './InitialTask';
@@ -36,9 +35,11 @@ const UserTasks = ({
   walletAddress,
   filter: FilterComponent,
 }: Props) => {
-  const { isFetching: isFetchingTasks, data: draftIds } = useDataFetcher<
-    [Address, TaskDraftId][]
-  >(currentUserDraftIdsFetcher, [], []);
+  const { isFetching: isFetchingTasks, data: draftIds } = useDataFetcher(
+    currentUserDraftIdsFetcher,
+    [],
+    [],
+  );
 
   if (isFetchingTasks) {
     return <SpinnerLoader />;
