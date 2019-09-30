@@ -9,7 +9,6 @@ import { useSelector, useRoles } from '~utils/hooks';
 import TokenItem from './TokenItem';
 import { useColonyTokens } from '../../../hooks/useColonyTokens';
 import { canMoveTokens as canMoveTokensCheck } from '../../../../admin/checks';
-import { COLONY_TOTAL_BALANCE_DOMAIN_ID } from '../../../../admin/constants';
 import { currentUserSelector } from '../../../../users/selectors';
 
 import styles from './ColonyFunding.css';
@@ -44,7 +43,8 @@ const ColonyFunding = ({ colonyAddress, currentDomainId }: Props) => {
     [currentUserWalletAddress, roles],
   );
 
-  return currentDomainId === COLONY_TOTAL_BALANCE_DOMAIN_ID ? null : (
+  // hide for root domain
+  return currentDomainId === 0 ? null : (
     <div>
       <Heading appearance={{ size: 'normal', weight: 'bold' }}>
         <FormattedMessage {...MSG.title} />

@@ -37,7 +37,6 @@ import {
 import { currentUserColonyPermissionsFetcher } from '../../../users/fetchers';
 import { colonyAddressFetcher, domainsFetcher } from '../../fetchers';
 import { colonySubscriber } from '../../subscribers';
-import { COLONY_TOTAL_BALANCE_DOMAIN_ID } from '../../../admin/constants';
 import {
   canAdminister,
   canCreateTask as canCreateTaskCheck,
@@ -95,10 +94,6 @@ const MSG = defineMessages({
     id: 'dashboard.ColonyHome.recoverColonyCancelButton',
     defaultMessage: 'Nope! Take me back, please',
   },
-  root: {
-    id: 'root',
-    defaultMessage: 'root',
-  },
 });
 
 interface Props {
@@ -118,9 +113,7 @@ const ColonyHome = ({
   intl: { formatMessage },
 }: Props) => {
   const [filterOption, setFilterOption] = useState(TasksFilterOptions.ALL_OPEN);
-  const [filteredDomainId, setFilteredDomainId] = useState(
-    COLONY_TOTAL_BALANCE_DOMAIN_ID,
-  );
+  const [filteredDomainId, setFilteredDomainId] = useState(0);
   const [isTaskBeingCreated, setIsTaskBeingCreated] = useState(false);
   const [showRecoverOption, setRecoverOption] = useState(false);
 
@@ -191,7 +184,7 @@ const ColonyHome = ({
           }
           return accumulator;
         },
-        [formatMessage(MSG.root)],
+        [formatMessage({ id: 'domain.root' })],
       );
 
   const nativeTokenRef: ColonyTokenReferenceType | null = useSelector(
