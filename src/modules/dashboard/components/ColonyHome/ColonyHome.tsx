@@ -49,7 +49,7 @@ import {
 import ColonyFunding from './ColonyFunding';
 import ColonyMeta from './ColonyMeta';
 import TabContribute from './TabContribute';
-import TabTransactions from './TabTransactions';
+import Transactions from '~admin/Transactions';
 import styles from './ColonyHome.css';
 
 const MSG = defineMessages({
@@ -329,7 +329,7 @@ const ColonyHome = ({
             />
           </TabPanel>
           <TabPanel>
-            <TabTransactions colony={colony} />
+            <Transactions colonyAddress={colony.colonyAddress} />
           </TabPanel>
         </Tabs>
       </main>
