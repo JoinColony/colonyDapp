@@ -1,7 +1,9 @@
-import React, { useMemo } from 'react';
+import React, { useCallback, useMemo } from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 
 import Button from '~core/Button';
+import { DialogType } from '~core/Dialog';
+import withDialog from '~core/Dialog/withDialog';
 import Heading from '~core/Heading';
 import { Address } from '~types/index';
 import { useSelector, useRoles } from '~utils/hooks';
@@ -27,11 +29,16 @@ const MSG = defineMessages({
 interface Props {
   colonyAddress: Address;
   currentDomainId: number;
+  openDialog: (dialogName: string, dialogProps?: object) => DialogType;
 }
 
 const displayName = 'dashboard.ColonyHome.ColonyFunding';
 
-const ColonyFunding = ({ colonyAddress, currentDomainId }: Props) => {
+const ColonyFunding = ({
+  colonyAddress,
+  currentDomainId,
+  openDialog,
+}: Props) => {
   const [tokenReferences, tokens] = useColonyTokens(colonyAddress);
 
   const {
@@ -43,6 +50,15 @@ const ColonyFunding = ({ colonyAddress, currentDomainId }: Props) => {
     [currentUserWalletAddress, roles],
   );
 
+  const handleMoveTokens = useCallback(
+    () =>
+      openDialog('TokensMoveDialog', {
+        colonyAddress,
+        toDomain: currentDomainId,
+      }),
+    [openDialog, colonyAddress, currentDomainId],
+  );
+
   // hide for root domain
   return currentDomainId === 0 ? null : (
     <div>
@@ -50,7 +66,11 @@ const ColonyFunding = ({ colonyAddress, currentDomainId }: Props) => {
         <FormattedMessage {...MSG.title} />
         {canMoveTokens && (
           <span className={styles.fundingButton}>
-            <Button appearance={{ theme: 'blue' }} text={MSG.buttonFund} />
+            <Button
+              appearance={{ theme: 'blue' }}
+              onClick={handleMoveTokens}
+              text={MSG.buttonFund}
+            />
           </span>
         )}
       </Heading>
@@ -73,4 +93,4 @@ const ColonyFunding = ({ colonyAddress, currentDomainId }: Props) => {
 
 ColonyFunding.displayName = displayName;
 
-export default ColonyFunding;
+export default (withDialog() as any)(ColonyFunding);
