@@ -1,5 +1,6 @@
 .main {
   display: block;
+  cursor: pointer;
 }
 
 .delegate {
@@ -70,6 +71,10 @@
   bottom: 0;
   background-color: var(--primary);
   content: '';
+}
+
+.stateDisabled {
+  cursor: default;
 }
 
 .stateDisabled .checkbox {
