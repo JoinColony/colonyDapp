@@ -59,33 +59,6 @@ const MSG = defineMessages({
     id: 'core.ColonyPermissionEditDialog.permissionsLabel',
     defaultMessage: 'Permissions',
   },
-  roleDescription0: {
-    id: 'core.ColonyPermissionEditDialog.roleDescription0',
-    defaultMessage:
-      'The highest permission, control all aspects of running a colony.',
-  },
-  roleDescription1: {
-    id: 'core.ColonyPermissionEditDialog.roleDescription1',
-    defaultMessage: 'Create and manage new tasks.',
-  },
-  roleDescription2: {
-    id: 'core.ColonyPermissionEditDialog.roleDescription2',
-    defaultMessage:
-      // eslint-disable-next-line max-len
-      'Set the administration, funding, and architecture roles in any subdomain.',
-  },
-  roleDescription3: {
-    id: 'core.ColonyPermissionEditDialog.roleDescription3',
-    defaultMessage: 'Fund tasks and transfer funds between domains.',
-  },
-  roleDescription4: {
-    id: 'core.ColonyPermissionEditDialog.roleDescription4',
-    defaultMessage: 'Put the Colony into recovery mode.',
-  },
-  roleDescription5: {
-    id: 'core.ColonyPermissionEditDialog.roleDescription5',
-    defaultMessage: 'Coming soon...',
-  },
   search: {
     id: 'core.ColonyPermissionEditDialog.search',
     defaultMessage: 'Search for a user or paste a wallet address',
@@ -307,12 +280,11 @@ const ColonyPermissionEditDialog = ({
                 />
               </div>
               <InputLabel label={MSG.permissionsLabel} />
-              {availableRoles.map((role, idx) => (
+              {availableRoles.map(role => (
                 <div key={role} className={styles.permissionChoiceContainer}>
                   <PermissionCheckbox
                     disabled={!checkIfCanBeSet(role)}
                     role={role}
-                    roleDescription={MSG[`roleDescription${idx}`]}
                   />
                 </div>
               ))}

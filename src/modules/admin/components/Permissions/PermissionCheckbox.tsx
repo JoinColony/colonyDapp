@@ -4,16 +4,44 @@ import {
   FormattedMessage,
   injectIntl,
   IntlShape,
-  MessageDescriptor,
 } from 'react-intl';
+import camelcase from 'camelcase';
 
 import { Checkbox } from '~core/Fields';
 import Heading from '~core/Heading';
 import Popover from '~core/Popover';
+import { capitalize } from '~utils/strings';
 
 import styles from './PermissionCheckbox.css';
 
 const MSG = defineMessages({
+  roleDescriptionRoot: {
+    id: 'core.ColonyPermissionEditDialog.roleDescriptionRoot',
+    defaultMessage:
+      'The highest permission, control all aspects of running a colony.',
+  },
+  roleDescriptionAdministration: {
+    id: 'core.ColonyPermissionEditDialog.roleDescriptionAdministration',
+    defaultMessage: 'Create and manage new tasks.',
+  },
+  roleDescriptionArchitecture: {
+    id: 'core.ColonyPermissionEditDialog.roleDescriptionArchitecture',
+    defaultMessage:
+      // eslint-disable-next-line max-len
+      'Set the administration, funding, and architecture roles in any subdomain.',
+  },
+  roleDescriptionFunding: {
+    id: 'core.ColonyPermissionEditDialog.roleDescriptionFunding',
+    defaultMessage: 'Fund tasks and transfer funds between domains.',
+  },
+  roleDescriptionRecovery: {
+    id: 'core.ColonyPermissionEditDialog.roleDescriptionRecovery',
+    defaultMessage: 'Put the Colony into recovery mode.',
+  },
+  roleDescriptionArbitration: {
+    id: 'core.ColonyPermissionEditDialog.roleDescriptionArbitration',
+    defaultMessage: 'Coming soon...',
+  },
   tooltipNoPermissionsText: {
     id: 'core.Permissions.PermissionCheckbox.tooltipNoPermissionsText',
     defaultMessage: 'You do not have permission to set the {roleName} role.',
@@ -24,7 +52,6 @@ interface Props {
   disabled: boolean;
   intl: IntlShape;
   role: string;
-  roleDescription: MessageDescriptor;
 }
 
 const displayName = 'admin.Permissions.PermissionCheckbox';
@@ -33,9 +60,11 @@ const PermissionCheckbox = ({
   disabled,
   intl: { formatMessage },
   role,
-  roleDescription,
 }: Props) => {
   const roleNameMessage = { id: `role.${role.toLowerCase()}` };
+  const roleDescriptionMessage = MSG[
+    `roleDescription${capitalize(camelcase(role))}`
+  ] || { id: '', defaultMessage: '' };
   const checkboxContent = useMemo(
     () => (
       <Checkbox
@@ -49,11 +78,11 @@ const PermissionCheckbox = ({
             text={roleNameMessage}
             appearance={{ size: 'small', margin: 'none' }}
           />
-          <FormattedMessage {...roleDescription} />
+          <FormattedMessage {...roleDescriptionMessage} />
         </span>
       </Checkbox>
     ),
-    [disabled, role, roleDescription, roleNameMessage],
+    [disabled, role, roleDescriptionMessage, roleNameMessage],
   );
   return disabled ? (
     <Popover
