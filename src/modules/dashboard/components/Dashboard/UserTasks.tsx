@@ -61,12 +61,16 @@ const UserTasks = ({
   }
   return draftIds && draftIds.length ? (
     <>
-      {FilterComponent}
-      <TaskList
-        draftIds={draftIds}
-        filterOption={filterOption}
-        walletAddress={walletAddress}
-      />
+      {!!FilterComponent && (
+        <div className={styles.filter}>{FilterComponent}</div>
+      )}
+      <div className={styles.taskList}>
+        <TaskList
+          draftIds={draftIds}
+          filterOption={filterOption}
+          walletAddress={walletAddress}
+        />
+      </div>
     </>
   ) : (
     <p className={styles.emptyText}>
