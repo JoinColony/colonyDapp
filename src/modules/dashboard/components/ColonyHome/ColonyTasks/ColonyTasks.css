@@ -29,3 +29,8 @@
 .noTaskAddition {
   margin-top: 20px;
 }
+
+.taskList {
+  display: flex;
+  max-height: calc(100vh - 350px);
+}
