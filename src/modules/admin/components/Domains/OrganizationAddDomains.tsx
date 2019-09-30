@@ -65,6 +65,7 @@ const OrganizationAddDomains = ({ colonyAddress }: Props) => {
                 help={MSG.helpText}
                 label={MSG.labelAddDomain}
                 name="domainName"
+                formattingOptions={{ lowercase: true }}
               />
             </div>
             <div className={styles.submitButton}>

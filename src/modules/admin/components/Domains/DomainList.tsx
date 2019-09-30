@@ -46,7 +46,7 @@ const DomainList = ({
     <div className={styles.listWrapper}>
       <Table scrollable>
         <TableBody>
-          {domains ? (
+          {domains && (
             Object.keys(domains).map(domainId => (
               <DomainListItem
                 key={domainId}
@@ -54,12 +54,7 @@ const DomainList = ({
                 viewOnly={viewOnly}
                 colonyAddress={colonyAddress}
               />
-            ))
-          ) : (
-            <div>
-              {/* //TODO: Add empty state here once we have it designed */}
-            </div>
-          )}
+            )))}
         </TableBody>
       </Table>
     </div>

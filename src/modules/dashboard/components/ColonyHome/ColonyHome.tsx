@@ -1,5 +1,5 @@
-import { Redirect } from 'react-router';
 import React, { useState, useCallback, useEffect, useMemo } from 'react';
+import { Redirect, RouteComponentProps } from 'react-router';
 import { defineMessages, FormattedMessage } from 'react-intl';
 import { subscribeActions as subscribeToReduxActions } from 'redux-action-watch/lib/actionCreators';
 import { useDispatch } from 'redux-react-hook';
@@ -101,9 +101,11 @@ const MSG = defineMessages({
   },
 });
 
-interface Props {
-  match: any;
+interface MatchParams {
+  colonyName: string;
 }
+
+interface Props extends RouteComponentProps<MatchParams> {}
 
 const COLONY_DB_RECOVER_BUTTON_TIMEOUT = 20 * 1000;
 
