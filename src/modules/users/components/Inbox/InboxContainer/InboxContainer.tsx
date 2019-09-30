@@ -32,7 +32,6 @@ const MSG = defineMessages({
   },
   title: {
     id: 'users.Inbox.InboxContainer.title',
-    // defaultMessage: 'Inbox',
     defaultMessage: `Inbox {hasInboxItems, select,
       true { ({inboxItems})}
       other {}
