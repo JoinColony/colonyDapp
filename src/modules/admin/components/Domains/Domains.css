@@ -1,4 +1,5 @@
 .main {
+  padding: var(--pad-huge) 0 0 8px;
   height: 100%;
 }
 

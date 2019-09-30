@@ -1,6 +1,6 @@
 .main {
   composes: stretchVertical stretchHorizontal from '~styles/layout.css';
-  padding: 28px 0 0 8px;
+  padding: var(--pad-huge) 0 0 8px;
 }
 
 .section {
