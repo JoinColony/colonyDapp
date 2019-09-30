@@ -1,0 +1,8 @@
+.moreButtonContainer {
+  margin-left: 5px;
+}
+
+.hideButtonContainer {
+  display: flex;
+  justify-content: flex-end;
+}

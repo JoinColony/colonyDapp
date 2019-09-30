@@ -1,18 +1,20 @@
 import React from 'react';
-import { defineMessages } from 'react-intl';
+import { defineMessages, FormattedMessage } from 'react-intl';
 
 import { stripProtocol, multiLineTextEllipsis } from '~utils/strings';
-import { useOldRoles } from '~utils/hooks';
-import { ColonyType } from '~immutable/index';
+import ExpandedParagraph from '~core/ExpandedParagraph';
 import Heading from '~core/Heading';
 import Icon from '~core/Icon';
+import Button from '~core/Button';
 import Link from '~core/Link';
-import { SpinnerLoader } from '~core/Preloaders';
 import ExternalLink from '~core/ExternalLink';
-import CopyableAddress from '~core/CopyableAddress';
 import HookedColonyAvatar from '~dashboard/HookedColonyAvatar';
-import HookedUserAvatar from '~users/HookedUserAvatar';
 import ColonySubscribe from './ColonySubscribe';
+import { useDataFetcher } from '~utils/hooks';
+import { domainsFetcher } from '../../../fetchers';
+
+import { ColonyType, DomainType } from '~immutable/index';
+
 import styles from './ColonyMeta.css';
 
 const MSG = defineMessages({
@@ -28,27 +30,31 @@ const MSG = defineMessages({
     id: 'dashboard.ColonyHome.ColonyMeta.guidelineLabel',
     defaultMessage: 'Contribute Guidelines',
   },
-  founderLabel: {
-    id: 'dashboard.ColonyHome.ColonyMeta.founderLabel',
-    defaultMessage: 'Colony Founder',
-  },
-  adminsLabel: {
-    id: 'dashboard.ColonyHome.ColonyMeta.adminsLabel',
-    defaultMessage: 'Colony Admins',
-  },
   editColonyTitle: {
     id: 'dashboard.ColonyHome.ColonyMeta.editColonyTitle',
     defaultMessage: 'Edit Colony',
   },
+  allDomains: {
+    id: 'dashboard.ColonyHome.ColonyMeta.allDomains',
+    defaultMessage: 'root',
+  },
+  title: {
+    id: 'dashboard.ColonyHome.ColonyMeta.title',
+    defaultMessage: 'All Domains',
+  },
 });
 
 const ColonyAvatar = HookedColonyAvatar({ fetchColony: false });
-const UserAvatar = HookedUserAvatar();
 
 interface Props {
   colony: ColonyType;
   canAdminister: boolean;
+  setFilteredDomainId: Function;
+  filteredDomainId: number;
 }
+
+const getActiveDomainFilterClass = (id = 0, filteredDomainId: number) =>
+  filteredDomainId === id ? styles.filterItemActive : styles.filterItem;
 
 const ColonyMeta = ({
   colony: {
@@ -59,26 +65,47 @@ const ColonyMeta = ({
     displayName,
     website,
   },
+  setFilteredDomainId,
+  filteredDomainId,
   colony,
   canAdminister,
 }: Props) => {
-  const { data: roles } = useOldRoles(colonyAddress);
-  const { admins = [], founder = undefined } = roles || {};
-
+  // eslint-disable-next-line prettier/prettier
+  const { data: domains } = useDataFetcher<DomainType[]>(
+    domainsFetcher,
+    [colonyAddress],
+    [colonyAddress],
+  );
+  const renderExpandedElements = (
+    <>
+      {website && (
+        <ExternalLink
+          className={styles.simpleLinkWebsite}
+          href={website}
+          text={stripProtocol(multiLineTextEllipsis(website, 30))}
+        />
+      )}
+      {guideline && (
+        <ExternalLink
+          className={styles.simpleLinkGuideline}
+          href={guideline}
+          text={stripProtocol(multiLineTextEllipsis(guideline, 30))}
+        />
+      )}
+    </>
+  );
   return (
     <div className={styles.main}>
-      <div className={styles.colonyAvatar}>
+      <section className={styles.colonyAvatarAndName}>
         <ColonyAvatar
           className={styles.avatar}
           colonyAddress={colonyAddress}
           colony={colony}
-          size="xl"
+          size="s"
         />
         <ColonySubscribe colonyAddress={colonyAddress} />
-      </div>
-      <section>
         <Heading appearance={{ margin: 'none', size: 'medium', theme: 'dark' }}>
-          <>
+          <div className={styles.headingAndSettings}>
             <span title={displayName}>
               {/*
                * @NOTE We need to use a JS string truncate here, rather then CSS as we do with the other fields,
@@ -87,7 +114,7 @@ const ColonyMeta = ({
                *
                * To fix this properly (ie: without JS), we'll need a re-design
                */
-              multiLineTextEllipsis(displayName, 65)}
+              multiLineTextEllipsis(displayName, 16)}
             </span>
             {canAdminister && (
               <Link
@@ -97,90 +124,45 @@ const ColonyMeta = ({
                 <Icon name="settings" title={MSG.editColonyTitle} />
               </Link>
             )}
-          </>
+          </div>
         </Heading>
       </section>
       {description && (
         <section className={styles.description}>
-          <p>{description}</p>
+          <ExpandedParagraph
+            characterLimit={85}
+            maximumCharacters={180}
+            paragraph={description}
+            expandedElements={renderExpandedElements}
+          />
         </section>
       )}
-      <section className={styles.dynamicTextSection}>
-        <Heading
-          appearance={{ margin: 'none', size: 'small', theme: 'dark' }}
-          text={MSG.addressLabel}
-        />
-        <CopyableAddress>{colonyAddress}</CopyableAddress>
-      </section>
-      {website && (
-        <section className={styles.dynamicTextSection}>
+      <div className={styles.domainContainer}>
+        <ul>
           <Heading
-            appearance={{ margin: 'none', size: 'small', theme: 'dark' }}
-            text={MSG.websiteLabel}
+            appearance={{ size: 'normal', weight: 'thin' }}
+            text={MSG.title}
           />
-          <span className={styles.link} title={stripProtocol(website)}>
-            <ExternalLink href={website} text={stripProtocol(website)} />
-          </span>
-        </section>
-      )}
-      {guideline && (
-        <section className={styles.dynamicTextSection}>
-          <Heading
-            appearance={{ margin: 'none', size: 'small', theme: 'dark' }}
-            text={MSG.guidelineLabel}
-          />
-          <span className={styles.link} title={stripProtocol(guideline)}>
-            <ExternalLink href={guideline} text={stripProtocol(guideline)} />
-          </span>
-        </section>
-      )}
-      <section className={styles.dynamicSection}>
-        <Heading
-          appearance={{ margin: 'none', size: 'small', theme: 'dark' }}
-          text={MSG.founderLabel}
-        />
-        {founder ? (
-          <div className={styles.avatarWrapper}>
-            <UserAvatar
-              key={`founder_${founder}`}
-              address={founder}
-              className={styles.userAvatar}
-              showInfo
-            />
-          </div>
-        ) : (
-          <div className={styles.spinnerContainer}>
-            <SpinnerLoader appearance={{ size: 'large' }} />
-          </div>
-        )}
-      </section>
-      {admins && admins.length ? (
-        <section className={styles.dynamicSection}>
-          <Heading
-            appearance={{ margin: 'none', size: 'small', theme: 'dark' }}
-            text={MSG.adminsLabel}
-          />
-          {admins.map((adminAddress: string) => {
-            if (admins && adminAddress) {
-              return (
-                <div className={styles.avatarWrapper}>
-                  <UserAvatar
-                    key={`admin_${adminAddress}`}
-                    address={adminAddress}
-                    className={styles.userAvatar}
-                    showInfo
-                  />
-                </div>
-              );
-            }
-            return (
-              <div className={styles.spinnerContainer}>
-                <SpinnerLoader appearance={{ size: 'large' }} />
-              </div>
-            );
-          })}
-        </section>
-      ) : null}
+          <li>
+            <Button
+              className={getActiveDomainFilterClass(0, filteredDomainId)}
+              onClick={() => setFilteredDomainId()}
+            >
+              <FormattedMessage {...MSG.allDomains} />
+            </Button>
+          </li>
+          {(domains || []).map(({ name, id }) => (
+            <li key={`domain_${id}`}>
+              <Button
+                className={getActiveDomainFilterClass(id, filteredDomainId)}
+                onClick={() => setFilteredDomainId(id)}
+              >
+                {name}
+              </Button>
+            </li>
+          ))}
+        </ul>
+      </div>
     </div>
   );
 };

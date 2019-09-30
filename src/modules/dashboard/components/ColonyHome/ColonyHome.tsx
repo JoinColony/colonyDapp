@@ -1,6 +1,11 @@
 import { Redirect } from 'react-router';
 import React, { useState, useCallback, useEffect } from 'react';
-import { defineMessages, FormattedMessage } from 'react-intl';
+import {
+  defineMessages,
+  FormattedMessage,
+  injectIntl,
+  IntlShape,
+} from 'react-intl';
 import { subscribeActions as subscribeToReduxActions } from 'redux-action-watch/lib/actionCreators';
 import { useDispatch } from 'redux-react-hook';
 import throttle from 'lodash/throttle';
@@ -8,6 +13,7 @@ import throttle from 'lodash/throttle';
 import {
   ColonyTokenReferenceType,
   UserPermissionsType,
+  DomainType,
 } from '~immutable/index';
 import { Address } from '~types/index';
 import {
@@ -21,6 +27,8 @@ import { mergePayload } from '~utils/actions';
 import { Tab, Tabs, TabList, TabPanel } from '~core/Tabs';
 import { Select } from '~core/Fields';
 import Button, { ActionButton, DialogActionButton } from '~core/Button';
+import BreadCrumb from '~core/BreadCrumb';
+import Heading from '~core/Heading';
 import RecoveryModeAlert from '~admin/RecoveryModeAlert';
 import LoadingTemplate from '~pages/LoadingTemplate';
 import {
@@ -28,7 +36,7 @@ import {
   colonyEthTokenSelector,
 } from '../../selectors';
 import { currentUserColonyPermissionsFetcher } from '../../../users/fetchers';
-import { colonyAddressFetcher } from '../../fetchers';
+import { colonyAddressFetcher, domainsFetcher } from '../../fetchers';
 import { colonySubscriber } from '../../subscribers';
 import {
   canAdminister,
@@ -39,7 +47,6 @@ import {
   canRecoverColony,
 } from '../../checks';
 
-import ColonyDomains from './ColonyDomains';
 import ColonyMeta from './ColonyMeta';
 import TabContribute from './TabContribute';
 import styles from './ColonyHome.css';
@@ -51,7 +58,7 @@ const MSG = defineMessages({
   },
   tabContribute: {
     id: 'dashboard.ColonyHome.tabContribute',
-    defaultMessage: 'Contribute',
+    defaultMessage: 'Tasks',
   },
   labelFilter: {
     id: 'dashboard.ColonyHome.labelFilter',
@@ -64,6 +71,14 @@ const MSG = defineMessages({
   newTaskButton: {
     id: 'dashboard.ColonyHome.newTaskButton',
     defaultMessage: 'New Task',
+  },
+  availableFunds: {
+    id: 'dashboard.ColonyHome.availableFunds',
+    defaultMessage: 'Available Funds',
+  },
+  fund: {
+    id: 'dashboard.ColonyHome.fund',
+    defaultMessage: 'Fund',
   },
   recoverColonyButton: {
     id: 'dashboard.ColonyHome.recoverColonyButton',
@@ -87,10 +102,16 @@ const MSG = defineMessages({
     id: 'dashboard.ColonyHome.recoverColonyCancelButton',
     defaultMessage: 'Nope! Take me back, please',
   },
+  root: {
+    id: 'root',
+    defaultMessage: 'root',
+  },
 });
 
 interface Props {
   match: any;
+  /** @ignore injected by `injectIntl` */
+  intl: IntlShape;
 }
 
 const COLONY_DB_RECOVER_BUTTON_TIMEOUT = 20 * 1000;
@@ -101,9 +122,10 @@ const ColonyHome = ({
   match: {
     params: { colonyName },
   },
+  intl: { formatMessage },
 }: Props) => {
   const [filterOption, setFilterOption] = useState(TasksFilterOptions.ALL_OPEN);
-  const [filteredDomainId, setFilteredDomainId] = useState();
+  const [filteredDomainId, setFilteredDomainId] = useState(0);
   const [isTaskBeingCreated, setIsTaskBeingCreated] = useState(false);
   const [showRecoverOption, setRecoverOption] = useState(false);
 
@@ -156,6 +178,26 @@ const ColonyHome = ({
     colonyArgs,
     colonyArgs,
   );
+
+  const { data: domains } = useDataFetcher<DomainType[]>(
+    domainsFetcher,
+    [colonyAddress],
+    [colonyAddress],
+  );
+
+  const crumbs =
+    domains &&
+    domains
+      .sort((a, b) => a.id - b.id)
+      .reduce(
+        (accumulator, domain) => {
+          if (domain && domain.name && domain.id === filteredDomainId) {
+            accumulator.push(domain.name);
+          }
+          return accumulator;
+        },
+        [formatMessage(MSG.root)],
+      );
 
   const nativeTokenRef: ColonyTokenReferenceType | null = useSelector(
     colonyNativeTokenSelector,
@@ -211,7 +253,7 @@ const ColonyHome = ({
 
   const filterSelect = (
     <Select
-      appearance={{ alignOptions: 'right', theme: 'alt' }}
+      appearance={{ alignOptions: 'left', theme: 'alt' }}
       connect={false}
       elementOnly
       label={MSG.labelFilter}
@@ -223,21 +265,55 @@ const ColonyHome = ({
     />
   );
 
+  const renderNewTaskButton = (
+    <>
+      {canCreateTask && (
+        <ActionButton
+          button={({ onClick, disabled, loading }) => (
+            <Button
+              appearance={{ theme: 'primary', size: 'medium' }}
+              text={MSG.newTaskButton}
+              disabled={disabled}
+              loading={loading}
+              onClick={throttle(onClick, 2000)}
+            />
+          )}
+          disabled={isInRecoveryMode}
+          error={ActionTypes.TASK_CREATE_ERROR}
+          submit={ActionTypes.TASK_CREATE}
+          success={ActionTypes.TASK_CREATE_SUCCESS}
+          transform={transform}
+          loading={isTaskBeingCreated}
+        />
+      )}
+    </>
+  );
+
   return (
     <div className={styles.main}>
       <aside className={styles.colonyInfo}>
-        <ColonyMeta
-          colony={colony}
-          canAdminister={!isInRecoveryMode && canAdminister(permissions)}
-        />
+        <div className={styles.metaContainer}>
+          <ColonyMeta
+            colony={colony}
+            canAdminister={!isInRecoveryMode && canAdminister(permissions)}
+            filteredDomainId={filteredDomainId}
+            setFilteredDomainId={setFilteredDomainId}
+          />
+        </div>
       </aside>
       <main className={styles.content}>
+        <div className={styles.breadCrumbContainer}>
+          {domains && crumbs && <BreadCrumb elements={crumbs} />}
+        </div>
         <Tabs>
-          <TabList extra={filterSelect}>
+          <TabList>
             <Tab>
               <FormattedMessage {...MSG.tabContribute} />
             </Tab>
           </TabList>
+          <div className={styles.interactiveBar}>
+            {filterSelect} {renderNewTaskButton}
+          </div>
           <TabPanel>
             <TabContribute
               colony={colony}
@@ -251,30 +327,8 @@ const ColonyHome = ({
         </Tabs>
       </main>
       <aside className={styles.sidebar}>
-        {canCreateTask && (
-          <ActionButton
-            button={({ onClick, disabled, loading }) => (
-              <Button
-                appearance={{ theme: 'primary', size: 'large' }}
-                text={MSG.newTaskButton}
-                disabled={disabled}
-                loading={loading}
-                onClick={throttle(onClick, 2000)}
-              />
-            )}
-            disabled={isInRecoveryMode}
-            error={ActionTypes.TASK_CREATE_ERROR}
-            submit={ActionTypes.TASK_CREATE}
-            success={ActionTypes.TASK_CREATE_SUCCESS}
-            transform={transform}
-            loading={isTaskBeingCreated}
-          />
-        )}
-        <ColonyDomains
-          colonyAddress={colonyAddress}
-          filteredDomainId={filteredDomainId}
-          setFilteredDomainId={setFilteredDomainId}
-        />
+        <Heading appearance={{ size: 'normal' }} text={MSG.availableFunds} />
+        <Button text={MSG.fund} appearance={{ theme: 'blue' }} />
       </aside>
       {isInRecoveryMode && <RecoveryModeAlert />}
     </div>
@@ -283,4 +337,4 @@ const ColonyHome = ({
 
 ColonyHome.displayName = displayName;
 
-export default ColonyHome;
+export default injectIntl(ColonyHome);

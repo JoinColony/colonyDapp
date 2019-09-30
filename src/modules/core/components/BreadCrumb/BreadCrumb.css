@@ -1,0 +1,15 @@
+.breadCrumble {
+  font-size: var(--size-medium-l);
+}
+
+.element {
+  flex-shrink: 0;
+}
+
+.crumbContainer {
+  display: flex;
+}
+
+.arrow {
+  padding: 3px 5px;
+}

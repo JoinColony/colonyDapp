@@ -3,17 +3,30 @@
 .main {
   composes: stretchVertical stretchHorizontal from '~styles/layout.css';
   display: grid;
-  padding: 130px 80px; /* vertical padding of 60px + nav height (70px) */
+  padding: 16px 18px; /* vertical padding of 16px + nav height (70px) */
   overflow: auto;
+  overflow: hidden;
   background: var(--gradient-default);
-  grid-template-columns: minmax(200px, 260px) minmax(360px, auto) minmax(120px, 200px);
+  grid-template-columns: 300px minmax(360px, auto) minmax(275px, 300px);
   grid-template-rows: auto;
   column-gap: 80px;
 }
 
 .colonyInfo {
+  z-index: var(--z-index-nav);
   grid-column: 1;
   grid-row: 1;
+}
+
+.interactiveBar {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 12px;
+  margin-bottom: -6px; /* We want to use a negative margin here since the taskList comes with a high one */
+}
+
+.metaContainer {
+  padding-bottom: 17px;
 }
 
 .content {
@@ -29,7 +42,17 @@
   line-height: 2em;
 }
 
+.breadCrumbContainer {
+  margin-top: 58px;
+  margin-bottom: 16px;
+  margin-left: 10px;
+}
+
 .sidebar {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 165px;
+  padding-right: 140px;
   grid-column: 3;
   grid-row: 1;
 }
