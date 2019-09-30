@@ -43,7 +43,7 @@ const ColonyAvatar = HookedColonyAvatar({ fetchColony: false });
 interface Props {
   colony: ColonyType;
   canAdminister: boolean;
-  setFilteredDomainId: Function;
+  setFilteredDomainId: (domainId: number) => void;
   filteredDomainId: number;
 }
 
