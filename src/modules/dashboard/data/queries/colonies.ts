@@ -442,7 +442,7 @@ export const getColonyDomains: Query<
 
           return [...difference, event];
         },
-        [],
+        [{ payload: { domainId: 0, name: 'root' } }],
       )
       .map(
         ({ payload: { domainId, name } }): DomainType => ({

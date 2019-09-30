@@ -84,10 +84,6 @@ const allDomainsReducer: ReducerType<AllDomainsMap> = (
         meta: { key },
         payload: { domains },
       } = action;
-      /* Add root domain to response which is the parent of all domains  */
-      if (domains.find(domain => domain.name !== 'root')) {
-        domains.push({ name: 'root', id: 0 });
-      }
       return state.set(
         key,
         FetchableData({
