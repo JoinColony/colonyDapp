@@ -62,9 +62,14 @@ const PermissionCheckbox = ({
   role,
 }: Props) => {
   const roleNameMessage = { id: `role.${role.toLowerCase()}` };
-  const roleDescriptionMessage = MSG[
-    `roleDescription${capitalize(camelcase(role))}`
-  ] || { id: '', defaultMessage: '' };
+  const roleDescriptionMessage = useMemo(
+    () =>
+      MSG[`roleDescription${capitalize(camelcase(role))}`] || {
+        id: '',
+        defaultMessage: '',
+      },
+    [role],
+  );
   const checkboxContent = useMemo(
     () => (
       <Checkbox
