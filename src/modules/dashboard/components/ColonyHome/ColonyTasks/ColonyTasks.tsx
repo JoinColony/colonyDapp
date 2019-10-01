@@ -180,20 +180,22 @@ const ColonyTasks = ({
    * Let TaskList handle the empty states
    */
   return (
-    <TaskList
-      colonyAddress={colonyAddress}
-      draftIds={draftIds}
-      filteredDomainId={filteredDomainId}
-      filterOption={filterOption}
-      walletAddress={walletAddress}
-      /*
-       * - If we can create tasks, but no tokens are minted,
-       *   don't show the empty state.
-       * - If we can't create tasks, and no tokens are minted,
-       *   show the empty state.
-       */
-      showEmptyState={!canCreateTask}
-    />
+    <div className={styles.taskList}>
+      <TaskList
+        colonyAddress={colonyAddress}
+        draftIds={draftIds}
+        filteredDomainId={filteredDomainId}
+        filterOption={filterOption}
+        walletAddress={walletAddress}
+        /*
+         * - If we can create tasks, but no tokens are minted,
+         *   don't show the empty state.
+         * - If we can't create tasks, and no tokens are minted,
+         *   show the empty state.
+         */
+        showEmptyState={!canCreateTask}
+      />
+    </div>
   );
 };
 

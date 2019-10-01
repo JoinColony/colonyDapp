@@ -7,3 +7,14 @@
 .coloniesContainer {
   margin-top: 40px;
 }
+
+.filter {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.taskList {
+  display: flex;
+  min-height: 88px;
+  max-height: calc(100vh - 450px);
+}

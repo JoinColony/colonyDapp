@@ -162,106 +162,103 @@ const TaskList = ({
 
   const colonyName = colonyAddress ? data.record : undefined;
 
-  return (
-    <>
-      {/* These empty states are getting a bit out of hand.
-        We have now 4 different empty states for different occurences
-        of the task list and different filter states
-      */}
-      {filteredTasksData.length === 0 && !colonyAddress && (
-        <div className={taskListItemStyles.empty}>
-          {emptyState || (
-            <p>
-              <FormattedMessage {...MSG.noTasks} />
-            </p>
+  /*
+   * These empty states are getting a bit out of hand. We have now 4 different
+   * empty states for different occurences of the task list and different
+   * filter states.
+   */
+  if (filteredTasksData.length === 0 && !colonyAddress) {
+    return (
+      <div className={taskListItemStyles.empty}>
+        {emptyState || (
+          <p>
+            <FormattedMessage {...MSG.noTasks} />
+          </p>
+        )}
+      </div>
+    );
+  }
+
+  return filteredTasksData.length === 0 && colonyAddress ? (
+    <div>
+      {showEmptyState && (
+        <>
+          {filteredDomainId ? (
+            <div>
+              <Icon
+                className={taskListItemStyles.noTask}
+                name="empty-task"
+                title={MSG.noTasks}
+                viewBox="0 0 120 120"
+              />
+              <div className={taskListItemStyles.emptyStateElements}>
+                <FormattedMessage tagName="p" {...MSG.noTaskDescription} />
+              </div>
+              <div className={taskListItemStyles.emptyStateElements}>
+                <FormattedMessage tagName="p" {...MSG.noTaskAddition} />
+              </div>
+            </div>
+          ) : (
+            <div>
+              <Icon
+                className={taskListItemStyles.noTask}
+                name="cup"
+                title={MSG.noTasks}
+                viewBox="0 0 120 120"
+              />
+              <div className={taskListItemStyles.emptyStateElements}>
+                <FormattedMessage
+                  tagName="p"
+                  {...MSG.welcomeToColony}
+                  values={{
+                    colonyNameExists: !!colonyName,
+                    colonyName,
+                  }}
+                />
+              </div>
+              <div className={taskListItemStyles.emptyStateElements}>
+                <FormattedMessage
+                  tagName="p"
+                  {...MSG.subscribeToColony}
+                  values={{
+                    /*
+                     * If the current user hasn't claimed a profile yet, then don't show the
+                     * subscribe to colony call to action
+                     */
+                    isSubscribed: currentUser.profile.username
+                      ? isSubscribed
+                      : true,
+                    myColonies: (
+                      <ActionButton
+                        className={taskListItemStyles.subscribe}
+                        error={ActionTypes.USER_COLONY_SUBSCRIBE_ERROR}
+                        submit={ActionTypes.USER_COLONY_SUBSCRIBE}
+                        success={ActionTypes.USER_COLONY_SUBSCRIBE_SUCCESS}
+                        transform={transform}
+                      >
+                        <FormattedMessage tagName="span" {...MSG.myColonies} />
+                      </ActionButton>
+                    ),
+                  }}
+                />
+              </div>
+            </div>
           )}
-        </div>
+        </>
       )}
-      {filteredTasksData.length === 0 && colonyAddress ? (
-        <div>
-          {showEmptyState && (
-            <>
-              {filteredDomainId ? (
-                <div>
-                  <Icon
-                    className={taskListItemStyles.noTask}
-                    name="empty-task"
-                    title={MSG.noTasks}
-                    viewBox="0 0 120 120"
-                  />
-                  <div className={taskListItemStyles.emptyStateElements}>
-                    <FormattedMessage tagName="p" {...MSG.noTaskDescription} />
-                  </div>
-                  <div className={taskListItemStyles.emptyStateElements}>
-                    <FormattedMessage tagName="p" {...MSG.noTaskAddition} />
-                  </div>
-                </div>
-              ) : (
-                <div>
-                  <Icon
-                    className={taskListItemStyles.noTask}
-                    name="cup"
-                    title={MSG.noTasks}
-                    viewBox="0 0 120 120"
-                  />
-                  <div className={taskListItemStyles.emptyStateElements}>
-                    <FormattedMessage
-                      tagName="p"
-                      {...MSG.welcomeToColony}
-                      values={{
-                        colonyNameExists: !!colonyName,
-                        colonyName,
-                      }}
-                    />
-                  </div>
-                  <div className={taskListItemStyles.emptyStateElements}>
-                    <FormattedMessage
-                      tagName="p"
-                      {...MSG.subscribeToColony}
-                      values={{
-                        /*
-                         * If the current user hasn't claimed a profile yet, then don't show the
-                         * subscribe to colony call to action
-                         */
-                        isSubscribed: currentUser.profile.username
-                          ? isSubscribed
-                          : true,
-                        myColonies: (
-                          <ActionButton
-                            className={taskListItemStyles.subscribe}
-                            error={ActionTypes.USER_COLONY_SUBSCRIBE_ERROR}
-                            submit={ActionTypes.USER_COLONY_SUBSCRIBE}
-                            success={ActionTypes.USER_COLONY_SUBSCRIBE_SUCCESS}
-                            transform={transform}
-                          >
-                            <FormattedMessage
-                              tagName="span"
-                              {...MSG.myColonies}
-                            />
-                          </ActionButton>
-                        ),
-                      }}
-                    />
-                  </div>
-                </div>
-              )}
-            </>
-          )}
-        </div>
-      ) : (
-        <Table
-          data-test="dashboardTaskList"
-          appearance={{ theme: 'rounder' }}
-          scrollable
-        >
-          <TableBody>
-            {filteredTasksData.map((taskData: any) => (
-              <TaskListItem key={taskData.key} data={taskData} />
-            ))}
-          </TableBody>
-        </Table>
-      )}
-    </>
+    </div>
+  ) : (
+    <Table
+      data-test="dashboardTaskList"
+      appearance={{ theme: 'rounder' }}
+      scrollable
+    >
+      <TableBody>
+        {filteredTasksData.map((taskData: any) => (
+          <TaskListItem key={taskData.key} data={taskData} />
+        ))}
+      </TableBody>
+    </Table>
   );
 };
 
