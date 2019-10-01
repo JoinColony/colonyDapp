@@ -286,14 +286,6 @@ workflows:
           filters:
             branches:
               only: master
-      - build-goerli-image:
-          requires:
-            - build-with-lockfile
-            - integration-testing
-            - e2e-testing
-          filters:
-            branches:
-              ignore: master
       - build-mainnet-image:
           requires:
             - build-with-lockfile
