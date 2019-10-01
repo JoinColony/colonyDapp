@@ -32,7 +32,10 @@ const MSG = defineMessages({
   },
   title: {
     id: 'users.Inbox.InboxContainer.title',
-    defaultMessage: 'Inbox',
+    defaultMessage: `Inbox {hasInboxItems, select,
+      true { ({inboxItems})}
+      other {}
+    }`,
   },
   markAllRead: {
     id: 'users.Inbox.InboxContainer.markAllRead',
@@ -75,6 +78,10 @@ const InboxContainer = ({ full, close }: Props) => {
         <Heading
           appearance={{ size: 'medium', margin: 'small' }}
           text={MSG.title}
+          textValues={{
+            hasInboxItems,
+            inboxItems: hasInboxItems ? inboxItems.length : 0,
+          }}
         />
         <Button
           appearance={{ theme: 'blue' }}
