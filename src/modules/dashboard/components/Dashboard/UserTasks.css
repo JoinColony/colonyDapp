@@ -15,5 +15,6 @@
 
 .taskList {
   display: flex;
+  min-height: 88px;
   max-height: calc(100vh - 450px);
 }
