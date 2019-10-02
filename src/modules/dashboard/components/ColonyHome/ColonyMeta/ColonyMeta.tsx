@@ -34,14 +34,6 @@ const MSG = defineMessages({
     id: 'dashboard.ColonyHome.ColonyMeta.editColonyTitle',
     defaultMessage: 'Edit Colony',
   },
-  allDomains: {
-    id: 'dashboard.ColonyHome.ColonyMeta.allDomains',
-    defaultMessage: 'root',
-  },
-  title: {
-    id: 'dashboard.ColonyHome.ColonyMeta.title',
-    defaultMessage: 'All Domains',
-  },
 });
 
 const ColonyAvatar = HookedColonyAvatar({ fetchColony: false });
@@ -139,16 +131,12 @@ const ColonyMeta = ({
       )}
       <div className={styles.domainContainer}>
         <ul>
-          <Heading
-            appearance={{ size: 'normal', weight: 'thin' }}
-            text={MSG.title}
-          />
           <li>
             <Button
               className={getActiveDomainFilterClass(0, filteredDomainId)}
-              onClick={() => setFilteredDomainId()}
+              onClick={() => setFilteredDomainId(0)}
             >
-              <FormattedMessage {...MSG.allDomains} />
+              <FormattedMessage id="domain.root" />
             </Button>
           </li>
           {(domains || []).map(({ name, id }) => (
