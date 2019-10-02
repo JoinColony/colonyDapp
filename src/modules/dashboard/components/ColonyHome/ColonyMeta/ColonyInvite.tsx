@@ -7,11 +7,11 @@ import styles from './ColonyInvite.css';
 
 const MSG = defineMessages({
   inviteLabel: {
-    id: 'dashboard.ColonyHome.ColonyMeta.inviteLabel',
+    id: 'dashboard.ColonyHome.ColonyMeta.ColonyInvite.inviteLabel',
     defaultMessage: 'Invite your community to join',
   },
   copyLabel: {
-    id: 'ClipboardCopy.copyLabel',
+    id: 'dashboard.ColonyHome.ColonyMeta.ColonyInvite.copyLabel',
     defaultMessage: `{valueIsCopied, select,
       true {copied}
       false {copy}
@@ -23,7 +23,7 @@ interface Props {
   colonyName: string;
 }
 
-const displayName = 'dashboard.ColonyHome.ColonyInvite';
+const displayName = 'dashboard.ColonyHome.ColonyMeta.ColonyInvite';
 
 const ColonyInvite = ({ colonyName }: Props) => {
   if (!colonyName) {
