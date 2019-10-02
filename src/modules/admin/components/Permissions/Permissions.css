@@ -31,3 +31,9 @@
 .main table .tableBody tr {
   overflow-x: auto;
 }
+
+.parentPermissionTip {
+  margin: 10px;
+  font-size: var(--size-small);
+  font-weight: var(--weight-medium);
+}

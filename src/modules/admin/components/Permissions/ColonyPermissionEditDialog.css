@@ -19,3 +19,9 @@
   margin-top: 35px;
   margin-bottom: 32px;
 }
+
+.parentPermissionTip {
+  margin: 10px 0;
+  font-size: var(--size-small);
+  font-weight: var(--weight-medium);
+}

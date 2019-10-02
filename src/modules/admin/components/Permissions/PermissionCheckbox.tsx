@@ -15,6 +15,10 @@ import { capitalize } from '~utils/strings';
 import styles from './PermissionCheckbox.css';
 
 const MSG = defineMessages({
+  roleWithAsterisk: {
+    id: 'core.ColonyPermissionEditDialog.roleWithAsterisk',
+    defaultMessage: '{role}{asterisk, select, true {*} false {} }',
+  },
   roleDescriptionRoot: {
     id: 'core.ColonyPermissionEditDialog.roleDescriptionRoot',
     defaultMessage:
@@ -49,6 +53,7 @@ const MSG = defineMessages({
 });
 
 interface Props {
+  asterisk: boolean;
   disabled: boolean;
   intl: IntlShape;
   role: string;
@@ -57,6 +62,7 @@ interface Props {
 const displayName = 'admin.Permissions.PermissionCheckbox';
 
 const PermissionCheckbox = ({
+  asterisk,
   disabled,
   intl: { formatMessage },
   role,
@@ -80,14 +86,25 @@ const PermissionCheckbox = ({
       >
         <span className={styles.permissionChoiceDescription}>
           <Heading
-            text={roleNameMessage}
+            text={MSG.roleWithAsterisk}
+            textValues={{
+              role: formatMessage(roleNameMessage),
+              asterisk: !!asterisk,
+            }}
             appearance={{ size: 'small', margin: 'none' }}
           />
           <FormattedMessage {...roleDescriptionMessage} />
         </span>
       </Checkbox>
     ),
-    [disabled, role, roleDescriptionMessage, roleNameMessage],
+    [
+      asterisk,
+      disabled,
+      formatMessage,
+      role,
+      roleDescriptionMessage,
+      roleNameMessage,
+    ],
   );
   return disabled ? (
     <Popover
