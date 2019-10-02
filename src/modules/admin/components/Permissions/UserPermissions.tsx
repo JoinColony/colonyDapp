@@ -27,12 +27,19 @@ const UserPermissions = ({ colonyAddress, domainId, userAddress }: Props) => {
     userAddress,
   );
 
+  const { data: userPermissionsWithParents } = useUserDomainRoles(
+    colonyAddress,
+    domainId,
+    userAddress,
+    true,
+  );
+
   const sortedUserPermissionlabels = useMemo(
     () =>
-      Object.keys(userPermissions)
+      Object.keys(userPermissionsWithParents)
         .filter(
           key =>
-            !!userPermissions[key] &&
+            !!userPermissionsWithParents[key] &&
             // Don't display ARCHITECTURE_SUBDOMAIN in listed roles
             key !== COLONY_ROLE_ARCHITECTURE_SUBDOMAIN,
         )
@@ -42,7 +49,7 @@ const UserPermissions = ({ colonyAddress, domainId, userAddress }: Props) => {
           }
           return 0;
         }),
-    [userPermissions],
+    [userPermissionsWithParents],
   );
 
   return (
@@ -54,6 +61,7 @@ const UserPermissions = ({ colonyAddress, domainId, userAddress }: Props) => {
           {sortedUserPermissionlabels.map(userPermission => (
             <span className={styles.permission} key={userPermission}>
               <FormattedMessage id={ROLE_MESSAGES[userPermission]} />
+              {!userPermissions[userPermission] && <span>*</span>}
             </span>
           ))}
         </>
