@@ -24,7 +24,7 @@ interface Props {
   hideAddress?: boolean;
 }
 
-const displyName = 'CopyableAddress';
+const displayName = 'CopyableAddress';
 
 const CopyableAddress = ({
   appearance,
@@ -58,6 +58,6 @@ const CopyableAddress = ({
   );
 };
 
-CopyableAddress.displayName = displyName;
+CopyableAddress.displayName = displayName;
 
 export default CopyableAddress;
