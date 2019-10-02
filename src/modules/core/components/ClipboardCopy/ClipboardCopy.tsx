@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState, useRef, useCallback, useEffect } from 'react';
 import { defineMessages, MessageDescriptor } from 'react-intl';
 import copyToClipboard from 'copy-to-clipboard';
 
@@ -23,12 +23,24 @@ const displayName = 'ClipboardCopy';
 
 const ClipboardCopy = ({ value, text = MSG.copyLabel }: Props) => {
   const [valueIsCopied, setValueIsCopied] = useState(false);
-  const handleClipboardCopy = useCallback(() => {
+  const userFeedbackTimer = useRef<any>(null);
+  const handleClipboardCopy = () => {
     setValueIsCopied(true);
     copyToClipboard(value);
-    const timer = setTimeout(() => setValueIsCopied(false), 2000);
-    return () => clearTimeout(timer);
-  }, [value, setValueIsCopied]);
+    userFeedbackTimer.current = setTimeout(
+      () => setValueIsCopied(false),
+      2000,
+    );
+  };
+  /*
+   * We need to wrap the call in a second function, since only the returned
+   * function gets called on unmount.
+   * The first one is only called on render.
+   */
+  useEffect(
+    () => () => clearTimeout(userFeedbackTimer.current),
+    [userFeedbackTimer],
+  );
   return (
     <Button
       appearance={{ size: 'small', theme: 'blue' }}
