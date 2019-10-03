@@ -105,13 +105,13 @@ const ProfileAdvanced = ({
 
   return (
     <div className={styles.main}>
+      <div className={styles.titleContainer}>
+        <Heading
+          text={MSG.title}
+          appearance={{ size: 'medium', theme: 'dark' }}
+        />
+      </div>
       <section className={styles.section}>
-        <div className={styles.titleContainer}>
-          <Heading
-            text={MSG.title}
-            appearance={{ size: 'medium', theme: 'dark' }}
-          />
-        </div>
         <div className={styles.withInlineButton}>
           <Heading
             appearance={{ size: 'small', margin: 'none' }}
@@ -183,39 +183,37 @@ const ProfileAdvanced = ({
         />
       </section>
       {canUnlockNativeToken && (
-        <>
+        <section className={styles.section}>
           <hr />
-          <section className={styles.section}>
-            <Heading
-              appearance={{ size: 'small' }}
-              text={MSG.tokenLockedHeading}
+          <Heading
+            appearance={{ size: 'small' }}
+            text={MSG.tokenLockedHeading}
+          />
+          <p className={styles.bigInfoText}>
+            <FormattedMessage
+              {...MSG.tokenLockedInfo}
+              values={{
+                link: (
+                  <ExternalLink
+                    text={MSG.tokenLockedLearnMore}
+                    href={TOKEN_LOCKED_URL}
+                  />
+                ),
+              }}
             />
-            <p className={styles.bigInfoText}>
-              <FormattedMessage
-                {...MSG.tokenLockedInfo}
-                values={{
-                  link: (
-                    <ExternalLink
-                      text={MSG.tokenLockedLearnMore}
-                      href={TOKEN_LOCKED_URL}
-                    />
-                  ),
-                }}
-              />
-            </p>
-            <div className={styles.unlockButton}>
-              <DialogActionButton
-                appearance={{ theme: 'blue', size: 'large' }}
-                text={MSG.buttonUnlockToken}
-                dialog="UnlockTokenDialog"
-                submit={ActionTypes.COLONY_NATIVE_TOKEN_UNLOCK}
-                success={ActionTypes.COLONY_NATIVE_TOKEN_UNLOCK_SUCCESS}
-                error={ActionTypes.COLONY_NATIVE_TOKEN_UNLOCK_ERROR}
-                values={{ colonyAddress }}
-              />
-            </div>
-          </section>
-        </>
+          </p>
+          <div className={styles.unlockButton}>
+            <DialogActionButton
+              appearance={{ theme: 'blue', size: 'large' }}
+              text={MSG.buttonUnlockToken}
+              dialog="UnlockTokenDialog"
+              submit={ActionTypes.COLONY_NATIVE_TOKEN_UNLOCK}
+              success={ActionTypes.COLONY_NATIVE_TOKEN_UNLOCK_SUCCESS}
+              error={ActionTypes.COLONY_NATIVE_TOKEN_UNLOCK_ERROR}
+              values={{ colonyAddress }}
+            />
+          </div>
+        </section>
       )}
     </div>
   );
