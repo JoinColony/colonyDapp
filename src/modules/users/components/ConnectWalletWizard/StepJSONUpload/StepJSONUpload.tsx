@@ -56,9 +56,7 @@ const MSG = defineMessages({
   },
 });
 
-export const ACCEPTED_MIME_TYPES: string[] = [
-  'application/json',
-];
+export const ACCEPTED_MIME_TYPES: string[] = ['application/json'];
 
 type FormValues = {
   method: WALLET_SPECIFICS;
