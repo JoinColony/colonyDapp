@@ -70,14 +70,6 @@ const MSG = defineMessages({
   },
 });
 
-const ACCEPTED_MIME_TYPES: string[] = [
-  'image/svg+xml',
-  'image/png',
-  'image/jpeg',
-];
-
-const ACCEPTED_MAX_FILE_SIZE = 1000000;
-
 const validationSchema = yup.object({
   tokenName: yup.string().required(),
   tokenSymbol: yup
@@ -193,8 +185,6 @@ const StepCreateToken = ({
             </div>
             <div className={styles.inputFieldWrapper}>
               <ActionFileUpload
-                accept={ACCEPTED_MIME_TYPES}
-                maxFileSize={ACCEPTED_MAX_FILE_SIZE}
                 name="tokenIcon"
                 label={MSG.labelTokenIcon}
                 submit={ActionTypes.IPFS_DATA_UPLOAD}

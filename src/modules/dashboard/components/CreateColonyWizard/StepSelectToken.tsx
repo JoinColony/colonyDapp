@@ -180,11 +180,9 @@ const StepSelectToken = ({
                 </div>
                 <div className={styles.tokenDetails}>
                   <FileUpload
-                    accept={['svg', 'png']}
                     label={MSG.fileUploadTitle}
                     name="iconUpload"
                     status={MSG.fileUploadHint}
-                    maxFilesLimit={1}
                   />
                 </div>
               </>
