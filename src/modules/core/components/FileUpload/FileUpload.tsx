@@ -8,12 +8,15 @@ import {
 import Dropzone from 'react-dropzone';
 import { getIn } from 'formik';
 
-import styles from './FileUpload.css';
+import { FileReaderFile, UploadFile } from './types';
+import { DEFAULT_MIME_TYPES, DEFAULT_MAX_FILE_SIZE } from './limits';
+
 import { asFieldArray } from '../Fields';
 import InputLabel from '../Fields/InputLabel';
 import InputStatus from '../Fields/InputStatus';
-import { FileReaderFile, UploadFile } from './types';
 import UploadItem from './UploadItem';
+
+import styles from './FileUpload.css';
 
 const MSG = defineMessages({
   dropzoneText: {
@@ -107,11 +110,12 @@ class FileUpload extends Component<Props> {
   static displayName = 'FileUpload';
 
   static defaultProps = {
+    accept: DEFAULT_MIME_TYPES,
     classNames: styles,
     disableClick: false,
     itemComponent: UploadItem,
     maxFilesLimit: 1,
-    maxFileSize: 1024 * 1024,
+    maxFileSize: DEFAULT_MAX_FILE_SIZE,
     renderPlaceholder: <Placeholder />,
   };
 
