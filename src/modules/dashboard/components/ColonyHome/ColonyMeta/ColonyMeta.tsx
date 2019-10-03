@@ -10,6 +10,8 @@ import Link from '~core/Link';
 import ExternalLink from '~core/ExternalLink';
 import HookedColonyAvatar from '~dashboard/HookedColonyAvatar';
 import ColonySubscribe from './ColonySubscribe';
+import ColonyInvite from './ColonyInvite';
+
 import { useDataFetcher } from '~utils/hooks';
 import { domainsFetcher } from '../../../fetchers';
 
@@ -88,7 +90,7 @@ const ColonyMeta = ({
   );
   return (
     <div className={styles.main}>
-      <section className={styles.colonyAvatarAndName}>
+      <div className={styles.colonyAvatarAndName}>
         <ColonyAvatar
           className={styles.avatar}
           colonyAddress={colonyAddress}
@@ -118,7 +120,7 @@ const ColonyMeta = ({
             )}
           </div>
         </Heading>
-      </section>
+      </div>
       {description && (
         <section className={styles.description}>
           <ExpandedParagraph
@@ -129,7 +131,7 @@ const ColonyMeta = ({
           />
         </section>
       )}
-      <div className={styles.domainContainer}>
+      <section className={styles.domainContainer}>
         <ul>
           <li>
             <Button
@@ -150,7 +152,8 @@ const ColonyMeta = ({
             </li>
           ))}
         </ul>
-      </div>
+      </section>
+      <ColonyInvite colonyName={colony && colony.colonyName} />
     </div>
   );
 };

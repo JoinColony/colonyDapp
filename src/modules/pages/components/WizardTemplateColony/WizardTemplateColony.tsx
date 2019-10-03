@@ -48,7 +48,9 @@ const WizardTemplateColony = ({
               <span className={styles.hello}>
                 <FormattedMessage {...MSG.wallet} />
               </span>
-              <CopyableAddress>{walletAddress}</CopyableAddress>
+              <span className={styles.copy}>
+                <CopyableAddress>{walletAddress}</CopyableAddress>
+              </span>
             </div>
             <div className={styles.moneyContainer}>
               {ethBalance.isZero() ? (

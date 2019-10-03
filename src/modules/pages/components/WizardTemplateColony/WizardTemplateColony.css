@@ -77,3 +77,8 @@
 .hello {
   font-weight: var(--weight-normal);
 }
+
+.copy {
+  margin-left: 40px;
+  position: absolute;
+}
