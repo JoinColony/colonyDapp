@@ -51,27 +51,27 @@ const DOMAINS_HELP_URL = 'https://help.colony.io/';
 
 const MSG = defineMessages({
   title: {
-    id: 'core.ColonyPermissionEditDialog.title',
+    id: 'admin.ColonyPermissionEditDialog.title',
     defaultMessage: 'Add New Role in {domain}',
   },
   selectUser: {
-    id: 'core.ColonyPermissionEditDialog.selectUser',
+    id: 'admin.ColonyPermissionEditDialog.selectUser',
     defaultMessage: 'Select Member',
   },
   permissionsLabel: {
-    id: 'core.ColonyPermissionEditDialog.permissionsLabel',
+    id: 'admin.ColonyPermissionEditDialog.permissionsLabel',
     defaultMessage: 'Permissions',
   },
   search: {
-    id: 'core.ColonyPermissionEditDialog.search',
+    id: 'admin.ColonyPermissionEditDialog.search',
     defaultMessage: 'Search for a user or paste a wallet address',
   },
   permissionInParent: {
-    id: 'dashboard.Permissions.permissionInParent',
+    id: 'admin.ColonyPermissionEditDialog.permissionInParent',
     defaultMessage: '*Permission granted via parent domain. {learnMore}',
   },
   learnMore: {
-    id: 'dashboard.Permissions.learnMore',
+    id: 'admin.ColonyPermissionEditDialog.learnMore',
     defaultMessage: 'Learn more',
   },
 });
@@ -351,6 +351,6 @@ const ColonyPermissionEditDialog = ({
   );
 };
 
-ColonyPermissionEditDialog.displayName = 'core.ColonyPermissionEditDialog';
+ColonyPermissionEditDialog.displayName = 'admin.ColonyPermissionEditDialog';
 
 export default ColonyPermissionEditDialog;

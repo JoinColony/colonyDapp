@@ -31,26 +31,26 @@ const DOMAINS_HELP_URL = 'https://help.colony.io/';
 
 const MSG = defineMessages({
   title: {
-    id: 'dashboard.Permissions.title',
+    id: 'admin.Permissions.title',
     defaultMessage: `Permissions{domainLabel, select,
       root {}
       other {: {domainLabel}}
     }`,
   },
   labelFilter: {
-    id: 'dashboard.Permissions.labelFilter',
+    id: 'admin.Permissions.labelFilter',
     defaultMessage: 'Filter',
   },
   addRole: {
-    id: 'dashboard.Permissions.addRole',
+    id: 'admin.Permissions.addRole',
     defaultMessage: 'Add Role',
   },
   permissionInParent: {
-    id: 'dashboard.Permissions.permissionInParent',
+    id: 'admin.Permissions.permissionInParent',
     defaultMessage: '*Permission granted via parent domain. {learnMore}',
   },
   learnMore: {
-    id: 'dashboard.Permissions.learnMore',
+    id: 'admin.Permissions.learnMore',
     defaultMessage: 'Learn more',
   },
 });
