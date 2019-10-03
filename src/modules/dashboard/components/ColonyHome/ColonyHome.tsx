@@ -77,6 +77,10 @@ const MSG = defineMessages({
     id: 'dashboard.ColonyHome.newTaskButton',
     defaultMessage: 'New Task',
   },
+  noFilter: {
+    id: 'dashboard.ColonyHome.noFilter',
+    defaultMessage: 'All Transactions in Colony',
+  },
   recoverColonyButton: {
     id: 'dashboard.ColonyHome.recoverColonyButton',
     defaultMessage: 'Recover Colony?',
