@@ -50,6 +50,10 @@ const MSG = defineMessages({
     id: 'dashboard.CreateColonyWizard.StepCreateToken.labelTokenIcon',
     defaultMessage: 'Token Logo (optional)',
   },
+  tokenIconHint: {
+    id: 'dashboard.CreateColonyWizard.StepCreateToken.tokenIconHint',
+    defaultMessage: 'Recommended format: .png or .svg',
+  },
   link: {
     id: 'dashboard.CreateColonyWizard.StepCreateToken.link',
     defaultMessage: 'I want to use an existing token',
@@ -191,6 +195,7 @@ const StepCreateToken = ({
                 success={ActionTypes.IPFS_DATA_UPLOAD_SUCCESS}
                 error={ActionTypes.IPFS_DATA_UPLOAD_ERROR}
                 transform={transform}
+                status={MSG.tokenIconHint}
               />
             </div>
           </section>
