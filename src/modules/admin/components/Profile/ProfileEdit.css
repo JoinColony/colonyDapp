@@ -4,10 +4,10 @@
 .main {
   composes: stretchVertical stretchHorizontal from '~styles/layout.css';
   display: grid;
+  padding: var(--pad-huge) 0 0 8px;
   grid-template-columns: auto minmax(300px, 320px);
   grid-template-rows: auto;
   column-gap: 0;
-  padding: var(--pad-huge) 0 0 8px;
 }
 
 .content {
