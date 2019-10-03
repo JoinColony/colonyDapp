@@ -26,10 +26,6 @@ const MSG = defineMessages({
     id: 'admin.Profile.ProfileEdit.labelAddress',
     defaultMessage: 'Colony Address',
   },
-  sendTokens: {
-    id: 'admin.Profile.ProfileEdit.sendTokens',
-    defaultMessage: '(Send tokens to this address to fund your colony)',
-  },
   labelEnsName: {
     id: 'admin.Profile.ProfileEdit.labelEnsName',
     defaultMessage: 'Colony ENS',
@@ -53,6 +49,10 @@ const MSG = defineMessages({
   labelGuidelines: {
     id: 'admin.Profile.ProfileEdit.labelGuidelines',
     defaultMessage: 'Contribution Guidelines URL',
+  },
+  sendTokens: {
+    id: 'admin.Profile.ProfileEdit.sendTokens',
+    defaultMessage: '(Send tokens to this address to fund your colony)',
   },
   title: {
     id: 'admin.Profile.ProfileEdit.title',
