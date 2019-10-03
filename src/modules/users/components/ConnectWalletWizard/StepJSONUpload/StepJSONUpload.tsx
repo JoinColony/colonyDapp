@@ -56,6 +56,10 @@ const MSG = defineMessages({
   },
 });
 
+export const ACCEPTED_MIME_TYPES: string[] = [
+  'application/json',
+];
+
 type FormValues = {
   method: WALLET_SPECIFICS;
   walletJsonFileUpload: UploadFile[];
@@ -126,7 +130,7 @@ const StepJSONUpload = ({
             <Heading text={MSG.heading} appearance={{ size: 'medium' }} />
             <div className={styles.uploadArea}>
               <FileUpload
-                accept={['application/json']}
+                accept={ACCEPTED_MIME_TYPES}
                 name="walletJsonFileUpload"
                 label={MSG.fileUploadLabel}
                 help={MSG.fileUploadHelp}
