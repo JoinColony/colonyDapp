@@ -80,6 +80,7 @@ const ColonyFunding = ({
           tokens.map(token => (
             <TokenItem
               currentDomainId={currentDomainId}
+              key={token.address}
               token={token}
               tokenReference={tokenReferences.find(
                 ({ address }) => address === token.address,
