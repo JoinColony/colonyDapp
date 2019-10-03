@@ -1,6 +1,7 @@
 export const wideButton: string;
 export const textAreaHeight: string;
 export const main: string;
+export const mainContentContainer: string;
 export const content: string;
 export const sidebar: string;
 export const section: string;
