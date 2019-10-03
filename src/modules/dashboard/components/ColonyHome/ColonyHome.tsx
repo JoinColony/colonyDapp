@@ -28,7 +28,6 @@ import { Tab, Tabs, TabList, TabPanel } from '~core/Tabs';
 import { Select } from '~core/Fields';
 import Button, { ActionButton, DialogActionButton } from '~core/Button';
 import BreadCrumb from '~core/BreadCrumb';
-import Heading from '~core/Heading';
 import RecoveryModeAlert from '~admin/RecoveryModeAlert';
 import LoadingTemplate from '~pages/LoadingTemplate';
 import {
@@ -47,6 +46,7 @@ import {
   canRecoverColony,
 } from '../../checks';
 
+import ColonyFunding from './ColonyFunding';
 import ColonyMeta from './ColonyMeta';
 import TabContribute from './TabContribute';
 import styles from './ColonyHome.css';
@@ -72,14 +72,6 @@ const MSG = defineMessages({
     id: 'dashboard.ColonyHome.newTaskButton',
     defaultMessage: 'New Task',
   },
-  availableFunds: {
-    id: 'dashboard.ColonyHome.availableFunds',
-    defaultMessage: 'Available Funds',
-  },
-  fund: {
-    id: 'dashboard.ColonyHome.fund',
-    defaultMessage: 'Fund',
-  },
   recoverColonyButton: {
     id: 'dashboard.ColonyHome.recoverColonyButton',
     defaultMessage: 'Recover Colony?',
@@ -101,10 +93,6 @@ const MSG = defineMessages({
   recoverColonyCancelButton: {
     id: 'dashboard.ColonyHome.recoverColonyCancelButton',
     defaultMessage: 'Nope! Take me back, please',
-  },
-  root: {
-    id: 'root',
-    defaultMessage: 'root',
   },
 });
 
@@ -196,7 +184,7 @@ const ColonyHome = ({
           }
           return accumulator;
         },
-        [formatMessage(MSG.root)],
+        [formatMessage({ id: 'domain.root' })],
       );
 
   const nativeTokenRef: ColonyTokenReferenceType | null = useSelector(
@@ -327,8 +315,10 @@ const ColonyHome = ({
         </Tabs>
       </main>
       <aside className={styles.sidebar}>
-        <Heading appearance={{ size: 'normal' }} text={MSG.availableFunds} />
-        <Button text={MSG.fund} appearance={{ theme: 'blue' }} />
+        <ColonyFunding
+          colonyAddress={colonyAddress}
+          currentDomainId={filteredDomainId}
+        />
       </aside>
       {isInRecoveryMode && <RecoveryModeAlert />}
     </div>
