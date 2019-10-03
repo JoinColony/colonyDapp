@@ -2,15 +2,19 @@
 @value textAreaHeight: 120px;
 
 .main {
+  margin-top: var(--pad-huge);
+}
+
+.mainContentContainer {
   composes: stretchVertical stretchHorizontal from '~styles/layout.css';
   display: grid;
-  padding: var(--pad-huge) 0 0 8px;
   grid-template-columns: auto minmax(300px, 320px);
   grid-template-rows: auto;
   column-gap: 0;
 }
 
 .content {
+  padding: var(--pad-huge) 0 0 8px;
   border-right: 1px solid var(--temp-grey-5);
   grid-row: 1;
   grid-column: 1;
@@ -46,6 +50,5 @@
 }
 
 .titleContainer {
-  margin-bottom: 30px;
   border-bottom: 1px solid var(--temp-grey-5);
 }
