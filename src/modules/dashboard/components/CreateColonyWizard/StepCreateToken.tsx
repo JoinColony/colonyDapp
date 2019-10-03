@@ -48,7 +48,7 @@ const MSG = defineMessages({
   },
   labelTokenIcon: {
     id: 'dashboard.CreateColonyWizard.StepCreateToken.labelTokenIcon',
-    defaultMessage: 'Token Logo (optional)',
+    defaultMessage: 'Token Icon (Optional)',
   },
   tokenIconHint: {
     id: 'dashboard.CreateColonyWizard.StepCreateToken.tokenIconHint',
