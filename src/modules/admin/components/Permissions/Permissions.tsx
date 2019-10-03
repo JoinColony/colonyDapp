@@ -1,6 +1,11 @@
 import React, { useCallback, useMemo, useState } from 'react';
 
-import { defineMessages, injectIntl, IntlShape } from 'react-intl';
+import {
+  defineMessages,
+  injectIntl,
+  IntlShape,
+  FormattedMessage,
+} from 'react-intl';
 import { compose } from 'recompose';
 
 import { Address, createAddress } from '~types/index';
@@ -12,6 +17,7 @@ import { Table, TableBody, TableCell } from '~core/Table';
 import Button from '~core/Button';
 import withDialog from '~core/Dialog/withDialog';
 import { DialogType } from '~core/Dialog';
+import ExternalLink from '~core/ExternalLink';
 import { useDataFetcher, useRoles } from '~utils/hooks';
 
 import UserListItem from '../UserListItem';
@@ -21,21 +27,31 @@ import UserPermissions from './UserPermissions';
 
 import styles from './Permissions.css';
 
+const DOMAINS_HELP_URL = 'https://help.colony.io/';
+
 const MSG = defineMessages({
   title: {
-    id: 'dashboard.Permissions.title',
+    id: 'admin.Permissions.title',
     defaultMessage: `Permissions{domainLabel, select,
       root {}
       other {: {domainLabel}}
     }`,
   },
   labelFilter: {
-    id: 'dashboard.Permissions.labelFilter',
+    id: 'admin.Permissions.labelFilter',
     defaultMessage: 'Filter',
   },
   addRole: {
-    id: 'dashboard.Permissions.addRole',
+    id: 'admin.Permissions.addRole',
     defaultMessage: 'Add Role',
+  },
+  permissionInParent: {
+    id: 'admin.Permissions.permissionInParent',
+    defaultMessage: '*Permission granted via parent domain. {learnMore}',
+  },
+  learnMore: {
+    id: 'admin.Permissions.learnMore',
+    defaultMessage: 'Learn more',
   },
 });
 
@@ -71,7 +87,10 @@ const Permissions = ({
     [domainsData],
   );
 
-  const { data: roles, isFetching: isFetchingRoles } = useRoles(colonyAddress);
+  const { data: roles, isFetching: isFetchingRoles } = useRoles(
+    colonyAddress,
+    true,
+  );
 
   const setFieldValue = useCallback((_, value) => setSelectedDomain(value), [
     setSelectedDomain,
@@ -152,28 +171,43 @@ const Permissions = ({
           {isFetchingRoles || isFetchingDomains ? (
             <SpinnerLoader />
           ) : (
-            <Table scrollable>
-              <TableBody className={styles.tableBody}>
-                {users.map(user => (
-                  <UserListItem
-                    address={user}
-                    key={user}
-                    onClick={handleOnClick}
-                    showDisplayName
-                    showMaskedAddress
-                    showUsername
-                  >
-                    <TableCell>
-                      <UserPermissions
-                        colonyAddress={colonyAddress}
-                        domainId={selectedDomain}
-                        userAddress={user}
+            <>
+              <Table scrollable>
+                <TableBody className={styles.tableBody}>
+                  {users.map(user => (
+                    <UserListItem
+                      address={user}
+                      key={user}
+                      onClick={handleOnClick}
+                      showDisplayName
+                      showMaskedAddress
+                      showUsername
+                    >
+                      <TableCell>
+                        <UserPermissions
+                          colonyAddress={colonyAddress}
+                          domainId={selectedDomain}
+                          userAddress={user}
+                        />
+                      </TableCell>
+                    </UserListItem>
+                  ))}
+                </TableBody>
+              </Table>
+              <p className={styles.parentPermissionTip}>
+                <FormattedMessage
+                  {...MSG.permissionInParent}
+                  values={{
+                    learnMore: (
+                      <ExternalLink
+                        text={MSG.learnMore}
+                        href={DOMAINS_HELP_URL}
                       />
-                    </TableCell>
-                  </UserListItem>
-                ))}
-              </TableBody>
-            </Table>
+                    ),
+                  }}
+                />
+              </p>
+            </>
           )}
         </div>
       </main>

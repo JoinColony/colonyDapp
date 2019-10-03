@@ -1,7 +1,7 @@
 import { FormikProps } from 'formik';
 
 import React, { useCallback, useMemo, useState, useEffect } from 'react';
-import { defineMessages } from 'react-intl';
+import { defineMessages, FormattedMessage } from 'react-intl';
 import * as yup from 'yup';
 
 import {
@@ -37,6 +37,7 @@ import Heading from '~core/Heading';
 import Button from '~core/Button';
 import Dialog, { DialogSection } from '~core/Dialog';
 import { ActionForm, InputLabel } from '~core/Fields';
+import ExternalLink from '~core/ExternalLink';
 import HookedUserAvatar from '~users/HookedUserAvatar';
 
 import {
@@ -46,22 +47,32 @@ import {
 
 import styles from './ColonyPermissionEditDialog.css';
 
+const DOMAINS_HELP_URL = 'https://help.colony.io/';
+
 const MSG = defineMessages({
   title: {
-    id: 'core.ColonyPermissionEditDialog.title',
+    id: 'admin.ColonyPermissionEditDialog.title',
     defaultMessage: 'Add New Role in {domain}',
   },
   selectUser: {
-    id: 'core.ColonyPermissionEditDialog.selectUser',
+    id: 'admin.ColonyPermissionEditDialog.selectUser',
     defaultMessage: 'Select Member',
   },
   permissionsLabel: {
-    id: 'core.ColonyPermissionEditDialog.permissionsLabel',
+    id: 'admin.ColonyPermissionEditDialog.permissionsLabel',
     defaultMessage: 'Permissions',
   },
   search: {
-    id: 'core.ColonyPermissionEditDialog.search',
+    id: 'admin.ColonyPermissionEditDialog.search',
     defaultMessage: 'Search for a user or paste a wallet address',
+  },
+  permissionInParent: {
+    id: 'admin.ColonyPermissionEditDialog.permissionInParent',
+    defaultMessage: '*Permission granted via parent domain. {learnMore}',
+  },
+  learnMore: {
+    id: 'admin.ColonyPermissionEditDialog.learnMore',
+    defaultMessage: 'Learn more',
   },
 });
 
@@ -209,20 +220,31 @@ const ColonyPermissionEditDialog = ({
 
   // When selected user gets updates get that user's roles
   // to populate the checkboxes
-  const { data } = useUserDomainRoles(colonyAddress, domain.id, selectedUser);
+  const { data: userPermissions } = useUserDomainRoles(
+    colonyAddress,
+    domain.id,
+    selectedUser,
+  );
+  const { data: userPermissionsWithParents } = useUserDomainRoles(
+    colonyAddress,
+    domain.id,
+    selectedUser,
+    true,
+  );
 
   useEffect(() => {
     // Avoid too many rerenders when no new data has loaded with the following condition
     if (
       selectedRoles &&
-      Object.keys(selectedRoles).length !== Object.keys(data).length &&
+      Object.keys(selectedRoles).length !==
+        Object.keys(userPermissions).length &&
       selectedUser
     ) {
-      setSelectedRoles(data);
+      setSelectedRoles(userPermissions);
 
-      setUserRoles(getRoles(data));
+      setUserRoles(getRoles(userPermissions));
     }
-  }, [data, selectedRoles, selectedUser]);
+  }, [userPermissions, selectedRoles, selectedUser]);
 
   // Set user whose roles should be edited
   const {
@@ -285,9 +307,28 @@ const ColonyPermissionEditDialog = ({
                   <PermissionCheckbox
                     disabled={!checkIfCanBeSet(role)}
                     role={role}
+                    asterisk={
+                      userPermissions &&
+                      !userPermissions[role] &&
+                      userPermissionsWithParents &&
+                      userPermissionsWithParents[role]
+                    }
                   />
                 </div>
               ))}
+              <p className={styles.parentPermissionTip}>
+                <FormattedMessage
+                  {...MSG.permissionInParent}
+                  values={{
+                    learnMore: (
+                      <ExternalLink
+                        text={MSG.learnMore}
+                        href={DOMAINS_HELP_URL}
+                      />
+                    ),
+                  }}
+                />
+              </p>
               <DialogSection appearance={{ align: 'right' }}>
                 <Button
                   appearance={{ theme: 'secondary', size: 'large' }}
@@ -310,6 +351,6 @@ const ColonyPermissionEditDialog = ({
   );
 };
 
-ColonyPermissionEditDialog.displayName = 'core.ColonyPermissionEditDialog';
+ColonyPermissionEditDialog.displayName = 'admin.ColonyPermissionEditDialog';
 
 export default ColonyPermissionEditDialog;

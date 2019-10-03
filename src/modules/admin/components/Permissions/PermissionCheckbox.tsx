@@ -15,40 +15,45 @@ import { capitalize } from '~utils/strings';
 import styles from './PermissionCheckbox.css';
 
 const MSG = defineMessages({
+  roleWithAsterisk: {
+    id: 'admin.ColonyPermissionEditDialog.roleWithAsterisk',
+    defaultMessage: '{role}{asterisk, select, true {*} false {} }',
+  },
   roleDescriptionRoot: {
-    id: 'core.ColonyPermissionEditDialog.roleDescriptionRoot',
+    id: 'admin.ColonyPermissionEditDialog.roleDescriptionRoot',
     defaultMessage:
       'The highest permission, control all aspects of running a colony.',
   },
   roleDescriptionAdministration: {
-    id: 'core.ColonyPermissionEditDialog.roleDescriptionAdministration',
+    id: 'admin.ColonyPermissionEditDialog.roleDescriptionAdministration',
     defaultMessage: 'Create and manage new tasks.',
   },
   roleDescriptionArchitecture: {
-    id: 'core.ColonyPermissionEditDialog.roleDescriptionArchitecture',
+    id: 'admin.ColonyPermissionEditDialog.roleDescriptionArchitecture',
     defaultMessage:
       // eslint-disable-next-line max-len
       'Set the administration, funding, and architecture roles in any subdomain.',
   },
   roleDescriptionFunding: {
-    id: 'core.ColonyPermissionEditDialog.roleDescriptionFunding',
+    id: 'admin.ColonyPermissionEditDialog.roleDescriptionFunding',
     defaultMessage: 'Fund tasks and transfer funds between domains.',
   },
   roleDescriptionRecovery: {
-    id: 'core.ColonyPermissionEditDialog.roleDescriptionRecovery',
+    id: 'admin.ColonyPermissionEditDialog.roleDescriptionRecovery',
     defaultMessage: 'Put the Colony into recovery mode.',
   },
   roleDescriptionArbitration: {
-    id: 'core.ColonyPermissionEditDialog.roleDescriptionArbitration',
+    id: 'admin.ColonyPermissionEditDialog.roleDescriptionArbitration',
     defaultMessage: 'Coming soon...',
   },
   tooltipNoPermissionsText: {
-    id: 'core.Permissions.PermissionCheckbox.tooltipNoPermissionsText',
+    id: 'admin.Permissions.PermissionCheckbox.tooltipNoPermissionsText',
     defaultMessage: 'You do not have permission to set the {roleName} role.',
   },
 });
 
 interface Props {
+  asterisk: boolean;
   disabled: boolean;
   intl: IntlShape;
   role: string;
@@ -57,6 +62,7 @@ interface Props {
 const displayName = 'admin.Permissions.PermissionCheckbox';
 
 const PermissionCheckbox = ({
+  asterisk,
   disabled,
   intl: { formatMessage },
   role,
@@ -80,14 +86,25 @@ const PermissionCheckbox = ({
       >
         <span className={styles.permissionChoiceDescription}>
           <Heading
-            text={roleNameMessage}
+            text={MSG.roleWithAsterisk}
+            textValues={{
+              role: formatMessage(roleNameMessage),
+              asterisk: !!asterisk,
+            }}
             appearance={{ size: 'small', margin: 'none' }}
           />
           <FormattedMessage {...roleDescriptionMessage} />
         </span>
       </Checkbox>
     ),
-    [disabled, role, roleDescriptionMessage, roleNameMessage],
+    [
+      asterisk,
+      disabled,
+      formatMessage,
+      role,
+      roleDescriptionMessage,
+      roleNameMessage,
+    ],
   );
   return disabled ? (
     <Popover
