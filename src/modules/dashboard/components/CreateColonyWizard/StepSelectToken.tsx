@@ -69,7 +69,7 @@ const MSG = defineMessages({
   },
   fileUploadTitle: {
     id: 'dashboard.CreateColonyWizard.StepSelectToken.fileUpload',
-    defaultMessage: 'Token Icon (.svg or .png)',
+    defaultMessage: 'Token Icon (optional)',
   },
   fileUploadHint: {
     id: 'dashboard.CreateColonyWizard.StepSelectToken.fileUploadHint',
