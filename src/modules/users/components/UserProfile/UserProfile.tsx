@@ -1,14 +1,12 @@
 import React from 'react';
 import { Redirect } from 'react-router';
 
-import { ActivityFeedItemType, UserType } from '~immutable/index';
+import { UserType } from '~immutable/index';
 import { NOT_FOUND_ROUTE } from '~routes/index';
 import { useDataSubscriber } from '~utils/hooks';
 import { userSubscriber } from '../../subscribers';
 import { useUserAddressFetcher } from '../../hooks';
-import ActivityFeed from '~core/ActivityFeed';
 import ProfileTemplate from '~pages/ProfileTemplate';
-import mockActivities from './__datamocks__/mockActivities';
 import UserMeta from './UserMeta';
 import UserProfileSpinner from './UserProfileSpinner';
 import UserColonies from './UserColonies';
@@ -44,9 +42,6 @@ const UserProfile = ({
     <ProfileTemplate asideContent={<UserMeta user={user} />}>
       <section className={styles.sectionContainer}>
         <UserColonies user={user} />
-      </section>
-      <section className={styles.sectionContainer}>
-        <ActivityFeed activities={mockActivities as ActivityFeedItemType[]} />
       </section>
     </ProfileTemplate>
   );
