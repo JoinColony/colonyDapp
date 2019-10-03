@@ -70,7 +70,7 @@ const MSG = defineMessages({
   },
   fileUploadHint: {
     id: 'dashboard.CreateColonyWizard.StepSelectToken.fileUploadHint',
-    defaultMessage: 'Recommended size for .png file is 60px by 60px, up to 1MB',
+    defaultMessage: 'Recommended format: .png or .svg',
   },
 });
 
