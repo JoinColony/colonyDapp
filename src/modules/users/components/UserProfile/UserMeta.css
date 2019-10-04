@@ -12,7 +12,7 @@
 }
 
 .profileLink:nth-child(2) {
-  /* Only add the margni if the link is the second child (adjacent to the user's display name) */
+  /* Only add the margin if the link is the second child (adjacent to the user's display name) */
   margin-left: 10px;
 }
 
