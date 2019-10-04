@@ -54,13 +54,12 @@ const ColonyFunding = ({
     () =>
       openDialog('TokensMoveDialog', {
         colonyAddress,
-        toDomain: currentDomainId,
+        toDomain: currentDomainId !== 0 ? currentDomainId : undefined,
       }),
     [openDialog, colonyAddress, currentDomainId],
   );
 
-  // hide for root domain
-  return currentDomainId === 0 ? null : (
+  return (
     <div>
       <Heading appearance={{ size: 'normal', weight: 'bold' }}>
         <FormattedMessage {...MSG.title} />

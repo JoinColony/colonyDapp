@@ -138,6 +138,14 @@ const ColonyMeta = ({
               className={getActiveDomainFilterClass(0, filteredDomainId)}
               onClick={() => setFilteredDomainId(0)}
             >
+              <FormattedMessage id="domain.all" />
+            </Button>
+          </li>
+          <li>
+            <Button
+              className={getActiveDomainFilterClass(1, filteredDomainId)}
+              onClick={() => setFilteredDomainId(1)}
+            >
               <FormattedMessage id="domain.root" />
             </Button>
           </li>
