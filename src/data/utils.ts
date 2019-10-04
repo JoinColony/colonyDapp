@@ -3,7 +3,7 @@ import nanoid from 'nanoid';
 
 import { EVENT_MIGRATIONS } from '~data/migrations';
 import { Address } from '~types/strings';
-import { EventTypes, Versions, VERSION } from './constants';
+import { EventTypes, Versions } from './constants';
 import { Entry, Event, VersionedEvent } from './types';
 
 /**
@@ -43,7 +43,7 @@ export const createEvent = <T extends EventTypes>(
   type: T,
   payload?: VersionedEvent<Versions.CURRENT, T>['payload'],
 ): VersionedEvent<Versions.CURRENT, T> =>
-  createVersionedEvent(VERSION, type, payload);
+  createVersionedEvent(Versions.CURRENT, type, payload);
 
 /**
  * Parse an OrbitDB Entry object as a Colony Event object
@@ -72,7 +72,7 @@ const parseEntry = <E extends Event<any>>({
  * @return {Event<any>}
  */
 const migrateEvent = <E extends Event<any>>(event: E): E => {
-  if (VERSION > event.meta.version) {
+  if (Versions.CURRENT > event.meta.version) {
     return EVENT_MIGRATIONS.reduce(
       (migratedEvent, [version, { [event.type]: migrate }]) =>
         migrate && version > migratedEvent.meta.version

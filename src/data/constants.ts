@@ -1,5 +1,3 @@
-export const VERSION = parseInt(process.env.VERSION, 10);
-
 // Always set CURRENT to the VERSION from the environment variable
 export enum Versions {
   V1 = 1,
