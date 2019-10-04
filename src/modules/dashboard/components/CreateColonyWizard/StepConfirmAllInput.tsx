@@ -30,8 +30,8 @@ const MSG = defineMessages({
   },
   subtitle: {
     id: 'CreateColony.StepConfirmAllInput.subtitle',
-    defaultMessage: `Double check these are correct! We’ll package these
-      up into separate transactions for you to deploy to the blockchain.`,
+    defaultMessage: `Please double check that these details
+      are correct, they cannot be changed later.`,
   },
   continue: {
     id: 'CreateColony.StepConfirmAllInput.continue',
