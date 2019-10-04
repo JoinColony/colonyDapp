@@ -1,4 +1,4 @@
-import { Versions } from '../constants';
+import { Versions, VERSION } from '../constants';
 import { Event } from '../types/index';
 
 export const CONTRACT_EVENT_SOURCE = 'contract';
@@ -70,7 +70,7 @@ export const normalizeTransactionLog = (
     sourceId: contractAddress,
     actorId: from,
     timestamp,
-    version: Versions.CURRENT,
+    version: VERSION,
   },
 });
 
