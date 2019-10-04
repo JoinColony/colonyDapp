@@ -28,6 +28,7 @@
 
 .titleAndButton {
   display: flex;
+  align-items: baseline;
   margin-top: 15px;
 }
 
