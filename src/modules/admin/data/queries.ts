@@ -51,9 +51,9 @@ export const getColonyTransactions: ContractEventQuery<
       colonyClient,
       {
         address: colonyAddress,
+        fromBlock: 1,
       },
       {
-        blocksBack: 400000,
         events: [
           ColonyFundsClaimed,
           /*
@@ -98,23 +98,21 @@ export const getColonyUnclaimedTransactions: ContractEventQuery<
       events: { Transfer },
     } = tokenClient;
 
-    const blocksBack = 400000;
-
     // Get logs & events for token transfer to this colony
     const {
       logs: transferLogs,
       events: transferEvents,
     } = await getLogsAndEvents(
       tokenClient,
-      {},
-      { blocksBack, events: [Transfer], to: colonyAddress },
+      { fromBlock: 1 },
+      { events: [Transfer], to: colonyAddress },
     );
 
     // Get logs & events for token claims by this colony
     const { logs: claimLogs, events: claimEvents } = await getLogsAndEvents(
       colonyClient,
-      { address: colonyAddress },
-      { blocksBack, events: [ColonyFundsClaimed] },
+      { address: colonyAddress, fromBlock: 1 },
+      { events: [ColonyFundsClaimed] },
     );
 
     const unclaimedTransfers = await Promise.all(
