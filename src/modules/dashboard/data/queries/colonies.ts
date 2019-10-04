@@ -112,9 +112,9 @@ export const getColonyRoles: ContractEventQuery<
       colonyClient,
       {
         address: colonyAddress,
+        fromBlock: 1,
       },
       {
-        blocksBack: 400000,
         events: [ColonyRoleSet],
       },
     );

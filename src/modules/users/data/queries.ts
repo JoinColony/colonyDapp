@@ -305,7 +305,6 @@ export const getUsername: Query<
 
 /**
  * This query gets all tokens sent from or received to this wallet since a certain block time
- * @todo Use a meaningful value for `blocksBack` when getting past transactions.
  */
 export const getUserColonyTransactions: Query<
   ColonyClient,
@@ -325,13 +324,12 @@ export const getUserColonyTransactions: Query<
       events: { Transfer },
     } = tokenClient;
     const logFilterOptions = {
-      blocksBack: 400000,
       events: [Transfer],
     };
 
     const transferToEventLogs = await getEventLogs(
       tokenClient,
-      {},
+      { fromBlock: 1 },
       {
         ...logFilterOptions,
         to: walletAddress,
@@ -340,7 +338,7 @@ export const getUserColonyTransactions: Query<
 
     const transferFromEventLogs = await getEventLogs(
       tokenClient,
-      {},
+      { fromBlock: 1 },
       {
         ...logFilterOptions,
         from: walletAddress,
@@ -415,9 +413,11 @@ const getColonyEventsForUserInbox = async (
     { colony: string; label: string; tokenAddress: string }
   >(
     networkClient,
-    mapTopics(ColonyLabelRegistered.interface.topics[0], colonyAddress),
     {
-      blocksBack: 400000,
+      ...mapTopics(ColonyLabelRegistered.interface.topics[0], colonyAddress),
+      fromBlock: 1,
+    },
+    {
       events: [ColonyLabelRegistered],
     },
   );
@@ -442,9 +442,9 @@ const getColonyEventsForUserInbox = async (
         formatFilterTopic(COLONY_ROLES[COLONY_ROLE_ADMINISTRATION]),
       ),
       address: colonyAddress,
+      fromBlock: 1,
     },
     {
-      blocksBack: 400000,
       events: [ColonyRoleSet],
     },
   );
@@ -458,9 +458,9 @@ const getColonyEventsForUserInbox = async (
     colonyClient,
     {
       address: colonyAddress,
+      fromBlock: 1,
     },
     {
-      blocksBack: 400000,
       events: [DomainAdded],
     },
   );
@@ -472,9 +472,9 @@ const getColonyEventsForUserInbox = async (
     tokenClient,
     {
       address: tokenAddress,
+      fromBlock: 1,
     },
     {
-      blocksBack: 400000,
       events: [Mint],
     },
   );
