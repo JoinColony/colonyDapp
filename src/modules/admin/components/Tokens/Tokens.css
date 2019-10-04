@@ -1,5 +1,6 @@
 .main {
   display: grid;
+  padding: var(--pad-huge) 0 0 8px;
   height: 100%;
   grid-template-columns: minmax(700px, auto) 180px;
   grid-template-rows: 1fr;

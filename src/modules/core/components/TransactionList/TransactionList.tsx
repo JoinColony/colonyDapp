@@ -1,22 +1,11 @@
 import React, { ReactNode } from 'react';
-import {
-  MessageDescriptor,
-  defineMessages,
-  FormattedMessage,
-} from 'react-intl';
+import { MessageDescriptor } from 'react-intl';
 
 import { Table, TableBody } from '~core/Table';
 import Heading from '~core/Heading';
 import { SpinnerLoader } from '~core/Preloaders';
 import TransactionListItem from './TransactionListItem';
 import { ContractTransactionType } from '~immutable/index';
-
-const MSG = defineMessages({
-  noTransactions: {
-    id: 'admin.TransactionList.noTransactions',
-    defaultMessage: 'No transactions',
-  },
-});
 
 interface Props {
   /*
@@ -73,11 +62,7 @@ const TransactionList = ({
           </TableBody>
         </Table>
       ) : (
-        emptyState || (
-          <p>
-            <FormattedMessage {...MSG.noTransactions} />
-          </p>
-        )
+        emptyState || null
       ))}
   </div>
 );

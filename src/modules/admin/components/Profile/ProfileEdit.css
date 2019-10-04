@@ -1,8 +1,11 @@
 @value wideButton: 160px;
 @value textAreaHeight: 120px;
-@value topPadding: 50px;
 
 .main {
+  margin-top: var(--pad-huge);
+}
+
+.mainContentContainer {
   composes: stretchVertical stretchHorizontal from '~styles/layout.css';
   display: grid;
   grid-template-columns: auto minmax(300px, 320px);
@@ -11,14 +14,14 @@
 }
 
 .content {
-  padding: topPadding 60px 0 8px;
+  padding: var(--pad-huge) 0 0 8px;
   border-right: 1px solid var(--temp-grey-5);
   grid-row: 1;
   grid-column: 1;
 }
 
 .sidebar {
-  padding: topPadding 0 0 60px;
+  padding: var(--pad-huge) 0 40px 60px;
   grid-row: 1;
   grid-column: 2;
 }
@@ -44,4 +47,8 @@
 .inputSection {
   composes: section;
   padding-right: 120px;
+}
+
+.titleContainer {
+  border-bottom: 1px solid var(--temp-grey-5);
 }

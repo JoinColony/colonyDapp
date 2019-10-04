@@ -1,7 +1,7 @@
 export const wideButton: string;
 export const textAreaHeight: string;
-export const topPadding: string;
 export const main: string;
+export const mainContentContainer: string;
 export const content: string;
 export const sidebar: string;
 export const section: string;
@@ -9,3 +9,4 @@ export const sectionENSName: string;
 export const sectionEnsName: string;
 export const divider: string;
 export const inputSection: string;
+export const titleContainer: string;
