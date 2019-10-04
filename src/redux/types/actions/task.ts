@@ -1,9 +1,11 @@
 /* eslint-disable max-len */
 
 import BigNumber from 'bn.js';
+import { CommentEvents } from '~data/types/CommentEvents';
+import { TaskEvents } from '~data/types/TaskEvents';
 
 import { TaskType, TaskProps } from '~immutable/index';
-import { Address, AllEvents } from '~types/index';
+import { Address, CurrentEvents } from '~types/index';
 import { Event } from '~data/types';
 import {
   ActionTypes,
@@ -90,7 +92,7 @@ export type TaskActionTypes =
     >
   | UniqueActionType<
       ActionTypes.TASK_CREATE,
-      TaskProps<'colonyAddress'>,
+      TaskProps<'colonyAddress' | 'domainId'>,
       object
     >
   | ErrorActionType<ActionTypes.TASK_CREATE_ERROR, object>
@@ -100,7 +102,9 @@ export type TaskActionTypes =
         colonyAddress: Address;
         commentsStoreAddress: string;
         taskStoreAddress: string;
-        task: TaskProps<'colonyAddress' | 'creatorAddress' | 'draftId'>;
+        task: TaskProps<
+          'colonyAddress' | 'creatorAddress' | 'draftId' | 'domainId'
+        >;
         event: Event<EventTypes.TASK_CREATED>;
       }
     >
@@ -118,7 +122,7 @@ export type TaskActionTypes =
   | NonUniqueTaskActionType<ActionTypes.TASK_FEED_ITEMS_SUB_STOP, object>
   | NonUniqueTaskActionType<
       ActionTypes.TASK_FEED_ITEMS_SUB_EVENTS,
-      { events: AllEvents[] }
+      { events: CurrentEvents<TaskEvents | CommentEvents>[] }
     >
   | TaskErrorActionType<ActionTypes.TASK_FEED_ITEMS_SUB_ERROR>
   | TaskActionType<
@@ -217,7 +221,7 @@ export type TaskActionTypes =
   | NonUniqueTaskActionType<ActionTypes.TASK_SUB_STOP, object>
   | NonUniqueTaskActionType<
       ActionTypes.TASK_SUB_EVENTS,
-      { events: AllEvents[] }
+      { events: CurrentEvents<TaskEvents>[] }
     >
   | TaskErrorActionType<ActionTypes.TASK_SUB_ERROR>
   | TaskActionType<

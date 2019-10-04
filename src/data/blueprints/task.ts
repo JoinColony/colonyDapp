@@ -5,18 +5,20 @@ import { TaskDraftId } from '~immutable/index';
 
 import { EventStore } from '~lib/database/stores';
 import { TaskAccessController } from '../accessControllers/index';
-import loadPermissionManifest from '../permissions/index';
+import loadPermissionManifest, { MANIFEST_LOADERS } from '../permissions/index';
 
-export type TaskStoreProps = {
+interface TaskStoreProps {
   colonyAddress: Address;
   chainId: string;
   draftId: TaskDraftId;
+  domainId: number;
   wallet: WalletObjectType;
   colonyClient: ColonyClientType;
-};
+}
 
-export const getTaskStoreAccessController = ({
+const getTaskStoreAccessController = ({
   draftId,
+  domainId,
   colonyAddress,
   colonyClient,
   wallet,
@@ -26,7 +28,7 @@ export const getTaskStoreAccessController = ({
       `Could not create access controller, invalid draft ID: "${draftId}"`,
     );
   if (!colonyAddress)
-    throw new Error( // eslint-disable-next-line max-len
+    throw new Error(
       `Could not create access controller, invalid colony address: "${colonyAddress}"`,
     );
   if (!wallet)
@@ -38,14 +40,20 @@ export const getTaskStoreAccessController = ({
       'Could not create access controller, colony client is required',
     );
 
-  const manifest = loadPermissionManifest(colonyClient);
-  return new TaskAccessController(draftId, colonyAddress, wallet, manifest);
+  const manifest = loadPermissionManifest(colonyClient, [
+    MANIFEST_LOADERS.COMMON,
+    MANIFEST_LOADERS.TASK,
+  ]);
+  return new TaskAccessController(
+    draftId,
+    colonyAddress,
+    domainId,
+    wallet,
+    manifest,
+  );
 };
 
-export type TaskStoreBlueprint = StoreBlueprint<
-  TaskStoreProps,
-  TaskAccessController
->;
+type TaskStoreBlueprint = StoreBlueprint<TaskStoreProps, TaskAccessController>;
 
 const taskStoreBlueprint: TaskStoreBlueprint = Object.freeze({
   getAccessController: getTaskStoreAccessController,

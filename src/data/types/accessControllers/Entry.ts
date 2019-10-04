@@ -1,11 +1,11 @@
 import { IdentityObject } from './Identity';
 
-type LamportClock = {
+interface LamportClock {
   id: string;
   time: number;
-};
+}
 
-export type Entry = {
+export interface Entry {
   hash: string; // IPFS hash of the entry
   id: string; // IPFS ID
   payload: { value: any }; // The operation payload
@@ -15,4 +15,4 @@ export type Entry = {
   sig: string; // The entry signature (signs everything but the hash)
   key: string; // Public key used to sign the data, hex encoded
   identity: IdentityObject; // The identity used to sign the entry
-};
+}

@@ -1,4 +1,5 @@
 import { ColonyNetworkClient } from '@colony/colony-js-client';
+import { UserProfileType } from '~immutable/UserProfile';
 
 import ENS from '~lib/ENS';
 import { DDB } from '~lib/database';
@@ -57,7 +58,10 @@ export const getUserInboxStoreByProfileAddress = (ddb: DDB) => async ({
   const profileStore = await getUserProfileStore(ddb)({ walletAddress });
   const { inboxStoreAddress } = profileStore
     .all()
-    .reduce(getUserProfileReducer, {});
+    .reduce(getUserProfileReducer, {} as UserProfileType);
+  if (!inboxStoreAddress) {
+    throw new Error('User profile inbox store not initialized.');
+  }
   return getUserInboxStore(ddb)({
     inboxStoreAddress,
     walletAddress,

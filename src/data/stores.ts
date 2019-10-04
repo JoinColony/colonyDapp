@@ -1,9 +1,8 @@
 import { ColonyClient as ColonyClientType } from '@colony/colony-js-client';
 // import { WalletObjectType } from '@colony/purser-core/flowtypes';
 
-import { Address } from '~types/index';
+import { Address, ColonyClient, Wallet, DDB } from '~types/index';
 import { TaskDraftId } from '~immutable/index';
-import { DDB } from '~lib/database';
 import {
   ColonyStore,
   ColonyTaskIndexStore,
@@ -118,6 +117,7 @@ export const getTaskStore = (
     colonyAddress,
     colonyClient,
     draftId,
+    domainId: null,
     wallet,
   });
 
@@ -142,9 +142,11 @@ export const createTaskStore = (
   wallet: WalletObjectType,
 ) => async ({
   draftId,
+  domainId,
   colonyAddress,
 }: {
   draftId: TaskDraftId;
+  domainId: number;
   colonyAddress: Address;
 }) => {
   const chainId = CHAIN_ID;
@@ -154,6 +156,7 @@ export const createTaskStore = (
       colonyAddress,
       colonyClient,
       draftId,
+      domainId,
       wallet,
     }),
     ddb.createStore<CommentsStore>(commentsStoreBlueprint, {
@@ -300,3 +303,40 @@ export const getColonyTaskIndexStoreAddress = (
     colonyClient,
     wallet,
   });
+
+export const getColonyTaskStores = async (
+  {
+    colonyClient,
+    ddb,
+    wallet,
+  }: {
+    colonyClient: ColonyClient;
+    ddb: DDB;
+    wallet: Wallet;
+  },
+  metadata: { colonyAddress: Address },
+) => {
+  const { colonyAddress } = metadata;
+  const colonyTaskIndexStoreAddress = await getColonyTaskIndexStoreAddress(
+    colonyClient,
+    ddb,
+    wallet,
+  )(metadata);
+  const colonyTaskIndexStore = await getColonyTaskIndexStore(
+    colonyClient,
+    ddb,
+    wallet,
+  )({ colonyAddress, colonyTaskIndexStoreAddress });
+
+  // backwards-compatibility Colony task index store
+  let colonyStore;
+  if (!colonyTaskIndexStore) {
+    colonyStore = await getColonyStore(colonyClient, ddb, wallet)(metadata);
+  }
+
+  if (!(colonyStore || colonyTaskIndexStore)) {
+    throw new Error('Could not load colony task index or colony store either');
+  }
+
+  return { colonyStore, colonyTaskIndexStore };
+};

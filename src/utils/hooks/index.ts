@@ -12,6 +12,7 @@ import { isFetchingData, shouldFetchData } from '~immutable/utils';
 import { getMainClasses } from '~utils/css';
 import { proxyOldRoles, includeParentRoles } from '~utils/data';
 
+import { ColonyRoles } from '../../modules/dashboard/state/AllRoles';
 import { rolesFetcher, domainsFetcher } from '../../modules/dashboard/fetchers';
 import { RootStateRecord } from '../../modules/state';
 
@@ -550,7 +551,7 @@ export const useOldRoles = (colonyAddress: Address) => {
  * Returns in the format { [domainId]: { [userAddress]: { [role]: boolean } } }
  */
 export const useRoles = (
-  colonyAddress: Address,
+  colonyAddress?: Address,
   includeParents = false, // This should not change
 ) => {
   const {
@@ -592,11 +593,15 @@ export const useRoles = (
  * Returns in the format { [role]: boolean }
  */
 export const useUserDomainRoles = (
-  colonyAddress: Address,
+  colonyAddress: Address | undefined,
   domainId: number,
   userAddress: Address,
   includeParents = false, // This should not change
-) => {
+): {
+  data: Record<ColonyRoles, boolean>;
+  isFetching: boolean;
+  error: string | void;
+} => {
   const dispatch = useDispatch();
   const { data: roles, isFetching, error } = useRoles(
     colonyAddress,

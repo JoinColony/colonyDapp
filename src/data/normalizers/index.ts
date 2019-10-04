@@ -1,5 +1,5 @@
+import { Versions } from '../constants';
 import { Event } from '../types/index';
-import { VERSION } from '../constants';
 
 export const CONTRACT_EVENT_SOURCE = 'contract';
 export const DDB_EVENT_SOURCE = 'ddb';
@@ -16,7 +16,7 @@ interface NormalizedEvent {
     sourceType: EVENT_SOURCE_TYPE; // See above
     actorId: string; // Wallet address for orbit-db events or tx sender address for tx logs
     timestamp: number;
-    version: typeof VERSION;
+    version: Versions;
   };
 }
 
@@ -35,7 +35,7 @@ interface TransactionLog {
 
 export const normalizeDDBStoreEvent = (
   storeAddress: string,
-  { meta: { timestamp, id, userAddress }, payload, type }: Event<any>,
+  { meta: { timestamp, id, userAddress, version }, payload, type }: Event<any>,
 ): NormalizedEvent => ({
   type,
   payload,
@@ -45,7 +45,7 @@ export const normalizeDDBStoreEvent = (
     sourceId: storeAddress,
     actorId: userAddress,
     timestamp,
-    version: VERSION,
+    version,
   },
 });
 
@@ -70,7 +70,7 @@ export const normalizeTransactionLog = (
     sourceId: contractAddress,
     actorId: from,
     timestamp,
-    version: VERSION,
+    version: Versions.CURRENT,
   },
 });
 

@@ -89,22 +89,6 @@ export type UserActionTypes =
       ActionTypes.USER_NOTIFICATION_METADATA_FETCH_SUCCESS,
       { readUntil: number; exceptFor: string[] }
     >
-
-  // In the future we could specify in the payload which permission(s) we would like to fetch
-  | ActionTypeWithPayloadAndMeta<
-      ActionTypes.USER_PERMISSIONS_FETCH,
-      { colonyAddress: Address },
-      WithKey
-    >
-  | ErrorActionType<ActionTypes.USER_PERMISSIONS_FETCH_ERROR, WithKey>
-  | ActionTypeWithPayloadAndMeta<
-      ActionTypes.USER_PERMISSIONS_FETCH_SUCCESS,
-      {
-        colonyAddress: Address;
-        permissions: { readonly canEnterRecoveryMode?: boolean };
-      },
-      WithKey
-    >
   | UniqueActionType<
       ActionTypes.USER_PROFILE_UPDATE,
       {

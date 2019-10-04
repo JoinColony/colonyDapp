@@ -20,7 +20,7 @@ export const taskReducer: EventReducer<{
     }
     case EventTypes.TASK_CREATED: {
       const {
-        payload: { creatorAddress, draftId },
+        payload: { creatorAddress, domainId, draftId },
         meta: { timestamp },
       } = event;
       return {
@@ -30,7 +30,7 @@ export const taskReducer: EventReducer<{
         managerAddress: creatorAddress, // @NOTE: At least for the draft version, the creator will also be the manager
         draftId,
         status: TaskStates.ACTIVE,
-        domainId: 1,
+        domainId,
       };
     }
     case EventTypes.TASK_TITLE_SET: {

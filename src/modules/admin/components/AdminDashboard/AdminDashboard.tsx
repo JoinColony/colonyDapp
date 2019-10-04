@@ -3,7 +3,7 @@ import { Redirect } from 'react-router';
 import { defineMessages } from 'react-intl';
 
 import { NavigationItem } from '~pages/VerticalNavigation/VerticalNavigation';
-import { ColonyType, UserPermissionsType } from '~immutable/index';
+import { ColonyType } from '~immutable/index';
 import Heading from '~core/Heading';
 import LoadingTemplate from '~pages/LoadingTemplate';
 import Profile from '~admin/Profile';
@@ -14,14 +14,21 @@ import Domains from '~admin/Domains';
 import Permissions from '~admin/Permissions';
 import VerticalNavigation from '~pages/VerticalNavigation';
 import { HistoryNavigation } from '~pages/NavigationWrapper';
-import { useDataFetcher, useDataSubscriber } from '~utils/hooks';
+import {
+  useDataFetcher,
+  useDataSubscriber,
+  useSelector,
+  useUserDomainRoles,
+} from '~utils/hooks';
 import { Address } from '~types/index';
 
+import { ROOT_DOMAIN } from '../../../core/constants';
 import { isInRecoveryMode } from '../../../dashboard/checks';
 import { canAdminister } from '../../../users/checks';
-import { currentUserColonyPermissionsFetcher } from '../../../users/fetchers';
 import { colonyAddressFetcher } from '../../../dashboard/fetchers';
 import { colonySubscriber } from '../../../dashboard/subscribers';
+
+import { walletAddressSelector } from '../../../users/selectors';
 
 import styles from './AdminDashboard.css';
 
@@ -118,24 +125,22 @@ const AdminDashboard = ({
     [colonyAddress],
   );
 
-  const {
-    data: permissions,
-    isFetching: isFetchingPermissions,
-  } = useDataFetcher<UserPermissionsType>(
-    currentUserColonyPermissionsFetcher,
-    [colony ? colony.colonyAddress : undefined],
-    [colony ? colony.colonyAddress : undefined],
+  const walletAddress = useSelector(walletAddressSelector);
+  const { data: roles, isFetching: isFetchingRoles } = useUserDomainRoles(
+    colony ? colony.colonyAddress : undefined,
+    ROOT_DOMAIN,
+    walletAddress,
   );
 
   if (!colonyName || addressError || colonyError) {
     return <Redirect to="/404" />;
   }
 
-  if (!colony || !permissions || isFetchingPermissions) {
+  if (!colony || !roles || isFetchingRoles) {
     return <LoadingTemplate loadingText={MSG.loadingText} />;
   }
 
-  if (!canAdminister(permissions)) {
+  if (!canAdminister(roles)) {
     return <Redirect to={CURRENT_COLONY_ROUTE} />;
   }
 

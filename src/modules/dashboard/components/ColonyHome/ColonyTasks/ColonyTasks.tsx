@@ -147,9 +147,10 @@ const ColonyTasks = ({
     [colonyAddress, taskMetadata],
   ) as [Address, TaskDraftId][];
 
-  const transform = useCallback(mergePayload({ colonyAddress }), [
-    colonyAddress,
-  ] as any);
+  const transform = useCallback(
+    mergePayload({ colonyAddress, domainId: filteredDomainId }),
+    [filteredDomainId, colonyAddress],
+  );
 
   if (isFetching) {
     return null;

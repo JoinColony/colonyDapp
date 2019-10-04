@@ -1,7 +1,5 @@
 import {
   COLONY_ROLE_ADMINISTRATION,
-  COLONY_ROLE_RECOVERY,
-  COLONY_ROLE_ROOT,
   COLONY_ROLES,
 } from '@colony/colony-js-client';
 import flatten from 'lodash/flatten';
@@ -23,8 +21,8 @@ import {
 } from '~data/types';
 import {
   ContractTransactionType,
-  UserPermissionsType,
   UserProfileType,
+  UserTokenReferenceType,
 } from '~immutable/index';
 import {
   normalizeDDBStoreEvent,
@@ -64,15 +62,6 @@ interface UserMetadataStoreMetadata {
   metadataStoreAddress: string;
   walletAddress: Address;
 }
-
-const prepareColonyClientQuery = async (
-  {
-    colonyManager,
-  }: {
-    colonyManager: ColonyManager;
-  },
-  { colonyAddress }: { colonyAddress: Address },
-) => colonyManager.getColonyClient(colonyAddress);
 
 const prepareMetaColonyClientQuery = async ({
   colonyManager,
@@ -207,7 +196,7 @@ export const getUserTokens: Query<
     } = colonyManager;
 
     // for each address, get balance
-    let tokens = [];
+    let tokens = [] as UserTokenReferenceType[];
     if (metadataStore) {
       tokens = await Promise.all(
         getUserTokenAddresses(metadataStore).map(async address => {
@@ -311,37 +300,6 @@ export const getUsername: Query<
     } catch (e) {
       return null;
     }
-  },
-};
-
-export const getUserPermissions: Query<
-  ColonyClient,
-  { colonyAddress: Address },
-  { walletAddress: string },
-  UserPermissionsType
-> = {
-  name: 'getUserPermissions',
-  context: [Context.COLONY_MANAGER],
-  prepare: prepareColonyClientQuery,
-  async execute(colonyClient, { walletAddress }) {
-    const {
-      hasRole: canEnterRecoveryMode,
-    } = await colonyClient.hasColonyRole.call({
-      address: walletAddress,
-      role: COLONY_ROLE_RECOVERY,
-      domainId: 1,
-    });
-    const { hasRole: isAdmin } = await colonyClient.hasColonyRole.call({
-      address: walletAddress,
-      role: COLONY_ROLE_ADMINISTRATION,
-      domainId: 1,
-    });
-    const { hasRole: isFounder } = await colonyClient.hasColonyRole.call({
-      address: walletAddress,
-      role: COLONY_ROLE_ROOT,
-      domainId: 1,
-    });
-    return { canEnterRecoveryMode, isAdmin, isFounder };
   },
 };
 

@@ -1,17 +1,10 @@
 import React from 'react';
 
-import {
-  ColonyType,
-  ColonyTokenReferenceType,
-  UserPermissionsType,
-} from '~immutable/index';
+import { ColonyType, ColonyTokenReferenceType } from '~immutable/index';
 import { COLONY_TOTAL_BALANCE_DOMAIN_ID } from '../../../../admin/constants';
+import { ColonyRole } from '~types/index';
 import { isInRecoveryMode } from '../../../checks';
-import {
-  canAdminister,
-  canCreateTask,
-  isFounder,
-} from '../../../../users/checks';
+import { canAdminister, isFounder } from '../../../../users/checks';
 import ColonyInitialFunding from '../ColonyInitialFunding';
 import ColonyTasks from '../ColonyTasks';
 
@@ -21,7 +14,7 @@ interface Props {
   filterOption: string;
   nativeTokenRef: ColonyTokenReferenceType | null;
   ethTokenRef: ColonyTokenReferenceType | null;
-  permissions: UserPermissionsType;
+  roles: Record<ColonyRole, boolean>;
 }
 
 const TabContribute = ({
@@ -30,7 +23,7 @@ const TabContribute = ({
   filterOption,
   ethTokenRef,
   nativeTokenRef,
-  permissions,
+  roles,
 }: Props) => {
   const isColonyTokenBalanceZero =
     nativeTokenRef &&
@@ -50,8 +43,13 @@ const TabContribute = ({
   );
   const showQrCode = !!(
     nativeTokenRef &&
-    canAdminister(permissions) &&
-    isFounder(permissions)
+    canAdminister(roles) &&
+    isFounder(roles)
+  );
+  const showEmptyState = !(
+    nativeTokenRef &&
+    isColonyTokenBalanceZero &&
+    isEthBalanceZero
   );
 
   return (
@@ -71,19 +69,13 @@ const TabContribute = ({
         />
       )}
       <ColonyTasks
-        canCreateTask={canCreateTask(permissions)}
+        canCreateTask={canAdminister(roles)}
         colonyAddress={colony.colonyAddress}
         filteredDomainId={filteredDomainId}
         filterOption={filterOption}
         isInRecoveryMode={isInRecoveryMode(colony)}
         canMintTokens={canMintTokens}
-        showEmptyState={
-          /*
-           * @NOTE I couldn't assign this to a variable and re-use it because
-           * of Flow not properly inferring values
-           */
-          !(nativeTokenRef && isColonyTokenBalanceZero && isEthBalanceZero)
-        }
+        showEmptyState={showEmptyState}
       />
     </>
   );

@@ -9,35 +9,30 @@ import { createAddress } from '../types';
 
 // Ideally, we should use the actual type for the common wallet interface
 type PurserWallet = any;
-type Options = {};
-type ProviderType = 'ethereum';
 
 const PROVIDER_TYPE = 'ethereum';
 
 class PurserIdentityProvider<I extends PurserIdentity>
   implements IdentityProvider<I> {
-  _options: Options;
+  private readonly options: object;
 
-  _localCache: LocalForage;
+  private readonly localCache: LocalForage;
 
-  _type: ProviderType;
+  private readonly wallet: PurserWallet;
 
-  _keystore: OrbitDBKeystore;
+  readonly keystore: OrbitDBKeystore;
 
-  _purserWallet: PurserWallet;
-
-  constructor(purserWallet: PurserWallet, options: Options = {}) {
+  constructor(purserWallet: PurserWallet, options: object = {}) {
     if (!purserWallet.address) {
       throw new Error(
         'Could not create an identity provider, is the wallet unlocked?',
       );
     }
 
-    this._type = PROVIDER_TYPE;
-    this._options = options;
-    this._purserWallet = purserWallet;
-    this._keystore = OrbitDBKeystore.create(`./keystore/${this.walletAddress}`);
-    this._localCache = localForage.createInstance({
+    this.options = options;
+    this.wallet = purserWallet;
+    this.keystore = OrbitDBKeystore.create(`./keystore/${this.walletAddress}`);
+    this.localCache = localForage.createInstance({
       // Make sure it uses indexedDB
       driver: localForage.INDEXEDDB,
       name: 'purser-identity-cache',
@@ -46,26 +41,22 @@ class PurserIdentityProvider<I extends PurserIdentity>
   }
 
   get type() {
-    return this._type;
-  }
-
-  get keystore() {
-    return this._keystore;
+    return PROVIDER_TYPE;
   }
 
   get walletAddress() {
-    return createAddress(this._purserWallet.address);
+    return createAddress(this.wallet.address);
   }
 
   async createIdentity() {
-    if (!this._purserWallet.address) {
+    if (!this.wallet.address) {
       throw new Error('Could not get wallet address. Is it unlocked?');
     }
 
     let cachedIdentity: PurserIdentity | undefined;
 
     try {
-      cachedIdentity = await this._localCache.getItem(this.walletAddress);
+      cachedIdentity = await this.localCache.getItem(this.walletAddress);
     } catch (e) {
       cachedIdentity = undefined;
       console.warn(
@@ -87,17 +78,17 @@ class PurserIdentityProvider<I extends PurserIdentity>
 
     // Always create a key per wallet address. This is stored on indexedDB
     const orbitKey =
-      (await this._keystore.getKey(this.walletAddress)) ||
-      (await this._keystore.createKey(this.walletAddress));
+      (await this.keystore.getKey(this.walletAddress)) ||
+      (await this.keystore.createKey(this.walletAddress));
 
     // Sign wallet address with the orbit signing key we've created and are going to use
-    const idSignature = await this._keystore.sign(orbitKey, this.walletAddress);
+    const idSignature = await this.keystore.sign(orbitKey, this.walletAddress);
 
     // Get the public key
-    const publicKey = this._keystore.getPublic(orbitKey);
+    const publicKey = this.keystore.getPublic(orbitKey);
 
     // Sign both the key and the signature created with that key
-    const pubKeyIdSignature = await this._purserWallet.signMessage({
+    const pubKeyIdSignature = await this.wallet.signMessage({
       message: publicKey + idSignature,
     });
 
@@ -106,11 +97,11 @@ class PurserIdentityProvider<I extends PurserIdentity>
       publicKey,
       idSignature,
       pubKeyIdSignature,
-      this._type,
+      this.type,
       this,
     );
     try {
-      await this._localCache.ready();
+      await this.localCache.ready();
     } catch (e) {
       console.warn(
         `Could not initialize local storage. If we're not in a browser, that's fine.`,
@@ -118,15 +109,15 @@ class PurserIdentityProvider<I extends PurserIdentity>
       );
       return identity;
     }
-    await this._localCache.setItem(this.walletAddress, identity.toJSON());
+    await this.localCache.setItem(this.walletAddress, identity.toJSON());
     return identity;
   }
 
   async sign(identity: PurserIdentity, data: any): Promise<string> {
-    const signingKey = await this._keystore.getKey(identity.id);
+    const signingKey = await this.keystore.getKey(identity.id);
     if (!signingKey)
       throw new Error(`Private signing key not found from Keystore`);
-    return this._keystore.sign(signingKey, data);
+    return this.keystore.sign(signingKey, data);
   }
 
   async verify(
@@ -134,12 +125,12 @@ class PurserIdentityProvider<I extends PurserIdentity>
     publicKey: string,
     data: any,
   ): Promise<boolean> {
-    return this._keystore.verify(signature, publicKey, data);
+    return this.keystore.verify(signature, publicKey, data);
   }
 
   async close() {
     // Make sure the keystore exists before trying to close it
-    if (this._keystore) await this._keystore.close();
+    if (this.keystore) await this.keystore.close();
   }
 }
 

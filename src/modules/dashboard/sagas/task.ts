@@ -35,6 +35,7 @@ import {
   colonyTaskMetadataSelector,
   taskSelector,
 } from '../selectors';
+import { ROOT_DOMAIN } from '../../core/constants';
 import { createTransaction, getTxChannel, signMessage } from '../../core/sagas';
 
 import {
@@ -105,7 +106,7 @@ export function* fetchColonyTaskMetadata(colonyAddress: Address) {
 
 function* taskCreate({
   meta,
-  payload: { colonyAddress },
+  payload: { colonyAddress, domainId = ROOT_DOMAIN },
 }: Action<ActionTypes.TASK_CREATE>) {
   try {
     const {
@@ -119,8 +120,8 @@ function* taskCreate({
     const { taskStore, commentsStore, event } = yield executeCommand(
       createTask,
       {
-        metadata: { colonyAddress, draftId },
-        args: { creatorAddress, draftId },
+        metadata: { colonyAddress, draftId, domainId },
+        args: { creatorAddress, draftId, domainId },
       },
     );
     const successAction: Action<ActionTypes.TASK_CREATE_SUCCESS> = {
@@ -133,8 +134,9 @@ function* taskCreate({
         taskStoreAddress: taskStore.address.toString(),
         task: {
           colonyAddress,
-          draftId,
           creatorAddress,
+          draftId,
+          domainId,
         },
       },
       meta: { key: draftId, ...meta },

@@ -1,4 +1,9 @@
-export const VERSION: number = Number(process.env.VERSION) || 1;
+// Always set CURRENT to the VERSION from the environment variable
+export enum Versions {
+  V1 = 1,
+  V2 = 2,
+  CURRENT = 2,
+}
 
 export enum TaskStates {
   ACTIVE = 'ACTIVE',

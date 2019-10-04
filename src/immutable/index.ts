@@ -23,7 +23,6 @@ export * from './Token';
 export * from './Transaction';
 export * from './User';
 export * from './UserNotificationMetadata';
-export * from './UserPermissions';
 export * from './UserProfile';
 export * from './UserTokenReference';
 export * from './Wallet';

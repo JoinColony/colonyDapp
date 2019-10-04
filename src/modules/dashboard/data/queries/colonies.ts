@@ -9,7 +9,13 @@ import {
 } from '@colony/colony-js-client';
 import BigNumber from 'bn.js';
 
-import { Address, createAddress, ENSCache } from '~types/index';
+import {
+  Address,
+  createAddress,
+  CurrentEvents,
+  ENSCache,
+  Event,
+} from '~types/index';
 import {
   ColonyClient,
   ColonyManager,
@@ -21,16 +27,21 @@ import {
   Subscription,
   Wallet,
 } from '~data/types';
+import { ColonyEvents } from '~data/types/ColonyEvents';
+import { TaskIndexEvents } from '~data/types/TaskIndexEvents';
 import { ColonyType, DomainType } from '~immutable/index';
 import { Context } from '~context/index';
+import EventStore from '~lib/database/stores/EventStore';
 import { EventTypes } from '~data/constants';
 import {
   getColonyStore,
   getColonyTaskIndexStore,
   getColonyTaskIndexStoreAddress,
+  getColonyTaskStores,
 } from '~data/stores';
 import { getEvents } from '~utils/web3/eventLogs';
 import { ZERO_ADDRESS } from '~utils/web3/constants';
+import { ROOT_DOMAIN } from '../../../core/constants';
 import { colonyReducer, colonyTasksReducer } from '../reducers';
 import { COLONY_TOTAL_BALANCE_DOMAIN_ID } from '../../../admin/constants';
 
@@ -188,7 +199,7 @@ export const getColonyDomainUserRoles: ContractEventQuery<
       }),
       colonyClient.hasColonyRole.call({
         address,
-        domainId,
+        domainId: ROOT_DOMAIN, // The root role only applies to the root domain
         role: COLONY_ROLE_ROOT,
       }),
     ]).then(results => results.map(({ hasRole }) => hasRole));
@@ -455,16 +466,22 @@ export const getColonyDomains: Query<
           type === EventTypes.DOMAIN_EDITED,
       )
       .sort((a, b) => a.meta.timestamp - b.meta.timestamp)
-      .reduce((domains, event) => {
-        const {
-          payload: { domainId: currentDomainId },
-        } = event;
-        const difference = domains.filter(
-          ({ payload: { domainId } }) => currentDomainId !== domainId,
-        );
+      .reduce(
+        (
+          domains,
+          event: Event<EventTypes.DOMAIN_CREATED | EventTypes.DOMAIN_EDITED>,
+        ) => {
+          const {
+            payload: { domainId: currentDomainId },
+          } = event;
+          const difference = domains.filter(
+            ({ payload: { domainId } }) => currentDomainId !== domainId,
+          );
 
-        return [...difference, event];
-      }, [])
+          return [...difference, event];
+        },
+        [],
+      )
       .map(({ payload: { domainId, name } }) => ({
         id: domainId,
         name,
@@ -585,22 +602,11 @@ export const subscribeToColonyTasks: Subscription<
   ) {
     const { colonyAddress } = metadata;
     const colonyClient = await colonyManager.getColonyClient(colonyAddress);
-    const colonyTaskIndexStoreAddress = await getColonyTaskIndexStoreAddress(
-      colonyClient,
-      ddb,
-      wallet,
-    )(metadata);
-    const colonyTaskIndexStore = await getColonyTaskIndexStore(
-      colonyClient,
-      ddb,
-      wallet,
-    )({ colonyAddress, colonyTaskIndexStoreAddress });
 
-    // backwards-compatibility Colony task index store
-    let colonyStore;
-    if (!colonyTaskIndexStore) {
-      colonyStore = await getColonyStore(colonyClient, ddb, wallet)(metadata);
-    }
+    const { colonyTaskIndexStore, colonyStore } = await getColonyTaskStores(
+      { colonyClient, ddb, wallet },
+      metadata,
+    );
 
     return {
       colonyStore,
@@ -609,7 +615,9 @@ export const subscribeToColonyTasks: Subscription<
   },
   async execute({ colonyStore, colonyTaskIndexStore }) {
     // backwards-compatibility Colony task index store
-    const store = colonyStore || colonyTaskIndexStore;
+    const store = (colonyTaskIndexStore || colonyStore) as EventStore<
+      CurrentEvents<ColonyEvents | TaskIndexEvents>
+    >;
     if (!store) {
       throw new Error(
         'Could not load colony task index or colony store either',
