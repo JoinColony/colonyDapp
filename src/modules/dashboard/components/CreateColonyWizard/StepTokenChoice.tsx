@@ -22,18 +22,14 @@ const MSG = defineMessages({
   },
   subtitle: {
     id: 'dashboard.CreateColonyWizard.StepTokenChoice.subtitle',
-    defaultMessage:
-      // eslint-disable-next-line max-len
-      'Colonies need a native token to calculate Reputation at the end of a task.',
-  },
-  callToAction: {
-    id: 'dashboard.CreateColonyWizard.StepTokenChoice.callToAction',
-    defaultMessage: 'Choose which token is right for {colony}.',
+    defaultMessage: `You earn reputation in a colony when it pays you in its\
+      native token.`,
   },
   subtitleWithExample: {
     id: 'dashboard.CreateColonyWizard.StepTokenChoice.subtitleWithExample',
-    defaultMessage: `E.g.: Leia has completed a task worth 1.5 ETH and 5 CLNY.
-      If CLNY is the native token then she also earns +5 Reputation points.`,
+    defaultMessage: `Example: Leia completes a task for 5 DAI. If the colony\
+      uses DAI as its native token, she also earns 5 reputation in that\
+      colony.`,
   },
   button: {
     id: 'dashboard.CreateColonyWizard.StepTokenChoice.button',
@@ -140,26 +136,6 @@ const StepTokenChoice = ({ nextStep, wizardForm, wizardValues }: Props) => (
             className={styles.subtitleWithExample}
             appearance={{ size: 'normal', weight: 'thin' }}
             text={MSG.subtitleWithExample}
-          />
-        </div>
-        <div className={styles.subtitleWithExampleBox}>
-          <FormattedMessage
-            {...MSG.callToAction}
-            values={{
-              /*
-               * @NOTE We need to use a JS string truncate here, rather then CSS,
-               * since we're dealing with a string that needs to be truncated,
-               * inside a sentence that does not
-               */
-              colony: (
-                <span title={ENS.normalizeAsText(wizardValues.colonyName)}>
-                  {multiLineTextEllipsis(
-                    ENS.normalizeAsText(wizardValues.colonyName),
-                    42,
-                  )}
-                </span>
-              ),
-            }}
           />
         </div>
         <DecisionHub name="tokenChoice" options={options} />
