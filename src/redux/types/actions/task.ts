@@ -102,7 +102,9 @@ export type TaskActionTypes =
         colonyAddress: Address;
         commentsStoreAddress: string;
         taskStoreAddress: string;
-        task: TaskProps<'colonyAddress' | 'creatorAddress' | 'draftId'>;
+        task: TaskProps<
+          'colonyAddress' | 'creatorAddress' | 'draftId' | 'domainId'
+        >;
         event: Event<EventTypes.TASK_CREATED>;
       }
     >

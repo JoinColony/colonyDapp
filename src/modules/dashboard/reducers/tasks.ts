@@ -116,14 +116,16 @@ const tasksReducer: ReducerType<TasksMap> = (
     case ActionTypes.TASK_CREATE_SUCCESS: {
       const {
         draftId,
-        task: { colonyAddress, creatorAddress },
+        task: { colonyAddress, creatorAddress, domainId },
       } = action.payload;
       return state.set(
         draftId,
         FetchableData<TaskRecord>({
           error: undefined,
           isFetching: false,
-          record: Task(fromJS({ colonyAddress, creatorAddress, draftId })),
+          record: Task(
+            fromJS({ colonyAddress, creatorAddress, draftId, domainId }),
+          ),
         }),
       );
     }
