@@ -19,7 +19,11 @@ import {
   UserMetadataStore,
   UserProfileStore,
 } from '~data/types';
-import { ContractTransactionType, UserProfileType } from '~immutable/index';
+import {
+  ContractTransactionType,
+  UserProfileType,
+  UserTokenReferenceType,
+} from '~immutable/index';
 import {
   normalizeDDBStoreEvent,
   normalizeTransactionLog,
@@ -192,7 +196,7 @@ export const getUserTokens: Query<
     } = colonyManager;
 
     // for each address, get balance
-    let tokens = [];
+    let tokens = [] as UserTokenReferenceType[];
     if (metadataStore) {
       tokens = await Promise.all(
         getUserTokenAddresses(metadataStore).map(async address => {
