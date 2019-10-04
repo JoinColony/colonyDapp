@@ -4,14 +4,17 @@ import React, { useCallback, useState } from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 import * as yup from 'yup';
 
+import { ActionTypes } from '~redux/index';
 import { WizardProps } from '~core/Wizard';
 import { Form, Input } from '~core/Fields';
 import Heading from '~core/Heading';
 import Button from '~core/Button';
-import FileUpload from '~core/FileUpload';
+import { ActionFileUpload } from '~core/FileUpload';
 import { multiLineTextEllipsis } from '~utils/strings';
+import { mapPayload } from '~utils/actions';
 import ENS from '~lib/ENS';
 import TokenSelector from './TokenSelector';
+
 import styles from './StepSelectToken.css';
 
 type TokenData = {
@@ -24,7 +27,7 @@ interface FormValues {
   tokenChoice: 'create' | 'select';
   tokenSymbol?: string;
   tokenName?: string;
-  iconUpload?: string;
+  tokenIcon?: string;
   tokenData: TokenData | null;
   colonyName: string;
 }
@@ -66,11 +69,11 @@ const MSG = defineMessages({
   },
   fileUploadTitle: {
     id: 'dashboard.CreateColonyWizard.StepSelectToken.fileUpload',
-    defaultMessage: 'Token Icon (.svg or .png)',
+    defaultMessage: 'Token Icon (optional)',
   },
   fileUploadHint: {
     id: 'dashboard.CreateColonyWizard.StepSelectToken.fileUploadHint',
-    defaultMessage: 'Recommended size for .png file is 60px by 60px, up to 1MB',
+    defaultMessage: 'Recommended format: .png or .svg',
   },
 });
 
@@ -98,6 +101,11 @@ const StepSelectToken = ({
       setFieldValue('tokenSymbol', data.symbol);
     }
   };
+
+  const transform = useCallback(
+    mapPayload(({ data }) => ({ ipfsData: data })),
+    [],
+  );
 
   const goToTokenCreate = useCallback(() => {
     /* This is a custom link since it goes to a sibling step that appears
@@ -179,12 +187,14 @@ const StepSelectToken = ({
                   />
                 </div>
                 <div className={styles.tokenDetails}>
-                  <FileUpload
-                    accept={['svg', 'png']}
+                  <ActionFileUpload
+                    name="tokenIcon"
+                    submit={ActionTypes.IPFS_DATA_UPLOAD}
+                    success={ActionTypes.IPFS_DATA_UPLOAD_SUCCESS}
+                    error={ActionTypes.IPFS_DATA_UPLOAD_ERROR}
+                    transform={transform}
                     label={MSG.fileUploadTitle}
-                    name="iconUpload"
                     status={MSG.fileUploadHint}
-                    maxFilesLimit={1}
                   />
                 </div>
               </>

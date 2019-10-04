@@ -48,7 +48,11 @@ const MSG = defineMessages({
   },
   labelTokenIcon: {
     id: 'dashboard.CreateColonyWizard.StepCreateToken.labelTokenIcon',
-    defaultMessage: 'Token Logo (optional)',
+    defaultMessage: 'Token Icon (Optional)',
+  },
+  tokenIconHint: {
+    id: 'dashboard.CreateColonyWizard.StepCreateToken.tokenIconHint',
+    defaultMessage: 'Recommended format: .png or .svg',
   },
   link: {
     id: 'dashboard.CreateColonyWizard.StepCreateToken.link',
@@ -69,9 +73,6 @@ const MSG = defineMessages({
     .svg and .png images, up to 1 MB in size.`,
   },
 });
-
-const ACCEPTED_MIME_TYPES: string[] = ['image/svg+xml', 'image/png'];
-const ACCEPTED_MAX_FILE_SIZE = 1000000;
 
 const validationSchema = yup.object({
   tokenName: yup.string().required(),
@@ -188,14 +189,13 @@ const StepCreateToken = ({
             </div>
             <div className={styles.inputFieldWrapper}>
               <ActionFileUpload
-                accept={ACCEPTED_MIME_TYPES}
-                maxFileSize={ACCEPTED_MAX_FILE_SIZE}
                 name="tokenIcon"
                 label={MSG.labelTokenIcon}
                 submit={ActionTypes.IPFS_DATA_UPLOAD}
                 success={ActionTypes.IPFS_DATA_UPLOAD_SUCCESS}
                 error={ActionTypes.IPFS_DATA_UPLOAD_ERROR}
                 transform={transform}
+                status={MSG.tokenIconHint}
               />
             </div>
           </section>

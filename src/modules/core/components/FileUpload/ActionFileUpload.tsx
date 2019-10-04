@@ -15,6 +15,7 @@ interface Props {
   maxFileSize?: number;
   name?: string;
   label?: any;
+  status?: any;
 }
 
 const ActionFileUpload = ({
