@@ -27,7 +27,7 @@ export default class PermissionManager {
   private async verify<C extends object>(
     permission: Permission<C>,
     user: string,
-    context?: C,
+    context: C,
   ) {
     if (typeof permission === 'function') {
       return permission(user, context);
@@ -40,7 +40,7 @@ export default class PermissionManager {
     return false;
   }
 
-  async can<C extends object>(actionId: ActionId, user: string, context?: C) {
+  async can<C extends object>(actionId: ActionId, user: string, context: C) {
     if (!(this.permissions && Object.keys(this.permissions).length)) {
       throw new Error('Could not verify permission');
     }

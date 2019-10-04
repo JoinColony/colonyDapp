@@ -125,7 +125,7 @@ class TaskAccessController extends AbstractAccessController<
   async can<C extends object | void>(
     actionId: string,
     user: string,
-    context?: C,
+    context: C,
   ): Promise<boolean> {
     log.verbose('Checking permission for action', actionId, user, context);
     return this.manager.can(

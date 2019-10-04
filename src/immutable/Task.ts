@@ -17,7 +17,7 @@ interface Shared {
   creatorAddress: string; // Address of the task creator
   currentState: TaskStates;
   description?: string;
-  domainId?: number;
+  domainId: number;
   draftId: string; // Draft task ID, when the task is a little babby
   dueDate?: Date;
   managerAddress: Address;

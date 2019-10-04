@@ -11,7 +11,7 @@ interface TaskStoreProps {
   colonyAddress: Address;
   chainId: string;
   draftId: TaskDraftId;
-  domainId?: number;
+  domainId: number;
   wallet: WalletObjectType;
   colonyClient: ColonyClientType;
 }

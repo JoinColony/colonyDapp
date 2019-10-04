@@ -59,6 +59,9 @@ export const getUserInboxStoreByProfileAddress = (ddb: DDB) => async ({
   const { inboxStoreAddress } = profileStore
     .all()
     .reduce(getUserProfileReducer, {} as UserProfileType);
+  if (!inboxStoreAddress) {
+    throw new Error('User profile inbox store not initialized.');
+  }
   return getUserInboxStore(ddb)({
     inboxStoreAddress,
     walletAddress,
