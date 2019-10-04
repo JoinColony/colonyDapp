@@ -72,7 +72,7 @@ const parseEntry = <E extends Event<any>>({
  * @return {Event<any>}
  */
 const migrateEvent = <E extends Event<any>>(event: E): E => {
-  if (Versions.CURRENT > event.meta.version) {
+  if (VERSION > event.meta.version) {
     return EVENT_MIGRATIONS.reduce(
       (migratedEvent, [version, { [event.type]: migrate }]) =>
         migrate && version > migratedEvent.meta.version
