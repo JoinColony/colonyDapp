@@ -194,7 +194,7 @@ const ColonyHome = ({
   );
 
   const transform = useCallback(
-    mergePayload({ colonyAddress, domainId: filteredDomainId || ROOT_DOMAIN }),
+    mergePayload({ colonyAddress, domainId: filteredDomainId }),
     [colonyAddress, filteredDomainId],
   );
 
