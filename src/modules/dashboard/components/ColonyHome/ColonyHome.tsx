@@ -1,5 +1,5 @@
 import { Redirect } from 'react-router';
-import React, { useState, useCallback, useEffect } from 'react';
+import React, { useState, useCallback, useEffect, useMemo } from 'react';
 import {
   defineMessages,
   FormattedMessage,
@@ -170,19 +170,22 @@ const ColonyHome = ({
     [colonyAddress],
   );
 
-  const crumbs =
-    domains &&
-    domains
-      .sort((a, b) => a.id - b.id)
-      .reduce(
-        (accumulator, domain) => {
-          if (domain && domain.name && domain.id === filteredDomainId) {
-            accumulator.push(domain.name);
-          }
-          return accumulator;
-        },
-        [formatMessage({ id: 'domain.root' })],
-      );
+  const crumbs = useMemo(() => {
+    const selectedDomain =
+      !!domains && domains.find(domain => domain.id === filteredDomainId);
+    switch (filteredDomainId) {
+      case 0:
+        return [formatMessage({ id: 'domain.all' })];
+
+      case 1:
+        return [formatMessage({ id: 'domain.root' })];
+
+      default:
+        return selectedDomain
+          ? [formatMessage({ id: 'domain.root' }), selectedDomain.name]
+          : [formatMessage({ id: 'domain.root' })];
+    }
+  }, [domains, filteredDomainId, formatMessage]);
 
   const nativeTokenRef: ColonyTokenReferenceType | null = useSelector(
     colonyNativeTokenSelector,
