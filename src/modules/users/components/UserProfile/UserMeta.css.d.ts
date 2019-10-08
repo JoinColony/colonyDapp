@@ -1,6 +1,7 @@
 export const contentMargin: string;
 export const main: string;
 export const headingContainer: string;
+export const profileLink: string;
 export const usernameContainer: string;
 export const bioContainer: string;
 export const websiteContainer: string;
