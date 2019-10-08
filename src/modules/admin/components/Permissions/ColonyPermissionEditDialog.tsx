@@ -47,7 +47,9 @@ import {
 
 import styles from './ColonyPermissionEditDialog.css';
 
-const DOMAINS_HELP_URL = 'https://help.colony.io/';
+const DOMAINS_HELP_URL =
+  // eslint-disable-next-line max-len
+  'https://help.colony.io/hc/en-us/articles/360024588993-What-are-the-permissions-in-a-colony-';
 
 const MSG = defineMessages({
   title: {
