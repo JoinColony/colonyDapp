@@ -239,7 +239,7 @@ const ColonyPermissionEditDialog = ({
     if (
       selectedRoles &&
       Object.keys(selectedRoles).length !==
-      Object.keys(userPermissions).length &&
+        Object.keys(userPermissions).length &&
       selectedUser
     ) {
       setSelectedRoles(userPermissions);
@@ -260,10 +260,10 @@ const ColonyPermissionEditDialog = ({
   const selectedUserData =
     !!selectedUser && !selectedUserObj
       ? User({
-        profile: UserProfile({
-          walletAddress: selectedUser,
-        }),
-      }).toJS()
+          profile: UserProfile({
+            walletAddress: selectedUser,
+          }),
+        }).toJS()
       : selectedUserObj;
 
   return (
