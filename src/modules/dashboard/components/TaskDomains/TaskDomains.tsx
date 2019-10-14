@@ -1,5 +1,5 @@
-import { defineMessages, FormattedMessage, injectIntl } from 'react-intl';
 import React, { useCallback, useMemo, useState } from 'react';
+import { defineMessages, FormattedMessage } from 'react-intl';
 
 import { COLONY_TOTAL_BALANCE_DOMAIN_ID } from '~constants';
 import Heading from '~core/Heading';
@@ -106,6 +106,9 @@ const TaskDomains = ({ colonyAddress, domainId, draftId, disabled }: Props) => {
         .map(id => ({
           ...(domains || {})[id],
           disabled: !domainHasEnoughFunds(id),
+          disabledText: !domainHasEnoughFunds(id)
+            ? MSG.insufficientFundsInDomain
+            : undefined,
           id: parseInt(id, 10),
         })),
     [domainHasEnoughFunds, domains],
@@ -147,4 +150,4 @@ const TaskDomains = ({ colonyAddress, domainId, draftId, disabled }: Props) => {
 
 TaskDomains.displayName = displayName;
 
-export default injectIntl(TaskDomains);
+export default TaskDomains;
