@@ -13,7 +13,7 @@ describe('taskSkillsTree data', () => {
       .filter(skill => !!skill.parent)
       .map(({ parent }) => parent);
     expect(
-      taskParentIds.every(parentId => taskIds.includes(parentId)),
+      taskParentIds.every(parentId => taskIds.includes(parentId as number)),
     ).toBeTruthy();
   });
 });

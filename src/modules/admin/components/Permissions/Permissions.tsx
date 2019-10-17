@@ -8,6 +8,7 @@ import {
 } from 'react-intl';
 import { compose } from 'recompose';
 
+import { ROOT_DOMAIN } from '~constants';
 import { Address, ColonyRoles } from '~types/index';
 import { DomainType } from '~immutable/index';
 import Heading from '~core/Heading';
@@ -20,9 +21,9 @@ import { DialogType } from '~core/Dialog';
 import ExternalLink from '~core/ExternalLink';
 import { useDataFetcher, useSelector } from '~utils/hooks';
 
-import UserListItem from '../UserListItem';
 import { domainsFetcher } from '../../../dashboard/fetchers';
 import { domainSelector } from '../../../dashboard/selectors';
+import UserListItem from '../UserListItem';
 import UserPermissions from './UserPermissions';
 
 import styles from './Permissions.css';
@@ -67,7 +68,7 @@ interface Props {
 const displayName = 'admin.Permissions';
 
 const Permissions = ({ colonyAddress, openDialog }: Props) => {
-  const [selectedDomainId, setSelectedDomainId] = useState<string>('1');
+  const [selectedDomainId, setSelectedDomainId] = useState<string>(ROOT_DOMAIN);
 
   const {
     data: domainsObj = {},

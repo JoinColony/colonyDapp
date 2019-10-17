@@ -10,6 +10,7 @@ import {
   select,
 } from 'redux-saga/effects';
 
+import { ROOT_DOMAIN } from '~constants';
 import { Action, ActionTypes, AllActions } from '~redux/index';
 import {
   putError,
@@ -391,7 +392,7 @@ function* colonyTokenBalancesFetch({
         ),
       ),
       // fetch balances for root domain
-      put(fetchColonyTokenBalance(colonyAddress, tokenAddress, '1')),
+      put(fetchColonyTokenBalance(colonyAddress, tokenAddress, ROOT_DOMAIN)),
       // fetch balances for other domains
       ...domains.map(({ id: domainId }) =>
         put(fetchColonyTokenBalance(colonyAddress, tokenAddress, domainId)),

@@ -2,6 +2,7 @@ import React, { useCallback, useMemo, useState } from 'react';
 import { defineMessages, injectIntl, IntlShape } from 'react-intl';
 import { compose } from 'recompose';
 
+import { ROOT_DOMAIN } from '~constants';
 import { DialogType } from '~core/Dialog';
 import Button from '~core/Button';
 import withDialog from '~core/Dialog/withDialog';
@@ -60,7 +61,7 @@ const Tokens = ({
   intl: { formatMessage },
   openDialog,
 }: Props) => {
-  const [selectedDomain, setSelectedDomain] = useState('1');
+  const [selectedDomain, setSelectedDomain] = useState(ROOT_DOMAIN);
 
   const walletAddress = useSelector(walletAddressSelector);
 
@@ -70,7 +71,8 @@ const Tokens = ({
     [colonyAddress],
   );
 
-  const { roles: rootDomainRoles = {} } = (domainsData || {})['1'] || {};
+  const { roles: rootDomainRoles = {} } =
+    (domainsData || {})[ROOT_DOMAIN] || {};
   const canEdit = useMemo(
     () => canEditTokens(proxyOldRoles(rootDomainRoles), walletAddress),
     [rootDomainRoles, walletAddress],
@@ -78,7 +80,7 @@ const Tokens = ({
 
   const canMoveTokens = useSelector(userHasRoleSelector, [
     colonyAddress,
-    '1',
+    ROOT_DOMAIN,
     walletAddress,
     ColonyRoles.FUNDING,
   ]);

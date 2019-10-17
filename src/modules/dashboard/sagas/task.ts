@@ -12,6 +12,7 @@ import {
 import { replace } from 'connected-react-router';
 import BigNumber from 'bn.js';
 
+import { ROOT_DOMAIN } from '~constants';
 import { Action, ActionTypes } from '~redux/index';
 import { Address, ContractContexts } from '~types/index';
 import { TaskType } from '~immutable/index';
@@ -25,8 +26,8 @@ import {
   takeFrom,
 } from '~utils/saga/effects';
 import { generateUrlFriendlyId } from '~utils/data';
-
 import { matchUsernames } from '~lib/TextDecorator';
+
 import { usernameSelector, walletAddressSelector } from '../../users/selectors';
 import { fetchColonyTaskMetadata as fetchColonyTaskMetadataAC } from '../actionCreators';
 import {
@@ -35,7 +36,6 @@ import {
   colonyTaskMetadataSelector,
   taskSelector,
 } from '../selectors';
-import { ROOT_DOMAIN } from '../../core/constants';
 import { createTransaction, getTxChannel, signMessage } from '../../core/sagas';
 
 import {

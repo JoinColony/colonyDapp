@@ -2,6 +2,7 @@ import React from 'react';
 import { Redirect } from 'react-router';
 import { defineMessages } from 'react-intl';
 
+import { ROOT_DOMAIN } from '~constants';
 import { NavigationItem } from '~pages/VerticalNavigation/VerticalNavigation';
 import { ColonyType } from '~immutable/index';
 import Heading from '~core/Heading';
@@ -124,7 +125,7 @@ const AdminDashboard = ({
 
   const { data: roles, isFetching: isFetchingRoles } = useDataFetcher(
     userDomainRolesFetcher,
-    [colonyAddress, '1', walletAddress],
+    [colonyAddress, ROOT_DOMAIN, walletAddress],
     [colonyAddress],
   );
 

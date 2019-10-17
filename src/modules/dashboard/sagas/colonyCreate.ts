@@ -12,6 +12,7 @@ import {
 } from 'redux-saga/effects';
 import BigNumber from 'bn.js';
 
+import { ROOT_DOMAIN } from '~constants';
 import { ActionTypes, Action, AllActions } from '~redux/index';
 import {
   putError,
@@ -36,7 +37,6 @@ import {
   transactionLoadRelated,
 } from '../../core/actionCreators';
 import { createTransaction, createTransactionChannels } from '../../core/sagas';
-import { ROOT_DOMAIN } from '../../core/constants';
 import {
   currentUserSelector,
   walletAddressSelector,
