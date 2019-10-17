@@ -93,8 +93,7 @@ export const taskReducer: EventReducer<{
       const { domainId } = event.payload;
       return {
         ...task,
-        // Older events used a number, and there isn't a migration for this
-        domainId: domainId.toString(),
+        domainId,
       };
     }
     case EventTypes.SKILL_SET: {

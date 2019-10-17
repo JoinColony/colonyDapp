@@ -17,6 +17,22 @@ const taskCreated: EventMigrationFunction<
   },
 });
 
+const domainSet: EventMigrationFunction<EventTypes.DOMAIN_SET, Versions.V2> = ({
+  payload,
+  meta,
+  ...event
+}) => ({
+  ...event,
+  payload: {
+    ...payload,
+    domainId: payload.domainId.toString(), // because it was a number before
+  },
+  meta: {
+    ...meta,
+    version: Versions.V2,
+  },
+});
+
 export const V2Migrations: [
   Versions.V2,
   Record<string, EventMigrationFunction<any, Versions.V2>>,
@@ -24,5 +40,6 @@ export const V2Migrations: [
   Versions.V2,
   {
     [EventTypes.TASK_CREATED]: taskCreated,
+    [EventTypes.DOMAIN_SET]: domainSet,
   },
 ];
