@@ -42,13 +42,8 @@ export const createDomain: Command<
   context: [Context.COLONY_MANAGER, Context.DDB_INSTANCE, Context.WALLET],
   prepare: prepareColonyStoreQuery,
   schema: CreateDomainCommandArgsSchema,
-  async execute(colonyStore, { domainId, ...args }) {
-    await colonyStore.append(
-      createEvent(EventTypes.DOMAIN_CREATED, {
-        domainId: domainId.toString(),
-        ...args,
-      }),
-    );
+  async execute(colonyStore, args) {
+    await colonyStore.append(createEvent(EventTypes.DOMAIN_CREATED, args));
     return colonyStore;
   },
 };
