@@ -11,7 +11,7 @@ import styles from './UserPermissions.css';
 
 interface Props {
   colonyAddress: Address;
-  domainId: string;
+  domainId: number;
   userAddress: Address;
 }
 

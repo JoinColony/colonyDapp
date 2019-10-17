@@ -1,6 +1,7 @@
 import { defineMessages, FormattedMessage, injectIntl } from 'react-intl';
 import React, { useCallback, useMemo, useState } from 'react';
 
+import { COLONY_TOTAL_BALANCE_DOMAIN_ID } from '~constants';
 import Heading from '~core/Heading';
 import Button from '~core/Button';
 import ItemsList from '~core/ItemsList';
@@ -54,7 +55,7 @@ const TaskDomains = ({ colonyAddress, domainId, draftId, disabled }: Props) => {
     error: ActionTypes.TASK_SET_DOMAIN_ERROR,
   });
 
-  const [selectedDomainId, setSelectedDomainId] = useState<string | undefined>(
+  const [selectedDomainId, setSelectedDomainId] = useState<number | undefined>(
     domainId,
   );
 
@@ -114,7 +115,7 @@ const TaskDomains = ({ colonyAddress, domainId, draftId, disabled }: Props) => {
         name="taskDomains"
         connect={false}
         showArrow={false}
-        itemId={parseInt(domainId || '0', 10)}
+        itemId={domainId || COLONY_TOTAL_BALANCE_DOMAIN_ID}
         disabled={disabled}
       >
         <div className={styles.controls}>

@@ -75,7 +75,7 @@ const MSG = defineMessages({
 interface Props {
   cancel: () => void;
   close: () => void;
-  domainId: string;
+  domainId: number;
   clickedUser?: Address;
   colonyAddress: Address;
   submit: ActionTypeString;

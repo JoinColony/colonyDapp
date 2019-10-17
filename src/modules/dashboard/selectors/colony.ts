@@ -80,7 +80,7 @@ export const tokenBalanceSelector = (
   state: RootStateRecord,
   colonyAddress: Address,
   tokenAddress: Address,
-  domainId: string,
+  domainId: number,
 ): BigNumber | undefined =>
   state.getIn([
     ns,
@@ -91,7 +91,8 @@ export const tokenBalanceSelector = (
     'tokens',
     tokenAddress,
     'balances',
-    domainId,
+    // FIXME this might have to be a string
+    domainId.toString(),
   ]);
 
 /*

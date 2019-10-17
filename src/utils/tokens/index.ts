@@ -9,7 +9,7 @@ export const getTokenBalanceFromReference = <
   T extends ColonyTokenReferenceType | UserTokenReferenceType
 >(
   tokenReference: T,
-  domainId: T extends ColonyTokenReferenceType ? string : never,
+  domainId: T extends ColonyTokenReferenceType ? number : never,
 ): BigNumber => {
   let balance: BigNumber | number = 0;
   if ('balances' in tokenReference) {
