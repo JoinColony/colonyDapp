@@ -10,13 +10,12 @@ import { TrufflepigLoader } from '@colony/colony-js-contract-loader-http';
 import { getNetworkClient } from '@colony/colony-js-client';
 
 import { Action, ActionTypes, AllActions } from '~redux/index';
+import { DEFAULT_NETWORK } from '~constants';
 import { Address, createAddress } from '~types/index';
-
 import { create, putError } from '~utils/saga/effects';
 
 import { WALLET_SPECIFICS, WALLET_CATEGORIES } from '~immutable/index';
 import { HARDWARE_WALLET_DEFAULT_ADDRESS_COUNT } from '../constants';
-import { DEFAULT_NETWORK } from '../../core/constants';
 
 // This should be typed better
 type WalletInstance = object;

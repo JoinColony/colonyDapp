@@ -5,6 +5,7 @@ import {
   fromJS,
 } from 'immutable';
 
+import { ROOT_DOMAIN } from '~constants';
 import { ReducerType, ActionTypes } from '~redux/index';
 import { TaskRecord, FetchableData, TaskPayout, Task } from '~immutable/index';
 import { withFetchableDataMap } from '~utils/reducers';
@@ -30,7 +31,7 @@ const taskEventReducer = (
           currentState: TaskStates.ACTIVE,
           draftId,
           managerAddress: creatorAddress,
-          domainId: domainId || '1',
+          domainId: domainId || ROOT_DOMAIN,
         }),
       );
     }
