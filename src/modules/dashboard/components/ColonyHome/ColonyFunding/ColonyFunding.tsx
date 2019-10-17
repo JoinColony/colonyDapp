@@ -1,6 +1,7 @@
 import React, { useCallback } from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 
+import { COLONY_TOTAL_BALANCE_DOMAIN_ID } from '~constants';
 import Button from '~core/Button';
 import { DialogType } from '~core/Dialog';
 import withDialog from '~core/Dialog/withDialog';
@@ -30,7 +31,7 @@ const MSG = defineMessages({
 
 interface Props {
   colonyAddress: Address;
-  currentDomainId: string;
+  currentDomainId: number;
   openDialog: (dialogName: string, dialogProps?: object) => DialogType;
 }
 
@@ -60,7 +61,10 @@ const ColonyFunding = ({
     () =>
       openDialog('TokensMoveDialog', {
         colonyAddress,
-        toDomain: currentDomainId !== '0' ? currentDomainId : undefined,
+        toDomain:
+          currentDomainId !== COLONY_TOTAL_BALANCE_DOMAIN_ID
+            ? currentDomainId
+            : undefined,
       }),
     [openDialog, colonyAddress, currentDomainId],
   );

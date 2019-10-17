@@ -11,6 +11,7 @@ interface Shared {
 }
 
 interface ColonyTokenReferenceBalancesObject {
+  // FIXME here domainId has to be a string (object key!!)
   [domainId: string]: BigNumber;
 }
 

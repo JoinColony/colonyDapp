@@ -146,7 +146,7 @@ export const createTaskStore = (
   colonyAddress,
 }: {
   draftId: TaskDraftId;
-  domainId: string;
+  domainId: number;
   colonyAddress: Address;
 }) => {
   const chainId = CHAIN_ID;

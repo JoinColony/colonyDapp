@@ -10,7 +10,7 @@ import { subscribeActions as subscribeToReduxActions } from 'redux-action-watch/
 import { useDispatch } from 'redux-react-hook';
 import throttle from 'lodash/throttle';
 
-import { ROOT_DOMAIN } from '~constants';
+import { COLONY_TOTAL_BALANCE_DOMAIN_ID, ROOT_DOMAIN } from '~constants';
 import { Address } from '~types/index';
 import {
   TasksFilterOptionType,
@@ -120,7 +120,9 @@ const ColonyHome = ({
   },
 }: Props) => {
   const [filterOption, setFilterOption] = useState(TasksFilterOptions.ALL_OPEN);
-  const [filteredDomainId, setFilteredDomainId] = useState('0');
+  const [filteredDomainId, setFilteredDomainId] = useState(
+    COLONY_TOTAL_BALANCE_DOMAIN_ID,
+  );
   const [isTaskBeingCreated, setIsTaskBeingCreated] = useState(false);
   const [showRecoverOption, setRecoverOption] = useState(false);
   const [activeTab, setActiveTab] = useState<'tasks' | 'transactions'>('tasks');
@@ -186,7 +188,9 @@ const ColonyHome = ({
         .sort()
         .filter(
           id =>
-            id === ROOT_DOMAIN && id === filteredDomainId && domains[id].name,
+            parseInt(id, 10) === ROOT_DOMAIN &&
+            parseInt(id, 10) === filteredDomainId &&
+            !!domains[id].name,
         )
         .map(id => domains[id].name),
     [domains, filteredDomainId],

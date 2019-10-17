@@ -10,8 +10,8 @@ export type DomainActionTypes =
       {
         colonyAddress: string;
         tokenAddress: string;
-        fromDomain: string;
-        toDomain: string;
+        fromDomain: number;
+        toDomain: number;
         amount: BigNumber;
       },
       object
@@ -47,8 +47,8 @@ export type DomainActionTypes =
       {
         colonyAddress: Address;
         domainName: string;
-        parentDomainId?: string;
-        domainId: string;
+        parentDomainId?: number;
+        domainId: number;
       },
       null
     >
@@ -57,9 +57,9 @@ export type DomainActionTypes =
       ActionTypes.DOMAIN_EDIT_SUCCESS,
       {
         colonyAddress: string;
-        domainId: string;
+        domainId: number;
         domainName: string;
-        parentId?: string;
+        parentId?: number;
       },
       null
     >;
