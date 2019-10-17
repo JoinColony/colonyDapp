@@ -14,8 +14,8 @@ import { useColonyTokens } from '../../../dashboard/hooks/useColonyTokens';
 import DialogForm from './TokensMoveDialogForm';
 
 export interface FormValues {
-  fromDomain?: number;
-  toDomain?: number;
+  fromDomain?: string;
+  toDomain?: string;
   amount: string;
   tokenAddress?: Address;
 }

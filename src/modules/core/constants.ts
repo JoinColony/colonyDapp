@@ -20,5 +20,4 @@ export const CORE_MESSAGES_LIST = 'list';
 
 export const DEFAULT_NETWORK = process.env.NETWORK || 'goerli';
 
-// XXXX change to string
-export const ROOT_DOMAIN = 1;
+export const ROOT_DOMAIN = '1';

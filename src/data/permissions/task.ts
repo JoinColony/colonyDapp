@@ -22,7 +22,7 @@ export default function loadModule(
 
   const isAdminOrFounder = async (
     userAddress: Address,
-    domainId: number,
+    domainId: string,
   ): Promise<boolean> => {
     const hasAdminRole = await isAdmin(userAddress, domainId);
     if (hasAdminRole) return hasAdminRole;

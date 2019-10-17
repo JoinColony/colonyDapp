@@ -1,12 +1,17 @@
 import React from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 
-import { useDataFetcher } from '~utils/hooks';
+import { useDataFetcher, useSelector } from '~utils/hooks';
 import Heading from '~core/Heading';
 import { SpinnerLoader } from '~core/Preloaders';
 
 import { canAdminister } from '../../../users/checks';
-import { domainsFetcher } from '../../../dashboard/fetchers';
+import {
+  domainsFetcher,
+  userDomainRolesFetcher,
+} from '../../../dashboard/fetchers';
+import { walletAddressSelector } from '../../../users/selectors';
+
 import OrganizationAddDomains from '../Domains/OrganizationAddDomains';
 import DomainList from './DomainList';
 
@@ -41,10 +46,12 @@ const Domains = ({ colonyAddress }: Props) => {
     [colonyAddress],
   );
 
-  const { data: permissions } = useDataFetcher(
-    currentUserColonyPermissionsFetcher,
-    [colonyAddress || undefined] as [string], // Technically a bug, shouldn't need type override
-    [colonyAddress || undefined],
+  const walletAddress = useSelector(walletAddressSelector);
+
+  const { data: roles } = useDataFetcher(
+    userDomainRolesFetcher,
+    [colonyAddress, '1', walletAddress],
+    [colonyAddress],
   );
 
   if (!domains) {
@@ -71,7 +78,7 @@ const Domains = ({ colonyAddress }: Props) => {
             colonyAddress={colonyAddress}
             domains={domains as any}
             label={MSG.title}
-            viewOnly={!canAdminister(permissions)}
+            viewOnly={!canAdminister(roles)}
           />
         ) : (
           <>
