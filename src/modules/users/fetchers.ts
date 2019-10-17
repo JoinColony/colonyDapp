@@ -2,10 +2,7 @@ import {
   currentUserTokensSelector,
   usersByAddressesSelector,
 } from './selectors';
-import {
-  userFetch,
-  userTokensFetch,
-} from './actionCreators';
+import { userFetch, userTokensFetch } from './actionCreators';
 
 export const currentUserTokensFetcher = Object.freeze({
   fetch: userTokensFetch,

@@ -3,6 +3,8 @@ import {
   colonyDomainsSelector,
   colonyNameSelector,
   colonySelector,
+  directRolesSelector,
+  inheritedRolesSelector,
   tokenSelector,
 } from './selectors';
 import {
@@ -14,6 +16,7 @@ import {
   fetchColonyAddress,
   fetchColonyName,
   fetchDomains,
+  fetchDomainsAndRoles,
   fetchToken,
 } from './actionCreators';
 import {
@@ -24,25 +27,43 @@ import {
 export const colonyFetcher = Object.freeze({
   select: colonySelector,
   fetch: fetchColony,
-  ttl: 1000 * 60, // 1 minute
+  ttl: 1000 * 60,
 });
 
 export const colonyAddressFetcher = Object.freeze({
   select: colonyAddressSelector,
   fetch: fetchColonyAddress,
-  ttl: 1000 * 60, // 1 minute
+  ttl: 1000 * 60,
 });
 
 export const colonyNameFetcher = Object.freeze({
   select: colonyNameSelector,
   fetch: fetchColonyName,
-  ttl: 1000 * 60, // 1 minute
+  ttl: 1000 * 60,
 });
 
 export const domainsFetcher = Object.freeze({
   select: colonyDomainsSelector,
   fetch: fetchDomains,
-  ttl: 1000 * 60, // 1 minute,
+  ttl: 1000 * 60,
+});
+
+export const domainsAndRolesFetcher = Object.freeze({
+  select: colonyDomainsSelector,
+  fetch: fetchDomainsAndRoles,
+  ttl: 1000 * 60,
+});
+
+export const userDomainRolesFetcher = Object.freeze({
+  select: inheritedRolesSelector,
+  fetch: fetchDomainsAndRoles,
+  ttl: 1000 * 60,
+});
+
+export const userDomainDirectRolesFetcher = Object.freeze({
+  select: directRolesSelector,
+  fetch: fetchDomainsAndRoles,
+  ttl: 1000 * 60,
 });
 
 export const currentUserDraftIdsFetcher = Object.freeze({

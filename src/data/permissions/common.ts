@@ -19,7 +19,7 @@ export default function loadModule(
     'is-founder': async (address: Address) => isFounder(address, ROOT_DOMAIN),
     'is-founder-or-admin': async (
       address: Address,
-      { domainId = ROOT_DOMAIN }: { domainId: number },
+      { domainId = ROOT_DOMAIN }: { domainId: string },
     ) => {
       const hasAdminRole = await isAdmin(address, domainId);
       if (hasAdminRole) return hasAdminRole;

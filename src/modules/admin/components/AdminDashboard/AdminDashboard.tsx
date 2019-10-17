@@ -14,11 +14,15 @@ import Permissions from '~admin/Permissions';
 import ProfileAdvanced from '~admin/Profile/ProfileAdvanced';
 import VerticalNavigation from '~pages/VerticalNavigation';
 import { HistoryNavigation } from '~pages/NavigationWrapper';
-import { useDataFetcher, useDataSubscriber } from '~utils/hooks';
+import { useDataFetcher, useDataSubscriber, useSelector } from '~utils/hooks';
 
+import { walletAddressSelector } from '../../../users/selectors';
 import { isInRecoveryMode } from '../../../dashboard/checks';
 import { canAdminister } from '../../../users/checks';
-import { colonyAddressFetcher } from '../../../dashboard/fetchers';
+import {
+  colonyAddressFetcher,
+  userDomainRolesFetcher,
+} from '../../../dashboard/fetchers';
 import { colonySubscriber } from '../../../dashboard/subscribers';
 
 import styles from './AdminDashboard.css';
@@ -116,24 +120,27 @@ const AdminDashboard = ({
     [colonyAddress],
   );
 
-  const {
-    data: permissions,
-    isFetching: isFetchingPermissions,
-  } = useDataFetcher(
-    currentUserColonyPermissionsFetcher,
-    [colony ? colony.colonyAddress : undefined] as [string], // Technically a bug, shouldn't need type override
-    [colony ? colony.colonyAddress : undefined],
+  const walletAddress = useSelector(walletAddressSelector);
+
+  const { data: roles, isFetching: isFetchingRoles } = useDataFetcher(
+    userDomainRolesFetcher,
+    [colonyAddress, '1', walletAddress],
+    [colonyAddress],
   );
 
   if (!colonyName || addressError || colonyError) {
     return <Redirect to="/404" />;
   }
 
-  if (!colony || !permissions || isFetchingPermissions) {
+  if (!colony || !roles || isFetchingRoles) {
     return <LoadingTemplate loadingText={MSG.loadingText} />;
   }
 
-  if (!canAdminister(permissions)) {
+  if (canAdminister(roles)) {
+    return <Redirect to={CURRENT_COLONY_ROUTE} />;
+  }
+
+  if (!canAdminister) {
     return <Redirect to={CURRENT_COLONY_ROUTE} />;
   }
 

@@ -14,7 +14,7 @@ import Heading from '~core/Heading';
 import { domainsFetcher } from '../../../dashboard/fetchers';
 import {
   tokenBalanceSelector,
-  userHasRole,
+  userHasRoleSelector,
 } from '../../../dashboard/selectors';
 import { walletAddressSelector } from '../../../users/selectors';
 
@@ -128,15 +128,15 @@ const TokensMoveDialogForm = ({
 
   // Get from and to domain permissions for current user
   const walletAddress = useSelector(walletAddressSelector);
-  const userHasFundingRoleInFromDomain = useSelector(userHasRole, [
+  const userHasFundingRoleInFromDomain = useSelector(userHasRoleSelector, [
     colonyAddress,
-    (values.fromDomain || 1).toString(),
+    values.fromDomain || '1',
     walletAddress,
     ColonyRoles.FUNDING,
   ]);
-  const userHasFundingRoleInToDomain = useSelector(userHasRole, [
+  const userHasFundingRoleInToDomain = useSelector(userHasRoleSelector, [
     colonyAddress,
-    (values.toDomain || 1).toString(),
+    values.toDomain || '1',
     walletAddress,
     ColonyRoles.FUNDING,
   ]);
@@ -148,7 +148,7 @@ const TokensMoveDialogForm = ({
         state,
         colonyAddress,
         values.tokenAddress || '',
-        (values.fromDomain || 1).toString(),
+        values.fromDomain || '1',
       ),
     [colonyAddress, values.fromDomain, values.tokenAddress],
   );
@@ -159,7 +159,7 @@ const TokensMoveDialogForm = ({
         state,
         colonyAddress,
         values.tokenAddress || '',
-        (values.toDomain || 1).toString(),
+        values.toDomain || '1',
       ),
     [colonyAddress, values.toDomain, values.tokenAddress],
   );

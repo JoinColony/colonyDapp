@@ -2,7 +2,7 @@ import React from 'react';
 
 import { ColonyType, ColonyTokenReferenceType } from '~immutable/index';
 import { COLONY_TOTAL_BALANCE_DOMAIN_ID } from '../../../../admin/constants';
-import { ColonyRole } from '~types/index';
+import { ColonyRoleSet } from '~types/index';
 import { isInRecoveryMode } from '../../../checks';
 import { canAdminister, isFounder } from '../../../../users/checks';
 import ColonyInitialFunding from '../ColonyInitialFunding';
@@ -14,7 +14,7 @@ interface Props {
   filterOption: string;
   nativeTokenRef: ColonyTokenReferenceType | null;
   ethTokenRef: ColonyTokenReferenceType | null;
-  roles: Record<ColonyRole, boolean>;
+  roles: ColonyRoleSet;
 }
 
 const TabContribute = ({

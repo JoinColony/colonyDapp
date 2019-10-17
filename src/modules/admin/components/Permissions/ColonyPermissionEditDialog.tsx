@@ -10,6 +10,7 @@ import { ItemDataType } from '~core/OmniPicker';
 import { ActionTypeString, ActionTypes } from '~redux/index';
 import {
   useSelector,
+  useDataFetcher,
   useDataSubscriber,
   useDataMapFetcher,
 } from '~utils/hooks';
@@ -25,13 +26,13 @@ import { ActionForm, InputLabel } from '~core/Fields';
 import ExternalLink from '~core/ExternalLink';
 import HookedUserAvatar from '~users/HookedUserAvatar';
 
-import {
-  domainSelector,
-  directRolesSelector,
-  inheritedRolesSelector,
-} from '../../../dashboard/selectors';
+import { domainSelector } from '../../../dashboard/selectors';
 import { userSubscriber } from '../../../users/subscribers';
 import { usersByAddressFetcher } from '../../../users/fetchers';
+import {
+  userDomainRolesFetcher,
+  userDomainDirectRolesFetcher,
+} from '../../../dashboard/fetchers';
 import {
   allUsersAddressesSelector,
   walletAddressSelector,
@@ -138,16 +139,17 @@ const ColonyPermissionEditDialog = ({
 
   // Get the current user's roles in the selected domain
   const walletAddress = useSelector(walletAddressSelector);
-  const inheritedRoles = useSelector(inheritedRolesSelector, [
-    colonyAddress,
-    domainId,
-    walletAddress,
-  ]);
-  const directRoles = useSelector(directRolesSelector, [
-    colonyAddress,
-    domainId,
-    walletAddress,
-  ]);
+
+  const { data: inheritedRoles } = useDataFetcher(
+    userDomainRolesFetcher,
+    [colonyAddress, domainId, walletAddress],
+    [colonyAddress],
+  );
+  const { data: directRoles } = useDataFetcher(
+    userDomainDirectRolesFetcher,
+    [colonyAddress, domainId, walletAddress],
+    [colonyAddress],
+  );
 
   // Check which roles the current user is allowed to set in this domain
   const canRoleBeSet = useCallback(
