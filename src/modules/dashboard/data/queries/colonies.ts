@@ -1,6 +1,6 @@
 import BigNumber from 'bn.js';
 
-import { ROOT_DOMAIN } from '~constants';
+import { COLONY_TOTAL_BALANCE_DOMAIN_ID, ROOT_DOMAIN } from '~constants';
 import {
   Address,
   ColonyRolesObject,
@@ -36,7 +36,6 @@ import {
 import { getEvents } from '~utils/web3/eventLogs';
 import { ZERO_ADDRESS } from '~utils/web3/constants';
 import { colonyReducer, colonyTasksReducer } from '../reducers';
-import { COLONY_TOTAL_BALANCE_DOMAIN_ID } from '../../../admin/constants';
 
 interface ColonyStoreMetadata {
   colonyAddress: Address;
