@@ -19,6 +19,7 @@ import {
 import { ActionTypes } from '~redux/index';
 import { useDataFetcher, useDataSubscriber, useSelector } from '~utils/hooks';
 import { mergePayload } from '~utils/actions';
+import Transactions from '~admin/Transactions';
 import { Tab, Tabs, TabList, TabPanel } from '~core/Tabs';
 import { Select } from '~core/Fields';
 import Heading from '~core/Heading';
@@ -26,22 +27,27 @@ import Button, { ActionButton, DialogActionButton } from '~core/Button';
 import BreadCrumb from '~core/BreadCrumb';
 import RecoveryModeAlert from '~admin/RecoveryModeAlert';
 import LoadingTemplate from '~pages/LoadingTemplate';
+
+import { walletAddressSelector } from '../../../users/selectors';
+import { canAdminister, isFounder } from '../../../users/checks';
+import {
+  colonyAddressFetcher,
+  domainsFetcher,
+  userDomainRolesFetcher,
+} from '../../fetchers';
 import {
   colonyNativeTokenSelector,
   colonyEthTokenSelector,
 } from '../../selectors';
-import { colonyAddressFetcher, domainsFetcher } from '../../fetchers';
 import { colonySubscriber } from '../../subscribers';
-import { canAdminister, isFounder } from '../../../users/checks';
 import {
   isInRecoveryMode as isInRecoveryModeCheck,
   canRecoverColony,
 } from '../../checks';
-
 import ColonyFunding from './ColonyFunding';
 import ColonyMeta from './ColonyMeta';
 import TabContribute from './TabContribute';
-import Transactions from '~admin/Transactions';
+
 import styles from './ColonyHome.css';
 
 const MSG = defineMessages({
@@ -159,18 +165,17 @@ const ColonyHome = ({
     error: colonyError,
   } = useDataSubscriber(colonySubscriber, colonyArgs, colonyArgs);
 
-  const {
-    data: permissions,
-    isFetching: isFetchingPermissions,
-  } = useDataFetcher(
-    currentUserColonyPermissionsFetcher,
-    colonyArgs as [string], // Technically a bug, shouldn't need type override
-    colonyArgs,
-  );
-
   const { data: domains } = useDataFetcher(
     domainsFetcher,
     [colonyAddress],
+    [colonyAddress],
+  );
+
+  const walletAddress = useSelector(walletAddressSelector);
+
+  const { data: roles, isFetching: isFetchingRoles } = useDataFetcher(
+    userDomainRolesFetcher,
+    [colonyAddress, '1', walletAddress],
     [colonyAddress],
   );
 
@@ -190,7 +195,8 @@ const ColonyHome = ({
     colonyAddress,
   ]);
 
-  const canCreateTask = canAdminister(permissions) || isFounder(permissions);
+  // Eventually this has to be in the proper domain. There's probably going to be a different UI for that
+  const canCreateTask = canAdminister(roles) || isFounder(roles);
   const isInRecoveryMode = isInRecoveryModeCheck(colony);
 
   if (colonyError || addressError) {
@@ -200,13 +206,13 @@ const ColonyHome = ({
   if (
     !(colony && colonyAddress) ||
     isFetchingColony ||
-    !permissions ||
-    isFetchingPermissions ||
+    !roles ||
+    isFetchingRoles ||
     !nativeTokenRef
   ) {
     return (
       <LoadingTemplate loadingText={MSG.loadingText}>
-        {showRecoverOption && colonyAddress && canRecoverColony(permissions) ? (
+        {showRecoverOption && colonyAddress && canRecoverColony(roles) ? (
           <DialogActionButton
             dialog="ConfirmDialog"
             dialogProps={{
@@ -278,7 +284,7 @@ const ColonyHome = ({
         <div className={styles.metaContainer}>
           <ColonyMeta
             colony={colony}
-            canAdminister={!isInRecoveryMode && canAdminister(permissions)}
+            canAdminister={!isInRecoveryMode && canAdminister(roles)}
             filteredDomainId={filteredDomainId}
             setFilteredDomainId={setFilteredDomainId}
           />
@@ -307,7 +313,7 @@ const ColonyHome = ({
               filterOption={filterOption}
               ethTokenRef={ethTokenRef}
               nativeTokenRef={nativeTokenRef}
-              roles={permissions}
+              roles={roles}
             />
           </TabPanel>
           <TabPanel>

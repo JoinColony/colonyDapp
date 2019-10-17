@@ -1,3 +1,5 @@
+import { Set as ImmutableSet } from 'immutable';
+
 import { DomainType } from '~immutable/Domain';
 import { Address } from '~types/strings';
 
@@ -12,6 +14,8 @@ export enum ColonyRoles {
   ADMINISTRATION = 6,
 }
 
-export type DomainRolesObject = Record<Address, Set<ColonyRoles>>;
+export type ColonyRoleSet = ImmutableSet<ColonyRoles>;
+
+export type DomainRolesObject = Record<Address, ColonyRoleSet>;
 
 export type ColonyRolesObject = Record<DomainType['id'], DomainRolesObject>;

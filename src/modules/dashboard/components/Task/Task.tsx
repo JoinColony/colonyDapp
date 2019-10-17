@@ -32,9 +32,13 @@ import {
   isFinalized,
   isWorkerSet,
 } from '../../checks';
+import {
+  colonyAddressFetcher,
+  userDomainRolesFetcher,
+} from '../../../dashboard/fetchers';
 import { currentUserSelector } from '../../../users/selectors';
-import { colonyAddressFetcher } from '../../fetchers';
 import { taskSubscriber } from '../../subscribers';
+
 import styles from './Task.css';
 
 const MSG = defineMessages({
@@ -123,16 +127,6 @@ const Task = ({
     [colonyName],
   );
 
-  const colonyArgs = [colonyAddress || undefined];
-  const {
-    data: permissions,
-    isFetching: isFetchingPermissions,
-  } = useDataFetcher(
-    currentUserColonyPermissionsFetcher,
-    colonyArgs as [string], // Technically a bug, shouldn't need type override
-    colonyArgs,
-  );
-
   const { data: task, isFetching: isFetchingTask } = useDataSubscriber(
     taskSubscriber,
     [draftId],
@@ -145,6 +139,12 @@ const Task = ({
     skillId = undefined,
     title = undefined,
   } = task || {};
+
+  const { data: roles, isFetching: isFetchingRoles } = useDataFetcher(
+    userDomainRolesFetcher,
+    [colonyAddress, domainId, walletAddress],
+    [colonyAddress],
+  );
 
   const onEditTask = useCallback(() => {
     // If you've managed to click on the button that runs this without the
@@ -167,17 +167,17 @@ const Task = ({
 
   if (
     isFetchingTask ||
-    isFetchingPermissions ||
+    isFetchingRoles ||
     !task ||
     !colonyAddress ||
-    !permissions ||
+    !roles ||
     !walletAddress
   ) {
     return <LoadingTemplate loadingText={MSG.loadingText} />;
   }
 
   const isTaskCreator = isCreator(task, walletAddress);
-  const canEdit = canEditTask(task, permissions, walletAddress);
+  const canEdit = canEditTask(task, roles, walletAddress);
 
   return (
     <div className={styles.main}>
@@ -300,7 +300,7 @@ const Task = ({
               </div>
             </Tooltip>
           )}
-          {canCancelTask(task, permissions, walletAddress) && (
+          {canCancelTask(task, roles, walletAddress) && (
             <ActionButton
               appearance={{ theme: 'secondary', size: 'small' }}
               button={ConfirmButton}
@@ -316,7 +316,7 @@ const Task = ({
           {/* Hide when discard confirm is displayed */}
           {!isDiscardConfirmDisplayed && (
             <>
-              {canFinalizeTask(task, permissions, walletAddress) && (
+              {canFinalizeTask(task, roles, walletAddress) && (
                 <ActionButton
                   text={MSG.finalizeTask}
                   submit={ActionTypes.TASK_FINALIZE}

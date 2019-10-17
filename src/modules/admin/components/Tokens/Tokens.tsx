@@ -16,7 +16,7 @@ import { COLONY_TOTAL_BALANCE_DOMAIN_ID } from '../../../admin/constants';
 import { domainsFetcher, tokenFetcher } from '../../../dashboard/fetchers';
 import { useColonyNativeToken } from '../../../dashboard/hooks/useColonyNativeToken';
 import { useColonyTokens } from '../../../dashboard/hooks/useColonyTokens';
-import { userHasRole } from '../../../dashboard/selectors';
+import { userHasRoleSelector } from '../../../dashboard/selectors';
 import { walletAddressSelector } from '../../../users/selectors';
 import { canEditTokens } from '../../checks';
 import FundingBanner from './FundingBanner';
@@ -76,7 +76,7 @@ const Tokens = ({
     [rootDomainRoles, walletAddress],
   );
 
-  const canMoveTokens = useSelector(userHasRole, [
+  const canMoveTokens = useSelector(userHasRoleSelector, [
     colonyAddress,
     '1',
     walletAddress,
