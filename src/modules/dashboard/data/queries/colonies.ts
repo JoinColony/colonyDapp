@@ -121,14 +121,16 @@ export const getColonyRoles: ContractEventQuery<void, ColonyRolesObject> = {
         // Reduce events to { [domainId]: { [address]: Set<Role> } }
         .reduce(
           (colonyRoles, { address, setTo, role, domainId }) => {
-            const domainRoles = colonyRoles[domainId] || {};
+            // FIXME .toString() necessary?
+            const domainRoles = colonyRoles[domainId.toString()] || {};
             const roles = new Set(
               // If the role is already set, and it is being unset, filter it from the set
               [...domainRoles[address], role].filter(r => r !== role || !setTo),
             );
             return {
               ...colonyRoles,
-              [domainId]: {
+              // FIXME .toString() necessary?
+              [domainId.toString()]: {
                 ...domainRoles,
                 [address as string]: roles,
               },
@@ -142,7 +144,7 @@ export const getColonyRoles: ContractEventQuery<void, ColonyRolesObject> = {
 
 export const getColonyDomainUserRoles: ContractEventQuery<
   {
-    domainId: string;
+    domainId: number;
     roles?: ColonyRoles[];
     userAddress: Address;
   },
@@ -444,6 +446,7 @@ export const getColonyDomains: Query<
             payload: { domainId: currentDomainId },
           } = event;
           const difference = domains.filter(
+            // FIXME check types here
             ({ payload: { domainId } }) => currentDomainId !== domainId,
           );
 
@@ -477,7 +480,7 @@ export const getColonyDomains: Query<
 export const getColonyTokenBalance: Query<
   ColonyClient,
   { colonyAddress: Address },
-  { domainId: string; tokenAddress: Address },
+  { domainId: number; tokenAddress: Address },
   BigNumber
 > = {
   name: 'getColonyTokenBalance',
