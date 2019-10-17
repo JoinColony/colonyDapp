@@ -10,7 +10,7 @@ import {
   select,
 } from 'redux-saga/effects';
 
-import { ROOT_DOMAIN } from '~constants';
+import { COLONY_TOTAL_BALANCE_DOMAIN_ID, ROOT_DOMAIN } from '~constants';
 import { Action, ActionTypes, AllActions } from '~redux/index';
 import {
   putError,
@@ -36,7 +36,6 @@ import {
   subscribeToColony,
   subscribeToColonyTasks,
 } from '../data/queries';
-import { COLONY_TOTAL_BALANCE_DOMAIN_ID } from '../../admin/constants';
 import { createTransaction, getTxChannel } from '../../core/sagas';
 import { ipfsUpload } from '../../core/sagas/ipfs';
 import { networkVersionSelector } from '../../core/selectors';

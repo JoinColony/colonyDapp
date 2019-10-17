@@ -1,7 +1,7 @@
 import React from 'react';
 
+import { COLONY_TOTAL_BALANCE_DOMAIN_ID } from '~constants';
 import { ColonyType, ColonyTokenReferenceType } from '~immutable/index';
-import { COLONY_TOTAL_BALANCE_DOMAIN_ID } from '../../../../admin/constants';
 import { ColonyRoleSet } from '~types/index';
 import { isInRecoveryMode } from '../../../checks';
 import { canAdminister, isFounder } from '../../../../users/checks';
