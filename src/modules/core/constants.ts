@@ -17,7 +17,3 @@ export const CORE_IPFS_DATA = 'ipfsData';
  */
 export const CORE_MESSAGES = 'messages';
 export const CORE_MESSAGES_LIST = 'list';
-
-export const DEFAULT_NETWORK = process.env.NETWORK || 'goerli';
-
-export const ROOT_DOMAIN = '1';

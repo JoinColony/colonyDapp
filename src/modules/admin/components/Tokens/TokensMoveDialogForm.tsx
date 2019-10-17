@@ -4,6 +4,7 @@ import { defineMessages, FormattedMessage } from 'react-intl';
 import BigNumber from 'bn.js';
 import moveDecimal from 'move-decimal-point';
 
+import { ROOT_DOMAIN } from '~constants';
 import { Address, ColonyRoles } from '~types/index';
 import { useDataFetcher, useSelector } from '~utils/hooks';
 import Button from '~core/Button';
@@ -130,13 +131,13 @@ const TokensMoveDialogForm = ({
   const walletAddress = useSelector(walletAddressSelector);
   const userHasFundingRoleInFromDomain = useSelector(userHasRoleSelector, [
     colonyAddress,
-    values.fromDomain || '1',
+    values.fromDomain || ROOT_DOMAIN,
     walletAddress,
     ColonyRoles.FUNDING,
   ]);
   const userHasFundingRoleInToDomain = useSelector(userHasRoleSelector, [
     colonyAddress,
-    values.toDomain || '1',
+    values.toDomain || ROOT_DOMAIN,
     walletAddress,
     ColonyRoles.FUNDING,
   ]);
@@ -148,7 +149,7 @@ const TokensMoveDialogForm = ({
         state,
         colonyAddress,
         values.tokenAddress || '',
-        values.fromDomain || '1',
+        values.fromDomain || ROOT_DOMAIN,
       ),
     [colonyAddress, values.fromDomain, values.tokenAddress],
   );
@@ -159,7 +160,7 @@ const TokensMoveDialogForm = ({
         state,
         colonyAddress,
         values.tokenAddress || '',
-        values.toDomain || '1',
+        values.toDomain || ROOT_DOMAIN,
       ),
     [colonyAddress, values.toDomain, values.tokenAddress],
   );

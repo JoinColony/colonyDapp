@@ -3,6 +3,7 @@ import React, { useCallback, useMemo, useState, useEffect } from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 import * as yup from 'yup';
 
+import { ROOT_DOMAIN } from '~constants';
 import { Address, ColonyRoles } from '~types/index';
 import { mergePayload, withKey, mapPayload, pipe } from '~utils/actions';
 import { UserType } from '~immutable/index';
@@ -162,7 +163,9 @@ const ColonyPermissionEditDialog = ({
         // Can only be set by root and in root domain
         case ColonyRoles.ROOT:
         case ColonyRoles.RECOVERY:
-          return domainId === '1' && inheritedRoles.has(ColonyRoles.ROOT);
+          return (
+            domainId === ROOT_DOMAIN && inheritedRoles.has(ColonyRoles.ROOT)
+          );
 
         // Must be root for these
         case ColonyRoles.ADMINISTRATION:

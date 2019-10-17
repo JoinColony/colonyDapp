@@ -1,6 +1,8 @@
 import React from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 
+import { ROOT_DOMAIN } from '~constants';
+import { Address } from '~types/index';
 import { useDataFetcher, useSelector } from '~utils/hooks';
 import Heading from '~core/Heading';
 import { SpinnerLoader } from '~core/Preloaders';
@@ -14,8 +16,6 @@ import { walletAddressSelector } from '../../../users/selectors';
 
 import OrganizationAddDomains from '../Domains/OrganizationAddDomains';
 import DomainList from './DomainList';
-
-import { Address } from '~types/index';
 
 import styles from './Domains.css';
 
@@ -50,7 +50,7 @@ const Domains = ({ colonyAddress }: Props) => {
 
   const { data: roles } = useDataFetcher(
     userDomainRolesFetcher,
-    [colonyAddress, '1', walletAddress],
+    [colonyAddress, ROOT_DOMAIN, walletAddress],
     [colonyAddress],
   );
 
