@@ -1,6 +1,6 @@
 import { TaskStates } from '~data/constants';
 import { ColonyType, TaskType, TaskUserType } from '~immutable/index';
-import { Address, ColonyRole } from '~types/index';
+import { Address, ColonyRoleSet } from '~types/index';
 import { isFounder, canAdminister } from '../users/checks';
 
 /*
@@ -61,7 +61,7 @@ export const isWorkerSet = ({ workerAddress }: TaskType) => !!workerAddress;
 
 export const canEditTask = (
   task: TaskType,
-  roles: Record<ColonyRole, boolean> | void,
+  roles: ColonyRoleSet,
   userAddress: Address,
 ) =>
   !isFinalized(task) &&
@@ -102,7 +102,7 @@ export const managerCanRevealWorkerRating = (
 
 export const canCancelTask = (
   task: TaskType,
-  roles: Record<ColonyRole, boolean> | void,
+  roles: ColonyRoleSet,
   userAddress: Address,
 ) =>
   isActive(task) &&
@@ -122,7 +122,7 @@ export const canRequestToWork = (task: TaskType, userAddress: Address) =>
 
 export const canFinalizeTask = (
   task: TaskType,
-  roles: Record<ColonyRole, boolean> | void,
+  roles: ColonyRoleSet,
   userAddress: Address,
 ) =>
   task &&
@@ -132,5 +132,4 @@ export const canFinalizeTask = (
   isPayoutsSet(task) &&
   (isManager(task, userAddress) || isFounder(roles) || canAdminister(roles));
 
-export const canRecoverColony = (roles: Record<ColonyRole, boolean> | void) =>
-  roles && roles.RECOVERY && isFounder(roles);
+export const canRecoverColony = isFounder;

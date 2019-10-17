@@ -66,7 +66,7 @@ describe('EventStore', () => {
     const newEvent = store.getEvent('');
 
     expect(newEvent.meta).toHaveProperty('version', Versions.V2);
-    expect(newEvent.payload).toHaveProperty('domainId', 1);
+    expect(newEvent.payload).toHaveProperty('domainId', '1');
   });
 
   test('It does not perform migrations for events without a migration', () => {

@@ -6,7 +6,7 @@ import Numeral from '~core/Numeral';
 import { getTokenBalanceFromReference } from '~utils/tokens';
 
 interface Props {
-  currentDomainId: number;
+  currentDomainId: string;
   token: TokenType;
   tokenReference?: ColonyTokenReferenceType;
 }

@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo } from 'react';
+import React, { useCallback } from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 
 import Button from '~core/Button';
@@ -6,19 +6,19 @@ import { DialogType } from '~core/Dialog';
 import withDialog from '~core/Dialog/withDialog';
 import Heading from '~core/Heading';
 import { Address } from '~types/index';
-import { useSelector, useRoles } from '~utils/hooks';
+import { useDataFetcher, useSelector } from '~utils/hooks';
 
-import TokenItem from './TokenItem';
+import { domainsAndRolesFetcher } from '../../../fetchers';
 import { useColonyTokens } from '../../../hooks/useColonyTokens';
-import { canMoveTokens as canMoveTokensCheck } from '../../../../admin/checks';
-import { currentUserSelector } from '../../../../users/selectors';
+import { walletAddressSelector } from '../../../../users/selectors';
+import TokenItem from './TokenItem';
 
 import styles from './ColonyFunding.css';
 
 const MSG = defineMessages({
   buttonFund: {
     id: 'dashboard.ColonyHome.ColonyFunding.buttonFund',
-    defaultMessage: 'Fund',
+    defaultMessage: 'Move Funds',
   },
   title: {
     id: 'dashboard.ColonyHome.ColonyFunding.title',
@@ -26,9 +26,11 @@ const MSG = defineMessages({
   },
 });
 
+// SHOW button if user has COLONY_ROLE_FUNDING or ROOT in any domain
+
 interface Props {
   colonyAddress: Address;
-  currentDomainId: number;
+  currentDomainId: string;
   openDialog: (dialogName: string, dialogProps?: object) => DialogType;
 }
 
@@ -41,20 +43,24 @@ const ColonyFunding = ({
 }: Props) => {
   const [tokenReferences, tokens] = useColonyTokens(colonyAddress);
 
-  const {
-    profile: { walletAddress: currentUserWalletAddress },
-  } = useSelector(currentUserSelector);
-  const { data: roles } = useRoles(colonyAddress);
-  const canMoveTokens = useMemo(
-    () => canMoveTokensCheck(roles, currentUserWalletAddress),
-    [currentUserWalletAddress, roles],
+  const walletAddress = useSelector(walletAddressSelector);
+
+  const { data: domains, isFetching: isFetchingDomains } = useDataFetcher(
+    domainsAndRolesFetcher,
+    [colonyAddress],
+    [colonyAddress],
   );
+
+  console.log(walletAddress);
+  console.log(domains);
+
+  const canMoveTokens = true;
 
   const handleMoveTokens = useCallback(
     () =>
       openDialog('TokensMoveDialog', {
         colonyAddress,
-        toDomain: currentDomainId !== 0 ? currentDomainId : undefined,
+        toDomain: currentDomainId !== '0' ? currentDomainId : undefined,
       }),
     [openDialog, colonyAddress, currentDomainId],
   );

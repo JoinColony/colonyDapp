@@ -10,6 +10,8 @@ import ExternalLink from '~core/ExternalLink';
 import { networkVersionSelector } from '../../../core/selectors';
 import { canEnterRecoveryMode } from '../../../users/checks';
 import { canBeUpgraded, isInRecoveryMode } from '../../../dashboard/checks';
+import { walletAddressSelector } from '../../../users/selectors';
+import { userDomainRolesFetcher } from '../../../dashboard/fetchers';
 
 import styles from './ProfileAdvanced.css';
 
@@ -92,13 +94,15 @@ const ProfileAdvanced = ({
   colony: { colonyAddress, id, version, canUnlockNativeToken },
   colony,
 }: Props) => {
+  const walletAddress = useSelector(walletAddressSelector);
+
   const {
-    isFetching: isFetchingUserPermissions,
-    data: permissions,
-    error: userPermissionsError,
+    data: roles,
+    error: rolesError,
+    isFetching: isFetchingRoles,
   } = useDataFetcher(
-    currentUserColonyPermissionsFetcher,
-    [colonyAddress],
+    userDomainRolesFetcher,
+    [colonyAddress, '1', walletAddress],
     [colonyAddress],
   );
 
@@ -175,11 +179,11 @@ const ProfileAdvanced = ({
           success={ActionTypes.COLONY_RECOVERY_MODE_ENTER_SUCCESS}
           error={ActionTypes.COLONY_RECOVERY_MODE_ENTER_ERROR}
           values={{ colonyAddress }}
-          loading={isFetchingUserPermissions}
+          loading={isFetchingRoles}
           disabled={
-            !!userPermissionsError ||
+            !!rolesError ||
             isInRecoveryMode(colony) ||
-            !canEnterRecoveryMode(permissions)
+            !canEnterRecoveryMode(roles)
           }
         />
       </section>
