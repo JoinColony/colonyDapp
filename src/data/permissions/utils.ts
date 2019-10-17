@@ -1,5 +1,5 @@
 import { ColonyClient } from '@colony/colony-js-client';
-import { Address, ColonyRole } from '~types/index';
+import { Address, ColonyRoles } from '~types/index';
 
 import { PermissionModuleLoader } from '../types';
 
@@ -14,12 +14,12 @@ export const buildManifest = (
 
 export const makeUserHasRoleFn = (
   colonyClient: ColonyClient,
-  role: ColonyRole,
-) => async (address: Address, domainId: number): Promise<boolean> => {
+  role: ColonyRoles,
+) => async (address: Address, domainId: string): Promise<boolean> => {
   const { hasRole } = await colonyClient.hasColonyRole.call({
     address,
     role,
-    domainId,
+    domainId: parseInt(domainId, 10),
   });
   return hasRole;
 };

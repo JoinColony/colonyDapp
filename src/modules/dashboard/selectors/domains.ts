@@ -1,3 +1,5 @@
+import { Set as ImmutableSet } from 'immutable';
+
 import { FetchableDataRecord, DomainRecord } from '~immutable/index';
 import { Address, ColonyRoles } from '~types/index';
 
@@ -65,10 +67,10 @@ export const directRolesSelector = (
   colonyAddress: Address,
   domainId: string,
   userAddress: Address,
-): Set<ColonyRoles> => {
+): ImmutableSet<ColonyRoles> => {
   const domain = domainSelector(state, colonyAddress, domainId);
   const roles = domain && domain.roles && domain.roles.get(userAddress);
-  return roles || new Set<ColonyRoles>();
+  return roles ? ImmutableSet(roles) : ImmutableSet<ColonyRoles>();
 };
 
 // For a given colony address/domain ID/user address, return the
@@ -78,13 +80,13 @@ export const inheritedRolesSelector = (
   colonyAddress: Address,
   domainId: string,
   userAddress: Address,
-): Set<ColonyRoles> =>
+): ImmutableSet<ColonyRoles> =>
   parentDomainsSelector(state, colonyAddress, domainId).reduce(
     (roles, domain) => {
       const domainRoles = domain.roles && domain.roles.get(userAddress);
-      return domainRoles ? new Set([...roles, ...domainRoles]) : roles;
+      return domainRoles ? ImmutableSet([...roles, ...domainRoles]) : roles;
     },
-    new Set<ColonyRoles>(),
+    ImmutableSet<ColonyRoles>(),
   );
 
 // For a given colony address/domain ID/user address/role, return whether

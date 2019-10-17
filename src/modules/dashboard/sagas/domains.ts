@@ -18,7 +18,8 @@ import { fetchColonyTokenBalance } from '../actionCreators';
 
 function* colonyDomainsFetch({
   meta,
-  payload: { colonyAddress, options: { fetchRoles } = { fetchRoles: false } },
+  // For now, we just always fetch all roles for the domains
+  payload: { colonyAddress, options: { fetchRoles } = { fetchRoles: true } },
 }: Action<ActionTypes.COLONY_DOMAINS_FETCH>) {
   try {
     const domains = yield executeQuery(getColonyDomains, {
