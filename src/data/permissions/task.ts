@@ -22,9 +22,11 @@ export default function loadModule(
 
   const isAdminOrFounder = async (
     userAddress: Address,
-    domainId: string,
+    domainId: string | number,
   ): Promise<boolean> => {
-    const hasAdminRole = await isAdmin(userAddress, domainId);
+    // I don't know why this can be string or number? Maybe because we're dealing with the raw (not migrated) event here.
+    // Should we apply migrations here as well?
+    const hasAdminRole = await isAdmin(userAddress, domainId.toString());
     if (hasAdminRole) return hasAdminRole;
 
     return isFounder(userAddress, ROOT_DOMAIN);

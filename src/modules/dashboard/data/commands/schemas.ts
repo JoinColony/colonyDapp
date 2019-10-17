@@ -33,12 +33,12 @@ export const UpdateColonyProfileCommandArgsSchema = yup.object({
 });
 
 export const CreateDomainCommandArgsSchema = yup.object({
-  domainId: yup.number().required(),
+  domainId: yup.string().required(),
   name: yup.string().required(),
 });
 
 export const EditDomainCommandArgsSchema = yup.object({
-  domainId: yup.number().required(),
+  domainId: yup.string().required(),
   name: yup.string().required(),
 });
 
@@ -122,7 +122,7 @@ export const SetTaskPayoutCommandArgsSchema = yup.object({
 });
 
 export const SetTaskDomainCommandArgsSchema = yup.object({
-  domainId: yup.number().required(),
+  domainId: yup.string().required(),
 });
 
 export const CancelTaskCommandArgsSchema = yup.object({
