@@ -7,12 +7,12 @@ import { RootStateRecord } from '../../state';
 import { DomainsMap } from '../state';
 import { DASHBOARD_NAMESPACE as ns, DASHBOARD_ALL_DOMAINS } from '../constants';
 
-const domainsPath = (colonyAddress: Address, domainId: string): string[] => [
+const domainsPath = (colonyAddress: Address, domainId: number): string[] => [
   ns,
   DASHBOARD_ALL_DOMAINS,
   colonyAddress,
   'record',
-  domainId,
+  domainId.toString(),
 ];
 
 /*
@@ -27,13 +27,13 @@ export const colonyDomainsSelector = (
 export const domainSelector = (
   state: RootStateRecord,
   colonyAddress: Address,
-  domainId: string,
+  domainId: number,
 ): DomainRecord | null => state.getIn(domainsPath(colonyAddress, domainId));
 
 export const parentDomainSelector = (
   state: RootStateRecord,
   colonyAddress: Address,
-  domainId: string,
+  domainId: number,
 ): DomainRecord | null => {
   const domain = domainSelector(state, colonyAddress, domainId);
 
@@ -47,7 +47,7 @@ export const parentDomainSelector = (
 export const parentDomainsSelector = (
   state: RootStateRecord,
   colonyAddress: Address,
-  domainId: string,
+  domainId: number,
 ): DomainRecord[] => {
   const parents: DomainRecord[] = [];
 
@@ -65,7 +65,7 @@ export const parentDomainsSelector = (
 export const directRolesSelector = (
   state: RootStateRecord,
   colonyAddress: Address,
-  domainId: string,
+  domainId: number,
   userAddress: Address,
 ): ImmutableSet<ColonyRoles> => {
   const domain = domainSelector(state, colonyAddress, domainId);
@@ -78,7 +78,7 @@ export const directRolesSelector = (
 export const inheritedRolesSelector = (
   state: RootStateRecord,
   colonyAddress: Address,
-  domainId: string,
+  domainId: number,
   userAddress: Address,
 ): ImmutableSet<ColonyRoles> =>
   parentDomainsSelector(state, colonyAddress, domainId).reduce(
@@ -94,7 +94,7 @@ export const inheritedRolesSelector = (
 export const userHasDirectRoleSelector = (
   state: RootStateRecord,
   colonyAddress: Address,
-  domainId: string,
+  domainId: number,
   userAddress: Address,
   role: ColonyRoles,
 ): boolean => {
@@ -113,7 +113,7 @@ export const userHasDirectRoleSelector = (
 export const userHasRoleSelector = (
   state: RootStateRecord,
   colonyAddress: Address,
-  domainId: string,
+  domainId: number,
   userAddress: Address,
   role: ColonyRoles,
 ): boolean =>

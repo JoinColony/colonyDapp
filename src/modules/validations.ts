@@ -43,7 +43,7 @@ function equalTo(ref, msg) {
 // selected token.
 function lessThanPot(
   tokenReferences: ColonyTokenReferenceType[],
-  domainId: string,
+  domainId: number,
   colonyTokens: TokenType[],
   msg,
 ) {

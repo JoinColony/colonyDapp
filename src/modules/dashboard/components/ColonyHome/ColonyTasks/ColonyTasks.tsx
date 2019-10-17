@@ -23,7 +23,7 @@ interface Props {
   colonyAddress: Address;
   isInRecoveryMode: boolean;
   filterOption: string;
-  filteredDomainId: string;
+  filteredDomainId: number;
   showEmptyState?: boolean;
   canMintTokens?: boolean;
 }

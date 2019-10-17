@@ -23,7 +23,7 @@ import styles from './TokenCard.css';
 
 interface Props<T> {
   token: T;
-  domainId: T extends ColonyTokenReferenceType ? string : never;
+  domainId: T extends ColonyTokenReferenceType ? number : never;
 }
 
 const displayName = 'admin.Tokens.TokenCard';

@@ -15,13 +15,6 @@ export type TaskEvents =
       {
         domainId: number;
       },
-      Versions.V1
-    >
-  | EventDefinition<
-      EventTypes.DOMAIN_SET,
-      {
-        domainId: string;
-      },
       Versions.CURRENT
     >
   | EventDefinition<
@@ -79,7 +72,7 @@ export type TaskEvents =
       {
         creatorAddress: Address;
         draftId: string;
-        domainId: string;
+        domainId: number;
       },
       Versions.CURRENT
     >

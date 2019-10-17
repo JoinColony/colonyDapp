@@ -14,9 +14,9 @@ import {
 } from '~types/index';
 
 interface Shared {
-  id: string;
+  id: number;
   name: string;
-  parentId: string | null;
+  parentId: number | null;
 }
 
 interface DomainRecordProps extends Shared {

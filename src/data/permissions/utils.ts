@@ -15,11 +15,11 @@ export const buildManifest = (
 export const makeUserHasRoleFn = (
   colonyClient: ColonyClient,
   role: ColonyRoles,
-) => async (address: Address, domainId: string): Promise<boolean> => {
+) => async (address: Address, domainId: number): Promise<boolean> => {
   const { hasRole } = await colonyClient.hasColonyRole.call({
     address,
     role,
-    domainId: parseInt(domainId, 10),
+    domainId,
   });
   return hasRole;
 };

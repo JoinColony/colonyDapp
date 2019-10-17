@@ -96,7 +96,7 @@ export type ColonyActionTypes =
     >
   | ActionTypeWithPayloadAndMeta<
       ActionTypes.COLONY_DOMAIN_USER_ROLES_FETCH,
-      { colonyAddress: Address; domainId: string; userAddress: Address },
+      { colonyAddress: Address; domainId: number; userAddress: Address },
       WithKey
     >
   | ErrorActionType<ActionTypes.COLONY_DOMAIN_USER_ROLES_FETCH_ERROR, WithKey>
@@ -105,7 +105,7 @@ export type ColonyActionTypes =
       {
         roles: Record<ColonyRoles, boolean>;
         colonyAddress: Address;
-        domainId: string;
+        domainId: number;
         userAddress: Address;
       },
       WithKey
@@ -253,7 +253,7 @@ export type ColonyActionTypes =
       ActionTypes.COLONY_DOMAIN_USER_ROLES_SET,
       {
         colonyAddress: Address;
-        domainId: string;
+        domainId: number;
         roles: Record<ColonyRoles, boolean>;
         userAddress: Address;
       },
@@ -267,7 +267,7 @@ export type ColonyActionTypes =
       typeof ActionTypes.COLONY_DOMAIN_USER_ROLES_SET_SUCCESS,
       {
         colonyAddress: Address;
-        domainId: string;
+        domainId: number;
         roles: Record<ColonyRoles, boolean>;
         userAddress: Address;
       },
@@ -317,13 +317,13 @@ export type ColonyActionTypes =
     >
   | ActionTypeWithPayload<
       ActionTypes.COLONY_TOKEN_BALANCE_FETCH,
-      { colonyAddress: Address; domainId: string; tokenAddress: Address }
+      { colonyAddress: Address; domainId: number; tokenAddress: Address }
     >
   | ErrorActionType<ActionTypes.COLONY_TOKEN_BALANCE_FETCH_ERROR, object>
   | ActionTypeWithPayload<
       ActionTypes.COLONY_TOKEN_BALANCE_FETCH_SUCCESS,
       {
-        domainId: string;
+        domainId: number;
         token: ColonyTokenReferenceType;
         tokenAddress: Address;
         colonyAddress: Address;

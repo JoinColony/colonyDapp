@@ -22,7 +22,7 @@ describe('immutable utils - shouldFetchData', () => {
    * Test values
    */
   const record = Domain({
-    id: '1',
+    id: 1,
     name: 'My Domain',
     roles: {},
     parentId: null,
