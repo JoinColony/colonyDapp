@@ -1,5 +1,6 @@
 import { all, call, fork, put, takeEvery, select } from 'redux-saga/effects';
 
+import { ROOT_DOMAIN } from '~constants';
 import { AllActions, Action, ActionTypes } from '~redux/index';
 import {
   takeFrom,
@@ -110,7 +111,7 @@ function* colonyClaimToken({
     yield put<AllActions>(fetchColonyUnclaimedTransactions(colonyAddress));
     yield put<AllActions>({
       type: ActionTypes.COLONY_TOKEN_BALANCE_FETCH,
-      payload: { colonyAddress, domainId: '1', tokenAddress },
+      payload: { colonyAddress, domainId: ROOT_DOMAIN, tokenAddress },
     });
   } catch (error) {
     return yield putError(ActionTypes.COLONY_CLAIM_TOKEN_ERROR, error, meta);
@@ -237,7 +238,7 @@ function* colonyMintTokens({
         }),
         put<AllActions>({
           type: ActionTypes.COLONY_TOKEN_BALANCE_FETCH,
-          payload: { colonyAddress, domainId: '1', tokenAddress },
+          payload: { colonyAddress, domainId: ROOT_DOMAIN, tokenAddress },
         }),
       ]);
 

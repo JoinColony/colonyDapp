@@ -41,6 +41,7 @@ const config = {
     alias: Object.assign(
       {},
       {
+        '~constants': path.resolve(__dirname, 'src/modules/constants'),
         '~context': path.resolve(__dirname, 'src/context'),
         '~lib': path.resolve(__dirname, 'src/lib'),
         '~data': path.resolve(__dirname, 'src/data'),

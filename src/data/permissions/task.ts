@@ -3,10 +3,10 @@ import {
   COLONY_ROLE_ROOT,
 } from '@colony/colony-js-client';
 
+import { ROOT_DOMAIN } from '~constants';
 import { EventTypes } from '~data/constants';
 import { TaskEvents } from '~data/types/TaskEvents';
 import { Address, ColonyClient, PermissionsManifest } from '~types/index';
-import { ROOT_DOMAIN } from '../../modules/core/constants';
 import { makeUserHasRoleFn } from './utils';
 
 export default function loadModule(

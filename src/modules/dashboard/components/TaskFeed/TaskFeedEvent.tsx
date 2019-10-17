@@ -3,6 +3,7 @@ import { defineMessages, FormattedMessage, injectIntl } from 'react-intl';
 import formatDate from 'sugar-date/date/format';
 import { TaskEvents } from '~data/types/TaskEvents';
 
+import { ROOT_DOMAIN } from '~constants';
 import { Address } from '~types/index';
 import TimeRelative from '~core/TimeRelative';
 import Numeral from '~core/Numeral';
@@ -134,7 +135,9 @@ const TaskFeedEventDomainSet = ({
 }: any) => {
   const domain = useSelector(domainSelector, [colonyAddress, domainId]);
   const domainName =
-    domainId === '1' ? formatMessage(MSG.rootDomain) : domain && domain.name;
+    domainId === ROOT_DOMAIN
+      ? formatMessage(MSG.rootDomain)
+      : domain && domain.name;
   return (
     <FormattedMessage
       {...MSG.domainSet}

@@ -1,9 +1,8 @@
 import { call } from 'redux-saga/effects';
 import { getNetworkClient } from '@colony/colony-js-client';
 
+import { DEFAULT_NETWORK } from '~constants';
 import { Context, getContext } from '~context/index';
-
-import { DEFAULT_NETWORK } from '../../constants';
 
 /*
  * Return an initialized ColonyNetworkClient instance.

@@ -4,8 +4,8 @@ import {
   COLONY_ROLE_ADMINISTRATION,
 } from '@colony/colony-js-client';
 
+import { ROOT_DOMAIN } from '~constants';
 import { Address } from '~types/strings';
-import { ROOT_DOMAIN } from '../../modules/core/constants';
 import { PermissionsManifest } from '../types';
 import { makeUserHasRoleFn } from './utils';
 

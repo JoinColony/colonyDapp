@@ -1,6 +1,7 @@
 import React, { useMemo } from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 
+import { ROOT_DOMAIN } from '~constants';
 import { stripProtocol, multiLineTextEllipsis } from '~utils/strings';
 import ExpandedParagraph from '~core/ExpandedParagraph';
 import Heading from '~core/Heading';
@@ -151,8 +152,11 @@ const ColonyMeta = ({
           </li>
           <li>
             <Button
-              className={getActiveDomainFilterClass('1', filteredDomainId)}
-              onClick={() => setFilteredDomainId('1')}
+              className={getActiveDomainFilterClass(
+                ROOT_DOMAIN,
+                filteredDomainId,
+              )}
+              onClick={() => setFilteredDomainId(ROOT_DOMAIN)}
             >
               <FormattedMessage id="domain.root" />
             </Button>

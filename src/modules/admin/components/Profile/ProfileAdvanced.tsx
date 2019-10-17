@@ -1,6 +1,7 @@
 import React from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 
+import { ROOT_DOMAIN } from '~constants';
 import { ColonyType } from '~immutable/index';
 import { useDataFetcher, useSelector } from '~utils/hooks';
 import { ActionTypes } from '~redux/index';
@@ -102,7 +103,7 @@ const ProfileAdvanced = ({
     isFetching: isFetchingRoles,
   } = useDataFetcher(
     userDomainRolesFetcher,
-    [colonyAddress, '1', walletAddress],
+    [colonyAddress, ROOT_DOMAIN, walletAddress],
     [colonyAddress],
   );
 

@@ -1,5 +1,6 @@
 import { all, call, fork, put, takeEvery } from 'redux-saga/effects';
 
+import { ROOT_DOMAIN } from '~constants';
 import { Action, ActionTypes, AllActions } from '~redux/index';
 import {
   putError,
@@ -96,7 +97,7 @@ function* domainCreate({
       // For now parentId is just root domain
       payload: {
         colonyAddress,
-        domain: { id, name, parentId: '1', roles: {} },
+        domain: { id, name, parentId: ROOT_DOMAIN, roles: {} },
       },
     });
 
@@ -140,7 +141,7 @@ function* domainEdit({
       type: ActionTypes.DOMAIN_EDIT_SUCCESS,
       meta,
       // For now parentId is just root domain
-      payload: { colonyAddress, domainId, domainName, parentId: '1' },
+      payload: { colonyAddress, domainId, domainName, parentId: ROOT_DOMAIN },
     });
   } catch (error) {
     return yield putError(ActionTypes.DOMAIN_EDIT_ERROR, error, meta);
