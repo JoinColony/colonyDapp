@@ -1,5 +1,5 @@
 import { EventTypes, Versions } from '~data/constants';
-import { ROOT_DOMAIN } from '../../modules/core/constants';
+import { ROOT_DOMAIN } from '~constants';
 import { EventMigrationFunction } from './types';
 
 const taskCreated: EventMigrationFunction<

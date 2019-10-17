@@ -1,5 +1,6 @@
 import BigNumber from 'bn.js';
 
+import { ROOT_DOMAIN } from '~constants';
 import {
   Address,
   ColonyRolesObject,
@@ -457,14 +458,14 @@ export const getColonyDomains: Query<
           name,
           // All will have parent of root for now; later, the parent domain ID
           // will probably a parameter of the event (and of the on-chain event).
-          parentId: '1',
+          parentId: ROOT_DOMAIN,
           roles: {},
         }),
       );
 
     // Add the root domain at the start
     const rootDomain: DomainType = {
-      id: '1',
+      id: ROOT_DOMAIN,
       name: 'root',
       parentId: null,
       roles: {},

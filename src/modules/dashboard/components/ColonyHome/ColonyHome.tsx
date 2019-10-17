@@ -10,6 +10,7 @@ import { subscribeActions as subscribeToReduxActions } from 'redux-action-watch/
 import { useDispatch } from 'redux-react-hook';
 import throttle from 'lodash/throttle';
 
+import { ROOT_DOMAIN } from '~constants';
 import { Address } from '~types/index';
 import {
   TasksFilterOptionType,
@@ -175,7 +176,7 @@ const ColonyHome = ({
 
   const { data: roles, isFetching: isFetchingRoles } = useDataFetcher(
     userDomainRolesFetcher,
-    [colonyAddress, '1', walletAddress],
+    [colonyAddress, ROOT_DOMAIN, walletAddress],
     [colonyAddress],
   );
 
@@ -183,7 +184,10 @@ const ColonyHome = ({
     () =>
       Object.keys(domains || {})
         .sort()
-        .filter(id => id === '1' && id === filteredDomainId && domains[id].name)
+        .filter(
+          id =>
+            id === ROOT_DOMAIN && id === filteredDomainId && domains[id].name,
+        )
         .map(id => domains[id].name),
     [domains, filteredDomainId],
   );

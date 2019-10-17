@@ -26,7 +26,7 @@ class TaskAccessController extends AbstractAccessController<
 
   private readonly colonyAddress: Address;
 
-  private readonly initialDomainId: number | null;
+  private readonly initialDomainId: string;
 
   private readonly manager: PermissionManager;
 
@@ -44,7 +44,7 @@ class TaskAccessController extends AbstractAccessController<
   constructor(
     draftId: string,
     colonyAddress: string,
-    initialDomainId: number | null,
+    initialDomainId: string,
     wallet: WalletObjectType,
     permissionsManifest: PermissionsManifest<any>,
   ) {

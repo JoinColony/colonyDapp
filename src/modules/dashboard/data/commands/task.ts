@@ -4,6 +4,7 @@ import {
   COLONY_ROLE_ADMINISTRATION,
 } from '@colony/colony-js-client';
 
+import { ROOT_DOMAIN } from '~constants';
 import { Context } from '~context/index';
 import { EventTypes, TaskStates, Versions } from '~data/constants';
 import {
@@ -28,9 +29,7 @@ import {
 } from '~data/stores';
 import { createEvent } from '~data/utils';
 import { TaskDraftId } from '~immutable/index';
-
 import { Address, ColonyClient } from '~types/index';
-import { ROOT_DOMAIN } from '../../../core/constants';
 
 import {
   CancelTaskCommandArgsSchema,
