@@ -1,7 +1,7 @@
 import React, { useMemo } from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 
-import { ROOT_DOMAIN } from '~constants';
+import { COLONY_TOTAL_BALANCE_DOMAIN_ID, ROOT_DOMAIN } from '~constants';
 import { stripProtocol, multiLineTextEllipsis } from '~utils/strings';
 import ExpandedParagraph from '~core/ExpandedParagraph';
 import Heading from '~core/Heading';
@@ -44,12 +44,14 @@ const ColonyAvatar = HookedColonyAvatar({ fetchColony: false });
 interface Props {
   colony: ColonyType;
   canAdminister: boolean;
-  setFilteredDomainId: (domainId: string) => void;
-  filteredDomainId: string;
+  setFilteredDomainId: (domainId: number) => void;
+  filteredDomainId: number;
 }
 
-const getActiveDomainFilterClass = (id = '0', filteredDomainId: string) =>
-  filteredDomainId === id ? styles.filterItemActive : styles.filterItem;
+const getActiveDomainFilterClass = (
+  id = COLONY_TOTAL_BALANCE_DOMAIN_ID,
+  filteredDomainId: number,
+) => (filteredDomainId === id ? styles.filterItemActive : styles.filterItem);
 
 const ColonyMeta = ({
   colony: {
@@ -144,8 +146,13 @@ const ColonyMeta = ({
         <ul>
           <li>
             <Button
-              className={getActiveDomainFilterClass('0', filteredDomainId)}
-              onClick={() => setFilteredDomainId('0')}
+              className={getActiveDomainFilterClass(
+                COLONY_TOTAL_BALANCE_DOMAIN_ID,
+                filteredDomainId,
+              )}
+              onClick={() =>
+                setFilteredDomainId(COLONY_TOTAL_BALANCE_DOMAIN_ID)
+              }
             >
               <FormattedMessage id="domain.all" />
             </Button>

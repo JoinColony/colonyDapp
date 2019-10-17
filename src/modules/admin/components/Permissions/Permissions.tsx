@@ -68,7 +68,7 @@ interface Props {
 const displayName = 'admin.Permissions';
 
 const Permissions = ({ colonyAddress, openDialog }: Props) => {
-  const [selectedDomainId, setSelectedDomainId] = useState<string>(ROOT_DOMAIN);
+  const [selectedDomainId, setSelectedDomainId] = useState(ROOT_DOMAIN);
 
   const {
     data: domainsObj = {},
@@ -82,7 +82,7 @@ const Permissions = ({ colonyAddress, openDialog }: Props) => {
   const domains = useMemo<{ label: string; value: number }[]>(
     () =>
       (Object.values(domainsObj) as DomainType[])
-        .map(({ id, name }) => ({ value: parseInt(id, 10), label: name }))
+        .map(({ id, name }) => ({ value: id, label: name }))
         .sort((a, b) => a.value - b.value),
     [domainsObj],
   );

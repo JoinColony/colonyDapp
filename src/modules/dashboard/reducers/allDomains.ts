@@ -37,8 +37,8 @@ const allDomainsReducer: ReducerType<AllDomainsMap> = (
         record.withMutations(
           (mutable: ImmutableMap<DomainRecord['id'], DomainRecord>) => {
             Object.entries(payload).forEach(
-              ([domainId, roles]: [DomainRecord['id'], DomainRolesObject]) => {
-                if (!mutable.has(domainId)) return;
+              ([domainId, roles]: [string, DomainRolesObject]) => {
+                if (!mutable.has(parseInt(domainId, 10))) return;
                 mutable.setIn([domainId, 'roles'], rolesFromJS(roles));
               },
             );

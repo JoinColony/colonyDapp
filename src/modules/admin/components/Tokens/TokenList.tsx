@@ -19,7 +19,7 @@ interface Appearance {
 
 interface Props<T> {
   appearance?: Appearance;
-  domainId?: string;
+  domainId?: number;
   tokens: T[];
 }
 

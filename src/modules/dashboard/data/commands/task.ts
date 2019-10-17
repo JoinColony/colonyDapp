@@ -55,7 +55,7 @@ interface TaskStoreMetadata {
 }
 
 interface CreateTaskStoreMetadata extends TaskStoreMetadata {
-  domainId: string;
+  domainId: number;
 }
 
 type CommentsStoreMetadata = TaskStoreMetadata;
@@ -106,12 +106,12 @@ export const createTask: Command<
   {
     creatorAddress: Address;
     draftId: string;
-    domainId: string;
+    domainId: number;
   },
   {
     commentsStore: CommentsStore;
     draftId: TaskDraftId;
-    domainId: string;
+    domainId: number;
     event: Event<EventTypes.TASK_CREATED>;
     taskStore: TaskStore;
   }
@@ -656,7 +656,7 @@ export const setTaskDomain: Command<
   { taskStore: TaskStore; colonyClient: ColonyClient; walletAddress: Address },
   TaskStoreMetadata,
   {
-    domainId: string;
+    domainId: number;
   },
   {
     event: Event<EventTypes.DOMAIN_SET>;
