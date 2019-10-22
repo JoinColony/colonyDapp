@@ -94,6 +94,13 @@ const MSG = defineMessages({
     id: 'dashboard.TaskEditDialog.unknownToken',
     defaultMessage: 'Unknown Token',
   },
+  fundingInfo: {
+    id: 'dashboard.TaskEditDialog.fundingInfo',
+    defaultMessage: `Each task has its own funding pot which allows you to set
+    aside funds for payouts. The payouts for each role will be taken from the
+    task's funding pot.The Colony fee will be deducted from each payout once
+    the task is completed.`,
+  },
 });
 
 interface Props {
