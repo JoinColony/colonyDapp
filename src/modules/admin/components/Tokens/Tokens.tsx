@@ -2,22 +2,25 @@ import React, { useCallback, useMemo, useState } from 'react';
 import { defineMessages, injectIntl, IntlShape } from 'react-intl';
 import { compose } from 'recompose';
 
-import { ROOT_DOMAIN, COLONY_TOTAL_BALANCE_DOMAIN_ID } from '~constants';
+import { ROOT_DOMAIN, COLONY_TOTAL_BALANCE_DOMAIN_ID, ROLES } from '~constants';
 import { DialogType } from '~core/Dialog';
 import Button from '~core/Button';
 import withDialog from '~core/Dialog/withDialog';
 import Heading from '~core/Heading';
 import { Select } from '~core/Fields';
 import { SpinnerLoader } from '~core/Preloaders';
-import { Address, ColonyRoles } from '~types/index';
+import { Address } from '~types/index';
 import { useDataFetcher, useSelector } from '~utils/hooks';
 import { proxyOldRoles } from '~utils/data';
 
-import { domainsFetcher, tokenFetcher } from '../../../dashboard/fetchers';
+import {
+  domainsAndRolesFetcher,
+  tokenFetcher,
+} from '../../../dashboard/fetchers';
 import { useColonyNativeToken } from '../../../dashboard/hooks/useColonyNativeToken';
 import { useColonyTokens } from '../../../dashboard/hooks/useColonyTokens';
-import { userHasRoleSelector } from '../../../dashboard/selectors';
 import { walletAddressSelector } from '../../../users/selectors';
+import { userHasRole } from '../../../users/checks';
 import { canEditTokens } from '../../checks';
 import FundingBanner from './FundingBanner';
 import TokenList from './TokenList';
@@ -65,7 +68,7 @@ const Tokens = ({
   const walletAddress = useSelector(walletAddressSelector);
 
   const { data: domainsData, isFetching: isFetchingDomains } = useDataFetcher(
-    domainsFetcher,
+    domainsAndRolesFetcher,
     [colonyAddress],
     [colonyAddress],
   );
@@ -77,12 +80,12 @@ const Tokens = ({
     [rootDomainRoles, walletAddress],
   );
 
-  const canMoveTokens = useSelector(userHasRoleSelector, [
-    colonyAddress,
+  const canMoveTokens = userHasRole(
+    domainsData,
     ROOT_DOMAIN,
     walletAddress,
-    ColonyRoles.FUNDING,
-  ]);
+    ROLES.FUNDING,
+  );
 
   const domains = useMemo(
     () => [

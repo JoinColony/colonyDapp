@@ -1,4 +1,4 @@
-import React, { useCallback } from 'react';
+import React, { useCallback, useMemo } from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 
 import { COLONY_TOTAL_BALANCE_DOMAIN_ID } from '~constants';
@@ -12,6 +12,7 @@ import { useDataFetcher, useSelector } from '~utils/hooks';
 import { domainsAndRolesFetcher } from '../../../fetchers';
 import { useColonyTokens } from '../../../hooks/useColonyTokens';
 import { walletAddressSelector } from '../../../../users/selectors';
+import { canMoveTokens as canMoveTokensCheck } from '../../../../admin/checks';
 import TokenItem from './TokenItem';
 
 import styles from './ColonyFunding.css';
@@ -46,16 +47,16 @@ const ColonyFunding = ({
 
   const walletAddress = useSelector(walletAddressSelector);
 
-  const { data: domains, isFetching: isFetchingDomains } = useDataFetcher(
+  const { data: domains } = useDataFetcher(
     domainsAndRolesFetcher,
     [colonyAddress],
     [colonyAddress],
   );
 
-  console.log(walletAddress);
-  console.log(domains);
-
-  const canMoveTokens = true;
+  const canMoveTokens = useMemo(
+    () => canMoveTokensCheck(domains, walletAddress),
+    [walletAddress, domains],
+  );
 
   const handleMoveTokens = useCallback(
     () =>

@@ -2,28 +2,28 @@ import React from 'react';
 
 import { COLONY_TOTAL_BALANCE_DOMAIN_ID } from '~constants';
 import { ColonyType, ColonyTokenReferenceType } from '~immutable/index';
-import { ColonyRoleSet } from '~types/index';
 import { isInRecoveryMode } from '../../../checks';
-import { canAdminister, isFounder } from '../../../../users/checks';
 import ColonyInitialFunding from '../ColonyInitialFunding';
 import ColonyTasks from '../ColonyTasks';
 
 interface Props {
+  allowTaskCreation: boolean;
   colony: ColonyType;
   filteredDomainId: number;
   filterOption: string;
-  nativeTokenRef: ColonyTokenReferenceType | null;
   ethTokenRef: ColonyTokenReferenceType | null;
-  roles: ColonyRoleSet;
+  nativeTokenRef: ColonyTokenReferenceType | null;
+  showQrCode: boolean;
 }
 
 const TabContribute = ({
+  allowTaskCreation,
   colony,
   filteredDomainId,
   filterOption,
   ethTokenRef,
   nativeTokenRef,
-  roles,
+  showQrCode,
 }: Props) => {
   const isColonyTokenBalanceZero =
     nativeTokenRef &&
@@ -40,11 +40,6 @@ const TabContribute = ({
     nativeTokenRef &&
     !nativeTokenRef.isExternal &&
     colony.canMintNativeToken
-  );
-  const showQrCode = !!(
-    nativeTokenRef &&
-    canAdminister(roles) &&
-    isFounder(roles)
   );
   const showEmptyState = !(
     nativeTokenRef &&
@@ -69,7 +64,7 @@ const TabContribute = ({
         />
       )}
       <ColonyTasks
-        canCreateTask={canAdminister(roles)}
+        canCreateTask={allowTaskCreation}
         colonyAddress={colony.colonyAddress}
         filteredDomainId={filteredDomainId}
         filterOption={filterOption}

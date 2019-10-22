@@ -1,18 +1,14 @@
 import BigNumber from 'bn.js';
 
+import { ROLES } from '~constants';
 import { ActionTypes } from '~redux/index';
-import {
-  Address,
-  ColonyRolesObject,
-  ENSName,
-  ColonyRoles,
-  WithKey,
-} from '~types/index';
+import { Address, ENSName, WithKey } from '~types/index';
 import {
   ColonyType,
   ContractTransactionType,
-  DomainType,
   ColonyTokenReferenceType,
+  DomainType,
+  ColonyRolesType,
 } from '~immutable/index';
 import {
   ActionType,
@@ -103,7 +99,7 @@ export type ColonyActionTypes =
   | ActionTypeWithPayloadAndMeta<
       ActionTypes.COLONY_DOMAIN_USER_ROLES_FETCH_SUCCESS,
       {
-        roles: Record<ColonyRoles, boolean>;
+        roles: Record<ROLES, boolean>;
         colonyAddress: Address;
         domainId: number;
         userAddress: Address;
@@ -246,7 +242,7 @@ export type ColonyActionTypes =
   | ErrorActionType<ActionTypes.COLONY_ROLES_FETCH_ERROR, WithKey>
   | ActionTypeWithPayloadAndMeta<
       ActionTypes.COLONY_ROLES_FETCH_SUCCESS,
-      ColonyRolesObject,
+      ColonyRolesType,
       WithKey
     >
   | UniqueActionType<
@@ -254,7 +250,7 @@ export type ColonyActionTypes =
       {
         colonyAddress: Address;
         domainId: number;
-        roles: Record<ColonyRoles, boolean>;
+        roles: Record<ROLES, boolean>;
         userAddress: Address;
       },
       WithKey
@@ -268,7 +264,7 @@ export type ColonyActionTypes =
       {
         colonyAddress: Address;
         domainId: number;
-        roles: Record<ColonyRoles, boolean>;
+        roles: Record<ROLES, boolean>;
         userAddress: Address;
       },
       WithKey

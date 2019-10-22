@@ -1,13 +1,6 @@
 import { all, fork, put, takeEvery } from 'redux-saga/effects';
-import {
-  COLONY_ROLE_ADMINISTRATION,
-  COLONY_ROLE_ARCHITECTURE,
-  COLONY_ROLE_ARCHITECTURE_SUBDOMAIN,
-  COLONY_ROLE_FUNDING,
-  COLONY_ROLE_RECOVERY,
-  COLONY_ROLE_ROOT,
-} from '@colony/colony-js-client';
 
+import { ROLES } from '~constants';
 import { Action, ActionTypes, AllActions } from '~redux/index';
 import { executeQuery, putError } from '~utils/saga/effects';
 import { ContractContexts } from '~types/index';
@@ -34,6 +27,7 @@ function* colonyRolesFetch({
   return null;
 }
 
+// Currently not used as we don't really have a way to extend the roles Set (and getting contract events seems to be cheaper)
 function* colonyDomainUserRolesFetch({
   payload: { colonyAddress, domainId, userAddress },
   meta,
@@ -60,23 +54,23 @@ function* colonyDomainUserRolesFetch({
 
 const getRoleSetFunctionName = (role: string, setTo: boolean) => {
   switch (role) {
-    case COLONY_ROLE_ADMINISTRATION:
+    case ROLES.ADMINISTRATION:
       return 'setAdministrationRole';
 
     // case COLONY_ROLE_ARBITRATION:
     //   return 'setArbitrationRole';
 
-    case COLONY_ROLE_ARCHITECTURE:
-    case COLONY_ROLE_ARCHITECTURE_SUBDOMAIN:
+    case ROLES.ARCHITECTURE:
+    case ROLES.ARCHITECTURE_SUBDOMAIN:
       return 'setArchitectureRole';
 
-    case COLONY_ROLE_FUNDING:
+    case ROLES.FUNDING:
       return 'setFundingRole';
 
-    case COLONY_ROLE_RECOVERY:
+    case ROLES.RECOVERY:
       return setTo ? 'setRecoveryRole' : 'removeRecoveryRole';
 
-    case COLONY_ROLE_ROOT:
+    case ROLES.ROOT:
       return 'setRootRole';
 
     default:
