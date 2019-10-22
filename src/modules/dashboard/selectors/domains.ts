@@ -18,10 +18,4 @@ export const domainSelector = (
   colonyAddress: Address,
   domainId: number,
 ): DomainRecord | null =>
-  state.getIn([
-    ns,
-    DASHBOARD_ALL_DOMAINS,
-    colonyAddress,
-    'record',
-    domainId.toString(),
-  ]);
+  state.getIn([ns, DASHBOARD_ALL_DOMAINS, colonyAddress, 'record', domainId]);
