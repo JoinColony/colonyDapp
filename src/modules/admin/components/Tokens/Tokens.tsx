@@ -94,7 +94,7 @@ const Tokens = ({
         .sort()
         .map(domainId => ({
           label: domainsData[domainId].name,
-          value: domainId,
+          value: domainsData[domainId].id,
         })),
     ],
     [domainsData],
