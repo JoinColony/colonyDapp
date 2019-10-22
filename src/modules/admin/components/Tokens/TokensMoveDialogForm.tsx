@@ -4,20 +4,18 @@ import { defineMessages, FormattedMessage } from 'react-intl';
 import BigNumber from 'bn.js';
 import moveDecimal from 'move-decimal-point';
 
-import { ROOT_DOMAIN } from '~constants';
-import { Address, ColonyRoles } from '~types/index';
+import { ROOT_DOMAIN, ROLES } from '~constants';
+import { Address } from '~types/index';
 import { useDataFetcher, useSelector } from '~utils/hooks';
 import Button from '~core/Button';
 import DialogSection from '~core/Dialog/DialogSection';
 import { Select, Input, FormStatus } from '~core/Fields';
 import Heading from '~core/Heading';
 
-import { domainsFetcher } from '../../../dashboard/fetchers';
-import {
-  tokenBalanceSelector,
-  userHasRoleSelector,
-} from '../../../dashboard/selectors';
+import { domainsAndRolesFetcher } from '../../../dashboard/fetchers';
+import { tokenBalanceSelector } from '../../../dashboard/selectors';
 import { walletAddressSelector } from '../../../users/selectors';
+import { userHasRole } from '../../../users/checks';
 
 import styles from './TokensMoveDialogForm.css';
 import { FormValues } from './TokensMoveDialog';
@@ -112,7 +110,7 @@ const TokensMoveDialogForm = ({
   );
 
   const { data: domains } = useDataFetcher(
-    domainsFetcher,
+    domainsAndRolesFetcher,
     [colonyAddress],
     [colonyAddress],
   );
@@ -129,18 +127,20 @@ const TokensMoveDialogForm = ({
 
   // Get from and to domain permissions for current user
   const walletAddress = useSelector(walletAddressSelector);
-  const userHasFundingRoleInFromDomain = useSelector(userHasRoleSelector, [
-    colonyAddress,
+
+  const userHasFundingRoleInFromDomain = userHasRole(
+    domains,
     values.fromDomain || ROOT_DOMAIN,
     walletAddress,
-    ColonyRoles.FUNDING,
-  ]);
-  const userHasFundingRoleInToDomain = useSelector(userHasRoleSelector, [
-    colonyAddress,
+    ROLES.FUNDING,
+  );
+
+  const userHasFundingRoleInToDomain = userHasRole(
+    domains,
     values.toDomain || ROOT_DOMAIN,
     walletAddress,
-    ColonyRoles.FUNDING,
-  ]);
+    ROLES.FUNDING,
+  );
 
   // Get domain token balances from state
   const fromDomainTokenBalanceSelector = useCallback(

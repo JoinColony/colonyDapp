@@ -8,10 +8,7 @@ import Heading from '~core/Heading';
 import { SpinnerLoader } from '~core/Preloaders';
 
 import { canAdminister } from '../../../users/checks';
-import {
-  domainsFetcher,
-  userDomainRolesFetcher,
-} from '../../../dashboard/fetchers';
+import { domainsAndRolesFetcher } from '../../../dashboard/fetchers';
 import { walletAddressSelector } from '../../../users/selectors';
 
 import OrganizationAddDomains from '../Domains/OrganizationAddDomains';
@@ -41,18 +38,12 @@ const displayName = 'admin.Domains';
 
 const Domains = ({ colonyAddress }: Props) => {
   const { data: domains } = useDataFetcher(
-    domainsFetcher,
+    domainsAndRolesFetcher,
     [colonyAddress],
     [colonyAddress],
   );
 
   const walletAddress = useSelector(walletAddressSelector);
-
-  const { data: roles } = useDataFetcher(
-    userDomainRolesFetcher,
-    [colonyAddress, ROOT_DOMAIN, walletAddress],
-    [colonyAddress],
-  );
 
   if (!domains) {
     return <SpinnerLoader appearance={{ theme: 'primary', size: 'massive' }} />;
@@ -78,7 +69,7 @@ const Domains = ({ colonyAddress }: Props) => {
             colonyAddress={colonyAddress}
             domains={domains as any}
             label={MSG.title}
-            viewOnly={!canAdminister(roles)}
+            viewOnly={!canAdminister(domains, ROOT_DOMAIN, walletAddress)}
           />
         ) : (
           <>

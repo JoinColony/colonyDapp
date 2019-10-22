@@ -1,10 +1,11 @@
+import { Set as ImmutableSet } from 'immutable';
 import BigNumber from 'bn.js';
 
-import { COLONY_TOTAL_BALANCE_DOMAIN_ID, ROOT_DOMAIN } from '~constants';
+import { COLONY_TOTAL_BALANCE_DOMAIN_ID, ROOT_DOMAIN, ROLES } from '~constants';
 import {
   Address,
-  ColonyRolesObject,
-  ColonyRoles,
+  RoleSet,
+  RoleSetType,
   createAddress,
   CurrentEvents,
   ENSCache,
@@ -23,7 +24,12 @@ import {
 } from '~data/types';
 import { ColonyEvents } from '~data/types/ColonyEvents';
 import { TaskIndexEvents } from '~data/types/TaskIndexEvents';
-import { ColonyType, DomainType } from '~immutable/index';
+import {
+  ColonyType,
+  ColonyRolesType,
+  DomainType,
+  DomainRolesType,
+} from '~immutable/index';
 import { Context } from '~context/index';
 import EventStore from '~lib/database/stores/EventStore';
 import { EventTypes } from '~data/constants';
@@ -46,6 +52,14 @@ interface ColonyTaskIndexStoreMetadata {
 }
 
 type ContractEventQuery<A, R> = Query<ColonyClient, ColonyStoreMetadata, A, R>;
+
+interface ColonyRoleSetEventData {
+  address: Address;
+  domainId: number;
+  role: string;
+  setTo: boolean;
+  eventName: 'ColonyRoleSet';
+}
 
 const context = [Context.COLONY_MANAGER];
 const colonyContext = [
@@ -84,7 +98,7 @@ const prepareColonyStoreQuery = async (
   return getColonyStore(colonyClient, ddb, wallet)(metadata);
 };
 
-export const getColonyRoles: ContractEventQuery<void, ColonyRolesObject> = {
+export const getColonyRoles: ContractEventQuery<void, ColonyRolesType> = {
   name: 'getColonyRoles',
   context,
   prepare: prepareColonyClientQuery,
@@ -120,23 +134,27 @@ export const getColonyRoles: ContractEventQuery<void, ColonyRolesObject> = {
         .filter(({ address }) => !extensionAddresses.includes(address))
         // Reduce events to { [domainId]: { [address]: Set<Role> } }
         .reduce(
-          (colonyRoles, { address, setTo, role, domainId }) => {
-            // FIXME .toString() necessary?
-            const domainRoles = colonyRoles[domainId.toString()] || {};
-            const roles = new Set(
-              // If the role is already set, and it is being unset, filter it from the set
-              [...domainRoles[address], role].filter(r => r !== role || !setTo),
-            );
+          (
+            colonyRoles,
+            { address, setTo, role, domainId }: ColonyRoleSetEventData,
+          ) => {
+            const domainRoles =
+              colonyRoles[domainId.toString()] || ({} as DomainRolesType);
+            const userRoles =
+              domainRoles[address] || (ImmutableSet() as RoleSet);
+
             return {
               ...colonyRoles,
-              // FIXME .toString() necessary?
               [domainId.toString()]: {
                 ...domainRoles,
-                [address as string]: roles,
+                // Add or remove the role, depending on the value of setTo
+                [address as Address]: setTo
+                  ? userRoles.add(role)
+                  : userRoles.remove(role),
               },
             };
           },
-          {} as ColonyRolesObject,
+          {} as ColonyRolesType,
         )
     );
   },
@@ -145,10 +163,10 @@ export const getColonyRoles: ContractEventQuery<void, ColonyRolesObject> = {
 export const getColonyDomainUserRoles: ContractEventQuery<
   {
     domainId: number;
-    roles?: ColonyRoles[];
+    roles?: RoleSetType;
     userAddress: Address;
   },
-  Set<ColonyRoles>
+  RoleSet
 > = {
   name: 'getColonyDomainUserRoles',
   context,
@@ -158,13 +176,13 @@ export const getColonyDomainUserRoles: ContractEventQuery<
     {
       domainId,
       roles = [
-        ColonyRoles.ADMINISTRATION,
-        ColonyRoles.ARBITRATION,
-        ColonyRoles.ARCHITECTURE,
-        ColonyRoles.ARCHITECTURE_SUBDOMAIN,
-        ColonyRoles.FUNDING,
-        ColonyRoles.RECOVERY,
-        ColonyRoles.ROOT,
+        ROLES.ADMINISTRATION,
+        ROLES.ARBITRATION,
+        ROLES.ARCHITECTURE,
+        ROLES.ARCHITECTURE_SUBDOMAIN,
+        ROLES.FUNDING,
+        ROLES.RECOVERY,
+        ROLES.ROOT,
       ],
       userAddress,
     },
@@ -182,7 +200,7 @@ export const getColonyDomainUserRoles: ContractEventQuery<
     return domainRoles.reduce(
       (userRoles, { hasRole }, index) =>
         hasRole ? userRoles.add(roles[index]) : userRoles,
-      new Set<ColonyRoles>(),
+      new Set<ROLES>(),
     );
   },
 };
@@ -446,7 +464,6 @@ export const getColonyDomains: Query<
             payload: { domainId: currentDomainId },
           } = event;
           const difference = domains.filter(
-            // FIXME check types here
             ({ payload: { domainId } }) => currentDomainId !== domainId,
           );
 

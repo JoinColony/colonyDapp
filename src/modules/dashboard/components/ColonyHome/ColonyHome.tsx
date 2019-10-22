@@ -31,11 +31,7 @@ import LoadingTemplate from '~pages/LoadingTemplate';
 
 import { walletAddressSelector } from '../../../users/selectors';
 import { canAdminister, isFounder } from '../../../users/checks';
-import {
-  colonyAddressFetcher,
-  domainsFetcher,
-  userDomainRolesFetcher,
-} from '../../fetchers';
+import { colonyAddressFetcher, domainsAndRolesFetcher } from '../../fetchers';
 import {
   colonyNativeTokenSelector,
   colonyEthTokenSelector,
@@ -168,19 +164,13 @@ const ColonyHome = ({
     error: colonyError,
   } = useDataSubscriber(colonySubscriber, colonyArgs, colonyArgs);
 
-  const { data: domains } = useDataFetcher(
-    domainsFetcher,
+  const { data: domains, isFetching: isFetchingDomains } = useDataFetcher(
+    domainsAndRolesFetcher,
     [colonyAddress],
     [colonyAddress],
   );
 
   const walletAddress = useSelector(walletAddressSelector);
-
-  const { data: roles, isFetching: isFetchingRoles } = useDataFetcher(
-    userDomainRolesFetcher,
-    [colonyAddress, ROOT_DOMAIN, walletAddress],
-    [colonyAddress],
-  );
 
   const crumbs = useMemo<string[]>(
     () =>
@@ -210,13 +200,16 @@ const ColonyHome = ({
   if (
     !(colony && colonyAddress) ||
     isFetchingColony ||
-    !roles ||
-    isFetchingRoles ||
+    !domains ||
+    isFetchingDomains ||
     !nativeTokenRef
   ) {
     return (
       <LoadingTemplate loadingText={MSG.loadingText}>
-        {showRecoverOption && colonyAddress && canRecoverColony(roles) ? (
+        {showRecoverOption &&
+        colonyAddress &&
+        domains &&
+        canRecoverColony(domains, ROOT_DOMAIN, walletAddress) ? (
           <DialogActionButton
             dialog="ConfirmDialog"
             dialogProps={{
@@ -238,7 +231,9 @@ const ColonyHome = ({
   }
 
   // Eventually this has to be in the proper domain. There's probably going to be a different UI for that
-  const canCreateTask = canAdminister(roles) || isFounder(roles);
+  const canCreateTask =
+    canAdminister(domains, ROOT_DOMAIN, walletAddress) ||
+    isFounder(domains, ROOT_DOMAIN, walletAddress);
   const isInRecoveryMode = isInRecoveryModeCheck(colony);
 
   const filterSelect = (
@@ -292,7 +287,11 @@ const ColonyHome = ({
         <div className={styles.metaContainer}>
           <ColonyMeta
             colony={colony}
-            canAdminister={!isInRecoveryMode && canAdminister(roles)}
+            canAdminister={
+              !isInRecoveryMode &&
+              canAdminister(domains, ROOT_DOMAIN, walletAddress)
+            }
+            domains={domains}
             filteredDomainId={filteredDomainId}
             setFilteredDomainId={setFilteredDomainId}
           />
@@ -316,12 +315,13 @@ const ColonyHome = ({
           </div>
           <TabPanel>
             <TabContribute
+              allowTaskCreation={canCreateTask}
               colony={colony}
               filteredDomainId={filteredDomainId}
               filterOption={filterOption}
               ethTokenRef={ethTokenRef}
               nativeTokenRef={nativeTokenRef}
-              roles={roles}
+              showQrCode={isFounder(domains, ROOT_DOMAIN, walletAddress)}
             />
           </TabPanel>
           <TabPanel>
