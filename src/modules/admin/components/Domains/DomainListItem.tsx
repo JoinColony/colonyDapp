@@ -1,6 +1,7 @@
 import React from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 
+import { ROOT_DOMAIN } from '~constants';
 import { DomainType } from '~immutable/index';
 import { Address } from '~types/index';
 
@@ -48,7 +49,7 @@ const DomainListItem = ({
       <span className={styles.domainName} title={domain.name}>
         {domain.name}
       </span>
-      {!viewOnly && (
+      {!viewOnly && domain.id !== ROOT_DOMAIN && (
         <span title={MSG.buttonEdit.defaultMessage}>
           <DialogActionButton
             dialog="DomainEditDialog"
