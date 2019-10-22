@@ -20,6 +20,7 @@ import {
   executeSubscription,
   selectAsJS,
 } from '~utils/saga/effects';
+import { ColonyRolesType } from '~immutable/index';
 import { ContractContexts, createAddress } from '~types/index';
 
 import {
@@ -376,7 +377,7 @@ function* colonyTokenBalancesFetch({
   payload: { colonyAddress, tokenAddress },
 }: Action<ActionTypes.COLONY_TOKEN_BALANCES_FETCH>) {
   try {
-    const { record: domains = [] } = yield selectAsJS(
+    const { record: domains = {} as ColonyRolesType } = yield selectAsJS(
       colonyDomainsSelector,
       colonyAddress,
     );
@@ -393,8 +394,14 @@ function* colonyTokenBalancesFetch({
       // fetch balances for root domain
       put(fetchColonyTokenBalance(colonyAddress, tokenAddress, ROOT_DOMAIN)),
       // fetch balances for other domains
-      ...domains.map(({ id: domainId }) =>
-        put(fetchColonyTokenBalance(colonyAddress, tokenAddress, domainId)),
+      ...Object.keys(domains).map(domainId =>
+        put(
+          fetchColonyTokenBalance(
+            colonyAddress,
+            tokenAddress,
+            parseInt(domainId, 10),
+          ),
+        ),
       ),
     ]);
 

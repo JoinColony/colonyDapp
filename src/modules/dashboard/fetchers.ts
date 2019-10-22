@@ -3,8 +3,6 @@ import {
   colonyDomainsSelector,
   colonyNameSelector,
   colonySelector,
-  directRolesSelector,
-  inheritedRolesSelector,
   tokenSelector,
 } from './selectors';
 import {
@@ -50,18 +48,6 @@ export const domainsFetcher = Object.freeze({
 
 export const domainsAndRolesFetcher = Object.freeze({
   select: colonyDomainsSelector,
-  fetch: fetchDomainsAndRoles,
-  ttl: 1000 * 60,
-});
-
-export const userDomainRolesFetcher = Object.freeze({
-  select: inheritedRolesSelector,
-  fetch: fetchDomainsAndRoles,
-  ttl: 1000 * 60,
-});
-
-export const userDomainDirectRolesFetcher = Object.freeze({
-  select: directRolesSelector,
   fetch: fetchDomainsAndRoles,
   ttl: 1000 * 60,
 });

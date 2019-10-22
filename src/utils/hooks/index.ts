@@ -106,7 +106,7 @@ export const usePrevious = (value: any) => {
   return ref.current;
 };
 
-const transformFetchedData = (data?: any) => {
+const transformSelectedData = (data?: any) => {
   if (!data) return undefined;
   const record =
     typeof data.get === 'function' ? data.get('record') : data.record;
@@ -236,7 +236,7 @@ export const useDataFetcher = <
   }, [dispatch, fetch, shouldFetch, ...fetchArgs]);
 
   return {
-    data: transformFetchedData(data) as MaybeFetchedData<typeof data>,
+    data: transformSelectedData(data) as MaybeFetchedData<typeof data>,
     isFetching: !!(shouldFetch && isFetchingData(data)),
     error: data && data.error ? data.error : undefined,
   };
@@ -300,7 +300,7 @@ export const useDataMapFetcher = <T>(
         const data = allData.get(key);
         return {
           key,
-          data: transformFetchedData(data),
+          data: transformSelectedData(data),
           isFetching: keysToFetchFor.includes(key) && isFetchingData(data),
           error: data && data.error ? data.error : null,
         };
@@ -354,7 +354,7 @@ export const useDataSubscriber = <
   );
 
   return {
-    data: transformFetchedData(data) as MaybeFetchedData<typeof data>,
+    data: transformSelectedData(data) as MaybeFetchedData<typeof data>,
     isFetching: !!(shouldSubscribe && isFetchingData(data)),
     error: data && data.error ? data.error : undefined,
   };
@@ -412,7 +412,7 @@ export const useDataTupleSubscriber = <T>(
         return {
           key: entry[1],
           entry,
-          data: transformFetchedData(data) as MaybeFetchedData<typeof data>,
+          data: transformSelectedData(data) as MaybeFetchedData<typeof data>,
           isFetching: keysToFetchFor.includes(entry[1]) && isFetchingData(data),
           error: data ? data.error : null,
         };
@@ -481,7 +481,7 @@ export const useDataTupleFetcher = <T>(
         return {
           key: entry[1],
           entry,
-          data: transformFetchedData(data) as MaybeFetchedData<typeof data>,
+          data: transformSelectedData(data) as MaybeFetchedData<typeof data>,
           isFetching: keysToFetchFor.includes(entry[1]) && isFetchingData(data),
           error: data ? data.error : null,
         };

@@ -6,12 +6,8 @@ import {
   isKeyed,
 } from 'immutable';
 
-import {
-  DefaultValues,
-  Address,
-  ColonyRoles,
-  DomainRolesObject,
-} from '~types/index';
+import { ROLES } from '~constants';
+import { DefaultValues, Address, RoleSet, RoleSetType } from '~types/index';
 
 interface Shared {
   id: number;
@@ -19,13 +15,25 @@ interface Shared {
   parentId: number | null;
 }
 
+export type DomainRolesType = Record<Address, RoleSetType>;
+
+export type DomainRoles = ImmutableMap<Address, RoleSet> & {
+  toJS(): DomainRolesType;
+};
+
+export type ColonyRolesType = Record<string, DomainRolesType>;
+
+export type ColonyRoles = ImmutableMap<number, DomainRoles> & {
+  toJS(): ColonyRolesType;
+};
+
 interface DomainRecordProps extends Shared {
-  roles: ImmutableMap<Address, ImmutableSet<ColonyRoles>>;
+  roles: DomainRoles;
   // pendingRoles: ImmutableMap<Address, ImmutableSet<Roles>>;
 }
 
 export interface DomainType extends Readonly<Shared> {
-  readonly roles: DomainRolesObject;
+  readonly roles: DomainRolesType;
   // readonly pendingRoles: DomainRolesObject;
 }
 
@@ -35,24 +43,32 @@ const defaultValues: DefaultValues<DomainRecordProps> = {
   id: undefined,
   name: undefined,
   parentId: undefined,
-  roles: ImmutableMap<Address, ImmutableSet<ColonyRoles>>(),
+  roles: ImmutableMap<Address, RoleSet>(),
   // pendingRoles: ImmutableMap<Address, ImmutableSet<Roles>>(),
 };
 
 export class DomainRecord extends ImmutableRecord<DomainRecordProps>(
   defaultValues,
 ) {
+  static rolesFromJS(roles: DomainType['roles']): DomainRecordProps['roles'] {
+    return ImmutableMap<Address, ImmutableSet<ROLES>>(
+      fromJS(roles, (key, value) =>
+        isKeyed(value) ? value.toMap() : value.toSet(),
+      ),
+    ) as DomainRecordProps['roles'];
+  }
+
   toJS(): DomainType {
     // `toJS` converts `ImmutableSet` to `Array` rather than `Set`
     const { roles, ...props } = super.toJS() as Omit<DomainType, 'roles'> & {
-      roles: Record<Address, ColonyRoles[]>;
+      roles: Record<Address, ROLES[]>;
     };
     return {
       ...props,
       roles: Object.entries(roles).reduce(
         (acc, [key, value]) => ({
           ...acc,
-          [key]: new Set<ColonyRoles>([...value]),
+          [key]: new Set<ROLES>([...value]),
         }),
         {},
       ),
@@ -60,29 +76,8 @@ export class DomainRecord extends ImmutableRecord<DomainRecordProps>(
   }
 }
 
-export const rolesFromJS = (
-  roles: DomainType['roles'],
-): DomainRecordProps['roles'] =>
-  ImmutableMap<Address, ImmutableSet<ColonyRoles>>(
-    fromJS(roles, (key, value) =>
-      isKeyed(value) ? value.toMap() : value.toSet(),
-    ),
-  );
-
-export const applyDomainRoleChanges = (
-  roles: ImmutableSet<ColonyRoles>,
-  changes: Record<ColonyRoles, boolean>,
-): ImmutableSet<ColonyRoles> => {
-  const changedRoles = (Object.keys(changes) as unknown) as ColonyRoles[];
-  return ImmutableSet(
-    [...roles, ...changedRoles].filter(role =>
-      Object.hasOwnProperty.call(changes, role) ? changes[role] : true,
-    ),
-  );
-};
-
 export const Domain = ({ roles, ...props }: DomainType): DomainRecord =>
   new DomainRecord({
     ...props,
-    roles: rolesFromJS(roles),
+    roles: DomainRecord.rolesFromJS(roles),
   });

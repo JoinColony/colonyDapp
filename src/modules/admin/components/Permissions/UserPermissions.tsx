@@ -1,10 +1,12 @@
 import React, { useMemo } from 'react';
 import { FormattedMessage } from 'react-intl';
 
-import { ColonyRoles } from '~types/roles';
+import { ROLES } from '~constants';
 import { Address } from '~types/strings';
-import { useSelector } from '~utils/hooks';
-import { inheritedRolesSelector } from '../../../dashboard/selectors';
+import { useDataFetcher } from '~utils/hooks';
+
+import { domainsAndRolesFetcher } from '../../../dashboard/fetchers';
+import { getInheritedRoles } from '../../../users/checks';
 import { ROLE_MESSAGES } from '../../constants';
 
 import styles from './UserPermissions.css';
@@ -18,23 +20,25 @@ interface Props {
 const displayName = 'admin.Permissions.UserPermissions';
 
 const UserPermissions = ({ colonyAddress, domainId, userAddress }: Props) => {
-  const roles = useSelector(inheritedRolesSelector, [
-    colonyAddress,
-    domainId,
-    userAddress,
-  ]);
+  const { data: domains } = useDataFetcher(
+    domainsAndRolesFetcher,
+    [colonyAddress],
+    [colonyAddress],
+  );
 
-  const sortedRoles: ColonyRoles[] = useMemo(
+  const roles = getInheritedRoles(domains, domainId, userAddress);
+
+  const sortedRoles: ROLES[] = useMemo(
     () =>
-      [...(roles || [])]
+      roles
         .filter(
           role =>
             // Don't display ARCHITECTURE_SUBDOMAIN in listed roles
-            role !== ColonyRoles.ARCHITECTURE_SUBDOMAIN,
+            role !== ROLES.ARCHITECTURE_SUBDOMAIN,
         )
         .sort((a, b) => {
-          if (a === ColonyRoles.ROOT || b === ColonyRoles.ROOT) {
-            return a === ColonyRoles.ROOT ? 1 : -1;
+          if (a === ROLES.ROOT || b === ROLES.ROOT) {
+            return a === ROLES.ROOT ? 1 : -1;
           }
           return 0;
         }),
