@@ -53,7 +53,7 @@ const InfoPopover = ({ address, children, trigger = 'click' }: Props) => {
   const user = useSelector(userSelector, [address]);
   let username;
   let displayName;
-  if (user && user && user.record.profile) {
+  if (user && user.record && user.record.profile) {
     username = user.record.profile.username;
     displayName = user.record.profile.displayName;
   }
