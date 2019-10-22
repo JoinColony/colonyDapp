@@ -1,10 +1,8 @@
 import { MessageDescriptor } from 'react-intl';
 
 import React from 'react';
-import nanoid from 'nanoid';
 
-import { DomainType } from '~immutable/index';
-import { Address } from '~types/index';
+import { Address, DomainsMapType } from '~types/index';
 
 import { Table, TableBody } from '~core/Table';
 import Heading from '~core/Heading';
@@ -15,9 +13,9 @@ import styles from './DomainList.css';
 
 interface Props {
   /*
-   * Array of domain data
+   * Map of domain data
    */
-  domains?: Array<DomainType>;
+  domains?: DomainsMapType;
   /*
    * Whether to show the remove button
    * Gets passed down to `DomainListItem`
@@ -49,10 +47,10 @@ const DomainList = ({
       <Table scrollable>
         <TableBody>
           {domains ? (
-            domains.map((domain, currentIndex) => (
+            Object.keys(domains).map(domainId => (
               <DomainListItem
-                key={nanoid(currentIndex)}
-                domain={domain}
+                key={domainId}
+                domain={domains[domainId]}
                 viewOnly={viewOnly}
                 colonyAddress={colonyAddress}
               />
