@@ -137,11 +137,7 @@ const AdminDashboard = ({
     return <LoadingTemplate loadingText={MSG.loadingText} />;
   }
 
-  if (canAdminister(domains, ROOT_DOMAIN, walletAddress)) {
-    return <Redirect to={CURRENT_COLONY_ROUTE} />;
-  }
-
-  if (!canAdminister) {
+  if (!canAdminister(domains, ROOT_DOMAIN, walletAddress)) {
     return <Redirect to={CURRENT_COLONY_ROUTE} />;
   }
 
