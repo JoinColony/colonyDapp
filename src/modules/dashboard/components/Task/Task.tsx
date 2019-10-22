@@ -34,7 +34,7 @@ import {
 } from '../../checks';
 import {
   colonyAddressFetcher,
-  userDomainRolesFetcher,
+  domainsAndRolesFetcher,
 } from '../../../dashboard/fetchers';
 import { currentUserSelector } from '../../../users/selectors';
 import { taskSubscriber } from '../../subscribers';
@@ -140,9 +140,9 @@ const Task = ({
     title = undefined,
   } = task || {};
 
-  const { data: roles, isFetching: isFetchingRoles } = useDataFetcher(
-    userDomainRolesFetcher,
-    [colonyAddress, domainId, walletAddress],
+  const { data: domains, isFetching: isFetchingDomains } = useDataFetcher(
+    domainsAndRolesFetcher,
+    [colonyAddress],
     [colonyAddress],
   );
 
@@ -167,17 +167,17 @@ const Task = ({
 
   if (
     isFetchingTask ||
-    isFetchingRoles ||
+    isFetchingDomains ||
     !task ||
     !colonyAddress ||
-    !roles ||
+    !domains ||
     !walletAddress
   ) {
     return <LoadingTemplate loadingText={MSG.loadingText} />;
   }
 
   const isTaskCreator = isCreator(task, walletAddress);
-  const canEdit = canEditTask(task, roles, walletAddress);
+  const canEdit = canEditTask(task, domains, walletAddress);
 
   return (
     <div className={styles.main}>
@@ -300,7 +300,7 @@ const Task = ({
               </div>
             </Tooltip>
           )}
-          {canCancelTask(task, roles, walletAddress) && (
+          {canCancelTask(task, domains, walletAddress) && (
             <ActionButton
               appearance={{ theme: 'secondary', size: 'small' }}
               button={ConfirmButton}
@@ -316,7 +316,7 @@ const Task = ({
           {/* Hide when discard confirm is displayed */}
           {!isDiscardConfirmDisplayed && (
             <>
-              {canFinalizeTask(task, roles, walletAddress) && (
+              {canFinalizeTask(task, domains, walletAddress) && (
                 <ActionButton
                   text={MSG.finalizeTask}
                   submit={ActionTypes.TASK_FINALIZE}

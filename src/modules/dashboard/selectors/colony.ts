@@ -91,7 +91,6 @@ export const tokenBalanceSelector = (
     'tokens',
     tokenAddress,
     'balances',
-    // FIXME this might have to be a string
     domainId.toString(),
   ]);
 

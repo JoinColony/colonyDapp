@@ -12,7 +12,7 @@ import { networkVersionSelector } from '../../../core/selectors';
 import { canEnterRecoveryMode } from '../../../users/checks';
 import { canBeUpgraded, isInRecoveryMode } from '../../../dashboard/checks';
 import { walletAddressSelector } from '../../../users/selectors';
-import { userDomainRolesFetcher } from '../../../dashboard/fetchers';
+import { domainsAndRolesFetcher } from '../../../dashboard/fetchers';
 
 import styles from './ProfileAdvanced.css';
 
@@ -98,14 +98,10 @@ const ProfileAdvanced = ({
   const walletAddress = useSelector(walletAddressSelector);
 
   const {
-    data: roles,
-    error: rolesError,
-    isFetching: isFetchingRoles,
-  } = useDataFetcher(
-    userDomainRolesFetcher,
-    [colonyAddress, ROOT_DOMAIN, walletAddress],
-    [colonyAddress],
-  );
+    data: domains,
+    error: domainsError,
+    isFetching: isFetchingDomains,
+  } = useDataFetcher(domainsAndRolesFetcher, [colonyAddress], [colonyAddress]);
 
   const networkVersion = useSelector(networkVersionSelector);
 
@@ -180,11 +176,11 @@ const ProfileAdvanced = ({
           success={ActionTypes.COLONY_RECOVERY_MODE_ENTER_SUCCESS}
           error={ActionTypes.COLONY_RECOVERY_MODE_ENTER_ERROR}
           values={{ colonyAddress }}
-          loading={isFetchingRoles}
+          loading={isFetchingDomains}
           disabled={
-            !!rolesError ||
+            !!domainsError ||
             isInRecoveryMode(colony) ||
-            !canEnterRecoveryMode(roles)
+            !canEnterRecoveryMode(domains, ROOT_DOMAIN, walletAddress)
           }
         />
       </section>

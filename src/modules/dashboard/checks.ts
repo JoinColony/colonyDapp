@@ -1,6 +1,6 @@
 import { TaskStates } from '~data/constants';
 import { ColonyType, TaskType, TaskUserType } from '~immutable/index';
-import { Address, ColonyRoleSet } from '~types/index';
+import { Address, DomainsMapType } from '~types/index';
 import { isFounder, canAdminister } from '../users/checks';
 
 /*
@@ -61,12 +61,14 @@ export const isWorkerSet = ({ workerAddress }: TaskType) => !!workerAddress;
 
 export const canEditTask = (
   task: TaskType,
-  roles: ColonyRoleSet,
+  domains: DomainsMapType,
   userAddress: Address,
 ) =>
   !isFinalized(task) &&
   !isCancelled(task) &&
-  (isCreator(task, userAddress) || isFounder(roles) || canAdminister(roles));
+  (isCreator(task, userAddress) ||
+    isFounder(domains, task.domainId, userAddress) ||
+    canAdminister(domains, task.domainId, userAddress));
 
 export const isDomainSet = ({ domainId }: TaskType) => !!domainId;
 
@@ -102,11 +104,13 @@ export const managerCanRevealWorkerRating = (
 
 export const canCancelTask = (
   task: TaskType,
-  roles: ColonyRoleSet,
+  domains: DomainsMapType,
   userAddress: Address,
 ) =>
   isActive(task) &&
-  (isManager(task, userAddress) || isFounder(roles) || canAdminister(roles));
+  (isManager(task, userAddress) ||
+    isFounder(domains, task.domainId, userAddress) ||
+    canAdminister(domains, task.domainId, userAddress));
 
 export const hasRequestedToWork = (
   { requests = [] }: TaskType,
@@ -122,7 +126,7 @@ export const canRequestToWork = (task: TaskType, userAddress: Address) =>
 
 export const canFinalizeTask = (
   task: TaskType,
-  roles: ColonyRoleSet,
+  domains: DomainsMapType,
   userAddress: Address,
 ) =>
   task &&
@@ -130,6 +134,8 @@ export const canFinalizeTask = (
   isWorkerSet(task) &&
   isDomainSet(task) &&
   isPayoutsSet(task) &&
-  (isManager(task, userAddress) || isFounder(roles) || canAdminister(roles));
+  (isManager(task, userAddress) ||
+    isFounder(domains, task.domainId, userAddress) ||
+    canAdminister(domains, task.domainId, userAddress));
 
 export const canRecoverColony = isFounder;

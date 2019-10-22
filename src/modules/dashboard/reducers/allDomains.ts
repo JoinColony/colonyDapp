@@ -1,18 +1,30 @@
 import { Map as ImmutableMap, Set as ImmutableSet } from 'immutable';
 
+import { ROLES } from '~constants';
 import {
   Domain,
+  DomainRolesType,
   FetchableData,
   DomainRecord,
-  rolesFromJS,
-  applyDomainRoleChanges,
 } from '~immutable/index';
-import { DomainRolesObject, ColonyRoles } from '~types/roles';
+import { RoleSet } from '~types/index';
 import { Address } from '~types/strings';
 import { withFetchableDataMap } from '~utils/reducers';
 import { ActionTypes, ReducerType } from '~redux/index';
 
 import { AllDomainsMap } from '../state/index';
+
+const applyDomainRoleChanges = (
+  roles: RoleSet,
+  changes: Record<ROLES, boolean>,
+): ImmutableSet<ROLES> => {
+  const changedRoles = (Object.keys(changes) as unknown) as ROLES[];
+  return ImmutableSet(
+    [...roles, ...changedRoles].filter(role =>
+      Object.hasOwnProperty.call(changes, role) ? changes[role] : true,
+    ),
+  );
+};
 
 const allDomainsReducer: ReducerType<AllDomainsMap> = (
   state = ImmutableMap() as AllDomainsMap,
@@ -37,9 +49,12 @@ const allDomainsReducer: ReducerType<AllDomainsMap> = (
         record.withMutations(
           (mutable: ImmutableMap<DomainRecord['id'], DomainRecord>) => {
             Object.entries(payload).forEach(
-              ([domainId, roles]: [string, DomainRolesObject]) => {
+              ([domainId, roles]: [string, DomainRolesType]) => {
                 if (!mutable.has(parseInt(domainId, 10))) return;
-                mutable.setIn([domainId, 'roles'], rolesFromJS(roles));
+                mutable.setIn(
+                  [domainId, 'roles'],
+                  DomainRecord.rolesFromJS(roles),
+                );
               },
             );
             return mutable;
@@ -58,7 +73,7 @@ const allDomainsReducer: ReducerType<AllDomainsMap> = (
 
       return state.updateIn(
         [colonyAddress, 'record', domainId, 'roles'],
-        (domainRoles: ImmutableMap<Address, ImmutableSet<ColonyRoles>>) => {
+        (domainRoles: ImmutableMap<Address, RoleSet>) => {
           return domainRoles
             ? domainRoles.update(userAddress, userRoles =>
                 applyDomainRoleChanges(userRoles || ImmutableSet(), roles),
@@ -104,7 +119,7 @@ const allDomainsReducer: ReducerType<AllDomainsMap> = (
         meta: { key },
         payload: { domains },
       } = action;
-      return state.setIn(
+      return state.set(
         key,
         FetchableData({
           record: ImmutableMap(

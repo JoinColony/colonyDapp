@@ -8,8 +8,8 @@ import {
 } from 'react-intl';
 import { compose } from 'recompose';
 
-import { ROOT_DOMAIN } from '~constants';
-import { Address, ColonyRoles } from '~types/index';
+import { ROLES, ROOT_DOMAIN } from '~constants';
+import { Address } from '~types/index';
 import { DomainType } from '~immutable/index';
 import Heading from '~core/Heading';
 import { Select } from '~core/Fields';
@@ -111,8 +111,8 @@ const Permissions = ({ colonyAddress, openDialog }: Props) => {
     () =>
       selectedDomain
         ? Object.keys(selectedDomain.roles).sort((a, b) => {
-            const rootA = selectedDomain.roles[a].has(ColonyRoles.ROOT);
-            const rootB = selectedDomain.roles[b].has(ColonyRoles.ROOT);
+            const rootA = selectedDomain.roles[a].includes(ROLES.ROOT);
+            const rootB = selectedDomain.roles[b].includes(ROLES.ROOT);
             if ((rootA && rootB) || (!rootA && !rootB)) {
               return 0;
             }
