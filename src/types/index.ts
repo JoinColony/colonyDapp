@@ -4,7 +4,7 @@ export * from '../lib/database/types';
 export * from './keyTypes';
 export * from './TransactionReceipt';
 export * from './strings';
-export * from './roles';
+export * from './domains';
 export * from './DefaultValues';
 export * from './RecordToJS';
 

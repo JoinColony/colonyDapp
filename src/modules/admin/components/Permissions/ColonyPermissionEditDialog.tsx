@@ -3,8 +3,8 @@ import React, { useCallback, useMemo, useState, useEffect } from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 import * as yup from 'yup';
 
-import { ROOT_DOMAIN } from '~constants';
-import { Address, ColonyRoles } from '~types/index';
+import { ROLES, ROOT_DOMAIN } from '~constants';
+import { Address } from '~types/index';
 import { mergePayload, withKey, mapPayload, pipe } from '~utils/actions';
 import { UserType } from '~immutable/index';
 import { ItemDataType } from '~core/OmniPicker';
@@ -29,11 +29,9 @@ import HookedUserAvatar from '~users/HookedUserAvatar';
 
 import { domainSelector } from '../../../dashboard/selectors';
 import { userSubscriber } from '../../../users/subscribers';
+import { getInheritedRoles, getDirectRoles } from '../../../users/checks';
 import { usersByAddressFetcher } from '../../../users/fetchers';
-import {
-  userDomainRolesFetcher,
-  userDomainDirectRolesFetcher,
-} from '../../../dashboard/fetchers';
+import { domainsAndRolesFetcher } from '../../../dashboard/fetchers';
 import {
   allUsersAddressesSelector,
   walletAddressSelector,
@@ -83,13 +81,13 @@ interface Props {
   error: ActionTypeString;
 }
 
-const availableRoles: ColonyRoles[] = [
-  ColonyRoles.ROOT,
-  ColonyRoles.ADMINISTRATION,
-  ColonyRoles.ARCHITECTURE,
-  ColonyRoles.FUNDING,
-  ColonyRoles.RECOVERY,
-  ColonyRoles.ARBITRATION,
+const availableRoles: ROLES[] = [
+  ROLES.ROOT,
+  ROLES.ADMINISTRATION,
+  ROLES.ARCHITECTURE,
+  ROLES.FUNDING,
+  ROLES.RECOVERY,
+  ROLES.ARBITRATION,
 ];
 
 const validationSchema = yup.object({
@@ -141,43 +139,41 @@ const ColonyPermissionEditDialog = ({
   // Get the current user's roles in the selected domain
   const walletAddress = useSelector(walletAddressSelector);
 
-  const { data: inheritedRoles } = useDataFetcher(
-    userDomainRolesFetcher,
-    [colonyAddress, domainId, walletAddress],
+  const { data: domains } = useDataFetcher(
+    domainsAndRolesFetcher,
+    [colonyAddress],
     [colonyAddress],
   );
-  const { data: directRoles } = useDataFetcher(
-    userDomainDirectRolesFetcher,
-    [colonyAddress, domainId, walletAddress],
-    [colonyAddress],
-  );
+
+  const inheritedRoles = getInheritedRoles(domains, domainId, walletAddress);
+  const directRoles = getDirectRoles(domains, domainId, walletAddress);
 
   // Check which roles the current user is allowed to set in this domain
   const canRoleBeSet = useCallback(
-    (role: ColonyRoles) => {
+    (role: ROLES) => {
       switch (role) {
         // Can't set arbitration at all yet
-        case ColonyRoles.ARBITRATION:
+        case ROLES.ARBITRATION:
           return false;
 
         // Can only be set by root and in root domain
-        case ColonyRoles.ROOT:
-        case ColonyRoles.RECOVERY:
+        case ROLES.ROOT:
+        case ROLES.RECOVERY:
           return (
-            domainId === ROOT_DOMAIN && inheritedRoles.has(ColonyRoles.ROOT)
+            domainId === ROOT_DOMAIN && inheritedRoles.includes(ROLES.ROOT)
           );
 
         // Must be root for these
-        case ColonyRoles.ADMINISTRATION:
-        case ColonyRoles.FUNDING:
-        case ColonyRoles.ARCHITECTURE:
-          return inheritedRoles.has(ColonyRoles.ROOT);
+        case ROLES.ADMINISTRATION:
+        case ROLES.FUNDING:
+        case ROLES.ARCHITECTURE:
+          return inheritedRoles.includes(ROLES.ROOT);
 
         default:
           return false;
       }
     },
-    [inheritedRoles, domainId],
+    [domainId, inheritedRoles],
   );
 
   const transform = useCallback(
@@ -206,7 +202,7 @@ const ColonyPermissionEditDialog = ({
     setSelectedUser(user.profile.walletAddress);
   }, []);
 
-  const roles: ColonyRoles[] = selectedUserAddress
+  const roles: ROLES[] = selectedUserAddress
     ? [...((domain && domain.roles[selectedUserAddress]) || [])]
     : [];
 
@@ -268,7 +264,8 @@ const ColonyPermissionEditDialog = ({
                     disabled={!canRoleBeSet(role)}
                     role={role}
                     asterisk={
-                      !directRoles.has(role) && inheritedRoles.has(role)
+                      !directRoles.includes(role) &&
+                      inheritedRoles.includes(role)
                     }
                   />
                 </div>

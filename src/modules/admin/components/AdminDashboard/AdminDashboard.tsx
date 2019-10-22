@@ -22,7 +22,7 @@ import { isInRecoveryMode } from '../../../dashboard/checks';
 import { canAdminister } from '../../../users/checks';
 import {
   colonyAddressFetcher,
-  userDomainRolesFetcher,
+  domainsAndRolesFetcher,
 } from '../../../dashboard/fetchers';
 import { colonySubscriber } from '../../../dashboard/subscribers';
 
@@ -123,9 +123,9 @@ const AdminDashboard = ({
 
   const walletAddress = useSelector(walletAddressSelector);
 
-  const { data: roles, isFetching: isFetchingRoles } = useDataFetcher(
-    userDomainRolesFetcher,
-    [colonyAddress, ROOT_DOMAIN, walletAddress],
+  const { data: domains, isFetching: isFetchingRoles } = useDataFetcher(
+    domainsAndRolesFetcher,
+    [colonyAddress],
     [colonyAddress],
   );
 
@@ -133,11 +133,11 @@ const AdminDashboard = ({
     return <Redirect to="/404" />;
   }
 
-  if (!colony || !roles || isFetchingRoles) {
+  if (!colony || !domains || isFetchingRoles) {
     return <LoadingTemplate loadingText={MSG.loadingText} />;
   }
 
-  if (canAdminister(roles)) {
+  if (canAdminister(domains, ROOT_DOMAIN, walletAddress)) {
     return <Redirect to={CURRENT_COLONY_ROUTE} />;
   }
 

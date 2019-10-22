@@ -2,6 +2,7 @@ import React, { useMemo } from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 
 import { COLONY_TOTAL_BALANCE_DOMAIN_ID, ROOT_DOMAIN } from '~constants';
+import { DomainsMapType } from '~types/index';
 import { stripProtocol, multiLineTextEllipsis } from '~utils/strings';
 import ExpandedParagraph from '~core/ExpandedParagraph';
 import Heading from '~core/Heading';
@@ -10,13 +11,10 @@ import Button from '~core/Button';
 import Link from '~core/Link';
 import ExternalLink from '~core/ExternalLink';
 import HookedColonyAvatar from '~dashboard/HookedColonyAvatar';
+import { ColonyType } from '~immutable/index';
+
 import ColonySubscribe from './ColonySubscribe';
 import ColonyInvite from './ColonyInvite';
-
-import { useDataFetcher } from '~utils/hooks';
-import { domainsFetcher } from '../../../fetchers';
-
-import { ColonyType } from '~immutable/index';
 
 import styles from './ColonyMeta.css';
 
@@ -44,6 +42,7 @@ const ColonyAvatar = HookedColonyAvatar({ fetchColony: false });
 interface Props {
   colony: ColonyType;
   canAdminister: boolean;
+  domains: DomainsMapType;
   setFilteredDomainId: (domainId: number) => void;
   filteredDomainId: number;
 }
@@ -62,17 +61,12 @@ const ColonyMeta = ({
     displayName,
     website = '',
   },
+  domains,
   setFilteredDomainId,
   filteredDomainId,
   colony,
   canAdminister,
 }: Props) => {
-  const { data: domains } = useDataFetcher(
-    domainsFetcher,
-    [colonyAddress],
-    [colonyAddress],
-  );
-
   const sortedDomains = useMemo(
     () =>
       Object.keys(domains || {})
