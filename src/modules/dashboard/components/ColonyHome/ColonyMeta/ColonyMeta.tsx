@@ -1,7 +1,7 @@
 import React, { useMemo } from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 
-import { COLONY_TOTAL_BALANCE_DOMAIN_ID, ROOT_DOMAIN } from '~constants';
+import { COLONY_TOTAL_BALANCE_DOMAIN_ID } from '~constants';
 import { DomainsMapType } from '~types/index';
 import { stripProtocol, multiLineTextEllipsis } from '~utils/strings';
 import ExpandedParagraph from '~core/ExpandedParagraph';
@@ -149,17 +149,6 @@ const ColonyMeta = ({
               }
             >
               <FormattedMessage id="domain.all" />
-            </Button>
-          </li>
-          <li>
-            <Button
-              className={getActiveDomainFilterClass(
-                ROOT_DOMAIN,
-                filteredDomainId,
-              )}
-              onClick={() => setFilteredDomainId(ROOT_DOMAIN)}
-            >
-              <FormattedMessage id="domain.root" />
             </Button>
           </li>
           {sortedDomains.map(({ name, id }) => (
