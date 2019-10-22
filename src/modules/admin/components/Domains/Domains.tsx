@@ -64,10 +64,10 @@ const Domains = ({ colonyAddress }: Props) => {
          * but if it turns out we're going to use this in multiple places,
          * we should consider moving it to core
          */}
-        {domains && (domains as any).length ? (
+        {domains && Object.keys(domains).length > 0 ? (
           <DomainList
             colonyAddress={colonyAddress}
-            domains={domains as any}
+            domains={domains}
             label={MSG.title}
             viewOnly={!canAdminister(domains, ROOT_DOMAIN, walletAddress)}
           />
