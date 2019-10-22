@@ -7,7 +7,7 @@ import {
   FetchableData,
   DomainRecord,
 } from '~immutable/index';
-import { RoleSet } from '~types/index';
+import { DomainsMap, RoleSet } from '~types/index';
 import { Address } from '~types/strings';
 import { withFetchableDataMap } from '~utils/reducers';
 import { ActionTypes, ReducerType } from '~redux/index';
@@ -46,20 +46,21 @@ const allDomainsReducer: ReducerType<AllDomainsMap> = (
       }
 
       return state.updateIn([colonyAddress, 'record'], record =>
-        record.withMutations(
-          (mutable: ImmutableMap<DomainRecord['id'], DomainRecord>) => {
-            Object.entries(payload).forEach(
-              ([domainId, roles]: [string, DomainRolesType]) => {
-                if (!mutable.has(parseInt(domainId, 10))) return;
-                mutable.setIn(
-                  [domainId, 'roles'],
-                  DomainRecord.rolesFromJS(roles),
-                );
-              },
-            );
-            return mutable;
-          },
-        ),
+        record.withMutations((mutable: DomainsMap) => {
+          Object.entries(payload).forEach(
+            // string because Object.entries casts to string
+            ([domainId, roles]: [string, DomainRolesType]) => {
+              const oldDomain = mutable.get(parseInt(domainId, 10));
+              if (!oldDomain) return;
+              const domain = Domain({
+                ...oldDomain.toJS(),
+                roles,
+              });
+              mutable.set(parseInt(domainId, 10), domain);
+            },
+          );
+          return mutable;
+        }),
       );
     }
     case ActionTypes.COLONY_DOMAIN_USER_ROLES_FETCH_SUCCESS:
