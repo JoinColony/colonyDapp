@@ -98,6 +98,23 @@ type MaybeSelected<
   ? T
   : (T extends { toJS: Function } ? ReturnType<T['toJS']> : T);
 
+/* Used in cases where we need to memoize the transformed output of any data.
+ * Transform function has to be pure, obviously
+ */
+export const useTransformer = <
+  T extends (...args: any[]) => any,
+  A extends Parameters<T>
+>(
+  transform: T,
+  args: A = ([] as unknown) as A,
+): ReturnType<T> =>
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  useMemo<ReturnType<T>>(() => transform(...args), [
+    transform,
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    ...args,
+  ]);
+
 export const usePrevious = (value: any) => {
   const ref = useRef();
   useEffect(() => {
@@ -124,14 +141,19 @@ const defaultTransform = <T extends { toJS(): any }>(
  * (immutable) redux state and return a mutable version of it.
  */
 export const useSelector = <
-  S extends (...args: any) => any & { transform?: <T>(obj: T) => any },
+  S extends (...args: any[]) => any & { transform?: <T>(obj: T) => any },
   A extends RemoveFirstFromTuple<Parameters<S>> // Omit the first arg (state)
 >(
   select: S,
-  args: A = ([] as unknown) as A,
+  args: A = [] as A,
   transform?: (obj: Collection<any, any>) => any,
 ) => {
-  const mapState = useCallback(state => select(state, ...args), [args, select]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  const mapState = useCallback(state => select(state, ...args), [
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    ...args,
+    select,
+  ]);
 
   const data: ReturnType<typeof select> = useMappedState(mapState);
 

@@ -10,9 +10,9 @@ import Heading from '~core/Heading';
 import { Select } from '~core/Fields';
 import { SpinnerLoader } from '~core/Preloaders';
 import { Address } from '~types/index';
-import { useDataFetcher, useSelector } from '~utils/hooks';
-import { proxyOldRoles } from '~utils/data';
+import { useDataFetcher, useSelector, useTransformer } from '~utils/hooks';
 
+import { getLegacyRoles, getUserRoles } from '../../../transformers';
 import {
   domainsAndRolesFetcher,
   tokenFetcher,
@@ -73,19 +73,15 @@ const Tokens = ({
     [colonyAddress],
   );
 
-  const { roles: rootDomainRoles = {} } =
-    (domainsData || {})[ROOT_DOMAIN] || {};
-  const canEdit = useMemo(
-    () => canEditTokens(proxyOldRoles(rootDomainRoles), walletAddress),
-    [rootDomainRoles, walletAddress],
-  );
-
-  const canMoveTokens = userHasRole(
+  const userRoles = useTransformer(getUserRoles, [
     domainsData,
     ROOT_DOMAIN,
     walletAddress,
-    ROLES.FUNDING,
-  );
+  ]);
+
+  const oldUserRoles = useTransformer(getLegacyRoles, [domainsData]);
+  const canEdit = canEditTokens(oldUserRoles, walletAddress);
+  const canMoveTokens = userHasRole(userRoles, ROLES.FUNDING);
 
   const domains = useMemo(
     () => [

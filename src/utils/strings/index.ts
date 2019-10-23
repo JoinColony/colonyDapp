@@ -1,5 +1,7 @@
 import { addressValidator } from '@colony/purser-core/validators';
 import { addressNormalizer } from '@colony/purser-core/normalizers';
+import generate from 'nanoid/generate';
+import urlDictionary from 'nanoid/url';
 
 import { Address } from '~types/index';
 
@@ -116,3 +118,9 @@ export const splitAddress = (address: Address): AddressElements | Error => {
     return caughtError;
   }
 };
+
+// This should be opaque
+type RandomId = string;
+
+export const generateUrlFriendlyId = (): RandomId =>
+  generate(urlDictionary, 21);
