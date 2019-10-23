@@ -46,7 +46,7 @@ import styles from './Task.css';
 const MSG = defineMessages({
   assignmentFunding: {
     id: 'dashboard.Task.assignmentFunding',
-    defaultMessage: 'Assignee and Funding',
+    defaultMessage: 'Assignee and Payout',
   },
   details: {
     id: 'dashboard.Task.details',
