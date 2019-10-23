@@ -90,6 +90,16 @@ const MSG = defineMessages({
       // eslint-disable-next-line max-len
       'Admins can edit the task and remove the assignee without consent. Protect your work and ensure you trust whom you are working with.',
   },
+  payoutInfo: {
+    id: 'dashboard.Task.payoutInfo',
+    defaultMessage:
+      // eslint-disable-next-line max-len
+      "Each task has its own funding pot which allows you to set aside funds for payouts. The payouts for each role will be taken from the task's funding pot. The Colony fee will be deducted from each payout once the task is completed.",
+  },
+  helpIconTitle: {
+    id: 'dashboard.Task.helpIconTitle',
+    defaultMessage: 'Help',
+  },
 });
 
 interface Props {
@@ -179,6 +189,25 @@ const Task = ({
               appearance={{ size: 'normal' }}
               text={MSG.assignmentFunding}
             />
+            <Tooltip
+              placement="right"
+              content={
+                <div className={styles.tooltipText}>
+                  <FormattedMessage {...MSG.payoutInfo} />
+                </div>
+              }
+            >
+              <button className={styles.helpButton} type="button">
+                <Icon
+                  appearance={{
+                    size: 'small',
+                    theme: 'invert',
+                  }}
+                  name="question-mark"
+                  title={MSG.helpIconTitle}
+                />
+              </button>
+            </Tooltip>
           </header>
           <div className={styles.assignment}>
             <div>
