@@ -6,12 +6,13 @@ import moveDecimal from 'move-decimal-point';
 
 import { ROOT_DOMAIN, ROLES } from '~constants';
 import { Address } from '~types/index';
-import { useDataFetcher, useSelector } from '~utils/hooks';
+import { useDataFetcher, useSelector, useTransformer } from '~utils/hooks';
 import Button from '~core/Button';
 import DialogSection from '~core/Dialog/DialogSection';
 import { Select, Input, FormStatus } from '~core/Fields';
 import Heading from '~core/Heading';
 
+import { getUserRoles } from '../../../transformers';
 import { domainsAndRolesFetcher } from '../../../dashboard/fetchers';
 import { tokenBalanceSelector } from '../../../dashboard/selectors';
 import { walletAddressSelector } from '../../../users/selectors';
@@ -115,6 +116,20 @@ const TokensMoveDialogForm = ({
     [colonyAddress],
   );
 
+  const walletAddress = useSelector(walletAddressSelector);
+
+  const fromDomainRoles = useTransformer(getUserRoles, [
+    domains,
+    values.fromDomain || ROOT_DOMAIN,
+    walletAddress,
+  ]);
+
+  const toDomainRoles = useTransformer(getUserRoles, [
+    domains,
+    values.toDomain || ROOT_DOMAIN,
+    walletAddress,
+  ]);
+
   // Map the colony's domains to Select options
   const domainOptions = useMemo(
     () =>
@@ -123,23 +138,6 @@ const TokensMoveDialogForm = ({
         .map(id => ({ value: id, label: domains[id].name })),
 
     [domains],
-  );
-
-  // Get from and to domain permissions for current user
-  const walletAddress = useSelector(walletAddressSelector);
-
-  const userHasFundingRoleInFromDomain = userHasRole(
-    domains,
-    values.fromDomain || ROOT_DOMAIN,
-    walletAddress,
-    ROLES.FUNDING,
-  );
-
-  const userHasFundingRoleInToDomain = userHasRole(
-    domains,
-    values.toDomain || ROOT_DOMAIN,
-    walletAddress,
-    ROLES.FUNDING,
   );
 
   // Get domain token balances from state
@@ -190,11 +188,11 @@ const TokensMoveDialogForm = ({
       }
     }
 
-    if (values.fromDomain && !userHasFundingRoleInFromDomain) {
+    if (values.fromDomain && !userHasRole(fromDomainRoles, ROLES.FUNDING)) {
       errors.fromDomain = MSG.noPermissionFrom;
     }
 
-    if (values.toDomain && !userHasFundingRoleInToDomain) {
+    if (values.toDomain && !userHasRole(toDomainRoles, ROLES.FUNDING)) {
       errors.toDomain = MSG.noPermissionTo;
     }
 
@@ -207,12 +205,12 @@ const TokensMoveDialogForm = ({
 
     setErrors(errors);
   }, [
+    fromDomainRoles,
     fromDomainTokenBalance,
     selectedToken.decimals,
     selectedTokenRef,
     setErrors,
-    userHasFundingRoleInFromDomain,
-    userHasFundingRoleInToDomain,
+    toDomainRoles,
     values.amount,
     values.fromDomain,
     values.toDomain,

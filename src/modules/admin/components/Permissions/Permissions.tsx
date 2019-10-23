@@ -7,6 +7,7 @@ import {
   FormattedMessage,
 } from 'react-intl';
 import { compose } from 'recompose';
+import sortBy from 'lodash/sortby';
 
 import { ROLES, ROOT_DOMAIN } from '~constants';
 import { Address } from '~types/index';
@@ -19,10 +20,10 @@ import Button from '~core/Button';
 import withDialog from '~core/Dialog/withDialog';
 import { DialogType } from '~core/Dialog';
 import ExternalLink from '~core/ExternalLink';
-import { useDataFetcher, useSelector } from '~utils/hooks';
+import { useDataFetcher, useTransformer } from '~utils/hooks';
 
-import { domainsFetcher } from '../../../dashboard/fetchers';
-import { domainSelector } from '../../../dashboard/selectors';
+import { domainsAndRolesFetcher } from '../../../dashboard/fetchers';
+import { getDomainRoles } from '../../../transformers';
 import UserListItem from '../UserListItem';
 import UserPermissions from './UserPermissions';
 
@@ -70,21 +71,23 @@ const displayName = 'admin.Permissions';
 const Permissions = ({ colonyAddress, openDialog }: Props) => {
   const [selectedDomainId, setSelectedDomainId] = useState(ROOT_DOMAIN);
 
-  const {
-    data: domainsObj = {},
-    isFetching: isFetchingDomains,
-  } = useDataFetcher(
-    domainsFetcher,
+  const { data: domains = {}, isFetching: isFetchingDomains } = useDataFetcher(
+    domainsAndRolesFetcher,
     [colonyAddress],
-    [colonyAddress, { fetchRoles: true }],
+    [colonyAddress],
   );
 
-  const domains = useMemo<{ label: string; value: number }[]>(
-    () =>
-      (Object.values(domainsObj) as DomainType[])
-        .map(({ id, name }) => ({ value: id, label: name }))
-        .sort((a, b) => a.value - b.value),
-    [domainsObj],
+  const domainRoles = useTransformer(getDomainRoles, [
+    domains,
+    selectedDomainId,
+  ]);
+
+  const domainSelectOptions = sortBy(
+    (Object.values(domains) as DomainType[]).map(({ id, name }) => ({
+      value: id,
+      label: name,
+    })),
+    ['value'],
   );
 
   const setFieldValue = useCallback((_, value) => setSelectedDomainId(value), [
@@ -101,26 +104,16 @@ const Permissions = ({ colonyAddress, openDialog }: Props) => {
     [openDialog, colonyAddress, selectedDomainId],
   );
 
-  const selectedDomain = useSelector(domainSelector, [
-    colonyAddress,
-    selectedDomainId,
-  ]);
-
-  // Sort the users for the selected role such that those with root are first
-  const userAddresses = useMemo<Address[]>(
+  // Convert to array and sort the users for the selected role such that those with root are first
+  const domainRolesArray = useMemo(
     () =>
-      selectedDomain
-        ? Object.keys(selectedDomain.roles).sort((a, b) => {
-            const rootA = selectedDomain.roles[a].includes(ROLES.ROOT);
-            const rootB = selectedDomain.roles[b].includes(ROLES.ROOT);
-            if ((rootA && rootB) || (!rootA && !rootB)) {
-              return 0;
-            }
-            return rootA ? -1 : 1;
-          })
-        : [],
-    [selectedDomain],
+      Object.entries(domainRoles)
+        .sort(([, roles]) => (roles.includes(ROLES.ROOT) ? -1 : 1))
+        .map(([userAddress, roles]) => ({ userAddress, roles })),
+    [domainRoles],
   );
+
+  const selectedDomain = domains[selectedDomainId];
 
   return (
     <div className={styles.main}>
@@ -139,7 +132,7 @@ const Permissions = ({ colonyAddress, openDialog }: Props) => {
             elementOnly
             label={MSG.labelFilter}
             name="filter"
-            options={domains}
+            options={domainSelectOptions}
             form={{ setFieldValue }}
             $value={selectedDomainId}
           />
@@ -151,7 +144,7 @@ const Permissions = ({ colonyAddress, openDialog }: Props) => {
             <>
               <Table scrollable>
                 <TableBody className={styles.tableBody}>
-                  {userAddresses.map(userAddress => (
+                  {domainRolesArray.map(({ userAddress }) => (
                     <UserListItem
                       address={userAddress}
                       key={userAddress}
@@ -162,9 +155,9 @@ const Permissions = ({ colonyAddress, openDialog }: Props) => {
                     >
                       <TableCell>
                         <UserPermissions
-                          colonyAddress={colonyAddress}
-                          domainId={selectedDomainId}
                           userAddress={userAddress}
+                          domains={domains}
+                          domainId={selectedDomainId}
                         />
                       </TableCell>
                     </UserListItem>

@@ -1,6 +1,7 @@
+import { ROLES } from '~constants';
 import { TaskStates } from '~data/constants';
 import { ColonyType, TaskType, TaskUserType } from '~immutable/index';
-import { Address, DomainsMapType } from '~types/index';
+import { Address } from '~types/index';
 import { isFounder, canAdminister } from '../users/checks';
 
 /*
@@ -61,14 +62,12 @@ export const isWorkerSet = ({ workerAddress }: TaskType) => !!workerAddress;
 
 export const canEditTask = (
   task: TaskType,
-  domains: DomainsMapType,
+  roles: ROLES[],
   userAddress: Address,
 ) =>
   !isFinalized(task) &&
   !isCancelled(task) &&
-  (isCreator(task, userAddress) ||
-    isFounder(domains, task.domainId, userAddress) ||
-    canAdminister(domains, task.domainId, userAddress));
+  (isCreator(task, userAddress) || isFounder(roles) || canAdminister(roles));
 
 export const isDomainSet = ({ domainId }: TaskType) => !!domainId;
 
@@ -104,13 +103,11 @@ export const managerCanRevealWorkerRating = (
 
 export const canCancelTask = (
   task: TaskType,
-  domains: DomainsMapType,
+  roles: ROLES[],
   userAddress: Address,
 ) =>
   isActive(task) &&
-  (isManager(task, userAddress) ||
-    isFounder(domains, task.domainId, userAddress) ||
-    canAdminister(domains, task.domainId, userAddress));
+  (isManager(task, userAddress) || isFounder(roles) || canAdminister(roles));
 
 export const hasRequestedToWork = (
   { requests = [] }: TaskType,
@@ -126,7 +123,7 @@ export const canRequestToWork = (task: TaskType, userAddress: Address) =>
 
 export const canFinalizeTask = (
   task: TaskType,
-  domains: DomainsMapType,
+  roles: ROLES[],
   userAddress: Address,
 ) =>
   task &&
@@ -134,8 +131,6 @@ export const canFinalizeTask = (
   isWorkerSet(task) &&
   isDomainSet(task) &&
   isPayoutsSet(task) &&
-  (isManager(task, userAddress) ||
-    isFounder(domains, task.domainId, userAddress) ||
-    canAdminister(domains, task.domainId, userAddress));
+  (isManager(task, userAddress) || isFounder(roles) || canAdminister(roles));
 
 export const canRecoverColony = isFounder;
