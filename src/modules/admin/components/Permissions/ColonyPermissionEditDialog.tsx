@@ -12,7 +12,6 @@ import { ActionTypeString, ActionTypes } from '~redux/index';
 import {
   useSelector,
   useDataFetcher,
-  useDataSubscriber,
   useDataMapFetcher,
   useTransformer,
 } from '~utils/hooks';
@@ -29,8 +28,6 @@ import ExternalLink from '~core/ExternalLink';
 import HookedUserAvatar from '~users/HookedUserAvatar';
 
 import { getUserRoles } from '../../../transformers';
-import { domainSelector } from '../../../dashboard/selectors';
-import { userSubscriber } from '../../../users/subscribers';
 import { usersByAddressFetcher } from '../../../users/fetchers';
 import { domainsAndRolesFetcher } from '../../../dashboard/fetchers';
 import {
@@ -206,29 +203,17 @@ const ColonyPermissionEditDialog = ({
     [colonyAddress, domainId],
   );
 
-  const domain = useSelector(domainSelector, [colonyAddress, domainId]);
-
   const updateSelectedUser = useCallback((user: UserType) => {
     setSelectedUser(user.profile.walletAddress);
   }, []);
 
-  const roles: ROLES[] = selectedUserAddress
-    ? [...((domain && domain.roles[selectedUserAddress]) || [])]
-    : [];
-
-  // Set user whose roles should be edited
-  const {
-    data: selectedUserData,
-    isFetching: isFetchingselectedUser,
-  } = useDataSubscriber(userSubscriber, [selectedUserAddress] as [string], [
-    selectedUserAddress,
+  const roles = useTransformer(getUserRoles, [
+    domains,
+    domainId,
+    selectedUserAddress || null,
   ]);
 
-  const selectedUser = selectedUserData || {
-    profile: {
-      walletAddress: selectedUserAddress,
-    },
-  };
+  const domain = domains[domainId];
 
   return (
     <Dialog cancel={cancel}>
@@ -237,7 +222,6 @@ const ColonyPermissionEditDialog = ({
         initialValues={{
           domainId,
           roles,
-          user: !isFetchingselectedUser && selectedUser,
         }}
         onSuccess={close}
         submit={ActionTypes.COLONY_DOMAIN_USER_ROLES_SET}
