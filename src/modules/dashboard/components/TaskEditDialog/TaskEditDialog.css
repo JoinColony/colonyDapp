@@ -19,3 +19,12 @@
   border-radius: var(--radius-large);
   background-color: var(--colony-white);
 }
+
+.helpButton {
+  composes: button from '~styles/reset.css';
+  margin-right: 5px;
+}
+
+.tooltipText {
+  max-width: 180px;
+}

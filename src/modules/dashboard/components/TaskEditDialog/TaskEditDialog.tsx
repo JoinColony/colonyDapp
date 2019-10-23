@@ -1,5 +1,5 @@
 import React, { useCallback, useMemo, useEffect } from 'react';
-import { defineMessages } from 'react-intl';
+import { defineMessages, FormattedMessage } from 'react-intl';
 import * as yup from 'yup';
 import { FieldArray } from 'formik';
 import nanoid from 'nanoid';
@@ -26,6 +26,8 @@ import DialogSection from '~core/Dialog/DialogSection';
 import Heading from '~core/Heading';
 import DialogBox from '~core/Dialog/DialogBox';
 import { SpinnerLoader } from '~core/Preloaders';
+import Icon from '~core/Icon';
+import { Tooltip } from '~core/Popover';
 import { ActionTypes } from '~redux/index';
 import HookedUserAvatar from '~users/HookedUserAvatar';
 import { mapPayload, mergePayload, pipe } from '~utils/actions';
@@ -43,6 +45,7 @@ import { usersByAddressFetcher } from '../../../users/fetchers';
 import { userSubscriber } from '../../../users/subscribers';
 import { allUsersAddressesSelector } from '../../../users/selectors';
 import { createAddress } from '../../../../types';
+
 import styles from './TaskEditDialog.css';
 
 const MSG = defineMessages({
@@ -52,7 +55,7 @@ const MSG = defineMessages({
   },
   titleFunding: {
     id: 'dashboard.TaskEditDialog.titleFunding',
-    defaultMessage: 'Funding',
+    defaultMessage: 'Payout',
   },
   add: {
     id: 'dashboard.TaskEditDialog.add',
@@ -94,12 +97,14 @@ const MSG = defineMessages({
     id: 'dashboard.TaskEditDialog.unknownToken',
     defaultMessage: 'Unknown Token',
   },
-  fundingInfo: {
-    id: 'dashboard.TaskEditDialog.fundingInfo',
-    defaultMessage: `Each task has its own funding pot which allows you to set
-    aside funds for payouts. The payouts for each role will be taken from the
-    task's funding pot.The Colony fee will be deducted from each payout once
-    the task is completed.`,
+  payoutInfo: {
+    id: 'dashboard.TaskEditDialog.payoutInfo',
+    defaultMessage: `The worker will receive their payout at the end of the
+    task. Make sure you have enough funds in the task to match the payout`,
+  },
+  helpIconTitle: {
+    id: 'dashboard.TaskEditDialog.helpIconTitle',
+    defaultMessage: 'Help',
   },
 });
 
@@ -384,6 +389,28 @@ const TaskEditDialog = ({
                               appearance={{ size: 'medium' }}
                               text={MSG.titleFunding}
                             />
+                            <Tooltip
+                              placement="right"
+                              content={
+                                <div className={styles.tooltipText}>
+                                  <FormattedMessage {...MSG.payoutInfo} />
+                                </div>
+                              }
+                            >
+                              <button
+                                className={styles.helpButton}
+                                type="button"
+                              >
+                                <Icon
+                                  appearance={{
+                                    size: 'small',
+                                    theme: 'invert',
+                                  }}
+                                  name="question-mark"
+                                  title={MSG.helpIconTitle}
+                                />
+                              </button>
+                            </Tooltip>
                             {canAddTokens(values, maxTokens) && (
                               <Button
                                 appearance={{ theme: 'blue', size: 'small' }}
