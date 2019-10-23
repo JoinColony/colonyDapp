@@ -99,8 +99,9 @@ const MSG = defineMessages({
   },
   payoutInfo: {
     id: 'dashboard.TaskEditDialog.payoutInfo',
-    defaultMessage: `The worker will receive their payout at the end of the
-    task. Make sure you have enough funds in the task to match the payout`,
+    defaultMessage:
+      // eslint-disable-next-line max-len
+      'The worker will receive their payout at the end of the task. Make sure you have enough funds in the task to match the payout',
   },
   helpIconTitle: {
     id: 'dashboard.TaskEditDialog.helpIconTitle',

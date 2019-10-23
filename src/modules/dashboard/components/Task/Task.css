@@ -61,7 +61,6 @@
 .headerAside {
   display: flex;
   flex-direction: row;
-  justify-content: space-between;
   height: 25px;
 }
 
@@ -112,4 +111,13 @@
 .trustInfoTooltipHeading {
   margin-bottom: 5px;
   font-weight: 500;
+}
+
+.helpButton {
+  composes: button from '~styles/reset.css';
+  margin-left: 5px;
+}
+
+.tooltipText {
+  max-width: 180px;
 }
