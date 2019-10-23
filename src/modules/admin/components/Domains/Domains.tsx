@@ -3,10 +3,11 @@ import { defineMessages, FormattedMessage } from 'react-intl';
 
 import { ROOT_DOMAIN } from '~constants';
 import { Address } from '~types/index';
-import { useDataFetcher, useSelector } from '~utils/hooks';
+import { useDataFetcher, useSelector, useTransformer } from '~utils/hooks';
 import Heading from '~core/Heading';
 import { SpinnerLoader } from '~core/Preloaders';
 
+import { getUserRoles } from '../../../transformers';
 import { canAdminister } from '../../../users/checks';
 import { domainsAndRolesFetcher } from '../../../dashboard/fetchers';
 import { walletAddressSelector } from '../../../users/selectors';
@@ -45,6 +46,12 @@ const Domains = ({ colonyAddress }: Props) => {
 
   const walletAddress = useSelector(walletAddressSelector);
 
+  const userRoles = useTransformer(getUserRoles, [
+    domains,
+    ROOT_DOMAIN,
+    walletAddress,
+  ]);
+
   if (!domains) {
     return <SpinnerLoader appearance={{ theme: 'primary', size: 'massive' }} />;
   }
@@ -69,7 +76,7 @@ const Domains = ({ colonyAddress }: Props) => {
             colonyAddress={colonyAddress}
             domains={domains}
             label={MSG.title}
-            viewOnly={!canAdminister(domains, ROOT_DOMAIN, walletAddress)}
+            viewOnly={!canAdminister(userRoles)}
           />
         ) : (
           <>

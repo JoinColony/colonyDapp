@@ -4,7 +4,12 @@ import compose from 'recompose/compose';
 import { withRouter } from 'react-router-dom';
 
 import { ActionTypes } from '~redux/index';
-import { useDataFetcher, useDataSubscriber, useSelector } from '~utils/hooks';
+import {
+  useDataFetcher,
+  useDataSubscriber,
+  useSelector,
+  useTransformer,
+} from '~utils/hooks';
 // Temporary, please remove when wiring in the rating modals
 import { OpenDialog } from '~core/Dialog/types';
 import { mergePayload } from '~utils/actions';
@@ -37,6 +42,7 @@ import {
   domainsAndRolesFetcher,
 } from '../../../dashboard/fetchers';
 import { currentUserSelector } from '../../../users/selectors';
+import { getUserRoles } from '../../../transformers';
 import { taskSubscriber } from '../../subscribers';
 
 import styles from './Task.css';
@@ -136,6 +142,12 @@ const Task = ({
     [colonyAddress],
   );
 
+  const userRoles = useTransformer(getUserRoles, [
+    domains,
+    task ? task.domainId : null,
+    walletAddress,
+  ]);
+
   const onEditTask = useCallback(() => {
     // If you've managed to click on the button that runs this without the
     // task being fetched yet, you are a wizard
@@ -167,7 +179,7 @@ const Task = ({
   }
 
   const isTaskCreator = isCreator(task, walletAddress);
-  const canEdit = canEditTask(task, domains, walletAddress);
+  const canEdit = canEditTask(task, userRoles, walletAddress);
 
   return (
     <div className={styles.main}>
@@ -271,7 +283,7 @@ const Task = ({
               </div>
             </Tooltip>
           )}
-          {canCancelTask(task, domains, walletAddress) && (
+          {canCancelTask(task, userRoles, walletAddress) && (
             <ActionButton
               appearance={{ theme: 'secondary', size: 'small' }}
               button={ConfirmButton}
@@ -287,7 +299,7 @@ const Task = ({
           {/* Hide when discard confirm is displayed */}
           {!isDiscardConfirmDisplayed && (
             <>
-              {canFinalizeTask(task, domains, walletAddress) && (
+              {canFinalizeTask(task, userRoles, walletAddress) && (
                 <ActionButton
                   text={MSG.finalizeTask}
                   submit={ActionTypes.TASK_FINALIZE}

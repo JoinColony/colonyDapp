@@ -14,6 +14,7 @@ import {
   useDataFetcher,
   useDataSubscriber,
   useDataMapFetcher,
+  useTransformer,
 } from '~utils/hooks';
 import { filterUserSelection } from '~utils/arrays';
 
@@ -27,9 +28,9 @@ import { ActionForm, InputLabel } from '~core/Fields';
 import ExternalLink from '~core/ExternalLink';
 import HookedUserAvatar from '~users/HookedUserAvatar';
 
+import { getUserRoles } from '../../../transformers';
 import { domainSelector } from '../../../dashboard/selectors';
 import { userSubscriber } from '../../../users/subscribers';
-import { getInheritedRoles, getDirectRoles } from '../../../users/checks';
 import { usersByAddressFetcher } from '../../../users/fetchers';
 import { domainsAndRolesFetcher } from '../../../dashboard/fetchers';
 import {
@@ -145,8 +146,17 @@ const ColonyPermissionEditDialog = ({
     [colonyAddress],
   );
 
-  const inheritedRoles = getInheritedRoles(domains, domainId, walletAddress);
-  const directRoles = getDirectRoles(domains, domainId, walletAddress);
+  const inheritedRoles = useTransformer(getUserRoles, [
+    domains,
+    domainId,
+    walletAddress,
+  ]);
+  const directRoles = useTransformer(getUserRoles, [
+    domains,
+    domainId,
+    walletAddress,
+    true,
+  ]);
 
   // Check which roles the current user is allowed to set in this domain
   const canRoleBeSet = useCallback(

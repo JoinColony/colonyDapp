@@ -18,7 +18,12 @@ import {
   tasksFilterSelectOptions,
 } from '../shared/tasksFilter';
 import { ActionTypes } from '~redux/index';
-import { useDataFetcher, useDataSubscriber, useSelector } from '~utils/hooks';
+import {
+  useDataFetcher,
+  useDataSubscriber,
+  useSelector,
+  useTransformer,
+} from '~utils/hooks';
 import { mergePayload } from '~utils/actions';
 import Transactions from '~admin/Transactions';
 import { Tab, Tabs, TabList, TabPanel } from '~core/Tabs';
@@ -36,6 +41,7 @@ import {
   colonyNativeTokenSelector,
   colonyEthTokenSelector,
 } from '../../selectors';
+import { getUserRoles } from '../../../transformers';
 import { colonySubscriber } from '../../subscribers';
 import {
   isInRecoveryMode as isInRecoveryModeCheck,
@@ -172,6 +178,12 @@ const ColonyHome = ({
 
   const walletAddress = useSelector(walletAddressSelector);
 
+  const userRoles = useTransformer(getUserRoles, [
+    domains,
+    ROOT_DOMAIN,
+    walletAddress,
+  ]);
+
   const crumbs = useMemo<string[]>(
     () =>
       Object.keys(domains || {})
@@ -209,7 +221,7 @@ const ColonyHome = ({
         {showRecoverOption &&
         colonyAddress &&
         domains &&
-        canRecoverColony(domains, ROOT_DOMAIN, walletAddress) ? (
+        canRecoverColony(userRoles) ? (
           <DialogActionButton
             dialog="ConfirmDialog"
             dialogProps={{
@@ -231,9 +243,7 @@ const ColonyHome = ({
   }
 
   // Eventually this has to be in the proper domain. There's probably going to be a different UI for that
-  const canCreateTask =
-    canAdminister(domains, ROOT_DOMAIN, walletAddress) ||
-    isFounder(domains, ROOT_DOMAIN, walletAddress);
+  const canCreateTask = canAdminister(userRoles) || isFounder(userRoles);
   const isInRecoveryMode = isInRecoveryModeCheck(colony);
 
   const filterSelect = (
@@ -287,10 +297,7 @@ const ColonyHome = ({
         <div className={styles.metaContainer}>
           <ColonyMeta
             colony={colony}
-            canAdminister={
-              !isInRecoveryMode &&
-              canAdminister(domains, ROOT_DOMAIN, walletAddress)
-            }
+            canAdminister={!isInRecoveryMode && canAdminister(userRoles)}
             domains={domains}
             filteredDomainId={filteredDomainId}
             setFilteredDomainId={setFilteredDomainId}
@@ -321,7 +328,7 @@ const ColonyHome = ({
               filterOption={filterOption}
               ethTokenRef={ethTokenRef}
               nativeTokenRef={nativeTokenRef}
-              showQrCode={isFounder(domains, ROOT_DOMAIN, walletAddress)}
+              showQrCode={isFounder(userRoles)}
             />
           </TabPanel>
           <TabPanel>

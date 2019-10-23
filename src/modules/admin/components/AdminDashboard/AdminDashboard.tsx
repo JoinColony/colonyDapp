@@ -15,8 +15,14 @@ import Permissions from '~admin/Permissions';
 import ProfileAdvanced from '~admin/Profile/ProfileAdvanced';
 import VerticalNavigation from '~pages/VerticalNavigation';
 import { HistoryNavigation } from '~pages/NavigationWrapper';
-import { useDataFetcher, useDataSubscriber, useSelector } from '~utils/hooks';
+import {
+  useDataFetcher,
+  useDataSubscriber,
+  useSelector,
+  useTransformer,
+} from '~utils/hooks';
 
+import { getUserRoles } from '../../../transformers';
 import { walletAddressSelector } from '../../../users/selectors';
 import { isInRecoveryMode } from '../../../dashboard/checks';
 import { canAdminister } from '../../../users/checks';
@@ -129,6 +135,12 @@ const AdminDashboard = ({
     [colonyAddress],
   );
 
+  const userRoles = useTransformer(getUserRoles, [
+    domains,
+    ROOT_DOMAIN,
+    walletAddress,
+  ]);
+
   if (!colonyName || addressError || colonyError) {
     return <Redirect to="/404" />;
   }
@@ -137,7 +149,7 @@ const AdminDashboard = ({
     return <LoadingTemplate loadingText={MSG.loadingText} />;
   }
 
-  if (!canAdminister(domains, ROOT_DOMAIN, walletAddress)) {
+  if (!canAdminister(userRoles)) {
     return <Redirect to={CURRENT_COLONY_ROUTE} />;
   }
 

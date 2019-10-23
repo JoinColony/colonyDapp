@@ -25,7 +25,7 @@ import {
   executeSubscription,
   takeFrom,
 } from '~utils/saga/effects';
-import { generateUrlFriendlyId } from '~utils/data';
+import { generateUrlFriendlyId } from '~utils/strings';
 import { matchUsernames } from '~lib/TextDecorator';
 
 import { usernameSelector, walletAddressSelector } from '../../users/selectors';
