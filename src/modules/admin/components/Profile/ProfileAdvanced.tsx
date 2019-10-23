@@ -3,11 +3,13 @@ import { defineMessages, FormattedMessage } from 'react-intl';
 
 import { ROOT_DOMAIN } from '~constants';
 import { ColonyType } from '~immutable/index';
-import { useDataFetcher, useSelector } from '~utils/hooks';
+import { useDataFetcher, useSelector, useTransformer } from '~utils/hooks';
 import { ActionTypes } from '~redux/index';
 import { DialogActionButton } from '~core/Button';
 import Heading from '~core/Heading';
 import ExternalLink from '~core/ExternalLink';
+
+import { getUserRoles } from '../../../transformers';
 import { networkVersionSelector } from '../../../core/selectors';
 import { canEnterRecoveryMode } from '../../../users/checks';
 import { canBeUpgraded, isInRecoveryMode } from '../../../dashboard/checks';
@@ -103,6 +105,12 @@ const ProfileAdvanced = ({
     isFetching: isFetchingDomains,
   } = useDataFetcher(domainsAndRolesFetcher, [colonyAddress], [colonyAddress]);
 
+  const userRoles = useTransformer(getUserRoles, [
+    domains,
+    ROOT_DOMAIN,
+    walletAddress,
+  ]);
+
   const networkVersion = useSelector(networkVersionSelector);
 
   return (
@@ -180,7 +188,7 @@ const ProfileAdvanced = ({
           disabled={
             !!domainsError ||
             isInRecoveryMode(colony) ||
-            !canEnterRecoveryMode(domains, ROOT_DOMAIN, walletAddress)
+            !canEnterRecoveryMode(userRoles)
           }
         />
       </section>
