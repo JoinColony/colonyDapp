@@ -1,11 +1,6 @@
 import { Redirect } from 'react-router';
 import React, { useState, useCallback, useEffect, useMemo } from 'react';
-import {
-  defineMessages,
-  FormattedMessage,
-  injectIntl,
-  IntlShape,
-} from 'react-intl';
+import { defineMessages, FormattedMessage } from 'react-intl';
 import { subscribeActions as subscribeToReduxActions } from 'redux-action-watch/lib/actionCreators';
 import { useDispatch } from 'redux-react-hook';
 import throttle from 'lodash/throttle';
@@ -108,8 +103,6 @@ const MSG = defineMessages({
 
 interface Props {
   match: any;
-  /** @ignore injected by `injectIntl` */
-  intl: IntlShape;
 }
 
 const COLONY_DB_RECOVER_BUTTON_TIMEOUT = 20 * 1000;
@@ -184,19 +177,20 @@ const ColonyHome = ({
     walletAddress,
   ]);
 
-  const crumbs = useMemo<string[]>(
-    () =>
-      Object.keys(domains || {})
-        .sort()
-        .filter(
-          id =>
-            parseInt(id, 10) === ROOT_DOMAIN &&
-            parseInt(id, 10) === filteredDomainId &&
-            !!domains[id].name,
-        )
-        .map(id => domains[id].name),
-    [domains, filteredDomainId],
-  );
+  const crumbs = useMemo(() => {
+    switch (filteredDomainId) {
+      case 0:
+        return [{ id: 'domain.all' }];
+
+      case 1:
+        return [{ id: 'domain.root' }];
+
+      default:
+        return domains[filteredDomainId]
+          ? [{ id: 'domain.root' }, domains[filteredDomainId].name]
+          : [{ id: 'domain.root' }];
+    }
+  }, [domains, filteredDomainId]);
 
   const nativeTokenRef = useSelector(colonyNativeTokenSelector, colonyArgs);
   const ethTokenRef = useSelector(colonyEthTokenSelector, colonyArgs);
@@ -349,4 +343,4 @@ const ColonyHome = ({
 
 ColonyHome.displayName = displayName;
 
-export default injectIntl(ColonyHome);
+export default ColonyHome;
