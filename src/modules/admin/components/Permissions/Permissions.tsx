@@ -10,19 +10,17 @@ import { compose } from 'recompose';
 import sortBy from 'lodash/sortby';
 
 import { ROLES, ROOT_DOMAIN } from '~constants';
-import { Address } from '~types/index';
+import { Address, DomainsMapType } from '~types/index';
 import { DomainType } from '~immutable/index';
 import Heading from '~core/Heading';
 import { Select } from '~core/Fields';
-import { SpinnerLoader } from '~core/Preloaders';
 import { Table, TableBody, TableCell } from '~core/Table';
 import Button from '~core/Button';
 import withDialog from '~core/Dialog/withDialog';
 import { DialogType } from '~core/Dialog';
 import ExternalLink from '~core/ExternalLink';
-import { useDataFetcher, useTransformer } from '~utils/hooks';
+import { useTransformer } from '~utils/hooks';
 
-import { domainsAndRolesFetcher } from '../../../dashboard/fetchers';
 import { getDomainRoles } from '../../../transformers';
 import UserListItem from '../UserListItem';
 import UserPermissions from './UserPermissions';
@@ -59,6 +57,7 @@ const MSG = defineMessages({
 
 interface Props {
   colonyAddress: Address;
+  domains: DomainsMapType;
   intl: IntlShape;
   openDialog: (
     dialogName: string,
@@ -68,14 +67,8 @@ interface Props {
 
 const displayName = 'admin.Permissions';
 
-const Permissions = ({ colonyAddress, openDialog }: Props) => {
+const Permissions = ({ colonyAddress, domains, openDialog }: Props) => {
   const [selectedDomainId, setSelectedDomainId] = useState(ROOT_DOMAIN);
-
-  const { data: domains = {}, isFetching: isFetchingDomains } = useDataFetcher(
-    domainsAndRolesFetcher,
-    [colonyAddress],
-    [colonyAddress],
-  );
 
   const domainRoles = useTransformer(getDomainRoles, [
     domains,
@@ -138,47 +131,43 @@ const Permissions = ({ colonyAddress, openDialog }: Props) => {
           />
         </div>
         <div className={styles.tableWrapper}>
-          {isFetchingDomains ? (
-            <SpinnerLoader />
-          ) : (
-            <>
-              <Table scrollable>
-                <TableBody className={styles.tableBody}>
-                  {domainRolesArray.map(({ userAddress }) => (
-                    <UserListItem
-                      address={userAddress}
-                      key={userAddress}
-                      onClick={handleEditPermissions}
-                      showDisplayName
-                      showMaskedAddress
-                      showUsername
-                    >
-                      <TableCell>
-                        <UserPermissions
-                          userAddress={userAddress}
-                          domains={domains}
-                          domainId={selectedDomainId}
-                        />
-                      </TableCell>
-                    </UserListItem>
-                  ))}
-                </TableBody>
-              </Table>
-              <p className={styles.parentPermissionTip}>
-                <FormattedMessage
-                  {...MSG.permissionInParent}
-                  values={{
-                    learnMore: (
-                      <ExternalLink
-                        text={MSG.learnMore}
-                        href={DOMAINS_HELP_URL}
+          <>
+            <Table scrollable>
+              <TableBody className={styles.tableBody}>
+                {domainRolesArray.map(({ userAddress }) => (
+                  <UserListItem
+                    address={userAddress}
+                    key={userAddress}
+                    onClick={handleEditPermissions}
+                    showDisplayName
+                    showMaskedAddress
+                    showUsername
+                  >
+                    <TableCell>
+                      <UserPermissions
+                        userAddress={userAddress}
+                        domains={domains}
+                        domainId={selectedDomainId}
                       />
-                    ),
-                  }}
-                />
-              </p>
-            </>
-          )}
+                    </TableCell>
+                  </UserListItem>
+                ))}
+              </TableBody>
+            </Table>
+            <p className={styles.parentPermissionTip}>
+              <FormattedMessage
+                {...MSG.permissionInParent}
+                values={{
+                  learnMore: (
+                    <ExternalLink
+                      text={MSG.learnMore}
+                      href={DOMAINS_HELP_URL}
+                    />
+                  ),
+                }}
+              />
+            </p>
+          </>
         </div>
       </main>
       <aside className={styles.sidebar}>

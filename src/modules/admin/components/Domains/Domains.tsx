@@ -2,14 +2,13 @@ import React from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 
 import { ROOT_DOMAIN } from '~constants';
-import { Address } from '~types/index';
-import { useDataFetcher, useSelector, useTransformer } from '~utils/hooks';
+import { Address, DomainsMapType } from '~types/index';
+import { useSelector, useTransformer } from '~utils/hooks';
 import Heading from '~core/Heading';
 import { SpinnerLoader } from '~core/Preloaders';
 
 import { getUserRoles } from '../../../transformers';
 import { canAdminister } from '../../../users/checks';
-import { domainsAndRolesFetcher } from '../../../dashboard/fetchers';
 import { walletAddressSelector } from '../../../users/selectors';
 
 import OrganizationAddDomains from '../Domains/OrganizationAddDomains';
@@ -19,6 +18,7 @@ import styles from './Domains.css';
 
 interface Props {
   colonyAddress: Address;
+  domains: DomainsMapType;
 }
 
 const MSG = defineMessages({
@@ -37,13 +37,7 @@ const MSG = defineMessages({
 
 const displayName = 'admin.Domains';
 
-const Domains = ({ colonyAddress }: Props) => {
-  const { data: domains } = useDataFetcher(
-    domainsAndRolesFetcher,
-    [colonyAddress],
-    [colonyAddress],
-  );
-
+const Domains = ({ colonyAddress, domains }: Props) => {
   const walletAddress = useSelector(walletAddressSelector);
 
   const userRoles = useTransformer(getUserRoles, [

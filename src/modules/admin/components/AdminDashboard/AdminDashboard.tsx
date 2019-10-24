@@ -21,6 +21,7 @@ import {
   useSelector,
   useTransformer,
 } from '~utils/hooks';
+import { DomainsMapType } from '~types/index';
 
 import { getUserRoles } from '../../../transformers';
 import { walletAddressSelector } from '../../../users/selectors';
@@ -74,7 +75,10 @@ interface Props {
   match: any;
 }
 
-const navigationItems = (colony: ColonyType): NavigationItem[] => [
+const navigationItems = (
+  colony: ColonyType,
+  domains: DomainsMapType,
+): NavigationItem[] => [
   {
     id: 1,
     title: MSG.tabProfile,
@@ -87,23 +91,26 @@ const navigationItems = (colony: ColonyType): NavigationItem[] => [
       <Tokens
         colonyAddress={colony.colonyAddress}
         canMintNativeToken={colony.canMintNativeToken}
+        domains={domains}
       />
     ),
   },
   {
     id: 3,
     title: MSG.tabDomains,
-    content: <Domains colonyAddress={colony.colonyAddress} />,
+    content: <Domains colonyAddress={colony.colonyAddress} domains={domains} />,
   },
   {
     id: 4,
     title: MSG.tabPermissions,
-    content: <Permissions colonyAddress={colony.colonyAddress} />,
+    content: (
+      <Permissions colonyAddress={colony.colonyAddress} domains={domains} />
+    ),
   },
   {
     id: 5,
     title: MSG.tabAdvanced,
-    content: <ProfileAdvanced colony={colony} />,
+    content: <ProfileAdvanced colony={colony} domains={domains} />,
   },
 ];
 
@@ -157,7 +164,7 @@ const AdminDashboard = ({
   return (
     <div className={styles.main}>
       <VerticalNavigation
-        navigationItems={navigationItems(colony)}
+        navigationItems={navigationItems(colony, domains)}
         initialTab={
           location && location.state && location.state.initialTab
             ? location.state.initialTab
