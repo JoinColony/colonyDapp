@@ -1,11 +1,9 @@
 import { ColonyTokenReferenceType, TokenType } from '~immutable/index';
 import { Address } from '~types/index';
-import { useDataSubscriber, useSelector } from '~utils/hooks';
+import { useDataSubscriber, useSelector, useTransformer } from '~utils/hooks';
 import { colonySubscriber } from '../subscribers';
-import {
-  allFromColonyTokensSelector,
-  colonyTokensSelector,
-} from '../selectors';
+import { allTokensSelector, colonyTokensSelector } from '../selectors';
+import { getTokensFromColony } from '../transformers';
 
 export const useColonyTokens = (
   colonyAddress: Address | null,
@@ -22,7 +20,10 @@ export const useColonyTokens = (
     fetchedColonyAddress,
   ]);
 
-  const availableTokens = useSelector(allFromColonyTokensSelector, [
+  const allTokens = useSelector(allTokensSelector);
+
+  const availableTokens = useTransformer(getTokensFromColony, [
+    allTokens,
     colonyTokenReferences,
   ]);
 
