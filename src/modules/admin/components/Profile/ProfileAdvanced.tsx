@@ -3,7 +3,8 @@ import { defineMessages, FormattedMessage } from 'react-intl';
 
 import { ROOT_DOMAIN } from '~constants';
 import { ColonyType } from '~immutable/index';
-import { useDataFetcher, useSelector, useTransformer } from '~utils/hooks';
+import { DomainsMapType } from '~types/index';
+import { useSelector, useTransformer } from '~utils/hooks';
 import { ActionTypes } from '~redux/index';
 import { DialogActionButton } from '~core/Button';
 import Heading from '~core/Heading';
@@ -14,7 +15,6 @@ import { networkVersionSelector } from '../../../core/selectors';
 import { canEnterRecoveryMode } from '../../../users/checks';
 import { canBeUpgraded, isInRecoveryMode } from '../../../dashboard/checks';
 import { walletAddressSelector } from '../../../users/selectors';
-import { domainsAndRolesFetcher } from '../../../dashboard/fetchers';
 
 import styles from './ProfileAdvanced.css';
 
@@ -91,19 +91,15 @@ const displayName = 'admin.Profile.ProfileAdvanced';
 
 interface Props {
   colony: ColonyType;
+  domains: DomainsMapType;
 }
 
 const ProfileAdvanced = ({
   colony: { colonyAddress, id, version, canUnlockNativeToken },
   colony,
+  domains,
 }: Props) => {
   const walletAddress = useSelector(walletAddressSelector);
-
-  const {
-    data: domains,
-    error: domainsError,
-    isFetching: isFetchingDomains,
-  } = useDataFetcher(domainsAndRolesFetcher, [colonyAddress], [colonyAddress]);
 
   const userRoles = useTransformer(getUserRoles, [
     domains,
@@ -184,11 +180,8 @@ const ProfileAdvanced = ({
           success={ActionTypes.COLONY_RECOVERY_MODE_ENTER_SUCCESS}
           error={ActionTypes.COLONY_RECOVERY_MODE_ENTER_ERROR}
           values={{ colonyAddress }}
-          loading={isFetchingDomains}
           disabled={
-            !!domainsError ||
-            isInRecoveryMode(colony) ||
-            !canEnterRecoveryMode(userRoles)
+            isInRecoveryMode(colony) || !canEnterRecoveryMode(userRoles)
           }
         />
       </section>
