@@ -11,10 +11,14 @@ import {
   TokenType,
 } from '~immutable/index';
 
+export type AllTokensMapType = {
+  [address: string]: FetchableDataType<TokenType>;
+};
+
 export type AllTokensMap = ImmutableMap<
   Address,
   FetchableDataRecord<TokenRecord>
-> & { toJS(): { [address: string]: FetchableDataType<TokenType> } };
+> & { toJS(): AllTokensMapType };
 
 export const AllTokensInitialState = ImmutableMap({
   [ZERO_ADDRESS]: FetchableData<TokenRecord>({
