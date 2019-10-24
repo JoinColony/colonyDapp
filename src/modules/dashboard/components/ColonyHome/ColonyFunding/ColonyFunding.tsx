@@ -6,10 +6,9 @@ import Button from '~core/Button';
 import { DialogType } from '~core/Dialog';
 import withDialog from '~core/Dialog/withDialog';
 import Heading from '~core/Heading';
-import { Address } from '~types/index';
-import { useDataFetcher, useSelector } from '~utils/hooks';
+import { Address, DomainsMapType } from '~types/index';
+import { useSelector } from '~utils/hooks';
 
-import { domainsAndRolesFetcher } from '../../../fetchers';
 import { useColonyTokens } from '../../../hooks/useColonyTokens';
 import { walletAddressSelector } from '../../../../users/selectors';
 import { canMoveTokens as canMoveTokensCheck } from '../../../../admin/checks';
@@ -33,6 +32,7 @@ const MSG = defineMessages({
 interface Props {
   colonyAddress: Address;
   currentDomainId: number;
+  domains: DomainsMapType;
   openDialog: (dialogName: string, dialogProps?: object) => DialogType;
 }
 
@@ -41,17 +41,12 @@ const displayName = 'dashboard.ColonyHome.ColonyFunding';
 const ColonyFunding = ({
   colonyAddress,
   currentDomainId,
+  domains,
   openDialog,
 }: Props) => {
   const [tokenReferences, tokens] = useColonyTokens(colonyAddress);
 
   const walletAddress = useSelector(walletAddressSelector);
-
-  const { data: domains } = useDataFetcher(
-    domainsAndRolesFetcher,
-    [colonyAddress],
-    [colonyAddress],
-  );
 
   const canMoveTokens = useMemo(
     () => canMoveTokensCheck(domains, walletAddress),
