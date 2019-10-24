@@ -8,15 +8,11 @@ import Button from '~core/Button';
 import withDialog from '~core/Dialog/withDialog';
 import Heading from '~core/Heading';
 import { Select } from '~core/Fields';
-import { SpinnerLoader } from '~core/Preloaders';
-import { Address } from '~types/index';
+import { Address, DomainsMapType } from '~types/index';
 import { useDataFetcher, useSelector, useTransformer } from '~utils/hooks';
 
 import { getLegacyRoles, getUserRoles } from '../../../transformers';
-import {
-  domainsAndRolesFetcher,
-  tokenFetcher,
-} from '../../../dashboard/fetchers';
+import { tokenFetcher } from '../../../dashboard/fetchers';
 import { useColonyNativeToken } from '../../../dashboard/hooks/useColonyNativeToken';
 import { useColonyTokens } from '../../../dashboard/hooks/useColonyTokens';
 import { walletAddressSelector } from '../../../users/selectors';
@@ -53,6 +49,7 @@ const MSG = defineMessages({
 interface Props {
   canMintNativeToken?: boolean;
   colonyAddress: Address;
+  domains: DomainsMapType;
   intl: IntlShape;
   openDialog: (dialogName: string, dialogProps?: object) => DialogType;
 }
@@ -60,6 +57,7 @@ interface Props {
 const Tokens = ({
   canMintNativeToken,
   colonyAddress,
+  domains,
   intl: { formatMessage },
   openDialog,
 }: Props) => {
@@ -67,40 +65,34 @@ const Tokens = ({
 
   const walletAddress = useSelector(walletAddressSelector);
 
-  const { data: domainsData, isFetching: isFetchingDomains } = useDataFetcher(
-    domainsAndRolesFetcher,
-    [colonyAddress],
-    [colonyAddress],
-  );
-
   const userRoles = useTransformer(getUserRoles, [
-    domainsData,
+    domains,
     ROOT_DOMAIN,
     walletAddress,
   ]);
 
-  const oldUserRoles = useTransformer(getLegacyRoles, [domainsData]);
+  const oldUserRoles = useTransformer(getLegacyRoles, [domains]);
   const canEdit = canEditTokens(oldUserRoles, walletAddress);
   const canMoveTokens = userHasRole(userRoles, ROLES.FUNDING);
 
-  const domains = useMemo(
+  const domainsArray = useMemo(
     () => [
       { value: COLONY_TOTAL_BALANCE_DOMAIN_ID, label: { id: 'domain.all' } },
-      ...Object.keys(domainsData || {})
+      ...Object.keys(domains || {})
         .sort()
         .map(domainId => ({
-          label: domainsData[domainId].name,
-          value: domainsData[domainId].id,
+          label: domains[domainId].name,
+          value: domains[domainId].id,
         })),
     ],
-    [domainsData],
+    [domains],
   );
 
   const selectedDomainLabel: string = useMemo(() => {
     const { label = '' } =
-      domains.find(({ value }) => value === selectedDomain) || {};
+      domainsArray.find(({ value }) => value === selectedDomain) || {};
     return typeof label === 'string' ? label : formatMessage(label);
-  }, [domains, formatMessage, selectedDomain]);
+  }, [domainsArray, formatMessage, selectedDomain]);
 
   const setFieldValue = useCallback((_, value) => setSelectedDomain(value), [
     setSelectedDomain,
@@ -155,20 +147,16 @@ const Tokens = ({
               textValues={{ selectedDomainLabel }}
               appearance={{ size: 'medium', theme: 'dark' }}
             />
-            {isFetchingDomains ? (
-              <SpinnerLoader />
-            ) : (
-              <Select
-                appearance={{ alignOptions: 'right', theme: 'alt' }}
-                connect={false}
-                elementOnly
-                label={MSG.labelSelectDomain}
-                name="selectDomain"
-                options={domains}
-                form={{ setFieldValue }}
-                $value={selectedDomain}
-              />
-            )}
+            <Select
+              appearance={{ alignOptions: 'right', theme: 'alt' }}
+              connect={false}
+              elementOnly
+              label={MSG.labelSelectDomain}
+              name="selectDomain"
+              options={domains}
+              form={{ setFieldValue }}
+              $value={selectedDomain}
+            />
           </div>
           {tokens && (
             <TokenList

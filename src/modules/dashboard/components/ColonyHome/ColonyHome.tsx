@@ -240,44 +240,6 @@ const ColonyHome = ({
   const canCreateTask = canAdminister(userRoles) || isFounder(userRoles);
   const isInRecoveryMode = isInRecoveryModeCheck(colony);
 
-  const filterSelect = (
-    <Select
-      appearance={{ alignOptions: 'left', theme: 'alt' }}
-      connect={false}
-      elementOnly
-      label={MSG.labelFilter}
-      name="filter"
-      options={tasksFilterSelectOptions}
-      placeholder={MSG.placeholderFilter}
-      form={{ setFieldValue: formSetFilter }}
-      $value={filterOption}
-    />
-  );
-
-  const renderNewTaskButton = (
-    <>
-      {canCreateTask && (
-        <ActionButton
-          button={({ onClick, disabled, loading }) => (
-            <Button
-              appearance={{ theme: 'primary', size: 'medium' }}
-              text={MSG.newTaskButton}
-              disabled={disabled}
-              loading={loading}
-              onClick={throttle(onClick, 2000)}
-            />
-          )}
-          disabled={isInRecoveryMode}
-          error={ActionTypes.TASK_CREATE_ERROR}
-          submit={ActionTypes.TASK_CREATE}
-          success={ActionTypes.TASK_CREATE_SUCCESS}
-          transform={transform}
-          loading={isTaskBeingCreated}
-        />
-      )}
-    </>
-  );
-
   const noFilter = (
     <Heading
       text={MSG.noFilter}
@@ -312,7 +274,40 @@ const ColonyHome = ({
             </Tab>
           </TabList>
           <div className={styles.interactiveBar}>
-            {activeTab === 'tasks' ? [filterSelect, renderNewTaskButton] : null}
+            {activeTab === 'tasks' ? (
+              <>
+                <Select
+                  appearance={{ alignOptions: 'left', theme: 'alt' }}
+                  connect={false}
+                  elementOnly
+                  label={MSG.labelFilter}
+                  name="filter"
+                  options={tasksFilterSelectOptions}
+                  placeholder={MSG.placeholderFilter}
+                  form={{ setFieldValue: formSetFilter }}
+                  $value={filterOption}
+                />
+                {canCreateTask && (
+                  <ActionButton
+                    button={({ onClick, disabled, loading }) => (
+                      <Button
+                        appearance={{ theme: 'primary', size: 'medium' }}
+                        text={MSG.newTaskButton}
+                        disabled={disabled}
+                        loading={loading}
+                        onClick={throttle(onClick, 2000)}
+                      />
+                    )}
+                    disabled={isInRecoveryMode}
+                    error={ActionTypes.TASK_CREATE_ERROR}
+                    submit={ActionTypes.TASK_CREATE}
+                    success={ActionTypes.TASK_CREATE_SUCCESS}
+                    transform={transform}
+                    loading={isTaskBeingCreated}
+                  />
+                )}
+              </>
+            ) : null}
           </div>
           <TabPanel>
             <TabContribute
