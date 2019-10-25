@@ -7,7 +7,7 @@ import {
   FormattedMessage,
 } from 'react-intl';
 import { compose } from 'recompose';
-import { sortBy } from 'lodash';
+import sortBy from 'lodash/sortBy';
 
 import { ROLES, ROOT_DOMAIN } from '~constants';
 import { Address, DomainsMapType } from '~types/index';
