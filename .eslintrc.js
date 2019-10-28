@@ -54,6 +54,7 @@ module.exports = {
     },
   ],
   rules: {
+    'camelcase': ['error', {allow: ["^TEMP_"]}],
     'eslint-comments/disable-enable-pair': ['error', { allowWholeFile: true }],
 
     // @typescript-eslint
