@@ -16,6 +16,7 @@ import {
 import { AllColoniesRecord } from './AllColonies';
 import { AllDomainsMap } from './AllDomains';
 import { AllTokensMap, AllTokensInitialState } from './AllTokens';
+import { TEMP_AllUserHasRecoveryRoles } from './TEMP_AllUserHasRecoveryRoles';
 import {
   DASHBOARD_ALL_COLONIES,
   DASHBOARD_ALL_DOMAINS,
@@ -23,11 +24,13 @@ import {
   DASHBOARD_ALL_TOKENS,
   DASHBOARD_TASK_FEED_ITEMS,
   DASHBOARD_TASKS,
+  TEMP_DASHBOARD_ALL_USER_HAS_RECOVERY_ROLES,
 } from '../constants';
 
 export * from './AllColonies';
 export * from './AllTokens';
 export * from './AllDomains';
+export * from './TEMP_AllUserHasRecoveryRoles';
 
 type TaskMetadataObject = { [draftId: string]: TaskMetadataRecord };
 
@@ -71,6 +74,7 @@ export interface DashboardStateProps {
   [DASHBOARD_ALL_TOKENS]: AllTokensMap;
   [DASHBOARD_TASK_FEED_ITEMS]: TaskFeedItemsMap;
   [DASHBOARD_TASKS]: TasksMap;
+  [TEMP_DASHBOARD_ALL_USER_HAS_RECOVERY_ROLES]: TEMP_AllUserHasRecoveryRoles;
 }
 
 const defaultValues: DefaultValues<DashboardStateProps> = {
@@ -80,6 +84,8 @@ const defaultValues: DefaultValues<DashboardStateProps> = {
   [DASHBOARD_ALL_TOKENS]: AllTokensInitialState,
   [DASHBOARD_TASK_FEED_ITEMS]: ImmutableMap() as TaskFeedItemsMap,
   [DASHBOARD_TASKS]: ImmutableMap() as TasksMap,
+  // eslint-disable-next-line max-len
+  [TEMP_DASHBOARD_ALL_USER_HAS_RECOVERY_ROLES]: ImmutableMap() as TEMP_AllUserHasRecoveryRoles,
 };
 
 export class DashboardStateRecord extends Record<DashboardStateProps>(
