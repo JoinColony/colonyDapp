@@ -15,13 +15,16 @@
 
 .main {
   composes: field from '~styles/fields.css';
-  position: relative;
 }
 
 .selectInner {
   display: flex;
   justify-content: space-between;
   align-items: center;
+}
+
+.inputWrapper {
+  position: relative;
 }
 
 .select[aria-disabled="true"], .select[aria-busy="true"] {

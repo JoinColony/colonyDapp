@@ -325,52 +325,54 @@ class Select extends Component<Props, State> {
         {!elementOnly && label ? (
           <InputLabel inputId={$id} label={label} help={help} />
         ) : null}
-        <button
-          className={`${styles.select} ${getMainClasses(appearance, styles)}`}
-          aria-haspopup="listbox"
-          aria-controls={listboxId}
-          aria-expanded={isOpen}
-          aria-label={label}
-          aria-labelledby={ariaLabelledby}
-          aria-disabled={disabled}
-          tabIndex={0}
-          ref={this.registerComboboxNode}
-          onClick={this.toggle}
-          onKeyUp={this.handleKeyUp}
-          onKeyDown={this.handleKeyDown}
-          type="button"
-          name={name}
-          {...props}
-        >
-          <div className={styles.selectInner}>
-            <div className={styles.activeOption}>
-              <span>{activeOptionLabel || placeholder}</span>
+        <div className={styles.inputWrapper}>
+          <button
+            className={`${styles.select} ${getMainClasses(appearance, styles)}`}
+            aria-haspopup="listbox"
+            aria-controls={listboxId}
+            aria-expanded={isOpen}
+            aria-label={label}
+            aria-labelledby={ariaLabelledby}
+            aria-disabled={disabled}
+            tabIndex={0}
+            ref={this.registerComboboxNode}
+            onClick={this.toggle}
+            onKeyUp={this.handleKeyUp}
+            onKeyDown={this.handleKeyDown}
+            type="button"
+            name={name}
+            {...props}
+          >
+            <div className={styles.selectInner}>
+              <div className={styles.activeOption}>
+                <span>{activeOptionLabel || placeholder}</span>
+              </div>
+              <span className={styles.selectExpandContainer}>
+                <Icon name="caret-down-small" title={MSG.expandIconHTMLTitle} />
+              </span>
             </div>
-            <span className={styles.selectExpandContainer}>
-              <Icon name="caret-down-small" title={MSG.expandIconHTMLTitle} />
-            </span>
-          </div>
-        </button>
+          </button>
+          {isOpen && !!options.length && (
+            <SelectListBox
+              checkedOption={checkedOption}
+              selectedOption={selectedOption}
+              listboxId={listboxId}
+              options={options}
+              onSelect={this.selectOption}
+              onClick={this.checkOption}
+              formatIntl={formatIntl}
+              appearance={appearance}
+              ariaLabelledby={ariaLabelledby}
+              name={name}
+            />
+          )}
+        </div>
         {!elementOnly && (
           <InputStatus
             appearance={{ theme: 'minimal' }}
             status={status}
             statusValues={statusValues}
             error={$error}
-          />
-        )}
-        {isOpen && !!options.length && (
-          <SelectListBox
-            checkedOption={checkedOption}
-            selectedOption={selectedOption}
-            listboxId={listboxId}
-            options={options}
-            onSelect={this.selectOption}
-            onClick={this.checkOption}
-            formatIntl={formatIntl}
-            appearance={appearance}
-            ariaLabelledby={ariaLabelledby}
-            name={name}
           />
         )}
       </div>
