@@ -4,7 +4,9 @@ import { ROLES } from '~constants';
 import { Action, ActionTypes, AllActions } from '~redux/index';
 import { executeQuery, putError } from '~utils/saga/effects';
 import { ContractContexts } from '~types/index';
-import { getColonyRoles, getColonyDomainUserRoles } from '../data/queries';
+import { ColonyRolesType } from '~immutable/index';
+
+import { getColonyRoles, TEMP_getUserHasColonyRole } from '../data/queries';
 import { createTransaction } from '../../core/sagas';
 
 function* colonyRolesFetch({
@@ -27,29 +29,27 @@ function* colonyRolesFetch({
   return null;
 }
 
-// Currently not used as we don't really have a way to extend the roles Set (and getting contract events seems to be cheaper)
-function* colonyDomainUserRolesFetch({
-  payload: { colonyAddress, domainId, userAddress },
+function* TEMP_userHasRecoveryRoleFetch({
+  payload: { colonyAddress, userAddress },
   meta,
-}: Action<ActionTypes.COLONY_DOMAIN_USER_ROLES_FETCH>) {
+}: Action<ActionTypes.TEMP_COLONY_USER_HAS_RECOVERY_ROLE_FETCH>) {
   try {
-    const roles = yield executeQuery(getColonyDomainUserRoles, {
+    const userHasRecoveryRole = yield executeQuery(TEMP_getUserHasColonyRole, {
+      args: { userAddress },
       metadata: { colonyAddress },
-      args: { domainId, userAddress },
     });
     yield put<AllActions>({
-      type: ActionTypes.COLONY_DOMAIN_USER_ROLES_FETCH_SUCCESS,
+      type: ActionTypes.TEMP_COLONY_USER_HAS_RECOVERY_ROLE_FETCH_SUCCESS,
       meta,
-      payload: { roles, colonyAddress, domainId, userAddress },
+      payload: { colonyAddress, userAddress, userHasRecoveryRole },
     });
   } catch (error) {
     return yield putError(
-      ActionTypes.COLONY_DOMAIN_USER_ROLES_FETCH_ERROR,
+      ActionTypes.TEMP_COLONY_USER_HAS_RECOVERY_ROLE_FETCH_ERROR,
       error,
       meta,
     );
   }
-  return null;
 }
 
 const getRoleSetFunctionName = (role: string, setTo: boolean) => {
@@ -83,17 +83,23 @@ function* colonyDomainUserRolesSet({
   meta,
 }: Action<ActionTypes.COLONY_DOMAIN_USER_ROLES_SET>) {
   try {
-    const existingRoles = yield executeQuery(getColonyDomainUserRoles, {
-      metadata: { colonyAddress },
-      args: { domainId, userAddress },
-    });
+    const existingColonyRoles: ColonyRolesType = yield executeQuery(
+      getColonyRoles,
+      {
+        metadata: { colonyAddress },
+        args: undefined,
+      },
+    );
 
-    const toChange: [string, boolean][] = Object.keys(roles).reduce(
-      (acc, role) =>
-        existingRoles[role] !== roles[role]
-          ? [...acc, [role, roles[role]]]
-          : acc,
-      [] as [string, boolean][],
+    const existingDomainRoles = existingColonyRoles[domainId.toString()] || {};
+    const existingUserRoles = existingDomainRoles[userAddress] || [];
+
+    const toChange = Object.entries(roles).filter(
+      ([role, setTo]: [ROLES, boolean]) => {
+        if (existingUserRoles.includes(role) && setTo === true) return false;
+        if (!existingUserRoles.includes(role) && setTo === false) return false;
+        return true;
+      },
     );
 
     yield all(
@@ -135,11 +141,11 @@ function* colonyDomainUserRolesSet({
 export default function* rolesSagas() {
   yield takeEvery(ActionTypes.COLONY_ROLES_FETCH, colonyRolesFetch);
   yield takeEvery(
-    ActionTypes.COLONY_DOMAIN_USER_ROLES_FETCH,
-    colonyDomainUserRolesFetch,
-  );
-  yield takeEvery(
     ActionTypes.COLONY_DOMAIN_USER_ROLES_SET,
     colonyDomainUserRolesSet,
+  );
+  yield takeEvery(
+    ActionTypes.TEMP_COLONY_USER_HAS_RECOVERY_ROLE_FETCH,
+    TEMP_userHasRecoveryRoleFetch,
   );
 }

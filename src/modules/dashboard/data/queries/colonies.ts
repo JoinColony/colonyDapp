@@ -5,7 +5,6 @@ import { COLONY_TOTAL_BALANCE_DOMAIN_ID, ROOT_DOMAIN, ROLES } from '~constants';
 import {
   Address,
   RoleSet,
-  RoleSetType,
   createAddress,
   CurrentEvents,
   ENSCache,
@@ -56,7 +55,7 @@ type ContractEventQuery<A, R> = Query<ColonyClient, ColonyStoreMetadata, A, R>;
 interface ColonyRoleSetEventData {
   address: Address;
   domainId: number;
-  role: string;
+  role: ROLES;
   setTo: boolean;
   eventName: 'ColonyRoleSet';
 }
@@ -98,6 +97,24 @@ const prepareColonyStoreQuery = async (
   return getColonyStore(colonyClient, ddb, wallet)(metadata);
 };
 
+// This will be unnecessary as soon as we have the RecoveryRoleSet event on the ColonyClient
+export const TEMP_getUserHasColonyRole: ContractEventQuery<
+  { userAddress },
+  boolean
+> = {
+  name: 'getUserHasRecoveryRole',
+  context,
+  prepare: prepareColonyClientQuery,
+  async execute(colonyClient, { userAddress }) {
+    const { hasRole } = await colonyClient.hasColonyRole.call({
+      address: userAddress,
+      domainId: ROOT_DOMAIN,
+      role: ROLES.RECOVERY,
+    });
+    return hasRole;
+  },
+};
+
 export const getColonyRoles: ContractEventQuery<void, ColonyRolesType> = {
   name: 'getColonyRoles',
   context,
@@ -105,14 +122,10 @@ export const getColonyRoles: ContractEventQuery<void, ColonyRolesType> = {
   async execute(colonyClient) {
     const {
       events: { ColonyRoleSet },
-      contract: { address: colonyAddress },
     } = colonyClient;
     const events = await getEvents(
       colonyClient,
-      {
-        address: colonyAddress,
-        fromBlock: 1,
-      },
+      { fromBlock: 1 },
       {
         events: [ColonyRoleSet],
       },
@@ -140,8 +153,8 @@ export const getColonyRoles: ContractEventQuery<void, ColonyRolesType> = {
           ) => {
             const domainRoles =
               colonyRoles[domainId.toString()] || ({} as DomainRolesType);
-            const userRoles =
-              domainRoles[address] || (ImmutableSet() as RoleSet);
+            const userRoles: RoleSet =
+              ImmutableSet(domainRoles[address]) || ImmutableSet();
 
             return {
               ...colonyRoles,
@@ -149,58 +162,13 @@ export const getColonyRoles: ContractEventQuery<void, ColonyRolesType> = {
                 ...domainRoles,
                 // Add or remove the role, depending on the value of setTo
                 [address as Address]: setTo
-                  ? userRoles.add(role)
-                  : userRoles.remove(role),
+                  ? Array.from(userRoles.add(role))
+                  : Array.from(userRoles.remove(role)),
               },
             };
           },
           {} as ColonyRolesType,
         )
-    );
-  },
-};
-
-export const getColonyDomainUserRoles: ContractEventQuery<
-  {
-    domainId: number;
-    roles?: RoleSetType;
-    userAddress: Address;
-  },
-  RoleSet
-> = {
-  name: 'getColonyDomainUserRoles',
-  context,
-  prepare: prepareColonyClientQuery,
-  async execute(
-    colonyClient,
-    {
-      domainId,
-      roles = [
-        ROLES.ADMINISTRATION,
-        ROLES.ARBITRATION,
-        ROLES.ARCHITECTURE,
-        ROLES.ARCHITECTURE_SUBDOMAIN,
-        ROLES.FUNDING,
-        ROLES.RECOVERY,
-        ROLES.ROOT,
-      ],
-      userAddress,
-    },
-  ) {
-    const domainRoles = await Promise.all(
-      roles.map(role =>
-        colonyClient.hasColonyRole.call({
-          address: userAddress,
-          domainId,
-          role,
-        }),
-      ),
-    );
-
-    return domainRoles.reduce(
-      (userRoles, { hasRole }, index) =>
-        hasRole ? userRoles.add(roles[index]) : userRoles,
-      new Set<ROLES>(),
     );
   },
 };

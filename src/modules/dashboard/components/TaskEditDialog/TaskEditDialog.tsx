@@ -40,7 +40,7 @@ import WrappedPayout from './WrappedPayout';
 import { colonySubscriber } from '../../subscribers';
 import { taskSelector, taskRequestsSelector } from '../../selectors';
 import { useColonyTokens } from '../../hooks/useColonyTokens';
-import { usersByAddressFetcher } from '../../../users/fetchers';
+import { userMapFetcher } from '../../../users/fetchers';
 import { userSubscriber } from '../../../users/subscribers';
 import { allUsersAddressesSelector } from '../../../users/selectors';
 import { createAddress } from '../../../../types';
@@ -190,7 +190,7 @@ const TaskEditDialog = ({
   );
 
   const userData = useDataMapFetcher(
-    usersByAddressFetcher,
+    userMapFetcher,
     Array.from(uniqueUserAddressesToPickFrom),
   );
 

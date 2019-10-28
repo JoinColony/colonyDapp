@@ -53,6 +53,25 @@ export const getUserRoles = (
   return roles[userAddress];
 };
 
+export const TEMP_getUserRolesWithRecovery = (
+  domains: DomainsMapType | null,
+  recoveryRoles: Address[],
+  domainId: number | null,
+  userAddress: Address | null,
+  excludeInherited = false,
+): ROLES[] => {
+  if (!domainId || !userAddress) return [];
+
+  const roles = getDomainRoles(domains, domainId, excludeInherited);
+  if (!roles || !roles[userAddress]) return [];
+
+  if (domainId === ROOT_DOMAIN && recoveryRoles.includes(userAddress)) {
+    return roles[userAddress].concat(ROLES.RECOVERY);
+  }
+
+  return roles[userAddress];
+};
+
 /*
  * Eventually we'll switch all of the dApp to using new roles, but until then
  * we still need to be able to get the old roles `admins` and `founder`. This
