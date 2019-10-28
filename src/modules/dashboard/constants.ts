@@ -10,3 +10,5 @@ export const DASHBOARD_TASK_REQUESTS = 'requests';
 export const DASHBOARD_ALL_TOKENS = 'allTokens';
 export const DASHBOARD_COLONIES = 'colonies';
 export const DASHBOARD_COLONY_NAMES = 'colonyNames';
+export const TEMP_DASHBOARD_ALL_USER_HAS_RECOVERY_ROLES =
+  'allUserHasRecoveryRoles';

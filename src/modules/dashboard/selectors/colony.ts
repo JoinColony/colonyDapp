@@ -15,6 +15,7 @@ import {
   DASHBOARD_COLONIES,
   DASHBOARD_COLONY_NAMES,
   DASHBOARD_NAMESPACE as ns,
+  TEMP_DASHBOARD_ALL_USER_HAS_RECOVERY_ROLES,
 } from '../constants';
 
 import {
@@ -175,3 +176,9 @@ export const friendlyColonyNameSelector = createSelector(
     return displayName || colonyName || colonyAddress;
   },
 );
+
+export const TEMP_userHasRecoveryRoleSelector = (
+  state: RootStateRecord,
+  colonyAddress: Address,
+): FetchableDataRecord<Address[]> =>
+  state.getIn([ns, TEMP_DASHBOARD_ALL_USER_HAS_RECOVERY_ROLES, colonyAddress]);
