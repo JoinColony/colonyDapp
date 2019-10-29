@@ -1,27 +1,8 @@
-@value borderColor: var(--grey-blue-0);
-
 .dialogContainer {
   padding: 27px 19px 17px 19px;
-}
-
-.permissionChoiceContainer:first-of-type {
-  padding: 15px 0px;
-  border-top: 1px solid borderColor;
-  border-bottom: 1px solid borderColor;
-}
-
-.permissionChoiceContainer {
-  padding: 15px 0px;
-  border-bottom: 1px solid borderColor;
 }
 
 .titleContainer {
   margin-top: 35px;
   margin-bottom: 32px;
-}
-
-.parentPermissionTip {
-  margin: 10px 0;
-  font-size: var(--size-small);
-  font-weight: var(--weight-medium);
 }
