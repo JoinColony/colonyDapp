@@ -1,39 +1,31 @@
 import { FormikProps } from 'formik';
-import React, { useCallback, useMemo, useState, useEffect } from 'react';
+import React, { useCallback } from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
-import * as yup from 'yup';
 
 import { ROLES, ROOT_DOMAIN } from '~constants';
 import { Address } from '~types/index';
 import { mergePayload, withKey, mapPayload, pipe } from '~utils/actions';
-import { UserType } from '~immutable/index';
-import { ItemDataType } from '~core/OmniPicker';
 import { ActionTypeString, ActionTypes } from '~redux/index';
-import {
-  useSelector,
-  useDataFetcher,
-  useDataMapFetcher,
-  useTransformer,
-} from '~utils/hooks';
-import { filterUserSelection } from '~utils/arrays';
-
-import PermissionCheckbox from './PermissionCheckbox';
-
-import SingleUserPicker from '~core/SingleUserPicker';
+import { useSelector, useDataFetcher, useTransformer } from '~utils/hooks';
 import Heading from '~core/Heading';
 import Button from '~core/Button';
 import Dialog, { DialogSection } from '~core/Dialog';
 import { ActionForm, InputLabel } from '~core/Fields';
 import ExternalLink from '~core/ExternalLink';
-import HookedUserAvatar from '~users/HookedUserAvatar';
+import { SpinnerLoader } from '~core/Preloaders';
+import UserInfo from '~users/UserInfo';
 
-import { getUserRoles } from '../../../transformers';
-import { usersByAddressFetcher } from '../../../users/fetchers';
-import { domainsAndRolesFetcher } from '../../../dashboard/fetchers';
 import {
-  allUsersAddressesSelector,
-  walletAddressSelector,
-} from '../../../users/selectors';
+  getUserRoles,
+  TEMP_getUserRolesWithRecovery,
+} from '../../../transformers';
+import { userFetcher } from '../../../users/fetchers';
+import {
+  domainsAndRolesFetcher,
+  TEMP_userHasRecoveryRoleFetcher,
+} from '../../../dashboard/fetchers';
+import { walletAddressSelector } from '../../../users/selectors';
+import PermissionCheckbox from './PermissionCheckbox';
 
 import styles from './ColonyPermissionEditDialog.css';
 
@@ -48,7 +40,7 @@ const MSG = defineMessages({
   },
   selectUser: {
     id: 'admin.ColonyPermissionEditDialog.selectUser',
-    defaultMessage: 'Select Member',
+    defaultMessage: 'Selected Member',
   },
   permissionsLabel: {
     id: 'admin.ColonyPermissionEditDialog.permissionsLabel',
@@ -72,8 +64,8 @@ interface Props {
   cancel: () => void;
   close: () => void;
   domainId: number;
-  clickedUser?: Address;
   colonyAddress: Address;
+  userAddress: Address;
   submit: ActionTypeString;
   success: ActionTypeString;
   error: ActionTypeString;
@@ -85,57 +77,23 @@ const availableRoles: ROLES[] = [
   ROLES.ARCHITECTURE,
   ROLES.FUNDING,
   ROLES.RECOVERY,
-  ROLES.ARBITRATION,
 ];
 
-const validationSchema = yup.object({
-  user: yup.object().required(),
-  roles: yup.array().of(yup.number().required()),
-});
-
-const UserAvatar = HookedUserAvatar({ fetchUser: false });
-
-const supRenderAvatar = (address: string, item: ItemDataType<UserType>) => {
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const { id, ...user } = item;
-  return <UserAvatar address={address} user={user} size="xs" />;
-};
-
 const ColonyPermissionEditDialog = ({
-  clickedUser,
   colonyAddress,
   cancel,
   close,
   domainId,
+  userAddress,
 }: Props) => {
-  const [selectedUserAddress, setSelectedUser] = useState<
-    Address | undefined
-  >();
-
-  // Overwrite the selected user whenever the prop changes
-  useEffect(() => {
-    setSelectedUser(clickedUser);
-  }, [clickedUser]);
-
-  // Prepare userData for SingleUserPicker
-  const userAddressesInStore = useSelector(allUsersAddressesSelector);
-  const userData = useDataMapFetcher(
-    usersByAddressFetcher,
-    Array.from(userAddressesInStore),
-  );
-  const users = useMemo(
-    () =>
-      userData
-        .filter(({ data }) => !!data)
-        .map(({ data, key }) => ({
-          id: key,
-          ...data,
-        })),
-    [userData],
+  const { data: user } = useDataFetcher(
+    userFetcher,
+    [userAddress],
+    [userAddress],
   );
 
   // Get the current user's roles in the selected domain
-  const walletAddress = useSelector(walletAddressSelector);
+  const currentUserAddress = useSelector(walletAddressSelector);
 
   const { data: domains } = useDataFetcher(
     domainsAndRolesFetcher,
@@ -143,16 +101,31 @@ const ColonyPermissionEditDialog = ({
     [colonyAddress],
   );
 
-  const inheritedRoles = useTransformer(getUserRoles, [
+  const { data: colonyRecoveryRoles = [] } = useDataFetcher(
+    TEMP_userHasRecoveryRoleFetcher,
+    [colonyAddress],
+    [colonyAddress, userAddress],
+  );
+
+  const currentUserRoles = useTransformer(getUserRoles, [
     domains,
     domainId,
-    walletAddress,
+    currentUserAddress,
   ]);
-  const directRoles = useTransformer(getUserRoles, [
+
+  const userDirectRoles = useTransformer(TEMP_getUserRolesWithRecovery, [
     domains,
+    colonyRecoveryRoles,
     domainId,
-    walletAddress,
+    userAddress,
     true,
+  ]);
+
+  const userInheritedRoles = useTransformer(TEMP_getUserRolesWithRecovery, [
+    domains,
+    colonyRecoveryRoles,
+    ROOT_DOMAIN,
+    userAddress,
   ]);
 
   // Check which roles the current user is allowed to set in this domain
@@ -167,29 +140,27 @@ const ColonyPermissionEditDialog = ({
         case ROLES.ROOT:
         case ROLES.RECOVERY:
           return (
-            domainId === ROOT_DOMAIN && inheritedRoles.includes(ROLES.ROOT)
+            domainId === ROOT_DOMAIN && currentUserRoles.includes(ROLES.ROOT)
           );
 
         // Must be root for these
         case ROLES.ADMINISTRATION:
         case ROLES.FUNDING:
         case ROLES.ARCHITECTURE:
-          return inheritedRoles.includes(ROLES.ROOT);
+          return currentUserRoles.includes(ROLES.ROOT);
 
         default:
           return false;
       }
     },
-    [domainId, inheritedRoles],
+    [currentUserRoles, domainId],
   );
 
   const transform = useCallback(
     pipe(
       withKey(colonyAddress),
       mapPayload(p => ({
-        userAddress: p.user.profile.walletAddress,
-        domainId,
-        colonyAddress,
+        ...p,
         roles: availableRoles.reduce(
           (acc, role) => ({
             ...acc,
@@ -203,98 +174,92 @@ const ColonyPermissionEditDialog = ({
     [colonyAddress, domainId],
   );
 
-  const updateSelectedUser = useCallback((user: UserType) => {
-    setSelectedUser(user.profile.walletAddress);
-  }, []);
-
-  const roles = useTransformer(getUserRoles, [
-    domains,
-    domainId,
-    selectedUserAddress || null,
-  ]);
-
-  const domain = domains[domainId];
-
   return (
     <Dialog cancel={cancel}>
-      <ActionForm
-        enableReinitialize
-        initialValues={{
-          domainId,
-          roles,
-        }}
-        onSuccess={close}
-        submit={ActionTypes.COLONY_DOMAIN_USER_ROLES_SET}
-        error={ActionTypes.COLONY_DOMAIN_USER_ROLES_SET_ERROR}
-        success={ActionTypes.COLONY_DOMAIN_USER_ROLES_SET_SUCCESS}
-        transform={transform}
-        validationSchema={validationSchema}
-      >
-        {({ isSubmitting, isValid }: FormikProps<any>) => {
-          return (
-            <div className={styles.dialogContainer}>
-              <Heading
-                appearance={{ size: 'medium', margin: 'none' }}
-                text={MSG.title}
-                textValues={{ domain: domain && domain.name }}
-              />
-              <div className={styles.titleContainer}>
-                <InputLabel label={MSG.selectUser} />
-                <SingleUserPicker
-                  appearance={{ width: 'wide' }}
-                  data={users}
-                  isResettable
-                  name="user"
-                  placeholder={MSG.search}
-                  filter={filterUserSelection}
-                  onSelected={updateSelectedUser}
-                  renderAvatar={supRenderAvatar}
+      {!user || !domains ? (
+        <SpinnerLoader />
+      ) : (
+        <ActionForm
+          enableReinitialize
+          initialValues={{
+            domainId,
+            roles: userInheritedRoles,
+            userAddress,
+          }}
+          onSuccess={close}
+          submit={ActionTypes.COLONY_DOMAIN_USER_ROLES_SET}
+          error={ActionTypes.COLONY_DOMAIN_USER_ROLES_SET_ERROR}
+          success={ActionTypes.COLONY_DOMAIN_USER_ROLES_SET_SUCCESS}
+          transform={transform}
+        >
+          {({ isSubmitting }: FormikProps<any>) => {
+            const domain = domains[domainId];
+            return (
+              <div className={styles.dialogContainer}>
+                <Heading
+                  appearance={{ size: 'medium', margin: 'none' }}
+                  text={MSG.title}
+                  textValues={{ domain: domain && domain.name }}
                 />
-              </div>
-              <InputLabel label={MSG.permissionsLabel} />
-              {availableRoles.map(role => (
-                <div key={role} className={styles.permissionChoiceContainer}>
-                  <PermissionCheckbox
-                    disabled={!canRoleBeSet(role)}
-                    role={role}
-                    asterisk={
-                      !directRoles.includes(role) &&
-                      inheritedRoles.includes(role)
-                    }
-                  />
+                <div className={styles.titleContainer}>
+                  <InputLabel label={MSG.selectUser} />
+                  <UserInfo
+                    userAddress={userAddress}
+                    user={user}
+                    placeholder={MSG.placeholder}
+                  >
+                    {user.profile.displayName || user.profile.username}
+                  </UserInfo>
                 </div>
-              ))}
-              <p className={styles.parentPermissionTip}>
-                <FormattedMessage
-                  {...MSG.permissionInParent}
-                  values={{
-                    learnMore: (
-                      <ExternalLink
-                        text={MSG.learnMore}
-                        href={DOMAINS_HELP_URL}
+                <InputLabel label={MSG.permissionsLabel} />
+                {availableRoles.map(role => {
+                  const roleIsInherited =
+                    !userDirectRoles.includes(role) &&
+                    userInheritedRoles.includes(role);
+                  return (
+                    <div
+                      key={role}
+                      className={styles.permissionChoiceContainer}
+                    >
+                      <PermissionCheckbox
+                        disabled={!canRoleBeSet(role) || roleIsInherited}
+                        role={role}
+                        asterisk={roleIsInherited}
                       />
-                    ),
-                  }}
-                />
-              </p>
-              <DialogSection appearance={{ align: 'right' }}>
-                <Button
-                  appearance={{ theme: 'secondary', size: 'large' }}
-                  onClick={cancel}
-                  text={{ id: 'button.cancel' }}
-                />
-                <Button
-                  appearance={{ theme: 'primary', size: 'large' }}
-                  loading={isSubmitting}
-                  text={{ id: 'button.confirm' }}
-                  disabled={!isValid}
-                  type="submit"
-                />
-              </DialogSection>
-            </div>
-          );
-        }}
-      </ActionForm>
+                    </div>
+                  );
+                })}
+                <p className={styles.parentPermissionTip}>
+                  <FormattedMessage
+                    {...MSG.permissionInParent}
+                    values={{
+                      learnMore: (
+                        <ExternalLink
+                          text={MSG.learnMore}
+                          href={DOMAINS_HELP_URL}
+                        />
+                      ),
+                    }}
+                  />
+                </p>
+                <DialogSection appearance={{ align: 'right' }}>
+                  <Button
+                    appearance={{ theme: 'secondary', size: 'large' }}
+                    onClick={cancel}
+                    text={{ id: 'button.cancel' }}
+                  />
+                  <Button
+                    appearance={{ theme: 'primary', size: 'large' }}
+                    loading={isSubmitting}
+                    text={{ id: 'button.confirm' }}
+                    type="submit"
+                  />
+                </DialogSection>
+              </div>
+            );
+          }}
+        </ActionForm>
+      )}
     </Dialog>
   );
 };
