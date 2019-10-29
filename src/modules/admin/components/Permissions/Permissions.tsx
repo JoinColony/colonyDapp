@@ -87,9 +87,16 @@ const Permissions = ({ colonyAddress, domains, openDialog }: Props) => {
     setSelectedDomainId,
   ]);
 
+  const handleAddPermissions = useCallback(() => {
+    openDialog('ColonyPermissionsAddDialog', {
+      colonyAddress,
+      domainId: selectedDomainId,
+    });
+  }, [openDialog, colonyAddress, selectedDomainId]);
+
   const handleEditPermissions = useCallback(
     (userAddress: Address) =>
-      openDialog('ColonyPermissionEditDialog', {
+      openDialog('ColonyPermissionsEditDialog', {
         colonyAddress,
         domainId: selectedDomainId,
         userAddress,
@@ -176,7 +183,7 @@ const Permissions = ({ colonyAddress, domains, openDialog }: Props) => {
             <Button
               appearance={{ theme: 'blue' }}
               text={MSG.addRole}
-              onClick={handleEditPermissions}
+              onClick={handleAddPermissions}
             />
           </li>
         </ul>

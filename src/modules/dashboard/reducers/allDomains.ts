@@ -63,7 +63,6 @@ const allDomainsReducer: ReducerType<AllDomainsMap> = (
         }),
       );
     }
-    case ActionTypes.COLONY_DOMAIN_USER_ROLES_FETCH_SUCCESS:
     case ActionTypes.COLONY_DOMAIN_USER_ROLES_SET_SUCCESS:
     case ActionTypes.COLONY_DOMAIN_USER_ROLES_SET: {
       const {

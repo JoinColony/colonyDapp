@@ -57,7 +57,7 @@ export const domainsAndRolesFetcher = Object.freeze({
 export const TEMP_userHasRecoveryRoleFetcher = Object.freeze({
   select: TEMP_userHasRecoveryRoleSelector,
   fetch: TEMP_fetchUserHasRecoveryRole,
-  ttl: Infinity,
+  ttl: 0,
 });
 
 export const currentUserDraftIdsFetcher = Object.freeze({

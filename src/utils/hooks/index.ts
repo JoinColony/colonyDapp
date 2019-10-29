@@ -4,7 +4,11 @@ import { useEffect, useCallback, useMemo, useRef } from 'react';
 import { useDispatch, useMappedState } from 'redux-react-hook';
 
 import { Action } from '~redux/index';
-import { RemoveFirstFromTuple } from '~types/index';
+import {
+  DataObject,
+  KeyedDataObject,
+  RemoveFirstFromTuple,
+} from '~types/index';
 import { ActionTransformFnType } from '~utils/actions';
 import { FetchableDataRecord } from '~immutable/index';
 import promiseListener, { AsyncFunction } from '~redux/createPromiseListener';
@@ -12,16 +16,6 @@ import { isFetchingData, shouldFetchData } from '~immutable/utils';
 import { getMainClasses } from '~utils/css';
 
 import { RootStateRecord } from '../../modules/state';
-
-interface DataObject<T> {
-  data?: T;
-  isFetching: boolean;
-  error?: string;
-}
-
-interface KeyedDataObject<T> extends DataObject<T> {
-  key: string;
-}
 
 interface DataFetcher<S> {
   select: S;
@@ -273,7 +267,7 @@ export const useDataMapFetcher = <T>(
   { fetch, select, ttl: ttlDefault = 0 }: DataMapFetcher<T>,
   keys: string[],
   { ttl: ttlOverride }: DataFetcherOptions = {},
-): KeyedDataObject<T>[] => {
+) => {
   /*
    * Created memoized keys to guard the rest of the function against
    * unnecessary updates.
@@ -281,10 +275,7 @@ export const useDataMapFetcher = <T>(
   const memoizedKeys = useMemoWithFlatArray(() => keys, keys);
 
   const dispatch = useDispatch();
-  const allData: ImmutableMap<
-    string,
-    FetchableDataRecord<any>
-  > = useMappedState(
+  const allData: ImmutableMap<string, FetchableDataRecord<T>> = useMappedState(
     useCallback(state => select(state, memoizedKeys), [select, memoizedKeys]),
   );
 
@@ -316,7 +307,9 @@ export const useDataMapFetcher = <T>(
    * Return an array of data objects with keys by mapping over the keys
    * and getting the data from `allData`.
    */
-  return useMemo(
+  return useMemo<
+    KeyedDataObject<MaybeFetchedData<ReturnType<typeof allData['get']>>>[]
+  >(
     () =>
       memoizedKeys.map(key => {
         const data = allData.get(key);
