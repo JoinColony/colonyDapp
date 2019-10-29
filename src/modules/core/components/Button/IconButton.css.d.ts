@@ -5,3 +5,6 @@ export const themeSecondary: string;
 export const themeGhost: string;
 export const themeUnderlineBold: string;
 export const themeBlue: string;
+export const sizeSmall: string;
+export const sizeMedium: string;
+export const sizeLarge: string;
