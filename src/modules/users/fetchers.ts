@@ -1,7 +1,7 @@
 import {
   currentUserTokensSelector,
-  usersByAddressesSelector,
   userSelector,
+  usersSelector,
 } from './selectors';
 import { userFetch, userTokensFetch } from './actionCreators';
 
@@ -19,6 +19,6 @@ export const userFetcher = Object.freeze({
 
 export const userMapFetcher = Object.freeze({
   fetch: userFetch,
-  select: usersByAddressesSelector,
+  select: usersSelector,
   ttl: 60 * 1000,
 });
