@@ -24,7 +24,7 @@ interface Props extends DefaultButtonProps {
 }
 
 const IconButton = ({
-  appearance = { theme: 'primary' },
+  appearance = { theme: 'primary', size: 'medium' },
   icon = 'wallet',
   text,
   textValues,
@@ -36,10 +36,7 @@ const IconButton = ({
     {...props}
   >
     <div className={useMainClasses(appearance, styles)}>
-      <Icon
-        appearance={{ size: 'small' }}
-        name={icon}
-      />
+      <Icon name={icon} />
       <FormattedMessage {...text} values={textValues} />
     </div>
   </Button>

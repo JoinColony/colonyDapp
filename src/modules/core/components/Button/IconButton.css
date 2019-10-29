@@ -2,6 +2,9 @@
   margin-right: 5px;
 }
 
+/*
+ * Themes
+ */
 .themePrimary, .themeDanger {
   composes: main;
 
@@ -58,5 +61,30 @@
   & svg {
     fill: var(--sky-blue);
     stroke: var(--sky-blue);
+  }
+}
+
+/*
+ * Sizes
+ */
+.sizeSmall {
+  & i {
+    height: 12px;
+    width: 12px;
+  }
+}
+
+.sizeMedium {
+  & i {
+    height: 16px;
+    width: 16px;
+  }
+}
+
+.sizeLarge {
+  & i {
+    height: 18px;
+    width: 18px;
+    vertical-align: bottom;
   }
 }
