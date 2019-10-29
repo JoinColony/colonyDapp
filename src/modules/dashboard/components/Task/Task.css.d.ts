@@ -17,3 +17,5 @@ export const completedDescription: string;
 export const trustInfoIcon: string;
 export const trustInfoTooltip: string;
 export const trustInfoTooltipHeading: string;
+export const helpButton: string;
+export const tooltipText: string;
