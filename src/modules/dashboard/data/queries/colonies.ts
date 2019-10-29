@@ -105,7 +105,7 @@ export const TEMP_getUserHasColonyRole: ContractEventQuery<
   name: 'getUserHasRecoveryRole',
   context,
   prepare: prepareColonyClientQuery,
-  async execute(colonyClient, { userAddress }) {
+  async execute(colonyClient, { userAddress = ZERO_ADDRESS }) {
     const { hasRole } = await colonyClient.hasColonyRole.call({
       address: userAddress,
       domainId: ROOT_DOMAIN,

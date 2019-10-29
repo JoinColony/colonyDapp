@@ -1,0 +1,18 @@
+@value borderColor: var(--grey-blue-0);
+
+.permissionChoiceContainer {
+  padding: 15px 0px;
+  border-bottom: 1px solid borderColor;
+}
+
+.permissionChoiceContainer:first-of-type {
+  padding: 15px 0px;
+  border-top: 1px solid borderColor;
+  border-bottom: 1px solid borderColor;
+}
+
+.parentPermissionTip {
+  margin: 10px 0;
+  font-size: var(--size-small);
+  font-weight: var(--weight-medium);
+}

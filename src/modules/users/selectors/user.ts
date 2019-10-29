@@ -98,7 +98,7 @@ Object.defineProperty(usersExceptSelector, 'transform', {
       .toJS(),
 });
 
-export const usersByAddressesSelector = (
+export const usersSelector = (
   state: RootStateRecord,
   addresses: Address[],
 ): UsersMap =>

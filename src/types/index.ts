@@ -19,3 +19,13 @@ export type ExcludesNull = <T>(x: T | null) => x is T;
 export type RemoveFirstFromTuple<T extends any[]> = T['length'] extends 0
   ? []
   : (((...b: T) => void) extends (a, ...b: infer I) => void ? I : []);
+
+export interface DataObject<T> {
+  data?: T;
+  isFetching: boolean;
+  error?: string;
+}
+
+export interface KeyedDataObject<T> extends DataObject<T> {
+  key: string;
+}

@@ -44,7 +44,7 @@ function* TEMP_userHasRecoveryRoleFetch({
       payload: { colonyAddress, userAddress, userHasRecoveryRole },
     });
   } catch (error) {
-    return yield putError(
+    yield putError(
       ActionTypes.TEMP_COLONY_USER_HAS_RECOVERY_ROLE_FETCH_ERROR,
       error,
       meta,
