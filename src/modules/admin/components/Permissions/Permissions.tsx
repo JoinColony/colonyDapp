@@ -88,11 +88,11 @@ const Permissions = ({ colonyAddress, domains, openDialog }: Props) => {
   ]);
 
   const handleEditPermissions = useCallback(
-    (userAddress?: Address) =>
+    (userAddress: Address) =>
       openDialog('ColonyPermissionEditDialog', {
         colonyAddress,
         domainId: selectedDomainId,
-        clickedUser: userAddress || null,
+        userAddress,
       }),
     [openDialog, colonyAddress, selectedDomainId],
   );

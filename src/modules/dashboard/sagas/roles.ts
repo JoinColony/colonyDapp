@@ -91,8 +91,17 @@ function* colonyDomainUserRolesSet({
       },
     );
 
+    const userHasRecoveryRole = yield executeQuery(TEMP_getUserHasColonyRole, {
+      args: { userAddress },
+      metadata: { colonyAddress },
+    });
+
     const existingDomainRoles = existingColonyRoles[domainId.toString()] || {};
     const existingUserRoles = existingDomainRoles[userAddress] || [];
+
+    if (userHasRecoveryRole) {
+      existingUserRoles.push(ROLES.RECOVERY);
+    }
 
     const toChange = Object.entries(roles).filter(
       ([role, setTo]: [ROLES, boolean]) => {
