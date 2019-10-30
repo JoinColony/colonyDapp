@@ -3,8 +3,8 @@
   height: 15px;
   width: 15px;
   position: relative;
-  top: 19px;
-  left: -11px; /* Subscribe icon is overlapping avatar a tiny bit */
+  top: 30px;
+  left: -16px; /* Subscribe icon is overlapping avatar a tiny bit */
   border: none;
   border-radius: 100%;
   font-size: 13px;
@@ -31,6 +31,6 @@
 
 .spinnerContainer {
   position: absolute;
-  top: 19px;
-  left: 21px;
+  top: 30px;
+  left: 31px;
 }
