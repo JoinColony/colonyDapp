@@ -3,7 +3,7 @@ import { defineMessages, injectIntl, IntlShape } from 'react-intl';
 import { compose } from 'recompose';
 import sortBy from 'lodash/sortBy';
 
-import { ROOT_DOMAIN, COLONY_TOTAL_BALANCE_DOMAIN_ID, ROLES } from '~constants';
+import { COLONY_TOTAL_BALANCE_DOMAIN_ID, ROLES } from '~constants';
 import { DialogType } from '~core/Dialog';
 import Button from '~core/Button';
 import withDialog from '~core/Dialog/withDialog';
@@ -12,7 +12,7 @@ import { Select } from '~core/Fields';
 import { Address, DomainsMapType } from '~types/index';
 import { useDataFetcher, useSelector, useTransformer } from '~utils/hooks';
 
-import { getLegacyRoles, getUserRoles } from '../../../transformers';
+import { getLegacyRoles } from '../../../transformers';
 import { tokenFetcher } from '../../../dashboard/fetchers';
 import { useColonyNativeToken } from '../../../dashboard/hooks/useColonyNativeToken';
 import { useColonyTokens } from '../../../dashboard/hooks/useColonyTokens';
@@ -53,6 +53,7 @@ interface Props {
   domains: DomainsMapType;
   intl: IntlShape;
   openDialog: (dialogName: string, dialogProps?: object) => DialogType;
+  rootRoles: ROLES[];
 }
 
 const Tokens = ({
@@ -61,6 +62,7 @@ const Tokens = ({
   domains,
   intl: { formatMessage },
   openDialog,
+  rootRoles,
 }: Props) => {
   const [selectedDomain, setSelectedDomain] = useState(
     COLONY_TOTAL_BALANCE_DOMAIN_ID,
@@ -68,15 +70,9 @@ const Tokens = ({
 
   const walletAddress = useSelector(walletAddressSelector);
 
-  const userRoles = useTransformer(getUserRoles, [
-    domains,
-    ROOT_DOMAIN,
-    walletAddress,
-  ]);
-
   const oldUserRoles = useTransformer(getLegacyRoles, [domains]);
   const canEdit = canEditTokens(oldUserRoles, walletAddress);
-  const canMoveTokens = userHasRole(userRoles, ROLES.FUNDING);
+  const canMoveTokens = userHasRole(rootRoles, ROLES.FUNDING);
 
   const domainsArray = useMemo(
     () => [

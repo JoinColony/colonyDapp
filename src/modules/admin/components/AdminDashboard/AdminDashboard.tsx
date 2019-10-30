@@ -2,7 +2,7 @@ import React from 'react';
 import { Redirect } from 'react-router';
 import { defineMessages } from 'react-intl';
 
-import { ROOT_DOMAIN } from '~constants';
+import { ROLES, ROOT_DOMAIN } from '~constants';
 import { NavigationItem } from '~pages/VerticalNavigation/VerticalNavigation';
 import { ColonyType } from '~immutable/index';
 import Heading from '~core/Heading';
@@ -23,13 +23,14 @@ import {
 } from '~utils/hooks';
 import { DomainsMapType } from '~types/index';
 
-import { getUserRoles } from '../../../transformers';
+import { TEMP_getUserRolesWithRecovery } from '../../../transformers';
 import { walletAddressSelector } from '../../../users/selectors';
 import { isInRecoveryMode } from '../../../dashboard/checks';
 import { canAdminister } from '../../../users/checks';
 import {
   colonyAddressFetcher,
   domainsAndRolesFetcher,
+  TEMP_userHasRecoveryRoleFetcher,
 } from '../../../dashboard/fetchers';
 import { colonySubscriber } from '../../../dashboard/subscribers';
 
@@ -78,6 +79,7 @@ interface Props {
 const navigationItems = (
   colony: ColonyType,
   domains: DomainsMapType,
+  rootRoles: ROLES[],
 ): NavigationItem[] => [
   {
     id: 1,
@@ -92,13 +94,20 @@ const navigationItems = (
         colonyAddress={colony.colonyAddress}
         canMintNativeToken={colony.canMintNativeToken}
         domains={domains}
+        rootRoles={rootRoles}
       />
     ),
   },
   {
     id: 3,
     title: MSG.tabDomains,
-    content: <Domains colonyAddress={colony.colonyAddress} domains={domains} />,
+    content: (
+      <Domains
+        colonyAddress={colony.colonyAddress}
+        domains={domains}
+        rootRoles={rootRoles}
+      />
+    ),
   },
   {
     id: 4,
@@ -110,7 +119,7 @@ const navigationItems = (
   {
     id: 5,
     title: MSG.tabAdvanced,
-    content: <ProfileAdvanced colony={colony} domains={domains} />,
+    content: <ProfileAdvanced colony={colony} rootRoles={rootRoles} />,
   },
 ];
 
@@ -142,8 +151,15 @@ const AdminDashboard = ({
     [colonyAddress],
   );
 
-  const userRoles = useTransformer(getUserRoles, [
+  const { data: colonyRecoveryRoles = [] } = useDataFetcher(
+    TEMP_userHasRecoveryRoleFetcher,
+    [colonyAddress],
+    [colonyAddress, walletAddress],
+  );
+
+  const rootRoles = useTransformer(TEMP_getUserRolesWithRecovery, [
     domains,
+    colonyRecoveryRoles,
     ROOT_DOMAIN,
     walletAddress,
   ]);
@@ -156,7 +172,7 @@ const AdminDashboard = ({
     return <LoadingTemplate loadingText={MSG.loadingText} />;
   }
 
-  if (!canAdminister(userRoles)) {
+  if (!canAdminister(rootRoles)) {
     return <Redirect to={CURRENT_COLONY_ROUTE} />;
   }
 
@@ -164,7 +180,7 @@ const AdminDashboard = ({
   return (
     <div className={styles.main}>
       <VerticalNavigation
-        navigationItems={navigationItems(colony, domains)}
+        navigationItems={navigationItems(colony, domains, rootRoles)}
         initialTab={
           location && location.state && location.state.initialTab
             ? location.state.initialTab
