@@ -1,30 +1,16 @@
-import { Map as ImmutableMap, Set as ImmutableSet } from 'immutable';
+import { Map as ImmutableMap } from 'immutable';
 
-import { ROLES } from '~constants';
 import {
   Domain,
   DomainRolesType,
   FetchableData,
   DomainRecord,
 } from '~immutable/index';
-import { DomainsMap, RoleSet } from '~types/index';
-import { Address } from '~types/strings';
+import { DomainsMap } from '~types/index';
 import { withFetchableDataMap } from '~utils/reducers';
 import { ActionTypes, ReducerType } from '~redux/index';
 
 import { AllDomainsMap } from '../state/index';
-
-const applyDomainRoleChanges = (
-  roles: RoleSet,
-  changes: Record<ROLES, boolean>,
-): ImmutableSet<ROLES> => {
-  const changedRoles = (Object.keys(changes) as unknown) as ROLES[];
-  return ImmutableSet(
-    [...roles, ...changedRoles].filter(role =>
-      Object.hasOwnProperty.call(changes, role) ? changes[role] : true,
-    ),
-  );
-};
 
 const allDomainsReducer: ReducerType<AllDomainsMap> = (
   state = ImmutableMap() as AllDomainsMap,
@@ -61,27 +47,6 @@ const allDomainsReducer: ReducerType<AllDomainsMap> = (
           );
           return mutable;
         }),
-      );
-    }
-    case ActionTypes.COLONY_DOMAIN_USER_ROLES_SET_SUCCESS:
-    case ActionTypes.COLONY_DOMAIN_USER_ROLES_SET: {
-      const {
-        payload: { colonyAddress, domainId, userAddress, roles },
-      } = action;
-
-      if (!state.getIn([colonyAddress, 'record', domainId])) return state;
-
-      return state.updateIn(
-        [colonyAddress, 'record', domainId, 'roles'],
-        (domainRoles: ImmutableMap<Address, RoleSet>) => {
-          return domainRoles
-            ? domainRoles.update(userAddress, userRoles =>
-                applyDomainRoleChanges(userRoles || ImmutableSet(), roles),
-              )
-            : ImmutableMap([
-                [userAddress, applyDomainRoleChanges(ImmutableSet(), roles)],
-              ]);
-        },
       );
     }
     case ActionTypes.DOMAIN_CREATE_SUCCESS: {
