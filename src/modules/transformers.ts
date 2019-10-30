@@ -32,6 +32,8 @@ export const getDomainRoles = (
   }
   return Object.entries(roleSets).reduce(
     (acc, [userAddress, roles]: [string, Set<ROLES>]) => {
+      // Ignore empty role sets
+      if (!roles.size) return acc;
       acc[userAddress] = Array.from(roles);
       return acc;
     },
