@@ -1,3 +1,62 @@
-.main {
-  display: block;
+.main i {
+  margin-right: 5px;
+}
+
+.themePrimary, .themeDanger {
+  composes: main;
+
+  & svg {
+    fill: var(--colony-white);
+    stroke: var(--colony-white);
+  }
+}
+
+.themeSecondary {
+  composes: main;
+
+  & svg {
+    fill: var(--text);
+    stroke: var(--text);
+  }
+
+  &:hover {
+    & svg {
+      fill: color-mod(var(--text) shade(30%));
+      stroke: color-mod(var(--text) shade(30%));
+    }
+  }
+}
+
+.themeGhost {
+  composes: main;
+
+  & svg {
+    fill: var(--black);
+    stroke: var(--black);
+  }
+
+  &:hover {
+    & svg {
+      fill: color-mod(var(--colony-black) tint(15%));
+      stroke: color-mod(var(--colony-black) tint(15%));
+    }
+  }
+}
+
+.themeUnderlineBold {
+  composes: main;
+
+  & svg {
+    fill: var(--black);
+    stroke: var(--black);
+  }
+}
+
+.themeBlue {
+  composes: main;
+
+  & svg {
+    fill: var(--sky-blue);
+    stroke: var(--sky-blue);
+  }
 }
