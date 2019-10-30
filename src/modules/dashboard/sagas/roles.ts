@@ -1,4 +1,4 @@
-import { all, fork, put, takeEvery } from 'redux-saga/effects';
+import { all, fork, put, take, takeEvery } from 'redux-saga/effects';
 
 import { ROLES } from '~constants';
 import { Action, ActionTypes, AllActions } from '~redux/index';
@@ -52,7 +52,7 @@ function* TEMP_userHasRecoveryRoleFetch({
   }
 }
 
-const getRoleSetFunctionName = (role: string, setTo: boolean) => {
+const getRoleMethodName = (role: string, setTo: boolean) => {
   switch (role) {
     case ROLES.ADMINISTRATION:
       return 'setAdministrationRole';
@@ -103,32 +103,31 @@ function* colonyDomainUserRolesSet({
       existingUserRoles.push(ROLES.RECOVERY);
     }
 
-    const toChange = Object.entries(roles).filter(
-      ([role, setTo]: [ROLES, boolean]) => {
+    const toChange = Object.entries(roles)
+      .filter(([role, setTo]: [ROLES, boolean]) => {
         if (existingUserRoles.includes(role) && setTo === true) return false;
         if (!existingUserRoles.includes(role) && setTo === false) return false;
         return true;
-      },
-    );
+      })
+      .map(
+        ([role, setTo]) =>
+          [getRoleMethodName(role, setTo), setTo] as [string, boolean],
+      );
 
     yield all(
-      toChange.map(([role, setTo], index) =>
-        fork(
-          createTransaction,
-          `${meta.id}_${getRoleSetFunctionName(role, setTo)}`,
-          {
-            context: ContractContexts.COLONY_CONTEXT,
-            identifier: colonyAddress,
-            methodName: getRoleSetFunctionName(role, setTo),
-            params: { address: userAddress, domainId, setTo },
-            ready: true,
-            group: {
-              key: 'setRoles',
-              id: meta.id,
-              index,
-            },
+      toChange.map(([methodName, setTo], index) =>
+        fork(createTransaction, `${meta.id}_${methodName}`, {
+          context: ContractContexts.COLONY_CONTEXT,
+          identifier: colonyAddress,
+          methodName,
+          params: { address: userAddress, domainId, setTo },
+          ready: true,
+          group: {
+            key: 'setRoles',
+            id: meta.id,
+            index,
           },
-        ),
+        }),
       ),
     );
 
@@ -136,6 +135,25 @@ function* colonyDomainUserRolesSet({
       type: ActionTypes.COLONY_DOMAIN_USER_ROLES_SET_SUCCESS,
       meta,
       payload: { roles, colonyAddress, domainId, userAddress },
+    });
+
+    // Wait for all of the created actions to be succeeded, failed or cancelled
+    yield all(
+      toChange.map(([methodName]) =>
+        take(
+          action =>
+            (action.type === ActionTypes.TRANSACTION_SUCCEEDED ||
+              action.type === ActionTypes.TRANSACTION_ERROR ||
+              action.type === ActionTypes.TRANSACTION_CANCEL) &&
+            action.meta.id === `${meta.id}_${methodName}`,
+        ),
+      ),
+    );
+
+    yield put<AllActions>({
+      type: ActionTypes.COLONY_ROLES_FETCH,
+      payload: { colonyAddress },
+      meta,
     });
   } catch (error) {
     return yield putError(
