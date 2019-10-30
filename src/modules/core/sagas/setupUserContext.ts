@@ -7,13 +7,16 @@ import {
   setContext,
 } from 'redux-saga/effects';
 
+import { createAddress, Address } from '~types/index';
 import { Action, ActionTypes, AllActions } from '~redux/index';
-import ColonyManagerType from '../../../lib/ColonyManager';
-import { DDB as DDBType } from '../../../lib/database';
 import { Context } from '~context/index';
 import { executeCommand, executeQuery, putError } from '~utils/saga/effects';
 import { log } from '~utils/debug';
 import ENSCache from '~lib/ENS';
+import { UserProfileType } from '~immutable/index';
+
+import ColonyManagerType from '../../../lib/ColonyManager';
+import { DDB as DDBType } from '../../../lib/database';
 import {
   getUserBalance,
   getUsername,
@@ -38,7 +41,6 @@ import {
 } from './utils';
 import setupOnBeforeUnload from './setupOnBeforeUnload';
 import { setupUserBalanceListener } from './setupUserBalanceListener';
-import { createAddress, Address } from '~types/index';
 
 function* setupContextDependentSagas() {
   yield all([
@@ -127,7 +129,7 @@ export default function* setupUserContext(
     const ens = yield getContext(Context.ENS_INSTANCE);
     yield call(setupDDBResolver, colonyManager, ddb, ens);
 
-    let profileData = {};
+    let profileData = {} as UserProfileType;
     try {
       profileData = yield executeQuery(getUserProfile, {
         args: undefined,
@@ -137,7 +139,7 @@ export default function* setupUserContext(
       log.verbose(`Could not find user profile for ${walletAddress}`);
     }
 
-    if (!(profileData as any).username) {
+    if (!profileData.username) {
       // Try to recover a user profile as it might already have been registered on ENS
       profileData = yield call(recoverUserProfile, walletAddress);
     }
