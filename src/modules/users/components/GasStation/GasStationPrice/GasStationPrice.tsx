@@ -27,7 +27,7 @@ import {
 } from '../../../selectors';
 
 import Alert from '~core/Alert';
-import Button from '~core/Button';
+import { IconButton } from '~core/Button';
 import EthUsd from '~core/EthUsd';
 import { ActionForm, RadioGroup } from '~core/Fields';
 import Icon from '~core/Icon';
@@ -246,9 +246,9 @@ const GasStationPrice = ({ transaction: { id, gasLimit, error } }: Props) => {
                   </div>
                   <div>
                     {error ? (
-                      <Button type="submit" text={{ id: 'button.retry' }} />
+                      <IconButton type="submit" text={{ id: 'button.retry' }} />
                     ) : (
-                      <Button
+                      <IconButton
                         disabled={!isValid}
                         loading={!transactionFee || isSubmitting}
                         text={{ id: 'button.confirm' }}
