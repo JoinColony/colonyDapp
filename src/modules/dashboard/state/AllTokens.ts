@@ -25,6 +25,7 @@ export const AllTokensInitialState = ImmutableMap({
     record: Token(
       fromJS({
         address: ZERO_ADDRESS,
+        decimals: 18,
         isVerified: true,
         name: 'Ether',
         symbol: 'ETH',
