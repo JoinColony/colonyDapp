@@ -3,13 +3,8 @@
 @value cellPaddingVertical: 27px;
 @value cellPaddingHorizontal: 25px;
 
-.globalLink:nth-child(n+2) tr {
-  border-width: 1px;
-  border-style: solid;
-  border-left: 0;
-  border-right: 0;
-  border-bottom: 0;
-  border-color: var(--grey-blue-1);
+.globalLink {
+  cursor: pointer;
 }
 
 td.taskLoading {
