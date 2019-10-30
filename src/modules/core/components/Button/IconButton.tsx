@@ -28,13 +28,15 @@ const IconButton = ({
   icon = 'wallet',
   text,
   textValues,
+  /*
+   * @NOTE Prevent children from being passed both to this component, or to
+   * the underlying `<Button />
+   */
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   children,
   ...props
 }: Props) => (
-  <Button
-    appearance={appearance}
-    {...props}
-  >
+  <Button appearance={appearance} {...props}>
     <div className={useMainClasses(appearance, styles)}>
       <Icon name={icon} />
       <FormattedMessage {...text} values={textValues} />
