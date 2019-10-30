@@ -122,10 +122,14 @@ export const getColonyRoles: ContractEventQuery<void, ColonyRolesType> = {
   async execute(colonyClient) {
     const {
       events: { ColonyRoleSet },
+      contract: { address: colonyAddress },
     } = colonyClient;
     const events = await getEvents(
       colonyClient,
-      { fromBlock: 1 },
+      {
+        address: colonyAddress,
+        fromBlock: 1,
+      },
       {
         events: [ColonyRoleSet],
       },
