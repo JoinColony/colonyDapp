@@ -1,6 +1,7 @@
 import React, { useCallback, useMemo, useState } from 'react';
 import { defineMessages, injectIntl, IntlShape } from 'react-intl';
 import { compose } from 'recompose';
+import sortBy from 'lodash/sortBy';
 
 import { ROOT_DOMAIN, COLONY_TOTAL_BALANCE_DOMAIN_ID, ROLES } from '~constants';
 import { DialogType } from '~core/Dialog';
@@ -61,7 +62,9 @@ const Tokens = ({
   intl: { formatMessage },
   openDialog,
 }: Props) => {
-  const [selectedDomain, setSelectedDomain] = useState(ROOT_DOMAIN);
+  const [selectedDomain, setSelectedDomain] = useState(
+    COLONY_TOTAL_BALANCE_DOMAIN_ID,
+  );
 
   const walletAddress = useSelector(walletAddressSelector);
 
@@ -78,12 +81,15 @@ const Tokens = ({
   const domainsArray = useMemo(
     () => [
       { value: COLONY_TOTAL_BALANCE_DOMAIN_ID, label: { id: 'domain.all' } },
-      ...Object.keys(domains || {})
-        .sort()
-        .map(domainId => ({
-          label: domains[domainId].name,
-          value: domains[domainId].id,
-        })),
+      ...sortBy(
+        Object.entries(domains || {})
+          .sort()
+          .map(([domainId, { name }]) => ({
+            label: name,
+            value: domainId,
+          })),
+        ['value'],
+      ),
     ],
     [domains],
   );
@@ -153,7 +159,7 @@ const Tokens = ({
               elementOnly
               label={MSG.labelSelectDomain}
               name="selectDomain"
-              options={domains}
+              options={domainsArray}
               form={{ setFieldValue }}
               $value={selectedDomain}
             />
