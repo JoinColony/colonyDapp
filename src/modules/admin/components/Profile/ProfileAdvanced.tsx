@@ -1,20 +1,17 @@
 import React from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 
-import { ROOT_DOMAIN } from '~constants';
+import { ROLES } from '~constants';
 import { ColonyType } from '~immutable/index';
-import { DomainsMapType } from '~types/index';
-import { useSelector, useTransformer } from '~utils/hooks';
+import { useSelector } from '~utils/hooks';
 import { ActionTypes } from '~redux/index';
 import { DialogActionButton } from '~core/Button';
 import Heading from '~core/Heading';
 import ExternalLink from '~core/ExternalLink';
 
-import { getUserRoles } from '../../../transformers';
 import { networkVersionSelector } from '../../../core/selectors';
 import { canEnterRecoveryMode } from '../../../users/checks';
 import { canBeUpgraded, isInRecoveryMode } from '../../../dashboard/checks';
-import { walletAddressSelector } from '../../../users/selectors';
 
 import styles from './ProfileAdvanced.css';
 
@@ -91,22 +88,14 @@ const displayName = 'admin.Profile.ProfileAdvanced';
 
 interface Props {
   colony: ColonyType;
-  domains: DomainsMapType;
+  rootRoles: ROLES[];
 }
 
 const ProfileAdvanced = ({
   colony: { colonyAddress, id, version, canUnlockNativeToken },
   colony,
-  domains,
+  rootRoles,
 }: Props) => {
-  const walletAddress = useSelector(walletAddressSelector);
-
-  const userRoles = useTransformer(getUserRoles, [
-    domains,
-    ROOT_DOMAIN,
-    walletAddress,
-  ]);
-
   const networkVersion = useSelector(networkVersionSelector);
 
   return (
@@ -181,7 +170,7 @@ const ProfileAdvanced = ({
           error={ActionTypes.COLONY_RECOVERY_MODE_ENTER_ERROR}
           values={{ colonyAddress }}
           disabled={
-            isInRecoveryMode(colony) || !canEnterRecoveryMode(userRoles)
+            isInRecoveryMode(colony) || !canEnterRecoveryMode(rootRoles)
           }
         />
       </section>
