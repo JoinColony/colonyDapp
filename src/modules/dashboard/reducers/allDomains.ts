@@ -128,7 +128,7 @@ const allDomainsReducer: ReducerType<AllDomainsMap> = (
               Domain({
                 ...domain,
                 // If the domain record is already set, ensure the roles are not modified
-                roles: state.getIn([key, 'record', 'roles'], {}),
+                roles: state.getIn([key, 'record', domain.id, 'roles'], {}),
               }),
             ]),
           ),
