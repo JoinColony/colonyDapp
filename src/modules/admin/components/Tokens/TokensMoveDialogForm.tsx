@@ -3,6 +3,7 @@ import { FormikProps } from 'formik';
 import { defineMessages, FormattedMessage } from 'react-intl';
 import BigNumber from 'bn.js';
 import moveDecimal from 'move-decimal-point';
+import sortBy from 'lodash/sortBy';
 
 import { ROOT_DOMAIN, ROLES } from '~constants';
 import { Address } from '~types/index';
@@ -133,9 +134,13 @@ const TokensMoveDialogForm = ({
   // Map the colony's domains to Select options
   const domainOptions = useMemo(
     () =>
-      Object.keys(domains || {})
-        .sort()
-        .map(id => ({ value: id, label: domains[id].name })),
+      sortBy(
+        Object.values(domains || {}).map(({ name, id }) => ({
+          value: id,
+          label: name,
+        })),
+        ['value'],
+      ),
 
     [domains],
   );
