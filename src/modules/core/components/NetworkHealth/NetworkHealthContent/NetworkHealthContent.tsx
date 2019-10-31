@@ -26,7 +26,7 @@ const MSG = defineMessages({
     defaultMessage: `The network's health is {health, select,
       3 {good. All systems are operational.}
       2 {fair. You might experience reduced data loading.}
-      1 {poor. Your data will probably fail to load.}
+      1 {poor. Please keep your browser open until the network health improves.}
       other {unknown. Hold tight until we check it.}
     }`,
   },
