@@ -1,8 +1,3 @@
-.moreButtonContainer {
-  margin-left: 5px;
-}
-
-.hideButtonContainer {
-  display: flex;
-  justify-content: flex-end;
+.controlContainer {
+  margin-top: 10px;
 }

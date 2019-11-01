@@ -75,7 +75,7 @@ const ExpandedParagraph = ({
       )}
       {elements && elements}
       {!expanded && (
-        <span className={styles.moreButtonContainer}>
+        <div className={styles.controlContainer}>
           <Button
             onClick={() => {
               expandDescription(true);
@@ -84,12 +84,12 @@ const ExpandedParagraph = ({
             textValues={expandTextValues}
             appearance={{ theme: 'blue' }}
           />
-        </span>
+        </div>
       )}
       {expanded && (
         <>
           {expandedElements}
-          <div className={styles.hideButtonContainer}>
+          <div className={styles.controlContainer}>
             <Button
               onClick={() => {
                 expandDescription(false);
