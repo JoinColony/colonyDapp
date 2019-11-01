@@ -2,10 +2,13 @@ import React from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 
 import { NetworkHealthItems } from '../types';
+
 import Icon from '~core/Icon';
 import Heading from '~core/Heading';
+import ExpandedParagraph from '~core/ExpandedParagraph';
 import NetworkHealthIcon from '../NetworkHealthIcon';
 import NetworkHealthContentItem from './NetworkHealthContentItem';
+
 import styles from './NetworkHealthContent.css';
 
 const MSG = defineMessages({
@@ -30,6 +33,10 @@ const MSG = defineMessages({
       other {unknown. Hold tight until we check it.}
     }`,
   },
+  expandSectionLabel: {
+    id: 'core.NetworkHealth.NetworkHealthContent.expandSectionLabel',
+    defaultMessage: 'Advanced',
+  }
 });
 
 interface Props {
@@ -40,34 +47,8 @@ interface Props {
 
 const displayName = 'NetworkHealth.NetworkHealthContent';
 
-const NetworkHealthContent = ({ close, health, networkItems = [] }: Props) => (
-  <div className={styles.main}>
-    <div className={styles.header}>
-      <div className={styles.healthDetailsWrapper}>
-        <div className={styles.healthTitle}>
-          <Heading appearance={{ margin: 'none', size: 'normal' }}>
-            <span className={styles.healthIconWrapper}>
-              <NetworkHealthIcon health={health} appearance={{ size: 'pea' }} />
-            </span>
-            <FormattedMessage {...MSG.healthTitle} values={{ health }} />
-          </Heading>
-        </div>
-        <div className={styles.healthDetails}>
-          <FormattedMessage {...MSG.healthDetails} values={{ health }} />
-        </div>
-      </div>
-      <div className={styles.actionsContainer}>
-        {close && (
-          <button className={styles.closeButton} onClick={close} type="button">
-            <Icon
-              appearance={{ size: 'normal' }}
-              name="close"
-              title={{ id: 'button.close' }}
-            />
-          </button>
-        )}
-      </div>
-    </div>
+const NetworkHealthContent = ({ close, health, networkItems = [] }: Props) => {
+  const renderNetworkItems = (
     <ul className={styles.content}>
       {networkItems.map(networkHealthItem => (
         <NetworkHealthContentItem
@@ -80,8 +61,47 @@ const NetworkHealthContent = ({ close, health, networkItems = [] }: Props) => (
         />
       ))}
     </ul>
-  </div>
-);
+  );
+  return (
+    <div className={styles.main}>
+      <div className={styles.header}>
+        <div className={styles.healthDetailsWrapper}>
+          <div className={styles.healthTitle}>
+            <Heading appearance={{ margin: 'none', size: 'normal' }}>
+              <span className={styles.healthIconWrapper}>
+                <NetworkHealthIcon health={health} appearance={{ size: 'pea' }} />
+              </span>
+              <FormattedMessage {...MSG.healthTitle} values={{ health }} />
+            </Heading>
+          </div>
+          <div className={styles.healthDetails}>
+            <FormattedMessage {...MSG.healthDetails} values={{ health }} />
+          </div>
+        </div>
+        <div className={styles.actionsContainer}>
+          {close && (
+            <button className={styles.closeButton} onClick={close} type="button">
+              <Icon
+                appearance={{ size: 'normal' }}
+                name="close"
+                title={{ id: 'button.close' }}
+              />
+            </button>
+          )}
+        </div>
+      </div>
+      <section className={styles.expandedSectionContainer}>
+        <ExpandedParagraph
+          characterLimit={0}
+          maximumCharacters={0}
+          paragraph=""
+          expandedElements={renderNetworkItems}
+          expandText={MSG.expandSectionLabel}
+        />
+      </section>
+    </div>
+  );
+};
 
 NetworkHealthContent.displayName = displayName;
 
