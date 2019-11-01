@@ -1,5 +1,5 @@
 import React, { ReactNode, useState } from 'react';
-import { defineMessages } from 'react-intl';
+import { defineMessages, MessageDescriptor, MessageValues } from 'react-intl';
 
 import Button from '~core/Button';
 
@@ -7,17 +7,25 @@ import { multiLineTextEllipsis } from '~utils/strings';
 import styles from './ExpandedParagraph.css';
 
 const MSG = defineMessages({
-  more: {
-    id: 'core.ExpandedParagraph.more',
-    defaultMessage: 'More',
+  expandText: {
+    id: 'core.ExpandedParagraph.expandText',
+    defaultMessage: 'Show more',
   },
-  hide: {
-    id: 'core.ExpandedParagraph.hide',
-    defaultMessage: 'Hide',
+  contractText: {
+    id: 'core.ExpandedParagraph.contractText',
+    defaultMessage: 'Show less',
   },
 });
 
 interface Props {
+  /** A string or a `messageDescriptor` that makes up the "show more" control */
+  expandText?: MessageDescriptor | string;
+  /** Message descriptor Values for the "show more" control text (react-intl interpolation) */
+  expandTextValues?: MessageValues;
+  /** A string or a `messageDescriptor` that makes up the "show less" control */
+  contractText?: MessageDescriptor | string;
+  /** Message descriptor Values for the "show less" control text (react-intl interpolation) */
+  contractTextValues?: MessageValues;
   /*
    * This contains a long text paragraph that initially gets shown
    * in a shortened version that can be extended clicking a more button
@@ -48,6 +56,10 @@ interface Props {
 const displayName = 'core.ExpandedParagraph';
 
 const ExpandedParagraph = ({
+  expandText = MSG.expandText,
+  expandTextValues,
+  contractText = MSG.contractText,
+  contractTextValues,
   paragraph,
   elements,
   expandedElements,
@@ -68,7 +80,8 @@ const ExpandedParagraph = ({
             onClick={() => {
               expandDescription(true);
             }}
-            text={MSG.more}
+            text={expandText}
+            textValues={expandTextValues}
             appearance={{ theme: 'blue' }}
           />
         </span>
@@ -81,7 +94,8 @@ const ExpandedParagraph = ({
               onClick={() => {
                 expandDescription(false);
               }}
-              text={MSG.hide}
+              text={contractText}
+              textValues={contractTextValues}
               appearance={{ theme: 'blue' }}
             />
           </div>
