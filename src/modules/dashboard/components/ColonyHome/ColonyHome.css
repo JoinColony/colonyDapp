@@ -3,7 +3,9 @@
 .main {
   composes: stretchVertical stretchHorizontal from '~styles/layout.css';
   display: grid;
-  padding: 16px 18px; /* vertical padding of 16px + nav height (70px) */
+
+  /* vertical padding of 11px + nav height (70px) */
+  padding: 11px 18px 16px 18px;
   overflow: auto;
   overflow: hidden;
   background: var(--gradient-default);

@@ -5,11 +5,13 @@
 }
 
 .main section {
-  margin-left: 52px;
+  margin-left: 63px;
 }
 
 .avatar {
   margin-bottom: 10px;
+  height: 45px;
+  width: 45px;
   border-radius: 50%;
   background-color: white;
   box-shadow: 0 0 20px var(--temp-grey-blue-2);
@@ -41,9 +43,9 @@
 }
 
 .headingAndSettings {
-  margin-top: 3px;
+  margin-top: 10px;
   position: absolute;
-  left: 49px;
+  left: 60px;
 }
 
 .simpleLinkWebsite {
