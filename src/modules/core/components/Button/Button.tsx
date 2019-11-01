@@ -14,7 +14,7 @@ import styles from './Button.css';
 
 const displayName = 'Button';
 
-interface Appearance {
+export interface Appearance {
   theme?:
     | 'primary'
     | 'secondary'
@@ -25,7 +25,7 @@ interface Appearance {
   size?: 'small' | 'medium' | 'large';
 }
 
-interface Props {
+export interface Props {
   /** Appearance object */
   appearance?: Appearance;
 
