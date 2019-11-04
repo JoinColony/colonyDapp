@@ -36,7 +36,7 @@ const MSG = defineMessages({
   expandSectionLabel: {
     id: 'core.NetworkHealth.NetworkHealthContent.expandSectionLabel',
     defaultMessage: 'Advanced',
-  }
+  },
 });
 
 interface Props {
@@ -69,7 +69,10 @@ const NetworkHealthContent = ({ close, health, networkItems = [] }: Props) => {
           <div className={styles.healthTitle}>
             <Heading appearance={{ margin: 'none', size: 'normal' }}>
               <span className={styles.healthIconWrapper}>
-                <NetworkHealthIcon health={health} appearance={{ size: 'pea' }} />
+                <NetworkHealthIcon
+                  health={health}
+                  appearance={{ size: 'pea' }}
+                />
               </span>
               <FormattedMessage {...MSG.healthTitle} values={{ health }} />
             </Heading>
@@ -80,7 +83,11 @@ const NetworkHealthContent = ({ close, health, networkItems = [] }: Props) => {
         </div>
         <div className={styles.actionsContainer}>
           {close && (
-            <button className={styles.closeButton} onClick={close} type="button">
+            <button
+              className={styles.closeButton}
+              onClick={close}
+              type="button"
+            >
               <Icon
                 appearance={{ size: 'normal' }}
                 name="close"
