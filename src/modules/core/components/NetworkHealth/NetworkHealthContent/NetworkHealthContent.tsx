@@ -26,11 +26,18 @@ const MSG = defineMessages({
    */
   healthDetails: {
     id: 'core.NetworkHealth.NetworkHealthContent.healthDetails',
-    defaultMessage: `The network's health is {health, select,
-      3 {good. All systems are operational.}
-      2 {fair. You might experience reduced data loading.}
-      1 {poor. Please keep your browser open until the network health improves.}
-      other {unknown. Hold tight until we check it.}
+    defaultMessage: `{health, select,
+      3 {{networkBusy, select,
+        false {The network's health is good. All systems are operational.}
+        true {Data is currently saving but the network health is good. This
+          should only take a couple of seconds.}
+      }}
+      2 {The network's health is fair. You might experience reduced data
+        loading.}
+      1 {{networkBusy, select,
+        false {The network's health is poor.}
+        true {Data is currently trying to save, but the network health is poor.}
+      } Please keep your browser open until the network health improves.}
     }`,
   },
   expandSectionLabel: {
@@ -43,11 +50,21 @@ interface Props {
   close?: () => void;
   health: number;
   networkItems?: NetworkHealthItems;
+  networkBusy?: boolean;
 }
 
 const displayName = 'NetworkHealth.NetworkHealthContent';
 
-const NetworkHealthContent = ({ close, health, networkItems = [] }: Props) => {
+const NetworkHealthContent = ({
+  close,
+  health,
+  networkItems = [],
+  /*
+   * @NOTE Erring on the side of caution here:
+   * If we (for some reason) can't get the busy state, assume it's busy
+   */
+  networkBusy = true,
+}: Props) => {
   const renderNetworkItems = (
     <ul className={styles.content}>
       {networkItems.map(networkHealthItem => (
@@ -78,7 +95,13 @@ const NetworkHealthContent = ({ close, health, networkItems = [] }: Props) => {
             </Heading>
           </div>
           <div className={styles.healthDetails}>
-            <FormattedMessage {...MSG.healthDetails} values={{ health }} />
+            <FormattedMessage
+              {...MSG.healthDetails}
+              values={{
+                health,
+                networkBusy,
+              }}
+            />
           </div>
         </div>
         <div className={styles.actionsContainer}>
