@@ -8,6 +8,7 @@ import ItemsList from './ItemsList';
 
 export interface ConsumableItem {
   disabled?: boolean;
+  disabledText?: MessageDescriptor | string;
   id: number;
   name: string;
   parent?: number;
