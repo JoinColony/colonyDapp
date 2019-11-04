@@ -8,3 +8,12 @@
 .main:focus {
   outline: none;
 }
+
+.busy {
+  display: inline-block;
+  margin: 1px 15px 0 0;
+  vertical-align: top;
+  font-size: var(--size-small);
+  font-weight: var(--weight-medium);
+  color: var(--grey-4);
+}
