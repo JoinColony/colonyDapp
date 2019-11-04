@@ -14,6 +14,7 @@ import { useSelector } from '~utils/hooks';
 import { NetworkHealthIconSize } from './types';
 import { connection as connectionSelector } from '../../selectors';
 import getNetworkHealth from './getNetworkHealth';
+import getNetworkBusyState from './getNetworkBusyState';
 import NetworkHealthIcon from './NetworkHealthIcon';
 import NetworkHealthContent from './NetworkHealthContent';
 import styles from './NetworkHealth.css';
@@ -66,6 +67,7 @@ const NetworkHealth = ({
 
   const connection: ConnectionType = useSelector(connectionSelector);
   const networkItems = getNetworkHealth(connection);
+  const busyItems = getNetworkBusyState(connection);
 
   // Errors are important so we set the whole thing to 1 if there are a lot (> 1)
   const health =
@@ -75,6 +77,7 @@ const NetworkHealth = ({
           networkItems.reduce((sum, current) => sum + current.itemHealth, 0) /
             networkItems.length,
         );
+  const isNetworkBusy = busyItems.some(({ busyState }) => busyState === true);
 
   return (
     <div className={className}>
@@ -95,9 +98,11 @@ const NetworkHealth = ({
           className={styles.main}
           title={formatMessage(MSG.statusTitle, { health })}
         >
-          <span className={styles.busy}>
-            <FormattedMessage {...MSG.busyLabel} />
-          </span>
+          {isNetworkBusy && (
+            <span className={styles.busy}>
+              <FormattedMessage {...MSG.busyLabel} />
+            </span>
+          )}
           <NetworkHealthIcon health={health} appearance={appearance} />
         </button>
       </Popover>
