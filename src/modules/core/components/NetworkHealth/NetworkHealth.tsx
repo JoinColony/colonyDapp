@@ -88,6 +88,7 @@ const NetworkHealth = ({
             close={close}
             health={health}
             networkItems={networkItems}
+            networkBusy={isNetworkBusy}
           />
         )}
         placement="bottom"
