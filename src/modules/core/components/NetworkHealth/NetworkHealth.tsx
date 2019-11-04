@@ -1,5 +1,10 @@
 import React, { useEffect } from 'react';
-import { injectIntl, defineMessages, IntlShape } from 'react-intl';
+import {
+  injectIntl,
+  defineMessages,
+  IntlShape,
+  FormattedMessage,
+} from 'react-intl';
 import { useDispatch } from 'redux-react-hook';
 
 import { ConnectionType } from '~immutable/index';
@@ -24,6 +29,10 @@ const MSG = defineMessages({
       2 {fair}
       1 {poor}
     }`,
+  },
+  busyLabel: {
+    id: 'core.NetworkHealth.busyLabel',
+    defaultMessage: 'Busy...',
   },
 });
 
@@ -86,6 +95,9 @@ const NetworkHealth = ({
           className={styles.main}
           title={formatMessage(MSG.statusTitle, { health })}
         >
+          <span className={styles.busy}>
+            <FormattedMessage {...MSG.busyLabel} />
+          </span>
           <NetworkHealthIcon health={health} appearance={appearance} />
         </button>
       </Popover>
