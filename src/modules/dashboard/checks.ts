@@ -2,7 +2,7 @@ import { ROLES } from '~constants';
 import { TaskStates } from '~data/constants';
 import { ColonyType, TaskType, TaskUserType } from '~immutable/index';
 import { Address } from '~types/index';
-import { isFounder, canAdminister } from '../users/checks';
+import { isFounder, canAdminister, canFund } from '../users/checks';
 
 /*
  * Colony
@@ -60,14 +60,8 @@ export const didDueDateElapse = ({ dueDate }: TaskType) =>
 
 export const isWorkerSet = ({ workerAddress }: TaskType) => !!workerAddress;
 
-export const canEditTask = (
-  task: TaskType,
-  roles: ROLES[],
-  userAddress: Address,
-) =>
-  !isFinalized(task) &&
-  !isCancelled(task) &&
-  (isCreator(task, userAddress) || isFounder(roles) || canAdminister(roles));
+export const canEditTask = (task: TaskType, roles: ROLES[]) =>
+  !isFinalized(task) && !isCancelled(task) && canAdminister(roles);
 
 export const isDomainSet = ({ domainId }: TaskType) => !!domainId;
 
@@ -101,13 +95,8 @@ export const managerCanRevealWorkerRating = (
   userAddress: Address,
 ) => isManager(task, userAddress) && isReveal(task);
 
-export const canCancelTask = (
-  task: TaskType,
-  roles: ROLES[],
-  userAddress: Address,
-) =>
-  isActive(task) &&
-  (isManager(task, userAddress) || isFounder(roles) || canAdminister(roles));
+export const canCancelTask = (task: TaskType, roles: ROLES[]) =>
+  isActive(task) && canAdminister(roles);
 
 export const hasRequestedToWork = (
   { requests = [] }: TaskType,
@@ -121,16 +110,13 @@ export const canRequestToWork = (task: TaskType, userAddress: Address) =>
     hasRequestedToWork(task, userAddress)
   );
 
-export const canFinalizeTask = (
-  task: TaskType,
-  roles: ROLES[],
-  userAddress: Address,
-) =>
+export const canFinalizeTask = (task: TaskType, roles: ROLES[]) =>
   task &&
   isActive(task) &&
   isWorkerSet(task) &&
   isDomainSet(task) &&
   isPayoutsSet(task) &&
-  (isManager(task, userAddress) || isFounder(roles) || canAdminister(roles));
+  canAdminister(roles) &&
+  canFund(roles);
 
 export const canRecoverColony = isFounder;

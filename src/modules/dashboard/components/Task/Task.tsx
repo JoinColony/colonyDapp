@@ -33,9 +33,8 @@ import {
   canEditTask,
   canFinalizeTask,
   isCancelled,
-  isCreator,
+  canRequestToWork,
   isFinalized,
-  isWorkerSet,
 } from '../../checks';
 import {
   colonyAddressFetcher,
@@ -188,8 +187,7 @@ const Task = ({
     return <LoadingTemplate loadingText={MSG.loadingText} />;
   }
 
-  const isTaskCreator = isCreator(task, walletAddress);
-  const canEdit = canEditTask(task, userRoles, walletAddress);
+  const canEdit = canEditTask(task, userRoles);
 
   return (
     <div className={styles.main}>
@@ -254,7 +252,8 @@ const Task = ({
             <div className={styles.editor}>
               <TaskDomains
                 colonyAddress={colonyAddress}
-                disabled={!canEdit}
+                // Disable the change of domain for now
+                disabled
                 domainId={domainId}
                 draftId={draftId}
               />
@@ -312,7 +311,7 @@ const Task = ({
               </div>
             </Tooltip>
           )}
-          {canCancelTask(task, userRoles, walletAddress) && (
+          {canCancelTask(task, userRoles) && (
             <ActionButton
               appearance={{ theme: 'secondary', size: 'small' }}
               button={ConfirmButton}
@@ -328,7 +327,7 @@ const Task = ({
           {/* Hide when discard confirm is displayed */}
           {!isDiscardConfirmDisplayed && (
             <>
-              {canFinalizeTask(task, userRoles, walletAddress) && (
+              {canFinalizeTask(task, userRoles) && (
                 <ActionButton
                   text={MSG.finalizeTask}
                   submit={ActionTypes.TASK_FINALIZE}
@@ -347,7 +346,7 @@ const Task = ({
                   <FormattedMessage {...MSG.discarded} />
                 </p>
               )}
-              {!isTaskCreator && !isWorkerSet(task) && !isCancelled(task) && (
+              {canRequestToWork(task, walletAddress) && (
                 <TaskRequestWork
                   currentUser={currentUser}
                   task={task}
