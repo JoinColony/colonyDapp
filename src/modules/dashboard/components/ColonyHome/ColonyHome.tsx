@@ -171,7 +171,13 @@ const ColonyHome = ({
 
   const walletAddress = useSelector(walletAddressSelector);
 
-  const userRoles = useTransformer(getUserRoles, [
+  const currentDomainUserRoles = useTransformer(getUserRoles, [
+    domains,
+    filteredDomainId || ROOT_DOMAIN,
+    walletAddress,
+  ]);
+
+  const rootUserRoles = useTransformer(getUserRoles, [
     domains,
     ROOT_DOMAIN,
     walletAddress,
@@ -195,9 +201,14 @@ const ColonyHome = ({
   const nativeTokenRef = useSelector(colonyNativeTokenSelector, colonyArgs);
   const ethTokenRef = useSelector(colonyEthTokenSelector, colonyArgs);
 
-  const transform = useCallback(mergePayload({ colonyAddress }), [
-    colonyAddress,
-  ]);
+  const transform = useCallback(
+    // Use ROOT_DOMAIN if filtered domain id equals 0
+    mergePayload({
+      colonyAddress,
+      domainId: filteredDomainId || ROOT_DOMAIN,
+    }),
+    [colonyAddress, filteredDomainId],
+  );
 
   if (colonyError || addressError) {
     return <Redirect to="/404" />;
@@ -215,7 +226,7 @@ const ColonyHome = ({
         {showRecoverOption &&
         colonyAddress &&
         domains &&
-        canRecoverColony(userRoles) ? (
+        canRecoverColony(rootUserRoles) ? (
           <DialogActionButton
             dialog="ConfirmDialog"
             dialogProps={{
@@ -237,7 +248,7 @@ const ColonyHome = ({
   }
 
   // Eventually this has to be in the proper domain. There's probably going to be a different UI for that
-  const canCreateTask = canAdminister(userRoles) || isFounder(userRoles);
+  const canCreateTask = canAdminister(currentDomainUserRoles);
   const isInRecoveryMode = isInRecoveryModeCheck(colony);
 
   const noFilter = (
@@ -253,7 +264,7 @@ const ColonyHome = ({
         <div className={styles.metaContainer}>
           <ColonyMeta
             colony={colony}
-            canAdminister={!isInRecoveryMode && canAdminister(userRoles)}
+            canAdminister={!isInRecoveryMode && canAdminister(rootUserRoles)}
             domains={domains}
             filteredDomainId={filteredDomainId}
             setFilteredDomainId={setFilteredDomainId}
@@ -317,7 +328,7 @@ const ColonyHome = ({
               filterOption={filterOption}
               ethTokenRef={ethTokenRef}
               nativeTokenRef={nativeTokenRef}
-              showQrCode={isFounder(userRoles)}
+              showQrCode={isFounder(rootUserRoles)}
             />
           </TabPanel>
           <TabPanel>

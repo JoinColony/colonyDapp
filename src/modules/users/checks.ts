@@ -10,6 +10,9 @@ export const canEnterRecoveryMode = (userRoles: ROLES[]) =>
 export const canAdminister = (userRoles: ROLES[]) =>
   userHasRole(userRoles, ROLES.ADMINISTRATION);
 
+export const canFund = (userRoles: ROLES[]) =>
+  userHasRole(userRoles, ROLES.FUNDING);
+
 export const isFounder = (userRoles: ROLES[]) =>
   userHasRole(userRoles, ROLES.ROOT);
 
