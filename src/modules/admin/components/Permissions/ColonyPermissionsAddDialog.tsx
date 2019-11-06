@@ -1,7 +1,6 @@
 import { FormikProps } from 'formik';
 import React, { useCallback, useMemo, useState } from 'react';
 import { defineMessages } from 'react-intl';
-import * as yup from 'yup';
 
 import { ROLES } from '~constants';
 import { Address } from '~types/index';
@@ -9,12 +8,7 @@ import { mergePayload, withKey, mapPayload, pipe } from '~utils/actions';
 import { UserType } from '~immutable/index';
 import { ItemDataType } from '~core/OmniPicker';
 import { ActionTypeString, ActionTypes } from '~redux/index';
-import {
-  useSelector,
-  useDataFetcher,
-  useDataMapFetcher,
-  useTransformer,
-} from '~utils/hooks';
+import { useSelector, useDataFetcher, useTransformer } from '~utils/hooks';
 import { filterUserSelection } from '~utils/arrays';
 
 import SingleUserPicker from '~core/SingleUserPicker';
@@ -26,28 +20,27 @@ import { ActionForm, InputLabel } from '~core/Fields';
 import HookedUserAvatar from '~users/HookedUserAvatar';
 
 import { TEMP_getUserRolesWithRecovery } from '../../../transformers';
-import { userMapFetcher } from '../../../users/fetchers';
 import { getUserPickerData } from '../../../users/transformers';
 import {
   domainsAndRolesFetcher,
   TEMP_userHasRecoveryRoleFetcher,
 } from '../../../dashboard/fetchers';
-import { allUsersAddressesSelector } from '../../../users/selectors';
+import { allUsersSelector } from '../../../users/selectors';
 import PermissionForm from './PermissionForm';
 
-import styles from './ColonyPermissionEditDialog.css';
+import styles from './ColonyPermissionsDialog.css';
 
 const MSG = defineMessages({
   title: {
-    id: 'admin.ColonyPermissionEditDialog.title',
+    id: 'admin.ColonyPermissionsAddDialog.title',
     defaultMessage: 'Add New Role in {domain}',
   },
   selectUser: {
-    id: 'admin.ColonyPermissionEditDialog.selectUser',
+    id: 'admin.ColonyPermissionsAddDialog.selectUser',
     defaultMessage: 'Select Member',
   },
   search: {
-    id: 'admin.ColonyPermissionEditDialog.search',
+    id: 'admin.ColonyPermissionsAssDialog.search',
     defaultMessage: 'Search for a user or paste a wallet address',
   },
 });
@@ -71,10 +64,6 @@ const availableRoles: ROLES[] = [
   ROLES.ARBITRATION,
 ];
 
-const validationSchema = yup.object({
-  user: yup.object().required(),
-});
-
 const UserAvatar = HookedUserAvatar({ fetchUser: false });
 
 const supRenderAvatar = (address: string, item: ItemDataType<UserType>) => {
@@ -83,7 +72,7 @@ const supRenderAvatar = (address: string, item: ItemDataType<UserType>) => {
   return <UserAvatar address={address} user={user} size="xs" />;
 };
 
-const ColonyPermissionEditDialog = ({
+const ColonyPermissionsAddDialog = ({
   colonyAddress,
   cancel,
   close,
@@ -93,10 +82,9 @@ const ColonyPermissionEditDialog = ({
     null,
   );
 
-  const userAddressesInStore = useSelector(allUsersAddressesSelector);
-  const userData = useDataMapFetcher(userMapFetcher, userAddressesInStore);
+  const allUsers = useSelector(allUsersSelector);
 
-  const users = useTransformer(getUserPickerData, [userData]);
+  const users = useTransformer(getUserPickerData, [allUsers]);
 
   const { data: domains } = useDataFetcher(
     domainsAndRolesFetcher,
@@ -169,7 +157,6 @@ const ColonyPermissionEditDialog = ({
           error={ActionTypes.COLONY_DOMAIN_USER_ROLES_SET_ERROR}
           success={ActionTypes.COLONY_DOMAIN_USER_ROLES_SET_SUCCESS}
           transform={transform}
-          validationSchema={validationSchema}
         >
           {({ isSubmitting, isValid }: FormikProps<any>) => {
             const domain = domains[domainId];
@@ -222,6 +209,7 @@ const ColonyPermissionEditDialog = ({
   );
 };
 
-ColonyPermissionEditDialog.displayName = 'admin.ColonyPermissionEditDialog';
+ColonyPermissionsAddDialog.displayName =
+  'admin.Permissions.ColonyPermissionsAddDialog';
 
-export default ColonyPermissionEditDialog;
+export default ColonyPermissionsAddDialog;
