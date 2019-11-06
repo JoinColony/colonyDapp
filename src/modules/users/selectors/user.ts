@@ -40,20 +40,15 @@ const getUsernameFromUserData = (
   user?: FetchableDataRecord<UserRecord>,
 ): string | undefined => user && user.getIn(['record', 'profile', 'username']);
 
-/*
- * Address getters
- */
-const getWalletAddressFromUserData = (
-  users: ImmutableMap<string, FetchableDataRecord<UserRecord>>,
-): Address[] => Object.keys(users.toJS()).filter(key => isAddress(key));
-
 export const allUsersSelector = (state: RootStateRecord): UsersMap =>
   state.getIn([ns, USERS_ALL_USERS, USERS_USERS]) || ImmutableMap();
 
-export const allUsersAddressesSelector = createSelector(
-  allUsersSelector,
-  users => getWalletAddressFromUserData(users),
-);
+export const allUsersAddressesSelector = (state: RootStateRecord) =>
+  allUsersSelector(state);
+
+allUsersAddressesSelector.transform = (
+  users: ImmutableMap<string, FetchableDataRecord<UserRecord>>,
+): Address[] => Object.keys(users.toJS()).filter(key => isAddress(key));
 
 /*
  * Username input selectors
