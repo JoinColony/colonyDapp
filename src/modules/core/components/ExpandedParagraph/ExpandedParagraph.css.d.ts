@@ -1,2 +1,1 @@
-export const moreButtonContainer: string;
-export const hideButtonContainer: string;
+export const controlContainer: string;

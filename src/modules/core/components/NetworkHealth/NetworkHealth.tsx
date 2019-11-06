@@ -1,5 +1,10 @@
 import React, { useEffect } from 'react';
-import { injectIntl, defineMessages, IntlShape } from 'react-intl';
+import {
+  injectIntl,
+  defineMessages,
+  IntlShape,
+  FormattedMessage,
+} from 'react-intl';
 import { useDispatch } from 'redux-react-hook';
 
 import { ConnectionType } from '~immutable/index';
@@ -9,6 +14,7 @@ import { useSelector } from '~utils/hooks';
 import { NetworkHealthIconSize } from './types';
 import { connection as connectionSelector } from '../../selectors';
 import getNetworkHealth from './getNetworkHealth';
+import getNetworkBusyState from './getNetworkBusyState';
 import NetworkHealthIcon from './NetworkHealthIcon';
 import NetworkHealthContent from './NetworkHealthContent';
 import styles from './NetworkHealth.css';
@@ -24,6 +30,10 @@ const MSG = defineMessages({
       2 {fair}
       1 {poor}
     }`,
+  },
+  busyLabel: {
+    id: 'core.NetworkHealth.busyLabel',
+    defaultMessage: 'Busy...',
   },
 });
 
@@ -57,6 +67,7 @@ const NetworkHealth = ({
 
   const connection: ConnectionType = useSelector(connectionSelector);
   const networkItems = getNetworkHealth(connection);
+  const busyItems = getNetworkBusyState(connection);
 
   // Errors are important so we set the whole thing to 1 if there are a lot (> 1)
   const health =
@@ -66,6 +77,7 @@ const NetworkHealth = ({
           networkItems.reduce((sum, current) => sum + current.itemHealth, 0) /
             networkItems.length,
         );
+  const isNetworkBusy = busyItems.some(({ busyState }) => busyState === true);
 
   return (
     <div className={className}>
@@ -76,6 +88,7 @@ const NetworkHealth = ({
             close={close}
             health={health}
             networkItems={networkItems}
+            networkBusy={isNetworkBusy}
           />
         )}
         placement="bottom"
@@ -86,6 +99,11 @@ const NetworkHealth = ({
           className={styles.main}
           title={formatMessage(MSG.statusTitle, { health })}
         >
+          {isNetworkBusy && (
+            <span className={styles.busy}>
+              <FormattedMessage {...MSG.busyLabel} />
+            </span>
+          )}
           <NetworkHealthIcon health={health} appearance={appearance} />
         </button>
       </Popover>

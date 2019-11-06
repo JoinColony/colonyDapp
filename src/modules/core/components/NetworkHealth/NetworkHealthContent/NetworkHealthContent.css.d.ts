@@ -7,3 +7,4 @@ export const healthDetails: string;
 export const actionsContainer: string;
 export const closeButton: string;
 export const content: string;
+export const expandedSectionContainer: string;

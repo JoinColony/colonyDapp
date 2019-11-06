@@ -39,19 +39,29 @@
   align-self: flex-start;
 }
 
-.actionsContainer button {
-  padding: 0;
-}
-
 .closeButton {
   composes: button from '~styles/reset.css';
+
+  /*
+  * @NOTE Use of !important to reset values inherited from the user navigation
+  * component, directly passed down through elements
+  */
+  padding: 0 !important;
   stroke: var(--text);
 }
 
 .closeButton i {
-  padding: 0;
+  /*
+  * @NOTE Use of !important to reset values inherited from the user navigation
+  * component, directly passed down through elements
+  */
+  padding: 0 !important;
 }
 
 .content {
-  padding: 10px 10px 15px 10px;
+  padding: 10px 10px 0px 10px;
+}
+
+.expandedSectionContainer {
+  padding: 0 0 15px 0;
 }
