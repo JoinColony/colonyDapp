@@ -1,5 +1,5 @@
 import { FormikProps } from 'formik';
-import React, { useCallback, useState } from 'react';
+import React, { useCallback, useMemo, useState } from 'react';
 import { defineMessages } from 'react-intl';
 import * as yup from 'yup';
 
@@ -144,6 +144,14 @@ const ColonyPermissionEditDialog = ({
     [colonyAddress, domainId],
   );
 
+  const user = useMemo(
+    () =>
+      selectedUserAddress
+        ? users.find(({ id }) => id === selectedUserAddress)
+        : null,
+    [selectedUserAddress, users],
+  );
+
   return (
     <Dialog cancel={cancel}>
       {!domains ? (
@@ -154,6 +162,7 @@ const ColonyPermissionEditDialog = ({
           initialValues={{
             domainId,
             roles,
+            user,
           }}
           onSuccess={close}
           submit={ActionTypes.COLONY_DOMAIN_USER_ROLES_SET}
