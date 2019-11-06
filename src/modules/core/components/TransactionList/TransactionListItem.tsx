@@ -150,6 +150,11 @@ const TransactionListItem = ({
               hash={transaction.hash}
               text={MSG.buttonEtherscan}
             />
+            <TransactionLink
+              className={styles.mobileLink}
+              hash={transaction.hash}
+              text={MSG.buttonEtherscan}
+            />
           </div>
         )}
         <Numeral
