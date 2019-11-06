@@ -1,11 +1,21 @@
+
+.overflowPrevention {
+  width: 130px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
 .primaryText {
+  composes: overflowPrevention;
   font-weight: var(--weight-medium);
   color: var(--grey-1);
 }
 
 .secondaryText {
+  composes: overflowPrevention;
   margin-top: 2px;
   font-size: var(--size-small);
+  white-space: nowrap;
   color: var(--grey-3);
   letter-spacing: 0.5px;
 }
