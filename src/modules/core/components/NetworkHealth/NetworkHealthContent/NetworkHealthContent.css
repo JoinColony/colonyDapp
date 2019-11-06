@@ -41,15 +41,21 @@
 
 .closeButton {
   composes: button from '~styles/reset.css';
-  stroke: var(--text);
 
-  &, & i {
-    /*
-    * @NOTE Use of !important to reset values inherited from the user navigation
-    * component, directly passed down through elements
-    */
-    padding: 0 !important;
-  }
+  /*
+  * @NOTE Use of !important to reset values inherited from the user navigation
+  * component, directly passed down through elements
+  */
+  padding: 0 !important;
+  stroke: var(--text);
+}
+
+.closeButton i {
+  /*
+  * @NOTE Use of !important to reset values inherited from the user navigation
+  * component, directly passed down through elements
+  */
+  padding: 0 !important;
 }
 
 .content {
