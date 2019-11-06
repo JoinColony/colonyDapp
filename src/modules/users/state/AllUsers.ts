@@ -17,10 +17,14 @@ export type ColoniesMap = ImmutableMap<
   FetchableDataRecord<UserColonies>
 > & { toJS(): { [userAddress: string]: FetchableDataType<Address[]> } };
 
+export type UsersMapType = {
+  [userAddress: string]: FetchableDataType<UserType>;
+};
+
 export type UsersMap = ImmutableMap<
   Address,
   FetchableDataRecord<UserRecord>
-> & { toJS(): { [userAddress: string]: FetchableDataType<UserType> } };
+> & { toJS(): UsersMapType };
 
 export interface AllUsersProps {
   [USERS_COLONIES]: ColoniesMap;

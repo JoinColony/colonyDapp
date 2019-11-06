@@ -23,15 +23,15 @@ import {
 import PermissionForm from './PermissionForm';
 import { availableRoles } from './constants';
 
-import styles from './ColonyPermissionEditDialog.css';
+import styles from './ColonyPermissionsDialog.css';
 
 const MSG = defineMessages({
   title: {
-    id: 'admin.ColonyPermissionEditDialog.title',
+    id: 'admin.ColonyPermissionsEditDialog.title',
     defaultMessage: 'Edit user roles in {domain}',
   },
   selectUser: {
-    id: 'admin.ColonyPermissionEditDialog.selectUser',
+    id: 'admin.ColonyPermissionsEditDialog.selectUser',
     defaultMessage: 'Selected Member',
   },
 });
@@ -47,7 +47,7 @@ interface Props {
   error: ActionTypeString;
 }
 
-const ColonyPermissionEditDialog = ({
+const ColonyPermissionsEditDialog = ({
   colonyAddress,
   cancel,
   close,
@@ -163,6 +163,7 @@ const ColonyPermissionEditDialog = ({
   );
 };
 
-ColonyPermissionEditDialog.displayName = 'admin.ColonyPermissionEditDialog';
+ColonyPermissionsEditDialog.displayName =
+  'admin.Permissions.ColonyPermissionsEditDialog';
 
-export default ColonyPermissionEditDialog;
+export default ColonyPermissionsEditDialog;
