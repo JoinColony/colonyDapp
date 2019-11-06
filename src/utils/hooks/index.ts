@@ -157,7 +157,7 @@ export const useSelector = <
       : (select as { transform?: <T>(obj: T) => any }).transform ||
         defaultTransform;
 
-  return useMemo<MaybeSelected<typeof data>>(() => transformFn(data), [
+  return useMemo<ReturnType<typeof transformFn>>(() => transformFn(data), [
     data,
     transformFn,
   ]);
@@ -275,8 +275,9 @@ export const useDataMapFetcher = <T>(
   const memoizedKeys = useMemoWithFlatArray(() => keys, keys);
 
   const dispatch = useDispatch();
+  const mapState = useCallback(state => select(state, keys), [keys, select]);
   const allData: ImmutableMap<string, FetchableDataRecord<T>> = useMappedState(
-    useCallback(state => select(state, memoizedKeys), [select, memoizedKeys]),
+    mapState,
   );
 
   const isFirstMount = useRef(true);
