@@ -1,12 +1,7 @@
-import { KeyedDataObject } from '~types/index';
-import { UserType } from '~immutable/index';
+import { UsersMapType } from './state/index';
 
-export const getUserPickerData = (
-  userData: KeyedDataObject<UserType | null | undefined>[],
-) =>
-  userData
-    .filter(({ data }) => !!data)
-    .map(({ data, key }) => ({
-      id: key,
-      ...data,
-    }));
+export const getUserPickerData = (userData: UsersMapType) =>
+  Object.entries(userData).map(([address, { record }]) => ({
+    id: address,
+    ...record,
+  }));

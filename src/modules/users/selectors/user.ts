@@ -33,9 +33,6 @@ import {
   UsersMap,
 } from '../state';
 
-/*
- * Username getters
- */
 const getUsernameFromUserData = (
   user?: FetchableDataRecord<UserRecord>,
 ): string | undefined => user && user.getIn(['record', 'profile', 'username']);
@@ -93,13 +90,13 @@ Object.defineProperty(usersExceptSelector, 'transform', {
       .toJS(),
 });
 
-export const usersSelector = (
-  state: RootStateRecord,
+export const specificUsersSelector = (state: RootStateRecord): UsersMap =>
+  state.getIn([ns, USERS_ALL_USERS, USERS_USERS]);
+
+specificUsersSelector.filter = (
+  users: UsersMap = ImmutableMap() as UsersMap,
   addresses: Address[],
-): UsersMap =>
-  (state.getIn([ns, USERS_ALL_USERS, USERS_USERS]) || ImmutableMap()).filter(
-    (_, address) => addresses.includes(address),
-  );
+) => users.filter((_, address) => addresses.includes(address));
 
 /*
  * Current user input selectors

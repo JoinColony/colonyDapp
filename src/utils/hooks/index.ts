@@ -1,4 +1,4 @@
-import { Collection, Map as ImmutableMap } from 'immutable';
+import { Map as ImmutableMap } from 'immutable';
 import { Selector } from 'reselect';
 import { useEffect, useCallback, useMemo, useRef } from 'react';
 import { useDispatch, useMappedState } from 'redux-react-hook';
@@ -30,10 +30,11 @@ interface DataSubscriber<S> {
 }
 
 type DataMapFetcher<T> = {
-  select: (
+  select: ((
     rootState: RootStateRecord,
-    keys: string[],
-  ) => ImmutableMap<string, FetchableDataRecord<T>>;
+  ) => ImmutableMap<string, FetchableDataRecord<T>>) & {
+    filter?: (data: any, ...args: any[]) => any;
+  };
   fetch: (key: any) => Action<any>;
   ttl?: number;
 };
@@ -128,6 +129,8 @@ const defaultTransform = <T extends { toJS(): any }>(
   obj: T,
   // The return type of this could be improved if there was a way
   // to map from immutable to non-immutable types
+  // eslint-disable-next-line no-unused-vars, @typescript-eslint/no-unused-vars
+  ...args: any[]
 ) => (obj && typeof obj.toJS === 'function' ? obj.toJS() : obj);
 
 /*
@@ -135,12 +138,13 @@ const defaultTransform = <T extends { toJS(): any }>(
  * (immutable) redux state and return a mutable version of it.
  */
 export const useSelector = <
-  S extends (...args: any[]) => any & { transform?: <T>(obj: T) => any },
+  S extends (
+    ...args: any[]
+  ) => any & { transform?: <T>(obj: T, ...args: any[]) => any },
   A extends RemoveFirstFromTuple<Parameters<S>> // Omit the first arg (state)
 >(
   select: S,
   args: A = [] as A,
-  transform?: (obj: Collection<any, any>) => any,
 ) => {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   const mapState = useCallback(state => select(state, ...args), [
@@ -152,15 +156,13 @@ export const useSelector = <
   const data: ReturnType<typeof select> = useMappedState(mapState);
 
   const transformFn =
-    typeof transform === 'function'
-      ? transform
-      : (select as { transform?: <T>(obj: T) => any }).transform ||
-        defaultTransform;
+    (select as { transform?: <T>(obj: T, ...args: A) => any }).transform ||
+    defaultTransform;
 
-  return useMemo<ReturnType<typeof transformFn>>(() => transformFn(data), [
-    data,
-    transformFn,
-  ]);
+  return useMemo<ReturnType<typeof transformFn>>(
+    () => transformFn(data, ...args),
+    [args, data, transformFn],
+  );
 };
 
 /*
@@ -268,17 +270,20 @@ export const useDataMapFetcher = <T>(
   keys: string[],
   { ttl: ttlOverride }: DataFetcherOptions = {},
 ) => {
-  /*
-   * Created memoized keys to guard the rest of the function against
-   * unnecessary updates.
-   */
-  const memoizedKeys = useMemoWithFlatArray(() => keys, keys);
-
   const dispatch = useDispatch();
-  const mapState = useCallback(state => select(state, keys), [keys, select]);
-  const allData: ImmutableMap<string, FetchableDataRecord<T>> = useMappedState(
+
+  const mapState = useCallback(state => select(state), [select]);
+  const rawData: ImmutableMap<string, FetchableDataRecord<T>> = useMappedState(
     mapState,
   );
+
+  let allData;
+
+  if (typeof select.filter == 'function') {
+    allData = select.filter(rawData, keys);
+  } else {
+    allData = rawData;
+  }
 
   const isFirstMount = useRef(true);
   const ttl = ttlOverride || ttlDefault;
@@ -290,10 +295,10 @@ export const useDataMapFetcher = <T>(
    */
   const keysToFetchFor = useMemo(
     () =>
-      memoizedKeys.filter(key =>
-        shouldFetchData(allData.get(key), ttl, isFirstMount.current, [key]),
+      keys.filter(key =>
+        shouldFetchData(rawData.get(key), ttl, isFirstMount.current, [key]),
       ),
-    [allData, memoizedKeys, ttl],
+    [rawData, keys, ttl],
   );
 
   /*
@@ -302,7 +307,7 @@ export const useDataMapFetcher = <T>(
   useEffect(() => {
     isFirstMount.current = false;
     keysToFetchFor.map(key => dispatch(fetch(key)));
-  }, [keysToFetchFor, dispatch, fetch, memoizedKeys]);
+  }, [keysToFetchFor, dispatch, fetch]);
 
   /*
    * Return an array of data objects with keys by mapping over the keys
@@ -312,16 +317,16 @@ export const useDataMapFetcher = <T>(
     KeyedDataObject<MaybeFetchedData<ReturnType<typeof allData['get']>>>[]
   >(
     () =>
-      memoizedKeys.map(key => {
+      keys.map(key => {
         const data = allData.get(key);
         return {
           key,
           data: transformSelectedData(data),
-          isFetching: keysToFetchFor.includes(key) && isFetchingData(data),
+          isFetching: !!(keysToFetchFor.includes(key) && isFetchingData(data)),
           error: data && data.error ? data.error : null,
         };
       }),
-    [memoizedKeys, allData, keysToFetchFor],
+    [keys, allData, keysToFetchFor],
   );
 };
 
