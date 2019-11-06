@@ -61,7 +61,9 @@ const userProfilesReducer: ReducerType<UsersMap> = (
       const profile = UserProfile(payload);
       const recordPath = [walletAddress, 'record'];
       return state.getIn(recordPath)
-        ? state.setIn([...recordPath, 'profile'], profile)
+        ? state
+            .setIn([walletAddress, 'isFetching'], false)
+            .setIn([...recordPath, 'profile'], profile)
         : state
             .setIn([walletAddress, 'isFetching'], false)
             .setIn(recordPath, User({ profile }));
