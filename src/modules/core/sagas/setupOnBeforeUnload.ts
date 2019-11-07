@@ -1,7 +1,6 @@
 import { getContext } from 'redux-saga/effects';
 
 // Do NOT do this at home! We import the store directly here because we need a sync API (that sagas don't provide)
-import { ConnectionType } from '~immutable/index';
 import store from '~redux/createReduxStore';
 
 import { DDB } from '../../../lib/database';
@@ -25,9 +24,8 @@ const pinnerIsBusy = (ipfsNode: IPFSNode) =>
 const ddbIsBusy = (ddb: DDB) => ddb.busy;
 
 const networkHealthIsPoor = () => {
-  const connection: ConnectionType = connectionSelector(
-    (store as any).getState(),
-  );
+  const connectionRecord = connectionSelector((store as any).getState());
+  const connection = connectionRecord.toJS();
   const networkItems = getNetworkHealth(connection);
   /*
    * @NOTE This is (currently) exactly the same as the logic inside the `<NetworkHealth />` component
