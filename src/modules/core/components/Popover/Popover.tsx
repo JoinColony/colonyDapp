@@ -106,16 +106,24 @@ class Popover extends Component<Props, State> {
   ) {
     const { isOpen: isOpenProp } = this.props;
     const { isOpen } = this.state;
+    const isFirstOpen = isOpen && !prevOpen;
     if (
-      isOpen &&
-      !prevOpen &&
+      isFirstOpen &&
       closeOnOutsideClick &&
       document.body &&
       (trigger === 'click' || !trigger)
     ) {
       document.body.addEventListener('click', this.handleOutsideClick, true);
+    } else if (isFirstOpen && trigger === 'hover' && this.refNode) {
+      /*
+       * Incase the `ref` contains a `disabled` button, we need to use the native `mouseleave` event,
+       * as React doesn't call `onMouseLeave` for `disabled` buttons.
+       *
+       * See: https://github.com/facebook/react/issues/4251
+       */
+      this.refNode.addEventListener('mouseleave', this.close);
     } else if (!isOpen && prevOpen) {
-      this.removeOutsideClickListener();
+      this.removeEventListeners();
     }
     if (isOpenProp !== prevIsOpenProp) {
       // We are guarded perfectly fine against this, only when the outside prop changes we change the state as well
@@ -128,10 +136,13 @@ class Popover extends Component<Props, State> {
   }
 
   componentWillUnmount() {
-    this.removeOutsideClickListener();
+    this.removeEventListeners();
   }
 
-  removeOutsideClickListener = () => {
+  removeEventListeners = () => {
+    if (this.refNode) {
+      this.refNode.removeEventListener('mouseleave', this.close);
+    }
     if (document.body) {
       document.body.removeEventListener('click', this.handleOutsideClick, true);
     }
@@ -159,7 +170,13 @@ class Popover extends Component<Props, State> {
         ? {
             hover: {
               onMouseEnter: this.requestOpen,
-              onMouseLeave: this.close,
+              /*
+               * Current version of React (16.11.0 as of now) does not call `onMouseLeave` for
+               * `disabled` buttons. Thus, we use a native event listener in `componentDidUpdate`.
+               *
+               * However, this may work in future versions.
+               */
+              // onMouseLeave: this.close,
             },
             click: { onClick: this.toggle },
             disabled: null,

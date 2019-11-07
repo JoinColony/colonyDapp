@@ -228,6 +228,17 @@ class ItemsList extends Component<Props, State> {
       }
       return null;
     };
+
+    let tooltipContent;
+    if (disabledText) {
+      tooltipContent =
+        typeof disabledText === 'string' ? (
+          <>{disabledText}</>
+        ) : (
+          <FormattedMessage {...disabledText} />
+        );
+    }
+
     return (
       <Fragment key={id}>
         <li
@@ -237,26 +248,22 @@ class ItemsList extends Component<Props, State> {
               parseInt(styles.paddingValue, 10)}px`,
           }}
         >
-          <Tooltip
-            content={
-              typeof disabledText === 'string' ? (
-                <>{disabledText}</>
-              ) : (
-                <FormattedMessage {...disabledText} />
-              )
-            }
-            placement="bottom"
-            trigger={disabledText ? 'hover' : 'disabled'}
-          >
-            <button
-              disabled={disabled}
-              type="button"
-              className={id < 0 ? styles.itemHeading : styles.item}
-              onClick={() => this.handleSelectItem(id)}
-              title={decoratedName}
-            >
-              {decoratedName}
-            </button>
+          <Tooltip content={tooltipContent} placement="bottom">
+            {/*
+             * Must use a `div` here, as `mouseleave` event isn't fired on buttons that are `disabled`.
+             * See: https://github.com/facebook/react/issues/4251
+             */}
+            <div>
+              <button
+                disabled={disabled}
+                type="button"
+                className={id < 0 ? styles.itemHeading : styles.item}
+                onClick={() => this.handleSelectItem(id)}
+                title={decoratedName}
+              >
+                {decoratedName}
+              </button>
+            </div>
           </Tooltip>
         </li>
         {recursiveChildRender()}
