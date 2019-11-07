@@ -106,6 +106,7 @@ export const TEMP_getUserHasColonyRole: ContractEventQuery<
   context,
   prepare: prepareColonyClientQuery,
   async execute(colonyClient, { userAddress = ZERO_ADDRESS }) {
+    if (!userAddress || userAddress === ZERO_ADDRESS) return false;
     const { hasRole } = await colonyClient.hasColonyRole.call({
       address: userAddress,
       domainId: ROOT_DOMAIN,

@@ -31,6 +31,10 @@ import PermissionForm from './PermissionForm';
 import styles from './ColonyPermissionsDialog.css';
 
 const MSG = defineMessages({
+  errorNoUserGiven: {
+    id: 'admin.ColonyPermissionsAddDialog.errorNoUserGiven',
+    defaultMessage: 'No user selected',
+  },
   title: {
     id: 'admin.ColonyPermissionsAddDialog.title',
     defaultMessage: 'Add New Role in {domain}',
@@ -158,7 +162,7 @@ const ColonyPermissionsAddDialog = ({
           success={ActionTypes.COLONY_DOMAIN_USER_ROLES_SET_SUCCESS}
           transform={transform}
         >
-          {({ isSubmitting, isValid }: FormikProps<any>) => {
+          {({ isSubmitting }: FormikProps<any>) => {
             const domain = domains[domainId];
             return (
               <div className={styles.dialogContainer}>
@@ -196,7 +200,7 @@ const ColonyPermissionsAddDialog = ({
                     appearance={{ theme: 'primary', size: 'large' }}
                     loading={isSubmitting}
                     text={{ id: 'button.confirm' }}
-                    disabled={!isValid}
+                    disabled={!user}
                     type="submit"
                   />
                 </DialogSection>
