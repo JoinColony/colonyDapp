@@ -1,4 +1,4 @@
-describe('Goes to user wizard', () => {
+describe('Creates a Colony', () => {
   it('Use a TrufflePig wallet', () => {
     cy.get('button')
       .contains('TrufflePig')
@@ -11,9 +11,9 @@ describe('Goes to user wizard', () => {
      */
     cy.get('button[data-test="trufflepigAccountSelector"]').click();
     /*
-     * Select the second entry (Account 1), focus it, and click it
+     * Select the fourth entry (Account 3), focus it, and click it
      */
-    cy.get('li#accountIndex-listbox-entry-1')
+    cy.get('li#accountIndex-listbox-entry-3')
       .trigger('mouseover')
       .click();
     /*
@@ -31,14 +31,9 @@ describe('Goes to user wizard', () => {
 
   it('Go through the flow and claim a (ENS) username', () => {
     /*
-     * Load the usernames fixture
+     * Fill the username form
      */
-    cy.fixture('users').then(({ ensName }) => {
-      /*
-       * Fill the username form
-       */
-      cy.get('[data-test=claimUsernameInput]').type(ensName);
-    });
+    cy.get('[data-test=claimUsernameInput]').type('cypresscreatecolonyuser');
     /*
      * Submit your selected username
      */
@@ -50,12 +45,6 @@ describe('Goes to user wizard', () => {
       .click();
 
     cy.confirmTx();
-
-    /*
-     * Wait a spell, it seems that the spinner on the button prevents
-     * cypress to fetch the Gas Station hook.
-     * This way, we make sure the modal is closed by the time it tries to.
-     */
   });
 
   it('Open the create colony wizard', () => {
@@ -74,13 +63,7 @@ describe('Goes to user wizard', () => {
       .contains('Create a Colony')
       .click();
   });
-  /*
-   * Please keep in mind that the test will not work on rerun
-   * since the username step will be skipped
-   */
-});
 
-describe('Creates a new profile', () => {
   it('Fill out (ENS) colonyName in second wizard step', () => {
     /*
      * Load the colonyNames fixture
@@ -89,18 +72,19 @@ describe('Creates a new profile', () => {
       /*
        * Fill the colonyName form
        */
-      cy.get('input[data-test="claimColonyNameInput"]', {
-        timeout: 60000,
-      }).type(colonyName);
-
       cy.get('input[data-test="claimColonyDisplayNameInput"]').type(
         displayName,
       );
+
+      cy.get('input[data-test="claimColonyNameInput"]').type(colonyName);
     });
+
     /*
      * Submit your selected colonyName
      */
-    cy.get('button[data-test="claimColonyNameConfirm"]').click();
+    cy.get('button[data-test="claimColonyNameConfirm"]', {
+      timeout: 6000,
+    }).click();
   });
 
   it('Fill out token details in fourth wizard step', () => {
@@ -127,29 +111,24 @@ describe('Creates a new profile', () => {
     cy.get('button[data-test="userInputConfirm"]', { timeout: 60000 }).click();
   });
 
-  it('Sign the transaction', () => {
-    /*
-     * Check if the gas station is open
-     */
-    cy.get('div[data-test="gasStation"]', { timeout: 60000 }).should(
-      'be.visible',
-    );
-
-    /*
-     * Currently we have 9 transactions, until this is
-     * simplified we still want to test
-     */
-
-    cy.get('ul>li').each((val, index) => {
+  it('Sign the transactions', () => {
+    cy.get('ul[data-test="gasStationGroupedTransaction"] > li').each(() => {
       /*
        * Confirm the transactions
        */
       cy.confirmTx();
+    });
+  });
 
+  it('Verifies the colony was created', () => {
+    cy.fixture('colonies').then(({ colonyName }) => {
       /*
-       * Verify that transactions have succeeded
+       * The app redirects to the colony dashboard
        */
-      cy.verifyTxByIndex(index);
+      cy.location('pathname', { timeout: 60000 }).should(
+        'eq',
+        `/colony/${colonyName}`,
+      );
     });
   });
 });
