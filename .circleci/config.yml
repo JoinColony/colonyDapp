@@ -138,6 +138,7 @@ jobs:
       - image: joincolony/circleci-cypress
     environment:
       NETWORK: local
+      CHAIN_ID: 1337
       LOADER: trufflepig
       COLONY_NETWORK_ENS_NAME: joincolony.test
       ETHPLORER_API_KEY: freekey
