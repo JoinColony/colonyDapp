@@ -108,7 +108,7 @@ export const canRequestToWork = (task: TaskType, userAddress: Address) =>
     task.workerAddress ||
     isCreator(task, userAddress) ||
     hasRequestedToWork(task, userAddress)
-  );
+  ) && isActive(task);
 
 export const canFinalizeTask = (task: TaskType, roles: ROLES[]) =>
   task &&
