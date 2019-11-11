@@ -264,6 +264,7 @@ const Task = ({
                 disabled={!canEdit}
                 draftId={draftId}
                 skillId={skillId}
+                domainId={domainId}
               />
             </div>
             <div className={styles.editor}>
@@ -272,6 +273,7 @@ const Task = ({
                 disabled={!canEdit}
                 draftId={draftId}
                 dueDate={dueDate}
+                domainId={domainId}
               />
             </div>
           </section>
