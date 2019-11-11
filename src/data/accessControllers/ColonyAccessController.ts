@@ -61,7 +61,7 @@ class ColonyAccessController extends AbstractAccessController<
 
   async save({ onlyDetermineAddress }: { onlyDetermineAddress: boolean }) {
     if (!onlyDetermineAddress) {
-      const isAllowed = await this.can('is-founder', this.walletAddress, {});
+      const isAllowed = await this.can('is-root', this.walletAddress, {});
       if (!isAllowed) {
         throw new Error('Cannot create colony database, user not allowed');
       }
