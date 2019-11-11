@@ -155,6 +155,7 @@ export const createTask: Command<
     await taskStore.append(
       createEvent(EventTypes.COMMENT_STORE_CREATED, {
         commentsStoreAddress,
+        domainId,
       }),
     );
 
@@ -190,6 +191,7 @@ export const setTaskTitle: Command<
   {
     currentTitle: string | void;
     title: string;
+    domainId: number;
   },
   {
     event: Event<EventTypes.TASK_TITLE_SET>;
@@ -200,11 +202,12 @@ export const setTaskTitle: Command<
   context: [Context.COLONY_MANAGER, Context.DDB_INSTANCE, Context.WALLET],
   prepare: prepareTaskStoreCommand,
   schema: SetTaskTitleCommandArgsSchema,
-  async execute(taskStore, { currentTitle, title }) {
+  async execute(taskStore, { currentTitle, title, domainId }) {
     if (title === currentTitle) return null;
     const eventHash = await taskStore.append(
       createEvent(EventTypes.TASK_TITLE_SET, {
         title,
+        domainId,
       }),
     );
     return {
@@ -220,6 +223,7 @@ export const setTaskDescription: Command<
   {
     currentDescription: string | void;
     description: string;
+    domainId: number;
   },
   {
     event: Event<EventTypes.TASK_DESCRIPTION_SET>;
@@ -230,13 +234,14 @@ export const setTaskDescription: Command<
   context: [Context.COLONY_MANAGER, Context.DDB_INSTANCE, Context.WALLET],
   prepare: prepareTaskStoreCommand,
   schema: SetTaskDescriptionCommandArgsSchema,
-  async execute(taskStore, { currentDescription, description }) {
+  async execute(taskStore, { currentDescription, description, domainId }) {
     if (description === currentDescription) {
       return null;
     }
     const eventHash = await taskStore.append(
       createEvent(EventTypes.TASK_DESCRIPTION_SET, {
         description,
+        domainId,
       }),
     );
     return {
@@ -253,6 +258,7 @@ export const setTaskDueDate: Command<
   TaskStoreMetadata,
   {
     dueDate?: number;
+    domainId: number;
   },
   {
     event: Event<EventTypes.DUE_DATE_SET>;
@@ -263,10 +269,11 @@ export const setTaskDueDate: Command<
   context: [Context.COLONY_MANAGER, Context.DDB_INSTANCE, Context.WALLET],
   prepare: prepareTaskStoreCommand,
   schema: SetTaskDueDateCommandArgsSchema,
-  async execute(taskStore, { dueDate }) {
+  async execute(taskStore, { dueDate, domainId }) {
     const eventHash = await taskStore.append(
       createEvent(EventTypes.DUE_DATE_SET, {
         dueDate,
+        domainId,
       }),
     );
     return {
@@ -281,6 +288,7 @@ export const setTaskSkill: Command<
   TaskStoreMetadata,
   {
     skillId?: number;
+    domainId: number;
   },
   {
     event: Event<EventTypes.SKILL_SET>;
@@ -291,10 +299,11 @@ export const setTaskSkill: Command<
   context: [Context.COLONY_MANAGER, Context.DDB_INSTANCE, Context.WALLET],
   prepare: prepareTaskStoreCommand,
   schema: SetTaskSkillCommandArgsSchema,
-  async execute(taskStore, { skillId }) {
+  async execute(taskStore, { skillId, domainId }) {
     const eventHash = await taskStore.append(
       createEvent(EventTypes.SKILL_SET, {
         skillId,
+        domainId,
       }),
     );
     return {
@@ -338,6 +347,7 @@ export const sendWorkInvite: Command<
   TaskStoreMetadata,
   {
     workerAddress: Address;
+    domainId: number;
   },
   {
     event: Event<EventTypes.WORK_INVITE_SENT>;
@@ -348,10 +358,11 @@ export const sendWorkInvite: Command<
   context: [Context.COLONY_MANAGER, Context.DDB_INSTANCE, Context.WALLET],
   prepare: prepareTaskStoreCommand,
   schema: SendWorkInviteCommandArgsSchema,
-  async execute(taskStore, { workerAddress }) {
+  async execute(taskStore, { workerAddress, domainId }) {
     const eventHash = await taskStore.append(
       createEvent(EventTypes.WORK_INVITE_SENT, {
         workerAddress,
+        domainId,
       }),
     );
     return {
@@ -408,6 +419,7 @@ export const setTaskPayout: Command<
   {
     amount: BigNumber;
     token: string;
+    domainId: number;
   },
   {
     event: Event<EventTypes.PAYOUT_SET>;
@@ -418,11 +430,12 @@ export const setTaskPayout: Command<
   context: [Context.COLONY_MANAGER, Context.DDB_INSTANCE, Context.WALLET],
   prepare: prepareTaskStoreCommand,
   schema: SetTaskPayoutCommandArgsSchema,
-  async execute(taskStore, { amount, token }) {
+  async execute(taskStore, { amount, token, domainId }) {
     const eventHash = await taskStore.append(
       createEvent(EventTypes.PAYOUT_SET, {
         amount: amount.toString(10),
         token,
+        domainId,
       }),
     );
     return {
@@ -461,6 +474,7 @@ export const assignWorker: Command<
   {
     workerAddress: Address;
     currentWorkerAddress: Address | null;
+    domainId: number;
   },
   {
     event: Event<EventTypes.WORKER_ASSIGNED>;
@@ -470,13 +484,14 @@ export const assignWorker: Command<
   name: 'assignWorker',
   context: [Context.COLONY_MANAGER, Context.DDB_INSTANCE, Context.WALLET],
   prepare: prepareTaskStoreCommand,
-  async execute(taskStore, { workerAddress, currentWorkerAddress }) {
+  async execute(taskStore, { workerAddress, currentWorkerAddress, domainId }) {
     if (workerAddress === currentWorkerAddress) {
       return null;
     }
     const eventHash = await taskStore.append(
       createEvent(EventTypes.WORKER_ASSIGNED, {
         workerAddress,
+        domainId,
       }),
     );
     return {
@@ -492,6 +507,7 @@ export const unassignWorker: Command<
   {
     workerAddress: Address;
     userAddress: Address;
+    domainId: number;
   },
   {
     event: Event<EventTypes.WORKER_UNASSIGNED>;
@@ -501,11 +517,12 @@ export const unassignWorker: Command<
   name: 'unassignWorker',
   context: [Context.COLONY_MANAGER, Context.DDB_INSTANCE, Context.WALLET],
   prepare: prepareTaskStoreCommand,
-  async execute(taskStore, { workerAddress, userAddress }) {
+  async execute(taskStore, { workerAddress, userAddress, domainId }) {
     const eventHash = await taskStore.append(
       createEvent(EventTypes.WORKER_UNASSIGNED, {
         workerAddress,
         userAddress,
+        domainId,
       }),
     );
     return {
@@ -525,6 +542,7 @@ export const finalizeTask: Command<
     paymentTokenAddress?: Address;
     workerAddress: Address;
     transactionHash: string;
+    domainId: number;
   },
   {
     event: Event<EventTypes.TASK_FINALIZED>;
@@ -555,6 +573,7 @@ export const cancelTask: Command<
   TaskStoreMetadata,
   {
     draftId: TaskDraftId;
+    domainId: number;
   },
   {
     event: Event<EventTypes.TASK_CANCELLED>;
@@ -600,7 +619,10 @@ export const cancelTask: Command<
     };
   },
   schema: CancelTaskCommandArgsSchema,
-  async execute({ colonyStore, colonyTaskIndexStore, taskStore }, { draftId }) {
+  async execute(
+    { colonyStore, colonyTaskIndexStore, taskStore },
+    { draftId, domainId },
+  ) {
     // backwards-compatibility Colony task index store
     const store = colonyTaskIndexStore || colonyStore;
     if (!store) {
@@ -611,6 +633,7 @@ export const cancelTask: Command<
     const eventHash = await taskStore.append(
       createEvent(EventTypes.TASK_CANCELLED, {
         status: TaskStates.CANCELLED,
+        domainId,
       }),
     );
     await store.append(
@@ -629,7 +652,7 @@ export const cancelTask: Command<
 export const closeTask: Command<
   TaskStore,
   TaskStoreMetadata,
-  void,
+  { domainId: number },
   {
     event: Event<EventTypes.TASK_CLOSED>;
     taskStore: TaskStore;
@@ -639,10 +662,11 @@ export const closeTask: Command<
   context: [Context.COLONY_MANAGER, Context.DDB_INSTANCE, Context.WALLET],
   prepare: prepareTaskStoreCommand,
   schema: FinalizeTaskCommandArgsSchema,
-  async execute(taskStore) {
+  async execute(taskStore, { domainId }) {
     const eventHash = await taskStore.append(
       createEvent(EventTypes.TASK_CLOSED, {
         status: TaskStates.CLOSED,
+        domainId,
       }),
     );
     return {

@@ -26,7 +26,7 @@ class TaskAccessController extends AbstractAccessController<
 
   private readonly colonyAddress: Address;
 
-  private readonly initialDomainId: number;
+  private readonly domainId: number;
 
   private readonly manager: PermissionManager;
 
@@ -44,7 +44,7 @@ class TaskAccessController extends AbstractAccessController<
   constructor(
     draftId: string,
     colonyAddress: string,
-    initialDomainId: number,
+    domainId: number,
     wallet: WalletObjectType,
     permissionsManifest: PermissionsManifest<any>,
   ) {
@@ -52,13 +52,13 @@ class TaskAccessController extends AbstractAccessController<
     this.draftId = draftId;
     this.colonyAddress = colonyAddress;
     this.wallet = wallet;
-    this.initialDomainId = initialDomainId;
+    this.domainId = domainId;
 
     log.verbose(
       'Instantiating task access controller',
       colonyAddress,
       draftId,
-      initialDomainId,
+      domainId,
       wallet.address,
     );
 
@@ -71,10 +71,11 @@ class TaskAccessController extends AbstractAccessController<
 
   private extendVerifyContext<C extends object | void>(
     context: C,
-  ): C & { colonyAddress: Address } {
+  ): C & { colonyAddress: Address; domainId: number } {
     return {
       ...context,
       colonyAddress: this.colonyAddress,
+      domainId: this.domainId,
     };
   }
 
@@ -85,23 +86,20 @@ class TaskAccessController extends AbstractAccessController<
 
   async save({ onlyDetermineAddress }: { onlyDetermineAddress: boolean }) {
     if (!onlyDetermineAddress) {
-      if (!this.initialDomainId) {
+      if (!this.domainId) {
         throw new Error(
           'TaskAccessController must be initialized with a domain ID to save',
         );
       }
 
-      const isAllowed = await this.can(
-        'is-founder-or-admin',
-        this.walletAddress,
-        { domainId: this.initialDomainId },
-      );
+      const isAllowed = await this.can('is-admin', this.walletAddress, {
+        domainId: this.domainId,
+      });
       if (!isAllowed) {
         throw new Error('Cannot create task database, user not allowed');
       }
     }
 
-    // eslint-disable-next-line max-len
     const accessControllerAddress = `/colony/${this.colonyAddress}/task/${this.draftId}`;
     log.verbose(`Access controller address: "${accessControllerAddress}"`);
     return accessControllerAddress;
