@@ -30,7 +30,7 @@ import RecoveryModeAlert from '~admin/RecoveryModeAlert';
 import LoadingTemplate from '~pages/LoadingTemplate';
 
 import { walletAddressSelector } from '../../../users/selectors';
-import { canAdminister, isFounder } from '../../../users/checks';
+import { canAdminister, hasRoot } from '../../../users/checks';
 import { colonyAddressFetcher, domainsAndRolesFetcher } from '../../fetchers';
 import {
   colonyNativeTokenSelector,
@@ -328,7 +328,7 @@ const ColonyHome = ({
               filterOption={filterOption}
               ethTokenRef={ethTokenRef}
               nativeTokenRef={nativeTokenRef}
-              showQrCode={isFounder(rootUserRoles)}
+              showQrCode={hasRoot(rootUserRoles)}
             />
           </TabPanel>
           <TabPanel>
