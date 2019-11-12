@@ -75,6 +75,12 @@ const Permissions = ({ colonyAddress, domains, openDialog }: Props) => {
     selectedDomainId,
   ]);
 
+  const directDomainRoles = useTransformer(getDomainRoles, [
+    domains,
+    selectedDomainId,
+    true,
+  ]);
+
   const domainSelectOptions = sortBy(
     (Object.values(domains) as DomainType[]).map(({ id, name }) => ({
       value: id,
@@ -109,8 +115,12 @@ const Permissions = ({ colonyAddress, domains, openDialog }: Props) => {
     () =>
       Object.entries(domainRoles)
         .sort(([, roles]) => (roles.includes(ROLES.ROOT) ? -1 : 1))
-        .map(([userAddress, roles]) => ({ userAddress, roles })),
-    [domainRoles],
+        .map(([userAddress, roles]) => ({
+          userAddress,
+          roles,
+          directRoles: directDomainRoles[userAddress] || [],
+        })),
+    [directDomainRoles, domainRoles],
   );
 
   const selectedDomain = domains[selectedDomainId];
@@ -141,7 +151,7 @@ const Permissions = ({ colonyAddress, domains, openDialog }: Props) => {
           <>
             <Table scrollable>
               <TableBody className={styles.tableBody}>
-                {domainRolesArray.map(({ userAddress }) => (
+                {domainRolesArray.map(({ userAddress, roles, directRoles }) => (
                   <UserListItem
                     address={userAddress}
                     key={userAddress}
@@ -152,9 +162,8 @@ const Permissions = ({ colonyAddress, domains, openDialog }: Props) => {
                   >
                     <TableCell>
                       <UserPermissions
-                        userAddress={userAddress}
-                        domains={domains}
-                        domainId={selectedDomainId}
+                        roles={roles}
+                        directRoles={directRoles}
                       />
                     </TableCell>
                   </UserListItem>
