@@ -248,7 +248,7 @@ class ItemsList extends Component<Props, State> {
               parseInt(styles.paddingValue, 10)}px`,
           }}
         >
-          <Tooltip content={tooltipContent} placement="bottom">
+          <Tooltip content={tooltipContent} placement="bottom-start">
             {/*
              * Must use a `div` here, as `mouseleave` event isn't fired on buttons that are `disabled`.
              * See: https://github.com/facebook/react/issues/4251
