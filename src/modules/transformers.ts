@@ -18,7 +18,8 @@ export const getDomainRoles = (
     return domain.roles;
   }
 
-  let parent = domains[domain.parentId] as DomainType | null;
+  // Start with the current domain to accumulate roles
+  let parent = domains[domainId] as DomainType | null;
   const roleSets = {};
   while (parent) {
     Object.entries(parent.roles).forEach(([userAddress, roles]) => {
