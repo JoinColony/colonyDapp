@@ -2,7 +2,7 @@ import { ROLES } from '~constants';
 import { TaskStates } from '~data/constants';
 import { ColonyType, TaskType, TaskUserType } from '~immutable/index';
 import { Address } from '~types/index';
-import { isFounder, canAdminister, canFund } from '../users/checks';
+import { hasRoot, canAdminister, canFund } from '../users/checks';
 
 /*
  * Colony
@@ -119,4 +119,4 @@ export const canFinalizeTask = (task: TaskType, roles: ROLES[]) =>
   canAdminister(roles) &&
   canFund(roles);
 
-export const canRecoverColony = isFounder;
+export const canRecoverColony = hasRoot;

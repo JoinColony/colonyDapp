@@ -13,8 +13,11 @@ export const canAdminister = (userRoles: ROLES[]) =>
 export const canFund = (userRoles: ROLES[]) =>
   userHasRole(userRoles, ROLES.FUNDING);
 
-export const isFounder = (userRoles: ROLES[]) =>
+export const hasRoot = (userRoles: ROLES[]) =>
   userHasRole(userRoles, ROLES.ROOT);
+
+export const canArchitect = (userRoles: ROLES[]) =>
+  userHasRole(userRoles, ROLES.ARCHITECTURE);
 
 export const userDidClaimProfile = ({ profile: { username } }: UserType) =>
   !!username;
