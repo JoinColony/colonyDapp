@@ -1,6 +1,6 @@
-import React, { ReactNode, FocusEvent } from 'react';
+import React, { ReactNode, FocusEvent, useMemo } from 'react';
 import { PopperArrowProps } from 'react-popper';
-import { PopoverAppearanceType } from './types';
+import { PopoverAppearanceType, PopoverPlacementType } from './types';
 import { getMainClasses } from '~utils/css';
 import getPopoverArrowClasses from './getPopoverArrowClasses';
 
@@ -18,12 +18,12 @@ interface Props {
   innerRef: (arg0: HTMLElement | null) => void;
   onFocus: (evt: FocusEvent<HTMLElement>) => void;
   retainRefFocus?: boolean;
-  placement: string;
+  placement: PopoverPlacementType;
   style: any;
 }
 
 const PopoverWrapper = ({
-  appearance,
+  appearance: origAppearance,
   arrowProps,
   children,
   id,
@@ -32,27 +32,36 @@ const PopoverWrapper = ({
   placement,
   retainRefFocus,
   style,
-}: Props) => (
-  <div
-    className={getMainClasses(appearance, styles, {
-      hideArrow: !arrowProps.showArrow,
-      showArrow: arrowProps.showArrow,
-    })}
-    id={id}
-    role="tooltip"
-    ref={innerRef}
-    style={style}
-    data-placement={placement}
-    tabIndex={retainRefFocus ? -1 : undefined}
-    onFocus={onFocus}
-  >
-    {children}
-    <span
-      className={getPopoverArrowClasses(appearance, placement, styles)}
-      ref={arrowProps.ref}
-      style={arrowProps.style}
-    />
-  </div>
-);
+}: Props) => {
+  const appearance = useMemo(
+    () => ({
+      ...origAppearance,
+      placement,
+    }),
+    [origAppearance, placement],
+  );
+  return (
+    <div
+      className={getMainClasses(appearance, styles, {
+        hideArrow: !arrowProps.showArrow,
+        showArrow: arrowProps.showArrow,
+      })}
+      id={id}
+      role="tooltip"
+      ref={innerRef}
+      style={style}
+      data-placement={placement}
+      tabIndex={retainRefFocus ? -1 : undefined}
+      onFocus={onFocus}
+    >
+      {children}
+      <span
+        className={getPopoverArrowClasses(appearance, placement, styles)}
+        ref={arrowProps.ref}
+        style={arrowProps.style}
+      />
+    </div>
+  );
+};
 
 export default PopoverWrapper;
