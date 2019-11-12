@@ -2,30 +2,20 @@ import React from 'react';
 import { FormattedMessage } from 'react-intl';
 
 import { ROLES } from '~constants';
-import { Address, DomainsMapType } from '~types/index';
-import { useTransformer } from '~utils/hooks';
 
-import { getUserRoles } from '../../../transformers';
 import { ROLE_MESSAGES } from '../../constants';
 
 import styles from './UserPermissions.css';
 
 interface Props {
-  userAddress: Address;
-  domains: DomainsMapType;
-  domainId: number;
+  roles: ROLES[];
+  directRoles: ROLES[];
 }
 
 const displayName = 'admin.Permissions.UserPermissions';
 
-const UserPermissions = ({ userAddress, domains, domainId }: Props) => {
-  const inheritedUserRoles = useTransformer(getUserRoles, [
-    domains,
-    domainId,
-    userAddress,
-  ]);
-
-  const sortedRoles = inheritedUserRoles
+const UserPermissions = ({ roles, directRoles }: Props) => {
+  const sortedRoles = roles
     .filter(
       role =>
         // Don't display ARCHITECTURE_SUBDOMAIN in listed roles
@@ -40,12 +30,10 @@ const UserPermissions = ({ userAddress, domains, domainId }: Props) => {
 
   return (
     <div className={styles.main}>
-      {/* @TODO restore pending role indicator */}
-      {/* {userPermissions.pending ? ( */}
-      {/*  <div className={styles.pendingDot} /> */}
       {sortedRoles.map(role => (
         <span className={styles.permission} key={role}>
           <FormattedMessage id={ROLE_MESSAGES[role]} />
+          {!directRoles.includes(role) ? '*' : null}
         </span>
       ))}
     </div>
