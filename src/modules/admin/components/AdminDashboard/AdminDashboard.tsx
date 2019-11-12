@@ -23,10 +23,13 @@ import {
 } from '~utils/hooks';
 import { DomainsMapType } from '~types/index';
 
-import { TEMP_getUserRolesWithRecovery } from '../../../transformers';
+import {
+  TEMP_getUserRolesWithRecovery,
+  getAllUserRoles,
+} from '../../../transformers';
 import { walletAddressSelector } from '../../../users/selectors';
 import { isInRecoveryMode } from '../../../dashboard/checks';
-import { canAdminister } from '../../../users/checks';
+import { canArchitect, hasRoot } from '../../../users/checks';
 import {
   colonyAddressFetcher,
   domainsAndRolesFetcher,
@@ -80,48 +83,61 @@ const navigationItems = (
   colony: ColonyType,
   domains: DomainsMapType,
   rootRoles: ROLES[],
-): NavigationItem[] => [
-  {
-    id: 1,
-    title: MSG.tabProfile,
-    content: <ProfileEdit colony={colony} />,
-  },
-  {
-    id: 2,
-    title: MSG.tabTokens,
-    content: (
-      <Tokens
-        colonyAddress={colony.colonyAddress}
-        canMintNativeToken={colony.canMintNativeToken}
-        domains={domains}
-        rootRoles={rootRoles}
-      />
-    ),
-  },
-  {
-    id: 3,
-    title: MSG.tabDomains,
-    content: (
-      <Domains
-        colonyAddress={colony.colonyAddress}
-        domains={domains}
-        rootRoles={rootRoles}
-      />
-    ),
-  },
-  {
-    id: 4,
-    title: MSG.tabPermissions,
-    content: (
-      <Permissions colonyAddress={colony.colonyAddress} domains={domains} />
-    ),
-  },
-  {
-    id: 5,
-    title: MSG.tabAdvanced,
-    content: <ProfileAdvanced colony={colony} rootRoles={rootRoles} />,
-  },
-];
+  allRoles: ROLES[],
+): NavigationItem[] => {
+  const items = [] as NavigationItem[];
+
+  if (hasRoot(rootRoles)) {
+    items.push({
+      id: 1,
+      title: MSG.tabProfile,
+      content: <ProfileEdit colony={colony} />,
+    });
+    items.push({
+      id: 2,
+      title: MSG.tabTokens,
+      content: (
+        <Tokens
+          colonyAddress={colony.colonyAddress}
+          canMintNativeToken={colony.canMintNativeToken}
+          domains={domains}
+          rootRoles={rootRoles}
+        />
+      ),
+    });
+  }
+
+  if (canArchitect(allRoles)) {
+    items.push({
+      id: 3,
+      title: MSG.tabDomains,
+      content: (
+        <Domains
+          colonyAddress={colony.colonyAddress}
+          domains={domains}
+          rootRoles={rootRoles}
+        />
+      ),
+    });
+    items.push({
+      id: 4,
+      title: MSG.tabPermissions,
+      content: (
+        <Permissions colonyAddress={colony.colonyAddress} domains={domains} />
+      ),
+    });
+  }
+
+  if (hasRoot(rootRoles)) {
+    items.push({
+      id: 5,
+      title: MSG.tabAdvanced,
+      content: <ProfileAdvanced colony={colony} rootRoles={rootRoles} />,
+    });
+  }
+
+  return items;
+};
 
 const AdminDashboard = ({
   location,
@@ -157,10 +173,15 @@ const AdminDashboard = ({
     [colonyAddress, walletAddress],
   );
 
-  const rootRoles = useTransformer(TEMP_getUserRolesWithRecovery, [
+  const rootUserRoles = useTransformer(TEMP_getUserRolesWithRecovery, [
     domains,
     colonyRecoveryRoles,
     ROOT_DOMAIN,
+    walletAddress,
+  ]);
+
+  const allUserRoles = useTransformer(getAllUserRoles, [
+    domains,
     walletAddress,
   ]);
 
@@ -172,7 +193,7 @@ const AdminDashboard = ({
     return <LoadingTemplate loadingText={MSG.loadingText} />;
   }
 
-  if (!canAdminister(rootRoles)) {
+  if (!hasRoot(rootUserRoles) && !canArchitect(allUserRoles)) {
     return <Redirect to={CURRENT_COLONY_ROUTE} />;
   }
 
@@ -180,7 +201,12 @@ const AdminDashboard = ({
   return (
     <div className={styles.main}>
       <VerticalNavigation
-        navigationItems={navigationItems(colony, domains, rootRoles)}
+        navigationItems={navigationItems(
+          colony,
+          domains,
+          rootUserRoles,
+          allUserRoles,
+        )}
         initialTab={
           location && location.state && location.state.initialTab
             ? location.state.initialTab
