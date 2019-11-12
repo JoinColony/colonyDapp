@@ -259,7 +259,7 @@ class ItemsList extends Component<Props, State> {
                 type="button"
                 className={id < 0 ? styles.itemHeading : styles.item}
                 onClick={() => this.handleSelectItem(id)}
-                title={decoratedName}
+                title={disabled ? undefined : decoratedName}
               >
                 {decoratedName}
               </button>
