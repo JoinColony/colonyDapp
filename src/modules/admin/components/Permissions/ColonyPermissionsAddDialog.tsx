@@ -5,7 +5,7 @@ import { defineMessages } from 'react-intl';
 import { ROLES } from '~constants';
 import { Address } from '~types/index';
 import { mergePayload, withKey, mapPayload, pipe } from '~utils/actions';
-import { UserType } from '~immutable/index';
+import { UserType, UserProfile, User } from '~immutable/index';
 import { ItemDataType } from '~core/OmniPicker';
 import { ActionTypeString, ActionTypes } from '~redux/index';
 import { useSelector, useDataFetcher, useTransformer } from '~utils/hooks';
@@ -136,13 +136,20 @@ const ColonyPermissionsAddDialog = ({
     [colonyAddress, domainId],
   );
 
-  const user = useMemo(
-    () =>
-      selectedUserAddress
-        ? users.find(({ id }) => id === selectedUserAddress)
-        : null,
-    [selectedUserAddress, users],
-  );
+  const user = useMemo(() => {
+    if (!selectedUserAddress) {
+      return null;
+    }
+    const userInStore = users.find(({ id }) => id === selectedUserAddress);
+    if (userInStore) {
+      return userInStore;
+    }
+    return User({
+      profile: UserProfile({
+        walletAddress: selectedUserAddress,
+      }),
+    }).toJS();
+  }, [selectedUserAddress, users]);
 
   return (
     <Dialog cancel={cancel}>
@@ -200,7 +207,7 @@ const ColonyPermissionsAddDialog = ({
                     appearance={{ theme: 'primary', size: 'large' }}
                     loading={isSubmitting}
                     text={{ id: 'button.confirm' }}
-                    disabled={!user}
+                    disabled={!selectedUserAddress}
                     type="submit"
                   />
                 </DialogSection>
