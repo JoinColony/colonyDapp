@@ -1157,10 +1157,10 @@
     "@colony/colony-js-contract-loader" "^1.12.0"
     bn.js "^4.11.8"
 
-"@colony/colony-js-client@^1.14.0-beta.3":
-  version "1.14.0-beta.3"
-  resolved "https://registry.yarnpkg.com/@colony/colony-js-client/-/colony-js-client-1.14.0-beta.3.tgz#4383f41891210f94209757b781bb619bdab63fc8"
-  integrity sha512-ICAdmor4WEKo9H9pX7IgY/kV6g7aqr6Xm8Xzk1N1y4tj+SyUvPxJNkxdSNoTi45t+a8QYKqDM9k5PqzkR5qbVQ==
+"@colony/colony-js-client@^1.14.0":
+  version "1.14.0"
+  resolved "https://registry.yarnpkg.com/@colony/colony-js-client/-/colony-js-client-1.14.0.tgz#6c3eec085af574b0d1cd77842829044615266dce"
+  integrity sha512-g+rAQrgTIDxWt/KTK8yx/59LEhlrqKfBlVcFnigKnZswuUWikbDvzu1NQp+ewkz6rv0Ga7yjggdA88fBDFfgGQ==
   dependencies:
     "@colony/colony-js-adapter" "^1.14.0-beta.2"
     "@colony/colony-js-adapter-ethers" "^1.14.0-beta.2"
