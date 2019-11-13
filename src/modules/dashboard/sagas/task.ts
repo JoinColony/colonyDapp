@@ -546,7 +546,7 @@ function* taskFinalize({
     const txChannel = yield call(getTxChannel, meta.id);
     yield fork(createTransaction, meta.id, {
       context: ContractContexts.COLONY_CONTEXT,
-      methodName: 'makePayment',
+      methodName: 'makePaymentFundedFromDomain',
       identifier: colonyAddress,
       params: {
         recipient: workerAddress,
