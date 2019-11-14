@@ -4,6 +4,11 @@
 @value themeDarkBackgroundColor: rgb(58, 58, 58); /* --grey-1 */
 @value themeGreyBackgroundColor: var(--grey-blue-2);
 
+@value arrowHorizontalEnd: calc(var(--radius-small) + arrowBorder);
+@value arrowHorizontalStart: calc(0px - arrowSize + (arrowBorder + var(--radius-small)));
+@value arrowVerticalEnd: calc(var(--radius-small) + arrowBorder);
+@value arrowVerticalStart: calc(var(--radius-small) + arrowBorder);
+
 .main {
   z-index: calc(var(--z-index-notification) + 1);
   border-radius: var(--radius-small);
@@ -30,22 +35,6 @@
   content: '';
 }
 
-.placementTop {
-  top: calc(0px - arrowSize) !important;
-}
-
-.placementRight {
-  left: calc(arrowSize + arrowBorder * 2) !important;
-}
-
-.placementBottom {
-  top: arrowSize !important;
-}
-
-.placementLeft {
-  left: calc(0px - arrowSize - arrowBorder * 2) !important;
-}
-
 /*
  * @NOTE On arrow positioning classes
  *
@@ -64,7 +53,17 @@
 
 .topArrow::before {
   bottom: calc(-1 * (arrowSize - arrowBorder));
-  left: calc(-1 * arrowSize);
+}
+
+.topEndArrow {
+  composes: topArrow;
+  right: arrowHorizontalEnd;
+  left: auto !important;
+}
+
+.topStartArrow {
+  composes: topArrow;
+  left: arrowHorizontalStart !important;
 }
 
 .rightArrow {
@@ -78,6 +77,17 @@
   left: calc(-1 * (arrowSize - arrowBorder));
 }
 
+.rightEndArrow {
+  composes: rightArrow;
+  top: auto !important;
+  bottom: arrowVerticalEnd;
+}
+
+.rightStartArrow {
+  composes: rightArrow;
+  top: arrowVerticalStart !important;
+}
+
 .bottomArrow {
   composes: arrow;
   top: calc(-2 * (arrowSize + arrowBorder));
@@ -86,7 +96,17 @@
 
 .bottomArrow::before {
   top: calc(-1 * (arrowSize - arrowBorder));
-  left: calc(-1 * arrowSize);
+}
+
+.bottomEndArrow {
+  composes: bottomArrow;
+  right: arrowHorizontalEnd;
+  left: auto !important;
+}
+
+.bottomStartArrow {
+  composes: bottomArrow;
+  left: arrowHorizontalStart !important;
 }
 
 .leftArrow {
@@ -99,6 +119,17 @@
 .leftArrow::before {
   top: calc(-1 * arrowSize);
   right: calc(-1 * (arrowSize - arrowBorder));
+}
+
+.leftEndArrow {
+  composes: leftArrow;
+  top: auto !important;
+  bottom: arrowVerticalEnd;
+}
+
+.leftStartArrow {
+  composes: leftArrow;
+  top: arrowVerticalStart !important;
 }
 
 .themeDark {
@@ -116,17 +147,17 @@
  * Because of this the theme name needs to be encoded in the class's name.
  */
 
-.themeDarkTopArrow { border-top-color: transparent; }
-.themeDarkTopArrow::before { border-top-color: themeDarkBackgroundColor; }
+.themeDarkTopArrow, .themeDarkTopEndArrow, .themeDarkTopStartArrow { border-top-color: transparent; }
+.themeDarkTopArrow::before, .themeDarkTopEndArrow::before, .themeDarkTopStartArrow::before { border-top-color: themeDarkBackgroundColor; }
 
-.themeDarkRightArrow { border-right-color: transparent; }
-.themeDarkRightArrow::before { border-right-color: themeDarkBackgroundColor; }
+.themeDarkRightArrow, .themeDarkRightEndArrow, .themeDarkRightStartArrow { border-right-color: transparent; }
+.themeDarkRightArrow::before, .themeDarkRightEndArrow::before, .themeDarkRightStartArrow::before { border-right-color: themeDarkBackgroundColor; }
 
-.themeDarkBottomArrow { border-bottom-color: transparent; }
-.themeDarkBottomArrow::before { border-bottom-color: themeDarkBackgroundColor; }
+.themeDarkBottomArrow, .themeDarkBottomEndArrow, .themeDarkBottomStartArrow { border-bottom-color: transparent; }
+.themeDarkBottomArrow::before, .themeDarkBottomEndArrow::before, .themeDarkBottomStartArrow::before { border-bottom-color: themeDarkBackgroundColor; }
 
-.themeDarkLeftArrow { border-left-color: transparent; }
-.themeDarkLeftArrow::before { border-left-color: themeDarkBackgroundColor; }
+.themeDarkLeftArrow, .themeDarkLeftEndArrow, .themeDarkLeftStartArrow { border-left-color: transparent; }
+.themeDarkLeftArrow::before, .themeDarkLeftEndArrow::before, .themeDarkLeftStartArrow::before { border-left-color: themeDarkBackgroundColor; }
 
 .themeGrey {
   composes: main;
@@ -134,17 +165,17 @@
   box-shadow: 0 0 20px -2px var(--grey-5);
 }
 
-.themeGreyTopArrow { border-top-color: transparent; }
-.themeGreyTopArrow::before { border-top-color: themeGreyBackgroundColor; }
+.themeGreyTopArrow, .themeGreyTopEndArrow, .themeGreyTopStartArrow { border-top-color: transparent; }
+.themeGreyTopArrow::before, .themeGreyTopEndArrow::before, .themeGreyTopStartArrow::before { border-top-color: themeGreyBackgroundColor; }
 
-.themeGreyRightArrow { border-right-color: transparent; }
-.themeGreyRightArrow::before { border-right-color: themeGreyBackgroundColor; }
+.themeGreyRightArrow, .themeGreyRightEndArrow, .themeGreyRightStartArrow { border-right-color: transparent; }
+.themeGreyRightArrow::before, .themeGreyRightEndArrow::before, .themeGreyRightStartArrow::before { border-right-color: themeGreyBackgroundColor; }
 
-.themeGreyBottomArrow { border-bottom-color: transparent; }
-.themeGreyBottomArrow::before { border-bottom-color: themeGreyBackgroundColor; }
+.themeGreyBottomArrow, .themeGreyBottomEndArrow, .themeGreyBottomStartArrow { border-bottom-color: transparent; }
+.themeGreyBottomArrow::before, .themeGreyBottomEndArrow::before, .themeGreyBottomStartArrow::before { border-bottom-color: themeGreyBackgroundColor; }
 
-.themeGreyLeftArrow { border-left-color: transparent; }
-.themeGreyLeftArrow::before { border-left-color: themeGreyBackgroundColor; }
+.themeGreyLeftArrow, .themeGreyLeftEndArrow, .themeGreyLeftStartArrow { border-left-color: transparent; }
+.themeGreyLeftArrow::before, .themeGreyLeftEndArrow::before, .themeGreyLeftStartArrow::before { border-left-color: themeGreyBackgroundColor; }
 
 /* State */
 
@@ -154,4 +185,30 @@
 
 .stateShowArrow .arrow {
   display: block;
+}
+
+.stateShowArrow {
+  &.placementTop,
+  &.placementTop-end,
+  &.placementTop-start {
+    top: calc(0px - arrowSize) !important;
+  }
+
+  &.placementRight,
+  &.placementRight-end,
+  &.placementRight-start {
+    left: calc(arrowSize + arrowBorder * 2) !important;
+  }
+
+  &.placementBottom,
+  &.placementBottom-end,
+  &.placementBottom-start {
+    top: arrowSize !important;
+  }
+
+  &.placementLeft,
+  &.placementLeft-end,
+  &.placementLeft-start {
+    left: calc(0px - arrowSize - arrowBorder * 2) !important;
+  }
 }

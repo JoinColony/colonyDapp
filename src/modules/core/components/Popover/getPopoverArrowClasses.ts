@@ -1,4 +1,7 @@
+import camelcase from 'camelcase';
+
 import { capitalize } from '~utils/strings';
+import { PopoverPlacementType } from './types';
 
 /**
  * This is a stripped down version of the `getMainClasses` method, that is specifically
@@ -19,13 +22,13 @@ import { capitalize } from '~utils/strings';
  */
 const getPopoverArrowClasses = (
   { theme = undefined }: any = {},
-  placement: string,
+  placement: PopoverPlacementType = 'auto',
   styleObject: { [k: string]: string } = {},
 ) => {
   /*
    * Arrows have the position encoded in the class's name
    */
-  const placementClass = `${placement}Arrow`;
+  const placementClass = `${camelcase(placement)}Arrow`;
   const styleArray = [styleObject[placementClass]];
   if (theme) {
     /*

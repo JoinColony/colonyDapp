@@ -1,10 +1,15 @@
-import { MessageDescriptor, MessageValues, defineMessages } from 'react-intl';
+import {
+  defineMessages,
+  FormattedMessage,
+  MessageDescriptor,
+  MessageValues,
+} from 'react-intl';
 import React, { Component, Fragment, ReactNode } from 'react';
 
 import { ConsumableItem } from './index';
 import { asField } from '~core/Fields';
 import Button from '~core/Button';
-import Popover from '~core/Popover';
+import Popover, { Tooltip } from '~core/Popover';
 import styles from './ItemsList.css';
 
 const MSG = defineMessages({
@@ -203,7 +208,7 @@ class ItemsList extends Component<Props, State> {
    * @NOTE This will recursevly render nested children
    */
   renderListItem = (
-    { disabled, id, name, children }: ConsumableItem,
+    { disabled, disabledText, id, name, children }: ConsumableItem,
     nestingCounter = 0,
   ) => {
     const { selectedItem } = this.state;
@@ -223,6 +228,17 @@ class ItemsList extends Component<Props, State> {
       }
       return null;
     };
+
+    let tooltipContent;
+    if (disabledText) {
+      tooltipContent =
+        typeof disabledText === 'string' ? (
+          <>{disabledText}</>
+        ) : (
+          <FormattedMessage {...disabledText} />
+        );
+    }
+
     return (
       <Fragment key={id}>
         <li
@@ -232,15 +248,23 @@ class ItemsList extends Component<Props, State> {
               parseInt(styles.paddingValue, 10)}px`,
           }}
         >
-          <button
-            disabled={disabled}
-            type="button"
-            className={id < 0 ? styles.itemHeading : styles.item}
-            onClick={() => this.handleSelectItem(id)}
-            title={decoratedName}
-          >
-            {decoratedName}
-          </button>
+          <Tooltip content={tooltipContent} placement="bottom-start">
+            {/*
+             * Must use a `div` here, as `mouseleave` event isn't fired on buttons that are `disabled`.
+             * See: https://github.com/facebook/react/issues/4251
+             */}
+            <div>
+              <button
+                disabled={disabled}
+                type="button"
+                className={id < 0 ? styles.itemHeading : styles.item}
+                onClick={() => this.handleSelectItem(id)}
+                title={disabled ? undefined : decoratedName}
+              >
+                {decoratedName}
+              </button>
+            </div>
+          </Tooltip>
         </li>
         {recursiveChildRender()}
       </Fragment>

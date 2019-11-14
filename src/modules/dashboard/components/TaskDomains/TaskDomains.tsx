@@ -21,6 +21,10 @@ import { colonyTokensSelector, taskPayoutsSelector } from '../../selectors';
 import styles from './TaskDomains.css';
 
 const MSG = defineMessages({
+  insufficientFundsInDomain: {
+    id: 'dashboard.TaskDomains.insufficientFundsInDomain',
+    defaultMessage: 'This domain has insufficient funds.',
+  },
   notSet: {
     id: 'dashboard.TaskDomains.notSet',
     defaultMessage: 'Domain not set',
@@ -112,11 +116,17 @@ const TaskDomains = ({
       domains && [
         {
           disabled: !domainHasEnoughFunds(1),
+          disabledText: !domainHasEnoughFunds(1)
+            ? MSG.insufficientFundsInDomain
+            : undefined,
           id: 1,
           name: formatMessage(MSG.rootDomain),
         },
         ...domains.map(domain => ({
           disabled: !domainHasEnoughFunds(domain.id),
+          disabledText: !domainHasEnoughFunds(domain.id)
+            ? MSG.insufficientFundsInDomain
+            : undefined,
           ...domain,
         })),
       ]

@@ -108,10 +108,7 @@ const PermissionCheckbox = ({
   );
   return disabled ? (
     <Popover
-      // Note: `placement` must be set in both `appearance` & `placement` prop
-      // @todo Cleanup `Popover` placement styles
-      // @body `react-popper` uses the `placement` prop, while our styles uses `appearance.placement`. Let's consolidate this into one or the other.
-      appearance={{ placement: 'bottom', theme: 'dark' }}
+      appearance={{ theme: 'dark' }}
       content={() => (
         <div className={styles.popoverContent}>
           <FormattedMessage
