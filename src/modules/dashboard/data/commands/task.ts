@@ -1,10 +1,6 @@
 import BigNumber from 'bn.js';
-import {
-  COLONY_ROLE_ROOT,
-  COLONY_ROLE_ADMINISTRATION,
-} from '@colony/colony-js-client';
 
-import { ROOT_DOMAIN } from '~constants';
+import { ROLES } from '~constants';
 import { Context } from '~context/index';
 import { EventTypes, TaskStates, Versions } from '~data/constants';
 import {
@@ -727,21 +723,22 @@ export const setTaskDomain: Command<
         EventTypes.TASK_CREATED | EventTypes.DOMAIN_SET
       >;
 
-      const { hasRole: isFounder } = await colonyClient.hasColonyRole.call({
-        address: walletAddress,
-        role: COLONY_ROLE_ROOT,
-        domainId: ROOT_DOMAIN,
-      });
-      if (isFounder) return true;
-
       const {
         hasRole: isAdminOfCurrentDomain,
       } = await colonyClient.hasColonyRole.call({
         address: walletAddress,
-        role: COLONY_ROLE_ADMINISTRATION,
+        role: ROLES.ADMINISTRATION,
         domainId: currentDomainId,
       });
-      return isAdminOfCurrentDomain;
+
+      const {
+        hasRole: isAdminOfNextDomain,
+      } = await colonyClient.hasColonyRole.call({
+        address: walletAddress,
+        role: ROLES.ADMINISTRATION,
+        domainId,
+      });
+      return isAdminOfCurrentDomain && isAdminOfNextDomain;
     })();
 
     if (!canAppend) {
