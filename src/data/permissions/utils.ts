@@ -29,7 +29,7 @@ export const makeUserHasRoleFn = (
   const { hasRole: hasRoleInRoot } = await colonyClient.hasColonyRole.call({
     address,
     role,
-    ROOT_DOMAIN,
+    domainId: ROOT_DOMAIN,
   });
   return hasRoleInRoot;
 };
