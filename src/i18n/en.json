@@ -75,6 +75,8 @@
 
     "transaction.colony.makePayment.title": "Make payment",
     "transaction.colony.makePayment.description": "Make payment",
+    "transaction.colony.makePaymentFundedFromDomain.title": "Make payment",
+    "transaction.colony.makePaymentFundedFromDomain.description": "Make payment",
 
     "transaction.colony.upgrade.title": "Update Colony",
     "transaction.colony.upgrade.description": "Update Colony",
