@@ -9,6 +9,24 @@ export type TaskIndexEvents =
         draftId: string;
         taskStoreAddress: string;
       },
+      Versions.V1
+    >
+  | EventDefinition<
+      EventTypes.TASK_STORE_UNREGISTERED,
+      {
+        draftId: string;
+        taskStoreAddress: string;
+      },
+      Versions.V1
+    >
+  | EventDefinition<
+      EventTypes.TASK_STORE_REGISTERED,
+      {
+        commentsStoreAddress: string;
+        draftId: string;
+        taskStoreAddress: string;
+        domainId: number;
+      },
       Versions.CURRENT
     >
   | EventDefinition<
@@ -16,6 +34,7 @@ export type TaskIndexEvents =
       {
         draftId: string;
         taskStoreAddress: string;
+        domainId: number;
       },
       Versions.CURRENT
     >;

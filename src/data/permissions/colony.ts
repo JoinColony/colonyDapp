@@ -24,7 +24,7 @@ export default function loadModule(): PermissionsManifest<{
     'edit-domain': { inherits: 'has-root-architecture' },
     'add-token': { inherits: 'is-root' },
     'create-colony-profile': { inherits: 'is-root' },
-    'register-task-store': { inherits: 'is-root' },
+    'register-task-store': { inherits: 'is-admin' },
     'set-colony-avatar': { inherits: 'is-root' },
     'update-colony-profile': { inherits: 'is-root' },
   };
