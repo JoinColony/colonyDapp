@@ -4,12 +4,6 @@
 @value statusWidth: 40px;
 @value detailsWidth: 160px;
 
-@media screen and (min-width: 1400px) {
-  tr.main:hover .etherscanButtonWrapper {
-    margin-right: 0;
-  }
-}
-
 .main td {
   padding: cellPadding;
 
@@ -72,6 +66,14 @@ td.transactionAmountActions {
 }
 
 @media screen and (min-width: 1400px) {
+  tr.main {
+    overflow-x: hidden;
+  }
+
+  tr.main:hover .etherscanButtonWrapper {
+    margin-right: 0;
+  }
+
   td.transactionAmountActions {
     align-items: center;
     flex-direction: row-reverse;
