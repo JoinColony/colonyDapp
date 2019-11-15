@@ -99,7 +99,7 @@ const ColonyPermissionsEditDialog = ({
 
   return (
     <Dialog cancel={cancel}>
-      {!user || !domains ? (
+      {!userAddress || !domains ? (
         <SpinnerLoader />
       ) : (
         <ActionForm
@@ -131,7 +131,9 @@ const ColonyPermissionsEditDialog = ({
                     user={user}
                     placeholder={MSG.placeholder}
                   >
-                    {user.profile.displayName || user.profile.username}
+                    {user && user.profile
+                      ? user.profile.displayName || user.profile.username
+                      : userAddress}
                   </UserInfo>
                 </div>
                 <PermissionForm
