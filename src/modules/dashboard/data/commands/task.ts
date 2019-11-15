@@ -167,6 +167,7 @@ export const createTask: Command<
       commentsStoreAddress,
       draftId,
       taskStoreAddress: taskStore.address.toString(),
+      domainId,
     });
 
     await taskIndexStore.append(event);
@@ -636,6 +637,7 @@ export const cancelTask: Command<
       createEvent(EventTypes.TASK_STORE_UNREGISTERED, {
         draftId,
         taskStoreAddress: taskStore.address.toString(),
+        domainId,
       }),
     );
     return {
