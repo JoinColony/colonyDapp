@@ -41,6 +41,7 @@ const InitialTask = ({
             <button
               className={styles.callToAction}
               type="button"
+              data-test="createColony"
               onClick={() => unfinishedProfileOpener(history)}
             >
               <FormattedMessage {...title} values={titleValues} />
