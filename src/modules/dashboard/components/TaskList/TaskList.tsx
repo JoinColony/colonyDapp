@@ -90,12 +90,14 @@ const TaskList = ({
     ({ creatorAddress, workerAddress, currentState, domainId }: TaskType) => {
       if (filteredDomainId && filteredDomainId !== domainId) return false;
 
+      const taskIsOpen = currentState === TaskStates.ACTIVE;
+
       switch (filterOption) {
         case TasksFilterOptions.CREATED:
-          return creatorAddress === walletAddress;
+          return creatorAddress === walletAddress && taskIsOpen;
 
         case TasksFilterOptions.ASSIGNED:
-          return workerAddress === walletAddress;
+          return workerAddress === walletAddress && taskIsOpen;
 
         case TasksFilterOptions.COMPLETED:
           return currentState === TaskStates.FINALIZED;
@@ -104,7 +106,7 @@ const TaskList = ({
           return currentState === TaskStates.CANCELLED;
 
         case TasksFilterOptions.ALL_OPEN:
-          return currentState === TaskStates.ACTIVE;
+          return taskIsOpen;
 
         default:
           return currentState !== TaskStates.CANCELLED;
