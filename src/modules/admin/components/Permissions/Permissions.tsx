@@ -110,11 +110,11 @@ const Permissions = ({ colonyAddress, domains, openDialog }: Props) => {
     [openDialog, colonyAddress, selectedDomainId],
   );
 
-  // Convert to array and sort the users for the selected role such that those with root are first
   const domainRolesArray = useMemo(
     () =>
       Object.entries(domainRoles)
         .sort(([, roles]) => (roles.includes(ROLES.ROOT) ? -1 : 1))
+        .filter(([, roles]) => !!roles.length)
         .map(([userAddress, roles]) => ({
           userAddress,
           roles,
