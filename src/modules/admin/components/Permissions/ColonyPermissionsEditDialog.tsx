@@ -2,7 +2,6 @@ import { FormikProps } from 'formik';
 import React, { useCallback } from 'react';
 import { defineMessages } from 'react-intl';
 
-import { ROOT_DOMAIN } from '~constants';
 import { Address } from '~types/index';
 import { mergePayload, withKey, mapPayload, pipe } from '~utils/actions';
 import { ActionTypeString, ActionTypes } from '~redux/index';
@@ -75,8 +74,9 @@ const ColonyPermissionsEditDialog = ({
   const userRoles = useTransformer(TEMP_getUserRolesWithRecovery, [
     domains,
     colonyRecoveryRoles,
-    ROOT_DOMAIN,
+    domainId,
     userAddress,
+    true,
   ]);
 
   const transform = useCallback(
