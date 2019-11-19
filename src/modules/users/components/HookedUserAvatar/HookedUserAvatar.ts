@@ -23,7 +23,10 @@ export default withHooks<
     );
     result.user = fetchedUser as UserType;
   }
-  const avatarHash = result.user ? result.user.profile.avatarHash : undefined;
+  const avatarHash =
+    result.user && result.user.profile
+      ? result.user.profile.avatarHash
+      : undefined;
   const { data: avatarURL } = useDataFetcher(
     ipfsDataFetcher,
     [avatarHash as string], // Technically a bug
