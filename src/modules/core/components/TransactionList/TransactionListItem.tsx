@@ -99,11 +99,13 @@ const TransactionListItem = ({
   return (
     <TableRow className={styles.main}>
       <TableCell className={styles.transactionDate}>
-        <div className={styles.dateDay}>
-          <FormattedDate value={date} day="numeric" />
-        </div>
-        <div className={styles.dateMonth}>
-          <FormattedDate value={date} month="short" />
+        <div>
+          <div className={styles.dateDay}>
+            <FormattedDate value={date} day="numeric" />
+          </div>
+          <div className={styles.dateMonth}>
+            <FormattedDate value={date} month="short" />
+          </div>
         </div>
       </TableCell>
       <TableCell className={styles.transactionStatus}>
@@ -145,6 +147,11 @@ const TransactionListItem = ({
           <div className={styles.etherscanButtonWrapper}>
             <TransactionLink
               className={styles.customButton}
+              hash={transaction.hash}
+              text={MSG.buttonEtherscan}
+            />
+            <TransactionLink
+              className={styles.mobileLink}
               hash={transaction.hash}
               text={MSG.buttonEtherscan}
             />

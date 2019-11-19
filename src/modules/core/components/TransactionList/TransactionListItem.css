@@ -1,11 +1,8 @@
 @value cellPadding: 20px;
 
-tr.main:hover .etherscanButtonWrapper {
-  display: block;
-  padding: 10px 15px 10px 20px;
-  position: absolute;
-  background-color: var(--colony-white);
-}
+@value dateWidth: 75px;
+@value statusWidth: 40px;
+@value detailsWidth: 160px;
 
 .main td {
   padding: cellPadding;
@@ -21,7 +18,7 @@ tr.main:hover .etherscanButtonWrapper {
 td.transactionDate {
   flex-wrap: wrap;
   padding-left: 30px;
-  width: 75px;
+  width: dateWidth;
 }
 
 .dateDay {
@@ -41,17 +38,18 @@ td.transactionDate {
 
 td.transactionStatus {
   padding: cellPadding 5px;
-  width: 40px;
+  width: statusWidth;
 }
 
 td.transactionDetails {
-  width: calc(100% - 315px);
+  width: detailsWidth;
 }
 
 td.transactionAmountActions {
-  flex-direction: row-reverse;
-  padding-right: 30px;
-  width: 60%;
+  flex-direction: column-reverse;
+  align-items: flex-end;
+  width: calc(100% - dateWidth - statusWidth - detailsWidth);
+  text-align: right;
 }
 
 .customButton {
@@ -59,14 +57,50 @@ td.transactionAmountActions {
   width: 100%;
 }
 
-.buttonWrapper {
-  margin-left: cellPadding;
-  padding-left: cellPadding;
-  width: 130px;
-  border-left: 1px solid var(--grey-blue-1);
+.etherscanButtonWrapper .customButton {
+  display: none;
 }
 
-.etherscanButtonWrapper {
-  composes: buttonWrapper;
-  display: none;
+.mobileLink {
+  composes: themeBlue from '~core/Button/Button.css';
+}
+
+@media screen and (min-width: 1400px) {
+  tr.main {
+    overflow-x: hidden;
+  }
+
+  tr.main:hover .etherscanButtonWrapper {
+    margin-right: 0;
+  }
+
+  td.transactionAmountActions {
+    align-items: center;
+    flex-direction: row-reverse;
+    text-align: left;
+  }
+
+  .buttonWrapper {
+    margin-left: cellPadding;
+    padding-left: cellPadding;
+    width: 130px;
+    border-left: 1px solid var(--grey-blue-1);
+  }
+
+  .etherscanButtonWrapper {
+    margin-right: -160px;
+    margin-left: cellPadding;
+    padding-left: cellPadding;
+    width: 130px;
+    border-left: 1px solid var(--grey-blue-1);
+    transition: 0.2s margin-right ease;
+  }
+
+  .etherscanButtonWrapper .customButton {
+    display: inline-block;
+  }
+
+  .mobileLink {
+    display: none;
+  }
 }
