@@ -28,11 +28,18 @@ interface Props {
    */
   showMaskedAddress?: boolean;
 }
-
 const ItemDefault = ({
   walletAddress,
   itemData: {
-    profile: { walletAddress: userAddress, displayName, username },
+    profile: { walletAddress: userAddress, displayName, username } = {
+      /*
+       * @NOTE This is a last resort default!
+       *
+       * If the app ever gets to use this value, the SingleUserPickerItem
+       * compontn will display: _Address format is wrong!_
+       */
+      walletAddress: '',
+    },
   },
   itemData,
   renderAvatar,
