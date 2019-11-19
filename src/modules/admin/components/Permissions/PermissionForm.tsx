@@ -60,12 +60,11 @@ const PermissionForm = ({
     currentUserAddress,
   ]);
 
-  const userDirectRoles = useTransformer(TEMP_getUserRolesWithRecovery, [
+  const userInheritedRoles = useTransformer(TEMP_getUserRolesWithRecovery, [
     domains,
     colonyRecoveryRoles,
     domainId,
     userAddress,
-    true,
   ]);
 
   // Check which roles the current user is allowed to set in this domain
@@ -101,7 +100,7 @@ const PermissionForm = ({
       <InputLabel label={MSG.permissionsLabel} />
       {availableRoles.map(role => {
         const roleIsInherited =
-          !userDirectRoles.includes(role) && userRoles.includes(role);
+          !userRoles.includes(role) && userInheritedRoles.includes(role);
         return (
           <div key={role} className={styles.permissionChoiceContainer}>
             <PermissionCheckbox
