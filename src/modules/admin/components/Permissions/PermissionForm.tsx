@@ -10,6 +10,7 @@ import ExternalLink from '~core/ExternalLink';
 import {
   getUserRoles,
   TEMP_getUserRolesWithRecovery,
+  getAllRootAccounts,
 } from '../../../transformers';
 import { walletAddressSelector } from '../../../users/selectors';
 import PermissionCheckbox from './PermissionCheckbox';
@@ -67,6 +68,8 @@ const PermissionForm = ({
     userAddress,
   ]);
 
+  const rootAccounts = useTransformer(getAllRootAccounts, [domains]);
+
   // Check which roles the current user is allowed to set in this domain
   const canRoleBeSet = useCallback(
     (role: ROLES) => {
@@ -75,11 +78,13 @@ const PermissionForm = ({
         case ROLES.ARBITRATION:
           return false;
 
-        // Can only be set by root and in root domain
+        // Can only be set by root and in root domain (and only if other root accounts exist)
         case ROLES.ROOT:
         case ROLES.RECOVERY:
           return (
-            domainId === ROOT_DOMAIN && currentUserRoles.includes(ROLES.ROOT)
+            domainId === ROOT_DOMAIN &&
+            currentUserRoles.includes(ROLES.ROOT) &&
+            rootAccounts.length > 1
           );
 
         // Must be root for these
@@ -92,7 +97,7 @@ const PermissionForm = ({
           return false;
       }
     },
-    [currentUserRoles, domainId],
+    [currentUserRoles, domainId, rootAccounts.length],
   );
 
   return (
