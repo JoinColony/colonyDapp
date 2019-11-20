@@ -109,6 +109,7 @@ function* colonyDomainUserRolesSet({
         if (!existingUserRoles.includes(role) && setTo === false) return false;
         return true;
       })
+      .sort(([role]) => (role === ROLES.ROOT ? 1 : -1))
       .map(
         ([role, setTo]) =>
           [getRoleMethodName(role, setTo), setTo] as [string, boolean],
