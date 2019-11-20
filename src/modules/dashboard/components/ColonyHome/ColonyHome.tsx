@@ -105,7 +105,7 @@ interface MatchParams {
   colonyName: string;
 }
 
-interface Props extends RouteComponentProps<MatchParams> {}
+type Props = RouteComponentProps<MatchParams>;
 
 const COLONY_DB_RECOVER_BUTTON_TIMEOUT = 20 * 1000;
 
