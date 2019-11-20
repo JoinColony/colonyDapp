@@ -4,7 +4,8 @@
 /orbitdb
 coverage
 node_modules
-.env
+.env*
+!.env.example
 *.log
 reports
 ganache-accounts.json
