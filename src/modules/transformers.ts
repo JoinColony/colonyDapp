@@ -56,6 +56,28 @@ export const getUserRoles = (
   return roles[userAddress];
 };
 
+/* Gets all account addresses that have the ROOT role in the ROOT_DOMAIN */
+export const getAllRootAccounts = (
+  domains: DomainsMapType | null,
+): Address[] => {
+  if (!domains) return [];
+
+  const rootDomain = domains[ROOT_DOMAIN];
+  if (!rootDomain) return [];
+
+  const rootAccountSet = new Set<Address>();
+
+  Object.entries(rootDomain.roles).forEach(
+    ([userAddress, roles]: [Address, ROLES[]]) => {
+      if (roles.includes(ROLES.ROOT)) {
+        rootAccountSet.add(userAddress);
+      }
+    },
+  );
+
+  return Array.from(rootAccountSet);
+};
+
 export const TEMP_getUserRolesWithRecovery = (
   domains: DomainsMapType | null,
   recoveryRoles: Address[],
