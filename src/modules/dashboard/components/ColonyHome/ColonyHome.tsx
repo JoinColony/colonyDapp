@@ -199,10 +199,6 @@ const ColonyHome = ({
     colonyAddress,
   ]);
 
-  // Eventually this has to be in the proper domain. There's probably going to be a different UI for that
-  const canCreateTask = canAdminister(roles) || isFounder(roles);
-  const isInRecoveryMode = isInRecoveryModeCheck(colony);
-
   if (colonyError || addressError) {
     return <Redirect to="/404" />;
   }
@@ -236,6 +232,10 @@ const ColonyHome = ({
       </LoadingTemplate>
     );
   }
+
+  // Eventually this has to be in the proper domain. There's probably going to be a different UI for that
+  const canCreateTask = canAdminister(roles) || isFounder(roles);
+  const isInRecoveryMode = isInRecoveryModeCheck(colony);
 
   const filterSelect = (
     <Select
