@@ -2,7 +2,7 @@ import React, { useCallback, useMemo, useState } from 'react';
 import { defineMessages, injectIntl, IntlShape } from 'react-intl';
 import { compose } from 'recompose';
 
-import { ROOT_DOMAIN } from '~constants';
+import { ROOT_DOMAIN, COLONY_TOTAL_BALANCE_DOMAIN_ID } from '~constants';
 import { DialogType } from '~core/Dialog';
 import Button from '~core/Button';
 import withDialog from '~core/Dialog/withDialog';
@@ -13,7 +13,6 @@ import { Address, ColonyRoles } from '~types/index';
 import { useDataFetcher, useSelector } from '~utils/hooks';
 import { proxyOldRoles } from '~utils/data';
 
-import { COLONY_TOTAL_BALANCE_DOMAIN_ID } from '../../../admin/constants';
 import { domainsFetcher, tokenFetcher } from '../../../dashboard/fetchers';
 import { useColonyNativeToken } from '../../../dashboard/hooks/useColonyNativeToken';
 import { useColonyTokens } from '../../../dashboard/hooks/useColonyTokens';
