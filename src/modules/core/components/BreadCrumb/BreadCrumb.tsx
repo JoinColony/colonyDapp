@@ -24,13 +24,17 @@ const BreadCrumb = ({ elements, intl: { formatMessage } }: Props) => {
         return (
           <>
             {elements.length > 1 && i < elements.length - 1 ? (
-              <div className={styles.element} key={`breadCrumb_${crumbText}`}>
+              <div
+                className={styles.element}
+                key={`breadCrumb_${crumbText}`}
+                title={crumbText}
+              >
                 <span className={styles.breadCrumble}>{crumbText}</span>
                 <span className={styles.arrow}>&gt;</span>
               </div>
             ) : null}
             {i === elements.length - 1 || elements.length === 1 ? (
-              <div className={styles.elementLast}>
+              <div className={styles.elementLast} title={crumbText}>
                 <b className={styles.breadCrumble}>{crumbText}</b>
               </div>
             ) : null}
