@@ -10,6 +10,17 @@
   justify-content: space-between;
   align-items: baseline;
   border-bottom: 1px solid var(--temp-grey-5);
+
+  & h3 {
+    /*
+     * @NOTE We can't compose from `inlineEllipsis` here since we're inside an
+     * element, not a component :(
+     */
+    width: calc(100% - 150px);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
 }
 
 .tableWrapper {
