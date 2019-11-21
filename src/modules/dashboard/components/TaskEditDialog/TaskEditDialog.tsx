@@ -17,7 +17,7 @@ import {
   UserType,
 } from '~immutable/index';
 import { ItemDataType } from '~core/OmniPicker';
-import SingleUserPicker from '~core/SingleUserPicker';
+import SingleUserPicker, { filterUserSelection } from '~core/SingleUserPicker';
 import Button from '~core/Button';
 import { ActionForm, FormStatus } from '~core/Fields';
 import { FullscreenDialog } from '~core/Dialog';
@@ -35,15 +35,15 @@ import {
   useDataMapFetcher,
   useSelector,
 } from '~utils/hooks';
-import { filterUserSelection } from '~utils/arrays';
-import WrappedPayout from './WrappedPayout';
-import { colonySubscriber } from '../../subscribers';
-import { taskSelector, taskRequestsSelector } from '../../selectors';
+
+import { createAddress } from '../../../../types';
 import { useColonyTokens } from '../../hooks/useColonyTokens';
 import { userMapFetcher } from '../../../users/fetchers';
 import { userSubscriber } from '../../../users/subscribers';
 import { allUsersAddressesSelector } from '../../../users/selectors';
-import { createAddress } from '../../../../types';
+import { colonySubscriber } from '../../subscribers';
+import { taskSelector, taskRequestsSelector } from '../../selectors';
+import WrappedPayout from './WrappedPayout';
 
 import styles from './TaskEditDialog.css';
 

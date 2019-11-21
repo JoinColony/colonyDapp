@@ -9,9 +9,8 @@ import { UserType, UserProfile, User } from '~immutable/index';
 import { ItemDataType } from '~core/OmniPicker';
 import { ActionTypeString, ActionTypes } from '~redux/index';
 import { useSelector, useDataFetcher, useTransformer } from '~utils/hooks';
-import { filterUserSelection } from '~utils/arrays';
 
-import SingleUserPicker from '~core/SingleUserPicker';
+import SingleUserPicker, { filterUserSelection } from '~core/SingleUserPicker';
 import { SpinnerLoader } from '~core/Preloaders';
 import Heading from '~core/Heading';
 import Button from '~core/Button';
