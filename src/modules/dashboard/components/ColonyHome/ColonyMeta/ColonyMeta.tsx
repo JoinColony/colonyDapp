@@ -152,7 +152,7 @@ const ColonyMeta = ({
             </Button>
           </li>
           {sortedDomains.map(({ name, id }) => (
-            <li key={`domain_${id}`}>
+            <li key={`domain_${id}`} title={name}>
               <Button
                 className={getActiveDomainFilterClass(id, filteredDomainId)}
                 onClick={() => setFilteredDomainId(id)}
