@@ -78,13 +78,13 @@ const PermissionForm = ({
         case ROLES.ARBITRATION:
           return false;
 
-        // Can only be set by root and in root domain (and only if other root accounts exist)
+        // Can only be set by root and in root domain (and only unset if other root accounts exist)
         case ROLES.ROOT:
         case ROLES.RECOVERY:
           return (
             domainId === ROOT_DOMAIN &&
             currentUserRoles.includes(ROLES.ROOT) &&
-            rootAccounts.length > 1
+            (!userRoles.includes(ROLES.ROOT) || rootAccounts.length > 1)
           );
 
         // Must be root for these
@@ -97,7 +97,7 @@ const PermissionForm = ({
           return false;
       }
     },
-    [currentUserRoles, domainId, rootAccounts.length],
+    [currentUserRoles, domainId, rootAccounts.length, userRoles],
   );
 
   return (
