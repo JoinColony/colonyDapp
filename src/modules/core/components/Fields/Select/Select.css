@@ -85,3 +85,11 @@
 .themeAlt.select[aria-expanded="true"], .themeAlt:focus {
   background-color: var(--temp-grey-5);
 }
+
+.widthFluid {
+  width: 100%;
+}
+
+.widthStrict {
+  width: 100px;
+}
