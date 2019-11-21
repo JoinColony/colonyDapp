@@ -21,7 +21,7 @@ const options = [
         name="basicSelect"
       />
       <Select
-        appearance={{ alignOptions: 'left', theme: 'alt' }}
+        appearance={{ alignOptions: 'left', theme: 'alt', width: 'fluid' }}
         label="I'm an alt Select"
         options={options}
         placeholder="Select an alt option"
@@ -50,7 +50,7 @@ initialState = { $value: ''};
     // with connect={false}, `$value` and `setValue` are required
     $value={state.$value}
     setValue={val => setState({ $value: val })}
-    appearance={{ alignOptions: 'right', theme: 'alt' }}
+    appearance={{ alignOptions: 'right', theme: 'alt', width: 'strict' }}
     elementOnly={true}
     label="I'm an unconnected Select"
     options={options}

@@ -39,3 +39,13 @@
   left: 50%;
   transform: translate(-50%);
 }
+
+.widthFluid {
+  width: auto;
+  min-width: 100%;
+}
+
+.widthStrict {
+  width: 300px;
+  min-width: auto;
+}
