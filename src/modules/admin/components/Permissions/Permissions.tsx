@@ -137,7 +137,11 @@ const Permissions = ({ colonyAddress, domains, openDialog }: Props) => {
             appearance={{ size: 'medium', theme: 'dark' }}
           />
           <Select
-            appearance={{ alignOptions: 'right', theme: 'alt' }}
+            appearance={{
+              alignOptions: 'right',
+              theme: 'alt',
+              width: 'strict',
+            }}
             connect={false}
             elementOnly
             label={MSG.labelFilter}
