@@ -150,7 +150,11 @@ const Tokens = ({
               appearance={{ size: 'medium', theme: 'dark' }}
             />
             <Select
-              appearance={{ alignOptions: 'right', theme: 'alt' }}
+              appearance={{
+                alignOptions: 'right',
+                width: 'strict',
+                theme: 'alt',
+              }}
               connect={false}
               elementOnly
               label={MSG.labelSelectDomain}
