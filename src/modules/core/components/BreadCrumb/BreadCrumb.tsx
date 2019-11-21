@@ -22,21 +22,19 @@ const BreadCrumb = ({ elements, intl: { formatMessage } }: Props) => {
         const crumbText =
           typeof crumb == 'string' ? crumb : formatMessage(crumb);
         return (
-          <div className={styles.element} key={`breadCrumb_${crumbText}`}>
-            <>
-              {elements.length > 1 && i < elements.length - 1 ? (
-                <>
-                  <span className={styles.breadCrumble}>{crumbText}</span>
-                  <span className={styles.arrow}>&gt;</span>
-                </>
-              ) : null}
-            </>
-            <>
-              {i === elements.length - 1 || elements.length === 1 ? (
+          <>
+            {elements.length > 1 && i < elements.length - 1 ? (
+              <div className={styles.element} key={`breadCrumb_${crumbText}`}>
+                <span className={styles.breadCrumble}>{crumbText}</span>
+                <span className={styles.arrow}>&gt;</span>
+              </div>
+            ) : null}
+            {i === elements.length - 1 || elements.length === 1 ? (
+              <div className={styles.elementLast}>
                 <b className={styles.breadCrumble}>{crumbText}</b>
-              ) : null}
-            </>
-          </div>
+              </div>
+            ) : null}
+          </>
         );
       })}
     </div>
