@@ -7,3 +7,5 @@ export const selectExpandContainer: string;
 export const activeOption: string;
 export const themeDefault: string;
 export const themeAlt: string;
+export const widthFluid: string;
+export const widthStrict: string;
