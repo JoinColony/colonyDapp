@@ -1,5 +1,7 @@
 import React from 'react';
 import { Redirect } from 'react-router';
+import { useQuery } from '@apollo/react-hooks';
+import gql from 'graphql-tag';
 
 import { NOT_FOUND_ROUTE } from '~routes/index';
 import { useDataSubscriber } from '~utils/hooks';
@@ -10,6 +12,21 @@ import UserMeta from './UserMeta';
 import UserProfileSpinner from './UserProfileSpinner';
 import UserColonies from './UserColonies';
 import styles from './UserProfile.css';
+
+const USER = gql`
+  {
+    user {
+      profile {
+        walletAddress
+        displayName
+        bio
+        location
+        website
+        avatarHash
+      }
+    }
+  }
+`;
 
 interface Props {
   match: any;
@@ -24,11 +41,19 @@ const UserProfile = ({
     username,
   );
 
+  const { data } = useQuery(USER);
+
   const { error: userError, data: user, isFetching } = useDataSubscriber(
     userSubscriber,
     [userAddress as string],
     [userAddress],
   );
+
+  const TEMP_user = data.user;
+
+  if (TEMP_user && TEMP_user.profile) {
+    TEMP_user.profile.username = username;
+  }
 
   // Sometimes userAddress is not defined (because it is being fetched). Only if it *is* defined we should care about the error
   if (userAddressError || (userAddress && userError)) {
@@ -40,9 +65,9 @@ const UserProfile = ({
   }
 
   return (
-    <ProfileTemplate asideContent={<UserMeta user={user} />}>
+    <ProfileTemplate asideContent={<UserMeta user={TEMP_user} />}>
       <section className={styles.sectionContainer}>
-        <UserColonies user={user} />
+        <UserColonies user={TEMP_user} />
       </section>
     </ProfileTemplate>
   );
