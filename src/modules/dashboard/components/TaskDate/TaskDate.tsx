@@ -28,22 +28,30 @@ const MSG = defineMessages({
   },
 });
 
-interface Props extends TaskProps<'colonyAddress' | 'draftId' | 'dueDate'> {
+interface Props
+  extends TaskProps<'colonyAddress' | 'draftId' | 'dueDate' | 'domainId'> {
   disabled?: boolean;
 }
 
 const displayName = 'dashboard.TaskDate';
 
-const TaskDate = ({ colonyAddress, draftId, dueDate, disabled }: Props) => {
+const TaskDate = ({
+  colonyAddress,
+  draftId,
+  dueDate,
+  disabled,
+  domainId,
+}: Props) => {
   const transform = useCallback(
     pipe(
       mapPayload(({ taskDueDate }) => ({ dueDate: taskDueDate })),
       mergePayload({
         colonyAddress,
         draftId,
+        domainId,
       }),
     ),
-    [colonyAddress, draftId],
+    [colonyAddress, draftId, domainId],
   );
 
   return (

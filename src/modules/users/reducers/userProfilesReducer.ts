@@ -7,7 +7,7 @@ import { ActionTypes, ReducerType } from '~redux/index';
 import { UsersMap } from '../state/index';
 
 const userProfilesReducer: ReducerType<UsersMap> = (
-  state = ImmutableMap(),
+  state = ImmutableMap() as UsersMap,
   action,
 ) => {
   switch (action.type) {
@@ -61,7 +61,9 @@ const userProfilesReducer: ReducerType<UsersMap> = (
       const profile = UserProfile(payload);
       const recordPath = [walletAddress, 'record'];
       return state.getIn(recordPath)
-        ? state.setIn([...recordPath, 'profile'], profile)
+        ? state
+            .setIn([walletAddress, 'isFetching'], false)
+            .setIn([...recordPath, 'profile'], profile)
         : state
             .setIn([walletAddress, 'isFetching'], false)
             .setIn(recordPath, User({ profile }));
@@ -74,5 +76,5 @@ const userProfilesReducer: ReducerType<UsersMap> = (
 
 export default withFetchableDataMap<UsersMap, UserRecord>(
   new Set([ActionTypes.USER_FETCH, ActionTypes.USER_SUB_START]),
-  ImmutableMap(),
+  ImmutableMap() as UsersMap,
 )(userProfilesReducer);

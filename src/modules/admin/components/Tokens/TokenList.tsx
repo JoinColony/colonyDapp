@@ -1,10 +1,12 @@
 import React from 'react';
 
+import { ROOT_DOMAIN } from '~constants';
 import {
   ColonyTokenReferenceType,
   UserTokenReferenceType,
 } from '~immutable/index';
 import CardList from '~core/CardList';
+
 import TokenCard from './TokenCard';
 import styles from './TokenList.css';
 
@@ -26,7 +28,7 @@ const displayName = 'admin.Tokens.TokenList';
 const TokenList = <
   T extends ColonyTokenReferenceType | UserTokenReferenceType
 >({
-  domainId = 1,
+  domainId = ROOT_DOMAIN,
   tokens,
   appearance,
 }: Props<T>) => (

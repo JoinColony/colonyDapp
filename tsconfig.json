@@ -2,6 +2,7 @@
   "compilerOptions": {
     "baseUrl": ".",
     "paths": {
+      "~constants": ["src/modules/constants.ts"],
       "~admin/*": ["src/modules/admin/components/*"],
       "~context/*": ["src/context/*"],
       "~core/*": ["src/modules/core/components/*"],

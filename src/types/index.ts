@@ -4,16 +4,9 @@ export * from '../lib/database/types';
 export * from './keyTypes';
 export * from './TransactionReceipt';
 export * from './strings';
-export * from './roles';
-
-export type ColonyRole =
-  | 'ADMINISTRATION'
-  | 'ARBITRATION'
-  | 'ARCHITECTURE'
-  | 'ARCHITECTURE_SUBDOMAIN'
-  | 'FUNDING'
-  | 'RECOVERY'
-  | 'ROOT';
+export * from './domains';
+export * from './DefaultValues';
+export * from './RecordToJS';
 
 export type WithKey = {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -22,4 +15,17 @@ export type WithKey = {
 
 export type ExcludesNull = <T>(x: T | null) => x is T;
 
-export * from './DefaultValues';
+// https://stackoverflow.com/questions/54607400/typescript-remove-entries-from-tuple-type
+export type RemoveFirstFromTuple<T extends any[]> = T['length'] extends 0
+  ? []
+  : (((...b: T) => void) extends (a, ...b: infer I) => void ? I : []);
+
+export interface DataObject<T> {
+  data?: T;
+  isFetching: boolean;
+  error?: string;
+}
+
+export interface KeyedDataObject<T> extends DataObject<T> {
+  key: string;
+}

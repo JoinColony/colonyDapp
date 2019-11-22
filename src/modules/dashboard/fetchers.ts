@@ -2,12 +2,9 @@ import {
   colonyAddressSelector,
   colonyDomainsSelector,
   colonyNameSelector,
-  colonyRolesSelector,
   colonySelector,
-  colonyTaskMetadataSelector,
-  tasksByIdsSelector,
-  taskSelector,
   tokenSelector,
+  TEMP_userHasRecoveryRoleSelector,
 } from './selectors';
 import {
   userColoniesSelector,
@@ -18,11 +15,9 @@ import {
   fetchColonyAddress,
   fetchColonyName,
   fetchDomains,
-  fetchRoles,
-  fetchTask,
-  fetchTaskByColonyAddressAndDraftId,
+  fetchDomainsAndRoles,
   fetchToken,
-  fetchColonyTaskMetadata,
+  TEMP_fetchUserHasRecoveryRole,
 } from './actionCreators';
 import {
   fetchUserColonies,
@@ -32,31 +27,37 @@ import {
 export const colonyFetcher = Object.freeze({
   select: colonySelector,
   fetch: fetchColony,
-  ttl: 1000 * 60, // 1 minute
+  ttl: 1000 * 60,
 });
 
 export const colonyAddressFetcher = Object.freeze({
   select: colonyAddressSelector,
   fetch: fetchColonyAddress,
-  ttl: 1000 * 60, // 1 minute
+  ttl: 1000 * 60,
 });
 
 export const colonyNameFetcher = Object.freeze({
   select: colonyNameSelector,
   fetch: fetchColonyName,
-  ttl: 1000 * 60, // 1 minute
+  ttl: 1000 * 60,
 });
 
 export const domainsFetcher = Object.freeze({
   select: colonyDomainsSelector,
   fetch: fetchDomains,
-  ttl: 1000 * 60, // 1 minute,
+  ttl: 1000 * 60,
 });
 
-export const rolesFetcher = Object.freeze({
-  select: colonyRolesSelector,
-  fetch: fetchRoles,
+export const domainsAndRolesFetcher = Object.freeze({
+  select: colonyDomainsSelector,
+  fetch: fetchDomainsAndRoles,
   ttl: 1000 * 60,
+});
+
+export const TEMP_userHasRecoveryRoleFetcher = Object.freeze({
+  select: TEMP_userHasRecoveryRoleSelector,
+  fetch: TEMP_fetchUserHasRecoveryRole,
+  ttl: 0,
 });
 
 export const currentUserDraftIdsFetcher = Object.freeze({
@@ -69,24 +70,6 @@ export const userColoniesFetcher = Object.freeze({
   select: userColoniesSelector,
   fetch: fetchUserColonies,
   ttl: 1000 * 60,
-});
-
-export const taskFetcher = Object.freeze({
-  select: taskSelector,
-  fetch: fetchTask,
-  ttl: 1000 * 60, // 1 minute,
-});
-
-export const tasksByIdFetcher = Object.freeze({
-  select: tasksByIdsSelector,
-  fetch: fetchTaskByColonyAddressAndDraftId,
-  ttl: 1000 * 60, // 1 minute,
-});
-
-export const colonyTaskMetadataFetcher = Object.freeze({
-  select: colonyTaskMetadataSelector,
-  fetch: fetchColonyTaskMetadata,
-  ttl: 1000 * 60, // 1 minute,
 });
 
 export const tokenFetcher = Object.freeze({

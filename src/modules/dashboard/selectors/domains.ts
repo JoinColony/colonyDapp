@@ -1,7 +1,5 @@
-import { Set as ImmutableSet } from 'immutable';
-
-import { DomainId } from '~immutable/index';
-import { Address } from '~types/index';
+import { FetchableDataRecord, DomainRecord } from '~immutable/index';
+import { Address, DomainsMap } from '~types/index';
 
 import { RootStateRecord } from '../../state';
 import { DASHBOARD_NAMESPACE as ns, DASHBOARD_ALL_DOMAINS } from '../constants';
@@ -12,14 +10,12 @@ import { DASHBOARD_NAMESPACE as ns, DASHBOARD_ALL_DOMAINS } from '../constants';
 export const colonyDomainsSelector = (
   state: RootStateRecord,
   colonyAddress: Address,
-) => state.getIn([ns, DASHBOARD_ALL_DOMAINS, colonyAddress]);
+): FetchableDataRecord<DomainsMap> =>
+  state.getIn([ns, DASHBOARD_ALL_DOMAINS, colonyAddress]);
 
 export const domainSelector = (
   state: RootStateRecord,
   colonyAddress: Address,
-  domainId: DomainId,
-) =>
-  (
-    state.getIn([ns, DASHBOARD_ALL_DOMAINS, colonyAddress, 'record']) ||
-    ImmutableSet()
-  ).find(({ id }) => id === domainId);
+  domainId: number,
+): DomainRecord | null =>
+  state.getIn([ns, DASHBOARD_ALL_DOMAINS, colonyAddress, 'record', domainId]);

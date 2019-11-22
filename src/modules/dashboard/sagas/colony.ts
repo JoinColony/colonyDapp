@@ -10,6 +10,7 @@ import {
   select,
 } from 'redux-saga/effects';
 
+import { COLONY_TOTAL_BALANCE_DOMAIN_ID, ROOT_DOMAIN } from '~constants';
 import { Action, ActionTypes, AllActions } from '~redux/index';
 import {
   putError,
@@ -19,6 +20,7 @@ import {
   executeSubscription,
   selectAsJS,
 } from '~utils/saga/effects';
+import { ColonyRolesType } from '~immutable/index';
 import { ContractContexts, createAddress } from '~types/index';
 
 import {
@@ -35,7 +37,6 @@ import {
   subscribeToColony,
   subscribeToColonyTasks,
 } from '../data/queries';
-import { COLONY_TOTAL_BALANCE_DOMAIN_ID } from '../../admin/constants';
 import { createTransaction, getTxChannel } from '../../core/sagas';
 import { ipfsUpload } from '../../core/sagas/ipfs';
 import { networkVersionSelector } from '../../core/selectors';
@@ -376,7 +377,7 @@ function* colonyTokenBalancesFetch({
   payload: { colonyAddress, tokenAddress },
 }: Action<ActionTypes.COLONY_TOKEN_BALANCES_FETCH>) {
   try {
-    const { record: domains = [] } = yield selectAsJS(
+    const { record: domains = {} as ColonyRolesType } = yield selectAsJS(
       colonyDomainsSelector,
       colonyAddress,
     );
@@ -391,10 +392,16 @@ function* colonyTokenBalancesFetch({
         ),
       ),
       // fetch balances for root domain
-      put(fetchColonyTokenBalance(colonyAddress, tokenAddress, 1)),
+      put(fetchColonyTokenBalance(colonyAddress, tokenAddress, ROOT_DOMAIN)),
       // fetch balances for other domains
-      ...domains.map(({ id: domainId }) =>
-        put(fetchColonyTokenBalance(colonyAddress, tokenAddress, domainId)),
+      ...Object.keys(domains).map(domainId =>
+        put(
+          fetchColonyTokenBalance(
+            colonyAddress,
+            tokenAddress,
+            parseInt(domainId, 10),
+          ),
+        ),
       ),
     ]);
 

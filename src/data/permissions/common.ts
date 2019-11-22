@@ -1,30 +1,24 @@
-import {
-  ColonyClient,
-  COLONY_ROLE_ROOT,
-  COLONY_ROLE_ADMINISTRATION,
-} from '@colony/colony-js-client';
+import { ColonyClient } from '@colony/colony-js-client';
 
+import { ROLES, ROOT_DOMAIN } from '~constants';
 import { Address } from '~types/strings';
-import { ROOT_DOMAIN } from '../../modules/core/constants';
 import { PermissionsManifest } from '../types';
 import { makeUserHasRoleFn } from './utils';
 
 export default function loadModule(
   colonyClient: ColonyClient,
 ): PermissionsManifest<any> {
-  const isFounder = makeUserHasRoleFn(colonyClient, COLONY_ROLE_ROOT);
-  const isAdmin = makeUserHasRoleFn(colonyClient, COLONY_ROLE_ADMINISTRATION);
+  const isRoot = makeUserHasRoleFn(colonyClient, ROLES.ROOT);
+  const isAdmin = makeUserHasRoleFn(colonyClient, ROLES.ADMINISTRATION);
+  const hasArchitecture = makeUserHasRoleFn(colonyClient, ROLES.ARCHITECTURE);
 
   return {
-    'is-founder': async (address: Address) => isFounder(address, ROOT_DOMAIN),
-    'is-founder-or-admin': async (
+    'is-admin': async (
       address: Address,
       { domainId = ROOT_DOMAIN }: { domainId: number },
-    ) => {
-      const hasAdminRole = await isAdmin(address, domainId);
-      if (hasAdminRole) return hasAdminRole;
-
-      return isFounder(address, ROOT_DOMAIN);
-    },
+    ) => isAdmin(address, domainId),
+    'is-root': async (address: Address) => isRoot(address, ROOT_DOMAIN),
+    'has-root-architecture': async (address: Address) =>
+      hasArchitecture(address, ROOT_DOMAIN),
   };
 }

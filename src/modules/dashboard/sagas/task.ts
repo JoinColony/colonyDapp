@@ -12,6 +12,7 @@ import {
 import { replace } from 'connected-react-router';
 import BigNumber from 'bn.js';
 
+import { ROOT_DOMAIN } from '~constants';
 import { Action, ActionTypes } from '~redux/index';
 import { Address, ContractContexts } from '~types/index';
 import { TaskType } from '~immutable/index';
@@ -24,9 +25,9 @@ import {
   executeSubscription,
   takeFrom,
 } from '~utils/saga/effects';
-import { generateUrlFriendlyId } from '~utils/data';
-
+import { generateUrlFriendlyId } from '~utils/strings';
 import { matchUsernames } from '~lib/TextDecorator';
+
 import { usernameSelector, walletAddressSelector } from '../../users/selectors';
 import { fetchColonyTaskMetadata as fetchColonyTaskMetadataAC } from '../actionCreators';
 import {
@@ -35,7 +36,6 @@ import {
   colonyTaskMetadataSelector,
   taskSelector,
 } from '../selectors';
-import { ROOT_DOMAIN } from '../../core/constants';
 import { createTransaction, getTxChannel, signMessage } from '../../core/sagas';
 
 import {
@@ -238,12 +238,13 @@ function* taskSetDescription({
 }: Action<ActionTypes.TASK_SET_DESCRIPTION>) {
   try {
     const {
-      record: { description: currentDescription },
+      record: { description: currentDescription, domainId },
     } = yield selectAsJS(taskSelector, draftId);
     const eventData = yield executeCommand(setTaskDescription, {
       args: {
         currentDescription,
         description,
+        domainId,
       },
       metadata: { colonyAddress, draftId },
     });
@@ -271,10 +272,10 @@ function* taskSetTitle({
 }: Action<ActionTypes.TASK_SET_TITLE>) {
   try {
     const {
-      record: { title: currentTitle },
+      record: { title: currentTitle, domainId },
     }: { record: TaskType } = yield selectAsJS(taskSelector, draftId);
     const eventData = yield executeCommand(setTaskTitle, {
-      args: { currentTitle, title },
+      args: { currentTitle, title, domainId },
       metadata: { colonyAddress, draftId },
     });
     if (eventData) {
@@ -326,11 +327,11 @@ function* taskSetDomain({
  */
 function* taskCancel({
   meta,
-  payload: { colonyAddress, draftId },
+  payload: { colonyAddress, draftId, domainId },
 }: Action<ActionTypes.TASK_CANCEL>) {
   try {
     const { event } = yield executeCommand(cancelTask, {
-      args: { draftId },
+      args: { draftId, domainId },
       metadata: { colonyAddress, draftId },
     });
 
@@ -356,10 +357,11 @@ function* taskCancel({
  */
 function* taskClose({
   meta,
-  payload: { colonyAddress, draftId },
+  payload: { colonyAddress, draftId, domainId },
 }: Action<ActionTypes.TASK_CLOSE>) {
   try {
     const { event } = yield executeCommand(closeTask, {
+      args: { domainId },
       metadata: { colonyAddress, draftId },
     });
 
@@ -382,12 +384,12 @@ function* taskClose({
  * As worker or manager, I want to be able to set a skill
  */
 function* taskSetSkill({
-  payload: { colonyAddress, draftId, skillId },
+  payload: { colonyAddress, draftId, skillId, domainId },
   meta,
 }: Action<ActionTypes.TASK_SET_SKILL>) {
   try {
     const { event } = yield executeCommand(setTaskSkill, {
-      args: { skillId },
+      args: { skillId, domainId },
       metadata: { colonyAddress, draftId },
     });
 
@@ -425,7 +427,7 @@ function* taskSetPayout({
 }: Action<ActionTypes.TASK_SET_PAYOUT>) {
   try {
     const {
-      record: { payouts },
+      record: { payouts, domainId },
     }: { record: TaskType } = yield selectAsJS(taskSelector, draftId);
 
     /*
@@ -438,7 +440,7 @@ function* taskSetPayout({
       !amount.eq(new BigNumber(payouts[0].amount))
     ) {
       const { event } = yield executeCommand(setTaskPayout, {
-        args: { token, amount },
+        args: { token, amount, domainId },
         metadata: { colonyAddress, draftId },
       });
 
@@ -499,12 +501,12 @@ function* taskRemovePayout({
  * As worker or manager, I want to be able to set a date
  */
 function* taskSetDueDate({
-  payload: { colonyAddress, draftId, dueDate },
+  payload: { colonyAddress, draftId, dueDate, domainId },
   meta,
 }: Action<ActionTypes.TASK_SET_DUE_DATE>) {
   try {
     const { event } = yield executeCommand(setTaskDueDate, {
-      args: { dueDate: dueDate ? dueDate.getTime() : undefined },
+      args: { dueDate: dueDate ? dueDate.getTime() : undefined, domainId },
       metadata: { colonyAddress, draftId },
     });
     yield put<AllActions>({
@@ -544,7 +546,7 @@ function* taskFinalize({
     const txChannel = yield call(getTxChannel, meta.id);
     yield fork(createTransaction, meta.id, {
       context: ContractContexts.COLONY_CONTEXT,
-      methodName: 'makePayment',
+      methodName: 'makePaymentFundedFromDomain',
       identifier: colonyAddress,
       params: {
         recipient: workerAddress,
@@ -565,6 +567,7 @@ function* taskFinalize({
     // add finalize task event to task store
     const { event } = yield executeCommand(finalizeTask, {
       args: {
+        domainId,
         paymentTokenAddress: token,
         amountPaid: amount.toString(),
         workerAddress,
@@ -604,9 +607,9 @@ function* taskSendWorkInvite({
   meta,
 }: Action<ActionTypes.TASK_SEND_WORK_INVITE>) {
   try {
-    const { workerAddress } = yield select(taskSelector, draftId);
+    const { workerAddress, domainId } = yield select(taskSelector, draftId);
     const { event } = yield executeCommand(sendWorkInvite, {
-      args: { workerAddress },
+      args: { workerAddress, domainId },
       metadata: { colonyAddress, draftId },
     });
     yield put<AllActions>({
@@ -684,10 +687,14 @@ function* taskWorkerAssign({
   try {
     const walletAddress = yield select(walletAddressSelector);
     const {
-      record: { workerAddress: currentWorkerAddress, title: taskTitle },
+      record: {
+        workerAddress: currentWorkerAddress,
+        title: taskTitle,
+        domainId,
+      },
     } = yield select(taskSelector, draftId);
     const eventData = yield executeCommand(assignWorker, {
-      args: { workerAddress, currentWorkerAddress },
+      args: { workerAddress, currentWorkerAddress, domainId },
       metadata: { colonyAddress, draftId },
     });
     if (eventData) {
@@ -731,10 +738,10 @@ function* taskWorkerUnassign({
     if (workerAddress) {
       const userAddress = yield select(walletAddressSelector);
       const {
-        record: { title: taskTitle },
+        record: { title: taskTitle, domainId },
       } = yield select(taskSelector, draftId);
       const eventData = yield executeCommand(unassignWorker, {
-        args: { workerAddress, userAddress },
+        args: { workerAddress, userAddress, domainId },
         metadata: { colonyAddress, draftId },
       });
 

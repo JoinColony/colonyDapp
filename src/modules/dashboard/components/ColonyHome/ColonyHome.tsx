@@ -1,19 +1,12 @@
 import { Redirect } from 'react-router';
 import React, { useState, useCallback, useEffect, useMemo } from 'react';
-import {
-  defineMessages,
-  FormattedMessage,
-  injectIntl,
-  IntlShape,
-} from 'react-intl';
+import { defineMessages, FormattedMessage } from 'react-intl';
 import { subscribeActions as subscribeToReduxActions } from 'redux-action-watch/lib/actionCreators';
 import { useDispatch } from 'redux-react-hook';
 import throttle from 'lodash/throttle';
 
-import { ColonyTokenReferenceType, DomainType } from '~immutable/index';
+import { COLONY_TOTAL_BALANCE_DOMAIN_ID, ROOT_DOMAIN } from '~constants';
 import { Address } from '~types/index';
-import { ROOT_DOMAIN } from '../../../core/constants';
-import { walletAddressSelector } from '../../../users/selectors';
 import {
   TasksFilterOptionType,
   TasksFilterOptions,
@@ -24,9 +17,10 @@ import {
   useDataFetcher,
   useDataSubscriber,
   useSelector,
-  useUserDomainRoles,
+  useTransformer,
 } from '~utils/hooks';
 import { mergePayload } from '~utils/actions';
+import Transactions from '~admin/Transactions';
 import { Tab, Tabs, TabList, TabPanel } from '~core/Tabs';
 import { Select } from '~core/Fields';
 import Heading from '~core/Heading';
@@ -34,22 +28,24 @@ import Button, { ActionButton, DialogActionButton } from '~core/Button';
 import BreadCrumb from '~core/BreadCrumb';
 import RecoveryModeAlert from '~admin/RecoveryModeAlert';
 import LoadingTemplate from '~pages/LoadingTemplate';
+
+import { walletAddressSelector } from '../../../users/selectors';
+import { canAdminister, hasRoot } from '../../../users/checks';
+import { colonyAddressFetcher, domainsAndRolesFetcher } from '../../fetchers';
 import {
   colonyNativeTokenSelector,
   colonyEthTokenSelector,
 } from '../../selectors';
-import { colonyAddressFetcher, domainsFetcher } from '../../fetchers';
+import { getUserRoles } from '../../../transformers';
 import { colonySubscriber } from '../../subscribers';
-import { canAdminister, isFounder } from '../../../users/checks';
 import {
   isInRecoveryMode as isInRecoveryModeCheck,
   canRecoverColony,
 } from '../../checks';
-
 import ColonyFunding from './ColonyFunding';
 import ColonyMeta from './ColonyMeta';
 import TabContribute from './TabContribute';
-import Transactions from '~admin/Transactions';
+
 import styles from './ColonyHome.css';
 
 const MSG = defineMessages({
@@ -107,8 +103,6 @@ const MSG = defineMessages({
 
 interface Props {
   match: any;
-  /** @ignore injected by `injectIntl` */
-  intl: IntlShape;
 }
 
 const COLONY_DB_RECOVER_BUTTON_TIMEOUT = 20 * 1000;
@@ -119,10 +113,11 @@ const ColonyHome = ({
   match: {
     params: { colonyName },
   },
-  intl: { formatMessage },
 }: Props) => {
   const [filterOption, setFilterOption] = useState(TasksFilterOptions.ALL_OPEN);
-  const [filteredDomainId, setFilteredDomainId] = useState(0);
+  const [filteredDomainId, setFilteredDomainId] = useState(
+    COLONY_TOTAL_BALANCE_DOMAIN_ID,
+  );
   const [isTaskBeingCreated, setIsTaskBeingCreated] = useState(false);
   const [showRecoverOption, setRecoverOption] = useState(false);
   const [activeTab, setActiveTab] = useState<'tasks' | 'transactions'>('tasks');
@@ -155,65 +150,65 @@ const ColonyHome = ({
     [setFilterOption],
   );
 
-  const { data: colonyAddress, error: addressError } = useDataFetcher<Address>(
+  const { data: colonyAddress, error: addressError } = useDataFetcher(
     colonyAddressFetcher,
     [colonyName],
     [colonyName],
   );
 
-  const colonyArgs = [colonyAddress || undefined];
+  const colonyArgs: [Address | undefined] = [colonyAddress || undefined];
   const {
     data: colony,
     isFetching: isFetchingColony,
     error: colonyError,
-  } = useDataSubscriber<any>(colonySubscriber, colonyArgs, colonyArgs);
+  } = useDataSubscriber(colonySubscriber, colonyArgs, colonyArgs);
+
+  const { data: domains, isFetching: isFetchingDomains } = useDataFetcher(
+    domainsAndRolesFetcher,
+    [colonyAddress],
+    [colonyAddress],
+  );
 
   const walletAddress = useSelector(walletAddressSelector);
-  const { data: roles, isFetching: isFetchingRoles } = useUserDomainRoles(
-    colonyAddress || undefined,
+
+  const currentDomainUserRoles = useTransformer(getUserRoles, [
+    domains,
     filteredDomainId || ROOT_DOMAIN,
     walletAddress,
-  );
+  ]);
 
-  const { data: domains } = useDataFetcher<DomainType[]>(
-    domainsFetcher,
-    [colonyAddress],
-    [colonyAddress],
-  );
+  const rootUserRoles = useTransformer(getUserRoles, [
+    domains,
+    ROOT_DOMAIN,
+    walletAddress,
+  ]);
 
   const crumbs = useMemo(() => {
-    const selectedDomain =
-      !!domains && domains.find(domain => domain.id === filteredDomainId);
     switch (filteredDomainId) {
       case 0:
-        return [formatMessage({ id: 'domain.all' })];
+        return [{ id: 'domain.all' }];
 
       case 1:
-        return [formatMessage({ id: 'domain.root' })];
+        return [{ id: 'domain.root' }];
 
       default:
-        return selectedDomain
-          ? [formatMessage({ id: 'domain.root' }), selectedDomain.name]
-          : [formatMessage({ id: 'domain.root' })];
+        return domains[filteredDomainId]
+          ? [{ id: 'domain.root' }, domains[filteredDomainId].name]
+          : [{ id: 'domain.root' }];
     }
-  }, [domains, filteredDomainId, formatMessage]);
+  }, [domains, filteredDomainId]);
 
-  const nativeTokenRef: ColonyTokenReferenceType | null = useSelector(
-    colonyNativeTokenSelector,
-    colonyArgs,
-  );
-  const ethTokenRef: ColonyTokenReferenceType | null = useSelector(
-    colonyEthTokenSelector,
-    colonyArgs,
-  );
+  const nativeTokenRef = useSelector(colonyNativeTokenSelector, colonyArgs);
+  const ethTokenRef = useSelector(colonyEthTokenSelector, colonyArgs);
 
   const transform = useCallback(
-    mergePayload({ colonyAddress, domainId: filteredDomainId }),
+    // Use ROOT_DOMAIN if filtered domain id equals 0
+    mergePayload({
+      colonyAddress,
+      domainId: filteredDomainId || ROOT_DOMAIN,
+    }),
     [colonyAddress, filteredDomainId],
   );
-
-  const canCreateTask = canAdminister(roles) || isFounder(roles);
-  const isInRecoveryMode = isInRecoveryModeCheck(colony);
 
   if (colonyError || addressError) {
     return <Redirect to="/404" />;
@@ -222,13 +217,16 @@ const ColonyHome = ({
   if (
     !(colony && colonyAddress) ||
     isFetchingColony ||
-    !roles ||
-    isFetchingRoles ||
+    !domains ||
+    isFetchingDomains ||
     !nativeTokenRef
   ) {
     return (
       <LoadingTemplate loadingText={MSG.loadingText}>
-        {showRecoverOption && colonyAddress && canRecoverColony(roles) ? (
+        {showRecoverOption &&
+        colonyAddress &&
+        domains &&
+        canRecoverColony(rootUserRoles) ? (
           <DialogActionButton
             dialog="ConfirmDialog"
             dialogProps={{
@@ -249,43 +247,9 @@ const ColonyHome = ({
     );
   }
 
-  const filterSelect = (
-    <Select
-      appearance={{ alignOptions: 'left', theme: 'alt' }}
-      connect={false}
-      elementOnly
-      label={MSG.labelFilter}
-      name="filter"
-      options={tasksFilterSelectOptions}
-      placeholder={MSG.placeholderFilter}
-      form={{ setFieldValue: formSetFilter }}
-      $value={filterOption}
-    />
-  );
-
-  const renderNewTaskButton = (
-    <>
-      {canCreateTask && (
-        <ActionButton
-          button={({ onClick, disabled, loading }) => (
-            <Button
-              appearance={{ theme: 'primary', size: 'medium' }}
-              text={MSG.newTaskButton}
-              disabled={disabled}
-              loading={loading}
-              onClick={throttle(onClick, 2000)}
-            />
-          )}
-          disabled={isInRecoveryMode}
-          error={ActionTypes.TASK_CREATE_ERROR}
-          submit={ActionTypes.TASK_CREATE}
-          success={ActionTypes.TASK_CREATE_SUCCESS}
-          transform={transform}
-          loading={isTaskBeingCreated}
-        />
-      )}
-    </>
-  );
+  // Eventually this has to be in the proper domain. There's probably going to be a different UI for that
+  const canCreateTask = canAdminister(currentDomainUserRoles);
+  const isInRecoveryMode = isInRecoveryModeCheck(colony);
 
   const noFilter = (
     <Heading
@@ -300,7 +264,8 @@ const ColonyHome = ({
         <div className={styles.metaContainer}>
           <ColonyMeta
             colony={colony}
-            canAdminister={!isInRecoveryMode && canAdminister(roles)}
+            canAdminister={!isInRecoveryMode && canAdminister(rootUserRoles)}
+            domains={domains}
             filteredDomainId={filteredDomainId}
             setFilteredDomainId={setFilteredDomainId}
           />
@@ -320,16 +285,50 @@ const ColonyHome = ({
             </Tab>
           </TabList>
           <div className={styles.interactiveBar}>
-            {activeTab === 'tasks' ? [filterSelect, renderNewTaskButton] : null}
+            {activeTab === 'tasks' ? (
+              <>
+                <Select
+                  appearance={{ alignOptions: 'left', theme: 'alt' }}
+                  connect={false}
+                  elementOnly
+                  label={MSG.labelFilter}
+                  name="filter"
+                  options={tasksFilterSelectOptions}
+                  placeholder={MSG.placeholderFilter}
+                  form={{ setFieldValue: formSetFilter }}
+                  $value={filterOption}
+                />
+                {canCreateTask && (
+                  <ActionButton
+                    button={({ onClick, disabled, loading }) => (
+                      <Button
+                        appearance={{ theme: 'primary', size: 'medium' }}
+                        text={MSG.newTaskButton}
+                        disabled={disabled}
+                        loading={loading}
+                        onClick={throttle(onClick, 2000)}
+                      />
+                    )}
+                    disabled={isInRecoveryMode}
+                    error={ActionTypes.TASK_CREATE_ERROR}
+                    submit={ActionTypes.TASK_CREATE}
+                    success={ActionTypes.TASK_CREATE_SUCCESS}
+                    transform={transform}
+                    loading={isTaskBeingCreated}
+                  />
+                )}
+              </>
+            ) : null}
           </div>
           <TabPanel>
             <TabContribute
+              allowTaskCreation={canCreateTask}
               colony={colony}
               filteredDomainId={filteredDomainId}
               filterOption={filterOption}
               ethTokenRef={ethTokenRef}
               nativeTokenRef={nativeTokenRef}
-              roles={roles}
+              showQrCode={hasRoot(rootUserRoles)}
             />
           </TabPanel>
           <TabPanel>
@@ -350,4 +349,4 @@ const ColonyHome = ({
 
 ColonyHome.displayName = displayName;
 
-export default injectIntl(ColonyHome);
+export default ColonyHome;

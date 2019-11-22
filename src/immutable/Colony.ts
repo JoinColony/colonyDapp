@@ -1,6 +1,6 @@
 import { Record, Map as ImmutableMap } from 'immutable';
 
-import { Address, DefaultValues, ENSName } from '~types/index';
+import { Address, DefaultValues, ENSName, RecordToJS } from '~types/index';
 import { ColonyTokenReferenceRecord, ColonyTokenReferenceType } from './index';
 
 interface Shared {
@@ -30,9 +30,9 @@ export type ColonyType = Readonly<
 
 export type ColonyProps<T extends keyof ColonyType> = Pick<ColonyType, T>;
 
-type ColonyRecordProps = Shared & {
+interface ColonyRecordProps extends Shared {
   tokens?: ImmutableMap<Address, ColonyTokenReferenceRecord>;
-};
+}
 
 const defaultValues: DefaultValues<ColonyRecordProps> = {
   avatarHash: undefined,
@@ -51,6 +51,7 @@ const defaultValues: DefaultValues<ColonyRecordProps> = {
   website: undefined,
 };
 
-export class ColonyRecord extends Record<ColonyRecordProps>(defaultValues) {}
+export class ColonyRecord extends Record<ColonyRecordProps>(defaultValues)
+  implements RecordToJS<ColonyType> {}
 
 export const Colony = (p: ColonyRecordProps) => new ColonyRecord(p);

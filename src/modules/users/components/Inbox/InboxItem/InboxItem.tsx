@@ -2,13 +2,7 @@ import React, { ReactNode, useCallback } from 'react';
 import { FormattedMessage, defineMessages } from 'react-intl';
 
 import { EventType } from '../types';
-import {
-  UserType,
-  ColonyType,
-  DomainType,
-  TokenType,
-  InboxItemType,
-} from '~immutable/index';
+import { DomainType, InboxItemType } from '~immutable/index';
 import TimeRelative from '~core/TimeRelative';
 import { TableRow, TableCell } from '~core/Table';
 import Numeral from '~core/Numeral';
@@ -119,9 +113,11 @@ const InboxItem = ({
   },
   full,
 }: Props) => {
-  const { data: user, isFetching: isFetchingUser } = useDataSubscriber<
-    UserType
-  >(userSubscriber, [sourceUserAddress], [sourceUserAddress]);
+  const { data: user, isFetching: isFetchingUser } = useDataSubscriber(
+    userSubscriber,
+    [sourceUserAddress],
+    [sourceUserAddress],
+  );
   const sourceUserDisplayWithFallback = useSelector(friendlyUsernameSelector, [
     sourceUserAddress,
   ]);
@@ -135,24 +131,30 @@ const InboxItem = ({
     targetUserAddress || currentUser.profile.walletAddress,
   ]);
 
-  const { data: colony, isFetching: isFetchingColony } = useDataSubscriber<
-    ColonyType
-  >(colonySubscriber, [colonyAddress], [colonyAddress]);
+  const { data: colony, isFetching: isFetchingColony } = useDataSubscriber(
+    colonySubscriber,
+    [colonyAddress],
+    [colonyAddress],
+  );
   const colonyDisplayNameWithFallback = useSelector(
     friendlyColonyNameSelector,
     [colonyAddress],
   );
   const colonyName = colony && colony.colonyName;
 
-  const { data: domains, isFetching: isFetchingDomains } = useDataFetcher<
-    DomainType[]
-  >(domainsFetcher, [colonyAddress], [colonyAddress]);
-  const currentDomain =
-    domains && domains.find(domain => domain.id === (domainId || 0));
+  const { data: domains, isFetching: isFetchingDomains } = useDataFetcher(
+    domainsFetcher,
+    [colonyAddress],
+    [colonyAddress],
+  );
+  const currentDomain: DomainType | undefined =
+    domainId && domains && domains[domainId];
 
-  const { data: token, isFetching: isFetchingToken } = useDataFetcher<
-    TokenType
-  >(tokenFetcher, [tokenAddress], [tokenAddress]);
+  const { data: token, isFetching: isFetchingToken } = useDataFetcher(
+    tokenFetcher,
+    [tokenAddress],
+    [tokenAddress],
+  );
 
   const transform = useCallback(mergePayload({ id, timestamp }), [
     id,

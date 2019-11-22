@@ -1,26 +1,13 @@
 import {
   currentUserTokensSelector,
-  currentUserTransactionsSelector,
   userSelector,
-  usersByAddressesSelector,
-  inboxItemsSelector,
+  specificUsersSelector,
 } from './selectors';
-import {
-  userFetch,
-  userTokensFetch,
-  userTokenTransfersFetch,
-  inboxItemsFetch,
-} from './actionCreators';
+import { userFetch, userTokensFetch } from './actionCreators';
 
 export const currentUserTokensFetcher = Object.freeze({
   fetch: userTokensFetch,
   select: currentUserTokensSelector,
-  ttl: 60 * 1000,
-});
-
-export const currentUserTokenTransfersFetcher = Object.freeze({
-  fetch: userTokenTransfersFetch,
-  select: currentUserTransactionsSelector,
   ttl: 60 * 1000,
 });
 
@@ -30,14 +17,8 @@ export const userFetcher = Object.freeze({
   ttl: 60 * 1000,
 });
 
-export const usersByAddressFetcher = Object.freeze({
+export const userMapFetcher = Object.freeze({
   fetch: userFetch,
-  select: usersByAddressesSelector,
-  ttl: 60 * 1000,
-});
-
-export const inboxItemsFetcher = Object.freeze({
-  fetch: inboxItemsFetch,
-  select: inboxItemsSelector,
+  select: specificUsersSelector,
   ttl: 60 * 1000,
 });

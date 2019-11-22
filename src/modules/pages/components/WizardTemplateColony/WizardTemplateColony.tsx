@@ -7,7 +7,6 @@ import QRCode from '~core/QRCode';
 import CopyableAddress from '~core/CopyableAddress';
 import { HistoryNavigation } from '~pages/NavigationWrapper';
 import { useSelector } from '~utils/hooks';
-import { UserType } from '~immutable/index';
 import { currentUserSelector } from '../../../users/selectors';
 import styles from './WizardTemplateColony.css';
 
@@ -31,7 +30,7 @@ const WizardTemplateColony = ({
   previousStep,
   hideQR = false,
 }: Props) => {
-  const currentUser: UserType = useSelector(currentUserSelector);
+  const currentUser = useSelector(currentUserSelector);
   const { profile: { walletAddress = '', balance = undefined } = {} } =
     currentUser || {};
   const customHandler = useCallback(() => previousStep(), [previousStep]);

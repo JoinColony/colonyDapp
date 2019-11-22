@@ -1,15 +1,23 @@
+import { ROLES } from '~constants';
 import { UserType } from '~immutable/index';
-import { ColonyRole } from '~types/index';
 
-type Roles = Record<ColonyRole, boolean>;
+export const userHasRole = (userRoles: ROLES[], role: ROLES) =>
+  userRoles.includes(role);
 
-export const canEnterRecoveryMode = (roles: Roles | void) =>
-  !!(roles && roles.RECOVERY);
+export const canEnterRecoveryMode = (userRoles: ROLES[]) =>
+  userHasRole(userRoles, ROLES.RECOVERY);
 
-export const canAdminister = (roles: Roles | void) =>
-  !!(roles && roles.ADMINISTRATION);
+export const canAdminister = (userRoles: ROLES[]) =>
+  userHasRole(userRoles, ROLES.ADMINISTRATION);
 
-export const isFounder = (roles: Roles | void) => !!(roles && roles.ROOT);
+export const canFund = (userRoles: ROLES[]) =>
+  userHasRole(userRoles, ROLES.FUNDING);
+
+export const hasRoot = (userRoles: ROLES[]) =>
+  userHasRole(userRoles, ROLES.ROOT);
+
+export const canArchitect = (userRoles: ROLES[]) =>
+  userHasRole(userRoles, ROLES.ARCHITECTURE);
 
 export const userDidClaimProfile = ({ profile: { username } }: UserType) =>
   !!username;

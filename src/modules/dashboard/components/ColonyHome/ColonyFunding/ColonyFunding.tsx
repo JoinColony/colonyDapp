@@ -1,24 +1,25 @@
 import React, { useCallback, useMemo } from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 
+import { COLONY_TOTAL_BALANCE_DOMAIN_ID } from '~constants';
 import Button from '~core/Button';
 import { DialogType } from '~core/Dialog';
 import withDialog from '~core/Dialog/withDialog';
 import Heading from '~core/Heading';
-import { Address } from '~types/index';
-import { useSelector, useRoles } from '~utils/hooks';
+import { Address, DomainsMapType } from '~types/index';
+import { useSelector } from '~utils/hooks';
 
-import TokenItem from './TokenItem';
 import { useColonyTokens } from '../../../hooks/useColonyTokens';
+import { walletAddressSelector } from '../../../../users/selectors';
 import { canMoveTokens as canMoveTokensCheck } from '../../../../admin/checks';
-import { currentUserSelector } from '../../../../users/selectors';
+import TokenItem from './TokenItem';
 
 import styles from './ColonyFunding.css';
 
 const MSG = defineMessages({
   buttonFund: {
     id: 'dashboard.ColonyHome.ColonyFunding.buttonFund',
-    defaultMessage: 'Fund',
+    defaultMessage: 'Move Funds',
   },
   title: {
     id: 'dashboard.ColonyHome.ColonyFunding.title',
@@ -26,9 +27,12 @@ const MSG = defineMessages({
   },
 });
 
+// SHOW button if user has COLONY_ROLE_FUNDING or ROOT in any domain
+
 interface Props {
   colonyAddress: Address;
   currentDomainId: number;
+  domains: DomainsMapType;
   openDialog: (dialogName: string, dialogProps?: object) => DialogType;
 }
 
@@ -37,24 +41,26 @@ const displayName = 'dashboard.ColonyHome.ColonyFunding';
 const ColonyFunding = ({
   colonyAddress,
   currentDomainId,
+  domains,
   openDialog,
 }: Props) => {
   const [tokenReferences, tokens] = useColonyTokens(colonyAddress);
 
-  const {
-    profile: { walletAddress: currentUserWalletAddress },
-  } = useSelector(currentUserSelector);
-  const { data: roles } = useRoles(colonyAddress);
+  const walletAddress = useSelector(walletAddressSelector);
+
   const canMoveTokens = useMemo(
-    () => canMoveTokensCheck(roles, currentUserWalletAddress),
-    [currentUserWalletAddress, roles],
+    () => canMoveTokensCheck(domains, walletAddress),
+    [walletAddress, domains],
   );
 
   const handleMoveTokens = useCallback(
     () =>
       openDialog('TokensMoveDialog', {
         colonyAddress,
-        toDomain: currentDomainId !== 0 ? currentDomainId : undefined,
+        toDomain:
+          currentDomainId !== COLONY_TOTAL_BALANCE_DOMAIN_ID
+            ? currentDomainId
+            : undefined,
       }),
     [openDialog, colonyAddress, currentDomainId],
   );

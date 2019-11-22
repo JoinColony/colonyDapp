@@ -3,8 +3,6 @@ import React from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 
 import { Address } from '~types/index';
-import { TokenType } from '~immutable/index';
-
 import { useDataFetcher } from '~utils/hooks';
 import { tokenFetcher } from '../../../fetchers';
 
@@ -65,7 +63,7 @@ const ColonyInitialFunding = ({
   displayName,
   tokenAddress,
 }: Props) => {
-  const { data: nativeToken } = useDataFetcher<TokenType>(
+  const { data: nativeToken } = useDataFetcher(
     tokenFetcher,
     [tokenAddress],
     [tokenAddress],

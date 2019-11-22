@@ -7,6 +7,7 @@ import {
   AddressOrENSName,
   ContractContexts,
   DefaultValues,
+  RecordToJS,
   TransactionReceipt,
 } from '~types/index';
 
@@ -101,9 +102,9 @@ const defaultValues: DefaultValues<TransactionRecordProps> = {
   loadingRelated: false,
 };
 
-export class TransactionRecord extends Record<TransactionRecordProps>(
-  defaultValues,
-) {}
+export class TransactionRecord
+  extends Record<TransactionRecordProps>(defaultValues)
+  implements RecordToJS<TransactionType> {}
 
 export const Transaction = (p: TransactionRecordProps) =>
   new TransactionRecord(p);

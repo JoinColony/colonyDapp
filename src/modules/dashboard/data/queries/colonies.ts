@@ -1,16 +1,10 @@
-import {
-  COLONY_ROLE_ADMINISTRATION,
-  COLONY_ROLE_ARBITRATION,
-  COLONY_ROLE_ARCHITECTURE,
-  COLONY_ROLE_ARCHITECTURE_SUBDOMAIN,
-  COLONY_ROLE_FUNDING,
-  COLONY_ROLE_RECOVERY,
-  COLONY_ROLE_ROOT,
-} from '@colony/colony-js-client';
+import { Set as ImmutableSet } from 'immutable';
 import BigNumber from 'bn.js';
 
+import { COLONY_TOTAL_BALANCE_DOMAIN_ID, ROOT_DOMAIN, ROLES } from '~constants';
 import {
   Address,
+  RoleSet,
   createAddress,
   CurrentEvents,
   ENSCache,
@@ -29,7 +23,12 @@ import {
 } from '~data/types';
 import { ColonyEvents } from '~data/types/ColonyEvents';
 import { TaskIndexEvents } from '~data/types/TaskIndexEvents';
-import { ColonyType, DomainType } from '~immutable/index';
+import {
+  ColonyType,
+  ColonyRolesType,
+  DomainType,
+  DomainRolesType,
+} from '~immutable/index';
 import { Context } from '~context/index';
 import EventStore from '~lib/database/stores/EventStore';
 import { EventTypes } from '~data/constants';
@@ -41,9 +40,7 @@ import {
 } from '~data/stores';
 import { getEvents } from '~utils/web3/eventLogs';
 import { ZERO_ADDRESS } from '~utils/web3/constants';
-import { ROOT_DOMAIN } from '../../../core/constants';
 import { colonyReducer, colonyTasksReducer } from '../reducers';
-import { COLONY_TOTAL_BALANCE_DOMAIN_ID } from '../../../admin/constants';
 
 interface ColonyStoreMetadata {
   colonyAddress: Address;
@@ -54,6 +51,14 @@ interface ColonyTaskIndexStoreMetadata {
 }
 
 type ContractEventQuery<A, R> = Query<ColonyClient, ColonyStoreMetadata, A, R>;
+
+interface ColonyRoleSetEventData {
+  address: Address;
+  domainId: number;
+  role: ROLES;
+  setTo: boolean;
+  eventName: 'ColonyRoleSet';
+}
 
 const context = [Context.COLONY_MANAGER];
 const colonyContext = [
@@ -92,14 +97,26 @@ const prepareColonyStoreQuery = async (
   return getColonyStore(colonyClient, ddb, wallet)(metadata);
 };
 
-export const getColonyRoles: ContractEventQuery<
-  void,
-  {
-    [domainId: number]: {
-      [address: string]: { [role: string]: boolean };
-    };
-  }
+// This will be unnecessary as soon as we have the RecoveryRoleSet event on the ColonyClient
+export const TEMP_getUserHasColonyRole: ContractEventQuery<
+  { userAddress },
+  boolean
 > = {
+  name: 'getUserHasRecoveryRole',
+  context,
+  prepare: prepareColonyClientQuery,
+  async execute(colonyClient, { userAddress = ZERO_ADDRESS }) {
+    if (!userAddress || userAddress === ZERO_ADDRESS) return false;
+    const { hasRole } = await colonyClient.hasColonyRole.call({
+      address: userAddress,
+      domainId: ROOT_DOMAIN,
+      role: ROLES.RECOVERY,
+    });
+    return hasRole;
+  },
+};
+
+export const getColonyRoles: ContractEventQuery<void, ColonyRolesType> = {
   name: 'getColonyRoles',
   context,
   prepare: prepareColonyClientQuery,
@@ -127,92 +144,37 @@ export const getColonyRoles: ContractEventQuery<
     });
     const extensionAddresses = [createAddress(oneTxAddress)];
 
-    // reduce events to { [domainId]: { [address]: { [role]: boolean } } }
-    return events.reduce((acc, { address, setTo, role, domainId }) => {
-      const normalizedAddress = createAddress(address);
+    return (
+      events
+        // Normalize the address
+        .map(event => ({ ...event, address: createAddress(event.address) }))
+        // Don't include roles of extensions
+        .filter(({ address }) => !extensionAddresses.includes(address))
+        // Reduce events to { [domainId]: { [address]: Set<Role> } }
+        .reduce(
+          (
+            colonyRoles,
+            { address, setTo, role, domainId }: ColonyRoleSetEventData,
+          ) => {
+            const domainRoles =
+              colonyRoles[domainId.toString()] || ({} as DomainRolesType);
+            const userRoles: RoleSet =
+              ImmutableSet(domainRoles[address]) || ImmutableSet();
 
-      // don't include roles of extensions
-      if (extensionAddresses.includes(normalizedAddress)) {
-        return acc;
-      }
-
-      return {
-        ...acc,
-        [domainId]: {
-          ...acc[domainId],
-          [normalizedAddress as string]: {
-            ...(acc[domainId] || {})[normalizedAddress],
-            [role]: setTo,
+            return {
+              ...colonyRoles,
+              [domainId.toString()]: {
+                ...domainRoles,
+                // Add or remove the role, depending on the value of setTo
+                [address as Address]: setTo
+                  ? Array.from(userRoles.add(role))
+                  : Array.from(userRoles.remove(role)),
+              },
+            };
           },
-        },
-      };
-    }, {});
-  },
-};
-
-export const getColonyDomainUserRoles: ContractEventQuery<
-  { userAddress: Address; domainId: number },
-  { [role: string]: boolean }
-> = {
-  name: 'getColonyDomainUserRoles',
-  context,
-  prepare: prepareColonyClientQuery,
-  async execute(colonyClient, { userAddress: address, domainId }) {
-    const [
-      ADMINISTRATION,
-      ARBITRATION,
-      ARCHITECTURE,
-      ARCHITECTURE_SUBDOMAIN,
-      FUNDING,
-      RECOVERY,
-      ROOT,
-    ] = await Promise.all([
-      colonyClient.hasColonyRole.call({
-        address,
-        domainId,
-        role: COLONY_ROLE_ADMINISTRATION,
-      }),
-      colonyClient.hasColonyRole.call({
-        address,
-        domainId,
-        role: COLONY_ROLE_ARBITRATION,
-      }),
-      colonyClient.hasColonyRole.call({
-        address,
-        domainId,
-        role: COLONY_ROLE_ARCHITECTURE,
-      }),
-      colonyClient.hasColonyRole.call({
-        address,
-        domainId,
-        role: COLONY_ROLE_ARCHITECTURE_SUBDOMAIN,
-      }),
-      colonyClient.hasColonyRole.call({
-        address,
-        domainId,
-        role: COLONY_ROLE_FUNDING,
-      }),
-      colonyClient.hasColonyRole.call({
-        address,
-        domainId,
-        role: COLONY_ROLE_RECOVERY,
-      }),
-      colonyClient.hasColonyRole.call({
-        address,
-        domainId: ROOT_DOMAIN, // The root role only applies to the root domain
-        role: COLONY_ROLE_ROOT,
-      }),
-    ]).then(results => results.map(({ hasRole }) => hasRole));
-
-    return {
-      ADMINISTRATION,
-      ARBITRATION,
-      ARCHITECTURE,
-      ARCHITECTURE_SUBDOMAIN,
-      FUNDING,
-      RECOVERY,
-      ROOT,
-    };
+          {} as ColonyRolesType,
+        )
+    );
   },
 };
 
@@ -458,7 +420,7 @@ export const getColonyDomains: Query<
   context: colonyContext,
   prepare: prepareColonyStoreQuery,
   async execute(colonyStore) {
-    return colonyStore
+    const colonyDomains = colonyStore
       .all()
       .filter(
         ({ type }) =>
@@ -482,12 +444,26 @@ export const getColonyDomains: Query<
         },
         [],
       )
-      .map(({ payload: { domainId, name } }) => ({
-        id: domainId,
-        name,
-        // All will have parent of root for now
-        parentId: 1,
-      }));
+      .map(
+        ({ payload: { domainId, name } }): DomainType => ({
+          id: domainId,
+          name,
+          // All will have parent of root for now; later, the parent domain ID
+          // will probably a parameter of the event (and of the on-chain event).
+          parentId: ROOT_DOMAIN,
+          roles: {},
+        }),
+      );
+
+    // Add the root domain at the start
+    const rootDomain: DomainType = {
+      id: ROOT_DOMAIN,
+      name: 'root',
+      parentId: null,
+      roles: {},
+    };
+
+    return [rootDomain, ...colonyDomains];
   },
 };
 

@@ -1,54 +1,40 @@
-import { Collection, Map as ImmutableMap } from 'immutable';
+import { Map as ImmutableMap } from 'immutable';
 import { Selector } from 'reselect';
 import { useEffect, useCallback, useMemo, useRef } from 'react';
 import { useDispatch, useMappedState } from 'redux-react-hook';
 
-import { Action, AllActions, ActionTypes } from '~redux/index';
-import { Address } from '~types/index';
+import { Action } from '~redux/index';
+import {
+  DataObject,
+  KeyedDataObject,
+  RemoveFirstFromTuple,
+} from '~types/index';
 import { ActionTransformFnType } from '~utils/actions';
-import { FetchableDataRecord, DomainType } from '~immutable/index';
+import { FetchableDataRecord } from '~immutable/index';
 import promiseListener, { AsyncFunction } from '~redux/createPromiseListener';
 import { isFetchingData, shouldFetchData } from '~immutable/utils';
 import { getMainClasses } from '~utils/css';
-import { proxyOldRoles, includeParentRoles } from '~utils/data';
 
-import { ColonyRoles } from '../../modules/dashboard/state/AllRoles';
-import { rolesFetcher, domainsFetcher } from '../../modules/dashboard/fetchers';
 import { RootStateRecord } from '../../modules/state';
 
-interface DataObject<T> {
-  data?: T;
-  isFetching: boolean;
-  error?: string;
-}
-
-interface KeyedDataObject<T> extends DataObject<T> {
-  key: string;
-}
-
-type DataFetcher<T> = {
-  select: (
-    rootState: RootStateRecord,
-    ...selectArgs: any[]
-  ) => FetchableDataRecord<T> | undefined;
+interface DataFetcher<S> {
+  select: S;
   fetch: (...fetchArgs: any[]) => Action<any>;
   ttl?: number;
-};
+}
 
-type DataSubscriber<T> = {
-  select: (
-    rootState: RootStateRecord,
-    ...selectArgs: any[]
-  ) => FetchableDataRecord<T> | undefined;
+interface DataSubscriber<S> {
+  select: S;
   start: (...subArgs: any[]) => Action<any>;
   stop: (...subArgs: any[]) => Action<any>;
-};
+}
 
 type DataMapFetcher<T> = {
-  select: (
+  select: ((
     rootState: RootStateRecord,
-    keys: string[],
-  ) => ImmutableMap<string, FetchableDataRecord<T>>;
+  ) => ImmutableMap<string, FetchableDataRecord<T>>) & {
+    filter?: (data: any, ...args: any[]) => any;
+  };
   fetch: (key: any) => Action<any>;
   ttl?: number;
 };
@@ -86,6 +72,44 @@ type DataFetcherOptions = {
   ttl?: number;
 };
 
+// This conditional type allows data to be undefined/null, but uses
+// further conditional types in order to get the possibly-toJS'ed type
+// of the record property.
+type MaybeFetchedData<T extends undefined | null | { record: any }> = T extends
+  | undefined
+  | null
+  ? T
+  : (T extends { record: any }
+      ? (T extends { record: { toJS: Function } }
+          ? ReturnType<T['record']['toJS']>
+          : T['record'])
+      : T);
+
+// This conditional type allows data to be undefined/null, but uses a
+// further conditional type in order to get the possibly-toJS'ed type.
+type MaybeSelected<
+  T extends undefined | null | { toJS: (...args: any[]) => any }
+> = T extends undefined | null
+  ? T
+  : (T extends { toJS: Function } ? ReturnType<T['toJS']> : T);
+
+/* Used in cases where we need to memoize the transformed output of any data.
+ * Transform function has to be pure, obviously
+ */
+export const useTransformer = <
+  T extends (...args: any[]) => any,
+  A extends Parameters<T>
+>(
+  transform: T,
+  args: A = ([] as unknown) as A,
+): ReturnType<T> =>
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  useMemo<ReturnType<T>>(() => transform(...args), [
+    transform,
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    ...args,
+  ]);
+
 export const usePrevious = (value: any) => {
   const ref = useRef();
   useEffect(() => {
@@ -94,33 +118,51 @@ export const usePrevious = (value: any) => {
   return ref.current;
 };
 
-const transformFetchedData = (data?: FetchableDataRecord<any>) => {
+const transformSelectedData = (data?: any) => {
   if (!data) return undefined;
   const record =
     typeof data.get === 'function' ? data.get('record') : data.record;
   return record && typeof record.toJS === 'function' ? record.toJS() : record;
 };
 
-const defaultTransform = (obj: Collection<any, any>) =>
-  obj && typeof obj.toJS === 'function' ? obj.toJS() : obj;
+const defaultTransform = <T extends { toJS(): any }>(
+  obj: T,
+  // The return type of this could be improved if there was a way
+  // to map from immutable to non-immutable types
+  // eslint-disable-next-line no-unused-vars, @typescript-eslint/no-unused-vars
+  ...args: any[]
+) => (obj && typeof obj.toJS === 'function' ? obj.toJS() : obj);
 
 /*
  * Given a redux selector and optional selector arguments, get the
  * (immutable) redux state and return a mutable version of it.
  */
-export const useSelector = (
-  select: any,
-  args: any[] = [],
-  transform?: (obj: Collection<any, any>) => any,
+export const useSelector = <
+  S extends (
+    ...args: any[]
+  ) => any & { transform?: <T>(obj: T, ...args: any[]) => any },
+  A extends RemoveFirstFromTuple<Parameters<S>> // Omit the first arg (state)
+>(
+  select: S,
+  args: A = [] as A,
 ) => {
-  const mapState = useCallback(state => select(state, ...args), [args, select]);
-  const data = useMappedState(mapState);
-  const transformFn =
-    typeof transform === 'function'
-      ? transform
-      : select.transform || defaultTransform;
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  const mapState = useCallback(state => select(state, ...args), [
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    ...args,
+    select,
+  ]);
 
-  return useMemo(() => transformFn(data), [data, transformFn]);
+  const data: ReturnType<typeof select> = useMappedState(mapState);
+
+  const transformFn =
+    (select as { transform?: <T>(obj: T, ...args: A) => any }).transform ||
+    defaultTransform;
+
+  return useMemo<ReturnType<typeof transformFn>>(
+    () => transformFn(data, ...args),
+    [args, data, transformFn],
+  );
 };
 
 /*
@@ -175,21 +217,21 @@ const areTupleArraysEqual = (arr1: [any, any][], arr2: [any, any][]) => {
 export const useMemoWithFlatArray = createCustomMemo(areFlatArraysEqual);
 export const useMemoWithTupleArray = createCustomMemo(areTupleArraysEqual);
 
-/*
- * T: JS type of the fetched and transformed data, e.g. ColonyType
- */
-export const useDataFetcher = <T>(
-  { fetch, select, ttl = 0 }: DataFetcher<T>,
-  selectArgs: any[],
+export const useDataFetcher = <
+  S extends (...args: any[]) => any,
+  A extends RemoveFirstFromTuple<Parameters<S>>
+>(
+  { fetch, select, ttl = 0 }: DataFetcher<S>,
+  selectArgs: A,
   fetchArgs: any[],
   { ttl: ttlOverride }: DataFetcherOptions = {},
-): DataObject<T> => {
+) => {
   const dispatch = useDispatch();
   const mapState = useCallback(state => select(state, ...selectArgs), [
     select,
     selectArgs,
   ]);
-  const data = useMappedState(mapState);
+  const data: ReturnType<typeof select> = useMappedState(mapState);
 
   const isFirstMount = useRef(true);
 
@@ -212,7 +254,7 @@ export const useDataFetcher = <T>(
   }, [dispatch, fetch, shouldFetch, ...fetchArgs]);
 
   return {
-    data: transformFetchedData(data),
+    data: transformSelectedData(data) as MaybeFetchedData<typeof data>,
     isFetching: !!(shouldFetch && isFetchingData(data)),
     error: data && data.error ? data.error : undefined,
   };
@@ -227,20 +269,21 @@ export const useDataMapFetcher = <T>(
   { fetch, select, ttl: ttlDefault = 0 }: DataMapFetcher<T>,
   keys: string[],
   { ttl: ttlOverride }: DataFetcherOptions = {},
-): KeyedDataObject<T>[] => {
-  /*
-   * Created memoized keys to guard the rest of the function against
-   * unnecessary updates.
-   */
-  const memoizedKeys = useMemoWithFlatArray(() => keys, keys);
-
+) => {
   const dispatch = useDispatch();
-  const allData: ImmutableMap<
-    string,
-    FetchableDataRecord<any>
-  > = useMappedState(
-    useCallback(state => select(state, memoizedKeys), [select, memoizedKeys]),
+
+  const mapState = useCallback(state => select(state), [select]);
+  const rawData: ImmutableMap<string, FetchableDataRecord<T>> = useMappedState(
+    mapState,
   );
+
+  let allData;
+
+  if (typeof select.filter == 'function') {
+    allData = select.filter(rawData, keys);
+  } else {
+    allData = rawData;
+  }
 
   const isFirstMount = useRef(true);
   const ttl = ttlOverride || ttlDefault;
@@ -252,10 +295,10 @@ export const useDataMapFetcher = <T>(
    */
   const keysToFetchFor = useMemo(
     () =>
-      memoizedKeys.filter(key =>
-        shouldFetchData(allData.get(key), ttl, isFirstMount.current, [key]),
+      keys.filter(key =>
+        shouldFetchData(rawData.get(key), ttl, isFirstMount.current, [key]),
       ),
-    [allData, memoizedKeys, ttl],
+    [rawData, keys, ttl],
   );
 
   /*
@@ -264,41 +307,46 @@ export const useDataMapFetcher = <T>(
   useEffect(() => {
     isFirstMount.current = false;
     keysToFetchFor.map(key => dispatch(fetch(key)));
-  }, [keysToFetchFor, dispatch, fetch, memoizedKeys]);
+  }, [keysToFetchFor, dispatch, fetch]);
 
   /*
    * Return an array of data objects with keys by mapping over the keys
    * and getting the data from `allData`.
    */
-  return useMemo(
+  return useMemo<
+    KeyedDataObject<MaybeFetchedData<ReturnType<typeof allData['get']>>>[]
+  >(
     () =>
-      memoizedKeys.map(key => {
+      keys.map(key => {
         const data = allData.get(key);
         return {
           key,
-          data: transformFetchedData(data),
-          isFetching: keysToFetchFor.includes(key) && isFetchingData(data),
+          data: transformSelectedData(data),
+          isFetching: !!(keysToFetchFor.includes(key) && isFetchingData(data)),
           error: data && data.error ? data.error : null,
         };
       }),
-    [memoizedKeys, allData, keysToFetchFor],
+    [keys, allData, keysToFetchFor],
   );
 };
 
 /*
  * T: JS type of the fetched and transformed data, e.g. ColonyType
  */
-export const useDataSubscriber = <T>(
-  { start, stop, select }: DataSubscriber<T>,
-  selectArgs: any[],
+export const useDataSubscriber = <
+  S extends (...args: any[]) => any,
+  A extends RemoveFirstFromTuple<Parameters<S>>
+>(
+  { start, stop, select }: DataSubscriber<S>,
+  selectArgs: A,
   subArgs: any[],
-): DataObject<T> => {
+) => {
   const dispatch = useDispatch();
   const mapState = useCallback(state => select(state, ...selectArgs), [
     select,
     selectArgs,
   ]);
-  const data = useMappedState(mapState);
+  const data: ReturnType<typeof select> = useMappedState(mapState);
 
   const isFirstMount = useRef(true);
 
@@ -327,7 +375,7 @@ export const useDataSubscriber = <T>(
   );
 
   return {
-    data: transformFetchedData(data),
+    data: transformSelectedData(data) as MaybeFetchedData<typeof data>,
     isFetching: !!(shouldSubscribe && isFetchingData(data)),
     error: data && data.error ? data.error : undefined,
   };
@@ -385,7 +433,7 @@ export const useDataTupleSubscriber = <T>(
         return {
           key: entry[1],
           entry,
-          data: transformFetchedData(data),
+          data: transformSelectedData(data) as MaybeFetchedData<typeof data>,
           isFetching: keysToFetchFor.includes(entry[1]) && isFetchingData(data),
           error: data ? data.error : null,
         };
@@ -454,7 +502,7 @@ export const useDataTupleFetcher = <T>(
         return {
           key: entry[1],
           entry,
-          data: transformFetchedData(data),
+          data: transformSelectedData(data) as MaybeFetchedData<typeof data>,
           isFetching: keysToFetchFor.includes(entry[1]) && isFetchingData(data),
           error: data ? data.error : null,
         };
@@ -525,99 +573,3 @@ export const useMainClasses = (
     className,
     styles,
   ]);
-
-/*
- * Proxy the new redux state of roles to the old structure of founder and
- * admins.
- */
-export const useOldRoles = (colonyAddress: Address) => {
-  const { data: newRoles, isFetching, error } = useDataFetcher<any>(
-    rolesFetcher,
-    [colonyAddress],
-    [colonyAddress],
-  );
-  const roles = useMemo(() => proxyOldRoles(newRoles), [newRoles]);
-  return { data: roles, isFetching, error };
-};
-
-/*
- * Fetch an object of all domains with users who have roles in them. If
- * includeParents is true, it also includes effective roles that users have in
- * those domains as a result of parent domain roles. Note that this will not
- * include child domains where the user has no roles - in such cases where data
- * is needed for a specific domain and user, the useUserDomainRoles hook should
- * be used.
- *
- * Returns in the format { [domainId]: { [userAddress]: { [role]: boolean } } }
- */
-export const useRoles = (
-  colonyAddress?: Address,
-  includeParents = false, // This should not change
-) => {
-  const {
-    data: rolesFromState,
-    isFetching: isFetchingRoles,
-    error,
-  } = useDataFetcher<any>(rolesFetcher, [colonyAddress], [colonyAddress]);
-
-  const { data: domains, isFetching: isFetchingDomains } = useDataFetcher<
-    DomainType[]
-  >(
-    domainsFetcher,
-    // Setting these to undefined will prevent fetching when we don't want it
-    [includeParents ? colonyAddress : undefined],
-    [includeParents ? colonyAddress : undefined],
-  );
-
-  // Include root domains (not in redux state)
-  const domainsWithRoot = Array.isArray(domains)
-    ? [{ id: 1, name: 'root' }, ...domains]
-    : domains;
-
-  const permissions =
-    includeParents && rolesFromState && domainsWithRoot
-      ? includeParentRoles(rolesFromState, domainsWithRoot)
-      : rolesFromState;
-  return {
-    data: permissions,
-    isFetching: isFetchingRoles || (isFetchingDomains && includeParents),
-    error,
-  };
-};
-
-/*
- * Fetch the roles which a single user has in a specific domain. If
- * includeParents is true, it will also check for any roles that the user has
- * in this domain by effect of them being set in parent domains.
- *
- * Returns in the format { [role]: boolean }
- */
-export const useUserDomainRoles = (
-  colonyAddress: Address | undefined,
-  domainId: number,
-  userAddress: Address,
-  includeParents = false, // This should not change
-): {
-  data: Record<ColonyRoles, boolean>;
-  isFetching: boolean;
-  error: string | void;
-} => {
-  const dispatch = useDispatch();
-  const { data: roles, isFetching, error } = useRoles(
-    colonyAddress,
-    includeParents,
-  );
-  useEffect(() => {
-    if (colonyAddress && domainId && userAddress) {
-      dispatch<AllActions>({
-        type: ActionTypes.COLONY_DOMAIN_USER_ROLES_FETCH,
-        meta: { key: colonyAddress },
-        payload: { colonyAddress, domainId, userAddress },
-      });
-    }
-  }, [colonyAddress, dispatch, domainId, userAddress]);
-  const userDomainRoles = roles
-    ? (roles[domainId] || {})[userAddress] || {}
-    : {};
-  return { data: userDomainRoles, isFetching, error };
-};

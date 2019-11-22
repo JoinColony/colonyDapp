@@ -1,6 +1,6 @@
 import { Record } from 'immutable';
 
-import { DefaultValues } from '~types/index';
+import { DefaultValues, RecordToJS } from '~types/index';
 
 import { UserType, UserRecord } from './User';
 
@@ -22,8 +22,8 @@ const defaultValues: DefaultValues<TaskRatingRecordProps> = {
   rating: -1,
 };
 
-export class TaskRatingRecord extends Record<TaskRatingRecordProps>(
-  defaultValues,
-) {}
+export class TaskRatingRecord
+  extends Record<TaskRatingRecordProps>(defaultValues)
+  implements RecordToJS<TaskRatingRecordProps> {}
 
 export const TaskRating = (p: TaskRatingRecordProps) => new TaskRatingRecord(p);

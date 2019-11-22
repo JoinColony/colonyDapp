@@ -1,12 +1,14 @@
 import BigNumber from 'bn.js';
 
+import { ROLES } from '~constants';
 import { ActionTypes } from '~redux/index';
 import { Address, ENSName, WithKey } from '~types/index';
 import {
   ColonyType,
   ContractTransactionType,
-  DomainType,
   ColonyTokenReferenceType,
+  DomainType,
+  ColonyRolesType,
 } from '~immutable/index';
 import {
   ActionType,
@@ -79,29 +81,18 @@ export type ColonyActionTypes =
   | UniqueActionType<ActionTypes.COLONY_CREATE_SUCCESS, void, object>
   | ActionTypeWithPayloadAndMeta<
       ActionTypes.COLONY_DOMAINS_FETCH,
-      { colonyAddress: Address },
+      {
+        colonyAddress: Address;
+        options?: {
+          fetchRoles?: boolean;
+        };
+      },
       WithKey
     >
   | ErrorActionType<ActionTypes.COLONY_DOMAINS_FETCH_ERROR, WithKey>
   | ActionTypeWithPayloadAndMeta<
       ActionTypes.COLONY_DOMAINS_FETCH_SUCCESS,
       { colonyAddress: Address; domains: DomainType[] },
-      WithKey
-    >
-  | ActionTypeWithPayloadAndMeta<
-      ActionTypes.COLONY_DOMAIN_USER_ROLES_FETCH,
-      { colonyAddress: Address; domainId: number; userAddress: Address },
-      WithKey
-    >
-  | ErrorActionType<ActionTypes.COLONY_DOMAIN_USER_ROLES_FETCH_ERROR, WithKey>
-  | ActionTypeWithPayloadAndMeta<
-      ActionTypes.COLONY_DOMAIN_USER_ROLES_FETCH_SUCCESS,
-      {
-        roles: { [role: string]: boolean };
-        colonyAddress: Address;
-        domainId: number;
-        userAddress: Address;
-      },
       WithKey
     >
   | UniqueActionType<
@@ -240,7 +231,7 @@ export type ColonyActionTypes =
   | ErrorActionType<ActionTypes.COLONY_ROLES_FETCH_ERROR, WithKey>
   | ActionTypeWithPayloadAndMeta<
       ActionTypes.COLONY_ROLES_FETCH_SUCCESS,
-      { admins: Address[]; founder: Address },
+      ColonyRolesType,
       WithKey
     >
   | UniqueActionType<
@@ -248,7 +239,7 @@ export type ColonyActionTypes =
       {
         colonyAddress: Address;
         domainId: number;
-        roles: { [role: string]: boolean };
+        roles: Record<ROLES, boolean>;
         userAddress: Address;
       },
       WithKey
@@ -262,7 +253,7 @@ export type ColonyActionTypes =
       {
         colonyAddress: Address;
         domainId: number;
-        roles: { [role: string]: boolean };
+        roles: Record<ROLES, boolean>;
         userAddress: Address;
       },
       WithKey
@@ -370,4 +361,22 @@ export type ColonyActionTypes =
       },
       WithKey
     >
-  | ErrorActionType<ActionTypes.COLONY_TASK_METADATA_SUB_ERROR, null>;
+  | ErrorActionType<ActionTypes.COLONY_TASK_METADATA_SUB_ERROR, null>
+  | ActionTypeWithPayloadAndMeta<
+      ActionTypes.TEMP_COLONY_USER_HAS_RECOVERY_ROLE_FETCH,
+      { colonyAddress: Address; userAddress: Address },
+      WithKey
+    >
+  | ErrorActionType<
+      ActionTypes.TEMP_COLONY_USER_HAS_RECOVERY_ROLE_FETCH_ERROR,
+      WithKey
+    >
+  | ActionTypeWithPayloadAndMeta<
+      ActionTypes.TEMP_COLONY_USER_HAS_RECOVERY_ROLE_FETCH_SUCCESS,
+      {
+        colonyAddress: Address;
+        userAddress: Address;
+        userHasRecoveryRole: boolean;
+      },
+      WithKey
+    >;

@@ -1,11 +1,11 @@
 import { Record } from 'immutable';
 
-import { DefaultValues } from '~types/index';
+import { DefaultValues, RecordToJS } from '~types/index';
 
-type Shared = {
+interface Shared {
   readUntil?: number;
   exceptFor?: string[];
-};
+}
 
 export type UserNotificationMetadataType = Readonly<Shared>;
 
@@ -14,9 +14,9 @@ const defaultValues: DefaultValues<Shared> = {
   exceptFor: undefined,
 };
 
-export class UserNotificationMetadataRecord extends Record<Shared>(
-  defaultValues,
-) {}
+export class UserNotificationMetadataRecord
+  extends Record<Shared>(defaultValues)
+  implements RecordToJS<UserNotificationMetadataType> {}
 
 export const UserNotificationMetadata = (p?: Shared) =>
   new UserNotificationMetadataRecord(p);

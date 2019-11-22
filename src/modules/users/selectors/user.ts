@@ -2,8 +2,14 @@ import { createSelector } from 'reselect';
 import { Map as ImmutableMap } from 'immutable';
 import { isAddress } from 'web3-utils';
 
-import { FetchableDataRecord, UserRecord } from '~immutable/index';
+import {
+  FetchableDataRecord,
+  UserNotificationMetadataRecord,
+  UserRecord,
+  UserType,
+} from '~immutable/index';
 import { Address } from '~types/index';
+import { FetchableContractTransactionList } from '../../admin/state';
 
 import { RootStateRecord } from '../../state';
 import {
@@ -19,44 +25,41 @@ import {
   USERS_INBOX_ITEMS,
   USERS_CURRENT_USER_NOTIFICATION_METADATA,
 } from '../constants';
+import {
+  CurrentUserInboxItemsType,
+  CurrentUserTasksType,
+  CurrentUserTokensType,
+  UserColonies,
+  UsersMap,
+} from '../state';
 
-/*
- * Username getters
- */
-const getUsernameFromUserData = (user?: FetchableDataRecord<UserRecord>) =>
-  user && user.getIn(['record', 'profile', 'username']);
+const getUsernameFromUserData = (
+  user?: FetchableDataRecord<UserRecord>,
+): string | undefined => user && user.getIn(['record', 'profile', 'username']);
 
-/*
- * Address getters
- */
-const getWalletAddressFromUserData = (
+export const allUsersSelector = (state: RootStateRecord): UsersMap =>
+  state.getIn([ns, USERS_ALL_USERS, USERS_USERS]) || ImmutableMap();
+
+export const allUsersAddressesSelector = (state: RootStateRecord) =>
+  allUsersSelector(state);
+
+allUsersAddressesSelector.transform = (
   users: ImmutableMap<string, FetchableDataRecord<UserRecord>>,
-) => Object.keys(users.toJS()).filter(key => isAddress(key));
-
-export const allUsersSelector = (state: RootStateRecord) =>
-  // @ts-ignore
-  state.getIn([ns, USERS_ALL_USERS, USERS_USERS], ImmutableMap());
-
-export const allUsersAddressesSelector = createSelector(
-  allUsersSelector,
-  users => getWalletAddressFromUserData(users),
-);
+): Address[] => Object.keys(users.toJS()).filter(key => isAddress(key));
 
 /*
  * Username input selectors
  */
-export const userAddressSelector = (state: RootStateRecord, username: string) =>
-  state
-    // @ts-ignore
-    .getIn([ns, USERS_ALL_USERS, USERS_USERS], ImmutableMap())
-    .findKey(user => getUsernameFromUserData(user) === username);
-
 export const userColoniesSelector = (
   state: RootStateRecord,
   address: Address,
-) => state.getIn([ns, USERS_ALL_USERS, USERS_COLONIES, address]);
+): FetchableDataRecord<UserColonies> =>
+  state.getIn([ns, USERS_ALL_USERS, USERS_COLONIES, address]);
 
-export const usernameSelector = (state: RootStateRecord, address: Address) =>
+export const usernameSelector = (
+  state: RootStateRecord,
+  address: Address,
+): string | undefined =>
   getUsernameFromUserData(
     state.getIn([ns, USERS_ALL_USERS, USERS_USERS, address]),
   );
@@ -64,7 +67,10 @@ export const usernameSelector = (state: RootStateRecord, address: Address) =>
 /*
  * User input selectors
  */
-export const userSelector = (state: RootStateRecord, address: Address) =>
+export const userSelector = (
+  state: RootStateRecord,
+  address: Address,
+): FetchableDataRecord<UserRecord> | undefined =>
   state.getIn([ns, USERS_ALL_USERS, USERS_USERS, address]);
 
 export const usersExceptSelector = createSelector(
@@ -75,49 +81,57 @@ export const usersExceptSelector = createSelector(
     ),
 );
 
-// @ts-ignore
-usersExceptSelector.transform = (
-  input: ImmutableMap<string, FetchableDataRecord<UserRecord>>,
-) =>
-  input
-    .map(user => user.record)
-    .filter(Boolean)
-    .toList()
-    .toJS();
+Object.defineProperty(usersExceptSelector, 'transform', {
+  value: (input: ImmutableMap<string, FetchableDataRecord<UserRecord>>) =>
+    input
+      .map(user => user.record)
+      .filter(Boolean)
+      .toList()
+      .toJS(),
+});
 
-export const usersByAddressesSelector = (
-  state: RootStateRecord,
-  addresses: string[],
-) =>
-  state
-    // @ts-ignore
-    .getIn([ns, USERS_ALL_USERS, USERS_USERS], ImmutableMap())
-    .filter((_, address) => addresses.includes(address));
+export const specificUsersSelector = (state: RootStateRecord): UsersMap =>
+  state.getIn([ns, USERS_ALL_USERS, USERS_USERS]);
+
+specificUsersSelector.filter = (
+  users: UsersMap = ImmutableMap() as UsersMap,
+  addresses: Address[],
+) => users.filter((_, address) => addresses.includes(address));
 
 /*
  * Current user input selectors
  */
-export const currentUserSelector = (state: RootStateRecord) =>
+export const currentUserSelector = (state: RootStateRecord): UserType =>
   state.getIn([ns, USERS_CURRENT_USER]);
-export const currentUsernameSelector = (state: RootStateRecord) =>
+export const currentUsernameSelector = (
+  state: RootStateRecord,
+): string | undefined =>
   state.getIn([ns, USERS_CURRENT_USER, USERS_CURRENT_USER_PROFILE, 'username']);
-export const walletAddressSelector = (state: RootStateRecord) =>
+export const walletAddressSelector = (state: RootStateRecord): Address =>
   state.getIn([
     ns,
     USERS_CURRENT_USER,
     USERS_CURRENT_USER_PROFILE,
     'walletAddress',
   ]);
-export const currentUserBalanceSelector = (state: RootStateRecord) =>
-  state.getIn(
-    [ns, USERS_CURRENT_USER, USERS_CURRENT_USER_PROFILE, 'balance'],
-    // @ts-ignore
-    0,
-  );
-export const currentUserTokensSelector = (state: RootStateRecord) =>
+export const currentUserBalanceSelector = (state: RootStateRecord): string =>
+  state.getIn([
+    ns,
+    USERS_CURRENT_USER,
+    USERS_CURRENT_USER_PROFILE,
+    'balance',
+  ]) || '0';
+
+export const currentUserTokensSelector = (
+  state: RootStateRecord,
+): CurrentUserTokensType =>
   state.getIn([ns, USERS_CURRENT_USER, USERS_CURRENT_USER_TOKENS]);
-export const currentUserTransactionsSelector = (state: RootStateRecord) =>
+
+export const currentUserTransactionsSelector = (
+  state: RootStateRecord,
+): FetchableContractTransactionList =>
   state.getIn([ns, USERS_CURRENT_USER, USERS_CURRENT_USER_TRANSACTIONS]);
+
 export const currentUserMetadataSelector = (state: RootStateRecord) => {
   // @ts-ignore
   const { inboxStoreAddress, metadataStoreAddress } =
@@ -125,7 +139,9 @@ export const currentUserMetadataSelector = (state: RootStateRecord) => {
   return { inboxStoreAddress, metadataStoreAddress };
 };
 
-export const currentUserDraftIdsSelector = (state: RootStateRecord) =>
+export const currentUserDraftIdsSelector = (
+  state: RootStateRecord,
+): FetchableDataRecord<CurrentUserTasksType> =>
   state.getIn([ns, USERS_CURRENT_USER, USERS_CURRENT_USER_TASKS]);
 
 export const currentUserRecentTokensSelector = createSelector(
@@ -133,6 +149,7 @@ export const currentUserRecentTokensSelector = createSelector(
   currentUserTransactionsSelector,
   (tokens, transactions) =>
     Array.from(
+      // @ts-ignore
       new Map([
         ...((tokens &&
           tokens.record &&
@@ -166,13 +183,15 @@ export const friendlyUsernameSelector = createSelector(
 /*
  * User activities (Eg: Inbox)
  */
-const getInboxItems = (state: RootStateRecord) =>
+const getInboxItems = (state: RootStateRecord): CurrentUserInboxItemsType =>
   state.getIn([ns, USERS_CURRENT_USER, USERS_INBOX_ITEMS]);
 
 /*
  * User notification metadata
  */
-const getCurrentUserNotificationMetadata = (state: RootStateRecord) =>
+const getCurrentUserNotificationMetadata = (
+  state: RootStateRecord,
+): UserNotificationMetadataRecord =>
   state.getIn([
     ns,
     USERS_CURRENT_USER,
@@ -184,14 +203,14 @@ export const inboxItemsSelector = createSelector(
   getCurrentUserNotificationMetadata,
   (data, { readUntil = 0, exceptFor = [] }) =>
     data &&
-    data.update('record', list =>
+    data.update('record', (list: typeof data['record']) =>
       list
         ? list.map(
             activity =>
               activity &&
               activity.set(
                 'unread',
-                new Date(activity.timestamp) > new Date(readUntil) ||
+                new Date(activity.timestamp || 0) > new Date(readUntil) ||
                   exceptFor.includes(activity.id),
               ),
           )

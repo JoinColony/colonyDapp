@@ -3,7 +3,6 @@ import { defineMessages, FormattedMessage } from 'react-intl';
 
 import {
   ColonyTokenReferenceType,
-  TokenType,
   UserTokenReferenceType,
 } from '~immutable/index';
 
@@ -47,7 +46,7 @@ const TokenCard = <
   token: { address },
   token: tokenReference,
 }: Props<T>) => {
-  const { data: token, isFetching } = useDataFetcher<TokenType>(
+  const { data: token, isFetching } = useDataFetcher(
     tokenFetcher,
     [address],
     [address],

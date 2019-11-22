@@ -1,29 +1,24 @@
 import React, { useCallback, useMemo, useState } from 'react';
 import { defineMessages, injectIntl, IntlShape } from 'react-intl';
 import { compose } from 'recompose';
-import { useMappedState } from 'redux-react-hook';
+import sortBy from 'lodash/sortBy';
 
+import { COLONY_TOTAL_BALANCE_DOMAIN_ID, ROLES } from '~constants';
 import { DialogType } from '~core/Dialog';
 import Button from '~core/Button';
 import withDialog from '~core/Dialog/withDialog';
 import Heading from '~core/Heading';
 import { Select } from '~core/Fields';
-import { SpinnerLoader } from '~core/Preloaders';
-import { DomainType, TokenType } from '~immutable/index';
-import { Address } from '~types/index';
-import { useDataFetcher, useRoles } from '~utils/hooks';
-import { proxyOldRoles } from '~utils/data';
+import { Address, DomainsMapType } from '~types/index';
+import { useDataFetcher, useSelector, useTransformer } from '~utils/hooks';
 
-import { COLONY_TOTAL_BALANCE_DOMAIN_ID } from '../../../admin/constants';
-import { domainsFetcher, tokenFetcher } from '../../../dashboard/fetchers';
+import { getLegacyRoles } from '../../../transformers';
+import { tokenFetcher } from '../../../dashboard/fetchers';
 import { useColonyNativeToken } from '../../../dashboard/hooks/useColonyNativeToken';
 import { useColonyTokens } from '../../../dashboard/hooks/useColonyTokens';
 import { walletAddressSelector } from '../../../users/selectors';
-import {
-  canEditTokens,
-  canMoveTokens as canMoveTokensCheck,
-} from '../../checks';
-
+import { userHasRole } from '../../../users/checks';
+import { canEditTokens } from '../../checks';
 import FundingBanner from './FundingBanner';
 import TokenList from './TokenList';
 
@@ -55,50 +50,51 @@ const MSG = defineMessages({
 interface Props {
   canMintNativeToken?: boolean;
   colonyAddress: Address;
+  domains: DomainsMapType;
   intl: IntlShape;
   openDialog: (dialogName: string, dialogProps?: object) => DialogType;
+  rootRoles: ROLES[];
 }
 
 const Tokens = ({
   canMintNativeToken,
   colonyAddress,
+  domains,
   intl: { formatMessage },
   openDialog,
+  rootRoles,
 }: Props) => {
-  // permissions checks
-  const { data: roles } = useRoles(colonyAddress);
-  const walletAddress = useMappedState(walletAddressSelector);
-  const canEdit = useMemo(
-    () => canEditTokens(proxyOldRoles(roles), walletAddress),
-    [roles, walletAddress],
-  );
-  const canMoveTokens = useMemo(
-    () => canMoveTokensCheck(roles, walletAddress),
-    [roles, walletAddress],
+  const [selectedDomain, setSelectedDomain] = useState(
+    COLONY_TOTAL_BALANCE_DOMAIN_ID,
   );
 
-  // domains
-  const [selectedDomain, setSelectedDomain] = useState<number>(1);
-  const { data: domainsData, isFetching: isFetchingDomains } = useDataFetcher<
-    DomainType[]
-  >(domainsFetcher, [colonyAddress], [colonyAddress]);
-  const domains = useMemo(
+  const walletAddress = useSelector(walletAddressSelector);
+
+  const oldUserRoles = useTransformer(getLegacyRoles, [domains]);
+  const canEdit = canEditTokens(oldUserRoles, walletAddress);
+  const canMoveTokens = userHasRole(rootRoles, ROLES.FUNDING);
+
+  const domainsArray = useMemo(
     () => [
       { value: COLONY_TOTAL_BALANCE_DOMAIN_ID, label: { id: 'domain.all' } },
-      { value: 1, label: { id: 'domain.root' } },
-      ...(domainsData || []).map(({ name, id }) => ({
-        label: name,
-        value: id,
-      })),
+      ...sortBy(
+        Object.entries(domains || {})
+          .sort()
+          .map(([domainId, { name }]) => ({
+            label: name,
+            value: domainId,
+          })),
+        ['value'],
+      ),
     ],
-    [domainsData],
+    [domains],
   );
 
   const selectedDomainLabel: string = useMemo(() => {
     const { label = '' } =
-      domains.find(({ value }) => value === selectedDomain) || {};
+      domainsArray.find(({ value }) => value === selectedDomain) || {};
     return typeof label === 'string' ? label : formatMessage(label);
-  }, [domains, formatMessage, selectedDomain]);
+  }, [domainsArray, formatMessage, selectedDomain]);
 
   const setFieldValue = useCallback((_, value) => setSelectedDomain(value), [
     setSelectedDomain,
@@ -111,7 +107,7 @@ const Tokens = ({
   const nativeTokenAddress = nativeTokenReference
     ? nativeTokenReference.address
     : '';
-  const { data: nativeToken } = useDataFetcher<TokenType>(
+  const { data: nativeToken } = useDataFetcher(
     tokenFetcher,
     [nativeTokenAddress],
     [nativeTokenAddress],
@@ -153,20 +149,16 @@ const Tokens = ({
               textValues={{ selectedDomainLabel }}
               appearance={{ size: 'medium', theme: 'dark' }}
             />
-            {isFetchingDomains ? (
-              <SpinnerLoader />
-            ) : (
-              <Select
-                appearance={{ alignOptions: 'right', theme: 'alt' }}
-                connect={false}
-                elementOnly
-                label={MSG.labelSelectDomain}
-                name="selectDomain"
-                options={domains}
-                form={{ setFieldValue }}
-                $value={selectedDomain}
-              />
-            )}
+            <Select
+              appearance={{ alignOptions: 'right', theme: 'alt' }}
+              connect={false}
+              elementOnly
+              label={MSG.labelSelectDomain}
+              name="selectDomain"
+              options={domainsArray}
+              form={{ setFieldValue }}
+              $value={selectedDomain}
+            />
           </div>
           {tokens && (
             <TokenList

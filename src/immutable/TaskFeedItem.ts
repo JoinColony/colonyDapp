@@ -1,6 +1,6 @@
 import { Record } from 'immutable';
 
-import { DefaultValues } from '~types/index';
+import { DefaultValues, RecordToJS } from '~types/index';
 
 import {
   ContractTransactionRecord,
@@ -40,9 +40,9 @@ const defaultValues: DefaultValues<TaskFeedItemRecordProps> = {
   transaction: undefined,
 };
 
-export class TaskFeedItemRecord extends Record<TaskFeedItemRecordProps>(
-  defaultValues,
-) {}
+export class TaskFeedItemRecord
+  extends Record<TaskFeedItemRecordProps>(defaultValues)
+  implements RecordToJS<TaskFeedItemType> {}
 
 export const TaskFeedItem = (p: TaskFeedItemRecordProps) =>
   new TaskFeedItemRecord(p);

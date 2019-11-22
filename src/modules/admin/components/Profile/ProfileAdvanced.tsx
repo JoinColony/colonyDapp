@@ -1,17 +1,17 @@
 import React from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 
+import { ROLES } from '~constants';
 import { ColonyType } from '~immutable/index';
-import { useSelector, useUserDomainRoles } from '~utils/hooks';
+import { useSelector } from '~utils/hooks';
 import { ActionTypes } from '~redux/index';
 import { DialogActionButton } from '~core/Button';
 import Heading from '~core/Heading';
 import ExternalLink from '~core/ExternalLink';
-import { ROOT_DOMAIN } from '../../../core/constants';
+
 import { networkVersionSelector } from '../../../core/selectors';
 import { canEnterRecoveryMode } from '../../../users/checks';
 import { canBeUpgraded, isInRecoveryMode } from '../../../dashboard/checks';
-import { walletAddressSelector } from '../../../users/selectors';
 
 import styles from './ProfileAdvanced.css';
 
@@ -88,19 +88,14 @@ const displayName = 'admin.Profile.ProfileAdvanced';
 
 interface Props {
   colony: ColonyType;
+  rootRoles: ROLES[];
 }
 
 const ProfileAdvanced = ({
   colony: { colonyAddress, id, version, canUnlockNativeToken },
   colony,
+  rootRoles,
 }: Props) => {
-  const walletAddress = useSelector(walletAddressSelector);
-  const {
-    isFetching: isFetchingRoles,
-    data: roles,
-    error: userRolesError,
-  } = useUserDomainRoles(colonyAddress, ROOT_DOMAIN, walletAddress);
-
   const networkVersion = useSelector(networkVersionSelector);
 
   return (
@@ -174,11 +169,8 @@ const ProfileAdvanced = ({
           success={ActionTypes.COLONY_RECOVERY_MODE_ENTER_SUCCESS}
           error={ActionTypes.COLONY_RECOVERY_MODE_ENTER_ERROR}
           values={{ colonyAddress }}
-          loading={isFetchingRoles}
           disabled={
-            !!userRolesError ||
-            isInRecoveryMode(colony) ||
-            !canEnterRecoveryMode(roles)
+            isInRecoveryMode(colony) || !canEnterRecoveryMode(rootRoles)
           }
         />
       </section>

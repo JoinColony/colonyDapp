@@ -1,16 +1,17 @@
+import { ROLES } from '~constants';
 import { TaskStates } from '~data/constants';
 import { ColonyType, TaskType, TaskUserType } from '~immutable/index';
-import { Address, ColonyRole } from '~types/index';
-import { isFounder, canAdminister } from '../users/checks';
+import { Address } from '~types/index';
+import { hasRoot, canAdminister, canFund } from '../users/checks';
 
 /*
  * Colony
  */
-export const isInRecoveryMode = (colony: ColonyType | null) =>
+export const isInRecoveryMode = (colony: ColonyType | undefined) =>
   !!(colony && colony.inRecoveryMode);
 
 export const canBeUpgraded = (
-  colony: ColonyType | null,
+  colony: ColonyType | undefined,
   networkVersion: number | null,
 ) =>
   colony && colony.version && networkVersion && networkVersion > colony.version;
@@ -23,7 +24,7 @@ export const canBeUpgraded = (
  * @todo Wire task payouts.
  */
 export const didClaimPayout = (
-  taskUser: TaskUserType | null,
+  taskUser: TaskUserType | undefined,
   userAddress: Address,
 ) => taskUser && taskUser.didClaimPayout && taskUser.address === userAddress;
 
@@ -59,14 +60,8 @@ export const didDueDateElapse = ({ dueDate }: TaskType) =>
 
 export const isWorkerSet = ({ workerAddress }: TaskType) => !!workerAddress;
 
-export const canEditTask = (
-  task: TaskType,
-  roles: Record<ColonyRole, boolean> | void,
-  userAddress: Address,
-) =>
-  !isFinalized(task) &&
-  !isCancelled(task) &&
-  (isCreator(task, userAddress) || isFounder(roles) || canAdminister(roles));
+export const canEditTask = (task: TaskType, roles: ROLES[]) =>
+  !isFinalized(task) && !isCancelled(task) && canAdminister(roles);
 
 export const isDomainSet = ({ domainId }: TaskType) => !!domainId;
 
@@ -100,13 +95,8 @@ export const managerCanRevealWorkerRating = (
   userAddress: Address,
 ) => isManager(task, userAddress) && isReveal(task);
 
-export const canCancelTask = (
-  task: TaskType,
-  roles: Record<ColonyRole, boolean> | void,
-  userAddress: Address,
-) =>
-  isActive(task) &&
-  (isManager(task, userAddress) || isFounder(roles) || canAdminister(roles));
+export const canCancelTask = (task: TaskType, roles: ROLES[]) =>
+  isActive(task) && canAdminister(roles);
 
 export const hasRequestedToWork = (
   { requests = [] }: TaskType,
@@ -118,19 +108,15 @@ export const canRequestToWork = (task: TaskType, userAddress: Address) =>
     task.workerAddress ||
     isCreator(task, userAddress) ||
     hasRequestedToWork(task, userAddress)
-  );
+  ) && isActive(task);
 
-export const canFinalizeTask = (
-  task: TaskType,
-  roles: Record<ColonyRole, boolean> | void,
-  userAddress: Address,
-) =>
+export const canFinalizeTask = (task: TaskType, roles: ROLES[]) =>
   task &&
   isActive(task) &&
   isWorkerSet(task) &&
   isDomainSet(task) &&
   isPayoutsSet(task) &&
-  (isManager(task, userAddress) || isFounder(roles) || canAdminister(roles));
+  canAdminister(roles) &&
+  canFund(roles);
 
-export const canRecoverColony = (roles: Record<ColonyRole, boolean> | void) =>
-  roles && roles.RECOVERY && isFounder(roles);
+export const canRecoverColony = hasRoot;

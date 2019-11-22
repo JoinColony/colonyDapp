@@ -1,7 +1,14 @@
 import { WalletObjectType } from '@colony/purser-core';
 
 import { transformEntry } from '~data/utils';
-import { Entry, PermissionsManifest, createAddress } from '../../types/index';
+import { TaskEvents } from '~data/types/TaskEvents';
+
+import {
+  Address,
+  Entry,
+  PermissionsManifest,
+  createAddress,
+} from '../../types/index';
 import { log } from '../../utils/debug';
 import { PermissionManager } from '../permissions';
 import AbstractAccessController from './AbstractAccessController';
@@ -50,8 +57,23 @@ class ColonyAccessController extends AbstractAccessController<
     return createAddress(this.wallet.address);
   }
 
-  private extendVerifyContext<C extends object | void>(context: C) {
-    return { ...context, colonyAddress: this.colonyAddress };
+  private extendVerifyContext<C extends object | void>(
+    context: C & { event?: TaskEvents },
+  ): C & { colonyAddress: Address; domainId: number } {
+    let domainId;
+    if (
+      context &&
+      context.event &&
+      context.event.payload &&
+      'domainId' in context.event.payload
+    ) {
+      domainId = context.event.payload.domainId;
+    }
+    return {
+      ...context,
+      colonyAddress: this.colonyAddress,
+      domainId,
+    };
   }
 
   private checkWalletAddress() {
@@ -61,7 +83,7 @@ class ColonyAccessController extends AbstractAccessController<
 
   async save({ onlyDetermineAddress }: { onlyDetermineAddress: boolean }) {
     if (!onlyDetermineAddress) {
-      const isAllowed = await this.can('is-founder', this.walletAddress, {});
+      const isAllowed = await this.can('is-root', this.walletAddress, {});
       if (!isAllowed) {
         throw new Error('Cannot create colony database, user not allowed');
       }
@@ -83,14 +105,14 @@ class ColonyAccessController extends AbstractAccessController<
     const isAuthorized = await super.canAppend(entry, provider);
     if (!isAuthorized) return false;
 
-    const event = transformEntry(entry);
+    const event = transformEntry(entry) as TaskEvents;
     return this.can(event.type, event.meta.userAddress, { event });
   }
 
   async can<C extends object | void>(
     actionId: string,
     user: string,
-    context: C,
+    context: C & { event?: TaskEvents },
   ): Promise<boolean> {
     log.verbose('Checking permission for action', actionId, user, context);
     return this.manager.can(

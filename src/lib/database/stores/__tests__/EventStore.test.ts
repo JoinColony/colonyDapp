@@ -2,12 +2,14 @@
 /* eslint-disable no-underscore-dangle, dot-notation */
 
 import createSandbox from 'jest-sandbox';
+
+import { ROOT_DOMAIN } from '~constants';
 import { EventTypes, Versions } from '~data/constants';
+import PinnerConnector from '~lib/ipfs/PinnerConnector';
+import { OrbitDBStore } from '~lib/database/types';
 
 import createMockOrbitStore from './mockOrbitStore';
 import EventStore from '../EventStore';
-import PinnerConnector from '~lib/ipfs/PinnerConnector';
-import { OrbitDBStore } from '~lib/database/types';
 
 describe('EventStore', () => {
   const sandbox = createSandbox();
@@ -66,7 +68,7 @@ describe('EventStore', () => {
     const newEvent = store.getEvent('');
 
     expect(newEvent.meta).toHaveProperty('version', Versions.V2);
-    expect(newEvent.payload).toHaveProperty('domainId', 1);
+    expect(newEvent.payload).toHaveProperty('domainId', ROOT_DOMAIN);
   });
 
   test('It does not perform migrations for events without a migration', () => {

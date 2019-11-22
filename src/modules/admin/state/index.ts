@@ -1,22 +1,40 @@
 import { List, Map as ImmutableMap, Record } from 'immutable';
 
-import { ENSName } from '~types/index';
+import { Address } from '~types/index';
 import {
   ContractTransactionRecord,
+  ContractTransactionType,
   FetchableDataRecord,
+  FetchableDataType,
 } from '~immutable/index';
 
 import { ADMIN_TRANSACTIONS, ADMIN_UNCLAIMED_TRANSACTIONS } from '../constants';
 
-export type AdminTransactionsState = ImmutableMap<
-  ENSName,
-  FetchableDataRecord<List<ContractTransactionRecord>>
+type ContractTransactionList = List<ContractTransactionRecord> & {
+  toJS(): ContractTransactionType[];
+};
+
+export type FetchableContractTransactionList = FetchableDataRecord<
+  ContractTransactionList
 >;
 
+export type AdminTransactionsState = ImmutableMap<
+  Address,
+  FetchableContractTransactionList
+> & {
+  toJS(): {
+    [colonyAddress: string]: FetchableDataType<ContractTransactionType[]>;
+  };
+};
+
 export type AdminUnclaimedTransactionsState = ImmutableMap<
-  ENSName,
-  FetchableDataRecord<List<ContractTransactionRecord>>
->;
+  Address,
+  FetchableContractTransactionList
+> & {
+  toJS(): {
+    [colonyAddress: string]: FetchableDataType<ContractTransactionType[]>;
+  };
+};
 
 export interface AdminStateProps {
   [ADMIN_TRANSACTIONS]: AdminTransactionsState;
@@ -24,6 +42,7 @@ export interface AdminStateProps {
 }
 
 export class AdminStateRecord extends Record<AdminStateProps>({
-  [ADMIN_TRANSACTIONS]: ImmutableMap(),
-  [ADMIN_UNCLAIMED_TRANSACTIONS]: ImmutableMap(),
+  [ADMIN_TRANSACTIONS]: ImmutableMap() as AdminTransactionsState,
+  // eslint-disable-next-line max-len
+  [ADMIN_UNCLAIMED_TRANSACTIONS]: ImmutableMap() as AdminUnclaimedTransactionsState,
 }) {}

@@ -21,7 +21,12 @@ describe('immutable utils - shouldFetchData', () => {
   /*
    * Test values
    */
-  const record = Domain({ id: 1, name: 'My Domain' });
+  const record = Domain({
+    id: 1,
+    name: 'My Domain',
+    roles: {},
+    parentId: null,
+  });
   const error = 'could not load';
 
   /*

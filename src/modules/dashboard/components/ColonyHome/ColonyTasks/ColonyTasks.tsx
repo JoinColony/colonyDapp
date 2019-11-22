@@ -15,7 +15,6 @@ import { useDataSubscriber, useSelector } from '~utils/hooks';
 
 import { colonyTaskMetadataSubscriber } from '../../../subscribers';
 import { walletAddressSelector } from '../../../../users/selectors';
-import { TaskMetadataMap } from '../../../state/index';
 import TaskList from '../../TaskList';
 import styles from './ColonyTasks.css';
 
@@ -134,7 +133,7 @@ const ColonyTasks = ({
     [dispatch],
   );
 
-  const { data: taskMetadata, isFetching } = useDataSubscriber<TaskMetadataMap>(
+  const { data: taskMetadata, isFetching } = useDataSubscriber(
     colonyTaskMetadataSubscriber,
     [colonyAddress],
     [colonyAddress],

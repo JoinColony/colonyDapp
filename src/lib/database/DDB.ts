@@ -233,6 +233,7 @@ class DDB {
     const store: T = this.makeStore(orbitStore, { name, type, schema });
 
     await store.load();
+    await store.ready();
     return store;
   }
 

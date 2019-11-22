@@ -1,22 +1,23 @@
 import React, { useMemo, useEffect, useCallback } from 'react';
 import { FormikProps } from 'formik';
 import { defineMessages, FormattedMessage } from 'react-intl';
-import { COLONY_ROLE_FUNDING } from '@colony/colony-js-client';
 import BigNumber from 'bn.js';
-import { useMappedState } from 'redux-react-hook';
 import moveDecimal from 'move-decimal-point';
+import sortBy from 'lodash/sortBy';
 
+import { ROOT_DOMAIN, ROLES } from '~constants';
 import { Address } from '~types/index';
-import { DomainType } from '~immutable/index';
-import { useDataFetcher, useUserDomainRoles, useSelector } from '~utils/hooks';
+import { useDataFetcher, useSelector, useTransformer } from '~utils/hooks';
 import Button from '~core/Button';
 import DialogSection from '~core/Dialog/DialogSection';
 import { Select, Input, FormStatus } from '~core/Fields';
 import Heading from '~core/Heading';
 
-import { domainsFetcher } from '../../../dashboard/fetchers';
+import { getUserRoles } from '../../../transformers';
+import { domainsAndRolesFetcher } from '../../../dashboard/fetchers';
 import { tokenBalanceSelector } from '../../../dashboard/selectors';
 import { walletAddressSelector } from '../../../users/selectors';
+import { userHasRole } from '../../../users/checks';
 
 import styles from './TokensMoveDialogForm.css';
 import { FormValues } from './TokensMoveDialog';
@@ -70,8 +71,8 @@ const MSG = defineMessages({
 interface Props {
   cancel: () => void;
   colonyAddress: Address;
-  colonyTokenRefs: any;
-  colonyTokens: any;
+  colonyTokenRefs: any; // This type should be improved!
+  colonyTokens: any; // This type should be improved!
 }
 
 const TokensMoveDialogForm = ({
@@ -110,41 +111,38 @@ const TokensMoveDialogForm = ({
     [colonyTokenRefs, colonyTokens],
   );
 
-  // Fetch colony domains
-  const { data: domains } = useDataFetcher<DomainType[]>(
-    domainsFetcher,
+  const { data: domains } = useDataFetcher(
+    domainsAndRolesFetcher,
     [colonyAddress],
     [colonyAddress],
   );
+
+  const walletAddress = useSelector(walletAddressSelector);
+
+  const fromDomainRoles = useTransformer(getUserRoles, [
+    domains,
+    values.fromDomain || ROOT_DOMAIN,
+    walletAddress,
+  ]);
+
+  const toDomainRoles = useTransformer(getUserRoles, [
+    domains,
+    values.toDomain || ROOT_DOMAIN,
+    walletAddress,
+  ]);
 
   // Map the colony's domains to Select options
   const domainOptions = useMemo(
-    () => [
-      { value: 1, label: { id: 'domain.root' } },
-      ...(domains || []).map(({ id, name }) => ({ value: id, label: name })),
-    ],
-    [domains],
-  );
+    () =>
+      sortBy(
+        Object.values(domains || {}).map(({ name, id }) => ({
+          value: id,
+          label: name,
+        })),
+        ['value'],
+      ),
 
-  // Get from and to domain permissions for current user
-  const currentUserAddress = useSelector(walletAddressSelector);
-  const {
-    data: fromDomainPermissions,
-    isFetching: isFetchingFromDomainPermissions,
-  } = useUserDomainRoles(
-    colonyAddress,
-    values.fromDomain || 1,
-    currentUserAddress,
-    true,
-  );
-  const {
-    data: toDomainPermissions,
-    isFetching: isFetchingToDomainPermissions,
-  } = useUserDomainRoles(
-    colonyAddress,
-    values.toDomain || 1,
-    currentUserAddress,
-    true,
+    [domains],
   );
 
   // Get domain token balances from state
@@ -154,22 +152,22 @@ const TokensMoveDialogForm = ({
         state,
         colonyAddress,
         values.tokenAddress || '',
-        values.fromDomain || 1,
+        values.fromDomain || ROOT_DOMAIN,
       ),
     [colonyAddress, values.fromDomain, values.tokenAddress],
   );
-  const fromDomainTokenBalance = useMappedState(fromDomainTokenBalanceSelector);
+  const fromDomainTokenBalance = useSelector(fromDomainTokenBalanceSelector);
   const toDomainTokenBalanceSelector = useCallback(
     state =>
       tokenBalanceSelector(
         state,
         colonyAddress,
         values.tokenAddress || '',
-        values.toDomain || 1,
+        values.toDomain || ROOT_DOMAIN,
       ),
     [colonyAddress, values.toDomain, values.tokenAddress],
   );
-  const toDomainTokenBalance = useMappedState(toDomainTokenBalanceSelector);
+  const toDomainTokenBalance = useSelector(toDomainTokenBalanceSelector);
 
   // Perform form validations
   useEffect(() => {
@@ -195,19 +193,11 @@ const TokensMoveDialogForm = ({
       }
     }
 
-    if (
-      values.fromDomain &&
-      !isFetchingFromDomainPermissions &&
-      !fromDomainPermissions[COLONY_ROLE_FUNDING]
-    ) {
+    if (values.fromDomain && !userHasRole(fromDomainRoles, ROLES.FUNDING)) {
       errors.fromDomain = MSG.noPermissionFrom;
     }
 
-    if (
-      values.toDomain &&
-      !isFetchingToDomainPermissions &&
-      !toDomainPermissions[COLONY_ROLE_FUNDING]
-    ) {
+    if (values.toDomain && !userHasRole(toDomainRoles, ROLES.FUNDING)) {
       errors.toDomain = MSG.noPermissionTo;
     }
 
@@ -220,14 +210,12 @@ const TokensMoveDialogForm = ({
 
     setErrors(errors);
   }, [
-    fromDomainPermissions,
+    fromDomainRoles,
     fromDomainTokenBalance,
-    isFetchingFromDomainPermissions,
-    isFetchingToDomainPermissions,
     selectedToken.decimals,
     selectedTokenRef,
     setErrors,
-    toDomainPermissions,
+    toDomainRoles,
     values.amount,
     values.fromDomain,
     values.toDomain,

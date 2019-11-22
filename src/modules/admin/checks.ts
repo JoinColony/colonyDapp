@@ -1,6 +1,5 @@
-import { COLONY_ROLE_FUNDING } from '@colony/colony-js-client';
-
-import { Address } from '~types/index';
+import { ROLES } from '~constants';
+import { Address, DomainsMapType } from '~types/index';
 
 export const canEditTokens = (
   roles: { founder: Address; admins: Address[] } | void,
@@ -8,15 +7,13 @@ export const canEditTokens = (
 ) => roles && roles.founder === walletAddress;
 
 export const canMoveTokens = (
-  domainRoles: {
-    [domainId: number]: { [userAddress: string]: { [role: string]: boolean } };
-  },
+  colonyRoles: DomainsMapType,
   walletAddress: Address,
 ) =>
-  domainRoles &&
-  !!Object.values(domainRoles).find(users =>
+  colonyRoles &&
+  !!Object.values(colonyRoles).find(users =>
     Object.entries(users).find(
       ([userAddress, roles]) =>
-        userAddress === walletAddress && roles[COLONY_ROLE_FUNDING],
+        userAddress === walletAddress && roles[ROLES.FUNDING],
     ),
   );

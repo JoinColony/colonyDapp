@@ -1,5 +1,6 @@
 import { all, call, fork, put, takeEvery } from 'redux-saga/effects';
 
+import { ROOT_DOMAIN } from '~constants';
 import { Action, ActionTypes, AllActions } from '~redux/index';
 import {
   putError,
@@ -18,7 +19,12 @@ import { fetchColonyTokenBalance } from '../actionCreators';
 
 function* colonyDomainsFetch({
   meta,
-  payload: { colonyAddress },
+  payload: {
+    colonyAddress,
+    options: { fetchRoles } = {
+      fetchRoles: true,
+    },
+  },
 }: Action<ActionTypes.COLONY_DOMAINS_FETCH>) {
   try {
     const domains = yield executeQuery(getColonyDomains, {
@@ -26,9 +32,6 @@ function* colonyDomainsFetch({
       metadata: { colonyAddress },
     });
 
-    /*
-     * Dispatch the success action.
-     */
     yield put<AllActions>({
       type: ActionTypes.COLONY_DOMAINS_FETCH_SUCCESS,
       meta,
@@ -37,6 +40,14 @@ function* colonyDomainsFetch({
         domains,
       },
     });
+
+    if (fetchRoles) {
+      yield put<AllActions>({
+        type: ActionTypes.COLONY_ROLES_FETCH,
+        payload: { colonyAddress },
+        meta,
+      });
+    }
   } catch (error) {
     return yield putError(ActionTypes.COLONY_DOMAINS_FETCH_ERROR, error, meta);
   }
@@ -84,14 +95,14 @@ function* domainCreate({
       },
     });
 
-    /*
-     * Dispatch a success action with the newly-added domain.
-     */
     yield put<AllActions>({
       type: ActionTypes.DOMAIN_CREATE_SUCCESS,
       meta,
       // For now parentId is just root domain
-      payload: { colonyAddress, domain: { id, name, parentId: 1 } },
+      payload: {
+        colonyAddress,
+        domain: { id, name, parentId: ROOT_DOMAIN, roles: {} },
+      },
     });
 
     // const colonyManager = yield getContext(Context.COLONY_MANAGER);
@@ -130,14 +141,11 @@ function* domainEdit({
         name: domainName,
       },
     });
-    /*
-     * Dispatch a success action with the newly-edited domain.
-     */
     yield put<AllActions>({
       type: ActionTypes.DOMAIN_EDIT_SUCCESS,
       meta,
       // For now parentId is just root domain
-      payload: { colonyAddress, domainId, domainName, parentId: 1 },
+      payload: { colonyAddress, domainId, domainName, parentId: ROOT_DOMAIN },
     });
   } catch (error) {
     return yield putError(ActionTypes.DOMAIN_EDIT_ERROR, error, meta);

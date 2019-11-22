@@ -3,7 +3,6 @@ import { defineMessages } from 'react-intl';
 
 import {
   ColonyTokenReferenceType,
-  TokenType,
   UserTokenReferenceType,
 } from '~immutable/index';
 
@@ -31,11 +30,7 @@ const TokenCheckbox = ({
 }: {
   token: ColonyTokenReferenceType | UserTokenReferenceType;
 }) => {
-  const { data: token } = useDataFetcher<TokenType>(
-    tokenFetcher,
-    [address],
-    [address],
-  );
+  const { data: token } = useDataFetcher(tokenFetcher, [address], [address]);
   return token ? (
     <Checkbox
       className={styles.tokenChoice}

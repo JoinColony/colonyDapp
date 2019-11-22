@@ -29,13 +29,20 @@ const MSG = defineMessages({
   },
 });
 
-interface Props extends TaskProps<'draftId' | 'colonyAddress' | 'skillId'> {
+interface Props
+  extends TaskProps<'draftId' | 'colonyAddress' | 'skillId' | 'domainId'> {
   disabled?: boolean;
 }
 
 const displayName = 'daskboard.TaskSKills';
 
-const TaskSkills = ({ colonyAddress, draftId, disabled, skillId }: Props) => {
+const TaskSkills = ({
+  colonyAddress,
+  draftId,
+  disabled,
+  skillId,
+  domainId,
+}: Props) => {
   const setSkill = useAsyncFunction({
     submit: ActionTypes.TASK_SET_SKILL,
     success: ActionTypes.TASK_SET_SKILL_SUCCESS,
@@ -48,6 +55,7 @@ const TaskSkills = ({ colonyAddress, draftId, disabled, skillId }: Props) => {
         await setSkill({
           colonyAddress,
           draftId,
+          domainId,
           skillId: skillValue ? skillValue.id : undefined,
         });
       } catch (caughtError) {
@@ -57,7 +65,7 @@ const TaskSkills = ({ colonyAddress, draftId, disabled, skillId }: Props) => {
         log.error(caughtError);
       }
     },
-    [colonyAddress, draftId, setSkill],
+    [colonyAddress, domainId, draftId, setSkill],
   );
 
   return (

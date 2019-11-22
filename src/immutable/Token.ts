@@ -1,6 +1,6 @@
 import { Record } from 'immutable';
 
-import { Address, DefaultValues } from '~types/index';
+import { Address, DefaultValues, RecordToJS } from '~types/index';
 
 /**
  * @todo Fix Token record required props
@@ -24,6 +24,7 @@ const defaultValues: DefaultValues<Shared> = {
   symbol: undefined,
 };
 
-export class TokenRecord extends Record<Shared>(defaultValues) {}
+export class TokenRecord extends Record<Shared>(defaultValues)
+  implements RecordToJS<TokenType> {}
 
 export const Token = (p: Shared) => new TokenRecord(p);

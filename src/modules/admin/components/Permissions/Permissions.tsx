@@ -7,22 +7,22 @@ import {
   FormattedMessage,
 } from 'react-intl';
 import { compose } from 'recompose';
+import sortBy from 'lodash/sortBy';
 
-import { Address, createAddress } from '~types/index';
+import { ROLES, ROOT_DOMAIN } from '~constants';
+import { Address, DomainsMapType } from '~types/index';
 import { DomainType } from '~immutable/index';
 import Heading from '~core/Heading';
 import { Select } from '~core/Fields';
-import { SpinnerLoader } from '~core/Preloaders';
 import { Table, TableBody, TableCell } from '~core/Table';
 import Button from '~core/Button';
 import withDialog from '~core/Dialog/withDialog';
 import { DialogType } from '~core/Dialog';
 import ExternalLink from '~core/ExternalLink';
-import { useDataFetcher, useRoles } from '~utils/hooks';
+import { useTransformer } from '~utils/hooks';
 
+import { getDomainRoles } from '../../../transformers';
 import UserListItem from '../UserListItem';
-import { domainsFetcher } from '../../../dashboard/fetchers';
-
 import UserPermissions from './UserPermissions';
 
 import styles from './Permissions.css';
@@ -57,6 +57,7 @@ const MSG = defineMessages({
 
 interface Props {
   colonyAddress: Address;
+  domains: DomainsMapType;
   intl: IntlShape;
   openDialog: (
     dialogName: string,
@@ -66,86 +67,63 @@ interface Props {
 
 const displayName = 'admin.Permissions';
 
-const Permissions = ({
-  colonyAddress,
-  intl: { formatMessage },
-  openDialog,
-}: Props) => {
-  const [selectedDomain, setSelectedDomain] = useState(1);
+const Permissions = ({ colonyAddress, domains, openDialog }: Props) => {
+  const [selectedDomainId, setSelectedDomainId] = useState(ROOT_DOMAIN);
 
-  const { data: domainsData, isFetching: isFetchingDomains } = useDataFetcher<
-    DomainType[]
-  >(domainsFetcher, [colonyAddress], [colonyAddress]);
-  const domains = useMemo(
-    () => [
-      { value: 1, label: { id: 'domain.root' } },
-      ...(domainsData || []).map(({ name, id }) => ({
-        label: name,
-        value: id,
-      })),
-    ],
-    [domainsData],
-  );
-
-  const { data: roles, isFetching: isFetchingRoles } = useRoles(
-    colonyAddress,
-    true,
-  );
-
-  const setFieldValue = useCallback((_, value) => setSelectedDomain(value), [
-    setSelectedDomain,
+  const domainRoles = useTransformer(getDomainRoles, [
+    domains,
+    selectedDomainId,
   ]);
 
-  const getPermissionsForUser = useCallback(
-    (user: Address) => roles && roles[selectedDomain][user],
-    [roles, selectedDomain],
+  const directDomainRoles = useTransformer(getDomainRoles, [
+    domains,
+    selectedDomainId,
+    true,
+  ]);
+
+  const domainSelectOptions = sortBy(
+    (Object.values(domains) as DomainType[]).map(({ id, name }) => ({
+      value: id,
+      label: name,
+    })),
+    ['value'],
   );
 
-  const sortRootUsersFirst = useCallback(
-    (userA, userB) => {
-      const userAPermissions = getPermissionsForUser(userA);
-      const userBPermissions = getPermissionsForUser(userB);
-      if (
-        (userAPermissions.ROOT && userBPermissions.ROOT) ||
-        (!userAPermissions.ROOT && !userBPermissions.ROOT)
-      ) {
-        return 0;
-      }
-      return userAPermissions.ROOT ? -1 : 1;
-    },
-    [getPermissionsForUser],
-  );
+  const setFieldValue = useCallback((_, value) => setSelectedDomainId(value), [
+    setSelectedDomainId,
+  ]);
 
-  const domainLabel: string = useMemo(() => {
-    const { label = '' } =
-      domains.find(({ value }) => value === selectedDomain) || {};
-    return typeof label === 'string' ? label : formatMessage(label);
-  }, [domains, formatMessage, selectedDomain]);
+  const handleAddPermissions = useCallback(() => {
+    openDialog('ColonyPermissionsAddDialog', {
+      colonyAddress,
+      domainId: selectedDomainId,
+    });
+  }, [openDialog, colonyAddress, selectedDomainId]);
 
   const handleEditPermissions = useCallback(
-    userAddress =>
-      openDialog('ColonyPermissionEditDialog', {
+    (userAddress: Address) =>
+      openDialog('ColonyPermissionsEditDialog', {
         colonyAddress,
-        domain: { name: domainLabel, id: selectedDomain },
-        clickedUser: userAddress || null,
+        domainId: selectedDomainId,
+        userAddress,
       }),
-    [openDialog, colonyAddress, selectedDomain, domainLabel],
+    [openDialog, colonyAddress, selectedDomainId],
   );
 
-  const handleOnClick = useCallback(
-    (userAddress: Address) => {
-      handleEditPermissions(userAddress);
-    },
-    [handleEditPermissions],
-  );
-
-  const users = useMemo(
+  const domainRolesArray = useMemo(
     () =>
-      Object.keys((roles || {})[selectedDomain] || {})
-        .map(createAddress)
-        .sort(sortRootUsersFirst),
-    [roles, selectedDomain, sortRootUsersFirst],
+      Object.entries(domainRoles)
+        .sort(([, roles]) => (roles.includes(ROLES.ROOT) ? -1 : 1))
+        .filter(([, roles]) => !!roles.length)
+        .map(([userAddress, roles]) => ({
+          userAddress,
+          roles,
+          directRoles: directDomainRoles[userAddress] || [],
+        })),
+    [directDomainRoles, domainRoles],
   );
+
+  const selectedDomain = domains[selectedDomainId];
 
   return (
     <div className={styles.main}>
@@ -153,7 +131,9 @@ const Permissions = ({
         <div className={styles.titleContainer}>
           <Heading
             text={MSG.title}
-            textValues={{ domainLabel }}
+            textValues={{
+              domainLabel: selectedDomain ? selectedDomain.name : undefined,
+            }}
             appearance={{ size: 'medium', theme: 'dark' }}
           />
           <Select
@@ -162,53 +142,48 @@ const Permissions = ({
             elementOnly
             label={MSG.labelFilter}
             name="filter"
-            options={domains}
+            options={domainSelectOptions}
             form={{ setFieldValue }}
-            $value={selectedDomain}
+            $value={selectedDomainId}
           />
         </div>
         <div className={styles.tableWrapper}>
-          {isFetchingRoles || isFetchingDomains ? (
-            <SpinnerLoader />
-          ) : (
-            <>
-              <Table scrollable>
-                <TableBody className={styles.tableBody}>
-                  {users.map(user => (
-                    <UserListItem
-                      address={user}
-                      key={user}
-                      onClick={handleOnClick}
-                      showDisplayName
-                      showMaskedAddress
-                      showUsername
-                    >
-                      <TableCell>
-                        <UserPermissions
-                          colonyAddress={colonyAddress}
-                          domainId={selectedDomain}
-                          userAddress={user}
-                        />
-                      </TableCell>
-                    </UserListItem>
-                  ))}
-                </TableBody>
-              </Table>
-              <p className={styles.parentPermissionTip}>
-                <FormattedMessage
-                  {...MSG.permissionInParent}
-                  values={{
-                    learnMore: (
-                      <ExternalLink
-                        text={MSG.learnMore}
-                        href={DOMAINS_HELP_URL}
+          <>
+            <Table scrollable>
+              <TableBody className={styles.tableBody}>
+                {domainRolesArray.map(({ userAddress, roles, directRoles }) => (
+                  <UserListItem
+                    address={userAddress}
+                    key={userAddress}
+                    onClick={handleEditPermissions}
+                    showDisplayName
+                    showMaskedAddress
+                    showUsername
+                  >
+                    <TableCell>
+                      <UserPermissions
+                        roles={roles}
+                        directRoles={directRoles}
                       />
-                    ),
-                  }}
-                />
-              </p>
-            </>
-          )}
+                    </TableCell>
+                  </UserListItem>
+                ))}
+              </TableBody>
+            </Table>
+            <p className={styles.parentPermissionTip}>
+              <FormattedMessage
+                {...MSG.permissionInParent}
+                values={{
+                  learnMore: (
+                    <ExternalLink
+                      text={MSG.learnMore}
+                      href={DOMAINS_HELP_URL}
+                    />
+                  ),
+                }}
+              />
+            </p>
+          </>
         </div>
       </main>
       <aside className={styles.sidebar}>
@@ -217,7 +192,7 @@ const Permissions = ({
             <Button
               appearance={{ theme: 'blue' }}
               text={MSG.addRole}
-              onClick={() => handleEditPermissions(null)}
+              onClick={handleAddPermissions}
             />
           </li>
         </ul>

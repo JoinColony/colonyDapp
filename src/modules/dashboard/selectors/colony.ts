@@ -1,5 +1,8 @@
 import { createSelector } from 'reselect';
+import BigNumber from 'bn.js';
 import { Map as ImmutableMap } from 'immutable';
+import { ColonyRecord } from '~immutable/Colony';
+import { FetchableDataRecord } from '~immutable/FetchableData';
 
 import { Address, ENSName } from '~types/index';
 
@@ -12,46 +15,59 @@ import {
   DASHBOARD_COLONIES,
   DASHBOARD_COLONY_NAMES,
   DASHBOARD_NAMESPACE as ns,
+  TEMP_DASHBOARD_ALL_USER_HAS_RECOVERY_ROLES,
 } from '../constants';
 
 import {
   colonyTransactionsSelector,
   colonyUnclaimedTransactionsSelector,
 } from '../../admin/selectors';
+import { AllColonyNamesMap } from '../state';
 
 /*
  * Input selectors
  */
-export const colonyNamesSelector = (state: RootStateRecord) =>
+export const colonyNamesSelector = (
+  state: RootStateRecord,
+): AllColonyNamesMap =>
   state.getIn([ns, DASHBOARD_ALL_COLONIES, DASHBOARD_COLONY_NAMES]);
 
 export const colonyNameSelector = (
   state: RootStateRecord,
-  colonyAddress: Address,
-) =>
-  state.getIn([
-    ns,
-    DASHBOARD_ALL_COLONIES,
-    DASHBOARD_COLONY_NAMES,
-    colonyAddress,
-  ]);
+  colonyAddress: Address | undefined,
+): FetchableDataRecord<string> | null =>
+  colonyAddress
+    ? state.getIn([
+        ns,
+        DASHBOARD_ALL_COLONIES,
+        DASHBOARD_COLONY_NAMES,
+        colonyAddress,
+      ])
+    : null;
 
 export const colonyAddressSelector = (
   state: RootStateRecord,
   colonyName: ENSName,
-) =>
+): FetchableDataRecord<string> =>
   state.getIn([ns, DASHBOARD_ALL_COLONIES, DASHBOARD_COLONY_NAMES, colonyName]);
 
 export const colonySelector = (
   state: RootStateRecord,
-  colonyAddress: Address,
-) =>
-  state.getIn([ns, DASHBOARD_ALL_COLONIES, DASHBOARD_COLONIES, colonyAddress]);
+  colonyAddress: Address | undefined,
+): FetchableDataRecord<ColonyRecord> | undefined =>
+  colonyAddress
+    ? state.getIn([
+        ns,
+        DASHBOARD_ALL_COLONIES,
+        DASHBOARD_COLONIES,
+        colonyAddress,
+      ])
+    : null;
 
 export const colonyAvatarHashSelector = (
   state: RootStateRecord,
   colonyAddress: Address,
-) =>
+): string | undefined =>
   state.getIn([
     ns,
     DASHBOARD_ALL_COLONIES,
@@ -66,7 +82,7 @@ export const tokenBalanceSelector = (
   colonyAddress: Address,
   tokenAddress: Address,
   domainId: number,
-) =>
+): BigNumber | undefined =>
   state.getIn([
     ns,
     DASHBOARD_ALL_COLONIES,
@@ -76,7 +92,7 @@ export const tokenBalanceSelector = (
     'tokens',
     tokenAddress,
     'balances',
-    domainId,
+    domainId.toString(),
   ]);
 
 /*
@@ -92,6 +108,7 @@ export const colonyTokensSelector = createSelector(
   colony =>
     colony
       ? colony
+          // @ts-ignore
           .getIn(['record', 'tokens'], ImmutableMap())
           .valueSeq()
           .sort(sortTokensByEth)
@@ -105,6 +122,7 @@ export const colonyNativeTokenSelector = createSelector(
   colony =>
     colony
       ? colony
+          // @ts-ignore
           .getIn(['record', 'tokens'], ImmutableMap())
           .find(token => !!token && token.isNative)
       : null,
@@ -114,7 +132,10 @@ export const colonyEthTokenSelector = createSelector(
   colonySelector,
   colony =>
     colony
-      ? colony.getIn(['record', 'tokens'], ImmutableMap()).find(tokenIsETH)
+      ? colony
+          // @ts-ignore
+          .getIn(['record', 'tokens'], ImmutableMap())
+          .find(tokenIsETH)
       : null,
 );
 
@@ -155,3 +176,9 @@ export const friendlyColonyNameSelector = createSelector(
     return displayName || colonyName || colonyAddress;
   },
 );
+
+export const TEMP_userHasRecoveryRoleSelector = (
+  state: RootStateRecord,
+  colonyAddress: Address,
+): FetchableDataRecord<Address[]> =>
+  state.getIn([ns, TEMP_DASHBOARD_ALL_USER_HAS_RECOVERY_ROLES, colonyAddress]);

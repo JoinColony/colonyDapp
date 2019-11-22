@@ -1,11 +1,7 @@
-import {
-  defineMessages,
-  FormattedMessage,
-  injectIntl,
-  IntlShape,
-} from 'react-intl';
+import { defineMessages, FormattedMessage, injectIntl } from 'react-intl';
 import React, { useCallback, useMemo, useState } from 'react';
 
+import { COLONY_TOTAL_BALANCE_DOMAIN_ID } from '~constants';
 import Heading from '~core/Heading';
 import Button from '~core/Button';
 import ItemsList from '~core/ItemsList';
@@ -40,19 +36,15 @@ const MSG = defineMessages({
       other {Modify}
     }`,
   },
-  rootDomain: {
-    id: 'dashboard.TaskDomains.rootDomain',
-    defaultMessage: 'root',
-  },
 });
 
 interface Props extends TaskProps<'colonyAddress' | 'domainId' | 'draftId'> {
   disabled?: boolean;
-  intl: IntlShape;
 }
 
 // This odd typing makes DomainType compatible with ConsumableItem
-interface ConsumableDomainType extends DomainType {
+interface ConsumableDomainType extends Omit<DomainType, 'id'> {
+  id: number;
   children?: any;
   parent?: any;
 }
@@ -60,20 +52,16 @@ type ConsumableDomainArray = ConsumableDomainType[];
 
 const displayName = 'dashboard.TaskDomains';
 
-const TaskDomains = ({
-  colonyAddress,
-  domainId,
-  draftId,
-  disabled,
-  intl: { formatMessage },
-}: Props) => {
+const TaskDomains = ({ colonyAddress, domainId, draftId, disabled }: Props) => {
   const setDomain = useAsyncFunction({
     submit: ActionTypes.TASK_SET_DOMAIN,
     success: ActionTypes.TASK_SET_DOMAIN_SUCCESS,
     error: ActionTypes.TASK_SET_DOMAIN_ERROR,
   });
 
-  const [selectedDomainId, setSelectedDomainId] = useState(domainId);
+  const [selectedDomainId, setSelectedDomainId] = useState<number | undefined>(
+    domainId,
+  );
 
   const handleSetDomain = useCallback(
     async (domainValue: any) => {
@@ -91,7 +79,7 @@ const TaskDomains = ({
     [colonyAddress, draftId, setDomain],
   );
 
-  const { data: domains } = useDataFetcher<ConsumableDomainArray>(
+  const { data: domains } = useDataFetcher(
     domainsFetcher,
     [colonyAddress],
     [colonyAddress],
@@ -101,47 +89,37 @@ const TaskDomains = ({
   const tokens = useSelector(colonyTokensSelector, [colonyAddress]);
 
   const domainHasEnoughFunds = useCallback(
-    (domain: number) =>
+    (id: string) =>
       payouts.every(({ amount, token }) => {
         const payoutToken = tokens.find(({ address }) => address === token);
         const tokenBalanceInDomain =
-          payoutToken && payoutToken.balances && payoutToken.balances[domain];
+          payoutToken && payoutToken.balances && payoutToken.balances[id];
         return !bnLessThan(tokenBalanceInDomain, amount);
       }),
     [payouts, tokens],
   );
 
-  const domainsWithRoot = useMemo(() => {
-    return (
-      domains && [
-        {
-          disabled: !domainHasEnoughFunds(1),
-          disabledText: !domainHasEnoughFunds(1)
-            ? MSG.insufficientFundsInDomain
-            : undefined,
-          id: 1,
-          name: formatMessage(MSG.rootDomain),
-        },
-        ...domains.map(domain => ({
-          disabled: !domainHasEnoughFunds(domain.id),
-          disabledText: !domainHasEnoughFunds(domain.id)
-            ? MSG.insufficientFundsInDomain
-            : undefined,
-          ...domain,
+  const consumableDomains: ConsumableDomainArray = useMemo(
+    () =>
+      Object.keys(domains || {})
+        .sort()
+        .map(id => ({
+          ...(domains || {})[id],
+          disabled: !domainHasEnoughFunds(id),
+          id: parseInt(id, 10),
         })),
-      ]
-    );
-  }, [domainHasEnoughFunds, domains, formatMessage]);
+    [domainHasEnoughFunds, domains],
+  );
 
   return (
     <div className={styles.main}>
       <ItemsList
-        list={domainsWithRoot || []}
+        list={consumableDomains}
         handleSetItem={handleSetDomain}
         name="taskDomains"
         connect={false}
         showArrow={false}
-        itemId={domainId}
+        itemId={domainId || COLONY_TOTAL_BALANCE_DOMAIN_ID}
         disabled={disabled}
       >
         <div className={styles.controls}>

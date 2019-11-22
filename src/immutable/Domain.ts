@@ -1,24 +1,61 @@
-import { Record } from 'immutable';
+import {
+  Record as ImmutableRecord,
+  Map as ImmutableMap,
+  fromJS,
+} from 'immutable';
 
-import { DefaultValues } from '~types/index';
+import {
+  DefaultValues,
+  Address,
+  RecordToJS,
+  RoleSet,
+  RoleSetType,
+} from '~types/index';
 
 interface Shared {
   id: number;
   name: string;
-  // Empty if root, but we don't actually store root domain yet anyway
-  parentId?: number;
+  parentId: number | null;
 }
 
-export type DomainType = Readonly<Shared>;
+export type DomainRolesType = Record<Address, RoleSetType>;
 
-export type DomainId = Shared['id'];
+export type DomainRoles = ImmutableMap<Address, RoleSet> & {
+  toJS(): DomainRolesType;
+};
 
-const defaultValues: DefaultValues<Shared> = {
+export type ColonyRolesType = Record<string, DomainRolesType>;
+
+export type ColonyRoles = ImmutableMap<number, DomainRoles> & {
+  toJS(): ColonyRolesType;
+};
+
+interface DomainRecordProps extends Shared {
+  roles: DomainRoles;
+  // pendingRoles: ImmutableMap<Address, ImmutableSet<Roles>>;
+}
+
+export interface DomainType extends Readonly<Shared> {
+  readonly roles: DomainRolesType;
+  // readonly pendingRoles: DomainRolesObject;
+}
+
+export type DomainId = DomainType['id'];
+
+const defaultValues: DefaultValues<DomainRecordProps> = {
   id: undefined,
   name: undefined,
   parentId: undefined,
+  roles: ImmutableMap<Address, RoleSet>(),
+  // pendingRoles: ImmutableMap<Address, ImmutableSet<Roles>>(),
 };
 
-export class DomainRecord extends Record<Shared>(defaultValues) {}
+export class DomainRecord
+  extends ImmutableRecord<DomainRecordProps>(defaultValues)
+  implements RecordToJS<DomainType> {}
 
-export const Domain = (p: Shared) => new DomainRecord(p);
+export const Domain = ({ roles, ...props }: DomainType): DomainRecord =>
+  new DomainRecord({
+    ...props,
+    roles: fromJS(roles),
+  });

@@ -1,12 +1,14 @@
-import { Map as ImmutableMap, Set as ImmutableSet } from 'immutable';
+import { Map as ImmutableMap } from 'immutable';
 
-import { ENSName } from '~types/index';
+import { Address, DomainsMap } from '~types/index';
 
-import { FetchableDataRecord, DomainRecord } from '~immutable/index';
-
-type DomainsSet = ImmutableSet<DomainRecord>;
+import {
+  FetchableDataType,
+  FetchableDataRecord,
+  DomainType,
+} from '~immutable/index';
 
 export type AllDomainsMap = ImmutableMap<
-  ENSName,
-  FetchableDataRecord<DomainsSet>
->;
+  Address,
+  FetchableDataRecord<DomainsMap>
+> & { toJS(): Record<Address, FetchableDataType<Record<string, DomainType>>> };

@@ -15,21 +15,23 @@ interface Props extends TaskProps<'colonyAddress' | 'draftId'> {}
 const displayName = 'dashboard.TaskAssignment';
 
 const TaskAssignment = ({ colonyAddress, draftId }: Props) => {
-  const {
-    record: { payouts, reputation, workerAddress },
-  } = useSelector(taskSelector, [draftId]);
+  const task = useSelector(taskSelector, [draftId]);
   const nativeTokenReference = useColonyNativeToken(colonyAddress);
   const [, tokenOptions] = useColonyTokens(colonyAddress);
-  const { data: worker } = useDataSubscriber<UserType>(
+
+  const workerAddress =
+    task && task.record ? task.record.workerAddress : undefined;
+  const { data: worker } = useDataSubscriber(
     userSubscriber,
     [workerAddress],
     [workerAddress],
   );
+
   return nativeTokenReference && tokenOptions ? (
     <Assignment
       nativeToken={nativeTokenReference}
-      payouts={payouts}
-      reputation={reputation}
+      payouts={task && task.record ? task.record.payouts : undefined}
+      reputation={task && task.record ? task.record.reputation : undefined}
       tokenOptions={tokenOptions}
       worker={worker as UserType}
       workerAddress={workerAddress}

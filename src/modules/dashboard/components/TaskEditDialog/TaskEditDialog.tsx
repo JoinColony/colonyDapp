@@ -9,7 +9,6 @@ import { subscribeActions as subscribeToReduxActions } from 'redux-action-watch/
 import { useDispatch } from 'redux-react-hook';
 
 import {
-  ColonyType,
   TaskPayoutType,
   ColonyTokenReferenceType,
   TokenType,
@@ -18,7 +17,7 @@ import {
   UserType,
 } from '~immutable/index';
 import { ItemDataType } from '~core/OmniPicker';
-import SingleUserPicker from '~core/SingleUserPicker';
+import SingleUserPicker, { filterUserSelection } from '~core/SingleUserPicker';
 import Button from '~core/Button';
 import { ActionForm, FormStatus } from '~core/Fields';
 import { FullscreenDialog } from '~core/Dialog';
@@ -36,15 +35,15 @@ import {
   useDataMapFetcher,
   useSelector,
 } from '~utils/hooks';
-import { filterUserSelection } from '~utils/arrays';
-import WrappedPayout from './WrappedPayout';
-import { colonySubscriber } from '../../subscribers';
-import { taskSelector, taskRequestsSelector } from '../../selectors';
+
+import { createAddress } from '../../../../types';
 import { useColonyTokens } from '../../hooks/useColonyTokens';
-import { usersByAddressFetcher } from '../../../users/fetchers';
+import { userMapFetcher } from '../../../users/fetchers';
 import { userSubscriber } from '../../../users/subscribers';
 import { allUsersAddressesSelector } from '../../../users/selectors';
-import { createAddress } from '../../../../types';
+import { colonySubscriber } from '../../subscribers';
+import { taskSelector, taskRequestsSelector } from '../../selectors';
+import WrappedPayout from './WrappedPayout';
 
 import styles from './TaskEditDialog.css';
 
@@ -165,19 +164,15 @@ const TaskEditDialog = ({
     [dispatch, closeDialog],
   );
 
-  const {
-    record: {
-      colonyAddress,
-      domainId,
-      payouts: taskPayouts,
-      reputation,
-      workerAddress,
-    },
-  } = useSelector(taskSelector, [draftId]);
+  const task = useSelector(taskSelector, [draftId]);
 
-  const { data: colonyData, isFetching: isFetchingColony } = useDataSubscriber<
-    ColonyType
-  >(colonySubscriber, [colonyAddress], [colonyAddress]);
+  const colonyAddress =
+    task && task.record ? task.record.colonyAddress : undefined;
+  const { data: colonyData, isFetching: isFetchingColony } = useDataSubscriber(
+    colonySubscriber,
+    [colonyAddress],
+    [colonyAddress],
+  );
 
   const [colonyTokenReferences, availableTokens] = useColonyTokens(
     colonyAddress,
@@ -194,20 +189,18 @@ const TaskEditDialog = ({
     userAddressesToPickFrom,
   );
 
-  const userData = useDataMapFetcher<UserType>(
-    usersByAddressFetcher,
+  const userData = useDataMapFetcher(
+    userMapFetcher,
     Array.from(uniqueUserAddressesToPickFrom),
   );
 
   // Get user (worker) assigned to this task
+  const workerAddress =
+    task && task.record ? task.record.workerAddress : undefined;
   const {
     data: existingWorkerObj,
     isFetching: isFetchingExistingWorker,
-  } = useDataSubscriber<UserType>(
-    userSubscriber,
-    [workerAddress],
-    [workerAddress],
-  );
+  } = useDataSubscriber(userSubscriber, [workerAddress], [workerAddress]);
   const existingWorker =
     !!workerAddress && !existingWorkerObj
       ? User({
@@ -228,6 +221,7 @@ const TaskEditDialog = ({
     [userData],
   );
 
+  const taskPayouts = task && task.record ? task.record.payouts : [];
   const existingPayouts = useMemo(
     () =>
       taskPayouts.map(payout => {
@@ -244,9 +238,10 @@ const TaskEditDialog = ({
           id: payout.token.address,
         };
       }),
-    [taskPayouts, availableTokens],
+    [availableTokens, taskPayouts],
   );
 
+  const domainId = task && task.record ? task.record.domainId : undefined;
   const validateForm = useMemo(() => {
     const workerShape = yup
       .object()
@@ -435,7 +430,11 @@ const TaskEditDialog = ({
                                     key={payout.id}
                                     payout={payout}
                                     payouts={existingPayouts}
-                                    reputation={reputation}
+                                    reputation={
+                                      task && task.record
+                                        ? task.record.reputation
+                                        : undefined
+                                    }
                                     tokenOptions={tokenOptions as any}
                                     tokenReferences={colonyTokenReferences}
                                   />

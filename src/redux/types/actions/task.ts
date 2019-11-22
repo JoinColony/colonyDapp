@@ -63,13 +63,13 @@ interface TaskErrorActionType<T extends string>
  * TASK_WORKER_REVEAL_MANAGER_RATING_SUCCESS
  */
 export type TaskActionTypes =
-  | TaskActionType<ActionTypes.TASK_CANCEL, object>
+  | TaskActionType<ActionTypes.TASK_CANCEL, { domainId: number }>
   | TaskErrorActionType<ActionTypes.TASK_CANCEL_ERROR>
   | TaskActionType<
       ActionTypes.TASK_CANCEL_SUCCESS,
       { event: Event<EventTypes.TASK_CANCELLED> }
     >
-  | TaskActionType<ActionTypes.TASK_CLOSE, object>
+  | TaskActionType<ActionTypes.TASK_CLOSE, { domainId: number }>
   | TaskErrorActionType<ActionTypes.TASK_CLOSE_ERROR>
   | TaskActionType<
       ActionTypes.TASK_CLOSE_SUCCESS,
@@ -175,7 +175,10 @@ export type TaskActionTypes =
       ActionTypes.TASK_SEND_WORK_REQUEST_SUCCESS,
       { event: Event<EventTypes.WORK_REQUEST_CREATED> }
     >
-  | TaskActionType<ActionTypes.TASK_SET_DUE_DATE, TaskProps<'dueDate'>>
+  | TaskActionType<
+      ActionTypes.TASK_SET_DUE_DATE,
+      TaskProps<'dueDate' | 'domainId'>
+    >
   | TaskErrorActionType<ActionTypes.TASK_SET_DUE_DATE_ERROR>
   | TaskActionType<
       ActionTypes.TASK_SET_DUE_DATE_SUCCESS,
@@ -205,7 +208,10 @@ export type TaskActionTypes =
       ActionTypes.TASK_SET_PAYOUT_SUCCESS,
       { event: Event<EventTypes.PAYOUT_SET> }
     >
-  | TaskActionType<ActionTypes.TASK_SET_SKILL, TaskProps<'skillId'>>
+  | TaskActionType<
+      ActionTypes.TASK_SET_SKILL,
+      TaskProps<'skillId' | 'domainId'>
+    >
   | TaskErrorActionType<ActionTypes.TASK_SET_SKILL_ERROR>
   | TaskActionType<
       ActionTypes.TASK_SET_SKILL_SUCCESS,

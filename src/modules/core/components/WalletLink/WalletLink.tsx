@@ -1,8 +1,8 @@
 import { MessageDescriptor, MessageValues } from 'react-intl';
 import React from 'react';
 
+import { DEFAULT_NETWORK } from '~constants';
 import ExternalLink from '~core/ExternalLink';
-import { DEFAULT_NETWORK } from '../../constants';
 
 interface Props {
   /*

@@ -1,36 +1,31 @@
-import {
-  ColonyType,
-  ColonyTokenReferenceType,
-  TokenType,
-} from '~immutable/index';
+import { ColonyTokenReferenceType, TokenType } from '~immutable/index';
 import { Address } from '~types/index';
-import { useDataSubscriber, useSelector } from '~utils/hooks';
+import { useDataSubscriber, useSelector, useTransformer } from '~utils/hooks';
 import { colonySubscriber } from '../subscribers';
-import {
-  allFromColonyTokensSelector,
-  colonyTokensSelector,
-} from '../selectors';
+import { allTokensSelector, colonyTokensSelector } from '../selectors';
+import { getTokensFromColony } from '../transformers';
 
 export const useColonyTokens = (
   colonyAddress: Address | null,
 ): [ColonyTokenReferenceType[] | null, TokenType[] | null] => {
-  const { data: fetchedColony } = useDataSubscriber<ColonyType>(
+  const { data: fetchedColony } = useDataSubscriber(
     colonySubscriber,
-    [colonyAddress],
+    [colonyAddress as string],
     [colonyAddress],
   );
   const { colonyAddress: fetchedColonyAddress = undefined } =
     fetchedColony || {};
 
-  const colonyTokenReferences: ColonyTokenReferenceType[] = useSelector(
-    colonyTokensSelector,
-    [fetchedColonyAddress],
-  );
+  const colonyTokenReferences = useSelector(colonyTokensSelector, [
+    fetchedColonyAddress,
+  ]);
 
-  const availableTokens: TokenType[] = useSelector(
-    allFromColonyTokensSelector,
-    [colonyTokenReferences],
-  );
+  const allTokens = useSelector(allTokensSelector);
+
+  const availableTokens = useTransformer(getTokensFromColony, [
+    allTokens,
+    colonyTokenReferences,
+  ]);
 
   return [colonyTokenReferences, availableTokens];
 };

@@ -18,12 +18,14 @@ export default function loadModule(): PermissionsManifest<{
     TASK_STORE_UNREGISTERED: { inherits: 'register-task-store' },
     TOKEN_INFO_ADDED: { inherits: 'add-token' },
     TOKEN_INFO_REMOVED: { inherits: 'add-token' },
-    'add-domain': { inherits: 'is-founder-or-admin' },
-    'edit-domain': { inherits: 'is-founder-or-admin' },
-    'add-token': { inherits: 'is-founder' },
-    'create-colony-profile': { inherits: 'is-founder' },
-    'register-task-store': { inherits: 'is-founder-or-admin' },
-    'set-colony-avatar': { inherits: 'is-founder-or-admin' },
-    'update-colony-profile': { inherits: 'is-founder-or-admin' },
+    // @todo Fix domain permissions
+    // @body For now that's OK because we only allow 1 level depth of domains. As soon as that changes, we have to find a solution for this
+    'add-domain': { inherits: 'has-root-architecture' },
+    'edit-domain': { inherits: 'has-root-architecture' },
+    'add-token': { inherits: 'is-root' },
+    'create-colony-profile': { inherits: 'is-root' },
+    'register-task-store': { inherits: 'is-admin' },
+    'set-colony-avatar': { inherits: 'is-root' },
+    'update-colony-profile': { inherits: 'is-root' },
   };
 }

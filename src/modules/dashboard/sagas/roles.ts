@@ -1,17 +1,12 @@
-import { all, fork, put, takeEvery } from 'redux-saga/effects';
-import {
-  COLONY_ROLE_ADMINISTRATION,
-  COLONY_ROLE_ARCHITECTURE,
-  COLONY_ROLE_ARCHITECTURE_SUBDOMAIN,
-  COLONY_ROLE_FUNDING,
-  COLONY_ROLE_RECOVERY,
-  COLONY_ROLE_ROOT,
-} from '@colony/colony-js-client';
+import { all, fork, put, take, takeEvery } from 'redux-saga/effects';
 
+import { ROLES } from '~constants';
 import { Action, ActionTypes, AllActions } from '~redux/index';
 import { executeQuery, putError } from '~utils/saga/effects';
 import { ContractContexts } from '~types/index';
-import { getColonyRoles, getColonyDomainUserRoles } from '../data/queries';
+import { ColonyRolesType } from '~immutable/index';
+
+import { getColonyRoles, TEMP_getUserHasColonyRole } from '../data/queries';
 import { createTransaction } from '../../core/sagas';
 
 function* colonyRolesFetch({
@@ -23,10 +18,6 @@ function* colonyRolesFetch({
       args: undefined,
       metadata: { colonyAddress },
     });
-
-    /*
-     * Dispatch the success action.
-     */
     yield put<AllActions>({
       type: ActionTypes.COLONY_ROLES_FETCH_SUCCESS,
       meta,
@@ -38,49 +29,48 @@ function* colonyRolesFetch({
   return null;
 }
 
-function* colonyDomainUserRolesFetch({
-  payload: { colonyAddress, domainId, userAddress },
+function* TEMP_userHasRecoveryRoleFetch({
+  payload: { colonyAddress, userAddress },
   meta,
-}: Action<ActionTypes.COLONY_DOMAIN_USER_ROLES_FETCH>) {
+}: Action<ActionTypes.TEMP_COLONY_USER_HAS_RECOVERY_ROLE_FETCH>) {
   try {
-    const roles = yield executeQuery(getColonyDomainUserRoles, {
+    const userHasRecoveryRole = yield executeQuery(TEMP_getUserHasColonyRole, {
+      args: { userAddress },
       metadata: { colonyAddress },
-      args: { domainId, userAddress },
     });
     yield put<AllActions>({
-      type: ActionTypes.COLONY_DOMAIN_USER_ROLES_FETCH_SUCCESS,
+      type: ActionTypes.TEMP_COLONY_USER_HAS_RECOVERY_ROLE_FETCH_SUCCESS,
       meta,
-      payload: { roles, colonyAddress, domainId, userAddress },
+      payload: { colonyAddress, userAddress, userHasRecoveryRole },
     });
   } catch (error) {
-    return yield putError(
-      ActionTypes.COLONY_DOMAIN_USER_ROLES_FETCH_ERROR,
+    yield putError(
+      ActionTypes.TEMP_COLONY_USER_HAS_RECOVERY_ROLE_FETCH_ERROR,
       error,
       meta,
     );
   }
-  return null;
 }
 
-const getRoleSetFunctionName = (role: string, setTo: boolean) => {
+const getRoleMethodName = (role: string, setTo: boolean) => {
   switch (role) {
-    case COLONY_ROLE_ADMINISTRATION:
+    case ROLES.ADMINISTRATION:
       return 'setAdministrationRole';
 
     // case COLONY_ROLE_ARBITRATION:
     //   return 'setArbitrationRole';
 
-    case COLONY_ROLE_ARCHITECTURE:
-    case COLONY_ROLE_ARCHITECTURE_SUBDOMAIN:
+    case ROLES.ARCHITECTURE:
+    case ROLES.ARCHITECTURE_SUBDOMAIN:
       return 'setArchitectureRole';
 
-    case COLONY_ROLE_FUNDING:
+    case ROLES.FUNDING:
       return 'setFundingRole';
 
-    case COLONY_ROLE_RECOVERY:
+    case ROLES.RECOVERY:
       return setTo ? 'setRecoveryRole' : 'removeRecoveryRole';
 
-    case COLONY_ROLE_ROOT:
+    case ROLES.ROOT:
       return 'setRootRole';
 
     default:
@@ -93,37 +83,52 @@ function* colonyDomainUserRolesSet({
   meta,
 }: Action<ActionTypes.COLONY_DOMAIN_USER_ROLES_SET>) {
   try {
-    const existingRoles = yield executeQuery(getColonyDomainUserRoles, {
-      metadata: { colonyAddress },
-      args: { domainId, userAddress },
-    });
-
-    const toChange: [string, boolean][] = Object.keys(roles).reduce(
-      (acc, role) =>
-        existingRoles[role] !== roles[role]
-          ? [...acc, [role, roles[role]]]
-          : acc,
-      [] as [string, boolean][],
+    const existingColonyRoles: ColonyRolesType = yield executeQuery(
+      getColonyRoles,
+      {
+        metadata: { colonyAddress },
+        args: undefined,
+      },
     );
 
+    const userHasRecoveryRole = yield executeQuery(TEMP_getUserHasColonyRole, {
+      args: { userAddress },
+      metadata: { colonyAddress },
+    });
+
+    const existingDomainRoles = existingColonyRoles[domainId.toString()] || {};
+    const existingUserRoles = existingDomainRoles[userAddress] || [];
+
+    if (userHasRecoveryRole) {
+      existingUserRoles.push(ROLES.RECOVERY);
+    }
+
+    const toChange = Object.entries(roles)
+      .filter(([role, setTo]: [ROLES, boolean]) => {
+        if (existingUserRoles.includes(role) && setTo === true) return false;
+        if (!existingUserRoles.includes(role) && setTo === false) return false;
+        return true;
+      })
+      .sort(([role]) => (role === ROLES.ROOT ? 1 : -1))
+      .map(
+        ([role, setTo]) =>
+          [getRoleMethodName(role, setTo), setTo] as [string, boolean],
+      );
+
     yield all(
-      toChange.map(([role, setTo], index) =>
-        fork(
-          createTransaction,
-          `${meta.id}_${getRoleSetFunctionName(role, setTo)}`,
-          {
-            context: ContractContexts.COLONY_CONTEXT,
-            identifier: colonyAddress,
-            methodName: getRoleSetFunctionName(role, setTo),
-            params: { address: userAddress, domainId, setTo },
-            ready: true,
-            group: {
-              key: 'setRoles',
-              id: meta.id,
-              index,
-            },
+      toChange.map(([methodName, setTo], index) =>
+        fork(createTransaction, `${meta.id}_${methodName}`, {
+          context: ContractContexts.COLONY_CONTEXT,
+          identifier: colonyAddress,
+          methodName,
+          params: { address: userAddress, domainId, setTo },
+          ready: true,
+          group: {
+            key: 'setRoles',
+            id: meta.id,
+            index,
           },
-        ),
+        }),
       ),
     );
 
@@ -131,6 +136,25 @@ function* colonyDomainUserRolesSet({
       type: ActionTypes.COLONY_DOMAIN_USER_ROLES_SET_SUCCESS,
       meta,
       payload: { roles, colonyAddress, domainId, userAddress },
+    });
+
+    // Wait for all of the created actions to be succeeded, failed or cancelled
+    yield all(
+      toChange.map(([methodName]) =>
+        take(
+          action =>
+            (action.type === ActionTypes.TRANSACTION_SUCCEEDED ||
+              action.type === ActionTypes.TRANSACTION_ERROR ||
+              action.type === ActionTypes.TRANSACTION_CANCEL) &&
+            action.meta.id === `${meta.id}_${methodName}`,
+        ),
+      ),
+    );
+
+    yield put<AllActions>({
+      type: ActionTypes.COLONY_ROLES_FETCH,
+      payload: { colonyAddress },
+      meta,
     });
   } catch (error) {
     return yield putError(
@@ -145,11 +169,11 @@ function* colonyDomainUserRolesSet({
 export default function* rolesSagas() {
   yield takeEvery(ActionTypes.COLONY_ROLES_FETCH, colonyRolesFetch);
   yield takeEvery(
-    ActionTypes.COLONY_DOMAIN_USER_ROLES_FETCH,
-    colonyDomainUserRolesFetch,
-  );
-  yield takeEvery(
     ActionTypes.COLONY_DOMAIN_USER_ROLES_SET,
     colonyDomainUserRolesSet,
+  );
+  yield takeEvery(
+    ActionTypes.TEMP_COLONY_USER_HAS_RECOVERY_ROLE_FETCH,
+    TEMP_userHasRecoveryRoleFetch,
   );
 }

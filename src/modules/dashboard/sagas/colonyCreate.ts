@@ -1,4 +1,3 @@
-import { COLONY_ROLE_ROOT } from '@colony/colony-js-client';
 import { $Values } from 'utility-types';
 import { Channel } from 'redux-saga';
 import {
@@ -12,6 +11,7 @@ import {
 } from 'redux-saga/effects';
 import BigNumber from 'bn.js';
 
+import { ROLES, ROOT_DOMAIN } from '~constants';
 import { ActionTypes, Action, AllActions } from '~redux/index';
 import {
   putError,
@@ -36,13 +36,14 @@ import {
   transactionLoadRelated,
 } from '../../core/actionCreators';
 import { createTransaction, createTransactionChannels } from '../../core/sagas';
-import { ROOT_DOMAIN } from '../../core/constants';
 import {
   currentUserSelector,
   walletAddressSelector,
 } from '../../users/selectors';
 import { inboxItemsFetch, subscribeToColony } from '../../users/actionCreators';
+import { fetchDomainsAndRoles } from '../actionCreators/domains';
 import { userDidClaimProfile } from '../../users/checks';
+import { getUserRoles } from '../../transformers';
 import { createColonyProfile } from '../data/commands';
 import { getColonyName } from './shared';
 
@@ -483,23 +484,17 @@ function* colonyRecover({
   );
   try {
     const walletAddress = yield select(walletAddressSelector);
-    yield put<AllActions>({
-      type: ActionTypes.COLONY_DOMAIN_USER_ROLES_FETCH,
-      meta: { key: colonyAddress },
-      payload: {
-        colonyAddress,
-        domainId: ROOT_DOMAIN,
-        userAddress: walletAddress,
-      },
-    });
+
+    yield put(fetchDomainsAndRoles(colonyAddress));
+
     const {
-      payload: {
-        roles: { [COLONY_ROLE_ROOT]: isFounder },
-      },
-    } = yield take<Action<ActionTypes.COLONY_DOMAIN_USER_ROLES_FETCH_SUCCESS>>(
-      ActionTypes.COLONY_DOMAIN_USER_ROLES_FETCH_SUCCESS,
-    );
-    if (!isFounder) throw new Error('Founder permission required');
+      payload: { domains },
+    } = yield take<AllActions>(ActionTypes.COLONY_DOMAINS_FETCH_SUCCESS);
+
+    const userRoles = getUserRoles(domains, ROOT_DOMAIN, walletAddress);
+
+    if (!userRoles.includes(ROLES.ROOT))
+      throw new Error('Founder permission required');
 
     const colonyName = yield call(getColonyName, colonyAddress);
     const displayName = `Recovered: ${colonyName}`;

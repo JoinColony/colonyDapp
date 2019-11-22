@@ -1,6 +1,8 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 
+import { COLONY_TOTAL_BALANCE_DOMAIN_ID } from '~constants';
+import { DomainsMapType } from '~types/index';
 import { stripProtocol, multiLineTextEllipsis } from '~utils/strings';
 import ExpandedParagraph from '~core/ExpandedParagraph';
 import Heading from '~core/Heading';
@@ -9,13 +11,10 @@ import Button from '~core/Button';
 import Link from '~core/Link';
 import ExternalLink from '~core/ExternalLink';
 import HookedColonyAvatar from '~dashboard/HookedColonyAvatar';
+import { ColonyType } from '~immutable/index';
+
 import ColonySubscribe from './ColonySubscribe';
 import ColonyInvite from './ColonyInvite';
-
-import { useDataFetcher } from '~utils/hooks';
-import { domainsFetcher } from '../../../fetchers';
-
-import { ColonyType, DomainType } from '~immutable/index';
 
 import styles from './ColonyMeta.css';
 
@@ -43,33 +42,39 @@ const ColonyAvatar = HookedColonyAvatar({ fetchColony: false });
 interface Props {
   colony: ColonyType;
   canAdminister: boolean;
+  domains: DomainsMapType;
   setFilteredDomainId: (domainId: number) => void;
   filteredDomainId: number;
 }
 
-const getActiveDomainFilterClass = (id = 0, filteredDomainId: number) =>
-  filteredDomainId === id ? styles.filterItemActive : styles.filterItem;
+const getActiveDomainFilterClass = (
+  id = COLONY_TOTAL_BALANCE_DOMAIN_ID,
+  filteredDomainId: number,
+) => (filteredDomainId === id ? styles.filterItemActive : styles.filterItem);
 
 const ColonyMeta = ({
   colony: {
     colonyAddress,
     description,
     colonyName,
-    guideline,
+    guideline = '',
     displayName,
-    website,
+    website = '',
   },
+  domains,
   setFilteredDomainId,
   filteredDomainId,
   colony,
   canAdminister,
 }: Props) => {
-  // eslint-disable-next-line prettier/prettier
-  const { data: domains } = useDataFetcher<DomainType[]>(
-    domainsFetcher,
-    [colonyAddress],
-    [colonyAddress],
+  const sortedDomains = useMemo(
+    () =>
+      Object.keys(domains || {})
+        .sort()
+        .map(id => domains[id]),
+    [domains],
   );
+
   const renderExpandedElements = (
     <>
       {website && (
@@ -135,21 +140,18 @@ const ColonyMeta = ({
         <ul>
           <li>
             <Button
-              className={getActiveDomainFilterClass(0, filteredDomainId)}
-              onClick={() => setFilteredDomainId(0)}
+              className={getActiveDomainFilterClass(
+                COLONY_TOTAL_BALANCE_DOMAIN_ID,
+                filteredDomainId,
+              )}
+              onClick={() =>
+                setFilteredDomainId(COLONY_TOTAL_BALANCE_DOMAIN_ID)
+              }
             >
               <FormattedMessage id="domain.all" />
             </Button>
           </li>
-          <li>
-            <Button
-              className={getActiveDomainFilterClass(1, filteredDomainId)}
-              onClick={() => setFilteredDomainId(1)}
-            >
-              <FormattedMessage id="domain.root" />
-            </Button>
-          </li>
-          {(domains || []).map(({ name, id }) => (
+          {sortedDomains.map(({ name, id }) => (
             <li key={`domain_${id}`}>
               <Button
                 className={getActiveDomainFilterClass(id, filteredDomainId)}

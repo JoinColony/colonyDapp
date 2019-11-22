@@ -8,11 +8,10 @@ import {
   useDataFetcher,
   useDataSubscriber,
   useSelector,
-  useUserDomainRoles,
+  useTransformer,
 } from '~utils/hooks';
 // Temporary, please remove when wiring in the rating modals
 import { OpenDialog } from '~core/Dialog/types';
-import { Address } from '~types/index';
 import { mergePayload } from '~utils/actions';
 import Heading from '~core/Heading';
 import withDialog from '~core/Dialog/withDialog';
@@ -34,13 +33,17 @@ import {
   canEditTask,
   canFinalizeTask,
   isCancelled,
-  isCreator,
+  canRequestToWork,
   isFinalized,
-  isWorkerSet,
 } from '../../checks';
+import {
+  colonyAddressFetcher,
+  domainsAndRolesFetcher,
+} from '../../../dashboard/fetchers';
 import { currentUserSelector } from '../../../users/selectors';
-import { colonyAddressFetcher } from '../../fetchers';
+import { getUserRoles } from '../../../transformers';
 import { taskSubscriber } from '../../subscribers';
+
 import styles from './Task.css';
 
 const MSG = defineMessages({
@@ -123,12 +126,13 @@ const Task = ({
   const walletAddress =
     currentUser && currentUser.profile && currentUser.profile.walletAddress;
 
-  const { data: colonyAddress } = useDataFetcher<Address>(
+  const { data: colonyAddress } = useDataFetcher(
     colonyAddressFetcher,
     [colonyName],
     [colonyName],
   );
-  const { data: task, isFetching: isFetchingTask } = useDataSubscriber<any>(
+
+  const { data: task, isFetching: isFetchingTask } = useDataSubscriber(
     taskSubscriber,
     [draftId],
     [colonyAddress || undefined, draftId],
@@ -141,11 +145,17 @@ const Task = ({
     title = undefined,
   } = task || {};
 
-  const { data: roles, isFetching: isFetchingRoles } = useUserDomainRoles(
-    colonyAddress || undefined,
-    domainId,
-    walletAddress,
+  const { data: domains, isFetching: isFetchingDomains } = useDataFetcher(
+    domainsAndRolesFetcher,
+    [colonyAddress],
+    [colonyAddress],
   );
+
+  const userRoles = useTransformer(getUserRoles, [
+    domains,
+    task ? task.domainId : null,
+    walletAddress,
+  ]);
 
   const onEditTask = useCallback(() => {
     // If you've managed to click on the button that runs this without the
@@ -168,17 +178,16 @@ const Task = ({
 
   if (
     isFetchingTask ||
-    isFetchingRoles ||
+    isFetchingDomains ||
     !task ||
     !colonyAddress ||
-    !roles ||
+    !domains ||
     !walletAddress
   ) {
     return <LoadingTemplate loadingText={MSG.loadingText} />;
   }
 
-  const isTaskCreator = isCreator(task, walletAddress);
-  const canEdit = canEditTask(task, roles, walletAddress);
+  const canEdit = canEditTask(task, userRoles);
 
   return (
     <div className={styles.main}>
@@ -243,7 +252,8 @@ const Task = ({
             <div className={styles.editor}>
               <TaskDomains
                 colonyAddress={colonyAddress}
-                disabled={!canEdit}
+                // Disable the change of domain for now
+                disabled
                 domainId={domainId}
                 draftId={draftId}
               />
@@ -254,6 +264,7 @@ const Task = ({
                 disabled={!canEdit}
                 draftId={draftId}
                 skillId={skillId}
+                domainId={domainId}
               />
             </div>
             <div className={styles.editor}>
@@ -262,6 +273,7 @@ const Task = ({
                 disabled={!canEdit}
                 draftId={draftId}
                 dueDate={dueDate}
+                domainId={domainId}
               />
             </div>
           </section>
@@ -301,7 +313,7 @@ const Task = ({
               </div>
             </Tooltip>
           )}
-          {canCancelTask(task, roles, walletAddress) && (
+          {canCancelTask(task, userRoles) && (
             <ActionButton
               appearance={{ theme: 'secondary', size: 'small' }}
               button={ConfirmButton}
@@ -317,7 +329,7 @@ const Task = ({
           {/* Hide when discard confirm is displayed */}
           {!isDiscardConfirmDisplayed && (
             <>
-              {canFinalizeTask(task, roles, walletAddress) && (
+              {canFinalizeTask(task, userRoles) && (
                 <ActionButton
                   text={MSG.finalizeTask}
                   submit={ActionTypes.TASK_FINALIZE}
@@ -336,7 +348,7 @@ const Task = ({
                   <FormattedMessage {...MSG.discarded} />
                 </p>
               )}
-              {!isTaskCreator && !isWorkerSet(task) && !isCancelled(task) && (
+              {canRequestToWork(task, walletAddress) && (
                 <TaskRequestWork
                   currentUser={currentUser}
                   task={task}
