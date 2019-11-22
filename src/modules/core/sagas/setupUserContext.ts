@@ -17,6 +17,7 @@ import { UserProfileType } from '~immutable/index';
 
 import ColonyManagerType from '../../../lib/ColonyManager';
 import { DDB as DDBType } from '../../../lib/database';
+import { authenticate } from '../../../api';
 import {
   getUserBalance,
   getUsername,
@@ -104,6 +105,8 @@ export default function* setupUserContext(
     const wallet = yield call(getWallet, action);
     const walletAddress = createAddress(wallet.address);
     yield setContext({ [Context.WALLET]: wallet });
+
+    yield authenticate(wallet);
 
     yield put<AllActions>({
       type: ActionTypes.WALLET_CREATE_SUCCESS,
