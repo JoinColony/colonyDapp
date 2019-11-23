@@ -1,3 +1,6 @@
+import gql from 'graphql-tag';
+import ApolloClient from 'apollo-client';
+
 import { Address, ExcludesNull } from '~types/index';
 import { TaskDraftId } from '~immutable/index';
 import {
@@ -9,7 +12,6 @@ import {
   UserMetadataStore,
   UserProfileStore,
 } from '~data/types';
-
 import { Context } from '~context/index';
 import { log } from '~utils/debug';
 import { ZERO_ADDRESS } from '~utils/web3/constants';
@@ -49,6 +51,17 @@ type UserMetadataStoreMetadata = {
   walletAddress: Address;
 };
 
+const CREATE_USER = gql`
+  mutation CreateUser($username: String!, $address: String!) {
+    createUser(username: $username, address: $address) {
+      profile {
+        username
+        walletAddress
+      }
+    }
+  }
+`;
+
 const prepareProfileCommand = async (
   { ddb }: { ddb: DDB },
   metadata: UserProfileStoreMetadata,
@@ -61,6 +74,7 @@ const prepareMetadataCommand = async (
 
 export const createUserProfile: Command<
   {
+    apolloClient: ApolloClient<any>;
     profileStore: UserProfileStore;
     inboxStore: UserInboxStore;
     metadataStore: UserMetadataStore;
@@ -77,12 +91,20 @@ export const createUserProfile: Command<
   }
 > = {
   name: 'createUserProfile',
-  context: [Context.DDB_INSTANCE],
+  context: [Context.DDB_INSTANCE, Context.APOLLO_CLIENT],
   schema: CreateUserProfileCommandArgsSchema,
-  async prepare({ ddb }: { ddb: DDB }, metadata: UserProfileStoreMetadata) {
-    return createUserProfileStore(ddb)(metadata);
+  async prepare({ ddb, apolloClient }, metadata: UserProfileStoreMetadata) {
+    const stores = await createUserProfileStore(ddb)(metadata);
+    return {
+      ...stores,
+      apolloClient,
+    };
   },
-  async execute({ profileStore, inboxStore, metadataStore }, args) {
+  async execute(
+    { profileStore, inboxStore, metadataStore, apolloClient },
+    args,
+  ) {
+    /* Old ddb stuff */
     await profileStore.append(
       createEvent(EventTypes.USER_PROFILE_CREATED, {
         inboxStoreAddress: inboxStore.address.toString(),
@@ -91,6 +113,17 @@ export const createUserProfile: Command<
       }),
     );
     await profileStore.load();
+
+    /* New server stuff */
+    await apolloClient.mutate({
+      mutation: CREATE_USER,
+      variables: {
+        address: args.walletAddress,
+        username: args.username,
+      },
+    });
+
+    /* Old returns */
     return { profileStore, inboxStore, metadataStore };
   },
 };

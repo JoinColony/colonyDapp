@@ -1,4 +1,5 @@
 export enum Context {
+  APOLLO_CLIENT = 'apolloClient',
   COLONY_MANAGER = 'colonyManager',
   DDB_INSTANCE = 'ddb',
   DDB_CLASS = 'DDB',

@@ -7,6 +7,7 @@ export const apiRequest = axios.create({
 });
 
 export const authenticate = async wallet => {
+  // FIXME if we have a token, check expiry date and maybe just use that
   // FIXME error handling
   const {
     data: { challenge },
