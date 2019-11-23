@@ -9,10 +9,6 @@ export const UserUpdateTokensCommandArgsSchema = yup.object({
   tokens: yup.array().of(yup.string()),
 });
 
-export const CreateUserProfileCommandArgsSchema = yup.object({
-  username: yup.string().required(),
-});
-
 export const UpdateUserProfileCommandArgsSchema = yup.object({
   bio: yup.string(),
   displayName: yup.string(),

@@ -21,8 +21,6 @@ export type UsernameActionTypes =
   | UniqueActionType<
       ActionTypes.USERNAME_CREATE_SUCCESS,
       {
-        inboxStoreAddress: string;
-        metadataStoreAddress: string;
         username: string;
       },
       object

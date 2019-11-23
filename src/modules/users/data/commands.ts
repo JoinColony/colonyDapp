@@ -1,6 +1,3 @@
-import gql from 'graphql-tag';
-import ApolloClient from 'apollo-client';
-
 import { Address, ExcludesNull } from '~types/index';
 import { TaskDraftId } from '~immutable/index';
 import {
@@ -15,11 +12,7 @@ import {
 import { Context } from '~context/index';
 import { log } from '~utils/debug';
 import { ZERO_ADDRESS } from '~utils/web3/constants';
-import {
-  createUserProfileStore,
-  getUserProfileStore,
-  getUserMetadataStore,
-} from '~data/stores';
+import { getUserProfileStore, getUserMetadataStore } from '~data/stores';
 import { createEvent } from '~data/utils';
 import { EventTypes } from '~data/constants';
 
@@ -34,7 +27,6 @@ import {
   CreateUnassignedCommandArgsSchema,
   CreateCommentMentionCommandArgsSchema,
   CreateFinalizedCommandArgsSchema,
-  CreateUserProfileCommandArgsSchema,
   CreateWorkRequestCommandArgsSchema,
   MarkNotificationsAsReadCommandArgsSchema,
   SetUserAvatarCommandArgsSchema,
@@ -51,17 +43,6 @@ type UserMetadataStoreMetadata = {
   walletAddress: Address;
 };
 
-const CREATE_USER = gql`
-  mutation CreateUser($username: String!, $address: String!) {
-    createUser(username: $username, address: $address) {
-      profile {
-        username
-        walletAddress
-      }
-    }
-  }
-`;
-
 const prepareProfileCommand = async (
   { ddb }: { ddb: DDB },
   metadata: UserProfileStoreMetadata,
@@ -71,63 +52,6 @@ const prepareMetadataCommand = async (
   { ddb }: { ddb: DDB },
   metadata: UserMetadataStoreMetadata,
 ) => getUserMetadataStore(ddb)(metadata);
-
-export const createUserProfile: Command<
-  {
-    apolloClient: ApolloClient<any>;
-    profileStore: UserProfileStore;
-    inboxStore: UserInboxStore;
-    metadataStore: UserMetadataStore;
-  },
-  UserProfileStoreMetadata,
-  {
-    username: string;
-    walletAddress: Address;
-  },
-  {
-    profileStore: UserProfileStore;
-    inboxStore: UserInboxStore;
-    metadataStore: UserMetadataStore;
-  }
-> = {
-  name: 'createUserProfile',
-  context: [Context.DDB_INSTANCE, Context.APOLLO_CLIENT],
-  schema: CreateUserProfileCommandArgsSchema,
-  async prepare({ ddb, apolloClient }, metadata: UserProfileStoreMetadata) {
-    const stores = await createUserProfileStore(ddb)(metadata);
-    return {
-      ...stores,
-      apolloClient,
-    };
-  },
-  async execute(
-    { profileStore, inboxStore, metadataStore, apolloClient },
-    args,
-  ) {
-    // @TODO_GRAPHQL remove
-    /* Old ddb stuff */
-    await profileStore.append(
-      createEvent(EventTypes.USER_PROFILE_CREATED, {
-        inboxStoreAddress: inboxStore.address.toString(),
-        metadataStoreAddress: metadataStore.address.toString(),
-        ...args,
-      }),
-    );
-    await profileStore.load();
-
-    /* New server stuff */
-    await apolloClient.mutate({
-      mutation: CREATE_USER,
-      variables: {
-        address: args.walletAddress,
-        username: args.username,
-      },
-    });
-
-    /* Old returns */
-    return { profileStore, inboxStore, metadataStore };
-  },
-};
 
 export const updateUserProfile: Command<
   UserProfileStore,
