@@ -120,7 +120,7 @@ function* userFetch({
 }: Action<ActionTypes.USER_FETCH>) {
   try {
     const user = yield executeQuery(getUserProfile, {
-      args: undefined,
+      args: { walletAddress: userAddress },
       metadata: {
         walletAddress: userAddress,
       },
@@ -150,7 +150,7 @@ function* userProfileUpdate({
     });
 
     const user = yield executeQuery(getUserProfile, {
-      args: undefined,
+      args: { walletAddress },
       metadata: {
         walletAddress,
       },

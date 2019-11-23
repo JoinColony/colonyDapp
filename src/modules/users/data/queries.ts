@@ -1,3 +1,4 @@
+import ApolloClient from 'apollo-client';
 import {
   COLONY_ROLE_ADMINISTRATION,
   COLONY_ROLES,
@@ -47,6 +48,7 @@ import {
   getUserProfileStoreAddress,
 } from '~data/stores';
 import { getUserProfileReducer, getUserTasksReducer } from './reducers';
+import { USER } from '../queries';
 import {
   decorateColonyEventPayload,
   getExtensionAddresses,
@@ -80,25 +82,24 @@ const prepareMetadataStoreQuery = async (
 ) =>
   metadata.metadataStoreAddress ? getUserMetadataStore(ddb)(metadata) : null;
 
+// This query is used by a few other sagas/queries(?) so we can't remove it for now
 export const getUserProfile: Query<
-  UserProfileStore,
+  { apolloClient: ApolloClient<any> },
   UserProfileStoreMetadata,
-  void,
+  { walletAddress: Address },
   UserProfileType
 > = {
   name: 'getUserProfile',
-  context: [Context.DDB_INSTANCE],
-  prepare: prepareProfileStoreQuery,
-  async execute(profileStore) {
-    return profileStore.all().reduce(getUserProfileReducer, {
-      /*
-       * We can be pretty sure that `walletAddress` will be in the first
-       * event for this store, but flow doesn't know that.
-       */
-      walletAddress: '',
-      inboxStoreAddress: '',
-      metadataStoreAddress: '',
+  context: [Context.DDB_INSTANCE, Context.APOLLO_CLIENT],
+  prepare: async ({ apolloClient }) => ({ apolloClient }),
+  async execute({ apolloClient }, { walletAddress }) {
+    const { data } = await apolloClient.query<{
+      user: { profile: UserProfileType };
+    }>({
+      query: USER,
+      variables: { address: walletAddress },
     });
+    return data.user.profile;
   },
 };
 
