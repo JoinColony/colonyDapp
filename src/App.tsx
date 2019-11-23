@@ -11,7 +11,7 @@ import { DialogProvider } from '~core/Dialog';
 import dialogComponents from './dialogComponents';
 import messages from './i18n/en.json';
 import Routes from './routes';
-import { ApolloProvider, client } from './apollo';
+import apolloClient, { ApolloProvider } from './context/apolloClient';
 
 addLocaleData(en);
 
@@ -22,7 +22,7 @@ interface Props {
 
 const App = ({ store, history }: Props) => (
   <IntlProvider locale="en" defaultLocale="en" messages={messages}>
-    <ApolloProvider client={client}>
+    <ApolloProvider client={apolloClient}>
       <StoreContext.Provider value={store}>
         <ReduxProvider store={store}>
           <ConnectedRouter history={history}>
