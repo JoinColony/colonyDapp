@@ -104,6 +104,7 @@ export const createUserProfile: Command<
     { profileStore, inboxStore, metadataStore, apolloClient },
     args,
   ) {
+    // @TODO_GRAPHQL remove
     /* Old ddb stuff */
     await profileStore.append(
       createEvent(EventTypes.USER_PROFILE_CREATED, {
