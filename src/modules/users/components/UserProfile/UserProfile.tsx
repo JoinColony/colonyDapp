@@ -1,22 +1,22 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Redirect } from 'react-router';
-import { useQuery } from '@apollo/react-hooks';
+import { useLazyQuery } from '@apollo/react-hooks';
 import gql from 'graphql-tag';
 
 import { NOT_FOUND_ROUTE } from '~routes/index';
-import { useDataSubscriber } from '~utils/hooks';
-import { userSubscriber } from '../../subscribers';
-import { useUserAddressFetcher } from '../../hooks';
 import ProfileTemplate from '~pages/ProfileTemplate';
+
+import { useUserAddressFetcher } from '../../hooks';
 import UserMeta from './UserMeta';
 import UserProfileSpinner from './UserProfileSpinner';
 import UserColonies from './UserColonies';
 import styles from './UserProfile.css';
 
 const USER = gql`
-  {
-    user {
+  query User($address: String!) {
+    user(address: $address) {
       profile {
+        username
         walletAddress
         displayName
         bio
@@ -41,33 +41,33 @@ const UserProfile = ({
     username,
   );
 
-  const { data } = useQuery(USER);
+  const [loadUser, { data, loading }] = useLazyQuery(USER, {
+    variables: { address: userAddress },
+  });
 
-  const { error: userError, data: user, isFetching } = useDataSubscriber(
-    userSubscriber,
-    [userAddress as string],
-    [userAddress],
-  );
+  useEffect(() => {
+    if (userAddress) {
+      loadUser();
+    }
+  }, [loadUser, userAddress]);
 
-  const TEMP_user = data.user;
-
-  if (TEMP_user && TEMP_user.profile) {
-    TEMP_user.profile.username = username;
+  if (!data || !data.user || loading) {
+    return <UserProfileSpinner />;
   }
 
-  // Sometimes userAddress is not defined (because it is being fetched). Only if it *is* defined we should care about the error
-  if (userAddressError || (userAddress && userError)) {
+  if (userAddressError) {
     return <Redirect to={NOT_FOUND_ROUTE} />;
   }
+  const { user } = data;
 
-  if (!user || isFetching) {
+  if (!user || loading) {
     return <UserProfileSpinner />;
   }
 
   return (
-    <ProfileTemplate asideContent={<UserMeta user={TEMP_user} />}>
+    <ProfileTemplate asideContent={<UserMeta user={user} />}>
       <section className={styles.sectionContainer}>
-        <UserColonies user={TEMP_user} />
+        <UserColonies user={user} />
       </section>
     </ProfileTemplate>
   );
