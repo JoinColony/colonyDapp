@@ -206,30 +206,6 @@ export const getUserMetadataStore = (ddb: DDB) => async ({
     },
   );
 
-export const createUserProfileStore = (ddb: DDB) => async ({
-  walletAddress,
-}: {
-  walletAddress: Address;
-}) => {
-  const chainId = CHAIN_ID;
-  const [profileStore, inboxStore, metadataStore] = await Promise.all([
-    ddb.createStore<UserProfileStore>(userProfileStoreBlueprint, {
-      chainId,
-      walletAddress,
-    }),
-    ddb.createStore<UserInboxStore>(userInboxStoreBlueprint, {
-      chainId,
-      walletAddress,
-    }),
-    ddb.createStore<UserMetadataStore>(userMetadataStoreBlueprint, {
-      chainId,
-      walletAddress,
-    }),
-  ]);
-
-  return { profileStore, inboxStore, metadataStore };
-};
-
 export const getTaskStoreAddress = (
   colonyClient: ColonyClientType,
   ddb: DDB,

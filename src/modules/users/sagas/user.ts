@@ -17,7 +17,6 @@ import { Action, ActionTypes, AllActions } from '~redux/index';
 import { getContext, Context } from '~context/index';
 import ENS from '~lib/ENS';
 
-import { getUserProfileStoreAddress } from '../../../data/stores';
 import { inboxItemsFetch } from '../actionCreators';
 
 import {
@@ -37,14 +36,9 @@ import {
 } from '../selectors';
 
 import { ipfsUpload } from '../../core/sagas/ipfs';
-import {
-  transactionAddParams,
-  transactionReady,
-  transactionLoadRelated,
-} from '../../core/actionCreators';
+import { transactionLoadRelated } from '../../core/actionCreators';
 
 import {
-  createUserProfile,
   updateTokens,
   removeUserAvatar,
   setUserAvatar,
@@ -65,6 +59,8 @@ import {
   subscribeToUserTasks,
   subscribeToUserColonies,
 } from '../data/queries';
+
+import { CREATE_USER } from '../mutations';
 
 import { createTransaction, getTxChannel } from '../../core/sagas/transactions';
 
@@ -258,8 +254,8 @@ function* usernameCreate({
     yield fork(createTransaction, id, {
       context: ContractContexts.NETWORK_CONTEXT,
       methodName: 'registerUserLabel',
-      ready: false,
-      params: { username },
+      ready: true,
+      params: { username, orbitDBPath: '' },
       group: {
         key: 'transaction.batch.createUser',
         id,
@@ -269,34 +265,25 @@ function* usernameCreate({
 
     const walletAddress = yield select(walletAddressSelector);
 
-    const ddb = yield getContext(Context.DDB_INSTANCE);
-
-    const getAddress = yield call(getUserProfileStoreAddress, ddb);
-    const profileStoreAddress = yield call(getAddress, { walletAddress });
-
-    const orbitDBPath = profileStoreAddress.toString();
-    yield put(transactionAddParams(id, { orbitDBPath }));
-    yield put(transactionReady(id));
+    const apolloClient = yield* getContext(Context.APOLLO_CLIENT);
 
     yield takeFrom(txChannel, ActionTypes.TRANSACTION_SUCCEEDED);
 
     yield put(transactionLoadRelated(id, true));
 
-    const { metadataStore, inboxStore } = yield executeCommand(
-      createUserProfile,
-      {
-        args: { username, walletAddress },
-        metadata: { walletAddress },
+    yield apolloClient.mutate({
+      mutation: CREATE_USER,
+      variables: {
+        address: walletAddress,
+        username,
       },
-    );
+    });
 
     yield put(transactionLoadRelated(id, false));
 
     yield put<AllActions>({
       type: ActionTypes.USERNAME_CREATE_SUCCESS,
       payload: {
-        inboxStoreAddress: inboxStore.address.toString(),
-        metadataStoreAddress: metadataStore.address.toString(),
         username,
       },
       meta,
@@ -693,7 +680,10 @@ export function* setupUsersSagas() {
     userTokenTransfersFetch
   );
   yield takeEvery(ActionTypes.USER_TOKENS_FETCH, userTokensFetch);
-  yield takeLatest(ActionTypes.USERNAME_CHECK_AVAILABILITY, usernameCheckAvailability);
+  yield takeLatest(
+    ActionTypes.USERNAME_CHECK_AVAILABILITY,
+    usernameCheckAvailability
+  );
   yield takeLatest(ActionTypes.USER_AVATAR_REMOVE, userAvatarRemove);
   yield takeLatest(ActionTypes.USER_AVATAR_UPLOAD, userAvatarUpload);
   yield takeLatest(ActionTypes.USER_LOGOUT, userLogout);
