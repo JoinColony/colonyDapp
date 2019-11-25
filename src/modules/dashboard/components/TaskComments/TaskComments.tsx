@@ -90,6 +90,7 @@ const TaskComments = ({
   const onSuccess: OnSuccess = useCallback(
     (result, { resetForm, setStatus }) => {
       setStatus({});
+      // @ts-ignore proper formik typings!
       resetForm({ comment: '' });
     },
     [],
