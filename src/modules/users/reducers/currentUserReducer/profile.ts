@@ -18,7 +18,6 @@ const currentUserProfileReducer: ReducerType<UserProfileRecord> = (
       /* Set values back to default */
       return state.clear();
     }
-    case ActionTypes.USER_PROFILE_UPDATE_SUCCESS:
     case ActionTypes.USERNAME_CREATE_SUCCESS: {
       return state.mergeDeep(fromJS(action.payload));
     }
