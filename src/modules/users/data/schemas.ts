@@ -9,13 +9,6 @@ export const UserUpdateTokensCommandArgsSchema = yup.object({
   tokens: yup.array().of(yup.string()),
 });
 
-export const UpdateUserProfileCommandArgsSchema = yup.object({
-  bio: yup.string(),
-  displayName: yup.string(),
-  location: yup.string(),
-  website: yup.string().url(),
-});
-
 export const SetUserAvatarCommandArgsSchema = yup.object({
   ipfsHash: yup
     .string()

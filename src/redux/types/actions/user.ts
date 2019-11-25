@@ -89,22 +89,6 @@ export type UserActionTypes =
       ActionTypes.USER_NOTIFICATION_METADATA_FETCH_SUCCESS,
       { readUntil: number; exceptFor: string[] }
     >
-  | UniqueActionType<
-      ActionTypes.USER_PROFILE_UPDATE,
-      {
-        bio?: string;
-        displayName?: string;
-        location?: string;
-        website?: string;
-      },
-      object
-    >
-  | ErrorActionType<ActionTypes.USER_PROFILE_UPDATE_ERROR, object>
-  | UniqueActionType<
-      ActionTypes.USER_PROFILE_UPDATE_SUCCESS,
-      UserProfileType,
-      object
-    >
   | ActionTypeWithPayloadAndMeta<
       ActionTypes.USER_SUBSCRIBED_COLONIES_FETCH,
       { walletAddress: Address; metadataStoreAddress: string },

@@ -31,11 +31,6 @@ const userProfilesReducer: ReducerType<UsersMap> = (
       );
     }
 
-    case ActionTypes.USER_PROFILE_UPDATE_SUCCESS: {
-      const { walletAddress, ...profile } = action.payload;
-      return state.mergeDeepIn([walletAddress, 'record', 'profile'], profile);
-    }
-
     case ActionTypes.USER_FETCH_SUCCESS: {
       const {
         meta: { key },
