@@ -3,11 +3,17 @@
 }
 
 .element {
-  flex-shrink: 0;
+  flex: 0 0 auto;
+}
+
+.elementLast {
+  composes: inlineEllipsis from '~styles/text.css';
+  flex: 1 1 auto;
 }
 
 .crumbContainer {
   display: flex;
+  overflow: hidden;
 }
 
 .arrow {

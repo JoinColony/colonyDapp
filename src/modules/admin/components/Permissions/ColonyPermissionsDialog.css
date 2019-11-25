@@ -1,5 +1,15 @@
 .dialogContainer {
   padding: 27px 19px 17px 19px;
+
+  & h3 {
+    /*
+     * @NOTE We can't compose from `inlineEllipsis` here since we're inside an
+     * element, not a component :(
+     */
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
 }
 
 .titleContainer {
