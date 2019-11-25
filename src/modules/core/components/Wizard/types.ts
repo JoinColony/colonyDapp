@@ -1,11 +1,11 @@
-import { FormikActions } from 'formik';
+import { FormikHelpers } from 'formik';
 
 export interface WizardProps<FormValues> {
   step: number;
   stepCount: number;
   nextStep: (
     values: FormValues,
-    formikActions?: FormikActions<FormValues>,
+    formikActions?: FormikHelpers<FormValues>,
   ) => void;
   previousStep: () => void;
   resetWizard: () => void;
