@@ -1,3 +1,4 @@
+import ApolloClient from 'apollo-client';
 import { push } from 'connected-react-router';
 
 import {
@@ -44,7 +45,6 @@ import {
   setUserAvatar,
   subscribeToColony,
   subscribeToTask,
-  updateUserProfile,
   unsubscribeToColony,
 } from '../data/commands';
 import {
@@ -128,36 +128,6 @@ function* userFetch({
     });
   } catch (error) {
     return yield putError(ActionTypes.USER_FETCH_ERROR, error, meta);
-  }
-  return null;
-}
-
-function* userProfileUpdate({
-  meta,
-  payload,
-}: Action<ActionTypes.USER_PROFILE_UPDATE>) {
-  try {
-    const walletAddress = yield select(walletAddressSelector);
-    yield executeCommand(updateUserProfile, {
-      metadata: {
-        walletAddress,
-      },
-      args: payload,
-    });
-
-    const user = yield executeQuery(getUserProfile, {
-      args: { walletAddress },
-      metadata: {
-        walletAddress,
-      },
-    });
-    yield put<AllActions>({
-      type: ActionTypes.USER_PROFILE_UPDATE_SUCCESS,
-      meta,
-      payload: user,
-    });
-  } catch (error) {
-    return yield putError(ActionTypes.USER_PROFILE_UPDATE_ERROR, error, meta);
   }
   return null;
 }
@@ -265,7 +235,9 @@ function* usernameCreate({
 
     const walletAddress = yield select(walletAddressSelector);
 
-    const apolloClient = yield* getContext(Context.APOLLO_CLIENT);
+    const apolloClient: ApolloClient<any> = yield getContext(
+      Context.APOLLO_CLIENT,
+    );
 
     yield takeFrom(txChannel, ActionTypes.TRANSACTION_SUCCEEDED);
 
@@ -687,7 +659,6 @@ export function* setupUsersSagas() {
   yield takeLatest(ActionTypes.USER_AVATAR_REMOVE, userAvatarRemove);
   yield takeLatest(ActionTypes.USER_AVATAR_UPLOAD, userAvatarUpload);
   yield takeLatest(ActionTypes.USER_LOGOUT, userLogout);
-  yield takeLatest(ActionTypes.USER_PROFILE_UPDATE, userProfileUpdate);
   yield takeLatest(ActionTypes.USER_TOKENS_UPDATE, userTokensUpdate);
   yield takeLatest(ActionTypes.USERNAME_CREATE, usernameCreate);
 }

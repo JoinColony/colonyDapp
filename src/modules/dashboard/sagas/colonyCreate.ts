@@ -1,3 +1,4 @@
+import ApolloClient from 'apollo-client';
 import { $Values } from 'utility-types';
 import { Channel } from 'redux-saga';
 import {
@@ -27,7 +28,6 @@ import { createAddress, ContractContexts } from '~types/index';
 import { parseExtensionDeployedLog } from '~utils/web3/eventLogs/eventParsers';
 
 import { TxConfig } from '../../core/types';
-import { createUserProfile } from '../../users/data/commands';
 import { getProfileStoreAddress } from '../../users/data/queries';
 import {
   transactionAddParams,
@@ -45,6 +45,7 @@ import { fetchDomainsAndRoles } from '../actionCreators/domains';
 import { userDidClaimProfile } from '../../users/checks';
 import { getUserRoles } from '../../transformers';
 import { createColonyProfile } from '../data/commands';
+import { CREATE_USER } from '../../users/mutations';
 import { getColonyName } from './shared';
 
 function* colonyCreate({
@@ -237,20 +238,22 @@ function* colonyCreate({
       yield takeFrom(createUser.channel, ActionTypes.TRANSACTION_SUCCEEDED);
       yield put<AllActions>(transactionLoadRelated(createUser.id, true));
 
-      const { metadataStore, inboxStore } = yield executeCommand(
-        createUserProfile,
-        {
-          args: { username, walletAddress },
-          metadata: { walletAddress },
-        },
+      const apolloClient: ApolloClient<any> = yield getContext(
+        Context.APOLLO_CLIENT,
       );
+
+      yield apolloClient.mutate({
+        mutation: CREATE_USER,
+        variables: {
+          address: walletAddress,
+          username,
+        },
+      });
 
       yield put<AllActions>(transactionLoadRelated(createUser.id, false));
       yield put<AllActions>({
         type: ActionTypes.USERNAME_CREATE_SUCCESS,
         payload: {
-          inboxStoreAddress: inboxStore.address.toString(),
-          metadataStoreAddress: metadataStore.address.toString(),
           username,
         },
         meta,

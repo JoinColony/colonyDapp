@@ -30,7 +30,6 @@ import {
   CreateWorkRequestCommandArgsSchema,
   MarkNotificationsAsReadCommandArgsSchema,
   SetUserAvatarCommandArgsSchema,
-  UpdateUserProfileCommandArgsSchema,
   UserUpdateTokensCommandArgsSchema,
 } from './schemas';
 
@@ -52,30 +51,6 @@ const prepareMetadataCommand = async (
   { ddb }: { ddb: DDB },
   metadata: UserMetadataStoreMetadata,
 ) => getUserMetadataStore(ddb)(metadata);
-
-export const updateUserProfile: Command<
-  UserProfileStore,
-  UserProfileStoreMetadata,
-  {
-    bio?: string;
-    displayName?: string;
-    location?: string;
-    website?: string;
-  },
-  UserProfileStore
-> = {
-  name: 'updateUserProfile',
-  context: [Context.DDB_INSTANCE],
-  schema: UpdateUserProfileCommandArgsSchema,
-  prepare: prepareProfileCommand,
-  async execute(profileStore, args) {
-    await profileStore.append(
-      createEvent(EventTypes.USER_PROFILE_UPDATED, args),
-    );
-    await profileStore.load();
-    return profileStore;
-  },
-};
 
 export const setUserAvatar: Command<
   UserProfileStore,
