@@ -194,7 +194,7 @@
         "ethers": "^3.0.27",
         "ethjs-unit": "^0.1.6",
         "format-number": "^3.0.0",
-        "formik": "^1.5.2",
+        "formik": "^2.0.6",
         "graphql": "^14.5.8",
         "graphql-tag": "^2.10.1",
         "history": "^4.7.2",
