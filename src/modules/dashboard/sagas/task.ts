@@ -1,3 +1,4 @@
+import ApolloClient from 'apollo-client';
 import nanoid from 'nanoid';
 import {
   all,
@@ -12,6 +13,7 @@ import {
 import { replace } from 'connected-react-router';
 import BigNumber from 'bn.js';
 
+import { Context, getContext } from '~context/index';
 import { ROOT_DOMAIN } from '~constants';
 import { Action, ActionTypes } from '~redux/index';
 import { Address, ContractContexts } from '~types/index';
@@ -62,6 +64,7 @@ import {
 } from '../data/queries';
 
 import { AllActions } from '../../../redux/types/actions';
+import { CREATE_TASK } from '../mutations';
 
 /*
  * Dispatch an action to fetch the colony task metadata and wait for the
@@ -106,31 +109,40 @@ function* taskCreate({
 
     const { walletAddress } = yield getLoggedInUser();
 
-    // NOTE: This is going to be part of the store address so we need to be careful
-    const draftId = generateUrlFriendlyId();
-    const { taskStore, commentsStore, event } = yield executeCommand(
-      createTask,
-      {
-        metadata: { colonyAddress, draftId, domainId },
-        args: { creatorAddress: walletAddress, draftId, domainId },
-      },
+    const apolloClient: ApolloClient<any> = yield getContext(
+      Context.APOLLO_CLIENT,
     );
+
+    // fixme remove this? Will task id be created on server?
+    // const draftId = generateUrlFriendlyId();
+    const {
+      data: { createTask },
+    } = yield apolloClient.mutate({
+      mutation: CREATE_TASK,
+      variables: {
+        input: {
+          colonyAddress,
+          ethDomainId: domainId,
+        },
+      },
+    });
+
+    // Not sure what to use for task slug - `id` or `ethTaskId`. Will these be the same?
+    const { id } = createTask;
+
     const successAction: Action<ActionTypes.TASK_CREATE_SUCCESS> = {
       type: ActionTypes.TASK_CREATE_SUCCESS,
       payload: {
-        commentsStoreAddress: commentsStore.address.toString(),
         colonyAddress,
-        draftId,
-        event,
-        taskStoreAddress: taskStore.address.toString(),
+        draftId: id,
         task: {
           colonyAddress,
           creatorAddress: walletAddress,
-          draftId,
+          draftId: id,
           domainId,
         },
       },
-      meta: { key: draftId, ...meta },
+      meta: { key: id, ...meta },
     };
 
     /*
@@ -138,7 +150,7 @@ function* taskCreate({
      */
     yield all([
       put(successAction),
-      put(replace(`/colony/${colonyName}/task/${draftId}`)),
+      put(replace(`/colony/${colonyName}/task/${id}`)),
     ]);
   } catch (error) {
     return yield putError(ActionTypes.TASK_CREATE_ERROR, error, meta);
