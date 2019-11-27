@@ -5,15 +5,16 @@ export interface WizardProps<FormValues> {
   stepCount: number;
   nextStep: (
     values: FormValues,
-    formikActions?: FormikHelpers<FormValues>,
+    formikHelpers?: FormikHelpers<FormValues>,
   ) => void;
   previousStep: () => void;
   resetWizard: () => void;
+  stepCompleted: boolean;
   wizardValues: FormValues;
   wizardForm: {
     initialValues: {
       [formValue: string]: any;
     };
-    isInitialValid: (arg0: object) => boolean;
+    validateOnMount: boolean;
   };
 }

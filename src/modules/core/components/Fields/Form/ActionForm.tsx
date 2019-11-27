@@ -33,7 +33,6 @@ export type OnSuccess = (
 interface ExtendedFormikConfig {
   validateOnChange?: boolean;
   validateOnBlur?: boolean;
-  isInitialValid?: boolean | ((props: object) => boolean);
   enableReinitialize?: boolean;
   component?: React.ComponentType<FormikProps<any>> | React.ReactNode;
   render?: (props: FormikProps<any>) => React.ReactNode;
