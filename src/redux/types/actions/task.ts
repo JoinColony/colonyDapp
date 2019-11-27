@@ -100,12 +100,9 @@ export type TaskActionTypes =
       ActionTypes.TASK_CREATE_SUCCESS,
       {
         colonyAddress: Address;
-        commentsStoreAddress: string;
-        taskStoreAddress: string;
         task: TaskProps<
           'colonyAddress' | 'creatorAddress' | 'draftId' | 'domainId'
         >;
-        event: Event<EventTypes.TASK_CREATED>;
       }
     >
   | NonUniqueTaskActionType<ActionTypes.TASK_FETCH, object>
