@@ -1,14 +1,16 @@
 import gql from 'graphql-tag';
 
 export const CREATE_USER = gql`
-  mutation CreateUser($address: String!, $username: String!) {
-    createUser(address: $address, username: $username) {
+  mutation CreateUser(
+    $createUserInput: CreateUserInput!
+    $currentUserInput: CurrentUserInput!
+  ) {
+    # Create user on the server
+    createUser(input: $createUserInput) {
       id
-      profile {
-        username
-        walletAddress
-      }
     }
+    # Set the current user data to the given data
+    setCurrentUserData(input: $currentUserInput) @client
   }
 `;
 

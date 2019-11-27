@@ -1,15 +1,7 @@
 import ApolloClient from 'apollo-client';
 import { $Values } from 'utility-types';
 import { Channel } from 'redux-saga';
-import {
-  all,
-  call,
-  fork,
-  put,
-  select,
-  take,
-  takeEvery,
-} from 'redux-saga/effects';
+import { all, call, fork, put, take, takeEvery } from 'redux-saga/effects';
 import BigNumber from 'bn.js';
 
 import { ROLES, ROOT_DOMAIN } from '~constants';
@@ -19,13 +11,13 @@ import {
   takeFrom,
   executeCommand,
   executeQuery,
-  selectAsJS,
   takeLatestCancellable,
 } from '~utils/saga/effects';
 import { Context, getContext } from '~context/index';
 import ENS from '~lib/ENS';
 import { createAddress, ContractContexts } from '~types/index';
 import { parseExtensionDeployedLog } from '~utils/web3/eventLogs/eventParsers';
+import { getCurrentUser } from '~data/helpers';
 
 import { TxConfig } from '../../core/types';
 import { getProfileStoreAddress } from '../../users/data/queries';
@@ -36,13 +28,8 @@ import {
   transactionLoadRelated,
 } from '../../core/actionCreators';
 import { createTransaction, createTransactionChannels } from '../../core/sagas';
-import {
-  currentUserSelector,
-  walletAddressSelector,
-} from '../../users/selectors';
 import { inboxItemsFetch, subscribeToColony } from '../../users/actionCreators';
 import { fetchDomainsAndRoles } from '../actionCreators/domains';
-import { userDidClaimProfile } from '../../users/checks';
 import { getUserRoles } from '../../transformers';
 import { createColonyProfile } from '../data/commands';
 import { CREATE_USER } from '../../users/mutations';
@@ -61,12 +48,7 @@ function* colonyCreate({
     username: givenUsername,
   },
 }: Action<ActionTypes.COLONY_CREATE>) {
-  /*
-   * Get the current user's wallet address (needed for notifications).
-   */
-  const walletAddress = yield select(walletAddressSelector);
-  // @ts-ignore
-  const currentUser = yield selectAsJS(currentUserSelector);
+  const { username: currentUsername, walletAddress } = yield getCurrentUser();
 
   /*
    * Define a manifest of transaction ids and their respective channels.
@@ -77,7 +59,7 @@ function* colonyCreate({
     /*
      * If the user did not claim a profile yet, define a tx to create the user.
      */
-    ...(!userDidClaimProfile(currentUser) ? ['createUser'] : []),
+    ...(!currentUsername ? ['createUser'] : []),
     /*
      * If the user opted to create a token, define a tx to create the token.
      */
@@ -486,7 +468,7 @@ function* colonyRecover({
     colonyAddress,
   );
   try {
-    const walletAddress = yield select(walletAddressSelector);
+    const { walletAddress } = yield getCurrentUser();
 
     yield put(fetchDomainsAndRoles(colonyAddress));
 

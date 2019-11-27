@@ -3,7 +3,7 @@ import { defineMessages, FormattedMessage } from 'react-intl';
 import * as yup from 'yup';
 
 import { WizardProps } from '~core/Wizard';
-import { useAsyncFunction, useSelector } from '~utils/hooks';
+import { useAsyncFunction } from '~utils/hooks';
 import { Form, Input } from '~core/Fields';
 import Heading from '~core/Heading';
 import Button from '~core/Button';
@@ -12,7 +12,8 @@ import { Tooltip } from '~core/Popover';
 import { ActionTypes } from '~redux/index';
 import { multiLineTextEllipsis } from '~utils/strings';
 import ENS from '~lib/ENS';
-import { currentUserSelector } from '../../../users/selectors';
+import { useCurrentUser } from '~data/helpers';
+
 import styles from './StepColonyName.css';
 
 interface FormValues {
@@ -89,10 +90,7 @@ const StepColonyName = ({
     error: ActionTypes.COLONY_NAME_CHECK_AVAILABILITY_ERROR,
   });
 
-  const currentUser = useSelector(currentUserSelector);
-  const {
-    profile: { username },
-  } = currentUser;
+  const { username } = useCurrentUser();
 
   const [currentENSName, setCurrentENSName] = useState();
 

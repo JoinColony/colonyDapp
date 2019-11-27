@@ -12,11 +12,11 @@ import Button from '~core/Button';
 import DialogSection from '~core/Dialog/DialogSection';
 import { Select, Input, FormStatus } from '~core/Fields';
 import Heading from '~core/Heading';
+import { useCurrentUser } from '~data/helpers';
 
 import { getUserRoles } from '../../../transformers';
 import { domainsAndRolesFetcher } from '../../../dashboard/fetchers';
 import { tokenBalanceSelector } from '../../../dashboard/selectors';
-import { walletAddressSelector } from '../../../users/selectors';
 import { userHasRole } from '../../../users/checks';
 
 import styles from './TokensMoveDialogForm.css';
@@ -117,7 +117,7 @@ const TokensMoveDialogForm = ({
     [colonyAddress],
   );
 
-  const walletAddress = useSelector(walletAddressSelector);
+  const { walletAddress } = useCurrentUser();
 
   const fromDomainRoles = useTransformer(getUserRoles, [
     domains,

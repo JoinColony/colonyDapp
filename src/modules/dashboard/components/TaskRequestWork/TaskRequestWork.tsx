@@ -1,17 +1,16 @@
 import React, { useCallback } from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
-import { OpenDialog } from '~core/Dialog/types';
-import { TaskType, UserType } from '~immutable/index';
 
+import { OpenDialog } from '~core/Dialog/types';
+import { TaskType } from '~immutable/index';
 import { ActionTypes } from '~redux/index';
 import { mergePayload } from '~utils/actions';
-
 import withDialog from '~core/Dialog/withDialog';
 import Button, { ActionButton } from '~core/Button';
 import unfinishedProfileOpener from '~users/UnfinishedProfile';
+import { useCurrentUser } from '~data/helpers';
 
 import { canRequestToWork, hasRequestedToWork } from '../../checks';
-import { userDidClaimProfile } from '../../../users/checks';
 
 import styles from './TaskRequestWork.css';
 
@@ -31,20 +30,17 @@ const displayName = 'dashboard.TaskRequestWork';
 // Can't seal this object because of withConsumerFactory
 interface Props {
   openDialog: OpenDialog;
-  currentUser: UserType;
   task: TaskType;
   history: any;
 }
 
 const TaskRequestWork = ({
-  currentUser: {
-    profile: { walletAddress },
-  },
-  currentUser,
   task: { colonyAddress, draftId },
   task,
   history,
 }: Props) => {
+  const { username, walletAddress } = useCurrentUser();
+
   const transform = useCallback(mergePayload({ colonyAddress, draftId }), [
     colonyAddress,
     draftId,
@@ -58,10 +54,7 @@ const TaskRequestWork = ({
     );
   }
 
-  if (
-    userDidClaimProfile(currentUser) &&
-    canRequestToWork(task, walletAddress)
-  ) {
+  if (!!username && canRequestToWork(task, walletAddress)) {
     return (
       <ActionButton
         text={MSG.requestWork}

@@ -7,7 +7,6 @@ import { ActionTypes } from '~redux/index';
 import {
   useDataFetcher,
   useDataSubscriber,
-  useSelector,
   useTransformer,
 } from '~utils/hooks';
 // Temporary, please remove when wiring in the rating modals
@@ -28,6 +27,8 @@ import TaskFeed from '~dashboard/TaskFeed';
 import TaskRequestWork from '~dashboard/TaskRequestWork';
 import TaskSkills from '~dashboard/TaskSkills';
 import TaskTitle from '~dashboard/TaskTitle';
+import { useCurrentUser } from '~data/helpers';
+
 import {
   canCancelTask,
   canEditTask,
@@ -40,7 +41,6 @@ import {
   colonyAddressFetcher,
   domainsAndRolesFetcher,
 } from '../../../dashboard/fetchers';
-import { currentUserSelector } from '../../../users/selectors';
 import { getUserRoles } from '../../../transformers';
 import { taskSubscriber } from '../../subscribers';
 
@@ -122,9 +122,7 @@ const Task = ({
 }: Props) => {
   const [isDiscardConfirmDisplayed, setDiscardConfirmDisplay] = useState(false);
 
-  const currentUser = useSelector(currentUserSelector);
-  const walletAddress =
-    currentUser && currentUser.profile && currentUser.profile.walletAddress;
+  const { walletAddress } = useCurrentUser();
 
   const { data: colonyAddress } = useDataFetcher(
     colonyAddressFetcher,
@@ -349,11 +347,7 @@ const Task = ({
                 </p>
               )}
               {canRequestToWork(task, walletAddress) && (
-                <TaskRequestWork
-                  currentUser={currentUser}
-                  task={task}
-                  history={history}
-                />
+                <TaskRequestWork task={task} history={history} />
               )}
             </>
           )}
@@ -373,7 +367,6 @@ const Task = ({
               draftId={draftId}
               taskTitle={title}
               history={history}
-              currentUser={currentUser}
             />
           </section>
         </div>

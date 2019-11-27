@@ -1,7 +1,5 @@
 import { Action } from 'redux';
 
-// type Next = (action: AllActions) => AllActions;
-
 export const createDuplicateActionGuardMiddleware = (
   timeout: number,
   ...actionTypesToGuard: string[]

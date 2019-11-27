@@ -68,7 +68,7 @@ const StepMnemonic = ({
   return (
     <ActionForm
       submit={ActionTypes.WALLET_CREATE}
-      success={ActionTypes.CURRENT_USER_CREATE}
+      success={ActionTypes.USER_CONTEXT_SETUP_SUCCESS}
       error={ActionTypes.WALLET_CREATE_ERROR}
       onError={(_: object, { setStatus }: FormikBag<object, FormValues>) => {
         setStatus({ error: MSG.errorOpenMnemonic });

@@ -1,6 +1,7 @@
 import { WALLET_SPECIFICS, WALLET_CATEGORIES } from '~immutable/index';
 import { Address } from '~types/index';
 import {
+  ActionType,
   ActionTypeWithPayload,
   ErrorActionType,
   UniqueActionType,
@@ -41,4 +42,5 @@ export type WalletActionTypes =
       {
         allAddresses: Address[];
       }
-    >;
+    >
+  | ActionType<ActionTypes.USER_CONTEXT_SETUP_SUCCESS>;

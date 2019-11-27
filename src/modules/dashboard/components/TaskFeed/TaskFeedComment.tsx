@@ -7,17 +7,14 @@ import ExternalLink from '~core/ExternalLink';
 import TimeRelative from '~core/TimeRelative';
 import UserMention from '~core/UserMention';
 import HookedUserAvatar from '~users/HookedUserAvatar';
+import { useCurrentUser } from '~data/helpers';
+import { useDataSubscriber, useSelector } from '~utils/hooks';
 
 import { userSubscriber } from '../../../users/subscribers';
 import TextDecorator from '../../../../lib/TextDecorator';
-import {
-  friendlyUsernameSelector,
-  walletAddressSelector,
-} from '../../../users/selectors';
+import { friendlyUsernameSelector } from '../../../users/selectors';
 
 import styles from './TaskFeedComment.css';
-
-import { useDataSubscriber, useSelector } from '~utils/hooks';
 
 const UserAvatar = HookedUserAvatar();
 
@@ -40,7 +37,7 @@ const TaskFeedComment = ({
     ),
   });
 
-  const walletAddress = useSelector(walletAddressSelector, []);
+  const { walletAddress } = useCurrentUser();
 
   const isCurrentUser = authorAddress === walletAddress;
 

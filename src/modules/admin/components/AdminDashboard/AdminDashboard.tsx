@@ -18,16 +18,15 @@ import { HistoryNavigation } from '~pages/NavigationWrapper';
 import {
   useDataFetcher,
   useDataSubscriber,
-  useSelector,
   useTransformer,
 } from '~utils/hooks';
 import { DomainsMapType } from '~types/index';
+import { useCurrentUser } from '~data/helpers';
 
 import {
   TEMP_getUserRolesWithRecovery,
   getAllUserRoles,
 } from '../../../transformers';
-import { walletAddressSelector } from '../../../users/selectors';
 import { isInRecoveryMode } from '../../../dashboard/checks';
 import { canArchitect, hasRoot } from '../../../users/checks';
 import {
@@ -159,7 +158,7 @@ const AdminDashboard = ({
     [colonyAddress],
   );
 
-  const walletAddress = useSelector(walletAddressSelector);
+  const { walletAddress } = useCurrentUser();
 
   const { data: domains, isFetching: isFetchingRoles } = useDataFetcher(
     domainsAndRolesFetcher,

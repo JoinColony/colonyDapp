@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
 import { defineMessages } from 'react-intl';
-import compose from 'recompose/compose';
-import { withRouter } from 'react-router-dom';
+import { withRouter, RouteComponentProps } from 'react-router-dom';
 
 import { ActionButton } from '~core/Button';
 import { ActionTypes } from '~redux/index';
@@ -16,7 +15,6 @@ import DropdownMenu, {
 } from '~core/DropdownMenu';
 import NavLink from '~core/NavLink';
 import ExternalLink from '~core/ExternalLink';
-import { UserType } from '~immutable/index';
 import styles from './AvatarDropdownPopover.css';
 
 const MSG = defineMessages({
@@ -54,20 +52,16 @@ const MSG = defineMessages({
   },
 });
 
-interface Props {
+interface Props extends RouteComponentProps {
   closePopover: () => void;
-  user: UserType;
+  username?: string;
 }
 
 class AvatarDropdownPopover extends Component<Props> {
   static displayName = 'users.AvatarDropdown.AvatarDropdownPopover';
 
   renderUserSection = () => {
-    const {
-      user: {
-        profile: { username },
-      },
-    } = this.props;
+    const { username } = this.props;
     return (
       <DropdownMenuSection separator>
         {!username && (
@@ -158,6 +152,4 @@ class AvatarDropdownPopover extends Component<Props> {
   }
 }
 
-const enhance = compose(withRouter);
-
-export default enhance(AvatarDropdownPopover) as any;
+export default withRouter(AvatarDropdownPopover);

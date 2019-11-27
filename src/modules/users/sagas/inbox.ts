@@ -2,11 +2,8 @@ import { put, takeEvery, select } from 'redux-saga/effects';
 
 import { Action, ActionTypes, AllActions } from '~redux/index';
 import { executeCommand, executeQuery, putError } from '~utils/saga/effects';
-import {
-  walletAddressSelector,
-  currentUserMetadataSelector,
-  inboxItemsSelector,
-} from '../selectors';
+import { getCurrentUser } from '~data/helpers';
+import { currentUserMetadataSelector, inboxItemsSelector } from '../selectors';
 import {
   getUserNotificationMetadata,
   getUserInboxActivity,
@@ -16,7 +13,7 @@ import { markNotificationsAsRead } from '../data/commands';
 
 function* markAllNotificationsAsRead() {
   try {
-    const walletAddress = yield select(walletAddressSelector);
+    const { walletAddress } = yield getCurrentUser();
     const { metadataStoreAddress } = yield select(currentUserMetadataSelector);
     const metadata = {
       walletAddress,
@@ -54,7 +51,7 @@ function* markNotificationAsRead({
 }: Action<ActionTypes.INBOX_MARK_NOTIFICATION_READ>) {
   try {
     const { record: activities = [] } = yield select(inboxItemsSelector);
-    const walletAddress = yield select(walletAddressSelector);
+    const { walletAddress } = yield getCurrentUser();
     const { metadataStoreAddress } = yield select(currentUserMetadataSelector);
     const metadata = {
       walletAddress,
@@ -141,7 +138,7 @@ function* inboxItemsFetch() {
   try {
     let userColonies = [];
 
-    const walletAddress = yield select(walletAddressSelector);
+    const { walletAddress } = yield getCurrentUser();
     const { inboxStoreAddress, metadataStoreAddress } = yield select(
       currentUserMetadataSelector,
     );

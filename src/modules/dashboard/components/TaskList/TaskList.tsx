@@ -1,4 +1,4 @@
-import React, { ReactNode, useMemo, useCallback, DependencyList } from 'react';
+import React, { ReactNode, useMemo, useCallback } from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 
 import { Address } from '~types/index';
@@ -10,17 +10,18 @@ import {
   useSelector,
   useDataSubscriber,
 } from '~utils/hooks';
+import { ActionTypes } from '~redux/index';
+import Icon from '~core/Icon';
+import { Table, TableBody } from '~core/Table';
+import { ActionButton } from '~core/Button';
+import { useCurrentUser } from '~data/helpers';
+
 import { tasksByIdSubscriber, userColoniesSubscriber } from '../../subscribers';
 import {
   TasksFilterOptions,
   TasksFilterOptionType,
 } from '../shared/tasksFilter';
-import { ActionTypes } from '~redux/index';
 import { colonyNameSelector } from '../../selectors';
-import { currentUserSelector } from '../../../users/selectors';
-import Icon from '~core/Icon';
-import { Table, TableBody } from '~core/Table';
-import { ActionButton } from '~core/Button';
 import TaskListItem from './TaskListItem';
 import taskListItemStyles from './TaskListItem.css';
 
@@ -112,8 +113,7 @@ const TaskList = ({
           return currentState !== TaskStates.CANCELLED;
       }
     },
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [filterOption, filteredDomainId, walletAddress] as DependencyList,
+    [filterOption, filteredDomainId, walletAddress],
   );
 
   const sortingOrderOption = 'desc';
@@ -128,8 +128,7 @@ const TaskList = ({
         ? (second as any).createdAt - (first as any).createdAt
         : (first as any).createdAt - (second as any).createdAt;
     },
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [sortingOrderOption] as DependencyList,
+    [sortingOrderOption],
   );
 
   const filteredTasksData = useMemo(
@@ -139,18 +138,14 @@ const TaskList = ({
             .sort(sort as any)
             .filter(({ data }) => (data ? filter(data) : true))
         : tasksData,
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [filter, sort, tasksData] as DependencyList,
+    [filter, sort, tasksData],
   );
 
-  const currentUser = useSelector(currentUserSelector);
+  const { username } = useCurrentUser();
   const { data: colonyAddresses } = useDataSubscriber(
     userColoniesSubscriber,
-    [currentUser.profile.walletAddress],
-    [
-      currentUser.profile.walletAddress,
-      currentUser.profile.metadataStoreAddress,
-    ],
+    [walletAddress],
+    [walletAddress, ''],
   );
   const isSubscribed = (colonyAddresses || []).includes(
     // Casting should be ok here as we don't have any sparse arrays
@@ -158,7 +153,7 @@ const TaskList = ({
   );
   const transform = useCallback(mergePayload({ colonyAddress }), [
     colonyAddress,
-  ] as DependencyList);
+  ]);
 
   const data = useSelector(colonyNameSelector, [colonyAddress]);
 
@@ -227,9 +222,7 @@ const TaskList = ({
                      * If the current user hasn't claimed a profile yet, then don't show the
                      * subscribe to colony call to action
                      */
-                    isSubscribed: currentUser.profile.username
-                      ? isSubscribed
-                      : true,
+                    isSubscribed: username ? isSubscribed : true,
                     myColonies: (
                       <ActionButton
                         className={taskListItemStyles.subscribe}

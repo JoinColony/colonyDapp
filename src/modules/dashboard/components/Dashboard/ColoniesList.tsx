@@ -1,16 +1,14 @@
 import React from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 
-import { useDataFetcher, useSelector } from '~utils/hooks';
-
+import { useDataFetcher } from '~utils/hooks';
 import { SpinnerLoader } from '~core/Preloaders';
-
 import Link from '~core/Link';
-import ColoniesListItem from './ColoniesListItem';
-
-import { currentUserSelector } from '../../../users/selectors';
-import { userColoniesFetcher } from '../../fetchers';
 import { CREATE_COLONY_ROUTE } from '~routes/index';
+import { useCurrentUser } from '~data/helpers';
+
+import ColoniesListItem from './ColoniesListItem';
+import { userColoniesFetcher } from '../../fetchers';
 
 import styles from './ColoniesList.css';
 
@@ -32,14 +30,11 @@ const MSG = defineMessages({
 const displayName = 'dashboard.Dashboard.ColoniesList';
 
 const ColoniesList = () => {
-  const currentUser = useSelector(currentUserSelector);
+  const { walletAddress } = useCurrentUser();
   const { data: colonyAddresses, isFetching } = useDataFetcher(
     userColoniesFetcher,
-    [currentUser.profile.walletAddress],
-    [
-      currentUser.profile.walletAddress,
-      currentUser.profile.metadataStoreAddress,
-    ],
+    [walletAddress],
+    [walletAddress, ''],
   );
 
   if (isFetching) {

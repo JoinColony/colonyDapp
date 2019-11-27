@@ -11,10 +11,10 @@ import { mergePayload } from '~utils/actions';
 import { ActionButton } from '~core/Button';
 import Icon from '~core/Icon';
 import { SpinnerLoader } from '~core/Preloaders';
-import { useDataSubscriber, useSelector } from '~utils/hooks';
+import { useDataSubscriber } from '~utils/hooks';
+import { useCurrentUser } from '~data/helpers';
 
 import { colonyTaskMetadataSubscriber } from '../../../subscribers';
-import { walletAddressSelector } from '../../../../users/selectors';
 import TaskList from '../../TaskList';
 import styles from './ColonyTasks.css';
 
@@ -115,7 +115,7 @@ const ColonyTasks = ({
 }: Props) => {
   const [isTaskBeingCreated, setIsTaskBeingCreated] = useState(false);
 
-  const walletAddress = useSelector(walletAddressSelector, []);
+  const { walletAddress } = useCurrentUser();
 
   const dispatch = useDispatch();
 
