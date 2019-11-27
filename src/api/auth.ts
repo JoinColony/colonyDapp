@@ -21,10 +21,9 @@ export const authenticate = async wallet => {
     challenge,
     signature,
   });
-  apiRequest.defaults.headers.common.Authorization = `Bearer ${token}`;
+  // apiRequest.defaults.headers.common.Authorization = `Bearer ${token}`;
 
   // FIXME abstraction???
   localStorage.setItem('token', token);
-  console.log(token);
   return token;
 };

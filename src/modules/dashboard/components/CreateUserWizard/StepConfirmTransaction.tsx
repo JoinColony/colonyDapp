@@ -4,8 +4,8 @@ import { Redirect } from 'react-router';
 
 import { DASHBOARD_ROUTE } from '~routes/index';
 import { useSelector } from '~utils/hooks';
-import { currentUserSelector } from '../../../users/selectors';
-import { userDidClaimProfile } from '../../../users/checks';
+import { useCurrentUser } from '~data/helpers';
+
 import { groupedTransactions } from '../../../core/selectors';
 import {
   findTransactionGroupByKey,
@@ -31,10 +31,10 @@ const MSG = defineMessages({
 const displayName = 'dashboard.CreateUserWizard.StepConfirmTransaction';
 
 const StepConfirmTransaction = () => {
+  const { username } = useCurrentUser();
   const transactionGroups = useSelector(groupedTransactions);
-  const currentUser = useSelector(currentUserSelector);
 
-  if (currentUser && userDidClaimProfile(currentUser)) {
+  if (username) {
     return <Redirect to={DASHBOARD_ROUTE} />;
   }
 

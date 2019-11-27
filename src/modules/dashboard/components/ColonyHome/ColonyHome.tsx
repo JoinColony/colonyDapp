@@ -28,8 +28,8 @@ import Button, { ActionButton, DialogActionButton } from '~core/Button';
 import BreadCrumb from '~core/BreadCrumb';
 import RecoveryModeAlert from '~admin/RecoveryModeAlert';
 import LoadingTemplate from '~pages/LoadingTemplate';
+import { useCurrentUser } from '~data/helpers';
 
-import { walletAddressSelector } from '../../../users/selectors';
 import { canAdminister, hasRoot } from '../../../users/checks';
 import { colonyAddressFetcher, domainsAndRolesFetcher } from '../../fetchers';
 import {
@@ -169,7 +169,7 @@ const ColonyHome = ({
     [colonyAddress],
   );
 
-  const walletAddress = useSelector(walletAddressSelector);
+  const { walletAddress } = useCurrentUser();
 
   const currentDomainUserRoles = useTransformer(getUserRoles, [
     domains,

@@ -1,7 +1,7 @@
 import { Map as ImmutableMap, fromJS } from 'immutable';
 
 import { withFetchableDataMap } from '~utils/reducers';
-import { User, UserProfile, FetchableData, UserRecord } from '~immutable/index';
+import { User, UserProfile, UserRecord } from '~immutable/index';
 import { ActionTypes, ReducerType } from '~redux/index';
 
 import { UsersMap } from '../state/index';
@@ -11,26 +11,6 @@ const userProfilesReducer: ReducerType<UsersMap> = (
   action,
 ) => {
   switch (action.type) {
-    case ActionTypes.CURRENT_USER_CREATE: {
-      const { profileData, walletAddress, balance } = action.payload;
-      return state.mergeDeepIn(
-        [walletAddress],
-        FetchableData({
-          error: undefined,
-          lastFetchedAt: new Date(),
-          record: User({
-            profile: UserProfile(
-              fromJS({
-                ...profileData,
-                walletAddress,
-                balance,
-              }),
-            ),
-          }),
-        }),
-      );
-    }
-
     case ActionTypes.USER_FETCH_SUCCESS: {
       const {
         meta: { key },

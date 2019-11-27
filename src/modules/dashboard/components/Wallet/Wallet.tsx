@@ -2,15 +2,17 @@ import React, { useCallback } from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 
 import { DialogType } from '~core/Dialog';
-import { Address } from '~types/index';
 import CopyableAddress from '~core/CopyableAddress';
 import Button from '~core/Button';
 import Heading from '~core/Heading';
 import QRCode from '~core/QRCode';
 import WalletLink from '~core/WalletLink';
 import { SpinnerLoader } from '~core/Preloaders';
+import withDialog from '~core/Dialog/withDialog';
 import TokenList from '~admin/Tokens/TokenList';
 import { useDataFetcher } from '~utils/hooks';
+import { useCurrentUser } from '~data/helpers';
+
 import { currentUserTokensFetcher } from '../../../users/fetchers';
 import styles from './Wallet.css';
 
@@ -47,10 +49,10 @@ const MSG = defineMessages({
 
 interface Props {
   openDialog: (dialogName: string, dialogProps?: object) => DialogType;
-  walletAddress: Address;
 }
 
-const Wallet = ({ walletAddress, openDialog }: Props) => {
+const Wallet = ({ openDialog }: Props) => {
+  const { walletAddress } = useCurrentUser();
   const { isFetching: isFetchingTokens, data: tokens } = useDataFetcher(
     currentUserTokensFetcher,
     [],
@@ -116,4 +118,4 @@ const Wallet = ({ walletAddress, openDialog }: Props) => {
 
 Wallet.displayName = 'dashboard.Wallet';
 
-export default Wallet;
+export default withDialog()(Wallet);

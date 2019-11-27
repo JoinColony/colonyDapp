@@ -1,3 +1,4 @@
+import ApolloClient from 'apollo-client';
 import {
   all,
   call,
@@ -6,19 +7,19 @@ import {
   put,
   setContext,
 } from 'redux-saga/effects';
+import { formatEther } from 'ethers/utils';
 
 import { createAddress } from '~types/index';
 import { Action, ActionTypes, AllActions } from '~redux/index';
 import { Context } from '~context/index';
-import { executeQuery, putError } from '~utils/saga/effects';
+import { putError } from '~utils/saga/effects';
 import { log } from '~utils/debug';
 import ENSCache from '~lib/ENS';
-import { UserProfileType } from '~immutable/index';
+import { SET_CURRENT_USER } from '~data/currentUser';
 
 import ColonyManagerType from '../../../lib/ColonyManager';
 import { DDB as DDBType } from '../../../lib/database';
 import { authenticate } from '../../../api';
-import { getUserBalance, getUserProfile } from '../../users/data/queries';
 import setupAdminSagas from '../../admin/sagas';
 import setupDashboardSagas from '../../dashboard/sagas';
 import {
@@ -82,6 +83,10 @@ export default function* setupUserContext(
     const walletAddress = createAddress(wallet.address);
     yield setContext({ [Context.WALLET]: wallet });
 
+    const apolloClient: ApolloClient<any> = yield getContext(
+      Context.APOLLO_CLIENT,
+    );
+
     yield authenticate(wallet);
 
     yield put<AllActions>({
@@ -108,24 +113,36 @@ export default function* setupUserContext(
     const ens = yield getContext(Context.ENS_INSTANCE);
     yield call(setupDDBResolver, colonyManager, ddb, ens);
 
-    let profileData = {} as UserProfileType;
+    let username;
+
     try {
-      profileData = yield executeQuery(getUserProfile, {
-        args: { walletAddress },
-        metadata: { walletAddress },
-      });
-    } catch (e) {
-      log.verbose(`Could not find user profile for ${walletAddress}`);
+      const domain = yield ens.getDomain(
+        walletAddress,
+        colonyManager.networkClient,
+      );
+      username = ens.constructor.stripDomainParts('user', domain);
+    } catch (caughtError) {
+      log.verbose(`Could not find username for ${walletAddress}`);
     }
 
-    const balance = yield executeQuery(getUserBalance, {
-      args: {
-        walletAddress,
+    const {
+      adapter: { provider },
+    } = colonyManager.networkClient;
+    const balance = yield provider.getBalance(walletAddress);
+
+    yield apolloClient.mutate({
+      mutation: SET_CURRENT_USER,
+      variables: {
+        data: {
+          balance: formatEther(balance),
+          username,
+          walletAddress,
+        },
       },
     });
 
     /*
-     * This needs to happen first because CURRENT_USER_CREATE causes a redirect
+     * This needs to happen first because USER_CONTEXT_SETUP_SUCCESS causes a redirect
      * to dashboard, which needs context for sagas which happen on load.
      * Forking is okay because each `takeEvery` etc happens immediately anyway,
      * but we then do not wait for a return value (which will never come).
@@ -136,16 +153,7 @@ export default function* setupUserContext(
     yield fork(setupUserBalanceListener, walletAddress);
 
     yield put<AllActions>({
-      type: ActionTypes.CURRENT_USER_CREATE,
-      payload: {
-        balance,
-        profileData,
-        walletAddress,
-      },
-      meta: {
-        ...meta,
-        key: walletAddress,
-      },
+      type: ActionTypes.USER_CONTEXT_SETUP_SUCCESS,
     });
 
     try {

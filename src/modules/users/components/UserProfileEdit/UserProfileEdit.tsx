@@ -3,7 +3,6 @@ import { defineMessages } from 'react-intl';
 import { useQuery, useMutation } from '@apollo/react-hooks';
 import * as yup from 'yup';
 
-import { useSelector } from '~utils/hooks';
 import CopyableAddress from '~core/CopyableAddress';
 import UserMention from '~core/UserMention';
 import Heading from '~core/Heading';
@@ -17,7 +16,8 @@ import {
 } from '~core/Fields';
 import Button from '~core/Button';
 import ProfileTemplate from '~pages/ProfileTemplate';
-import { walletAddressSelector } from '../../selectors';
+import { useCurrentUser } from '~data/helpers';
+
 import { EDIT_USER } from '../../mutations';
 import { USER } from '../../queries';
 import UserProfileSpinner from '../UserProfile/UserProfileSpinner';
@@ -72,7 +72,7 @@ const validationSchema = yup.object({
 });
 
 const UserProfileEdit = () => {
-  const walletAddress = useSelector(walletAddressSelector);
+  const { walletAddress } = useCurrentUser();
 
   const [editUser] = useMutation(EDIT_USER);
   const onSubmit = useCallback(

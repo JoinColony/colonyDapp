@@ -5,14 +5,16 @@ import { useDispatch } from 'redux-react-hook';
 import throttle from 'lodash/throttle';
 
 import { Address } from '~types/index';
-import { useDataSubscriber, useSelector } from '~utils/hooks';
+import { useDataSubscriber } from '~utils/hooks';
 import { mergePayload } from '~utils/actions';
 import { ActionTypes } from '~redux/index';
 import Button, { ActionButton } from '~core/Button';
 import { Tooltip } from '~core/Popover';
 import { SpinnerLoader } from '~core/Preloaders';
+import { useCurrentUser } from '~data/helpers';
+
 import { userColoniesSubscriber } from '../../../subscribers';
-import { currentUserSelector } from '../../../../users/selectors';
+
 import styles from './ColonySubscribe.css';
 
 const MSG = defineMessages({
@@ -59,21 +61,18 @@ const ColonySubscribe = ({ colonyAddress }: Props) => {
     [dispatch, setUserColonySubscriptionChanging],
   );
 
-  const currentUser = useSelector(currentUserSelector);
+  const { username, walletAddress } = useCurrentUser();
   const { data: colonyAddresses } = useDataSubscriber(
     userColoniesSubscriber,
-    [currentUser.profile.walletAddress],
-    [
-      currentUser.profile.walletAddress,
-      currentUser.profile.metadataStoreAddress,
-    ],
+    [walletAddress],
+    [walletAddress, ''],
   );
   const isSubscribed = (colonyAddresses || []).includes(colonyAddress);
   const transform = useCallback(mergePayload({ colonyAddress }), [
     colonyAddress,
   ]);
 
-  if (!currentUser.profile.username) {
+  if (!username) {
     return null;
   }
 

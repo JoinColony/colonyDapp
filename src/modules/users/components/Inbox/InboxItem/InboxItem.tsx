@@ -6,8 +6,6 @@ import { DomainType, InboxItemType } from '~immutable/index';
 import TimeRelative from '~core/TimeRelative';
 import { TableRow, TableCell } from '~core/Table';
 import Numeral from '~core/Numeral';
-// import Button from '~core/Button';
-// import { DialogLink } from '~core/Dialog';
 import Link from '~core/Link';
 import HookedUserAvatar from '~users/HookedUserAvatar';
 import { SpinnerLoader } from '~core/Preloaders';
@@ -17,16 +15,13 @@ import {
   useSelector,
   useAsyncFunction,
 } from '~utils/hooks';
+import { useCurrentUser } from '~data/helpers';
 
 import { userSubscriber } from '../../../subscribers';
 import { domainsFetcher, tokenFetcher } from '../../../../dashboard/fetchers';
 import { colonySubscriber } from '../../../../dashboard/subscribers';
 import { friendlyColonyNameSelector } from '../../../../dashboard/selectors';
-import {
-  friendlyUsernameSelector,
-  currentUserSelector,
-  usernameSelector,
-} from '../../../selectors';
+import { friendlyUsernameSelector, usernameSelector } from '../../../selectors';
 import { transformNotificationEventNames } from '../../../data/utils';
 import { ActionTypes } from '~redux/index';
 import { mergePayload } from '~utils/actions';
@@ -123,12 +118,12 @@ const InboxItem = ({
   ]);
   const sourceUsername = user && user.profile && user.profile.username;
 
-  const currentUser = useSelector(currentUserSelector);
+  const { walletAddress } = useCurrentUser();
   const targetUserDisplayWithFallback = useSelector(friendlyUsernameSelector, [
-    targetUserAddress || currentUser.profile.walletAddress,
+    targetUserAddress || walletAddress,
   ]);
   const targetUsername = useSelector(usernameSelector, [
-    targetUserAddress || currentUser.profile.walletAddress,
+    targetUserAddress || walletAddress,
   ]);
 
   const { data: colony, isFetching: isFetchingColony } = useDataSubscriber(

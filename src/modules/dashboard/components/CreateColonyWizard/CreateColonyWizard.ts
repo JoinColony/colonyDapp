@@ -2,9 +2,11 @@ import { ComponentType } from 'react';
 import { $Values } from 'utility-types';
 import compose from 'recompose/compose';
 
-import { withWizard } from '../../../core/components/Wizard';
-import { StepsFn, StepType } from '~core/Wizard/withWizard';
 import WizardTemplate from '~pages/WizardTemplateColony';
+import { StepsFn, StepType } from '~core/Wizard/withWizard';
+import { withCurrentUser } from '~data/helpers';
+
+import { withWizard } from '../../../core/components/Wizard';
 import StepTokenChoice from './StepTokenChoice';
 import StepColonyName from './StepColonyName';
 import StepSelectToken from './StepSelectToken';
@@ -12,8 +14,6 @@ import StepCreateToken from './StepCreateToken';
 import StepConfirmAllInput from './StepConfirmAllInput';
 import StepUserName from './StepUserName';
 import StepConfirmTransactions from './StepConfirmTransactions';
-import { userDidClaimProfile } from '../../../users/checks';
-import { withCurrentUser } from '../../../users/hocs';
 
 const stepArray: StepType[] = [
   StepUserName,
@@ -43,7 +43,7 @@ const stepFunction: StepsFn<any> = (
   props?: any,
 ): ComponentType<any> => {
   if (props) {
-    const usernameCreated = userDidClaimProfile(props.currentUser);
+    const { username } = props.currentUser;
 
     /*
      * In case the username is already registered
@@ -51,7 +51,7 @@ const stepFunction: StepsFn<any> = (
      */
 
     /* When username hasn't been created flow through wizard is different */
-    if (!usernameCreated) {
+    if (!username) {
       if (step === 3) {
         return pickTokenStep(tokenChoice);
       }
@@ -60,7 +60,7 @@ const stepFunction: StepsFn<any> = (
 
     /* Standard wizard flow  */
     if (step === 0) {
-      if (usernameCreated && stepArray[0].stepName === 'StepUserName') {
+      if (username && stepArray[0].stepName === 'StepUserName') {
         stepArray.shift();
         return stepArray[step] as ComponentType<any>;
       }

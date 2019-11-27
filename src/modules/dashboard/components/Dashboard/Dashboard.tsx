@@ -1,17 +1,14 @@
 import React, { useState, useCallback } from 'react';
 import { defineMessages } from 'react-intl';
 
-import { useSelector } from '~utils/hooks';
-
 import { Select } from '~core/Fields';
 import Heading from '~core/Heading';
-import { userDidClaimProfile } from '../../../users/checks';
-import { currentUserSelector } from '../../../users/selectors';
+import { useCurrentUser } from '~data/helpers';
+
 import {
   TasksFilterOptions,
   tasksFilterSelectOptions,
 } from '../shared/tasksFilter';
-
 import UserTasks from './UserTasks';
 import ColoniesList from './ColoniesList';
 
@@ -52,10 +49,7 @@ const Dashboard = () => {
     [setFilterOption],
   );
 
-  const currentUser = useSelector(currentUserSelector);
-  const {
-    profile: { walletAddress = '' },
-  } = currentUser;
+  const { username, walletAddress } = useCurrentUser();
 
   return (
     <div className={styles.layoutMain} data-test="dashboard">
@@ -90,7 +84,7 @@ const Dashboard = () => {
               />
             </div>
           }
-          userClaimedProfile={userDidClaimProfile(currentUser)}
+          userClaimedProfile={!!username}
           filterOption={filterOption}
           walletAddress={walletAddress}
         />
