@@ -73,7 +73,7 @@ const validationSchema = yup.object({
     .ensAddress(),
 });
 
-const StepUserName = ({ wizardForm, nextStep }: Props) => {
+const StepUserName = ({ stepCompleted, wizardForm, nextStep }: Props) => {
   const checkDomainTaken = useAsyncFunction({
     submit: ActionTypes.USERNAME_CHECK_AVAILABILITY,
     success: ActionTypes.USERNAME_CHECK_AVAILABILITY_SUCCESS,
@@ -108,7 +108,7 @@ const StepUserName = ({ wizardForm, nextStep }: Props) => {
       validationSchema={validationSchema}
       {...wizardForm}
     >
-      {({ isValid, isSubmitting, values: { username } }) => {
+      {({ dirty, isValid, isSubmitting, values: { username } }) => {
         const normalized = ENS.normalizeAsText(username);
         return (
           <section className={styles.main}>
@@ -155,7 +155,7 @@ const StepUserName = ({ wizardForm, nextStep }: Props) => {
                   <Button
                     appearance={{ theme: 'primary', size: 'large' }}
                     type="submit"
-                    disabled={!isValid}
+                    disabled={!isValid || (!dirty && !stepCompleted)}
                     loading={isSubmitting}
                     text={MSG.continue}
                     data-test="claimUsernameConfirm"
