@@ -7,10 +7,9 @@ import { DialogType } from '~core/Dialog';
 import withDialog from '~core/Dialog/withDialog';
 import Heading from '~core/Heading';
 import { Address, DomainsMapType } from '~types/index';
-import { useSelector } from '~utils/hooks';
+import { useCurrentUser } from '~data/helpers';
 
 import { useColonyTokens } from '../../../hooks/useColonyTokens';
-import { walletAddressSelector } from '../../../../users/selectors';
 import { canMoveTokens as canMoveTokensCheck } from '../../../../admin/checks';
 import TokenItem from './TokenItem';
 
@@ -46,7 +45,7 @@ const ColonyFunding = ({
 }: Props) => {
   const [tokenReferences, tokens] = useColonyTokens(colonyAddress);
 
-  const walletAddress = useSelector(walletAddressSelector);
+  const { walletAddress } = useCurrentUser();
 
   const canMoveTokens = useMemo(
     () => canMoveTokensCheck(domains, walletAddress),

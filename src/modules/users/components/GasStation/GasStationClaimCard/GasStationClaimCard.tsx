@@ -1,11 +1,11 @@
 import React from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
-import { connect } from 'react-redux';
 import BigNumber from 'bn.js';
 
 import Card from '~core/Card';
 import Heading from '~core/Heading';
-import { currentUserBalanceSelector } from '../../../selectors';
+import { useCurrentUser } from '~data/helpers';
+
 import styles from './GasStationClaimCard.css';
 
 const MSG = defineMessages({
@@ -27,7 +27,6 @@ sign your first transaction and finish setting up your account.`,
  * This should always be the last step.
  */
 interface Props {
-  balance: string;
   numberOfSteps?: number;
 }
 
@@ -39,7 +38,8 @@ const displayName = 'users.GasStation.GasStationClaimCard';
  * Otherwise, when dismissed, it will still render the wrapper (without any content)
  * and the `CardList` grid will add gaps and styles to it
  */
-const GasStationClaimCard = ({ numberOfSteps = 3, balance }: Props) => {
+const GasStationClaimCard = ({ numberOfSteps = 3 }: Props) => {
+  const { balance } = useCurrentUser();
   const bigNumberBalance = new BigNumber(balance);
   return (
     <Card
@@ -66,6 +66,4 @@ const GasStationClaimCard = ({ numberOfSteps = 3, balance }: Props) => {
 
 GasStationClaimCard.displayName = displayName;
 
-export default connect((state: any) => ({
-  balance: currentUserBalanceSelector(state),
-}))(GasStationClaimCard);
+export default GasStationClaimCard;

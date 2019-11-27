@@ -83,6 +83,7 @@ const prepareMetadataStoreQuery = async (
   metadata.metadataStoreAddress ? getUserMetadataStore(ddb)(metadata) : null;
 
 // This query is used by a few other sagas/queries(?) so we can't remove it for now
+// FIXME REMOVE
 export const getUserProfile: Query<
   { apolloClient: ApolloClient<any> },
   UserProfileStoreMetadata,
@@ -225,6 +226,7 @@ export const getUserTokens: Query<
   },
 };
 
+// FIXME remove as soon as possible
 export const getUserBalance: Query<
   NetworkClient,
   void,

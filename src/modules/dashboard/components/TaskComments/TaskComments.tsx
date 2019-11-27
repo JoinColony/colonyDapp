@@ -3,7 +3,6 @@ import React, { useCallback, KeyboardEvent, SyntheticEvent } from 'react';
 import { defineMessages } from 'react-intl';
 import * as yup from 'yup';
 
-import { UserType } from '~immutable/index';
 import { mergePayload } from '~utils/actions';
 import { OpenDialog } from '~core/Dialog/types';
 import { Address, ENTER } from '~types/index';
@@ -13,8 +12,7 @@ import { ActionForm, TextareaAutoresize } from '~core/Fields';
 import { OnSuccess } from '~core/Fields/Form/ActionForm';
 import Button from '~core/Button';
 import unfinishedProfileOpener from '~users/UnfinishedProfile';
-
-import { userDidClaimProfile } from '../../../users/checks';
+import { useCurrentUser } from '~data/helpers';
 
 import styles from './TaskComments.css';
 
@@ -46,7 +44,6 @@ type FormValues = {
 
 interface Props extends FormikProps<FormValues> {
   colonyAddress: Address;
-  currentUser: UserType;
   openDialog: OpenDialog;
   draftId: string;
   history: any;
@@ -76,16 +73,12 @@ const handleKeyboardSubmit = (
 };
 
 const TaskComments = ({
-  currentUser: {
-    profile: { walletAddress },
-  },
-  currentUser,
   taskTitle,
   colonyAddress,
   draftId,
   history,
 }: Props) => {
-  const didClaimProfile = userDidClaimProfile(currentUser);
+  const { username, walletAddress } = useCurrentUser();
 
   const onSuccess: OnSuccess = useCallback(
     (result, { resetForm, setStatus }) => {
@@ -102,11 +95,11 @@ const TaskComments = ({
   );
 
   const handleUnclaimedProfile = useCallback(() => {
-    if (!didClaimProfile) {
+    if (!username) {
       return unfinishedProfileOpener(history);
     }
     return false;
-  }, [didClaimProfile, history]);
+  }, [username, history]);
 
   return (
     <div
@@ -156,7 +149,7 @@ const TaskComments = ({
               maxRows={8}
               onKeyDown={event => handleKeyboardSubmit(event, handleSubmit)}
               value={values.comment || ''}
-              disabled={!didClaimProfile || isSubmitting}
+              disabled={!username || isSubmitting}
               /*
                * This is an UGLY silent restriction placed on the
                * comment textarea; it's needed because the Trezor
@@ -174,7 +167,7 @@ const TaskComments = ({
             <div className={styles.commentControls}>
               <Button
                 loading={isSubmitting}
-                disabled={!didClaimProfile || !isValid}
+                disabled={!username || !isValid}
                 text={MSG.button}
                 type="submit"
                 style={{ width: styles.wideButton }}

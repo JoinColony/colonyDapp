@@ -1,6 +1,5 @@
 import { ColonyActionTypes } from './colony';
 import { ConnectionActionTypes } from './connection';
-import { CurrentUserActionTypes } from './currentUser';
 import { DomainActionTypes } from './domain';
 import { GasPricesActionTypes } from './gasPrices';
 import { InboxActionTypes } from './inbox';
@@ -100,7 +99,6 @@ export interface ErrorActionType<T extends string, M>
 export type AllActions =
   | ColonyActionTypes
   | ConnectionActionTypes
-  | CurrentUserActionTypes
   | DomainActionTypes
   | GasPricesActionTypes
   | InboxActionTypes

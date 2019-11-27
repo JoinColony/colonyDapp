@@ -1,5 +1,4 @@
 import { ROLES } from '~constants';
-import { UserType } from '~immutable/index';
 
 export const userHasRole = (userRoles: ROLES[], role: ROLES) =>
   userRoles.includes(role);
@@ -18,6 +17,3 @@ export const hasRoot = (userRoles: ROLES[]) =>
 
 export const canArchitect = (userRoles: ROLES[]) =>
   userHasRole(userRoles, ROLES.ARCHITECTURE);
-
-export const userDidClaimProfile = ({ profile: { username } }: UserType) =>
-  !!username;

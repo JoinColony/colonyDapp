@@ -4,6 +4,7 @@ import { AllActions, ActionTypes } from '~redux/index';
 import { Address, createAddress } from '~types/index';
 import { TaskDraftId } from '~immutable/index';
 
+// FIXME this needs to go
 export const userFetch = (userAddress: Address): AllActions => ({
   type: ActionTypes.USER_FETCH,
   meta: { key: createAddress(userAddress) },
@@ -16,11 +17,6 @@ export const userTokensFetch = (): AllActions => ({
 
 export const userTokenTransfersFetch = (): AllActions => ({
   type: ActionTypes.USER_TOKEN_TRANSFERS_FETCH,
-});
-
-export const currentUserBalance = (balance: string): AllActions => ({
-  type: ActionTypes.CURRENT_USER_BALANCE,
-  payload: { balance },
 });
 
 export const subscribeToColony = (colonyAddress: Address): AllActions => ({

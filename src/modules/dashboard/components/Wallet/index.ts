@@ -1,4 +1,3 @@
-// @ts-ignore
-export { default } from './Wallet.ts';
+export { default } from './Wallet';
 
 export { default as UserTokenEditDialog } from './UserTokenEditDialog';

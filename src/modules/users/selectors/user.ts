@@ -6,7 +6,6 @@ import {
   FetchableDataRecord,
   UserNotificationMetadataRecord,
   UserRecord,
-  UserType,
 } from '~immutable/index';
 import { Address } from '~types/index';
 import { FetchableContractTransactionList } from '../../admin/state';
@@ -16,7 +15,6 @@ import {
   USERS_ALL_USERS,
   USERS_COLONIES,
   USERS_CURRENT_USER,
-  USERS_CURRENT_USER_PROFILE,
   USERS_CURRENT_USER_TOKENS,
   USERS_CURRENT_USER_TRANSACTIONS,
   USERS_NAMESPACE as ns,
@@ -32,6 +30,12 @@ import {
   UserColonies,
   UsersMap,
 } from '../state';
+
+interface CurrentUserData {
+  username?: string;
+  walletAddress: string;
+  balance: string;
+}
 
 const getUsernameFromUserData = (
   user?: FetchableDataRecord<UserRecord>,
@@ -101,26 +105,24 @@ specificUsersSelector.filter = (
 /*
  * Current user input selectors
  */
-export const currentUserSelector = (state: RootStateRecord): UserType =>
-  state.getIn([ns, USERS_CURRENT_USER]);
-export const currentUsernameSelector = (
-  state: RootStateRecord,
-): string | undefined =>
-  state.getIn([ns, USERS_CURRENT_USER, USERS_CURRENT_USER_PROFILE, 'username']);
-export const walletAddressSelector = (state: RootStateRecord): Address =>
-  state.getIn([
-    ns,
-    USERS_CURRENT_USER,
-    USERS_CURRENT_USER_PROFILE,
-    'walletAddress',
-  ]);
-export const currentUserBalanceSelector = (state: RootStateRecord): string =>
-  state.getIn([
-    ns,
-    USERS_CURRENT_USER,
-    USERS_CURRENT_USER_PROFILE,
-    'balance',
-  ]) || '0';
+// export const currentUserDataSelector = (
+//   state: RootStateRecord,
+// ): CurrentUserData =>
+//   state.getIn([ns, USERS_CURRENT_USER, USERS_CURRENT_USER_DATA]);
+// export const currentUsernameSelector = (
+//   state: RootStateRecord,
+// ): string | undefined =>
+//   state.getIn([ns, USERS_CURRENT_USER, USERS_CURRENT_USER_DATA, 'username']);
+// export const walletAddressSelector = (state: RootStateRecord): Address =>
+//   state.getIn([
+//     ns,
+//     USERS_CURRENT_USER,
+//     USERS_CURRENT_USER_DATA,
+//     'walletAddress',
+//   ]);
+// export const currentUserBalanceSelector = (state: RootStateRecord): string =>
+//   state.getIn([ns, USERS_CURRENT_USER, USERS_CURRENT_USER_DATA, 'balance']) ||
+//   '0';
 
 export const currentUserTokensSelector = (
   state: RootStateRecord,
@@ -132,11 +134,9 @@ export const currentUserTransactionsSelector = (
 ): FetchableContractTransactionList =>
   state.getIn([ns, USERS_CURRENT_USER, USERS_CURRENT_USER_TRANSACTIONS]);
 
-export const currentUserMetadataSelector = (state: RootStateRecord) => {
-  // @ts-ignore
-  const { inboxStoreAddress, metadataStoreAddress } =
-    state.getIn([ns, USERS_CURRENT_USER, USERS_CURRENT_USER_PROFILE]) || {};
-  return { inboxStoreAddress, metadataStoreAddress };
+export const currentUserMetadataSelector = () => {
+  // FIXME remove Just stubs, this isn't real
+  return { inboxStoreAddress: '', metadataStoreAddress: '' };
 };
 
 export const currentUserDraftIdsSelector = (

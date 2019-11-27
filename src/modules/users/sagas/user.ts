@@ -17,6 +17,7 @@ import {
 import { Action, ActionTypes, AllActions } from '~redux/index';
 import { getContext, Context } from '~context/index';
 import ENS from '~lib/ENS';
+import { getCurrentUser } from '~data/helpers';
 
 import { inboxItemsFetch } from '../actionCreators';
 
@@ -31,7 +32,6 @@ import {
 
 import { ContractContexts } from '../../../lib/ColonyManager/constants';
 import {
-  walletAddressSelector,
   currentUserMetadataSelector,
   userColoniesSelector,
 } from '../selectors';
@@ -68,7 +68,7 @@ function* userTokenTransfersFetch( // eslint-disable-next-line @typescript-eslin
   action: Action<ActionTypes.USER_TOKEN_TRANSFERS_FETCH>,
 ) {
   try {
-    const walletAddress = yield select(walletAddressSelector);
+    const { walletAddress } = yield getCurrentUser();
     const userColonyAddresses = yield selectAsJS(
       userColoniesSelector,
       walletAddress,
@@ -134,7 +134,7 @@ function* userFetch({
 
 function* userAvatarRemove({ meta }: Action<ActionTypes.USER_AVATAR_REMOVE>) {
   try {
-    const walletAddress = yield select(walletAddressSelector);
+    const { walletAddress } = yield getCurrentUser();
     yield executeCommand(removeUserAvatar, {
       metadata: {
         walletAddress,
@@ -157,7 +157,7 @@ function* userAvatarUpload({
   payload,
 }: Action<ActionTypes.USER_AVATAR_UPLOAD>) {
   try {
-    const walletAddress = yield select(walletAddressSelector);
+    const { walletAddress } = yield getCurrentUser();
     const ipfsHash = yield call(ipfsUpload, payload.data);
     yield executeCommand(setUserAvatar, {
       metadata: {
@@ -233,7 +233,7 @@ function* usernameCreate({
       },
     });
 
-    const walletAddress = yield select(walletAddressSelector);
+    const { walletAddress } = yield getCurrentUser();
 
     const apolloClient: ApolloClient<any> = yield getContext(
       Context.APOLLO_CLIENT,
@@ -246,23 +246,26 @@ function* usernameCreate({
     yield apolloClient.mutate({
       mutation: CREATE_USER,
       variables: {
-        address: walletAddress,
-        username,
+        createUserInput: {
+          address: walletAddress,
+          username,
+        },
+        currentUserInput: { username },
       },
     });
 
     yield put(transactionLoadRelated(id, false));
 
-    yield put<AllActions>({
-      type: ActionTypes.USERNAME_CREATE_SUCCESS,
-      payload: {
-        username,
-      },
-      meta,
-    });
+    // yield put<AllActions>({
+    //   type: ActionTypes.USERNAME_CREATE_SUCCESS,
+    //   payload: {
+    //     username,
+    //   },
+    //   meta,
+    // });
 
-    // Dispatch an action to fetch the inbox items (see JoinColony/colonyDapp#1462)
-    yield put(inboxItemsFetch());
+    // // Dispatch an action to fetch the inbox items (see JoinColony/colonyDapp#1462)
+    // yield put(inboxItemsFetch());
   } catch (error) {
     return yield putError(ActionTypes.USERNAME_CREATE_ERROR, error, meta);
   } finally {
@@ -306,7 +309,7 @@ function* userLogout() {
 
 function* userTokensFetch() {
   try {
-    const walletAddress = yield select(walletAddressSelector);
+    const { walletAddress } = yield getCurrentUser();
     const { metadataStoreAddress } = yield select(currentUserMetadataSelector);
     const metadata = {
       walletAddress,
@@ -336,7 +339,7 @@ function* userTokensFetch() {
 function* userTokensUpdate(action: Action<ActionTypes.USER_TOKENS_UPDATE>) {
   try {
     const { tokens } = action.payload;
-    const walletAddress = yield select(walletAddressSelector);
+    const { walletAddress } = yield getCurrentUser();
     const { metadataStoreAddress } = yield select(currentUserMetadataSelector);
     const metadata = {
       walletAddress,
@@ -389,7 +392,7 @@ function* userColonySubscribe({
   meta,
 }: Action<ActionTypes.USER_COLONY_SUBSCRIBE>) {
   try {
-    const walletAddress = yield select(walletAddressSelector);
+    const { walletAddress } = yield getCurrentUser();
     const { metadataStoreAddress } = yield select(currentUserMetadataSelector);
     const metadata = {
       walletAddress,
@@ -426,7 +429,7 @@ function* userColonyUnsubscribe({
   meta,
 }: Action<ActionTypes.USER_COLONY_UNSUBSCRIBE>) {
   try {
-    const walletAddress = yield select(walletAddressSelector);
+    const { walletAddress } = yield getCurrentUser();
     const { metadataStoreAddress } = yield select(currentUserMetadataSelector);
     const metadata = {
       walletAddress,
@@ -458,7 +461,7 @@ function* userColonyUnsubscribe({
 
 function* userSubscribedTasksFetch() {
   try {
-    const walletAddress = yield select(walletAddressSelector);
+    const { walletAddress } = yield getCurrentUser();
     const { metadataStoreAddress } = yield select(currentUserMetadataSelector);
     const metadata = {
       walletAddress,
@@ -482,7 +485,7 @@ function* userTaskSubscribe({
   payload,
 }: Action<ActionTypes.USER_TASK_SUBSCRIBE>) {
   try {
-    const walletAddress = yield select(walletAddressSelector);
+    const { walletAddress } = yield getCurrentUser();
     const { metadataStoreAddress } = yield select(currentUserMetadataSelector);
     const metadata = {
       walletAddress,
@@ -546,7 +549,7 @@ function* userSubStart({
 }
 
 function* userSubscribedTasksSubStart() {
-  const walletAddress = yield select(walletAddressSelector);
+  const { walletAddress } = yield getCurrentUser();
   const { metadataStoreAddress } = yield select(currentUserMetadataSelector);
   let channel;
   try {

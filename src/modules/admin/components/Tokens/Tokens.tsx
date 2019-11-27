@@ -10,13 +10,13 @@ import withDialog from '~core/Dialog/withDialog';
 import Heading from '~core/Heading';
 import { Select } from '~core/Fields';
 import { Address, DomainsMapType } from '~types/index';
-import { useDataFetcher, useSelector, useTransformer } from '~utils/hooks';
+import { useDataFetcher, useTransformer } from '~utils/hooks';
+import { useCurrentUser } from '~data/helpers';
 
 import { getLegacyRoles } from '../../../transformers';
 import { tokenFetcher } from '../../../dashboard/fetchers';
 import { useColonyNativeToken } from '../../../dashboard/hooks/useColonyNativeToken';
 import { useColonyTokens } from '../../../dashboard/hooks/useColonyTokens';
-import { walletAddressSelector } from '../../../users/selectors';
 import { userHasRole } from '../../../users/checks';
 import { canEditTokens } from '../../checks';
 import FundingBanner from './FundingBanner';
@@ -68,7 +68,7 @@ const Tokens = ({
     COLONY_TOTAL_BALANCE_DOMAIN_ID,
   );
 
-  const walletAddress = useSelector(walletAddressSelector);
+  const { walletAddress } = useCurrentUser();
 
   const oldUserRoles = useTransformer(getLegacyRoles, [domains]);
   const canEdit = canEditTokens(oldUserRoles, walletAddress);

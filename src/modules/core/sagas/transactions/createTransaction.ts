@@ -5,23 +5,23 @@ import {
   call,
   cancel,
   put,
-  select,
   take,
   takeEvery,
 } from 'redux-saga/effects';
 
 import { ActionTypes } from '~redux/index';
-import { TxConfig } from '../../types';
 import { filterUniqueAction } from '~utils/actions';
-import { walletAddressSelector } from '../../../users/selectors';
+import { getCurrentUser } from '~data/helpers';
+
+import { TxConfig } from '../../types';
 import { createTxAction } from '../../actionCreators';
 import estimateGasCost from './estimateGasCost';
 import sendTransaction from './sendTransaction';
 
 export function* createTransaction(id: string, config: TxConfig) {
-  const address = yield select(walletAddressSelector);
+  const { walletAddress } = yield getCurrentUser();
 
-  if (!address) {
+  if (!walletAddress) {
     throw new Error(
       'Could not create transaction. No current user address available',
     );
@@ -31,7 +31,7 @@ export function* createTransaction(id: string, config: TxConfig) {
     throw new Error('Could not create transaction. No transaction id provided');
   }
 
-  yield put(createTxAction(id, address, config));
+  yield put(createTxAction(id, walletAddress, config));
 
   // Create tasks for estimating and sending; the actions may be taken multiple times
   const estimateGasTask = yield takeEvery(

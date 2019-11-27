@@ -7,8 +7,6 @@ import {
   InboxItemRecord,
   UserNotificationMetadata,
   UserNotificationMetadataRecord,
-  UserProfile,
-  UserProfileRecord,
   UserTokenReferenceRecord,
   TaskDraftId,
   InboxItemType,
@@ -19,7 +17,6 @@ import { FetchableContractTransactionList } from '../../admin/state/index';
 import {
   USERS_INBOX_ITEMS,
   USERS_CURRENT_USER_NOTIFICATION_METADATA,
-  USERS_CURRENT_USER_PROFILE,
   USERS_CURRENT_USER_TASKS,
   USERS_CURRENT_USER_TOKENS,
   USERS_CURRENT_USER_TRANSACTIONS,
@@ -48,7 +45,6 @@ export type CurrentUserInboxItemsType = FetchableDataRecord<
 interface CurrentUserProps {
   [USERS_INBOX_ITEMS]: CurrentUserInboxItemsType;
   [USERS_CURRENT_USER_NOTIFICATION_METADATA]: UserNotificationMetadataRecord;
-  [USERS_CURRENT_USER_PROFILE]: UserProfileRecord;
   [USERS_CURRENT_USER_TASKS]: FetchableDataRecord<CurrentUserTasksType>;
   [USERS_CURRENT_USER_TOKENS]: CurrentUserTokensType;
   [USERS_CURRENT_USER_TRANSACTIONS]: FetchableContractTransactionList;
@@ -57,10 +53,6 @@ interface CurrentUserProps {
 export class CurrentUserRecord extends Record<CurrentUserProps>({
   [USERS_INBOX_ITEMS]: FetchableData() as CurrentUserInboxItemsType,
   [USERS_CURRENT_USER_NOTIFICATION_METADATA]: UserNotificationMetadata(),
-  [USERS_CURRENT_USER_PROFILE]: UserProfile({
-    walletAddress: '',
-  }),
-  // eslint-disable-next-line max-len
   [USERS_CURRENT_USER_TASKS]: FetchableData() as FetchableDataRecord<
     CurrentUserTasksType
   >,

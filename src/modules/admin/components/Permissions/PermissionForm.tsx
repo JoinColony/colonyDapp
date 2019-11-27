@@ -3,16 +3,16 @@ import { defineMessages, FormattedMessage } from 'react-intl';
 
 import { ROLES, ROOT_DOMAIN } from '~constants';
 import { Address, DomainsMapType } from '~types/index';
-import { useSelector, useTransformer } from '~utils/hooks';
+import { useTransformer } from '~utils/hooks';
 import { InputLabel } from '~core/Fields';
 import ExternalLink from '~core/ExternalLink';
+import { useCurrentUser } from '~data/helpers';
 
 import {
   getUserRoles,
   TEMP_getUserRolesWithRecovery,
   getAllRootAccounts,
 } from '../../../transformers';
-import { walletAddressSelector } from '../../../users/selectors';
 import PermissionCheckbox from './PermissionCheckbox';
 import { availableRoles } from './constants';
 
@@ -52,13 +52,12 @@ const PermissionForm = ({
   userAddress,
   userRoles,
 }: Props) => {
-  // Get the current user's roles in the selected domain
-  const currentUserAddress = useSelector(walletAddressSelector);
+  const { walletAddress } = useCurrentUser();
 
   const currentUserRoles = useTransformer(getUserRoles, [
     domains,
     domainId,
-    currentUserAddress,
+    walletAddress,
   ]);
 
   const userInheritedRoles = useTransformer(TEMP_getUserRolesWithRecovery, [
