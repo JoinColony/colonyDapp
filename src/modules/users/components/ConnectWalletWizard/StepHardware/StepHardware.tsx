@@ -206,6 +206,7 @@ class StepHardware extends Component<Props> {
       nextStep,
       availableAddresses,
       resetWizard,
+      stepCompleted,
       wizardForm,
       wizardValues,
     } = this.props;
@@ -223,7 +224,7 @@ class StepHardware extends Component<Props> {
         transform={mergePayload(wizardValues)}
         {...wizardForm}
       >
-        {({ isSubmitting, isValid, status, values }) => (
+        {({ dirty, isSubmitting, isValid, status, values }) => (
           <div>
             <section className={styles.content}>
               {this.renderContent(values)}
@@ -248,7 +249,7 @@ class StepHardware extends Component<Props> {
                 }
                 appearance={{ theme: 'primary', size: 'large' }}
                 type="submit"
-                disabled={!isValid}
+                disabled={!isValid || (!dirty && !stepCompleted)}
                 loading={isSubmitting}
               />
             </div>

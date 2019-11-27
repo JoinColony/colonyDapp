@@ -59,6 +59,7 @@ const displayName = 'users.ConnectWalletWizard.StepMnemonic';
 const StepMnemonic = ({
   nextStep,
   resetWizard,
+  stepCompleted,
   wizardForm,
   wizardValues,
 }: Props) => {
@@ -77,7 +78,7 @@ const StepMnemonic = ({
       transform={transform}
       {...wizardForm}
     >
-      {({ isSubmitting, isValid, status }) => (
+      {({ dirty, isSubmitting, isValid, status }) => (
         <main>
           <div className={styles.content}>
             <Heading text={MSG.heading} appearance={{ size: 'medium' }} />
@@ -95,7 +96,7 @@ const StepMnemonic = ({
             />
             <Button
               appearance={{ theme: 'primary', size: 'large' }}
-              disabled={!isValid}
+              disabled={!isValid || (!dirty && !stepCompleted)}
               text={MSG.buttonAdvanceText}
               type="submit"
               loading={isSubmitting}

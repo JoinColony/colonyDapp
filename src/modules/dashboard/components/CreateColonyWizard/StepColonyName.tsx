@@ -77,7 +77,12 @@ const validationSchema = yup.object({
   displayName: yup.string().required(),
 });
 
-const StepColonyName = ({ wizardForm, nextStep, wizardValues }: Props) => {
+const StepColonyName = ({
+  wizardForm,
+  nextStep,
+  stepCompleted,
+  wizardValues,
+}: Props) => {
   const checkDomainTaken = useAsyncFunction({
     submit: ActionTypes.COLONY_NAME_CHECK_AVAILABILITY,
     success: ActionTypes.COLONY_NAME_CHECK_AVAILABILITY_SUCCESS,
@@ -124,7 +129,7 @@ const StepColonyName = ({ wizardForm, nextStep, wizardValues }: Props) => {
       validationSchema={validationSchema}
       {...wizardForm}
     >
-      {({ isValid, isSubmitting, values: { colonyName } }) => {
+      {({ isValid, isSubmitting, dirty, values: { colonyName } }) => {
         const normalized = ENS.normalizeAsText(colonyName);
         return (
           <section className={styles.main}>
@@ -199,7 +204,7 @@ const StepColonyName = ({ wizardForm, nextStep, wizardValues }: Props) => {
                   appearance={{ theme: 'primary', size: 'large' }}
                   type="submit"
                   data-test="claimColonyNameConfirm"
-                  disabled={!isValid}
+                  disabled={!isValid || (!dirty && !stepCompleted)}
                   loading={isSubmitting}
                   text={MSG.continue}
                 />

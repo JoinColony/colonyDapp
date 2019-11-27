@@ -96,6 +96,7 @@ type Props = WizardProps<FormValues>;
 const StepCreateToken = ({
   nextStep,
   previousStep,
+  stepCompleted,
   wizardForm,
   wizardValues,
 }: Props) => {
@@ -134,7 +135,7 @@ const StepCreateToken = ({
       validationSchema={validationSchema}
       {...wizardForm}
     >
-      {({ isSubmitting, isValid, status }) => (
+      {({ dirty, isSubmitting, isValid, status }) => (
         <div className={styles.main}>
           <section className={styles.titleSection}>
             <Heading appearance={{ size: 'medium', weight: 'bold' }}>
@@ -208,7 +209,7 @@ const StepCreateToken = ({
               text={MSG.nextButton}
               type="submit"
               data-test="definedTokenConfirm"
-              disabled={!isValid}
+              disabled={!isValid || (!dirty && !stepCompleted)}
               loading={isSubmitting}
             />
           </section>

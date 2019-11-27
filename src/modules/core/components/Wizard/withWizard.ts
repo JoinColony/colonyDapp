@@ -36,8 +36,9 @@ const withWizard = ({ steps, stepCount: maxSteps }: WizardArgs) => (
   class Wizard extends Component<Props, State> {
     state = { step: 0, values: List() };
 
-    setValues = (values?: Values) => {
+    next = (values: Values) => {
       this.setState(({ step, values: currentValues }) => ({
+        step: step + 1,
         values:
           values && Object.keys(values).length
             ? currentValues.set(step, values)
@@ -45,13 +46,7 @@ const withWizard = ({ steps, stepCount: maxSteps }: WizardArgs) => (
       }));
     };
 
-    next = (values: Values) => {
-      this.setState(({ step }) => ({ step: step + 1 }));
-      this.setValues(values);
-    };
-
     prev = () => {
-      // @ts-ignore
       const { step: currentStep } = this.state;
 
       /* Inform developer if step has been changed
@@ -67,7 +62,6 @@ const withWizard = ({ steps, stepCount: maxSteps }: WizardArgs) => (
 
     reset = () => {
       this.setState({ step: 0, values: List() });
-      this.setValues(List());
     };
 
     render() {
@@ -77,14 +71,16 @@ const withWizard = ({ steps, stepCount: maxSteps }: WizardArgs) => (
 
       if (!Step) throw new Error('Step needs to be implemented!');
 
-      const currentStep = step + 1;
+      const displayedStep = step + 1;
       const stepCount = maxSteps || (steps as any).length;
+
+      const stepValues = values.get(step);
 
       return createElement(
         OuterComponent,
         {
           // @ts-ignore
-          step: currentStep,
+          step: displayedStep,
           stepCount,
           nextStep: this.next,
           previousStep: this.prev,
@@ -93,18 +89,19 @@ const withWizard = ({ steps, stepCount: maxSteps }: WizardArgs) => (
           ...this.props,
         },
         createElement(Step, {
-          step: currentStep,
+          step: displayedStep,
           stepCount,
           nextStep: this.next,
           previousStep: this.prev,
           resetWizard: this.reset,
+          stepCompleted: !!stepValues,
           wizardValues: allValues,
           // Wizard form helpers to take some shortcuts if needed
           wizardForm: {
             // Get values just for this step
-            initialValues: values.get(step),
-            // It must be valid if we submitted values for this step before
-            isInitialValid: ({ initialValues }) => !!initialValues,
+            initialValues: stepValues || {},
+            // It should be valid if we submitted values for this step before
+            validateOnMount: !!stepValues,
           },
         }),
       );

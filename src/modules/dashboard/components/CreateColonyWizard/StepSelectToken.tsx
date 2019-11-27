@@ -89,6 +89,7 @@ export const validationSchema = yup.object({
 const StepSelectToken = ({
   nextStep,
   previousStep,
+  stepCompleted,
   wizardForm: { initialValues },
   wizardValues,
 }: Props) => {
@@ -150,7 +151,7 @@ const StepSelectToken = ({
         validationSchema={validationSchema}
         initialValues={initialValues}
       >
-        {({ isValid, setFieldValue, values }) => (
+        {({ dirty, isValid, setFieldValue, values }) => (
           <div>
             <TokenSelector
               tokenAddress={values.tokenAddress}
@@ -203,7 +204,7 @@ const StepSelectToken = ({
               <Button
                 appearance={{ theme: 'primary', size: 'large' }}
                 type="submit"
-                disabled={!isValid}
+                disabled={!isValid || (!dirty && !stepCompleted)}
                 text={MSG.continue}
               />
             </div>

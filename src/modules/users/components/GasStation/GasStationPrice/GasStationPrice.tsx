@@ -155,7 +155,6 @@ const GasStationPrice = ({ transaction: { id, gasLimit, error } }: Props) => {
         success={ActionTypes.TRANSACTION_SENT}
         error={ActionTypes.TRANSACTION_ERROR}
         validationSchema={validationSchema}
-        isInitialValid={!!initialFormValues.transactionSpeed}
         initialValues={initialFormValues}
         transform={transform}
       >
