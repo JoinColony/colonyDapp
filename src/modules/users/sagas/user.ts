@@ -251,16 +251,13 @@ function* usernameCreate({
 
     yield put(transactionLoadRelated(id, false));
 
-    // yield put<AllActions>({
-    //   type: ActionTypes.USERNAME_CREATE_SUCCESS,
-    //   payload: {
-    //     username,
-    //   },
-    //   meta,
-    // });
-
-    // // Dispatch an action to fetch the inbox items (see JoinColony/colonyDapp#1462)
-    // yield put(inboxItemsFetch());
+    yield put<AllActions>({
+      type: ActionTypes.USERNAME_CREATE_SUCCESS,
+      payload: {
+        username,
+      },
+      meta,
+    });
   } catch (error) {
     return yield putError(ActionTypes.USERNAME_CREATE_ERROR, error, meta);
   } finally {
