@@ -33,6 +33,7 @@ import { subscribeToColony } from '../../users/actionCreators';
 import { fetchDomainsAndRoles } from '../actionCreators/domains';
 import { getUserRoles } from '../../transformers';
 import { createColonyProfile } from '../data/commands';
+import { COLONY_CREATE } from '../mutations';
 import { getColonyName } from './shared';
 
 function* colonyCreate({
@@ -300,6 +301,19 @@ function* colonyCreate({
           name: tokenName,
           symbol: tokenSymbol,
         },
+      },
+    });
+
+    /*
+     * Create the colony in the Mongo Database
+     */
+    yield apolloClient.mutate({
+      mutation: CREATE_COLONY,
+      variables: {
+        input: {
+          colonyAddress,
+          colonyName,
+        }
       },
     });
 
