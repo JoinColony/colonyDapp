@@ -15,18 +15,9 @@ export const CREATE_USER = gql`
 `;
 
 export const EDIT_USER = gql`
-  mutation EditUser($address: String!, $profile: UserProfileInput!) {
-    editUser(address: $address, profile: $profile) {
+  mutation EditUser($input: EditUserInput!) {
+    editUser(input: $input) {
       id
-      profile {
-        username
-        walletAddress
-        avatarHash
-        bio
-        displayName
-        location
-        website
-      }
     }
   }
 `;

@@ -65,10 +65,13 @@ interface FormValues {
 }
 
 const validationSchema = yup.object({
-  bio: yup.string(),
-  displayName: yup.string(),
-  location: yup.string(),
-  website: yup.string().url(),
+  bio: yup.string().nullable(),
+  displayName: yup.string().nullable(),
+  location: yup.string().nullable(),
+  website: yup
+    .string()
+    .url()
+    .nullable(),
 });
 
 const UserProfileEdit = () => {
@@ -76,9 +79,8 @@ const UserProfileEdit = () => {
 
   const [editUser] = useMutation(EDIT_USER);
   const onSubmit = useCallback(
-    (profile: FormValues) =>
-      editUser({ variables: { address: walletAddress, profile } }),
-    [walletAddress, editUser],
+    (profile: FormValues) => editUser({ variables: { input: profile } }),
+    [editUser],
   );
 
   const { data } = useQuery(USER, {
