@@ -233,8 +233,6 @@ function* usernameCreate({
       },
     });
 
-    const { walletAddress } = yield getCurrentUser();
-
     const apolloClient: ApolloClient<any> = yield getContext(
       Context.APOLLO_CLIENT,
     );
@@ -246,10 +244,7 @@ function* usernameCreate({
     yield apolloClient.mutate({
       mutation: CREATE_USER,
       variables: {
-        createUserInput: {
-          address: walletAddress,
-          username,
-        },
+        createUserInput: { username },
         currentUserInput: { username },
       },
     });
