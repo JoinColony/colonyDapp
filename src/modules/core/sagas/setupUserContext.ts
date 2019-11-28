@@ -133,7 +133,7 @@ export default function* setupUserContext(
     yield apolloClient.mutate({
       mutation: SET_CURRENT_USER,
       variables: {
-        data: {
+        input: {
           balance: formatEther(balance),
           username,
           walletAddress,
@@ -156,14 +156,14 @@ export default function* setupUserContext(
       type: ActionTypes.USER_CONTEXT_SETUP_SUCCESS,
     });
 
-    try {
-      yield put<AllActions>({
-        type: ActionTypes.INBOX_ITEMS_FETCH,
-      });
-    } catch (caughtError) {
-      // It's ok if the user store doesn't exist (yet)
-      log.warn(caughtError);
-    }
+    // try {
+    //   yield put<AllActions>({
+    //     type: ActionTypes.INBOX_ITEMS_FETCH,
+    //   });
+    // } catch (caughtError) {
+    //   // It's ok if the user store doesn't exist (yet)
+    //   log.warn(caughtError);
+    // }
 
     yield call(setupOnBeforeUnload);
   } catch (caughtError) {
