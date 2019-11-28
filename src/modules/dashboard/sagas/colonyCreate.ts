@@ -28,7 +28,7 @@ import {
   transactionLoadRelated,
 } from '../../core/actionCreators';
 import { createTransaction, createTransactionChannels } from '../../core/sagas';
-import { inboxItemsFetch, subscribeToColony } from '../../users/actionCreators';
+import { subscribeToColony } from '../../users/actionCreators';
 import { fetchDomainsAndRoles } from '../actionCreators/domains';
 import { getUserRoles } from '../../transformers';
 import { createColonyProfile } from '../data/commands';
@@ -227,22 +227,12 @@ function* colonyCreate({
       yield apolloClient.mutate({
         mutation: CREATE_USER,
         variables: {
-          address: walletAddress,
-          username,
+          createUserInput: { username },
+          currentUserInput: { username },
         },
       });
 
       yield put<AllActions>(transactionLoadRelated(createUser.id, false));
-      yield put<AllActions>({
-        type: ActionTypes.USERNAME_CREATE_SUCCESS,
-        payload: {
-          username,
-        },
-        meta,
-      });
-
-      // Dispatch an action to fetch the inbox items (see JoinColony/colonyDapp#1462)
-      yield put(inboxItemsFetch());
     }
 
     /*
