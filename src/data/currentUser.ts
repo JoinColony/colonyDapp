@@ -58,13 +58,13 @@ export const initialCache = {
 
 export const resolvers = {
   Mutation: {
-    setCurrentUserData: (_root, { data }, { cache }) => {
+    setCurrentUserData: (_root, { input }, { cache }) => {
       const { currentUser } = cache.readQuery({ query: CURRENT_USER });
       const changedData = {
-        currentUser: assignDefined({ ...currentUser }, data),
+        currentUser: assignDefined({ ...currentUser }, input),
       };
       cache.writeQuery({ query: CURRENT_USER, data: changedData });
-      return data.currentUser;
+      return input.currentUser;
     },
   },
 };

@@ -26,9 +26,7 @@ export function* setupUserBalanceListener(walletAddress: Address) {
       yield apolloClient.mutate({
         mutation: SET_CURRENT_USER,
         variables: {
-          data: {
-            balance,
-          },
+          input: { balance },
         },
       });
     }
