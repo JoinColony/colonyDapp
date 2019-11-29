@@ -33,8 +33,9 @@ import { subscribeToColony } from '../../users/actionCreators';
 import { fetchDomainsAndRoles } from '../actionCreators/domains';
 import { getUserRoles } from '../../transformers';
 import { createColonyProfile } from '../data/commands';
-import { COLONY_CREATE } from '../mutations';
+import { CREATE_COLONY } from '../mutations';
 import { getColonyName } from './shared';
+import apolloClient from '~context/apolloClient';
 
 function* colonyCreate({
   meta,
