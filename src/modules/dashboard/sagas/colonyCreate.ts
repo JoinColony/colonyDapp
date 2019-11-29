@@ -314,6 +314,7 @@ function* colonyCreate({
         input: {
           colonyAddress,
           colonyName,
+          displayName,
         }
       },
     });
