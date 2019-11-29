@@ -4,6 +4,7 @@ import { defineMessages, FormattedMessage } from 'react-intl';
 import { subscribeActions as subscribeToReduxActions } from 'redux-action-watch/lib/actionCreators';
 import { useDispatch } from 'redux-react-hook';
 import throttle from 'lodash/throttle';
+import { useLazyQuery } from '@apollo/react-hooks';
 
 import { COLONY_TOTAL_BALANCE_DOMAIN_ID, ROOT_DOMAIN } from '~constants';
 import { Address } from '~types/index';
@@ -45,6 +46,7 @@ import {
 import ColonyFunding from './ColonyFunding';
 import ColonyMeta from './ColonyMeta';
 import TabContribute from './TabContribute';
+import { COLONY_BY_NAME } from '../../queries';
 
 import styles from './ColonyHome.css';
 
@@ -124,6 +126,22 @@ const ColonyHome = ({
 
   const dispatch = useDispatch();
 
+  const [
+    loadColony,
+    {
+      data: colonyData,
+      loading: colonyDataLoading
+    },
+  ] = useLazyQuery(COLONY_BY_NAME, {
+    variables: { name: colonyName },
+  });
+
+  useEffect(() => {
+    if (colonyName) {
+      loadColony();
+    }
+  }, [loadColony, colonyName]);
+
   /*
    * @NOTE this needs to return the `subscribeToReduxActions` function, since that returns an
    * unsubscriber, and that gets called when the component is unmounted
@@ -150,6 +168,9 @@ const ColonyHome = ({
     [setFilterOption],
   );
 
+  /*
+   * @TODO Remove after Apollo client is properly setup
+   */
   const { data: colonyAddress, error: addressError } = useDataFetcher(
     colonyAddressFetcher,
     [colonyName],
@@ -219,7 +240,9 @@ const ColonyHome = ({
     isFetchingColony ||
     !domains ||
     isFetchingDomains ||
-    !nativeTokenRef
+    !nativeTokenRef ||
+    !(colonyData  && colonyData.colonyByName) ||
+    colonyDataLoading
   ) {
     return (
       <LoadingTemplate loadingText={MSG.loadingText}>
@@ -263,7 +286,7 @@ const ColonyHome = ({
       <aside className={styles.colonyInfo}>
         <div className={styles.metaContainer}>
           <ColonyMeta
-            colony={colony}
+            colony={colonyData.colonyByName}
             canAdminister={!isInRecoveryMode && canAdminister(rootUserRoles)}
             domains={domains}
             filteredDomainId={filteredDomainId}
