@@ -7,12 +7,11 @@ import {
   ENSCache,
   UserInboxStore,
   UserMetadataStore,
-  UserProfileStore,
 } from '~data/types';
 import { Context } from '~context/index';
 import { log } from '~utils/debug';
 import { ZERO_ADDRESS } from '~utils/web3/constants';
-import { getUserProfileStore, getUserMetadataStore } from '~data/stores';
+import { getUserMetadataStore } from '~data/stores';
 import { createEvent } from '~data/utils';
 import { EventTypes } from '~data/constants';
 
@@ -29,7 +28,6 @@ import {
   CreateFinalizedCommandArgsSchema,
   CreateWorkRequestCommandArgsSchema,
   MarkNotificationsAsReadCommandArgsSchema,
-  SetUserAvatarCommandArgsSchema,
   UserUpdateTokensCommandArgsSchema,
 } from './schemas';
 
@@ -42,56 +40,10 @@ type UserMetadataStoreMetadata = {
   walletAddress: Address;
 };
 
-const prepareProfileCommand = async (
-  { ddb }: { ddb: DDB },
-  metadata: UserProfileStoreMetadata,
-) => getUserProfileStore(ddb)(metadata);
-
 const prepareMetadataCommand = async (
   { ddb }: { ddb: DDB },
   metadata: UserMetadataStoreMetadata,
 ) => getUserMetadataStore(ddb)(metadata);
-
-export const setUserAvatar: Command<
-  UserProfileStore,
-  UserProfileStoreMetadata,
-  {
-    ipfsHash: string;
-  },
-  string
-> = {
-  name: 'setUserAvatar',
-  context: [Context.DDB_INSTANCE],
-  schema: SetUserAvatarCommandArgsSchema,
-  prepare: prepareProfileCommand,
-  async execute(profileStore, { ipfsHash: avatarHash }) {
-    await profileStore.append(
-      createEvent(EventTypes.USER_AVATAR_UPLOADED, {
-        avatarHash,
-      }),
-    );
-    return avatarHash;
-  },
-};
-
-/**
- * @todo Unpin the avatar when the PinnerConnector supports it.
- */
-export const removeUserAvatar: Command<
-  UserProfileStore,
-  UserProfileStoreMetadata,
-  void,
-  UserProfileStore
-> = {
-  name: 'removeUserAvatar',
-  context: [Context.DDB_INSTANCE],
-  prepare: prepareProfileCommand,
-  async execute(profileStore) {
-    await profileStore.append(createEvent(EventTypes.USER_AVATAR_REMOVED));
-    await profileStore.load();
-    return profileStore;
-  },
-};
 
 export const updateTokens: Command<
   UserMetadataStore,

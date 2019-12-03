@@ -41,8 +41,6 @@ import { transactionLoadRelated } from '../../core/actionCreators';
 
 import {
   updateTokens,
-  removeUserAvatar,
-  setUserAvatar,
   subscribeToColony,
   subscribeToTask,
   unsubscribeToColony,
@@ -58,7 +56,7 @@ import {
   subscribeToUserColonies,
 } from '../data/queries';
 
-import { CREATE_USER } from '../mutations';
+import { CREATE_USER, EDIT_USER } from '../mutations';
 
 import { createTransaction, getTxChannel } from '../../core/sagas/transactions';
 
@@ -108,35 +106,15 @@ function* userAddressFetch({
   return null;
 }
 
-// function* userFetch({
-//   meta,
-//   payload: { userAddress },
-// }: Action<ActionTypes.USER_FETCH>) {
-//   try {
-//     const user = yield executeQuery(getUserProfile, {
-//       args: { walletAddress: userAddress },
-//       metadata: {
-//         walletAddress: userAddress,
-//       },
-//     });
-//     yield put<AllActions>({
-//       type: ActionTypes.USER_FETCH_SUCCESS,
-//       meta,
-//       payload: user,
-//     });
-//   } catch (error) {
-//     return yield putError(ActionTypes.USER_FETCH_ERROR, error, meta);
-//   }
-//   return null;
-// }
-
 function* userAvatarRemove({ meta }: Action<ActionTypes.USER_AVATAR_REMOVE>) {
   try {
     const { walletAddress } = yield getCurrentUser();
-    yield executeCommand(removeUserAvatar, {
-      metadata: {
-        walletAddress,
-      },
+    const apolloClient: ApolloClient<any> = yield getContext(
+      Context.APOLLO_CLIENT,
+    );
+    yield apolloClient.mutate({
+      mutation: EDIT_USER,
+      variables: { avatarHash: undefined },
     });
 
     yield put<AllActions>({
@@ -156,12 +134,14 @@ function* userAvatarUpload({
 }: Action<ActionTypes.USER_AVATAR_UPLOAD>) {
   try {
     const { walletAddress } = yield getCurrentUser();
+    const apolloClient: ApolloClient<any> = yield getContext(
+      Context.APOLLO_CLIENT,
+    );
     const ipfsHash = yield call(ipfsUpload, payload.data);
-    yield executeCommand(setUserAvatar, {
-      metadata: {
-        walletAddress,
-      },
-      args: { ipfsHash },
+
+    yield apolloClient.mutate({
+      mutation: EDIT_USER,
+      variables: { avatarHash: ipfsHash },
     });
 
     yield put<AllActions>({

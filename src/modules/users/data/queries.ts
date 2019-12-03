@@ -17,7 +17,6 @@ import {
   Subscription,
   UserInboxStore,
   UserMetadataStore,
-  UserProfileStore,
 } from '~data/types';
 import {
   ContractTransactionType,
@@ -42,7 +41,6 @@ import {
 import {
   getUserInboxStore,
   getUserMetadataStore,
-  getUserProfileStore,
   getUserProfileStoreAddress,
 } from '~data/stores';
 import { getUserTasksReducer } from './reducers';
@@ -73,26 +71,6 @@ const prepareMetadataStoreQuery = async (
   metadata: UserMetadataStoreMetadata,
 ) =>
   metadata.metadataStoreAddress ? getUserMetadataStore(ddb)(metadata) : null;
-
-// export const getUserProfile: Query<
-//   { apolloClient: ApolloClient<any> },
-//   UserProfileStoreMetadata,
-//   { walletAddress: Address },
-//   UserProfileType
-// > = {
-//   name: 'getUserProfile',
-//   context: [Context.DDB_INSTANCE, Context.APOLLO_CLIENT],
-//   prepare: async ({ apolloClient }) => ({ apolloClient }),
-//   async execute({ apolloClient }, { walletAddress }) {
-//     const { data } = await apolloClient.query<{
-//       user: { profile: UserProfileType };
-//     }>({
-//       query: USER,
-//       variables: { address: walletAddress },
-//     });
-//     return data.user.profile;
-//   },
-// };
 
 export const getUserTasks: Query<
   UserMetadataStore | null,
@@ -512,7 +490,6 @@ const getAllColonyEventsForUserInbox = async (
 export const getUserInboxActivity: Query<
   {
     userInboxStore: UserInboxStore | void;
-    userProfileStore: UserProfileStore | void;
     colonyClients: ColonyClient[];
     walletAddress: Address;
   },
@@ -530,12 +507,12 @@ export const getUserInboxActivity: Query<
     { colonyManager, ddb },
     { userColonies, inboxStoreAddress, walletAddress },
   ) {
-    let userProfileStore;
-    try {
-      userProfileStore = await getUserProfileStore(ddb)({ walletAddress });
-    } catch {
-      // Ignore the error; it's ok if the store doesn't exist yet
-    }
+    // let userProfileStore;
+    // try {
+    //   userProfileStore = await getUserProfileStore(ddb)({ walletAddress });
+    // } catch {
+    //   // Ignore the error; it's ok if the store doesn't exist yet
+    // }
 
     const userInboxStore = inboxStoreAddress
       ? await getUserInboxStore(ddb)({
@@ -551,14 +528,14 @@ export const getUserInboxActivity: Query<
     return {
       colonyClients,
       userInboxStore,
-      userProfileStore,
+      // userProfileStore,
       walletAddress,
     };
   },
   async execute({
     colonyClients,
     userInboxStore,
-    userProfileStore,
+    // userProfileStore,
     walletAddress,
   }) {
     const colonyEvents = await getAllColonyEventsForUserInbox(
@@ -574,14 +551,16 @@ export const getUserInboxActivity: Query<
           )
       : [];
 
-    const profileStoreEvents = userProfileStore
-      ? userProfileStore
-          .all()
-          .filter(({ type }) => type === EventTypes.USER_PROFILE_CREATED)
-          .map(event =>
-            normalizeDDBStoreEvent(userProfileStore.address.toString(), event),
-          )
-      : [];
+    /* This comment serves as a reference to what was done befor to get events */
+    // const profileStoreEvents = userProfileStore
+    //   ? userProfileStore
+    //       .all()
+    //       .filter(({ type }) => type === EventTypes.USER_PROFILE_CREATED)
+    //       .map(event =>
+    //         normalizeDDBStoreEvent(userProfileStore.address.toString(), event),
+    //       )
+    //   : [];
+    const profileStoreEvents = [];
 
     // Sort all events in descending date order
     return [...profileStoreEvents, ...inboxStoreEvents, ...colonyEvents].sort(
