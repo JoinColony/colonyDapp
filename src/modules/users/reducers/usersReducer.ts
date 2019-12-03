@@ -1,11 +1,9 @@
 import { combineReducers } from 'redux-immutable';
 
-import userProfilesReducer from './userProfilesReducer';
 import userColoniesReducer from './userColoniesReducer';
 
-import { USERS_COLONIES, USERS_USERS } from '../constants';
+import { USERS_COLONIES } from '../constants';
 
 export default combineReducers({
-  [USERS_USERS]: userProfilesReducer,
   [USERS_COLONIES]: userColoniesReducer,
 });

@@ -82,7 +82,7 @@ export const TEMP_getUserRolesWithRecovery = (
   domains: DomainsMapType | null,
   recoveryRoles: Address[],
   domainId: number | null,
-  userAddress: Address | null,
+  userAddress: Address | undefined,
   excludeInherited = false,
 ): ROLES[] => {
   if (!domainId || !userAddress) return [];

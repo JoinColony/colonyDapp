@@ -57,3 +57,8 @@ export type CurrentEvents<E extends Event<any>> = Extract<
 >;
 
 export type AllCurrentEvents = CurrentEvents<AllEvents>;
+
+export enum EVENT_SOURCE_TYPES {
+  CONTRACT = 'contract',
+  DB = 'db',
+}

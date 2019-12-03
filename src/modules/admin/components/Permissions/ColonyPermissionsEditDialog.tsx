@@ -12,9 +12,9 @@ import Dialog, { DialogSection } from '~core/Dialog';
 import { ActionForm, InputLabel } from '~core/Fields';
 import { SpinnerLoader } from '~core/Preloaders';
 import UserInfo from '~users/UserInfo';
+import { useUser } from '~data/helpers';
 
 import { TEMP_getUserRolesWithRecovery } from '../../../transformers';
-import { userFetcher } from '../../../users/fetchers';
 import {
   domainsAndRolesFetcher,
   TEMP_userHasRecoveryRoleFetcher,
@@ -53,11 +53,7 @@ const ColonyPermissionsEditDialog = ({
   domainId,
   userAddress,
 }: Props) => {
-  const { data: user } = useDataFetcher(
-    userFetcher,
-    [userAddress],
-    [userAddress],
-  );
+  const user = useUser(userAddress);
 
   const { data: domains } = useDataFetcher(
     domainsAndRolesFetcher,

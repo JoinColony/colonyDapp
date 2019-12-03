@@ -6,7 +6,7 @@ import { BrowserRouter } from 'react-router-dom';
 import en from 'react-intl/locale-data/en';
 import { Map as ImmutableMap, Record } from 'immutable';
 
-import { User, UserProfile, Wallet, WALLET_CATEGORIES } from '~immutable/index';
+import { Wallet, WALLET_CATEGORIES } from '~immutable/index';
 
 import { CoreTransactions } from '../modules/core/state/index';
 
@@ -49,14 +49,14 @@ const initialState = MockState({
     },
   },
   users: {
-    currentUser: User({
-      profile: UserProfile({
+    currentUser: {
+      profile: {
         username: 'piglet',
         walletAddress: '0xdeadbeef',
         inboxStoreAddress: '',
         metadataStoreAddress: '',
-      }),
-    }),
+      },
+    },
     wallet: Wallet({
       walletType: WALLET_CATEGORIES.SOFTWARE,
     }),

@@ -1,15 +1,15 @@
 import { FormikProps } from 'formik';
-import React, { useCallback, useMemo, useState } from 'react';
+import { useQuery } from '@apollo/react-hooks';
+import React, { useCallback, useState } from 'react';
 import { defineMessages } from 'react-intl';
 
 import { ROLES } from '~constants';
 import { Address } from '~types/index';
 import { mergePayload, withKey, mapPayload, pipe } from '~utils/actions';
-import { UserType, UserProfile, User } from '~immutable/index';
 import { ItemDataType } from '~core/OmniPicker';
 import { ActionTypeString, ActionTypes } from '~redux/index';
-import { useSelector, useDataFetcher, useTransformer } from '~utils/hooks';
-
+import { useDataFetcher, useTransformer } from '~utils/hooks';
+import { User } from '~data/types/index';
 import SingleUserPicker, { filterUserSelection } from '~core/SingleUserPicker';
 import { SpinnerLoader } from '~core/Preloaders';
 import Heading from '~core/Heading';
@@ -17,14 +17,14 @@ import Button from '~core/Button';
 import Dialog, { DialogSection } from '~core/Dialog';
 import { ActionForm, InputLabel } from '~core/Fields';
 import HookedUserAvatar from '~users/HookedUserAvatar';
+import { useUserLazy } from '~data/helpers';
 
+import { COLONY_SUBSCRIBED_USERS } from '../../../dashboard/queries';
 import { TEMP_getUserRolesWithRecovery } from '../../../transformers';
-import { getUserPickerData } from '../../../users/transformers';
 import {
   domainsAndRolesFetcher,
   TEMP_userHasRecoveryRoleFetcher,
 } from '../../../dashboard/fetchers';
-import { allUsersSelector } from '../../../users/selectors';
 import PermissionForm from './PermissionForm';
 
 import styles from './ColonyPermissionsDialog.css';
@@ -69,11 +69,9 @@ const availableRoles: ROLES[] = [
 
 const UserAvatar = HookedUserAvatar({ fetchUser: false });
 
-const supRenderAvatar = (address: string, item: ItemDataType<UserType>) => {
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const { id, ...user } = item;
-  return <UserAvatar address={address} user={user} size="xs" />;
-};
+const supRenderAvatar = (address: string, item: ItemDataType<User>) => (
+  <UserAvatar address={address} user={item} size="xs" />
+);
 
 const ColonyPermissionsAddDialog = ({
   colonyAddress,
@@ -81,13 +79,7 @@ const ColonyPermissionsAddDialog = ({
   close,
   domainId,
 }: Props) => {
-  const [selectedUserAddress, setSelectedUserAddress] = useState<string | null>(
-    null,
-  );
-
-  const allUsers = useSelector(allUsersSelector);
-
-  const users = useTransformer(getUserPickerData, [allUsers]);
+  const [selectedUserAddress, setSelectedUserAddress] = useState<string>();
 
   const { data: domains } = useDataFetcher(
     domainsAndRolesFetcher,
@@ -109,7 +101,7 @@ const ColonyPermissionsAddDialog = ({
   ]);
 
   const updateSelectedUser = useCallback(
-    (user: UserType) => {
+    (user: User) => {
       setSelectedUserAddress(user.profile.walletAddress);
     },
     [setSelectedUserAddress],
@@ -135,24 +127,17 @@ const ColonyPermissionsAddDialog = ({
     [colonyAddress, domainId],
   );
 
-  const user = useMemo(() => {
-    if (!selectedUserAddress) {
-      return null;
-    }
-    const userInStore = users.find(({ id }) => id === selectedUserAddress);
-    if (userInStore) {
-      return userInStore;
-    }
-    return User({
-      profile: UserProfile({
-        walletAddress: selectedUserAddress,
-      }),
-    }).toJS();
-  }, [selectedUserAddress, users]);
+  const { data: subscribedUsersData } = useQuery(COLONY_SUBSCRIBED_USERS, {
+    variables: { colonyAddress },
+  });
+
+  const user = useUserLazy(selectedUserAddress);
 
   return (
     <Dialog cancel={cancel}>
-      {!domains ? (
+      {!domains ||
+      !subscribedUsersData ||
+      !subscribedUsersData.colonySubscribedUsers ? (
         <SpinnerLoader />
       ) : (
         <ActionForm
@@ -181,7 +166,7 @@ const ColonyPermissionsAddDialog = ({
                   <InputLabel label={MSG.selectUser} />
                   <SingleUserPicker
                     appearance={{ width: 'wide' }}
-                    data={users}
+                    data={subscribedUsersData.colonySubscribedUsers}
                     name="user"
                     placeholder={MSG.search}
                     filter={filterUserSelection}

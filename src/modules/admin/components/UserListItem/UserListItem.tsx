@@ -8,9 +8,7 @@ import UserMention from '~core/UserMention';
 import { Address, ENTER } from '~types/index';
 import HookedUserAvatar from '~users/HookedUserAvatar';
 import { getMainClasses } from '~utils/css';
-import { useDataSubscriber } from '~utils/hooks';
-
-import { userSubscriber } from '../../../users/subscribers';
+import { useUser } from '~data/helpers';
 
 import styles from './UserListItem.css';
 
@@ -82,14 +80,12 @@ const UserListItem = ({
   onClick: callbackFn,
   onRemove,
 }: Props) => {
-  const { data: user } = useDataSubscriber(
-    userSubscriber,
-    [address],
-    [address],
-  );
+  // FIXME this can be sync and passed down from the parent as we can get the whole list of users easily
+  const user = useUser(address);
 
-  const { profile: { username = undefined, displayName = undefined } = {} } =
-    user || {};
+  const {
+    profile: { username, displayName },
+  } = user;
 
   const handleClick = useCallback(() => {
     if (typeof callbackFn === 'function') {

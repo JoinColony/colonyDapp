@@ -31,7 +31,6 @@ const duplicateActionGuardMiddleware = createDuplicateActionGuardMiddleware(
   ActionTypes.COLONY_FETCH,
   ActionTypes.COLONY_NAME_FETCH,
   ActionTypes.TASK_FETCH,
-  ActionTypes.USER_FETCH,
 );
 
 // Allows useDataSubsctiber to always dispatch, and prevents those actions from
@@ -49,7 +48,6 @@ const subscriberMiddleware = createSubscriberMiddleware(
   ],
   [ActionTypes.TASK_FEED_ITEMS_SUB_START, ActionTypes.TASK_FEED_ITEMS_SUB_STOP],
   [ActionTypes.TASK_SUB_START, ActionTypes.TASK_SUB_STOP],
-  [ActionTypes.USER_SUB_START, ActionTypes.USER_SUB_STOP],
   [
     ActionTypes.USER_SUBSCRIBED_COLONIES_SUB_START,
     ActionTypes.USER_SUBSCRIBED_COLONIES_SUB_STOP,
