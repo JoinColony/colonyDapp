@@ -137,7 +137,7 @@ const ColonyPermissionsAddDialog = ({
     <Dialog cancel={cancel}>
       {!domains ||
       !subscribedUsersData ||
-      !subscribedUsersData.colonySubscribedUsers ? (
+      !subscribedUsersData.colony.subscribedUsers ? (
         <SpinnerLoader />
       ) : (
         <ActionForm
