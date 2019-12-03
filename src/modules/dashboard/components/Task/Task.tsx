@@ -2,6 +2,7 @@ import React, { useState, useCallback } from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 import compose from 'recompose/compose';
 import { withRouter } from 'react-router-dom';
+import { useLazyQuery, useQuery } from '@apollo/react-hooks';
 
 import { ActionTypes } from '~redux/index';
 import {
@@ -37,12 +38,12 @@ import {
   canRequestToWork,
   isFinalized,
 } from '../../checks';
+import { TASK } from '../../queries';
 import {
   colonyAddressFetcher,
   domainsAndRolesFetcher,
 } from '../../../dashboard/fetchers';
 import { getUserRoles } from '../../../transformers';
-import { taskSubscriber } from '../../subscribers';
 
 import styles from './Task.css';
 
@@ -130,11 +131,11 @@ const Task = ({
     [colonyName],
   );
 
-  const { data: task, isFetching: isFetchingTask } = useDataSubscriber(
-    taskSubscriber,
-    [draftId],
-    [colonyAddress || undefined, draftId],
-  );
+  const { data, loading: isLoadingTask } = useQuery(TASK, {
+    variables: { id: draftId },
+  });
+  const { task } = data || {};
+
   const {
     description = undefined,
     domainId = undefined,
@@ -175,7 +176,7 @@ const Task = ({
   ]);
 
   if (
-    isFetchingTask ||
+    isLoadingTask ||
     isFetchingDomains ||
     !task ||
     !colonyAddress ||
