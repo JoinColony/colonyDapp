@@ -46,7 +46,7 @@ import {
 import ColonyFunding from './ColonyFunding';
 import ColonyMeta from './ColonyMeta';
 import TabContribute from './TabContribute';
-import { COLONY_BY_NAME } from '../../queries';
+import { GET_COLONY } from '../../queries';
 
 import styles from './ColonyHome.css';
 
@@ -65,7 +65,7 @@ const MSG = defineMessages({
   },
   labelFilter: {
     id: 'dashboard.ColonyHome.labelFilter',
-    defaultMessage: 'Filter',
+     defaultMessage: 'Filter',
   },
   placeholderFilter: {
     id: 'dashboard.ColonyHome.placeholderFilter',
@@ -126,22 +126,6 @@ const ColonyHome = ({
 
   const dispatch = useDispatch();
 
-  const [
-    loadColony,
-    {
-      data: colonyData,
-      loading: colonyDataLoading
-    },
-  ] = useLazyQuery(COLONY_BY_NAME, {
-    variables: { name: colonyName },
-  });
-
-  useEffect(() => {
-    if (colonyName) {
-      loadColony();
-    }
-  }, [loadColony, colonyName]);
-
   /*
    * @NOTE this needs to return the `subscribeToReduxActions` function, since that returns an
    * unsubscriber, and that gets called when the component is unmounted
@@ -169,7 +153,9 @@ const ColonyHome = ({
   );
 
   /*
-   * @TODO Remove after Apollo client is properly setup
+   * @NOTE Blockchain-first approach
+   * We get the colony's address from the ENS resolver, then using that,
+   * we fetch data from mongo
    */
   const { data: colonyAddress, error: addressError } = useDataFetcher(
     colonyAddressFetcher,
@@ -177,6 +163,25 @@ const ColonyHome = ({
     [colonyName],
   );
 
+  const [
+    loadColony,
+    {
+      data: colonyData,
+      loading: colonyDataLoading
+    },
+  ] = useLazyQuery(GET_COLONY, {
+    variables: { address: colonyAddress },
+  });
+
+  useEffect(() => {
+    if (colonyAddress) {
+      loadColony();
+    }
+  }, [loadColony, colonyAddress]);
+
+  /*
+   * @TODO Remove after Apollo client is properly setup
+   */
   const colonyArgs: [Address | undefined] = [colonyAddress || undefined];
   const {
     data: colony,
@@ -241,7 +246,10 @@ const ColonyHome = ({
     !domains ||
     isFetchingDomains ||
     !nativeTokenRef ||
-    !(colonyData  && colonyData.colonyByName) ||
+    /*
+     * @TODO Figure out a better way to handle returned query data prop naming
+     */
+    !(colonyData && colonyData.colony) ||
     colonyDataLoading
   ) {
     return (
@@ -286,7 +294,7 @@ const ColonyHome = ({
       <aside className={styles.colonyInfo}>
         <div className={styles.metaContainer}>
           <ColonyMeta
-            colony={colonyData.colonyByName}
+            colony={colonyData.colony}
             canAdminister={!isInRecoveryMode && canAdminister(rootUserRoles)}
             domains={domains}
             filteredDomainId={filteredDomainId}
