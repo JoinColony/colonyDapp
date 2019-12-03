@@ -6,7 +6,6 @@ import { TaskEvents } from './TaskEvents';
 import { TaskIndexEvents } from './TaskIndexEvents';
 import { UserInboxEvents } from './UserInboxEvents';
 import { UserMetadataEvents } from './UserMetadataEvents';
-import { UserProfileEvents } from './UserProfileEvents';
 
 /*
  * The definition of an event object.
@@ -36,8 +35,7 @@ export type AllEvents =
   | TaskIndexEvents
   | TaskEvents
   | UserMetadataEvents
-  | UserInboxEvents
-  | UserProfileEvents;
+  | UserInboxEvents;
 
 export type Event<T extends EventTypes> = Extract<
   AllEvents,
