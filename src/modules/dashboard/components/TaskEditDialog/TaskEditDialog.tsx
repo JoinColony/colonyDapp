@@ -175,7 +175,7 @@ const TaskEditDialog = ({
   });
 
   const subscribedColonyUsers =
-    (subscribedUsersData && subscribedUsersData.colonySubscribedUsers) || [];
+    (subscribedUsersData && subscribedUsersData.colony.subscribedUsers) || [];
 
   // FIXME This is temporarily to not break everything
   task.workRequests = [];
