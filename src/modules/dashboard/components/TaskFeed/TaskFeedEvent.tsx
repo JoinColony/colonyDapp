@@ -1,20 +1,22 @@
 import React, { useMemo } from 'react';
 import { defineMessages, FormattedMessage, injectIntl } from 'react-intl';
 import formatDate from 'sugar-date/date/format';
-import { TaskEvents } from '~data/types/TaskEvents';
 
+import { TaskEvents } from '~data/types/TaskEvents';
 import { ROOT_DOMAIN } from '~constants';
 import { Address } from '~types/index';
 import TimeRelative from '~core/TimeRelative';
 import Numeral from '~core/Numeral';
 import InfoPopover from '~core/InfoPopover';
-import taskSkillsTree from '../TaskSkills/taskSkillsTree';
-import { EventTypes } from '~data/constants';
-import { useDataFetcher, useSelector } from '~utils/hooks';
-import { domainSelector } from '../../selectors';
-import { userSelector } from '../../../users/selectors';
-import { tokenFetcher } from '../../fetchers';
 import styles from '~dashboard/TaskFeed/TaskFeedEvent.css';
+import { EventTypes } from '~data/constants';
+import { useUser } from '~data/helpers';
+import { useDataFetcher, useSelector } from '~utils/hooks';
+
+import { getFriendlyName } from '../../../users/transformers';
+import { domainSelector } from '../../selectors';
+import { tokenFetcher } from '../../fetchers';
+import taskSkillsTree from '../TaskSkills/taskSkillsTree';
 
 const componentDisplayName = 'dashboard.TaskFeedEvent';
 
@@ -106,20 +108,12 @@ interface InteractiveUsernameProps {
 }
 
 const InteractiveUsername = ({ userAddress }: InteractiveUsernameProps) => {
-  const user = useSelector(userSelector, [userAddress]);
-  let username;
-  let displayName;
-  if (user && user.record && user.record.profile) {
-    username = user.record.profile.username;
-    displayName = user.record.profile.displayName;
-  }
+  const user = useUser(userAddress);
+  const friendlyName = getFriendlyName(user);
   return (
-    <InfoPopover address={userAddress}>
-      <span
-        title={displayName || username || userAddress}
-        className={styles.highlightCursor}
-      >
-        {displayName || username || userAddress}
+    <InfoPopover user={user}>
+      <span title={friendlyName} className={styles.highlightCursor}>
+        {friendlyName}
       </span>
     </InfoPopover>
   );

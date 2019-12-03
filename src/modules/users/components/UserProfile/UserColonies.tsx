@@ -1,19 +1,19 @@
 import React from 'react';
 import { defineMessages } from 'react-intl';
 
-import { UserType } from '~immutable/index';
-import { useDataSubscriber, useSelector } from '~utils/hooks';
+import { User } from '~data/types/index';
+import { useDataSubscriber } from '~utils/hooks';
 import ColonyGrid from '~dashboard/ColonyGrid';
 import Link from '~core/Link';
 import { CREATE_COLONY_ROUTE } from '~routes/index';
 import { useCurrentUser } from '~data/helpers';
 
 import { userColoniesSubscriber } from '../../../dashboard/subscribers';
-import { friendlyUsernameSelector } from '../../selectors';
+import { getFriendlyName } from '../../transformers';
 import styles from './UserColonies.css';
 
 interface Props {
-  user: UserType;
+  user: User;
 }
 
 const MSG = defineMessages({
@@ -38,11 +38,9 @@ const UserColonies = ({ user }: Props) => {
   const { data: colonyAddresses } = useDataSubscriber(
     userColoniesSubscriber,
     [user.profile.walletAddress],
-    [user.profile.walletAddress, user.profile.metadataStoreAddress],
+    [user.profile.walletAddress, ''],
   );
-  const friendlyUsername = useSelector(friendlyUsernameSelector, [
-    user.profile.walletAddress,
-  ]) as string;
+  const friendlyName = getFriendlyName(user);
   const isCurrentUser = walletAddress === user.profile.walletAddress;
   return (
     <ColonyGrid
@@ -63,8 +61,8 @@ const UserColonies = ({ user }: Props) => {
             }
           : {
               friendlyUsername: (
-                <span title={friendlyUsername} className={styles.userHighlight}>
-                  {friendlyUsername}
+                <span title={friendlyName} className={styles.userHighlight}>
+                  {friendlyName}
                 </span>
               ),
             }

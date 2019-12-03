@@ -9,10 +9,12 @@ import Icon from '~core/Icon';
 import TransactionLink from '~core/TransactionLink';
 import { ActionTypes } from '~redux/index';
 import { mergePayload } from '~utils/actions';
-import { useDataFetcher, useDataSubscriber } from '~utils/hooks';
+import { useDataFetcher } from '~utils/hooks';
+import { useUserLazy } from '~data/helpers';
+
 import { tokenFetcher } from '../../../dashboard/fetchers';
-import { userSubscriber } from '../../../users/subscribers';
 import TransactionDetails from './TransactionDetails';
+
 import styles from './TransactionListItem.css';
 
 const MSG = defineMessages({
@@ -71,11 +73,8 @@ const TransactionListItem = ({
   transaction,
 }: Props) => {
   const userAddress = incoming ? senderAddress : recipientAddress;
-  const { data: user } = useDataSubscriber(
-    userSubscriber,
-    [userAddress as string],
-    [userAddress],
-  );
+
+  const user = useUserLazy(userAddress);
 
   const { data: token } = useDataFetcher(
     tokenFetcher,
@@ -126,7 +125,7 @@ const TransactionListItem = ({
       <TableCell className={styles.transactionDetails}>
         <TransactionDetails
           transaction={transaction}
-          user={user ? user.profile : undefined}
+          user={user}
           showMaskedAddress={showMaskedAddress}
         />
       </TableCell>

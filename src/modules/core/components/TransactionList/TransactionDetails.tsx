@@ -5,13 +5,14 @@ import {
   ColonyType,
   ContractTransactionType,
   TaskType,
-  UserProfileType,
 } from '~immutable/index';
 import { useDataSubscriber } from '~utils/hooks';
-import { colonySubscriber } from '../../../dashboard/subscribers';
 import MaskedAddress from '~core/MaskedAddress';
 import Link from '~core/Link';
 import { Address, ENSName } from '~types/index';
+import { User } from '~data/types/index';
+
+import { colonySubscriber } from '../../../dashboard/subscribers';
 
 import styles from './TransactionDetails.css';
 
@@ -35,7 +36,7 @@ const displayName = 'admin.TransactionList.TransactionDetails';
 interface Props {
   transaction: ContractTransactionType;
   task?: TaskType;
-  user?: UserProfileType;
+  user?: User;
 
   /*
    * User and colony addresses will always be shown; this controls whether the
@@ -49,24 +50,31 @@ interface HookedProps extends Props {
 }
 
 const UserDetails = ({
-  user: { displayName: userDisplayName = '', username = '', walletAddress },
-  address = walletAddress,
+  user,
+  address,
   showMaskedAddress,
 }: {
   address: Address;
   showMaskedAddress?: boolean;
-  user: UserProfileType;
-}) => (
-  <span>
-    {userDisplayName && <span>{`${userDisplayName} `}</span>}
-    {username && <span>{`@${username} `}</span>}
-    {!userDisplayName && !username && address && (
-      <span>
-        {showMaskedAddress ? <MaskedAddress address={address} /> : address}
-      </span>
-    )}
-  </span>
-);
+  user?: User;
+}) => {
+  // @TODO consider user a proper preloader here
+  if (!user) return null;
+  const {
+    profile: { displayName: userDisplayName, username },
+  } = user;
+  return (
+    <span>
+      {userDisplayName && <span>{`${userDisplayName} `}</span>}
+      {username && <span>{`@${username} `}</span>}
+      {!userDisplayName && !username && address && (
+        <span>
+          {showMaskedAddress ? <MaskedAddress address={address} /> : address}
+        </span>
+      )}
+    </span>
+  );
+};
 
 const ColonyDetails = ({
   colony: { displayName: colonyDisplayName, colonyAddress },

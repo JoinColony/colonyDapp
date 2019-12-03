@@ -1,5 +1,4 @@
 import { ColonyNetworkClient } from '@colony/colony-js-client';
-import { UserProfileType } from '~immutable/UserProfile';
 
 import ENS from '~lib/ENS';
 import { DDB } from '~lib/database';
@@ -7,8 +6,8 @@ import { Address, ColonyClient, createAddress, ENSCache } from '~types/index';
 import { UserMetadataStore } from '~data/types';
 
 import { EventTypes } from '~data/constants';
-import { getUserInboxStore, getUserProfileStore } from '~data/stores';
-import { getUserProfileReducer, getUserTokensReducer } from './reducers';
+import { getUserInboxStore } from '~data/stores';
+import { getUserTokensReducer } from './reducers';
 import {
   NOTIFICATION_EVENT_ASSIGNED,
   NOTIFICATION_EVENT_COLONY_ENS_CREATED,
@@ -55,15 +54,9 @@ export const getUserInboxStoreByProfileAddress = (ddb: DDB) => async ({
 }: {
   walletAddress: Address;
 }) => {
-  const profileStore = await getUserProfileStore(ddb)({ walletAddress });
-  const { inboxStoreAddress } = profileStore
-    .all()
-    .reduce(getUserProfileReducer, {} as UserProfileType);
-  if (!inboxStoreAddress) {
-    throw new Error('User profile inbox store not initialized.');
-  }
   return getUserInboxStore(ddb)({
-    inboxStoreAddress,
+    // FIXME this is just a stub
+    inboxStoreAddress: '',
     walletAddress,
   });
 };
@@ -106,7 +99,7 @@ export const decorateColonyEventPayload = ({ payload, ...event }: any) => ({
         case 'ColonyRoleSet':
           return {
             colonyAddress: event.meta.sourceId,
-            targetUserAddress: payload.address,
+            targetUser: payload.address,
           };
         case 'DomainAdded':
           return {

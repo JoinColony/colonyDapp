@@ -1,4 +1,3 @@
-import ApolloClient from 'apollo-client';
 import {
   COLONY_ROLE_ADMINISTRATION,
   COLONY_ROLES,
@@ -22,7 +21,6 @@ import {
 } from '~data/types';
 import {
   ContractTransactionType,
-  UserProfileType,
   UserTokenReferenceType,
 } from '~immutable/index';
 import {
@@ -47,8 +45,7 @@ import {
   getUserProfileStore,
   getUserProfileStoreAddress,
 } from '~data/stores';
-import { getUserProfileReducer, getUserTasksReducer } from './reducers';
-import { USER } from '../queries';
+import { getUserTasksReducer } from './reducers';
 import {
   decorateColonyEventPayload,
   getExtensionAddresses,
@@ -71,38 +68,31 @@ const prepareMetaColonyClientQuery = async ({
   colonyManager: ColonyManager;
 }) => colonyManager.getMetaColonyClient();
 
-const prepareProfileStoreQuery = async (
-  { ddb }: { ddb: DDB },
-  metadata: UserProfileStoreMetadata,
-) => getUserProfileStore(ddb)(metadata);
-
 const prepareMetadataStoreQuery = async (
   { ddb }: { ddb: DDB },
   metadata: UserMetadataStoreMetadata,
 ) =>
   metadata.metadataStoreAddress ? getUserMetadataStore(ddb)(metadata) : null;
 
-// This query is used by a few other sagas/queries(?) so we can't remove it for now
-// FIXME REMOVE
-export const getUserProfile: Query<
-  { apolloClient: ApolloClient<any> },
-  UserProfileStoreMetadata,
-  { walletAddress: Address },
-  UserProfileType
-> = {
-  name: 'getUserProfile',
-  context: [Context.DDB_INSTANCE, Context.APOLLO_CLIENT],
-  prepare: async ({ apolloClient }) => ({ apolloClient }),
-  async execute({ apolloClient }, { walletAddress }) {
-    const { data } = await apolloClient.query<{
-      user: { profile: UserProfileType };
-    }>({
-      query: USER,
-      variables: { address: walletAddress },
-    });
-    return data.user.profile;
-  },
-};
+// export const getUserProfile: Query<
+//   { apolloClient: ApolloClient<any> },
+//   UserProfileStoreMetadata,
+//   { walletAddress: Address },
+//   UserProfileType
+// > = {
+//   name: 'getUserProfile',
+//   context: [Context.DDB_INSTANCE, Context.APOLLO_CLIENT],
+//   prepare: async ({ apolloClient }) => ({ apolloClient }),
+//   async execute({ apolloClient }, { walletAddress }) {
+//     const { data } = await apolloClient.query<{
+//       user: { profile: UserProfileType };
+//     }>({
+//       query: USER,
+//       variables: { address: walletAddress },
+//     });
+//     return data.user.profile;
+//   },
+// };
 
 export const getUserTasks: Query<
   UserMetadataStore | null,
@@ -642,31 +632,6 @@ export const getUserNotificationMetadata: Query<
       readUntil,
       exceptFor,
     };
-  },
-};
-
-export const subscribeToUser: Subscription<
-  UserProfileStore,
-  UserProfileStoreMetadata,
-  void,
-  UserProfileType
-> = {
-  name: 'subscribeToUser',
-  context: [Context.DDB_INSTANCE],
-  prepare: prepareProfileStoreQuery,
-  async execute(profileStore) {
-    return emitter => [
-      profileStore.subscribe(events =>
-        emitter(
-          events &&
-            events.reduce(getUserProfileReducer, {
-              walletAddress: ZERO_ADDRESS,
-              inboxStoreAddress: '',
-              metadataStoreAddress: '',
-            }),
-        ),
-      ),
-    ];
   },
 };
 

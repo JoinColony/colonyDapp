@@ -3,7 +3,6 @@ import {
   ContractTransactionType,
   TaskDraftId,
   UserTokenReferenceType,
-  UserProfileType,
 } from '~immutable/index';
 
 import {
@@ -69,17 +68,6 @@ export type UserActionTypes =
       object
     >
   | ActionTypeWithPayloadAndMeta<
-      ActionTypes.USER_FETCH,
-      { userAddress: Address },
-      WithKey
-    >
-  | ErrorActionType<ActionTypes.USER_FETCH_ERROR, WithKey>
-  | ActionTypeWithPayloadAndMeta<
-      ActionTypes.USER_FETCH_SUCCESS,
-      UserProfileType,
-      WithKey
-    >
-  | ActionTypeWithPayloadAndMeta<
       ActionTypes.USER_NOTIFICATION_METADATA_FETCH,
       { readUntil: number; exceptFor: string[] },
       WithKey
@@ -142,22 +130,6 @@ export type UserActionTypes =
   | ActionType<ActionTypes.USER_LOGOUT>
   | ErrorActionType<ActionTypes.USER_LOGOUT_ERROR, object>
   | ActionType<ActionTypes.USER_LOGOUT_SUCCESS>
-  | ActionTypeWithPayloadAndMeta<
-      ActionTypes.USER_SUB_START,
-      { userAddress: Address },
-      WithKey
-    >
-  | ActionTypeWithPayloadAndMeta<
-      ActionTypes.USER_SUB_STOP,
-      { userAddress: Address },
-      WithKey
-    >
-  | ActionTypeWithPayloadAndMeta<
-      ActionTypes.USER_SUB_EVENTS,
-      UserProfileType,
-      WithKey
-    >
-  | ErrorActionType<ActionTypes.USER_SUB_ERROR, WithKey>
   | ActionTypeWithPayloadAndMeta<
       ActionTypes.USER_SUBSCRIBED_COLONIES_SUB_START,
       { walletAddress: Address; metadataStoreAddress: string },

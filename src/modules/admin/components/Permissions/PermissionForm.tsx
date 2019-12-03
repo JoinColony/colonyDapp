@@ -41,7 +41,7 @@ interface Props {
   colonyRecoveryRoles: Address[];
   domainId: number;
   domains: DomainsMapType;
-  userAddress: Address | null;
+  userAddress: Address | undefined;
   userRoles: ROLES[];
 }
 

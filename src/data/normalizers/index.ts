@@ -1,11 +1,5 @@
 import { Versions } from '../constants';
-import { Event } from '../types/index';
-
-export const CONTRACT_EVENT_SOURCE = 'contract';
-export const DDB_EVENT_SOURCE = 'ddb';
-
-// This should be opaque
-type EVENT_SOURCE_TYPE = 'contract' | 'ddb';
+import { Event, EVENT_SOURCE_TYPES } from '../types/index';
 
 interface NormalizedEvent {
   type: string; // Event type a.k.a event name
@@ -13,7 +7,7 @@ interface NormalizedEvent {
   meta: {
     id: string; // Orbit payload id or txHash_logIndex for tx logs
     sourceId: string; // Orbit store address or contract address
-    sourceType: EVENT_SOURCE_TYPE; // See above
+    sourceType: EVENT_SOURCE_TYPES; // See above
     actorId: string; // Wallet address for orbit-db events or tx sender address for tx logs
     timestamp: number;
     version: Versions;
@@ -41,7 +35,7 @@ export const normalizeDDBStoreEvent = (
   payload,
   meta: {
     id,
-    sourceType: DDB_EVENT_SOURCE,
+    sourceType: EVENT_SOURCE_TYPES.DB,
     sourceId: storeAddress,
     actorId: userAddress,
     timestamp,
@@ -66,7 +60,7 @@ export const normalizeTransactionLog = (
   },
   meta: {
     id: `${transactionHash}_${logIndex}`,
-    sourceType: CONTRACT_EVENT_SOURCE,
+    sourceType: EVENT_SOURCE_TYPES.CONTRACT,
     sourceId: contractAddress,
     actorId: from,
     timestamp,
