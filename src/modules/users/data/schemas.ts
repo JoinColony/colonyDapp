@@ -9,14 +9,6 @@ export const UserUpdateTokensCommandArgsSchema = yup.object({
   tokens: yup.array().of(yup.string()),
 });
 
-export const SetUserAvatarCommandArgsSchema = yup.object({
-  ipfsHash: yup
-    .string()
-    // @ts-ignore
-    .cid()
-    .required(),
-});
-
 export const CreateCommentMentionCommandArgsSchema = yup.object({
   colonyAddress: yup.string(),
   draftId: yup.string(),

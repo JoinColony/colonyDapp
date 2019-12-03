@@ -9,7 +9,6 @@ import {
   CommentsStore,
   TaskStore,
   UserMetadataStore,
-  UserProfileStore,
   UserInboxStore,
 } from './types';
 
@@ -167,16 +166,6 @@ export const createTaskStore = (
   ]);
   return { taskStore, commentsStore };
 };
-
-export const getUserProfileStore = (ddb: DDB) => async ({
-  walletAddress,
-}: {
-  walletAddress: Address;
-}) =>
-  ddb.getStore<UserProfileStore>(userProfileStoreBlueprint, walletAddress, {
-    chainId: CHAIN_ID,
-    walletAddress,
-  });
 
 export const getUserInboxStore = (ddb: DDB) => async ({
   inboxStoreAddress,

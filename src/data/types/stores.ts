@@ -7,7 +7,6 @@ import { CommentEvents } from '~data/types/CommentEvents';
 import { TaskEvents } from '~data/types/TaskEvents';
 import { UserInboxEvents } from '~data/types/UserInboxEvents';
 import { UserMetadataEvents } from '~data/types/UserMetadataEvents';
-import { UserProfileEvents } from '~data/types/UserProfileEvents';
 import { AccessController } from './accessControllers/index';
 import { EventStore } from '../../lib/database/stores/index';
 
@@ -19,7 +18,6 @@ export type CommentsStore = EventStore<CurrentEvents<CommentEvents>>;
 export type TaskStore = EventStore<CurrentEvents<TaskEvents>>;
 export type UserInboxStore = EventStore<CurrentEvents<UserInboxEvents>>;
 export type UserMetadataStore = EventStore<CurrentEvents<UserMetadataEvents>>;
-export type UserProfileStore = EventStore<CurrentEvents<UserProfileEvents>>;
 
 type StoreClassWrapper = typeof EventStore;
 
