@@ -1,18 +1,16 @@
 import { Record } from 'immutable';
 
-import { DefaultValues, RecordToJS } from '~types/index';
-
-import { UserType, UserRecord } from './User';
+import { Address, DefaultValues, RecordToJS } from '~types/index';
 
 interface TaskRatingRecordProps {
-  ratee: UserRecord;
-  rater: UserRecord;
+  ratee: Address;
+  rater: Address;
   rating: number;
 }
 
 export type TaskRatingType = Readonly<{
-  ratee: UserType;
-  rater: UserType;
+  ratee: Address;
+  rater: Address;
   rating: number;
 }>;
 

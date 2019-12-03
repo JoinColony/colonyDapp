@@ -7,12 +7,10 @@ import ExternalLink from '~core/ExternalLink';
 import TimeRelative from '~core/TimeRelative';
 import UserMention from '~core/UserMention';
 import HookedUserAvatar from '~users/HookedUserAvatar';
-import { useCurrentUser } from '~data/helpers';
-import { useDataSubscriber, useSelector } from '~utils/hooks';
+import { useCurrentUser, useUser } from '~data/helpers';
 
-import { userSubscriber } from '../../../users/subscribers';
 import TextDecorator from '../../../../lib/TextDecorator';
-import { friendlyUsernameSelector } from '../../../users/selectors';
+import { getFriendlyName } from '../../../users/transformers';
 
 import styles from './TaskFeedComment.css';
 
@@ -40,15 +38,8 @@ const TaskFeedComment = ({
   const { walletAddress } = useCurrentUser();
 
   const isCurrentUser = authorAddress === walletAddress;
-
-  const { data: creator } = useDataSubscriber(
-    userSubscriber,
-    [authorAddress],
-    [authorAddress],
-  );
-  const userDisplayName = useSelector(friendlyUsernameSelector, [
-    authorAddress,
-  ]);
+  const author = useUser(authorAddress);
+  const userDisplayName = getFriendlyName(author);
   return (
     <div
       className={`${styles.comment} ${
@@ -61,7 +52,7 @@ const TaskFeedComment = ({
         </div>
       )}
       <div className={styles.commentMain}>
-        {!isCurrentUser && creator && (
+        {!isCurrentUser && author && (
           <div className={styles.commentUsername}>
             <span>{userDisplayName}</span>
           </div>

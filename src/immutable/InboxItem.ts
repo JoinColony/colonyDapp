@@ -1,14 +1,16 @@
 import { Record } from 'immutable';
 
-import { Address, DefaultValues, RecordToJS } from '~types/index';
+import { DefaultValues, RecordToJS } from '~types/index';
+import { EVENT_SOURCE_TYPES, User } from '~data/types/index';
 
 interface Shared {
   id: string;
+  initiator: string | User;
   type: string;
   sourceId: string;
-  sourceType: string;
+  sourceType: EVENT_SOURCE_TYPES;
+  targetUser: string | User;
   timestamp?: number;
-  sourceAddress: Address;
   onClickRoute?: string;
   context: any;
   unread?: boolean;
@@ -18,11 +20,12 @@ export type InboxItemType = Readonly<Shared>;
 
 const defaultValues: DefaultValues<Shared> = {
   id: undefined,
+  initiator: undefined,
   type: undefined,
   timestamp: Date.now(),
   sourceId: undefined,
   sourceType: undefined,
-  sourceAddress: undefined,
+  targetUser: undefined,
   onClickRoute: undefined,
   context: undefined,
   unread: true,

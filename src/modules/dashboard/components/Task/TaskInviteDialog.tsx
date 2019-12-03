@@ -2,7 +2,8 @@ import React, { useCallback } from 'react';
 import { defineMessages } from 'react-intl';
 
 import { Address } from '~types/index';
-import { UserType, TaskPayoutType } from '~immutable/index';
+import { TaskPayoutType } from '~immutable/index';
+import { User } from '~data/types/index';
 import { mergePayload } from '~utils/actions';
 import Assignment from '~core/Assignment';
 import Button from '~core/Button';
@@ -33,7 +34,7 @@ const MSG = defineMessages({
 interface Props {
   colonyAddress: Address;
   draftId: string;
-  currentUser: UserType;
+  currentUser: User;
   cancel: () => void;
   close: () => void;
 }

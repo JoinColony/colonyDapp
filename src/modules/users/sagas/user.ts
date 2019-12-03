@@ -52,10 +52,8 @@ import {
   getUserAddress,
   getUserColonies,
   getUserColonyTransactions,
-  getUserProfile,
   getUserTasks,
   getUserTokens,
-  subscribeToUser,
   subscribeToUserTasks,
   subscribeToUserColonies,
 } from '../data/queries';
@@ -110,27 +108,27 @@ function* userAddressFetch({
   return null;
 }
 
-function* userFetch({
-  meta,
-  payload: { userAddress },
-}: Action<ActionTypes.USER_FETCH>) {
-  try {
-    const user = yield executeQuery(getUserProfile, {
-      args: { walletAddress: userAddress },
-      metadata: {
-        walletAddress: userAddress,
-      },
-    });
-    yield put<AllActions>({
-      type: ActionTypes.USER_FETCH_SUCCESS,
-      meta,
-      payload: user,
-    });
-  } catch (error) {
-    return yield putError(ActionTypes.USER_FETCH_ERROR, error, meta);
-  }
-  return null;
-}
+// function* userFetch({
+//   meta,
+//   payload: { userAddress },
+// }: Action<ActionTypes.USER_FETCH>) {
+//   try {
+//     const user = yield executeQuery(getUserProfile, {
+//       args: { walletAddress: userAddress },
+//       metadata: {
+//         walletAddress: userAddress,
+//       },
+//     });
+//     yield put<AllActions>({
+//       type: ActionTypes.USER_FETCH_SUCCESS,
+//       meta,
+//       payload: user,
+//     });
+//   } catch (error) {
+//     return yield putError(ActionTypes.USER_FETCH_ERROR, error, meta);
+//   }
+//   return null;
+// }
 
 function* userAvatarRemove({ meta }: Action<ActionTypes.USER_AVATAR_REMOVE>) {
   try {
@@ -504,41 +502,41 @@ function* userTaskSubscribe({
   return null;
 }
 
-function* userSubStart({
-  meta,
-  payload: { userAddress },
-}: Action<ActionTypes.USER_SUB_START>) {
-  let channel;
-  try {
-    channel = yield call(executeSubscription, subscribeToUser, {
-      metadata: { walletAddress: userAddress },
-    });
+// function* userSubStart({
+//   meta,
+//   payload: { userAddress },
+// }: Action<ActionTypes.USER_SUB_START>) {
+//   let channel;
+//   try {
+//     channel = yield call(executeSubscription, subscribeToUser, {
+//       metadata: { walletAddress: userAddress },
+//     });
 
-    yield fork(function* stopSubscription() {
-      yield take(
-        action =>
-          action.type === ActionTypes.USER_SUB_STOP &&
-          action.payload.userAddress === userAddress,
-      );
-      channel.close();
-    });
+//     yield fork(function* stopSubscription() {
+//       yield take(
+//         action =>
+//           action.type === ActionTypes.USER_SUB_STOP &&
+//           action.payload.userAddress === userAddress,
+//       );
+//       channel.close();
+//     });
 
-    while (true) {
-      const userProfile = yield take(channel);
-      yield put({
-        type: ActionTypes.USER_SUB_EVENTS,
-        meta,
-        payload: userProfile,
-      });
-    }
-  } catch (caughtError) {
-    return yield putError(ActionTypes.USER_SUB_ERROR, caughtError, meta);
-  } finally {
-    if (channel && typeof channel.close == 'function') {
-      channel.close();
-    }
-  }
-}
+//     while (true) {
+//       const userProfile = yield take(channel);
+//       yield put({
+//         type: ActionTypes.USER_SUB_EVENTS,
+//         meta,
+//         payload: userProfile,
+//       });
+//     }
+//   } catch (caughtError) {
+//     return yield putError(ActionTypes.USER_SUB_ERROR, caughtError, meta);
+//   } finally {
+//     if (channel && typeof channel.close == 'function') {
+//       channel.close();
+//     }
+//   }
+// }
 
 function* userSubscribedTasksSubStart() {
   const { walletAddress } = yield getCurrentUser();
@@ -623,8 +621,8 @@ export function* setupUsersSagas() {
   yield takeEvery(ActionTypes.USER_ADDRESS_FETCH, userAddressFetch);
   yield takeEvery(ActionTypes.USER_COLONY_SUBSCRIBE, userColonySubscribe);
   yield takeEvery(ActionTypes.USER_COLONY_UNSUBSCRIBE, userColonyUnsubscribe);
-  yield takeEvery(ActionTypes.USER_FETCH, userFetch);
-  yield takeEvery(ActionTypes.USER_SUB_START, userSubStart);
+  // yield takeEvery(ActionTypes.USER_FETCH, userFetch);
+  // yield takeEvery(ActionTypes.USER_SUB_START, userSubStart);
   yield takeEvery(
     ActionTypes.USER_SUBSCRIBED_COLONIES_FETCH,
     userSubscribedColoniesFetch

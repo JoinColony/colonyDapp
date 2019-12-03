@@ -1,13 +1,13 @@
 import React from 'react';
 
-import { TaskProps, UserType } from '~immutable/index';
+import { TaskProps } from '~immutable/index';
 import Assignment from '~core/Assignment';
 import { SpinnerLoader } from '~core/Preloaders';
-import { useDataSubscriber, useSelector } from '~utils/hooks';
+import { useSelector } from '~utils/hooks';
+import { useUser } from '~data/helpers';
 import { taskSelector } from '../../selectors';
 import { useColonyNativeToken } from '../../hooks/useColonyNativeToken';
 import { useColonyTokens } from '../../hooks/useColonyTokens';
-import { userSubscriber } from '../../../users/subscribers';
 
 // eslint-disable-next-line @typescript-eslint/no-empty-interface
 interface Props extends TaskProps<'colonyAddress' | 'draftId'> {}
@@ -19,13 +19,8 @@ const TaskAssignment = ({ colonyAddress, draftId }: Props) => {
   const nativeTokenReference = useColonyNativeToken(colonyAddress);
   const [, tokenOptions] = useColonyTokens(colonyAddress);
 
-  const workerAddress =
-    task && task.record ? task.record.workerAddress : undefined;
-  const { data: worker } = useDataSubscriber(
-    userSubscriber,
-    [workerAddress],
-    [workerAddress],
-  );
+  // FIXME we should expand the user from the task
+  const worker = useUser(task.record.workerAddress);
 
   return nativeTokenReference && tokenOptions ? (
     <Assignment
@@ -33,8 +28,8 @@ const TaskAssignment = ({ colonyAddress, draftId }: Props) => {
       payouts={task && task.record ? task.record.payouts : undefined}
       reputation={task && task.record ? task.record.reputation : undefined}
       tokenOptions={tokenOptions}
-      worker={worker as UserType}
-      workerAddress={workerAddress}
+      worker={worker}
+      workerAddress={task.record.workerAddress}
     />
   ) : (
     <SpinnerLoader />

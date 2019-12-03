@@ -1,11 +1,40 @@
 /* This file is already part of apollo data. Don't delete */
+import { useEffect } from 'react';
 import ApolloClient from 'apollo-client';
-import { useQuery } from '@apollo/react-hooks';
+import { useQuery, useLazyQuery } from '@apollo/react-hooks';
 import { graphql, DataValue } from '@apollo/react-hoc';
 import { getContext } from 'redux-saga/effects';
 
 import { Context } from '~context/index';
+import { Address } from '~types/index';
+// FIXME move that to this module
+import { User } from '~data/types/index';
+
+import { USER } from '../modules/users/queries';
 import { CurrentUser, CURRENT_USER } from './currentUser';
+
+const getMinimalUser = address => ({
+  id: address,
+  profile: { walletAddress: address },
+});
+
+// FIXME put these into the modules where they belong alongside with the queries and types
+export const useUser = (address: Address): User => {
+  const { data } = useQuery(USER, { variables: { address } }) as {
+    data?: { user: User };
+  };
+  return data ? data.user : getMinimalUser(address);
+};
+
+// FIXME error handling
+export const useUserLazy = (address?: Address): User | undefined => {
+  const [loadUser, { data }] = useLazyQuery(USER, { variables: { address } });
+  useEffect(() => {
+    if (address) loadUser();
+  }, [address, loadUser]);
+  if (!address) return undefined;
+  return data ? data.user : getMinimalUser(address);
+};
 
 /* All of these helper assume that the current user exists in the apollo cache at the time of calling them */
 

@@ -1,9 +1,13 @@
-import { UsersMapType } from './state/index';
+import { User } from '~data/types/index';
 
-export const getUserPickerData = (userData: UsersMapType) =>
-  Object.entries(userData)
-    .filter(([, { record }]) => !!(record && record.profile))
-    .map(([address, { record }]) => ({
-      id: address,
-      ...record,
-    }));
+export const getFriendlyName = (user?: User | string) => {
+  if (!user) return '';
+  if (typeof user === 'string') return user;
+  const { displayName, username, walletAddress } = user.profile;
+  return displayName || username || walletAddress;
+};
+
+export const getUsername = (user?: User) => {
+  if (!user) return '';
+  return user.profile.username;
+};

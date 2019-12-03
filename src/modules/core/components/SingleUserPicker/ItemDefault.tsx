@@ -2,7 +2,7 @@ import React, { ReactNode } from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 import cx from 'classnames';
 
-import { UserType } from '~immutable/index';
+import { User } from '~data/types/index';
 import { Address } from '~types/index';
 import { ItemDataType } from '~core/OmniPicker';
 import MaskedAddress from '~core/MaskedAddress';
@@ -18,8 +18,8 @@ const MSG = defineMessages({
 
 interface Props {
   walletAddress?: Address;
-  itemData: ItemDataType<UserType>;
-  renderAvatar: (address: Address, user: ItemDataType<UserType>) => ReactNode;
+  itemData: ItemDataType<User>;
+  renderAvatar: (address: Address, user: ItemDataType<User>) => ReactNode;
   selected?: boolean;
   showAddress?: boolean;
 

@@ -1,5 +1,5 @@
 import { Address } from '~types/index';
-import { TaskDraftId, UserProfileType } from '~immutable/index';
+import { TaskDraftId } from '~immutable/index';
 import { EventReducer } from '~data/types';
 
 import { EventTypes } from '~data/constants';
@@ -22,29 +22,6 @@ export const getUserTasksReducer: EventReducer<[Address, TaskDraftId][]> = (
     }
     default:
       return userTasks;
-  }
-};
-export const getUserProfileReducer: EventReducer<UserProfileType> = (
-  userProfile,
-  event,
-) => {
-  switch (event.type) {
-    case EventTypes.USER_PROFILE_CREATED:
-    case EventTypes.USER_PROFILE_UPDATED:
-    case EventTypes.USER_AVATAR_UPLOADED:
-      return {
-        ...userProfile,
-        ...event.payload,
-      };
-
-    case EventTypes.USER_AVATAR_REMOVED: {
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      const { avatarHash, ...rest } = userProfile;
-      return rest;
-    }
-
-    default:
-      return userProfile;
   }
 };
 

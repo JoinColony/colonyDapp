@@ -7,14 +7,12 @@ import moveDecimal from 'move-decimal-point';
 import BigNumber from 'bn.js';
 import { subscribeActions as subscribeToReduxActions } from 'redux-action-watch/lib/actionCreators';
 import { useDispatch } from 'redux-react-hook';
+import { useQuery } from '@apollo/react-hooks';
 
 import {
   TaskPayoutType,
   ColonyTokenReferenceType,
   TokenType,
-  UserProfile,
-  User,
-  UserType,
 } from '~immutable/index';
 import { ItemDataType } from '~core/OmniPicker';
 import SingleUserPicker, { filterUserSelection } from '~core/SingleUserPicker';
@@ -30,19 +28,14 @@ import { Tooltip } from '~core/Popover';
 import { ActionTypes } from '~redux/index';
 import HookedUserAvatar from '~users/HookedUserAvatar';
 import { mapPayload, mergePayload, pipe } from '~utils/actions';
-import {
-  useDataSubscriber,
-  useDataMapFetcher,
-  useSelector,
-} from '~utils/hooks';
+import { useDataSubscriber, useSelector } from '~utils/hooks';
+import { User } from '~data/types/index';
 
 import { createAddress } from '../../../../types';
 import { useColonyTokens } from '../../hooks/useColonyTokens';
-import { userMapFetcher } from '../../../users/fetchers';
-import { userSubscriber } from '../../../users/subscribers';
-import { allUsersAddressesSelector } from '../../../users/selectors';
 import { colonySubscriber } from '../../subscribers';
-import { taskSelector, taskRequestsSelector } from '../../selectors';
+import { taskSelector } from '../../selectors';
+import { COLONY_SUBSCRIBED_USERS } from '../../queries';
 import WrappedPayout from './WrappedPayout';
 
 import styles from './TaskEditDialog.css';
@@ -118,11 +111,9 @@ interface Props {
 
 const UserAvatar = HookedUserAvatar({ fetchUser: false });
 
-const supRenderAvatar = (address: string, item: ItemDataType<UserType>) => {
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const { id, ...user } = item;
-  return <UserAvatar address={address} user={user} size="xs" />;
-};
+const supRenderAvatar = (address: string, item: ItemDataType<User>) => (
+  <UserAvatar address={address} user={item} size="xs" />
+);
 
 const canAddTokens = (values, maxTokens) =>
   !maxTokens || (values.payouts && values.payouts.length < maxTokens);
@@ -164,6 +155,7 @@ const TaskEditDialog = ({
     [dispatch, closeDialog],
   );
 
+  // @TODO get the task data from db and extend all users in the task (worker, requested?)
   const task = useSelector(taskSelector, [draftId]);
 
   const colonyAddress =
@@ -178,48 +170,42 @@ const TaskEditDialog = ({
     colonyAddress,
   ) as [ColonyTokenReferenceType[], TokenType[]];
 
-  // Get users that have requested to work on this task
-  const userAddressesRequested = useSelector(taskRequestsSelector, [draftId]);
-  const userAddressesInStore = useSelector(allUsersAddressesSelector);
+  const { data: subscribedUsersData } = useQuery(COLONY_SUBSCRIBED_USERS, {
+    variables: { colonyAddress },
+  });
 
-  const userAddressesToPickFrom = userAddressesRequested.concat(
-    userAddressesInStore,
-  );
-  const uniqueUserAddressesToPickFrom = new Set<string>(
-    userAddressesToPickFrom,
-  );
+  const subscribedColonyUsers =
+    (subscribedUsersData && subscribedUsersData.colonySubscribedUsers) || [];
 
-  const userData = useDataMapFetcher(
-    userMapFetcher,
-    Array.from(uniqueUserAddressesToPickFrom),
-  );
+  // FIXME This is temporarily to not break everything
+  task.workRequests = [];
+  task.worker = {
+    profile: { walletAddress: '0x9df24e73f40b2a911eb254a8825103723e13209c' },
+  };
 
-  // Get user (worker) assigned to this task
-  const workerAddress =
-    task && task.record ? task.record.workerAddress : undefined;
-  const {
-    data: existingWorkerObj,
-    isFetching: isFetchingExistingWorker,
-  } = useDataSubscriber(userSubscriber, [workerAddress], [workerAddress]);
-  const existingWorker =
-    !!workerAddress && !existingWorkerObj
-      ? User({
-          profile: UserProfile({
-            walletAddress: workerAddress,
-          }),
-        }).toJS()
-      : existingWorkerObj;
+  /* Eventually we want to get the data like this:
+   * task(id: String!) {
+      workRequests {
+        id
+        profile {
+          ..
+        }
+      }
+      colony {
+       subscribedUsers {
+        id
+        profile {
+         displayName
+         walletAddress
+         username
+         avatarHash
+       }
+      }
+    }
+   */
+  const existingWorker = task.worker;
 
-  const users = useMemo(
-    () =>
-      userData
-        .filter(({ data }) => !!data)
-        .map(({ data, key }) => ({
-          id: key,
-          ...data,
-        })),
-    [userData],
-  );
+  const users = [...task.workRequests, ...subscribedColonyUsers];
 
   const taskPayouts = task && task.record ? task.record.payouts : [];
   const existingPayouts = useMemo(
@@ -325,6 +311,9 @@ const TaskEditDialog = ({
     [colonyAddress, draftId],
   );
 
+  // FIXME do actual checks if something is loading
+  const loading = false;
+
   return (
     <FullscreenDialog
       cancel={cancel}
@@ -339,7 +328,7 @@ const TaskEditDialog = ({
        */
       isDismissable={false}
     >
-      {isFetchingExistingWorker ? (
+      {loading ? (
         <SpinnerLoader />
       ) : (
         <ActionForm

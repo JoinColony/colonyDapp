@@ -15,13 +15,11 @@ import {
   useSelector,
   useAsyncFunction,
 } from '~utils/hooks';
-import { useCurrentUser } from '~data/helpers';
 
-import { userSubscriber } from '../../../subscribers';
 import { domainsFetcher, tokenFetcher } from '../../../../dashboard/fetchers';
 import { colonySubscriber } from '../../../../dashboard/subscribers';
 import { friendlyColonyNameSelector } from '../../../../dashboard/selectors';
-import { friendlyUsernameSelector, usernameSelector } from '../../../selectors';
+import { getFriendlyName, getUsername } from '../../../transformers';
 import { transformNotificationEventNames } from '../../../data/utils';
 import { ActionTypes } from '~redux/index';
 import { mergePayload } from '~utils/actions';
@@ -40,8 +38,8 @@ const LOCAL_MSG = defineMessages({
 
 const displayName = 'users.Inbox.InboxItem';
 
-interface Props {
-  activity: InboxItemType;
+export interface Props {
+  item: InboxItemType;
   full?: boolean;
 }
 
@@ -87,7 +85,7 @@ const readActions = {
 };
 
 const InboxItem = ({
-  activity: {
+  item: {
     unread = true,
     type: eventType,
     id,
@@ -98,33 +96,26 @@ const InboxItem = ({
       domainId,
       draftId,
       setTo,
-      targetUserAddress,
       taskTitle,
       tokenAddress,
     },
     onClickRoute,
-    sourceAddress: sourceUserAddress,
+    initiator,
+    // FIXME targetUser needs to be expanded on the db. If not given in event on db it needs to be the current user
+    targetUser,
     timestamp,
   },
   full,
 }: Props) => {
-  const { data: user, isFetching: isFetchingUser } = useDataSubscriber(
-    userSubscriber,
-    [sourceUserAddress],
-    [sourceUserAddress],
-  );
-  const sourceUserDisplayWithFallback = useSelector(friendlyUsernameSelector, [
-    sourceUserAddress,
-  ]);
-  const sourceUsername = user && user.profile && user.profile.username;
+  const initiatorFriendlyName =
+    typeof initiator == 'string' ? initiator : getFriendlyName(initiator);
+  const initiatorUsername =
+    typeof initiator == 'string' ? initiator : getUsername(initiator);
 
-  const { walletAddress } = useCurrentUser();
-  const targetUserDisplayWithFallback = useSelector(friendlyUsernameSelector, [
-    targetUserAddress || walletAddress,
-  ]);
-  const targetUsername = useSelector(usernameSelector, [
-    targetUserAddress || walletAddress,
-  ]);
+  const targetUserFriendlyName =
+    typeof targetUser == 'string' ? targetUser : getFriendlyName(targetUser);
+  const targetUserUsername =
+    typeof targetUser == 'string' ? targetUser : getUsername(targetUser);
 
   const { data: colony, isFetching: isFetchingColony } = useDataSubscriber(
     colonySubscriber,
@@ -157,8 +148,7 @@ const InboxItem = ({
   ]);
   const markAsRead = useAsyncFunction({ ...readActions, transform });
 
-  const isFetching =
-    isFetchingUser || isFetchingColony || isFetchingDomains || isFetchingToken;
+  const isFetching = isFetchingColony || isFetchingDomains || isFetchingToken;
 
   return (
     <TableRow onClick={() => markAsRead(id)}>
@@ -175,12 +165,12 @@ const InboxItem = ({
         ) : (
           <WithLink to={onClickRoute}>
             {unread && <UnreadIndicator type={getType(eventType)} />}
-            {user && (
+            {typeof initiator != 'string' && (
               <div className={styles.avatarWrapper}>
                 <UserAvatar
                   showInfo
                   size="xxs"
-                  address={user.profile.walletAddress}
+                  address={initiator.profile.walletAddress}
                   className={styles.userAvatar}
                 />
               </div>
@@ -217,14 +207,12 @@ const InboxItem = ({
                   domainName: makeInboxDetail(
                     currentDomain && currentDomain.name,
                   ),
-                  otherUser: makeInboxDetail(
-                    targetUserDisplayWithFallback,
-                    value =>
-                      targetUsername ? (
-                        <Link to={`/user/${targetUsername}`}>{value}</Link>
-                      ) : (
-                        value
-                      ),
+                  otherUser: makeInboxDetail(targetUserFriendlyName, value =>
+                    targetUserUsername ? (
+                      <Link to={`/user/${targetUserUsername}`}>{value}</Link>
+                    ) : (
+                      value
+                    ),
                   ),
                   task: makeInboxDetail(taskTitle, value =>
                     colonyName && draftId ? (
@@ -238,9 +226,9 @@ const InboxItem = ({
                   time: makeInboxDetail(timestamp, value => (
                     <TimeRelative value={value} />
                   )),
-                  user: makeInboxDetail(sourceUserDisplayWithFallback, value =>
-                    sourceUsername ? (
-                      <Link to={`/user/${sourceUsername}`}>{value}</Link>
+                  user: makeInboxDetail(initiatorFriendlyName, value =>
+                    initiatorUsername ? (
+                      <Link to={`/user/${initiatorUsername}`}>{value}</Link>
                     ) : (
                       value
                     ),

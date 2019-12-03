@@ -11,8 +11,9 @@ import Button from '~core/Button';
 import { SpinnerLoader } from '~core/Preloaders';
 import { Table, TableBody } from '~core/Table';
 import NavLink from '~core/NavLink';
+import { EVENT_SOURCE_TYPES } from '~data/types/index';
 
-import InboxItem from '../InboxItem';
+import { ChainInboxItem, InboxItem } from '../InboxItem';
 
 import { inboxItemsSelector } from '../../../selectors';
 
@@ -98,9 +99,13 @@ const InboxContainer = ({ full, close }: Props) => {
         {hasInboxItems && !isFetching && (
           <Table scrollable appearance={{ separators: 'borders' }}>
             <TableBody>
-              {inboxItems.map(activity => (
-                <InboxItem full={full} key={activity.id} activity={activity} />
-              ))}
+              {inboxItems.map(item =>
+                item.sourceType === EVENT_SOURCE_TYPES.DB ? (
+                  <InboxItem full={full} key={item.id} item={item} />
+                ) : (
+                  <ChainInboxItem full={full} key={item.id} item={item} />
+                ),
+              )}
             </TableBody>
           </Table>
         )}

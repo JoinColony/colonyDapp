@@ -9,9 +9,12 @@ import { SpinnerLoader } from '~core/Preloaders';
 import TimeRelative from '~core/TimeRelative';
 import TransactionLink from '~core/TransactionLink';
 import { useDataFetcher, useSelector } from '~utils/hooks';
+import { useUser } from '~data/helpers';
+
 import { tokenFetcher } from '../../fetchers';
-import { friendlyUsernameSelector } from '../../../users/selectors';
+import { getFriendlyName } from '../../../users/transformers';
 import { networkFeeInverseSelector } from '../../../core/selectors';
+
 import styles from './TaskFeedCompleteInfo.css';
 
 const MSG = defineMessages({
@@ -59,7 +62,7 @@ const TaskFeedCompleteInfo = ({
     },
   },
 }: Props) => {
-  const user = useSelector(friendlyUsernameSelector, [workerAddress]);
+  const user = useUser(workerAddress);
   const networkFeeInverse = useSelector(networkFeeInverseSelector);
   const { data: token, isFetching: isFetchingToken } = useDataFetcher(
     tokenFetcher,
@@ -87,7 +90,9 @@ const TaskFeedCompleteInfo = ({
           <FormattedMessage
             {...MSG.eventTaskSentMessage}
             values={{
-              user: <span className={styles.username}>{user}</span>,
+              user: (
+                <span className={styles.username}>{getFriendlyName(user)}</span>
+              ),
             }}
           />
           <span className={styles.timeSinceTx}>

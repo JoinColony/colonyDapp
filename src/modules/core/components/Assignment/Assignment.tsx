@@ -5,11 +5,14 @@ import {
   TaskPayoutType,
   ColonyTokenReferenceType,
   TokenType,
-  UserType,
 } from '~immutable/index';
 import { Address } from '~types/index';
+import { User } from '~data/types/index';
 import PayoutsList from '~core/PayoutsList';
 import UserInfo from '~users/UserInfo';
+
+import { getFriendlyName } from '../../../users/transformers';
+
 import styles from './Assignment.css';
 
 const MSG = defineMessages({
@@ -37,7 +40,7 @@ const MSG = defineMessages({
 
 interface Props {
   /** The worker that is assigned */
-  worker?: UserType;
+  worker?: User;
 
   /** The address of the above worker (used in the case of unclaimed worker profile) */
   workerAddress?: Address;
@@ -83,9 +86,7 @@ const Assignment = ({
         user={worker}
         placeholder={MSG.placeholder}
       >
-        {worker
-          ? worker.profile.displayName || worker.profile.username
-          : workerAddress}
+        {worker ? getFriendlyName(worker) : workerAddress}
         {pending && (
           <span className={styles.pendingLabel}>
             <FormattedMessage {...MSG.pendingAssignment} />
