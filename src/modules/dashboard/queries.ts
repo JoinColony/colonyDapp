@@ -2,7 +2,7 @@ import gql from 'graphql-tag';
 
 export const COLONY_SUBSCRIBED_USERS = gql`
   query ColonySubscribedUsers($colonyAddress: String!) {
-    colony(colonyAddress: $colonyAddress) {
+    colony(address: $colonyAddress) {
       id
       subscribedUsers {
         id
