@@ -113,7 +113,7 @@ function* userAvatarRemove({ meta }: Action<ActionTypes.USER_AVATAR_REMOVE>) {
     );
     yield apolloClient.mutate({
       mutation: EDIT_USER,
-      variables: { avatarHash: undefined },
+      variables: { input: { avatarHash: null } },
     });
 
     yield put<AllActions>({
@@ -140,7 +140,7 @@ function* userAvatarUpload({
 
     yield apolloClient.mutate({
       mutation: EDIT_USER,
-      variables: { avatarHash: ipfsHash },
+      variables: { input: { avatarHash: ipfsHash } },
     });
 
     yield put<AllActions>({
