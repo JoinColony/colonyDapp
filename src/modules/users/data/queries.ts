@@ -336,28 +336,6 @@ export const getUserColonyTransactions: Query<
   },
 };
 
-export const checkUsernameIsAvailable: Query<
-  { ens: ENSCache; networkClient: NetworkClient },
-  void,
-  { username: string },
-  boolean
-> = {
-  name: 'checkUsernameIsAvailable',
-  context: [Context.COLONY_MANAGER, Context.ENS_INSTANCE],
-  async prepare({
-    colonyManager: { networkClient },
-    ens,
-  }: {
-    colonyManager: ColonyManager;
-    ens: ENSCache;
-  }) {
-    return { ens, networkClient };
-  },
-  async execute({ ens, networkClient }, { username }) {
-    return ens.isENSNameAvailable('user', username, networkClient);
-  },
-};
-
 const getColonyEventsForUserInbox = async (
   colonyClient: ColonyClient,
   walletAddress: Address,
