@@ -97,7 +97,7 @@ const StepColonyName = ({
   const validateDomain = useCallback(
     async (values: FormValues) => {
       if (values && currentENSName === values.colonyName) {
-        return;
+        return {};
       }
       try {
         // Let's check whether this is even valid first
@@ -105,17 +105,18 @@ const StepColonyName = ({
       } catch (caughtError) {
         // Just return. The actual validation will be done by the
         // validationSchema
-        return;
+        return {};
       }
       try {
         await checkDomainTaken(values);
         setCurrentENSName(values.colonyName);
       } catch (e) {
-        const error = {
+        const errors = {
           colonyName: MSG.errorDomainTaken,
         };
-        throw error;
+        return errors;
       }
+      return {};
     },
     [checkDomainTaken, currentENSName, setCurrentENSName],
   );

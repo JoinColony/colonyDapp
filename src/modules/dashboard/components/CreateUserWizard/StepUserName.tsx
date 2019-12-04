@@ -86,16 +86,17 @@ const StepUserName = ({ wizardValues, nextStep }: Props) => {
       } catch (caughtError) {
         // Just return. The actual validation will be done by the
         // validationSchema
-        return;
+        return {};
       }
       try {
         await checkDomainTaken(values);
       } catch (e) {
-        const error = {
+        const errors = {
           username: MSG.errorDomainTaken,
         };
-        throw error;
+        return errors;
       }
+      return {};
     },
     [checkDomainTaken],
   );

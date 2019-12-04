@@ -46,7 +46,6 @@ import {
   unsubscribeToColony,
 } from '../data/commands';
 import {
-  checkUsernameIsAvailable,
   getUserAddress,
   getUserColonies,
   getUserColonyTransactions,
@@ -166,9 +165,15 @@ function* usernameCheckAvailability({
   try {
     yield delay(300);
 
-    const isAvailable = yield executeQuery(checkUsernameIsAvailable, {
-      args: { username },
-    });
+    const colonyManager = yield getContext(Context.COLONY_MANAGER);
+    const ens = yield getContext(Context.ENS_INSTANCE);
+
+    const isAvailable = yield call(
+      [ens, ens.isENSNameAvailable],
+      'user',
+      username,
+      colonyManager.networkClient,
+    );
 
     if (!isAvailable) {
       throw new Error(`ENS address for user "${username}" already exists`);
