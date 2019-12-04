@@ -1,6 +1,5 @@
 const path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
-const ForkTsCheckerWebpackPlugin = require('fork-ts-checker-webpack-plugin');
 const Dotenv = require('dotenv-webpack');
 const webpack = require('webpack');
 
@@ -178,10 +177,6 @@ const config = {
     new HtmlWebpackPlugin({
       template: 'src/templates/index.html',
       favicon: 'src/img/favicon.png',
-    }),
-    new ForkTsCheckerWebpackPlugin({
-      checkSyntacticErrors: true,
-      useTypescriptIncrementalApi: true,
     }),
     new webpack.HotModuleReplacementPlugin(),
   ],
