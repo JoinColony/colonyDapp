@@ -1,19 +1,19 @@
-mutation SetCurrentUser($input: CurrentUserInput!) {
-  setCurrentUser(input: $input) @client {
+mutation SetLoggedInUser($input: LoggedInUserInput!) {
+  setLoggedInUser(input: $input) @client {
     id
   }
 }
 
 mutation CreateUser(
   $createUserInput: CreateUserInput!
-  $currentUserInput: CurrentUserInput!
+  $loggedInUserInput: LoggedInUserInput!
 ) {
   # Create user on the server
   createUser(input: $createUserInput) {
     id
   }
   # Set the current user data to the given data
-  setCurrentUser(input: $currentUserInput) @client {
+  setLoggedInUser(input: $loggedInUserInput) @client {
     id
   }
 }

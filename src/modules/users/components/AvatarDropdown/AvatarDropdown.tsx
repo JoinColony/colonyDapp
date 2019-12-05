@@ -2,7 +2,7 @@ import React from 'react';
 
 import Popover from '~core/Popover';
 import HookedUserAvatar from '~users/HookedUserAvatar';
-import { useCurrentUser } from '~data/helpers';
+import { useLoggedInUser } from '~data/helpers';
 
 import AvatarDropdownPopover from './AvatarDropdownPopover';
 
@@ -13,7 +13,7 @@ const UserAvatar = HookedUserAvatar();
 const displayName = 'users.AvatarDropdown';
 
 const AvatarDropdown = () => {
-  const { username, walletAddress } = useCurrentUser();
+  const { username, walletAddress } = useLoggedInUser();
   return (
     <Popover
       content={({ close }) => (

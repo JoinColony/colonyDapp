@@ -6,7 +6,7 @@ import Numeral from '~core/Numeral';
 import QRCode from '~core/QRCode';
 import CopyableAddress from '~core/CopyableAddress';
 import { HistoryNavigation } from '~pages/NavigationWrapper';
-import { useCurrentUser } from '~data/helpers';
+import { useLoggedInUser } from '~data/helpers';
 
 import styles from './WizardTemplateColony.css';
 
@@ -30,7 +30,7 @@ const WizardTemplateColony = ({
   previousStep,
   hideQR = false,
 }: Props) => {
-  const { balance, walletAddress } = useCurrentUser();
+  const { balance, walletAddress } = useLoggedInUser();
   const customHandler = useCallback(() => previousStep(), [previousStep]);
   const ethBalance = toWei(balance, 'ether');
   return (

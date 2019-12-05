@@ -102,20 +102,11 @@ export type CurrentUser = IUser & {
   colonies: Array<Maybe<Colony>>,
   tasks: Array<Maybe<Task>>,
   notifications: Array<Maybe<Notification>>,
-  balance: Scalars['String'],
-  username?: Maybe<Scalars['String']>,
-  walletAddress: Scalars['String'],
 };
 
 
 export type CurrentUserNotificationsArgs = {
   read?: Maybe<Scalars['Boolean']>
-};
-
-export type CurrentUserInput = {
-  balance?: Maybe<Scalars['String']>,
-  username?: Maybe<Scalars['String']>,
-  walletAddress?: Maybe<Scalars['String']>,
 };
 
 export type Domain = {
@@ -176,6 +167,20 @@ export type IUser = {
   tasks: Array<Maybe<Task>>,
 };
 
+export type LoggedInUser = {
+   __typename?: 'LoggedInUser',
+  id: Scalars['String'],
+  balance: Scalars['String'],
+  username?: Maybe<Scalars['String']>,
+  walletAddress: Scalars['String'],
+};
+
+export type LoggedInUserInput = {
+  balance?: Maybe<Scalars['String']>,
+  username?: Maybe<Scalars['String']>,
+  walletAddress?: Maybe<Scalars['String']>,
+};
+
 export type MarkNotificationAsReadInput = {
   id: Scalars['String'],
 };
@@ -209,7 +214,7 @@ export type Mutation = {
   markAllNotificationsAsRead: Scalars['Boolean'],
   markNotificationAsRead: Scalars['Boolean'],
   sendTaskMessage: Scalars['Boolean'],
-  setCurrentUser: CurrentUser,
+  setLoggedInUser: LoggedInUser,
 };
 
 
@@ -343,8 +348,8 @@ export type MutationSendTaskMessageArgs = {
 };
 
 
-export type MutationSetCurrentUserArgs = {
-  input?: Maybe<CurrentUserInput>
+export type MutationSetLoggedInUserArgs = {
+  input?: Maybe<LoggedInUserInput>
 };
 
 export type Notification = {
@@ -360,6 +365,7 @@ export type Query = {
   domain: Colony,
   task: Task,
   currentUser: CurrentUser,
+  loggedInUser: LoggedInUser,
 };
 
 
@@ -556,22 +562,22 @@ export type UserProfile = {
   website?: Maybe<Scalars['String']>,
 };
 
-export type SetCurrentUserMutationVariables = {
-  input: CurrentUserInput
+export type SetLoggedInUserMutationVariables = {
+  input: LoggedInUserInput
 };
 
 
-export type SetCurrentUserMutation = (
+export type SetLoggedInUserMutation = (
   { __typename?: 'Mutation' }
-  & { setCurrentUser: (
-    { __typename?: 'CurrentUser' }
-    & Pick<CurrentUser, 'id'>
+  & { setLoggedInUser: (
+    { __typename?: 'LoggedInUser' }
+    & Pick<LoggedInUser, 'id'>
   ) }
 );
 
 export type CreateUserMutationVariables = {
   createUserInput: CreateUserInput,
-  currentUserInput: CurrentUserInput
+  loggedInUserInput: LoggedInUserInput
 };
 
 
@@ -580,9 +586,9 @@ export type CreateUserMutation = (
   & { createUser: Maybe<(
     { __typename?: 'User' }
     & Pick<User, 'id'>
-  )>, setCurrentUser: (
-    { __typename?: 'CurrentUser' }
-    & Pick<CurrentUser, 'id'>
+  )>, setLoggedInUser: (
+    { __typename?: 'LoggedInUser' }
+    & Pick<LoggedInUser, 'id'>
   ) }
 );
 
@@ -599,14 +605,14 @@ export type EditUserMutation = (
   )> }
 );
 
-export type CurrentUserQueryVariables = {};
+export type LoggedInUserQueryVariables = {};
 
 
-export type CurrentUserQuery = (
+export type LoggedInUserQuery = (
   { __typename?: 'Query' }
-  & { currentUser: (
-    { __typename?: 'CurrentUser' }
-    & Pick<CurrentUser, 'walletAddress' | 'balance' | 'username'>
+  & { loggedInUser: (
+    { __typename?: 'LoggedInUser' }
+    & Pick<LoggedInUser, 'walletAddress' | 'balance' | 'username'>
   ) }
 );
 
@@ -649,44 +655,44 @@ export type ColonySubscribedUsersQuery = (
 );
 
 
-export const SetCurrentUserDocument = gql`
-    mutation SetCurrentUser($input: CurrentUserInput!) {
-  setCurrentUser(input: $input) @client {
+export const SetLoggedInUserDocument = gql`
+    mutation SetLoggedInUser($input: LoggedInUserInput!) {
+  setLoggedInUser(input: $input) @client {
     id
   }
 }
     `;
-export type SetCurrentUserMutationFn = ApolloReactCommon.MutationFunction<SetCurrentUserMutation, SetCurrentUserMutationVariables>;
+export type SetLoggedInUserMutationFn = ApolloReactCommon.MutationFunction<SetLoggedInUserMutation, SetLoggedInUserMutationVariables>;
 
 /**
- * __useSetCurrentUserMutation__
+ * __useSetLoggedInUserMutation__
  *
- * To run a mutation, you first call `useSetCurrentUserMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useSetCurrentUserMutation` returns a tuple that includes:
+ * To run a mutation, you first call `useSetLoggedInUserMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useSetLoggedInUserMutation` returns a tuple that includes:
  * - A mutate function that you can call at any time to execute the mutation
  * - An object with fields that represent the current status of the mutation's execution
  *
  * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
  *
  * @example
- * const [setCurrentUserMutation, { data, loading, error }] = useSetCurrentUserMutation({
+ * const [setLoggedInUserMutation, { data, loading, error }] = useSetLoggedInUserMutation({
  *   variables: {
  *      input: // value for 'input'
  *   },
  * });
  */
-export function useSetCurrentUserMutation(baseOptions?: ApolloReactHooks.MutationHookOptions<SetCurrentUserMutation, SetCurrentUserMutationVariables>) {
-        return ApolloReactHooks.useMutation<SetCurrentUserMutation, SetCurrentUserMutationVariables>(SetCurrentUserDocument, baseOptions);
+export function useSetLoggedInUserMutation(baseOptions?: ApolloReactHooks.MutationHookOptions<SetLoggedInUserMutation, SetLoggedInUserMutationVariables>) {
+        return ApolloReactHooks.useMutation<SetLoggedInUserMutation, SetLoggedInUserMutationVariables>(SetLoggedInUserDocument, baseOptions);
       }
-export type SetCurrentUserMutationHookResult = ReturnType<typeof useSetCurrentUserMutation>;
-export type SetCurrentUserMutationResult = ApolloReactCommon.MutationResult<SetCurrentUserMutation>;
-export type SetCurrentUserMutationOptions = ApolloReactCommon.BaseMutationOptions<SetCurrentUserMutation, SetCurrentUserMutationVariables>;
+export type SetLoggedInUserMutationHookResult = ReturnType<typeof useSetLoggedInUserMutation>;
+export type SetLoggedInUserMutationResult = ApolloReactCommon.MutationResult<SetLoggedInUserMutation>;
+export type SetLoggedInUserMutationOptions = ApolloReactCommon.BaseMutationOptions<SetLoggedInUserMutation, SetLoggedInUserMutationVariables>;
 export const CreateUserDocument = gql`
-    mutation CreateUser($createUserInput: CreateUserInput!, $currentUserInput: CurrentUserInput!) {
+    mutation CreateUser($createUserInput: CreateUserInput!, $loggedInUserInput: LoggedInUserInput!) {
   createUser(input: $createUserInput) {
     id
   }
-  setCurrentUser(input: $currentUserInput) @client {
+  setLoggedInUser(input: $loggedInUserInput) @client {
     id
   }
 }
@@ -707,7 +713,7 @@ export type CreateUserMutationFn = ApolloReactCommon.MutationFunction<CreateUser
  * const [createUserMutation, { data, loading, error }] = useCreateUserMutation({
  *   variables: {
  *      createUserInput: // value for 'createUserInput'
- *      currentUserInput: // value for 'currentUserInput'
+ *      loggedInUserInput: // value for 'loggedInUserInput'
  *   },
  * });
  */
@@ -749,9 +755,9 @@ export function useEditUserMutation(baseOptions?: ApolloReactHooks.MutationHookO
 export type EditUserMutationHookResult = ReturnType<typeof useEditUserMutation>;
 export type EditUserMutationResult = ApolloReactCommon.MutationResult<EditUserMutation>;
 export type EditUserMutationOptions = ApolloReactCommon.BaseMutationOptions<EditUserMutation, EditUserMutationVariables>;
-export const CurrentUserDocument = gql`
-    query CurrentUser {
-  currentUser @client {
+export const LoggedInUserDocument = gql`
+    query LoggedInUser {
+  loggedInUser @client {
     walletAddress
     balance
     username
@@ -760,29 +766,29 @@ export const CurrentUserDocument = gql`
     `;
 
 /**
- * __useCurrentUserQuery__
+ * __useLoggedInUserQuery__
  *
- * To run a query within a React component, call `useCurrentUserQuery` and pass it any options that fit your needs.
- * When your component renders, `useCurrentUserQuery` returns an object from Apollo Client that contains loading, error, and data properties 
+ * To run a query within a React component, call `useLoggedInUserQuery` and pass it any options that fit your needs.
+ * When your component renders, `useLoggedInUserQuery` returns an object from Apollo Client that contains loading, error, and data properties 
  * you can use to render your UI.
  *
  * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
  *
  * @example
- * const { data, loading, error } = useCurrentUserQuery({
+ * const { data, loading, error } = useLoggedInUserQuery({
  *   variables: {
  *   },
  * });
  */
-export function useCurrentUserQuery(baseOptions?: ApolloReactHooks.QueryHookOptions<CurrentUserQuery, CurrentUserQueryVariables>) {
-        return ApolloReactHooks.useQuery<CurrentUserQuery, CurrentUserQueryVariables>(CurrentUserDocument, baseOptions);
+export function useLoggedInUserQuery(baseOptions?: ApolloReactHooks.QueryHookOptions<LoggedInUserQuery, LoggedInUserQueryVariables>) {
+        return ApolloReactHooks.useQuery<LoggedInUserQuery, LoggedInUserQueryVariables>(LoggedInUserDocument, baseOptions);
       }
-export function useCurrentUserLazyQuery(baseOptions?: ApolloReactHooks.LazyQueryHookOptions<CurrentUserQuery, CurrentUserQueryVariables>) {
-          return ApolloReactHooks.useLazyQuery<CurrentUserQuery, CurrentUserQueryVariables>(CurrentUserDocument, baseOptions);
+export function useLoggedInUserLazyQuery(baseOptions?: ApolloReactHooks.LazyQueryHookOptions<LoggedInUserQuery, LoggedInUserQueryVariables>) {
+          return ApolloReactHooks.useLazyQuery<LoggedInUserQuery, LoggedInUserQueryVariables>(LoggedInUserDocument, baseOptions);
         }
-export type CurrentUserQueryHookResult = ReturnType<typeof useCurrentUserQuery>;
-export type CurrentUserLazyQueryHookResult = ReturnType<typeof useCurrentUserLazyQuery>;
-export type CurrentUserQueryResult = ApolloReactCommon.QueryResult<CurrentUserQuery, CurrentUserQueryVariables>;
+export type LoggedInUserQueryHookResult = ReturnType<typeof useLoggedInUserQuery>;
+export type LoggedInUserLazyQueryHookResult = ReturnType<typeof useLoggedInUserLazyQuery>;
+export type LoggedInUserQueryResult = ApolloReactCommon.QueryResult<LoggedInUserQuery, LoggedInUserQueryVariables>;
 export const UserDocument = gql`
     query User($address: String!) {
   user(address: $address) {

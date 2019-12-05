@@ -15,7 +15,7 @@ import CreateWalletWizard from '~users/CreateWalletWizard';
 import UserProfile from '~users/UserProfile';
 import UserProfileEdit from '~users/UserProfileEdit';
 import AdminDashboard from '~admin/AdminDashboard';
-import { useCurrentUser } from '~data/helpers';
+import { useLoggedInUser } from '~data/helpers';
 
 import {
   CONNECT_ROUTE,
@@ -48,7 +48,7 @@ const MSG = defineMessages({
 });
 
 const Routes = () => {
-  const { walletAddress, username } = useCurrentUser();
+  const { walletAddress, username } = useLoggedInUser();
   const isConnected = !!walletAddress;
   const didClaimProfile = !!username;
   return (

@@ -14,7 +14,7 @@ import { ActionTypes } from '~redux/index';
 import Icon from '~core/Icon';
 import { Table, TableBody } from '~core/Table';
 import { ActionButton } from '~core/Button';
-import { useCurrentUser } from '~data/helpers';
+import { useLoggedInUser } from '~data/helpers';
 
 import { tasksByIdSubscriber, userColoniesSubscriber } from '../../subscribers';
 import {
@@ -141,7 +141,7 @@ const TaskList = ({
     [filter, sort, tasksData],
   );
 
-  const { username } = useCurrentUser();
+  const { username } = useLoggedInUser();
   const { data: colonyAddresses } = useDataSubscriber(
     userColoniesSubscriber,
     [walletAddress],

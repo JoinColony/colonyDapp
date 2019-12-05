@@ -8,7 +8,7 @@ import { mergePayload } from '~utils/actions';
 import withDialog from '~core/Dialog/withDialog';
 import Button, { ActionButton } from '~core/Button';
 import unfinishedProfileOpener from '~users/UnfinishedProfile';
-import { useCurrentUser } from '~data/helpers';
+import { useLoggedInUser } from '~data/helpers';
 
 import { canRequestToWork, hasRequestedToWork } from '../../checks';
 
@@ -39,7 +39,7 @@ const TaskRequestWork = ({
   task,
   history,
 }: Props) => {
-  const { username, walletAddress } = useCurrentUser();
+  const { username, walletAddress } = useLoggedInUser();
 
   const transform = useCallback(mergePayload({ colonyAddress, draftId }), [
     colonyAddress,

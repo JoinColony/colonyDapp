@@ -3,7 +3,7 @@ import React, { useCallback } from 'react';
 
 import Heading from '~core/Heading';
 import ENS from '~lib/ENS';
-import { useCurrentUser } from '~data/helpers';
+import { useLoggedInUser } from '~data/helpers';
 
 import styles from './CreateColonyCardRow.css';
 
@@ -82,7 +82,7 @@ const formatGeneralEntry = (values, { valueKey }) => (
 );
 
 const CardRow = ({ cardOptions, values }: CardProps) => {
-  const { username } = useCurrentUser();
+  const { username } = useLoggedInUser();
 
   const getHeadingPreviewText = useCallback(
     option => {

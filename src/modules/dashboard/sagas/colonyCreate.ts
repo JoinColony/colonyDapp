@@ -17,7 +17,7 @@ import { Context, getContext } from '~context/index';
 import ENS from '~lib/ENS';
 import { createAddress, ContractContexts } from '~types/index';
 import { parseExtensionDeployedLog } from '~utils/web3/eventLogs/eventParsers';
-import { getCurrentUser } from '~data/helpers';
+import { getLoggedInUser } from '~data/helpers';
 import { CreateUserDocument } from '~data/index';
 
 import { TxConfig } from '../../core/types';
@@ -48,7 +48,7 @@ function* colonyCreate({
     username: givenUsername,
   },
 }: Action<ActionTypes.COLONY_CREATE>) {
-  const { username: currentUsername, walletAddress } = yield getCurrentUser();
+  const { username: currentUsername, walletAddress } = yield getLoggedInUser();
 
   /*
    * Define a manifest of transaction ids and their respective channels.
@@ -228,7 +228,7 @@ function* colonyCreate({
         mutation: CreateUserDocument,
         variables: {
           createUserInput: { username },
-          currentUserInput: { username },
+          loggedInUserInput: { username },
         },
       });
 
@@ -458,7 +458,7 @@ function* colonyRecover({
     colonyAddress,
   );
   try {
-    const { walletAddress } = yield getCurrentUser();
+    const { walletAddress } = yield getLoggedInUser();
 
     yield put(fetchDomainsAndRoles(colonyAddress));
 

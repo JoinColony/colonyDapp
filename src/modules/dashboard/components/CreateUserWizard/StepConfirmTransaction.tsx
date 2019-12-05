@@ -4,7 +4,7 @@ import { Redirect } from 'react-router';
 
 import { DASHBOARD_ROUTE } from '~routes/index';
 import { useSelector } from '~utils/hooks';
-import { useCurrentUser } from '~data/helpers';
+import { useLoggedInUser } from '~data/helpers';
 
 import { groupedTransactions } from '../../../core/selectors';
 import {
@@ -31,7 +31,7 @@ const MSG = defineMessages({
 const displayName = 'dashboard.CreateUserWizard.StepConfirmTransaction';
 
 const StepConfirmTransaction = () => {
-  const { username } = useCurrentUser();
+  const { username } = useLoggedInUser();
   const transactionGroups = useSelector(groupedTransactions);
 
   if (username) {

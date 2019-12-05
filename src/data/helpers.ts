@@ -7,9 +7,9 @@ import { getContext } from 'redux-saga/effects';
 
 import { Context } from '~context/index';
 import { Address } from '~types/index';
-import { CurrentUser, User } from '~data/index';
+import { LoggedInUser, User } from '~data/index';
 
-import { CurrentUserDocument, UserDocument } from './index';
+import { LoggedInUserDocument, UserDocument } from './index';
 
 const getMinimalUser = address => ({
   id: address,
@@ -38,45 +38,45 @@ export const useUserLazy = (address?: Address): User | undefined => {
   return data ? data.user : getMinimalUser(address);
 };
 
-/* All of these helper assume that the current user exists in the apollo cache at the time of calling them */
+/* All of these helper assume that the logged in user exists in the apollo cache at the time of calling them */
 
 // Meant to be used as a hook in react components
-export const useCurrentUser = () => {
+export const useLoggedInUser = () => {
   const {
-    data: { currentUser },
-  } = useQuery(CurrentUserDocument) as {
+    data: { loggedInUser },
+  } = useQuery(LoggedInUserDocument) as {
     data: {
-      currentUser: CurrentUser;
+      loggedInUser: LoggedInUser;
     };
   };
-  return currentUser;
+  return loggedInUser;
 };
 
 // Meant to be used as a saga in a proper context
-export function* getCurrentUser() {
+export function* getLoggedInUser() {
   const apolloClient: ApolloClient<any> = yield getContext(
     Context.APOLLO_CLIENT,
   );
-  const result = yield apolloClient.query({ query: CurrentUserDocument });
+  const result = yield apolloClient.query({ query: LoggedInUserDocument });
   const {
-    data: { currentUser },
+    data: { loggedInUser },
   } = result as {
     data: {
-      currentUser: CurrentUser;
+      loggedInUser: LoggedInUser;
     };
   };
-  return currentUser;
+  return loggedInUser;
 }
 
 // Meant to be used as a hoc in compose calls
 // @todo use hooks for wizard
 // @body Because of the legacy code of the wizard that still doesn't use hooks
 // we are obligated to use a hoc here, which is unfortunate. We should change that
-export const withCurrentUser = graphql(CurrentUserDocument, {
+export const withLoggedInUser = graphql(LoggedInUserDocument, {
   props: ({ data }) => {
-    const mappedData = data as DataValue<{ currentUser: CurrentUser }>;
+    const mappedData = data as DataValue<{ loggedInUser: LoggedInUser }>;
     return {
-      currentUser: mappedData.currentUser as CurrentUser,
+      loggedInUser: mappedData.loggedInUser as LoggedInUser,
     };
   },
 });

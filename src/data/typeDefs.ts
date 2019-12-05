@@ -1,24 +1,24 @@
 import gql from 'graphql-tag';
 
 export default gql`
-  type CurrentUser {
+  type LoggedInUser {
     id: String!
     balance: String!
     username: String
     walletAddress: String!
   }
 
-  input CurrentUserInput {
+  input LoggedInUserInput {
     balance: String
     username: String
     walletAddress: String
   }
 
   extend type Query {
-    currentUser: CurrentUser!
+    loggedInUser: LoggedInUser!
   }
 
   extend type Mutation {
-    setCurrentUser(input: CurrentUserInput): CurrentUser!
+    setLoggedInUser(input: LoggedInUserInput): LoggedInUser!
   }
 `;

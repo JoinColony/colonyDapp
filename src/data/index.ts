@@ -3,14 +3,14 @@
 import apolloCache from './cache';
 
 import {
-  resolvers as currentUserResolvers,
-  initialCache as currentUser,
-} from './currentUser';
+  resolvers as loggedInUserResolvers,
+  initialCache as loggedInUser,
+} from './loggedInUser';
 
 // Initialize cache
 apolloCache.writeData({
   data: {
-    ...currentUser,
+    ...loggedInUser,
   },
 });
 
@@ -18,7 +18,7 @@ export { default as cache } from './cache';
 export { default as typeDefs } from './typeDefs';
 export const resolvers = {
   Mutation: {
-    ...currentUserResolvers.Mutation,
+    ...loggedInUserResolvers.Mutation,
   },
 };
 

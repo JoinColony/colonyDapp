@@ -3,7 +3,7 @@ import { defineMessages } from 'react-intl';
 
 import { Select } from '~core/Fields';
 import Heading from '~core/Heading';
-import { useCurrentUser } from '~data/helpers';
+import { useLoggedInUser } from '~data/helpers';
 
 import {
   TasksFilterOptions,
@@ -49,7 +49,7 @@ const Dashboard = () => {
     [setFilterOption],
   );
 
-  const { username, walletAddress } = useCurrentUser();
+  const { username, walletAddress } = useLoggedInUser();
 
   return (
     <div className={styles.layoutMain} data-test="dashboard">
