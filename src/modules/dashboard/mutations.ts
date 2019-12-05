@@ -34,6 +34,14 @@ export const CREATE_WORK_REQUEST = gql`
   }
 `;
 
+export const FINALIZE_TASK = gql`
+  mutation FinalizeTask($input: TaskIdInput!) {
+    finalizeTask(input: $input) {
+      id
+    }
+  }
+`;
+
 export const SET_TASK_DOMAIN = gql`
   mutation SetTaskDomain($input: SetTaskDomainInput!) {
     setTaskDomain(input: $input) {
