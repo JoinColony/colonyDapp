@@ -54,3 +54,12 @@ export const SET_TASK_SKILL = gql`
     }
   }
 `;
+
+export const SET_TASK_TITLE = gql`
+  mutation SetTaskTitle($input: SetTaskTitleInput!) {
+    setTaskTitle(input: $input) {
+      id
+      title
+    }
+  }
+`;
