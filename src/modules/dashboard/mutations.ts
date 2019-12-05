@@ -7,3 +7,12 @@ export const CREATE_TASK = gql`
     }
   }
 `;
+
+export const SET_TASK_DOMAIN = gql`
+  mutation SetTaskDomain($input: SetTaskDomainInput!) {
+    setTaskDomain(input: $input) {
+      id
+      ethDomainId
+    }
+  }
+`;
