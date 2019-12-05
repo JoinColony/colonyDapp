@@ -16,3 +16,12 @@ export const SET_TASK_DOMAIN = gql`
     }
   }
 `;
+
+export const SET_TASK_DESCRIPTION = gql`
+  mutation SetTaskDescription($input: SetTaskDescriptionInput!) {
+    setTaskDescription(input: $input) {
+      id
+      description
+    }
+  }
+`;
