@@ -5,8 +5,6 @@ import { Context } from '~context/index';
 import { EventTypes, TaskStates, Versions } from '~data/constants';
 import {
   ColonyManager,
-  ColonyStore,
-  ColonyTaskIndexStore,
   Command,
   CommentsStore,
   DDB,
@@ -16,20 +14,15 @@ import {
   Wallet,
 } from '~data/types';
 import {
-  createTaskStore,
-  getColonyTaskStores,
   getCommentsStore,
   getTaskStore,
   getTaskStoreAddress,
   getCommentsStoreAddress,
 } from '~data/stores';
 import { createEvent } from '~data/utils';
-import { TaskDraftId } from '~immutable/index';
-import { Address, ColonyClient } from '~types/index';
+import { Address, ColonyClient, TaskDraftId } from '~types/index';
 
 import {
-  CancelTaskCommandArgsSchema,
-  CreateTaskCommandArgsSchema,
   FinalizeTaskCommandArgsSchema,
   PostCommentCommandArgsSchema,
   SendWorkInviteCommandArgsSchema,
@@ -48,10 +41,6 @@ import {
 interface TaskStoreMetadata {
   colonyAddress: Address;
   draftId: TaskDraftId;
-}
-
-interface CreateTaskStoreMetadata extends TaskStoreMetadata {
-  domainId: number;
 }
 
 type CommentsStoreMetadata = TaskStoreMetadata;
@@ -466,92 +455,6 @@ export const finalizeTask: Command<
     return {
       taskStore,
       event: taskStore.getEvent(eventHash) as Event<EventTypes.TASK_FINALIZED>,
-    };
-  },
-};
-
-export const cancelTask: Command<
-  {
-    colonyStore: ColonyStore | null;
-    colonyTaskIndexStore: ColonyTaskIndexStore | null;
-    taskStore: TaskStore;
-  },
-  TaskStoreMetadata,
-  {
-    draftId: TaskDraftId;
-    domainId: number;
-  },
-  {
-    event: Event<EventTypes.TASK_CANCELLED>;
-    taskStore: TaskStore;
-  }
-> = {
-  name: 'cancelTask',
-  context: [Context.COLONY_MANAGER, Context.DDB_INSTANCE, Context.WALLET],
-  async prepare(
-    {
-      colonyManager,
-      ddb,
-      wallet,
-    }: {
-      colonyManager: ColonyManager;
-      ddb: DDB;
-      wallet: Wallet;
-    },
-    metadata: TaskStoreMetadata,
-  ) {
-    const { colonyAddress } = metadata;
-    const colonyClient = await colonyManager.getColonyClient(colonyAddress);
-
-    const taskStoreAddress = await getTaskStoreAddress(
-      colonyClient,
-      ddb,
-      wallet,
-    )(metadata);
-    const taskStore = await getTaskStore(colonyClient, ddb, wallet)({
-      ...metadata,
-      taskStoreAddress,
-    });
-
-    const { colonyTaskIndexStore, colonyStore } = await getColonyTaskStores(
-      { colonyClient, ddb, wallet },
-      metadata,
-    );
-
-    return {
-      colonyStore,
-      colonyTaskIndexStore,
-      taskStore,
-    };
-  },
-  schema: CancelTaskCommandArgsSchema,
-  async execute(
-    { colonyStore, colonyTaskIndexStore, taskStore },
-    { draftId, domainId },
-  ) {
-    // backwards-compatibility Colony task index store
-    const store = colonyTaskIndexStore || colonyStore;
-    if (!store) {
-      throw new Error(
-        'Could not load colony task index or colony store either',
-      );
-    }
-    const eventHash = await taskStore.append(
-      createEvent(EventTypes.TASK_CANCELLED, {
-        status: TaskStates.CANCELLED,
-        domainId,
-      }),
-    );
-    await store.append(
-      createEvent(EventTypes.TASK_STORE_UNREGISTERED, {
-        draftId,
-        taskStoreAddress: taskStore.address.toString(),
-        domainId,
-      }),
-    );
-    return {
-      taskStore,
-      event: taskStore.getEvent(eventHash) as Event<EventTypes.TASK_CANCELLED>,
     };
   },
 };
