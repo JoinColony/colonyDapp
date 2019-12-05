@@ -1,5 +1,13 @@
 import gql from 'graphql-tag';
 
+export const CANCEL_TASK = gql`
+  mutation CancelTask($input: TaskIdInput!) {
+    cancelTask(input: $input) {
+      id
+    }
+  }
+`
+
 export const CREATE_TASK = gql`
   mutation CreateTask($input: CreateTaskInput!) {
     createTask(input: $input) {
