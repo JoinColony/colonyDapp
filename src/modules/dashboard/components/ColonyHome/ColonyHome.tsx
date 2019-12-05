@@ -4,7 +4,7 @@ import { defineMessages, FormattedMessage } from 'react-intl';
 import { subscribeActions as subscribeToReduxActions } from 'redux-action-watch/lib/actionCreators';
 import { useDispatch } from 'redux-react-hook';
 import throttle from 'lodash/throttle';
-import { useLazyQuery } from '@apollo/react-hooks';
+import { useQuery } from '@apollo/react-hooks';
 
 import { COLONY_TOTAL_BALANCE_DOMAIN_ID, ROOT_DOMAIN } from '~constants';
 import { Address } from '~types/index';
@@ -16,7 +16,6 @@ import {
 import { ActionTypes } from '~redux/index';
 import {
   useDataFetcher,
-  useDataSubscriber,
   useSelector,
   useTransformer,
 } from '~utils/hooks';
@@ -38,7 +37,6 @@ import {
   colonyEthTokenSelector,
 } from '../../selectors';
 import { getUserRoles } from '../../../transformers';
-import { colonySubscriber } from '../../subscribers';
 import {
   isInRecoveryMode as isInRecoveryModeCheck,
   canRecoverColony,
@@ -163,28 +161,12 @@ const ColonyHome = ({
     [colonyName],
   );
 
-  const [
-    loadColony,
-    { data: colonyData, loading: colonyDataLoading },
-  ] = useLazyQuery(GET_COLONY, {
-    variables: { address: colonyAddress },
-  });
-
-  useEffect(() => {
-    if (colonyAddress) {
-      loadColony();
-    }
-  }, [loadColony, colonyAddress]);
-
-  /*
-   * @TODO Remove after Apollo client is properly setup
-   */
-  const colonyArgs: [Address | undefined] = [colonyAddress || undefined];
-  const {
-    data: colony,
-    isFetching: isFetchingColony,
-    error: colonyError,
-  } = useDataSubscriber(colonySubscriber, colonyArgs, colonyArgs);
+  const { data: { colony } = {}, loading: colonyDataLoading } = useQuery(
+    GET_COLONY,
+    {
+      variables: { address: colonyAddress },
+    },
+  );
 
   const { data: domains, isFetching: isFetchingDomains } = useDataFetcher(
     domainsAndRolesFetcher,
@@ -221,6 +203,7 @@ const ColonyHome = ({
     }
   }, [domains, filteredDomainId]);
 
+  const colonyArgs: [Address | undefined] = [colonyAddress || undefined];
   const nativeTokenRef = useSelector(colonyNativeTokenSelector, colonyArgs);
   const ethTokenRef = useSelector(colonyEthTokenSelector, colonyArgs);
 
@@ -233,20 +216,22 @@ const ColonyHome = ({
     [colonyAddress, filteredDomainId],
   );
 
-  if (colonyError || addressError) {
+  if (!colonyName || addressError) {
     return <Redirect to="/404" />;
   }
 
   if (
-    !(colony && colonyAddress) ||
-    isFetchingColony ||
+    !colony ||
+    !colonyAddress ||
     !domains ||
     isFetchingDomains ||
-    !nativeTokenRef ||
     /*
-     * @TODO Figure out a better way to handle returned query data prop naming
+     * @TODO Re-add nativeTokenRef
+     * Right now it gets hung up since the colony's data is no longer making it's way
+     * into the redux state
+     *
+     *!nativeTokenRef ||
      */
-    !(colonyData && colonyData.colony) ||
     colonyDataLoading
   ) {
     return (
@@ -291,7 +276,7 @@ const ColonyHome = ({
       <aside className={styles.colonyInfo}>
         <div className={styles.metaContainer}>
           <ColonyMeta
-            colony={colonyData.colony}
+            colony={colony}
             canAdminister={!isInRecoveryMode && canAdminister(rootUserRoles)}
             domains={domains}
             filteredDomainId={filteredDomainId}
