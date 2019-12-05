@@ -315,7 +315,7 @@ function* colonyCreate({
           colonyAddress,
           colonyName,
           displayName,
-        }
+        },
       },
     });
 

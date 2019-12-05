@@ -65,7 +65,7 @@ const MSG = defineMessages({
   },
   labelFilter: {
     id: 'dashboard.ColonyHome.labelFilter',
-     defaultMessage: 'Filter',
+    defaultMessage: 'Filter',
   },
   placeholderFilter: {
     id: 'dashboard.ColonyHome.placeholderFilter',
@@ -165,10 +165,7 @@ const ColonyHome = ({
 
   const [
     loadColony,
-    {
-      data: colonyData,
-      loading: colonyDataLoading
-    },
+    { data: colonyData, loading: colonyDataLoading },
   ] = useLazyQuery(GET_COLONY, {
     variables: { address: colonyAddress },
   });
