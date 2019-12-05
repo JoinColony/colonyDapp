@@ -6,7 +6,7 @@ import {
 } from 'react-intl';
 
 import { Address } from '~types/index';
-import { User } from '~data/types/index';
+import { User } from '~data/index';
 import Icon from '~core/Icon';
 import MaskedAddress from '~core/MaskedAddress';
 import HookedUserAvatar from '~users/HookedUserAvatar';

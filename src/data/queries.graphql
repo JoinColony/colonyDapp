@@ -1,0 +1,37 @@
+query CurrentUser {
+  currentUser @client {
+    walletAddress
+    balance
+    username
+  }
+}
+
+query User($address: String!) {
+  user(address: $address) {
+    id
+    profile {
+      username
+      walletAddress
+      displayName
+      bio
+      location
+      website
+      avatarHash
+    }
+  }
+}
+
+query ColonySubscribedUsers($colonyAddress: String!) {
+  colony(address: $colonyAddress) {
+    id
+    subscribedUsers {
+      id
+      profile {
+        avatarHash
+        displayName
+        username
+        walletAddress
+      }
+    }
+  }
+}

@@ -3,7 +3,6 @@
 import apolloCache from './cache';
 
 import {
-  typeDefs as CurrentUser,
   resolvers as currentUserResolvers,
   initialCache as currentUser,
 } from './currentUser';
@@ -16,9 +15,12 @@ apolloCache.writeData({
 });
 
 export { default as cache } from './cache';
-export const typeDefs = [CurrentUser];
+export { default as typeDefs } from './typeDefs';
 export const resolvers = {
   Mutation: {
     ...currentUserResolvers.Mutation,
   },
 };
+
+// export all the generated types and helpers
+export * from './generated';

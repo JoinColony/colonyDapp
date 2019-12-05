@@ -7,7 +7,7 @@ import {
   TokenType,
 } from '~immutable/index';
 import { Address } from '~types/index';
-import { User } from '~data/types/index';
+import { User } from '~data/index';
 import PayoutsList from '~core/PayoutsList';
 import UserInfo from '~users/UserInfo';
 

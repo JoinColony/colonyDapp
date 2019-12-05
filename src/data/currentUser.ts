@@ -1,55 +1,16 @@
 /* This file is already part of apollo data. Don't delete */
-import gql from 'graphql-tag';
 import assignWith from 'lodash/fp/assignWith';
+
+import { CurrentUserDocument } from './index';
 
 // Merges source object(s) into target object, but values that are truthy
 // Move this to a utils file if used somewhere else as well
 const assignDefined = assignWith((objValue, srcValue) => srcValue || objValue);
 
-export interface CurrentUser {
-  balance: string;
-  username?: string;
-  walletAddress: string;
-}
-
-export const typeDefs = gql`
-  type CurrentUser {
-    balance: String!
-    username: String
-    walletAddress: String!
-  }
-  input CurrentUserInput {
-    balance: String
-    username: String
-    walletAddress: String
-  }
-  extend type Query {
-    currentUser: CurrentUser!
-  }
-  extend type Mutation {
-    setCurrentUserData(input: CurrentUserInput): CurrentUser!
-  }
-`;
-
-export const CURRENT_USER = gql`
-  query CurrentUserData {
-    currentUser @client {
-      walletAddress
-      balance
-      username
-    }
-  }
-`;
-
-export const SET_CURRENT_USER = gql`
-  mutation SetCurrentUserData($input: CurrentUserInput!) {
-    setCurrentUserData(input: $input) @client
-  }
-`;
-
 export const initialCache = {
   currentUser: {
     __typename: 'CurrentUser',
+    id: '',
     walletAddress: '',
     balance: '0',
     username: null,
@@ -58,13 +19,16 @@ export const initialCache = {
 
 export const resolvers = {
   Mutation: {
-    setCurrentUserData: (_root, { input }, { cache }) => {
-      const { currentUser } = cache.readQuery({ query: CURRENT_USER });
+    setCurrentUser: (_root, { input }, { cache }) => {
+      const { currentUser } = cache.readQuery({ query: CurrentUserDocument });
       const changedData = {
-        currentUser: assignDefined({ ...currentUser }, input),
+        currentUser: assignDefined(
+          { ...currentUser, id: currentUser.walletAddress },
+          input,
+        ),
       };
-      cache.writeQuery({ query: CURRENT_USER, data: changedData });
-      return input.currentUser;
+      cache.writeQuery({ query: CurrentUserDocument, data: changedData });
+      return changedData.currentUser;
     },
   },
 };

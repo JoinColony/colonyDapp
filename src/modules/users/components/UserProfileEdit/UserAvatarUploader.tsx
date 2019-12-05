@@ -2,7 +2,7 @@ import React from 'react';
 import { defineMessages } from 'react-intl';
 
 import { FileReaderFile } from '~core/FileUpload';
-import { User } from '~data/types/index';
+import { User } from '~data/index';
 import { useAsyncFunction } from '~utils/hooks';
 import AvatarUploader from '~core/AvatarUploader';
 import HookedUserAvatar from '~users/HookedUserAvatar';

@@ -1,7 +1,7 @@
 import React from 'react';
 import { defineMessages } from 'react-intl';
 
-import { User } from '~data/types/index';
+import { User } from '~data/index';
 import Heading from '~core/Heading';
 import UserAvatarUploader from './UserAvatarUploader';
 

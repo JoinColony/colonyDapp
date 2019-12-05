@@ -1,4 +1,4 @@
-import { User } from '~data/types/index';
+import { User } from '~data/index';
 
 export const getFriendlyName = (user?: User | string) => {
   if (!user) return '';

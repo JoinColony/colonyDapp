@@ -10,7 +10,7 @@ import { useDataSubscriber } from '~utils/hooks';
 import MaskedAddress from '~core/MaskedAddress';
 import Link from '~core/Link';
 import { Address, ENSName } from '~types/index';
-import { User } from '~data/types/index';
+import { User } from '~data/index';
 
 import { colonySubscriber } from '../../../dashboard/subscribers';
 

@@ -1,0 +1,25 @@
+mutation SetCurrentUser($input: CurrentUserInput!) {
+  setCurrentUser(input: $input) @client {
+    id
+  }
+}
+
+mutation CreateUser(
+  $createUserInput: CreateUserInput!
+  $currentUserInput: CurrentUserInput!
+) {
+  # Create user on the server
+  createUser(input: $createUserInput) {
+    id
+  }
+  # Set the current user data to the given data
+  setCurrentUser(input: $currentUserInput) @client {
+    id
+  }
+}
+
+mutation EditUser($input: EditUserInput!) {
+  editUser(input: $input) {
+    id
+  }
+}
