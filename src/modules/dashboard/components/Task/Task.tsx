@@ -106,8 +106,12 @@ const MSG = defineMessages({
   },
 });
 
-interface Props {
-  match: any;
+interface MatchProps {
+  draftId: TaskDraftId;
+  colonyName: string;
+}
+
+interface Props extends RouteComponentProps<MatchProps> {
   openDialog: OpenDialog;
   history: any;
 }
