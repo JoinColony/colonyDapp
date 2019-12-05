@@ -134,3 +134,11 @@ export const UNASSIGN_WORKER = gql`
     }
   }
 `;
+
+export const UNSUBSCRIBE_FROM_TASK = gql`
+  mutation UnsubscribeFromTask($input: UnsubscribeFromTaskInput!) {
+    unsubscribeFromTask(input: $input) {
+      id
+    }
+  }
+`
