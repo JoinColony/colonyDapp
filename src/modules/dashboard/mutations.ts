@@ -118,6 +118,14 @@ export const SET_TASK_TITLE = gql`
   }
 `;
 
+export const SUBSCRIBE_TO_TASK = gql`
+  mutation SubscribeToTask($input: SubscribeToTaskInput!) {
+    subscribeToTask(input: $input) {
+      id
+    }
+  }
+`;
+
 export const UNASSIGN_WORKER = gql`
   mutation UnassignWorker($input: UnassignWorkerInput!) {
     unassignWorker(input: $input) {
