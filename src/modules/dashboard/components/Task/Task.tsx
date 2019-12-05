@@ -27,7 +27,7 @@ import TaskFeed from '~dashboard/TaskFeed';
 import TaskRequestWork from '~dashboard/TaskRequestWork';
 import TaskSkills from '~dashboard/TaskSkills';
 import TaskTitle from '~dashboard/TaskTitle';
-import { useCurrentUser } from '~data/helpers';
+import { useLoggedInUser } from '~data/helpers';
 
 import {
   canCancelTask,
@@ -122,7 +122,7 @@ const Task = ({
 }: Props) => {
   const [isDiscardConfirmDisplayed, setDiscardConfirmDisplay] = useState(false);
 
-  const { walletAddress } = useCurrentUser();
+  const { walletAddress } = useLoggedInUser();
 
   const { data: colonyAddress } = useDataFetcher(
     colonyAddressFetcher,

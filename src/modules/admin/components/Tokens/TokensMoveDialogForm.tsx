@@ -12,7 +12,7 @@ import Button from '~core/Button';
 import DialogSection from '~core/Dialog/DialogSection';
 import { Select, Input, FormStatus } from '~core/Fields';
 import Heading from '~core/Heading';
-import { useCurrentUser } from '~data/helpers';
+import { useLoggedInUser } from '~data/helpers';
 
 import { getUserRoles } from '../../../transformers';
 import { domainsAndRolesFetcher } from '../../../dashboard/fetchers';
@@ -117,7 +117,7 @@ const TokensMoveDialogForm = ({
     [colonyAddress],
   );
 
-  const { walletAddress } = useCurrentUser();
+  const { walletAddress } = useLoggedInUser();
 
   const fromDomainRoles = useTransformer(getUserRoles, [
     domains,

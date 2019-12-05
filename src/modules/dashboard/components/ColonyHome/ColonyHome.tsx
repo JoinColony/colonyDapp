@@ -28,7 +28,7 @@ import Button, { ActionButton, DialogActionButton } from '~core/Button';
 import BreadCrumb from '~core/BreadCrumb';
 import RecoveryModeAlert from '~admin/RecoveryModeAlert';
 import LoadingTemplate from '~pages/LoadingTemplate';
-import { useCurrentUser } from '~data/helpers';
+import { useLoggedInUser } from '~data/helpers';
 
 import { canAdminister, hasRoot } from '../../../users/checks';
 import { colonyAddressFetcher, domainsAndRolesFetcher } from '../../fetchers';
@@ -169,7 +169,7 @@ const ColonyHome = ({
     [colonyAddress],
   );
 
-  const { walletAddress } = useCurrentUser();
+  const { walletAddress } = useLoggedInUser();
 
   const currentDomainUserRoles = useTransformer(getUserRoles, [
     domains,

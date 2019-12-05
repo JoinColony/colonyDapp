@@ -27,7 +27,7 @@ import {
 } from '~utils/saga/effects';
 import { generateUrlFriendlyId } from '~utils/strings';
 import { matchUsernames } from '~lib/TextDecorator';
-import { getCurrentUser } from '~data/helpers';
+import { getLoggedInUser } from '~data/helpers';
 
 import { fetchColonyTaskMetadata as fetchColonyTaskMetadataAC } from '../actionCreators';
 import {
@@ -113,7 +113,7 @@ function* taskCreate({
       record: { colonyName },
     } = yield select(colonySelector, colonyAddress);
 
-    const { walletAddress } = yield getCurrentUser();
+    const { walletAddress } = yield getLoggedInUser();
 
     // NOTE: This is going to be part of the store address so we need to be careful
     const draftId = generateUrlFriendlyId();
@@ -532,7 +532,7 @@ function* taskFinalize({
   meta,
 }: Action<ActionTypes.TASK_FINALIZE>) {
   try {
-    const { walletAddress } = yield getCurrentUser();
+    const { walletAddress } = yield getLoggedInUser();
 
     const {
       record: { workerAddress, payouts, domainId, skillId, title: taskTitle },
@@ -632,7 +632,7 @@ function* taskSendWorkRequest({
   meta,
 }: Action<ActionTypes.TASK_SEND_WORK_REQUEST>) {
   try {
-    const { walletAddress } = yield getCurrentUser();
+    const { walletAddress } = yield getLoggedInUser();
     const { event } = yield executeCommand(createWorkRequest, {
       args: { workerAddress: walletAddress },
       metadata: { colonyAddress, draftId },
@@ -685,7 +685,7 @@ function* taskWorkerAssign({
   meta,
 }: Action<ActionTypes.TASK_WORKER_ASSIGN>) {
   try {
-    const { walletAddress } = yield getCurrentUser();
+    const { walletAddress } = yield getLoggedInUser();
     const {
       record: {
         workerAddress: currentWorkerAddress,
@@ -736,7 +736,7 @@ function* taskWorkerUnassign({
      * isnt' a user already assigned
      */
     if (workerAddress) {
-      const { walletAddress } = yield getCurrentUser();
+      const { walletAddress } = yield getLoggedInUser();
       const {
         record: { title: taskTitle, domainId },
       } = yield select(taskSelector, draftId);
@@ -923,7 +923,10 @@ function* taskCommentAdd({
   meta,
 }: Action<ActionTypes.TASK_COMMENT_ADD>) {
   try {
-    const { username: currentUsername, walletAddress } = yield getCurrentUser();
+    const {
+      username: currentUsername,
+      walletAddress,
+    } = yield getLoggedInUser();
 
     const signature = yield call(signMessage, 'taskComment', {
       comment,

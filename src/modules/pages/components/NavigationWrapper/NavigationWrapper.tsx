@@ -5,7 +5,7 @@ import Alert from '~core/Alert';
 import HistoryNavigation from './HistoryNavigation';
 import UserNavigation from './UserNavigation';
 import { getMainClasses } from '~utils/css';
-import { useCurrentUser } from '~data/helpers';
+import { useLoggedInUser } from '~data/helpers';
 
 import styles from './NavigationWrapper.css';
 
@@ -88,7 +88,7 @@ const NavigationWrapper = ({
    */
   ...props
 }: Props) => {
-  const { username } = useCurrentUser();
+  const { username } = useLoggedInUser();
   return (
     <div className={className || getMainClasses(appearance, styles)}>
       <div className={styles.wrapper}>

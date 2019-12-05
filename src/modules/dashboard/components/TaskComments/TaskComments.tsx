@@ -12,7 +12,7 @@ import { ActionForm, TextareaAutoresize } from '~core/Fields';
 import { OnSuccess } from '~core/Fields/Form/ActionForm';
 import Button from '~core/Button';
 import unfinishedProfileOpener from '~users/UnfinishedProfile';
-import { useCurrentUser } from '~data/helpers';
+import { useLoggedInUser } from '~data/helpers';
 
 import styles from './TaskComments.css';
 
@@ -78,7 +78,7 @@ const TaskComments = ({
   draftId,
   history,
 }: Props) => {
-  const { username, walletAddress } = useCurrentUser();
+  const { username, walletAddress } = useLoggedInUser();
 
   const onSuccess: OnSuccess = useCallback(
     (result, { resetForm, setStatus }) => {

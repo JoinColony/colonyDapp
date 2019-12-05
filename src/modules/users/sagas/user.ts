@@ -17,7 +17,7 @@ import {
 import { Action, ActionTypes, AllActions } from '~redux/index';
 import { getContext, Context } from '~context/index';
 import ENS from '~lib/ENS';
-import { getCurrentUser } from '~data/helpers';
+import { getLoggedInUser } from '~data/helpers';
 import { CreateUserDocument, EditUserDocument } from '~data/index';
 
 import { inboxItemsFetch } from '../actionCreators';
@@ -62,7 +62,7 @@ function* userTokenTransfersFetch( // eslint-disable-next-line @typescript-eslin
   action: Action<ActionTypes.USER_TOKEN_TRANSFERS_FETCH>,
 ) {
   try {
-    const { walletAddress } = yield getCurrentUser();
+    const { walletAddress } = yield getLoggedInUser();
     const userColonyAddresses = yield selectAsJS(
       userColoniesSelector,
       walletAddress,
@@ -106,7 +106,7 @@ function* userAddressFetch({
 
 function* userAvatarRemove({ meta }: Action<ActionTypes.USER_AVATAR_REMOVE>) {
   try {
-    const { walletAddress } = yield getCurrentUser();
+    const { walletAddress } = yield getLoggedInUser();
     const apolloClient: ApolloClient<any> = yield getContext(
       Context.APOLLO_CLIENT,
     );
@@ -131,7 +131,7 @@ function* userAvatarUpload({
   payload,
 }: Action<ActionTypes.USER_AVATAR_UPLOAD>) {
   try {
-    const { walletAddress } = yield getCurrentUser();
+    const { walletAddress } = yield getLoggedInUser();
     const apolloClient: ApolloClient<any> = yield getContext(
       Context.APOLLO_CLIENT,
     );
@@ -227,7 +227,7 @@ function* usernameCreate({
       mutation: CreateUserDocument,
       variables: {
         createUserInput: { username },
-        currentUserInput: { username },
+        loggedInUserInput: { username },
       },
     });
 
@@ -283,7 +283,7 @@ function* userLogout() {
 
 function* userTokensFetch() {
   try {
-    const { walletAddress } = yield getCurrentUser();
+    const { walletAddress } = yield getLoggedInUser();
     const { metadataStoreAddress } = yield select(currentUserMetadataSelector);
     const metadata = {
       walletAddress,
@@ -313,7 +313,7 @@ function* userTokensFetch() {
 function* userTokensUpdate(action: Action<ActionTypes.USER_TOKENS_UPDATE>) {
   try {
     const { tokens } = action.payload;
-    const { walletAddress } = yield getCurrentUser();
+    const { walletAddress } = yield getLoggedInUser();
     const { metadataStoreAddress } = yield select(currentUserMetadataSelector);
     const metadata = {
       walletAddress,
@@ -366,7 +366,7 @@ function* userColonySubscribe({
   meta,
 }: Action<ActionTypes.USER_COLONY_SUBSCRIBE>) {
   try {
-    const { walletAddress } = yield getCurrentUser();
+    const { walletAddress } = yield getLoggedInUser();
     const { metadataStoreAddress } = yield select(currentUserMetadataSelector);
     const metadata = {
       walletAddress,
@@ -403,7 +403,7 @@ function* userColonyUnsubscribe({
   meta,
 }: Action<ActionTypes.USER_COLONY_UNSUBSCRIBE>) {
   try {
-    const { walletAddress } = yield getCurrentUser();
+    const { walletAddress } = yield getLoggedInUser();
     const { metadataStoreAddress } = yield select(currentUserMetadataSelector);
     const metadata = {
       walletAddress,
@@ -435,7 +435,7 @@ function* userColonyUnsubscribe({
 
 function* userSubscribedTasksFetch() {
   try {
-    const { walletAddress } = yield getCurrentUser();
+    const { walletAddress } = yield getLoggedInUser();
     const { metadataStoreAddress } = yield select(currentUserMetadataSelector);
     const metadata = {
       walletAddress,
@@ -459,7 +459,7 @@ function* userTaskSubscribe({
   payload,
 }: Action<ActionTypes.USER_TASK_SUBSCRIBE>) {
   try {
-    const { walletAddress } = yield getCurrentUser();
+    const { walletAddress } = yield getLoggedInUser();
     const { metadataStoreAddress } = yield select(currentUserMetadataSelector);
     const metadata = {
       walletAddress,
@@ -523,7 +523,7 @@ function* userTaskSubscribe({
 // }
 
 function* userSubscribedTasksSubStart() {
-  const { walletAddress } = yield getCurrentUser();
+  const { walletAddress } = yield getLoggedInUser();
   const { metadataStoreAddress } = yield select(currentUserMetadataSelector);
   let channel;
   try {

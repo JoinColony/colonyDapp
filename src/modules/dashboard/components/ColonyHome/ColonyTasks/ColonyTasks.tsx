@@ -12,7 +12,7 @@ import { ActionButton } from '~core/Button';
 import Icon from '~core/Icon';
 import { SpinnerLoader } from '~core/Preloaders';
 import { useDataSubscriber } from '~utils/hooks';
-import { useCurrentUser } from '~data/helpers';
+import { useLoggedInUser } from '~data/helpers';
 
 import { colonyTaskMetadataSubscriber } from '../../../subscribers';
 import TaskList from '../../TaskList';
@@ -115,7 +115,7 @@ const ColonyTasks = ({
 }: Props) => {
   const [isTaskBeingCreated, setIsTaskBeingCreated] = useState(false);
 
-  const { walletAddress } = useCurrentUser();
+  const { walletAddress } = useLoggedInUser();
 
   const dispatch = useDispatch();
 

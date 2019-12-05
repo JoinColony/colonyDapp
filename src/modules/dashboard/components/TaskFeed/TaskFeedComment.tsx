@@ -7,7 +7,7 @@ import ExternalLink from '~core/ExternalLink';
 import TimeRelative from '~core/TimeRelative';
 import UserMention from '~core/UserMention';
 import HookedUserAvatar from '~users/HookedUserAvatar';
-import { useCurrentUser, useUser } from '~data/helpers';
+import { useLoggedInUser, useUser } from '~data/helpers';
 
 import TextDecorator from '../../../../lib/TextDecorator';
 import { getFriendlyName } from '../../../users/transformers';
@@ -35,7 +35,7 @@ const TaskFeedComment = ({
     ),
   });
 
-  const { walletAddress } = useCurrentUser();
+  const { walletAddress } = useLoggedInUser();
 
   const isCurrentUser = authorAddress === walletAddress;
   const author = useUser(authorAddress);

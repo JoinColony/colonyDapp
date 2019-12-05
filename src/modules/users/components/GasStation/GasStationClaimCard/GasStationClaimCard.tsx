@@ -4,7 +4,7 @@ import BigNumber from 'bn.js';
 
 import Card from '~core/Card';
 import Heading from '~core/Heading';
-import { useCurrentUser } from '~data/helpers';
+import { useLoggedInUser } from '~data/helpers';
 
 import styles from './GasStationClaimCard.css';
 
@@ -39,7 +39,7 @@ const displayName = 'users.GasStation.GasStationClaimCard';
  * and the `CardList` grid will add gaps and styles to it
  */
 const GasStationClaimCard = ({ numberOfSteps = 3 }: Props) => {
-  const { balance } = useCurrentUser();
+  const { balance } = useLoggedInUser();
   const bigNumberBalance = new BigNumber(balance);
   return (
     <Card

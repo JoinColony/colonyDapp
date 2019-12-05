@@ -11,7 +11,7 @@ import Heading from '~core/Heading';
 import { Select } from '~core/Fields';
 import { Address, DomainsMapType } from '~types/index';
 import { useDataFetcher, useTransformer } from '~utils/hooks';
-import { useCurrentUser } from '~data/helpers';
+import { useLoggedInUser } from '~data/helpers';
 
 import { getLegacyRoles } from '../../../transformers';
 import { tokenFetcher } from '../../../dashboard/fetchers';
@@ -68,7 +68,7 @@ const Tokens = ({
     COLONY_TOTAL_BALANCE_DOMAIN_ID,
   );
 
-  const { walletAddress } = useCurrentUser();
+  const { walletAddress } = useLoggedInUser();
 
   const oldUserRoles = useTransformer(getLegacyRoles, [domains]);
   const canEdit = canEditTokens(oldUserRoles, walletAddress);

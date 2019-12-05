@@ -11,7 +11,7 @@ import {
 
 import { ActionTypes } from '~redux/index';
 import { filterUniqueAction } from '~utils/actions';
-import { getCurrentUser } from '~data/helpers';
+import { getLoggedInUser } from '~data/helpers';
 
 import { TxConfig } from '../../types';
 import { createTxAction } from '../../actionCreators';
@@ -19,7 +19,7 @@ import estimateGasCost from './estimateGasCost';
 import sendTransaction from './sendTransaction';
 
 export function* createTransaction(id: string, config: TxConfig) {
-  const { walletAddress } = yield getCurrentUser();
+  const { walletAddress } = yield getLoggedInUser();
 
   if (!walletAddress) {
     throw new Error(

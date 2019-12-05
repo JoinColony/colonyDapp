@@ -7,7 +7,7 @@ import Icon from '~core/Icon';
 import Link from '~core/Link';
 import Numeral from '~core/Numeral';
 import { WALLET_ROUTE } from '~routes/index';
-import { useCurrentUser } from '~data/helpers';
+import { useLoggedInUser } from '~data/helpers';
 
 import styles from './GasStationHeader.css';
 
@@ -25,7 +25,7 @@ interface Props {
 const displayName = 'users.GasStation.GasStationHeader';
 
 const GasStationHeader = ({ close }: Props) => {
-  const { balance, walletAddress } = useCurrentUser();
+  const { balance, walletAddress } = useLoggedInUser();
   return (
     <div className={styles.main}>
       <div className={styles.walletDetails}>

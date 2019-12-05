@@ -5,7 +5,7 @@ import { formatEther } from 'ethers/utils';
 import { Context, getContext } from '~context/index';
 import { Address } from '~types/strings';
 import { log } from '~utils/debug';
-import { SetCurrentUserDocument } from '~data/index';
+import { SetLoggedInUserDocument } from '~data/index';
 
 export function* setupUserBalanceListener(walletAddress: Address) {
   let channel;
@@ -24,7 +24,7 @@ export function* setupUserBalanceListener(walletAddress: Address) {
     while (true) {
       const balance = yield take(channel);
       yield apolloClient.mutate({
-        mutation: SetCurrentUserDocument,
+        mutation: SetLoggedInUserDocument,
         variables: {
           input: { balance },
         },

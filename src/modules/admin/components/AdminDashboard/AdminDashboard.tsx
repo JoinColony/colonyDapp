@@ -21,7 +21,7 @@ import {
   useTransformer,
 } from '~utils/hooks';
 import { DomainsMapType } from '~types/index';
-import { useCurrentUser } from '~data/helpers';
+import { useLoggedInUser } from '~data/helpers';
 
 import {
   TEMP_getUserRolesWithRecovery,
@@ -158,7 +158,7 @@ const AdminDashboard = ({
     [colonyAddress],
   );
 
-  const { walletAddress } = useCurrentUser();
+  const { walletAddress } = useLoggedInUser();
 
   const { data: domains, isFetching: isFetchingRoles } = useDataFetcher(
     domainsAndRolesFetcher,

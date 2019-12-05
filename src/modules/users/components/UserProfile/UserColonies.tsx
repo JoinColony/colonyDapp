@@ -6,7 +6,7 @@ import { useDataSubscriber } from '~utils/hooks';
 import ColonyGrid from '~dashboard/ColonyGrid';
 import Link from '~core/Link';
 import { CREATE_COLONY_ROUTE } from '~routes/index';
-import { useCurrentUser } from '~data/helpers';
+import { useLoggedInUser } from '~data/helpers';
 
 import { userColoniesSubscriber } from '../../../dashboard/subscribers';
 import { getFriendlyName } from '../../transformers';
@@ -34,7 +34,7 @@ const MSG = defineMessages({
 const displayName = 'users.UserProfile.UserColonies';
 
 const UserColonies = ({ user }: Props) => {
-  const { walletAddress } = useCurrentUser();
+  const { walletAddress } = useLoggedInUser();
   const { data: colonyAddresses } = useDataSubscriber(
     userColoniesSubscriber,
     [user.profile.walletAddress],
