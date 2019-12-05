@@ -25,6 +25,15 @@ export const CREATE_TASK = gql`
   }
 `;
 
+export const CREATE_WORK_REQUEST = gql`
+  mutation CreateWorkRequest($input: CreateWorkRequestInput!) {
+    createWorkRequest(input: $input) {
+      id
+      workerAddress
+    }
+  }
+`;
+
 export const SET_TASK_DOMAIN = gql`
   mutation SetTaskDomain($input: SetTaskDomainInput!) {
     setTaskDomain(input: $input) {
