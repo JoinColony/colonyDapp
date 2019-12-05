@@ -14,8 +14,6 @@ import { getColonyStore, createColonyStore } from '~data/stores';
 import { diffAddresses } from '~utils/arrays';
 import {
   CreateColonyProfileCommandArgsSchema,
-  RemoveColonyAvatarCommandArgsSchema,
-  SetColonyAvatarCommandArgsSchema,
   UpdateColonyProfileCommandArgsSchema,
 } from './schemas';
 
@@ -128,48 +126,6 @@ export const updateColonyProfile: Command<
   async execute(colonyStore, args) {
     await colonyStore.append(
       createEvent(EventTypes.COLONY_PROFILE_UPDATED, args),
-    );
-    await colonyStore.load();
-    return colonyStore;
-  },
-};
-
-export const setColonyAvatar: Command<
-  ColonyStore,
-  ColonyStoreMetadata,
-  {
-    ipfsHash: string;
-  },
-  ColonyStore
-> = {
-  name: 'setColonyAvatar',
-  context: [Context.COLONY_MANAGER, Context.DDB_INSTANCE, Context.WALLET],
-  prepare: prepareColonyStoreQuery,
-  schema: SetColonyAvatarCommandArgsSchema,
-  async execute(colonyStore, args) {
-    await colonyStore.append(
-      createEvent(EventTypes.COLONY_AVATAR_UPLOADED, args),
-    );
-    await colonyStore.load();
-    return colonyStore;
-  },
-};
-
-export const removeColonyAvatar: Command<
-  ColonyStore,
-  ColonyStoreMetadata,
-  {
-    ipfsHash: string;
-  },
-  ColonyStore
-> = {
-  name: 'removeColonyAvatar',
-  context: [Context.COLONY_MANAGER, Context.DDB_INSTANCE, Context.WALLET],
-  prepare: prepareColonyStoreQuery,
-  schema: RemoveColonyAvatarCommandArgsSchema,
-  async execute(colonyStore, args) {
-    await colonyStore.append(
-      createEvent(EventTypes.COLONY_AVATAR_REMOVED, args),
     );
     await colonyStore.load();
     return colonyStore;

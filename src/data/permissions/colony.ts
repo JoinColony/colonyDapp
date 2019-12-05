@@ -8,7 +8,6 @@ export default function loadModule(): PermissionsManifest<{
   return {
     // @TODO Provide a proper mapping from event types to action permission
     COLONY_AVATAR_REMOVED: { inherits: 'set-colony-avatar' },
-    COLONY_AVATAR_UPLOADED: { inherits: 'set-colony-avatar' },
     COLONY_PROFILE_CREATED: { inherits: 'create-colony-profile' },
     COLONY_PROFILE_UPDATED: { inherits: 'update-colony-profile' },
     DOMAIN_CREATED: { inherits: 'add-domain' },
