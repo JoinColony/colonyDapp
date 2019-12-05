@@ -11,7 +11,7 @@ import { SpinnerLoader } from '~core/Preloaders';
 import withDialog from '~core/Dialog/withDialog';
 import TokenList from '~admin/Tokens/TokenList';
 import { useDataFetcher } from '~utils/hooks';
-import { useCurrentUser } from '~data/helpers';
+import { useLoggedInUser } from '~data/helpers';
 
 import { currentUserTokensFetcher } from '../../../users/fetchers';
 import styles from './Wallet.css';
@@ -52,7 +52,7 @@ interface Props {
 }
 
 const Wallet = ({ openDialog }: Props) => {
-  const { walletAddress } = useCurrentUser();
+  const { walletAddress } = useLoggedInUser();
   const { isFetching: isFetchingTokens, data: tokens } = useDataFetcher(
     currentUserTokensFetcher,
     [],

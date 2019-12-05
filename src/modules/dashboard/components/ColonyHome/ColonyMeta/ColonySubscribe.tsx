@@ -11,7 +11,7 @@ import { ActionTypes } from '~redux/index';
 import Button, { ActionButton } from '~core/Button';
 import { Tooltip } from '~core/Popover';
 import { SpinnerLoader } from '~core/Preloaders';
-import { useCurrentUser } from '~data/helpers';
+import { useLoggedInUser } from '~data/helpers';
 
 import { userColoniesSubscriber } from '../../../subscribers';
 
@@ -61,7 +61,7 @@ const ColonySubscribe = ({ colonyAddress }: Props) => {
     [dispatch, setUserColonySubscriptionChanging],
   );
 
-  const { username, walletAddress } = useCurrentUser();
+  const { username, walletAddress } = useLoggedInUser();
   const { data: colonyAddresses } = useDataSubscriber(
     userColoniesSubscriber,
     [walletAddress],

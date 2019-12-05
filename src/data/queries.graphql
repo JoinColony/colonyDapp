@@ -1,5 +1,5 @@
-query CurrentUser {
-  currentUser @client {
+query LoggedInUser {
+  loggedInUser @client {
     walletAddress
     balance
     username

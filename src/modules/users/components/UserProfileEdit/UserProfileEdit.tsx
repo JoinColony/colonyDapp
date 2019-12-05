@@ -16,7 +16,7 @@ import {
 } from '~core/Fields';
 import Button from '~core/Button';
 import ProfileTemplate from '~pages/ProfileTemplate';
-import { useCurrentUser } from '~data/helpers';
+import { useLoggedInUser } from '~data/helpers';
 import { EditUserDocument, UserDocument } from '~data/index';
 
 import UserProfileSpinner from '../UserProfile/UserProfileSpinner';
@@ -74,7 +74,7 @@ const validationSchema = yup.object({
 });
 
 const UserProfileEdit = () => {
-  const { walletAddress } = useCurrentUser();
+  const { walletAddress } = useLoggedInUser();
 
   const [editUser] = useMutation(EditUserDocument);
   const onSubmit = useCallback(

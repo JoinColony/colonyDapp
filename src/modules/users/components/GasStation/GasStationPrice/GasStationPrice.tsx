@@ -13,7 +13,7 @@ import { getMainClasses } from '~utils/css';
 import { withId } from '~utils/actions';
 import { ActionTypes } from '~redux/index';
 import { useSelector } from '~utils/hooks';
-import { useCurrentUser } from '~data/helpers';
+import { useLoggedInUser } from '~data/helpers';
 import Alert from '~core/Alert';
 import { IconButton } from '~core/Button';
 import EthUsd from '~core/EthUsd';
@@ -108,7 +108,7 @@ const GasStationPrice = ({ transaction: { id, gasLimit, error } }: Props) => {
   const [isNetworkCongested] = useState(false);
 
   const gasPrices = useSelector(gasPricesSelector);
-  const { balance } = useCurrentUser();
+  const { balance } = useLoggedInUser();
   const walletType = useSelector(walletTypeSelector);
 
   const transform = useCallback(withId(id), [id]);

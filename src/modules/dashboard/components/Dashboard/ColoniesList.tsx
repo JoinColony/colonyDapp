@@ -5,7 +5,7 @@ import { useDataFetcher } from '~utils/hooks';
 import { SpinnerLoader } from '~core/Preloaders';
 import Link from '~core/Link';
 import { CREATE_COLONY_ROUTE } from '~routes/index';
-import { useCurrentUser } from '~data/helpers';
+import { useLoggedInUser } from '~data/helpers';
 
 import ColoniesListItem from './ColoniesListItem';
 import { userColoniesFetcher } from '../../fetchers';
@@ -30,7 +30,7 @@ const MSG = defineMessages({
 const displayName = 'dashboard.Dashboard.ColoniesList';
 
 const ColoniesList = () => {
-  const { walletAddress } = useCurrentUser();
+  const { walletAddress } = useLoggedInUser();
   const { data: colonyAddresses, isFetching } = useDataFetcher(
     userColoniesFetcher,
     [walletAddress],

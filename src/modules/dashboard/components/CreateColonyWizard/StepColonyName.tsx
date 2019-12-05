@@ -12,7 +12,7 @@ import { Tooltip } from '~core/Popover';
 import { ActionTypes } from '~redux/index';
 import { multiLineTextEllipsis } from '~utils/strings';
 import ENS from '~lib/ENS';
-import { useCurrentUser } from '~data/helpers';
+import { useLoggedInUser } from '~data/helpers';
 
 import styles from './StepColonyName.css';
 
@@ -90,7 +90,7 @@ const StepColonyName = ({
     error: ActionTypes.COLONY_NAME_CHECK_AVAILABILITY_ERROR,
   });
 
-  const { username } = useCurrentUser();
+  const { username } = useLoggedInUser();
 
   const [currentENSName, setCurrentENSName] = useState();
 
