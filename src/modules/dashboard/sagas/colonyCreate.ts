@@ -35,7 +35,6 @@ import { getUserRoles } from '../../transformers';
 import { createColonyProfile } from '../data/commands';
 import { CREATE_COLONY } from '../mutations';
 import { getColonyName } from './shared';
-import apolloClient from '~context/apolloClient';
 
 function* colonyCreate({
   meta,
@@ -44,13 +43,17 @@ function* colonyCreate({
     displayName,
     tokenAddress: givenTokenAddress,
     tokenChoice,
-    tokenIcon,
+    // tokenIcon,
     tokenName,
     tokenSymbol,
     username: givenUsername,
   },
 }: Action<ActionTypes.COLONY_CREATE>) {
   const { username: currentUsername, walletAddress } = yield getLoggedInUser();
+
+  const apolloClient: ApolloClient<any> = yield getContext(
+    Context.APOLLO_CLIENT,
+  );
 
   /*
    * Define a manifest of transaction ids and their respective channels.
@@ -222,10 +225,6 @@ function* colonyCreate({
       yield takeFrom(createUser.channel, ActionTypes.TRANSACTION_SUCCEEDED);
       yield put<AllActions>(transactionLoadRelated(createUser.id, true));
 
-      const apolloClient: ApolloClient<any> = yield getContext(
-        Context.APOLLO_CLIENT,
-      );
-
       yield apolloClient.mutate({
         mutation: CreateUserDocument,
         variables: {
@@ -286,26 +285,6 @@ function* colonyCreate({
     yield put(transactionLoadRelated(createColony.id, true));
 
     /*
-     * Create the colony store
-     */
-    const colonyStore = yield executeCommand(createColonyProfile, {
-      metadata: { colonyAddress },
-      args: {
-        colonyAddress,
-        colonyName,
-        displayName,
-        token: {
-          address: tokenAddress,
-          iconHash: tokenIcon,
-          isExternal: tokenChoice === 'select',
-          isNative: true,
-          name: tokenName,
-          symbol: tokenSymbol,
-        },
-      },
-    });
-
-    /*
      * Create the colony in the Mongo Database
      */
     yield apolloClient.mutate({
@@ -320,15 +299,6 @@ function* colonyCreate({
     });
 
     yield put(transactionLoadRelated(createColony.id, false));
-
-    /*
-     * Pass through colonyStore Address after colony store creation to colonyName creation
-     */
-    yield put(
-      transactionAddParams(createLabel.id, {
-        orbitDBPath: colonyStore.address.toString(),
-      }),
-    );
 
     /*
      * Add a colonyAddress identifier to all pending transactions.
