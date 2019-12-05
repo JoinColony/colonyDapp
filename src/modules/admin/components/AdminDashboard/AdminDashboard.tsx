@@ -16,10 +16,7 @@ import Permissions from '~admin/Permissions';
 import ProfileAdvanced from '~admin/Profile/ProfileAdvanced';
 import VerticalNavigation from '~pages/VerticalNavigation';
 import { HistoryNavigation } from '~pages/NavigationWrapper';
-import {
-  useDataFetcher,
-  useTransformer,
-} from '~utils/hooks';
+import { useDataFetcher, useTransformer } from '~utils/hooks';
 import { DomainsMapType } from '~types/index';
 import { useLoggedInUser } from '~data/helpers';
 
