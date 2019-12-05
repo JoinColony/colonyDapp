@@ -45,3 +45,12 @@ export const SET_TASK_PAYOUT = gql`
     }
   }
 `;
+
+export const SET_TASK_SKILL = gql`
+  mutation SetTaskSkill($input: SetTaskSkillInput!) {
+    setTaskSkill(input: $input) {
+      id
+      ethSkillId
+    }
+  }
+`;
