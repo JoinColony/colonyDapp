@@ -1,24 +1,14 @@
-import React, { useState, useCallback } from 'react';
+import React, { useCallback, useState } from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
+import { RouteComponentProps, withRouter } from 'react-router-dom';
 import compose from 'recompose/compose';
-import { withRouter } from 'react-router-dom';
-import { useLazyQuery, useQuery } from '@apollo/react-hooks';
-
-import { ActionTypes } from '~redux/index';
-import {
-  useDataFetcher,
-  useDataSubscriber,
-  useTransformer,
-} from '~utils/hooks';
+import Button, { ActionButton, ConfirmButton } from '~core/Button';
 // Temporary, please remove when wiring in the rating modals
 import { OpenDialog } from '~core/Dialog/types';
-import { mergePayload } from '~utils/actions';
-import Heading from '~core/Heading';
 import withDialog from '~core/Dialog/withDialog';
-import Button, { ActionButton, ConfirmButton } from '~core/Button';
+import Heading from '~core/Heading';
 import Icon from '~core/Icon';
 import { Tooltip } from '~core/Popover';
-import LoadingTemplate from '~pages/LoadingTemplate';
 import TaskAssignment from '~dashboard/TaskAssignment';
 import TaskComments from '~dashboard/TaskComments';
 import TaskDate from '~dashboard/TaskDate';
@@ -28,7 +18,6 @@ import TaskFeed from '~dashboard/TaskFeed';
 import TaskRequestWork from '~dashboard/TaskRequestWork';
 import TaskSkills from '~dashboard/TaskSkills';
 import TaskTitle from '~dashboard/TaskTitle';
-import { useLoggedInUser } from '~data/index';
 
 import {
   canCancelTask,
@@ -38,13 +27,17 @@ import {
   canRequestToWork,
   isFinalized,
 } from '../../checks';
-import { TASK } from '../../queries';
 import {
   colonyAddressFetcher,
   domainsAndRolesFetcher,
 } from '../../../dashboard/fetchers';
+import { useLoggedInUser, useTask } from '~data/helpers';
+import { TaskIdInput } from '~data/index';
+import LoadingTemplate from '~pages/LoadingTemplate';
+import { ActionTypes } from '~redux/index';
+import { mergePayload } from '~utils/actions';
+import { useDataFetcher, useTransformer } from '~utils/hooks';
 import { getUserRoles } from '../../../transformers';
-
 import styles from './Task.css';
 
 const MSG = defineMessages({
@@ -107,7 +100,7 @@ const MSG = defineMessages({
 });
 
 interface MatchProps {
-  draftId: TaskDraftId;
+  draftId: string;
   colonyName: string;
 }
 
@@ -135,10 +128,8 @@ const Task = ({
     [colonyName],
   );
 
-  const { data, loading: isLoadingTask } = useQuery(TASK, {
-    variables: { id: draftId },
-  });
-  const { task } = data || {};
+  // @todo fix type assertion here - string -> TaskIdInput
+  const { data: task, loading: isLoadingTask } = useTask(draftId as unknown as TaskIdInput);
 
   const {
     description = undefined,
