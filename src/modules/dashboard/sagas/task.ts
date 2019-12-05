@@ -17,7 +17,6 @@ import { Context, getContext } from '~context/index';
 import { ROOT_DOMAIN } from '~constants';
 import { Action, ActionTypes } from '~redux/index';
 import { Address, ContractContexts } from '~types/index';
-import { TaskType } from '~immutable/index';
 import {
   executeCommand,
   executeQuery,
@@ -41,9 +40,7 @@ import { createTransaction, getTxChannel, signMessage } from '../../core/sagas';
 
 import {
   assignWorker,
-  cancelTask,
   closeTask,
-  createTask,
   createWorkRequest,
   finalizeTask,
   postComment,
@@ -113,8 +110,6 @@ function* taskCreate({
       Context.APOLLO_CLIENT,
     );
 
-    // fixme remove this? Will task id be created on server?
-    // const draftId = generateUrlFriendlyId();
     const {
       data: { createTask },
     } = yield apolloClient.mutate({
@@ -318,36 +313,6 @@ function* taskSetDomain({
     });
   } catch (error) {
     return yield putError(ActionTypes.TASK_SET_DOMAIN_ERROR, error, meta);
-  }
-  return null;
-}
-
-/*
- * Given a colony address and task ID, remove the task by unsetting
- * the corresponding key in the tasks index store. The task store is
- * simply unpinned.
- */
-function* taskCancel({
-  meta,
-  payload: { colonyAddress, draftId, domainId },
-}: Action<ActionTypes.TASK_CANCEL>) {
-  try {
-    const { event } = yield executeCommand(cancelTask, {
-      args: { draftId, domainId },
-      metadata: { colonyAddress, draftId },
-    });
-
-    yield put<AllActions>({
-      type: ActionTypes.TASK_CANCEL_SUCCESS,
-      meta,
-      payload: {
-        colonyAddress,
-        draftId,
-        event,
-      },
-    });
-  } catch (error) {
-    return yield putError(ActionTypes.TASK_CANCEL_ERROR, error, meta);
   }
   return null;
 }
@@ -908,7 +873,6 @@ function* taskCommentAdd({
 }
 
 export default function* tasksSagas() {
-  yield takeEvery(ActionTypes.TASK_CANCEL, taskCancel);
   yield takeEvery(ActionTypes.TASK_CLOSE, taskClose);
   yield takeEvery(ActionTypes.TASK_COMMENT_ADD, taskCommentAdd);
   yield takeEvery(ActionTypes.TASK_CREATE, taskCreate);
