@@ -1,5 +1,14 @@
 import gql from 'graphql-tag';
 
+export const ASSIGN_WORKER = gql`
+  mutation AssignWorker($input: AssignWorkerInput!) {
+    assignWorker(input: $input) {
+      id
+      workerAddress
+    }
+  }
+`;
+
 export const CANCEL_TASK = gql`
   mutation CancelTask($input: TaskIdInput!) {
     cancelTask(input: $input) {
