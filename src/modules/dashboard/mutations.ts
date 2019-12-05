@@ -42,6 +42,17 @@ export const FINALIZE_TASK = gql`
   }
 `;
 
+export const REMOVE_TASK_PAYOUT = gql`
+  mutation RemoveTaskPayout($input: RemoveTaskPayoutInput!) {
+    removeTaskPayout(input: $input) {
+      id
+      amount
+      token
+      ethDomainId
+    }
+  }
+`;
+
 export const SET_TASK_DOMAIN = gql`
   mutation SetTaskDomain($input: SetTaskDomainInput!) {
     setTaskDomain(input: $input) {
