@@ -1,3 +1,4 @@
+import { useMutation } from '@apollo/react-hooks';
 import React, { useCallback, useState } from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 import { RouteComponentProps, withRouter } from 'react-router-dom';
@@ -33,12 +34,13 @@ import {
   domainsAndRolesFetcher,
 } from '../../../dashboard/fetchers';
 import { useLoggedInUser, useTask } from '~data/helpers';
-import { TaskIdInput } from '~data/index';
+import { Task as TaskType, TaskIdInput } from '~data/index';
 import LoadingTemplate from '~pages/LoadingTemplate';
 import { ActionTypes } from '~redux/index';
 import { mergePayload } from '~utils/actions';
 import { useDataFetcher, useTransformer } from '~utils/hooks';
 import { getUserRoles } from '../../../transformers';
+import { CANCEL_TASK } from '../../mutations';
 
 import styles from './Task.css';
 
@@ -171,6 +173,12 @@ const Task = ({
     colonyAddress,
     draftId,
   ]);
+
+  // @todo type mutation variables with generated types
+  const [handleCancelTask] = useMutation<TaskType, {}>(
+    CANCEL_TASK,
+    { variables: { id: draftId } },
+  );
 
   if (
     isLoadingTask ||
@@ -308,16 +316,13 @@ const Task = ({
             </Tooltip>
           )}
           {canCancelTask(task, userRoles) && (
-            <ActionButton
+            <Button
               appearance={{ theme: 'secondary', size: 'small' }}
               button={ConfirmButton}
               confirmText={MSG.confirmText}
+              onClick={handleCancelTask}
               onConfirmToggled={setDiscardConfirmDisplay}
               text={MSG.discardTask}
-              submit={ActionTypes.TASK_CANCEL}
-              error={ActionTypes.TASK_CANCEL_ERROR}
-              success={ActionTypes.TASK_CANCEL_SUCCESS}
-              transform={transform}
             />
           )}
           {/* Hide when discard confirm is displayed */}
