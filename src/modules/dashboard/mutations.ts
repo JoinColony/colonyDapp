@@ -53,6 +53,15 @@ export const REMOVE_TASK_PAYOUT = gql`
   }
 `;
 
+export const SEND_WORK_INVITE = gql`
+  mutation SendWorkInvite($input: SendWorkInviteInput!) {
+    sendWorkInvite(input: $input) {
+      id
+      workerAddress
+    }
+  }
+`;
+
 export const SET_TASK_DOMAIN = gql`
   mutation SetTaskDomain($input: SetTaskDomainInput!) {
     setTaskDomain(input: $input) {
