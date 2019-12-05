@@ -23,11 +23,7 @@ import {
 import { ColonyRolesType } from '~immutable/index';
 import { ContractContexts, createAddress } from '~types/index';
 
-import {
-  removeColonyAvatar,
-  setColonyAvatar,
-  updateColonyProfile,
-} from '../data/commands';
+import { removeColonyAvatar, setColonyAvatar } from '../data/commands';
 import {
   checkColonyNameIsAvailable,
   getColony,
@@ -81,46 +77,6 @@ function* colonyNameCheckAvailability({
       caughtError,
       meta,
     );
-  }
-  return null;
-}
-
-function* colonyProfileUpdate({
-  meta,
-  payload: {
-    colonyAddress,
-    colonyName,
-    description,
-    displayName,
-    guideline,
-    website,
-  },
-}: Action<ActionTypes.COLONY_PROFILE_UPDATE>) {
-  try {
-    yield executeCommand(updateColonyProfile, {
-      args: {
-        description,
-        displayName,
-        guideline,
-        website,
-      },
-      metadata: { colonyAddress },
-    });
-
-    yield put<AllActions>({
-      type: ActionTypes.COLONY_PROFILE_UPDATE_SUCCESS,
-      meta,
-      payload: {
-        colonyAddress,
-        colonyName,
-        description,
-        displayName,
-        guideline,
-        website,
-      },
-    });
-  } catch (error) {
-    return yield putError(ActionTypes.COLONY_PROFILE_UPDATE_ERROR, error, meta);
   }
   return null;
 }
@@ -627,7 +583,6 @@ export default function* colonySagas() {
     ActionTypes.COLONY_NATIVE_TOKEN_UNLOCK,
     colonyNativeTokenUnlock,
   );
-  yield takeEvery(ActionTypes.COLONY_PROFILE_UPDATE, colonyProfileUpdate);
   yield takeEvery(
     ActionTypes.COLONY_RECOVERY_MODE_ENTER,
     colonyRecoveryModeEnter,

@@ -188,31 +188,6 @@ export type ColonyActionTypes =
     >
   | UniqueActionType<ActionTypes.COLONY_MINT_TOKENS_SUBMITTED, object, object>
   | UniqueActionType<
-      ActionTypes.COLONY_PROFILE_UPDATE,
-      {
-        colonyAddress: string;
-        colonyName: string;
-        description: string;
-        displayName: string;
-        guideline: string;
-        website: string;
-      },
-      WithKey
-    >
-  | ErrorActionType<ActionTypes.COLONY_PROFILE_UPDATE_ERROR, object>
-  | UniqueActionType<
-      ActionTypes.COLONY_PROFILE_UPDATE_SUCCESS,
-      {
-        colonyAddress: string;
-        colonyName: string;
-        description: string;
-        displayName: string;
-        guideline: string;
-        website: string;
-      },
-      WithKey
-    >
-  | UniqueActionType<
       ActionTypes.COLONY_RECOVERY_MODE_ENTER,
       { colonyAddress: Address },
       object
