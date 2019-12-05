@@ -2,7 +2,7 @@ import React, { ReactNode, useCallback } from 'react';
 import { MessageDescriptor, MessageValues, defineMessages } from 'react-intl';
 import compose from 'recompose/compose';
 
-import { User } from '~data/types/index';
+import { User } from '~data/index';
 import { Address } from '~types/index';
 import { getMainClasses } from '~utils/css';
 

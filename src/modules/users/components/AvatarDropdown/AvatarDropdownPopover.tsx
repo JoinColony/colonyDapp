@@ -54,7 +54,7 @@ const MSG = defineMessages({
 
 interface Props extends RouteComponentProps {
   closePopover: () => void;
-  username?: string;
+  username?: string | null;
 }
 
 class AvatarDropdownPopover extends Component<Props> {

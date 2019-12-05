@@ -2,7 +2,7 @@ import React, { ReactNode } from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 import cx from 'classnames';
 
-import { User } from '~data/types/index';
+import { User } from '~data/index';
 import { Address } from '~types/index';
 import { ItemDataType } from '~core/OmniPicker';
 import MaskedAddress from '~core/MaskedAddress';

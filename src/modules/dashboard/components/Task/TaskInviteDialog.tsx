@@ -3,7 +3,7 @@ import { defineMessages } from 'react-intl';
 
 import { Address } from '~types/index';
 import { TaskPayoutType } from '~immutable/index';
-import { User } from '~data/types/index';
+import { User } from '~data/index';
 import { mergePayload } from '~utils/actions';
 import Assignment from '~core/Assignment';
 import Button from '~core/Button';

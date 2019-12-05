@@ -1,7 +1,8 @@
 import React from 'react';
 import { useQuery } from '@apollo/react-hooks';
 
-import { USER } from '../../../queries';
+import { UserDocument } from '~data/index';
+
 import InboxItem, { Props } from './InboxItem';
 
 const ChainInboxItem = ({
@@ -9,10 +10,10 @@ const ChainInboxItem = ({
   item,
   ...props
 }: Props) => {
-  const { data: initiatorData } = useQuery(USER, {
+  const { data: initiatorData } = useQuery(UserDocument, {
     variables: { address: initiator },
   });
-  const { data: targetUserData } = useQuery(USER, {
+  const { data: targetUserData } = useQuery(UserDocument, {
     variables: { address: targetUser },
   });
   const enrichedItem = {

@@ -4,7 +4,7 @@ import Avatar from '~core/Avatar';
 import InfoPopover from '~core/InfoPopover';
 import Link from '~core/NavLink';
 import { Address } from '~types/index';
-import { User } from '~data/types/index';
+import { User } from '~data/index';
 
 import { getUsername } from '../../../users/transformers';
 
@@ -44,7 +44,12 @@ const UserAvatar = ({
   showLink,
   notSet,
   size,
-  user = { id: address, profile: { walletAddress: address } },
+  user = {
+    id: address,
+    profile: { walletAddress: address },
+    colonies: [],
+    tasks: [],
+  },
 }: Props) => {
   const username = getUsername(user);
   const avatar = (

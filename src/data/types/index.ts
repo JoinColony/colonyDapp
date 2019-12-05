@@ -8,4 +8,5 @@ export * from './permissions';
 export * from './stores';
 
 /* these are already part of the db refactoring. do not delete */
-export * from './User';
+// FIXME USE generated code
+// export * from './User';

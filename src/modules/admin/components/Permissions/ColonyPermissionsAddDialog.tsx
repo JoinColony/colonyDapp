@@ -9,7 +9,7 @@ import { mergePayload, withKey, mapPayload, pipe } from '~utils/actions';
 import { ItemDataType } from '~core/OmniPicker';
 import { ActionTypeString, ActionTypes } from '~redux/index';
 import { useDataFetcher, useTransformer } from '~utils/hooks';
-import { User } from '~data/types/index';
+import { ColonySubscribedUsersDocument, User } from '~data/index';
 import SingleUserPicker, { filterUserSelection } from '~core/SingleUserPicker';
 import { SpinnerLoader } from '~core/Preloaders';
 import Heading from '~core/Heading';
@@ -19,7 +19,6 @@ import { ActionForm, InputLabel } from '~core/Fields';
 import HookedUserAvatar from '~users/HookedUserAvatar';
 import { useUserLazy } from '~data/helpers';
 
-import { COLONY_SUBSCRIBED_USERS } from '../../../dashboard/queries';
 import { TEMP_getUserRolesWithRecovery } from '../../../transformers';
 import {
   domainsAndRolesFetcher,
@@ -127,9 +126,12 @@ const ColonyPermissionsAddDialog = ({
     [colonyAddress, domainId],
   );
 
-  const { data: subscribedUsersData } = useQuery(COLONY_SUBSCRIBED_USERS, {
-    variables: { colonyAddress },
-  });
+  const { data: subscribedUsersData } = useQuery(
+    ColonySubscribedUsersDocument,
+    {
+      variables: { colonyAddress },
+    },
+  );
 
   const user = useUserLazy(selectedUserAddress);
 

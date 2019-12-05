@@ -4,9 +4,9 @@ import { useLazyQuery } from '@apollo/react-hooks';
 
 import { NOT_FOUND_ROUTE } from '~routes/index';
 import ProfileTemplate from '~pages/ProfileTemplate';
+import { UserDocument } from '~data/index';
 
 import { useUserAddressFetcher } from '../../hooks';
-import { USER } from '../../queries';
 import UserMeta from './UserMeta';
 import UserProfileSpinner from './UserProfileSpinner';
 import UserColonies from './UserColonies';
@@ -25,7 +25,7 @@ const UserProfile = ({
     username,
   );
 
-  const [loadUser, { data, loading }] = useLazyQuery(USER, {
+  const [loadUser, { data, loading }] = useLazyQuery(UserDocument, {
     variables: { address: userAddress },
   });
 
