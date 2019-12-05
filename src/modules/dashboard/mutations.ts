@@ -34,3 +34,14 @@ export const SET_TASK_DUE_DATE = gql`
     }
   }
 `;
+
+export const SET_TASK_PAYOUT = gql`
+  mutation SetTaskPayout($input: SetTaskPayoutInput!) {
+    setTaskPayout(input: $input) {
+      id
+      amount
+      token
+      ethDomainId
+    }
+  }
+`;
