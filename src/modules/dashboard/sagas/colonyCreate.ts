@@ -18,6 +18,7 @@ import ENS from '~lib/ENS';
 import { createAddress, ContractContexts } from '~types/index';
 import { parseExtensionDeployedLog } from '~utils/web3/eventLogs/eventParsers';
 import { getCurrentUser } from '~data/helpers';
+import { CreateUserDocument } from '~data/index';
 
 import { TxConfig } from '../../core/types';
 import { getProfileStoreAddress } from '../../users/data/queries';
@@ -32,7 +33,6 @@ import { subscribeToColony } from '../../users/actionCreators';
 import { fetchDomainsAndRoles } from '../actionCreators/domains';
 import { getUserRoles } from '../../transformers';
 import { createColonyProfile } from '../data/commands';
-import { CREATE_USER } from '../../users/mutations';
 import { getColonyName } from './shared';
 
 function* colonyCreate({
@@ -225,7 +225,7 @@ function* colonyCreate({
       );
 
       yield apolloClient.mutate({
-        mutation: CREATE_USER,
+        mutation: CreateUserDocument,
         variables: {
           createUserInput: { username },
           currentUserInput: { username },

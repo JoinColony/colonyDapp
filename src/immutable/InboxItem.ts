@@ -1,7 +1,8 @@
 import { Record } from 'immutable';
 
 import { DefaultValues, RecordToJS } from '~types/index';
-import { EVENT_SOURCE_TYPES, User } from '~data/types/index';
+import { EVENT_SOURCE_TYPES } from '~data/types/index';
+import { User } from '~data/index';
 
 interface Shared {
   id: string;

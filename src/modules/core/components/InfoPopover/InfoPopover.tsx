@@ -1,7 +1,7 @@
 import React, { ReactNode } from 'react';
 
 import { Address } from '~types/index';
-import { User } from '~data/types/index';
+import { User } from '~data/index';
 
 import { Tooltip } from '~core/Popover';
 import UserMention from '~core/UserMention';
@@ -21,8 +21,8 @@ interface Props {
 }
 
 interface TooltipProps {
-  displayName?: string;
-  username?: string;
+  displayName?: string | null;
+  username?: string | null;
   walletAddress: Address;
 }
 

@@ -15,7 +15,7 @@ import { Context } from '~context/index';
 import { putError } from '~utils/saga/effects';
 import { log } from '~utils/debug';
 import ENSCache from '~lib/ENS';
-import { SET_CURRENT_USER } from '~data/currentUser';
+import { SetCurrentUserDocument } from '~data/index';
 
 import ColonyManagerType from '../../../lib/ColonyManager';
 import { DDB as DDBType } from '../../../lib/database';
@@ -131,7 +131,7 @@ export default function* setupUserContext(
     const balance = yield provider.getBalance(walletAddress);
 
     yield apolloClient.mutate({
-      mutation: SET_CURRENT_USER,
+      mutation: SetCurrentUserDocument,
       variables: {
         input: {
           balance: formatEther(balance),

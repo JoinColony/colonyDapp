@@ -17,9 +17,8 @@ import {
 import Button from '~core/Button';
 import ProfileTemplate from '~pages/ProfileTemplate';
 import { useCurrentUser } from '~data/helpers';
+import { EditUserDocument, UserDocument } from '~data/index';
 
-import { EDIT_USER } from '../../mutations';
-import { USER } from '../../queries';
 import UserProfileSpinner from '../UserProfile/UserProfileSpinner';
 import Sidebar from './Sidebar';
 import styles from './UserProfileEdit.css';
@@ -77,13 +76,13 @@ const validationSchema = yup.object({
 const UserProfileEdit = () => {
   const { walletAddress } = useCurrentUser();
 
-  const [editUser] = useMutation(EDIT_USER);
+  const [editUser] = useMutation(EditUserDocument);
   const onSubmit = useCallback(
     (profile: FormValues) => editUser({ variables: { input: profile } }),
     [editUser],
   );
 
-  const { data } = useQuery(USER, {
+  const { data } = useQuery(UserDocument, {
     variables: { address: walletAddress },
   });
 

@@ -29,13 +29,12 @@ import { ActionTypes } from '~redux/index';
 import HookedUserAvatar from '~users/HookedUserAvatar';
 import { mapPayload, mergePayload, pipe } from '~utils/actions';
 import { useDataSubscriber, useSelector } from '~utils/hooks';
-import { User } from '~data/types/index';
+import { ColonySubscribedUsersDocument, User } from '~data/index';
 
 import { createAddress } from '../../../../types';
 import { useColonyTokens } from '../../hooks/useColonyTokens';
 import { colonySubscriber } from '../../subscribers';
 import { taskSelector } from '../../selectors';
-import { COLONY_SUBSCRIBED_USERS } from '../../queries';
 import WrappedPayout from './WrappedPayout';
 
 import styles from './TaskEditDialog.css';
@@ -170,9 +169,12 @@ const TaskEditDialog = ({
     colonyAddress,
   ) as [ColonyTokenReferenceType[], TokenType[]];
 
-  const { data: subscribedUsersData } = useQuery(COLONY_SUBSCRIBED_USERS, {
-    variables: { colonyAddress },
-  });
+  const { data: subscribedUsersData } = useQuery(
+    ColonySubscribedUsersDocument,
+    {
+      variables: { colonyAddress },
+    },
+  );
 
   const subscribedColonyUsers =
     (subscribedUsersData && subscribedUsersData.colony.subscribedUsers) || [];

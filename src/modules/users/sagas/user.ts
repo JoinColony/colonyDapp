@@ -18,6 +18,7 @@ import { Action, ActionTypes, AllActions } from '~redux/index';
 import { getContext, Context } from '~context/index';
 import ENS from '~lib/ENS';
 import { getCurrentUser } from '~data/helpers';
+import { CreateUserDocument, EditUserDocument } from '~data/index';
 
 import { inboxItemsFetch } from '../actionCreators';
 
@@ -54,8 +55,6 @@ import {
   subscribeToUserTasks,
   subscribeToUserColonies,
 } from '../data/queries';
-
-import { CREATE_USER, EDIT_USER } from '../mutations';
 
 import { createTransaction, getTxChannel } from '../../core/sagas/transactions';
 
@@ -112,7 +111,7 @@ function* userAvatarRemove({ meta }: Action<ActionTypes.USER_AVATAR_REMOVE>) {
       Context.APOLLO_CLIENT,
     );
     yield apolloClient.mutate({
-      mutation: EDIT_USER,
+      mutation: EditUserDocument,
       variables: { input: { avatarHash: null } },
     });
 
@@ -139,7 +138,7 @@ function* userAvatarUpload({
     const ipfsHash = yield call(ipfsUpload, payload.data);
 
     yield apolloClient.mutate({
-      mutation: EDIT_USER,
+      mutation: EditUserDocument,
       variables: { input: { avatarHash: ipfsHash } },
     });
 
@@ -225,7 +224,7 @@ function* usernameCreate({
     yield put(transactionLoadRelated(id, true));
 
     yield apolloClient.mutate({
-      mutation: CREATE_USER,
+      mutation: CreateUserDocument,
       variables: {
         createUserInput: { username },
         currentUserInput: { username },
