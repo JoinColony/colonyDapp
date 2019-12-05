@@ -16,8 +16,8 @@ export const CREATE_COLONY = gql`
 `;
 
 export const EDIT_COLONY = gql`
-  mutation editColony($address: String!) {
-    editColony(address: $address) {
+  mutation editColonyProfile($input: EditColonyProfileInput!) {
+    editColony(input: $input) {
       id
     }
   }

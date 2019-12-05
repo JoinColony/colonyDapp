@@ -14,11 +14,7 @@ import {
   tasksFilterSelectOptions,
 } from '../shared/tasksFilter';
 import { ActionTypes } from '~redux/index';
-import {
-  useDataFetcher,
-  useSelector,
-  useTransformer,
-} from '~utils/hooks';
+import { useDataFetcher, useSelector, useTransformer } from '~utils/hooks';
 import { mergePayload } from '~utils/actions';
 import Transactions from '~admin/Transactions';
 import { Tab, Tabs, TabList, TabPanel } from '~core/Tabs';
