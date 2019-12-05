@@ -1,6 +1,7 @@
 import React from 'react';
 import { Redirect } from 'react-router';
 import { defineMessages } from 'react-intl';
+import { useQuery } from '@apollo/react-hooks';
 
 import { ROLES, ROOT_DOMAIN } from '~constants';
 import { NavigationItem } from '~pages/VerticalNavigation/VerticalNavigation';
@@ -17,7 +18,6 @@ import VerticalNavigation from '~pages/VerticalNavigation';
 import { HistoryNavigation } from '~pages/NavigationWrapper';
 import {
   useDataFetcher,
-  useDataSubscriber,
   useTransformer,
 } from '~utils/hooks';
 import { DomainsMapType } from '~types/index';
@@ -34,7 +34,7 @@ import {
   domainsAndRolesFetcher,
   TEMP_userHasRecoveryRoleFetcher,
 } from '../../../dashboard/fetchers';
-import { colonySubscriber } from '../../../dashboard/subscribers';
+import { GET_COLONY } from '../../../dashboard/queries';
 
 import styles from './AdminDashboard.css';
 
@@ -152,11 +152,12 @@ const AdminDashboard = ({
     [colonyName],
   );
 
-  const { error: colonyError, data: colony } = useDataSubscriber(
-    colonySubscriber,
-    [colonyAddress],
-    [colonyAddress],
-  );
+  const {
+    data: { colony },
+    loading: colonyDataLoading,
+  } = useQuery(GET_COLONY, {
+    variables: { address: colonyAddress },
+  });
 
   const { walletAddress } = useLoggedInUser();
 
@@ -184,11 +185,11 @@ const AdminDashboard = ({
     walletAddress,
   ]);
 
-  if (!colonyName || addressError || colonyError) {
+  if (!colonyName || addressError) {
     return <Redirect to="/404" />;
   }
 
-  if (!colony || !domains || isFetchingRoles) {
+  if (!colony || !domains || isFetchingRoles || colonyDataLoading) {
     return <LoadingTemplate loadingText={MSG.loadingText} />;
   }
 
