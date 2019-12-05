@@ -63,3 +63,12 @@ export const SET_TASK_TITLE = gql`
     }
   }
 `;
+
+export const UNASSIGN_WORKER = gql`
+  mutation UnassignWorker($input: UnassignWorkerInput!) {
+    unassignWorker(input: $input) {
+      id
+      workerAddress
+    }
+  }
+`;
