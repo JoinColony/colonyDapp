@@ -54,22 +54,6 @@ export const colonyReducer: EventReducer<ColonyType> = (colony, event) => {
           ),
       };
     }
-    case EventTypes.COLONY_AVATAR_UPLOADED: {
-      const { ipfsHash } = event.payload;
-      return {
-        ...colony,
-        avatarHash: ipfsHash,
-      };
-    }
-    case EventTypes.COLONY_AVATAR_REMOVED: {
-      const { avatarHash } = colony;
-      const { ipfsHash } = event.payload;
-      return {
-        ...colony,
-        avatarHash:
-          avatarHash && avatarHash === ipfsHash ? undefined : avatarHash,
-      };
-    }
     case EventTypes.COLONY_PROFILE_CREATED:
     case EventTypes.COLONY_PROFILE_UPDATED:
       return { ...colony, ...event.payload };

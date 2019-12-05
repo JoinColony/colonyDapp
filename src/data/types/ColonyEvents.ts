@@ -6,20 +6,6 @@ import { Address } from '~types/index';
 
 export type ColonyEvents =
   | EventDefinition<
-      EventTypes.COLONY_AVATAR_REMOVED,
-      {
-        ipfsHash: string;
-      },
-      Versions.CURRENT
-    >
-  | EventDefinition<
-      EventTypes.COLONY_AVATAR_UPLOADED,
-      {
-        ipfsHash: string;
-      },
-      Versions.CURRENT
-    >
-  | EventDefinition<
       EventTypes.DOMAIN_CREATED,
       {
         domainId: number;
