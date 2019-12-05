@@ -2,6 +2,7 @@ import React, { useCallback, useState } from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 import { RouteComponentProps, withRouter } from 'react-router-dom';
 import compose from 'recompose/compose';
+
 import Button, { ActionButton, ConfirmButton } from '~core/Button';
 // Temporary, please remove when wiring in the rating modals
 import { OpenDialog } from '~core/Dialog/types';
@@ -38,6 +39,7 @@ import { ActionTypes } from '~redux/index';
 import { mergePayload } from '~utils/actions';
 import { useDataFetcher, useTransformer } from '~utils/hooks';
 import { getUserRoles } from '../../../transformers';
+
 import styles from './Task.css';
 
 const MSG = defineMessages({
@@ -133,9 +135,9 @@ const Task = ({
 
   const {
     description = undefined,
-    domainId = undefined,
+    ethDomainId = undefined,
     dueDate = undefined,
-    skillId = undefined,
+    ethSkillId = undefined,
     title = undefined,
   } = task || {};
 
@@ -147,7 +149,7 @@ const Task = ({
 
   const userRoles = useTransformer(getUserRoles, [
     domains,
-    task ? task.domainId : null,
+    ethDomainId || null,
     walletAddress,
   ]);
 
@@ -214,7 +216,7 @@ const Task = ({
           </header>
           <div className={styles.assignment}>
             <div>
-              <TaskAssignment colonyAddress={colonyAddress} draftId={draftId} />
+              <TaskAssignment colonyAddress={colonyAddress} id={draftId} />
             </div>
             {canEdit && (
               <div className={styles.assignmentDetailsButton}>
@@ -231,43 +233,41 @@ const Task = ({
           <TaskTitle
             colonyAddress={colonyAddress}
             disabled={!canEdit}
-            draftId={draftId}
+            id={draftId}
             title={title}
           />
           <TaskDescription
             colonyAddress={colonyAddress}
             description={description}
             disabled={!canEdit}
-            draftId={draftId}
+            id={draftId}
           />
         </section>
-        {!!(canEdit || dueDate || domainId || skillId) && (
+        {!!(canEdit || dueDate || ethDomainId || ethSkillId) && (
           <section className={styles.section}>
             <div className={styles.editor}>
               <TaskDomains
                 colonyAddress={colonyAddress}
                 // Disable the change of domain for now
                 disabled
-                domainId={domainId}
+                domainId={ethDomainId}
                 draftId={draftId}
               />
             </div>
             <div className={styles.editor}>
               <TaskSkills
-                colonyAddress={colonyAddress}
                 disabled={!canEdit}
-                draftId={draftId}
-                skillId={skillId}
-                domainId={domainId}
+                id={draftId}
+                ethSkillId={ethSkillId}
+                ethDomainId={ethDomainId}
               />
             </div>
             <div className={styles.editor}>
               <TaskDate
-                colonyAddress={colonyAddress}
                 disabled={!canEdit}
-                draftId={draftId}
+                id={draftId}
                 dueDate={dueDate}
-                domainId={domainId}
+                ethDomainId={ethDomainId}
               />
             </div>
           </section>
