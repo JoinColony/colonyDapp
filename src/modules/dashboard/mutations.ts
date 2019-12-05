@@ -25,3 +25,12 @@ export const SET_TASK_DESCRIPTION = gql`
     }
   }
 `;
+
+export const SET_TASK_DUE_DATE = gql`
+  mutation SetTaskDueDate($input: SetTaskDueDateInput!) {
+    setTaskDueDate(input: $input) {
+      id
+      dueDate
+    }
+  }
+`;
