@@ -1,4 +1,3 @@
-import { useMutation } from '@apollo/react-hooks';
 import React, { useCallback, useState } from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 import { RouteComponentProps, withRouter } from 'react-router-dom';
@@ -35,12 +34,12 @@ import {
 } from '../../../dashboard/fetchers';
 import { useLoggedInUser, useTask } from '~data/helpers';
 import { Task as TaskType, TaskIdInput } from '~data/index';
+import { useTaskQuery, useCancelTaskMutation } from '~data/index';
 import LoadingTemplate from '~pages/LoadingTemplate';
 import { ActionTypes } from '~redux/index';
 import { mergePayload } from '~utils/actions';
 import { useDataFetcher, useTransformer } from '~utils/hooks';
 import { getUserRoles } from '../../../transformers';
-import { CANCEL_TASK } from '../../mutations';
 
 import styles from './Task.css';
 
@@ -132,8 +131,9 @@ const Task = ({
     [colonyName],
   );
 
-  // @todo fix type assertion here - string -> TaskIdInput
-  const { data: task, loading: isLoadingTask } = useTask(draftId as unknown as TaskIdInput);
+  const { data: task, loading: isLoadingTask } = useTaskQuery(
+    { variables: { id: draftId } },
+  );
 
   const {
     description = undefined,
@@ -174,11 +174,9 @@ const Task = ({
     draftId,
   ]);
 
-  // @todo type mutation variables with generated types
-  const [handleCancelTask] = useMutation<TaskType, {}>(
-    CANCEL_TASK,
-    { variables: { id: draftId } },
-  );
+  const [handleCancelTask] = useCancelTaskMutation({
+    variables: { input: { id: draftId }}
+  });
 
   if (
     isLoadingTask ||
