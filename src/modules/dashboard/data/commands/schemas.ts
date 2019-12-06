@@ -64,10 +64,6 @@ export const SetTaskDescriptionCommandArgsSchema = yup.object({
   description: yup.string(),
 });
 
-export const SetTaskTitleCommandArgsSchema = yup.object({
-  title: yup.string(),
-});
-
 export const PostCommentCommandArgsSchema = yup.object({
   comment: yup.object({
     signature: yup.string().required(),
@@ -113,10 +109,6 @@ export const SetTaskPayoutCommandArgsSchema = yup.object({
 
 export const SetTaskDomainCommandArgsSchema = yup.object({
   domainId: yup.number().required(),
-});
-
-export const CancelTaskCommandArgsSchema = yup.object({
-  draftId: yup.string().required(),
 });
 
 export const FinalizeTaskCommandArgsSchema = yup.object({

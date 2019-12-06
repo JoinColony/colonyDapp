@@ -4,9 +4,8 @@ import BigNumber from 'bn.js';
 import { CommentEvents } from '~data/types/CommentEvents';
 import { TaskEvents } from '~data/types/TaskEvents';
 
-import { TaskType, TaskProps } from '~immutable/index';
 import { Address, CurrentEvents } from '~types/index';
-import { Event } from '~data/types';
+import { Event, Task, TaskProps } from '~data/types';
 import {
   ActionTypes,
   ActionType,
@@ -20,7 +19,7 @@ type TaskActionMeta = {
   key: string; // draftId
 };
 
-type TaskActionPayload<P> = TaskProps<'colonyAddress' | 'draftId'> & P;
+type TaskActionPayload<P> = TaskProps<'id'> & P;
 
 // eslint-disable-next-line @typescript-eslint/no-empty-interface
 interface TaskActionType<T extends string, P>
@@ -63,12 +62,6 @@ interface TaskErrorActionType<T extends string>
  * TASK_WORKER_REVEAL_MANAGER_RATING_SUCCESS
  */
 export type TaskActionTypes =
-  | TaskActionType<ActionTypes.TASK_CANCEL, { domainId: number }>
-  | TaskErrorActionType<ActionTypes.TASK_CANCEL_ERROR>
-  | TaskActionType<
-      ActionTypes.TASK_CANCEL_SUCCESS,
-      { event: Event<EventTypes.TASK_CANCELLED> }
-    >
   | TaskActionType<ActionTypes.TASK_CLOSE, { domainId: number }>
   | TaskErrorActionType<ActionTypes.TASK_CLOSE_ERROR>
   | TaskActionType<
@@ -92,7 +85,7 @@ export type TaskActionTypes =
     >
   | UniqueActionType<
       ActionTypes.TASK_CREATE,
-      TaskProps<'colonyAddress' | 'domainId'>,
+      TaskProps<'ethDomainId'> & { colonyAddress: Address },
       object
     >
   | ErrorActionType<ActionTypes.TASK_CREATE_ERROR, object>
@@ -100,9 +93,7 @@ export type TaskActionTypes =
       ActionTypes.TASK_CREATE_SUCCESS,
       {
         colonyAddress: Address;
-        task: TaskProps<
-          'colonyAddress' | 'creatorAddress' | 'draftId' | 'domainId'
-        >;
+        task: TaskProps<'id' | 'ethDomainId'>;
       }
     >
   | NonUniqueTaskActionType<ActionTypes.TASK_FETCH, object>
@@ -111,7 +102,7 @@ export type TaskActionTypes =
       ActionTypes.TASK_FETCH_SUCCESS,
       {
         colonyAddress: Address;
-        task: TaskType;
+        task: Task;
       }
     >
   | ActionType<ActionTypes.TASK_FETCH_ALL>
@@ -124,7 +115,7 @@ export type TaskActionTypes =
   | TaskErrorActionType<ActionTypes.TASK_FEED_ITEMS_SUB_ERROR>
   | TaskActionType<
       ActionTypes.TASK_FINALIZE,
-      Required<TaskProps<'workerAddress'>> & {
+      Required<TaskProps<'assignedWorker'>> & {
         amountPaid: number;
       }
     >
@@ -159,7 +150,7 @@ export type TaskActionTypes =
     >
   | TaskActionType<
       ActionTypes.TASK_SEND_WORK_INVITE,
-      TaskProps<'workerAddress'>
+      TaskProps<'assignedWorker'>
     >
   | TaskErrorActionType<ActionTypes.TASK_SEND_WORK_INVITE_ERROR>
   | TaskActionType<
@@ -174,7 +165,7 @@ export type TaskActionTypes =
     >
   | TaskActionType<
       ActionTypes.TASK_SET_DUE_DATE,
-      TaskProps<'dueDate' | 'domainId'>
+      TaskProps<'dueDate' | 'ethDomainId'>
     >
   | TaskErrorActionType<ActionTypes.TASK_SET_DUE_DATE_ERROR>
   | TaskActionType<
@@ -190,7 +181,10 @@ export type TaskActionTypes =
       ActionTypes.TASK_SET_DESCRIPTION_SUCCESS,
       { event: Event<EventTypes.TASK_DESCRIPTION_SET> }
     >
-  | TaskActionType<ActionTypes.TASK_SET_DOMAIN, Required<TaskProps<'domainId'>>>
+  | TaskActionType<
+      ActionTypes.TASK_SET_DOMAIN,
+      Required<TaskProps<'ethDomainId'>>
+    >
   | TaskErrorActionType<ActionTypes.TASK_SET_DOMAIN_ERROR>
   | TaskActionType<
       ActionTypes.TASK_SET_DOMAIN_SUCCESS,
@@ -207,18 +201,12 @@ export type TaskActionTypes =
     >
   | TaskActionType<
       ActionTypes.TASK_SET_SKILL,
-      TaskProps<'skillId' | 'domainId'>
+      TaskProps<'ethSkillId' | 'ethDomainId'>
     >
   | TaskErrorActionType<ActionTypes.TASK_SET_SKILL_ERROR>
   | TaskActionType<
       ActionTypes.TASK_SET_SKILL_SUCCESS,
       { event: Event<EventTypes.SKILL_SET> }
-    >
-  | TaskActionType<ActionTypes.TASK_SET_TITLE, Required<TaskProps<'title'>>>
-  | TaskErrorActionType<ActionTypes.TASK_SET_TITLE_ERROR>
-  | TaskActionType<
-      ActionTypes.TASK_SET_TITLE_SUCCESS,
-      { event: Event<EventTypes.TASK_TITLE_SET> }
     >
   | NonUniqueTaskActionType<ActionTypes.TASK_SUB_START, object>
   | NonUniqueTaskActionType<ActionTypes.TASK_SUB_STOP, object>
@@ -247,7 +235,7 @@ export type TaskActionTypes =
   | TaskActionType<ActionTypes.TASK_SUBMIT_DELIVERABLE_SUCCESS, object>
   | NonUniqueTaskActionType<
       ActionTypes.TASK_WORKER_ASSIGN,
-      Required<TaskProps<'workerAddress'>>
+      Required<TaskProps<'assignedWorker'>>
     >
   | TaskErrorActionType<ActionTypes.TASK_WORKER_ASSIGN_ERROR>
   | NonUniqueTaskActionType<
@@ -271,7 +259,7 @@ export type TaskActionTypes =
     >
   | NonUniqueTaskActionType<
       ActionTypes.TASK_WORKER_UNASSIGN,
-      Required<TaskProps<'workerAddress'>>
+      Required<TaskProps<'assignedWorker'>>
     >
   | TaskErrorActionType<ActionTypes.TASK_WORKER_UNASSIGN_ERROR>
   | NonUniqueTaskActionType<
