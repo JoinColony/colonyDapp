@@ -41,11 +41,6 @@ const taskEventReducer = (
       return task.set('dueDate', dueDate ? new Date(dueDate) : undefined);
     }
 
-    case EventTypes.DOMAIN_SET: {
-      const { domainId } = event.payload;
-      return task.set('domainId', domainId);
-    }
-
     case EventTypes.SKILL_SET: {
       const { skillId } = event.payload;
       return task.set('skillId', skillId);

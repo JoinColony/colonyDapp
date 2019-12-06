@@ -68,13 +68,6 @@ export const taskReducer: EventReducer<{
         dueDate: dueDate ? new Date(dueDate) : undefined,
       };
     }
-    case EventTypes.DOMAIN_SET: {
-      const { domainId } = event.payload;
-      return {
-        ...task,
-        domainId,
-      };
-    }
     case EventTypes.SKILL_SET: {
       const { skillId } = event.payload;
       return {
