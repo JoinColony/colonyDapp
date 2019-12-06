@@ -45,7 +45,6 @@ import {
   setTaskDueDate,
   setTaskPayout,
   removeTaskPayout,
-  setTaskSkill,
   unassignWorker,
 } from '../data/commands';
 import {
@@ -182,34 +181,6 @@ function* taskClose({
     });
   } catch (error) {
     return yield putError(ActionTypes.TASK_CLOSE_ERROR, error, meta);
-  }
-  return null;
-}
-
-/*
- * As worker or manager, I want to be able to set a skill
- */
-function* taskSetSkill({
-  payload: { colonyAddress, draftId, skillId, domainId },
-  meta,
-}: Action<ActionTypes.TASK_SET_SKILL>) {
-  try {
-    const { event } = yield executeCommand(setTaskSkill, {
-      args: { skillId, domainId },
-      metadata: { colonyAddress, draftId },
-    });
-
-    yield put<AllActions>({
-      type: ActionTypes.TASK_SET_SKILL_SUCCESS,
-      payload: {
-        colonyAddress,
-        draftId,
-        event,
-      },
-      meta,
-    });
-  } catch (error) {
-    return yield putError(ActionTypes.TASK_SET_SKILL_ERROR, error, meta);
   }
   return null;
 }
@@ -722,7 +693,6 @@ export default function* tasksSagas() {
   yield takeEvery(ActionTypes.TASK_SET_DUE_DATE, taskSetDueDate);
   yield takeEvery(ActionTypes.TASK_SET_PAYOUT, taskSetPayout);
   yield takeEvery(ActionTypes.TASK_REMOVE_PAYOUT, taskRemovePayout);
-  yield takeEvery(ActionTypes.TASK_SET_SKILL, taskSetSkill);
   yield takeEvery(ActionTypes.TASK_SUB_START, taskSubStart);
   yield takeEvery(
     ActionTypes.TASK_SET_WORKER_OR_PAYOUT,
