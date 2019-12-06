@@ -85,21 +85,6 @@ export type TaskEvents =
       Versions.CURRENT
     >
   | EventDefinition<
-      EventTypes.TASK_CANCELLED,
-      {
-        status: TaskStates.CANCELLED;
-      },
-      Versions.V1
-    >
-  | EventDefinition<
-      EventTypes.TASK_CANCELLED,
-      {
-        status: TaskStates.CANCELLED;
-        domainId: number;
-      },
-      Versions.CURRENT
-    >
-  | EventDefinition<
       EventTypes.TASK_CLOSED,
       {
         status: TaskStates.CLOSED;
@@ -163,21 +148,6 @@ export type TaskEvents =
         paymentTokenAddress?: Address;
         workerAddress: Address;
         transactionHash: string;
-        domainId: number;
-      },
-      Versions.CURRENT
-    >
-  | EventDefinition<
-      EventTypes.TASK_TITLE_SET,
-      {
-        title: string;
-      },
-      Versions.V1
-    >
-  | EventDefinition<
-      EventTypes.TASK_TITLE_SET,
-      {
-        title: string;
         domainId: number;
       },
       Versions.CURRENT

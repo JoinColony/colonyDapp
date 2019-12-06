@@ -31,7 +31,6 @@ import {
   SetTaskDueDateCommandArgsSchema,
   SetTaskPayoutCommandArgsSchema,
   SetTaskSkillCommandArgsSchema,
-  SetTaskTitleCommandArgsSchema,
 } from './schemas';
 
 /*
@@ -78,38 +77,6 @@ const prepareTaskStoreCommand = async (
     ...metadata,
     taskStoreAddress,
   });
-};
-
-export const setTaskTitle: Command<
-  TaskStore,
-  TaskStoreMetadata,
-  {
-    currentTitle: string | void;
-    title: string;
-    domainId: number;
-  },
-  {
-    event: Event<EventTypes.TASK_TITLE_SET>;
-    taskStore: TaskStore;
-  } | null
-> = {
-  name: 'setTaskTitle',
-  context: [Context.COLONY_MANAGER, Context.DDB_INSTANCE, Context.WALLET],
-  prepare: prepareTaskStoreCommand,
-  schema: SetTaskTitleCommandArgsSchema,
-  async execute(taskStore, { currentTitle, title, domainId }) {
-    if (title === currentTitle) return null;
-    const eventHash = await taskStore.append(
-      createEvent(EventTypes.TASK_TITLE_SET, {
-        title,
-        domainId,
-      }),
-    );
-    return {
-      taskStore,
-      event: taskStore.getEvent(eventHash) as Event<EventTypes.TASK_TITLE_SET>,
-    };
-  },
 };
 
 export const setTaskDescription: Command<

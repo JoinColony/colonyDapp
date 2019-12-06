@@ -237,9 +237,8 @@ const Task = ({
         </section>
         <section className={styles.section}>
           <TaskTitle
-            colonyAddress={colonyAddress}
             disabled={!canEdit}
-            id={draftId}
+            draftId={draftId}
             title={title}
           />
           <TaskDescription

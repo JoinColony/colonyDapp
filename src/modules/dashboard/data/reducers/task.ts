@@ -33,13 +33,6 @@ export const taskReducer: EventReducer<{
         domainId,
       };
     }
-    case EventTypes.TASK_TITLE_SET: {
-      const { title } = event.payload;
-      return {
-        ...task,
-        title,
-      };
-    }
     case EventTypes.TASK_DESCRIPTION_SET: {
       const { description } = event.payload;
       return {
@@ -58,13 +51,6 @@ export const taskReducer: EventReducer<{
         finalizedAt: new Date(timestamp),
         paymentTokenAddress,
         workerAddress,
-      };
-    }
-    case EventTypes.TASK_CANCELLED: {
-      const { status } = event.payload;
-      return {
-        ...task,
-        status,
       };
     }
     case EventTypes.TASK_CLOSED: {

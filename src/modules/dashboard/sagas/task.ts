@@ -263,36 +263,6 @@ function* taskSetDescription({
   return null;
 }
 
-function* taskSetTitle({
-  meta,
-  payload: { colonyAddress, draftId, title },
-}: Action<ActionTypes.TASK_SET_TITLE>) {
-  try {
-    const {
-      record: { title: currentTitle, domainId },
-    }: { record: TaskType } = yield selectAsJS(taskSelector, draftId);
-    const eventData = yield executeCommand(setTaskTitle, {
-      args: { currentTitle, title, domainId },
-      metadata: { colonyAddress, draftId },
-    });
-    if (eventData) {
-      const { event } = eventData;
-      yield put<AllActions>({
-        type: ActionTypes.TASK_SET_TITLE_SUCCESS,
-        meta,
-        payload: {
-          colonyAddress,
-          draftId,
-          event,
-        },
-      });
-    }
-  } catch (error) {
-    return yield putError(ActionTypes.TASK_SET_TITLE_ERROR, error, meta);
-  }
-  return null;
-}
-
 function* taskSetDomain({
   meta,
   payload: { colonyAddress, draftId, domainId },
