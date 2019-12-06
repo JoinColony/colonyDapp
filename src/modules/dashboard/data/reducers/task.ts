@@ -33,19 +33,6 @@ export const taskReducer: EventReducer<{
         domainId,
       };
     }
-    case EventTypes.TASK_FINALIZED: {
-      const {
-        payload: { amountPaid, paymentTokenAddress, workerAddress },
-        meta: { timestamp },
-      } = event;
-      return {
-        ...task,
-        amountPaid,
-        finalizedAt: new Date(timestamp),
-        paymentTokenAddress,
-        workerAddress,
-      };
-    }
     case EventTypes.TASK_CLOSED: {
       const { status } = event.payload;
       return {
