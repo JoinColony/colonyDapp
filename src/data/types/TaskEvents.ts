@@ -19,21 +19,6 @@ export type TaskEvents =
       Versions.CURRENT
     >
   | EventDefinition<
-      EventTypes.DUE_DATE_SET,
-      {
-        dueDate?: number;
-      },
-      Versions.V1
-    >
-  | EventDefinition<
-      EventTypes.DUE_DATE_SET,
-      {
-        dueDate?: number;
-        domainId: number;
-      },
-      Versions.CURRENT
-    >
-  | EventDefinition<
       EventTypes.PAYOUT_SET,
       {
         amount: string;

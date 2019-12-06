@@ -268,9 +268,8 @@ const Task = ({
             <div className={styles.editor}>
               <TaskDate
                 disabled={!canEdit}
-                id={draftId}
+                draftId={draftId}
                 dueDate={dueDate}
-                ethDomainId={ethDomainId}
               />
             </div>
           </section>

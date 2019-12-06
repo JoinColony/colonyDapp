@@ -4,10 +4,9 @@ import { defineMessages, FormattedDate, FormattedMessage } from 'react-intl';
 import Heading from '~core/Heading';
 import Button from '~core/Button';
 import DatePicker from '~core/DatePicker';
-import { ActionForm } from '~core/Fields/Form';
-import { ActionTypes } from '~redux/index';
-import { TaskProps } from '~immutable/index';
-import { mapPayload, mergePayload, pipe } from '~utils/actions';
+import Form from '~core/Fields/Form';
+import { useSetTaskDueDateMutation } from '~data/index';
+
 import styles from './TaskDate.css';
 
 const MSG = defineMessages({
@@ -28,30 +27,32 @@ const MSG = defineMessages({
   },
 });
 
-interface Props
-  extends TaskProps<'colonyAddress' | 'draftId' | 'dueDate' | 'domainId'> {
+interface FormValues {
+  taskDueDate: number;
+};
+
+interface Props {
   disabled?: boolean;
-}
+  draftId: string;
+  dueDate?: number;
+};
 
 const displayName = 'dashboard.TaskDate';
 
-const TaskDate = ({
-  colonyAddress,
-  draftId,
-  dueDate,
-  disabled,
-  domainId,
-}: Props) => {
-  const transform = useCallback(
-    pipe(
-      mapPayload(({ taskDueDate }) => ({ dueDate: taskDueDate })),
-      mergePayload({
-        colonyAddress,
-        draftId,
-        domainId,
+const TaskDate = ({ draftId, dueDate: existingDueDate, disabled }: Props) => {
+  const [setDueDate] = useSetTaskDueDateMutation();
+
+  const onSubmit = useCallback(
+    ({ taskDueDate }: FormValues) =>
+      setDueDate({
+        variables: {
+          input: {
+            id: draftId,
+            dueDate: taskDueDate,
+          },
+        },
       }),
-    ),
-    [colonyAddress, draftId, domainId],
+    [draftId, setDueDate],
   );
 
   return (
@@ -62,14 +63,11 @@ const TaskDate = ({
           text={MSG.title}
         />
         {!disabled && (
-          <ActionForm
+          <Form
             initialValues={{
-              taskDueDate: dueDate,
+              taskDueDate: existingDueDate,
             }}
-            submit={ActionTypes.TASK_SET_DUE_DATE}
-            success={ActionTypes.TASK_SET_DUE_DATE_SUCCESS}
-            error={ActionTypes.TASK_SET_DUE_DATE_ERROR}
-            transform={transform}
+            onSubmit={onSubmit}
           >
             {({ submitForm, setFormikState }) => (
               <DatePicker
@@ -82,7 +80,7 @@ const TaskDate = ({
                     appearance={{ theme: 'blue', size: 'small' }}
                     text={MSG.selectDate}
                     textValues={{
-                      dateSelected: !!dueDate,
+                      dateSelected: !!existingDueDate,
                     }}
                   />
                 }
@@ -95,7 +93,7 @@ const TaskDate = ({
                     />
                     <Button
                       appearance={{ theme: 'danger' }}
-                      disabled={!dueDate}
+                      disabled={!existingDueDate}
                       text={{ id: 'button.remove' }}
                       onClick={() => {
                         setFormikState(state => ({
@@ -122,13 +120,13 @@ const TaskDate = ({
                 )}
               />
             )}
-          </ActionForm>
+          </Form>
         )}
       </div>
       <div className={styles.currentDate}>
-        {dueDate ? (
+        {existingDueDate ? (
           <FormattedDate
-            value={dueDate}
+            value={existingDueDate}
             month="long"
             day="numeric"
             year="numeric"

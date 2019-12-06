@@ -48,10 +48,6 @@ export const RemoveColonyAvatarCommandArgsSchema = yup.object({
     .required(),
 });
 
-export const SetTaskDueDateCommandArgsSchema = yup.object({
-  dueDate: yup.number(),
-});
-
 export const CreateTaskCommandArgsSchema = yup.object({
   creatorAddress: yup.string().required(),
 });
