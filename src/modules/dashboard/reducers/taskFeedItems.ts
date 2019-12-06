@@ -22,7 +22,6 @@ const FEED_ITEM_TYPES = new Set([
   EventTypes.PAYOUT_REMOVED,
   EventTypes.TASK_CLOSED,
   EventTypes.TASK_CREATED,
-  EventTypes.TASK_FINALIZED,
   EventTypes.WORK_INVITE_SENT,
   EventTypes.WORK_REQUEST_CREATED,
   EventTypes.WORKER_ASSIGNED,

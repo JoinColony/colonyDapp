@@ -14,7 +14,7 @@ import { replace } from 'connected-react-router';
 import BigNumber from 'bn.js';
 
 import { Context, getContext } from '~context/index';
-import { CreateTaskDocument } from '~data/index';
+import { CreateTaskDocument, TaskDocument, FinalizeTaskDocument } from '~data/index';
 import { Action, ActionTypes } from '~redux/index';
 import { Address, ContractContexts } from '~types/index';
 import {
@@ -40,7 +40,6 @@ import {
   assignWorker,
   closeTask,
   createWorkRequest,
-  finalizeTask,
   postComment,
   sendWorkInvite,
   setTaskPayout,
@@ -48,7 +47,6 @@ import {
   unassignWorker,
 } from '../data/commands';
 import {
-  getTask,
   subscribeTaskFeedItems,
   subscribeTask,
 } from '../data/queries';
@@ -281,12 +279,27 @@ function* taskFinalize({
   meta,
 }: Action<ActionTypes.TASK_FINALIZE>) {
   try {
-    const {
-      record: { workerAddress, payouts, domainId, skillId },
-    }: { record: TaskType } = yield selectAsJS(taskSelector, draftId);
-    if (!workerAddress)
+    const { walletAddress } = yield getLoggedInUser();
+
+    const apolloClient: ApolloClient<any> = yield getContext(
+      Context.APOLLO_CLIENT,
+    );
+
+    const { data: { task } } = yield apolloClient.query({
+      query: TaskDocument,
+      variables: {
+        id: draftId,
+      },
+    });
+
+    const { assignedWorker, ethDomainId, ethSkillId, title } = task;
+
+    // @todo get payouts from centralized store
+    const payouts = [];
+
+    if (!assignedWorker)
       throw new Error(`Worker not assigned for task ${draftId}`);
-    if (!domainId) throw new Error(`Domain not set for task ${draftId}`);
+    if (!ethDomainId) throw new Error(`Domain not set for task ${draftId}`);
     if (!payouts.length) throw new Error(`No payout set for task ${draftId}`);
     const { amount, token } = payouts[0];
 
@@ -296,11 +309,11 @@ function* taskFinalize({
       methodName: 'makePaymentFundedFromDomain',
       identifier: colonyAddress,
       params: {
-        recipient: workerAddress,
+        recipient: assignedWorker.id,
         token,
         amount: new BigNumber(amount.toString()),
-        domainId,
-        skillId: skillId || 0,
+        domainId: ethDomainId,
+        skillId: ethSkillId || 0,
       },
     });
 
@@ -311,26 +324,17 @@ function* taskFinalize({
       },
     } = yield takeFrom(txChannel, ActionTypes.TRANSACTION_SUCCEEDED);
 
-    // add finalize task event to task store
-    const { event } = yield executeCommand(finalizeTask, {
-      args: {
-        domainId,
-        paymentTokenAddress: token,
-        amountPaid: amount.toString(),
-        workerAddress,
-        transactionHash: hash,
+    yield apolloClient.mutate({
+      mutation: FinalizeTaskDocument,
+      variables: {
+        input: {
+          id: draftId,
+        },
       },
-      metadata: { colonyAddress, draftId },
     });
 
     yield put<AllActions>({
       type: ActionTypes.TASK_FINALIZE_SUCCESS,
-      payload: {
-        colonyAddress,
-        draftId,
-        event,
-      },
-      meta,
     });
   } catch (error) {
     return yield putError(ActionTypes.TASK_FINALIZE_ERROR, error, meta);

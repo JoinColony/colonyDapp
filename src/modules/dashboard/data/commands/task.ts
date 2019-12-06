@@ -294,36 +294,6 @@ export const unassignWorker: Command<
   },
 };
 
-export const finalizeTask: Command<
-  TaskStore,
-  TaskStoreMetadata,
-  {
-    amountPaid: string;
-    paymentTokenAddress?: Address;
-    workerAddress: Address;
-    transactionHash: string;
-    domainId: number;
-  },
-  {
-    event: Event<EventTypes.TASK_FINALIZED>;
-    taskStore: TaskStore;
-  }
-> = {
-  name: 'finalizeTask',
-  context: [Context.COLONY_MANAGER, Context.DDB_INSTANCE, Context.WALLET],
-  prepare: prepareTaskStoreCommand,
-  schema: FinalizeTaskCommandArgsSchema,
-  async execute(taskStore, args) {
-    const eventHash = await taskStore.append(
-      createEvent(EventTypes.TASK_FINALIZED, args),
-    );
-    return {
-      taskStore,
-      event: taskStore.getEvent(eventHash) as Event<EventTypes.TASK_FINALIZED>,
-    };
-  },
-};
-
 export const closeTask: Command<
   TaskStore,
   TaskStoreMetadata,
