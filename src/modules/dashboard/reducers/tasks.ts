@@ -51,11 +51,6 @@ const taskEventReducer = (
       return task.set('skillId', skillId);
     }
 
-    case EventTypes.TASK_TITLE_SET: {
-      const { title } = event.payload;
-      return task.set('title', title);
-    }
-
     case EventTypes.TASK_DESCRIPTION_SET: {
       const { description } = event.payload;
       return task.set('description', description);
@@ -63,9 +58,6 @@ const taskEventReducer = (
 
     case EventTypes.TASK_FINALIZED:
       return task.set('currentState', TaskStates.FINALIZED);
-
-    case EventTypes.TASK_CANCELLED:
-      return task.set('currentState', TaskStates.CANCELLED);
 
     case EventTypes.WORK_INVITE_SENT: {
       const { workerAddress } = event.payload;

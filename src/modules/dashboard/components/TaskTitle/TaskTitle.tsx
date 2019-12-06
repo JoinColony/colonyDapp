@@ -2,10 +2,8 @@ import { FormikProps } from 'formik';
 import React, { useCallback } from 'react';
 import { defineMessages } from 'react-intl';
 
-import { TaskProps } from '~immutable/index';
-import { mergePayload } from '~utils/actions';
-import { ActionTypes } from '~redux/index';
-import { SingleLineEdit, ActionForm } from '~core/Fields';
+import { SingleLineEdit, Form } from '~core/Fields';
+import { useSetTaskTitleMutation } from '~data/index';
 
 const MSG = defineMessages({
   placeholder: {
@@ -14,23 +12,36 @@ const MSG = defineMessages({
   },
 });
 
-interface Props extends TaskProps<'colonyAddress' | 'draftId' | 'title'> {
-  disabled: boolean;
+interface FormValues {
+  title: string;
 }
 
-const TaskTitle = ({ disabled, title, colonyAddress, draftId }: Props) => {
-  const transform = useCallback(mergePayload({ colonyAddress, draftId }), [
-    colonyAddress,
-    draftId,
-  ]);
+interface Props {
+  draftId: string;
+  disabled: boolean;
+  title: string;
+}
+
+const TaskTitle = ({ disabled, title: existingTitle, draftId }: Props) => {
+  const [setTitle] = useSetTaskTitleMutation();
+  const onSubmit = useCallback(
+    ({ title }: FormValues) =>
+      setTitle({
+        variables: {
+          input: {
+            title,
+            id: draftId,
+          },
+        },
+      }),
+    [draftId, setTitle],
+  );
+
   return (
-    <ActionForm
+    <Form
       enableReinitialize
-      submit={ActionTypes.TASK_SET_TITLE}
-      error={ActionTypes.TASK_SET_TITLE_ERROR}
-      success={ActionTypes.TASK_SET_TITLE_SUCCESS}
-      transform={transform}
-      initialValues={{ title }}
+      onSubmit={onSubmit}
+      initialValues={{ title: existingTitle }}
     >
       {({ submitForm }: FormikProps<any>) => (
         <SingleLineEdit
@@ -41,7 +52,7 @@ const TaskTitle = ({ disabled, title, colonyAddress, draftId }: Props) => {
           onBlur={() => setTimeout(submitForm, 0)}
         />
       )}
-    </ActionForm>
+    </Form>
   );
 };
 
