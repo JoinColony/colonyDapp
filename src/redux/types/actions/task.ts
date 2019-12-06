@@ -173,15 +173,6 @@ export type TaskActionTypes =
       { event: Event<EventTypes.DUE_DATE_SET> }
     >
   | TaskActionType<
-      ActionTypes.TASK_SET_DESCRIPTION,
-      Required<TaskProps<'description'>>
-    >
-  | TaskErrorActionType<ActionTypes.TASK_SET_DESCRIPTION_ERROR>
-  | TaskActionType<
-      ActionTypes.TASK_SET_DESCRIPTION_SUCCESS,
-      { event: Event<EventTypes.TASK_DESCRIPTION_SET> }
-    >
-  | TaskActionType<
       ActionTypes.TASK_SET_DOMAIN,
       Required<TaskProps<'ethDomainId'>>
     >

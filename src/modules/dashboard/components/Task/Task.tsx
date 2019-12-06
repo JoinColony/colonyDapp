@@ -242,10 +242,9 @@ const Task = ({
             title={title}
           />
           <TaskDescription
-            colonyAddress={colonyAddress}
             description={description}
             disabled={!canEdit}
-            id={draftId}
+            draftId={draftId}
           />
         </section>
         {!!(canEdit || dueDate || ethDomainId || ethSkillId) && (

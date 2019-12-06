@@ -79,42 +79,6 @@ const prepareTaskStoreCommand = async (
   });
 };
 
-export const setTaskDescription: Command<
-  TaskStore,
-  TaskStoreMetadata,
-  {
-    currentDescription: string | void;
-    description: string;
-    domainId: number;
-  },
-  {
-    event: Event<EventTypes.TASK_DESCRIPTION_SET>;
-    taskStore: TaskStore;
-  } | null
-> = {
-  name: 'setTaskDescription',
-  context: [Context.COLONY_MANAGER, Context.DDB_INSTANCE, Context.WALLET],
-  prepare: prepareTaskStoreCommand,
-  schema: SetTaskDescriptionCommandArgsSchema,
-  async execute(taskStore, { currentDescription, description, domainId }) {
-    if (description === currentDescription) {
-      return null;
-    }
-    const eventHash = await taskStore.append(
-      createEvent(EventTypes.TASK_DESCRIPTION_SET, {
-        description,
-        domainId,
-      }),
-    );
-    return {
-      taskStore,
-      event: taskStore.getEvent(eventHash) as Event<
-        EventTypes.TASK_DESCRIPTION_SET
-      >,
-    };
-  },
-};
-
 export const setTaskDueDate: Command<
   TaskStore,
   TaskStoreMetadata,
