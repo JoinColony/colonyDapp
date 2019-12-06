@@ -1,3 +1,53 @@
+query Task($id: String!) {
+  task(id: $id) {
+    id
+    assignedWorker {
+      id
+      profile {
+        avatarHash
+        displayName
+        username
+        walletAddress
+      }
+    }
+    cancelledAt
+    creator {
+      id
+      profile {
+        avatarHash
+        displayName
+        username
+        walletAddress
+      }
+    }
+    description
+    dueDate
+    ethDomainId
+    ethSkillId
+    ethTaskId
+    finalizedAt
+    title
+    workInvites {
+      id
+      profile {
+        avatarHash
+        displayName
+        username
+        walletAddress
+      }
+    }
+    workRequests {
+      id
+      profile {
+        avatarHash
+        displayName
+        username
+        walletAddress
+      }
+    }
+  }
+}
+
 query LoggedInUser {
   loggedInUser @client {
     walletAddress

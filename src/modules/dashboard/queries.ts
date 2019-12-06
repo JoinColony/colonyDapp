@@ -16,22 +16,3 @@ export const COLONY_SUBSCRIBED_USERS = gql`
     }
   }
 `;
-
-export const TASK = gql`
-  query Task($id: String!) {
-    task(id: $id) {
-      id
-      assignedWorker
-      cancelledAt
-      colonyAddress
-      creatorAddress
-      description
-      dueDate
-      ethDomainId
-      ethSkillId
-      ethTaskId
-      finalizedAt
-      title
-    }
-  }
-`;

@@ -1,3 +1,121 @@
+# Tasks
+mutation AssignWorker($input: AssignWorkerInput!) {
+  assignWorker(input: $input) {
+    id
+    assignedWorker {
+      id
+    }
+  }
+}
+
+mutation CancelTask($input: TaskIdInput!) {
+  cancelTask(input: $input) {
+    id
+  }
+}
+
+mutation CreateTask($input: CreateTaskInput!) {
+  createTask(input: $input) {
+    id
+  }
+}
+
+mutation CreateWorkRequest($input: CreateWorkRequestInput!) {
+  createWorkRequest(input: $input) {
+    id
+    workRequests {
+      id
+    }
+  }
+}
+
+mutation FinalizeTask($input: TaskIdInput!) {
+  finalizeTask(input: $input) {
+    id
+  }
+}
+
+mutation RemoveTaskPayout($input: RemoveTaskPayoutInput!) {
+  removeTaskPayout(input: $input) {
+    id
+    # @todo Get payouts here
+  }
+}
+
+mutation SendWorkInvite($input: SendWorkInviteInput!) {
+  sendWorkInvite(input: $input) {
+    id
+    workInvites {
+      id
+    }
+  }
+}
+
+mutation SetTaskDomain($input: SetTaskDomainInput!) {
+  setTaskDomain(input: $input) {
+    id
+    ethDomainId
+  }
+}
+
+mutation SetTaskDescription($input: SetTaskDescriptionInput!) {
+  setTaskDescription(input: $input) {
+    id
+    description
+  }
+}
+
+mutation SetTaskDueDate($input: SetTaskDueDateInput!) {
+  setTaskDueDate(input: $input) {
+    id
+    dueDate
+  }
+}
+
+mutation SetTaskPayout($input: SetTaskPayoutInput!) {
+  setTaskPayout(input: $input) {
+    id
+    ethDomainId
+  }
+}
+
+mutation SetTaskSkill($input: SetTaskSkillInput!) {
+  setTaskSkill(input: $input) {
+    id
+    ethSkillId
+  }
+}
+
+mutation SetTaskTitle($input: SetTaskTitleInput!) {
+  setTaskTitle(input: $input) {
+    id
+    title
+  }
+}
+
+mutation SubscribeToTask($input: SubscribeToTaskInput!) {
+  subscribeToTask(input: $input) {
+    id
+  }
+}
+
+mutation UnassignWorker($input: UnassignWorkerInput!) {
+  unassignWorker(input: $input) {
+    id
+    assignedWorker {
+      id
+    }
+  }
+}
+
+mutation UnsubscribeFromTask($input: UnsubscribeFromTaskInput!) {
+  unsubscribeFromTask(input: $input) {
+    id
+  }
+}
+
+# Users
+
 mutation SetLoggedInUser($input: LoggedInUserInput!) {
   setLoggedInUser(input: $input) @client {
     id
