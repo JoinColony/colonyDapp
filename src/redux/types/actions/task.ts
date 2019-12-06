@@ -120,9 +120,8 @@ export type TaskActionTypes =
       }
     >
   | TaskErrorActionType<ActionTypes.TASK_FINALIZE_ERROR>
-  | TaskActionType<
-      ActionTypes.TASK_FINALIZE_SUCCESS,
-      { event: Event<EventTypes.TASK_FINALIZED> }
+  | ActionType<
+      ActionTypes.TASK_FINALIZE_SUCCESS
     >
   | TaskActionType<ActionTypes.TASK_MANAGER_COMPLETE, object>
   | TaskErrorActionType<ActionTypes.TASK_MANAGER_COMPLETE_ERROR>

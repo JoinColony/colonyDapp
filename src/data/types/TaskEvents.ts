@@ -80,27 +80,6 @@ export type TaskEvents =
       Versions.CURRENT
     >
   | EventDefinition<
-      EventTypes.TASK_FINALIZED,
-      {
-        amountPaid: string;
-        paymentTokenAddress?: Address;
-        workerAddress: Address;
-        transactionHash: string;
-      },
-      Versions.V1
-    >
-  | EventDefinition<
-      EventTypes.TASK_FINALIZED,
-      {
-        amountPaid: string;
-        paymentTokenAddress?: Address;
-        workerAddress: Address;
-        transactionHash: string;
-        domainId: number;
-      },
-      Versions.CURRENT
-    >
-  | EventDefinition<
       EventTypes.WORK_INVITE_SENT,
       {
         workerAddress: Address;

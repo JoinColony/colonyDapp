@@ -36,9 +36,6 @@ const taskEventReducer = (
       );
     }
 
-    case EventTypes.TASK_FINALIZED:
-      return task.set('currentState', TaskStates.FINALIZED);
-
     case EventTypes.WORK_INVITE_SENT: {
       const { workerAddress } = event.payload;
       return task.update('invites', invites => invites.add(workerAddress));
