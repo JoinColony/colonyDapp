@@ -14,6 +14,7 @@ import { replace } from 'connected-react-router';
 import BigNumber from 'bn.js';
 
 import { Context, getContext } from '~context/index';
+import { CreateTaskDocument } from '~data/index';
 import { Action, ActionTypes } from '~redux/index';
 import { Address, ContractContexts } from '~types/index';
 import {
@@ -53,7 +54,6 @@ import {
 } from '../data/queries';
 
 import { AllActions } from '../../../redux/types/actions';
-import { CREATE_TASK } from '../mutations';
 
 /*
  * Dispatch an action to fetch the colony task metadata and wait for the
@@ -103,7 +103,7 @@ function* taskCreate({
     const {
       data: { createTask },
     } = yield apolloClient.mutate({
-      mutation: CREATE_TASK,
+      mutation: CreateTaskDocument,
       variables: {
         input: {
           colonyAddress,
