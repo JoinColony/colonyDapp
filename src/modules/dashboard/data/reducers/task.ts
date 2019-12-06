@@ -61,13 +61,6 @@ export const taskReducer: EventReducer<{
         paymentTokenAddress: token,
       };
     }
-    case EventTypes.DUE_DATE_SET: {
-      const { dueDate } = event.payload;
-      return {
-        ...task,
-        dueDate: dueDate ? new Date(dueDate) : undefined,
-      };
-    }
     case EventTypes.WORK_INVITE_SENT: {
       const { invites = [] } = task;
       return {

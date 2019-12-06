@@ -42,7 +42,6 @@ import {
   finalizeTask,
   postComment,
   sendWorkInvite,
-  setTaskDueDate,
   setTaskPayout,
   removeTaskPayout,
   unassignWorker,
@@ -270,33 +269,6 @@ function* taskRemovePayout({
     }
   } catch (error) {
     return yield putError(ActionTypes.TASK_REMOVE_PAYOUT_ERROR, error, meta);
-  }
-  return null;
-}
-
-/*
- * As worker or manager, I want to be able to set a date
- */
-function* taskSetDueDate({
-  payload: { colonyAddress, draftId, dueDate, domainId },
-  meta,
-}: Action<ActionTypes.TASK_SET_DUE_DATE>) {
-  try {
-    const { event } = yield executeCommand(setTaskDueDate, {
-      args: { dueDate: dueDate ? dueDate.getTime() : undefined, domainId },
-      metadata: { colonyAddress, draftId },
-    });
-    yield put<AllActions>({
-      type: ActionTypes.TASK_SET_DUE_DATE_SUCCESS,
-      payload: {
-        colonyAddress,
-        draftId,
-        event,
-      },
-      meta,
-    });
-  } catch (error) {
-    return yield putError(ActionTypes.TASK_SET_DUE_DATE_ERROR, error, meta);
   }
   return null;
 }
@@ -690,7 +662,6 @@ export default function* tasksSagas() {
   yield takeEvery(ActionTypes.TASK_FINALIZE, taskFinalize);
   yield takeEvery(ActionTypes.TASK_SEND_WORK_INVITE, taskSendWorkInvite);
   yield takeEvery(ActionTypes.TASK_SEND_WORK_REQUEST, taskSendWorkRequest);
-  yield takeEvery(ActionTypes.TASK_SET_DUE_DATE, taskSetDueDate);
   yield takeEvery(ActionTypes.TASK_SET_PAYOUT, taskSetPayout);
   yield takeEvery(ActionTypes.TASK_REMOVE_PAYOUT, taskRemovePayout);
   yield takeEvery(ActionTypes.TASK_SUB_START, taskSubStart);

@@ -36,11 +36,6 @@ const taskEventReducer = (
       );
     }
 
-    case EventTypes.DUE_DATE_SET: {
-      const { dueDate } = event.payload;
-      return task.set('dueDate', dueDate ? new Date(dueDate) : undefined);
-    }
-
     case EventTypes.TASK_FINALIZED:
       return task.set('currentState', TaskStates.FINALIZED);
 

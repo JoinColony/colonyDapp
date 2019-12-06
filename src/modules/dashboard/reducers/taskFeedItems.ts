@@ -18,7 +18,6 @@ import { TaskFeedItemsMap } from '../state/index';
 
 const FEED_ITEM_TYPES = new Set([
   EventTypes.COMMENT_POSTED,
-  EventTypes.DUE_DATE_SET,
   EventTypes.PAYOUT_SET,
   EventTypes.PAYOUT_REMOVED,
   EventTypes.TASK_CLOSED,
