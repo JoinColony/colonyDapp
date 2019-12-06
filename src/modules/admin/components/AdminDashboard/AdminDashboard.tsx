@@ -162,8 +162,7 @@ const AdminDashboard = ({
   );
 
   const {
-    data: { colony } = {},
-    loading: colonyDataLoading,
+    data: { colony },
   } = useColonyQuery({
     variables: { address: colonyAddress },
   });
@@ -199,13 +198,12 @@ const AdminDashboard = ({
   }
 
   if (
-    !colony ||
+    !(colony && colony.colonyAddress)
     /*
      * @TODO Re-add domains once they're available from mongo
      */
     // !domains ||
     // isFetchingRoles ||
-    colonyDataLoading
   ) {
     return <LoadingTemplate loadingText={MSG.loadingText} />;
   }
