@@ -25,7 +25,6 @@ const FEED_ITEM_TYPES = new Set([
   EventTypes.SKILL_SET,
   EventTypes.TASK_CLOSED,
   EventTypes.TASK_CREATED,
-  EventTypes.TASK_DESCRIPTION_SET,
   EventTypes.TASK_FINALIZED,
   EventTypes.WORK_INVITE_SENT,
   EventTypes.WORK_REQUEST_CREATED,

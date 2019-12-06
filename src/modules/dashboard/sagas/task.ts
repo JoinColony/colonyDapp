@@ -14,12 +14,10 @@ import { replace } from 'connected-react-router';
 import BigNumber from 'bn.js';
 
 import { Context, getContext } from '~context/index';
-import { ROOT_DOMAIN } from '~constants';
 import { Action, ActionTypes } from '~redux/index';
 import { Address, ContractContexts } from '~types/index';
 import {
   executeCommand,
-  executeQuery,
   putError,
   raceError,
   selectAsJS,
@@ -34,7 +32,6 @@ import {
   allColonyNamesSelector,
   colonySelector,
   colonyTaskMetadataSelector,
-  taskSelector,
 } from '../selectors';
 import { createTransaction, getTxChannel, signMessage } from '../../core/sagas';
 
@@ -45,13 +42,11 @@ import {
   finalizeTask,
   postComment,
   sendWorkInvite,
-  setTaskDescription,
   setTaskDomain,
   setTaskDueDate,
   setTaskPayout,
   removeTaskPayout,
   setTaskSkill,
-  setTaskTitle,
   unassignWorker,
 } from '../data/commands';
 import {
@@ -97,14 +92,12 @@ export function* fetchColonyTaskMetadata(colonyAddress: Address) {
 
 function* taskCreate({
   meta,
-  payload: { colonyAddress, domainId = ROOT_DOMAIN },
+  payload: { colonyAddress, ethDomainId },
 }: Action<ActionTypes.TASK_CREATE>) {
   try {
     const {
       record: { colonyName },
     } = yield select(colonySelector, colonyAddress);
-
-    const { walletAddress } = yield getLoggedInUser();
 
     const apolloClient: ApolloClient<any> = yield getContext(
       Context.APOLLO_CLIENT,
@@ -117,7 +110,7 @@ function* taskCreate({
       variables: {
         input: {
           colonyAddress,
-          ethDomainId: domainId,
+          ethDomainId,
         },
       },
     });
@@ -128,13 +121,11 @@ function* taskCreate({
     const successAction: Action<ActionTypes.TASK_CREATE_SUCCESS> = {
       type: ActionTypes.TASK_CREATE_SUCCESS,
       payload: {
+        id,
         colonyAddress,
-        draftId: id,
         task: {
-          colonyAddress,
-          creatorAddress: walletAddress,
-          draftId: id,
-          domainId,
+          id,
+          ethDomainId,
         },
       },
       meta: { key: id, ...meta },
@@ -153,69 +144,6 @@ function* taskCreate({
   return null;
 }
 
-/**
- * @todo Simplify the conversion of `getTask` query results to redux data.
- */
-const getTaskFetchSuccessPayload = (
-  { draftId, colonyAddress }: any,
-  {
-    /* eslint-disable @typescript-eslint/no-unused-vars */
-    amountPaid,
-    commentsStoreAddress,
-    finalizedAt,
-    paymentId,
-    /* eslint-enable @typescript-eslint/no-unused-vars */
-    invites,
-    paymentTokenAddress = '',
-    payout,
-    requests,
-    status: currentState,
-    ...task
-  }: any,
-) => ({
-  colonyAddress,
-  draftId,
-  task: {
-    ...task,
-    colonyAddress,
-    currentState,
-    draftId,
-    invites,
-    payouts: paymentTokenAddress
-      ? [
-          {
-            amount: payout,
-            token: paymentTokenAddress,
-          },
-        ]
-      : undefined,
-    requests,
-  },
-});
-
-/*
- * Given a colony address and a task draft ID, fetch the task from its store.
- */
-function* taskFetch({
-  meta,
-  payload: { colonyAddress, draftId },
-}: Action<ActionTypes.TASK_FETCH>) {
-  try {
-    const taskData = yield executeQuery(getTask, {
-      args: undefined,
-      metadata: { colonyAddress, draftId },
-    });
-    yield put<AllActions>({
-      type: ActionTypes.TASK_FETCH_SUCCESS,
-      payload: getTaskFetchSuccessPayload({ draftId, colonyAddress }, taskData),
-      meta,
-    });
-  } catch (error) {
-    return yield putError(ActionTypes.TASK_FETCH_ERROR, error, meta);
-  }
-  return null;
-}
-
 /*
  * Given all colonies in the current state, fetch all tasks for all
  * colonies (in parallel).
@@ -227,40 +155,6 @@ function* taskFetchAll() {
       call(fetchColonyTaskMetadata, colonyAddress),
     ),
   );
-}
-
-function* taskSetDescription({
-  meta,
-  payload: { colonyAddress, draftId, description },
-}: Action<ActionTypes.TASK_SET_DESCRIPTION>) {
-  try {
-    const {
-      record: { description: currentDescription, domainId },
-    } = yield selectAsJS(taskSelector, draftId);
-    const eventData = yield executeCommand(setTaskDescription, {
-      args: {
-        currentDescription,
-        description,
-        domainId,
-      },
-      metadata: { colonyAddress, draftId },
-    });
-    if (eventData) {
-      const { event } = eventData;
-      yield put<AllActions>({
-        type: ActionTypes.TASK_SET_DESCRIPTION_SUCCESS,
-        meta,
-        payload: {
-          colonyAddress,
-          draftId,
-          event,
-        },
-      });
-    }
-  } catch (error) {
-    return yield putError(ActionTypes.TASK_SET_DESCRIPTION_ERROR, error, meta);
-  }
-  return null;
 }
 
 function* taskSetDomain({
@@ -847,17 +741,14 @@ export default function* tasksSagas() {
   yield takeEvery(ActionTypes.TASK_COMMENT_ADD, taskCommentAdd);
   yield takeEvery(ActionTypes.TASK_CREATE, taskCreate);
   yield takeEvery(ActionTypes.TASK_FEED_ITEMS_SUB_START, taskFeedItemsSubStart);
-  yield takeEvery(ActionTypes.TASK_FETCH, taskFetch);
   yield takeEvery(ActionTypes.TASK_FINALIZE, taskFinalize);
   yield takeEvery(ActionTypes.TASK_SEND_WORK_INVITE, taskSendWorkInvite);
   yield takeEvery(ActionTypes.TASK_SEND_WORK_REQUEST, taskSendWorkRequest);
-  yield takeEvery(ActionTypes.TASK_SET_DESCRIPTION, taskSetDescription);
   yield takeEvery(ActionTypes.TASK_SET_DOMAIN, taskSetDomain);
   yield takeEvery(ActionTypes.TASK_SET_DUE_DATE, taskSetDueDate);
   yield takeEvery(ActionTypes.TASK_SET_PAYOUT, taskSetPayout);
   yield takeEvery(ActionTypes.TASK_REMOVE_PAYOUT, taskRemovePayout);
   yield takeEvery(ActionTypes.TASK_SET_SKILL, taskSetSkill);
-  yield takeEvery(ActionTypes.TASK_SET_TITLE, taskSetTitle);
   yield takeEvery(ActionTypes.TASK_SUB_START, taskSubStart);
   yield takeEvery(
     ActionTypes.TASK_SET_WORKER_OR_PAYOUT,

@@ -16,7 +16,6 @@ export default function loadModule(): PermissionsManifest<{
     SKILL_SET: { inherits: 'set-task-skill' },
     TASK_CLOSED: { inherits: 'close-task' },
     TASK_CREATED: { inherits: 'create-task' },
-    TASK_DESCRIPTION_SET: { inherits: 'update-task' },
     TASK_FINALIZED: { inherits: 'finalize-task' },
     WORK_INVITE_SENT: { inherits: 'send-task-work-invite' },
     WORK_REQUEST_CREATED: { inherits: 'send-task-work-request' },

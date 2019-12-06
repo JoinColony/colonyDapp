@@ -1,11 +1,10 @@
-import React, { useCallback } from 'react';
 import { FormikProps } from 'formik';
+import React, { useCallback } from 'react';
 import { defineMessages } from 'react-intl';
 
-import { TaskProps } from '~immutable/index';
-import { pipe, mergePayload } from '~utils/actions';
-import { MultiLineEdit, ActionForm } from '~core/Fields';
-import { ActionTypes } from '~redux/index';
+import { MultiLineEdit, Form } from '~core/Fields';
+import { Address } from '~types/index';
+import { useSetTaskDescriptionMutation } from '~data/index';
 
 const MSG = defineMessages({
   placeholder: {
@@ -14,31 +13,42 @@ const MSG = defineMessages({
   },
 });
 
-interface Props extends TaskProps<'colonyAddress' | 'draftId' | 'description'> {
+interface FormValues {
+  description: string;
+};
+
+interface Props {
+  draftId: string;
+  description: string;
   disabled: boolean;
-}
+};
 
 const TaskDescription = ({
-  description,
+  description: existingDescription,
   disabled,
-  colonyAddress,
   draftId,
 }: Props) => {
-  const transform = useCallback(
-    pipe(mergePayload({ colonyAddress, draftId })),
-    [colonyAddress, draftId],
+  const [setTaskDescription] = useSetTaskDescriptionMutation();
+
+  const onSubmit = useCallback(({ description }: FormValues) =>
+    setTaskDescription({
+      variables: {
+        input: {
+          description,
+          id: draftId,
+        }
+      }
+    }),
+    [draftId, setTaskDescription],
   );
 
   return (
-    <ActionForm
+    <Form
       enableReinitialize
       initialValues={{
-        description,
+        description: existingDescription,
       }}
-      submit={ActionTypes.TASK_SET_DESCRIPTION}
-      success={ActionTypes.TASK_SET_DESCRIPTION_SUCCESS}
-      error={ActionTypes.TASK_SET_DESCRIPTION_ERROR}
-      transform={transform}
+      onSubmit={onSubmit}
     >
       {({ submitForm }: FormikProps<any>) => (
         <MultiLineEdit
@@ -53,7 +63,7 @@ const TaskDescription = ({
           }}
         />
       )}
-    </ActionForm>
+    </Form>
   );
 };
 

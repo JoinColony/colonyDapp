@@ -117,21 +117,6 @@ export type TaskEvents =
       Versions.CURRENT
     >
   | EventDefinition<
-      EventTypes.TASK_DESCRIPTION_SET,
-      {
-        description: string;
-      },
-      Versions.V1
-    >
-  | EventDefinition<
-      EventTypes.TASK_DESCRIPTION_SET,
-      {
-        description: string;
-        domainId: number;
-      },
-      Versions.CURRENT
-    >
-  | EventDefinition<
       EventTypes.TASK_FINALIZED,
       {
         amountPaid: string;
