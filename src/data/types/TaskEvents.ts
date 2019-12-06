@@ -63,21 +63,6 @@ export type TaskEvents =
       Versions.CURRENT
     >
   | EventDefinition<
-      EventTypes.SKILL_SET,
-      {
-        skillId?: number;
-      },
-      Versions.V1
-    >
-  | EventDefinition<
-      EventTypes.SKILL_SET,
-      {
-        skillId?: number;
-        domainId: number;
-      },
-      Versions.CURRENT
-    >
-  | EventDefinition<
       EventTypes.TASK_CLOSED,
       {
         status: TaskStates.CLOSED;

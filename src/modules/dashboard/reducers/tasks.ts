@@ -41,11 +41,6 @@ const taskEventReducer = (
       return task.set('dueDate', dueDate ? new Date(dueDate) : undefined);
     }
 
-    case EventTypes.SKILL_SET: {
-      const { skillId } = event.payload;
-      return task.set('skillId', skillId);
-    }
-
     case EventTypes.TASK_FINALIZED:
       return task.set('currentState', TaskStates.FINALIZED);
 
