@@ -42,7 +42,6 @@ import {
   finalizeTask,
   postComment,
   sendWorkInvite,
-  setTaskDomain,
   setTaskDueDate,
   setTaskPayout,
   removeTaskPayout,
@@ -155,30 +154,6 @@ function* taskFetchAll() {
       call(fetchColonyTaskMetadata, colonyAddress),
     ),
   );
-}
-
-function* taskSetDomain({
-  meta,
-  payload: { colonyAddress, draftId, domainId },
-}: Action<ActionTypes.TASK_SET_DOMAIN>) {
-  try {
-    const { event } = yield executeCommand(setTaskDomain, {
-      args: { domainId },
-      metadata: { colonyAddress, draftId },
-    });
-    yield put<AllActions>({
-      type: ActionTypes.TASK_SET_DOMAIN_SUCCESS,
-      meta,
-      payload: {
-        colonyAddress,
-        draftId,
-        event,
-      },
-    });
-  } catch (error) {
-    return yield putError(ActionTypes.TASK_SET_DOMAIN_ERROR, error, meta);
-  }
-  return null;
 }
 
 /*
@@ -744,7 +719,6 @@ export default function* tasksSagas() {
   yield takeEvery(ActionTypes.TASK_FINALIZE, taskFinalize);
   yield takeEvery(ActionTypes.TASK_SEND_WORK_INVITE, taskSendWorkInvite);
   yield takeEvery(ActionTypes.TASK_SEND_WORK_REQUEST, taskSendWorkRequest);
-  yield takeEvery(ActionTypes.TASK_SET_DOMAIN, taskSetDomain);
   yield takeEvery(ActionTypes.TASK_SET_DUE_DATE, taskSetDueDate);
   yield takeEvery(ActionTypes.TASK_SET_PAYOUT, taskSetPayout);
   yield takeEvery(ActionTypes.TASK_REMOVE_PAYOUT, taskRemovePayout);

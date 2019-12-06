@@ -10,7 +10,6 @@ export default function loadModule(): PermissionsManifest<{
   return {
     COMMENT_STORE_CREATED: { inherits: 'create-task' },
     DUE_DATE_SET: { inherits: 'set-task-due-date' },
-    DOMAIN_SET: { inherits: 'set-task-domain' },
     PAYOUT_SET: { inherits: 'set-task-payout' },
     PAYOUT_REMOVED: { inherits: 'set-task-payout' },
     SKILL_SET: { inherits: 'set-task-skill' },
@@ -27,16 +26,6 @@ export default function loadModule(): PermissionsManifest<{
     'send-task-work-invite': { inherits: 'is-admin' },
     'send-task-work-request': async () => true,
     'set-task-assignee': { inherits: 'is-admin' },
-    // disallow changing of the domain for now
-    'set-task-domain': async () => false,
-    // 'set-task-domain': async (userAddress, { event }) => {
-    //   // Ideally, this would also check the current domainId; this has to
-    //   // be done outside of the action controller, because Orbit only passes
-    //   // the current entry to the `canAppend` method.
-    //   return event && event.type === EventTypes.DOMAIN_SET
-    //     ? isAdminOrFounder(userAddress, event.payload.domainId)
-    //     : false;
-    // },
     'set-task-due-date': { inherits: 'is-admin' },
     'set-task-payout': { inherits: 'is-admin' },
     'set-task-skill': { inherits: 'is-admin' },
