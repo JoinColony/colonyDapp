@@ -26,7 +26,6 @@ export const V2Migrations: [
   Versions.V2,
   {
     [EventTypes.COMMENT_STORE_CREATED]: addRootDomain,
-    [EventTypes.DUE_DATE_SET]: addRootDomain,
     [EventTypes.PAYOUT_SET]: addRootDomain,
     [EventTypes.PAYOUT_REMOVED]: addRootDomain,
     [EventTypes.TASK_CREATED]: addRootDomain,

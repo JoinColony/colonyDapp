@@ -24,7 +24,6 @@ import {
   FinalizeTaskCommandArgsSchema,
   PostCommentCommandArgsSchema,
   SendWorkInviteCommandArgsSchema,
-  SetTaskDueDateCommandArgsSchema,
   SetTaskPayoutCommandArgsSchema,
 } from './schemas';
 
@@ -72,36 +71,6 @@ const prepareTaskStoreCommand = async (
     ...metadata,
     taskStoreAddress,
   });
-};
-
-export const setTaskDueDate: Command<
-  TaskStore,
-  TaskStoreMetadata,
-  {
-    dueDate?: number;
-    domainId: number;
-  },
-  {
-    event: Event<EventTypes.DUE_DATE_SET>;
-    taskStore: TaskStore;
-  }
-> = {
-  name: 'setTaskDueDate',
-  context: [Context.COLONY_MANAGER, Context.DDB_INSTANCE, Context.WALLET],
-  prepare: prepareTaskStoreCommand,
-  schema: SetTaskDueDateCommandArgsSchema,
-  async execute(taskStore, { dueDate, domainId }) {
-    const eventHash = await taskStore.append(
-      createEvent(EventTypes.DUE_DATE_SET, {
-        dueDate,
-        domainId,
-      }),
-    );
-    return {
-      taskStore,
-      event: taskStore.getEvent(eventHash) as Event<EventTypes.DUE_DATE_SET>,
-    };
-  },
 };
 
 export const createWorkRequest: Command<

@@ -9,7 +9,6 @@ export default function loadModule(): PermissionsManifest<{
 }> {
   return {
     COMMENT_STORE_CREATED: { inherits: 'create-task' },
-    DUE_DATE_SET: { inherits: 'set-task-due-date' },
     PAYOUT_SET: { inherits: 'set-task-payout' },
     PAYOUT_REMOVED: { inherits: 'set-task-payout' },
     TASK_CLOSED: { inherits: 'close-task' },
@@ -25,7 +24,6 @@ export default function loadModule(): PermissionsManifest<{
     'send-task-work-invite': { inherits: 'is-admin' },
     'send-task-work-request': async () => true,
     'set-task-assignee': { inherits: 'is-admin' },
-    'set-task-due-date': { inherits: 'is-admin' },
     'set-task-payout': { inherits: 'is-admin' },
     'update-task': { inherits: 'is-admin' },
   };

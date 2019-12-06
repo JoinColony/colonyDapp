@@ -164,15 +164,6 @@ export type TaskActionTypes =
       { event: Event<EventTypes.WORK_REQUEST_CREATED> }
     >
   | TaskActionType<
-      ActionTypes.TASK_SET_DUE_DATE,
-      TaskProps<'dueDate' | 'ethDomainId'>
-    >
-  | TaskErrorActionType<ActionTypes.TASK_SET_DUE_DATE_ERROR>
-  | TaskActionType<
-      ActionTypes.TASK_SET_DUE_DATE_SUCCESS,
-      { event: Event<EventTypes.DUE_DATE_SET> }
-    >
-  | TaskActionType<
       ActionTypes.TASK_SET_PAYOUT,
       { token: string; amount: BigNumber }
     >
