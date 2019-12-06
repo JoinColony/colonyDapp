@@ -19,13 +19,6 @@ export type TaskEvents =
       Versions.CURRENT
     >
   | EventDefinition<
-      EventTypes.DOMAIN_SET,
-      {
-        domainId: number;
-      },
-      Versions.CURRENT
-    >
-  | EventDefinition<
       EventTypes.DUE_DATE_SET,
       {
         dueDate?: number;
