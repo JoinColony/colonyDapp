@@ -261,9 +261,8 @@ const Task = ({
             <div className={styles.editor}>
               <TaskSkills
                 disabled={!canEdit}
-                id={draftId}
+                draftId={draftId}
                 ethSkillId={ethSkillId}
-                ethDomainId={ethDomainId}
               />
             </div>
             <div className={styles.editor}>

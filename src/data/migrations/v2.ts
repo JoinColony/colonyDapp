@@ -29,7 +29,6 @@ export const V2Migrations: [
     [EventTypes.DUE_DATE_SET]: addRootDomain,
     [EventTypes.PAYOUT_SET]: addRootDomain,
     [EventTypes.PAYOUT_REMOVED]: addRootDomain,
-    [EventTypes.SKILL_SET]: addRootDomain,
     [EventTypes.TASK_CREATED]: addRootDomain,
     [EventTypes.TASK_CLOSED]: addRootDomain,
     [EventTypes.TASK_FINALIZED]: addRootDomain,

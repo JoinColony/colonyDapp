@@ -21,7 +21,6 @@ const FEED_ITEM_TYPES = new Set([
   EventTypes.DUE_DATE_SET,
   EventTypes.PAYOUT_SET,
   EventTypes.PAYOUT_REMOVED,
-  EventTypes.SKILL_SET,
   EventTypes.TASK_CLOSED,
   EventTypes.TASK_CREATED,
   EventTypes.TASK_FINALIZED,

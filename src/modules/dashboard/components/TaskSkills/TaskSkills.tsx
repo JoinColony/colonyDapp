@@ -1,15 +1,13 @@
 import React, { useCallback } from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 
-import { TaskProps } from '~immutable/index';
-import { ActionTypes } from '~redux/index';
-import { useAsyncFunction } from '~utils/hooks';
-import { log } from '~utils/debug';
-import Heading from '~core/Heading';
 import Button from '~core/Button';
+import Heading from '~core/Heading';
 import ItemsList from '~core/ItemsList';
-import taskSkillsTree from './taskSkillsTree';
+import { useSetTaskSkillMutation } from '~data/index';
+
 import styles from './TaskSkills.css';
+import taskSkillsTree from './taskSkillsTree';
 
 const MSG = defineMessages({
   notSet: {
@@ -29,43 +27,28 @@ const MSG = defineMessages({
   },
 });
 
-interface Props
-  extends TaskProps<'draftId' | 'colonyAddress' | 'skillId' | 'domainId'> {
+interface Props {
   disabled?: boolean;
-}
+  draftId: string;
+  ethSkillId: number;
+};
 
 const displayName = 'daskboard.TaskSKills';
 
-const TaskSkills = ({
-  colonyAddress,
-  draftId,
-  disabled,
-  skillId,
-  domainId,
-}: Props) => {
-  const setSkill = useAsyncFunction({
-    submit: ActionTypes.TASK_SET_SKILL,
-    success: ActionTypes.TASK_SET_SKILL_SUCCESS,
-    error: ActionTypes.TASK_SET_SKILL_ERROR,
-  });
+const TaskSkills = ({ draftId, disabled, ethSkillId }: Props) => {
+  const [setSkill] = useSetTaskSkillMutation();
 
   const handleSetSkill = useCallback(
-    async (skillValue: any) => {
-      try {
-        await setSkill({
-          colonyAddress,
-          draftId,
-          domainId,
-          skillId: skillValue ? skillValue.id : undefined,
-        });
-      } catch (caughtError) {
-        /**
-         * @todo Improve error modes for setting the task skill.
-         */
-        log.error(caughtError);
-      }
-    },
-    [colonyAddress, domainId, draftId, setSkill],
+    (skillValue: any) =>
+      setSkill({
+        variables: {
+          input: {
+            id: draftId,
+            ethSkillId: skillValue,
+          }
+        }
+      }),
+    [draftId, setSkill],
   );
 
   return (
@@ -76,7 +59,7 @@ const TaskSkills = ({
         name="taskSkills"
         connect={false}
         showArrow={false}
-        itemId={skillId}
+        itemId={ethSkillId}
         disabled={disabled}
         nullable
       >
@@ -89,16 +72,16 @@ const TaskSkills = ({
             <Button
               appearance={{ theme: 'blue', size: 'small' }}
               text={MSG.selectSkill}
-              textValues={{ skillSelected: skillId }}
+              textValues={{ skillSelected: ethSkillId }}
             />
           )}
         </div>
       </ItemsList>
-      {!skillId ||
+      {!ethSkillId ||
         /*
          * Prevent setting a negative index items
          */
-        (skillId < 0 && (
+        (ethSkillId < 0 && (
           <span className={styles.notSet}>
             <FormattedMessage {...MSG.notSet} />
           </span>

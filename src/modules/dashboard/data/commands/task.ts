@@ -1,8 +1,7 @@
 import BigNumber from 'bn.js';
 
-import { ROLES } from '~constants';
 import { Context } from '~context/index';
-import { EventTypes, TaskStates, Versions } from '~data/constants';
+import { EventTypes, TaskStates } from '~data/constants';
 import {
   ColonyManager,
   Command,
@@ -10,7 +9,6 @@ import {
   DDB,
   Event,
   TaskStore,
-  VersionedEvent,
   Wallet,
 } from '~data/types';
 import {
@@ -20,17 +18,14 @@ import {
   getCommentsStoreAddress,
 } from '~data/stores';
 import { createEvent } from '~data/utils';
-import { Address, ColonyClient, TaskDraftId } from '~types/index';
+import { Address } from '~types/index';
 
 import {
   FinalizeTaskCommandArgsSchema,
   PostCommentCommandArgsSchema,
   SendWorkInviteCommandArgsSchema,
-  SetTaskDescriptionCommandArgsSchema,
-  SetTaskDomainCommandArgsSchema,
   SetTaskDueDateCommandArgsSchema,
   SetTaskPayoutCommandArgsSchema,
-  SetTaskSkillCommandArgsSchema,
 } from './schemas';
 
 /*
@@ -39,7 +34,7 @@ import {
  */
 interface TaskStoreMetadata {
   colonyAddress: Address;
-  draftId: TaskDraftId;
+  draftId: string;
 }
 
 type CommentsStoreMetadata = TaskStoreMetadata;
@@ -105,36 +100,6 @@ export const setTaskDueDate: Command<
     return {
       taskStore,
       event: taskStore.getEvent(eventHash) as Event<EventTypes.DUE_DATE_SET>,
-    };
-  },
-};
-
-export const setTaskSkill: Command<
-  TaskStore,
-  TaskStoreMetadata,
-  {
-    skillId?: number;
-    domainId: number;
-  },
-  {
-    event: Event<EventTypes.SKILL_SET>;
-    taskStore: TaskStore;
-  }
-> = {
-  name: 'setTaskSkill',
-  context: [Context.COLONY_MANAGER, Context.DDB_INSTANCE, Context.WALLET],
-  prepare: prepareTaskStoreCommand,
-  schema: SetTaskSkillCommandArgsSchema,
-  async execute(taskStore, { skillId, domainId }) {
-    const eventHash = await taskStore.append(
-      createEvent(EventTypes.SKILL_SET, {
-        skillId,
-        domainId,
-      }),
-    );
-    return {
-      taskStore,
-      event: taskStore.getEvent(eventHash) as Event<EventTypes.SKILL_SET>,
     };
   },
 };

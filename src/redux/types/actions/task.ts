@@ -181,15 +181,6 @@ export type TaskActionTypes =
       ActionTypes.TASK_SET_PAYOUT_SUCCESS,
       { event: Event<EventTypes.PAYOUT_SET> }
     >
-  | TaskActionType<
-      ActionTypes.TASK_SET_SKILL,
-      TaskProps<'ethSkillId' | 'ethDomainId'>
-    >
-  | TaskErrorActionType<ActionTypes.TASK_SET_SKILL_ERROR>
-  | TaskActionType<
-      ActionTypes.TASK_SET_SKILL_SUCCESS,
-      { event: Event<EventTypes.SKILL_SET> }
-    >
   | NonUniqueTaskActionType<ActionTypes.TASK_SUB_START, object>
   | NonUniqueTaskActionType<ActionTypes.TASK_SUB_STOP, object>
   | NonUniqueTaskActionType<
