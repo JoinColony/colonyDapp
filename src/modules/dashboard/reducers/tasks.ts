@@ -51,11 +51,6 @@ const taskEventReducer = (
       return task.set('skillId', skillId);
     }
 
-    case EventTypes.TASK_DESCRIPTION_SET: {
-      const { description } = event.payload;
-      return task.set('description', description);
-    }
-
     case EventTypes.TASK_FINALIZED:
       return task.set('currentState', TaskStates.FINALIZED);
 
