@@ -90,17 +90,3 @@ export const SetTaskPayoutCommandArgsSchema = yup.object({
 export const SetTaskDomainCommandArgsSchema = yup.object({
   domainId: yup.number().required(),
 });
-
-export const FinalizeTaskCommandArgsSchema = yup.object({
-  amountPaid: yup.string().required(),
-  paymentTokenAddress: yup
-    .string()
-    // @ts-ignore
-    .address()
-    .required(),
-  workerAddress: yup
-    .string()
-    // @ts-ignore
-    .address()
-    .required(),
-});
