@@ -38,7 +38,6 @@ import { createTransaction, getTxChannel, signMessage } from '../../core/sagas';
 
 import {
   assignWorker,
-  closeTask,
   createWorkRequest,
   postComment,
   setTaskPayout,
@@ -149,36 +148,6 @@ function* taskFetchAll() {
       call(fetchColonyTaskMetadata, colonyAddress),
     ),
   );
-}
-
-/*
- * Given a colony address and task ID, remove the task by unsetting
- * the corresponding key in the tasks index store. The task store is
- * simply unpinned.
- */
-function* taskClose({
-  meta,
-  payload: { colonyAddress, draftId, domainId },
-}: Action<ActionTypes.TASK_CLOSE>) {
-  try {
-    const { event } = yield executeCommand(closeTask, {
-      args: { domainId },
-      metadata: { colonyAddress, draftId },
-    });
-
-    yield put<AllActions>({
-      type: ActionTypes.TASK_CLOSE_SUCCESS,
-      meta,
-      payload: {
-        colonyAddress,
-        draftId,
-        event,
-      },
-    });
-  } catch (error) {
-    return yield putError(ActionTypes.TASK_CLOSE_ERROR, error, meta);
-  }
-  return null;
 }
 
 /*
@@ -633,7 +602,6 @@ function* taskCommentAdd({
 }
 
 export default function* tasksSagas() {
-  yield takeEvery(ActionTypes.TASK_CLOSE, taskClose);
   yield takeEvery(ActionTypes.TASK_COMMENT_ADD, taskCommentAdd);
   yield takeEvery(ActionTypes.TASK_CREATE, taskCreate);
   yield takeEvery(ActionTypes.TASK_FEED_ITEMS_SUB_START, taskFeedItemsSubStart);

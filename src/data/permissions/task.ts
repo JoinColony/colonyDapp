@@ -11,7 +11,6 @@ export default function loadModule(): PermissionsManifest<{
     COMMENT_STORE_CREATED: { inherits: 'create-task' },
     PAYOUT_SET: { inherits: 'set-task-payout' },
     PAYOUT_REMOVED: { inherits: 'set-task-payout' },
-    TASK_CLOSED: { inherits: 'close-task' },
     TASK_CREATED: { inherits: 'create-task' },
     WORK_REQUEST_CREATED: { inherits: 'send-task-work-request' },
     WORKER_ASSIGNED: { inherits: 'set-task-assignee' },

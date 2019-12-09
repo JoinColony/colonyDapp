@@ -33,13 +33,6 @@ export const taskReducer: EventReducer<{
         domainId,
       };
     }
-    case EventTypes.TASK_CLOSED: {
-      const { status } = event.payload;
-      return {
-        ...task,
-        status,
-      };
-    }
     case EventTypes.PAYOUT_SET: {
       const { amount, token } = event.payload;
       return {
