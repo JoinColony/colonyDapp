@@ -147,15 +147,6 @@ export type TaskActionTypes =
       ActionTypes.TASK_REMOVE_PAYOUT_SUCCESS,
       { event: Event<EventTypes.PAYOUT_REMOVED> }
     >
-  | TaskActionType<
-      ActionTypes.TASK_SEND_WORK_INVITE,
-      TaskProps<'assignedWorker'>
-    >
-  | TaskErrorActionType<ActionTypes.TASK_SEND_WORK_INVITE_ERROR>
-  | TaskActionType<
-      ActionTypes.TASK_SEND_WORK_INVITE_SUCCESS,
-      { event: Event<EventTypes.WORK_INVITE_SENT> }
-    >
   | TaskActionType<ActionTypes.TASK_SEND_WORK_REQUEST, object>
   | TaskErrorActionType<ActionTypes.TASK_SEND_WORK_REQUEST_ERROR>
   | TaskActionType<

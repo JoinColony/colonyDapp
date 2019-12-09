@@ -31,7 +31,6 @@ export const V2Migrations: [
     [EventTypes.TASK_CREATED]: addRootDomain,
     [EventTypes.TASK_CLOSED]: addRootDomain,
     [EventTypes.TASK_STORE_REGISTERED]: addRootDomain,
-    [EventTypes.WORK_INVITE_SENT]: addRootDomain,
     [EventTypes.WORKER_ASSIGNED]: addRootDomain,
     [EventTypes.WORKER_UNASSIGNED]: addRootDomain,
   },
