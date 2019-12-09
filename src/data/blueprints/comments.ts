@@ -1,13 +1,11 @@
-import { Address, StoreBlueprint } from '~types/index';
-import { TaskDraftId } from '~immutable/index';
-
 import { EventStore } from '~lib/database/stores';
+import { Address, StoreBlueprint } from '~types/index';
 import { PermissiveAccessController } from '../accessControllers/index';
 
 export type CommentsStoreProps = {
   colonyAddress: Address;
   chainId: string;
-  draftId: TaskDraftId;
+  draftId: string;
 };
 
 export type CommentsStoreBlueprint = StoreBlueprint<

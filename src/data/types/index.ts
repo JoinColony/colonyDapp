@@ -6,7 +6,3 @@ export * from './queries';
 export * from './subscription';
 export * from './permissions';
 export * from './stores';
-
-/* these are already part of the db refactoring. do not delete */
-// FIXME USE generated code
-// export * from './User';
