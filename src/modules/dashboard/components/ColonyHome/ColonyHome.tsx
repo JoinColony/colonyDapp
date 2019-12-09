@@ -4,7 +4,6 @@ import { defineMessages, FormattedMessage } from 'react-intl';
 import { subscribeActions as subscribeToReduxActions } from 'redux-action-watch/lib/actionCreators';
 import { useDispatch } from 'redux-react-hook';
 import throttle from 'lodash/throttle';
-import { useQuery } from '@apollo/react-hooks';
 
 import { COLONY_TOTAL_BALANCE_DOMAIN_ID, ROOT_DOMAIN } from '~constants';
 import { Address } from '~types/index';
@@ -24,17 +23,17 @@ import Button, { ActionButton } from '~core/Button';
 import RecoveryModeAlert from '~admin/RecoveryModeAlert';
 import LoadingTemplate from '~pages/LoadingTemplate';
 // import { useLoggedInUser } from '~data/helpers';
-
 import { colonyAddressFetcher } from '../../fetchers';
 import {
   colonyNativeTokenSelector,
   colonyEthTokenSelector,
 } from '../../selectors';
 import { isInRecoveryMode as isInRecoveryModeCheck } from '../../checks';
+import { useColonyQuery } from '~data/index';
+
 import ColonyFunding from './ColonyFunding';
 import ColonyMeta from './ColonyMeta';
 import TabContribute from './TabContribute';
-import { GET_COLONY } from '../../queries';
 
 import styles from './ColonyHome.css';
 
@@ -163,12 +162,9 @@ const ColonyHome = ({
     [colonyName],
   );
 
-  const { data: { colony } = {}, loading: colonyDataLoading } = useQuery(
-    GET_COLONY,
-    {
-      variables: { address: colonyAddress },
-    },
-  );
+  const { data: { colony } = {}, loading: colonyDataLoading } = useColonyQuery({
+    variables: { address: colonyAddress },
+  });
 
   /*
    * @TODO Re-add domains once they're available from mongo

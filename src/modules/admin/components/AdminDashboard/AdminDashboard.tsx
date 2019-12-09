@@ -1,7 +1,6 @@
 import React from 'react';
 import { Redirect } from 'react-router';
 import { defineMessages } from 'react-intl';
-import { useQuery } from '@apollo/react-hooks';
 
 import { ROLES, ROOT_DOMAIN } from '~constants';
 import { NavigationItem } from '~pages/VerticalNavigation/VerticalNavigation';
@@ -19,19 +18,26 @@ import { HistoryNavigation } from '~pages/NavigationWrapper';
 import { useDataFetcher, useTransformer } from '~utils/hooks';
 import { DomainsMapType } from '~types/index';
 import { useLoggedInUser } from '~data/helpers';
+import { useColonyQuery } from '~data/index';
 
 import {
   TEMP_getUserRolesWithRecovery,
   getAllUserRoles,
 } from '../../../transformers';
 import { isInRecoveryMode } from '../../../dashboard/checks';
-import { canArchitect, hasRoot } from '../../../users/checks';
+/*
+ * @TODO Re-add domains once they're available from mongo
+ *
+ * import {
+ *   canArchitect,
+ *   hasRoot
+ * } from '../../../users/checks';
+ */
 import {
   colonyAddressFetcher,
   domainsAndRolesFetcher,
   TEMP_userHasRecoveryRoleFetcher,
 } from '../../../dashboard/fetchers';
-import { GET_COLONY } from '../../../dashboard/queries';
 
 import styles from './AdminDashboard.css';
 
@@ -74,6 +80,12 @@ interface Props {
   location: any;
   match: any;
 }
+
+/*
+ * @TODO Re-add domains once they're available from mongo
+ */
+const canArchitect = () => true;
+const hasRoot = () => true;
 
 const navigationItems = (
   colony: ColonyType,
@@ -150,9 +162,9 @@ const AdminDashboard = ({
   );
 
   const {
-    data: { colony },
+    data: { colony } = {},
     loading: colonyDataLoading,
-  } = useQuery(GET_COLONY, {
+  } = useColonyQuery({
     variables: { address: colonyAddress },
   });
 
@@ -186,7 +198,15 @@ const AdminDashboard = ({
     return <Redirect to="/404" />;
   }
 
-  if (!colony || !domains || isFetchingRoles || colonyDataLoading) {
+  if (
+    !colony ||
+    /*
+     * @TODO Re-add domains once they're available from mongo
+     */
+    // !domains ||
+    // isFetchingRoles ||
+    colonyDataLoading
+  ) {
     return <LoadingTemplate loadingText={MSG.loadingText} />;
   }
 

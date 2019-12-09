@@ -18,7 +18,7 @@ import ENS from '~lib/ENS';
 import { createAddress, ContractContexts } from '~types/index';
 import { parseExtensionDeployedLog } from '~utils/web3/eventLogs/eventParsers';
 import { getLoggedInUser } from '~data/helpers';
-import { CreateUserDocument } from '~data/index';
+import { CreateUserDocument, CreateColonyDocument } from '~data/index';
 
 import { TxConfig } from '../../core/types';
 import { getProfileStoreAddress } from '../../users/data/queries';
@@ -33,7 +33,6 @@ import { subscribeToColony } from '../../users/actionCreators';
 import { fetchDomainsAndRoles } from '../actionCreators/domains';
 import { getUserRoles } from '../../transformers';
 import { createColonyProfile } from '../data/commands';
-import { CREATE_COLONY } from '../mutations';
 import { getColonyName } from './shared';
 
 function* colonyCreate({
@@ -288,7 +287,7 @@ function* colonyCreate({
      * Create the colony in the Mongo Database
      */
     yield apolloClient.mutate({
-      mutation: CREATE_COLONY,
+      mutation: CreateColonyDocument,
       variables: {
         input: {
           colonyAddress,
