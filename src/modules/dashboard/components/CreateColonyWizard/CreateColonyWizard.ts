@@ -43,7 +43,7 @@ const stepFunction: StepsFn<any> = (
   props?: any,
 ): ComponentType<any> => {
   if (props) {
-    const { username } = props.currentUser;
+    const { username } = props.loggedInUser;
 
     /*
      * In case the username is already registered
