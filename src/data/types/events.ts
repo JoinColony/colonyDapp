@@ -4,8 +4,6 @@ import { ColonyEvents } from './ColonyEvents';
 import { CommentEvents } from './CommentEvents';
 import { TaskEvents } from './TaskEvents';
 import { TaskIndexEvents } from './TaskIndexEvents';
-import { UserInboxEvents } from './UserInboxEvents';
-import { UserMetadataEvents } from './UserMetadataEvents';
 
 /*
  * The definition of an event object.
@@ -33,9 +31,7 @@ export type AllEvents =
   | ColonyEvents
   | CommentEvents
   | TaskIndexEvents
-  | TaskEvents
-  | UserMetadataEvents
-  | UserInboxEvents;
+  | TaskEvents;
 
 export type Event<T extends EventTypes> = Extract<
   AllEvents,

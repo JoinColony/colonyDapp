@@ -48,3 +48,23 @@ mutation EditColonyProfile($input: EditColonyProfileInput!) {
     website
   }
 }
+
+mutation MarkNotificationAsRead($input: MarkNotificationAsReadInput!) {
+  markNotificationAsRead(input: $input)
+}
+
+mutation MarkAllNotificationsAsRead {
+  markAllNotificationsAsRead
+}
+
+mutation SubscribeToColony($input: SubscribeToColonyInput!) {
+  subscribeToColony(input: $input) {
+    id
+  }
+}
+
+mutation UnsubscribeFromColony($input: UnsubscribeFromColonyInput!) {
+  unsubscribeFromColony(input: $input) {
+    id
+  }
+}

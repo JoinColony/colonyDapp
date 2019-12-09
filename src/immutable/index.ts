@@ -21,7 +21,5 @@ export * from './TaskMetadata';
 export * from './TaskUser';
 export * from './Token';
 export * from './Transaction';
-// FIXE delete the following
-export * from './UserNotificationMetadata';
 export * from './UserTokenReference';
 export * from './Wallet';

@@ -1,20 +1,17 @@
 import React from 'react';
-
 import { defineMessages, FormattedMessage } from 'react-intl';
 
 import { INBOX_ROUTE } from '~routes/index';
-
-import { useSelector, useAsyncFunction } from '~utils/hooks';
-import { ActionTypes } from '~redux/index';
+import { useSelector } from '~utils/hooks';
 import Heading from '~core/Heading';
 import Button from '~core/Button';
 import { SpinnerLoader } from '~core/Preloaders';
 import { Table, TableBody } from '~core/Table';
 import NavLink from '~core/NavLink';
 import { EVENT_SOURCE_TYPES } from '~data/types/index';
+import { useMarkAllNotificationsAsReadMutation } from '~data/index';
 
 import { ChainInboxItem, InboxItem } from '../InboxItem';
-
 import { inboxItemsSelector } from '../../../selectors';
 
 import styles from './InboxContainer.css';
@@ -38,8 +35,8 @@ const MSG = defineMessages({
       other {}
     }`,
   },
-  markAllRead: {
-    id: 'users.Inbox.InboxContainer.markAllRead',
+  markAllAsRead: {
+    id: 'users.Inbox.InboxContainer.markAllAsRead',
     defaultMessage: 'Mark all as read',
   },
   seeAll: {
@@ -53,15 +50,10 @@ Don't worry, we'll let you know when anything important happens.`,
   },
 });
 
-const allReadActions = {
-  submit: ActionTypes.INBOX_MARK_ALL_NOTIFICATIONS_READ,
-  success: ActionTypes.INBOX_MARK_ALL_NOTIFICATIONS_READ_SUCCESS,
-  error: ActionTypes.INBOX_MARK_ALL_NOTIFICATIONS_READ_ERROR,
-};
-
 const InboxContainer = ({ full, close }: Props) => {
   const { record: inboxItems, isFetching } = useSelector(inboxItemsSelector);
-  const markAllRead = useAsyncFunction(allReadActions);
+  const [markAllAsRead] = useMarkAllNotificationsAsReadMutation();
+
   const hasInboxItems = !!(
     inboxItems &&
     inboxItems.length &&
@@ -86,8 +78,8 @@ const InboxContainer = ({ full, close }: Props) => {
         />
         <Button
           appearance={{ theme: 'blue' }}
-          text={MSG.markAllRead}
-          onClick={markAllRead}
+          text={MSG.markAllAsRead}
+          onClick={markAllAsRead}
           disabled={!hasInboxItems || isFetching}
         />
       </div>
