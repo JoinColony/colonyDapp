@@ -93,24 +93,12 @@ mutation SetTaskTitle($input: SetTaskTitleInput!) {
   }
 }
 
-mutation SubscribeToTask($input: SubscribeToTaskInput!) {
-  subscribeToTask(input: $input) {
-    id
-  }
-}
-
 mutation UnassignWorker($input: UnassignWorkerInput!) {
   unassignWorker(input: $input) {
     id
     assignedWorker {
       id
     }
-  }
-}
-
-mutation UnsubscribeFromTask($input: UnsubscribeFromTaskInput!) {
-  unsubscribeFromTask(input: $input) {
-    id
   }
 }
 
