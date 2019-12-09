@@ -222,7 +222,7 @@ const Task = ({
           </header>
           <div className={styles.assignment}>
             <div>
-              <TaskAssignment colonyAddress={colonyAddress} id={draftId} />
+              <TaskAssignment colonyAddress={colonyAddress} draftId={draftId} />
             </div>
             {canEdit && (
               <div className={styles.assignmentDetailsButton}>
