@@ -1,60 +1,38 @@
 import ApolloClient from 'apollo-client';
 import { push } from 'connected-react-router';
-
+import BigNumber from 'bn.js';
 import {
   call,
   delay,
   fork,
   put,
-  select,
-  take,
   takeEvery,
   takeLatest,
   setContext,
   all,
 } from 'redux-saga/effects';
 
+import { ZERO_ADDRESS } from '~utils/web3/constants';
 import { Action, ActionTypes, AllActions } from '~redux/index';
 import { getContext, Context } from '~context/index';
 import ENS from '~lib/ENS';
 import { getLoggedInUser } from '~data/helpers';
-import { CreateUserDocument, EditUserDocument } from '~data/index';
-
-import { inboxItemsFetch } from '../actionCreators';
-
 import {
-  executeQuery,
-  executeCommand,
-  executeSubscription,
-  putError,
-  selectAsJS,
-  takeFrom,
-} from '~utils/saga/effects';
+  CreateUserDocument,
+  EditUserDocument,
+  ColonySubscribedUsersDocument,
+  UserColonyIdsQueryResult,
+} from '~data/index';
+
+import { UserTokenReferenceType } from '~immutable/index';
+import { executeQuery, putError, takeFrom } from '~utils/saga/effects';
 
 import { ContractContexts } from '../../../lib/ColonyManager/constants';
-import {
-  currentUserMetadataSelector,
-  userColoniesSelector,
-} from '../selectors';
 
 import { ipfsUpload } from '../../core/sagas/ipfs';
 import { transactionLoadRelated } from '../../core/actionCreators';
 
-import {
-  updateTokens,
-  subscribeToColony,
-  subscribeToTask,
-  unsubscribeToColony,
-} from '../data/commands';
-import {
-  getUserAddress,
-  getUserColonies,
-  getUserColonyTransactions,
-  getUserTasks,
-  getUserTokens,
-  subscribeToUserTasks,
-  subscribeToUserColonies,
-} from '../data/queries';
+import { getUserAddress, getUserColonyTransactions } from '../data/queries';
 
 import { createTransaction, getTxChannel } from '../../core/sagas/transactions';
 
@@ -63,15 +41,28 @@ function* userTokenTransfersFetch( // eslint-disable-next-line @typescript-eslin
 ) {
   try {
     const { walletAddress } = yield getLoggedInUser();
-    const userColonyAddresses = yield selectAsJS(
-      userColoniesSelector,
-      walletAddress,
+    const apolloClient: ApolloClient<any> = yield getContext(
+      Context.APOLLO_CLIENT,
     );
+
+    const { data }: UserColonyIdsQueryResult = yield apolloClient.query({
+      query: ColonySubscribedUsersDocument,
+      variables: { address: walletAddress },
+    });
+
+    if (!data) {
+      throw new Error('Could not get user colonies');
+    }
+
+    const {
+      user: { colonies },
+    } = data;
+    const colonyAddresses = colonies.map(({ id }) => id);
+
     const transactions = yield executeQuery(getUserColonyTransactions, {
       args: {
         walletAddress,
-        userColonyAddresses:
-          (userColonyAddresses && userColonyAddresses.record) || [],
+        userColonyAddresses: colonyAddresses,
       },
     });
     yield put<AllActions>({
@@ -273,7 +264,7 @@ function* userLogout() {
       put<AllActions>({
         type: ActionTypes.USER_LOGOUT_SUCCESS,
       }),
-      put(push(`/dashboard`)),
+      put(push('/dashboard')),
     ]);
   } catch (error) {
     return yield putError(ActionTypes.USER_LOGOUT_ERROR, error);
@@ -284,17 +275,36 @@ function* userLogout() {
 function* userTokensFetch() {
   try {
     const { walletAddress } = yield getLoggedInUser();
-    const { metadataStoreAddress } = yield select(currentUserMetadataSelector);
-    const metadata = {
-      walletAddress,
-      metadataStoreAddress,
-    };
-    const tokens = yield executeQuery(getUserTokens, {
-      metadata,
-      args: {
-        walletAddress,
+    const colonyManager = yield getContext(Context.COLONY_MANAGER);
+    const {
+      networkClient: {
+        adapter: { provider },
       },
-    });
+    } = colonyManager;
+
+    // FIXME get user tokens from apollo here
+    const tokenAddresses = [] as string[];
+    const coinTokens: UserTokenReferenceType[] = yield Promise.all(
+      tokenAddresses.map(async address => {
+        const tokenClient = await colonyManager.getTokenClient(address);
+        const { amount } = await tokenClient.getBalanceOf.call({
+          sourceAddress: walletAddress,
+        });
+        // convert from Ethers BN
+        const balance = new BigNumber(amount.toString());
+        return { address, balance };
+      }),
+    );
+
+    // also get balance for ether and return in same format
+    const etherBalance = yield provider.getBalance(walletAddress);
+    const etherToken = {
+      address: ZERO_ADDRESS,
+      // convert from Ethers BN
+      balance: new BigNumber(etherBalance.toString()),
+    };
+
+    const tokens = [etherToken, ...coinTokens];
     yield put<AllActions>({
       type: ActionTypes.USER_TOKENS_FETCH_SUCCESS,
       payload: { tokens },
@@ -305,24 +315,13 @@ function* userTokensFetch() {
   return null;
 }
 
-/**
- * Diff the current user tokens and the list sent as payload, and work out
- * which tokens need adding and which need removing. Then append the relevant
- * events to the user metadata store.
- */
+// We need to do this in a saga as we want to trigger the USER_TOKENS_FETCH action again
 function* userTokensUpdate(action: Action<ActionTypes.USER_TOKENS_UPDATE>) {
   try {
     const { tokens } = action.payload;
     const { walletAddress } = yield getLoggedInUser();
-    const { metadataStoreAddress } = yield select(currentUserMetadataSelector);
-    const metadata = {
-      walletAddress,
-      metadataStoreAddress,
-    };
-    yield executeCommand(updateTokens, {
-      metadata,
-      args: { tokens },
-    });
+    // We probably don't need the wallet address
+    // FIXME update tokens here (apollo mutation)
 
     yield put({ type: ActionTypes.USER_TOKENS_FETCH });
     yield put({ type: ActionTypes.USER_TOKENS_UPDATE_SUCCESS });
@@ -332,306 +331,16 @@ function* userTokensUpdate(action: Action<ActionTypes.USER_TOKENS_UPDATE>) {
   return null;
 }
 
-function* userSubscribedColoniesFetch(
-  action: Action<ActionTypes.USER_SUBSCRIBED_COLONIES_FETCH>,
-) {
-  try {
-    const {
-      payload: { walletAddress, metadataStoreAddress },
-      meta,
-    } = action;
-    const colonyAddresses = yield executeQuery(getUserColonies, {
-      args: undefined,
-      metadata: {
-        walletAddress,
-        metadataStoreAddress,
-      },
-    });
-    yield put<AllActions>({
-      type: ActionTypes.USER_SUBSCRIBED_COLONIES_FETCH_SUCCESS,
-      payload: { walletAddress, colonyAddresses },
-      meta,
-    });
-  } catch (error) {
-    return yield putError(
-      ActionTypes.USER_SUBSCRIBED_COLONIES_FETCH_SUCCESS,
-      error,
-    );
-  }
-  return null;
-}
-
-function* userColonySubscribe({
-  payload: { colonyAddress },
-  meta,
-}: Action<ActionTypes.USER_COLONY_SUBSCRIBE>) {
-  try {
-    const { walletAddress } = yield getLoggedInUser();
-    const { metadataStoreAddress } = yield select(currentUserMetadataSelector);
-    const metadata = {
-      walletAddress,
-      metadataStoreAddress,
-    };
-    const userColonyAddresses = yield executeQuery(getUserColonies, {
-      args: undefined,
-      metadata,
-    });
-    yield executeCommand(subscribeToColony, {
-      args: { colonyAddress, userColonyAddresses },
-      metadata,
-    });
-    yield put<AllActions>({
-      type: ActionTypes.USER_COLONY_SUBSCRIBE_SUCCESS,
-      payload: { colonyAddress, walletAddress },
-      meta,
-    });
-
-    // Dispatch an action to fetch the inbox items (see JoinColony/colonyDapp#1462)
-    yield put(inboxItemsFetch());
-  } catch (caughtError) {
-    return yield putError(
-      ActionTypes.USER_COLONY_SUBSCRIBE_ERROR,
-      caughtError,
-      meta,
-    );
-  }
-  return null;
-}
-
-function* userColonyUnsubscribe({
-  payload: { colonyAddress },
-  meta,
-}: Action<ActionTypes.USER_COLONY_UNSUBSCRIBE>) {
-  try {
-    const { walletAddress } = yield getLoggedInUser();
-    const { metadataStoreAddress } = yield select(currentUserMetadataSelector);
-    const metadata = {
-      walletAddress,
-      metadataStoreAddress,
-    };
-    const userColonyAddresses = yield executeQuery(getUserColonies, {
-      args: undefined,
-      metadata,
-    });
-
-    yield executeCommand(unsubscribeToColony, {
-      args: { colonyAddress, userColonyAddresses },
-      metadata,
-    });
-    yield put<AllActions>({
-      type: ActionTypes.USER_COLONY_UNSUBSCRIBE_SUCCESS,
-      payload: { colonyAddress, walletAddress },
-      meta,
-    });
-  } catch (caughtError) {
-    return yield putError(
-      ActionTypes.USER_COLONY_UNSUBSCRIBE_ERROR,
-      caughtError,
-      meta,
-    );
-  }
-  return null;
-}
-
-function* userSubscribedTasksFetch() {
-  try {
-    const { walletAddress } = yield getLoggedInUser();
-    const { metadataStoreAddress } = yield select(currentUserMetadataSelector);
-    const metadata = {
-      walletAddress,
-      metadataStoreAddress,
-    };
-    const userTasks = yield executeQuery(getUserTasks, {
-      args: undefined,
-      metadata,
-    });
-    yield put<AllActions>({
-      type: ActionTypes.USER_SUBSCRIBED_TASKS_FETCH_SUCCESS,
-      payload: userTasks,
-    });
-  } catch (error) {
-    return yield putError(ActionTypes.USER_SUBSCRIBED_TASKS_FETCH_ERROR, error);
-  }
-  return null;
-}
-
-function* userTaskSubscribe({
-  payload,
-}: Action<ActionTypes.USER_TASK_SUBSCRIBE>) {
-  try {
-    const { walletAddress } = yield getLoggedInUser();
-    const { metadataStoreAddress } = yield select(currentUserMetadataSelector);
-    const metadata = {
-      walletAddress,
-      metadataStoreAddress,
-    };
-    const userDraftIds = yield executeQuery(getUserTasks, {
-      args: undefined,
-      metadata,
-    });
-    if (
-      yield executeCommand(subscribeToTask, {
-        args: { ...payload, userDraftIds },
-        metadata,
-      })
-    ) {
-      yield put<AllActions>({
-        type: ActionTypes.USER_TASK_SUBSCRIBE_SUCCESS,
-        payload,
-      });
-    }
-  } catch (error) {
-    return yield putError(ActionTypes.USER_TASK_SUBSCRIBE_ERROR, error);
-  }
-  return null;
-}
-
-// function* userSubStart({
-//   meta,
-//   payload: { userAddress },
-// }: Action<ActionTypes.USER_SUB_START>) {
-//   let channel;
-//   try {
-//     channel = yield call(executeSubscription, subscribeToUser, {
-//       metadata: { walletAddress: userAddress },
-//     });
-
-//     yield fork(function* stopSubscription() {
-//       yield take(
-//         action =>
-//           action.type === ActionTypes.USER_SUB_STOP &&
-//           action.payload.userAddress === userAddress,
-//       );
-//       channel.close();
-//     });
-
-//     while (true) {
-//       const userProfile = yield take(channel);
-//       yield put({
-//         type: ActionTypes.USER_SUB_EVENTS,
-//         meta,
-//         payload: userProfile,
-//       });
-//     }
-//   } catch (caughtError) {
-//     return yield putError(ActionTypes.USER_SUB_ERROR, caughtError, meta);
-//   } finally {
-//     if (channel && typeof channel.close == 'function') {
-//       channel.close();
-//     }
-//   }
-// }
-
-function* userSubscribedTasksSubStart() {
-  const { walletAddress } = yield getLoggedInUser();
-  const { metadataStoreAddress } = yield select(currentUserMetadataSelector);
-  let channel;
-  try {
-    channel = yield call(executeSubscription, subscribeToUserTasks, {
-      metadata: { walletAddress, metadataStoreAddress },
-    });
-
-    yield fork(function* stopSubscription() {
-      yield take(
-        action => action.type === ActionTypes.USER_SUBSCRIBED_TASKS_SUB_STOP,
-      );
-      channel.close();
-    });
-
-    while (true) {
-      const userTasks = yield take(channel);
-      yield put({
-        type: ActionTypes.USER_SUBSCRIBED_TASKS_SUB_EVENTS,
-        payload: userTasks,
-      });
-    }
-  } catch (caughtError) {
-    return yield putError(
-      ActionTypes.USER_SUBSCRIBED_TASKS_SUB_ERROR,
-      caughtError,
-    );
-  } finally {
-    if (channel && typeof channel.close == 'function') {
-      channel.close();
-    }
-  }
-}
-
-function* userSubscribedColoniesSubStart({
-  meta,
-  payload: { walletAddress, metadataStoreAddress },
-}: Action<ActionTypes.USER_SUBSCRIBED_COLONIES_SUB_START>) {
-  let channel;
-  try {
-    channel = yield call(executeSubscription, subscribeToUserColonies, {
-      metadata: { walletAddress, metadataStoreAddress },
-    });
-
-    yield fork(function* stopSubscription() {
-      yield take(
-        action =>
-          action.type === ActionTypes.USER_SUBSCRIBED_COLONIES_SUB_STOP &&
-          action.payload.walletAddress === walletAddress,
-      );
-      channel.close();
-    });
-
-    while (true) {
-      const colonyAddresses = yield take(channel);
-      yield put({
-        type: ActionTypes.USER_SUBSCRIBED_COLONIES_SUB_EVENTS,
-        meta,
-        payload: {
-          colonyAddresses,
-          walletAddress,
-        },
-      });
-    }
-  } catch (caughtError) {
-    return yield putError(
-      ActionTypes.USER_SUBSCRIBED_COLONIES_SUB_ERROR,
-      caughtError,
-      meta,
-    );
-  } finally {
-    if (channel && typeof channel.close == 'function') {
-      channel.close();
-    }
-  }
-}
-
-/* eslint-disable max-len,prettier/prettier */
 export function* setupUsersSagas() {
   yield takeEvery(ActionTypes.USER_ADDRESS_FETCH, userAddressFetch);
-  yield takeEvery(ActionTypes.USER_COLONY_SUBSCRIBE, userColonySubscribe);
-  yield takeEvery(ActionTypes.USER_COLONY_UNSUBSCRIBE, userColonyUnsubscribe);
-  // yield takeEvery(ActionTypes.USER_FETCH, userFetch);
-  // yield takeEvery(ActionTypes.USER_SUB_START, userSubStart);
-  yield takeEvery(
-    ActionTypes.USER_SUBSCRIBED_COLONIES_FETCH,
-    userSubscribedColoniesFetch
-  );
-  yield takeEvery(
-    ActionTypes.USER_SUBSCRIBED_COLONIES_SUB_START,
-    userSubscribedColoniesSubStart
-  );
-  yield takeEvery(
-    ActionTypes.USER_SUBSCRIBED_TASKS_FETCH,
-    userSubscribedTasksFetch
-  );
-  yield takeEvery(
-    ActionTypes.USER_SUBSCRIBED_TASKS_SUB_START,
-    userSubscribedTasksSubStart
-  );
-  yield takeEvery(ActionTypes.USER_TASK_SUBSCRIBE, userTaskSubscribe);
   yield takeEvery(
     ActionTypes.USER_TOKEN_TRANSFERS_FETCH,
-    userTokenTransfersFetch
+    userTokenTransfersFetch,
   );
   yield takeEvery(ActionTypes.USER_TOKENS_FETCH, userTokensFetch);
   yield takeLatest(
     ActionTypes.USERNAME_CHECK_AVAILABILITY,
-    usernameCheckAvailability
+    usernameCheckAvailability,
   );
   yield takeLatest(ActionTypes.USER_AVATAR_REMOVE, userAvatarRemove);
   yield takeLatest(ActionTypes.USER_AVATAR_UPLOAD, userAvatarUpload);
@@ -639,4 +348,3 @@ export function* setupUsersSagas() {
   yield takeLatest(ActionTypes.USER_TOKENS_UPDATE, userTokensUpdate);
   yield takeLatest(ActionTypes.USERNAME_CREATE, usernameCreate);
 }
-/* eslint-enable max-len,prettier/prettier */

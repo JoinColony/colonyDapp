@@ -9,19 +9,18 @@ import Numeral from '~core/Numeral';
 import Link from '~core/Link';
 import HookedUserAvatar from '~users/HookedUserAvatar';
 import { SpinnerLoader } from '~core/Preloaders';
-import { useDataFetcher, useSelector, useAsyncFunction } from '~utils/hooks';
+import { useDataFetcher, useSelector } from '~utils/hooks';
 
 import {
   domainsFetcher,
   tokenFetcher,
   colonyFetcher,
 } from '../../../../dashboard/fetchers';
+import { useMarkNotificationAsReadMutation } from '~data/index';
 
 import { friendlyColonyNameSelector } from '../../../../dashboard/selectors';
 import { getFriendlyName, getUsername } from '../../../transformers';
 import { transformNotificationEventNames } from '../../../data/utils';
-import { ActionTypes } from '~redux/index';
-import { mergePayload } from '~utils/actions';
 
 import styles from './InboxItem.css';
 import MSG from '../messages';
@@ -76,12 +75,6 @@ const WithLink = ({ to, children }: { to?: string; children: ReactNode }) =>
   ) : (
     <div className={styles.inboxDetails}>{children}</div>
   );
-
-const readActions = {
-  submit: ActionTypes.INBOX_MARK_NOTIFICATION_READ,
-  success: ActionTypes.INBOX_MARK_NOTIFICATION_READ_SUCCESS,
-  error: ActionTypes.INBOX_MARK_NOTIFICATION_READ_ERROR,
-};
 
 const InboxItem = ({
   item: {
@@ -141,16 +134,18 @@ const InboxItem = ({
     [tokenAddress],
   );
 
-  const transform = useCallback(mergePayload({ id, timestamp }), [
-    id,
-    timestamp,
+  const [markAsReadMutation] = useMarkNotificationAsReadMutation({
+    variables: { input: { id } },
+  });
+
+  const markAsRead = useCallback(() => markAsReadMutation(), [
+    markAsReadMutation,
   ]);
-  const markAsRead = useAsyncFunction({ ...readActions, transform });
 
   const isFetching = isFetchingColony || isFetchingDomains || isFetchingToken;
 
   return (
-    <TableRow onClick={() => markAsRead(id)}>
+    <TableRow onClick={markAsRead}>
       <TableCell
         className={full ? styles.inboxRowCellFull : styles.inboxRowCellPopover}
       >

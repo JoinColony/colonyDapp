@@ -10,27 +10,18 @@ import { Address, createAddress } from '~types/index';
 import {
   ColonyClient,
   ColonyManager,
-  DDB,
   ENSCache,
   NetworkClient,
   Query,
-  Subscription,
-  UserInboxStore,
-  UserMetadataStore,
 } from '~data/types';
 import {
   ContractTransactionType,
   UserTokenReferenceType,
 } from '~immutable/index';
-import {
-  normalizeDDBStoreEvent,
-  normalizeTransactionLog,
-} from '~data/normalizers';
+import { normalizeTransactionLog } from '~data/normalizers';
 import ENS from '~lib/ENS';
 import { Context } from '~context/index';
-import { EventTypes } from '~data/constants';
 import { ZERO_ADDRESS } from '~utils/web3/constants';
-import { reduceToLastState } from '~utils/reducers';
 import {
   formatFilterTopic,
   getDecoratedEvents,
@@ -39,16 +30,9 @@ import {
   parseUserTransferEvent,
 } from '~utils/web3/eventLogs';
 import {
-  getUserInboxStore,
-  getUserMetadataStore,
-  getUserProfileStoreAddress,
-} from '~data/stores';
-import { getUserTasksReducer } from './reducers';
-import {
   decorateColonyEventPayload,
   getExtensionAddresses,
   getUserAddressByUsername,
-  getUserTokenAddresses,
 } from './utils';
 
 interface UserProfileStoreMetadata {
@@ -66,120 +50,40 @@ const prepareMetaColonyClientQuery = async ({
   colonyManager: ColonyManager;
 }) => colonyManager.getMetaColonyClient();
 
-const prepareMetadataStoreQuery = async (
-  { ddb }: { ddb: DDB },
-  metadata: UserMetadataStoreMetadata,
-) =>
-  metadata.metadataStoreAddress ? getUserMetadataStore(ddb)(metadata) : null;
-
-export const getUserTasks: Query<
-  UserMetadataStore | null,
-  UserMetadataStoreMetadata,
-  void,
-  any
-> = {
-  name: 'getUserTasks',
-  context: [Context.DDB_INSTANCE],
-  prepare: prepareMetadataStoreQuery,
-  async execute(metadataStore) {
-    /*
-     * If the user has no metadata store set, we will assume that the
-     * user is newly-created (and we can't get their subscribed tasks yet).
-     */
-    return metadataStore
-      ? metadataStore
-          .all()
-          .filter(
-            ({ type }) =>
-              type === EventTypes.SUBSCRIBED_TO_TASK ||
-              type === EventTypes.UNSUBSCRIBED_FROM_TASK,
-          )
-          .reduce(getUserTasksReducer, [])
-      : [];
-  },
-};
-
-export const getUserColonies: Query<
-  UserMetadataStore | null,
-  UserMetadataStoreMetadata,
-  void,
-  any
-> = {
-  name: 'getUserColonies',
-  context: [Context.COLONY_MANAGER, Context.DDB_INSTANCE, Context.WALLET],
-  prepare: prepareMetadataStoreQuery,
-  async execute(metadataStore) {
-    /*
-     * If the user has no metadata store set, we will assume that the
-     * user is newly-created (and we can't get their subscribed tasks yet).
-     */
-    return metadataStore
-      ? reduceToLastState(
-          metadataStore
-            .all()
-            .filter(
-              ({ type }) =>
-                type === EventTypes.SUBSCRIBED_TO_COLONY ||
-                type === EventTypes.UNSUBSCRIBED_FROM_COLONY,
-            ),
-          ({ payload: { colonyAddress } }) => colonyAddress,
-          ({ type }) => type,
-        )
-          .filter(([, type]) => type === EventTypes.SUBSCRIBED_TO_COLONY)
-          .map(([colonyAddress]) => createAddress(colonyAddress))
-      : [];
-  },
-};
-
+// FIXME do this in saga, also using apollo data for user tokens
 export const getUserTokens: Query<
   {
-    metadataStore: UserMetadataStore | null;
     colonyManager: ColonyManager;
   },
-  { walletAddress: Address; metadataStoreAddress: string },
+  { walletAddress: Address },
   { walletAddress: Address },
   any
 > = {
   name: 'getUserTokens',
-  context: [Context.COLONY_MANAGER, Context.DDB_INSTANCE, Context.WALLET],
-  async prepare(
-    {
-      colonyManager,
-      ddb,
-    }: {
-      colonyManager: ColonyManager;
-      ddb: DDB;
-    },
-    metadata: UserMetadataStoreMetadata,
-  ) {
-    const { metadataStoreAddress } = metadata;
-    let metadataStore: UserMetadataStore | null = null;
-    if (metadataStoreAddress)
-      metadataStore = await getUserMetadataStore(ddb)(metadata);
-    return { metadataStore, colonyManager };
+  context: [Context.COLONY_MANAGER, Context.WALLET],
+  async prepare({ colonyManager }: { colonyManager: ColonyManager }) {
+    return { colonyManager };
   },
-  async execute({ metadataStore, colonyManager }, { walletAddress }) {
+  async execute({ colonyManager }, { walletAddress }) {
     const {
       networkClient: {
         adapter: { provider },
       },
     } = colonyManager;
 
-    // for each address, get balance
-    let tokens = [] as UserTokenReferenceType[];
-    if (metadataStore) {
-      tokens = await Promise.all(
-        getUserTokenAddresses(metadataStore).map(async address => {
-          const tokenClient = await colonyManager.getTokenClient(address);
-          const { amount } = await tokenClient.getBalanceOf.call({
-            sourceAddress: walletAddress,
-          });
-          // convert from Ethers BN
-          const balance = new BigNumber(amount.toString());
-          return { address, balance };
-        }),
-      );
-    }
+    // FIXME get user tokens from apollo here
+    const tokenAddresses = [] as string[];
+    const tokens: UserTokenReferenceType[] = await Promise.all(
+      tokenAddresses.map(async address => {
+        const tokenClient = await colonyManager.getTokenClient(address);
+        const { amount } = await tokenClient.getBalanceOf.call({
+          sourceAddress: walletAddress,
+        });
+        // convert from Ethers BN
+        const balance = new BigNumber(amount.toString());
+        return { address, balance };
+      }),
+    );
 
     // also get balance for ether and return in same format
     const etherBalance = await provider.getBalance(walletAddress);
@@ -467,13 +371,11 @@ const getAllColonyEventsForUserInbox = async (
 
 export const getUserInboxActivity: Query<
   {
-    userInboxStore: UserInboxStore | void;
     colonyClients: ColonyClient[];
     walletAddress: Address;
   },
   {
     userColonies: Address[];
-    inboxStoreAddress: string | void;
     walletAddress: Address;
   },
   void,
@@ -481,173 +383,29 @@ export const getUserInboxActivity: Query<
 > = {
   name: 'getUserInboxActivity',
   context: [Context.COLONY_MANAGER, Context.DDB_INSTANCE],
-  async prepare(
-    { colonyManager, ddb },
-    { userColonies, inboxStoreAddress, walletAddress },
-  ) {
-    // let userProfileStore;
-    // try {
-    //   userProfileStore = await getUserProfileStore(ddb)({ walletAddress });
-    // } catch {
-    //   // Ignore the error; it's ok if the store doesn't exist yet
-    // }
-
-    const userInboxStore = inboxStoreAddress
-      ? await getUserInboxStore(ddb)({
-          inboxStoreAddress,
-          walletAddress,
-        })
-      : undefined;
-
+  async prepare({ colonyManager }, { userColonies, walletAddress }) {
     const colonyClients = await Promise.all(
       userColonies.map(address => colonyManager.getColonyClient(address)),
     );
 
     return {
       colonyClients,
-      userInboxStore,
-      // userProfileStore,
       walletAddress,
     };
   },
-  async execute({
-    colonyClients,
-    userInboxStore,
-    // userProfileStore,
-    walletAddress,
-  }) {
+  async execute({ colonyClients, walletAddress }) {
     const colonyEvents = await getAllColonyEventsForUserInbox(
       colonyClients,
       walletAddress,
     );
 
-    const inboxStoreEvents = userInboxStore
-      ? userInboxStore
-          .all()
-          .map(event =>
-            normalizeDDBStoreEvent(userInboxStore.address.toString(), event),
-          )
-      : [];
-
-    /* This comment serves as a reference to what was done befor to get events */
-    // const profileStoreEvents = userProfileStore
-    //   ? userProfileStore
-    //       .all()
-    //       .filter(({ type }) => type === EventTypes.USER_PROFILE_CREATED)
-    //       .map(event =>
-    //         normalizeDDBStoreEvent(userProfileStore.address.toString(), event),
-    //       )
-    //   : [];
+    // FIXME these need to come from apollo.
+    const inboxStoreEvents = [];
     const profileStoreEvents = [];
 
     // Sort all events in descending date order
     return [...profileStoreEvents, ...inboxStoreEvents, ...colonyEvents].sort(
       (a, b) => b.meta.timestamp - a.meta.timestamp,
     );
-  },
-};
-
-export const getProfileStoreAddress: Query<
-  { ddb: DDB; metadata: { walletAddress: Address } },
-  { walletAddress: Address },
-  void,
-  string
-> = {
-  name: 'getProfileStoreAddress',
-  context: [Context.DDB_INSTANCE],
-  async prepare({ ddb }, metadata) {
-    return { ddb, metadata };
-  },
-  async execute({ ddb, metadata }) {
-    const orbitAddress = await getUserProfileStoreAddress(ddb)(metadata);
-    return orbitAddress.toString();
-  },
-};
-
-export const getUserNotificationMetadata: Query<
-  UserMetadataStore | null,
-  UserMetadataStoreMetadata,
-  void,
-  { readUntil: number; exceptFor: string[] }
-> = {
-  name: 'getUserNotificationMetadata',
-  context: [Context.DDB_INSTANCE],
-  prepare: prepareMetadataStoreQuery,
-  async execute(metadataStore) {
-    /*
-     * The user has no metadata store set, assuming there's no metadata
-     */
-    // @ts-ignore
-    const [{ payload: { readUntil, exceptFor } = {} } = {}] = metadataStore
-      ? metadataStore
-          .all()
-          .filter(({ type }) => type === EventTypes.READ_UNTIL)
-          .sort((a, b) => b.meta.timestamp - a.meta.timestamp)
-      : [];
-
-    return {
-      readUntil,
-      exceptFor,
-    };
-  },
-};
-
-export const subscribeToUserTasks: Subscription<
-  UserMetadataStore | null,
-  UserMetadataStoreMetadata,
-  void,
-  any
-> = {
-  name: 'subscribeToUserTasks',
-  context: [Context.COLONY_MANAGER, Context.DDB_INSTANCE, Context.WALLET],
-  prepare: prepareMetadataStoreQuery,
-  async execute(metadataStore) {
-    if (!metadataStore) throw new Error('No such user metadata store');
-    return emitter => [
-      metadataStore.subscribe(events =>
-        emitter(
-          events &&
-            events
-              .filter(
-                ({ type }) =>
-                  type === EventTypes.SUBSCRIBED_TO_TASK ||
-                  type === EventTypes.UNSUBSCRIBED_FROM_TASK,
-              )
-              .reduce(getUserTasksReducer, []),
-        ),
-      ),
-    ];
-  },
-};
-
-export const subscribeToUserColonies: Subscription<
-  UserMetadataStore | null,
-  UserMetadataStoreMetadata,
-  void,
-  any
-> = {
-  name: 'subscribeToUserColonies',
-  context: [Context.COLONY_MANAGER, Context.DDB_INSTANCE, Context.WALLET],
-  prepare: prepareMetadataStoreQuery,
-  async execute(metadataStore) {
-    if (!metadataStore) throw new Error('No such user metadata store');
-    return emitter => [
-      metadataStore.subscribe(events =>
-        emitter(
-          events &&
-            reduceToLastState(
-              events.filter(
-                ({ type }) =>
-                  type === EventTypes.SUBSCRIBED_TO_COLONY ||
-                  type === EventTypes.UNSUBSCRIBED_FROM_COLONY,
-              ),
-              ({ payload: { colonyAddress } }) => colonyAddress,
-              ({ type }) => type,
-            )
-              .filter(([, type]) => type === EventTypes.SUBSCRIBED_TO_COLONY)
-              .map(([colonyAddress]) => createAddress(colonyAddress)),
-        ),
-      ),
-    ];
   },
 };

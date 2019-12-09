@@ -7,17 +7,12 @@ import {
   taskSubStop,
 } from './actionCreators';
 import {
-  userColoniesSubStart,
-  userColoniesSubStop,
-} from '../users/actionCreators';
-import {
   colonySelector,
   colonyTaskMetadataSelector,
   taskFeedItemsSelector,
   tasksByIdsSelector,
   taskSelector,
 } from './selectors';
-import { userColoniesSelector } from '../users/selectors';
 
 export const taskFeedItemsSubscriber = Object.freeze({
   select: taskFeedItemsSelector,
@@ -41,10 +36,4 @@ export const colonyTaskMetadataSubscriber = Object.freeze({
   select: colonyTaskMetadataSelector,
   start: colonyTaskMetadataSubStart,
   stop: colonyTaskMetadataSubStop,
-});
-
-export const userColoniesSubscriber = Object.freeze({
-  select: userColoniesSelector,
-  start: userColoniesSubStart,
-  stop: userColoniesSubStop,
 });

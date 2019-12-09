@@ -2,27 +2,23 @@ import React, { ReactNode, useMemo, useCallback } from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 
 import { Address } from '~types/index';
-import { DomainId, TaskDraftId, TaskType } from '~immutable/index';
+import { DomainId, TaskType } from '~immutable/index';
 import { TaskStates } from '~data/constants';
-import { mergePayload } from '~utils/actions';
-import {
-  useDataTupleSubscriber,
-  useSelector,
-  useDataSubscriber,
-} from '~utils/hooks';
-import { ActionTypes } from '~redux/index';
+import { useDataTupleSubscriber, useSelector } from '~utils/hooks';
 import Icon from '~core/Icon';
 import { Table, TableBody } from '~core/Table';
-import { ActionButton } from '~core/Button';
+import Button from '~core/Button';
 import { useLoggedInUser } from '~data/helpers';
+import { useSubscribeToColonyMutation } from '~data/index';
 
-import { tasksByIdSubscriber, userColoniesSubscriber } from '../../subscribers';
+import { tasksByIdSubscriber } from '../../subscribers';
 import {
   TasksFilterOptions,
   TasksFilterOptionType,
 } from '../shared/tasksFilter';
 import { colonyNameSelector } from '../../selectors';
 import TaskListItem from './TaskListItem';
+
 import taskListItemStyles from './TaskListItem.css';
 
 const MSG = defineMessages({
@@ -65,11 +61,10 @@ const MSG = defineMessages({
 });
 
 interface Props {
-  draftIds: [Address, TaskDraftId][];
+  draftIds: string[];
   emptyState?: ReactNode;
   filteredDomainId?: DomainId;
   filterOption: TasksFilterOptionType;
-  walletAddress: Address;
   colonyAddress?: Address;
   showEmptyState?: boolean;
 }
@@ -79,10 +74,10 @@ const TaskList = ({
   filteredDomainId,
   filterOption,
   emptyState,
-  walletAddress,
   colonyAddress,
   showEmptyState = true,
 }: Props) => {
+  const { username, walletAddress } = useLoggedInUser();
   const tasksData = useDataTupleSubscriber<TaskType>(
     tasksByIdSubscriber,
     draftIds,
@@ -141,19 +136,19 @@ const TaskList = ({
     [filter, sort, tasksData],
   );
 
-  const { username } = useLoggedInUser();
-  const { data: colonyAddresses } = useDataSubscriber(
-    userColoniesSubscriber,
-    [walletAddress],
-    [walletAddress, ''],
-  );
-  const isSubscribed = (colonyAddresses || []).includes(
-    // Casting should be ok here as we don't have any sparse arrays
-    colonyAddress as string,
-  );
-  const transform = useCallback(mergePayload({ colonyAddress }), [
-    colonyAddress,
-  ]);
+  const [subscribeToColonyMutation] = useSubscribeToColonyMutation();
+  const subscribeToColony = useCallback(() => {
+    if (colonyAddress) {
+      // FIXME @james can we remove the nested input here?
+      subscribeToColonyMutation({ variables: { input: { colonyAddress } } });
+    }
+  }, [subscribeToColonyMutation, colonyAddress]);
+
+  // FIXME get the colony addresses for the user
+  const colonyAddresses = [] as string[];
+
+  const isSubscribed =
+    typeof colonyAddress == 'string' && colonyAddresses.includes(colonyAddress);
 
   const data = useSelector(colonyNameSelector, [colonyAddress]);
 
@@ -224,15 +219,12 @@ const TaskList = ({
                      */
                     isSubscribed: username ? isSubscribed : true,
                     myColonies: (
-                      <ActionButton
+                      <Button
                         className={taskListItemStyles.subscribe}
-                        error={ActionTypes.USER_COLONY_SUBSCRIBE_ERROR}
-                        submit={ActionTypes.USER_COLONY_SUBSCRIBE}
-                        success={ActionTypes.USER_COLONY_SUBSCRIBE_SUCCESS}
-                        transform={transform}
+                        onClick={subscribeToColony}
                       >
                         <FormattedMessage tagName="span" {...MSG.myColonies} />
-                      </ActionButton>
+                      </Button>
                     ),
                   }}
                 />
