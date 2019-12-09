@@ -21,7 +21,6 @@ import { createEvent } from '~data/utils';
 import { Address } from '~types/index';
 
 import {
-  FinalizeTaskCommandArgsSchema,
   PostCommentCommandArgsSchema,
   SetTaskPayoutCommandArgsSchema,
 } from './schemas';
@@ -257,33 +256,6 @@ export const unassignWorker: Command<
       event: taskStore.getEvent(eventHash) as Event<
         EventTypes.WORKER_UNASSIGNED
       >,
-    };
-  },
-};
-
-export const closeTask: Command<
-  TaskStore,
-  TaskStoreMetadata,
-  { domainId: number },
-  {
-    event: Event<EventTypes.TASK_CLOSED>;
-    taskStore: TaskStore;
-  }
-> = {
-  name: 'closeTask',
-  context: [Context.COLONY_MANAGER, Context.DDB_INSTANCE, Context.WALLET],
-  prepare: prepareTaskStoreCommand,
-  schema: FinalizeTaskCommandArgsSchema,
-  async execute(taskStore, { domainId }) {
-    const eventHash = await taskStore.append(
-      createEvent(EventTypes.TASK_CLOSED, {
-        status: TaskStates.CLOSED,
-        domainId,
-      }),
-    );
-    return {
-      taskStore,
-      event: taskStore.getEvent(eventHash) as Event<EventTypes.TASK_CLOSED>,
     };
   },
 };

@@ -62,12 +62,6 @@ interface TaskErrorActionType<T extends string>
  * TASK_WORKER_REVEAL_MANAGER_RATING_SUCCESS
  */
 export type TaskActionTypes =
-  | TaskActionType<ActionTypes.TASK_CLOSE, { domainId: number }>
-  | TaskErrorActionType<ActionTypes.TASK_CLOSE_ERROR>
-  | TaskActionType<
-      ActionTypes.TASK_CLOSE_SUCCESS,
-      { event: Event<EventTypes.TASK_CLOSED> }
-    >
   | TaskActionType<
       ActionTypes.TASK_COMMENT_ADD,
       {
