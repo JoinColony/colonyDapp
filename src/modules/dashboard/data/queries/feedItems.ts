@@ -1,7 +1,6 @@
 import { CommentEvents } from '~data/types/CommentEvents';
 import { TaskEvents } from '~data/types/TaskEvents';
-import { Address, Subscription, AllEvents } from '~types/index';
-import { TaskDraftId } from '~immutable/index';
+import { Address, AllEvents, Subscription } from '~types/index';
 import {
   ColonyManager,
   CommentsStore,
@@ -20,7 +19,7 @@ import {
 
 type Metadata = {
   colonyAddress: Address;
-  draftId: TaskDraftId;
+  draftId: string;
 };
 const prepare = async (
   {

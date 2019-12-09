@@ -1,20 +1,19 @@
 import { ColonyClient as ColonyClientType } from '@colony/colony-js-client';
 import { WalletObjectType } from '@colony/purser-core';
 import { Address, StoreBlueprint } from '~types/index';
-import { TaskDraftId } from '~immutable/index';
-
 import { EventStore } from '~lib/database/stores';
+
 import { TaskAccessController } from '../accessControllers/index';
 import loadPermissionManifest, { MANIFEST_LOADERS } from '../permissions/index';
 
 interface TaskStoreProps {
   colonyAddress: Address;
   chainId: string;
-  draftId: TaskDraftId;
+  draftId: string;
   domainId: number;
   wallet: WalletObjectType;
   colonyClient: ColonyClientType;
-}
+};
 
 const getTaskStoreAccessController = ({
   draftId,

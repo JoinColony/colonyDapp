@@ -1,4 +1,4 @@
-import { Address, TaskDraftId } from '~types/index';
+import { Address } from '~types/index';
 import { FetchableDataRecord, TaskMetadataRecord } from '~immutable/index';
 
 import { RootStateRecord } from '../../state';
@@ -19,5 +19,5 @@ export const colonyTaskMetadataSelector = (
 
 export const taskFeedItemsSelector = (
   state: RootStateRecord,
-  draftId: TaskDraftId,
+  draftId: string,
 ) => state.getIn([ns, DASHBOARD_TASK_FEED_ITEMS, draftId]);

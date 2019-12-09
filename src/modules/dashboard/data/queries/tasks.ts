@@ -1,5 +1,4 @@
 import { Address, Subscription } from '~types/index';
-import { TaskDraftId } from '~immutable/index';
 
 import { ColonyManager, DDB, Query, Wallet, TaskStore } from '~data/types';
 import { TaskEvents } from '~data/types/TaskEvents';
@@ -9,7 +8,7 @@ import { Context } from '~context/index';
 import { getTaskStore, getTaskStoreAddress } from '~data/stores';
 import { taskReducer } from '../reducers';
 
-type TaskStoreMetadata = { colonyAddress: Address; draftId: TaskDraftId };
+type TaskStoreMetadata = { colonyAddress: Address; draftId: string };
 
 const initialTask = {
   amountPaid: undefined,

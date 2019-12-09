@@ -3,13 +3,10 @@ import { List, Map as ImmutableMap, Record } from 'immutable';
 import { Address, DefaultValues } from '~types/index';
 import {
   FetchableDataRecord,
-  TaskDraftId,
-  TaskRecord,
   TaskFeedItemRecord,
   TaskMetadataRecord,
   FetchableDataType,
   TaskMetadataRecordProps,
-  TaskType,
   TaskFeedItemType,
 } from '~immutable/index';
 
@@ -34,7 +31,7 @@ export * from './TEMP_AllUserHasRecoveryRoles';
 
 type TaskMetadataObject = { [draftId: string]: TaskMetadataRecord };
 
-export type TaskMetadataMap = ImmutableMap<TaskDraftId, TaskMetadataRecord> & {
+export type TaskMetadataMap = ImmutableMap<string, TaskMetadataRecord> & {
   toJS(): TaskMetadataObject;
 };
 
@@ -47,13 +44,6 @@ export type AllTaskMetadataMap = ImmutableMap<
   FetchableDataRecord<TaskMetadataMap>
 > & { toJS(): AllTaskMetadataObject };
 
-type TasksObject = { [draftId: string]: FetchableDataType<TaskType> };
-
-export type TasksMap = ImmutableMap<
-  TaskDraftId,
-  FetchableDataRecord<TaskRecord>
-> & { toJS(): TasksObject };
-
 type TaskFeedItemsObject = {
   [draftId: string]: FetchableDataType<TaskFeedItemType[]>;
 };
@@ -63,7 +53,7 @@ type TaskFeedItemsList = List<TaskFeedItemRecord> & {
 };
 
 export type TaskFeedItemsMap = ImmutableMap<
-  TaskDraftId,
+  string,
   FetchableDataRecord<TaskFeedItemsList>
 > & { toJS(): TaskFeedItemsObject };
 
@@ -73,7 +63,6 @@ export interface DashboardStateProps {
   [DASHBOARD_TASK_METADATA]: AllTaskMetadataMap;
   [DASHBOARD_ALL_TOKENS]: AllTokensMap;
   [DASHBOARD_TASK_FEED_ITEMS]: TaskFeedItemsMap;
-  [DASHBOARD_TASKS]: TasksMap;
   [TEMP_DASHBOARD_ALL_USER_HAS_RECOVERY_ROLES]: TEMP_AllUserHasRecoveryRoles;
 }
 
@@ -83,7 +72,6 @@ const defaultValues: DefaultValues<DashboardStateProps> = {
   [DASHBOARD_TASK_METADATA]: ImmutableMap() as AllTaskMetadataMap,
   [DASHBOARD_ALL_TOKENS]: AllTokensInitialState,
   [DASHBOARD_TASK_FEED_ITEMS]: ImmutableMap() as TaskFeedItemsMap,
-  [DASHBOARD_TASKS]: ImmutableMap() as TasksMap,
   // eslint-disable-next-line max-len
   [TEMP_DASHBOARD_ALL_USER_HAS_RECOVERY_ROLES]: ImmutableMap() as TEMP_AllUserHasRecoveryRoles,
 };
