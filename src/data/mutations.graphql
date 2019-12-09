@@ -23,3 +23,22 @@ mutation EditUser($input: EditUserInput!) {
     id
   }
 }
+
+mutation CreateColony($input: CreateColonyInput!) {
+  createColony(input: $input) {
+    id
+    colonyAddress
+    colonyName
+    avatarHash
+    description
+    displayName
+    guideline
+    website
+  }
+}
+
+mutation EditColonyProfile($input: EditColonyProfileInput!) {
+  editColonyProfile(input: $input) {
+    id
+  }
+}
