@@ -4,12 +4,7 @@ import { Channel } from 'redux-saga';
 import { all, call, fork, put } from 'redux-saga/effects';
 
 import { ActionTypes, Action, AllActions } from '~redux/index';
-import {
-  putError,
-  takeFrom,
-  executeQuery,
-  takeLatestCancellable,
-} from '~utils/saga/effects';
+import { putError, takeFrom, takeLatestCancellable } from '~utils/saga/effects';
 import { Context, getContext } from '~context/index';
 import ENS from '~lib/ENS';
 import { createAddress, ContractContexts } from '~types/index';
@@ -18,7 +13,6 @@ import { getLoggedInUser } from '~data/helpers';
 import { CreateUserDocument, CreateColonyDocument } from '~data/index';
 
 import { TxConfig } from '../../core/types';
-import { getProfileStoreAddress } from '../../users/data/queries';
 import {
   transactionAddParams,
   transactionAddIdentifier,
@@ -26,7 +20,6 @@ import {
   transactionLoadRelated,
 } from '../../core/actionCreators';
 import { createTransaction, createTransactionChannels } from '../../core/sagas';
-import { subscribeToColony } from '../../users/actionCreators';
 
 function* colonyCreate({
   meta,
@@ -41,7 +34,7 @@ function* colonyCreate({
     username: givenUsername,
   },
 }: Action<ActionTypes.COLONY_CREATE>) {
-  const { username: currentUsername, walletAddress } = yield getLoggedInUser();
+  const { username: currentUsername } = yield getLoggedInUser();
 
   const apolloClient: ApolloClient<any> = yield getContext(
     Context.APOLLO_CLIENT,
@@ -117,20 +110,9 @@ function* colonyCreate({
       yield createGroupedTransaction(createUser, {
         context: ContractContexts.NETWORK_CONTEXT,
         methodName: 'registerUserLabel',
-        params: { username },
-        ready: false,
+        params: { username, orbitDBPath: '' },
+        ready: true,
       });
-
-      // @ts-ignore
-      const profileStoreAddress = yield executeQuery(getProfileStoreAddress, {
-        metadata: { walletAddress },
-      });
-      yield put(
-        transactionAddParams(createUser.id, {
-          orbitDBPath: profileStoreAddress,
-        }),
-      );
-      yield put(transactionReady(createUser.id));
     }
 
     if (createToken) {
@@ -403,9 +385,6 @@ function* colonyCreate({
       setOneTxRoleFunding.channel,
       ActionTypes.TRANSACTION_SUCCEEDED,
     );
-
-    // Subscribe to the colony last, after successful colony creation
-    yield put(subscribeToColony(colonyAddress));
     return null;
   } catch (error) {
     yield putError(ActionTypes.COLONY_CREATE_ERROR, error, meta);

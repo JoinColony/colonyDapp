@@ -7,10 +7,6 @@ import {
   TEMP_userHasRecoveryRoleSelector,
 } from './selectors';
 import {
-  userColoniesSelector,
-  currentUserDraftIdsSelector,
-} from '../users/selectors';
-import {
   fetchColony,
   fetchColonyAddress,
   fetchColonyName,
@@ -19,10 +15,6 @@ import {
   fetchToken,
   TEMP_fetchUserHasRecoveryRole,
 } from './actionCreators';
-import {
-  fetchUserColonies,
-  currentUserFetchTasks,
-} from '../users/actionCreators';
 
 export const colonyFetcher = Object.freeze({
   select: colonySelector,
@@ -58,18 +50,6 @@ export const TEMP_userHasRecoveryRoleFetcher = Object.freeze({
   select: TEMP_userHasRecoveryRoleSelector,
   fetch: TEMP_fetchUserHasRecoveryRole,
   ttl: 0,
-});
-
-export const currentUserDraftIdsFetcher = Object.freeze({
-  select: currentUserDraftIdsSelector,
-  fetch: currentUserFetchTasks,
-  ttl: 1000 * 60,
-});
-
-export const userColoniesFetcher = Object.freeze({
-  select: userColoniesSelector,
-  fetch: fetchUserColonies,
-  ttl: 1000 * 60,
 });
 
 export const tokenFetcher = Object.freeze({

@@ -1,5 +1,5 @@
 import { Versions } from '../constants';
-import { Event, EVENT_SOURCE_TYPES } from '../types/index';
+import { EVENT_SOURCE_TYPES } from '../types/index';
 
 interface NormalizedEvent {
   type: string; // Event type a.k.a event name
@@ -27,22 +27,6 @@ interface TransactionLog {
   };
 }
 
-export const normalizeDDBStoreEvent = (
-  storeAddress: string,
-  { meta: { timestamp, id, userAddress, version }, payload, type }: Event<any>,
-): NormalizedEvent => ({
-  type,
-  payload,
-  meta: {
-    id,
-    sourceType: EVENT_SOURCE_TYPES.DB,
-    sourceId: storeAddress,
-    actorId: userAddress,
-    timestamp,
-    version,
-  },
-});
-
 export const normalizeTransactionLog = (
   contractAddress: string,
   {
@@ -67,14 +51,3 @@ export const normalizeTransactionLog = (
     version: Versions.CURRENT,
   },
 });
-
-export const normalizeEvent = (
-  eventSourceType: string,
-): ((
-  eventSourceId: string,
-  data: TransactionLog | Event<any>,
-) => NormalizedEvent) =>
-  ({
-    CONTRACT_EVENT_SOURCE: normalizeTransactionLog,
-    DDB_EVENT_SOURCE: normalizeDDBStoreEvent,
-  }[eventSourceType]);

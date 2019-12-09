@@ -40,6 +40,26 @@ query Colony($address: String!) {
   }
 }
 
+# @TODO we want to get the full tasks in a lot of cases, maybe this isn't needed
+query UserTaskIds($address: String!) {
+  user(address: $address) {
+    id
+    tasks {
+      id
+    }
+  }
+}
+
+# @TODO we want to get the full tasks in a lot of cases, maybe this isn't needed
+query UserColonyIds($address: String!) {
+  user(address: $address) {
+    id
+    colonies {
+      id
+    }
+  }
+}
+
 query ColonySubscribedUsers($colonyAddress: String!) {
   colony(address: $colonyAddress) {
     id

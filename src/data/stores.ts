@@ -8,8 +8,6 @@ import {
   ColonyTaskIndexStore,
   CommentsStore,
   TaskStore,
-  UserMetadataStore,
-  UserInboxStore,
 } from './types';
 
 import {
@@ -17,8 +15,6 @@ import {
   colonyTaskIndex as colonyTaskIndexStoreBlueprint,
   comments as commentsStoreBlueprint,
   task as taskStoreBlueprint,
-  userInbox as userInboxStoreBlueprint,
-  userMetadata as userMetadataStoreBlueprint,
   userProfile as userProfileStoreBlueprint,
 } from './blueprints';
 
@@ -167,34 +163,6 @@ export const createTaskStore = (
   return { taskStore, commentsStore };
 };
 
-export const getUserInboxStore = (ddb: DDB) => async ({
-  inboxStoreAddress,
-  walletAddress,
-}: {
-  inboxStoreAddress: string;
-  walletAddress: Address;
-}) =>
-  ddb.getStore<UserInboxStore>(userInboxStoreBlueprint, inboxStoreAddress, {
-    chainId: CHAIN_ID,
-    walletAddress,
-  });
-
-export const getUserMetadataStore = (ddb: DDB) => async ({
-  metadataStoreAddress,
-  walletAddress,
-}: {
-  metadataStoreAddress: string;
-  walletAddress: Address;
-}) =>
-  ddb.getStore<UserMetadataStore>(
-    userMetadataStoreBlueprint,
-    metadataStoreAddress,
-    {
-      chainId: CHAIN_ID,
-      walletAddress,
-    },
-  );
-
 export const getTaskStoreAddress = (
   colonyClient: ColonyClientType,
   ddb: DDB,
@@ -225,36 +193,6 @@ export const getCommentsStoreAddress = (ddb: DDB) => async ({
     chainId: CHAIN_ID,
     colonyAddress,
     draftId,
-  });
-
-export const getUserProfileStoreAddress = (ddb: DDB) => async ({
-  walletAddress,
-}: {
-  walletAddress: Address;
-}) =>
-  ddb.generateStoreAddress(userProfileStoreBlueprint, {
-    chainId: CHAIN_ID,
-    walletAddress,
-  });
-
-export const getUserInboxStoreAddress = (ddb: DDB) => async ({
-  walletAddress,
-}: {
-  walletAddress: Address;
-}) =>
-  ddb.generateStoreAddress(userInboxStoreBlueprint, {
-    chainId: CHAIN_ID,
-    walletAddress,
-  });
-
-export const getUserMetadataStoreAddress = (ddb: DDB) => async ({
-  walletAddress,
-}: {
-  walletAddress: Address;
-}) =>
-  ddb.generateStoreAddress(userMetadataStoreBlueprint, {
-    chainId: CHAIN_ID,
-    walletAddress,
   });
 
 export const getColonyTaskIndexStoreAddress = (

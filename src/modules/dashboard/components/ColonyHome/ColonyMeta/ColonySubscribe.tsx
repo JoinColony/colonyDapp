@@ -1,19 +1,16 @@
-import React, { useCallback, useState, useEffect } from 'react';
+import React from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
-import { subscribeActions as subscribeToReduxActions } from 'redux-action-watch/lib/actionCreators';
-import { useDispatch } from 'redux-react-hook';
-import throttle from 'lodash/throttle';
 
 import { Address } from '~types/index';
-import { useDataSubscriber } from '~utils/hooks';
-import { mergePayload } from '~utils/actions';
-import { ActionTypes } from '~redux/index';
-import Button, { ActionButton } from '~core/Button';
+import Button from '~core/Button';
 import { Tooltip } from '~core/Popover';
 import { SpinnerLoader } from '~core/Preloaders';
 import { useLoggedInUser } from '~data/helpers';
-
-import { userColoniesSubscriber } from '../../../subscribers';
+import {
+  useUserColonyIdsQuery,
+  useSubscribeToColonyMutation,
+  useUnsubscribeFromColonyMutation,
+} from '~data/index';
 
 import styles from './ColonySubscribe.css';
 
@@ -37,113 +34,53 @@ interface Props {
 }
 
 const ColonySubscribe = ({ colonyAddress }: Props) => {
-  const [
-    isUserColonySubscriptionChanging,
-    setUserColonySubscriptionChanging,
-  ] = useState(false);
-  const dispatch = useDispatch();
-  useEffect(
-    () =>
-      subscribeToReduxActions(dispatch)({
-        [ActionTypes.USER_COLONY_SUBSCRIBE]: () =>
-          setUserColonySubscriptionChanging(true),
-        [ActionTypes.USER_COLONY_UNSUBSCRIBE]: () =>
-          setUserColonySubscriptionChanging(true),
-        [ActionTypes.USER_COLONY_SUBSCRIBE_ERROR]: () =>
-          setUserColonySubscriptionChanging(false),
-        [ActionTypes.USER_COLONY_SUBSCRIBE_SUCCESS]: () =>
-          setUserColonySubscriptionChanging(false),
-        [ActionTypes.USER_COLONY_UNSUBSCRIBE_ERROR]: () =>
-          setUserColonySubscriptionChanging(false),
-        [ActionTypes.USER_COLONY_UNSUBSCRIBE_SUCCESS]: () =>
-          setUserColonySubscriptionChanging(false),
-      }),
-    [dispatch, setUserColonySubscriptionChanging],
-  );
-
   const { username, walletAddress } = useLoggedInUser();
-  const { data: colonyAddresses } = useDataSubscriber(
-    userColoniesSubscriber,
-    [walletAddress],
-    [walletAddress, ''],
-  );
-  const isSubscribed = (colonyAddresses || []).includes(colonyAddress);
-  const transform = useCallback(mergePayload({ colonyAddress }), [
-    colonyAddress,
-  ]);
+  // FIXME: this will probably not show immediate effect. Needs to be fixed
+  const { data } = useUserColonyIdsQuery({
+    variables: { address: walletAddress },
+  });
 
-  if (!username) {
-    return null;
+  const [
+    subscribe,
+    { loading: loadingSubscribe },
+  ] = useSubscribeToColonyMutation();
+  const [
+    unsubscribe,
+    { loading: loadingUnsubscribe },
+  ] = useUnsubscribeFromColonyMutation();
+
+  if (!username || !data) return null;
+
+  const {
+    user: { colonies },
+  } = data;
+  const colonyAddresses = colonies.map(({ id }) => id);
+
+  const isSubscribed = (colonyAddresses || []).includes(colonyAddress);
+
+  if (loadingSubscribe || loadingUnsubscribe) {
+    return (
+      <div className={styles.spinnerContainer}>
+        <SpinnerLoader appearance={{ theme: 'primary', size: 'small' }} />
+      </div>
+    );
   }
 
   return (
-    <>
-      {isSubscribed ? (
-        <Tooltip
-          content={
-            <span>
-              <FormattedMessage {...MSG.unsubscribe} />
-            </span>
-          }
-        >
-          <ActionButton
-            button={({ onClick, disabled, loading }) =>
-              loading ? (
-                <div className={styles.spinnerContainer}>
-                  <SpinnerLoader
-                    appearance={{ theme: 'primary', size: 'small' }}
-                  />
-                </div>
-              ) : (
-                <Button
-                  className={styles.unsubscribe}
-                  disabled={disabled}
-                  loading={loading}
-                  onClick={throttle(onClick, 2000)}
-                />
-              )
-            }
-            error={ActionTypes.USER_COLONY_UNSUBSCRIBE_ERROR}
-            submit={ActionTypes.USER_COLONY_UNSUBSCRIBE}
-            success={ActionTypes.USER_COLONY_UNSUBSCRIBE_SUCCESS}
-            transform={transform}
-            loading={isUserColonySubscriptionChanging}
+    <Tooltip
+      content={
+        <span>
+          <FormattedMessage
+            {...(isSubscribed ? MSG.unsubscribe : MSG.subscribe)}
           />
-        </Tooltip>
-      ) : (
-        <Tooltip
-          content={
-            <span>
-              <FormattedMessage {...MSG.subscribe} />
-            </span>
-          }
-        >
-          <ActionButton
-            button={({ onClick, disabled, loading }) =>
-              loading ? (
-                <div className={styles.spinnerContainer}>
-                  <SpinnerLoader
-                    appearance={{ theme: 'primary', size: 'small' }}
-                  />
-                </div>
-              ) : (
-                <Button
-                  className={styles.subscribe}
-                  disabled={disabled}
-                  loading={loading}
-                  onClick={throttle(onClick, 2000)}
-                />
-              )
-            }
-            error={ActionTypes.USER_COLONY_SUBSCRIBE_ERROR}
-            submit={ActionTypes.USER_COLONY_SUBSCRIBE}
-            success={ActionTypes.USER_COLONY_SUBSCRIBE_SUCCESS}
-            transform={transform}
-            loading={isUserColonySubscriptionChanging}
-          />
-        </Tooltip>
-      )}
-    </>
+        </span>
+      }
+    >
+      <Button
+        className={isSubscribed ? styles.unsubscribe : styles.subscribe}
+        onClick={isSubscribed ? unsubscribe : subscribe}
+      />
+    </Tooltip>
   );
 };
 

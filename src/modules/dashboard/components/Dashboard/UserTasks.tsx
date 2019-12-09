@@ -1,13 +1,13 @@
 import React, { ReactNode } from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 
-import { useDataFetcher } from '~utils/hooks';
 import { Address } from '~types/index';
 import { SpinnerLoader } from '~core/Preloaders';
 import TaskList from '~dashboard/TaskList';
+import { useUserTaskIdsQuery } from '~data/index';
+
 import InitialTask, { InitialTaskType } from './InitialTask';
 import { TasksFilterOptionType } from '../shared/tasksFilter';
-import { currentUserDraftIdsFetcher } from '../../fetchers';
 
 import styles from './UserTasks.css';
 
@@ -22,8 +22,8 @@ interface Props {
   filterOption: TasksFilterOptionType;
   initialTask: InitialTaskType;
   userClaimedProfile: boolean;
-  walletAddress: Address;
   filter?: ReactNode;
+  walletAddress: Address;
 }
 
 const displayName = 'dashboard.Dashboard.UserTasks';
@@ -32,18 +32,23 @@ const UserTasks = ({
   filterOption,
   initialTask,
   userClaimedProfile,
-  walletAddress,
   filter: FilterComponent,
+  walletAddress,
 }: Props) => {
-  const { isFetching: isFetchingTasks, data: draftIds } = useDataFetcher(
-    currentUserDraftIdsFetcher,
-    [],
-    [],
-  );
+  // @TODO: pass the whole task into the TaskList as opposed to just the id
 
-  if (isFetchingTasks) {
+  const { data } = useUserTaskIdsQuery({
+    variables: { address: walletAddress },
+  });
+
+  if (!data) {
     return <SpinnerLoader />;
   }
+
+  const {
+    user: { tasks },
+  } = data;
+  const draftIds = tasks.map(({ id }) => id);
 
   if (!userClaimedProfile) {
     return (
@@ -51,11 +56,7 @@ const UserTasks = ({
         {FilterComponent}
         <InitialTask task={initialTask} />
         {draftIds && draftIds.length ? (
-          <TaskList
-            draftIds={draftIds}
-            filterOption={filterOption}
-            walletAddress={walletAddress}
-          />
+          <TaskList draftIds={draftIds} filterOption={filterOption} />
         ) : null}
       </>
     );
@@ -66,11 +67,7 @@ const UserTasks = ({
         <div className={styles.filter}>{FilterComponent}</div>
       )}
       <div className={styles.taskList}>
-        <TaskList
-          draftIds={draftIds}
-          filterOption={filterOption}
-          walletAddress={walletAddress}
-        />
+        <TaskList draftIds={draftIds} filterOption={filterOption} />
       </div>
     </>
   ) : (
