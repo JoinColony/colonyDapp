@@ -73,14 +73,6 @@ export const PostCommentCommandArgsSchema = yup.object({
   }),
 });
 
-export const SendWorkInviteCommandArgsSchema = yup.object({
-  worker: yup
-    .string()
-    // @ts-ignore
-    .address()
-    .required(),
-});
-
 export const SendWorkRequestCommandArgsSchema = yup.object({
   worker: yup
     .string()

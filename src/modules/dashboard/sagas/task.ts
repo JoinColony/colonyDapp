@@ -41,7 +41,6 @@ import {
   closeTask,
   createWorkRequest,
   postComment,
-  sendWorkInvite,
   setTaskPayout,
   removeTaskPayout,
   unassignWorker,
@@ -338,31 +337,6 @@ function* taskFinalize({
     });
   } catch (error) {
     return yield putError(ActionTypes.TASK_FINALIZE_ERROR, error, meta);
-  }
-  return null;
-}
-
-function* taskSendWorkInvite({
-  payload: { colonyAddress, draftId },
-  meta,
-}: Action<ActionTypes.TASK_SEND_WORK_INVITE>) {
-  try {
-    const { workerAddress, domainId } = yield select(taskSelector, draftId);
-    const { event } = yield executeCommand(sendWorkInvite, {
-      args: { workerAddress, domainId },
-      metadata: { colonyAddress, draftId },
-    });
-    yield put<AllActions>({
-      type: ActionTypes.TASK_SEND_WORK_INVITE_SUCCESS,
-      payload: {
-        colonyAddress,
-        draftId,
-        event,
-      },
-      meta,
-    });
-  } catch (error) {
-    return yield putError(ActionTypes.TASK_SEND_WORK_INVITE_ERROR, error, meta);
   }
   return null;
 }
@@ -664,7 +638,6 @@ export default function* tasksSagas() {
   yield takeEvery(ActionTypes.TASK_CREATE, taskCreate);
   yield takeEvery(ActionTypes.TASK_FEED_ITEMS_SUB_START, taskFeedItemsSubStart);
   yield takeEvery(ActionTypes.TASK_FINALIZE, taskFinalize);
-  yield takeEvery(ActionTypes.TASK_SEND_WORK_INVITE, taskSendWorkInvite);
   yield takeEvery(ActionTypes.TASK_SEND_WORK_REQUEST, taskSendWorkRequest);
   yield takeEvery(ActionTypes.TASK_SET_PAYOUT, taskSetPayout);
   yield takeEvery(ActionTypes.TASK_REMOVE_PAYOUT, taskRemovePayout);

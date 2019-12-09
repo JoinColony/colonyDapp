@@ -23,7 +23,6 @@ import { Address } from '~types/index';
 import {
   FinalizeTaskCommandArgsSchema,
   PostCommentCommandArgsSchema,
-  SendWorkInviteCommandArgsSchema,
   SetTaskPayoutCommandArgsSchema,
 } from './schemas';
 
@@ -97,38 +96,6 @@ export const createWorkRequest: Command<
       taskStore,
       event: taskStore.getEvent(eventHash) as Event<
         EventTypes.WORK_REQUEST_CREATED
-      >,
-    };
-  },
-};
-
-export const sendWorkInvite: Command<
-  TaskStore,
-  TaskStoreMetadata,
-  {
-    workerAddress: Address;
-    domainId: number;
-  },
-  {
-    event: Event<EventTypes.WORK_INVITE_SENT>;
-    taskStore: TaskStore;
-  }
-> = {
-  name: 'sendWorkInvite',
-  context: [Context.COLONY_MANAGER, Context.DDB_INSTANCE, Context.WALLET],
-  prepare: prepareTaskStoreCommand,
-  schema: SendWorkInviteCommandArgsSchema,
-  async execute(taskStore, { workerAddress, domainId }) {
-    const eventHash = await taskStore.append(
-      createEvent(EventTypes.WORK_INVITE_SENT, {
-        workerAddress,
-        domainId,
-      }),
-    );
-    return {
-      taskStore,
-      event: taskStore.getEvent(eventHash) as Event<
-        EventTypes.WORK_INVITE_SENT
       >,
     };
   },

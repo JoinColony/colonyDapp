@@ -48,13 +48,6 @@ export const taskReducer: EventReducer<{
         paymentTokenAddress: token,
       };
     }
-    case EventTypes.WORK_INVITE_SENT: {
-      const { invites = [] } = task;
-      return {
-        ...task,
-        invites: [...invites, event.payload.workerAddress],
-      };
-    }
     case EventTypes.WORK_REQUEST_CREATED: {
       const { requests = [] } = task;
       return {
