@@ -18,7 +18,7 @@ import Button from '~core/Button';
 import { useColonyNativeToken } from '../../../dashboard/hooks/useColonyNativeToken';
 import ENS from '~lib/ENS';
 import ColonyAvatarUploader from './ColonyAvatarUploader';
-import { EDIT_COLONY } from '../../../dashboard/mutations';
+import { EditColonyProfileDocument } from '~data/index';
 
 import styles from './ProfileEdit.css';
 
@@ -100,7 +100,7 @@ const ProfileEdit = ({ colony }: Props) => {
     website,
   } = colony;
 
-  const [editColony] = useMutation(EDIT_COLONY);
+  const [editColony] = useMutation(EditColonyProfileDocument);
   const onSubmit = useCallback(
     (profile: FormValues) =>
       editColony({

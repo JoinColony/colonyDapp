@@ -44,7 +44,7 @@ import {
 } from '../actionCreators';
 import { colonyDomainsSelector, colonySelector } from '../selectors';
 import { getColonyAddress, getColonyName } from './shared';
-import { EDIT_COLONY } from '../../dashboard/mutations';
+import { EditColonyProfileDocument } from '~data/index';
 import { getContext, Context } from '~context/index';
 
 function* colonyNameCheckAvailability({
@@ -169,17 +169,11 @@ function* colonyAvatarUpload({
     const ipfsHash = yield call(ipfsUpload, data);
 
     yield apolloClient.mutate({
-      mutation: EDIT_COLONY,
+      mutation: EditColonyProfileDocument,
       variables: { input: { colonyAddress, avatarHash: ipfsHash } },
     });
-
-    yield put<AllActions>({
-      type: ActionTypes.COLONY_AVATAR_UPLOAD_SUCCESS,
-      meta,
-      payload: { hash: ipfsHash },
-    });
   } catch (error) {
-    return yield putError(ActionTypes.COLONY_AVATAR_UPLOAD_ERROR, error, meta);
+    return yield putError(error.message, error, meta);
   }
   return null;
 }
@@ -193,17 +187,11 @@ function* colonyAvatarRemove({
       Context.APOLLO_CLIENT,
     );
     yield apolloClient.mutate({
-      mutation: EDIT_COLONY,
+      mutation: EditColonyProfileDocument,
       variables: { input: { colonyAddress, avatarHash: null } },
     });
-
-    yield put<AllActions>({
-      type: ActionTypes.COLONY_AVATAR_REMOVE_SUCCESS,
-      payload: undefined,
-      meta,
-    });
   } catch (error) {
-    return yield putError(ActionTypes.COLONY_AVATAR_REMOVE_ERROR, error, meta);
+    return yield putError(error.message, error, meta);
   }
   return null;
 }
