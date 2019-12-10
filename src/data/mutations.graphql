@@ -5,24 +5,41 @@ mutation AssignWorker($input: AssignWorkerInput!) {
     assignedWorker {
       id
     }
+    events {
+      sourceId
+      sourceType
+    }
   }
 }
 
 mutation CancelTask($input: TaskIdInput!) {
   cancelTask(input: $input) {
     id
+    cancelledAt
+    events {
+      sourceId
+      sourceType
+    }
   }
 }
 
 mutation CreateTask($input: CreateTaskInput!) {
   createTask(input: $input) {
     id
+    events {
+      sourceId
+      sourceType
+    }
   }
 }
 
 mutation CreateWorkRequest($input: CreateWorkRequestInput!) {
   createWorkRequest(input: $input) {
     id
+    events {
+      sourceId
+      sourceType
+    }
     workRequests {
       id
     }
@@ -32,19 +49,32 @@ mutation CreateWorkRequest($input: CreateWorkRequestInput!) {
 mutation FinalizeTask($input: TaskIdInput!) {
   finalizeTask(input: $input) {
     id
+    events {
+      sourceId
+      sourceType
+    }
+    finalizedAt
   }
 }
 
 mutation RemoveTaskPayout($input: RemoveTaskPayoutInput!) {
   removeTaskPayout(input: $input) {
     id
-    # @todo Get payouts here
+    events {
+      sourceId
+      sourceType
+    }
+    # @todo Also return payouts from `removeTaskPayout` mutation
   }
 }
 
 mutation SendWorkInvite($input: SendWorkInviteInput!) {
   sendWorkInvite(input: $input) {
     id
+    events {
+      sourceId
+      sourceType
+    }
     workInvites {
       id
     }
@@ -55,6 +85,10 @@ mutation SetTaskDomain($input: SetTaskDomainInput!) {
   setTaskDomain(input: $input) {
     id
     ethDomainId
+    events {
+      sourceId
+      sourceType
+    }
   }
 }
 
@@ -62,6 +96,10 @@ mutation SetTaskDescription($input: SetTaskDescriptionInput!) {
   setTaskDescription(input: $input) {
     id
     description
+    events {
+      sourceId
+      sourceType
+    }
   }
 }
 
@@ -69,13 +107,17 @@ mutation SetTaskDueDate($input: SetTaskDueDateInput!) {
   setTaskDueDate(input: $input) {
     id
     dueDate
+    events {
+      sourceId
+      sourceType
+    }
   }
 }
 
 mutation SetTaskPayout($input: SetTaskPayoutInput!) {
   setTaskPayout(input: $input) {
     id
-    ethDomainId
+    # @todo Also return payouts from `setTaskPayout` mutation
   }
 }
 
@@ -83,12 +125,20 @@ mutation SetTaskSkill($input: SetTaskSkillInput!) {
   setTaskSkill(input: $input) {
     id
     ethSkillId
+    events {
+      sourceId
+      sourceType
+    }
   }
 }
 
 mutation SetTaskTitle($input: SetTaskTitleInput!) {
   setTaskTitle(input: $input) {
     id
+    events {
+      sourceId
+      sourceType
+    }
     title
   }
 }
@@ -98,6 +148,10 @@ mutation UnassignWorker($input: UnassignWorkerInput!) {
     id
     assignedWorker {
       id
+    }
+    events {
+      sourceId
+      sourceType
     }
   }
 }
