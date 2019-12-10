@@ -156,6 +156,13 @@ mutation UnassignWorker($input: UnassignWorkerInput!) {
   }
 }
 
+# Messages
+
+mutation SendTaskMessage($input: SendTaskMessageInput!) {
+  # @todo Return task with events from `sendTaskMessage` mutation
+  sendTaskMessage(input: $input)
+}
+
 # Users
 
 mutation SetLoggedInUser($input: LoggedInUserInput!) {

@@ -924,6 +924,16 @@ export type UnassignWorkerMutation = (
   )> }
 );
 
+export type SendTaskMessageMutationVariables = {
+  input: SendTaskMessageInput
+};
+
+
+export type SendTaskMessageMutation = (
+  { __typename?: 'Mutation' }
+  & Pick<Mutation, 'sendTaskMessage'>
+);
+
 export type SetLoggedInUserMutationVariables = {
   input: LoggedInUserInput
 };
@@ -1652,6 +1662,36 @@ export function useUnassignWorkerMutation(baseOptions?: ApolloReactHooks.Mutatio
 export type UnassignWorkerMutationHookResult = ReturnType<typeof useUnassignWorkerMutation>;
 export type UnassignWorkerMutationResult = ApolloReactCommon.MutationResult<UnassignWorkerMutation>;
 export type UnassignWorkerMutationOptions = ApolloReactCommon.BaseMutationOptions<UnassignWorkerMutation, UnassignWorkerMutationVariables>;
+export const SendTaskMessageDocument = gql`
+    mutation SendTaskMessage($input: SendTaskMessageInput!) {
+  sendTaskMessage(input: $input)
+}
+    `;
+export type SendTaskMessageMutationFn = ApolloReactCommon.MutationFunction<SendTaskMessageMutation, SendTaskMessageMutationVariables>;
+
+/**
+ * __useSendTaskMessageMutation__
+ *
+ * To run a mutation, you first call `useSendTaskMessageMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useSendTaskMessageMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [sendTaskMessageMutation, { data, loading, error }] = useSendTaskMessageMutation({
+ *   variables: {
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function useSendTaskMessageMutation(baseOptions?: ApolloReactHooks.MutationHookOptions<SendTaskMessageMutation, SendTaskMessageMutationVariables>) {
+        return ApolloReactHooks.useMutation<SendTaskMessageMutation, SendTaskMessageMutationVariables>(SendTaskMessageDocument, baseOptions);
+      }
+export type SendTaskMessageMutationHookResult = ReturnType<typeof useSendTaskMessageMutation>;
+export type SendTaskMessageMutationResult = ApolloReactCommon.MutationResult<SendTaskMessageMutation>;
+export type SendTaskMessageMutationOptions = ApolloReactCommon.BaseMutationOptions<SendTaskMessageMutation, SendTaskMessageMutationVariables>;
 export const SetLoggedInUserDocument = gql`
     mutation SetLoggedInUser($input: LoggedInUserInput!) {
   setLoggedInUser(input: $input) @client {

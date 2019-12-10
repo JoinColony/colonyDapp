@@ -22,6 +22,7 @@ import {
   SetTaskPayoutDocument,
   TaskDocument,
   UnassignWorkerDocument,
+  SendTaskMessageDocument,
 } from '~data/index';
 import { Action, ActionTypes } from '~redux/index';
 import { Address, ContractContexts } from '~types/index';
@@ -397,29 +398,26 @@ function* taskCommentAdd({
       author,
     });
 
-    const { event } = yield executeCommand(postComment, {
-      args: {
-        signature,
-        content: {
-          id: nanoid(),
-          author: walletAddress,
-          body: comment,
+    const matches = (matchUsernames(comment) || []).filter(
+      username => username !== currentUsername,
+    );
+
+    const apolloClient: ApolloClient<any> = yield getContext(
+      Context.APOLLO_CLIENT
+    );
+
+    yield apolloClient.mutate({
+      mutation: SendTaskMessageDocument,
+      variables: {
+        input: {
+          id: draftId,
+          message: comment,
         },
-      },
-      metadata: {
-        colonyAddress,
-        draftId,
       },
     });
 
     yield put<AllActions>({
       type: ActionTypes.TASK_COMMENT_ADD_SUCCESS,
-      payload: {
-        colonyAddress,
-        draftId,
-        event,
-      },
-      meta,
     });
   } catch (error) {
     yield putError(ActionTypes.TASK_COMMENT_ADD_ERROR, error, meta);
