@@ -2,22 +2,17 @@ import React, { useCallback } from 'react';
 import { defineMessages } from 'react-intl';
 
 import { Address } from '~types/index';
-import { TaskPayoutType } from '~immutable/index';
-import { AnyUser } from '~data/index';
-import { mergePayload } from '~utils/actions';
+import { AnyUser, useAssignWorkerMutation } from '~data/index';
 import Assignment from '~core/Assignment';
 import Button from '~core/Button';
-import { ActionForm, FormStatus } from '~core/Fields';
+import { FormStatus, Form } from '~core/Fields';
 import { FullscreenDialog } from '~core/Dialog';
 import DialogSection from '~core/Dialog/DialogSection';
 import Heading from '~core/Heading';
 import Payout from '~dashboard/TaskEditDialog/Payout';
 import DialogBox from '~core/Dialog/DialogBox';
-import { taskSubscriber } from '../../subscribers';
 import { useColonyNativeToken } from '../../hooks/useColonyNativeToken';
 import { useColonyTokens } from '../../hooks/useColonyTokens';
-import { useDataSubscriber } from '~utils/hooks';
-import { ActionTypes } from '~redux/index';
 import styles from './TaskInviteDialog.css';
 
 const MSG = defineMessages({
@@ -30,6 +25,11 @@ const MSG = defineMessages({
     defaultMessage: 'Funding',
   },
 });
+
+interface FormValues {
+  payouts: [{ amount: string; token: Address }];
+  workerAddress: Address;
+}
 
 interface Props {
   colonyAddress: Address;
@@ -48,33 +48,38 @@ const TaskInviteDialog = ({
   },
   currentUser,
 }: Props) => {
-  const { data: taskData } = useDataSubscriber(
-    taskSubscriber,
-    [draftId],
-    [colonyAddress || undefined, draftId],
-  );
+  // @todo get payouts from centralized store
+  const payouts = [];
+
+  // @todo get reputation from centralized store (someday)
+  const reputation = undefined;
 
   const nativeTokenReference = useColonyNativeToken(colonyAddress);
   const [, tokenOptions] = useColonyTokens(colonyAddress);
-  const transform = useCallback(
-    mergePayload({
-      worker: walletAddress,
-      draftId,
-      colonyAddress,
-    }),
-    [walletAddress, draftId, colonyAddress],
+
+  const [assignWorker] = useAssignWorkerMutation();
+
+  const onSubmit = useCallback(
+    ({ workerAddress }: FormValues) =>
+      assignWorker({
+        variables: {
+          input: {
+            id: draftId,
+            workerAddress,
+          },
+        },
+      }),
+    [assignWorker, draftId],
   );
+
   return (
     <FullscreenDialog cancel={cancel}>
-      <ActionForm
+      <Form
         initialValues={{
-          payouts: (taskData && taskData.payouts) || [],
+          payouts,
           worker: currentUser,
         }}
-        submit={ActionTypes.TASK_WORKER_ASSIGN}
-        success={ActionTypes.TASK_WORKER_ASSIGN_SUCCESS}
-        error={ActionTypes.TASK_WORKER_ASSIGN_ERROR}
-        transform={transform}
+        onSubmit={onSubmit}
       >
         {({ status, isSubmitting }) => (
           <>
@@ -88,15 +93,9 @@ const TaskInviteDialog = ({
                 {tokenOptions && (
                   <Assignment
                     nativeToken={nativeTokenReference}
-                    payouts={
-                      ((taskData && taskData.payouts) || []) as TaskPayoutType[]
-                    }
+                    payouts={payouts}
                     pending
-                    reputation={
-                      taskData && taskData.reputation
-                        ? taskData.reputation
-                        : undefined
-                    }
+                    reputation={reputation}
                     showFunding={false}
                     tokenOptions={tokenOptions}
                     worker={currentUser}
@@ -113,8 +112,8 @@ const TaskInviteDialog = ({
                     />
                   </div>
                   <div>
-                    {nativeTokenReference && taskData && taskData.payouts
-                      ? taskData.payouts.map((payout, index) => {
+                    {nativeTokenReference && payouts
+                      ? payouts.map((payout, index) => {
                           const { amount, token } = payout;
                           return (
                             <Payout
@@ -124,8 +123,8 @@ const TaskInviteDialog = ({
                               colonyAddress={colonyAddress}
                               reputation={
                                 token === nativeTokenReference.address &&
-                                taskData
-                                  ? taskData.reputation
+                                reputation
+                                  ? reputation
                                   : undefined
                               }
                               tokenAddress={token}
@@ -154,7 +153,7 @@ const TaskInviteDialog = ({
             </div>
           </>
         )}
-      </ActionForm>
+      </Form>
     </FullscreenDialog>
   );
 };

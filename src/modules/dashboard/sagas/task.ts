@@ -14,14 +14,21 @@ import { replace } from 'connected-react-router';
 import BigNumber from 'bn.js';
 
 import { Context, getContext } from '~context/index';
-import { CreateTaskDocument, TaskDocument, FinalizeTaskDocument } from '~data/index';
+import {
+  AssignWorkerDocument,
+  CreateTaskDocument,
+  FinalizeTaskDocument,
+  RemoveTaskPayoutDocument,
+  SetTaskPayoutDocument,
+  TaskDocument,
+  UnassignWorkerDocument,
+} from '~data/index';
 import { Action, ActionTypes } from '~redux/index';
 import { Address, ContractContexts } from '~types/index';
 import {
   executeCommand,
   putError,
   raceError,
-  selectAsJS,
   executeSubscription,
   takeFrom,
 } from '~utils/saga/effects';
@@ -37,18 +44,13 @@ import {
 import { createTransaction, getTxChannel, signMessage } from '../../core/sagas';
 
 import {
-  assignWorker,
   createWorkRequest,
   postComment,
-  setTaskPayout,
-  removeTaskPayout,
-  unassignWorker,
 } from '../data/commands';
 import {
   subscribeTaskFeedItems,
   subscribeTask,
 } from '../data/queries';
-
 import { AllActions } from '../../../redux/types/actions';
 
 /*
@@ -148,95 +150,6 @@ function* taskFetchAll() {
       call(fetchColonyTaskMetadata, colonyAddress),
     ),
   );
-}
-
-/*
- * As worker or manager, I want to be able to set a payout
- */
-
-/*
- * @NOTE There's a case to be made here about simplifying the `taskSetPayout`
- * and `taskRemovePayout` sagas, by refactoring them into one, and deling
- * with the undefined values
- *
- * This will cut down on code, but make sure you handle all edge cases
- * especially when you deal with notification stores, where you don't have
- * a worker address to fetch them for
- */
-function* taskSetPayout({
-  payload: { colonyAddress, draftId, token, amount },
-  meta,
-}: Action<ActionTypes.TASK_SET_PAYOUT>) {
-  try {
-    const {
-      record: { payouts, domainId },
-    }: { record: TaskType } = yield selectAsJS(taskSelector, draftId);
-
-    /*
-     * Edge case, but prevent triggering this saga and subseqent event, if the
-     * payment is the same as the previous one
-     */
-    if (
-      !payouts ||
-      !payouts.length ||
-      !amount.eq(new BigNumber(payouts[0].amount))
-    ) {
-      const { event } = yield executeCommand(setTaskPayout, {
-        args: { token, amount, domainId },
-        metadata: { colonyAddress, draftId },
-      });
-
-      yield put<AllActions>({
-        type: ActionTypes.TASK_SET_PAYOUT_SUCCESS,
-        payload: {
-          colonyAddress,
-          draftId,
-          event,
-        },
-        meta,
-      });
-    }
-  } catch (error) {
-    return yield putError(ActionTypes.TASK_SET_PAYOUT_ERROR, error, meta);
-  }
-  return null;
-}
-
-/*
- * As worker or manager, I want to be able to remove the payout
- */
-function* taskRemovePayout({
-  payload: { colonyAddress, draftId },
-  meta,
-}: Action<ActionTypes.TASK_REMOVE_PAYOUT>) {
-  try {
-    const {
-      record: { payouts: currentPayouts },
-    } = yield select(taskSelector, draftId);
-
-    /*
-     * Prevent triggering this saga and subseqent event,
-     * if there isnt' a payment set
-     */
-    if (currentPayouts && currentPayouts.size) {
-      const { event } = yield executeCommand(removeTaskPayout, {
-        metadata: { colonyAddress, draftId },
-      });
-
-      yield put<AllActions>({
-        type: ActionTypes.TASK_REMOVE_PAYOUT_SUCCESS,
-        payload: {
-          colonyAddress,
-          draftId,
-          event,
-        },
-        meta,
-      });
-    }
-  } catch (error) {
-    return yield putError(ActionTypes.TASK_REMOVE_PAYOUT_ERROR, error, meta);
-  }
-  return null;
 }
 
 /*
@@ -340,131 +253,74 @@ function* taskSendWorkRequest({
   return null;
 }
 
-/*
- * @NOTE There's a case to be made here about simplifying the `taskWorkerAssign`
- * and `taskWorkerUnassign` sagas, by refactoring them into one, and deling
- * with the undefined values
- *
- * This will cut down on code, but make sure you handle all edge cases
- * especially when you deal with notification stores, where you don't have
- * a worker address to fetch them for
- */
-function* taskWorkerAssign({
-  payload: { colonyAddress, draftId, workerAddress },
-  meta,
-}: Action<ActionTypes.TASK_WORKER_ASSIGN>) {
-  try {
-    const {
-      record: { workerAddress: currentWorkerAddress, domainId },
-    } = yield select(taskSelector, draftId);
-    const eventData = yield executeCommand(assignWorker, {
-      args: { workerAddress, currentWorkerAddress, domainId },
-      metadata: { colonyAddress, draftId },
-    });
-    if (eventData) {
-      const { event } = eventData;
-      yield put<AllActions>({
-        type: ActionTypes.TASK_WORKER_ASSIGN_SUCCESS,
-        payload: {
-          colonyAddress,
-          draftId,
-          event,
-        },
-        meta,
-      });
-    }
-  } catch (error) {
-    return yield putError(ActionTypes.TASK_WORKER_ASSIGN_ERROR, error, meta);
-  }
-  return null;
-}
-
-function* taskWorkerUnassign({
-  payload: { colonyAddress, draftId, workerAddress },
-  meta,
-}: Action<ActionTypes.TASK_WORKER_UNASSIGN>) {
-  try {
-    /*
-     * Edge case, but prevent triggering this saga and subseqent event, if there
-     * isnt' a user already assigned
-     */
-    if (workerAddress) {
-      const { walletAddress } = yield getLoggedInUser();
-      const {
-        record: { domainId },
-      } = yield select(taskSelector, draftId);
-      const eventData = yield executeCommand(unassignWorker, {
-        args: { workerAddress, userAddress: walletAddress, domainId },
-        metadata: { colonyAddress, draftId },
-      });
-
-      if (eventData) {
-        const { event } = eventData;
-        yield put<AllActions>({
-          type: ActionTypes.TASK_WORKER_UNASSIGN_SUCCESS,
-          payload: {
-            colonyAddress,
-            draftId,
-            event,
-          },
-          meta,
-        });
-      }
-    }
-  } catch (error) {
-    return yield putError(ActionTypes.TASK_WORKER_UNASSIGN_ERROR, error, meta);
-  }
-  return null;
-}
-
 function* taskSetWorkerOrPayouts({
-  payload: { colonyAddress, draftId, payouts, workerAddress },
+  payload: { draftId, payouts, workerAddress },
   meta,
 }: Action<ActionTypes.TASK_SET_WORKER_OR_PAYOUT>) {
   try {
-    const payload = { colonyAddress, draftId };
-    const {
-      record: { workerAddress: currentWorkerAddress },
-    } = yield select(taskSelector, draftId);
+    const apolloClient: ApolloClient<any> = yield getContext(
+      Context.APOLLO_CLIENT,
+    );
+
+    const { data: { task: { assignedWorker, ethDomainId } } } = yield apolloClient.query({
+      query: TaskDocument,
+      variables: {
+        id: draftId,
+      },
+    });
+
     if (workerAddress) {
-      yield call(taskWorkerAssign, {
-        meta: { key: draftId },
-        payload: { ...payload, workerAddress },
-        type: ActionTypes.TASK_WORKER_ASSIGN,
+      yield apolloClient.mutate({
+        mutation: AssignWorkerDocument,
+        variables: {
+          input: {
+            id: draftId,
+            workerAddress,
+          },
+        },
       });
     } else {
-      yield call(taskWorkerUnassign, {
-        meta: { key: draftId },
-        payload: { ...payload, workerAddress: currentWorkerAddress },
-        type: ActionTypes.TASK_WORKER_UNASSIGN,
+      yield apolloClient.mutate({
+        mutation: UnassignWorkerDocument,
+        variables: {
+          input: {
+            id: draftId,
+            workerAddress: assignedWorker.id,
+          },
+        },
       });
-    }
+    };
 
     if (payouts && payouts.length) {
-      yield call(taskSetPayout, {
-        meta,
-        payload: { ...payload, ...payouts[0] },
-        type: ActionTypes.TASK_SET_PAYOUT,
+      yield apolloClient.mutate({
+        mutation: SetTaskPayoutDocument,
+        variables: {
+          input: {
+            id: draftId,
+            ethDomainId,
+            ...payouts[0],
+          },
+        },
       });
     } else {
-      /*
-       * Last payout, remove it whole
-       */
-      yield call(taskRemovePayout, {
-        meta,
-        payload,
-        type: ActionTypes.TASK_REMOVE_PAYOUT,
-      });
+      // @todo use payouts from centralized store
+      const existingPayouts: any[] = [];
+      if (existingPayouts && existingPayouts.length) {
+        yield apolloClient.mutate({
+          mutation: RemoveTaskPayoutDocument,
+          variables: {
+            input: {
+              id: draftId,
+              ethDomainId,
+              ...existingPayouts[0],
+            },
+          },
+        });
+      }
     }
 
     yield put<AllActions>({
       type: ActionTypes.TASK_SET_WORKER_OR_PAYOUT_SUCCESS,
-      meta,
-      payload: {
-        ...payload,
-        payouts,
-        workerAddress,
-      },
     });
   } catch (error) {
     return yield putError(
@@ -607,14 +463,10 @@ export default function* tasksSagas() {
   yield takeEvery(ActionTypes.TASK_FEED_ITEMS_SUB_START, taskFeedItemsSubStart);
   yield takeEvery(ActionTypes.TASK_FINALIZE, taskFinalize);
   yield takeEvery(ActionTypes.TASK_SEND_WORK_REQUEST, taskSendWorkRequest);
-  yield takeEvery(ActionTypes.TASK_SET_PAYOUT, taskSetPayout);
-  yield takeEvery(ActionTypes.TASK_REMOVE_PAYOUT, taskRemovePayout);
   yield takeEvery(ActionTypes.TASK_SUB_START, taskSubStart);
   yield takeEvery(
     ActionTypes.TASK_SET_WORKER_OR_PAYOUT,
     taskSetWorkerOrPayouts,
   );
-  yield takeEvery(ActionTypes.TASK_WORKER_ASSIGN, taskWorkerAssign);
-  yield takeEvery(ActionTypes.TASK_WORKER_UNASSIGN, taskWorkerUnassign);
   yield takeLeading(ActionTypes.TASK_FETCH_ALL, taskFetchAll);
 }

@@ -22,7 +22,6 @@ import { Address } from '~types/index';
 
 import {
   PostCommentCommandArgsSchema,
-  SetTaskPayoutCommandArgsSchema,
 } from './schemas';
 
 /*
@@ -134,127 +133,6 @@ export const postComment: Command<
       commentsStore,
       event: commentsStore.getEvent(eventHash) as Event<
         EventTypes.COMMENT_POSTED
-      >,
-    };
-  },
-};
-
-export const setTaskPayout: Command<
-  TaskStore,
-  TaskStoreMetadata,
-  {
-    amount: BigNumber;
-    token: string;
-    domainId: number;
-  },
-  {
-    event: Event<EventTypes.PAYOUT_SET>;
-    taskStore: TaskStore;
-  }
-> = {
-  name: 'setTaskPayout',
-  context: [Context.COLONY_MANAGER, Context.DDB_INSTANCE, Context.WALLET],
-  prepare: prepareTaskStoreCommand,
-  schema: SetTaskPayoutCommandArgsSchema,
-  async execute(taskStore, { amount, token, domainId }) {
-    const eventHash = await taskStore.append(
-      createEvent(EventTypes.PAYOUT_SET, {
-        amount: amount.toString(10),
-        token,
-        domainId,
-      }),
-    );
-    return {
-      taskStore,
-      event: taskStore.getEvent(eventHash) as Event<EventTypes.PAYOUT_SET>,
-    };
-  },
-};
-
-export const removeTaskPayout: Command<
-  TaskStore,
-  TaskStoreMetadata,
-  void,
-  {
-    event: Event<EventTypes.PAYOUT_REMOVED>;
-    taskStore: TaskStore;
-  }
-> = {
-  name: 'removeTaskPayout',
-  context: [Context.COLONY_MANAGER, Context.DDB_INSTANCE, Context.WALLET],
-  prepare: prepareTaskStoreCommand,
-  async execute(taskStore) {
-    const eventHash = await taskStore.append(
-      createEvent(EventTypes.PAYOUT_REMOVED),
-    );
-    return {
-      taskStore,
-      event: taskStore.getEvent(eventHash) as Event<EventTypes.PAYOUT_REMOVED>,
-    };
-  },
-};
-
-export const assignWorker: Command<
-  TaskStore,
-  TaskStoreMetadata,
-  {
-    workerAddress: Address;
-    currentWorkerAddress: Address | null;
-    domainId: number;
-  },
-  {
-    event: Event<EventTypes.WORKER_ASSIGNED>;
-    taskStore: TaskStore;
-  } | null
-> = {
-  name: 'assignWorker',
-  context: [Context.COLONY_MANAGER, Context.DDB_INSTANCE, Context.WALLET],
-  prepare: prepareTaskStoreCommand,
-  async execute(taskStore, { workerAddress, currentWorkerAddress, domainId }) {
-    if (workerAddress === currentWorkerAddress) {
-      return null;
-    }
-    const eventHash = await taskStore.append(
-      createEvent(EventTypes.WORKER_ASSIGNED, {
-        workerAddress,
-        domainId,
-      }),
-    );
-    return {
-      taskStore,
-      event: taskStore.getEvent(eventHash) as Event<EventTypes.WORKER_ASSIGNED>,
-    };
-  },
-};
-
-export const unassignWorker: Command<
-  TaskStore,
-  TaskStoreMetadata,
-  {
-    workerAddress: Address;
-    userAddress: Address;
-    domainId: number;
-  },
-  {
-    event: Event<EventTypes.WORKER_UNASSIGNED>;
-    taskStore: TaskStore;
-  }
-> = {
-  name: 'unassignWorker',
-  context: [Context.COLONY_MANAGER, Context.DDB_INSTANCE, Context.WALLET],
-  prepare: prepareTaskStoreCommand,
-  async execute(taskStore, { workerAddress, userAddress, domainId }) {
-    const eventHash = await taskStore.append(
-      createEvent(EventTypes.WORKER_UNASSIGNED, {
-        workerAddress,
-        userAddress,
-        domainId,
-      }),
-    );
-    return {
-      taskStore,
-      event: taskStore.getEvent(eventHash) as Event<
-        EventTypes.WORKER_UNASSIGNED
       >,
     };
   },
