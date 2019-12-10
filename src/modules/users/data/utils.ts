@@ -1,7 +1,4 @@
-import { ColonyNetworkClient } from '@colony/colony-js-client';
-
-import ENS from '~lib/ENS';
-import { Address, ColonyClient, createAddress, ENSCache } from '~types/index';
+import { Address, ColonyClient, createAddress } from '~types/index';
 
 import { EventTypes } from '~data/constants';
 import {
@@ -17,7 +14,6 @@ import {
   NOTIFICATION_EVENT_USER_MENTIONED,
   NOTIFICATION_EVENT_USER_TRANSFER,
 } from '~users/Inbox/events';
-import { log } from '~utils/debug';
 
 const notificationsToEventsMapping = {
   [EventTypes.ASSIGNED_TO_TASK]: NOTIFICATION_EVENT_ASSIGNED,
@@ -35,18 +31,6 @@ const notificationsToEventsMapping = {
 
 export const transformNotificationEventNames = (eventName: string): string =>
   notificationsToEventsMapping[eventName];
-
-export const getUserAddressByUsername = (
-  ens: ENSCache,
-  networkClient: ColonyNetworkClient,
-) => async (username: string): Promise<Address | null> => {
-  try {
-    return ens.getAddress(ENS.getFullDomain('user', username), networkClient);
-  } catch (caughtError) {
-    log.warn(caughtError);
-    return null;
-  }
-};
 
 export const getExtensionAddresses = async (
   colonyClient: ColonyClient,
