@@ -132,12 +132,6 @@ export type TaskActionTypes =
       ActionTypes.TASK_MANAGER_REVEAL_WORKER_RATING_SUCCESS,
       object
     >
-  | TaskActionType<ActionTypes.TASK_SEND_WORK_REQUEST, object>
-  | TaskErrorActionType<ActionTypes.TASK_SEND_WORK_REQUEST_ERROR>
-  | TaskActionType<
-      ActionTypes.TASK_SEND_WORK_REQUEST_SUCCESS,
-      { event: Event<EventTypes.WORK_REQUEST_CREATED> }
-    >
   | NonUniqueTaskActionType<ActionTypes.TASK_SUB_START, object>
   | NonUniqueTaskActionType<ActionTypes.TASK_SUB_STOP, object>
   | NonUniqueTaskActionType<

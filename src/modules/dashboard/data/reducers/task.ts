@@ -33,13 +33,6 @@ export const taskReducer: EventReducer<{
         domainId,
       };
     }
-    case EventTypes.WORK_REQUEST_CREATED: {
-      const { requests = [] } = task;
-      return {
-        ...task,
-        requests: [...requests, event.payload.workerAddress],
-      };
-    }
 
     default:
       return task;
