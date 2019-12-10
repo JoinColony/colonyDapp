@@ -2,12 +2,12 @@ import React from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 
 import { ROLES } from '~constants';
-import { ColonyType } from '~immutable/index';
 import { useSelector } from '~utils/hooks';
 import { ActionTypes } from '~redux/index';
 import { DialogActionButton } from '~core/Button';
 import Heading from '~core/Heading';
 import ExternalLink from '~core/ExternalLink';
+import { AnyColony } from '~data/index';
 
 import { networkVersionSelector } from '../../../core/selectors';
 import { canEnterRecoveryMode } from '../../../users/checks';
@@ -87,7 +87,7 @@ const MSG = defineMessages({
 const displayName = 'admin.Profile.ProfileAdvanced';
 
 interface Props {
-  colony: ColonyType;
+  colony: AnyColony;
   rootRoles: ROLES[];
 }
 
