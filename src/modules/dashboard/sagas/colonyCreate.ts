@@ -1,15 +1,12 @@
 import ApolloClient from 'apollo-client';
 import { $Values } from 'utility-types';
 import { Channel } from 'redux-saga';
-import { all, call, fork, put, take, takeEvery } from 'redux-saga/effects';
-import BigNumber from 'bn.js';
+import { all, call, fork, put } from 'redux-saga/effects';
 
-import { ROLES, ROOT_DOMAIN } from '~constants';
 import { ActionTypes, Action, AllActions } from '~redux/index';
 import {
   putError,
   takeFrom,
-  executeCommand,
   executeQuery,
   takeLatestCancellable,
 } from '~utils/saga/effects';
@@ -30,10 +27,6 @@ import {
 } from '../../core/actionCreators';
 import { createTransaction, createTransactionChannels } from '../../core/sagas';
 import { subscribeToColony } from '../../users/actionCreators';
-import { fetchDomainsAndRoles } from '../actionCreators/domains';
-import { getUserRoles } from '../../transformers';
-import { createColonyProfile } from '../data/commands';
-import { getColonyName } from './shared';
 
 function* colonyCreate({
   meta,
@@ -429,19 +422,6 @@ function* colonyCreate({
       ),
     );
   }
-}
-
-// This function assumes that the founder is calling it
-function* hasExternalToken(colonyClient) {
-  let isExternal = false;
-  try {
-    yield call([colonyClient.mintTokens, colonyClient.mintTokens.estimate], {
-      amount: new BigNumber(1),
-    });
-  } catch (caughtError) {
-    isExternal = true;
-  }
-  return isExternal;
 }
 
 export default function* colonyCreateSaga() {
