@@ -29,7 +29,7 @@ import {
   colonyEthTokenSelector,
 } from '../../selectors';
 import { isInRecoveryMode as isInRecoveryModeCheck } from '../../checks';
-import { useColonyQuery } from '~data/index';
+import { useColonyLazyQuery } from '~data/index';
 
 import ColonyFunding from './ColonyFunding';
 import ColonyMeta from './ColonyMeta';
@@ -162,9 +162,19 @@ const ColonyHome = ({
     [colonyName],
   );
 
-  const { data: { colony } = {}, loading: colonyDataLoading } = useColonyQuery({
-    variables: { address: colonyAddress },
-  });
+  // const { data: { colony } = {}, loading: colonyDataLoading } = useColonyQuery({
+  //   variables: { address: colonyAddress },
+  // });
+
+  const [loadColony, { data }] = useColonyLazyQuery();
+
+  useEffect(() => {
+    if (colonyAddress) {
+      loadColony({
+        variables: { address: colonyAddress },
+      });
+    }
+  }, [loadColony, colonyAddress]);
 
   /*
    * @TODO Re-add domains once they're available from mongo
@@ -225,8 +235,10 @@ const ColonyHome = ({
   }
 
   if (
-    !colony ||
-    !colonyAddress ||
+    !data ||
+    !(data && data.colony) ||
+    // !colony ||
+    !colonyAddress
     /*
      * @TODO Re-add domains once they're available from mongo
      *
@@ -240,7 +252,6 @@ const ColonyHome = ({
      *
      *!nativeTokenRef ||
      */
-    colonyDataLoading
   ) {
     return (
       <LoadingTemplate loadingText={MSG.loadingText}>
@@ -278,7 +289,7 @@ const ColonyHome = ({
    * const canCreateTask = canAdminister(currentDomainUserRoles);
    */
   const canCreateTask = true;
-  const isInRecoveryMode = isInRecoveryModeCheck(colony);
+  const isInRecoveryMode = isInRecoveryModeCheck(data.colony);
 
   const noFilter = (
     <Heading
@@ -292,7 +303,7 @@ const ColonyHome = ({
       <aside className={styles.colonyInfo}>
         <div className={styles.metaContainer}>
           <ColonyMeta
-            colony={colony}
+            colony={data.colony}
             /*
              * @TODO Re-add domains once they're available from mongo
              *
@@ -364,7 +375,7 @@ const ColonyHome = ({
           <TabPanel>
             <TabContribute
               allowTaskCreation={canCreateTask}
-              colony={colony}
+              colony={data.colony}
               filteredDomainId={filteredDomainId}
               filterOption={filterOption}
               ethTokenRef={ethTokenRef}

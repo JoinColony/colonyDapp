@@ -161,9 +161,7 @@ const AdminDashboard = ({
     [colonyName],
   );
 
-  const {
-    data: { colony },
-  } = useColonyQuery({
+  const { data } = useColonyQuery({
     variables: { address: colonyAddress },
   });
 
@@ -198,7 +196,8 @@ const AdminDashboard = ({
   }
 
   if (
-    !(colony && colony.colonyAddress)
+    !data ||
+    !(data && data.colony)
     /*
      * @TODO Re-add domains once they're available from mongo
      */
@@ -212,12 +211,11 @@ const AdminDashboard = ({
     return <Redirect to={CURRENT_COLONY_ROUTE} />;
   }
 
-  const { displayName } = colony;
   return (
     <div className={styles.main}>
       <VerticalNavigation
         navigationItems={navigationItems(
-          colony,
+          data.colony,
           domains,
           rootUserRoles,
           allUserRoles,
@@ -232,7 +230,7 @@ const AdminDashboard = ({
           <HistoryNavigation
             backRoute={CURRENT_COLONY_ROUTE}
             backText={MSG.backButton}
-            backTextValues={{ displayName }}
+            backTextValues={{ displayName: data.colony.displayName }}
           />
         </div>
         <div className={styles.headingWrapper}>
@@ -247,7 +245,7 @@ const AdminDashboard = ({
           />
         </div>
       </VerticalNavigation>
-      {isInRecoveryMode(colony) && <RecoveryModeAlert />}
+      {isInRecoveryMode(data.colony) && <RecoveryModeAlert />}
     </div>
   );
 };
