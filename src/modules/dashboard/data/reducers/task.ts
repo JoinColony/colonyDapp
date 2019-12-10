@@ -33,37 +33,11 @@ export const taskReducer: EventReducer<{
         domainId,
       };
     }
-    case EventTypes.PAYOUT_SET: {
-      const { amount, token } = event.payload;
-      return {
-        ...task,
-        payout: new BigNumber(amount),
-        paymentTokenAddress: token,
-      };
-    }
     case EventTypes.WORK_REQUEST_CREATED: {
       const { requests = [] } = task;
       return {
         ...task,
         requests: [...requests, event.payload.workerAddress],
-      };
-    }
-    case EventTypes.WORKER_ASSIGNED: {
-      const { workerAddress } = event.payload;
-      return {
-        ...task,
-        workerAddress,
-      };
-    }
-    case EventTypes.WORKER_UNASSIGNED: {
-      const { workerAddress: currentWorkerAddress } = task;
-      const { workerAddress } = event.payload;
-      return {
-        ...task,
-        workerAddress:
-          currentWorkerAddress && currentWorkerAddress === workerAddress
-            ? undefined
-            : currentWorkerAddress,
       };
     }
 

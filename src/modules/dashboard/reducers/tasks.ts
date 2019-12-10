@@ -41,33 +41,6 @@ const taskEventReducer = (
       return task.update('requests', requests => requests.add(workerAddress));
     }
 
-    case EventTypes.WORKER_ASSIGNED: {
-      const { workerAddress } = event.payload;
-      return task.set('workerAddress', createAddress(workerAddress));
-    }
-
-    case EventTypes.WORKER_UNASSIGNED:
-      return task.delete('workerAddress');
-
-    case EventTypes.PAYOUT_SET: {
-      const { amount, token } = event.payload;
-      return task.set(
-        'payouts',
-        List([
-          TaskPayout(
-            fromJS({
-              amount,
-              token: createAddress(token),
-            }),
-          ),
-        ]),
-      );
-    }
-
-    case EventTypes.PAYOUT_REMOVED: {
-      return task.set('payouts', List());
-    }
-
     default:
       return task;
   }
