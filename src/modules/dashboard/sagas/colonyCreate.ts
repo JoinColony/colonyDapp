@@ -42,7 +42,7 @@ function* colonyCreate({
     displayName,
     tokenAddress: givenTokenAddress,
     tokenChoice,
-    // tokenIcon,
+    tokenIcon,
     tokenName,
     tokenSymbol,
     username: givenUsername,
@@ -53,6 +53,8 @@ function* colonyCreate({
   const apolloClient: ApolloClient<any> = yield getContext(
     Context.APOLLO_CLIENT,
   );
+
+  const TOKEN_DECIMALS = 18;
 
   /*
    * Define a manifest of transaction ids and their respective channels.
@@ -142,7 +144,11 @@ function* colonyCreate({
       yield createGroupedTransaction(createToken, {
         context: ContractContexts.NETWORK_CONTEXT,
         methodName: 'createToken',
-        params: { name: tokenName, symbol: tokenSymbol, decimals: 18 },
+        params: {
+          name: tokenName,
+          symbol: tokenSymbol,
+          decimals: TOKEN_DECIMALS,
+        },
       });
     }
 
@@ -293,6 +299,11 @@ function* colonyCreate({
           colonyAddress,
           colonyName,
           displayName,
+          tokenAddress,
+          tokenName,
+          tokenSymbol,
+          tokenIconHash: tokenIcon,
+          tokenDecimals: TOKEN_DECIMALS,
         },
       },
     });
