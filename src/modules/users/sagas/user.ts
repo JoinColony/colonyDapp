@@ -16,6 +16,8 @@ import { ZERO_ADDRESS } from '~utils/web3/constants';
 import { Action, ActionTypes, AllActions } from '~redux/index';
 import { getContext, Context } from '~context/index';
 import ENS from '~lib/ENS';
+import { createAddress } from '~types/index';
+import { ColonyManager } from '~data/types';
 import {
   getLoggedInUser,
   CreateUserDocument,
@@ -32,7 +34,7 @@ import { ContractContexts } from '../../../lib/ColonyManager/constants';
 import { ipfsUpload } from '../../core/sagas/ipfs';
 import { transactionLoadRelated } from '../../core/actionCreators';
 
-import { getUserAddress, getUserColonyTransactions } from '../data/queries';
+import { getUserColonyTransactions } from '../data/queries';
 
 import { createTransaction, getTxChannel } from '../../core/sagas/transactions';
 
@@ -80,13 +82,21 @@ function* userAddressFetch({
   meta,
 }: Action<ActionTypes.USER_ADDRESS_FETCH>) {
   try {
-    const userAddress = yield executeQuery(getUserAddress, {
-      args: { username },
-    });
+    const ens: ENS = yield getContext(Context.ENS_INSTANCE);
+    const colonyManager: ColonyManager = yield getContext(
+      Context.COLONY_MANAGER,
+    );
+
+    const address = yield ens.getAddress(
+      ENS.getFullDomain('user', username),
+      colonyManager.networkClient,
+    );
+
+    console.log('saga', address);
 
     yield put({
       type: ActionTypes.USER_ADDRESS_FETCH_SUCCESS,
-      payload: { userAddress },
+      payload: { userAddress: createAddress(address) },
       meta,
     });
   } catch (error) {
