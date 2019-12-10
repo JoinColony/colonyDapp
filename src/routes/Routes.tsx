@@ -15,7 +15,7 @@ import CreateWalletWizard from '~users/CreateWalletWizard';
 import UserProfile from '~users/UserProfile';
 import UserProfileEdit from '~users/UserProfileEdit';
 import AdminDashboard from '~admin/AdminDashboard';
-import { useLoggedInUser } from '~data/helpers';
+import { useLoggedInUser } from '~data/index';
 
 import {
   CONNECT_ROUTE,

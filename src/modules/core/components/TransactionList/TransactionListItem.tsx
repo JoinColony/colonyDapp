@@ -10,7 +10,7 @@ import TransactionLink from '~core/TransactionLink';
 import { ActionTypes } from '~redux/index';
 import { mergePayload } from '~utils/actions';
 import { useDataFetcher } from '~utils/hooks';
-import { useUserLazy } from '~data/helpers';
+import { useUserLazy } from '~data/index';
 
 import { tokenFetcher } from '../../../dashboard/fetchers';
 import TransactionDetails from './TransactionDetails';

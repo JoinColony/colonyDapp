@@ -4,7 +4,7 @@ import { Redirect } from 'react-router';
 
 import { DASHBOARD_ROUTE } from '~routes/index';
 import { useSelector } from '~utils/hooks';
-import { useLoggedInUser } from '~data/helpers';
+import { useLoggedInUser } from '~data/index';
 
 import { groupedTransactions } from '../../../core/selectors';
 import {

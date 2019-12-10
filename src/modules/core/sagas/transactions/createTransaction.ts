@@ -11,7 +11,7 @@ import {
 
 import { ActionTypes } from '~redux/index';
 import { filterUniqueAction } from '~utils/actions';
-import { getLoggedInUser } from '~data/helpers';
+import { getLoggedInUser } from '~data/index';
 
 import { TxConfig } from '../../types';
 import { createTxAction } from '../../actionCreators';

@@ -3,7 +3,7 @@ import { defineMessages } from 'react-intl';
 
 import { Select } from '~core/Fields';
 import Heading from '~core/Heading';
-import { useLoggedInUser } from '~data/helpers';
+import { useLoggedInUser } from '~data/index';
 
 import {
   TasksFilterOptions,

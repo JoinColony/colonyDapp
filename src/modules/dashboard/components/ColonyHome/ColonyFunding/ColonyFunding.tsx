@@ -7,7 +7,7 @@ import { DialogType } from '~core/Dialog';
 import withDialog from '~core/Dialog/withDialog';
 import Heading from '~core/Heading';
 import { Address, DomainsMapType } from '~types/index';
-import { useLoggedInUser } from '~data/helpers';
+import { useLoggedInUser } from '~data/index';
 
 import { useColonyTokens } from '../../../hooks/useColonyTokens';
 import { canMoveTokens as canMoveTokensCheck } from '../../../../admin/checks';

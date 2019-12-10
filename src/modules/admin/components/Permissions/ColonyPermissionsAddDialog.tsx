@@ -9,7 +9,11 @@ import { mergePayload, withKey, mapPayload, pipe } from '~utils/actions';
 import { ItemDataType } from '~core/OmniPicker';
 import { ActionTypeString, ActionTypes } from '~redux/index';
 import { useDataFetcher, useTransformer } from '~utils/hooks';
-import { ColonySubscribedUsersDocument, AnyUser } from '~data/index';
+import {
+  ColonySubscribedUsersDocument,
+  AnyUser,
+  useUserLazy,
+} from '~data/index';
 import SingleUserPicker, { filterUserSelection } from '~core/SingleUserPicker';
 import { SpinnerLoader } from '~core/Preloaders';
 import Heading from '~core/Heading';
@@ -17,7 +21,6 @@ import Button from '~core/Button';
 import Dialog, { DialogSection } from '~core/Dialog';
 import { ActionForm, InputLabel } from '~core/Fields';
 import HookedUserAvatar from '~users/HookedUserAvatar';
-import { useUserLazy } from '~data/helpers';
 
 import { TEMP_getUserRolesWithRecovery } from '../../../transformers';
 import {

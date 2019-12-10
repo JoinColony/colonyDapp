@@ -13,7 +13,7 @@ import { getMainClasses } from '~utils/css';
 import { withId } from '~utils/actions';
 import { ActionTypes } from '~redux/index';
 import { useSelector } from '~utils/hooks';
-import { useLoggedInUser } from '~data/helpers';
+import { useLoggedInUser } from '~data/index';
 import Alert from '~core/Alert';
 import { IconButton } from '~core/Button';
 import EthUsd from '~core/EthUsd';
