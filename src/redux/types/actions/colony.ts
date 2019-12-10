@@ -306,13 +306,6 @@ export type ColonyActionTypes =
       { colonyAddress: Address; tokens: Address[] },
       object
     >
-  | UniqueActionType<
-      ActionTypes.COLONY_RECOVER_DB,
-      { colonyAddress: Address },
-      null
-    >
-  | ErrorActionType<ActionTypes.COLONY_RECOVER_DB_ERROR, null>
-  | UniqueActionType<ActionTypes.COLONY_RECOVER_DB_SUCCESS, null, null>
   | ActionTypeWithPayloadAndMeta<
       ActionTypes.COLONY_TASK_METADATA_SUB_START,
       { colonyAddress: Address },
