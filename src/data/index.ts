@@ -2,7 +2,7 @@
 
 import apolloCache from './cache';
 
-import { ColonyQuery } from './generated';
+import { ColonyQuery, UserQuery } from './generated';
 
 import {
   resolvers as loggedInUserResolvers,
@@ -26,5 +26,9 @@ export const resolvers = {
 
 // export all the generated types and helpers
 export * from './generated';
+export * from './helpers';
 
+// @TODO find a solution for query return types used throughout the dapp
+// @body when passing down properties to other components we should expect the return type of the query in the upper component. How can we make that work in a simple way?
+export type AnyUser = UserQuery['user'];
 export type AnyColony = ColonyQuery['colony'];

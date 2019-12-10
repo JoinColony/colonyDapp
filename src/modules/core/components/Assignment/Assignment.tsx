@@ -7,7 +7,7 @@ import {
   TokenType,
 } from '~immutable/index';
 import { Address } from '~types/index';
-import { User } from '~data/index';
+import { AnyUser } from '~data/index';
 import PayoutsList from '~core/PayoutsList';
 import UserInfo from '~users/UserInfo';
 
@@ -40,7 +40,7 @@ const MSG = defineMessages({
 
 interface Props {
   /** The worker that is assigned */
-  worker?: User;
+  worker?: AnyUser;
 
   /** The address of the above worker (used in the case of unclaimed worker profile) */
   workerAddress?: Address;

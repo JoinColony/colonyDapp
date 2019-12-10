@@ -1,10 +1,9 @@
 import React, { useEffect } from 'react';
 import { Redirect } from 'react-router';
-import { useLazyQuery } from '@apollo/react-hooks';
 
 import { NOT_FOUND_ROUTE } from '~routes/index';
 import ProfileTemplate from '~pages/ProfileTemplate';
-import { UserDocument } from '~data/index';
+import { useUserLazyQuery } from '~data/index';
 
 import { useUserAddressFetcher } from '../../hooks';
 import UserMeta from './UserMeta';
@@ -25,17 +24,17 @@ const UserProfile = ({
     username,
   );
 
-  const [loadUser, { data, loading }] = useLazyQuery(UserDocument, {
-    variables: { address: userAddress },
-  });
+  const [loadUser, { data }] = useUserLazyQuery();
 
   useEffect(() => {
     if (userAddress) {
-      loadUser();
+      loadUser({
+        variables: { address: userAddress },
+      });
     }
   }, [loadUser, userAddress]);
 
-  if (!data || !data.user || loading) {
+  if (!data || !data.user) {
     return <UserProfileSpinner />;
   }
 

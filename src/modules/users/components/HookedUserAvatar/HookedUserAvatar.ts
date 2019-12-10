@@ -1,6 +1,6 @@
 import { useQuery } from '@apollo/react-hooks';
 
-import { User, UserDocument } from '~data/index';
+import { AnyUser, UserDocument } from '~data/index';
 import UserAvatar, { Props as UserAvatarProps } from '~core/UserAvatar';
 import { useDataFetcher } from '~utils/hooks';
 import { withHooks } from '~utils/hoc';
@@ -10,9 +10,9 @@ import { ipfsDataFetcher } from '../../../core/fetchers';
 export default withHooks<
   { fetchUser: boolean } | void,
   UserAvatarProps,
-  { user: User | void; avatarURL: string | void }
+  { user: AnyUser | void; avatarURL: string | void }
 >((hookParams, { user, address }) => {
-  const result: { user: User | void; avatarURL: string | void } = {
+  const result: { user: AnyUser | void; avatarURL: string | void } = {
     user,
     avatarURL: undefined,
   };

@@ -2,15 +2,15 @@ import { Record } from 'immutable';
 
 import { DefaultValues, RecordToJS } from '~types/index';
 import { EVENT_SOURCE_TYPES } from '~data/types/index';
-import { User } from '~data/index';
+import { AnyUser } from '~data/index';
 
 interface Shared {
   id: string;
-  initiator: string | User;
+  initiator: string | AnyUser;
   type: string;
   sourceId: string;
   sourceType: EVENT_SOURCE_TYPES;
-  targetUser: string | User;
+  targetUser: string | AnyUser;
   timestamp?: number;
   onClickRoute?: string;
   context: any;

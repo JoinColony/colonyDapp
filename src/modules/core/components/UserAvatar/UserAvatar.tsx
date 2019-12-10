@@ -4,7 +4,7 @@ import Avatar from '~core/Avatar';
 import InfoPopover from '~core/InfoPopover';
 import Link from '~core/NavLink';
 import { Address } from '~types/index';
-import { User } from '~data/index';
+import { AnyUser } from '~data/index';
 
 import { getUsername } from '../../../users/transformers';
 
@@ -31,7 +31,7 @@ export interface Props {
   size?: 'xxs' | 'xs' | 's' | 'm' | 'l' | 'xl';
 
   /** The corresponding user object if available */
-  user?: User;
+  user?: AnyUser;
 }
 
 const displayName = 'UserAvatar';
@@ -47,13 +47,6 @@ const UserAvatar = ({
   user = {
     id: address,
     profile: { walletAddress: address },
-    colonies: [],
-    tasks: [],
-    createdAt: 0,
-    colonyAddresses: [],
-    taskIds: [],
-    tokens: [],
-    tokenRefs: [],
   },
 }: Props) => {
   const username = getUsername(user);
