@@ -4,7 +4,6 @@ import { defineMessages } from 'react-intl';
 
 import { ROLES, ROOT_DOMAIN } from '~constants';
 import { NavigationItem } from '~pages/VerticalNavigation/VerticalNavigation';
-import { ColonyType } from '~immutable/index';
 import Heading from '~core/Heading';
 import LoadingTemplate from '~pages/LoadingTemplate';
 import ProfileEdit from '~admin/Profile/ProfileEdit';
@@ -18,7 +17,7 @@ import { HistoryNavigation } from '~pages/NavigationWrapper';
 import { useDataFetcher, useTransformer } from '~utils/hooks';
 import { DomainsMapType } from '~types/index';
 import { useLoggedInUser } from '~data/helpers';
-import { useColonyQuery } from '~data/index';
+import { useColonyQuery, AnyColony } from '~data/index';
 
 import {
   TEMP_getUserRolesWithRecovery,
@@ -88,7 +87,7 @@ const canArchitect = () => true;
 const hasRoot = () => true;
 
 const navigationItems = (
-  colony: ColonyType,
+  colony: AnyColony,
   domains: DomainsMapType,
   rootRoles: ROLES[],
   allRoles: ROLES[],
@@ -167,11 +166,13 @@ const AdminDashboard = ({
 
   const { walletAddress } = useLoggedInUser();
 
-  const { data: domains, isFetching: isFetchingRoles } = useDataFetcher(
-    domainsAndRolesFetcher,
-    [colonyAddress],
-    [colonyAddress],
-  );
+  const {
+    data: domains,
+    /*
+     * @TODO Re-add domains once they're available from mongo
+     */
+    // isFetching: isFetchingRoles
+  } = useDataFetcher(domainsAndRolesFetcher, [colonyAddress], [colonyAddress]);
 
   const { data: colonyRecoveryRoles = [] } = useDataFetcher(
     TEMP_userHasRecoveryRoleFetcher,

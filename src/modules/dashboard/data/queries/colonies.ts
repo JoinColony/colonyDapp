@@ -23,12 +23,7 @@ import {
 } from '~data/types';
 import { ColonyEvents } from '~data/types/ColonyEvents';
 import { TaskIndexEvents } from '~data/types/TaskIndexEvents';
-import {
-  ColonyType,
-  ColonyRolesType,
-  DomainType,
-  DomainRolesType,
-} from '~immutable/index';
+import { ColonyRolesType, DomainType, DomainRolesType } from '~immutable/index';
 import { Context } from '~context/index';
 import EventStore from '~lib/database/stores/EventStore';
 import { EventTypes } from '~data/constants';
@@ -41,6 +36,7 @@ import {
 import { getEvents } from '~utils/web3/eventLogs';
 import { ZERO_ADDRESS } from '~utils/web3/constants';
 import { colonyReducer, colonyTasksReducer } from '../reducers';
+import { AnyColony } from '~data/index';
 
 interface ColonyStoreMetadata {
   colonyAddress: Address;
@@ -186,7 +182,7 @@ export const subscribeToColony: Subscription<
   },
   ColonyStoreMetadata,
   any,
-  ColonyType
+  AnyColony
 > = {
   name: 'subscribeToColony',
   context: colonyContext,
@@ -270,7 +266,7 @@ export const getColony: Query<
   { colonyClient: ColonyClient; colonyStore: ColonyStore },
   ColonyStoreMetadata,
   { colonyAddress: Address },
-  ColonyType
+  AnyColony
 > = {
   name: 'getColony',
   context: colonyContext,

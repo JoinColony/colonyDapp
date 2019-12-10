@@ -3,7 +3,6 @@ import { defineMessages } from 'react-intl';
 import { useMutation } from '@apollo/react-hooks';
 import * as yup from 'yup';
 
-import { ColonyType } from '~immutable/index';
 import Heading from '~core/Heading';
 import CopyableAddress from '~core/CopyableAddress';
 import {
@@ -18,7 +17,7 @@ import Button from '~core/Button';
 import { useColonyNativeToken } from '../../../dashboard/hooks/useColonyNativeToken';
 import ENS from '~lib/ENS';
 import ColonyAvatarUploader from './ColonyAvatarUploader';
-import { EditColonyProfileDocument } from '~data/index';
+import { EditColonyProfileDocument, AnyColony } from '~data/index';
 
 import styles from './ProfileEdit.css';
 
@@ -87,7 +86,7 @@ const validationSchema = yup.object({
 });
 
 interface Props {
-  colony: ColonyType;
+  colony: AnyColony;
 }
 
 const ProfileEdit = ({ colony }: Props) => {

@@ -205,9 +205,7 @@ const ColonyHome = ({
      *!nativeTokenRef ||
      */
   ) {
-    return (
-      <LoadingTemplate loadingText={MSG.loadingText} />
-    );
+    return <LoadingTemplate loadingText={MSG.loadingText} />;
   }
 
   // Eventually this has to be in the proper domain. There's probably going to be a different UI for that

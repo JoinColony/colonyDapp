@@ -4,7 +4,6 @@ import { ROLES } from '~constants';
 import { ActionTypes } from '~redux/index';
 import { Address, ENSName, WithKey } from '~types/index';
 import {
-  ColonyType,
   ContractTransactionType,
   ColonyTokenReferenceType,
   DomainType,
@@ -17,6 +16,7 @@ import {
   ErrorActionType,
   UniqueActionType,
 } from './index';
+import { AnyColony } from '~data/index';
 
 export type ColonyActionTypes =
   | UniqueActionType<
@@ -147,7 +147,7 @@ export type ColonyActionTypes =
   | ErrorActionType<ActionTypes.COLONY_FETCH_ERROR, WithKey>
   | ActionTypeWithPayloadAndMeta<
       ActionTypes.COLONY_FETCH_SUCCESS,
-      ColonyType,
+      AnyColony,
       WithKey
     >
   | ActionTypeWithPayloadAndMeta<
@@ -245,7 +245,7 @@ export type ColonyActionTypes =
     >
   | ActionTypeWithPayloadAndMeta<
       ActionTypes.COLONY_SUB_EVENTS,
-      { colony: ColonyType; colonyAddress: Address },
+      { colony: AnyColony; colonyAddress: Address },
       WithKey
     >
   | ErrorActionType<ActionTypes.COLONY_SUB_ERROR, WithKey>
