@@ -66,39 +66,11 @@ const MSG = defineMessages({
     id: 'dashboard.ColonyHome.noFilter',
     defaultMessage: 'All Transactions in Colony',
   },
-  recoverColonyButton: {
-    id: 'dashboard.ColonyHome.recoverColonyButton',
-    defaultMessage: 'Recover Colony?',
-  },
-  recoverColonyHeading: {
-    id: 'dashboard.ColonyHome.recoverColonyHeading',
-    defaultMessage: 'Really recover this Colony?',
-  },
-  recoverColonyParagraph: {
-    id: 'dashboard.ColonyHome.recoverColonyParagraph',
-    defaultMessage: `Please ONLY do this if you know what you're doing.
-    This will effectively DELETE all of your Colony's metadata
-    and recreate it from scratch. After that, the page will be reloaded!`,
-  },
-  recoverColonyConfirmButton: {
-    id: 'dashboard.ColonyHome.recoverColonyConfirmButton',
-    defaultMessage: 'Yes, RECOVER this Colony',
-  },
-  recoverColonyCancelButton: {
-    id: 'dashboard.ColonyHome.recoverColonyCancelButton',
-    defaultMessage: 'Nope! Take me back, please',
-  },
 });
 
 interface Props {
   match: any;
 }
-
-/*
- * @TODO Re-add domains once we decide what we're going to do with the
- * "Recover Colony" system
- */
-// const COLONY_DB_RECOVER_BUTTON_TIMEOUT = 20 * 1000;
 
 const displayName = 'dashboard.ColonyHome';
 
@@ -112,11 +84,6 @@ const ColonyHome = ({
     COLONY_TOTAL_BALANCE_DOMAIN_ID,
   );
   const [isTaskBeingCreated, setIsTaskBeingCreated] = useState(false);
-  /*
-   * @TODO Re-add domains once we decide what we're going to do with the
-   * "Recover Colony" system
-   */
-  // const [showRecoverOption, setRecoverOption] = useState(false);
   const [activeTab, setActiveTab] = useState<'tasks' | 'transactions'>('tasks');
 
   const dispatch = useDispatch();
@@ -135,17 +102,6 @@ const ColonyHome = ({
     [dispatch, setIsTaskBeingCreated],
   );
 
-  /*
-   * @TODO Re-add domains once we decide what we're going to do with the
-   * "Recover Colony" system
-   */
-  // useEffect(() => {
-  //   const timeout = setTimeout(() => {
-  //     setRecoverOption(true);
-  //   }, COLONY_DB_RECOVER_BUTTON_TIMEOUT);
-  //   return () => clearTimeout(timeout);
-  // });
-
   const formSetFilter = useCallback(
     (_: string, value: TasksFilterOptionType) => setFilterOption(value as any),
     [setFilterOption],
@@ -161,10 +117,6 @@ const ColonyHome = ({
     [colonyName],
     [colonyName],
   );
-
-  // const { data: { colony } = {}, loading: colonyDataLoading } = useColonyQuery({
-  //   variables: { address: colonyAddress },
-  // });
 
   const [loadColony, { data }] = useColonyLazyQuery();
 
@@ -254,31 +206,7 @@ const ColonyHome = ({
      */
   ) {
     return (
-      <LoadingTemplate loadingText={MSG.loadingText}>
-        {/*
-         * @TODO Re-add domains once they're available from mongo
-         */}
-        {/* {showRecoverOption &&
-        colonyAddress &&
-        domains &&
-        canRecoverColony(rootUserRoles) ? (
-          <DialogActionButton
-            dialog="ConfirmDialog"
-            dialogProps={{
-              appearance: { theme: 'danger' },
-              heading: MSG.recoverColonyHeading,
-              children: <FormattedMessage {...MSG.recoverColonyParagraph} />,
-              cancelButtonText: MSG.recoverColonyCancelButton,
-              confirmButtonText: MSG.recoverColonyConfirmButton,
-            }}
-            submit={ActionTypes.COLONY_RECOVER_DB}
-            error={ActionTypes.COLONY_RECOVER_DB_ERROR}
-            success={ActionTypes.COLONY_RECOVER_DB_SUCCESS}
-            text={MSG.recoverColonyButton}
-            values={{ colonyAddress }}
-          />
-        ) : null} */}
-      </LoadingTemplate>
+      <LoadingTemplate loadingText={MSG.loadingText} />
     );
   }
 
@@ -388,7 +316,7 @@ const ColonyHome = ({
             />
           </TabPanel>
           <TabPanel>
-            <Transactions colonyAddress={colony.colonyAddress} />
+            <Transactions colonyAddress={data.colony.colonyAddress} />
           </TabPanel>
         </Tabs>
       </main>

@@ -444,70 +444,7 @@ function* hasExternalToken(colonyClient) {
   return isExternal;
 }
 
-function* colonyRecover({
-  meta,
-  payload: { colonyAddress },
-}: Action<ActionTypes.COLONY_RECOVER_DB>) {
-  const colonyManager = yield* getContext(Context.COLONY_MANAGER);
-  const colonyClient = yield call(
-    [colonyManager, colonyManager.getColonyClient],
-    colonyAddress,
-  );
-  try {
-    const { walletAddress } = yield getLoggedInUser();
-
-    yield put(fetchDomainsAndRoles(colonyAddress));
-
-    const {
-      payload: { domains },
-    } = yield take<AllActions>(ActionTypes.COLONY_DOMAINS_FETCH_SUCCESS);
-
-    const userRoles = getUserRoles(domains, ROOT_DOMAIN, walletAddress);
-
-    if (!userRoles.includes(ROLES.ROOT))
-      throw new Error('Founder permission required');
-
-    const colonyName = yield call(getColonyName, colonyAddress);
-    const displayName = `Recovered: ${colonyName}`;
-
-    const {
-      tokenClient,
-      tokenClient: {
-        contract: { address: tokenAddress },
-      },
-    } = colonyClient;
-    const { name, symbol } = yield call([
-      tokenClient.getTokenInfo,
-      tokenClient.getTokenInfo.call,
-    ]);
-
-    const isExternalToken = yield call(hasExternalToken, colonyClient);
-
-    yield* executeCommand(createColonyProfile, {
-      metadata: { colonyAddress },
-      args: {
-        colonyAddress,
-        colonyName,
-        displayName,
-        token: {
-          address: tokenAddress,
-          isExternal: isExternalToken,
-          isNative: true,
-          name,
-          symbol,
-        },
-      },
-    });
-
-    // After a reload everything should be fine again.
-    window.location.reload();
-  } catch (caughtError) {
-    yield putError(ActionTypes.COLONY_RECOVER_DB_ERROR, caughtError, meta);
-  }
-}
-
 export default function* colonyCreateSaga() {
-  yield takeEvery(ActionTypes.COLONY_RECOVER_DB, colonyRecover);
   yield takeLatestCancellable(
     ActionTypes.COLONY_CREATE,
     ActionTypes.COLONY_CREATE_CANCEL,
