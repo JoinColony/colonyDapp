@@ -21,7 +21,6 @@ const getMinimalUser = (address: string): UserQuery['user'] => ({
   profile: { walletAddress: address },
 });
 
-// FIXME_NOW: use generated code for this (all of the helpers in this file)
 export const useUser = (address: Address) => {
   const { data } = useUserQuery({ variables: { address } });
   return data ? data.user : getMinimalUser(address);

@@ -4,8 +4,7 @@ import { defineMessages, FormattedMessage } from 'react-intl';
 import { SpinnerLoader } from '~core/Preloaders';
 import Link from '~core/Link';
 import { CREATE_COLONY_ROUTE } from '~routes/index';
-import { useLoggedInUser } from '~data/helpers';
-import { useUserColonyIdsQuery } from '~data/index';
+import { useLoggedInUser, useUserColonyIdsQuery } from '~data/index';
 
 import ColoniesListItem from './ColoniesListItem';
 

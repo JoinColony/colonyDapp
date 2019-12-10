@@ -5,8 +5,8 @@ import { Address } from '~types/index';
 import Button from '~core/Button';
 import { Tooltip } from '~core/Popover';
 import { SpinnerLoader } from '~core/Preloaders';
-import { useLoggedInUser } from '~data/helpers';
 import {
+  useLoggedInUser,
   useUserColonyIdsQuery,
   useSubscribeToColonyMutation,
   useUnsubscribeFromColonyMutation,

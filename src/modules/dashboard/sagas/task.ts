@@ -26,7 +26,7 @@ import {
   takeFrom,
 } from '~utils/saga/effects';
 import { generateUrlFriendlyId } from '~utils/strings';
-import { getLoggedInUser } from '~data/helpers';
+import { getLoggedInUser } from '~data/index';
 
 import { fetchColonyTaskMetadata as fetchColonyTaskMetadataAC } from '../actionCreators';
 import {

@@ -4,7 +4,7 @@ import BigNumber from 'bn.js';
 
 import Card from '~core/Card';
 import Heading from '~core/Heading';
-import { useLoggedInUser } from '~data/helpers';
+import { useLoggedInUser } from '~data/index';
 
 import styles from './GasStationClaimCard.css';
 

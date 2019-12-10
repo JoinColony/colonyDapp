@@ -8,7 +8,7 @@ import { mergePayload } from '~utils/actions';
 import withDialog from '~core/Dialog/withDialog';
 import Button, { ActionButton } from '~core/Button';
 import unfinishedProfileOpener from '~users/UnfinishedProfile';
-import { useLoggedInUser } from '~data/helpers';
+import { useLoggedInUser } from '~data/index';
 
 import { canRequestToWork, hasRequestedToWork } from '../../checks';
 

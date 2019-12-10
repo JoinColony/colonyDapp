@@ -8,7 +8,7 @@ import UserMention from '~core/UserMention';
 import { Address, ENTER } from '~types/index';
 import HookedUserAvatar from '~users/HookedUserAvatar';
 import { getMainClasses } from '~utils/css';
-import { useUser } from '~data/helpers';
+import { useUser } from '~data/index';
 
 import styles from './UserListItem.css';
 

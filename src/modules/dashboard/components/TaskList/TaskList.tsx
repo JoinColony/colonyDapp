@@ -8,8 +8,7 @@ import { useDataTupleSubscriber, useSelector } from '~utils/hooks';
 import Icon from '~core/Icon';
 import { Table, TableBody } from '~core/Table';
 import Button from '~core/Button';
-import { useLoggedInUser } from '~data/helpers';
-import { useSubscribeToColonyMutation } from '~data/index';
+import { useLoggedInUser, useSubscribeToColonyMutation } from '~data/index';
 
 import { tasksByIdSubscriber } from '../../subscribers';
 import {

@@ -9,8 +9,11 @@ import { Context, getContext } from '~context/index';
 import ENS from '~lib/ENS';
 import { createAddress, ContractContexts } from '~types/index';
 import { parseExtensionDeployedLog } from '~utils/web3/eventLogs/eventParsers';
-import { getLoggedInUser } from '~data/helpers';
-import { CreateUserDocument, CreateColonyDocument } from '~data/index';
+import {
+  CreateUserDocument,
+  CreateColonyDocument,
+  getLoggedInUser,
+} from '~data/index';
 
 import { TxConfig } from '../../core/types';
 import {

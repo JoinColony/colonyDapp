@@ -16,8 +16,7 @@ import {
 } from '~core/Fields';
 import Button from '~core/Button';
 import ProfileTemplate from '~pages/ProfileTemplate';
-import { useLoggedInUser } from '~data/helpers';
-import { EditUserDocument, UserDocument } from '~data/index';
+import { useLoggedInUser, EditUserDocument, UserDocument } from '~data/index';
 
 import UserProfileSpinner from '../UserProfile/UserProfileSpinner';
 import Sidebar from './Sidebar';

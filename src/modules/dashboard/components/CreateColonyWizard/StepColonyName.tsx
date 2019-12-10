@@ -12,7 +12,7 @@ import { Tooltip } from '~core/Popover';
 import { ActionTypes } from '~redux/index';
 import { multiLineTextEllipsis } from '~utils/strings';
 import ENS from '~lib/ENS';
-import { useLoggedInUser } from '~data/helpers';
+import { useLoggedInUser } from '~data/index';
 
 import styles from './StepColonyName.css';
 
