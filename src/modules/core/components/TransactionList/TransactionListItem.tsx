@@ -82,18 +82,13 @@ const TransactionListItem = ({
     [tokenAddress],
   );
 
-  /**
-   * @todo Support fetching of tasks by `taskId`
-   * */
-  // const { data: task } = useDataSubscriber(
-  //   taskSubscriber,
-  //   [taskId],
-  //   [taskId],
-  // );
   const transform = useCallback(mergePayload({ colonyAddress, tokenAddress }), [
     colonyAddress,
     tokenAddress,
   ]);
+
+  // @TODO: use proper preloader
+  if (!token || !user) return null;
 
   return (
     <TableRow className={styles.main}>

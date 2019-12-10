@@ -1,7 +1,7 @@
 import React, { ReactNode } from 'react';
 
 import { Address } from '~types/index';
-import { User } from '~data/index';
+import { AnyUser } from '~data/index';
 
 import { Tooltip } from '~core/Popover';
 import UserMention from '~core/UserMention';
@@ -15,7 +15,7 @@ interface Props {
   /** Children elemnts or components to wrap the tooltip around */
   children?: ReactNode;
   /** The address */
-  user: User;
+  user: AnyUser;
   /** How the popover gets triggered */
   trigger?: 'hover' | 'click' | 'disabled';
 }
