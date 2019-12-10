@@ -1,16 +1,12 @@
 import React from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 
-import {
-  ColonyType,
-  ContractTransactionType,
-  TaskType,
-} from '~immutable/index';
+import { ContractTransactionType, TaskType } from '~immutable/index';
 import { useDataSubscriber } from '~utils/hooks';
 import MaskedAddress from '~core/MaskedAddress';
 import Link from '~core/Link';
 import { Address, ENSName } from '~types/index';
-import { User } from '~data/index';
+import { User, AnyColony } from '~data/index';
 
 import { colonySubscriber } from '../../../dashboard/subscribers';
 
@@ -46,7 +42,7 @@ interface Props {
 }
 
 interface HookedProps extends Props {
-  colony?: ColonyType;
+  colony?: AnyColony;
 }
 
 const UserDetails = ({
@@ -81,7 +77,7 @@ const ColonyDetails = ({
   address = colonyAddress,
   showMaskedAddress,
 }: {
-  colony: ColonyType;
+  colony: AnyColony;
   address?: Address;
   showMaskedAddress?: boolean;
 }) => (
@@ -192,7 +188,7 @@ const OutgoingTransaction = ({
   transaction: { from, to },
   user,
 }: Props & {
-  colony?: ColonyType;
+  colony?: AnyColony;
 }) => (
   <div>
     <p className={styles.primaryText}>
