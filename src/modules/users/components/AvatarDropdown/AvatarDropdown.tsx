@@ -2,7 +2,7 @@ import React from 'react';
 
 import Popover from '~core/Popover';
 import HookedUserAvatar from '~users/HookedUserAvatar';
-import { useLoggedInUser } from '~data/helpers';
+import { useLoggedInUser } from '~data/index';
 
 import AvatarDropdownPopover from './AvatarDropdownPopover';
 

@@ -2,7 +2,7 @@ import compose from 'recompose/compose';
 import { ComponentType } from 'react';
 
 import { withWizard } from '~core/Wizard';
-import { withLoggedInUser } from '~data/helpers';
+import { withLoggedInUser } from '~data/index';
 
 // @ts-ignore
 import CreateUser from './CreateUserWizard.tsx';

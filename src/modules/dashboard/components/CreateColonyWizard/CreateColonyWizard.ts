@@ -4,7 +4,7 @@ import compose from 'recompose/compose';
 
 import WizardTemplate from '~pages/WizardTemplateColony';
 import { StepsFn, StepType } from '~core/Wizard/withWizard';
-import { withLoggedInUser } from '~data/helpers';
+import { withLoggedInUser } from '~data/index';
 
 import { withWizard } from '../../../core/components/Wizard';
 import StepTokenChoice from './StepTokenChoice';

@@ -5,7 +5,7 @@ import Alert from '~core/Alert';
 import HistoryNavigation from './HistoryNavigation';
 import UserNavigation from './UserNavigation';
 import { getMainClasses } from '~utils/css';
-import { useLoggedInUser } from '~data/helpers';
+import { useLoggedInUser } from '~data/index';
 
 import styles from './NavigationWrapper.css';
 

@@ -9,7 +9,7 @@ import { SpinnerLoader } from '~core/Preloaders';
 import TimeRelative from '~core/TimeRelative';
 import TransactionLink from '~core/TransactionLink';
 import { useDataFetcher, useSelector } from '~utils/hooks';
-import { useUser } from '~data/helpers';
+import { useUser } from '~data/index';
 
 import { tokenFetcher } from '../../fetchers';
 import { getFriendlyName } from '../../../users/transformers';

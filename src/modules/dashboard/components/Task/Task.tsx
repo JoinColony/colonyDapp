@@ -27,7 +27,7 @@ import TaskFeed from '~dashboard/TaskFeed';
 import TaskRequestWork from '~dashboard/TaskRequestWork';
 import TaskSkills from '~dashboard/TaskSkills';
 import TaskTitle from '~dashboard/TaskTitle';
-import { useLoggedInUser } from '~data/helpers';
+import { useLoggedInUser } from '~data/index';
 
 import {
   canCancelTask,

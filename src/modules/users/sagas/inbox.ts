@@ -7,8 +7,9 @@ import { executeQuery, putError } from '~utils/saga/effects';
 import {
   ColonySubscribedUsersDocument,
   UserColonyIdsQueryResult,
+  getLoggedInUser,
 } from '~data/index';
-import { getLoggedInUser } from '~data/helpers';
+
 import { getUserInboxActivity } from '../data/queries';
 
 function* inboxItemsFetch() {

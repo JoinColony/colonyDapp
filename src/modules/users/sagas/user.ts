@@ -16,8 +16,8 @@ import { ZERO_ADDRESS } from '~utils/web3/constants';
 import { Action, ActionTypes, AllActions } from '~redux/index';
 import { getContext, Context } from '~context/index';
 import ENS from '~lib/ENS';
-import { getLoggedInUser } from '~data/helpers';
 import {
+  getLoggedInUser,
   CreateUserDocument,
   EditUserDocument,
   ColonySubscribedUsersDocument,

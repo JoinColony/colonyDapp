@@ -12,7 +12,7 @@ import Button from '~core/Button';
 import DialogSection from '~core/Dialog/DialogSection';
 import { Select, Input, FormStatus } from '~core/Fields';
 import Heading from '~core/Heading';
-import { useLoggedInUser } from '~data/helpers';
+import { useLoggedInUser } from '~data/index';
 
 import { getUserRoles } from '../../../transformers';
 import { domainsAndRolesFetcher } from '../../../dashboard/fetchers';

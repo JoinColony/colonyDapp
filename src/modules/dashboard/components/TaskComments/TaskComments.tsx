@@ -12,7 +12,7 @@ import { ActionForm, TextareaAutoresize } from '~core/Fields';
 import { OnSuccess } from '~core/Fields/Form/ActionForm';
 import Button from '~core/Button';
 import unfinishedProfileOpener from '~users/UnfinishedProfile';
-import { useLoggedInUser } from '~data/helpers';
+import { useLoggedInUser } from '~data/index';
 
 import styles from './TaskComments.css';
 
