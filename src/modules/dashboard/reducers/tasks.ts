@@ -36,11 +36,6 @@ const taskEventReducer = (
       );
     }
 
-    case EventTypes.WORK_REQUEST_CREATED: {
-      const { workerAddress } = event.payload;
-      return task.update('requests', requests => requests.add(workerAddress));
-    }
-
     default:
       return task;
   }

@@ -10,9 +10,7 @@ export default function loadModule(): PermissionsManifest<{
   return {
     COMMENT_STORE_CREATED: { inherits: 'create-task' },
     TASK_CREATED: { inherits: 'create-task' },
-    WORK_REQUEST_CREATED: { inherits: 'send-task-work-request' },
     'create-task': { inherits: 'is-admin' },
-    'send-task-work-request': async () => true,
     'update-task': { inherits: 'is-admin' },
   };
 }

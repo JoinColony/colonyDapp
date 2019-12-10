@@ -44,7 +44,6 @@ import {
 import { createTransaction, getTxChannel, signMessage } from '../../core/sagas';
 
 import {
-  createWorkRequest,
   postComment,
 } from '../data/commands';
 import {
@@ -219,36 +218,6 @@ function* taskFinalize({
     });
   } catch (error) {
     return yield putError(ActionTypes.TASK_FINALIZE_ERROR, error, meta);
-  }
-  return null;
-}
-
-function* taskSendWorkRequest({
-  payload: { colonyAddress, draftId },
-  meta,
-}: Action<ActionTypes.TASK_SEND_WORK_REQUEST>) {
-  try {
-    const { walletAddress } = yield getLoggedInUser();
-    const { event } = yield executeCommand(createWorkRequest, {
-      args: { workerAddress: walletAddress },
-      metadata: { colonyAddress, draftId },
-    });
-
-    yield put<AllActions>({
-      type: ActionTypes.TASK_SEND_WORK_REQUEST_SUCCESS,
-      payload: {
-        colonyAddress,
-        draftId,
-        event,
-      },
-      meta,
-    });
-  } catch (error) {
-    return yield putError(
-      ActionTypes.TASK_SEND_WORK_REQUEST_ERROR,
-      error,
-      meta,
-    );
   }
   return null;
 }
@@ -462,7 +431,6 @@ export default function* tasksSagas() {
   yield takeEvery(ActionTypes.TASK_CREATE, taskCreate);
   yield takeEvery(ActionTypes.TASK_FEED_ITEMS_SUB_START, taskFeedItemsSubStart);
   yield takeEvery(ActionTypes.TASK_FINALIZE, taskFinalize);
-  yield takeEvery(ActionTypes.TASK_SEND_WORK_REQUEST, taskSendWorkRequest);
   yield takeEvery(ActionTypes.TASK_SUB_START, taskSubStart);
   yield takeEvery(
     ActionTypes.TASK_SET_WORKER_OR_PAYOUT,
