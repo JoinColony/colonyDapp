@@ -7,9 +7,10 @@ import {
 import React from 'react';
 import { RouteComponentProps, withRouter } from 'react-router-dom';
 import compose from 'recompose/compose';
+import BigNumber from 'bn.js';
 
 import { Address } from '~types/index';
-import { TaskType } from '~immutable/index';
+import { AnyTask } from '~data/index';
 import { useDataFetcher } from '~utils/hooks';
 import { colonyNameFetcher } from '../../fetchers';
 import { TableRow, TableCell } from '~core/Table';
@@ -37,7 +38,7 @@ interface Props {
   data: {
     key: string;
     entry: [Address, string];
-    data: TaskType | void;
+    data: AnyTask | void;
     isFetching: boolean;
     error: boolean;
   };
@@ -61,11 +62,15 @@ const TaskListItem = ({
   } = data;
   const defaultTitle = formatMessage(MSG.untitled);
   const {
-    workerAddress = undefined,
-    payouts = [],
-    reputation = undefined,
+    assignedWorker,
     title = defaultTitle,
   } = task || {};
+
+  // @todo get payouts from centralized store
+  const payouts = [];
+
+  // @todo get reputation from centralized store
+  let reputation: BigNumber | undefined;
 
   const { data: colonyName, isFetching: isFetchingColonyName } = useDataFetcher(
     colonyNameFetcher,
@@ -96,14 +101,14 @@ const TaskListItem = ({
     <TableRow className={styles.globalLink} onClick={() => handleClick()}>
       <TableCell className={styles.taskDetails}>
         <p className={styles.taskDetailsTitle}>{title || defaultTitle}</p>
-        {reputation ? (
+        {!!reputation && (
           <span className={styles.taskDetailsReputation}>
             <FormattedMessage
               {...MSG.reputation}
               values={{ reputation: reputation.toString() }}
             />
           </span>
-        ) : null}
+        )}
       </TableCell>
       <TableCell className={styles.taskPayouts}>
         {!!availableTokens && (
@@ -115,7 +120,7 @@ const TaskListItem = ({
         )}
       </TableCell>
       <TableCell className={styles.userAvatar}>
-        {workerAddress && <UserAvatar size="s" address={workerAddress} />}
+        {assignedWorker && <UserAvatar size="s" address={assignedWorker.id} />}
       </TableCell>
     </TableRow>
   );
