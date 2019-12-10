@@ -1,43 +1,41 @@
 /* This file is already part of apollo data. Don't delete */
 import { useEffect } from 'react';
 import ApolloClient from 'apollo-client';
-import { useQuery, useLazyQuery } from '@apollo/react-hooks';
 import { graphql, DataValue } from '@apollo/react-hoc';
 import { getContext } from 'redux-saga/effects';
 
 import { Context } from '~context/index';
 import { Address } from '~types/index';
-import { LoggedInUser, User } from '~data/index';
 
-import { LoggedInUserDocument, UserDocument } from './index';
+import {
+  LoggedInUserDocument,
+  LoggedInUserQuery,
+  useLoggedInUserQuery,
+  useUserLazyQuery,
+  useUserQuery,
+  UserQuery,
+} from './index';
 
-const getMinimalUser = address => ({
+const getMinimalUser = (address: string): UserQuery['user'] => ({
   id: address,
   profile: { walletAddress: address },
-  colonies: [],
-  tasks: [],
-  createdAt: 0,
-  colonyAddresses: [],
-  taskIds: [],
-  tokens: [],
-  tokenRefs: [],
 });
 
-// FIXME put these into the modules where they belong alongside with the queries and types
-export const useUser = (address: Address): User => {
-  const { data } = useQuery(UserDocument, { variables: { address } }) as {
-    data?: { user: User };
-  };
+// FIXME_NOW: use generated code for this (all of the helpers in this file)
+export const useUser = (address: Address) => {
+  const { data } = useUserQuery({ variables: { address } });
   return data ? data.user : getMinimalUser(address);
 };
 
 // FIXME error handling
-export const useUserLazy = (address?: Address): User | undefined => {
-  const [loadUser, { data }] = useLazyQuery(UserDocument, {
-    variables: { address },
-  });
+export const useUserLazy = (address?: Address) => {
+  const [loadUser, { data }] = useUserLazyQuery();
   useEffect(() => {
-    if (address) loadUser();
+    if (address) {
+      loadUser({
+        variables: { address },
+      });
+    }
   }, [address, loadUser]);
   if (!address) return undefined;
   return data ? data.user : getMinimalUser(address);
@@ -49,9 +47,9 @@ export const useUserLazy = (address?: Address): User | undefined => {
 export const useLoggedInUser = () => {
   const {
     data: { loggedInUser },
-  } = useQuery(LoggedInUserDocument) as {
+  } = useLoggedInUserQuery() as {
     data: {
-      loggedInUser: LoggedInUser;
+      loggedInUser: LoggedInUserQuery['loggedInUser'];
     };
   };
   return loggedInUser;
@@ -67,7 +65,7 @@ export function* getLoggedInUser() {
     data: { loggedInUser },
   } = result as {
     data: {
-      loggedInUser: LoggedInUser;
+      loggedInUser: LoggedInUserQuery['loggedInUser'];
     };
   };
   return loggedInUser;
@@ -79,9 +77,11 @@ export function* getLoggedInUser() {
 // we are obligated to use a hoc here, which is unfortunate. We should change that
 export const withLoggedInUser = graphql(LoggedInUserDocument, {
   props: ({ data }) => {
-    const mappedData = data as DataValue<{ loggedInUser: LoggedInUser }>;
+    const mappedData = data as DataValue<{
+      loggedInUser: LoggedInUserQuery['loggedInUser'];
+    }>;
     return {
-      loggedInUser: mappedData.loggedInUser as LoggedInUser,
+      loggedInUser: mappedData.loggedInUser,
     };
   },
 });

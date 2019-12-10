@@ -5,13 +5,13 @@ import ColonyGrid from '~dashboard/ColonyGrid';
 import Link from '~core/Link';
 import { CREATE_COLONY_ROUTE } from '~routes/index';
 import { useLoggedInUser } from '~data/helpers';
-import { User, useUserColonyIdsQuery } from '~data/index';
+import { AnyUser, useUserColonyIdsQuery } from '~data/index';
 
 import { getFriendlyName } from '../../transformers';
 import styles from './UserColonies.css';
 
 interface Props {
-  user: User;
+  user: AnyUser;
 }
 
 const MSG = defineMessages({
