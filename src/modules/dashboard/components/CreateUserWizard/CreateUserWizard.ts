@@ -12,7 +12,7 @@ import StepConfirmTransaction from './StepConfirmTransaction';
 const wizardSteps = [StepUserName, StepConfirmTransaction];
 
 const steps = (step: number, formValues: any, props: any) => {
-  if (props && props.currentUser && props.currentUser.username) {
+  if (props && props.loggedInUser && props.loggedInUser.username) {
     return StepConfirmTransaction as ComponentType<any>;
   }
   return wizardSteps[step] as ComponentType<any>;
