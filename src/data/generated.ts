@@ -691,6 +691,9 @@ export type AssignWorkerMutation = (
     & { assignedWorker: Maybe<(
       { __typename?: 'User' }
       & Pick<User, 'id'>
+    )>, events: Array<(
+      { __typename?: 'Event' }
+      & Pick<Event, 'sourceId' | 'sourceType'>
     )> }
   )> }
 );
@@ -704,7 +707,11 @@ export type CancelTaskMutation = (
   { __typename?: 'Mutation' }
   & { cancelTask: Maybe<(
     { __typename?: 'Task' }
-    & Pick<Task, 'id'>
+    & Pick<Task, 'id' | 'cancelledAt'>
+    & { events: Array<(
+      { __typename?: 'Event' }
+      & Pick<Event, 'sourceId' | 'sourceType'>
+    )> }
   )> }
 );
 
@@ -718,6 +725,10 @@ export type CreateTaskMutation = (
   & { createTask: Maybe<(
     { __typename?: 'Task' }
     & Pick<Task, 'id'>
+    & { events: Array<(
+      { __typename?: 'Event' }
+      & Pick<Event, 'sourceId' | 'sourceType'>
+    )> }
   )> }
 );
 
@@ -731,7 +742,10 @@ export type CreateWorkRequestMutation = (
   & { createWorkRequest: Maybe<(
     { __typename?: 'Task' }
     & Pick<Task, 'id'>
-    & { workRequests: Array<(
+    & { events: Array<(
+      { __typename?: 'Event' }
+      & Pick<Event, 'sourceId' | 'sourceType'>
+    )>, workRequests: Array<(
       { __typename?: 'User' }
       & Pick<User, 'id'>
     )> }
@@ -747,7 +761,11 @@ export type FinalizeTaskMutation = (
   { __typename?: 'Mutation' }
   & { finalizeTask: Maybe<(
     { __typename?: 'Task' }
-    & Pick<Task, 'id'>
+    & Pick<Task, 'id' | 'finalizedAt'>
+    & { events: Array<(
+      { __typename?: 'Event' }
+      & Pick<Event, 'sourceId' | 'sourceType'>
+    )> }
   )> }
 );
 
@@ -761,6 +779,10 @@ export type RemoveTaskPayoutMutation = (
   & { removeTaskPayout: Maybe<(
     { __typename?: 'Task' }
     & Pick<Task, 'id'>
+    & { events: Array<(
+      { __typename?: 'Event' }
+      & Pick<Event, 'sourceId' | 'sourceType'>
+    )> }
   )> }
 );
 
@@ -774,7 +796,10 @@ export type SendWorkInviteMutation = (
   & { sendWorkInvite: Maybe<(
     { __typename?: 'Task' }
     & Pick<Task, 'id'>
-    & { workInvites: Array<(
+    & { events: Array<(
+      { __typename?: 'Event' }
+      & Pick<Event, 'sourceId' | 'sourceType'>
+    )>, workInvites: Array<(
       { __typename?: 'User' }
       & Pick<User, 'id'>
     )> }
@@ -791,6 +816,10 @@ export type SetTaskDomainMutation = (
   & { setTaskDomain: Maybe<(
     { __typename?: 'Task' }
     & Pick<Task, 'id' | 'ethDomainId'>
+    & { events: Array<(
+      { __typename?: 'Event' }
+      & Pick<Event, 'sourceId' | 'sourceType'>
+    )> }
   )> }
 );
 
@@ -804,6 +833,10 @@ export type SetTaskDescriptionMutation = (
   & { setTaskDescription: Maybe<(
     { __typename?: 'Task' }
     & Pick<Task, 'id' | 'description'>
+    & { events: Array<(
+      { __typename?: 'Event' }
+      & Pick<Event, 'sourceId' | 'sourceType'>
+    )> }
   )> }
 );
 
@@ -817,6 +850,10 @@ export type SetTaskDueDateMutation = (
   & { setTaskDueDate: Maybe<(
     { __typename?: 'Task' }
     & Pick<Task, 'id' | 'dueDate'>
+    & { events: Array<(
+      { __typename?: 'Event' }
+      & Pick<Event, 'sourceId' | 'sourceType'>
+    )> }
   )> }
 );
 
@@ -829,7 +866,7 @@ export type SetTaskPayoutMutation = (
   { __typename?: 'Mutation' }
   & { setTaskPayout: Maybe<(
     { __typename?: 'Task' }
-    & Pick<Task, 'id' | 'ethDomainId'>
+    & Pick<Task, 'id'>
   )> }
 );
 
@@ -843,6 +880,10 @@ export type SetTaskSkillMutation = (
   & { setTaskSkill: Maybe<(
     { __typename?: 'Task' }
     & Pick<Task, 'id' | 'ethSkillId'>
+    & { events: Array<(
+      { __typename?: 'Event' }
+      & Pick<Event, 'sourceId' | 'sourceType'>
+    )> }
   )> }
 );
 
@@ -856,6 +897,10 @@ export type SetTaskTitleMutation = (
   & { setTaskTitle: Maybe<(
     { __typename?: 'Task' }
     & Pick<Task, 'id' | 'title'>
+    & { events: Array<(
+      { __typename?: 'Event' }
+      & Pick<Event, 'sourceId' | 'sourceType'>
+    )> }
   )> }
 );
 
@@ -872,6 +917,9 @@ export type UnassignWorkerMutation = (
     & { assignedWorker: Maybe<(
       { __typename?: 'User' }
       & Pick<User, 'id'>
+    )>, events: Array<(
+      { __typename?: 'Event' }
+      & Pick<Event, 'sourceId' | 'sourceType'>
     )> }
   )> }
 );
@@ -1092,6 +1140,10 @@ export const AssignWorkerDocument = gql`
     assignedWorker {
       id
     }
+    events {
+      sourceId
+      sourceType
+    }
   }
 }
     `;
@@ -1124,6 +1176,11 @@ export const CancelTaskDocument = gql`
     mutation CancelTask($input: TaskIdInput!) {
   cancelTask(input: $input) {
     id
+    cancelledAt
+    events {
+      sourceId
+      sourceType
+    }
   }
 }
     `;
@@ -1156,6 +1213,10 @@ export const CreateTaskDocument = gql`
     mutation CreateTask($input: CreateTaskInput!) {
   createTask(input: $input) {
     id
+    events {
+      sourceId
+      sourceType
+    }
   }
 }
     `;
@@ -1188,6 +1249,10 @@ export const CreateWorkRequestDocument = gql`
     mutation CreateWorkRequest($input: CreateWorkRequestInput!) {
   createWorkRequest(input: $input) {
     id
+    events {
+      sourceId
+      sourceType
+    }
     workRequests {
       id
     }
@@ -1223,6 +1288,11 @@ export const FinalizeTaskDocument = gql`
     mutation FinalizeTask($input: TaskIdInput!) {
   finalizeTask(input: $input) {
     id
+    events {
+      sourceId
+      sourceType
+    }
+    finalizedAt
   }
 }
     `;
@@ -1255,6 +1325,10 @@ export const RemoveTaskPayoutDocument = gql`
     mutation RemoveTaskPayout($input: RemoveTaskPayoutInput!) {
   removeTaskPayout(input: $input) {
     id
+    events {
+      sourceId
+      sourceType
+    }
   }
 }
     `;
@@ -1287,6 +1361,10 @@ export const SendWorkInviteDocument = gql`
     mutation SendWorkInvite($input: SendWorkInviteInput!) {
   sendWorkInvite(input: $input) {
     id
+    events {
+      sourceId
+      sourceType
+    }
     workInvites {
       id
     }
@@ -1323,6 +1401,10 @@ export const SetTaskDomainDocument = gql`
   setTaskDomain(input: $input) {
     id
     ethDomainId
+    events {
+      sourceId
+      sourceType
+    }
   }
 }
     `;
@@ -1356,6 +1438,10 @@ export const SetTaskDescriptionDocument = gql`
   setTaskDescription(input: $input) {
     id
     description
+    events {
+      sourceId
+      sourceType
+    }
   }
 }
     `;
@@ -1389,6 +1475,10 @@ export const SetTaskDueDateDocument = gql`
   setTaskDueDate(input: $input) {
     id
     dueDate
+    events {
+      sourceId
+      sourceType
+    }
   }
 }
     `;
@@ -1421,7 +1511,6 @@ export const SetTaskPayoutDocument = gql`
     mutation SetTaskPayout($input: SetTaskPayoutInput!) {
   setTaskPayout(input: $input) {
     id
-    ethDomainId
   }
 }
     `;
@@ -1455,6 +1544,10 @@ export const SetTaskSkillDocument = gql`
   setTaskSkill(input: $input) {
     id
     ethSkillId
+    events {
+      sourceId
+      sourceType
+    }
   }
 }
     `;
@@ -1487,6 +1580,10 @@ export const SetTaskTitleDocument = gql`
     mutation SetTaskTitle($input: SetTaskTitleInput!) {
   setTaskTitle(input: $input) {
     id
+    events {
+      sourceId
+      sourceType
+    }
     title
   }
 }
@@ -1522,6 +1619,10 @@ export const UnassignWorkerDocument = gql`
     id
     assignedWorker {
       id
+    }
+    events {
+      sourceId
+      sourceType
     }
   }
 }
