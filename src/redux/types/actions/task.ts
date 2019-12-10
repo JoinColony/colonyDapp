@@ -132,29 +132,11 @@ export type TaskActionTypes =
       ActionTypes.TASK_MANAGER_REVEAL_WORKER_RATING_SUCCESS,
       object
     >
-  | TaskActionType<ActionTypes.TASK_MODIFY_WORKER_PAYOUT, object>
-  | TaskErrorActionType<ActionTypes.TASK_MODIFY_WORKER_PAYOUT_ERROR>
-  | TaskActionType<ActionTypes.TASK_MODIFY_WORKER_PAYOUT_SUCCESS, object>
-  | TaskActionType<ActionTypes.TASK_REMOVE_PAYOUT, object>
-  | TaskErrorActionType<ActionTypes.TASK_REMOVE_PAYOUT_ERROR>
-  | TaskActionType<
-      ActionTypes.TASK_REMOVE_PAYOUT_SUCCESS,
-      { event: Event<EventTypes.PAYOUT_REMOVED> }
-    >
   | TaskActionType<ActionTypes.TASK_SEND_WORK_REQUEST, object>
   | TaskErrorActionType<ActionTypes.TASK_SEND_WORK_REQUEST_ERROR>
   | TaskActionType<
       ActionTypes.TASK_SEND_WORK_REQUEST_SUCCESS,
       { event: Event<EventTypes.WORK_REQUEST_CREATED> }
-    >
-  | TaskActionType<
-      ActionTypes.TASK_SET_PAYOUT,
-      { token: string; amount: BigNumber }
-    >
-  | TaskErrorActionType<ActionTypes.TASK_SET_PAYOUT_ERROR>
-  | TaskActionType<
-      ActionTypes.TASK_SET_PAYOUT_SUCCESS,
-      { event: Event<EventTypes.PAYOUT_SET> }
     >
   | NonUniqueTaskActionType<ActionTypes.TASK_SUB_START, object>
   | NonUniqueTaskActionType<ActionTypes.TASK_SUB_STOP, object>
@@ -171,25 +153,12 @@ export type TaskActionTypes =
       }
     >
   | TaskErrorActionType<ActionTypes.TASK_SET_WORKER_OR_PAYOUT_ERROR>
-  | TaskActionType<
-      ActionTypes.TASK_SET_WORKER_OR_PAYOUT_SUCCESS,
-      {
-        payouts?: { amount: BigNumber; token: string }[];
-        workerAddress?: Address;
-      }
+  | ActionType<
+      ActionTypes.TASK_SET_WORKER_OR_PAYOUT_SUCCESS
     >
   | TaskActionType<ActionTypes.TASK_SUBMIT_DELIVERABLE, object>
   | TaskErrorActionType<ActionTypes.TASK_SUBMIT_DELIVERABLE_ERROR>
   | TaskActionType<ActionTypes.TASK_SUBMIT_DELIVERABLE_SUCCESS, object>
-  | NonUniqueTaskActionType<
-      ActionTypes.TASK_WORKER_ASSIGN,
-      Required<TaskProps<'assignedWorker'>>
-    >
-  | TaskErrorActionType<ActionTypes.TASK_WORKER_ASSIGN_ERROR>
-  | NonUniqueTaskActionType<
-      ActionTypes.TASK_WORKER_ASSIGN_SUCCESS,
-      { event: Event<EventTypes.WORKER_ASSIGNED> }
-    >
   | TaskActionType<ActionTypes.TASK_WORKER_CLAIM_REWARD, object>
   | TaskErrorActionType<ActionTypes.TASK_WORKER_CLAIM_REWARD_ERROR>
   | TaskActionType<ActionTypes.TASK_WORKER_CLAIM_REWARD_SUCCESS, object>
@@ -204,13 +173,4 @@ export type TaskActionTypes =
   | TaskActionType<
       ActionTypes.TASK_WORKER_REVEAL_MANAGER_RATING_SUCCESS,
       object
-    >
-  | NonUniqueTaskActionType<
-      ActionTypes.TASK_WORKER_UNASSIGN,
-      Required<TaskProps<'assignedWorker'>>
-    >
-  | TaskErrorActionType<ActionTypes.TASK_WORKER_UNASSIGN_ERROR>
-  | NonUniqueTaskActionType<
-      ActionTypes.TASK_WORKER_UNASSIGN_SUCCESS,
-      { event: Event<EventTypes.WORKER_UNASSIGNED> }
     >;

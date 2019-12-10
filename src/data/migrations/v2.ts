@@ -26,11 +26,6 @@ export const V2Migrations: [
   Versions.V2,
   {
     [EventTypes.COMMENT_STORE_CREATED]: addRootDomain,
-    [EventTypes.PAYOUT_SET]: addRootDomain,
-    [EventTypes.PAYOUT_REMOVED]: addRootDomain,
-    [EventTypes.TASK_CREATED]: addRootDomain,
     [EventTypes.TASK_STORE_REGISTERED]: addRootDomain,
-    [EventTypes.WORKER_ASSIGNED]: addRootDomain,
-    [EventTypes.WORKER_UNASSIGNED]: addRootDomain,
   },
 ];
