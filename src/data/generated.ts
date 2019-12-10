@@ -757,6 +757,10 @@ export type EditUserMutation = (
   & { editUser: Maybe<(
     { __typename?: 'User' }
     & Pick<User, 'id'>
+    & { profile: (
+      { __typename?: 'UserProfile' }
+      & Pick<UserProfile, 'avatarHash' | 'bio' | 'displayName' | 'location' | 'website'>
+    ) }
   )> }
 );
 
@@ -1003,6 +1007,13 @@ export const EditUserDocument = gql`
     mutation EditUser($input: EditUserInput!) {
   editUser(input: $input) {
     id
+    profile {
+      avatarHash
+      bio
+      displayName
+      location
+      website
+    }
   }
 }
     `;

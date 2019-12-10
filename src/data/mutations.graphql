@@ -21,6 +21,13 @@ mutation CreateUser(
 mutation EditUser($input: EditUserInput!) {
   editUser(input: $input) {
     id
+    profile {
+      avatarHash
+      bio
+      displayName
+      location
+      website
+    }
   }
 }
 
