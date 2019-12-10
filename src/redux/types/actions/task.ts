@@ -5,7 +5,7 @@ import { CommentEvents } from '~data/types/CommentEvents';
 import { TaskEvents } from '~data/types/TaskEvents';
 
 import { Address, CurrentEvents } from '~types/index';
-import { Event, Task, TaskProps } from '~data/types';
+import { Task, TaskProps } from '~data/types';
 import {
   ActionTypes,
   ActionType,
@@ -13,7 +13,6 @@ import {
   ErrorActionType,
   UniqueActionType,
 } from '~redux/index';
-import { EventTypes } from '~data/constants';
 
 type TaskActionMeta = {
   key: string; // draftId
@@ -73,9 +72,8 @@ export type TaskActionTypes =
       }
     >
   | TaskErrorActionType<ActionTypes.TASK_COMMENT_ADD_ERROR>
-  | TaskActionType<
-      ActionTypes.TASK_COMMENT_ADD_SUCCESS,
-      { event: Event<EventTypes.COMMENT_POSTED> }
+  | ActionType<
+      ActionTypes.TASK_COMMENT_ADD_SUCCESS
     >
   | UniqueActionType<
       ActionTypes.TASK_CREATE,
