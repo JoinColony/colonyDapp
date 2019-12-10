@@ -6,7 +6,7 @@ import flatten from 'lodash/flatten';
 import BigNumber from 'bn.js';
 import { formatEther } from 'ethers/utils';
 
-import { Address, createAddress } from '~types/index';
+import { Address } from '~types/index';
 import {
   ColonyClient,
   ColonyManager,
@@ -29,11 +29,7 @@ import {
   mapTopics,
   parseUserTransferEvent,
 } from '~utils/web3/eventLogs';
-import {
-  decorateColonyEventPayload,
-  getExtensionAddresses,
-  getUserAddressByUsername,
-} from './utils';
+import { decorateColonyEventPayload, getExtensionAddresses } from './utils';
 
 interface UserProfileStoreMetadata {
   walletAddress: Address;
@@ -118,36 +114,6 @@ export const getUserBalance: Query<
     } = networkClient;
     const balance = await provider.getBalance(walletAddress);
     return formatEther(balance);
-  },
-};
-
-export const getUserAddress: Query<
-  { ens: ENSCache; networkClient: NetworkClient },
-  void,
-  { username: string },
-  Address
-> = {
-  name: 'getUserAddress',
-  context: [Context.COLONY_MANAGER, Context.ENS_INSTANCE],
-  async prepare({
-    colonyManager: { networkClient },
-    ens,
-  }: {
-    colonyManager: ColonyManager;
-    ens: ENSCache;
-  }) {
-    return { ens, networkClient };
-  },
-  async execute({ ens, networkClient }, { username }) {
-    const userAddress = await getUserAddressByUsername(ens, networkClient)(
-      username,
-    );
-
-    if (!userAddress) {
-      throw new Error(`Address not found for username "${username}"`);
-    }
-
-    return createAddress(userAddress);
   },
 };
 
