@@ -33,7 +33,6 @@ export type AddUserTokenReferenceInput = {
 };
 
 export type AssignWorkerEvent = TaskEvent & {
-   __typename?: 'AssignWorkerEvent',
   type: Scalars['String'],
   taskId: Scalars['String'],
   workerAddress: Scalars['String'],
@@ -50,13 +49,11 @@ export enum CacheControlScope {
 }
 
 export type CancelTaskEvent = TaskEvent & {
-   __typename?: 'CancelTaskEvent',
   type: Scalars['String'],
   taskId: Scalars['String'],
 };
 
 export type Colony = {
-   __typename?: 'Colony',
   id: Scalars['String'],
   createdAt: Scalars['DateTime'],
   colonyAddress: Scalars['String'],
@@ -82,7 +79,6 @@ export type ColonyEvent = {
 };
 
 export type ColonyToken = IToken & {
-   __typename?: 'ColonyToken',
   id: Scalars['String'],
   createdAt: Scalars['DateTime'],
   address: Scalars['String'],
@@ -94,7 +90,6 @@ export type ColonyToken = IToken & {
 };
 
 export type ColonyTokenRef = {
-   __typename?: 'ColonyTokenRef',
   address: Scalars['String'],
   isExternal?: Maybe<Scalars['Boolean']>,
   isNative?: Maybe<Scalars['Boolean']>,
@@ -113,7 +108,6 @@ export type CreateColonyInput = {
 };
 
 export type CreateDomainEvent = ColonyEvent & {
-   __typename?: 'CreateDomainEvent',
   type: Scalars['String'],
   ethDomainId: Scalars['String'],
   colonyAddress: Scalars['String'],
@@ -127,7 +121,6 @@ export type CreateDomainInput = {
 };
 
 export type CreateTaskEvent = TaskEvent & {
-   __typename?: 'CreateTaskEvent',
   type: Scalars['String'],
   taskId: Scalars['String'],
   ethDomainId: Scalars['String'],
@@ -152,7 +145,6 @@ export type CreateUserInput = {
 };
 
 export type CreateWorkRequestEvent = TaskEvent & {
-   __typename?: 'CreateWorkRequestEvent',
   type: Scalars['String'],
   taskId: Scalars['String'],
 };
@@ -163,7 +155,6 @@ export type CreateWorkRequestInput = {
 
 
 export type Domain = {
-   __typename?: 'Domain',
   id: Scalars['String'],
   createdAt: Scalars['DateTime'],
   colonyAddress: Scalars['String'],
@@ -199,7 +190,6 @@ export type EditUserInput = {
 };
 
 export type Event = {
-   __typename?: 'Event',
   type: Scalars['String'],
   createdAt: Scalars['DateTime'],
   initiator?: Maybe<User>,
@@ -212,7 +202,6 @@ export type Event = {
 export type EventContext = AssignWorkerEvent | CancelTaskEvent | CreateDomainEvent | CreateTaskEvent | CreateWorkRequestEvent | FinalizeTaskEvent | RemoveTaskPayoutEvent | SendWorkInviteEvent | SetTaskDescriptionEvent | SetTaskDomainEvent | SetTaskDueDateEvent | SetTaskPayoutEvent | SetTaskSkillEvent | SetTaskTitleEvent | TaskMessageEvent | UnassignWorkerEvent;
 
 export type FinalizeTaskEvent = TaskEvent & {
-   __typename?: 'FinalizeTaskEvent',
   type: Scalars['String'],
   taskId: Scalars['String'],
 };
@@ -227,7 +216,6 @@ export type IToken = {
 };
 
 export type LoggedInUser = {
-   __typename?: 'LoggedInUser',
   id: Scalars['String'],
   balance: Scalars['String'],
   username?: Maybe<Scalars['String']>,
@@ -245,7 +233,6 @@ export type MarkNotificationAsReadInput = {
 };
 
 export type Mutation = {
-   __typename?: 'Mutation',
   createUser?: Maybe<User>,
   editUser?: Maybe<User>,
   subscribeToColony?: Maybe<User>,
@@ -436,13 +423,11 @@ export type MutationSetLoggedInUserArgs = {
 };
 
 export type Notification = {
-   __typename?: 'Notification',
   event: Event,
   read: Scalars['Boolean'],
 };
 
 export type Query = {
-   __typename?: 'Query',
   user: User,
   colony: Colony,
   domain: Domain,
@@ -478,7 +463,6 @@ export type QueryTokenArgs = {
 };
 
 export type RemoveTaskPayoutEvent = TaskEvent & {
-   __typename?: 'RemoveTaskPayoutEvent',
   type: Scalars['String'],
   taskId: Scalars['String'],
   tokenAddress: Scalars['String'],
@@ -499,7 +483,6 @@ export type SendTaskMessageInput = {
 };
 
 export type SendWorkInviteEvent = TaskEvent & {
-   __typename?: 'SendWorkInviteEvent',
   type: Scalars['String'],
   taskId: Scalars['String'],
   tokenAddress: Scalars['String'],
@@ -518,7 +501,6 @@ export type SetColonyTokenAvatarInput = {
 };
 
 export type SetTaskDescriptionEvent = TaskEvent & {
-   __typename?: 'SetTaskDescriptionEvent',
   type: Scalars['String'],
   taskId: Scalars['String'],
   description: Scalars['String'],
@@ -530,7 +512,6 @@ export type SetTaskDescriptionInput = {
 };
 
 export type SetTaskDomainEvent = TaskEvent & {
-   __typename?: 'SetTaskDomainEvent',
   type: Scalars['String'],
   taskId: Scalars['String'],
   ethDomainId: Scalars['String'],
@@ -542,7 +523,6 @@ export type SetTaskDomainInput = {
 };
 
 export type SetTaskDueDateEvent = TaskEvent & {
-   __typename?: 'SetTaskDueDateEvent',
   type: Scalars['String'],
   taskId: Scalars['String'],
   dueDate: Scalars['Int'],
@@ -554,7 +534,6 @@ export type SetTaskDueDateInput = {
 };
 
 export type SetTaskPayoutEvent = TaskEvent & {
-   __typename?: 'SetTaskPayoutEvent',
   type: Scalars['String'],
   taskId: Scalars['String'],
 };
@@ -567,7 +546,6 @@ export type SetTaskPayoutInput = {
 };
 
 export type SetTaskSkillEvent = TaskEvent & {
-   __typename?: 'SetTaskSkillEvent',
   type: Scalars['String'],
   taskId: Scalars['String'],
   ethSkillId: Scalars['Int'],
@@ -579,7 +557,6 @@ export type SetTaskSkillInput = {
 };
 
 export type SetTaskTitleEvent = TaskEvent & {
-   __typename?: 'SetTaskTitleEvent',
   type: Scalars['String'],
   taskId: Scalars['String'],
   title: Scalars['String'],
@@ -604,7 +581,6 @@ export type SubscribeToColonyInput = {
 };
 
 export type Task = {
-   __typename?: 'Task',
   id: Scalars['String'],
   createdAt: Scalars['DateTime'],
   ethTaskId?: Maybe<Scalars['Int']>,
@@ -638,14 +614,12 @@ export type TaskIdInput = {
 };
 
 export type TaskMessageEvent = TaskEvent & {
-   __typename?: 'TaskMessageEvent',
   type: Scalars['String'],
   taskId: Scalars['String'],
   message: Scalars['String'],
 };
 
 export type Token = IToken & {
-   __typename?: 'Token',
   id: Scalars['String'],
   createdAt: Scalars['DateTime'],
   address: Scalars['String'],
@@ -655,7 +629,6 @@ export type Token = IToken & {
 };
 
 export type UnassignWorkerEvent = TaskEvent & {
-   __typename?: 'UnassignWorkerEvent',
   type: Scalars['String'],
   taskId: Scalars['String'],
   workerAddress: Scalars['String'],
@@ -672,7 +645,6 @@ export type UnsubscribeFromColonyInput = {
 
 
 export type User = {
-   __typename?: 'User',
   id: Scalars['String'],
   createdAt: Scalars['DateTime'],
   profile: UserProfile,
@@ -691,7 +663,6 @@ export type UserNotificationsArgs = {
 };
 
 export type UserProfile = {
-   __typename?: 'UserProfile',
   username?: Maybe<Scalars['String']>,
   avatarHash?: Maybe<Scalars['String']>,
   bio?: Maybe<Scalars['String']>,
@@ -702,7 +673,6 @@ export type UserProfile = {
 };
 
 export type UserToken = IToken & {
-   __typename?: 'UserToken',
   id: Scalars['String'],
   createdAt: Scalars['DateTime'],
   address: Scalars['String'],
@@ -712,7 +682,6 @@ export type UserToken = IToken & {
 };
 
 export type UserTokenRef = {
-   __typename?: 'UserTokenRef',
   address: Scalars['String'],
   iconHash?: Maybe<Scalars['String']>,
 };
@@ -722,13 +691,7 @@ export type SetLoggedInUserMutationVariables = {
 };
 
 
-export type SetLoggedInUserMutation = (
-  { __typename?: 'Mutation' }
-  & { setLoggedInUser: (
-    { __typename?: 'LoggedInUser' }
-    & Pick<LoggedInUser, 'id'>
-  ) }
-);
+export type SetLoggedInUserMutation = { setLoggedInUser: Pick<LoggedInUser, 'id'> };
 
 export type CreateUserMutationVariables = {
   createUserInput: CreateUserInput,
@@ -736,203 +699,115 @@ export type CreateUserMutationVariables = {
 };
 
 
-export type CreateUserMutation = (
-  { __typename?: 'Mutation' }
-  & { createUser: Maybe<(
-    { __typename?: 'User' }
-    & Pick<User, 'id'>
-  )>, setLoggedInUser: (
-    { __typename?: 'LoggedInUser' }
-    & Pick<LoggedInUser, 'id'>
-  ) }
-);
+export type CreateUserMutation = { createUser: Maybe<Pick<User, 'id'>>, setLoggedInUser: Pick<LoggedInUser, 'id'> };
 
 export type EditUserMutationVariables = {
   input: EditUserInput
 };
 
 
-export type EditUserMutation = (
-  { __typename?: 'Mutation' }
-  & { editUser: Maybe<(
-    { __typename?: 'User' }
-    & Pick<User, 'id'>
-    & { profile: (
-      { __typename?: 'UserProfile' }
-      & Pick<UserProfile, 'avatarHash' | 'bio' | 'displayName' | 'location' | 'website'>
-    ) }
-  )> }
-);
+export type EditUserMutation = { editUser: Maybe<(
+    Pick<User, 'id'>
+    & { profile: Pick<UserProfile, 'avatarHash' | 'bio' | 'displayName' | 'location' | 'website'> }
+  )> };
 
 export type CreateColonyMutationVariables = {
   input: CreateColonyInput
 };
 
 
-export type CreateColonyMutation = (
-  { __typename?: 'Mutation' }
-  & { createColony: Maybe<(
-    { __typename?: 'Colony' }
-    & Pick<Colony, 'id' | 'colonyAddress' | 'colonyName' | 'avatarHash' | 'description' | 'displayName' | 'guideline' | 'website'>
-  )> }
-);
+export type CreateColonyMutation = { createColony: Maybe<Pick<Colony, 'id' | 'colonyAddress' | 'colonyName' | 'avatarHash' | 'description' | 'displayName' | 'guideline' | 'website'>> };
 
 export type EditColonyProfileMutationVariables = {
   input: EditColonyProfileInput
 };
 
 
-export type EditColonyProfileMutation = (
-  { __typename?: 'Mutation' }
-  & { editColonyProfile: Maybe<(
-    { __typename?: 'Colony' }
-    & Pick<Colony, 'id' | 'colonyName' | 'avatarHash' | 'description' | 'displayName' | 'guideline' | 'website'>
-  )> }
-);
+export type EditColonyProfileMutation = { editColonyProfile: Maybe<Pick<Colony, 'id' | 'colonyName' | 'avatarHash' | 'description' | 'displayName' | 'guideline' | 'website'>> };
 
 export type MarkNotificationAsReadMutationVariables = {
   input: MarkNotificationAsReadInput
 };
 
 
-export type MarkNotificationAsReadMutation = (
-  { __typename?: 'Mutation' }
-  & Pick<Mutation, 'markNotificationAsRead'>
-);
+export type MarkNotificationAsReadMutation = Pick<Mutation, 'markNotificationAsRead'>;
 
 export type MarkAllNotificationsAsReadMutationVariables = {};
 
 
-export type MarkAllNotificationsAsReadMutation = (
-  { __typename?: 'Mutation' }
-  & Pick<Mutation, 'markAllNotificationsAsRead'>
-);
+export type MarkAllNotificationsAsReadMutation = Pick<Mutation, 'markAllNotificationsAsRead'>;
 
 export type SubscribeToColonyMutationVariables = {
   input: SubscribeToColonyInput
 };
 
 
-export type SubscribeToColonyMutation = (
-  { __typename?: 'Mutation' }
-  & { subscribeToColony: Maybe<(
-    { __typename?: 'User' }
-    & Pick<User, 'id'>
-  )> }
-);
+export type SubscribeToColonyMutation = { subscribeToColony: Maybe<Pick<User, 'id'>> };
 
 export type UnsubscribeFromColonyMutationVariables = {
   input: UnsubscribeFromColonyInput
 };
 
 
-export type UnsubscribeFromColonyMutation = (
-  { __typename?: 'Mutation' }
-  & { unsubscribeFromColony: Maybe<(
-    { __typename?: 'User' }
-    & Pick<User, 'id'>
-  )> }
-);
+export type UnsubscribeFromColonyMutation = { unsubscribeFromColony: Maybe<Pick<User, 'id'>> };
 
 export type LoggedInUserQueryVariables = {};
 
 
-export type LoggedInUserQuery = (
-  { __typename?: 'Query' }
-  & { loggedInUser: (
-    { __typename?: 'LoggedInUser' }
-    & Pick<LoggedInUser, 'walletAddress' | 'balance' | 'username'>
-  ) }
-);
+export type LoggedInUserQuery = { loggedInUser: Pick<LoggedInUser, 'walletAddress' | 'balance' | 'username'> };
 
 export type UserQueryVariables = {
   address: Scalars['String']
 };
 
 
-export type UserQuery = (
-  { __typename?: 'Query' }
-  & { user: (
-    { __typename?: 'User' }
-    & Pick<User, 'id'>
-    & { profile: (
-      { __typename?: 'UserProfile' }
-      & Pick<UserProfile, 'username' | 'walletAddress' | 'displayName' | 'bio' | 'location' | 'website' | 'avatarHash'>
-    ) }
-  ) }
-);
+export type UserQuery = { user: (
+    Pick<User, 'id'>
+    & { profile: Pick<UserProfile, 'username' | 'walletAddress' | 'displayName' | 'bio' | 'location' | 'website' | 'avatarHash'> }
+  ) };
 
 export type ColonyQueryVariables = {
   address: Scalars['String']
 };
 
 
-export type ColonyQuery = (
-  { __typename?: 'Query' }
-  & { colony: (
-    { __typename?: 'Colony' }
-    & Pick<Colony, 'id' | 'colonyAddress' | 'colonyName' | 'avatarHash' | 'description' | 'displayName' | 'guideline' | 'website'>
-    & { tokens: Array<(
-      { __typename?: 'ColonyToken' }
-      & Pick<ColonyToken, 'address' | 'name' | 'symbol' | 'iconHash'>
-    )> }
-  ) }
-);
+export type ColonyQuery = { colony: (
+    Pick<Colony, 'id' | 'colonyAddress' | 'colonyName' | 'avatarHash' | 'description' | 'displayName' | 'guideline' | 'website'>
+    & { tokens: Array<Pick<ColonyToken, 'address' | 'name' | 'symbol' | 'iconHash'>> }
+  ) };
 
 export type UserTaskIdsQueryVariables = {
   address: Scalars['String']
 };
 
 
-export type UserTaskIdsQuery = (
-  { __typename?: 'Query' }
-  & { user: (
-    { __typename?: 'User' }
-    & Pick<User, 'id'>
-    & { tasks: Array<(
-      { __typename?: 'Task' }
-      & Pick<Task, 'id'>
-    )> }
-  ) }
-);
+export type UserTaskIdsQuery = { user: (
+    Pick<User, 'id'>
+    & { tasks: Array<Pick<Task, 'id'>> }
+  ) };
 
 export type UserColonyIdsQueryVariables = {
   address: Scalars['String']
 };
 
 
-export type UserColonyIdsQuery = (
-  { __typename?: 'Query' }
-  & { user: (
-    { __typename?: 'User' }
-    & Pick<User, 'id'>
-    & { colonies: Array<(
-      { __typename?: 'Colony' }
-      & Pick<Colony, 'id'>
-    )> }
-  ) }
-);
+export type UserColonyIdsQuery = { user: (
+    Pick<User, 'id'>
+    & { colonies: Array<Pick<Colony, 'id'>> }
+  ) };
 
 export type ColonySubscribedUsersQueryVariables = {
   colonyAddress: Scalars['String']
 };
 
 
-export type ColonySubscribedUsersQuery = (
-  { __typename?: 'Query' }
-  & { colony: (
-    { __typename?: 'Colony' }
-    & Pick<Colony, 'id'>
+export type ColonySubscribedUsersQuery = { colony: (
+    Pick<Colony, 'id'>
     & { subscribedUsers: Array<(
-      { __typename?: 'User' }
-      & Pick<User, 'id'>
-      & { profile: (
-        { __typename?: 'UserProfile' }
-        & Pick<UserProfile, 'avatarHash' | 'displayName' | 'username' | 'walletAddress'>
-      ) }
+      Pick<User, 'id'>
+      & { profile: Pick<UserProfile, 'avatarHash' | 'displayName' | 'username' | 'walletAddress'> }
     )> }
-  ) }
-);
+  ) };
 
 
 export const SetLoggedInUserDocument = gql`
