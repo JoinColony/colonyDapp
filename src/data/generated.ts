@@ -711,6 +711,13 @@ export type EditUserMutation = { editUser: Maybe<(
     & { profile: Pick<UserProfile, 'avatarHash' | 'bio' | 'displayName' | 'location' | 'website'> }
   )> };
 
+export type SetUserTokensMutationVariables = {
+  input: SetUserTokensInput
+};
+
+
+export type SetUserTokensMutation = { setUserTokens: Maybe<Pick<User, 'id' | 'tokens'>> };
+
 export type CreateColonyMutationVariables = {
   input: CreateColonyInput
 };
@@ -765,6 +772,13 @@ export type UserQuery = { user: (
     Pick<User, 'id'>
     & { profile: Pick<UserProfile, 'username' | 'walletAddress' | 'displayName' | 'bio' | 'location' | 'website' | 'avatarHash'> }
   ) };
+
+export type UserTokensQueryVariables = {
+  address: Scalars['String']
+};
+
+
+export type UserTokensQuery = { user: Pick<User, 'id' | 'tokens'> };
 
 export type ColonyQueryVariables = {
   address: Scalars['String']
@@ -917,6 +931,39 @@ export function useEditUserMutation(baseOptions?: ApolloReactHooks.MutationHookO
 export type EditUserMutationHookResult = ReturnType<typeof useEditUserMutation>;
 export type EditUserMutationResult = ApolloReactCommon.MutationResult<EditUserMutation>;
 export type EditUserMutationOptions = ApolloReactCommon.BaseMutationOptions<EditUserMutation, EditUserMutationVariables>;
+export const SetUserTokensDocument = gql`
+    mutation SetUserTokens($input: SetUserTokensInput!) {
+  setUserTokens(input: $input) {
+    id
+    tokens
+  }
+}
+    `;
+export type SetUserTokensMutationFn = ApolloReactCommon.MutationFunction<SetUserTokensMutation, SetUserTokensMutationVariables>;
+
+/**
+ * __useSetUserTokensMutation__
+ *
+ * To run a mutation, you first call `useSetUserTokensMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useSetUserTokensMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [setUserTokensMutation, { data, loading, error }] = useSetUserTokensMutation({
+ *   variables: {
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function useSetUserTokensMutation(baseOptions?: ApolloReactHooks.MutationHookOptions<SetUserTokensMutation, SetUserTokensMutationVariables>) {
+        return ApolloReactHooks.useMutation<SetUserTokensMutation, SetUserTokensMutationVariables>(SetUserTokensDocument, baseOptions);
+      }
+export type SetUserTokensMutationHookResult = ReturnType<typeof useSetUserTokensMutation>;
+export type SetUserTokensMutationResult = ApolloReactCommon.MutationResult<SetUserTokensMutation>;
+export type SetUserTokensMutationOptions = ApolloReactCommon.BaseMutationOptions<SetUserTokensMutation, SetUserTokensMutationVariables>;
 export const CreateColonyDocument = gql`
     mutation CreateColony($input: CreateColonyInput!) {
   createColony(input: $input) {
@@ -1193,6 +1240,40 @@ export function useUserLazyQuery(baseOptions?: ApolloReactHooks.LazyQueryHookOpt
 export type UserQueryHookResult = ReturnType<typeof useUserQuery>;
 export type UserLazyQueryHookResult = ReturnType<typeof useUserLazyQuery>;
 export type UserQueryResult = ApolloReactCommon.QueryResult<UserQuery, UserQueryVariables>;
+export const UserTokensDocument = gql`
+    query UserTokens($address: String!) {
+  user(address: $address) {
+    id
+    tokens
+  }
+}
+    `;
+
+/**
+ * __useUserTokensQuery__
+ *
+ * To run a query within a React component, call `useUserTokensQuery` and pass it any options that fit your needs.
+ * When your component renders, `useUserTokensQuery` returns an object from Apollo Client that contains loading, error, and data properties 
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useUserTokensQuery({
+ *   variables: {
+ *      address: // value for 'address'
+ *   },
+ * });
+ */
+export function useUserTokensQuery(baseOptions?: ApolloReactHooks.QueryHookOptions<UserTokensQuery, UserTokensQueryVariables>) {
+        return ApolloReactHooks.useQuery<UserTokensQuery, UserTokensQueryVariables>(UserTokensDocument, baseOptions);
+      }
+export function useUserTokensLazyQuery(baseOptions?: ApolloReactHooks.LazyQueryHookOptions<UserTokensQuery, UserTokensQueryVariables>) {
+          return ApolloReactHooks.useLazyQuery<UserTokensQuery, UserTokensQueryVariables>(UserTokensDocument, baseOptions);
+        }
+export type UserTokensQueryHookResult = ReturnType<typeof useUserTokensQuery>;
+export type UserTokensLazyQueryHookResult = ReturnType<typeof useUserTokensLazyQuery>;
+export type UserTokensQueryResult = ApolloReactCommon.QueryResult<UserTokensQuery, UserTokensQueryVariables>;
 export const ColonyDocument = gql`
     query Colony($address: String!) {
   colony(address: $address) {
