@@ -92,8 +92,6 @@ function* userAddressFetch({
       colonyManager.networkClient,
     );
 
-    console.log('saga', address);
-
     yield put({
       type: ActionTypes.USER_ADDRESS_FETCH_SUCCESS,
       payload: { userAddress: createAddress(address) },
