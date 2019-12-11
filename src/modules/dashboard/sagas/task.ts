@@ -1,12 +1,10 @@
 import ApolloClient from 'apollo-client';
-import nanoid from 'nanoid';
 import {
   all,
   call,
   fork,
   put,
   select,
-  take,
   takeEvery,
   takeLeading,
 } from 'redux-saga/effects';
@@ -30,7 +28,6 @@ import {
   executeCommand,
   putError,
   raceError,
-  executeSubscription,
   takeFrom,
 } from '~utils/saga/effects';
 import { generateUrlFriendlyId } from '~utils/strings';
@@ -44,13 +41,6 @@ import {
 } from '../selectors';
 import { createTransaction, getTxChannel, signMessage } from '../../core/sagas';
 
-import {
-  postComment,
-} from '../data/commands';
-import {
-  subscribeTaskFeedItems,
-  subscribeTask,
-} from '../data/queries';
 import { AllActions } from '../../../redux/types/actions';
 
 /*
@@ -302,90 +292,6 @@ function* taskSetWorkerOrPayouts({
   return null;
 }
 
-function* taskFeedItemsSubStart({
-  payload: { colonyAddress, draftId },
-  meta,
-}: any) {
-  let channel;
-  try {
-    channel = yield call(executeSubscription, subscribeTaskFeedItems, {
-      metadata: { colonyAddress, draftId },
-    });
-
-    yield fork(function* stopSubscription() {
-      yield take(
-        action =>
-          action.type === ActionTypes.TASK_FEED_ITEMS_SUB_STOP &&
-          action.payload.draftId === draftId,
-      );
-      channel.close();
-    });
-
-    while (true) {
-      const events = yield take(channel);
-      yield put({
-        type: ActionTypes.TASK_FEED_ITEMS_SUB_EVENTS,
-        meta,
-        payload: {
-          colonyAddress,
-          draftId,
-          events,
-        },
-      });
-    }
-  } catch (caughtError) {
-    return yield putError(
-      ActionTypes.TASK_FEED_ITEMS_SUB_ERROR,
-      caughtError,
-      meta,
-    );
-  } finally {
-    if (channel && typeof channel.close === 'function') {
-      channel.close();
-    }
-  }
-}
-
-function* taskSubStart({ payload: { colonyAddress, draftId }, meta }: any) {
-  // This could be generalised (it's very similar to the above function),
-  // but it's probably worth waiting to see, as this pattern will likely change
-  // as it gets used elsewhere.
-  let channel;
-  try {
-    channel = yield call(executeSubscription, subscribeTask, {
-      metadata: { colonyAddress, draftId },
-    });
-
-    yield fork(function* stopSubscription() {
-      yield take(
-        action =>
-          action.type === ActionTypes.TASK_SUB_STOP &&
-          action.payload.draftId === draftId,
-      );
-      channel.close();
-    });
-
-    while (true) {
-      const events = yield take(channel);
-      yield put({
-        type: ActionTypes.TASK_SUB_EVENTS,
-        meta,
-        payload: {
-          colonyAddress,
-          draftId,
-          events,
-        },
-      });
-    }
-  } catch (caughtError) {
-    return yield putError(ActionTypes.TASK_SUB_ERROR, caughtError, meta);
-  } finally {
-    if (channel && typeof channel.close === 'function') {
-      channel.close();
-    }
-  }
-}
-
 function* taskCommentAdd({
   payload: { author, colonyAddress, comment, draftId },
   meta,
@@ -427,9 +333,7 @@ function* taskCommentAdd({
 export default function* tasksSagas() {
   yield takeEvery(ActionTypes.TASK_COMMENT_ADD, taskCommentAdd);
   yield takeEvery(ActionTypes.TASK_CREATE, taskCreate);
-  yield takeEvery(ActionTypes.TASK_FEED_ITEMS_SUB_START, taskFeedItemsSubStart);
   yield takeEvery(ActionTypes.TASK_FINALIZE, taskFinalize);
-  yield takeEvery(ActionTypes.TASK_SUB_START, taskSubStart);
   yield takeEvery(
     ActionTypes.TASK_SET_WORKER_OR_PAYOUT,
     taskSetWorkerOrPayouts,

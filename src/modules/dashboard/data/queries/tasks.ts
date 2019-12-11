@@ -72,17 +72,3 @@ export const getTask: Query<TaskStore, TaskStoreMetadata, void, any> = {
     return taskStore.all().reduce(taskReducer, initialTask);
   },
 };
-
-export const subscribeTask: Subscription<
-  TaskStore,
-  TaskStoreMetadata,
-  any,
-  TaskEvents[]
-> = {
-  name: 'subscribeTask',
-  context: [Context.COLONY_MANAGER, Context.DDB_INSTANCE, Context.WALLET],
-  prepare: prepareTaskStoreQuery,
-  async execute(taskStore) {
-    return emitter => [taskStore.subscribe(emitter)];
-  },
-};

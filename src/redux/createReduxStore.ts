@@ -44,8 +44,6 @@ const subscriberMiddleware = createSubscriberMiddleware(
     ActionTypes.CONNECTION_STATS_SUB_START,
     ActionTypes.CONNECTION_STATS_SUB_STOP,
   ],
-  [ActionTypes.TASK_FEED_ITEMS_SUB_START, ActionTypes.TASK_FEED_ITEMS_SUB_STOP],
-  [ActionTypes.TASK_SUB_START, ActionTypes.TASK_SUB_STOP],
 );
 
 const composeEnhancer =

@@ -10,7 +10,7 @@ import { ReducerType, ActionTypes } from '~redux/index';
 import { TaskRecord, FetchableData, TaskPayout, Task } from '~immutable/index';
 import { withFetchableDataMap } from '~utils/reducers';
 import { EventTypes, TaskStates } from '~data/constants';
-import { AllCurrentEvents, createAddress } from '~types/index';
+import { AllCurrentEvents } from '~types/index';
 
 import { TasksMap } from '../state/index';
 
@@ -87,16 +87,6 @@ const tasksReducer: ReducerType<TasksMap> = (
           ),
         }),
       );
-    }
-
-    case ActionTypes.TASK_SUB_EVENTS: {
-      const { colonyAddress, draftId, events } = action.payload;
-
-      const record: TaskRecord = events.reduce(
-        taskEventReducer,
-        Task(fromJS({ colonyAddress, draftId })),
-      );
-      return state.set(draftId, FetchableData({ record }));
     }
 
     default:
