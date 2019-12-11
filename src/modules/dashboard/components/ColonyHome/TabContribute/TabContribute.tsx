@@ -1,15 +1,14 @@
 import React from 'react';
 
 import { COLONY_TOTAL_BALANCE_DOMAIN_ID } from '~constants';
-import { ColonyTokenReferenceType } from '~immutable/index';
+import { ColonyTokenReferenceType, ColonyType } from '~immutable/index';
 import { isInRecoveryMode } from '../../../checks';
 import ColonyInitialFunding from '../ColonyInitialFunding';
 import ColonyTasks from '../ColonyTasks';
-import { AnyColony } from '~data/index';
 
 interface Props {
   allowTaskCreation: boolean;
-  colony: AnyColony;
+  colony: ColonyType;
   filteredDomainId: number;
   filterOption: string;
   ethTokenRef: ColonyTokenReferenceType | null;

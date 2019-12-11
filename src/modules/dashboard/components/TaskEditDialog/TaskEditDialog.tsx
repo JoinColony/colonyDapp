@@ -28,12 +28,12 @@ import { Tooltip } from '~core/Popover';
 import { ActionTypes } from '~redux/index';
 import HookedUserAvatar from '~users/HookedUserAvatar';
 import { mapPayload, mergePayload, pipe } from '~utils/actions';
-import { useDataSubscriber, useSelector } from '~utils/hooks';
+import { useDataFetcher, useSelector } from '~utils/hooks';
 import { ColonySubscribedUsersDocument, User } from '~data/index';
 
 import { createAddress } from '../../../../types';
 import { useColonyTokens } from '../../hooks/useColonyTokens';
-import { colonySubscriber } from '../../subscribers';
+import { colonyFetcher } from '../../fetchers';
 import { taskSelector } from '../../selectors';
 import WrappedPayout from './WrappedPayout';
 
@@ -159,8 +159,8 @@ const TaskEditDialog = ({
 
   const colonyAddress =
     task && task.record ? task.record.colonyAddress : undefined;
-  const { data: colonyData, isFetching: isFetchingColony } = useDataSubscriber(
-    colonySubscriber,
+  const { data: colonyData, isFetching: isFetchingColony } = useDataFetcher(
+    colonyFetcher,
     [colonyAddress],
     [colonyAddress],
   );

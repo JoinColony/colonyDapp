@@ -78,7 +78,7 @@ describe('EventStore', () => {
       },
       payload: {
         value: {
-          type: EventTypes.COLONY_AVATAR_REMOVED,
+          type: EventTypes.FINALIZED,
           payload: {
             ipfsHash: '',
           },

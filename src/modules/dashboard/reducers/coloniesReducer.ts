@@ -10,7 +10,7 @@ import {
 } from '~immutable/index';
 import { withFetchableDataMap } from '~utils/reducers';
 import { ActionTypes, ReducerType } from '~redux/index';
-import { createAddress, Address } from '~types/index';
+import { createAddress } from '~types/index';
 
 import { AllColoniesMap } from '../state/index';
 
@@ -74,63 +74,12 @@ const coloniesReducer: ReducerType<AllColoniesMap> = (
         record,
       );
     }
-    case ActionTypes.COLONY_CAN_MINT_NATIVE_TOKEN_FETCH_SUCCESS: {
-      const {
-        payload: { canMintNativeToken, colonyAddress },
-      } = action;
-      return state.setIn(
-        [colonyAddress, 'record', 'canMintNativeToken'],
-        canMintNativeToken,
-      );
-    }
-    case ActionTypes.COLONY_SUB_EVENTS: {
-      const {
-        payload: {
-          colony: { tokens = {}, ...colony },
-          colonyAddress,
-        },
-      } = action;
-      const canMintNativeToken = state.getIn([
-        colonyAddress,
-        'record',
-        'canMintNativeToken',
-      ]);
-      const previousTokens: ImmutableMap<
-        Address,
-        ColonyTokenReferenceRecord
-      > | null = state.getIn([colonyAddress, 'record', 'tokens']);
-      const record = Colony({
-        canMintNativeToken,
-        ...colony,
-        colonyAddress,
-        tokens: ImmutableMap(
-          Object.entries(tokens).map(([tokenAddress, token]) => {
-            const normalizedTokenAddress = createAddress(tokenAddress);
-
-            // get any previous balances for the token, so that we don't overwrite them
-            const balances = previousTokens
-              ? previousTokens.getIn([normalizedTokenAddress, 'balances'])
-              : undefined;
-
-            return [
-              normalizedTokenAddress,
-              ColonyTokenReference({ balances, ...token }),
-            ];
-          }),
-        ),
-      });
-      return state.get(colonyAddress)
-        ? state
-            .setIn([colonyAddress, 'record'], record)
-            .setIn([colonyAddress, 'isFetching'], false)
-        : state.set(colonyAddress, FetchableData<ColonyRecord>({ record }));
-    }
     default:
       return state;
   }
 };
 
 export default withFetchableDataMap<AllColoniesMap, ColonyRecord>(
-  new Set([ActionTypes.COLONY_FETCH, ActionTypes.COLONY_SUB_START]),
+  new Set([ActionTypes.COLONY_FETCH]),
   ImmutableMap() as AllColoniesMap,
 )(coloniesReducer);

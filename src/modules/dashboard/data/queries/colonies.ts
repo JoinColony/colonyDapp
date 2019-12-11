@@ -35,8 +35,7 @@ import {
 } from '~data/stores';
 import { getEvents } from '~utils/web3/eventLogs';
 import { ZERO_ADDRESS } from '~utils/web3/constants';
-import { colonyReducer, colonyTasksReducer } from '../reducers';
-import { AnyColony } from '~data/index';
+import { colonyTasksReducer } from '../reducers';
 
 interface ColonyStoreMetadata {
   colonyAddress: Address;
@@ -171,166 +170,6 @@ export const getColonyRoles: ContractEventQuery<void, ColonyRolesType> = {
           {} as ColonyRolesType,
         )
     );
-  },
-};
-
-export const subscribeToColony: Subscription<
-  {
-    colonyClient: ColonyClient;
-    colonyStore: ColonyStore;
-    colonyAddress: Address;
-  },
-  ColonyStoreMetadata,
-  any,
-  AnyColony
-> = {
-  name: 'subscribeToColony',
-  context: colonyContext,
-  async prepare(
-    {
-      colonyManager,
-      ddb,
-      wallet,
-    }: {
-      colonyManager: ColonyManager;
-      ddb: DDB;
-      wallet: Wallet;
-    },
-    metadata: ColonyStoreMetadata,
-  ) {
-    const { colonyAddress } = metadata;
-    const colonyClient = await colonyManager.getColonyClient(colonyAddress);
-    const colonyStore = await getColonyStore(colonyClient, ddb, wallet)(
-      metadata,
-    );
-    return {
-      colonyClient,
-      colonyStore,
-      colonyAddress,
-    };
-  },
-  async execute({ colonyStore, colonyClient, colonyAddress }) {
-    const { inRecoveryMode } = await colonyClient.isInRecoveryMode.call();
-    const { version } = await colonyClient.getVersion.call();
-
-    // wrap this in a try/catch since it will fail if token doesn't support locking
-    let isNativeTokenLocked;
-    try {
-      ({
-        locked: isNativeTokenLocked,
-      } = await colonyClient.tokenClient.isLocked.call());
-    } catch (error) {
-      isNativeTokenLocked = false;
-    }
-
-    // wrap this in a try/catch since it will fail if token can't be unlocked
-    let canUnlockNativeToken;
-    try {
-      await colonyClient.tokenClient.unlock.call({});
-      canUnlockNativeToken = isNativeTokenLocked;
-    } catch (error) {
-      canUnlockNativeToken = false;
-    }
-
-    // @TODO Normalize colony subscription events
-    return emitter => [
-      colonyStore.subscribe(events =>
-        emitter(
-          events &&
-            events.reduce(colonyReducer, {
-              avatarHash: undefined,
-              colonyAddress,
-              colonyName: '',
-              displayName: '',
-              inRecoveryMode,
-              isNativeTokenLocked,
-              canUnlockNativeToken,
-              tokens: {
-                // also include Ether
-                [ZERO_ADDRESS.toString()]: {
-                  address: ZERO_ADDRESS,
-                },
-              },
-              version,
-            }),
-        ),
-      ),
-    ];
-  },
-};
-
-/**
- * @todo Get the right defaults for data reducers based on the redux data.
- */
-export const getColony: Query<
-  { colonyClient: ColonyClient; colonyStore: ColonyStore },
-  ColonyStoreMetadata,
-  { colonyAddress: Address },
-  AnyColony
-> = {
-  name: 'getColony',
-  context: colonyContext,
-  async prepare(
-    {
-      colonyManager,
-      ddb,
-      wallet,
-    }: {
-      colonyManager: ColonyManager;
-      ddb: DDB;
-      wallet: Wallet;
-    },
-    metadata: ColonyStoreMetadata,
-  ) {
-    const { colonyAddress } = metadata;
-    const colonyClient = await colonyManager.getColonyClient(colonyAddress);
-    const colonyStore = await getColonyStore(colonyClient, ddb, wallet)(
-      metadata,
-    );
-    return {
-      colonyClient,
-      colonyStore,
-    };
-  },
-  async execute({ colonyStore, colonyClient }, { colonyAddress }) {
-    const { inRecoveryMode } = await colonyClient.isInRecoveryMode.call();
-    const { version } = await colonyClient.getVersion.call();
-
-    // wrap this in a try/catch since it will fail if token doesn't support locking
-    let isNativeTokenLocked;
-    try {
-      ({
-        locked: isNativeTokenLocked,
-      } = await colonyClient.tokenClient.isLocked.call());
-    } catch (error) {
-      isNativeTokenLocked = false;
-    }
-
-    // wrap this in a try/catch since it will fail if token can't be unlocked
-    let canUnlockNativeToken;
-    try {
-      await colonyClient.tokenClient.unlock.call({});
-      canUnlockNativeToken = isNativeTokenLocked;
-    } catch (error) {
-      canUnlockNativeToken = false;
-    }
-
-    return colonyStore.all().reduce(colonyReducer, {
-      avatarHash: undefined,
-      colonyAddress,
-      colonyName: '',
-      displayName: '',
-      inRecoveryMode,
-      isNativeTokenLocked,
-      canUnlockNativeToken,
-      tokens: {
-        // also include Ether
-        [ZERO_ADDRESS.toString()]: {
-          address: ZERO_ADDRESS,
-        },
-      },
-      version,
-    });
   },
 };
 
@@ -489,36 +328,6 @@ export const getColonyTokenBalance: Query<
       );
     }
     return new BigNumber(rewardsPotTotal.toString(10));
-  },
-};
-
-export const getColonyCanMintNativeToken: Query<
-  ColonyClient,
-  { colonyAddress: Address },
-  void,
-  boolean
-> = {
-  name: 'getColonyCanMintNativeToken',
-  context: colonyContext,
-  async prepare(
-    {
-      colonyManager,
-    }: {
-      colonyManager: ColonyManager;
-    },
-    metadata: ColonyStoreMetadata,
-  ) {
-    const { colonyAddress } = metadata;
-    return colonyManager.getColonyClient(colonyAddress);
-  },
-  async execute(colonyClient) {
-    // wrap this in a try/catch since it will fail if tokens can't be minted
-    try {
-      await colonyClient.mintTokens.estimate({ amount: new BigNumber(1) });
-    } catch (error) {
-      return false;
-    }
-    return true;
   },
 };
 
