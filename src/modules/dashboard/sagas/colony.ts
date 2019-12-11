@@ -172,8 +172,12 @@ function* colonyAvatarUpload({
       mutation: EditColonyProfileDocument,
       variables: { input: { colonyAddress, avatarHash: ipfsHash } },
     });
+
+    yield put<AllActions>({
+      type: ActionTypes.COLONY_AVATAR_UPLOAD_SUCCESS,
+    });
   } catch (error) {
-    return yield putError(error.message, error, meta);
+    return yield putError(ActionTypes.COLONY_AVATAR_UPLOAD_ERROR, error, meta);
   }
   return null;
 }
@@ -190,8 +194,12 @@ function* colonyAvatarRemove({
       mutation: EditColonyProfileDocument,
       variables: { input: { colonyAddress, avatarHash: null } },
     });
+
+    yield put<AllActions>({
+      type: ActionTypes.COLONY_AVATAR_REMOVE_SUCCESS,
+    });
   } catch (error) {
-    return yield putError(error.message, error, meta);
+    return yield putError(ActionTypes.COLONY_AVATAR_REMOVE_ERROR, error, meta);
   }
   return null;
 }
