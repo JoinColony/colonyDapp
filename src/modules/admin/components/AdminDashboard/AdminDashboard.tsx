@@ -16,8 +16,8 @@ import VerticalNavigation from '~pages/VerticalNavigation';
 import { HistoryNavigation } from '~pages/NavigationWrapper';
 import { useDataFetcher, useTransformer } from '~utils/hooks';
 import { DomainsMapType } from '~types/index';
+import { ColonyType } from '~immutable/index';
 import { useLoggedInUser } from '~data/helpers';
-import { useColonyQuery, AnyColony } from '~data/index';
 
 import {
   TEMP_getUserRolesWithRecovery,
@@ -34,6 +34,7 @@ import { isInRecoveryMode } from '../../../dashboard/checks';
  */
 import {
   colonyAddressFetcher,
+  colonyFetcher,
   domainsAndRolesFetcher,
   TEMP_userHasRecoveryRoleFetcher,
 } from '../../../dashboard/fetchers';
@@ -83,11 +84,11 @@ interface Props {
 /*
  * @TODO Re-add domains once they're available from mongo
  */
-const canArchitect = () => true;
-const hasRoot = () => true;
+const canArchitect = (_: any) => true;
+const hasRoot = (_: any) => true;
 
 const navigationItems = (
-  colony: AnyColony,
+  colony: ColonyType,
   domains: DomainsMapType,
   rootRoles: ROLES[],
   allRoles: ROLES[],
@@ -160,9 +161,11 @@ const AdminDashboard = ({
     [colonyName],
   );
 
-  const { data } = useColonyQuery({
-    variables: { address: colonyAddress },
-  });
+  const { data: colony } = useDataFetcher(
+    colonyFetcher,
+    [colonyAddress],
+    [colonyAddress],
+  );
 
   const { walletAddress } = useLoggedInUser();
 
@@ -197,8 +200,7 @@ const AdminDashboard = ({
   }
 
   if (
-    !data ||
-    !(data && data.colony)
+    !colony
     /*
      * @TODO Re-add domains once they're available from mongo
      */
@@ -216,7 +218,7 @@ const AdminDashboard = ({
     <div className={styles.main}>
       <VerticalNavigation
         navigationItems={navigationItems(
-          data.colony,
+          colony,
           domains,
           rootUserRoles,
           allUserRoles,
@@ -231,7 +233,7 @@ const AdminDashboard = ({
           <HistoryNavigation
             backRoute={CURRENT_COLONY_ROUTE}
             backText={MSG.backButton}
-            backTextValues={{ displayName: data.colony.displayName }}
+            backTextValues={{ displayName: colony.displayName }}
           />
         </div>
         <div className={styles.headingWrapper}>
@@ -246,7 +248,7 @@ const AdminDashboard = ({
           />
         </div>
       </VerticalNavigation>
-      {isInRecoveryMode(data.colony) && <RecoveryModeAlert />}
+      {isInRecoveryMode(colony) && <RecoveryModeAlert />}
     </div>
   );
 };

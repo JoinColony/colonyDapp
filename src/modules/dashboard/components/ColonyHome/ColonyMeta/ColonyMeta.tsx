@@ -3,6 +3,8 @@ import { defineMessages, FormattedMessage } from 'react-intl';
 
 import { COLONY_TOTAL_BALANCE_DOMAIN_ID } from '~constants';
 import { DomainsMapType } from '~types/index';
+import { ColonyType } from '~immutable/index';
+import { AnyColony } from '~data/index';
 import { stripProtocol, multiLineTextEllipsis } from '~utils/strings';
 import ExpandedParagraph from '~core/ExpandedParagraph';
 import Heading from '~core/Heading';
@@ -11,7 +13,6 @@ import Button from '~core/Button';
 import Link from '~core/Link';
 import ExternalLink from '~core/ExternalLink';
 import HookedColonyAvatar from '~dashboard/HookedColonyAvatar';
-import { AnyColony } from '~data/index';
 
 import ColonySubscribe from './ColonySubscribe';
 import ColonyInvite from './ColonyInvite';
@@ -40,7 +41,7 @@ const MSG = defineMessages({
 const ColonyAvatar = HookedColonyAvatar({ fetchColony: false });
 
 interface Props {
-  colony: AnyColony;
+  colony: AnyColony | ColonyType;
   canAdminister: boolean;
   domains: DomainsMapType;
   setFilteredDomainId: (domainId: number) => void;
@@ -105,7 +106,7 @@ const ColonyMeta = ({
         <ColonySubscribe colonyAddress={colonyAddress} />
         <Heading appearance={{ margin: 'none', size: 'medium', theme: 'dark' }}>
           <div className={styles.headingAndSettings}>
-            <span title={displayName}>
+            <span title={displayName || colonyName}>
               {/*
                * @NOTE We need to use a JS string truncate here, rather then CSS as we do with the other fields,
                * since we also have to show the settings icon, after the truncated name, otherwise the icon
@@ -113,7 +114,7 @@ const ColonyMeta = ({
                *
                * To fix this properly (ie: without JS), we'll need a re-design
                */
-              multiLineTextEllipsis(displayName, 16)}
+              multiLineTextEllipsis(displayName || colonyName, 16)}
             </span>
             {canAdminister && (
               <Link

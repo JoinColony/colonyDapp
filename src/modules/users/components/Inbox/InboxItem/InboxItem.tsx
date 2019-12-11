@@ -9,15 +9,14 @@ import Numeral from '~core/Numeral';
 import Link from '~core/Link';
 import HookedUserAvatar from '~users/HookedUserAvatar';
 import { SpinnerLoader } from '~core/Preloaders';
-import {
-  useDataFetcher,
-  useDataSubscriber,
-  useSelector,
-  useAsyncFunction,
-} from '~utils/hooks';
+import { useDataFetcher, useSelector, useAsyncFunction } from '~utils/hooks';
 
-import { domainsFetcher, tokenFetcher } from '../../../../dashboard/fetchers';
-import { colonySubscriber } from '../../../../dashboard/subscribers';
+import {
+  domainsFetcher,
+  tokenFetcher,
+  colonyFetcher,
+} from '../../../../dashboard/fetchers';
+
 import { friendlyColonyNameSelector } from '../../../../dashboard/selectors';
 import { getFriendlyName, getUsername } from '../../../transformers';
 import { transformNotificationEventNames } from '../../../data/utils';
@@ -117,8 +116,8 @@ const InboxItem = ({
   const targetUserUsername =
     typeof targetUser == 'string' ? targetUser : getUsername(targetUser);
 
-  const { data: colony, isFetching: isFetchingColony } = useDataSubscriber(
-    colonySubscriber,
+  const { data: colony, isFetching: isFetchingColony } = useDataFetcher(
+    colonyFetcher,
     [colonyAddress],
     [colonyAddress],
   );

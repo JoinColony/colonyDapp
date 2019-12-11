@@ -16,6 +16,11 @@ const getMinimalUser = address => ({
   profile: { walletAddress: address },
   colonies: [],
   tasks: [],
+  createdAt: 0,
+  colonyAddresses: [],
+  taskIds: [],
+  tokens: [],
+  tokenRefs: [],
 });
 
 // FIXME put these into the modules where they belong alongside with the queries and types

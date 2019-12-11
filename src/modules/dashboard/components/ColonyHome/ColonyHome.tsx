@@ -22,14 +22,12 @@ import Heading from '~core/Heading';
 import Button, { ActionButton } from '~core/Button';
 import RecoveryModeAlert from '~admin/RecoveryModeAlert';
 import LoadingTemplate from '~pages/LoadingTemplate';
-// import { useLoggedInUser } from '~data/helpers';
-import { colonyAddressFetcher } from '../../fetchers';
+import { colonyAddressFetcher, colonyFetcher } from '../../fetchers';
 import {
   colonyNativeTokenSelector,
   colonyEthTokenSelector,
 } from '../../selectors';
 import { isInRecoveryMode as isInRecoveryModeCheck } from '../../checks';
-import { useColonyLazyQuery } from '~data/index';
 
 import ColonyFunding from './ColonyFunding';
 import ColonyMeta from './ColonyMeta';
@@ -118,15 +116,11 @@ const ColonyHome = ({
     [colonyName],
   );
 
-  const [loadColony, { data }] = useColonyLazyQuery();
-
-  useEffect(() => {
-    if (colonyAddress) {
-      loadColony({
-        variables: { address: colonyAddress },
-      });
-    }
-  }, [loadColony, colonyAddress]);
+  const { data: colony } = useDataFetcher(
+    colonyFetcher,
+    [colonyAddress],
+    [colonyAddress],
+  );
 
   /*
    * @TODO Re-add domains once they're available from mongo
@@ -187,9 +181,7 @@ const ColonyHome = ({
   }
 
   if (
-    !data ||
-    !(data && data.colony) ||
-    // !colony ||
+    !colony ||
     !colonyAddress
     /*
      * @TODO Re-add domains once they're available from mongo
@@ -215,7 +207,7 @@ const ColonyHome = ({
    * const canCreateTask = canAdminister(currentDomainUserRoles);
    */
   const canCreateTask = true;
-  const isInRecoveryMode = isInRecoveryModeCheck(data.colony);
+  const isInRecoveryMode = isInRecoveryModeCheck(colony);
 
   const noFilter = (
     <Heading
@@ -229,7 +221,7 @@ const ColonyHome = ({
       <aside className={styles.colonyInfo}>
         <div className={styles.metaContainer}>
           <ColonyMeta
-            colony={data.colony}
+            colony={colony}
             /*
              * @TODO Re-add domains once they're available from mongo
              *
@@ -241,6 +233,7 @@ const ColonyHome = ({
              *
              * domains={domains}
              */
+            domains={{}}
             filteredDomainId={filteredDomainId}
             setFilteredDomainId={setFilteredDomainId}
           />
@@ -301,7 +294,7 @@ const ColonyHome = ({
           <TabPanel>
             <TabContribute
               allowTaskCreation={canCreateTask}
-              colony={data.colony}
+              colony={colony}
               filteredDomainId={filteredDomainId}
               filterOption={filterOption}
               ethTokenRef={ethTokenRef}
@@ -311,10 +304,11 @@ const ColonyHome = ({
                *
                * showQrCode={hasRoot(rootUserRoles)}
                */
+              showQrCode
             />
           </TabPanel>
           <TabPanel>
-            <Transactions colonyAddress={data.colony.colonyAddress} />
+            <Transactions colonyAddress={colony.colonyAddress} />
           </TabPanel>
         </Tabs>
       </main>

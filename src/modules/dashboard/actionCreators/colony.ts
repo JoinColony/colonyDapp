@@ -44,26 +44,6 @@ export const fetchColonyTokenBalances = (
   payload: { colonyAddress, tokenAddress },
 });
 
-export const fetchColonyCanMintNativeToken = (
-  colonyAddress: Address,
-): AllActions => ({
-  type: ActionTypes.COLONY_CAN_MINT_NATIVE_TOKEN_FETCH,
-  payload: { colonyAddress },
-  meta: { key: createAddress(colonyAddress) },
-});
-
-export const colonySubStart = (colonyAddress: Address): AllActions => ({
-  type: ActionTypes.COLONY_SUB_START,
-  payload: { colonyAddress },
-  meta: { key: createAddress(colonyAddress) },
-});
-
-export const colonySubStop = (colonyAddress: Address): AllActions => ({
-  type: ActionTypes.COLONY_SUB_STOP,
-  payload: { colonyAddress },
-  meta: { key: createAddress(colonyAddress) },
-});
-
 export const colonyTaskMetadataSubStart = (
   colonyAddress: Address,
 ): AllActions => ({

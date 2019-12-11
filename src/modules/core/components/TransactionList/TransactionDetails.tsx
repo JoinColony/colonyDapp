@@ -2,13 +2,10 @@ import React from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 
 import { ContractTransactionType, TaskType } from '~immutable/index';
-import { useDataSubscriber } from '~utils/hooks';
 import MaskedAddress from '~core/MaskedAddress';
 import Link from '~core/Link';
 import { Address, ENSName } from '~types/index';
-import { User, AnyColony } from '~data/index';
-
-import { colonySubscriber } from '../../../dashboard/subscribers';
+import { User, AnyColony, useColonyQuery } from '~data/index';
 
 import styles from './TransactionDetails.css';
 
@@ -263,18 +260,14 @@ const TransactionDetails = ({
   transaction,
   user,
 }: Props) => {
-  const { data: colony } = useDataSubscriber(
-    colonySubscriber,
-    [colonyAddress],
-    [colonyAddress],
-  );
-  if (!colony) return null;
+  const { data } = useColonyQuery({ variables: { address: colonyAddress } });
+  if (!data) return null;
   const TransactionComponent = incoming
     ? IncomingTransaction
     : OutgoingTransaction;
   return (
     <TransactionComponent
-      colony={colony}
+      colony={data.colony}
       showMaskedAddress={showMaskedAddress}
       task={task}
       transaction={transaction}
