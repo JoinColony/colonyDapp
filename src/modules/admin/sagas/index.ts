@@ -12,7 +12,6 @@ import { ContractContexts } from '~types/index';
 // import { Context, getContext } from '~context/index';
 // import { decorateLog } from '~utils/web3/eventLogs/events';
 // import { normalizeTransactionLog } from '~data/normalizers';
-import { getColony } from '../../dashboard/data/queries';
 import {
   getColonyTransactions,
   getColonyUnclaimedTransactions,
@@ -126,17 +125,8 @@ function* colonyUpdateTokens({
   meta,
 }: Action<ActionTypes.COLONY_UPDATE_TOKENS>) {
   try {
-    /*
-     * @todo Consider fetching tokens from state
-     * @body Consider fetching tokens from state instead of executing a query before updating colony tokens
-     */
-    const { tokens: currentTokenReferences = {} } = yield executeQuery(
-      getColony,
-      {
-        args: { colonyAddress },
-        metadata: { colonyAddress },
-      },
-    );
+    // FIXME: get current tokens somehow? This probably is on the server anyways so we can just do this on the server
+    const currentTokenReferences = {};
     yield executeCommand(updateTokenInfo, {
       metadata: { colonyAddress },
       args: { tokens, currentTokenReferences },

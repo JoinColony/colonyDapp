@@ -1,3 +1,4 @@
+import ApolloClient from 'apollo-client';
 import {
   all,
   call,
@@ -9,9 +10,11 @@ import {
   takeLatest,
   select,
 } from 'redux-saga/effects';
+import BigNumber from 'bn.js';
 
 import { COLONY_TOTAL_BALANCE_DOMAIN_ID, ROOT_DOMAIN } from '~constants';
 import { Action, ActionTypes, AllActions } from '~redux/index';
+import { ZERO_ADDRESS } from '~utils/web3/constants';
 import {
   putError,
   takeFrom,
@@ -19,16 +22,19 @@ import {
   executeSubscription,
   selectAsJS,
 } from '~utils/saga/effects';
-import { ColonyRolesType } from '~immutable/index';
-import { ContractContexts, createAddress } from '~types/index';
+import { ColonyType, ColonyRolesType } from '~immutable/index';
+import { ColonyManager, ContractContexts, createAddress } from '~types/index';
+import {
+  ColonyDocument,
+  ColonyQueryResult,
+  EditColonyProfileDocument,
+} from '~data/index';
+import { getContext, Context } from '~context/index';
 
 import {
   checkColonyNameIsAvailable,
-  getColony,
-  getColonyCanMintNativeToken,
   getColonyTasks,
   getColonyTokenBalance,
-  subscribeToColony,
   subscribeToColonyTasks,
 } from '../data/queries';
 import { createTransaction, getTxChannel } from '../../core/sagas';
@@ -38,14 +44,11 @@ import {
   fetchColony,
   fetchDomains,
   fetchToken,
-  fetchColonyCanMintNativeToken,
   fetchColonyTokenBalance,
   fetchColonyTokenBalances,
 } from '../actionCreators';
-import { colonyDomainsSelector, colonySelector } from '../selectors';
+import { colonyDomainsSelector } from '../selectors';
 import { getColonyAddress, getColonyName } from './shared';
-import { EditColonyProfileDocument } from '~data/index';
-import { getContext, Context } from '~context/index';
 
 function* colonyNameCheckAvailability({
   payload: { colonyName },
@@ -82,10 +85,81 @@ function* colonyFetch({
   meta,
 }: Action<ActionTypes.COLONY_FETCH>) {
   try {
-    const colony = yield executeQuery(getColony, {
-      args: { colonyAddress },
-      metadata: { colonyAddress },
+    const colonyManager: ColonyManager = yield getContext(
+      Context.COLONY_MANAGER,
+    );
+    const apolloClient: ApolloClient<any> = yield getContext(
+      Context.APOLLO_CLIENT,
+    );
+
+    const colonyClient = yield colonyManager.getColonyClient(colonyAddress);
+
+    const { inRecoveryMode } = yield colonyClient.isInRecoveryMode.call();
+    const { version } = yield colonyClient.getVersion.call();
+
+    // wrap this in a try/catch since it will fail if token doesn't support locking
+    let isNativeTokenLocked;
+    try {
+      const { locked } = yield colonyClient.tokenClient.isLocked.call();
+      isNativeTokenLocked = locked;
+    } catch (error) {
+      isNativeTokenLocked = false;
+    }
+
+    // wrap this in a try/catch since it will fail if token can't be unlocked
+    let canUnlockNativeToken;
+    try {
+      yield colonyClient.tokenClient.unlock.call({});
+      canUnlockNativeToken = isNativeTokenLocked;
+    } catch (error) {
+      canUnlockNativeToken = false;
+    }
+
+    // fetch whether the user is allowed to mint tokens via the colony
+    let canMintNativeToken = true;
+    try {
+      yield colonyClient.mintTokens.estimate({ amount: new BigNumber(1) });
+    } catch (error) {
+      canMintNativeToken = false;
+    }
+
+    const { data }: ColonyQueryResult = yield apolloClient.query({
+      query: ColonyDocument,
+      variables: { address: colonyAddress },
     });
+
+    if (!data) throw new Error('Could not get colony metadata');
+
+    const {
+      avatarHash,
+      colonyName,
+      displayName,
+      guideline,
+      id,
+      website,
+    } = data.colony;
+
+    const colony: ColonyType = {
+      avatarHash: avatarHash || undefined,
+      canMintNativeToken,
+      canUnlockNativeToken,
+      colonyAddress,
+      colonyName,
+      displayName: displayName || undefined,
+      guideline: guideline || undefined,
+      id,
+      inRecoveryMode,
+      isNativeTokenLocked,
+      tokens: {
+        // also include Ether
+        [ZERO_ADDRESS.toString()]: {
+          address: ZERO_ADDRESS,
+        },
+      },
+      version,
+      website: website || undefined,
+    };
+
     yield put<AllActions>({
       type: ActionTypes.COLONY_FETCH_SUCCESS,
       meta,
@@ -107,13 +181,6 @@ function* colonyFetch({
           [],
         ),
     );
-
-    // fetch whether the user is allowed to mint tokens via the colony
-    yield put<AllActions>({
-      type: ActionTypes.COLONY_CAN_MINT_NATIVE_TOKEN_FETCH,
-      meta: { key: colonyAddress },
-      payload: { colonyAddress },
-    });
   } catch (error) {
     return yield putError(ActionTypes.COLONY_FETCH_ERROR, error, meta);
   }
@@ -175,6 +242,8 @@ function* colonyAvatarUpload({
 
     yield put<AllActions>({
       type: ActionTypes.COLONY_AVATAR_UPLOAD_SUCCESS,
+      meta,
+      payload: { hash: ipfsHash },
     });
   } catch (error) {
     return yield putError(ActionTypes.COLONY_AVATAR_UPLOAD_ERROR, error, meta);
@@ -194,9 +263,10 @@ function* colonyAvatarRemove({
       mutation: EditColonyProfileDocument,
       variables: { input: { colonyAddress, avatarHash: null } },
     });
-
     yield put<AllActions>({
       type: ActionTypes.COLONY_AVATAR_REMOVE_SUCCESS,
+      meta,
+      payload: undefined,
     });
   } catch (error) {
     return yield putError(ActionTypes.COLONY_AVATAR_REMOVE_ERROR, error, meta);
@@ -380,30 +450,6 @@ function* colonyTaskMetadataFetch({
   return null;
 }
 
-function* colonyCanMintNativeTokenFetch({
-  meta,
-  payload: { colonyAddress },
-}: Action<ActionTypes.COLONY_CAN_MINT_NATIVE_TOKEN_FETCH>) {
-  try {
-    const canMintNativeToken = yield executeQuery(getColonyCanMintNativeToken, {
-      args: undefined,
-      metadata: { colonyAddress },
-    });
-    yield put<AllActions>({
-      type: ActionTypes.COLONY_CAN_MINT_NATIVE_TOKEN_FETCH_SUCCESS,
-      meta,
-      payload: { canMintNativeToken, colonyAddress },
-    });
-  } catch (error) {
-    return yield putError(
-      ActionTypes.COLONY_CAN_MINT_NATIVE_TOKEN_FETCH_ERROR,
-      error,
-      meta,
-    );
-  }
-  return null;
-}
-
 function* colonyNativeTokenUnlock({
   meta,
   payload: { colonyAddress },
@@ -435,76 +481,6 @@ function* colonyNativeTokenUnlock({
     txChannel.close();
   }
   return null;
-}
-
-function* colonySubStart({ payload: { colonyAddress }, meta }: any) {
-  // @TODO: Generalize subscription sagas
-  // @BODY This could be generalised (it's very similar to the above function),
-  // but it's probably worth waiting to see, as this pattern will likely change
-  // as it gets used elsewhere.
-  let channel;
-  try {
-    channel = yield call(executeSubscription, subscribeToColony, {
-      metadata: { colonyAddress },
-    });
-
-    yield fork(function* stopSubscription() {
-      yield take(
-        action =>
-          action.type === ActionTypes.COLONY_SUB_STOP &&
-          action.payload.colonyAddress === colonyAddress,
-      );
-      channel.close();
-    });
-
-    const reduceTokenToDispatch = (acc, token) =>
-      token.balance === undefined
-        ? [
-            ...acc,
-            put(fetchColonyTokenBalances(colonyAddress, token.address)),
-            put(fetchToken(token.address)),
-          ]
-        : acc;
-
-    while (true) {
-      const colony = yield take(channel);
-      yield put({
-        type: ActionTypes.COLONY_SUB_EVENTS,
-        meta,
-        payload: {
-          colonyAddress,
-          colony,
-        },
-      });
-
-      // select the freshly updated colony
-      const { record: colonyFromState } = yield select(
-        colonySelector,
-        colonyAddress,
-      );
-
-      // fetch canMintNativeToken if we didn't already
-      if (colonyFromState.canMintNativeToken === undefined) {
-        yield put(fetchColonyCanMintNativeToken(colonyAddress));
-      }
-
-      // fetch colony domains for token balances
-      yield put<AllActions>(fetchDomains(colonyAddress));
-
-      // fetch token balances for those which we have loaded
-      if (colonyFromState.tokens) {
-        yield all(
-          colonyFromState.tokens.toList().reduce(reduceTokenToDispatch, []),
-        );
-      }
-    }
-  } catch (caughtError) {
-    return yield putError(ActionTypes.COLONY_SUB_ERROR, caughtError, meta);
-  } finally {
-    if (channel && typeof channel.close === 'function') {
-      channel.close();
-    }
-  }
 }
 
 function* colonyTaskMetadataSubStart({
@@ -552,10 +528,6 @@ function* colonyTaskMetadataSubStart({
 
 export default function* colonySagas() {
   yield takeEvery(ActionTypes.COLONY_ADDRESS_FETCH, colonyAddressFetch);
-  yield takeEvery(
-    ActionTypes.COLONY_CAN_MINT_NATIVE_TOKEN_FETCH,
-    colonyCanMintNativeTokenFetch,
-  );
   yield takeEvery(ActionTypes.COLONY_FETCH, colonyFetch);
   yield takeEvery(ActionTypes.COLONY_NAME_FETCH, colonyNameFetch);
   yield takeEvery(
@@ -579,7 +551,6 @@ export default function* colonySagas() {
     colonyTokenBalancesFetch,
   );
   yield takeEvery(ActionTypes.COLONY_VERSION_UPGRADE, colonyUpgradeContract);
-  yield takeEvery(ActionTypes.COLONY_SUB_START, colonySubStart);
   yield takeEvery(
     ActionTypes.COLONY_TASK_METADATA_SUB_START,
     colonyTaskMetadataSubStart,

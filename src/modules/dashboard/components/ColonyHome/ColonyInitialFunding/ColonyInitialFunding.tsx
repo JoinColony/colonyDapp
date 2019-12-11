@@ -18,7 +18,7 @@ import CopyableAddress from '~core/CopyableAddress';
 interface Props {
   canMintTokens: boolean;
   colonyAddress: Address;
-  displayName: string;
+  displayName?: string | null;
   isExternal?: boolean;
   showQrCode: boolean;
   tokenAddress: Address;

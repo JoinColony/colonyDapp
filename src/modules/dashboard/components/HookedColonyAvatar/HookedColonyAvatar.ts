@@ -1,10 +1,9 @@
 import ColonyAvatar, { Props as ColonyAvatarProps } from '~core/ColonyAvatar';
-import { useDataFetcher, useDataSubscriber } from '~utils/hooks';
+import { useDataFetcher } from '~utils/hooks';
 import { withHooks } from '~utils/hoc';
-import { AnyColony } from '~data/index';
+import { AnyColony, useColonyQuery } from '~data/index';
 
 import { ipfsDataFetcher } from '../../../core/fetchers';
-import { colonySubscriber } from '../../subscribers';
 
 export default withHooks<
   { fetchColony: boolean },
@@ -17,12 +16,10 @@ export default withHooks<
   };
 
   if (fetchColony) {
-    const { data: fetchedColony } = useDataSubscriber(
-      colonySubscriber,
-      [colonyAddress],
-      [colonyAddress],
-    );
-    result.colony = fetchedColony;
+    const { data } = useColonyQuery({ variables: { address: colonyAddress } });
+    if (data) {
+      result.colony = data.colony;
+    }
   }
   const avatarHash = result.colony ? result.colony.avatarHash : undefined;
   const { data: avatarURL } = useDataFetcher(

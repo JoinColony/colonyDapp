@@ -49,6 +49,11 @@ const UserAvatar = ({
     profile: { walletAddress: address },
     colonies: [],
     tasks: [],
+    createdAt: 0,
+    colonyAddresses: [],
+    taskIds: [],
+    tokens: [],
+    tokenRefs: [],
   },
 }: Props) => {
   const username = getUsername(user);

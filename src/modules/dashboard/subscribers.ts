@@ -1,6 +1,4 @@
 import {
-  colonySubStart,
-  colonySubStop,
   colonyTaskMetadataSubStart,
   colonyTaskMetadataSubStop,
   taskFeedItemsSubStart,
@@ -37,12 +35,6 @@ export const tasksByIdSubscriber = Object.freeze({
   select: tasksByIdsSelector,
   start: taskSubStart,
   stop: taskSubStop,
-});
-
-export const colonySubscriber = Object.freeze({
-  select: colonySelector,
-  start: colonySubStart,
-  stop: colonySubStop,
 });
 
 export const colonyTaskMetadataSubscriber = Object.freeze({

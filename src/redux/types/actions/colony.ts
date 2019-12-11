@@ -8,6 +8,7 @@ import {
   ColonyTokenReferenceType,
   DomainType,
   ColonyRolesType,
+  ColonyType,
 } from '~immutable/index';
 import {
   ActionType,
@@ -16,7 +17,6 @@ import {
   ErrorActionType,
   UniqueActionType,
 } from './index';
-import { AnyColony } from '~data/index';
 
 export type ColonyActionTypes =
   | UniqueActionType<
@@ -35,20 +35,6 @@ export type ColonyActionTypes =
   | UniqueActionType<
       ActionTypes.COLONY_AVATAR_UPLOAD_SUCCESS,
       { hash: string },
-      WithKey
-    >
-  | ActionTypeWithPayloadAndMeta<
-      ActionTypes.COLONY_CAN_MINT_NATIVE_TOKEN_FETCH,
-      { colonyAddress: Address },
-      WithKey
-    >
-  | ErrorActionType<
-      ActionTypes.COLONY_CAN_MINT_NATIVE_TOKEN_FETCH_ERROR,
-      WithKey
-    >
-  | ActionTypeWithPayloadAndMeta<
-      ActionTypes.COLONY_CAN_MINT_NATIVE_TOKEN_FETCH_SUCCESS,
-      { canMintNativeToken: boolean; colonyAddress: Address },
       WithKey
     >
   | UniqueActionType<
@@ -147,7 +133,7 @@ export type ColonyActionTypes =
   | ErrorActionType<ActionTypes.COLONY_FETCH_ERROR, WithKey>
   | ActionTypeWithPayloadAndMeta<
       ActionTypes.COLONY_FETCH_SUCCESS,
-      AnyColony,
+      ColonyType,
       WithKey
     >
   | ActionTypeWithPayloadAndMeta<
@@ -233,22 +219,6 @@ export type ColonyActionTypes =
       },
       WithKey
     >
-  | ActionTypeWithPayloadAndMeta<
-      ActionTypes.COLONY_SUB_START,
-      { colonyAddress: Address },
-      WithKey
-    >
-  | ActionTypeWithPayloadAndMeta<
-      ActionTypes.COLONY_SUB_STOP,
-      { colonyAddress: Address },
-      WithKey
-    >
-  | ActionTypeWithPayloadAndMeta<
-      ActionTypes.COLONY_SUB_EVENTS,
-      { colony: AnyColony; colonyAddress: Address },
-      WithKey
-    >
-  | ErrorActionType<ActionTypes.COLONY_SUB_ERROR, WithKey>
   | UniqueActionType<
       ActionTypes.COLONY_VERSION_UPGRADE,
       { colonyAddress: Address },
