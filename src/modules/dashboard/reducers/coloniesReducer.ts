@@ -52,19 +52,6 @@ const coloniesReducer: ReducerType<AllColoniesMap> = (
         ? state.setIn([colonyAddress, 'record'], record)
         : state.set(colonyAddress, FetchableData<ColonyRecord>({ record }));
     }
-    case ActionTypes.COLONY_AVATAR_UPLOAD_SUCCESS: {
-      const {
-        meta: { key },
-        payload: { hash },
-      } = action;
-      return state.setIn([key, 'record', 'avatarHash'], hash);
-    }
-    case ActionTypes.COLONY_AVATAR_REMOVE_SUCCESS: {
-      const {
-        meta: { key },
-      } = action;
-      return state.setIn([key, 'record', 'avatarHash'], undefined);
-    }
     case ActionTypes.COLONY_TOKEN_BALANCE_FETCH_SUCCESS: {
       const {
         payload: { colonyAddress, tokenAddress, token: tokenObject },
