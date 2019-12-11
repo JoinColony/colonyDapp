@@ -21,6 +21,13 @@ query User($address: String!) {
   }
 }
 
+query UserTokens($address: String!) {
+  user(address: $address) {
+    id
+    tokens  
+  }
+}
+
 query Colony($address: String!) {
   colony(address: $address) {
     id
