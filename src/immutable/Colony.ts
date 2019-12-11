@@ -10,9 +10,9 @@ interface Shared {
   colonyAddress: Address;
   colonyName: ENSName;
   description?: string;
-  displayName: string;
+  displayName?: string;
   guideline?: string;
-  id?: number;
+  id: string;
   inRecoveryMode?: boolean;
   isNativeTokenLocked?: boolean;
   version?: number;

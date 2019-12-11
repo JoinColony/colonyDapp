@@ -9,6 +9,12 @@ export type Scalars = {
   Boolean: boolean,
   Int: number,
   Float: number,
+  /** 
+ * A date-time string at UTC, such as 2007-12-03T10:15:30Z, compliant with the
+   * `date-time` format outlined in section 5.6 of the RFC 3339 profile of the ISO
+   * 8601 standard for representation of dates and times using the Gregorian calendar.
+ */
+  DateTime: any,
   /** The `Upload` scalar type represents a file upload. */
   Upload: any,
 };
@@ -28,6 +34,7 @@ export type AddUserTokenReferenceInput = {
 
 export type AssignWorkerEvent = TaskEvent & {
    __typename?: 'AssignWorkerEvent',
+  type: Scalars['String'],
   taskId: Scalars['String'],
   workerAddress: Scalars['String'],
 };
@@ -44,39 +51,54 @@ export enum CacheControlScope {
 
 export type CancelTaskEvent = TaskEvent & {
    __typename?: 'CancelTaskEvent',
+  type: Scalars['String'],
   taskId: Scalars['String'],
 };
 
 export type Colony = {
    __typename?: 'Colony',
   id: Scalars['String'],
+  createdAt: Scalars['DateTime'],
   colonyAddress: Scalars['String'],
+  founderAddress: Scalars['String'],
   colonyName: Scalars['String'],
   avatarHash?: Maybe<Scalars['String']>,
   description?: Maybe<Scalars['String']>,
   displayName?: Maybe<Scalars['String']>,
   guideline?: Maybe<Scalars['String']>,
   website?: Maybe<Scalars['String']>,
+  taskIds: Array<Scalars['String']>,
   tasks: Array<Task>,
   domains: Array<Domain>,
   founder?: Maybe<User>,
   subscribedUsers: Array<User>,
   tokens: Array<ColonyToken>,
+  tokenRefs: Array<ColonyTokenRef>,
 };
 
 export type ColonyEvent = {
+  type: Scalars['String'],
   colonyAddress: Scalars['String'],
 };
 
 export type ColonyToken = IToken & {
    __typename?: 'ColonyToken',
   id: Scalars['String'],
+  createdAt: Scalars['DateTime'],
   address: Scalars['String'],
   name: Scalars['String'],
   symbol: Scalars['String'],
   iconHash?: Maybe<Scalars['String']>,
   isExternal: Scalars['Boolean'],
   isNative: Scalars['Boolean'],
+};
+
+export type ColonyTokenRef = {
+   __typename?: 'ColonyTokenRef',
+  address: Scalars['String'],
+  isExternal?: Maybe<Scalars['Boolean']>,
+  isNative?: Maybe<Scalars['Boolean']>,
+  iconHash?: Maybe<Scalars['String']>,
 };
 
 export type CreateColonyInput = {
@@ -92,6 +114,7 @@ export type CreateColonyInput = {
 
 export type CreateDomainEvent = ColonyEvent & {
    __typename?: 'CreateDomainEvent',
+  type: Scalars['String'],
   ethDomainId: Scalars['String'],
   colonyAddress: Scalars['String'],
 };
@@ -105,6 +128,7 @@ export type CreateDomainInput = {
 
 export type CreateTaskEvent = TaskEvent & {
    __typename?: 'CreateTaskEvent',
+  type: Scalars['String'],
   taskId: Scalars['String'],
   ethDomainId: Scalars['String'],
   colonyAddress: Scalars['String'],
@@ -129,6 +153,7 @@ export type CreateUserInput = {
 
 export type CreateWorkRequestEvent = TaskEvent & {
    __typename?: 'CreateWorkRequestEvent',
+  type: Scalars['String'],
   taskId: Scalars['String'],
 };
 
@@ -136,14 +161,16 @@ export type CreateWorkRequestInput = {
   id: Scalars['String'],
 };
 
+
 export type Domain = {
    __typename?: 'Domain',
   id: Scalars['String'],
+  createdAt: Scalars['DateTime'],
   colonyAddress: Scalars['String'],
   ethDomainId: Scalars['Int'],
   ethParentDomainId?: Maybe<Scalars['Int']>,
   name: Scalars['String'],
-  colony: Colony,
+  colony?: Maybe<Colony>,
   parent?: Maybe<Domain>,
   tasks: Array<Task>,
 };
@@ -174,7 +201,9 @@ export type EditUserInput = {
 export type Event = {
    __typename?: 'Event',
   type: Scalars['String'],
-  initiator: User,
+  createdAt: Scalars['DateTime'],
+  initiator?: Maybe<User>,
+  initiatorAddress: Scalars['String'],
   sourceId: Scalars['String'],
   sourceType: Scalars['String'],
   context: EventContext,
@@ -184,11 +213,13 @@ export type EventContext = AssignWorkerEvent | CancelTaskEvent | CreateDomainEve
 
 export type FinalizeTaskEvent = TaskEvent & {
    __typename?: 'FinalizeTaskEvent',
+  type: Scalars['String'],
   taskId: Scalars['String'],
 };
 
 export type IToken = {
   id: Scalars['String'],
+  createdAt: Scalars['DateTime'],
   address: Scalars['String'],
   name: Scalars['String'],
   symbol: Scalars['String'],
@@ -442,6 +473,7 @@ export type QueryTokenArgs = {
 
 export type RemoveTaskPayoutEvent = TaskEvent & {
    __typename?: 'RemoveTaskPayoutEvent',
+  type: Scalars['String'],
   taskId: Scalars['String'],
   tokenAddress: Scalars['String'],
   amount: Scalars['String'],
@@ -451,6 +483,7 @@ export type RemoveTaskPayoutInput = {
   id: Scalars['String'],
   amount: Scalars['String'],
   token: Scalars['String'],
+  tokenAddress: Scalars['String'],
   ethDomainId: Scalars['Int'],
 };
 
@@ -461,6 +494,7 @@ export type SendTaskMessageInput = {
 
 export type SendWorkInviteEvent = TaskEvent & {
    __typename?: 'SendWorkInviteEvent',
+  type: Scalars['String'],
   taskId: Scalars['String'],
   tokenAddress: Scalars['String'],
   amount: Scalars['String'],
@@ -479,6 +513,7 @@ export type SetColonyTokenAvatarInput = {
 
 export type SetTaskDescriptionEvent = TaskEvent & {
    __typename?: 'SetTaskDescriptionEvent',
+  type: Scalars['String'],
   taskId: Scalars['String'],
   description: Scalars['String'],
 };
@@ -490,6 +525,7 @@ export type SetTaskDescriptionInput = {
 
 export type SetTaskDomainEvent = TaskEvent & {
    __typename?: 'SetTaskDomainEvent',
+  type: Scalars['String'],
   taskId: Scalars['String'],
   ethDomainId: Scalars['String'],
 };
@@ -501,6 +537,7 @@ export type SetTaskDomainInput = {
 
 export type SetTaskDueDateEvent = TaskEvent & {
    __typename?: 'SetTaskDueDateEvent',
+  type: Scalars['String'],
   taskId: Scalars['String'],
   dueDate: Scalars['Int'],
 };
@@ -512,6 +549,7 @@ export type SetTaskDueDateInput = {
 
 export type SetTaskPayoutEvent = TaskEvent & {
    __typename?: 'SetTaskPayoutEvent',
+  type: Scalars['String'],
   taskId: Scalars['String'],
 };
 
@@ -524,6 +562,7 @@ export type SetTaskPayoutInput = {
 
 export type SetTaskSkillEvent = TaskEvent & {
    __typename?: 'SetTaskSkillEvent',
+  type: Scalars['String'],
   taskId: Scalars['String'],
   ethSkillId: Scalars['Int'],
 };
@@ -535,6 +574,7 @@ export type SetTaskSkillInput = {
 
 export type SetTaskTitleEvent = TaskEvent & {
    __typename?: 'SetTaskTitleEvent',
+  type: Scalars['String'],
   taskId: Scalars['String'],
   title: Scalars['String'],
 };
@@ -556,6 +596,7 @@ export type SubscribeToColonyInput = {
 export type Task = {
    __typename?: 'Task',
   id: Scalars['String'],
+  createdAt: Scalars['DateTime'],
   ethTaskId?: Maybe<Scalars['Int']>,
   ethDomainId: Scalars['Int'],
   ethSkillId?: Maybe<Scalars['Int']>,
@@ -565,14 +606,20 @@ export type Task = {
   finalizedAt?: Maybe<Scalars['Int']>,
   title?: Maybe<Scalars['String']>,
   colony?: Maybe<Colony>,
+  colonyAddress: Scalars['String'],
   creator?: Maybe<User>,
+  creatorAddress: Scalars['String'],
   assignedWorker?: Maybe<User>,
+  assignedWorkerAddress?: Maybe<Scalars['String']>,
   workInvites: Array<User>,
+  workInviteAddresses: Array<Scalars['String']>,
   workRequests: Array<User>,
+  workRequestAddresses: Array<Scalars['String']>,
   events: Array<Event>,
 };
 
 export type TaskEvent = {
+  type: Scalars['String'],
   taskId: Scalars['String'],
 };
 
@@ -582,6 +629,7 @@ export type TaskIdInput = {
 
 export type TaskMessageEvent = TaskEvent & {
    __typename?: 'TaskMessageEvent',
+  type: Scalars['String'],
   taskId: Scalars['String'],
   message: Scalars['String'],
 };
@@ -589,6 +637,7 @@ export type TaskMessageEvent = TaskEvent & {
 export type Token = IToken & {
    __typename?: 'Token',
   id: Scalars['String'],
+  createdAt: Scalars['DateTime'],
   address: Scalars['String'],
   name: Scalars['String'],
   symbol: Scalars['String'],
@@ -597,6 +646,7 @@ export type Token = IToken & {
 
 export type UnassignWorkerEvent = TaskEvent & {
    __typename?: 'UnassignWorkerEvent',
+  type: Scalars['String'],
   taskId: Scalars['String'],
   workerAddress: Scalars['String'],
 };
@@ -614,10 +664,14 @@ export type UnsubscribeFromColonyInput = {
 export type User = {
    __typename?: 'User',
   id: Scalars['String'],
+  createdAt: Scalars['DateTime'],
   profile: UserProfile,
   colonies: Array<Colony>,
+  colonyAddresses: Array<Scalars['String']>,
   tasks: Array<Task>,
+  taskIds: Array<Scalars['String']>,
   tokens: Array<UserToken>,
+  tokenRefs: Array<Maybe<UserTokenRef>>,
   notifications?: Maybe<Array<Notification>>,
 };
 
@@ -640,9 +694,16 @@ export type UserProfile = {
 export type UserToken = IToken & {
    __typename?: 'UserToken',
   id: Scalars['String'],
+  createdAt: Scalars['DateTime'],
   address: Scalars['String'],
   name: Scalars['String'],
   symbol: Scalars['String'],
+  iconHash?: Maybe<Scalars['String']>,
+};
+
+export type UserTokenRef = {
+   __typename?: 'UserTokenRef',
+  address: Scalars['String'],
   iconHash?: Maybe<Scalars['String']>,
 };
 
