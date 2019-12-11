@@ -40,5 +40,11 @@ mutation CreateColony($input: CreateColonyInput!) {
 mutation EditColonyProfile($input: EditColonyProfileInput!) {
   editColonyProfile(input: $input) {
     id
+    colonyName
+    avatarHash
+    description
+    displayName
+    guideline
+    website
   }
 }
