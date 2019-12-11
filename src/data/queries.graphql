@@ -25,6 +25,20 @@ query Task($id: String!) {
     ethDomainId
     ethSkillId
     ethTaskId
+    events {
+      initiator {
+        id
+        profile {
+          avatarHash
+          displayName
+          username
+          walletAddress
+        }
+      }
+      sourceId
+      sourceType
+      type
+    }
     finalizedAt
     title
     workInvites {

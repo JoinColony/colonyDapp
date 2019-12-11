@@ -1,16 +1,16 @@
 import React, { Fragment, useRef, useLayoutEffect } from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
-import { EventTypes } from '~data/constants';
 
-import { Address } from '~types/index';
-import { TaskCommentType } from '~immutable/index';
 import { SpinnerLoader } from '~core/Preloaders';
-import { useDataSubscriber } from '~utils/hooks';
+import { EventTypes } from '~data/constants';
+import { useTaskQuery } from '~data/index';
+import { TaskCommentType } from '~immutable/index';
+import { Address } from '~types/index';
+
 import TaskFeedCompleteInfo from './TaskFeedCompleteInfo';
 import TaskFeedEvent from './TaskFeedEvent';
 import TaskFeedComment from './TaskFeedComment';
 import TaskFeedRating from './TaskFeedRating';
-import { taskFeedItemsSubscriber } from '../../subscribers';
 import styles from './TaskFeed.css';
 
 const displayName = 'dashboard.TaskFeed';
@@ -41,21 +41,17 @@ const TaskFeed = ({ colonyAddress, draftId }: Props) => {
     setTimeout(scrollToEnd, 1000);
   }, [bottomEl]);
 
-  const {
-    data: feedItems,
-    isFetching: isFetchingFeedItems,
-  } = useDataSubscriber(
-    taskFeedItemsSubscriber,
-    [draftId],
-    [colonyAddress, draftId],
-  );
+  const { data } = useTaskQuery({ variables: { id: draftId }})
 
-  const nFeedItems = feedItems ? feedItems.length : 0;
-  useLayoutEffect(scrollToEnd, [nFeedItems]);
+  const feedItems = data && data.task && data.task.events ? data.task.events : [];
 
-  return isFetchingFeedItems ? (
-    <SpinnerLoader />
-  ) : (
+  useLayoutEffect(scrollToEnd, [feedItems.length]);
+
+  if (!data) {
+    return <SpinnerLoader />;
+  }
+
+  return (
     <>
       {feedItems && (
         <div className={styles.main}>

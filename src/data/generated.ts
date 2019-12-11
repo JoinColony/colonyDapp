@@ -1016,6 +1016,7 @@ export type TaskQueryVariables = {
   id: Scalars['String']
 };
 
+
 export type TaskQuery = (
   { __typename?: 'Query' }
   & { task: (
@@ -1035,6 +1036,17 @@ export type TaskQuery = (
         { __typename?: 'UserProfile' }
         & Pick<UserProfile, 'avatarHash' | 'displayName' | 'username' | 'walletAddress'>
       ) }
+    )>, events: Array<(
+      { __typename?: 'Event' }
+      & Pick<Event, 'sourceId' | 'sourceType' | 'type'>
+      & { initiator: Maybe<(
+        { __typename?: 'User' }
+        & Pick<User, 'id'>
+        & { profile: (
+          { __typename?: 'UserProfile' }
+          & Pick<UserProfile, 'avatarHash' | 'displayName' | 'username' | 'walletAddress'>
+        ) }
+      )> }
     )>, workInvites: Array<(
       { __typename?: 'User' }
       & Pick<User, 'id'>
@@ -2097,6 +2109,20 @@ export const TaskDocument = gql`
     ethDomainId
     ethSkillId
     ethTaskId
+    events {
+      initiator {
+        id
+        profile {
+          avatarHash
+          displayName
+          username
+          walletAddress
+        }
+      }
+      sourceId
+      sourceType
+      type
+    }
     finalizedAt
     title
     workInvites {
