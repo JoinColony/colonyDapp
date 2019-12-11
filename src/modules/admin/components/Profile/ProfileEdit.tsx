@@ -1,6 +1,5 @@
 import React, { useCallback } from 'react';
 import { defineMessages } from 'react-intl';
-import { useMutation } from '@apollo/react-hooks';
 import * as yup from 'yup';
 
 import Heading from '~core/Heading';
