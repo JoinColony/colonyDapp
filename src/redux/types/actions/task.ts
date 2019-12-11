@@ -98,13 +98,6 @@ export type TaskActionTypes =
       }
     >
   | ActionType<ActionTypes.TASK_FETCH_ALL>
-  | NonUniqueTaskActionType<ActionTypes.TASK_FEED_ITEMS_SUB_START, object>
-  | NonUniqueTaskActionType<ActionTypes.TASK_FEED_ITEMS_SUB_STOP, object>
-  | NonUniqueTaskActionType<
-      ActionTypes.TASK_FEED_ITEMS_SUB_EVENTS,
-      { events: CurrentEvents<TaskEvents | CommentEvents>[] }
-    >
-  | TaskErrorActionType<ActionTypes.TASK_FEED_ITEMS_SUB_ERROR>
   | TaskActionType<
       ActionTypes.TASK_FINALIZE,
       Required<TaskProps<'assignedWorker'>> & {
@@ -130,13 +123,6 @@ export type TaskActionTypes =
       ActionTypes.TASK_MANAGER_REVEAL_WORKER_RATING_SUCCESS,
       object
     >
-  | NonUniqueTaskActionType<ActionTypes.TASK_SUB_START, object>
-  | NonUniqueTaskActionType<ActionTypes.TASK_SUB_STOP, object>
-  | NonUniqueTaskActionType<
-      ActionTypes.TASK_SUB_EVENTS,
-      { events: CurrentEvents<TaskEvents>[] }
-    >
-  | TaskErrorActionType<ActionTypes.TASK_SUB_ERROR>
   | TaskActionType<
       ActionTypes.TASK_SET_WORKER_OR_PAYOUT,
       {
