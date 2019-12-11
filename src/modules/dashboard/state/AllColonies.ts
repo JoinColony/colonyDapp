@@ -1,9 +1,9 @@
 import { Map as ImmutableMap, Record } from 'immutable';
+import { AnyColony } from '~data/index';
 
 import { Address, DefaultValues, RecordToJS } from '~types/index';
 import {
   ColonyRecord,
-  ColonyType,
   FetchableDataRecord,
   FetchableDataType,
 } from '~immutable/index';
@@ -11,7 +11,7 @@ import {
 import { DASHBOARD_COLONY_NAMES, DASHBOARD_COLONIES } from '../constants';
 
 type AllColoniesObject = {
-  [colonyAddress: string]: FetchableDataType<ColonyType>;
+  [colonyAddress: string]: FetchableDataType<AnyColony>;
 };
 
 export type AllColoniesMap = ImmutableMap<

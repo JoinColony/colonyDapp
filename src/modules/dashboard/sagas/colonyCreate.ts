@@ -1,15 +1,12 @@
 import ApolloClient from 'apollo-client';
 import { $Values } from 'utility-types';
 import { Channel } from 'redux-saga';
-import { all, call, fork, put, take, takeEvery } from 'redux-saga/effects';
-import BigNumber from 'bn.js';
+import { all, call, fork, put } from 'redux-saga/effects';
 
-import { ROLES, ROOT_DOMAIN } from '~constants';
 import { ActionTypes, Action, AllActions } from '~redux/index';
 import {
   putError,
   takeFrom,
-  executeCommand,
   executeQuery,
   takeLatestCancellable,
 } from '~utils/saga/effects';
@@ -18,7 +15,7 @@ import ENS from '~lib/ENS';
 import { createAddress, ContractContexts } from '~types/index';
 import { parseExtensionDeployedLog } from '~utils/web3/eventLogs/eventParsers';
 import { getLoggedInUser } from '~data/helpers';
-import { CreateUserDocument } from '~data/index';
+import { CreateUserDocument, CreateColonyDocument } from '~data/index';
 
 import { TxConfig } from '../../core/types';
 import { getProfileStoreAddress } from '../../users/data/queries';
@@ -30,10 +27,6 @@ import {
 } from '../../core/actionCreators';
 import { createTransaction, createTransactionChannels } from '../../core/sagas';
 import { subscribeToColony } from '../../users/actionCreators';
-import { fetchDomainsAndRoles } from '../actionCreators/domains';
-import { getUserRoles } from '../../transformers';
-import { createColonyProfile } from '../data/commands';
-import { getColonyName } from './shared';
 
 function* colonyCreate({
   meta,
@@ -49,6 +42,12 @@ function* colonyCreate({
   },
 }: Action<ActionTypes.COLONY_CREATE>) {
   const { username: currentUsername, walletAddress } = yield getLoggedInUser();
+
+  const apolloClient: ApolloClient<any> = yield getContext(
+    Context.APOLLO_CLIENT,
+  );
+
+  const TOKEN_DECIMALS = 18;
 
   /*
    * Define a manifest of transaction ids and their respective channels.
@@ -138,7 +137,11 @@ function* colonyCreate({
       yield createGroupedTransaction(createToken, {
         context: ContractContexts.NETWORK_CONTEXT,
         methodName: 'createToken',
-        params: { name: tokenName, symbol: tokenSymbol, decimals: 18 },
+        params: {
+          name: tokenName,
+          symbol: tokenSymbol,
+          decimals: TOKEN_DECIMALS,
+        },
       });
     }
 
@@ -220,10 +223,6 @@ function* colonyCreate({
       yield takeFrom(createUser.channel, ActionTypes.TRANSACTION_SUCCEEDED);
       yield put<AllActions>(transactionLoadRelated(createUser.id, true));
 
-      const apolloClient: ApolloClient<any> = yield getContext(
-        Context.APOLLO_CLIENT,
-      );
-
       yield apolloClient.mutate({
         mutation: CreateUserDocument,
         variables: {
@@ -284,35 +283,25 @@ function* colonyCreate({
     yield put(transactionLoadRelated(createColony.id, true));
 
     /*
-     * Create the colony store
+     * Create the colony in the Mongo Database
      */
-    const colonyStore = yield executeCommand(createColonyProfile, {
-      metadata: { colonyAddress },
-      args: {
-        colonyAddress,
-        colonyName,
-        displayName,
-        token: {
-          address: tokenAddress,
-          iconHash: tokenIcon,
-          isExternal: tokenChoice === 'select',
-          isNative: true,
-          name: tokenName,
-          symbol: tokenSymbol,
+    yield apolloClient.mutate({
+      mutation: CreateColonyDocument,
+      variables: {
+        input: {
+          colonyAddress,
+          colonyName,
+          displayName,
+          tokenAddress,
+          tokenName,
+          tokenSymbol,
+          tokenIconHash: tokenIcon,
+          tokenDecimals: TOKEN_DECIMALS,
         },
       },
     });
 
     yield put(transactionLoadRelated(createColony.id, false));
-
-    /*
-     * Pass through colonyStore Address after colony store creation to colonyName creation
-     */
-    yield put(
-      transactionAddParams(createLabel.id, {
-        orbitDBPath: colonyStore.address.toString(),
-      }),
-    );
 
     /*
      * Add a colonyAddress identifier to all pending transactions.
@@ -435,83 +424,7 @@ function* colonyCreate({
   }
 }
 
-// This function assumes that the founder is calling it
-function* hasExternalToken(colonyClient) {
-  let isExternal = false;
-  try {
-    yield call([colonyClient.mintTokens, colonyClient.mintTokens.estimate], {
-      amount: new BigNumber(1),
-    });
-  } catch (caughtError) {
-    isExternal = true;
-  }
-  return isExternal;
-}
-
-function* colonyRecover({
-  meta,
-  payload: { colonyAddress },
-}: Action<ActionTypes.COLONY_RECOVER_DB>) {
-  const colonyManager = yield* getContext(Context.COLONY_MANAGER);
-  const colonyClient = yield call(
-    [colonyManager, colonyManager.getColonyClient],
-    colonyAddress,
-  );
-  try {
-    const { walletAddress } = yield getLoggedInUser();
-
-    yield put(fetchDomainsAndRoles(colonyAddress));
-
-    const {
-      payload: { domains },
-    } = yield take<AllActions>(ActionTypes.COLONY_DOMAINS_FETCH_SUCCESS);
-
-    const userRoles = getUserRoles(domains, ROOT_DOMAIN, walletAddress);
-
-    if (!userRoles.includes(ROLES.ROOT))
-      throw new Error('Founder permission required');
-
-    const colonyName = yield call(getColonyName, colonyAddress);
-    const displayName = `Recovered: ${colonyName}`;
-
-    const {
-      tokenClient,
-      tokenClient: {
-        contract: { address: tokenAddress },
-      },
-    } = colonyClient;
-    const { name, symbol } = yield call([
-      tokenClient.getTokenInfo,
-      tokenClient.getTokenInfo.call,
-    ]);
-
-    const isExternalToken = yield call(hasExternalToken, colonyClient);
-
-    yield* executeCommand(createColonyProfile, {
-      metadata: { colonyAddress },
-      args: {
-        colonyAddress,
-        colonyName,
-        displayName,
-        token: {
-          address: tokenAddress,
-          isExternal: isExternalToken,
-          isNative: true,
-          name,
-          symbol,
-        },
-      },
-    });
-
-    // After a reload everything should be fine again.
-    window.location.reload();
-  } catch (caughtError) {
-    yield putError(ActionTypes.COLONY_RECOVER_DB_ERROR, caughtError, meta);
-  }
-}
-
 export default function* colonyCreateSaga() {
-  yield takeEvery(ActionTypes.COLONY_RECOVER_DB, colonyRecover);
   yield takeLatestCancellable(
     ActionTypes.COLONY_CREATE,
     ActionTypes.COLONY_CREATE_CANCEL,

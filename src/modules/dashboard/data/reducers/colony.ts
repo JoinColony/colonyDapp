@@ -1,6 +1,6 @@
-import { ColonyType } from '~immutable/index';
 import { EventReducer } from '~data/types';
 import { EventTypes } from '~data/constants';
+import { AnyColony } from '~data/index';
 
 export const colonyTasksReducer: EventReducer<{
   [draftId: string]: {
@@ -27,7 +27,7 @@ export const colonyTasksReducer: EventReducer<{
   }
 };
 
-export const colonyReducer: EventReducer<ColonyType> = (colony, event) => {
+export const colonyReducer: EventReducer<AnyColony> = (colony, event) => {
   switch (event.type) {
     case EventTypes.TOKEN_INFO_ADDED: {
       const { address } = event.payload;
@@ -52,22 +52,6 @@ export const colonyReducer: EventReducer<ColonyType> = (colony, event) => {
             }),
             {},
           ),
-      };
-    }
-    case EventTypes.COLONY_AVATAR_UPLOADED: {
-      const { ipfsHash } = event.payload;
-      return {
-        ...colony,
-        avatarHash: ipfsHash,
-      };
-    }
-    case EventTypes.COLONY_AVATAR_REMOVED: {
-      const { avatarHash } = colony;
-      const { ipfsHash } = event.payload;
-      return {
-        ...colony,
-        avatarHash:
-          avatarHash && avatarHash === ipfsHash ? undefined : avatarHash,
       };
     }
     case EventTypes.COLONY_PROFILE_CREATED:

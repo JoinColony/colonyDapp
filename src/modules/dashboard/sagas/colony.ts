@@ -15,7 +15,6 @@ import { Action, ActionTypes, AllActions } from '~redux/index';
 import {
   putError,
   takeFrom,
-  executeCommand,
   executeQuery,
   executeSubscription,
   selectAsJS,
@@ -23,11 +22,6 @@ import {
 import { ColonyRolesType } from '~immutable/index';
 import { ContractContexts, createAddress } from '~types/index';
 
-import {
-  removeColonyAvatar,
-  setColonyAvatar,
-  updateColonyProfile,
-} from '../data/commands';
 import {
   checkColonyNameIsAvailable,
   getColony,
@@ -48,12 +42,10 @@ import {
   fetchColonyTokenBalance,
   fetchColonyTokenBalances,
 } from '../actionCreators';
-import {
-  colonyDomainsSelector,
-  colonyAvatarHashSelector,
-  colonySelector,
-} from '../selectors';
+import { colonyDomainsSelector, colonySelector } from '../selectors';
 import { getColonyAddress, getColonyName } from './shared';
+import { EditColonyProfileDocument } from '~data/index';
+import { getContext, Context } from '~context/index';
 
 function* colonyNameCheckAvailability({
   payload: { colonyName },
@@ -81,46 +73,6 @@ function* colonyNameCheckAvailability({
       caughtError,
       meta,
     );
-  }
-  return null;
-}
-
-function* colonyProfileUpdate({
-  meta,
-  payload: {
-    colonyAddress,
-    colonyName,
-    description,
-    displayName,
-    guideline,
-    website,
-  },
-}: Action<ActionTypes.COLONY_PROFILE_UPDATE>) {
-  try {
-    yield executeCommand(updateColonyProfile, {
-      args: {
-        description,
-        displayName,
-        guideline,
-        website,
-      },
-      metadata: { colonyAddress },
-    });
-
-    yield put<AllActions>({
-      type: ActionTypes.COLONY_PROFILE_UPDATE_SUCCESS,
-      meta,
-      payload: {
-        colonyAddress,
-        colonyName,
-        description,
-        displayName,
-        guideline,
-        website,
-      },
-    });
-  } catch (error) {
-    return yield putError(ActionTypes.COLONY_PROFILE_UPDATE_ERROR, error, meta);
   }
   return null;
 }
@@ -211,26 +163,18 @@ function* colonyAvatarUpload({
   payload: { colonyAddress, data },
 }: Action<ActionTypes.COLONY_AVATAR_UPLOAD>) {
   try {
-    // first attempt upload to IPFS
+    const apolloClient: ApolloClient<any> = yield getContext(
+      Context.APOLLO_CLIENT,
+    );
     const ipfsHash = yield call(ipfsUpload, data);
 
-    /*
-     * Set the avatar's hash in the store
-     */
-    yield executeCommand(setColonyAvatar, {
-      args: {
-        ipfsHash,
-      },
-      metadata: { colonyAddress },
+    yield apolloClient.mutate({
+      mutation: EditColonyProfileDocument,
+      variables: { input: { colonyAddress, avatarHash: ipfsHash } },
     });
 
-    /*
-     * Store the new avatar hash value in the redux store so we can show it
-     */
     yield put<AllActions>({
       type: ActionTypes.COLONY_AVATAR_UPLOAD_SUCCESS,
-      meta,
-      payload: { hash: ipfsHash },
     });
   } catch (error) {
     return yield putError(ActionTypes.COLONY_AVATAR_UPLOAD_ERROR, error, meta);
@@ -243,25 +187,16 @@ function* colonyAvatarRemove({
   payload: { colonyAddress },
 }: Action<ActionTypes.COLONY_AVATAR_REMOVE>) {
   try {
-    const ipfsHash = yield select(colonyAvatarHashSelector, colonyAddress);
-
-    /*
-     * Remove colony avatar
-     */
-    yield executeCommand(removeColonyAvatar, {
-      args: {
-        ipfsHash,
-      },
-      metadata: { colonyAddress },
+    const apolloClient: ApolloClient<any> = yield getContext(
+      Context.APOLLO_CLIENT,
+    );
+    yield apolloClient.mutate({
+      mutation: EditColonyProfileDocument,
+      variables: { input: { colonyAddress, avatarHash: null } },
     });
 
-    /*
-     * Also set the avatar in the state to undefined (via a reducer)
-     */
     yield put<AllActions>({
       type: ActionTypes.COLONY_AVATAR_REMOVE_SUCCESS,
-      meta,
-      payload: undefined,
     });
   } catch (error) {
     return yield putError(ActionTypes.COLONY_AVATAR_REMOVE_ERROR, error, meta);
@@ -627,7 +562,6 @@ export default function* colonySagas() {
     ActionTypes.COLONY_NATIVE_TOKEN_UNLOCK,
     colonyNativeTokenUnlock,
   );
-  yield takeEvery(ActionTypes.COLONY_PROFILE_UPDATE, colonyProfileUpdate);
   yield takeEvery(
     ActionTypes.COLONY_RECOVERY_MODE_ENTER,
     colonyRecoveryModeEnter,

@@ -11,7 +11,7 @@ import Button from '~core/Button';
 import Link from '~core/Link';
 import ExternalLink from '~core/ExternalLink';
 import HookedColonyAvatar from '~dashboard/HookedColonyAvatar';
-import { ColonyType } from '~immutable/index';
+import { AnyColony } from '~data/index';
 
 import ColonySubscribe from './ColonySubscribe';
 import ColonyInvite from './ColonyInvite';
@@ -40,7 +40,7 @@ const MSG = defineMessages({
 const ColonyAvatar = HookedColonyAvatar({ fetchColony: false });
 
 interface Props {
-  colony: ColonyType;
+  colony: AnyColony;
   canAdminister: boolean;
   domains: DomainsMapType;
   setFilteredDomainId: (domainId: number) => void;

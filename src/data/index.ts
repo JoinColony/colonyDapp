@@ -2,6 +2,8 @@
 
 import apolloCache from './cache';
 
+import { ColonyQuery } from './generated';
+
 import {
   resolvers as loggedInUserResolvers,
   initialCache as loggedInUser,
@@ -24,3 +26,5 @@ export const resolvers = {
 
 // export all the generated types and helpers
 export * from './generated';
+
+export type AnyColony = ColonyQuery['colony'];

@@ -21,6 +21,19 @@ query User($address: String!) {
   }
 }
 
+query Colony($address: String!) {
+  colony(address: $address) {
+    id
+    colonyAddress
+    colonyName
+    avatarHash
+    description
+    displayName
+    guideline
+    website
+  }
+}
+
 query ColonySubscribedUsers($colonyAddress: String!) {
   colony(address: $colonyAddress) {
     id

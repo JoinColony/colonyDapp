@@ -1,5 +1,5 @@
 import { Redirect } from 'react-router';
-import React, { useState, useCallback, useEffect, useMemo } from 'react';
+import React, { useState, useCallback, useEffect } from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 import { subscribeActions as subscribeToReduxActions } from 'redux-action-watch/lib/actionCreators';
 import { useDispatch } from 'redux-react-hook';
@@ -13,35 +13,24 @@ import {
   tasksFilterSelectOptions,
 } from '../shared/tasksFilter';
 import { ActionTypes } from '~redux/index';
-import {
-  useDataFetcher,
-  useDataSubscriber,
-  useSelector,
-  useTransformer,
-} from '~utils/hooks';
+import { useDataFetcher, useSelector } from '~utils/hooks';
 import { mergePayload } from '~utils/actions';
 import Transactions from '~admin/Transactions';
 import { Tab, Tabs, TabList, TabPanel } from '~core/Tabs';
 import { Select } from '~core/Fields';
 import Heading from '~core/Heading';
-import Button, { ActionButton, DialogActionButton } from '~core/Button';
-import BreadCrumb from '~core/BreadCrumb';
+import Button, { ActionButton } from '~core/Button';
 import RecoveryModeAlert from '~admin/RecoveryModeAlert';
 import LoadingTemplate from '~pages/LoadingTemplate';
-import { useLoggedInUser } from '~data/helpers';
-
-import { canAdminister, hasRoot } from '../../../users/checks';
-import { colonyAddressFetcher, domainsAndRolesFetcher } from '../../fetchers';
+// import { useLoggedInUser } from '~data/helpers';
+import { colonyAddressFetcher } from '../../fetchers';
 import {
   colonyNativeTokenSelector,
   colonyEthTokenSelector,
 } from '../../selectors';
-import { getUserRoles } from '../../../transformers';
-import { colonySubscriber } from '../../subscribers';
-import {
-  isInRecoveryMode as isInRecoveryModeCheck,
-  canRecoverColony,
-} from '../../checks';
+import { isInRecoveryMode as isInRecoveryModeCheck } from '../../checks';
+import { useColonyLazyQuery } from '~data/index';
+
 import ColonyFunding from './ColonyFunding';
 import ColonyMeta from './ColonyMeta';
 import TabContribute from './TabContribute';
@@ -77,35 +66,11 @@ const MSG = defineMessages({
     id: 'dashboard.ColonyHome.noFilter',
     defaultMessage: 'All Transactions in Colony',
   },
-  recoverColonyButton: {
-    id: 'dashboard.ColonyHome.recoverColonyButton',
-    defaultMessage: 'Recover Colony?',
-  },
-  recoverColonyHeading: {
-    id: 'dashboard.ColonyHome.recoverColonyHeading',
-    defaultMessage: 'Really recover this Colony?',
-  },
-  recoverColonyParagraph: {
-    id: 'dashboard.ColonyHome.recoverColonyParagraph',
-    defaultMessage: `Please ONLY do this if you know what you're doing.
-    This will effectively DELETE all of your Colony's metadata
-    and recreate it from scratch. After that, the page will be reloaded!`,
-  },
-  recoverColonyConfirmButton: {
-    id: 'dashboard.ColonyHome.recoverColonyConfirmButton',
-    defaultMessage: 'Yes, RECOVER this Colony',
-  },
-  recoverColonyCancelButton: {
-    id: 'dashboard.ColonyHome.recoverColonyCancelButton',
-    defaultMessage: 'Nope! Take me back, please',
-  },
 });
 
 interface Props {
   match: any;
 }
-
-const COLONY_DB_RECOVER_BUTTON_TIMEOUT = 20 * 1000;
 
 const displayName = 'dashboard.ColonyHome';
 
@@ -119,7 +84,6 @@ const ColonyHome = ({
     COLONY_TOTAL_BALANCE_DOMAIN_ID,
   );
   const [isTaskBeingCreated, setIsTaskBeingCreated] = useState(false);
-  const [showRecoverOption, setRecoverOption] = useState(false);
   const [activeTab, setActiveTab] = useState<'tasks' | 'transactions'>('tasks');
 
   const dispatch = useDispatch();
@@ -138,66 +102,74 @@ const ColonyHome = ({
     [dispatch, setIsTaskBeingCreated],
   );
 
-  useEffect(() => {
-    const timeout = setTimeout(() => {
-      setRecoverOption(true);
-    }, COLONY_DB_RECOVER_BUTTON_TIMEOUT);
-    return () => clearTimeout(timeout);
-  });
-
   const formSetFilter = useCallback(
     (_: string, value: TasksFilterOptionType) => setFilterOption(value as any),
     [setFilterOption],
   );
 
+  /*
+   * @NOTE Blockchain-first approach
+   * We get the colony's address from the ENS resolver, then using that,
+   * we fetch data from mongo
+   */
   const { data: colonyAddress, error: addressError } = useDataFetcher(
     colonyAddressFetcher,
     [colonyName],
     [colonyName],
   );
 
-  const colonyArgs: [Address | undefined] = [colonyAddress || undefined];
-  const {
-    data: colony,
-    isFetching: isFetchingColony,
-    error: colonyError,
-  } = useDataSubscriber(colonySubscriber, colonyArgs, colonyArgs);
+  const [loadColony, { data }] = useColonyLazyQuery();
 
-  const { data: domains, isFetching: isFetchingDomains } = useDataFetcher(
-    domainsAndRolesFetcher,
-    [colonyAddress],
-    [colonyAddress],
-  );
-
-  const { walletAddress } = useLoggedInUser();
-
-  const currentDomainUserRoles = useTransformer(getUserRoles, [
-    domains,
-    filteredDomainId || ROOT_DOMAIN,
-    walletAddress,
-  ]);
-
-  const rootUserRoles = useTransformer(getUserRoles, [
-    domains,
-    ROOT_DOMAIN,
-    walletAddress,
-  ]);
-
-  const crumbs = useMemo(() => {
-    switch (filteredDomainId) {
-      case 0:
-        return [{ id: 'domain.all' }];
-
-      case 1:
-        return [{ id: 'domain.root' }];
-
-      default:
-        return domains[filteredDomainId]
-          ? [{ id: 'domain.root' }, domains[filteredDomainId].name]
-          : [{ id: 'domain.root' }];
+  useEffect(() => {
+    if (colonyAddress) {
+      loadColony({
+        variables: { address: colonyAddress },
+      });
     }
-  }, [domains, filteredDomainId]);
+  }, [loadColony, colonyAddress]);
 
+  /*
+   * @TODO Re-add domains once they're available from mongo
+   */
+  // const { data: domains, isFetching: isFetchingDomains } = useDataFetcher(
+  //   domainsAndRolesFetcher,
+  //   [colonyAddress],
+  //   [colonyAddress],
+  // );
+
+  // const { walletAddress } = useLoggedInUser();
+
+  /*
+   * @TODO Re-add domains once they're available from mongo
+   */
+  // const currentDomainUserRoles = useTransformer(getUserRoles, [
+  //   domains,
+  //   filteredDomainId || ROOT_DOMAIN,
+  //   walletAddress,
+  // ]);
+
+  // const rootUserRoles = useTransformer(getUserRoles, [
+  //   domains,
+  //   ROOT_DOMAIN,
+  //   walletAddress,
+  // ]);
+
+  // const crumbs = useMemo(() => {
+  //   switch (filteredDomainId) {
+  //     case 0:
+  //       return [{ id: 'domain.all' }];
+
+  //     case 1:
+  //       return [{ id: 'domain.root' }];
+
+  //     default:
+  //       return domains[filteredDomainId]
+  //         ? [{ id: 'domain.root' }, domains[filteredDomainId].name]
+  //         : [{ id: 'domain.root' }];
+  //   }
+  // }, [domains, filteredDomainId]);
+
+  const colonyArgs: [Address | undefined] = [colonyAddress || undefined];
   const nativeTokenRef = useSelector(colonyNativeTokenSelector, colonyArgs);
   const ethTokenRef = useSelector(colonyEthTokenSelector, colonyArgs);
 
@@ -210,46 +182,40 @@ const ColonyHome = ({
     [colonyAddress, filteredDomainId],
   );
 
-  if (colonyError || addressError) {
+  if (!colonyName || addressError) {
     return <Redirect to="/404" />;
   }
 
   if (
-    !(colony && colonyAddress) ||
-    isFetchingColony ||
-    !domains ||
-    isFetchingDomains ||
-    !nativeTokenRef
+    !data ||
+    !(data && data.colony) ||
+    // !colony ||
+    !colonyAddress
+    /*
+     * @TODO Re-add domains once they're available from mongo
+     *
+     * !domains ||
+     * isFetchingDomains ||
+     */
+    /*
+     * @TODO Re-add nativeTokenRef
+     * Right now it gets hung up since the colony's data is no longer making it's way
+     * into the redux state
+     *
+     *!nativeTokenRef ||
+     */
   ) {
-    return (
-      <LoadingTemplate loadingText={MSG.loadingText}>
-        {showRecoverOption &&
-        colonyAddress &&
-        domains &&
-        canRecoverColony(rootUserRoles) ? (
-          <DialogActionButton
-            dialog="ConfirmDialog"
-            dialogProps={{
-              appearance: { theme: 'danger' },
-              heading: MSG.recoverColonyHeading,
-              children: <FormattedMessage {...MSG.recoverColonyParagraph} />,
-              cancelButtonText: MSG.recoverColonyCancelButton,
-              confirmButtonText: MSG.recoverColonyConfirmButton,
-            }}
-            submit={ActionTypes.COLONY_RECOVER_DB}
-            error={ActionTypes.COLONY_RECOVER_DB_ERROR}
-            success={ActionTypes.COLONY_RECOVER_DB_SUCCESS}
-            text={MSG.recoverColonyButton}
-            values={{ colonyAddress }}
-          />
-        ) : null}
-      </LoadingTemplate>
-    );
+    return <LoadingTemplate loadingText={MSG.loadingText} />;
   }
 
   // Eventually this has to be in the proper domain. There's probably going to be a different UI for that
-  const canCreateTask = canAdminister(currentDomainUserRoles);
-  const isInRecoveryMode = isInRecoveryModeCheck(colony);
+  /*
+   * @TODO Re-add domains once they're available from mongo
+   *
+   * const canCreateTask = canAdminister(currentDomainUserRoles);
+   */
+  const canCreateTask = true;
+  const isInRecoveryMode = isInRecoveryModeCheck(data.colony);
 
   const noFilter = (
     <Heading
@@ -263,18 +229,30 @@ const ColonyHome = ({
       <aside className={styles.colonyInfo}>
         <div className={styles.metaContainer}>
           <ColonyMeta
-            colony={colony}
-            canAdminister={!isInRecoveryMode && canAdminister(rootUserRoles)}
-            domains={domains}
+            colony={data.colony}
+            /*
+             * @TODO Re-add domains once they're available from mongo
+             *
+             * canAdminister={!isInRecoveryMode && canAdminister(rootUserRoles)}
+             */
+            canAdminister
+            /*
+             * @TODO Re-add domains once they're available from mongo
+             *
+             * domains={domains}
+             */
             filteredDomainId={filteredDomainId}
             setFilteredDomainId={setFilteredDomainId}
           />
         </div>
       </aside>
       <main className={styles.content}>
-        <div className={styles.breadCrumbContainer}>
+        {/*
+         * @TODO Re-add domains once they're available from mongo
+         */}
+        {/* <div className={styles.breadCrumbContainer}>
           {domains && crumbs && <BreadCrumb elements={crumbs} />}
-        </div>
+        </div> */}
         <Tabs>
           <TabList extra={activeTab === 'tasks' ? null : noFilter}>
             <Tab onClick={() => setActiveTab('tasks')}>
@@ -323,16 +301,20 @@ const ColonyHome = ({
           <TabPanel>
             <TabContribute
               allowTaskCreation={canCreateTask}
-              colony={colony}
+              colony={data.colony}
               filteredDomainId={filteredDomainId}
               filterOption={filterOption}
               ethTokenRef={ethTokenRef}
               nativeTokenRef={nativeTokenRef}
-              showQrCode={hasRoot(rootUserRoles)}
+              /*
+               * @TODO Re-add domains once they're available from mongo
+               *
+               * showQrCode={hasRoot(rootUserRoles)}
+               */
             />
           </TabPanel>
           <TabPanel>
-            <Transactions colonyAddress={colony.colonyAddress} />
+            <Transactions colonyAddress={data.colony.colonyAddress} />
           </TabPanel>
         </Tabs>
       </main>

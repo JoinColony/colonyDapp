@@ -1,7 +1,7 @@
-import { ColonyType } from '~immutable/index';
 import ColonyAvatar, { Props as ColonyAvatarProps } from '~core/ColonyAvatar';
 import { useDataFetcher, useDataSubscriber } from '~utils/hooks';
 import { withHooks } from '~utils/hoc';
+import { AnyColony } from '~data/index';
 
 import { ipfsDataFetcher } from '../../../core/fetchers';
 import { colonySubscriber } from '../../subscribers';
@@ -9,9 +9,9 @@ import { colonySubscriber } from '../../subscribers';
 export default withHooks<
   { fetchColony: boolean },
   ColonyAvatarProps,
-  { colony?: ColonyType; avatarURL?: string }
+  { colony?: AnyColony; avatarURL?: string }
 >(({ fetchColony = true }, { colony, colonyAddress }) => {
-  const result: { colony?: ColonyType; avatarURL?: string } = {
+  const result: { colony?: AnyColony; avatarURL?: string } = {
     colony,
     avatarURL: undefined,
   };

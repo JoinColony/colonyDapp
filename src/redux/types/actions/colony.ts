@@ -4,7 +4,6 @@ import { ROLES } from '~constants';
 import { ActionTypes } from '~redux/index';
 import { Address, ENSName, WithKey } from '~types/index';
 import {
-  ColonyType,
   ContractTransactionType,
   ColonyTokenReferenceType,
   DomainType,
@@ -17,6 +16,7 @@ import {
   ErrorActionType,
   UniqueActionType,
 } from './index';
+import { AnyColony } from '~data/index';
 
 export type ColonyActionTypes =
   | UniqueActionType<
@@ -147,7 +147,7 @@ export type ColonyActionTypes =
   | ErrorActionType<ActionTypes.COLONY_FETCH_ERROR, WithKey>
   | ActionTypeWithPayloadAndMeta<
       ActionTypes.COLONY_FETCH_SUCCESS,
-      ColonyType,
+      AnyColony,
       WithKey
     >
   | ActionTypeWithPayloadAndMeta<
@@ -187,31 +187,6 @@ export type ColonyActionTypes =
       WithKey
     >
   | UniqueActionType<ActionTypes.COLONY_MINT_TOKENS_SUBMITTED, object, object>
-  | UniqueActionType<
-      ActionTypes.COLONY_PROFILE_UPDATE,
-      {
-        colonyAddress: string;
-        colonyName: string;
-        description: string;
-        displayName: string;
-        guideline: string;
-        website: string;
-      },
-      WithKey
-    >
-  | ErrorActionType<ActionTypes.COLONY_PROFILE_UPDATE_ERROR, object>
-  | UniqueActionType<
-      ActionTypes.COLONY_PROFILE_UPDATE_SUCCESS,
-      {
-        colonyAddress: string;
-        colonyName: string;
-        description: string;
-        displayName: string;
-        guideline: string;
-        website: string;
-      },
-      WithKey
-    >
   | UniqueActionType<
       ActionTypes.COLONY_RECOVERY_MODE_ENTER,
       { colonyAddress: Address },
@@ -270,7 +245,7 @@ export type ColonyActionTypes =
     >
   | ActionTypeWithPayloadAndMeta<
       ActionTypes.COLONY_SUB_EVENTS,
-      { colony: ColonyType; colonyAddress: Address },
+      { colony: AnyColony; colonyAddress: Address },
       WithKey
     >
   | ErrorActionType<ActionTypes.COLONY_SUB_ERROR, WithKey>
@@ -331,13 +306,6 @@ export type ColonyActionTypes =
       { colonyAddress: Address; tokens: Address[] },
       object
     >
-  | UniqueActionType<
-      ActionTypes.COLONY_RECOVER_DB,
-      { colonyAddress: Address },
-      null
-    >
-  | ErrorActionType<ActionTypes.COLONY_RECOVER_DB_ERROR, null>
-  | UniqueActionType<ActionTypes.COLONY_RECOVER_DB_SUCCESS, null, null>
   | ActionTypeWithPayloadAndMeta<
       ActionTypes.COLONY_TASK_METADATA_SUB_START,
       { colonyAddress: Address },

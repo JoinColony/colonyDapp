@@ -4,7 +4,6 @@ import { defineMessages } from 'react-intl';
 
 import { ROLES, ROOT_DOMAIN } from '~constants';
 import { NavigationItem } from '~pages/VerticalNavigation/VerticalNavigation';
-import { ColonyType } from '~immutable/index';
 import Heading from '~core/Heading';
 import LoadingTemplate from '~pages/LoadingTemplate';
 import ProfileEdit from '~admin/Profile/ProfileEdit';
@@ -15,26 +14,29 @@ import Permissions from '~admin/Permissions';
 import ProfileAdvanced from '~admin/Profile/ProfileAdvanced';
 import VerticalNavigation from '~pages/VerticalNavigation';
 import { HistoryNavigation } from '~pages/NavigationWrapper';
-import {
-  useDataFetcher,
-  useDataSubscriber,
-  useTransformer,
-} from '~utils/hooks';
+import { useDataFetcher, useTransformer } from '~utils/hooks';
 import { DomainsMapType } from '~types/index';
 import { useLoggedInUser } from '~data/helpers';
+import { useColonyQuery, AnyColony } from '~data/index';
 
 import {
   TEMP_getUserRolesWithRecovery,
   getAllUserRoles,
 } from '../../../transformers';
 import { isInRecoveryMode } from '../../../dashboard/checks';
-import { canArchitect, hasRoot } from '../../../users/checks';
+/*
+ * @TODO Re-add domains once they're available from mongo
+ *
+ * import {
+ *   canArchitect,
+ *   hasRoot
+ * } from '../../../users/checks';
+ */
 import {
   colonyAddressFetcher,
   domainsAndRolesFetcher,
   TEMP_userHasRecoveryRoleFetcher,
 } from '../../../dashboard/fetchers';
-import { colonySubscriber } from '../../../dashboard/subscribers';
 
 import styles from './AdminDashboard.css';
 
@@ -78,8 +80,14 @@ interface Props {
   match: any;
 }
 
+/*
+ * @TODO Re-add domains once they're available from mongo
+ */
+const canArchitect = () => true;
+const hasRoot = () => true;
+
 const navigationItems = (
-  colony: ColonyType,
+  colony: AnyColony,
   domains: DomainsMapType,
   rootRoles: ROLES[],
   allRoles: ROLES[],
@@ -152,19 +160,19 @@ const AdminDashboard = ({
     [colonyName],
   );
 
-  const { error: colonyError, data: colony } = useDataSubscriber(
-    colonySubscriber,
-    [colonyAddress],
-    [colonyAddress],
-  );
+  const { data } = useColonyQuery({
+    variables: { address: colonyAddress },
+  });
 
   const { walletAddress } = useLoggedInUser();
 
-  const { data: domains, isFetching: isFetchingRoles } = useDataFetcher(
-    domainsAndRolesFetcher,
-    [colonyAddress],
-    [colonyAddress],
-  );
+  const {
+    data: domains,
+    /*
+     * @TODO Re-add domains once they're available from mongo
+     */
+    // isFetching: isFetchingRoles
+  } = useDataFetcher(domainsAndRolesFetcher, [colonyAddress], [colonyAddress]);
 
   const { data: colonyRecoveryRoles = [] } = useDataFetcher(
     TEMP_userHasRecoveryRoleFetcher,
@@ -184,11 +192,19 @@ const AdminDashboard = ({
     walletAddress,
   ]);
 
-  if (!colonyName || addressError || colonyError) {
+  if (!colonyName || addressError) {
     return <Redirect to="/404" />;
   }
 
-  if (!colony || !domains || isFetchingRoles) {
+  if (
+    !data ||
+    !(data && data.colony)
+    /*
+     * @TODO Re-add domains once they're available from mongo
+     */
+    // !domains ||
+    // isFetchingRoles ||
+  ) {
     return <LoadingTemplate loadingText={MSG.loadingText} />;
   }
 
@@ -196,12 +212,11 @@ const AdminDashboard = ({
     return <Redirect to={CURRENT_COLONY_ROUTE} />;
   }
 
-  const { displayName } = colony;
   return (
     <div className={styles.main}>
       <VerticalNavigation
         navigationItems={navigationItems(
-          colony,
+          data.colony,
           domains,
           rootUserRoles,
           allUserRoles,
@@ -216,7 +231,7 @@ const AdminDashboard = ({
           <HistoryNavigation
             backRoute={CURRENT_COLONY_ROUTE}
             backText={MSG.backButton}
-            backTextValues={{ displayName }}
+            backTextValues={{ displayName: data.colony.displayName }}
           />
         </div>
         <div className={styles.headingWrapper}>
@@ -231,7 +246,7 @@ const AdminDashboard = ({
           />
         </div>
       </VerticalNavigation>
-      {isInRecoveryMode(colony) && <RecoveryModeAlert />}
+      {isInRecoveryMode(data.colony) && <RecoveryModeAlert />}
     </div>
   );
 };
