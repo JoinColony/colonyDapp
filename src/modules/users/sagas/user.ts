@@ -19,10 +19,17 @@ import ENS from '~lib/ENS';
 import { createAddress } from '~types/index';
 import { ColonyManager } from '~data/types';
 import {
-  getLoggedInUser,
+  ColonySubscribedUsersDocument,
   CreateUserDocument,
   EditUserDocument,
-  ColonySubscribedUsersDocument,
+  getLoggedInUser,
+  SetUserTokensDocument,
+  SetUserTokensMutation,
+  SetUserTokensMutationVariables,
+  UserTokensDocument,
+  UserTokensQuery,
+  UserTokensQueryResult,
+  UserTokensQueryVariables,
   UserColonyIdsQueryResult,
 } from '~data/index';
 
@@ -283,17 +290,32 @@ function* userLogout() {
 function* userTokensFetch() {
   try {
     const { walletAddress } = yield getLoggedInUser();
-    const colonyManager = yield getContext(Context.COLONY_MANAGER);
+    const colonyManager: ColonyManager = yield getContext(
+      Context.COLONY_MANAGER,
+    );
+    const apolloClient: ApolloClient<any> = yield getContext(
+      Context.APOLLO_CLIENT,
+    );
     const {
       networkClient: {
         adapter: { provider },
       },
     } = colonyManager;
 
-    // FIXME get user tokens from apollo here
-    const tokenAddresses = [] as string[];
+    const { data }: UserTokensQueryResult = yield apolloClient.query<
+      UserTokensQuery,
+      UserTokensQueryVariables
+    >({
+      query: UserTokensDocument,
+      variables: { address: walletAddress },
+    });
+
+    if (!data) {
+      throw new Error('Could not get user tokens');
+    }
+
     const coinTokens: UserTokenReferenceType[] = yield Promise.all(
-      tokenAddresses.map(async address => {
+      data.user.tokens.map(async address => {
         const tokenClient = await colonyManager.getTokenClient(address);
         const { amount } = await tokenClient.getBalanceOf.call({
           sourceAddress: walletAddress,
@@ -327,9 +349,17 @@ function* userTokensFetch() {
 function* userTokensUpdate(action: Action<ActionTypes.USER_TOKENS_UPDATE>) {
   try {
     const { tokens } = action.payload;
-    const { walletAddress } = yield getLoggedInUser();
-    // We probably don't need the wallet address
-    // FIXME update tokens here (apollo mutation)
+    const apolloClient: ApolloClient<any> = yield getContext(
+      Context.APOLLO_CLIENT,
+    );
+
+    yield apolloClient.mutate<
+      SetUserTokensMutation,
+      SetUserTokensMutationVariables
+    >({
+      mutation: SetUserTokensDocument,
+      variables: { input: { tokens } },
+    });
 
     yield put({ type: ActionTypes.USER_TOKENS_FETCH });
     yield put({ type: ActionTypes.USER_TOKENS_UPDATE_SUCCESS });

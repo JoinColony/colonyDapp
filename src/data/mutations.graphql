@@ -31,6 +31,13 @@ mutation EditUser($input: EditUserInput!) {
   }
 }
 
+mutation SetUserTokens($input: SetUserTokensInput!) {
+  setUserTokens(input: $input) {
+    id
+    tokens
+  }
+}
+
 mutation CreateColony($input: CreateColonyInput!) {
   createColony(input: $input) {
     id
