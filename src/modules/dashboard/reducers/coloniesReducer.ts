@@ -18,7 +18,7 @@ import { AllColoniesMap } from '../state/index';
  * Convert a JS object of balances { 1: '...' } where keys may be number or
  * string, to an ImmutableMap of balances keyed by numbers.
  */
-const balancesMapFromObject = balances =>
+const balancesMapFromObject = (balances = {}) =>
   ImmutableMap(
     Object.entries(balances).map(([domainId, balance]) => [
       domainId,
