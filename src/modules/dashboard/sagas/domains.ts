@@ -9,13 +9,14 @@ import {
   executeCommand,
 } from '~utils/saga/effects';
 import { ContractContexts } from '~types/index';
-// import { getContext, Context } from '~context/index';
+import { getContext, Context } from '~context/index';
 // import { decorateLog } from '~utils/web3/eventLogs/events';
 // import { normalizeTransactionLog } from '~data/normalizers';
 import { createTransaction, getTxChannel } from '../../core/sagas';
 import { createDomain, editDomain } from '../data/commands';
-import { getDomain, getColonyDomains } from '../data/queries';
+import { getDomain } from '../data/queries';
 import { fetchColonyTokenBalance } from '../actionCreators';
+import { ColonyDomainsQueryResult, ColonyDomainsDocument } from '~data/index';
 
 function* colonyDomainsFetch({
   meta,
@@ -27,17 +28,23 @@ function* colonyDomainsFetch({
   },
 }: Action<ActionTypes.COLONY_DOMAINS_FETCH>) {
   try {
-    const domains = yield executeQuery(getColonyDomains, {
-      args: undefined,
-      metadata: { colonyAddress },
+    const apolloClient: ApolloClient<any> = yield getContext(
+      Context.APOLLO_CLIENT,
+    );
+
+    const { data }: ColonyDomainsQueryResult = yield apolloClient.query({
+      query: ColonyDomainsDocument,
+      variables: { colonyAddress },
     });
+
+    if (!data) throw new Error("Could not get the colony's domain metadata");
 
     yield put<AllActions>({
       type: ActionTypes.COLONY_DOMAINS_FETCH_SUCCESS,
       meta,
       payload: {
         colonyAddress,
-        domains,
+        domains: data.colony.domains,
       },
     });
 
