@@ -36,7 +36,6 @@ import { getLoggedInUser } from '~data/index';
 import { fetchColonyTaskMetadata as fetchColonyTaskMetadataAC } from '../actionCreators';
 import {
   allColonyNamesSelector,
-  colonySelector,
   colonyTaskMetadataSelector,
 } from '../selectors';
 import { createTransaction, getTxChannel, signMessage } from '../../core/sagas';
