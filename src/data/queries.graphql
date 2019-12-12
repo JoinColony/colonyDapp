@@ -188,6 +188,22 @@ query UserColonyIds($address: String!) {
   }
 }
 
+query ColonyTasks($address: String!) {
+  colony(address: $address) {
+    id
+    tasks {
+      id
+      assignedWorker {
+        id
+        profile {
+          avatarHash
+        }
+      }
+      title
+    }
+  }
+}
+
 query ColonySubscribedUsers($colonyAddress: String!) {
   colony(address: $colonyAddress) {
     id
