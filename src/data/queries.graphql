@@ -11,6 +11,16 @@ query Task($id: String!) {
       }
     }
     cancelledAt
+    colony {
+      id
+      colonyAddress
+      colonyName
+      avatarHash
+      description
+      displayName
+      guideline
+      website
+    }
     creator {
       id
       profile {
