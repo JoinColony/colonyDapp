@@ -87,15 +87,8 @@ query Domain($colonyAddress: String!, $ethDomainId: Int!) {
     id
     colonyAddress
     ethDomainId
-    ethParentDomainId
     name
-    colony {
-      id
-      colonyName
-      colonyAddress
-    }
     parent {
-      id
       ethDomainId
       name
     }
