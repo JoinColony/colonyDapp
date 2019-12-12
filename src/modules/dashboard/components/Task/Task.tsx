@@ -22,7 +22,6 @@ import TaskTitle from '~dashboard/TaskTitle';
 
 import {
   canCancelTask,
-  canEditTask,
   canFinalizeTask,
   isCancelled,
   canRequestToWork,
@@ -116,7 +115,7 @@ const displayName = 'dashboard.Task';
 
 const Task = ({
   match: {
-    params: { draftId, colonyName },
+    params: { draftId },
   },
   openDialog,
   history,
@@ -125,35 +124,36 @@ const Task = ({
 
   const { walletAddress } = useLoggedInUser();
 
-  const { data: colonyAddress } = useDataFetcher(
-    colonyAddressFetcher,
-    [colonyName],
-    [colonyName],
-  );
-
-  const { data: task, loading: isLoadingTask } = useTaskQuery(
-    { variables: { id: draftId } },
-  );
+  const { data } = useTaskQuery({
+    variables: { id: draftId },
+  });
 
   const {
-    description = undefined,
-    ethDomainId = undefined,
-    dueDate = undefined,
-    ethSkillId = undefined,
-    title = undefined,
-  } = task || {};
+    task: {
+      colony = {} as AnyColony,
+      description = undefined,
+      ethDomainId = undefined,
+      dueDate = undefined,
+      ethSkillId = undefined,
+      title = undefined,
+    } = {},
+    task,
+  } = data || {};
 
-  const { data: domains, isFetching: isFetchingDomains } = useDataFetcher(
-    domainsAndRolesFetcher,
-    [colonyAddress],
-    [colonyAddress],
-  );
+  // fixme add domains back in here once ready
+  // const { data: domains, isFetching: isFetchingDomains } = useDataFetcher(
+  //   domainsAndRolesFetcher,
+  //   [colonyAddress],
+  //   [colonyAddress],
+  // );
 
-  const userRoles = useTransformer(getUserRoles, [
-    domains,
-    ethDomainId || null,
-    walletAddress,
-  ]);
+  // fixme add user roles back in here once ready
+  // const userRoles = useTransformer(getUserRoles, [
+  //   domains,
+  //   ethDomainId || null,
+  //   walletAddress,
+  // ]);
+  const userRoles = [];
 
   const onEditTask = useCallback(() => {
     // If you've managed to click on the button that runs this without the
@@ -169,27 +169,33 @@ const Task = ({
     });
   }, [draftId, openDialog, task]);
 
-  const transform = useCallback(mergePayload({ colonyAddress, draftId }), [
-    colonyAddress,
-    draftId,
-  ]);
+  const transform = useCallback(
+    mergePayload({
+      colonyAddress: colony ? colony.colonyAddress : '',
+      draftId,
+    }),
+    [colony, draftId],
+  );
 
   const [handleCancelTask] = useCancelTaskMutation({
-    variables: { input: { id: draftId }}
+    variables: { input: { id: draftId } },
   });
 
   if (
-    isLoadingTask ||
-    isFetchingDomains ||
+    // fixme isFetchingDomains
+    // isFetchingDomains ||
     !task ||
-    !colonyAddress ||
-    !domains ||
+    !colony ||
+    // fixme !domains
+    // !domains ||
     !walletAddress
   ) {
     return <LoadingTemplate loadingText={MSG.loadingText} />;
   }
 
-  const canEdit = canEditTask(task, userRoles);
+  // fixme handle edit check here
+  const canEdit = true;
+  // const canEdit = canEditTask(task, userRoles);
 
   return (
     <div className={styles.main}>
@@ -222,7 +228,10 @@ const Task = ({
           </header>
           <div className={styles.assignment}>
             <div>
-              <TaskAssignment colonyAddress={colonyAddress} draftId={draftId} />
+              <TaskAssignment
+                colonyAddress={colony.colonyAddress}
+                draftId={draftId}
+              />
             </div>
             {canEdit && (
               <div className={styles.assignmentDetailsButton}>
@@ -239,37 +248,39 @@ const Task = ({
           <TaskTitle
             disabled={!canEdit}
             draftId={draftId}
-            title={title}
+            title={title || undefined}
           />
           <TaskDescription
-            description={description}
+            description={description || undefined}
             disabled={!canEdit}
             draftId={draftId}
           />
         </section>
         {!!(canEdit || dueDate || ethDomainId || ethSkillId) && (
           <section className={styles.section}>
-            <div className={styles.editor}>
-              <TaskDomains
-                colonyAddress={colonyAddress}
-                // Disable the change of domain for now
-                disabled
-                domainId={ethDomainId}
-                draftId={draftId}
-              />
-            </div>
+            {colony && colony.colonyAddress && (
+              <div className={styles.editor}>
+                <TaskDomains
+                  colonyAddress={colony.colonyAddress}
+                  // Disable the change of domain for now
+                  disabled
+                  ethDomainId={ethDomainId}
+                  draftId={draftId}
+                />
+              </div>
+            )}
             <div className={styles.editor}>
               <TaskSkills
                 disabled={!canEdit}
                 draftId={draftId}
-                ethSkillId={ethSkillId}
+                ethSkillId={ethSkillId || undefined}
               />
             </div>
             <div className={styles.editor}>
               <TaskDate
                 disabled={!canEdit}
                 draftId={draftId}
-                dueDate={dueDate}
+                dueDate={dueDate || undefined}
               />
             </div>
           </section>
@@ -354,11 +365,11 @@ const Task = ({
         </section>
         <div className={styles.activityContainer}>
           <section className={styles.activity}>
-            <TaskFeed colonyAddress={colonyAddress} draftId={draftId} />
+            <TaskFeed colonyAddress={colony.colonyAddress} draftId={draftId} />
           </section>
           <section className={styles.commentBox}>
             <TaskComments
-              colonyAddress={colonyAddress}
+              colonyAddress={colony.colonyAddress}
               draftId={draftId}
               taskTitle={title}
               history={history}

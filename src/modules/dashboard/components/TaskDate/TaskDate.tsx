@@ -34,7 +34,7 @@ interface FormValues {
 interface Props {
   disabled?: boolean;
   draftId: string;
-  dueDate?: number;
+  dueDate: number | void;
 };
 
 const displayName = 'dashboard.TaskDate';
