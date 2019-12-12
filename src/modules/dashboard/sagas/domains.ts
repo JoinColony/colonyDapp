@@ -16,7 +16,11 @@ import { createTransaction, getTxChannel } from '../../core/sagas';
 import { createDomain, editDomain } from '../data/commands';
 import { getDomain } from '../data/queries';
 import { fetchColonyTokenBalance } from '../actionCreators';
-import { ColonyDomainsQueryResult, ColonyDomainsDocument } from '~data/index';
+import {
+  ColonyDomainsQueryResult,
+  ColonyDomainsDocument,
+  CreateDomainDocument,
+} from '~data/index';
 
 function* colonyDomainsFetch({
   meta,
@@ -32,7 +36,10 @@ function* colonyDomainsFetch({
       Context.APOLLO_CLIENT,
     );
 
-    const { data }: ColonyDomainsQueryResult = yield apolloClient.query({
+    const { data }: ColonyDomainsQueryResult = yield apolloClient.query<
+      ColonyDomainsQuery,
+      ColonyDomainsQueryVariables,
+    >({
       query: ColonyDomainsDocument,
       variables: { colonyAddress },
     });
@@ -62,11 +69,15 @@ function* colonyDomainsFetch({
 }
 
 function* domainCreate({
-  payload: { colonyAddress, domainName: name, parentDomainId = 1 },
+  payload: { colonyAddress, domainName: name, parentDomainId = ROOT_DOMAIN },
+  payload,
   meta,
 }: Action<ActionTypes.DOMAIN_CREATE>) {
   const txChannel = yield call(getTxChannel, meta.id);
   try {
+    const apolloClient: ApolloClient<any> = yield getContext(
+      Context.APOLLO_CLIENT,
+    );
     /*
      * @todo Create the domain on the colony with a transaction.
      * @body Idempotency could be improved here by looking for a pending transaction.
@@ -92,13 +103,20 @@ function* domainCreate({
     } = yield takeFrom(txChannel, ActionTypes.TRANSACTION_SUCCEEDED);
 
     /*
-     * Add an entry to the colony store.
+     * Add the Domain's metadata to the Mongo database
      */
-    yield executeCommand(createDomain, {
-      metadata: { colonyAddress },
-      args: {
-        domainId: id,
-        name,
+    yield apolloClient.mutate<
+      CreateDomainMutation,
+      CreateDomainMutationVariables,
+    >({
+      mutation: CreateDomainDocument,
+      variables: {
+        input: {
+          colonyAddress,
+          ethDomainId: id,
+          ethParentDomainId: parentDomainId,
+          name,
+        },
       },
     });
 
@@ -108,15 +126,9 @@ function* domainCreate({
       // For now parentId is just root domain
       payload: {
         colonyAddress,
-        domain: { id, name, parentId: ROOT_DOMAIN, roles: {} },
+        domain: { id, name, parentId: parentDomainId, roles: {} },
       },
     });
-
-    // const colonyManager = yield getContext(Context.COLONY_MANAGER);
-    // const colonyClient = yield call(
-    //   [colonyManager, colonyManager.getColonyClient],
-    //   colonyAddress,
-    // );
 
     /*
      * Notification
