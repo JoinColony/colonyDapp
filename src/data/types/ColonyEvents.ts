@@ -6,22 +6,6 @@ import { Address } from '~types/index';
 
 export type ColonyEvents =
   | EventDefinition<
-      EventTypes.DOMAIN_CREATED,
-      {
-        domainId: number;
-        name: string;
-      },
-      Versions.CURRENT
-    >
-  | EventDefinition<
-      EventTypes.DOMAIN_EDITED,
-      {
-        domainId: number;
-        name: string;
-      },
-      Versions.CURRENT
-    >
-  | EventDefinition<
       EventTypes.COLONY_PROFILE_CREATED,
       ColonyProps<'colonyAddress' | 'colonyName' | 'displayName'>,
       Versions.CURRENT

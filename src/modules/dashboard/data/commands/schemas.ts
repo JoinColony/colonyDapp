@@ -32,16 +32,6 @@ export const UpdateColonyProfileCommandArgsSchema = yup.object({
   guideline: yup.string().url(),
 });
 
-export const CreateDomainCommandArgsSchema = yup.object({
-  domainId: yup.number().required(),
-  name: yup.string().required(),
-});
-
-export const EditDomainCommandArgsSchema = yup.object({
-  domainId: yup.number().required(),
-  name: yup.string().required(),
-});
-
 export const SetColonyAvatarCommandArgsSchema = yup.object({
   ipfsHash: yup
     .string()
