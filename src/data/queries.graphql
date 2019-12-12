@@ -36,6 +36,7 @@ query Task($id: String!) {
     ethSkillId
     ethTaskId
     events {
+      createdAt
       initiator {
         id
         profile {

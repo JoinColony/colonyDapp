@@ -1036,7 +1036,7 @@ export type TaskQuery = (
       ) }
     )>, events: Array<(
       { __typename?: 'Event' }
-      & Pick<Event, 'sourceId' | 'sourceType' | 'type'>
+      & Pick<Event, 'createdAt' | 'sourceId' | 'sourceType' | 'type'>
       & { initiator: Maybe<(
         { __typename?: 'User' }
         & Pick<User, 'id'>
@@ -2118,6 +2118,7 @@ export const TaskDocument = gql`
     ethSkillId
     ethTaskId
     events {
+      createdAt
       initiator {
         id
         profile {
