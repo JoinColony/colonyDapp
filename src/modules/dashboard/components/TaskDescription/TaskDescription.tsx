@@ -3,7 +3,6 @@ import React, { useCallback } from 'react';
 import { defineMessages } from 'react-intl';
 
 import { MultiLineEdit, Form } from '~core/Fields';
-import { Address } from '~types/index';
 import { useSetTaskDescriptionMutation } from '~data/index';
 
 const MSG = defineMessages({
@@ -15,13 +14,13 @@ const MSG = defineMessages({
 
 interface FormValues {
   description: string;
-};
+}
 
 interface Props {
   draftId: string;
   description: string;
   disabled: boolean;
-};
+}
 
 const TaskDescription = ({
   description: existingDescription,
@@ -30,16 +29,21 @@ const TaskDescription = ({
 }: Props) => {
   const [setTaskDescription] = useSetTaskDescriptionMutation();
 
-  const onSubmit = useCallback(({ description }: FormValues) =>
-    setTaskDescription({
-      variables: {
-        input: {
-          description,
-          id: draftId,
-        }
+  const onSubmit = useCallback(
+    ({ description = '' }: FormValues) => {
+      // Only fire mutation if the description has changed.
+      if (description !== existingDescription) {
+        setTaskDescription({
+          variables: {
+            input: {
+              description,
+              id: draftId,
+            },
+          },
+        });
       }
-    }),
-    [draftId, setTaskDescription],
+    },
+    [draftId, existingDescription, setTaskDescription],
   );
 
   return (
