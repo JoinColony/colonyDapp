@@ -82,3 +82,13 @@ mutation UnsubscribeFromColony($input: UnsubscribeFromColonyInput!) {
     id
   }
 }
+
+mutation CreateDomain($input: CreateDomainInput!) {
+  createDomain(input: $input) {
+    id
+    colonyAddress
+    ethDomainId
+    ethParentDomainId
+    name
+  }
+}
