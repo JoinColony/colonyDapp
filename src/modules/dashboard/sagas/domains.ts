@@ -13,8 +13,6 @@ import { getContext, Context } from '~context/index';
 // import { decorateLog } from '~utils/web3/eventLogs/events';
 // import { normalizeTransactionLog } from '~data/normalizers';
 import { createTransaction, getTxChannel } from '../../core/sagas';
-import { createDomain, editDomain } from '../data/commands';
-import { getDomain } from '../data/queries';
 import { fetchColonyTokenBalance } from '../actionCreators';
 import {
   ColonyDomainsQuery,
@@ -27,6 +25,9 @@ import {
   EditDomainMutation,
   EditDomainMutationVariables,
   EditDomainDocument,
+  DomainQuery,
+  DomainQueryVariables,
+  DomainDocument,
 } from '~data/index';
 
 function* colonyDomainsFetch({
@@ -195,15 +196,22 @@ function* moveFundsBetweenPots({
 }: Action<ActionTypes.MOVE_FUNDS_BETWEEN_POTS>) {
   let txChannel;
   try {
+    const apolloClient: ApolloClient<any> = yield getContext(
+      Context.APOLLO_CLIENT,
+    );
+
     txChannel = yield call(getTxChannel, meta.id);
     const [{ potId: fromPot }, { potId: toPot }] = yield all([
-      executeQuery(getDomain, {
-        args: { domainId: fromDomain },
-        metadata: { colonyAddress },
+      /*
+       * @TODO Actually test if this returns the proper data format
+       */
+      apolloClient.query<DomainQuery, DomainQueryVariables>({
+        query: DomainDocument,
+        variables: { colonyAddress, ethDomainId: fromDomain },
       }),
-      executeQuery(getDomain, {
-        args: { domainId: toDomain },
-        metadata: { colonyAddress },
+      apolloClient.query<DomainQuery, DomainQueryVariables>({
+        query: DomainDocument,
+        variables: { colonyAddress, ethDomainId: toDomain },
       }),
     ]);
 
