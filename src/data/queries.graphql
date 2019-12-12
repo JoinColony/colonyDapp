@@ -31,6 +31,12 @@ query Colony($address: String!) {
     displayName
     guideline
     website
+    tokens {
+      address
+      name
+      symbol
+      iconHash
+    }
   }
 }
 

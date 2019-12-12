@@ -250,6 +250,7 @@ export type Mutation = {
   editUser?: Maybe<User>,
   subscribeToColony?: Maybe<User>,
   unsubscribeFromColony?: Maybe<User>,
+  setUserTokens?: Maybe<User>,
   createColony?: Maybe<Colony>,
   editColonyProfile?: Maybe<Colony>,
   createDomain?: Maybe<Domain>,
@@ -297,6 +298,11 @@ export type MutationSubscribeToColonyArgs = {
 
 export type MutationUnsubscribeFromColonyArgs = {
   input: UnsubscribeFromColonyInput
+};
+
+
+export type MutationSetUserTokensArgs = {
+  input: SetUserTokensInput
 };
 
 
@@ -589,6 +595,10 @@ export type SetUserTokenAvatarInput = {
   iconHash?: Maybe<Scalars['String']>,
 };
 
+export type SetUserTokensInput = {
+  tokens: Array<Scalars['String']>,
+};
+
 export type SubscribeToColonyInput = {
   colonyAddress: Scalars['String'],
 };
@@ -670,7 +680,7 @@ export type User = {
   colonyAddresses: Array<Scalars['String']>,
   tasks: Array<Task>,
   taskIds: Array<Scalars['String']>,
-  tokens: Array<UserToken>,
+  tokens: Array<Scalars['String']>,
   tokenRefs: Array<Maybe<UserTokenRef>>,
   notifications?: Maybe<Array<Notification>>,
 };
@@ -814,6 +824,10 @@ export type ColonyQuery = (
   & { colony: (
     { __typename?: 'Colony' }
     & Pick<Colony, 'id' | 'colonyAddress' | 'colonyName' | 'avatarHash' | 'description' | 'displayName' | 'guideline' | 'website'>
+    & { tokens: Array<(
+      { __typename?: 'ColonyToken' }
+      & Pick<ColonyToken, 'address' | 'name' | 'symbol' | 'iconHash'>
+    )> }
   ) }
 );
 
@@ -1103,6 +1117,12 @@ export const ColonyDocument = gql`
     displayName
     guideline
     website
+    tokens {
+      address
+      name
+      symbol
+      iconHash
+    }
   }
 }
     `;

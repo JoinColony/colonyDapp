@@ -13,10 +13,12 @@ import {
   FormStatus,
 } from '~core/Fields';
 import Button from '~core/Button';
-import { useColonyNativeToken } from '../../../dashboard/hooks/useColonyNativeToken';
+import { ColonyType } from '~immutable/index';
 import ENS from '~lib/ENS';
 import ColonyAvatarUploader from './ColonyAvatarUploader';
 import { useEditColonyProfileMutation, AnyColony } from '~data/index';
+
+import { useColonyNativeToken } from '../../../dashboard/hooks/useColonyNativeToken';
 
 import styles from './ProfileEdit.css';
 
@@ -85,7 +87,7 @@ const validationSchema = yup.object({
 });
 
 interface Props {
-  colony: AnyColony;
+  colony: AnyColony | ColonyType;
 }
 
 const ProfileEdit = ({ colony }: Props) => {
