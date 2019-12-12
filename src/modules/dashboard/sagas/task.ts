@@ -77,13 +77,9 @@ export function* fetchColonyTaskMetadata(colonyAddress: Address) {
 
 function* taskCreate({
   meta,
-  payload: { colonyAddress, ethDomainId },
+  payload: { colonyAddress, colonyName, ethDomainId },
 }: Action<ActionTypes.TASK_CREATE>) {
   try {
-    const {
-      record: { colonyName },
-    } = yield select(colonySelector, colonyAddress);
-
     const apolloClient: ApolloClient<any> = yield getContext(
       Context.APOLLO_CLIENT,
     );
@@ -105,15 +101,6 @@ function* taskCreate({
 
     const successAction: Action<ActionTypes.TASK_CREATE_SUCCESS> = {
       type: ActionTypes.TASK_CREATE_SUCCESS,
-      payload: {
-        id,
-        colonyAddress,
-        task: {
-          id,
-          ethDomainId,
-        },
-      },
-      meta: { key: id, ...meta },
     };
 
     /*
