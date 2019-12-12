@@ -1029,6 +1029,9 @@ export type TaskQuery = (
         { __typename?: 'UserProfile' }
         & Pick<UserProfile, 'avatarHash' | 'displayName' | 'username' | 'walletAddress'>
       ) }
+    )>, colony: Maybe<(
+      { __typename?: 'Colony' }
+      & Pick<Colony, 'id' | 'colonyAddress' | 'colonyName' | 'avatarHash' | 'description' | 'displayName' | 'guideline' | 'website'>
     )>, creator: Maybe<(
       { __typename?: 'User' }
       & Pick<User, 'id'>
@@ -2095,6 +2098,16 @@ export const TaskDocument = gql`
       }
     }
     cancelledAt
+    colony {
+      id
+      colonyAddress
+      colonyName
+      avatarHash
+      description
+      displayName
+      guideline
+      website
+    }
     creator {
       id
       profile {
