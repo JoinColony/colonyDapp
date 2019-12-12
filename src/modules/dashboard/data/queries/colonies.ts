@@ -1,7 +1,6 @@
 import { Set as ImmutableSet } from 'immutable';
-import BigNumber from 'bn.js';
 
-import { COLONY_TOTAL_BALANCE_DOMAIN_ID, ROOT_DOMAIN, ROLES } from '~constants';
+import { ROOT_DOMAIN, ROLES } from '~constants';
 import {
   Address,
   RoleSet,
@@ -299,35 +298,6 @@ export const getColonyDomains: Query<
     };
 
     return [rootDomain, ...colonyDomains];
-  },
-};
-
-export const getColonyTokenBalance: Query<
-  ColonyClient,
-  { colonyAddress: Address },
-  { domainId: number; tokenAddress: Address },
-  BigNumber
-> = {
-  name: 'getColonyTokenBalance',
-  context: colonyContext,
-  prepare: async (
-    { colonyManager }: { colonyManager: ColonyManager },
-    { colonyAddress },
-  ) => colonyManager.getColonyClient(colonyAddress),
-  async execute(colonyClient, { domainId, tokenAddress: token }) {
-    const { potId } = await colonyClient.getDomain.call({ domainId });
-    const {
-      balance: rewardsPotTotal,
-    } = await colonyClient.getFundingPotBalance.call({ potId, token });
-    if (domainId === COLONY_TOTAL_BALANCE_DOMAIN_ID) {
-      const {
-        total: nonRewardsPotsTotal,
-      } = await colonyClient.getNonRewardPotsTotal.call({ token });
-      return new BigNumber(
-        nonRewardsPotsTotal.add(rewardsPotTotal).toString(10),
-      );
-    }
-    return new BigNumber(rewardsPotTotal.toString(10));
   },
 };
 

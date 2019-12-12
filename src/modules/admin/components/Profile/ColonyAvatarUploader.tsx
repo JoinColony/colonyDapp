@@ -5,6 +5,7 @@ import { ActionTypes } from '~redux/index';
 import { pipe, withKey, mergePayload } from '~utils/actions';
 import { useAsyncFunction } from '~utils/hooks';
 import AvatarUploader from '~core/AvatarUploader';
+import { ColonyType } from '~immutable/index';
 import HookedColonyAvatar from '~dashboard/HookedColonyAvatar';
 import { AnyColony } from '~data/index';
 
@@ -24,7 +25,7 @@ const MSG = defineMessages({
 const ColonyAvatar = HookedColonyAvatar({ fetchColony: false });
 
 interface Props {
-  colony: AnyColony;
+  colony: AnyColony | ColonyType;
 }
 
 const displayName = 'admin.Profile.ColonyAvatarUploader';
