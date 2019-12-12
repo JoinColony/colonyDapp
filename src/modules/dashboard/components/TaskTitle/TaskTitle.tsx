@@ -19,7 +19,7 @@ interface FormValues {
 interface Props {
   draftId: string;
   disabled: boolean;
-  title: string;
+  title: string | void;
 }
 
 const TaskTitle = ({ disabled, title: existingTitle, draftId }: Props) => {

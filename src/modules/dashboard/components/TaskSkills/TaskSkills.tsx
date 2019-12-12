@@ -30,7 +30,7 @@ const MSG = defineMessages({
 interface Props {
   disabled?: boolean;
   draftId: string;
-  ethSkillId: number;
+  ethSkillId: number | void;
 };
 
 const displayName = 'daskboard.TaskSKills';
