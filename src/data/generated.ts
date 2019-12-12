@@ -1164,6 +1164,31 @@ export type UserColonyIdsQuery = { user: (
     & { colonies: Array<Pick<Colony, 'id'>> }
   ) };
 
+export type ColonyTasksQueryVariables = {
+  address: Scalars['String']
+};
+
+
+export type ColonyTasksQuery = (
+  { __typename?: 'Query' }
+  & { colony: (
+    { __typename?: 'Colony' }
+    & Pick<Colony, 'id'>
+    & { tasks: Array<(
+      { __typename?: 'Task' }
+      & Pick<Task, 'id' | 'title'>
+      & { assignedWorker: Maybe<(
+        { __typename?: 'User' }
+        & Pick<User, 'id'>
+        & { profile: (
+          { __typename?: 'UserProfile' }
+          & Pick<UserProfile, 'avatarHash'>
+        ) }
+      )> }
+    )> }
+  ) }
+);
+
 export type ColonySubscribedUsersQueryVariables = {
   colonyAddress: Scalars['String']
 };
