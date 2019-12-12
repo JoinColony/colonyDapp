@@ -16,10 +16,7 @@ query Task($id: String!) {
       colonyAddress
       colonyName
       avatarHash
-      description
       displayName
-      guideline
-      website
     }
     creator {
       id
@@ -35,21 +32,6 @@ query Task($id: String!) {
     ethDomainId
     ethSkillId
     ethTaskId
-    events {
-      createdAt
-      initiator {
-        id
-        profile {
-          avatarHash
-          displayName
-          username
-          walletAddress
-        }
-      }
-      sourceId
-      sourceType
-      type
-    }
     finalizedAt
     title
     workInvites {
@@ -69,6 +51,70 @@ query Task($id: String!) {
         username
         walletAddress
       }
+    }
+  }
+}
+
+query TaskFeedEvents($id: String!) {
+  task(id: $id) {
+    events {
+      context {
+        ... on AssignWorkerEvent {
+          workerAddress
+        }
+        ... on CreateDomainEvent {
+          ethDomainId
+        }
+        ... on CreateTaskEvent {
+          ethDomainId
+        }
+        ... on RemoveTaskPayoutEvent {
+          amount
+          tokenAddress
+        }
+        ... on SendWorkInviteEvent {
+          amount
+          tokenAddress
+        }
+        ... on SetTaskDescriptionEvent {
+          description
+        }
+        ... on SetTaskDomainEvent {
+          ethDomainId
+        }
+        ... on SetTaskDueDateEvent {
+          dueDate
+        }
+        # @todo have `amount` & `tokenAddress` here
+        # ... on SetTaskPayoutEvent {
+
+        # }
+        ... on SetTaskSkillEvent {
+          ethSkillId
+        }
+        ... on SetTaskTitleEvent {
+          title
+        }
+        ... on TaskMessageEvent {
+          message
+        }
+        ... on UnassignWorkerEvent {
+          workerAddress
+        }
+      }
+      createdAt
+      initiator {
+        id
+        profile {
+          avatarHash
+          displayName
+          username
+          walletAddress
+        }
+      }
+      sourceId
+      sourceType
+      type
     }
   }
 }

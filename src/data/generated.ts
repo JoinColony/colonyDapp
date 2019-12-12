@@ -1026,7 +1026,7 @@ export type TaskQuery = (
       ) }
     )>, colony: Maybe<(
       { __typename?: 'Colony' }
-      & Pick<Colony, 'id' | 'colonyAddress' | 'colonyName' | 'avatarHash' | 'description' | 'displayName' | 'guideline' | 'website'>
+      & Pick<Colony, 'id' | 'colonyAddress' | 'colonyName' | 'avatarHash' | 'displayName'>
     )>, creator: Maybe<(
       { __typename?: 'User' }
       & Pick<User, 'id'>
@@ -1034,17 +1034,6 @@ export type TaskQuery = (
         { __typename?: 'UserProfile' }
         & Pick<UserProfile, 'avatarHash' | 'displayName' | 'username' | 'walletAddress'>
       ) }
-    )>, events: Array<(
-      { __typename?: 'Event' }
-      & Pick<Event, 'createdAt' | 'sourceId' | 'sourceType' | 'type'>
-      & { initiator: Maybe<(
-        { __typename?: 'User' }
-        & Pick<User, 'id'>
-        & { profile: (
-          { __typename?: 'UserProfile' }
-          & Pick<UserProfile, 'avatarHash' | 'displayName' | 'username' | 'walletAddress'>
-        ) }
-      )> }
     )>, workInvites: Array<(
       { __typename?: 'User' }
       & Pick<User, 'id'>
@@ -1059,6 +1048,66 @@ export type TaskQuery = (
         { __typename?: 'UserProfile' }
         & Pick<UserProfile, 'avatarHash' | 'displayName' | 'username' | 'walletAddress'>
       ) }
+    )> }
+  ) }
+);
+
+export type TaskFeedEventsQueryVariables = {
+  id: Scalars['String']
+};
+
+
+export type TaskFeedEventsQuery = (
+  { __typename?: 'Query' }
+  & { task: (
+    { __typename?: 'Task' }
+    & { events: Array<(
+      { __typename?: 'Event' }
+      & Pick<Event, 'createdAt' | 'sourceId' | 'sourceType' | 'type'>
+      & { context: (
+        { __typename?: 'AssignWorkerEvent' }
+        & Pick<AssignWorkerEvent, 'workerAddress'>
+      ) | { __typename?: 'CancelTaskEvent' } | (
+        { __typename?: 'CreateDomainEvent' }
+        & Pick<CreateDomainEvent, 'ethDomainId'>
+      ) | (
+        { __typename?: 'CreateTaskEvent' }
+        & Pick<CreateTaskEvent, 'ethDomainId'>
+      ) | { __typename?: 'CreateWorkRequestEvent' } | { __typename?: 'FinalizeTaskEvent' } | (
+        { __typename?: 'RemoveTaskPayoutEvent' }
+        & Pick<RemoveTaskPayoutEvent, 'amount' | 'tokenAddress'>
+      ) | (
+        { __typename?: 'SendWorkInviteEvent' }
+        & Pick<SendWorkInviteEvent, 'amount' | 'tokenAddress'>
+      ) | (
+        { __typename?: 'SetTaskDescriptionEvent' }
+        & Pick<SetTaskDescriptionEvent, 'description'>
+      ) | (
+        { __typename?: 'SetTaskDomainEvent' }
+        & Pick<SetTaskDomainEvent, 'ethDomainId'>
+      ) | (
+        { __typename?: 'SetTaskDueDateEvent' }
+        & Pick<SetTaskDueDateEvent, 'dueDate'>
+      ) | { __typename?: 'SetTaskPayoutEvent' } | (
+        { __typename?: 'SetTaskSkillEvent' }
+        & Pick<SetTaskSkillEvent, 'ethSkillId'>
+      ) | (
+        { __typename?: 'SetTaskTitleEvent' }
+        & Pick<SetTaskTitleEvent, 'title'>
+      ) | (
+        { __typename?: 'TaskMessageEvent' }
+        & Pick<TaskMessageEvent, 'message'>
+      ) | (
+        { __typename?: 'UnassignWorkerEvent' }
+        & Pick<UnassignWorkerEvent, 'workerAddress'>
+      ), initiator: Maybe<(
+        { __typename?: 'User' }
+        & Pick<User, 'id'>
+        & { profile: (
+          { __typename?: 'UserProfile' }
+          & Pick<UserProfile, 'avatarHash' | 'displayName' | 'username' | 'walletAddress'>
+        ) }
+      )> }
     )> }
   ) }
 );
@@ -2098,10 +2147,7 @@ export const TaskDocument = gql`
       colonyAddress
       colonyName
       avatarHash
-      description
       displayName
-      guideline
-      website
     }
     creator {
       id
@@ -2117,21 +2163,6 @@ export const TaskDocument = gql`
     ethDomainId
     ethSkillId
     ethTaskId
-    events {
-      createdAt
-      initiator {
-        id
-        profile {
-          avatarHash
-          displayName
-          username
-          walletAddress
-        }
-      }
-      sourceId
-      sourceType
-      type
-    }
     finalizedAt
     title
     workInvites {
@@ -2181,6 +2212,93 @@ export function useTaskLazyQuery(baseOptions?: ApolloReactHooks.LazyQueryHookOpt
 export type TaskQueryHookResult = ReturnType<typeof useTaskQuery>;
 export type TaskLazyQueryHookResult = ReturnType<typeof useTaskLazyQuery>;
 export type TaskQueryResult = ApolloReactCommon.QueryResult<TaskQuery, TaskQueryVariables>;
+export const TaskFeedEventsDocument = gql`
+    query TaskFeedEvents($id: String!) {
+  task(id: $id) {
+    events {
+      context {
+        ... on AssignWorkerEvent {
+          workerAddress
+        }
+        ... on CreateDomainEvent {
+          ethDomainId
+        }
+        ... on CreateTaskEvent {
+          ethDomainId
+        }
+        ... on RemoveTaskPayoutEvent {
+          amount
+          tokenAddress
+        }
+        ... on SendWorkInviteEvent {
+          amount
+          tokenAddress
+        }
+        ... on SetTaskDescriptionEvent {
+          description
+        }
+        ... on SetTaskDomainEvent {
+          ethDomainId
+        }
+        ... on SetTaskDueDateEvent {
+          dueDate
+        }
+        ... on SetTaskSkillEvent {
+          ethSkillId
+        }
+        ... on SetTaskTitleEvent {
+          title
+        }
+        ... on TaskMessageEvent {
+          message
+        }
+        ... on UnassignWorkerEvent {
+          workerAddress
+        }
+      }
+      createdAt
+      initiator {
+        id
+        profile {
+          avatarHash
+          displayName
+          username
+          walletAddress
+        }
+      }
+      sourceId
+      sourceType
+      type
+    }
+  }
+}
+    `;
+
+/**
+ * __useTaskFeedEventsQuery__
+ *
+ * To run a query within a React component, call `useTaskFeedEventsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useTaskFeedEventsQuery` returns an object from Apollo Client that contains loading, error, and data properties 
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useTaskFeedEventsQuery({
+ *   variables: {
+ *      id: // value for 'id'
+ *   },
+ * });
+ */
+export function useTaskFeedEventsQuery(baseOptions?: ApolloReactHooks.QueryHookOptions<TaskFeedEventsQuery, TaskFeedEventsQueryVariables>) {
+        return ApolloReactHooks.useQuery<TaskFeedEventsQuery, TaskFeedEventsQueryVariables>(TaskFeedEventsDocument, baseOptions);
+      }
+export function useTaskFeedEventsLazyQuery(baseOptions?: ApolloReactHooks.LazyQueryHookOptions<TaskFeedEventsQuery, TaskFeedEventsQueryVariables>) {
+          return ApolloReactHooks.useLazyQuery<TaskFeedEventsQuery, TaskFeedEventsQueryVariables>(TaskFeedEventsDocument, baseOptions);
+        }
+export type TaskFeedEventsQueryHookResult = ReturnType<typeof useTaskFeedEventsQuery>;
+export type TaskFeedEventsLazyQueryHookResult = ReturnType<typeof useTaskFeedEventsLazyQuery>;
+export type TaskFeedEventsQueryResult = ApolloReactCommon.QueryResult<TaskFeedEventsQuery, TaskFeedEventsQueryVariables>;
 export const LoggedInUserDocument = gql`
     query LoggedInUser {
   loggedInUser @client {
