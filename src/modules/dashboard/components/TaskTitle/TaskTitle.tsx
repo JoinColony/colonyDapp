@@ -25,16 +25,19 @@ interface Props {
 const TaskTitle = ({ disabled, title: existingTitle, draftId }: Props) => {
   const [setTitle] = useSetTaskTitleMutation();
   const onSubmit = useCallback(
-    ({ title }: FormValues) =>
-      setTitle({
-        variables: {
-          input: {
-            title,
-            id: draftId,
+    ({ title = '' }: FormValues) => {
+      if (title !== existingTitle) {
+        setTitle({
+          variables: {
+            input: {
+              title,
+              id: draftId,
+            },
           },
-        },
-      }),
-    [draftId, setTitle],
+        });
+      }
+    },
+    [draftId, existingTitle, setTitle],
   );
 
   return (
