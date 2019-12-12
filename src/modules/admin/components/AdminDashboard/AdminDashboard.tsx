@@ -84,8 +84,8 @@ interface Props {
 /*
  * @TODO Re-add domains once they're available from mongo
  */
-const canArchitect = (_: any) => true;
-const hasRoot = (_: any) => true;
+const canArchitect = () => true;
+const hasRoot = () => true;
 
 const navigationItems = (
   colony: ColonyType,
@@ -169,13 +169,11 @@ const AdminDashboard = ({
 
   const { walletAddress } = useLoggedInUser();
 
-  const {
-    data: domains,
-    /*
-     * @TODO Re-add domains once they're available from mongo
-     */
-    // isFetching: isFetchingRoles
-  } = useDataFetcher(domainsAndRolesFetcher, [colonyAddress], [colonyAddress]);
+  const { data: domains, isFetching: isFetchingDomains } = useDataFetcher(
+    domainsAndRolesFetcher,
+    [colonyAddress],
+    [colonyAddress],
+  );
 
   const { data: colonyRecoveryRoles = [] } = useDataFetcher(
     TEMP_userHasRecoveryRoleFetcher,
@@ -199,14 +197,7 @@ const AdminDashboard = ({
     return <Redirect to="/404" />;
   }
 
-  if (
-    !colony
-    /*
-     * @TODO Re-add domains once they're available from mongo
-     */
-    // !domains ||
-    // isFetchingRoles ||
-  ) {
+  if (!colony || !domains || isFetchingDomains) {
     return <LoadingTemplate loadingText={MSG.loadingText} />;
   }
 
