@@ -1,5 +1,5 @@
 import { Redirect } from 'react-router';
-import React, { useState, useCallback, useEffect } from 'react';
+import React, { useState, useCallback, useEffect, useMemo } from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 import { subscribeActions as subscribeToReduxActions } from 'redux-action-watch/lib/actionCreators';
 import { useDispatch } from 'redux-react-hook';
@@ -13,7 +13,7 @@ import {
   tasksFilterSelectOptions,
 } from '../shared/tasksFilter';
 import { ActionTypes } from '~redux/index';
-import { useDataFetcher, useSelector } from '~utils/hooks';
+import { useDataFetcher, useSelector, useTransformer } from '~utils/hooks';
 import { mergePayload } from '~utils/actions';
 import Transactions from '~admin/Transactions';
 import { Tab, Tabs, TabList, TabPanel } from '~core/Tabs';
@@ -22,19 +22,21 @@ import Heading from '~core/Heading';
 import Button, { ActionButton } from '~core/Button';
 import RecoveryModeAlert from '~admin/RecoveryModeAlert';
 import LoadingTemplate from '~pages/LoadingTemplate';
-/* import { useLoggedInUser } from '~data/index'; */
-
-/* import { canAdminister, hasRoot } from '../../../users/checks'; */
+import { useLoggedInUser } from '~data/index';
+import BreadCrumb from '~core/BreadCrumb';
 import {
   colonyAddressFetcher,
   colonyFetcher,
-  /* domainsAndRolesFetcher, */
+  domainsAndRolesFetcher,
 } from '../../fetchers';
 import {
   colonyNativeTokenSelector,
   colonyEthTokenSelector,
 } from '../../selectors';
+import { getUserRoles } from '../../../transformers';
 import { isInRecoveryMode as isInRecoveryModeCheck } from '../../checks';
+import { useLoggedInUser } from '~data/helpers';
+import { canAdminister, hasRoot } from '../../../users/checks';
 
 import ColonyFunding from './ColonyFunding';
 import ColonyMeta from './ColonyMeta';
@@ -129,46 +131,40 @@ const ColonyHome = ({
     [colonyAddress],
   );
 
-  /*
-   * @TODO Re-add domains once they're available from mongo
-   */
-  // const { data: domains, isFetching: isFetchingDomains } = useDataFetcher(
-  //   domainsAndRolesFetcher,
-  //   [colonyAddress],
-  //   [colonyAddress],
-  // );
+  const { data: domains, isFetching: isFetchingDomains } = useDataFetcher(
+    domainsAndRolesFetcher,
+    [colonyAddress],
+    [colonyAddress],
+  );
 
-  // const { walletAddress } = useLoggedInUser();
+  const { walletAddress } = useLoggedInUser();
 
-  /*
-   * @TODO Re-add domains once they're available from mongo
-   */
-  // const currentDomainUserRoles = useTransformer(getUserRoles, [
-  //   domains,
-  //   filteredDomainId || ROOT_DOMAIN,
-  //   walletAddress,
-  // ]);
+  const currentDomainUserRoles = useTransformer(getUserRoles, [
+    domains,
+    filteredDomainId || ROOT_DOMAIN,
+    walletAddress,
+  ]);
 
-  // const rootUserRoles = useTransformer(getUserRoles, [
-  //   domains,
-  //   ROOT_DOMAIN,
-  //   walletAddress,
-  // ]);
+  const rootUserRoles = useTransformer(getUserRoles, [
+    domains,
+    ROOT_DOMAIN,
+    walletAddress,
+  ]);
 
-  // const crumbs = useMemo(() => {
-  //   switch (filteredDomainId) {
-  //     case 0:
-  //       return [{ id: 'domain.all' }];
+  const crumbs = useMemo(() => {
+    switch (filteredDomainId) {
+      case 0:
+        return [{ id: 'domain.all' }];
 
-  //     case 1:
-  //       return [{ id: 'domain.root' }];
+      case 1:
+        return [{ id: 'domain.root' }];
 
-  //     default:
-  //       return domains[filteredDomainId]
-  //         ? [{ id: 'domain.root' }, domains[filteredDomainId].name]
-  //         : [{ id: 'domain.root' }];
-  //   }
-  // }, [domains, filteredDomainId]);
+      default:
+        return domains[filteredDomainId]
+          ? [{ id: 'domain.root' }, domains[filteredDomainId].name]
+          : [{ id: 'domain.root' }];
+    }
+  }, [domains, filteredDomainId]);
 
   const colonyArgs: [Address | undefined] = [colonyAddress || undefined];
   const nativeTokenRef = useSelector(colonyNativeTokenSelector, colonyArgs);
@@ -189,13 +185,9 @@ const ColonyHome = ({
 
   if (
     !colony ||
-    !colonyAddress
-    /*
-     * @TODO Re-add domains once they're available from mongo
-     *
-     * !domains ||
-     * isFetchingDomains ||
-     */
+    !colonyAddress ||
+    !domains ||
+    isFetchingDomains
     /*
      * @TODO Re-add nativeTokenRef
      * Right now it gets hung up since the colony's data is no longer making it's way
@@ -208,12 +200,7 @@ const ColonyHome = ({
   }
 
   // Eventually this has to be in the proper domain. There's probably going to be a different UI for that
-  /*
-   * @TODO Re-add domains once they're available from mongo
-   *
-   * const canCreateTask = canAdminister(currentDomainUserRoles);
-   */
-  const canCreateTask = true;
+  const canCreateTask = canAdminister(currentDomainUserRoles);
   const isInRecoveryMode = isInRecoveryModeCheck(colony);
 
   const noFilter = (
@@ -229,30 +216,17 @@ const ColonyHome = ({
         <div className={styles.metaContainer}>
           <ColonyMeta
             colony={colony}
-            /*
-             * @TODO Re-add domains once they're available from mongo
-             *
-             * canAdminister={!isInRecoveryMode && canAdminister(rootUserRoles)}
-             */
-            canAdminister
-            /*
-             * @TODO Re-add domains once they're available from mongo
-             *
-             * domains={domains}
-             */
-            domains={{}}
+            canAdminister={!isInRecoveryMode && canAdminister(rootUserRoles)}
+            domains={domains}
             filteredDomainId={filteredDomainId}
             setFilteredDomainId={setFilteredDomainId}
           />
         </div>
       </aside>
       <main className={styles.content}>
-        {/*
-         * @TODO Re-add domains once they're available from mongo
-         */}
-        {/* <div className={styles.breadCrumbContainer}>
+        <div className={styles.breadCrumbContainer}>
           {domains && crumbs && <BreadCrumb elements={crumbs} />}
-        </div> */}
+        </div>
         <Tabs>
           <TabList extra={activeTab === 'tasks' ? null : noFilter}>
             <Tab onClick={() => setActiveTab('tasks')}>
@@ -306,12 +280,7 @@ const ColonyHome = ({
               filterOption={filterOption}
               ethTokenRef={ethTokenRef}
               nativeTokenRef={nativeTokenRef}
-              /*
-               * @TODO Re-add domains once they're available from mongo
-               *
-               * showQrCode={hasRoot(rootUserRoles)}
-               */
-              showQrCode
+              showQrCode={hasRoot(rootUserRoles)}
             />
           </TabPanel>
           <TabPanel>
