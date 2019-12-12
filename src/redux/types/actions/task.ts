@@ -77,16 +77,12 @@ export type TaskActionTypes =
     >
   | UniqueActionType<
       ActionTypes.TASK_CREATE,
-      TaskProps<'ethDomainId'> & { colonyAddress: Address },
+      TaskProps<'ethDomainId'> & { colonyAddress: Address, colonyName: string },
       object
     >
   | ErrorActionType<ActionTypes.TASK_CREATE_ERROR, object>
-  | TaskActionType<
-      ActionTypes.TASK_CREATE_SUCCESS,
-      {
-        colonyAddress: Address;
-        task: TaskProps<'id' | 'ethDomainId'>;
-      }
+  | ActionType<
+      ActionTypes.TASK_CREATE_SUCCESS
     >
   | NonUniqueTaskActionType<ActionTypes.TASK_FETCH, object>
   | TaskErrorActionType<ActionTypes.TASK_FETCH_ERROR>
