@@ -1,5 +1,3 @@
-import BigNumber from 'bn.js';
-
 import { EventReducer } from '~data/types';
 
 import { EventTypes, TaskStates } from '~data/constants';

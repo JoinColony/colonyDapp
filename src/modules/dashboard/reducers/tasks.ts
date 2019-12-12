@@ -95,6 +95,6 @@ const tasksReducer: ReducerType<TasksMap> = (
 };
 
 export default withFetchableDataMap<TasksMap, TaskRecord>(
-  new Set([ActionTypes.TASK_FETCH, ActionTypes.TASK_SUB_START]),
+  new Set([ActionTypes.TASK_FETCH]),
   ImmutableMap() as TasksMap,
 )(tasksReducer);
