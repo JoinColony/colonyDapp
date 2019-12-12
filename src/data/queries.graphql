@@ -81,3 +81,23 @@ query ColonySubscribedUsers($colonyAddress: String!) {
     }
   }
 }
+
+query Domain($colonyAddress: String!, $ethDomainId: Int!) {
+  domain(colonyAddress: $colonyAddress, ethDomainId: $ethDomainId) {
+    id
+    colonyAddress
+    ethDomainId
+    ethParentDomainId
+    name
+    colony {
+      id
+      colonyName
+      colonyAddress
+    }
+    parent {
+      id
+      ethDomainId
+      name
+    }
+  }
+}
