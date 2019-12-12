@@ -94,3 +94,18 @@ query Domain($colonyAddress: String!, $ethDomainId: Int!) {
     }
   }
 }
+
+query ColonyDomains($colonyAddress: String!) {
+  colony(address: $colonyAddress) {
+    id
+    domains {
+      id
+      ethDomainId
+      name
+      parent {
+        id
+        ethDomainId
+      }
+    }
+  }
+}
