@@ -28,13 +28,13 @@ const MSG = defineMessages({
 });
 
 interface FormValues {
-  taskDueDate: number;
+  taskDueDate: Date;
 };
 
 interface Props {
   disabled?: boolean;
   draftId: string;
-  dueDate: number | void;
+  dueDate: string | void;
 };
 
 const displayName = 'dashboard.TaskDate';
@@ -43,15 +43,20 @@ const TaskDate = ({ draftId, dueDate: existingDueDate, disabled }: Props) => {
   const [setDueDate] = useSetTaskDueDateMutation();
 
   const onSubmit = useCallback(
-    ({ taskDueDate }: FormValues) =>
-      setDueDate({
-        variables: {
-          input: {
-            id: draftId,
-            dueDate: taskDueDate,
+    ({ taskDueDate: taskDueDateValue }: FormValues) => {
+      const taskDueDate = taskDueDateValue.toISOString();
+      // only update if the date has changed
+      if (taskDueDate !== existingDueDate) {
+        setDueDate({
+          variables: {
+            input: {
+              id: draftId,
+              dueDate: taskDueDate,
+            },
           },
-        },
-      }),
+        });
+      }
+    },
     [draftId, setDueDate],
   );
 
@@ -65,7 +70,7 @@ const TaskDate = ({ draftId, dueDate: existingDueDate, disabled }: Props) => {
         {!disabled && (
           <Form
             initialValues={{
-              taskDueDate: existingDueDate,
+              taskDueDate: existingDueDate ? new Date(existingDueDate) : undefined,
             }}
             onSubmit={onSubmit}
           >
@@ -126,7 +131,7 @@ const TaskDate = ({ draftId, dueDate: existingDueDate, disabled }: Props) => {
       <div className={styles.currentDate}>
         {existingDueDate ? (
           <FormattedDate
-            value={existingDueDate}
+            value={new Date(existingDueDate)}
             month="long"
             day="numeric"
             year="numeric"
