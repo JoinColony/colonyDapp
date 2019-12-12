@@ -552,11 +552,6 @@ export type SetTaskTitleInput = {
   title: Scalars['String'],
 };
 
-export type SetUserTokenAvatarInput = {
-  tokenAddress: Scalars['String'],
-  iconHash?: Maybe<Scalars['String']>,
-};
-
 export type SetUserTokensInput = {
   tokens: Array<Scalars['String']>,
 };
