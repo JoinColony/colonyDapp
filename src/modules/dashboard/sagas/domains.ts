@@ -17,9 +17,16 @@ import { createDomain, editDomain } from '../data/commands';
 import { getDomain } from '../data/queries';
 import { fetchColonyTokenBalance } from '../actionCreators';
 import {
+  ColonyDomainsQuery,
+  ColonyDomainsQueryVariables,
   ColonyDomainsQueryResult,
   ColonyDomainsDocument,
+  CreateDomainMutation,
+  CreateDomainMutationVariables,
   CreateDomainDocument,
+  EditDomainMutation,
+  EditDomainMutationVariables,
+  EditDomainDocument,
 } from '~data/index';
 
 function* colonyDomainsFetch({
@@ -149,17 +156,27 @@ function* domainEdit({
   meta,
 }: Action<ActionTypes.DOMAIN_EDIT>) {
   try {
+    const apolloClient: ApolloClient<any> = yield getContext(
+      Context.APOLLO_CLIENT,
+    );
+
     /*
-     * Add an entry to the colony store.
-     * Get the domain ID from the payload
+     * Update the domain's name in the mongo database
      */
-    yield executeCommand(editDomain, {
-      metadata: { colonyAddress },
-      args: {
-        domainId,
-        name: domainName,
+    yield apolloClient.mutate<
+      EditDomainMutation,
+      EditDomainMutationVariables,
+    >({
+      mutation: EditDomainDocument,
+      variables: {
+        input: {
+          colonyAddress,
+          ethDomainId: domainId,
+          name: domainName,
+        },
       },
     });
+
     yield put<AllActions>({
       type: ActionTypes.DOMAIN_EDIT_SUCCESS,
       meta,
