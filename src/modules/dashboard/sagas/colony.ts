@@ -34,7 +34,6 @@ import { getContext, Context } from '~context/index';
 import {
   checkColonyNameIsAvailable,
   getColonyTasks,
-  getColonyTokenBalance,
   subscribeToColonyTasks,
 } from '../data/queries';
 import { createTransaction, getTxChannel } from '../../core/sagas';
@@ -49,6 +48,28 @@ import {
 } from '../actionCreators';
 import { colonyDomainsSelector } from '../selectors';
 import { getColonyAddress, getColonyName } from './shared';
+
+function* getBalanceForTokenAndDomain(colonyAddress, tokenAddress, domainId) {
+  const colonyManager: ColonyManager = yield getContext(Context.COLONY_MANAGER);
+  const colonyClient = yield colonyManager.getColonyClient(colonyAddress);
+
+  const { potId } = yield colonyClient.getDomain.call({ domainId });
+  const {
+    balance: rewardsPotTotal,
+  } = yield colonyClient.getFundingPotBalance.call({
+    potId,
+    token: tokenAddress,
+  });
+  if (domainId === COLONY_TOTAL_BALANCE_DOMAIN_ID) {
+    const {
+      total: nonRewardsPotsTotal,
+    } = yield colonyClient.getNonRewardPotsTotal.call({
+      token: tokenAddress,
+    });
+    return new BigNumber(nonRewardsPotsTotal.add(rewardsPotTotal).toString(10));
+  }
+  return new BigNumber(rewardsPotTotal.toString(10));
+}
 
 function* colonyNameCheckAvailability({
   payload: { colonyName },
@@ -136,8 +157,31 @@ function* colonyFetch({
       displayName,
       guideline,
       id,
+      tokens,
       website,
     } = data.colony;
+
+    const tokensWithEth = [{ address: ZERO_ADDRESS }, ...tokens];
+
+    const tokenBalances = yield all(
+      tokensWithEth.map(({ address }) =>
+        call(
+          getBalanceForTokenAndDomain,
+          colonyAddress,
+          address,
+          COLONY_TOTAL_BALANCE_DOMAIN_ID,
+        ),
+      ),
+    );
+
+    const tokenMap = tokensWithEth.reduce((acc, { address, ...token }, idx) => {
+      acc[address] = {
+        address,
+        balances: { [COLONY_TOTAL_BALANCE_DOMAIN_ID]: tokenBalances[idx] },
+        ...token,
+      };
+      return acc;
+    }, {});
 
     const colony: ColonyType = {
       avatarHash: avatarHash || undefined,
@@ -150,12 +194,7 @@ function* colonyFetch({
       id,
       inRecoveryMode,
       isNativeTokenLocked,
-      tokens: {
-        // also include Ether
-        [ZERO_ADDRESS.toString()]: {
-          address: ZERO_ADDRESS,
-        },
-      },
+      tokens: tokenMap,
       version,
       website: website || undefined,
     };
@@ -351,10 +390,12 @@ function* colonyTokenBalanceFetch({
   payload: { colonyAddress, domainId, tokenAddress },
 }: Action<ActionTypes.COLONY_TOKEN_BALANCE_FETCH>) {
   try {
-    const balance = yield executeQuery(getColonyTokenBalance, {
-      args: { domainId, tokenAddress },
-      metadata: { colonyAddress },
-    });
+    const balance = yield call(
+      getBalanceForTokenAndDomain,
+      colonyAddress,
+      tokenAddress,
+      domainId,
+    );
 
     yield put({
       type: ActionTypes.COLONY_TOKEN_BALANCE_FETCH_SUCCESS,

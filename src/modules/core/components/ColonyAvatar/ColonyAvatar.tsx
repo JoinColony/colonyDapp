@@ -2,6 +2,7 @@ import React from 'react';
 
 import { Address } from '~types/index';
 import { AnyColony } from '~data/index';
+import { ColonyType } from '~immutable/index';
 
 import Avatar from '~core/Avatar';
 import NavLink from '~core/NavLink';
@@ -26,7 +27,7 @@ export interface Props {
   size?: 'xxs' | 'xs' | 's' | 'm' | 'l' | 'xl';
 
   /** The corresponding user object if available */
-  colony?: AnyColony;
+  colony?: AnyColony | ColonyType;
 }
 
 const displayName = 'ColonyAvatar';
