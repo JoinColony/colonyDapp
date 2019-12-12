@@ -18,7 +18,7 @@ interface FormValues {
 
 interface Props {
   draftId: string;
-  description: string;
+  description: string | void;
   disabled: boolean;
 }
 
