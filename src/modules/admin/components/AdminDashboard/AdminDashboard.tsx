@@ -24,14 +24,7 @@ import {
   getAllUserRoles,
 } from '../../../transformers';
 import { isInRecoveryMode } from '../../../dashboard/checks';
-/*
- * @TODO Re-add domains once they're available from mongo
- *
- * import {
- *   canArchitect,
- *   hasRoot
- * } from '../../../users/checks';
- */
+import { canArchitect, hasRoot } from '../../../users/checks';
 import {
   colonyAddressFetcher,
   colonyFetcher,
@@ -80,12 +73,6 @@ interface Props {
   location: any;
   match: any;
 }
-
-/*
- * @TODO Re-add domains once they're available from mongo
- */
-const canArchitect = () => true;
-const hasRoot = () => true;
 
 const navigationItems = (
   colony: ColonyType,
