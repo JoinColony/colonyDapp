@@ -85,12 +85,10 @@ query ColonySubscribedUsers($colonyAddress: String!) {
 query Domain($colonyAddress: String!, $ethDomainId: Int!) {
   domain(colonyAddress: $colonyAddress, ethDomainId: $ethDomainId) {
     id
-    colonyAddress
     ethDomainId
     name
     parent {
       ethDomainId
-      name
     }
   }
 }
@@ -104,7 +102,6 @@ query ColonyDomains($colonyAddress: String!) {
       name
       parent {
         id
-        ethDomainId
       }
     }
   }
