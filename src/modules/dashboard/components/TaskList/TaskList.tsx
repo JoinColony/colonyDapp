@@ -2,15 +2,16 @@ import React, { ReactNode, useMemo, useCallback } from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 
 import { Address } from '~types/index';
-import { DomainId, TaskType } from '~immutable/index';
-import { TaskStates } from '~data/constants';
-import { useDataTupleSubscriber, useSelector } from '~utils/hooks';
+import { DomainId } from '~immutable/index';
+import { AnyTask } from '~data/index';
+import {
+  useSelector,
+} from '~utils/hooks';
 import Icon from '~core/Icon';
 import { Table, TableBody } from '~core/Table';
 import Button from '~core/Button';
 import { useLoggedInUser, useSubscribeToColonyMutation } from '~data/index';
 
-import { tasksByIdSubscriber } from '../../subscribers';
 import {
   TasksFilterOptions,
   TasksFilterOptionType,
@@ -60,7 +61,7 @@ const MSG = defineMessages({
 });
 
 interface Props {
-  draftIds: string[];
+  tasks: AnyTask[];
   emptyState?: ReactNode;
   filteredDomainId?: DomainId;
   filterOption: TasksFilterOptionType;
@@ -69,7 +70,7 @@ interface Props {
 }
 
 const TaskList = ({
-  draftIds = [],
+  tasks = [],
   filteredDomainId,
   filterOption,
   emptyState,
@@ -77,34 +78,30 @@ const TaskList = ({
   showEmptyState = true,
 }: Props) => {
   const { username, walletAddress } = useLoggedInUser();
-  const tasksData = useDataTupleSubscriber<TaskType>(
-    tasksByIdSubscriber,
-    draftIds,
-  );
   const filter = useCallback(
-    ({ creatorAddress, workerAddress, currentState, domainId }: TaskType) => {
-      if (filteredDomainId && filteredDomainId !== domainId) return false;
+    ({ creator, assignedWorker, cancelledAt, ethDomainId, finalizedAt }: AnyTask) => {
+      if (filteredDomainId && filteredDomainId !== ethDomainId) return false;
 
-      const taskIsOpen = currentState === TaskStates.ACTIVE;
+      const taskIsOpen = !finalizedAt && !cancelledAt;
 
       switch (filterOption) {
         case TasksFilterOptions.CREATED:
-          return creatorAddress === walletAddress && taskIsOpen;
+          return creator && creator.id === walletAddress && taskIsOpen;
 
         case TasksFilterOptions.ASSIGNED:
-          return workerAddress === walletAddress && taskIsOpen;
+          return assignedWorker && assignedWorker.id === walletAddress && taskIsOpen;
 
         case TasksFilterOptions.COMPLETED:
-          return currentState === TaskStates.FINALIZED;
+          return !!finalizedAt;
 
         case TasksFilterOptions.DISCARDED:
-          return currentState === TaskStates.CANCELLED;
+          return !!cancelledAt;
 
         case TasksFilterOptions.ALL_OPEN:
           return taskIsOpen;
 
         default:
-          return currentState !== TaskStates.CANCELLED;
+          return !cancelledAt;
       }
     },
     [filterOption, filteredDomainId, walletAddress],
@@ -113,8 +110,8 @@ const TaskList = ({
   const sortingOrderOption = 'desc';
   const sort = useCallback(
     (
-      { data: first }: { data: TaskType },
-      { data: second }: { data: TaskType },
+      first: AnyTask,
+      second: AnyTask,
     ) => {
       if (!(first && second)) return 0;
 
@@ -125,14 +122,14 @@ const TaskList = ({
     [sortingOrderOption],
   );
 
-  const filteredTasksData = useMemo(
+  const filteredTasksData: AnyTask[] = useMemo(
     () =>
       filter
-        ? tasksData
+        ? tasks
             .sort(sort as any)
-            .filter(({ data }) => (data ? filter(data) : true))
-        : tasksData,
-    [filter, sort, tasksData],
+            .filter(task => (task ? filter(task) : true))
+        : tasks,
+    [filter, sort, tasks],
   );
 
   const [subscribeToColonyMutation] = useSubscribeToColonyMutation();
@@ -240,8 +237,8 @@ const TaskList = ({
       scrollable
     >
       <TableBody>
-        {filteredTasksData.map((taskData: any) => (
-          <TaskListItem key={taskData.key} data={taskData} />
+        {colonyAddress && filteredTasksData.map(taskData => (
+          <TaskListItem key={taskData.id} colonyAddress={colonyAddress} colonyName={colonyName} data={taskData} />
         ))}
       </TableBody>
     </Table>

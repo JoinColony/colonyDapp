@@ -35,13 +35,9 @@ const MSG = defineMessages({
 const UserAvatar = HookedUserAvatar();
 
 interface Props {
-  data: {
-    key: string;
-    entry: [Address, string];
-    data: AnyTask | void;
-    isFetching: boolean;
-    error: boolean;
-  };
+  colonyAddress: Address;
+  colonyName: string;
+  data: AnyTask;
 }
 
 type EnhancerProps = RouteComponentProps & InjectedIntlProps;
@@ -51,20 +47,18 @@ interface InnerProps extends Props, EnhancerProps {}
 const displayName = 'dashboard.TaskList.TaskListItem';
 
 const TaskListItem = ({
+  colonyAddress,
+  colonyName,
   data,
   intl: { formatMessage },
   history,
 }: InnerProps) => {
-  const {
-    data: task,
-    entry: [colonyAddress, draftId],
-    isFetching: isFetchingTask,
-  } = data;
   const defaultTitle = formatMessage(MSG.untitled);
   const {
+    id: draftId,
     assignedWorker,
     title = defaultTitle,
-  } = task || {};
+  } = data || {};
 
   // @todo get payouts from centralized store
   const payouts = [];
@@ -72,24 +66,8 @@ const TaskListItem = ({
   // @todo get reputation from centralized store
   let reputation: BigNumber | undefined;
 
-  const { data: colonyName, isFetching: isFetchingColonyName } = useDataFetcher(
-    colonyNameFetcher,
-    [colonyAddress],
-    [colonyAddress],
-  );
-
   const nativeTokenRef = useColonyNativeToken(colonyAddress);
   const [, availableTokens] = useColonyTokens(colonyAddress);
-
-  if (!task || !colonyName || isFetchingTask || isFetchingColonyName) {
-    return (
-      <TableRow>
-        <TableCell className={styles.taskLoading}>
-          <SpinnerLoader appearance={{ size: 'medium' }} />
-        </TableCell>
-      </TableRow>
-    );
-  }
 
   const handleClick = () => {
     history.push({

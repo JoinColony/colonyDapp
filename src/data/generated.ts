@@ -817,266 +817,149 @@ export type UserToken = IToken & {
   iconHash?: Maybe<Scalars['String']>,
 };
 
-export type UserTokenRef = {
-  address: Scalars['String'],
-  iconHash?: Maybe<Scalars['String']>,
-};
-
 export type AssignWorkerMutationVariables = {
   input: AssignWorkerInput
 };
 
 
-export type AssignWorkerMutation = (
-  { __typename?: 'Mutation' }
-  & { assignWorker: Maybe<(
-    { __typename?: 'Task' }
-    & Pick<Task, 'id'>
-    & { assignedWorker: Maybe<(
-      { __typename?: 'User' }
-      & Pick<User, 'id'>
-    )>, events: Array<(
-      { __typename?: 'Event' }
-      & Pick<Event, 'sourceId' | 'sourceType'>
-    )> }
-  )> }
-);
+export type AssignWorkerMutation = { assignWorker: Maybe<(
+    Pick<Task, 'id'>
+    & { assignedWorker: Maybe<Pick<User, 'id'>>, events: Array<Pick<Event, 'sourceId' | 'sourceType'>> }
+  )> };
 
 export type CancelTaskMutationVariables = {
   input: TaskIdInput
 };
 
 
-export type CancelTaskMutation = (
-  { __typename?: 'Mutation' }
-  & { cancelTask: Maybe<(
-    { __typename?: 'Task' }
-    & Pick<Task, 'id' | 'cancelledAt'>
-    & { events: Array<(
-      { __typename?: 'Event' }
-      & Pick<Event, 'sourceId' | 'sourceType'>
-    )> }
-  )> }
-);
+export type CancelTaskMutation = { cancelTask: Maybe<(
+    Pick<Task, 'id' | 'cancelledAt'>
+    & { events: Array<Pick<Event, 'sourceId' | 'sourceType'>> }
+  )> };
 
 export type CreateTaskMutationVariables = {
   input: CreateTaskInput
 };
 
 
-export type CreateTaskMutation = (
-  { __typename?: 'Mutation' }
-  & { createTask: Maybe<(
-    { __typename?: 'Task' }
-    & Pick<Task, 'id'>
-    & { events: Array<(
-      { __typename?: 'Event' }
-      & Pick<Event, 'sourceId' | 'sourceType'>
-    )> }
-  )> }
-);
+export type CreateTaskMutation = { createTask: Maybe<(
+    Pick<Task, 'id'>
+    & { events: Array<Pick<Event, 'sourceId' | 'sourceType'>> }
+  )> };
 
 export type CreateWorkRequestMutationVariables = {
   input: CreateWorkRequestInput
 };
 
 
-export type CreateWorkRequestMutation = (
-  { __typename?: 'Mutation' }
-  & { createWorkRequest: Maybe<(
-    { __typename?: 'Task' }
-    & Pick<Task, 'id'>
-    & { events: Array<(
-      { __typename?: 'Event' }
-      & Pick<Event, 'sourceId' | 'sourceType'>
-    )>, workRequests: Array<(
-      { __typename?: 'User' }
-      & Pick<User, 'id'>
-    )> }
-  )> }
-);
+export type CreateWorkRequestMutation = { createWorkRequest: Maybe<(
+    Pick<Task, 'id'>
+    & { events: Array<Pick<Event, 'sourceId' | 'sourceType'>>, workRequests: Array<Pick<User, 'id'>> }
+  )> };
 
 export type FinalizeTaskMutationVariables = {
   input: TaskIdInput
 };
 
 
-export type FinalizeTaskMutation = (
-  { __typename?: 'Mutation' }
-  & { finalizeTask: Maybe<(
-    { __typename?: 'Task' }
-    & Pick<Task, 'id' | 'finalizedAt'>
-    & { events: Array<(
-      { __typename?: 'Event' }
-      & Pick<Event, 'sourceId' | 'sourceType'>
-    )> }
-  )> }
-);
+export type FinalizeTaskMutation = { finalizeTask: Maybe<(
+    Pick<Task, 'id' | 'finalizedAt'>
+    & { events: Array<Pick<Event, 'sourceId' | 'sourceType'>> }
+  )> };
 
 export type RemoveTaskPayoutMutationVariables = {
   input: RemoveTaskPayoutInput
 };
 
 
-export type RemoveTaskPayoutMutation = (
-  { __typename?: 'Mutation' }
-  & { removeTaskPayout: Maybe<(
-    { __typename?: 'Task' }
-    & Pick<Task, 'id'>
-    & { events: Array<(
-      { __typename?: 'Event' }
-      & Pick<Event, 'sourceId' | 'sourceType'>
-    )> }
-  )> }
-);
+export type RemoveTaskPayoutMutation = { removeTaskPayout: Maybe<(
+    Pick<Task, 'id'>
+    & { events: Array<Pick<Event, 'sourceId' | 'sourceType'>> }
+  )> };
 
 export type SendWorkInviteMutationVariables = {
   input: SendWorkInviteInput
 };
 
 
-export type SendWorkInviteMutation = (
-  { __typename?: 'Mutation' }
-  & { sendWorkInvite: Maybe<(
-    { __typename?: 'Task' }
-    & Pick<Task, 'id'>
-    & { events: Array<(
-      { __typename?: 'Event' }
-      & Pick<Event, 'sourceId' | 'sourceType'>
-    )>, workInvites: Array<(
-      { __typename?: 'User' }
-      & Pick<User, 'id'>
-    )> }
-  )> }
-);
+export type SendWorkInviteMutation = { sendWorkInvite: Maybe<(
+    Pick<Task, 'id'>
+    & { events: Array<Pick<Event, 'sourceId' | 'sourceType'>>, workInvites: Array<Pick<User, 'id'>> }
+  )> };
 
 export type SetTaskDomainMutationVariables = {
   input: SetTaskDomainInput
 };
 
 
-export type SetTaskDomainMutation = (
-  { __typename?: 'Mutation' }
-  & { setTaskDomain: Maybe<(
-    { __typename?: 'Task' }
-    & Pick<Task, 'id' | 'ethDomainId'>
-    & { events: Array<(
-      { __typename?: 'Event' }
-      & Pick<Event, 'sourceId' | 'sourceType'>
-    )> }
-  )> }
-);
+export type SetTaskDomainMutation = { setTaskDomain: Maybe<(
+    Pick<Task, 'id' | 'ethDomainId'>
+    & { events: Array<Pick<Event, 'sourceId' | 'sourceType'>> }
+  )> };
 
 export type SetTaskDescriptionMutationVariables = {
   input: SetTaskDescriptionInput
 };
 
 
-export type SetTaskDescriptionMutation = (
-  { __typename?: 'Mutation' }
-  & { setTaskDescription: Maybe<(
-    { __typename?: 'Task' }
-    & Pick<Task, 'id' | 'description'>
-    & { events: Array<(
-      { __typename?: 'Event' }
-      & Pick<Event, 'sourceId' | 'sourceType'>
-    )> }
-  )> }
-);
+export type SetTaskDescriptionMutation = { setTaskDescription: Maybe<(
+    Pick<Task, 'id' | 'description'>
+    & { events: Array<Pick<Event, 'sourceId' | 'sourceType'>> }
+  )> };
 
 export type SetTaskDueDateMutationVariables = {
   input: SetTaskDueDateInput
 };
 
 
-export type SetTaskDueDateMutation = (
-  { __typename?: 'Mutation' }
-  & { setTaskDueDate: Maybe<(
-    { __typename?: 'Task' }
-    & Pick<Task, 'id' | 'dueDate'>
-    & { events: Array<(
-      { __typename?: 'Event' }
-      & Pick<Event, 'sourceId' | 'sourceType'>
-    )> }
-  )> }
-);
+export type SetTaskDueDateMutation = { setTaskDueDate: Maybe<(
+    Pick<Task, 'id' | 'dueDate'>
+    & { events: Array<Pick<Event, 'sourceId' | 'sourceType'>> }
+  )> };
 
 export type SetTaskPayoutMutationVariables = {
   input: SetTaskPayoutInput
 };
 
 
-export type SetTaskPayoutMutation = (
-  { __typename?: 'Mutation' }
-  & { setTaskPayout: Maybe<(
-    { __typename?: 'Task' }
-    & Pick<Task, 'id'>
-  )> }
-);
+export type SetTaskPayoutMutation = { setTaskPayout: Maybe<Pick<Task, 'id'>> };
 
 export type SetTaskSkillMutationVariables = {
   input: SetTaskSkillInput
 };
 
 
-export type SetTaskSkillMutation = (
-  { __typename?: 'Mutation' }
-  & { setTaskSkill: Maybe<(
-    { __typename?: 'Task' }
-    & Pick<Task, 'id' | 'ethSkillId'>
-    & { events: Array<(
-      { __typename?: 'Event' }
-      & Pick<Event, 'sourceId' | 'sourceType'>
-    )> }
-  )> }
-);
+export type SetTaskSkillMutation = { setTaskSkill: Maybe<(
+    Pick<Task, 'id' | 'ethSkillId'>
+    & { events: Array<Pick<Event, 'sourceId' | 'sourceType'>> }
+  )> };
 
 export type SetTaskTitleMutationVariables = {
   input: SetTaskTitleInput
 };
 
 
-export type SetTaskTitleMutation = (
-  { __typename?: 'Mutation' }
-  & { setTaskTitle: Maybe<(
-    { __typename?: 'Task' }
-    & Pick<Task, 'id' | 'title'>
-    & { events: Array<(
-      { __typename?: 'Event' }
-      & Pick<Event, 'sourceId' | 'sourceType'>
-    )> }
-  )> }
-);
+export type SetTaskTitleMutation = { setTaskTitle: Maybe<(
+    Pick<Task, 'id' | 'title'>
+    & { events: Array<Pick<Event, 'sourceId' | 'sourceType'>> }
+  )> };
 
 export type UnassignWorkerMutationVariables = {
   input: UnassignWorkerInput
 };
 
 
-export type UnassignWorkerMutation = (
-  { __typename?: 'Mutation' }
-  & { unassignWorker: Maybe<(
-    { __typename?: 'Task' }
-    & Pick<Task, 'id'>
-    & { assignedWorker: Maybe<(
-      { __typename?: 'User' }
-      & Pick<User, 'id'>
-    )>, events: Array<(
-      { __typename?: 'Event' }
-      & Pick<Event, 'sourceId' | 'sourceType'>
-    )> }
-  )> }
-);
+export type UnassignWorkerMutation = { unassignWorker: Maybe<(
+    Pick<Task, 'id'>
+    & { assignedWorker: Maybe<Pick<User, 'id'>>, events: Array<Pick<Event, 'sourceId' | 'sourceType'>> }
+  )> };
 
 export type SendTaskMessageMutationVariables = {
   input: SendTaskMessageInput
 };
 
 
-export type SendTaskMessageMutation = (
-  { __typename?: 'Mutation' }
-  & Pick<Mutation, 'sendTaskMessage'>
-);
+export type SendTaskMessageMutation = Pick<Mutation, 'sendTaskMessage'>;
 
 export type SetLoggedInUserMutationVariables = {
   input: LoggedInUserInput
@@ -1161,115 +1044,38 @@ export type TaskQueryVariables = {
 };
 
 
-export type TaskQuery = (
-  { __typename?: 'Query' }
-  & { task: (
-    { __typename?: 'Task' }
-    & Pick<Task, 'id' | 'cancelledAt' | 'description' | 'dueDate' | 'ethDomainId' | 'ethSkillId' | 'ethTaskId' | 'finalizedAt' | 'title'>
+export type TaskQuery = { task: (
+    Pick<Task, 'id' | 'cancelledAt' | 'description' | 'dueDate' | 'ethDomainId' | 'ethSkillId' | 'ethTaskId' | 'finalizedAt' | 'title'>
     & { assignedWorker: Maybe<(
-      { __typename?: 'User' }
-      & Pick<User, 'id'>
-      & { profile: (
-        { __typename?: 'UserProfile' }
-        & Pick<UserProfile, 'avatarHash' | 'displayName' | 'username' | 'walletAddress'>
-      ) }
-    )>, colony: Maybe<(
-      { __typename?: 'Colony' }
-      & Pick<Colony, 'id' | 'colonyAddress' | 'colonyName' | 'avatarHash' | 'displayName'>
-    )>, creator: Maybe<(
-      { __typename?: 'User' }
-      & Pick<User, 'id'>
-      & { profile: (
-        { __typename?: 'UserProfile' }
-        & Pick<UserProfile, 'avatarHash' | 'displayName' | 'username' | 'walletAddress'>
-      ) }
+      Pick<User, 'id'>
+      & { profile: Pick<UserProfile, 'avatarHash' | 'displayName' | 'username' | 'walletAddress'> }
+    )>, colony: Maybe<Pick<Colony, 'id' | 'colonyAddress' | 'colonyName' | 'avatarHash' | 'displayName'>>, creator: Maybe<(
+      Pick<User, 'id'>
+      & { profile: Pick<UserProfile, 'avatarHash' | 'displayName' | 'username' | 'walletAddress'> }
     )>, workInvites: Array<(
-      { __typename?: 'User' }
-      & Pick<User, 'id'>
-      & { profile: (
-        { __typename?: 'UserProfile' }
-        & Pick<UserProfile, 'avatarHash' | 'displayName' | 'username' | 'walletAddress'>
-      ) }
+      Pick<User, 'id'>
+      & { profile: Pick<UserProfile, 'avatarHash' | 'displayName' | 'username' | 'walletAddress'> }
     )>, workRequests: Array<(
-      { __typename?: 'User' }
-      & Pick<User, 'id'>
-      & { profile: (
-        { __typename?: 'UserProfile' }
-        & Pick<UserProfile, 'avatarHash' | 'displayName' | 'username' | 'walletAddress'>
-      ) }
+      Pick<User, 'id'>
+      & { profile: Pick<UserProfile, 'avatarHash' | 'displayName' | 'username' | 'walletAddress'> }
     )> }
-  ) }
-);
+  ) };
 
 export type TaskFeedEventsQueryVariables = {
   id: Scalars['String']
 };
 
 
-export type TaskFeedEventsQuery = (
-  { __typename?: 'Query' }
-  & { task: (
-    { __typename?: 'Task' }
-    & Pick<Task, 'id'>
+export type TaskFeedEventsQuery = { task: (
+    Pick<Task, 'id'>
     & { events: Array<(
-      { __typename?: 'Event' }
-      & Pick<Event, 'createdAt' | 'initiatorAddress' | 'sourceId' | 'sourceType' | 'type'>
-      & { context: (
-        { __typename?: 'AssignWorkerEvent' }
-        & Pick<AssignWorkerEvent, 'taskId' | 'type' | 'workerAddress'>
-      ) | (
-        { __typename?: 'CancelTaskEvent' }
-        & Pick<CancelTaskEvent, 'taskId' | 'type'>
-      ) | { __typename?: 'CreateDomainEvent' } | (
-        { __typename?: 'CreateTaskEvent' }
-        & Pick<CreateTaskEvent, 'colonyAddress' | 'ethDomainId' | 'taskId' | 'type'>
-      ) | (
-        { __typename?: 'CreateWorkRequestEvent' }
-        & Pick<CreateWorkRequestEvent, 'taskId' | 'type'>
-      ) | (
-        { __typename?: 'FinalizeTaskEvent' }
-        & Pick<FinalizeTaskEvent, 'taskId' | 'type'>
-      ) | (
-        { __typename?: 'RemoveTaskPayoutEvent' }
-        & Pick<RemoveTaskPayoutEvent, 'amount' | 'taskId' | 'tokenAddress' | 'type'>
-      ) | (
-        { __typename?: 'SendWorkInviteEvent' }
-        & Pick<SendWorkInviteEvent, 'amount' | 'taskId' | 'tokenAddress' | 'type'>
-      ) | (
-        { __typename?: 'SetTaskDescriptionEvent' }
-        & Pick<SetTaskDescriptionEvent, 'description' | 'taskId' | 'type'>
-      ) | (
-        { __typename?: 'SetTaskDomainEvent' }
-        & Pick<SetTaskDomainEvent, 'ethDomainId' | 'taskId' | 'type'>
-      ) | (
-        { __typename?: 'SetTaskDueDateEvent' }
-        & Pick<SetTaskDueDateEvent, 'dueDate' | 'taskId' | 'type'>
-      ) | (
-        { __typename?: 'SetTaskPayoutEvent' }
-        & Pick<SetTaskPayoutEvent, 'taskId' | 'type'>
-      ) | (
-        { __typename?: 'SetTaskSkillEvent' }
-        & Pick<SetTaskSkillEvent, 'ethSkillId' | 'taskId' | 'type'>
-      ) | (
-        { __typename?: 'SetTaskTitleEvent' }
-        & Pick<SetTaskTitleEvent, 'taskId' | 'title' | 'type'>
-      ) | (
-        { __typename?: 'TaskMessageEvent' }
-        & Pick<TaskMessageEvent, 'message' | 'taskId' | 'type'>
-      ) | (
-        { __typename?: 'UnassignWorkerEvent' }
-        & Pick<UnassignWorkerEvent, 'taskId' | 'type' | 'workerAddress'>
-      ), initiator: Maybe<(
-        { __typename?: 'User' }
-        & Pick<User, 'id'>
-        & { profile: (
-          { __typename?: 'UserProfile' }
-          & Pick<UserProfile, 'avatarHash' | 'displayName' | 'username' | 'walletAddress'>
-        ) }
+      Pick<Event, 'createdAt' | 'initiatorAddress' | 'sourceId' | 'sourceType' | 'type'>
+      & { context: Pick<AssignWorkerEvent, 'taskId' | 'type' | 'workerAddress'> | Pick<CancelTaskEvent, 'taskId' | 'type'> | Pick<CreateTaskEvent, 'colonyAddress' | 'ethDomainId' | 'taskId' | 'type'> | Pick<CreateWorkRequestEvent, 'taskId' | 'type'> | Pick<FinalizeTaskEvent, 'taskId' | 'type'> | Pick<RemoveTaskPayoutEvent, 'amount' | 'taskId' | 'tokenAddress' | 'type'> | Pick<SendWorkInviteEvent, 'amount' | 'taskId' | 'tokenAddress' | 'type'> | Pick<SetTaskDescriptionEvent, 'description' | 'taskId' | 'type'> | Pick<SetTaskDomainEvent, 'ethDomainId' | 'taskId' | 'type'> | Pick<SetTaskDueDateEvent, 'dueDate' | 'taskId' | 'type'> | Pick<SetTaskPayoutEvent, 'taskId' | 'type'> | Pick<SetTaskSkillEvent, 'ethSkillId' | 'taskId' | 'type'> | Pick<SetTaskTitleEvent, 'taskId' | 'title' | 'type'> | Pick<TaskMessageEvent, 'message' | 'taskId' | 'type'> | Pick<UnassignWorkerEvent, 'taskId' | 'type' | 'workerAddress'>, initiator: Maybe<(
+        Pick<User, 'id'>
+        & { profile: Pick<UserProfile, 'avatarHash' | 'displayName' | 'username' | 'walletAddress'> }
       )> }
     )> }
-  ) }
-);
+  ) };
 
 export type LoggedInUserQueryVariables = {};
 
@@ -1328,25 +1134,16 @@ export type ColonyTasksQueryVariables = {
 };
 
 
-export type ColonyTasksQuery = (
-  { __typename?: 'Query' }
-  & { colony: (
-    { __typename?: 'Colony' }
-    & Pick<Colony, 'id'>
+export type ColonyTasksQuery = { colony: (
+    Pick<Colony, 'id'>
     & { tasks: Array<(
-      { __typename?: 'Task' }
-      & Pick<Task, 'id' | 'title'>
+      Pick<Task, 'id' | 'title'>
       & { assignedWorker: Maybe<(
-        { __typename?: 'User' }
-        & Pick<User, 'id'>
-        & { profile: (
-          { __typename?: 'UserProfile' }
-          & Pick<UserProfile, 'avatarHash'>
-        ) }
+        Pick<User, 'id'>
+        & { profile: Pick<UserProfile, 'avatarHash'> }
       )> }
     )> }
-  ) }
-);
+  ) };
 
 export type ColonySubscribedUsersQueryVariables = {
   colonyAddress: Scalars['String']
@@ -2748,6 +2545,49 @@ export function useUserColonyIdsLazyQuery(baseOptions?: ApolloReactHooks.LazyQue
 export type UserColonyIdsQueryHookResult = ReturnType<typeof useUserColonyIdsQuery>;
 export type UserColonyIdsLazyQueryHookResult = ReturnType<typeof useUserColonyIdsLazyQuery>;
 export type UserColonyIdsQueryResult = ApolloReactCommon.QueryResult<UserColonyIdsQuery, UserColonyIdsQueryVariables>;
+export const ColonyTasksDocument = gql`
+    query ColonyTasks($address: String!) {
+  colony(address: $address) {
+    id
+    tasks {
+      id
+      assignedWorker {
+        id
+        profile {
+          avatarHash
+        }
+      }
+      title
+    }
+  }
+}
+    `;
+
+/**
+ * __useColonyTasksQuery__
+ *
+ * To run a query within a React component, call `useColonyTasksQuery` and pass it any options that fit your needs.
+ * When your component renders, `useColonyTasksQuery` returns an object from Apollo Client that contains loading, error, and data properties 
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useColonyTasksQuery({
+ *   variables: {
+ *      address: // value for 'address'
+ *   },
+ * });
+ */
+export function useColonyTasksQuery(baseOptions?: ApolloReactHooks.QueryHookOptions<ColonyTasksQuery, ColonyTasksQueryVariables>) {
+        return ApolloReactHooks.useQuery<ColonyTasksQuery, ColonyTasksQueryVariables>(ColonyTasksDocument, baseOptions);
+      }
+export function useColonyTasksLazyQuery(baseOptions?: ApolloReactHooks.LazyQueryHookOptions<ColonyTasksQuery, ColonyTasksQueryVariables>) {
+          return ApolloReactHooks.useLazyQuery<ColonyTasksQuery, ColonyTasksQueryVariables>(ColonyTasksDocument, baseOptions);
+        }
+export type ColonyTasksQueryHookResult = ReturnType<typeof useColonyTasksQuery>;
+export type ColonyTasksLazyQueryHookResult = ReturnType<typeof useColonyTasksLazyQuery>;
+export type ColonyTasksQueryResult = ApolloReactCommon.QueryResult<ColonyTasksQuery, ColonyTasksQueryVariables>;
 export const ColonySubscribedUsersDocument = gql`
     query ColonySubscribedUsers($colonyAddress: String!) {
   colony(address: $colonyAddress) {
