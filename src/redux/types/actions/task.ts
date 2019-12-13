@@ -1,11 +1,8 @@
 /* eslint-disable max-len */
 
 import BigNumber from 'bn.js';
-import { CommentEvents } from '~data/types/CommentEvents';
-import { TaskEvents } from '~data/types/TaskEvents';
 
-import { Address, CurrentEvents } from '~types/index';
-import { Task, TaskProps } from '~data/types';
+import { Address } from '~types/index';
 import {
   ActionTypes,
   ActionType,
@@ -13,12 +10,13 @@ import {
   ErrorActionType,
   UniqueActionType,
 } from '~redux/index';
+import { AnyTask } from '~data/index';
 
 type TaskActionMeta = {
   key: string; // draftId
 };
 
-type TaskActionPayload<P> = TaskProps<'id'> & P;
+type TaskActionPayload<P> = AnyTask['id'] & P;
 
 // eslint-disable-next-line @typescript-eslint/no-empty-interface
 interface TaskActionType<T extends string, P>
@@ -77,26 +75,17 @@ export type TaskActionTypes =
     >
   | UniqueActionType<
       ActionTypes.TASK_CREATE,
-      TaskProps<'ethDomainId'> & { colonyAddress: Address, colonyName: string },
+      AnyTask['ethDomainId'] & { colonyAddress: Address, colonyName: string },
       object
     >
   | ErrorActionType<ActionTypes.TASK_CREATE_ERROR, object>
   | ActionType<
       ActionTypes.TASK_CREATE_SUCCESS
     >
-  | NonUniqueTaskActionType<ActionTypes.TASK_FETCH, object>
-  | TaskErrorActionType<ActionTypes.TASK_FETCH_ERROR>
-  | NonUniqueTaskActionType<
-      ActionTypes.TASK_FETCH_SUCCESS,
-      {
-        colonyAddress: Address;
-        task: Task;
-      }
-    >
   | ActionType<ActionTypes.TASK_FETCH_ALL>
   | TaskActionType<
       ActionTypes.TASK_FINALIZE,
-      Required<TaskProps<'assignedWorker'>> & {
+      Required<AnyTask['assignedWorker']> & {
         amountPaid: number;
       }
     >
