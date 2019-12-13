@@ -3,8 +3,7 @@ import { defineMessages, FormattedMessage } from 'react-intl';
 
 import { SpinnerLoader } from '~core/Preloaders';
 import { EventTypes } from '~data/constants';
-import { useTaskQuery } from '~data/index';
-import { TaskCommentType } from '~immutable/index';
+import { useTaskFeedEventsQuery, TaskMessageEvent } from '~data/index';
 import { Address } from '~types/index';
 
 import TaskFeedCompleteInfo from './TaskFeedCompleteInfo';
@@ -41,9 +40,9 @@ const TaskFeed = ({ colonyAddress, draftId }: Props) => {
     setTimeout(scrollToEnd, 1000);
   }, [bottomEl]);
 
-  const { data } = useTaskQuery({ variables: { id: draftId }})
+  const { data } = useTaskFeedEventsQuery({ variables: { id: draftId }})
 
-  const feedItems = data && data.task && data.task.events ? data.task.events : [];
+  useLayoutEffect(scrollToEnd, [data]);
 
   useLayoutEffect(scrollToEnd, [feedItems.length]);
 
@@ -51,15 +50,17 @@ const TaskFeed = ({ colonyAddress, draftId }: Props) => {
     return <SpinnerLoader />;
   }
 
+  const { task: { events } } = data;
+
   return (
     <>
-      {feedItems && (
+      {events && (
         <div className={styles.main}>
           <div className={styles.items}>
             {/*
              * There is always at least one task event: TASK_CREATED
              */
-            feedItems.length < 1 ? (
+            events.length < 1 ? (
               <div className={styles.eventsLoader}>
                 <SpinnerLoader appearance={{ size: 'small' }} />
                 <span className={styles.eventsLoaderText}>
@@ -68,13 +69,15 @@ const TaskFeed = ({ colonyAddress, draftId }: Props) => {
               </div>
             ) : (
               <div>
-                {feedItems.map(({ id, createdAt, comment, event, rating }) => {
-                  if (comment) {
+                {events.map(({ context, createdAt, initiatorAddress, sourceId }) => {
+                  if (context['type'] === EventTypes.TASK_MESSAGE) {
+                    const { message } = context as TaskMessageEvent;
                     return (
                       <TaskFeedComment
-                        key={id}
-                        comment={comment as TaskCommentType}
-                        createdAt={createdAt as Date}
+                        createdAt={createdAt}
+                        initiatorAddress={initiatorAddress}
+                        key={sourceId}
+                        message={message}
                       />
                     );
                   }
