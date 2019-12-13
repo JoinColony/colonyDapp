@@ -354,3 +354,19 @@ query AllTokens {
     }
   }
 }
+
+query UserNotifications($address: String!) {
+  user(address: $address) {
+    notifications {
+      id
+      event {
+        type
+        createdAt
+        initiatorAddress
+        sourceId
+        sourceType
+      }
+      read
+    }
+  }
+}
