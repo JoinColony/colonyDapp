@@ -179,7 +179,12 @@ query User($address: String!) {
 query UserTokens($address: String!) {
   user(address: $address) {
     id
-    tokens  
+    tokens {
+      address
+      name
+      symbol
+      iconHash
+    }
   }
 }
 
