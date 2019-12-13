@@ -2,6 +2,155 @@ import gql from 'graphql-tag';
 import * as ApolloReactCommon from '@apollo/react-common';
 import * as ApolloReactHooks from '@apollo/react-hooks';
 export type Maybe<T> = T | null;
+
+      export interface IntrospectionResultData {
+        __schema: {
+          types: {
+            kind: string;
+            name: string;
+            possibleTypes: {
+              name: string;
+            }[];
+          }[];
+        };
+      }
+      const result: IntrospectionResultData = {
+  "__schema": {
+    "types": [
+      {
+        "kind": "UNION",
+        "name": "EventContext",
+        "possibleTypes": [
+          {
+            "name": "AssignWorkerEvent"
+          },
+          {
+            "name": "CancelTaskEvent"
+          },
+          {
+            "name": "CreateDomainEvent"
+          },
+          {
+            "name": "CreateTaskEvent"
+          },
+          {
+            "name": "CreateWorkRequestEvent"
+          },
+          {
+            "name": "FinalizeTaskEvent"
+          },
+          {
+            "name": "RemoveTaskPayoutEvent"
+          },
+          {
+            "name": "SendWorkInviteEvent"
+          },
+          {
+            "name": "SetTaskDescriptionEvent"
+          },
+          {
+            "name": "SetTaskDomainEvent"
+          },
+          {
+            "name": "SetTaskDueDateEvent"
+          },
+          {
+            "name": "SetTaskPayoutEvent"
+          },
+          {
+            "name": "SetTaskSkillEvent"
+          },
+          {
+            "name": "SetTaskTitleEvent"
+          },
+          {
+            "name": "TaskMessageEvent"
+          },
+          {
+            "name": "UnassignWorkerEvent"
+          }
+        ]
+      },
+      {
+        "kind": "INTERFACE",
+        "name": "TaskEvent",
+        "possibleTypes": [
+          {
+            "name": "AssignWorkerEvent"
+          },
+          {
+            "name": "CancelTaskEvent"
+          },
+          {
+            "name": "CreateTaskEvent"
+          },
+          {
+            "name": "CreateWorkRequestEvent"
+          },
+          {
+            "name": "FinalizeTaskEvent"
+          },
+          {
+            "name": "RemoveTaskPayoutEvent"
+          },
+          {
+            "name": "SendWorkInviteEvent"
+          },
+          {
+            "name": "SetTaskDescriptionEvent"
+          },
+          {
+            "name": "SetTaskDomainEvent"
+          },
+          {
+            "name": "SetTaskDueDateEvent"
+          },
+          {
+            "name": "SetTaskPayoutEvent"
+          },
+          {
+            "name": "SetTaskSkillEvent"
+          },
+          {
+            "name": "SetTaskTitleEvent"
+          },
+          {
+            "name": "TaskMessageEvent"
+          },
+          {
+            "name": "UnassignWorkerEvent"
+          }
+        ]
+      },
+      {
+        "kind": "INTERFACE",
+        "name": "ColonyEvent",
+        "possibleTypes": [
+          {
+            "name": "CreateDomainEvent"
+          }
+        ]
+      },
+      {
+        "kind": "INTERFACE",
+        "name": "IToken",
+        "possibleTypes": [
+          {
+            "name": "ColonyToken"
+          },
+          {
+            "name": "UserToken"
+          },
+          {
+            "name": "Token"
+          }
+        ]
+      }
+    ]
+  }
+};
+      export default result;
+    
 /** All built-in and custom scalars, mapped to their actual values */
 export type Scalars = {
   ID: string,
@@ -1061,45 +1210,55 @@ export type TaskFeedEventsQuery = (
   { __typename?: 'Query' }
   & { task: (
     { __typename?: 'Task' }
+    & Pick<Task, 'id'>
     & { events: Array<(
       { __typename?: 'Event' }
-      & Pick<Event, 'createdAt' | 'sourceId' | 'sourceType' | 'type'>
+      & Pick<Event, 'createdAt' | 'initiatorAddress' | 'sourceId' | 'sourceType' | 'type'>
       & { context: (
         { __typename?: 'AssignWorkerEvent' }
-        & Pick<AssignWorkerEvent, 'workerAddress'>
-      ) | { __typename?: 'CancelTaskEvent' } | (
-        { __typename?: 'CreateDomainEvent' }
-        & Pick<CreateDomainEvent, 'ethDomainId'>
+        & Pick<AssignWorkerEvent, 'taskId' | 'type' | 'workerAddress'>
       ) | (
+        { __typename?: 'CancelTaskEvent' }
+        & Pick<CancelTaskEvent, 'taskId' | 'type'>
+      ) | { __typename?: 'CreateDomainEvent' } | (
         { __typename?: 'CreateTaskEvent' }
-        & Pick<CreateTaskEvent, 'ethDomainId'>
-      ) | { __typename?: 'CreateWorkRequestEvent' } | { __typename?: 'FinalizeTaskEvent' } | (
+        & Pick<CreateTaskEvent, 'colonyAddress' | 'ethDomainId' | 'taskId' | 'type'>
+      ) | (
+        { __typename?: 'CreateWorkRequestEvent' }
+        & Pick<CreateWorkRequestEvent, 'taskId' | 'type'>
+      ) | (
+        { __typename?: 'FinalizeTaskEvent' }
+        & Pick<FinalizeTaskEvent, 'taskId' | 'type'>
+      ) | (
         { __typename?: 'RemoveTaskPayoutEvent' }
-        & Pick<RemoveTaskPayoutEvent, 'amount' | 'tokenAddress'>
+        & Pick<RemoveTaskPayoutEvent, 'amount' | 'taskId' | 'tokenAddress' | 'type'>
       ) | (
         { __typename?: 'SendWorkInviteEvent' }
-        & Pick<SendWorkInviteEvent, 'amount' | 'tokenAddress'>
+        & Pick<SendWorkInviteEvent, 'amount' | 'taskId' | 'tokenAddress' | 'type'>
       ) | (
         { __typename?: 'SetTaskDescriptionEvent' }
-        & Pick<SetTaskDescriptionEvent, 'description'>
+        & Pick<SetTaskDescriptionEvent, 'description' | 'taskId' | 'type'>
       ) | (
         { __typename?: 'SetTaskDomainEvent' }
-        & Pick<SetTaskDomainEvent, 'ethDomainId'>
+        & Pick<SetTaskDomainEvent, 'ethDomainId' | 'taskId' | 'type'>
       ) | (
         { __typename?: 'SetTaskDueDateEvent' }
-        & Pick<SetTaskDueDateEvent, 'dueDate'>
-      ) | { __typename?: 'SetTaskPayoutEvent' } | (
+        & Pick<SetTaskDueDateEvent, 'dueDate' | 'taskId' | 'type'>
+      ) | (
+        { __typename?: 'SetTaskPayoutEvent' }
+        & Pick<SetTaskPayoutEvent, 'taskId' | 'type'>
+      ) | (
         { __typename?: 'SetTaskSkillEvent' }
-        & Pick<SetTaskSkillEvent, 'ethSkillId'>
+        & Pick<SetTaskSkillEvent, 'ethSkillId' | 'taskId' | 'type'>
       ) | (
         { __typename?: 'SetTaskTitleEvent' }
-        & Pick<SetTaskTitleEvent, 'title'>
+        & Pick<SetTaskTitleEvent, 'taskId' | 'title' | 'type'>
       ) | (
         { __typename?: 'TaskMessageEvent' }
-        & Pick<TaskMessageEvent, 'message'>
+        & Pick<TaskMessageEvent, 'message' | 'taskId' | 'type'>
       ) | (
         { __typename?: 'UnassignWorkerEvent' }
-        & Pick<UnassignWorkerEvent, 'workerAddress'>
+        & Pick<UnassignWorkerEvent, 'taskId' | 'type' | 'workerAddress'>
       ), initiator: Maybe<(
         { __typename?: 'User' }
         & Pick<User, 'id'>
@@ -2240,44 +2399,81 @@ export type TaskQueryResult = ApolloReactCommon.QueryResult<TaskQuery, TaskQuery
 export const TaskFeedEventsDocument = gql`
     query TaskFeedEvents($id: String!) {
   task(id: $id) {
+    id
     events {
       context {
         ... on AssignWorkerEvent {
+          taskId
+          type
           workerAddress
         }
-        ... on CreateDomainEvent {
-          ethDomainId
+        ... on CancelTaskEvent {
+          taskId
+          type
         }
         ... on CreateTaskEvent {
+          colonyAddress
           ethDomainId
+          taskId
+          type
+        }
+        ... on CreateWorkRequestEvent {
+          taskId
+          type
+        }
+        ... on FinalizeTaskEvent {
+          taskId
+          type
         }
         ... on RemoveTaskPayoutEvent {
           amount
+          taskId
           tokenAddress
+          type
         }
         ... on SendWorkInviteEvent {
           amount
+          taskId
           tokenAddress
+          type
         }
         ... on SetTaskDescriptionEvent {
           description
+          taskId
+          type
         }
         ... on SetTaskDomainEvent {
           ethDomainId
+          taskId
+          type
         }
         ... on SetTaskDueDateEvent {
           dueDate
+          taskId
+          type
+        }
+        ... on SetTaskPayoutEvent {
+          taskId
+          type
         }
         ... on SetTaskSkillEvent {
           ethSkillId
+          taskId
+          type
         }
         ... on SetTaskTitleEvent {
+          taskId
           title
+          type
         }
         ... on TaskMessageEvent {
           message
+          taskId
+          type
         }
         ... on UnassignWorkerEvent {
+          taskId
+          type
           workerAddress
         }
       }
@@ -2291,6 +2487,7 @@ export const TaskFeedEventsDocument = gql`
           walletAddress
         }
       }
+      initiatorAddress
       sourceId
       sourceType
       type
