@@ -33,7 +33,6 @@ export type AddUserTokenReferenceInput = {
 };
 
 export type AssignWorkerEvent = TaskEvent & {
-   __typename?: 'AssignWorkerEvent',
   type: Scalars['String'],
   taskId: Scalars['String'],
   workerAddress: Scalars['String'],
@@ -50,13 +49,11 @@ export enum CacheControlScope {
 }
 
 export type CancelTaskEvent = TaskEvent & {
-   __typename?: 'CancelTaskEvent',
   type: Scalars['String'],
   taskId: Scalars['String'],
 };
 
 export type Colony = {
-   __typename?: 'Colony',
   id: Scalars['String'],
   createdAt: Scalars['DateTime'],
   colonyAddress: Scalars['String'],
@@ -82,7 +79,6 @@ export type ColonyEvent = {
 };
 
 export type ColonyToken = IToken & {
-   __typename?: 'ColonyToken',
   id: Scalars['String'],
   createdAt: Scalars['DateTime'],
   address: Scalars['String'],
@@ -94,7 +90,6 @@ export type ColonyToken = IToken & {
 };
 
 export type ColonyTokenRef = {
-   __typename?: 'ColonyTokenRef',
   address: Scalars['String'],
   isExternal?: Maybe<Scalars['Boolean']>,
   isNative?: Maybe<Scalars['Boolean']>,
@@ -113,7 +108,6 @@ export type CreateColonyInput = {
 };
 
 export type CreateDomainEvent = ColonyEvent & {
-   __typename?: 'CreateDomainEvent',
   type: Scalars['String'],
   ethDomainId: Scalars['String'],
   colonyAddress: Scalars['String'],
@@ -127,7 +121,6 @@ export type CreateDomainInput = {
 };
 
 export type CreateTaskEvent = TaskEvent & {
-   __typename?: 'CreateTaskEvent',
   type: Scalars['String'],
   taskId: Scalars['String'],
   ethDomainId: Scalars['String'],
@@ -152,7 +145,6 @@ export type CreateUserInput = {
 };
 
 export type CreateWorkRequestEvent = TaskEvent & {
-   __typename?: 'CreateWorkRequestEvent',
   type: Scalars['String'],
   taskId: Scalars['String'],
 };
@@ -163,7 +155,6 @@ export type CreateWorkRequestInput = {
 
 
 export type Domain = {
-   __typename?: 'Domain',
   id: Scalars['String'],
   createdAt: Scalars['DateTime'],
   colonyAddress: Scalars['String'],
@@ -199,7 +190,6 @@ export type EditUserInput = {
 };
 
 export type Event = {
-   __typename?: 'Event',
   type: Scalars['String'],
   createdAt: Scalars['DateTime'],
   initiator?: Maybe<User>,
@@ -212,7 +202,6 @@ export type Event = {
 export type EventContext = AssignWorkerEvent | CancelTaskEvent | CreateDomainEvent | CreateTaskEvent | CreateWorkRequestEvent | FinalizeTaskEvent | RemoveTaskPayoutEvent | SendWorkInviteEvent | SetTaskDescriptionEvent | SetTaskDomainEvent | SetTaskDueDateEvent | SetTaskPayoutEvent | SetTaskSkillEvent | SetTaskTitleEvent | TaskMessageEvent | UnassignWorkerEvent;
 
 export type FinalizeTaskEvent = TaskEvent & {
-   __typename?: 'FinalizeTaskEvent',
   type: Scalars['String'],
   taskId: Scalars['String'],
 };
@@ -227,7 +216,6 @@ export type IToken = {
 };
 
 export type LoggedInUser = {
-   __typename?: 'LoggedInUser',
   id: Scalars['String'],
   balance: Scalars['String'],
   username?: Maybe<Scalars['String']>,
@@ -245,7 +233,6 @@ export type MarkNotificationAsReadInput = {
 };
 
 export type Mutation = {
-   __typename?: 'Mutation',
   createUser?: Maybe<User>,
   editUser?: Maybe<User>,
   subscribeToColony?: Maybe<User>,
@@ -436,13 +423,11 @@ export type MutationSetLoggedInUserArgs = {
 };
 
 export type Notification = {
-   __typename?: 'Notification',
   event: Event,
   read: Scalars['Boolean'],
 };
 
 export type Query = {
-   __typename?: 'Query',
   user: User,
   colony: Colony,
   domain: Domain,
@@ -478,7 +463,6 @@ export type QueryTokenArgs = {
 };
 
 export type RemoveTaskPayoutEvent = TaskEvent & {
-   __typename?: 'RemoveTaskPayoutEvent',
   type: Scalars['String'],
   taskId: Scalars['String'],
   tokenAddress: Scalars['String'],
@@ -499,7 +483,6 @@ export type SendTaskMessageInput = {
 };
 
 export type SendWorkInviteEvent = TaskEvent & {
-   __typename?: 'SendWorkInviteEvent',
   type: Scalars['String'],
   taskId: Scalars['String'],
   tokenAddress: Scalars['String'],
@@ -518,7 +501,6 @@ export type SetColonyTokenAvatarInput = {
 };
 
 export type SetTaskDescriptionEvent = TaskEvent & {
-   __typename?: 'SetTaskDescriptionEvent',
   type: Scalars['String'],
   taskId: Scalars['String'],
   description: Scalars['String'],
@@ -530,7 +512,6 @@ export type SetTaskDescriptionInput = {
 };
 
 export type SetTaskDomainEvent = TaskEvent & {
-   __typename?: 'SetTaskDomainEvent',
   type: Scalars['String'],
   taskId: Scalars['String'],
   ethDomainId: Scalars['String'],
@@ -542,7 +523,6 @@ export type SetTaskDomainInput = {
 };
 
 export type SetTaskDueDateEvent = TaskEvent & {
-   __typename?: 'SetTaskDueDateEvent',
   type: Scalars['String'],
   taskId: Scalars['String'],
   dueDate: Scalars['Int'],
@@ -554,7 +534,6 @@ export type SetTaskDueDateInput = {
 };
 
 export type SetTaskPayoutEvent = TaskEvent & {
-   __typename?: 'SetTaskPayoutEvent',
   type: Scalars['String'],
   taskId: Scalars['String'],
 };
@@ -567,7 +546,6 @@ export type SetTaskPayoutInput = {
 };
 
 export type SetTaskSkillEvent = TaskEvent & {
-   __typename?: 'SetTaskSkillEvent',
   type: Scalars['String'],
   taskId: Scalars['String'],
   ethSkillId: Scalars['Int'],
@@ -579,7 +557,6 @@ export type SetTaskSkillInput = {
 };
 
 export type SetTaskTitleEvent = TaskEvent & {
-   __typename?: 'SetTaskTitleEvent',
   type: Scalars['String'],
   taskId: Scalars['String'],
   title: Scalars['String'],
@@ -604,7 +581,6 @@ export type SubscribeToColonyInput = {
 };
 
 export type Task = {
-   __typename?: 'Task',
   id: Scalars['String'],
   createdAt: Scalars['DateTime'],
   ethTaskId?: Maybe<Scalars['Int']>,
@@ -638,14 +614,12 @@ export type TaskIdInput = {
 };
 
 export type TaskMessageEvent = TaskEvent & {
-   __typename?: 'TaskMessageEvent',
   type: Scalars['String'],
   taskId: Scalars['String'],
   message: Scalars['String'],
 };
 
 export type Token = IToken & {
-   __typename?: 'Token',
   id: Scalars['String'],
   createdAt: Scalars['DateTime'],
   address: Scalars['String'],
@@ -655,7 +629,6 @@ export type Token = IToken & {
 };
 
 export type UnassignWorkerEvent = TaskEvent & {
-   __typename?: 'UnassignWorkerEvent',
   type: Scalars['String'],
   taskId: Scalars['String'],
   workerAddress: Scalars['String'],
@@ -672,7 +645,6 @@ export type UnsubscribeFromColonyInput = {
 
 
 export type User = {
-   __typename?: 'User',
   id: Scalars['String'],
   createdAt: Scalars['DateTime'],
   profile: UserProfile,
@@ -691,7 +663,6 @@ export type UserNotificationsArgs = {
 };
 
 export type UserProfile = {
-   __typename?: 'UserProfile',
   username?: Maybe<Scalars['String']>,
   avatarHash?: Maybe<Scalars['String']>,
   bio?: Maybe<Scalars['String']>,
@@ -702,7 +673,6 @@ export type UserProfile = {
 };
 
 export type UserToken = IToken & {
-   __typename?: 'UserToken',
   id: Scalars['String'],
   createdAt: Scalars['DateTime'],
   address: Scalars['String'],
@@ -712,7 +682,6 @@ export type UserToken = IToken & {
 };
 
 export type UserTokenRef = {
-   __typename?: 'UserTokenRef',
   address: Scalars['String'],
   iconHash?: Maybe<Scalars['String']>,
 };
@@ -722,13 +691,7 @@ export type SetLoggedInUserMutationVariables = {
 };
 
 
-export type SetLoggedInUserMutation = (
-  { __typename?: 'Mutation' }
-  & { setLoggedInUser: (
-    { __typename?: 'LoggedInUser' }
-    & Pick<LoggedInUser, 'id'>
-  ) }
-);
+export type SetLoggedInUserMutation = { setLoggedInUser: Pick<LoggedInUser, 'id'> };
 
 export type CreateUserMutationVariables = {
   createUserInput: CreateUserInput,
@@ -736,121 +699,129 @@ export type CreateUserMutationVariables = {
 };
 
 
-export type CreateUserMutation = (
-  { __typename?: 'Mutation' }
-  & { createUser: Maybe<(
-    { __typename?: 'User' }
-    & Pick<User, 'id'>
-  )>, setLoggedInUser: (
-    { __typename?: 'LoggedInUser' }
-    & Pick<LoggedInUser, 'id'>
-  ) }
-);
+export type CreateUserMutation = { createUser: Maybe<Pick<User, 'id'>>, setLoggedInUser: Pick<LoggedInUser, 'id'> };
 
 export type EditUserMutationVariables = {
   input: EditUserInput
 };
 
 
-export type EditUserMutation = (
-  { __typename?: 'Mutation' }
-  & { editUser: Maybe<(
-    { __typename?: 'User' }
-    & Pick<User, 'id'>
-  )> }
-);
+export type EditUserMutation = { editUser: Maybe<(
+    Pick<User, 'id'>
+    & { profile: Pick<UserProfile, 'avatarHash' | 'bio' | 'displayName' | 'location' | 'website'> }
+  )> };
+
+export type SetUserTokensMutationVariables = {
+  input: SetUserTokensInput
+};
+
+
+export type SetUserTokensMutation = { setUserTokens: Maybe<Pick<User, 'id' | 'tokens'>> };
 
 export type CreateColonyMutationVariables = {
   input: CreateColonyInput
 };
 
 
-export type CreateColonyMutation = (
-  { __typename?: 'Mutation' }
-  & { createColony: Maybe<(
-    { __typename?: 'Colony' }
-    & Pick<Colony, 'id' | 'colonyAddress' | 'colonyName' | 'avatarHash' | 'description' | 'displayName' | 'guideline' | 'website'>
-  )> }
-);
+export type CreateColonyMutation = { createColony: Maybe<Pick<Colony, 'id' | 'colonyAddress' | 'colonyName' | 'avatarHash' | 'description' | 'displayName' | 'guideline' | 'website'>> };
 
 export type EditColonyProfileMutationVariables = {
   input: EditColonyProfileInput
 };
 
 
-export type EditColonyProfileMutation = (
-  { __typename?: 'Mutation' }
-  & { editColonyProfile: Maybe<(
-    { __typename?: 'Colony' }
-    & Pick<Colony, 'id' | 'colonyName' | 'avatarHash' | 'description' | 'displayName' | 'guideline' | 'website'>
-  )> }
-);
+export type EditColonyProfileMutation = { editColonyProfile: Maybe<Pick<Colony, 'id' | 'colonyName' | 'avatarHash' | 'description' | 'displayName' | 'guideline' | 'website'>> };
+
+export type MarkNotificationAsReadMutationVariables = {
+  input: MarkNotificationAsReadInput
+};
+
+
+export type MarkNotificationAsReadMutation = Pick<Mutation, 'markNotificationAsRead'>;
+
+export type MarkAllNotificationsAsReadMutationVariables = {};
+
+
+export type MarkAllNotificationsAsReadMutation = Pick<Mutation, 'markAllNotificationsAsRead'>;
+
+export type SubscribeToColonyMutationVariables = {
+  input: SubscribeToColonyInput
+};
+
+
+export type SubscribeToColonyMutation = { subscribeToColony: Maybe<Pick<User, 'id'>> };
+
+export type UnsubscribeFromColonyMutationVariables = {
+  input: UnsubscribeFromColonyInput
+};
+
+
+export type UnsubscribeFromColonyMutation = { unsubscribeFromColony: Maybe<Pick<User, 'id'>> };
 
 export type LoggedInUserQueryVariables = {};
 
 
-export type LoggedInUserQuery = (
-  { __typename?: 'Query' }
-  & { loggedInUser: (
-    { __typename?: 'LoggedInUser' }
-    & Pick<LoggedInUser, 'walletAddress' | 'balance' | 'username'>
-  ) }
-);
+export type LoggedInUserQuery = { loggedInUser: Pick<LoggedInUser, 'walletAddress' | 'balance' | 'username'> };
 
 export type UserQueryVariables = {
   address: Scalars['String']
 };
 
 
-export type UserQuery = (
-  { __typename?: 'Query' }
-  & { user: (
-    { __typename?: 'User' }
-    & Pick<User, 'id'>
-    & { profile: (
-      { __typename?: 'UserProfile' }
-      & Pick<UserProfile, 'username' | 'walletAddress' | 'displayName' | 'bio' | 'location' | 'website' | 'avatarHash'>
-    ) }
-  ) }
-);
+export type UserQuery = { user: (
+    Pick<User, 'id'>
+    & { profile: Pick<UserProfile, 'username' | 'walletAddress' | 'displayName' | 'bio' | 'location' | 'website' | 'avatarHash'> }
+  ) };
+
+export type UserTokensQueryVariables = {
+  address: Scalars['String']
+};
+
+
+export type UserTokensQuery = { user: Pick<User, 'id' | 'tokens'> };
 
 export type ColonyQueryVariables = {
   address: Scalars['String']
 };
 
 
-export type ColonyQuery = (
-  { __typename?: 'Query' }
-  & { colony: (
-    { __typename?: 'Colony' }
-    & Pick<Colony, 'id' | 'colonyAddress' | 'colonyName' | 'avatarHash' | 'description' | 'displayName' | 'guideline' | 'website'>
-    & { tokens: Array<(
-      { __typename?: 'ColonyToken' }
-      & Pick<ColonyToken, 'address' | 'name' | 'symbol' | 'iconHash'>
-    )> }
-  ) }
-);
+export type ColonyQuery = { colony: (
+    Pick<Colony, 'id' | 'colonyAddress' | 'colonyName' | 'avatarHash' | 'description' | 'displayName' | 'guideline' | 'website'>
+    & { tokens: Array<Pick<ColonyToken, 'address' | 'name' | 'symbol' | 'iconHash'>> }
+  ) };
+
+export type UserTaskIdsQueryVariables = {
+  address: Scalars['String']
+};
+
+
+export type UserTaskIdsQuery = { user: (
+    Pick<User, 'id'>
+    & { tasks: Array<Pick<Task, 'id'>> }
+  ) };
+
+export type UserColonyIdsQueryVariables = {
+  address: Scalars['String']
+};
+
+
+export type UserColonyIdsQuery = { user: (
+    Pick<User, 'id'>
+    & { colonies: Array<Pick<Colony, 'id'>> }
+  ) };
 
 export type ColonySubscribedUsersQueryVariables = {
   colonyAddress: Scalars['String']
 };
 
 
-export type ColonySubscribedUsersQuery = (
-  { __typename?: 'Query' }
-  & { colony: (
-    { __typename?: 'Colony' }
-    & Pick<Colony, 'id'>
+export type ColonySubscribedUsersQuery = { colony: (
+    Pick<Colony, 'id'>
     & { subscribedUsers: Array<(
-      { __typename?: 'User' }
-      & Pick<User, 'id'>
-      & { profile: (
-        { __typename?: 'UserProfile' }
-        & Pick<UserProfile, 'avatarHash' | 'displayName' | 'username' | 'walletAddress'>
-      ) }
+      Pick<User, 'id'>
+      & { profile: Pick<UserProfile, 'avatarHash' | 'displayName' | 'username' | 'walletAddress'> }
     )> }
-  ) }
-);
+  ) };
 
 
 export const SetLoggedInUserDocument = gql`
@@ -925,6 +896,13 @@ export const EditUserDocument = gql`
     mutation EditUser($input: EditUserInput!) {
   editUser(input: $input) {
     id
+    profile {
+      avatarHash
+      bio
+      displayName
+      location
+      website
+    }
   }
 }
     `;
@@ -953,6 +931,39 @@ export function useEditUserMutation(baseOptions?: ApolloReactHooks.MutationHookO
 export type EditUserMutationHookResult = ReturnType<typeof useEditUserMutation>;
 export type EditUserMutationResult = ApolloReactCommon.MutationResult<EditUserMutation>;
 export type EditUserMutationOptions = ApolloReactCommon.BaseMutationOptions<EditUserMutation, EditUserMutationVariables>;
+export const SetUserTokensDocument = gql`
+    mutation SetUserTokens($input: SetUserTokensInput!) {
+  setUserTokens(input: $input) {
+    id
+    tokens
+  }
+}
+    `;
+export type SetUserTokensMutationFn = ApolloReactCommon.MutationFunction<SetUserTokensMutation, SetUserTokensMutationVariables>;
+
+/**
+ * __useSetUserTokensMutation__
+ *
+ * To run a mutation, you first call `useSetUserTokensMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useSetUserTokensMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [setUserTokensMutation, { data, loading, error }] = useSetUserTokensMutation({
+ *   variables: {
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function useSetUserTokensMutation(baseOptions?: ApolloReactHooks.MutationHookOptions<SetUserTokensMutation, SetUserTokensMutationVariables>) {
+        return ApolloReactHooks.useMutation<SetUserTokensMutation, SetUserTokensMutationVariables>(SetUserTokensDocument, baseOptions);
+      }
+export type SetUserTokensMutationHookResult = ReturnType<typeof useSetUserTokensMutation>;
+export type SetUserTokensMutationResult = ApolloReactCommon.MutationResult<SetUserTokensMutation>;
+export type SetUserTokensMutationOptions = ApolloReactCommon.BaseMutationOptions<SetUserTokensMutation, SetUserTokensMutationVariables>;
 export const CreateColonyDocument = gql`
     mutation CreateColony($input: CreateColonyInput!) {
   createColony(input: $input) {
@@ -1030,6 +1041,129 @@ export function useEditColonyProfileMutation(baseOptions?: ApolloReactHooks.Muta
 export type EditColonyProfileMutationHookResult = ReturnType<typeof useEditColonyProfileMutation>;
 export type EditColonyProfileMutationResult = ApolloReactCommon.MutationResult<EditColonyProfileMutation>;
 export type EditColonyProfileMutationOptions = ApolloReactCommon.BaseMutationOptions<EditColonyProfileMutation, EditColonyProfileMutationVariables>;
+export const MarkNotificationAsReadDocument = gql`
+    mutation MarkNotificationAsRead($input: MarkNotificationAsReadInput!) {
+  markNotificationAsRead(input: $input)
+}
+    `;
+export type MarkNotificationAsReadMutationFn = ApolloReactCommon.MutationFunction<MarkNotificationAsReadMutation, MarkNotificationAsReadMutationVariables>;
+
+/**
+ * __useMarkNotificationAsReadMutation__
+ *
+ * To run a mutation, you first call `useMarkNotificationAsReadMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useMarkNotificationAsReadMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [markNotificationAsReadMutation, { data, loading, error }] = useMarkNotificationAsReadMutation({
+ *   variables: {
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function useMarkNotificationAsReadMutation(baseOptions?: ApolloReactHooks.MutationHookOptions<MarkNotificationAsReadMutation, MarkNotificationAsReadMutationVariables>) {
+        return ApolloReactHooks.useMutation<MarkNotificationAsReadMutation, MarkNotificationAsReadMutationVariables>(MarkNotificationAsReadDocument, baseOptions);
+      }
+export type MarkNotificationAsReadMutationHookResult = ReturnType<typeof useMarkNotificationAsReadMutation>;
+export type MarkNotificationAsReadMutationResult = ApolloReactCommon.MutationResult<MarkNotificationAsReadMutation>;
+export type MarkNotificationAsReadMutationOptions = ApolloReactCommon.BaseMutationOptions<MarkNotificationAsReadMutation, MarkNotificationAsReadMutationVariables>;
+export const MarkAllNotificationsAsReadDocument = gql`
+    mutation MarkAllNotificationsAsRead {
+  markAllNotificationsAsRead
+}
+    `;
+export type MarkAllNotificationsAsReadMutationFn = ApolloReactCommon.MutationFunction<MarkAllNotificationsAsReadMutation, MarkAllNotificationsAsReadMutationVariables>;
+
+/**
+ * __useMarkAllNotificationsAsReadMutation__
+ *
+ * To run a mutation, you first call `useMarkAllNotificationsAsReadMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useMarkAllNotificationsAsReadMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [markAllNotificationsAsReadMutation, { data, loading, error }] = useMarkAllNotificationsAsReadMutation({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useMarkAllNotificationsAsReadMutation(baseOptions?: ApolloReactHooks.MutationHookOptions<MarkAllNotificationsAsReadMutation, MarkAllNotificationsAsReadMutationVariables>) {
+        return ApolloReactHooks.useMutation<MarkAllNotificationsAsReadMutation, MarkAllNotificationsAsReadMutationVariables>(MarkAllNotificationsAsReadDocument, baseOptions);
+      }
+export type MarkAllNotificationsAsReadMutationHookResult = ReturnType<typeof useMarkAllNotificationsAsReadMutation>;
+export type MarkAllNotificationsAsReadMutationResult = ApolloReactCommon.MutationResult<MarkAllNotificationsAsReadMutation>;
+export type MarkAllNotificationsAsReadMutationOptions = ApolloReactCommon.BaseMutationOptions<MarkAllNotificationsAsReadMutation, MarkAllNotificationsAsReadMutationVariables>;
+export const SubscribeToColonyDocument = gql`
+    mutation SubscribeToColony($input: SubscribeToColonyInput!) {
+  subscribeToColony(input: $input) {
+    id
+  }
+}
+    `;
+export type SubscribeToColonyMutationFn = ApolloReactCommon.MutationFunction<SubscribeToColonyMutation, SubscribeToColonyMutationVariables>;
+
+/**
+ * __useSubscribeToColonyMutation__
+ *
+ * To run a mutation, you first call `useSubscribeToColonyMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useSubscribeToColonyMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [subscribeToColonyMutation, { data, loading, error }] = useSubscribeToColonyMutation({
+ *   variables: {
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function useSubscribeToColonyMutation(baseOptions?: ApolloReactHooks.MutationHookOptions<SubscribeToColonyMutation, SubscribeToColonyMutationVariables>) {
+        return ApolloReactHooks.useMutation<SubscribeToColonyMutation, SubscribeToColonyMutationVariables>(SubscribeToColonyDocument, baseOptions);
+      }
+export type SubscribeToColonyMutationHookResult = ReturnType<typeof useSubscribeToColonyMutation>;
+export type SubscribeToColonyMutationResult = ApolloReactCommon.MutationResult<SubscribeToColonyMutation>;
+export type SubscribeToColonyMutationOptions = ApolloReactCommon.BaseMutationOptions<SubscribeToColonyMutation, SubscribeToColonyMutationVariables>;
+export const UnsubscribeFromColonyDocument = gql`
+    mutation UnsubscribeFromColony($input: UnsubscribeFromColonyInput!) {
+  unsubscribeFromColony(input: $input) {
+    id
+  }
+}
+    `;
+export type UnsubscribeFromColonyMutationFn = ApolloReactCommon.MutationFunction<UnsubscribeFromColonyMutation, UnsubscribeFromColonyMutationVariables>;
+
+/**
+ * __useUnsubscribeFromColonyMutation__
+ *
+ * To run a mutation, you first call `useUnsubscribeFromColonyMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useUnsubscribeFromColonyMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [unsubscribeFromColonyMutation, { data, loading, error }] = useUnsubscribeFromColonyMutation({
+ *   variables: {
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function useUnsubscribeFromColonyMutation(baseOptions?: ApolloReactHooks.MutationHookOptions<UnsubscribeFromColonyMutation, UnsubscribeFromColonyMutationVariables>) {
+        return ApolloReactHooks.useMutation<UnsubscribeFromColonyMutation, UnsubscribeFromColonyMutationVariables>(UnsubscribeFromColonyDocument, baseOptions);
+      }
+export type UnsubscribeFromColonyMutationHookResult = ReturnType<typeof useUnsubscribeFromColonyMutation>;
+export type UnsubscribeFromColonyMutationResult = ApolloReactCommon.MutationResult<UnsubscribeFromColonyMutation>;
+export type UnsubscribeFromColonyMutationOptions = ApolloReactCommon.BaseMutationOptions<UnsubscribeFromColonyMutation, UnsubscribeFromColonyMutationVariables>;
 export const LoggedInUserDocument = gql`
     query LoggedInUser {
   loggedInUser @client {
@@ -1106,6 +1240,40 @@ export function useUserLazyQuery(baseOptions?: ApolloReactHooks.LazyQueryHookOpt
 export type UserQueryHookResult = ReturnType<typeof useUserQuery>;
 export type UserLazyQueryHookResult = ReturnType<typeof useUserLazyQuery>;
 export type UserQueryResult = ApolloReactCommon.QueryResult<UserQuery, UserQueryVariables>;
+export const UserTokensDocument = gql`
+    query UserTokens($address: String!) {
+  user(address: $address) {
+    id
+    tokens
+  }
+}
+    `;
+
+/**
+ * __useUserTokensQuery__
+ *
+ * To run a query within a React component, call `useUserTokensQuery` and pass it any options that fit your needs.
+ * When your component renders, `useUserTokensQuery` returns an object from Apollo Client that contains loading, error, and data properties 
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useUserTokensQuery({
+ *   variables: {
+ *      address: // value for 'address'
+ *   },
+ * });
+ */
+export function useUserTokensQuery(baseOptions?: ApolloReactHooks.QueryHookOptions<UserTokensQuery, UserTokensQueryVariables>) {
+        return ApolloReactHooks.useQuery<UserTokensQuery, UserTokensQueryVariables>(UserTokensDocument, baseOptions);
+      }
+export function useUserTokensLazyQuery(baseOptions?: ApolloReactHooks.LazyQueryHookOptions<UserTokensQuery, UserTokensQueryVariables>) {
+          return ApolloReactHooks.useLazyQuery<UserTokensQuery, UserTokensQueryVariables>(UserTokensDocument, baseOptions);
+        }
+export type UserTokensQueryHookResult = ReturnType<typeof useUserTokensQuery>;
+export type UserTokensLazyQueryHookResult = ReturnType<typeof useUserTokensLazyQuery>;
+export type UserTokensQueryResult = ApolloReactCommon.QueryResult<UserTokensQuery, UserTokensQueryVariables>;
 export const ColonyDocument = gql`
     query Colony($address: String!) {
   colony(address: $address) {
@@ -1152,6 +1320,78 @@ export function useColonyLazyQuery(baseOptions?: ApolloReactHooks.LazyQueryHookO
 export type ColonyQueryHookResult = ReturnType<typeof useColonyQuery>;
 export type ColonyLazyQueryHookResult = ReturnType<typeof useColonyLazyQuery>;
 export type ColonyQueryResult = ApolloReactCommon.QueryResult<ColonyQuery, ColonyQueryVariables>;
+export const UserTaskIdsDocument = gql`
+    query UserTaskIds($address: String!) {
+  user(address: $address) {
+    id
+    tasks {
+      id
+    }
+  }
+}
+    `;
+
+/**
+ * __useUserTaskIdsQuery__
+ *
+ * To run a query within a React component, call `useUserTaskIdsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useUserTaskIdsQuery` returns an object from Apollo Client that contains loading, error, and data properties 
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useUserTaskIdsQuery({
+ *   variables: {
+ *      address: // value for 'address'
+ *   },
+ * });
+ */
+export function useUserTaskIdsQuery(baseOptions?: ApolloReactHooks.QueryHookOptions<UserTaskIdsQuery, UserTaskIdsQueryVariables>) {
+        return ApolloReactHooks.useQuery<UserTaskIdsQuery, UserTaskIdsQueryVariables>(UserTaskIdsDocument, baseOptions);
+      }
+export function useUserTaskIdsLazyQuery(baseOptions?: ApolloReactHooks.LazyQueryHookOptions<UserTaskIdsQuery, UserTaskIdsQueryVariables>) {
+          return ApolloReactHooks.useLazyQuery<UserTaskIdsQuery, UserTaskIdsQueryVariables>(UserTaskIdsDocument, baseOptions);
+        }
+export type UserTaskIdsQueryHookResult = ReturnType<typeof useUserTaskIdsQuery>;
+export type UserTaskIdsLazyQueryHookResult = ReturnType<typeof useUserTaskIdsLazyQuery>;
+export type UserTaskIdsQueryResult = ApolloReactCommon.QueryResult<UserTaskIdsQuery, UserTaskIdsQueryVariables>;
+export const UserColonyIdsDocument = gql`
+    query UserColonyIds($address: String!) {
+  user(address: $address) {
+    id
+    colonies {
+      id
+    }
+  }
+}
+    `;
+
+/**
+ * __useUserColonyIdsQuery__
+ *
+ * To run a query within a React component, call `useUserColonyIdsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useUserColonyIdsQuery` returns an object from Apollo Client that contains loading, error, and data properties 
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useUserColonyIdsQuery({
+ *   variables: {
+ *      address: // value for 'address'
+ *   },
+ * });
+ */
+export function useUserColonyIdsQuery(baseOptions?: ApolloReactHooks.QueryHookOptions<UserColonyIdsQuery, UserColonyIdsQueryVariables>) {
+        return ApolloReactHooks.useQuery<UserColonyIdsQuery, UserColonyIdsQueryVariables>(UserColonyIdsDocument, baseOptions);
+      }
+export function useUserColonyIdsLazyQuery(baseOptions?: ApolloReactHooks.LazyQueryHookOptions<UserColonyIdsQuery, UserColonyIdsQueryVariables>) {
+          return ApolloReactHooks.useLazyQuery<UserColonyIdsQuery, UserColonyIdsQueryVariables>(UserColonyIdsDocument, baseOptions);
+        }
+export type UserColonyIdsQueryHookResult = ReturnType<typeof useUserColonyIdsQuery>;
+export type UserColonyIdsLazyQueryHookResult = ReturnType<typeof useUserColonyIdsLazyQuery>;
+export type UserColonyIdsQueryResult = ApolloReactCommon.QueryResult<UserColonyIdsQuery, UserColonyIdsQueryVariables>;
 export const ColonySubscribedUsersDocument = gql`
     query ColonySubscribedUsers($colonyAddress: String!) {
   colony(address: $colonyAddress) {

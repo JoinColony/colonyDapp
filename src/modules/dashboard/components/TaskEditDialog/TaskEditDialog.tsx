@@ -29,7 +29,7 @@ import { ActionTypes } from '~redux/index';
 import HookedUserAvatar from '~users/HookedUserAvatar';
 import { mapPayload, mergePayload, pipe } from '~utils/actions';
 import { useDataFetcher, useSelector } from '~utils/hooks';
-import { ColonySubscribedUsersDocument, User } from '~data/index';
+import { AnyUser, ColonySubscribedUsersDocument } from '~data/index';
 
 import { createAddress } from '../../../../types';
 import { useColonyTokens } from '../../hooks/useColonyTokens';
@@ -110,7 +110,7 @@ interface Props {
 
 const UserAvatar = HookedUserAvatar({ fetchUser: false });
 
-const supRenderAvatar = (address: string, item: ItemDataType<User>) => (
+const supRenderAvatar = (address: string, item: ItemDataType<AnyUser>) => (
   <UserAvatar address={address} user={item} size="xs" />
 );
 

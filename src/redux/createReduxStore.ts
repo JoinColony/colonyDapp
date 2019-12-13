@@ -4,7 +4,6 @@ import { routerMiddleware } from 'connected-react-router';
 import { middleware as actionWatchMiddleWare } from 'redux-action-watch';
 
 import context from '~context/index';
-import { middleware as persistMiddleware } from './persist';
 
 import setupSagas from '../modules/core/sagas';
 import history from './history';
@@ -47,14 +46,6 @@ const subscriberMiddleware = createSubscriberMiddleware(
   ],
   [ActionTypes.TASK_FEED_ITEMS_SUB_START, ActionTypes.TASK_FEED_ITEMS_SUB_STOP],
   [ActionTypes.TASK_SUB_START, ActionTypes.TASK_SUB_STOP],
-  [
-    ActionTypes.USER_SUBSCRIBED_COLONIES_SUB_START,
-    ActionTypes.USER_SUBSCRIBED_COLONIES_SUB_STOP,
-  ],
-  [
-    ActionTypes.USER_SUBSCRIBED_TASKS_SUB_START,
-    ActionTypes.USER_SUBSCRIBED_TASKS_SUB_STOP,
-  ],
 );
 
 const composeEnhancer =
@@ -71,7 +62,6 @@ const store = createStore(
       subscriberMiddleware,
       sagaMiddleware,
       reduxPromiseListener.middleware,
-      persistMiddleware,
       actionWatchMiddleWare('watcher'),
     ),
   ),

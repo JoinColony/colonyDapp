@@ -1,6 +1,5 @@
 import React, { useCallback } from 'react';
 import { defineMessages } from 'react-intl';
-import { useQuery, useMutation } from '@apollo/react-hooks';
 import * as yup from 'yup';
 
 import CopyableAddress from '~core/CopyableAddress';
@@ -16,8 +15,7 @@ import {
 } from '~core/Fields';
 import Button from '~core/Button';
 import ProfileTemplate from '~pages/ProfileTemplate';
-import { useLoggedInUser } from '~data/helpers';
-import { EditUserDocument, UserDocument } from '~data/index';
+import { useLoggedInUser, useUser, useEditUserMutation } from '~data/index';
 
 import UserProfileSpinner from '../UserProfile/UserProfileSpinner';
 import Sidebar from './Sidebar';
@@ -76,21 +74,17 @@ const validationSchema = yup.object({
 const UserProfileEdit = () => {
   const { walletAddress } = useLoggedInUser();
 
-  const [editUser] = useMutation(EditUserDocument);
+  const [editUser] = useEditUserMutation();
   const onSubmit = useCallback(
     (profile: FormValues) => editUser({ variables: { input: profile } }),
     [editUser],
   );
 
-  const { data } = useQuery(UserDocument, {
-    variables: { address: walletAddress },
-  });
+  const user = useUser(walletAddress);
 
-  if (!data || !data.user) {
+  if (!user) {
     return <UserProfileSpinner />;
   }
-
-  const { user } = data;
 
   return (
     <ProfileTemplate

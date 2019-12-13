@@ -1,14 +1,12 @@
 import React from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 
-import { useDataFetcher } from '~utils/hooks';
 import { SpinnerLoader } from '~core/Preloaders';
 import Link from '~core/Link';
 import { CREATE_COLONY_ROUTE } from '~routes/index';
-import { useLoggedInUser } from '~data/helpers';
+import { useLoggedInUser, useUserColonyIdsQuery } from '~data/index';
 
 import ColoniesListItem from './ColoniesListItem';
-import { userColoniesFetcher } from '../../fetchers';
 
 import styles from './ColoniesList.css';
 
@@ -31,13 +29,11 @@ const displayName = 'dashboard.Dashboard.ColoniesList';
 
 const ColoniesList = () => {
   const { walletAddress } = useLoggedInUser();
-  const { data: colonyAddresses, isFetching } = useDataFetcher(
-    userColoniesFetcher,
-    [walletAddress],
-    [walletAddress, ''],
-  );
+  const { data } = useUserColonyIdsQuery({
+    variables: { address: walletAddress },
+  });
 
-  if (isFetching) {
+  if (!data) {
     return (
       <div className={styles.loader}>
         <SpinnerLoader appearance={{ size: 'medium' }} />
@@ -47,6 +43,11 @@ const ColoniesList = () => {
       </div>
     );
   }
+
+  const {
+    user: { colonies },
+  } = data;
+  const colonyAddresses = colonies.map(({ id }) => id);
 
   if (colonyAddresses && colonyAddresses.length) {
     return (

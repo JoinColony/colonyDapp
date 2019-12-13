@@ -1,13 +1,6 @@
-import { ColonyNetworkClient } from '@colony/colony-js-client';
-
-import ENS from '~lib/ENS';
-import { DDB } from '~lib/database';
-import { Address, ColonyClient, createAddress, ENSCache } from '~types/index';
-import { UserMetadataStore } from '~data/types';
+import { Address, ColonyClient, createAddress } from '~types/index';
 
 import { EventTypes } from '~data/constants';
-import { getUserInboxStore } from '~data/stores';
-import { getUserTokensReducer } from './reducers';
 import {
   NOTIFICATION_EVENT_ASSIGNED,
   NOTIFICATION_EVENT_COLONY_ENS_CREATED,
@@ -21,16 +14,6 @@ import {
   NOTIFICATION_EVENT_USER_MENTIONED,
   NOTIFICATION_EVENT_USER_TRANSFER,
 } from '~users/Inbox/events';
-import { log } from '~utils/debug';
-
-export const getUserTokenAddresses = (metadataStore: UserMetadataStore) =>
-  metadataStore
-    .all()
-    .filter(
-      ({ type }) =>
-        type === EventTypes.TOKEN_ADDED || type === EventTypes.TOKEN_REMOVED,
-    )
-    .reduce(getUserTokensReducer, []);
 
 const notificationsToEventsMapping = {
   [EventTypes.ASSIGNED_TO_TASK]: NOTIFICATION_EVENT_ASSIGNED,
@@ -48,30 +31,6 @@ const notificationsToEventsMapping = {
 
 export const transformNotificationEventNames = (eventName: string): string =>
   notificationsToEventsMapping[eventName];
-
-export const getUserInboxStoreByProfileAddress = (ddb: DDB) => async ({
-  walletAddress,
-}: {
-  walletAddress: Address;
-}) => {
-  return getUserInboxStore(ddb)({
-    // FIXME this is just a stub
-    inboxStoreAddress: '',
-    walletAddress,
-  });
-};
-
-export const getUserAddressByUsername = (
-  ens: ENSCache,
-  networkClient: ColonyNetworkClient,
-) => async (username: string): Promise<Address | null> => {
-  try {
-    return ens.getAddress(ENS.getFullDomain('user', username), networkClient);
-  } catch (caughtError) {
-    log.warn(caughtError);
-    return null;
-  }
-};
 
 export const getExtensionAddresses = async (
   colonyClient: ColonyClient,

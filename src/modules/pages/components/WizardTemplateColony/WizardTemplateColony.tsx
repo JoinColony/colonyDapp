@@ -6,7 +6,7 @@ import Numeral from '~core/Numeral';
 import QRCode from '~core/QRCode';
 import CopyableAddress from '~core/CopyableAddress';
 import { HistoryNavigation } from '~pages/NavigationWrapper';
-import { useLoggedInUser } from '~data/helpers';
+import { useLoggedInUser } from '~data/index';
 
 import styles from './WizardTemplateColony.css';
 

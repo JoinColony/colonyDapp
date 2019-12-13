@@ -5,7 +5,7 @@ import { ContractTransactionType, TaskType } from '~immutable/index';
 import MaskedAddress from '~core/MaskedAddress';
 import Link from '~core/Link';
 import { Address, ENSName } from '~types/index';
-import { User, AnyColony, useColonyQuery } from '~data/index';
+import { AnyColony, AnyUser, useColonyQuery } from '~data/index';
 
 import styles from './TransactionDetails.css';
 
@@ -26,11 +26,7 @@ const MSG = defineMessages({
 
 const displayName = 'admin.TransactionList.TransactionDetails';
 
-interface Props {
-  transaction: ContractTransactionType;
-  task?: TaskType;
-  user?: User;
-
+interface BaseProps {
   /*
    * User and colony addresses will always be shown; this controls whether the
    * address is shown in full, or masked.
@@ -38,19 +34,46 @@ interface Props {
   showMaskedAddress?: boolean;
 }
 
-interface HookedProps extends Props {
-  colony?: AnyColony;
+interface ColonyDetailsProps extends BaseProps {
+  address?: Address;
+  colony: AnyColony;
+}
+
+interface TaskDetailsProps extends BaseProps {
+  colonyName: ENSName;
+  task: TaskType;
+}
+
+interface UserDetailsProps extends BaseProps {
+  user: AnyUser;
+  address: Address;
+}
+
+interface IncomingTransactionProps extends BaseProps {
+  colony: AnyColony;
+  task?: TaskType;
+  transaction: ContractTransactionType;
+  user: AnyUser;
+}
+
+interface OutgoingTransactionProps extends BaseProps {
+  colony: AnyColony;
+  task?: TaskType;
+  transaction: ContractTransactionType;
+  user: AnyUser;
+}
+
+interface Props extends BaseProps {
+  task?: TaskType;
+  transaction: ContractTransactionType;
+  user: AnyUser;
 }
 
 const UserDetails = ({
   user,
   address,
   showMaskedAddress,
-}: {
-  address: Address;
-  showMaskedAddress?: boolean;
-  user?: User;
-}) => {
+}: UserDetailsProps) => {
   // @TODO consider user a proper preloader here
   if (!user) return null;
   const {
@@ -73,11 +96,7 @@ const ColonyDetails = ({
   colony: { displayName: colonyDisplayName, colonyAddress },
   address = colonyAddress,
   showMaskedAddress,
-}: {
-  colony: AnyColony;
-  address?: Address;
-  showMaskedAddress?: boolean;
-}) => (
+}: ColonyDetailsProps) => (
   <span>
     {colonyDisplayName && <span>{`${colonyDisplayName} `}</span>}
     {!colonyDisplayName && address && (
@@ -91,10 +110,7 @@ const ColonyDetails = ({
 const TaskDetails = ({
   colonyName,
   task: { draftId, title },
-}: {
-  task: TaskType;
-  colonyName: ENSName;
-}) => (
+}: TaskDetailsProps) => (
   <span>
     <Link
       text={title || MSG.untitled}
@@ -110,7 +126,7 @@ const IncomingTransaction = ({
   task,
   transaction: { from, to },
   user,
-}: HookedProps) => (
+}: IncomingTransactionProps) => (
   <div>
     <p className={styles.primaryText}>
       {/*
@@ -184,9 +200,7 @@ const OutgoingTransaction = ({
   task,
   transaction: { from, to },
   user,
-}: Props & {
-  colony?: AnyColony;
-}) => (
+}: OutgoingTransactionProps) => (
   <div>
     <p className={styles.primaryText}>
       {/*

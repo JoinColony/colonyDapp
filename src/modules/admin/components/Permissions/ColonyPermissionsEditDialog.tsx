@@ -12,7 +12,7 @@ import Dialog, { DialogSection } from '~core/Dialog';
 import { ActionForm, InputLabel } from '~core/Fields';
 import { SpinnerLoader } from '~core/Preloaders';
 import UserInfo from '~users/UserInfo';
-import { useUser } from '~data/helpers';
+import { useUser } from '~data/index';
 
 import { TEMP_getUserRolesWithRecovery } from '../../../transformers';
 import {

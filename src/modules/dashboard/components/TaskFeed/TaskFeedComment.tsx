@@ -7,7 +7,7 @@ import ExternalLink from '~core/ExternalLink';
 import TimeRelative from '~core/TimeRelative';
 import UserMention from '~core/UserMention';
 import HookedUserAvatar from '~users/HookedUserAvatar';
-import { useLoggedInUser, useUser } from '~data/helpers';
+import { useLoggedInUser, useUser } from '~data/index';
 
 import TextDecorator from '../../../../lib/TextDecorator';
 import { getFriendlyName } from '../../../users/transformers';

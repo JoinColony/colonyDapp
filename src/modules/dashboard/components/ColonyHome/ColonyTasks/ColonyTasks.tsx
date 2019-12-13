@@ -1,20 +1,16 @@
-import React, { useCallback, useMemo, useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 import { subscribeActions as subscribeToReduxActions } from 'redux-action-watch/lib/actionCreators';
 import { useDispatch } from 'redux-react-hook';
 import throttle from 'lodash/throttle';
 
 import { Address } from '~types/index';
-import { TaskDraftId } from '~immutable/index';
 import { ActionTypes } from '~redux/index';
 import { mergePayload } from '~utils/actions';
 import { ActionButton } from '~core/Button';
 import Icon from '~core/Icon';
 import { SpinnerLoader } from '~core/Preloaders';
-import { useDataSubscriber } from '~utils/hooks';
-import { useLoggedInUser } from '~data/helpers';
 
-import { colonyTaskMetadataSubscriber } from '../../../subscribers';
 import TaskList from '../../TaskList';
 import styles from './ColonyTasks.css';
 
@@ -114,9 +110,6 @@ const ColonyTasks = ({
   canMintTokens,
 }: Props) => {
   const [isTaskBeingCreated, setIsTaskBeingCreated] = useState(false);
-
-  const { walletAddress } = useLoggedInUser();
-
   const dispatch = useDispatch();
 
   /*
@@ -133,27 +126,24 @@ const ColonyTasks = ({
     [dispatch],
   );
 
-  const { data: taskMetadata, isFetching } = useDataSubscriber(
-    colonyTaskMetadataSubscriber,
-    [colonyAddress],
-    [colonyAddress],
-  );
+  /* const { data: taskMetadata, isFetching } = useDataSubscriber( */
+  /*   colonyTaskMetadataSubscriber, */
+  /*   [colonyAddress], */
+  /*   [colonyAddress], */
+  /* ); */
 
   // This could be simpler if we had the tuples ready to select from state
-  const draftIds = useMemo(
-    () =>
-      Object.keys(taskMetadata || {}).map(draftId => [colonyAddress, draftId]),
-    [colonyAddress, taskMetadata],
-  ) as [Address, TaskDraftId][];
+  // FIXME get actual draft ids
+  const draftIds = [];
 
   const transform = useCallback(
     mergePayload({ colonyAddress, domainId: filteredDomainId }),
     [filteredDomainId, colonyAddress],
   );
 
-  if (isFetching) {
-    return null;
-  }
+  /* if (isFetching) { */
+  /*   return null; */
+  /* } */
 
   /*
    * If we can create tasks, but tokens are not yet minted, don't show the
@@ -186,7 +176,6 @@ const ColonyTasks = ({
         draftIds={draftIds}
         filteredDomainId={filteredDomainId}
         filterOption={filterOption}
-        walletAddress={walletAddress}
         /*
          * - If we can create tasks, but no tokens are minted,
          *   don't show the empty state.

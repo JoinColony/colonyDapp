@@ -2,7 +2,7 @@ import React, { ReactNode, useCallback } from 'react';
 import { MessageDescriptor, MessageValues, defineMessages } from 'react-intl';
 import compose from 'recompose/compose';
 
-import { User } from '~data/index';
+import { AnyUser } from '~data/index';
 import { Address } from '~types/index';
 import { getMainClasses } from '~utils/css';
 
@@ -17,7 +17,7 @@ import styles from './SingleUserPicker.css';
 
 type AvatarRenderFn = (
   address: Address,
-  user?: ItemDataType<User>,
+  user?: ItemDataType<AnyUser>,
 ) => ReactNode;
 
 const MSG = defineMessages({
@@ -35,12 +35,13 @@ const MSG = defineMessages({
   },
 });
 
-const defaultRenderAvatar = (address: Address, item?: ItemDataType<User>) => (
-  <UserAvatar address={address} user={item} size="xs" />
-);
+const defaultRenderAvatar = (
+  address: Address,
+  item?: ItemDataType<AnyUser>,
+) => <UserAvatar address={address} user={item} size="xs" />;
 
 const defaultRenderItem = (
-  user: ItemDataType<User>,
+  user: ItemDataType<AnyUser>,
   renderAvatar: AvatarRenderFn,
 ) => (
   <ItemDefault itemData={user} renderAvatar={renderAvatar} showMaskedAddress />
@@ -80,7 +81,7 @@ interface Props extends OmniPickerProps {
   renderAvatar: AvatarRenderFn;
 
   /** Item component for omnipicker listbox */
-  renderItem?: (user: ItemDataType<User>, selected?: boolean) => ReactNode;
+  renderItem?: (user: ItemDataType<AnyUser>, selected?: boolean) => ReactNode;
 
   /** Label text */
   label: string | MessageDescriptor;
@@ -92,13 +93,13 @@ interface Props extends OmniPickerProps {
   placeholder?: string;
 
   /** Callback for things that happend after selection  */
-  onSelected?: (user: User) => void;
+  onSelected?: (user: AnyUser) => void;
 
   /** @ignore Will be injected by `asField` */
   $error?: string;
 
   /** @ignore Will be injected by `asField` */
-  $value?: ItemDataType<User>;
+  $value?: ItemDataType<AnyUser>;
 
   /** @ignore Will be injected by `asField` */
   $touched?: boolean;
@@ -143,7 +144,7 @@ const SingleUserPicker = ({
     }
   }, [disabled, openOmniPicker, setValue]);
   const handlePick = useCallback(
-    (user: User) => {
+    (user: AnyUser) => {
       setValue(user);
       if (onSelected) onSelected(user);
     },
@@ -158,7 +159,7 @@ const SingleUserPicker = ({
   const renderItem =
     renderItemProp || // eslint-disable-next-line react-hooks/rules-of-hooks
     useCallback(
-      (user: ItemDataType<User>) => defaultRenderItem(user, renderAvatar),
+      (user: ItemDataType<AnyUser>) => defaultRenderItem(user, renderAvatar),
       [renderAvatar],
     );
 

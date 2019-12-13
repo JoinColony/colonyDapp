@@ -113,8 +113,18 @@ export default function* setupUserContext(
     const ens = yield getContext(Context.ENS_INSTANCE);
     yield call(setupDDBResolver, colonyManager, ddb, ens);
 
-    let username;
+    /*
+     * This needs to happen first because USER_CONTEXT_SETUP_SUCCESS causes a redirect
+     * to dashboard, which needs context for sagas which happen on load.
+     * Forking is okay because each `takeEvery` etc happens immediately anyway,
+     * but we then do not wait for a return value (which will never come).
+     */
+    yield fork(setupContextDependentSagas);
 
+    // Start a forked task to listen for user balance events
+    yield fork(setupUserBalanceListener, walletAddress);
+
+    let username;
     try {
       const domain = yield ens.getDomain(
         walletAddress,
@@ -140,17 +150,6 @@ export default function* setupUserContext(
         },
       },
     });
-
-    /*
-     * This needs to happen first because USER_CONTEXT_SETUP_SUCCESS causes a redirect
-     * to dashboard, which needs context for sagas which happen on load.
-     * Forking is okay because each `takeEvery` etc happens immediately anyway,
-     * but we then do not wait for a return value (which will never come).
-     */
-    yield fork(setupContextDependentSagas);
-
-    // Start a forked task to listen for user balance events
-    yield fork(setupUserBalanceListener, walletAddress);
 
     yield put<AllActions>({
       type: ActionTypes.USER_CONTEXT_SETUP_SUCCESS,

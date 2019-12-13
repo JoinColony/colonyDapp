@@ -10,7 +10,7 @@ import Numeral from '~core/Numeral';
 import InfoPopover from '~core/InfoPopover';
 import styles from '~dashboard/TaskFeed/TaskFeedEvent.css';
 import { EventTypes } from '~data/constants';
-import { useUser } from '~data/helpers';
+import { useUser } from '~data/index';
 import { useDataFetcher, useSelector } from '~utils/hooks';
 
 import { getFriendlyName } from '../../../users/transformers';

@@ -11,7 +11,7 @@ import Heading from '~core/Heading';
 import { Select } from '~core/Fields';
 import { Address, DomainsMapType } from '~types/index';
 import { useDataFetcher, useTransformer } from '~utils/hooks';
-import { useLoggedInUser } from '~data/helpers';
+import { useLoggedInUser } from '~data/index';
 
 import { getLegacyRoles } from '../../../transformers';
 import { tokenFetcher } from '../../../dashboard/fetchers';

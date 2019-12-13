@@ -21,6 +21,20 @@ mutation CreateUser(
 mutation EditUser($input: EditUserInput!) {
   editUser(input: $input) {
     id
+    profile {
+      avatarHash
+      bio
+      displayName
+      location
+      website
+    }
+  }
+}
+
+mutation SetUserTokens($input: SetUserTokensInput!) {
+  setUserTokens(input: $input) {
+    id
+    tokens
   }
 }
 
@@ -46,5 +60,25 @@ mutation EditColonyProfile($input: EditColonyProfileInput!) {
     displayName
     guideline
     website
+  }
+}
+
+mutation MarkNotificationAsRead($input: MarkNotificationAsReadInput!) {
+  markNotificationAsRead(input: $input)
+}
+
+mutation MarkAllNotificationsAsRead {
+  markAllNotificationsAsRead
+}
+
+mutation SubscribeToColony($input: SubscribeToColonyInput!) {
+  subscribeToColony(input: $input) {
+    id
+  }
+}
+
+mutation UnsubscribeFromColony($input: UnsubscribeFromColonyInput!) {
+  unsubscribeFromColony(input: $input) {
+    id
   }
 }

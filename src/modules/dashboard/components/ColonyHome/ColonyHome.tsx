@@ -22,7 +22,14 @@ import Heading from '~core/Heading';
 import Button, { ActionButton } from '~core/Button';
 import RecoveryModeAlert from '~admin/RecoveryModeAlert';
 import LoadingTemplate from '~pages/LoadingTemplate';
-import { colonyAddressFetcher, colonyFetcher } from '../../fetchers';
+/* import { useLoggedInUser } from '~data/index'; */
+
+/* import { canAdminister, hasRoot } from '../../../users/checks'; */
+import {
+  colonyAddressFetcher,
+  colonyFetcher,
+  /* domainsAndRolesFetcher, */
+} from '../../fetchers';
 import {
   colonyNativeTokenSelector,
   colonyEthTokenSelector,

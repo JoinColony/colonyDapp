@@ -10,7 +10,7 @@ import TransactionLink from '~core/TransactionLink';
 import { ActionTypes } from '~redux/index';
 import { mergePayload } from '~utils/actions';
 import { useDataFetcher } from '~utils/hooks';
-import { useUserLazy } from '~data/helpers';
+import { useUserLazy } from '~data/index';
 
 import { tokenFetcher } from '../../../dashboard/fetchers';
 import TransactionDetails from './TransactionDetails';
@@ -82,18 +82,13 @@ const TransactionListItem = ({
     [tokenAddress],
   );
 
-  /**
-   * @todo Support fetching of tasks by `taskId`
-   * */
-  // const { data: task } = useDataSubscriber(
-  //   taskSubscriber,
-  //   [taskId],
-  //   [taskId],
-  // );
   const transform = useCallback(mergePayload({ colonyAddress, tokenAddress }), [
     colonyAddress,
     tokenAddress,
   ]);
+
+  // @TODO: use proper preloader
+  if (!token || !user) return null;
 
   return (
     <TableRow className={styles.main}>

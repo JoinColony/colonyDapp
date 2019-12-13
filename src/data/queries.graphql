@@ -21,6 +21,13 @@ query User($address: String!) {
   }
 }
 
+query UserTokens($address: String!) {
+  user(address: $address) {
+    id
+    tokens  
+  }
+}
+
 query Colony($address: String!) {
   colony(address: $address) {
     id
@@ -36,6 +43,26 @@ query Colony($address: String!) {
       name
       symbol
       iconHash
+    }
+  }
+}
+
+# @TODO we want to get the full tasks in a lot of cases, maybe this isn't needed
+query UserTaskIds($address: String!) {
+  user(address: $address) {
+    id
+    tasks {
+      id
+    }
+  }
+}
+
+# @TODO we want to get the full tasks in a lot of cases, maybe this isn't needed
+query UserColonyIds($address: String!) {
+  user(address: $address) {
+    id
+    colonies {
+      id
     }
   }
 }

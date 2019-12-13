@@ -11,7 +11,7 @@ import { SpinnerLoader } from '~core/Preloaders';
 import withDialog from '~core/Dialog/withDialog';
 import TokenList from '~admin/Tokens/TokenList';
 import { useDataFetcher } from '~utils/hooks';
-import { useLoggedInUser } from '~data/helpers';
+import { useLoggedInUser } from '~data/index';
 
 import { currentUserTokensFetcher } from '../../../users/fetchers';
 import styles from './Wallet.css';

@@ -2,11 +2,9 @@ import { ColonyActionTypes } from './colony';
 import { ConnectionActionTypes } from './connection';
 import { DomainActionTypes } from './domain';
 import { GasPricesActionTypes } from './gasPrices';
-import { InboxActionTypes } from './inbox';
 import { IpfsActionTypes } from './ipfs';
 import { MultisigActionTypes } from './multisig';
 import { NetworkActionTypes } from './network';
-import { PersistActionTypes } from '../../persist';
 import { TaskActionTypes } from './task';
 import { TokenActionTypes } from './token';
 import { TransactionActionTypes } from './transaction';
@@ -101,11 +99,9 @@ export type AllActions =
   | ConnectionActionTypes
   | DomainActionTypes
   | GasPricesActionTypes
-  | InboxActionTypes
   | IpfsActionTypes
   | MultisigActionTypes
   | NetworkActionTypes
-  | PersistActionTypes
   | TaskActionTypes
   | TokenActionTypes
   | TransactionActionTypes

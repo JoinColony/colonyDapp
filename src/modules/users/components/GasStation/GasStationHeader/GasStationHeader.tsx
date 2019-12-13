@@ -7,7 +7,7 @@ import Icon from '~core/Icon';
 import Link from '~core/Link';
 import Numeral from '~core/Numeral';
 import { WALLET_ROUTE } from '~routes/index';
-import { useLoggedInUser } from '~data/helpers';
+import { useLoggedInUser } from '~data/index';
 
 import styles from './GasStationHeader.css';
 

@@ -26,8 +26,7 @@ import {
   takeFrom,
 } from '~utils/saga/effects';
 import { generateUrlFriendlyId } from '~utils/strings';
-import { matchUsernames } from '~lib/TextDecorator';
-import { getLoggedInUser } from '~data/helpers';
+import { getLoggedInUser } from '~data/index';
 
 import { fetchColonyTaskMetadata as fetchColonyTaskMetadataAC } from '../actionCreators';
 import {
@@ -61,15 +60,7 @@ import {
   subscribeTaskFeedItems,
   subscribeTask,
 } from '../data/queries';
-import {
-  createAssignedInboxEvent,
-  createUnassignedInboxEvent,
-  createCommentMention,
-  createFinalizedInboxEvent,
-  createWorkRequestInboxEvent,
-} from '../../users/data/commands';
 
-import { subscribeToTask } from '../../users/actionCreators';
 import { AllActions } from '../../../redux/types/actions';
 
 /*
@@ -147,7 +138,6 @@ function* taskCreate({
      */
     yield all([
       put(successAction),
-      put(subscribeToTask(colonyAddress, draftId)),
       put(replace(`/colony/${colonyName}/task/${draftId}`)),
     ]);
   } catch (error) {
@@ -532,10 +522,8 @@ function* taskFinalize({
   meta,
 }: Action<ActionTypes.TASK_FINALIZE>) {
   try {
-    const { walletAddress } = yield getLoggedInUser();
-
     const {
-      record: { workerAddress, payouts, domainId, skillId, title: taskTitle },
+      record: { workerAddress, payouts, domainId, skillId },
     }: { record: TaskType } = yield selectAsJS(taskSelector, draftId);
     if (!workerAddress)
       throw new Error(`Worker not assigned for task ${draftId}`);
@@ -574,17 +562,6 @@ function* taskFinalize({
         transactionHash: hash,
       },
       metadata: { colonyAddress, draftId },
-    });
-
-    // send a notification to the worker
-    yield executeCommand(createFinalizedInboxEvent, {
-      args: {
-        colonyAddress,
-        draftId,
-        taskTitle: taskTitle || '',
-        sourceUserAddress: walletAddress,
-      },
-      metadata: { workerAddress },
     });
 
     yield put<AllActions>({
@@ -638,20 +615,6 @@ function* taskSendWorkRequest({
       metadata: { colonyAddress, draftId },
     });
 
-    // send a notification to the manager
-    const {
-      record: { managerAddress, title: taskTitle },
-    } = yield select(taskSelector, draftId);
-    yield executeCommand(createWorkRequestInboxEvent, {
-      args: {
-        colonyAddress,
-        draftId,
-        taskTitle,
-        sourceUserAddress: walletAddress,
-      },
-      metadata: { managerAddress },
-    });
-
     yield put<AllActions>({
       type: ActionTypes.TASK_SEND_WORK_REQUEST_SUCCESS,
       payload: {
@@ -685,30 +648,14 @@ function* taskWorkerAssign({
   meta,
 }: Action<ActionTypes.TASK_WORKER_ASSIGN>) {
   try {
-    const { walletAddress } = yield getLoggedInUser();
     const {
-      record: {
-        workerAddress: currentWorkerAddress,
-        title: taskTitle,
-        domainId,
-      },
+      record: { workerAddress: currentWorkerAddress, domainId },
     } = yield select(taskSelector, draftId);
     const eventData = yield executeCommand(assignWorker, {
       args: { workerAddress, currentWorkerAddress, domainId },
       metadata: { colonyAddress, draftId },
     });
     if (eventData) {
-      // send a notification to the worker
-      yield executeCommand(createAssignedInboxEvent, {
-        args: {
-          colonyAddress,
-          draftId,
-          taskTitle,
-          sourceUserAddress: walletAddress,
-        },
-        metadata: { workerAddress },
-      });
-
       const { event } = eventData;
       yield put<AllActions>({
         type: ActionTypes.TASK_WORKER_ASSIGN_SUCCESS,
@@ -738,7 +685,7 @@ function* taskWorkerUnassign({
     if (workerAddress) {
       const { walletAddress } = yield getLoggedInUser();
       const {
-        record: { title: taskTitle, domainId },
+        record: { domainId },
       } = yield select(taskSelector, draftId);
       const eventData = yield executeCommand(unassignWorker, {
         args: { workerAddress, userAddress: walletAddress, domainId },
@@ -746,17 +693,6 @@ function* taskWorkerUnassign({
       });
 
       if (eventData) {
-        // send a notification to the worker
-        yield executeCommand(createUnassignedInboxEvent, {
-          args: {
-            colonyAddress,
-            draftId,
-            taskTitle,
-            sourceUserAddress: walletAddress,
-          },
-          metadata: { workerAddress },
-        });
-
         const { event } = eventData;
         yield put<AllActions>({
           type: ActionTypes.TASK_WORKER_UNASSIGN_SUCCESS,
@@ -919,23 +855,16 @@ function* taskSubStart({ payload: { colonyAddress, draftId }, meta }: any) {
 }
 
 function* taskCommentAdd({
-  payload: { author, colonyAddress, comment, draftId, taskTitle },
+  payload: { author, colonyAddress, comment, draftId },
   meta,
 }: Action<ActionTypes.TASK_COMMENT_ADD>) {
   try {
-    const {
-      username: currentUsername,
-      walletAddress,
-    } = yield getLoggedInUser();
+    const { walletAddress } = yield getLoggedInUser();
 
     const signature = yield call(signMessage, 'taskComment', {
       comment,
       author,
     });
-
-    const matches = (matchUsernames(comment) || []).filter(
-      username => username !== currentUsername,
-    );
 
     const { event } = yield executeCommand(postComment, {
       args: {
@@ -961,19 +890,6 @@ function* taskCommentAdd({
       },
       meta,
     });
-
-    if (matches && matches.length) {
-      yield executeCommand(createCommentMention, {
-        args: {
-          colonyAddress,
-          draftId,
-          taskTitle,
-          comment,
-          sourceUserAddress: walletAddress,
-        },
-        metadata: { matchingUsernames: matches },
-      });
-    }
   } catch (error) {
     yield putError(ActionTypes.TASK_COMMENT_ADD_ERROR, error, meta);
   }

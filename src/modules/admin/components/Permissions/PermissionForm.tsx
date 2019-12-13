@@ -6,7 +6,7 @@ import { Address, DomainsMapType } from '~types/index';
 import { useTransformer } from '~utils/hooks';
 import { InputLabel } from '~core/Fields';
 import ExternalLink from '~core/ExternalLink';
-import { useLoggedInUser } from '~data/helpers';
+import { useLoggedInUser } from '~data/index';
 
 import {
   getUserRoles,

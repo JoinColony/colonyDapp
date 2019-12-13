@@ -8,6 +8,7 @@ generates:
   src/data/generated.ts:
     schema: 'src/data/typeDefs.ts'
     config:
+      skipTypename: true
       withComponent: false
       withHOC: false
       withHooks: true

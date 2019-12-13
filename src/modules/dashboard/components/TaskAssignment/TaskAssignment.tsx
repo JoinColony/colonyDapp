@@ -4,7 +4,7 @@ import { TaskProps } from '~immutable/index';
 import Assignment from '~core/Assignment';
 import { SpinnerLoader } from '~core/Preloaders';
 import { useSelector } from '~utils/hooks';
-import { useUser } from '~data/helpers';
+import { useUser } from '~data/index';
 import { taskSelector } from '../../selectors';
 import { useColonyNativeToken } from '../../hooks/useColonyNativeToken';
 import { useColonyTokens } from '../../hooks/useColonyTokens';
