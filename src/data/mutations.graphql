@@ -201,7 +201,12 @@ mutation EditUser($input: EditUserInput!) {
 mutation SetUserTokens($input: SetUserTokensInput!) {
   setUserTokens(input: $input) {
     id
-    tokens
+    tokens {
+      address
+      name
+      symbol
+      iconHash
+    }
   }
 }
 

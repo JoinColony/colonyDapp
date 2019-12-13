@@ -10,6 +10,7 @@ import { mergePayload } from '~utils/actions';
 import { ActionButton } from '~core/Button';
 import Icon from '~core/Icon';
 import { SpinnerLoader } from '~core/Preloaders';
+import { useColonyTasksQuery } from '~data/index';
 
 import TaskList from '../../TaskList';
 import styles from './ColonyTasks.css';
@@ -126,31 +127,36 @@ const ColonyTasks = ({
     [dispatch],
   );
 
-  /* const { data: taskMetadata, isFetching } = useDataSubscriber( */
-  /*   colonyTaskMetadataSubscriber, */
-  /*   [colonyAddress], */
-  /*   [colonyAddress], */
-  /* ); */
+  // const { data: taskMetadata, isFetching } = useDataSubscriber(
+  //   colonyTaskMetadataSubscriber,
+  //   [colonyAddress],
+  //   [colonyAddress],
+  // );
 
   // This could be simpler if we had the tuples ready to select from state
-  // FIXME get actual draft ids
-  const draftIds = [];
+  // const draftIds = useMemo(
+  //   () =>
+  //     Object.keys(taskMetadata || {}).map(draftId => [colonyAddress, draftId]),
+  //   [colonyAddress, taskMetadata],
+  // ) as [Address, string][];
+  const { data } = useColonyTasksQuery({ variables: { address: colonyAddress } });
 
   const transform = useCallback(
     mergePayload({ colonyAddress, domainId: filteredDomainId }),
     [filteredDomainId, colonyAddress],
   );
 
-  /* if (isFetching) { */
-  /*   return null; */
-  /* } */
+  if (!data) {
+    return null;
+  }
 
+  const { colony: { tasks } } = data;
   /*
    * If we can create tasks, but tokens are not yet minted, don't show the
    * create task action button
    */
   if (
-    draftIds.length === 0 &&
+    data.colony.tasks.length === 0 &&
     ((canCreateTask && showEmptyState) || (canCreateTask && !canMintTokens))
   ) {
     return (
@@ -173,7 +179,7 @@ const ColonyTasks = ({
     <div className={styles.taskList}>
       <TaskList
         colonyAddress={colonyAddress}
-        draftIds={draftIds}
+        tasks={tasks}
         filteredDomainId={filteredDomainId}
         filterOption={filterOption}
         /*
