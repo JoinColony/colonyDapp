@@ -1,13 +1,11 @@
-import { List, Map as ImmutableMap, Record } from 'immutable';
+import { Map as ImmutableMap, Record } from 'immutable';
 
 import { Address, DefaultValues } from '~types/index';
 import {
   FetchableDataRecord,
-  TaskFeedItemRecord,
   TaskMetadataRecord,
   FetchableDataType,
   TaskMetadataRecordProps,
-  TaskFeedItemType,
 } from '~immutable/index';
 
 import { AllColoniesRecord } from './AllColonies';
@@ -19,8 +17,6 @@ import {
   DASHBOARD_ALL_DOMAINS,
   DASHBOARD_TASK_METADATA,
   DASHBOARD_ALL_TOKENS,
-  DASHBOARD_TASK_FEED_ITEMS,
-  DASHBOARD_TASKS,
   TEMP_DASHBOARD_ALL_USER_HAS_RECOVERY_ROLES,
 } from '../constants';
 
@@ -44,25 +40,11 @@ export type AllTaskMetadataMap = ImmutableMap<
   FetchableDataRecord<TaskMetadataMap>
 > & { toJS(): AllTaskMetadataObject };
 
-type TaskFeedItemsObject = {
-  [draftId: string]: FetchableDataType<TaskFeedItemType[]>;
-};
-
-type TaskFeedItemsList = List<TaskFeedItemRecord> & {
-  toJS(): TaskFeedItemType[];
-};
-
-export type TaskFeedItemsMap = ImmutableMap<
-  string,
-  FetchableDataRecord<TaskFeedItemsList>
-> & { toJS(): TaskFeedItemsObject };
-
 export interface DashboardStateProps {
   [DASHBOARD_ALL_COLONIES]: AllColoniesRecord;
   [DASHBOARD_ALL_DOMAINS]: AllDomainsMap;
   [DASHBOARD_TASK_METADATA]: AllTaskMetadataMap;
   [DASHBOARD_ALL_TOKENS]: AllTokensMap;
-  [DASHBOARD_TASK_FEED_ITEMS]: TaskFeedItemsMap;
   [TEMP_DASHBOARD_ALL_USER_HAS_RECOVERY_ROLES]: TEMP_AllUserHasRecoveryRoles;
 }
 
@@ -71,7 +53,6 @@ const defaultValues: DefaultValues<DashboardStateProps> = {
   [DASHBOARD_ALL_DOMAINS]: ImmutableMap() as AllDomainsMap,
   [DASHBOARD_TASK_METADATA]: ImmutableMap() as AllTaskMetadataMap,
   [DASHBOARD_ALL_TOKENS]: AllTokensInitialState,
-  [DASHBOARD_TASK_FEED_ITEMS]: ImmutableMap() as TaskFeedItemsMap,
   // eslint-disable-next-line max-len
   [TEMP_DASHBOARD_ALL_USER_HAS_RECOVERY_ROLES]: ImmutableMap() as TEMP_AllUserHasRecoveryRoles,
 };
