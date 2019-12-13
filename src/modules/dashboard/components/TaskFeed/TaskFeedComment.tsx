@@ -1,7 +1,5 @@
 import React from 'react';
 
-import { TaskCommentType } from '~immutable/index';
-
 import { PreserveLinebreaks } from '~utils/components';
 import ExternalLink from '~core/ExternalLink';
 import TimeRelative from '~core/TimeRelative';
@@ -13,19 +11,22 @@ import TextDecorator from '../../../../lib/TextDecorator';
 import { getFriendlyName } from '../../../users/transformers';
 
 import styles from './TaskFeedComment.css';
+import { Event, TaskMessageEvent } from '~data/index';
 
 const UserAvatar = HookedUserAvatar();
 
 const displayName = 'dashboard.TaskFeed.TaskFeedComment';
 
 interface Props {
-  comment: TaskCommentType;
-  createdAt: Date;
+  createdAt: Event['createdAt'];
+  initiatorAddress: Event['initiatorAddress'];
+  message: TaskMessageEvent['message'];
 }
 
 const TaskFeedComment = ({
-  comment: { authorAddress, body },
   createdAt,
+  initiatorAddress,
+  message,
 }: Props) => {
   const { Decorate } = new TextDecorator({
     email: (text, normalized) => <ExternalLink text={text} href={normalized} />,
@@ -37,8 +38,8 @@ const TaskFeedComment = ({
 
   const { walletAddress } = useLoggedInUser();
 
-  const isCurrentUser = authorAddress === walletAddress;
-  const author = useUser(authorAddress);
+  const isCurrentUser = initiatorAddress === walletAddress;
+  const author = useUser(initiatorAddress);
   const userDisplayName = getFriendlyName(author);
   return (
     <div
@@ -48,7 +49,7 @@ const TaskFeedComment = ({
     >
       {!isCurrentUser && (
         <div className={styles.commentAvatar}>
-          <UserAvatar address={authorAddress} showInfo size="s" />
+          <UserAvatar address={initiatorAddress} showInfo size="s" />
         </div>
       )}
       <div className={styles.commentMain}>
@@ -57,8 +58,8 @@ const TaskFeedComment = ({
             <span>{userDisplayName}</span>
           </div>
         )}
-        <div title={body} className={styles.commentBody}>
-          <Decorate tagName={PreserveLinebreaks}>{body}</Decorate>
+        <div title={message} className={styles.commentBody}>
+          <Decorate tagName={PreserveLinebreaks}>{message}</Decorate>
         </div>
         <div className={styles.commentTimestamp}>
           <TimeRelative value={createdAt} />
