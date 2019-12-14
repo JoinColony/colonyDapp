@@ -13,7 +13,7 @@ interface TaskStoreProps {
   domainId: number;
   wallet: WalletObjectType;
   colonyClient: ColonyClientType;
-};
+}
 
 const getTaskStoreAccessController = ({
   draftId,

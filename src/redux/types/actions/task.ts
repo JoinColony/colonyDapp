@@ -68,18 +68,14 @@ export type TaskActionTypes =
       }
     >
   | TaskErrorActionType<ActionTypes.TASK_COMMENT_ADD_ERROR>
-  | ActionType<
-      ActionTypes.TASK_COMMENT_ADD_SUCCESS
-    >
+  | ActionType<ActionTypes.TASK_COMMENT_ADD_SUCCESS>
   | UniqueActionType<
       ActionTypes.TASK_CREATE,
-      AnyTask['ethDomainId'] & { colonyAddress: Address, colonyName: string },
+      AnyTask['ethDomainId'] & { colonyAddress: Address; colonyName: string },
       object
     >
   | ErrorActionType<ActionTypes.TASK_CREATE_ERROR, object>
-  | ActionType<
-      ActionTypes.TASK_CREATE_SUCCESS
-    >
+  | ActionType<ActionTypes.TASK_CREATE_SUCCESS>
   | ActionType<ActionTypes.TASK_FETCH_ALL>
   | TaskActionType<
       ActionTypes.TASK_FINALIZE,
@@ -88,9 +84,7 @@ export type TaskActionTypes =
       }
     >
   | TaskErrorActionType<ActionTypes.TASK_FINALIZE_ERROR>
-  | ActionType<
-      ActionTypes.TASK_FINALIZE_SUCCESS
-    >
+  | ActionType<ActionTypes.TASK_FINALIZE_SUCCESS>
   | TaskActionType<ActionTypes.TASK_MANAGER_COMPLETE, object>
   | TaskErrorActionType<ActionTypes.TASK_MANAGER_COMPLETE_ERROR>
   | TaskActionType<ActionTypes.TASK_MANAGER_COMPLETE_SUCCESS, object>
@@ -114,9 +108,7 @@ export type TaskActionTypes =
       }
     >
   | TaskErrorActionType<ActionTypes.TASK_SET_WORKER_OR_PAYOUT_ERROR>
-  | ActionType<
-      ActionTypes.TASK_SET_WORKER_OR_PAYOUT_SUCCESS
-    >
+  | ActionType<ActionTypes.TASK_SET_WORKER_OR_PAYOUT_SUCCESS>
   | TaskActionType<ActionTypes.TASK_SUBMIT_DELIVERABLE, object>
   | TaskErrorActionType<ActionTypes.TASK_SUBMIT_DELIVERABLE_ERROR>
   | TaskActionType<ActionTypes.TASK_SUBMIT_DELIVERABLE_SUCCESS, object>

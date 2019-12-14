@@ -54,11 +54,7 @@ const TaskListItem = ({
   history,
 }: InnerProps) => {
   const defaultTitle = formatMessage(MSG.untitled);
-  const {
-    id: draftId,
-    assignedWorker,
-    title = defaultTitle,
-  } = data || {};
+  const { id: draftId, assignedWorker, title = defaultTitle } = data || {};
 
   // @todo get payouts from centralized store
   const payouts = [];

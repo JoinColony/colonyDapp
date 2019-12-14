@@ -40,7 +40,7 @@ const TaskFeed = ({ colonyAddress, draftId }: Props) => {
     setTimeout(scrollToEnd, 1000);
   }, [bottomEl]);
 
-  const { data } = useTaskFeedEventsQuery({ variables: { id: draftId }})
+  const { data } = useTaskFeedEventsQuery({ variables: { id: draftId } });
 
   useLayoutEffect(scrollToEnd, [data]);
 
@@ -48,7 +48,9 @@ const TaskFeed = ({ colonyAddress, draftId }: Props) => {
     return <SpinnerLoader />;
   }
 
-  const { task: { events } } = data;
+  const {
+    task: { events },
+  } = data;
 
   return (
     <>
@@ -68,7 +70,12 @@ const TaskFeed = ({ colonyAddress, draftId }: Props) => {
             ) : (
               <div>
                 {events.map(event => {
-                  const { context, createdAt, initiatorAddress, sourceId } = event;
+                  const {
+                    context,
+                    createdAt,
+                    initiatorAddress,
+                    sourceId,
+                  } = event;
                   if (context.type === EventTypes.TASK_MESSAGE) {
                     const { message } = context as TaskMessageEvent;
                     return (
