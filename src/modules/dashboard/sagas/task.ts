@@ -22,17 +22,25 @@ import {AssignWorkerDocument,
   SendTaskMessageDocument,
   SendTaskMessageMutation,
   SendTaskMessageMutationVariables,
-  getLoggedInUser,
+  CreateTaskMutation,
+  CreateTaskMutationVariables,
+  TaskQuery,
+  TaskQueryVariables,
+  FinalizeTaskMutation,
+  FinalizeTaskMutationVariables,
+  AssignWorkerMutation,
+  AssignWorkerMutationVariables,
+  UnassignWorkerMutation,
+  UnassignWorkerMutationVariables,
+  SetTaskPayoutMutation,
+  SetTaskPayoutMutationVariables,
+  RemoveTaskPayoutMutation,
+  RemoveTaskPayoutMutationVariables,
 } from '~data/index';
+import { TaskPayoutType } from '~immutable/TaskPayout';
 import { Action, ActionTypes } from '~redux/index';
 import { Address, ContractContexts } from '~types/index';
-import {
-  executeCommand,
-  putError,
-  raceError,
-  takeFrom,
-} from '~utils/saga/effects';
-import { generateUrlFriendlyId } from '~utils/strings';
+import { putError, raceError, takeFrom } from '~utils/saga/effects';
 
 import { fetchColonyTaskMetadata as fetchColonyTaskMetadataAC } from '../actionCreators';
 import {
@@ -86,7 +94,10 @@ function* taskCreate({
 
     const {
       data: { createTask },
-    } = yield apolloClient.mutate({
+    } = yield apolloClient.mutate<
+      CreateTaskMutation,
+      CreateTaskMutationVariables
+    >({
       mutation: CreateTaskDocument,
       variables: {
         input: {
@@ -137,25 +148,23 @@ function* taskFinalize({
   meta,
 }: Action<ActionTypes.TASK_FINALIZE>) {
   try {
-    const { walletAddress } = yield getLoggedInUser();
-
     const apolloClient: ApolloClient<any> = yield getContext(
       Context.APOLLO_CLIENT,
     );
 
     const {
       data: { task },
-    } = yield apolloClient.query({
+    } = yield apolloClient.query<TaskQuery, TaskQueryVariables>({
       query: TaskDocument,
       variables: {
         id: draftId,
       },
     });
 
-    const { assignedWorker, ethDomainId, ethSkillId, title } = task;
+    const { assignedWorker, ethDomainId, ethSkillId } = task;
 
     // @todo get payouts from centralized store
-    const payouts = [];
+    const payouts = [] as TaskPayoutType[];
 
     if (!assignedWorker)
       throw new Error(`Worker not assigned for task ${draftId}`);
@@ -178,13 +187,12 @@ function* taskFinalize({
     });
 
     // wait for tx to succeed
-    const {
-      payload: {
-        transaction: { hash },
-      },
-    } = yield takeFrom(txChannel, ActionTypes.TRANSACTION_SUCCEEDED);
+    yield takeFrom(txChannel, ActionTypes.TRANSACTION_SUCCEEDED);
 
-    yield apolloClient.mutate({
+    yield apolloClient.mutate<
+      FinalizeTaskMutation,
+      FinalizeTaskMutationVariables
+    >({
       mutation: FinalizeTaskDocument,
       variables: {
         input: {
@@ -215,7 +223,7 @@ function* taskSetWorkerOrPayouts({
       data: {
         task: { assignedWorker, ethDomainId },
       },
-    } = yield apolloClient.query({
+    } = yield apolloClient.query<TaskQuery, TaskQueryVariables>({
       query: TaskDocument,
       variables: {
         id: draftId,
@@ -223,7 +231,10 @@ function* taskSetWorkerOrPayouts({
     });
 
     if (workerAddress) {
-      yield apolloClient.mutate({
+      yield apolloClient.mutate<
+        AssignWorkerMutation,
+        AssignWorkerMutationVariables
+      >({
         mutation: AssignWorkerDocument,
         variables: {
           input: {
@@ -233,7 +244,10 @@ function* taskSetWorkerOrPayouts({
         },
       });
     } else {
-      yield apolloClient.mutate({
+      yield apolloClient.mutate<
+        UnassignWorkerMutation,
+        UnassignWorkerMutationVariables
+      >({
         mutation: UnassignWorkerDocument,
         variables: {
           input: {
@@ -245,27 +259,36 @@ function* taskSetWorkerOrPayouts({
     }
 
     if (payouts && payouts.length) {
-      yield apolloClient.mutate({
+      yield apolloClient.mutate<
+        SetTaskPayoutMutation,
+        SetTaskPayoutMutationVariables
+      >({
         mutation: SetTaskPayoutDocument,
         variables: {
           input: {
             id: draftId,
             ethDomainId,
-            ...payouts[0],
+            amount: payouts[0].amount.toString(),
+            tokenAddress: payouts[0].token,
           },
         },
       });
     } else {
       // @todo use payouts from centralized store
-      const existingPayouts: any[] = [];
+      const existingPayouts: TaskPayoutType[] = [];
       if (existingPayouts && existingPayouts.length) {
-        yield apolloClient.mutate({
+        yield apolloClient.mutate<
+          RemoveTaskPayoutMutation,
+          RemoveTaskPayoutMutationVariables
+        >({
           mutation: RemoveTaskPayoutDocument,
           variables: {
             input: {
               id: draftId,
               ethDomainId,
-              ...existingPayouts[0],
+              amount: existingPayouts[0].amount.toString(),
+              token: existingPayouts[0].token,
+              tokenAddress: existingPayouts[0].token,
             },
           },
         });
