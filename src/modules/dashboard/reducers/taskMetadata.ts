@@ -65,22 +65,6 @@ const taskMetadataReducer: ReducerType<AllTaskMetadataMap> = (
       return updateState(state, colonyAddress, colonyTasks);
     }
 
-    case ActionTypes.TASK_CREATE_SUCCESS: {
-      const {
-        colonyAddress,
-        commentsStoreAddress,
-        task: { draftId },
-        taskStoreAddress,
-      } = action.payload;
-      const colonyTasks = {
-        [draftId]: { commentsStoreAddress, taskStoreAddress },
-      };
-      return updateState(state, colonyAddress, colonyTasks).setIn(
-        [colonyAddress, 'isFetching'],
-        false,
-      );
-    }
-
     default:
       return state;
   }
