@@ -2,18 +2,18 @@ import React, { useCallback } from 'react';
 
 import {
   TaskPayoutType,
-  TaskType,
   ColonyTokenReferenceType,
 } from '~immutable/index';
 import { Address } from '~types/index';
 import Payout from './Payout';
 
-interface Props extends Pick<TaskType, 'payouts' | 'reputation'> {
+interface Props {
   arrayHelpers: any;
   canRemove: boolean;
   colonyAddress: Address;
   index: number;
   payout: TaskPayoutType;
+  payouts: TaskPayoutType[];
   reputation: number;
   tokenOptions: { value: number; label: string }[];
   tokenReferences: ColonyTokenReferenceType[];
