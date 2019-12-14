@@ -1,3 +1,5 @@
+#import './fragments.graphql'
+
 query Task($id: String!) {
   task(id: $id) {
     id
@@ -59,96 +61,7 @@ query TaskFeedEvents($id: String!) {
   task(id: $id) {
     id
     events {
-      context {
-        ... on AssignWorkerEvent {
-          taskId
-          type
-          workerAddress
-        }
-        ... on CancelTaskEvent {
-          taskId
-          type
-        }
-        ... on CreateTaskEvent {
-          colonyAddress
-          ethDomainId
-          taskId
-          type
-        }
-        ... on CreateWorkRequestEvent {
-          taskId
-          type
-        }
-        ... on FinalizeTaskEvent {
-          taskId
-          type
-        }
-        ... on RemoveTaskPayoutEvent {
-          amount
-          taskId
-          tokenAddress
-          type
-        }
-        ... on SendWorkInviteEvent {
-          amount
-          taskId
-          tokenAddress
-          type
-        }
-        ... on SetTaskDescriptionEvent {
-          description
-          taskId
-          type
-        }
-        ... on SetTaskDomainEvent {
-          ethDomainId
-          taskId
-          type
-        }
-        ... on SetTaskDueDateEvent {
-          dueDate
-          taskId
-          type
-        }
-        ... on SetTaskPayoutEvent {
-          taskId
-          type
-        }
-        ... on SetTaskSkillEvent {
-          ethSkillId
-          taskId
-          type
-        }
-        ... on SetTaskTitleEvent {
-          taskId
-          title
-          type
-        }
-        ... on TaskMessageEvent {
-          message
-          taskId
-          type
-        }
-        ... on UnassignWorkerEvent {
-          taskId
-          type
-          workerAddress
-        }
-      }
-      createdAt
-      initiator {
-        id
-        profile {
-          avatarHash
-          displayName
-          username
-          walletAddress
-        }
-      }
-      initiatorAddress
-      sourceId
-      sourceType
-      type
+      ...TaskEvent
     }
   }
 }
