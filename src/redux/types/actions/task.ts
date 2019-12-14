@@ -64,14 +64,18 @@ export type TaskActionTypes =
       {
         comment: string;
         author: Address;
-        draftId: string;
+        draftId: AnyTask['id'];
       }
     >
   | TaskErrorActionType<ActionTypes.TASK_COMMENT_ADD_ERROR>
   | ActionType<ActionTypes.TASK_COMMENT_ADD_SUCCESS>
   | UniqueActionType<
       ActionTypes.TASK_CREATE,
-      AnyTask['ethDomainId'] & { colonyAddress: Address; colonyName: string },
+      {
+        colonyAddress: Address;
+        colonyName: string;
+        ethDomainId: AnyTask['ethDomainId'];
+      },
       object
     >
   | ErrorActionType<ActionTypes.TASK_CREATE_ERROR, object>
@@ -79,8 +83,9 @@ export type TaskActionTypes =
   | ActionType<ActionTypes.TASK_FETCH_ALL>
   | TaskActionType<
       ActionTypes.TASK_FINALIZE,
-      Required<AnyTask['assignedWorker']> & {
-        amountPaid: number;
+      {
+        colonyAddress: Address;
+        draftId: AnyTask['id'];
       }
     >
   | TaskErrorActionType<ActionTypes.TASK_FINALIZE_ERROR>
@@ -103,6 +108,7 @@ export type TaskActionTypes =
   | TaskActionType<
       ActionTypes.TASK_SET_WORKER_OR_PAYOUT,
       {
+        draftId: AnyTask['id'];
         payouts?: { token: string; amount: BigNumber }[];
         workerAddress?: Address;
       }
