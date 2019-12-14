@@ -1,7 +1,7 @@
 import React, { useCallback } from 'react';
 import { defineMessages } from 'react-intl';
 
-import { TaskType } from '~immutable/index';
+import { AnyTask } from '~data/index';
 import { Address } from '~types/index';
 import { ActionButton, DialogActionButton } from '~core/Button';
 import { ActionTypes } from '~redux/index';
@@ -36,18 +36,11 @@ const MSG = defineMessages({
 
 interface Props {
   address: Address;
-  task: TaskType;
+  task: AnyTask;
 }
 
-const TaskRatingButtons = ({
-  task: { colonyAddress, draftId },
-  task,
-  address,
-}: Props) => {
-  const transform = useCallback(mergePayload({ colonyAddress, draftId }), [
-    colonyAddress,
-    draftId,
-  ]);
+const TaskRatingButtons = ({ task: { id: draftId }, task, address }: Props) => {
+  const transform = useCallback(mergePayload({ draftId }), [draftId]);
 
   return (
     <>
