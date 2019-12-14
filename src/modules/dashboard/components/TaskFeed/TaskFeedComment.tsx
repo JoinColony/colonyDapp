@@ -5,13 +5,12 @@ import ExternalLink from '~core/ExternalLink';
 import TimeRelative from '~core/TimeRelative';
 import UserMention from '~core/UserMention';
 import HookedUserAvatar from '~users/HookedUserAvatar';
-import { useLoggedInUser, useUser } from '~data/index';
+import { useLoggedInUser, useUser, Event, TaskMessageEvent } from '~data/index';
 
 import TextDecorator from '../../../../lib/TextDecorator';
 import { getFriendlyName } from '../../../users/transformers';
 
 import styles from './TaskFeedComment.css';
-import { Event, TaskMessageEvent } from '~data/index';
 
 const UserAvatar = HookedUserAvatar();
 
@@ -23,11 +22,7 @@ interface Props {
   message: TaskMessageEvent['message'];
 }
 
-const TaskFeedComment = ({
-  createdAt,
-  initiatorAddress,
-  message,
-}: Props) => {
+const TaskFeedComment = ({ createdAt, initiatorAddress, message }: Props) => {
   const { Decorate } = new TextDecorator({
     email: (text, normalized) => <ExternalLink text={text} href={normalized} />,
     link: (text, normalized) => <ExternalLink text={text} href={normalized} />,

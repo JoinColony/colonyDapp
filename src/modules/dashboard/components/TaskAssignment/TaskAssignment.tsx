@@ -12,7 +12,7 @@ import { useColonyTokens } from '../../hooks/useColonyTokens';
 interface Props {
   draftId: string;
   colonyAddress: Address;
-};
+}
 
 const displayName = 'dashboard.TaskAssignment';
 
@@ -28,7 +28,9 @@ const TaskAssignment = ({ colonyAddress, draftId }: Props) => {
     return <SpinnerLoader />;
   }
 
-  const { task: { assignedWorker } } = data;
+  const {
+    task: { assignedWorker },
+  } = data;
 
   return nativeTokenReference && tokenOptions ? (
     <Assignment

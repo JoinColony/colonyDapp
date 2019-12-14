@@ -139,7 +139,9 @@ const ColonyTasks = ({
   //     Object.keys(taskMetadata || {}).map(draftId => [colonyAddress, draftId]),
   //   [colonyAddress, taskMetadata],
   // ) as [Address, string][];
-  const { data } = useColonyTasksQuery({ variables: { address: colonyAddress } });
+  const { data } = useColonyTasksQuery({
+    variables: { address: colonyAddress },
+  });
 
   const transform = useCallback(
     mergePayload({ colonyAddress, domainId: filteredDomainId }),
@@ -150,7 +152,9 @@ const ColonyTasks = ({
     return null;
   }
 
-  const { colony: { tasks } } = data;
+  const {
+    colony: { tasks },
+  } = data;
   /*
    * If we can create tasks, but tokens are not yet minted, don't show the
    * create task action button

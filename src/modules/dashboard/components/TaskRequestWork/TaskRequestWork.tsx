@@ -33,14 +33,12 @@ interface Props {
   history: History;
 }
 
-const TaskRequestWork = ({
-  task: { id: draftId },
-  task,
-  history,
-}: Props) => {
+const TaskRequestWork = ({ task: { id: draftId }, task, history }: Props) => {
   const { username, walletAddress } = useLoggedInUser();
 
-  const [sendWorkRequest] = useCreateWorkRequestMutation({ variables: { input: { id: draftId } } });
+  const [sendWorkRequest] = useCreateWorkRequestMutation({
+    variables: { input: { id: draftId } },
+  });
 
   if (hasRequestedToWork(task, walletAddress)) {
     return (
@@ -51,12 +49,7 @@ const TaskRequestWork = ({
   }
 
   if (!!username && canRequestToWork(task, walletAddress)) {
-    return (
-      <Button
-        text={MSG.requestWork}
-        onClick={sendWorkRequest}
-      />
-    );
+    return <Button text={MSG.requestWork} onClick={sendWorkRequest} />;
   }
 
   return (

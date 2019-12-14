@@ -1,5 +1,8 @@
 /* This file is already part of apollo data. Don't delete */
-import { InMemoryCache, IntrospectionFragmentMatcher } from 'apollo-cache-inmemory';
+import {
+  InMemoryCache,
+  IntrospectionFragmentMatcher,
+} from 'apollo-cache-inmemory';
 
 import introspectionResult from './generated';
 

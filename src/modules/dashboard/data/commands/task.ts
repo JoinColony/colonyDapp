@@ -1,22 +1,11 @@
 import { Context } from '~context/index';
 import { EventTypes } from '~data/constants';
-import {
-  ColonyManager,
-  Command,
-  CommentsStore,
-  DDB,
-  Event,
-} from '~data/types';
-import {
-  getCommentsStore,
-  getCommentsStoreAddress,
-} from '~data/stores';
+import { ColonyManager, Command, CommentsStore, DDB, Event } from '~data/types';
+import { getCommentsStore, getCommentsStoreAddress } from '~data/stores';
 import { createEvent } from '~data/utils';
 import { Address } from '~types/index';
 
-import {
-  PostCommentCommandArgsSchema,
-} from './schemas';
+import { PostCommentCommandArgsSchema } from './schemas';
 
 /*
  * @todo Better wording for metadata and context

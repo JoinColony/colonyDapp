@@ -3,14 +3,15 @@ import { defineMessages, FormattedMessage } from 'react-intl';
 
 import { Address } from '~types/index';
 import { DomainId } from '~immutable/index';
-import { AnyTask } from '~data/index';
 import {
-  useSelector,
-} from '~utils/hooks';
+  AnyTask,
+  useLoggedInUser,
+  useSubscribeToColonyMutation,
+} from '~data/index';
+import { useSelector } from '~utils/hooks';
 import Icon from '~core/Icon';
 import { Table, TableBody } from '~core/Table';
 import Button from '~core/Button';
-import { useLoggedInUser, useSubscribeToColonyMutation } from '~data/index';
 
 import {
   TasksFilterOptions,
@@ -79,7 +80,13 @@ const TaskList = ({
 }: Props) => {
   const { username, walletAddress } = useLoggedInUser();
   const filter = useCallback(
-    ({ creator, assignedWorker, cancelledAt, ethDomainId, finalizedAt }: AnyTask) => {
+    ({
+      creator,
+      assignedWorker,
+      cancelledAt,
+      ethDomainId,
+      finalizedAt,
+    }: AnyTask) => {
       if (filteredDomainId && filteredDomainId !== ethDomainId) return false;
 
       const taskIsOpen = !finalizedAt && !cancelledAt;
@@ -89,7 +96,9 @@ const TaskList = ({
           return creator && creator.id === walletAddress && taskIsOpen;
 
         case TasksFilterOptions.ASSIGNED:
-          return assignedWorker && assignedWorker.id === walletAddress && taskIsOpen;
+          return (
+            assignedWorker && assignedWorker.id === walletAddress && taskIsOpen
+          );
 
         case TasksFilterOptions.COMPLETED:
           return !!finalizedAt;
@@ -109,10 +118,7 @@ const TaskList = ({
 
   const sortingOrderOption = 'desc';
   const sort = useCallback(
-    (
-      first: AnyTask,
-      second: AnyTask,
-    ) => {
+    (first: AnyTask, second: AnyTask) => {
       if (!(first && second)) return 0;
 
       return sortingOrderOption === 'desc'
@@ -125,9 +131,7 @@ const TaskList = ({
   const filteredTasksData: AnyTask[] = useMemo(
     () =>
       filter
-        ? tasks
-            .sort(sort as any)
-            .filter(task => (task ? filter(task) : true))
+        ? tasks.sort(sort as any).filter(task => (task ? filter(task) : true))
         : tasks,
     [filter, sort, tasks],
   );
@@ -237,9 +241,15 @@ const TaskList = ({
       scrollable
     >
       <TableBody>
-        {colonyAddress && filteredTasksData.map(taskData => (
-          <TaskListItem key={taskData.id} colonyAddress={colonyAddress} colonyName={colonyName} data={taskData} />
-        ))}
+        {colonyAddress &&
+          filteredTasksData.map(taskData => (
+            <TaskListItem
+              key={taskData.id}
+              colonyAddress={colonyAddress}
+              colonyName={colonyName}
+              data={taskData}
+            />
+          ))}
       </TableBody>
     </Table>
   );

@@ -31,7 +31,7 @@ interface Props {
   disabled?: boolean;
   draftId: string;
   ethSkillId: number | void;
-};
+}
 
 const displayName = 'daskboard.TaskSKills';
 
@@ -45,8 +45,8 @@ const TaskSkills = ({ draftId, disabled, ethSkillId }: Props) => {
           input: {
             id: draftId,
             ethSkillId: skillValue,
-          }
-        }
+          },
+        },
       }),
     [draftId, setSkill],
   );

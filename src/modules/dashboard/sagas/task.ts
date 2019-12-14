@@ -12,8 +12,7 @@ import { replace } from 'connected-react-router';
 import BigNumber from 'bn.js';
 
 import { Context, getContext } from '~context/index';
-import {
-  AssignWorkerDocument,
+import {AssignWorkerDocument,
   CreateTaskDocument,
   FinalizeTaskDocument,
   RemoveTaskPayoutDocument,
@@ -23,6 +22,7 @@ import {
   SendTaskMessageDocument,
   SendTaskMessageMutation,
   SendTaskMessageMutationVariables,
+  getLoggedInUser,
 } from '~data/index';
 import { Action, ActionTypes } from '~redux/index';
 import { Address, ContractContexts } from '~types/index';
@@ -33,7 +33,6 @@ import {
   takeFrom,
 } from '~utils/saga/effects';
 import { generateUrlFriendlyId } from '~utils/strings';
-import { getLoggedInUser } from '~data/index';
 
 import { fetchColonyTaskMetadata as fetchColonyTaskMetadataAC } from '../actionCreators';
 import {
@@ -144,7 +143,9 @@ function* taskFinalize({
       Context.APOLLO_CLIENT,
     );
 
-    const { data: { task } } = yield apolloClient.query({
+    const {
+      data: { task },
+    } = yield apolloClient.query({
       query: TaskDocument,
       variables: {
         id: draftId,
@@ -210,7 +211,11 @@ function* taskSetWorkerOrPayouts({
       Context.APOLLO_CLIENT,
     );
 
-    const { data: { task: { assignedWorker, ethDomainId } } } = yield apolloClient.query({
+    const {
+      data: {
+        task: { assignedWorker, ethDomainId },
+      },
+    } = yield apolloClient.query({
       query: TaskDocument,
       variables: {
         id: draftId,
@@ -237,7 +242,7 @@ function* taskSetWorkerOrPayouts({
           },
         },
       });
-    };
+    }
 
     if (payouts && payouts.length) {
       yield apolloClient.mutate({
@@ -291,10 +296,13 @@ function* taskCommentAdd({
     });
 
     const apolloClient: ApolloClient<any> = yield getContext(
-      Context.APOLLO_CLIENT
+      Context.APOLLO_CLIENT,
     );
 
-    yield apolloClient.mutate<SendTaskMessageMutation, SendTaskMessageMutationVariables>({
+    yield apolloClient.mutate<
+      SendTaskMessageMutation,
+      SendTaskMessageMutationVariables
+    >({
       mutation: SendTaskMessageDocument,
       variables: {
         input: {

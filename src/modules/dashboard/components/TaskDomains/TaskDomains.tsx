@@ -55,7 +55,12 @@ type ConsumableDomainArray = ConsumableDomainType[];
 
 const displayName = 'dashboard.TaskDomains';
 
-const TaskDomains = ({ colonyAddress, ethDomainId, draftId, disabled }: Props) => {
+const TaskDomains = ({
+  colonyAddress,
+  ethDomainId,
+  draftId,
+  disabled,
+}: Props) => {
   const [setDomain] = useSetTaskDomainMutation();
 
   const [selectedDomainId, setSelectedDomainId] = useState<number | undefined>(
@@ -69,12 +74,12 @@ const TaskDomains = ({ colonyAddress, ethDomainId, draftId, disabled }: Props) =
           input: {
             ethDomainId: domainValue,
             id: draftId,
-          }
-        }
+          },
+        },
       });
       setSelectedDomainId(domainValue);
     },
-    [colonyAddress, draftId, setDomain],
+    [draftId, setDomain],
   );
 
   const { data: domains } = useDataFetcher(
