@@ -11,12 +11,9 @@ import BigNumber from 'bn.js';
 
 import { Address } from '~types/index';
 import { AnyTask } from '~data/index';
-import { useDataFetcher } from '~utils/hooks';
-import { colonyNameFetcher } from '../../fetchers';
 import { TableRow, TableCell } from '~core/Table';
 import PayoutsList from '~core/PayoutsList';
 import HookedUserAvatar from '~users/HookedUserAvatar';
-import { SpinnerLoader } from '~core/Preloaders';
 import { useColonyNativeToken } from '../../hooks/useColonyNativeToken';
 import { useColonyTokens } from '../../hooks/useColonyTokens';
 import styles from './TaskListItem.css';
@@ -54,7 +51,7 @@ const TaskListItem = ({
   history,
 }: InnerProps) => {
   const defaultTitle = formatMessage(MSG.untitled);
-  const { id: draftId, assignedWorker, title = defaultTitle } = data || {};
+  const { id: draftId, assignedWorker, title = defaultTitle } = data;
 
   // @todo get payouts from centralized store
   const payouts = [];
