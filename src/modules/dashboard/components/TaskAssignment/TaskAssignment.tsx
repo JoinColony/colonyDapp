@@ -38,8 +38,8 @@ const TaskAssignment = ({ colonyAddress, draftId }: Props) => {
       payouts={payouts}
       reputation={undefined}
       tokenOptions={tokenOptions}
-      worker={assignedWorker}
-      workerAddress={assignedWorker.id || undefined}
+      worker={assignedWorker || undefined}
+      workerAddress={assignedWorker ? assignedWorker.id : undefined}
     />
   ) : (
     <SpinnerLoader />
