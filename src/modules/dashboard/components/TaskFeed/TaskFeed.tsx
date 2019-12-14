@@ -44,8 +44,6 @@ const TaskFeed = ({ colonyAddress, draftId }: Props) => {
 
   useLayoutEffect(scrollToEnd, [data]);
 
-  useLayoutEffect(scrollToEnd, [feedItems.length]);
-
   if (!data) {
     return <SpinnerLoader />;
   }
@@ -69,8 +67,9 @@ const TaskFeed = ({ colonyAddress, draftId }: Props) => {
               </div>
             ) : (
               <div>
-                {events.map(({ context, createdAt, initiatorAddress, sourceId }) => {
-                  if (context['type'] === EventTypes.TASK_MESSAGE) {
+                {events.map(event => {
+                  const { context, createdAt, initiatorAddress, sourceId } = event;
+                  if (context.type === EventTypes.TASK_MESSAGE) {
                     const { message } = context as TaskMessageEvent;
                     return (
                       <TaskFeedComment
@@ -82,43 +81,36 @@ const TaskFeed = ({ colonyAddress, draftId }: Props) => {
                     );
                   }
 
-                  // @todo if task is finalized
-                  if (event && event.type === EventTypes.TASK_FINALIZED) {
+                  if (context.type === EventTypes.TASK_FINALIZED) {
                     return (
-                      <Fragment key={id}>
-                        <TaskFeedCompleteInfo
+                      <Fragment key={sourceId}>
+                        {/* fixme  */}
+                        {/* <TaskFeedCompleteInfo
                           event={event}
-                          createdAt={createdAt as Date}
-                        />
+                        /> */}
                         <TaskFeedEvent
                           colonyAddress={colonyAddress}
-                          createdAt={createdAt as Date}
                           event={event}
                         />
                       </Fragment>
                     );
                   }
 
-                  if (event) {
-                    return (
-                      <TaskFeedEvent
-                        colonyAddress={colonyAddress}
-                        createdAt={createdAt as Date}
-                        event={event}
-                        key={id}
-                      />
-                    );
-                  }
+                  // /**
+                  //  * @todo Check that the reveal period is over for ratings
+                  //  * (task feed).
+                  //  */
+                  // if (rating) {
+                  //   return <TaskFeedRating key={sourceId} rating={rating} />;
+                  // }
 
-                  /**
-                   * @todo Check that the reveal period is over for ratings
-                   * (task feed).
-                   */
-                  if (rating) {
-                    return <TaskFeedRating key={id} rating={rating} />;
-                  }
-
-                  return null;
+                  return (
+                    <TaskFeedEvent
+                      colonyAddress={colonyAddress}
+                      event={event}
+                      key={sourceId}
+                    />
+                  );
                 })}
                 <div ref={bottomEl} />
               </div>

@@ -48,6 +48,7 @@ fragment TaskEvent on Event {
       type
     }
     ... on SendWorkInviteEvent {
+      # @todo include `workerAddress` here
       amount
       taskId
       tokenAddress
@@ -69,6 +70,7 @@ fragment TaskEvent on Event {
       type
     }
     ... on SetTaskPayoutEvent {
+      # @todo include `amount` and `tokenAddress` here
       taskId
       type
     }
