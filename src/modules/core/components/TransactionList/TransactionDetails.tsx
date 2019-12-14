@@ -107,10 +107,7 @@ const ColonyDetails = ({
   </span>
 );
 
-const TaskDetails = ({
-  colonyName,
-  task: { id, title },
-}: TaskDetailsProps) => (
+const TaskDetails = ({ colonyName, task: { id, title } }: TaskDetailsProps) => (
   <span>
     <Link
       text={title || MSG.untitled}

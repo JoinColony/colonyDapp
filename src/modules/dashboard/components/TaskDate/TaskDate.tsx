@@ -29,13 +29,13 @@ const MSG = defineMessages({
 
 interface FormValues {
   taskDueDate: Date;
-};
+}
 
 interface Props {
   disabled?: boolean;
   draftId: string;
   dueDate: string | void;
-};
+}
 
 const displayName = 'dashboard.TaskDate';
 
@@ -57,7 +57,7 @@ const TaskDate = ({ draftId, dueDate: existingDueDate, disabled }: Props) => {
         });
       }
     },
-    [draftId, setDueDate],
+    [draftId, existingDueDate, setDueDate],
   );
 
   return (
@@ -70,7 +70,9 @@ const TaskDate = ({ draftId, dueDate: existingDueDate, disabled }: Props) => {
         {!disabled && (
           <Form
             initialValues={{
-              taskDueDate: existingDueDate ? new Date(existingDueDate) : undefined,
+              taskDueDate: existingDueDate
+                ? new Date(existingDueDate)
+                : undefined,
             }}
             onSubmit={onSubmit}
           >
