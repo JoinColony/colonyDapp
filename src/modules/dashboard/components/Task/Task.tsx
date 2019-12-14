@@ -27,19 +27,11 @@ import {
   canRequestToWork,
   isFinalized,
 } from '../../checks';
-import {
-  colonyAddressFetcher,
-  domainsAndRolesFetcher,
-} from '../../../dashboard/fetchers';
-import { useLoggedInUser, useTask } from '~data/helpers';
-import { Task as TaskType, TaskIdInput } from '~data/index';
-import { useTaskQuery, useCancelTaskMutation } from '~data/index';
+import { useLoggedInUser } from '~data/helpers';
+import { AnyColony, useTaskQuery, useCancelTaskMutation } from '~data/index';
 import LoadingTemplate from '~pages/LoadingTemplate';
 import { ActionTypes } from '~redux/index';
 import { mergePayload } from '~utils/actions';
-import { useDataFetcher, useTransformer } from '~utils/hooks';
-import { getUserRoles } from '../../../transformers';
-
 import styles from './Task.css';
 
 const MSG = defineMessages({
