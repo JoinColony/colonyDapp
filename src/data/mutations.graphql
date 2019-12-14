@@ -7,7 +7,6 @@ mutation AssignWorker($input: AssignWorkerInput!) {
     }
     events {
       sourceId
-      sourceType
     }
   }
 }
@@ -18,7 +17,6 @@ mutation CancelTask($input: TaskIdInput!) {
     cancelledAt
     events {
       sourceId
-      sourceType
     }
   }
 }
@@ -28,7 +26,6 @@ mutation CreateTask($input: CreateTaskInput!) {
     id
     events {
       sourceId
-      sourceType
     }
   }
 }
@@ -38,7 +35,6 @@ mutation CreateWorkRequest($input: CreateWorkRequestInput!) {
     id
     events {
       sourceId
-      sourceType
     }
     workRequests {
       id
@@ -51,7 +47,6 @@ mutation FinalizeTask($input: TaskIdInput!) {
     id
     events {
       sourceId
-      sourceType
     }
     finalizedAt
   }
@@ -62,7 +57,6 @@ mutation RemoveTaskPayout($input: RemoveTaskPayoutInput!) {
     id
     events {
       sourceId
-      sourceType
     }
     # @todo Also return payouts from `removeTaskPayout` mutation
   }
@@ -73,7 +67,6 @@ mutation SendWorkInvite($input: SendWorkInviteInput!) {
     id
     events {
       sourceId
-      sourceType
     }
     workInvites {
       id
@@ -87,7 +80,6 @@ mutation SetTaskDomain($input: SetTaskDomainInput!) {
     ethDomainId
     events {
       sourceId
-      sourceType
     }
   }
 }
@@ -98,7 +90,6 @@ mutation SetTaskDescription($input: SetTaskDescriptionInput!) {
     description
     events {
       sourceId
-      sourceType
     }
   }
 }
@@ -109,7 +100,6 @@ mutation SetTaskDueDate($input: SetTaskDueDateInput!) {
     dueDate
     events {
       sourceId
-      sourceType
     }
   }
 }
@@ -127,7 +117,6 @@ mutation SetTaskSkill($input: SetTaskSkillInput!) {
     ethSkillId
     events {
       sourceId
-      sourceType
     }
   }
 }
@@ -137,7 +126,6 @@ mutation SetTaskTitle($input: SetTaskTitleInput!) {
     id
     events {
       sourceId
-      sourceType
     }
     title
   }
@@ -151,7 +139,6 @@ mutation UnassignWorker($input: UnassignWorkerInput!) {
     }
     events {
       sourceId
-      sourceType
     }
   }
 }

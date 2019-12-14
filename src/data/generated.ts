@@ -817,6 +817,19 @@ export type UserToken = IToken & {
   iconHash?: Maybe<Scalars['String']>,
 };
 
+export type EventFieldsFragment = (
+  Pick<Event, 'createdAt' | 'initiatorAddress' | 'sourceId' | 'sourceType' | 'type'>
+  & { initiator: Maybe<(
+    Pick<User, 'id'>
+    & { profile: Pick<UserProfile, 'avatarHash' | 'displayName' | 'username' | 'walletAddress'> }
+  )> }
+);
+
+export type TaskEventFragment = (
+  { context: Pick<AssignWorkerEvent, 'taskId' | 'type' | 'workerAddress'> | Pick<CancelTaskEvent, 'taskId' | 'type'> | Pick<CreateTaskEvent, 'colonyAddress' | 'ethDomainId' | 'taskId' | 'type'> | Pick<CreateWorkRequestEvent, 'taskId' | 'type'> | Pick<FinalizeTaskEvent, 'taskId' | 'type'> | Pick<RemoveTaskPayoutEvent, 'amount' | 'taskId' | 'tokenAddress' | 'type'> | Pick<SendWorkInviteEvent, 'amount' | 'taskId' | 'tokenAddress' | 'type'> | Pick<SetTaskDescriptionEvent, 'description' | 'taskId' | 'type'> | Pick<SetTaskDomainEvent, 'ethDomainId' | 'taskId' | 'type'> | Pick<SetTaskDueDateEvent, 'dueDate' | 'taskId' | 'type'> | Pick<SetTaskPayoutEvent, 'taskId' | 'type'> | Pick<SetTaskSkillEvent, 'ethSkillId' | 'taskId' | 'type'> | Pick<SetTaskTitleEvent, 'taskId' | 'title' | 'type'> | Pick<TaskMessageEvent, 'message' | 'taskId' | 'type'> | Pick<UnassignWorkerEvent, 'taskId' | 'type' | 'workerAddress'> }
+  & EventFieldsFragment
+);
+
 export type AssignWorkerMutationVariables = {
   input: AssignWorkerInput
 };
@@ -824,7 +837,7 @@ export type AssignWorkerMutationVariables = {
 
 export type AssignWorkerMutation = { assignWorker: Maybe<(
     Pick<Task, 'id'>
-    & { assignedWorker: Maybe<Pick<User, 'id'>>, events: Array<Pick<Event, 'sourceId' | 'sourceType'>> }
+    & { assignedWorker: Maybe<Pick<User, 'id'>>, events: Array<Pick<Event, 'sourceId'>> }
   )> };
 
 export type CancelTaskMutationVariables = {
@@ -834,7 +847,7 @@ export type CancelTaskMutationVariables = {
 
 export type CancelTaskMutation = { cancelTask: Maybe<(
     Pick<Task, 'id' | 'cancelledAt'>
-    & { events: Array<Pick<Event, 'sourceId' | 'sourceType'>> }
+    & { events: Array<Pick<Event, 'sourceId'>> }
   )> };
 
 export type CreateTaskMutationVariables = {
@@ -844,7 +857,7 @@ export type CreateTaskMutationVariables = {
 
 export type CreateTaskMutation = { createTask: Maybe<(
     Pick<Task, 'id'>
-    & { events: Array<Pick<Event, 'sourceId' | 'sourceType'>> }
+    & { events: Array<Pick<Event, 'sourceId'>> }
   )> };
 
 export type CreateWorkRequestMutationVariables = {
@@ -854,7 +867,7 @@ export type CreateWorkRequestMutationVariables = {
 
 export type CreateWorkRequestMutation = { createWorkRequest: Maybe<(
     Pick<Task, 'id'>
-    & { events: Array<Pick<Event, 'sourceId' | 'sourceType'>>, workRequests: Array<Pick<User, 'id'>> }
+    & { events: Array<Pick<Event, 'sourceId'>>, workRequests: Array<Pick<User, 'id'>> }
   )> };
 
 export type FinalizeTaskMutationVariables = {
@@ -864,7 +877,7 @@ export type FinalizeTaskMutationVariables = {
 
 export type FinalizeTaskMutation = { finalizeTask: Maybe<(
     Pick<Task, 'id' | 'finalizedAt'>
-    & { events: Array<Pick<Event, 'sourceId' | 'sourceType'>> }
+    & { events: Array<Pick<Event, 'sourceId'>> }
   )> };
 
 export type RemoveTaskPayoutMutationVariables = {
@@ -874,7 +887,7 @@ export type RemoveTaskPayoutMutationVariables = {
 
 export type RemoveTaskPayoutMutation = { removeTaskPayout: Maybe<(
     Pick<Task, 'id'>
-    & { events: Array<Pick<Event, 'sourceId' | 'sourceType'>> }
+    & { events: Array<Pick<Event, 'sourceId'>> }
   )> };
 
 export type SendWorkInviteMutationVariables = {
@@ -884,7 +897,7 @@ export type SendWorkInviteMutationVariables = {
 
 export type SendWorkInviteMutation = { sendWorkInvite: Maybe<(
     Pick<Task, 'id'>
-    & { events: Array<Pick<Event, 'sourceId' | 'sourceType'>>, workInvites: Array<Pick<User, 'id'>> }
+    & { events: Array<Pick<Event, 'sourceId'>>, workInvites: Array<Pick<User, 'id'>> }
   )> };
 
 export type SetTaskDomainMutationVariables = {
@@ -894,7 +907,7 @@ export type SetTaskDomainMutationVariables = {
 
 export type SetTaskDomainMutation = { setTaskDomain: Maybe<(
     Pick<Task, 'id' | 'ethDomainId'>
-    & { events: Array<Pick<Event, 'sourceId' | 'sourceType'>> }
+    & { events: Array<Pick<Event, 'sourceId'>> }
   )> };
 
 export type SetTaskDescriptionMutationVariables = {
@@ -904,7 +917,7 @@ export type SetTaskDescriptionMutationVariables = {
 
 export type SetTaskDescriptionMutation = { setTaskDescription: Maybe<(
     Pick<Task, 'id' | 'description'>
-    & { events: Array<Pick<Event, 'sourceId' | 'sourceType'>> }
+    & { events: Array<Pick<Event, 'sourceId'>> }
   )> };
 
 export type SetTaskDueDateMutationVariables = {
@@ -914,7 +927,7 @@ export type SetTaskDueDateMutationVariables = {
 
 export type SetTaskDueDateMutation = { setTaskDueDate: Maybe<(
     Pick<Task, 'id' | 'dueDate'>
-    & { events: Array<Pick<Event, 'sourceId' | 'sourceType'>> }
+    & { events: Array<Pick<Event, 'sourceId'>> }
   )> };
 
 export type SetTaskPayoutMutationVariables = {
@@ -931,7 +944,7 @@ export type SetTaskSkillMutationVariables = {
 
 export type SetTaskSkillMutation = { setTaskSkill: Maybe<(
     Pick<Task, 'id' | 'ethSkillId'>
-    & { events: Array<Pick<Event, 'sourceId' | 'sourceType'>> }
+    & { events: Array<Pick<Event, 'sourceId'>> }
   )> };
 
 export type SetTaskTitleMutationVariables = {
@@ -941,7 +954,7 @@ export type SetTaskTitleMutationVariables = {
 
 export type SetTaskTitleMutation = { setTaskTitle: Maybe<(
     Pick<Task, 'id' | 'title'>
-    & { events: Array<Pick<Event, 'sourceId' | 'sourceType'>> }
+    & { events: Array<Pick<Event, 'sourceId'>> }
   )> };
 
 export type UnassignWorkerMutationVariables = {
@@ -951,7 +964,7 @@ export type UnassignWorkerMutationVariables = {
 
 export type UnassignWorkerMutation = { unassignWorker: Maybe<(
     Pick<Task, 'id'>
-    & { assignedWorker: Maybe<Pick<User, 'id'>>, events: Array<Pick<Event, 'sourceId' | 'sourceType'>> }
+    & { assignedWorker: Maybe<Pick<User, 'id'>>, events: Array<Pick<Event, 'sourceId'>> }
   )> };
 
 export type SendTaskMessageMutationVariables = {
@@ -1068,13 +1081,7 @@ export type TaskFeedEventsQueryVariables = {
 
 export type TaskFeedEventsQuery = { task: (
     Pick<Task, 'id'>
-    & { events: Array<(
-      Pick<Event, 'createdAt' | 'initiatorAddress' | 'sourceId' | 'sourceType' | 'type'>
-      & { context: Pick<AssignWorkerEvent, 'taskId' | 'type' | 'workerAddress'> | Pick<CancelTaskEvent, 'taskId' | 'type'> | Pick<CreateTaskEvent, 'colonyAddress' | 'ethDomainId' | 'taskId' | 'type'> | Pick<CreateWorkRequestEvent, 'taskId' | 'type'> | Pick<FinalizeTaskEvent, 'taskId' | 'type'> | Pick<RemoveTaskPayoutEvent, 'amount' | 'taskId' | 'tokenAddress' | 'type'> | Pick<SendWorkInviteEvent, 'amount' | 'taskId' | 'tokenAddress' | 'type'> | Pick<SetTaskDescriptionEvent, 'description' | 'taskId' | 'type'> | Pick<SetTaskDomainEvent, 'ethDomainId' | 'taskId' | 'type'> | Pick<SetTaskDueDateEvent, 'dueDate' | 'taskId' | 'type'> | Pick<SetTaskPayoutEvent, 'taskId' | 'type'> | Pick<SetTaskSkillEvent, 'ethSkillId' | 'taskId' | 'type'> | Pick<SetTaskTitleEvent, 'taskId' | 'title' | 'type'> | Pick<TaskMessageEvent, 'message' | 'taskId' | 'type'> | Pick<UnassignWorkerEvent, 'taskId' | 'type' | 'workerAddress'>, initiator: Maybe<(
-        Pick<User, 'id'>
-        & { profile: Pick<UserProfile, 'avatarHash' | 'displayName' | 'username' | 'walletAddress'> }
-      )> }
-    )> }
+    & { events: Array<TaskEventFragment> }
   ) };
 
 export type LoggedInUserQueryVariables = {};
@@ -1182,7 +1189,105 @@ export type ColonyDomainsQuery = { colony: (
     )> }
   ) };
 
-
+export const EventFieldsFragmentDoc = gql`
+    fragment EventFields on Event {
+  createdAt
+  initiator {
+    id
+    profile {
+      avatarHash
+      displayName
+      username
+      walletAddress
+    }
+  }
+  initiatorAddress
+  sourceId
+  sourceType
+  type
+}
+    `;
+export const TaskEventFragmentDoc = gql`
+    fragment TaskEvent on Event {
+  ...EventFields
+  context {
+    ... on AssignWorkerEvent {
+      taskId
+      type
+      workerAddress
+    }
+    ... on CancelTaskEvent {
+      taskId
+      type
+    }
+    ... on CreateTaskEvent {
+      colonyAddress
+      ethDomainId
+      taskId
+      type
+    }
+    ... on CreateWorkRequestEvent {
+      taskId
+      type
+    }
+    ... on FinalizeTaskEvent {
+      taskId
+      type
+    }
+    ... on RemoveTaskPayoutEvent {
+      amount
+      taskId
+      tokenAddress
+      type
+    }
+    ... on SendWorkInviteEvent {
+      amount
+      taskId
+      tokenAddress
+      type
+    }
+    ... on SetTaskDescriptionEvent {
+      description
+      taskId
+      type
+    }
+    ... on SetTaskDomainEvent {
+      ethDomainId
+      taskId
+      type
+    }
+    ... on SetTaskDueDateEvent {
+      dueDate
+      taskId
+      type
+    }
+    ... on SetTaskPayoutEvent {
+      taskId
+      type
+    }
+    ... on SetTaskSkillEvent {
+      ethSkillId
+      taskId
+      type
+    }
+    ... on SetTaskTitleEvent {
+      taskId
+      title
+      type
+    }
+    ... on TaskMessageEvent {
+      message
+      taskId
+      type
+    }
+    ... on UnassignWorkerEvent {
+      taskId
+      type
+      workerAddress
+    }
+  }
+}
+    ${EventFieldsFragmentDoc}`;
 export const AssignWorkerDocument = gql`
     mutation AssignWorker($input: AssignWorkerInput!) {
   assignWorker(input: $input) {
@@ -1192,7 +1297,6 @@ export const AssignWorkerDocument = gql`
     }
     events {
       sourceId
-      sourceType
     }
   }
 }
@@ -1229,7 +1333,6 @@ export const CancelTaskDocument = gql`
     cancelledAt
     events {
       sourceId
-      sourceType
     }
   }
 }
@@ -1265,7 +1368,6 @@ export const CreateTaskDocument = gql`
     id
     events {
       sourceId
-      sourceType
     }
   }
 }
@@ -1301,7 +1403,6 @@ export const CreateWorkRequestDocument = gql`
     id
     events {
       sourceId
-      sourceType
     }
     workRequests {
       id
@@ -1340,7 +1441,6 @@ export const FinalizeTaskDocument = gql`
     id
     events {
       sourceId
-      sourceType
     }
     finalizedAt
   }
@@ -1377,7 +1477,6 @@ export const RemoveTaskPayoutDocument = gql`
     id
     events {
       sourceId
-      sourceType
     }
   }
 }
@@ -1413,7 +1512,6 @@ export const SendWorkInviteDocument = gql`
     id
     events {
       sourceId
-      sourceType
     }
     workInvites {
       id
@@ -1453,7 +1551,6 @@ export const SetTaskDomainDocument = gql`
     ethDomainId
     events {
       sourceId
-      sourceType
     }
   }
 }
@@ -1490,7 +1587,6 @@ export const SetTaskDescriptionDocument = gql`
     description
     events {
       sourceId
-      sourceType
     }
   }
 }
@@ -1527,7 +1623,6 @@ export const SetTaskDueDateDocument = gql`
     dueDate
     events {
       sourceId
-      sourceType
     }
   }
 }
@@ -1596,7 +1691,6 @@ export const SetTaskSkillDocument = gql`
     ethSkillId
     events {
       sourceId
-      sourceType
     }
   }
 }
@@ -1632,7 +1726,6 @@ export const SetTaskTitleDocument = gql`
     id
     events {
       sourceId
-      sourceType
     }
     title
   }
@@ -1672,7 +1765,6 @@ export const UnassignWorkerDocument = gql`
     }
     events {
       sourceId
-      sourceType
     }
   }
 }
@@ -2198,100 +2290,11 @@ export const TaskFeedEventsDocument = gql`
   task(id: $id) {
     id
     events {
-      context {
-        ... on AssignWorkerEvent {
-          taskId
-          type
-          workerAddress
-        }
-        ... on CancelTaskEvent {
-          taskId
-          type
-        }
-        ... on CreateTaskEvent {
-          colonyAddress
-          ethDomainId
-          taskId
-          type
-        }
-        ... on CreateWorkRequestEvent {
-          taskId
-          type
-        }
-        ... on FinalizeTaskEvent {
-          taskId
-          type
-        }
-        ... on RemoveTaskPayoutEvent {
-          amount
-          taskId
-          tokenAddress
-          type
-        }
-        ... on SendWorkInviteEvent {
-          amount
-          taskId
-          tokenAddress
-          type
-        }
-        ... on SetTaskDescriptionEvent {
-          description
-          taskId
-          type
-        }
-        ... on SetTaskDomainEvent {
-          ethDomainId
-          taskId
-          type
-        }
-        ... on SetTaskDueDateEvent {
-          dueDate
-          taskId
-          type
-        }
-        ... on SetTaskPayoutEvent {
-          taskId
-          type
-        }
-        ... on SetTaskSkillEvent {
-          ethSkillId
-          taskId
-          type
-        }
-        ... on SetTaskTitleEvent {
-          taskId
-          title
-          type
-        }
-        ... on TaskMessageEvent {
-          message
-          taskId
-          type
-        }
-        ... on UnassignWorkerEvent {
-          taskId
-          type
-          workerAddress
-        }
-      }
-      createdAt
-      initiator {
-        id
-        profile {
-          avatarHash
-          displayName
-          username
-          walletAddress
-        }
-      }
-      initiatorAddress
-      sourceId
-      sourceType
-      type
+      ...TaskEvent
     }
   }
 }
-    `;
+    ${TaskEventFragmentDoc}`;
 
 /**
  * __useTaskFeedEventsQuery__
