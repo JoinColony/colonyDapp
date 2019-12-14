@@ -1,8 +1,12 @@
 import React, { useMemo } from 'react';
-import { defineMessages, FormattedMessage, injectIntl } from 'react-intl';
+import {
+  defineMessages,
+  FormattedMessage,
+  injectIntl,
+  IntlShape,
+} from 'react-intl';
 import formatDate from 'sugar-date/date/format';
 
-import { TaskEvents } from '~data/types/TaskEvents';
 import { ROOT_DOMAIN } from '~constants';
 import { Address } from '~types/index';
 import TimeRelative from '~core/TimeRelative';
@@ -10,7 +14,25 @@ import Numeral from '~core/Numeral';
 import InfoPopover from '~core/InfoPopover';
 import styles from '~dashboard/TaskFeed/TaskFeedEvent.css';
 import { EventTypes } from '~data/constants';
-import { useUser } from '~data/index';
+import {
+  useUser,
+  AnyUser,
+  TaskEventFragment,
+  SetTaskDueDateEvent,
+  SetTaskSkillEvent,
+  CreateTaskEvent,
+  SetTaskTitleEvent,
+  SetTaskDescriptionEvent,
+  SetTaskPayoutEvent,
+  RemoveTaskPayoutEvent,
+  CancelTaskEvent,
+  FinalizeTaskEvent,
+  SendWorkInviteEvent,
+  CreateWorkRequestEvent,
+  AssignWorkerEvent,
+  UnassignWorkerEvent,
+  SetTaskDomainEvent,
+} from '~data/index';
 import { useDataFetcher, useSelector } from '~utils/hooks';
 
 import { getFriendlyName } from '../../../users/transformers';
@@ -99,8 +121,13 @@ const MSG = defineMessages({
 
 interface Props {
   colonyAddress: Address;
-  createdAt: Date;
-  event: TaskEvents;
+  event: TaskEventFragment;
+}
+
+interface EventProps<C> {
+  colonyAddress: Address;
+  initiator: AnyUser;
+  context: C;
 }
 
 interface InteractiveUsernameProps {
@@ -121,15 +148,16 @@ const InteractiveUsername = ({ userAddress }: InteractiveUsernameProps) => {
 
 const TaskFeedEventDomainSet = ({
   colonyAddress,
-  event: {
-    meta: { userAddress },
-    payload: { domainId },
-  },
+  context: { ethDomainId },
+  initiator: { id: initiatorAddress },
   intl: { formatMessage },
-}: any) => {
-  const domain = useSelector(domainSelector, [colonyAddress, domainId]);
+}: EventProps<SetTaskDomainEvent> & { intl: IntlShape }) => {
+  const domain = useSelector(domainSelector, [
+    colonyAddress,
+    parseInt(ethDomainId, 10),
+  ]);
   const domainName =
-    domainId === ROOT_DOMAIN
+    parseInt(ethDomainId, 10) === ROOT_DOMAIN
       ? formatMessage(MSG.rootDomain)
       : domain && domain.name;
   return (
@@ -141,35 +169,31 @@ const TaskFeedEventDomainSet = ({
             {domainName}
           </span>
         ),
-        user: <InteractiveUsername userAddress={userAddress} />,
+        user: <InteractiveUsername userAddress={initiatorAddress} />,
       }}
     />
   );
 };
 
 const TaskFeedEventCreated = ({
-  event: {
-    meta: { userAddress },
-  },
-}: any) => (
+  initiator: { id: initiatorAddress },
+}: EventProps<CreateTaskEvent>) => (
   <FormattedMessage
     {...MSG.created}
     values={{
-      user: <InteractiveUsername userAddress={userAddress} />,
+      user: <InteractiveUsername userAddress={initiatorAddress} />,
     }}
   />
 );
 
 const TaskFeedEventDueDateSet = ({
-  event: {
-    meta: { userAddress },
-    payload: { dueDate },
-  },
-}: any) => (
+  context: { dueDate },
+  initiator: { id: initiatorAddress },
+}: EventProps<SetTaskDueDateEvent>) => (
   <FormattedMessage
     {...MSG.dueDateSet}
     values={{
-      user: <InteractiveUsername userAddress={userAddress} />,
+      user: <InteractiveUsername userAddress={initiatorAddress} />,
       dueDate: dueDate && (
         <span
           title={formatDate(new Date(dueDate), '{short}')}
@@ -184,11 +208,9 @@ const TaskFeedEventDueDateSet = ({
 );
 
 const TaskFeedEventPayoutSet = ({
-  event: {
-    meta: { userAddress },
-    payload: { amount, token: tokenAddress },
-  },
-}: any) => {
+  context: { amount, tokenAddress },
+  initiator: { id: initiatorAddress },
+}: EventProps<SetTaskPayoutEvent>) => {
   const { data: token } = useDataFetcher(
     tokenFetcher,
     [tokenAddress],
@@ -199,7 +221,7 @@ const TaskFeedEventPayoutSet = ({
     <FormattedMessage
       {...MSG.payoutSet}
       values={{
-        user: <InteractiveUsername userAddress={userAddress} />,
+        user: <InteractiveUsername userAddress={initiatorAddress} />,
         payout: (
           <span className={styles.highlightNumeral}>
             <Numeral
@@ -216,33 +238,30 @@ const TaskFeedEventPayoutSet = ({
 };
 
 const TaskFeedEventPayoutRemoved = ({
-  event: {
-    meta: { userAddress },
-  },
-}: any) => (
+  initiator: { id: initiatorAddress },
+}: EventProps<RemoveTaskPayoutEvent>) => (
   <FormattedMessage
     {...MSG.payoutRemoved}
     values={{
-      user: <InteractiveUsername userAddress={userAddress} />,
+      user: <InteractiveUsername userAddress={initiatorAddress} />,
     }}
   />
 );
 
 const TaskFeedEventSkillSet = ({
-  event: {
-    meta: { userAddress },
-    payload: { skillId },
-  },
-}: any) => {
-  const skill = useMemo(() => taskSkillsTree.find(({ id }) => id === skillId), [
-    skillId,
-  ]);
+  context: { ethSkillId },
+  initiator: { id: initiatorAddress },
+}: EventProps<SetTaskSkillEvent>) => {
+  const skill = useMemo(
+    () => taskSkillsTree.find(({ id }) => id === ethSkillId),
+    [ethSkillId],
+  );
   const { name: skillName = undefined } = skill || {};
   return (
     <FormattedMessage
       {...MSG.skillSet}
       values={{
-        user: <InteractiveUsername userAddress={userAddress} />,
+        user: <InteractiveUsername userAddress={initiatorAddress} />,
         skillName: (
           <span title={skillName} className={styles.highlight}>
             {skillName}
@@ -255,41 +274,38 @@ const TaskFeedEventSkillSet = ({
 };
 
 const TaskFeedEventCancelled = ({
-  event: {
-    meta: { userAddress },
-  },
-}: any) => (
+  initiator: { id: initiatorAddress },
+}: EventProps<CancelTaskEvent>) => (
   <FormattedMessage
     {...MSG.cancelled}
     values={{
-      user: <InteractiveUsername userAddress={userAddress} />,
+      user: <InteractiveUsername userAddress={initiatorAddress} />,
     }}
   />
 );
 
-const TaskFeedEventClosed = ({
-  event: {
-    meta: { userAddress },
-  },
-}: any) => (
-  <FormattedMessage
-    {...MSG.closed}
-    values={{
-      user: <InteractiveUsername userAddress={userAddress} />,
-    }}
-  />
-);
+// fixme is this the same as task cancelled? If so, remove this component
+// const TaskFeedEventClosed = ({
+//   event: {
+//     meta: { userAddress },
+//   },
+// }: EventProps<>) => (
+//   <FormattedMessage
+//     {...MSG.closed}
+//     values={{
+//       user: <InteractiveUsername userAddress={userAddress} />,
+//     }}
+//   />
+// );
 
 const TaskFeedEventDescriptionSet = ({
-  event: {
-    meta: { userAddress },
-    payload: { description },
-  },
-}: any) => (
+  context: { description },
+  initiator: { id: initiatorAddress },
+}: EventProps<SetTaskDescriptionEvent>) => (
   <FormattedMessage
     {...MSG.descriptionSet}
     values={{
-      user: <InteractiveUsername userAddress={userAddress} />,
+      user: <InteractiveUsername userAddress={initiatorAddress} />,
       description: (
         <span title={description} className={styles.highlight}>
           {description}
@@ -300,30 +316,26 @@ const TaskFeedEventDescriptionSet = ({
 );
 
 const TaskFeedEventFinalized = ({
-  event: {
-    meta: { userAddress },
-  },
-}: any) => (
+  initiator: { id: initiatorAddress },
+}: EventProps<FinalizeTaskEvent>) => (
   <FormattedMessage
     {...MSG.finalized}
     values={{
-      user: <InteractiveUsername userAddress={userAddress} />,
+      user: <InteractiveUsername userAddress={initiatorAddress} />,
     }}
   />
 );
 
 const TaskFeedEventTitleSet = ({
-  event: {
-    meta: { userAddress },
-    payload: { title },
-  },
-}: any) => {
+  context: { title },
+  initiator: { id: initiatorAddress },
+}: EventProps<SetTaskTitleEvent>) => {
   if (!title) {
     return (
       <FormattedMessage
         {...MSG.titleRemoved}
         values={{
-          user: <InteractiveUsername userAddress={userAddress} />,
+          user: <InteractiveUsername userAddress={initiatorAddress} />,
         }}
       />
     );
@@ -332,7 +344,7 @@ const TaskFeedEventTitleSet = ({
     <FormattedMessage
       {...MSG.titleSet}
       values={{
-        user: <InteractiveUsername userAddress={userAddress} />,
+        user: <InteractiveUsername userAddress={initiatorAddress} />,
         title: (
           <span title={title} className={styles.highlight}>
             {title}
@@ -344,57 +356,50 @@ const TaskFeedEventTitleSet = ({
 };
 
 const TaskFeedEventWorkInviteSent = ({
-  event: {
-    meta: { userAddress },
-    payload: { workerAddress },
-  },
-}: any) => (
+  context: { workerAddress },
+  initiator: { id: initiatorAddress },
+}: EventProps<SendWorkInviteEvent>) => (
   <FormattedMessage
     {...MSG.workInviteSent}
     values={{
-      user: <InteractiveUsername userAddress={userAddress} />,
+      user: <InteractiveUsername userAddress={initiatorAddress} />,
       invitedUser: <InteractiveUsername userAddress={workerAddress} />,
     }}
   />
 );
 
 const TaskFeedEventWorkRequestCreated = ({
-  event: {
-    meta: { userAddress },
-  },
-}: any) => (
+  initiator: { id: initiatorAddress },
+}: EventProps<CreateWorkRequestEvent>) => (
   <FormattedMessage
     {...MSG.workRequestCreated}
     values={{
-      user: <InteractiveUsername userAddress={userAddress} />,
+      user: <InteractiveUsername userAddress={initiatorAddress} />,
     }}
   />
 );
 
 const TaskFeedEventWorkerAssigned = ({
-  event: {
-    meta: { userAddress },
-    payload: { workerAddress },
-  },
-}: any) => (
+  context: { workerAddress },
+  initiator: { id: initiatorAddress },
+}: EventProps<AssignWorkerEvent>) => (
   <FormattedMessage
     {...MSG.workerAssigned}
     values={{
-      user: <InteractiveUsername userAddress={userAddress} />,
+      user: <InteractiveUsername userAddress={initiatorAddress} />,
       worker: <InteractiveUsername userAddress={workerAddress} />,
     }}
   />
 );
 
 const TaskFeedEventWorkerUnassigned = ({
-  event: {
-    payload: { userAddress, workerAddress },
-  },
-}: any) => (
+  context: { workerAddress },
+  initiator: { id: initiatorAddress },
+}: EventProps<UnassignWorkerEvent>) => (
   <FormattedMessage
     {...MSG.workerUnassigned}
     values={{
-      user: <InteractiveUsername userAddress={userAddress} />,
+      user: <InteractiveUsername userAddress={initiatorAddress} />,
       worker: <InteractiveUsername userAddress={workerAddress} />,
     }}
   />
@@ -407,7 +412,8 @@ const FEED_EVENT_COMPONENTS = {
   [EventTypes.PAYOUT_REMOVED]: TaskFeedEventPayoutRemoved,
   [EventTypes.SKILL_SET]: TaskFeedEventSkillSet,
   [EventTypes.TASK_CANCELLED]: TaskFeedEventCancelled,
-  [EventTypes.TASK_CLOSED]: TaskFeedEventClosed,
+  // fixme is this the same as task cancelled?
+  // [EventTypes.TASK_CLOSED]: TaskFeedEventClosed,
   [EventTypes.TASK_CREATED]: TaskFeedEventCreated,
   [EventTypes.TASK_DESCRIPTION_SET]: TaskFeedEventDescriptionSet,
   [EventTypes.TASK_FINALIZED]: TaskFeedEventFinalized,
@@ -418,14 +424,24 @@ const FEED_EVENT_COMPONENTS = {
   [EventTypes.WORKER_UNASSIGNED]: TaskFeedEventWorkerUnassigned,
 };
 
-const TaskFeedEvent = ({ colonyAddress, createdAt, event }: Props) => {
-  const FeedEventComponent = FEED_EVENT_COMPONENTS[event.type];
+const TaskFeedEvent = ({ colonyAddress, event }: Props) => {
+  const FeedEventComponent = FEED_EVENT_COMPONENTS[event.context.type];
+  if (!FeedEventComponent) {
+    console.warn(
+      `No task feed event component defined for '${event.context.type}'.`,
+    );
+    return null;
+  }
   return (
     <div className={styles.main}>
       <div className={styles.event}>
-        <FeedEventComponent event={event} colonyAddress={colonyAddress} />
+        <FeedEventComponent
+          initiator={event.initiator}
+          colonyAddress={colonyAddress}
+          context={event.context}
+        />
         &nbsp;
-        <TimeRelative value={createdAt} />
+        <TimeRelative value={event.createdAt} />
       </div>
     </div>
   );
