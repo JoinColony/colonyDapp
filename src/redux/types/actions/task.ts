@@ -64,9 +64,7 @@ export type TaskActionTypes =
       {
         comment: string;
         author: Address;
-        draftIt: string;
-        colonyAddress: Address;
-        taskTitle: string;
+        draftId: string;
       }
     >
   | TaskErrorActionType<ActionTypes.TASK_COMMENT_ADD_ERROR>

@@ -21,6 +21,8 @@ import {
   TaskDocument,
   UnassignWorkerDocument,
   SendTaskMessageDocument,
+  SendTaskMessageMutation,
+  SendTaskMessageMutationVariables,
 } from '~data/index';
 import { Action, ActionTypes } from '~redux/index';
 import { Address, ContractContexts } from '~types/index';
@@ -279,26 +281,20 @@ function* taskSetWorkerOrPayouts({
 }
 
 function* taskCommentAdd({
-  payload: { author, colonyAddress, comment, draftId },
+  payload: { author, comment, draftId },
   meta,
 }: Action<ActionTypes.TASK_COMMENT_ADD>) {
   try {
-    const { walletAddress } = yield getLoggedInUser();
-
-    const signature = yield call(signMessage, 'taskComment', {
+    yield call(signMessage, 'taskComment', {
       comment,
       author,
     });
-
-    const matches = (matchUsernames(comment) || []).filter(
-      username => username !== currentUsername,
-    );
 
     const apolloClient: ApolloClient<any> = yield getContext(
       Context.APOLLO_CLIENT
     );
 
-    yield apolloClient.mutate({
+    yield apolloClient.mutate<SendTaskMessageMutation, SendTaskMessageMutationVariables>({
       mutation: SendTaskMessageDocument,
       variables: {
         input: {
