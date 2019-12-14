@@ -52,6 +52,7 @@ mutation FinalizeTask($input: TaskIdInput!) {
   }
 }
 
+# @todo only require `tokenAddress`. It currently requires both `token` & `tokenAddress`
 mutation RemoveTaskPayout($input: RemoveTaskPayoutInput!) {
   removeTaskPayout(input: $input) {
     id
