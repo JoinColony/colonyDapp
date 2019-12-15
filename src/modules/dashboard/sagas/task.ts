@@ -12,7 +12,8 @@ import { replace } from 'connected-react-router';
 import BigNumber from 'bn.js';
 
 import { Context, getContext } from '~context/index';
-import {AssignWorkerDocument,
+import {
+  AssignWorkerDocument,
   CreateTaskDocument,
   FinalizeTaskDocument,
   RemoveTaskPayoutDocument,
@@ -36,6 +37,7 @@ import {AssignWorkerDocument,
   SetTaskPayoutMutationVariables,
   RemoveTaskPayoutMutation,
   RemoveTaskPayoutMutationVariables,
+  TaskFeedEventsDocument,
 } from '~data/index';
 import { TaskPayoutType } from '~immutable/TaskPayout';
 import { Action, ActionTypes } from '~redux/index';
@@ -333,6 +335,10 @@ function* taskCommentAdd({
           message: comment,
         },
       },
+      refetchQueries: [
+        // fixme Is it possible to improve type safety here?
+        { query: TaskFeedEventsDocument, variables: { id: draftId } },
+      ],
     });
 
     yield put<AllActions>({
