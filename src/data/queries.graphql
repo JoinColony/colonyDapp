@@ -190,7 +190,7 @@ query UserTokens($address: String!) {
         symbol
       }
       balance(walletAddress: $address) @client
-    }  
+    }
   }
 }
 
@@ -357,6 +357,7 @@ query AllTokens {
 
 query UserNotifications($address: String!) {
   user(address: $address) {
+    id
     notifications {
       id
       event {
