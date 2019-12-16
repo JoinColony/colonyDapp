@@ -20,6 +20,7 @@ LIB_PATH="src/lib"
 
 NETWORK="colonyNetwork"
 PINNING="pinion"
+SERVER="colonyServer"
 
 ROOT_PATH=$(pwd)
 
@@ -59,5 +60,15 @@ then
     log "Building '${PINNING}' submodule"
     cd "${ROOT_PATH}/${LIB_PATH}/${PINNING}"
     yarn
+    cd ${ROOT_PATH}
+fi
+
+if [ "$SKIP_SERVER_BUILD" != true ]
+then
+    # Build pinning service
+    log "Building '${SERVER}' submodule"
+    cd "${ROOT_PATH}/${LIB_PATH}/${SERVER}"
+    mkdir -p mongo-data
+    npm install
     cd ${ROOT_PATH}
 fi
