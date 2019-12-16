@@ -91,6 +91,47 @@ addProcess('wss', async () => {
   return wssProxyProcess;
 });
 
+addProcess('db', async () => {
+  const dbProcess = spawn('npm', ['run', 'db:start'], {
+    cwd: path.resolve(__dirname, '..', 'src/lib/colonyServer'),
+  });
+  dbProcess.on('error', e => {
+    console.error(e);
+    dbProcess.kill();
+  });
+  await waitOn({ resources: ['tcp:27017'] });
+  const cleanProcess = spawn('npm', ['run', 'db:clean'], {
+    cwd: path.resolve(__dirname, '..', 'src/lib/colonyServer'),
+  });
+  await new Promise((resolve, reject) => {
+    cleanProcess.on('exit', code => {
+      if (code) {
+        dbProcess.kill();
+        return reject(new Error(`Clean process exited with code ${code}`));
+      }
+      resolve();
+    });
+  });
+  return dbProcess;
+});
+
+addProcess('server', async () => {
+  const serverProcess = spawn('npm', ['run', 'dev'], {
+    cwd: path.resolve(__dirname, '..', 'src/lib/colonyServer'),
+    stdio: 'pipe',
+  });
+  if (args.foreground) {
+    serverProcess.stdout.pipe(process.stdout);
+    serverProcess.stderr.pipe(process.stderr);
+  }
+  serverProcess.on('error', e => {
+    serverProcess.kill();
+    reject(e);
+  });
+  await waitOn({ resources: ['tcp:3000'] });
+  return serverProcess;
+});
+
 addProcess('webpack', () =>
   new Promise((resolve, reject) => {
     let webpackArgs = ['run', 'webpack'];
@@ -117,9 +158,8 @@ addProcess('webpack', () =>
 );
 
 
+const pids = {};
 const startAll = async () => {
-  const pids = {};
-
   const startSerial = processes.reduce((promise, process) => {
     if (`skip-${process.name}` in args) return promise;
     return promise
@@ -129,6 +169,7 @@ const startAll = async () => {
       })
       .then(proc => {
         pids[process.name] = proc.pid;
+        fs.writeFileSync(PID_FILE, JSON.stringify(pids));
       });
   }, Promise.resolve(true));
 
@@ -139,8 +180,6 @@ const startAll = async () => {
     console.info(chalk.redBright(caughtError.message));
     process.exit(1);
   }
-  
-  fs.writeFileSync(PID_FILE, JSON.stringify(pids));
   
   console.info(chalk.greenBright('Stack started successfully.'));
 };

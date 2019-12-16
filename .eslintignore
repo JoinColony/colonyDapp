@@ -5,3 +5,4 @@ webpack.config.*
 src/data/generated.ts
 src/lib/colonyNetwork
 src/lib/pinion
+src/lib/colonyServer
