@@ -4,6 +4,7 @@
 .*/utils/test/.*
 .*/src/lib/colonyNetwork/.*
 .*/src/lib/pinion/.*
+.*/src/lib/colonyServer/.*
 # We need to remove these as soon as they fixed flow support
 .*/node_modules/findup/.*?\.json
 .*/node_modules/oboe/.*?\.json
