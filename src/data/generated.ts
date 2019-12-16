@@ -826,7 +826,7 @@ export type EventFieldsFragment = (
 );
 
 export type TaskEventFragment = (
-  { context: Pick<AssignWorkerEvent, 'taskId' | 'type' | 'workerAddress'> | Pick<CancelTaskEvent, 'taskId' | 'type'> | Pick<CreateTaskEvent, 'colonyAddress' | 'ethDomainId' | 'taskId' | 'type'> | Pick<CreateWorkRequestEvent, 'taskId' | 'type'> | Pick<FinalizeTaskEvent, 'taskId' | 'type'> | Pick<RemoveTaskPayoutEvent, 'amount' | 'taskId' | 'tokenAddress' | 'type'> | Pick<SendWorkInviteEvent, 'amount' | 'taskId' | 'tokenAddress' | 'type'> | Pick<SetTaskDescriptionEvent, 'description' | 'taskId' | 'type'> | Pick<SetTaskDomainEvent, 'ethDomainId' | 'taskId' | 'type'> | Pick<SetTaskDueDateEvent, 'dueDate' | 'taskId' | 'type'> | Pick<SetTaskPayoutEvent, 'taskId' | 'type'> | Pick<SetTaskSkillEvent, 'ethSkillId' | 'taskId' | 'type'> | Pick<SetTaskTitleEvent, 'taskId' | 'title' | 'type'> | Pick<TaskMessageEvent, 'message' | 'taskId' | 'type'> | Pick<UnassignWorkerEvent, 'taskId' | 'type' | 'workerAddress'> }
+  { context: Pick<AssignWorkerEvent, 'taskId' | 'type' | 'workerAddress'> | Pick<CancelTaskEvent, 'taskId' | 'type'> | Pick<CreateTaskEvent, 'colonyAddress' | 'ethDomainId' | 'taskId' | 'type'> | Pick<CreateWorkRequestEvent, 'taskId' | 'type'> | Pick<FinalizeTaskEvent, 'taskId' | 'type'> | Pick<RemoveTaskPayoutEvent, 'amount' | 'taskId' | 'tokenAddress' | 'type'> | Pick<SendWorkInviteEvent, 'taskId' | 'type' | 'workerAddress'> | Pick<SetTaskDescriptionEvent, 'description' | 'taskId' | 'type'> | Pick<SetTaskDomainEvent, 'ethDomainId' | 'taskId' | 'type'> | Pick<SetTaskDueDateEvent, 'dueDate' | 'taskId' | 'type'> | Pick<SetTaskPayoutEvent, 'taskId' | 'type'> | Pick<SetTaskSkillEvent, 'ethSkillId' | 'taskId' | 'type'> | Pick<SetTaskTitleEvent, 'taskId' | 'title' | 'type'> | Pick<TaskMessageEvent, 'message' | 'taskId' | 'type'> | Pick<UnassignWorkerEvent, 'taskId' | 'type' | 'workerAddress'> }
   & EventFieldsFragment
 );
 
@@ -1241,10 +1241,9 @@ export const TaskEventFragmentDoc = gql`
       type
     }
     ... on SendWorkInviteEvent {
-      amount
       taskId
-      tokenAddress
       type
+      workerAddress
     }
     ... on SetTaskDescriptionEvent {
       description

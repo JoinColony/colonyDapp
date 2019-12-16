@@ -48,11 +48,9 @@ fragment TaskEvent on Event {
       type
     }
     ... on SendWorkInviteEvent {
-      # @todo include `workerAddress` here
-      amount
       taskId
-      tokenAddress
       type
+      workerAddress
     }
     ... on SetTaskDescriptionEvent {
       description
