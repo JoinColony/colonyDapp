@@ -68,8 +68,9 @@ fragment TaskEvent on Event {
       type
     }
     ... on SetTaskPayoutEvent {
-      # @todo include `amount` and `tokenAddress` here
+      amount
       taskId
+      tokenAddress
       type
     }
     ... on SetTaskSkillEvent {
