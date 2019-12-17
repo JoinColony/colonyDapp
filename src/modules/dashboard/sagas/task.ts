@@ -38,6 +38,7 @@ import {
   RemoveTaskPayoutMutation,
   RemoveTaskPayoutMutationVariables,
   TaskFeedEventsDocument,
+  ColonyTasksDocument,
 } from '~data/index';
 import { TaskPayoutType } from '~immutable/TaskPayout';
 import { Action, ActionTypes } from '~redux/index';
@@ -107,6 +108,9 @@ function* taskCreate({
           ethDomainId,
         },
       },
+      refetchQueries: [
+        { query: ColonyTasksDocument, variables: { address: colonyAddress } },
+      ]
     });
 
     // Not sure what to use for task slug - `id` or `ethTaskId`. Will these be the same?
