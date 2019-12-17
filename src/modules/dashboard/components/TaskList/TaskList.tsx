@@ -93,7 +93,9 @@ const TaskList = ({
 
       switch (filterOption) {
         case TasksFilterOptions.CREATED:
-          return creatorAddress && creatorAddress === walletAddress && taskIsOpen;
+          return (
+            creatorAddress && creatorAddress === walletAddress && taskIsOpen
+          );
 
         case TasksFilterOptions.ASSIGNED:
           return (
@@ -252,7 +254,7 @@ const TaskList = ({
               />
             )}
           </>
-          ))}
+        ))}
       </TableBody>
     </Table>
   );

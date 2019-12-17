@@ -39,7 +39,7 @@ const TaskSkills = ({ draftId, disabled, ethSkillId }: Props) => {
   const [setSkill] = useSetTaskSkillMutation();
 
   const handleSetSkill = useCallback(
-    ({ id }: { id: number, name: string }) =>
+    ({ id }: { id: number; name: string }) =>
       setSkill({
         variables: {
           input: {
