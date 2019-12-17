@@ -133,22 +133,44 @@ query UserTokens($address: String!) {
   }
 }
 
+fragment FullColony on Colony {
+  id
+  colonyAddress
+  colonyName
+  avatarHash
+  description
+  displayName
+  guideline
+  website
+  tokens {
+    address
+    name
+    symbol
+    iconHash
+    isExternal
+    isNative
+    balances(address: $address) @client {
+      domainId
+      balance
+    }
+  }
+  version(address: $address) @client
+  canMintNativeToken(address: $address) @client
+  canUnlockNativeToken(address: $address) @client
+  isInRecoveryMode(address: $address) @client
+  isNativeTokenLocked(address: $address) @client
+}
+
+query ColonyFromName($name: String!, $address: String!) {
+  colonyAddress(name: $name) @client @export(as: "address")
+  colony(address: $address) {
+    ...FullColony
+  }
+}
+
 query Colony($address: String!) {
   colony(address: $address) {
-    id
-    colonyAddress
-    colonyName
-    avatarHash
-    description
-    displayName
-    guideline
-    website
-    tokens {
-      address
-      name
-      symbol
-      iconHash
-    }
+    ...FullColony
   }
 }
 

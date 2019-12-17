@@ -17,7 +17,7 @@ export const initialCache = {
   },
 };
 
-export const resolvers = {
+export const loggedInUserResolvers = () => ({
   Mutation: {
     setLoggedInUser: (_root, { input }, { cache }) => {
       const { loggedInUser } = cache.readQuery({ query: LoggedInUserDocument });
@@ -31,4 +31,4 @@ export const resolvers = {
       return changedData.loggedInUser;
     },
   },
-};
+});

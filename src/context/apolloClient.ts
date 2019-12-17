@@ -2,7 +2,7 @@ import ApolloClient from 'apollo-client';
 import { createHttpLink } from 'apollo-link-http';
 import { setContext } from 'apollo-link-context';
 
-import { cache, resolvers, typeDefs } from '~data/index';
+import { cache, typeDefs } from '~data/index';
 
 export { ApolloProvider } from '@apollo/react-hooks';
 
@@ -27,5 +27,6 @@ export default new ApolloClient({
   link: authLink.concat(httpLink),
   cache,
   typeDefs,
-  resolvers,
+  // All resolvers are added via addResolvers
+  resolvers: {},
 });
