@@ -156,10 +156,7 @@ const TaskFeedEventDomainSet = ({
   initiator: { id: initiatorAddress },
   intl: { formatMessage },
 }: EventProps<SetTaskDomainEvent> & { intl: IntlShape }) => {
-  const domain = useSelector(domainSelector, [
-    colonyAddress,
-    ethDomainId,
-  ]);
+  const domain = useSelector(domainSelector, [colonyAddress, ethDomainId]);
   const domainName =
     ethDomainId === ROOT_DOMAIN
       ? formatMessage(MSG.rootDomain)

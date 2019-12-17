@@ -28,7 +28,10 @@ export * from './TEMP_AllUserHasRecoveryRoles';
 
 type TaskMetadataObject = { [draftId: string]: TaskMetadataRecord };
 
-export type TaskMetadataMap = ImmutableMap<AnyTask['id'], TaskMetadataRecord> & {
+export type TaskMetadataMap = ImmutableMap<
+  AnyTask['id'],
+  TaskMetadataRecord
+> & {
   toJS(): TaskMetadataObject;
 };
 

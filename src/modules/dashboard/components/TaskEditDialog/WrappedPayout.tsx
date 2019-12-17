@@ -1,9 +1,6 @@
 import React, { useCallback } from 'react';
 
-import {
-  TaskPayoutType,
-  ColonyTokenReferenceType,
-} from '~immutable/index';
+import { TaskPayoutType, ColonyTokenReferenceType } from '~immutable/index';
 import { Address } from '~types/index';
 import Payout from './Payout';
 
