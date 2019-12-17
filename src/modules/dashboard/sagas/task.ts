@@ -269,7 +269,6 @@ function* taskSetWorkerOrPayouts({
         variables: {
           input: {
             id: draftId,
-            ethDomainId,
             amount: payouts[0].amount.toString(),
             tokenAddress: payouts[0].token,
           },
@@ -287,9 +286,7 @@ function* taskSetWorkerOrPayouts({
           variables: {
             input: {
               id: draftId,
-              ethDomainId,
               amount: existingPayouts[0].amount.toString(),
-              token: existingPayouts[0].token,
               tokenAddress: existingPayouts[0].token,
             },
           },
