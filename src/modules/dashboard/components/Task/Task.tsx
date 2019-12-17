@@ -132,7 +132,7 @@ const Task = ({
       ethSkillId = undefined,
       title = undefined,
     } = {},
-    task,
+    task = undefined,
   } = data || {};
 
   // fixme add domains back in here once ready

@@ -59,7 +59,7 @@ const TaskSkills = ({ draftId, disabled, ethSkillId }: Props) => {
         name="taskSkills"
         connect={false}
         showArrow={false}
-        itemId={ethSkillId}
+        itemId={ethSkillId || undefined}
         disabled={disabled}
         nullable
       >

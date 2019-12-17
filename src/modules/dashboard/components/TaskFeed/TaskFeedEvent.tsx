@@ -154,10 +154,10 @@ const TaskFeedEventDomainSet = ({
 }: EventProps<SetTaskDomainEvent> & { intl: IntlShape }) => {
   const domain = useSelector(domainSelector, [
     colonyAddress,
-    parseInt(ethDomainId, 10),
+    ethDomainId,
   ]);
   const domainName =
-    parseInt(ethDomainId, 10) === ROOT_DOMAIN
+    ethDomainId === ROOT_DOMAIN
       ? formatMessage(MSG.rootDomain)
       : domain && domain.name;
   return (
