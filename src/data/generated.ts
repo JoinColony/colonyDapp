@@ -1110,7 +1110,7 @@ export type UserTasksQueryVariables = {
 export type UserTasksQuery = { user: (
     Pick<User, 'id'>
     & { tasks: Array<(
-      Pick<Task, 'id' | 'creatorAddress' | 'title'>
+      Pick<Task, 'id' | 'assignedWorkerAddress' | 'cancelledAt' | 'creatorAddress' | 'dueDate' | 'ethDomainId' | 'ethSkillId' | 'finalizedAt' | 'title' | 'workRequestAddresses'>
       & { assignedWorker: Maybe<(
         Pick<User, 'id'>
         & { profile: Pick<UserProfile, 'avatarHash'> }
@@ -1153,7 +1153,7 @@ export type ColonyTasksQueryVariables = {
 export type ColonyTasksQuery = { colony: (
     Pick<Colony, 'id'>
     & { tasks: Array<(
-      Pick<Task, 'id' | 'title'>
+      Pick<Task, 'id' | 'assignedWorkerAddress' | 'cancelledAt' | 'creatorAddress' | 'dueDate' | 'ethDomainId' | 'ethSkillId' | 'finalizedAt' | 'title' | 'workRequestAddresses'>
       & { assignedWorker: Maybe<(
         Pick<User, 'id'>
         & { profile: Pick<UserProfile, 'avatarHash'> }
@@ -2427,8 +2427,15 @@ export const UserTasksDocument = gql`
           avatarHash
         }
       }
+      assignedWorkerAddress
+      cancelledAt
       creatorAddress
+      dueDate
+      ethDomainId
+      ethSkillId
+      finalizedAt
       title
+      workRequestAddresses
     }
   }
 }
@@ -2586,7 +2593,15 @@ export const ColonyTasksDocument = gql`
           avatarHash
         }
       }
+      assignedWorkerAddress
+      cancelledAt
+      creatorAddress
+      dueDate
+      ethDomainId
+      ethSkillId
+      finalizedAt
       title
+      workRequestAddresses
     }
   }
 }

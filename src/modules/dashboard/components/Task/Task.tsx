@@ -22,6 +22,7 @@ import TaskTitle from '~dashboard/TaskTitle';
 
 import {
   canCancelTask,
+  canEditTask,
   canFinalizeTask,
   isCancelled,
   canRequestToWork,
@@ -187,7 +188,7 @@ const Task = ({
     return <LoadingTemplate loadingText={MSG.loadingText} />;
   }
 
-  // fixme handle edit check here
+  // @todo handle user roles / `canEdit` check on task
   const canEdit = true;
   // const canEdit = canEditTask(task, userRoles);
 
