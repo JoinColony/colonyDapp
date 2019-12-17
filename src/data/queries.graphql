@@ -22,6 +22,7 @@ query Task($id: String!) {
       displayName
     }
     colonyAddress
+    createdAt
     creator {
       id
       profile {
@@ -107,6 +108,12 @@ query UserTasks($address: String!) {
       }
       assignedWorkerAddress
       cancelledAt
+      colony {
+        id
+        colonyName
+      }
+      colonyAddress
+      createdAt
       creatorAddress
       dueDate
       ethDomainId
@@ -172,6 +179,12 @@ query ColonyTasks($address: String!) {
       }
       assignedWorkerAddress
       cancelledAt
+      colony {
+        id
+        colonyName
+      }
+      colonyAddress
+      createdAt
       creatorAddress
       dueDate
       ethDomainId
