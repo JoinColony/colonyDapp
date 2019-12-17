@@ -81,7 +81,7 @@ const TaskList = ({
   const { username, walletAddress } = useLoggedInUser();
   const filter = useCallback(
     ({
-      creator,
+      creatorAddress,
       assignedWorker,
       cancelledAt,
       ethDomainId,
@@ -93,7 +93,7 @@ const TaskList = ({
 
       switch (filterOption) {
         case TasksFilterOptions.CREATED:
-          return creator && creator.id === walletAddress && taskIsOpen;
+          return creatorAddress && creatorAddress === walletAddress && taskIsOpen;
 
         case TasksFilterOptions.ASSIGNED:
           return (
@@ -122,8 +122,8 @@ const TaskList = ({
       if (!(first && second)) return 0;
 
       return sortingOrderOption === 'desc'
-        ? (second as any).createdAt - (first as any).createdAt
-        : (first as any).createdAt - (second as any).createdAt;
+        ? second.createdAt - first.createdAt
+        : first.createdAt - second.createdAt;
     },
     [sortingOrderOption],
   );
@@ -131,7 +131,7 @@ const TaskList = ({
   const filteredTasksData: AnyTask[] = useMemo(
     () =>
       filter
-        ? tasks.sort(sort as any).filter(task => (task ? filter(task) : true))
+        ? tasks.sort(sort).filter(task => (task ? filter(task) : true))
         : tasks,
     [filter, sort, tasks],
   );
@@ -241,14 +241,17 @@ const TaskList = ({
       scrollable
     >
       <TableBody>
-        {colonyAddress &&
-          filteredTasksData.map(taskData => (
-            <TaskListItem
-              key={taskData.id}
-              colonyAddress={colonyAddress}
-              colonyName={colonyName}
-              data={taskData}
-            />
+        {filteredTasksData.map(taskData => (
+          <>
+            {taskData.colony && (
+              <TaskListItem
+                key={taskData.id}
+                colonyAddress={taskData.colonyAddress}
+                colonyName={taskData.colony.colonyName}
+                data={taskData}
+              />
+            )}
+          </>
           ))}
       </TableBody>
     </Table>
