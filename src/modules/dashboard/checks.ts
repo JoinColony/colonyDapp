@@ -32,8 +32,10 @@ export const didClaimPayout = (
 export const isManager = ({ managerAddress }: AnyTask, userAddress: Address) =>
   managerAddress === userAddress;
 
-export const isWorker = ({ assignedWorkerAddress }: AnyTask, userAddress: Address) =>
-  assignedWorkerAddress && assignedWorkerAddress === userAddress;
+export const isWorker = (
+  { assignedWorkerAddress }: AnyTask,
+  userAddress: Address,
+) => assignedWorkerAddress && assignedWorkerAddress === userAddress;
 
 export const isCreator = ({ creatorAddress }: AnyTask, userAddress: Address) =>
   creatorAddress && creatorAddress === userAddress;
@@ -41,11 +43,9 @@ export const isCreator = ({ creatorAddress }: AnyTask, userAddress: Address) =>
 export const isPayoutsSet = ({ payouts }: AnyTask) =>
   !!payouts && payouts.length > 0;
 
-export const isFinalized = ({ finalizedAt }: AnyTask) =>
-  !!finalizedAt;
+export const isFinalized = ({ finalizedAt }: AnyTask) => !!finalizedAt;
 
-export const isCancelled = ({ cancelledAt }: AnyTask) =>
-  !!cancelledAt;
+export const isCancelled = ({ cancelledAt }: AnyTask) => !!cancelledAt;
 
 export const isRating = ({ currentState }: AnyTask) =>
   currentState === TaskStates.RATING;
@@ -59,7 +59,8 @@ export const isReveal = ({ currentState }: AnyTask) =>
 export const didDueDateElapse = ({ dueDate }: AnyTask) =>
   !!(dueDate && new Date(dueDate) < new Date());
 
-export const isWorkerSet = ({ assignedWorkerAddress }: AnyTask) => !!assignedWorkerAddress;
+export const isWorkerSet = ({ assignedWorkerAddress }: AnyTask) =>
+  !!assignedWorkerAddress;
 
 export const canEditTask = (task: AnyTask, roles: ROLES[]) =>
   !isFinalized(task) && !isCancelled(task) && canAdminister(roles);
@@ -102,7 +103,10 @@ export const canCancelTask = (task: AnyTask, roles: ROLES[]) =>
 export const hasRequestedToWork = (
   { workRequestAddresses = [] }: AnyTask,
   userAddress: Address,
-) => workRequestAddresses.find(workRequestAddress => workRequestAddress === userAddress);
+) =>
+  workRequestAddresses.find(
+    workRequestAddress => workRequestAddress === userAddress,
+  );
 
 export const canRequestToWork = (task: AnyTask, userAddress: Address) =>
   !(

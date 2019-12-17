@@ -139,7 +139,7 @@ export const createTaskStore = (
   domainId,
   colonyAddress,
 }: {
-  draftId:  AnyTask['id'];
+  draftId: AnyTask['id'];
   domainId: number;
   colonyAddress: Address;
 }) => {
@@ -185,7 +185,7 @@ export const getCommentsStoreAddress = (ddb: DDB) => async ({
   draftId,
   colonyAddress,
 }: {
-  draftId:  AnyTask['id'];
+  draftId: AnyTask['id'];
   colonyAddress: Address;
 }) =>
   ddb.generateStoreAddress(commentsStoreBlueprint, {

@@ -29,7 +29,12 @@ import {
   isFinalized,
 } from '../../checks';
 import { useLoggedInUser } from '~data/helpers';
-import { AnyColony, useTaskQuery, useCancelTaskMutation, AnyTask } from '~data/index';
+import {
+  AnyColony,
+  useTaskQuery,
+  useCancelTaskMutation,
+  AnyTask,
+} from '~data/index';
 import LoadingTemplate from '~pages/LoadingTemplate';
 import { ActionTypes } from '~redux/index';
 import { mergePayload } from '~utils/actions';

@@ -110,7 +110,7 @@ function* taskCreate({
       },
       refetchQueries: [
         { query: ColonyTasksDocument, variables: { address: colonyAddress } },
-      ]
+      ],
     });
 
     // Not sure what to use for task slug - `id` or `ethTaskId`. Will these be the same?
