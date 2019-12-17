@@ -22,7 +22,7 @@ interface Props {
   title: string | void;
 }
 
-const TaskTitle = ({ disabled, title: existingTitle, draftId }: Props) => {
+const TaskTitle = ({ disabled, title: existingTitle = '', draftId }: Props) => {
   const [setTitle] = useSetTaskTitleMutation();
   const onSubmit = useCallback(
     ({ title = '' }: FormValues) => {
