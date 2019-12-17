@@ -40,7 +40,11 @@ const TaskFeed = ({ colonyAddress, draftId }: Props) => {
     setTimeout(scrollToEnd, 1000);
   }, [bottomEl]);
 
-  const { data } = useTaskFeedEventsQuery({ variables: { id: draftId } });
+  const { data } = useTaskFeedEventsQuery({
+    // @todo use subscription for `TaskFeedEvents` instead of `pollInterval` (once supported by server)
+    pollInterval: 2000,
+    variables: { id: draftId },
+  });
 
   useLayoutEffect(scrollToEnd, [data]);
 

@@ -117,6 +117,8 @@ const Task = ({
   const { walletAddress } = useLoggedInUser();
 
   const { data } = useTaskQuery({
+    // @todo use subscription for `Task` instead of `pollInterval` (once supported by server)
+    pollInterval: 2000,
     variables: { id: draftId },
   });
 
