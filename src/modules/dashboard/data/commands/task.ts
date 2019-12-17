@@ -1,4 +1,5 @@
 import { Context } from '~context/index';
+import { AnyTask } from '~data/index';
 import { EventTypes } from '~data/constants';
 import { ColonyManager, Command, CommentsStore, DDB, Event } from '~data/types';
 import { getCommentsStore, getCommentsStoreAddress } from '~data/stores';
@@ -13,7 +14,7 @@ import { PostCommentCommandArgsSchema } from './schemas';
  */
 interface TaskStoreMetadata {
   colonyAddress: Address;
-  draftId: string;
+  draftId: AnyTask['id'];
 }
 
 type CommentsStoreMetadata = TaskStoreMetadata;

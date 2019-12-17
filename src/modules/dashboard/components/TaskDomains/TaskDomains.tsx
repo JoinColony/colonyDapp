@@ -5,7 +5,7 @@ import { COLONY_TOTAL_BALANCE_DOMAIN_ID } from '~constants';
 import Heading from '~core/Heading';
 import Button from '~core/Button';
 import ItemsList from '~core/ItemsList';
-import { useSetTaskDomainMutation } from '~data/index';
+import { useSetTaskDomainMutation, AnyTask } from '~data/index';
 import { DomainType } from '~immutable/index';
 import { Address } from '~types/index';
 import { useDataFetcher, useSelector } from '~utils/hooks';
@@ -41,7 +41,7 @@ const MSG = defineMessages({
 interface Props {
   colonyAddress: Address;
   disabled?: boolean;
-  draftId: string;
+  draftId: AnyTask['id'];
   ethDomainId: number;
 }
 

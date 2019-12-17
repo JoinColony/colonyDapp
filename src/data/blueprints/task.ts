@@ -1,5 +1,6 @@
 import { ColonyClient as ColonyClientType } from '@colony/colony-js-client';
 import { WalletObjectType } from '@colony/purser-core';
+import { AnyTask } from '~data/index';
 import { Address, StoreBlueprint } from '~types/index';
 import { EventStore } from '~lib/database/stores';
 
@@ -9,7 +10,7 @@ import loadPermissionManifest, { MANIFEST_LOADERS } from '../permissions/index';
 interface TaskStoreProps {
   colonyAddress: Address;
   chainId: string;
-  draftId: string;
+  draftId: AnyTask['id'];
   domainId: number;
   wallet: WalletObjectType;
   colonyClient: ColonyClientType;

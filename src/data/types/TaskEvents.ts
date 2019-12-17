@@ -1,6 +1,7 @@
+import { AnyTask } from '~data/index';
+import { Address } from '~types/index';
 import { EventTypes, TaskStates, Versions } from '../constants';
 import { EventDefinition } from './events';
-import { Address } from '~types/index';
 
 export type TaskEvents =
   | EventDefinition<
@@ -66,7 +67,7 @@ export type TaskEvents =
       EventTypes.TASK_CREATED,
       {
         creatorAddress: Address;
-        draftId: string;
+        draftId: AnyTask['id'];
       },
       Versions.V1
     >
@@ -74,7 +75,7 @@ export type TaskEvents =
       EventTypes.TASK_CREATED,
       {
         creatorAddress: Address;
-        draftId: string;
+        draftId: AnyTask['id'];
         domainId: number;
       },
       Versions.CURRENT

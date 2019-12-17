@@ -1,3 +1,4 @@
+import { AnyTask } from '~data/index';
 import { EventStore } from '~lib/database/stores';
 import { Address, StoreBlueprint } from '~types/index';
 import { PermissiveAccessController } from '../accessControllers/index';
@@ -5,7 +6,7 @@ import { PermissiveAccessController } from '../accessControllers/index';
 export type CommentsStoreProps = {
   colonyAddress: Address;
   chainId: string;
-  draftId: string;
+  draftId: AnyTask['id'];
 };
 
 export type CommentsStoreBlueprint = StoreBlueprint<

@@ -2,7 +2,7 @@ import React, { useCallback } from 'react';
 import { defineMessages } from 'react-intl';
 
 import { Address } from '~types/index';
-import { AnyUser, useAssignWorkerMutation } from '~data/index';
+import { AnyUser, useAssignWorkerMutation, AnyTask } from '~data/index';
 import Assignment from '~core/Assignment';
 import Button from '~core/Button';
 import { FormStatus, Form } from '~core/Fields';
@@ -33,7 +33,7 @@ interface FormValues {
 
 interface Props {
   colonyAddress: Address;
-  draftId: string;
+  draftId: AnyTask['id'];
   currentUser: AnyUser;
   cancel: () => void;
   close: () => void;

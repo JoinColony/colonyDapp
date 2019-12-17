@@ -2,9 +2,9 @@ import React from 'react';
 import { defineMessages } from 'react-intl';
 
 import { DialogActionButton } from '~core/Button';
-import { ActionTypes } from '~redux/index';
-
+import { AnyTask } from '~data/index';
 import { TaskPayoutType } from '~immutable/index';
+import { ActionTypes } from '~redux/index';
 import { Address } from '~types/index';
 
 const MSG = defineMessages({
@@ -17,7 +17,7 @@ const MSG = defineMessages({
 // Can't seal this object because of HOC
 export interface Props {
   colonyAddress: Address;
-  draftId: string;
+  draftId: AnyTask['id'];
   lateRating: boolean;
   lateReveal: boolean;
   nativeTokenPayout: object | void;
