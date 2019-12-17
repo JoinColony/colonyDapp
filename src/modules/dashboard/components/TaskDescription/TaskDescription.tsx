@@ -23,7 +23,7 @@ interface Props {
 }
 
 const TaskDescription = ({
-  description: existingDescription,
+  description: existingDescription = '',
   disabled,
   draftId,
 }: Props) => {

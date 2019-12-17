@@ -81,6 +81,10 @@ const MSG = defineMessages({
     id: 'dashboard.TaskFeedEvent.created',
     defaultMessage: 'Task created by {user}',
   },
+  descriptionRemoved: {
+    id: 'dashboard.TaskFeedEvent.descriptionRemoved',
+    defaultMessage: 'Task description removed by {user}',
+  },
   descriptionSet: {
     id: 'dashboard.TaskFeedEvent.descriptionSet',
     defaultMessage: 'Task description set to {description} by {user}',
@@ -301,19 +305,31 @@ const TaskFeedEventCancelled = ({
 const TaskFeedEventDescriptionSet = ({
   context: { description },
   initiator: { id: initiatorAddress },
-}: EventProps<SetTaskDescriptionEvent>) => (
-  <FormattedMessage
-    {...MSG.descriptionSet}
-    values={{
-      user: <InteractiveUsername userAddress={initiatorAddress} />,
-      description: (
-        <span title={description} className={styles.highlight}>
-          {description}
-        </span>
-      ),
-    }}
-  />
-);
+}: EventProps<SetTaskDescriptionEvent>) => {
+  if (!description) {
+    return (
+      <FormattedMessage
+        {...MSG.descriptionRemoved}
+        values={{
+          user: <InteractiveUsername userAddress={initiatorAddress} />,
+        }}
+      />
+    );
+  }
+  return (
+    <FormattedMessage
+      {...MSG.descriptionSet}
+      values={{
+        user: <InteractiveUsername userAddress={initiatorAddress} />,
+        description: (
+          <span title={description} className={styles.highlight}>
+            {description}
+          </span>
+        ),
+      }}
+    />
+  );
+};
 
 const TaskFeedEventFinalized = ({
   initiator: { id: initiatorAddress },
