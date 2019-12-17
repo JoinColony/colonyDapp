@@ -837,7 +837,7 @@ export type AssignWorkerMutationVariables = {
 
 export type AssignWorkerMutation = { assignWorker: Maybe<(
     Pick<Task, 'id'>
-    & { assignedWorker: Maybe<Pick<User, 'id'>>, events: Array<Pick<Event, 'sourceId'>> }
+    & { assignedWorker: Maybe<Pick<User, 'id'>>, events: Array<TaskEventFragment> }
   )> };
 
 export type CancelTaskMutationVariables = {
@@ -847,7 +847,7 @@ export type CancelTaskMutationVariables = {
 
 export type CancelTaskMutation = { cancelTask: Maybe<(
     Pick<Task, 'id' | 'cancelledAt'>
-    & { events: Array<Pick<Event, 'sourceId'>> }
+    & { events: Array<TaskEventFragment> }
   )> };
 
 export type CreateTaskMutationVariables = {
@@ -857,7 +857,7 @@ export type CreateTaskMutationVariables = {
 
 export type CreateTaskMutation = { createTask: Maybe<(
     Pick<Task, 'id'>
-    & { events: Array<Pick<Event, 'sourceId'>> }
+    & { events: Array<TaskEventFragment> }
   )> };
 
 export type CreateWorkRequestMutationVariables = {
@@ -867,7 +867,7 @@ export type CreateWorkRequestMutationVariables = {
 
 export type CreateWorkRequestMutation = { createWorkRequest: Maybe<(
     Pick<Task, 'id'>
-    & { events: Array<Pick<Event, 'sourceId'>>, workRequests: Array<Pick<User, 'id'>> }
+    & { events: Array<TaskEventFragment>, workRequests: Array<Pick<User, 'id'>> }
   )> };
 
 export type FinalizeTaskMutationVariables = {
@@ -877,7 +877,7 @@ export type FinalizeTaskMutationVariables = {
 
 export type FinalizeTaskMutation = { finalizeTask: Maybe<(
     Pick<Task, 'id' | 'finalizedAt'>
-    & { events: Array<Pick<Event, 'sourceId'>> }
+    & { events: Array<TaskEventFragment> }
   )> };
 
 export type RemoveTaskPayoutMutationVariables = {
@@ -887,7 +887,7 @@ export type RemoveTaskPayoutMutationVariables = {
 
 export type RemoveTaskPayoutMutation = { removeTaskPayout: Maybe<(
     Pick<Task, 'id'>
-    & { events: Array<Pick<Event, 'sourceId'>> }
+    & { events: Array<TaskEventFragment> }
   )> };
 
 export type SendWorkInviteMutationVariables = {
@@ -897,7 +897,7 @@ export type SendWorkInviteMutationVariables = {
 
 export type SendWorkInviteMutation = { sendWorkInvite: Maybe<(
     Pick<Task, 'id'>
-    & { events: Array<Pick<Event, 'sourceId'>>, workInvites: Array<Pick<User, 'id'>> }
+    & { events: Array<TaskEventFragment>, workInvites: Array<Pick<User, 'id'>> }
   )> };
 
 export type SetTaskDomainMutationVariables = {
@@ -907,7 +907,7 @@ export type SetTaskDomainMutationVariables = {
 
 export type SetTaskDomainMutation = { setTaskDomain: Maybe<(
     Pick<Task, 'id' | 'ethDomainId'>
-    & { events: Array<Pick<Event, 'sourceId'>> }
+    & { events: Array<TaskEventFragment> }
   )> };
 
 export type SetTaskDescriptionMutationVariables = {
@@ -917,7 +917,7 @@ export type SetTaskDescriptionMutationVariables = {
 
 export type SetTaskDescriptionMutation = { setTaskDescription: Maybe<(
     Pick<Task, 'id' | 'description'>
-    & { events: Array<Pick<Event, 'sourceId'>> }
+    & { events: Array<TaskEventFragment> }
   )> };
 
 export type SetTaskDueDateMutationVariables = {
@@ -927,7 +927,7 @@ export type SetTaskDueDateMutationVariables = {
 
 export type SetTaskDueDateMutation = { setTaskDueDate: Maybe<(
     Pick<Task, 'id' | 'dueDate'>
-    & { events: Array<Pick<Event, 'sourceId'>> }
+    & { events: Array<TaskEventFragment> }
   )> };
 
 export type SetTaskPayoutMutationVariables = {
@@ -935,7 +935,10 @@ export type SetTaskPayoutMutationVariables = {
 };
 
 
-export type SetTaskPayoutMutation = { setTaskPayout: Maybe<Pick<Task, 'id'>> };
+export type SetTaskPayoutMutation = { setTaskPayout: Maybe<(
+    Pick<Task, 'id'>
+    & { events: Array<TaskEventFragment> }
+  )> };
 
 export type SetTaskSkillMutationVariables = {
   input: SetTaskSkillInput
@@ -944,7 +947,7 @@ export type SetTaskSkillMutationVariables = {
 
 export type SetTaskSkillMutation = { setTaskSkill: Maybe<(
     Pick<Task, 'id' | 'ethSkillId'>
-    & { events: Array<Pick<Event, 'sourceId'>> }
+    & { events: Array<TaskEventFragment> }
   )> };
 
 export type SetTaskTitleMutationVariables = {
@@ -954,7 +957,7 @@ export type SetTaskTitleMutationVariables = {
 
 export type SetTaskTitleMutation = { setTaskTitle: Maybe<(
     Pick<Task, 'id' | 'title'>
-    & { events: Array<Pick<Event, 'sourceId'>> }
+    & { events: Array<TaskEventFragment> }
   )> };
 
 export type UnassignWorkerMutationVariables = {
@@ -964,7 +967,7 @@ export type UnassignWorkerMutationVariables = {
 
 export type UnassignWorkerMutation = { unassignWorker: Maybe<(
     Pick<Task, 'id'>
-    & { assignedWorker: Maybe<Pick<User, 'id'>>, events: Array<Pick<Event, 'sourceId'>> }
+    & { assignedWorker: Maybe<Pick<User, 'id'>>, events: Array<TaskEventFragment> }
   )> };
 
 export type SendTaskMessageMutationVariables = {
@@ -1297,11 +1300,11 @@ export const AssignWorkerDocument = gql`
       id
     }
     events {
-      sourceId
+      ...TaskEvent
     }
   }
 }
-    `;
+    ${TaskEventFragmentDoc}`;
 export type AssignWorkerMutationFn = ApolloReactCommon.MutationFunction<AssignWorkerMutation, AssignWorkerMutationVariables>;
 
 /**
@@ -1333,11 +1336,11 @@ export const CancelTaskDocument = gql`
     id
     cancelledAt
     events {
-      sourceId
+      ...TaskEvent
     }
   }
 }
-    `;
+    ${TaskEventFragmentDoc}`;
 export type CancelTaskMutationFn = ApolloReactCommon.MutationFunction<CancelTaskMutation, CancelTaskMutationVariables>;
 
 /**
@@ -1368,11 +1371,11 @@ export const CreateTaskDocument = gql`
   createTask(input: $input) {
     id
     events {
-      sourceId
+      ...TaskEvent
     }
   }
 }
-    `;
+    ${TaskEventFragmentDoc}`;
 export type CreateTaskMutationFn = ApolloReactCommon.MutationFunction<CreateTaskMutation, CreateTaskMutationVariables>;
 
 /**
@@ -1403,14 +1406,14 @@ export const CreateWorkRequestDocument = gql`
   createWorkRequest(input: $input) {
     id
     events {
-      sourceId
+      ...TaskEvent
     }
     workRequests {
       id
     }
   }
 }
-    `;
+    ${TaskEventFragmentDoc}`;
 export type CreateWorkRequestMutationFn = ApolloReactCommon.MutationFunction<CreateWorkRequestMutation, CreateWorkRequestMutationVariables>;
 
 /**
@@ -1441,12 +1444,12 @@ export const FinalizeTaskDocument = gql`
   finalizeTask(input: $input) {
     id
     events {
-      sourceId
+      ...TaskEvent
     }
     finalizedAt
   }
 }
-    `;
+    ${TaskEventFragmentDoc}`;
 export type FinalizeTaskMutationFn = ApolloReactCommon.MutationFunction<FinalizeTaskMutation, FinalizeTaskMutationVariables>;
 
 /**
@@ -1477,11 +1480,11 @@ export const RemoveTaskPayoutDocument = gql`
   removeTaskPayout(input: $input) {
     id
     events {
-      sourceId
+      ...TaskEvent
     }
   }
 }
-    `;
+    ${TaskEventFragmentDoc}`;
 export type RemoveTaskPayoutMutationFn = ApolloReactCommon.MutationFunction<RemoveTaskPayoutMutation, RemoveTaskPayoutMutationVariables>;
 
 /**
@@ -1512,14 +1515,14 @@ export const SendWorkInviteDocument = gql`
   sendWorkInvite(input: $input) {
     id
     events {
-      sourceId
+      ...TaskEvent
     }
     workInvites {
       id
     }
   }
 }
-    `;
+    ${TaskEventFragmentDoc}`;
 export type SendWorkInviteMutationFn = ApolloReactCommon.MutationFunction<SendWorkInviteMutation, SendWorkInviteMutationVariables>;
 
 /**
@@ -1551,11 +1554,11 @@ export const SetTaskDomainDocument = gql`
     id
     ethDomainId
     events {
-      sourceId
+      ...TaskEvent
     }
   }
 }
-    `;
+    ${TaskEventFragmentDoc}`;
 export type SetTaskDomainMutationFn = ApolloReactCommon.MutationFunction<SetTaskDomainMutation, SetTaskDomainMutationVariables>;
 
 /**
@@ -1587,11 +1590,11 @@ export const SetTaskDescriptionDocument = gql`
     id
     description
     events {
-      sourceId
+      ...TaskEvent
     }
   }
 }
-    `;
+    ${TaskEventFragmentDoc}`;
 export type SetTaskDescriptionMutationFn = ApolloReactCommon.MutationFunction<SetTaskDescriptionMutation, SetTaskDescriptionMutationVariables>;
 
 /**
@@ -1623,11 +1626,11 @@ export const SetTaskDueDateDocument = gql`
     id
     dueDate
     events {
-      sourceId
+      ...TaskEvent
     }
   }
 }
-    `;
+    ${TaskEventFragmentDoc}`;
 export type SetTaskDueDateMutationFn = ApolloReactCommon.MutationFunction<SetTaskDueDateMutation, SetTaskDueDateMutationVariables>;
 
 /**
@@ -1657,9 +1660,12 @@ export const SetTaskPayoutDocument = gql`
     mutation SetTaskPayout($input: SetTaskPayoutInput!) {
   setTaskPayout(input: $input) {
     id
+    events {
+      ...TaskEvent
+    }
   }
 }
-    `;
+    ${TaskEventFragmentDoc}`;
 export type SetTaskPayoutMutationFn = ApolloReactCommon.MutationFunction<SetTaskPayoutMutation, SetTaskPayoutMutationVariables>;
 
 /**
@@ -1691,11 +1697,11 @@ export const SetTaskSkillDocument = gql`
     id
     ethSkillId
     events {
-      sourceId
+      ...TaskEvent
     }
   }
 }
-    `;
+    ${TaskEventFragmentDoc}`;
 export type SetTaskSkillMutationFn = ApolloReactCommon.MutationFunction<SetTaskSkillMutation, SetTaskSkillMutationVariables>;
 
 /**
@@ -1726,12 +1732,12 @@ export const SetTaskTitleDocument = gql`
   setTaskTitle(input: $input) {
     id
     events {
-      sourceId
+      ...TaskEvent
     }
     title
   }
 }
-    `;
+    ${TaskEventFragmentDoc}`;
 export type SetTaskTitleMutationFn = ApolloReactCommon.MutationFunction<SetTaskTitleMutation, SetTaskTitleMutationVariables>;
 
 /**
@@ -1765,11 +1771,11 @@ export const UnassignWorkerDocument = gql`
       id
     }
     events {
-      sourceId
+      ...TaskEvent
     }
   }
 }
-    `;
+    ${TaskEventFragmentDoc}`;
 export type UnassignWorkerMutationFn = ApolloReactCommon.MutationFunction<UnassignWorkerMutation, UnassignWorkerMutationVariables>;
 
 /**
