@@ -332,6 +332,7 @@ function* taskCommentAdd({
           message: comment,
         },
       },
+      // @todo return `Task` from `SendTaskMessage` mutation to avoid needing to `refetchQueries`
       refetchQueries: [
         // fixme Is it possible to improve type safety here?
         { query: TaskFeedEventsDocument, variables: { id: draftId } },

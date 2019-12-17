@@ -105,8 +105,15 @@ query UserTasks($address: String!) {
           avatarHash
         }
       }
+      assignedWorkerAddress
+      cancelledAt
       creatorAddress
+      dueDate
+      ethDomainId
+      ethSkillId
+      finalizedAt
       title
+      workRequestAddresses
     }
   }
 }
@@ -163,7 +170,15 @@ query ColonyTasks($address: String!) {
           avatarHash
         }
       }
+      assignedWorkerAddress
+      cancelledAt
+      creatorAddress
+      dueDate
+      ethDomainId
+      ethSkillId
+      finalizedAt
       title
+      workRequestAddresses
     }
   }
 }
