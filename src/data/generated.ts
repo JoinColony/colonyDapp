@@ -1102,6 +1102,22 @@ export type UserQuery = { user: (
     & { profile: Pick<UserProfile, 'username' | 'walletAddress' | 'displayName' | 'bio' | 'location' | 'website' | 'avatarHash'> }
   ) };
 
+export type UserTasksQueryVariables = {
+  address: Scalars['String']
+};
+
+
+export type UserTasksQuery = { user: (
+    Pick<User, 'id'>
+    & { tasks: Array<(
+      Pick<Task, 'id' | 'creatorAddress' | 'title'>
+      & { assignedWorker: Maybe<(
+        Pick<User, 'id'>
+        & { profile: Pick<UserProfile, 'avatarHash'> }
+      )> }
+    )> }
+  ) };
+
 export type UserTokensQueryVariables = {
   address: Scalars['String']
 };
@@ -1117,16 +1133,6 @@ export type ColonyQueryVariables = {
 export type ColonyQuery = { colony: (
     Pick<Colony, 'id' | 'colonyAddress' | 'colonyName' | 'avatarHash' | 'description' | 'displayName' | 'guideline' | 'website'>
     & { tokens: Array<Pick<ColonyToken, 'address' | 'name' | 'symbol' | 'iconHash'>> }
-  ) };
-
-export type UserTaskIdsQueryVariables = {
-  address: Scalars['String']
-};
-
-
-export type UserTaskIdsQuery = { user: (
-    Pick<User, 'id'>
-    & { tasks: Array<Pick<Task, 'id'>> }
   ) };
 
 export type UserColonyIdsQueryVariables = {
@@ -2409,6 +2415,50 @@ export function useUserLazyQuery(baseOptions?: ApolloReactHooks.LazyQueryHookOpt
 export type UserQueryHookResult = ReturnType<typeof useUserQuery>;
 export type UserLazyQueryHookResult = ReturnType<typeof useUserLazyQuery>;
 export type UserQueryResult = ApolloReactCommon.QueryResult<UserQuery, UserQueryVariables>;
+export const UserTasksDocument = gql`
+    query UserTasks($address: String!) {
+  user(address: $address) {
+    id
+    tasks {
+      id
+      assignedWorker {
+        id
+        profile {
+          avatarHash
+        }
+      }
+      creatorAddress
+      title
+    }
+  }
+}
+    `;
+
+/**
+ * __useUserTasksQuery__
+ *
+ * To run a query within a React component, call `useUserTasksQuery` and pass it any options that fit your needs.
+ * When your component renders, `useUserTasksQuery` returns an object from Apollo Client that contains loading, error, and data properties 
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useUserTasksQuery({
+ *   variables: {
+ *      address: // value for 'address'
+ *   },
+ * });
+ */
+export function useUserTasksQuery(baseOptions?: ApolloReactHooks.QueryHookOptions<UserTasksQuery, UserTasksQueryVariables>) {
+        return ApolloReactHooks.useQuery<UserTasksQuery, UserTasksQueryVariables>(UserTasksDocument, baseOptions);
+      }
+export function useUserTasksLazyQuery(baseOptions?: ApolloReactHooks.LazyQueryHookOptions<UserTasksQuery, UserTasksQueryVariables>) {
+          return ApolloReactHooks.useLazyQuery<UserTasksQuery, UserTasksQueryVariables>(UserTasksDocument, baseOptions);
+        }
+export type UserTasksQueryHookResult = ReturnType<typeof useUserTasksQuery>;
+export type UserTasksLazyQueryHookResult = ReturnType<typeof useUserTasksLazyQuery>;
+export type UserTasksQueryResult = ApolloReactCommon.QueryResult<UserTasksQuery, UserTasksQueryVariables>;
 export const UserTokensDocument = gql`
     query UserTokens($address: String!) {
   user(address: $address) {
@@ -2488,42 +2538,6 @@ export function useColonyLazyQuery(baseOptions?: ApolloReactHooks.LazyQueryHookO
 export type ColonyQueryHookResult = ReturnType<typeof useColonyQuery>;
 export type ColonyLazyQueryHookResult = ReturnType<typeof useColonyLazyQuery>;
 export type ColonyQueryResult = ApolloReactCommon.QueryResult<ColonyQuery, ColonyQueryVariables>;
-export const UserTaskIdsDocument = gql`
-    query UserTaskIds($address: String!) {
-  user(address: $address) {
-    id
-    tasks {
-      id
-    }
-  }
-}
-    `;
-
-/**
- * __useUserTaskIdsQuery__
- *
- * To run a query within a React component, call `useUserTaskIdsQuery` and pass it any options that fit your needs.
- * When your component renders, `useUserTaskIdsQuery` returns an object from Apollo Client that contains loading, error, and data properties 
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useUserTaskIdsQuery({
- *   variables: {
- *      address: // value for 'address'
- *   },
- * });
- */
-export function useUserTaskIdsQuery(baseOptions?: ApolloReactHooks.QueryHookOptions<UserTaskIdsQuery, UserTaskIdsQueryVariables>) {
-        return ApolloReactHooks.useQuery<UserTaskIdsQuery, UserTaskIdsQueryVariables>(UserTaskIdsDocument, baseOptions);
-      }
-export function useUserTaskIdsLazyQuery(baseOptions?: ApolloReactHooks.LazyQueryHookOptions<UserTaskIdsQuery, UserTaskIdsQueryVariables>) {
-          return ApolloReactHooks.useLazyQuery<UserTaskIdsQuery, UserTaskIdsQueryVariables>(UserTaskIdsDocument, baseOptions);
-        }
-export type UserTaskIdsQueryHookResult = ReturnType<typeof useUserTaskIdsQuery>;
-export type UserTaskIdsLazyQueryHookResult = ReturnType<typeof useUserTaskIdsLazyQuery>;
-export type UserTaskIdsQueryResult = ApolloReactCommon.QueryResult<UserTaskIdsQuery, UserTaskIdsQueryVariables>;
 export const UserColonyIdsDocument = gql`
     query UserColonyIds($address: String!) {
   user(address: $address) {

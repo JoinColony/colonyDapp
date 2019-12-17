@@ -2,7 +2,13 @@
 
 import apolloCache from './cache';
 
-import { ColonyQuery, TaskQuery, UserQuery } from './generated';
+import {
+  ColonyQuery,
+  TaskQuery,
+  UserQuery,
+  UserTasksQuery,
+  ColonyTasksQuery,
+} from './generated';
 
 import {
   resolvers as loggedInUserResolvers,
@@ -32,4 +38,7 @@ export * from './helpers';
 // @body when passing down properties to other components we should expect the return type of the query in the upper component. How can we make that work in a simple way?
 export type AnyUser = UserQuery['user'];
 export type AnyColony = ColonyQuery['colony'];
-export type AnyTask = TaskQuery['task'];
+export type AnyTask =
+  | TaskQuery['task']
+  | ColonyTasksQuery['colony']['tasks'][number]
+  | UserTasksQuery['user']['tasks'][number];
