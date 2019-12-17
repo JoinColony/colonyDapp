@@ -17,6 +17,7 @@ import { log } from '~utils/debug';
 import ENSCache from '~lib/ENS';
 import { SetLoggedInUserDocument } from '~data/index';
 
+import setupResolvers from '../../../context/setupResolvers';
 import ColonyManagerType from '../../../lib/ColonyManager';
 import { DDB as DDBType } from '../../../lib/database';
 import { authenticate } from '../../../api';
@@ -139,6 +140,11 @@ export default function* setupUserContext(
       adapter: { provider },
     } = colonyManager.networkClient;
     const balance = yield provider.getBalance(walletAddress);
+
+    // FIXME eventually we want to move everything to resolvers, so all of this has to
+    // happen outside of sagas. There is no need to have a separate state or anything,
+    // just set it up in an aync function (instead of WALLET_CREATE), then call this function
+    yield setupResolvers(apolloClient, { colonyManager, ens, wallet });
 
     yield apolloClient.mutate({
       mutation: SetLoggedInUserDocument,

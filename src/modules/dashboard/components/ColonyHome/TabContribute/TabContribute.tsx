@@ -1,45 +1,60 @@
 import React from 'react';
 
 import { COLONY_TOTAL_BALANCE_DOMAIN_ID } from '~constants';
-import { ColonyTokenReferenceType, ColonyType } from '~immutable/index';
-import { isInRecoveryMode } from '../../../checks';
+import { FullColonyFragment } from '~data/index';
+
+import { tokenIsETH } from '../../../../core/checks';
 import ColonyInitialFunding from '../ColonyInitialFunding';
 import ColonyTasks from '../ColonyTasks';
 
 interface Props {
   allowTaskCreation: boolean;
-  colony: ColonyType;
+  colonyAddress: FullColonyFragment['colonyAddress'];
+  canMintNativeToken: FullColonyFragment['canMintNativeToken'];
+  displayName: FullColonyFragment['displayName'];
   filteredDomainId: number;
   filterOption: string;
-  ethTokenRef: ColonyTokenReferenceType | null;
-  nativeTokenRef: ColonyTokenReferenceType | null;
+  isInRecoveryMode: FullColonyFragment['isInRecoveryMode'];
+  tokens: FullColonyFragment['tokens'];
   showQrCode: boolean;
 }
 
 const TabContribute = ({
   allowTaskCreation,
-  colony,
+  colonyAddress,
+  canMintNativeToken,
+  displayName,
   filteredDomainId,
   filterOption,
-  ethTokenRef,
-  nativeTokenRef,
+  isInRecoveryMode,
+  tokens,
   showQrCode,
 }: Props) => {
-  const isColonyTokenBalanceZero =
+  const nativeTokenRef = tokens.find(token => token.isNative);
+  const ethTokenRef = tokens.find(token => tokenIsETH(token));
+
+  const nativeTokenTotalBalance =
     nativeTokenRef &&
     nativeTokenRef.balances &&
-    nativeTokenRef.balances[COLONY_TOTAL_BALANCE_DOMAIN_ID] &&
-    nativeTokenRef.balances[COLONY_TOTAL_BALANCE_DOMAIN_ID].isZero();
-  const isEthBalanceZero =
+    nativeTokenRef.balances.find(
+      balance => balance.domainId === COLONY_TOTAL_BALANCE_DOMAIN_ID,
+    );
+  const isColonyTokenBalanceZero =
+    nativeTokenTotalBalance && nativeTokenTotalBalance.balance === '0';
+
+  const ethTotalBalance =
     ethTokenRef &&
     ethTokenRef.balances &&
-    ethTokenRef.balances[COLONY_TOTAL_BALANCE_DOMAIN_ID] &&
-    ethTokenRef.balances[COLONY_TOTAL_BALANCE_DOMAIN_ID].isZero();
+    ethTokenRef.balances.find(
+      balance => balance.domainId === COLONY_TOTAL_BALANCE_DOMAIN_ID,
+    );
+
+  const isEthBalanceZero = ethTotalBalance && ethTotalBalance.balance === '0';
 
   const canMintTokens = !!(
     nativeTokenRef &&
     !nativeTokenRef.isExternal &&
-    colony.canMintNativeToken
+    canMintNativeToken
   );
   const showEmptyState = !(
     nativeTokenRef &&
@@ -56,8 +71,8 @@ const TabContribute = ({
          */
         <ColonyInitialFunding
           canMintTokens={canMintTokens}
-          colonyAddress={colony.colonyAddress}
-          displayName={colony.displayName}
+          colonyAddress={colonyAddress}
+          displayName={displayName}
           isExternal={nativeTokenRef.isExternal}
           showQrCode={showQrCode}
           tokenAddress={nativeTokenRef.address}
@@ -65,10 +80,10 @@ const TabContribute = ({
       )}
       <ColonyTasks
         canCreateTask={allowTaskCreation}
-        colonyAddress={colony.colonyAddress}
+        colonyAddress={colonyAddress}
         filteredDomainId={filteredDomainId}
         filterOption={filterOption}
-        isInRecoveryMode={isInRecoveryMode(colony)}
+        isInRecoveryMode={isInRecoveryMode}
         canMintTokens={canMintTokens}
         showEmptyState={showEmptyState}
       />

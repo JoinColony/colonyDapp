@@ -92,7 +92,13 @@ interface Props {
 }
 
 const ProfileAdvanced = ({
-  colony: { colonyAddress, id, version, canUnlockNativeToken },
+  colony: {
+    colonyAddress,
+    id,
+    version,
+    canUnlockNativeToken,
+    isNativeTokenLocked,
+  },
   colony,
   rootRoles,
 }: Props) => {
@@ -174,7 +180,7 @@ const ProfileAdvanced = ({
           }
         />
       </section>
-      {canUnlockNativeToken && (
+      {canUnlockNativeToken && isNativeTokenLocked && (
         <section className={styles.section}>
           <hr />
           <Heading
