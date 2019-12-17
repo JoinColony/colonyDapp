@@ -12,6 +12,7 @@ query Task($id: String!) {
         walletAddress
       }
     }
+    assignedWorkerAddress
     cancelledAt
     colony {
       id
@@ -20,6 +21,7 @@ query Task($id: String!) {
       avatarHash
       displayName
     }
+    colonyAddress
     creator {
       id
       profile {
@@ -29,6 +31,7 @@ query Task($id: String!) {
         walletAddress
       }
     }
+    creatorAddress
     description
     dueDate
     ethDomainId
@@ -45,6 +48,7 @@ query Task($id: String!) {
         walletAddress
       }
     }
+    workInviteAddresses
     workRequests {
       id
       profile {
@@ -54,6 +58,7 @@ query Task($id: String!) {
         walletAddress
       }
     }
+    workRequestAddresses
   }
 }
 
