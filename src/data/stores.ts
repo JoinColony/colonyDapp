@@ -1,6 +1,7 @@
 import { ColonyClient as ColonyClientType } from '@colony/colony-js-client';
 // import { WalletObjectType } from '@colony/purser-core/flowtypes';
 
+import { AnyTask } from '~data/index';
 import { Address, ColonyClient, Wallet, DDB } from '~types/index';
 import {
   ColonyStore,
@@ -102,7 +103,7 @@ export const getTaskStore = (
   taskStoreAddress,
 }: {
   colonyAddress: Address;
-  draftId: string;
+  draftId: AnyTask['id'];
   taskStoreAddress: string;
 }) =>
   ddb.getStore<TaskStore>(taskStoreBlueprint, taskStoreAddress, {
@@ -121,7 +122,7 @@ export const getCommentsStore = (ddb: DDB) => async ({
 }: {
   colonyAddress: Address;
   commentsStoreAddress: string;
-  draftId: string;
+  draftId: AnyTask['id'];
 }) =>
   ddb.getStore<CommentsStore>(commentsStoreBlueprint, commentsStoreAddress, {
     chainId: CHAIN_ID,
@@ -138,7 +139,7 @@ export const createTaskStore = (
   domainId,
   colonyAddress,
 }: {
-  draftId: string;
+  draftId:  AnyTask['id'];
   domainId: number;
   colonyAddress: Address;
 }) => {
@@ -169,7 +170,7 @@ export const getTaskStoreAddress = (
   draftId,
   colonyAddress,
 }: {
-  draftId: string;
+  draftId: AnyTask['id'];
   colonyAddress: Address;
 }) =>
   ddb.generateStoreAddress(taskStoreBlueprint, {
@@ -184,7 +185,7 @@ export const getCommentsStoreAddress = (ddb: DDB) => async ({
   draftId,
   colonyAddress,
 }: {
-  draftId: string;
+  draftId:  AnyTask['id'];
   colonyAddress: Address;
 }) =>
   ddb.generateStoreAddress(commentsStoreBlueprint, {

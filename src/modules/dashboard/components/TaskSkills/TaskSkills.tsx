@@ -4,7 +4,7 @@ import { defineMessages, FormattedMessage } from 'react-intl';
 import Button from '~core/Button';
 import Heading from '~core/Heading';
 import ItemsList from '~core/ItemsList';
-import { useSetTaskSkillMutation } from '~data/index';
+import { useSetTaskSkillMutation, AnyTask } from '~data/index';
 
 import styles from './TaskSkills.css';
 import taskSkillsTree from './taskSkillsTree';
@@ -29,7 +29,7 @@ const MSG = defineMessages({
 
 interface Props {
   disabled?: boolean;
-  draftId: string;
+  draftId: AnyTask['id'];
   ethSkillId: number | void;
 }
 

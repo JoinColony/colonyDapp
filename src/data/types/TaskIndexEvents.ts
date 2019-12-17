@@ -1,3 +1,4 @@
+import { AnyTask } from '~data/index';
 import { EventDefinition } from './events';
 import { EventTypes, Versions } from '../constants';
 
@@ -6,7 +7,7 @@ export type TaskIndexEvents =
       EventTypes.TASK_STORE_REGISTERED,
       {
         commentsStoreAddress: string;
-        draftId: string;
+        draftId: AnyTask['id'];
         taskStoreAddress: string;
       },
       Versions.V1
@@ -14,7 +15,7 @@ export type TaskIndexEvents =
   | EventDefinition<
       EventTypes.TASK_STORE_UNREGISTERED,
       {
-        draftId: string;
+        draftId: AnyTask['id'];
         taskStoreAddress: string;
       },
       Versions.V1
@@ -23,7 +24,7 @@ export type TaskIndexEvents =
       EventTypes.TASK_STORE_REGISTERED,
       {
         commentsStoreAddress: string;
-        draftId: string;
+        draftId: AnyTask['id'];
         taskStoreAddress: string;
         domainId: number;
       },
@@ -32,7 +33,7 @@ export type TaskIndexEvents =
   | EventDefinition<
       EventTypes.TASK_STORE_UNREGISTERED,
       {
-        draftId: string;
+        draftId: AnyTask['id'];
         taskStoreAddress: string;
         domainId: number;
       },

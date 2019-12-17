@@ -29,7 +29,7 @@ import { ActionTypes } from '~redux/index';
 import HookedUserAvatar from '~users/HookedUserAvatar';
 import { mapPayload, mergePayload, pipe } from '~utils/actions';
 import { useDataFetcher, useSelector } from '~utils/hooks';
-import { AnyUser, ColonySubscribedUsersDocument } from '~data/index';
+import { AnyUser, ColonySubscribedUsersDocument, AnyTask } from '~data/index';
 
 import { createAddress } from '../../../../types';
 import { useColonyTokens } from '../../hooks/useColonyTokens';
@@ -103,7 +103,7 @@ const MSG = defineMessages({
 interface Props {
   cancel: () => void;
   close: () => void;
-  draftId: string;
+  draftId: AnyTask['id'];
   maxTokens?: number;
   minTokens?: number;
 }

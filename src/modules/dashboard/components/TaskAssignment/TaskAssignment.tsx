@@ -2,7 +2,7 @@ import React from 'react';
 
 import Assignment from '~core/Assignment';
 import { SpinnerLoader } from '~core/Preloaders';
-import { useTaskQuery, useUser } from '~data/index';
+import { useTaskQuery, useUser, AnyTask } from '~data/index';
 import { Address } from '~types/index';
 
 import { useColonyNativeToken } from '../../hooks/useColonyNativeToken';
@@ -10,7 +10,7 @@ import { useColonyTokens } from '../../hooks/useColonyTokens';
 
 // eslint-disable-next-line @typescript-eslint/no-empty-interface
 interface Props {
-  draftId: string;
+  draftId: AnyTask['id'];
   colonyAddress: Address;
 }
 
