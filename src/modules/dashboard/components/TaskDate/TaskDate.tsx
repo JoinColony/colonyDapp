@@ -5,7 +5,7 @@ import Heading from '~core/Heading';
 import Button from '~core/Button';
 import DatePicker from '~core/DatePicker';
 import Form from '~core/Fields/Form';
-import { useSetTaskDueDateMutation } from '~data/index';
+import { useSetTaskDueDateMutation, AnyTask } from '~data/index';
 
 import styles from './TaskDate.css';
 
@@ -33,7 +33,7 @@ interface FormValues {
 
 interface Props {
   disabled?: boolean;
-  draftId: string;
+  draftId: AnyTask['id'];
   dueDate: string | void;
 }
 

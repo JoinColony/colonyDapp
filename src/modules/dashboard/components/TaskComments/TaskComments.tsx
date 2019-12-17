@@ -12,7 +12,7 @@ import { ActionForm, TextareaAutoresize } from '~core/Fields';
 import { OnSuccess } from '~core/Fields/Form/ActionForm';
 import Button from '~core/Button';
 import unfinishedProfileOpener from '~users/UnfinishedProfile';
-import { useLoggedInUser } from '~data/index';
+import { useLoggedInUser, AnyTask } from '~data/index';
 
 import styles from './TaskComments.css';
 
@@ -45,7 +45,7 @@ type FormValues = {
 interface Props extends FormikProps<FormValues> {
   colonyAddress: Address;
   openDialog: OpenDialog;
-  draftId: string;
+  draftId: AnyTask['id'];
   history: any;
   taskTitle: string;
 }

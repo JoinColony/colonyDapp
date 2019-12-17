@@ -3,7 +3,7 @@ import { defineMessages, FormattedMessage } from 'react-intl';
 
 import { SpinnerLoader } from '~core/Preloaders';
 import { EventTypes } from '~data/constants';
-import { useTaskFeedEventsQuery, TaskMessageEvent } from '~data/index';
+import { useTaskFeedEventsQuery, TaskMessageEvent, AnyTask } from '~data/index';
 import { Address } from '~types/index';
 
 import TaskFeedCompleteInfo from './TaskFeedCompleteInfo';
@@ -16,7 +16,7 @@ const displayName = 'dashboard.TaskFeed';
 
 interface Props {
   colonyAddress: Address;
-  draftId: string;
+  draftId: AnyTask['id'];
 }
 
 const MSG = defineMessages({

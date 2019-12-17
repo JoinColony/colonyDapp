@@ -3,7 +3,7 @@ import React, { useCallback } from 'react';
 import { defineMessages } from 'react-intl';
 
 import { SingleLineEdit, Form } from '~core/Fields';
-import { useSetTaskTitleMutation } from '~data/index';
+import { useSetTaskTitleMutation, AnyTask } from '~data/index';
 
 const MSG = defineMessages({
   placeholder: {
@@ -17,7 +17,7 @@ interface FormValues {
 }
 
 interface Props {
-  draftId: string;
+  draftId: AnyTask['id'];
   disabled: boolean;
   title: string | void;
 }

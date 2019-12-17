@@ -1,5 +1,6 @@
 import { Map as ImmutableMap, Record } from 'immutable';
 
+import { AnyTask } from '~data/index';
 import { Address, DefaultValues } from '~types/index';
 import {
   FetchableDataRecord,
@@ -27,7 +28,7 @@ export * from './TEMP_AllUserHasRecoveryRoles';
 
 type TaskMetadataObject = { [draftId: string]: TaskMetadataRecord };
 
-export type TaskMetadataMap = ImmutableMap<string, TaskMetadataRecord> & {
+export type TaskMetadataMap = ImmutableMap<AnyTask['id'], TaskMetadataRecord> & {
   toJS(): TaskMetadataObject;
 };
 
