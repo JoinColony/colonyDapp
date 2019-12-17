@@ -1061,7 +1061,7 @@ export type TaskQueryVariables = {
 
 
 export type TaskQuery = { task: (
-    Pick<Task, 'id' | 'cancelledAt' | 'description' | 'dueDate' | 'ethDomainId' | 'ethSkillId' | 'ethTaskId' | 'finalizedAt' | 'title'>
+    Pick<Task, 'id' | 'assignedWorkerAddress' | 'cancelledAt' | 'colonyAddress' | 'creatorAddress' | 'description' | 'dueDate' | 'ethDomainId' | 'ethSkillId' | 'ethTaskId' | 'finalizedAt' | 'title' | 'workInviteAddresses' | 'workRequestAddresses'>
     & { assignedWorker: Maybe<(
       Pick<User, 'id'>
       & { profile: Pick<UserProfile, 'avatarHash' | 'displayName' | 'username' | 'walletAddress'> }
@@ -2221,6 +2221,7 @@ export const TaskDocument = gql`
         walletAddress
       }
     }
+    assignedWorkerAddress
     cancelledAt
     colony {
       id
@@ -2229,6 +2230,7 @@ export const TaskDocument = gql`
       avatarHash
       displayName
     }
+    colonyAddress
     creator {
       id
       profile {
@@ -2238,6 +2240,7 @@ export const TaskDocument = gql`
         walletAddress
       }
     }
+    creatorAddress
     description
     dueDate
     ethDomainId
@@ -2254,6 +2257,7 @@ export const TaskDocument = gql`
         walletAddress
       }
     }
+    workInviteAddresses
     workRequests {
       id
       profile {
@@ -2263,6 +2267,7 @@ export const TaskDocument = gql`
         walletAddress
       }
     }
+    workRequestAddresses
   }
 }
     `;
