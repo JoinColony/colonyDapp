@@ -22,7 +22,6 @@ import Heading from '~core/Heading';
 import Button, { ActionButton } from '~core/Button';
 import RecoveryModeAlert from '~admin/RecoveryModeAlert';
 import LoadingTemplate from '~pages/LoadingTemplate';
-import { useLoggedInUser } from '~data/index';
 import BreadCrumb from '~core/BreadCrumb';
 import {
   colonyAddressFetcher,
