@@ -2,12 +2,7 @@ import { all, call, fork, put, takeEvery } from 'redux-saga/effects';
 
 import { ROOT_DOMAIN } from '~constants';
 import { Action, ActionTypes, AllActions } from '~redux/index';
-import {
-  putError,
-  takeFrom,
-  executeQuery,
-  executeCommand,
-} from '~utils/saga/effects';
+import { putError, takeFrom } from '~utils/saga/effects';
 import { ContractContexts } from '~types/index';
 import { getContext, Context } from '~context/index';
 // import { decorateLog } from '~utils/web3/eventLogs/events';
@@ -46,7 +41,7 @@ function* colonyDomainsFetch({
 
     const { data }: ColonyDomainsQueryResult = yield apolloClient.query<
       ColonyDomainsQuery,
-      ColonyDomainsQueryVariables,
+      ColonyDomainsQueryVariables
     >({
       query: ColonyDomainsDocument,
       variables: { colonyAddress },
@@ -78,7 +73,6 @@ function* colonyDomainsFetch({
 
 function* domainCreate({
   payload: { colonyAddress, domainName: name, parentDomainId = ROOT_DOMAIN },
-  payload,
   meta,
 }: Action<ActionTypes.DOMAIN_CREATE>) {
   const txChannel = yield call(getTxChannel, meta.id);
@@ -115,7 +109,7 @@ function* domainCreate({
      */
     yield apolloClient.mutate<
       CreateDomainMutation,
-      CreateDomainMutationVariables,
+      CreateDomainMutationVariables
     >({
       mutation: CreateDomainDocument,
       variables: {
@@ -164,10 +158,7 @@ function* domainEdit({
     /*
      * Update the domain's name in the mongo database
      */
-    yield apolloClient.mutate<
-      EditDomainMutation,
-      EditDomainMutationVariables,
-    >({
+    yield apolloClient.mutate<EditDomainMutation, EditDomainMutationVariables>({
       mutation: EditDomainDocument,
       variables: {
         input: {

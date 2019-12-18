@@ -15,7 +15,6 @@ import {
   colonyTaskIndex as colonyTaskIndexStoreBlueprint,
   comments as commentsStoreBlueprint,
   task as taskStoreBlueprint,
-  userProfile as userProfileStoreBlueprint,
 } from './blueprints';
 
 // This should be more specific
