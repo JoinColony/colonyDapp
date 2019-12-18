@@ -69,9 +69,8 @@ fragment EventFields on Event {
   type
 }
 
-fragment TaskEvent on Event {
-  ...EventFields
-  context {
+fragment EventContext on Event {
+    context {
     ... on AssignWorkerEvent {
       taskId
       type
@@ -148,4 +147,9 @@ fragment TaskEvent on Event {
       workerAddress
     }
   }
+}
+
+fragment TaskEvent on Event {
+  ...EventFields
+  ...EventContext
 }

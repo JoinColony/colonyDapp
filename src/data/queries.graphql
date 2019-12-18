@@ -1,4 +1,4 @@
-#import './fragments.graphql'
+# import './fragments.graphql'
 
 query Task($id: String!) {
   task(id: $id) {
@@ -366,6 +366,7 @@ query UserNotifications($address: String!) {
         initiatorAddress
         sourceId
         sourceType
+        ...EventContext
       }
       read
     }
