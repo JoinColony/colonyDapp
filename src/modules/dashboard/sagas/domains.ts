@@ -1,3 +1,4 @@
+import ApolloClient from 'apollo-client';
 import { all, call, fork, put, takeEvery } from 'redux-saga/effects';
 
 import { ROOT_DOMAIN } from '~constants';
