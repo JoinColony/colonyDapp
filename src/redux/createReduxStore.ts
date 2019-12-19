@@ -35,16 +35,10 @@ const duplicateActionGuardMiddleware = createDuplicateActionGuardMiddleware(
 // Allows useDataSubsctiber to always dispatch, and prevents those actions from
 // propagating while something is already being subscribed to, or other
 // instances of useDataSubscriber are still reliant on a subscription.
-const subscriberMiddleware = createSubscriberMiddleware(
-  [
-    ActionTypes.COLONY_TASK_METADATA_SUB_START,
-    ActionTypes.COLONY_TASK_METADATA_SUB_STOP,
-  ],
-  [
-    ActionTypes.CONNECTION_STATS_SUB_START,
-    ActionTypes.CONNECTION_STATS_SUB_STOP,
-  ],
-);
+const subscriberMiddleware = createSubscriberMiddleware([
+  ActionTypes.CONNECTION_STATS_SUB_START,
+  ActionTypes.CONNECTION_STATS_SUB_STOP,
+]);
 
 const composeEnhancer =
   // @ts-ignore

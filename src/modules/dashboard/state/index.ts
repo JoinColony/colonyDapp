@@ -16,7 +16,6 @@ import { TEMP_AllUserHasRecoveryRoles } from './TEMP_AllUserHasRecoveryRoles';
 import {
   DASHBOARD_ALL_COLONIES,
   DASHBOARD_ALL_DOMAINS,
-  DASHBOARD_TASK_METADATA,
   DASHBOARD_ALL_TOKENS,
   TEMP_DASHBOARD_ALL_USER_HAS_RECOVERY_ROLES,
 } from '../constants';
@@ -47,7 +46,6 @@ export type AllTaskMetadataMap = ImmutableMap<
 export interface DashboardStateProps {
   [DASHBOARD_ALL_COLONIES]: AllColoniesRecord;
   [DASHBOARD_ALL_DOMAINS]: AllDomainsMap;
-  [DASHBOARD_TASK_METADATA]: AllTaskMetadataMap;
   [DASHBOARD_ALL_TOKENS]: AllTokensMap;
   [TEMP_DASHBOARD_ALL_USER_HAS_RECOVERY_ROLES]: TEMP_AllUserHasRecoveryRoles;
 }
@@ -55,7 +53,6 @@ export interface DashboardStateProps {
 const defaultValues: DefaultValues<DashboardStateProps> = {
   [DASHBOARD_ALL_COLONIES]: new AllColoniesRecord(),
   [DASHBOARD_ALL_DOMAINS]: ImmutableMap() as AllDomainsMap,
-  [DASHBOARD_TASK_METADATA]: ImmutableMap() as AllTaskMetadataMap,
   [DASHBOARD_ALL_TOKENS]: AllTokensInitialState,
   // eslint-disable-next-line max-len
   [TEMP_DASHBOARD_ALL_USER_HAS_RECOVERY_ROLES]: ImmutableMap() as TEMP_AllUserHasRecoveryRoles,
