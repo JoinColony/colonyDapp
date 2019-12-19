@@ -19,25 +19,25 @@ import TaskFeed from '~dashboard/TaskFeed';
 import TaskRequestWork from '~dashboard/TaskRequestWork';
 import TaskSkills from '~dashboard/TaskSkills';
 import TaskTitle from '~dashboard/TaskTitle';
-
-import {
-  canCancelTask,
-  canEditTask,
-  canFinalizeTask,
-  isCancelled,
-  canRequestToWork,
-  isFinalized,
-} from '../../checks';
 import { useLoggedInUser } from '~data/helpers';
 import {
   AnyColony,
-  useTaskQuery,
-  useCancelTaskMutation,
   AnyTask,
+  useCancelTaskMutation,
+  useTaskQuery,
 } from '~data/index';
 import LoadingTemplate from '~pages/LoadingTemplate';
 import { ActionTypes } from '~redux/index';
 import { mergePayload } from '~utils/actions';
+
+import {
+  canCancelTask,
+  canFinalizeTask,
+  canRequestToWork,
+  isCancelled,
+  isFinalized,
+} from '../../checks';
+
 import styles from './Task.css';
 
 const MSG = defineMessages({
