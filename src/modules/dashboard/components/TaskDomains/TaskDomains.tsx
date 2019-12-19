@@ -88,7 +88,7 @@ const TaskDomains = ({
     [colonyAddress],
   );
 
-  // @todo get centralized payouts
+  // fixme get centralized payouts
   const payouts = [];
   const tokens = useSelector(colonyTokensSelector, [colonyAddress]);
 
