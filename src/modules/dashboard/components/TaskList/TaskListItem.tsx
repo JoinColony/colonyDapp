@@ -53,7 +53,7 @@ const TaskListItem = ({
   const defaultTitle = formatMessage(MSG.untitled);
   const { id: draftId, assignedWorkerAddress, title = defaultTitle } = data;
 
-  // @todo get payouts from centralized store
+  // fixme get payouts from centralized store
   const payouts = [];
 
   // @todo get reputation from centralized store

@@ -39,6 +39,7 @@ query Task($id: String!) {
     ethSkillId
     ethTaskId
     finalizedAt
+    # fixme return payouts as well
     title
     workInvites {
       id
