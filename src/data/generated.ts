@@ -109,7 +109,7 @@ export type CreateColonyInput = {
 
 export type CreateDomainEvent = ColonyEvent & {
   type: Scalars['String'],
-  ethDomainId: Scalars['String'],
+  ethDomainId: Scalars['Int'],
   colonyAddress: Scalars['String'],
 };
 
@@ -123,7 +123,7 @@ export type CreateDomainInput = {
 export type CreateTaskEvent = TaskEvent & {
   type: Scalars['String'],
   taskId: Scalars['String'],
-  ethDomainId: Scalars['String'],
+  ethDomainId: Scalars['Int'],
   colonyAddress: Scalars['String'],
 };
 
@@ -199,7 +199,7 @@ export type Event = {
   context: EventContext,
 };
 
-export type EventContext = AssignWorkerEvent | CancelTaskEvent | CreateDomainEvent | CreateTaskEvent | CreateWorkRequestEvent | FinalizeTaskEvent | RemoveTaskPayoutEvent | SendWorkInviteEvent | SetTaskDescriptionEvent | SetTaskDomainEvent | SetTaskDueDateEvent | SetTaskPayoutEvent | SetTaskSkillEvent | SetTaskTitleEvent | TaskMessageEvent | UnassignWorkerEvent;
+export type EventContext = AssignWorkerEvent | CancelTaskEvent | CreateDomainEvent | CreateTaskEvent | CreateWorkRequestEvent | FinalizeTaskEvent | NewUserEvent | RemoveTaskPayoutEvent | SendWorkInviteEvent | SetTaskDescriptionEvent | SetTaskDomainEvent | SetTaskDueDateEvent | SetTaskPayoutEvent | SetTaskSkillEvent | SetTaskTitleEvent | TaskMessageEvent | UnassignWorkerEvent;
 
 export type FinalizeTaskEvent = TaskEvent & {
   type: Scalars['String'],
@@ -237,7 +237,6 @@ export type Mutation = {
   editUser?: Maybe<User>,
   subscribeToColony?: Maybe<User>,
   unsubscribeFromColony?: Maybe<User>,
-  setUserTokens?: Maybe<User>,
   createColony?: Maybe<Colony>,
   editColonyProfile?: Maybe<Colony>,
   createDomain?: Maybe<Domain>,
@@ -258,9 +257,7 @@ export type Mutation = {
   unassignWorker?: Maybe<Task>,
   createToken?: Maybe<Token>,
   addColonyTokenReference?: Maybe<Token>,
-  addUserTokenReference?: Maybe<Token>,
   setColonyTokenAvatar?: Maybe<Token>,
-  setUserTokenAvatar?: Maybe<Token>,
   markAllNotificationsAsRead: Scalars['Boolean'],
   markNotificationAsRead: Scalars['Boolean'],
   sendTaskMessage: Scalars['Boolean'],
@@ -285,11 +282,6 @@ export type MutationSubscribeToColonyArgs = {
 
 export type MutationUnsubscribeFromColonyArgs = {
   input: UnsubscribeFromColonyInput
-};
-
-
-export type MutationSetUserTokensArgs = {
-  input: SetUserTokensInput
 };
 
 
@@ -393,18 +385,8 @@ export type MutationAddColonyTokenReferenceArgs = {
 };
 
 
-export type MutationAddUserTokenReferenceArgs = {
-  input: AddUserTokenReferenceInput
-};
-
-
 export type MutationSetColonyTokenAvatarArgs = {
   input: SetColonyTokenAvatarInput
-};
-
-
-export type MutationSetUserTokenAvatarArgs = {
-  input: SetUserTokenAvatarInput
 };
 
 
@@ -422,7 +404,12 @@ export type MutationSetLoggedInUserArgs = {
   input?: Maybe<LoggedInUserInput>
 };
 
+export type NewUserEvent = {
+  type: Scalars['String'],
+};
+
 export type Notification = {
+  id: Scalars['String'],
   event: Event,
   read: Scalars['Boolean'],
 };
@@ -472,9 +459,7 @@ export type RemoveTaskPayoutEvent = TaskEvent & {
 export type RemoveTaskPayoutInput = {
   id: Scalars['String'],
   amount: Scalars['String'],
-  token: Scalars['String'],
   tokenAddress: Scalars['String'],
-  ethDomainId: Scalars['Int'],
 };
 
 export type SendTaskMessageInput = {
@@ -485,8 +470,7 @@ export type SendTaskMessageInput = {
 export type SendWorkInviteEvent = TaskEvent & {
   type: Scalars['String'],
   taskId: Scalars['String'],
-  tokenAddress: Scalars['String'],
-  amount: Scalars['String'],
+  workerAddress: Scalars['String'],
 };
 
 export type SendWorkInviteInput = {
@@ -514,7 +498,7 @@ export type SetTaskDescriptionInput = {
 export type SetTaskDomainEvent = TaskEvent & {
   type: Scalars['String'],
   taskId: Scalars['String'],
-  ethDomainId: Scalars['String'],
+  ethDomainId: Scalars['Int'],
 };
 
 export type SetTaskDomainInput = {
@@ -525,24 +509,25 @@ export type SetTaskDomainInput = {
 export type SetTaskDueDateEvent = TaskEvent & {
   type: Scalars['String'],
   taskId: Scalars['String'],
-  dueDate: Scalars['Int'],
+  dueDate: Scalars['DateTime'],
 };
 
 export type SetTaskDueDateInput = {
   id: Scalars['String'],
-  dueDate: Scalars['Int'],
+  dueDate?: Maybe<Scalars['DateTime']>,
 };
 
 export type SetTaskPayoutEvent = TaskEvent & {
   type: Scalars['String'],
   taskId: Scalars['String'],
+  tokenAddress: Scalars['String'],
+  amount: Scalars['String'],
 };
 
 export type SetTaskPayoutInput = {
   id: Scalars['String'],
   amount: Scalars['String'],
   tokenAddress: Scalars['String'],
-  ethDomainId: Scalars['Int'],
 };
 
 export type SetTaskSkillEvent = TaskEvent & {
@@ -586,10 +571,10 @@ export type Task = {
   ethTaskId?: Maybe<Scalars['Int']>,
   ethDomainId: Scalars['Int'],
   ethSkillId?: Maybe<Scalars['Int']>,
-  cancelledAt?: Maybe<Scalars['Int']>,
+  cancelledAt?: Maybe<Scalars['DateTime']>,
   description?: Maybe<Scalars['String']>,
-  dueDate?: Maybe<Scalars['Int']>,
-  finalizedAt?: Maybe<Scalars['Int']>,
+  dueDate?: Maybe<Scalars['DateTime']>,
+  finalizedAt?: Maybe<Scalars['DateTime']>,
   title?: Maybe<Scalars['String']>,
   colony?: Maybe<Colony>,
   colonyAddress: Scalars['String'],
@@ -602,6 +587,7 @@ export type Task = {
   workRequests: Array<User>,
   workRequestAddresses: Array<Scalars['String']>,
   events: Array<Event>,
+  payouts: Array<TaskPayout>,
 };
 
 export type TaskEvent = {
@@ -619,12 +605,18 @@ export type TaskMessageEvent = TaskEvent & {
   message: Scalars['String'],
 };
 
+export type TaskPayout = {
+  amount: Scalars['String'],
+  tokenAddress: Scalars['String'],
+};
+
 export type Token = IToken & {
   id: Scalars['String'],
   createdAt: Scalars['DateTime'],
   address: Scalars['String'],
   name: Scalars['String'],
   symbol: Scalars['String'],
+  decimals: Scalars['Int'],
   iconHash?: Maybe<Scalars['String']>,
 };
 
@@ -652,8 +644,8 @@ export type User = {
   colonyAddresses: Array<Scalars['String']>,
   tasks: Array<Task>,
   taskIds: Array<Scalars['String']>,
-  tokens: Array<Scalars['String']>,
-  tokenRefs: Array<Maybe<UserTokenRef>>,
+  tokens: Array<UserToken>,
+  tokenAddresses: Array<Scalars['String']>,
   notifications?: Maybe<Array<Notification>>,
 };
 
@@ -681,11 +673,6 @@ export type UserToken = IToken & {
   iconHash?: Maybe<Scalars['String']>,
 };
 
-export type UserTokenRef = {
-  address: Scalars['String'],
-  iconHash?: Maybe<Scalars['String']>,
-};
-
 export type SetLoggedInUserMutationVariables = {
   input: LoggedInUserInput
 };
@@ -710,13 +697,6 @@ export type EditUserMutation = { editUser: Maybe<(
     Pick<User, 'id'>
     & { profile: Pick<UserProfile, 'avatarHash' | 'bio' | 'displayName' | 'location' | 'website'> }
   )> };
-
-export type SetUserTokensMutationVariables = {
-  input: SetUserTokensInput
-};
-
-
-export type SetUserTokensMutation = { setUserTokens: Maybe<Pick<User, 'id' | 'tokens'>> };
 
 export type CreateColonyMutationVariables = {
   input: CreateColonyInput
@@ -758,6 +738,20 @@ export type UnsubscribeFromColonyMutationVariables = {
 
 export type UnsubscribeFromColonyMutation = { unsubscribeFromColony: Maybe<Pick<User, 'id'>> };
 
+export type CreateDomainMutationVariables = {
+  input: CreateDomainInput
+};
+
+
+export type CreateDomainMutation = { createDomain: Maybe<Pick<Domain, 'id' | 'ethDomainId' | 'ethParentDomainId' | 'name'>> };
+
+export type EditDomainMutationVariables = {
+  input: EditDomainNameInput
+};
+
+
+export type EditDomainMutation = { editDomainName: Maybe<Pick<Domain, 'id' | 'ethDomainId' | 'ethParentDomainId' | 'name'>> };
+
 export type LoggedInUserQueryVariables = {};
 
 
@@ -778,7 +772,7 @@ export type UserTokensQueryVariables = {
 };
 
 
-export type UserTokensQuery = { user: Pick<User, 'id' | 'tokens'> };
+export type UserTokensQuery = { user: Pick<User, 'id'> };
 
 export type ColonyQueryVariables = {
   address: Scalars['String']
@@ -820,6 +814,30 @@ export type ColonySubscribedUsersQuery = { colony: (
     & { subscribedUsers: Array<(
       Pick<User, 'id'>
       & { profile: Pick<UserProfile, 'avatarHash' | 'displayName' | 'username' | 'walletAddress'> }
+    )> }
+  ) };
+
+export type DomainQueryVariables = {
+  colonyAddress: Scalars['String'],
+  ethDomainId: Scalars['Int']
+};
+
+
+export type DomainQuery = { domain: (
+    Pick<Domain, 'id' | 'ethDomainId' | 'name'>
+    & { parent: Maybe<Pick<Domain, 'ethDomainId'>> }
+  ) };
+
+export type ColonyDomainsQueryVariables = {
+  colonyAddress: Scalars['String']
+};
+
+
+export type ColonyDomainsQuery = { colony: (
+    Pick<Colony, 'id'>
+    & { domains: Array<(
+      Pick<Domain, 'id' | 'ethDomainId' | 'name'>
+      & { parent: Maybe<Pick<Domain, 'id'>> }
     )> }
   ) };
 
@@ -931,39 +949,6 @@ export function useEditUserMutation(baseOptions?: ApolloReactHooks.MutationHookO
 export type EditUserMutationHookResult = ReturnType<typeof useEditUserMutation>;
 export type EditUserMutationResult = ApolloReactCommon.MutationResult<EditUserMutation>;
 export type EditUserMutationOptions = ApolloReactCommon.BaseMutationOptions<EditUserMutation, EditUserMutationVariables>;
-export const SetUserTokensDocument = gql`
-    mutation SetUserTokens($input: SetUserTokensInput!) {
-  setUserTokens(input: $input) {
-    id
-    tokens
-  }
-}
-    `;
-export type SetUserTokensMutationFn = ApolloReactCommon.MutationFunction<SetUserTokensMutation, SetUserTokensMutationVariables>;
-
-/**
- * __useSetUserTokensMutation__
- *
- * To run a mutation, you first call `useSetUserTokensMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useSetUserTokensMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [setUserTokensMutation, { data, loading, error }] = useSetUserTokensMutation({
- *   variables: {
- *      input: // value for 'input'
- *   },
- * });
- */
-export function useSetUserTokensMutation(baseOptions?: ApolloReactHooks.MutationHookOptions<SetUserTokensMutation, SetUserTokensMutationVariables>) {
-        return ApolloReactHooks.useMutation<SetUserTokensMutation, SetUserTokensMutationVariables>(SetUserTokensDocument, baseOptions);
-      }
-export type SetUserTokensMutationHookResult = ReturnType<typeof useSetUserTokensMutation>;
-export type SetUserTokensMutationResult = ApolloReactCommon.MutationResult<SetUserTokensMutation>;
-export type SetUserTokensMutationOptions = ApolloReactCommon.BaseMutationOptions<SetUserTokensMutation, SetUserTokensMutationVariables>;
 export const CreateColonyDocument = gql`
     mutation CreateColony($input: CreateColonyInput!) {
   createColony(input: $input) {
@@ -1164,6 +1149,76 @@ export function useUnsubscribeFromColonyMutation(baseOptions?: ApolloReactHooks.
 export type UnsubscribeFromColonyMutationHookResult = ReturnType<typeof useUnsubscribeFromColonyMutation>;
 export type UnsubscribeFromColonyMutationResult = ApolloReactCommon.MutationResult<UnsubscribeFromColonyMutation>;
 export type UnsubscribeFromColonyMutationOptions = ApolloReactCommon.BaseMutationOptions<UnsubscribeFromColonyMutation, UnsubscribeFromColonyMutationVariables>;
+export const CreateDomainDocument = gql`
+    mutation CreateDomain($input: CreateDomainInput!) {
+  createDomain(input: $input) {
+    id
+    ethDomainId
+    ethParentDomainId
+    name
+  }
+}
+    `;
+export type CreateDomainMutationFn = ApolloReactCommon.MutationFunction<CreateDomainMutation, CreateDomainMutationVariables>;
+
+/**
+ * __useCreateDomainMutation__
+ *
+ * To run a mutation, you first call `useCreateDomainMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useCreateDomainMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [createDomainMutation, { data, loading, error }] = useCreateDomainMutation({
+ *   variables: {
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function useCreateDomainMutation(baseOptions?: ApolloReactHooks.MutationHookOptions<CreateDomainMutation, CreateDomainMutationVariables>) {
+        return ApolloReactHooks.useMutation<CreateDomainMutation, CreateDomainMutationVariables>(CreateDomainDocument, baseOptions);
+      }
+export type CreateDomainMutationHookResult = ReturnType<typeof useCreateDomainMutation>;
+export type CreateDomainMutationResult = ApolloReactCommon.MutationResult<CreateDomainMutation>;
+export type CreateDomainMutationOptions = ApolloReactCommon.BaseMutationOptions<CreateDomainMutation, CreateDomainMutationVariables>;
+export const EditDomainDocument = gql`
+    mutation EditDomain($input: EditDomainNameInput!) {
+  editDomainName(input: $input) {
+    id
+    ethDomainId
+    ethParentDomainId
+    name
+  }
+}
+    `;
+export type EditDomainMutationFn = ApolloReactCommon.MutationFunction<EditDomainMutation, EditDomainMutationVariables>;
+
+/**
+ * __useEditDomainMutation__
+ *
+ * To run a mutation, you first call `useEditDomainMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useEditDomainMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [editDomainMutation, { data, loading, error }] = useEditDomainMutation({
+ *   variables: {
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function useEditDomainMutation(baseOptions?: ApolloReactHooks.MutationHookOptions<EditDomainMutation, EditDomainMutationVariables>) {
+        return ApolloReactHooks.useMutation<EditDomainMutation, EditDomainMutationVariables>(EditDomainDocument, baseOptions);
+      }
+export type EditDomainMutationHookResult = ReturnType<typeof useEditDomainMutation>;
+export type EditDomainMutationResult = ApolloReactCommon.MutationResult<EditDomainMutation>;
+export type EditDomainMutationOptions = ApolloReactCommon.BaseMutationOptions<EditDomainMutation, EditDomainMutationVariables>;
 export const LoggedInUserDocument = gql`
     query LoggedInUser {
   loggedInUser @client {
@@ -1244,7 +1299,6 @@ export const UserTokensDocument = gql`
     query UserTokens($address: String!) {
   user(address: $address) {
     id
-    tokens
   }
 }
     `;
@@ -1434,3 +1488,83 @@ export function useColonySubscribedUsersLazyQuery(baseOptions?: ApolloReactHooks
 export type ColonySubscribedUsersQueryHookResult = ReturnType<typeof useColonySubscribedUsersQuery>;
 export type ColonySubscribedUsersLazyQueryHookResult = ReturnType<typeof useColonySubscribedUsersLazyQuery>;
 export type ColonySubscribedUsersQueryResult = ApolloReactCommon.QueryResult<ColonySubscribedUsersQuery, ColonySubscribedUsersQueryVariables>;
+export const DomainDocument = gql`
+    query Domain($colonyAddress: String!, $ethDomainId: Int!) {
+  domain(colonyAddress: $colonyAddress, ethDomainId: $ethDomainId) {
+    id
+    ethDomainId
+    name
+    parent {
+      ethDomainId
+    }
+  }
+}
+    `;
+
+/**
+ * __useDomainQuery__
+ *
+ * To run a query within a React component, call `useDomainQuery` and pass it any options that fit your needs.
+ * When your component renders, `useDomainQuery` returns an object from Apollo Client that contains loading, error, and data properties 
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useDomainQuery({
+ *   variables: {
+ *      colonyAddress: // value for 'colonyAddress'
+ *      ethDomainId: // value for 'ethDomainId'
+ *   },
+ * });
+ */
+export function useDomainQuery(baseOptions?: ApolloReactHooks.QueryHookOptions<DomainQuery, DomainQueryVariables>) {
+        return ApolloReactHooks.useQuery<DomainQuery, DomainQueryVariables>(DomainDocument, baseOptions);
+      }
+export function useDomainLazyQuery(baseOptions?: ApolloReactHooks.LazyQueryHookOptions<DomainQuery, DomainQueryVariables>) {
+          return ApolloReactHooks.useLazyQuery<DomainQuery, DomainQueryVariables>(DomainDocument, baseOptions);
+        }
+export type DomainQueryHookResult = ReturnType<typeof useDomainQuery>;
+export type DomainLazyQueryHookResult = ReturnType<typeof useDomainLazyQuery>;
+export type DomainQueryResult = ApolloReactCommon.QueryResult<DomainQuery, DomainQueryVariables>;
+export const ColonyDomainsDocument = gql`
+    query ColonyDomains($colonyAddress: String!) {
+  colony(address: $colonyAddress) {
+    id
+    domains {
+      id
+      ethDomainId
+      name
+      parent {
+        id
+      }
+    }
+  }
+}
+    `;
+
+/**
+ * __useColonyDomainsQuery__
+ *
+ * To run a query within a React component, call `useColonyDomainsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useColonyDomainsQuery` returns an object from Apollo Client that contains loading, error, and data properties 
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useColonyDomainsQuery({
+ *   variables: {
+ *      colonyAddress: // value for 'colonyAddress'
+ *   },
+ * });
+ */
+export function useColonyDomainsQuery(baseOptions?: ApolloReactHooks.QueryHookOptions<ColonyDomainsQuery, ColonyDomainsQueryVariables>) {
+        return ApolloReactHooks.useQuery<ColonyDomainsQuery, ColonyDomainsQueryVariables>(ColonyDomainsDocument, baseOptions);
+      }
+export function useColonyDomainsLazyQuery(baseOptions?: ApolloReactHooks.LazyQueryHookOptions<ColonyDomainsQuery, ColonyDomainsQueryVariables>) {
+          return ApolloReactHooks.useLazyQuery<ColonyDomainsQuery, ColonyDomainsQueryVariables>(ColonyDomainsDocument, baseOptions);
+        }
+export type ColonyDomainsQueryHookResult = ReturnType<typeof useColonyDomainsQuery>;
+export type ColonyDomainsLazyQueryHookResult = ReturnType<typeof useColonyDomainsLazyQuery>;
+export type ColonyDomainsQueryResult = ApolloReactCommon.QueryResult<ColonyDomainsQuery, ColonyDomainsQueryVariables>;
