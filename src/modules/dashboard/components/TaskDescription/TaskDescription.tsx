@@ -30,7 +30,8 @@ const TaskDescription = ({
   const [setTaskDescription] = useSetTaskDescriptionMutation();
 
   const onSubmit = useCallback(
-    ({ description = '' }: FormValues) => {
+    ({ description: inputDescriptionVal = '' }: FormValues) => {
+      const description = inputDescriptionVal.trim();
       // Only fire mutation if the description has changed.
       if (description !== existingDescription) {
         setTaskDescription({
