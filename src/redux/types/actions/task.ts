@@ -73,7 +73,6 @@ export type TaskActionTypes =
       ActionTypes.TASK_CREATE,
       {
         colonyAddress: Address;
-        colonyName: string;
         ethDomainId: AnyTask['ethDomainId'];
       },
       object

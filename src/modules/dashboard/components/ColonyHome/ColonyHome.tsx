@@ -173,10 +173,9 @@ const ColonyHome = ({
     // Use ROOT_DOMAIN if filtered domain id equals 0
     mergePayload({
       colonyAddress,
-      colonyName,
       ethDomainId: filteredDomainId || ROOT_DOMAIN,
     }),
-    [colonyAddress, colonyName, filteredDomainId],
+    [colonyAddress, filteredDomainId],
   );
 
   if (!colonyName || addressError) {
