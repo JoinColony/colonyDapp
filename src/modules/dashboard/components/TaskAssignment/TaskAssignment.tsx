@@ -2,7 +2,7 @@ import React from 'react';
 
 import Assignment from '~core/Assignment';
 import { SpinnerLoader } from '~core/Preloaders';
-import { useTaskQuery, useUser, AnyTask } from '~data/index';
+import { useTaskQuery, AnyTask } from '~data/index';
 import { Address } from '~types/index';
 
 import { useColonyNativeToken } from '../../hooks/useColonyNativeToken';
@@ -21,7 +21,7 @@ const TaskAssignment = ({ colonyAddress, draftId }: Props) => {
   const nativeTokenReference = useColonyNativeToken(colonyAddress);
   const [, tokenOptions] = useColonyTokens(colonyAddress);
 
-  // @todo get payouts from centralized store
+  // fixme get payouts from centralized store
   const payouts = [];
 
   if (!data) {
