@@ -128,12 +128,7 @@ query UserTasks($address: String!) {
 query UserTokens($address: String!) {
   user(address: $address) {
     id
-    tokens {
-      address
-      name
-      symbol
-      iconHash
-    }
+    tokens
   }
 }
 
