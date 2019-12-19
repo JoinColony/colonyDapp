@@ -7,6 +7,7 @@ import { Context, getContext } from '~context/index';
 import {
   AssignWorkerDocument,
   CreateTaskDocument,
+  CreateTaskMutationResult,
   FinalizeTaskDocument,
   RemoveTaskPayoutDocument,
   SetTaskPayoutDocument,
@@ -50,9 +51,7 @@ function* taskCreate({
       Context.APOLLO_CLIENT,
     );
 
-    const {
-      data: { createTask },
-    } = yield apolloClient.mutate<
+    const { data }: CreateTaskMutationResult = yield apolloClient.mutate<
       CreateTaskMutation,
       CreateTaskMutationVariables
     >({
@@ -63,15 +62,19 @@ function* taskCreate({
           ethDomainId,
         },
       },
+      // @TODO mutate state directly instead of refetching queries
+      // @BODY See https://github.com/JoinColony/colonyDapp/pull/1933/files#r359016028
       refetchQueries: [
         { query: ColonyTasksDocument, variables: { address: colonyAddress } },
       ],
     });
 
+    if (!data || !data.createTask) throw new Error('Could not create task');
+
     const {
       id,
       colony: { colonyName },
-    } = createTask;
+    } = data.createTask;
 
     const successAction: Action<ActionTypes.TASK_CREATE_SUCCESS> = {
       type: ActionTypes.TASK_CREATE_SUCCESS,
@@ -160,6 +163,8 @@ function* taskFinalize({
   return null;
 }
 
+// FIXME I think we can just do this in the component (no saga needed)
+// Also remove the actions
 function* taskSetWorkerOrPayouts({
   payload: { draftId, payouts, workerAddress },
   meta,
@@ -171,7 +176,7 @@ function* taskSetWorkerOrPayouts({
 
     const {
       data: {
-        task: { assignedWorker, ethDomainId },
+        task: { assignedWorker },
       },
     } = yield apolloClient.query<TaskQuery, TaskQueryVariables>({
       query: TaskDocument,

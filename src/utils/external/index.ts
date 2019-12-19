@@ -1,10 +1,5 @@
 import BN from 'bn.js';
 import { fromWei } from 'ethjs-unit';
-import { isAddress } from 'web3-utils';
-
-import { Address } from '~types/index';
-
-import { log } from '~utils/debug';
 
 interface EthUsdResponse {
   status: string;
@@ -75,59 +70,4 @@ export const getEthToUsd = (ethValue: BN): Promise<number | void> => {
       return fromWei(ethValue, 'ether') * parseFloat(ethUsd);
     })
     .catch(console.warn);
-};
-
-/*
- * Lookup a token contract address to either get token details (verified)
- * or an error (unverified). Useful for bring-your-own-token.
- *
- * @NOTE only operates on mainnet.
- */
-export const getTokenDetails = async (
-  tokenAddress: Address,
-): Promise<TokenDetails> => {
-  const TOKEN_DETAILS_KEY = `tokenDetails_${tokenAddress}`;
-  const TOKEN_TIMESTAMP_KEY = `tokenTimestamp_${tokenAddress}`;
-
-  const cachedTokenDetails = localStorage.getItem(TOKEN_DETAILS_KEY) || null;
-  const cachedTokenTimestamp =
-    localStorage.getItem(TOKEN_TIMESTAMP_KEY) || null;
-  const currentTimestamp = new Date().getTime();
-
-  if (cachedTokenDetails && cachedTokenTimestamp) {
-    const olderThanOneDay =
-      currentTimestamp - parseInt(cachedTokenTimestamp, 10) >
-      24 * 60 * 60 * 1000;
-    if (!olderThanOneDay) {
-      return Promise.resolve(JSON.parse(cachedTokenDetails));
-    }
-  }
-
-  try {
-    if (!isAddress(tokenAddress)) {
-      // don't bother looking it up if it's an invalid token address
-      throw Error('Invalid token address');
-    }
-    // eslint-disable-next-line max-len, prettier/prettier
-    const endpoint = `//api.ethplorer.io/getTokenInfo/${tokenAddress}?apiKey=${process.env.ETHPLORER_API_KEY || 'freekey'}`;
-    const response = await fetch(endpoint);
-    const data = await response.json();
-    if (data.error) {
-      throw new Error(`Ethplorer error: ${data.error.message}`);
-    }
-    const { name, symbol, decimals } = data;
-    // Should be the same object as https://docs.colony.io/colonyjs/api-tokenclient#gettokeninfo (plus isVerified)
-    const tokenDetails = {
-      name,
-      symbol,
-      decimals: parseInt(decimals, 10),
-      isVerified: true,
-    };
-    localStorage.setItem(TOKEN_DETAILS_KEY, JSON.stringify(tokenDetails));
-    localStorage.setItem(TOKEN_TIMESTAMP_KEY, currentTimestamp.toString());
-    return tokenDetails;
-  } catch (caughtError) {
-    log.warn(caughtError);
-  }
-  return {};
 };

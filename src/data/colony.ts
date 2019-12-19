@@ -6,7 +6,7 @@ const getBalanceForTokenAndDomain = async (
   colonyClient,
   tokenAddress,
   domainId,
-) => {
+): Promise<BigNumber> => {
   const { potId } = await colonyClient.getDomain.call({ domainId });
   const {
     balance: rewardsPotTotal,
@@ -38,6 +38,10 @@ export const colonyResolvers = ({
         networkClient,
       );
       return address;
+    },
+    async colonyName(_, { address }) {
+      const domain = await ens.getDomain(address, networkClient);
+      return ens.constructor.stripDomainParts('colony', domain);
     },
   },
   Colony: {
@@ -85,13 +89,11 @@ export const colonyResolvers = ({
     },
   },
   ColonyToken: {
-    async balances({ address }, { address: colonyAddress }) {
+    async balances({ address }, { colonyAddress, domainIds }) {
       const colonyClient = await colonyManager.getColonyClient(colonyAddress);
-      // FIXME somehow we need to get all the domains into this
-      const domainIds = [0];
       // FIXME somehow we have to get ETHER into this (on the server?)
 
-      const balances = await Promise.all(
+      const balances: BigNumber[] = await Promise.all(
         domainIds.map(domainId =>
           getBalanceForTokenAndDomain(colonyClient, address, domainId),
         ),
@@ -102,6 +104,10 @@ export const colonyResolvers = ({
         balance: balances[idx].toString(),
         __typename: 'DomainBalance',
       }));
+    },
+    async details() {
+      // FIXME can be imported from token (make util function)
+      throw new Error('Implement me!');
     },
   },
 });

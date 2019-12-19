@@ -1,7 +1,10 @@
 import React, { useCallback } from 'react';
 
-import { TaskPayoutType, ColonyTokenReferenceType } from '~immutable/index';
+// FIXME remove the task payout type entirely
+import { TaskPayoutType } from '~immutable/index';
 import { Address } from '~types/index';
+import { FullColonyFragment } from '~data/index';
+
 import Payout from './Payout';
 
 interface Props {
@@ -13,8 +16,7 @@ interface Props {
   payout: TaskPayoutType;
   payouts: TaskPayoutType[];
   reputation: number;
-  tokenOptions: { value: number; label: string }[];
-  tokenReferences: ColonyTokenReferenceType[];
+  tokens: FullColonyFragment['tokens'];
 }
 
 const WrappedPayout = ({
@@ -25,14 +27,11 @@ const WrappedPayout = ({
   payout,
   payouts,
   reputation,
-  tokenOptions,
-  tokenReferences,
+  tokens,
 }: Props) => {
   const { amount, token: tokenAddress } = payout;
 
-  const tokenReference = tokenReferences.find(
-    ({ address }) => address === tokenAddress,
-  ) || { address: '' }; // make flow happy for below
+  const token = tokens.find(({ address }) => address === tokenAddress);
 
   const removePayout = useCallback(() => arrayHelpers.remove(index), [
     arrayHelpers,
@@ -52,12 +51,12 @@ const WrappedPayout = ({
       amount={amount}
       colonyAddress={colonyAddress}
       name={`payouts.${index}`}
-      reputation={tokenReference.isNative ? reputation : undefined}
-      tokenOptions={tokenOptions}
+      reputation={token && token.isNative ? reputation : undefined}
+      token={token}
+      tokens={tokens}
       canRemove={canRemove}
       remove={removePayout}
       reset={resetPayout}
-      tokenAddress={tokenAddress}
     />
   );
 };

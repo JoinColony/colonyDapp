@@ -1,12 +1,7 @@
-import {
-  ColonyTokenReferenceType,
-  TokenType,
-  TransactionType,
-  UserTokenReferenceType,
-} from '~immutable/index';
-
-import { getTokenBalanceFromReference } from '~utils/tokens';
+import { TransactionType } from '~immutable/index';
+import { TokenWithBalances, AnyToken } from '~data/index';
 import { ZERO_ADDRESS } from '~utils/web3/constants';
+import { getBalanceFromToken } from '~utils/tokens';
 
 /*
  * Transactions
@@ -20,22 +15,19 @@ export const isPendingMultisig = (tx: TransactionType) =>
  * Tokens
  */
 export const tokenBalanceIsPositive = (
-  tokenReference: ColonyTokenReferenceType | UserTokenReferenceType,
+  token: TokenWithBalances,
   domainId: number,
 ) => {
-  const balance = getTokenBalanceFromReference(tokenReference, domainId);
+  const balance = getBalanceFromToken(token, domainId);
   return balance.gten(0);
 };
 
 export const tokenBalanceIsNotPositive = (
-  tokenReference: ColonyTokenReferenceType | UserTokenReferenceType,
+  token: TokenWithBalances,
   domainId: number,
 ) => {
-  const balance = getTokenBalanceFromReference(tokenReference, domainId);
+  const balance = getBalanceFromToken(token, domainId);
   return balance.lten(0);
 };
 
-export const tokenIsETH = ({
-  address,
-}: TokenType | ColonyTokenReferenceType | UserTokenReferenceType) =>
-  address === ZERO_ADDRESS;
+export const tokenIsETH = ({ address }: AnyToken) => address === ZERO_ADDRESS;

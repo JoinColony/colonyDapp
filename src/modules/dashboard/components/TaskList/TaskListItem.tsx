@@ -4,18 +4,16 @@ import {
   FormattedMessage,
   injectIntl,
 } from 'react-intl';
-import React from 'react';
+import React, { useCallback } from 'react';
 import { RouteComponentProps, withRouter } from 'react-router-dom';
 import compose from 'recompose/compose';
 import BigNumber from 'bn.js';
 
-import { Address } from '~types/index';
 import { AnyTask } from '~data/index';
 import { TableRow, TableCell } from '~core/Table';
 import PayoutsList from '~core/PayoutsList';
 import HookedUserAvatar from '~users/HookedUserAvatar';
-import { useColonyNativeToken } from '../../hooks/useColonyNativeToken';
-import { useColonyTokens } from '../../hooks/useColonyTokens';
+
 import styles from './TaskListItem.css';
 
 const MSG = defineMessages({
@@ -31,42 +29,36 @@ const MSG = defineMessages({
 
 const UserAvatar = HookedUserAvatar();
 
-interface Props {
-  colonyAddress: Address;
-  colonyName: string;
-  data: AnyTask;
-}
-
 type EnhancerProps = RouteComponentProps & InjectedIntlProps;
 
-interface InnerProps extends Props, EnhancerProps {}
+interface Props extends EnhancerProps {
+  task: AnyTask;
+}
 
 const displayName = 'dashboard.TaskList.TaskListItem';
 
-const TaskListItem = ({
-  colonyAddress,
-  colonyName,
-  data,
-  intl: { formatMessage },
-  history,
-}: InnerProps) => {
+const TaskListItem = ({ task, intl: { formatMessage }, history }: Props) => {
   const defaultTitle = formatMessage(MSG.untitled);
-  const { id: draftId, assignedWorkerAddress, title = defaultTitle } = data;
+  const {
+    id: draftId,
+    assignedWorkerAddress,
+    title = defaultTitle,
+    colony: { colonyName, displayName },
+  } = task;
 
-  // fixme get payouts from centralized store
+  // FIXME get payouts from task
   const payouts = [];
+  // FIXME get tokens from colony
+  const tokens = [];
 
   // @todo get reputation from centralized store
   let reputation: BigNumber | undefined;
 
-  const nativeTokenRef = useColonyNativeToken(colonyAddress);
-  const [, availableTokens] = useColonyTokens(colonyAddress);
-
-  const handleClick = () => {
+  const handleClick = useCallback(() => {
     history.push({
       pathname: `/colony/${colonyName}/task/${draftId}`,
     });
-  };
+  }, [colonyName, draftId, history]);
 
   return (
     <TableRow className={styles.globalLink} onClick={() => handleClick()}>
@@ -82,13 +74,7 @@ const TaskListItem = ({
         )}
       </TableCell>
       <TableCell className={styles.taskPayouts}>
-        {!!availableTokens && (
-          <PayoutsList
-            payouts={payouts}
-            nativeToken={nativeTokenRef}
-            tokenOptions={availableTokens}
-          />
-        )}
+        <PayoutsList payouts={payouts} tokens={tokens} />
       </TableCell>
       <TableCell className={styles.userAvatar}>
         {assignedWorkerAddress && (

@@ -6,10 +6,7 @@ import { Action, ActionTypes, AllActions } from '~redux/index';
 import { putError, takeFrom } from '~utils/saga/effects';
 import { ContractContexts } from '~types/index';
 import { getContext, Context } from '~context/index';
-// import { decorateLog } from '~utils/web3/eventLogs/events';
-// import { normalizeTransactionLog } from '~data/normalizers';
 import { createTransaction, getTxChannel } from '../../core/sagas';
-import { fetchColonyTokenBalance } from '../actionCreators';
 import {
   ColonyDomainsQuery,
   ColonyDomainsQueryVariables,
@@ -219,8 +216,7 @@ function* moveFundsBetweenPots({
     yield takeFrom(txChannel, ActionTypes.TRANSACTION_SUCCEEDED);
 
     // Refetch token balances for the domains involved
-    yield put(fetchColonyTokenBalance(colonyAddress, tokenAddress, fromDomain));
-    yield put(fetchColonyTokenBalance(colonyAddress, tokenAddress, toDomain));
+    // FIXME re-fetch token balances for colonyAddress, tokenAddress, fromDomain + toDomain
 
     yield put<AllActions>({
       type: ActionTypes.MOVE_FUNDS_BETWEEN_POTS_SUCCESS,
