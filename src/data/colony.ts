@@ -1,22 +1,25 @@
 import BigNumber from 'bn.js';
+import { Resolvers } from 'apollo-client';
+
+import ENS from '~lib/ENS';
+import { ContextType } from '~context/index';
 
 export const colonyResolvers = ({
   colonyManager: { networkClient },
   colonyManager,
   ens,
-  // FIXME type this
-}) => ({
+}: ContextType): Resolvers => ({
   Query: {
     async colonyAddress(_, { name }) {
       const address = await ens.getAddress(
-        ens.constructor.getFullDomain('colony', name),
+        ENS.getFullDomain('colony', name),
         networkClient,
       );
       return address;
     },
     async colonyName(_, { address }) {
       const domain = await ens.getDomain(address, networkClient);
-      return ens.constructor.stripDomainParts('colony', domain);
+      return ENS.stripDomainParts('colony', domain);
     },
   },
   Colony: {
