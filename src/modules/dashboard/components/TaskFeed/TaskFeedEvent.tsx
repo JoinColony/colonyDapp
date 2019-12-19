@@ -285,20 +285,6 @@ const TaskFeedEventCancelled = ({
   />
 );
 
-// fixme is this the same as task cancelled? If so, remove this component
-// const TaskFeedEventClosed = ({
-//   event: {
-//     meta: { userAddress },
-//   },
-// }: EventProps<>) => (
-//   <FormattedMessage
-//     {...MSG.closed}
-//     values={{
-//       user: <InteractiveUsername userAddress={userAddress} />,
-//     }}
-//   />
-// );
-
 const TaskFeedEventDescriptionSet = ({
   context: { description },
   initiator: { id: initiatorAddress },
@@ -425,8 +411,6 @@ const FEED_EVENT_COMPONENTS = {
   [EventTypes.PAYOUT_REMOVED]: TaskFeedEventPayoutRemoved,
   [EventTypes.SKILL_SET]: TaskFeedEventSkillSet,
   [EventTypes.TASK_CANCELLED]: TaskFeedEventCancelled,
-  // fixme is this the same as task cancelled?
-  // [EventTypes.TASK_CLOSED]: TaskFeedEventClosed,
   [EventTypes.TASK_CREATED]: TaskFeedEventCreated,
   [EventTypes.TASK_DESCRIPTION_SET]: TaskFeedEventDescriptionSet,
   [EventTypes.TASK_FINALIZED]: TaskFeedEventFinalized,
