@@ -38,7 +38,6 @@ export enum EventTypes {
   SUBSCRIBED_TO_COLONY = 'SUBSCRIBED_TO_COLONY',
   SUBSCRIBED_TO_TASK = 'SUBSCRIBED_TO_TASK',
   TASK_CANCELLED = 'CancelTask',
-  TASK_CLOSED = 'TASK_CLOSED',
   TASK_CREATED = 'CreateTask',
   TASK_DESCRIPTION_SET = 'SetTaskDescription',
   TASK_FINALIZED = 'FinalizeTask',
