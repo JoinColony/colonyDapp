@@ -4,10 +4,11 @@ import { defineMessages, FormattedMessage } from 'react-intl';
 import Button from '~core/Button';
 import Heading from '~core/Heading';
 import ItemsList from '~core/ItemsList';
-import { useSetTaskSkillMutation, AnyTask } from '~data/index';
+import { AnyTask, useSetTaskSkillMutation } from '~data/index';
+
+import taskSkillsTree from './taskSkillsTree';
 
 import styles from './TaskSkills.css';
-import taskSkillsTree from './taskSkillsTree';
 
 const MSG = defineMessages({
   notSet: {
