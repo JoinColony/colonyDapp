@@ -1,7 +1,6 @@
 import { WalletObjectType } from '@colony/purser-core';
 
 import { transformEntry } from '~data/utils';
-import { TaskEvents } from '~data/types/TaskEvents';
 
 import {
   Address,
@@ -58,7 +57,7 @@ class ColonyAccessController extends AbstractAccessController<
   }
 
   private extendVerifyContext<C extends object | void>(
-    context: C & { event?: TaskEvents },
+    context: C & { event?: Record<string, any> },
   ): C & { colonyAddress: Address; domainId: number } {
     let domainId;
     if (
@@ -105,14 +104,14 @@ class ColonyAccessController extends AbstractAccessController<
     const isAuthorized = await super.canAppend(entry, provider);
     if (!isAuthorized) return false;
 
-    const event = transformEntry(entry) as TaskEvents;
+    const event = transformEntry(entry) as Record<string, any>;
     return this.can(event.type, event.meta.userAddress, { event });
   }
 
   async can<C extends object | void>(
     actionId: string,
     user: string,
-    context: C & { event?: TaskEvents },
+    context: C & { event?: Record<string, any> },
   ): Promise<boolean> {
     log.verbose('Checking permission for action', actionId, user, context);
     return this.manager.can(

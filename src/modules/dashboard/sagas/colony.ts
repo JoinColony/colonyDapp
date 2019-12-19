@@ -5,7 +5,6 @@ import {
   delay,
   fork,
   put,
-  take,
   takeEvery,
   takeLatest,
   select,
@@ -19,7 +18,6 @@ import {
   putError,
   takeFrom,
   executeQuery,
-  executeSubscription,
   selectAsJS,
 } from '~utils/saga/effects';
 import { ColonyType, ColonyRolesType } from '~immutable/index';
@@ -31,11 +29,7 @@ import {
 } from '~data/index';
 import { getContext, Context } from '~context/index';
 
-import {
-  checkColonyNameIsAvailable,
-  getColonyTasks,
-  subscribeToColonyTasks,
-} from '../data/queries';
+import { checkColonyNameIsAvailable } from '../data/queries';
 import { createTransaction, getTxChannel } from '../../core/sagas';
 import { ipfsUpload } from '../../core/sagas/ipfs';
 import { networkVersionSelector } from '../../core/selectors';
@@ -463,34 +457,6 @@ function* colonyTokenBalancesFetch({
   return null;
 }
 
-/*
- * Given a colony address, dispatch actions to fetch all tasks
- * for that colony.
- */
-function* colonyTaskMetadataFetch({
-  meta,
-  payload: { colonyAddress },
-}: Action<ActionTypes.COLONY_TASK_METADATA_FETCH>) {
-  try {
-    const colonyTasks = yield executeQuery(getColonyTasks, {
-      args: undefined,
-      metadata: { colonyAddress },
-    });
-    yield put<AllActions>({
-      type: ActionTypes.COLONY_TASK_METADATA_FETCH_SUCCESS,
-      meta: { key: colonyAddress },
-      payload: { colonyAddress, colonyTasks },
-    });
-  } catch (error) {
-    return yield putError(
-      ActionTypes.COLONY_TASK_METADATA_FETCH_ERROR,
-      error,
-      meta,
-    );
-  }
-  return null;
-}
-
 function* colonyNativeTokenUnlock({
   meta,
   payload: { colonyAddress },
@@ -524,49 +490,6 @@ function* colonyNativeTokenUnlock({
   return null;
 }
 
-function* colonyTaskMetadataSubStart({
-  meta,
-  payload: { colonyAddress },
-}: Action<ActionTypes.COLONY_TASK_METADATA_SUB_START>) {
-  let channel;
-  try {
-    channel = yield call(executeSubscription, subscribeToColonyTasks, {
-      metadata: { colonyAddress },
-    });
-
-    yield fork(function* stopSubscription() {
-      yield take(
-        action =>
-          action.type === ActionTypes.COLONY_TASK_METADATA_SUB_STOP &&
-          action.payload.colonyAddress === colonyAddress,
-      );
-      channel.close();
-    });
-
-    while (true) {
-      const colonyTasks = yield take(channel);
-      yield put({
-        type: ActionTypes.COLONY_TASK_METADATA_SUB_EVENTS,
-        meta,
-        payload: {
-          colonyAddress,
-          colonyTasks,
-        },
-      });
-    }
-  } catch (caughtError) {
-    return yield putError(
-      ActionTypes.COLONY_TASK_METADATA_SUB_ERROR,
-      caughtError,
-      meta,
-    );
-  } finally {
-    if (channel && typeof channel.close == 'function') {
-      channel.close();
-    }
-  }
-}
-
 export default function* colonySagas() {
   yield takeEvery(ActionTypes.COLONY_ADDRESS_FETCH, colonyAddressFetch);
   yield takeEvery(ActionTypes.COLONY_FETCH, colonyFetch);
@@ -580,10 +503,6 @@ export default function* colonySagas() {
     colonyRecoveryModeEnter,
   );
   yield takeEvery(
-    ActionTypes.COLONY_TASK_METADATA_FETCH,
-    colonyTaskMetadataFetch,
-  );
-  yield takeEvery(
     ActionTypes.COLONY_TOKEN_BALANCE_FETCH,
     colonyTokenBalanceFetch,
   );
@@ -592,10 +511,6 @@ export default function* colonySagas() {
     colonyTokenBalancesFetch,
   );
   yield takeEvery(ActionTypes.COLONY_VERSION_UPGRADE, colonyUpgradeContract);
-  yield takeEvery(
-    ActionTypes.COLONY_TASK_METADATA_SUB_START,
-    colonyTaskMetadataSubStart,
-  );
 
   /*
    * Note that the following actions use `takeLatest` because they are

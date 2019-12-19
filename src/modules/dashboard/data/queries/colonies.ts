@@ -1,40 +1,22 @@
 import { Set as ImmutableSet } from 'immutable';
 
 import { ROOT_DOMAIN, ROLES } from '~constants';
-import {
-  Address,
-  RoleSet,
-  createAddress,
-  CurrentEvents,
-  ENSCache,
-  Event,
-} from '~types/index';
+import { Address, RoleSet, createAddress, ENSCache, Event } from '~types/index';
 import {
   ColonyClient,
   ColonyManager,
   ColonyStore,
-  ColonyTaskIndexStore,
   DDB,
   NetworkClient,
   Query,
-  Subscription,
   Wallet,
 } from '~data/types';
-import { ColonyEvents } from '~data/types/ColonyEvents';
-import { TaskIndexEvents } from '~data/types/TaskIndexEvents';
 import { ColonyRolesType, DomainType, DomainRolesType } from '~immutable/index';
 import { Context } from '~context/index';
-import EventStore from '~lib/database/stores/EventStore';
 import { EventTypes } from '~data/constants';
-import {
-  getColonyStore,
-  getColonyTaskIndexStore,
-  getColonyTaskIndexStoreAddress,
-  getColonyTaskStores,
-} from '~data/stores';
+import { getColonyStore } from '~data/stores';
 import { getEvents } from '~utils/web3/eventLogs';
 import { ZERO_ADDRESS } from '~utils/web3/constants';
-import { colonyTasksReducer } from '../reducers';
 
 interface ColonyStoreMetadata {
   colonyAddress: Address;
@@ -172,78 +154,6 @@ export const getColonyRoles: ContractEventQuery<void, ColonyRolesType> = {
   },
 };
 
-// @NOTE: This is a separate query so we can, later on, cache the query result
-export const getColonyTasks: Query<
-  {
-    colonyStore: ColonyStore | null;
-    colonyTaskIndexStore: ColonyTaskIndexStore | null;
-  },
-  ColonyTaskIndexStoreMetadata,
-  void,
-  {
-    [draftId: string]: {
-      commentsStoreAddress: string;
-      taskStoreAddress: string;
-    };
-  }
-> = {
-  name: 'getColonyTasks',
-  context: colonyContext,
-  async prepare(
-    {
-      colonyManager,
-      ddb,
-      wallet,
-    }: {
-      colonyManager: ColonyManager;
-      ddb: DDB;
-      wallet: Wallet;
-    },
-    metadata: ColonyStoreMetadata,
-  ) {
-    const { colonyAddress } = metadata;
-    const colonyClient = await colonyManager.getColonyClient(colonyAddress);
-    const colonyTaskIndexStoreAddress = await getColonyTaskIndexStoreAddress(
-      colonyClient,
-      ddb,
-      wallet,
-    )(metadata);
-    const colonyTaskIndexStore = await getColonyTaskIndexStore(
-      colonyClient,
-      ddb,
-      wallet,
-    )({ colonyAddress, colonyTaskIndexStoreAddress });
-
-    // backwards-compatibility Colony task index store
-    let colonyStore;
-    if (!colonyTaskIndexStore) {
-      colonyStore = await getColonyStore(colonyClient, ddb, wallet)(metadata);
-    }
-
-    return {
-      colonyStore,
-      colonyTaskIndexStore,
-    };
-  },
-  async execute({ colonyStore, colonyTaskIndexStore }) {
-    // backwards-compatibility Colony task index store
-    const store = colonyTaskIndexStore || colonyStore;
-    if (!store) {
-      throw new Error(
-        'Could not load colony task index or colony store either',
-      );
-    }
-    return store
-      .all()
-      .filter(
-        ({ type }) =>
-          type === EventTypes.TASK_STORE_REGISTERED ||
-          type === EventTypes.TASK_STORE_UNREGISTERED,
-      )
-      .reduce(colonyTasksReducer, {});
-  },
-};
-
 export const getColonyDomains: Query<
   ColonyStore,
   ColonyStoreMetadata,
@@ -320,73 +230,5 @@ export const checkColonyNameIsAvailable: Query<
   },
   async execute({ ens, networkClient }, { colonyName }) {
     return ens.isENSNameAvailable('colony', colonyName, networkClient);
-  },
-};
-
-export const subscribeToColonyTasks: Subscription<
-  {
-    colonyStore: ColonyStore | void;
-    colonyTaskIndexStore: ColonyTaskIndexStore | void;
-  },
-  ColonyTaskIndexStoreMetadata,
-  void,
-  {
-    [draftId: string]: {
-      commentsStoreAddress: string;
-      taskStoreAddress: string;
-    };
-  }
-> = {
-  name: 'subscribeToColonyTasks',
-  context: colonyContext,
-  async prepare(
-    {
-      colonyManager,
-      ddb,
-      wallet,
-    }: {
-      colonyManager: ColonyManager;
-      ddb: DDB;
-      wallet: Wallet;
-    },
-    metadata: ColonyStoreMetadata,
-  ) {
-    const { colonyAddress } = metadata;
-    const colonyClient = await colonyManager.getColonyClient(colonyAddress);
-
-    const { colonyTaskIndexStore, colonyStore } = await getColonyTaskStores(
-      { colonyClient, ddb, wallet },
-      metadata,
-    );
-
-    return {
-      colonyStore,
-      colonyTaskIndexStore,
-    };
-  },
-  async execute({ colonyStore, colonyTaskIndexStore }) {
-    // backwards-compatibility Colony task index store
-    const store = (colonyTaskIndexStore || colonyStore) as EventStore<
-      CurrentEvents<ColonyEvents | TaskIndexEvents>
-    >;
-    if (!store) {
-      throw new Error(
-        'Could not load colony task index or colony store either',
-      );
-    }
-    return emitter => [
-      store.subscribe(events =>
-        emitter(
-          events &&
-            events
-              .filter(
-                ({ type }) =>
-                  type === EventTypes.TASK_STORE_REGISTERED ||
-                  type === EventTypes.TASK_STORE_UNREGISTERED,
-              )
-              .reduce(colonyTasksReducer, {}),
-        ),
-      ),
-    ];
   },
 };
