@@ -124,7 +124,7 @@ const Task = ({
 
   const { data } = useTaskQuery({
     // @todo use subscription for `Task` instead of `pollInterval` (once supported by server)
-    pollInterval: 2000,
+    pollInterval: 5000,
     variables: { id: draftId },
   });
 
