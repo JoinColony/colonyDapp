@@ -43,7 +43,7 @@ import { AllActions } from '../../../redux/types/actions';
 
 function* taskCreate({
   meta,
-  payload: { colonyAddress, colonyName, ethDomainId },
+  payload: { colonyAddress, ethDomainId },
 }: Action<ActionTypes.TASK_CREATE>) {
   try {
     const apolloClient: ApolloClient<any> = yield getContext(
@@ -68,8 +68,10 @@ function* taskCreate({
       ],
     });
 
-    // Not sure what to use for task slug - `id` or `ethTaskId`. Will these be the same?
-    const { id } = createTask;
+    const {
+      id,
+      colony: { colonyName },
+    } = createTask;
 
     const successAction: Action<ActionTypes.TASK_CREATE_SUCCESS> = {
       type: ActionTypes.TASK_CREATE_SUCCESS,
