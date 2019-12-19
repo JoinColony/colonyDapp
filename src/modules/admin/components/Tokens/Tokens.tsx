@@ -109,10 +109,11 @@ const Tokens = ({
   const handleEditTokens = useCallback(
     () =>
       openDialog('ColonyTokenEditDialog', {
-        selectedTokens: tokens && tokens.map(({ address }) => address),
+        colonyAddress,
         nativeTokenAddress,
+        selectedTokens: tokens && tokens.map(({ address }) => address),
       }),
-    [openDialog, tokens, nativeTokenAddress],
+    [openDialog, colonyAddress, nativeTokenAddress, tokens],
   );
   const handleMintTokens = useCallback(
     () =>

@@ -17,7 +17,9 @@ const UserTokenEditDialog = ({ selectedTokens = [], cancel, close }: Props) => {
 
   const setUserTokens = useCallback(
     ({ tokens }) => {
-      setUserTokensMutation({ variables: { input: { tokens } } });
+      setUserTokensMutation({
+        variables: { input: { tokenAddresses: tokens } },
+      });
     },
     [setUserTokensMutation],
   );

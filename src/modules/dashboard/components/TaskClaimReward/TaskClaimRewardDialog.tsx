@@ -12,6 +12,7 @@ import StarRating from '~core/StarRating';
 import { useSelector } from '~utils/hooks';
 import { Props as TaskClaimRewardProps } from './TaskClaimReward';
 import { networkFeeSelector } from '../../../core/selectors';
+
 import styles from './TaskClaimRewardDialog.css';
 
 export const getTaskPayoutNetworkFee = (
@@ -99,8 +100,8 @@ const TaskClaimRewardDialog = ({
   close,
   task: {
     /* colonyAddress, */
-    reputation,
-    payouts,
+    /* reputation, */
+    /* payouts, */
     title,
     // @ts-ignore
     rating,
@@ -116,6 +117,8 @@ const TaskClaimRewardDialog = ({
 }: Props) => {
   const networkFee = useSelector(networkFeeSelector);
   // @TODO This component is unused. Get token options if needbe
+  const payouts = [];
+  const reputation = 0;
   const tokenOptions = [];
   const getToken = useCallback(
     (tokenAddress: Address) =>
