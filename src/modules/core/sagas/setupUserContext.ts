@@ -11,7 +11,7 @@ import { formatEther } from 'ethers/utils';
 
 import { createAddress } from '~types/index';
 import { Action, ActionTypes, AllActions } from '~redux/index';
-import { Context } from '~context/index';
+import { Context, ContextType } from '~context/index';
 import { putError } from '~utils/saga/effects';
 import { log } from '~utils/debug';
 import ENSCache from '~lib/ENS';
@@ -23,7 +23,8 @@ import {
 
 import setupResolvers from '../../../context/setupResolvers';
 import ColonyManagerType from '../../../lib/ColonyManager';
-import { DDB as DDBType } from '../../../lib/database';
+import { DDB } from '../../../lib/database';
+import IPFSNode from '../../../lib/ipfs';
 import { authenticate } from '../../../api';
 import setupAdminSagas from '../../admin/sagas';
 import setupDashboardSagas from '../../dashboard/sagas';
@@ -58,7 +59,7 @@ function* setupContextDependentSagas() {
 
 function* setupDDBResolver(
   colonyManager: ColonyManagerType,
-  ddb: DDBType,
+  ddb: DDB,
   ens: ENSCache,
 ) {
   const { networkClient } = colonyManager;
@@ -148,7 +149,17 @@ export default function* setupUserContext(
     // FIXME eventually we want to move everything to resolvers, so all of this has to
     // happen outside of sagas. There is no need to have a separate state or anything,
     // just set it up in an aync function (instead of WALLET_CREATE), then call this function
-    yield setupResolvers(apolloClient, { colonyManager, ens, wallet });
+    const ipfsNode: IPFSNode = yield getContext(Context.IPFS_NODE);
+    const userContext: ContextType = {
+      apolloClient,
+      colonyManager,
+      DDB,
+      ddb,
+      ens,
+      ipfsNode,
+      wallet,
+    };
+    yield setupResolvers(apolloClient, userContext);
 
     yield apolloClient.mutate<
       SetLoggedInUserMutation,

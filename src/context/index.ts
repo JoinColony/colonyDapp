@@ -4,7 +4,7 @@ import { rootContext, RootContext } from './rootContext';
 
 import { UserContext } from './userContext';
 
-type ContextType = RootContext & UserContext;
+export type ContextType = RootContext & UserContext;
 
 export type ContextName = keyof ContextType;
 

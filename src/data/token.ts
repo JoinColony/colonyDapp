@@ -2,6 +2,7 @@ import ApolloClient, { Resolvers } from 'apollo-client';
 import { isAddress } from 'web3-utils';
 import BigNumber from 'bn.js';
 
+import { ContextType } from '~context/index';
 import { COLONY_TOTAL_BALANCE_DOMAIN_ID } from '~constants';
 import { ZERO_ADDRESS, ETHER_INFO } from '~utils/web3/constants';
 import { TokenInfo, TokenInfoDocument } from '~data/index';
@@ -48,10 +49,7 @@ const getEthplorerTokenData = async (address: string): Promise<TokenInfo> => {
   return tokenDetails;
 };
 
-export const tokenResolvers = ({
-  colonyManager,
-  // FIXME type this
-}): Resolvers => ({
+export const tokenResolvers = ({ colonyManager }: ContextType): Resolvers => ({
   Token: {
     async balance({ address }, { walletAddress }) {
       const {
