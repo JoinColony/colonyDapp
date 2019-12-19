@@ -139,10 +139,10 @@ export type Maybe<T> = T | null;
             "name": "ColonyToken"
           },
           {
-            "name": "UserToken"
+            "name": "Token"
           },
           {
-            "name": "Token"
+            "name": "UserToken"
           }
         ]
       }
@@ -348,7 +348,7 @@ export type Event = {
   context: EventContext,
 };
 
-export type EventContext = AssignWorkerEvent | CancelTaskEvent | CreateDomainEvent | CreateTaskEvent | CreateWorkRequestEvent | FinalizeTaskEvent | NewUserEvent | RemoveTaskPayoutEvent | SendWorkInviteEvent | SetTaskDescriptionEvent | SetTaskDomainEvent | SetTaskDueDateEvent | SetTaskPayoutEvent | SetTaskSkillEvent | SetTaskTitleEvent | TaskMessageEvent | UnassignWorkerEvent;
+export type EventContext = AssignWorkerEvent | CancelTaskEvent | CreateDomainEvent | CreateTaskEvent | CreateWorkRequestEvent | FinalizeTaskEvent | RemoveTaskPayoutEvent | SendWorkInviteEvent | SetTaskDescriptionEvent | SetTaskDomainEvent | SetTaskDueDateEvent | SetTaskPayoutEvent | SetTaskSkillEvent | SetTaskTitleEvent | TaskMessageEvent | UnassignWorkerEvent;
 
 export type FinalizeTaskEvent = TaskEvent & {
   type: Scalars['String'],
@@ -386,6 +386,7 @@ export type Mutation = {
   editUser?: Maybe<User>,
   subscribeToColony?: Maybe<User>,
   unsubscribeFromColony?: Maybe<User>,
+  setUserTokens?: Maybe<User>,
   createColony?: Maybe<Colony>,
   editColonyProfile?: Maybe<Colony>,
   createDomain?: Maybe<Domain>,
@@ -431,6 +432,11 @@ export type MutationSubscribeToColonyArgs = {
 
 export type MutationUnsubscribeFromColonyArgs = {
   input: UnsubscribeFromColonyInput
+};
+
+
+export type MutationSetUserTokensArgs = {
+  input: SetUserTokensInput
 };
 
 
@@ -553,12 +559,7 @@ export type MutationSetLoggedInUserArgs = {
   input?: Maybe<LoggedInUserInput>
 };
 
-export type NewUserEvent = {
-  type: Scalars['String'],
-};
-
 export type Notification = {
-  id: Scalars['String'],
   event: Event,
   read: Scalars['Boolean'],
 };
@@ -701,6 +702,11 @@ export type SetTaskTitleInput = {
   title: Scalars['String'],
 };
 
+export type SetUserTokenAvatarInput = {
+  tokenAddress: Scalars['String'],
+  iconHash?: Maybe<Scalars['String']>,
+};
+
 export type SetUserTokensInput = {
   tokens: Array<Scalars['String']>,
 };
@@ -731,7 +737,6 @@ export type Task = {
   workRequests: Array<User>,
   workRequestAddresses: Array<Scalars['String']>,
   events: Array<Event>,
-  payouts: Array<TaskPayout>,
 };
 
 export type TaskEvent = {
@@ -749,18 +754,12 @@ export type TaskMessageEvent = TaskEvent & {
   message: Scalars['String'],
 };
 
-export type TaskPayout = {
-  amount: Scalars['String'],
-  tokenAddress: Scalars['String'],
-};
-
 export type Token = IToken & {
   id: Scalars['String'],
   createdAt: Scalars['DateTime'],
   address: Scalars['String'],
   name: Scalars['String'],
   symbol: Scalars['String'],
-  decimals: Scalars['Int'],
   iconHash?: Maybe<Scalars['String']>,
 };
 
@@ -788,8 +787,7 @@ export type User = {
   colonyAddresses: Array<Scalars['String']>,
   tasks: Array<Task>,
   taskIds: Array<Scalars['String']>,
-  tokens: Array<UserToken>,
-  tokenAddresses: Array<Scalars['String']>,
+  tokens: Array<Scalars['String']>,
   notifications?: Maybe<Array<Notification>>,
 };
 
@@ -1002,6 +1000,13 @@ export type EditUserMutation = { editUser: Maybe<(
     & { profile: Pick<UserProfile, 'avatarHash' | 'bio' | 'displayName' | 'location' | 'website'> }
   )> };
 
+export type SetUserTokensMutationVariables = {
+  input: SetUserTokensInput
+};
+
+
+export type SetUserTokensMutation = { setUserTokens: Maybe<Pick<User, 'id' | 'tokens'>> };
+
 export type CreateColonyMutationVariables = {
   input: CreateColonyInput
 };
@@ -1055,6 +1060,7 @@ export type EditDomainMutationVariables = {
 
 
 export type EditDomainMutation = { editDomainName: Maybe<Pick<Domain, 'id' | 'ethDomainId' | 'ethParentDomainId' | 'name'>> };
+
 export type TaskQueryVariables = {
   id: Scalars['String']
 };
@@ -1123,7 +1129,7 @@ export type UserTokensQueryVariables = {
 };
 
 
-export type UserTokensQuery = { user: Pick<User, 'id'> };
+export type UserTokensQuery = { user: Pick<User, 'id' | 'tokens'> };
 
 export type ColonyQueryVariables = {
   address: Scalars['String']
@@ -1944,6 +1950,39 @@ export function useEditUserMutation(baseOptions?: ApolloReactHooks.MutationHookO
 export type EditUserMutationHookResult = ReturnType<typeof useEditUserMutation>;
 export type EditUserMutationResult = ApolloReactCommon.MutationResult<EditUserMutation>;
 export type EditUserMutationOptions = ApolloReactCommon.BaseMutationOptions<EditUserMutation, EditUserMutationVariables>;
+export const SetUserTokensDocument = gql`
+    mutation SetUserTokens($input: SetUserTokensInput!) {
+  setUserTokens(input: $input) {
+    id
+    tokens
+  }
+}
+    `;
+export type SetUserTokensMutationFn = ApolloReactCommon.MutationFunction<SetUserTokensMutation, SetUserTokensMutationVariables>;
+
+/**
+ * __useSetUserTokensMutation__
+ *
+ * To run a mutation, you first call `useSetUserTokensMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useSetUserTokensMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [setUserTokensMutation, { data, loading, error }] = useSetUserTokensMutation({
+ *   variables: {
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function useSetUserTokensMutation(baseOptions?: ApolloReactHooks.MutationHookOptions<SetUserTokensMutation, SetUserTokensMutationVariables>) {
+        return ApolloReactHooks.useMutation<SetUserTokensMutation, SetUserTokensMutationVariables>(SetUserTokensDocument, baseOptions);
+      }
+export type SetUserTokensMutationHookResult = ReturnType<typeof useSetUserTokensMutation>;
+export type SetUserTokensMutationResult = ApolloReactCommon.MutationResult<SetUserTokensMutation>;
+export type SetUserTokensMutationOptions = ApolloReactCommon.BaseMutationOptions<SetUserTokensMutation, SetUserTokensMutationVariables>;
 export const CreateColonyDocument = gql`
     mutation CreateColony($input: CreateColonyInput!) {
   createColony(input: $input) {
@@ -2477,6 +2516,7 @@ export const UserTokensDocument = gql`
     query UserTokens($address: String!) {
   user(address: $address) {
     id
+    tokens
   }
 }
     `;
