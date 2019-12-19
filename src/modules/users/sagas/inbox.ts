@@ -15,7 +15,7 @@ import { getUserInboxActivity } from '../data/queries';
 function* inboxItemsFetch() {
   try {
     const { walletAddress } = yield getLoggedInUser();
-    const apolloClient: ApolloClient<any> = yield getContext(
+    const apolloClient: ApolloClient<object> = yield getContext(
       Context.APOLLO_CLIENT,
     );
 

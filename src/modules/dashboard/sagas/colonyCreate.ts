@@ -10,8 +10,12 @@ import ENS from '~lib/ENS';
 import { createAddress, ContractContexts } from '~types/index';
 import { parseExtensionDeployedLog } from '~utils/web3/eventLogs/eventParsers';
 import {
-  CreateUserDocument,
   CreateColonyDocument,
+  CreateColonyMutation,
+  CreateColonyMutationVariables,
+  CreateUserMutation,
+  CreateUserDocument,
+  CreateUserMutationVariables,
   getLoggedInUser,
 } from '~data/index';
 
@@ -39,7 +43,7 @@ function* colonyCreate({
 }: Action<ActionTypes.COLONY_CREATE>) {
   const { username: currentUsername } = yield getLoggedInUser();
 
-  const apolloClient: ApolloClient<any> = yield getContext(
+  const apolloClient: ApolloClient<object> = yield getContext(
     Context.APOLLO_CLIENT,
   );
 
@@ -208,7 +212,10 @@ function* colonyCreate({
       yield takeFrom(createUser.channel, ActionTypes.TRANSACTION_SUCCEEDED);
       yield put<AllActions>(transactionLoadRelated(createUser.id, true));
 
-      yield apolloClient.mutate({
+      yield apolloClient.mutate<
+        CreateUserMutation,
+        CreateUserMutationVariables
+      >({
         mutation: CreateUserDocument,
         variables: {
           createUserInput: { username },
@@ -270,7 +277,10 @@ function* colonyCreate({
     /*
      * Create the colony in the Mongo Database
      */
-    yield apolloClient.mutate({
+    yield apolloClient.mutate<
+      CreateColonyMutation,
+      CreateColonyMutationVariables
+    >({
       mutation: CreateColonyDocument,
       variables: {
         input: {
@@ -278,6 +288,7 @@ function* colonyCreate({
           colonyName,
           displayName,
           tokenAddress,
+          tokenIsExternal: !createToken,
           tokenName,
           tokenSymbol,
           tokenIconHash: tokenIcon,
