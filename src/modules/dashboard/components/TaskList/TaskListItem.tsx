@@ -51,7 +51,7 @@ const TaskListItem = ({
   history,
 }: InnerProps) => {
   const defaultTitle = formatMessage(MSG.untitled);
-  const { id: draftId, assignedWorker, title = defaultTitle } = data;
+  const { id: draftId, assignedWorkerAddress, title = defaultTitle } = data;
 
   // @todo get payouts from centralized store
   const payouts = [];
@@ -91,7 +91,9 @@ const TaskListItem = ({
         )}
       </TableCell>
       <TableCell className={styles.userAvatar}>
-        {assignedWorker && <UserAvatar size="s" address={assignedWorker.id} />}
+        {assignedWorkerAddress && (
+          <UserAvatar size="s" address={assignedWorkerAddress} />
+        )}
       </TableCell>
     </TableRow>
   );
