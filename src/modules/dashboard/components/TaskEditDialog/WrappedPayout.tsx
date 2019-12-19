@@ -9,6 +9,7 @@ interface Props {
   canRemove: boolean;
   colonyAddress: Address;
   index: number;
+  // fixme use task payout type from server
   payout: TaskPayoutType;
   payouts: TaskPayoutType[];
   reputation: number;
