@@ -40,10 +40,7 @@ export default gql`
 
   extend type Token {
     balance(walletAddress: String!): String!
-    balances(
-      colonyAddress: String!
-      domainIds: [Int!] = [0, 1]
-    ): [DomainBalance!]!
+    balances(colonyAddress: String!, domainIds: [Int!]): [DomainBalance!]!
     details: TokenInfo!
   }
 
