@@ -15,7 +15,11 @@ import { Context } from '~context/index';
 import { putError } from '~utils/saga/effects';
 import { log } from '~utils/debug';
 import ENSCache from '~lib/ENS';
-import { SetLoggedInUserDocument } from '~data/index';
+import {
+  SetLoggedInUserDocument,
+  SetLoggedInUserMutation,
+  SetLoggedInUserMutationVariables,
+} from '~data/index';
 
 import setupResolvers from '../../../context/setupResolvers';
 import ColonyManagerType from '../../../lib/ColonyManager';
@@ -84,7 +88,7 @@ export default function* setupUserContext(
     const walletAddress = createAddress(wallet.address);
     yield setContext({ [Context.WALLET]: wallet });
 
-    const apolloClient: ApolloClient<any> = yield getContext(
+    const apolloClient: ApolloClient<object> = yield getContext(
       Context.APOLLO_CLIENT,
     );
 
@@ -146,7 +150,10 @@ export default function* setupUserContext(
     // just set it up in an aync function (instead of WALLET_CREATE), then call this function
     yield setupResolvers(apolloClient, { colonyManager, ens, wallet });
 
-    yield apolloClient.mutate({
+    yield apolloClient.mutate<
+      SetLoggedInUserMutation,
+      SetLoggedInUserMutationVariables
+    >({
       mutation: SetLoggedInUserDocument,
       variables: {
         input: {

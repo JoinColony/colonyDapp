@@ -121,7 +121,7 @@ function* colonyMintTokens({
   let txChannel;
   try {
     txChannel = yield call(getTxChannel, meta.id);
-    const apolloClient: ApolloClient<any> = yield getContext(
+    const apolloClient: ApolloClient<object> = yield getContext(
       Context.APOLLO_CLIENT,
     );
     const { data } = yield apolloClient.query({ query: ColonyTokensDocument });

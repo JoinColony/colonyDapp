@@ -12,7 +12,11 @@ import {
 import { Action, ActionTypes, AllActions } from '~redux/index';
 import { putError, takeFrom, executeQuery } from '~utils/saga/effects';
 import { ContractContexts } from '~types/index';
-import { EditColonyProfileDocument } from '~data/index';
+import {
+  EditColonyProfileDocument,
+  EditColonyProfileMutation,
+  EditColonyProfileMutationVariables,
+} from '~data/index';
 import { getContext, Context } from '~context/index';
 
 import { checkColonyNameIsAvailable } from '../data/queries';
@@ -55,12 +59,15 @@ function* colonyAvatarUpload({
   payload: { colonyAddress, data },
 }: Action<ActionTypes.COLONY_AVATAR_UPLOAD>) {
   try {
-    const apolloClient: ApolloClient<any> = yield getContext(
+    const apolloClient: ApolloClient<object> = yield getContext(
       Context.APOLLO_CLIENT,
     );
     const ipfsHash = yield call(ipfsUpload, data);
 
-    yield apolloClient.mutate({
+    yield apolloClient.mutate<
+      EditColonyProfileMutation,
+      EditColonyProfileMutationVariables
+    >({
       mutation: EditColonyProfileDocument,
       variables: { input: { colonyAddress, avatarHash: ipfsHash } },
     });
@@ -81,10 +88,13 @@ function* colonyAvatarRemove({
   payload: { colonyAddress },
 }: Action<ActionTypes.COLONY_AVATAR_REMOVE>) {
   try {
-    const apolloClient: ApolloClient<any> = yield getContext(
+    const apolloClient: ApolloClient<object> = yield getContext(
       Context.APOLLO_CLIENT,
     );
-    yield apolloClient.mutate({
+    yield apolloClient.mutate<
+      EditColonyProfileMutation,
+      EditColonyProfileMutationVariables
+    >({
       mutation: EditColonyProfileDocument,
       variables: { input: { colonyAddress, avatarHash: null } },
     });

@@ -86,7 +86,11 @@ export const tokenResolvers = ({
         __typename: 'DomainBalance',
       }));
     },
-    async details({ address }, _, { client }: { client: ApolloClient<any> }) {
+    async details(
+      { address },
+      _,
+      { client }: { client: ApolloClient<object> },
+    ) {
       if (!isAddress(address)) {
         // don't bother looking it up if it's an invalid token address
         throw Error('Invalid token address');
