@@ -1,13 +1,5 @@
 import ApolloClient from 'apollo-client';
-import {
-  all,
-  call,
-  fork,
-  put,
-  select,
-  takeEvery,
-  takeLeading,
-} from 'redux-saga/effects';
+import { all, call, fork, put, takeEvery } from 'redux-saga/effects';
 import { replace } from 'connected-react-router';
 import BigNumber from 'bn.js';
 
@@ -42,49 +34,12 @@ import {
 } from '~data/index';
 import { TaskPayoutType } from '~immutable/TaskPayout';
 import { Action, ActionTypes } from '~redux/index';
-import { Address, ContractContexts } from '~types/index';
-import { putError, raceError, takeFrom } from '~utils/saga/effects';
+import { ContractContexts } from '~types/index';
+import { putError, takeFrom } from '~utils/saga/effects';
 
-import { fetchColonyTaskMetadata as fetchColonyTaskMetadataAC } from '../actionCreators';
-import {
-  allColonyNamesSelector,
-  colonyTaskMetadataSelector,
-} from '../selectors';
 import { createTransaction, getTxChannel, signMessage } from '../../core/sagas';
 
 import { AllActions } from '../../../redux/types/actions';
-
-/*
- * Dispatch an action to fetch the colony task metadata and wait for the
- * success/error action.
- */
-export function* fetchColonyTaskMetadata(colonyAddress: Address) {
-  const metadata = yield select(colonyTaskMetadataSelector, colonyAddress);
-
-  /*
-   * Dispatch an action to fetch the task metadata for this colony
-   * (if necessary).
-   */
-  if (metadata == null || metadata.error || !metadata.isFetching) {
-    yield put(fetchColonyTaskMetadataAC(colonyAddress));
-
-    /*
-     * Wait for any success/error action of this type; this may not be from
-     * the action dispatched above, because it could have been from a previously
-     * dispatched action that did not block the UI.
-     */
-    return yield raceError(
-      (action: AllActions) =>
-        action.type === ActionTypes.COLONY_TASK_METADATA_FETCH_SUCCESS &&
-        action.meta.key === colonyAddress,
-      (action: AllActions) =>
-        action.type === ActionTypes.COLONY_TASK_METADATA_FETCH_ERROR &&
-        action.meta.key === colonyAddress,
-    );
-  }
-
-  return null;
-}
 
 function* taskCreate({
   meta,
@@ -131,19 +86,6 @@ function* taskCreate({
     return yield putError(ActionTypes.TASK_CREATE_ERROR, error, meta);
   }
   return null;
-}
-
-/*
- * Given all colonies in the current state, fetch all tasks for all
- * colonies (in parallel).
- */
-function* taskFetchAll() {
-  const colonyAddresss = yield select(allColonyNamesSelector);
-  yield all(
-    colonyAddresss.map(colonyAddress =>
-      call(fetchColonyTaskMetadata, colonyAddress),
-    ),
-  );
 }
 
 /*
@@ -359,5 +301,4 @@ export default function* tasksSagas() {
     ActionTypes.TASK_SET_WORKER_OR_PAYOUT,
     taskSetWorkerOrPayouts,
   );
-  yield takeLeading(ActionTypes.TASK_FETCH_ALL, taskFetchAll);
 }

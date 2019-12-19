@@ -11,7 +11,6 @@ export * from './GasPrices';
 export * from './InboxItem';
 export * from './Message';
 export * from './Network';
-export * from './TaskEvent';
 export * from './TaskRating';
 export * from './TaskPayout';
 export * from './TaskMetadata';

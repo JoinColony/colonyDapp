@@ -2,8 +2,6 @@ export const DASHBOARD_NAMESPACE = 'dashboard';
 
 export const DASHBOARD_ALL_COLONIES = 'allColonies';
 export const DASHBOARD_ALL_DOMAINS = 'allDomains';
-export const DASHBOARD_TASKS = 'tasks';
-export const DASHBOARD_TASK_METADATA = 'taskMetadata';
 export const DASHBOARD_TASK_PAYOUTS = 'payouts';
 export const DASHBOARD_TASK_REQUESTS = 'requests';
 export const DASHBOARD_ALL_TOKENS = 'allTokens';

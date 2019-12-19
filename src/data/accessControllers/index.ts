@@ -1,4 +1,3 @@
-export { default as TaskAccessController } from './TaskAccessController';
 export { default as ColonyAccessController } from './ColonyAccessController';
 export {
   default as EthereumWalletAccessController,

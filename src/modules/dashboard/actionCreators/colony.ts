@@ -19,14 +19,6 @@ export const fetchColonyName = (colonyAddress: Address): AllActions => ({
   meta: { key: createAddress(colonyAddress) },
 });
 
-export const fetchColonyTaskMetadata = (
-  colonyAddress: Address,
-): AllActions => ({
-  type: ActionTypes.COLONY_TASK_METADATA_FETCH,
-  payload: { colonyAddress },
-  meta: { key: createAddress(colonyAddress) },
-});
-
 export const fetchColonyTokenBalance = (
   colonyAddress: Address,
   tokenAddress: Address,
@@ -42,20 +34,4 @@ export const fetchColonyTokenBalances = (
 ): AllActions => ({
   type: ActionTypes.COLONY_TOKEN_BALANCES_FETCH,
   payload: { colonyAddress, tokenAddress },
-});
-
-export const colonyTaskMetadataSubStart = (
-  colonyAddress: Address,
-): AllActions => ({
-  type: ActionTypes.COLONY_TASK_METADATA_SUB_START,
-  payload: { colonyAddress },
-  meta: { key: createAddress(colonyAddress) },
-});
-
-export const colonyTaskMetadataSubStop = (
-  colonyAddress: Address,
-): AllActions => ({
-  type: ActionTypes.COLONY_TASK_METADATA_SUB_STOP,
-  payload: { colonyAddress },
-  meta: { key: createAddress(colonyAddress) },
 });
