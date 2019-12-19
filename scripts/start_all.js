@@ -104,12 +104,21 @@ addProcess('db', async () => {
     cwd: path.resolve(__dirname, '..', 'src/lib/colonyServer'),
   });
   await new Promise((resolve, reject) => {
-    cleanProcess.on('exit', code => {
-      if (code) {
+    cleanProcess.on('exit', cleanCode => {
+      if (cleanCode) {
         dbProcess.kill();
         return reject(new Error(`Clean process exited with code ${code}`));
       }
-      resolve();
+      const setupProcess = spawn('npm', ['run', 'db:setup'], {
+        cwd: path.resolve(__dirname, '..', 'src/lib/colonyServer'),
+      });
+      setupProcess.on('exit', setupCode => {
+        if (setupCode) {
+          dbProcess.kill();
+          return reject(new Error(`Setup process exited with code ${code}`));
+        }
+        resolve();
+      });
     });
   });
   return dbProcess;
