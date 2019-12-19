@@ -19,7 +19,11 @@ import { ColonyManager } from '~data/types';
 import {
   ColonySubscribedUsersDocument,
   CreateUserDocument,
+  CreateUserMutation,
+  CreateUserMutationVariables,
   EditUserDocument,
+  EditUserMutation,
+  EditUserMutationVariables,
   getLoggedInUser,
   UserColonyIdsQueryResult,
 } from '~data/index';
@@ -40,7 +44,7 @@ function* userTokenTransfersFetch( // eslint-disable-next-line @typescript-eslin
 ) {
   try {
     const { walletAddress } = yield getLoggedInUser();
-    const apolloClient: ApolloClient<any> = yield getContext(
+    const apolloClient: ApolloClient<object> = yield getContext(
       Context.APOLLO_CLIENT,
     );
 
@@ -103,10 +107,10 @@ function* userAddressFetch({
 function* userAvatarRemove({ meta }: Action<ActionTypes.USER_AVATAR_REMOVE>) {
   try {
     const { walletAddress } = yield getLoggedInUser();
-    const apolloClient: ApolloClient<any> = yield getContext(
+    const apolloClient: ApolloClient<object> = yield getContext(
       Context.APOLLO_CLIENT,
     );
-    yield apolloClient.mutate({
+    yield apolloClient.mutate<EditUserMutation, EditUserMutationVariables>({
       mutation: EditUserDocument,
       variables: { input: { avatarHash: null } },
     });
@@ -128,12 +132,12 @@ function* userAvatarUpload({
 }: Action<ActionTypes.USER_AVATAR_UPLOAD>) {
   try {
     const { walletAddress } = yield getLoggedInUser();
-    const apolloClient: ApolloClient<any> = yield getContext(
+    const apolloClient: ApolloClient<object> = yield getContext(
       Context.APOLLO_CLIENT,
     );
     const ipfsHash = yield call(ipfsUpload, payload.data);
 
-    yield apolloClient.mutate({
+    yield apolloClient.mutate<EditUserMutation, EditUserMutationVariables>({
       mutation: EditUserDocument,
       variables: { input: { avatarHash: ipfsHash } },
     });
@@ -211,7 +215,7 @@ function* usernameCreate({
       },
     });
 
-    const apolloClient: ApolloClient<any> = yield getContext(
+    const apolloClient: ApolloClient<object> = yield getContext(
       Context.APOLLO_CLIENT,
     );
 
@@ -219,7 +223,7 @@ function* usernameCreate({
 
     yield put(transactionLoadRelated(id, true));
 
-    yield apolloClient.mutate({
+    yield apolloClient.mutate<CreateUserMutation, CreateUserMutationVariables>({
       mutation: CreateUserDocument,
       variables: {
         createUserInput: { username },

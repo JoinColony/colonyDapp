@@ -33,7 +33,7 @@ function* colonyDomainsFetch({
   },
 }: Action<ActionTypes.COLONY_DOMAINS_FETCH>) {
   try {
-    const apolloClient: ApolloClient<any> = yield getContext(
+    const apolloClient: ApolloClient<object> = yield getContext(
       Context.APOLLO_CLIENT,
     );
 
@@ -47,11 +47,14 @@ function* colonyDomainsFetch({
 
     if (!data) throw new Error("Could not get the colony's domain metadata");
 
-    const domains = data.colony.domains.map(domain => ({
-      ...domain,
-      id: domain.ethDomainId,
-      roles: {},
-    }));
+    const domains = data.colony.domains.map(
+      ({ ethDomainId, ethParentDomainId, name }) => ({
+        id: ethDomainId,
+        parentId: ethParentDomainId,
+        name,
+        roles: {},
+      }),
+    );
 
     yield put<AllActions>({
       type: ActionTypes.COLONY_DOMAINS_FETCH_SUCCESS,
@@ -81,7 +84,7 @@ function* domainCreate({
 }: Action<ActionTypes.DOMAIN_CREATE>) {
   const txChannel = yield call(getTxChannel, meta.id);
   try {
-    const apolloClient: ApolloClient<any> = yield getContext(
+    const apolloClient: ApolloClient<object> = yield getContext(
       Context.APOLLO_CLIENT,
     );
     /*
@@ -155,7 +158,7 @@ function* domainEdit({
   meta,
 }: Action<ActionTypes.DOMAIN_EDIT>) {
   try {
-    const apolloClient: ApolloClient<any> = yield getContext(
+    const apolloClient: ApolloClient<object> = yield getContext(
       Context.APOLLO_CLIENT,
     );
 
@@ -191,7 +194,7 @@ function* moveFundsBetweenPots({
 }: Action<ActionTypes.MOVE_FUNDS_BETWEEN_POTS>) {
   let txChannel;
   try {
-    const apolloClient: ApolloClient<any> = yield getContext(
+    const apolloClient: ApolloClient<object> = yield getContext(
       Context.APOLLO_CLIENT,
     );
 
