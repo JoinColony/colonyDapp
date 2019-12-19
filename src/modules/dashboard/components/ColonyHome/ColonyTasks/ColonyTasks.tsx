@@ -127,18 +127,6 @@ const ColonyTasks = ({
     [dispatch],
   );
 
-  // const { data: taskMetadata, isFetching } = useDataSubscriber(
-  //   colonyTaskMetadataSubscriber,
-  //   [colonyAddress],
-  //   [colonyAddress],
-  // );
-
-  // This could be simpler if we had the tuples ready to select from state
-  // const draftIds = useMemo(
-  //   () =>
-  //     Object.keys(taskMetadata || {}).map(draftId => [colonyAddress, draftId]),
-  //   [colonyAddress, taskMetadata],
-  // ) as [Address, string][];
   const { data } = useColonyTasksQuery({
     variables: { address: colonyAddress },
   });
