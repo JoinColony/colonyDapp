@@ -7,7 +7,6 @@ import {
   taskSubStop,
 } from './actionCreators';
 import {
-  colonySelector,
   colonyTaskMetadataSelector,
   taskFeedItemsSelector,
   tasksByIdsSelector,
