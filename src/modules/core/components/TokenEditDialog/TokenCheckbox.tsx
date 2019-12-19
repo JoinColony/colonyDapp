@@ -1,19 +1,12 @@
 import React from 'react';
 import { defineMessages } from 'react-intl';
 
-import {
-  ColonyTokenReferenceType,
-  UserTokenReferenceType,
-} from '~immutable/index';
-
-import { useDataFetcher } from '~utils/hooks';
 import { Checkbox } from '~core/Fields';
 import Heading from '~core/Heading';
-import { SpinnerLoader } from '~core/Preloaders';
 import TokenIcon from '~dashboard/HookedTokenIcon';
+import { FullColonyFragment, TokenList } from '~data/index';
 
 import { tokenIsETH } from '../../checks';
-import { tokenFetcher } from '../../../dashboard/fetchers';
 
 import styles from './TokenEditDialog.css';
 
@@ -24,34 +17,27 @@ const MSG = defineMessages({
   },
 });
 
-const TokenCheckbox = ({
-  token: { address },
-  token: tokenReference,
-}: {
-  token: ColonyTokenReferenceType | UserTokenReferenceType;
-}) => {
-  const { data: token } = useDataFetcher(tokenFetcher, [address], [address]);
-  return token ? (
+interface Props {
+  token: TokenList[0] | FullColonyFragment['tokens'][0];
+}
+
+const TokenCheckbox = ({ token }: Props) => {
+  return (
     <Checkbox
       className={styles.tokenChoice}
-      value={address}
+      value={token.address}
       name="tokens"
-      disabled={
-        ('isNative' in tokenReference && !!tokenReference.isNative) ||
-        tokenIsETH(token)
-      }
+      disabled={('isNative' in token && !!token.isNative) || tokenIsETH(token)}
     >
-      <TokenIcon token={tokenReference} name={token.name} />
+      <TokenIcon token={token} name={token.details.name || undefined} />
       <span className={styles.tokenChoiceSymbol}>
         <Heading
-          text={token.symbol || token.name || MSG.unknownToken}
+          text={token.details.symbol || token.details.name || MSG.unknownToken}
           appearance={{ size: 'small', margin: 'none' }}
         />
-        {(!!token.symbol && token.name) || address}
+        {(!!token.details.symbol && token.details.name) || token.address}
       </span>
     </Checkbox>
-  ) : (
-    <SpinnerLoader />
   );
 };
 

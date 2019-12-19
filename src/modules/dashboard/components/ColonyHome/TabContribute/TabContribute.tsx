@@ -2,6 +2,7 @@ import React from 'react';
 
 import { COLONY_TOTAL_BALANCE_DOMAIN_ID } from '~constants';
 import { FullColonyFragment } from '~data/index';
+import { getBalanceFromToken } from '~utils/tokens';
 
 import { tokenIsETH } from '../../../../core/checks';
 import ColonyInitialFunding from '../ColonyInitialFunding';
@@ -30,41 +31,33 @@ const TabContribute = ({
   tokens,
   showQrCode,
 }: Props) => {
-  const nativeTokenRef = tokens.find(token => token.isNative);
-  const ethTokenRef = tokens.find(token => tokenIsETH(token));
+  const nativeToken = tokens.find(token => token.isNative);
+  const ethToken = tokens.find(token => tokenIsETH(token));
 
-  const nativeTokenTotalBalance =
-    nativeTokenRef &&
-    nativeTokenRef.balances &&
-    nativeTokenRef.balances.find(
-      balance => balance.domainId === COLONY_TOTAL_BALANCE_DOMAIN_ID,
-    );
-  const isColonyTokenBalanceZero =
-    nativeTokenTotalBalance && nativeTokenTotalBalance.balance === '0';
+  const nativeTokenBalance = getBalanceFromToken(
+    nativeToken,
+    COLONY_TOTAL_BALANCE_DOMAIN_ID,
+  );
 
-  const ethTotalBalance =
-    ethTokenRef &&
-    ethTokenRef.balances &&
-    ethTokenRef.balances.find(
-      balance => balance.domainId === COLONY_TOTAL_BALANCE_DOMAIN_ID,
-    );
-
-  const isEthBalanceZero = ethTotalBalance && ethTotalBalance.balance === '0';
+  const ethBalance = getBalanceFromToken(
+    ethToken,
+    COLONY_TOTAL_BALANCE_DOMAIN_ID,
+  );
 
   const canMintTokens = !!(
-    nativeTokenRef &&
-    !nativeTokenRef.isExternal &&
+    nativeToken &&
+    !nativeToken.isExternal &&
     canMintNativeToken
   );
   const showEmptyState = !(
-    nativeTokenRef &&
-    isColonyTokenBalanceZero &&
-    isEthBalanceZero
+    nativeToken &&
+    nativeTokenBalance.isZero() &&
+    ethBalance.isZero()
   );
 
   return (
     <>
-      {nativeTokenRef && isColonyTokenBalanceZero && isEthBalanceZero && (
+      {nativeToken && nativeTokenBalance.isZero() && ethBalance.isZero() && (
         /*
          * The funding panel should be shown if the colony's balance of
          * both the native token and ETH is zero.
@@ -73,9 +66,9 @@ const TabContribute = ({
           canMintTokens={canMintTokens}
           colonyAddress={colonyAddress}
           displayName={displayName}
-          isExternal={nativeTokenRef.isExternal}
+          isExternal={nativeToken.isExternal}
           showQrCode={showQrCode}
-          tokenAddress={nativeTokenRef.address}
+          tokenAddress={nativeToken.address}
         />
       )}
       <ColonyTasks

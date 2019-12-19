@@ -2,17 +2,18 @@ import React, { useCallback, useMemo, useState } from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 import BigNumber from 'bn.js';
 
-import { Address, createAddress } from '~types/index';
+import { Address } from '~types/index';
 
+import { DEFAULT_TOKEN_DECIMALS } from '~constants';
 import Button from '~core/Button';
 import EthUsd from '~core/EthUsd';
 import Heading from '~core/Heading';
 import Input from '~core/Fields/Input';
 import Select from '~core/Fields/Select';
 import Numeral from '~core/Numeral';
+import { FullColonyFragment } from '~data/index';
 
 import NetworkFee from '../NetworkFee';
-import { useColonyTokens } from '../../../hooks/useColonyTokens';
 import { tokenIsETH } from '../../../../core/checks';
 
 import styles from './Payout.css';
@@ -26,6 +27,10 @@ const MSG = defineMessages({
     id: 'dashboard.TaskEditDialog.Payout.reputation',
     defaultMessage: '{reputation} max rep',
   },
+  unknownToken: {
+    id: 'dashboard.TaskEditDialog.unknownToken',
+    defaultMessage: 'Unknown Token',
+  },
 });
 
 interface Props {
@@ -37,8 +42,8 @@ interface Props {
   remove?: () => void;
   reputation?: number;
   reset?: () => void;
-  tokenAddress: Address;
-  tokenOptions?: { value: number; label: string }[];
+  token?: FullColonyFragment['tokens'][0];
+  tokens?: FullColonyFragment['tokens'];
 }
 
 const displayName = 'dashboard.TaskEditDialog.Payout';
@@ -46,14 +51,13 @@ const displayName = 'dashboard.TaskEditDialog.Payout';
 const Payout = ({
   amount,
   canRemove = true,
-  colonyAddress,
   editPayout = true,
   name,
   remove,
   reputation,
   reset,
-  tokenAddress,
-  tokenOptions,
+  token,
+  tokens,
 }: Props) => {
   const [isEditing, setIsEditing] = useState(false);
 
@@ -64,19 +68,15 @@ const Payout = ({
     setIsEditing(false);
   }, [isEditing, reset]);
 
-  const [, availableTokens] = useColonyTokens(colonyAddress);
+  const isEth = useMemo(() => token && tokenIsETH(token), [token]);
+  const tokenOptions =
+    tokens &&
+    tokens.map(({ address, details: { symbol } }) => ({
+      value: address,
+      label: symbol || MSG.unknownToken,
+    }));
 
-  const token = (availableTokens &&
-    availableTokens.find(({ address }) => address === tokenAddress)) || {
-    address: createAddress(''),
-    decimals: 18,
-    name: '',
-    symbol: '',
-  }; // make flow happy for below
-
-  const isEth = useMemo(() => tokenIsETH(token), [token]);
-
-  const { decimals = 18, symbol } = token;
+  const symbol = token && token.details.symbol;
 
   return (
     <div>
@@ -109,7 +109,7 @@ const Payout = ({
               formattingOptions={{
                 delimiter: ',',
                 numeral: true,
-                numeralDecimalScale: decimals,
+                numeralDecimalScale: DEFAULT_TOKEN_DECIMALS,
               }}
             />
           </div>
@@ -170,7 +170,11 @@ const Payout = ({
         </div>
         {amount && symbol && !isEditing && (
           <div className={styles.networkFeeRow}>
-            <NetworkFee amount={amount} decimals={decimals} symbol={symbol} />
+            <NetworkFee
+              amount={amount}
+              decimals={DEFAULT_TOKEN_DECIMALS}
+              symbol={symbol}
+            />
           </div>
         )}
       </div>

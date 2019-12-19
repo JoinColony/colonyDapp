@@ -8,10 +8,9 @@ import Numeral from '~core/Numeral';
 import { SpinnerLoader } from '~core/Preloaders';
 import TimeRelative from '~core/TimeRelative';
 import TransactionLink from '~core/TransactionLink';
-import { useDataFetcher, useSelector } from '~utils/hooks';
-import { useUser } from '~data/index';
+import { useSelector } from '~utils/hooks';
+import { useUser, useTokenQuery } from '~data/index';
 
-import { tokenFetcher } from '../../fetchers';
 import { getFriendlyName } from '../../../users/transformers';
 import { networkFeeInverseSelector } from '../../../core/selectors';
 
@@ -64,12 +63,10 @@ const TaskFeedCompleteInfo = ({
 }: Props) => {
   const user = useUser(workerAddress);
   const networkFeeInverse = useSelector(networkFeeInverseSelector);
-  const { data: token, isFetching: isFetchingToken } = useDataFetcher(
-    tokenFetcher,
-    [paymentTokenAddress as string], // Technically a bug, shouldn't need type override
-    [paymentTokenAddress],
-  );
-  const { decimals = 18, symbol = undefined } = token || {};
+  const { data, loading: isLoadingToken } = useTokenQuery({
+    variables: { address: paymentTokenAddress },
+  });
+  const { decimals = 18, symbol = '' } = (data && data.token.details) || {};
   const metaColonyFee = useMemo(() => {
     if (new BigNumber(amountPaid).isZero() || networkFeeInverse === 1) {
       return amountPaid;
@@ -100,7 +97,7 @@ const TaskFeedCompleteInfo = ({
           </span>
         </p>
       </div>
-      {isFetchingToken ? (
+      {isLoadingToken ? (
         <SpinnerLoader />
       ) : (
         <div className={styles.receiptContainer}>
@@ -127,7 +124,7 @@ const TaskFeedCompleteInfo = ({
                   amount: (
                     <Numeral
                       integerSeparator=""
-                      unit={decimals}
+                      unit={decimals || 18}
                       value={workerPayout}
                     />
                   ),
@@ -138,7 +135,9 @@ const TaskFeedCompleteInfo = ({
               <FormattedMessage
                 {...MSG.receiptColonyFeeText}
                 values={{
-                  amount: <Numeral unit={decimals} value={metaColonyFee} />,
+                  amount: (
+                    <Numeral unit={decimals || 18} value={metaColonyFee} />
+                  ),
                   symbol,
                 }}
               />

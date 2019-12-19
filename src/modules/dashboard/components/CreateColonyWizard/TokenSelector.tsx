@@ -1,12 +1,19 @@
 import React, { useCallback, useEffect, useState, ReactNode } from 'react';
 import { defineMessages } from 'react-intl';
+import { useApolloClient } from '@apollo/react-hooks';
 import { isAddress } from 'web3-utils';
 
-import { useAsyncFunction, usePrevious } from '~utils/hooks';
+import { usePrevious } from '~utils/hooks';
 import { Input } from '~core/Fields';
 import Button from '~core/Button';
 import { log } from '~utils/debug';
-import { ActionTypes } from '~redux/index';
+import {
+  OneToken,
+  TokenQuery,
+  TokenQueryVariables,
+  TokenDocument,
+} from '~data/index';
+
 import styles from './StepSelectToken.css';
 
 const MSG = defineMessages({
@@ -36,15 +43,10 @@ const MSG = defineMessages({
   },
 });
 
-interface TokenData {
-  name: string;
-  symbol: string;
-}
-
 interface Props {
   tokenAddress: string;
-  onTokenSelect: (arg0: TokenData | null | void) => any;
-  tokenData: TokenData | null;
+  onTokenSelect: (arg0: OneToken | null | void) => any;
+  tokenData: OneToken | null;
 
   /** Extra node to render on the top right in the label */
   extra?: ReactNode;
@@ -70,22 +72,28 @@ const TokenSelector = ({
   tokenData,
   extra,
 }: Props) => {
-  const getToken = useAsyncFunction({
-    submit: ActionTypes.TOKEN_INFO_FETCH,
-    success: ActionTypes.TOKEN_INFO_FETCH_SUCCESS,
-    error: ActionTypes.TOKEN_INFO_FETCH_ERROR,
-  });
+  const apolloClient = useApolloClient();
+  const getToken = useCallback(async () => {
+    const { data } = await apolloClient.query<TokenQuery, TokenQueryVariables>({
+      query: TokenDocument,
+      variables: { address: tokenAddress },
+    });
+    return data && data.token;
+  }, [apolloClient, tokenAddress]);
 
   const [isLoading, setLoading] = useState(false);
 
   const handleGetTokenSuccess = useCallback(
-    ({ name, symbol }: TokenData) => {
+    (token: OneToken) => {
+      const {
+        details: { name, symbol },
+      } = token;
       setLoading(false);
       if (!name || !symbol) {
         onTokenSelect(null);
         return;
       }
-      onTokenSelect({ name, symbol });
+      onTokenSelect(token);
     },
     [onTokenSelect],
   );
@@ -117,8 +125,8 @@ const TokenSelector = ({
     onTokenSelect();
 
     // Get the token address and handle success/error
-    getToken({ tokenAddress })
-      .then((data: TokenData) => handleGetTokenSuccess(data))
+    getToken()
+      .then((token: OneToken) => handleGetTokenSuccess(token))
       .catch(error => handleGetTokenError(error));
   }, [
     tokenAddress,

@@ -26,9 +26,6 @@ const sagaMiddleware = createSagaMiddleware({ context });
 // been resolved yet. For now, only fetch actions with a key are guarded against.
 const duplicateActionGuardMiddleware = createDuplicateActionGuardMiddleware(
   300,
-  ActionTypes.COLONY_ADDRESS_FETCH,
-  ActionTypes.COLONY_FETCH,
-  ActionTypes.COLONY_NAME_FETCH,
   ActionTypes.TASK_FETCH,
 );
 

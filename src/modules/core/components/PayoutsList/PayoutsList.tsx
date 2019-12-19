@@ -2,13 +2,12 @@ import React, { useCallback } from 'react';
 import { defineMessages, FormattedMessage, FormattedNumber } from 'react-intl';
 import cx from 'classnames';
 
-import {
-  TaskPayoutType,
-  ColonyTokenReferenceType,
-  TokenType,
-} from '~immutable/index';
+import { DEFAULT_TOKEN_DECIMALS } from '~constants';
+import { TaskPayoutType } from '~immutable/index';
 import { Address } from '~types/index';
 import { ZERO_ADDRESS } from '~utils/web3/constants';
+import { ColonyTokens } from '~data/index';
+
 import { Tooltip } from '../Popover';
 import Numeral from '../Numeral';
 import styles from './PayoutsList.css';
@@ -24,29 +23,23 @@ interface Props {
   /** Maximum lines to show before switching to popover */
   maxLines?: number;
 
-  /** Native token of the displayed Colony */
-  nativeToken?: ColonyTokenReferenceType;
-
   /** Payouts list containing all the payouts */
   payouts: TaskPayoutType[];
 
   /** Tokens available to the current colony */
-  tokenOptions: TokenType[];
+  tokens: ColonyTokens;
 }
 
 const displayName = 'PayoutsList';
 
-const PayoutsList = ({
-  maxLines = 1,
-  nativeToken,
-  payouts,
-  tokenOptions,
-}: Props) => {
+const PayoutsList = ({ maxLines = 1, payouts, tokens }: Props) => {
   const getToken = useCallback(
     (tokenAddress: Address) =>
-      tokenOptions.find(({ address }) => address === tokenAddress),
-    [tokenOptions],
+      tokens.find(({ address }) => address === tokenAddress),
+    [tokens],
   );
+
+  const nativeToken = tokens.find(({ isNative }) => isNative);
 
   const { address: nativeTokenAddress = undefined } = nativeToken || {};
 
@@ -79,8 +72,8 @@ const PayoutsList = ({
                 [styles.native]: payout.token === nativeTokenAddress,
               })}
               key={payout.token}
-              suffix={` ${token.symbol} `}
-              unit={token.decimals || 18}
+              suffix={` ${token.details.symbol} `}
+              unit={DEFAULT_TOKEN_DECIMALS}
               value={payout.amount}
             />
           ) : null;
@@ -99,8 +92,8 @@ const PayoutsList = ({
                     })}
                     key={payout.token}
                     value={payout.amount}
-                    unit={token.decimals || 18}
-                    suffix={` ${token.symbol} `}
+                    unit={DEFAULT_TOKEN_DECIMALS}
+                    suffix={` ${token.details.symbol} `}
                   />
                 ) : null;
               })}

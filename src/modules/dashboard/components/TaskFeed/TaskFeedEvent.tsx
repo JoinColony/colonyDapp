@@ -16,6 +16,7 @@ import styles from '~dashboard/TaskFeed/TaskFeedEvent.css';
 import { EventTypes } from '~data/constants';
 import {
   useUser,
+  useTokenQuery,
   AnyUser,
   TaskEventFragment,
   SetTaskDueDateEvent,
@@ -33,11 +34,10 @@ import {
   UnassignWorkerEvent,
   SetTaskDomainEvent,
 } from '~data/index';
-import { useDataFetcher, useSelector } from '~utils/hooks';
+import { useSelector } from '~utils/hooks';
 
 import { getFriendlyName } from '../../../users/transformers';
 import { domainSelector } from '../../selectors';
-import { tokenFetcher } from '../../fetchers';
 import taskSkillsTree from '../TaskSkills/taskSkillsTree';
 
 const componentDisplayName = 'dashboard.TaskFeedEvent';
@@ -220,12 +220,8 @@ const TaskFeedEventPayoutSet = ({
     profile: { walletAddress },
   },
 }: EventProps<SetTaskPayoutEvent>) => {
-  const { data: token } = useDataFetcher(
-    tokenFetcher,
-    [tokenAddress],
-    [tokenAddress],
-  );
-  const { decimals = 18, symbol = '' } = token || {};
+  const { data } = useTokenQuery({ variables: { address: tokenAddress } });
+  const { decimals = 18, symbol = '' } = (data && data.token.details) || {};
   return (
     <FormattedMessage
       {...MSG.payoutSet}
@@ -235,7 +231,7 @@ const TaskFeedEventPayoutSet = ({
           <span className={styles.highlightNumeral}>
             <Numeral
               integerSeparator=""
-              unit={decimals}
+              unit={decimals || 18}
               value={amount}
               suffix={` ${symbol}`}
             />

@@ -9,19 +9,13 @@ import {
   TaskMetadataRecordProps,
 } from '~immutable/index';
 
-import { AllColoniesRecord } from './AllColonies';
 import { AllDomainsMap } from './AllDomains';
-import { AllTokensMap, AllTokensInitialState } from './AllTokens';
 import { TEMP_AllUserHasRecoveryRoles } from './TEMP_AllUserHasRecoveryRoles';
 import {
-  DASHBOARD_ALL_COLONIES,
   DASHBOARD_ALL_DOMAINS,
-  DASHBOARD_ALL_TOKENS,
   TEMP_DASHBOARD_ALL_USER_HAS_RECOVERY_ROLES,
 } from '../constants';
 
-export * from './AllColonies';
-export * from './AllTokens';
 export * from './AllDomains';
 export * from './TEMP_AllUserHasRecoveryRoles';
 
@@ -44,16 +38,12 @@ export type AllTaskMetadataMap = ImmutableMap<
 > & { toJS(): AllTaskMetadataObject };
 
 export interface DashboardStateProps {
-  [DASHBOARD_ALL_COLONIES]: AllColoniesRecord;
   [DASHBOARD_ALL_DOMAINS]: AllDomainsMap;
-  [DASHBOARD_ALL_TOKENS]: AllTokensMap;
   [TEMP_DASHBOARD_ALL_USER_HAS_RECOVERY_ROLES]: TEMP_AllUserHasRecoveryRoles;
 }
 
 const defaultValues: DefaultValues<DashboardStateProps> = {
-  [DASHBOARD_ALL_COLONIES]: new AllColoniesRecord(),
   [DASHBOARD_ALL_DOMAINS]: ImmutableMap() as AllDomainsMap,
-  [DASHBOARD_ALL_TOKENS]: AllTokensInitialState,
   // eslint-disable-next-line max-len
   [TEMP_DASHBOARD_ALL_USER_HAS_RECOVERY_ROLES]: ImmutableMap() as TEMP_AllUserHasRecoveryRoles,
 };

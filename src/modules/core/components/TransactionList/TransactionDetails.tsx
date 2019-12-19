@@ -3,7 +3,12 @@ import { defineMessages, FormattedMessage } from 'react-intl';
 
 import MaskedAddress from '~core/MaskedAddress';
 import Link from '~core/Link';
-import { AnyUser, AnyColony, AnyTask, useColonyQuery } from '~data/index';
+import {
+  AnyUser,
+  AnyColonyProfile,
+  AnyTask,
+  useColonyQuery,
+} from '~data/index';
 import { ContractTransactionType } from '~immutable/index';
 import { Address, ENSName } from '~types/index';
 
@@ -36,7 +41,7 @@ interface BaseProps {
 
 interface ColonyDetailsProps extends BaseProps {
   address?: Address;
-  colony: AnyColony;
+  colony: AnyColonyProfile;
 }
 
 interface TaskDetailsProps extends BaseProps {
@@ -50,14 +55,14 @@ interface UserDetailsProps extends BaseProps {
 }
 
 interface IncomingTransactionProps extends BaseProps {
-  colony: AnyColony;
+  colony: AnyColonyProfile;
   task?: AnyTask;
   transaction: ContractTransactionType;
   user: AnyUser;
 }
 
 interface OutgoingTransactionProps extends BaseProps {
-  colony: AnyColony;
+  colony: AnyColonyProfile;
   task?: AnyTask;
   transaction: ContractTransactionType;
   user: AnyUser;

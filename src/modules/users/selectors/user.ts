@@ -1,16 +1,13 @@
-import { createSelector } from 'reselect';
-
 import { FetchableContractTransactionList } from '../../admin/state';
 
 import { RootStateRecord } from '../../state';
 import {
   USERS_CURRENT_USER,
-  USERS_CURRENT_USER_TOKENS,
   USERS_CURRENT_USER_TRANSACTIONS,
   USERS_NAMESPACE as ns,
   USERS_INBOX_ITEMS,
 } from '../constants';
-import { CurrentUserInboxItemsType, CurrentUserTokensType } from '../state';
+import { CurrentUserInboxItemsType } from '../state';
 
 interface CurrentUserData {
   username?: string;
@@ -22,34 +19,10 @@ interface CurrentUserData {
  * Current user input selectors
  */
 
-export const currentUserTokensSelector = (
-  state: RootStateRecord,
-): CurrentUserTokensType =>
-  state.getIn([ns, USERS_CURRENT_USER, USERS_CURRENT_USER_TOKENS]);
-
 export const currentUserTransactionsSelector = (
   state: RootStateRecord,
 ): FetchableContractTransactionList =>
   state.getIn([ns, USERS_CURRENT_USER, USERS_CURRENT_USER_TRANSACTIONS]);
-
-export const currentUserRecentTokensSelector = createSelector(
-  currentUserTokensSelector,
-  currentUserTransactionsSelector,
-  (tokens, transactions) =>
-    Array.from(
-      // @ts-ignore
-      new Map([
-        ...((tokens &&
-          tokens.record &&
-          tokens.record.map(token => [token.address, token])) ||
-          []),
-        ...((transactions && transactions.record) || []).map(({ token }) => [
-          token,
-          { address: token },
-        ]),
-      ]).values(),
-    ),
-);
 
 /*
  * User activities (Eg: Inbox)

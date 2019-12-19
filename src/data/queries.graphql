@@ -64,6 +64,45 @@ query Task($id: String!) {
   }
 }
 
+query TaskToEdit($id: String!) {
+  task(id: String!) {
+    id
+    assignedWorker {
+      id
+      profile {
+        avatarHash
+        displayName
+        username
+        walletAddress
+      }
+    }
+    payouts {
+      amount
+      tokenAddress
+      token
+    }
+    workRequests {
+      id
+      profile {
+        avatarHash
+        displayName
+        username
+        walletAddress
+      }
+    }
+    colony {
+     subscribedUsers {
+      id
+      profile {
+       displayName
+       walletAddress
+       username
+       avatarHash
+     }
+    }
+  }
+}
+
 query TaskFeedEvents($id: String!) {
   task(id: $id) {
     id
@@ -112,6 +151,7 @@ query UserTasks($address: String!) {
       colony {
         id
         colonyName
+        displayName
       }
       colonyAddress
       createdAt
@@ -129,11 +169,40 @@ query UserTasks($address: String!) {
 query UserTokens($address: String!) {
   user(address: $address) {
     id
-    tokens
+    tokens {
+      id
+      address
+      iconHash
+      details @client {
+        decimals
+        name
+        symbol
+      }
+      balance(walletAddress: $address) @client
+    }  
   }
 }
 
-fragment FullColony on Colony {
+fragment Tokens on Colony {
+  tokens {
+    id
+    address
+    iconHash
+    isExternal
+    isNative
+    details @client {
+      decimals
+      name
+      symbol
+    }
+    balances(colonyAddress: $address) @client {
+      domainId
+      balance
+    }
+  }
+}
+
+fragment ColonyProfile on Colony {
   id
   colonyAddress
   colonyName
@@ -142,18 +211,11 @@ fragment FullColony on Colony {
   displayName
   guideline
   website
-  tokens {
-    address
-    name
-    symbol
-    iconHash
-    isExternal
-    isNative
-    balances(address: $address) @client {
-      domainId
-      balance
-    }
-  }
+}
+
+fragment FullColony on Colony {
+  ...ColonyProfile
+  ...Tokens
   version(address: $address) @client
   canMintNativeToken(address: $address) @client
   canUnlockNativeToken(address: $address) @client
@@ -168,9 +230,40 @@ query ColonyFromName($name: String!, $address: String!) {
   }
 }
 
+query ColonyName($address: String!) {
+  colonyName(address: $address) @client
+}
+
 query Colony($address: String!) {
   colony(address: $address) {
     ...FullColony
+  }
+}
+
+query ColonyTokens($address: String!) {
+  colony(address: $address) {
+    id
+    ...Tokens
+  }
+}
+
+query TokenBalancesForDomains($colonyAddress: String!, $tokenAddresses: [String!], $domainIds: [Int!]) {
+  colony(address: $colonyAddress) {
+    id
+    tokens(addresses: $tokenAddresses) {
+      id
+      address
+      balances(colonyAddress: $colonyAddress, domainIds: $domainIds) @client {
+        domainId
+        balance
+      }
+    }
+  }
+}
+
+query ColonyProfile($address: String!) {
+  colony(address: $address) {
+    ...ColonyProfile
   }
 }
 
@@ -200,6 +293,7 @@ query ColonyTasks($address: String!) {
       colony {
         id
         colonyName
+        displayName
       }
       colonyAddress
       createdAt
@@ -240,6 +334,30 @@ query Domain($colonyAddress: String!, $ethDomainId: Int!) {
   }
 }
 
+query Token($address: String!) {
+  token(address: $address) {
+    id
+    address
+    iconHash
+    details @client {
+      decimals
+      name
+      symbol
+    }
+  }
+}
+
+query TokenInfo($address: String!) {
+  token(address: $address) {
+    # This is deliberately _not_ renamed to details as we are using this in the local details resolver
+    info {
+      decimals
+      name
+      symbol
+    }
+  }
+}
+
 query ColonyDomains($colonyAddress: String!) {
   colony(address: $colonyAddress) {
     id
@@ -250,6 +368,19 @@ query ColonyDomains($colonyAddress: String!) {
       parent {
         id
       }
+    }
+  }
+}
+
+query AllTokens {
+  allTokens {
+    id
+    address
+    iconHash
+    details: info {
+      name
+      symbol
+      decimals
     }
   }
 }

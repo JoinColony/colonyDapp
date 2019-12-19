@@ -1,14 +1,14 @@
-import React, { ReactNode, useMemo, useCallback } from 'react';
+import React, { ReactNode, useMemo, useCallback, useEffect } from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 
 import { Address } from '~types/index';
 import { DomainId } from '~immutable/index';
 import {
   AnyTask,
+  useColonyNameLazyQuery,
   useLoggedInUser,
   useSubscribeToColonyMutation,
 } from '~data/index';
-import { useSelector } from '~utils/hooks';
 import Icon from '~core/Icon';
 import { Table, TableBody } from '~core/Table';
 import Button from '~core/Button';
@@ -17,7 +17,6 @@ import {
   TasksFilterOptions,
   TasksFilterOptionType,
 } from '../shared/tasksFilter';
-import { colonyNameSelector } from '../../selectors';
 import TaskListItem from './TaskListItem';
 
 import taskListItemStyles from './TaskListItem.css';
@@ -79,6 +78,22 @@ const TaskList = ({
   showEmptyState = true,
 }: Props) => {
   const { username, walletAddress } = useLoggedInUser();
+
+  const [loadColonyName, { data: colonyNameData }] = useColonyNameLazyQuery();
+
+  useEffect(() => {
+    if (colonyAddress) {
+      loadColonyName({ variables: { address: colonyAddress } });
+    }
+  }, [colonyAddress, loadColonyName]);
+
+  const [subscribeToColonyMutation] = useSubscribeToColonyMutation();
+  const subscribeToColony = useCallback(() => {
+    if (colonyAddress) {
+      subscribeToColonyMutation({ variables: { input: { colonyAddress } } });
+    }
+  }, [subscribeToColonyMutation, colonyAddress]);
+
   const filter = useCallback(
     ({
       creatorAddress,
@@ -138,23 +153,11 @@ const TaskList = ({
     [filter, sort, tasks],
   );
 
-  const [subscribeToColonyMutation] = useSubscribeToColonyMutation();
-  const subscribeToColony = useCallback(() => {
-    if (colonyAddress) {
-      // FIXME @james can we remove the nested input here?
-      subscribeToColonyMutation({ variables: { input: { colonyAddress } } });
-    }
-  }, [subscribeToColonyMutation, colonyAddress]);
-
   // FIXME get the colony addresses for the user
   const colonyAddresses = [] as string[];
 
   const isSubscribed =
     typeof colonyAddress == 'string' && colonyAddresses.includes(colonyAddress);
-
-  const data = useSelector(colonyNameSelector, [colonyAddress]);
-
-  const colonyName = colonyAddress ? data && data.record : undefined;
 
   /*
    * These empty states are getting a bit out of hand. We have now 4 different
@@ -172,6 +175,8 @@ const TaskList = ({
       </div>
     );
   }
+
+  const colonyName = colonyNameData && colonyNameData.colonyName;
 
   return filteredTasksData.length === 0 && colonyAddress ? (
     <div>

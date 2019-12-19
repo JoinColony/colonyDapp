@@ -3,23 +3,22 @@ import React from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 
 import { Address } from '~types/index';
-import { useDataFetcher } from '~utils/hooks';
-import { tokenFetcher } from '../../../fetchers';
 
 import Heading from '~core/Heading';
 import Button from '~core/Button';
 import { Input } from '~core/Fields';
 import QRCode from '~core/QRCode';
+import CopyableAddress from '~core/CopyableAddress';
 import { TokenMintForm } from '~admin/Tokens';
+import { useTokenQuery } from '~data/index';
 
 import styles from './ColonyInitialFunding.css';
-import CopyableAddress from '~core/CopyableAddress';
 
 interface Props {
   canMintTokens: boolean;
   colonyAddress: Address;
   displayName?: string | null;
-  isExternal?: boolean;
+  isExternal: boolean;
   showQrCode: boolean;
   tokenAddress: Address;
 }
@@ -63,15 +62,15 @@ const ColonyInitialFunding = ({
   displayName,
   tokenAddress,
 }: Props) => {
-  const { data: nativeToken } = useDataFetcher(
-    tokenFetcher,
-    [tokenAddress],
-    [tokenAddress],
-  );
+  const { data } = useTokenQuery({
+    variables: { address: tokenAddress },
+  });
 
-  if (!nativeToken) {
+  if (!data) {
     return null;
   }
+
+  const { token: nativeToken } = data;
 
   return (
     <>
@@ -110,14 +109,17 @@ const ColonyInitialFunding = ({
                       formattingOptions={{
                         numeral: true,
                         numeralPositiveOnly: true,
-                        numeralDecimalScale: nativeToken.decimals || 18,
+                        numeralDecimalScale: nativeToken.details.decimals || 18,
                       }}
                       label={MSG.amountLabel}
                       name="mintAmount"
                     />
                   </div>
-                  <span className={styles.nativeToken} title={nativeToken.name}>
-                    {nativeToken.symbol}
+                  <span
+                    className={styles.nativeToken}
+                    title={nativeToken.details.name || undefined}
+                  >
+                    {nativeToken.details.symbol}
                   </span>
                   <Button
                     appearance={{ theme: 'primary', size: 'large' }}

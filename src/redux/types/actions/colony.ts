@@ -2,17 +2,14 @@ import BigNumber from 'bn.js';
 
 import { ROLES } from '~constants';
 import { ActionTypes } from '~redux/index';
-import { Address, ENSName, WithKey } from '~types/index';
+import { Address, WithKey } from '~types/index';
 import {
   ContractTransactionType,
-  ColonyTokenReferenceType,
   DomainType,
   ColonyRolesType,
-  ColonyType,
 } from '~immutable/index';
 import {
   ActionType,
-  ActionTypeWithPayload,
   ActionTypeWithPayloadAndMeta,
   ErrorActionType,
   UniqueActionType,
@@ -92,17 +89,6 @@ export type ColonyActionTypes =
       void,
       object
     >
-  | ActionTypeWithPayloadAndMeta<
-      ActionTypes.COLONY_NAME_FETCH,
-      { colonyAddress: Address },
-      WithKey
-    >
-  | ErrorActionType<ActionTypes.COLONY_NAME_FETCH_ERROR, WithKey>
-  | ActionTypeWithPayloadAndMeta<
-      ActionTypes.COLONY_NAME_FETCH_SUCCESS,
-      { colonyAddress: Address; colonyName: ENSName },
-      WithKey
-    >
   | UniqueActionType<
       ActionTypes.COLONY_NATIVE_TOKEN_UNLOCK,
       { colonyAddress: Address },
@@ -113,28 +99,6 @@ export type ColonyActionTypes =
       ActionTypes.COLONY_NATIVE_TOKEN_UNLOCK_SUCCESS,
       object,
       object
-    >
-  | ActionTypeWithPayloadAndMeta<
-      ActionTypes.COLONY_ADDRESS_FETCH,
-      { colonyName: ENSName },
-      WithKey
-    >
-  | ErrorActionType<ActionTypes.COLONY_ADDRESS_FETCH_ERROR, WithKey>
-  | ActionTypeWithPayloadAndMeta<
-      ActionTypes.COLONY_ADDRESS_FETCH_SUCCESS,
-      { colonyAddress: Address; colonyName: ENSName },
-      WithKey
-    >
-  | ActionTypeWithPayloadAndMeta<
-      ActionTypes.COLONY_FETCH,
-      { colonyAddress: Address },
-      WithKey
-    >
-  | ErrorActionType<ActionTypes.COLONY_FETCH_ERROR, WithKey>
-  | ActionTypeWithPayloadAndMeta<
-      ActionTypes.COLONY_FETCH_SUCCESS,
-      ColonyType,
-      WithKey
     >
   | ActionTypeWithPayloadAndMeta<
       ActionTypes.COLONY_TRANSACTIONS_FETCH,
@@ -226,37 +190,6 @@ export type ColonyActionTypes =
     >
   | UniqueActionType<ActionTypes.COLONY_VERSION_UPGRADE_SUCCESS, object, object>
   | ErrorActionType<ActionTypes.COLONY_VERSION_UPGRADE_ERROR, object>
-  | ActionTypeWithPayload<
-      ActionTypes.COLONY_TOKEN_BALANCE_FETCH,
-      { colonyAddress: Address; domainId: number; tokenAddress: Address }
-    >
-  | ErrorActionType<ActionTypes.COLONY_TOKEN_BALANCE_FETCH_ERROR, object>
-  | ActionTypeWithPayload<
-      ActionTypes.COLONY_TOKEN_BALANCE_FETCH_SUCCESS,
-      {
-        domainId: number;
-        token: ColonyTokenReferenceType;
-        tokenAddress: Address;
-        colonyAddress: Address;
-      }
-    >
-  | ActionTypeWithPayload<
-      ActionTypes.COLONY_TOKEN_BALANCES_FETCH,
-      { colonyAddress: Address; tokenAddress: Address }
-    >
-  | ErrorActionType<ActionTypes.COLONY_TOKEN_BALANCES_FETCH_ERROR, object>
-  | ActionTypeWithPayload<ActionTypes.COLONY_TOKEN_BALANCES_FETCH_SUCCESS, null>
-  | UniqueActionType<
-      ActionTypes.COLONY_UPDATE_TOKENS,
-      { colonyAddress: Address; tokens: Address[] },
-      object
-    >
-  | ErrorActionType<ActionTypes.COLONY_UPDATE_TOKENS_ERROR, object>
-  | UniqueActionType<
-      ActionTypes.COLONY_UPDATE_TOKENS_SUCCESS,
-      { colonyAddress: Address; tokens: Address[] },
-      object
-    >
   | ActionTypeWithPayloadAndMeta<
       ActionTypes.TEMP_COLONY_USER_HAS_RECOVERY_ROLE_FETCH,
       { colonyAddress: Address; userAddress: Address },

@@ -10,10 +10,8 @@ import WalletLink from '~core/WalletLink';
 import { SpinnerLoader } from '~core/Preloaders';
 import withDialog from '~core/Dialog/withDialog';
 import TokenList from '~admin/Tokens/TokenList';
-import { useDataFetcher } from '~utils/hooks';
-import { useLoggedInUser } from '~data/index';
+import { useLoggedInUser, useUserTokensQuery } from '~data/index';
 
-import { currentUserTokensFetcher } from '../../../users/fetchers';
 import styles from './Wallet.css';
 
 const MSG = defineMessages({
@@ -53,11 +51,10 @@ interface Props {
 
 const Wallet = ({ openDialog }: Props) => {
   const { walletAddress } = useLoggedInUser();
-  const { isFetching: isFetchingTokens, data: tokens } = useDataFetcher(
-    currentUserTokensFetcher,
-    [],
-    [],
-  );
+  const { data: userTokensData, loading: loadingTokens } = useUserTokensQuery({
+    variables: { address: walletAddress },
+  });
+  const tokens = userTokensData ? userTokensData.user.tokens : [];
   const editTokens = useCallback(
     () =>
       openDialog('UserTokenEditDialog', {
@@ -80,10 +77,10 @@ const Wallet = ({ openDialog }: Props) => {
             </CopyableAddress>
           </div>
         </div>
-        {isFetchingTokens ? (
+        {loadingTokens ? (
           <SpinnerLoader />
         ) : (
-          <TokenList tokens={tokens || []} appearance={{ numCols: '3' }} />
+          <TokenList tokens={tokens} appearance={{ numCols: '3' }} />
         )}
       </main>
       <aside className={styles.sidebar}>

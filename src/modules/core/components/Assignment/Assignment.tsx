@@ -1,13 +1,9 @@
 import React from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 
-import {
-  TaskPayoutType,
-  ColonyTokenReferenceType,
-  TokenType,
-} from '~immutable/index';
+import { TaskPayoutType } from '~immutable/index';
 import { Address } from '~types/index';
-import { AnyUser } from '~data/index';
+import { AnyUser, FullColonyFragment } from '~data/index';
 import PayoutsList from '~core/PayoutsList';
 import UserInfo from '~users/UserInfo';
 
@@ -54,26 +50,23 @@ interface Props {
   /** The assignment has to be confirmed first and can therefore appear as pending */
   pending?: boolean;
 
-  /** We need to be aware of the native token to adjust the UI */
-  nativeToken?: ColonyTokenReferenceType;
-
   /** Should the funding be rendered (if set) */
   showFunding?: boolean;
 
   /** Tokens available to the current colony */
-  tokenOptions: TokenType[];
+  tokens: FullColonyFragment['tokens'];
 }
 
 const Assignment = ({
-  nativeToken,
   payouts,
   pending,
   reputation,
   showFunding,
-  tokenOptions,
+  tokens,
   worker,
   workerAddress,
 }: Props) => {
+  const nativeToken = tokens.find(({ isNative }) => isNative);
   const fundingWithNativeToken =
     payouts &&
     nativeToken &&
@@ -104,12 +97,7 @@ const Assignment = ({
             </span>
           ) : null}
           {nativeToken && payouts && payouts.length > 0 ? (
-            <PayoutsList
-              maxLines={2}
-              nativeToken={nativeToken}
-              payouts={payouts}
-              tokenOptions={tokenOptions}
-            />
+            <PayoutsList maxLines={2} payouts={payouts} tokens={tokens} />
           ) : (
             <FormattedMessage {...MSG.fundingNotSet} />
           )}

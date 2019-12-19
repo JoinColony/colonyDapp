@@ -4,7 +4,6 @@ import {
 } from '@colony/colony-js-client';
 import flatten from 'lodash/flatten';
 import BigNumber from 'bn.js';
-import { formatEther } from 'ethers/utils';
 
 import { Address } from '~types/index';
 import {
@@ -14,14 +13,10 @@ import {
   NetworkClient,
   Query,
 } from '~data/types';
-import {
-  ContractTransactionType,
-  UserTokenReferenceType,
-} from '~immutable/index';
+import { ContractTransactionType } from '~immutable/index';
 import { normalizeTransactionLog } from '~data/normalizers';
 import ENS from '~lib/ENS';
 import { Context } from '~context/index';
-import { ZERO_ADDRESS } from '~utils/web3/constants';
 import {
   formatFilterTopic,
   getDecoratedEvents,
@@ -45,77 +40,6 @@ const prepareMetaColonyClientQuery = async ({
 }: {
   colonyManager: ColonyManager;
 }) => colonyManager.getMetaColonyClient();
-
-// FIXME do this in saga, also using apollo data for user tokens
-export const getUserTokens: Query<
-  {
-    colonyManager: ColonyManager;
-  },
-  { walletAddress: Address },
-  { walletAddress: Address },
-  any
-> = {
-  name: 'getUserTokens',
-  context: [Context.COLONY_MANAGER, Context.WALLET],
-  async prepare({ colonyManager }: { colonyManager: ColonyManager }) {
-    return { colonyManager };
-  },
-  async execute({ colonyManager }, { walletAddress }) {
-    const {
-      networkClient: {
-        adapter: { provider },
-      },
-    } = colonyManager;
-
-    // FIXME get user tokens from apollo here
-    const tokenAddresses = [] as string[];
-    const tokens: UserTokenReferenceType[] = await Promise.all(
-      tokenAddresses.map(async address => {
-        const tokenClient = await colonyManager.getTokenClient(address);
-        const { amount } = await tokenClient.getBalanceOf.call({
-          sourceAddress: walletAddress,
-        });
-        // convert from Ethers BN
-        const balance = new BigNumber(amount.toString());
-        return { address, balance };
-      }),
-    );
-
-    // also get balance for ether and return in same format
-    const etherBalance = await provider.getBalance(walletAddress);
-    const etherToken = {
-      address: ZERO_ADDRESS,
-      // convert from Ethers BN
-      balance: new BigNumber(etherBalance.toString()),
-    };
-
-    // return combined array
-    return [etherToken, ...tokens];
-  },
-};
-
-// FIXME remove as soon as possible
-export const getUserBalance: Query<
-  NetworkClient,
-  void,
-  { walletAddress: string },
-  string
-> = {
-  name: 'getUserBalance',
-  context: [Context.COLONY_MANAGER],
-  prepare: async ({
-    colonyManager: { networkClient },
-  }: {
-    colonyManager: ColonyManager;
-  }) => networkClient,
-  async execute(networkClient, { walletAddress }) {
-    const {
-      adapter: { provider },
-    } = networkClient;
-    const balance = await provider.getBalance(walletAddress);
-    return formatEther(balance);
-  },
-};
 
 export const getUsername: Query<
   { ens: ENSCache; networkClient: NetworkClient },
