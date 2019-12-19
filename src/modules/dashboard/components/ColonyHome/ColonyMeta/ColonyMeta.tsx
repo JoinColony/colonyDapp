@@ -3,8 +3,7 @@ import { defineMessages, FormattedMessage } from 'react-intl';
 
 import { COLONY_TOTAL_BALANCE_DOMAIN_ID } from '~constants';
 import { DomainsMapType } from '~types/index';
-import { ColonyType } from '~immutable/index';
-import { AnyColony } from '~data/index';
+import { AnyColonyProfile } from '~data/index';
 import { stripProtocol, multiLineTextEllipsis } from '~utils/strings';
 import ExpandedParagraph from '~core/ExpandedParagraph';
 import Heading from '~core/Heading';
@@ -41,7 +40,7 @@ const MSG = defineMessages({
 const ColonyAvatar = HookedColonyAvatar({ fetchColony: false });
 
 interface Props {
-  colony: AnyColony | ColonyType;
+  colony: AnyColonyProfile;
   canAdminister: boolean;
   domains: DomainsMapType;
   setFilteredDomainId: (domainId: number) => void;

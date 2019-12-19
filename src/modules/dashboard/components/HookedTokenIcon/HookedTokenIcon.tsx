@@ -2,8 +2,9 @@ import React, { useState, useEffect, ComponentType } from 'react';
 import mapping from 'eth-contract-metadata';
 
 import TokenIcon, { Props as TokenIconProps } from '~core/TokenIcon';
+import { ZERO_ADDRESS } from '~utils/web3/constants';
 import { useDataFetcher } from '~utils/hooks';
-import { tokenIsETH } from '../../../core/checks';
+
 import { ipfsDataFetcher } from '../../../core/fetchers';
 
 interface ImageType {
@@ -55,7 +56,7 @@ const HookedTokenIcon = ({ token, ...props }: TokenIconProps) => {
           }
         }
       }
-      if (tokenIsETH({ address })) {
+      if (address === ZERO_ADDRESS) {
         const response = await import(
           /* webpackMode: "eager" */ `../../../../img/tokens/ether.svg`
         );

@@ -17,6 +17,7 @@ export default gql`
   extend type Query {
     loggedInUser: LoggedInUser!
     colonyAddress(name: String!): String!
+    colonyName(address: String!): String!
   }
 
   extend type Mutation {
@@ -31,12 +32,26 @@ export default gql`
     version(address: String!): Int!
   }
 
+  extend type Token {
+    balance(walletAddress: String!): String!
+    details: TokenInfo!
+  }
+
+  extend type TokenInfo {
+    verified: Boolean
+  }
+
   type DomainBalance {
+    id: Int!
     domainId: Int!
     balance: String!
   }
 
   extend type ColonyToken {
-    balances(address: String!): [DomainBalance!]!
+    balances(
+      colonyAddress: String!
+      domainIds: [Int!] = [0, 1]
+    ): [DomainBalance!]!
+    details: TokenInfo!
   }
 `;

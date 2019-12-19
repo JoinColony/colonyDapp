@@ -1,8 +1,5 @@
 import { Address } from '~types/index';
-import {
-  ContractTransactionType,
-  UserTokenReferenceType,
-} from '~immutable/index';
+import { ContractTransactionType } from '~immutable/index';
 
 import {
   ActionType,
@@ -51,22 +48,6 @@ export type UserActionTypes =
         transactions: ContractTransactionType[];
       }
     >
-  | ActionType<ActionTypes.USER_TOKENS_FETCH>
-  | ErrorActionType<ActionTypes.USER_TOKENS_FETCH_ERROR, object>
-  | ActionTypeWithPayload<
-      ActionTypes.USER_TOKENS_FETCH_SUCCESS,
-      {
-        tokens: UserTokenReferenceType[];
-      }
-    >
-  | ActionTypeWithPayload<
-      ActionTypes.USER_TOKENS_UPDATE,
-      {
-        tokens: Address[];
-      }
-    >
-  | ErrorActionType<ActionTypes.USER_TOKENS_UPDATE_ERROR, object>
-  | ActionType<ActionTypes.USER_TOKENS_UPDATE_SUCCESS>
   | ActionType<ActionTypes.USER_LOGOUT>
   | ErrorActionType<ActionTypes.USER_LOGOUT_ERROR, object>
   | ActionType<ActionTypes.USER_LOGOUT_SUCCESS>;

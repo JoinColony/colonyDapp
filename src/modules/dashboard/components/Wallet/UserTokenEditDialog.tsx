@@ -1,14 +1,9 @@
-import React, { useEffect } from 'react';
-import { useDispatch, useMappedState } from 'redux-react-hook';
+import React, { useCallback } from 'react';
 
-import { UserTokenReferenceType } from '~immutable/index';
 import { Address } from '~types/strings';
-import { ActionTypes } from '~redux/index';
-import { currentUserRecentTokensSelector } from '../../../users/selectors';
-
-import { userTokenTransfersFetch } from '../../../users/actionCreators';
-
 import TokenEditDialog from '~core/TokenEditDialog';
+import { SpinnerLoader } from '~core/Preloaders';
+import { useSetUserTokensMutation, useAllTokensQuery } from '~data/index';
 
 interface Props {
   cancel: () => void;
@@ -17,25 +12,29 @@ interface Props {
 }
 
 const UserTokenEditDialog = ({ selectedTokens = [], cancel, close }: Props) => {
-  // refetch recent user transactions, used to populate token options
-  const dispatch = useDispatch();
-  useEffect(() => {
-    dispatch(userTokenTransfersFetch());
-  }, [dispatch]);
+  const { data: allTokensData } = useAllTokensQuery();
+  const [setUserTokensMutation] = useSetUserTokensMutation();
 
-  const availableTokens = useMappedState(
-    currentUserRecentTokensSelector,
-  ) as UserTokenReferenceType[];
+  const setUserTokens = useCallback(
+    ({ tokens }) => {
+      setUserTokensMutation({ variables: { input: { tokens } } });
+    },
+    [setUserTokensMutation],
+  );
+
+  if (!allTokensData) {
+    return <SpinnerLoader />;
+  }
+
+  const { allTokens } = allTokensData;
 
   return (
     <TokenEditDialog
       cancel={cancel}
       close={close}
-      availableTokens={availableTokens}
+      availableTokens={allTokens}
       selectedTokens={selectedTokens}
-      submit={ActionTypes.USER_TOKENS_UPDATE}
-      error={ActionTypes.USER_TOKENS_UPDATE_ERROR}
-      success={ActionTypes.USER_TOKENS_UPDATE_SUCCESS}
+      onSubmit={setUserTokens}
     />
   );
 };

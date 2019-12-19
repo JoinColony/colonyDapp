@@ -263,10 +263,7 @@ const ColonyHome = ({
         </Tabs>
       </main>
       <aside className={styles.sidebar}>
-        <ColonyFunding
-          colonyAddress={colonyAddress}
-          currentDomainId={filteredDomainId}
-        />
+        <ColonyFunding colony={colony} currentDomainId={filteredDomainId} />
       </aside>
       {colony.isInRecoveryMode && <RecoveryModeAlert />}
     </div>

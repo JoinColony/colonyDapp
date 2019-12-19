@@ -26,6 +26,9 @@ mutation CancelTask($input: TaskIdInput!) {
 mutation CreateTask($input: CreateTaskInput!) {
   createTask(input: $input) {
     id
+    colony {
+      colonyName
+    }
     events {
       ...TaskEvent
     }
@@ -192,7 +195,14 @@ mutation EditUser($input: EditUserInput!) {
 mutation SetUserTokens($input: SetUserTokensInput!) {
   setUserTokens(input: $input) {
     id
-    tokens
+    tokenAddresses
+  }
+}
+
+mutation SetColonyTokens($input: SetColonyTokensInput!) {
+  setColonyTokens(input: $input) {
+    id
+    tokenAddresses
   }
 }
 

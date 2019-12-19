@@ -9,10 +9,8 @@ import Icon from '~core/Icon';
 import TransactionLink from '~core/TransactionLink';
 import { ActionTypes } from '~redux/index';
 import { mergePayload } from '~utils/actions';
-import { useDataFetcher } from '~utils/hooks';
-import { useUserLazy } from '~data/index';
+import { useUserLazy, useTokenQuery } from '~data/index';
 
-import { tokenFetcher } from '../../../dashboard/fetchers';
 import TransactionDetails from './TransactionDetails';
 
 import styles from './TransactionListItem.css';
@@ -76,11 +74,9 @@ const TransactionListItem = ({
 
   const user = useUserLazy(userAddress);
 
-  const { data: token } = useDataFetcher(
-    tokenFetcher,
-    [tokenAddress],
-    [tokenAddress],
-  );
+  const { data: tokenData } = useTokenQuery({
+    variables: { address: tokenAddress },
+  });
 
   const transform = useCallback(mergePayload({ colonyAddress, tokenAddress }), [
     colonyAddress,
@@ -88,7 +84,9 @@ const TransactionListItem = ({
   ]);
 
   // @TODO: use proper preloader
-  if (!token || !user) return null;
+  if (!tokenData || !user) return null;
+
+  const { token } = tokenData;
 
   return (
     <TableRow className={styles.main}>
@@ -157,7 +155,7 @@ const TransactionListItem = ({
           /**
            * @todo : what should we show when we don't recognise the token?
            */
-          suffix={` ${(token && token.symbol) || '???'}`}
+          suffix={` ${(token && token.details.symbol) || '???'}`}
         />
       </TableCell>
     </TableRow>

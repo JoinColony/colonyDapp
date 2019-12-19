@@ -2,14 +2,13 @@ import { FormikProps } from 'formik';
 import React from 'react';
 import { defineMessages } from 'react-intl';
 
-import { TokenType } from '~immutable/index';
 import { Address } from '~types/index';
-
 import Button from '~core/Button';
 import Dialog from '~core/Dialog';
 import DialogSection from '~core/Dialog/DialogSection';
 import { Input } from '~core/Fields';
 import Heading from '~core/Heading';
+import { ColonyTokens } from '~data/index';
 
 import TokenMintForm from './TokenMintForm';
 
@@ -46,7 +45,7 @@ interface FormValues {
 interface Props {
   cancel: () => void;
   close: () => void;
-  nativeToken: TokenType;
+  nativeToken: ColonyTokens[0];
   colonyAddress: Address;
 }
 
@@ -54,7 +53,9 @@ const TokenMintDialog = ({
   colonyAddress,
   cancel,
   close,
-  nativeToken: { name, symbol, decimals },
+  nativeToken: {
+    details: { name, symbol, decimals },
+  },
   nativeToken,
 }: Props) => (
   <Dialog cancel={cancel}>
@@ -93,7 +94,7 @@ const TokenMintDialog = ({
                   name="mintAmount"
                 />
               </div>
-              <span className={styles.nativeToken} title={name}>
+              <span className={styles.nativeToken} title={name || undefined}>
                 {symbol}
               </span>
             </div>

@@ -1,18 +1,15 @@
 import { ROLES } from '~constants';
 import { TaskStates } from '~data/constants';
-import { AnyTask } from '~data/index';
-import { ColonyType, TaskUserType } from '~immutable/index';
+import { AnyTask, FullColonyFragment } from '~data/index';
+import { TaskUserType } from '~immutable/index';
 import { Address } from '~types/index';
 import { hasRoot, canAdminister, canFund } from '../users/checks';
 
 /*
  * Colony
  */
-export const isInRecoveryMode = (colony: ColonyType | undefined) =>
-  !!(colony && colony.inRecoveryMode);
-
 export const canBeUpgraded = (
-  colony: ColonyType | undefined,
+  colony: FullColonyFragment | undefined,
   networkVersion: number | null,
 ) =>
   colony && colony.version && networkVersion && networkVersion > colony.version;

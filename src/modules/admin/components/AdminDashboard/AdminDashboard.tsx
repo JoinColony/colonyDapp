@@ -16,18 +16,18 @@ import VerticalNavigation from '~pages/VerticalNavigation';
 import { HistoryNavigation } from '~pages/NavigationWrapper';
 import { useDataFetcher, useTransformer } from '~utils/hooks';
 import { DomainsMapType } from '~types/index';
-import { ColonyType } from '~immutable/index';
-import { useLoggedInUser } from '~data/helpers';
+import {
+  FullColonyFragment,
+  useColonyFromNameQuery,
+  useLoggedInUser,
+} from '~data/index';
 
 import {
   TEMP_getUserRolesWithRecovery,
   getAllUserRoles,
 } from '../../../transformers';
-import { isInRecoveryMode } from '../../../dashboard/checks';
 import { canArchitect, hasRoot } from '../../../users/checks';
 import {
-  colonyAddressFetcher,
-  colonyFetcher,
   domainsAndRolesFetcher,
   TEMP_userHasRecoveryRoleFetcher,
 } from '../../../dashboard/fetchers';
@@ -75,7 +75,7 @@ interface Props {
 }
 
 const navigationItems = (
-  colony: ColonyType,
+  colony: FullColonyFragment,
   domains: DomainsMapType,
   rootRoles: ROLES[],
   allRoles: ROLES[],
@@ -142,19 +142,14 @@ const AdminDashboard = ({
 }: Props) => {
   const CURRENT_COLONY_ROUTE = colonyName ? `/colony/${colonyName}` : '';
 
-  const { error: addressError, data: colonyAddress } = useDataFetcher(
-    colonyAddressFetcher,
-    [colonyName],
-    [colonyName],
-  );
-
-  const { data: colony } = useDataFetcher(
-    colonyFetcher,
-    [colonyAddress],
-    [colonyAddress],
-  );
+  // @TODO: Try to get proper error handling going in resolvers (for colonies that don't exist)
+  const { data } = useColonyFromNameQuery({
+    // We have to define an empty address here for type safety, will be replaced by the query
+    variables: { name: colonyName, address: '' },
+  });
 
   const { walletAddress } = useLoggedInUser();
+  const colonyAddress = data && data.colonyAddress;
 
   const { data: domains, isFetching: isFetchingDomains } = useDataFetcher(
     domainsAndRolesFetcher,
@@ -180,17 +175,19 @@ const AdminDashboard = ({
     walletAddress,
   ]);
 
-  if (!colonyName || addressError) {
+  if (!colonyName) {
     return <Redirect to="/404" />;
   }
 
-  if (!colony || !domains || isFetchingDomains) {
+  if (!data || !domains || isFetchingDomains) {
     return <LoadingTemplate loadingText={MSG.loadingText} />;
   }
 
   if (!hasRoot(rootUserRoles) && !canArchitect(allUserRoles)) {
     return <Redirect to={CURRENT_COLONY_ROUTE} />;
   }
+
+  const { colony } = data;
 
   return (
     <div className={styles.main}>
@@ -226,7 +223,7 @@ const AdminDashboard = ({
           />
         </div>
       </VerticalNavigation>
-      {isInRecoveryMode(colony) && <RecoveryModeAlert />}
+      {colony.isInRecoveryMode && <RecoveryModeAlert />}
     </div>
   );
 };

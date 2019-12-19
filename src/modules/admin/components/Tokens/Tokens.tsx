@@ -10,13 +10,10 @@ import withDialog from '~core/Dialog/withDialog';
 import Heading from '~core/Heading';
 import { Select } from '~core/Fields';
 import { Address, DomainsMapType } from '~types/index';
-import { useDataFetcher, useTransformer } from '~utils/hooks';
-import { useLoggedInUser } from '~data/index';
+import { useTransformer } from '~utils/hooks';
+import { useLoggedInUser, useColonyTokensQuery } from '~data/index';
 
 import { getLegacyRoles } from '../../../transformers';
-import { tokenFetcher } from '../../../dashboard/fetchers';
-import { useColonyNativeToken } from '../../../dashboard/hooks/useColonyNativeToken';
-import { useColonyTokens } from '../../../dashboard/hooks/useColonyTokens';
 import { userHasRole } from '../../../users/checks';
 import { canEditTokens } from '../../checks';
 import FundingBanner from './FundingBanner';
@@ -100,20 +97,12 @@ const Tokens = ({
     setSelectedDomain,
   ]);
 
-  // get sorted tokens
-  const [tokens] = useColonyTokens(colonyAddress);
+  const { data: colonyTokensData } = useColonyTokensQuery({
+    variables: { address: colonyAddress },
+  });
+  const tokens = (colonyTokensData && colonyTokensData.colony.tokens) || [];
+  const nativeToken = tokens && tokens.find(({ isNative }) => isNative);
 
-  const nativeTokenReference = useColonyNativeToken(colonyAddress);
-  const nativeTokenAddress = nativeTokenReference
-    ? nativeTokenReference.address
-    : '';
-  const { data: nativeToken } = useDataFetcher(
-    tokenFetcher,
-    [nativeTokenAddress],
-    [nativeTokenAddress],
-  );
-
-  // handle opening of dialogs
   const handleEditTokens = useCallback(
     () =>
       openDialog('ColonyTokenEditDialog', {

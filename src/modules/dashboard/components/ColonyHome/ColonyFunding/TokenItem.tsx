@@ -1,29 +1,29 @@
 import React from 'react';
 
-import { TokenType, ColonyTokenReferenceType } from '~immutable/index';
-
 import Numeral from '~core/Numeral';
-import { getTokenBalanceFromReference } from '~utils/tokens';
+import { FullColonyFragment } from '~data/index';
 
 interface Props {
   currentDomainId: number;
-  token: TokenType;
-  tokenReference?: ColonyTokenReferenceType;
+  token: FullColonyFragment['tokens'][0];
 }
 
 const displayName = 'dashboard.ColonyHome.ColonyFunding.TokenItem';
 
 const TokenItem = ({
   currentDomainId,
-  token: { decimals, symbol },
-  tokenReference,
+  token: {
+    balances,
+    details: { decimals, symbol },
+  },
 }: Props) => {
-  const balance = tokenReference
-    ? getTokenBalanceFromReference(tokenReference, currentDomainId)
-    : undefined;
+  const domainBalance = balances.find(
+    ({ domainId }) => domainId === currentDomainId,
+  );
+  const balance = domainBalance && domainBalance.balance;
   return typeof balance === 'undefined' ? null : (
     <li>
-      <Numeral unit={decimals} value={balance} suffix={` ${symbol}`} />
+      <Numeral unit={decimals || 18} value={balance} suffix={` ${symbol}`} />
     </li>
   );
 };

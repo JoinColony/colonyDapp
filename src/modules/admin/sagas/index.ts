@@ -1,14 +1,11 @@
-import { all, call, fork, put, takeEvery, select } from 'redux-saga/effects';
+import ApolloClient from 'apollo-client';
+import { call, fork, getContext, put, takeEvery } from 'redux-saga/effects';
 
-import { ROOT_DOMAIN, COLONY_TOTAL_BALANCE_DOMAIN_ID } from '~constants';
 import { AllActions, Action, ActionTypes } from '~redux/index';
-import {
-  takeFrom,
-  putError,
-  executeCommand,
-  executeQuery,
-} from '~utils/saga/effects';
+import { takeFrom, putError, executeQuery } from '~utils/saga/effects';
 import { ContractContexts } from '~types/index';
+import { Context } from '~context/index';
+import { ColonyTokensDocument } from '~data/index';
 // import { Context, getContext } from '~context/index';
 // import { decorateLog } from '~utils/web3/eventLogs/events';
 // import { normalizeTransactionLog } from '~data/normalizers';
@@ -16,15 +13,12 @@ import {
   getColonyTransactions,
   getColonyUnclaimedTransactions,
 } from '../data/queries';
-import { updateTokenInfo } from '../../dashboard/data/commands';
 import { createTransaction, getTxChannel } from '../../core/sagas';
 import { transactionReady } from '../../core/actionCreators';
 import {
   fetchColonyTransactions,
   fetchColonyUnclaimedTransactions,
 } from '../actionCreators';
-import { fetchColony } from '../../dashboard/actionCreators';
-import { colonyNativeTokenSelector } from '../../dashboard/selectors';
 
 function* colonyTransactionsFetch({
   payload: { colonyAddress },
@@ -107,37 +101,15 @@ function* colonyClaimToken({
     });
     yield put<AllActions>(fetchColonyTransactions(colonyAddress));
     yield put<AllActions>(fetchColonyUnclaimedTransactions(colonyAddress));
-    yield put<AllActions>({
-      type: ActionTypes.COLONY_TOKEN_BALANCE_FETCH,
-      payload: { colonyAddress, domainId: ROOT_DOMAIN, tokenAddress },
-    });
+    // FIXME refresh token balance for colonyAddress, domainId, tokenAddress
+    // yield put<AllActions>({
+    //   type: ActionTypes.COLONY_TOKEN_BALANCE_FETCH,
+    //   payload: { colonyAddress, domainId: ROOT_DOMAIN, tokenAddress },
+    // });
   } catch (error) {
     return yield putError(ActionTypes.COLONY_CLAIM_TOKEN_ERROR, error, meta);
   } finally {
     if (txChannel) txChannel.close();
-  }
-  return null;
-}
-
-function* colonyUpdateTokens({
-  payload: { colonyAddress, tokens },
-  payload,
-  meta,
-}: Action<ActionTypes.COLONY_UPDATE_TOKENS>) {
-  try {
-    // FIXME: get current tokens somehow? This probably is on the server anyways so we can just do this on the server
-    const currentTokenReferences = {};
-    yield executeCommand(updateTokenInfo, {
-      metadata: { colonyAddress },
-      args: { tokens, currentTokenReferences },
-    });
-    yield put(fetchColony(colonyAddress));
-
-    // We could consider dispatching an action to fetch tokens when
-    // successfully updating them
-    yield put({ type: ActionTypes.COLONY_UPDATE_TOKENS_SUCCESS, payload });
-  } catch (error) {
-    return yield putError(ActionTypes.COLONY_UPDATE_TOKENS_ERROR, error, meta);
   }
   return null;
 }
@@ -149,10 +121,23 @@ function* colonyMintTokens({
   let txChannel;
   try {
     txChannel = yield call(getTxChannel, meta.id);
-    const { address: nativeTokenAddress } = yield select(
-      colonyNativeTokenSelector,
-      colonyAddress,
+    const apolloClient: ApolloClient<any> = yield getContext(
+      Context.APOLLO_CLIENT,
     );
+    const { data } = yield apolloClient.query({ query: ColonyTokensDocument });
+
+    if (!data) {
+      throw new Error('Could not get Colony tokens');
+    }
+
+    const {
+      colony: { tokens },
+    } = data;
+    const nativeToken = tokens.find(({ isNative }) => isNative);
+
+    if (!nativeToken) {
+      throw new Error('Could not get the Colonys native token');
+    }
 
     // setup batch ids and channels
     const batchKey = 'mintTokens';
@@ -183,7 +168,7 @@ function* colonyMintTokens({
       methodName: 'claimColonyFunds',
       identifier: colonyAddress,
       params: {
-        token: nativeTokenAddress,
+        token: nativeToken.address,
       },
       group: {
         key: batchKey,
@@ -215,36 +200,22 @@ function* colonyMintTokens({
     */
     const mintLog = receipt.logs[0];
     if (mintLog) {
-      const tokenAddress = mintLog.address;
-      yield all([
-        put<AllActions>({
-          type: ActionTypes.COLONY_TOKEN_BALANCE_FETCH,
-          payload: {
-            colonyAddress,
-            domainId: COLONY_TOTAL_BALANCE_DOMAIN_ID,
-            tokenAddress,
-          },
-        }),
-        put<AllActions>({
-          type: ActionTypes.COLONY_TOKEN_BALANCE_FETCH,
-          payload: { colonyAddress, domainId: ROOT_DOMAIN, tokenAddress },
-        }),
-      ]);
-
-      // const colonyManager = yield getContext(Context.COLONY_MANAGER);
-      // const tokenClient = yield call(
-      //   [colonyManager, colonyManager.getTokenClient],
-      //   tokenAddress,
-      // );
-
-      /*
-       * Notification
-       */
-
-      // const decoratedLog = yield call(decorateLog, tokenClient, mintLog);
-      // yield putNotification(
-      //   normalizeTransactionLog(tokenAddress, decoratedLog),
-      // );
+      // FIXME fetch token balances for these domains and tokens
+      // const tokenAddress = mintLog.address;
+      // yield all([
+      //   put<AllActions>({
+      //     type: ActionTypes.COLONY_TOKEN_BALANCE_FETCH,
+      //     payload: {
+      //       colonyAddress,
+      //       domainId: COLONY_TOTAL_BALANCE_DOMAIN_ID,
+      //       tokenAddress,
+      //     },
+      //   }),
+      //   put<AllActions>({
+      //     type: ActionTypes.COLONY_TOKEN_BALANCE_FETCH,
+      //     payload: { colonyAddress, domainId: ROOT_DOMAIN, tokenAddress },
+      //   }),
+      // ]);
     }
 
     yield put<AllActions>({
@@ -270,6 +241,5 @@ export default function* adminSagas() {
     colonyUnclaimedTransactionsFetch,
   );
   yield takeEvery(ActionTypes.COLONY_CLAIM_TOKEN, colonyClaimToken);
-  yield takeEvery(ActionTypes.COLONY_UPDATE_TOKENS, colonyUpdateTokens);
   yield takeEvery(ActionTypes.COLONY_MINT_TOKENS, colonyMintTokens);
 }
