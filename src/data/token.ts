@@ -70,9 +70,8 @@ export const tokenResolvers = ({
       });
       return amount.toString();
     },
-    async balances({ address }, { colonyAddress, domainIds }) {
+    async balances({ address }, { colonyAddress, domainIds = [0, 1] }) {
       const colonyClient = await colonyManager.getColonyClient(colonyAddress);
-      // FIXME somehow we have to get ETHER into this (on the server?)
 
       const balances: BigNumber[] = await Promise.all(
         domainIds.map(domainId =>
@@ -81,9 +80,9 @@ export const tokenResolvers = ({
       );
 
       return domainIds.map((domainId, idx) => ({
-        domainId,
-        balance: balances[idx].toString(),
         __typename: 'DomainBalance',
+        domainId,
+        amount: balances[idx].toString(),
       }));
     },
     async details(
@@ -91,33 +90,36 @@ export const tokenResolvers = ({
       _,
       { client }: { client: ApolloClient<object> },
     ) {
-      if (!isAddress(address)) {
+      const tokenAddress = address === '0x0' ? ZERO_ADDRESS : address;
+
+      if (!isAddress(tokenAddress)) {
         // don't bother looking it up if it's an invalid token address
         throw Error('Invalid token address');
       }
 
       // If we're asking for ETH, just return static data
-      if (address === ZERO_ADDRESS) {
+      if (tokenAddress === ZERO_ADDRESS) {
         return {
-          isVerified: true,
+          __typename: 'TokenInfo',
+          verified: true,
           ...ETHER_INFO,
         };
       }
 
-      const tokenClient = await colonyManager.getTokenClient(address);
+      const tokenClient = await colonyManager.getTokenClient(tokenAddress);
       const chainData: TokenInfo = await tokenClient.getTokenInfo.call();
 
       let ethplorerData = {} as TokenInfo;
 
       try {
-        ethplorerData = await getEthplorerTokenData(address);
+        ethplorerData = await getEthplorerTokenData(tokenAddress);
       } catch (err) {
-        console.warn(`Could not verify token details for ${address}`);
+        console.warn(`Could not verify token details for ${tokenAddress}`);
       }
 
       const { data: serverDataResult } = await client.query({
         query: TokenInfoDocument,
-        variables: { address },
+        variables: { address: tokenAddress },
       });
 
       const serverData: TokenInfo = serverDataResult
@@ -125,6 +127,7 @@ export const tokenResolvers = ({
         : {};
 
       const tokenInfo = {
+        __typename: 'TokenInfo',
         name: chainData.name || ethplorerData.name || serverData.name,
         decimals:
           chainData.decimals || ethplorerData.decimals || serverData.decimals,

@@ -21,6 +21,7 @@ import {
   initialCache as loggedInUser,
 } from './loggedInUser';
 import { colonyResolvers } from './colony';
+import { tokenResolvers } from './token';
 
 type ResolverFactory = (context?: any) => Resolvers;
 
@@ -34,8 +35,9 @@ apolloCache.writeData({
 export { default as cache } from './cache';
 export { default as typeDefs } from './typeDefs';
 export const resolvers: ResolverFactory[] = [
-  loggedInUserResolvers,
   colonyResolvers,
+  loggedInUserResolvers,
+  tokenResolvers,
 ];
 
 // export all the generated types and helpers
