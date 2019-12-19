@@ -47,12 +47,18 @@ function* colonyDomainsFetch({
 
     if (!data) throw new Error("Could not get the colony's domain metadata");
 
+    const domains = data.colony.domains.map(domain => ({
+      ...domain,
+      id: domain.ethDomainId,
+      roles: {},
+    }));
+
     yield put<AllActions>({
       type: ActionTypes.COLONY_DOMAINS_FETCH_SUCCESS,
       meta,
       payload: {
         colonyAddress,
-        domains: data.colony.domains,
+        domains,
       },
     });
 

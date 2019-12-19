@@ -7,6 +7,7 @@ import { useSetColonyTokensMutation, useAllTokensQuery } from '~data/index';
 import TokenEditDialog from '~core/TokenEditDialog';
 
 interface Props {
+  colonyAddress: Address;
   cancel: () => void;
   close: () => void;
   nativeTokenAddress: Address;
@@ -14,6 +15,7 @@ interface Props {
 }
 
 const ColonyTokenEditDialog = ({
+  colonyAddress,
   nativeTokenAddress,
   selectedTokens = [],
   cancel,
@@ -24,9 +26,11 @@ const ColonyTokenEditDialog = ({
 
   const setColonyTokens = useCallback(
     ({ tokens }) => {
-      setColonyTokensMutation({ variables: { input: { tokens } } });
+      setColonyTokensMutation({
+        variables: { input: { colonyAddress, tokenAddresses: tokens } },
+      });
     },
-    [setColonyTokensMutation],
+    [colonyAddress, setColonyTokensMutation],
   );
 
   if (!allTokensData) {
