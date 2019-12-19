@@ -146,9 +146,8 @@ export default function* setupUserContext(
     } = colonyManager.networkClient;
     const balance = yield provider.getBalance(walletAddress);
 
-    // FIXME eventually we want to move everything to resolvers, so all of this has to
-    // happen outside of sagas. There is no need to have a separate state or anything,
-    // just set it up in an aync function (instead of WALLET_CREATE), then call this function
+    // @TODO refactor setupUserContext for graphql
+    // @BODY eventually we want to move everything to resolvers, so all of this has to happen outside of sagas. There is no need to have a separate state or anything, just set it up in an aync function (instead of WALLET_CREATE), then call this function
     const ipfsNode: IPFSNode = yield getContext(Context.IPFS_NODE);
     const userContext: ContextType = {
       apolloClient,
