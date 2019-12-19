@@ -20,7 +20,7 @@ const TokenItem = ({
   const domainBalance = balances.find(
     ({ domainId }) => domainId === currentDomainId,
   );
-  const balance = domainBalance && domainBalance.balance;
+  const balance = domainBalance && domainBalance.amount;
   return typeof balance === 'undefined' ? null : (
     <li>
       <Numeral unit={decimals || 18} value={balance} suffix={` ${symbol}`} />

@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo } from 'react';
+import React, { useCallback } from 'react';
 import { FormikProps } from 'formik';
 import * as yup from 'yup';
 import moveDecimal from 'move-decimal-point';
@@ -45,11 +45,8 @@ const TokensMoveDialog = ({
   });
 
   const tokens = (colonyTokensData && colonyTokensData.colony.tokens) || [];
-
-  const nativeTokenAddress = useMemo(
-    () => tokens.find(({ isNative }) => !!isNative),
-    [tokens],
-  );
+  const nativeTokenAddress =
+    colonyTokensData && colonyTokensData.colony.nativeTokenAddress;
 
   const transform = useCallback(
     pipe(

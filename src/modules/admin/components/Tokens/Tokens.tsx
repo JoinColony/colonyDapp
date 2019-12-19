@@ -101,15 +101,18 @@ const Tokens = ({
     variables: { address: colonyAddress },
   });
   const tokens = (colonyTokensData && colonyTokensData.colony.tokens) || [];
-  const nativeToken = tokens && tokens.find(({ isNative }) => isNative);
+  const nativeTokenAddress =
+    colonyTokensData && colonyTokensData.colony.nativeTokenAddress;
+  const nativeToken =
+    tokens && tokens.find(({ address }) => address === nativeTokenAddress);
 
   const handleEditTokens = useCallback(
     () =>
       openDialog('ColonyTokenEditDialog', {
         selectedTokens: tokens && tokens.map(({ address }) => address),
-        colonyAddress,
+        nativeTokenAddress,
       }),
-    [openDialog, tokens, colonyAddress],
+    [openDialog, tokens, nativeTokenAddress],
   );
   const handleMintTokens = useCallback(
     () =>

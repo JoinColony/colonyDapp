@@ -47,12 +47,14 @@ interface Props {
   cancel: () => void;
   close: () => void;
   availableTokens: TokenList;
-  selectedTokens: Address[];
   onSubmit: FormikConfig<FormValues>['onSubmit'];
+  nativeTokenAddress?: Address;
+  selectedTokens: Address[];
 }
 
 const TokenEditDialog = ({
   availableTokens = [],
+  nativeTokenAddress,
   selectedTokens = [],
   cancel,
   close,
@@ -89,7 +91,11 @@ const TokenEditDialog = ({
               <InputLabel label={MSG.fieldLabel} />
               <div className={styles.tokenChoiceContainer}>
                 {availableTokens.map(token => (
-                  <TokenCheckbox key={token.address} token={token} />
+                  <TokenCheckbox
+                    key={token.address}
+                    nativeTokenAddress={nativeTokenAddress}
+                    token={token}
+                  />
                 ))}
               </div>
             </DialogSection>

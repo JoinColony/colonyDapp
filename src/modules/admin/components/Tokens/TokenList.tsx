@@ -2,6 +2,7 @@ import React from 'react';
 
 import { ROOT_DOMAIN } from '~constants';
 import CardList from '~core/CardList';
+import { Address } from '~types/index';
 import { ColonyTokens, UserTokens } from '~data/index';
 
 import TokenCard from './TokenCard';
@@ -19,18 +20,28 @@ type ColonyOrUserToken = ColonyTokens[0] | UserTokens[0];
 interface Props {
   appearance?: Appearance;
   domainId?: number;
+  nativeTokenAddress?: Address;
   tokens: ColonyOrUserToken[];
 }
 
 const displayName = 'admin.Tokens.TokenList';
 
-const TokenList = ({ domainId = ROOT_DOMAIN, tokens, appearance }: Props) => (
+const TokenList = ({
+  appearance,
+  domainId = ROOT_DOMAIN,
+  nativeTokenAddress,
+  tokens,
+}: Props) => (
   <div className={styles.tokenCardContainer}>
     <CardList appearance={appearance}>
       {tokens.map(token => (
         <div key={token.address}>
           {'balances' in token && (
-            <TokenCard domainId={domainId} token={token} />
+            <TokenCard
+              domainId={domainId}
+              nativeTokenAddress={nativeTokenAddress}
+              token={token}
+            />
           )}
           {'balance' in token && (
             <TokenCard domainId={domainId} token={token} />

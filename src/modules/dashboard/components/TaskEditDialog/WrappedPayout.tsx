@@ -12,6 +12,7 @@ interface Props {
   canRemove: boolean;
   colonyAddress: Address;
   index: number;
+  nativeTokenAddress: Address;
   // fixme use task payout type from server
   payout: TaskPayoutType;
   payouts: TaskPayoutType[];
@@ -24,6 +25,7 @@ const WrappedPayout = ({
   canRemove,
   colonyAddress,
   index,
+  nativeTokenAddress,
   payout,
   payouts,
   reputation,
@@ -51,7 +53,9 @@ const WrappedPayout = ({
       amount={amount}
       colonyAddress={colonyAddress}
       name={`payouts.${index}`}
-      reputation={token && token.isNative ? reputation : undefined}
+      reputation={
+        token && token.address === nativeTokenAddress ? reputation : undefined
+      }
       token={token}
       tokens={tokens}
       canRemove={canRemove}

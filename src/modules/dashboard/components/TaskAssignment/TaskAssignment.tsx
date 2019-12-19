@@ -3,15 +3,17 @@ import React from 'react';
 import Assignment from '~core/Assignment';
 import { SpinnerLoader } from '~core/Preloaders';
 import { AnyTask, FullColonyFragment, useTaskQuery } from '~data/index';
+import { Address } from '~types/index';
 
 interface Props {
   draftId: AnyTask['id'];
+  nativeTokenAddress: Address;
   tokens: FullColonyFragment['tokens'];
 }
 
 const displayName = 'dashboard.TaskAssignment';
 
-const TaskAssignment = ({ draftId, tokens }: Props) => {
+const TaskAssignment = ({ draftId, nativeTokenAddress, tokens }: Props) => {
   const { data } = useTaskQuery({ variables: { id: draftId } });
 
   // fixme get payouts from centralized store
@@ -29,6 +31,7 @@ const TaskAssignment = ({ draftId, tokens }: Props) => {
     <Assignment
       payouts={payouts}
       reputation={undefined}
+      nativeTokenAddress={nativeTokenAddress}
       tokens={tokens}
       worker={assignedWorker || undefined}
       workerAddress={
