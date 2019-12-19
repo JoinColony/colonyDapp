@@ -168,7 +168,7 @@ const ColonyHome = ({
     return <LoadingTemplate loadingText={MSG.loadingText} />;
   }
 
-  const { colony, colonyAddress } = data;
+  const { colony } = data;
 
   // Eventually this has to be in the proper domain. There's probably going to be a different UI for that
   const canCreateTask = canAdminister(currentDomainUserRoles);
@@ -247,14 +247,10 @@ const ColonyHome = ({
           <TabPanel>
             <TabContribute
               allowTaskCreation={canCreateTask}
-              colonyAddress={colonyAddress}
-              canMintNativeToken={colony.canMintNativeToken}
-              displayName={colony.displayName}
+              colony={colony}
               filteredDomainId={filteredDomainId}
               filterOption={filterOption}
               showQrCode={hasRoot(rootUserRoles)}
-              isInRecoveryMode={colony.isInRecoveryMode}
-              tokens={colony.tokens}
             />
           </TabPanel>
           <TabPanel>

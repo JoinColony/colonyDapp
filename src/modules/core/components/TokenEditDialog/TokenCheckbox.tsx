@@ -5,6 +5,7 @@ import { Checkbox } from '~core/Fields';
 import Heading from '~core/Heading';
 import TokenIcon from '~dashboard/HookedTokenIcon';
 import { FullColonyFragment, TokenList } from '~data/index';
+import { Address } from '~types/index';
 
 import { tokenIsETH } from '../../checks';
 
@@ -18,16 +19,17 @@ const MSG = defineMessages({
 });
 
 interface Props {
+  nativeTokenAddress?: Address;
   token: TokenList[0] | FullColonyFragment['tokens'][0];
 }
 
-const TokenCheckbox = ({ token }: Props) => {
+const TokenCheckbox = ({ nativeTokenAddress, token }: Props) => {
   return (
     <Checkbox
       className={styles.tokenChoice}
       value={token.address}
       name="tokens"
-      disabled={('isNative' in token && !!token.isNative) || tokenIsETH(token)}
+      disabled={nativeTokenAddress === token.address || tokenIsETH(token)}
     >
       <TokenIcon token={token} name={token.details.name || undefined} />
       <span className={styles.tokenChoiceSymbol}>

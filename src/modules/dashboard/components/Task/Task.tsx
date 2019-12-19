@@ -166,12 +166,12 @@ const Task = ({
     }
 
     openDialog('TaskEditDialog', {
-      colonyAddress: colonyData.colonyAddress,
+      colonyAddress: colonyData && colonyData.colonyAddress,
       draftId,
       maxTokens: 1,
       minTokens: 0,
     });
-  }, [colonyData.colonyAddress, draftId, openDialog, task]);
+  }, [colonyData, draftId, openDialog, task]);
 
   const transform = useCallback(
     mergePayload({
@@ -223,7 +223,11 @@ const Task = ({
           </header>
           <div className={styles.assignment}>
             <div>
-              <TaskAssignment draftId={draftId} tokens={colony.tokens} />
+              <TaskAssignment
+                draftId={draftId}
+                nativeTokenAddress={colony.nativeTokenAddress}
+                tokens={colony.tokens}
+              />
             </div>
             {canEdit && (
               <div className={styles.assignmentDetailsButton}>

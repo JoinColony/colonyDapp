@@ -1,27 +1,22 @@
 import BigNumber from 'bn.js';
 
-import { ColonyTokens, TokenWithBalances } from '~data/index';
+import { TokenWithBalances } from '~data/index';
 
 export const getBalanceFromToken = (
   token: TokenWithBalances | undefined,
   tokenDomainId = 0,
 ) => {
-  let balance;
+  let result;
   if (!token) return new BigNumber(0);
   if ('balances' in token) {
-    const balanceObj = token.balances.find(
+    const domainBalance = token.balances.find(
       ({ domainId }) => domainId === tokenDomainId,
     );
-    balance = balanceObj ? balanceObj.balance : 0;
+    result = domainBalance ? domainBalance.amount : 0;
   } else if ('balance' in token) {
-    balance = token.balance;
+    result = token.balance;
   } else {
-    balance = 0;
+    result = 0;
   }
-  return new BigNumber(balance);
-};
-
-export const getNativeTokenAddress = (tokens: ColonyTokens) => {
-  const nativeToken = tokens.find(({ isNative }) => isNative);
-  return nativeToken && nativeToken.address;
+  return new BigNumber(result);
 };

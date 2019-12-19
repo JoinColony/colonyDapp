@@ -43,7 +43,7 @@ const TaskListItem = ({ task, intl: { formatMessage }, history }: Props) => {
     id: draftId,
     assignedWorkerAddress,
     title = defaultTitle,
-    colony: { colonyName, displayName },
+    colony: { colonyName, displayName, nativeTokenAddress },
   } = task;
 
   // FIXME get payouts from task
@@ -74,7 +74,11 @@ const TaskListItem = ({ task, intl: { formatMessage }, history }: Props) => {
         )}
       </TableCell>
       <TableCell className={styles.taskPayouts}>
-        <PayoutsList payouts={payouts} tokens={tokens} />
+        <PayoutsList
+          nativeTokenAddress={nativeTokenAddress}
+          payouts={payouts}
+          tokens={tokens}
+        />
       </TableCell>
       <TableCell className={styles.userAvatar}>
         {assignedWorkerAddress && (

@@ -8,6 +8,7 @@ import {
   useAssignWorkerMutation,
   useColonyTokensQuery,
 } from '~data/index';
+import { ZERO_ADDRESS } from '~utils/web3/constants';
 import Assignment from '~core/Assignment';
 import Button from '~core/Button';
 import { FormStatus, Form } from '~core/Fields';
@@ -72,13 +73,15 @@ const TaskInviteDialog = ({
     [assignWorker, draftId],
   );
 
+  // @TODO revise if the token query is still necessary
+  // @BODY This component is currently unused. Depending on from where we are opening it we can probably pass in all the required information via props. Then remove the ZERO_ADDRESS fallback!
   const { data: colonyData } = useColonyTokensQuery({
     variables: { address: colonyAddress },
   });
 
   const tokens = colonyData && colonyData.colony.tokens;
-
-  const nativeToken = tokens && tokens.find(({ isNative }) => isNative);
+  const nativeTokenAddress =
+    (colonyData && colonyData.colony.nativeTokenAddress) || ZERO_ADDRESS;
 
   return (
     <FullscreenDialog cancel={cancel}>
@@ -101,6 +104,7 @@ const TaskInviteDialog = ({
                 {tokens && (
                   <Assignment
                     payouts={payouts}
+                    nativeTokenAddress={nativeTokenAddress}
                     tokens={tokens}
                     pending
                     reputation={reputation}
@@ -119,7 +123,7 @@ const TaskInviteDialog = ({
                     />
                   </div>
                   <div>
-                    {nativeToken && payouts
+                    {nativeTokenAddress && payouts
                       ? payouts.map((payout, index) => {
                           const { amount, token } = payout;
                           return (
@@ -129,11 +133,7 @@ const TaskInviteDialog = ({
                               tokens={tokens}
                               amount={amount}
                               colonyAddress={colonyAddress}
-                              reputation={
-                                token === nativeToken.address && reputation
-                                  ? reputation
-                                  : undefined
-                              }
+                              reputation={0}
                               editPayout={false}
                             />
                           );

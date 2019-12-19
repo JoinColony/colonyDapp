@@ -15,7 +15,6 @@ import {
 import Button from '~core/Button';
 import ENS from '~lib/ENS';
 import { useEditColonyProfileMutation, FullColonyFragment } from '~data/index';
-import { getNativeTokenAddress } from '~utils/tokens';
 import ColonyAvatarUploader from './ColonyAvatarUploader';
 
 import styles from './ProfileEdit.css';
@@ -95,7 +94,7 @@ const ProfileEdit = ({ colony }: Props) => {
     description,
     displayName,
     guideline,
-    tokens,
+    nativeTokenAddress,
     website,
   } = colony;
 
@@ -112,8 +111,6 @@ const ProfileEdit = ({ colony }: Props) => {
       }),
     [colonyAddress, editColony],
   );
-
-  const nativeTokenAddress = getNativeTokenAddress(tokens);
 
   return (
     <div className={styles.main}>
@@ -160,7 +157,7 @@ const ProfileEdit = ({ colony }: Props) => {
                     text={ENS.getFullDomain('colony', colonyName)}
                   />
                 </div>
-                {nativeTokenAddress && (
+                {colony.nativeTokenAddress && (
                   <div className={styles.section}>
                     <InputLabel label={MSG.labelTokenAddress} />
                     <CopyableAddress appearance={{ theme: 'big' }} full>
