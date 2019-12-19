@@ -1340,10 +1340,7 @@ export type DomainQueryVariables = {
 };
 
 
-export type DomainQuery = { domain: (
-    Pick<Domain, 'id' | 'ethDomainId' | 'name'>
-    & { parent: Maybe<Pick<Domain, 'ethDomainId'>> }
-  ) };
+export type DomainQuery = { domain: Pick<Domain, 'id' | 'ethDomainId' | 'name' | 'ethParentDomainId'> };
 
 export type TokenQueryVariables = {
   address: Scalars['String']
@@ -1369,10 +1366,7 @@ export type ColonyDomainsQueryVariables = {
 
 export type ColonyDomainsQuery = { colony: (
     Pick<Colony, 'id'>
-    & { domains: Array<(
-      Pick<Domain, 'id' | 'ethDomainId' | 'name'>
-      & { parent: Maybe<Pick<Domain, 'id'>> }
-    )> }
+    & { domains: Array<Pick<Domain, 'id' | 'ethDomainId' | 'name' | 'ethParentDomainId'>> }
   ) };
 
 export type AllTokensQueryVariables = {};
@@ -3237,9 +3231,7 @@ export const DomainDocument = gql`
     id
     ethDomainId
     name
-    parent {
-      ethDomainId
-    }
+    ethParentDomainId
   }
 }
     `;
@@ -3355,9 +3347,7 @@ export const ColonyDomainsDocument = gql`
       id
       ethDomainId
       name
-      parent {
-        id
-      }
+      ethParentDomainId
     }
   }
 }

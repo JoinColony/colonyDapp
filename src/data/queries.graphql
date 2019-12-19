@@ -332,9 +332,7 @@ query Domain($colonyAddress: String!, $ethDomainId: Int!) {
     id
     ethDomainId
     name
-    parent {
-      ethDomainId
-    }
+    ethParentDomainId
   }
 }
 
@@ -369,9 +367,7 @@ query ColonyDomains($colonyAddress: String!) {
       id
       ethDomainId
       name
-      parent {
-        id
-      }
+      ethParentDomainId
     }
   }
 }
