@@ -9,10 +9,12 @@ import TokenEditDialog from '~core/TokenEditDialog';
 interface Props {
   cancel: () => void;
   close: () => void;
+  nativeTokenAddress: Address;
   selectedTokens: Address[];
 }
 
 const ColonyTokenEditDialog = ({
+  nativeTokenAddress,
   selectedTokens = [],
   cancel,
   close,
@@ -38,6 +40,7 @@ const ColonyTokenEditDialog = ({
       cancel={cancel}
       close={close}
       availableTokens={allTokens}
+      nativeTokenAddress={nativeTokenAddress}
       selectedTokens={selectedTokens}
       onSubmit={setColonyTokens}
     />

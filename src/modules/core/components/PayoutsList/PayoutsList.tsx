@@ -26,22 +26,26 @@ interface Props {
   /** Payouts list containing all the payouts */
   payouts: TaskPayoutType[];
 
+  /** Pretty self-explanatory */
+  nativeTokenAddress: Address;
+
   /** Tokens available to the current colony */
   tokens: ColonyTokens;
 }
 
 const displayName = 'PayoutsList';
 
-const PayoutsList = ({ maxLines = 1, payouts, tokens }: Props) => {
+const PayoutsList = ({
+  maxLines = 1,
+  nativeTokenAddress,
+  payouts,
+  tokens,
+}: Props) => {
   const getToken = useCallback(
     (tokenAddress: Address) =>
       tokens.find(({ address }) => address === tokenAddress),
     [tokens],
   );
-
-  const nativeToken = tokens.find(({ isNative }) => isNative);
-
-  const { address: nativeTokenAddress = undefined } = nativeToken || {};
 
   const sortedPayouts = payouts.sort(
     ({ token: firstToken }, { token: secondToken }) => {

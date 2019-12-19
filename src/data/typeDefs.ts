@@ -32,26 +32,22 @@ export default gql`
     version(address: String!): Int!
   }
 
-  extend type Token {
-    balance(walletAddress: String!): String!
-    details: TokenInfo!
-  }
-
-  extend type TokenInfo {
-    verified: Boolean
-  }
-
   type DomainBalance {
     id: Int!
     domainId: Int!
-    balance: String!
+    amount: String!
   }
 
-  extend type ColonyToken {
+  extend type Token {
+    balance(walletAddress: String!): String!
     balances(
       colonyAddress: String!
       domainIds: [Int!] = [0, 1]
     ): [DomainBalance!]!
     details: TokenInfo!
+  }
+
+  extend type TokenInfo {
+    verified: Boolean
   }
 `;

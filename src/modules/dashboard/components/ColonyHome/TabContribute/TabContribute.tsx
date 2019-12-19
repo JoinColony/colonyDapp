@@ -10,28 +10,30 @@ import ColonyTasks from '../ColonyTasks';
 
 interface Props {
   allowTaskCreation: boolean;
-  colonyAddress: FullColonyFragment['colonyAddress'];
-  canMintNativeToken: FullColonyFragment['canMintNativeToken'];
-  displayName: FullColonyFragment['displayName'];
+  colony: FullColonyFragment;
   filteredDomainId: number;
   filterOption: string;
-  isInRecoveryMode: FullColonyFragment['isInRecoveryMode'];
-  tokens: FullColonyFragment['tokens'];
   showQrCode: boolean;
 }
 
 const TabContribute = ({
   allowTaskCreation,
-  colonyAddress,
-  canMintNativeToken,
-  displayName,
+  colony: {
+    colonyAddress,
+    canMintNativeToken,
+    displayName,
+    isInRecoveryMode,
+    isNativeTokenExternal,
+    nativeTokenAddress,
+    tokens,
+  },
   filteredDomainId,
   filterOption,
-  isInRecoveryMode,
-  tokens,
   showQrCode,
 }: Props) => {
-  const nativeToken = tokens.find(token => token.isNative);
+  const nativeToken = tokens.find(
+    ({ address }) => address === nativeTokenAddress,
+  );
   const ethToken = tokens.find(token => tokenIsETH(token));
 
   const nativeTokenBalance = getBalanceFromToken(
@@ -46,7 +48,7 @@ const TabContribute = ({
 
   const canMintTokens = !!(
     nativeToken &&
-    !nativeToken.isExternal &&
+    !isNativeTokenExternal &&
     canMintNativeToken
   );
   const showEmptyState = !(
@@ -66,7 +68,7 @@ const TabContribute = ({
           canMintTokens={canMintTokens}
           colonyAddress={colonyAddress}
           displayName={displayName}
-          isExternal={nativeToken.isExternal}
+          isExternal={isNativeTokenExternal}
           showQrCode={showQrCode}
           tokenAddress={nativeToken.address}
         />

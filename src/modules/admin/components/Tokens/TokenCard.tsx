@@ -6,6 +6,7 @@ import EthUsd from '~core/EthUsd';
 import Numeral from '~core/Numeral';
 import CopyableAddress from '~core/CopyableAddress';
 import TokenIcon from '~dashboard/HookedTokenIcon';
+import { Address } from '~types/index';
 import { ColonyTokens, UserTokens } from '~data/index';
 import { getBalanceFromToken } from '~utils/tokens';
 
@@ -14,8 +15,9 @@ import { tokenIsETH, tokenBalanceIsNotPositive } from '../../../core/checks';
 import styles from './TokenCard.css';
 
 interface Props {
-  token: ColonyTokens[0] | UserTokens[0];
   domainId: number;
+  nativeTokenAddress?: Address;
+  token: ColonyTokens[0] | UserTokens[0];
 }
 
 const displayName = 'admin.Tokens.TokenCard';
@@ -31,7 +33,7 @@ const MSG = defineMessages({
   },
 });
 
-const TokenCard = ({ domainId, token }: Props) => {
+const TokenCard = ({ domainId, nativeTokenAddress, token }: Props) => {
   const balance = getBalanceFromToken(token, domainId);
 
   return (
@@ -51,7 +53,7 @@ const TokenCard = ({ domainId, token }: Props) => {
               <CopyableAddress>{token.address}</CopyableAddress>
             </>
           )}
-          {'isNative' in token && (token as ColonyTokens[0]).isNative && (
+          {token.address === nativeTokenAddress && (
             <span className={styles.nativeTokenText}>
               <FormattedMessage {...MSG.nativeToken} />
             </span>

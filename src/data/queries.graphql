@@ -65,7 +65,7 @@ query Task($id: String!) {
 }
 
 query TaskToEdit($id: String!) {
-  task(id: String!) {
+  task(id: $id) {
     id
     assignedWorker {
       id
@@ -79,7 +79,10 @@ query TaskToEdit($id: String!) {
     payouts {
       amount
       tokenAddress
-      token
+      token {
+        id
+        address
+      }
     }
     workRequests {
       id
@@ -91,14 +94,15 @@ query TaskToEdit($id: String!) {
       }
     }
     colony {
-     subscribedUsers {
-      id
-      profile {
-       displayName
-       walletAddress
-       username
-       avatarHash
-     }
+      subscribedUsers {
+        id
+        profile {
+          displayName
+          walletAddress
+          username
+          avatarHash
+        }
+      }
     }
   }
 }
@@ -184,12 +188,11 @@ query UserTokens($address: String!) {
 }
 
 fragment Tokens on Colony {
+  nativeTokenAddress
   tokens {
     id
     address
     iconHash
-    isExternal
-    isNative
     details @client {
       decimals
       name
@@ -197,7 +200,7 @@ fragment Tokens on Colony {
     }
     balances(colonyAddress: $address) @client {
       domainId
-      balance
+      amount
     }
   }
 }
@@ -216,6 +219,7 @@ fragment ColonyProfile on Colony {
 fragment FullColony on Colony {
   ...ColonyProfile
   ...Tokens
+  isNativeTokenExternal
   version(address: $address) @client
   canMintNativeToken(address: $address) @client
   canUnlockNativeToken(address: $address) @client
@@ -255,7 +259,7 @@ query TokenBalancesForDomains($colonyAddress: String!, $tokenAddresses: [String!
       address
       balances(colonyAddress: $colonyAddress, domainIds: $domainIds) @client {
         domainId
-        balance
+        amount
       }
     }
   }

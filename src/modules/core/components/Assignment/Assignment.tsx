@@ -55,9 +55,13 @@ interface Props {
 
   /** Tokens available to the current colony */
   tokens: FullColonyFragment['tokens'];
+
+  /** Ahem... */
+  nativeTokenAddress: Address;
 }
 
 const Assignment = ({
+  nativeTokenAddress,
   payouts,
   pending,
   reputation,
@@ -66,11 +70,8 @@ const Assignment = ({
   worker,
   workerAddress,
 }: Props) => {
-  const nativeToken = tokens.find(({ isNative }) => isNative);
   const fundingWithNativeToken =
-    payouts &&
-    nativeToken &&
-    payouts.find(payout => payout.token === nativeToken.address);
+    payouts && payouts.find(payout => payout.token === nativeTokenAddress);
 
   return (
     <div>
@@ -96,8 +97,13 @@ const Assignment = ({
               />
             </span>
           ) : null}
-          {nativeToken && payouts && payouts.length > 0 ? (
-            <PayoutsList maxLines={2} payouts={payouts} tokens={tokens} />
+          {payouts && payouts.length > 0 ? (
+            <PayoutsList
+              maxLines={2}
+              nativeTokenAddress={nativeTokenAddress}
+              payouts={payouts}
+              tokens={tokens}
+            />
           ) : (
             <FormattedMessage {...MSG.fundingNotSet} />
           )}
