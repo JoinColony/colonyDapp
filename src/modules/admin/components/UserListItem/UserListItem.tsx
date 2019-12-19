@@ -80,7 +80,8 @@ const UserListItem = ({
   onClick: callbackFn,
   onRemove,
 }: Props) => {
-  // FIXME this can be sync and passed down from the parent as we can get the whole list of users easily
+  // @TODO pass down user to UserListItem
+  // @body once the roles come through apollo, this can be sync and passed down from the parent as we can get the whole list of users easily
   const user = useUser(address);
 
   const {
