@@ -42,7 +42,7 @@ const TaskFeed = ({ colonyAddress, draftId }: Props) => {
 
   const { data } = useTaskFeedEventsQuery({
     // @todo use subscription for `TaskFeedEvents` instead of `pollInterval` (once supported by server)
-    pollInterval: 2000,
+    pollInterval: 5000,
     variables: { id: draftId },
   });
 
