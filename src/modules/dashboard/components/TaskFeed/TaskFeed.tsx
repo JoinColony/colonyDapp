@@ -1,23 +1,22 @@
 import React, { Fragment, useRef, useLayoutEffect } from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
-import { EventTypes } from '~data/constants';
 
-import { Address } from '~types/index';
-import { TaskCommentType, TaskDraftId } from '~immutable/index';
 import { SpinnerLoader } from '~core/Preloaders';
-import { useDataSubscriber } from '~utils/hooks';
+import { EventTypes } from '~data/constants';
+import { useTaskFeedEventsQuery, TaskMessageEvent, AnyTask } from '~data/index';
+import { Address } from '~types/index';
+
 import TaskFeedCompleteInfo from './TaskFeedCompleteInfo';
 import TaskFeedEvent from './TaskFeedEvent';
 import TaskFeedComment from './TaskFeedComment';
 import TaskFeedRating from './TaskFeedRating';
-import { taskFeedItemsSubscriber } from '../../subscribers';
 import styles from './TaskFeed.css';
 
 const displayName = 'dashboard.TaskFeed';
 
 interface Props {
   colonyAddress: Address;
-  draftId: TaskDraftId;
+  draftId: AnyTask['id'];
 }
 
 const MSG = defineMessages({
@@ -41,29 +40,31 @@ const TaskFeed = ({ colonyAddress, draftId }: Props) => {
     setTimeout(scrollToEnd, 1000);
   }, [bottomEl]);
 
+  const { data } = useTaskFeedEventsQuery({
+    // @todo use subscription for `TaskFeedEvents` instead of `pollInterval` (once supported by server)
+    pollInterval: 5000,
+    variables: { id: draftId },
+  });
+
+  useLayoutEffect(scrollToEnd, [data]);
+
+  if (!data) {
+    return <SpinnerLoader />;
+  }
+
   const {
-    data: feedItems,
-    isFetching: isFetchingFeedItems,
-  } = useDataSubscriber(
-    taskFeedItemsSubscriber,
-    [draftId],
-    [colonyAddress, draftId],
-  );
+    task: { events },
+  } = data;
 
-  const nFeedItems = feedItems ? feedItems.length : 0;
-  useLayoutEffect(scrollToEnd, [nFeedItems]);
-
-  return isFetchingFeedItems ? (
-    <SpinnerLoader />
-  ) : (
+  return (
     <>
-      {feedItems && (
+      {events && (
         <div className={styles.main}>
           <div className={styles.items}>
             {/*
              * There is always at least one task event: TASK_CREATED
              */
-            feedItems.length < 1 ? (
+            events.length < 1 ? (
               <div className={styles.eventsLoader}>
                 <SpinnerLoader appearance={{ size: 'small' }} />
                 <span className={styles.eventsLoaderText}>
@@ -72,53 +73,55 @@ const TaskFeed = ({ colonyAddress, draftId }: Props) => {
               </div>
             ) : (
               <div>
-                {feedItems.map(({ id, createdAt, comment, event, rating }) => {
-                  if (comment) {
+                {events.map(event => {
+                  const {
+                    context,
+                    createdAt,
+                    initiatorAddress,
+                    sourceId,
+                  } = event;
+                  if (context.type === EventTypes.TASK_MESSAGE) {
+                    const { message } = context as TaskMessageEvent;
                     return (
                       <TaskFeedComment
-                        key={id}
-                        comment={comment as TaskCommentType}
-                        createdAt={createdAt as Date}
+                        createdAt={createdAt}
+                        initiatorAddress={initiatorAddress}
+                        key={sourceId}
+                        message={message}
                       />
                     );
                   }
 
-                  if (event && event.type === EventTypes.TASK_FINALIZED) {
+                  if (context.type === EventTypes.TASK_FINALIZED) {
                     return (
-                      <Fragment key={id}>
-                        <TaskFeedCompleteInfo
+                      <Fragment key={sourceId}>
+                        {/* fixme  */}
+                        {/* <TaskFeedCompleteInfo
                           event={event}
-                          createdAt={createdAt as Date}
-                        />
+                        /> */}
                         <TaskFeedEvent
                           colonyAddress={colonyAddress}
-                          createdAt={createdAt as Date}
                           event={event}
                         />
                       </Fragment>
                     );
                   }
 
-                  if (event) {
-                    return (
-                      <TaskFeedEvent
-                        colonyAddress={colonyAddress}
-                        createdAt={createdAt as Date}
-                        event={event}
-                        key={id}
-                      />
-                    );
-                  }
+                  // /**
+                  //  * @todo Check that the reveal period is over for ratings
+                  //  * (task feed).
+                  //  */
+                  // if (rating) {
+                  //   return <TaskFeedRating key={sourceId} rating={rating} />;
+                  // }
 
-                  /**
-                   * @todo Check that the reveal period is over for ratings
-                   * (task feed).
-                   */
-                  if (rating) {
-                    return <TaskFeedRating key={id} rating={rating} />;
-                  }
-
-                  return null;
+                  return (
+                    <TaskFeedEvent
+                      colonyAddress={colonyAddress}
+                      event={event}
+                      key={sourceId}
+                    />
+                  );
                 })}
                 <div ref={bottomEl} />
               </div>

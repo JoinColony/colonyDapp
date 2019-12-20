@@ -1,23 +1,14 @@
-import React, { useState, useCallback } from 'react';
+import React, { useCallback, useState } from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
+import { RouteComponentProps, withRouter } from 'react-router-dom';
 import compose from 'recompose/compose';
-import { withRouter } from 'react-router-dom';
 
-import { ActionTypes } from '~redux/index';
-import {
-  useDataFetcher,
-  useDataSubscriber,
-  useTransformer,
-} from '~utils/hooks';
-// Temporary, please remove when wiring in the rating modals
-import { OpenDialog } from '~core/Dialog/types';
-import { mergePayload } from '~utils/actions';
-import Heading from '~core/Heading';
-import withDialog from '~core/Dialog/withDialog';
 import Button, { ActionButton, ConfirmButton } from '~core/Button';
+import { OpenDialog } from '~core/Dialog/types';
+import withDialog from '~core/Dialog/withDialog';
+import Heading from '~core/Heading';
 import Icon from '~core/Icon';
 import { Tooltip } from '~core/Popover';
-import LoadingTemplate from '~pages/LoadingTemplate';
 import TaskAssignment from '~dashboard/TaskAssignment';
 import TaskComments from '~dashboard/TaskComments';
 import TaskDate from '~dashboard/TaskDate';
@@ -27,22 +18,28 @@ import TaskFeed from '~dashboard/TaskFeed';
 import TaskRequestWork from '~dashboard/TaskRequestWork';
 import TaskSkills from '~dashboard/TaskSkills';
 import TaskTitle from '~dashboard/TaskTitle';
-import { useLoggedInUser } from '~data/index';
+import { useLoggedInUser } from '~data/helpers';
+import {
+  AnyColony,
+  AnyTask,
+  useCancelTaskMutation,
+  useTaskQuery,
+} from '~data/index';
+import LoadingTemplate from '~pages/LoadingTemplate';
+import { ActionTypes } from '~redux/index';
+import { mergePayload } from '~utils/actions';
+import { useDataFetcher, useTransformer } from '~utils/hooks';
 
+import { getUserRoles } from '../../../transformers';
 import {
   canCancelTask,
   canEditTask,
   canFinalizeTask,
-  isCancelled,
   canRequestToWork,
+  isCancelled,
   isFinalized,
 } from '../../checks';
-import {
-  colonyAddressFetcher,
-  domainsAndRolesFetcher,
-} from '../../../dashboard/fetchers';
-import { getUserRoles } from '../../../transformers';
-import { taskSubscriber } from '../../subscribers';
+import { domainsAndRolesFetcher } from '../../fetchers';
 
 import styles from './Task.css';
 
@@ -105,8 +102,12 @@ const MSG = defineMessages({
   },
 });
 
-interface Props {
-  match: any;
+interface MatchProps {
+  draftId: AnyTask['id'];
+  colonyName: string;
+}
+
+interface Props extends RouteComponentProps<MatchProps> {
   openDialog: OpenDialog;
   history: any;
 }
@@ -115,7 +116,7 @@ const displayName = 'dashboard.Task';
 
 const Task = ({
   match: {
-    params: { draftId, colonyName },
+    params: { draftId },
   },
   openDialog,
   history,
@@ -124,34 +125,33 @@ const Task = ({
 
   const { walletAddress } = useLoggedInUser();
 
-  const { data: colonyAddress } = useDataFetcher(
-    colonyAddressFetcher,
-    [colonyName],
-    [colonyName],
-  );
+  const { data } = useTaskQuery({
+    // @todo use subscription for `Task` instead of `pollInterval` (once supported by server)
+    pollInterval: 5000,
+    variables: { id: draftId },
+  });
 
-  const { data: task, isFetching: isFetchingTask } = useDataSubscriber(
-    taskSubscriber,
-    [draftId],
-    [colonyAddress || undefined, draftId],
-  );
   const {
-    description = undefined,
-    domainId = undefined,
-    dueDate = undefined,
-    skillId = undefined,
-    title = undefined,
-  } = task || {};
+    task: {
+      colony = {} as AnyColony,
+      description = undefined,
+      ethDomainId = undefined,
+      dueDate = undefined,
+      ethSkillId = undefined,
+      title = undefined,
+    } = {},
+    task = undefined,
+  } = data || {};
 
   const { data: domains, isFetching: isFetchingDomains } = useDataFetcher(
     domainsAndRolesFetcher,
-    [colonyAddress],
-    [colonyAddress],
+    [colony ? colony.colonyAddress : ''],
+    [colony ? colony.colonyAddress : undefined],
   );
 
   const userRoles = useTransformer(getUserRoles, [
     domains,
-    task ? task.domainId : null,
+    ethDomainId || null,
     walletAddress,
   ]);
 
@@ -169,19 +169,19 @@ const Task = ({
     });
   }, [draftId, openDialog, task]);
 
-  const transform = useCallback(mergePayload({ colonyAddress, draftId }), [
-    colonyAddress,
-    draftId,
-  ]);
+  const transform = useCallback(
+    mergePayload({
+      colonyAddress: colony ? colony.colonyAddress : '',
+      draftId,
+    }),
+    [colony, draftId],
+  );
 
-  if (
-    isFetchingTask ||
-    isFetchingDomains ||
-    !task ||
-    !colonyAddress ||
-    !domains ||
-    !walletAddress
-  ) {
+  const [handleCancelTask] = useCancelTaskMutation({
+    variables: { input: { id: draftId } },
+  });
+
+  if (isFetchingDomains || !task || !colony || !domains || !walletAddress) {
     return <LoadingTemplate loadingText={MSG.loadingText} />;
   }
 
@@ -218,7 +218,10 @@ const Task = ({
           </header>
           <div className={styles.assignment}>
             <div>
-              <TaskAssignment colonyAddress={colonyAddress} draftId={draftId} />
+              <TaskAssignment
+                colonyAddress={colony.colonyAddress}
+                draftId={draftId}
+              />
             </div>
             {canEdit && (
               <div className={styles.assignmentDetailsButton}>
@@ -233,45 +236,41 @@ const Task = ({
         </section>
         <section className={styles.section}>
           <TaskTitle
-            colonyAddress={colonyAddress}
             disabled={!canEdit}
             draftId={draftId}
-            title={title}
+            title={title || undefined}
           />
           <TaskDescription
-            colonyAddress={colonyAddress}
-            description={description}
+            description={description || undefined}
             disabled={!canEdit}
             draftId={draftId}
           />
         </section>
-        {!!(canEdit || dueDate || domainId || skillId) && (
+        {!!(canEdit || dueDate || ethDomainId || ethSkillId) && (
           <section className={styles.section}>
-            <div className={styles.editor}>
-              <TaskDomains
-                colonyAddress={colonyAddress}
-                // Disable the change of domain for now
-                disabled
-                domainId={domainId}
-                draftId={draftId}
-              />
-            </div>
+            {colony && colony.colonyAddress && (
+              <div className={styles.editor}>
+                <TaskDomains
+                  colonyAddress={colony.colonyAddress}
+                  // Disable the change of domain for now
+                  disabled
+                  ethDomainId={ethDomainId}
+                  draftId={draftId}
+                />
+              </div>
+            )}
             <div className={styles.editor}>
               <TaskSkills
-                colonyAddress={colonyAddress}
                 disabled={!canEdit}
                 draftId={draftId}
-                skillId={skillId}
-                domainId={domainId}
+                ethSkillId={ethSkillId || undefined}
               />
             </div>
             <div className={styles.editor}>
               <TaskDate
-                colonyAddress={colonyAddress}
                 disabled={!canEdit}
                 draftId={draftId}
-                dueDate={dueDate}
-                domainId={domainId}
+                dueDate={dueDate || undefined}
               />
             </div>
           </section>
@@ -312,16 +311,13 @@ const Task = ({
             </Tooltip>
           )}
           {canCancelTask(task, userRoles) && (
-            <ActionButton
+            <Button
               appearance={{ theme: 'secondary', size: 'small' }}
               button={ConfirmButton}
               confirmText={MSG.confirmText}
+              onClick={handleCancelTask}
               onConfirmToggled={setDiscardConfirmDisplay}
               text={MSG.discardTask}
-              submit={ActionTypes.TASK_CANCEL}
-              error={ActionTypes.TASK_CANCEL_ERROR}
-              success={ActionTypes.TASK_CANCEL_SUCCESS}
-              transform={transform}
             />
           )}
           {/* Hide when discard confirm is displayed */}
@@ -359,11 +355,11 @@ const Task = ({
         </section>
         <div className={styles.activityContainer}>
           <section className={styles.activity}>
-            <TaskFeed colonyAddress={colonyAddress} draftId={draftId} />
+            <TaskFeed colonyAddress={colony.colonyAddress} draftId={draftId} />
           </section>
           <section className={styles.commentBox}>
             <TaskComments
-              colonyAddress={colonyAddress}
+              colonyAddress={colony.colonyAddress}
               draftId={draftId}
               taskTitle={title}
               history={history}

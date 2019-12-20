@@ -1,35 +1,47 @@
 import React from 'react';
 
-import { TaskProps } from '~immutable/index';
 import Assignment from '~core/Assignment';
 import { SpinnerLoader } from '~core/Preloaders';
-import { useSelector } from '~utils/hooks';
-import { useUser } from '~data/index';
-import { taskSelector } from '../../selectors';
+import { useTaskQuery, AnyTask } from '~data/index';
+import { Address } from '~types/index';
+
 import { useColonyNativeToken } from '../../hooks/useColonyNativeToken';
 import { useColonyTokens } from '../../hooks/useColonyTokens';
 
 // eslint-disable-next-line @typescript-eslint/no-empty-interface
-interface Props extends TaskProps<'colonyAddress' | 'draftId'> {}
+interface Props {
+  draftId: AnyTask['id'];
+  colonyAddress: Address;
+}
 
 const displayName = 'dashboard.TaskAssignment';
 
 const TaskAssignment = ({ colonyAddress, draftId }: Props) => {
-  const task = useSelector(taskSelector, [draftId]);
+  const { data } = useTaskQuery({ variables: { id: draftId } });
   const nativeTokenReference = useColonyNativeToken(colonyAddress);
   const [, tokenOptions] = useColonyTokens(colonyAddress);
 
-  // FIXME we should expand the user from the task
-  const worker = useUser(task.record.workerAddress);
+  // fixme get payouts from centralized store
+  const payouts = [];
+
+  if (!data) {
+    return <SpinnerLoader />;
+  }
+
+  const {
+    task: { assignedWorker },
+  } = data;
 
   return nativeTokenReference && tokenOptions ? (
     <Assignment
       nativeToken={nativeTokenReference}
-      payouts={task && task.record ? task.record.payouts : undefined}
-      reputation={task && task.record ? task.record.reputation : undefined}
+      payouts={payouts}
+      reputation={undefined}
       tokenOptions={tokenOptions}
-      worker={worker}
-      workerAddress={task.record.workerAddress}
+      worker={assignedWorker || undefined}
+      workerAddress={
+        assignedWorker ? assignedWorker.profile.walletAddress : undefined
+      }
     />
   ) : (
     <SpinnerLoader />

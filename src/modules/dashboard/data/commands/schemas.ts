@@ -1,7 +1,5 @@
 import * as yup from 'yup';
 
-import { BigNumberSchemaType } from '../../../validations';
-
 export const CreateColonyProfileCommandArgsSchema = yup.object({
   colonyAddress: yup
     .string()
@@ -48,24 +46,8 @@ export const RemoveColonyAvatarCommandArgsSchema = yup.object({
     .required(),
 });
 
-export const SetTaskDueDateCommandArgsSchema = yup.object({
-  dueDate: yup.number(),
-});
-
-export const SetTaskSkillCommandArgsSchema = yup.object({
-  skillId: yup.number(),
-});
-
 export const CreateTaskCommandArgsSchema = yup.object({
   creatorAddress: yup.string().required(),
-});
-
-export const SetTaskDescriptionCommandArgsSchema = yup.object({
-  description: yup.string(),
-});
-
-export const SetTaskTitleCommandArgsSchema = yup.object({
-  title: yup.string(),
 });
 
 export const PostCommentCommandArgsSchema = yup.object({
@@ -89,14 +71,6 @@ export const PostCommentCommandArgsSchema = yup.object({
   }),
 });
 
-export const SendWorkInviteCommandArgsSchema = yup.object({
-  worker: yup
-    .string()
-    // @ts-ignore
-    .address()
-    .required(),
-});
-
 export const SendWorkRequestCommandArgsSchema = yup.object({
   worker: yup
     .string()
@@ -105,30 +79,6 @@ export const SendWorkRequestCommandArgsSchema = yup.object({
     .required(),
 });
 
-export const SetTaskPayoutCommandArgsSchema = yup.object({
-  // @ts-ignore
-  amount: new BigNumberSchemaType().required(),
-  token: yup.string().required(),
-});
-
 export const SetTaskDomainCommandArgsSchema = yup.object({
   domainId: yup.number().required(),
-});
-
-export const CancelTaskCommandArgsSchema = yup.object({
-  draftId: yup.string().required(),
-});
-
-export const FinalizeTaskCommandArgsSchema = yup.object({
-  amountPaid: yup.string().required(),
-  paymentTokenAddress: yup
-    .string()
-    // @ts-ignore
-    .address()
-    .required(),
-  workerAddress: yup
-    .string()
-    // @ts-ignore
-    .address()
-    .required(),
 });

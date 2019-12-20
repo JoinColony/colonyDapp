@@ -1,3 +1,78 @@
+#import './fragments.graphql'
+
+query Task($id: String!) {
+  task(id: $id) {
+    id
+    assignedWorker {
+      id
+      profile {
+        avatarHash
+        displayName
+        username
+        walletAddress
+      }
+    }
+    assignedWorkerAddress
+    cancelledAt
+    colony {
+      id
+      colonyAddress
+      colonyName
+      avatarHash
+      displayName
+    }
+    colonyAddress
+    createdAt
+    creator {
+      id
+      profile {
+        avatarHash
+        displayName
+        username
+        walletAddress
+      }
+    }
+    creatorAddress
+    description
+    dueDate
+    ethDomainId
+    ethSkillId
+    ethTaskId
+    finalizedAt
+    # fixme return payouts as well
+    title
+    workInvites {
+      id
+      profile {
+        avatarHash
+        displayName
+        username
+        walletAddress
+      }
+    }
+    workInviteAddresses
+    workRequests {
+      id
+      profile {
+        avatarHash
+        displayName
+        username
+        walletAddress
+      }
+    }
+    workRequestAddresses
+  }
+}
+
+query TaskFeedEvents($id: String!) {
+  task(id: $id) {
+    id
+    events {
+      ...TaskEvent
+    }
+  }
+}
+
 query LoggedInUser {
   loggedInUser @client {
     walletAddress
@@ -21,10 +96,40 @@ query User($address: String!) {
   }
 }
 
+query UserTasks($address: String!) {
+  user(address: $address) {
+    id
+    tasks {
+      id
+      assignedWorker {
+        id
+        profile {
+          avatarHash
+        }
+      }
+      assignedWorkerAddress
+      cancelledAt
+      colony {
+        id
+        colonyName
+      }
+      colonyAddress
+      createdAt
+      creatorAddress
+      dueDate
+      ethDomainId
+      ethSkillId
+      finalizedAt
+      title
+      workRequestAddresses
+    }
+  }
+}
+
 query UserTokens($address: String!) {
   user(address: $address) {
     id
-    tokens  
+    tokens
   }
 }
 
@@ -48,21 +153,41 @@ query Colony($address: String!) {
 }
 
 # @TODO we want to get the full tasks in a lot of cases, maybe this isn't needed
-query UserTaskIds($address: String!) {
-  user(address: $address) {
-    id
-    tasks {
-      id
-    }
-  }
-}
-
-# @TODO we want to get the full tasks in a lot of cases, maybe this isn't needed
 query UserColonyIds($address: String!) {
   user(address: $address) {
     id
     colonies {
       id
+    }
+  }
+}
+
+query ColonyTasks($address: String!) {
+  colony(address: $address) {
+    id
+    tasks {
+      id
+      assignedWorker {
+        id
+        profile {
+          avatarHash
+        }
+      }
+      assignedWorkerAddress
+      cancelledAt
+      colony {
+        id
+        colonyName
+      }
+      colonyAddress
+      createdAt
+      creatorAddress
+      dueDate
+      ethDomainId
+      ethSkillId
+      finalizedAt
+      title
+      workRequestAddresses
     }
   }
 }

@@ -1,3 +1,161 @@
+#import './fragments.graphql'
+
+# Tasks
+mutation AssignWorker($input: AssignWorkerInput!) {
+  assignWorker(input: $input) {
+    id
+    assignedWorker {
+      id
+    }
+    events {
+      ...TaskEvent
+    }
+  }
+}
+
+mutation CancelTask($input: TaskIdInput!) {
+  cancelTask(input: $input) {
+    id
+    cancelledAt
+    events {
+      ...TaskEvent
+    }
+  }
+}
+
+mutation CreateTask($input: CreateTaskInput!) {
+  createTask(input: $input) {
+    id
+    events {
+      ...TaskEvent
+    }
+  }
+}
+
+mutation CreateWorkRequest($input: CreateWorkRequestInput!) {
+  createWorkRequest(input: $input) {
+    id
+    events {
+      ...TaskEvent
+    }
+    workRequests {
+      id
+    }
+  }
+}
+
+mutation FinalizeTask($input: TaskIdInput!) {
+  finalizeTask(input: $input) {
+    id
+    events {
+      ...TaskEvent
+    }
+    finalizedAt
+  }
+}
+
+mutation RemoveTaskPayout($input: RemoveTaskPayoutInput!) {
+  removeTaskPayout(input: $input) {
+    id
+    events {
+      ...TaskEvent
+    }
+    # fixme return payouts from `removeTaskPayout` mutation
+  }
+}
+
+mutation SendWorkInvite($input: SendWorkInviteInput!) {
+  sendWorkInvite(input: $input) {
+    id
+    events {
+      ...TaskEvent
+    }
+    workInvites {
+      id
+    }
+  }
+}
+
+mutation SetTaskDomain($input: SetTaskDomainInput!) {
+  setTaskDomain(input: $input) {
+    id
+    ethDomainId
+    events {
+      ...TaskEvent
+    }
+  }
+}
+
+mutation SetTaskDescription($input: SetTaskDescriptionInput!) {
+  setTaskDescription(input: $input) {
+    id
+    description
+    events {
+      ...TaskEvent
+    }
+  }
+}
+
+mutation SetTaskDueDate($input: SetTaskDueDateInput!) {
+  setTaskDueDate(input: $input) {
+    id
+    dueDate
+    events {
+      ...TaskEvent
+    }
+  }
+}
+
+mutation SetTaskPayout($input: SetTaskPayoutInput!) {
+  setTaskPayout(input: $input) {
+    id
+    events {
+      ...TaskEvent
+    }
+    # fixme return payouts from `setTaskPayout` mutation
+  }
+}
+
+mutation SetTaskSkill($input: SetTaskSkillInput!) {
+  setTaskSkill(input: $input) {
+    id
+    ethSkillId
+    events {
+      ...TaskEvent
+    }
+  }
+}
+
+mutation SetTaskTitle($input: SetTaskTitleInput!) {
+  setTaskTitle(input: $input) {
+    id
+    events {
+      ...TaskEvent
+    }
+    title
+  }
+}
+
+mutation UnassignWorker($input: UnassignWorkerInput!) {
+  unassignWorker(input: $input) {
+    id
+    assignedWorker {
+      id
+    }
+    events {
+      ...TaskEvent
+    }
+  }
+}
+
+# Messages
+
+mutation SendTaskMessage($input: SendTaskMessageInput!) {
+  sendTaskMessage(input: $input)
+}
+
+# Users
+
 mutation SetLoggedInUser($input: LoggedInUserInput!) {
   setLoggedInUser(input: $input) @client {
     id

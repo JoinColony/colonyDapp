@@ -2,6 +2,155 @@ import gql from 'graphql-tag';
 import * as ApolloReactCommon from '@apollo/react-common';
 import * as ApolloReactHooks from '@apollo/react-hooks';
 export type Maybe<T> = T | null;
+
+      export interface IntrospectionResultData {
+        __schema: {
+          types: {
+            kind: string;
+            name: string;
+            possibleTypes: {
+              name: string;
+            }[];
+          }[];
+        };
+      }
+      const result: IntrospectionResultData = {
+  "__schema": {
+    "types": [
+      {
+        "kind": "UNION",
+        "name": "EventContext",
+        "possibleTypes": [
+          {
+            "name": "AssignWorkerEvent"
+          },
+          {
+            "name": "CancelTaskEvent"
+          },
+          {
+            "name": "CreateDomainEvent"
+          },
+          {
+            "name": "CreateTaskEvent"
+          },
+          {
+            "name": "CreateWorkRequestEvent"
+          },
+          {
+            "name": "FinalizeTaskEvent"
+          },
+          {
+            "name": "RemoveTaskPayoutEvent"
+          },
+          {
+            "name": "SendWorkInviteEvent"
+          },
+          {
+            "name": "SetTaskDescriptionEvent"
+          },
+          {
+            "name": "SetTaskDomainEvent"
+          },
+          {
+            "name": "SetTaskDueDateEvent"
+          },
+          {
+            "name": "SetTaskPayoutEvent"
+          },
+          {
+            "name": "SetTaskSkillEvent"
+          },
+          {
+            "name": "SetTaskTitleEvent"
+          },
+          {
+            "name": "TaskMessageEvent"
+          },
+          {
+            "name": "UnassignWorkerEvent"
+          }
+        ]
+      },
+      {
+        "kind": "INTERFACE",
+        "name": "TaskEvent",
+        "possibleTypes": [
+          {
+            "name": "AssignWorkerEvent"
+          },
+          {
+            "name": "CancelTaskEvent"
+          },
+          {
+            "name": "CreateTaskEvent"
+          },
+          {
+            "name": "CreateWorkRequestEvent"
+          },
+          {
+            "name": "FinalizeTaskEvent"
+          },
+          {
+            "name": "RemoveTaskPayoutEvent"
+          },
+          {
+            "name": "SendWorkInviteEvent"
+          },
+          {
+            "name": "SetTaskDescriptionEvent"
+          },
+          {
+            "name": "SetTaskDomainEvent"
+          },
+          {
+            "name": "SetTaskDueDateEvent"
+          },
+          {
+            "name": "SetTaskPayoutEvent"
+          },
+          {
+            "name": "SetTaskSkillEvent"
+          },
+          {
+            "name": "SetTaskTitleEvent"
+          },
+          {
+            "name": "TaskMessageEvent"
+          },
+          {
+            "name": "UnassignWorkerEvent"
+          }
+        ]
+      },
+      {
+        "kind": "INTERFACE",
+        "name": "ColonyEvent",
+        "possibleTypes": [
+          {
+            "name": "CreateDomainEvent"
+          }
+        ]
+      },
+      {
+        "kind": "INTERFACE",
+        "name": "IToken",
+        "possibleTypes": [
+          {
+            "name": "ColonyToken"
+          },
+          {
+            "name": "Token"
+          },
+          {
+            "name": "UserToken"
+          }
+        ]
+      }
+    ]
+  }
+};
+      export default result;
+    
 /** All built-in and custom scalars, mapped to their actual values */
 export type Scalars = {
   ID: string,
@@ -199,7 +348,7 @@ export type Event = {
   context: EventContext,
 };
 
-export type EventContext = AssignWorkerEvent | CancelTaskEvent | CreateDomainEvent | CreateTaskEvent | CreateWorkRequestEvent | FinalizeTaskEvent | NewUserEvent | RemoveTaskPayoutEvent | SendWorkInviteEvent | SetTaskDescriptionEvent | SetTaskDomainEvent | SetTaskDueDateEvent | SetTaskPayoutEvent | SetTaskSkillEvent | SetTaskTitleEvent | TaskMessageEvent | UnassignWorkerEvent;
+export type EventContext = AssignWorkerEvent | CancelTaskEvent | CreateDomainEvent | CreateTaskEvent | CreateWorkRequestEvent | FinalizeTaskEvent | RemoveTaskPayoutEvent | SendWorkInviteEvent | SetTaskDescriptionEvent | SetTaskDomainEvent | SetTaskDueDateEvent | SetTaskPayoutEvent | SetTaskSkillEvent | SetTaskTitleEvent | TaskMessageEvent | UnassignWorkerEvent;
 
 export type FinalizeTaskEvent = TaskEvent & {
   type: Scalars['String'],
@@ -237,6 +386,7 @@ export type Mutation = {
   editUser?: Maybe<User>,
   subscribeToColony?: Maybe<User>,
   unsubscribeFromColony?: Maybe<User>,
+  setUserTokens?: Maybe<User>,
   createColony?: Maybe<Colony>,
   editColonyProfile?: Maybe<Colony>,
   createDomain?: Maybe<Domain>,
@@ -282,6 +432,11 @@ export type MutationSubscribeToColonyArgs = {
 
 export type MutationUnsubscribeFromColonyArgs = {
   input: UnsubscribeFromColonyInput
+};
+
+
+export type MutationSetUserTokensArgs = {
+  input: SetUserTokensInput
 };
 
 
@@ -404,12 +559,7 @@ export type MutationSetLoggedInUserArgs = {
   input?: Maybe<LoggedInUserInput>
 };
 
-export type NewUserEvent = {
-  type: Scalars['String'],
-};
-
 export type Notification = {
-  id: Scalars['String'],
   event: Event,
   read: Scalars['Boolean'],
 };
@@ -587,7 +737,6 @@ export type Task = {
   workRequests: Array<User>,
   workRequestAddresses: Array<Scalars['String']>,
   events: Array<Event>,
-  payouts: Array<TaskPayout>,
 };
 
 export type TaskEvent = {
@@ -605,18 +754,12 @@ export type TaskMessageEvent = TaskEvent & {
   message: Scalars['String'],
 };
 
-export type TaskPayout = {
-  amount: Scalars['String'],
-  tokenAddress: Scalars['String'],
-};
-
 export type Token = IToken & {
   id: Scalars['String'],
   createdAt: Scalars['DateTime'],
   address: Scalars['String'],
   name: Scalars['String'],
   symbol: Scalars['String'],
-  decimals: Scalars['Int'],
   iconHash?: Maybe<Scalars['String']>,
 };
 
@@ -644,8 +787,7 @@ export type User = {
   colonyAddresses: Array<Scalars['String']>,
   tasks: Array<Task>,
   taskIds: Array<Scalars['String']>,
-  tokens: Array<UserToken>,
-  tokenAddresses: Array<Scalars['String']>,
+  tokens: Array<Scalars['String']>,
   notifications?: Maybe<Array<Notification>>,
 };
 
@@ -673,6 +815,166 @@ export type UserToken = IToken & {
   iconHash?: Maybe<Scalars['String']>,
 };
 
+export type EventFieldsFragment = (
+  Pick<Event, 'createdAt' | 'initiatorAddress' | 'sourceId' | 'sourceType' | 'type'>
+  & { initiator: Maybe<(
+    Pick<User, 'id'>
+    & { profile: Pick<UserProfile, 'avatarHash' | 'displayName' | 'username' | 'walletAddress'> }
+  )> }
+);
+
+export type TaskEventFragment = (
+  { context: Pick<AssignWorkerEvent, 'taskId' | 'type' | 'workerAddress'> | Pick<CancelTaskEvent, 'taskId' | 'type'> | Pick<CreateTaskEvent, 'colonyAddress' | 'ethDomainId' | 'taskId' | 'type'> | Pick<CreateWorkRequestEvent, 'taskId' | 'type'> | Pick<FinalizeTaskEvent, 'taskId' | 'type'> | Pick<RemoveTaskPayoutEvent, 'amount' | 'taskId' | 'tokenAddress' | 'type'> | Pick<SendWorkInviteEvent, 'taskId' | 'type' | 'workerAddress'> | Pick<SetTaskDescriptionEvent, 'description' | 'taskId' | 'type'> | Pick<SetTaskDomainEvent, 'ethDomainId' | 'taskId' | 'type'> | Pick<SetTaskDueDateEvent, 'dueDate' | 'taskId' | 'type'> | Pick<SetTaskPayoutEvent, 'amount' | 'taskId' | 'tokenAddress' | 'type'> | Pick<SetTaskSkillEvent, 'ethSkillId' | 'taskId' | 'type'> | Pick<SetTaskTitleEvent, 'taskId' | 'title' | 'type'> | Pick<TaskMessageEvent, 'message' | 'taskId' | 'type'> | Pick<UnassignWorkerEvent, 'taskId' | 'type' | 'workerAddress'> }
+  & EventFieldsFragment
+);
+
+export type AssignWorkerMutationVariables = {
+  input: AssignWorkerInput
+};
+
+
+export type AssignWorkerMutation = { assignWorker: Maybe<(
+    Pick<Task, 'id'>
+    & { assignedWorker: Maybe<Pick<User, 'id'>>, events: Array<TaskEventFragment> }
+  )> };
+
+export type CancelTaskMutationVariables = {
+  input: TaskIdInput
+};
+
+
+export type CancelTaskMutation = { cancelTask: Maybe<(
+    Pick<Task, 'id' | 'cancelledAt'>
+    & { events: Array<TaskEventFragment> }
+  )> };
+
+export type CreateTaskMutationVariables = {
+  input: CreateTaskInput
+};
+
+
+export type CreateTaskMutation = { createTask: Maybe<(
+    Pick<Task, 'id'>
+    & { events: Array<TaskEventFragment> }
+  )> };
+
+export type CreateWorkRequestMutationVariables = {
+  input: CreateWorkRequestInput
+};
+
+
+export type CreateWorkRequestMutation = { createWorkRequest: Maybe<(
+    Pick<Task, 'id'>
+    & { events: Array<TaskEventFragment>, workRequests: Array<Pick<User, 'id'>> }
+  )> };
+
+export type FinalizeTaskMutationVariables = {
+  input: TaskIdInput
+};
+
+
+export type FinalizeTaskMutation = { finalizeTask: Maybe<(
+    Pick<Task, 'id' | 'finalizedAt'>
+    & { events: Array<TaskEventFragment> }
+  )> };
+
+export type RemoveTaskPayoutMutationVariables = {
+  input: RemoveTaskPayoutInput
+};
+
+
+export type RemoveTaskPayoutMutation = { removeTaskPayout: Maybe<(
+    Pick<Task, 'id'>
+    & { events: Array<TaskEventFragment> }
+  )> };
+
+export type SendWorkInviteMutationVariables = {
+  input: SendWorkInviteInput
+};
+
+
+export type SendWorkInviteMutation = { sendWorkInvite: Maybe<(
+    Pick<Task, 'id'>
+    & { events: Array<TaskEventFragment>, workInvites: Array<Pick<User, 'id'>> }
+  )> };
+
+export type SetTaskDomainMutationVariables = {
+  input: SetTaskDomainInput
+};
+
+
+export type SetTaskDomainMutation = { setTaskDomain: Maybe<(
+    Pick<Task, 'id' | 'ethDomainId'>
+    & { events: Array<TaskEventFragment> }
+  )> };
+
+export type SetTaskDescriptionMutationVariables = {
+  input: SetTaskDescriptionInput
+};
+
+
+export type SetTaskDescriptionMutation = { setTaskDescription: Maybe<(
+    Pick<Task, 'id' | 'description'>
+    & { events: Array<TaskEventFragment> }
+  )> };
+
+export type SetTaskDueDateMutationVariables = {
+  input: SetTaskDueDateInput
+};
+
+
+export type SetTaskDueDateMutation = { setTaskDueDate: Maybe<(
+    Pick<Task, 'id' | 'dueDate'>
+    & { events: Array<TaskEventFragment> }
+  )> };
+
+export type SetTaskPayoutMutationVariables = {
+  input: SetTaskPayoutInput
+};
+
+
+export type SetTaskPayoutMutation = { setTaskPayout: Maybe<(
+    Pick<Task, 'id'>
+    & { events: Array<TaskEventFragment> }
+  )> };
+
+export type SetTaskSkillMutationVariables = {
+  input: SetTaskSkillInput
+};
+
+
+export type SetTaskSkillMutation = { setTaskSkill: Maybe<(
+    Pick<Task, 'id' | 'ethSkillId'>
+    & { events: Array<TaskEventFragment> }
+  )> };
+
+export type SetTaskTitleMutationVariables = {
+  input: SetTaskTitleInput
+};
+
+
+export type SetTaskTitleMutation = { setTaskTitle: Maybe<(
+    Pick<Task, 'id' | 'title'>
+    & { events: Array<TaskEventFragment> }
+  )> };
+
+export type UnassignWorkerMutationVariables = {
+  input: UnassignWorkerInput
+};
+
+
+export type UnassignWorkerMutation = { unassignWorker: Maybe<(
+    Pick<Task, 'id'>
+    & { assignedWorker: Maybe<Pick<User, 'id'>>, events: Array<TaskEventFragment> }
+  )> };
+
+export type SendTaskMessageMutationVariables = {
+  input: SendTaskMessageInput
+};
+
+
+export type SendTaskMessageMutation = Pick<Mutation, 'sendTaskMessage'>;
+
 export type SetLoggedInUserMutationVariables = {
   input: LoggedInUserInput
 };
@@ -697,6 +999,13 @@ export type EditUserMutation = { editUser: Maybe<(
     Pick<User, 'id'>
     & { profile: Pick<UserProfile, 'avatarHash' | 'bio' | 'displayName' | 'location' | 'website'> }
   )> };
+
+export type SetUserTokensMutationVariables = {
+  input: SetUserTokensInput
+};
+
+
+export type SetUserTokensMutation = { setUserTokens: Maybe<Pick<User, 'id' | 'tokens'>> };
 
 export type CreateColonyMutationVariables = {
   input: CreateColonyInput
@@ -752,6 +1061,38 @@ export type EditDomainMutationVariables = {
 
 export type EditDomainMutation = { editDomainName: Maybe<Pick<Domain, 'id' | 'ethDomainId' | 'ethParentDomainId' | 'name'>> };
 
+export type TaskQueryVariables = {
+  id: Scalars['String']
+};
+
+
+export type TaskQuery = { task: (
+    Pick<Task, 'id' | 'assignedWorkerAddress' | 'cancelledAt' | 'colonyAddress' | 'createdAt' | 'creatorAddress' | 'description' | 'dueDate' | 'ethDomainId' | 'ethSkillId' | 'ethTaskId' | 'finalizedAt' | 'title' | 'workInviteAddresses' | 'workRequestAddresses'>
+    & { assignedWorker: Maybe<(
+      Pick<User, 'id'>
+      & { profile: Pick<UserProfile, 'avatarHash' | 'displayName' | 'username' | 'walletAddress'> }
+    )>, colony: Maybe<Pick<Colony, 'id' | 'colonyAddress' | 'colonyName' | 'avatarHash' | 'displayName'>>, creator: Maybe<(
+      Pick<User, 'id'>
+      & { profile: Pick<UserProfile, 'avatarHash' | 'displayName' | 'username' | 'walletAddress'> }
+    )>, workInvites: Array<(
+      Pick<User, 'id'>
+      & { profile: Pick<UserProfile, 'avatarHash' | 'displayName' | 'username' | 'walletAddress'> }
+    )>, workRequests: Array<(
+      Pick<User, 'id'>
+      & { profile: Pick<UserProfile, 'avatarHash' | 'displayName' | 'username' | 'walletAddress'> }
+    )> }
+  ) };
+
+export type TaskFeedEventsQueryVariables = {
+  id: Scalars['String']
+};
+
+
+export type TaskFeedEventsQuery = { task: (
+    Pick<Task, 'id'>
+    & { events: Array<TaskEventFragment> }
+  ) };
+
 export type LoggedInUserQueryVariables = {};
 
 
@@ -767,12 +1108,28 @@ export type UserQuery = { user: (
     & { profile: Pick<UserProfile, 'username' | 'walletAddress' | 'displayName' | 'bio' | 'location' | 'website' | 'avatarHash'> }
   ) };
 
+export type UserTasksQueryVariables = {
+  address: Scalars['String']
+};
+
+
+export type UserTasksQuery = { user: (
+    Pick<User, 'id'>
+    & { tasks: Array<(
+      Pick<Task, 'id' | 'assignedWorkerAddress' | 'cancelledAt' | 'colonyAddress' | 'createdAt' | 'creatorAddress' | 'dueDate' | 'ethDomainId' | 'ethSkillId' | 'finalizedAt' | 'title' | 'workRequestAddresses'>
+      & { assignedWorker: Maybe<(
+        Pick<User, 'id'>
+        & { profile: Pick<UserProfile, 'avatarHash'> }
+      )>, colony: Maybe<Pick<Colony, 'id' | 'colonyName'>> }
+    )> }
+  ) };
+
 export type UserTokensQueryVariables = {
   address: Scalars['String']
 };
 
 
-export type UserTokensQuery = { user: Pick<User, 'id'> };
+export type UserTokensQuery = { user: Pick<User, 'id' | 'tokens'> };
 
 export type ColonyQueryVariables = {
   address: Scalars['String']
@@ -784,16 +1141,6 @@ export type ColonyQuery = { colony: (
     & { tokens: Array<Pick<ColonyToken, 'address' | 'name' | 'symbol' | 'iconHash'>> }
   ) };
 
-export type UserTaskIdsQueryVariables = {
-  address: Scalars['String']
-};
-
-
-export type UserTaskIdsQuery = { user: (
-    Pick<User, 'id'>
-    & { tasks: Array<Pick<Task, 'id'>> }
-  ) };
-
 export type UserColonyIdsQueryVariables = {
   address: Scalars['String']
 };
@@ -802,6 +1149,22 @@ export type UserColonyIdsQueryVariables = {
 export type UserColonyIdsQuery = { user: (
     Pick<User, 'id'>
     & { colonies: Array<Pick<Colony, 'id'>> }
+  ) };
+
+export type ColonyTasksQueryVariables = {
+  address: Scalars['String']
+};
+
+
+export type ColonyTasksQuery = { colony: (
+    Pick<Colony, 'id'>
+    & { tasks: Array<(
+      Pick<Task, 'id' | 'assignedWorkerAddress' | 'cancelledAt' | 'colonyAddress' | 'createdAt' | 'creatorAddress' | 'dueDate' | 'ethDomainId' | 'ethSkillId' | 'finalizedAt' | 'title' | 'workRequestAddresses'>
+      & { assignedWorker: Maybe<(
+        Pick<User, 'id'>
+        & { profile: Pick<UserProfile, 'avatarHash'> }
+      )>, colony: Maybe<Pick<Colony, 'id' | 'colonyName'>> }
+    )> }
   ) };
 
 export type ColonySubscribedUsersQueryVariables = {
@@ -841,7 +1204,645 @@ export type ColonyDomainsQuery = { colony: (
     )> }
   ) };
 
+export const EventFieldsFragmentDoc = gql`
+    fragment EventFields on Event {
+  createdAt
+  initiator {
+    id
+    profile {
+      avatarHash
+      displayName
+      username
+      walletAddress
+    }
+  }
+  initiatorAddress
+  sourceId
+  sourceType
+  type
+}
+    `;
+export const TaskEventFragmentDoc = gql`
+    fragment TaskEvent on Event {
+  ...EventFields
+  context {
+    ... on AssignWorkerEvent {
+      taskId
+      type
+      workerAddress
+    }
+    ... on CancelTaskEvent {
+      taskId
+      type
+    }
+    ... on CreateTaskEvent {
+      colonyAddress
+      ethDomainId
+      taskId
+      type
+    }
+    ... on CreateWorkRequestEvent {
+      taskId
+      type
+    }
+    ... on FinalizeTaskEvent {
+      taskId
+      type
+    }
+    ... on RemoveTaskPayoutEvent {
+      amount
+      taskId
+      tokenAddress
+      type
+    }
+    ... on SendWorkInviteEvent {
+      taskId
+      type
+      workerAddress
+    }
+    ... on SetTaskDescriptionEvent {
+      description
+      taskId
+      type
+    }
+    ... on SetTaskDomainEvent {
+      ethDomainId
+      taskId
+      type
+    }
+    ... on SetTaskDueDateEvent {
+      dueDate
+      taskId
+      type
+    }
+    ... on SetTaskPayoutEvent {
+      amount
+      taskId
+      tokenAddress
+      type
+    }
+    ... on SetTaskSkillEvent {
+      ethSkillId
+      taskId
+      type
+    }
+    ... on SetTaskTitleEvent {
+      taskId
+      title
+      type
+    }
+    ... on TaskMessageEvent {
+      message
+      taskId
+      type
+    }
+    ... on UnassignWorkerEvent {
+      taskId
+      type
+      workerAddress
+    }
+  }
+}
+    ${EventFieldsFragmentDoc}`;
+export const AssignWorkerDocument = gql`
+    mutation AssignWorker($input: AssignWorkerInput!) {
+  assignWorker(input: $input) {
+    id
+    assignedWorker {
+      id
+    }
+    events {
+      ...TaskEvent
+    }
+  }
+}
+    ${TaskEventFragmentDoc}`;
+export type AssignWorkerMutationFn = ApolloReactCommon.MutationFunction<AssignWorkerMutation, AssignWorkerMutationVariables>;
 
+/**
+ * __useAssignWorkerMutation__
+ *
+ * To run a mutation, you first call `useAssignWorkerMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useAssignWorkerMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [assignWorkerMutation, { data, loading, error }] = useAssignWorkerMutation({
+ *   variables: {
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function useAssignWorkerMutation(baseOptions?: ApolloReactHooks.MutationHookOptions<AssignWorkerMutation, AssignWorkerMutationVariables>) {
+        return ApolloReactHooks.useMutation<AssignWorkerMutation, AssignWorkerMutationVariables>(AssignWorkerDocument, baseOptions);
+      }
+export type AssignWorkerMutationHookResult = ReturnType<typeof useAssignWorkerMutation>;
+export type AssignWorkerMutationResult = ApolloReactCommon.MutationResult<AssignWorkerMutation>;
+export type AssignWorkerMutationOptions = ApolloReactCommon.BaseMutationOptions<AssignWorkerMutation, AssignWorkerMutationVariables>;
+export const CancelTaskDocument = gql`
+    mutation CancelTask($input: TaskIdInput!) {
+  cancelTask(input: $input) {
+    id
+    cancelledAt
+    events {
+      ...TaskEvent
+    }
+  }
+}
+    ${TaskEventFragmentDoc}`;
+export type CancelTaskMutationFn = ApolloReactCommon.MutationFunction<CancelTaskMutation, CancelTaskMutationVariables>;
+
+/**
+ * __useCancelTaskMutation__
+ *
+ * To run a mutation, you first call `useCancelTaskMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useCancelTaskMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [cancelTaskMutation, { data, loading, error }] = useCancelTaskMutation({
+ *   variables: {
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function useCancelTaskMutation(baseOptions?: ApolloReactHooks.MutationHookOptions<CancelTaskMutation, CancelTaskMutationVariables>) {
+        return ApolloReactHooks.useMutation<CancelTaskMutation, CancelTaskMutationVariables>(CancelTaskDocument, baseOptions);
+      }
+export type CancelTaskMutationHookResult = ReturnType<typeof useCancelTaskMutation>;
+export type CancelTaskMutationResult = ApolloReactCommon.MutationResult<CancelTaskMutation>;
+export type CancelTaskMutationOptions = ApolloReactCommon.BaseMutationOptions<CancelTaskMutation, CancelTaskMutationVariables>;
+export const CreateTaskDocument = gql`
+    mutation CreateTask($input: CreateTaskInput!) {
+  createTask(input: $input) {
+    id
+    events {
+      ...TaskEvent
+    }
+  }
+}
+    ${TaskEventFragmentDoc}`;
+export type CreateTaskMutationFn = ApolloReactCommon.MutationFunction<CreateTaskMutation, CreateTaskMutationVariables>;
+
+/**
+ * __useCreateTaskMutation__
+ *
+ * To run a mutation, you first call `useCreateTaskMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useCreateTaskMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [createTaskMutation, { data, loading, error }] = useCreateTaskMutation({
+ *   variables: {
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function useCreateTaskMutation(baseOptions?: ApolloReactHooks.MutationHookOptions<CreateTaskMutation, CreateTaskMutationVariables>) {
+        return ApolloReactHooks.useMutation<CreateTaskMutation, CreateTaskMutationVariables>(CreateTaskDocument, baseOptions);
+      }
+export type CreateTaskMutationHookResult = ReturnType<typeof useCreateTaskMutation>;
+export type CreateTaskMutationResult = ApolloReactCommon.MutationResult<CreateTaskMutation>;
+export type CreateTaskMutationOptions = ApolloReactCommon.BaseMutationOptions<CreateTaskMutation, CreateTaskMutationVariables>;
+export const CreateWorkRequestDocument = gql`
+    mutation CreateWorkRequest($input: CreateWorkRequestInput!) {
+  createWorkRequest(input: $input) {
+    id
+    events {
+      ...TaskEvent
+    }
+    workRequests {
+      id
+    }
+  }
+}
+    ${TaskEventFragmentDoc}`;
+export type CreateWorkRequestMutationFn = ApolloReactCommon.MutationFunction<CreateWorkRequestMutation, CreateWorkRequestMutationVariables>;
+
+/**
+ * __useCreateWorkRequestMutation__
+ *
+ * To run a mutation, you first call `useCreateWorkRequestMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useCreateWorkRequestMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [createWorkRequestMutation, { data, loading, error }] = useCreateWorkRequestMutation({
+ *   variables: {
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function useCreateWorkRequestMutation(baseOptions?: ApolloReactHooks.MutationHookOptions<CreateWorkRequestMutation, CreateWorkRequestMutationVariables>) {
+        return ApolloReactHooks.useMutation<CreateWorkRequestMutation, CreateWorkRequestMutationVariables>(CreateWorkRequestDocument, baseOptions);
+      }
+export type CreateWorkRequestMutationHookResult = ReturnType<typeof useCreateWorkRequestMutation>;
+export type CreateWorkRequestMutationResult = ApolloReactCommon.MutationResult<CreateWorkRequestMutation>;
+export type CreateWorkRequestMutationOptions = ApolloReactCommon.BaseMutationOptions<CreateWorkRequestMutation, CreateWorkRequestMutationVariables>;
+export const FinalizeTaskDocument = gql`
+    mutation FinalizeTask($input: TaskIdInput!) {
+  finalizeTask(input: $input) {
+    id
+    events {
+      ...TaskEvent
+    }
+    finalizedAt
+  }
+}
+    ${TaskEventFragmentDoc}`;
+export type FinalizeTaskMutationFn = ApolloReactCommon.MutationFunction<FinalizeTaskMutation, FinalizeTaskMutationVariables>;
+
+/**
+ * __useFinalizeTaskMutation__
+ *
+ * To run a mutation, you first call `useFinalizeTaskMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useFinalizeTaskMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [finalizeTaskMutation, { data, loading, error }] = useFinalizeTaskMutation({
+ *   variables: {
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function useFinalizeTaskMutation(baseOptions?: ApolloReactHooks.MutationHookOptions<FinalizeTaskMutation, FinalizeTaskMutationVariables>) {
+        return ApolloReactHooks.useMutation<FinalizeTaskMutation, FinalizeTaskMutationVariables>(FinalizeTaskDocument, baseOptions);
+      }
+export type FinalizeTaskMutationHookResult = ReturnType<typeof useFinalizeTaskMutation>;
+export type FinalizeTaskMutationResult = ApolloReactCommon.MutationResult<FinalizeTaskMutation>;
+export type FinalizeTaskMutationOptions = ApolloReactCommon.BaseMutationOptions<FinalizeTaskMutation, FinalizeTaskMutationVariables>;
+export const RemoveTaskPayoutDocument = gql`
+    mutation RemoveTaskPayout($input: RemoveTaskPayoutInput!) {
+  removeTaskPayout(input: $input) {
+    id
+    events {
+      ...TaskEvent
+    }
+  }
+}
+    ${TaskEventFragmentDoc}`;
+export type RemoveTaskPayoutMutationFn = ApolloReactCommon.MutationFunction<RemoveTaskPayoutMutation, RemoveTaskPayoutMutationVariables>;
+
+/**
+ * __useRemoveTaskPayoutMutation__
+ *
+ * To run a mutation, you first call `useRemoveTaskPayoutMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useRemoveTaskPayoutMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [removeTaskPayoutMutation, { data, loading, error }] = useRemoveTaskPayoutMutation({
+ *   variables: {
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function useRemoveTaskPayoutMutation(baseOptions?: ApolloReactHooks.MutationHookOptions<RemoveTaskPayoutMutation, RemoveTaskPayoutMutationVariables>) {
+        return ApolloReactHooks.useMutation<RemoveTaskPayoutMutation, RemoveTaskPayoutMutationVariables>(RemoveTaskPayoutDocument, baseOptions);
+      }
+export type RemoveTaskPayoutMutationHookResult = ReturnType<typeof useRemoveTaskPayoutMutation>;
+export type RemoveTaskPayoutMutationResult = ApolloReactCommon.MutationResult<RemoveTaskPayoutMutation>;
+export type RemoveTaskPayoutMutationOptions = ApolloReactCommon.BaseMutationOptions<RemoveTaskPayoutMutation, RemoveTaskPayoutMutationVariables>;
+export const SendWorkInviteDocument = gql`
+    mutation SendWorkInvite($input: SendWorkInviteInput!) {
+  sendWorkInvite(input: $input) {
+    id
+    events {
+      ...TaskEvent
+    }
+    workInvites {
+      id
+    }
+  }
+}
+    ${TaskEventFragmentDoc}`;
+export type SendWorkInviteMutationFn = ApolloReactCommon.MutationFunction<SendWorkInviteMutation, SendWorkInviteMutationVariables>;
+
+/**
+ * __useSendWorkInviteMutation__
+ *
+ * To run a mutation, you first call `useSendWorkInviteMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useSendWorkInviteMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [sendWorkInviteMutation, { data, loading, error }] = useSendWorkInviteMutation({
+ *   variables: {
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function useSendWorkInviteMutation(baseOptions?: ApolloReactHooks.MutationHookOptions<SendWorkInviteMutation, SendWorkInviteMutationVariables>) {
+        return ApolloReactHooks.useMutation<SendWorkInviteMutation, SendWorkInviteMutationVariables>(SendWorkInviteDocument, baseOptions);
+      }
+export type SendWorkInviteMutationHookResult = ReturnType<typeof useSendWorkInviteMutation>;
+export type SendWorkInviteMutationResult = ApolloReactCommon.MutationResult<SendWorkInviteMutation>;
+export type SendWorkInviteMutationOptions = ApolloReactCommon.BaseMutationOptions<SendWorkInviteMutation, SendWorkInviteMutationVariables>;
+export const SetTaskDomainDocument = gql`
+    mutation SetTaskDomain($input: SetTaskDomainInput!) {
+  setTaskDomain(input: $input) {
+    id
+    ethDomainId
+    events {
+      ...TaskEvent
+    }
+  }
+}
+    ${TaskEventFragmentDoc}`;
+export type SetTaskDomainMutationFn = ApolloReactCommon.MutationFunction<SetTaskDomainMutation, SetTaskDomainMutationVariables>;
+
+/**
+ * __useSetTaskDomainMutation__
+ *
+ * To run a mutation, you first call `useSetTaskDomainMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useSetTaskDomainMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [setTaskDomainMutation, { data, loading, error }] = useSetTaskDomainMutation({
+ *   variables: {
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function useSetTaskDomainMutation(baseOptions?: ApolloReactHooks.MutationHookOptions<SetTaskDomainMutation, SetTaskDomainMutationVariables>) {
+        return ApolloReactHooks.useMutation<SetTaskDomainMutation, SetTaskDomainMutationVariables>(SetTaskDomainDocument, baseOptions);
+      }
+export type SetTaskDomainMutationHookResult = ReturnType<typeof useSetTaskDomainMutation>;
+export type SetTaskDomainMutationResult = ApolloReactCommon.MutationResult<SetTaskDomainMutation>;
+export type SetTaskDomainMutationOptions = ApolloReactCommon.BaseMutationOptions<SetTaskDomainMutation, SetTaskDomainMutationVariables>;
+export const SetTaskDescriptionDocument = gql`
+    mutation SetTaskDescription($input: SetTaskDescriptionInput!) {
+  setTaskDescription(input: $input) {
+    id
+    description
+    events {
+      ...TaskEvent
+    }
+  }
+}
+    ${TaskEventFragmentDoc}`;
+export type SetTaskDescriptionMutationFn = ApolloReactCommon.MutationFunction<SetTaskDescriptionMutation, SetTaskDescriptionMutationVariables>;
+
+/**
+ * __useSetTaskDescriptionMutation__
+ *
+ * To run a mutation, you first call `useSetTaskDescriptionMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useSetTaskDescriptionMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [setTaskDescriptionMutation, { data, loading, error }] = useSetTaskDescriptionMutation({
+ *   variables: {
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function useSetTaskDescriptionMutation(baseOptions?: ApolloReactHooks.MutationHookOptions<SetTaskDescriptionMutation, SetTaskDescriptionMutationVariables>) {
+        return ApolloReactHooks.useMutation<SetTaskDescriptionMutation, SetTaskDescriptionMutationVariables>(SetTaskDescriptionDocument, baseOptions);
+      }
+export type SetTaskDescriptionMutationHookResult = ReturnType<typeof useSetTaskDescriptionMutation>;
+export type SetTaskDescriptionMutationResult = ApolloReactCommon.MutationResult<SetTaskDescriptionMutation>;
+export type SetTaskDescriptionMutationOptions = ApolloReactCommon.BaseMutationOptions<SetTaskDescriptionMutation, SetTaskDescriptionMutationVariables>;
+export const SetTaskDueDateDocument = gql`
+    mutation SetTaskDueDate($input: SetTaskDueDateInput!) {
+  setTaskDueDate(input: $input) {
+    id
+    dueDate
+    events {
+      ...TaskEvent
+    }
+  }
+}
+    ${TaskEventFragmentDoc}`;
+export type SetTaskDueDateMutationFn = ApolloReactCommon.MutationFunction<SetTaskDueDateMutation, SetTaskDueDateMutationVariables>;
+
+/**
+ * __useSetTaskDueDateMutation__
+ *
+ * To run a mutation, you first call `useSetTaskDueDateMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useSetTaskDueDateMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [setTaskDueDateMutation, { data, loading, error }] = useSetTaskDueDateMutation({
+ *   variables: {
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function useSetTaskDueDateMutation(baseOptions?: ApolloReactHooks.MutationHookOptions<SetTaskDueDateMutation, SetTaskDueDateMutationVariables>) {
+        return ApolloReactHooks.useMutation<SetTaskDueDateMutation, SetTaskDueDateMutationVariables>(SetTaskDueDateDocument, baseOptions);
+      }
+export type SetTaskDueDateMutationHookResult = ReturnType<typeof useSetTaskDueDateMutation>;
+export type SetTaskDueDateMutationResult = ApolloReactCommon.MutationResult<SetTaskDueDateMutation>;
+export type SetTaskDueDateMutationOptions = ApolloReactCommon.BaseMutationOptions<SetTaskDueDateMutation, SetTaskDueDateMutationVariables>;
+export const SetTaskPayoutDocument = gql`
+    mutation SetTaskPayout($input: SetTaskPayoutInput!) {
+  setTaskPayout(input: $input) {
+    id
+    events {
+      ...TaskEvent
+    }
+  }
+}
+    ${TaskEventFragmentDoc}`;
+export type SetTaskPayoutMutationFn = ApolloReactCommon.MutationFunction<SetTaskPayoutMutation, SetTaskPayoutMutationVariables>;
+
+/**
+ * __useSetTaskPayoutMutation__
+ *
+ * To run a mutation, you first call `useSetTaskPayoutMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useSetTaskPayoutMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [setTaskPayoutMutation, { data, loading, error }] = useSetTaskPayoutMutation({
+ *   variables: {
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function useSetTaskPayoutMutation(baseOptions?: ApolloReactHooks.MutationHookOptions<SetTaskPayoutMutation, SetTaskPayoutMutationVariables>) {
+        return ApolloReactHooks.useMutation<SetTaskPayoutMutation, SetTaskPayoutMutationVariables>(SetTaskPayoutDocument, baseOptions);
+      }
+export type SetTaskPayoutMutationHookResult = ReturnType<typeof useSetTaskPayoutMutation>;
+export type SetTaskPayoutMutationResult = ApolloReactCommon.MutationResult<SetTaskPayoutMutation>;
+export type SetTaskPayoutMutationOptions = ApolloReactCommon.BaseMutationOptions<SetTaskPayoutMutation, SetTaskPayoutMutationVariables>;
+export const SetTaskSkillDocument = gql`
+    mutation SetTaskSkill($input: SetTaskSkillInput!) {
+  setTaskSkill(input: $input) {
+    id
+    ethSkillId
+    events {
+      ...TaskEvent
+    }
+  }
+}
+    ${TaskEventFragmentDoc}`;
+export type SetTaskSkillMutationFn = ApolloReactCommon.MutationFunction<SetTaskSkillMutation, SetTaskSkillMutationVariables>;
+
+/**
+ * __useSetTaskSkillMutation__
+ *
+ * To run a mutation, you first call `useSetTaskSkillMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useSetTaskSkillMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [setTaskSkillMutation, { data, loading, error }] = useSetTaskSkillMutation({
+ *   variables: {
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function useSetTaskSkillMutation(baseOptions?: ApolloReactHooks.MutationHookOptions<SetTaskSkillMutation, SetTaskSkillMutationVariables>) {
+        return ApolloReactHooks.useMutation<SetTaskSkillMutation, SetTaskSkillMutationVariables>(SetTaskSkillDocument, baseOptions);
+      }
+export type SetTaskSkillMutationHookResult = ReturnType<typeof useSetTaskSkillMutation>;
+export type SetTaskSkillMutationResult = ApolloReactCommon.MutationResult<SetTaskSkillMutation>;
+export type SetTaskSkillMutationOptions = ApolloReactCommon.BaseMutationOptions<SetTaskSkillMutation, SetTaskSkillMutationVariables>;
+export const SetTaskTitleDocument = gql`
+    mutation SetTaskTitle($input: SetTaskTitleInput!) {
+  setTaskTitle(input: $input) {
+    id
+    events {
+      ...TaskEvent
+    }
+    title
+  }
+}
+    ${TaskEventFragmentDoc}`;
+export type SetTaskTitleMutationFn = ApolloReactCommon.MutationFunction<SetTaskTitleMutation, SetTaskTitleMutationVariables>;
+
+/**
+ * __useSetTaskTitleMutation__
+ *
+ * To run a mutation, you first call `useSetTaskTitleMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useSetTaskTitleMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [setTaskTitleMutation, { data, loading, error }] = useSetTaskTitleMutation({
+ *   variables: {
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function useSetTaskTitleMutation(baseOptions?: ApolloReactHooks.MutationHookOptions<SetTaskTitleMutation, SetTaskTitleMutationVariables>) {
+        return ApolloReactHooks.useMutation<SetTaskTitleMutation, SetTaskTitleMutationVariables>(SetTaskTitleDocument, baseOptions);
+      }
+export type SetTaskTitleMutationHookResult = ReturnType<typeof useSetTaskTitleMutation>;
+export type SetTaskTitleMutationResult = ApolloReactCommon.MutationResult<SetTaskTitleMutation>;
+export type SetTaskTitleMutationOptions = ApolloReactCommon.BaseMutationOptions<SetTaskTitleMutation, SetTaskTitleMutationVariables>;
+export const UnassignWorkerDocument = gql`
+    mutation UnassignWorker($input: UnassignWorkerInput!) {
+  unassignWorker(input: $input) {
+    id
+    assignedWorker {
+      id
+    }
+    events {
+      ...TaskEvent
+    }
+  }
+}
+    ${TaskEventFragmentDoc}`;
+export type UnassignWorkerMutationFn = ApolloReactCommon.MutationFunction<UnassignWorkerMutation, UnassignWorkerMutationVariables>;
+
+/**
+ * __useUnassignWorkerMutation__
+ *
+ * To run a mutation, you first call `useUnassignWorkerMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useUnassignWorkerMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [unassignWorkerMutation, { data, loading, error }] = useUnassignWorkerMutation({
+ *   variables: {
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function useUnassignWorkerMutation(baseOptions?: ApolloReactHooks.MutationHookOptions<UnassignWorkerMutation, UnassignWorkerMutationVariables>) {
+        return ApolloReactHooks.useMutation<UnassignWorkerMutation, UnassignWorkerMutationVariables>(UnassignWorkerDocument, baseOptions);
+      }
+export type UnassignWorkerMutationHookResult = ReturnType<typeof useUnassignWorkerMutation>;
+export type UnassignWorkerMutationResult = ApolloReactCommon.MutationResult<UnassignWorkerMutation>;
+export type UnassignWorkerMutationOptions = ApolloReactCommon.BaseMutationOptions<UnassignWorkerMutation, UnassignWorkerMutationVariables>;
+export const SendTaskMessageDocument = gql`
+    mutation SendTaskMessage($input: SendTaskMessageInput!) {
+  sendTaskMessage(input: $input)
+}
+    `;
+export type SendTaskMessageMutationFn = ApolloReactCommon.MutationFunction<SendTaskMessageMutation, SendTaskMessageMutationVariables>;
+
+/**
+ * __useSendTaskMessageMutation__
+ *
+ * To run a mutation, you first call `useSendTaskMessageMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useSendTaskMessageMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [sendTaskMessageMutation, { data, loading, error }] = useSendTaskMessageMutation({
+ *   variables: {
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function useSendTaskMessageMutation(baseOptions?: ApolloReactHooks.MutationHookOptions<SendTaskMessageMutation, SendTaskMessageMutationVariables>) {
+        return ApolloReactHooks.useMutation<SendTaskMessageMutation, SendTaskMessageMutationVariables>(SendTaskMessageDocument, baseOptions);
+      }
+export type SendTaskMessageMutationHookResult = ReturnType<typeof useSendTaskMessageMutation>;
+export type SendTaskMessageMutationResult = ApolloReactCommon.MutationResult<SendTaskMessageMutation>;
+export type SendTaskMessageMutationOptions = ApolloReactCommon.BaseMutationOptions<SendTaskMessageMutation, SendTaskMessageMutationVariables>;
 export const SetLoggedInUserDocument = gql`
     mutation SetLoggedInUser($input: LoggedInUserInput!) {
   setLoggedInUser(input: $input) @client {
@@ -949,6 +1950,39 @@ export function useEditUserMutation(baseOptions?: ApolloReactHooks.MutationHookO
 export type EditUserMutationHookResult = ReturnType<typeof useEditUserMutation>;
 export type EditUserMutationResult = ApolloReactCommon.MutationResult<EditUserMutation>;
 export type EditUserMutationOptions = ApolloReactCommon.BaseMutationOptions<EditUserMutation, EditUserMutationVariables>;
+export const SetUserTokensDocument = gql`
+    mutation SetUserTokens($input: SetUserTokensInput!) {
+  setUserTokens(input: $input) {
+    id
+    tokens
+  }
+}
+    `;
+export type SetUserTokensMutationFn = ApolloReactCommon.MutationFunction<SetUserTokensMutation, SetUserTokensMutationVariables>;
+
+/**
+ * __useSetUserTokensMutation__
+ *
+ * To run a mutation, you first call `useSetUserTokensMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useSetUserTokensMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [setUserTokensMutation, { data, loading, error }] = useSetUserTokensMutation({
+ *   variables: {
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function useSetUserTokensMutation(baseOptions?: ApolloReactHooks.MutationHookOptions<SetUserTokensMutation, SetUserTokensMutationVariables>) {
+        return ApolloReactHooks.useMutation<SetUserTokensMutation, SetUserTokensMutationVariables>(SetUserTokensDocument, baseOptions);
+      }
+export type SetUserTokensMutationHookResult = ReturnType<typeof useSetUserTokensMutation>;
+export type SetUserTokensMutationResult = ApolloReactCommon.MutationResult<SetUserTokensMutation>;
+export type SetUserTokensMutationOptions = ApolloReactCommon.BaseMutationOptions<SetUserTokensMutation, SetUserTokensMutationVariables>;
 export const CreateColonyDocument = gql`
     mutation CreateColony($input: CreateColonyInput!) {
   createColony(input: $input) {
@@ -1219,6 +2253,132 @@ export function useEditDomainMutation(baseOptions?: ApolloReactHooks.MutationHoo
 export type EditDomainMutationHookResult = ReturnType<typeof useEditDomainMutation>;
 export type EditDomainMutationResult = ApolloReactCommon.MutationResult<EditDomainMutation>;
 export type EditDomainMutationOptions = ApolloReactCommon.BaseMutationOptions<EditDomainMutation, EditDomainMutationVariables>;
+export const TaskDocument = gql`
+    query Task($id: String!) {
+  task(id: $id) {
+    id
+    assignedWorker {
+      id
+      profile {
+        avatarHash
+        displayName
+        username
+        walletAddress
+      }
+    }
+    assignedWorkerAddress
+    cancelledAt
+    colony {
+      id
+      colonyAddress
+      colonyName
+      avatarHash
+      displayName
+    }
+    colonyAddress
+    createdAt
+    creator {
+      id
+      profile {
+        avatarHash
+        displayName
+        username
+        walletAddress
+      }
+    }
+    creatorAddress
+    description
+    dueDate
+    ethDomainId
+    ethSkillId
+    ethTaskId
+    finalizedAt
+    title
+    workInvites {
+      id
+      profile {
+        avatarHash
+        displayName
+        username
+        walletAddress
+      }
+    }
+    workInviteAddresses
+    workRequests {
+      id
+      profile {
+        avatarHash
+        displayName
+        username
+        walletAddress
+      }
+    }
+    workRequestAddresses
+  }
+}
+    `;
+
+/**
+ * __useTaskQuery__
+ *
+ * To run a query within a React component, call `useTaskQuery` and pass it any options that fit your needs.
+ * When your component renders, `useTaskQuery` returns an object from Apollo Client that contains loading, error, and data properties 
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useTaskQuery({
+ *   variables: {
+ *      id: // value for 'id'
+ *   },
+ * });
+ */
+export function useTaskQuery(baseOptions?: ApolloReactHooks.QueryHookOptions<TaskQuery, TaskQueryVariables>) {
+        return ApolloReactHooks.useQuery<TaskQuery, TaskQueryVariables>(TaskDocument, baseOptions);
+      }
+export function useTaskLazyQuery(baseOptions?: ApolloReactHooks.LazyQueryHookOptions<TaskQuery, TaskQueryVariables>) {
+          return ApolloReactHooks.useLazyQuery<TaskQuery, TaskQueryVariables>(TaskDocument, baseOptions);
+        }
+export type TaskQueryHookResult = ReturnType<typeof useTaskQuery>;
+export type TaskLazyQueryHookResult = ReturnType<typeof useTaskLazyQuery>;
+export type TaskQueryResult = ApolloReactCommon.QueryResult<TaskQuery, TaskQueryVariables>;
+export const TaskFeedEventsDocument = gql`
+    query TaskFeedEvents($id: String!) {
+  task(id: $id) {
+    id
+    events {
+      ...TaskEvent
+    }
+  }
+}
+    ${TaskEventFragmentDoc}`;
+
+/**
+ * __useTaskFeedEventsQuery__
+ *
+ * To run a query within a React component, call `useTaskFeedEventsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useTaskFeedEventsQuery` returns an object from Apollo Client that contains loading, error, and data properties 
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useTaskFeedEventsQuery({
+ *   variables: {
+ *      id: // value for 'id'
+ *   },
+ * });
+ */
+export function useTaskFeedEventsQuery(baseOptions?: ApolloReactHooks.QueryHookOptions<TaskFeedEventsQuery, TaskFeedEventsQueryVariables>) {
+        return ApolloReactHooks.useQuery<TaskFeedEventsQuery, TaskFeedEventsQueryVariables>(TaskFeedEventsDocument, baseOptions);
+      }
+export function useTaskFeedEventsLazyQuery(baseOptions?: ApolloReactHooks.LazyQueryHookOptions<TaskFeedEventsQuery, TaskFeedEventsQueryVariables>) {
+          return ApolloReactHooks.useLazyQuery<TaskFeedEventsQuery, TaskFeedEventsQueryVariables>(TaskFeedEventsDocument, baseOptions);
+        }
+export type TaskFeedEventsQueryHookResult = ReturnType<typeof useTaskFeedEventsQuery>;
+export type TaskFeedEventsLazyQueryHookResult = ReturnType<typeof useTaskFeedEventsLazyQuery>;
+export type TaskFeedEventsQueryResult = ApolloReactCommon.QueryResult<TaskFeedEventsQuery, TaskFeedEventsQueryVariables>;
 export const LoggedInUserDocument = gql`
     query LoggedInUser {
   loggedInUser @client {
@@ -1295,10 +2455,68 @@ export function useUserLazyQuery(baseOptions?: ApolloReactHooks.LazyQueryHookOpt
 export type UserQueryHookResult = ReturnType<typeof useUserQuery>;
 export type UserLazyQueryHookResult = ReturnType<typeof useUserLazyQuery>;
 export type UserQueryResult = ApolloReactCommon.QueryResult<UserQuery, UserQueryVariables>;
+export const UserTasksDocument = gql`
+    query UserTasks($address: String!) {
+  user(address: $address) {
+    id
+    tasks {
+      id
+      assignedWorker {
+        id
+        profile {
+          avatarHash
+        }
+      }
+      assignedWorkerAddress
+      cancelledAt
+      colony {
+        id
+        colonyName
+      }
+      colonyAddress
+      createdAt
+      creatorAddress
+      dueDate
+      ethDomainId
+      ethSkillId
+      finalizedAt
+      title
+      workRequestAddresses
+    }
+  }
+}
+    `;
+
+/**
+ * __useUserTasksQuery__
+ *
+ * To run a query within a React component, call `useUserTasksQuery` and pass it any options that fit your needs.
+ * When your component renders, `useUserTasksQuery` returns an object from Apollo Client that contains loading, error, and data properties 
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useUserTasksQuery({
+ *   variables: {
+ *      address: // value for 'address'
+ *   },
+ * });
+ */
+export function useUserTasksQuery(baseOptions?: ApolloReactHooks.QueryHookOptions<UserTasksQuery, UserTasksQueryVariables>) {
+        return ApolloReactHooks.useQuery<UserTasksQuery, UserTasksQueryVariables>(UserTasksDocument, baseOptions);
+      }
+export function useUserTasksLazyQuery(baseOptions?: ApolloReactHooks.LazyQueryHookOptions<UserTasksQuery, UserTasksQueryVariables>) {
+          return ApolloReactHooks.useLazyQuery<UserTasksQuery, UserTasksQueryVariables>(UserTasksDocument, baseOptions);
+        }
+export type UserTasksQueryHookResult = ReturnType<typeof useUserTasksQuery>;
+export type UserTasksLazyQueryHookResult = ReturnType<typeof useUserTasksLazyQuery>;
+export type UserTasksQueryResult = ApolloReactCommon.QueryResult<UserTasksQuery, UserTasksQueryVariables>;
 export const UserTokensDocument = gql`
     query UserTokens($address: String!) {
   user(address: $address) {
     id
+    tokens
   }
 }
     `;
@@ -1374,42 +2592,6 @@ export function useColonyLazyQuery(baseOptions?: ApolloReactHooks.LazyQueryHookO
 export type ColonyQueryHookResult = ReturnType<typeof useColonyQuery>;
 export type ColonyLazyQueryHookResult = ReturnType<typeof useColonyLazyQuery>;
 export type ColonyQueryResult = ApolloReactCommon.QueryResult<ColonyQuery, ColonyQueryVariables>;
-export const UserTaskIdsDocument = gql`
-    query UserTaskIds($address: String!) {
-  user(address: $address) {
-    id
-    tasks {
-      id
-    }
-  }
-}
-    `;
-
-/**
- * __useUserTaskIdsQuery__
- *
- * To run a query within a React component, call `useUserTaskIdsQuery` and pass it any options that fit your needs.
- * When your component renders, `useUserTaskIdsQuery` returns an object from Apollo Client that contains loading, error, and data properties 
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useUserTaskIdsQuery({
- *   variables: {
- *      address: // value for 'address'
- *   },
- * });
- */
-export function useUserTaskIdsQuery(baseOptions?: ApolloReactHooks.QueryHookOptions<UserTaskIdsQuery, UserTaskIdsQueryVariables>) {
-        return ApolloReactHooks.useQuery<UserTaskIdsQuery, UserTaskIdsQueryVariables>(UserTaskIdsDocument, baseOptions);
-      }
-export function useUserTaskIdsLazyQuery(baseOptions?: ApolloReactHooks.LazyQueryHookOptions<UserTaskIdsQuery, UserTaskIdsQueryVariables>) {
-          return ApolloReactHooks.useLazyQuery<UserTaskIdsQuery, UserTaskIdsQueryVariables>(UserTaskIdsDocument, baseOptions);
-        }
-export type UserTaskIdsQueryHookResult = ReturnType<typeof useUserTaskIdsQuery>;
-export type UserTaskIdsLazyQueryHookResult = ReturnType<typeof useUserTaskIdsLazyQuery>;
-export type UserTaskIdsQueryResult = ApolloReactCommon.QueryResult<UserTaskIdsQuery, UserTaskIdsQueryVariables>;
 export const UserColonyIdsDocument = gql`
     query UserColonyIds($address: String!) {
   user(address: $address) {
@@ -1446,6 +2628,63 @@ export function useUserColonyIdsLazyQuery(baseOptions?: ApolloReactHooks.LazyQue
 export type UserColonyIdsQueryHookResult = ReturnType<typeof useUserColonyIdsQuery>;
 export type UserColonyIdsLazyQueryHookResult = ReturnType<typeof useUserColonyIdsLazyQuery>;
 export type UserColonyIdsQueryResult = ApolloReactCommon.QueryResult<UserColonyIdsQuery, UserColonyIdsQueryVariables>;
+export const ColonyTasksDocument = gql`
+    query ColonyTasks($address: String!) {
+  colony(address: $address) {
+    id
+    tasks {
+      id
+      assignedWorker {
+        id
+        profile {
+          avatarHash
+        }
+      }
+      assignedWorkerAddress
+      cancelledAt
+      colony {
+        id
+        colonyName
+      }
+      colonyAddress
+      createdAt
+      creatorAddress
+      dueDate
+      ethDomainId
+      ethSkillId
+      finalizedAt
+      title
+      workRequestAddresses
+    }
+  }
+}
+    `;
+
+/**
+ * __useColonyTasksQuery__
+ *
+ * To run a query within a React component, call `useColonyTasksQuery` and pass it any options that fit your needs.
+ * When your component renders, `useColonyTasksQuery` returns an object from Apollo Client that contains loading, error, and data properties 
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useColonyTasksQuery({
+ *   variables: {
+ *      address: // value for 'address'
+ *   },
+ * });
+ */
+export function useColonyTasksQuery(baseOptions?: ApolloReactHooks.QueryHookOptions<ColonyTasksQuery, ColonyTasksQueryVariables>) {
+        return ApolloReactHooks.useQuery<ColonyTasksQuery, ColonyTasksQueryVariables>(ColonyTasksDocument, baseOptions);
+      }
+export function useColonyTasksLazyQuery(baseOptions?: ApolloReactHooks.LazyQueryHookOptions<ColonyTasksQuery, ColonyTasksQueryVariables>) {
+          return ApolloReactHooks.useLazyQuery<ColonyTasksQuery, ColonyTasksQueryVariables>(ColonyTasksDocument, baseOptions);
+        }
+export type ColonyTasksQueryHookResult = ReturnType<typeof useColonyTasksQuery>;
+export type ColonyTasksLazyQueryHookResult = ReturnType<typeof useColonyTasksLazyQuery>;
+export type ColonyTasksQueryResult = ApolloReactCommon.QueryResult<ColonyTasksQuery, ColonyTasksQueryVariables>;
 export const ColonySubscribedUsersDocument = gql`
     query ColonySubscribedUsers($colonyAddress: String!) {
   colony(address: $colonyAddress) {

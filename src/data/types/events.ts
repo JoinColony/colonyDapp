@@ -1,9 +1,6 @@
 import { EventTypes, Versions } from '~data/constants';
 import { Address } from '~types/index';
 import { ColonyEvents } from './ColonyEvents';
-import { CommentEvents } from './CommentEvents';
-import { TaskEvents } from './TaskEvents';
-import { TaskIndexEvents } from './TaskIndexEvents';
 
 /*
  * The definition of an event object.
@@ -27,11 +24,7 @@ export interface EventDefinition<
   };
 }
 
-export type AllEvents =
-  | ColonyEvents
-  | CommentEvents
-  | TaskIndexEvents
-  | TaskEvents;
+export type AllEvents = ColonyEvents;
 
 export type Event<T extends EventTypes> = Extract<
   AllEvents,

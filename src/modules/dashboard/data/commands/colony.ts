@@ -1,12 +1,5 @@
 import { Address, createAddress } from '~types/index';
-import {
-  ColonyManager,
-  ColonyStore,
-  ColonyTaskIndexStore,
-  Command,
-  DDB,
-  Wallet,
-} from '~data/types';
+import { ColonyManager, ColonyStore, Command, DDB, Wallet } from '~data/types';
 import { Context } from '~context/index';
 import { createEvent } from '~data/utils';
 import { EventTypes } from '~data/constants';
@@ -39,7 +32,7 @@ const prepareColonyStoreQuery = async (
 };
 
 export const createColonyProfile: Command<
-  { colonyStore: ColonyStore; colonyTaskIndexStore: ColonyTaskIndexStore },
+  { colonyStore: ColonyStore },
   ColonyStoreMetadata,
   {
     colonyAddress: Address;
@@ -76,7 +69,7 @@ export const createColonyProfile: Command<
   },
   schema: CreateColonyProfileCommandArgsSchema,
   async execute(
-    { colonyStore, colonyTaskIndexStore },
+    { colonyStore },
     {
       colonyAddress,
       colonyName,
@@ -84,12 +77,6 @@ export const createColonyProfile: Command<
       token: { iconHash, isNative, isExternal, ...token },
     },
   ) {
-    await colonyStore.append(
-      createEvent(EventTypes.TASK_INDEX_STORE_REGISTERED, {
-        taskIndexStoreAddress: colonyTaskIndexStore.address.toString(),
-      }),
-    );
-
     const profileCreatedEvent = createEvent(EventTypes.COLONY_PROFILE_CREATED, {
       colonyAddress,
       colonyName,

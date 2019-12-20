@@ -226,25 +226,6 @@ export type ColonyActionTypes =
     >
   | UniqueActionType<ActionTypes.COLONY_VERSION_UPGRADE_SUCCESS, object, object>
   | ErrorActionType<ActionTypes.COLONY_VERSION_UPGRADE_ERROR, object>
-  | ActionTypeWithPayloadAndMeta<
-      ActionTypes.COLONY_TASK_METADATA_FETCH,
-      { colonyAddress: Address },
-      WithKey
-    >
-  | ErrorActionType<ActionTypes.COLONY_TASK_METADATA_FETCH_ERROR, WithKey>
-  | ActionTypeWithPayloadAndMeta<
-      ActionTypes.COLONY_TASK_METADATA_FETCH_SUCCESS,
-      {
-        colonyAddress: Address;
-        colonyTasks: {
-          [draftId: string]: {
-            commentsStoreAddress: string;
-            taskStoreAddress: string;
-          };
-        };
-      },
-      WithKey
-    >
   | ActionTypeWithPayload<
       ActionTypes.COLONY_TOKEN_BALANCE_FETCH,
       { colonyAddress: Address; domainId: number; tokenAddress: Address }
@@ -276,30 +257,6 @@ export type ColonyActionTypes =
       { colonyAddress: Address; tokens: Address[] },
       object
     >
-  | ActionTypeWithPayloadAndMeta<
-      ActionTypes.COLONY_TASK_METADATA_SUB_START,
-      { colonyAddress: Address },
-      WithKey
-    >
-  | ActionTypeWithPayloadAndMeta<
-      ActionTypes.COLONY_TASK_METADATA_SUB_STOP,
-      { colonyAddress: Address },
-      WithKey
-    >
-  | ActionTypeWithPayloadAndMeta<
-      ActionTypes.COLONY_TASK_METADATA_SUB_EVENTS,
-      {
-        colonyAddress: Address;
-        colonyTasks: {
-          [draftId: string]: {
-            commentsStoreAddress: string;
-            taskStoreAddress: string;
-          };
-        };
-      },
-      WithKey
-    >
-  | ErrorActionType<ActionTypes.COLONY_TASK_METADATA_SUB_ERROR, null>
   | ActionTypeWithPayloadAndMeta<
       ActionTypes.TEMP_COLONY_USER_HAS_RECOVERY_ROLE_FETCH,
       { colonyAddress: Address; userAddress: Address },

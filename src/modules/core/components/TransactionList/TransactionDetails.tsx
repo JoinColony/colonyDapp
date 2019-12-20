@@ -1,11 +1,11 @@
 import React from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 
-import { ContractTransactionType, TaskType } from '~immutable/index';
 import MaskedAddress from '~core/MaskedAddress';
 import Link from '~core/Link';
+import { AnyUser, AnyColony, AnyTask, useColonyQuery } from '~data/index';
+import { ContractTransactionType } from '~immutable/index';
 import { Address, ENSName } from '~types/index';
-import { AnyColony, AnyUser, useColonyQuery } from '~data/index';
 
 import styles from './TransactionDetails.css';
 
@@ -41,7 +41,7 @@ interface ColonyDetailsProps extends BaseProps {
 
 interface TaskDetailsProps extends BaseProps {
   colonyName: ENSName;
-  task: TaskType;
+  task: AnyTask;
 }
 
 interface UserDetailsProps extends BaseProps {
@@ -51,20 +51,20 @@ interface UserDetailsProps extends BaseProps {
 
 interface IncomingTransactionProps extends BaseProps {
   colony: AnyColony;
-  task?: TaskType;
+  task?: AnyTask;
   transaction: ContractTransactionType;
   user: AnyUser;
 }
 
 interface OutgoingTransactionProps extends BaseProps {
   colony: AnyColony;
-  task?: TaskType;
+  task?: AnyTask;
   transaction: ContractTransactionType;
   user: AnyUser;
 }
 
 interface Props extends BaseProps {
-  task?: TaskType;
+  task?: AnyTask;
   transaction: ContractTransactionType;
   user: AnyUser;
 }
@@ -107,14 +107,11 @@ const ColonyDetails = ({
   </span>
 );
 
-const TaskDetails = ({
-  colonyName,
-  task: { draftId, title },
-}: TaskDetailsProps) => (
+const TaskDetails = ({ colonyName, task: { id, title } }: TaskDetailsProps) => (
   <span>
     <Link
       text={title || MSG.untitled}
-      to={`/colony/${colonyName}/task/${draftId}`}
+      to={`/colony/${colonyName}/task/${id}`}
       className={styles.taskLink}
     />
   </span>
