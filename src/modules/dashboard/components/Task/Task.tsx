@@ -29,6 +29,7 @@ import {
 import LoadingTemplate from '~pages/LoadingTemplate';
 import { ActionTypes } from '~redux/index';
 import { mergePayload } from '~utils/actions';
+import { useDataFetcher } from '~utils/hooks';
 
 import {
   canCancelTask,
@@ -37,6 +38,7 @@ import {
   isCancelled,
   isFinalized,
 } from '../../checks';
+import { domainsAndRolesFetcher } from '../../fetchers';
 
 import styles from './Task.css';
 
@@ -140,12 +142,11 @@ const Task = ({
     task = undefined,
   } = data || {};
 
-  // fixme add domains back in here once ready
-  // const { data: domains, isFetching: isFetchingDomains } = useDataFetcher(
-  //   domainsAndRolesFetcher,
-  //   [colonyAddress],
-  //   [colonyAddress],
-  // );
+  const { data: domains, isFetching: isFetchingDomains } = useDataFetcher(
+    domainsAndRolesFetcher,
+    [colony ? colony.colonyAddress : ''],
+    [colony ? colony.colonyAddress : undefined],
+  );
 
   // fixme add user roles back in here once ready
   // const userRoles = useTransformer(getUserRoles, [
@@ -181,15 +182,7 @@ const Task = ({
     variables: { input: { id: draftId } },
   });
 
-  if (
-    // fixme isFetchingDomains
-    // isFetchingDomains ||
-    !task ||
-    !colony ||
-    // fixme !domains
-    // !domains ||
-    !walletAddress
-  ) {
+  if (isFetchingDomains || !task || !colony || !domains || !walletAddress) {
     return <LoadingTemplate loadingText={MSG.loadingText} />;
   }
 
