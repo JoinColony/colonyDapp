@@ -4,7 +4,6 @@ import { RouteComponentProps, withRouter } from 'react-router-dom';
 import compose from 'recompose/compose';
 
 import Button, { ActionButton, ConfirmButton } from '~core/Button';
-// Temporary, please remove when wiring in the rating modals
 import { OpenDialog } from '~core/Dialog/types';
 import withDialog from '~core/Dialog/withDialog';
 import Heading from '~core/Heading';
@@ -29,10 +28,12 @@ import {
 import LoadingTemplate from '~pages/LoadingTemplate';
 import { ActionTypes } from '~redux/index';
 import { mergePayload } from '~utils/actions';
-import { useDataFetcher } from '~utils/hooks';
+import { useDataFetcher, useTransformer } from '~utils/hooks';
 
+import { getUserRoles } from '../../../transformers';
 import {
   canCancelTask,
+  canEditTask,
   canFinalizeTask,
   canRequestToWork,
   isCancelled,
@@ -148,13 +149,11 @@ const Task = ({
     [colony ? colony.colonyAddress : undefined],
   );
 
-  // fixme add user roles back in here once ready
-  // const userRoles = useTransformer(getUserRoles, [
-  //   domains,
-  //   ethDomainId || null,
-  //   walletAddress,
-  // ]);
-  const userRoles = [];
+  const userRoles = useTransformer(getUserRoles, [
+    domains,
+    ethDomainId || null,
+    walletAddress,
+  ]);
 
   const onEditTask = useCallback(() => {
     // If you've managed to click on the button that runs this without the
@@ -186,9 +185,7 @@ const Task = ({
     return <LoadingTemplate loadingText={MSG.loadingText} />;
   }
 
-  // fixme handle user roles / `canEdit` check on task
-  const canEdit = true;
-  // const canEdit = canEditTask(task, userRoles);
+  const canEdit = canEditTask(task, userRoles);
 
   return (
     <div className={styles.main}>
