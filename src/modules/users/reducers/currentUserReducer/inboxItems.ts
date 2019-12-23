@@ -21,10 +21,15 @@ const inboxItemsReducer = (
         List(
           activities.map(
             ({
-              type,
-              meta: { id, actorId, sourceType, sourceId, timestamp },
-              payload: { sourceUserAddress },
-              payload: context,
+              id,
+              event: {
+                type,
+                createdAt: timestamp,
+                initiatorAddress: initiator,
+                sourceId,
+                sourceType,
+                context
+              }
             }) =>
               InboxItem({
                 id,
@@ -32,7 +37,7 @@ const inboxItemsReducer = (
                 type,
                 sourceId,
                 sourceType,
-                initiator: sourceUserAddress || actorId,
+                initiator,
                 context,
                 targetUser: context.targetUserAddress,
               }),
