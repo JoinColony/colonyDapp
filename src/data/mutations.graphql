@@ -63,7 +63,7 @@ mutation RemoveTaskPayout($input: RemoveTaskPayoutInput!) {
     events {
       ...TaskEvent
     }
-    # fixme return payouts from `removeTaskPayout` mutation
+    ...Payouts
   }
 }
 
