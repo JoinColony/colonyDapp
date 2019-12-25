@@ -1,3 +1,57 @@
+fragment Payouts on Task {
+  payouts {
+    amount
+    token {
+      id
+      address
+      details @client {
+        decimals
+        name
+        symbol
+      }
+    }
+  }
+}
+
+fragment Tokens on Colony {
+  nativeTokenAddress
+  tokens {
+    id
+    address
+    iconHash
+    details @client {
+      decimals
+      name
+      symbol
+    }
+    balances(colonyAddress: $address) @client {
+      domainId
+      amount
+    }
+  }
+}
+
+fragment ColonyProfile on Colony {
+  id
+  colonyAddress
+  colonyName
+  avatarHash
+  description
+  displayName
+  guideline
+  website
+}
+
+fragment FullColony on Colony {
+  ...ColonyProfile
+  ...Tokens
+  isNativeTokenExternal
+  version(address: $address) @client
+  canMintNativeToken(address: $address) @client
+  canUnlockNativeToken(address: $address) @client
+  isInRecoveryMode(address: $address) @client
+  isNativeTokenLocked(address: $address) @client
+}
 fragment EventFields on Event {
   createdAt
   initiator {

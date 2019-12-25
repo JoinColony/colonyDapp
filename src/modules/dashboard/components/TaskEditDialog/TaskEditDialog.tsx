@@ -1,13 +1,11 @@
 import React, { useCallback, useMemo, useEffect } from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 import * as yup from 'yup';
-import { FieldArray } from 'formik';
+import { FieldArray, ArrayHelpers } from 'formik';
 import nanoid from 'nanoid';
 import { subscribeActions as subscribeToReduxActions } from 'redux-action-watch/lib/actionCreators';
 import { useDispatch } from 'redux-react-hook';
 
-import { DEFAULT_TOKEN_DECIMALS } from '~constants';
-import { TaskPayoutType } from '~immutable/index';
 import { ItemDataType } from '~core/OmniPicker';
 import SingleUserPicker, { filterUserSelection } from '~core/SingleUserPicker';
 import Button from '~core/Button';
@@ -24,7 +22,7 @@ import HookedUserAvatar from '~users/HookedUserAvatar';
 import { AnyUser, AnyTask, useTaskToEditQuery } from '~data/index';
 import { Address } from '~types/index';
 
-import WrappedPayout from './WrappedPayout';
+import Payout from './Payout';
 
 import styles from './TaskEditDialog.css';
 
@@ -102,6 +100,16 @@ const canAddTokens = (values, maxTokens) =>
 const canRemoveTokens = (values, minTokens) =>
   !minTokens || (values.payouts && values.payouts.length > minTokens);
 
+const removePayout = (arrayHelpers: ArrayHelpers, index: number) =>
+  arrayHelpers.remove(index);
+
+const resetPayout =
+  // FIXME type payouts better
+  (arrayHelpers: ArrayHelpers, index: number, payouts: object[]) =>
+    payouts.length > 0
+      ? arrayHelpers.replace(index, payouts[index])
+      : arrayHelpers.remove(index);
+
 const displayName = 'dashboard.TaskEditDialog';
 
 const TaskEditDialog = ({
@@ -145,7 +153,7 @@ const TaskEditDialog = ({
   }, [maxTokens, minTokens]);
 
   const addTokenFunding = useCallback(
-    (values: { payouts?: TaskPayoutType[] }, helpers: () => void) => {
+    (values: { payouts?: AnyTask['payouts'] }, helpers: () => void) => {
       if (canAddTokens(values, maxTokens))
         (helpers as any).push({
           id: nanoid(),
@@ -194,8 +202,8 @@ const TaskEditDialog = ({
   const {
     task: {
       assignedWorker,
-      colony: { subscribedUsers },
-      payouts,
+      colony: { subscribedUsers, tokens },
+      payouts: initialPayouts,
       workRequests,
     },
   } = data;
@@ -220,7 +228,7 @@ const TaskEditDialog = ({
     >
       <ActionForm
         initialValues={{
-          payouts,
+          payouts: initialPayouts,
           worker: assignedWorker,
         }}
         error={ActionTypes.TASK_SET_WORKER_OR_PAYOUT_ERROR}
@@ -290,18 +298,18 @@ const TaskEditDialog = ({
                           )}
                         </div>
                         {values.payouts &&
-                          values.payouts.map((payout, index) => (
-                            <WrappedPayout
-                              arrayHelpers={arrayHelpers}
+                          values.payouts.map((payout, index, payouts) => (
+                            <Payout
                               canRemove={canRemove}
                               colonyAddress={colonyAddress}
-                              index={index}
-                              key={payout.id}
+                              name={`payouts.${index}`}
                               payout={payout}
-                              payouts={payouts}
+                              tokens={tokens}
                               reputation={0}
-                              /* FIXME This needs to be handled somehow */
-                              tokens={[]}
+                              remove={() => removePayout(arrayHelpers, index)}
+                              reset={() =>
+                                resetPayout(arrayHelpers, index, payouts)
+                              }
                             />
                           ))}
                       </>

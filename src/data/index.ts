@@ -9,6 +9,7 @@ import {
   ColonyQuery,
   ColonyTasksQuery,
   FullColonyFragment,
+  PayoutsFragment,
   UserQuery,
   UserTasksQuery,
   UserTokensQuery,
@@ -44,13 +45,19 @@ export const resolvers: ResolverFactory[] = [
 export * from './generated';
 export * from './helpers';
 
+// FIXME create fragments for typical tokens/payouts, use in queries and type with those
+
 // @TODO find a solution for query return types used throughout the dapp
 // @body when passing down properties to other components we should expect the return type of the query in the upper component. How can we make that work in a simple way?
 export type AnyUser = UserQuery['user'];
+
 export type AnyTask =
   | TaskQuery['task']
   | ColonyTasksQuery['colony']['tasks'][number]
   | UserTasksQuery['user']['tasks'][number];
+
+export type Payouts = PayoutsFragment['payouts'];
+
 export type AnyColonyProfile = FullColonyFragment | ColonyProfileFragment;
 
 export type OneToken = TokenQuery['token'];

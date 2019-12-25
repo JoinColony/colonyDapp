@@ -1,9 +1,8 @@
 import React from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 
-import { TaskPayoutType } from '~immutable/index';
 import { Address } from '~types/index';
-import { AnyUser, FullColonyFragment } from '~data/index';
+import { AnyUser, FullColonyFragment, Payouts } from '~data/index';
 import PayoutsList from '~core/PayoutsList';
 import UserInfo from '~users/UserInfo';
 
@@ -42,7 +41,7 @@ interface Props {
   workerAddress?: Address;
 
   /** List of payouts per token that has been set for a task */
-  payouts?: TaskPayoutType[];
+  payouts?: Payouts;
 
   /** current user reputation */
   reputation?: number;
@@ -71,7 +70,8 @@ const Assignment = ({
   workerAddress,
 }: Props) => {
   const fundingWithNativeToken =
-    payouts && payouts.find(payout => payout.token === nativeTokenAddress);
+    payouts &&
+    payouts.find(payout => payout.token.address === nativeTokenAddress);
 
   return (
     <div>
