@@ -5,6 +5,7 @@ import { Address } from '~types/index';
 import {
   AnyTask,
   AnyUser,
+  Payouts,
   useAssignWorkerMutation,
   useColonyTokensQuery,
 } from '~data/index';
@@ -17,6 +18,7 @@ import DialogSection from '~core/Dialog/DialogSection';
 import Heading from '~core/Heading';
 import Payout from '~dashboard/TaskEditDialog/Payout';
 import DialogBox from '~core/Dialog/DialogBox';
+
 import styles from './TaskInviteDialog.css';
 
 const MSG = defineMessages({
@@ -52,8 +54,9 @@ const TaskInviteDialog = ({
   },
   currentUser,
 }: Props) => {
-  // fixme get payouts from centralized store
-  const payouts = [];
+  // This component is unused. These todos need to be fixed when we start using it again
+  // @todo get payouts from centralized store
+  const payouts = [] as Payouts;
 
   // @todo get reputation from centralized store (someday)
   const reputation = undefined;
@@ -125,13 +128,12 @@ const TaskInviteDialog = ({
                   <div>
                     {nativeTokenAddress && payouts
                       ? payouts.map((payout, index) => {
-                          const { amount, token } = payout;
                           return (
                             <Payout
-                              key={token}
+                              key={payout.token.address}
+                              payout={payout}
                               name={`payouts.${index}`}
                               tokens={tokens}
-                              amount={amount}
                               colonyAddress={colonyAddress}
                               reputation={0}
                               editPayout={false}

@@ -871,6 +871,30 @@ export type UserProfile = {
   website?: Maybe<Scalars['String']>,
 };
 
+export type PayoutsFragment = { payouts: Array<(
+    Pick<TaskPayout, 'amount'>
+    & { token: (
+      Pick<Token, 'id' | 'address'>
+      & { details: Pick<TokenInfo, 'decimals' | 'name' | 'symbol'> }
+    ) }
+  )> };
+
+export type TokensFragment = (
+  Pick<Colony, 'nativeTokenAddress'>
+  & { tokens: Array<(
+    Pick<Token, 'id' | 'address' | 'iconHash'>
+    & { details: Pick<TokenInfo, 'decimals' | 'name' | 'symbol'>, balances: Array<Pick<DomainBalance, 'domainId' | 'amount'>> }
+  )> }
+);
+
+export type ColonyProfileFragment = Pick<Colony, 'id' | 'colonyAddress' | 'colonyName' | 'avatarHash' | 'description' | 'displayName' | 'guideline' | 'website'>;
+
+export type FullColonyFragment = (
+  Pick<Colony, 'isNativeTokenExternal' | 'version' | 'canMintNativeToken' | 'canUnlockNativeToken' | 'isInRecoveryMode' | 'isNativeTokenLocked'>
+  & ColonyProfileFragment
+  & TokensFragment
+);
+
 export type EventFieldsFragment = (
   Pick<Event, 'createdAt' | 'initiatorAddress' | 'sourceId' | 'sourceType' | 'type'>
   & { initiator: Maybe<(
@@ -991,7 +1015,10 @@ export type SetTaskPayoutMutationVariables = {
 
 export type SetTaskPayoutMutation = { setTaskPayout: Maybe<(
     Pick<Task, 'id'>
-    & { events: Array<TaskEventFragment> }
+    & { events: Array<TaskEventFragment>, payouts: Array<(
+      Pick<TaskPayout, 'amount'>
+      & { token: Pick<Token, 'id' | 'address'> }
+    )> }
   )> };
 
 export type SetTaskSkillMutationVariables = {
@@ -1134,16 +1161,20 @@ export type TaskQuery = { task: (
     & { assignedWorker: Maybe<(
       Pick<User, 'id'>
       & { profile: Pick<UserProfile, 'avatarHash' | 'displayName' | 'username' | 'walletAddress'> }
-    )>, colony: Pick<Colony, 'id' | 'colonyAddress' | 'colonyName' | 'avatarHash' | 'displayName'>, creator: (
+    )>, colony: Pick<Colony, 'id' | 'colonyAddress' | 'colonyName' | 'avatarHash' | 'displayName' | 'nativeTokenAddress'>, creator: (
       Pick<User, 'id'>
       & { profile: Pick<UserProfile, 'avatarHash' | 'displayName' | 'username' | 'walletAddress'> }
-    ), workInvites: Array<(
+    ), payouts: Array<(
+      Pick<TaskPayout, 'amount'>
+      & { token: Pick<Token, 'id' | 'address'> }
+    )>, workInvites: Array<(
       Pick<User, 'id'>
       & { profile: Pick<UserProfile, 'avatarHash' | 'displayName' | 'username' | 'walletAddress'> }
     )>, workRequests: Array<(
       Pick<User, 'id'>
       & { profile: Pick<UserProfile, 'avatarHash' | 'displayName' | 'username' | 'walletAddress'> }
     )> }
+    & PayoutsFragment
   ) };
 
 export type TaskToEditQueryVariables = {
@@ -1156,16 +1187,20 @@ export type TaskToEditQuery = { task: (
     & { assignedWorker: Maybe<(
       Pick<User, 'id'>
       & { profile: Pick<UserProfile, 'avatarHash' | 'displayName' | 'username' | 'walletAddress'> }
-    )>, payouts: Array<(
-      Pick<TaskPayout, 'amount' | 'tokenAddress'>
-      & { token: Pick<Token, 'id' | 'address'> }
     )>, workRequests: Array<(
       Pick<User, 'id'>
       & { profile: Pick<UserProfile, 'avatarHash' | 'displayName' | 'username' | 'walletAddress'> }
-    )>, colony: { subscribedUsers: Array<(
+    )>, colony: (
+      Pick<Colony, 'nativeTokenAddress'>
+      & { subscribedUsers: Array<(
         Pick<User, 'id'>
         & { profile: Pick<UserProfile, 'displayName' | 'walletAddress' | 'username' | 'avatarHash'> }
-      )> } }
+      )>, tokens: Array<(
+        Pick<Token, 'id' | 'address'>
+        & { details: Pick<TokenInfo, 'decimals' | 'name' | 'symbol'> }
+      )> }
+    ) }
+    & PayoutsFragment
   ) };
 
 export type TaskFeedEventsQueryVariables = {
@@ -1205,7 +1240,8 @@ export type UserTasksQuery = { user: (
       & { assignedWorker: Maybe<(
         Pick<User, 'id'>
         & { profile: Pick<UserProfile, 'avatarHash'> }
-      )>, colony: Pick<Colony, 'id' | 'colonyName' | 'displayName'> }
+      )>, colony: Pick<Colony, 'id' | 'colonyName' | 'displayName' | 'nativeTokenAddress'> }
+      & PayoutsFragment
     )> }
   ) };
 
@@ -1221,22 +1257,6 @@ export type UserTokensQuery = { user: (
       & { details: Pick<TokenInfo, 'decimals' | 'name' | 'symbol'> }
     )> }
   ) };
-
-export type TokensFragment = (
-  Pick<Colony, 'nativeTokenAddress'>
-  & { tokens: Array<(
-    Pick<Token, 'id' | 'address' | 'iconHash'>
-    & { details: Pick<TokenInfo, 'decimals' | 'name' | 'symbol'>, balances: Array<Pick<DomainBalance, 'domainId' | 'amount'>> }
-  )> }
-);
-
-export type ColonyProfileFragment = Pick<Colony, 'id' | 'colonyAddress' | 'colonyName' | 'avatarHash' | 'description' | 'displayName' | 'guideline' | 'website'>;
-
-export type FullColonyFragment = (
-  Pick<Colony, 'isNativeTokenExternal' | 'version' | 'canMintNativeToken' | 'canUnlockNativeToken' | 'isInRecoveryMode' | 'isNativeTokenLocked'>
-  & ColonyProfileFragment
-  & TokensFragment
-);
 
 export type ColonyFromNameQueryVariables = {
   name: Scalars['String'],
@@ -1317,7 +1337,10 @@ export type ColonyTasksQuery = { colony: (
       & { assignedWorker: Maybe<(
         Pick<User, 'id'>
         & { profile: Pick<UserProfile, 'avatarHash'> }
-      )>, colony: Pick<Colony, 'id' | 'colonyName' | 'displayName'> }
+      )>, colony: Pick<Colony, 'id' | 'colonyName' | 'displayName' | 'nativeTokenAddress'>, payouts: Array<(
+        Pick<TaskPayout, 'amount'>
+        & { token: Pick<Token, 'id' | 'address'> }
+      )> }
     )> }
   ) };
 
@@ -1377,6 +1400,66 @@ export type AllTokensQuery = { allTokens: Array<(
     & { details: Pick<TokenInfo, 'name' | 'symbol' | 'decimals'> }
   )> };
 
+export const PayoutsFragmentDoc = gql`
+    fragment Payouts on Task {
+  payouts {
+    amount
+    token {
+      id
+      address
+      details @client {
+        decimals
+        name
+        symbol
+      }
+    }
+  }
+}
+    `;
+export const ColonyProfileFragmentDoc = gql`
+    fragment ColonyProfile on Colony {
+  id
+  colonyAddress
+  colonyName
+  avatarHash
+  description
+  displayName
+  guideline
+  website
+}
+    `;
+export const TokensFragmentDoc = gql`
+    fragment Tokens on Colony {
+  nativeTokenAddress
+  tokens {
+    id
+    address
+    iconHash
+    details @client {
+      decimals
+      name
+      symbol
+    }
+    balances(colonyAddress: $address) @client {
+      domainId
+      amount
+    }
+  }
+}
+    `;
+export const FullColonyFragmentDoc = gql`
+    fragment FullColony on Colony {
+  ...ColonyProfile
+  ...Tokens
+  isNativeTokenExternal
+  version(address: $address) @client
+  canMintNativeToken(address: $address) @client
+  canUnlockNativeToken(address: $address) @client
+  isInRecoveryMode(address: $address) @client
+  isNativeTokenLocked(address: $address) @client
+}
+    ${ColonyProfileFragmentDoc}
+${TokensFragmentDoc}`;
 export const EventFieldsFragmentDoc = gql`
     fragment EventFields on Event {
   createdAt
@@ -1477,50 +1560,6 @@ export const TaskEventFragmentDoc = gql`
   }
 }
     ${EventFieldsFragmentDoc}`;
-export const ColonyProfileFragmentDoc = gql`
-    fragment ColonyProfile on Colony {
-  id
-  colonyAddress
-  colonyName
-  avatarHash
-  description
-  displayName
-  guideline
-  website
-}
-    `;
-export const TokensFragmentDoc = gql`
-    fragment Tokens on Colony {
-  nativeTokenAddress
-  tokens {
-    id
-    address
-    iconHash
-    details @client {
-      decimals
-      name
-      symbol
-    }
-    balances(colonyAddress: $address) @client {
-      domainId
-      amount
-    }
-  }
-}
-    `;
-export const FullColonyFragmentDoc = gql`
-    fragment FullColony on Colony {
-  ...ColonyProfile
-  ...Tokens
-  isNativeTokenExternal
-  version(address: $address) @client
-  canMintNativeToken(address: $address) @client
-  canUnlockNativeToken(address: $address) @client
-  isInRecoveryMode(address: $address) @client
-  isNativeTokenLocked(address: $address) @client
-}
-    ${ColonyProfileFragmentDoc}
-${TokensFragmentDoc}`;
 export const AssignWorkerDocument = gql`
     mutation AssignWorker($input: AssignWorkerInput!) {
   assignWorker(input: $input) {
@@ -1894,6 +1933,13 @@ export const SetTaskPayoutDocument = gql`
     id
     events {
       ...TaskEvent
+    }
+    payouts {
+      amount
+      token {
+        id
+        address
+      }
     }
   }
 }
@@ -2510,6 +2556,7 @@ export const TaskDocument = gql`
     query Task($id: String!) {
   task(id: $id) {
     id
+    ...Payouts
     assignedWorker {
       id
       profile {
@@ -2527,6 +2574,7 @@ export const TaskDocument = gql`
       colonyName
       avatarHash
       displayName
+      nativeTokenAddress
     }
     colonyAddress
     createdAt
@@ -2546,6 +2594,13 @@ export const TaskDocument = gql`
     ethSkillId
     ethTaskId
     finalizedAt
+    payouts {
+      amount
+      token {
+        id
+        address
+      }
+    }
     title
     workInvites {
       id
@@ -2569,7 +2624,7 @@ export const TaskDocument = gql`
     workRequestAddresses
   }
 }
-    `;
+    ${PayoutsFragmentDoc}`;
 
 /**
  * __useTaskQuery__
@@ -2600,6 +2655,7 @@ export const TaskToEditDocument = gql`
     query TaskToEdit($id: String!) {
   task(id: $id) {
     id
+    ...Payouts
     assignedWorker {
       id
       profile {
@@ -2607,14 +2663,6 @@ export const TaskToEditDocument = gql`
         displayName
         username
         walletAddress
-      }
-    }
-    payouts {
-      amount
-      tokenAddress
-      token {
-        id
-        address
       }
     }
     workRequests {
@@ -2627,6 +2675,7 @@ export const TaskToEditDocument = gql`
       }
     }
     colony {
+      nativeTokenAddress
       subscribedUsers {
         id
         profile {
@@ -2636,10 +2685,19 @@ export const TaskToEditDocument = gql`
           avatarHash
         }
       }
+      tokens {
+        id
+        address
+        details @client {
+          decimals
+          name
+          symbol
+        }
+      }
     }
   }
 }
-    `;
+    ${PayoutsFragmentDoc}`;
 
 /**
  * __useTaskToEditQuery__
@@ -2784,6 +2842,7 @@ export const UserTasksDocument = gql`
     id
     tasks {
       id
+      ...Payouts
       assignedWorker {
         id
         profile {
@@ -2796,6 +2855,7 @@ export const UserTasksDocument = gql`
         id
         colonyName
         displayName
+        nativeTokenAddress
       }
       colonyAddress
       createdAt
@@ -2809,7 +2869,7 @@ export const UserTasksDocument = gql`
     }
   }
 }
-    `;
+    ${PayoutsFragmentDoc}`;
 
 /**
  * __useUserTasksQuery__
@@ -3143,6 +3203,14 @@ export const ColonyTasksDocument = gql`
         id
         colonyName
         displayName
+        nativeTokenAddress
+      }
+      payouts {
+        amount
+        token {
+          id
+          address
+        }
       }
       colonyAddress
       createdAt

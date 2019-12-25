@@ -33,7 +33,6 @@ import {
   TaskFeedEventsDocument,
   ColonyTasksDocument,
 } from '~data/index';
-import { TaskPayoutType } from '~immutable/TaskPayout';
 import { Action, ActionTypes } from '~redux/index';
 import { ContractContexts } from '~types/index';
 import { putError, takeFrom } from '~utils/saga/effects';
@@ -114,10 +113,7 @@ function* taskFinalize({
       },
     });
 
-    const { assignedWorker, ethDomainId, ethSkillId } = task;
-
-    // @todo get payouts from centralized store
-    const payouts = [] as TaskPayoutType[];
+    const { assignedWorker, ethDomainId, ethSkillId, payouts } = task;
 
     if (!assignedWorker)
       throw new Error(`Worker not assigned for task ${draftId}`);
@@ -176,7 +172,7 @@ function* taskSetWorkerOrPayouts({
 
     const {
       data: {
-        task: { assignedWorker },
+        task: { assignedWorker, payouts: existingPayouts },
       },
     } = yield apolloClient.query<TaskQuery, TaskQueryVariables>({
       query: TaskDocument,
@@ -227,24 +223,20 @@ function* taskSetWorkerOrPayouts({
           },
         },
       });
-    } else {
-      // @todo use payouts from centralized store
-      const existingPayouts: TaskPayoutType[] = [];
-      if (existingPayouts && existingPayouts.length) {
-        yield apolloClient.mutate<
-          RemoveTaskPayoutMutation,
-          RemoveTaskPayoutMutationVariables
-        >({
-          mutation: RemoveTaskPayoutDocument,
-          variables: {
-            input: {
-              id: draftId,
-              amount: existingPayouts[0].amount.toString(),
-              tokenAddress: existingPayouts[0].token,
-            },
+    } else if (existingPayouts && existingPayouts.length) {
+      yield apolloClient.mutate<
+        RemoveTaskPayoutMutation,
+        RemoveTaskPayoutMutationVariables
+      >({
+        mutation: RemoveTaskPayoutDocument,
+        variables: {
+          input: {
+            id: draftId,
+            amount: existingPayouts[0].amount.toString(),
+            tokenAddress: existingPayouts[0].token,
           },
-        });
-      }
+        },
+      });
     }
 
     yield put<AllActions>({
