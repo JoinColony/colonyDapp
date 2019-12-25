@@ -140,7 +140,16 @@ const InboxItem = ({
       <TableCell
         className={full ? styles.inboxRowCellFull : styles.inboxRowCellPopover}
       >
-        {!colonyName || !token || isFetchingDomains ? (
+        {
+          /*
+           * @FIXME The first ever notification for every user (user profile claimed)
+           * does not have a colony name or a token, so in that case the spinner
+           * will always render even though it shouldn't at that point
+           */
+          // !colonyName ||
+          // !token ||
+          isFetchingDomains ?
+        (
           <div className={styles.spinnerWrapper}>
             <SpinnerLoader
               loadingText={LOCAL_MSG.loadingText}
