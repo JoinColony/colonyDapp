@@ -10,7 +10,6 @@ export * from './InboxItem';
 export * from './Message';
 export * from './Network';
 export * from './TaskRating';
-export * from './TaskPayout';
 export * from './TaskMetadata';
 export * from './TaskUser';
 export * from './Transaction';

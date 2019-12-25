@@ -1,6 +1,5 @@
 import React, { useCallback, useMemo, useState } from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
-import BigNumber from 'bn.js';
 
 import { Address } from '~types/index';
 
@@ -11,7 +10,7 @@ import Heading from '~core/Heading';
 import Input from '~core/Fields/Input';
 import Select from '~core/Fields/Select';
 import Numeral from '~core/Numeral';
-import { FullColonyFragment } from '~data/index';
+import { Payouts } from '~data/index';
 
 import NetworkFee from '../NetworkFee';
 import { tokenIsETH } from '../../../../core/checks';
@@ -33,30 +32,37 @@ const MSG = defineMessages({
   },
 });
 
+interface Token {
+  address: string;
+  details: {
+    decimals?: number | null;
+    name?: string | null;
+    symbol?: string | null;
+  };
+}
+
 interface Props {
-  amount?: number | BigNumber;
   canRemove?: boolean;
   colonyAddress: Address;
   editPayout?: boolean;
   name: string;
+  payout: Payouts[0];
   remove?: () => void;
   reputation?: number;
   reset?: () => void;
-  token?: FullColonyFragment['tokens'][0];
-  tokens?: FullColonyFragment['tokens'];
+  tokens?: Token[];
 }
 
 const displayName = 'dashboard.TaskEditDialog.Payout';
 
 const Payout = ({
-  amount,
   canRemove = true,
   editPayout = true,
   name,
+  payout: { amount, token },
   remove,
   reputation,
   reset,
-  token,
   tokens,
 }: Props) => {
   const [isEditing, setIsEditing] = useState(false);

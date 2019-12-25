@@ -3,10 +3,9 @@ import { defineMessages, FormattedMessage, FormattedNumber } from 'react-intl';
 import cx from 'classnames';
 
 import { DEFAULT_TOKEN_DECIMALS } from '~constants';
-import { TaskPayoutType } from '~immutable/index';
 import { Address } from '~types/index';
 import { ZERO_ADDRESS } from '~utils/web3/constants';
-import { ColonyTokens } from '~data/index';
+import { ColonyTokens, Payouts } from '~data/index';
 
 import { Tooltip } from '../Popover';
 import Numeral from '../Numeral';
@@ -24,7 +23,7 @@ interface Props {
   maxLines?: number;
 
   /** Payouts list containing all the payouts */
-  payouts: TaskPayoutType[];
+  payouts: Payouts;
 
   /** Pretty self-explanatory */
   nativeTokenAddress: Address;
@@ -48,7 +47,10 @@ const PayoutsList = ({
   );
 
   const sortedPayouts = payouts.sort(
-    ({ token: firstToken }, { token: secondToken }) => {
+    (
+      { token: { address: firstToken } },
+      { token: { address: secondToken } },
+    ) => {
       if (firstToken === nativeTokenAddress && secondToken === ZERO_ADDRESS) {
         return -1;
       }
@@ -69,13 +71,13 @@ const PayoutsList = ({
     <div className={styles.main}>
       <div>
         {firstPayouts.map(payout => {
-          const token = getToken(payout.token);
+          const token = getToken(payout.token.address);
           return token ? (
             <Numeral
               className={cx(styles.payoutNumber, {
-                [styles.native]: payout.token === nativeTokenAddress,
+                [styles.native]: payout.token.address === nativeTokenAddress,
               })}
-              key={payout.token}
+              key={payout.token.address}
               suffix={` ${token.details.symbol} `}
               unit={DEFAULT_TOKEN_DECIMALS}
               value={payout.amount}
@@ -88,13 +90,14 @@ const PayoutsList = ({
           content={
             <div className={styles.popoverContent}>
               {extraPayouts.map(payout => {
-                const token = getToken(payout.token);
+                const token = getToken(payout.token.address);
                 return token ? (
                   <Numeral
                     className={cx(styles.payoutNumber, {
-                      [styles.native]: payout.token === nativeTokenAddress,
+                      [styles.native]:
+                        payout.token.address === nativeTokenAddress,
                     })}
-                    key={payout.token}
+                    key={payout.token.address}
                     value={payout.amount}
                     unit={DEFAULT_TOKEN_DECIMALS}
                     suffix={` ${token.details.symbol} `}

@@ -34,7 +34,7 @@ const MSG = defineMessages({
 });
 
 interface Props {
-  amount: BigNumber | number;
+  amount: BigNumber | number | string;
   decimals: number;
   symbol: string;
 }

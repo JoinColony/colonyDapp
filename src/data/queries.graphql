@@ -3,6 +3,7 @@
 query Task($id: String!) {
   task(id: $id) {
     id
+    ...Payouts
     assignedWorker {
       id
       profile {
@@ -20,6 +21,7 @@ query Task($id: String!) {
       colonyName
       avatarHash
       displayName
+      nativeTokenAddress
     }
     colonyAddress
     createdAt
@@ -39,7 +41,13 @@ query Task($id: String!) {
     ethSkillId
     ethTaskId
     finalizedAt
-    # fixme return payouts as well
+    payouts {
+      amount
+      token {
+        id
+        address
+      }
+    }
     title
     workInvites {
       id
@@ -67,6 +75,7 @@ query Task($id: String!) {
 query TaskToEdit($id: String!) {
   task(id: $id) {
     id
+    ...Payouts
     assignedWorker {
       id
       profile {
@@ -74,14 +83,6 @@ query TaskToEdit($id: String!) {
         displayName
         username
         walletAddress
-      }
-    }
-    payouts {
-      amount
-      tokenAddress
-      token {
-        id
-        address
       }
     }
     workRequests {
@@ -94,6 +95,7 @@ query TaskToEdit($id: String!) {
       }
     }
     colony {
+      nativeTokenAddress
       subscribedUsers {
         id
         profile {
@@ -101,6 +103,15 @@ query TaskToEdit($id: String!) {
           walletAddress
           username
           avatarHash
+        }
+      }
+      tokens {
+        id
+        address
+        details @client {
+          decimals
+          name
+          symbol
         }
       }
     }
@@ -144,6 +155,7 @@ query UserTasks($address: String!) {
     id
     tasks {
       id
+      ...Payouts
       assignedWorker {
         id
         profile {
@@ -156,6 +168,7 @@ query UserTasks($address: String!) {
         id
         colonyName
         displayName
+        nativeTokenAddress
       }
       colonyAddress
       createdAt
@@ -187,45 +200,6 @@ query UserTokens($address: String!) {
   }
 }
 
-fragment Tokens on Colony {
-  nativeTokenAddress
-  tokens {
-    id
-    address
-    iconHash
-    details @client {
-      decimals
-      name
-      symbol
-    }
-    balances(colonyAddress: $address) @client {
-      domainId
-      amount
-    }
-  }
-}
-
-fragment ColonyProfile on Colony {
-  id
-  colonyAddress
-  colonyName
-  avatarHash
-  description
-  displayName
-  guideline
-  website
-}
-
-fragment FullColony on Colony {
-  ...ColonyProfile
-  ...Tokens
-  isNativeTokenExternal
-  version(address: $address) @client
-  canMintNativeToken(address: $address) @client
-  canUnlockNativeToken(address: $address) @client
-  isInRecoveryMode(address: $address) @client
-  isNativeTokenLocked(address: $address) @client
-}
 
 query ColonyFromName($name: String!, $address: String!) {
   colonyAddress(name: $name) @client @export(as: "address")
@@ -298,6 +272,14 @@ query ColonyTasks($address: String!) {
         id
         colonyName
         displayName
+        nativeTokenAddress
+      }
+      payouts {
+        amount
+        token {
+          id
+          address
+        }
       }
       colonyAddress
       createdAt

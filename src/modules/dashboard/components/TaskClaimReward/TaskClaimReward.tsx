@@ -2,10 +2,9 @@ import React from 'react';
 import { defineMessages } from 'react-intl';
 
 import { DialogActionButton } from '~core/Button';
-import { AnyTask } from '~data/index';
-import { TaskPayoutType } from '~immutable/index';
 import { ActionTypes } from '~redux/index';
 import { Address } from '~types/index';
+import { AnyTask, Payouts } from '~data/index';
 
 const MSG = defineMessages({
   claimRewards: {
@@ -21,10 +20,10 @@ export interface Props {
   lateRating: boolean;
   lateReveal: boolean;
   nativeTokenPayout: object | void;
-  payouts: TaskPayoutType[];
+  payouts: Payouts;
   rating: number;
   reputation: number;
-  sortedPayouts: TaskPayoutType[];
+  sortedPayouts: Payouts;
   title?: string;
 }
 
@@ -62,7 +61,7 @@ const TaskClaimReward = ({
     values={{
       draftId,
       colonyAddress,
-      tokenAddresses: payouts.map(payout => payout.token),
+      tokenAddresses: payouts.map(payout => payout.token.address),
     }}
   />
 );

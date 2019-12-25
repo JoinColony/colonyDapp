@@ -4,10 +4,10 @@ import { defineMessages, FormattedMessage } from 'react-intl';
 import { Address } from '~types/index';
 import { DomainId } from '~immutable/index';
 import {
-  AnyTask,
   useColonyNameLazyQuery,
   useLoggedInUser,
   useSubscribeToColonyMutation,
+  AnyTask,
 } from '~data/index';
 import Icon from '~core/Icon';
 import { Table, TableBody } from '~core/Table';
@@ -255,7 +255,7 @@ const TaskList = ({
                 key={taskData.id}
                 colonyAddress={taskData.colonyAddress}
                 colonyName={taskData.colony.colonyName}
-                data={taskData}
+                task={taskData}
               />
             )}
           </>

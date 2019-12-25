@@ -115,7 +115,13 @@ mutation SetTaskPayout($input: SetTaskPayoutInput!) {
     events {
       ...TaskEvent
     }
-    # fixme return payouts from `setTaskPayout` mutation
+    payouts {
+      amount
+      token {
+        id
+        address
+      }
+    }
   }
 }
 
