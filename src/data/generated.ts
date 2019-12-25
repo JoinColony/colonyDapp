@@ -966,6 +966,7 @@ export type RemoveTaskPayoutMutationVariables = {
 export type RemoveTaskPayoutMutation = { removeTaskPayout: Maybe<(
     Pick<Task, 'id'>
     & { events: Array<TaskEventFragment> }
+    & PayoutsFragment
   )> };
 
 export type SendWorkInviteMutationVariables = {
@@ -1753,9 +1754,11 @@ export const RemoveTaskPayoutDocument = gql`
     events {
       ...TaskEvent
     }
+    ...Payouts
   }
 }
-    ${TaskEventFragmentDoc}`;
+    ${TaskEventFragmentDoc}
+${PayoutsFragmentDoc}`;
 export type RemoveTaskPayoutMutationFn = ApolloReactCommon.MutationFunction<RemoveTaskPayoutMutation, RemoveTaskPayoutMutationVariables>;
 
 /**
