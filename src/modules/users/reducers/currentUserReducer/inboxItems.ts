@@ -28,7 +28,7 @@ const inboxItemsReducer = (
                 initiatorAddress: initiator,
                 sourceId,
                 sourceType,
-                context
+                context,
               },
               read,
             }) =>

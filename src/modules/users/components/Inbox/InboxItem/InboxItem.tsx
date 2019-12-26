@@ -99,7 +99,6 @@ const InboxItem = ({
   },
   full,
 }: Props) => {
-
   const { data: initiatorUser } = useUserQuery({
     variables: { address: initiatorAddress },
   });
@@ -110,17 +109,21 @@ const InboxItem = ({
 
   const { data: taskData } = useTaskQuery({
     variables: { id: taskId },
-  })
+  });
 
-  const initiatorFriendlyName =
-    !initiatorUser ? initiatorAddress : getFriendlyName(initiatorUser.user);
-  const initiatorUsername =
-    !initiatorUser ? initiatorAddress : getUsername(initiatorUser.user);
+  const initiatorFriendlyName = !initiatorUser
+    ? initiatorAddress
+    : getFriendlyName(initiatorUser.user);
+  const initiatorUsername = !initiatorUser
+    ? initiatorAddress
+    : getUsername(initiatorUser.user);
 
-  const targetUserFriendlyName =
-    !targetUser ? targetUserAddress : getFriendlyName(targetUser.user);
-  const targetUserUsername =
-    !targetUser ? targetUserAddress : getUsername(targetUser.user);
+  const targetUserFriendlyName = !targetUser
+    ? targetUserAddress
+    : getFriendlyName(targetUser.user);
+  const targetUserUsername = !targetUser
+    ? targetUserAddress
+    : getUsername(targetUser.user);
 
   const { data: colonyNameData } = useColonyNameQuery({
     variables: { address: colonyAddress },
@@ -155,16 +158,14 @@ const InboxItem = ({
       <TableCell
         className={full ? styles.inboxRowCellFull : styles.inboxRowCellPopover}
       >
-        {
-          /*
-           * @FIXME The first ever notification for every user (user profile claimed)
-           * does not have a colony name or a token, so in that case the spinner
-           * will always render even though it shouldn't at that point
-           */
-          // !colonyName ||
-          // !token ||
-          isFetchingDomains ?
-        (
+        {/*
+         * @FIXME The first ever notification for every user (user profile claimed)
+         * does not have a colony name or a token, so in that case the spinner
+         * will always render even though it shouldn't at that point
+         */
+        // !colonyName ||
+        // !token ||
+        isFetchingDomains ? (
           <div className={styles.spinnerWrapper}>
             <SpinnerLoader
               loadingText={LOCAL_MSG.loadingText}
