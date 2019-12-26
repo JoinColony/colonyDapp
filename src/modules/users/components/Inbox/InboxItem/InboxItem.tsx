@@ -93,7 +93,6 @@ const InboxItem = ({
     },
     onClickRoute,
     initiator: initiatorAddress,
-    // FIXME targetUser needs to be expanded on the db. If not given in event on db it needs to be the current user
     targetUser,
     timestamp,
   },

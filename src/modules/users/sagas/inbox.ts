@@ -32,7 +32,10 @@ function* inboxItemsFetch() {
 
     yield put<AllActions>({
       type: ActionTypes.INBOX_ITEMS_FETCH_SUCCESS,
-      payload: { activities: data.user.notifications },
+      payload: {
+        activities: data.user.notifications,
+        currentUser: walletAddress,
+      },
     });
   } catch (error) {
     return yield putError(ActionTypes.INBOX_ITEMS_FETCH_ERROR, error);
