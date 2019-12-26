@@ -3,7 +3,7 @@ import { put, takeEvery } from 'redux-saga/effects';
 
 import { ActionTypes, AllActions } from '~redux/index';
 import { getContext, Context } from '~context/index';
-import { executeQuery, putError } from '~utils/saga/effects';
+import { putError } from '~utils/saga/effects';
 import {
   getLoggedInUser,
   UserNotificationsDocument,
