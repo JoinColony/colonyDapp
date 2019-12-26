@@ -14,6 +14,7 @@ import {
   useColonyNameQuery,
   useMarkNotificationAsReadMutation,
   useTokenQuery,
+  useUserQuery,
 } from '~data/index';
 
 import { domainsFetcher } from '../../../../dashboard/fetchers';
@@ -91,17 +92,22 @@ const InboxItem = ({
       tokenAddress,
     },
     onClickRoute,
-    initiator,
+    initiator: initiatorAddress,
     // FIXME targetUser needs to be expanded on the db. If not given in event on db it needs to be the current user
     targetUser,
     timestamp,
   },
   full,
 }: Props) => {
+
+  const { data: initiatorUser } = useUserQuery({
+    variables: { address: initiatorAddress },
+  });
+
   const initiatorFriendlyName =
-    typeof initiator == 'string' ? initiator : getFriendlyName(initiator);
+    !initiatorUser ? initiatorAddress : getFriendlyName(initiatorUser.user);
   const initiatorUsername =
-    typeof initiator == 'string' ? initiator : getUsername(initiator);
+    !initiatorUser ? initiatorAddress : getUsername(initiatorUser.user);
 
   const targetUserFriendlyName =
     typeof targetUser == 'string' ? targetUser : getFriendlyName(targetUser);
@@ -111,6 +117,8 @@ const InboxItem = ({
   const { data: colonyNameData } = useColonyNameQuery({
     variables: { address: colonyAddress },
   });
+
+  console.log('target', targetUserFriendlyName, targetUserUsername);
 
   const { data: domains, isFetching: isFetchingDomains } = useDataFetcher(
     domainsFetcher,
@@ -159,12 +167,12 @@ const InboxItem = ({
         ) : (
           <WithLink to={onClickRoute}>
             {unread && <UnreadIndicator type={getType(eventType)} />}
-            {typeof initiator != 'string' && (
+            {initiatorUser && initiatorUser.user && (
               <div className={styles.avatarWrapper}>
                 <UserAvatar
                   showInfo
                   size="xxs"
-                  address={initiator.profile.walletAddress}
+                  address={initiatorUser.user.profile.walletAddress}
                   className={styles.userAvatar}
                 />
               </div>
