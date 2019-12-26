@@ -93,7 +93,7 @@ const InboxItem = ({
     },
     onClickRoute,
     initiator: initiatorAddress,
-    targetUser,
+    targetUser: targetUserAddress,
     timestamp,
   },
   full,
@@ -103,21 +103,23 @@ const InboxItem = ({
     variables: { address: initiatorAddress },
   });
 
+  const { data: targetUser } = useUserQuery({
+    variables: { address: targetUserAddress },
+  });
+
   const initiatorFriendlyName =
     !initiatorUser ? initiatorAddress : getFriendlyName(initiatorUser.user);
   const initiatorUsername =
     !initiatorUser ? initiatorAddress : getUsername(initiatorUser.user);
 
   const targetUserFriendlyName =
-    typeof targetUser == 'string' ? targetUser : getFriendlyName(targetUser);
+    !targetUser ? targetUserAddress : getFriendlyName(targetUser.user);
   const targetUserUsername =
-    typeof targetUser == 'string' ? targetUser : getUsername(targetUser);
+    !targetUser ? targetUserAddress : getUsername(targetUser.user);
 
   const { data: colonyNameData } = useColonyNameQuery({
     variables: { address: colonyAddress },
   });
-
-  console.log('target', targetUserFriendlyName, targetUserUsername);
 
   const { data: domains, isFetching: isFetchingDomains } = useDataFetcher(
     domainsFetcher,
