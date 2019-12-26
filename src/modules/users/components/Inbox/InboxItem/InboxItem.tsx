@@ -85,7 +85,7 @@ const InboxItem = ({
     context: {
       amount,
       colonyAddress,
-      comment,
+      message,
       domainId,
       draftId,
       setTo,
@@ -97,7 +97,6 @@ const InboxItem = ({
     targetUser: targetUserAddress,
     timestamp,
   },
-  item,
   full,
 }: Props) => {
 
@@ -211,7 +210,7 @@ const InboxItem = ({
                       value
                     ),
                   ),
-                  comment: makeInboxDetail(comment),
+                  comment: makeInboxDetail(message),
                   domainName: makeInboxDetail(
                     currentDomain && currentDomain.name,
                   ),
