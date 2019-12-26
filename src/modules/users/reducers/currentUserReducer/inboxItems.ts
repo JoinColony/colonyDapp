@@ -29,7 +29,8 @@ const inboxItemsReducer = (
                 sourceId,
                 sourceType,
                 context
-              }
+              },
+              read,
             }) =>
               InboxItem({
                 id,
@@ -40,6 +41,7 @@ const inboxItemsReducer = (
                 initiator,
                 context,
                 targetUser: context.targetUserAddress || currentUser,
+                unread: !read,
               }),
           ),
         ),
