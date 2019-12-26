@@ -15,7 +15,7 @@ const inboxItemsReducer = (
 ) => {
   switch (action.type) {
     case ActionTypes.INBOX_ITEMS_FETCH_SUCCESS: {
-      const { activities } = action.payload;
+      const { activities, currentUser } = action.payload;
       return state.set(
         'record',
         List(
@@ -39,7 +39,7 @@ const inboxItemsReducer = (
                 sourceType,
                 initiator,
                 context,
-                targetUser: context.targetUserAddress,
+                targetUser: context.targetUserAddress || currentUser,
               }),
           ),
         ),
