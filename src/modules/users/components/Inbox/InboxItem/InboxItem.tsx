@@ -15,6 +15,7 @@ import {
   useMarkNotificationAsReadMutation,
   useTokenQuery,
   useUserQuery,
+  useTaskQuery,
 } from '~data/index';
 
 import { domainsFetcher } from '../../../../dashboard/fetchers';
@@ -88,7 +89,7 @@ const InboxItem = ({
       domainId,
       draftId,
       setTo,
-      taskTitle,
+      taskId,
       tokenAddress,
     },
     onClickRoute,
@@ -96,6 +97,7 @@ const InboxItem = ({
     targetUser: targetUserAddress,
     timestamp,
   },
+  item,
   full,
 }: Props) => {
 
@@ -106,6 +108,10 @@ const InboxItem = ({
   const { data: targetUser } = useUserQuery({
     variables: { address: targetUserAddress },
   });
+
+  const { data: taskData } = useTaskQuery({
+    variables: { id: taskId },
+  })
 
   const initiatorFriendlyName =
     !initiatorUser ? initiatorAddress : getFriendlyName(initiatorUser.user);
@@ -143,6 +149,7 @@ const InboxItem = ({
 
   const colonyName = colonyNameData && colonyNameData.colonyName;
   const token = tokenData && tokenData.token;
+  const taskTitle = taskData && taskData.task && taskData.task.title;
 
   return (
     <TableRow onClick={markAsRead}>
