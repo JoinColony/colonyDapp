@@ -5,14 +5,10 @@ import { ActionTypes, AllActions } from '~redux/index';
 import { getContext, Context } from '~context/index';
 import { executeQuery, putError } from '~utils/saga/effects';
 import {
-  ColonySubscribedUsersDocument,
-  UserColonyIdsQueryResult,
   getLoggedInUser,
   UserNotificationsDocument,
   UserNotificationsQueryResult,
 } from '~data/index';
-
-import { getUserInboxActivity } from '../data/queries';
 
 function* inboxItemsFetch() {
   try {
