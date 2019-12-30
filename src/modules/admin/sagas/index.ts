@@ -5,7 +5,14 @@ import { AllActions, Action, ActionTypes } from '~redux/index';
 import { takeFrom, putError, executeQuery } from '~utils/saga/effects';
 import { ContractContexts } from '~types/index';
 import { Context } from '~context/index';
-import { ColonyTokensDocument } from '~data/index';
+import {
+  ColonyQuery,
+  ColonyQueryVariables,
+  ColonyDocument,
+  TokenBalancesForDomainsQuery,
+  TokenBalancesForDomainsQueryVariables,
+  TokenBalancesForDomainsDocument,
+} from '~data/index';
 // import { Context, getContext } from '~context/index';
 // import { decorateLog } from '~utils/web3/eventLogs/events';
 // import { normalizeTransactionLog } from '~data/normalizers';
@@ -124,19 +131,23 @@ function* colonyMintTokens({
     const apolloClient: ApolloClient<object> = yield getContext(
       Context.APOLLO_CLIENT,
     );
-    const { data } = yield apolloClient.query({ query: ColonyTokensDocument });
+    const { data } = yield apolloClient.query<
+      ColonyQuery,
+      ColonyQueryVariables
+    >({
+      query: ColonyDocument,
+      variables: { address: colonyAddress },
+    });
 
     if (!data) {
       throw new Error('Could not get Colony tokens');
     }
 
     const {
-      colony: { tokens },
+      colony: { nativeTokenAddress },
     } = data;
-    const nativeToken = tokens.find(({ isNative }) => isNative);
-
-    if (!nativeToken) {
-      throw new Error('Could not get the Colonys native token');
+    if (!nativeTokenAddress) {
+      throw new Error(`Could not get the Colony's native token`);
     }
 
     // setup batch ids and channels
@@ -168,7 +179,7 @@ function* colonyMintTokens({
       methodName: 'claimColonyFunds',
       identifier: colonyAddress,
       params: {
-        token: nativeToken.address,
+        token: nativeTokenAddress,
       },
       group: {
         key: batchKey,
@@ -200,22 +211,16 @@ function* colonyMintTokens({
     */
     const mintLog = receipt.logs[0];
     if (mintLog) {
-      // FIXME fetch token balances for these domains and tokens
-      // const tokenAddress = mintLog.address;
-      // yield all([
-      //   put<AllActions>({
-      //     type: ActionTypes.COLONY_TOKEN_BALANCE_FETCH,
-      //     payload: {
-      //       colonyAddress,
-      //       domainId: COLONY_TOTAL_BALANCE_DOMAIN_ID,
-      //       tokenAddress,
-      //     },
-      //   }),
-      //   put<AllActions>({
-      //     type: ActionTypes.COLONY_TOKEN_BALANCE_FETCH,
-      //     payload: { colonyAddress, domainId: ROOT_DOMAIN, tokenAddress },
-      //   }),
-      // ]);
+      yield apolloClient.query<
+        TokenBalancesForDomainsQuery,
+        TokenBalancesForDomainsQueryVariables
+      >({
+        query: TokenBalancesForDomainsDocument,
+        variables: {
+          colonyAddress,
+          tokenAddresses: [nativeTokenAddress],
+        },
+      });
     }
 
     yield put<AllActions>({
