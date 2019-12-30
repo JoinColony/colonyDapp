@@ -1192,7 +1192,7 @@ export type TaskToEditQuery = { task: (
       Pick<User, 'id'>
       & { profile: Pick<UserProfile, 'avatarHash' | 'displayName' | 'username' | 'walletAddress'> }
     )>, colony: (
-      Pick<Colony, 'nativeTokenAddress'>
+      Pick<Colony, 'id' | 'nativeTokenAddress'>
       & { subscribedUsers: Array<(
         Pick<User, 'id'>
         & { profile: Pick<UserProfile, 'displayName' | 'walletAddress' | 'username' | 'avatarHash'> }
@@ -2678,6 +2678,7 @@ export const TaskToEditDocument = gql`
       }
     }
     colony {
+      id
       nativeTokenAddress
       subscribedUsers {
         id
