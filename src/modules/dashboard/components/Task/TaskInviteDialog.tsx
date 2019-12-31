@@ -16,7 +16,7 @@ import { FormStatus, Form } from '~core/Fields';
 import { FullscreenDialog } from '~core/Dialog';
 import DialogSection from '~core/Dialog/DialogSection';
 import Heading from '~core/Heading';
-import Payout from '~dashboard/TaskEditDialog/Payout';
+import Payout, { FormPayout } from '~dashboard/TaskEditDialog/Payout';
 import DialogBox from '~core/Dialog/DialogBox';
 
 import styles from './TaskInviteDialog.css';
@@ -33,7 +33,7 @@ const MSG = defineMessages({
 });
 
 interface FormValues {
-  payouts: [{ amount: string; token: Address }];
+  payouts: FormPayout;
   workerAddress: Address;
 }
 
@@ -43,6 +43,7 @@ interface Props {
   currentUser: AnyUser;
   cancel: () => void;
   close: () => void;
+  payouts: Payouts;
 }
 
 const TaskInviteDialog = ({
@@ -53,11 +54,8 @@ const TaskInviteDialog = ({
     profile: { walletAddress },
   },
   currentUser,
+  payouts,
 }: Props) => {
-  // This component is unused. These todos need to be fixed when we start using it again
-  // @todo get payouts from centralized store
-  const payouts = [] as Payouts;
-
   // @todo get reputation from centralized store (someday)
   const reputation = undefined;
 
@@ -86,16 +84,21 @@ const TaskInviteDialog = ({
   const nativeTokenAddress =
     (colonyData && colonyData.colony.nativeTokenAddress) || ZERO_ADDRESS;
 
+  const initialPayouts = payouts.map(({ amount, token }) => ({
+    amount,
+    token: token.address,
+  }));
+
   return (
     <FullscreenDialog cancel={cancel}>
       <Form
         initialValues={{
-          payouts,
+          payouts: initialPayouts,
           worker: currentUser,
         }}
         onSubmit={onSubmit}
       >
-        {({ status, isSubmitting }) => (
+        {({ status, values, isSubmitting }) => (
           <>
             <FormStatus status={status} />
             <DialogBox>
@@ -108,7 +111,6 @@ const TaskInviteDialog = ({
                   <Assignment
                     payouts={payouts}
                     nativeTokenAddress={nativeTokenAddress}
-                    tokens={tokens}
                     pending
                     reputation={reputation}
                     showFunding={false}
@@ -126,8 +128,8 @@ const TaskInviteDialog = ({
                     />
                   </div>
                   <div>
-                    {nativeTokenAddress && payouts
-                      ? payouts.map((payout, index) => {
+                    {nativeTokenAddress && values.payouts
+                      ? values.payouts.map((payout, index) => {
                           return (
                             <Payout
                               key={payout.token.address}

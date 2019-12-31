@@ -1,15 +1,13 @@
-import React, { useCallback, useMemo, useEffect } from 'react';
+import React, { useCallback, useMemo } from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 import * as yup from 'yup';
 import { FieldArray, ArrayHelpers } from 'formik';
 import nanoid from 'nanoid';
-import { subscribeActions as subscribeToReduxActions } from 'redux-action-watch/lib/actionCreators';
-import { useDispatch } from 'redux-react-hook';
 
 import { ItemDataType } from '~core/OmniPicker';
 import SingleUserPicker, { filterUserSelection } from '~core/SingleUserPicker';
 import Button from '~core/Button';
-import { ActionForm, FormStatus } from '~core/Fields';
+import { Form, FormStatus } from '~core/Fields';
 import { FullscreenDialog } from '~core/Dialog';
 import DialogSection from '~core/Dialog/DialogSection';
 import Heading from '~core/Heading';
@@ -17,12 +15,20 @@ import DialogBox from '~core/Dialog/DialogBox';
 import { SpinnerLoader } from '~core/Preloaders';
 import Icon from '~core/Icon';
 import { Tooltip } from '~core/Popover';
-import { ActionTypes } from '~redux/index';
-import HookedUserAvatar from '~users/HookedUserAvatar';
-import { AnyUser, AnyTask, useTaskToEditQuery } from '~data/index';
+import {
+  AnyUser,
+  AnyTask,
+  useTaskToEditQuery,
+  Payouts,
+  useAssignWorkerMutation,
+  useUnassignWorkerMutation,
+  useSetTaskPayoutMutation,
+  useRemoveTaskPayoutMutation,
+} from '~data/index';
 import { Address } from '~types/index';
+import HookedUserAvatar from '~users/HookedUserAvatar';
 
-import Payout from './Payout';
+import Payout, { FormPayout } from './Payout';
 
 import styles from './TaskEditDialog.css';
 
@@ -88,6 +94,11 @@ interface Props {
   minTokens?: number;
 }
 
+interface FormValues {
+  payouts?: FormPayout[];
+  worker?: AnyUser;
+}
+
 const UserAvatar = HookedUserAvatar({ fetchUser: false });
 
 const supRenderAvatar = (address: string, item: ItemDataType<AnyUser>) => (
@@ -103,12 +114,14 @@ const canRemoveTokens = (values, minTokens) =>
 const removePayout = (arrayHelpers: ArrayHelpers, index: number) =>
   arrayHelpers.remove(index);
 
-const resetPayout =
-  // FIXME type payouts better
-  (arrayHelpers: ArrayHelpers, index: number, payouts: object[]) =>
-    payouts.length > 0
-      ? arrayHelpers.replace(index, payouts[index])
-      : arrayHelpers.remove(index);
+const resetPayout = (
+  arrayHelpers: ArrayHelpers,
+  index: number,
+  payouts: Payouts,
+) =>
+  payouts.length > 0
+    ? arrayHelpers.replace(index, payouts[index])
+    : arrayHelpers.remove(index);
 
 const displayName = 'dashboard.TaskEditDialog';
 
@@ -162,34 +175,109 @@ const TaskEditDialog = ({
     [maxTokens],
   );
 
-  const dispatch = useDispatch();
-
-  /*
-   * @NOTE this needs to return the `subscribeToReduxActions` function, since that returns an
-   * unsubscriber, and that gets called when the component is unmounted
-   */
-  useEffect(
-    () =>
-      subscribeToReduxActions(dispatch)({
-        /*
-         * @NOTE All this is needed in order to shortcircuit re-rendering the TaskEditDialog
-         * There's a edge case that's happening here:
-         * - ActionForm submits the values
-         * - Formik after submitting the values causes this component to re-render
-         * - In some cases it happens so fast, it actually re-renders before the success action being dispatched
-         * - That prevents ActionForm from acting on the success action so the `onSuccess` callback never gets called
-         *
-         * This works, since only one payout success will ever be dispatched while this Dialog is opened
-         * so there's no danger of this being closed prematurely
-         */
-        [ActionTypes.TASK_SET_WORKER_OR_PAYOUT_SUCCESS]: () => closeDialog(),
-      }),
-    [dispatch, closeDialog],
-  );
-
   const { data } = useTaskToEditQuery({
     variables: { id: draftId },
   });
+
+  const [assignWorker] = useAssignWorkerMutation();
+  const [unassignWorker] = useUnassignWorkerMutation();
+  const [setTaskPayout] = useSetTaskPayoutMutation();
+  const [removeTaskPayout] = useRemoveTaskPayoutMutation();
+
+  const onSubmit = useCallback(
+    ({ payouts, worker }: FormValues) => {
+      // @todo Implement error handling with assignment/payout mutations
+
+      const existingPayouts = data && data.task && data.task.payouts;
+
+      // @todo Support multiple payouts on tasks
+      const existingPayout =
+        data &&
+        data.task &&
+        data.task.payouts &&
+        data.task.payouts.length > 0 &&
+        data.task.payouts[0];
+      const existingWorkerAddress =
+        data &&
+        data.task &&
+        data.task.assignedWorker &&
+        data.task.assignedWorker.profile &&
+        data.task.assignedWorker.profile.walletAddress;
+      const isPayoutsChanged =
+        !(payouts && payouts.length > 0 && existingPayouts) ||
+        !payouts.some(({ amount, token }) =>
+          existingPayouts.some(
+            ({ amount: existingAmount, token: existingToken }) =>
+              amount === existingAmount && token === existingToken.address,
+          ),
+        );
+
+      if (worker && worker.profile) {
+        assignWorker({
+          variables: {
+            input: { id: draftId, workerAddress: worker.profile.walletAddress },
+          },
+        });
+      } else if (existingWorkerAddress) {
+        // existing worker is set - unassign it
+        unassignWorker({
+          variables: {
+            input: {
+              id: draftId,
+              workerAddress: existingWorkerAddress,
+            },
+          },
+        });
+      }
+
+      if (isPayoutsChanged) {
+        if (payouts && payouts.length > 0) {
+          if (existingPayout) {
+            // Since we currently only support 1 payout, unassign the old one first
+            removeTaskPayout({
+              variables: {
+                input: {
+                  id: draftId,
+                  amount: existingPayout.amount,
+                  tokenAddress: existingPayout.token.address,
+                },
+              },
+            });
+          }
+          setTaskPayout({
+            variables: {
+              input: {
+                id: draftId,
+                amount: payouts[0].amount,
+                tokenAddress: payouts[0].token,
+              },
+            },
+          });
+        } else if (existingPayout) {
+          removeTaskPayout({
+            variables: {
+              input: {
+                id: draftId,
+                amount: existingPayout.amount,
+                tokenAddress: existingPayout.token.address,
+              },
+            },
+          });
+        }
+      }
+
+      closeDialog();
+    },
+    [
+      assignWorker,
+      closeDialog,
+      data,
+      draftId,
+      removeTaskPayout,
+      setTaskPayout,
+      unassignWorker,
+    ],
+  );
 
   if (!data) {
     return (
@@ -209,8 +297,13 @@ const TaskEditDialog = ({
   } = data;
   const users = [...workRequests, ...subscribedUsers];
 
-  // FIXME This needs to be handled entirely without a saga
-  // FIXME close dialog after success
+  const initialValues: FormValues = {
+    payouts: initialPayouts.map(({ amount, token }) => ({
+      amount,
+      token: token.address,
+    })),
+    worker: assignedWorker || undefined,
+  };
 
   return (
     <FullscreenDialog
@@ -226,15 +319,9 @@ const TaskEditDialog = ({
        */
       isDismissable={false}
     >
-      <ActionForm
-        initialValues={{
-          payouts: initialPayouts,
-          worker: assignedWorker,
-        }}
-        error={ActionTypes.TASK_SET_WORKER_OR_PAYOUT_ERROR}
-        submit={ActionTypes.TASK_SET_WORKER_OR_PAYOUT}
-        success={ActionTypes.TASK_SET_WORKER_OR_PAYOUT_SUCCESS}
-        onSuccess={closeDialog}
+      <Form
+        initialValues={initialValues}
+        onSubmit={onSubmit}
         validationSchema={validateForm}
       >
         {({ status, values, dirty, isSubmitting, isValid }) => {
@@ -304,12 +391,12 @@ const TaskEditDialog = ({
                               colonyAddress={colonyAddress}
                               name={`payouts.${index}`}
                               payout={payout}
-                              tokens={tokens}
                               reputation={0}
                               remove={() => removePayout(arrayHelpers, index)}
                               reset={() =>
                                 resetPayout(arrayHelpers, index, payouts)
                               }
+                              tokens={tokens}
                             />
                           ))}
                       </>
@@ -335,7 +422,7 @@ const TaskEditDialog = ({
             </>
           );
         }}
-      </ActionForm>
+      </Form>
     </FullscreenDialog>
   );
 };

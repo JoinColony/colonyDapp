@@ -1339,8 +1339,7 @@ export type ColonyTasksQuery = { colony: (
         Pick<User, 'id'>
         & { profile: Pick<UserProfile, 'avatarHash'> }
       )>, colony: Pick<Colony, 'id' | 'colonyName' | 'displayName' | 'nativeTokenAddress'>, payouts: Array<(
-        Pick<TaskPayout, 'amount'>
-        & { token: Pick<Token, 'id' | 'address'> }
+        & PayoutsFragment
       )> }
     )> }
   ) };
@@ -2597,13 +2596,6 @@ export const TaskDocument = gql`
     ethSkillId
     ethTaskId
     finalizedAt
-    payouts {
-      amount
-      token {
-        id
-        address
-      }
-    }
     title
     workInvites {
       id
@@ -3195,6 +3187,7 @@ export const ColonyTasksDocument = gql`
     id
     tasks {
       id
+      ...Payouts
       assignedWorker {
         id
         profile {
@@ -3209,13 +3202,6 @@ export const ColonyTasksDocument = gql`
         displayName
         nativeTokenAddress
       }
-      payouts {
-        amount
-        token {
-          id
-          address
-        }
-      }
       colonyAddress
       createdAt
       creatorAddress
@@ -3228,7 +3214,7 @@ export const ColonyTasksDocument = gql`
     }
   }
 }
-    `;
+    ${PayoutsFragmentDoc}`;
 
 /**
  * __useColonyTasksQuery__
