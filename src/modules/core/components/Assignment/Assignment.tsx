@@ -2,7 +2,7 @@ import React from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 
 import { Address } from '~types/index';
-import { AnyUser, FullColonyFragment, Payouts } from '~data/index';
+import { AnyUser, Payouts } from '~data/index';
 import PayoutsList from '~core/PayoutsList';
 import UserInfo from '~users/UserInfo';
 
@@ -52,9 +52,6 @@ interface Props {
   /** Should the funding be rendered (if set) */
   showFunding?: boolean;
 
-  /** Tokens available to the current colony */
-  tokens: FullColonyFragment['tokens'];
-
   /** Ahem... */
   nativeTokenAddress: Address;
 }
@@ -65,7 +62,6 @@ const Assignment = ({
   pending,
   reputation,
   showFunding,
-  tokens,
   worker,
   workerAddress,
 }: Props) => {
@@ -102,7 +98,6 @@ const Assignment = ({
               maxLines={2}
               nativeTokenAddress={nativeTokenAddress}
               payouts={payouts}
-              tokens={tokens}
             />
           ) : (
             <FormattedMessage {...MSG.fundingNotSet} />
