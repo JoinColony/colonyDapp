@@ -18,9 +18,9 @@ import {
   EditDomainMutation,
   EditDomainMutationVariables,
   EditDomainDocument,
-  DomainQuery,
-  DomainQueryVariables,
-  DomainDocument,
+  TokenBalancesForDomainsDocument,
+  TokenBalancesForDomainsQuery,
+  TokenBalancesForDomainsQueryVariables,
 } from '~data/index';
 
 function* colonyDomainsFetch({
@@ -199,17 +199,18 @@ function* moveFundsBetweenPots({
     );
 
     txChannel = yield call(getTxChannel, meta.id);
+
+    const colonyManager = yield getContext(Context.COLONY_MANAGER);
+    const colonyClient = yield call(
+      [colonyManager, colonyManager.getColonyClient],
+      colonyAddress,
+    );
     const [{ potId: fromPot }, { potId: toPot }] = yield all([
-      /*
-       * @TODO Actually test if this returns the proper data format
-       */
-      apolloClient.query<DomainQuery, DomainQueryVariables>({
-        query: DomainDocument,
-        variables: { colonyAddress, ethDomainId: fromDomain },
+      call([colonyClient.getDomain, colonyClient.getDomain.call], {
+        domainId: fromDomain,
       }),
-      apolloClient.query<DomainQuery, DomainQueryVariables>({
-        query: DomainDocument,
-        variables: { colonyAddress, ethDomainId: toDomain },
+      call([colonyClient.getDomain, colonyClient.getDomain.call], {
+        domainId: toDomain,
       }),
     ]);
 
@@ -225,7 +226,17 @@ function* moveFundsBetweenPots({
     yield takeFrom(txChannel, ActionTypes.TRANSACTION_SUCCEEDED);
 
     // Refetch token balances for the domains involved
-    // FIXME re-fetch token balances for colonyAddress, tokenAddress, fromDomain + toDomain
+    yield apolloClient.query<
+      TokenBalancesForDomainsQuery,
+      TokenBalancesForDomainsQueryVariables
+    >({
+      query: TokenBalancesForDomainsDocument,
+      variables: {
+        colonyAddress,
+        tokenAddresses: [tokenAddress],
+        domainIds: [fromDomain, toDomain],
+      },
+    });
 
     yield put<AllActions>({
       type: ActionTypes.MOVE_FUNDS_BETWEEN_POTS_SUCCESS,
