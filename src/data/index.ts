@@ -10,12 +10,12 @@ import {
   ColonyTasksQuery,
   FullColonyFragment,
   PayoutsFragment,
-  UserQuery,
-  UserTasksQuery,
-  UserTokensQuery,
   TaskQuery,
   TokenBalancesForDomainsQuery,
   TokenQuery,
+  UserQuery,
+  UserTasksQuery,
+  UserTokensQuery,
 } from './generated';
 import {
   loggedInUserResolvers,

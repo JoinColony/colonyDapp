@@ -1,11 +1,13 @@
-import React, { useCallback } from 'react';
+import React from 'react';
 import { defineMessages, FormattedMessage, FormattedNumber } from 'react-intl';
 import cx from 'classnames';
+import BigNumber from 'bn.js';
+import moveDecimal from 'move-decimal-point';
 
 import { DEFAULT_TOKEN_DECIMALS } from '~constants';
+import { Payouts } from '~data/index';
 import { Address } from '~types/index';
 import { ZERO_ADDRESS } from '~utils/web3/constants';
-import { ColonyTokens, Payouts } from '~data/index';
 
 import { Tooltip } from '../Popover';
 import Numeral from '../Numeral';
@@ -27,25 +29,11 @@ interface Props {
 
   /** Pretty self-explanatory */
   nativeTokenAddress: Address;
-
-  /** Tokens available to the current colony */
-  tokens: ColonyTokens;
 }
 
 const displayName = 'PayoutsList';
 
-const PayoutsList = ({
-  maxLines = 1,
-  nativeTokenAddress,
-  payouts,
-  tokens,
-}: Props) => {
-  const getToken = useCallback(
-    (tokenAddress: Address) =>
-      tokens.find(({ address }) => address === tokenAddress),
-    [tokens],
-  );
-
+const PayoutsList = ({ maxLines = 1, nativeTokenAddress, payouts }: Props) => {
   const sortedPayouts = payouts.sort(
     (
       { token: { address: firstToken } },
@@ -70,40 +58,39 @@ const PayoutsList = ({
   return (
     <div className={styles.main}>
       <div>
-        {firstPayouts.map(payout => {
-          const token = getToken(payout.token.address);
-          return token ? (
-            <Numeral
-              className={cx(styles.payoutNumber, {
-                [styles.native]: payout.token.address === nativeTokenAddress,
-              })}
-              key={payout.token.address}
-              suffix={` ${token.details.symbol} `}
-              unit={DEFAULT_TOKEN_DECIMALS}
-              value={payout.amount}
-            />
-          ) : null;
-        })}
+        {firstPayouts.map(({ amount, token }) => (
+          <Numeral
+            className={cx(styles.payoutNumber, {
+              [styles.native]: token.address === nativeTokenAddress,
+            })}
+            key={token.address}
+            suffix={` ${token.details.symbol} `}
+            unit={DEFAULT_TOKEN_DECIMALS}
+            value={
+              new BigNumber(moveDecimal(amount, token.details.decimals || 18))
+            }
+          />
+        ))}
       </div>
       {extraPayouts && extraPayouts.length ? (
         <Tooltip
           content={
             <div className={styles.popoverContent}>
-              {extraPayouts.map(payout => {
-                const token = getToken(payout.token.address);
-                return token ? (
-                  <Numeral
-                    className={cx(styles.payoutNumber, {
-                      [styles.native]:
-                        payout.token.address === nativeTokenAddress,
-                    })}
-                    key={payout.token.address}
-                    value={payout.amount}
-                    unit={DEFAULT_TOKEN_DECIMALS}
-                    suffix={` ${token.details.symbol} `}
-                  />
-                ) : null;
-              })}
+              {extraPayouts.map(({ amount, token }) => (
+                <Numeral
+                  className={cx(styles.payoutNumber, {
+                    [styles.native]: token.address === nativeTokenAddress,
+                  })}
+                  key={token.address}
+                  value={
+                    new BigNumber(
+                      moveDecimal(amount, token.details.decimals || 18),
+                    )
+                  }
+                  unit={DEFAULT_TOKEN_DECIMALS}
+                  suffix={` ${token.details.symbol} `}
+                />
+              ))}
             </div>
           }
         >

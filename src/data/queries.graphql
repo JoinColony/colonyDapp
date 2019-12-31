@@ -41,13 +41,6 @@ query Task($id: String!) {
     ethSkillId
     ethTaskId
     finalizedAt
-    payouts {
-      amount
-      token {
-        id
-        address
-      }
-    }
     title
     workInvites {
       id
@@ -261,6 +254,7 @@ query ColonyTasks($address: String!) {
     id
     tasks {
       id
+      ...Payouts
       assignedWorker {
         id
         profile {
@@ -274,13 +268,6 @@ query ColonyTasks($address: String!) {
         colonyName
         displayName
         nativeTokenAddress
-      }
-      payouts {
-        amount
-        token {
-          id
-          address
-        }
       }
       colonyAddress
       createdAt

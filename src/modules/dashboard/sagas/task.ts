@@ -5,14 +5,10 @@ import BigNumber from 'bn.js';
 
 import { Context, getContext } from '~context/index';
 import {
-  AssignWorkerDocument,
   CreateTaskDocument,
   CreateTaskMutationResult,
   FinalizeTaskDocument,
-  RemoveTaskPayoutDocument,
-  SetTaskPayoutDocument,
   TaskDocument,
-  UnassignWorkerDocument,
   SendTaskMessageDocument,
   SendTaskMessageMutation,
   SendTaskMessageMutationVariables,
@@ -22,14 +18,6 @@ import {
   TaskQueryVariables,
   FinalizeTaskMutation,
   FinalizeTaskMutationVariables,
-  AssignWorkerMutation,
-  AssignWorkerMutationVariables,
-  UnassignWorkerMutation,
-  UnassignWorkerMutationVariables,
-  SetTaskPayoutMutation,
-  SetTaskPayoutMutationVariables,
-  RemoveTaskPayoutMutation,
-  RemoveTaskPayoutMutationVariables,
   TaskFeedEventsDocument,
   ColonyTasksDocument,
 } from '~data/index';
@@ -159,99 +147,6 @@ function* taskFinalize({
   return null;
 }
 
-// FIXME I think we can just do this in the component (no saga needed)
-// Also remove the actions
-function* taskSetWorkerOrPayouts({
-  payload: { draftId, payouts, workerAddress },
-  meta,
-}: Action<ActionTypes.TASK_SET_WORKER_OR_PAYOUT>) {
-  try {
-    const apolloClient: ApolloClient<any> = yield getContext(
-      Context.APOLLO_CLIENT,
-    );
-
-    const {
-      data: {
-        task: { assignedWorker, payouts: existingPayouts },
-      },
-    } = yield apolloClient.query<TaskQuery, TaskQueryVariables>({
-      query: TaskDocument,
-      variables: {
-        id: draftId,
-      },
-    });
-
-    if (workerAddress) {
-      yield apolloClient.mutate<
-        AssignWorkerMutation,
-        AssignWorkerMutationVariables
-      >({
-        mutation: AssignWorkerDocument,
-        variables: {
-          input: {
-            id: draftId,
-            workerAddress,
-          },
-        },
-      });
-    } else {
-      yield apolloClient.mutate<
-        UnassignWorkerMutation,
-        UnassignWorkerMutationVariables
-      >({
-        mutation: UnassignWorkerDocument,
-        variables: {
-          input: {
-            id: draftId,
-            workerAddress: assignedWorker.id,
-          },
-        },
-      });
-    }
-
-    if (payouts && payouts.length) {
-      yield apolloClient.mutate<
-        SetTaskPayoutMutation,
-        SetTaskPayoutMutationVariables
-      >({
-        mutation: SetTaskPayoutDocument,
-        variables: {
-          input: {
-            id: draftId,
-            amount: payouts[0].amount.toString(),
-            tokenAddress: payouts[0].token,
-          },
-        },
-      });
-    } else if (existingPayouts && existingPayouts.length) {
-      yield apolloClient.mutate<
-        RemoveTaskPayoutMutation,
-        RemoveTaskPayoutMutationVariables
-      >({
-        mutation: RemoveTaskPayoutDocument,
-        variables: {
-          input: {
-            id: draftId,
-            amount: existingPayouts[0].amount.toString(),
-            tokenAddress: existingPayouts[0].token,
-          },
-        },
-      });
-    }
-
-    yield put<AllActions>({
-      type: ActionTypes.TASK_SET_WORKER_OR_PAYOUT_SUCCESS,
-    });
-  } catch (error) {
-    return yield putError(
-      ActionTypes.TASK_SET_WORKER_OR_PAYOUT_ERROR,
-      error,
-      meta,
-    );
-  }
-  return null;
-}
-
 function* taskCommentAdd({
   payload: { author, comment, draftId },
   meta,
@@ -296,8 +191,4 @@ export default function* tasksSagas() {
   yield takeEvery(ActionTypes.TASK_COMMENT_ADD, taskCommentAdd);
   yield takeEvery(ActionTypes.TASK_CREATE, taskCreate);
   yield takeEvery(ActionTypes.TASK_FINALIZE, taskFinalize);
-  yield takeEvery(
-    ActionTypes.TASK_SET_WORKER_OR_PAYOUT,
-    taskSetWorkerOrPayouts,
-  );
 }

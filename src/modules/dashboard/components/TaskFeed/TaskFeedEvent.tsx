@@ -5,6 +5,8 @@ import {
   injectIntl,
   IntlShape,
 } from 'react-intl';
+import BigNumber from 'bn.js';
+import moveDecimal from 'move-decimal-point';
 import formatDate from 'sugar-date/date/format';
 
 import { ROOT_DOMAIN } from '~constants';
@@ -232,7 +234,7 @@ const TaskFeedEventPayoutSet = ({
             <Numeral
               integerSeparator=""
               unit={decimals || 18}
-              value={amount}
+              value={new BigNumber(moveDecimal(amount, decimals || 18))}
               suffix={` ${symbol}`}
             />
           </span>

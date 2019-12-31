@@ -16,15 +16,12 @@ const displayName = 'dashboard.TaskAssignment';
 const TaskAssignment = ({ draftId, nativeTokenAddress, tokens }: Props) => {
   const { data } = useTaskQuery({ variables: { id: draftId } });
 
-  // fixme get payouts from centralized store
-  const payouts = [];
-
   if (!data) {
     return <SpinnerLoader />;
   }
 
   const {
-    task: { assignedWorker },
+    task: { assignedWorker, payouts },
   } = data;
 
   return tokens ? (
@@ -32,7 +29,6 @@ const TaskAssignment = ({ draftId, nativeTokenAddress, tokens }: Props) => {
       payouts={payouts}
       reputation={undefined}
       nativeTokenAddress={nativeTokenAddress}
-      tokens={tokens}
       worker={assignedWorker || undefined}
       workerAddress={
         assignedWorker ? assignedWorker.profile.walletAddress : undefined

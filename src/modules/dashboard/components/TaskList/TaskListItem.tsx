@@ -9,7 +9,7 @@ import { RouteComponentProps, withRouter } from 'react-router-dom';
 import compose from 'recompose/compose';
 import BigNumber from 'bn.js';
 
-import { AnyTask } from '~data/index';
+import { AnyTask, Payouts } from '~data/index';
 import { TableRow, TableCell } from '~core/Table';
 import PayoutsList from '~core/PayoutsList';
 import HookedUserAvatar from '~users/HookedUserAvatar';
@@ -42,14 +42,10 @@ const TaskListItem = ({ task, intl: { formatMessage }, history }: Props) => {
   const {
     id: draftId,
     assignedWorkerAddress,
+    payouts,
     title = defaultTitle,
-    colony: { colonyName, displayName, nativeTokenAddress },
+    colony: { colonyName, nativeTokenAddress },
   } = task;
-
-  // FIXME get payouts from task
-  const payouts = [];
-  // FIXME get tokens from colony
-  const tokens = [];
 
   // @todo get reputation from centralized store
   let reputation: BigNumber | undefined;
@@ -76,8 +72,7 @@ const TaskListItem = ({ task, intl: { formatMessage }, history }: Props) => {
       <TableCell className={styles.taskPayouts}>
         <PayoutsList
           nativeTokenAddress={nativeTokenAddress}
-          payouts={payouts}
-          tokens={tokens}
+          payouts={payouts as Payouts}
         />
       </TableCell>
       <TableCell className={styles.userAvatar}>

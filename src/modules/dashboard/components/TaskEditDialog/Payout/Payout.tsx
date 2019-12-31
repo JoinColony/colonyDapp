@@ -10,10 +10,12 @@ import Heading from '~core/Heading';
 import Input from '~core/Fields/Input';
 import Select from '~core/Fields/Select';
 import Numeral from '~core/Numeral';
-import { Payouts } from '~data/index';
+import { AnyToken } from '~data/index';
 
 import NetworkFee from '../NetworkFee';
 import { tokenIsETH } from '../../../../core/checks';
+
+import { FormPayout } from './types';
 
 import styles from './Payout.css';
 
@@ -27,30 +29,21 @@ const MSG = defineMessages({
     defaultMessage: '{reputation} max rep',
   },
   unknownToken: {
-    id: 'dashboard.TaskEditDialog.unknownToken',
+    id: 'dashboard.TaskEditDialog.Payout.unknownToken',
     defaultMessage: 'Unknown Token',
   },
 });
-
-interface Token {
-  address: string;
-  details: {
-    decimals?: number | null;
-    name?: string | null;
-    symbol?: string | null;
-  };
-}
 
 interface Props {
   canRemove?: boolean;
   colonyAddress: Address;
   editPayout?: boolean;
   name: string;
-  payout: Payouts[0];
+  payout: FormPayout;
   remove?: () => void;
   reputation?: number;
   reset?: () => void;
-  tokens?: Token[];
+  tokens?: AnyToken[];
 }
 
 const displayName = 'dashboard.TaskEditDialog.Payout';
@@ -74,7 +67,11 @@ const Payout = ({
     setIsEditing(false);
   }, [isEditing, reset]);
 
-  const isEth = useMemo(() => token && tokenIsETH(token), [token]);
+  const selectedToken =
+    tokens && tokens.find(({ address }) => address === token);
+  const isEth = useMemo(() => selectedToken && tokenIsETH(selectedToken), [
+    selectedToken,
+  ]);
   const tokenOptions =
     tokens &&
     tokens.map(({ address, details: { symbol } }) => ({
@@ -82,7 +79,7 @@ const Payout = ({
       label: symbol || MSG.unknownToken,
     }));
 
-  const symbol = token && token.details.symbol;
+  const { symbol = '' } = (selectedToken && selectedToken.details) || {};
 
   return (
     <div>
@@ -144,7 +141,7 @@ const Payout = ({
                 </span>
                 <span>{symbol}</span>
               </div>
-              {reputation && (
+              {!!reputation && (
                 <div className={styles.reputation}>
                   <FormattedMessage
                     {...MSG.reputation}
