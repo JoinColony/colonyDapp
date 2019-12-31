@@ -39,7 +39,7 @@ const TaskFeed = ({ colonyAddress, draftId }: Props) => {
 
   useLayoutEffect(() => {
     // Content is not fully loaded at first, wait a moment
-    setTimeout(scrollToEnd, 1000);
+    setTimeout(scrollToEnd, 0);
   }, [bottomEl]);
 
   const { data } = useTaskFeedEventsQuery({
