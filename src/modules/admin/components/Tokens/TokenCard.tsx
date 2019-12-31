@@ -15,7 +15,8 @@ import { tokenIsETH, tokenBalanceIsNotPositive } from '../../../core/checks';
 import styles from './TokenCard.css';
 
 interface Props {
-  domainId: number;
+  // @todo use string or number (not both) everywhere for `domainId`
+  domainId: number | string;
   nativeTokenAddress?: Address;
   token: ColonyTokens[0] | UserTokens[0];
 }
@@ -34,7 +35,7 @@ const MSG = defineMessages({
 });
 
 const TokenCard = ({ domainId, nativeTokenAddress, token }: Props) => {
-  const balance = getBalanceFromToken(token, domainId);
+  const balance = getBalanceFromToken(token, parseInt(domainId as string, 10));
 
   return (
     <Card key={token.address} className={styles.main}>
@@ -62,7 +63,7 @@ const TokenCard = ({ domainId, nativeTokenAddress, token }: Props) => {
       </div>
       <div
         className={
-          tokenBalanceIsNotPositive(token, domainId)
+          tokenBalanceIsNotPositive(token, parseInt(domainId as string, 10))
             ? styles.balanceNotPositive
             : styles.balanceContent
         }
