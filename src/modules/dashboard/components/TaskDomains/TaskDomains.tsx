@@ -10,6 +10,7 @@ import {
   AnyTask,
   FullColonyFragment,
   useSetTaskDomainMutation,
+  Payouts,
 } from '~data/index';
 import { DomainType } from '~immutable/index';
 import { Address } from '~types/index';
@@ -48,6 +49,7 @@ interface Props {
   disabled?: boolean;
   draftId: AnyTask['id'];
   ethDomainId: number;
+  payouts: Payouts;
   tokens: FullColonyFragment['tokens'];
 }
 
@@ -66,6 +68,7 @@ const TaskDomains = ({
   ethDomainId,
   draftId,
   disabled,
+  payouts,
   tokens,
 }: Props) => {
   const [setDomain] = useSetTaskDomainMutation();
@@ -95,13 +98,12 @@ const TaskDomains = ({
     [colonyAddress],
   );
 
-  // fixme get centralized payouts
-  const payouts = [];
-
   const domainHasEnoughFunds = useCallback(
     (dId: number) =>
       payouts.every(({ amount, token }) => {
-        const payoutToken = tokens.find(({ address }) => address === token);
+        const payoutToken = tokens.find(
+          ({ address }) => address === token.address,
+        );
         const tokenBalanceInDomain = getBalanceFromToken(payoutToken, dId);
         return !bnLessThan(new BigNumber(tokenBalanceInDomain), amount);
       }),
