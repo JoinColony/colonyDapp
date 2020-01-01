@@ -16,6 +16,9 @@ import {
   EditColonyProfileDocument,
   EditColonyProfileMutation,
   EditColonyProfileMutationVariables,
+  ColonyDocument,
+  ColonyQuery,
+  ColonyQueryVariables,
 } from '~data/index';
 import { getContext, Context } from '~context/index';
 
@@ -131,7 +134,16 @@ function* colonyRecoveryModeEnter({
 
     yield takeFrom(txChannel, ActionTypes.TRANSACTION_SUCCEEDED);
 
-    // FIXME re-fetch colony here
+    const apolloClient: ApolloClient<object> = yield getContext(
+      Context.APOLLO_CLIENT,
+    );
+
+    yield apolloClient.query<ColonyQuery, ColonyQueryVariables>({
+      query: ColonyDocument,
+      variables: {
+        address: colonyAddress,
+      },
+    });
   } catch (error) {
     return yield putError(
       ActionTypes.COLONY_RECOVERY_MODE_ENTER_ERROR,
@@ -169,7 +181,16 @@ function* colonyUpgradeContract({
 
     yield takeFrom(txChannel, ActionTypes.TRANSACTION_SUCCEEDED);
 
-    // FIXME re-fetch colony here
+    const apolloClient: ApolloClient<object> = yield getContext(
+      Context.APOLLO_CLIENT,
+    );
+
+    yield apolloClient.query<ColonyQuery, ColonyQueryVariables>({
+      query: ColonyDocument,
+      variables: {
+        address: colonyAddress,
+      },
+    });
   } catch (error) {
     return yield putError(
       ActionTypes.COLONY_VERSION_UPGRADE_ERROR,
@@ -202,7 +223,16 @@ function* colonyNativeTokenUnlock({
       meta,
     });
 
-    // FIXME re-fetch colony here
+    const apolloClient: ApolloClient<object> = yield getContext(
+      Context.APOLLO_CLIENT,
+    );
+
+    yield apolloClient.query<ColonyQuery, ColonyQueryVariables>({
+      query: ColonyDocument,
+      variables: {
+        address: colonyAddress,
+      },
+    });
   } catch (error) {
     return yield putError(
       ActionTypes.COLONY_NATIVE_TOKEN_UNLOCK_ERROR,
