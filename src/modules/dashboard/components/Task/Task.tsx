@@ -141,6 +141,7 @@ const Task = ({
       ethDomainId = undefined,
       dueDate = undefined,
       ethSkillId = undefined,
+      payouts = [],
       title = undefined,
     } = {},
     task = undefined,
@@ -262,6 +263,7 @@ const Task = ({
                   disabled
                   ethDomainId={ethDomainId}
                   draftId={draftId}
+                  payouts={payouts}
                 />
               </div>
             )}
