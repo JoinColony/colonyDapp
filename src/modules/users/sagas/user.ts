@@ -241,13 +241,7 @@ function* usernameCreate({
       meta,
     });
 
-    /*
-     * @NOTE After the user is created, fetch it's inbox notifications
-     */
-    yield put<AllActions>({
-      type: ActionTypes.INBOX_ITEMS_FETCH,
-    });
-
+    // FIXME After the user is created, fetch it's inbox notifications
   } catch (error) {
     return yield putError(ActionTypes.USERNAME_CREATE_ERROR, error, meta);
   } finally {
