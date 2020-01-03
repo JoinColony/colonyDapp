@@ -1,18 +1,24 @@
-import { defineMessages, FormattedMessage, injectIntl } from 'react-intl';
 import React, { useCallback, useMemo, useState } from 'react';
+import { defineMessages, FormattedMessage, injectIntl } from 'react-intl';
+import BigNumber from 'bn.js';
 
 import { COLONY_TOTAL_BALANCE_DOMAIN_ID } from '~constants';
 import Heading from '~core/Heading';
 import Button from '~core/Button';
 import ItemsList from '~core/ItemsList';
-import { useSetTaskDomainMutation, AnyTask } from '~data/index';
+import {
+  AnyTask,
+  FullColonyFragment,
+  useSetTaskDomainMutation,
+  Payouts,
+} from '~data/index';
 import { DomainType } from '~immutable/index';
 import { Address } from '~types/index';
-import { useDataFetcher, useSelector } from '~utils/hooks';
+import { useDataFetcher } from '~utils/hooks';
 import { bnLessThan } from '~utils/numbers';
+import { getBalanceFromToken } from '~utils/tokens';
 
 import { domainsFetcher } from '../../fetchers';
-import { colonyTokensSelector } from '../../selectors';
 
 import styles from './TaskDomains.css';
 
@@ -43,6 +49,8 @@ interface Props {
   disabled?: boolean;
   draftId: AnyTask['id'];
   ethDomainId: number;
+  payouts: Payouts;
+  tokens: FullColonyFragment['tokens'];
 }
 
 // This odd typing makes DomainType compatible with ConsumableItem
@@ -60,6 +68,8 @@ const TaskDomains = ({
   ethDomainId,
   draftId,
   disabled,
+  payouts,
+  tokens,
 }: Props) => {
   const [setDomain] = useSetTaskDomainMutation();
 
@@ -88,17 +98,14 @@ const TaskDomains = ({
     [colonyAddress],
   );
 
-  // fixme get centralized payouts
-  const payouts = [];
-  const tokens = useSelector(colonyTokensSelector, [colonyAddress]);
-
   const domainHasEnoughFunds = useCallback(
-    (id: string) =>
+    (dId: number) =>
       payouts.every(({ amount, token }) => {
-        const payoutToken = tokens.find(({ address }) => address === token);
-        const tokenBalanceInDomain =
-          payoutToken && payoutToken.balances && payoutToken.balances[id];
-        return !bnLessThan(tokenBalanceInDomain, amount);
+        const payoutToken = tokens.find(
+          ({ address }) => address === token.address,
+        );
+        const tokenBalanceInDomain = getBalanceFromToken(payoutToken, dId);
+        return !bnLessThan(new BigNumber(tokenBalanceInDomain), amount);
       }),
     [payouts, tokens],
   );
@@ -109,7 +116,7 @@ const TaskDomains = ({
         .sort()
         .map(id => ({
           ...(domains || {})[id],
-          disabled: !domainHasEnoughFunds(id),
+          disabled: !domainHasEnoughFunds(parseInt(id, 10)),
           id: parseInt(id, 10),
         })),
     [domainHasEnoughFunds, domains],

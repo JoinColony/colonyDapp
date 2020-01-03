@@ -1,7 +1,6 @@
 import React, { useCallback } from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 
-import { TaskPayoutType } from '~immutable/index';
 import { Address } from '~types/index';
 import Button from '~core/Button';
 import Dialog from '~core/Dialog';
@@ -10,19 +9,21 @@ import Heading from '~core/Heading';
 import Numeral from '~core/Numeral';
 import StarRating from '~core/StarRating';
 import { useSelector } from '~utils/hooks';
-import { Props as TaskClaimRewardProps } from './TaskClaimReward';
+import { Payouts } from '~data/index';
+
 import { networkFeeSelector } from '../../../core/selectors';
-import { useColonyTokens } from '../../hooks/useColonyTokens';
+import { Props as TaskClaimRewardProps } from './TaskClaimReward';
+
 import styles from './TaskClaimRewardDialog.css';
 
 export const getTaskPayoutNetworkFee = (
-  { amount }: TaskPayoutType,
+  { amount }: Payouts[0],
   fee: number,
   // @ts-ignore (apparently this is a BigNumber? is the type wrong?)
 ) => amount * fee;
 
 export const getTaskPayoutAmountMinusNetworkFee = (
-  payout: TaskPayoutType,
+  payout: Payouts[0],
   fee: number,
   // @ts-ignore (apparently this is a BigNumber? is the type wrong?)
 ) => payout.amount - getTaskPayoutNetworkFee(payout, fee);
@@ -99,9 +100,9 @@ const TaskClaimRewardDialog = ({
   cancel,
   close,
   task: {
-    colonyAddress,
-    reputation,
-    payouts,
+    /* colonyAddress, */
+    /* reputation, */
+    /* payouts, */
     title,
     // @ts-ignore
     rating,
@@ -116,7 +117,10 @@ const TaskClaimRewardDialog = ({
   },
 }: Props) => {
   const networkFee = useSelector(networkFeeSelector);
-  const [, tokenOptions] = useColonyTokens(colonyAddress);
+  // @TODO This component is unused. Get token options if needbe
+  const payouts = [];
+  const reputation = 0;
+  const tokenOptions = [];
   const getToken = useCallback(
     (tokenAddress: Address) =>
       (tokenOptions &&

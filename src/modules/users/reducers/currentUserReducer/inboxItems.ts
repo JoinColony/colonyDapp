@@ -15,16 +15,22 @@ const inboxItemsReducer = (
 ) => {
   switch (action.type) {
     case ActionTypes.INBOX_ITEMS_FETCH_SUCCESS: {
-      const { activities } = action.payload;
+      const { activities, currentUser } = action.payload;
       return state.set(
         'record',
         List(
           activities.map(
             ({
-              type,
-              meta: { id, actorId, sourceType, sourceId, timestamp },
-              payload: { sourceUserAddress },
-              payload: context,
+              id,
+              event: {
+                type,
+                createdAt: timestamp,
+                initiatorAddress: initiator,
+                sourceId,
+                sourceType,
+                context,
+              },
+              read,
             }) =>
               InboxItem({
                 id,
@@ -32,9 +38,10 @@ const inboxItemsReducer = (
                 type,
                 sourceId,
                 sourceType,
-                initiator: sourceUserAddress || actorId,
+                initiator,
                 context,
-                targetUser: context.targetUserAddress,
+                targetUser: context.targetUserAddress || currentUser,
+                unread: !read,
               }),
           ),
         ),

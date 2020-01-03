@@ -6,10 +6,9 @@ import Button from '~core/Button';
 import { DialogType } from '~core/Dialog';
 import withDialog from '~core/Dialog/withDialog';
 import Heading from '~core/Heading';
-import { Address, DomainsMapType } from '~types/index';
-import { useLoggedInUser } from '~data/index';
+import { DomainsMapType } from '~types/index';
+import { useLoggedInUser, FullColonyFragment } from '~data/index';
 
-import { useColonyTokens } from '../../../hooks/useColonyTokens';
 import { canMoveTokens as canMoveTokensCheck } from '../../../../admin/checks';
 import TokenItem from './TokenItem';
 
@@ -29,7 +28,7 @@ const MSG = defineMessages({
 // SHOW button if user has COLONY_ROLE_FUNDING or ROOT in any domain
 
 interface Props {
-  colonyAddress: Address;
+  colony: FullColonyFragment;
   currentDomainId: number;
   domains: DomainsMapType;
   openDialog: (dialogName: string, dialogProps?: object) => DialogType;
@@ -38,19 +37,19 @@ interface Props {
 const displayName = 'dashboard.ColonyHome.ColonyFunding';
 
 const ColonyFunding = ({
-  colonyAddress,
+  colony,
   currentDomainId,
   domains,
   openDialog,
 }: Props) => {
-  const [tokenReferences, tokens] = useColonyTokens(colonyAddress);
-
   const { walletAddress } = useLoggedInUser();
 
   const canMoveTokens = useMemo(
     () => canMoveTokensCheck(domains, walletAddress),
     [walletAddress, domains],
   );
+
+  const { colonyAddress, tokens } = colony;
 
   const handleMoveTokens = useCallback(
     () =>
@@ -79,18 +78,13 @@ const ColonyFunding = ({
         )}
       </Heading>
       <ul>
-        {tokens &&
-          tokenReferences &&
-          tokens.map(token => (
-            <TokenItem
-              currentDomainId={currentDomainId}
-              key={token.address}
-              token={token}
-              tokenReference={tokenReferences.find(
-                ({ address }) => address === token.address,
-              )}
-            />
-          ))}
+        {tokens.map(token => (
+          <TokenItem
+            currentDomainId={currentDomainId}
+            key={token.address}
+            token={token}
+          />
+        ))}
       </ul>
     </div>
   );

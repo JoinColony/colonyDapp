@@ -13,12 +13,9 @@ import {
   FormStatus,
 } from '~core/Fields';
 import Button from '~core/Button';
-import { ColonyType } from '~immutable/index';
 import ENS from '~lib/ENS';
+import { useEditColonyProfileMutation, FullColonyFragment } from '~data/index';
 import ColonyAvatarUploader from './ColonyAvatarUploader';
-import { useEditColonyProfileMutation, AnyColony } from '~data/index';
-
-import { useColonyNativeToken } from '../../../dashboard/hooks/useColonyNativeToken';
 
 import styles from './ProfileEdit.css';
 
@@ -87,7 +84,7 @@ const validationSchema = yup.object({
 });
 
 interface Props {
-  colony: AnyColony | ColonyType;
+  colony: FullColonyFragment;
 }
 
 const ProfileEdit = ({ colony }: Props) => {
@@ -97,6 +94,7 @@ const ProfileEdit = ({ colony }: Props) => {
     description,
     displayName,
     guideline,
+    nativeTokenAddress,
     website,
   } = colony;
 
@@ -113,9 +111,6 @@ const ProfileEdit = ({ colony }: Props) => {
       }),
     [colonyAddress, editColony],
   );
-
-  const { address: nativeTokenAddress = '' } =
-    useColonyNativeToken(colonyAddress) || {};
 
   return (
     <div className={styles.main}>
@@ -162,7 +157,7 @@ const ProfileEdit = ({ colony }: Props) => {
                     text={ENS.getFullDomain('colony', colonyName)}
                   />
                 </div>
-                {nativeTokenAddress && (
+                {colony.nativeTokenAddress && (
                   <div className={styles.section}>
                     <InputLabel label={MSG.labelTokenAddress} />
                     <CopyableAddress appearance={{ theme: 'big' }} full>

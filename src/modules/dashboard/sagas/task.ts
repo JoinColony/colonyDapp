@@ -5,13 +5,10 @@ import BigNumber from 'bn.js';
 
 import { Context, getContext } from '~context/index';
 import {
-  AssignWorkerDocument,
   CreateTaskDocument,
+  CreateTaskMutationResult,
   FinalizeTaskDocument,
-  RemoveTaskPayoutDocument,
-  SetTaskPayoutDocument,
   TaskDocument,
-  UnassignWorkerDocument,
   SendTaskMessageDocument,
   SendTaskMessageMutation,
   SendTaskMessageMutationVariables,
@@ -21,18 +18,9 @@ import {
   TaskQueryVariables,
   FinalizeTaskMutation,
   FinalizeTaskMutationVariables,
-  AssignWorkerMutation,
-  AssignWorkerMutationVariables,
-  UnassignWorkerMutation,
-  UnassignWorkerMutationVariables,
-  SetTaskPayoutMutation,
-  SetTaskPayoutMutationVariables,
-  RemoveTaskPayoutMutation,
-  RemoveTaskPayoutMutationVariables,
   TaskFeedEventsDocument,
   ColonyTasksDocument,
 } from '~data/index';
-import { TaskPayoutType } from '~immutable/TaskPayout';
 import { Action, ActionTypes } from '~redux/index';
 import { ContractContexts } from '~types/index';
 import { putError, takeFrom } from '~utils/saga/effects';
@@ -50,9 +38,7 @@ function* taskCreate({
       Context.APOLLO_CLIENT,
     );
 
-    const {
-      data: { createTask },
-    } = yield apolloClient.mutate<
+    const { data }: CreateTaskMutationResult = yield apolloClient.mutate<
       CreateTaskMutation,
       CreateTaskMutationVariables
     >({
@@ -63,15 +49,19 @@ function* taskCreate({
           ethDomainId,
         },
       },
+      // @TODO mutate state directly instead of refetching queries
+      // @BODY See https://github.com/JoinColony/colonyDapp/pull/1933/files#r359016028
       refetchQueries: [
         { query: ColonyTasksDocument, variables: { address: colonyAddress } },
       ],
     });
 
+    if (!data || !data.createTask) throw new Error('Could not create task');
+
     const {
       id,
       colony: { colonyName },
-    } = createTask;
+    } = data.createTask;
 
     const successAction: Action<ActionTypes.TASK_CREATE_SUCCESS> = {
       type: ActionTypes.TASK_CREATE_SUCCESS,
@@ -111,10 +101,7 @@ function* taskFinalize({
       },
     });
 
-    const { assignedWorker, ethDomainId, ethSkillId } = task;
-
-    // @todo get payouts from centralized store
-    const payouts = [] as TaskPayoutType[];
+    const { assignedWorker, ethDomainId, ethSkillId, payouts } = task;
 
     if (!assignedWorker)
       throw new Error(`Worker not assigned for task ${draftId}`);
@@ -156,101 +143,6 @@ function* taskFinalize({
     });
   } catch (error) {
     return yield putError(ActionTypes.TASK_FINALIZE_ERROR, error, meta);
-  }
-  return null;
-}
-
-function* taskSetWorkerOrPayouts({
-  payload: { draftId, payouts, workerAddress },
-  meta,
-}: Action<ActionTypes.TASK_SET_WORKER_OR_PAYOUT>) {
-  try {
-    const apolloClient: ApolloClient<any> = yield getContext(
-      Context.APOLLO_CLIENT,
-    );
-
-    const {
-      data: {
-        task: { assignedWorker, ethDomainId },
-      },
-    } = yield apolloClient.query<TaskQuery, TaskQueryVariables>({
-      query: TaskDocument,
-      variables: {
-        id: draftId,
-      },
-    });
-
-    if (workerAddress) {
-      yield apolloClient.mutate<
-        AssignWorkerMutation,
-        AssignWorkerMutationVariables
-      >({
-        mutation: AssignWorkerDocument,
-        variables: {
-          input: {
-            id: draftId,
-            workerAddress,
-          },
-        },
-      });
-    } else {
-      yield apolloClient.mutate<
-        UnassignWorkerMutation,
-        UnassignWorkerMutationVariables
-      >({
-        mutation: UnassignWorkerDocument,
-        variables: {
-          input: {
-            id: draftId,
-            workerAddress: assignedWorker.id,
-          },
-        },
-      });
-    }
-
-    if (payouts && payouts.length) {
-      yield apolloClient.mutate<
-        SetTaskPayoutMutation,
-        SetTaskPayoutMutationVariables
-      >({
-        mutation: SetTaskPayoutDocument,
-        variables: {
-          input: {
-            id: draftId,
-            amount: payouts[0].amount.toString(),
-            tokenAddress: payouts[0].token,
-          },
-        },
-      });
-    } else {
-      // @todo use payouts from centralized store
-      const existingPayouts: TaskPayoutType[] = [];
-      if (existingPayouts && existingPayouts.length) {
-        yield apolloClient.mutate<
-          RemoveTaskPayoutMutation,
-          RemoveTaskPayoutMutationVariables
-        >({
-          mutation: RemoveTaskPayoutDocument,
-          variables: {
-            input: {
-              id: draftId,
-              amount: existingPayouts[0].amount.toString(),
-              tokenAddress: existingPayouts[0].token,
-            },
-          },
-        });
-      }
-    }
-
-    yield put<AllActions>({
-      type: ActionTypes.TASK_SET_WORKER_OR_PAYOUT_SUCCESS,
-    });
-  } catch (error) {
-    return yield putError(
-      ActionTypes.TASK_SET_WORKER_OR_PAYOUT_ERROR,
-      error,
-      meta,
-    );
   }
   return null;
 }
@@ -299,8 +191,4 @@ export default function* tasksSagas() {
   yield takeEvery(ActionTypes.TASK_COMMENT_ADD, taskCommentAdd);
   yield takeEvery(ActionTypes.TASK_CREATE, taskCreate);
   yield takeEvery(ActionTypes.TASK_FINALIZE, taskFinalize);
-  yield takeEvery(
-    ActionTypes.TASK_SET_WORKER_OR_PAYOUT,
-    taskSetWorkerOrPayouts,
-  );
 }

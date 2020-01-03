@@ -6,10 +6,7 @@ import { Action, ActionTypes, AllActions } from '~redux/index';
 import { putError, takeFrom } from '~utils/saga/effects';
 import { ContractContexts } from '~types/index';
 import { getContext, Context } from '~context/index';
-// import { decorateLog } from '~utils/web3/eventLogs/events';
-// import { normalizeTransactionLog } from '~data/normalizers';
 import { createTransaction, getTxChannel } from '../../core/sagas';
-import { fetchColonyTokenBalance } from '../actionCreators';
 import {
   ColonyDomainsQuery,
   ColonyDomainsQueryVariables,
@@ -21,9 +18,9 @@ import {
   EditDomainMutation,
   EditDomainMutationVariables,
   EditDomainDocument,
-  DomainQuery,
-  DomainQueryVariables,
-  DomainDocument,
+  TokenBalancesForDomainsDocument,
+  TokenBalancesForDomainsQuery,
+  TokenBalancesForDomainsQueryVariables,
 } from '~data/index';
 
 function* colonyDomainsFetch({
@@ -36,7 +33,7 @@ function* colonyDomainsFetch({
   },
 }: Action<ActionTypes.COLONY_DOMAINS_FETCH>) {
   try {
-    const apolloClient: ApolloClient<any> = yield getContext(
+    const apolloClient: ApolloClient<object> = yield getContext(
       Context.APOLLO_CLIENT,
     );
 
@@ -50,12 +47,21 @@ function* colonyDomainsFetch({
 
     if (!data) throw new Error("Could not get the colony's domain metadata");
 
+    const domains = data.colony.domains.map(
+      ({ ethDomainId, ethParentDomainId, name }) => ({
+        id: ethDomainId,
+        parentId: ethParentDomainId,
+        name,
+        roles: {},
+      }),
+    );
+
     yield put<AllActions>({
       type: ActionTypes.COLONY_DOMAINS_FETCH_SUCCESS,
       meta,
       payload: {
         colonyAddress,
-        domains: data.colony.domains,
+        domains,
       },
     });
 
@@ -78,7 +84,7 @@ function* domainCreate({
 }: Action<ActionTypes.DOMAIN_CREATE>) {
   const txChannel = yield call(getTxChannel, meta.id);
   try {
-    const apolloClient: ApolloClient<any> = yield getContext(
+    const apolloClient: ApolloClient<object> = yield getContext(
       Context.APOLLO_CLIENT,
     );
     /*
@@ -152,7 +158,7 @@ function* domainEdit({
   meta,
 }: Action<ActionTypes.DOMAIN_EDIT>) {
   try {
-    const apolloClient: ApolloClient<any> = yield getContext(
+    const apolloClient: ApolloClient<object> = yield getContext(
       Context.APOLLO_CLIENT,
     );
 
@@ -188,22 +194,23 @@ function* moveFundsBetweenPots({
 }: Action<ActionTypes.MOVE_FUNDS_BETWEEN_POTS>) {
   let txChannel;
   try {
-    const apolloClient: ApolloClient<any> = yield getContext(
+    const apolloClient: ApolloClient<object> = yield getContext(
       Context.APOLLO_CLIENT,
     );
 
     txChannel = yield call(getTxChannel, meta.id);
+
+    const colonyManager = yield getContext(Context.COLONY_MANAGER);
+    const colonyClient = yield call(
+      [colonyManager, colonyManager.getColonyClient],
+      colonyAddress,
+    );
     const [{ potId: fromPot }, { potId: toPot }] = yield all([
-      /*
-       * @TODO Actually test if this returns the proper data format
-       */
-      apolloClient.query<DomainQuery, DomainQueryVariables>({
-        query: DomainDocument,
-        variables: { colonyAddress, ethDomainId: fromDomain },
+      call([colonyClient.getDomain, colonyClient.getDomain.call], {
+        domainId: fromDomain,
       }),
-      apolloClient.query<DomainQuery, DomainQueryVariables>({
-        query: DomainDocument,
-        variables: { colonyAddress, ethDomainId: toDomain },
+      call([colonyClient.getDomain, colonyClient.getDomain.call], {
+        domainId: toDomain,
       }),
     ]);
 
@@ -219,8 +226,17 @@ function* moveFundsBetweenPots({
     yield takeFrom(txChannel, ActionTypes.TRANSACTION_SUCCEEDED);
 
     // Refetch token balances for the domains involved
-    yield put(fetchColonyTokenBalance(colonyAddress, tokenAddress, fromDomain));
-    yield put(fetchColonyTokenBalance(colonyAddress, tokenAddress, toDomain));
+    yield apolloClient.query<
+      TokenBalancesForDomainsQuery,
+      TokenBalancesForDomainsQueryVariables
+    >({
+      query: TokenBalancesForDomainsDocument,
+      variables: {
+        colonyAddress,
+        tokenAddresses: [tokenAddress],
+        domainIds: [fromDomain, toDomain],
+      },
+    });
 
     yield put<AllActions>({
       type: ActionTypes.MOVE_FUNDS_BETWEEN_POTS_SUCCESS,

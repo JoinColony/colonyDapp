@@ -1,12 +1,7 @@
-/* eslint-disable max-len */
-
-import BigNumber from 'bn.js';
-
 import { Address } from '~types/index';
 import {
   ActionTypes,
   ActionType,
-  ActionTypeWithPayloadAndMeta,
   ErrorActionType,
   UniqueActionType,
 } from '~redux/index';
@@ -21,14 +16,6 @@ type TaskActionPayload<P> = AnyTask['id'] & P;
 // eslint-disable-next-line @typescript-eslint/no-empty-interface
 interface TaskActionType<T extends string, P>
   extends UniqueActionType<T, TaskActionPayload<P>, TaskActionMeta> {}
-
-// eslint-disable-next-line @typescript-eslint/no-empty-interface
-interface NonUniqueTaskActionType<T extends string, P>
-  extends ActionTypeWithPayloadAndMeta<
-    T,
-    TaskActionPayload<P>,
-    TaskActionMeta
-  > {}
 
 // eslint-disable-next-line @typescript-eslint/no-empty-interface
 interface TaskErrorActionType<T extends string>
@@ -104,16 +91,6 @@ export type TaskActionTypes =
       ActionTypes.TASK_MANAGER_REVEAL_WORKER_RATING_SUCCESS,
       object
     >
-  | TaskActionType<
-      ActionTypes.TASK_SET_WORKER_OR_PAYOUT,
-      {
-        draftId: AnyTask['id'];
-        payouts?: { token: string; amount: BigNumber }[];
-        workerAddress?: Address;
-      }
-    >
-  | TaskErrorActionType<ActionTypes.TASK_SET_WORKER_OR_PAYOUT_ERROR>
-  | ActionType<ActionTypes.TASK_SET_WORKER_OR_PAYOUT_SUCCESS>
   | TaskActionType<ActionTypes.TASK_SUBMIT_DELIVERABLE, object>
   | TaskErrorActionType<ActionTypes.TASK_SUBMIT_DELIVERABLE_ERROR>
   | TaskActionType<ActionTypes.TASK_SUBMIT_DELIVERABLE_SUCCESS, object>

@@ -1,6 +1,5 @@
 import ApolloClient from 'apollo-client';
 import { push } from 'connected-react-router';
-import BigNumber from 'bn.js';
 import {
   call,
   delay,
@@ -12,7 +11,6 @@ import {
   all,
 } from 'redux-saga/effects';
 
-import { ZERO_ADDRESS } from '~utils/web3/constants';
 import { Action, ActionTypes, AllActions } from '~redux/index';
 import { getContext, Context } from '~context/index';
 import ENS from '~lib/ENS';
@@ -21,19 +19,15 @@ import { ColonyManager } from '~data/types';
 import {
   ColonySubscribedUsersDocument,
   CreateUserDocument,
+  CreateUserMutation,
+  CreateUserMutationVariables,
   EditUserDocument,
+  EditUserMutation,
+  EditUserMutationVariables,
   getLoggedInUser,
-  SetUserTokensDocument,
-  SetUserTokensMutation,
-  SetUserTokensMutationVariables,
-  UserTokensDocument,
-  UserTokensQuery,
-  UserTokensQueryResult,
-  UserTokensQueryVariables,
   UserColonyIdsQueryResult,
 } from '~data/index';
 
-import { UserTokenReferenceType } from '~immutable/index';
 import { executeQuery, putError, takeFrom } from '~utils/saga/effects';
 
 import { ContractContexts } from '../../../lib/ColonyManager/constants';
@@ -50,7 +44,7 @@ function* userTokenTransfersFetch( // eslint-disable-next-line @typescript-eslin
 ) {
   try {
     const { walletAddress } = yield getLoggedInUser();
-    const apolloClient: ApolloClient<any> = yield getContext(
+    const apolloClient: ApolloClient<object> = yield getContext(
       Context.APOLLO_CLIENT,
     );
 
@@ -113,10 +107,10 @@ function* userAddressFetch({
 function* userAvatarRemove({ meta }: Action<ActionTypes.USER_AVATAR_REMOVE>) {
   try {
     const { walletAddress } = yield getLoggedInUser();
-    const apolloClient: ApolloClient<any> = yield getContext(
+    const apolloClient: ApolloClient<object> = yield getContext(
       Context.APOLLO_CLIENT,
     );
-    yield apolloClient.mutate({
+    yield apolloClient.mutate<EditUserMutation, EditUserMutationVariables>({
       mutation: EditUserDocument,
       variables: { input: { avatarHash: null } },
     });
@@ -138,12 +132,12 @@ function* userAvatarUpload({
 }: Action<ActionTypes.USER_AVATAR_UPLOAD>) {
   try {
     const { walletAddress } = yield getLoggedInUser();
-    const apolloClient: ApolloClient<any> = yield getContext(
+    const apolloClient: ApolloClient<object> = yield getContext(
       Context.APOLLO_CLIENT,
     );
     const ipfsHash = yield call(ipfsUpload, payload.data);
 
-    yield apolloClient.mutate({
+    yield apolloClient.mutate<EditUserMutation, EditUserMutationVariables>({
       mutation: EditUserDocument,
       variables: { input: { avatarHash: ipfsHash } },
     });
@@ -221,7 +215,7 @@ function* usernameCreate({
       },
     });
 
-    const apolloClient: ApolloClient<any> = yield getContext(
+    const apolloClient: ApolloClient<object> = yield getContext(
       Context.APOLLO_CLIENT,
     );
 
@@ -229,7 +223,7 @@ function* usernameCreate({
 
     yield put(transactionLoadRelated(id, true));
 
-    yield apolloClient.mutate({
+    yield apolloClient.mutate<CreateUserMutation, CreateUserMutationVariables>({
       mutation: CreateUserDocument,
       variables: {
         createUserInput: { username },
@@ -246,6 +240,14 @@ function* usernameCreate({
       },
       meta,
     });
+
+    /*
+     * @NOTE After the user is created, fetch it's inbox notifications
+     */
+    yield put<AllActions>({
+      type: ActionTypes.INBOX_ITEMS_FETCH,
+    });
+
   } catch (error) {
     return yield putError(ActionTypes.USERNAME_CREATE_ERROR, error, meta);
   } finally {
@@ -287,95 +289,12 @@ function* userLogout() {
   return null;
 }
 
-function* userTokensFetch() {
-  try {
-    const { walletAddress } = yield getLoggedInUser();
-    const colonyManager: ColonyManager = yield getContext(
-      Context.COLONY_MANAGER,
-    );
-    const apolloClient: ApolloClient<any> = yield getContext(
-      Context.APOLLO_CLIENT,
-    );
-    const {
-      networkClient: {
-        adapter: { provider },
-      },
-    } = colonyManager;
-
-    const { data }: UserTokensQueryResult = yield apolloClient.query<
-      UserTokensQuery,
-      UserTokensQueryVariables
-    >({
-      query: UserTokensDocument,
-      variables: { address: walletAddress },
-    });
-
-    if (!data) {
-      throw new Error('Could not get user tokens');
-    }
-
-    const coinTokens: UserTokenReferenceType[] = yield Promise.all(
-      data.user.tokens.map(async address => {
-        const tokenClient = await colonyManager.getTokenClient(address);
-        const { amount } = await tokenClient.getBalanceOf.call({
-          sourceAddress: walletAddress,
-        });
-        // convert from Ethers BN
-        const balance = new BigNumber(amount.toString());
-        return { address, balance };
-      }),
-    );
-
-    // also get balance for ether and return in same format
-    const etherBalance = yield provider.getBalance(walletAddress);
-    const etherToken = {
-      address: ZERO_ADDRESS,
-      // convert from Ethers BN
-      balance: new BigNumber(etherBalance.toString()),
-    };
-
-    const tokens = [etherToken, ...coinTokens];
-    yield put<AllActions>({
-      type: ActionTypes.USER_TOKENS_FETCH_SUCCESS,
-      payload: { tokens },
-    });
-  } catch (error) {
-    return yield putError(ActionTypes.USER_TOKENS_FETCH_ERROR, error);
-  }
-  return null;
-}
-
-// We need to do this in a saga as we want to trigger the USER_TOKENS_FETCH action again
-function* userTokensUpdate(action: Action<ActionTypes.USER_TOKENS_UPDATE>) {
-  try {
-    const { tokens } = action.payload;
-    const apolloClient: ApolloClient<any> = yield getContext(
-      Context.APOLLO_CLIENT,
-    );
-
-    yield apolloClient.mutate<
-      SetUserTokensMutation,
-      SetUserTokensMutationVariables
-    >({
-      mutation: SetUserTokensDocument,
-      variables: { input: { tokens } },
-    });
-
-    yield put({ type: ActionTypes.USER_TOKENS_FETCH });
-    yield put({ type: ActionTypes.USER_TOKENS_UPDATE_SUCCESS });
-  } catch (error) {
-    return yield putError(ActionTypes.USER_TOKENS_UPDATE_ERROR, error);
-  }
-  return null;
-}
-
 export function* setupUsersSagas() {
   yield takeEvery(ActionTypes.USER_ADDRESS_FETCH, userAddressFetch);
   yield takeEvery(
     ActionTypes.USER_TOKEN_TRANSFERS_FETCH,
     userTokenTransfersFetch,
   );
-  yield takeEvery(ActionTypes.USER_TOKENS_FETCH, userTokensFetch);
   yield takeLatest(
     ActionTypes.USERNAME_CHECK_AVAILABILITY,
     usernameCheckAvailability,
@@ -383,6 +302,5 @@ export function* setupUsersSagas() {
   yield takeLatest(ActionTypes.USER_AVATAR_REMOVE, userAvatarRemove);
   yield takeLatest(ActionTypes.USER_AVATAR_UPLOAD, userAvatarUpload);
   yield takeLatest(ActionTypes.USER_LOGOUT, userLogout);
-  yield takeLatest(ActionTypes.USER_TOKENS_UPDATE, userTokensUpdate);
   yield takeLatest(ActionTypes.USERNAME_CREATE, usernameCreate);
 }

@@ -56,7 +56,7 @@ export const useLoggedInUser = () => {
 
 // Meant to be used as a saga in a proper context
 export function* getLoggedInUser() {
-  const apolloClient: ApolloClient<any> = yield getContext(
+  const apolloClient: ApolloClient<object> = yield getContext(
     Context.APOLLO_CLIENT,
   );
   const result = yield apolloClient.query({ query: LoggedInUserDocument });

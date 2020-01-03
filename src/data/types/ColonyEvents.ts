@@ -1,18 +1,24 @@
-import { ColonyProps } from '~immutable/index';
-import { EventDefinition } from './events';
-
-import { EventTypes, Versions } from '../constants';
 import { Address } from '~types/index';
+import { ColonyProfileFragment } from '~data/index';
+
+import { EventDefinition } from './events';
+import { EventTypes, Versions } from '../constants';
 
 export type ColonyEvents =
   | EventDefinition<
       EventTypes.COLONY_PROFILE_CREATED,
-      ColonyProps<'colonyAddress' | 'colonyName' | 'displayName'>,
+      Pick<
+        ColonyProfileFragment,
+        'colonyAddress' | 'colonyName' | 'displayName'
+      >,
       Versions.CURRENT
     >
   | EventDefinition<
       EventTypes.COLONY_PROFILE_UPDATED,
-      ColonyProps<'description' | 'displayName' | 'guideline' | 'website'>,
+      Pick<
+        ColonyProfileFragment,
+        'description' | 'displayName' | 'guideline' | 'website'
+      >,
       Versions.CURRENT
     >
   | EventDefinition<

@@ -1,19 +1,15 @@
-import { FormikProps } from 'formik';
-import React from 'react';
+import React, { useCallback } from 'react';
+import { FormikProps, FormikConfig } from 'formik';
 import { defineMessages } from 'react-intl';
 
-import {
-  ColonyTokenReferenceType,
-  UserTokenReferenceType,
-} from '~immutable/index';
-import { ActionTypeString } from '~redux/index';
-import { ActionTransformFnType } from '~utils/actions';
 import Button from '~core/Button';
 import Dialog, { DialogSection } from '~core/Dialog';
-import { ActionForm, InputLabel } from '~core/Fields';
+import { Form, InputLabel } from '~core/Fields';
 import Heading from '~core/Heading';
 import TokenCheckbox from './TokenCheckbox';
 import { Address } from '~types/strings';
+import { TokenList } from '~data/index';
+
 import styles from './TokenEditDialog.css';
 
 const MSG = defineMessages({
@@ -43,76 +39,85 @@ const MSG = defineMessages({
   },
 });
 
+interface FormValues {
+  tokens: string[];
+}
+
 interface Props {
   cancel: () => void;
   close: () => void;
-  availableTokens: Array<ColonyTokenReferenceType | UserTokenReferenceType>;
+  availableTokens: TokenList;
+  onSubmit: FormikConfig<FormValues>['onSubmit'];
+  nativeTokenAddress?: Address;
   selectedTokens: Address[];
-  submit: ActionTypeString;
-  success: ActionTypeString;
-  error: ActionTypeString;
-  transform?: ActionTransformFnType;
 }
 
 const TokenEditDialog = ({
   availableTokens = [],
+  nativeTokenAddress,
   selectedTokens = [],
   cancel,
   close,
-  submit,
-  error,
-  success,
-  transform,
-}: Props) => (
-  <Dialog cancel={cancel}>
-    <ActionForm
-      initialValues={{
-        tokens: selectedTokens,
-      }}
-      onSuccess={close}
-      submit={submit}
-      error={error}
-      success={success}
-      transform={transform}
-    >
-      {({ isSubmitting }: FormikProps<any>) => (
-        <>
-          <DialogSection>
-            <Heading
-              appearance={{ size: 'medium', margin: 'none' }}
-              text={MSG.title}
-            />
-          </DialogSection>
-          <DialogSection>
-            <Heading
-              text={MSG.instructionText}
-              appearance={{ size: 'normal', weight: 'thin' }}
-            />
-            <InputLabel label={MSG.fieldLabel} />
-            <div className={styles.tokenChoiceContainer}>
-              {availableTokens.map(token => (
-                <TokenCheckbox key={token.address} token={token} />
-              ))}
-            </div>
-          </DialogSection>
-          <DialogSection appearance={{ align: 'right' }}>
-            <Button
-              appearance={{ theme: 'secondary', size: 'large' }}
-              onClick={cancel}
-              text={MSG.buttonCancel}
-            />
-            <Button
-              appearance={{ theme: 'primary', size: 'large' }}
-              loading={isSubmitting}
-              text={MSG.buttonConfirm}
-              type="submit"
-            />
-          </DialogSection>
-        </>
-      )}
-    </ActionForm>
-  </Dialog>
-);
+  onSubmit,
+}: Props) => {
+  const handleSubmit = useCallback(
+    async ({ tokens }, formikHelpers) => {
+      await onSubmit({ tokens }, formikHelpers);
+      close();
+    },
+    [onSubmit, close],
+  );
+  return (
+    <Dialog cancel={cancel}>
+      <Form
+        initialValues={{
+          tokens: selectedTokens,
+        }}
+        onSubmit={handleSubmit}
+      >
+        {({ isSubmitting }: FormikProps<any>) => (
+          <>
+            <DialogSection>
+              <Heading
+                appearance={{ size: 'medium', margin: 'none' }}
+                text={MSG.title}
+              />
+            </DialogSection>
+            <DialogSection>
+              <Heading
+                text={MSG.instructionText}
+                appearance={{ size: 'normal', weight: 'thin' }}
+              />
+              <InputLabel label={MSG.fieldLabel} />
+              <div className={styles.tokenChoiceContainer}>
+                {availableTokens.map(token => (
+                  <TokenCheckbox
+                    key={token.address}
+                    nativeTokenAddress={nativeTokenAddress}
+                    token={token}
+                  />
+                ))}
+              </div>
+            </DialogSection>
+            <DialogSection appearance={{ align: 'right' }}>
+              <Button
+                appearance={{ theme: 'secondary', size: 'large' }}
+                onClick={cancel}
+                text={MSG.buttonCancel}
+              />
+              <Button
+                appearance={{ theme: 'primary', size: 'large' }}
+                loading={isSubmitting}
+                text={MSG.buttonConfirm}
+                type="submit"
+              />
+            </DialogSection>
+          </>
+        )}
+      </Form>
+    </Dialog>
+  );
+};
 
 TokenEditDialog.displayName = 'core.TokenEditDialog';
 

@@ -4,14 +4,14 @@ import { defineMessages, FormattedMessage } from 'react-intl';
 import { ROLES } from '~constants';
 import { useSelector } from '~utils/hooks';
 import { ActionTypes } from '~redux/index';
-import { ColonyType } from '~immutable/index';
 import { DialogActionButton } from '~core/Button';
 import Heading from '~core/Heading';
 import ExternalLink from '~core/ExternalLink';
+import { FullColonyFragment } from '~data/index';
 
 import { networkVersionSelector } from '../../../core/selectors';
 import { canEnterRecoveryMode } from '../../../users/checks';
-import { canBeUpgraded, isInRecoveryMode } from '../../../dashboard/checks';
+import { canBeUpgraded } from '../../../dashboard/checks';
 
 import styles from './ProfileAdvanced.css';
 
@@ -87,12 +87,18 @@ const MSG = defineMessages({
 const displayName = 'admin.Profile.ProfileAdvanced';
 
 interface Props {
-  colony: ColonyType;
+  colony: FullColonyFragment;
   rootRoles: ROLES[];
 }
 
 const ProfileAdvanced = ({
-  colony: { colonyAddress, id, version, canUnlockNativeToken },
+  colony: {
+    colonyAddress,
+    id,
+    version,
+    canUnlockNativeToken,
+    isNativeTokenLocked,
+  },
   colony,
   rootRoles,
 }: Props) => {
@@ -157,7 +163,7 @@ const ProfileAdvanced = ({
           <p className={styles.bigInfoText}>
             <FormattedMessage
               {...MSG.inRecoveryMode}
-              values={{ inRecoveryMode: isInRecoveryMode(colony) }}
+              values={{ inRecoveryMode: colony.isInRecoveryMode }}
             />
           </p>
         </div>
@@ -169,12 +175,10 @@ const ProfileAdvanced = ({
           success={ActionTypes.COLONY_RECOVERY_MODE_ENTER_SUCCESS}
           error={ActionTypes.COLONY_RECOVERY_MODE_ENTER_ERROR}
           values={{ colonyAddress }}
-          disabled={
-            isInRecoveryMode(colony) || !canEnterRecoveryMode(rootRoles)
-          }
+          disabled={colony.isInRecoveryMode || !canEnterRecoveryMode(rootRoles)}
         />
       </section>
-      {canUnlockNativeToken && (
+      {canUnlockNativeToken && isNativeTokenLocked && (
         <section className={styles.section}>
           <hr />
           <Heading

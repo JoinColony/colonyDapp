@@ -1,4 +1,5 @@
 /* This file is already part of apollo data. Don't delete */
+import { Resolvers } from 'apollo-client';
 import assignWith from 'lodash/fp/assignWith';
 
 import { LoggedInUserDocument } from './index';
@@ -17,7 +18,7 @@ export const initialCache = {
   },
 };
 
-export const resolvers = {
+export const loggedInUserResolvers = (): Resolvers => ({
   Mutation: {
     setLoggedInUser: (_root, { input }, { cache }) => {
       const { loggedInUser } = cache.readQuery({ query: LoggedInUserDocument });
@@ -31,4 +32,4 @@ export const resolvers = {
       return changedData.loggedInUser;
     },
   },
-};
+});

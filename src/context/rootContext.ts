@@ -14,7 +14,7 @@ export type RootContext = {
   [Context.DDB_CLASS]: typeof DDB;
   [Context.ENS_INSTANCE]: ENS;
   // @todo type the client cache properly
-  [Context.APOLLO_CLIENT]: ApolloClient<any>;
+  [Context.APOLLO_CLIENT]: ApolloClient<object>;
 };
 
 export const rootContext = {

@@ -1,11 +1,9 @@
 import React from 'react';
 
 import { ROOT_DOMAIN } from '~constants';
-import {
-  ColonyTokenReferenceType,
-  UserTokenReferenceType,
-} from '~immutable/index';
 import CardList from '~core/CardList';
+import { Address } from '~types/index';
+import { ColonyTokens, UserTokens } from '~data/index';
 
 import TokenCard from './TokenCard';
 import styles from './TokenList.css';
@@ -17,21 +15,23 @@ interface Appearance {
   numCols: ValidCols;
 }
 
-interface Props<T> {
+type ColonyOrUserToken = ColonyTokens[0] | UserTokens[0];
+
+interface Props {
   appearance?: Appearance;
   domainId?: number;
-  tokens: T[];
+  nativeTokenAddress?: Address;
+  tokens: ColonyOrUserToken[];
 }
 
 const displayName = 'admin.Tokens.TokenList';
 
-const TokenList = <
-  T extends ColonyTokenReferenceType | UserTokenReferenceType
->({
-  domainId = ROOT_DOMAIN,
-  tokens,
+const TokenList = ({
   appearance,
-}: Props<T>) => (
+  domainId = ROOT_DOMAIN,
+  nativeTokenAddress,
+  tokens,
+}: Props) => (
   <div className={styles.tokenCardContainer}>
     <CardList appearance={appearance}>
       {tokens.map(token => (
@@ -39,14 +39,12 @@ const TokenList = <
           {'balances' in token && (
             <TokenCard
               domainId={domainId}
-              token={token as ColonyTokenReferenceType}
+              nativeTokenAddress={nativeTokenAddress}
+              token={token}
             />
           )}
           {'balance' in token && (
-            <TokenCard
-              domainId={domainId}
-              token={token as UserTokenReferenceType}
-            />
+            <TokenCard domainId={domainId} token={token} />
           )}
         </div>
       ))}

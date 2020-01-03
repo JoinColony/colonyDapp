@@ -1,8 +1,9 @@
-#import './fragments.graphql'
+# import './fragments.graphql'
 
 query Task($id: String!) {
   task(id: $id) {
     id
+    ...Payouts
     assignedWorker {
       id
       profile {
@@ -20,6 +21,7 @@ query Task($id: String!) {
       colonyName
       avatarHash
       displayName
+      nativeTokenAddress
     }
     colonyAddress
     createdAt
@@ -39,7 +41,6 @@ query Task($id: String!) {
     ethSkillId
     ethTaskId
     finalizedAt
-    # fixme return payouts as well
     title
     workInvites {
       id
@@ -61,6 +62,53 @@ query Task($id: String!) {
       }
     }
     workRequestAddresses
+  }
+}
+
+query TaskToEdit($id: String!) {
+  task(id: $id) {
+    id
+    ...Payouts
+    assignedWorker {
+      id
+      profile {
+        avatarHash
+        displayName
+        username
+        walletAddress
+      }
+    }
+    workRequests {
+      id
+      profile {
+        avatarHash
+        displayName
+        username
+        walletAddress
+      }
+    }
+    colony {
+      id
+      nativeTokenAddress
+      subscribedUsers {
+        id
+        profile {
+          displayName
+          walletAddress
+          username
+          avatarHash
+        }
+      }
+      tokens {
+        id
+        address
+        details @client {
+          decimals
+          name
+          symbol
+        }
+      }
+    }
   }
 }
 
@@ -101,6 +149,7 @@ query UserTasks($address: String!) {
     id
     tasks {
       id
+      ...Payouts
       assignedWorker {
         id
         profile {
@@ -112,6 +161,8 @@ query UserTasks($address: String!) {
       colony {
         id
         colonyName
+        displayName
+        nativeTokenAddress
       }
       colonyAddress
       createdAt
@@ -129,26 +180,62 @@ query UserTasks($address: String!) {
 query UserTokens($address: String!) {
   user(address: $address) {
     id
-    tokens
+    tokens {
+      id
+      address
+      iconHash
+      details @client {
+        decimals
+        name
+        symbol
+      }
+      balance(walletAddress: $address) @client
+    }
   }
+}
+
+
+query ColonyFromName($name: String!, $address: String!) {
+  colonyAddress(name: $name) @client @export(as: "address")
+  colony(address: $address) {
+    ...FullColony
+  }
+}
+
+query ColonyName($address: String!) {
+  colonyName(address: $address) @client
 }
 
 query Colony($address: String!) {
   colony(address: $address) {
+    ...FullColony
+  }
+}
+
+query ColonyTokens($address: String!) {
+  colony(address: $address) {
     id
-    colonyAddress
-    colonyName
-    avatarHash
-    description
-    displayName
-    guideline
-    website
-    tokens {
+    ...Tokens
+  }
+}
+
+query TokenBalancesForDomains($colonyAddress: String!, $tokenAddresses: [String!], $domainIds: [Int!]) {
+  colony(address: $colonyAddress) {
+    id
+    tokens(addresses: $tokenAddresses) {
+      id
       address
-      name
-      symbol
-      iconHash
+      balances(colonyAddress: $colonyAddress, domainIds: $domainIds) @client {
+        domainId
+        amount
+      }
     }
+  }
+}
+
+query ColonyProfile($address: String!) {
+  colony(address: $address) {
+    ...ColonyProfile
   }
 }
 
@@ -167,6 +254,7 @@ query ColonyTasks($address: String!) {
     id
     tasks {
       id
+      ...Payouts
       assignedWorker {
         id
         profile {
@@ -178,6 +266,8 @@ query ColonyTasks($address: String!) {
       colony {
         id
         colonyName
+        displayName
+        nativeTokenAddress
       }
       colonyAddress
       createdAt
@@ -212,8 +302,30 @@ query Domain($colonyAddress: String!, $ethDomainId: Int!) {
     id
     ethDomainId
     name
-    parent {
-      ethDomainId
+    ethParentDomainId
+  }
+}
+
+query Token($address: String!) {
+  token(address: $address) {
+    id
+    address
+    iconHash
+    details @client {
+      decimals
+      name
+      symbol
+    }
+  }
+}
+
+query TokenInfo($address: String!) {
+  token(address: $address) {
+    # This is deliberately _not_ renamed to details as we are using this in the local details resolver
+    info {
+      decimals
+      name
+      symbol
     }
   }
 }
@@ -225,9 +337,38 @@ query ColonyDomains($colonyAddress: String!) {
       id
       ethDomainId
       name
-      parent {
-        id
+      ethParentDomainId
+    }
+  }
+}
+
+query AllTokens {
+  allTokens {
+    id
+    address
+    iconHash
+    details: info {
+      name
+      symbol
+      decimals
+    }
+  }
+}
+
+query UserNotifications($address: String!) {
+  user(address: $address) {
+    id
+    notifications {
+      id
+      event {
+        type
+        createdAt
+        initiatorAddress
+        sourceId
+        sourceType
+        ...EventContext
       }
+      read
     }
   }
 }

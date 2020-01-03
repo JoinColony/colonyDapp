@@ -26,6 +26,9 @@ mutation CancelTask($input: TaskIdInput!) {
 mutation CreateTask($input: CreateTaskInput!) {
   createTask(input: $input) {
     id
+    colony {
+      colonyName
+    }
     events {
       ...TaskEvent
     }
@@ -60,7 +63,7 @@ mutation RemoveTaskPayout($input: RemoveTaskPayoutInput!) {
     events {
       ...TaskEvent
     }
-    # fixme return payouts from `removeTaskPayout` mutation
+    ...Payouts
   }
 }
 
@@ -112,7 +115,13 @@ mutation SetTaskPayout($input: SetTaskPayoutInput!) {
     events {
       ...TaskEvent
     }
-    # fixme return payouts from `setTaskPayout` mutation
+    payouts {
+      amount
+      token {
+        id
+        address
+      }
+    }
   }
 }
 
@@ -192,7 +201,14 @@ mutation EditUser($input: EditUserInput!) {
 mutation SetUserTokens($input: SetUserTokensInput!) {
   setUserTokens(input: $input) {
     id
-    tokens
+    tokenAddresses
+  }
+}
+
+mutation SetColonyTokens($input: SetColonyTokensInput!) {
+  setColonyTokens(input: $input) {
+    id
+    tokenAddresses
   }
 }
 

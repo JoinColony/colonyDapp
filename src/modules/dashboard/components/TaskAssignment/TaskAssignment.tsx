@@ -2,42 +2,33 @@ import React from 'react';
 
 import Assignment from '~core/Assignment';
 import { SpinnerLoader } from '~core/Preloaders';
-import { useTaskQuery, AnyTask } from '~data/index';
+import { AnyTask, FullColonyFragment, useTaskQuery } from '~data/index';
 import { Address } from '~types/index';
 
-import { useColonyNativeToken } from '../../hooks/useColonyNativeToken';
-import { useColonyTokens } from '../../hooks/useColonyTokens';
-
-// eslint-disable-next-line @typescript-eslint/no-empty-interface
 interface Props {
   draftId: AnyTask['id'];
-  colonyAddress: Address;
+  nativeTokenAddress: Address;
+  tokens: FullColonyFragment['tokens'];
 }
 
 const displayName = 'dashboard.TaskAssignment';
 
-const TaskAssignment = ({ colonyAddress, draftId }: Props) => {
+const TaskAssignment = ({ draftId, nativeTokenAddress, tokens }: Props) => {
   const { data } = useTaskQuery({ variables: { id: draftId } });
-  const nativeTokenReference = useColonyNativeToken(colonyAddress);
-  const [, tokenOptions] = useColonyTokens(colonyAddress);
-
-  // fixme get payouts from centralized store
-  const payouts = [];
 
   if (!data) {
     return <SpinnerLoader />;
   }
 
   const {
-    task: { assignedWorker },
+    task: { assignedWorker, payouts },
   } = data;
 
-  return nativeTokenReference && tokenOptions ? (
+  return tokens ? (
     <Assignment
-      nativeToken={nativeTokenReference}
       payouts={payouts}
       reputation={undefined}
-      tokenOptions={tokenOptions}
+      nativeTokenAddress={nativeTokenAddress}
       worker={assignedWorker || undefined}
       workerAddress={
         assignedWorker ? assignedWorker.profile.walletAddress : undefined

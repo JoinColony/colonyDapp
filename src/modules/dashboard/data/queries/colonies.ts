@@ -1,20 +1,11 @@
 import { Set as ImmutableSet } from 'immutable';
 
 import { ROOT_DOMAIN, ROLES } from '~constants';
-import { Address, RoleSet, createAddress, ENSCache, Event } from '~types/index';
-import {
-  ColonyClient,
-  ColonyManager,
-  ColonyStore,
-  DDB,
-  NetworkClient,
-  Query,
-  Wallet,
-} from '~data/types';
-import { ColonyRolesType, DomainType, DomainRolesType } from '~immutable/index';
+import { Address, RoleSet, createAddress, ENSCache } from '~types/index';
+import { ColonyClient, ColonyManager, NetworkClient, Query } from '~data/types';
+import { ColonyRolesType, DomainRolesType } from '~immutable/index';
+
 import { Context } from '~context/index';
-import { EventTypes } from '~data/constants';
-import { getColonyStore } from '~data/stores';
 import { getEvents } from '~utils/web3/eventLogs';
 import { ZERO_ADDRESS } from '~utils/web3/constants';
 
@@ -37,11 +28,6 @@ interface ColonyRoleSetEventData {
 }
 
 const context = [Context.COLONY_MANAGER];
-const colonyContext = [
-  Context.COLONY_MANAGER,
-  Context.DDB_INSTANCE,
-  Context.WALLET,
-];
 
 export const prepareColonyClientQuery = async (
   {
@@ -54,23 +40,6 @@ export const prepareColonyClientQuery = async (
   if (!colonyAddress)
     throw new Error('Cannot prepare query. Metadata is invalid');
   return colonyManager.getColonyClient(colonyAddress);
-};
-
-const prepareColonyStoreQuery = async (
-  {
-    colonyManager,
-    ddb,
-    wallet,
-  }: {
-    colonyManager: ColonyManager;
-    ddb: DDB;
-    wallet: Wallet;
-  },
-  metadata: ColonyStoreMetadata,
-) => {
-  const { colonyAddress } = metadata;
-  const colonyClient = await colonyManager.getColonyClient(colonyAddress);
-  return getColonyStore(colonyClient, ddb, wallet)(metadata);
 };
 
 // This will be unnecessary as soon as we have the RecoveryRoleSet event on the ColonyClient
@@ -151,63 +120,6 @@ export const getColonyRoles: ContractEventQuery<void, ColonyRolesType> = {
           {} as ColonyRolesType,
         )
     );
-  },
-};
-
-export const getColonyDomains: Query<
-  ColonyStore,
-  ColonyStoreMetadata,
-  void,
-  DomainType[]
-> = {
-  name: 'getColonyDomains',
-  context: colonyContext,
-  prepare: prepareColonyStoreQuery,
-  async execute(colonyStore) {
-    const colonyDomains = colonyStore
-      .all()
-      .filter(
-        ({ type }) =>
-          type === EventTypes.DOMAIN_CREATED ||
-          type === EventTypes.DOMAIN_EDITED,
-      )
-      .sort((a, b) => a.meta.timestamp - b.meta.timestamp)
-      .reduce(
-        (
-          domains,
-          event: Event<EventTypes.DOMAIN_CREATED | EventTypes.DOMAIN_EDITED>,
-        ) => {
-          const {
-            payload: { domainId: currentDomainId },
-          } = event;
-          const difference = domains.filter(
-            ({ payload: { domainId } }) => currentDomainId !== domainId,
-          );
-
-          return [...difference, event];
-        },
-        [],
-      )
-      .map(
-        ({ payload: { domainId, name } }): DomainType => ({
-          id: domainId,
-          name,
-          // All will have parent of root for now; later, the parent domain ID
-          // will probably a parameter of the event (and of the on-chain event).
-          parentId: ROOT_DOMAIN,
-          roles: {},
-        }),
-      );
-
-    // Add the root domain at the start
-    const rootDomain: DomainType = {
-      id: ROOT_DOMAIN,
-      name: 'root',
-      parentId: null,
-      roles: {},
-    };
-
-    return [rootDomain, ...colonyDomains];
   },
 };
 

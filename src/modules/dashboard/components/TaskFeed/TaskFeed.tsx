@@ -2,14 +2,16 @@ import React, { Fragment, useRef, useLayoutEffect } from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 
 import { SpinnerLoader } from '~core/Preloaders';
-import { EventTypes } from '~data/constants';
-import { useTaskFeedEventsQuery, TaskMessageEvent, AnyTask } from '~data/index';
+import {
+  EventType,
+  useTaskFeedEventsQuery,
+  TaskMessageEvent,
+  AnyTask,
+} from '~data/index';
 import { Address } from '~types/index';
 
-import TaskFeedCompleteInfo from './TaskFeedCompleteInfo';
 import TaskFeedEvent from './TaskFeedEvent';
 import TaskFeedComment from './TaskFeedComment';
-import TaskFeedRating from './TaskFeedRating';
 import styles from './TaskFeed.css';
 
 const displayName = 'dashboard.TaskFeed';
@@ -37,7 +39,7 @@ const TaskFeed = ({ colonyAddress, draftId }: Props) => {
 
   useLayoutEffect(() => {
     // Content is not fully loaded at first, wait a moment
-    setTimeout(scrollToEnd, 1000);
+    setTimeout(scrollToEnd, 0);
   }, [bottomEl]);
 
   const { data } = useTaskFeedEventsQuery({
@@ -80,7 +82,7 @@ const TaskFeed = ({ colonyAddress, draftId }: Props) => {
                     initiatorAddress,
                     sourceId,
                   } = event;
-                  if (context.type === EventTypes.TASK_MESSAGE) {
+                  if (context.type === EventType.TaskMessage) {
                     const { message } = context as TaskMessageEvent;
                     return (
                       <TaskFeedComment
@@ -92,7 +94,7 @@ const TaskFeed = ({ colonyAddress, draftId }: Props) => {
                     );
                   }
 
-                  if (context.type === EventTypes.TASK_FINALIZED) {
+                  if (context.type === EventType.FinalizeTask) {
                     return (
                       <Fragment key={sourceId}>
                         {/* fixme  */}

@@ -2,17 +2,23 @@ import React, { useCallback } from 'react';
 import { defineMessages } from 'react-intl';
 
 import { Address } from '~types/index';
-import { AnyUser, useAssignWorkerMutation, AnyTask } from '~data/index';
+import {
+  AnyTask,
+  AnyUser,
+  Payouts,
+  useAssignWorkerMutation,
+  useColonyTokensQuery,
+} from '~data/index';
+import { ZERO_ADDRESS } from '~utils/web3/constants';
 import Assignment from '~core/Assignment';
 import Button from '~core/Button';
 import { FormStatus, Form } from '~core/Fields';
 import { FullscreenDialog } from '~core/Dialog';
 import DialogSection from '~core/Dialog/DialogSection';
 import Heading from '~core/Heading';
-import Payout from '~dashboard/TaskEditDialog/Payout';
+import Payout, { FormPayout } from '~dashboard/TaskEditDialog/Payout';
 import DialogBox from '~core/Dialog/DialogBox';
-import { useColonyNativeToken } from '../../hooks/useColonyNativeToken';
-import { useColonyTokens } from '../../hooks/useColonyTokens';
+
 import styles from './TaskInviteDialog.css';
 
 const MSG = defineMessages({
@@ -27,7 +33,7 @@ const MSG = defineMessages({
 });
 
 interface FormValues {
-  payouts: [{ amount: string; token: Address }];
+  payouts: FormPayout;
   workerAddress: Address;
 }
 
@@ -37,6 +43,7 @@ interface Props {
   currentUser: AnyUser;
   cancel: () => void;
   close: () => void;
+  payouts: Payouts;
 }
 
 const TaskInviteDialog = ({
@@ -47,15 +54,10 @@ const TaskInviteDialog = ({
     profile: { walletAddress },
   },
   currentUser,
+  payouts,
 }: Props) => {
-  // fixme get payouts from centralized store
-  const payouts = [];
-
   // @todo get reputation from centralized store (someday)
   const reputation = undefined;
-
-  const nativeTokenReference = useColonyNativeToken(colonyAddress);
-  const [, tokenOptions] = useColonyTokens(colonyAddress);
 
   const [assignWorker] = useAssignWorkerMutation();
 
@@ -72,16 +74,31 @@ const TaskInviteDialog = ({
     [assignWorker, draftId],
   );
 
+  // @TODO revise if the token query is still necessary
+  // @BODY This component is currently unused. Depending on from where we are opening it we can probably pass in all the required information via props. Then remove the ZERO_ADDRESS fallback!
+  const { data: colonyData } = useColonyTokensQuery({
+    variables: { address: colonyAddress },
+  });
+
+  const tokens = colonyData && colonyData.colony.tokens;
+  const nativeTokenAddress =
+    (colonyData && colonyData.colony.nativeTokenAddress) || ZERO_ADDRESS;
+
+  const initialPayouts = payouts.map(({ amount, token }) => ({
+    amount,
+    token: token.address,
+  }));
+
   return (
     <FullscreenDialog cancel={cancel}>
       <Form
         initialValues={{
-          payouts,
+          payouts: initialPayouts,
           worker: currentUser,
         }}
         onSubmit={onSubmit}
       >
-        {({ status, isSubmitting }) => (
+        {({ status, values, isSubmitting }) => (
           <>
             <FormStatus status={status} />
             <DialogBox>
@@ -90,14 +107,13 @@ const TaskInviteDialog = ({
                   appearance={{ size: 'medium' }}
                   text={MSG.titleAssignment}
                 />
-                {tokenOptions && (
+                {tokens && (
                   <Assignment
-                    nativeToken={nativeTokenReference}
                     payouts={payouts}
+                    nativeTokenAddress={nativeTokenAddress}
                     pending
                     reputation={reputation}
                     showFunding={false}
-                    tokenOptions={tokenOptions}
                     worker={currentUser}
                     workerAddress={walletAddress}
                   />
@@ -112,22 +128,16 @@ const TaskInviteDialog = ({
                     />
                   </div>
                   <div>
-                    {nativeTokenReference && payouts
-                      ? payouts.map((payout, index) => {
-                          const { amount, token } = payout;
+                    {nativeTokenAddress && values.payouts
+                      ? values.payouts.map((payout, index) => {
                           return (
                             <Payout
-                              key={token}
+                              key={payout.token.address}
+                              payout={payout}
                               name={`payouts.${index}`}
-                              amount={amount}
+                              tokens={tokens}
                               colonyAddress={colonyAddress}
-                              reputation={
-                                token === nativeTokenReference.address &&
-                                reputation
-                                  ? reputation
-                                  : undefined
-                              }
-                              tokenAddress={token}
+                              reputation={0}
                               editPayout={false}
                             />
                           );

@@ -6,14 +6,13 @@ import { useDispatch } from 'redux-react-hook';
 import throttle from 'lodash/throttle';
 
 import { COLONY_TOTAL_BALANCE_DOMAIN_ID, ROOT_DOMAIN } from '~constants';
-import { Address } from '~types/index';
 import {
   TasksFilterOptionType,
   TasksFilterOptions,
   tasksFilterSelectOptions,
 } from '../shared/tasksFilter';
 import { ActionTypes } from '~redux/index';
-import { useDataFetcher, useSelector, useTransformer } from '~utils/hooks';
+import { useDataFetcher, useTransformer } from '~utils/hooks';
 import { mergePayload } from '~utils/actions';
 import Transactions from '~admin/Transactions';
 import { Tab, Tabs, TabList, TabPanel } from '~core/Tabs';
@@ -23,20 +22,12 @@ import Button, { ActionButton } from '~core/Button';
 import RecoveryModeAlert from '~admin/RecoveryModeAlert';
 import LoadingTemplate from '~pages/LoadingTemplate';
 import BreadCrumb from '~core/BreadCrumb';
-import {
-  colonyAddressFetcher,
-  colonyFetcher,
-  domainsAndRolesFetcher,
-} from '../../fetchers';
-import {
-  colonyNativeTokenSelector,
-  colonyEthTokenSelector,
-} from '../../selectors';
+import { domainsAndRolesFetcher } from '../../fetchers';
 import { getUserRoles } from '../../../transformers';
-import { isInRecoveryMode as isInRecoveryModeCheck } from '../../checks';
 import { useLoggedInUser } from '~data/helpers';
 import { canAdminister, hasRoot } from '../../../users/checks';
 
+import { useColonyFromNameQuery } from '~data/index';
 import ColonyFunding from './ColonyFunding';
 import ColonyMeta from './ColonyMeta';
 import TabContribute from './TabContribute';
@@ -113,27 +104,16 @@ const ColonyHome = ({
     [setFilterOption],
   );
 
-  /*
-   * @NOTE Blockchain-first approach
-   * We get the colony's address from the ENS resolver, then using that,
-   * we fetch data from mongo
-   */
-  const { data: colonyAddress, error: addressError } = useDataFetcher(
-    colonyAddressFetcher,
-    [colonyName],
-    [colonyName],
-  );
-
-  const { data: colony } = useDataFetcher(
-    colonyFetcher,
-    [colonyAddress],
-    [colonyAddress],
-  );
+  // @TODO: Try to get proper error handling going in resolvers (for colonies that don't exist)
+  const { data } = useColonyFromNameQuery({
+    // We have to define an empty address here for type safety, will be replaced by the query
+    variables: { name: colonyName, address: '' },
+  });
 
   const { data: domains, isFetching: isFetchingDomains } = useDataFetcher(
     domainsAndRolesFetcher,
-    [colonyAddress],
-    [colonyAddress],
+    [data && data.colonyAddress],
+    [data && data.colonyAddress],
   );
 
   const { walletAddress } = useLoggedInUser();
@@ -165,42 +145,33 @@ const ColonyHome = ({
     }
   }, [domains, filteredDomainId]);
 
-  const colonyArgs: [Address | undefined] = [colonyAddress || undefined];
-  const nativeTokenRef = useSelector(colonyNativeTokenSelector, colonyArgs);
-  const ethTokenRef = useSelector(colonyEthTokenSelector, colonyArgs);
-
   const transform = useCallback(
     // Use ROOT_DOMAIN if filtered domain id equals 0
     mergePayload({
-      colonyAddress,
+      colonyAddress: data && data.colonyAddress,
       ethDomainId: filteredDomainId || ROOT_DOMAIN,
     }),
-    [colonyAddress, filteredDomainId],
+    [data && data.colonyAddress, filteredDomainId],
   );
 
-  if (!colonyName || addressError) {
+  if (!colonyName) {
     return <Redirect to="/404" />;
   }
 
   if (
-    !colony ||
-    !colonyAddress ||
     !domains ||
-    isFetchingDomains
-    /*
-     * @TODO Re-add nativeTokenRef
-     * Right now it gets hung up since the colony's data is no longer making it's way
-     * into the redux state
-     *
-     *!nativeTokenRef ||
-     */
+    isFetchingDomains ||
+    !data ||
+    !data.colonyAddress ||
+    !data.colony
   ) {
     return <LoadingTemplate loadingText={MSG.loadingText} />;
   }
 
+  const { colony } = data;
+
   // Eventually this has to be in the proper domain. There's probably going to be a different UI for that
   const canCreateTask = canAdminister(currentDomainUserRoles);
-  const isInRecoveryMode = isInRecoveryModeCheck(colony);
 
   const noFilter = (
     <Heading
@@ -215,7 +186,9 @@ const ColonyHome = ({
         <div className={styles.metaContainer}>
           <ColonyMeta
             colony={colony}
-            canAdminister={!isInRecoveryMode && canAdminister(rootUserRoles)}
+            canAdminister={
+              !colony.isInRecoveryMode && canAdminister(rootUserRoles)
+            }
             domains={domains}
             filteredDomainId={filteredDomainId}
             setFilteredDomainId={setFilteredDomainId}
@@ -260,7 +233,7 @@ const ColonyHome = ({
                         onClick={throttle(onClick, 2000)}
                       />
                     )}
-                    disabled={isInRecoveryMode}
+                    disabled={colony.isInRecoveryMode}
                     error={ActionTypes.TASK_CREATE_ERROR}
                     submit={ActionTypes.TASK_CREATE}
                     success={ActionTypes.TASK_CREATE_SUCCESS}
@@ -277,8 +250,6 @@ const ColonyHome = ({
               colony={colony}
               filteredDomainId={filteredDomainId}
               filterOption={filterOption}
-              ethTokenRef={ethTokenRef}
-              nativeTokenRef={nativeTokenRef}
               showQrCode={hasRoot(rootUserRoles)}
             />
           </TabPanel>
@@ -288,12 +259,9 @@ const ColonyHome = ({
         </Tabs>
       </main>
       <aside className={styles.sidebar}>
-        <ColonyFunding
-          colonyAddress={colonyAddress}
-          currentDomainId={filteredDomainId}
-        />
+        <ColonyFunding colony={colony} currentDomainId={filteredDomainId} />
       </aside>
-      {isInRecoveryMode && <RecoveryModeAlert />}
+      {colony.isInRecoveryMode && <RecoveryModeAlert />}
     </div>
   );
 };

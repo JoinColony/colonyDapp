@@ -89,16 +89,11 @@ const allDomainsReducer: ReducerType<AllDomainsMap> = (
         FetchableData({
           record: ImmutableMap(
             domains.map(domain => [
-              domain.ethDomainId,
+              domain.id,
               Domain({
                 ...domain,
-                id: domain.ethDomainId,
-                parentId: domain.parent ? domain.parent.ethDomainId : undefined,
                 // If the domain record is already set, ensure the roles are not modified
-                roles: state.getIn(
-                  [key, 'record', domain.ethDomainId, 'roles'],
-                  {},
-                ),
+                roles: state.getIn([key, 'record', domain.id, 'roles'], {}),
               }),
             ]),
           ),

@@ -3,13 +3,14 @@ import React from 'react';
 import Link from '~core/Link';
 import { SpinnerLoader } from '~core/Preloaders';
 import HookedColonyAvatar from '~dashboard/HookedColonyAvatar';
-import { ColonyProps } from '~immutable/index';
 import { useColonyQuery } from '~data/index';
 
 import styles from './ColoniesListItem.css';
 
 const ColonyAvatar = HookedColonyAvatar({ fetchColony: false });
-type Props = ColonyProps<'colonyAddress'>;
+interface Props {
+  colonyAddress: string;
+}
 
 const ColoniesListItem = ({ colonyAddress }: Props) => {
   const { loading, data } = useColonyQuery();

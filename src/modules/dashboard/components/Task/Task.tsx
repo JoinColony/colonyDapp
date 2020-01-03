@@ -18,11 +18,11 @@ import TaskFeed from '~dashboard/TaskFeed';
 import TaskRequestWork from '~dashboard/TaskRequestWork';
 import TaskSkills from '~dashboard/TaskSkills';
 import TaskTitle from '~dashboard/TaskTitle';
-import { useLoggedInUser } from '~data/helpers';
 import {
-  AnyColony,
   AnyTask,
   useCancelTaskMutation,
+  useColonyFromNameQuery,
+  useLoggedInUser,
   useTaskQuery,
 } from '~data/index';
 import LoadingTemplate from '~pages/LoadingTemplate';
@@ -116,7 +116,7 @@ const displayName = 'dashboard.Task';
 
 const Task = ({
   match: {
-    params: { draftId },
+    params: { colonyName, draftId },
   },
   openDialog,
   history,
@@ -131,13 +131,17 @@ const Task = ({
     variables: { id: draftId },
   });
 
+  const { data: colonyData } = useColonyFromNameQuery({
+    variables: { address: '', name: colonyName },
+  });
+
   const {
     task: {
-      colony = {} as AnyColony,
       description = undefined,
       ethDomainId = undefined,
       dueDate = undefined,
       ethSkillId = undefined,
+      payouts = [],
       title = undefined,
     } = {},
     task = undefined,
@@ -145,8 +149,8 @@ const Task = ({
 
   const { data: domains, isFetching: isFetchingDomains } = useDataFetcher(
     domainsAndRolesFetcher,
-    [colony ? colony.colonyAddress : ''],
-    [colony ? colony.colonyAddress : undefined],
+    [colonyData && colonyData.colonyAddress],
+    [colonyData && colonyData.colonyAddress],
   );
 
   const userRoles = useTransformer(getUserRoles, [
@@ -163,28 +167,30 @@ const Task = ({
     }
 
     openDialog('TaskEditDialog', {
+      colonyAddress: colonyData && colonyData.colonyAddress,
       draftId,
       maxTokens: 1,
       minTokens: 0,
     });
-  }, [draftId, openDialog, task]);
+  }, [colonyData, draftId, openDialog, task]);
 
   const transform = useCallback(
     mergePayload({
-      colonyAddress: colony ? colony.colonyAddress : '',
+      colonyAddress: colonyData && colonyData.colonyAddress,
       draftId,
     }),
-    [colony, draftId],
+    [colonyData, draftId],
   );
 
   const [handleCancelTask] = useCancelTaskMutation({
     variables: { input: { id: draftId } },
   });
 
-  if (isFetchingDomains || !task || !colony || !domains || !walletAddress) {
+  if (isFetchingDomains || !task || !colonyData || !domains || !walletAddress) {
     return <LoadingTemplate loadingText={MSG.loadingText} />;
   }
 
+  const { colony } = colonyData;
   const canEdit = canEditTask(task, userRoles);
 
   return (
@@ -219,8 +225,9 @@ const Task = ({
           <div className={styles.assignment}>
             <div>
               <TaskAssignment
-                colonyAddress={colony.colonyAddress}
                 draftId={draftId}
+                nativeTokenAddress={colony.nativeTokenAddress}
+                tokens={colony.tokens}
               />
             </div>
             {canEdit && (
@@ -256,6 +263,7 @@ const Task = ({
                   disabled
                   ethDomainId={ethDomainId}
                   draftId={draftId}
+                  payouts={payouts}
                 />
               </div>
             )}

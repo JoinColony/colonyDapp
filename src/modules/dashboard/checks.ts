@@ -1,18 +1,14 @@
 import { ROLES } from '~constants';
-import { TaskStates } from '~data/constants';
-import { AnyTask } from '~data/index';
-import { ColonyType, TaskUserType } from '~immutable/index';
+import { AnyTask, FullColonyFragment } from '~data/index';
+import { TaskUserType } from '~immutable/index';
 import { Address } from '~types/index';
 import { hasRoot, canAdminister, canFund } from '../users/checks';
 
 /*
  * Colony
  */
-export const isInRecoveryMode = (colony: ColonyType | undefined) =>
-  !!(colony && colony.inRecoveryMode);
-
 export const canBeUpgraded = (
-  colony: ColonyType | undefined,
+  colony: FullColonyFragment | undefined,
   networkVersion: number | null,
 ) =>
   colony && colony.version && networkVersion && networkVersion > colony.version;
@@ -29,8 +25,9 @@ export const didClaimPayout = (
   userAddress: Address,
 ) => taskUser && taskUser.didClaimPayout && taskUser.address === userAddress;
 
-export const isManager = ({ managerAddress }: AnyTask, userAddress: Address) =>
-  managerAddress === userAddress;
+// @todo reimplement isManager
+export const isManager = (task: AnyTask, managerAddress?: string) =>
+  task && !!managerAddress && false;
 
 export const isWorker = (
   { assignedWorkerAddress }: AnyTask,
@@ -47,14 +44,14 @@ export const isFinalized = ({ finalizedAt }: AnyTask) => !!finalizedAt;
 
 export const isCancelled = ({ cancelledAt }: AnyTask) => !!cancelledAt;
 
-export const isRating = ({ currentState }: AnyTask) =>
-  currentState === TaskStates.RATING;
+// @todo reimplement isRating
+export const isRating = (task: AnyTask) => task && false;
 
 export const isActive = ({ cancelledAt, finalizedAt }: AnyTask) =>
   !cancelledAt && !finalizedAt;
 
-export const isReveal = ({ currentState }: AnyTask) =>
-  currentState === TaskStates.REVEAL;
+// @todo reimplement isReveal
+export const isReveal = (task: AnyTask) => task && false;
 
 export const didDueDateElapse = ({ dueDate }: AnyTask) =>
   !!(dueDate && new Date(dueDate) < new Date());

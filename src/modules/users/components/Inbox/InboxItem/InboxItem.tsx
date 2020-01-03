@@ -9,16 +9,17 @@ import Numeral from '~core/Numeral';
 import Link from '~core/Link';
 import HookedUserAvatar from '~users/HookedUserAvatar';
 import { SpinnerLoader } from '~core/Preloaders';
-import { useDataFetcher, useSelector } from '~utils/hooks';
-
+import { useDataFetcher } from '~utils/hooks';
 import {
-  domainsFetcher,
-  tokenFetcher,
-  colonyFetcher,
-} from '../../../../dashboard/fetchers';
-import { useMarkNotificationAsReadMutation } from '~data/index';
+  useColonyNameQuery,
+  useMarkNotificationAsReadMutation,
+  useTokenQuery,
+  useUserQuery,
+  useTaskQuery,
+} from '~data/index';
 
-import { friendlyColonyNameSelector } from '../../../../dashboard/selectors';
+import { domainsFetcher } from '../../../../dashboard/fetchers';
+
 import { getFriendlyName, getUsername } from '../../../transformers';
 import { transformNotificationEventNames } from '../../../data/utils';
 
@@ -84,41 +85,49 @@ const InboxItem = ({
     context: {
       amount,
       colonyAddress,
-      comment,
+      message,
       domainId,
       draftId,
       setTo,
-      taskTitle,
+      taskId,
       tokenAddress,
     },
     onClickRoute,
-    initiator,
-    // FIXME targetUser needs to be expanded on the db. If not given in event on db it needs to be the current user
-    targetUser,
+    initiator: initiatorAddress,
+    targetUser: targetUserAddress,
     timestamp,
   },
   full,
 }: Props) => {
-  const initiatorFriendlyName =
-    typeof initiator == 'string' ? initiator : getFriendlyName(initiator);
-  const initiatorUsername =
-    typeof initiator == 'string' ? initiator : getUsername(initiator);
+  const { data: initiatorUser } = useUserQuery({
+    variables: { address: initiatorAddress },
+  });
 
-  const targetUserFriendlyName =
-    typeof targetUser == 'string' ? targetUser : getFriendlyName(targetUser);
-  const targetUserUsername =
-    typeof targetUser == 'string' ? targetUser : getUsername(targetUser);
+  const { data: targetUser } = useUserQuery({
+    variables: { address: targetUserAddress },
+  });
 
-  const { data: colony, isFetching: isFetchingColony } = useDataFetcher(
-    colonyFetcher,
-    [colonyAddress],
-    [colonyAddress],
-  );
-  const colonyDisplayNameWithFallback = useSelector(
-    friendlyColonyNameSelector,
-    [colonyAddress],
-  );
-  const colonyName = colony && colony.colonyName;
+  const { data: taskData } = useTaskQuery({
+    variables: { id: taskId },
+  });
+
+  const initiatorFriendlyName = !initiatorUser
+    ? initiatorAddress
+    : getFriendlyName(initiatorUser.user);
+  const initiatorUsername = !initiatorUser
+    ? initiatorAddress
+    : getUsername(initiatorUser.user);
+
+  const targetUserFriendlyName = !targetUser
+    ? targetUserAddress
+    : getFriendlyName(targetUser.user);
+  const targetUserUsername = !targetUser
+    ? targetUserAddress
+    : getUsername(targetUser.user);
+
+  const { data: colonyNameData } = useColonyNameQuery({
+    variables: { address: colonyAddress },
+  });
 
   const { data: domains, isFetching: isFetchingDomains } = useDataFetcher(
     domainsFetcher,
@@ -128,11 +137,9 @@ const InboxItem = ({
   const currentDomain: DomainType | undefined =
     domainId && domains && domains[domainId];
 
-  const { data: token, isFetching: isFetchingToken } = useDataFetcher(
-    tokenFetcher,
-    [tokenAddress],
-    [tokenAddress],
-  );
+  const { data: tokenData } = useTokenQuery({
+    variables: { address: tokenAddress },
+  });
 
   const [markAsReadMutation] = useMarkNotificationAsReadMutation({
     variables: { input: { id } },
@@ -142,14 +149,23 @@ const InboxItem = ({
     markAsReadMutation,
   ]);
 
-  const isFetching = isFetchingColony || isFetchingDomains || isFetchingToken;
+  const colonyName = colonyNameData && colonyNameData.colonyName;
+  const token = tokenData && tokenData.token;
+  const taskTitle = taskData && taskData.task && taskData.task.title;
 
   return (
     <TableRow onClick={markAsRead}>
       <TableCell
         className={full ? styles.inboxRowCellFull : styles.inboxRowCellPopover}
       >
-        {isFetching ? (
+        {/*
+         * @FIXME The first ever notification for every user (user profile claimed)
+         * does not have a colony name or a token, so in that case the spinner
+         * will always render even though it shouldn't at that point
+         */
+        // !colonyName ||
+        // !token ||
+        isFetchingDomains ? (
           <div className={styles.spinnerWrapper}>
             <SpinnerLoader
               loadingText={LOCAL_MSG.loadingText}
@@ -159,12 +175,12 @@ const InboxItem = ({
         ) : (
           <WithLink to={onClickRoute}>
             {unread && <UnreadIndicator type={getType(eventType)} />}
-            {typeof initiator != 'string' && (
+            {initiatorUser && initiatorUser.user && (
               <div className={styles.avatarWrapper}>
                 <UserAvatar
                   showInfo
                   size="xxs"
-                  address={initiator.profile.walletAddress}
+                  address={initiatorUser.user.profile.walletAddress}
                   className={styles.userAvatar}
                 />
               </div>
@@ -180,24 +196,22 @@ const InboxItem = ({
                 values={{
                   amount: makeInboxDetail(amount, value => (
                     <Numeral
-                      suffix={` ${token ? token.symbol : ''}`}
+                      suffix={` ${token ? token.details.symbol : ''}`}
                       integerSeparator=""
-                      unit={(token && token.decimals) || 18}
+                      unit={(token && token.details.decimals) || 18}
                       value={value}
                     />
                   )),
                   colonyAddress: makeInboxDetail(colonyAddress),
                   colonyName: makeInboxDetail(colonyName),
-                  colonyDisplayName: makeInboxDetail(
-                    colonyDisplayNameWithFallback,
-                    value =>
-                      colonyName ? (
-                        <Link to={`/colony/${colonyName}`}>{value}</Link>
-                      ) : (
-                        value
-                      ),
+                  colonyDisplayName: makeInboxDetail(colonyName, value =>
+                    colonyName ? (
+                      <Link to={`/colony/${colonyName}`}>{value}</Link>
+                    ) : (
+                      value
+                    ),
                   ),
-                  comment: makeInboxDetail(comment),
+                  comment: makeInboxDetail(message),
                   domainName: makeInboxDetail(
                     currentDomain && currentDomain.name,
                   ),
@@ -243,9 +257,7 @@ const InboxItem = ({
                       {...MSG.metaColonyAndDomain}
                       values={{
                         colonyDisplayName: (
-                          <Link to={`/colony/${colonyName}`}>
-                            {colonyDisplayNameWithFallback}
-                          </Link>
+                          <Link to={`/colony/${colonyName}`}>{colonyName}</Link>
                         ),
                         domainName: currentDomain && currentDomain.name,
                       }}
@@ -255,9 +267,7 @@ const InboxItem = ({
                       {...MSG.metaColonyOnly}
                       values={{
                         colonyDisplayName: (
-                          <Link to={`/colony/${colonyName}`}>
-                            {colonyDisplayNameWithFallback}
-                          </Link>
+                          <Link to={`/colony/${colonyName}`}>{colonyName}</Link>
                         ),
                       }}
                     />
@@ -269,9 +279,9 @@ const InboxItem = ({
                 <span>
                   <span className={styles.pipe}>|</span>
                   <Numeral
-                    suffix={` ${token ? token.symbol : ''}`}
+                    suffix={` ${token ? token.details.symbol : ''}`}
                     integerSeparator=""
-                    unit={(token && token.decimals) || 18}
+                    unit={(token && token.details.decimals) || 18}
                     value={amount}
                     appearance={{ size: 'small', theme: 'grey' }}
                   />
