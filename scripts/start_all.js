@@ -94,7 +94,12 @@ addProcess('wss', async () => {
 addProcess('db', async () => {
   const dbProcess = spawn('npm', ['run', 'db:start'], {
     cwd: path.resolve(__dirname, '..', 'src/lib/colonyServer'),
+    stdio: 'pipe',
   });
+  if (args.foreground) {
+    dbProcess.stdout.pipe(process.stdout);
+    dbProcess.stderr.pipe(process.stderr);
+  }
   dbProcess.on('error', e => {
     console.error(e);
     dbProcess.kill();
@@ -102,12 +107,17 @@ addProcess('db', async () => {
   await waitOn({ resources: ['tcp:27017'] });
   const cleanProcess = spawn('npm', ['run', 'db:clean'], {
     cwd: path.resolve(__dirname, '..', 'src/lib/colonyServer'),
+    stdio: 'pipe',
   });
+  if (args.foreground) {
+    cleanProcess.stdout.pipe(process.stdout);
+    cleanProcess.stderr.pipe(process.stderr);
+  }
   await new Promise((resolve, reject) => {
     cleanProcess.on('exit', cleanCode => {
       if (cleanCode) {
         dbProcess.kill();
-        return reject(new Error(`Clean process exited with code ${code}`));
+        return reject(new Error(`Clean process exited with code ${cleanCode}`));
       }
       const setupProcess = spawn('npm', ['run', 'db:setup'], {
         cwd: path.resolve(__dirname, '..', 'src/lib/colonyServer'),
@@ -115,7 +125,7 @@ addProcess('db', async () => {
       setupProcess.on('exit', setupCode => {
         if (setupCode) {
           dbProcess.kill();
-          return reject(new Error(`Setup process exited with code ${code}`));
+          return reject(new Error(`Setup process exited with code ${setupCode}`));
         }
         resolve();
       });
