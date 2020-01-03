@@ -757,9 +757,9 @@ export type Task = {
   dueDate?: Maybe<Scalars['DateTime']>,
   finalizedAt?: Maybe<Scalars['DateTime']>,
   title?: Maybe<Scalars['String']>,
-  colony: Colony,
+  colony?: Maybe<Colony>,
   colonyAddress: Scalars['String'],
-  creator: User,
+  creator?: Maybe<User>,
   creatorAddress: Scalars['String'],
   domain: Domain,
   assignedWorker?: Maybe<User>,
@@ -903,9 +903,11 @@ export type EventFieldsFragment = (
   )> }
 );
 
+export type EventContextFragment = { context: Pick<AssignWorkerEvent, 'taskId' | 'type' | 'workerAddress'> | Pick<CancelTaskEvent, 'taskId' | 'type'> | Pick<CreateTaskEvent, 'colonyAddress' | 'ethDomainId' | 'taskId' | 'type'> | Pick<CreateWorkRequestEvent, 'taskId' | 'type'> | Pick<FinalizeTaskEvent, 'taskId' | 'type'> | Pick<RemoveTaskPayoutEvent, 'amount' | 'taskId' | 'tokenAddress' | 'type'> | Pick<SendWorkInviteEvent, 'taskId' | 'type' | 'workerAddress'> | Pick<SetTaskDescriptionEvent, 'description' | 'taskId' | 'type'> | Pick<SetTaskDomainEvent, 'ethDomainId' | 'taskId' | 'type'> | Pick<SetTaskDueDateEvent, 'dueDate' | 'taskId' | 'type'> | Pick<SetTaskPayoutEvent, 'amount' | 'taskId' | 'tokenAddress' | 'type'> | Pick<SetTaskSkillEvent, 'ethSkillId' | 'taskId' | 'type'> | Pick<SetTaskTitleEvent, 'taskId' | 'title' | 'type'> | Pick<TaskMessageEvent, 'message' | 'taskId' | 'type'> | Pick<UnassignWorkerEvent, 'taskId' | 'type' | 'workerAddress'> };
+
 export type TaskEventFragment = (
-  { context: Pick<AssignWorkerEvent, 'taskId' | 'type' | 'workerAddress'> | Pick<CancelTaskEvent, 'taskId' | 'type'> | Pick<CreateTaskEvent, 'colonyAddress' | 'ethDomainId' | 'taskId' | 'type'> | Pick<CreateWorkRequestEvent, 'taskId' | 'type'> | Pick<FinalizeTaskEvent, 'taskId' | 'type'> | Pick<RemoveTaskPayoutEvent, 'amount' | 'taskId' | 'tokenAddress' | 'type'> | Pick<SendWorkInviteEvent, 'taskId' | 'type' | 'workerAddress'> | Pick<SetTaskDescriptionEvent, 'description' | 'taskId' | 'type'> | Pick<SetTaskDomainEvent, 'ethDomainId' | 'taskId' | 'type'> | Pick<SetTaskDueDateEvent, 'dueDate' | 'taskId' | 'type'> | Pick<SetTaskPayoutEvent, 'amount' | 'taskId' | 'tokenAddress' | 'type'> | Pick<SetTaskSkillEvent, 'ethSkillId' | 'taskId' | 'type'> | Pick<SetTaskTitleEvent, 'taskId' | 'title' | 'type'> | Pick<TaskMessageEvent, 'message' | 'taskId' | 'type'> | Pick<UnassignWorkerEvent, 'taskId' | 'type' | 'workerAddress'> }
-  & EventFieldsFragment
+  EventFieldsFragment
+  & EventContextFragment
 );
 
 export type AssignWorkerMutationVariables = {
@@ -935,7 +937,7 @@ export type CreateTaskMutationVariables = {
 
 export type CreateTaskMutation = { createTask: Maybe<(
     Pick<Task, 'id'>
-    & { colony: Pick<Colony, 'colonyName'>, events: Array<TaskEventFragment> }
+    & { colony: Maybe<Pick<Colony, 'colonyName'>>, events: Array<TaskEventFragment> }
   )> };
 
 export type CreateWorkRequestMutationVariables = {
@@ -1162,12 +1164,9 @@ export type TaskQuery = { task: (
     & { assignedWorker: Maybe<(
       Pick<User, 'id'>
       & { profile: Pick<UserProfile, 'avatarHash' | 'displayName' | 'username' | 'walletAddress'> }
-    )>, colony: Pick<Colony, 'id' | 'colonyAddress' | 'colonyName' | 'avatarHash' | 'displayName' | 'nativeTokenAddress'>, creator: (
+    )>, colony: Maybe<Pick<Colony, 'id' | 'colonyAddress' | 'colonyName' | 'avatarHash' | 'displayName' | 'nativeTokenAddress'>>, creator: Maybe<(
       Pick<User, 'id'>
       & { profile: Pick<UserProfile, 'avatarHash' | 'displayName' | 'username' | 'walletAddress'> }
-    ), payouts: Array<(
-      Pick<TaskPayout, 'amount'>
-      & { token: Pick<Token, 'id' | 'address'> }
     )>, workInvites: Array<(
       Pick<User, 'id'>
       & { profile: Pick<UserProfile, 'avatarHash' | 'displayName' | 'username' | 'walletAddress'> }
@@ -1191,7 +1190,7 @@ export type TaskToEditQuery = { task: (
     )>, workRequests: Array<(
       Pick<User, 'id'>
       & { profile: Pick<UserProfile, 'avatarHash' | 'displayName' | 'username' | 'walletAddress'> }
-    )>, colony: (
+    )>, colony: Maybe<(
       Pick<Colony, 'id' | 'nativeTokenAddress'>
       & { subscribedUsers: Array<(
         Pick<User, 'id'>
@@ -1200,7 +1199,7 @@ export type TaskToEditQuery = { task: (
         Pick<Token, 'id' | 'address'>
         & { details: Pick<TokenInfo, 'decimals' | 'name' | 'symbol'> }
       )> }
-    ) }
+    )> }
     & PayoutsFragment
   ) };
 
@@ -1241,7 +1240,7 @@ export type UserTasksQuery = { user: (
       & { assignedWorker: Maybe<(
         Pick<User, 'id'>
         & { profile: Pick<UserProfile, 'avatarHash'> }
-      )>, colony: Pick<Colony, 'id' | 'colonyName' | 'displayName' | 'nativeTokenAddress'> }
+      )>, colony: Maybe<Pick<Colony, 'id' | 'colonyName' | 'displayName' | 'nativeTokenAddress'>> }
       & PayoutsFragment
     )> }
   ) };
@@ -1338,9 +1337,8 @@ export type ColonyTasksQuery = { colony: (
       & { assignedWorker: Maybe<(
         Pick<User, 'id'>
         & { profile: Pick<UserProfile, 'avatarHash'> }
-      )>, colony: Pick<Colony, 'id' | 'colonyName' | 'displayName' | 'nativeTokenAddress'>, payouts: Array<(
-        & PayoutsFragment
-      )> }
+      )>, colony: Maybe<Pick<Colony, 'id' | 'colonyName' | 'displayName' | 'nativeTokenAddress'>> }
+      & PayoutsFragment
     )> }
   ) };
 
@@ -1399,6 +1397,22 @@ export type AllTokensQuery = { allTokens: Array<(
     Pick<Token, 'id' | 'address' | 'iconHash'>
     & { details: Pick<TokenInfo, 'name' | 'symbol' | 'decimals'> }
   )> };
+
+export type UserNotificationsQueryVariables = {
+  address: Scalars['String']
+};
+
+
+export type UserNotificationsQuery = { user: (
+    Pick<User, 'id'>
+    & { notifications: Maybe<Array<(
+      Pick<Notification, 'id' | 'read'>
+      & { event: (
+        Pick<Event, 'type' | 'createdAt' | 'initiatorAddress' | 'sourceId' | 'sourceType'>
+        & EventContextFragment
+      ) }
+    )>> }
+  ) };
 
 export const PayoutsFragmentDoc = gql`
     fragment Payouts on Task {
@@ -1478,9 +1492,8 @@ export const EventFieldsFragmentDoc = gql`
   type
 }
     `;
-export const TaskEventFragmentDoc = gql`
-    fragment TaskEvent on Event {
-  ...EventFields
+export const EventContextFragmentDoc = gql`
+    fragment EventContext on Event {
   context {
     ... on AssignWorkerEvent {
       taskId
@@ -1559,7 +1572,14 @@ export const TaskEventFragmentDoc = gql`
     }
   }
 }
-    ${EventFieldsFragmentDoc}`;
+    `;
+export const TaskEventFragmentDoc = gql`
+    fragment TaskEvent on Event {
+  ...EventFields
+  ...EventContext
+}
+    ${EventFieldsFragmentDoc}
+${EventContextFragmentDoc}`;
 export const AssignWorkerDocument = gql`
     mutation AssignWorker($input: AssignWorkerInput!) {
   assignWorker(input: $input) {
@@ -3475,3 +3495,48 @@ export function useAllTokensLazyQuery(baseOptions?: ApolloReactHooks.LazyQueryHo
 export type AllTokensQueryHookResult = ReturnType<typeof useAllTokensQuery>;
 export type AllTokensLazyQueryHookResult = ReturnType<typeof useAllTokensLazyQuery>;
 export type AllTokensQueryResult = ApolloReactCommon.QueryResult<AllTokensQuery, AllTokensQueryVariables>;
+export const UserNotificationsDocument = gql`
+    query UserNotifications($address: String!) {
+  user(address: $address) {
+    id
+    notifications {
+      id
+      event {
+        type
+        createdAt
+        initiatorAddress
+        sourceId
+        sourceType
+        ...EventContext
+      }
+      read
+    }
+  }
+}
+    ${EventContextFragmentDoc}`;
+
+/**
+ * __useUserNotificationsQuery__
+ *
+ * To run a query within a React component, call `useUserNotificationsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useUserNotificationsQuery` returns an object from Apollo Client that contains loading, error, and data properties 
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useUserNotificationsQuery({
+ *   variables: {
+ *      address: // value for 'address'
+ *   },
+ * });
+ */
+export function useUserNotificationsQuery(baseOptions?: ApolloReactHooks.QueryHookOptions<UserNotificationsQuery, UserNotificationsQueryVariables>) {
+        return ApolloReactHooks.useQuery<UserNotificationsQuery, UserNotificationsQueryVariables>(UserNotificationsDocument, baseOptions);
+      }
+export function useUserNotificationsLazyQuery(baseOptions?: ApolloReactHooks.LazyQueryHookOptions<UserNotificationsQuery, UserNotificationsQueryVariables>) {
+          return ApolloReactHooks.useLazyQuery<UserNotificationsQuery, UserNotificationsQueryVariables>(UserNotificationsDocument, baseOptions);
+        }
+export type UserNotificationsQueryHookResult = ReturnType<typeof useUserNotificationsQuery>;
+export type UserNotificationsLazyQueryHookResult = ReturnType<typeof useUserNotificationsLazyQuery>;
+export type UserNotificationsQueryResult = ApolloReactCommon.QueryResult<UserNotificationsQuery, UserNotificationsQueryVariables>;
