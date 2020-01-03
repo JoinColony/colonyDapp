@@ -225,12 +225,7 @@ function* colonyCreate({
 
       yield put<AllActions>(transactionLoadRelated(createUser.id, false));
 
-      /*
-       * @NOTE After the user is created, fetch it's inbox notifications
-       */
-      yield put<AllActions>({
-        type: ActionTypes.INBOX_ITEMS_FETCH,
-      });
+      // FIXME After the user is created, fetch it's inbox notifications
     }
 
     /*

@@ -10,7 +10,6 @@ import { TokenActionTypes } from './token';
 import { TransactionActionTypes } from './transaction';
 import { MessageActionTypes } from './message';
 import { UserActionTypes } from './user';
-import { InboxItemsActionTypes } from './inboxItems';
 import { UsernameActionTypes } from './username';
 import { WalletActionTypes } from './wallet';
 
@@ -107,7 +106,6 @@ export type AllActions =
   | TransactionActionTypes
   | MessageActionTypes
   | UserActionTypes
-  | InboxItemsActionTypes
   | UsernameActionTypes
   | WalletActionTypes;
 

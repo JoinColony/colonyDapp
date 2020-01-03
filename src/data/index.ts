@@ -13,6 +13,7 @@ import {
   TaskQuery,
   TokenBalancesForDomainsQuery,
   TokenQuery,
+  UserNotificationsQuery,
   UserQuery,
   UserTasksQuery,
   UserTokensQuery,
@@ -57,6 +58,8 @@ export type AnyTask =
   | UserTasksQuery['user']['tasks'][number];
 
 export type Payouts = PayoutsFragment['payouts'];
+
+export type Notifications = UserNotificationsQuery['user']['notifications'];
 
 export type AnyColonyProfile = FullColonyFragment | ColonyProfileFragment;
 
