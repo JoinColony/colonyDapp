@@ -30,62 +30,68 @@ const MSG = defineMessages({
 
 const displayName = 'pages.NavigationWrapper.UserNavigation';
 
-const UserNavigation = () => (
-  <div className={styles.main}>
-    <NetworkHealth
-      className={styles.navigationItemHealth}
-      appearance={{ size: 'small' }}
-    />
-    <NavLink
-      to={DASHBOARD_ROUTE}
-      className={styles.navigationItem}
-      activeClassName={styles.navigationItemActive}
-      data-test="goToDashboard"
-    >
-      <Icon name="home" title={MSG.dashboardTitle} />
-    </NavLink>
-    <GasStationPopover>
-      {({ isOpen, toggle, ref }) => (
-        <button
-          type="button"
-          className={styles.navigationItemButton}
-          ref={ref}
-          onClick={toggle}
-        >
-          <div
-            className={`${styles.navigationItem} ${
-              isOpen ? styles.navigationItemActive : ''
-            }`}
+const UserNavigation = () => {
+  // FIXME get notificiations here
+  const notifications = [];
+
+  return (
+    <div className={styles.main}>
+      <NetworkHealth
+        className={styles.navigationItemHealth}
+        appearance={{ size: 'small' }}
+      />
+      <NavLink
+        to={DASHBOARD_ROUTE}
+        className={styles.navigationItem}
+        activeClassName={styles.navigationItemActive}
+        data-test="goToDashboard"
+      >
+        <Icon name="home" title={MSG.dashboardTitle} />
+      </NavLink>
+      <GasStationPopover>
+        {({ isOpen, toggle, ref }) => (
+          <button
+            type="button"
+            className={styles.navigationItemButton}
+            ref={ref}
+            onClick={toggle}
           >
-            <Icon name="wallet" title={MSG.walletTitle} />
-          </div>
-        </button>
-      )}
-    </GasStationPopover>
-    <InboxPopover>
-      {({ isOpen, toggle, ref }) => (
-        <button
-          type="button"
-          className={styles.navigationItemButton}
-          ref={ref}
-          onClick={toggle}
-        >
-          <div
-            className={`${styles.navigationItem} ${
-              isOpen ? styles.navigationItemActive : ''
-            }`}
+            <div
+              className={`${styles.navigationItem} ${
+                isOpen ? styles.navigationItemActive : ''
+              }`}
+            >
+              <Icon name="wallet" title={MSG.walletTitle} />
+            </div>
+          </button>
+        )}
+      </GasStationPopover>
+      <InboxPopover notifications={notifications}>
+        {({ isOpen, toggle, ref }) => (
+          <button
+            type="button"
+            className={styles.navigationItemButton}
+            ref={ref}
+            onClick={toggle}
           >
-            <InboxIcon
-              activeClassName={styles.navigationItemActive}
-              title={MSG.inboxTitle}
-            />
-          </div>
-        </button>
-      )}
-    </InboxPopover>
-    <AvatarDropdown />
-  </div>
-);
+            <div
+              className={`${styles.navigationItem} ${
+                isOpen ? styles.navigationItemActive : ''
+              }`}
+            >
+              <InboxIcon
+                activeClassName={styles.navigationItemActive}
+                notifications={notifications}
+                title={MSG.inboxTitle}
+              />
+            </div>
+          </button>
+        )}
+      </InboxPopover>
+      <AvatarDropdown />
+    </div>
+  );
+};
 
 UserNavigation.displayName = displayName;
 

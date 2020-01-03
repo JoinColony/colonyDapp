@@ -6,7 +6,6 @@ export * from './ContractTransaction';
 export * from './Domain';
 export * from './FetchableData';
 export * from './GasPrices';
-export * from './InboxItem';
 export * from './Message';
 export * from './Network';
 export * from './TaskRating';

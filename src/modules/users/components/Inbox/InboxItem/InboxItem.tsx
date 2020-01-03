@@ -1,8 +1,8 @@
-import React, { ReactNode, useCallback } from 'react';
+import React, { ReactNode, useCallback, useEffect } from 'react';
 import { FormattedMessage, defineMessages } from 'react-intl';
 
 import { EventType } from '../types';
-import { DomainType, InboxItemType } from '~immutable/index';
+import { DomainType } from '~immutable/index';
 import TimeRelative from '~core/TimeRelative';
 import { TableRow, TableCell } from '~core/Table';
 import Numeral from '~core/Numeral';
@@ -11,11 +11,13 @@ import HookedUserAvatar from '~users/HookedUserAvatar';
 import { SpinnerLoader } from '~core/Preloaders';
 import { useDataFetcher } from '~utils/hooks';
 import {
-  useColonyNameQuery,
+  Notification,
+  useColonyNameLazyQuery,
   useMarkNotificationAsReadMutation,
-  useTokenQuery,
+  useTokenLazyQuery,
   useUserQuery,
-  useTaskQuery,
+  useUserLazyQuery,
+  useTaskLazyQuery,
 } from '~data/index';
 
 import { domainsFetcher } from '../../../../dashboard/fetchers';
@@ -38,7 +40,7 @@ const LOCAL_MSG = defineMessages({
 const displayName = 'users.Inbox.InboxItem';
 
 export interface Props {
-  item: InboxItemType;
+  item: Notification;
   full?: boolean;
 }
 
@@ -79,36 +81,58 @@ const WithLink = ({ to, children }: { to?: string; children: ReactNode }) =>
 
 const InboxItem = ({
   item: {
-    unread = true,
-    type: eventType,
     id,
-    context: {
-      amount,
-      colonyAddress,
-      message,
-      domainId,
-      draftId,
-      setTo,
-      taskId,
-      tokenAddress,
+    read,
+    event: {
+      context,
+      createdAt,
+      type: eventType,
+      /* onClickRoute, */
+      initiatorAddress,
     },
-    onClickRoute,
-    initiator: initiatorAddress,
-    targetUser: targetUserAddress,
-    timestamp,
   },
   full,
 }: Props) => {
+  // FIXME Get these from somewhere if applicable
+  const onClickRoute = 'xxx';
+  const setTo = true;
+  // Let's see what event type context props we have
+
+  // We might have more than just the worker as the target in the future
+  const { workerAddress: targetUserAddress = undefined } =
+    'workerAddress' in context ? context : {};
+  const { taskId = undefined } = 'taskId' in context ? context : {};
+  const { colonyAddress = undefined } =
+    'colonyAddress' in context ? context : {};
+  const { domainId = 0 } = 'domainId' in context ? context : {};
+  const { tokenAddress = undefined } = 'tokenAddress' in context ? context : {};
+  const { amount = undefined } = 'amount' in context ? context : {};
+  const { message = undefined } = 'message' in context ? context : {};
+
   const { data: initiatorUser } = useUserQuery({
     variables: { address: initiatorAddress },
   });
 
-  const { data: targetUser } = useUserQuery({
-    variables: { address: targetUserAddress },
+  const [loadTargetUser, { data: targetUser }] = useUserLazyQuery();
+  useEffect(() => {
+    if (targetUserAddress) {
+      loadTargetUser({ variables: { address: targetUserAddress } });
+    }
   });
 
-  const { data: taskData } = useTaskQuery({
-    variables: { id: taskId },
+  const [loadTask, { data: taskData }] = useTaskLazyQuery();
+  useEffect(() => {
+    if (taskId) loadTask({ variables: { id: taskId } });
+  });
+
+  const [loadColony, { data: colonyNameData }] = useColonyNameLazyQuery();
+  useEffect(() => {
+    if (colonyAddress) loadColony({ variables: { address: colonyAddress } });
+  });
+
+  const [loadToken, { data: tokenData }] = useTokenLazyQuery();
+  useEffect(() => {
+    if (tokenAddress) loadToken({ variables: { address: tokenAddress } });
   });
 
   const initiatorFriendlyName = !initiatorUser
@@ -125,21 +149,13 @@ const InboxItem = ({
     ? targetUserAddress
     : getUsername(targetUser.user);
 
-  const { data: colonyNameData } = useColonyNameQuery({
-    variables: { address: colonyAddress },
-  });
-
   const { data: domains, isFetching: isFetchingDomains } = useDataFetcher(
     domainsFetcher,
     [colonyAddress],
     [colonyAddress],
   );
-  const currentDomain: DomainType | undefined =
-    domainId && domains && domains[domainId];
 
-  const { data: tokenData } = useTokenQuery({
-    variables: { address: tokenAddress },
-  });
+  const currentDomain: DomainType | undefined = domains[domainId];
 
   const [markAsReadMutation] = useMarkNotificationAsReadMutation({
     variables: { input: { id } },
@@ -174,7 +190,7 @@ const InboxItem = ({
           </div>
         ) : (
           <WithLink to={onClickRoute}>
-            {unread && <UnreadIndicator type={getType(eventType)} />}
+            {!read && <UnreadIndicator type={getType(eventType)} />}
             {initiatorUser && initiatorUser.user && (
               <div className={styles.avatarWrapper}>
                 <UserAvatar
@@ -223,15 +239,15 @@ const InboxItem = ({
                     ),
                   ),
                   task: makeInboxDetail(taskTitle, value =>
-                    colonyName && draftId ? (
-                      <Link to={`/colony/${colonyName}/task/${draftId}`}>
+                    colonyName && taskId ? (
+                      <Link to={`/colony/${colonyName}/task/${taskId}`}>
                         {value}
                       </Link>
                     ) : (
                       value
                     ),
                   ),
-                  time: makeInboxDetail(timestamp, value => (
+                  time: makeInboxDetail(createdAt, value => (
                     <TimeRelative value={value} />
                   )),
                   user: makeInboxDetail(initiatorFriendlyName, value =>
@@ -290,7 +306,7 @@ const InboxItem = ({
 
               {(colonyName || amount) && <span className={styles.pipe}>|</span>}
               <span className={styles.time}>
-                {timestamp && <TimeRelative value={new Date(timestamp)} />}
+                {createdAt && <TimeRelative value={new Date(createdAt)} />}
               </span>
             </span>
           </WithLink>

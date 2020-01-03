@@ -28,11 +28,7 @@ import IPFSNode from '../../../lib/ipfs';
 import { authenticate } from '../../../api';
 import setupAdminSagas from '../../admin/sagas';
 import setupDashboardSagas from '../../dashboard/sagas';
-import {
-  getWallet,
-  setupUsersSagas,
-  setupInboxSagas,
-} from '../../users/sagas/index';
+import { getWallet, setupUsersSagas } from '../../users/sagas/index';
 import setupTransactionsSagas from './transactions';
 import setupConnectionSagas from './connection';
 import setupNetworkSagas from './network';
@@ -51,7 +47,6 @@ function* setupContextDependentSagas() {
     call(setupConnectionSagas),
     call(setupDashboardSagas),
     call(setupUsersSagas),
-    call(setupInboxSagas),
     call(setupTransactionsSagas),
     call(setupNetworkSagas),
   ]);
@@ -178,14 +173,7 @@ export default function* setupUserContext(
       type: ActionTypes.USER_CONTEXT_SETUP_SUCCESS,
     });
 
-    /*
-     * @NOTE Fetch the user's inbox notifications
-     * (If there are any, as the user might not have claimed a profile yet, in
-     * which case no notifications are available)
-     */
-    yield put<AllActions>({
-      type: ActionTypes.INBOX_ITEMS_FETCH,
-    });
+    // FIXME Fetch the user's inbox notifications
 
     yield call(setupOnBeforeUnload);
   } catch (caughtError) {
