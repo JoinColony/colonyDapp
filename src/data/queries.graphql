@@ -1,4 +1,4 @@
-#import './fragments.graphql'
+# import './fragments.graphql'
 
 query Task($id: String!) {
   task(id: $id) {
@@ -190,7 +190,7 @@ query UserTokens($address: String!) {
         symbol
       }
       balance(walletAddress: $address) @client
-    }  
+    }
   }
 }
 
@@ -351,6 +351,24 @@ query AllTokens {
       name
       symbol
       decimals
+    }
+  }
+}
+
+query UserNotifications($address: String!) {
+  user(address: $address) {
+    id
+    notifications {
+      id
+      event {
+        type
+        createdAt
+        initiatorAddress
+        sourceId
+        sourceType
+        ...EventContext
+      }
+      read
     }
   }
 }

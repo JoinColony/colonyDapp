@@ -14,6 +14,8 @@ import {
   useColonyNameQuery,
   useMarkNotificationAsReadMutation,
   useTokenQuery,
+  useUserQuery,
+  useTaskQuery,
 } from '~data/index';
 
 import { domainsFetcher } from '../../../../dashboard/fetchers';
@@ -83,30 +85,45 @@ const InboxItem = ({
     context: {
       amount,
       colonyAddress,
-      comment,
+      message,
       domainId,
       draftId,
       setTo,
-      taskTitle,
+      taskId,
       tokenAddress,
     },
     onClickRoute,
-    initiator,
-    // FIXME targetUser needs to be expanded on the db. If not given in event on db it needs to be the current user
-    targetUser,
+    initiator: initiatorAddress,
+    targetUser: targetUserAddress,
     timestamp,
   },
   full,
 }: Props) => {
-  const initiatorFriendlyName =
-    typeof initiator == 'string' ? initiator : getFriendlyName(initiator);
-  const initiatorUsername =
-    typeof initiator == 'string' ? initiator : getUsername(initiator);
+  const { data: initiatorUser } = useUserQuery({
+    variables: { address: initiatorAddress },
+  });
 
-  const targetUserFriendlyName =
-    typeof targetUser == 'string' ? targetUser : getFriendlyName(targetUser);
-  const targetUserUsername =
-    typeof targetUser == 'string' ? targetUser : getUsername(targetUser);
+  const { data: targetUser } = useUserQuery({
+    variables: { address: targetUserAddress },
+  });
+
+  const { data: taskData } = useTaskQuery({
+    variables: { id: taskId },
+  });
+
+  const initiatorFriendlyName = !initiatorUser
+    ? initiatorAddress
+    : getFriendlyName(initiatorUser.user);
+  const initiatorUsername = !initiatorUser
+    ? initiatorAddress
+    : getUsername(initiatorUser.user);
+
+  const targetUserFriendlyName = !targetUser
+    ? targetUserAddress
+    : getFriendlyName(targetUser.user);
+  const targetUserUsername = !targetUser
+    ? targetUserAddress
+    : getUsername(targetUser.user);
 
   const { data: colonyNameData } = useColonyNameQuery({
     variables: { address: colonyAddress },
@@ -134,13 +151,21 @@ const InboxItem = ({
 
   const colonyName = colonyNameData && colonyNameData.colonyName;
   const token = tokenData && tokenData.token;
+  const taskTitle = taskData && taskData.task && taskData.task.title;
 
   return (
     <TableRow onClick={markAsRead}>
       <TableCell
         className={full ? styles.inboxRowCellFull : styles.inboxRowCellPopover}
       >
-        {!colonyName || !token || isFetchingDomains ? (
+        {/*
+         * @FIXME The first ever notification for every user (user profile claimed)
+         * does not have a colony name or a token, so in that case the spinner
+         * will always render even though it shouldn't at that point
+         */
+        // !colonyName ||
+        // !token ||
+        isFetchingDomains ? (
           <div className={styles.spinnerWrapper}>
             <SpinnerLoader
               loadingText={LOCAL_MSG.loadingText}
@@ -150,12 +175,12 @@ const InboxItem = ({
         ) : (
           <WithLink to={onClickRoute}>
             {unread && <UnreadIndicator type={getType(eventType)} />}
-            {typeof initiator != 'string' && (
+            {initiatorUser && initiatorUser.user && (
               <div className={styles.avatarWrapper}>
                 <UserAvatar
                   showInfo
                   size="xxs"
-                  address={initiator.profile.walletAddress}
+                  address={initiatorUser.user.profile.walletAddress}
                   className={styles.userAvatar}
                 />
               </div>
@@ -186,7 +211,7 @@ const InboxItem = ({
                       value
                     ),
                   ),
-                  comment: makeInboxDetail(comment),
+                  comment: makeInboxDetail(message),
                   domainName: makeInboxDetail(
                     currentDomain && currentDomain.name,
                   ),

@@ -3,14 +3,12 @@ import { put, takeEvery } from 'redux-saga/effects';
 
 import { ActionTypes, AllActions } from '~redux/index';
 import { getContext, Context } from '~context/index';
-import { executeQuery, putError } from '~utils/saga/effects';
+import { putError } from '~utils/saga/effects';
 import {
-  ColonySubscribedUsersDocument,
-  UserColonyIdsQueryResult,
   getLoggedInUser,
+  UserNotificationsDocument,
+  UserNotificationsQueryResult,
 } from '~data/index';
-
-import { getUserInboxActivity } from '../data/queries';
 
 function* inboxItemsFetch() {
   try {
@@ -19,28 +17,21 @@ function* inboxItemsFetch() {
       Context.APOLLO_CLIENT,
     );
 
-    const { data }: UserColonyIdsQueryResult = yield apolloClient.query({
-      query: ColonySubscribedUsersDocument,
+    const { data }: UserNotificationsQueryResult = yield apolloClient.query({
+      query: UserNotificationsDocument,
       variables: { address: walletAddress },
     });
 
     if (!data) {
-      throw new Error('Could not get user colonies');
+      throw new Error('Could not get user notifications');
     }
-
-    const {
-      user: { colonies },
-    } = data;
-    const userColonies = colonies.map(({ id }) => id);
-
-    const activities = yield executeQuery(getUserInboxActivity, {
-      args: undefined,
-      metadata: { walletAddress, userColonies },
-    });
 
     yield put<AllActions>({
       type: ActionTypes.INBOX_ITEMS_FETCH_SUCCESS,
-      payload: { activities },
+      payload: {
+        activities: data.user.notifications,
+        currentUser: walletAddress,
+      },
     });
   } catch (error) {
     return yield putError(ActionTypes.INBOX_ITEMS_FETCH_ERROR, error);
