@@ -1,5 +1,5 @@
 import { ActionPattern } from '@redux-saga/types';
-import { Channel, eventChannel, buffers, END } from 'redux-saga';
+import { Channel } from 'redux-saga';
 import {
   all,
   call,
@@ -12,10 +12,7 @@ import {
 } from 'redux-saga/effects';
 
 import { ErrorActionType, TakeFilter, Action } from '~redux/index';
-import { Command, Query, Subscription } from '../../data/types';
 
-import { getContext, Context } from '~context/index';
-import { validateSync } from '~utils/yup';
 import { log } from '~utils/debug';
 
 /*
@@ -66,147 +63,6 @@ export const raceError = (
   }
   return call(raceErrorGenerator);
 };
-
-const validateDataSpec = <D, M, A, R>(
-  spec: Command<D, M, A, R> | Query<D, M, A, R> | Subscription<D, M, A, R>,
-) => {
-  if (!spec.context) {
-    throw new Error('Cannot prepare, context not defined');
-  }
-
-  const allowedContextNames = Object.values(Context);
-  if (
-    !(
-      spec.context.length > 0 &&
-      spec.context.every(contextName =>
-        allowedContextNames.includes(contextName as any),
-      )
-    )
-  ) {
-    throw new Error('Cannot prepare, invalid context');
-  }
-
-  if (!spec.prepare) {
-    throw new Error('Cannot prepare, "prepare" function not defined');
-  }
-
-  if (!spec.execute) {
-    throw new Error('Cannot execute, "execute" function not defined');
-  }
-
-  return true;
-};
-
-/*
- * Given a data specification (Command/Query/Subscription)
- * and metadata, validate it and get the dependencies to execute it.
- */
-function* getExecuteDependencies<D, M, A, R>(
-  spec: Command<D, M, A, R> | Query<D, M, A, R> | Subscription<D, M, A, R>,
-  metadata: M,
-): IterableIterator<any> {
-  validateDataSpec(spec);
-
-  const contextValues = yield all(
-    spec.context.map(contextName => call(getContext, contextName)),
-  );
-  const prepareContext = spec.context.reduce(
-    (contextObj, contextName, index) => ({
-      ...contextObj,
-      [contextName]: (contextValues as any)[index],
-    }),
-    {},
-  );
-
-  return yield call(spec.prepare, prepareContext, metadata);
-}
-
-export function* executeQuery<D, M, A, R>(
-  query: Query<D, M, A, R>,
-  { args, metadata }: { args: A; metadata?: M },
-): IterableIterator<any> {
-  log.verbose(`Executing query "${query.name}"`, { args, metadata });
-  const startQuery = Date.now();
-
-  const executeDeps = yield call(getExecuteDependencies, query, metadata);
-
-  const result = yield call(query.execute, executeDeps, args);
-
-  log.verbose(
-    `Executed query "${query.name}" in ${Date.now() - startQuery} ms`,
-    result,
-  );
-  return result;
-}
-
-export function* executeSubscription<D, M, A, R>(
-  subscriber: Subscription<D, M, A, R>,
-  {
-    args,
-    metadata,
-  }: {
-    args?: A;
-    metadata: M;
-  },
-): IterableIterator<any> {
-  log.verbose(`Starting subscription "${subscriber.name}"`, {
-    args,
-    metadata,
-  });
-
-  const executeDeps = yield call(getExecuteDependencies, subscriber, metadata);
-
-  const subscription = yield call(
-    [subscriber, subscriber.execute],
-    executeDeps,
-    args,
-  );
-
-  return eventChannel(emitter => {
-    let subs;
-    try {
-      subs = subscription(emitter);
-    } catch (caughtError) {
-      emitter(END);
-      throw caughtError;
-    }
-
-    return () => {
-      log.verbose(`Stopping subscription "${subscriber.name}"`, {
-        args,
-        metadata,
-      });
-      subs.forEach(({ stop }) => stop());
-    };
-  }, buffers.expanding());
-}
-
-export function* executeCommand<D, M, A, R>(
-  command: Command<D, M, A, R>,
-  {
-    args,
-    metadata,
-  }: {
-    args?: A;
-    metadata?: M;
-  },
-): IterableIterator<any> {
-  log.verbose(`Executing command "${command.name}"`, { args, metadata });
-  const startCommand = Date.now();
-
-  const maybeSanitizedArgs: any = command.schema
-    ? validateSync(command.schema)(args)
-    : args;
-  const executeDeps = yield call(getExecuteDependencies, command, metadata);
-
-  const result = yield call(command.execute, executeDeps, maybeSanitizedArgs);
-
-  log.verbose(
-    `Executed command "${command.name}" in ${Date.now() - startCommand} ms`,
-    result,
-  );
-  return result;
-}
 
 export function* selectAsJS(
   selector: (...selectorArgs: any[]) => any,

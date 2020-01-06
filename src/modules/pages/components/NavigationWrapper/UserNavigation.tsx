@@ -9,7 +9,6 @@ import { GasStationPopover } from '~users/GasStation';
 import AvatarDropdown from '~users/AvatarDropdown';
 import { InboxIcon } from '~users/Inbox';
 import InboxPopover from '~users/Inbox/InboxPopover';
-import NetworkHealth from '~core/NetworkHealth';
 
 import styles from './UserNavigation.css';
 
@@ -36,10 +35,6 @@ const UserNavigation = () => {
 
   return (
     <div className={styles.main}>
-      <NetworkHealth
-        className={styles.navigationItemHealth}
-        appearance={{ size: 'small' }}
-      />
       <NavLink
         to={DASHBOARD_ROUTE}
         className={styles.navigationItem}

@@ -4,8 +4,9 @@ import EthersAdapter from '@colony/colony-js-adapter-ethers';
 import { isAddress } from 'web3-utils';
 
 import ENS from '~lib/ENS';
-import { Address } from '~types/index';
-import { AddressOrENSName, ContractContexts } from './types';
+import { Address, AddressOrENSName } from '~types/index';
+
+import { ContractContexts } from './types';
 import tokenABILoader from './tokenABILoader';
 import ens from '../../context/ensContext';
 

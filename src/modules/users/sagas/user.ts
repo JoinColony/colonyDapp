@@ -14,8 +14,7 @@ import {
 import { Action, ActionTypes, AllActions } from '~redux/index';
 import { getContext, Context } from '~context/index';
 import ENS from '~lib/ENS';
-import { createAddress } from '~types/index';
-import { ColonyManager } from '~data/types';
+import { ColonyManager, createAddress } from '~types/index';
 import {
   ColonySubscribedUsersDocument,
   CreateUserDocument,
@@ -27,15 +26,13 @@ import {
   getLoggedInUser,
   UserColonyIdsQueryResult,
 } from '~data/index';
-
-import { executeQuery, putError, takeFrom } from '~utils/saga/effects';
+import { putError, takeFrom } from '~utils/saga/effects';
+import { getEventLogs, parseUserTransferEvent } from '~utils/web3/eventLogs';
 
 import { ContractContexts } from '../../../lib/ColonyManager/constants';
 
 import { ipfsUpload } from '../../core/sagas/ipfs';
 import { transactionLoadRelated } from '../../core/actionCreators';
-
-import { getUserColonyTransactions } from '../data/queries';
 
 import { createTransaction, getTxChannel } from '../../core/sagas/transactions';
 
@@ -46,6 +43,9 @@ function* userTokenTransfersFetch( // eslint-disable-next-line @typescript-eslin
     const { walletAddress } = yield getLoggedInUser();
     const apolloClient: ApolloClient<object> = yield getContext(
       Context.APOLLO_CLIENT,
+    );
+    const colonyManager: ColonyManager = yield getContext(
+      Context.COLONY_MANAGER,
     );
 
     const { data }: UserColonyIdsQueryResult = yield apolloClient.query({
@@ -60,14 +60,54 @@ function* userTokenTransfersFetch( // eslint-disable-next-line @typescript-eslin
     const {
       user: { colonies },
     } = data;
-    const colonyAddresses = colonies.map(({ id }) => id);
+    const userColonyAddresses = colonies.map(({ id }) => id);
 
-    const transactions = yield executeQuery(getUserColonyTransactions, {
-      args: {
-        walletAddress,
-        userColonyAddresses: colonyAddresses,
+    const metaColonyClient = yield colonyManager.getMetaColonyClient();
+
+    const { tokenClient } = metaColonyClient;
+    const {
+      events: { Transfer },
+    } = tokenClient;
+    const logFilterOptions = {
+      events: [Transfer],
+    };
+
+    const transferToEventLogs = yield getEventLogs(
+      tokenClient,
+      { fromBlock: 1 },
+      {
+        ...logFilterOptions,
+        to: walletAddress,
       },
-    });
+    );
+
+    const transferFromEventLogs = yield getEventLogs(
+      tokenClient,
+      { fromBlock: 1 },
+      {
+        ...logFilterOptions,
+        from: walletAddress,
+      },
+    );
+
+    // Combine and sort logs by blockNumber, then parse events from thihs
+    const logs = [...transferToEventLogs, ...transferFromEventLogs].sort(
+      (a, b) => a.blockNumber - b.blockNumber,
+    );
+    const transferEvents = yield tokenClient.parseLogs(logs);
+
+    const transactions = yield Promise.all(
+      transferEvents.map((event, i) =>
+        parseUserTransferEvent({
+          event,
+          log: logs[i],
+          tokenClient,
+          userColonyAddresses,
+          walletAddress,
+        }),
+      ),
+    );
+
     yield put<AllActions>({
       type: ActionTypes.USER_TOKEN_TRANSFERS_FETCH_SUCCESS,
       payload: { transactions },
@@ -251,8 +291,6 @@ function* usernameCreate({
 }
 
 function* userLogout() {
-  const ddb = yield getContext(Context.DDB_INSTANCE);
-
   try {
     /*
      *  1. Destroy instances of colonyJS in the colonyManager? Probably.
@@ -267,9 +305,9 @@ function* userLogout() {
     yield setContext({ [Context.WALLET]: undefined });
 
     /*
-     *  3. Close orbit store
+     *  3. Delete json web token
      */
-    yield call([ddb, ddb.stop]);
+    // FIXME this has to be done
 
     yield all([
       put<AllActions>({

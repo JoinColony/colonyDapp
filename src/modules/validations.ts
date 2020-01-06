@@ -1,7 +1,6 @@
 import * as yup from 'yup';
 import { isIPFS } from 'ipfs';
 import { isAddress } from 'web3-utils';
-import { isValidAddress } from 'orbit-db';
 import { normalize as ensNormalize } from 'eth-ens-namehash-ms';
 import BigNumber from 'bn.js';
 
@@ -41,16 +40,6 @@ function address(msg) {
     message: msg || en.string.address,
     test(value) {
       return typeof value == 'undefined' || isAddress(value);
-    },
-  });
-}
-
-function orbitDBAddress(msg) {
-  return this.test({
-    name: 'orbitDBAddress',
-    message: msg || en.string.orbitDBAddress,
-    test(value) {
-      return typeof value == 'undefined' || isValidAddress(value);
     },
   });
 }
@@ -105,5 +94,4 @@ yup.addMethod(yup.mixed, 'equalTo', equalTo);
 yup.addMethod(yup.string, 'address', address);
 yup.addMethod(yup.string, 'ensAddress', ensAddress);
 yup.addMethod(yup.array, 'includes', includes);
-yup.addMethod(yup.string, 'orbitDBAddress', orbitDBAddress);
 yup.addMethod(yup.string, 'cid', cid);

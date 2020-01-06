@@ -14,7 +14,6 @@ import { Action, ActionTypes, AllActions } from '~redux/index';
 import { Context, ContextType } from '~context/index';
 import { putError } from '~utils/saga/effects';
 import { log } from '~utils/debug';
-import ENSCache from '~lib/ENS';
 import {
   SetLoggedInUserDocument,
   SetLoggedInUserMutation,
@@ -22,46 +21,25 @@ import {
 } from '~data/index';
 
 import setupResolvers from '../../../context/setupResolvers';
-import ColonyManagerType from '../../../lib/ColonyManager';
-import { DDB } from '../../../lib/database';
 import IPFSNode from '../../../lib/ipfs';
 import { authenticate } from '../../../api';
 import setupAdminSagas from '../../admin/sagas';
 import setupDashboardSagas from '../../dashboard/sagas';
 import { getWallet, setupUsersSagas } from '../../users/sagas/index';
 import setupTransactionsSagas from './transactions';
-import setupConnectionSagas from './connection';
 import setupNetworkSagas from './network';
-import {
-  getDDB,
-  getGasPrices,
-  getColonyManager,
-  getWalletCategory,
-} from './utils';
+import { getGasPrices, getColonyManager, getWalletCategory } from './utils';
 import setupOnBeforeUnload from './setupOnBeforeUnload';
 import { setupUserBalanceListener } from './setupUserBalanceListener';
 
 function* setupContextDependentSagas() {
   yield all([
     call(setupAdminSagas),
-    call(setupConnectionSagas),
     call(setupDashboardSagas),
     call(setupUsersSagas),
     call(setupTransactionsSagas),
     call(setupNetworkSagas),
   ]);
-}
-
-function* setupDDBResolver(
-  colonyManager: ColonyManagerType,
-  ddb: DDB,
-  ens: ENSCache,
-) {
-  const { networkClient } = colonyManager;
-
-  yield call([ddb, ddb.registerResolver], (identifier: string) =>
-    ens.getOrbitDBAddress(identifier, networkClient),
-  );
 }
 
 /*
@@ -100,19 +78,14 @@ export default function* setupUserContext(
     /*
      * Set up the DDB instance and colony manager context.
      */
-    const [ddb, colonyManager] = yield all([
-      call(getDDB),
-      call(getColonyManager),
-    ]);
+    const colonyManager = yield call(getColonyManager);
     yield setContext({
       [Context.COLONY_MANAGER]: colonyManager,
-      [Context.DDB_INSTANCE]: ddb,
     });
 
     yield call(getGasPrices);
 
     const ens = yield getContext(Context.ENS_INSTANCE);
-    yield call(setupDDBResolver, colonyManager, ddb, ens);
 
     /*
      * This needs to happen first because USER_CONTEXT_SETUP_SUCCESS causes a redirect
@@ -147,8 +120,6 @@ export default function* setupUserContext(
     const userContext: ContextType = {
       apolloClient,
       colonyManager,
-      DDB,
-      ddb,
       ens,
       ipfsNode,
       wallet,

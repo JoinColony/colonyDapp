@@ -2,14 +2,12 @@ import React, { useMemo } from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 import BigNumber from 'bn.js';
 
-import { EventTypes } from '~data/constants';
-import { Event } from '~data/types';
 import Numeral from '~core/Numeral';
 import { SpinnerLoader } from '~core/Preloaders';
 import TimeRelative from '~core/TimeRelative';
 import TransactionLink from '~core/TransactionLink';
 import { useSelector } from '~utils/hooks';
-import { useUser, useTokenQuery } from '~data/index';
+import { useUser, useTokenQuery, FinalizeTaskEvent } from '~data/index';
 
 import { getFriendlyName } from '../../../users/transformers';
 import { networkFeeInverseSelector } from '../../../core/selectors';
@@ -45,7 +43,7 @@ const MSG = defineMessages({
 
 interface Props {
   createdAt: Date;
-  event: Event<EventTypes.TASK_FINALIZED>;
+  event: FinalizeTaskEvent;
 }
 
 const displayName = 'dashboard.TaskFeed.TaskFeedCompleteInfo';
@@ -53,6 +51,8 @@ const displayName = 'dashboard.TaskFeed.TaskFeedCompleteInfo';
 const TaskFeedCompleteInfo = ({
   createdAt,
   event: {
+    // FIXME this has to be sorted out somehow
+    // @ts-ignore
     payload: {
       amountPaid,
       paymentTokenAddress,
