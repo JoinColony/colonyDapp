@@ -38,37 +38,3 @@ export const getExtensionAddresses = async (
 
   return [createAddress(oldRolesAddress), createAddress(oneTxAddress)];
 };
-
-/*
- * @REMOVE Most likely this can be removed as well
- */
-export const decorateColonyEventPayload = ({ payload, ...event }: any) => ({
-  ...event,
-  payload: {
-    ...payload,
-    ...(() => {
-      switch (event.type) {
-        case 'ColonyRoleSet':
-          return {
-            colonyAddress: event.meta.sourceId,
-            targetUser: payload.address,
-          };
-        case 'DomainAdded':
-          return {
-            colonyAddress: event.meta.sourceId,
-          };
-        case 'Mint':
-          return {
-            colonyAddress: payload.address,
-            tokenAddress: payload.tokenAddress,
-          };
-        case 'ColonyLabelRegistered':
-          return {
-            colonyAddress: payload.colony,
-          };
-        default:
-          return {};
-      }
-    })(),
-  },
-});
