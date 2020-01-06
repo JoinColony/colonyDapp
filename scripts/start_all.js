@@ -8,7 +8,6 @@ const args = require('minimist')(process.argv);
 const chalk = require('chalk');
 
 const startGanache = require('./start_ganache');
-const startStarSignal = require('./start_star_signal');
 const deployContracts = require('./deploy_contracts');
 
 const { PID_FILE } = require('./paths');
@@ -54,42 +53,6 @@ addProcess('trufflepig', () =>
     });
   })
 );
-
-addProcess('star', startStarSignal);
-
-addProcess('pinion', () => 
-  new Promise((resolve, reject) => {
-    const pinionProcess = spawn('yarn', ['start'], {
-      cwd: path.resolve(__dirname, '..', 'src/lib/pinion'),
-      stdio: 'pipe',
-      env: {
-        ...process.env,
-        PINION_ROOM: 'PINION_DEV_ROOM',
-      },
-    });
-    // Wait a few seconds for pinion to settle in
-    setTimeout(() => resolve(pinionProcess), 4000);
-    if (args.foreground) {
-      pinionProcess.stdout.pipe(process.stdout);
-      pinionProcess.stderr.pipe(process.stderr);
-    }
-    pinionProcess.on('error', e => {
-      pinionProcess.kill();
-      reject(e);
-    });
-  })
-);
-
-addProcess('wss', async () => {
-  const wssProxyProcess = spawn(
-    path.resolve(__dirname, './start_wss_proxy.js'),
-    {
-      stdio: 'pipe',
-    },
-  );
-  await waitOn({ resources: ['tcp:4004'] });
-  return wssProxyProcess;
-});
 
 addProcess('db', async () => {
   const dbProcess = spawn('npm', ['run', 'db:start'], {
@@ -154,9 +117,6 @@ addProcess('server', async () => {
 addProcess('webpack', () =>
   new Promise((resolve, reject) => {
     let webpackArgs = ['run', 'webpack'];
-    if (!args['without-https']) {
-      webpackArgs = webpackArgs.concat(['--https', '--key', './ssl/localhost+2-key.pem', '--cert', './ssl/localhost+2.pem']);
-    }
     const webpackProcess = spawn('yarn', webpackArgs, {
       cwd: path.resolve(__dirname, '..'),
       stdio: 'pipe',

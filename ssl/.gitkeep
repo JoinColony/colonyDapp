@@ -1,8 +1,0 @@
-# Put your SSL certificates here
-
-# Use https://github.com/FiloSottile/mkcert
-# mkcert -install
-# mkcert localhost 127.0.0.1 ::1
-
-# key: localhost+2-key.pem
-# cert: localhost+2.pem
