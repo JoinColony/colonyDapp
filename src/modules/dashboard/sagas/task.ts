@@ -20,6 +20,8 @@ import {
   FinalizeTaskMutationVariables,
   TaskFeedEventsDocument,
   ColonyTasksDocument,
+  TaskFeedEventsQueryVariables,
+  ColonyTasksQueryVariables,
 } from '~data/index';
 import { Action, ActionTypes } from '~redux/index';
 import { ContractContexts } from '~types/index';
@@ -52,7 +54,10 @@ function* taskCreate({
       // @TODO mutate state directly instead of refetching queries
       // @BODY See https://github.com/JoinColony/colonyDapp/pull/1933/files#r359016028
       refetchQueries: [
-        { query: ColonyTasksDocument, variables: { address: colonyAddress } },
+        {
+          query: ColonyTasksDocument,
+          variables: { address: colonyAddress } as ColonyTasksQueryVariables,
+        },
       ],
     });
 
@@ -174,8 +179,10 @@ function* taskCommentAdd({
       },
       // @todo return `Task` from `SendTaskMessage` mutation to avoid needing to `refetchQueries`
       refetchQueries: [
-        // fixme Is it possible to improve type safety here?
-        { query: TaskFeedEventsDocument, variables: { id: draftId } },
+        {
+          query: TaskFeedEventsDocument,
+          variables: { id: draftId } as TaskFeedEventsQueryVariables,
+        },
       ],
     });
 
