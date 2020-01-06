@@ -757,7 +757,7 @@ export type Task = {
   dueDate?: Maybe<Scalars['DateTime']>,
   finalizedAt?: Maybe<Scalars['DateTime']>,
   title?: Maybe<Scalars['String']>,
-  colony?: Maybe<Colony>,
+  colony: Colony,
   colonyAddress: Scalars['String'],
   creator?: Maybe<User>,
   creatorAddress: Scalars['String'],
@@ -848,7 +848,7 @@ export type User = {
   taskIds: Array<Scalars['String']>,
   tokens: Array<Token>,
   tokenAddresses: Array<Scalars['String']>,
-  notifications?: Maybe<Array<Notification>>,
+  notifications: Array<Notification>,
 };
 
 
@@ -937,7 +937,7 @@ export type CreateTaskMutationVariables = {
 
 export type CreateTaskMutation = { createTask: Maybe<(
     Pick<Task, 'id'>
-    & { colony: Maybe<Pick<Colony, 'colonyName'>>, events: Array<TaskEventFragment> }
+    & { colony: Pick<Colony, 'colonyName'>, events: Array<TaskEventFragment> }
   )> };
 
 export type CreateWorkRequestMutationVariables = {
@@ -1164,7 +1164,7 @@ export type TaskQuery = { task: (
     & { assignedWorker: Maybe<(
       Pick<User, 'id'>
       & { profile: Pick<UserProfile, 'avatarHash' | 'displayName' | 'username' | 'walletAddress'> }
-    )>, colony: Maybe<Pick<Colony, 'id' | 'colonyAddress' | 'colonyName' | 'avatarHash' | 'displayName' | 'nativeTokenAddress'>>, creator: Maybe<(
+    )>, colony: Pick<Colony, 'id' | 'colonyAddress' | 'colonyName' | 'avatarHash' | 'displayName' | 'nativeTokenAddress'>, creator: Maybe<(
       Pick<User, 'id'>
       & { profile: Pick<UserProfile, 'avatarHash' | 'displayName' | 'username' | 'walletAddress'> }
     )>, workInvites: Array<(
@@ -1190,7 +1190,7 @@ export type TaskToEditQuery = { task: (
     )>, workRequests: Array<(
       Pick<User, 'id'>
       & { profile: Pick<UserProfile, 'avatarHash' | 'displayName' | 'username' | 'walletAddress'> }
-    )>, colony: Maybe<(
+    )>, colony: (
       Pick<Colony, 'id' | 'nativeTokenAddress'>
       & { subscribedUsers: Array<(
         Pick<User, 'id'>
@@ -1199,7 +1199,7 @@ export type TaskToEditQuery = { task: (
         Pick<Token, 'id' | 'address'>
         & { details: Pick<TokenInfo, 'decimals' | 'name' | 'symbol'> }
       )> }
-    )> }
+    ) }
     & PayoutsFragment
   ) };
 
@@ -1240,7 +1240,7 @@ export type UserTasksQuery = { user: (
       & { assignedWorker: Maybe<(
         Pick<User, 'id'>
         & { profile: Pick<UserProfile, 'avatarHash'> }
-      )>, colony: Maybe<Pick<Colony, 'id' | 'colonyName' | 'displayName' | 'nativeTokenAddress'>> }
+      )>, colony: Pick<Colony, 'id' | 'colonyName' | 'displayName' | 'nativeTokenAddress'> }
       & PayoutsFragment
     )> }
   ) };
@@ -1337,7 +1337,7 @@ export type ColonyTasksQuery = { colony: (
       & { assignedWorker: Maybe<(
         Pick<User, 'id'>
         & { profile: Pick<UserProfile, 'avatarHash'> }
-      )>, colony: Maybe<Pick<Colony, 'id' | 'colonyName' | 'displayName' | 'nativeTokenAddress'>> }
+      )>, colony: Pick<Colony, 'id' | 'colonyName' | 'displayName' | 'nativeTokenAddress'> }
       & PayoutsFragment
     )> }
   ) };
@@ -1405,13 +1405,13 @@ export type UserNotificationsQueryVariables = {
 
 export type UserNotificationsQuery = { user: (
     Pick<User, 'id'>
-    & { notifications: Maybe<Array<(
+    & { notifications: Array<(
       Pick<Notification, 'id' | 'read'>
       & { event: (
         Pick<Event, 'type' | 'createdAt' | 'initiatorAddress' | 'sourceId' | 'sourceType'>
         & EventContextFragment
       ) }
-    )>> }
+    )> }
   ) };
 
 export const PayoutsFragmentDoc = gql`

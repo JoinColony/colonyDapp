@@ -2,25 +2,26 @@ import React from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 
 import { INBOX_ROUTE } from '~routes/index';
-import { useSelector } from '~utils/hooks';
 import Heading from '~core/Heading';
 import Button from '~core/Button';
 import { SpinnerLoader } from '~core/Preloaders';
 import { Table, TableBody } from '~core/Table';
 import NavLink from '~core/NavLink';
-import { EVENT_SOURCE_TYPES } from '~data/types/index';
-import { useMarkAllNotificationsAsReadMutation } from '~data/index';
+import {
+  Notifications,
+  useMarkAllNotificationsAsReadMutation,
+} from '~data/index';
 
-import { ChainInboxItem, InboxItem } from '../InboxItem';
-import { inboxItemsSelector } from '../../../selectors';
+import { InboxItem } from '../InboxItem';
 
 import styles from './InboxContainer.css';
 
 const displayName = 'users.Inbox.InboxContainer';
 
 interface Props {
-  full?: boolean;
   close?: () => void;
+  full?: boolean;
+  notifications: Notifications;
 }
 
 const MSG = defineMessages({
@@ -50,15 +51,10 @@ Don't worry, we'll let you know when anything important happens.`,
   },
 });
 
-const InboxContainer = ({ full, close }: Props) => {
-  const { record: inboxItems, isFetching } = useSelector(inboxItemsSelector);
+const InboxContainer = ({ full, close, notifications }: Props) => {
   const [markAllAsRead] = useMarkAllNotificationsAsReadMutation();
 
-  const hasInboxItems = !!(
-    inboxItems &&
-    inboxItems.length &&
-    inboxItems.length > 0
-  );
+  const hasInboxItems = notifications.length > 0;
   return (
     <div
       className={
@@ -73,14 +69,14 @@ const InboxContainer = ({ full, close }: Props) => {
           text={MSG.title}
           textValues={{
             hasInboxItems,
-            inboxItems: hasInboxItems ? inboxItems.length : 0,
+            inboxItems: hasInboxItems ? notifications.length : 0,
           }}
         />
         <Button
           appearance={{ theme: 'blue' }}
           text={MSG.markAllAsRead}
           onClick={markAllAsRead}
-          disabled={!hasInboxItems || isFetching}
+          disabled={!hasInboxItems}
         />
       </div>
       <div
@@ -88,21 +84,17 @@ const InboxContainer = ({ full, close }: Props) => {
           full ? styles.inboxContainerFull : styles.inboxContainerPopover
         }
       >
-        {hasInboxItems && !isFetching && (
+        {hasInboxItems && (
           <Table scrollable appearance={{ separators: 'borders' }}>
             <TableBody>
-              {inboxItems.map(item =>
-                item.sourceType === EVENT_SOURCE_TYPES.DB ? (
-                  <InboxItem full={full} key={item.id} item={item} />
-                ) : (
-                  <ChainInboxItem full={full} key={item.id} item={item} />
-                ),
-              )}
+              {notifications.map(item => (
+                <InboxItem full={full} key={item.id} item={item} />
+              ))}
             </TableBody>
           </Table>
         )}
 
-        {!hasInboxItems && isFetching && (
+        {!hasInboxItems && (
           <div className={!full ? styles.emptyPopoverPlaceholder : undefined}>
             <SpinnerLoader
               loadingText={MSG.loadingInbox}
@@ -110,7 +102,7 @@ const InboxContainer = ({ full, close }: Props) => {
             />
           </div>
         )}
-        {!hasInboxItems && !isFetching && (
+        {!hasInboxItems && (
           <div className={!full ? styles.emptyPopoverPlaceholder : undefined}>
             <div className={styles.emptyText}>
               <FormattedMessage {...MSG.noItems} />
