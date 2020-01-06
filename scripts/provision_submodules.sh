@@ -19,7 +19,6 @@ done
 LIB_PATH="src/lib"
 
 NETWORK="colonyNetwork"
-PINNING="pinion"
 SERVER="colonyServer"
 
 ROOT_PATH=$(pwd)
@@ -51,15 +50,6 @@ then
     cd "${ROOT_PATH}/${LIB_PATH}/${NETWORK}"
     yarn
     yarn provision:token:contracts
-    cd ${ROOT_PATH}
-fi
-
-if [ "$SKIP_PINNING_SERVICE_BUILD" != true ]
-then
-    # Build pinning service
-    log "Building '${PINNING}' submodule"
-    cd "${ROOT_PATH}/${LIB_PATH}/${PINNING}"
-    yarn
     cd ${ROOT_PATH}
 fi
 
