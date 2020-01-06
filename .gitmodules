@@ -2,9 +2,6 @@
 	path = src/lib/colonyNetwork
 	url = git@github.com:JoinColony/colonyNetwork.git
 	branch = develop
-[submodule "src/lib/pinion"]
-	path = src/lib/pinion
-	url = git@github.com:JoinColony/pinion.git
 [submodule "src/lib/colonyServer"]
 	path = src/lib/colonyServer
 	url = git@github.com:JoinColony/colonyServer.git

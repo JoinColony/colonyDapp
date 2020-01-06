@@ -60,8 +60,7 @@ RUN echo "LOADER=$LOADER\n" \
         "INFURA_ID=$INFURA_ID\n" \
         "NETWORK=$NETWORK\n" \
         "VERBOSE=$VERBOSE\n" \
-        "COLONY_NETWORK_ENS_NAME=$COLONY_NETWORK_ENS_NAME\n" \
-        "PINNING_ROOM=$PINNING_ROOM\n" > .env
+        "COLONY_NETWORK_ENS_NAME=$COLONY_NETWORK_ENS_NAME\n" > .env
 
 # Build the production bundle
 RUN yarn webpack:build:prod

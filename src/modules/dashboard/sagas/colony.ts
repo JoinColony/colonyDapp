@@ -10,19 +10,20 @@ import {
 } from 'redux-saga/effects';
 
 import { Action, ActionTypes, AllActions } from '~redux/index';
-import { putError, takeFrom, executeQuery } from '~utils/saga/effects';
+import { putError, takeFrom } from '~utils/saga/effects';
 import { ContractContexts } from '~types/index';
 import {
   EditColonyProfileDocument,
   EditColonyProfileMutation,
   EditColonyProfileMutationVariables,
   ColonyDocument,
+  ColonyAddressQuery,
+  ColonyAddressQueryVariables,
   ColonyQuery,
   ColonyQueryVariables,
 } from '~data/index';
 import { getContext, Context } from '~context/index';
 
-import { checkColonyNameIsAvailable } from '../data/queries';
 import { createTransaction, getTxChannel } from '../../core/sagas';
 import { ipfsUpload } from '../../core/sagas/ipfs';
 import { networkVersionSelector } from '../../core/selectors';
@@ -34,11 +35,21 @@ function* colonyNameCheckAvailability({
   try {
     yield delay(300);
 
-    const isAvailable = yield executeQuery(checkColonyNameIsAvailable, {
-      args: { colonyName },
+    const apolloClient: ApolloClient<object> = yield getContext(
+      Context.APOLLO_CLIENT,
+    );
+
+    const { data } = yield apolloClient.query<
+      ColonyAddressQuery,
+      ColonyAddressQueryVariables
+    >({
+      query: ColonyDocument,
+      variables: {
+        name: colonyName,
+      },
     });
 
-    if (!isAvailable) {
+    if (!data || !data.colonyAddress) {
       throw new Error(`ENS address for colony "${colonyName}" already exists`);
     }
 
