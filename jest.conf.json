@@ -42,14 +42,12 @@
     "testPathIgnorePatterns": [
         "node_modules",
         "src/lib/colonyNetwork",
-        "src/lib/pinion",
         "src/lib/colonyServer"
     ],
     "coveragePathIgnorePatterns": [
         "node_modules",
         "src/data",
         "src/lib/colonyNetwork",
-        "src/lib/pinion",
         "src/lib/colonyServer"
     ],
     "globals": {
