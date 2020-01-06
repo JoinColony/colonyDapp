@@ -22,7 +22,6 @@ ARG NETWORK=goerli
 ARG CHAIN_ID=5
 ARG VERBOSE=false
 ARG COLONY_NETWORK_ENS_NAME=joincolony.eth
-ARG PINNING_ROOM=PINION_DEV_ROOM
 
 # @FIX Allow the nginx service to start at build time, so that the installation will work
 # See: https://askubuntu.com/questions/365911/why-the-services-do-not-start-at-installation
