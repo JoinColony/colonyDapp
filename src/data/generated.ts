@@ -759,7 +759,7 @@ export type Task = {
   title?: Maybe<Scalars['String']>,
   colony: Colony,
   colonyAddress: Scalars['String'],
-  creator?: Maybe<User>,
+  creator: User,
   creatorAddress: Scalars['String'],
   domain: Domain,
   assignedWorker?: Maybe<User>,
@@ -1164,10 +1164,10 @@ export type TaskQuery = { task: (
     & { assignedWorker: Maybe<(
       Pick<User, 'id'>
       & { profile: Pick<UserProfile, 'avatarHash' | 'displayName' | 'username' | 'walletAddress'> }
-    )>, colony: Pick<Colony, 'id' | 'colonyAddress' | 'colonyName' | 'avatarHash' | 'displayName' | 'nativeTokenAddress'>, creator: Maybe<(
+    )>, colony: Pick<Colony, 'id' | 'colonyAddress' | 'colonyName' | 'avatarHash' | 'displayName' | 'nativeTokenAddress'>, creator: (
       Pick<User, 'id'>
       & { profile: Pick<UserProfile, 'avatarHash' | 'displayName' | 'username' | 'walletAddress'> }
-    )>, workInvites: Array<(
+    ), workInvites: Array<(
       Pick<User, 'id'>
       & { profile: Pick<UserProfile, 'avatarHash' | 'displayName' | 'username' | 'walletAddress'> }
     )>, workRequests: Array<(
@@ -1275,6 +1275,13 @@ export type ColonyNameQueryVariables = {
 
 
 export type ColonyNameQuery = Pick<Query, 'colonyName'>;
+
+export type ColonyAddressQueryVariables = {
+  name: Scalars['String']
+};
+
+
+export type ColonyAddressQuery = Pick<Query, 'colonyAddress'>;
 
 export type ColonyQueryVariables = {
   address: Scalars['String']
@@ -3022,6 +3029,37 @@ export function useColonyNameLazyQuery(baseOptions?: ApolloReactHooks.LazyQueryH
 export type ColonyNameQueryHookResult = ReturnType<typeof useColonyNameQuery>;
 export type ColonyNameLazyQueryHookResult = ReturnType<typeof useColonyNameLazyQuery>;
 export type ColonyNameQueryResult = ApolloReactCommon.QueryResult<ColonyNameQuery, ColonyNameQueryVariables>;
+export const ColonyAddressDocument = gql`
+    query ColonyAddress($name: String!) {
+  colonyAddress(name: $name) @client
+}
+    `;
+
+/**
+ * __useColonyAddressQuery__
+ *
+ * To run a query within a React component, call `useColonyAddressQuery` and pass it any options that fit your needs.
+ * When your component renders, `useColonyAddressQuery` returns an object from Apollo Client that contains loading, error, and data properties 
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useColonyAddressQuery({
+ *   variables: {
+ *      name: // value for 'name'
+ *   },
+ * });
+ */
+export function useColonyAddressQuery(baseOptions?: ApolloReactHooks.QueryHookOptions<ColonyAddressQuery, ColonyAddressQueryVariables>) {
+        return ApolloReactHooks.useQuery<ColonyAddressQuery, ColonyAddressQueryVariables>(ColonyAddressDocument, baseOptions);
+      }
+export function useColonyAddressLazyQuery(baseOptions?: ApolloReactHooks.LazyQueryHookOptions<ColonyAddressQuery, ColonyAddressQueryVariables>) {
+          return ApolloReactHooks.useLazyQuery<ColonyAddressQuery, ColonyAddressQueryVariables>(ColonyAddressDocument, baseOptions);
+        }
+export type ColonyAddressQueryHookResult = ReturnType<typeof useColonyAddressQuery>;
+export type ColonyAddressLazyQueryHookResult = ReturnType<typeof useColonyAddressLazyQuery>;
+export type ColonyAddressQueryResult = ApolloReactCommon.QueryResult<ColonyAddressQuery, ColonyAddressQueryVariables>;
 export const ColonyDocument = gql`
     query Colony($address: String!) {
   colony(address: $address) {

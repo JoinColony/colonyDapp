@@ -1,12 +1,12 @@
-export * from '../lib/ColonyManager/types';
-export * from '../data/types';
-export * from '../lib/database/types';
+import { Address, ENSName } from '~types/index';
+
 export * from './keyTypes';
 export * from './TransactionReceipt';
 export * from './strings';
 export * from './domains';
 export * from './DefaultValues';
 export * from './RecordToJS';
+export * from './context';
 
 export type WithKey = {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -29,3 +29,5 @@ export interface DataObject<T> {
 export interface KeyedDataObject<T> extends DataObject<T> {
   key: string;
 }
+
+export type AddressOrENSName = Address | ENSName;

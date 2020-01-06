@@ -206,6 +206,10 @@ query ColonyName($address: String!) {
   colonyName(address: $address) @client
 }
 
+query ColonyAddress($name: String!) {
+  colonyAddress(name: $name) @client
+}
+
 query Colony($address: String!) {
   colony(address: $address) {
     ...FullColony

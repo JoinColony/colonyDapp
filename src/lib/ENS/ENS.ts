@@ -34,12 +34,9 @@ class ENS {
 
   _addressCache: Map<Address, string>;
 
-  _orbitAddressCache: Map<string, string>;
-
   constructor() {
     this._addressCache = new Map();
     this._domainCache = new Map();
-    this._orbitAddressCache = new Map();
   }
 
   async _getRawAddress(
@@ -133,36 +130,6 @@ class ENS {
     }
     const domain = punycode.toASCII(rawDomain);
     return rawDomain === domain ? rawDomain : `${EXTERNAL_PREFIX}${rawDomain}`;
-  }
-
-  async getOrbitDBAddress(
-    addressOrDomain: string,
-    networkClient: ColonyNetworkClient,
-  ): Promise<string | undefined> {
-    const domain = isAddress(addressOrDomain)
-      ? await this._getRawDomain(createAddress(addressOrDomain), networkClient)
-      : addressOrDomain;
-
-    if (!domain) return undefined;
-
-    let normalizedDomain = domain;
-    if (domain.startsWith(EXTERNAL_PREFIX)) {
-      normalizedDomain = domain.substr(1);
-    }
-
-    if (this._orbitAddressCache.has(normalizedDomain)) {
-      return this._orbitAddressCache.get(normalizedDomain);
-    }
-
-    const { orbitDBAddress } = await networkClient.getProfileDBAddress.call({
-      nameHash: namehash.hash(normalizedDomain),
-    });
-
-    if (orbitDBAddress) {
-      this._orbitAddressCache.set(normalizedDomain, orbitDBAddress);
-    }
-
-    return orbitDBAddress;
   }
 
   _updateCaches(domain: string, address: Address) {

@@ -15,11 +15,11 @@ import TimeRelative from '~core/TimeRelative';
 import Numeral from '~core/Numeral';
 import InfoPopover from '~core/InfoPopover';
 import styles from '~dashboard/TaskFeed/TaskFeedEvent.css';
-import { EventTypes } from '~data/constants';
 import {
   useUser,
   useTokenQuery,
   AnyUser,
+  EventType,
   TaskEventFragment,
   SetTaskDueDateEvent,
   SetTaskSkillEvent,
@@ -431,20 +431,20 @@ const TaskFeedEventWorkerUnassigned = ({
 );
 
 const FEED_EVENT_COMPONENTS = {
-  [EventTypes.DOMAIN_SET]: injectIntl(TaskFeedEventDomainSet),
-  [EventTypes.DUE_DATE_SET]: TaskFeedEventDueDateSet,
-  [EventTypes.PAYOUT_SET]: TaskFeedEventPayoutSet,
-  [EventTypes.PAYOUT_REMOVED]: TaskFeedEventPayoutRemoved,
-  [EventTypes.SKILL_SET]: TaskFeedEventSkillSet,
-  [EventTypes.TASK_CANCELLED]: TaskFeedEventCancelled,
-  [EventTypes.TASK_CREATED]: TaskFeedEventCreated,
-  [EventTypes.TASK_DESCRIPTION_SET]: TaskFeedEventDescriptionSet,
-  [EventTypes.TASK_FINALIZED]: TaskFeedEventFinalized,
-  [EventTypes.TASK_TITLE_SET]: TaskFeedEventTitleSet,
-  [EventTypes.WORK_INVITE_SENT]: TaskFeedEventWorkInviteSent,
-  [EventTypes.WORK_REQUEST_CREATED]: TaskFeedEventWorkRequestCreated,
-  [EventTypes.WORKER_ASSIGNED]: TaskFeedEventWorkerAssigned,
-  [EventTypes.WORKER_UNASSIGNED]: TaskFeedEventWorkerUnassigned,
+  [EventType.SetTaskDomain]: injectIntl(TaskFeedEventDomainSet),
+  [EventType.SetTaskDueDate]: TaskFeedEventDueDateSet,
+  [EventType.SetTaskPayout]: TaskFeedEventPayoutSet,
+  [EventType.RemoveTaskPayout]: TaskFeedEventPayoutRemoved,
+  [EventType.SetTaskSkill]: TaskFeedEventSkillSet,
+  [EventType.CancelTask]: TaskFeedEventCancelled,
+  [EventType.CreateTask]: TaskFeedEventCreated,
+  [EventType.SetTaskDescription]: TaskFeedEventDescriptionSet,
+  [EventType.FinalizeTask]: TaskFeedEventFinalized,
+  [EventType.SetTaskTitle]: TaskFeedEventTitleSet,
+  [EventType.SendWorkInvite]: TaskFeedEventWorkInviteSent,
+  [EventType.CreateWorkRequest]: TaskFeedEventWorkRequestCreated,
+  [EventType.AssignWorker]: TaskFeedEventWorkerAssigned,
+  [EventType.UnassignWorker]: TaskFeedEventWorkerUnassigned,
 };
 
 const TaskFeedEvent = ({ colonyAddress, event }: Props) => {
