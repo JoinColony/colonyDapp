@@ -176,13 +176,8 @@ const InboxItem = ({
       <TableCell
         className={full ? styles.inboxRowCellFull : styles.inboxRowCellPopover}
       >
-        {/*
-         * @FIXME The first ever notification for every user (user profile claimed)
-         * does not have a colony name or a token, so in that case the spinner
-         * will always render even though it shouldn't at that point
-         */
-        // !colonyName ||
-        // !token ||
+        {(colonyAddress && !colonyName) ||
+        (tokenAddress && !token) ||
         isFetchingDomains ? (
           <div className={styles.spinnerWrapper}>
             <SpinnerLoader
@@ -205,11 +200,6 @@ const InboxItem = ({
             )}
             <span className={styles.inboxAction}>
               <FormattedMessage
-                /*
-                 * @todo switch between notificationAdminOtherAdded v. notificationUserMadeAdmin notifications
-                 * depending if the otherUser address is the same as the sourceUserAddress
-                 * This is preffered as opposed to adding two notifications to the stores
-                 */
                 {...MSG[transformNotificationEventNames(eventType)]}
                 values={{
                   amount: makeInboxDetail(amount, value => (
