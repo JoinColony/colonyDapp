@@ -79,17 +79,6 @@ export type ColonyActionTypes =
       WithKey
     >
   | UniqueActionType<
-      ActionTypes.COLONY_NAME_CHECK_AVAILABILITY,
-      { colonyName: string },
-      object
-    >
-  | ErrorActionType<ActionTypes.COLONY_NAME_CHECK_AVAILABILITY_ERROR, object>
-  | UniqueActionType<
-      ActionTypes.COLONY_NAME_CHECK_AVAILABILITY_SUCCESS,
-      void,
-      object
-    >
-  | UniqueActionType<
       ActionTypes.COLONY_NATIVE_TOKEN_UNLOCK,
       { colonyAddress: Address },
       object
