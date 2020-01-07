@@ -4,7 +4,7 @@ import { defineMessages, FormattedMessage } from 'react-intl';
 import { SpinnerLoader } from '~core/Preloaders';
 import Link from '~core/Link';
 import { CREATE_COLONY_ROUTE } from '~routes/index';
-import { useLoggedInUser, useUserColonyIdsQuery } from '~data/index';
+import { useLoggedInUser, useUserColonyAddressesQuery } from '~data/index';
 
 import ColoniesListItem from './ColoniesListItem';
 
@@ -29,7 +29,7 @@ const displayName = 'dashboard.Dashboard.ColoniesList';
 
 const ColoniesList = () => {
   const { walletAddress } = useLoggedInUser();
-  const { data } = useUserColonyIdsQuery({
+  const { data } = useUserColonyAddressesQuery({
     variables: { address: walletAddress },
   });
 
@@ -45,9 +45,8 @@ const ColoniesList = () => {
   }
 
   const {
-    user: { colonies },
+    user: { colonyAddresses },
   } = data;
-  const colonyAddresses = colonies.map(({ id }) => id);
 
   if (colonyAddresses && colonyAddresses.length) {
     return (

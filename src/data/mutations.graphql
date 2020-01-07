@@ -248,12 +248,14 @@ mutation MarkAllNotificationsAsRead {
 mutation SubscribeToColony($input: SubscribeToColonyInput!) {
   subscribeToColony(input: $input) {
     id
+    colonyAddresses
   }
 }
 
 mutation UnsubscribeFromColony($input: UnsubscribeFromColonyInput!) {
   unsubscribeFromColony(input: $input) {
     id
+    colonyAddresses
   }
 }
 
