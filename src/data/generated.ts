@@ -593,6 +593,8 @@ export type Query = {
   loggedInUser: LoggedInUser,
   colonyAddress: Scalars['String'],
   colonyName: Scalars['String'],
+  userAddress: Scalars['String'],
+  username: Scalars['String'],
 };
 
 
@@ -628,6 +630,16 @@ export type QueryColonyAddressArgs = {
 
 
 export type QueryColonyNameArgs = {
+  address: Scalars['String']
+};
+
+
+export type QueryUserAddressArgs = {
+  name: Scalars['String']
+};
+
+
+export type QueryUsernameArgs = {
   address: Scalars['String']
 };
 
@@ -1257,6 +1269,20 @@ export type UserTokensQuery = { user: (
       & { details: Pick<TokenInfo, 'decimals' | 'name' | 'symbol'> }
     )> }
   ) };
+
+export type UsernameQueryVariables = {
+  address: Scalars['String']
+};
+
+
+export type UsernameQuery = Pick<Query, 'username'>;
+
+export type UserAddressQueryVariables = {
+  name: Scalars['String']
+};
+
+
+export type UserAddressQuery = Pick<Query, 'userAddress'>;
 
 export type ColonyFromNameQueryVariables = {
   name: Scalars['String'],
@@ -2962,6 +2988,68 @@ export function useUserTokensLazyQuery(baseOptions?: ApolloReactHooks.LazyQueryH
 export type UserTokensQueryHookResult = ReturnType<typeof useUserTokensQuery>;
 export type UserTokensLazyQueryHookResult = ReturnType<typeof useUserTokensLazyQuery>;
 export type UserTokensQueryResult = ApolloReactCommon.QueryResult<UserTokensQuery, UserTokensQueryVariables>;
+export const UsernameDocument = gql`
+    query Username($address: String!) {
+  username(address: $address) @client
+}
+    `;
+
+/**
+ * __useUsernameQuery__
+ *
+ * To run a query within a React component, call `useUsernameQuery` and pass it any options that fit your needs.
+ * When your component renders, `useUsernameQuery` returns an object from Apollo Client that contains loading, error, and data properties 
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useUsernameQuery({
+ *   variables: {
+ *      address: // value for 'address'
+ *   },
+ * });
+ */
+export function useUsernameQuery(baseOptions?: ApolloReactHooks.QueryHookOptions<UsernameQuery, UsernameQueryVariables>) {
+        return ApolloReactHooks.useQuery<UsernameQuery, UsernameQueryVariables>(UsernameDocument, baseOptions);
+      }
+export function useUsernameLazyQuery(baseOptions?: ApolloReactHooks.LazyQueryHookOptions<UsernameQuery, UsernameQueryVariables>) {
+          return ApolloReactHooks.useLazyQuery<UsernameQuery, UsernameQueryVariables>(UsernameDocument, baseOptions);
+        }
+export type UsernameQueryHookResult = ReturnType<typeof useUsernameQuery>;
+export type UsernameLazyQueryHookResult = ReturnType<typeof useUsernameLazyQuery>;
+export type UsernameQueryResult = ApolloReactCommon.QueryResult<UsernameQuery, UsernameQueryVariables>;
+export const UserAddressDocument = gql`
+    query UserAddress($name: String!) {
+  userAddress(name: $name) @client
+}
+    `;
+
+/**
+ * __useUserAddressQuery__
+ *
+ * To run a query within a React component, call `useUserAddressQuery` and pass it any options that fit your needs.
+ * When your component renders, `useUserAddressQuery` returns an object from Apollo Client that contains loading, error, and data properties 
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useUserAddressQuery({
+ *   variables: {
+ *      name: // value for 'name'
+ *   },
+ * });
+ */
+export function useUserAddressQuery(baseOptions?: ApolloReactHooks.QueryHookOptions<UserAddressQuery, UserAddressQueryVariables>) {
+        return ApolloReactHooks.useQuery<UserAddressQuery, UserAddressQueryVariables>(UserAddressDocument, baseOptions);
+      }
+export function useUserAddressLazyQuery(baseOptions?: ApolloReactHooks.LazyQueryHookOptions<UserAddressQuery, UserAddressQueryVariables>) {
+          return ApolloReactHooks.useLazyQuery<UserAddressQuery, UserAddressQueryVariables>(UserAddressDocument, baseOptions);
+        }
+export type UserAddressQueryHookResult = ReturnType<typeof useUserAddressQuery>;
+export type UserAddressLazyQueryHookResult = ReturnType<typeof useUserAddressLazyQuery>;
+export type UserAddressQueryResult = ApolloReactCommon.QueryResult<UserAddressQuery, UserAddressQueryVariables>;
 export const ColonyFromNameDocument = gql`
     query ColonyFromName($name: String!, $address: String!) {
   colonyAddress(name: $name) @client @export(as: "address")

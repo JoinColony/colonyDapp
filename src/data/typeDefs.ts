@@ -18,6 +18,8 @@ export default gql`
     loggedInUser: LoggedInUser!
     colonyAddress(name: String!): String!
     colonyName(address: String!): String!
+    userAddress(name: String!): String!
+    username(address: String!): String!
   }
 
   extend type Mutation {
