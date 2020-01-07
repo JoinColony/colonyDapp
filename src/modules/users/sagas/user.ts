@@ -24,7 +24,8 @@ import {
   EditUserMutation,
   EditUserMutationVariables,
   getLoggedInUser,
-  UserColonyIdsQueryResult,
+  UserColonyAddressesQuery,
+  UserColonyAddressesQueryVariables,
 } from '~data/index';
 import { putError, takeFrom } from '~utils/saga/effects';
 import { getEventLogs, parseUserTransferEvent } from '~utils/web3/eventLogs';
@@ -48,7 +49,10 @@ function* userTokenTransfersFetch( // eslint-disable-next-line @typescript-eslin
       Context.COLONY_MANAGER,
     );
 
-    const { data }: UserColonyIdsQueryResult = yield apolloClient.query({
+    const { data } = yield apolloClient.query<
+      UserColonyAddressesQuery,
+      UserColonyAddressesQueryVariables
+    >({
       query: ColonySubscribedUsersDocument,
       variables: { address: walletAddress },
     });
@@ -58,9 +62,8 @@ function* userTokenTransfersFetch( // eslint-disable-next-line @typescript-eslin
     }
 
     const {
-      user: { colonies },
+      user: { colonyAddresses: userColonyAddresses },
     } = data;
-    const userColonyAddresses = colonies.map(({ id }) => id);
 
     const metaColonyClient = yield colonyManager.getMetaColonyClient();
 

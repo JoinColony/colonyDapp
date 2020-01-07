@@ -8,6 +8,7 @@ import {
   useLoggedInUser,
   useSubscribeToColonyMutation,
   AnyTask,
+  useUserColonyAddressesQuery,
 } from '~data/index';
 import Icon from '~core/Icon';
 import { Table, TableBody } from '~core/Table';
@@ -153,11 +154,17 @@ const TaskList = ({
     [filter, sort, tasks],
   );
 
-  // FIXME get the colony addresses for the user
-  const colonyAddresses = [] as string[];
+  // const colonyAddresses = [] as string[];
+  const { data: userData } = useUserColonyAddressesQuery({
+    variables: { address: walletAddress },
+  });
 
   const isSubscribed =
-    typeof colonyAddress == 'string' && colonyAddresses.includes(colonyAddress);
+    typeof colonyAddress == 'string' &&
+    userData &&
+    userData.user &&
+    userData.user.colonyAddresses &&
+    userData.user.colonyAddresses.includes(colonyAddress);
 
   /*
    * These empty states are getting a bit out of hand. We have now 4 different
