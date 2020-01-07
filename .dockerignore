@@ -5,6 +5,5 @@ styleguide
 dist
 cypress
 docs
-integration-testing
 scripts
 ssl
