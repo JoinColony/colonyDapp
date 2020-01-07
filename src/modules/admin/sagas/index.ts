@@ -209,6 +209,10 @@ function* colonyClaimToken({
 }: Action<ActionTypes.COLONY_CLAIM_TOKEN>) {
   let txChannel;
   try {
+    const apolloClient: ApolloClient<object> = yield getContext(
+      Context.APOLLO_CLIENT,
+    );
+
     txChannel = yield call(getTxChannel, meta.id);
     yield fork(createTransaction, meta.id, {
       context: ContractContexts.COLONY_CONTEXT,
@@ -229,11 +233,14 @@ function* colonyClaimToken({
     });
     yield put<AllActions>(fetchColonyTransactions(colonyAddress));
     yield put<AllActions>(fetchColonyUnclaimedTransactions(colonyAddress));
-    // FIXME refresh token balance for colonyAddress, domainId, tokenAddress
-    // yield put<AllActions>({
-    //   type: ActionTypes.COLONY_TOKEN_BALANCE_FETCH,
-    //   payload: { colonyAddress, domainId: ROOT_DOMAIN, tokenAddress },
-    // });
+
+    yield apolloClient.query<
+      TokenBalancesForDomainsQuery,
+      TokenBalancesForDomainsQueryVariables
+    >({
+      query: TokenBalancesForDomainsDocument,
+      variables: { colonyAddress, tokenAddresses: [tokenAddress] },
+    });
   } catch (error) {
     return yield putError(ActionTypes.COLONY_CLAIM_TOKEN_ERROR, error, meta);
   } finally {
