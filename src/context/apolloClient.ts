@@ -7,8 +7,7 @@ import { cache, typeDefs } from '~data/index';
 export { ApolloProvider } from '@apollo/react-hooks';
 
 const httpLink = createHttpLink({
-  // FIXME use env variable
-  uri: 'http://127.0.0.1:3000/graphql',
+  uri: `${process.env.SERVER_ENDPOINT}/graphql`,
 });
 
 const authLink = setContext((_, { headers }) => {
