@@ -18,6 +18,8 @@ import {
   CreateUserMutation,
   CreateUserDocument,
   CreateUserMutationVariables,
+  UserColonyAddressesDocument,
+  UserColonyAddressesQueryVariables,
 } from '~data/index';
 
 import { TxConfig } from '../../core/types';
@@ -298,6 +300,14 @@ function* colonyCreate({
           tokenDecimals: TOKEN_DECIMALS,
         },
       },
+      refetchQueries: [
+        {
+          query: UserColonyAddressesDocument,
+          variables: {
+            address: walletAddress,
+          } as UserColonyAddressesQueryVariables,
+        },
+      ],
     });
 
     yield put(transactionLoadRelated(createColony.id, false));
