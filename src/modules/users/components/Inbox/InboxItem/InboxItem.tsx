@@ -87,14 +87,16 @@ const InboxItem = ({
       context,
       createdAt,
       type: eventType,
-      /* onClickRoute, */
+      /*
+       * @TODO Disabled notification click for initial deployment
+       *
+       * onClickRoute,
+       */
       initiatorAddress,
     },
   },
   full,
 }: Props) => {
-  // FIXME Get these from somewhere if applicable
-  const onClickRoute = 'xxx';
   const setTo = true;
   // Let's see what event type context props we have
 
@@ -155,7 +157,7 @@ const InboxItem = ({
     [colonyAddress],
   );
 
-  const currentDomain: DomainType | undefined = domains[domainId];
+  const currentDomain: DomainType | undefined = domains && domains[domainId];
 
   const [markAsReadMutation] = useMarkNotificationAsReadMutation({
     variables: { input: { id } },
@@ -174,13 +176,8 @@ const InboxItem = ({
       <TableCell
         className={full ? styles.inboxRowCellFull : styles.inboxRowCellPopover}
       >
-        {/*
-         * @FIXME The first ever notification for every user (user profile claimed)
-         * does not have a colony name or a token, so in that case the spinner
-         * will always render even though it shouldn't at that point
-         */
-        // !colonyName ||
-        // !token ||
+        {(colonyAddress && !colonyName) ||
+        (tokenAddress && !token) ||
         isFetchingDomains ? (
           <div className={styles.spinnerWrapper}>
             <SpinnerLoader
@@ -189,7 +186,7 @@ const InboxItem = ({
             />
           </div>
         ) : (
-          <WithLink to={onClickRoute}>
+          <WithLink>
             {!read && <UnreadIndicator type={getType(eventType)} />}
             {initiatorUser && initiatorUser.user && (
               <div className={styles.avatarWrapper}>
@@ -203,11 +200,6 @@ const InboxItem = ({
             )}
             <span className={styles.inboxAction}>
               <FormattedMessage
-                /*
-                 * @todo switch between notificationAdminOtherAdded v. notificationUserMadeAdmin notifications
-                 * depending if the otherUser address is the same as the sourceUserAddress
-                 * This is preffered as opposed to adding two notifications to the stores
-                 */
                 {...MSG[transformNotificationEventNames(eventType)]}
                 values={{
                   amount: makeInboxDetail(amount, value => (
