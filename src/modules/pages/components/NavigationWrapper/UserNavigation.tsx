@@ -5,10 +5,12 @@ import { DASHBOARD_ROUTE } from '~routes/index';
 
 import Icon from '~core/Icon';
 import NavLink from '~core/NavLink';
+import { SpinnerLoader } from '~core/Preloaders';
 import { GasStationPopover } from '~users/GasStation';
 import AvatarDropdown from '~users/AvatarDropdown';
 import { InboxIcon } from '~users/Inbox';
 import InboxPopover from '~users/Inbox/InboxPopover';
+import { useUserNotificationsQuery, useLoggedInUser } from '~data/index';
 
 import styles from './UserNavigation.css';
 
@@ -30,8 +32,17 @@ const MSG = defineMessages({
 const displayName = 'pages.NavigationWrapper.UserNavigation';
 
 const UserNavigation = () => {
-  // FIXME get notificiations here
-  const notifications = [];
+  const { walletAddress } = useLoggedInUser();
+
+  const { data } = useUserNotificationsQuery({
+    variables: { address: walletAddress },
+  });
+
+  if (!data) return <SpinnerLoader size="tiny" />;
+
+  const {
+    user: { notifications },
+  } = data;
 
   return (
     <div className={styles.main}>

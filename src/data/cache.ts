@@ -1,4 +1,3 @@
-/* This file is already part of apollo data. Don't delete */
 import {
   InMemoryCache,
   IntrospectionFragmentMatcher,

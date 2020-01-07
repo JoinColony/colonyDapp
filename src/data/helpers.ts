@@ -1,4 +1,3 @@
-/* This file is already part of apollo data. Don't delete */
 import { useEffect } from 'react';
 import ApolloClient from 'apollo-client';
 import { graphql, DataValue } from '@apollo/react-hoc';
@@ -14,6 +13,9 @@ import {
   useUserLazyQuery,
   useUserQuery,
   UserQuery,
+  UserNotificationsDocument,
+  UserNotificationsQuery,
+  UserNotificationsQueryVariables,
 } from './index';
 
 const getMinimalUser = (address: string): UserQuery['user'] => ({
@@ -26,7 +28,6 @@ export const useUser = (address: Address) => {
   return data ? data.user : getMinimalUser(address);
 };
 
-// FIXME error handling
 export const useUserLazy = (address?: Address) => {
   const [loadUser, { data }] = useUserLazyQuery();
   useEffect(() => {
@@ -84,3 +85,18 @@ export const withLoggedInUser = graphql(LoggedInUserDocument, {
     };
   },
 });
+
+// Re-fetch user notifications and write to cache
+export function* refetchUserNotifications(walletAddress: string) {
+  const apolloClient: ApolloClient<object> = yield getContext(
+    Context.APOLLO_CLIENT,
+  );
+  yield apolloClient.query<
+    UserNotificationsQuery,
+    UserNotificationsQueryVariables
+  >({
+    query: UserNotificationsDocument,
+    variables: { address: walletAddress },
+    fetchPolicy: 'network-only',
+  });
+}
