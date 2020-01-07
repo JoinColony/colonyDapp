@@ -4,7 +4,11 @@ import { defineMessages } from 'react-intl';
 import ColonyGrid from '~dashboard/ColonyGrid';
 import Link from '~core/Link';
 import { CREATE_COLONY_ROUTE } from '~routes/index';
-import { useLoggedInUser, AnyUser, useUserColonyIdsQuery } from '~data/index';
+import {
+  AnyUser,
+  useLoggedInUser,
+  useUserColonyAddressesQuery,
+} from '~data/index';
 
 import { getFriendlyName } from '../../transformers';
 import styles from './UserColonies.css';
@@ -34,16 +38,15 @@ const UserColonies = ({ user }: Props) => {
   const { walletAddress } = useLoggedInUser();
   const friendlyName = getFriendlyName(user);
   // @TODO we should probably get the full colonies and pass them down to colonyGrid
-  const { data } = useUserColonyIdsQuery({
+  const { data } = useUserColonyAddressesQuery({
     variables: { address: walletAddress },
   });
 
   // @TODO we want a proper spinner loader here eventually
   if (!data) return null;
   const {
-    user: { colonies },
+    user: { colonyAddresses },
   } = data;
-  const colonyAddresses = colonies.map(({ id }) => id);
   const isCurrentUser = walletAddress === user.profile.walletAddress;
   return (
     <ColonyGrid

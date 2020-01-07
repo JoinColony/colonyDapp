@@ -243,13 +243,10 @@ query ColonyProfile($address: String!) {
   }
 }
 
-# @TODO we want to get the full tasks in a lot of cases, maybe this isn't needed
-query UserColonyIds($address: String!) {
+query UserColonyAddresses($address: String!) {
   user(address: $address) {
     id
-    colonies {
-      id
-    }
+    colonyAddresses
   }
 }
 

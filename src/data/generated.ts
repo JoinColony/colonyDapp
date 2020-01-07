@@ -1131,14 +1131,14 @@ export type SubscribeToColonyMutationVariables = {
 };
 
 
-export type SubscribeToColonyMutation = { subscribeToColony: Maybe<Pick<User, 'id'>> };
+export type SubscribeToColonyMutation = { subscribeToColony: Maybe<Pick<User, 'id' | 'colonyAddresses'>> };
 
 export type UnsubscribeFromColonyMutationVariables = {
   input: UnsubscribeFromColonyInput
 };
 
 
-export type UnsubscribeFromColonyMutation = { unsubscribeFromColony: Maybe<Pick<User, 'id'>> };
+export type UnsubscribeFromColonyMutation = { unsubscribeFromColony: Maybe<Pick<User, 'id' | 'colonyAddresses'>> };
 
 export type CreateDomainMutationVariables = {
   input: CreateDomainInput
@@ -1322,15 +1322,12 @@ export type ColonyProfileQueryVariables = {
 
 export type ColonyProfileQuery = { colony: ColonyProfileFragment };
 
-export type UserColonyIdsQueryVariables = {
+export type UserColonyAddressesQueryVariables = {
   address: Scalars['String']
 };
 
 
-export type UserColonyIdsQuery = { user: (
-    Pick<User, 'id'>
-    & { colonies: Array<Pick<Colony, 'id'>> }
-  ) };
+export type UserColonyAddressesQuery = { user: Pick<User, 'id' | 'colonyAddresses'> };
 
 export type ColonyTasksQueryVariables = {
   address: Scalars['String']
@@ -2451,6 +2448,7 @@ export const SubscribeToColonyDocument = gql`
     mutation SubscribeToColony($input: SubscribeToColonyInput!) {
   subscribeToColony(input: $input) {
     id
+    colonyAddresses
   }
 }
     `;
@@ -2483,6 +2481,7 @@ export const UnsubscribeFromColonyDocument = gql`
     mutation UnsubscribeFromColony($input: UnsubscribeFromColonyInput!) {
   unsubscribeFromColony(input: $input) {
     id
+    colonyAddresses
   }
 }
     `;
@@ -3203,42 +3202,40 @@ export function useColonyProfileLazyQuery(baseOptions?: ApolloReactHooks.LazyQue
 export type ColonyProfileQueryHookResult = ReturnType<typeof useColonyProfileQuery>;
 export type ColonyProfileLazyQueryHookResult = ReturnType<typeof useColonyProfileLazyQuery>;
 export type ColonyProfileQueryResult = ApolloReactCommon.QueryResult<ColonyProfileQuery, ColonyProfileQueryVariables>;
-export const UserColonyIdsDocument = gql`
-    query UserColonyIds($address: String!) {
+export const UserColonyAddressesDocument = gql`
+    query UserColonyAddresses($address: String!) {
   user(address: $address) {
     id
-    colonies {
-      id
-    }
+    colonyAddresses
   }
 }
     `;
 
 /**
- * __useUserColonyIdsQuery__
+ * __useUserColonyAddressesQuery__
  *
- * To run a query within a React component, call `useUserColonyIdsQuery` and pass it any options that fit your needs.
- * When your component renders, `useUserColonyIdsQuery` returns an object from Apollo Client that contains loading, error, and data properties 
+ * To run a query within a React component, call `useUserColonyAddressesQuery` and pass it any options that fit your needs.
+ * When your component renders, `useUserColonyAddressesQuery` returns an object from Apollo Client that contains loading, error, and data properties 
  * you can use to render your UI.
  *
  * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
  *
  * @example
- * const { data, loading, error } = useUserColonyIdsQuery({
+ * const { data, loading, error } = useUserColonyAddressesQuery({
  *   variables: {
  *      address: // value for 'address'
  *   },
  * });
  */
-export function useUserColonyIdsQuery(baseOptions?: ApolloReactHooks.QueryHookOptions<UserColonyIdsQuery, UserColonyIdsQueryVariables>) {
-        return ApolloReactHooks.useQuery<UserColonyIdsQuery, UserColonyIdsQueryVariables>(UserColonyIdsDocument, baseOptions);
+export function useUserColonyAddressesQuery(baseOptions?: ApolloReactHooks.QueryHookOptions<UserColonyAddressesQuery, UserColonyAddressesQueryVariables>) {
+        return ApolloReactHooks.useQuery<UserColonyAddressesQuery, UserColonyAddressesQueryVariables>(UserColonyAddressesDocument, baseOptions);
       }
-export function useUserColonyIdsLazyQuery(baseOptions?: ApolloReactHooks.LazyQueryHookOptions<UserColonyIdsQuery, UserColonyIdsQueryVariables>) {
-          return ApolloReactHooks.useLazyQuery<UserColonyIdsQuery, UserColonyIdsQueryVariables>(UserColonyIdsDocument, baseOptions);
+export function useUserColonyAddressesLazyQuery(baseOptions?: ApolloReactHooks.LazyQueryHookOptions<UserColonyAddressesQuery, UserColonyAddressesQueryVariables>) {
+          return ApolloReactHooks.useLazyQuery<UserColonyAddressesQuery, UserColonyAddressesQueryVariables>(UserColonyAddressesDocument, baseOptions);
         }
-export type UserColonyIdsQueryHookResult = ReturnType<typeof useUserColonyIdsQuery>;
-export type UserColonyIdsLazyQueryHookResult = ReturnType<typeof useUserColonyIdsLazyQuery>;
-export type UserColonyIdsQueryResult = ApolloReactCommon.QueryResult<UserColonyIdsQuery, UserColonyIdsQueryVariables>;
+export type UserColonyAddressesQueryHookResult = ReturnType<typeof useUserColonyAddressesQuery>;
+export type UserColonyAddressesLazyQueryHookResult = ReturnType<typeof useUserColonyAddressesLazyQuery>;
+export type UserColonyAddressesQueryResult = ApolloReactCommon.QueryResult<UserColonyAddressesQuery, UserColonyAddressesQueryVariables>;
 export const ColonyTasksDocument = gql`
     query ColonyTasks($address: String!) {
   colony(address: $address) {

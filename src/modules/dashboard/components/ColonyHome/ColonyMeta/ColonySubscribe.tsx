@@ -7,9 +7,9 @@ import { Tooltip } from '~core/Popover';
 import { SpinnerLoader } from '~core/Preloaders';
 import {
   useLoggedInUser,
-  useUserColonyIdsQuery,
   useSubscribeToColonyMutation,
   useUnsubscribeFromColonyMutation,
+  useUserColonyAddressesQuery,
 } from '~data/index';
 
 import styles from './ColonySubscribe.css';
@@ -36,7 +36,7 @@ interface Props {
 const ColonySubscribe = ({ colonyAddress }: Props) => {
   const { username, walletAddress } = useLoggedInUser();
   // FIXME: this will probably not show immediate effect. Needs to be fixed
-  const { data } = useUserColonyIdsQuery({
+  const { data } = useUserColonyAddressesQuery({
     variables: { address: walletAddress },
   });
 
@@ -52,9 +52,8 @@ const ColonySubscribe = ({ colonyAddress }: Props) => {
   if (!username || !data) return null;
 
   const {
-    user: { colonies },
+    user: { colonyAddresses },
   } = data;
-  const colonyAddresses = colonies.map(({ id }) => id);
 
   const isSubscribed = (colonyAddresses || []).includes(colonyAddress);
 
