@@ -23,18 +23,16 @@ import {
   EditUserDocument,
   EditUserMutation,
   EditUserMutationVariables,
-  getLoggedInUser,
   UserColonyAddressesQuery,
   UserColonyAddressesQueryVariables,
 } from '~data/index';
 import { putError, takeFrom } from '~utils/saga/effects';
 import { getEventLogs, parseUserTransferEvent } from '~utils/web3/eventLogs';
 
+import { clearToken } from '../../../api/auth';
 import { ContractContexts } from '../../../lib/ColonyManager/constants';
-
 import { ipfsUpload } from '../../core/sagas/ipfs';
 import { transactionLoadRelated } from '../../core/actionCreators';
-
 import { createTransaction, getTxChannel } from '../../core/sagas/transactions';
 
 function* userTokenTransfersFetch( // eslint-disable-next-line @typescript-eslint/no-unused-vars,no-unused-vars
@@ -310,7 +308,7 @@ function* userLogout() {
     /*
      *  3. Delete json web token
      */
-    // FIXME this has to be done
+    clearToken();
 
     yield all([
       put<AllActions>({
