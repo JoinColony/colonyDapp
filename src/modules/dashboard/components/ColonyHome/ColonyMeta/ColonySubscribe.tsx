@@ -35,7 +35,6 @@ interface Props {
 
 const ColonySubscribe = ({ colonyAddress }: Props) => {
   const { username, walletAddress } = useLoggedInUser();
-  // FIXME: this will probably not show immediate effect. Needs to be fixed
   const { data } = useUserColonyAddressesQuery({
     variables: { address: walletAddress },
   });
