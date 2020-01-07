@@ -10,7 +10,6 @@ import { TokenActionTypes } from './token';
 import { TransactionActionTypes } from './transaction';
 import { MessageActionTypes } from './message';
 import { UserActionTypes } from './user';
-import { UsernameActionTypes } from './username';
 import { WalletActionTypes } from './wallet';
 
 /*
@@ -106,7 +105,6 @@ export type AllActions =
   | TransactionActionTypes
   | MessageActionTypes
   | UserActionTypes
-  | UsernameActionTypes
   | WalletActionTypes;
 
 export type Action<T extends AllActions['type']> = Extract<
