@@ -2,7 +2,6 @@ import ApolloClient from 'apollo-client';
 import { push } from 'connected-react-router';
 import {
   call,
-  delay,
   fork,
   put,
   takeEvery,
@@ -200,42 +199,6 @@ function* userAvatarUpload({
   return null;
 }
 
-function* usernameCheckAvailability({
-  meta,
-  payload: { username },
-}: Action<ActionTypes.USERNAME_CHECK_AVAILABILITY>) {
-  try {
-    yield delay(300);
-
-    const colonyManager = yield getContext(Context.COLONY_MANAGER);
-    const ens = yield getContext(Context.ENS_INSTANCE);
-
-    const isAvailable = yield call(
-      [ens, ens.isENSNameAvailable],
-      'user',
-      username,
-      colonyManager.networkClient,
-    );
-
-    if (!isAvailable) {
-      throw new Error(`ENS address for user "${username}" already exists`);
-    }
-
-    yield put<AllActions>({
-      type: ActionTypes.USERNAME_CHECK_AVAILABILITY_SUCCESS,
-      meta,
-      payload: undefined,
-    });
-  } catch (error) {
-    return yield putError(
-      ActionTypes.USERNAME_CHECK_AVAILABILITY_ERROR,
-      error,
-      meta,
-    );
-  }
-  return null;
-}
-
 function* usernameCreate({
   meta: { id },
   meta,
@@ -330,10 +293,6 @@ export function* setupUsersSagas() {
   yield takeEvery(
     ActionTypes.USER_TOKEN_TRANSFERS_FETCH,
     userTokenTransfersFetch,
-  );
-  yield takeLatest(
-    ActionTypes.USERNAME_CHECK_AVAILABILITY,
-    usernameCheckAvailability,
   );
   yield takeLatest(ActionTypes.USER_AVATAR_REMOVE, userAvatarRemove);
   yield takeLatest(ActionTypes.USER_AVATAR_UPLOAD, userAvatarUpload);

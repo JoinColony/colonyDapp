@@ -1,19 +1,22 @@
 import React, { useCallback } from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 import * as yup from 'yup';
+import { useApolloClient } from '@apollo/react-hooks';
 
 import { WizardProps } from '~core/Wizard';
-
-import styles from './StepUserName.css';
-
-import { useAsyncFunction } from '~utils/hooks';
 import { Form, Input } from '~core/Fields';
 import Heading from '~core/Heading';
 import Button from '~core/Button';
 import Icon from '~core/Icon';
 import { Tooltip } from '~core/Popover';
-import { ActionTypes } from '~redux/index';
 import ENS from '~lib/ENS';
+import {
+  UserAddressDocument,
+  UserAddressQuery,
+  UserAddressQueryVariables,
+} from '~data/index';
+
+import styles from './StepUserName.css';
 
 type FormValues = {
   username: string;
@@ -74,11 +77,28 @@ const validationSchema = yup.object({
 });
 
 const StepUserName = ({ stepCompleted, wizardForm, nextStep }: Props) => {
-  const checkDomainTaken = useAsyncFunction({
-    submit: ActionTypes.USERNAME_CHECK_AVAILABILITY,
-    success: ActionTypes.USERNAME_CHECK_AVAILABILITY_SUCCESS,
-    error: ActionTypes.USERNAME_CHECK_AVAILABILITY_ERROR,
-  });
+  const apolloClient = useApolloClient();
+
+  const checkDomainTaken = useCallback(
+    async (values: FormValues) => {
+      try {
+        const { data } = await apolloClient.query<
+          UserAddressQuery,
+          UserAddressQueryVariables
+        >({
+          query: UserAddressDocument,
+          variables: {
+            name: values.username,
+          },
+        });
+        if (data && data.userAddress) return true;
+        return false;
+      } catch (e) {
+        return false;
+      }
+    },
+    [apolloClient],
+  );
 
   const validateDomain = useCallback(
     async (values: FormValues) => {
@@ -90,9 +110,8 @@ const StepUserName = ({ stepCompleted, wizardForm, nextStep }: Props) => {
         // validationSchema
         return {};
       }
-      try {
-        await checkDomainTaken(values);
-      } catch (e) {
+      const taken = await checkDomainTaken(values);
+      if (taken) {
         const errors = {
           username: MSG.errorDomainTaken,
         };
