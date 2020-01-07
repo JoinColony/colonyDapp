@@ -16,6 +16,8 @@ import { getContext, Context } from '~context/index';
 import ENS from '~lib/ENS';
 import { ColonyManager, createAddress } from '~types/index';
 import {
+  getLoggedInUser,
+  refetchUserNotifications,
   ColonySubscribedUsersDocument,
   CreateUserDocument,
   CreateUserMutation,
@@ -239,6 +241,7 @@ function* usernameCreate({
   meta,
   payload: { username: givenUsername },
 }: Action<ActionTypes.USERNAME_CREATE>) {
+  const { walletAddress } = yield getLoggedInUser();
   const txChannel = yield call(getTxChannel, id);
   try {
     // Normalize again, just to be sure
@@ -274,6 +277,8 @@ function* usernameCreate({
 
     yield put(transactionLoadRelated(id, false));
 
+    yield refetchUserNotifications(walletAddress);
+
     yield put<AllActions>({
       type: ActionTypes.USERNAME_CREATE_SUCCESS,
       payload: {
@@ -281,8 +286,6 @@ function* usernameCreate({
       },
       meta,
     });
-
-    // FIXME After the user is created, fetch it's inbox notifications
   } catch (error) {
     return yield putError(ActionTypes.USERNAME_CREATE_ERROR, error, meta);
   } finally {
