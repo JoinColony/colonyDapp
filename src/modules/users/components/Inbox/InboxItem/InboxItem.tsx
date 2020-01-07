@@ -87,14 +87,16 @@ const InboxItem = ({
       context,
       createdAt,
       type: eventType,
-      /* onClickRoute, */
+      /*
+       * @TODO Disabled notification click for initial deployment
+       *
+       * onClickRoute,
+       */
       initiatorAddress,
     },
   },
   full,
 }: Props) => {
-  // FIXME Get these from somewhere if applicable
-  const onClickRoute = 'xxx';
   const setTo = true;
   // Let's see what event type context props we have
 
@@ -189,7 +191,7 @@ const InboxItem = ({
             />
           </div>
         ) : (
-          <WithLink to={onClickRoute}>
+          <WithLink>
             {!read && <UnreadIndicator type={getType(eventType)} />}
             {initiatorUser && initiatorUser.user && (
               <div className={styles.avatarWrapper}>
