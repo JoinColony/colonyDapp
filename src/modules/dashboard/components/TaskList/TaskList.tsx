@@ -1,4 +1,10 @@
-import React, { ReactNode, useMemo, useCallback, useEffect } from 'react';
+import React, {
+  ReactNode,
+  useMemo,
+  useCallback,
+  useEffect,
+  Fragment,
+} from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 
 import { Address } from '~types/index';
@@ -256,16 +262,15 @@ const TaskList = ({
     >
       <TableBody>
         {filteredTasksData.map(taskData => (
-          <>
+          <Fragment key={taskData.id}>
             {taskData.colony && (
               <TaskListItem
-                key={taskData.id}
                 colonyAddress={taskData.colonyAddress}
                 colonyName={taskData.colony.colonyName}
                 task={taskData}
               />
             )}
-          </>
+          </Fragment>
         ))}
       </TableBody>
     </Table>
