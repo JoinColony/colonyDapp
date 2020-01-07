@@ -155,7 +155,7 @@ const InboxItem = ({
     [colonyAddress],
   );
 
-  const currentDomain: DomainType | undefined = domains[domainId];
+  const currentDomain: DomainType | undefined = domains && domains[domainId];
 
   const [markAsReadMutation] = useMarkNotificationAsReadMutation({
     variables: { input: { id } },
