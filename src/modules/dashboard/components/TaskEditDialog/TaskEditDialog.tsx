@@ -389,6 +389,8 @@ const TaskEditDialog = ({
                             <Payout
                               canRemove={canRemove}
                               colonyAddress={colonyAddress}
+                              // wiill have at least one of `id` or `token`
+                              key={payout.id || payout.token}
                               name={`payouts.${index}`}
                               payout={payout}
                               reputation={0}
