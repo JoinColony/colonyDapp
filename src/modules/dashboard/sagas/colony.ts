@@ -1,7 +1,6 @@
 import ApolloClient from 'apollo-client';
 import {
   call,
-  delay,
   fork,
   put,
   takeEvery,
@@ -17,8 +16,6 @@ import {
   EditColonyProfileMutation,
   EditColonyProfileMutationVariables,
   ColonyDocument,
-  ColonyAddressQuery,
-  ColonyAddressQueryVariables,
   ColonyQuery,
   ColonyQueryVariables,
 } from '~data/index';
@@ -27,46 +24,6 @@ import { getContext, Context } from '~context/index';
 import { createTransaction, getTxChannel } from '../../core/sagas';
 import { ipfsUpload } from '../../core/sagas/ipfs';
 import { networkVersionSelector } from '../../core/selectors';
-
-function* colonyNameCheckAvailability({
-  payload: { colonyName },
-  meta,
-}: Action<ActionTypes.COLONY_NAME_CHECK_AVAILABILITY>) {
-  try {
-    yield delay(300);
-
-    const apolloClient: ApolloClient<object> = yield getContext(
-      Context.APOLLO_CLIENT,
-    );
-
-    const { data } = yield apolloClient.query<
-      ColonyAddressQuery,
-      ColonyAddressQueryVariables
-    >({
-      query: ColonyDocument,
-      variables: {
-        name: colonyName,
-      },
-    });
-
-    if (!data || !data.colonyAddress) {
-      throw new Error(`ENS address for colony "${colonyName}" already exists`);
-    }
-
-    yield put<AllActions>({
-      type: ActionTypes.COLONY_NAME_CHECK_AVAILABILITY_SUCCESS,
-      meta,
-      payload: undefined,
-    });
-  } catch (caughtError) {
-    return yield putError(
-      ActionTypes.COLONY_NAME_CHECK_AVAILABILITY_ERROR,
-      caughtError,
-      meta,
-    );
-  }
-  return null;
-}
 
 function* colonyAvatarUpload({
   meta,
@@ -273,8 +230,4 @@ export default function* colonySagas() {
    */
   yield takeLatest(ActionTypes.COLONY_AVATAR_REMOVE, colonyAvatarRemove);
   yield takeLatest(ActionTypes.COLONY_AVATAR_UPLOAD, colonyAvatarUpload);
-  yield takeLatest(
-    ActionTypes.COLONY_NAME_CHECK_AVAILABILITY,
-    colonyNameCheckAvailability,
-  );
 }
