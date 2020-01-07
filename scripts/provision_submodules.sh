@@ -8,6 +8,9 @@ while [ $# -gt 0 ]; do
     --skip-pinning-service-build)
       SKIP_PINNING_SERVICE_BUILD=true
       ;;
+    --skip-server-build)
+      SKIP_SERVER_BUILD=true
+      ;;
     *)
       echo "Invalid argument: $1"
       exit 1
