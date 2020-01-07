@@ -98,41 +98,6 @@ jobs:
       - run:
           name: "Building library"
           command: yarn webpack:build
-  integration-testing:
-    docker:
-      - image: circleci/node:10.16.3
-    environment:
-      LOADER: trufflepig
-      NETWORK: local
-      PINNING_ROOM: PINION_DEV_ROOM
-    working_directory: ~/colonyDapp
-    steps:
-      - checkout
-      - restore_cache:
-          keys:
-          - node-modules-v2-{{ checksum "package.json" }}
-          - node-modules-v2-
-      - run:
-          name: "Installing modules"
-          command: |
-            yarn install
-            yarn provision --skip-colony-network-build
-      - save_cache:
-          paths:
-            - node_modules
-          key: node-modules-v2-{{ checksum "package.json" }}
-      - run:
-          name: "Linting TypeScript"
-          command: yarn lint:ci
-      - run:
-          name: "Running Integration Tests"
-          command: |
-            mkdir -p reports/ava
-            yarn test:integration:ci
-      - store_test_results:
-          path: reports
-      - store_artifacts:
-          path: reports
   e2e-testing:
     docker:
       - image: joincolony/circleci-cypress
@@ -277,7 +242,6 @@ workflows:
   commit:
     jobs:
       - build-with-lockfile
-      - integration-testing
       - e2e-testing
       - build-styleguide:
           requires:
@@ -291,7 +255,6 @@ workflows:
       - build-mainnet-image:
           requires:
             - build-with-lockfile
-            - integration-testing
             - e2e-testing
           filters:
             branches:
@@ -306,5 +269,4 @@ workflows:
               only: master
     jobs:
       - nightly-build
-      - integration-testing
       - e2e-testing

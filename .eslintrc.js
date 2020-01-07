@@ -43,15 +43,6 @@ module.exports = {
         jest: true,
       },
     },
-    {
-      files: 'integration-testing/**/*.ts',
-      plugins: ['ava'],
-      rules: {
-        'no-param-reassign': 'off',
-        'no-underscore-dangle': 'off',
-        'max-len': 'off',
-      },
-    },
   ],
   rules: {
     'camelcase': ['error', {allow: ["^TEMP_"]}],

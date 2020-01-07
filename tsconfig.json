@@ -39,7 +39,6 @@
   },
   "include": [
     "globals.d.ts",
-    "integration-testing",
     "src"
   ],
   "exclude": [

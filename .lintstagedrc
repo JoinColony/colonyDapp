@@ -4,10 +4,6 @@
       "eslint --fix",
       "git add"
     ],
-    "integration-testing/**/*.ts": [
-      "eslint --fix",
-      "git add"
-    ],
     "cypress/**/*.ts": [
       "eslint --fix",
       "git add"
