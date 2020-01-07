@@ -15,6 +15,7 @@ import { Context, ContextType } from '~context/index';
 import { putError } from '~utils/saga/effects';
 import { log } from '~utils/debug';
 import {
+  refetchUserNotifications,
   SetLoggedInUserDocument,
   SetLoggedInUserMutation,
   SetLoggedInUserMutationVariables,
@@ -140,13 +141,13 @@ export default function* setupUserContext(
       },
     });
 
+    yield refetchUserNotifications(walletAddress);
+
+    setupOnBeforeUnload();
+
     yield put<AllActions>({
       type: ActionTypes.USER_CONTEXT_SETUP_SUCCESS,
     });
-
-    // FIXME Fetch the user's inbox notifications
-
-    yield call(setupOnBeforeUnload);
   } catch (caughtError) {
     return yield putError(ActionTypes.WALLET_CREATE_ERROR, caughtError, meta);
   }

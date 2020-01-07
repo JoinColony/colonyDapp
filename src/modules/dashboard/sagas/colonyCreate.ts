@@ -10,13 +10,14 @@ import ENS from '~lib/ENS';
 import { createAddress, ContractContexts } from '~types/index';
 import { parseExtensionDeployedLog } from '~utils/web3/eventLogs/eventParsers';
 import {
+  getLoggedInUser,
+  refetchUserNotifications,
   CreateColonyDocument,
   CreateColonyMutation,
   CreateColonyMutationVariables,
   CreateUserMutation,
   CreateUserDocument,
   CreateUserMutationVariables,
-  getLoggedInUser,
 } from '~data/index';
 
 import { TxConfig } from '../../core/types';
@@ -41,7 +42,7 @@ function* colonyCreate({
     username: givenUsername,
   },
 }: Action<ActionTypes.COLONY_CREATE>) {
-  const { username: currentUsername } = yield getLoggedInUser();
+  const { username: currentUsername, walletAddress } = yield getLoggedInUser();
 
   const apolloClient: ApolloClient<object> = yield getContext(
     Context.APOLLO_CLIENT,
@@ -225,7 +226,7 @@ function* colonyCreate({
 
       yield put<AllActions>(transactionLoadRelated(createUser.id, false));
 
-      // FIXME After the user is created, fetch it's inbox notifications
+      yield refetchUserNotifications(walletAddress);
     }
 
     /*

@@ -1,4 +1,3 @@
-/* This file is already part of apollo data. Don't delete */
 import { Resolvers } from 'apollo-client';
 
 import apolloCache from './cache';
@@ -46,10 +45,6 @@ export const resolvers: ResolverFactory[] = [
 export * from './generated';
 export * from './helpers';
 
-// FIXME create fragments for typical tokens/payouts, use in queries and type with those
-
-// @TODO find a solution for query return types used throughout the dapp
-// @body when passing down properties to other components we should expect the return type of the query in the upper component. How can we make that work in a simple way?
 export type AnyUser = UserQuery['user'];
 
 export type AnyTask =

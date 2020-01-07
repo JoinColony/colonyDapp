@@ -1,4 +1,3 @@
-/* This file is already part of apollo data. Don't delete */
 import { Resolvers } from 'apollo-client';
 import assignWith from 'lodash/fp/assignWith';
 
