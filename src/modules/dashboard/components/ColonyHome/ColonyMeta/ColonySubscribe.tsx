@@ -43,11 +43,15 @@ const ColonySubscribe = ({ colonyAddress }: Props) => {
   const [
     subscribe,
     { loading: loadingSubscribe },
-  ] = useSubscribeToColonyMutation();
+  ] = useSubscribeToColonyMutation({
+    variables: { input: { colonyAddress } },
+  });
   const [
     unsubscribe,
     { loading: loadingUnsubscribe },
-  ] = useUnsubscribeFromColonyMutation();
+  ] = useUnsubscribeFromColonyMutation({
+    variables: { input: { colonyAddress } },
+  });
 
   if (!username || !data) return null;
 
