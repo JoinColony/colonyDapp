@@ -1,22 +1,23 @@
-import React, { useCallback, useMemo, useState } from 'react';
-import { defineMessages, FormattedMessage, injectIntl } from 'react-intl';
-import BigNumber from 'bn.js';
+import React, { useCallback, /* useEffect, */ useMemo, useState } from 'react';
+import { defineMessages, FormattedMessage } from 'react-intl';
+/* import BigNumber from 'bn.js'; */
 
 import { COLONY_TOTAL_BALANCE_DOMAIN_ID } from '~constants';
 import Heading from '~core/Heading';
 import Button from '~core/Button';
 import ItemsList from '~core/ItemsList';
 import {
+  useSetTaskDomainMutation,
+  /* useTokenBalancesForDomainsLazyQuery, */
   AnyTask,
   FullColonyFragment,
-  useSetTaskDomainMutation,
   Payouts,
 } from '~data/index';
 import { DomainType } from '~immutable/index';
 import { Address } from '~types/index';
 import { useDataFetcher } from '~utils/hooks';
-import { bnLessThan } from '~utils/numbers';
-import { getBalanceFromToken } from '~utils/tokens';
+/* import { bnLessThan } from '~utils/numbers'; */
+/* import { getBalanceFromToken } from '~utils/tokens'; */
 
 import { domainsFetcher } from '../../fetchers';
 
@@ -68,9 +69,8 @@ const TaskDomains = ({
   ethDomainId,
   draftId,
   disabled,
-  payouts,
-  tokens,
-}: Props) => {
+}: /* payouts, */
+Props) => {
   const [setDomain] = useSetTaskDomainMutation();
 
   const [selectedDomainId, setSelectedDomainId] = useState<number | undefined>(
@@ -98,17 +98,43 @@ const TaskDomains = ({
     [colonyAddress],
   );
 
-  const domainHasEnoughFunds = useCallback(
-    (dId: number) =>
-      payouts.every(({ amount, token }) => {
-        const payoutToken = tokens.find(
-          ({ address }) => address === token.address,
-        );
-        const tokenBalanceInDomain = getBalanceFromToken(payoutToken, dId);
-        return !bnLessThan(new BigNumber(tokenBalanceInDomain), amount);
-      }),
-    [payouts, tokens],
-  );
+  // @TODO Fix token balances infinite loop
+  // @BODY This code checks for sufficient funds in a pot in order to change the domain of a task. Since we have disabled this functionality, we commented out this code. Also, it doesn't really work. This code will yield an infinite loop of requests to the server and the local resolvers. This has to be fixed before enabling this again.
+
+  /* const [ */
+  /*   loadTokenBalances, */
+  /*   { data: tokenBalancesForDomainsData }, */
+  /* ] = useTokenBalancesForDomainsLazyQuery(); */
+  /* useEffect(() => { */
+  /*   if (domains) { */
+  /*     const domainIds = Object.keys(domains).map(d => parseInt(d, 10)); */
+  /*     const tokenAddresses = payouts.map(({ token }) => token.address); */
+  /*     loadTokenBalances({ */
+  /*       variables: { */
+  /*         colonyAddress, */
+  /*         tokenAddresses, */
+  /*         domainIds, */
+  /*       }, */
+  /*     }); */
+  /*   } */
+  /* }, [colonyAddress, domains, loadTokenBalances, payouts]); */
+
+  /* const domainHasEnoughFunds = useCallback( */
+  /*   (dId: number) => */
+  /*     payouts.every(({ amount, token }) => { */
+  /*       if (!tokenBalancesForDomainsData) return false; */
+  /*       const { */
+  /*         colony: { tokens }, */
+  /*       } = tokenBalancesForDomainsData; */
+  /*       const tokenWithBalances = tokens.find(t => t.address === token.address); */
+  /*       const tokenBalanceInDomain = getBalanceFromToken( */
+  /*         tokenWithBalances, */
+  /*         dId, */
+  /*       ); */
+  /*       return !bnLessThan(new BigNumber(tokenBalanceInDomain), amount); */
+  /*     }), */
+  /*   [payouts, tokenBalancesForDomainsData], */
+  /* ); */
 
   const consumableDomains: ConsumableDomainArray = useMemo(
     () =>
@@ -116,10 +142,11 @@ const TaskDomains = ({
         .sort()
         .map(id => ({
           ...(domains || {})[id],
-          disabled: !domainHasEnoughFunds(parseInt(id, 10)),
+          disabled: false,
+          /* disabled: !domainHasEnoughFunds(parseInt(id, 10)), */
           id: parseInt(id, 10),
         })),
-    [domainHasEnoughFunds, domains],
+    [domains],
   );
 
   return (
@@ -158,4 +185,4 @@ const TaskDomains = ({
 
 TaskDomains.displayName = displayName;
 
-export default injectIntl(TaskDomains);
+export default TaskDomains;
