@@ -10,7 +10,7 @@ import {
   useSetTaskDomainMutation,
   /* useTokenBalancesForDomainsLazyQuery, */
   AnyTask,
-  FullColonyFragment,
+  /* FullColonyFragment, */
   Payouts,
 } from '~data/index';
 import { DomainType } from '~immutable/index';
@@ -51,7 +51,6 @@ interface Props {
   draftId: AnyTask['id'];
   ethDomainId: number;
   payouts: Payouts;
-  tokens: FullColonyFragment['tokens'];
 }
 
 // This odd typing makes DomainType compatible with ConsumableItem
