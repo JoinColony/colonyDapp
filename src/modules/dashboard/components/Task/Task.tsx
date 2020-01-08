@@ -3,7 +3,7 @@ import { defineMessages, FormattedMessage } from 'react-intl';
 import { RouteComponentProps, withRouter } from 'react-router-dom';
 import compose from 'recompose/compose';
 
-import Button, { ActionButton, ConfirmButton } from '~core/Button';
+import Button, { ActionButton } from '~core/Button';
 import { OpenDialog } from '~core/Dialog/types';
 import withDialog from '~core/Dialog/withDialog';
 import Heading from '~core/Heading';
@@ -121,7 +121,10 @@ const Task = ({
   openDialog,
   history,
 }: Props) => {
-  const [isDiscardConfirmDisplayed, setDiscardConfirmDisplay] = useState(false);
+  const [
+    isDiscardConfirmDisplayed,
+    // setDiscardConfirmDisplay,
+  ] = useState(false);
 
   const { walletAddress } = useLoggedInUser();
 
@@ -321,10 +324,10 @@ const Task = ({
           {canCancelTask(task, userRoles) && (
             <Button
               appearance={{ theme: 'secondary', size: 'small' }}
-              button={ConfirmButton}
-              confirmText={MSG.confirmText}
+              // @todo Use `ConfirmButton` for discard task button
+              // confirmText={MSG.confirmText}
               onClick={handleCancelTask}
-              onConfirmToggled={setDiscardConfirmDisplay}
+              // onConfirmToggled={setDiscardConfirmDisplay}
               text={MSG.discardTask}
             />
           )}
