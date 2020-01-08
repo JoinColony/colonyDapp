@@ -13,7 +13,9 @@ interface Props {
 }
 
 const ColoniesListItem = ({ colonyAddress }: Props) => {
-  const { loading, data } = useColonyQuery();
+  const { loading, data } = useColonyQuery({
+    variables: { address: colonyAddress },
+  });
 
   if (loading || !data) {
     return (
