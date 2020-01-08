@@ -47,13 +47,21 @@ mutation CreateWorkRequest($input: CreateWorkRequestInput!) {
   }
 }
 
-mutation FinalizeTask($input: TaskIdInput!) {
+mutation FinalizeTask($input: FinalizeTaskInput!) {
   finalizeTask(input: $input) {
     id
+    colonyAddress
     events {
       ...TaskEvent
     }
+    ethPotId
     finalizedAt
+    finalizedPayment @client {
+      amount
+      tokenAddress
+      workerAddress
+      transactionHash
+    }
   }
 }
 

@@ -23,6 +23,7 @@ import {
 } from './loggedInUser';
 import { colonyResolvers } from './colony';
 import { tokenResolvers } from './token';
+import { taskResolvers } from './task';
 
 type ResolverFactory = (context?: any) => Resolvers;
 
@@ -38,6 +39,7 @@ export { default as typeDefs } from './typeDefs';
 export const resolvers: ResolverFactory[] = [
   colonyResolvers,
   loggedInUserResolvers,
+  taskResolvers,
   tokenResolvers,
 ];
 
