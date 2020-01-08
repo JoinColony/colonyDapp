@@ -7,9 +7,8 @@ const webpackBaseConfig = require('./webpack.config');
  */
 const webpackProdConfig = webpackBaseConfig();
 /*
- * Remove the TS checker and HMR plugins since we won't be needing them
+ * Remove the HMR plugin since we won't need it in production
  */
-webpackProdConfig.plugins.pop();
 webpackProdConfig.plugins.pop();
 /*
  * Remove the dev server since we won't be needing it
