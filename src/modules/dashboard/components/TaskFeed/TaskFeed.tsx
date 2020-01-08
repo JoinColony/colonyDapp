@@ -3,8 +3,8 @@ import { defineMessages, FormattedMessage } from 'react-intl';
 
 import { SpinnerLoader } from '~core/Preloaders';
 import {
-  EventType,
   useTaskFeedEventsQuery,
+  EventType,
   TaskMessageEvent,
   AnyTask,
 } from '~data/index';
@@ -12,6 +12,7 @@ import { Address } from '~types/index';
 
 import TaskFeedEvent from './TaskFeedEvent';
 import TaskFeedComment from './TaskFeedComment';
+import TaskFeedCompleteInfo from './TaskFeedCompleteInfo';
 import styles from './TaskFeed.css';
 
 const displayName = 'dashboard.TaskFeed';
@@ -55,7 +56,7 @@ const TaskFeed = ({ colonyAddress, draftId }: Props) => {
   }
 
   const {
-    task: { events },
+    task: { events, finalizedAt, finalizedPayment },
   } = data;
 
   return (
@@ -94,13 +95,17 @@ const TaskFeed = ({ colonyAddress, draftId }: Props) => {
                     );
                   }
 
-                  if (context.type === EventType.FinalizeTask) {
+                  if (
+                    context.type === EventType.FinalizeTask &&
+                    finalizedAt &&
+                    finalizedPayment
+                  ) {
                     return (
                       <Fragment key={sourceId}>
-                        {/* fixme  */}
-                        {/* <TaskFeedCompleteInfo
-                          event={event}
-                        /> */}
+                        <TaskFeedCompleteInfo
+                          finalizedAt={finalizedAt}
+                          finalizedPayment={finalizedPayment}
+                        />
                         <TaskFeedEvent
                           colonyAddress={colonyAddress}
                           event={event}

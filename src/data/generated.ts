@@ -378,6 +378,11 @@ export type FinalizeTaskEvent = TaskEvent & {
   taskId: Scalars['String'],
 };
 
+export type FinalizeTaskInput = {
+  id: Scalars['String'],
+  ethPotId: Scalars['Int'],
+};
+
 export type LoggedInUser = {
   id: Scalars['String'],
   balance: Scalars['String'],
@@ -500,7 +505,7 @@ export type MutationCreateWorkRequestArgs = {
 
 
 export type MutationFinalizeTaskArgs = {
-  input: TaskIdInput
+  input: FinalizeTaskInput
 };
 
 
@@ -761,8 +766,8 @@ export type SubscribeToColonyInput = {
 export type Task = {
   id: Scalars['String'],
   createdAt: Scalars['DateTime'],
-  ethTaskId?: Maybe<Scalars['Int']>,
   ethDomainId: Scalars['Int'],
+  ethPotId?: Maybe<Scalars['Int']>,
   ethSkillId?: Maybe<Scalars['Int']>,
   cancelledAt?: Maybe<Scalars['DateTime']>,
   description?: Maybe<Scalars['String']>,
@@ -782,11 +787,19 @@ export type Task = {
   workRequestAddresses: Array<Scalars['String']>,
   events: Array<Event>,
   payouts: Array<TaskPayout>,
+  finalizedPayment?: Maybe<TaskFinalizedPayment>,
 };
 
 export type TaskEvent = {
   type: EventType,
   taskId: Scalars['String'],
+};
+
+export type TaskFinalizedPayment = {
+  amount: Scalars['String'],
+  tokenAddress: Scalars['String'],
+  workerAddress: Scalars['String'],
+  transactionHash: Scalars['String'],
 };
 
 export type TaskIdInput = {
@@ -963,13 +976,13 @@ export type CreateWorkRequestMutation = { createWorkRequest: Maybe<(
   )> };
 
 export type FinalizeTaskMutationVariables = {
-  input: TaskIdInput
+  input: FinalizeTaskInput
 };
 
 
 export type FinalizeTaskMutation = { finalizeTask: Maybe<(
-    Pick<Task, 'id' | 'finalizedAt'>
-    & { events: Array<TaskEventFragment> }
+    Pick<Task, 'id' | 'colonyAddress' | 'ethPotId' | 'finalizedAt'>
+    & { events: Array<TaskEventFragment>, finalizedPayment: Maybe<Pick<TaskFinalizedPayment, 'amount' | 'tokenAddress' | 'workerAddress' | 'transactionHash'>> }
   )> };
 
 export type RemoveTaskPayoutMutationVariables = {
@@ -1172,7 +1185,7 @@ export type TaskQueryVariables = {
 
 
 export type TaskQuery = { task: (
-    Pick<Task, 'id' | 'assignedWorkerAddress' | 'cancelledAt' | 'colonyAddress' | 'createdAt' | 'creatorAddress' | 'description' | 'dueDate' | 'ethDomainId' | 'ethSkillId' | 'ethTaskId' | 'finalizedAt' | 'title' | 'workInviteAddresses' | 'workRequestAddresses'>
+    Pick<Task, 'id' | 'assignedWorkerAddress' | 'cancelledAt' | 'colonyAddress' | 'createdAt' | 'creatorAddress' | 'description' | 'dueDate' | 'ethDomainId' | 'ethSkillId' | 'ethPotId' | 'finalizedAt' | 'title' | 'workInviteAddresses' | 'workRequestAddresses'>
     & { assignedWorker: Maybe<(
       Pick<User, 'id'>
       & { profile: Pick<UserProfile, 'avatarHash' | 'displayName' | 'username' | 'walletAddress'> }
@@ -1221,8 +1234,8 @@ export type TaskFeedEventsQueryVariables = {
 
 
 export type TaskFeedEventsQuery = { task: (
-    Pick<Task, 'id'>
-    & { events: Array<TaskEventFragment> }
+    Pick<Task, 'id' | 'colonyAddress' | 'ethPotId' | 'finalizedAt'>
+    & { events: Array<TaskEventFragment>, finalizedPayment: Maybe<Pick<TaskFinalizedPayment, 'amount' | 'tokenAddress' | 'workerAddress' | 'transactionHash'>> }
   ) };
 
 export type LoggedInUserQueryVariables = {};
@@ -1761,13 +1774,21 @@ export type CreateWorkRequestMutationHookResult = ReturnType<typeof useCreateWor
 export type CreateWorkRequestMutationResult = ApolloReactCommon.MutationResult<CreateWorkRequestMutation>;
 export type CreateWorkRequestMutationOptions = ApolloReactCommon.BaseMutationOptions<CreateWorkRequestMutation, CreateWorkRequestMutationVariables>;
 export const FinalizeTaskDocument = gql`
-    mutation FinalizeTask($input: TaskIdInput!) {
+    mutation FinalizeTask($input: FinalizeTaskInput!) {
   finalizeTask(input: $input) {
     id
+    colonyAddress
     events {
       ...TaskEvent
     }
+    ethPotId
     finalizedAt
+    finalizedPayment @client {
+      amount
+      tokenAddress
+      workerAddress
+      transactionHash
+    }
   }
 }
     ${TaskEventFragmentDoc}`;
@@ -2646,7 +2667,7 @@ export const TaskDocument = gql`
     dueDate
     ethDomainId
     ethSkillId
-    ethTaskId
+    ethPotId
     finalizedAt
     title
     workInvites {
@@ -2776,8 +2797,17 @@ export const TaskFeedEventsDocument = gql`
     query TaskFeedEvents($id: String!) {
   task(id: $id) {
     id
+    colonyAddress
     events {
       ...TaskEvent
+    }
+    ethPotId
+    finalizedAt
+    finalizedPayment @client {
+      amount
+      tokenAddress
+      workerAddress
+      transactionHash
     }
   }
 }
