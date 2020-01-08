@@ -256,36 +256,34 @@ const Task = ({
             draftId={draftId}
           />
         </section>
-        {!!(canEdit || dueDate || ethDomainId || ethSkillId) && (
-          <section className={styles.section}>
-            {colony && colony.colonyAddress && (
-              <div className={styles.editor}>
-                <TaskDomains
-                  colonyAddress={colony.colonyAddress}
-                  // Disable the change of domain for now
-                  disabled
-                  ethDomainId={ethDomainId}
-                  draftId={draftId}
-                  payouts={payouts}
-                />
-              </div>
-            )}
+        <section className={styles.section}>
+          {colony && colony.colonyAddress && (
             <div className={styles.editor}>
-              <TaskSkills
-                disabled={!canEdit}
+              <TaskDomains
+                colonyAddress={colony.colonyAddress}
+                // Disable the change of domain for now
+                disabled
+                ethDomainId={ethDomainId || 1}
                 draftId={draftId}
-                ethSkillId={ethSkillId || undefined}
+                payouts={payouts}
               />
             </div>
-            <div className={styles.editor}>
-              <TaskDate
-                disabled={!canEdit}
-                draftId={draftId}
-                dueDate={dueDate || undefined}
-              />
-            </div>
-          </section>
-        )}
+          )}
+          <div className={styles.editor}>
+            <TaskSkills
+              disabled={!canEdit}
+              draftId={draftId}
+              ethSkillId={ethSkillId || undefined}
+            />
+          </div>
+          <div className={styles.editor}>
+            <TaskDate
+              disabled={!canEdit}
+              draftId={draftId}
+              dueDate={dueDate || undefined}
+            />
+          </div>
+        </section>
       </aside>
       <div className={styles.container}>
         <section
