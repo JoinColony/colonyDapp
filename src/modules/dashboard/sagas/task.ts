@@ -112,7 +112,10 @@ function* taskFinalize({
       throw new Error(`Worker not assigned for task ${draftId}`);
     if (!ethDomainId) throw new Error(`Domain not set for task ${draftId}`);
     if (!payouts.length) throw new Error(`No payout set for task ${draftId}`);
-    const { amount, token } = payouts[0];
+    const {
+      amount,
+      token: { address: token },
+    } = payouts[0];
 
     const txChannel = yield call(getTxChannel, meta.id);
     yield fork(createTransaction, meta.id, {
@@ -128,8 +131,13 @@ function* taskFinalize({
       },
     });
 
-    // wait for tx to succeed
-    yield takeFrom(txChannel, ActionTypes.TRANSACTION_SUCCEEDED);
+    yield takeFrom(txChannel, ActionTypes.TRANSACTION_RECEIPT_RECEIVED);
+
+    const {
+      payload: {
+        eventData: { potId },
+      },
+    } = yield takeFrom(txChannel, ActionTypes.TRANSACTION_SUCCEEDED);
 
     yield apolloClient.mutate<
       FinalizeTaskMutation,
@@ -139,6 +147,7 @@ function* taskFinalize({
       variables: {
         input: {
           id: draftId,
+          ethPotId: potId,
         },
       },
     });

@@ -34,6 +34,17 @@ export default gql`
     version(address: String!): Int!
   }
 
+  type TaskFinalizedPayment {
+    amount: String!
+    tokenAddress: String!
+    workerAddress: String!
+    transactionHash: String!
+  }
+
+  extend type Task {
+    finalizedPayment: TaskFinalizedPayment
+  }
+
   type DomainBalance {
     id: Int!
     domainId: Int!

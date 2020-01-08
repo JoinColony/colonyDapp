@@ -39,7 +39,7 @@ query Task($id: String!) {
     dueDate
     ethDomainId
     ethSkillId
-    ethTaskId
+    ethPotId
     finalizedAt
     title
     workInvites {
@@ -115,8 +115,17 @@ query TaskToEdit($id: String!) {
 query TaskFeedEvents($id: String!) {
   task(id: $id) {
     id
+    colonyAddress
     events {
       ...TaskEvent
+    }
+    ethPotId
+    finalizedAt
+    finalizedPayment @client {
+      amount
+      tokenAddress
+      workerAddress
+      transactionHash
     }
   }
 }

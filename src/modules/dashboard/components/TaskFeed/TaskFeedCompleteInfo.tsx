@@ -7,7 +7,7 @@ import { SpinnerLoader } from '~core/Preloaders';
 import TimeRelative from '~core/TimeRelative';
 import TransactionLink from '~core/TransactionLink';
 import { useSelector } from '~utils/hooks';
-import { useUser, useTokenQuery, FinalizeTaskEvent } from '~data/index';
+import { useUser, useTokenQuery } from '~data/index';
 
 import { getFriendlyName } from '../../../users/transformers';
 import { networkFeeInverseSelector } from '../../../core/selectors';
@@ -42,42 +42,37 @@ const MSG = defineMessages({
 });
 
 interface Props {
-  createdAt: Date;
-  event: FinalizeTaskEvent;
+  finalizedAt: string;
+  finalizedPayment: {
+    amount: string;
+    tokenAddress: string;
+    workerAddress: string;
+    transactionHash: string;
+  };
 }
 
 const displayName = 'dashboard.TaskFeed.TaskFeedCompleteInfo';
 
 const TaskFeedCompleteInfo = ({
-  createdAt,
-  event: {
-    // FIXME this has to be sorted out somehow
-    // @ts-ignore
-    payload: {
-      amountPaid,
-      paymentTokenAddress,
-      workerAddress,
-      transactionHash,
-    },
-  },
+  finalizedAt,
+  finalizedPayment: { amount, tokenAddress, workerAddress, transactionHash },
 }: Props) => {
   const user = useUser(workerAddress);
   const networkFeeInverse = useSelector(networkFeeInverseSelector);
   const { data, loading: isLoadingToken } = useTokenQuery({
-    variables: { address: paymentTokenAddress },
+    variables: { address: tokenAddress },
   });
   const { decimals = 18, symbol = '' } = (data && data.token.details) || {};
   const metaColonyFee = useMemo(() => {
-    if (new BigNumber(amountPaid).isZero() || networkFeeInverse === 1) {
-      return amountPaid;
+    const amountBn = new BigNumber(amount);
+    if (amountBn.isZero() || networkFeeInverse === 1) {
+      return amount;
     }
-    return new BigNumber(amountPaid)
-      .div(new BigNumber(networkFeeInverse))
-      .add(new BigNumber(1));
-  }, [amountPaid, networkFeeInverse]);
+    return amountBn.div(new BigNumber(networkFeeInverse)).add(new BigNumber(1));
+  }, [amount, networkFeeInverse]);
   const workerPayout = useMemo(
-    () => new BigNumber(amountPaid).sub(metaColonyFee as BigNumber),
-    [amountPaid, metaColonyFee],
+    () => new BigNumber(amount).sub(metaColonyFee as BigNumber),
+    [amount, metaColonyFee],
   );
 
   return (
@@ -93,7 +88,7 @@ const TaskFeedCompleteInfo = ({
             }}
           />
           <span className={styles.timeSinceTx}>
-            <TimeRelative value={createdAt} />
+            <TimeRelative value={new Date(finalizedAt)} />
           </span>
         </p>
       </div>
@@ -113,9 +108,7 @@ const TaskFeedCompleteInfo = ({
               <br />
               <FormattedMessage
                 {...MSG.tokenAddressText}
-                values={{
-                  tokenAddress: paymentTokenAddress,
-                }}
+                values={{ tokenAddress }}
               />
               <br />
               <FormattedMessage
