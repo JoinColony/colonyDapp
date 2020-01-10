@@ -35,17 +35,15 @@ const UserTasks = ({
   filter: FilterComponent,
   walletAddress,
 }: Props) => {
-  const { data } = useUserTasksQuery({
+  const { data, loading } = useUserTasksQuery({
     variables: { address: walletAddress },
   });
 
-  if (!data) {
+  if (loading) {
     return <SpinnerLoader />;
   }
 
-  const {
-    user: { tasks },
-  } = data;
+  const tasks = data && data.user.tasks;
 
   if (!userClaimedProfile) {
     return (
@@ -58,7 +56,7 @@ const UserTasks = ({
       </>
     );
   }
-  return tasks && tasks.length ? (
+  return tasks && tasks.length > 0 ? (
     <>
       {!!FilterComponent && (
         <div className={styles.filter}>{FilterComponent}</div>

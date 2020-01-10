@@ -5,7 +5,6 @@ import { DASHBOARD_ROUTE } from '~routes/index';
 
 import Icon from '~core/Icon';
 import NavLink from '~core/NavLink';
-import { SpinnerLoader } from '~core/Preloaders';
 import { GasStationPopover } from '~users/GasStation';
 import AvatarDropdown from '~users/AvatarDropdown';
 import { InboxIcon } from '~users/Inbox';
@@ -38,11 +37,7 @@ const UserNavigation = () => {
     variables: { address: walletAddress },
   });
 
-  if (!data) return <SpinnerLoader size="tiny" />;
-
-  const {
-    user: { notifications },
-  } = data;
+  const notifications = (data && data.user && data.user.notifications) || [];
 
   return (
     <div className={styles.main}>

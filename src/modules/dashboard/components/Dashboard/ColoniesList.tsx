@@ -29,11 +29,11 @@ const displayName = 'dashboard.Dashboard.ColoniesList';
 
 const ColoniesList = () => {
   const { walletAddress } = useLoggedInUser();
-  const { data } = useUserColonyAddressesQuery({
+  const { data, loading } = useUserColonyAddressesQuery({
     variables: { address: walletAddress },
   });
 
-  if (!data) {
+  if (loading) {
     return (
       <div className={styles.loader}>
         <SpinnerLoader appearance={{ size: 'medium' }} />
@@ -44,11 +44,9 @@ const ColoniesList = () => {
     );
   }
 
-  const {
-    user: { colonyAddresses },
-  } = data;
+  const colonyAddresses = data && data.user && data.user.colonyAddresses;
 
-  if (colonyAddresses && colonyAddresses.length) {
+  if (colonyAddresses && colonyAddresses.length > 0) {
     return (
       <div className={styles.main}>
         {colonyAddresses.map(colonyAddress => (

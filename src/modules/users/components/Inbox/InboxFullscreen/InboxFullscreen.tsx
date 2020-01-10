@@ -2,20 +2,26 @@ import React from 'react';
 
 import CenteredTemplate from '~pages/CenteredTemplate';
 import { SpinnerLoader } from '~core/Preloaders';
-import { useUserNotificationsQuery } from '~data/index';
+import { useUserNotificationsQuery, useLoggedInUser } from '~data/index';
 
 import InboxContainer from '../InboxContainer';
 
 const displayName = 'users.Inbox.InboxFullscreen';
 
 const InboxFullscreen = () => {
-  const { data } = useUserNotificationsQuery();
+  const { walletAddress } = useLoggedInUser();
+  const { data, loading } = useUserNotificationsQuery({
+    variables: { address: walletAddress },
+  });
+
+  const notifications = (data && data.user && data.user.notifications) || [];
+
   return (
     <CenteredTemplate appearance={{ theme: 'alt' }}>
-      {data ? (
-        <InboxContainer full notifications={data.user.notifications} />
-      ) : (
+      {loading ? (
         <SpinnerLoader size="tiny" />
+      ) : (
+        <InboxContainer full notifications={notifications} />
       )}
     </CenteredTemplate>
   );
