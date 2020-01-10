@@ -121,7 +121,6 @@ const ColonyTasks = ({
     () =>
       subscribeToReduxActions(dispatch)({
         [ActionTypes.TASK_CREATE]: () => setIsTaskBeingCreated(true),
-        [ActionTypes.TASK_CREATE_SUCCESS]: () => setIsTaskBeingCreated(false),
         [ActionTypes.TASK_CREATE_ERROR]: () => setIsTaskBeingCreated(false),
       }),
     [dispatch],

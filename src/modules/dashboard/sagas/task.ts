@@ -73,7 +73,7 @@ function* taskCreate({
     };
 
     /*
-     * Put the success action, subscribe to the task and redirect to it
+     * Put the success action and redirect to the task
      */
     yield all([
       put(successAction),
