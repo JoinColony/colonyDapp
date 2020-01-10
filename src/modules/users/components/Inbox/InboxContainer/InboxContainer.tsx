@@ -94,7 +94,7 @@ const InboxContainer = ({ full, close, notifications }: Props) => {
           </Table>
         )}
 
-        {!hasInboxItems && (
+        {!notifications && (
           <div className={!full ? styles.emptyPopoverPlaceholder : undefined}>
             <SpinnerLoader
               loadingText={MSG.loadingInbox}
