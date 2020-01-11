@@ -127,6 +127,14 @@ function* domainCreate({
           name,
         },
       },
+      // @todo Use `update` instead of refetching domains
+      // @body This will be more performant. Typing the update may be somewhat tedious
+      refetchQueries: [
+        {
+          query: ColonyDomainsDocument,
+          variables: { colonyAddress } as ColonyDomainsQueryVariables,
+        },
+      ],
     });
 
     yield put<AllActions>({
