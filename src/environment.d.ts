@@ -2,7 +2,6 @@
 namespace NodeJS {
   interface ProcessEnv {
     NODE_ENV: 'development' | 'production';
-    CHAIN_ID: string;
     COLONY_NETWORK_ENS_NAME: string;
     LOADER: string;
     NETWORK: string;
