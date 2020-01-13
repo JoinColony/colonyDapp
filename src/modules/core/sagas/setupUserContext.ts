@@ -11,7 +11,7 @@ import { formatEther } from 'ethers/utils';
 
 import { createAddress } from '~types/index';
 import { Action, ActionTypes, AllActions } from '~redux/index';
-import { Context, ContextType } from '~context/index';
+import { Context, ContextType, TEMP_setNewContext } from '~context/index';
 import { putError } from '~utils/saga/effects';
 import { log } from '~utils/debug';
 import {
@@ -61,7 +61,7 @@ export default function* setupUserContext(
      */
     const wallet = yield call(getWallet, action);
     const walletAddress = createAddress(wallet.address);
-    yield setContext({ [Context.WALLET]: wallet });
+    TEMP_setNewContext('wallet', wallet);
 
     const apolloClient: ApolloClient<object> = yield getContext(
       Context.APOLLO_CLIENT,

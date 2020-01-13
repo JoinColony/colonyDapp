@@ -13,13 +13,15 @@ const postRequest = async (path: string, data: object) => {
   return response.json();
 };
 
-export const setToken = (token: string) =>
-  localStorage.setItem(TOKEN_STORAGE, token);
-export const getToken = () => localStorage.getItem(TOKEN_STORAGE);
-export const clearToken = () => localStorage.removeItem(TOKEN_STORAGE);
+export const setToken = (walletAddress: string, token: string) =>
+  localStorage.setItem(`${TOKEN_STORAGE}-${walletAddress}`, token);
+export const getToken = (walletAddress: string) =>
+  localStorage.getItem(`${TOKEN_STORAGE}-${walletAddress}`);
+export const clearToken = (walletAddress: string) =>
+  localStorage.removeItem(`${TOKEN_STORAGE}-${walletAddress}`);
 
 export const authenticate = async wallet => {
-  const token = getToken();
+  const token = getToken(wallet.address);
   if (token) {
     const tokenData = jwtDecode(token);
     if (
@@ -38,6 +40,6 @@ export const authenticate = async wallet => {
     challenge,
     signature,
   });
-  setToken(refreshedToken);
+  setToken(wallet.address, refreshedToken);
   return refreshedToken;
 };

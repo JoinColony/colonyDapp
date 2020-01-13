@@ -3,6 +3,7 @@ import { createHttpLink } from 'apollo-link-http';
 import { setContext } from 'apollo-link-context';
 
 import { cache, typeDefs } from '~data/index';
+import { TEMP_getNewContext } from '~context/index';
 
 import { getToken } from '../api/auth';
 
@@ -13,8 +14,10 @@ const httpLink = createHttpLink({
 });
 
 const authLink = setContext((_, { headers }) => {
+  const wallet = TEMP_getNewContext('wallet');
+  if (!wallet) return {};
   // get the authentication token from local storage if it exists
-  const token = getToken();
+  const token = getToken(wallet.address);
   // return the headers to the context so httpLink can read them
   return {
     headers: {

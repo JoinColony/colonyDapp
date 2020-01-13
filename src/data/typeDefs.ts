@@ -24,6 +24,7 @@ export default gql`
 
   extend type Mutation {
     setLoggedInUser(input: LoggedInUserInput): LoggedInUser!
+    clearLoggedInUser: LoggedInUser!
   }
 
   extend type Colony {
