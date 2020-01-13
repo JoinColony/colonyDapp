@@ -962,8 +962,12 @@ export type CreateTaskMutationVariables = {
 
 
 export type CreateTaskMutation = { createTask: Maybe<(
-    Pick<Task, 'id'>
-    & { colony: Pick<Colony, 'colonyName'>, events: Array<TaskEventFragment> }
+    Pick<Task, 'id' | 'assignedWorkerAddress' | 'cancelledAt' | 'colonyAddress' | 'createdAt' | 'creatorAddress' | 'dueDate' | 'ethDomainId' | 'ethSkillId' | 'finalizedAt' | 'title' | 'workRequestAddresses'>
+    & { assignedWorker: Maybe<(
+      Pick<User, 'id'>
+      & { profile: Pick<UserProfile, 'avatarHash'> }
+    )>, colony: Pick<Colony, 'id' | 'colonyName' | 'displayName' | 'nativeTokenAddress'> }
+    & PayoutsFragment
   )> };
 
 export type CreateWorkRequestMutationVariables = {
@@ -1707,15 +1711,33 @@ export const CreateTaskDocument = gql`
     mutation CreateTask($input: CreateTaskInput!) {
   createTask(input: $input) {
     id
+    ...Payouts
+    assignedWorker {
+      id
+      profile {
+        avatarHash
+      }
+    }
+    assignedWorkerAddress
+    cancelledAt
     colony {
+      id
       colonyName
+      displayName
+      nativeTokenAddress
     }
-    events {
-      ...TaskEvent
-    }
+    colonyAddress
+    createdAt
+    creatorAddress
+    dueDate
+    ethDomainId
+    ethSkillId
+    finalizedAt
+    title
+    workRequestAddresses
   }
 }
-    ${TaskEventFragmentDoc}`;
+    ${PayoutsFragmentDoc}`;
 export type CreateTaskMutationFn = ApolloReactCommon.MutationFunction<CreateTaskMutation, CreateTaskMutationVariables>;
 
 /**

@@ -26,12 +26,30 @@ mutation CancelTask($input: TaskIdInput!) {
 mutation CreateTask($input: CreateTaskInput!) {
   createTask(input: $input) {
     id
+    ...Payouts
+    assignedWorker {
+      id
+      profile {
+        avatarHash
+      }
+    }
+    assignedWorkerAddress
+    cancelledAt
     colony {
+      id
       colonyName
+      displayName
+      nativeTokenAddress
     }
-    events {
-      ...TaskEvent
-    }
+    colonyAddress
+    createdAt
+    creatorAddress
+    dueDate
+    ethDomainId
+    ethSkillId
+    finalizedAt
+    title
+    workRequestAddresses
   }
 }
 
