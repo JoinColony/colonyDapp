@@ -4,10 +4,10 @@ import { call, put, race, take } from 'redux-saga/effects';
 import { putError } from '~utils/saga/effects';
 import { ActionTypes } from '~redux/index';
 import { AllActions } from '~redux/types/actions';
-import { Context, getContext } from '~context/index';
+import { TEMP_getNewContext } from '~context/index';
 
 export function* signMessage(purpose, message) {
-  const wallet = yield getContext(Context.WALLET);
+  const wallet = TEMP_getNewContext('wallet');
   const messageId = `${nanoid(10)}-signMessage`;
   /*
    * @NOTE Initiate the message signing process

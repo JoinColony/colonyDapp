@@ -30,5 +30,9 @@ export const loggedInUserResolvers = (): Resolvers => ({
       cache.writeQuery({ query: LoggedInUserDocument, data: changedData });
       return changedData.loggedInUser;
     },
+    clearLoggedInUser: (_root, _args, { cache }) => {
+      cache.writeQuery({ query: LoggedInUserDocument, data: initialCache });
+      return initialCache.loggedInUser;
+    },
   },
 });

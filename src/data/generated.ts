@@ -431,6 +431,7 @@ export type Mutation = {
   markNotificationAsRead: Scalars['Boolean'],
   sendTaskMessage: Scalars['Boolean'],
   setLoggedInUser: LoggedInUser,
+  clearLoggedInUser: LoggedInUser,
 };
 
 
@@ -1092,6 +1093,11 @@ export type SetLoggedInUserMutationVariables = {
 
 
 export type SetLoggedInUserMutation = { setLoggedInUser: Pick<LoggedInUser, 'id'> };
+
+export type ClearLoggedInUserMutationVariables = {};
+
+
+export type ClearLoggedInUserMutation = { clearLoggedInUser: Pick<LoggedInUser, 'id'> };
 
 export type CreateUserMutationVariables = {
   createUserInput: CreateUserInput,
@@ -2214,6 +2220,37 @@ export function useSetLoggedInUserMutation(baseOptions?: ApolloReactHooks.Mutati
 export type SetLoggedInUserMutationHookResult = ReturnType<typeof useSetLoggedInUserMutation>;
 export type SetLoggedInUserMutationResult = ApolloReactCommon.MutationResult<SetLoggedInUserMutation>;
 export type SetLoggedInUserMutationOptions = ApolloReactCommon.BaseMutationOptions<SetLoggedInUserMutation, SetLoggedInUserMutationVariables>;
+export const ClearLoggedInUserDocument = gql`
+    mutation ClearLoggedInUser {
+  clearLoggedInUser @client {
+    id
+  }
+}
+    `;
+export type ClearLoggedInUserMutationFn = ApolloReactCommon.MutationFunction<ClearLoggedInUserMutation, ClearLoggedInUserMutationVariables>;
+
+/**
+ * __useClearLoggedInUserMutation__
+ *
+ * To run a mutation, you first call `useClearLoggedInUserMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useClearLoggedInUserMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [clearLoggedInUserMutation, { data, loading, error }] = useClearLoggedInUserMutation({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useClearLoggedInUserMutation(baseOptions?: ApolloReactHooks.MutationHookOptions<ClearLoggedInUserMutation, ClearLoggedInUserMutationVariables>) {
+        return ApolloReactHooks.useMutation<ClearLoggedInUserMutation, ClearLoggedInUserMutationVariables>(ClearLoggedInUserDocument, baseOptions);
+      }
+export type ClearLoggedInUserMutationHookResult = ReturnType<typeof useClearLoggedInUserMutation>;
+export type ClearLoggedInUserMutationResult = ApolloReactCommon.MutationResult<ClearLoggedInUserMutation>;
+export type ClearLoggedInUserMutationOptions = ApolloReactCommon.BaseMutationOptions<ClearLoggedInUserMutation, ClearLoggedInUserMutationVariables>;
 export const CreateUserDocument = gql`
     mutation CreateUser($createUserInput: CreateUserInput!, $loggedInUserInput: LoggedInUserInput!) {
   createUser(input: $createUserInput) {
