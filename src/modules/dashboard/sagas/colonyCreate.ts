@@ -3,12 +3,7 @@ import { $Values } from 'utility-types';
 import { Channel } from 'redux-saga';
 import { all, call, fork, put } from 'redux-saga/effects';
 
-import { ActionTypes, Action, AllActions } from '~redux/index';
-import { putError, takeFrom, takeLatestCancellable } from '~utils/saga/effects';
 import { Context, getContext } from '~context/index';
-import ENS from '~lib/ENS';
-import { createAddress, ContractContexts } from '~types/index';
-import { parseExtensionDeployedLog } from '~utils/web3/eventLogs/eventParsers';
 import {
   getLoggedInUser,
   refetchUserNotifications,
@@ -20,7 +15,14 @@ import {
   CreateUserMutationVariables,
   UserColonyAddressesDocument,
   UserColonyAddressesQueryVariables,
+  UserColonyAddressesQuery,
 } from '~data/index';
+import ENS from '~lib/ENS';
+import { ActionTypes, Action, AllActions } from '~redux/index';
+import { createAddress, ContractContexts } from '~types/index';
+import { log } from '~utils/debug';
+import { putError, takeFrom, takeLatestCancellable } from '~utils/saga/effects';
+import { parseExtensionDeployedLog } from '~utils/web3/eventLogs/eventParsers';
 
 import { TxConfig } from '../../core/types';
 import {
@@ -300,14 +302,41 @@ function* colonyCreate({
           tokenDecimals: TOKEN_DECIMALS,
         },
       },
-      refetchQueries: [
-        {
-          query: UserColonyAddressesDocument,
-          variables: {
-            address: walletAddress,
-          } as UserColonyAddressesQueryVariables,
-        },
-      ],
+      update: cache => {
+        try {
+          const cacheData = cache.readQuery<
+            UserColonyAddressesQuery,
+            UserColonyAddressesQueryVariables
+          >({
+            query: UserColonyAddressesDocument,
+            variables: {
+              address: walletAddress,
+            },
+          });
+          if (cacheData) {
+            const colonyAddresses = cacheData.user.colonyAddresses || [];
+            colonyAddresses.push(colonyAddress);
+            cache.writeQuery<
+              UserColonyAddressesQuery,
+              UserColonyAddressesQueryVariables
+            >({
+              query: UserColonyAddressesDocument,
+              data: {
+                user: {
+                  ...cacheData.user,
+                  colonyAddresses,
+                },
+              },
+              variables: {
+                address: walletAddress,
+              },
+            });
+          }
+        } catch (e) {
+          log.verbose(e);
+          log.verbose('Not updating store - colony addresses not loaded yet');
+        }
+      },
     });
 
     yield put(transactionLoadRelated(createColony.id, false));
