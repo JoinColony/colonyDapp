@@ -22,6 +22,7 @@ import {
   initialCache as loggedInUser,
 } from './loggedInUser';
 import { colonyResolvers } from './colony';
+import { userResolvers } from './user';
 import { tokenResolvers } from './token';
 import { taskResolvers } from './task';
 
@@ -39,6 +40,7 @@ export { default as typeDefs } from './typeDefs';
 export const resolvers: ResolverFactory[] = [
   colonyResolvers,
   loggedInUserResolvers,
+  userResolvers,
   taskResolvers,
   tokenResolvers,
 ];
