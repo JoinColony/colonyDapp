@@ -1,6 +1,5 @@
 import { combineReducers } from 'redux-immutable';
 import { connectRouter } from 'connected-react-router';
-import { reducer as actionWatchReducer } from 'redux-action-watch';
 
 import { RootStateRecord } from '../modules/state';
 import adminReducer from '../modules/admin/reducers';
@@ -20,7 +19,6 @@ const createRootReducer = (history: any) =>
       [DASHBOARD_NAMESPACE]: dashboardReducer,
       [USERS_NAMESPACE]: usersReducer,
       router: connectRouter(history),
-      watcher: actionWatchReducer,
     },
     () => new RootStateRecord(),
   );

@@ -20,13 +20,6 @@
   grid-row: 1;
 }
 
-.interactiveBar {
-  display: flex;
-  justify-content: space-between;
-  margin-top: 12px;
-  margin-bottom: -6px; /* We want to use a negative margin here since the taskList comes with a high one */
-}
-
 .metaContainer {
   padding-bottom: 17px;
 }
