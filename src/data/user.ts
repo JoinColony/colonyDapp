@@ -3,7 +3,7 @@ import { Resolvers } from 'apollo-client';
 import ENS from '~lib/ENS';
 import { ContextType } from '~context/index';
 
-export const colonyResolvers = ({
+export const userResolvers = ({
   colonyManager: { networkClient },
   ens,
 }: ContextType): Resolvers => ({
