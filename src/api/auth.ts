@@ -22,8 +22,13 @@ export const authenticate = async wallet => {
   const token = getToken();
   if (token) {
     const tokenData = jwtDecode(token);
-    // JWT expiry dates are noted in seconds
-    if (tokenData.exp * 10 ** 3 > Date.now()) return token;
+    if (
+      tokenData.address === wallet.address &&
+      // JWT expiry dates are noted in seconds
+      tokenData.exp * 10 ** 3 > Date.now()
+    ) {
+      return token;
+    }
   }
   const { challenge } = await postRequest('/auth/challenge', {
     address: wallet.address,
