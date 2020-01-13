@@ -179,6 +179,12 @@ mutation SetLoggedInUser($input: LoggedInUserInput!) {
   }
 }
 
+mutation ClearLoggedInUser {
+  clearLoggedInUser @client {
+    id
+  }
+}
+
 mutation CreateUser(
   $createUserInput: CreateUserInput!
   $loggedInUserInput: LoggedInUserInput!

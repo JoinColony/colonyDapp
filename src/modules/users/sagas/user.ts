@@ -11,7 +11,7 @@ import {
 } from 'redux-saga/effects';
 
 import { Action, ActionTypes, AllActions } from '~redux/index';
-import { getContext, Context } from '~context/index';
+import { getContext, Context, TEMP_removeNewContext } from '~context/index';
 import ENS from '~lib/ENS';
 import { ColonyManager, createAddress } from '~types/index';
 import {
@@ -26,6 +26,9 @@ import {
   EditUserMutationVariables,
   UserColonyAddressesQuery,
   UserColonyAddressesQueryVariables,
+  ClearLoggedInUserDocument,
+  ClearLoggedInUserMutation,
+  ClearLoggedInUserMutationVariables,
 } from '~data/index';
 import { putError, takeFrom } from '~utils/saga/effects';
 import { getEventLogs, parseUserTransferEvent } from '~utils/web3/eventLogs';
@@ -259,6 +262,10 @@ function* usernameCreate({
 
 function* userLogout() {
   try {
+    const apolloClient: ApolloClient<object> = yield getContext(
+      Context.APOLLO_CLIENT,
+    );
+    const { walletAddress } = yield getLoggedInUser();
     /*
      *  1. Destroy instances of colonyJS in the colonyManager? Probably.
      */
@@ -269,18 +276,28 @@ function* userLogout() {
     /*
      *  2. The purser wallet is reset
      */
-    yield setContext({ [Context.WALLET]: undefined });
+    TEMP_removeNewContext('wallet');
 
     /*
      *  3. Delete json web token
      */
-    clearToken();
+    clearToken(walletAddress);
+
+    /*
+     *  4. Clear the currently logged in user
+     */
+    yield apolloClient.mutate<
+      ClearLoggedInUserMutation,
+      ClearLoggedInUserMutationVariables
+    >({
+      mutation: ClearLoggedInUserDocument,
+    });
 
     yield all([
       put<AllActions>({
         type: ActionTypes.USER_LOGOUT_SUCCESS,
       }),
-      put(push('/dashboard')),
+      put(push('/connect')),
     ]);
   } catch (error) {
     return yield putError(ActionTypes.USER_LOGOUT_ERROR, error);
