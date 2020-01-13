@@ -39,7 +39,7 @@ const UserColonies = ({ user }: Props) => {
   const friendlyName = getFriendlyName(user);
   // @TODO we should probably get the full colonies and pass them down to colonyGrid
   const { data } = useUserColonyAddressesQuery({
-    variables: { address: walletAddress },
+    variables: { address: user.profile.walletAddress },
   });
 
   // @TODO we want a proper spinner loader here eventually
