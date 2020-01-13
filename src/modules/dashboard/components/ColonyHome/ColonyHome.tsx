@@ -1,24 +1,12 @@
 import { Redirect } from 'react-router';
-import React, { useState, useCallback, useEffect, useMemo } from 'react';
+import React, { useState, useMemo } from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
-import { subscribeActions as subscribeToReduxActions } from 'redux-action-watch/lib/actionCreators';
-import { useDispatch } from 'redux-react-hook';
-import throttle from 'lodash/throttle';
 
 import { COLONY_TOTAL_BALANCE_DOMAIN_ID, ROOT_DOMAIN } from '~constants';
-import {
-  TasksFilterOptionType,
-  TasksFilterOptions,
-  tasksFilterSelectOptions,
-} from '../shared/tasksFilter';
-import { ActionTypes } from '~redux/index';
 import { useDataFetcher, useTransformer } from '~utils/hooks';
-import { mergePayload } from '~utils/actions';
 import Transactions from '~admin/Transactions';
 import { Tab, Tabs, TabList, TabPanel } from '~core/Tabs';
-import { Select } from '~core/Fields';
 import Heading from '~core/Heading';
-import Button, { ActionButton } from '~core/Button';
 import RecoveryModeAlert from '~admin/RecoveryModeAlert';
 import LoadingTemplate from '~pages/LoadingTemplate';
 import BreadCrumb from '~core/BreadCrumb';
@@ -47,18 +35,6 @@ const MSG = defineMessages({
     id: 'dashboard.ColonyHome.tabTransactions',
     defaultMessage: 'Transactions',
   },
-  labelFilter: {
-    id: 'dashboard.ColonyHome.labelFilter',
-    defaultMessage: 'Filter',
-  },
-  placeholderFilter: {
-    id: 'dashboard.ColonyHome.placeholderFilter',
-    defaultMessage: 'Filter',
-  },
-  newTaskButton: {
-    id: 'dashboard.ColonyHome.newTaskButton',
-    defaultMessage: 'New Task',
-  },
   noFilter: {
     id: 'dashboard.ColonyHome.noFilter',
     defaultMessage: 'All Transactions in Colony',
@@ -76,32 +52,12 @@ const ColonyHome = ({
     params: { colonyName },
   },
 }: Props) => {
-  const [filterOption, setFilterOption] = useState(TasksFilterOptions.ALL_OPEN);
+  const { walletAddress } = useLoggedInUser();
+
   const [filteredDomainId, setFilteredDomainId] = useState(
     COLONY_TOTAL_BALANCE_DOMAIN_ID,
   );
-  const [isTaskBeingCreated, setIsTaskBeingCreated] = useState(false);
   const [activeTab, setActiveTab] = useState<'tasks' | 'transactions'>('tasks');
-
-  const dispatch = useDispatch();
-
-  /*
-   * @NOTE this needs to return the `subscribeToReduxActions` function, since that returns an
-   * unsubscriber, and that gets called when the component is unmounted
-   */
-  useEffect(
-    () =>
-      subscribeToReduxActions(dispatch)({
-        [ActionTypes.TASK_CREATE]: () => setIsTaskBeingCreated(true),
-        [ActionTypes.TASK_CREATE_ERROR]: () => setIsTaskBeingCreated(false),
-      }),
-    [dispatch, setIsTaskBeingCreated],
-  );
-
-  const formSetFilter = useCallback(
-    (_: string, value: TasksFilterOptionType) => setFilterOption(value as any),
-    [setFilterOption],
-  );
 
   // @TODO: Try to get proper error handling going in resolvers (for colonies that don't exist)
   const { data } = useColonyFromNameQuery({
@@ -114,8 +70,6 @@ const ColonyHome = ({
     [data && data.colonyAddress],
     [data && data.colonyAddress],
   );
-
-  const { walletAddress } = useLoggedInUser();
 
   const currentDomainUserRoles = useTransformer(getUserRoles, [
     domains,
@@ -143,15 +97,6 @@ const ColonyHome = ({
           : [{ id: 'domain.root' }];
     }
   }, [domains, filteredDomainId]);
-
-  const transform = useCallback(
-    // Use ROOT_DOMAIN if filtered domain id equals 0
-    mergePayload({
-      colonyAddress: data && data.colonyAddress,
-      ethDomainId: filteredDomainId || ROOT_DOMAIN,
-    }),
-    [data && data.colonyAddress, filteredDomainId],
-  );
 
   if (!colonyName) {
     return <Redirect to="/404" />;
@@ -207,48 +152,11 @@ const ColonyHome = ({
               <FormattedMessage {...MSG.tabTransactions} />
             </Tab>
           </TabList>
-          <div className={styles.interactiveBar}>
-            {activeTab === 'tasks' ? (
-              <>
-                <Select
-                  appearance={{ alignOptions: 'left', theme: 'alt' }}
-                  connect={false}
-                  elementOnly
-                  label={MSG.labelFilter}
-                  name="filter"
-                  options={tasksFilterSelectOptions}
-                  placeholder={MSG.placeholderFilter}
-                  form={{ setFieldValue: formSetFilter }}
-                  $value={filterOption}
-                />
-                {canCreateTask && (
-                  <ActionButton
-                    button={({ onClick, disabled, loading }) => (
-                      <Button
-                        appearance={{ theme: 'primary', size: 'medium' }}
-                        text={MSG.newTaskButton}
-                        disabled={disabled}
-                        loading={loading}
-                        onClick={throttle(onClick, 2000)}
-                      />
-                    )}
-                    disabled={colony.isInRecoveryMode}
-                    error={ActionTypes.TASK_CREATE_ERROR}
-                    submit={ActionTypes.TASK_CREATE}
-                    success={ActionTypes.TASK_CREATE_SUCCESS}
-                    transform={transform}
-                    loading={isTaskBeingCreated}
-                  />
-                )}
-              </>
-            ) : null}
-          </div>
           <TabPanel>
             <TabContribute
-              allowTaskCreation={canCreateTask}
+              canCreateTask={canCreateTask}
               colony={colony}
               filteredDomainId={filteredDomainId}
-              filterOption={filterOption}
               showQrCode={hasRoot(rootUserRoles)}
             />
           </TabPanel>

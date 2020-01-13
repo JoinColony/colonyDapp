@@ -1,31 +1,5 @@
 @import 'variables.css';
 
-.newTaskButtonContainer {
-  text-align: center;
-}
-
-.newTaskSpinnerContainer {
-  padding: 70px 0;
-}
-
-.newTaskButton {
-  display: block;
-  margin: 60px auto 30px auto;
-  height: 150px;
-  width: 150px;
-  cursor: pointer;
-  user-select: none;
-}
-
-.newTaskButton svg {
-  fill: var(--grey-4);
-}
-
-.newTaskButton:active svg {
-  fill: var(--primary);
-  stroke: var(--primary);
-}
-
 .noTaskAddition {
   margin-top: 20px;
 }
