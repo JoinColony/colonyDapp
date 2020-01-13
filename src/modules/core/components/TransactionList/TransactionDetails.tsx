@@ -58,7 +58,7 @@ interface IncomingTransactionProps extends BaseProps {
   colony: AnyColonyProfile;
   task?: AnyTask;
   transaction: ContractTransactionType;
-  user: AnyUser;
+  user?: AnyUser;
 }
 
 interface OutgoingTransactionProps extends BaseProps {
@@ -71,7 +71,7 @@ interface OutgoingTransactionProps extends BaseProps {
 interface Props extends BaseProps {
   task?: AnyTask;
   transaction: ContractTransactionType;
-  user: AnyUser;
+  user?: AnyUser;
 }
 
 const UserDetails = ({
