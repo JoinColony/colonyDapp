@@ -11,13 +11,15 @@ import HookedUserAvatar from '~users/HookedUserAvatar';
 import { SpinnerLoader } from '~core/Preloaders';
 import { useDataFetcher } from '~utils/hooks';
 import {
-  Notification,
   useColonyNameLazyQuery,
+  useLoggedInUser,
   useMarkNotificationAsReadMutation,
   useTokenLazyQuery,
   useUserQuery,
   useUserLazyQuery,
   useTaskLazyQuery,
+  Notification,
+  UserNotificationsDocument,
 } from '~data/index';
 
 import { domainsFetcher } from '../../../../dashboard/fetchers';
@@ -97,6 +99,7 @@ const InboxItem = ({
   },
   full,
 }: Props) => {
+  const { walletAddress } = useLoggedInUser();
   const setTo = true;
   // Let's see what event type context props we have
 
@@ -161,6 +164,12 @@ const InboxItem = ({
 
   const [markAsReadMutation] = useMarkNotificationAsReadMutation({
     variables: { input: { id } },
+    refetchQueries: [
+      {
+        query: UserNotificationsDocument,
+        variables: { address: walletAddress },
+      },
+    ],
   });
 
   const markAsRead = useCallback(() => markAsReadMutation(), [

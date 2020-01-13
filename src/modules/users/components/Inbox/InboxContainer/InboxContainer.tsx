@@ -8,8 +8,10 @@ import { SpinnerLoader } from '~core/Preloaders';
 import { Table, TableBody } from '~core/Table';
 import NavLink from '~core/NavLink';
 import {
-  Notifications,
+  useLoggedInUser,
   useMarkAllNotificationsAsReadMutation,
+  Notifications,
+  UserNotificationsDocument,
 } from '~data/index';
 
 import { InboxItem } from '../InboxItem';
@@ -52,7 +54,15 @@ Don't worry, we'll let you know when anything important happens.`,
 });
 
 const InboxContainer = ({ full, close, notifications }: Props) => {
-  const [markAllAsRead] = useMarkAllNotificationsAsReadMutation();
+  const { walletAddress } = useLoggedInUser();
+  const [markAllAsRead] = useMarkAllNotificationsAsReadMutation({
+    refetchQueries: [
+      {
+        query: UserNotificationsDocument,
+        variables: { address: walletAddress },
+      },
+    ],
+  });
 
   const hasInboxItems = notifications.length > 0;
   return (
