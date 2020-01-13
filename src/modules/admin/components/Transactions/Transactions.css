@@ -1,5 +1,4 @@
 .main {
-  margin-top: -25px; /* This is an exception, other tabs require more space here */
   padding: 0 0 40px 0;
   height: 100%;
 }
