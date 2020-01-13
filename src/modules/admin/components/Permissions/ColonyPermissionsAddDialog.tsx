@@ -171,7 +171,7 @@ const ColonyPermissionsAddDialog = ({
                   <InputLabel label={MSG.selectUser} />
                   <SingleUserPicker
                     appearance={{ width: 'wide' }}
-                    data={subscribedUsersData.colonySubscribedUsers}
+                    data={subscribedUsersData.colony.subscribedUsers}
                     name="user"
                     placeholder={MSG.search}
                     filter={filterUserSelection}
