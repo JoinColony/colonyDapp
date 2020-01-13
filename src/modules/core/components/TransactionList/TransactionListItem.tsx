@@ -84,7 +84,7 @@ const TransactionListItem = ({
   ]);
 
   // @TODO: use proper preloader
-  if (!tokenData || !user) return null;
+  if (!tokenData) return null;
 
   const { token } = tokenData;
 
