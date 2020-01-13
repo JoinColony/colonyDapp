@@ -1,23 +1,52 @@
-import React from 'react';
+import React, { useState, useCallback } from 'react';
+import { defineMessages } from 'react-intl';
+import throttle from 'lodash/throttle';
 
-import { COLONY_TOTAL_BALANCE_DOMAIN_ID } from '~constants';
+import { COLONY_TOTAL_BALANCE_DOMAIN_ID, ROOT_DOMAIN } from '~constants';
 import { FullColonyFragment } from '~data/index';
 import { getBalanceFromToken } from '~utils/tokens';
+import { useAsyncFunction } from '~utils/hooks';
+import { mergePayload } from '~utils/actions';
+import { ActionTypes } from '~redux/index';
+import { Select } from '~core/Fields';
+import Button from '~core/Button';
+
+import {
+  TasksFilterOptionType,
+  TasksFilterOptions,
+  tasksFilterSelectOptions,
+} from '../../shared/tasksFilter';
 
 import { tokenIsETH } from '../../../../core/checks';
 import ColonyInitialFunding from '../ColonyInitialFunding';
 import ColonyTasks from '../ColonyTasks';
 
+import styles from './TabContribute.css';
+
 interface Props {
-  allowTaskCreation: boolean;
+  canCreateTask: boolean;
   colony: FullColonyFragment;
   filteredDomainId: number;
-  filterOption: string;
   showQrCode: boolean;
 }
 
+const MSG = defineMessages({
+  labelFilter: {
+    id: 'dashboard.ColonyHome.labelFilter',
+    defaultMessage: 'Filter',
+  },
+  placeholderFilter: {
+    id: 'dashboard.ColonyHome.placeholderFilter',
+    defaultMessage: 'Filter',
+  },
+  newTaskButton: {
+    id: 'dashboard.ColonyHome.newTaskButton',
+    defaultMessage: 'New Task',
+  },
+});
+
 const TabContribute = ({
-  allowTaskCreation,
+  canCreateTask,
   colony: {
     colonyAddress,
     canMintNativeToken,
@@ -28,9 +57,40 @@ const TabContribute = ({
     tokens,
   },
   filteredDomainId,
-  filterOption,
   showQrCode,
 }: Props) => {
+  const [filterOption, setFilterOption] = useState(TasksFilterOptions.ALL_OPEN);
+  const [isCreatingTask, setIsCreatingTask] = useState(false);
+
+  const formSetFilter = useCallback(
+    (_: string, value: TasksFilterOptionType) => setFilterOption(value as any),
+    [setFilterOption],
+  );
+
+  const transform = useCallback(
+    mergePayload({
+      colonyAddress,
+      // Use ROOT_DOMAIN if filtered domain id equals 0
+      ethDomainId: filteredDomainId || ROOT_DOMAIN,
+    }),
+    [colonyAddress, filteredDomainId],
+  );
+
+  const createTask = useAsyncFunction({
+    error: ActionTypes.TASK_CREATE_ERROR,
+    submit: ActionTypes.TASK_CREATE,
+    success: ActionTypes.TASK_CREATE_SUCCESS,
+    transform,
+  });
+
+  const handleCreateTask = useCallback(
+    throttle(async () => {
+      setIsCreatingTask(true);
+      await createTask({});
+    }, 2000),
+    [createTask],
+  );
+
   const nativeToken = tokens.find(
     ({ address }) => address === nativeTokenAddress,
   );
@@ -59,6 +119,28 @@ const TabContribute = ({
 
   return (
     <>
+      <div className={styles.interactiveBar}>
+        <Select
+          appearance={{ alignOptions: 'left', theme: 'alt' }}
+          connect={false}
+          elementOnly
+          label={MSG.labelFilter}
+          name="filter"
+          options={tasksFilterSelectOptions}
+          placeholder={MSG.placeholderFilter}
+          form={{ setFieldValue: formSetFilter }}
+          $value={filterOption}
+        />
+        {canCreateTask && (
+          <Button
+            appearance={{ theme: 'primary', size: 'medium' }}
+            text={MSG.newTaskButton}
+            disabled={isInRecoveryMode}
+            loading={isCreatingTask}
+            onClick={handleCreateTask}
+          />
+        )}
+      </div>
       {nativeToken && nativeTokenBalance.isZero() && ethBalance.isZero() && (
         /*
          * The funding panel should be shown if the colony's balance of
@@ -74,10 +156,12 @@ const TabContribute = ({
         />
       )}
       <ColonyTasks
-        canCreateTask={allowTaskCreation}
+        canCreateTask={canCreateTask}
         colonyAddress={colonyAddress}
+        onCreateTask={handleCreateTask}
         filteredDomainId={filteredDomainId}
         filterOption={filterOption}
+        isCreatingTask={isCreatingTask}
         isInRecoveryMode={isInRecoveryMode}
         canMintTokens={canMintTokens}
         showEmptyState={showEmptyState}

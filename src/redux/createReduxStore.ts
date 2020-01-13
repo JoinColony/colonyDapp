@@ -1,7 +1,6 @@
 import { createStore, compose, applyMiddleware } from 'redux';
 import createSagaMiddleware from 'redux-saga';
 import { routerMiddleware } from 'connected-react-router';
-import { middleware as actionWatchMiddleWare } from 'redux-action-watch';
 
 import context from '~context/index';
 
@@ -51,7 +50,6 @@ const store = createStore(
       subscriberMiddleware,
       sagaMiddleware,
       reduxPromiseListener.middleware,
-      actionWatchMiddleWare('watcher'),
     ),
   ),
 );

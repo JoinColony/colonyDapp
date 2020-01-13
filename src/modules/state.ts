@@ -16,7 +16,6 @@ export interface RootStateProps {
   dashboard: DashboardStateRecord;
   users: UsersStateRecord;
   router?: RouterState;
-  watcher: any;
 }
 
 export class RootStateRecord extends Record<RootStateProps>({
@@ -25,5 +24,4 @@ export class RootStateRecord extends Record<RootStateProps>({
   [DASHBOARD_NAMESPACE]: new DashboardStateRecord(),
   [USERS_NAMESPACE]: new UsersStateRecord(),
   router: undefined,
-  watcher: undefined,
 }) {}
