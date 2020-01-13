@@ -2,11 +2,7 @@ import ApolloClient from 'apollo-client';
 import { all, call, fork, put, takeEvery } from 'redux-saga/effects';
 
 import { ROOT_DOMAIN } from '~constants';
-import { Action, ActionTypes, AllActions } from '~redux/index';
-import { putError, takeFrom } from '~utils/saga/effects';
-import { ContractContexts } from '~types/index';
 import { getContext, Context } from '~context/index';
-import { createTransaction, getTxChannel } from '../../core/sagas';
 import {
   ColonyDomainsQuery,
   ColonyDomainsQueryVariables,
@@ -22,6 +18,12 @@ import {
   TokenBalancesForDomainsQuery,
   TokenBalancesForDomainsQueryVariables,
 } from '~data/index';
+import { Action, ActionTypes, AllActions } from '~redux/index';
+import { ContractContexts } from '~types/index';
+import { log } from '~utils/debug';
+import { putError, takeFrom } from '~utils/saga/effects';
+
+import { createTransaction, getTxChannel } from '../../core/sagas';
 
 function* colonyDomainsFetch({
   meta,
@@ -127,14 +129,36 @@ function* domainCreate({
           name,
         },
       },
-      // @todo Use `update` instead of refetching domains
-      // @body This will be more performant. Typing the update may be somewhat tedious
-      refetchQueries: [
-        {
-          query: ColonyDomainsDocument,
-          variables: { colonyAddress } as ColonyDomainsQueryVariables,
-        },
-      ],
+      update: (cache, { data }) => {
+        try {
+          const cacheData = cache.readQuery<
+            ColonyDomainsQuery,
+            ColonyDomainsQueryVariables
+          >({
+            query: ColonyDomainsDocument,
+            variables: { colonyAddress },
+          });
+          if (cacheData && data && data.createDomain) {
+            const domains = cacheData.colony.domains || [];
+            domains.push(data.createDomain);
+            cache.writeQuery<ColonyDomainsQuery, ColonyDomainsQueryVariables>({
+              query: ColonyDomainsDocument,
+              data: {
+                colony: {
+                  ...cacheData.colony,
+                  domains,
+                },
+              },
+              variables: {
+                colonyAddress,
+              },
+            });
+          }
+        } catch (e) {
+          log.verbose(e);
+          log.verbose('Not updating store - colony domains not loaded yet');
+        }
+      },
     });
 
     yield put<AllActions>({
