@@ -160,56 +160,6 @@ jobs:
           paths:
             - node_modules
           key: v1-dependencies-{{ checksum "yarn.lock" }}
-  build-goerli-image:
-    docker:
-      - image: circleci/node:10.16.3
-    working_directory: ~/repo
-    steps:
-      - checkout
-      - setup_remote_docker
-      - restore_cache:
-          keys:
-            - v1-dependencies-{{ checksum "yarn.lock" }}
-            # fallback to using the latest cache if no exact match is found
-            - v1-dependencies-
-      - run: yarn install
-      - attach_workspace:
-          at: .
-      - save_cache:
-          paths:
-            - node_modules
-          key: v1-dependencies-{{ checksum "yarn.lock" }}
-      - run: docker build --build-arg COLONY_NETWORK_ENS_NAME='joincolony.test' --build-arg VERBOSE='true' --build-arg INFURA_ID='fe7e19c85e574235a06296de102d16ef' --build-arg NETWORK='goerli' --build-arg COMMIT_HASH=$CIRCLE_SHA1 --no-cache -t eu.gcr.io/${PROJECT_NAME}/dapp-goerli:$CIRCLE_SHA1 .
-      - run: echo "deb [signed-by=/usr/share/keyrings/cloud.google.gpg] http://packages.cloud.google.com/apt cloud-sdk main" | sudo tee -a /etc/apt/sources.list.d/google-cloud-sdk.list
-      - run: curl https://packages.cloud.google.com/apt/doc/apt-key.gpg | sudo apt-key --keyring /usr/share/keyrings/cloud.google.gpg add -
-      - run: sudo apt-get update && sudo apt-get install google-cloud-sdk
-      - run: bash ./scripts/authGoogle.sh
-      - run: gcloud docker -- push eu.gcr.io/${PROJECT_NAME}/dapp-goerli:$CIRCLE_SHA1
-  build-mainnet-image:
-    docker:
-      - image: circleci/node:10.16.3
-    working_directory: ~/repo
-    steps:
-      - checkout
-      - setup_remote_docker
-      - restore_cache:
-          keys:
-            - v1-dependencies-{{ checksum "yarn.lock" }}
-            # fallback to using the latest cache if no exact match is found
-            - v1-dependencies-
-      - run: yarn install
-      - attach_workspace:
-          at: .
-      - save_cache:
-          paths:
-            - node_modules
-          key: v1-dependencies-{{ checksum "yarn.lock" }}
-      - run: docker build --build-arg COLONY_NETWORK_ENS_NAME='joincolony.eth' --build-arg VERBOSE='true' --build-arg INFURA_ID='fe7e19c85e574235a06296de102d16ef' --build-arg NETWORK='mainnet' --build-arg COMMIT_HASH=$CIRCLE_SHA1 --no-cache -t eu.gcr.io/${PROJECT_NAME}/dapp-mainnet:$CIRCLE_SHA1 .
-      - run: echo "deb [signed-by=/usr/share/keyrings/cloud.google.gpg] http://packages.cloud.google.com/apt cloud-sdk main" | sudo tee -a /etc/apt/sources.list.d/google-cloud-sdk.list
-      - run: curl https://packages.cloud.google.com/apt/doc/apt-key.gpg | sudo apt-key --keyring /usr/share/keyrings/cloud.google.gpg add -
-      - run: sudo apt-get update && sudo apt-get install google-cloud-sdk
-      - run: bash ./scripts/authGoogle.sh
-      - run: gcloud docker -- push eu.gcr.io/${PROJECT_NAME}/dapp-mainnet:$CIRCLE_SHA1
   deploy-styleguide:
     docker:
       - image: circleci/node:10.16.3
@@ -240,20 +190,13 @@ workflows:
   commit:
     jobs:
       - build-with-lockfile
-      - e2e-testing
+      # - e2e-testing
       - build-styleguide:
           requires:
             - build-with-lockfile
       - deploy-styleguide:
           requires:
             - build-styleguide
-          filters:
-            branches:
-              only: master
-      - build-mainnet-image:
-          requires:
-            - build-with-lockfile
-            - e2e-testing
           filters:
             branches:
               only: master
