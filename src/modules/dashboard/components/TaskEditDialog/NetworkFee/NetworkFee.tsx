@@ -49,7 +49,12 @@ const NetworkFee = ({ amount, decimals, symbol }: Props) => {
     if (amountBn.isZero() || networkFeeInverse === 1) {
       return amountBn;
     }
-    return new BigNumber(amountBn).div(new BigNumber(networkFeeInverse));
+    return (
+      new BigNumber(amountBn)
+        .div(new BigNumber(networkFeeInverse))
+        // Add 1 wei to network fee, because the contracts do too
+        .add(new BigNumber(1))
+    );
   }, [amount, decimals, networkFeeInverse]);
   return (
     <>
