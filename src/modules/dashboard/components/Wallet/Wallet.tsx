@@ -59,8 +59,9 @@ const Wallet = ({ openDialog }: Props) => {
     () =>
       openDialog('UserTokenEditDialog', {
         selectedTokens: tokens && tokens.map(({ address }) => address),
+        walletAddress,
       }),
-    [openDialog, tokens],
+    [openDialog, tokens, walletAddress],
   );
   return (
     <div className={styles.layoutMain}>

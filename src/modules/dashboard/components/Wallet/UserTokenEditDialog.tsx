@@ -3,17 +3,35 @@ import React, { useCallback } from 'react';
 import { Address } from '~types/strings';
 import TokenEditDialog from '~core/TokenEditDialog';
 import { SpinnerLoader } from '~core/Preloaders';
-import { useSetUserTokensMutation, useAllTokensQuery } from '~data/index';
+import {
+  useSetUserTokensMutation,
+  useAllTokensQuery,
+  UserTokensDocument,
+  UserTokensQueryVariables,
+} from '~data/index';
 
 interface Props {
   cancel: () => void;
   close: () => void;
   selectedTokens: Address[];
+  walletAddress: Address;
 }
 
-const UserTokenEditDialog = ({ selectedTokens = [], cancel, close }: Props) => {
+const UserTokenEditDialog = ({
+  selectedTokens = [],
+  cancel,
+  close,
+  walletAddress,
+}: Props) => {
   const { data: allTokensData } = useAllTokensQuery();
-  const [setUserTokensMutation] = useSetUserTokensMutation();
+  const [setUserTokensMutation] = useSetUserTokensMutation({
+    refetchQueries: [
+      {
+        query: UserTokensDocument,
+        variables: { address: walletAddress } as UserTokensQueryVariables,
+      },
+    ],
+  });
 
   const setUserTokens = useCallback(
     ({ tokens }) => {
