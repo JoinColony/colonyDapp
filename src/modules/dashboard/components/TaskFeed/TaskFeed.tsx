@@ -56,7 +56,7 @@ const TaskFeed = ({ colonyAddress, draftId }: Props) => {
   }
 
   const {
-    task: { events, finalizedAt, finalizedPayment },
+    task: { events, finalizedAt, finalizedPayment, payouts },
   } = data;
 
   return (
@@ -103,6 +103,7 @@ const TaskFeed = ({ colonyAddress, draftId }: Props) => {
                     return (
                       <Fragment key={sourceId}>
                         <TaskFeedCompleteInfo
+                          payouts={payouts}
                           finalizedAt={finalizedAt}
                           finalizedPayment={finalizedPayment}
                         />

@@ -1246,6 +1246,7 @@ export type TaskFeedEventsQueryVariables = {
 export type TaskFeedEventsQuery = { task: (
     Pick<Task, 'id' | 'colonyAddress' | 'ethPotId' | 'finalizedAt'>
     & { events: Array<TaskEventFragment>, finalizedPayment: Maybe<Pick<TaskFinalizedPayment, 'amount' | 'tokenAddress' | 'workerAddress' | 'transactionHash'>> }
+    & PayoutsFragment
   ) };
 
 export type LoggedInUserQueryVariables = {};
@@ -2868,9 +2869,11 @@ export const TaskFeedEventsDocument = gql`
       workerAddress
       transactionHash
     }
+    ...Payouts
   }
 }
-    ${TaskEventFragmentDoc}`;
+    ${TaskEventFragmentDoc}
+${PayoutsFragmentDoc}`;
 
 /**
  * __useTaskFeedEventsQuery__

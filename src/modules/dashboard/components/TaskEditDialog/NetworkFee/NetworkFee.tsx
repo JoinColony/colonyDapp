@@ -45,16 +45,11 @@ const NetworkFee = ({ amount, decimals, symbol }: Props) => {
   const networkFee = useSelector(networkFeeSelector);
   const networkFeeInverse = useSelector(networkFeeInverseSelector);
   const metaColonyFee = useMemo(() => {
-    const decimalConvertedAmount = new BigNumber(moveDecimal(amount, decimals));
-    if (
-      new BigNumber(decimalConvertedAmount).isZero() ||
-      networkFeeInverse === 1
-    ) {
-      return decimalConvertedAmount;
+    const amountBn = new BigNumber(moveDecimal(amount, decimals));
+    if (amountBn.isZero() || networkFeeInverse === 1) {
+      return amountBn;
     }
-    return new BigNumber(decimalConvertedAmount)
-      .div(new BigNumber(networkFeeInverse))
-      .add(new BigNumber(1));
+    return new BigNumber(amountBn).div(new BigNumber(networkFeeInverse));
   }, [amount, decimals, networkFeeInverse]);
   return (
     <>

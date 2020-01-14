@@ -79,7 +79,8 @@ const Payout = ({
       label: symbol || MSG.unknownToken,
     }));
 
-  const { symbol = '' } = (selectedToken && selectedToken.details) || {};
+  const { symbol = '', decimals = DEFAULT_TOKEN_DECIMALS } =
+    (selectedToken && selectedToken.details) || {};
 
   return (
     <div>
@@ -112,7 +113,7 @@ const Payout = ({
               formattingOptions={{
                 delimiter: ',',
                 numeral: true,
-                numeralDecimalScale: DEFAULT_TOKEN_DECIMALS,
+                numeralDecimalScale: decimals,
               }}
             />
           </div>
@@ -171,13 +172,9 @@ const Payout = ({
             )}
           </div>
         </div>
-        {amount && symbol && !isEditing && (
+        {amount && symbol && !isEditing && decimals && (
           <div className={styles.networkFeeRow}>
-            <NetworkFee
-              amount={amount}
-              decimals={DEFAULT_TOKEN_DECIMALS}
-              symbol={symbol}
-            />
+            <NetworkFee amount={amount} decimals={decimals} symbol={symbol} />
           </div>
         )}
       </div>
