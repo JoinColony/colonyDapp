@@ -7,7 +7,6 @@ import Button from '~core/Button';
 import Heading from '~core/Heading';
 import QRCode from '~core/QRCode';
 import WalletLink from '~core/WalletLink';
-import { SpinnerLoader } from '~core/Preloaders';
 import withDialog from '~core/Dialog/withDialog';
 import TokenList from '~admin/Tokens/TokenList';
 import { useLoggedInUser, useUserTokensQuery } from '~data/index';
@@ -78,11 +77,11 @@ const Wallet = ({ openDialog }: Props) => {
             </CopyableAddress>
           </div>
         </div>
-        {loadingTokens ? (
-          <SpinnerLoader />
-        ) : (
-          <TokenList tokens={tokens} appearance={{ numCols: '3' }} />
-        )}
+        <TokenList
+          isLoading={loadingTokens}
+          tokens={tokens}
+          appearance={{ numCols: '3' }}
+        />
       </main>
       <aside className={styles.sidebar}>
         <p className={styles.helpText}>
