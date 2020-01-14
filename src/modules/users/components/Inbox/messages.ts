@@ -7,6 +7,14 @@ import { defineMessages } from 'react-intl';
 // - `colony` or `$role` the notification is intended for
 // - `$event` that happened
 const messages = defineMessages({
+  /*
+   * @NOTE This is generic message that we have to show in the rare case when
+   * the server even won't provide an eventType
+   */
+  genericFailsafe: {
+    id: 'dashboard.Inbox.InboxItem.genericFailsafe',
+    defaultMessage: 'Generic notification message',
+  },
   // Protip: this has nothing to do with the meta colony
   metaColonyOnly: {
     id: 'dashboard.Inbox.InboxItem.metaColonyOnly',
