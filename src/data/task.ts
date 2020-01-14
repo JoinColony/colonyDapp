@@ -11,7 +11,10 @@ export const taskResolvers = ({ colonyManager }: ContextType): Resolvers => ({
       const {
         events: { PayoutClaimed },
       } = colonyClient;
-      const topics = [...PayoutClaimed.interface.topics, padLeft(toHex(2), 64)];
+      const topics = [
+        ...PayoutClaimed.interface.topics,
+        padLeft(toHex(ethPotId), 64),
+      ];
       const [logs, fundingPot] = await Promise.all([
         colonyClient.getLogs({
           fromBlock: 1,
