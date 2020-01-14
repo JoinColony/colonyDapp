@@ -25,7 +25,7 @@ import {
 import { domainsFetcher } from '../../../../dashboard/fetchers';
 
 import { getFriendlyName, getUsername } from '../../../transformers';
-import { transformNotificationEventNames } from '../../../data/utils';
+import { transformNotificationEventNames } from '../events';
 
 import styles from './InboxItem.css';
 import MSG from '../messages';
@@ -248,6 +248,7 @@ const InboxItem = ({
                       value
                     ),
                   ),
+                  type: eventType,
                   time: makeInboxDetail(createdAt, value => (
                     <TimeRelative value={value} />
                   )),
