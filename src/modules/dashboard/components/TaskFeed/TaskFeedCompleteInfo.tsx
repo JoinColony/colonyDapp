@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import React from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 import BigNumber from 'bn.js';
 import moveDecimal from 'move-decimal-point';
@@ -7,11 +7,9 @@ import Numeral from '~core/Numeral';
 import { SpinnerLoader } from '~core/Preloaders';
 import TimeRelative from '~core/TimeRelative';
 import TransactionLink from '~core/TransactionLink';
-import { useSelector } from '~utils/hooks';
-import { useUser, useTokenQuery } from '~data/index';
+import { useUser, useTokenQuery, AnyTask } from '~data/index';
 
 import { getFriendlyName } from '../../../users/transformers';
-import { networkFeeInverseSelector } from '../../../core/selectors';
 
 import styles from './TaskFeedCompleteInfo.css';
 
@@ -50,6 +48,7 @@ interface Props {
     workerAddress: string;
     transactionHash: string;
   };
+  payouts: AnyTask['payouts'];
 }
 
 const displayName = 'dashboard.TaskFeed.TaskFeedCompleteInfo';
@@ -57,20 +56,20 @@ const displayName = 'dashboard.TaskFeed.TaskFeedCompleteInfo';
 const TaskFeedCompleteInfo = ({
   finalizedAt,
   finalizedPayment: { amount, tokenAddress, workerAddress, transactionHash },
+  payouts,
 }: Props) => {
   const user = useUser(workerAddress);
-  const networkFeeInverse = useSelector(networkFeeInverseSelector);
+  const payout = payouts.find(
+    ({ token: { address } }) => address === tokenAddress,
+  );
+  const fullPayoutAmount = (payout && payout.amount) || 0;
   const { data, loading: isLoadingToken } = useTokenQuery({
     variables: { address: tokenAddress },
   });
   const { decimals = 18, symbol = '' } = (data && data.token.details) || {};
-  const metaColonyFee = useMemo(() => {
-    const amountBn = new BigNumber(amount);
-    if (amountBn.isZero() || networkFeeInverse === 1) {
-      return amount;
-    }
-    return amountBn.div(new BigNumber(networkFeeInverse)).add(new BigNumber(1));
-  }, [amount, networkFeeInverse]);
+  const metaColonyFee = new BigNumber(
+    moveDecimal(fullPayoutAmount, decimals),
+  ).sub(new BigNumber(amount));
 
   return (
     <div>
@@ -115,7 +114,7 @@ const TaskFeedCompleteInfo = ({
                     <Numeral
                       integerSeparator=""
                       unit={decimals || 18}
-                      value={moveDecimal(amount, decimals)}
+                      value={amount}
                     />
                   ),
                   symbol,
@@ -126,10 +125,7 @@ const TaskFeedCompleteInfo = ({
                 {...MSG.receiptColonyFeeText}
                 values={{
                   amount: (
-                    <Numeral
-                      unit={decimals || 18}
-                      value={moveDecimal(metaColonyFee, decimals)}
-                    />
+                    <Numeral unit={decimals || 18} value={metaColonyFee} />
                   ),
                   symbol,
                 }}

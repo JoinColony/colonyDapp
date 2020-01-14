@@ -2,6 +2,7 @@ import ApolloClient from 'apollo-client';
 import { all, call, fork, put, takeEvery } from 'redux-saga/effects';
 import { replace } from 'connected-react-router';
 import BigNumber from 'bn.js';
+import moveDecimal from 'move-decimal-point';
 
 import { Context, getContext } from '~context/index';
 import {
@@ -140,7 +141,10 @@ function* taskFinalize({
     if (!payouts.length) throw new Error(`No payout set for task ${draftId}`);
     const {
       amount,
-      token: { address: token },
+      token: {
+        address: token,
+        details: { decimals },
+      },
     } = payouts[0];
 
     const txChannel = yield call(getTxChannel, meta.id);
@@ -151,7 +155,7 @@ function* taskFinalize({
       params: {
         recipient: assignedWorker.id,
         token,
-        amount: new BigNumber(amount.toString()),
+        amount: new BigNumber(moveDecimal(amount, decimals)),
         domainId: ethDomainId,
         skillId: ethSkillId || 0,
       },

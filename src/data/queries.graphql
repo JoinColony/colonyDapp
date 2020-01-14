@@ -127,6 +127,7 @@ query TaskFeedEvents($id: String!) {
       workerAddress
       transactionHash
     }
+    ...Payouts
   }
 }
 
