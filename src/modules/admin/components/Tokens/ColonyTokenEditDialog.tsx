@@ -2,7 +2,7 @@ import React, { useCallback } from 'react';
 
 import { Address } from '~types/index';
 import { SpinnerLoader } from '~core/Preloaders';
-import { useSetColonyTokensMutation, useAllTokensQuery } from '~data/index';
+import { useSetColonyTokensMutation, useColonyTokensQuery } from '~data/index';
 
 import TokenEditDialog from '~core/TokenEditDialog';
 
@@ -21,7 +21,10 @@ const ColonyTokenEditDialog = ({
   cancel,
   close,
 }: Props) => {
-  const { data: allTokensData } = useAllTokensQuery();
+  const { data } = useColonyTokensQuery({
+    variables: { address: colonyAddress },
+  });
+
   const [setColonyTokensMutation] = useSetColonyTokensMutation();
 
   const setColonyTokens = useCallback(
@@ -33,17 +36,19 @@ const ColonyTokenEditDialog = ({
     [colonyAddress, setColonyTokensMutation],
   );
 
-  if (!allTokensData) {
+  if (!data) {
     return <SpinnerLoader />;
   }
 
-  const { allTokens } = allTokensData;
+  const {
+    colony: { tokens },
+  } = data;
 
   return (
     <TokenEditDialog
       cancel={cancel}
       close={close}
-      availableTokens={allTokens}
+      availableTokens={tokens}
       nativeTokenAddress={nativeTokenAddress}
       selectedTokens={selectedTokens}
       onSubmit={setColonyTokens}
