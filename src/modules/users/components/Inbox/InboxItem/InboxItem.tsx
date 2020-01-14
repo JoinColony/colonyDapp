@@ -49,7 +49,7 @@ export interface Props {
 const INBOX_REGEX = /[A-Z]/;
 
 const getType = (eventType: string): EventType => {
-  const notificationId = transformNotificationEventNames(eventType);
+  const notificationId = transformNotificationEventNames(eventType) || '';
   const type = notificationId.split(INBOX_REGEX)[0];
   return type === 'action' || type === 'notification' ? type : 'notification';
 };
