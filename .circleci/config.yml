@@ -267,4 +267,4 @@ workflows:
               only: master
     jobs:
       - nightly-build
-      - e2e-testing
+      # - e2e-testing
