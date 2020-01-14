@@ -6,6 +6,7 @@ import {
   NOTIFICATION_EVENT_REQUEST_WORK,
   NOTIFICATION_EVENT_USER_MENTIONED,
   NOTIFICATION_EVENT_WORK_INVITE,
+  NOTIFICATION_GENERIC_FAILSAFE,
 } from '~users/Inbox/events';
 
 const notificationsToEventsMapping = {
@@ -20,7 +21,7 @@ const notificationsToEventsMapping = {
 };
 
 export const transformNotificationEventNames = (eventName: string): string =>
-  notificationsToEventsMapping[eventName];
+  notificationsToEventsMapping[eventName] || NOTIFICATION_GENERIC_FAILSAFE;
 
 export const getExtensionAddresses = async (
   colonyClient: ColonyClient,
