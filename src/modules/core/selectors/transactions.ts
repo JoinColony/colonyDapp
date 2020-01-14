@@ -3,7 +3,6 @@ import { Map as ImmutableMap, List } from 'immutable';
 
 import { TransactionRecord, TRANSACTION_STATUSES } from '~immutable/index';
 
-import { walletAddressSelector } from '../../users/selectors';
 import { isMultisig, isPendingMultisig } from '../checks';
 import { TransactionsListMap } from '../state';
 import { messageGroups } from './messages';
@@ -31,13 +30,8 @@ export const oneTransaction = (
 ): TransactionRecord | undefined =>
   state.getIn([ns, CORE_TRANSACTIONS, CORE_TRANSACTIONS_LIST, id]);
 
-export const allTransactions = createSelector(
-  (state: RootStateRecord): TransactionsListMap =>
-    state.getIn([ns, CORE_TRANSACTIONS, CORE_TRANSACTIONS_LIST]),
-  walletAddressSelector,
-  (transactions, walletAddress) =>
-    transactions.filter(tx => tx.from === walletAddress),
-);
+const allTransactions = (state: RootStateRecord): TransactionsListMap =>
+  state.getIn([ns, CORE_TRANSACTIONS, CORE_TRANSACTIONS_LIST]);
 
 export const transactionByHash = (state: RootStateRecord, hash: string) =>
   createSelector(

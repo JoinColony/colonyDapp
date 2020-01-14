@@ -5,7 +5,7 @@ import { Address, DefaultValues, RecordToJS } from '~types/index';
 
 interface Shared {
   amount: BigNumber;
-  colonyAddress?: Address;
+  colonyAddress: Address;
   date: Date;
   from?: Address;
   hash: string;

@@ -1,24 +1,22 @@
 import React, { useCallback } from 'react';
 import { defineMessages } from 'react-intl';
+import * as yup from 'yup';
 
-import { ColonyType } from '~immutable/index';
 import Heading from '~core/Heading';
 import CopyableAddress from '~core/CopyableAddress';
 import {
+  Form,
   FieldSet,
   Input,
   InputLabel,
   Textarea,
-  ActionForm,
   FormStatus,
 } from '~core/Fields';
 import Button from '~core/Button';
-import { pipe, mergePayload, withKey } from '~utils/actions';
-import { ActionTypes } from '~redux/index';
-import { UpdateColonyProfileCommandArgsSchema } from '../../../dashboard/data/commands/schemas';
-import { useColonyNativeToken } from '../../../dashboard/hooks/useColonyNativeToken';
 import ENS from '~lib/ENS';
+import { useEditColonyProfileMutation, FullColonyFragment } from '~data/index';
 import ColonyAvatarUploader from './ColonyAvatarUploader';
+
 import styles from './ProfileEdit.css';
 
 const MSG = defineMessages({
@@ -65,8 +63,28 @@ const MSG = defineMessages({
  */
 const componentDisplayName = 'admin.Profile.ProfileEdit';
 
+interface FormValues {
+  description?: string;
+  displayName?: string;
+  guideline?: string;
+  website?: string;
+}
+
+const validationSchema = yup.object({
+  description: yup.string().nullable(),
+  displayName: yup.string().nullable(),
+  guideline: yup
+    .string()
+    .url()
+    .nullable(),
+  website: yup
+    .string()
+    .url()
+    .nullable(),
+});
+
 interface Props {
-  colony: ColonyType;
+  colony: FullColonyFragment;
 }
 
 const ProfileEdit = ({ colony }: Props) => {
@@ -76,18 +94,23 @@ const ProfileEdit = ({ colony }: Props) => {
     description,
     displayName,
     guideline,
+    nativeTokenAddress,
     website,
   } = colony;
-  const transform = useCallback(
-    pipe(
-      withKey(colonyAddress),
-      mergePayload({ colonyAddress }),
-    ),
-    [colonyAddress],
-  );
 
-  const { address: nativeTokenAddress = '' } =
-    useColonyNativeToken(colonyAddress) || {};
+  const [editColony] = useEditColonyProfileMutation();
+  const onSubmit = useCallback(
+    (profile: FormValues) =>
+      editColony({
+        variables: {
+          input: {
+            ...profile,
+            colonyAddress,
+          },
+        },
+      }),
+    [colonyAddress, editColony],
+  );
 
   return (
     <div className={styles.main}>
@@ -99,19 +122,15 @@ const ProfileEdit = ({ colony }: Props) => {
       </div>
       <div className={styles.mainContentContainer}>
         <main className={styles.content}>
-          <ActionForm
-            submit={ActionTypes.COLONY_PROFILE_UPDATE}
-            success={ActionTypes.COLONY_PROFILE_UPDATE_SUCCESS}
-            error={ActionTypes.COLONY_PROFILE_UPDATE_ERROR}
-            transform={transform}
+          <Form
             initialValues={{
-              colonyName,
               description,
               displayName,
               guideline,
               website,
             }}
-            validationSchema={UpdateColonyProfileCommandArgsSchema}
+            onSubmit={onSubmit}
+            validationSchema={validationSchema}
           >
             {({ status, isSubmitting }) => (
               <>
@@ -138,7 +157,7 @@ const ProfileEdit = ({ colony }: Props) => {
                     text={ENS.getFullDomain('colony', colonyName)}
                   />
                 </div>
-                {nativeTokenAddress && (
+                {colony.nativeTokenAddress && (
                   <div className={styles.section}>
                     <InputLabel label={MSG.labelTokenAddress} />
                     <CopyableAddress appearance={{ theme: 'big' }} full>
@@ -188,7 +207,7 @@ const ProfileEdit = ({ colony }: Props) => {
                 <FormStatus status={status} />
               </>
             )}
-          </ActionForm>
+          </Form>
         </main>
         <aside className={styles.sidebar}>
           <ColonyAvatarUploader colony={colony} />

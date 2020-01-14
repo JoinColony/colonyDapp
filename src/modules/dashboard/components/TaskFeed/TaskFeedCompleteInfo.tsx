@@ -1,17 +1,16 @@
-import React, { useMemo } from 'react';
+import React from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 import BigNumber from 'bn.js';
+import moveDecimal from 'move-decimal-point';
 
-import { EventTypes } from '~data/constants';
-import { Event } from '~data/types';
 import Numeral from '~core/Numeral';
 import { SpinnerLoader } from '~core/Preloaders';
 import TimeRelative from '~core/TimeRelative';
 import TransactionLink from '~core/TransactionLink';
-import { useDataFetcher, useSelector } from '~utils/hooks';
-import { tokenFetcher } from '../../fetchers';
-import { friendlyUsernameSelector } from '../../../users/selectors';
-import { networkFeeInverseSelector } from '../../../core/selectors';
+import { useUser, useTokenQuery, AnyTask } from '~data/index';
+
+import { getFriendlyName } from '../../../users/transformers';
+
 import styles from './TaskFeedCompleteInfo.css';
 
 const MSG = defineMessages({
@@ -42,43 +41,35 @@ const MSG = defineMessages({
 });
 
 interface Props {
-  createdAt: Date;
-  event: Event<EventTypes.TASK_FINALIZED>;
+  finalizedAt: string;
+  finalizedPayment: {
+    amount: string;
+    tokenAddress: string;
+    workerAddress: string;
+    transactionHash: string;
+  };
+  payouts: AnyTask['payouts'];
 }
 
 const displayName = 'dashboard.TaskFeed.TaskFeedCompleteInfo';
 
 const TaskFeedCompleteInfo = ({
-  createdAt,
-  event: {
-    payload: {
-      amountPaid,
-      paymentTokenAddress,
-      workerAddress,
-      transactionHash,
-    },
-  },
+  finalizedAt,
+  finalizedPayment: { amount, tokenAddress, workerAddress, transactionHash },
+  payouts,
 }: Props) => {
-  const user = useSelector(friendlyUsernameSelector, [workerAddress]);
-  const networkFeeInverse = useSelector(networkFeeInverseSelector);
-  const { data: token, isFetching: isFetchingToken } = useDataFetcher(
-    tokenFetcher,
-    [paymentTokenAddress as string], // Technically a bug, shouldn't need type override
-    [paymentTokenAddress],
+  const user = useUser(workerAddress);
+  const payout = payouts.find(
+    ({ token: { address } }) => address === tokenAddress,
   );
-  const { decimals = 18, symbol = undefined } = token || {};
-  const metaColonyFee = useMemo(() => {
-    if (new BigNumber(amountPaid).isZero() || networkFeeInverse === 1) {
-      return amountPaid;
-    }
-    return new BigNumber(amountPaid)
-      .div(new BigNumber(networkFeeInverse))
-      .add(new BigNumber(1));
-  }, [amountPaid, networkFeeInverse]);
-  const workerPayout = useMemo(
-    () => new BigNumber(amountPaid).sub(metaColonyFee as BigNumber),
-    [amountPaid, metaColonyFee],
-  );
+  const fullPayoutAmount = (payout && payout.amount) || 0;
+  const { data, loading: isLoadingToken } = useTokenQuery({
+    variables: { address: tokenAddress },
+  });
+  const { decimals = 18, symbol = '' } = (data && data.token.details) || {};
+  const metaColonyFee = new BigNumber(
+    moveDecimal(fullPayoutAmount, decimals),
+  ).sub(new BigNumber(amount));
 
   return (
     <div>
@@ -87,15 +78,17 @@ const TaskFeedCompleteInfo = ({
           <FormattedMessage
             {...MSG.eventTaskSentMessage}
             values={{
-              user: <span className={styles.username}>{user}</span>,
+              user: (
+                <span className={styles.username}>{getFriendlyName(user)}</span>
+              ),
             }}
           />
           <span className={styles.timeSinceTx}>
-            <TimeRelative value={createdAt} />
+            <TimeRelative value={new Date(finalizedAt)} />
           </span>
         </p>
       </div>
-      {isFetchingToken ? (
+      {isLoadingToken ? (
         <SpinnerLoader />
       ) : (
         <div className={styles.receiptContainer}>
@@ -111,9 +104,7 @@ const TaskFeedCompleteInfo = ({
               <br />
               <FormattedMessage
                 {...MSG.tokenAddressText}
-                values={{
-                  tokenAddress: paymentTokenAddress,
-                }}
+                values={{ tokenAddress }}
               />
               <br />
               <FormattedMessage
@@ -122,8 +113,8 @@ const TaskFeedCompleteInfo = ({
                   amount: (
                     <Numeral
                       integerSeparator=""
-                      unit={decimals}
-                      value={workerPayout}
+                      unit={decimals || 18}
+                      value={amount}
                     />
                   ),
                   symbol,
@@ -133,7 +124,9 @@ const TaskFeedCompleteInfo = ({
               <FormattedMessage
                 {...MSG.receiptColonyFeeText}
                 values={{
-                  amount: <Numeral unit={decimals} value={metaColonyFee} />,
+                  amount: (
+                    <Numeral unit={decimals || 18} value={metaColonyFee} />
+                  ),
                   symbol,
                 }}
               />

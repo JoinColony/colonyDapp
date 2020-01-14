@@ -10,13 +10,10 @@ import withDialog from '~core/Dialog/withDialog';
 import Heading from '~core/Heading';
 import { Select } from '~core/Fields';
 import { Address, DomainsMapType } from '~types/index';
-import { useDataFetcher, useSelector, useTransformer } from '~utils/hooks';
+import { useTransformer } from '~utils/hooks';
+import { useLoggedInUser, useTokenBalancesForDomainsQuery } from '~data/index';
 
 import { getLegacyRoles } from '../../../transformers';
-import { tokenFetcher } from '../../../dashboard/fetchers';
-import { useColonyNativeToken } from '../../../dashboard/hooks/useColonyNativeToken';
-import { useColonyTokens } from '../../../dashboard/hooks/useColonyTokens';
-import { walletAddressSelector } from '../../../users/selectors';
 import { userHasRole } from '../../../users/checks';
 import { canEditTokens } from '../../checks';
 import FundingBanner from './FundingBanner';
@@ -64,11 +61,11 @@ const Tokens = ({
   openDialog,
   rootRoles,
 }: Props) => {
-  const [selectedDomain, setSelectedDomain] = useState(
-    COLONY_TOTAL_BALANCE_DOMAIN_ID,
+  const [selectedDomain, setSelectedDomain] = useState<string>(
+    COLONY_TOTAL_BALANCE_DOMAIN_ID.toString(),
   );
 
-  const walletAddress = useSelector(walletAddressSelector);
+  const { walletAddress } = useLoggedInUser();
 
   const oldUserRoles = useTransformer(getLegacyRoles, [domains]);
   const canEdit = canEditTokens(oldUserRoles, walletAddress);
@@ -76,13 +73,16 @@ const Tokens = ({
 
   const domainsArray = useMemo(
     () => [
-      { value: COLONY_TOTAL_BALANCE_DOMAIN_ID, label: { id: 'domain.all' } },
+      {
+        value: COLONY_TOTAL_BALANCE_DOMAIN_ID.toString(),
+        label: { id: 'domain.all' },
+      },
       ...sortBy(
         Object.entries(domains || {})
           .sort()
           .map(([domainId, { name }]) => ({
             label: name,
-            value: domainId,
+            value: domainId.toString(),
           })),
         ['value'],
       ),
@@ -100,27 +100,32 @@ const Tokens = ({
     setSelectedDomain,
   ]);
 
-  // get sorted tokens
-  const [tokens] = useColonyTokens(colonyAddress);
+  const { data: colonyTokensData, loading } = useTokenBalancesForDomainsQuery({
+    variables: {
+      colonyAddress,
+      domainIds: [
+        COLONY_TOTAL_BALANCE_DOMAIN_ID,
+        ...Object.entries(domains || {}).map(([domainId]) =>
+          parseInt(domainId, 10),
+        ),
+      ],
+    },
+  });
 
-  const nativeTokenReference = useColonyNativeToken(colonyAddress);
-  const nativeTokenAddress = nativeTokenReference
-    ? nativeTokenReference.address
-    : '';
-  const { data: nativeToken } = useDataFetcher(
-    tokenFetcher,
-    [nativeTokenAddress],
-    [nativeTokenAddress],
-  );
+  const tokens = (colonyTokensData && colonyTokensData.colony.tokens) || [];
+  const nativeTokenAddress =
+    colonyTokensData && colonyTokensData.colony.nativeTokenAddress;
+  const nativeToken =
+    tokens && tokens.find(({ address }) => address === nativeTokenAddress);
 
-  // handle opening of dialogs
   const handleEditTokens = useCallback(
     () =>
       openDialog('ColonyTokenEditDialog', {
-        selectedTokens: tokens && tokens.map(({ address }) => address),
         colonyAddress,
+        nativeTokenAddress,
+        selectedTokens: tokens && tokens.map(({ address }) => address),
       }),
-    [openDialog, tokens, colonyAddress],
+    [openDialog, colonyAddress, nativeTokenAddress, tokens],
   );
   const handleMintTokens = useCallback(
     () =>
@@ -167,6 +172,7 @@ const Tokens = ({
           {tokens && (
             <TokenList
               domainId={selectedDomain}
+              isLoading={loading}
               tokens={tokens}
               appearance={{ numCols: '3' }}
             />

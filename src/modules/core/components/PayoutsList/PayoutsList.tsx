@@ -1,14 +1,14 @@
-import React, { useCallback } from 'react';
+import React from 'react';
 import { defineMessages, FormattedMessage, FormattedNumber } from 'react-intl';
 import cx from 'classnames';
+import BigNumber from 'bn.js';
+import moveDecimal from 'move-decimal-point';
 
-import {
-  TaskPayoutType,
-  ColonyTokenReferenceType,
-  TokenType,
-} from '~immutable/index';
+import { DEFAULT_TOKEN_DECIMALS } from '~constants';
+import { Payouts } from '~data/index';
 import { Address } from '~types/index';
 import { ZERO_ADDRESS } from '~utils/web3/constants';
+
 import { Tooltip } from '../Popover';
 import Numeral from '../Numeral';
 import styles from './PayoutsList.css';
@@ -24,34 +24,21 @@ interface Props {
   /** Maximum lines to show before switching to popover */
   maxLines?: number;
 
-  /** Native token of the displayed Colony */
-  nativeToken?: ColonyTokenReferenceType;
-
   /** Payouts list containing all the payouts */
-  payouts: TaskPayoutType[];
+  payouts: Payouts;
 
-  /** Tokens available to the current colony */
-  tokenOptions: TokenType[];
+  /** Pretty self-explanatory */
+  nativeTokenAddress: Address;
 }
 
 const displayName = 'PayoutsList';
 
-const PayoutsList = ({
-  maxLines = 1,
-  nativeToken,
-  payouts,
-  tokenOptions,
-}: Props) => {
-  const getToken = useCallback(
-    (tokenAddress: Address) =>
-      tokenOptions.find(({ address }) => address === tokenAddress),
-    [tokenOptions],
-  );
-
-  const { address: nativeTokenAddress = undefined } = nativeToken || {};
-
+const PayoutsList = ({ maxLines = 1, nativeTokenAddress, payouts }: Props) => {
   const sortedPayouts = payouts.sort(
-    ({ token: firstToken }, { token: secondToken }) => {
+    (
+      { token: { address: firstToken } },
+      { token: { address: secondToken } },
+    ) => {
       if (firstToken === nativeTokenAddress && secondToken === ZERO_ADDRESS) {
         return -1;
       }
@@ -71,39 +58,39 @@ const PayoutsList = ({
   return (
     <div className={styles.main}>
       <div>
-        {firstPayouts.map(payout => {
-          const token = getToken(payout.token);
-          return token ? (
-            <Numeral
-              className={cx(styles.payoutNumber, {
-                [styles.native]: payout.token === nativeTokenAddress,
-              })}
-              key={payout.token}
-              suffix={` ${token.symbol} `}
-              unit={token.decimals || 18}
-              value={payout.amount}
-            />
-          ) : null;
-        })}
+        {firstPayouts.map(({ amount, token }) => (
+          <Numeral
+            className={cx(styles.payoutNumber, {
+              [styles.native]: token.address === nativeTokenAddress,
+            })}
+            key={token.address}
+            suffix={` ${token.details.symbol} `}
+            unit={DEFAULT_TOKEN_DECIMALS}
+            value={
+              new BigNumber(moveDecimal(amount, token.details.decimals || 18))
+            }
+          />
+        ))}
       </div>
       {extraPayouts && extraPayouts.length ? (
         <Tooltip
           content={
             <div className={styles.popoverContent}>
-              {extraPayouts.map(payout => {
-                const token = getToken(payout.token);
-                return token ? (
-                  <Numeral
-                    className={cx(styles.payoutNumber, {
-                      [styles.native]: payout.token === nativeTokenAddress,
-                    })}
-                    key={payout.token}
-                    value={payout.amount}
-                    unit={token.decimals || 18}
-                    suffix={` ${token.symbol} `}
-                  />
-                ) : null;
-              })}
+              {extraPayouts.map(({ amount, token }) => (
+                <Numeral
+                  className={cx(styles.payoutNumber, {
+                    [styles.native]: token.address === nativeTokenAddress,
+                  })}
+                  key={token.address}
+                  value={
+                    new BigNumber(
+                      moveDecimal(amount, token.details.decimals || 18),
+                    )
+                  }
+                  unit={DEFAULT_TOKEN_DECIMALS}
+                  suffix={` ${token.details.symbol} `}
+                />
+              ))}
             </div>
           }
         >

@@ -1,1 +1,1 @@
-export { default } from './InboxItem';
+export { default as InboxItem } from './InboxItem';

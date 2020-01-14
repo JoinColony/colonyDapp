@@ -1,9 +1,7 @@
 node_modules
-plop-templates
 scripts
-flow-typed
-plopfile.js
 postcss.config.js
 webpack.config.*
+src/data/generated.ts
 src/lib/colonyNetwork
-src/lib/pinion
+src/lib/colonyServer

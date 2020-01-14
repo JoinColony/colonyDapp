@@ -2,20 +2,22 @@ import React, { ReactNode, useCallback } from 'react';
 import { MessageDescriptor, MessageValues, defineMessages } from 'react-intl';
 import compose from 'recompose/compose';
 
-import { UserType } from '~immutable/index';
+import { AnyUser } from '~data/index';
 import { Address } from '~types/index';
 import { getMainClasses } from '~utils/css';
+
 import { ItemDataType, OmniPickerProps, withOmniPicker } from '../OmniPicker';
 import { asField, InputLabel } from '../Fields';
 import Icon from '../Icon';
 import Button from '../Button';
 import UserAvatar from '../UserAvatar';
 import ItemDefault from './ItemDefault';
+
 import styles from './SingleUserPicker.css';
 
 type AvatarRenderFn = (
   address: Address,
-  user: ItemDataType<UserType>,
+  user?: ItemDataType<AnyUser>,
 ) => ReactNode;
 
 const MSG = defineMessages({
@@ -35,15 +37,11 @@ const MSG = defineMessages({
 
 const defaultRenderAvatar = (
   address: Address,
-  item: ItemDataType<UserType>,
-) => {
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const { id, ...user } = item;
-  return <UserAvatar address={address} user={user} size="xs" />;
-};
+  item?: ItemDataType<AnyUser>,
+) => <UserAvatar address={address} user={item} size="xs" />;
 
 const defaultRenderItem = (
-  user: ItemDataType<UserType>,
+  user: ItemDataType<AnyUser>,
   renderAvatar: AvatarRenderFn,
 ) => (
   <ItemDefault itemData={user} renderAvatar={renderAvatar} showMaskedAddress />
@@ -83,7 +81,7 @@ interface Props extends OmniPickerProps {
   renderAvatar: AvatarRenderFn;
 
   /** Item component for omnipicker listbox */
-  renderItem?: (user: ItemDataType<UserType>, selected?: boolean) => ReactNode;
+  renderItem?: (user: ItemDataType<AnyUser>, selected?: boolean) => ReactNode;
 
   /** Label text */
   label: string | MessageDescriptor;
@@ -95,13 +93,13 @@ interface Props extends OmniPickerProps {
   placeholder?: string;
 
   /** Callback for things that happend after selection  */
-  onSelected?: (user: UserType) => void;
+  onSelected?: (user: AnyUser) => void;
 
   /** @ignore Will be injected by `asField` */
   $error?: string;
 
   /** @ignore Will be injected by `asField` */
-  $value?: ItemDataType<UserType>;
+  $value?: ItemDataType<AnyUser>;
 
   /** @ignore Will be injected by `asField` */
   $touched?: boolean;
@@ -146,7 +144,7 @@ const SingleUserPicker = ({
     }
   }, [disabled, openOmniPicker, setValue]);
   const handlePick = useCallback(
-    (user: UserType) => {
+    (user: AnyUser) => {
       setValue(user);
       if (onSelected) onSelected(user);
     },
@@ -161,7 +159,7 @@ const SingleUserPicker = ({
   const renderItem =
     renderItemProp || // eslint-disable-next-line react-hooks/rules-of-hooks
     useCallback(
-      (user: ItemDataType<UserType>) => defaultRenderItem(user, renderAvatar),
+      (user: ItemDataType<AnyUser>) => defaultRenderItem(user, renderAvatar),
       [renderAvatar],
     );
 

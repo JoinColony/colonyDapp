@@ -1,8 +1,7 @@
 import React, { ReactNode } from 'react';
 
 import { Address } from '~types/index';
-import { useSelector } from '~utils/hooks';
-import { userSelector } from '../../../users/selectors';
+import { AnyUser } from '~data/index';
 
 import { Tooltip } from '~core/Popover';
 import UserMention from '~core/UserMention';
@@ -16,14 +15,14 @@ interface Props {
   /** Children elemnts or components to wrap the tooltip around */
   children?: ReactNode;
   /** The address */
-  address: Address;
+  user: AnyUser;
   /** How the popover gets triggered */
   trigger?: 'hover' | 'click' | 'disabled';
 }
 
 interface TooltipProps {
-  displayName?: string;
-  username?: string;
+  displayName?: string | null;
+  username?: string | null;
   walletAddress: Address;
 }
 
@@ -49,20 +48,14 @@ const renderTooltipContent = ({
   </div>
 );
 
-const InfoPopover = ({ address, children, trigger = 'click' }: Props) => {
-  const user = useSelector(userSelector, [address]);
-  let username;
-  let displayName;
-  if (user && user.record && user.record.profile) {
-    username = user.record.profile.username;
-    displayName = user.record.profile.displayName;
-  }
+const InfoPopover = ({ user, children, trigger = 'click' }: Props) => {
+  const { displayName, username, walletAddress } = user.profile;
   return (
     <Tooltip
       content={renderTooltipContent({
         displayName,
         username,
-        walletAddress: address,
+        walletAddress,
       })}
       trigger={trigger}
       darkTheme={false}

@@ -1,12 +1,12 @@
 import React, { useCallback } from 'react';
 import { defineMessages } from 'react-intl';
 
-import { ColonyType } from '~immutable/index';
 import { ActionTypes } from '~redux/index';
 import { pipe, withKey, mergePayload } from '~utils/actions';
 import { useAsyncFunction } from '~utils/hooks';
 import AvatarUploader from '~core/AvatarUploader';
 import HookedColonyAvatar from '~dashboard/HookedColonyAvatar';
+import { AnyColonyProfile } from '~data/index';
 
 import styles from './ColonyAvatarUploader.css';
 
@@ -24,7 +24,7 @@ const MSG = defineMessages({
 const ColonyAvatar = HookedColonyAvatar({ fetchColony: false });
 
 interface Props {
-  colony: ColonyType;
+  colony: AnyColonyProfile;
 }
 
 const displayName = 'admin.Profile.ColonyAvatarUploader';

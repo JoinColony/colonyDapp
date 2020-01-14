@@ -8,6 +8,9 @@ while [ $# -gt 0 ]; do
     --skip-pinning-service-build)
       SKIP_PINNING_SERVICE_BUILD=true
       ;;
+    --skip-server-build)
+      SKIP_SERVER_BUILD=true
+      ;;
     *)
       echo "Invalid argument: $1"
       exit 1
@@ -19,7 +22,7 @@ done
 LIB_PATH="src/lib"
 
 NETWORK="colonyNetwork"
-PINNING="pinion"
+SERVER="colonyServer"
 
 ROOT_PATH=$(pwd)
 
@@ -53,11 +56,12 @@ then
     cd ${ROOT_PATH}
 fi
 
-if [ "$SKIP_PINNING_SERVICE_BUILD" != true ]
+if [ "$SKIP_SERVER_BUILD" != true ]
 then
     # Build pinning service
-    log "Building '${PINNING}' submodule"
-    cd "${ROOT_PATH}/${LIB_PATH}/${PINNING}"
-    yarn
+    log "Building '${SERVER}' submodule"
+    cd "${ROOT_PATH}/${LIB_PATH}/${SERVER}"
+    mkdir -p mongo-data
+    npm install
     cd ${ROOT_PATH}
 fi

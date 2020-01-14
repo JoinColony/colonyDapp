@@ -4,13 +4,14 @@ import EthersAdapter from '@colony/colony-js-adapter-ethers';
 import { isAddress } from 'web3-utils';
 
 import ENS from '~lib/ENS';
-import { Address } from '~types/index';
-import { AddressOrENSName, ContractContexts } from './types';
+import { Address, AddressOrENSName } from '~types/index';
+
+import { ContractContexts } from './types';
 import tokenABILoader from './tokenABILoader';
 import ens from '../../context/ensContext';
 
 export default class ColonyManager {
-  clients: Map<Address, ColonyNetworkClient.ColonyClient>;
+  clients: Map<Address, Promise<ColonyNetworkClient.ColonyClient>>;
 
   _metaColonyClient: ColonyNetworkClient.ColonyClient;
 
@@ -19,6 +20,19 @@ export default class ColonyManager {
   constructor(networkClient: ColonyNetworkClient) {
     this.clients = new Map();
     this.networkClient = networkClient;
+  }
+
+  private async getColonyPromise(address: Address) {
+    const client = await this.networkClient.getColonyClientByAddress(address);
+
+    // Check if the colony exists by calling `getVersion` (in lieu of an
+    // explicit means of checking whether a colony exists at an address).
+    try {
+      await client.getVersion.call();
+    } catch (caughtError) {
+      throw new Error(`Colony with address ${address} not found`);
+    }
+    return client;
   }
 
   async resolveColonyIdentifier(identifier: AddressOrENSName): Promise<any> {
@@ -31,18 +45,10 @@ export default class ColonyManager {
   }
 
   async setColonyClient(address: Address) {
-    const client = await this.networkClient.getColonyClientByAddress(address);
+    const clientPromise = this.getColonyPromise(address);
 
-    // Check if the colony exists by calling `getVersion` (in lieu of an
-    // explicit means of checking whether a colony exists at an address).
-    try {
-      await client.getVersion.call();
-    } catch (caughtError) {
-      throw new Error(`Colony with address ${address} not found`);
-    }
-
-    this.clients.set(address, client);
-    return client;
+    this.clients.set(address, clientPromise);
+    return clientPromise.catch(() => this.clients.delete(address));
   }
 
   async getMetaColonyClient() {

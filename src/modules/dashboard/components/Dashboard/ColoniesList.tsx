@@ -1,16 +1,12 @@
 import React from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 
-import { useDataFetcher, useSelector } from '~utils/hooks';
-
 import { SpinnerLoader } from '~core/Preloaders';
-
 import Link from '~core/Link';
-import ColoniesListItem from './ColoniesListItem';
-
-import { currentUserSelector } from '../../../users/selectors';
-import { userColoniesFetcher } from '../../fetchers';
 import { CREATE_COLONY_ROUTE } from '~routes/index';
+import { useLoggedInUser, useUserColonyAddressesQuery } from '~data/index';
+
+import ColoniesListItem from './ColoniesListItem';
 
 import styles from './ColoniesList.css';
 
@@ -32,17 +28,12 @@ const MSG = defineMessages({
 const displayName = 'dashboard.Dashboard.ColoniesList';
 
 const ColoniesList = () => {
-  const currentUser = useSelector(currentUserSelector);
-  const { data: colonyAddresses, isFetching } = useDataFetcher(
-    userColoniesFetcher,
-    [currentUser.profile.walletAddress],
-    [
-      currentUser.profile.walletAddress,
-      currentUser.profile.metadataStoreAddress,
-    ],
-  );
+  const { walletAddress } = useLoggedInUser();
+  const { data, loading } = useUserColonyAddressesQuery({
+    variables: { address: walletAddress },
+  });
 
-  if (isFetching) {
+  if (loading) {
     return (
       <div className={styles.loader}>
         <SpinnerLoader appearance={{ size: 'medium' }} />
@@ -53,7 +44,9 @@ const ColoniesList = () => {
     );
   }
 
-  if (colonyAddresses && colonyAddresses.length) {
+  const colonyAddresses = data && data.user && data.user.colonyAddresses;
+
+  if (colonyAddresses && colonyAddresses.length > 0) {
     return (
       <div className={styles.main}>
         {colonyAddresses.map(colonyAddress => (

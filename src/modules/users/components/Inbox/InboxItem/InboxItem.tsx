@@ -1,35 +1,31 @@
-import React, { ReactNode, useCallback } from 'react';
+import React, { ReactNode, useCallback, useEffect } from 'react';
 import { FormattedMessage, defineMessages } from 'react-intl';
 
 import { EventType } from '../types';
-import { DomainType, InboxItemType } from '~immutable/index';
+import { DomainType } from '~immutable/index';
 import TimeRelative from '~core/TimeRelative';
 import { TableRow, TableCell } from '~core/Table';
 import Numeral from '~core/Numeral';
-// import Button from '~core/Button';
-// import { DialogLink } from '~core/Dialog';
 import Link from '~core/Link';
 import HookedUserAvatar from '~users/HookedUserAvatar';
 import { SpinnerLoader } from '~core/Preloaders';
+import { useDataFetcher } from '~utils/hooks';
 import {
-  useDataFetcher,
-  useDataSubscriber,
-  useSelector,
-  useAsyncFunction,
-} from '~utils/hooks';
+  useColonyNameLazyQuery,
+  useLoggedInUser,
+  useMarkNotificationAsReadMutation,
+  useTokenLazyQuery,
+  useUserQuery,
+  useUserLazyQuery,
+  useTaskLazyQuery,
+  Notification,
+  UserNotificationsDocument,
+} from '~data/index';
 
-import { userSubscriber } from '../../../subscribers';
-import { domainsFetcher, tokenFetcher } from '../../../../dashboard/fetchers';
-import { colonySubscriber } from '../../../../dashboard/subscribers';
-import { friendlyColonyNameSelector } from '../../../../dashboard/selectors';
-import {
-  friendlyUsernameSelector,
-  currentUserSelector,
-  usernameSelector,
-} from '../../../selectors';
-import { transformNotificationEventNames } from '../../../data/utils';
-import { ActionTypes } from '~redux/index';
-import { mergePayload } from '~utils/actions';
+import { domainsFetcher } from '../../../../dashboard/fetchers';
+
+import { getFriendlyName, getUsername } from '../../../transformers';
+import { transformNotificationEventNames } from '../events';
 
 import styles from './InboxItem.css';
 import MSG from '../messages';
@@ -45,15 +41,15 @@ const LOCAL_MSG = defineMessages({
 
 const displayName = 'users.Inbox.InboxItem';
 
-interface Props {
-  activity: InboxItemType;
+export interface Props {
+  item: Notification;
   full?: boolean;
 }
 
 const INBOX_REGEX = /[A-Z]/;
 
 const getType = (eventType: string): EventType => {
-  const notificationId = transformNotificationEventNames(eventType);
+  const notificationId = transformNotificationEventNames(eventType) || '';
   const type = notificationId.split(INBOX_REGEX)[0];
   return type === 'action' || type === 'notification' ? type : 'notification';
 };
@@ -85,92 +81,113 @@ const WithLink = ({ to, children }: { to?: string; children: ReactNode }) =>
     <div className={styles.inboxDetails}>{children}</div>
   );
 
-const readActions = {
-  submit: ActionTypes.INBOX_MARK_NOTIFICATION_READ,
-  success: ActionTypes.INBOX_MARK_NOTIFICATION_READ_SUCCESS,
-  error: ActionTypes.INBOX_MARK_NOTIFICATION_READ_ERROR,
-};
-
 const InboxItem = ({
-  activity: {
-    unread = true,
-    type: eventType,
+  item: {
     id,
-    context: {
-      amount,
-      colonyAddress,
-      comment,
-      domainId,
-      draftId,
-      setTo,
-      targetUserAddress,
-      taskTitle,
-      tokenAddress,
+    read,
+    event: {
+      context,
+      createdAt,
+      type: eventType,
+      /*
+       * @TODO Disabled notification click for initial deployment
+       *
+       * onClickRoute,
+       */
+      initiatorAddress,
     },
-    onClickRoute,
-    sourceAddress: sourceUserAddress,
-    timestamp,
   },
   full,
 }: Props) => {
-  const { data: user, isFetching: isFetchingUser } = useDataSubscriber(
-    userSubscriber,
-    [sourceUserAddress],
-    [sourceUserAddress],
-  );
-  const sourceUserDisplayWithFallback = useSelector(friendlyUsernameSelector, [
-    sourceUserAddress,
-  ]);
-  const sourceUsername = user && user.profile && user.profile.username;
+  const { walletAddress } = useLoggedInUser();
+  const setTo = true;
+  // Let's see what event type context props we have
 
-  const currentUser = useSelector(currentUserSelector);
-  const targetUserDisplayWithFallback = useSelector(friendlyUsernameSelector, [
-    targetUserAddress || currentUser.profile.walletAddress,
-  ]);
-  const targetUsername = useSelector(usernameSelector, [
-    targetUserAddress || currentUser.profile.walletAddress,
-  ]);
+  // We might have more than just the worker as the target in the future
+  const { workerAddress: targetUserAddress = undefined } =
+    'workerAddress' in context ? context : {};
+  const { taskId = undefined } = 'taskId' in context ? context : {};
+  const { colonyAddress = undefined } =
+    'colonyAddress' in context ? context : {};
+  const { domainId = 0 } = 'domainId' in context ? context : {};
+  const { tokenAddress = undefined } = 'tokenAddress' in context ? context : {};
+  const { amount = undefined } = 'amount' in context ? context : {};
+  const { message = undefined } = 'message' in context ? context : {};
 
-  const { data: colony, isFetching: isFetchingColony } = useDataSubscriber(
-    colonySubscriber,
-    [colonyAddress],
-    [colonyAddress],
-  );
-  const colonyDisplayNameWithFallback = useSelector(
-    friendlyColonyNameSelector,
-    [colonyAddress],
-  );
-  const colonyName = colony && colony.colonyName;
+  const { data: initiatorUser } = useUserQuery({
+    variables: { address: initiatorAddress },
+  });
+
+  const [loadTargetUser, { data: targetUser }] = useUserLazyQuery();
+  useEffect(() => {
+    if (targetUserAddress) {
+      loadTargetUser({ variables: { address: targetUserAddress } });
+    }
+  });
+
+  const [loadTask, { data: taskData }] = useTaskLazyQuery();
+  useEffect(() => {
+    if (taskId) loadTask({ variables: { id: taskId } });
+  });
+
+  const [loadColony, { data: colonyNameData }] = useColonyNameLazyQuery();
+  useEffect(() => {
+    if (colonyAddress) loadColony({ variables: { address: colonyAddress } });
+  });
+
+  const [loadToken, { data: tokenData }] = useTokenLazyQuery();
+  useEffect(() => {
+    if (tokenAddress) loadToken({ variables: { address: tokenAddress } });
+  });
+
+  const initiatorFriendlyName = !initiatorUser
+    ? initiatorAddress
+    : getFriendlyName(initiatorUser.user);
+  const initiatorUsername = !initiatorUser
+    ? initiatorAddress
+    : getUsername(initiatorUser.user);
+
+  const targetUserFriendlyName = !targetUser
+    ? targetUserAddress
+    : getFriendlyName(targetUser.user);
+  const targetUserUsername = !targetUser
+    ? targetUserAddress
+    : getUsername(targetUser.user);
 
   const { data: domains, isFetching: isFetchingDomains } = useDataFetcher(
     domainsFetcher,
     [colonyAddress],
     [colonyAddress],
   );
-  const currentDomain: DomainType | undefined =
-    domainId && domains && domains[domainId];
 
-  const { data: token, isFetching: isFetchingToken } = useDataFetcher(
-    tokenFetcher,
-    [tokenAddress],
-    [tokenAddress],
-  );
+  const currentDomain: DomainType | undefined = domains && domains[domainId];
 
-  const transform = useCallback(mergePayload({ id, timestamp }), [
-    id,
-    timestamp,
+  const [markAsReadMutation] = useMarkNotificationAsReadMutation({
+    variables: { input: { id } },
+    refetchQueries: [
+      {
+        query: UserNotificationsDocument,
+        variables: { address: walletAddress },
+      },
+    ],
+  });
+
+  const markAsRead = useCallback(() => markAsReadMutation(), [
+    markAsReadMutation,
   ]);
-  const markAsRead = useAsyncFunction({ ...readActions, transform });
 
-  const isFetching =
-    isFetchingUser || isFetchingColony || isFetchingDomains || isFetchingToken;
+  const colonyName = colonyNameData && colonyNameData.colonyName;
+  const token = tokenData && tokenData.token;
+  const taskTitle = taskData && taskData.task && taskData.task.title;
 
   return (
-    <TableRow onClick={() => markAsRead(id)}>
+    <TableRow onClick={markAsRead}>
       <TableCell
         className={full ? styles.inboxRowCellFull : styles.inboxRowCellPopover}
       >
-        {isFetching ? (
+        {(colonyAddress && !colonyName) ||
+        (tokenAddress && !token) ||
+        isFetchingDomains ? (
           <div className={styles.spinnerWrapper}>
             <SpinnerLoader
               loadingText={LOCAL_MSG.loadingText}
@@ -178,74 +195,66 @@ const InboxItem = ({
             />
           </div>
         ) : (
-          <WithLink to={onClickRoute}>
-            {unread && <UnreadIndicator type={getType(eventType)} />}
-            {user && (
+          <WithLink>
+            {!read && <UnreadIndicator type={getType(eventType)} />}
+            {initiatorUser && initiatorUser.user && (
               <div className={styles.avatarWrapper}>
                 <UserAvatar
                   showInfo
                   size="xxs"
-                  address={user.profile.walletAddress}
+                  address={initiatorUser.user.profile.walletAddress}
                   className={styles.userAvatar}
                 />
               </div>
             )}
             <span className={styles.inboxAction}>
               <FormattedMessage
-                /*
-                 * @todo switch between notificationAdminOtherAdded v. notificationUserMadeAdmin notifications
-                 * depending if the otherUser address is the same as the sourceUserAddress
-                 * This is preffered as opposed to adding two notifications to the stores
-                 */
                 {...MSG[transformNotificationEventNames(eventType)]}
                 values={{
                   amount: makeInboxDetail(amount, value => (
                     <Numeral
-                      suffix={` ${token ? token.symbol : ''}`}
+                      suffix={` ${token ? token.details.symbol : ''}`}
                       integerSeparator=""
-                      unit={(token && token.decimals) || 18}
+                      unit={(token && token.details.decimals) || 18}
                       value={value}
                     />
                   )),
                   colonyAddress: makeInboxDetail(colonyAddress),
                   colonyName: makeInboxDetail(colonyName),
-                  colonyDisplayName: makeInboxDetail(
-                    colonyDisplayNameWithFallback,
-                    value =>
-                      colonyName ? (
-                        <Link to={`/colony/${colonyName}`}>{value}</Link>
-                      ) : (
-                        value
-                      ),
+                  colonyDisplayName: makeInboxDetail(colonyName, value =>
+                    colonyName ? (
+                      <Link to={`/colony/${colonyName}`}>{value}</Link>
+                    ) : (
+                      value
+                    ),
                   ),
-                  comment: makeInboxDetail(comment),
+                  comment: makeInboxDetail(message),
                   domainName: makeInboxDetail(
                     currentDomain && currentDomain.name,
                   ),
-                  otherUser: makeInboxDetail(
-                    targetUserDisplayWithFallback,
-                    value =>
-                      targetUsername ? (
-                        <Link to={`/user/${targetUsername}`}>{value}</Link>
-                      ) : (
-                        value
-                      ),
+                  otherUser: makeInboxDetail(targetUserFriendlyName, value =>
+                    targetUserUsername ? (
+                      <Link to={`/user/${targetUserUsername}`}>{value}</Link>
+                    ) : (
+                      value
+                    ),
                   ),
                   task: makeInboxDetail(taskTitle, value =>
-                    colonyName && draftId ? (
-                      <Link to={`/colony/${colonyName}/task/${draftId}`}>
+                    colonyName && taskId ? (
+                      <Link to={`/colony/${colonyName}/task/${taskId}`}>
                         {value}
                       </Link>
                     ) : (
                       value
                     ),
                   ),
-                  time: makeInboxDetail(timestamp, value => (
+                  type: eventType,
+                  time: makeInboxDetail(createdAt, value => (
                     <TimeRelative value={value} />
                   )),
-                  user: makeInboxDetail(sourceUserDisplayWithFallback, value =>
-                    sourceUsername ? (
-                      <Link to={`/user/${sourceUsername}`}>{value}</Link>
+                  user: makeInboxDetail(initiatorFriendlyName, value =>
+                    initiatorUsername ? (
+                      <Link to={`/user/${initiatorUsername}`}>{value}</Link>
                     ) : (
                       value
                     ),
@@ -266,9 +275,7 @@ const InboxItem = ({
                       {...MSG.metaColonyAndDomain}
                       values={{
                         colonyDisplayName: (
-                          <Link to={`/colony/${colonyName}`}>
-                            {colonyDisplayNameWithFallback}
-                          </Link>
+                          <Link to={`/colony/${colonyName}`}>{colonyName}</Link>
                         ),
                         domainName: currentDomain && currentDomain.name,
                       }}
@@ -278,9 +285,7 @@ const InboxItem = ({
                       {...MSG.metaColonyOnly}
                       values={{
                         colonyDisplayName: (
-                          <Link to={`/colony/${colonyName}`}>
-                            {colonyDisplayNameWithFallback}
-                          </Link>
+                          <Link to={`/colony/${colonyName}`}>{colonyName}</Link>
                         ),
                       }}
                     />
@@ -292,9 +297,9 @@ const InboxItem = ({
                 <span>
                   <span className={styles.pipe}>|</span>
                   <Numeral
-                    suffix={` ${token ? token.symbol : ''}`}
+                    suffix={` ${token ? token.details.symbol : ''}`}
                     integerSeparator=""
-                    unit={(token && token.decimals) || 18}
+                    unit={(token && token.details.decimals) || 18}
                     value={amount}
                     appearance={{ size: 'small', theme: 'grey' }}
                   />
@@ -303,7 +308,7 @@ const InboxItem = ({
 
               {(colonyName || amount) && <span className={styles.pipe}>|</span>}
               <span className={styles.time}>
-                {timestamp && <TimeRelative value={new Date(timestamp)} />}
+                {createdAt && <TimeRelative value={new Date(createdAt)} />}
               </span>
             </span>
           </WithLink>

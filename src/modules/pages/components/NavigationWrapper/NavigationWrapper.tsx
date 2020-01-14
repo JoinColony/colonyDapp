@@ -5,8 +5,8 @@ import Alert from '~core/Alert';
 import HistoryNavigation from './HistoryNavigation';
 import UserNavigation from './UserNavigation';
 import { getMainClasses } from '~utils/css';
-import { useSelector } from '~utils/hooks';
-import { currentUsernameSelector } from '../../../users/selectors';
+import { useLoggedInUser } from '~data/index';
+
 import styles from './NavigationWrapper.css';
 
 const displayName = 'pages.NavigationWrapper';
@@ -88,7 +88,7 @@ const NavigationWrapper = ({
    */
   ...props
 }: Props) => {
-  const username = useSelector(currentUsernameSelector);
+  const { username } = useLoggedInUser();
   return (
     <div className={className || getMainClasses(appearance, styles)}>
       <div className={styles.wrapper}>

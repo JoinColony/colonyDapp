@@ -1,15 +1,13 @@
 import React from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 
-import {
-  TaskPayoutType,
-  ColonyTokenReferenceType,
-  TokenType,
-  UserType,
-} from '~immutable/index';
 import { Address } from '~types/index';
+import { AnyUser, Payouts } from '~data/index';
 import PayoutsList from '~core/PayoutsList';
 import UserInfo from '~users/UserInfo';
+
+import { getFriendlyName } from '../../../users/transformers';
+
 import styles from './Assignment.css';
 
 const MSG = defineMessages({
@@ -37,13 +35,13 @@ const MSG = defineMessages({
 
 interface Props {
   /** The worker that is assigned */
-  worker?: UserType;
+  worker?: AnyUser;
 
   /** The address of the above worker (used in the case of unclaimed worker profile) */
   workerAddress?: Address;
 
   /** List of payouts per token that has been set for a task */
-  payouts?: TaskPayoutType[];
+  payouts?: Payouts;
 
   /** current user reputation */
   reputation?: number;
@@ -51,30 +49,25 @@ interface Props {
   /** The assignment has to be confirmed first and can therefore appear as pending */
   pending?: boolean;
 
-  /** We need to be aware of the native token to adjust the UI */
-  nativeToken?: ColonyTokenReferenceType;
-
   /** Should the funding be rendered (if set) */
   showFunding?: boolean;
 
-  /** Tokens available to the current colony */
-  tokenOptions: TokenType[];
+  /** Ahem... */
+  nativeTokenAddress: Address;
 }
 
 const Assignment = ({
-  nativeToken,
+  nativeTokenAddress,
   payouts,
   pending,
   reputation,
   showFunding,
-  tokenOptions,
   worker,
   workerAddress,
 }: Props) => {
   const fundingWithNativeToken =
     payouts &&
-    nativeToken &&
-    payouts.find(payout => payout.token === nativeToken.address);
+    payouts.find(payout => payout.token.address === nativeTokenAddress);
 
   return (
     <div>
@@ -83,9 +76,7 @@ const Assignment = ({
         user={worker}
         placeholder={MSG.placeholder}
       >
-        {worker
-          ? worker.profile.displayName || worker.profile.username
-          : workerAddress}
+        {worker ? getFriendlyName(worker) : workerAddress}
         {pending && (
           <span className={styles.pendingLabel}>
             <FormattedMessage {...MSG.pendingAssignment} />
@@ -102,12 +93,11 @@ const Assignment = ({
               />
             </span>
           ) : null}
-          {nativeToken && payouts && payouts.length > 0 ? (
+          {payouts && payouts.length > 0 ? (
             <PayoutsList
               maxLines={2}
-              nativeToken={nativeToken}
+              nativeTokenAddress={nativeTokenAddress}
               payouts={payouts}
-              tokenOptions={tokenOptions}
             />
           ) : (
             <FormattedMessage {...MSG.fundingNotSet} />

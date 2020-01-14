@@ -2,16 +2,15 @@ import React, { useCallback } from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 
 import { DialogType } from '~core/Dialog';
-import { Address } from '~types/index';
 import CopyableAddress from '~core/CopyableAddress';
 import Button from '~core/Button';
 import Heading from '~core/Heading';
 import QRCode from '~core/QRCode';
 import WalletLink from '~core/WalletLink';
-import { SpinnerLoader } from '~core/Preloaders';
+import withDialog from '~core/Dialog/withDialog';
 import TokenList from '~admin/Tokens/TokenList';
-import { useDataFetcher } from '~utils/hooks';
-import { currentUserTokensFetcher } from '../../../users/fetchers';
+import { useLoggedInUser, useUserTokensQuery } from '~data/index';
+
 import styles from './Wallet.css';
 
 const MSG = defineMessages({
@@ -47,21 +46,21 @@ const MSG = defineMessages({
 
 interface Props {
   openDialog: (dialogName: string, dialogProps?: object) => DialogType;
-  walletAddress: Address;
 }
 
-const Wallet = ({ walletAddress, openDialog }: Props) => {
-  const { isFetching: isFetchingTokens, data: tokens } = useDataFetcher(
-    currentUserTokensFetcher,
-    [],
-    [],
-  );
+const Wallet = ({ openDialog }: Props) => {
+  const { walletAddress } = useLoggedInUser();
+  const { data: userTokensData, loading: loadingTokens } = useUserTokensQuery({
+    variables: { address: walletAddress },
+  });
+  const tokens = userTokensData ? userTokensData.user.tokens : [];
   const editTokens = useCallback(
     () =>
       openDialog('UserTokenEditDialog', {
         selectedTokens: tokens && tokens.map(({ address }) => address),
+        walletAddress,
       }),
-    [openDialog, tokens],
+    [openDialog, tokens, walletAddress],
   );
   return (
     <div className={styles.layoutMain}>
@@ -78,11 +77,11 @@ const Wallet = ({ walletAddress, openDialog }: Props) => {
             </CopyableAddress>
           </div>
         </div>
-        {isFetchingTokens ? (
-          <SpinnerLoader />
-        ) : (
-          <TokenList tokens={tokens || []} appearance={{ numCols: '3' }} />
-        )}
+        <TokenList
+          isLoading={loadingTokens}
+          tokens={tokens}
+          appearance={{ numCols: '3' }}
+        />
       </main>
       <aside className={styles.sidebar}>
         <p className={styles.helpText}>
@@ -116,4 +115,4 @@ const Wallet = ({ walletAddress, openDialog }: Props) => {
 
 Wallet.displayName = 'dashboard.Wallet';
 
-export default Wallet;
+export default withDialog()(Wallet);

@@ -2,20 +2,18 @@ import React from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 
 import { ROLES } from '~constants';
-import { ColonyType } from '~immutable/index';
 import { useSelector } from '~utils/hooks';
 import { ActionTypes } from '~redux/index';
 import { DialogActionButton } from '~core/Button';
 import Heading from '~core/Heading';
 import ExternalLink from '~core/ExternalLink';
+import { FullColonyFragment } from '~data/index';
 
 import { networkVersionSelector } from '../../../core/selectors';
 import { canEnterRecoveryMode } from '../../../users/checks';
-import { canBeUpgraded, isInRecoveryMode } from '../../../dashboard/checks';
+import { canBeUpgraded } from '../../../dashboard/checks';
 
 import styles from './ProfileAdvanced.css';
-
-const chainId = process.env.CHAIN_ID;
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const { version: dappVersion } = require('../../../../../package.json');
@@ -36,10 +34,6 @@ const MSG = defineMessages({
   labelId: {
     id: 'admin.Profile.ProfileAdvanced.labelId',
     defaultMessage: 'Colony ID',
-  },
-  labelNetworkId: {
-    id: 'admin.Profile.ProfileAdvanced.labelNetworkId',
-    defaultMessage: 'Network ID',
   },
   buttonUpdate: {
     id: 'admin.Profile.ProfileAdvanced.buttonUpdate',
@@ -87,12 +81,18 @@ const MSG = defineMessages({
 const displayName = 'admin.Profile.ProfileAdvanced';
 
 interface Props {
-  colony: ColonyType;
+  colony: FullColonyFragment;
   rootRoles: ROLES[];
 }
 
 const ProfileAdvanced = ({
-  colony: { colonyAddress, id, version, canUnlockNativeToken },
+  colony: {
+    colonyAddress,
+    id,
+    version,
+    canUnlockNativeToken,
+    isNativeTokenLocked,
+  },
   colony,
   rootRoles,
 }: Props) => {
@@ -137,13 +137,6 @@ const ProfileAdvanced = ({
       <section className={styles.section}>
         <Heading
           appearance={{ size: 'small', margin: 'none' }}
-          text={MSG.labelNetworkId}
-        />
-        <p className={styles.bigInfoText}>{chainId}</p>
-      </section>
-      <section className={styles.section}>
-        <Heading
-          appearance={{ size: 'small', margin: 'none' }}
           text={MSG.labelId}
         />
         <p className={styles.bigInfoText}>{id}</p>
@@ -157,7 +150,7 @@ const ProfileAdvanced = ({
           <p className={styles.bigInfoText}>
             <FormattedMessage
               {...MSG.inRecoveryMode}
-              values={{ inRecoveryMode: isInRecoveryMode(colony) }}
+              values={{ inRecoveryMode: colony.isInRecoveryMode }}
             />
           </p>
         </div>
@@ -169,12 +162,10 @@ const ProfileAdvanced = ({
           success={ActionTypes.COLONY_RECOVERY_MODE_ENTER_SUCCESS}
           error={ActionTypes.COLONY_RECOVERY_MODE_ENTER_ERROR}
           values={{ colonyAddress }}
-          disabled={
-            isInRecoveryMode(colony) || !canEnterRecoveryMode(rootRoles)
-          }
+          disabled={colony.isInRecoveryMode || !canEnterRecoveryMode(rootRoles)}
         />
       </section>
-      {canUnlockNativeToken && (
+      {canUnlockNativeToken && isNativeTokenLocked && (
         <section className={styles.section}>
           <hr />
           <Heading

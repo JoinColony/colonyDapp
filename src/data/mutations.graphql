@@ -1,0 +1,310 @@
+#import './fragments.graphql'
+
+# Tasks
+mutation AssignWorker($input: AssignWorkerInput!) {
+  assignWorker(input: $input) {
+    id
+    assignedWorker {
+      id
+    }
+    events {
+      ...TaskEvent
+    }
+  }
+}
+
+mutation CancelTask($input: TaskIdInput!) {
+  cancelTask(input: $input) {
+    id
+    cancelledAt
+    events {
+      ...TaskEvent
+    }
+  }
+}
+
+mutation CreateTask($input: CreateTaskInput!) {
+  createTask(input: $input) {
+    id
+    ...Payouts
+    assignedWorker {
+      id
+      profile {
+        avatarHash
+      }
+    }
+    assignedWorkerAddress
+    cancelledAt
+    colony {
+      id
+      colonyName
+      displayName
+      nativeTokenAddress
+    }
+    colonyAddress
+    createdAt
+    creatorAddress
+    dueDate
+    ethDomainId
+    ethSkillId
+    finalizedAt
+    title
+    workRequestAddresses
+  }
+}
+
+mutation CreateWorkRequest($input: CreateWorkRequestInput!) {
+  createWorkRequest(input: $input) {
+    id
+    events {
+      ...TaskEvent
+    }
+    workRequests {
+      id
+    }
+  }
+}
+
+mutation FinalizeTask($input: FinalizeTaskInput!) {
+  finalizeTask(input: $input) {
+    id
+    colonyAddress
+    events {
+      ...TaskEvent
+    }
+    ethPotId
+    finalizedAt
+    finalizedPayment @client {
+      amount
+      tokenAddress
+      workerAddress
+      transactionHash
+    }
+  }
+}
+
+mutation RemoveTaskPayout($input: RemoveTaskPayoutInput!) {
+  removeTaskPayout(input: $input) {
+    id
+    events {
+      ...TaskEvent
+    }
+    ...Payouts
+  }
+}
+
+mutation SendWorkInvite($input: SendWorkInviteInput!) {
+  sendWorkInvite(input: $input) {
+    id
+    events {
+      ...TaskEvent
+    }
+    workInvites {
+      id
+    }
+  }
+}
+
+mutation SetTaskDomain($input: SetTaskDomainInput!) {
+  setTaskDomain(input: $input) {
+    id
+    ethDomainId
+    events {
+      ...TaskEvent
+    }
+  }
+}
+
+mutation SetTaskDescription($input: SetTaskDescriptionInput!) {
+  setTaskDescription(input: $input) {
+    id
+    description
+    events {
+      ...TaskEvent
+    }
+  }
+}
+
+mutation SetTaskDueDate($input: SetTaskDueDateInput!) {
+  setTaskDueDate(input: $input) {
+    id
+    dueDate
+    events {
+      ...TaskEvent
+    }
+  }
+}
+
+mutation SetTaskPayout($input: SetTaskPayoutInput!) {
+  setTaskPayout(input: $input) {
+    id
+    events {
+      ...TaskEvent
+    }
+    payouts {
+      amount
+      token {
+        id
+        address
+      }
+    }
+  }
+}
+
+mutation SetTaskSkill($input: SetTaskSkillInput!) {
+  setTaskSkill(input: $input) {
+    id
+    ethSkillId
+    events {
+      ...TaskEvent
+    }
+  }
+}
+
+mutation SetTaskTitle($input: SetTaskTitleInput!) {
+  setTaskTitle(input: $input) {
+    id
+    events {
+      ...TaskEvent
+    }
+    title
+  }
+}
+
+mutation UnassignWorker($input: UnassignWorkerInput!) {
+  unassignWorker(input: $input) {
+    id
+    assignedWorker {
+      id
+    }
+    events {
+      ...TaskEvent
+    }
+  }
+}
+
+# Messages
+
+mutation SendTaskMessage($input: SendTaskMessageInput!) {
+  sendTaskMessage(input: $input)
+}
+
+# Users
+
+mutation SetLoggedInUser($input: LoggedInUserInput!) {
+  setLoggedInUser(input: $input) @client {
+    id
+  }
+}
+
+mutation ClearLoggedInUser {
+  clearLoggedInUser @client {
+    id
+  }
+}
+
+mutation CreateUser(
+  $createUserInput: CreateUserInput!
+  $loggedInUserInput: LoggedInUserInput!
+) {
+  # Create user on the server
+  createUser(input: $createUserInput) {
+    id
+  }
+  # Set the current user data to the given data
+  setLoggedInUser(input: $loggedInUserInput) @client {
+    id
+  }
+}
+
+mutation EditUser($input: EditUserInput!) {
+  editUser(input: $input) {
+    id
+    profile {
+      avatarHash
+      bio
+      displayName
+      location
+      website
+    }
+  }
+}
+
+mutation SetUserTokens($input: SetUserTokensInput!) {
+  setUserTokens(input: $input) {
+    id
+    tokenAddresses
+  }
+}
+
+mutation SetColonyTokens($input: SetColonyTokensInput!) {
+  setColonyTokens(input: $input) {
+    id
+    tokenAddresses
+  }
+}
+
+mutation CreateColony($input: CreateColonyInput!) {
+  createColony(input: $input) {
+    id
+    colonyAddress
+    colonyName
+    avatarHash
+    description
+    displayName
+    guideline
+    website
+  }
+}
+
+mutation EditColonyProfile($input: EditColonyProfileInput!) {
+  editColonyProfile(input: $input) {
+    id
+    colonyName
+    avatarHash
+    description
+    displayName
+    guideline
+    website
+  }
+}
+
+mutation MarkNotificationAsRead($input: MarkNotificationAsReadInput!) {
+  markNotificationAsRead(input: $input)
+}
+
+mutation MarkAllNotificationsAsRead {
+  markAllNotificationsAsRead
+}
+
+mutation SubscribeToColony($input: SubscribeToColonyInput!) {
+  subscribeToColony(input: $input) {
+    id
+    colonyAddresses
+  }
+}
+
+mutation UnsubscribeFromColony($input: UnsubscribeFromColonyInput!) {
+  unsubscribeFromColony(input: $input) {
+    id
+    colonyAddresses
+  }
+}
+
+mutation CreateDomain($input: CreateDomainInput!) {
+  createDomain(input: $input) {
+    id
+    ethDomainId
+    ethParentDomainId
+    name
+  }
+}
+
+mutation EditDomain($input: EditDomainNameInput!) {
+  editDomainName(input: $input) {
+    id
+    ethDomainId
+    ethParentDomainId
+    name
+  }
+}

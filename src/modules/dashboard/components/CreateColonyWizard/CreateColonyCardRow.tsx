@@ -2,10 +2,9 @@ import { MessageDescriptor } from 'react-intl';
 import React, { useCallback } from 'react';
 
 import Heading from '~core/Heading';
-import { userDidClaimProfile } from '../../../users/checks';
-import { currentUserSelector } from '../../../users/selectors';
-import { useSelector } from '~utils/hooks';
 import ENS from '~lib/ENS';
+import { useLoggedInUser } from '~data/index';
+
 import styles from './CreateColonyCardRow.css';
 
 export interface Row {
@@ -32,15 +31,13 @@ interface CardProps {
 const normalize = (name): string =>
   name ? ENS.normalizeAsText(name) || '' : '';
 
-const formatUsername = (currentUser, values, option) => {
-  const username = normalize(
-    userDidClaimProfile(currentUser)
-      ? currentUser.profile.username
-      : values[option.valueKey.toString()],
+const formatUsername = (username, values, option) => {
+  const normalizedUsername = normalize(
+    username || values[option.valueKey.toString()],
   );
   return (
-    <span title={`@${username}`} className={styles.username}>
-      {`@${username}`}
+    <span title={`@${normalizedUsername}`} className={styles.username}>
+      {`@${normalizedUsername}`}
     </span>
   );
 };
@@ -85,7 +82,7 @@ const formatGeneralEntry = (values, { valueKey }) => (
 );
 
 const CardRow = ({ cardOptions, values }: CardProps) => {
-  const currentUser = useSelector(currentUserSelector);
+  const { username } = useLoggedInUser();
 
   const getHeadingPreviewText = useCallback(
     option => {
@@ -93,14 +90,14 @@ const CardRow = ({ cardOptions, values }: CardProps) => {
         return formatColonyName(values, option);
       }
       if (option.valueKey === 'username') {
-        return formatUsername(currentUser, values, option);
+        return formatUsername(username, values, option);
       }
       if (option.valueKey.length && option.valueKey[0] === 'tokenSymbol') {
         return formatToken(values, option);
       }
       return formatGeneralEntry(values, option);
     },
-    [values, currentUser],
+    [values, username],
   );
 
   return (

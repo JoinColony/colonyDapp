@@ -15,7 +15,7 @@ import {
 interface Shared {
   id: number;
   name: string;
-  parentId: number | null;
+  parentId?: number | null;
 }
 
 export type DomainRolesType = Record<Address, RoleSetType>;

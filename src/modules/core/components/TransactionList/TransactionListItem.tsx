@@ -9,10 +9,10 @@ import Icon from '~core/Icon';
 import TransactionLink from '~core/TransactionLink';
 import { ActionTypes } from '~redux/index';
 import { mergePayload } from '~utils/actions';
-import { useDataFetcher, useDataSubscriber } from '~utils/hooks';
-import { tokenFetcher } from '../../../dashboard/fetchers';
-import { userSubscriber } from '../../../users/subscribers';
+import { useUserLazy, useTokenQuery } from '~data/index';
+
 import TransactionDetails from './TransactionDetails';
+
 import styles from './TransactionListItem.css';
 
 const MSG = defineMessages({
@@ -71,30 +71,22 @@ const TransactionListItem = ({
   transaction,
 }: Props) => {
   const userAddress = incoming ? senderAddress : recipientAddress;
-  const { data: user } = useDataSubscriber(
-    userSubscriber,
-    [userAddress as string],
-    [userAddress],
-  );
 
-  const { data: token } = useDataFetcher(
-    tokenFetcher,
-    [tokenAddress],
-    [tokenAddress],
-  );
+  const user = useUserLazy(userAddress);
 
-  /**
-   * @todo Support fetching of tasks by `taskId`
-   * */
-  // const { data: task } = useDataSubscriber(
-  //   taskSubscriber,
-  //   [taskId],
-  //   [taskId],
-  // );
+  const { data: tokenData } = useTokenQuery({
+    variables: { address: tokenAddress },
+  });
+
   const transform = useCallback(mergePayload({ colonyAddress, tokenAddress }), [
     colonyAddress,
     tokenAddress,
   ]);
+
+  // @TODO: use proper preloader
+  if (!tokenData) return null;
+
+  const { token } = tokenData;
 
   return (
     <TableRow className={styles.main}>
@@ -126,7 +118,7 @@ const TransactionListItem = ({
       <TableCell className={styles.transactionDetails}>
         <TransactionDetails
           transaction={transaction}
-          user={user ? user.profile : undefined}
+          user={user}
           showMaskedAddress={showMaskedAddress}
         />
       </TableCell>
@@ -163,7 +155,7 @@ const TransactionListItem = ({
           /**
            * @todo : what should we show when we don't recognise the token?
            */
-          suffix={` ${(token && token.symbol) || '???'}`}
+          suffix={` ${(token && token.details.symbol) || '???'}`}
         />
       </TableCell>
     </TableRow>

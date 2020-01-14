@@ -1,18 +1,25 @@
-import { defineMessages, FormattedMessage, injectIntl } from 'react-intl';
-import React, { useCallback, useMemo, useState } from 'react';
+import React, { useCallback, /* useEffect, */ useMemo, useState } from 'react';
+import { defineMessages, FormattedMessage } from 'react-intl';
+/* import BigNumber from 'bn.js'; */
 
 import { COLONY_TOTAL_BALANCE_DOMAIN_ID } from '~constants';
 import Heading from '~core/Heading';
 import Button from '~core/Button';
 import ItemsList from '~core/ItemsList';
-import { DomainType, TaskProps } from '~immutable/index';
-import { ActionTypes } from '~redux/actionTypes';
-import { log } from '~utils/debug';
-import { useAsyncFunction, useDataFetcher, useSelector } from '~utils/hooks';
-import { bnLessThan } from '~utils/numbers';
+import {
+  useSetTaskDomainMutation,
+  /* useTokenBalancesForDomainsLazyQuery, */
+  AnyTask,
+  /* FullColonyFragment, */
+  Payouts,
+} from '~data/index';
+import { DomainType } from '~immutable/index';
+import { Address } from '~types/index';
+import { useDataFetcher } from '~utils/hooks';
+/* import { bnLessThan } from '~utils/numbers'; */
+/* import { getBalanceFromToken } from '~utils/tokens'; */
 
 import { domainsFetcher } from '../../fetchers';
-import { colonyTokensSelector, taskPayoutsSelector } from '../../selectors';
 
 import styles from './TaskDomains.css';
 
@@ -38,8 +45,12 @@ const MSG = defineMessages({
   },
 });
 
-interface Props extends TaskProps<'colonyAddress' | 'domainId' | 'draftId'> {
+interface Props {
+  colonyAddress: Address;
   disabled?: boolean;
+  draftId: AnyTask['id'];
+  ethDomainId: number;
+  payouts: Payouts;
 }
 
 // This odd typing makes DomainType compatible with ConsumableItem
@@ -52,31 +63,32 @@ type ConsumableDomainArray = ConsumableDomainType[];
 
 const displayName = 'dashboard.TaskDomains';
 
-const TaskDomains = ({ colonyAddress, domainId, draftId, disabled }: Props) => {
-  const setDomain = useAsyncFunction({
-    submit: ActionTypes.TASK_SET_DOMAIN,
-    success: ActionTypes.TASK_SET_DOMAIN_SUCCESS,
-    error: ActionTypes.TASK_SET_DOMAIN_ERROR,
-  });
+const TaskDomains = ({
+  colonyAddress,
+  ethDomainId,
+  draftId,
+  disabled,
+}: /* payouts, */
+Props) => {
+  const [setDomain] = useSetTaskDomainMutation();
 
   const [selectedDomainId, setSelectedDomainId] = useState<number | undefined>(
-    domainId,
+    ethDomainId,
   );
 
   const handleSetDomain = useCallback(
-    async (domainValue: any) => {
-      try {
-        await setDomain({
-          colonyAddress,
-          domainId: domainValue.id,
-          draftId,
-        });
-        setSelectedDomainId(domainValue.id);
-      } catch (caughtError) {
-        log.error(caughtError);
-      }
+    (domainValue: number) => {
+      setDomain({
+        variables: {
+          input: {
+            ethDomainId: domainValue,
+            id: draftId,
+          },
+        },
+      });
+      setSelectedDomainId(domainValue);
     },
-    [colonyAddress, draftId, setDomain],
+    [draftId, setDomain],
   );
 
   const { data: domains } = useDataFetcher(
@@ -85,19 +97,43 @@ const TaskDomains = ({ colonyAddress, domainId, draftId, disabled }: Props) => {
     [colonyAddress],
   );
 
-  const payouts = useSelector(taskPayoutsSelector, [draftId]);
-  const tokens = useSelector(colonyTokensSelector, [colonyAddress]);
+  // @TODO Fix token balances infinite loop
+  // @BODY This code checks for sufficient funds in a pot in order to change the domain of a task. Since we have disabled this functionality, we commented out this code. Also, it doesn't really work. This code will yield an infinite loop of requests to the server and the local resolvers. This has to be fixed before enabling this again.
 
-  const domainHasEnoughFunds = useCallback(
-    (id: string) =>
-      payouts.every(({ amount, token }) => {
-        const payoutToken = tokens.find(({ address }) => address === token);
-        const tokenBalanceInDomain =
-          payoutToken && payoutToken.balances && payoutToken.balances[id];
-        return !bnLessThan(tokenBalanceInDomain, amount);
-      }),
-    [payouts, tokens],
-  );
+  /* const [ */
+  /*   loadTokenBalances, */
+  /*   { data: tokenBalancesForDomainsData }, */
+  /* ] = useTokenBalancesForDomainsLazyQuery(); */
+  /* useEffect(() => { */
+  /*   if (domains) { */
+  /*     const domainIds = Object.keys(domains).map(d => parseInt(d, 10)); */
+  /*     const tokenAddresses = payouts.map(({ token }) => token.address); */
+  /*     loadTokenBalances({ */
+  /*       variables: { */
+  /*         colonyAddress, */
+  /*         tokenAddresses, */
+  /*         domainIds, */
+  /*       }, */
+  /*     }); */
+  /*   } */
+  /* }, [colonyAddress, domains, loadTokenBalances, payouts]); */
+
+  /* const domainHasEnoughFunds = useCallback( */
+  /*   (dId: number) => */
+  /*     payouts.every(({ amount, token }) => { */
+  /*       if (!tokenBalancesForDomainsData) return false; */
+  /*       const { */
+  /*         colony: { tokens }, */
+  /*       } = tokenBalancesForDomainsData; */
+  /*       const tokenWithBalances = tokens.find(t => t.address === token.address); */
+  /*       const tokenBalanceInDomain = getBalanceFromToken( */
+  /*         tokenWithBalances, */
+  /*         dId, */
+  /*       ); */
+  /*       return !bnLessThan(new BigNumber(tokenBalanceInDomain), amount); */
+  /*     }), */
+  /*   [payouts, tokenBalancesForDomainsData], */
+  /* ); */
 
   const consumableDomains: ConsumableDomainArray = useMemo(
     () =>
@@ -105,10 +141,11 @@ const TaskDomains = ({ colonyAddress, domainId, draftId, disabled }: Props) => {
         .sort()
         .map(id => ({
           ...(domains || {})[id],
-          disabled: !domainHasEnoughFunds(id),
+          disabled: false,
+          /* disabled: !domainHasEnoughFunds(parseInt(id, 10)), */
           id: parseInt(id, 10),
         })),
-    [domainHasEnoughFunds, domains],
+    [domains],
   );
 
   return (
@@ -119,7 +156,7 @@ const TaskDomains = ({ colonyAddress, domainId, draftId, disabled }: Props) => {
         name="taskDomains"
         connect={false}
         showArrow={false}
-        itemId={domainId || COLONY_TOTAL_BALANCE_DOMAIN_ID}
+        itemId={ethDomainId || COLONY_TOTAL_BALANCE_DOMAIN_ID}
         disabled={disabled}
       >
         <div className={styles.controls}>
@@ -136,7 +173,7 @@ const TaskDomains = ({ colonyAddress, domainId, draftId, disabled }: Props) => {
           )}
         </div>
       </ItemsList>
-      {!domainId && (
+      {!ethDomainId && (
         <span className={styles.notSet}>
           <FormattedMessage {...MSG.notSet} />
         </span>
@@ -147,4 +184,4 @@ const TaskDomains = ({ colonyAddress, domainId, draftId, disabled }: Props) => {
 
 TaskDomains.displayName = displayName;
 
-export default injectIntl(TaskDomains);
+export default TaskDomains;

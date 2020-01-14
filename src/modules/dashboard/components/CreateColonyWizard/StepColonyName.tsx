@@ -1,18 +1,23 @@
 import React, { useCallback, useState } from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 import * as yup from 'yup';
+import { useApolloClient } from '@apollo/react-hooks';
 
 import { WizardProps } from '~core/Wizard';
-import { useAsyncFunction, useSelector } from '~utils/hooks';
 import { Form, Input } from '~core/Fields';
 import Heading from '~core/Heading';
 import Button from '~core/Button';
 import Icon from '~core/Icon';
 import { Tooltip } from '~core/Popover';
-import { ActionTypes } from '~redux/index';
 import { multiLineTextEllipsis } from '~utils/strings';
 import ENS from '~lib/ENS';
-import { currentUserSelector } from '../../../users/selectors';
+import {
+  useLoggedInUser,
+  ColonyAddressDocument,
+  ColonyAddressQuery,
+  ColonyAddressQueryVariables,
+} from '~data/index';
+
 import styles from './StepColonyName.css';
 
 interface FormValues {
@@ -77,24 +82,45 @@ const validationSchema = yup.object({
   displayName: yup.string().required(),
 });
 
-const StepColonyName = ({ wizardForm, nextStep, wizardValues }: Props) => {
-  const checkDomainTaken = useAsyncFunction({
-    submit: ActionTypes.COLONY_NAME_CHECK_AVAILABILITY,
-    success: ActionTypes.COLONY_NAME_CHECK_AVAILABILITY_SUCCESS,
-    error: ActionTypes.COLONY_NAME_CHECK_AVAILABILITY_ERROR,
-  });
+const StepColonyName = ({
+  wizardForm,
+  nextStep,
+  stepCompleted,
+  wizardValues,
+}: Props) => {
+  const apolloClient = useApolloClient();
 
-  const currentUser = useSelector(currentUserSelector);
-  const {
-    profile: { username },
-  } = currentUser;
+  const checkDomainTaken = useCallback(
+    async (values: FormValues) => {
+      try {
+        const { data } = await apolloClient.query<
+          ColonyAddressQuery,
+          ColonyAddressQueryVariables
+        >({
+          query: ColonyAddressDocument,
+          variables: {
+            name: values.colonyName,
+          },
+        });
+        if (data && data.colonyAddress) return true;
+        return false;
+      } catch (e) {
+        return false;
+      }
+    },
+    [apolloClient],
+  );
+
+  const { username } = useLoggedInUser();
 
   const [currentENSName, setCurrentENSName] = useState();
 
+  // @TODO debounce colony name validation
+  // @BODY this is a bit harder than you'd expect. We have to make sure that validation still works and that the user can't just remove a character quickly and then move on without the validation to happen.
   const validateDomain = useCallback(
     async (values: FormValues) => {
       if (values && currentENSName === values.colonyName) {
-        return;
+        return {};
       }
       try {
         // Let's check whether this is even valid first
@@ -102,17 +128,17 @@ const StepColonyName = ({ wizardForm, nextStep, wizardValues }: Props) => {
       } catch (caughtError) {
         // Just return. The actual validation will be done by the
         // validationSchema
-        return;
+        return {};
       }
-      try {
-        await checkDomainTaken(values);
-        setCurrentENSName(values.colonyName);
-      } catch (e) {
-        const error = {
+      const taken = await checkDomainTaken(values);
+      if (taken) {
+        const errors = {
           colonyName: MSG.errorDomainTaken,
         };
-        throw error;
+        return errors;
       }
+      setCurrentENSName(values.colonyName);
+      return {};
     },
     [checkDomainTaken, currentENSName, setCurrentENSName],
   );
@@ -124,7 +150,7 @@ const StepColonyName = ({ wizardForm, nextStep, wizardValues }: Props) => {
       validationSchema={validationSchema}
       {...wizardForm}
     >
-      {({ isValid, isSubmitting, values: { colonyName } }) => {
+      {({ isValid, isSubmitting, dirty, values: { colonyName } }) => {
         const normalized = ENS.normalizeAsText(colonyName);
         return (
           <section className={styles.main}>
@@ -199,7 +225,7 @@ const StepColonyName = ({ wizardForm, nextStep, wizardValues }: Props) => {
                   appearance={{ theme: 'primary', size: 'large' }}
                   type="submit"
                   data-test="claimColonyNameConfirm"
-                  disabled={!isValid}
+                  disabled={!isValid || (!dirty && !stepCompleted)}
                   loading={isSubmitting}
                   text={MSG.continue}
                 />

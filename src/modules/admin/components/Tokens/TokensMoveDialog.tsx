@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo } from 'react';
+import React, { useCallback } from 'react';
 import { FormikProps } from 'formik';
 import * as yup from 'yup';
 import moveDecimal from 'move-decimal-point';
@@ -9,8 +9,8 @@ import { Address } from '~types/index';
 import { ActionTypes } from '~redux/index';
 import Dialog from '~core/Dialog';
 import { ActionForm } from '~core/Fields';
+import { useColonyTokensQuery } from '~data/index';
 
-import { useColonyTokens } from '../../../dashboard/hooks/useColonyTokens';
 import DialogForm from './TokensMoveDialogForm';
 
 export interface FormValues {
@@ -40,40 +40,32 @@ const TokensMoveDialog = ({
     tokenAddress: yup.string().required(),
   });
 
-  // Fetch colony tokens here since we need them for form submission
-  const [colonyTokenRefs, colonyTokens] = useColonyTokens(colonyAddress);
+  const { data: colonyTokensData } = useColonyTokensQuery({
+    variables: { address: colonyAddress },
+  });
 
-  const nativeTokenAddress = useMemo(
-    () =>
-      (
-        (colonyTokenRefs || []).find(({ isNative }) => !!isNative) || {
-          address: undefined,
-        }
-      ).address,
-    [colonyTokenRefs],
-  );
+  const tokens = (colonyTokensData && colonyTokensData.colony.tokens) || [];
+  const nativeTokenAddress =
+    colonyTokensData && colonyTokensData.colony.nativeTokenAddress;
 
   const transform = useCallback(
     pipe(
       mapPayload(payload => {
         // Find the selected token's decimals
-        const { decimals: tokenDecimals } = (colonyTokens &&
-          colonyTokens.find(
-            token => token.address === payload.tokenAddress,
-          )) || {
-          decimals: undefined,
-        };
+        const selectedToken = tokens.find(
+          token => token.address === payload.tokenAddress,
+        );
+        const decimals =
+          (selectedToken && selectedToken.details.decimals) || 18;
 
         // Convert amount string with decimals to BigInt (eth to wei)
-        const amount = new BigNumber(
-          moveDecimal(payload.amount, tokenDecimals || 18),
-        );
+        const amount = new BigNumber(moveDecimal(payload.amount, decimals));
 
         return { ...payload, colonyAddress, amount };
       }),
       withKey(colonyAddress),
     ),
-    [colonyAddress, colonyTokens],
+    [colonyAddress, tokens],
   );
 
   return (
@@ -98,8 +90,7 @@ const TokensMoveDialog = ({
             {...formValues}
             colonyAddress={colonyAddress}
             cancel={cancel}
-            colonyTokens={colonyTokens}
-            colonyTokenRefs={colonyTokenRefs}
+            tokens={tokens}
           />
         </Dialog>
       )}

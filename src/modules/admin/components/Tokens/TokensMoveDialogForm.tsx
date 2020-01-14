@@ -1,4 +1,4 @@
-import React, { useMemo, useEffect, useCallback } from 'react';
+import React, { useMemo, useEffect } from 'react';
 import { FormikProps } from 'formik';
 import { defineMessages, FormattedMessage } from 'react-intl';
 import BigNumber from 'bn.js';
@@ -7,23 +7,27 @@ import sortBy from 'lodash/sortBy';
 
 import { ROOT_DOMAIN, ROLES } from '~constants';
 import { Address } from '~types/index';
-import { useDataFetcher, useSelector, useTransformer } from '~utils/hooks';
+import { useDataFetcher, useTransformer } from '~utils/hooks';
 import Button from '~core/Button';
 import DialogSection from '~core/Dialog/DialogSection';
 import { Select, Input, FormStatus } from '~core/Fields';
 import Heading from '~core/Heading';
+import {
+  ColonyTokens,
+  useLoggedInUser,
+  useTokenBalancesForDomainsLazyQuery,
+} from '~data/index';
+import EthUsd from '~core/EthUsd';
+import Numeral from '~core/Numeral';
+import { ZERO_ADDRESS } from '~utils/web3/constants';
+import { getBalanceFromToken } from '~utils/tokens';
 
 import { getUserRoles } from '../../../transformers';
 import { domainsAndRolesFetcher } from '../../../dashboard/fetchers';
-import { tokenBalanceSelector } from '../../../dashboard/selectors';
-import { walletAddressSelector } from '../../../users/selectors';
 import { userHasRole } from '../../../users/checks';
 
 import styles from './TokensMoveDialogForm.css';
 import { FormValues } from './TokensMoveDialog';
-import EthUsd from '~core/EthUsd';
-import Numeral from '~core/Numeral';
-import { ZERO_ADDRESS } from '~utils/web3/constants';
 
 const MSG = defineMessages({
   title: {
@@ -71,44 +75,32 @@ const MSG = defineMessages({
 interface Props {
   cancel: () => void;
   colonyAddress: Address;
-  colonyTokenRefs: any; // This type should be improved!
-  colonyTokens: any; // This type should be improved!
+  tokens: ColonyTokens;
 }
 
 const TokensMoveDialogForm = ({
   cancel,
   colonyAddress,
-  colonyTokens,
-  colonyTokenRefs,
   handleSubmit,
   isSubmitting,
   isValid,
   setErrors,
   status,
+  tokens,
   values,
 }: Props & FormikProps<FormValues>) => {
-  // Find the currently selected token
-  const [selectedTokenRef, selectedToken] = useMemo(
-    () => [
-      colonyTokenRefs.find(token => token.address === values.tokenAddress),
-      colonyTokens.find(token => token.address === values.tokenAddress),
-    ],
-    [colonyTokenRefs, colonyTokens, values.tokenAddress],
+  const selectedToken = useMemo(
+    () => tokens.find(token => token.address === values.tokenAddress),
+    [tokens, values.tokenAddress],
   );
 
-  // Map the colony's tokens to Select options
   const tokenOptions = useMemo(
     () =>
-      colonyTokenRefs.map(({ address }) => ({
+      tokens.map(({ address, details: { symbol } }) => ({
         value: address,
-        label:
-          (
-            colonyTokens.find(
-              ({ address: refAddress }) => refAddress === address,
-            ) || { symbol: undefined }
-          ).symbol || '???',
+        label: symbol || '???',
       })),
-    [colonyTokenRefs, colonyTokens],
+    [tokens],
   );
 
   const { data: domains } = useDataFetcher(
@@ -117,7 +109,7 @@ const TokensMoveDialogForm = ({
     [colonyAddress],
   );
 
-  const walletAddress = useSelector(walletAddressSelector);
+  const { walletAddress } = useLoggedInUser();
 
   const fromDomainRoles = useTransformer(getUserRoles, [
     domains,
@@ -131,7 +123,6 @@ const TokensMoveDialogForm = ({
     walletAddress,
   ]);
 
-  // Map the colony's domains to Select options
   const domainOptions = useMemo(
     () =>
       sortBy(
@@ -145,29 +136,39 @@ const TokensMoveDialogForm = ({
     [domains],
   );
 
-  // Get domain token balances from state
-  const fromDomainTokenBalanceSelector = useCallback(
-    state =>
-      tokenBalanceSelector(
-        state,
-        colonyAddress,
-        values.tokenAddress || '',
-        values.fromDomain || ROOT_DOMAIN,
-      ),
-    [colonyAddress, values.fromDomain, values.tokenAddress],
-  );
-  const fromDomainTokenBalance = useSelector(fromDomainTokenBalanceSelector);
-  const toDomainTokenBalanceSelector = useCallback(
-    state =>
-      tokenBalanceSelector(
-        state,
-        colonyAddress,
-        values.tokenAddress || '',
-        values.toDomain || ROOT_DOMAIN,
-      ),
-    [colonyAddress, values.toDomain, values.tokenAddress],
-  );
-  const toDomainTokenBalance = useSelector(toDomainTokenBalanceSelector);
+  const {
+    fromDomain = ROOT_DOMAIN,
+    toDomain = ROOT_DOMAIN,
+    tokenAddress,
+    amount,
+  } = values;
+  const [
+    loadTokenBalances,
+    { data: tokenBalancesData },
+  ] = useTokenBalancesForDomainsLazyQuery();
+
+  useEffect(() => {
+    if (tokenAddress) {
+      loadTokenBalances({
+        variables: {
+          colonyAddress,
+          tokenAddresses: [tokenAddress],
+          domainIds: [fromDomain, toDomain],
+        },
+      });
+    }
+  }, [colonyAddress, tokenAddress, fromDomain, toDomain, loadTokenBalances]);
+
+  const [fromDomainTokenBalance, toDomainTokenBalance] = useMemo(() => {
+    const token =
+      tokenBalancesData &&
+      tokenBalancesData.colony.tokens.find(
+        ({ address }) => address === tokenAddress,
+      );
+    const from = getBalanceFromToken(token, fromDomain);
+    const to = getBalanceFromToken(token, toDomain);
+    return [from, to];
+  }, [fromDomain, toDomain, tokenAddress, tokenBalancesData]);
 
   // Perform form validations
   useEffect(() => {
@@ -177,11 +178,11 @@ const TokensMoveDialogForm = ({
       toDomain?: any;
     } = {};
 
-    if (!(values.amount && values.amount.length)) {
+    if (!selectedToken || !(amount && amount.length)) {
       errors.amount = undefined; // silent error
     } else {
       const convertedAmount = new BigNumber(
-        moveDecimal(values.amount, selectedToken.decimals || 18),
+        moveDecimal(amount, selectedToken.details.decimals || 18),
       );
       if (convertedAmount.eqn(0)) {
         errors.amount = MSG.noAmount;
@@ -193,32 +194,28 @@ const TokensMoveDialogForm = ({
       }
     }
 
-    if (values.fromDomain && !userHasRole(fromDomainRoles, ROLES.FUNDING)) {
+    if (fromDomain && !userHasRole(fromDomainRoles, ROLES.FUNDING)) {
       errors.fromDomain = MSG.noPermissionFrom;
     }
 
-    if (values.toDomain && !userHasRole(toDomainRoles, ROLES.FUNDING)) {
+    if (toDomain && !userHasRole(toDomainRoles, ROLES.FUNDING)) {
       errors.toDomain = MSG.noPermissionTo;
     }
 
-    if (
-      values.toDomain !== undefined &&
-      values.toDomain === values.fromDomain
-    ) {
+    if (toDomain !== undefined && toDomain === fromDomain) {
       errors.toDomain = MSG.samePot;
     }
 
     setErrors(errors);
   }, [
+    amount,
+    fromDomain,
     fromDomainRoles,
     fromDomainTokenBalance,
-    selectedToken.decimals,
-    selectedTokenRef,
+    selectedToken,
     setErrors,
+    toDomain,
     toDomainRoles,
-    values.amount,
-    values.fromDomain,
-    values.toDomain,
   ]);
 
   return (
@@ -232,7 +229,7 @@ const TokensMoveDialogForm = ({
       </DialogSection>
       <DialogSection>
         <Select options={domainOptions} label={MSG.from} name="fromDomain" />
-        {values.fromDomain !== undefined && !!values.tokenAddress && (
+        {!!tokenAddress && (
           <div className={styles.domainPotBalance}>
             <FormattedMessage
               {...MSG.domainTokenAmount}
@@ -244,11 +241,14 @@ const TokensMoveDialogForm = ({
                       theme: 'grey',
                     }}
                     value={fromDomainTokenBalance || 0}
-                    unit={(selectedToken && selectedToken.decimals) || 18}
+                    unit={
+                      (selectedToken && selectedToken.details.decimals) || 18
+                    }
                     truncate={3}
                   />
                 ),
-                symbol: selectedToken.symbol || '???',
+                symbol:
+                  (selectedToken && selectedToken.details.symbol) || '???',
               }}
             />
           </div>
@@ -268,11 +268,14 @@ const TokensMoveDialogForm = ({
                       theme: 'grey',
                     }}
                     value={toDomainTokenBalance || 0}
-                    unit={(selectedToken && selectedToken.decimals) || 18}
+                    unit={
+                      (selectedToken && selectedToken.details.decimals) || 18
+                    }
                     truncate={3}
                   />
                 ),
-                symbol: selectedToken.symbol || '???',
+                symbol:
+                  (selectedToken && selectedToken.details.symbol) || '???',
               }}
             />
           </div>
@@ -289,7 +292,7 @@ const TokensMoveDialogForm = ({
                 delimiter: ',',
                 numeral: true,
                 numeralDecimalScale:
-                  (selectedToken && selectedToken.decimals) || 18,
+                  (selectedToken && selectedToken.details.decimals) || 18,
               }}
             />
           </div>

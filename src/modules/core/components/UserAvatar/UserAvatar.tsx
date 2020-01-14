@@ -1,10 +1,12 @@
 import React from 'react';
 
-import { UserType } from '~immutable/index';
 import Avatar from '~core/Avatar';
 import InfoPopover from '~core/InfoPopover';
 import Link from '~core/NavLink';
 import { Address } from '~types/index';
+import { AnyUser } from '~data/index';
+
+import { getUsername } from '../../../users/transformers';
 
 export interface Props {
   /** Address of the current user for identicon fallback */
@@ -29,7 +31,7 @@ export interface Props {
   size?: 'xxs' | 'xs' | 's' | 'm' | 'l' | 'xl';
 
   /** The corresponding user object if available */
-  user?: UserType | void;
+  user?: AnyUser;
 }
 
 const displayName = 'UserAvatar';
@@ -42,11 +44,14 @@ const UserAvatar = ({
   showLink,
   notSet,
   size,
-  user,
+  user = {
+    id: address,
+    profile: { walletAddress: address },
+  },
 }: Props) => {
-  const username = user && user.profile && (user as UserType).profile.username;
+  const username = getUsername(user);
   const avatar = (
-    <InfoPopover trigger={showInfo ? 'click' : 'disabled'} address={address}>
+    <InfoPopover trigger={showInfo ? 'click' : 'disabled'} user={user}>
       <div>
         <Avatar
           avatarURL={avatarURL}

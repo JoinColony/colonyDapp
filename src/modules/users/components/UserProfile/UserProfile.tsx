@@ -1,11 +1,11 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Redirect } from 'react-router';
 
 import { NOT_FOUND_ROUTE } from '~routes/index';
-import { useDataSubscriber } from '~utils/hooks';
-import { userSubscriber } from '../../subscribers';
-import { useUserAddressFetcher } from '../../hooks';
 import ProfileTemplate from '~pages/ProfileTemplate';
+import { useUserLazyQuery } from '~data/index';
+
+import { useUserAddressFetcher } from '../../hooks';
 import UserMeta from './UserMeta';
 import UserProfileSpinner from './UserProfileSpinner';
 import UserColonies from './UserColonies';
@@ -24,20 +24,24 @@ const UserProfile = ({
     username,
   );
 
-  const { error: userError, data: user, isFetching } = useDataSubscriber(
-    userSubscriber,
-    [userAddress as string],
-    [userAddress],
-  );
+  const [loadUser, { data }] = useUserLazyQuery();
 
-  // Sometimes userAddress is not defined (because it is being fetched). Only if it *is* defined we should care about the error
-  if (userAddressError || (userAddress && userError)) {
-    return <Redirect to={NOT_FOUND_ROUTE} />;
-  }
+  useEffect(() => {
+    if (userAddress) {
+      loadUser({
+        variables: { address: userAddress },
+      });
+    }
+  }, [loadUser, userAddress]);
 
-  if (!user || isFetching) {
+  if (!data || !data.user) {
     return <UserProfileSpinner />;
   }
+
+  if (userAddressError) {
+    return <Redirect to={NOT_FOUND_ROUTE} />;
+  }
+  const { user } = data;
 
   return (
     <ProfileTemplate asideContent={<UserMeta user={user} />}>

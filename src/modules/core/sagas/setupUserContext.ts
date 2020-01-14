@@ -1,3 +1,4 @@
+import ApolloClient from 'apollo-client';
 import {
   all,
   call,
@@ -6,83 +7,40 @@ import {
   put,
   setContext,
 } from 'redux-saga/effects';
+import { formatEther } from 'ethers/utils';
 
-import { createAddress, Address } from '~types/index';
+import { createAddress } from '~types/index';
 import { Action, ActionTypes, AllActions } from '~redux/index';
-import { Context } from '~context/index';
-import { executeCommand, executeQuery, putError } from '~utils/saga/effects';
+import { Context, ContextType, TEMP_setNewContext } from '~context/index';
+import { putError } from '~utils/saga/effects';
 import { log } from '~utils/debug';
-import ENSCache from '~lib/ENS';
-import { UserProfileType } from '~immutable/index';
-
-import ColonyManagerType from '../../../lib/ColonyManager';
-import { DDB as DDBType } from '../../../lib/database';
 import {
-  getUserBalance,
-  getUsername,
-  getUserProfile,
-} from '../../users/data/queries';
-import { createUserProfile } from '../../users/data/commands';
+  refetchUserNotifications,
+  SetLoggedInUserDocument,
+  SetLoggedInUserMutation,
+  SetLoggedInUserMutationVariables,
+} from '~data/index';
+
+import setupResolvers from '../../../context/setupResolvers';
+import IPFSNode from '../../../lib/ipfs';
+import { authenticate } from '../../../api';
 import setupAdminSagas from '../../admin/sagas';
 import setupDashboardSagas from '../../dashboard/sagas';
-import {
-  getWallet,
-  setupUsersSagas,
-  setupInboxSagas,
-} from '../../users/sagas/index';
+import { getWallet, setupUsersSagas } from '../../users/sagas/index';
 import setupTransactionsSagas from './transactions';
-import setupConnectionSagas from './connection';
 import setupNetworkSagas from './network';
-import {
-  getDDB,
-  getGasPrices,
-  getColonyManager,
-  getWalletCategory,
-} from './utils';
+import { getGasPrices, getColonyManager, getWalletCategory } from './utils';
 import setupOnBeforeUnload from './setupOnBeforeUnload';
 import { setupUserBalanceListener } from './setupUserBalanceListener';
 
 function* setupContextDependentSagas() {
   yield all([
     call(setupAdminSagas),
-    call(setupConnectionSagas),
     call(setupDashboardSagas),
     call(setupUsersSagas),
-    call(setupInboxSagas),
     call(setupTransactionsSagas),
     call(setupNetworkSagas),
   ]);
-}
-
-function* setupDDBResolver(
-  colonyManager: ColonyManagerType,
-  ddb: DDBType,
-  ens: ENSCache,
-) {
-  const { networkClient } = colonyManager;
-
-  yield call([ddb, ddb.registerResolver], (identifier: string) =>
-    ens.getOrbitDBAddress(identifier, networkClient),
-  );
-}
-
-function* recoverUserProfile(walletAddress: Address) {
-  const username = yield executeQuery(getUsername, {
-    args: { walletAddress },
-  });
-  if (!username) return {};
-  const { metadataStore, inboxStore } = yield executeCommand(
-    createUserProfile,
-    {
-      args: { username, walletAddress },
-      metadata: { walletAddress },
-    },
-  );
-  return {
-    username,
-    metadataStoreAddress: metadataStore.address.toString(),
-    inboxStoreAddress: inboxStore.address.toString(),
-  };
 }
 
 /*
@@ -103,7 +61,13 @@ export default function* setupUserContext(
      */
     const wallet = yield call(getWallet, action);
     const walletAddress = createAddress(wallet.address);
-    yield setContext({ [Context.WALLET]: wallet });
+    TEMP_setNewContext('wallet', wallet);
+
+    const apolloClient: ApolloClient<object> = yield getContext(
+      Context.APOLLO_CLIENT,
+    );
+
+    yield authenticate(wallet);
 
     yield put<AllActions>({
       type: ActionTypes.WALLET_CREATE_SUCCESS,
@@ -115,43 +79,17 @@ export default function* setupUserContext(
     /*
      * Set up the DDB instance and colony manager context.
      */
-    const [ddb, colonyManager] = yield all([
-      call(getDDB),
-      call(getColonyManager),
-    ]);
+    const colonyManager = yield call(getColonyManager);
     yield setContext({
       [Context.COLONY_MANAGER]: colonyManager,
-      [Context.DDB_INSTANCE]: ddb,
     });
 
     yield call(getGasPrices);
 
     const ens = yield getContext(Context.ENS_INSTANCE);
-    yield call(setupDDBResolver, colonyManager, ddb, ens);
-
-    let profileData = {} as UserProfileType;
-    try {
-      profileData = yield executeQuery(getUserProfile, {
-        args: undefined,
-        metadata: { walletAddress },
-      });
-    } catch (e) {
-      log.verbose(`Could not find user profile for ${walletAddress}`);
-    }
-
-    if (!profileData.username) {
-      // Try to recover a user profile as it might already have been registered on ENS
-      profileData = yield call(recoverUserProfile, walletAddress);
-    }
-
-    const balance = yield executeQuery(getUserBalance, {
-      args: {
-        walletAddress,
-      },
-    });
 
     /*
-     * This needs to happen first because CURRENT_USER_CREATE causes a redirect
+     * This needs to happen first because USER_CONTEXT_SETUP_SUCCESS causes a redirect
      * to dashboard, which needs context for sagas which happen on load.
      * Forking is okay because each `takeEvery` etc happens immediately anyway,
      * but we then do not wait for a return value (which will never come).
@@ -161,29 +99,55 @@ export default function* setupUserContext(
     // Start a forked task to listen for user balance events
     yield fork(setupUserBalanceListener, walletAddress);
 
-    yield put<AllActions>({
-      type: ActionTypes.CURRENT_USER_CREATE,
-      payload: {
-        balance,
-        profileData,
+    let username;
+    try {
+      const domain = yield ens.getDomain(
         walletAddress,
-      },
-      meta: {
-        ...meta,
-        key: walletAddress,
+        colonyManager.networkClient,
+      );
+      username = ens.constructor.stripDomainParts('user', domain);
+    } catch (caughtError) {
+      log.verbose(`Could not find username for ${walletAddress}`);
+    }
+
+    const {
+      adapter: { provider },
+    } = colonyManager.networkClient;
+    const balance = yield provider.getBalance(walletAddress);
+
+    // @TODO refactor setupUserContext for graphql
+    // @BODY eventually we want to move everything to resolvers, so all of this has to happen outside of sagas. There is no need to have a separate state or anything, just set it up in an aync function (instead of WALLET_CREATE), then call this function
+    const ipfsNode: IPFSNode = yield getContext(Context.IPFS_NODE);
+    const userContext: ContextType = {
+      apolloClient,
+      colonyManager,
+      ens,
+      ipfsNode,
+      wallet,
+    };
+    yield setupResolvers(apolloClient, userContext);
+
+    yield apolloClient.mutate<
+      SetLoggedInUserMutation,
+      SetLoggedInUserMutationVariables
+    >({
+      mutation: SetLoggedInUserDocument,
+      variables: {
+        input: {
+          balance: formatEther(balance),
+          username,
+          walletAddress,
+        },
       },
     });
 
-    try {
-      yield put<AllActions>({
-        type: ActionTypes.INBOX_ITEMS_FETCH,
-      });
-    } catch (caughtError) {
-      // It's ok if the user store doesn't exist (yet)
-      log.warn(caughtError);
-    }
+    yield refetchUserNotifications(walletAddress);
 
-    yield call(setupOnBeforeUnload);
+    setupOnBeforeUnload();
+
+    yield put<AllActions>({
+      type: ActionTypes.USER_CONTEXT_SETUP_SUCCESS,
+    });
   } catch (caughtError) {
     return yield putError(ActionTypes.WALLET_CREATE_ERROR, caughtError, meta);
   }

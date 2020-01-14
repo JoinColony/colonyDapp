@@ -1,0 +1,19 @@
+overwrite: true
+schema:
+  - 'http://localhost:3000/graphql':
+      headers:
+        'authorization': 'codegen'
+documents: 'src/data/*.graphql'
+generates:
+  src/data/generated.ts:
+    schema: 'src/data/typeDefs.ts'
+    config:
+      skipTypename: true
+      withComponent: false
+      withHOC: false
+      withHooks: true
+    plugins:
+      - 'fragment-matcher'
+      - 'typescript'
+      - 'typescript-operations'
+      - 'typescript-react-apollo'

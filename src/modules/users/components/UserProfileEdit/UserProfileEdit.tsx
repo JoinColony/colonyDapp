@@ -1,14 +1,13 @@
-import React from 'react';
+import React, { useCallback } from 'react';
 import { defineMessages } from 'react-intl';
+import * as yup from 'yup';
 
-import { ActionTypes } from '~redux/index';
-import { useSelector } from '~utils/hooks';
 import CopyableAddress from '~core/CopyableAddress';
 import UserMention from '~core/UserMention';
 import Heading from '~core/Heading';
 import {
   FieldSet,
-  ActionForm,
+  Form,
   FormStatus,
   Input,
   InputLabel,
@@ -16,8 +15,9 @@ import {
 } from '~core/Fields';
 import Button from '~core/Button';
 import ProfileTemplate from '~pages/ProfileTemplate';
-import { UpdateUserProfileCommandArgsSchema } from '../../data/schemas';
-import { currentUserSelector } from '../../selectors';
+import { useLoggedInUser, useUser, useEditUserMutation } from '~data/index';
+
+import UserProfileSpinner from '../UserProfile/UserProfileSpinner';
 import Sidebar from './Sidebar';
 import styles from './UserProfileEdit.css';
 
@@ -54,8 +54,38 @@ const MSG = defineMessages({
 
 const displayName = 'users.UserProfileEdit';
 
+interface FormValues {
+  displayName?: string;
+  bio?: string;
+  website?: string;
+  location?: string;
+}
+
+const validationSchema = yup.object({
+  bio: yup.string().nullable(),
+  displayName: yup.string().nullable(),
+  location: yup.string().nullable(),
+  website: yup
+    .string()
+    .url()
+    .nullable(),
+});
+
 const UserProfileEdit = () => {
-  const user = useSelector(currentUserSelector);
+  const { walletAddress } = useLoggedInUser();
+
+  const [editUser] = useEditUserMutation();
+  const onSubmit = useCallback(
+    (profile: FormValues) => editUser({ variables: { input: profile } }),
+    [editUser],
+  );
+
+  const user = useUser(walletAddress);
+
+  if (!user) {
+    return <UserProfileSpinner />;
+  }
+
   return (
     <ProfileTemplate
       appearance={{ theme: 'alt' }}
@@ -65,17 +95,15 @@ const UserProfileEdit = () => {
         appearance={{ theme: 'dark', size: 'medium' }}
         text={MSG.heading}
       />
-      <ActionForm
-        submit={ActionTypes.USER_PROFILE_UPDATE}
-        success={ActionTypes.USER_PROFILE_UPDATE_SUCCESS}
-        error={ActionTypes.USER_PROFILE_UPDATE_ERROR}
+      <Form
         initialValues={{
           displayName: user.profile.displayName,
           bio: user.profile.bio,
           website: user.profile.website,
           location: user.profile.location,
         }}
-        validationSchema={UpdateUserProfileCommandArgsSchema}
+        onSubmit={onSubmit}
+        validationSchema={validationSchema}
       >
         {({ status, isSubmitting }) => (
           <div className={styles.main}>
@@ -128,7 +156,7 @@ const UserProfileEdit = () => {
             <FormStatus status={status} />
           </div>
         )}
-      </ActionForm>
+      </Form>
     </ProfileTemplate>
   );
 };

@@ -1,24 +1,14 @@
-import React, { useState, useCallback } from 'react';
+import React, { useCallback, useState } from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
+import { RouteComponentProps, withRouter } from 'react-router-dom';
 import compose from 'recompose/compose';
-import { withRouter } from 'react-router-dom';
 
-import { ActionTypes } from '~redux/index';
-import {
-  useDataFetcher,
-  useDataSubscriber,
-  useSelector,
-  useTransformer,
-} from '~utils/hooks';
-// Temporary, please remove when wiring in the rating modals
+import Button, { ActionButton } from '~core/Button';
 import { OpenDialog } from '~core/Dialog/types';
-import { mergePayload } from '~utils/actions';
-import Heading from '~core/Heading';
 import withDialog from '~core/Dialog/withDialog';
-import Button, { ActionButton, ConfirmButton } from '~core/Button';
+import Heading from '~core/Heading';
 import Icon from '~core/Icon';
 import { Tooltip } from '~core/Popover';
-import LoadingTemplate from '~pages/LoadingTemplate';
 import TaskAssignment from '~dashboard/TaskAssignment';
 import TaskComments from '~dashboard/TaskComments';
 import TaskDate from '~dashboard/TaskDate';
@@ -29,20 +19,27 @@ import TaskRequestWork from '~dashboard/TaskRequestWork';
 import TaskSkills from '~dashboard/TaskSkills';
 import TaskTitle from '~dashboard/TaskTitle';
 import {
+  AnyTask,
+  useCancelTaskMutation,
+  useColonyFromNameQuery,
+  useLoggedInUser,
+  useTaskQuery,
+} from '~data/index';
+import LoadingTemplate from '~pages/LoadingTemplate';
+import { ActionTypes } from '~redux/index';
+import { mergePayload } from '~utils/actions';
+import { useDataFetcher, useTransformer } from '~utils/hooks';
+
+import { getUserRoles } from '../../../transformers';
+import {
   canCancelTask,
   canEditTask,
   canFinalizeTask,
-  isCancelled,
   canRequestToWork,
+  isCancelled,
   isFinalized,
 } from '../../checks';
-import {
-  colonyAddressFetcher,
-  domainsAndRolesFetcher,
-} from '../../../dashboard/fetchers';
-import { currentUserSelector } from '../../../users/selectors';
-import { getUserRoles } from '../../../transformers';
-import { taskSubscriber } from '../../subscribers';
+import { domainsAndRolesFetcher } from '../../fetchers';
 
 import styles from './Task.css';
 
@@ -105,8 +102,12 @@ const MSG = defineMessages({
   },
 });
 
-interface Props {
-  match: any;
+interface MatchProps {
+  draftId: AnyTask['id'];
+  colonyName: string;
+}
+
+interface Props extends RouteComponentProps<MatchProps> {
   openDialog: OpenDialog;
   history: any;
 }
@@ -115,45 +116,49 @@ const displayName = 'dashboard.Task';
 
 const Task = ({
   match: {
-    params: { draftId, colonyName },
+    params: { colonyName, draftId },
   },
   openDialog,
   history,
 }: Props) => {
-  const [isDiscardConfirmDisplayed, setDiscardConfirmDisplay] = useState(false);
+  const [
+    isDiscardConfirmDisplayed,
+    // setDiscardConfirmDisplay,
+  ] = useState(false);
 
-  const currentUser = useSelector(currentUserSelector);
-  const walletAddress =
-    currentUser && currentUser.profile && currentUser.profile.walletAddress;
+  const { walletAddress } = useLoggedInUser();
 
-  const { data: colonyAddress } = useDataFetcher(
-    colonyAddressFetcher,
-    [colonyName],
-    [colonyName],
-  );
+  const { data } = useTaskQuery({
+    // @todo use subscription for `Task` instead of `pollInterval` (once supported by server)
+    pollInterval: 5000,
+    variables: { id: draftId },
+  });
 
-  const { data: task, isFetching: isFetchingTask } = useDataSubscriber(
-    taskSubscriber,
-    [draftId],
-    [colonyAddress || undefined, draftId],
-  );
+  const { data: colonyData } = useColonyFromNameQuery({
+    variables: { address: '', name: colonyName },
+  });
+
   const {
-    description = undefined,
-    domainId = undefined,
-    dueDate = undefined,
-    skillId = undefined,
-    title = undefined,
-  } = task || {};
+    task: {
+      description = undefined,
+      ethDomainId = undefined,
+      dueDate = undefined,
+      ethSkillId = undefined,
+      payouts = [],
+      title = undefined,
+    } = {},
+    task = undefined,
+  } = data || {};
 
   const { data: domains, isFetching: isFetchingDomains } = useDataFetcher(
     domainsAndRolesFetcher,
-    [colonyAddress],
-    [colonyAddress],
+    [colonyData && colonyData.colonyAddress],
+    [colonyData && colonyData.colonyAddress],
   );
 
   const userRoles = useTransformer(getUserRoles, [
     domains,
-    task ? task.domainId : null,
+    ethDomainId || null,
     walletAddress,
   ]);
 
@@ -165,28 +170,30 @@ const Task = ({
     }
 
     openDialog('TaskEditDialog', {
+      colonyAddress: colonyData && colonyData.colonyAddress,
       draftId,
       maxTokens: 1,
       minTokens: 0,
     });
-  }, [draftId, openDialog, task]);
+  }, [colonyData, draftId, openDialog, task]);
 
-  const transform = useCallback(mergePayload({ colonyAddress, draftId }), [
-    colonyAddress,
-    draftId,
-  ]);
+  const transform = useCallback(
+    mergePayload({
+      colonyAddress: colonyData && colonyData.colonyAddress,
+      draftId,
+    }),
+    [colonyData, draftId],
+  );
 
-  if (
-    isFetchingTask ||
-    isFetchingDomains ||
-    !task ||
-    !colonyAddress ||
-    !domains ||
-    !walletAddress
-  ) {
+  const [handleCancelTask] = useCancelTaskMutation({
+    variables: { input: { id: draftId } },
+  });
+
+  if (isFetchingDomains || !task || !colonyData || !domains || !walletAddress) {
     return <LoadingTemplate loadingText={MSG.loadingText} />;
   }
 
+  const { colony } = colonyData;
   const canEdit = canEditTask(task, userRoles);
 
   return (
@@ -220,7 +227,11 @@ const Task = ({
           </header>
           <div className={styles.assignment}>
             <div>
-              <TaskAssignment colonyAddress={colonyAddress} draftId={draftId} />
+              <TaskAssignment
+                draftId={draftId}
+                nativeTokenAddress={colony.nativeTokenAddress}
+                tokens={colony.tokens}
+              />
             </div>
             {canEdit && (
               <div className={styles.assignmentDetailsButton}>
@@ -235,49 +246,44 @@ const Task = ({
         </section>
         <section className={styles.section}>
           <TaskTitle
-            colonyAddress={colonyAddress}
             disabled={!canEdit}
             draftId={draftId}
-            title={title}
+            title={title || undefined}
           />
           <TaskDescription
-            colonyAddress={colonyAddress}
-            description={description}
+            description={description || undefined}
             disabled={!canEdit}
             draftId={draftId}
           />
         </section>
-        {!!(canEdit || dueDate || domainId || skillId) && (
-          <section className={styles.section}>
+        <section className={styles.section}>
+          {colony && colony.colonyAddress && (
             <div className={styles.editor}>
               <TaskDomains
-                colonyAddress={colonyAddress}
+                colonyAddress={colony.colonyAddress}
                 // Disable the change of domain for now
                 disabled
-                domainId={domainId}
+                ethDomainId={ethDomainId || 1}
                 draftId={draftId}
+                payouts={payouts}
               />
             </div>
-            <div className={styles.editor}>
-              <TaskSkills
-                colonyAddress={colonyAddress}
-                disabled={!canEdit}
-                draftId={draftId}
-                skillId={skillId}
-                domainId={domainId}
-              />
-            </div>
-            <div className={styles.editor}>
-              <TaskDate
-                colonyAddress={colonyAddress}
-                disabled={!canEdit}
-                draftId={draftId}
-                dueDate={dueDate}
-                domainId={domainId}
-              />
-            </div>
-          </section>
-        )}
+          )}
+          <div className={styles.editor}>
+            <TaskSkills
+              disabled={!canEdit}
+              draftId={draftId}
+              ethSkillId={ethSkillId || undefined}
+            />
+          </div>
+          <div className={styles.editor}>
+            <TaskDate
+              disabled={!canEdit}
+              draftId={draftId}
+              dueDate={dueDate || undefined}
+            />
+          </div>
+        </section>
       </aside>
       <div className={styles.container}>
         <section
@@ -314,16 +320,13 @@ const Task = ({
             </Tooltip>
           )}
           {canCancelTask(task, userRoles) && (
-            <ActionButton
+            <Button
               appearance={{ theme: 'secondary', size: 'small' }}
-              button={ConfirmButton}
-              confirmText={MSG.confirmText}
-              onConfirmToggled={setDiscardConfirmDisplay}
+              // @todo Use `ConfirmButton` for discard task button
+              // confirmText={MSG.confirmText}
+              onClick={handleCancelTask}
+              // onConfirmToggled={setDiscardConfirmDisplay}
               text={MSG.discardTask}
-              submit={ActionTypes.TASK_CANCEL}
-              error={ActionTypes.TASK_CANCEL_ERROR}
-              success={ActionTypes.TASK_CANCEL_SUCCESS}
-              transform={transform}
             />
           )}
           {/* Hide when discard confirm is displayed */}
@@ -349,11 +352,7 @@ const Task = ({
                 </p>
               )}
               {canRequestToWork(task, walletAddress) && (
-                <TaskRequestWork
-                  currentUser={currentUser}
-                  task={task}
-                  history={history}
-                />
+                <TaskRequestWork task={task} history={history} />
               )}
             </>
           )}
@@ -365,15 +364,14 @@ const Task = ({
         </section>
         <div className={styles.activityContainer}>
           <section className={styles.activity}>
-            <TaskFeed colonyAddress={colonyAddress} draftId={draftId} />
+            <TaskFeed colonyAddress={colony.colonyAddress} draftId={draftId} />
           </section>
           <section className={styles.commentBox}>
             <TaskComments
-              colonyAddress={colonyAddress}
+              colonyAddress={colony.colonyAddress}
               draftId={draftId}
               taskTitle={title}
               history={history}
-              currentUser={currentUser}
             />
           </section>
         </div>

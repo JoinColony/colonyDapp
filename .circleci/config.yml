@@ -98,51 +98,14 @@ jobs:
       - run:
           name: "Building library"
           command: yarn webpack:build
-  integration-testing:
-    docker:
-      - image: circleci/node:10.16.3
-    environment:
-      LOADER: trufflepig
-      NETWORK: local
-      PINNING_ROOM: PINION_DEV_ROOM
-    working_directory: ~/colonyDapp
-    steps:
-      - checkout
-      - restore_cache:
-          keys:
-          - node-modules-v2-{{ checksum "package.json" }}
-          - node-modules-v2-
-      - run:
-          name: "Installing modules"
-          command: |
-            yarn install
-            yarn provision --skip-colony-network-build
-      - save_cache:
-          paths:
-            - node_modules
-          key: node-modules-v2-{{ checksum "package.json" }}
-      - run:
-          name: "Linting TypeScript"
-          command: yarn lint:ci
-      - run:
-          name: "Running Integration Tests"
-          command: |
-            mkdir -p reports/ava
-            yarn test:integration:ci
-      - store_test_results:
-          path: reports
-      - store_artifacts:
-          path: reports
   e2e-testing:
     docker:
       - image: joincolony/circleci-cypress
     environment:
       NETWORK: local
-      CHAIN_ID: 1337
       LOADER: trufflepig
       COLONY_NETWORK_ENS_NAME: joincolony.test
       ETHPLORER_API_KEY: freekey
-      PINNING_ROOM: PINION_DEV_ROOM
       TERM: xterm
       CYPRESS_VIEWPORT_WIDTH: 1920
       CYPRESS_VIEWPORT_HEIGHT: 1080
@@ -216,7 +179,7 @@ jobs:
           paths:
             - node_modules
           key: v1-dependencies-{{ checksum "yarn.lock" }}
-      - run: docker build --build-arg COLONY_NETWORK_ENS_NAME='joincolony.test' --build-arg VERBOSE='true' --build-arg PINNING_ROOM='PINION_DEV_ROOM' --build-arg CHAIN_ID=5 --build-arg INFURA_ID='fe7e19c85e574235a06296de102d16ef' --build-arg NETWORK='goerli' --build-arg COMMIT_HASH=$CIRCLE_SHA1 --no-cache -t eu.gcr.io/${PROJECT_NAME}/dapp-goerli:$CIRCLE_SHA1 .
+      - run: docker build --build-arg COLONY_NETWORK_ENS_NAME='joincolony.test' --build-arg VERBOSE='true' --build-arg INFURA_ID='fe7e19c85e574235a06296de102d16ef' --build-arg NETWORK='goerli' --build-arg COMMIT_HASH=$CIRCLE_SHA1 --no-cache -t eu.gcr.io/${PROJECT_NAME}/dapp-goerli:$CIRCLE_SHA1 .
       - run: echo "deb [signed-by=/usr/share/keyrings/cloud.google.gpg] http://packages.cloud.google.com/apt cloud-sdk main" | sudo tee -a /etc/apt/sources.list.d/google-cloud-sdk.list
       - run: curl https://packages.cloud.google.com/apt/doc/apt-key.gpg | sudo apt-key --keyring /usr/share/keyrings/cloud.google.gpg add -
       - run: sudo apt-get update && sudo apt-get install google-cloud-sdk
@@ -241,7 +204,7 @@ jobs:
           paths:
             - node_modules
           key: v1-dependencies-{{ checksum "yarn.lock" }}
-      - run: docker build --build-arg COLONY_NETWORK_ENS_NAME='joincolony.eth' --build-arg VERBOSE='true' --build-arg PINNING_ROOM='COLONY' --build-arg CHAIN_ID=1 --build-arg INFURA_ID='fe7e19c85e574235a06296de102d16ef' --build-arg NETWORK='mainnet' --build-arg COMMIT_HASH=$CIRCLE_SHA1 --no-cache -t eu.gcr.io/${PROJECT_NAME}/dapp-mainnet:$CIRCLE_SHA1 .
+      - run: docker build --build-arg COLONY_NETWORK_ENS_NAME='joincolony.eth' --build-arg VERBOSE='true' --build-arg INFURA_ID='fe7e19c85e574235a06296de102d16ef' --build-arg NETWORK='mainnet' --build-arg COMMIT_HASH=$CIRCLE_SHA1 --no-cache -t eu.gcr.io/${PROJECT_NAME}/dapp-mainnet:$CIRCLE_SHA1 .
       - run: echo "deb [signed-by=/usr/share/keyrings/cloud.google.gpg] http://packages.cloud.google.com/apt cloud-sdk main" | sudo tee -a /etc/apt/sources.list.d/google-cloud-sdk.list
       - run: curl https://packages.cloud.google.com/apt/doc/apt-key.gpg | sudo apt-key --keyring /usr/share/keyrings/cloud.google.gpg add -
       - run: sudo apt-get update && sudo apt-get install google-cloud-sdk
@@ -277,7 +240,6 @@ workflows:
   commit:
     jobs:
       - build-with-lockfile
-      - integration-testing
       - e2e-testing
       - build-styleguide:
           requires:
@@ -291,7 +253,6 @@ workflows:
       - build-mainnet-image:
           requires:
             - build-with-lockfile
-            - integration-testing
             - e2e-testing
           filters:
             branches:
@@ -306,5 +267,4 @@ workflows:
               only: master
     jobs:
       - nightly-build
-      - integration-testing
       - e2e-testing

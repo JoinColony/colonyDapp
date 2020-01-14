@@ -1,19 +1,20 @@
-import { FormikActions } from 'formik';
+import { FormikHelpers } from 'formik';
 
 export interface WizardProps<FormValues> {
   step: number;
   stepCount: number;
   nextStep: (
     values: FormValues,
-    formikActions?: FormikActions<FormValues>,
+    formikHelpers?: FormikHelpers<FormValues>,
   ) => void;
   previousStep: () => void;
   resetWizard: () => void;
+  stepCompleted: boolean;
   wizardValues: FormValues;
   wizardForm: {
     initialValues: {
       [formValue: string]: any;
     };
-    isInitialValid: (arg0: object) => boolean;
+    validateOnMount: boolean;
   };
 }

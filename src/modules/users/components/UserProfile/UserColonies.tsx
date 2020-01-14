@@ -1,28 +1,29 @@
 import React from 'react';
 import { defineMessages } from 'react-intl';
 
-import { UserType } from '~immutable/index';
-import { useDataSubscriber, useSelector } from '~utils/hooks';
 import ColonyGrid from '~dashboard/ColonyGrid';
 import Link from '~core/Link';
-import { userColoniesSubscriber } from '../../../dashboard/subscribers';
-import { currentUserSelector, friendlyUsernameSelector } from '../../selectors';
 import { CREATE_COLONY_ROUTE } from '~routes/index';
+import {
+  AnyUser,
+  useLoggedInUser,
+  useUserColonyAddressesQuery,
+} from '~data/index';
+
+import { getFriendlyName } from '../../transformers';
 import styles from './UserColonies.css';
 
 interface Props {
-  user: UserType;
+  user: AnyUser;
 }
 
 const MSG = defineMessages({
   currentUserNoColonies: {
     id: 'users.UserProfile.UserColonies.currentUserNoColonies',
-    // eslint-disable-next-line max-len
     defaultMessage: `It looks like you're not subscribed to any Colonies yet. You’ll need an invite link to join one. Ask your community for a link or {createColonyLink}.`,
   },
   otherUserNoColonies: {
     id: 'users.UserProfile.UserColonies.otherUserNoColonies',
-    // eslint-disable-next-line max-len
     defaultMessage: `It looks like {friendlyUsername} isn't subscribed to any Colonies yet. You’ll might want to send them an invite link from a Colony you're part of.`,
   },
   createColonyLink: {
@@ -34,18 +35,19 @@ const MSG = defineMessages({
 const displayName = 'users.UserProfile.UserColonies';
 
 const UserColonies = ({ user }: Props) => {
-  const { data: colonyAddresses } = useDataSubscriber(
-    userColoniesSubscriber,
-    [user.profile.walletAddress],
-    [user.profile.walletAddress, user.profile.metadataStoreAddress],
-  );
+  const { walletAddress } = useLoggedInUser();
+  const friendlyName = getFriendlyName(user);
+  // @TODO we should probably get the full colonies and pass them down to colonyGrid
+  const { data } = useUserColonyAddressesQuery({
+    variables: { address: user.profile.walletAddress },
+  });
+
+  // @TODO we want a proper spinner loader here eventually
+  if (!data) return null;
   const {
-    profile: { walletAddress: currentUserWalletAddress },
-  } = useSelector(currentUserSelector);
-  const friendlyUsername = useSelector(friendlyUsernameSelector, [
-    user.profile.walletAddress,
-  ]) as string;
-  const isCurrentUser = currentUserWalletAddress === user.profile.walletAddress;
+    user: { colonyAddresses },
+  } = data;
+  const isCurrentUser = walletAddress === user.profile.walletAddress;
   return (
     <ColonyGrid
       colonyAddresses={colonyAddresses || []}
@@ -65,8 +67,8 @@ const UserColonies = ({ user }: Props) => {
             }
           : {
               friendlyUsername: (
-                <span title={friendlyUsername} className={styles.userHighlight}>
-                  {friendlyUsername}
+                <span title={friendlyName} className={styles.userHighlight}>
+                  {friendlyName}
                 </span>
               ),
             }

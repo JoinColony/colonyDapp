@@ -1,34 +1,30 @@
+import ApolloClient from 'apollo-client';
 import { $Values } from 'utility-types';
 import { Channel } from 'redux-saga';
-import {
-  all,
-  call,
-  fork,
-  put,
-  select,
-  take,
-  takeEvery,
-} from 'redux-saga/effects';
-import BigNumber from 'bn.js';
+import { all, call, fork, put } from 'redux-saga/effects';
 
-import { ROLES, ROOT_DOMAIN } from '~constants';
-import { ActionTypes, Action, AllActions } from '~redux/index';
-import {
-  putError,
-  takeFrom,
-  executeCommand,
-  executeQuery,
-  selectAsJS,
-  takeLatestCancellable,
-} from '~utils/saga/effects';
 import { Context, getContext } from '~context/index';
+import {
+  getLoggedInUser,
+  refetchUserNotifications,
+  CreateColonyDocument,
+  CreateColonyMutation,
+  CreateColonyMutationVariables,
+  CreateUserMutation,
+  CreateUserDocument,
+  CreateUserMutationVariables,
+  UserColonyAddressesDocument,
+  UserColonyAddressesQueryVariables,
+  UserColonyAddressesQuery,
+} from '~data/index';
 import ENS from '~lib/ENS';
+import { ActionTypes, Action, AllActions } from '~redux/index';
 import { createAddress, ContractContexts } from '~types/index';
+import { log } from '~utils/debug';
+import { putError, takeFrom, takeLatestCancellable } from '~utils/saga/effects';
 import { parseExtensionDeployedLog } from '~utils/web3/eventLogs/eventParsers';
 
 import { TxConfig } from '../../core/types';
-import { createUserProfile } from '../../users/data/commands';
-import { getProfileStoreAddress } from '../../users/data/queries';
 import {
   transactionAddParams,
   transactionAddIdentifier,
@@ -36,16 +32,6 @@ import {
   transactionLoadRelated,
 } from '../../core/actionCreators';
 import { createTransaction, createTransactionChannels } from '../../core/sagas';
-import {
-  currentUserSelector,
-  walletAddressSelector,
-} from '../../users/selectors';
-import { inboxItemsFetch, subscribeToColony } from '../../users/actionCreators';
-import { fetchDomainsAndRoles } from '../actionCreators/domains';
-import { userDidClaimProfile } from '../../users/checks';
-import { getUserRoles } from '../../transformers';
-import { createColonyProfile } from '../data/commands';
-import { getColonyName } from './shared';
 
 function* colonyCreate({
   meta,
@@ -60,12 +46,13 @@ function* colonyCreate({
     username: givenUsername,
   },
 }: Action<ActionTypes.COLONY_CREATE>) {
-  /*
-   * Get the current user's wallet address (needed for notifications).
-   */
-  const walletAddress = yield select(walletAddressSelector);
-  // @ts-ignore
-  const currentUser = yield selectAsJS(currentUserSelector);
+  const { username: currentUsername, walletAddress } = yield getLoggedInUser();
+
+  const apolloClient: ApolloClient<object> = yield getContext(
+    Context.APOLLO_CLIENT,
+  );
+
+  const TOKEN_DECIMALS = 18;
 
   /*
    * Define a manifest of transaction ids and their respective channels.
@@ -76,7 +63,7 @@ function* colonyCreate({
     /*
      * If the user did not claim a profile yet, define a tx to create the user.
      */
-    ...(!userDidClaimProfile(currentUser) ? ['createUser'] : []),
+    ...(!currentUsername ? ['createUser'] : []),
     /*
      * If the user opted to create a token, define a tx to create the token.
      */
@@ -135,27 +122,20 @@ function* colonyCreate({
       yield createGroupedTransaction(createUser, {
         context: ContractContexts.NETWORK_CONTEXT,
         methodName: 'registerUserLabel',
-        params: { username },
-        ready: false,
+        params: { username, orbitDBPath: '' },
+        ready: true,
       });
-
-      // @ts-ignore
-      const profileStoreAddress = yield executeQuery(getProfileStoreAddress, {
-        metadata: { walletAddress },
-      });
-      yield put(
-        transactionAddParams(createUser.id, {
-          orbitDBPath: profileStoreAddress,
-        }),
-      );
-      yield put(transactionReady(createUser.id));
     }
 
     if (createToken) {
       yield createGroupedTransaction(createToken, {
         context: ContractContexts.NETWORK_CONTEXT,
         methodName: 'createToken',
-        params: { name: tokenName, symbol: tokenSymbol, decimals: 18 },
+        params: {
+          name: tokenName,
+          symbol: tokenSymbol,
+          decimals: TOKEN_DECIMALS,
+        },
       });
     }
 
@@ -237,27 +217,20 @@ function* colonyCreate({
       yield takeFrom(createUser.channel, ActionTypes.TRANSACTION_SUCCEEDED);
       yield put<AllActions>(transactionLoadRelated(createUser.id, true));
 
-      const { metadataStore, inboxStore } = yield executeCommand(
-        createUserProfile,
-        {
-          args: { username, walletAddress },
-          metadata: { walletAddress },
+      yield apolloClient.mutate<
+        CreateUserMutation,
+        CreateUserMutationVariables
+      >({
+        mutation: CreateUserDocument,
+        variables: {
+          createUserInput: { username },
+          loggedInUserInput: { username },
         },
-      );
-
-      yield put<AllActions>(transactionLoadRelated(createUser.id, false));
-      yield put<AllActions>({
-        type: ActionTypes.USERNAME_CREATE_SUCCESS,
-        payload: {
-          inboxStoreAddress: inboxStore.address.toString(),
-          metadataStoreAddress: metadataStore.address.toString(),
-          username,
-        },
-        meta,
       });
 
-      // Dispatch an action to fetch the inbox items (see JoinColony/colonyDapp#1462)
-      yield put(inboxItemsFetch());
+      yield put<AllActions>(transactionLoadRelated(createUser.id, false));
+
+      yield refetchUserNotifications(walletAddress);
     }
 
     /*
@@ -309,35 +282,64 @@ function* colonyCreate({
     yield put(transactionLoadRelated(createColony.id, true));
 
     /*
-     * Create the colony store
+     * Create the colony in the Mongo Database
      */
-    const colonyStore = yield executeCommand(createColonyProfile, {
-      metadata: { colonyAddress },
-      args: {
-        colonyAddress,
-        colonyName,
-        displayName,
-        token: {
-          address: tokenAddress,
-          iconHash: tokenIcon,
-          isExternal: tokenChoice === 'select',
-          isNative: true,
-          name: tokenName,
-          symbol: tokenSymbol,
+    yield apolloClient.mutate<
+      CreateColonyMutation,
+      CreateColonyMutationVariables
+    >({
+      mutation: CreateColonyDocument,
+      variables: {
+        input: {
+          colonyAddress,
+          colonyName,
+          displayName,
+          tokenAddress,
+          tokenIsExternal: !createToken,
+          tokenName,
+          tokenSymbol,
+          tokenIconHash: tokenIcon,
+          tokenDecimals: TOKEN_DECIMALS,
         },
+      },
+      update: cache => {
+        try {
+          const cacheData = cache.readQuery<
+            UserColonyAddressesQuery,
+            UserColonyAddressesQueryVariables
+          >({
+            query: UserColonyAddressesDocument,
+            variables: {
+              address: walletAddress,
+            },
+          });
+          if (cacheData) {
+            const colonyAddresses = cacheData.user.colonyAddresses || [];
+            colonyAddresses.push(colonyAddress);
+            cache.writeQuery<
+              UserColonyAddressesQuery,
+              UserColonyAddressesQueryVariables
+            >({
+              query: UserColonyAddressesDocument,
+              data: {
+                user: {
+                  ...cacheData.user,
+                  colonyAddresses,
+                },
+              },
+              variables: {
+                address: walletAddress,
+              },
+            });
+          }
+        } catch (e) {
+          log.verbose(e);
+          log.verbose('Not updating store - colony addresses not loaded yet');
+        }
       },
     });
 
     yield put(transactionLoadRelated(createColony.id, false));
-
-    /*
-     * Pass through colonyStore Address after colony store creation to colonyName creation
-     */
-    yield put(
-      transactionAddParams(createLabel.id, {
-        orbitDBPath: colonyStore.address.toString(),
-      }),
-    );
 
     /*
      * Add a colonyAddress identifier to all pending transactions.
@@ -439,9 +441,6 @@ function* colonyCreate({
       setOneTxRoleFunding.channel,
       ActionTypes.TRANSACTION_SUCCEEDED,
     );
-
-    // Subscribe to the colony last, after successful colony creation
-    yield put(subscribeToColony(colonyAddress));
     return null;
   } catch (error) {
     yield putError(ActionTypes.COLONY_CREATE_ERROR, error, meta);
@@ -460,83 +459,7 @@ function* colonyCreate({
   }
 }
 
-// This function assumes that the founder is calling it
-function* hasExternalToken(colonyClient) {
-  let isExternal = false;
-  try {
-    yield call([colonyClient.mintTokens, colonyClient.mintTokens.estimate], {
-      amount: new BigNumber(1),
-    });
-  } catch (caughtError) {
-    isExternal = true;
-  }
-  return isExternal;
-}
-
-function* colonyRecover({
-  meta,
-  payload: { colonyAddress },
-}: Action<ActionTypes.COLONY_RECOVER_DB>) {
-  const colonyManager = yield* getContext(Context.COLONY_MANAGER);
-  const colonyClient = yield call(
-    [colonyManager, colonyManager.getColonyClient],
-    colonyAddress,
-  );
-  try {
-    const walletAddress = yield select(walletAddressSelector);
-
-    yield put(fetchDomainsAndRoles(colonyAddress));
-
-    const {
-      payload: { domains },
-    } = yield take<AllActions>(ActionTypes.COLONY_DOMAINS_FETCH_SUCCESS);
-
-    const userRoles = getUserRoles(domains, ROOT_DOMAIN, walletAddress);
-
-    if (!userRoles.includes(ROLES.ROOT))
-      throw new Error('Founder permission required');
-
-    const colonyName = yield call(getColonyName, colonyAddress);
-    const displayName = `Recovered: ${colonyName}`;
-
-    const {
-      tokenClient,
-      tokenClient: {
-        contract: { address: tokenAddress },
-      },
-    } = colonyClient;
-    const { name, symbol } = yield call([
-      tokenClient.getTokenInfo,
-      tokenClient.getTokenInfo.call,
-    ]);
-
-    const isExternalToken = yield call(hasExternalToken, colonyClient);
-
-    yield* executeCommand(createColonyProfile, {
-      metadata: { colonyAddress },
-      args: {
-        colonyAddress,
-        colonyName,
-        displayName,
-        token: {
-          address: tokenAddress,
-          isExternal: isExternalToken,
-          isNative: true,
-          name,
-          symbol,
-        },
-      },
-    });
-
-    // After a reload everything should be fine again.
-    window.location.reload();
-  } catch (caughtError) {
-    yield putError(ActionTypes.COLONY_RECOVER_DB_ERROR, caughtError, meta);
-  }
-}
-
 export default function* colonyCreateSaga() {
-  yield takeEvery(ActionTypes.COLONY_RECOVER_DB, colonyRecover);
   yield takeLatestCancellable(
     ActionTypes.COLONY_CREATE,
     ActionTypes.COLONY_CREATE_CANCEL,

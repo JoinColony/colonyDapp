@@ -1,12 +1,9 @@
+import ApolloClient from 'apollo-client';
 import { push } from 'connected-react-router';
-
 import {
   call,
-  delay,
   fork,
   put,
-  select,
-  take,
   takeEvery,
   takeLatest,
   setContext,
@@ -14,76 +11,108 @@ import {
 } from 'redux-saga/effects';
 
 import { Action, ActionTypes, AllActions } from '~redux/index';
-import { getContext, Context } from '~context/index';
+import { getContext, Context, TEMP_removeNewContext } from '~context/index';
 import ENS from '~lib/ENS';
-
-import { getUserProfileStoreAddress } from '../../../data/stores';
-import { inboxItemsFetch } from '../actionCreators';
-
+import { ColonyManager, createAddress } from '~types/index';
 import {
-  executeQuery,
-  executeCommand,
-  executeSubscription,
-  putError,
-  selectAsJS,
-  takeFrom,
-} from '~utils/saga/effects';
+  getLoggedInUser,
+  refetchUserNotifications,
+  ColonySubscribedUsersDocument,
+  CreateUserDocument,
+  CreateUserMutation,
+  CreateUserMutationVariables,
+  EditUserDocument,
+  EditUserMutation,
+  EditUserMutationVariables,
+  UserColonyAddressesQuery,
+  UserColonyAddressesQueryVariables,
+  ClearLoggedInUserDocument,
+  ClearLoggedInUserMutation,
+  ClearLoggedInUserMutationVariables,
+} from '~data/index';
+import { putError, takeFrom } from '~utils/saga/effects';
+import { getEventLogs, parseUserTransferEvent } from '~utils/web3/eventLogs';
 
+import { clearToken } from '../../../api/auth';
 import { ContractContexts } from '../../../lib/ColonyManager/constants';
-import {
-  walletAddressSelector,
-  currentUserMetadataSelector,
-  userColoniesSelector,
-} from '../selectors';
-
 import { ipfsUpload } from '../../core/sagas/ipfs';
-import {
-  transactionAddParams,
-  transactionReady,
-  transactionLoadRelated,
-} from '../../core/actionCreators';
-
-import {
-  createUserProfile,
-  updateTokens,
-  removeUserAvatar,
-  setUserAvatar,
-  subscribeToColony,
-  subscribeToTask,
-  updateUserProfile,
-  unsubscribeToColony,
-} from '../data/commands';
-import {
-  checkUsernameIsAvailable,
-  getUserAddress,
-  getUserColonies,
-  getUserColonyTransactions,
-  getUserProfile,
-  getUserTasks,
-  getUserTokens,
-  subscribeToUser,
-  subscribeToUserTasks,
-  subscribeToUserColonies,
-} from '../data/queries';
-
+import { transactionLoadRelated } from '../../core/actionCreators';
 import { createTransaction, getTxChannel } from '../../core/sagas/transactions';
 
 function* userTokenTransfersFetch( // eslint-disable-next-line @typescript-eslint/no-unused-vars,no-unused-vars
   action: Action<ActionTypes.USER_TOKEN_TRANSFERS_FETCH>,
 ) {
   try {
-    const walletAddress = yield select(walletAddressSelector);
-    const userColonyAddresses = yield selectAsJS(
-      userColoniesSelector,
-      walletAddress,
+    const { walletAddress } = yield getLoggedInUser();
+    const apolloClient: ApolloClient<object> = yield getContext(
+      Context.APOLLO_CLIENT,
     );
-    const transactions = yield executeQuery(getUserColonyTransactions, {
-      args: {
-        walletAddress,
-        userColonyAddresses:
-          (userColonyAddresses && userColonyAddresses.record) || [],
-      },
+    const colonyManager: ColonyManager = yield getContext(
+      Context.COLONY_MANAGER,
+    );
+
+    const { data } = yield apolloClient.query<
+      UserColonyAddressesQuery,
+      UserColonyAddressesQueryVariables
+    >({
+      query: ColonySubscribedUsersDocument,
+      variables: { address: walletAddress },
     });
+
+    if (!data) {
+      throw new Error('Could not get user colonies');
+    }
+
+    const {
+      user: { colonyAddresses: userColonyAddresses },
+    } = data;
+
+    const metaColonyClient = yield colonyManager.getMetaColonyClient();
+
+    const { tokenClient } = metaColonyClient;
+    const {
+      events: { Transfer },
+    } = tokenClient;
+    const logFilterOptions = {
+      events: [Transfer],
+    };
+
+    const transferToEventLogs = yield getEventLogs(
+      tokenClient,
+      { fromBlock: 1 },
+      {
+        ...logFilterOptions,
+        to: walletAddress,
+      },
+    );
+
+    const transferFromEventLogs = yield getEventLogs(
+      tokenClient,
+      { fromBlock: 1 },
+      {
+        ...logFilterOptions,
+        from: walletAddress,
+      },
+    );
+
+    // Combine and sort logs by blockNumber, then parse events from thihs
+    const logs = [...transferToEventLogs, ...transferFromEventLogs].sort(
+      (a, b) => a.blockNumber - b.blockNumber,
+    );
+    const transferEvents = yield tokenClient.parseLogs(logs);
+
+    const transactions = yield Promise.all(
+      transferEvents.map((event, i) =>
+        parseUserTransferEvent({
+          event,
+          log: logs[i],
+          tokenClient,
+          userColonyAddresses,
+          walletAddress,
+        }),
+      ),
+    );
+
     yield put<AllActions>({
       type: ActionTypes.USER_TOKEN_TRANSFERS_FETCH_SUCCESS,
       payload: { transactions },
@@ -99,13 +128,19 @@ function* userAddressFetch({
   meta,
 }: Action<ActionTypes.USER_ADDRESS_FETCH>) {
   try {
-    const userAddress = yield executeQuery(getUserAddress, {
-      args: { username },
-    });
+    const ens: ENS = yield getContext(Context.ENS_INSTANCE);
+    const colonyManager: ColonyManager = yield getContext(
+      Context.COLONY_MANAGER,
+    );
+
+    const address = yield ens.getAddress(
+      ENS.getFullDomain('user', username),
+      colonyManager.networkClient,
+    );
 
     yield put({
       type: ActionTypes.USER_ADDRESS_FETCH_SUCCESS,
-      payload: { userAddress },
+      payload: { userAddress: createAddress(address) },
       meta,
     });
   } catch (error) {
@@ -114,65 +149,15 @@ function* userAddressFetch({
   return null;
 }
 
-function* userFetch({
-  meta,
-  payload: { userAddress },
-}: Action<ActionTypes.USER_FETCH>) {
-  try {
-    const user = yield executeQuery(getUserProfile, {
-      args: undefined,
-      metadata: {
-        walletAddress: userAddress,
-      },
-    });
-    yield put<AllActions>({
-      type: ActionTypes.USER_FETCH_SUCCESS,
-      meta,
-      payload: user,
-    });
-  } catch (error) {
-    return yield putError(ActionTypes.USER_FETCH_ERROR, error, meta);
-  }
-  return null;
-}
-
-function* userProfileUpdate({
-  meta,
-  payload,
-}: Action<ActionTypes.USER_PROFILE_UPDATE>) {
-  try {
-    const walletAddress = yield select(walletAddressSelector);
-    yield executeCommand(updateUserProfile, {
-      metadata: {
-        walletAddress,
-      },
-      args: payload,
-    });
-
-    const user = yield executeQuery(getUserProfile, {
-      args: undefined,
-      metadata: {
-        walletAddress,
-      },
-    });
-    yield put<AllActions>({
-      type: ActionTypes.USER_PROFILE_UPDATE_SUCCESS,
-      meta,
-      payload: user,
-    });
-  } catch (error) {
-    return yield putError(ActionTypes.USER_PROFILE_UPDATE_ERROR, error, meta);
-  }
-  return null;
-}
-
 function* userAvatarRemove({ meta }: Action<ActionTypes.USER_AVATAR_REMOVE>) {
   try {
-    const walletAddress = yield select(walletAddressSelector);
-    yield executeCommand(removeUserAvatar, {
-      metadata: {
-        walletAddress,
-      },
+    const { walletAddress } = yield getLoggedInUser();
+    const apolloClient: ApolloClient<object> = yield getContext(
+      Context.APOLLO_CLIENT,
+    );
+    yield apolloClient.mutate<EditUserMutation, EditUserMutationVariables>({
+      mutation: EditUserDocument,
+      variables: { input: { avatarHash: null } },
     });
 
     yield put<AllActions>({
@@ -191,13 +176,15 @@ function* userAvatarUpload({
   payload,
 }: Action<ActionTypes.USER_AVATAR_UPLOAD>) {
   try {
-    const walletAddress = yield select(walletAddressSelector);
+    const { walletAddress } = yield getLoggedInUser();
+    const apolloClient: ApolloClient<object> = yield getContext(
+      Context.APOLLO_CLIENT,
+    );
     const ipfsHash = yield call(ipfsUpload, payload.data);
-    yield executeCommand(setUserAvatar, {
-      metadata: {
-        walletAddress,
-      },
-      args: { ipfsHash },
+
+    yield apolloClient.mutate<EditUserMutation, EditUserMutationVariables>({
+      mutation: EditUserDocument,
+      variables: { input: { avatarHash: ipfsHash } },
     });
 
     yield put<AllActions>({
@@ -215,41 +202,12 @@ function* userAvatarUpload({
   return null;
 }
 
-function* usernameCheckAvailability({
-  meta,
-  payload: { username },
-}: Action<ActionTypes.USERNAME_CHECK_AVAILABILITY>) {
-  try {
-    yield delay(300);
-
-    const isAvailable = yield executeQuery(checkUsernameIsAvailable, {
-      args: { username },
-    });
-
-    if (!isAvailable) {
-      throw new Error(`ENS address for user "${username}" already exists`);
-    }
-
-    yield put<AllActions>({
-      type: ActionTypes.USERNAME_CHECK_AVAILABILITY_SUCCESS,
-      meta,
-      payload: undefined,
-    });
-  } catch (error) {
-    return yield putError(
-      ActionTypes.USERNAME_CHECK_AVAILABILITY_ERROR,
-      error,
-      meta,
-    );
-  }
-  return null;
-}
-
 function* usernameCreate({
   meta: { id },
   meta,
   payload: { username: givenUsername },
 }: Action<ActionTypes.USERNAME_CREATE>) {
+  const { walletAddress } = yield getLoggedInUser();
   const txChannel = yield call(getTxChannel, id);
   try {
     // Normalize again, just to be sure
@@ -258,8 +216,8 @@ function* usernameCreate({
     yield fork(createTransaction, id, {
       context: ContractContexts.NETWORK_CONTEXT,
       methodName: 'registerUserLabel',
-      ready: false,
-      params: { username },
+      ready: true,
+      params: { username, orbitDBPath: '' },
       group: {
         key: 'transaction.batch.createUser',
         id,
@@ -267,43 +225,33 @@ function* usernameCreate({
       },
     });
 
-    const walletAddress = yield select(walletAddressSelector);
-
-    const ddb = yield getContext(Context.DDB_INSTANCE);
-
-    const getAddress = yield call(getUserProfileStoreAddress, ddb);
-    const profileStoreAddress = yield call(getAddress, { walletAddress });
-
-    const orbitDBPath = profileStoreAddress.toString();
-    yield put(transactionAddParams(id, { orbitDBPath }));
-    yield put(transactionReady(id));
+    const apolloClient: ApolloClient<object> = yield getContext(
+      Context.APOLLO_CLIENT,
+    );
 
     yield takeFrom(txChannel, ActionTypes.TRANSACTION_SUCCEEDED);
 
     yield put(transactionLoadRelated(id, true));
 
-    const { metadataStore, inboxStore } = yield executeCommand(
-      createUserProfile,
-      {
-        args: { username, walletAddress },
-        metadata: { walletAddress },
+    yield apolloClient.mutate<CreateUserMutation, CreateUserMutationVariables>({
+      mutation: CreateUserDocument,
+      variables: {
+        createUserInput: { username },
+        loggedInUserInput: { username },
       },
-    );
+    });
 
     yield put(transactionLoadRelated(id, false));
+
+    yield refetchUserNotifications(walletAddress);
 
     yield put<AllActions>({
       type: ActionTypes.USERNAME_CREATE_SUCCESS,
       payload: {
-        inboxStoreAddress: inboxStore.address.toString(),
-        metadataStoreAddress: metadataStore.address.toString(),
         username,
       },
       meta,
     });
-
-    // Dispatch an action to fetch the inbox items (see JoinColony/colonyDapp#1462)
-    yield put(inboxItemsFetch());
   } catch (error) {
     return yield putError(ActionTypes.USERNAME_CREATE_ERROR, error, meta);
   } finally {
@@ -313,9 +261,11 @@ function* usernameCreate({
 }
 
 function* userLogout() {
-  const ddb = yield getContext(Context.DDB_INSTANCE);
-
   try {
+    const apolloClient: ApolloClient<object> = yield getContext(
+      Context.APOLLO_CLIENT,
+    );
+    const { walletAddress } = yield getLoggedInUser();
     /*
      *  1. Destroy instances of colonyJS in the colonyManager? Probably.
      */
@@ -326,18 +276,28 @@ function* userLogout() {
     /*
      *  2. The purser wallet is reset
      */
-    yield setContext({ [Context.WALLET]: undefined });
+    TEMP_removeNewContext('wallet');
 
     /*
-     *  3. Close orbit store
+     *  3. Delete json web token
      */
-    yield call([ddb, ddb.stop]);
+    clearToken(walletAddress);
+
+    /*
+     *  4. Clear the currently logged in user
+     */
+    yield apolloClient.mutate<
+      ClearLoggedInUserMutation,
+      ClearLoggedInUserMutationVariables
+    >({
+      mutation: ClearLoggedInUserDocument,
+    });
 
     yield all([
       put<AllActions>({
         type: ActionTypes.USER_LOGOUT_SUCCESS,
       }),
-      put(push(`/dashboard`)),
+      put(push('/connect')),
     ]);
   } catch (error) {
     return yield putError(ActionTypes.USER_LOGOUT_ERROR, error);
@@ -345,360 +305,14 @@ function* userLogout() {
   return null;
 }
 
-function* userTokensFetch() {
-  try {
-    const walletAddress = yield select(walletAddressSelector);
-    const { metadataStoreAddress } = yield select(currentUserMetadataSelector);
-    const metadata = {
-      walletAddress,
-      metadataStoreAddress,
-    };
-    const tokens = yield executeQuery(getUserTokens, {
-      metadata,
-      args: {
-        walletAddress,
-      },
-    });
-    yield put<AllActions>({
-      type: ActionTypes.USER_TOKENS_FETCH_SUCCESS,
-      payload: { tokens },
-    });
-  } catch (error) {
-    return yield putError(ActionTypes.USER_TOKENS_FETCH_ERROR, error);
-  }
-  return null;
-}
-
-/**
- * Diff the current user tokens and the list sent as payload, and work out
- * which tokens need adding and which need removing. Then append the relevant
- * events to the user metadata store.
- */
-function* userTokensUpdate(action: Action<ActionTypes.USER_TOKENS_UPDATE>) {
-  try {
-    const { tokens } = action.payload;
-    const walletAddress = yield select(walletAddressSelector);
-    const { metadataStoreAddress } = yield select(currentUserMetadataSelector);
-    const metadata = {
-      walletAddress,
-      metadataStoreAddress,
-    };
-    yield executeCommand(updateTokens, {
-      metadata,
-      args: { tokens },
-    });
-
-    yield put({ type: ActionTypes.USER_TOKENS_FETCH });
-    yield put({ type: ActionTypes.USER_TOKENS_UPDATE_SUCCESS });
-  } catch (error) {
-    return yield putError(ActionTypes.USER_TOKENS_UPDATE_ERROR, error);
-  }
-  return null;
-}
-
-function* userSubscribedColoniesFetch(
-  action: Action<ActionTypes.USER_SUBSCRIBED_COLONIES_FETCH>,
-) {
-  try {
-    const {
-      payload: { walletAddress, metadataStoreAddress },
-      meta,
-    } = action;
-    const colonyAddresses = yield executeQuery(getUserColonies, {
-      args: undefined,
-      metadata: {
-        walletAddress,
-        metadataStoreAddress,
-      },
-    });
-    yield put<AllActions>({
-      type: ActionTypes.USER_SUBSCRIBED_COLONIES_FETCH_SUCCESS,
-      payload: { walletAddress, colonyAddresses },
-      meta,
-    });
-  } catch (error) {
-    return yield putError(
-      ActionTypes.USER_SUBSCRIBED_COLONIES_FETCH_SUCCESS,
-      error,
-    );
-  }
-  return null;
-}
-
-function* userColonySubscribe({
-  payload: { colonyAddress },
-  meta,
-}: Action<ActionTypes.USER_COLONY_SUBSCRIBE>) {
-  try {
-    const walletAddress = yield select(walletAddressSelector);
-    const { metadataStoreAddress } = yield select(currentUserMetadataSelector);
-    const metadata = {
-      walletAddress,
-      metadataStoreAddress,
-    };
-    const userColonyAddresses = yield executeQuery(getUserColonies, {
-      args: undefined,
-      metadata,
-    });
-    yield executeCommand(subscribeToColony, {
-      args: { colonyAddress, userColonyAddresses },
-      metadata,
-    });
-    yield put<AllActions>({
-      type: ActionTypes.USER_COLONY_SUBSCRIBE_SUCCESS,
-      payload: { colonyAddress, walletAddress },
-      meta,
-    });
-
-    // Dispatch an action to fetch the inbox items (see JoinColony/colonyDapp#1462)
-    yield put(inboxItemsFetch());
-  } catch (caughtError) {
-    return yield putError(
-      ActionTypes.USER_COLONY_SUBSCRIBE_ERROR,
-      caughtError,
-      meta,
-    );
-  }
-  return null;
-}
-
-function* userColonyUnsubscribe({
-  payload: { colonyAddress },
-  meta,
-}: Action<ActionTypes.USER_COLONY_UNSUBSCRIBE>) {
-  try {
-    const walletAddress = yield select(walletAddressSelector);
-    const { metadataStoreAddress } = yield select(currentUserMetadataSelector);
-    const metadata = {
-      walletAddress,
-      metadataStoreAddress,
-    };
-    const userColonyAddresses = yield executeQuery(getUserColonies, {
-      args: undefined,
-      metadata,
-    });
-
-    yield executeCommand(unsubscribeToColony, {
-      args: { colonyAddress, userColonyAddresses },
-      metadata,
-    });
-    yield put<AllActions>({
-      type: ActionTypes.USER_COLONY_UNSUBSCRIBE_SUCCESS,
-      payload: { colonyAddress, walletAddress },
-      meta,
-    });
-  } catch (caughtError) {
-    return yield putError(
-      ActionTypes.USER_COLONY_UNSUBSCRIBE_ERROR,
-      caughtError,
-      meta,
-    );
-  }
-  return null;
-}
-
-function* userSubscribedTasksFetch() {
-  try {
-    const walletAddress = yield select(walletAddressSelector);
-    const { metadataStoreAddress } = yield select(currentUserMetadataSelector);
-    const metadata = {
-      walletAddress,
-      metadataStoreAddress,
-    };
-    const userTasks = yield executeQuery(getUserTasks, {
-      args: undefined,
-      metadata,
-    });
-    yield put<AllActions>({
-      type: ActionTypes.USER_SUBSCRIBED_TASKS_FETCH_SUCCESS,
-      payload: userTasks,
-    });
-  } catch (error) {
-    return yield putError(ActionTypes.USER_SUBSCRIBED_TASKS_FETCH_ERROR, error);
-  }
-  return null;
-}
-
-function* userTaskSubscribe({
-  payload,
-}: Action<ActionTypes.USER_TASK_SUBSCRIBE>) {
-  try {
-    const walletAddress = yield select(walletAddressSelector);
-    const { metadataStoreAddress } = yield select(currentUserMetadataSelector);
-    const metadata = {
-      walletAddress,
-      metadataStoreAddress,
-    };
-    const userDraftIds = yield executeQuery(getUserTasks, {
-      args: undefined,
-      metadata,
-    });
-    if (
-      yield executeCommand(subscribeToTask, {
-        args: { ...payload, userDraftIds },
-        metadata,
-      })
-    ) {
-      yield put<AllActions>({
-        type: ActionTypes.USER_TASK_SUBSCRIBE_SUCCESS,
-        payload,
-      });
-    }
-  } catch (error) {
-    return yield putError(ActionTypes.USER_TASK_SUBSCRIBE_ERROR, error);
-  }
-  return null;
-}
-
-function* userSubStart({
-  meta,
-  payload: { userAddress },
-}: Action<ActionTypes.USER_SUB_START>) {
-  let channel;
-  try {
-    channel = yield call(executeSubscription, subscribeToUser, {
-      metadata: { walletAddress: userAddress },
-    });
-
-    yield fork(function* stopSubscription() {
-      yield take(
-        action =>
-          action.type === ActionTypes.USER_SUB_STOP &&
-          action.payload.userAddress === userAddress,
-      );
-      channel.close();
-    });
-
-    while (true) {
-      const userProfile = yield take(channel);
-      yield put({
-        type: ActionTypes.USER_SUB_EVENTS,
-        meta,
-        payload: userProfile,
-      });
-    }
-  } catch (caughtError) {
-    return yield putError(ActionTypes.USER_SUB_ERROR, caughtError, meta);
-  } finally {
-    if (channel && typeof channel.close == 'function') {
-      channel.close();
-    }
-  }
-}
-
-function* userSubscribedTasksSubStart() {
-  const walletAddress = yield select(walletAddressSelector);
-  const { metadataStoreAddress } = yield select(currentUserMetadataSelector);
-  let channel;
-  try {
-    channel = yield call(executeSubscription, subscribeToUserTasks, {
-      metadata: { walletAddress, metadataStoreAddress },
-    });
-
-    yield fork(function* stopSubscription() {
-      yield take(
-        action => action.type === ActionTypes.USER_SUBSCRIBED_TASKS_SUB_STOP,
-      );
-      channel.close();
-    });
-
-    while (true) {
-      const userTasks = yield take(channel);
-      yield put({
-        type: ActionTypes.USER_SUBSCRIBED_TASKS_SUB_EVENTS,
-        payload: userTasks,
-      });
-    }
-  } catch (caughtError) {
-    return yield putError(
-      ActionTypes.USER_SUBSCRIBED_TASKS_SUB_ERROR,
-      caughtError,
-    );
-  } finally {
-    if (channel && typeof channel.close == 'function') {
-      channel.close();
-    }
-  }
-}
-
-function* userSubscribedColoniesSubStart({
-  meta,
-  payload: { walletAddress, metadataStoreAddress },
-}: Action<ActionTypes.USER_SUBSCRIBED_COLONIES_SUB_START>) {
-  let channel;
-  try {
-    channel = yield call(executeSubscription, subscribeToUserColonies, {
-      metadata: { walletAddress, metadataStoreAddress },
-    });
-
-    yield fork(function* stopSubscription() {
-      yield take(
-        action =>
-          action.type === ActionTypes.USER_SUBSCRIBED_COLONIES_SUB_STOP &&
-          action.payload.walletAddress === walletAddress,
-      );
-      channel.close();
-    });
-
-    while (true) {
-      const colonyAddresses = yield take(channel);
-      yield put({
-        type: ActionTypes.USER_SUBSCRIBED_COLONIES_SUB_EVENTS,
-        meta,
-        payload: {
-          colonyAddresses,
-          walletAddress,
-        },
-      });
-    }
-  } catch (caughtError) {
-    return yield putError(
-      ActionTypes.USER_SUBSCRIBED_COLONIES_SUB_ERROR,
-      caughtError,
-      meta,
-    );
-  } finally {
-    if (channel && typeof channel.close == 'function') {
-      channel.close();
-    }
-  }
-}
-
-/* eslint-disable max-len,prettier/prettier */
 export function* setupUsersSagas() {
   yield takeEvery(ActionTypes.USER_ADDRESS_FETCH, userAddressFetch);
-  yield takeEvery(ActionTypes.USER_COLONY_SUBSCRIBE, userColonySubscribe);
-  yield takeEvery(ActionTypes.USER_COLONY_UNSUBSCRIBE, userColonyUnsubscribe);
-  yield takeEvery(ActionTypes.USER_FETCH, userFetch);
-  yield takeEvery(ActionTypes.USER_SUB_START, userSubStart);
-  yield takeEvery(
-    ActionTypes.USER_SUBSCRIBED_COLONIES_FETCH,
-    userSubscribedColoniesFetch
-  );
-  yield takeEvery(
-    ActionTypes.USER_SUBSCRIBED_COLONIES_SUB_START,
-    userSubscribedColoniesSubStart
-  );
-  yield takeEvery(
-    ActionTypes.USER_SUBSCRIBED_TASKS_FETCH,
-    userSubscribedTasksFetch
-  );
-  yield takeEvery(
-    ActionTypes.USER_SUBSCRIBED_TASKS_SUB_START,
-    userSubscribedTasksSubStart
-  );
-  yield takeEvery(ActionTypes.USER_TASK_SUBSCRIBE, userTaskSubscribe);
   yield takeEvery(
     ActionTypes.USER_TOKEN_TRANSFERS_FETCH,
-    userTokenTransfersFetch
+    userTokenTransfersFetch,
   );
-  yield takeEvery(ActionTypes.USER_TOKENS_FETCH, userTokensFetch);
-  yield takeLatest(ActionTypes.USERNAME_CHECK_AVAILABILITY, usernameCheckAvailability);
   yield takeLatest(ActionTypes.USER_AVATAR_REMOVE, userAvatarRemove);
   yield takeLatest(ActionTypes.USER_AVATAR_UPLOAD, userAvatarUpload);
   yield takeLatest(ActionTypes.USER_LOGOUT, userLogout);
-  yield takeLatest(ActionTypes.USER_PROFILE_UPDATE, userProfileUpdate);
-  yield takeLatest(ActionTypes.USER_TOKENS_UPDATE, userTokensUpdate);
   yield takeLatest(ActionTypes.USERNAME_CREATE, usernameCreate);
 }
-/* eslint-enable max-len,prettier/prettier */

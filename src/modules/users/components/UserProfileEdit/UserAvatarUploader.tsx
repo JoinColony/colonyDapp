@@ -2,7 +2,7 @@ import React from 'react';
 import { defineMessages } from 'react-intl';
 
 import { FileReaderFile } from '~core/FileUpload';
-import { UserType } from '~immutable/index';
+import { AnyUser } from '~data/index';
 import { useAsyncFunction } from '~utils/hooks';
 import AvatarUploader from '~core/AvatarUploader';
 import HookedUserAvatar from '~users/HookedUserAvatar';
@@ -19,7 +19,7 @@ const UserAvatar = HookedUserAvatar({ fetchUser: false });
 
 interface Props {
   /** Current user */
-  user: UserType;
+  user: AnyUser;
 }
 
 const uploadActions = {

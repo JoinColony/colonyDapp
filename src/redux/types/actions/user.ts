@@ -1,15 +1,9 @@
-import { Address, WithKey } from '~types/index';
-import {
-  ContractTransactionType,
-  TaskDraftId,
-  UserTokenReferenceType,
-  UserProfileType,
-} from '~immutable/index';
+import { Address } from '~types/index';
+import { ContractTransactionType } from '~immutable/index';
 
 import {
   ActionType,
   ActionTypeWithPayload,
-  ActionTypeWithPayloadAndMeta,
   ErrorActionType,
   UniqueActionType,
 } from './index';
@@ -17,6 +11,15 @@ import {
 import { ActionTypes } from '../../index';
 
 export type UserActionTypes =
+  | UniqueActionType<ActionTypes.USERNAME_CREATE, { username: string }, object>
+  | ErrorActionType<ActionTypes.USERNAME_CREATE_ERROR, object>
+  | UniqueActionType<
+      ActionTypes.USERNAME_CREATE_SUCCESS,
+      {
+        username: string;
+      },
+      object
+    >
   | UniqueActionType<ActionTypes.USER_AVATAR_REMOVE, object, object>
   | ErrorActionType<ActionTypes.USER_AVATAR_REMOVE_ERROR, object>
   | UniqueActionType<
@@ -46,91 +49,6 @@ export type UserActionTypes =
       { userAddress: string },
       object
     >
-  | UniqueActionType<
-      ActionTypes.USER_COLONY_SUBSCRIBE,
-      { colonyAddress: Address },
-      object
-    >
-  | ErrorActionType<ActionTypes.USER_COLONY_SUBSCRIBE_ERROR, object>
-  | UniqueActionType<
-      ActionTypes.USER_COLONY_SUBSCRIBE_SUCCESS,
-      { colonyAddress: Address; walletAddress: Address },
-      object
-    >
-  | UniqueActionType<
-      ActionTypes.USER_COLONY_UNSUBSCRIBE,
-      { colonyAddress: Address },
-      object
-    >
-  | ErrorActionType<ActionTypes.USER_COLONY_UNSUBSCRIBE_ERROR, object>
-  | UniqueActionType<
-      ActionTypes.USER_COLONY_UNSUBSCRIBE_SUCCESS,
-      { colonyAddress: Address; walletAddress: Address },
-      object
-    >
-  | ActionTypeWithPayloadAndMeta<
-      ActionTypes.USER_FETCH,
-      { userAddress: Address },
-      WithKey
-    >
-  | ErrorActionType<ActionTypes.USER_FETCH_ERROR, WithKey>
-  | ActionTypeWithPayloadAndMeta<
-      ActionTypes.USER_FETCH_SUCCESS,
-      UserProfileType,
-      WithKey
-    >
-  | ActionTypeWithPayloadAndMeta<
-      ActionTypes.USER_NOTIFICATION_METADATA_FETCH,
-      { readUntil: number; exceptFor: string[] },
-      WithKey
-    >
-  | ErrorActionType<ActionTypes.USER_NOTIFICATION_METADATA_FETCH_ERROR, object>
-  | ActionTypeWithPayload<
-      ActionTypes.USER_NOTIFICATION_METADATA_FETCH_SUCCESS,
-      { readUntil: number; exceptFor: string[] }
-    >
-  | UniqueActionType<
-      ActionTypes.USER_PROFILE_UPDATE,
-      {
-        bio?: string;
-        displayName?: string;
-        location?: string;
-        website?: string;
-      },
-      object
-    >
-  | ErrorActionType<ActionTypes.USER_PROFILE_UPDATE_ERROR, object>
-  | UniqueActionType<
-      ActionTypes.USER_PROFILE_UPDATE_SUCCESS,
-      UserProfileType,
-      object
-    >
-  | ActionTypeWithPayloadAndMeta<
-      ActionTypes.USER_SUBSCRIBED_COLONIES_FETCH,
-      { walletAddress: Address; metadataStoreAddress: string },
-      WithKey
-    >
-  | ErrorActionType<ActionTypes.USER_SUBSCRIBED_COLONIES_FETCH_ERROR, WithKey>
-  | ActionTypeWithPayloadAndMeta<
-      ActionTypes.USER_SUBSCRIBED_COLONIES_FETCH_SUCCESS,
-      { colonyAddresses: Address[]; walletAddress: Address },
-      WithKey
-    >
-  | ActionType<ActionTypes.USER_SUBSCRIBED_TASKS_FETCH>
-  | ErrorActionType<ActionTypes.USER_SUBSCRIBED_TASKS_FETCH_ERROR, object>
-  | ActionTypeWithPayload<
-      ActionTypes.USER_SUBSCRIBED_TASKS_FETCH_SUCCESS,
-      [Address, TaskDraftId][]
-    >
-  | ActionTypeWithPayload<
-      ActionTypes.USER_TASK_SUBSCRIBE,
-      { colonyAddress: Address; draftId: TaskDraftId }
-    >
-  | ErrorActionType<ActionTypes.USER_TASK_SUBSCRIBE_ERROR, object>
-  | ActionTypeWithPayload<
-      ActionTypes.USER_TASK_SUBSCRIBE_SUCCESS,
-      { colonyAddress: Address; draftId: TaskDraftId }
-    >
   | ActionType<ActionTypes.USER_TOKEN_TRANSFERS_FETCH>
   | ErrorActionType<ActionTypes.USER_TOKEN_TRANSFERS_FETCH_ERROR, object>
   | ActionTypeWithPayload<
@@ -139,64 +57,6 @@ export type UserActionTypes =
         transactions: ContractTransactionType[];
       }
     >
-  | ActionType<ActionTypes.USER_TOKENS_FETCH>
-  | ErrorActionType<ActionTypes.USER_TOKENS_FETCH_ERROR, object>
-  | ActionTypeWithPayload<
-      ActionTypes.USER_TOKENS_FETCH_SUCCESS,
-      {
-        tokens: UserTokenReferenceType[];
-      }
-    >
-  | ActionTypeWithPayload<
-      ActionTypes.USER_TOKENS_UPDATE,
-      {
-        tokens: Address[];
-      }
-    >
-  | ErrorActionType<ActionTypes.USER_TOKENS_UPDATE_ERROR, object>
-  | ActionType<ActionTypes.USER_TOKENS_UPDATE_SUCCESS>
   | ActionType<ActionTypes.USER_LOGOUT>
   | ErrorActionType<ActionTypes.USER_LOGOUT_ERROR, object>
-  | ActionType<ActionTypes.USER_LOGOUT_SUCCESS>
-  | ActionTypeWithPayloadAndMeta<
-      ActionTypes.USER_SUB_START,
-      { userAddress: Address },
-      WithKey
-    >
-  | ActionTypeWithPayloadAndMeta<
-      ActionTypes.USER_SUB_STOP,
-      { userAddress: Address },
-      WithKey
-    >
-  | ActionTypeWithPayloadAndMeta<
-      ActionTypes.USER_SUB_EVENTS,
-      UserProfileType,
-      WithKey
-    >
-  | ErrorActionType<ActionTypes.USER_SUB_ERROR, WithKey>
-  | ActionTypeWithPayloadAndMeta<
-      ActionTypes.USER_SUBSCRIBED_COLONIES_SUB_START,
-      { walletAddress: Address; metadataStoreAddress: string },
-      WithKey
-    >
-  | ActionTypeWithPayloadAndMeta<
-      ActionTypes.USER_SUBSCRIBED_COLONIES_SUB_STOP,
-      { walletAddress: Address },
-      WithKey
-    >
-  | ActionTypeWithPayloadAndMeta<
-      ActionTypes.USER_SUBSCRIBED_COLONIES_SUB_EVENTS,
-      {
-        colonyAddresses: Address[];
-        walletAddress: Address;
-      },
-      WithKey
-    >
-  | ErrorActionType<ActionTypes.USER_SUBSCRIBED_COLONIES_SUB_ERROR, WithKey>
-  | ActionType<ActionTypes.USER_SUBSCRIBED_TASKS_SUB_START>
-  | ActionType<ActionTypes.USER_SUBSCRIBED_TASKS_SUB_STOP>
-  | ActionTypeWithPayload<
-      ActionTypes.USER_SUBSCRIBED_TASKS_SUB_EVENTS,
-      [Address, TaskDraftId][]
-    >
-  | ErrorActionType<ActionTypes.USER_SUBSCRIBED_TASKS_SUB_ERROR, null>;
+  | ActionType<ActionTypes.USER_LOGOUT_SUCCESS>;

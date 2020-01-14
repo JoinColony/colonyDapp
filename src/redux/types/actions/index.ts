@@ -1,20 +1,15 @@
 import { ColonyActionTypes } from './colony';
 import { ConnectionActionTypes } from './connection';
-import { CurrentUserActionTypes } from './currentUser';
 import { DomainActionTypes } from './domain';
 import { GasPricesActionTypes } from './gasPrices';
-import { InboxActionTypes } from './inbox';
 import { IpfsActionTypes } from './ipfs';
 import { MultisigActionTypes } from './multisig';
 import { NetworkActionTypes } from './network';
-import { PersistActionTypes } from '../../persist';
 import { TaskActionTypes } from './task';
 import { TokenActionTypes } from './token';
 import { TransactionActionTypes } from './transaction';
 import { MessageActionTypes } from './message';
 import { UserActionTypes } from './user';
-import { InboxItemsActionTypes } from './inboxItems';
-import { UsernameActionTypes } from './username';
 import { WalletActionTypes } from './wallet';
 
 /*
@@ -100,21 +95,16 @@ export interface ErrorActionType<T extends string, M>
 export type AllActions =
   | ColonyActionTypes
   | ConnectionActionTypes
-  | CurrentUserActionTypes
   | DomainActionTypes
   | GasPricesActionTypes
-  | InboxActionTypes
   | IpfsActionTypes
   | MultisigActionTypes
   | NetworkActionTypes
-  | PersistActionTypes
   | TaskActionTypes
   | TokenActionTypes
   | TransactionActionTypes
   | MessageActionTypes
   | UserActionTypes
-  | InboxItemsActionTypes
-  | UsernameActionTypes
   | WalletActionTypes;
 
 export type Action<T extends AllActions['type']> = Extract<

@@ -13,14 +13,11 @@ import { ActionFileUpload } from '~core/FileUpload';
 import { multiLineTextEllipsis } from '~utils/strings';
 import { mapPayload } from '~utils/actions';
 import ENS from '~lib/ENS';
+import { OneToken } from '~data/index';
+
 import TokenSelector from './TokenSelector';
 
 import styles from './StepSelectToken.css';
-
-type TokenData = {
-  name: string;
-  symbol: string;
-} | null;
 
 interface FormValues {
   tokenAddress: string;
@@ -28,7 +25,7 @@ interface FormValues {
   tokenSymbol?: string;
   tokenName?: string;
   tokenIcon?: string;
-  tokenData: TokenData | null;
+  tokenData: OneToken | null;
   colonyName: string;
 }
 
@@ -89,16 +86,17 @@ export const validationSchema = yup.object({
 const StepSelectToken = ({
   nextStep,
   previousStep,
+  stepCompleted,
   wizardForm: { initialValues },
   wizardValues,
 }: Props) => {
   const [tokenData, setTokenData] = useState();
 
-  const handleTokenSelect = (data: TokenData, setFieldValue: SetFieldValue) => {
-    setTokenData(data);
-    if (data) {
-      setFieldValue('tokenName', data.name);
-      setFieldValue('tokenSymbol', data.symbol);
+  const handleTokenSelect = (token: OneToken, setFieldValue: SetFieldValue) => {
+    setTokenData(token);
+    if (token) {
+      setFieldValue('tokenName', token.details.name);
+      setFieldValue('tokenSymbol', token.details.symbol);
     }
   };
 
@@ -150,12 +148,12 @@ const StepSelectToken = ({
         validationSchema={validationSchema}
         initialValues={initialValues}
       >
-        {({ isValid, setFieldValue, values }) => (
+        {({ dirty, isValid, setFieldValue, values }) => (
           <div>
             <TokenSelector
               tokenAddress={values.tokenAddress}
-              onTokenSelect={(data: TokenData) =>
-                handleTokenSelect(data, setFieldValue)
+              onTokenSelect={(token: OneToken) =>
+                handleTokenSelect(token, setFieldValue)
               }
               tokenData={tokenData}
               extra={
@@ -203,7 +201,7 @@ const StepSelectToken = ({
               <Button
                 appearance={{ theme: 'primary', size: 'large' }}
                 type="submit"
-                disabled={!isValid}
+                disabled={!isValid || (!dirty && !stepCompleted)}
                 text={MSG.continue}
               />
             </div>

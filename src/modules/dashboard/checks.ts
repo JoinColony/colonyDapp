@@ -1,17 +1,14 @@
 import { ROLES } from '~constants';
-import { TaskStates } from '~data/constants';
-import { ColonyType, TaskType, TaskUserType } from '~immutable/index';
+import { AnyTask, FullColonyFragment } from '~data/index';
+import { TaskUserType } from '~immutable/index';
 import { Address } from '~types/index';
 import { hasRoot, canAdminister, canFund } from '../users/checks';
 
 /*
  * Colony
  */
-export const isInRecoveryMode = (colony: ColonyType | undefined) =>
-  !!(colony && colony.inRecoveryMode);
-
 export const canBeUpgraded = (
-  colony: ColonyType | undefined,
+  colony: FullColonyFragment | undefined,
   networkVersion: number | null,
 ) =>
   colony && colony.version && networkVersion && networkVersion > colony.version;
@@ -28,89 +25,94 @@ export const didClaimPayout = (
   userAddress: Address,
 ) => taskUser && taskUser.didClaimPayout && taskUser.address === userAddress;
 
-export const isManager = ({ managerAddress }: TaskType, userAddress: Address) =>
-  managerAddress === userAddress;
+// @todo reimplement isManager
+export const isManager = (task: AnyTask, managerAddress?: string) =>
+  task && !!managerAddress && false;
 
-export const isWorker = ({ workerAddress }: TaskType, userAddress: Address) =>
-  workerAddress === userAddress;
+export const isWorker = (
+  { assignedWorkerAddress }: AnyTask,
+  userAddress: Address,
+) => assignedWorkerAddress && assignedWorkerAddress === userAddress;
 
-export const isCreator = ({ creatorAddress }: TaskType, userAddress: Address) =>
-  creatorAddress === userAddress;
+export const isCreator = ({ creatorAddress }: AnyTask, userAddress: Address) =>
+  creatorAddress && creatorAddress === userAddress;
 
-export const isPayoutsSet = ({ payouts }: TaskType) =>
+export const isPayoutsSet = ({ payouts }: AnyTask) =>
   !!payouts && payouts.length > 0;
 
-export const isFinalized = ({ currentState }: TaskType) =>
-  currentState === TaskStates.FINALIZED;
+export const isFinalized = ({ finalizedAt }: AnyTask) => !!finalizedAt;
 
-export const isCancelled = ({ currentState }: TaskType) =>
-  currentState === TaskStates.CANCELLED;
+export const isCancelled = ({ cancelledAt }: AnyTask) => !!cancelledAt;
 
-export const isRating = ({ currentState }: TaskType) =>
-  currentState === TaskStates.RATING;
+// @todo reimplement isRating
+export const isRating = (task: AnyTask) => task && false;
 
-export const isActive = ({ currentState }: TaskType) =>
-  currentState === TaskStates.ACTIVE;
+export const isActive = ({ cancelledAt, finalizedAt }: AnyTask) =>
+  !cancelledAt && !finalizedAt;
 
-export const isReveal = ({ currentState }: TaskType) =>
-  currentState === TaskStates.REVEAL;
+// @todo reimplement isReveal
+export const isReveal = (task: AnyTask) => task && false;
 
-export const didDueDateElapse = ({ dueDate }: TaskType) =>
-  !!(dueDate && dueDate < new Date());
+export const didDueDateElapse = ({ dueDate }: AnyTask) =>
+  !!(dueDate && new Date(dueDate) < new Date());
 
-export const isWorkerSet = ({ workerAddress }: TaskType) => !!workerAddress;
+export const isWorkerSet = ({ assignedWorkerAddress }: AnyTask) =>
+  !!assignedWorkerAddress;
 
-export const canEditTask = (task: TaskType, roles: ROLES[]) =>
+export const canEditTask = (task: AnyTask, roles: ROLES[]) =>
   !isFinalized(task) && !isCancelled(task) && canAdminister(roles);
 
-export const isDomainSet = ({ domainId }: TaskType) => !!domainId;
+export const isDomainSet = ({ ethDomainId }: AnyTask) => !!ethDomainId;
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-export const isSkillSet = ({ skillId }: TaskType) => !!skillId;
+export const isSkillSet = ({ ethSkillId }: AnyTask) => !!ethSkillId;
 
 /**
  * @todo Fix task rating checks logic.
  * @body Fix this logic in #169
  */
 // eslint-disable-next-line no-unused-vars, @typescript-eslint/no-unused-vars
-export const workerCanRateManager = (task: TaskType, userAddress: Address) =>
+export const workerCanRateManager = (task: AnyTask, userAddress: Address) =>
   false;
 
-export const workerCanEndTask = (task: TaskType, userAddress: Address) =>
+export const workerCanEndTask = (task: AnyTask, userAddress: Address) =>
   isWorker(task, userAddress) && !(isRating(task) || didDueDateElapse(task));
 
 export const workerCanRevealManagerRating = (
-  task: TaskType,
+  task: AnyTask,
   userAddress: Address,
 ) => !!(isWorker(task, userAddress) && isReveal(task));
 
-export const managerCanRateWorker = (task: TaskType, userAddress: Address) =>
+export const managerCanRateWorker = (task: AnyTask, userAddress: Address) =>
   !!(isManager(task, userAddress) && isRating(task));
 
-export const managerCanEndTask = (task: TaskType, userAddress: Address) =>
+export const managerCanEndTask = (task: AnyTask, userAddress: Address) =>
   !isRating(task) && isManager(task, userAddress) && didDueDateElapse(task);
 
 export const managerCanRevealWorkerRating = (
-  task: TaskType,
+  task: AnyTask,
   userAddress: Address,
 ) => isManager(task, userAddress) && isReveal(task);
 
-export const canCancelTask = (task: TaskType, roles: ROLES[]) =>
+export const canCancelTask = (task: AnyTask, roles: ROLES[]) =>
   isActive(task) && canAdminister(roles);
 
 export const hasRequestedToWork = (
-  { requests = [] }: TaskType,
+  { workRequestAddresses = [] }: AnyTask,
   userAddress: Address,
-) => requests.find(requestAddress => requestAddress === userAddress);
+) =>
+  workRequestAddresses.find(
+    workRequestAddress => workRequestAddress === userAddress,
+  );
 
-export const canRequestToWork = (task: TaskType, userAddress: Address) =>
+export const canRequestToWork = (task: AnyTask, userAddress: Address) =>
   !(
-    task.workerAddress ||
+    isWorkerSet(task) ||
     isCreator(task, userAddress) ||
     hasRequestedToWork(task, userAddress)
   ) && isActive(task);
 
-export const canFinalizeTask = (task: TaskType, roles: ROLES[]) =>
+export const canFinalizeTask = (task: AnyTask, roles: ROLES[]) =>
   task &&
   isActive(task) &&
   isWorkerSet(task) &&

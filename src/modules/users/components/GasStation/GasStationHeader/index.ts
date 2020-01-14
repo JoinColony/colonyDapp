@@ -1,2 +1,1 @@
-// @ts-ignore
-export { default } from './GasStationHeader.ts';
+export { default } from './GasStationHeader';

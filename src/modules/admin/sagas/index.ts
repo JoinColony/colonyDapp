@@ -1,48 +1,96 @@
-import { all, call, fork, put, takeEvery, select } from 'redux-saga/effects';
+import ApolloClient from 'apollo-client';
+import { call, fork, getContext, put, takeEvery } from 'redux-saga/effects';
+import BigNumber from 'bn.js';
 
-import { ROOT_DOMAIN, COLONY_TOTAL_BALANCE_DOMAIN_ID } from '~constants';
+import { ZERO_ADDRESS } from '~utils/web3/constants';
 import { AllActions, Action, ActionTypes } from '~redux/index';
+import { takeFrom, putError } from '~utils/saga/effects';
+import { ColonyClient, ColonyManager, ContractContexts } from '~types/index';
+import { Context } from '~context/index';
 import {
-  takeFrom,
-  putError,
-  executeCommand,
-  executeQuery,
-} from '~utils/saga/effects';
-import { ContractContexts } from '~types/index';
-// import { Context, getContext } from '~context/index';
-// import { decorateLog } from '~utils/web3/eventLogs/events';
-// import { normalizeTransactionLog } from '~data/normalizers';
-import { getColony } from '../../dashboard/data/queries';
+  ColonyQuery,
+  ColonyQueryVariables,
+  ColonyDocument,
+  TokenBalancesForDomainsQuery,
+  TokenBalancesForDomainsQueryVariables,
+  TokenBalancesForDomainsDocument,
+} from '~data/index';
 import {
-  getColonyTransactions,
-  getColonyUnclaimedTransactions,
-} from '../data/queries';
-import { updateTokenInfo } from '../../dashboard/data/commands';
+  getLogsAndEvents,
+  parseColonyFundsClaimedEvent,
+  parseColonyFundsMovedBetweenFundingPotsEvent,
+  parsePayoutClaimedEvent,
+  parseUnclaimedTransferEvent,
+} from '~utils/web3/eventLogs';
+import { ContractTransactionType } from '~immutable/index';
+
 import { createTransaction, getTxChannel } from '../../core/sagas';
 import { transactionReady } from '../../core/actionCreators';
 import {
   fetchColonyTransactions,
   fetchColonyUnclaimedTransactions,
 } from '../actionCreators';
-import { fetchColony } from '../../dashboard/actionCreators';
-import { colonyNativeTokenSelector } from '../../dashboard/selectors';
+
+const EVENT_PARSERS = {
+  ColonyFundsClaimed: parseColonyFundsClaimedEvent,
+  // eslint-disable-next-line max-len
+  ColonyFundsMovedBetweenFundingPots: parseColonyFundsMovedBetweenFundingPotsEvent,
+  PayoutClaimed: parsePayoutClaimedEvent,
+};
 
 function* colonyTransactionsFetch({
   payload: { colonyAddress },
   meta,
 }: Action<ActionTypes.COLONY_TRANSACTIONS_FETCH>) {
   try {
-    const transactions = yield executeQuery(getColonyTransactions, {
-      args: undefined,
-      metadata: {
-        colonyAddress,
+    const colonyManager: ColonyManager = yield getContext(
+      Context.COLONY_MANAGER,
+    );
+    const colonyClient: ColonyClient = yield colonyManager.getColonyClient(
+      colonyAddress,
+    );
+    const {
+      events: {
+        ColonyFundsClaimed,
+        // ColonyFundsMovedBetweenFundingPots,
+        PayoutClaimed,
       },
-    });
+    } = colonyClient;
+    const { events, logs } = yield getLogsAndEvents(
+      colonyClient,
+      {
+        address: colonyAddress,
+        fromBlock: 1,
+      },
+      {
+        events: [
+          ColonyFundsClaimed,
+          /*
+        @todo Refactor Colony transactions
+        @body The Colony transactions list is currently really just
+        events, vaguely displayed as transactions. It should be refactored
+        along with the user wallet transactions list.
+       */
+          // ColonyFundsMovedBetweenFundingPots,
+          PayoutClaimed,
+        ],
+      },
+    );
+    const transactions = yield Promise.all(
+      events.map((event, i) =>
+        EVENT_PARSERS[event.eventName]({
+          event,
+          log: logs[i],
+          colonyClient,
+          colonyAddress,
+        }),
+      ),
+    );
 
     yield put<AllActions>({
       type: ActionTypes.COLONY_TRANSACTIONS_FETCH_SUCCESS,
       meta,
-      payload: { colonyAddress, transactions },
+      payload: { colonyAddress, transactions: transactions.filter(Boolean) },
     });
   } catch (error) {
     return yield putError(
@@ -59,10 +107,83 @@ function* colonyUnclaimedTransactionsFetch({
   meta,
 }: Action<ActionTypes.COLONY_UNCLAIMED_TRANSACTIONS_FETCH>) {
   try {
-    const transactions = yield executeQuery(getColonyUnclaimedTransactions, {
-      args: undefined,
-      metadata: { colonyAddress },
+    const colonyManager: ColonyManager = yield getContext(
+      Context.COLONY_MANAGER,
+    );
+    const colonyClient: ColonyClient = yield colonyManager.getColonyClient(
+      colonyAddress,
+    );
+    const {
+      events: { ColonyFundsClaimed },
+      tokenClient,
+    } = colonyClient;
+    const {
+      events: { Transfer },
+    } = tokenClient;
+
+    // Get logs & events for token transfer to this colony
+    const {
+      logs: transferLogs,
+      events: transferEvents,
+    } = yield getLogsAndEvents(
+      tokenClient,
+      { fromBlock: 1 },
+      { events: [Transfer], to: colonyAddress },
+    );
+
+    // Get logs & events for token claims by this colony
+    const { logs: claimLogs, events: claimEvents } = yield getLogsAndEvents(
+      colonyClient,
+      { address: colonyAddress, fromBlock: 1 },
+      { events: [ColonyFundsClaimed] },
+    );
+
+    const unclaimedTransfers = yield Promise.all(
+      transferEvents.map((transferEvent, i) =>
+        parseUnclaimedTransferEvent({
+          claimEvents,
+          claimLogs,
+          colonyClient,
+          colonyAddress,
+          transferEvent,
+          transferLog: transferLogs[i],
+        }),
+      ),
+    );
+
+    // Get ether balance and add a fake transaction if there's any unclaimed
+    const colonyEtherBalance = yield colonyClient.adapter.provider.getBalance(
+      colonyAddress,
+    );
+    const {
+      total: colonyNonRewardsPotsTotal,
+    } = yield colonyClient.getNonRewardPotsTotal.call({ token: ZERO_ADDRESS });
+    const {
+      balance: colonyRewardsPotTotal,
+    } = yield colonyClient.getFundingPotBalance.call({
+      potId: 0,
+      token: ZERO_ADDRESS,
     });
+    const unclaimedEther = new BigNumber(
+      colonyEtherBalance
+        .sub(colonyNonRewardsPotsTotal)
+        .sub(colonyRewardsPotTotal)
+        .toString(10),
+    );
+    if (unclaimedEther.gtn(0)) {
+      unclaimedTransfers.push({
+        amount: unclaimedEther,
+        colonyAddress,
+        date: new Date(),
+        hash: '0x0',
+        incoming: true,
+        token: ZERO_ADDRESS,
+      });
+    }
+
+    const transactions = unclaimedTransfers.filter(
+      Boolean,
+    ) as ContractTransactionType[];
 
     yield put<Action<ActionTypes.COLONY_UNCLAIMED_TRANSACTIONS_FETCH_SUCCESS>>({
       type: ActionTypes.COLONY_UNCLAIMED_TRANSACTIONS_FETCH_SUCCESS,
@@ -88,6 +209,10 @@ function* colonyClaimToken({
 }: Action<ActionTypes.COLONY_CLAIM_TOKEN>) {
   let txChannel;
   try {
+    const apolloClient: ApolloClient<object> = yield getContext(
+      Context.APOLLO_CLIENT,
+    );
+
     txChannel = yield call(getTxChannel, meta.id);
     yield fork(createTransaction, meta.id, {
       context: ContractContexts.COLONY_CONTEXT,
@@ -108,46 +233,18 @@ function* colonyClaimToken({
     });
     yield put<AllActions>(fetchColonyTransactions(colonyAddress));
     yield put<AllActions>(fetchColonyUnclaimedTransactions(colonyAddress));
-    yield put<AllActions>({
-      type: ActionTypes.COLONY_TOKEN_BALANCE_FETCH,
-      payload: { colonyAddress, domainId: ROOT_DOMAIN, tokenAddress },
+
+    yield apolloClient.query<
+      TokenBalancesForDomainsQuery,
+      TokenBalancesForDomainsQueryVariables
+    >({
+      query: TokenBalancesForDomainsDocument,
+      variables: { colonyAddress, tokenAddresses: [tokenAddress] },
     });
   } catch (error) {
     return yield putError(ActionTypes.COLONY_CLAIM_TOKEN_ERROR, error, meta);
   } finally {
     if (txChannel) txChannel.close();
-  }
-  return null;
-}
-
-function* colonyUpdateTokens({
-  payload: { colonyAddress, tokens },
-  payload,
-  meta,
-}: Action<ActionTypes.COLONY_UPDATE_TOKENS>) {
-  try {
-    /*
-     * @todo Consider fetching tokens from state
-     * @body Consider fetching tokens from state instead of executing a query before updating colony tokens
-     */
-    const { tokens: currentTokenReferences = {} } = yield executeQuery(
-      getColony,
-      {
-        args: { colonyAddress },
-        metadata: { colonyAddress },
-      },
-    );
-    yield executeCommand(updateTokenInfo, {
-      metadata: { colonyAddress },
-      args: { tokens, currentTokenReferences },
-    });
-    yield put(fetchColony(colonyAddress));
-
-    // We could consider dispatching an action to fetch tokens when
-    // successfully updating them
-    yield put({ type: ActionTypes.COLONY_UPDATE_TOKENS_SUCCESS, payload });
-  } catch (error) {
-    return yield putError(ActionTypes.COLONY_UPDATE_TOKENS_ERROR, error, meta);
   }
   return null;
 }
@@ -159,10 +256,27 @@ function* colonyMintTokens({
   let txChannel;
   try {
     txChannel = yield call(getTxChannel, meta.id);
-    const { address: nativeTokenAddress } = yield select(
-      colonyNativeTokenSelector,
-      colonyAddress,
+    const apolloClient: ApolloClient<object> = yield getContext(
+      Context.APOLLO_CLIENT,
     );
+    const { data } = yield apolloClient.query<
+      ColonyQuery,
+      ColonyQueryVariables
+    >({
+      query: ColonyDocument,
+      variables: { address: colonyAddress },
+    });
+
+    if (!data) {
+      throw new Error('Could not get Colony tokens');
+    }
+
+    const {
+      colony: { nativeTokenAddress },
+    } = data;
+    if (!nativeTokenAddress) {
+      throw new Error(`Could not get the Colony's native token`);
+    }
 
     // setup batch ids and channels
     const batchKey = 'mintTokens';
@@ -225,36 +339,16 @@ function* colonyMintTokens({
     */
     const mintLog = receipt.logs[0];
     if (mintLog) {
-      const tokenAddress = mintLog.address;
-      yield all([
-        put<AllActions>({
-          type: ActionTypes.COLONY_TOKEN_BALANCE_FETCH,
-          payload: {
-            colonyAddress,
-            domainId: COLONY_TOTAL_BALANCE_DOMAIN_ID,
-            tokenAddress,
-          },
-        }),
-        put<AllActions>({
-          type: ActionTypes.COLONY_TOKEN_BALANCE_FETCH,
-          payload: { colonyAddress, domainId: ROOT_DOMAIN, tokenAddress },
-        }),
-      ]);
-
-      // const colonyManager = yield getContext(Context.COLONY_MANAGER);
-      // const tokenClient = yield call(
-      //   [colonyManager, colonyManager.getTokenClient],
-      //   tokenAddress,
-      // );
-
-      /*
-       * Notification
-       */
-
-      // const decoratedLog = yield call(decorateLog, tokenClient, mintLog);
-      // yield putNotification(
-      //   normalizeTransactionLog(tokenAddress, decoratedLog),
-      // );
+      yield apolloClient.query<
+        TokenBalancesForDomainsQuery,
+        TokenBalancesForDomainsQueryVariables
+      >({
+        query: TokenBalancesForDomainsDocument,
+        variables: {
+          colonyAddress,
+          tokenAddresses: [nativeTokenAddress],
+        },
+      });
     }
 
     yield put<AllActions>({
@@ -280,6 +374,5 @@ export default function* adminSagas() {
     colonyUnclaimedTransactionsFetch,
   );
   yield takeEvery(ActionTypes.COLONY_CLAIM_TOKEN, colonyClaimToken);
-  yield takeEvery(ActionTypes.COLONY_UPDATE_TOKENS, colonyUpdateTokens);
   yield takeEvery(ActionTypes.COLONY_MINT_TOKENS, colonyMintTokens);
 }

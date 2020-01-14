@@ -4,20 +4,16 @@ import {
   FormattedMessage,
   injectIntl,
 } from 'react-intl';
-import React from 'react';
+import React, { useCallback } from 'react';
 import { RouteComponentProps, withRouter } from 'react-router-dom';
 import compose from 'recompose/compose';
+import BigNumber from 'bn.js';
 
-import { Address } from '~types/index';
-import { TaskType } from '~immutable/index';
-import { useDataFetcher } from '~utils/hooks';
-import { colonyNameFetcher } from '../../fetchers';
+import { AnyTask, Payouts } from '~data/index';
 import { TableRow, TableCell } from '~core/Table';
 import PayoutsList from '~core/PayoutsList';
 import HookedUserAvatar from '~users/HookedUserAvatar';
-import { SpinnerLoader } from '~core/Preloaders';
-import { useColonyNativeToken } from '../../hooks/useColonyNativeToken';
-import { useColonyTokens } from '../../hooks/useColonyTokens';
+
 import styles from './TaskListItem.css';
 
 const MSG = defineMessages({
@@ -33,89 +29,56 @@ const MSG = defineMessages({
 
 const UserAvatar = HookedUserAvatar();
 
-interface Props {
-  data: {
-    key: string;
-    entry: [Address, string];
-    data: TaskType | void;
-    isFetching: boolean;
-    error: boolean;
-  };
-}
-
 type EnhancerProps = RouteComponentProps & InjectedIntlProps;
 
-interface InnerProps extends Props, EnhancerProps {}
+interface Props extends EnhancerProps {
+  task: AnyTask;
+}
 
 const displayName = 'dashboard.TaskList.TaskListItem';
 
-const TaskListItem = ({
-  data,
-  intl: { formatMessage },
-  history,
-}: InnerProps) => {
-  const {
-    data: task,
-    entry: [colonyAddress, draftId],
-    isFetching: isFetchingTask,
-  } = data;
+const TaskListItem = ({ task, intl: { formatMessage }, history }: Props) => {
   const defaultTitle = formatMessage(MSG.untitled);
   const {
-    workerAddress = undefined,
-    payouts = [],
-    reputation = undefined,
+    id: draftId,
+    assignedWorkerAddress,
+    payouts,
     title = defaultTitle,
-  } = task || {};
+    colony: { colonyName, nativeTokenAddress },
+  } = task;
 
-  const { data: colonyName, isFetching: isFetchingColonyName } = useDataFetcher(
-    colonyNameFetcher,
-    [colonyAddress],
-    [colonyAddress],
-  );
+  // @todo get reputation from centralized store
+  let reputation: BigNumber | undefined;
 
-  const nativeTokenRef = useColonyNativeToken(colonyAddress);
-  const [, availableTokens] = useColonyTokens(colonyAddress);
-
-  if (!task || !colonyName || isFetchingTask || isFetchingColonyName) {
-    return (
-      <TableRow>
-        <TableCell className={styles.taskLoading}>
-          <SpinnerLoader appearance={{ size: 'medium' }} />
-        </TableCell>
-      </TableRow>
-    );
-  }
-
-  const handleClick = () => {
+  const handleClick = useCallback(() => {
     history.push({
       pathname: `/colony/${colonyName}/task/${draftId}`,
     });
-  };
+  }, [colonyName, draftId, history]);
 
   return (
     <TableRow className={styles.globalLink} onClick={() => handleClick()}>
       <TableCell className={styles.taskDetails}>
         <p className={styles.taskDetailsTitle}>{title || defaultTitle}</p>
-        {reputation ? (
+        {!!reputation && (
           <span className={styles.taskDetailsReputation}>
             <FormattedMessage
               {...MSG.reputation}
               values={{ reputation: reputation.toString() }}
             />
           </span>
-        ) : null}
-      </TableCell>
-      <TableCell className={styles.taskPayouts}>
-        {!!availableTokens && (
-          <PayoutsList
-            payouts={payouts}
-            nativeToken={nativeTokenRef}
-            tokenOptions={availableTokens}
-          />
         )}
       </TableCell>
+      <TableCell className={styles.taskPayouts}>
+        <PayoutsList
+          nativeTokenAddress={nativeTokenAddress}
+          payouts={payouts as Payouts}
+        />
+      </TableCell>
       <TableCell className={styles.userAvatar}>
-        {workerAddress && <UserAvatar size="s" address={workerAddress} />}
+        {assignedWorkerAddress && (
+          <UserAvatar size="s" address={assignedWorkerAddress} />
+        )}
       </TableCell>
     </TableRow>
   );

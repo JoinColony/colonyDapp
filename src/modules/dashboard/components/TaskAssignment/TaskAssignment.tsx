@@ -1,40 +1,38 @@
 import React from 'react';
 
-import { TaskProps, UserType } from '~immutable/index';
 import Assignment from '~core/Assignment';
 import { SpinnerLoader } from '~core/Preloaders';
-import { useDataSubscriber, useSelector } from '~utils/hooks';
-import { taskSelector } from '../../selectors';
-import { useColonyNativeToken } from '../../hooks/useColonyNativeToken';
-import { useColonyTokens } from '../../hooks/useColonyTokens';
-import { userSubscriber } from '../../../users/subscribers';
+import { AnyTask, FullColonyFragment, useTaskQuery } from '~data/index';
+import { Address } from '~types/index';
 
-// eslint-disable-next-line @typescript-eslint/no-empty-interface
-interface Props extends TaskProps<'colonyAddress' | 'draftId'> {}
+interface Props {
+  draftId: AnyTask['id'];
+  nativeTokenAddress: Address;
+  tokens: FullColonyFragment['tokens'];
+}
 
 const displayName = 'dashboard.TaskAssignment';
 
-const TaskAssignment = ({ colonyAddress, draftId }: Props) => {
-  const task = useSelector(taskSelector, [draftId]);
-  const nativeTokenReference = useColonyNativeToken(colonyAddress);
-  const [, tokenOptions] = useColonyTokens(colonyAddress);
+const TaskAssignment = ({ draftId, nativeTokenAddress, tokens }: Props) => {
+  const { data } = useTaskQuery({ variables: { id: draftId } });
 
-  const workerAddress =
-    task && task.record ? task.record.workerAddress : undefined;
-  const { data: worker } = useDataSubscriber(
-    userSubscriber,
-    [workerAddress],
-    [workerAddress],
-  );
+  if (!data) {
+    return <SpinnerLoader />;
+  }
 
-  return nativeTokenReference && tokenOptions ? (
+  const {
+    task: { assignedWorker, payouts },
+  } = data;
+
+  return tokens ? (
     <Assignment
-      nativeToken={nativeTokenReference}
-      payouts={task && task.record ? task.record.payouts : undefined}
-      reputation={task && task.record ? task.record.reputation : undefined}
-      tokenOptions={tokenOptions}
-      worker={worker as UserType}
-      workerAddress={workerAddress}
+      payouts={payouts}
+      reputation={undefined}
+      nativeTokenAddress={nativeTokenAddress}
+      worker={assignedWorker || undefined}
+      workerAddress={
+        assignedWorker ? assignedWorker.profile.walletAddress : undefined
+      }
     />
   ) : (
     <SpinnerLoader />

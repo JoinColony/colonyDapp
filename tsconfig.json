@@ -39,12 +39,11 @@
   },
   "include": [
     "globals.d.ts",
-    "integration-testing",
     "src"
   ],
   "exclude": [
     "node_modules",
-    "src/lib/pinion",
-    "src/lib/colonyNetwork"
+    "src/lib/colonyNetwork",
+    "src/lib/colonyServer"
   ]
 }

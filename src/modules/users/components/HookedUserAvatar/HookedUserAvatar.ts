@@ -1,27 +1,25 @@
-import { UserType } from '~immutable/index';
+import { useQuery } from '@apollo/react-hooks';
+
+import { AnyUser, UserDocument } from '~data/index';
 import UserAvatar, { Props as UserAvatarProps } from '~core/UserAvatar';
-import { useDataFetcher, useDataSubscriber } from '~utils/hooks';
+import { useDataFetcher } from '~utils/hooks';
 import { withHooks } from '~utils/hoc';
-import { userSubscriber } from '../../subscribers';
+
 import { ipfsDataFetcher } from '../../../core/fetchers';
 
 export default withHooks<
   { fetchUser: boolean } | void,
   UserAvatarProps,
-  { user: UserType | void; avatarURL: string | void }
+  { user: AnyUser | void; avatarURL: string | void }
 >((hookParams, { user, address }) => {
-  const result: { user: UserType | void; avatarURL: string | void } = {
+  const result: { user: AnyUser | void; avatarURL: string | void } = {
     user,
     avatarURL: undefined,
   };
   const { fetchUser } = hookParams || { fetchUser: true };
   if (fetchUser) {
-    const { data: fetchedUser } = useDataSubscriber(
-      userSubscriber,
-      [address],
-      [address],
-    );
-    result.user = fetchedUser as UserType;
+    const { data } = useQuery(UserDocument, { variables: { address } });
+    if (data) result.user = data.user;
   }
   const avatarHash =
     result.user && result.user.profile

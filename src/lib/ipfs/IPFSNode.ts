@@ -7,11 +7,9 @@ import prodConfig from './ipfsConfig.production';
 import qaConfig from './ipfsConfig.qa';
 
 import { B58String, IPFSNodeOptions, IPFSPeer } from './types';
-import PinnerConnector from './PinnerConnector';
 
 // process.env is a special object. Destructuring doesn't work
 // eslint-disable-next-line prefer-destructuring
-const PINNING_ROOM = process.env.PINNING_ROOM;
 const TIMEOUT = process.env.CI ? 50000 : 10000;
 const NETWORK = process.env.NETWORK || 'local';
 
@@ -29,8 +27,6 @@ class IPFSNode {
     peerItem.peer.id.toB58String();
 
   _ipfs: IPFS;
-
-  pinner?: PinnerConnector;
 
   ready: Promise<boolean>;
 
@@ -59,16 +55,7 @@ class IPFSNode {
     });
   }
 
-  async connectPinner() {
-    if (!PINNING_ROOM) {
-      throw new Error('No pinner room defined in environment variables.');
-    }
-    this.pinner = new PinnerConnector(this.getIPFS(), PINNING_ROOM);
-    await this.ready;
-    await this.pinner.init();
-  }
-
-  /** Get the IPFS instance (to use in 3rd party libraries (e.g. orbit-db)) */
+  /** Get the IPFS instance */
   getIPFS() {
     return this._ipfs;
   }
@@ -138,10 +125,6 @@ class IPFSNode {
   async addString(data: string): Promise<string> {
     await this.ready;
     const [result] = await this._ipfs.add(IPFS.Buffer.from(data));
-    if (!result) throw new Error('Failed to upload to IPFS');
-    if (this.pinner) {
-      this.pinner.pinHash(result.hash);
-    }
     return result.path;
   }
 
@@ -158,9 +141,6 @@ class IPFSNode {
 
   /** Stop the connection to IPFS */
   async stop(): Promise<void> {
-    if (this.pinner) {
-      await this.pinner.disconnect();
-    }
     return this._ipfs.stop();
   }
 }

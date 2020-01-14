@@ -75,7 +75,7 @@ const StepProveMnemonic = ({
     <main className={styles.main}>
       <ActionForm
         submit={ActionTypes.WALLET_CREATE}
-        success={ActionTypes.CURRENT_USER_CREATE}
+        success={ActionTypes.WALLET_CREATE_SUCCESS}
         error={ActionTypes.WALLET_CREATE_ERROR}
         transform={transform}
         validationSchema={yup.object().shape({

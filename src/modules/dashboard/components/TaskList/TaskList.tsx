@@ -1,27 +1,31 @@
-import React, { ReactNode, useMemo, useCallback, DependencyList } from 'react';
+import React, {
+  ReactNode,
+  useMemo,
+  useCallback,
+  useEffect,
+  Fragment,
+} from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 
 import { Address } from '~types/index';
-import { DomainId, TaskDraftId, TaskType } from '~immutable/index';
-import { TaskStates } from '~data/constants';
-import { mergePayload } from '~utils/actions';
+import { DomainId } from '~immutable/index';
 import {
-  useDataTupleSubscriber,
-  useSelector,
-  useDataSubscriber,
-} from '~utils/hooks';
-import { tasksByIdSubscriber, userColoniesSubscriber } from '../../subscribers';
+  useColonyNameLazyQuery,
+  useLoggedInUser,
+  useSubscribeToColonyMutation,
+  AnyTask,
+  useUserColonyAddressesQuery,
+} from '~data/index';
+import Icon from '~core/Icon';
+import { Table, TableBody } from '~core/Table';
+import Button from '~core/Button';
+
 import {
   TasksFilterOptions,
   TasksFilterOptionType,
 } from '../shared/tasksFilter';
-import { ActionTypes } from '~redux/index';
-import { colonyNameSelector } from '../../selectors';
-import { currentUserSelector } from '../../../users/selectors';
-import Icon from '~core/Icon';
-import { Table, TableBody } from '~core/Table';
-import { ActionButton } from '~core/Button';
 import TaskListItem from './TaskListItem';
+
 import taskListItemStyles from './TaskListItem.css';
 
 const MSG = defineMessages({
@@ -64,105 +68,109 @@ const MSG = defineMessages({
 });
 
 interface Props {
-  draftIds: [Address, TaskDraftId][];
+  tasks: AnyTask[];
   emptyState?: ReactNode;
   filteredDomainId?: DomainId;
   filterOption: TasksFilterOptionType;
-  walletAddress: Address;
   colonyAddress?: Address;
   showEmptyState?: boolean;
 }
 
 const TaskList = ({
-  draftIds = [],
+  tasks = [],
   filteredDomainId,
   filterOption,
   emptyState,
-  walletAddress,
   colonyAddress,
   showEmptyState = true,
 }: Props) => {
-  const tasksData = useDataTupleSubscriber<TaskType>(
-    tasksByIdSubscriber,
-    draftIds,
-  );
-  const filter = useCallback(
-    ({ creatorAddress, workerAddress, currentState, domainId }: TaskType) => {
-      if (filteredDomainId && filteredDomainId !== domainId) return false;
+  const { username, walletAddress } = useLoggedInUser();
 
-      const taskIsOpen = currentState === TaskStates.ACTIVE;
+  const [loadColonyName, { data: colonyNameData }] = useColonyNameLazyQuery();
+
+  useEffect(() => {
+    if (colonyAddress) {
+      loadColonyName({ variables: { address: colonyAddress } });
+    }
+  }, [colonyAddress, loadColonyName]);
+
+  const [subscribeToColonyMutation] = useSubscribeToColonyMutation();
+  const subscribeToColony = useCallback(() => {
+    if (colonyAddress) {
+      subscribeToColonyMutation({ variables: { input: { colonyAddress } } });
+    }
+  }, [subscribeToColonyMutation, colonyAddress]);
+
+  const filter = useCallback(
+    ({
+      creatorAddress,
+      assignedWorker,
+      cancelledAt,
+      ethDomainId,
+      finalizedAt,
+    }: AnyTask) => {
+      if (filteredDomainId && filteredDomainId !== ethDomainId) return false;
+
+      const taskIsOpen = !finalizedAt && !cancelledAt;
 
       switch (filterOption) {
         case TasksFilterOptions.CREATED:
-          return creatorAddress === walletAddress && taskIsOpen;
+          return (
+            creatorAddress && creatorAddress === walletAddress && taskIsOpen
+          );
 
         case TasksFilterOptions.ASSIGNED:
-          return workerAddress === walletAddress && taskIsOpen;
+          return (
+            assignedWorker && assignedWorker.id === walletAddress && taskIsOpen
+          );
 
         case TasksFilterOptions.COMPLETED:
-          return currentState === TaskStates.FINALIZED;
+          return !!finalizedAt;
 
         case TasksFilterOptions.DISCARDED:
-          return currentState === TaskStates.CANCELLED;
+          return !!cancelledAt;
 
         case TasksFilterOptions.ALL_OPEN:
           return taskIsOpen;
 
         default:
-          return currentState !== TaskStates.CANCELLED;
+          return !cancelledAt;
       }
     },
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [filterOption, filteredDomainId, walletAddress] as DependencyList,
+    [filterOption, filteredDomainId, walletAddress],
   );
 
   const sortingOrderOption = 'desc';
   const sort = useCallback(
-    (
-      { data: first }: { data: TaskType },
-      { data: second }: { data: TaskType },
-    ) => {
+    (first: AnyTask, second: AnyTask) => {
       if (!(first && second)) return 0;
 
       return sortingOrderOption === 'desc'
-        ? (second as any).createdAt - (first as any).createdAt
-        : (first as any).createdAt - (second as any).createdAt;
+        ? second.createdAt - first.createdAt
+        : first.createdAt - second.createdAt;
     },
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [sortingOrderOption] as DependencyList,
+    [sortingOrderOption],
   );
 
-  const filteredTasksData = useMemo(
+  const filteredTasksData: AnyTask[] = useMemo(
     () =>
       filter
-        ? tasksData
-            .sort(sort as any)
-            .filter(({ data }) => (data ? filter(data) : true))
-        : tasksData,
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [filter, sort, tasksData] as DependencyList,
+        ? tasks.sort(sort).filter(task => (task ? filter(task) : true))
+        : tasks,
+    [filter, sort, tasks],
   );
 
-  const currentUser = useSelector(currentUserSelector);
-  const { data: colonyAddresses } = useDataSubscriber(
-    userColoniesSubscriber,
-    [currentUser.profile.walletAddress],
-    [
-      currentUser.profile.walletAddress,
-      currentUser.profile.metadataStoreAddress,
-    ],
-  );
-  const isSubscribed = (colonyAddresses || []).includes(
-    // Casting should be ok here as we don't have any sparse arrays
-    colonyAddress as string,
-  );
-  const transform = useCallback(mergePayload({ colonyAddress }), [
-    colonyAddress,
-  ] as DependencyList);
+  // const colonyAddresses = [] as string[];
+  const { data: userData } = useUserColonyAddressesQuery({
+    variables: { address: walletAddress },
+  });
 
-  const data = useSelector(colonyNameSelector, [colonyAddress]);
-
-  const colonyName = colonyAddress ? data && data.record : undefined;
+  const isSubscribed =
+    typeof colonyAddress == 'string' &&
+    userData &&
+    userData.user &&
+    userData.user.colonyAddresses &&
+    userData.user.colonyAddresses.includes(colonyAddress);
 
   /*
    * These empty states are getting a bit out of hand. We have now 4 different
@@ -180,6 +188,8 @@ const TaskList = ({
       </div>
     );
   }
+
+  const colonyName = colonyNameData && colonyNameData.colonyName;
 
   return filteredTasksData.length === 0 && colonyAddress ? (
     <div>
@@ -227,19 +237,14 @@ const TaskList = ({
                      * If the current user hasn't claimed a profile yet, then don't show the
                      * subscribe to colony call to action
                      */
-                    isSubscribed: currentUser.profile.username
-                      ? isSubscribed
-                      : true,
+                    isSubscribed: username ? isSubscribed : true,
                     myColonies: (
-                      <ActionButton
+                      <Button
                         className={taskListItemStyles.subscribe}
-                        error={ActionTypes.USER_COLONY_SUBSCRIBE_ERROR}
-                        submit={ActionTypes.USER_COLONY_SUBSCRIBE}
-                        success={ActionTypes.USER_COLONY_SUBSCRIBE_SUCCESS}
-                        transform={transform}
+                        onClick={subscribeToColony}
                       >
                         <FormattedMessage tagName="span" {...MSG.myColonies} />
-                      </ActionButton>
+                      </Button>
                     ),
                   }}
                 />
@@ -256,8 +261,16 @@ const TaskList = ({
       scrollable
     >
       <TableBody>
-        {filteredTasksData.map((taskData: any) => (
-          <TaskListItem key={taskData.key} data={taskData} />
+        {filteredTasksData.map(taskData => (
+          <Fragment key={taskData.id}>
+            {taskData.colony && (
+              <TaskListItem
+                colonyAddress={taskData.colonyAddress}
+                colonyName={taskData.colony.colonyName}
+                task={taskData}
+              />
+            )}
+          </Fragment>
         ))}
       </TableBody>
     </Table>

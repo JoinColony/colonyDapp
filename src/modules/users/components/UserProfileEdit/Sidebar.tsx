@@ -1,7 +1,7 @@
 import React from 'react';
 import { defineMessages } from 'react-intl';
 
-import { UserType } from '~immutable/index';
+import { AnyUser } from '~data/index';
 import Heading from '~core/Heading';
 import UserAvatarUploader from './UserAvatarUploader';
 
@@ -13,7 +13,7 @@ const MSG = defineMessages({
 });
 
 interface Props {
-  user: UserType;
+  user: AnyUser;
 }
 
 const displayName = 'users.UserProfileEdit.Sidebar';

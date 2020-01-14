@@ -9,23 +9,11 @@ import { toWei } from 'ethjs-unit';
 
 import { TransactionType, WALLET_CATEGORIES } from '~immutable/index';
 import { RadioOption } from '~core/Fields/RadioGroup';
-
 import { getMainClasses } from '~utils/css';
 import { withId } from '~utils/actions';
 import { ActionTypes } from '~redux/index';
-
 import { useSelector } from '~utils/hooks';
-
-import { gasPrices as gasPricesSelector } from '../../../../core/selectors';
-import {
-  transactionEstimateGas,
-  transactionUpdateGas,
-} from '../../../../core/actionCreators';
-import {
-  currentUserBalanceSelector,
-  walletTypeSelector,
-} from '../../../selectors';
-
+import { useLoggedInUser } from '~data/index';
 import Alert from '~core/Alert';
 import { IconButton } from '~core/Button';
 import EthUsd from '~core/EthUsd';
@@ -34,6 +22,13 @@ import Icon from '~core/Icon';
 import Numeral from '~core/Numeral';
 import Duration from '~core/Duration';
 import { SpinnerLoader } from '~core/Preloaders';
+
+import { gasPrices as gasPricesSelector } from '../../../../core/selectors';
+import {
+  transactionEstimateGas,
+  transactionUpdateGas,
+} from '../../../../core/actionCreators';
+import { walletTypeSelector } from '../../../selectors';
 import WalletInteraction from '../WalletInteraction';
 
 import styles from './GasStationPrice.css';
@@ -113,7 +108,7 @@ const GasStationPrice = ({ transaction: { id, gasLimit, error } }: Props) => {
   const [isNetworkCongested] = useState(false);
 
   const gasPrices = useSelector(gasPricesSelector);
-  const balance = useSelector(currentUserBalanceSelector) || '0';
+  const { balance } = useLoggedInUser();
   const walletType = useSelector(walletTypeSelector);
 
   const transform = useCallback(withId(id), [id]);
@@ -155,7 +150,6 @@ const GasStationPrice = ({ transaction: { id, gasLimit, error } }: Props) => {
         success={ActionTypes.TRANSACTION_SENT}
         error={ActionTypes.TRANSACTION_ERROR}
         validationSchema={validationSchema}
-        isInitialValid={!!initialFormValues.transactionSpeed}
         initialValues={initialFormValues}
         transform={transform}
       >

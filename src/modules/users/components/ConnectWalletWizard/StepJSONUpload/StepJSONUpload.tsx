@@ -99,6 +99,7 @@ const readKeystoreFromFileData = (file: FileReaderFile) => {
 const StepJSONUpload = ({
   nextStep,
   resetWizard,
+  stepCompleted,
   wizardForm,
   wizardValues,
 }: Props) => {
@@ -112,7 +113,7 @@ const StepJSONUpload = ({
   return (
     <ActionForm
       submit={ActionTypes.WALLET_CREATE}
-      success={ActionTypes.CURRENT_USER_CREATE}
+      success={ActionTypes.USER_CONTEXT_SETUP_SUCCESS}
       error={ActionTypes.WALLET_CREATE_ERROR}
       onError={(_: object, { setStatus }: FormikBag<object, FormValues>) => {
         setStatus({ error: MSG.errorUnlockWallet });
@@ -122,7 +123,7 @@ const StepJSONUpload = ({
       transform={transform}
       {...wizardForm}
     >
-      {({ status, isValid }) => (
+      {({ dirty, status, isValid }) => (
         <main>
           <div className={styles.content}>
             <Heading text={MSG.heading} appearance={{ size: 'medium' }} />
@@ -151,7 +152,7 @@ const StepJSONUpload = ({
             />
             <Button
               appearance={{ theme: 'primary', size: 'large' }}
-              disabled={!isValid}
+              disabled={!isValid || (!dirty && !stepCompleted)}
               text={MSG.buttonAdvance}
               type="submit"
             />

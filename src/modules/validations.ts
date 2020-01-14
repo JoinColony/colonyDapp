@@ -1,13 +1,8 @@
 import * as yup from 'yup';
 import { isIPFS } from 'ipfs';
 import { isAddress } from 'web3-utils';
-import { isValidAddress } from 'orbit-db';
 import { normalize as ensNormalize } from 'eth-ens-namehash-ms';
 import BigNumber from 'bn.js';
-import moveDecimal from 'move-decimal-point';
-
-import { ColonyTokenReferenceType, TokenType } from '~immutable/index';
-import { bnLessThan } from '../utils/numbers';
 
 import en from '../i18n/en-validation.json';
 
@@ -39,59 +34,12 @@ function equalTo(ref, msg) {
   });
 }
 
-// Used by `TaskEditDialog` to check there are sufficient funds for the
-// selected token.
-function lessThanPot(
-  tokenReferences: ColonyTokenReferenceType[],
-  domainId: number,
-  colonyTokens: TokenType[],
-  msg,
-) {
-  return this.test({
-    name: 'lessThanPot',
-    message: msg || en.number.lessThanPot,
-    params: {
-      domainId,
-      tokenReferences,
-    },
-    test(value) {
-      const tokenAddress = this.resolve(yup.ref('token'));
-      if (!tokenAddress) return true;
-      const { balances = {} } =
-        tokenReferences.find(
-          ({ address: refAddress }) => refAddress === tokenAddress,
-        ) || {};
-      const { decimals = undefined } =
-        colonyTokens.find(
-          ({ address: refAddress }) => refAddress === tokenAddress,
-        ) || {};
-      const amount = new BigNumber(
-        moveDecimal(value, decimals ? Math.floor(decimals) : 18),
-      );
-      return (
-        balances[domainId] === undefined ||
-        bnLessThan(amount, balances[domainId])
-      );
-    },
-  });
-}
-
 function address(msg) {
   return this.test({
     name: 'address',
     message: msg || en.string.address,
     test(value) {
       return typeof value == 'undefined' || isAddress(value);
-    },
-  });
-}
-
-function orbitDBAddress(msg) {
-  return this.test({
-    name: 'orbitDBAddress',
-    message: msg || en.string.orbitDBAddress,
-    test(value) {
-      return typeof value == 'undefined' || isValidAddress(value);
     },
   });
 }
@@ -143,9 +91,7 @@ export class BigNumberSchemaType extends yup.object {
 }
 
 yup.addMethod(yup.mixed, 'equalTo', equalTo);
-yup.addMethod(yup.mixed, 'lessThanPot', lessThanPot);
 yup.addMethod(yup.string, 'address', address);
 yup.addMethod(yup.string, 'ensAddress', ensAddress);
 yup.addMethod(yup.array, 'includes', includes);
-yup.addMethod(yup.string, 'orbitDBAddress', orbitDBAddress);
 yup.addMethod(yup.string, 'cid', cid);

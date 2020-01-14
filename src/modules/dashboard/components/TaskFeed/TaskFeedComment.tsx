@@ -1,37 +1,28 @@
 import React from 'react';
 
-import { TaskCommentType } from '~immutable/index';
-
 import { PreserveLinebreaks } from '~utils/components';
 import ExternalLink from '~core/ExternalLink';
 import TimeRelative from '~core/TimeRelative';
 import UserMention from '~core/UserMention';
 import HookedUserAvatar from '~users/HookedUserAvatar';
+import { useLoggedInUser, useUser, Event, TaskMessageEvent } from '~data/index';
 
-import { userSubscriber } from '../../../users/subscribers';
 import TextDecorator from '../../../../lib/TextDecorator';
-import {
-  friendlyUsernameSelector,
-  walletAddressSelector,
-} from '../../../users/selectors';
+import { getFriendlyName } from '../../../users/transformers';
 
 import styles from './TaskFeedComment.css';
-
-import { useDataSubscriber, useSelector } from '~utils/hooks';
 
 const UserAvatar = HookedUserAvatar();
 
 const displayName = 'dashboard.TaskFeed.TaskFeedComment';
 
 interface Props {
-  comment: TaskCommentType;
-  createdAt: Date;
+  createdAt: Event['createdAt'];
+  initiatorAddress: Event['initiatorAddress'];
+  message: TaskMessageEvent['message'];
 }
 
-const TaskFeedComment = ({
-  comment: { authorAddress, body },
-  createdAt,
-}: Props) => {
+const TaskFeedComment = ({ createdAt, initiatorAddress, message }: Props) => {
   const { Decorate } = new TextDecorator({
     email: (text, normalized) => <ExternalLink text={text} href={normalized} />,
     link: (text, normalized) => <ExternalLink text={text} href={normalized} />,
@@ -40,18 +31,11 @@ const TaskFeedComment = ({
     ),
   });
 
-  const walletAddress = useSelector(walletAddressSelector, []);
+  const { walletAddress } = useLoggedInUser();
 
-  const isCurrentUser = authorAddress === walletAddress;
-
-  const { data: creator } = useDataSubscriber(
-    userSubscriber,
-    [authorAddress],
-    [authorAddress],
-  );
-  const userDisplayName = useSelector(friendlyUsernameSelector, [
-    authorAddress,
-  ]);
+  const isCurrentUser = initiatorAddress === walletAddress;
+  const author = useUser(initiatorAddress);
+  const userDisplayName = getFriendlyName(author);
   return (
     <div
       className={`${styles.comment} ${
@@ -60,17 +44,17 @@ const TaskFeedComment = ({
     >
       {!isCurrentUser && (
         <div className={styles.commentAvatar}>
-          <UserAvatar address={authorAddress} showInfo size="s" />
+          <UserAvatar address={initiatorAddress} showInfo size="s" />
         </div>
       )}
       <div className={styles.commentMain}>
-        {!isCurrentUser && creator && (
+        {!isCurrentUser && author && (
           <div className={styles.commentUsername}>
             <span>{userDisplayName}</span>
           </div>
         )}
-        <div title={body} className={styles.commentBody}>
-          <Decorate tagName={PreserveLinebreaks}>{body}</Decorate>
+        <div title={message} className={styles.commentBody}>
+          <Decorate tagName={PreserveLinebreaks}>{message}</Decorate>
         </div>
         <div className={styles.commentTimestamp}>
           <TimeRelative value={createdAt} />

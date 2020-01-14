@@ -1,28 +1,29 @@
 import React from 'react';
-
 import { defineMessages, FormattedMessage } from 'react-intl';
 
 import { INBOX_ROUTE } from '~routes/index';
-
-import { useSelector, useAsyncFunction } from '~utils/hooks';
-import { ActionTypes } from '~redux/index';
 import Heading from '~core/Heading';
 import Button from '~core/Button';
 import { SpinnerLoader } from '~core/Preloaders';
 import { Table, TableBody } from '~core/Table';
 import NavLink from '~core/NavLink';
+import {
+  useLoggedInUser,
+  useMarkAllNotificationsAsReadMutation,
+  Notifications,
+  UserNotificationsDocument,
+} from '~data/index';
 
-import InboxItem from '../InboxItem';
-
-import { inboxItemsSelector } from '../../../selectors';
+import { InboxItem } from '../InboxItem';
 
 import styles from './InboxContainer.css';
 
 const displayName = 'users.Inbox.InboxContainer';
 
 interface Props {
-  full?: boolean;
   close?: () => void;
+  full?: boolean;
+  notifications: Notifications;
 }
 
 const MSG = defineMessages({
@@ -37,8 +38,8 @@ const MSG = defineMessages({
       other {}
     }`,
   },
-  markAllRead: {
-    id: 'users.Inbox.InboxContainer.markAllRead',
+  markAllAsRead: {
+    id: 'users.Inbox.InboxContainer.markAllAsRead',
     defaultMessage: 'Mark all as read',
   },
   seeAll: {
@@ -52,20 +53,18 @@ Don't worry, we'll let you know when anything important happens.`,
   },
 });
 
-const allReadActions = {
-  submit: ActionTypes.INBOX_MARK_ALL_NOTIFICATIONS_READ,
-  success: ActionTypes.INBOX_MARK_ALL_NOTIFICATIONS_READ_SUCCESS,
-  error: ActionTypes.INBOX_MARK_ALL_NOTIFICATIONS_READ_ERROR,
-};
+const InboxContainer = ({ full, close, notifications }: Props) => {
+  const { walletAddress } = useLoggedInUser();
+  const [markAllAsRead] = useMarkAllNotificationsAsReadMutation({
+    refetchQueries: [
+      {
+        query: UserNotificationsDocument,
+        variables: { address: walletAddress },
+      },
+    ],
+  });
 
-const InboxContainer = ({ full, close }: Props) => {
-  const { record: inboxItems, isFetching } = useSelector(inboxItemsSelector);
-  const markAllRead = useAsyncFunction(allReadActions);
-  const hasInboxItems = !!(
-    inboxItems &&
-    inboxItems.length &&
-    inboxItems.length > 0
-  );
+  const hasInboxItems = notifications.length > 0;
   return (
     <div
       className={
@@ -80,14 +79,14 @@ const InboxContainer = ({ full, close }: Props) => {
           text={MSG.title}
           textValues={{
             hasInboxItems,
-            inboxItems: hasInboxItems ? inboxItems.length : 0,
+            inboxItems: hasInboxItems ? notifications.length : 0,
           }}
         />
         <Button
           appearance={{ theme: 'blue' }}
-          text={MSG.markAllRead}
-          onClick={markAllRead}
-          disabled={!hasInboxItems || isFetching}
+          text={MSG.markAllAsRead}
+          onClick={markAllAsRead}
+          disabled={!hasInboxItems}
         />
       </div>
       <div
@@ -95,17 +94,17 @@ const InboxContainer = ({ full, close }: Props) => {
           full ? styles.inboxContainerFull : styles.inboxContainerPopover
         }
       >
-        {hasInboxItems && !isFetching && (
+        {hasInboxItems && (
           <Table scrollable appearance={{ separators: 'borders' }}>
             <TableBody>
-              {inboxItems.map(activity => (
-                <InboxItem full={full} key={activity.id} activity={activity} />
+              {notifications.map(item => (
+                <InboxItem full={full} key={item.id} item={item} />
               ))}
             </TableBody>
           </Table>
         )}
 
-        {!hasInboxItems && isFetching && (
+        {!notifications && (
           <div className={!full ? styles.emptyPopoverPlaceholder : undefined}>
             <SpinnerLoader
               loadingText={MSG.loadingInbox}
@@ -113,7 +112,7 @@ const InboxContainer = ({ full, close }: Props) => {
             />
           </div>
         )}
-        {!hasInboxItems && !isFetching && (
+        {!hasInboxItems && (
           <div className={!full ? styles.emptyPopoverPlaceholder : undefined}>
             <div className={styles.emptyText}>
               <FormattedMessage {...MSG.noItems} />

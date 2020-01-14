@@ -1,4 +1,4 @@
-import { FormikBag, FormikProps, FormikActions, FormikErrors } from 'formik';
+import { FormikBag, FormikProps, FormikHelpers, FormikErrors } from 'formik';
 import React from 'react';
 import { defineMessages } from 'react-intl';
 
@@ -33,15 +33,14 @@ export type OnSuccess = (
 interface ExtendedFormikConfig {
   validateOnChange?: boolean;
   validateOnBlur?: boolean;
-  isInitialValid?: boolean | ((props: object) => boolean | undefined);
   enableReinitialize?: boolean;
   component?: React.ComponentType<FormikProps<any>> | React.ReactNode;
   render?: (props: FormikProps<any>) => React.ReactNode;
   children?: ((props: FormikProps<any>) => React.ReactNode) | React.ReactNode;
   initialValues: any;
   initialStatus?: any;
-  onReset?: (values: any, formikActions: FormikActions<any>) => void;
-  onSubmit?: (values: any, formikActions: FormikActions<any>) => void;
+  onReset?: (values: any, formikActions: FormikHelpers<any>) => void;
+  onSubmit?: (values: any, formikActions: FormikHelpers<any>) => void;
   validationSchema?: any | (() => any);
   validate?: (values: any) => void | object | Promise<FormikErrors<any>>;
 }

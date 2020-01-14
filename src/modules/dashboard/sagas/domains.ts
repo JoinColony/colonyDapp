@@ -1,21 +1,29 @@
+import ApolloClient from 'apollo-client';
 import { all, call, fork, put, takeEvery } from 'redux-saga/effects';
 
 import { ROOT_DOMAIN } from '~constants';
-import { Action, ActionTypes, AllActions } from '~redux/index';
+import { getContext, Context } from '~context/index';
 import {
-  putError,
-  takeFrom,
-  executeQuery,
-  executeCommand,
-} from '~utils/saga/effects';
+  ColonyDomainsQuery,
+  ColonyDomainsQueryVariables,
+  ColonyDomainsQueryResult,
+  ColonyDomainsDocument,
+  CreateDomainMutation,
+  CreateDomainMutationVariables,
+  CreateDomainDocument,
+  EditDomainMutation,
+  EditDomainMutationVariables,
+  EditDomainDocument,
+  TokenBalancesForDomainsDocument,
+  TokenBalancesForDomainsQuery,
+  TokenBalancesForDomainsQueryVariables,
+} from '~data/index';
+import { Action, ActionTypes, AllActions } from '~redux/index';
 import { ContractContexts } from '~types/index';
-// import { getContext, Context } from '~context/index';
-// import { decorateLog } from '~utils/web3/eventLogs/events';
-// import { normalizeTransactionLog } from '~data/normalizers';
+import { log } from '~utils/debug';
+import { putError, takeFrom } from '~utils/saga/effects';
+
 import { createTransaction, getTxChannel } from '../../core/sagas';
-import { createDomain, editDomain } from '../data/commands';
-import { getDomain, getColonyDomains } from '../data/queries';
-import { fetchColonyTokenBalance } from '../actionCreators';
 
 function* colonyDomainsFetch({
   meta,
@@ -27,10 +35,28 @@ function* colonyDomainsFetch({
   },
 }: Action<ActionTypes.COLONY_DOMAINS_FETCH>) {
   try {
-    const domains = yield executeQuery(getColonyDomains, {
-      args: undefined,
-      metadata: { colonyAddress },
+    const apolloClient: ApolloClient<object> = yield getContext(
+      Context.APOLLO_CLIENT,
+    );
+
+    const { data }: ColonyDomainsQueryResult = yield apolloClient.query<
+      ColonyDomainsQuery,
+      ColonyDomainsQueryVariables
+    >({
+      query: ColonyDomainsDocument,
+      variables: { colonyAddress },
     });
+
+    if (!data) throw new Error("Could not get the colony's domain metadata");
+
+    const domains = data.colony.domains.map(
+      ({ ethDomainId, ethParentDomainId, name }) => ({
+        id: ethDomainId,
+        parentId: ethParentDomainId,
+        name,
+        roles: {},
+      }),
+    );
 
     yield put<AllActions>({
       type: ActionTypes.COLONY_DOMAINS_FETCH_SUCCESS,
@@ -55,11 +81,14 @@ function* colonyDomainsFetch({
 }
 
 function* domainCreate({
-  payload: { colonyAddress, domainName: name, parentDomainId = 1 },
+  payload: { colonyAddress, domainName: name, parentDomainId = ROOT_DOMAIN },
   meta,
 }: Action<ActionTypes.DOMAIN_CREATE>) {
   const txChannel = yield call(getTxChannel, meta.id);
   try {
+    const apolloClient: ApolloClient<object> = yield getContext(
+      Context.APOLLO_CLIENT,
+    );
     /*
      * @todo Create the domain on the colony with a transaction.
      * @body Idempotency could be improved here by looking for a pending transaction.
@@ -85,13 +114,50 @@ function* domainCreate({
     } = yield takeFrom(txChannel, ActionTypes.TRANSACTION_SUCCEEDED);
 
     /*
-     * Add an entry to the colony store.
+     * Add the Domain's metadata to the Mongo database
      */
-    yield executeCommand(createDomain, {
-      metadata: { colonyAddress },
-      args: {
-        domainId: id,
-        name,
+    yield apolloClient.mutate<
+      CreateDomainMutation,
+      CreateDomainMutationVariables
+    >({
+      mutation: CreateDomainDocument,
+      variables: {
+        input: {
+          colonyAddress,
+          ethDomainId: id,
+          ethParentDomainId: parentDomainId,
+          name,
+        },
+      },
+      update: (cache, { data }) => {
+        try {
+          const cacheData = cache.readQuery<
+            ColonyDomainsQuery,
+            ColonyDomainsQueryVariables
+          >({
+            query: ColonyDomainsDocument,
+            variables: { colonyAddress },
+          });
+          if (cacheData && data && data.createDomain) {
+            const domains = cacheData.colony.domains || [];
+            domains.push(data.createDomain);
+            cache.writeQuery<ColonyDomainsQuery, ColonyDomainsQueryVariables>({
+              query: ColonyDomainsDocument,
+              data: {
+                colony: {
+                  ...cacheData.colony,
+                  domains,
+                },
+              },
+              variables: {
+                colonyAddress,
+              },
+            });
+          }
+        } catch (e) {
+          log.verbose(e);
+          log.verbose('Not updating store - colony domains not loaded yet');
+        }
       },
     });
 
@@ -101,15 +167,9 @@ function* domainCreate({
       // For now parentId is just root domain
       payload: {
         colonyAddress,
-        domain: { id, name, parentId: ROOT_DOMAIN, roles: {} },
+        domain: { id, name, parentId: parentDomainId, roles: {} },
       },
     });
-
-    // const colonyManager = yield getContext(Context.COLONY_MANAGER);
-    // const colonyClient = yield call(
-    //   [colonyManager, colonyManager.getColonyClient],
-    //   colonyAddress,
-    // );
 
     /*
      * Notification
@@ -130,17 +190,24 @@ function* domainEdit({
   meta,
 }: Action<ActionTypes.DOMAIN_EDIT>) {
   try {
+    const apolloClient: ApolloClient<object> = yield getContext(
+      Context.APOLLO_CLIENT,
+    );
+
     /*
-     * Add an entry to the colony store.
-     * Get the domain ID from the payload
+     * Update the domain's name in the mongo database
      */
-    yield executeCommand(editDomain, {
-      metadata: { colonyAddress },
-      args: {
-        domainId,
-        name: domainName,
+    yield apolloClient.mutate<EditDomainMutation, EditDomainMutationVariables>({
+      mutation: EditDomainDocument,
+      variables: {
+        input: {
+          colonyAddress,
+          ethDomainId: domainId,
+          name: domainName,
+        },
       },
     });
+
     yield put<AllActions>({
       type: ActionTypes.DOMAIN_EDIT_SUCCESS,
       meta,
@@ -159,15 +226,23 @@ function* moveFundsBetweenPots({
 }: Action<ActionTypes.MOVE_FUNDS_BETWEEN_POTS>) {
   let txChannel;
   try {
+    const apolloClient: ApolloClient<object> = yield getContext(
+      Context.APOLLO_CLIENT,
+    );
+
     txChannel = yield call(getTxChannel, meta.id);
+
+    const colonyManager = yield getContext(Context.COLONY_MANAGER);
+    const colonyClient = yield call(
+      [colonyManager, colonyManager.getColonyClient],
+      colonyAddress,
+    );
     const [{ potId: fromPot }, { potId: toPot }] = yield all([
-      executeQuery(getDomain, {
-        args: { domainId: fromDomain },
-        metadata: { colonyAddress },
+      call([colonyClient.getDomain, colonyClient.getDomain.call], {
+        domainId: fromDomain,
       }),
-      executeQuery(getDomain, {
-        args: { domainId: toDomain },
-        metadata: { colonyAddress },
+      call([colonyClient.getDomain, colonyClient.getDomain.call], {
+        domainId: toDomain,
       }),
     ]);
 
@@ -183,8 +258,21 @@ function* moveFundsBetweenPots({
     yield takeFrom(txChannel, ActionTypes.TRANSACTION_SUCCEEDED);
 
     // Refetch token balances for the domains involved
-    yield put(fetchColonyTokenBalance(colonyAddress, tokenAddress, fromDomain));
-    yield put(fetchColonyTokenBalance(colonyAddress, tokenAddress, toDomain));
+    yield apolloClient.query<
+      TokenBalancesForDomainsQuery,
+      TokenBalancesForDomainsQueryVariables
+    >({
+      query: TokenBalancesForDomainsDocument,
+      variables: {
+        colonyAddress,
+        tokenAddresses: [tokenAddress],
+        domainIds: [fromDomain, toDomain],
+      },
+      // Force resolvers to update, as query resolvers are only updated on a cache miss
+      // See #4: https://www.apollographql.com/docs/link/links/state/#resolvers
+      // Also: https://www.apollographql.com/docs/react/api/react-apollo/#optionsfetchpolicy
+      fetchPolicy: 'network-only',
+    });
 
     yield put<AllActions>({
       type: ActionTypes.MOVE_FUNDS_BETWEEN_POTS_SUCCESS,

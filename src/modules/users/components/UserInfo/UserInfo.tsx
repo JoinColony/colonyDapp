@@ -6,7 +6,7 @@ import {
 } from 'react-intl';
 
 import { Address } from '~types/index';
-import { UserType } from '~immutable/index';
+import { AnyUser } from '~data/index';
 import Icon from '~core/Icon';
 import MaskedAddress from '~core/MaskedAddress';
 import HookedUserAvatar from '~users/HookedUserAvatar';
@@ -22,16 +22,16 @@ const MSG = defineMessages({
 
 const UserAvatar = HookedUserAvatar({ fetchUser: false });
 
-const defaultRenderAvatar = (address: Address, user?: UserType) => (
+const defaultRenderAvatar = (address: Address, user?: AnyUser) => (
   <UserAvatar address={address} user={user} showInfo size="xs" />
 );
 
 interface Props {
   children?: ReactNode;
   placeholder?: MessageDescriptor;
-  user?: UserType;
+  user?: AnyUser;
   userAddress?: Address;
-  renderAvatar?: (address: Address, user?: UserType) => ReactNode;
+  renderAvatar?: (address: Address, user?: AnyUser) => ReactNode;
 }
 
 const UserInfo = ({

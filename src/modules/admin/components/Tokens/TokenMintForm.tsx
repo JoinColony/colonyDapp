@@ -5,13 +5,11 @@ import * as yup from 'yup';
 import moveDecimal from 'move-decimal-point';
 import BigNumber from 'bn.js';
 
-import { TokenType } from '~immutable/index';
 import { Address } from '~types/index';
-
 import { ActionForm } from '~core/Fields';
-
 import { pipe, mapPayload, mergePayload, withKey } from '~utils/actions';
 import { ActionTypes } from '~redux/index';
+import { ColonyTokens, OneToken } from '~data/index';
 
 const MSG = defineMessages({
   errorAmountMin: {
@@ -27,7 +25,7 @@ const MSG = defineMessages({
 interface Props {
   children?: any;
   colonyAddress: Address;
-  nativeToken: TokenType;
+  nativeToken: ColonyTokens[0] | OneToken;
   onSuccess?: (result: any, bag: FormikBag<any, any>, values: any) => void;
 }
 
@@ -41,7 +39,9 @@ const validationSchema = yup.object().shape({
 const TokenMintForm = ({
   children,
   onSuccess,
-  nativeToken: { decimals },
+  nativeToken: {
+    details: { decimals },
+  },
   colonyAddress,
 }: Props) => {
   const transform = useCallback(

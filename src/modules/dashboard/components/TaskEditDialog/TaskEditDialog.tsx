@@ -1,25 +1,13 @@
-import React, { useCallback, useMemo, useEffect } from 'react';
+import React, { useCallback, useMemo } from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 import * as yup from 'yup';
-import { FieldArray } from 'formik';
+import { FieldArray, ArrayHelpers } from 'formik';
 import nanoid from 'nanoid';
-import moveDecimal from 'move-decimal-point';
-import BigNumber from 'bn.js';
-import { subscribeActions as subscribeToReduxActions } from 'redux-action-watch/lib/actionCreators';
-import { useDispatch } from 'redux-react-hook';
 
-import {
-  TaskPayoutType,
-  ColonyTokenReferenceType,
-  TokenType,
-  UserProfile,
-  User,
-  UserType,
-} from '~immutable/index';
 import { ItemDataType } from '~core/OmniPicker';
 import SingleUserPicker, { filterUserSelection } from '~core/SingleUserPicker';
 import Button from '~core/Button';
-import { ActionForm, FormStatus } from '~core/Fields';
+import { Form, FormStatus } from '~core/Fields';
 import { FullscreenDialog } from '~core/Dialog';
 import DialogSection from '~core/Dialog/DialogSection';
 import Heading from '~core/Heading';
@@ -27,23 +15,20 @@ import DialogBox from '~core/Dialog/DialogBox';
 import { SpinnerLoader } from '~core/Preloaders';
 import Icon from '~core/Icon';
 import { Tooltip } from '~core/Popover';
-import { ActionTypes } from '~redux/index';
-import HookedUserAvatar from '~users/HookedUserAvatar';
-import { mapPayload, mergePayload, pipe } from '~utils/actions';
 import {
-  useDataSubscriber,
-  useDataMapFetcher,
-  useSelector,
-} from '~utils/hooks';
+  AnyUser,
+  AnyTask,
+  useTaskToEditQuery,
+  Payouts,
+  useAssignWorkerMutation,
+  useUnassignWorkerMutation,
+  useSetTaskPayoutMutation,
+  useRemoveTaskPayoutMutation,
+} from '~data/index';
+import { Address } from '~types/index';
+import HookedUserAvatar from '~users/HookedUserAvatar';
 
-import { createAddress } from '../../../../types';
-import { useColonyTokens } from '../../hooks/useColonyTokens';
-import { userMapFetcher } from '../../../users/fetchers';
-import { userSubscriber } from '../../../users/subscribers';
-import { allUsersAddressesSelector } from '../../../users/selectors';
-import { colonySubscriber } from '../../subscribers';
-import { taskSelector, taskRequestsSelector } from '../../selectors';
-import WrappedPayout from './WrappedPayout';
+import Payout, { FormPayout } from './Payout';
 
 import styles from './TaskEditDialog.css';
 
@@ -76,10 +61,6 @@ const MSG = defineMessages({
     id: 'dashboard.TaskEditDialog.workerRequiredError',
     defaultMessage: 'Please select a worker.',
   },
-  insufficientFundsError: {
-    id: 'dashboard.TaskEditDialog.insufficientFundsError',
-    defaultMessage: "You don't have enough funds",
-  },
   tokenRequiredError: {
     id: 'dashboard.TaskEditDialog.tokenRequiredError',
     defaultMessage: 'Token required',
@@ -91,10 +72,6 @@ const MSG = defineMessages({
   amountRequiredError: {
     id: 'dashboard.TaskEditDialog.amountRequiredError',
     defaultMessage: 'Amount required',
-  },
-  unknownToken: {
-    id: 'dashboard.TaskEditDialog.unknownToken',
-    defaultMessage: 'Unknown Token',
   },
   payoutInfo: {
     id: 'dashboard.TaskEditDialog.payoutInfo',
@@ -111,18 +88,22 @@ const MSG = defineMessages({
 interface Props {
   cancel: () => void;
   close: () => void;
-  draftId: string;
+  colonyAddress: Address;
+  draftId: AnyTask['id'];
   maxTokens?: number;
   minTokens?: number;
 }
 
+interface FormValues {
+  payouts?: FormPayout[];
+  worker?: AnyUser;
+}
+
 const UserAvatar = HookedUserAvatar({ fetchUser: false });
 
-const supRenderAvatar = (address: string, item: ItemDataType<UserType>) => {
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const { id, ...user } = item;
-  return <UserAvatar address={address} user={user} size="xs" />;
-};
+const supRenderAvatar = (address: string, item: ItemDataType<AnyUser>) => (
+  <UserAvatar address={address} user={item} size="xs" />
+);
 
 const canAddTokens = (values, maxTokens) =>
   !maxTokens || (values.payouts && values.payouts.length < maxTokens);
@@ -130,118 +111,29 @@ const canAddTokens = (values, maxTokens) =>
 const canRemoveTokens = (values, minTokens) =>
   !minTokens || (values.payouts && values.payouts.length > minTokens);
 
+const removePayout = (arrayHelpers: ArrayHelpers, index: number) =>
+  arrayHelpers.remove(index);
+
+const resetPayout = (
+  arrayHelpers: ArrayHelpers,
+  index: number,
+  payouts: Payouts,
+) =>
+  payouts.length > 0
+    ? arrayHelpers.replace(index, payouts[index])
+    : arrayHelpers.remove(index);
+
 const displayName = 'dashboard.TaskEditDialog';
 
 const TaskEditDialog = ({
   cancel,
   close: closeDialog,
+  colonyAddress,
   draftId,
   maxTokens = Infinity,
   minTokens = 0,
 }: Props) => {
-  const dispatch = useDispatch();
-
-  /*
-   * @NOTE this needs to return the `subscribeToReduxActions` function, since that returns an
-   * unsubscriber, and that gets called when the component is unmounted
-   */
-  useEffect(
-    () =>
-      subscribeToReduxActions(dispatch)({
-        /*
-         * @NOTE All this is needed in order to shortcircuit re-rendering the TaskEditDialog
-         * There's a edge case that's happening here:
-         * - ActionForm submits the values
-         * - Formik after submitting the values causes this component to re-render
-         * - In some cases it happens so fast, it actually re-renders before the success action being dispatched
-         * - That prevents ActionForm from acting on the success action so the `onSuccess` callback never gets called
-         *
-         * This works, since only one payout success will ever be dispatched while this Dialog is opened
-         * so there's no danger of this being closed prematurely
-         */
-        [ActionTypes.TASK_SET_WORKER_OR_PAYOUT_SUCCESS]: () => closeDialog(),
-      }),
-    [dispatch, closeDialog],
-  );
-
-  const task = useSelector(taskSelector, [draftId]);
-
-  const colonyAddress =
-    task && task.record ? task.record.colonyAddress : undefined;
-  const { data: colonyData, isFetching: isFetchingColony } = useDataSubscriber(
-    colonySubscriber,
-    [colonyAddress],
-    [colonyAddress],
-  );
-
-  const [colonyTokenReferences, availableTokens] = useColonyTokens(
-    colonyAddress,
-  ) as [ColonyTokenReferenceType[], TokenType[]];
-
-  // Get users that have requested to work on this task
-  const userAddressesRequested = useSelector(taskRequestsSelector, [draftId]);
-  const userAddressesInStore = useSelector(allUsersAddressesSelector);
-
-  const userAddressesToPickFrom = userAddressesRequested.concat(
-    userAddressesInStore,
-  );
-  const uniqueUserAddressesToPickFrom = new Set<string>(
-    userAddressesToPickFrom,
-  );
-
-  const userData = useDataMapFetcher(
-    userMapFetcher,
-    Array.from(uniqueUserAddressesToPickFrom),
-  );
-
-  // Get user (worker) assigned to this task
-  const workerAddress =
-    task && task.record ? task.record.workerAddress : undefined;
-  const {
-    data: existingWorkerObj,
-    isFetching: isFetchingExistingWorker,
-  } = useDataSubscriber(userSubscriber, [workerAddress], [workerAddress]);
-  const existingWorker =
-    !!workerAddress && !existingWorkerObj
-      ? User({
-          profile: UserProfile({
-            walletAddress: workerAddress,
-          }),
-        }).toJS()
-      : existingWorkerObj;
-
-  const users = useMemo(
-    () =>
-      userData
-        .filter(({ data }) => !!data)
-        .map(({ data, key }) => ({
-          id: key,
-          ...data,
-        })),
-    [userData],
-  );
-
-  const taskPayouts = task && task.record ? task.record.payouts : [];
-  const existingPayouts = useMemo(
-    () =>
-      taskPayouts.map(payout => {
-        const { address = undefined, decimals = 18 } =
-          (availableTokens &&
-            availableTokens.find(token => token.address === payout.token)) ||
-          {};
-        return {
-          token: address,
-          amount: moveDecimal(
-            new BigNumber(payout.amount).toString(10),
-            -1 * decimals,
-          ),
-          id: payout.token.address,
-        };
-      }),
-    [availableTokens, taskPayouts],
-  );
-
-  const domainId = task && task.record ? task.record.domainId : undefined;
+  // @TODO check for sufficient funds (asynchronous validation)
   const validateForm = useMemo(() => {
     const workerShape = yup
       .object()
@@ -262,14 +154,7 @@ const TaskEditDialog = ({
               .number()
               .typeError(MSG.amountPositiveError)
               .required(MSG.amountRequiredError)
-              .moreThan(0, MSG.amountPositiveError)
-              // @ts-ignore
-              .lessThanPot(
-                colonyTokenReferences,
-                domainId,
-                availableTokens,
-                MSG.insufficientFundsError,
-              ),
+              .moreThan(0, MSG.amountPositiveError),
           }),
         )
         .min(minTokens)
@@ -278,20 +163,10 @@ const TaskEditDialog = ({
         .default(null),
       worker: workerShape,
     });
-  }, [availableTokens, colonyTokenReferences, domainId, maxTokens, minTokens]);
-
-  const tokenOptions = useMemo(
-    () =>
-      availableTokens &&
-      availableTokens.map(({ address, symbol }) => ({
-        value: address,
-        label: symbol || MSG.unknownToken,
-      })),
-    [availableTokens],
-  );
+  }, [maxTokens, minTokens]);
 
   const addTokenFunding = useCallback(
-    (values: { payouts?: TaskPayoutType[] }, helpers: () => void) => {
+    (values: { payouts?: AnyTask['payouts'] }, helpers: () => void) => {
       if (canAddTokens(values, maxTokens))
         (helpers as any).push({
           id: nanoid(),
@@ -300,30 +175,135 @@ const TaskEditDialog = ({
     [maxTokens],
   );
 
-  const transform = useCallback(
-    pipe(
-      mapPayload(p => ({
-        payouts: p.payouts.map(({ amount, token }) => {
-          const { decimals = undefined } =
-            (availableTokens &&
-              availableTokens.find(
-                ({ address: refAddress }) => refAddress === token,
-              )) ||
-            {};
-          return {
-            amount: new BigNumber(moveDecimal(amount, decimals || 18)),
-            token,
-          };
-        }),
-        workerAddress:
-          p.worker && p.worker.profile && p.worker.profile.walletAddress
-            ? createAddress(p.worker.profile.walletAddress)
-            : undefined,
-      })),
-      mergePayload({ colonyAddress, draftId }),
-    ),
-    [colonyAddress, draftId],
+  const { data } = useTaskToEditQuery({
+    variables: { id: draftId },
+  });
+
+  const [assignWorker] = useAssignWorkerMutation();
+  const [unassignWorker] = useUnassignWorkerMutation();
+  const [setTaskPayout] = useSetTaskPayoutMutation();
+  const [removeTaskPayout] = useRemoveTaskPayoutMutation();
+
+  const onSubmit = useCallback(
+    ({ payouts, worker }: FormValues) => {
+      // @todo Implement error handling with assignment/payout mutations
+
+      const existingPayouts = data && data.task && data.task.payouts;
+
+      // @todo Support multiple payouts on tasks
+      const existingPayout =
+        data &&
+        data.task &&
+        data.task.payouts &&
+        data.task.payouts.length > 0 &&
+        data.task.payouts[0];
+      const existingWorkerAddress =
+        data &&
+        data.task &&
+        data.task.assignedWorker &&
+        data.task.assignedWorker.profile &&
+        data.task.assignedWorker.profile.walletAddress;
+      const isPayoutsChanged =
+        !(payouts && payouts.length > 0 && existingPayouts) ||
+        !payouts.some(({ amount, token }) =>
+          existingPayouts.some(
+            ({ amount: existingAmount, token: existingToken }) =>
+              amount === existingAmount && token === existingToken.address,
+          ),
+        );
+
+      if (worker && worker.profile) {
+        assignWorker({
+          variables: {
+            input: { id: draftId, workerAddress: worker.profile.walletAddress },
+          },
+        });
+      } else if (existingWorkerAddress) {
+        // existing worker is set - unassign it
+        unassignWorker({
+          variables: {
+            input: {
+              id: draftId,
+              workerAddress: existingWorkerAddress,
+            },
+          },
+        });
+      }
+
+      if (isPayoutsChanged) {
+        if (payouts && payouts.length > 0) {
+          if (existingPayout) {
+            // Since we currently only support 1 payout, unassign the old one first
+            removeTaskPayout({
+              variables: {
+                input: {
+                  id: draftId,
+                  amount: existingPayout.amount,
+                  tokenAddress: existingPayout.token.address,
+                },
+              },
+            });
+          }
+          setTaskPayout({
+            variables: {
+              input: {
+                id: draftId,
+                amount: payouts[0].amount,
+                tokenAddress: payouts[0].token,
+              },
+            },
+          });
+        } else if (existingPayout) {
+          removeTaskPayout({
+            variables: {
+              input: {
+                id: draftId,
+                amount: existingPayout.amount,
+                tokenAddress: existingPayout.token.address,
+              },
+            },
+          });
+        }
+      }
+
+      closeDialog();
+    },
+    [
+      assignWorker,
+      closeDialog,
+      data,
+      draftId,
+      removeTaskPayout,
+      setTaskPayout,
+      unassignWorker,
+    ],
   );
+
+  if (!data) {
+    return (
+      <FullscreenDialog cancel={cancel}>
+        <SpinnerLoader />
+      </FullscreenDialog>
+    );
+  }
+
+  const {
+    task: {
+      assignedWorker,
+      colony: { subscribedUsers, tokens },
+      payouts: initialPayouts,
+      workRequests,
+    },
+  } = data;
+  const users = [...workRequests, ...subscribedUsers];
+
+  const initialValues: FormValues = {
+    payouts: initialPayouts.map(({ amount, token }) => ({
+      amount,
+      token: token.address,
+    })),
+    worker: assignedWorker || undefined,
+  };
 
   return (
     <FullscreenDialog
@@ -339,135 +319,112 @@ const TaskEditDialog = ({
        */
       isDismissable={false}
     >
-      {isFetchingExistingWorker ? (
-        <SpinnerLoader />
-      ) : (
-        <ActionForm
-          initialValues={{
-            payouts: existingPayouts,
-            worker: existingWorker,
-          }}
-          error={ActionTypes.TASK_SET_WORKER_OR_PAYOUT_ERROR}
-          submit={ActionTypes.TASK_SET_WORKER_OR_PAYOUT}
-          success={ActionTypes.TASK_SET_WORKER_OR_PAYOUT_SUCCESS}
-          transform={transform}
-          onSuccess={closeDialog}
-          validationSchema={validateForm}
-        >
-          {({ status, values, dirty, isSubmitting, isValid }) => {
-            const canRemove = canRemoveTokens(values, minTokens);
-            return (
-              <>
-                <FormStatus status={status} />
-                <DialogBox>
-                  <DialogSection appearance={{ border: 'bottom' }}>
-                    <Heading
-                      appearance={{ size: 'medium' }}
-                      text={MSG.titleAssignment}
-                    />
-                    <SingleUserPicker
-                      data={users}
-                      isResettable
-                      label={MSG.selectAssignee}
-                      name="worker"
-                      filter={filterUserSelection}
-                      placeholder={MSG.search}
-                      renderAvatar={supRenderAvatar}
-                    />
-                  </DialogSection>
-                  <DialogSection>
-                    <FieldArray
-                      name="payouts"
-                      render={arrayHelpers => (
-                        <>
-                          <div className={styles.editor}>
-                            <Heading
-                              appearance={{ size: 'medium' }}
-                              text={MSG.titleFunding}
-                            />
-                            <Tooltip
-                              placement="right"
-                              content={
-                                <div className={styles.tooltipText}>
-                                  <FormattedMessage {...MSG.payoutInfo} />
-                                </div>
-                              }
-                            >
-                              <button
-                                className={styles.helpButton}
-                                type="button"
-                              >
-                                <Icon
-                                  appearance={{
-                                    size: 'small',
-                                    theme: 'invert',
-                                  }}
-                                  name="question-mark"
-                                  title={MSG.helpIconTitle}
-                                />
-                              </button>
-                            </Tooltip>
-                            {canAddTokens(values, maxTokens) && (
-                              <Button
-                                appearance={{ theme: 'blue', size: 'small' }}
-                                text={MSG.add}
-                                onClick={() =>
-                                  addTokenFunding(values, arrayHelpers as any)
-                                }
+      <Form
+        initialValues={initialValues}
+        onSubmit={onSubmit}
+        validationSchema={validateForm}
+      >
+        {({ status, values, dirty, isSubmitting, isValid }) => {
+          const canRemove = canRemoveTokens(values, minTokens);
+          return (
+            <>
+              <FormStatus status={status} />
+              <DialogBox>
+                <DialogSection appearance={{ border: 'bottom' }}>
+                  <Heading
+                    appearance={{ size: 'medium' }}
+                    text={MSG.titleAssignment}
+                  />
+                  <SingleUserPicker
+                    data={users}
+                    isResettable
+                    label={MSG.selectAssignee}
+                    name="worker"
+                    filter={filterUserSelection}
+                    placeholder={MSG.search}
+                    renderAvatar={supRenderAvatar}
+                  />
+                </DialogSection>
+                <DialogSection>
+                  <FieldArray
+                    name="payouts"
+                    render={arrayHelpers => (
+                      <>
+                        <div className={styles.editor}>
+                          <Heading
+                            appearance={{ size: 'medium' }}
+                            text={MSG.titleFunding}
+                          />
+                          <Tooltip
+                            placement="right"
+                            content={
+                              <div className={styles.tooltipText}>
+                                <FormattedMessage {...MSG.payoutInfo} />
+                              </div>
+                            }
+                          >
+                            <button className={styles.helpButton} type="button">
+                              <Icon
+                                appearance={{
+                                  size: 'small',
+                                  theme: 'invert',
+                                }}
+                                name="question-mark"
+                                title={MSG.helpIconTitle}
                               />
-                            )}
-                          </div>
-                          {colonyData ? (
-                            <>
-                              {colonyTokenReferences &&
-                                values.payouts &&
-                                values.payouts.map((payout, index) => (
-                                  <WrappedPayout
-                                    arrayHelpers={arrayHelpers}
-                                    canRemove={canRemove}
-                                    colonyAddress={colonyAddress}
-                                    index={index}
-                                    key={payout.id}
-                                    payout={payout}
-                                    payouts={existingPayouts}
-                                    reputation={
-                                      task && task.record
-                                        ? task.record.reputation
-                                        : undefined
-                                    }
-                                    tokenOptions={tokenOptions as any}
-                                    tokenReferences={colonyTokenReferences}
-                                  />
-                                ))}
-                            </>
-                          ) : (
-                            <>{isFetchingColony ? <SpinnerLoader /> : null}</>
+                            </button>
+                          </Tooltip>
+                          {canAddTokens(values, maxTokens) && (
+                            <Button
+                              appearance={{ theme: 'blue', size: 'small' }}
+                              text={MSG.add}
+                              onClick={() =>
+                                addTokenFunding(values, arrayHelpers as any)
+                              }
+                            />
                           )}
-                        </>
-                      )}
-                    />
-                  </DialogSection>
-                </DialogBox>
-                <div className={styles.buttonContainer}>
-                  <Button
-                    appearance={{ theme: 'secondary', size: 'large' }}
-                    onClick={cancel}
-                    text={{ id: 'button.cancel' }}
-                    disabled={isSubmitting}
+                        </div>
+                        {values.payouts &&
+                          values.payouts.map((payout, index, payouts) => (
+                            <Payout
+                              canRemove={canRemove}
+                              colonyAddress={colonyAddress}
+                              // wiill have at least one of `id` or `token`
+                              key={payout.id || payout.token}
+                              name={`payouts.${index}`}
+                              payout={payout}
+                              reputation={0}
+                              remove={() => removePayout(arrayHelpers, index)}
+                              reset={() =>
+                                resetPayout(arrayHelpers, index, payouts)
+                              }
+                              tokens={tokens}
+                            />
+                          ))}
+                      </>
+                    )}
                   />
-                  <Button
-                    appearance={{ theme: 'primary', size: 'large' }}
-                    text={{ id: 'button.confirm' }}
-                    type="submit"
-                    disabled={!dirty || !isValid}
-                    loading={isSubmitting}
-                  />
-                </div>
-              </>
-            );
-          }}
-        </ActionForm>
-      )}
+                </DialogSection>
+              </DialogBox>
+              <div className={styles.buttonContainer}>
+                <Button
+                  appearance={{ theme: 'secondary', size: 'large' }}
+                  onClick={cancel}
+                  text={{ id: 'button.cancel' }}
+                  disabled={isSubmitting}
+                />
+                <Button
+                  appearance={{ theme: 'primary', size: 'large' }}
+                  text={{ id: 'button.confirm' }}
+                  type="submit"
+                  disabled={!dirty || !isValid}
+                  loading={isSubmitting}
+                />
+              </div>
+            </>
+          );
+        }}
+      </Form>
     </FullscreenDialog>
   );
 };

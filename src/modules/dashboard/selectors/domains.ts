@@ -9,7 +9,7 @@ import { DASHBOARD_NAMESPACE as ns, DASHBOARD_ALL_DOMAINS } from '../constants';
  */
 export const colonyDomainsSelector = (
   state: RootStateRecord,
-  colonyAddress: Address,
+  colonyAddress?: Address,
 ): FetchableDataRecord<DomainsMap> =>
   state.getIn([ns, DASHBOARD_ALL_DOMAINS, colonyAddress]);
 

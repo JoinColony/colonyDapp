@@ -1,16 +1,15 @@
 import React from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 
-import {
-  ColonyType,
-  ContractTransactionType,
-  TaskType,
-  UserProfileType,
-} from '~immutable/index';
-import { useDataSubscriber } from '~utils/hooks';
-import { colonySubscriber } from '../../../dashboard/subscribers';
 import MaskedAddress from '~core/MaskedAddress';
 import Link from '~core/Link';
+import {
+  AnyUser,
+  AnyColonyProfile,
+  AnyTask,
+  useColonyQuery,
+} from '~data/index';
+import { ContractTransactionType } from '~immutable/index';
 import { Address, ENSName } from '~types/index';
 
 import styles from './TransactionDetails.css';
@@ -32,11 +31,7 @@ const MSG = defineMessages({
 
 const displayName = 'admin.TransactionList.TransactionDetails';
 
-interface Props {
-  transaction: ContractTransactionType;
-  task?: TaskType;
-  user?: UserProfileType;
-
+interface BaseProps {
   /*
    * User and colony addresses will always be shown; this controls whether the
    * address is shown in full, or masked.
@@ -44,39 +39,69 @@ interface Props {
   showMaskedAddress?: boolean;
 }
 
-interface HookedProps extends Props {
-  colony?: ColonyType;
+interface ColonyDetailsProps extends BaseProps {
+  address?: Address;
+  colony: AnyColonyProfile;
+}
+
+interface TaskDetailsProps extends BaseProps {
+  colonyName: ENSName;
+  task: AnyTask;
+}
+
+interface UserDetailsProps extends BaseProps {
+  user: AnyUser;
+  address: Address;
+}
+
+interface IncomingTransactionProps extends BaseProps {
+  colony: AnyColonyProfile;
+  task?: AnyTask;
+  transaction: ContractTransactionType;
+  user?: AnyUser;
+}
+
+interface OutgoingTransactionProps extends BaseProps {
+  colony: AnyColonyProfile;
+  task?: AnyTask;
+  transaction: ContractTransactionType;
+  user: AnyUser;
+}
+
+interface Props extends BaseProps {
+  task?: AnyTask;
+  transaction: ContractTransactionType;
+  user?: AnyUser;
 }
 
 const UserDetails = ({
-  user: { displayName: userDisplayName = '', username = '', walletAddress },
-  address = walletAddress,
+  user,
+  address,
   showMaskedAddress,
-}: {
-  address: Address;
-  showMaskedAddress?: boolean;
-  user: UserProfileType;
-}) => (
-  <span>
-    {userDisplayName && <span>{`${userDisplayName} `}</span>}
-    {username && <span>{`@${username} `}</span>}
-    {!userDisplayName && !username && address && (
-      <span>
-        {showMaskedAddress ? <MaskedAddress address={address} /> : address}
-      </span>
-    )}
-  </span>
-);
+}: UserDetailsProps) => {
+  // @TODO consider user a proper preloader here
+  if (!user) return null;
+  const {
+    profile: { displayName: userDisplayName, username },
+  } = user;
+  return (
+    <span>
+      {userDisplayName && <span>{`${userDisplayName} `}</span>}
+      {username && <span>{`@${username} `}</span>}
+      {!userDisplayName && !username && address && (
+        <span>
+          {showMaskedAddress ? <MaskedAddress address={address} /> : address}
+        </span>
+      )}
+    </span>
+  );
+};
 
 const ColonyDetails = ({
   colony: { displayName: colonyDisplayName, colonyAddress },
   address = colonyAddress,
   showMaskedAddress,
-}: {
-  colony: ColonyType;
-  address?: Address;
-  showMaskedAddress?: boolean;
-}) => (
+}: ColonyDetailsProps) => (
   <span>
     {colonyDisplayName && <span>{`${colonyDisplayName} `}</span>}
     {!colonyDisplayName && address && (
@@ -87,17 +112,11 @@ const ColonyDetails = ({
   </span>
 );
 
-const TaskDetails = ({
-  colonyName,
-  task: { draftId, title },
-}: {
-  task: TaskType;
-  colonyName: ENSName;
-}) => (
+const TaskDetails = ({ colonyName, task: { id, title } }: TaskDetailsProps) => (
   <span>
     <Link
       text={title || MSG.untitled}
-      to={`/colony/${colonyName}/task/${draftId}`}
+      to={`/colony/${colonyName}/task/${id}`}
       className={styles.taskLink}
     />
   </span>
@@ -109,7 +128,7 @@ const IncomingTransaction = ({
   task,
   transaction: { from, to },
   user,
-}: HookedProps) => (
+}: IncomingTransactionProps) => (
   <div>
     <p className={styles.primaryText}>
       {/*
@@ -183,9 +202,7 @@ const OutgoingTransaction = ({
   task,
   transaction: { from, to },
   user,
-}: Props & {
-  colony?: ColonyType;
-}) => (
+}: OutgoingTransactionProps) => (
   <div>
     <p className={styles.primaryText}>
       {/*
@@ -259,18 +276,14 @@ const TransactionDetails = ({
   transaction,
   user,
 }: Props) => {
-  const { data: colony } = useDataSubscriber(
-    colonySubscriber,
-    [colonyAddress],
-    [colonyAddress],
-  );
-  if (!colony) return null;
+  const { data } = useColonyQuery({ variables: { address: colonyAddress } });
+  if (!data) return null;
   const TransactionComponent = incoming
     ? IncomingTransaction
     : OutgoingTransaction;
   return (
     <TransactionComponent
-      colony={colony}
+      colony={data.colony}
       showMaskedAddress={showMaskedAddress}
       task={task}
       transaction={transaction}

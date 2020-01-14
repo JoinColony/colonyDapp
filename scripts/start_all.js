@@ -8,7 +8,6 @@ const args = require('minimist')(process.argv);
 const chalk = require('chalk');
 
 const startGanache = require('./start_ganache');
-const startStarSignal = require('./start_star_signal');
 const deployContracts = require('./deploy_contracts');
 
 const { PID_FILE } = require('./paths');
@@ -55,48 +54,69 @@ addProcess('trufflepig', () =>
   })
 );
 
-addProcess('star', startStarSignal);
-
-addProcess('pinion', () => 
-  new Promise((resolve, reject) => {
-    const pinionProcess = spawn('yarn', ['start'], {
-      cwd: path.resolve(__dirname, '..', 'src/lib/pinion'),
-      stdio: 'pipe',
-      env: {
-        ...process.env,
-        PINION_ROOM: 'PINION_DEV_ROOM',
-      },
+addProcess('db', async () => {
+  const dbProcess = spawn('npm', ['run', 'db:start'], {
+    cwd: path.resolve(__dirname, '..', 'src/lib/colonyServer'),
+    stdio: 'pipe',
+  });
+  if (args.foreground) {
+    dbProcess.stdout.pipe(process.stdout);
+    dbProcess.stderr.pipe(process.stderr);
+  }
+  dbProcess.on('error', e => {
+    console.error(e);
+    dbProcess.kill();
+  });
+  await waitOn({ resources: ['tcp:27017'] });
+  const cleanProcess = spawn('npm', ['run', 'db:clean'], {
+    cwd: path.resolve(__dirname, '..', 'src/lib/colonyServer'),
+    stdio: 'pipe',
+  });
+  if (args.foreground) {
+    cleanProcess.stdout.pipe(process.stdout);
+    cleanProcess.stderr.pipe(process.stderr);
+  }
+  await new Promise((resolve, reject) => {
+    cleanProcess.on('exit', cleanCode => {
+      if (cleanCode) {
+        dbProcess.kill();
+        return reject(new Error(`Clean process exited with code ${cleanCode}`));
+      }
+      const setupProcess = spawn('npm', ['run', 'db:setup'], {
+        cwd: path.resolve(__dirname, '..', 'src/lib/colonyServer'),
+      });
+      setupProcess.on('exit', setupCode => {
+        if (setupCode) {
+          dbProcess.kill();
+          return reject(new Error(`Setup process exited with code ${setupCode}`));
+        }
+        resolve();
+      });
     });
-    // Wait a few seconds for pinion to settle in
-    setTimeout(() => resolve(pinionProcess), 4000);
-    if (args.foreground) {
-      pinionProcess.stdout.pipe(process.stdout);
-      pinionProcess.stderr.pipe(process.stderr);
-    }
-    pinionProcess.on('error', e => {
-      pinionProcess.kill();
-      reject(e);
-    });
-  })
-);
+  });
+  return dbProcess;
+});
 
-addProcess('wss', async () => {
-  const wssProxyProcess = spawn(
-    path.resolve(__dirname, './start_wss_proxy.js'),
-    {
-      stdio: 'pipe',
-    },
-  );
-  await waitOn({ resources: ['tcp:4004'] });
-  return wssProxyProcess;
+addProcess('server', async () => {
+  const serverProcess = spawn('npm', ['run', 'dev'], {
+    cwd: path.resolve(__dirname, '..', 'src/lib/colonyServer'),
+    stdio: 'pipe',
+  });
+  if (args.foreground) {
+    serverProcess.stdout.pipe(process.stdout);
+    serverProcess.stderr.pipe(process.stderr);
+  }
+  serverProcess.on('error', e => {
+    serverProcess.kill();
+    reject(e);
+  });
+  await waitOn({ resources: ['tcp:3000'] });
+  return serverProcess;
 });
 
 addProcess('webpack', () =>
   new Promise((resolve, reject) => {
     let webpackArgs = ['run', 'webpack'];
-    if (!args['without-https']) {
-      webpackArgs = webpackArgs.concat(['--https', '--key', './ssl/localhost+2-key.pem', '--cert', './ssl/localhost+2.pem']);
-    }
     const webpackProcess = spawn('yarn', webpackArgs, {
       cwd: path.resolve(__dirname, '..'),
       stdio: 'pipe',
@@ -117,9 +137,8 @@ addProcess('webpack', () =>
 );
 
 
+const pids = {};
 const startAll = async () => {
-  const pids = {};
-
   const startSerial = processes.reduce((promise, process) => {
     if (`skip-${process.name}` in args) return promise;
     return promise
@@ -129,6 +148,7 @@ const startAll = async () => {
       })
       .then(proc => {
         pids[process.name] = proc.pid;
+        fs.writeFileSync(PID_FILE, JSON.stringify(pids));
       });
   }, Promise.resolve(true));
 
@@ -139,8 +159,6 @@ const startAll = async () => {
     console.info(chalk.redBright(caughtError.message));
     process.exit(1);
   }
-  
-  fs.writeFileSync(PID_FILE, JSON.stringify(pids));
   
   console.info(chalk.greenBright('Stack started successfully.'));
 };

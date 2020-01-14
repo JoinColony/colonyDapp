@@ -1,7 +1,7 @@
 import React from 'react';
 import { defineMessages } from 'react-intl';
 
-import { UserType } from '~immutable/index';
+import { AnyUser } from '~data/index';
 
 import CopyableAddress from '~core/CopyableAddress';
 import ExternalLink from '~core/ExternalLink';
@@ -24,7 +24,7 @@ const MSG = defineMessages({
 const UserAvatar = HookedUserAvatar({ fetchUser: false });
 
 interface Props {
-  user: UserType;
+  user: AnyUser;
 }
 
 const componentDisplayName = 'users.UserProfile.UserMeta';

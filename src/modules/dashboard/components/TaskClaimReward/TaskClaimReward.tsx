@@ -3,9 +3,8 @@ import { defineMessages } from 'react-intl';
 
 import { DialogActionButton } from '~core/Button';
 import { ActionTypes } from '~redux/index';
-
-import { TaskPayoutType } from '~immutable/index';
 import { Address } from '~types/index';
+import { AnyTask, Payouts } from '~data/index';
 
 const MSG = defineMessages({
   claimRewards: {
@@ -17,14 +16,14 @@ const MSG = defineMessages({
 // Can't seal this object because of HOC
 export interface Props {
   colonyAddress: Address;
-  draftId: string;
+  draftId: AnyTask['id'];
   lateRating: boolean;
   lateReveal: boolean;
   nativeTokenPayout: object | void;
-  payouts: TaskPayoutType[];
+  payouts: Payouts;
   rating: number;
   reputation: number;
-  sortedPayouts: TaskPayoutType[];
+  sortedPayouts: Payouts;
   title?: string;
 }
 
@@ -62,7 +61,7 @@ const TaskClaimReward = ({
     values={{
       draftId,
       colonyAddress,
-      tokenAddresses: payouts.map(payout => payout.token),
+      tokenAddresses: payouts.map(payout => payout.token.address),
     }}
   />
 );

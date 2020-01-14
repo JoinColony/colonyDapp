@@ -4,7 +4,6 @@ import { defineMessages } from 'react-intl';
 
 import { ROLES, ROOT_DOMAIN } from '~constants';
 import { NavigationItem } from '~pages/VerticalNavigation/VerticalNavigation';
-import { ColonyType } from '~immutable/index';
 import Heading from '~core/Heading';
 import LoadingTemplate from '~pages/LoadingTemplate';
 import ProfileEdit from '~admin/Profile/ProfileEdit';
@@ -15,27 +14,23 @@ import Permissions from '~admin/Permissions';
 import ProfileAdvanced from '~admin/Profile/ProfileAdvanced';
 import VerticalNavigation from '~pages/VerticalNavigation';
 import { HistoryNavigation } from '~pages/NavigationWrapper';
-import {
-  useDataFetcher,
-  useDataSubscriber,
-  useSelector,
-  useTransformer,
-} from '~utils/hooks';
+import { useDataFetcher, useTransformer } from '~utils/hooks';
 import { DomainsMapType } from '~types/index';
+import {
+  FullColonyFragment,
+  useColonyFromNameQuery,
+  useLoggedInUser,
+} from '~data/index';
 
 import {
   TEMP_getUserRolesWithRecovery,
   getAllUserRoles,
 } from '../../../transformers';
-import { walletAddressSelector } from '../../../users/selectors';
-import { isInRecoveryMode } from '../../../dashboard/checks';
 import { canArchitect, hasRoot } from '../../../users/checks';
 import {
-  colonyAddressFetcher,
   domainsAndRolesFetcher,
   TEMP_userHasRecoveryRoleFetcher,
 } from '../../../dashboard/fetchers';
-import { colonySubscriber } from '../../../dashboard/subscribers';
 
 import styles from './AdminDashboard.css';
 
@@ -80,7 +75,7 @@ interface Props {
 }
 
 const navigationItems = (
-  colony: ColonyType,
+  colony: FullColonyFragment,
   domains: DomainsMapType,
   rootRoles: ROLES[],
   allRoles: ROLES[],
@@ -147,21 +142,16 @@ const AdminDashboard = ({
 }: Props) => {
   const CURRENT_COLONY_ROUTE = colonyName ? `/colony/${colonyName}` : '';
 
-  const { error: addressError, data: colonyAddress } = useDataFetcher(
-    colonyAddressFetcher,
-    [colonyName],
-    [colonyName],
-  );
+  // @TODO: Try to get proper error handling going in resolvers (for colonies that don't exist)
+  const { data } = useColonyFromNameQuery({
+    // We have to define an empty address here for type safety, will be replaced by the query
+    variables: { name: colonyName, address: '' },
+  });
 
-  const { error: colonyError, data: colony } = useDataSubscriber(
-    colonySubscriber,
-    [colonyAddress],
-    [colonyAddress],
-  );
+  const { walletAddress } = useLoggedInUser();
+  const colonyAddress = data && data.colonyAddress;
 
-  const walletAddress = useSelector(walletAddressSelector);
-
-  const { data: domains, isFetching: isFetchingRoles } = useDataFetcher(
+  const { data: domains, isFetching: isFetchingDomains } = useDataFetcher(
     domainsAndRolesFetcher,
     [colonyAddress],
     [colonyAddress],
@@ -185,11 +175,11 @@ const AdminDashboard = ({
     walletAddress,
   ]);
 
-  if (!colonyName || addressError || colonyError) {
+  if (!colonyName) {
     return <Redirect to="/404" />;
   }
 
-  if (!colony || !domains || isFetchingRoles) {
+  if (!data || !domains || isFetchingDomains) {
     return <LoadingTemplate loadingText={MSG.loadingText} />;
   }
 
@@ -197,7 +187,8 @@ const AdminDashboard = ({
     return <Redirect to={CURRENT_COLONY_ROUTE} />;
   }
 
-  const { displayName } = colony;
+  const { colony } = data;
+
   return (
     <div className={styles.main}>
       <VerticalNavigation
@@ -217,7 +208,7 @@ const AdminDashboard = ({
           <HistoryNavigation
             backRoute={CURRENT_COLONY_ROUTE}
             backText={MSG.backButton}
-            backTextValues={{ displayName }}
+            backTextValues={{ displayName: colony.displayName }}
           />
         </div>
         <div className={styles.headingWrapper}>
@@ -232,7 +223,7 @@ const AdminDashboard = ({
           />
         </div>
       </VerticalNavigation>
-      {isInRecoveryMode(colony) && <RecoveryModeAlert />}
+      {colony.isInRecoveryMode && <RecoveryModeAlert />}
     </div>
   );
 };
