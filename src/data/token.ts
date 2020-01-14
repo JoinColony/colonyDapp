@@ -6,6 +6,7 @@ import { ContextType } from '~context/index';
 import { COLONY_TOTAL_BALANCE_DOMAIN_ID } from '~constants';
 import { ZERO_ADDRESS, ETHER_INFO } from '~utils/web3/constants';
 import { TokenInfo, TokenInfoDocument } from '~data/index';
+import { Address } from '~types/index';
 
 const getBalanceForTokenAndDomain = async (
   colonyClient,
@@ -68,7 +69,13 @@ export const tokenResolvers = ({ colonyManager }: ContextType): Resolvers => ({
       });
       return amount.toString();
     },
-    async balances({ address }, { colonyAddress, domainIds = [0, 1] }) {
+    async balances(
+      { address }: { address: Address },
+      {
+        colonyAddress,
+        domainIds = [0, 1],
+      }: { colonyAddress: Address; domainIds?: number[] },
+    ) {
       const colonyClient = await colonyManager.getColonyClient(colonyAddress);
 
       const balances: BigNumber[] = await Promise.all(

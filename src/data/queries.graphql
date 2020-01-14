@@ -242,9 +242,16 @@ query ColonyTokens($address: String!) {
 query TokenBalancesForDomains($colonyAddress: String!, $tokenAddresses: [String!], $domainIds: [Int!]) {
   colony(address: $colonyAddress) {
     id
+    nativeTokenAddress
     tokens(addresses: $tokenAddresses) {
       id
       address
+      iconHash
+      details @client {
+        decimals
+        name
+        symbol
+      }
       balances(colonyAddress: $colonyAddress, domainIds: $domainIds) @client {
         domainId
         amount

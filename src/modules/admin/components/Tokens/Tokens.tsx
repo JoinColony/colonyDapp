@@ -11,7 +11,7 @@ import Heading from '~core/Heading';
 import { Select } from '~core/Fields';
 import { Address, DomainsMapType } from '~types/index';
 import { useTransformer } from '~utils/hooks';
-import { useLoggedInUser, useColonyTokensQuery } from '~data/index';
+import { useLoggedInUser, useTokenBalancesForDomainsQuery } from '~data/index';
 
 import { getLegacyRoles } from '../../../transformers';
 import { userHasRole } from '../../../users/checks';
@@ -61,8 +61,8 @@ const Tokens = ({
   openDialog,
   rootRoles,
 }: Props) => {
-  const [selectedDomain, setSelectedDomain] = useState(
-    COLONY_TOTAL_BALANCE_DOMAIN_ID,
+  const [selectedDomain, setSelectedDomain] = useState<string>(
+    COLONY_TOTAL_BALANCE_DOMAIN_ID.toString(),
   );
 
   const { walletAddress } = useLoggedInUser();
@@ -73,13 +73,16 @@ const Tokens = ({
 
   const domainsArray = useMemo(
     () => [
-      { value: COLONY_TOTAL_BALANCE_DOMAIN_ID, label: { id: 'domain.all' } },
+      {
+        value: COLONY_TOTAL_BALANCE_DOMAIN_ID.toString(),
+        label: { id: 'domain.all' },
+      },
       ...sortBy(
         Object.entries(domains || {})
           .sort()
           .map(([domainId, { name }]) => ({
             label: name,
-            value: domainId,
+            value: domainId.toString(),
           })),
         ['value'],
       ),
@@ -97,9 +100,18 @@ const Tokens = ({
     setSelectedDomain,
   ]);
 
-  const { data: colonyTokensData } = useColonyTokensQuery({
-    variables: { address: colonyAddress },
+  const { data: colonyTokensData, loading } = useTokenBalancesForDomainsQuery({
+    variables: {
+      colonyAddress,
+      domainIds: [
+        COLONY_TOTAL_BALANCE_DOMAIN_ID,
+        ...Object.entries(domains || {}).map(([domainId]) =>
+          parseInt(domainId, 10),
+        ),
+      ],
+    },
   });
+
   const tokens = (colonyTokensData && colonyTokensData.colony.tokens) || [];
   const nativeTokenAddress =
     colonyTokensData && colonyTokensData.colony.nativeTokenAddress;
@@ -160,6 +172,7 @@ const Tokens = ({
           {tokens && (
             <TokenList
               domainId={selectedDomain}
+              isLoading={loading}
               tokens={tokens}
               appearance={{ numCols: '3' }}
             />
