@@ -11,9 +11,10 @@ const messages = defineMessages({
    * @NOTE This is generic message that we have to show in the rare case when
    * the server even won't provide an eventType
    */
-  genericFailsafe: {
+  __failSafe: {
     id: 'dashboard.Inbox.InboxItem.genericFailsafe',
-    defaultMessage: 'Generic notification message',
+    defaultMessage:
+      'You should not be seeing this. Please report this bug stating the notification type: {type}',
   },
   // Protip: this has nothing to do with the meta colony
   metaColonyOnly: {
@@ -49,14 +50,18 @@ const messages = defineMessages({
     defaultMessage:
       'Colony {colonyAddress} was registered on ENS as {colonyName}.',
   },
-  notificationAdminColonyLabelAdded: {
-    id: 'dashboard.Inbox.InboxItem.notificationAdminColonyLabelAdded',
+  notificationAdminColonyDomainCreated: {
+    id: 'dashboard.Inbox.InboxItem.notificationAdminColonyDomainCreated',
     defaultMessage:
       '{user} added a new domain titled {domainName} to {colonyDisplayName}.',
   },
   notificationAdminTokensGenerated: {
     id: 'dashboard.Inbox.InboxItem.notificationAdminTokensGenerated',
     defaultMessage: '{user} generated {amount} tokens in {colonyDisplayName}.',
+  },
+  notificationTaskCreated: {
+    id: 'dashboard.Inbox.InboxItem.notificationTaskCreated',
+    defaultMessage: '{user} has created a new task: {task}.',
   },
   notificationUserMentioned: {
     id: 'dashboard.Inbox.InboxItem.notificationUserMentioned',
