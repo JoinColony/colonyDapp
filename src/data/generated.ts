@@ -1357,10 +1357,10 @@ export type TokenBalancesForDomainsQueryVariables = {
 
 
 export type TokenBalancesForDomainsQuery = { colony: (
-    Pick<Colony, 'id'>
+    Pick<Colony, 'id' | 'nativeTokenAddress'>
     & { tokens: Array<(
-      Pick<Token, 'id' | 'address'>
-      & { balances: Array<Pick<DomainBalance, 'domainId' | 'amount'>> }
+      Pick<Token, 'id' | 'address' | 'iconHash'>
+      & { details: Pick<TokenInfo, 'decimals' | 'name' | 'symbol'>, balances: Array<Pick<DomainBalance, 'domainId' | 'amount'>> }
     )> }
   ) };
 
@@ -3307,9 +3307,16 @@ export const TokenBalancesForDomainsDocument = gql`
     query TokenBalancesForDomains($colonyAddress: String!, $tokenAddresses: [String!], $domainIds: [Int!]) {
   colony(address: $colonyAddress) {
     id
+    nativeTokenAddress
     tokens(addresses: $tokenAddresses) {
       id
       address
+      iconHash
+      details @client {
+        decimals
+        name
+        symbol
+      }
       balances(colonyAddress: $colonyAddress, domainIds: $domainIds) @client {
         domainId
         amount
