@@ -1,6 +1,7 @@
 import React, { useMemo } from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 import BigNumber from 'bn.js';
+import moveDecimal from 'move-decimal-point';
 
 import Numeral from '~core/Numeral';
 import { SpinnerLoader } from '~core/Preloaders';
@@ -70,10 +71,6 @@ const TaskFeedCompleteInfo = ({
     }
     return amountBn.div(new BigNumber(networkFeeInverse)).add(new BigNumber(1));
   }, [amount, networkFeeInverse]);
-  const workerPayout = useMemo(
-    () => new BigNumber(amount).sub(metaColonyFee as BigNumber),
-    [amount, metaColonyFee],
-  );
 
   return (
     <div>
@@ -118,7 +115,7 @@ const TaskFeedCompleteInfo = ({
                     <Numeral
                       integerSeparator=""
                       unit={decimals || 18}
-                      value={workerPayout}
+                      value={moveDecimal(amount, decimals)}
                     />
                   ),
                   symbol,
@@ -129,7 +126,10 @@ const TaskFeedCompleteInfo = ({
                 {...MSG.receiptColonyFeeText}
                 values={{
                   amount: (
-                    <Numeral unit={decimals || 18} value={metaColonyFee} />
+                    <Numeral
+                      unit={decimals || 18}
+                      value={moveDecimal(metaColonyFee, decimals)}
+                    />
                   ),
                   symbol,
                 }}
