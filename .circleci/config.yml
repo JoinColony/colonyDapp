@@ -191,15 +191,15 @@ workflows:
     jobs:
       - build-with-lockfile
       # - e2e-testing
-      - build-styleguide:
-          requires:
-            - build-with-lockfile
-      - deploy-styleguide:
-          requires:
-            - build-styleguide
-          filters:
-            branches:
-              only: master
+      # - build-styleguide:
+      #     requires:
+      #       - build-with-lockfile
+      # - deploy-styleguide:
+      #     requires:
+      #       - build-styleguide
+      #     filters:
+      #       branches:
+      #         only: master
 
   nightly:
     triggers:
