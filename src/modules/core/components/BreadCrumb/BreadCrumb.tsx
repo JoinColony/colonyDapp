@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { Fragment } from 'react';
 import { injectIntl, IntlShape, MessageDescriptor } from 'react-intl';
 
 import styles from './BreadCrumb.css';
@@ -22,13 +22,9 @@ const BreadCrumb = ({ elements, intl: { formatMessage } }: Props) => {
         const crumbText =
           typeof crumb == 'string' ? crumb : formatMessage(crumb);
         return (
-          <>
+          <Fragment key={`breadCrumb_${crumbText}`}>
             {elements.length > 1 && i < elements.length - 1 ? (
-              <div
-                className={styles.element}
-                key={`breadCrumb_${crumbText}`}
-                title={crumbText}
-              >
+              <div className={styles.element} title={crumbText}>
                 <span className={styles.breadCrumble}>{crumbText}</span>
                 <span className={styles.arrow}>&gt;</span>
               </div>
@@ -38,7 +34,7 @@ const BreadCrumb = ({ elements, intl: { formatMessage } }: Props) => {
                 <b className={styles.breadCrumble}>{crumbText}</b>
               </div>
             ) : null}
-          </>
+          </Fragment>
         );
       })}
     </div>
