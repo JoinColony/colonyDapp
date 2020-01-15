@@ -1,26 +1,27 @@
-import { Redirect } from 'react-router';
-import React, { useState, useMemo } from 'react';
+import React, { useMemo, useState } from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
+import { Redirect } from 'react-router';
 
-import { COLONY_TOTAL_BALANCE_DOMAIN_ID, ROOT_DOMAIN } from '~constants';
-import { useDataFetcher, useTransformer } from '~utils/hooks';
-import Transactions from '~admin/Transactions';
-import { Tab, Tabs, TabList, TabPanel } from '~core/Tabs';
-import Heading from '~core/Heading';
 import RecoveryModeAlert from '~admin/RecoveryModeAlert';
-import LoadingTemplate from '~pages/LoadingTemplate';
+import Transactions from '~admin/Transactions';
+import { COLONY_TOTAL_BALANCE_DOMAIN_ID, ROOT_DOMAIN } from '~constants';
 import BreadCrumb from '~core/BreadCrumb';
-import { domainsAndRolesFetcher } from '../../fetchers';
-import { getUserRoles } from '../../../transformers';
+import Heading from '~core/Heading';
+import { Tab, TabList, TabPanel, Tabs } from '~core/Tabs';
+import Suggestions from '~dashboard/Suggestions';
 import { useLoggedInUser } from '~data/helpers';
-import { canAdminister, hasRoot } from '../../../users/checks';
-
 import { useColonyFromNameQuery } from '~data/index';
+import LoadingTemplate from '~pages/LoadingTemplate';
+import { useDataFetcher, useTransformer } from '~utils/hooks';
+
+import { getUserRoles } from '../../../transformers';
+import { canAdminister, hasRoot } from '../../../users/checks';
+import { domainsAndRolesFetcher } from '../../fetchers';
+
 import ColonyFunding from './ColonyFunding';
+import styles from './ColonyHome.css';
 import ColonyMeta from './ColonyMeta';
 import TabContribute from './TabContribute';
-
-import styles from './ColonyHome.css';
 
 const MSG = defineMessages({
   loadingText: {
@@ -31,6 +32,10 @@ const MSG = defineMessages({
     id: 'dashboard.ColonyHome.tabContribute',
     defaultMessage: 'Tasks',
   },
+  tabSuggestions: {
+    id: 'dashboard.ColonyHome.tabSuggestions',
+    defaultMessage: 'Suggestions',
+  },
   tabTransactions: {
     id: 'dashboard.ColonyHome.tabTransactions',
     defaultMessage: 'Transactions',
@@ -40,6 +45,8 @@ const MSG = defineMessages({
     defaultMessage: 'All Transactions in Colony',
   },
 });
+
+type TabName = 'suggestions' | 'tasks' | 'transactions';
 
 interface Props {
   match: any;
@@ -57,7 +64,7 @@ const ColonyHome = ({
   const [filteredDomainId, setFilteredDomainId] = useState(
     COLONY_TOTAL_BALANCE_DOMAIN_ID,
   );
-  const [activeTab, setActiveTab] = useState<'tasks' | 'transactions'>('tasks');
+  const [activeTab, setActiveTab] = useState<TabName>('tasks');
 
   // @TODO: Try to get proper error handling going in resolvers (for colonies that don't exist)
   const { data } = useColonyFromNameQuery({
@@ -144,12 +151,15 @@ const ColonyHome = ({
           {domains && crumbs && <BreadCrumb elements={crumbs} />}
         </div>
         <Tabs>
-          <TabList extra={activeTab === 'tasks' ? null : noFilter}>
+          <TabList extra={activeTab === 'transactions' ? noFilter : null}>
             <Tab onClick={() => setActiveTab('tasks')}>
               <FormattedMessage {...MSG.tabContribute} />
             </Tab>
             <Tab onClick={() => setActiveTab('transactions')}>
               <FormattedMessage {...MSG.tabTransactions} />
+            </Tab>
+            <Tab onClick={() => setActiveTab('suggestions')}>
+              <FormattedMessage {...MSG.tabSuggestions} />
             </Tab>
           </TabList>
           <TabPanel>
@@ -162,6 +172,9 @@ const ColonyHome = ({
           </TabPanel>
           <TabPanel>
             <Transactions colonyAddress={colony.colonyAddress} />
+          </TabPanel>
+          <TabPanel>
+            <Suggestions colonyAddress={colony.colonyAddress} />
           </TabPanel>
         </Tabs>
       </main>
