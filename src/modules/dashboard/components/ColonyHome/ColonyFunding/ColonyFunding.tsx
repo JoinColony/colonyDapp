@@ -7,12 +7,17 @@ import { DialogType } from '~core/Dialog';
 import withDialog from '~core/Dialog/withDialog';
 import Heading from '~core/Heading';
 import { DomainsMapType } from '~types/index';
-import { useLoggedInUser, FullColonyFragment } from '~data/index';
+import {
+  useLoggedInUser,
+  FullColonyFragment,
+  useTokenBalancesForDomainsQuery,
+} from '~data/index';
 
 import { canMoveTokens as canMoveTokensCheck } from '../../../../admin/checks';
 import TokenItem from './TokenItem';
 
 import styles from './ColonyFunding.css';
+import { SpinnerLoader } from '~core/Preloaders';
 
 const MSG = defineMessages({
   buttonFund: {
@@ -49,7 +54,7 @@ const ColonyFunding = ({
     [walletAddress, domains],
   );
 
-  const { colonyAddress, tokens } = colony;
+  const { colonyAddress, tokens: colonyTokens } = colony;
 
   const handleMoveTokens = useCallback(
     () =>
@@ -62,6 +67,17 @@ const ColonyFunding = ({
       }),
     [openDialog, colonyAddress, currentDomainId],
   );
+
+  const {
+    data,
+    loading: isLoadingTokenBalances,
+  } = useTokenBalancesForDomainsQuery({
+    variables: {
+      colonyAddress,
+      domainIds: [currentDomainId],
+      tokenAddresses: colonyTokens.map(({ address }) => address),
+    },
+  });
 
   return (
     <div>
@@ -77,15 +93,19 @@ const ColonyFunding = ({
           </span>
         )}
       </Heading>
-      <ul>
-        {tokens.map(token => (
-          <TokenItem
-            currentDomainId={currentDomainId}
-            key={token.address}
-            token={token}
-          />
-        ))}
-      </ul>
+      {data && !isLoadingTokenBalances ? (
+        <ul>
+          {data.colony.tokens.map(token => (
+            <TokenItem
+              currentDomainId={currentDomainId}
+              key={token.address}
+              token={token}
+            />
+          ))}
+        </ul>
+      ) : (
+        <SpinnerLoader />
+      )}
     </div>
   );
 };
