@@ -155,7 +155,9 @@ const ColonyHome = ({
           {domains && crumbs && <BreadCrumb elements={crumbs} />}
         </div>
         <Tabs>
-          <TabList extra={activeTab === 'transactions' ? noFilter : null}>
+          <TabList
+            extra={activeTab === TabName.TransactionsTab ? noFilter : null}
+          >
             <Tab onClick={() => setActiveTab(TabName.TasksTab)}>
               <FormattedMessage {...MSG.tabContribute} />
             </Tab>
