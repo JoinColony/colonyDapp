@@ -86,8 +86,11 @@ export const tokenResolvers = ({ colonyManager }: ContextType): Resolvers => ({
 
       return domainIds.map((domainId, idx) => ({
         __typename: 'DomainBalance',
-        domainId,
         amount: balances[idx].toString(),
+        domainId,
+        // `address` & `colonyAddress` only used for cache key - NOT PART OF QUERY
+        address,
+        colonyAddress,
       }));
     },
     async details(
