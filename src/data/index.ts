@@ -15,6 +15,7 @@ import {
   UserQuery,
   UserTasksQuery,
   UserTokensQuery,
+  ColonySuggestionsQuery,
 } from './generated';
 import {
   loggedInUserResolvers,
@@ -60,6 +61,8 @@ export type Payouts = PayoutsFragment['payouts'];
 export type Notifications = UserNotificationsQuery['user']['notifications'];
 
 export type AnyColonyProfile = FullColonyFragment | ColonyProfileFragment;
+
+export type OneSuggestion = ColonySuggestionsQuery['colony']['suggestions'][number];
 
 export type OneToken = TokenQuery['token'];
 export type ColonyTokens = ColonyQuery['colony']['tokens'];
