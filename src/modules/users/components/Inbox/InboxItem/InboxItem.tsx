@@ -18,7 +18,7 @@ import {
   useUserQuery,
   useUserLazyQuery,
   useTaskLazyQuery,
-  Notification,
+  OneNotification,
   UserNotificationsDocument,
 } from '~data/index';
 
@@ -42,7 +42,7 @@ const LOCAL_MSG = defineMessages({
 const displayName = 'users.Inbox.InboxItem';
 
 export interface Props {
-  item: Notification;
+  item: OneNotification;
   full?: boolean;
 }
 

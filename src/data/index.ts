@@ -60,6 +60,7 @@ export type AnyTask =
 export type Payouts = PayoutsFragment['payouts'];
 
 export type Notifications = UserNotificationsQuery['user']['notifications'];
+export type OneNotification = Notifications[number];
 
 export type AnyColonyProfile = FullColonyFragment | ColonyProfileFragment;
 
