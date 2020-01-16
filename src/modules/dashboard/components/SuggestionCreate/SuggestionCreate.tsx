@@ -7,7 +7,12 @@ import { Address } from '~types/index';
 import { Form, Input } from '~core/Fields';
 import { withDialog } from '~core/Dialog';
 import { OpenDialog } from '~core/Dialog/types';
-import { Domain } from '~data/index';
+import {
+  Domain,
+  useCreateSuggestionMutation,
+  ColonySuggestionsDocument,
+  ColonySuggestionsQueryVariables,
+} from '~data/index';
 import { COLONY_TOTAL_BALANCE_DOMAIN_ID, ROOT_DOMAIN } from '~constants';
 
 const MSG = defineMessages({
@@ -38,6 +43,8 @@ const validationSchema = yup.object({
 const displayName = 'Dashboard.SuggestionCreate';
 
 const SuggestionCreate = ({ colonyAddress, domainId, openDialog }: Props) => {
+  const [createSuggestion] = useCreateSuggestionMutation();
+
   const handleSubmit = useCallback(
     ({ title }: FormValues, { resetForm }: FormikHelpers<FormValues>) => {
       openDialog('ConfirmDialog')
@@ -48,13 +55,18 @@ const SuggestionCreate = ({ colonyAddress, domainId, openDialog }: Props) => {
             domainId === COLONY_TOTAL_BALANCE_DOMAIN_ID
               ? ROOT_DOMAIN
               : domainId;
-          // @todo Use createSuggestionMutation
-          // eslint-disable-next-line no-console
-          console.log(title, colonyAddress, ethDomainId);
-          resetForm();
+          createSuggestion({
+            variables: { input: { colonyAddress, ethDomainId, title } },
+            refetchQueries: [
+              {
+                query: ColonySuggestionsDocument,
+                variables: { colonyAddress } as ColonySuggestionsQueryVariables,
+              },
+            ],
+          }).then(() => resetForm());
         });
     },
-    [colonyAddress, openDialog, domainId],
+    [openDialog, domainId, createSuggestion, colonyAddress],
   );
   return (
     <Form
