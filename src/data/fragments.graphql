@@ -13,6 +13,34 @@ fragment Payouts on Task {
   }
 }
 
+fragment CreateTaskFields on Task {
+  id
+  ...Payouts
+  assignedWorker {
+    id
+    profile {
+      avatarHash
+    }
+  }
+  assignedWorkerAddress
+  cancelledAt
+  colony {
+    id
+    colonyName
+    displayName
+    nativeTokenAddress
+  }
+  colonyAddress
+  createdAt
+  creatorAddress
+  dueDate
+  ethDomainId
+  ethSkillId
+  finalizedAt
+  title
+  workRequestAddresses
+}
+
 fragment Tokens on Colony {
   nativeTokenAddress
   tokens {
@@ -52,6 +80,19 @@ fragment FullColony on Colony {
   isInRecoveryMode(address: $address) @client
   isNativeTokenLocked(address: $address) @client
 }
+
+fragment SuggestionFields on Suggestion {
+  id
+  createdAt
+  colonyAddress
+  creatorAddress
+  ethDomainId
+  status
+  title
+  taskId
+  upvotes
+}
+
 fragment EventFields on Event {
   createdAt
   initiator {

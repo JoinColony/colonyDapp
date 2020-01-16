@@ -25,31 +25,7 @@ mutation CancelTask($input: TaskIdInput!) {
 
 mutation CreateTask($input: CreateTaskInput!) {
   createTask(input: $input) {
-    id
-    ...Payouts
-    assignedWorker {
-      id
-      profile {
-        avatarHash
-      }
-    }
-    assignedWorkerAddress
-    cancelledAt
-    colony {
-      id
-      colonyName
-      displayName
-      nativeTokenAddress
-    }
-    colonyAddress
-    createdAt
-    creatorAddress
-    dueDate
-    ethDomainId
-    ethSkillId
-    finalizedAt
-    title
-    workRequestAddresses
+    ...CreateTaskFields
   }
 }
 
@@ -306,5 +282,39 @@ mutation EditDomain($input: EditDomainNameInput!) {
     ethDomainId
     ethParentDomainId
     name
+  }
+}
+
+mutation CreateSuggestion($input: CreateSuggestionInput!) {
+  createSuggestion(input: $input) {
+    ...SuggestionFields
+  }
+}
+
+mutation SetSuggestionStatus($input: SetSuggestionStatusInput!) {
+  setSuggestionStatus(input: $input) {
+    id
+    status
+    taskId
+  }
+}
+
+mutation AddUpvoteToSuggestion($input: AddUpvoteToSuggestionInput!) {
+  addUpvoteToSuggestion(input: $input) {
+    id
+    upvotes
+  }
+}
+
+mutation RemoveUpvoteFromSuggestion($input: RemoveUpvoteFromSuggestionInput!) {
+  removeUpvoteFromSuggestion(input: $input) {
+    id
+    upvotes
+  }
+}
+
+mutation CreateTaskFromSuggestion($input: CreateTaskFromSuggestionInput!) {
+  createTaskFromSuggestion(input: $input) {
+    ...CreateTaskFields
   }
 }
