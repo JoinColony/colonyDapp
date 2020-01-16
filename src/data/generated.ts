@@ -937,6 +937,15 @@ export type PayoutsFragment = { payouts: Array<(
     & { token: Pick<Token, 'id' | 'address' | 'decimals' | 'name' | 'symbol'> }
   )> };
 
+export type CreateTaskFieldsFragment = (
+  Pick<Task, 'id' | 'assignedWorkerAddress' | 'cancelledAt' | 'colonyAddress' | 'createdAt' | 'creatorAddress' | 'dueDate' | 'ethDomainId' | 'ethSkillId' | 'finalizedAt' | 'title' | 'workRequestAddresses'>
+  & { assignedWorker: Maybe<(
+    Pick<User, 'id'>
+    & { profile: Pick<UserProfile, 'avatarHash'> }
+  )>, colony: Pick<Colony, 'id' | 'colonyName' | 'displayName' | 'nativeTokenAddress'> }
+  & PayoutsFragment
+);
+
 export type TokensFragment = (
   Pick<Colony, 'nativeTokenAddress' | 'tokenAddresses'>
   & { tokens: Array<(
@@ -952,6 +961,8 @@ export type FullColonyFragment = (
   & ColonyProfileFragment
   & TokensFragment
 );
+
+export type SuggestionFieldsFragment = Pick<Suggestion, 'id' | 'createdAt' | 'colonyAddress' | 'creatorAddress' | 'ethDomainId' | 'status' | 'title' | 'taskId' | 'upvotes'>;
 
 export type EventFieldsFragment = (
   Pick<Event, 'createdAt' | 'initiatorAddress' | 'sourceId' | 'sourceType' | 'type'>
@@ -993,14 +1004,7 @@ export type CreateTaskMutationVariables = {
 };
 
 
-export type CreateTaskMutation = { createTask: Maybe<(
-    Pick<Task, 'id' | 'assignedWorkerAddress' | 'cancelledAt' | 'colonyAddress' | 'createdAt' | 'creatorAddress' | 'dueDate' | 'ethDomainId' | 'ethSkillId' | 'finalizedAt' | 'title' | 'workRequestAddresses'>
-    & { assignedWorker: Maybe<(
-      Pick<User, 'id'>
-      & { profile: Pick<UserProfile, 'avatarHash'> }
-    )>, colony: Pick<Colony, 'id' | 'colonyName' | 'displayName' | 'nativeTokenAddress'> }
-    & PayoutsFragment
-  )> };
+export type CreateTaskMutation = { createTask: Maybe<CreateTaskFieldsFragment> };
 
 export type CreateWorkRequestMutationVariables = {
   input: CreateWorkRequestInput
@@ -1220,6 +1224,41 @@ export type EditDomainMutationVariables = {
 
 
 export type EditDomainMutation = { editDomainName: Maybe<Pick<Domain, 'id' | 'ethDomainId' | 'ethParentDomainId' | 'name'>> };
+
+export type CreateSuggestionMutationVariables = {
+  input: CreateSuggestionInput
+};
+
+
+export type CreateSuggestionMutation = { createSuggestion: Maybe<SuggestionFieldsFragment> };
+
+export type SetSuggestionStatusMutationVariables = {
+  input: SetSuggestionStatusInput
+};
+
+
+export type SetSuggestionStatusMutation = { setSuggestionStatus: Maybe<Pick<Suggestion, 'id' | 'status' | 'taskId'>> };
+
+export type AddUpvoteToSuggestionMutationVariables = {
+  input: AddUpvoteToSuggestionInput
+};
+
+
+export type AddUpvoteToSuggestionMutation = { addUpvoteToSuggestion: Maybe<Pick<Suggestion, 'id' | 'upvotes'>> };
+
+export type RemoveUpvoteFromSuggestionMutationVariables = {
+  input: RemoveUpvoteFromSuggestionInput
+};
+
+
+export type RemoveUpvoteFromSuggestionMutation = { removeUpvoteFromSuggestion: Maybe<Pick<Suggestion, 'id' | 'upvotes'>> };
+
+export type CreateTaskFromSuggestionMutationVariables = {
+  input: CreateTaskFromSuggestionInput
+};
+
+
+export type CreateTaskFromSuggestionMutation = { createTaskFromSuggestion: Maybe<CreateTaskFieldsFragment> };
 
 export type TaskQueryVariables = {
   id: Scalars['String']
@@ -1464,6 +1503,16 @@ export type ColonyDomainsQuery = { colony: (
     & { domains: Array<Pick<Domain, 'id' | 'ethDomainId' | 'name' | 'ethParentDomainId'>> }
   ) };
 
+export type ColonySuggestionsQueryVariables = {
+  colonyAddress: Scalars['String']
+};
+
+
+export type ColonySuggestionsQuery = { colony: (
+    Pick<Colony, 'id'>
+    & { suggestions: Array<SuggestionFieldsFragment> }
+  ) };
+
 export type UserNotificationsQueryVariables = {
   address: Scalars['String']
 };
@@ -1495,6 +1544,35 @@ export const PayoutsFragmentDoc = gql`
   }
 }
     `;
+export const CreateTaskFieldsFragmentDoc = gql`
+    fragment CreateTaskFields on Task {
+  id
+  ...Payouts
+  assignedWorker {
+    id
+    profile {
+      avatarHash
+    }
+  }
+  assignedWorkerAddress
+  cancelledAt
+  colony {
+    id
+    colonyName
+    displayName
+    nativeTokenAddress
+  }
+  colonyAddress
+  createdAt
+  creatorAddress
+  dueDate
+  ethDomainId
+  ethSkillId
+  finalizedAt
+  title
+  workRequestAddresses
+}
+    ${PayoutsFragmentDoc}`;
 export const ColonyProfileFragmentDoc = gql`
     fragment ColonyProfile on Colony {
   id
@@ -1538,6 +1616,19 @@ export const FullColonyFragmentDoc = gql`
 }
     ${ColonyProfileFragmentDoc}
 ${TokensFragmentDoc}`;
+export const SuggestionFieldsFragmentDoc = gql`
+    fragment SuggestionFields on Suggestion {
+  id
+  createdAt
+  colonyAddress
+  creatorAddress
+  ethDomainId
+  status
+  title
+  taskId
+  upvotes
+}
+    `;
 export const EventFieldsFragmentDoc = gql`
     fragment EventFields on Event {
   createdAt
@@ -1721,34 +1812,10 @@ export type CancelTaskMutationOptions = ApolloReactCommon.BaseMutationOptions<Ca
 export const CreateTaskDocument = gql`
     mutation CreateTask($input: CreateTaskInput!) {
   createTask(input: $input) {
-    id
-    ...Payouts
-    assignedWorker {
-      id
-      profile {
-        avatarHash
-      }
-    }
-    assignedWorkerAddress
-    cancelledAt
-    colony {
-      id
-      colonyName
-      displayName
-      nativeTokenAddress
-    }
-    colonyAddress
-    createdAt
-    creatorAddress
-    dueDate
-    ethDomainId
-    ethSkillId
-    finalizedAt
-    title
-    workRequestAddresses
+    ...CreateTaskFields
   }
 }
-    ${PayoutsFragmentDoc}`;
+    ${CreateTaskFieldsFragmentDoc}`;
 export type CreateTaskMutationFn = ApolloReactCommon.MutationFunction<CreateTaskMutation, CreateTaskMutationVariables>;
 
 /**
@@ -2697,6 +2764,170 @@ export function useEditDomainMutation(baseOptions?: ApolloReactHooks.MutationHoo
 export type EditDomainMutationHookResult = ReturnType<typeof useEditDomainMutation>;
 export type EditDomainMutationResult = ApolloReactCommon.MutationResult<EditDomainMutation>;
 export type EditDomainMutationOptions = ApolloReactCommon.BaseMutationOptions<EditDomainMutation, EditDomainMutationVariables>;
+export const CreateSuggestionDocument = gql`
+    mutation CreateSuggestion($input: CreateSuggestionInput!) {
+  createSuggestion(input: $input) {
+    ...SuggestionFields
+  }
+}
+    ${SuggestionFieldsFragmentDoc}`;
+export type CreateSuggestionMutationFn = ApolloReactCommon.MutationFunction<CreateSuggestionMutation, CreateSuggestionMutationVariables>;
+
+/**
+ * __useCreateSuggestionMutation__
+ *
+ * To run a mutation, you first call `useCreateSuggestionMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useCreateSuggestionMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [createSuggestionMutation, { data, loading, error }] = useCreateSuggestionMutation({
+ *   variables: {
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function useCreateSuggestionMutation(baseOptions?: ApolloReactHooks.MutationHookOptions<CreateSuggestionMutation, CreateSuggestionMutationVariables>) {
+        return ApolloReactHooks.useMutation<CreateSuggestionMutation, CreateSuggestionMutationVariables>(CreateSuggestionDocument, baseOptions);
+      }
+export type CreateSuggestionMutationHookResult = ReturnType<typeof useCreateSuggestionMutation>;
+export type CreateSuggestionMutationResult = ApolloReactCommon.MutationResult<CreateSuggestionMutation>;
+export type CreateSuggestionMutationOptions = ApolloReactCommon.BaseMutationOptions<CreateSuggestionMutation, CreateSuggestionMutationVariables>;
+export const SetSuggestionStatusDocument = gql`
+    mutation SetSuggestionStatus($input: SetSuggestionStatusInput!) {
+  setSuggestionStatus(input: $input) {
+    id
+    status
+    taskId
+  }
+}
+    `;
+export type SetSuggestionStatusMutationFn = ApolloReactCommon.MutationFunction<SetSuggestionStatusMutation, SetSuggestionStatusMutationVariables>;
+
+/**
+ * __useSetSuggestionStatusMutation__
+ *
+ * To run a mutation, you first call `useSetSuggestionStatusMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useSetSuggestionStatusMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [setSuggestionStatusMutation, { data, loading, error }] = useSetSuggestionStatusMutation({
+ *   variables: {
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function useSetSuggestionStatusMutation(baseOptions?: ApolloReactHooks.MutationHookOptions<SetSuggestionStatusMutation, SetSuggestionStatusMutationVariables>) {
+        return ApolloReactHooks.useMutation<SetSuggestionStatusMutation, SetSuggestionStatusMutationVariables>(SetSuggestionStatusDocument, baseOptions);
+      }
+export type SetSuggestionStatusMutationHookResult = ReturnType<typeof useSetSuggestionStatusMutation>;
+export type SetSuggestionStatusMutationResult = ApolloReactCommon.MutationResult<SetSuggestionStatusMutation>;
+export type SetSuggestionStatusMutationOptions = ApolloReactCommon.BaseMutationOptions<SetSuggestionStatusMutation, SetSuggestionStatusMutationVariables>;
+export const AddUpvoteToSuggestionDocument = gql`
+    mutation AddUpvoteToSuggestion($input: AddUpvoteToSuggestionInput!) {
+  addUpvoteToSuggestion(input: $input) {
+    id
+    upvotes
+  }
+}
+    `;
+export type AddUpvoteToSuggestionMutationFn = ApolloReactCommon.MutationFunction<AddUpvoteToSuggestionMutation, AddUpvoteToSuggestionMutationVariables>;
+
+/**
+ * __useAddUpvoteToSuggestionMutation__
+ *
+ * To run a mutation, you first call `useAddUpvoteToSuggestionMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useAddUpvoteToSuggestionMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [addUpvoteToSuggestionMutation, { data, loading, error }] = useAddUpvoteToSuggestionMutation({
+ *   variables: {
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function useAddUpvoteToSuggestionMutation(baseOptions?: ApolloReactHooks.MutationHookOptions<AddUpvoteToSuggestionMutation, AddUpvoteToSuggestionMutationVariables>) {
+        return ApolloReactHooks.useMutation<AddUpvoteToSuggestionMutation, AddUpvoteToSuggestionMutationVariables>(AddUpvoteToSuggestionDocument, baseOptions);
+      }
+export type AddUpvoteToSuggestionMutationHookResult = ReturnType<typeof useAddUpvoteToSuggestionMutation>;
+export type AddUpvoteToSuggestionMutationResult = ApolloReactCommon.MutationResult<AddUpvoteToSuggestionMutation>;
+export type AddUpvoteToSuggestionMutationOptions = ApolloReactCommon.BaseMutationOptions<AddUpvoteToSuggestionMutation, AddUpvoteToSuggestionMutationVariables>;
+export const RemoveUpvoteFromSuggestionDocument = gql`
+    mutation RemoveUpvoteFromSuggestion($input: RemoveUpvoteFromSuggestionInput!) {
+  removeUpvoteFromSuggestion(input: $input) {
+    id
+    upvotes
+  }
+}
+    `;
+export type RemoveUpvoteFromSuggestionMutationFn = ApolloReactCommon.MutationFunction<RemoveUpvoteFromSuggestionMutation, RemoveUpvoteFromSuggestionMutationVariables>;
+
+/**
+ * __useRemoveUpvoteFromSuggestionMutation__
+ *
+ * To run a mutation, you first call `useRemoveUpvoteFromSuggestionMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useRemoveUpvoteFromSuggestionMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [removeUpvoteFromSuggestionMutation, { data, loading, error }] = useRemoveUpvoteFromSuggestionMutation({
+ *   variables: {
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function useRemoveUpvoteFromSuggestionMutation(baseOptions?: ApolloReactHooks.MutationHookOptions<RemoveUpvoteFromSuggestionMutation, RemoveUpvoteFromSuggestionMutationVariables>) {
+        return ApolloReactHooks.useMutation<RemoveUpvoteFromSuggestionMutation, RemoveUpvoteFromSuggestionMutationVariables>(RemoveUpvoteFromSuggestionDocument, baseOptions);
+      }
+export type RemoveUpvoteFromSuggestionMutationHookResult = ReturnType<typeof useRemoveUpvoteFromSuggestionMutation>;
+export type RemoveUpvoteFromSuggestionMutationResult = ApolloReactCommon.MutationResult<RemoveUpvoteFromSuggestionMutation>;
+export type RemoveUpvoteFromSuggestionMutationOptions = ApolloReactCommon.BaseMutationOptions<RemoveUpvoteFromSuggestionMutation, RemoveUpvoteFromSuggestionMutationVariables>;
+export const CreateTaskFromSuggestionDocument = gql`
+    mutation CreateTaskFromSuggestion($input: CreateTaskFromSuggestionInput!) {
+  createTaskFromSuggestion(input: $input) {
+    ...CreateTaskFields
+  }
+}
+    ${CreateTaskFieldsFragmentDoc}`;
+export type CreateTaskFromSuggestionMutationFn = ApolloReactCommon.MutationFunction<CreateTaskFromSuggestionMutation, CreateTaskFromSuggestionMutationVariables>;
+
+/**
+ * __useCreateTaskFromSuggestionMutation__
+ *
+ * To run a mutation, you first call `useCreateTaskFromSuggestionMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useCreateTaskFromSuggestionMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [createTaskFromSuggestionMutation, { data, loading, error }] = useCreateTaskFromSuggestionMutation({
+ *   variables: {
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function useCreateTaskFromSuggestionMutation(baseOptions?: ApolloReactHooks.MutationHookOptions<CreateTaskFromSuggestionMutation, CreateTaskFromSuggestionMutationVariables>) {
+        return ApolloReactHooks.useMutation<CreateTaskFromSuggestionMutation, CreateTaskFromSuggestionMutationVariables>(CreateTaskFromSuggestionDocument, baseOptions);
+      }
+export type CreateTaskFromSuggestionMutationHookResult = ReturnType<typeof useCreateTaskFromSuggestionMutation>;
+export type CreateTaskFromSuggestionMutationResult = ApolloReactCommon.MutationResult<CreateTaskFromSuggestionMutation>;
+export type CreateTaskFromSuggestionMutationOptions = ApolloReactCommon.BaseMutationOptions<CreateTaskFromSuggestionMutation, CreateTaskFromSuggestionMutationVariables>;
 export const TaskDocument = gql`
     query Task($id: String!) {
   task(id: $id) {
@@ -3676,6 +3907,42 @@ export function useColonyDomainsLazyQuery(baseOptions?: ApolloReactHooks.LazyQue
 export type ColonyDomainsQueryHookResult = ReturnType<typeof useColonyDomainsQuery>;
 export type ColonyDomainsLazyQueryHookResult = ReturnType<typeof useColonyDomainsLazyQuery>;
 export type ColonyDomainsQueryResult = ApolloReactCommon.QueryResult<ColonyDomainsQuery, ColonyDomainsQueryVariables>;
+export const ColonySuggestionsDocument = gql`
+    query ColonySuggestions($colonyAddress: String!) {
+  colony(address: $colonyAddress) {
+    id
+    suggestions {
+      ...SuggestionFields
+    }
+  }
+}
+    ${SuggestionFieldsFragmentDoc}`;
+
+/**
+ * __useColonySuggestionsQuery__
+ *
+ * To run a query within a React component, call `useColonySuggestionsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useColonySuggestionsQuery` returns an object from Apollo Client that contains loading, error, and data properties 
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useColonySuggestionsQuery({
+ *   variables: {
+ *      colonyAddress: // value for 'colonyAddress'
+ *   },
+ * });
+ */
+export function useColonySuggestionsQuery(baseOptions?: ApolloReactHooks.QueryHookOptions<ColonySuggestionsQuery, ColonySuggestionsQueryVariables>) {
+        return ApolloReactHooks.useQuery<ColonySuggestionsQuery, ColonySuggestionsQueryVariables>(ColonySuggestionsDocument, baseOptions);
+      }
+export function useColonySuggestionsLazyQuery(baseOptions?: ApolloReactHooks.LazyQueryHookOptions<ColonySuggestionsQuery, ColonySuggestionsQueryVariables>) {
+          return ApolloReactHooks.useLazyQuery<ColonySuggestionsQuery, ColonySuggestionsQueryVariables>(ColonySuggestionsDocument, baseOptions);
+        }
+export type ColonySuggestionsQueryHookResult = ReturnType<typeof useColonySuggestionsQuery>;
+export type ColonySuggestionsLazyQueryHookResult = ReturnType<typeof useColonySuggestionsLazyQuery>;
+export type ColonySuggestionsQueryResult = ApolloReactCommon.QueryResult<ColonySuggestionsQuery, ColonySuggestionsQueryVariables>;
 export const UserNotificationsDocument = gql`
     query UserNotifications($address: String!) {
   user(address: $address) {
