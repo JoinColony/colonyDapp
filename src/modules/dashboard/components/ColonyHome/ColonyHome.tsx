@@ -174,7 +174,10 @@ const ColonyHome = ({
             <Transactions colonyAddress={colony.colonyAddress} />
           </TabPanel>
           <TabPanel>
-            <Suggestions colonyAddress={colony.colonyAddress} />
+            <Suggestions
+              colonyAddress={colony.colonyAddress}
+              domainId={filteredDomainId}
+            />
           </TabPanel>
         </Tabs>
       </main>
