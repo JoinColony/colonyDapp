@@ -22,3 +22,11 @@
   display: flex;
   align-items: center;
 }
+
+.upvoteCount {
+  font-weight: var(--weight-medium);
+}
+
+.upvoteButtonContainer {
+  padding-left: 30px;
+}
