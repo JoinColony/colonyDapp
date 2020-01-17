@@ -96,7 +96,7 @@ const TokensMoveDialogForm = ({
 
   const tokenOptions = useMemo(
     () =>
-      tokens.map(({ address, details: { symbol } }) => ({
+      tokens.map(({ address, symbol }) => ({
         value: address,
         label: symbol || '???',
       })),
@@ -182,7 +182,7 @@ const TokensMoveDialogForm = ({
       errors.amount = undefined; // silent error
     } else {
       const convertedAmount = new BigNumber(
-        moveDecimal(amount, selectedToken.details.decimals || 18),
+        moveDecimal(amount, selectedToken.decimals || 18),
       );
       if (convertedAmount.eqn(0)) {
         errors.amount = MSG.noAmount;
@@ -241,14 +241,11 @@ const TokensMoveDialogForm = ({
                       theme: 'grey',
                     }}
                     value={fromDomainTokenBalance || 0}
-                    unit={
-                      (selectedToken && selectedToken.details.decimals) || 18
-                    }
+                    unit={(selectedToken && selectedToken.decimals) || 18}
                     truncate={3}
                   />
                 ),
-                symbol:
-                  (selectedToken && selectedToken.details.symbol) || '???',
+                symbol: (selectedToken && selectedToken.symbol) || '???',
               }}
             />
           </div>
@@ -268,14 +265,11 @@ const TokensMoveDialogForm = ({
                       theme: 'grey',
                     }}
                     value={toDomainTokenBalance || 0}
-                    unit={
-                      (selectedToken && selectedToken.details.decimals) || 18
-                    }
+                    unit={(selectedToken && selectedToken.decimals) || 18}
                     truncate={3}
                   />
                 ),
-                symbol:
-                  (selectedToken && selectedToken.details.symbol) || '???',
+                symbol: (selectedToken && selectedToken.symbol) || '???',
               }}
             />
           </div>
@@ -292,7 +286,7 @@ const TokensMoveDialogForm = ({
                 delimiter: ',',
                 numeral: true,
                 numeralDecimalScale:
-                  (selectedToken && selectedToken.details.decimals) || 18,
+                  (selectedToken && selectedToken.decimals) || 18,
               }}
             />
           </div>

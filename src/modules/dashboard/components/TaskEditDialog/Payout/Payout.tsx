@@ -74,13 +74,13 @@ const Payout = ({
   ]);
   const tokenOptions =
     tokens &&
-    tokens.map(({ address, details: { symbol } }) => ({
+    tokens.map(({ address, symbol }) => ({
       value: address,
       label: symbol || MSG.unknownToken,
     }));
 
   const { symbol = '', decimals = DEFAULT_TOKEN_DECIMALS } =
-    (selectedToken && selectedToken.details) || {};
+    (selectedToken && selectedToken) || {};
 
   return (
     <div>

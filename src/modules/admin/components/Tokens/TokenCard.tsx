@@ -40,14 +40,10 @@ const TokenCard = ({ domainId, nativeTokenAddress, token }: Props) => {
   return (
     <Card key={token.address} className={styles.main}>
       <div className={styles.cardHeading}>
-        <TokenIcon
-          token={token}
-          name={token.details.name || undefined}
-          size="xs"
-        />
+        <TokenIcon token={token} name={token.name || undefined} size="xs" />
         <div className={styles.tokenSymbol}>
-          {token.details.symbol ? (
-            token.details.symbol
+          {token.symbol ? (
+            token.symbol
           ) : (
             <>
               <FormattedMessage {...MSG.unknownToken} />
@@ -71,7 +67,7 @@ const TokenCard = ({ domainId, nativeTokenAddress, token }: Props) => {
         <Numeral
           className={styles.balanceNumeral}
           integerSeparator=""
-          unit={token.details.decimals ? token.details.decimals : 18}
+          unit={token.decimals ? token.decimals : 18}
           value={balance || 0}
         />
       </div>

@@ -57,7 +57,7 @@ const getStatusText = (isLoading: boolean, tokenData?: Token) => {
     return { status: MSG.statusNotFound };
   }
   return tokenData
-    ? { status: MSG.preview, statusValues: tokenData.details }
+    ? { status: MSG.preview, statusValues: tokenData }
     : { status: MSG.hint };
 };
 
@@ -82,9 +82,7 @@ const TokenSelector = ({
 
   const handleGetTokenSuccess = useCallback(
     (token: Token) => {
-      const {
-        details: { name, symbol },
-      } = token;
+      const { name, symbol } = token;
       setLoading(false);
       if (!name || !symbol) {
         onTokenSelect(null);

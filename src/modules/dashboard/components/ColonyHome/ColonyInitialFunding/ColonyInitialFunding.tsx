@@ -109,7 +109,7 @@ const ColonyInitialFunding = ({
                       formattingOptions={{
                         numeral: true,
                         numeralPositiveOnly: true,
-                        numeralDecimalScale: nativeToken.details.decimals || 18,
+                        numeralDecimalScale: nativeToken.decimals || 18,
                       }}
                       label={MSG.amountLabel}
                       name="mintAmount"
@@ -117,9 +117,9 @@ const ColonyInitialFunding = ({
                   </div>
                   <span
                     className={styles.nativeToken}
-                    title={nativeToken.details.name || undefined}
+                    title={nativeToken.name || undefined}
                   >
-                    {nativeToken.details.symbol}
+                    {nativeToken.symbol}
                   </span>
                   <Button
                     appearance={{ theme: 'primary', size: 'large' }}

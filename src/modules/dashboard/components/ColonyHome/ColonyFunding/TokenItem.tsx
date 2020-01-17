@@ -12,10 +12,7 @@ const displayName = 'dashboard.ColonyHome.ColonyFunding.TokenItem';
 
 const TokenItem = ({
   currentDomainId,
-  token: {
-    balances,
-    details: { decimals, symbol },
-  },
+  token: { balances, decimals, symbol },
 }: Props) => {
   const domainBalance = balances.find(
     ({ domainId }) => domainId === currentDomainId,
