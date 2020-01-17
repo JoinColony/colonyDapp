@@ -9,6 +9,7 @@ export const themePrimary: string;
 export const themeSecondary: string;
 export const colorSchemaInverted: string;
 export const themeDanger: string;
+export const themeDangerLink: string;
 export const themeGhost: string;
 export const colorSchemaGrey: string;
 export const themeUnderlinedBold: string;
