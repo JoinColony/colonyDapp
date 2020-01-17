@@ -24,25 +24,29 @@ const SuggestionsListItem = ({
   suggestion: { title, creator, upvotes },
 }: Props) => (
   <div className={styles.main}>
-    <div className={styles.actionMenuContainer}>
-      {/* @todo Action menu goes here */}|
-    </div>
-    <div className={styles.titleContainer}>
-      <Heading
-        appearance={{ size: 'normal', margin: 'none', weight: 'bold' }}
-        text={title}
-      />
-      <p className={styles.authorText}>
-        <FormattedMessage
-          {...MSG.byAuthorText}
-          values={{ creator: getFriendlyName(creator) }}
+    <div className={styles.mainInner}>
+      <div className={styles.actionMenuContainer}>
+        <div className={styles.actionMenu}>
+          {/* @todo Action menu goes here */}|
+        </div>
+      </div>
+      <div className={styles.titleContainer}>
+        <Heading
+          appearance={{ size: 'normal', margin: 'none', weight: 'bold' }}
+          text={title}
         />
-      </p>
-    </div>
-    <div className={styles.upvoteContainer}>
-      <div className={styles.upvoteCount}>{upvotes.length}</div>
-      <div className={styles.upvoteButtonContainer}>
-        {/* @todo upvote button goes here */}^
+        <p className={styles.authorText}>
+          <FormattedMessage
+            {...MSG.byAuthorText}
+            values={{ creator: getFriendlyName(creator) }}
+          />
+        </p>
+      </div>
+      <div className={styles.upvoteContainer}>
+        <div className={styles.upvoteCount}>{upvotes.length}</div>
+        <div className={styles.upvoteButtonContainer}>
+          {/* @todo upvote button goes here */}^
+        </div>
       </div>
     </div>
   </div>
