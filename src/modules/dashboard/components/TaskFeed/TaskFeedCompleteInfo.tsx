@@ -66,7 +66,7 @@ const TaskFeedCompleteInfo = ({
   const { data, loading: isLoadingToken } = useTokenQuery({
     variables: { address: tokenAddress },
   });
-  const { decimals = 18, symbol = '' } = (data && data.token.details) || {};
+  const { decimals = 18, symbol = '' } = (data && data.token) || {};
   const metaColonyFee = new BigNumber(
     moveDecimal(fullPayoutAmount, decimals),
   ).sub(new BigNumber(amount));

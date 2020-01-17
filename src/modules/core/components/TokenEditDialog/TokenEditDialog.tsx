@@ -8,7 +8,6 @@ import { Form, InputLabel } from '~core/Fields';
 import Heading from '~core/Heading';
 import TokenCheckbox from './TokenCheckbox';
 import { Address } from '~types/strings';
-import { TokenList } from '~data/index';
 
 import styles from './TokenEditDialog.css';
 
@@ -46,7 +45,8 @@ interface FormValues {
 interface Props {
   cancel: () => void;
   close: () => void;
-  availableTokens: TokenList;
+  // FIXME type correctly
+  availableTokens: any[];
   onSubmit: FormikConfig<FormValues>['onSubmit'];
   nativeTokenAddress?: Address;
   selectedTokens: Address[];

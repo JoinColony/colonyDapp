@@ -157,6 +157,10 @@ export type Scalars = {
 };
 
 
+export type AddUpvoteToSuggestionInput = {
+  id: Scalars['String'],
+};
+
 export type AssignWorkerEvent = TaskEvent & {
   type: EventType,
   taskId: Scalars['String'],
@@ -193,22 +197,18 @@ export type Colony = {
   tasks: Array<Task>,
   domains: Array<Domain>,
   founder?: Maybe<User>,
-  nativeToken: Token,
   isNativeTokenExternal: Scalars['Boolean'],
   nativeTokenAddress: Scalars['String'],
   subscribedUsers: Array<User>,
-  tokens: Array<Token>,
+  suggestions: Array<Suggestion>,
   tokenAddresses: Array<Scalars['String']>,
   canMintNativeToken: Scalars['Boolean'],
   canUnlockNativeToken: Scalars['Boolean'],
   isInRecoveryMode: Scalars['Boolean'],
   isNativeTokenLocked: Scalars['Boolean'],
+  nativeToken: Token,
+  tokens: Array<Token>,
   version: Scalars['Int'],
-};
-
-
-export type ColonyTokensArgs = {
-  addresses?: Maybe<Array<Scalars['String']>>
 };
 
 
@@ -229,6 +229,11 @@ export type ColonyIsInRecoveryModeArgs = {
 
 export type ColonyIsNativeTokenLockedArgs = {
   address: Scalars['String']
+};
+
+
+export type ColonyTokensArgs = {
+  addresses?: Maybe<Array<Scalars['String']>>
 };
 
 
@@ -266,6 +271,12 @@ export type CreateDomainInput = {
   name: Scalars['String'],
 };
 
+export type CreateSuggestionInput = {
+  colonyAddress: Scalars['String'],
+  ethDomainId: Scalars['Int'],
+  title: Scalars['String'],
+};
+
 export type CreateTaskEvent = TaskEvent & {
   type: EventType,
   taskId: Scalars['String'],
@@ -273,17 +284,13 @@ export type CreateTaskEvent = TaskEvent & {
   colonyAddress: Scalars['String'],
 };
 
+export type CreateTaskFromSuggestionInput = {
+  id: Scalars['String'],
+};
+
 export type CreateTaskInput = {
   colonyAddress: Scalars['String'],
   ethDomainId: Scalars['Int'],
-};
-
-export type CreateTokenInput = {
-  address: Scalars['String'],
-  decimals: Scalars['Int'],
-  name: Scalars['String'],
-  symbol: Scalars['String'],
-  iconHash?: Maybe<Scalars['String']>,
 };
 
 export type CreateUserInput = {
@@ -342,6 +349,7 @@ export type EditUserInput = {
 };
 
 export type Event = {
+  id: Scalars['String'],
   type: EventType,
   createdAt: Scalars['DateTime'],
   initiator?: Maybe<User>,
@@ -401,19 +409,22 @@ export type MarkNotificationAsReadInput = {
 };
 
 export type Mutation = {
-  createUser?: Maybe<User>,
-  editUser?: Maybe<User>,
-  subscribeToColony?: Maybe<User>,
-  unsubscribeFromColony?: Maybe<User>,
-  setUserTokens?: Maybe<User>,
   createColony?: Maybe<Colony>,
   editColonyProfile?: Maybe<Colony>,
   setColonyTokens?: Maybe<Colony>,
   createDomain?: Maybe<Domain>,
   editDomainName?: Maybe<Domain>,
+  sendTaskMessage: Scalars['Boolean'],
+  markAllNotificationsAsRead: Scalars['Boolean'],
+  markNotificationAsRead: Scalars['Boolean'],
+  createSuggestion?: Maybe<Suggestion>,
+  setSuggestionStatus?: Maybe<Suggestion>,
+  addUpvoteToSuggestion?: Maybe<Suggestion>,
+  removeUpvoteFromSuggestion?: Maybe<Suggestion>,
   assignWorker?: Maybe<Task>,
   cancelTask?: Maybe<Task>,
   createTask?: Maybe<Task>,
+  createTaskFromSuggestion?: Maybe<Task>,
   createWorkRequest?: Maybe<Task>,
   finalizeTask?: Maybe<Task>,
   removeTaskPayout?: Maybe<Task>,
@@ -425,38 +436,13 @@ export type Mutation = {
   setTaskSkill?: Maybe<Task>,
   setTaskTitle?: Maybe<Task>,
   unassignWorker?: Maybe<Task>,
-  createToken?: Maybe<Token>,
-  setTokenIcon?: Maybe<Token>,
-  markAllNotificationsAsRead: Scalars['Boolean'],
-  markNotificationAsRead: Scalars['Boolean'],
-  sendTaskMessage: Scalars['Boolean'],
+  createUser?: Maybe<User>,
+  editUser?: Maybe<User>,
+  subscribeToColony?: Maybe<User>,
+  unsubscribeFromColony?: Maybe<User>,
+  setUserTokens?: Maybe<User>,
   setLoggedInUser: LoggedInUser,
   clearLoggedInUser: LoggedInUser,
-};
-
-
-export type MutationCreateUserArgs = {
-  input: CreateUserInput
-};
-
-
-export type MutationEditUserArgs = {
-  input: EditUserInput
-};
-
-
-export type MutationSubscribeToColonyArgs = {
-  input: SubscribeToColonyInput
-};
-
-
-export type MutationUnsubscribeFromColonyArgs = {
-  input: UnsubscribeFromColonyInput
-};
-
-
-export type MutationSetUserTokensArgs = {
-  input: SetUserTokensInput
 };
 
 
@@ -485,6 +471,36 @@ export type MutationEditDomainNameArgs = {
 };
 
 
+export type MutationSendTaskMessageArgs = {
+  input: SendTaskMessageInput
+};
+
+
+export type MutationMarkNotificationAsReadArgs = {
+  input: MarkNotificationAsReadInput
+};
+
+
+export type MutationCreateSuggestionArgs = {
+  input: CreateSuggestionInput
+};
+
+
+export type MutationSetSuggestionStatusArgs = {
+  input: SetSuggestionStatusInput
+};
+
+
+export type MutationAddUpvoteToSuggestionArgs = {
+  input: AddUpvoteToSuggestionInput
+};
+
+
+export type MutationRemoveUpvoteFromSuggestionArgs = {
+  input: RemoveUpvoteFromSuggestionInput
+};
+
+
 export type MutationAssignWorkerArgs = {
   input: AssignWorkerInput
 };
@@ -497,6 +513,11 @@ export type MutationCancelTaskArgs = {
 
 export type MutationCreateTaskArgs = {
   input: CreateTaskInput
+};
+
+
+export type MutationCreateTaskFromSuggestionArgs = {
+  input: CreateTaskFromSuggestionInput
 };
 
 
@@ -555,23 +576,28 @@ export type MutationUnassignWorkerArgs = {
 };
 
 
-export type MutationCreateTokenArgs = {
-  input: CreateTokenInput
+export type MutationCreateUserArgs = {
+  input: CreateUserInput
 };
 
 
-export type MutationSetTokenIconArgs = {
-  input: SetTokenIconInput
+export type MutationEditUserArgs = {
+  input: EditUserInput
 };
 
 
-export type MutationMarkNotificationAsReadArgs = {
-  input: MarkNotificationAsReadInput
+export type MutationSubscribeToColonyArgs = {
+  input: SubscribeToColonyInput
 };
 
 
-export type MutationSendTaskMessageArgs = {
-  input: SendTaskMessageInput
+export type MutationUnsubscribeFromColonyArgs = {
+  input: UnsubscribeFromColonyInput
+};
+
+
+export type MutationSetUserTokensArgs = {
+  input: SetUserTokensInput
 };
 
 
@@ -594,11 +620,11 @@ export type Query = {
   colony: Colony,
   domain: Domain,
   task: Task,
-  token: Token,
-  allTokens: Array<Token>,
+  tokenInfo: TokenInfo,
   loggedInUser: LoggedInUser,
   colonyAddress: Scalars['String'],
   colonyName: Scalars['String'],
+  token: Token,
   userAddress: Scalars['String'],
   username: Scalars['String'],
 };
@@ -625,7 +651,7 @@ export type QueryTaskArgs = {
 };
 
 
-export type QueryTokenArgs = {
+export type QueryTokenInfoArgs = {
   address: Scalars['String']
 };
 
@@ -636,6 +662,11 @@ export type QueryColonyAddressArgs = {
 
 
 export type QueryColonyNameArgs = {
+  address: Scalars['String']
+};
+
+
+export type QueryTokenArgs = {
   address: Scalars['String']
 };
 
@@ -662,6 +693,10 @@ export type RemoveTaskPayoutInput = {
   tokenAddress: Scalars['String'],
 };
 
+export type RemoveUpvoteFromSuggestionInput = {
+  id: Scalars['String'],
+};
+
 export type SendTaskMessageInput = {
   id: Scalars['String'],
   message: Scalars['String'],
@@ -681,6 +716,11 @@ export type SendWorkInviteInput = {
 export type SetColonyTokensInput = {
   tokenAddresses: Array<Maybe<Scalars['String']>>,
   colonyAddress: Scalars['String'],
+};
+
+export type SetSuggestionStatusInput = {
+  id: Scalars['String'],
+  status: SuggestionStatus,
 };
 
 export type SetTaskDescriptionEvent = TaskEvent & {
@@ -751,11 +791,6 @@ export type SetTaskTitleInput = {
   title: Scalars['String'],
 };
 
-export type SetTokenIconInput = {
-  tokenAddress: Scalars['String'],
-  iconHash?: Maybe<Scalars['String']>,
-};
-
 export type SetUserTokensInput = {
   tokenAddresses: Array<Scalars['String']>,
 };
@@ -763,6 +798,26 @@ export type SetUserTokensInput = {
 export type SubscribeToColonyInput = {
   colonyAddress: Scalars['String'],
 };
+
+export type Suggestion = {
+  id: Scalars['String'],
+  createdAt: Scalars['DateTime'],
+  colonyAddress: Scalars['String'],
+  creatorAddress: Scalars['String'],
+  creator: User,
+  ethDomainId: Scalars['Int'],
+  status: SuggestionStatus,
+  title: Scalars['String'],
+  taskId?: Maybe<Scalars['String']>,
+  upvotes: Array<Scalars['String']>,
+};
+
+export enum SuggestionStatus {
+  Open = 'Open',
+  NotPlanned = 'NotPlanned',
+  Accepted = 'Accepted',
+  Deleted = 'Deleted'
+}
 
 export type Task = {
   id: Scalars['String'],
@@ -821,13 +876,14 @@ export type TaskPayout = {
 
 export type Token = {
   id: Scalars['String'],
-  createdAt: Scalars['DateTime'],
   address: Scalars['String'],
+  decimals: Scalars['Int'],
+  name: Scalars['String'],
+  symbol: Scalars['String'],
   iconHash?: Maybe<Scalars['String']>,
-  info: TokenInfo,
+  verified: Scalars['Boolean'],
   balance: Scalars['String'],
   balances: Array<DomainBalance>,
-  details: TokenInfo,
 };
 
 
@@ -842,10 +898,13 @@ export type TokenBalancesArgs = {
 };
 
 export type TokenInfo = {
-  name?: Maybe<Scalars['String']>,
-  decimals?: Maybe<Scalars['Int']>,
-  symbol?: Maybe<Scalars['String']>,
-  verified?: Maybe<Scalars['Boolean']>,
+  id: Scalars['String'],
+  createdAt: Scalars['DateTime'],
+  address: Scalars['String'],
+  iconHash?: Maybe<Scalars['String']>,
+  name: Scalars['String'],
+  decimals: Scalars['Int'],
+  symbol: Scalars['String'],
 };
 
 export type UnassignWorkerEvent = TaskEvent & {
@@ -872,14 +931,9 @@ export type User = {
   colonyAddresses: Array<Scalars['String']>,
   tasks: Array<Task>,
   taskIds: Array<Scalars['String']>,
-  tokens: Array<Token>,
   tokenAddresses: Array<Scalars['String']>,
   notifications: Array<Notification>,
-};
-
-
-export type UserTokensArgs = {
-  addresses?: Maybe<Array<Scalars['String']>>
+  tokens: Array<Token>,
 };
 
 
@@ -899,17 +953,14 @@ export type UserProfile = {
 
 export type PayoutsFragment = { payouts: Array<(
     Pick<TaskPayout, 'amount'>
-    & { token: (
-      Pick<Token, 'id' | 'address'>
-      & { details: Pick<TokenInfo, 'decimals' | 'name' | 'symbol'> }
-    ) }
+    & { token: Pick<Token, 'id' | 'address' | 'decimals' | 'name' | 'symbol'> }
   )> };
 
 export type TokensFragment = (
   Pick<Colony, 'nativeTokenAddress'>
   & { tokens: Array<(
-    Pick<Token, 'id' | 'address' | 'iconHash'>
-    & { details: Pick<TokenInfo, 'decimals' | 'name' | 'symbol'>, balances: Array<Pick<DomainBalance, 'domainId' | 'amount'>> }
+    Pick<Token, 'id' | 'address' | 'iconHash' | 'decimals' | 'name' | 'symbol'>
+    & { balances: Array<Pick<DomainBalance, 'domainId' | 'amount'>> }
   )> }
 );
 
@@ -1230,10 +1281,7 @@ export type TaskToEditQuery = { task: (
       & { subscribedUsers: Array<(
         Pick<User, 'id'>
         & { profile: Pick<UserProfile, 'displayName' | 'walletAddress' | 'username' | 'avatarHash'> }
-      )>, tokens: Array<(
-        Pick<Token, 'id' | 'address'>
-        & { details: Pick<TokenInfo, 'decimals' | 'name' | 'symbol'> }
-      )> }
+      )>, tokens: Array<Pick<Token, 'id' | 'address' | 'decimals' | 'name' | 'symbol'>> }
     ) }
     & PayoutsFragment
   ) };
@@ -1288,10 +1336,7 @@ export type UserTokensQueryVariables = {
 
 export type UserTokensQuery = { user: (
     Pick<User, 'id'>
-    & { tokens: Array<(
-      Pick<Token, 'id' | 'address' | 'iconHash' | 'balance'>
-      & { details: Pick<TokenInfo, 'decimals' | 'name' | 'symbol'> }
-    )> }
+    & { tokens: Array<Pick<Token, 'id' | 'address' | 'iconHash' | 'decimals' | 'name' | 'symbol' | 'balance'>> }
   ) };
 
 export type UsernameQueryVariables = {
@@ -1360,8 +1405,8 @@ export type TokenBalancesForDomainsQueryVariables = {
 export type TokenBalancesForDomainsQuery = { colony: (
     Pick<Colony, 'id' | 'nativeTokenAddress'>
     & { tokens: Array<(
-      Pick<Token, 'id' | 'address' | 'iconHash'>
-      & { details: Pick<TokenInfo, 'decimals' | 'name' | 'symbol'>, balances: Array<Pick<DomainBalance, 'domainId' | 'amount'>> }
+      Pick<Token, 'id' | 'address' | 'iconHash' | 'decimals' | 'name' | 'symbol'>
+      & { balances: Array<Pick<DomainBalance, 'domainId' | 'amount'>> }
     )> }
   ) };
 
@@ -1422,17 +1467,14 @@ export type TokenQueryVariables = {
 };
 
 
-export type TokenQuery = { token: (
-    Pick<Token, 'id' | 'address' | 'iconHash'>
-    & { details: Pick<TokenInfo, 'decimals' | 'name' | 'symbol'> }
-  ) };
+export type TokenQuery = { token: Pick<Token, 'id' | 'address' | 'iconHash' | 'decimals' | 'name' | 'symbol'> };
 
 export type TokenInfoQueryVariables = {
   address: Scalars['String']
 };
 
 
-export type TokenInfoQuery = { token: { info: Pick<TokenInfo, 'decimals' | 'name' | 'symbol'> } };
+export type TokenInfoQuery = { tokenInfo: Pick<TokenInfo, 'decimals' | 'name' | 'symbol' | 'iconHash'> };
 
 export type ColonyDomainsQueryVariables = {
   colonyAddress: Scalars['String']
@@ -1444,14 +1486,6 @@ export type ColonyDomainsQuery = { colony: (
     & { domains: Array<Pick<Domain, 'id' | 'ethDomainId' | 'name' | 'ethParentDomainId'>> }
   ) };
 
-export type AllTokensQueryVariables = {};
-
-
-export type AllTokensQuery = { allTokens: Array<(
-    Pick<Token, 'id' | 'address' | 'iconHash'>
-    & { details: Pick<TokenInfo, 'name' | 'symbol' | 'decimals'> }
-  )> };
-
 export type UserNotificationsQueryVariables = {
   address: Scalars['String']
 };
@@ -1462,7 +1496,7 @@ export type UserNotificationsQuery = { user: (
     & { notifications: Array<(
       Pick<Notification, 'id' | 'read'>
       & { event: (
-        Pick<Event, 'type' | 'createdAt' | 'initiatorAddress' | 'sourceId' | 'sourceType'>
+        Pick<Event, 'id' | 'type' | 'createdAt' | 'initiatorAddress' | 'sourceId' | 'sourceType'>
         & EventContextFragment
       ) }
     )> }
@@ -1472,14 +1506,12 @@ export const PayoutsFragmentDoc = gql`
     fragment Payouts on Task {
   payouts {
     amount
-    token {
+    token @client {
       id
       address
-      details @client {
-        decimals
-        name
-        symbol
-      }
+      decimals
+      name
+      symbol
     }
   }
 }
@@ -1499,16 +1531,14 @@ export const ColonyProfileFragmentDoc = gql`
 export const TokensFragmentDoc = gql`
     fragment Tokens on Colony {
   nativeTokenAddress
-  tokens {
+  tokens @client {
     id
     address
     iconHash
-    details @client {
-      decimals
-      name
-      symbol
-    }
-    balances(colonyAddress: $address) @client {
+    decimals
+    name
+    symbol
+    balances(colonyAddress: $address) {
       domainId
       amount
     }
@@ -2814,14 +2844,12 @@ export const TaskToEditDocument = gql`
           avatarHash
         }
       }
-      tokens {
+      tokens @client {
         id
         address
-        details @client {
-          decimals
-          name
-          symbol
-        }
+        decimals
+        name
+        symbol
       }
     }
   }
@@ -3040,16 +3068,14 @@ export const UserTokensDocument = gql`
     query UserTokens($address: String!) {
   user(address: $address) {
     id
-    tokens {
+    tokens @client {
       id
       address
       iconHash
-      details @client {
-        decimals
-        name
-        symbol
-      }
-      balance(walletAddress: $address) @client
+      decimals
+      name
+      symbol
+      balance(walletAddress: $address)
     }
   }
 }
@@ -3311,16 +3337,14 @@ export const TokenBalancesForDomainsDocument = gql`
   colony(address: $colonyAddress) {
     id
     nativeTokenAddress
-    tokens(addresses: $tokenAddresses) {
+    tokens(addresses: $tokenAddresses) @client {
       id
       address
       iconHash
-      details @client {
-        decimals
-        name
-        symbol
-      }
-      balances(colonyAddress: $colonyAddress, domainIds: $domainIds) @client {
+      decimals
+      name
+      symbol
+      balances(colonyAddress: $colonyAddress, domainIds: $domainIds) {
         domainId
         amount
       }
@@ -3568,11 +3592,9 @@ export const TokenDocument = gql`
     id
     address
     iconHash
-    details @client {
-      decimals
-      name
-      symbol
-    }
+    decimals
+    name
+    symbol
   }
 }
     `;
@@ -3604,12 +3626,11 @@ export type TokenLazyQueryHookResult = ReturnType<typeof useTokenLazyQuery>;
 export type TokenQueryResult = ApolloReactCommon.QueryResult<TokenQuery, TokenQueryVariables>;
 export const TokenInfoDocument = gql`
     query TokenInfo($address: String!) {
-  token(address: $address) {
-    info {
-      decimals
-      name
-      symbol
-    }
+  tokenInfo(address: $address) {
+    decimals
+    name
+    symbol
+    iconHash
   }
 }
     `;
@@ -3678,45 +3699,6 @@ export function useColonyDomainsLazyQuery(baseOptions?: ApolloReactHooks.LazyQue
 export type ColonyDomainsQueryHookResult = ReturnType<typeof useColonyDomainsQuery>;
 export type ColonyDomainsLazyQueryHookResult = ReturnType<typeof useColonyDomainsLazyQuery>;
 export type ColonyDomainsQueryResult = ApolloReactCommon.QueryResult<ColonyDomainsQuery, ColonyDomainsQueryVariables>;
-export const AllTokensDocument = gql`
-    query AllTokens {
-  allTokens {
-    id
-    address
-    iconHash
-    details: info {
-      name
-      symbol
-      decimals
-    }
-  }
-}
-    `;
-
-/**
- * __useAllTokensQuery__
- *
- * To run a query within a React component, call `useAllTokensQuery` and pass it any options that fit your needs.
- * When your component renders, `useAllTokensQuery` returns an object from Apollo Client that contains loading, error, and data properties 
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useAllTokensQuery({
- *   variables: {
- *   },
- * });
- */
-export function useAllTokensQuery(baseOptions?: ApolloReactHooks.QueryHookOptions<AllTokensQuery, AllTokensQueryVariables>) {
-        return ApolloReactHooks.useQuery<AllTokensQuery, AllTokensQueryVariables>(AllTokensDocument, baseOptions);
-      }
-export function useAllTokensLazyQuery(baseOptions?: ApolloReactHooks.LazyQueryHookOptions<AllTokensQuery, AllTokensQueryVariables>) {
-          return ApolloReactHooks.useLazyQuery<AllTokensQuery, AllTokensQueryVariables>(AllTokensDocument, baseOptions);
-        }
-export type AllTokensQueryHookResult = ReturnType<typeof useAllTokensQuery>;
-export type AllTokensLazyQueryHookResult = ReturnType<typeof useAllTokensLazyQuery>;
-export type AllTokensQueryResult = ApolloReactCommon.QueryResult<AllTokensQuery, AllTokensQueryVariables>;
 export const UserNotificationsDocument = gql`
     query UserNotifications($address: String!) {
   user(address: $address) {
@@ -3724,6 +3706,7 @@ export const UserNotificationsDocument = gql`
     notifications {
       id
       event {
+        id
         type
         createdAt
         initiatorAddress

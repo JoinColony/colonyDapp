@@ -149,14 +149,7 @@ const TransactionListItem = ({
             />
           </div>
         )}
-        <Numeral
-          value={amount}
-          unit="ether"
-          /**
-           * @todo : what should we show when we don't recognise the token?
-           */
-          suffix={` ${(token && token.details.symbol) || '???'}`}
-        />
+        <Numeral value={amount} unit="ether" suffix={` ${token.symbol}`} />
       </TableCell>
     </TableRow>
   );

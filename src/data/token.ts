@@ -8,6 +8,13 @@ import { ZERO_ADDRESS, ETHER_INFO } from '~utils/web3/constants';
 import { TokenInfo, TokenInfoDocument } from '~data/index';
 import { Address } from '~types/index';
 
+interface EthplorerTokenData {
+  name: string;
+  symbol: string;
+  decimals: number;
+  verified: boolean;
+}
+
 const getBalanceForTokenAndDomain = async (
   colonyClient,
   tokenAddress,
@@ -31,7 +38,7 @@ const getBalanceForTokenAndDomain = async (
   return new BigNumber(rewardsPotTotal.toString(10));
 };
 
-const getEthplorerTokenData = async (address: string): Promise<TokenInfo> => {
+const getEthplorerTokenData = async (address: string) => {
   // eslint-disable-next-line max-len, prettier/prettier
   const endpoint = `//api.ethplorer.io/getTokenInfo/${address}?apiKey=${process
     .env.ETHPLORER_API_KEY || 'freekey'}`;
@@ -117,7 +124,7 @@ export const tokenResolvers = ({ colonyManager }: ContextType): Resolvers => ({
       const tokenClient = await colonyManager.getTokenClient(tokenAddress);
       const chainData: TokenInfo = await tokenClient.getTokenInfo.call();
 
-      let ethplorerData = {} as TokenInfo;
+      let ethplorerData = {} as EthplorerTokenData;
 
       try {
         ethplorerData = await getEthplorerTokenData(tokenAddress);

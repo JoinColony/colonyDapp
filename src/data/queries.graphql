@@ -99,14 +99,12 @@ query TaskToEdit($id: String!) {
           avatarHash
         }
       }
-      tokens {
+      tokens @client {
         id
         address
-        details @client {
-          decimals
-          name
-          symbol
-        }
+        decimals
+        name
+        symbol
       }
     }
   }
@@ -190,16 +188,14 @@ query UserTasks($address: String!) {
 query UserTokens($address: String!) {
   user(address: $address) {
     id
-    tokens {
+    tokens @client {
       id
       address
       iconHash
-      details @client {
-        decimals
-        name
-        symbol
-      }
-      balance(walletAddress: $address) @client
+      decimals
+      name
+      symbol
+      balance(walletAddress: $address)
     }
   }
 }
@@ -244,16 +240,14 @@ query TokenBalancesForDomains($colonyAddress: String!, $tokenAddresses: [String!
   colony(address: $colonyAddress) {
     id
     nativeTokenAddress
-    tokens(addresses: $tokenAddresses) {
+    tokens(addresses: $tokenAddresses) @client {
       id
       address
       iconHash
-      details @client {
-        decimals
-        name
-        symbol
-      }
-      balances(colonyAddress: $colonyAddress, domainIds: $domainIds) @client {
+      decimals
+      name
+      symbol
+      balances(colonyAddress: $colonyAddress, domainIds: $domainIds) {
         domainId
         amount
       }
@@ -336,22 +330,18 @@ query Token($address: String!) {
     id
     address
     iconHash
-    details @client {
-      decimals
-      name
-      symbol
-    }
+    decimals
+    name
+    symbol
   }
 }
 
 query TokenInfo($address: String!) {
-  token(address: $address) {
-    # This is deliberately _not_ renamed to details as we are using this in the local details resolver
-    info {
-      decimals
-      name
-      symbol
-    }
+  tokenInfo(address: $address) {
+    decimals
+    name
+    symbol
+    iconHash
   }
 }
 
@@ -367,25 +357,13 @@ query ColonyDomains($colonyAddress: String!) {
   }
 }
 
-query AllTokens {
-  allTokens {
-    id
-    address
-    iconHash
-    details: info {
-      name
-      symbol
-      decimals
-    }
-  }
-}
-
 query UserNotifications($address: String!) {
   user(address: $address) {
     id
     notifications {
       id
       event {
+        id
         type
         createdAt
         initiatorAddress

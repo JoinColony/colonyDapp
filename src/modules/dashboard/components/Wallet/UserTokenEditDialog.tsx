@@ -2,10 +2,8 @@ import React, { useCallback } from 'react';
 
 import { Address } from '~types/strings';
 import TokenEditDialog from '~core/TokenEditDialog';
-import { SpinnerLoader } from '~core/Preloaders';
 import {
   useSetUserTokensMutation,
-  useAllTokensQuery,
   UserTokensDocument,
   UserTokensQueryVariables,
 } from '~data/index';
@@ -23,7 +21,6 @@ const UserTokenEditDialog = ({
   close,
   walletAddress,
 }: Props) => {
-  const { data: allTokensData } = useAllTokensQuery();
   const [setUserTokensMutation] = useSetUserTokensMutation({
     refetchQueries: [
       {
@@ -42,11 +39,8 @@ const UserTokenEditDialog = ({
     [setUserTokensMutation],
   );
 
-  if (!allTokensData) {
-    return <SpinnerLoader />;
-  }
-
-  const { allTokens } = allTokensData;
+  // FIXME refactor this component to just take a token address
+  const allTokens = [];
 
   return (
     <TokenEditDialog
