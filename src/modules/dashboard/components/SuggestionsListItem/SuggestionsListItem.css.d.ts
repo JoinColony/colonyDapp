@@ -3,3 +3,5 @@ export const actionMenuContainer: string;
 export const titleContainer: string;
 export const authorText: string;
 export const upvoteContainer: string;
+export const upvoteCount: string;
+export const upvoteButtonContainer: string;
