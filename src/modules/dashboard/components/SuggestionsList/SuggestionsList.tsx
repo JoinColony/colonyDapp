@@ -58,7 +58,7 @@ const SuggestionsList = ({ colonyAddress, domainId }: Props) => {
       {suggestions.length > 0 ? (
         <ListGroup>
           {suggestions.map(suggestion => (
-            <ListGroupItem key={suggestion.id}>
+            <ListGroupItem appearance={{ padding: 'none' }} key={suggestion.id}>
               <SuggestionsListItem suggestion={suggestion} />
             </ListGroupItem>
           ))}
