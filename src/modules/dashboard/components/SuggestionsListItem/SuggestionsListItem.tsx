@@ -40,10 +40,9 @@ const SuggestionsListItem = ({
       </p>
     </div>
     <div className={styles.upvoteContainer}>
-      <div>{upvotes.length}</div>
-      <div>
-        {/* @todo upvote button goes here */}
-        Upvote
+      <div className={styles.upvoteCount}>{upvotes.length}</div>
+      <div className={styles.upvoteButtonContainer}>
+        {/* @todo upvote button goes here */}^
       </div>
     </div>
   </div>
