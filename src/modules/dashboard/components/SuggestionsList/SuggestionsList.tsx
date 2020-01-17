@@ -1,17 +1,17 @@
 import React, { useMemo } from 'react';
 import { defineMessages } from 'react-intl';
 
-import { SpinnerLoader } from '~core/Preloaders';
-import { useColonySuggestionsQuery, Domain } from '~data/index';
-import { Address } from '~types/index';
+import { COLONY_TOTAL_BALANCE_DOMAIN_ID } from '~constants';
 import Heading from '~core/Heading';
+import ListGroup from '~core/ListGroup';
+import ListGroupItem from '~core/ListGroup/ListGroupItem';
+import { SpinnerLoader } from '~core/Preloaders';
+import SuggestionsListItem from '~dashboard/SuggestionsListItem';
+import { Domain, useColonySuggestionsQuery } from '~data/index';
+import { Address } from '~types/index';
 import { getMainClasses } from '~utils/css';
 
 import styles from './SuggestionsList.css';
-import ListGroup from '~core/ListGroup';
-import ListGroupItem from '~core/ListGroup/ListGroupItem';
-import SuggestionsListItem from '~dashboard/SuggestionsListItem';
-import { COLONY_TOTAL_BALANCE_DOMAIN_ID } from '~constants';
 
 const MSG = defineMessages({
   emptyStateTitle: {
