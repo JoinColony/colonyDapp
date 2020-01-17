@@ -34,6 +34,7 @@ const ColonyTasks = ({
   showEmptyState = true,
 }: Props) => {
   const { data } = useColonyTasksQuery({
+    pollInterval: 5000,
     variables: { address: colonyAddress },
   });
 
