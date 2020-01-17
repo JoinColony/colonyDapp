@@ -84,6 +84,14 @@ fragment SuggestionFields on Suggestion {
   createdAt
   colonyAddress
   creatorAddress
+  creator {
+    id
+    profile {
+      displayName
+      username
+      walletAddress
+    }
+  }
   ethDomainId
   status
   title
