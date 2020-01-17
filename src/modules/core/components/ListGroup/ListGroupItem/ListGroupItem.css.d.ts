@@ -1,1 +1,2 @@
-export const main: string;
+export const paddingNone: string;
+export const paddingMedium: string;
