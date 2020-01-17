@@ -39,9 +39,7 @@ const validationSchema = yup.object().shape({
 const TokenMintForm = ({
   children,
   onSuccess,
-  nativeToken: {
-    details: { decimals },
-  },
+  nativeToken: { decimals },
   colonyAddress,
 }: Props) => {
   const transform = useCallback(

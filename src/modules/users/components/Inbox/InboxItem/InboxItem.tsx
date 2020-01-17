@@ -213,9 +213,9 @@ const InboxItem = ({
                 values={{
                   amount: makeInboxDetail(amount, value => (
                     <Numeral
-                      suffix={` ${token ? token.details.symbol : ''}`}
+                      suffix={` ${token ? token.symbol : ''}`}
                       integerSeparator=""
-                      unit={(token && token.details.decimals) || 18}
+                      unit={(token && token.decimals) || 18}
                       value={value}
                     />
                   )),
@@ -297,9 +297,9 @@ const InboxItem = ({
                 <span>
                   <span className={styles.pipe}>|</span>
                   <Numeral
-                    suffix={` ${token ? token.details.symbol : ''}`}
+                    suffix={` ${token ? token.symbol : ''}`}
                     integerSeparator=""
-                    unit={(token && token.details.decimals) || 18}
+                    unit={(token && token.decimals) || 18}
                     value={amount}
                     appearance={{ size: 'small', theme: 'grey' }}
                   />

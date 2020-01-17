@@ -1,8 +1,7 @@
 import React, { useCallback } from 'react';
 
 import { Address } from '~types/index';
-import { SpinnerLoader } from '~core/Preloaders';
-import { useSetColonyTokensMutation, useAllTokensQuery } from '~data/index';
+import { useSetColonyTokensMutation } from '~data/index';
 
 import TokenEditDialog from '~core/TokenEditDialog';
 
@@ -21,8 +20,6 @@ const ColonyTokenEditDialog = ({
   cancel,
   close,
 }: Props) => {
-  const { data } = useAllTokensQuery();
-
   const [setColonyTokensMutation] = useSetColonyTokensMutation();
 
   const setColonyTokens = useCallback(
@@ -34,11 +31,8 @@ const ColonyTokenEditDialog = ({
     [colonyAddress, setColonyTokensMutation],
   );
 
-  if (!data) {
-    return <SpinnerLoader />;
-  }
-
-  const { allTokens } = data;
+  // FIXME Rewrite token edit dialog as discussed (only show colony tokens, add via input field)
+  const allTokens = [];
 
   return (
     <TokenEditDialog
