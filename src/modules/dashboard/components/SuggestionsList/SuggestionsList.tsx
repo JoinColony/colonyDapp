@@ -7,7 +7,7 @@ import ListGroup from '~core/ListGroup';
 import ListGroupItem from '~core/ListGroup/ListGroupItem';
 import { SpinnerLoader } from '~core/Preloaders';
 import SuggestionsListItem from '~dashboard/SuggestionsListItem';
-import { Domain, useColonySuggestionsQuery } from '~data/index';
+import { Domain, useColonySuggestionsQuery, OneSuggestion } from '~data/index';
 import { Address } from '~types/index';
 import { getMainClasses } from '~utils/css';
 
@@ -30,6 +30,11 @@ interface Props {
   domainId: Domain['ethDomainId'];
 }
 
+const createdAtDesc = (
+  { createdAt: createdAtA }: OneSuggestion,
+  { createdAt: createdAtB }: OneSuggestion,
+) => new Date(createdAtB).getTime() - new Date(createdAtA).getTime();
+
 const displayName = 'Dashboard.SuggestionsList';
 
 const SuggestionsList = ({ colonyAddress, domainId }: Props) => {
@@ -39,13 +44,13 @@ const SuggestionsList = ({ colonyAddress, domainId }: Props) => {
 
   const allSuggestions = (data && data.colony.suggestions) || [];
 
-  const suggestions = useMemo(
-    () =>
+  const suggestions = useMemo(() => {
+    const filteredSuggestions =
       domainId === COLONY_TOTAL_BALANCE_DOMAIN_ID
         ? allSuggestions
-        : allSuggestions.filter(({ ethDomainId }) => ethDomainId === domainId),
-    [allSuggestions, domainId],
-  );
+        : allSuggestions.filter(({ ethDomainId }) => ethDomainId === domainId);
+    return filteredSuggestions.sort(createdAtDesc);
+  }, [allSuggestions, domainId]);
 
   return loading ? (
     <SpinnerLoader size="medium" />
