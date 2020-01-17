@@ -46,7 +46,11 @@ const MSG = defineMessages({
   },
 });
 
-type TabName = 'suggestions' | 'tasks' | 'transactions';
+enum TabName {
+  SuggestionsTab = 'suggestions',
+  TasksTab = 'tasks',
+  TransactionsTab = 'transactions',
+}
 
 interface Props {
   match: any;
@@ -64,7 +68,7 @@ const ColonyHome = ({
   const [filteredDomainId, setFilteredDomainId] = useState(
     COLONY_TOTAL_BALANCE_DOMAIN_ID,
   );
-  const [activeTab, setActiveTab] = useState<TabName>('tasks');
+  const [activeTab, setActiveTab] = useState<TabName>(TabName.TasksTab);
 
   // @TODO: Try to get proper error handling going in resolvers (for colonies that don't exist)
   const { data } = useColonyFromNameQuery({
@@ -152,13 +156,13 @@ const ColonyHome = ({
         </div>
         <Tabs>
           <TabList extra={activeTab === 'transactions' ? noFilter : null}>
-            <Tab onClick={() => setActiveTab('tasks')}>
+            <Tab onClick={() => setActiveTab(TabName.TasksTab)}>
               <FormattedMessage {...MSG.tabContribute} />
             </Tab>
-            <Tab onClick={() => setActiveTab('transactions')}>
+            <Tab onClick={() => setActiveTab(TabName.TransactionsTab)}>
               <FormattedMessage {...MSG.tabTransactions} />
             </Tab>
-            <Tab onClick={() => setActiveTab('suggestions')}>
+            <Tab onClick={() => setActiveTab(TabName.SuggestionsTab)}>
               <FormattedMessage {...MSG.tabSuggestions} />
             </Tab>
           </TabList>
