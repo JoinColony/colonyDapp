@@ -1,0 +1,24 @@
+
+.main {
+  display: flex;
+  align-items: center;
+  position: relative;
+}
+
+.actionMenuContainer {
+  position: absolute;
+  left: -15px;
+}
+
+.titleContainer {
+  flex-grow: 1;
+}
+
+.authorText {
+  color: var(--grey-3);
+}
+
+.upvoteContainer {
+  display: flex;
+  align-items: center;
+}
