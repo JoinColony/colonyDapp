@@ -4,8 +4,9 @@ import { defineMessages, FormattedMessage } from 'react-intl';
 import Heading from '~core/Heading';
 import { OneSuggestion } from '~data/index';
 
-import styles from './SuggestionsListItem.css';
 import { getFriendlyName } from '../../../users/transformers';
+
+import styles from './SuggestionsListItem.css';
 
 const MSG = defineMessages({
   byAuthorText: {
