@@ -19,6 +19,7 @@ export interface Appearance {
     | 'primary'
     | 'secondary'
     | 'danger'
+    | 'dangerLink'
     | 'ghost'
     | 'underlinedBold'
     | 'blue';
