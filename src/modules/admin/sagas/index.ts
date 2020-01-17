@@ -348,6 +348,10 @@ function* colonyMintTokens({
           colonyAddress,
           tokenAddresses: [nativeTokenAddress],
         },
+        // Force resolvers to update, as query resolvers are only updated on a cache miss
+        // See #4: https://www.apollographql.com/docs/link/links/state/#resolvers
+        // Also: https://www.apollographql.com/docs/react/api/react-apollo/#optionsfetchpolicy
+        fetchPolicy: 'network-only',
       });
     }
 
