@@ -967,7 +967,13 @@ export type FullColonyFragment = (
   & TokensFragment
 );
 
-export type SuggestionFieldsFragment = Pick<Suggestion, 'id' | 'createdAt' | 'colonyAddress' | 'creatorAddress' | 'ethDomainId' | 'status' | 'title' | 'taskId' | 'upvotes'>;
+export type SuggestionFieldsFragment = (
+  Pick<Suggestion, 'id' | 'createdAt' | 'colonyAddress' | 'creatorAddress' | 'ethDomainId' | 'status' | 'title' | 'taskId' | 'upvotes'>
+  & { creator: (
+    Pick<User, 'id'>
+    & { profile: Pick<UserProfile, 'displayName' | 'username' | 'walletAddress'> }
+  ) }
+);
 
 export type EventFieldsFragment = (
   Pick<Event, 'createdAt' | 'initiatorAddress' | 'sourceId' | 'sourceType' | 'type'>
@@ -1632,6 +1638,14 @@ export const SuggestionFieldsFragmentDoc = gql`
   createdAt
   colonyAddress
   creatorAddress
+  creator {
+    id
+    profile {
+      displayName
+      username
+      walletAddress
+    }
+  }
   ethDomainId
   status
   title
