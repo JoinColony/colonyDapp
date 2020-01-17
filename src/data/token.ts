@@ -119,10 +119,13 @@ export const tokenResolvers = ({ colonyManager }: ContextType): Resolvers => ({
 
       let ethplorerData = {} as TokenInfo;
 
-      try {
-        ethplorerData = await getEthplorerTokenData(tokenAddress);
-      } catch (err) {
-        console.warn(`Could not verify token details for ${tokenAddress}`);
+      // Token verification using ethplorer only really works on mainnet
+      if (process.env.NETWORK === 'mainnet') {
+        try {
+          ethplorerData = await getEthplorerTokenData(tokenAddress);
+        } catch (err) {
+          console.warn(`Could not verify token details for ${tokenAddress}`);
+        }
       }
 
       const { data: serverDataResult } = await client.query({
