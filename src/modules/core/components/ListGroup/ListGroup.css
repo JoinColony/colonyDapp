@@ -1,0 +1,12 @@
+
+.main {
+  display: block;
+  width: 100%;
+  border-radius: var(--radius-large);
+  background-color: var(--colony-white);
+  box-shadow: 0px 2px 11px var(--drop-shadow);
+}
+
+.main > :not(:first-child) {
+  border-top: 1px solid var(--grey-blue-1);
+}
