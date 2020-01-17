@@ -1,9 +1,9 @@
 import React from 'react';
 
 import SuggestionCreate from '~dashboard/SuggestionCreate';
-import { Address } from '~types/index';
-import { Domain } from '~data/index';
 import SuggestionsList from '~dashboard/SuggestionsList';
+import { Domain } from '~data/index';
+import { Address } from '~types/index';
 
 interface Props {
   colonyAddress: Address;
