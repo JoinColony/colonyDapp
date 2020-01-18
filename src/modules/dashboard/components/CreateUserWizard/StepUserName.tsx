@@ -74,7 +74,6 @@ const validationSchema = yup.object({
   username: yup
     .string()
     .required()
-    // @ts-ignore
     .ensAddress(),
 });
 
