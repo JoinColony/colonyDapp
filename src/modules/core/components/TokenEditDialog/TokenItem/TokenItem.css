@@ -1,0 +1,16 @@
+
+.main {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.tokenChoice {
+  display: flex;
+  align-items: center;
+  margin: 20px 0;
+}
+
+.tokenChoiceSymbol {
+  margin: 0 10px;
+}

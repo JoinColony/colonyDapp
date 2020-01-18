@@ -1,120 +1,149 @@
 import React, { useCallback } from 'react';
-import { FormikProps, FormikConfig } from 'formik';
+import { FormikProps, FormikHelpers } from 'formik';
 import { defineMessages } from 'react-intl';
+import * as yup from 'yup';
 
 import Button from '~core/Button';
 import Dialog, { DialogSection } from '~core/Dialog';
-import { Form, InputLabel } from '~core/Fields';
+import { Form, Input } from '~core/Fields';
 import Heading from '~core/Heading';
-import TokenCheckbox from './TokenCheckbox';
+import { AnyToken } from '~data/index';
 import { Address } from '~types/strings';
+
+import TokenItem from './TokenItem/index';
 
 import styles from './TokenEditDialog.css';
 
 const MSG = defineMessages({
   title: {
     id: 'core.TokenEditDialog.title',
-    defaultMessage: 'Add Token',
+    defaultMessage: 'Add Tokens',
   },
-  instructionText: {
-    id: 'core.TokenEditDialog.instructionText',
-    defaultMessage: 'Please select from these ERC20 tokens.',
+  errorAddingToken: {
+    id: 'core.TokenEditDialog.errorAddingToken',
+    defaultMessage: `Sorry, there was an error adding this token. Learn more about tokens at: https://colony.io.`,
   },
   fieldLabel: {
     id: 'core.TokenEditDialog.fieldLabel',
-    defaultMessage: 'Add Tokens',
+    defaultMessage: 'Enter a valid token address',
   },
-  buttonCancel: {
-    id: 'core.TokenEditDialog.buttonCancel',
-    defaultMessage: 'Cancel',
+  headingManageTokens: {
+    id: 'core.TokenEditDialog.headingManageTokens',
+    defaultMessage: 'Remove Tokens',
   },
-  buttonConfirm: {
-    id: 'core.TokenEditDialog.buttonConfirm',
-    defaultMessage: 'Confirm',
+  buttonAddToken: {
+    id: 'core.TokenEditDialog.buttonAddToken',
+    defaultMessage: 'Add Token',
   },
-  errorNativeTokenRequired: {
-    id: 'core.TokenEditDialog.errorNativeTokenRequired',
-    defaultMessage: 'The native token must be selected.',
+  buttonDone: {
+    id: 'core.TokenEditDialog.buttonDone',
+    defaultMessage: 'Done',
+  },
+  noTokensText: {
+    id: 'core.TokenEditDialog.noTokensText',
+    defaultMessage: `It looks no tokens have been added yet. Get started using the form above.`,
   },
 });
 
-interface FormValues {
-  tokens: string[];
-}
-
 interface Props {
+  addTokenFn: (address: Address) => Promise<any>;
   cancel: () => void;
   close: () => void;
-  // FIXME type correctly
-  availableTokens: any[];
-  onSubmit: FormikConfig<FormValues>['onSubmit'];
   nativeTokenAddress?: Address;
-  selectedTokens: Address[];
+  removeTokenFn: (address: Address) => Promise<any>;
+  tokens: AnyToken[];
 }
 
+interface FormValues {
+  tokenAddress: Address;
+}
+
+const validationSchema = yup.object({
+  tokenAddress: yup
+    .string()
+    // @ts-ignore
+    .address()
+    // @todo validate against entering a duplicate address
+    .required(),
+});
+
 const TokenEditDialog = ({
-  availableTokens = [],
+  addTokenFn,
+  tokens = [],
   nativeTokenAddress,
-  selectedTokens = [],
   cancel,
   close,
-  onSubmit,
+  removeTokenFn,
 }: Props) => {
   const handleSubmit = useCallback(
-    async ({ tokens }, formikHelpers) => {
-      await onSubmit({ tokens }, formikHelpers);
-      close();
+    async (
+      { tokenAddress }: FormValues,
+      { resetForm, setSubmitting, setFieldError }: FormikHelpers<FormValues>,
+    ) => {
+      try {
+        await addTokenFn(tokenAddress);
+        resetForm();
+      } catch (e) {
+        setFieldError('tokenAddress', MSG.errorAddingToken);
+        setSubmitting(false);
+      }
     },
-    [onSubmit, close],
+    [addTokenFn],
   );
   return (
     <Dialog cancel={cancel}>
-      <Form
-        initialValues={{
-          tokens: selectedTokens,
-        }}
-        onSubmit={handleSubmit}
-      >
-        {({ isSubmitting }: FormikProps<any>) => (
-          <>
-            <DialogSection>
-              <Heading
-                appearance={{ size: 'medium', margin: 'none' }}
-                text={MSG.title}
-              />
-            </DialogSection>
-            <DialogSection>
-              <Heading
-                text={MSG.instructionText}
-                appearance={{ size: 'normal', weight: 'thin' }}
-              />
-              <InputLabel label={MSG.fieldLabel} />
-              <div className={styles.tokenChoiceContainer}>
-                {availableTokens.map(token => (
-                  <TokenCheckbox
-                    key={token.address}
-                    nativeTokenAddress={nativeTokenAddress}
-                    token={token}
-                  />
-                ))}
-              </div>
-            </DialogSection>
-            <DialogSection appearance={{ align: 'right' }}>
+      <DialogSection>
+        <Heading appearance={{ size: 'medium' }} text={MSG.title} />
+        <Form
+          initialValues={{
+            tokenAddress: '',
+          }}
+          onSubmit={handleSubmit}
+          validateOnMount
+          validationSchema={validationSchema}
+        >
+          {({ isSubmitting, isValid }: FormikProps<FormValues>) => (
+            <>
+              <Input label={MSG.fieldLabel} name="tokenAddress" />
               <Button
-                appearance={{ theme: 'secondary', size: 'large' }}
-                onClick={cancel}
-                text={MSG.buttonCancel}
-              />
-              <Button
-                appearance={{ theme: 'primary', size: 'large' }}
+                disabled={!isValid || isSubmitting}
                 loading={isSubmitting}
-                text={MSG.buttonConfirm}
+                text={MSG.buttonAddToken}
                 type="submit"
               />
-            </DialogSection>
+            </>
+          )}
+        </Form>
+      </DialogSection>
+      <DialogSection appearance={{ border: 'top' }}>
+        {tokens.length > 0 ? (
+          <>
+            <Heading
+              appearance={{ size: 'medium', margin: 'none' }}
+              text={MSG.headingManageTokens}
+            />
+            <div className={styles.tokenChoiceContainer}>
+              {tokens.map(token => (
+                <TokenItem
+                  key={token.address}
+                  nativeTokenAddress={nativeTokenAddress}
+                  removeTokenFn={removeTokenFn}
+                  token={token}
+                />
+              ))}
+            </div>
           </>
+        ) : (
+          <Heading appearance={{ size: 'normal' }} text={MSG.noTokensText} />
         )}
-      </Form>
+      </DialogSection>
+      <DialogSection appearance={{ align: 'right' }}>
+        <Button
+          appearance={{ theme: 'primary', size: 'large' }}
+          text={MSG.buttonDone}
+          onClick={close}
+        />
+      </DialogSection>
     </Dialog>
   );
 };
