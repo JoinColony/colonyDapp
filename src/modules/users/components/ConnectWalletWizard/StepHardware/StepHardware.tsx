@@ -85,7 +85,6 @@ const MSG = defineMessages({
 const validationSchema = yup.object({
   hardwareWalletChoice: yup
     .string()
-    // @ts-ignore
     .address()
     .required(MSG.walletChoiceRequired),
 });

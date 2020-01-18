@@ -75,10 +75,7 @@ const MSG = defineMessages({
 });
 
 export const validationSchema = yup.object({
-  tokenAddress: yup
-    .string()
-    // @ts-ignore
-    .address(MSG.invalidAddress),
+  tokenAddress: yup.string().address(MSG.invalidAddress),
   tokenSymbol: yup.string().max(6),
   tokenName: yup.string(),
 });

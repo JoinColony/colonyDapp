@@ -77,7 +77,6 @@ const validationSchema = yup.object({
   colonyName: yup
     .string()
     .required()
-    // @ts-ignore
     .ensAddress(),
   displayName: yup.string().required(),
 });
