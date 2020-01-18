@@ -6,21 +6,16 @@ import {
   useSetUserTokensMutation,
   UserTokensDocument,
   UserTokensQueryVariables,
+  useUserTokensQuery,
 } from '~data/index';
 
 interface Props {
   cancel: () => void;
   close: () => void;
-  selectedTokens: Address[];
   walletAddress: Address;
 }
 
-const UserTokenEditDialog = ({
-  selectedTokens = [],
-  cancel,
-  close,
-  walletAddress,
-}: Props) => {
+const UserTokenEditDialog = ({ cancel, close, walletAddress }: Props) => {
   const [setUserTokensMutation] = useSetUserTokensMutation({
     refetchQueries: [
       {
@@ -30,25 +25,44 @@ const UserTokenEditDialog = ({
     ],
   });
 
-  const setUserTokens = useCallback(
-    ({ tokens }) => {
-      setUserTokensMutation({
-        variables: { input: { tokenAddresses: tokens } },
+  const { data } = useUserTokensQuery({
+    variables: { address: walletAddress },
+  });
+
+  const userTokens = (data && data.user.tokens) || [];
+
+  const addToken = useCallback(
+    (newTokenAddress: Address) => {
+      const newAddresses = [
+        ...userTokens.map(({ address }) => address),
+        newTokenAddress,
+      ];
+      return setUserTokensMutation({
+        variables: { input: { tokenAddresses: newAddresses } },
       });
     },
-    [setUserTokensMutation],
+    [setUserTokensMutation, userTokens],
   );
 
-  // FIXME refactor this component to just take a token address
-  const allTokens = [];
+  const removeToken = useCallback(
+    (tokenAddressToRemove: Address) => {
+      const newAddresses = userTokens
+        .filter(({ address }) => address !== tokenAddressToRemove)
+        .map(({ address }) => address);
+      return setUserTokensMutation({
+        variables: { input: { tokenAddresses: newAddresses } },
+      });
+    },
+    [setUserTokensMutation, userTokens],
+  );
 
   return (
     <TokenEditDialog
       cancel={cancel}
       close={close}
-      availableTokens={allTokens}
-      selectedTokens={selectedTokens}
-      onSubmit={setUserTokens}
+      tokens={userTokens}
+      addTokenFn={addToken}
+      removeTokenFn={removeToken}
     />
   );
 };

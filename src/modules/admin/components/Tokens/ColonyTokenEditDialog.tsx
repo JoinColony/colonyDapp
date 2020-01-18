@@ -1,7 +1,7 @@
 import React, { useCallback } from 'react';
 
 import { Address } from '~types/index';
-import { useSetColonyTokensMutation } from '~data/index';
+import { useSetColonyTokensMutation, useColonyTokensQuery } from '~data/index';
 
 import TokenEditDialog from '~core/TokenEditDialog';
 
@@ -10,38 +10,55 @@ interface Props {
   cancel: () => void;
   close: () => void;
   nativeTokenAddress: Address;
-  selectedTokens: Address[];
 }
 
 const ColonyTokenEditDialog = ({
   colonyAddress,
   nativeTokenAddress,
-  selectedTokens = [],
   cancel,
   close,
 }: Props) => {
   const [setColonyTokensMutation] = useSetColonyTokensMutation();
 
-  const setColonyTokens = useCallback(
-    ({ tokens }) => {
-      setColonyTokensMutation({
-        variables: { input: { colonyAddress, tokenAddresses: tokens } },
+  const { data } = useColonyTokensQuery({
+    variables: { address: colonyAddress },
+  });
+
+  const colonyTokens = (data && data.colony.tokens) || [];
+
+  const addToken = useCallback(
+    (newTokenAddress: Address) => {
+      const newAddresses = [
+        ...colonyTokens.map(({ address }) => address),
+        newTokenAddress,
+      ];
+      return setColonyTokensMutation({
+        variables: { input: { colonyAddress, tokenAddresses: newAddresses } },
       });
     },
-    [colonyAddress, setColonyTokensMutation],
+    [colonyAddress, colonyTokens, setColonyTokensMutation],
   );
 
-  // FIXME Rewrite token edit dialog as discussed (only show colony tokens, add via input field)
-  const allTokens = [];
+  const removeToken = useCallback(
+    (tokenAddressToRemove: Address) => {
+      const newAddresses = colonyTokens
+        .filter(({ address }) => address !== tokenAddressToRemove)
+        .map(({ address }) => address);
+      return setColonyTokensMutation({
+        variables: { input: { colonyAddress, tokenAddresses: newAddresses } },
+      });
+    },
+    [colonyAddress, colonyTokens, setColonyTokensMutation],
+  );
 
   return (
     <TokenEditDialog
       cancel={cancel}
       close={close}
-      availableTokens={allTokens}
+      tokens={colonyTokens}
       nativeTokenAddress={nativeTokenAddress}
-      selectedTokens={selectedTokens}
-      onSubmit={setColonyTokens}
+      addTokenFn={addToken}
+      removeTokenFn={removeToken}
     />
   );
 };
