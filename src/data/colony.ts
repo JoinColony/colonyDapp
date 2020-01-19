@@ -62,7 +62,7 @@ export const colonyResolvers = ({
       { client },
     ) {
       return Promise.all(
-        tokenAddresses.map(tokenAddress =>
+        ['0x0', ...tokenAddresses].map(tokenAddress =>
           getToken({ colonyManager, client }, tokenAddress),
         ),
       );
