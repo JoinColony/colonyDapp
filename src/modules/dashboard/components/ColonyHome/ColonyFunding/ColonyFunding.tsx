@@ -95,7 +95,7 @@ const ColonyFunding = ({
       </Heading>
       {data && !isLoadingTokenBalances ? (
         <ul>
-          {data.colony.tokens.map(token => (
+          {data.tokens.map(token => (
             <TokenItem
               currentDomainId={currentDomainId}
               key={token.address}

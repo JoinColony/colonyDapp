@@ -40,13 +40,13 @@ export default gql`
   }
 
   extend type Colony {
-    canMintNativeToken(address: String!): Boolean!
-    canUnlockNativeToken(address: String!): Boolean!
-    isInRecoveryMode(address: String!): Boolean!
-    isNativeTokenLocked(address: String!): Boolean!
+    canMintNativeToken: Boolean!
+    canUnlockNativeToken: Boolean!
+    isInRecoveryMode: Boolean!
+    isNativeTokenLocked: Boolean!
     nativeToken: Token!
     tokens(addresses: [String!]): [Token!]!
-    version(address: String!): Int!
+    version: Int!
   }
 
   extend type TaskPayout {
@@ -66,6 +66,7 @@ export default gql`
     colonyAddress(name: String!): String!
     colonyName(address: String!): String!
     token(address: String!): Token!
+    tokens(addresses: [String!]): [Token!]!
     userAddress(name: String!): String!
     username(address: String!): String!
   }
