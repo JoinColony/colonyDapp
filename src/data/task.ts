@@ -3,6 +3,8 @@ import { padLeft, toHex } from 'web3-utils';
 
 import { ContextType } from '~context/index';
 
+import { getToken } from './token';
+
 export const taskResolvers = ({ colonyManager }: ContextType): Resolvers => ({
   Task: {
     async finalizedPayment({ colonyAddress, finalizedAt, ethPotId }) {
@@ -42,6 +44,11 @@ export const taskResolvers = ({ colonyManager }: ContextType): Resolvers => ({
         workerAddress: recipient,
         transactionHash,
       };
+    },
+  },
+  TaskPayout: {
+    async token({ tokenAddress }, _, { client }) {
+      return getToken({ colonyManager, client }, tokenAddress);
     },
   },
 });

@@ -162,9 +162,7 @@ const TokensMoveDialogForm = ({
   const [fromDomainTokenBalance, toDomainTokenBalance] = useMemo(() => {
     const token =
       tokenBalancesData &&
-      tokenBalancesData.colony.tokens.find(
-        ({ address }) => address === tokenAddress,
-      );
+      tokenBalancesData.tokens.find(({ address }) => address === tokenAddress);
     const from = getBalanceFromToken(token, fromDomain);
     const to = getBalanceFromToken(token, toDomain);
     return [from, to];

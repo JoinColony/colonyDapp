@@ -212,33 +212,8 @@ export type Colony = {
 };
 
 
-export type ColonyCanMintNativeTokenArgs = {
-  address: Scalars['String']
-};
-
-
-export type ColonyCanUnlockNativeTokenArgs = {
-  address: Scalars['String']
-};
-
-
-export type ColonyIsInRecoveryModeArgs = {
-  address: Scalars['String']
-};
-
-
-export type ColonyIsNativeTokenLockedArgs = {
-  address: Scalars['String']
-};
-
-
 export type ColonyTokensArgs = {
   addresses?: Maybe<Array<Scalars['String']>>
-};
-
-
-export type ColonyVersionArgs = {
-  address: Scalars['String']
 };
 
 export type ColonyEvent = {
@@ -625,6 +600,7 @@ export type Query = {
   colonyAddress: Scalars['String'],
   colonyName: Scalars['String'],
   token: Token,
+  tokens: Array<Token>,
   userAddress: Scalars['String'],
   username: Scalars['String'],
 };
@@ -668,6 +644,11 @@ export type QueryColonyNameArgs = {
 
 export type QueryTokenArgs = {
   address: Scalars['String']
+};
+
+
+export type QueryTokensArgs = {
+  addresses?: Maybe<Array<Scalars['String']>>
 };
 
 
@@ -952,12 +933,12 @@ export type UserProfile = {
 };
 
 export type PayoutsFragment = { payouts: Array<(
-    Pick<TaskPayout, 'amount'>
+    Pick<TaskPayout, 'amount' | 'tokenAddress'>
     & { token: Pick<Token, 'id' | 'address' | 'decimals' | 'name' | 'symbol'> }
   )> };
 
 export type TokensFragment = (
-  Pick<Colony, 'nativeTokenAddress'>
+  Pick<Colony, 'nativeTokenAddress' | 'tokenAddresses'>
   & { tokens: Array<(
     Pick<Token, 'id' | 'address' | 'iconHash' | 'decimals' | 'name' | 'symbol'>
     & { balances: Array<Pick<DomainBalance, 'domainId' | 'amount'>> }
@@ -1335,7 +1316,7 @@ export type UserTokensQueryVariables = {
 
 
 export type UserTokensQuery = { user: (
-    Pick<User, 'id'>
+    Pick<User, 'id' | 'tokenAddresses'>
     & { tokens: Array<Pick<Token, 'id' | 'address' | 'iconHash' | 'decimals' | 'name' | 'symbol' | 'balance'>> }
   ) };
 
@@ -1402,13 +1383,10 @@ export type TokenBalancesForDomainsQueryVariables = {
 };
 
 
-export type TokenBalancesForDomainsQuery = { colony: (
-    Pick<Colony, 'id' | 'nativeTokenAddress'>
-    & { tokens: Array<(
-      Pick<Token, 'id' | 'address' | 'iconHash' | 'decimals' | 'name' | 'symbol'>
-      & { balances: Array<Pick<DomainBalance, 'domainId' | 'amount'>> }
-    )> }
-  ) };
+export type TokenBalancesForDomainsQuery = { tokens: Array<(
+    Pick<Token, 'id' | 'address' | 'iconHash' | 'decimals' | 'name' | 'symbol'>
+    & { balances: Array<Pick<DomainBalance, 'domainId' | 'amount'>> }
+  )> };
 
 export type ColonyProfileQueryVariables = {
   address: Scalars['String']
@@ -1506,6 +1484,7 @@ export const PayoutsFragmentDoc = gql`
     fragment Payouts on Task {
   payouts {
     amount
+    tokenAddress
     token @client {
       id
       address
@@ -1531,6 +1510,7 @@ export const ColonyProfileFragmentDoc = gql`
 export const TokensFragmentDoc = gql`
     fragment Tokens on Colony {
   nativeTokenAddress
+  tokenAddresses
   tokens @client {
     id
     address
@@ -1550,11 +1530,11 @@ export const FullColonyFragmentDoc = gql`
   ...ColonyProfile
   ...Tokens
   isNativeTokenExternal
-  version(address: $address) @client
-  canMintNativeToken(address: $address) @client
-  canUnlockNativeToken(address: $address) @client
-  isInRecoveryMode(address: $address) @client
-  isNativeTokenLocked(address: $address) @client
+  version @client
+  canMintNativeToken @client
+  canUnlockNativeToken @client
+  isInRecoveryMode @client
+  isNativeTokenLocked @client
 }
     ${ColonyProfileFragmentDoc}
 ${TokensFragmentDoc}`;
@@ -3068,6 +3048,7 @@ export const UserTokensDocument = gql`
     query UserTokens($address: String!) {
   user(address: $address) {
     id
+    tokenAddresses
     tokens @client {
       id
       address
@@ -3334,20 +3315,16 @@ export type ColonyTokensLazyQueryHookResult = ReturnType<typeof useColonyTokensL
 export type ColonyTokensQueryResult = ApolloReactCommon.QueryResult<ColonyTokensQuery, ColonyTokensQueryVariables>;
 export const TokenBalancesForDomainsDocument = gql`
     query TokenBalancesForDomains($colonyAddress: String!, $tokenAddresses: [String!], $domainIds: [Int!]) {
-  colony(address: $colonyAddress) {
+  tokens(addresses: $tokenAddresses) @client {
     id
-    nativeTokenAddress
-    tokens(addresses: $tokenAddresses) @client {
-      id
-      address
-      iconHash
-      decimals
-      name
-      symbol
-      balances(colonyAddress: $colonyAddress, domainIds: $domainIds) {
-        domainId
-        amount
-      }
+    address
+    iconHash
+    decimals
+    name
+    symbol
+    balances(colonyAddress: $colonyAddress, domainIds: $domainIds) {
+      domainId
+      amount
     }
   }
 }
@@ -3588,7 +3565,7 @@ export type DomainLazyQueryHookResult = ReturnType<typeof useDomainLazyQuery>;
 export type DomainQueryResult = ApolloReactCommon.QueryResult<DomainQuery, DomainQueryVariables>;
 export const TokenDocument = gql`
     query Token($address: String!) {
-  token(address: $address) {
+  token(address: $address) @client {
     id
     address
     iconHash

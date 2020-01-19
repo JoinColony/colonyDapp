@@ -68,6 +68,6 @@ export type UserTokens = UserTokensQuery['user']['tokens'];
 export type TokenWithBalances =
   | ColonyTokens[0]
   | UserTokens[0]
-  | TokenBalancesForDomainsQuery['colony']['tokens'][0];
+  | TokenBalancesForDomainsQuery['tokens'][0];
 // Almost all tokens with 'address' and 'iconHash'
 export type AnyToken = ColonyTokens[0] | UserTokens[0] | OneToken;

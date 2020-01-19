@@ -333,8 +333,7 @@ function* colonyCreate({
             });
           }
         } catch (e) {
-          log.verbose(e);
-          log.verbose('Not updating store - colony addresses not loaded yet');
+          log.error(e);
         }
       },
     });
