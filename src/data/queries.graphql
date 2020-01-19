@@ -188,6 +188,7 @@ query UserTasks($address: String!) {
 query UserTokens($address: String!) {
   user(address: $address) {
     id
+    tokenAddresses
     tokens @client {
       id
       address
@@ -237,20 +238,16 @@ query ColonyTokens($address: String!) {
 }
 
 query TokenBalancesForDomains($colonyAddress: String!, $tokenAddresses: [String!], $domainIds: [Int!]) {
-  colony(address: $colonyAddress) {
+  tokens(addresses: $tokenAddresses) @client {
     id
-    nativeTokenAddress
-    tokens(addresses: $tokenAddresses) @client {
-      id
-      address
-      iconHash
-      decimals
-      name
-      symbol
-      balances(colonyAddress: $colonyAddress, domainIds: $domainIds) {
-        domainId
-        amount
-      }
+    address
+    iconHash
+    decimals
+    name
+    symbol
+    balances(colonyAddress: $colonyAddress, domainIds: $domainIds) {
+      domainId
+      amount
     }
   }
 }
@@ -326,7 +323,7 @@ query Domain($colonyAddress: String!, $ethDomainId: Int!) {
 }
 
 query Token($address: String!) {
-  token(address: $address) {
+  token(address: $address) @client {
     id
     address
     iconHash

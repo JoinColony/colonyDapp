@@ -49,6 +49,7 @@ interface Props {
   colonyAddress: Address;
   domains: DomainsMapType;
   intl: IntlShape;
+  nativeTokenAddress: Address;
   openDialog: (dialogName: string, dialogProps?: object) => DialogType;
   rootRoles: ROLES[];
 }
@@ -58,6 +59,7 @@ const Tokens = ({
   colonyAddress,
   domains,
   intl: { formatMessage },
+  nativeTokenAddress,
   openDialog,
   rootRoles,
 }: Props) => {
@@ -112,9 +114,7 @@ const Tokens = ({
     },
   });
 
-  const tokens = (colonyTokensData && colonyTokensData.colony.tokens) || [];
-  const nativeTokenAddress =
-    colonyTokensData && colonyTokensData.colony.nativeTokenAddress;
+  const tokens = (colonyTokensData && colonyTokensData.tokens) || [];
   const nativeToken =
     tokens && tokens.find(({ address }) => address === nativeTokenAddress);
 

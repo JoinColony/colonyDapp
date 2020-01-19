@@ -1,6 +1,7 @@
 fragment Payouts on Task {
   payouts {
     amount
+    tokenAddress
     token @client {
       id
       address
@@ -13,6 +14,7 @@ fragment Payouts on Task {
 
 fragment Tokens on Colony {
   nativeTokenAddress
+  tokenAddresses
   tokens @client {
     id
     address
@@ -42,11 +44,11 @@ fragment FullColony on Colony {
   ...ColonyProfile
   ...Tokens
   isNativeTokenExternal
-  version(address: $address) @client
-  canMintNativeToken(address: $address) @client
-  canUnlockNativeToken(address: $address) @client
-  isInRecoveryMode(address: $address) @client
-  isNativeTokenLocked(address: $address) @client
+  version @client
+  canMintNativeToken @client
+  canUnlockNativeToken @client
+  isInRecoveryMode @client
+  isNativeTokenLocked @client
 }
 fragment EventFields on Event {
   createdAt
