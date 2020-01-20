@@ -20,6 +20,7 @@ import FundingBanner from './FundingBanner';
 import TokenList from './TokenList';
 
 import styles from './Tokens.css';
+import { ZERO_ADDRESS } from '~utils/web3/constants';
 
 const MSG = defineMessages({
   labelSelectDomain: {
@@ -52,6 +53,7 @@ interface Props {
   nativeTokenAddress: Address;
   openDialog: (dialogName: string, dialogProps?: object) => DialogType;
   rootRoles: ROLES[];
+  tokenAddresses: string[];
 }
 
 const Tokens = ({
@@ -62,6 +64,7 @@ const Tokens = ({
   nativeTokenAddress,
   openDialog,
   rootRoles,
+  tokenAddresses,
 }: Props) => {
   const [selectedDomain, setSelectedDomain] = useState<string>(
     COLONY_TOTAL_BALANCE_DOMAIN_ID.toString(),
@@ -107,10 +110,9 @@ const Tokens = ({
       colonyAddress,
       domainIds: [
         COLONY_TOTAL_BALANCE_DOMAIN_ID,
-        ...Object.entries(domains || {}).map(([domainId]) =>
-          parseInt(domainId, 10),
-        ),
+        ...Object.keys(domains || {}).map(domainId => parseInt(domainId, 10)),
       ],
+      tokenAddresses: [ZERO_ADDRESS, ...tokenAddresses],
     },
   });
 

@@ -97,6 +97,7 @@ const navigationItems = (
           canMintNativeToken={colony.canMintNativeToken}
           domains={domains}
           rootRoles={rootRoles}
+          tokenAddresses={colony.tokenAddresses}
         />
       ),
     });

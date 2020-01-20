@@ -237,7 +237,7 @@ query ColonyTokens($address: String!) {
   }
 }
 
-query TokenBalancesForDomains($colonyAddress: String!, $tokenAddresses: [String!], $domainIds: [Int!]) {
+query TokenBalancesForDomains($colonyAddress: String!, $tokenAddresses: [String!]!, $domainIds: [Int!]) {
   tokens(addresses: $tokenAddresses) @client {
     id
     address

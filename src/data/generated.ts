@@ -1378,7 +1378,7 @@ export type ColonyTokensQuery = { colony: (
 
 export type TokenBalancesForDomainsQueryVariables = {
   colonyAddress: Scalars['String'],
-  tokenAddresses?: Maybe<Array<Scalars['String']>>,
+  tokenAddresses: Array<Scalars['String']>,
   domainIds?: Maybe<Array<Scalars['Int']>>
 };
 
@@ -3314,7 +3314,7 @@ export type ColonyTokensQueryHookResult = ReturnType<typeof useColonyTokensQuery
 export type ColonyTokensLazyQueryHookResult = ReturnType<typeof useColonyTokensLazyQuery>;
 export type ColonyTokensQueryResult = ApolloReactCommon.QueryResult<ColonyTokensQuery, ColonyTokensQueryVariables>;
 export const TokenBalancesForDomainsDocument = gql`
-    query TokenBalancesForDomains($colonyAddress: String!, $tokenAddresses: [String!], $domainIds: [Int!]) {
+    query TokenBalancesForDomains($colonyAddress: String!, $tokenAddresses: [String!]!, $domainIds: [Int!]) {
   tokens(addresses: $tokenAddresses) @client {
     id
     address
