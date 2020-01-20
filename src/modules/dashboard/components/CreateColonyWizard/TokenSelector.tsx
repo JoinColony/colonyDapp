@@ -59,8 +59,8 @@ const getStatusText = (tokenData, isLoading) => {
   if (tokenData === null) {
     return { status: MSG.statusNotFound };
   }
-  return tokenData
-    ? { status: MSG.preview, statusValues: tokenData }
+  return tokenData && tokenData.details
+    ? { status: MSG.preview, statusValues: tokenData.details }
     : { status: MSG.hint };
 };
 
