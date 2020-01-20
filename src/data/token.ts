@@ -8,13 +8,6 @@ import { ZERO_ADDRESS, ETHER_INFO } from '~utils/web3/constants';
 import { TokenInfo, TokenInfoDocument } from '~data/index';
 import { Address } from '~types/index';
 
-interface EthplorerTokenData {
-  name: string;
-  symbol: string;
-  decimals: number;
-  verified: boolean;
-}
-
 // Token data is used a lot and never change. They require a custom cache
 const tokenCache = new Map();
 
@@ -39,25 +32,6 @@ const getBalanceForTokenAndDomain = async (
     return new BigNumber(nonRewardsPotsTotal.add(rewardsPotTotal).toString(10));
   }
   return new BigNumber(rewardsPotTotal.toString(10));
-};
-
-const getEthplorerTokenData = async (address: string) => {
-  // eslint-disable-next-line max-len, prettier/prettier
-  const endpoint = `//api.ethplorer.io/getTokenInfo/${address}?apiKey=${process
-    .env.ETHPLORER_API_KEY || 'freekey'}`;
-  const response = await fetch(endpoint);
-  const data = await response.json();
-  if (data.error) {
-    throw new Error(`Ethplorer error: ${data.error.message}`);
-  }
-  const { name, symbol, decimals } = data;
-  const tokenDetails = {
-    name,
-    symbol,
-    decimals: parseInt(decimals, 10),
-    verified: true,
-  };
-  return tokenDetails;
 };
 
 const getTokenData = async (
@@ -89,14 +63,6 @@ const getTokenData = async (
   const tokenClient = await colonyManager.getTokenClient(tokenAddress);
   const chainData: TokenInfo = await tokenClient.getTokenInfo.call();
 
-  let ethplorerData = {} as EthplorerTokenData;
-
-  try {
-    ethplorerData = await getEthplorerTokenData(tokenAddress);
-  } catch (err) {
-    console.warn(`Could not verify token details for ${tokenAddress}`);
-  }
-
   let serverDataResult;
   try {
     const { data } = await client.query({
@@ -116,17 +82,11 @@ const getTokenData = async (
     __typename: 'Token',
     id: tokenAddress,
     address: tokenAddress,
-    decimals:
-      chainData.decimals || ethplorerData.decimals || serverData.decimals || 18,
+    decimals: chainData.decimals || serverData.decimals || 18,
     iconHash: serverData.iconHash || null,
-    name:
-      chainData.name ||
-      ethplorerData.name ||
-      serverData.name ||
-      'Unknown token',
-    symbol:
-      chainData.symbol || ethplorerData.symbol || serverData.symbol || '???',
-    verified: ethplorerData.verified || false,
+    name: chainData.name || serverData.name || 'Unknown token',
+    symbol: chainData.symbol || serverData.symbol || '???',
+    verified: serverData.verified || false,
   };
 };
 

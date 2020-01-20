@@ -880,12 +880,12 @@ export type TokenBalancesArgs = {
 
 export type TokenInfo = {
   id: Scalars['String'],
-  createdAt: Scalars['DateTime'],
   address: Scalars['String'],
   iconHash?: Maybe<Scalars['String']>,
   name: Scalars['String'],
   decimals: Scalars['Int'],
   symbol: Scalars['String'],
+  verified: Scalars['Boolean'],
 };
 
 export type UnassignWorkerEvent = TaskEvent & {
