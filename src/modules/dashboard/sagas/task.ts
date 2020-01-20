@@ -30,7 +30,7 @@ import { Action, ActionTypes } from '~redux/index';
 import { ContractContexts } from '~types/index';
 import { putError, takeFrom } from '~utils/saga/effects';
 
-import { createTransaction, getTxChannel, signMessage } from '../../core/sagas';
+import { createTransaction, getTxChannel } from '../../core/sagas';
 
 import { AllActions } from '../../../redux/types/actions';
 
@@ -196,10 +196,6 @@ function* taskCommentAdd({
   meta,
 }: Action<ActionTypes.TASK_COMMENT_ADD>) {
   try {
-    yield call(signMessage, 'taskComment', {
-      comment,
-      author,
-    });
 
     const apolloClient: ApolloClient<any> = yield getContext(
       Context.APOLLO_CLIENT,
