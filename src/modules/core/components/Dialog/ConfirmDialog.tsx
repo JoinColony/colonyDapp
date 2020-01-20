@@ -72,9 +72,8 @@ const ConfirmDialog = ({
           theme: (appearance && appearance.theme) || 'primary',
           size: 'large',
         }}
-        onClick={() => {
-          close(null);
-        }}
+        autoFocus
+        onClick={() => close(null)}
         text={confirmButtonText}
       />
     </DialogSection>
