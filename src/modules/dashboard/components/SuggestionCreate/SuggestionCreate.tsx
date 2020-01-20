@@ -1,9 +1,9 @@
-import React, { useCallback, FC } from 'react';
+import React, { useCallback, FC, useRef } from 'react';
 import { FormikHelpers } from 'formik';
 import { defineMessages } from 'react-intl';
 import * as yup from 'yup';
 
-import { Address } from '~types/index';
+import { COLONY_TOTAL_BALANCE_DOMAIN_ID, ROOT_DOMAIN } from '~constants';
 import { Form, Input } from '~core/Fields';
 import { withDialog } from '~core/Dialog';
 import { OpenDialog } from '~core/Dialog/types';
@@ -13,7 +13,7 @@ import {
   ColonySuggestionsDocument,
   ColonySuggestionsQueryVariables,
 } from '~data/index';
-import { COLONY_TOTAL_BALANCE_DOMAIN_ID, ROOT_DOMAIN } from '~constants';
+import { Address } from '~types/index';
 
 const MSG = defineMessages({
   inputLabelTitle: {
@@ -43,6 +43,8 @@ const validationSchema = yup.object({
 const displayName = 'Dashboard.SuggestionCreate';
 
 const SuggestionCreate = ({ colonyAddress, domainId, openDialog }: Props) => {
+  const inputRef = useRef<HTMLInputElement>(null);
+
   const [createSuggestion] = useCreateSuggestionMutation();
 
   const handleSubmit = useCallback(
@@ -63,11 +65,17 @@ const SuggestionCreate = ({ colonyAddress, domainId, openDialog }: Props) => {
                 variables: { colonyAddress } as ColonySuggestionsQueryVariables,
               },
             ],
-          }).then(() => resetForm());
+          }).then(() => {
+            if (inputRef && inputRef.current) {
+              inputRef.current.blur();
+            }
+            resetForm();
+          });
         });
     },
     [openDialog, domainId, createSuggestion, colonyAddress],
   );
+
   return (
     <Form
       initialValues={{ title: '' } as FormValues}
@@ -78,6 +86,7 @@ const SuggestionCreate = ({ colonyAddress, domainId, openDialog }: Props) => {
         appearance={{ theme: 'fat' }}
         label={MSG.inputLabelTitle}
         name="title"
+        innerRef={inputRef}
       />
     </Form>
   );
