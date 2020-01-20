@@ -1,6 +1,5 @@
 import React, { useCallback } from 'react';
 
-import { Address } from '~types/strings';
 import TokenEditDialog from '~core/TokenEditDialog';
 import {
   useSetUserTokensMutation,
@@ -8,6 +7,9 @@ import {
   UserTokensQueryVariables,
   useUserTokensQuery,
 } from '~data/index';
+import { Address } from '~types/strings';
+
+import { tokenIsETH } from '../../../core/checks';
 
 interface Props {
   cancel: () => void;
@@ -34,7 +36,9 @@ const UserTokenEditDialog = ({ cancel, close, walletAddress }: Props) => {
   const addToken = useCallback(
     (newTokenAddress: Address) => {
       const newAddresses = [
-        ...userTokens.map(({ address }) => address),
+        ...userTokens
+          .filter(token => !tokenIsETH(token))
+          .map(({ address }) => address),
         newTokenAddress,
       ];
       return setUserTokensMutation({
@@ -47,6 +51,7 @@ const UserTokenEditDialog = ({ cancel, close, walletAddress }: Props) => {
   const removeToken = useCallback(
     (tokenAddressToRemove: Address) => {
       const newAddresses = userTokens
+        .filter(token => !tokenIsETH(token))
         .filter(({ address }) => address !== tokenAddressToRemove)
         .map(({ address }) => address);
       return setUserTokensMutation({
