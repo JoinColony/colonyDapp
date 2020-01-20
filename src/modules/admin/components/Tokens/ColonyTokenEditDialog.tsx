@@ -1,7 +1,12 @@
 import React, { useCallback } from 'react';
 
 import TokenEditDialog from '~core/TokenEditDialog';
-import { useSetColonyTokensMutation, useColonyTokensQuery } from '~data/index';
+import {
+  useSetColonyTokensMutation,
+  useColonyTokensQuery,
+  ColonyTokensDocument,
+  ColonyTokensQueryVariables,
+} from '~data/index';
 import { Address } from '~types/index';
 
 import { tokenIsETH } from '../../../core/checks';
@@ -19,7 +24,14 @@ const ColonyTokenEditDialog = ({
   cancel,
   close,
 }: Props) => {
-  const [setColonyTokensMutation] = useSetColonyTokensMutation();
+  const [setColonyTokensMutation] = useSetColonyTokensMutation({
+    refetchQueries: [
+      {
+        query: ColonyTokensDocument,
+        variables: { address: colonyAddress } as ColonyTokensQueryVariables,
+      },
+    ],
+  });
 
   const { data } = useColonyTokensQuery({
     variables: { address: colonyAddress },

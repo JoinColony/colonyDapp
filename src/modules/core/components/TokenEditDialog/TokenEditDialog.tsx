@@ -17,7 +17,7 @@ import styles from './TokenEditDialog.css';
 const MSG = defineMessages({
   title: {
     id: 'core.TokenEditDialog.title',
-    defaultMessage: 'Add Tokens',
+    defaultMessage: 'Edit Tokens',
   },
   errorAddingToken: {
     id: 'core.TokenEditDialog.errorAddingToken',
@@ -26,10 +26,6 @@ const MSG = defineMessages({
   fieldLabel: {
     id: 'core.TokenEditDialog.fieldLabel',
     defaultMessage: 'Enter a valid token address',
-  },
-  headingManageTokens: {
-    id: 'core.TokenEditDialog.headingManageTokens',
-    defaultMessage: 'Remove Tokens',
   },
   buttonAddToken: {
     id: 'core.TokenEditDialog.buttonAddToken',
@@ -93,20 +89,24 @@ const TokenEditDialog = ({
   return (
     <Dialog cancel={cancel}>
       <DialogSection>
-        <Heading appearance={{ size: 'medium' }} text={MSG.title} />
+        <Heading
+          appearance={{ margin: 'none', size: 'medium' }}
+          text={MSG.title}
+        />
+      </DialogSection>
+      <DialogSection appearance={{ border: 'top' }}>
         <Form
           initialValues={{
             tokenAddress: '',
           }}
           onSubmit={handleSubmit}
-          validateOnMount
           validationSchema={validationSchema}
         >
-          {({ isSubmitting, isValid }: FormikProps<FormValues>) => (
+          {({ isSubmitting, isValid, dirty }: FormikProps<FormValues>) => (
             <>
               <Input label={MSG.fieldLabel} name="tokenAddress" />
               <Button
-                disabled={!isValid || isSubmitting}
+                disabled={!isValid || isSubmitting || !dirty}
                 loading={isSubmitting}
                 text={MSG.buttonAddToken}
                 type="submit"
@@ -117,22 +117,16 @@ const TokenEditDialog = ({
       </DialogSection>
       <DialogSection appearance={{ border: 'top' }}>
         {tokens.length > 0 ? (
-          <>
-            <Heading
-              appearance={{ size: 'medium', margin: 'none' }}
-              text={MSG.headingManageTokens}
-            />
-            <div className={styles.tokenChoiceContainer}>
-              {tokens.map(token => (
-                <TokenItem
-                  key={token.address}
-                  nativeTokenAddress={nativeTokenAddress}
-                  removeTokenFn={removeTokenFn}
-                  token={token}
-                />
-              ))}
-            </div>
-          </>
+          <div className={styles.tokenChoiceContainer}>
+            {tokens.map(token => (
+              <TokenItem
+                key={token.address}
+                nativeTokenAddress={nativeTokenAddress}
+                removeTokenFn={removeTokenFn}
+                token={token}
+              />
+            ))}
+          </div>
         ) : (
           <Heading appearance={{ size: 'normal' }} text={MSG.noTokensText} />
         )}
