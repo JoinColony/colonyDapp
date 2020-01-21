@@ -368,9 +368,7 @@ const Task = ({
           </section>
           <section className={styles.commentBox}>
             <TaskComments
-              colonyAddress={colony.colonyAddress}
               draftId={draftId}
-              taskTitle={title}
               history={history}
             />
           </section>
