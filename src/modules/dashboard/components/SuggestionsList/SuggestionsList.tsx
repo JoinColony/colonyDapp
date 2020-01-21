@@ -1,9 +1,10 @@
-import React, { FC, useCallback, useMemo } from 'react';
+import React, { FC, useCallback, useMemo, useState } from 'react';
 import { defineMessages } from 'react-intl';
 import { useHistory } from 'react-router-dom';
 
 import { COLONY_TOTAL_BALANCE_DOMAIN_ID } from '~constants';
 import Heading from '~core/Heading';
+import { Select } from '~core/Fields';
 import ListGroup from '~core/ListGroup';
 import ListGroupItem from '~core/ListGroup/ListGroupItem';
 import { SpinnerLoader } from '~core/Preloaders';
@@ -25,6 +26,11 @@ import { useDataFetcher } from '~utils/hooks';
 import { getMainClasses } from '~utils/css';
 
 import { domainsAndRolesFetcher } from '../../fetchers';
+import {
+  SuggestionsFilterOptions,
+  SuggestionsFilterOptionType,
+  suggestionsFilterSelectOptions,
+} from '../shared/suggestionFilter';
 
 import styles from './SuggestionsList.css';
 
@@ -66,6 +72,36 @@ const SuggestionsList = ({
 }: Props) => {
   const history = useHistory();
   const { walletAddress } = useLoggedInUser();
+
+  const [filterOption, setFilterOption] = useState<SuggestionsFilterOptionType>(
+    'All',
+  );
+
+  const handleSetFilterOption = useCallback(
+    (_: string, value: SuggestionsFilterOptionType) => {
+      setFilterOption(value);
+    },
+    [setFilterOption],
+  );
+
+  const filterByDomain = useCallback(
+    ({ ethDomainId }: OneSuggestion) => {
+      return domainId === COLONY_TOTAL_BALANCE_DOMAIN_ID
+        ? true
+        : ethDomainId === domainId;
+    },
+    [domainId],
+  );
+
+  const filterByStatus = useCallback(
+    ({ status }: OneSuggestion) => {
+      return filterOption === SuggestionsFilterOptions.All
+        ? true
+        : status === filterOption;
+    },
+    [filterOption],
+  );
+
   const { data, loading } = useColonySuggestionsQuery({
     variables: { colonyAddress },
   });
@@ -113,52 +149,66 @@ const SuggestionsList = ({
     [colonyName, createTaskFromSuggestion, history, openDialog],
   );
 
-  const allSuggestions = (data && data.colony.suggestions) || [];
-
-  const suggestions = useMemo(() => {
-    const filteredSuggestions =
-      domainId === COLONY_TOTAL_BALANCE_DOMAIN_ID
-        ? allSuggestions
-        : allSuggestions.filter(({ ethDomainId }) => ethDomainId === domainId);
-    return filteredSuggestions.sort(createdAtDesc);
-  }, [allSuggestions, domainId]);
+  const suggestions = useMemo(
+    () =>
+      ((data && data.colony.suggestions) || [])
+        .filter(filterByDomain)
+        .filter(filterByStatus)
+        .sort(createdAtDesc),
+    [data, filterByDomain, filterByStatus],
+  );
 
   return loading || isFetchingDomains ? (
     <SpinnerLoader size="medium" />
   ) : (
-    <div
-      className={getMainClasses({}, styles, {
-        isEmpty: suggestions.length === 0,
-      })}
-    >
-      {suggestions.length > 0 ? (
-        <ListGroup>
-          {suggestions.map(suggestion => (
-            <ListGroupItem appearance={{ padding: 'none' }} key={suggestion.id}>
-              <SuggestionsListItem
-                onNotPlanned={handleNotPlanned}
-                onDeleted={handleDeleted}
-                onCreateTask={handleCreateTask}
-                suggestion={suggestion}
-                domains={domains}
-                walletAddress={walletAddress}
-              />
-            </ListGroupItem>
-          ))}
-        </ListGroup>
-      ) : (
-        <div>
-          <Heading
-            appearance={{ size: 'medium', weight: 'bold' }}
-            text={MSG.emptyStateTitle}
-          />
-          <Heading
-            appearance={{ size: 'small' }}
-            text={MSG.emptyStateSubTitle}
-          />
-        </div>
-      )}
-    </div>
+    <>
+      <div className={styles.filterContainer}>
+        <Select
+          connect={false}
+          appearance={{ alignOptions: 'right', theme: 'alt' }}
+          form={{ setFieldValue: handleSetFilterOption }}
+          options={suggestionsFilterSelectOptions}
+          name="suggestionsFilter"
+          $value={filterOption}
+        />
+      </div>
+      <div
+        className={getMainClasses({}, styles, {
+          isEmpty: suggestions.length === 0,
+        })}
+      >
+        {suggestions.length > 0 ? (
+          <ListGroup>
+            {suggestions.map(suggestion => (
+              <ListGroupItem
+                appearance={{ padding: 'none' }}
+                key={suggestion.id}
+              >
+                <SuggestionsListItem
+                  onNotPlanned={handleNotPlanned}
+                  onDeleted={handleDeleted}
+                  onCreateTask={handleCreateTask}
+                  suggestion={suggestion}
+                  domains={domains}
+                  walletAddress={walletAddress}
+                />
+              </ListGroupItem>
+            ))}
+          </ListGroup>
+        ) : (
+          <div>
+            <Heading
+              appearance={{ size: 'medium', weight: 'bold' }}
+              text={MSG.emptyStateTitle}
+            />
+            <Heading
+              appearance={{ size: 'small' }}
+              text={MSG.emptyStateSubTitle}
+            />
+          </div>
+        )}
+      </div>
+    </>
   );
 };
 
