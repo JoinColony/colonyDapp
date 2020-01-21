@@ -191,46 +191,7 @@ function* taskFinalize({
   return null;
 }
 
-function* taskCommentAdd({
-  payload: { author, comment, draftId },
-  meta,
-}: Action<ActionTypes.TASK_COMMENT_ADD>) {
-  try {
-
-    const apolloClient: ApolloClient<any> = yield getContext(
-      Context.APOLLO_CLIENT,
-    );
-
-    yield apolloClient.mutate<
-      SendTaskMessageMutation,
-      SendTaskMessageMutationVariables
-    >({
-      mutation: SendTaskMessageDocument,
-      variables: {
-        input: {
-          id: draftId,
-          message: comment,
-        },
-      },
-      // @todo return `Task` from `SendTaskMessage` mutation to avoid needing to `refetchQueries`
-      refetchQueries: [
-        {
-          query: TaskFeedEventsDocument,
-          variables: { id: draftId } as TaskFeedEventsQueryVariables,
-        },
-      ],
-    });
-
-    yield put<AllActions>({
-      type: ActionTypes.TASK_COMMENT_ADD_SUCCESS,
-    });
-  } catch (error) {
-    yield putError(ActionTypes.TASK_COMMENT_ADD_ERROR, error, meta);
-  }
-}
-
 export default function* tasksSagas() {
-  yield takeEvery(ActionTypes.TASK_COMMENT_ADD, taskCommentAdd);
   yield takeEvery(ActionTypes.TASK_CREATE, taskCreate);
   yield takeEvery(ActionTypes.TASK_FINALIZE, taskFinalize);
 }
