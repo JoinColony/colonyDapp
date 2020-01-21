@@ -14,6 +14,7 @@ import {
   useSendTaskMessageMutation,
   AnyTask,
   TaskFeedEventsDocument,
+  TaskFeedEventsQueryVariables,
 } from '~data/index';
 
 import styles from './TaskComments.css';
@@ -81,7 +82,10 @@ const TaskComments = ({ draftId, history }: Props) => {
 
   const [sendComment] = useSendTaskMessageMutation();
   const onSubmit = useCallback(
-    ({ comment: message }: FormValues, { resetForm }: FormikBag<any, any>) =>
+    (
+      { comment: message }: FormValues,
+      { resetForm }: FormikBag<object, FormValues>,
+    ) =>
       sendComment({
         variables: {
           input: {
@@ -92,7 +96,7 @@ const TaskComments = ({ draftId, history }: Props) => {
         refetchQueries: [
           {
             query: TaskFeedEventsDocument,
-            variables: { id: draftId, },
+            variables: { id: draftId } as TaskFeedEventsQueryVariables,
           },
         ],
       }).then(() => resetForm()),
