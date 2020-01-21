@@ -30,12 +30,6 @@ const config = {
   entry: './src/index.ts',
   mode,
   devtool: 'source-map',
-  output: {
-    filename: 'bundle.js',
-    path: path.resolve(__dirname, 'dist'),
-    publicPath: '/',
-    pathinfo: false,
-  },
   resolve: {
     alias: Object.assign(
       {},

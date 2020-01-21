@@ -1,4 +1,5 @@
 const TerserPlugin = require('terser-webpack-plugin');
+const path = require('path');
 
 const webpackBaseConfig = require('./webpack.config');
 
@@ -6,6 +7,11 @@ const webpackBaseConfig = require('./webpack.config');
  * Get the base config object, so we can modify it.
  */
 const webpackProdConfig = webpackBaseConfig();
+webpackProdConfig.output = {
+  filename: '[name].[contenthash].js',
+  path: path.resolve(__dirname, 'dist'),
+  publicPath: '/',
+};
 /*
  * Remove the HMR plugin since we won't need it in production
  */
