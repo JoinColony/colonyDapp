@@ -176,6 +176,7 @@
         "@colony/purser-software": "^1.2.7",
         "@colony/purser-trezor": "^1.4.1",
         "@colony/redux-promise-listener": "^1.2.0",
+        "@formatjs/intl-unified-numberformat": "^3.0.4",
         "apollo-cache-inmemory": "^1.6.3",
         "apollo-client": "^2.6.4",
         "apollo-link-context": "^1.0.19",
