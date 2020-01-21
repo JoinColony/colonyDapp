@@ -1,7 +1,7 @@
 node_modules
 scripts
 postcss.config.js
-webpack.config.*
+webpack.*
 src/data/generated.ts
 src/lib/colonyNetwork
 src/lib/colonyServer

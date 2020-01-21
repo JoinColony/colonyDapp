@@ -1,3 +1,8 @@
+/*
+ * @NOTE This file exports just the BASE configuration object.
+ * This cannot be directly plugged into webpack as that expects a function.
+ * For the final config objects look into webpack.dev.js and webpack.prod.js
+ */
 const path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const Dotenv = require('dotenv-webpack');
@@ -29,7 +34,6 @@ const generateModulesAliases = () => {
 const config = {
   entry: './src/index.ts',
   mode,
-  devtool: 'source-map',
   resolve: {
     alias: Object.assign(
       {},
@@ -51,18 +55,6 @@ const config = {
   },
   module: {
     rules: [
-      {
-        test: /\.tsx?$/,
-        exclude: /node_modules/,
-        use: [
-          {
-            loader: 'ts-loader',
-            options: {
-              transpileOnly: true,
-            },
-          },
-        ],
-      },
       {
         test: /\.css$/,
         include: [
@@ -112,9 +104,7 @@ const config = {
        */
       {
         test: /\.svg$/,
-        include: [
-          path.resolve(__dirname, 'src', 'img', 'icons'),
-        ],
+        include: [path.resolve(__dirname, 'src', 'img', 'icons')],
         use: [
           {
             loader: 'svg-sprite-loader',
@@ -137,7 +127,12 @@ const config = {
       {
         test: /\.svg$/,
         include: [
-          path.resolve(__dirname, 'node_modules', 'eth-contract-metadata', 'images'),
+          path.resolve(
+            __dirname,
+            'node_modules',
+            'eth-contract-metadata',
+            'images',
+          ),
           path.resolve(__dirname, 'src', 'img', 'tokens'),
         ],
         use: [
@@ -149,7 +144,7 @@ const config = {
                 { convertColors: { shorthex: false } },
                 { convertPathData: false },
                 { removeViewBox: false },
-                { removeDimensions: true }
+                { removeDimensions: true },
               ],
             },
           },
@@ -162,9 +157,6 @@ const config = {
     new webpack.ProvidePlugin({
       regeneratorRuntime: '@babel/runtime/regenerator',
     }),
-    new webpack.WatchIgnorePlugin([
-      /css\.d\.ts$/
-    ]),
     new Dotenv({
       systemvars: !!process.env.CI,
     }),
@@ -172,13 +164,7 @@ const config = {
       template: 'src/templates/index.html',
       favicon: 'src/img/favicon.png',
     }),
-    new webpack.HotModuleReplacementPlugin(),
   ],
-  devServer: {
-    historyApiFallback: true,
-    contentBase: [path.resolve(__dirname, '..', 'colonyNetwork', 'build')],
-    hotOnly: true,
-  },
   /*
    * Fix for the XMLHttpRequest compile-time bug.
    *
@@ -192,4 +178,4 @@ const config = {
   ],
 };
 
-module.exports = () => config;
+module.exports = config;
