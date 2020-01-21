@@ -38,7 +38,7 @@ const IconButton = ({
 }: Props) => (
   <Button appearance={appearance} {...props}>
     <div className={useMainClasses(appearance, styles)}>
-      <Icon name={icon} />
+      <Icon name={icon} title={text} titleValues={textValues} />
       <FormattedMessage {...text} values={textValues} />
     </div>
   </Button>
