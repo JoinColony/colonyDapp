@@ -1,5 +1,5 @@
 import { ROLES } from '~constants';
-import { AnyTask, FullColonyFragment } from '~data/index';
+import { AnyTask, FullColonyFragment, OneSuggestion } from '~data/index';
 import { TaskUserType } from '~immutable/index';
 import { Address } from '~types/index';
 import { hasRoot, canAdminister, canFund } from '../users/checks';
@@ -122,3 +122,12 @@ export const canFinalizeTask = (task: AnyTask, roles: ROLES[]) =>
   canFund(roles);
 
 export const canRecoverColony = hasRoot;
+
+/*
+ * Suggestions
+ */
+
+export const hasUpvotedSuggestion = (
+  upvotes: OneSuggestion['upvotes'],
+  userAddress: Address,
+) => upvotes.includes(userAddress);
