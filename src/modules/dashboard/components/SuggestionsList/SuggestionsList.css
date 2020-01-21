@@ -1,0 +1,11 @@
+
+.main {
+  display: flex;
+}
+
+.main.stateIsEmpty {
+  justify-content: center;
+  align-items: center;
+  height: 200px;
+  text-align: center;
+}

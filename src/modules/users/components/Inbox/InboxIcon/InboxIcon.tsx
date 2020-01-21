@@ -2,7 +2,7 @@ import { MessageDescriptor, defineMessages } from 'react-intl';
 import React from 'react';
 
 import Icon from '~core/Icon';
-import { Notification } from '~data/index';
+import { Notifications } from '~data/index';
 
 import styles from './InboxIcon.css';
 
@@ -14,7 +14,7 @@ const MSG = defineMessages({
 });
 
 interface Props {
-  notifications: Notification[];
+  notifications: Notifications;
   activeClassName?: string;
   title?: MessageDescriptor;
 }

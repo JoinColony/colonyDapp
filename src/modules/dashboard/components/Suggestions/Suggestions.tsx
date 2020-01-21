@@ -15,7 +15,7 @@ const displayName = 'dashboard.Suggestions';
 const Suggestions = ({ colonyAddress, domainId }: Props) => (
   <div>
     <SuggestionCreate colonyAddress={colonyAddress} domainId={domainId} />
-    <SuggestionsList colonyAddress={colonyAddress} domainId={domainId} />
+    <SuggestionsList colonyAddress={colonyAddress} />
   </div>
 );
 
