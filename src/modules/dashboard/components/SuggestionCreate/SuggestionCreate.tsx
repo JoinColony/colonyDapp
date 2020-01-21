@@ -1,14 +1,11 @@
 import React, { useCallback, useRef } from 'react';
 import { FormikHelpers } from 'formik';
 import { defineMessages } from 'react-intl';
-import { compose } from 'recompose';
 import * as yup from 'yup';
 
 import { RouteComponentProps, withRouter } from 'react-router';
 import { COLONY_TOTAL_BALANCE_DOMAIN_ID, ROOT_DOMAIN } from '~constants';
 import { Form, Input } from '~core/Fields';
-import { withDialog } from '~core/Dialog';
-import { OpenDialog } from '~core/Dialog/types';
 import {
   Domain,
   useCreateSuggestionMutation,
@@ -30,14 +27,9 @@ interface FormValues {
   title: string;
 }
 
-interface InProps {
+interface Props extends RouteComponentProps {
   colonyAddress: Address;
   domainId: Domain['ethDomainId'];
-}
-
-interface Props extends InProps, RouteComponentProps {
-  // Injected via `withDialog`
-  openDialog: OpenDialog;
 }
 
 const validationSchema = yup.object({
@@ -46,12 +38,7 @@ const validationSchema = yup.object({
 
 const displayName = 'Dashboard.SuggestionCreate';
 
-const SuggestionCreate = ({
-  colonyAddress,
-  domainId,
-  history,
-  openDialog,
-}: Props) => {
+const SuggestionCreate = ({ colonyAddress, domainId, history }: Props) => {
   const inputRef = useRef<HTMLInputElement>(null);
 
   const { username } = useLoggedInUser();
@@ -65,32 +52,25 @@ const SuggestionCreate = ({
   }, [history, username]);
 
   const handleSubmit = useCallback(
-    ({ title }: FormValues, { resetForm }: FormikHelpers<FormValues>) => {
-      openDialog('ConfirmDialog')
-        .afterClosed()
-        .then(() => {
-          // Suggestion must be associated with an actual domain
-          const ethDomainId =
-            domainId === COLONY_TOTAL_BALANCE_DOMAIN_ID
-              ? ROOT_DOMAIN
-              : domainId;
-          createSuggestion({
-            variables: { input: { colonyAddress, ethDomainId, title } },
-            refetchQueries: [
-              {
-                query: ColonySuggestionsDocument,
-                variables: { colonyAddress } as ColonySuggestionsQueryVariables,
-              },
-            ],
-          }).then(() => {
-            if (inputRef && inputRef.current) {
-              inputRef.current.blur();
-            }
-            resetForm();
-          });
-        });
+    async ({ title }: FormValues, { resetForm }: FormikHelpers<FormValues>) => {
+      // Suggestion must be associated with an actual domain
+      const ethDomainId =
+        domainId === COLONY_TOTAL_BALANCE_DOMAIN_ID ? ROOT_DOMAIN : domainId;
+      await createSuggestion({
+        variables: { input: { colonyAddress, ethDomainId, title } },
+        refetchQueries: [
+          {
+            query: ColonySuggestionsDocument,
+            variables: { colonyAddress } as ColonySuggestionsQueryVariables,
+          },
+        ],
+      });
+      if (inputRef && inputRef.current) {
+        inputRef.current.blur();
+      }
+      resetForm();
     },
-    [openDialog, domainId, createSuggestion, colonyAddress],
+    [domainId, createSuggestion, colonyAddress],
   );
 
   return (
@@ -113,9 +93,4 @@ const SuggestionCreate = ({
 
 SuggestionCreate.displayName = displayName;
 
-const enhance = compose<Props, InProps>(
-  withDialog(),
-  withRouter,
-);
-
-export default enhance(SuggestionCreate);
+export default withRouter(SuggestionCreate);
