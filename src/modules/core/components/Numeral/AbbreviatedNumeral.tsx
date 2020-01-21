@@ -3,10 +3,10 @@ import BN from 'bn.js';
 import { fromWei } from 'ethjs-unit';
 import { UnifiedNumberFormatOptions } from '@formatjs/intl-unified-numberformat';
 import moveDecimal from 'move-decimal-point';
-import { injectIntl, IntlShape } from 'react-intl';
+import { injectIntl, WithIntlProps } from 'react-intl';
 import { Unit } from 'web3-utils';
 
-interface InProps extends HTMLAttributes<HTMLSpanElement> {
+interface Props extends HTMLAttributes<HTMLSpanElement> {
   /** When dealing with ethereum units */
   ethUnit?: Unit;
   /** Disallow children */
@@ -15,11 +15,6 @@ interface InProps extends HTMLAttributes<HTMLSpanElement> {
   formatOptions: UnifiedNumberFormatOptions;
   /** Actual value */
   value: number | string | BN;
-}
-
-interface Props extends InProps {
-  /** @ignore injected via `InjectIntl` */
-  intl: IntlShape;
 }
 
 const displayName = 'AbbreviatedNumeral';
@@ -45,7 +40,7 @@ const AbbreviatedNumeral = ({
   value,
   ethUnit,
   ...rest
-}: Props) => {
+}: WithIntlProps<Props>) => {
   const convertedNum =
     typeof ethUnit === 'string'
       ? fromWei(value.toString(10), ethUnit)
@@ -60,4 +55,4 @@ const AbbreviatedNumeral = ({
 
 AbbreviatedNumeral.displayName = displayName;
 
-export default injectIntl(AbbreviatedNumeral) as FC<InProps>;
+export default injectIntl(AbbreviatedNumeral) as FC<Props>;
