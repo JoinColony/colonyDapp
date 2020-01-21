@@ -1,7 +1,7 @@
 import React from 'react';
 import { defineMessages } from 'react-intl';
 
-import { AnyUser } from '~data/index';
+import { AnyUser, useLoggedInUser } from '~data/index';
 
 import CopyableAddress from '~core/CopyableAddress';
 import ExternalLink from '~core/ExternalLink';
@@ -11,7 +11,6 @@ import Link from '~core/Link';
 import UserMention from '~core/UserMention';
 import HookedUserAvatar from '~users/HookedUserAvatar';
 import { stripProtocol } from '~utils/strings';
-import { useLoggedInUser } from '~data/index';
 
 import styles from './UserMeta.css';
 
