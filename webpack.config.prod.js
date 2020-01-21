@@ -1,5 +1,6 @@
 const TerserPlugin = require('terser-webpack-plugin');
 const path = require('path');
+const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 
 const webpackBaseConfig = require('./webpack.config');
 
@@ -16,6 +17,12 @@ webpackProdConfig.output = {
  * Remove the HMR plugin since we won't need it in production
  */
 webpackProdConfig.plugins.pop();
+/*
+ *
+ */
+webpackProdConfig.plugins.push(
+  new CleanWebpackPlugin(),
+);
 /*
  * Remove the dev server since we won't be needing it
  */
