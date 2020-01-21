@@ -52,7 +52,11 @@ interface Props extends FormikProps<FormValues> {
 const displayName = 'dashboard.TaskComments';
 
 const validationSchema = yup.object().shape({
-  comment: yup.string().trim().min(1).required(),
+  comment: yup
+    .string()
+    .trim()
+    .min(1)
+    .required(),
 });
 
 const handleKeyboardSubmit = (
@@ -76,14 +80,15 @@ const TaskComments = ({ draftId, history }: Props) => {
 
   const [sendComment] = useSendTaskMessageMutation();
   const onSubmit = useCallback(
-    ({ comment: message }: FormValues, { resetForm }: FormikBag<any, any>) => sendComment({
-      variables: {
-        input: {
-          id: draftId,
-          message,
+    ({ comment: message }: FormValues, { resetForm }: FormikBag<any, any>) =>
+      sendComment({
+        variables: {
+          input: {
+            id: draftId,
+            message,
+          },
         },
-      },
-    }).then(() => resetForm()),
+      }).then(() => resetForm()),
     [draftId, sendComment],
   );
 
