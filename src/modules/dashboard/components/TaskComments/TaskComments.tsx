@@ -13,6 +13,7 @@ import {
   useLoggedInUser,
   useSendTaskMessageMutation,
   AnyTask,
+  TaskFeedEventsDocument,
 } from '~data/index';
 
 import styles from './TaskComments.css';
@@ -88,6 +89,12 @@ const TaskComments = ({ draftId, history }: Props) => {
             message,
           },
         },
+        refetchQueries: [
+          {
+            query: TaskFeedEventsDocument,
+            variables: { id: draftId, },
+          },
+        ],
       }).then(() => resetForm()),
     [draftId, sendComment],
   );
