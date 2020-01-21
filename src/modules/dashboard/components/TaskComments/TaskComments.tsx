@@ -3,13 +3,13 @@ import React, { useCallback, KeyboardEvent, SyntheticEvent } from 'react';
 import { defineMessages } from 'react-intl';
 import * as yup from 'yup';
 
-import { mergePayload } from '~utils/actions';
+// import { mergePayload } from '~utils/actions';
 import { OpenDialog } from '~core/Dialog/types';
 import { Address, ENTER } from '~types/index';
-import { ActionTypes } from '~redux/index';
+// import { ActionTypes } from '~redux/index';
 import withDialog from '~core/Dialog/withDialog';
-import { ActionForm, TextareaAutoresize } from '~core/Fields';
-import { OnSuccess } from '~core/Fields/Form/ActionForm';
+import { Form, TextareaAutoresize } from '~core/Fields';
+// import { OnSuccess } from '~core/Fields/Form/ActionForm';
 import Button from '~core/Button';
 import unfinishedProfileOpener from '~users/UnfinishedProfile';
 import { useLoggedInUser, AnyTask } from '~data/index';
@@ -80,19 +80,19 @@ const TaskComments = ({
 }: Props) => {
   const { username, walletAddress } = useLoggedInUser();
 
-  const onSuccess: OnSuccess = useCallback(
-    (result, { resetForm, setStatus }) => {
-      setStatus({});
-      // @ts-ignore proper formik typings!
-      resetForm({ comment: '' });
-    },
-    [],
-  );
+  // const onSuccess: OnSuccess = useCallback(
+  //   (result, { resetForm, setStatus }) => {
+  //     setStatus({});
+  //     // @ts-ignore proper formik typings!
+  //     resetForm({ comment: '' });
+  //   },
+  //   [],
+  // );
 
-  const transform = useCallback(
-    mergePayload({ colonyAddress, author: walletAddress, draftId, taskTitle }),
-    [colonyAddress, draftId],
-  );
+  // const transform = useCallback(
+  //   mergePayload({ colonyAddress, author: walletAddress, draftId, taskTitle }),
+  //   [colonyAddress, draftId],
+  // );
 
   const handleUnclaimedProfile = useCallback(() => {
     if (!username) {
@@ -119,14 +119,12 @@ const TaskComments = ({
       role="textbox"
       tabIndex={0}
     >
-      <ActionForm
-        submit={ActionTypes.TASK_COMMENT_ADD}
-        success={ActionTypes.TASK_COMMENT_ADD_SUCCESS}
-        error={ActionTypes.TASK_COMMENT_ADD_ERROR}
+      <Form
         initialValues={{ comment: '' }}
         validationSchema={validationSchema}
-        onSuccess={onSuccess}
-        transform={transform}
+        onSubmit={() => {}}
+        // onSuccess={onSuccess}
+        // transform={transform}
       >
         {({
           isSubmitting,
@@ -175,7 +173,7 @@ const TaskComments = ({
             </div>
           </>
         )}
-      </ActionForm>
+      </Form>
     </div>
   );
 };
