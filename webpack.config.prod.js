@@ -40,7 +40,18 @@ webpackProdConfig.module.rules[0].use.push( { loader: 'babel-loader' } );
 webpackProdConfig.optimization = {
   minimizer: [new TerserPlugin()],
   splitChunks: {
-    chunks: 'all'
+    cacheGroups: {
+      vendor: {
+        test: /[\\/]node_modules[\\/]/,
+        name: 'vendors',
+        chunks: 'all',
+      },
+      lib: {
+        test: /[\\/]src\/lib[\\/]/,
+        name: 'libs',
+        chunks: 'all',
+      }
+    }
   },
 };
 
