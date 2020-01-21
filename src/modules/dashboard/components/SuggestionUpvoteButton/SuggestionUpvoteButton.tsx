@@ -1,5 +1,6 @@
 import React, { useCallback } from 'react';
 import { defineMessages } from 'react-intl';
+import { withRouter, RouteComponentProps } from 'react-router-dom';
 
 import Button from '~core/Button';
 import Icon from '~core/Icon';
@@ -7,8 +8,9 @@ import {
   OneSuggestion,
   useAddUpvoteToSuggestionMutation,
   useRemoveUpvoteFromSuggestionMutation,
+  useLoggedInUser,
 } from '~data/index';
-import { Address } from '~types/index';
+import unfinishedProfileOpener from '~users/UnfinishedProfile';
 import { getMainClasses } from '~utils/css';
 
 import { hasUpvotedSuggestion as hasUpvotedSuggestionCheck } from '../../checks';
@@ -26,19 +28,15 @@ const MSG = defineMessages({
   },
 });
 
-interface Props {
+interface Props extends RouteComponentProps {
   suggestionId: OneSuggestion['id'];
   upvotes: OneSuggestion['upvotes'];
-  walletAddress: Address;
 }
 
 const displayName = 'Dashboard.SuggestionUpvoteButton';
 
-const SuggestionUpvoteButton = ({
-  suggestionId,
-  upvotes,
-  walletAddress,
-}: Props) => {
+const SuggestionUpvoteButton = ({ history, suggestionId, upvotes }: Props) => {
+  const { username, walletAddress } = useLoggedInUser();
   const hasUpvoted = hasUpvotedSuggestionCheck(upvotes, walletAddress);
 
   const [addUpvote] = useAddUpvoteToSuggestionMutation({
@@ -52,10 +50,16 @@ const SuggestionUpvoteButton = ({
     },
   });
 
-  const handleClick = useCallback(
-    () => (hasUpvoted ? removeUpvote() : addUpvote()),
-    [addUpvote, hasUpvoted, removeUpvote],
-  );
+  const handleUnclaimedProfile = useCallback(() => {
+    unfinishedProfileOpener(history);
+  }, [history]);
+
+  const handleClick = useCallback(() => {
+    if (!username) {
+      return handleUnclaimedProfile();
+    }
+    return hasUpvoted ? removeUpvote() : addUpvote();
+  }, [addUpvote, handleUnclaimedProfile, hasUpvoted, removeUpvote, username]);
 
   const htmlTitle = hasUpvoted ? MSG.titleRemoveUpvote : MSG.titleAddUpvote;
 
@@ -76,4 +80,4 @@ const SuggestionUpvoteButton = ({
 
 SuggestionUpvoteButton.displayName = displayName;
 
-export default SuggestionUpvoteButton;
+export default withRouter(SuggestionUpvoteButton);

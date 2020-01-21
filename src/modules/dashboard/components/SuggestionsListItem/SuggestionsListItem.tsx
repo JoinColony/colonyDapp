@@ -154,11 +154,7 @@ const SuggestionsListItem = ({
           />
         </div>
         <div className={styles.upvoteButtonContainer}>
-          <SuggestionUpvoteButton
-            suggestionId={id}
-            upvotes={upvotes}
-            walletAddress={walletAddress}
-          />
+          <SuggestionUpvoteButton suggestionId={id} upvotes={upvotes} />
         </div>
       </div>
     </div>
