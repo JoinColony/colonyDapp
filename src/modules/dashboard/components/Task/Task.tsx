@@ -367,10 +367,7 @@ const Task = ({
             <TaskFeed colonyAddress={colony.colonyAddress} draftId={draftId} />
           </section>
           <section className={styles.commentBox}>
-            <TaskComments
-              draftId={draftId}
-              history={history}
-            />
+            <TaskComments draftId={draftId} history={history} />
           </section>
         </div>
       </div>
