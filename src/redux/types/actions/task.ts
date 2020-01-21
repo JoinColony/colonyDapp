@@ -46,16 +46,6 @@ interface TaskErrorActionType<T extends string>
  * TASK_WORKER_REVEAL_MANAGER_RATING_SUCCESS
  */
 export type TaskActionTypes =
-  | TaskActionType<
-      ActionTypes.TASK_COMMENT_ADD,
-      {
-        comment: string;
-        author: Address;
-        draftId: AnyTask['id'];
-      }
-    >
-  | TaskErrorActionType<ActionTypes.TASK_COMMENT_ADD_ERROR>
-  | ActionType<ActionTypes.TASK_COMMENT_ADD_SUCCESS>
   | UniqueActionType<
       ActionTypes.TASK_CREATE,
       {

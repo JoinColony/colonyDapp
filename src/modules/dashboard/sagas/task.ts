@@ -10,18 +10,13 @@ import {
   CreateTaskMutationResult,
   FinalizeTaskDocument,
   TaskDocument,
-  SendTaskMessageDocument,
-  SendTaskMessageMutation,
-  SendTaskMessageMutationVariables,
   CreateTaskMutation,
   CreateTaskMutationVariables,
   TaskQuery,
   TaskQueryVariables,
   FinalizeTaskMutation,
   FinalizeTaskMutationVariables,
-  TaskFeedEventsDocument,
   ColonyTasksDocument,
-  TaskFeedEventsQueryVariables,
   ColonyTasksQueryVariables,
   ColonyTasksQuery,
 } from '~data/index';
@@ -30,7 +25,7 @@ import { Action, ActionTypes } from '~redux/index';
 import { ContractContexts } from '~types/index';
 import { putError, takeFrom } from '~utils/saga/effects';
 
-import { createTransaction, getTxChannel, signMessage } from '../../core/sagas';
+import { createTransaction, getTxChannel } from '../../core/sagas';
 
 import { AllActions } from '../../../redux/types/actions';
 
@@ -191,50 +186,7 @@ function* taskFinalize({
   return null;
 }
 
-function* taskCommentAdd({
-  payload: { author, comment, draftId },
-  meta,
-}: Action<ActionTypes.TASK_COMMENT_ADD>) {
-  try {
-    yield call(signMessage, 'taskComment', {
-      comment,
-      author,
-    });
-
-    const apolloClient: ApolloClient<any> = yield getContext(
-      Context.APOLLO_CLIENT,
-    );
-
-    yield apolloClient.mutate<
-      SendTaskMessageMutation,
-      SendTaskMessageMutationVariables
-    >({
-      mutation: SendTaskMessageDocument,
-      variables: {
-        input: {
-          id: draftId,
-          message: comment,
-        },
-      },
-      // @todo return `Task` from `SendTaskMessage` mutation to avoid needing to `refetchQueries`
-      refetchQueries: [
-        {
-          query: TaskFeedEventsDocument,
-          variables: { id: draftId } as TaskFeedEventsQueryVariables,
-        },
-      ],
-    });
-
-    yield put<AllActions>({
-      type: ActionTypes.TASK_COMMENT_ADD_SUCCESS,
-    });
-  } catch (error) {
-    yield putError(ActionTypes.TASK_COMMENT_ADD_ERROR, error, meta);
-  }
-}
-
 export default function* tasksSagas() {
-  yield takeEvery(ActionTypes.TASK_COMMENT_ADD, taskCommentAdd);
   yield takeEvery(ActionTypes.TASK_CREATE, taskCreate);
   yield takeEvery(ActionTypes.TASK_FINALIZE, taskFinalize);
 }

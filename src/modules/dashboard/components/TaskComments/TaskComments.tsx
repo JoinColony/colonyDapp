@@ -1,18 +1,21 @@
-import { FormikProps } from 'formik';
+import { FormikProps, FormikBag } from 'formik';
 import React, { useCallback, KeyboardEvent, SyntheticEvent } from 'react';
 import { defineMessages } from 'react-intl';
 import * as yup from 'yup';
 
-import { mergePayload } from '~utils/actions';
 import { OpenDialog } from '~core/Dialog/types';
-import { Address, ENTER } from '~types/index';
-import { ActionTypes } from '~redux/index';
+import { ENTER } from '~types/index';
 import withDialog from '~core/Dialog/withDialog';
-import { ActionForm, TextareaAutoresize } from '~core/Fields';
-import { OnSuccess } from '~core/Fields/Form/ActionForm';
+import { Form, TextareaAutoresize } from '~core/Fields';
 import Button from '~core/Button';
 import unfinishedProfileOpener from '~users/UnfinishedProfile';
-import { useLoggedInUser, AnyTask } from '~data/index';
+import {
+  useLoggedInUser,
+  useSendTaskMessageMutation,
+  AnyTask,
+  TaskFeedEventsDocument,
+  TaskFeedEventsQueryVariables,
+} from '~data/index';
 
 import styles from './TaskComments.css';
 
@@ -43,17 +46,19 @@ type FormValues = {
 };
 
 interface Props extends FormikProps<FormValues> {
-  colonyAddress: Address;
   openDialog: OpenDialog;
   draftId: AnyTask['id'];
   history: any;
-  taskTitle: string;
 }
 
 const displayName = 'dashboard.TaskComments';
 
 const validationSchema = yup.object().shape({
-  comment: yup.string().required(),
+  comment: yup
+    .string()
+    .trim()
+    .min(1)
+    .required(),
 });
 
 const handleKeyboardSubmit = (
@@ -72,26 +77,30 @@ const handleKeyboardSubmit = (
   return false;
 };
 
-const TaskComments = ({
-  taskTitle,
-  colonyAddress,
-  draftId,
-  history,
-}: Props) => {
-  const { username, walletAddress } = useLoggedInUser();
+const TaskComments = ({ draftId, history }: Props) => {
+  const { username } = useLoggedInUser();
 
-  const onSuccess: OnSuccess = useCallback(
-    (result, { resetForm, setStatus }) => {
-      setStatus({});
-      // @ts-ignore proper formik typings!
-      resetForm({ comment: '' });
-    },
-    [],
-  );
-
-  const transform = useCallback(
-    mergePayload({ colonyAddress, author: walletAddress, draftId, taskTitle }),
-    [colonyAddress, draftId],
+  const [sendComment] = useSendTaskMessageMutation();
+  const onSubmit = useCallback(
+    (
+      { comment: message }: FormValues,
+      { resetForm }: FormikBag<object, FormValues>,
+    ) =>
+      sendComment({
+        variables: {
+          input: {
+            id: draftId,
+            message,
+          },
+        },
+        refetchQueries: [
+          {
+            query: TaskFeedEventsDocument,
+            variables: { id: draftId } as TaskFeedEventsQueryVariables,
+          },
+        ],
+      }).then(() => resetForm()),
+    [draftId, sendComment],
   );
 
   const handleUnclaimedProfile = useCallback(() => {
@@ -119,14 +128,11 @@ const TaskComments = ({
       role="textbox"
       tabIndex={0}
     >
-      <ActionForm
-        submit={ActionTypes.TASK_COMMENT_ADD}
-        success={ActionTypes.TASK_COMMENT_ADD_SUCCESS}
-        error={ActionTypes.TASK_COMMENT_ADD_ERROR}
+      <Form
         initialValues={{ comment: '' }}
         validationSchema={validationSchema}
-        onSuccess={onSuccess}
-        transform={transform}
+        onSubmit={onSubmit}
+        validateOnMount
       >
         {({
           isSubmitting,
@@ -150,19 +156,6 @@ const TaskComments = ({
               onKeyDown={event => handleKeyboardSubmit(event, handleSubmit)}
               value={values.comment || ''}
               disabled={!username || isSubmitting}
-              /*
-               * This is an UGLY silent restriction placed on the
-               * comment textarea; it's needed because the Trezor
-               * wallet can't sign messages with payloads larger
-               * than 1024 bytes, and all other wallets submit to
-               * this limitation.
-               *
-               * The value below represents the max numbers of
-               * characters you can comment with; the rest
-               * up until 1024 represent the json data we wrap the comment with.
-               * ie: {"comment":"aaa...","author":"0x1234...1234"}
-               */
-              maxLength={956}
             />
             <div className={styles.commentControls}>
               <Button
@@ -175,7 +168,7 @@ const TaskComments = ({
             </div>
           </>
         )}
-      </ActionForm>
+      </Form>
     </div>
   );
 };

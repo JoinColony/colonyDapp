@@ -159,7 +159,7 @@ const startAll = async () => {
     console.info(chalk.redBright(caughtError.message));
     process.exit(1);
   }
-  
+
   console.info(chalk.greenBright('Stack started successfully.'));
 };
 
