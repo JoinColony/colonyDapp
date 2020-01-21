@@ -7,9 +7,19 @@ import ListGroup from '~core/ListGroup';
 import ListGroupItem from '~core/ListGroup/ListGroupItem';
 import { SpinnerLoader } from '~core/Preloaders';
 import SuggestionsListItem from '~dashboard/SuggestionsListItem';
-import { Domain, useColonySuggestionsQuery, OneSuggestion } from '~data/index';
+import {
+  useColonySuggestionsQuery,
+  useLoggedInUser,
+  Domain,
+  OneSuggestion,
+} from '~data/index';
 import { Address } from '~types/index';
+import { useDataFetcher, useTransformer } from '~utils/hooks';
 import { getMainClasses } from '~utils/css';
+
+import { getUserRoles } from '../../../transformers';
+import { canAdminister } from '../../../users/checks';
+import { domainsAndRolesFetcher } from '../../fetchers';
 
 import styles from './SuggestionsList.css';
 
@@ -38,9 +48,22 @@ const createdAtDesc = (
 const displayName = 'Dashboard.SuggestionsList';
 
 const SuggestionsList = ({ colonyAddress, domainId }: Props) => {
+  const { walletAddress } = useLoggedInUser();
   const { data, loading } = useColonySuggestionsQuery({
     variables: { colonyAddress },
   });
+
+  const { data: domains, isFetching: isFetchingDomains } = useDataFetcher(
+    domainsAndRolesFetcher,
+    [colonyAddress],
+    [colonyAddress],
+  );
+
+  const userRoles = useTransformer(getUserRoles, [
+    domains,
+    domainId,
+    walletAddress,
+  ]);
 
   const allSuggestions = (data && data.colony.suggestions) || [];
 
@@ -52,7 +75,7 @@ const SuggestionsList = ({ colonyAddress, domainId }: Props) => {
     return filteredSuggestions.sort(createdAtDesc);
   }, [allSuggestions, domainId]);
 
-  return loading ? (
+  return loading || isFetchingDomains ? (
     <SpinnerLoader size="medium" />
   ) : (
     <div
@@ -64,7 +87,11 @@ const SuggestionsList = ({ colonyAddress, domainId }: Props) => {
         <ListGroup>
           {suggestions.map(suggestion => (
             <ListGroupItem appearance={{ padding: 'none' }} key={suggestion.id}>
-              <SuggestionsListItem suggestion={suggestion} />
+              <SuggestionsListItem
+                suggestion={suggestion}
+                canAdminister={canAdminister(userRoles)}
+                walletAddress={walletAddress}
+              />
             </ListGroupItem>
           ))}
         </ListGroup>

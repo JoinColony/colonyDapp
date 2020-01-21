@@ -128,7 +128,7 @@ class AvatarDropdownPopover extends Component<Props> {
     <DropdownMenuSection separator>
       <DropdownMenuItem>
         <ActionButton
-          className={styles.logout}
+          appearance={{ theme: 'no-style' }}
           text={MSG.signOut}
           submit={ActionTypes.USER_LOGOUT}
           error={ActionTypes.USER_LOGOUT_ERROR}

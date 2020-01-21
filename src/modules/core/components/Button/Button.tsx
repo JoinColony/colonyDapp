@@ -22,7 +22,8 @@ export interface Appearance {
     | 'dangerLink'
     | 'ghost'
     | 'underlinedBold'
-    | 'blue';
+    | 'blue'
+    | 'no-style';
   size?: 'small' | 'medium' | 'large';
 }
 
