@@ -9,13 +9,14 @@ import DropdownMenu, {
 } from '~core/DropdownMenu';
 import Icon from '~core/Icon';
 import Button from '~core/Button';
-import { Address, DomainsMapType } from '~types/index';
+import { AbbreviatedNumeral } from '~core/Numeral';
+import SuggestionUpvoteButton from '~dashboard/SuggestionUpvoteButton';
 import { OneSuggestion } from '~data/index';
+import { Address, DomainsMapType } from '~types/index';
 import { useTransformer } from '~utils/hooks';
 
 import { getUserRoles } from '../../../transformers';
 import { canAdminister } from '../../../users/checks';
-
 import { getFriendlyName } from '../../../users/transformers';
 
 import styles from './SuggestionsListItem.css';
@@ -144,9 +145,20 @@ const SuggestionsListItem = ({
         </p>
       </div>
       <div className={styles.upvoteContainer}>
-        <div className={styles.upvoteCount}>{upvotes.length}</div>
+        <div className={styles.upvoteCount}>
+          <AbbreviatedNumeral
+            formatOptions={{
+              notation: 'compact',
+            }}
+            value={upvotes.length}
+          />
+        </div>
         <div className={styles.upvoteButtonContainer}>
-          {/* @todo upvote button goes here */}^
+          <SuggestionUpvoteButton
+            suggestionId={id}
+            upvotes={upvotes}
+            walletAddress={walletAddress}
+          />
         </div>
       </div>
     </div>
