@@ -185,6 +185,7 @@ const SuggestionsList = ({
                 key={suggestion.id}
               >
                 <SuggestionsListItem
+                  colonyName={colonyName}
                   onNotPlanned={handleNotPlanned}
                   onDeleted={handleDeleted}
                   onCreateTask={handleCreateTask}
