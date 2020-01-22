@@ -1,6 +1,5 @@
 import React, { useCallback } from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
-import { useParams } from 'react-router-dom';
 
 import Badge from '~core/Badge';
 import Button from '~core/Button';
@@ -65,6 +64,7 @@ const suggestionStatusBadgeText = {
 };
 
 interface Props {
+  colonyName: string;
   domains: DomainsMapType;
   onNotPlanned: (id: string) => void;
   onDeleted: (id: string) => void;
@@ -76,6 +76,7 @@ interface Props {
 const displayName = 'Dashboard.SuggestionsListItem';
 
 const SuggestionsListItem = ({
+  colonyName,
   domains,
   onNotPlanned,
   onDeleted,
@@ -83,8 +84,6 @@ const SuggestionsListItem = ({
   suggestion: { ethDomainId, id, status, title, creator, upvotes, taskId },
   walletAddress,
 }: Props) => {
-  const { colonyName } = useParams();
-
   const userRoles = useTransformer(getUserRoles, [
     domains,
     ethDomainId,
