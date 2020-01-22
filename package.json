@@ -27,9 +27,9 @@
         "truffle": "yarn --cwd ./src/lib/colonyNetwork truffle",
         "trufflepig": "scripts/start_trufflepig.js",
         "typecheck": "tsc --noEmit",
-        "webpack": "webpack-dev-server --config webpack.config.js --port 9090",
-        "webpack:build": "webpack-cli --config webpack.config.js",
-        "webpack:build:prod": "NODE_ENV=production webpack-cli --config webpack.config.prod.js",
+        "webpack": "webpack-dev-server --config webpack.dev.js --port 9090",
+        "webpack:build": "webpack-cli --config webpack.dev.js",
+        "webpack:build:prod": "NODE_ENV=production webpack-cli --config webpack.prod.js",
         "wssproxy": "scripts/start_wss_proxy.js"
     },
     "repository": {
@@ -182,6 +182,7 @@
         "bn.js": "^4.11.8",
         "camelcase": "^5.0.0",
         "classnames": "^2.2.6",
+        "clean-webpack-plugin": "^3.0.0",
         "cleave.js": "^1.3.7",
         "connected-react-router": "^6.2.2",
         "copy-to-clipboard": "^3.0.8",
