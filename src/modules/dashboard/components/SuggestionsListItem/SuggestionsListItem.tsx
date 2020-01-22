@@ -1,17 +1,20 @@
 import React, { useCallback } from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
+import { useParams } from 'react-router-dom';
 
-import Heading from '~core/Heading';
-import Popover from '~core/Popover';
-import DropdownMenu, {
-  DropdownMenuSection,
-  DropdownMenuItem,
-} from '~core/DropdownMenu';
-import Icon from '~core/Icon';
+import Badge from '~core/Badge';
 import Button from '~core/Button';
+import DropdownMenu, {
+  DropdownMenuItem,
+  DropdownMenuSection,
+} from '~core/DropdownMenu';
+import Heading from '~core/Heading';
+import Icon from '~core/Icon';
+import Link from '~core/Link';
 import { AbbreviatedNumeral } from '~core/Numeral';
+import Popover from '~core/Popover';
 import SuggestionUpvoteButton from '~dashboard/SuggestionUpvoteButton';
-import { OneSuggestion } from '~data/index';
+import { OneSuggestion, SuggestionStatus } from '~data/index';
 import { Address, DomainsMapType } from '~types/index';
 import { useTransformer } from '~utils/hooks';
 
@@ -22,6 +25,14 @@ import { getFriendlyName } from '../../../users/transformers';
 import styles from './SuggestionsListItem.css';
 
 const MSG = defineMessages({
+  badgeTextAccepted: {
+    id: 'Dashboard.SuggestionsListItem.badgeTextAccepted',
+    defaultMessage: 'Accepted',
+  },
+  badgeTextNotPlanned: {
+    id: 'Dashboard.SuggestionsListItem.badgeTextNotPlanned',
+    defaultMessage: 'Not Planned',
+  },
   byAuthorText: {
     id: 'Dashboard.SuggestionsListItem.byAuthorText',
     defaultMessage: 'by {creator}',
@@ -42,7 +53,16 @@ const MSG = defineMessages({
     id: 'Dashboard.SuggestionsListItem.titleActionMenu',
     defaultMessage: 'Change status',
   },
+  linkGoToTask: {
+    id: 'Dashboard.SuggestionsListItem.linkGoToTask',
+    defaultMessage: 'Go to task',
+  },
 });
+
+const suggestionStatusBadgeText = {
+  [SuggestionStatus.Accepted]: MSG.badgeTextAccepted,
+  [SuggestionStatus.NotPlanned]: MSG.badgeTextNotPlanned,
+};
 
 interface Props {
   domains: DomainsMapType;
@@ -60,9 +80,11 @@ const SuggestionsListItem = ({
   onNotPlanned,
   onDeleted,
   onCreateTask,
-  suggestion: { ethDomainId, id, title, creator, upvotes },
+  suggestion: { ethDomainId, id, status, title, creator, upvotes, taskId },
   walletAddress,
 }: Props) => {
+  const { colonyName } = useParams();
+
   const userRoles = useTransformer(getUserRoles, [
     domains,
     ethDomainId,
@@ -80,6 +102,8 @@ const SuggestionsListItem = ({
     id,
     onCreateTask,
   ]);
+
+  const statusBadgeText = suggestionStatusBadgeText[status];
 
   return (
     <div className={styles.main}>
@@ -135,8 +159,22 @@ const SuggestionsListItem = ({
       <div className={styles.titleContainer}>
         <Heading
           appearance={{ size: 'normal', margin: 'none', weight: 'bold' }}
-          text={title}
-        />
+        >
+          <span className={styles.titleContentContainer}>{title}</span>
+          {statusBadgeText && (
+            <span className={styles.badgeContainer}>
+              &nbsp;
+              <Badge text={statusBadgeText} />
+            </span>
+          )}
+          {taskId && (
+            <Link
+              className={styles.taskLink}
+              to={`/colony/${colonyName}/task/${taskId}`}
+              text={MSG.linkGoToTask}
+            />
+          )}
+        </Heading>
         <p className={styles.authorText}>
           <FormattedMessage
             {...MSG.byAuthorText}
