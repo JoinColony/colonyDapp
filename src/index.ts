@@ -7,13 +7,12 @@ import './modules/validations';
 
 import App from './App';
 import store from '~redux/createReduxStore';
-import history from '~redux/history';
 
 const rootNode = document.getElementById('root');
 
 if (rootNode) {
   ReactModal.setAppElement(rootNode);
-  render(createElement(App, { store, history }), rootNode);
+  render(createElement(App, { store }), rootNode);
 }
 
 // @ts-ignore

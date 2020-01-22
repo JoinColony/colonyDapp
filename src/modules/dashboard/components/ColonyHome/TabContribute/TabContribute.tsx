@@ -1,5 +1,6 @@
 import React, { useState, useCallback } from 'react';
 import { defineMessages } from 'react-intl';
+import { useHistory } from 'react-router-dom';
 import throttle from 'lodash/throttle';
 
 import { COLONY_TOTAL_BALANCE_DOMAIN_ID, ROOT_DOMAIN } from '~constants';
@@ -49,6 +50,7 @@ const TabContribute = ({
   canCreateTask,
   colony: {
     colonyAddress,
+    colonyName,
     canMintNativeToken,
     displayName,
     isInRecoveryMode,
@@ -59,6 +61,7 @@ const TabContribute = ({
   filteredDomainId,
   showQrCode,
 }: Props) => {
+  const history = useHistory();
   const [filterOption, setFilterOption] = useState(TasksFilterOptions.ALL_OPEN);
   const [isCreatingTask, setIsCreatingTask] = useState(false);
 
@@ -86,7 +89,8 @@ const TabContribute = ({
   const handleCreateTask = useCallback(
     throttle(async () => {
       setIsCreatingTask(true);
-      await createTask({});
+      const { id } = (await createTask({})) as { id: string };
+      history.replace(`/colony/${colonyName}/task/${id}`);
     }, 2000),
     [createTask],
   );

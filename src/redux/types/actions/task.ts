@@ -55,7 +55,7 @@ export type TaskActionTypes =
       object
     >
   | ErrorActionType<ActionTypes.TASK_CREATE_ERROR, object>
-  | ActionType<ActionTypes.TASK_CREATE_SUCCESS>
+  | UniqueActionType<ActionTypes.TASK_CREATE_SUCCESS, { id: string }, object>
   | ActionType<ActionTypes.TASK_FETCH_ALL>
   | TaskActionType<
       ActionTypes.TASK_FINALIZE,

@@ -1,5 +1,4 @@
 import ApolloClient from 'apollo-client';
-import { push } from 'connected-react-router';
 import {
   call,
   fork,
@@ -7,7 +6,6 @@ import {
   takeEvery,
   takeLatest,
   setContext,
-  all,
 } from 'redux-saga/effects';
 
 import { Action, ActionTypes, AllActions } from '~redux/index';
@@ -293,12 +291,9 @@ function* userLogout() {
       mutation: ClearLoggedInUserDocument,
     });
 
-    yield all([
-      put<AllActions>({
-        type: ActionTypes.USER_LOGOUT_SUCCESS,
-      }),
-      put(push('/connect')),
-    ]);
+    yield put<AllActions>({
+      type: ActionTypes.USER_LOGOUT_SUCCESS,
+    });
   } catch (error) {
     return yield putError(ActionTypes.USER_LOGOUT_ERROR, error);
   }

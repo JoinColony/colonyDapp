@@ -1,6 +1,6 @@
-import { Redirect } from 'react-router';
 import React, { useState, useMemo } from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
+import { Redirect } from 'react-router-dom';
 
 import { COLONY_TOTAL_BALANCE_DOMAIN_ID, ROOT_DOMAIN } from '~constants';
 import { useDataFetcher, useTransformer } from '~utils/hooks';

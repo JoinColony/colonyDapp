@@ -6,8 +6,7 @@ import {
   injectIntl,
 } from 'react-intl';
 import React from 'react';
-import compose from 'recompose/compose';
-import { withRouter } from 'react-router-dom';
+import { useHistory } from 'react-router-dom';
 
 import Icon from '~core/Icon';
 import NavLink from '~core/NavLink';
@@ -40,11 +39,6 @@ interface Props {
   backTextValues?: MessageValues;
 
   /*
-   * Browser history object injected so that we can access the previous route
-   */
-  history: any;
-
-  /*
    * Internationalization library object, injected by `react-intl`
    */
   intl: IntlShape;
@@ -57,13 +51,13 @@ interface Props {
 }
 
 const HistoryNavigation = ({
-  history,
   backRoute,
   backText,
   backTextValues,
   intl: { formatMessage },
   customHandler,
 }: Props) => {
+  const history = useHistory();
   let linkText: string = formatMessage(MSG.backHistoryLink);
   if (backText) {
     linkText =
@@ -104,10 +98,4 @@ const HistoryNavigation = ({
 
 HistoryNavigation.displayName = displayName;
 
-const enhance = compose(
-  withRouter,
-  injectIntl,
-);
-
-// @ts-ignore
-export default enhance(HistoryNavigation);
+export default injectIntl(HistoryNavigation);

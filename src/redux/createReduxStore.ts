@@ -1,11 +1,9 @@
 import { createStore, compose, applyMiddleware } from 'redux';
 import createSagaMiddleware from 'redux-saga';
-import { routerMiddleware } from 'connected-react-router';
 
 import context from '~context/index';
 
 import setupSagas from '../modules/core/sagas';
-import history from './history';
 import reduxPromiseListener from './createPromiseListener';
 import createRootReducer from './createRootReducer';
 import { createDuplicateActionGuardMiddleware } from './createDuplicateActionGuardMiddleware';
@@ -42,10 +40,9 @@ const composeEnhancer =
   window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
 
 const store = createStore(
-  createRootReducer(history),
+  createRootReducer(),
   composeEnhancer(
     applyMiddleware(
-      routerMiddleware(history),
       duplicateActionGuardMiddleware,
       subscriberMiddleware,
       sagaMiddleware,
