@@ -21,7 +21,8 @@ export interface Appearance {
     | 'danger'
     | 'ghost'
     | 'underlinedBold'
-    | 'blue';
+    | 'blue'
+    | 'no-style';
   size?: 'small' | 'medium' | 'large';
 }
 

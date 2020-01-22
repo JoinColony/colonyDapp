@@ -1,11 +1,7 @@
 @value paddingVertical: 20px;
 @value paddingHorizontal: 30px;
 
-.main:hover .actionMenu {
-  opacity: 1;
-}
-
-.mainInner {
+.main {
   display: flex;
   align-items: center;
   padding: paddingVertical paddingHorizontal;
@@ -14,12 +10,36 @@
 
 .actionMenuContainer {
   position: absolute;
-  top: paddingVertical;
-  left: calc(paddingHorizontal / 2);
+  top: calc(paddingVertical + 3px);
+  left: calc((paddingHorizontal / 2) - 5px);
 }
 
-.actionMenu {
-  opacity: 0;
+.actionMenuButton {
+  composes: button from '~styles/reset.css';
+}
+
+.actionMenuIcon {
+  display: inline-block;
+  height: 14px;
+  width: 14px;
+}
+
+.actionMenuIcon svg {
+  stroke: var(--grey-4);
+  fill: var(--grey-4);
+}
+
+.actionMenuButton[aria-describedBy] .actionMenuIcon,
+.actionMenuButton:focus .actionMenuIcon {
+  border-radius: 200%;
+  background-color: var(--grey-blue-1);
+}
+
+.actionMenuButton[aria-describedBy] .actionMenuIcon svg,
+.actionMenuButton:focus .actionMenuIcon svg {
+  /* Popover applies `aria-describedBy` when open */
+  stroke: var(--violet);
+  fill: var(--violet);
 }
 
 .titleContainer {
