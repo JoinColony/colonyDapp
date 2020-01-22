@@ -94,9 +94,10 @@ const SuggestionsList = ({
       await openDialog('ConfirmDialog').afterClosed();
       return setSuggestionStatus({
         variables: { input: { id, status: SuggestionStatus.Deleted } },
+        update: cacheUpdates.setSuggestionStatusDeleted(colonyAddress),
       });
     },
-    [openDialog, setSuggestionStatus],
+    [colonyAddress, openDialog, setSuggestionStatus],
   );
   const handleCreateTask = useCallback(
     async (id: string) => {
