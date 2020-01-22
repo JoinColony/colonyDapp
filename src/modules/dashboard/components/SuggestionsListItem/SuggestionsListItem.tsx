@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useCallback } from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 
 import Heading from '~core/Heading';
@@ -41,6 +41,9 @@ const MSG = defineMessages({
 
 interface Props {
   domains: DomainsMapType;
+  onNotPlanned: (id: string) => void;
+  onDeleted: (id: string) => void;
+  onCreateTask: (id: string) => void;
   suggestion: OneSuggestion;
   walletAddress: Address;
 }
@@ -49,7 +52,10 @@ const displayName = 'Dashboard.SuggestionsListItem';
 
 const SuggestionsListItem = ({
   domains,
-  suggestion: { ethDomainId, title, creator, upvotes },
+  onNotPlanned,
+  onDeleted,
+  onCreateTask,
+  suggestion: { ethDomainId, id, title, creator, upvotes },
   walletAddress,
 }: Props) => {
   const userRoles = useTransformer(getUserRoles, [
@@ -59,6 +65,17 @@ const SuggestionsListItem = ({
   ]);
   const canDelete = walletAddress === creator.profile.walletAddress;
   const canModify = canAdminister(userRoles);
+
+  const handleNotPlanned = useCallback(() => onNotPlanned(id), [
+    id,
+    onNotPlanned,
+  ]);
+  const handleDeleted = useCallback(() => onDeleted(id), [id, onDeleted]);
+  const handleCreateTask = useCallback(() => onCreateTask(id), [
+    id,
+    onCreateTask,
+  ]);
+
   return (
     <div className={styles.main}>
       <div className={styles.mainInner}>
@@ -73,6 +90,7 @@ const SuggestionsListItem = ({
                       {canAdminister && (
                         <DropdownMenuItem>
                           <Button
+                            onClick={handleCreateTask}
                             appearance={{ theme: 'no-style' }}
                             text={MSG.buttonAccept}
                           />
@@ -81,6 +99,7 @@ const SuggestionsListItem = ({
                       {canAdminister && (
                         <DropdownMenuItem>
                           <Button
+                            onClick={handleNotPlanned}
                             appearance={{ theme: 'no-style' }}
                             text={MSG.buttonNotPlanned}
                           />
@@ -89,6 +108,7 @@ const SuggestionsListItem = ({
                       {(canDelete || canModify) && (
                         <DropdownMenuItem>
                           <Button
+                            onClick={handleDeleted}
                             appearance={{ theme: 'no-style' }}
                             text={MSG.buttonDelete}
                           />

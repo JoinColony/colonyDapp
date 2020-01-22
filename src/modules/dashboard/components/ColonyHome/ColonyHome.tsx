@@ -180,6 +180,7 @@ const ColonyHome = ({
           <TabPanel>
             <Suggestions
               colonyAddress={colony.colonyAddress}
+              colonyName={colony.colonyName}
               domainId={filteredDomainId}
             />
           </TabPanel>
