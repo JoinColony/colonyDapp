@@ -158,16 +158,23 @@ const ColonyHome = ({
           <TabList
             extra={activeTab === TabName.TransactionsTab ? noFilter : null}
           >
+            <Tab onClick={() => setActiveTab(TabName.SuggestionsTab)}>
+              <FormattedMessage {...MSG.tabSuggestions} />
+            </Tab>
             <Tab onClick={() => setActiveTab(TabName.TasksTab)}>
               <FormattedMessage {...MSG.tabContribute} />
             </Tab>
             <Tab onClick={() => setActiveTab(TabName.TransactionsTab)}>
               <FormattedMessage {...MSG.tabTransactions} />
             </Tab>
-            <Tab onClick={() => setActiveTab(TabName.SuggestionsTab)}>
-              <FormattedMessage {...MSG.tabSuggestions} />
-            </Tab>
           </TabList>
+          <TabPanel>
+            <Suggestions
+              colonyAddress={colony.colonyAddress}
+              colonyName={colony.colonyName}
+              domainId={filteredDomainId}
+            />
+          </TabPanel>
           <TabPanel>
             <TabContribute
               canCreateTask={canCreateTask}
@@ -178,13 +185,6 @@ const ColonyHome = ({
           </TabPanel>
           <TabPanel>
             <Transactions colonyAddress={colony.colonyAddress} />
-          </TabPanel>
-          <TabPanel>
-            <Suggestions
-              colonyAddress={colony.colonyAddress}
-              colonyName={colony.colonyName}
-              domainId={filteredDomainId}
-            />
           </TabPanel>
         </Tabs>
       </main>
