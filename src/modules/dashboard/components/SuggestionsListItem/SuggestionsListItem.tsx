@@ -37,6 +37,10 @@ const MSG = defineMessages({
     id: 'Dashboard.SuggestionsListItem.buttonDelete',
     defaultMessage: 'Delete',
   },
+  titleActionMenu: {
+    id: 'Dashboard.SuggestionsListItem.titleActionMenu',
+    defaultMessage: 'Change status',
+  },
 });
 
 interface Props {
@@ -78,71 +82,71 @@ const SuggestionsListItem = ({
 
   return (
     <div className={styles.main}>
-      <div className={styles.mainInner}>
-        <div className={styles.actionMenuContainer}>
-          <div className={styles.actionMenu}>
-            {(canModify || canDelete) && (
-              <Popover
-                trigger="click"
-                content={({ close }) => (
-                  <DropdownMenu onClick={close}>
-                    <DropdownMenuSection separator>
-                      {canAdminister && (
-                        <DropdownMenuItem>
-                          <Button
-                            onClick={handleCreateTask}
-                            appearance={{ theme: 'no-style' }}
-                            text={MSG.buttonAccept}
-                          />
-                        </DropdownMenuItem>
-                      )}
-                      {canAdminister && (
-                        <DropdownMenuItem>
-                          <Button
-                            onClick={handleNotPlanned}
-                            appearance={{ theme: 'no-style' }}
-                            text={MSG.buttonNotPlanned}
-                          />
-                        </DropdownMenuItem>
-                      )}
-                      {(canDelete || canModify) && (
-                        <DropdownMenuItem>
-                          <Button
-                            onClick={handleDeleted}
-                            appearance={{ theme: 'no-style' }}
-                            text={MSG.buttonDelete}
-                          />
-                        </DropdownMenuItem>
-                      )}
-                    </DropdownMenuSection>
-                  </DropdownMenu>
-                )}
-                placement="bottom"
-              >
-                <div>
-                  <Icon name="file" appearance={{ size: 'tiny' }} />
-                </div>
-              </Popover>
+      <div className={styles.actionMenuContainer}>
+        {(canModify || canDelete) && (
+          <Popover
+            trigger="click"
+            content={({ close }) => (
+              <DropdownMenu onClick={close}>
+                <DropdownMenuSection separator>
+                  {canAdminister && (
+                    <DropdownMenuItem>
+                      <Button
+                        onClick={handleCreateTask}
+                        appearance={{ theme: 'no-style' }}
+                        text={MSG.buttonAccept}
+                      />
+                    </DropdownMenuItem>
+                  )}
+                  {canAdminister && (
+                    <DropdownMenuItem>
+                      <Button
+                        onClick={handleNotPlanned}
+                        appearance={{ theme: 'no-style' }}
+                        text={MSG.buttonNotPlanned}
+                      />
+                    </DropdownMenuItem>
+                  )}
+                  {(canDelete || canModify) && (
+                    <DropdownMenuItem>
+                      <Button
+                        onClick={handleDeleted}
+                        appearance={{ theme: 'no-style' }}
+                        text={MSG.buttonDelete}
+                      />
+                    </DropdownMenuItem>
+                  )}
+                </DropdownMenuSection>
+              </DropdownMenu>
             )}
-          </div>
-        </div>
-        <div className={styles.titleContainer}>
-          <Heading
-            appearance={{ size: 'normal', margin: 'none', weight: 'bold' }}
-            text={title}
+            placement="bottom"
+          >
+            <div>
+              <Icon
+                name="file"
+                appearance={{ size: 'tiny' }}
+                title={MSG.titleActionMenu}
+              />
+            </div>
+          </Popover>
+        )}
+      </div>
+      <div className={styles.titleContainer}>
+        <Heading
+          appearance={{ size: 'normal', margin: 'none', weight: 'bold' }}
+          text={title}
+        />
+        <p className={styles.authorText}>
+          <FormattedMessage
+            {...MSG.byAuthorText}
+            values={{ creator: getFriendlyName(creator) }}
           />
-          <p className={styles.authorText}>
-            <FormattedMessage
-              {...MSG.byAuthorText}
-              values={{ creator: getFriendlyName(creator) }}
-            />
-          </p>
-        </div>
-        <div className={styles.upvoteContainer}>
-          <div className={styles.upvoteCount}>{upvotes.length}</div>
-          <div className={styles.upvoteButtonContainer}>
-            {/* @todo upvote button goes here */}^
-          </div>
+        </p>
+      </div>
+      <div className={styles.upvoteContainer}>
+        <div className={styles.upvoteCount}>{upvotes.length}</div>
+        <div className={styles.upvoteButtonContainer}>
+          {/* @todo upvote button goes here */}^
         </div>
       </div>
     </div>

@@ -1,11 +1,7 @@
 @value paddingVertical: 20px;
 @value paddingHorizontal: 30px;
 
-.main:hover .actionMenu {
-  opacity: 1;
-}
-
-.mainInner {
+.main {
   display: flex;
   align-items: center;
   padding: paddingVertical paddingHorizontal;
@@ -16,10 +12,6 @@
   position: absolute;
   top: paddingVertical;
   left: calc(paddingHorizontal / 2);
-}
-
-.actionMenu {
-  opacity: 0;
 }
 
 .titleContainer {
