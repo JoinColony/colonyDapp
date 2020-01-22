@@ -3,7 +3,7 @@ import { FormikHelpers } from 'formik';
 import { defineMessages } from 'react-intl';
 import * as yup from 'yup';
 
-import { RouteComponentProps, withRouter } from 'react-router';
+import { useHistory } from 'react-router';
 import { COLONY_TOTAL_BALANCE_DOMAIN_ID, ROOT_DOMAIN } from '~constants';
 import { Form, Input } from '~core/Fields';
 import {
@@ -27,7 +27,7 @@ interface FormValues {
   title: string;
 }
 
-interface Props extends RouteComponentProps {
+interface Props {
   colonyAddress: Address;
   domainId: Domain['ethDomainId'];
 }
@@ -38,7 +38,8 @@ const validationSchema = yup.object({
 
 const displayName = 'Dashboard.SuggestionCreate';
 
-const SuggestionCreate = ({ colonyAddress, domainId, history }: Props) => {
+const SuggestionCreate = ({ colonyAddress, domainId }: Props) => {
+  const history = useHistory();
   const inputRef = useRef<HTMLInputElement>(null);
 
   const { username } = useLoggedInUser();
@@ -93,4 +94,4 @@ const SuggestionCreate = ({ colonyAddress, domainId, history }: Props) => {
 
 SuggestionCreate.displayName = displayName;
 
-export default withRouter(SuggestionCreate);
+export default SuggestionCreate;
