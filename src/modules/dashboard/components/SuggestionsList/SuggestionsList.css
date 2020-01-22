@@ -9,3 +9,7 @@
   height: 200px;
   text-align: center;
 }
+
+.filterContainer {
+  display: inline-block;
+}
