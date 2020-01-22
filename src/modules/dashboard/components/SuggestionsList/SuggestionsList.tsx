@@ -14,11 +14,9 @@ import {
   OneSuggestion,
 } from '~data/index';
 import { Address } from '~types/index';
-import { useDataFetcher, useTransformer } from '~utils/hooks';
+import { useDataFetcher } from '~utils/hooks';
 import { getMainClasses } from '~utils/css';
 
-import { getUserRoles } from '../../../transformers';
-import { canAdminister } from '../../../users/checks';
 import { domainsAndRolesFetcher } from '../../fetchers';
 
 import styles from './SuggestionsList.css';
@@ -59,12 +57,6 @@ const SuggestionsList = ({ colonyAddress, domainId }: Props) => {
     [colonyAddress],
   );
 
-  const userRoles = useTransformer(getUserRoles, [
-    domains,
-    domainId,
-    walletAddress,
-  ]);
-
   const allSuggestions = (data && data.colony.suggestions) || [];
 
   const suggestions = useMemo(() => {
@@ -89,7 +81,7 @@ const SuggestionsList = ({ colonyAddress, domainId }: Props) => {
             <ListGroupItem appearance={{ padding: 'none' }} key={suggestion.id}>
               <SuggestionsListItem
                 suggestion={suggestion}
-                canAdminister={canAdminister(userRoles)}
+                domains={domains}
                 walletAddress={walletAddress}
               />
             </ListGroupItem>
