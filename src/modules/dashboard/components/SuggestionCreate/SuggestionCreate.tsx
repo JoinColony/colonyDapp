@@ -91,7 +91,7 @@ const SuggestionCreate = ({ colonyAddress, domainId }: Props) => {
       onSubmit={handleSubmit}
       validationSchema={validationSchema}
     >
-      {({ isSubmitting, isValid }) => (
+      {({ dirty, isSubmitting, isValid }) => (
         <div className={styles.horizontalForm} onFocus={handleUnclaimedProfile}>
           <div className={styles.formItem}>
             <Input
@@ -106,7 +106,7 @@ const SuggestionCreate = ({ colonyAddress, domainId }: Props) => {
               appearance={{ theme: 'primary', size: 'large' }}
               text={MSG.buttonCreateSuggestion}
               type="submit"
-              disabled={!isValid}
+              disabled={!isValid || isSubmitting || !dirty}
               loading={isSubmitting}
             />
           </div>
