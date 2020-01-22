@@ -14,6 +14,11 @@ module.exports = () => ({
     contentBase: [path.resolve(__dirname, '..', 'colonyNetwork', 'build')],
     hotOnly: true,
   },
+  output: {
+    filename: 'dev-[name].js',
+    path: path.resolve(__dirname, 'dist'),
+    publicPath: '/',
+  },
   module: {
     rules: [
       ...webpackBaseConfig.module.rules,
