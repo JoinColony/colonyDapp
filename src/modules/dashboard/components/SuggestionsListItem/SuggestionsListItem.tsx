@@ -121,13 +121,13 @@ const SuggestionsListItem = ({
             )}
             placement="bottom"
           >
-            <div>
+            <Button className={styles.actionMenuButton}>
               <Icon
-                name="file"
-                appearance={{ size: 'tiny' }}
+                className={styles.actionMenuIcon}
+                name="three-dots-row"
                 title={MSG.titleActionMenu}
               />
-            </div>
+            </Button>
           </Popover>
         )}
       </div>

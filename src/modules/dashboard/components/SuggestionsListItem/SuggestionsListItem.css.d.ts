@@ -2,6 +2,8 @@ export const paddingVertical: string;
 export const paddingHorizontal: string;
 export const main: string;
 export const actionMenuContainer: string;
+export const actionMenuButton: string;
+export const actionMenuIcon: string;
 export const titleContainer: string;
 export const authorText: string;
 export const upvoteContainer: string;
