@@ -15,11 +15,8 @@ import {
   TaskQueryVariables,
   FinalizeTaskMutation,
   FinalizeTaskMutationVariables,
-  ColonyTasksDocument,
-  ColonyTasksQueryVariables,
-  ColonyTasksQuery,
+  cacheUpdates,
 } from '~data/index';
-import { log } from '~utils/debug';
 import { Action, ActionTypes } from '~redux/index';
 import { ContractContexts } from '~types/index';
 import { putError, takeFrom } from '~utils/saga/effects';
@@ -48,38 +45,7 @@ function* taskCreate({
           ethDomainId,
         },
       },
-      update: (cache, { data: mutationData }) => {
-        try {
-          const cacheData = cache.readQuery<
-            ColonyTasksQuery,
-            ColonyTasksQueryVariables
-          >({
-            query: ColonyTasksDocument,
-            variables: {
-              address: colonyAddress,
-            },
-          });
-          if (cacheData && mutationData && mutationData.createTask) {
-            const tasks = cacheData.colony.tasks || [];
-            tasks.push(mutationData.createTask);
-            cache.writeQuery<ColonyTasksQuery, ColonyTasksQueryVariables>({
-              query: ColonyTasksDocument,
-              data: {
-                colony: {
-                  ...cacheData.colony,
-                  tasks,
-                },
-              },
-              variables: {
-                address: colonyAddress,
-              },
-            });
-          }
-        } catch (e) {
-          log.verbose(e);
-          log.verbose('Not updating store - colony tasks not loaded yet');
-        }
-      },
+      update: cacheUpdates.createTask(colonyAddress),
     });
 
     if (!data || !data.createTask) throw new Error('Could not create task');

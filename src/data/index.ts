@@ -37,6 +37,7 @@ apolloCache.writeData({
 });
 
 export { default as cache } from './cache';
+export { default as cacheUpdates } from './cacheUpdates';
 export { default as typeDefs } from './typeDefs';
 export const resolvers: ResolverFactory[] = [
   colonyResolvers,
