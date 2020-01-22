@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
 import { defineMessages } from 'react-intl';
-import { withRouter, RouteComponentProps } from 'react-router-dom';
 
 import { ActionButton } from '~core/Button';
 import { ActionTypes } from '~redux/index';
@@ -52,7 +51,7 @@ const MSG = defineMessages({
   },
 });
 
-interface Props extends RouteComponentProps {
+interface Props {
   closePopover: () => void;
   username?: string | null;
 }
@@ -152,4 +151,4 @@ class AvatarDropdownPopover extends Component<Props> {
   }
 }
 
-export default withRouter(AvatarDropdownPopover);
+export default AvatarDropdownPopover;

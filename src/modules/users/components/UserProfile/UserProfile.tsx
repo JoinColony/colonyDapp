@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { Redirect } from 'react-router';
+import { Redirect } from 'react-router-dom';
 
 import { NOT_FOUND_ROUTE } from '~routes/index';
 import ProfileTemplate from '~pages/ProfileTemplate';

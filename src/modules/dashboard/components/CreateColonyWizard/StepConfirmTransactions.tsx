@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 import { defineMessages } from 'react-intl';
-import { Redirect } from 'react-router';
+import { Redirect } from 'react-router-dom';
 import { useDispatch } from 'redux-react-hook';
 
 import { WizardProps } from '~core/Wizard';

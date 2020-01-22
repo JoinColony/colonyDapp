@@ -1,5 +1,5 @@
 import React from 'react';
-import { withRouter, Route, Redirect, Switch } from 'react-router-dom';
+import { Route, Redirect, Switch } from 'react-router-dom';
 import { defineMessages } from 'react-intl';
 
 import CreateColonyWizard from '~dashboard/CreateColonyWizard';
@@ -173,9 +173,4 @@ const Routes = () => {
   );
 };
 
-// We need `withRouter` here because (surprisingly) react-router-dom is not
-// using the router context property (available to e.g. each `Switch`):
-// https://github.com/ReactTraining/react-router/issues/4671
-// We are using `withRouter` to get around `connect()`'s `shouldComponentUpdate`
-// function blocking updates when the route location changes.
-export default withRouter(Routes);
+export default Routes;
