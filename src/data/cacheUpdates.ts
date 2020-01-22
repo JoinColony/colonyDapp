@@ -23,9 +23,12 @@ const cacheUpdates = {
             address: colonyAddress,
           },
         });
-        if (cacheData && data && data.createTask) {
+        // This is used for createTask and createTaskFromSuggestion mutations
+        const createTaskData =
+          data && (data.createTask || data.createTaskFromSuggestion);
+        if (cacheData && createTaskData) {
           const tasks = cacheData.colony.tasks || [];
-          tasks.push(data.createTask);
+          tasks.push(createTaskData);
           cache.writeQuery<ColonyTasksQuery, ColonyTasksQueryVariables>({
             query: ColonyTasksDocument,
             data: {
