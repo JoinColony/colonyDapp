@@ -71,11 +71,11 @@ const getTokenData = async (
     });
     serverDataResult = data;
   } catch (e) {
-    console.warn(`Token with address ${tokenAddress} not found on server`);
+    console.warn(`Server error for token with address ${tokenAddress}`, e);
   }
 
   const serverData: TokenInfo = serverDataResult
-    ? serverDataResult.token.info
+    ? serverDataResult.tokenInfo
     : {};
 
   return {
