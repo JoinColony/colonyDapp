@@ -1,6 +1,6 @@
 import React, { useCallback } from 'react';
 import { defineMessages } from 'react-intl';
-import { withRouter, RouteComponentProps } from 'react-router-dom';
+import { useHistory } from 'react-router-dom';
 
 import Button from '~core/Button';
 import Icon from '~core/Icon';
@@ -28,15 +28,17 @@ const MSG = defineMessages({
   },
 });
 
-interface Props extends RouteComponentProps {
+interface Props {
   suggestionId: OneSuggestion['id'];
   upvotes: OneSuggestion['upvotes'];
 }
 
 const displayName = 'Dashboard.SuggestionUpvoteButton';
 
-const SuggestionUpvoteButton = ({ history, suggestionId, upvotes }: Props) => {
+const SuggestionUpvoteButton = ({ suggestionId, upvotes }: Props) => {
   const { username, walletAddress } = useLoggedInUser();
+  const history = useHistory();
+
   const hasUpvoted = hasUpvotedSuggestionCheck(upvotes, walletAddress);
 
   const [addUpvote] = useAddUpvoteToSuggestionMutation({
@@ -80,4 +82,4 @@ const SuggestionUpvoteButton = ({ history, suggestionId, upvotes }: Props) => {
 
 SuggestionUpvoteButton.displayName = displayName;
 
-export default withRouter(SuggestionUpvoteButton);
+export default SuggestionUpvoteButton;
