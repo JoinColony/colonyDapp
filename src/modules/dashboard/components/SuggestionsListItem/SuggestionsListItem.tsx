@@ -9,8 +9,12 @@ import DropdownMenu, {
 } from '~core/DropdownMenu';
 import Icon from '~core/Icon';
 import Button from '~core/Button';
-import { Address } from '~types/index';
+import { Address, DomainsMapType } from '~types/index';
 import { OneSuggestion } from '~data/index';
+import { useTransformer } from '~utils/hooks';
+
+import { getUserRoles } from '../../../transformers';
+import { canAdminister } from '../../../users/checks';
 
 import { getFriendlyName } from '../../../users/transformers';
 
@@ -36,7 +40,7 @@ const MSG = defineMessages({
 });
 
 interface Props {
-  canAdminister: boolean;
+  domains: DomainsMapType;
   suggestion: OneSuggestion;
   walletAddress: Address;
 }
@@ -44,79 +48,86 @@ interface Props {
 const displayName = 'Dashboard.SuggestionsListItem';
 
 const SuggestionsListItem = ({
-  canAdminister,
-  suggestion: { title, creator, upvotes },
+  domains,
+  suggestion: { ethDomainId, title, creator, upvotes },
   walletAddress,
-}: Props) => (
-  <div className={styles.main}>
-    <div className={styles.mainInner}>
-      <div className={styles.actionMenuContainer}>
-        <div className={styles.actionMenu}>
-          {(canAdminister ||
-            walletAddress === creator.profile.walletAddress) && (
-            <Popover
-              trigger="click"
-              content={({ close }) => (
-                <DropdownMenu onClick={close}>
-                  <DropdownMenuSection separator>
-                    {canAdminister && (
-                      <DropdownMenuItem>
-                        <Button
-                          appearance={{ theme: 'no-style' }}
-                          text={MSG.buttonAccept}
-                        />
-                      </DropdownMenuItem>
-                    )}
-                    {canAdminister && (
-                      <DropdownMenuItem>
-                        <Button
-                          appearance={{ theme: 'no-style' }}
-                          text={MSG.buttonNotPlanned}
-                        />
-                      </DropdownMenuItem>
-                    )}
-                    {(canAdminister ||
-                      walletAddress === creator.profile.walletAddress) && (
-                      <DropdownMenuItem>
-                        <Button
-                          appearance={{ theme: 'no-style' }}
-                          text={MSG.buttonDelete}
-                        />
-                      </DropdownMenuItem>
-                    )}
-                  </DropdownMenuSection>
-                </DropdownMenu>
-              )}
-              placement="bottom"
-            >
-              <div>
-                <Icon name="file" appearance={{ size: 'tiny' }} />
-              </div>
-            </Popover>
-          )}
+}: Props) => {
+  const userRoles = useTransformer(getUserRoles, [
+    domains,
+    ethDomainId,
+    walletAddress,
+  ]);
+  const canDelete = walletAddress === creator.profile.walletAddress;
+  const canModify = canAdminister(userRoles);
+  return (
+    <div className={styles.main}>
+      <div className={styles.mainInner}>
+        <div className={styles.actionMenuContainer}>
+          <div className={styles.actionMenu}>
+            {(canModify || canDelete) && (
+              <Popover
+                trigger="click"
+                content={({ close }) => (
+                  <DropdownMenu onClick={close}>
+                    <DropdownMenuSection separator>
+                      {canAdminister && (
+                        <DropdownMenuItem>
+                          <Button
+                            appearance={{ theme: 'no-style' }}
+                            text={MSG.buttonAccept}
+                          />
+                        </DropdownMenuItem>
+                      )}
+                      {canAdminister && (
+                        <DropdownMenuItem>
+                          <Button
+                            appearance={{ theme: 'no-style' }}
+                            text={MSG.buttonNotPlanned}
+                          />
+                        </DropdownMenuItem>
+                      )}
+                      {(canDelete || canModify) && (
+                        <DropdownMenuItem>
+                          <Button
+                            appearance={{ theme: 'no-style' }}
+                            text={MSG.buttonDelete}
+                          />
+                        </DropdownMenuItem>
+                      )}
+                    </DropdownMenuSection>
+                  </DropdownMenu>
+                )}
+                placement="bottom"
+              >
+                <div>
+                  <Icon name="file" appearance={{ size: 'tiny' }} />
+                </div>
+              </Popover>
+            )}
+          </div>
         </div>
-      </div>
-      <div className={styles.titleContainer}>
-        <Heading
-          appearance={{ size: 'normal', margin: 'none', weight: 'bold' }}
-          text={title}
-        />
-        <p className={styles.authorText}>
-          <FormattedMessage
-            {...MSG.byAuthorText}
-            values={{ creator: getFriendlyName(creator) }}
+        <div className={styles.titleContainer}>
+          <Heading
+            appearance={{ size: 'normal', margin: 'none', weight: 'bold' }}
+            text={title}
           />
-        </p>
-      </div>
-      <div className={styles.upvoteContainer}>
-        <div className={styles.upvoteCount}>{upvotes.length}</div>
-        <div className={styles.upvoteButtonContainer}>
-          {/* @todo upvote button goes here */}^
+          <p className={styles.authorText}>
+            <FormattedMessage
+              {...MSG.byAuthorText}
+              values={{ creator: getFriendlyName(creator) }}
+            />
+          </p>
+        </div>
+        <div className={styles.upvoteContainer}>
+          <div className={styles.upvoteCount}>{upvotes.length}</div>
+          <div className={styles.upvoteButtonContainer}>
+            {/* @todo upvote button goes here */}^
+          </div>
         </div>
       </div>
     </div>
-  </div>
-);
+  );
+};
 
 SuggestionsListItem.displayName = displayName;
 
