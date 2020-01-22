@@ -1,6 +1,5 @@
 import ApolloClient from 'apollo-client';
-import { all, call, fork, put, takeEvery } from 'redux-saga/effects';
-import { replace } from 'connected-react-router';
+import { call, fork, put, takeEvery } from 'redux-saga/effects';
 import BigNumber from 'bn.js';
 import moveDecimal from 'move-decimal-point';
 
@@ -85,22 +84,19 @@ function* taskCreate({
 
     if (!data || !data.createTask) throw new Error('Could not create task');
 
-    const {
-      id,
-      colony: { colonyName },
-    } = data.createTask;
+    const { id } = data.createTask;
 
     const successAction: Action<ActionTypes.TASK_CREATE_SUCCESS> = {
       type: ActionTypes.TASK_CREATE_SUCCESS,
+      payload: { id },
+      meta,
     };
 
     /*
      * Put the success action and redirect to the task
      */
-    yield all([
-      put(successAction),
-      put(replace(`/colony/${colonyName}/task/${id}`)),
-    ]);
+
+    yield put(successAction);
   } catch (error) {
     return yield putError(ActionTypes.TASK_CREATE_ERROR, error, meta);
   }

@@ -1,5 +1,5 @@
 import React from 'react';
-import { Redirect } from 'react-router';
+import { Redirect } from 'react-router-dom';
 import { defineMessages } from 'react-intl';
 
 import { ROLES, ROOT_DOMAIN } from '~constants';

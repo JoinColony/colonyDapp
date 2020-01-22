@@ -1,7 +1,6 @@
-import React, { useCallback, useState } from 'react';
+import React, { FC, useCallback, useState } from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
-import { RouteComponentProps, withRouter } from 'react-router-dom';
-import compose from 'recompose/compose';
+import { useHistory, useParams } from 'react-router-dom';
 
 import Button, { ActionButton } from '~core/Button';
 import { OpenDialog } from '~core/Dialog/types';
@@ -19,7 +18,6 @@ import TaskRequestWork from '~dashboard/TaskRequestWork';
 import TaskSkills from '~dashboard/TaskSkills';
 import TaskTitle from '~dashboard/TaskTitle';
 import {
-  AnyTask,
   useCancelTaskMutation,
   useColonyFromNameQuery,
   useLoggedInUser,
@@ -102,25 +100,21 @@ const MSG = defineMessages({
   },
 });
 
-interface MatchProps {
-  draftId: AnyTask['id'];
-  colonyName: string;
+interface InProps {
+  openDialog: OpenDialog;
 }
 
-interface Props extends RouteComponentProps<MatchProps> {
+interface Props extends InProps {
+  // Injected via `withDialog`
   openDialog: OpenDialog;
-  history: any;
 }
 
 const displayName = 'dashboard.Task';
 
-const Task = ({
-  match: {
-    params: { colonyName, draftId },
-  },
-  openDialog,
-  history,
-}: Props) => {
+const Task = ({ openDialog }: Props) => {
+  const { colonyName, draftId } = useParams();
+  const history = useHistory();
+
   const [
     isDiscardConfirmDisplayed,
     // setDiscardConfirmDisplay,
@@ -377,9 +371,4 @@ const Task = ({
 
 Task.displayName = displayName;
 
-const enhance = compose(
-  withDialog(),
-  withRouter,
-) as any;
-
-export default enhance(Task);
+export default (withDialog() as any)(Task) as FC<InProps>;

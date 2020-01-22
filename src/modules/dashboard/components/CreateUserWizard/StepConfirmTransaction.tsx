@@ -1,6 +1,6 @@
 import React from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
-import { Redirect } from 'react-router';
+import { Redirect } from 'react-router-dom';
 
 import { DASHBOARD_ROUTE } from '~routes/index';
 import { useSelector } from '~utils/hooks';

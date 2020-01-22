@@ -1,12 +1,12 @@
 import {
-  InjectedIntlProps,
+  WrappedComponentProps,
   defineMessages,
   FormattedMessage,
+  IntlShape,
   injectIntl,
 } from 'react-intl';
 import React, { useCallback } from 'react';
-import { RouteComponentProps, withRouter } from 'react-router-dom';
-import compose from 'recompose/compose';
+import { useHistory } from 'react-router-dom';
 import BigNumber from 'bn.js';
 
 import { AnyTask, Payouts } from '~data/index';
@@ -29,15 +29,15 @@ const MSG = defineMessages({
 
 const UserAvatar = HookedUserAvatar();
 
-type EnhancerProps = RouteComponentProps & InjectedIntlProps;
-
-interface Props extends EnhancerProps {
+interface Props extends WrappedComponentProps {
+  intl: IntlShape;
   task: AnyTask;
 }
 
 const displayName = 'dashboard.TaskList.TaskListItem';
 
-const TaskListItem = ({ task, intl: { formatMessage }, history }: Props) => {
+const TaskListItem = ({ task, intl: { formatMessage } }: Props) => {
+  const history = useHistory();
   const defaultTitle = formatMessage(MSG.untitled);
   const {
     id: draftId,
@@ -86,9 +86,4 @@ const TaskListItem = ({ task, intl: { formatMessage }, history }: Props) => {
 
 TaskListItem.displayName = displayName;
 
-const enhance = compose<EnhancerProps, Props>(
-  withRouter,
-  injectIntl,
-);
-
-export default enhance(TaskListItem);
+export default injectIntl(TaskListItem);
