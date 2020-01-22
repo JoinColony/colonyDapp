@@ -71,11 +71,10 @@ const SuggestionUpvoteButton = ({ suggestionId, upvotes }: Props) => {
       className={getMainClasses({}, styles, {
         hasUpvoted,
       })}
-      icon="upvote"
       onClick={handleClick}
       title={htmlTitle}
     >
-      <Icon name="upvote" title={htmlTitle} />
+      <Icon name="caret-up-small" title={htmlTitle} />
     </Button>
   );
 };
