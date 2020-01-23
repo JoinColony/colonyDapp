@@ -1,5 +1,6 @@
 const webpack = require('webpack');
 const path = require('path');
+const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer');
 
 const webpackBaseConfig = require('./webpack.base');
 
@@ -48,5 +49,9 @@ module.exports = () => ({
       /css\.d\.ts$/
     ]),
     new webpack.HotModuleReplacementPlugin(),
+    new BundleAnalyzerPlugin({
+      analyzerMode: 'static',
+      openAnalyzer: false,
+    }),
   ],
 });
