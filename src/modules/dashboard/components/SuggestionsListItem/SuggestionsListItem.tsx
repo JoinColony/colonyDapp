@@ -177,7 +177,16 @@ const SuggestionsListItem = ({
         <p className={styles.authorText}>
           <FormattedMessage
             {...MSG.byAuthorText}
-            values={{ creator: getFriendlyName(creator) }}
+            values={{
+              creator:
+                creator && creator.profile && creator.profile.username ? (
+                  <Link to={`/user/${creator.profile.username}`}>
+                    {getFriendlyName(creator)}
+                  </Link>
+                ) : (
+                  getFriendlyName(creator)
+                ),
+            }}
           />
         </p>
       </div>
