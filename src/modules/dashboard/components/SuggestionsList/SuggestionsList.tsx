@@ -118,13 +118,11 @@ const SuggestionsList = ({
   });
   const [createTaskFromSuggestion] = useCreateTaskFromSuggestionMutation();
   const handleNotPlanned = useCallback(
-    async (id: string) => {
-      await openDialog('ConfirmDialog').afterClosed();
-      return setSuggestionStatus({
+    (id: string) =>
+      setSuggestionStatus({
         variables: { input: { id, status: SuggestionStatus.NotPlanned } },
-      });
-    },
-    [openDialog, setSuggestionStatus],
+      }),
+    [setSuggestionStatus],
   );
   const handleDeleted = useCallback(
     async (id: string) => {
