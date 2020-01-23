@@ -29,8 +29,3 @@ export interface IPFSOptions {
     pubsub: boolean;
   };
 }
-
-// eslint-disable-next-line @typescript-eslint/interface-name-prefix
-export interface IPFSNodeOptions {
-  timeout: number;
-}

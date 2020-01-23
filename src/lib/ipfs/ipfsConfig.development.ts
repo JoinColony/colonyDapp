@@ -4,6 +4,7 @@ const config = () => ({
   config: {
     Bootstrap: [],
   },
+  preload: { enabled: false, addresses: [] },
 });
 
 export default config;
