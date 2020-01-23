@@ -113,7 +113,9 @@ const SuggestionsList = ({
     [colonyAddress],
   );
 
-  const [setSuggestionStatus] = useSetSuggestionStatusMutation();
+  const [setSuggestionStatus] = useSetSuggestionStatusMutation({
+    update: cacheUpdates.setSuggestionStatus(colonyAddress),
+  });
   const [createTaskFromSuggestion] = useCreateTaskFromSuggestionMutation({
     update: cacheUpdates.createTask(colonyAddress),
   });
@@ -131,10 +133,9 @@ const SuggestionsList = ({
       await openDialog('ConfirmDialog').afterClosed();
       return setSuggestionStatus({
         variables: { input: { id, status: SuggestionStatus.Deleted } },
-        update: cacheUpdates.setSuggestionStatusDeleted(colonyAddress),
       });
     },
-    [colonyAddress, openDialog, setSuggestionStatus],
+    [openDialog, setSuggestionStatus],
   );
   const handleCreateTask = useCallback(
     async (id: string) => {
