@@ -132,10 +132,7 @@ function* taskFinalize({
     if (!payouts.length) throw new Error(`No payout set for task ${draftId}`);
     const {
       amount,
-      token: {
-        address: token,
-        details: { decimals },
-      },
+      token: { address: token, decimals },
     } = payouts[0];
 
     const txChannel = yield call(getTxChannel, meta.id);
