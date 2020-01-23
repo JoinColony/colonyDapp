@@ -14,13 +14,6 @@ interface EthUsdResponse {
   };
 }
 
-interface TokenDetails {
-  name?: string;
-  symbol?: string;
-  decimals?: number;
-  isVerified?: boolean;
-}
-
 /*
   Request dollar conversion value from etherScan
 */
