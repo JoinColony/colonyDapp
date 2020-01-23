@@ -1081,7 +1081,7 @@ export type SetTaskPayoutMutationVariables = {
 export type SetTaskPayoutMutation = { setTaskPayout: Maybe<(
     Pick<Task, 'id'>
     & { events: Array<TaskEventFragment>, payouts: Array<(
-      Pick<TaskPayout, 'amount'>
+      Pick<TaskPayout, 'amount' | 'tokenAddress'>
       & { token: Pick<Token, 'id' | 'address'> }
     )> }
   )> };
@@ -1258,7 +1258,7 @@ export type TaskToEditQuery = { task: (
       Pick<User, 'id'>
       & { profile: Pick<UserProfile, 'avatarHash' | 'displayName' | 'username' | 'walletAddress'> }
     )>, colony: (
-      Pick<Colony, 'id' | 'nativeTokenAddress'>
+      Pick<Colony, 'id' | 'nativeTokenAddress' | 'tokenAddresses'>
       & { subscribedUsers: Array<(
         Pick<User, 'id'>
         & { profile: Pick<UserProfile, 'displayName' | 'walletAddress' | 'username' | 'avatarHash'> }
@@ -2048,7 +2048,8 @@ export const SetTaskPayoutDocument = gql`
     }
     payouts {
       amount
-      token {
+      tokenAddress
+      token @client {
         id
         address
       }
@@ -2824,6 +2825,7 @@ export const TaskToEditDocument = gql`
           avatarHash
         }
       }
+      tokenAddresses
       tokens @client {
         id
         address

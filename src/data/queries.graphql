@@ -99,6 +99,7 @@ query TaskToEdit($id: String!) {
           avatarHash
         }
       }
+      tokenAddresses
       tokens @client {
         id
         address
