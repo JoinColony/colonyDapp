@@ -1,8 +1,6 @@
 import { MessageDescriptor, MessageValues, defineMessages } from 'react-intl';
 import React, { Component, KeyboardEvent } from 'react';
 
-import 'core-js/fn/array/find-index';
-
 import { getMainClasses } from '~utils/css';
 
 import styles from './Select.css';
