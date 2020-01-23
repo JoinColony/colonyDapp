@@ -12,6 +12,7 @@ import {
   ColonySuggestionsQueryVariables,
   ColonySuggestionsDocument,
   SetSuggestionStatusMutationResult,
+  SuggestionStatus,
 } from './generated';
 
 type Cache = typeof apolloCache;
@@ -54,7 +55,7 @@ const cacheUpdates = {
       }
     };
   },
-  setSuggestionStatusDeleted(colonyAddress: Address) {
+  setSuggestionStatus(colonyAddress: Address) {
     return (cache: Cache, { data }: SetSuggestionStatusMutationResult) => {
       try {
         const cacheData = cache.readQuery<
@@ -66,12 +67,19 @@ const cacheUpdates = {
             colonyAddress,
           },
         });
-        const suggestionId =
-          data && data.setSuggestionStatus && data.setSuggestionStatus.id;
-        if (cacheData && suggestionId) {
-          const suggestions = cacheData.colony.suggestions.filter(
-            ({ id }) => id !== suggestionId,
-          );
+        if (cacheData && data && data.setSuggestionStatus) {
+          const { id: suggestionId, status } = data.setSuggestionStatus;
+          const suggestions =
+            status === SuggestionStatus.Deleted
+              ? cacheData.colony.suggestions.filter(
+                  // remove suggestion from cache
+                  ({ id }) => id !== suggestionId,
+                )
+              : cacheData.colony.suggestions.map(suggestion =>
+                  suggestion.id === suggestionId // update status of changed suggestion
+                    ? { ...suggestion, status }
+                    : suggestion,
+                );
           cache.writeQuery<
             ColonySuggestionsQuery,
             ColonySuggestionsQueryVariables
