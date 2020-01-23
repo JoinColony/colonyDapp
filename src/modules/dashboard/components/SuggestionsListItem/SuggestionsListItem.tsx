@@ -113,7 +113,7 @@ const SuggestionsListItem = ({
             content={({ close }) => (
               <DropdownMenu onClick={close}>
                 <DropdownMenuSection separator>
-                  {canAdminister && (
+                  {canModify && (
                     <DropdownMenuItem>
                       <Button
                         onClick={handleCreateTask}
@@ -122,7 +122,7 @@ const SuggestionsListItem = ({
                       />
                     </DropdownMenuItem>
                   )}
-                  {canAdminister && (
+                  {canModify && (
                     <DropdownMenuItem>
                       <Button
                         onClick={handleNotPlanned}
