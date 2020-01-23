@@ -6,8 +6,6 @@ type ConsumerType<T> = ComponentType<{
 
 type HookFn<H, P extends {}, R> = (hookParams: H, props: P) => R;
 
-export { default as withImmutablePropsToJS } from './withImmutablePropsToJS';
-
 export const withConsumerFactory = (Consumer: ConsumerType<any>) => () => (
   Component: ComponentType<object>,
 ) => (props: object) =>
