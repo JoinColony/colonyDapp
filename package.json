@@ -203,7 +203,7 @@
         "history": "^4.7.2",
         "hoist-non-react-statics": "^3.3.0",
         "immutable": "^4.0.0-rc.12",
-        "ipfs": "^0.36.4",
+        "ipfs": "^0.40.0",
         "jwt-decode": "^2.2.0",
         "linkify-it": "^2.0.3",
         "localforage": "^1.7.3",

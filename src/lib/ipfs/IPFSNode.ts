@@ -6,11 +6,8 @@ import devConfig from './ipfsConfig.development';
 import prodConfig from './ipfsConfig.production';
 import qaConfig from './ipfsConfig.qa';
 
-import { B58String, IPFSNodeOptions, IPFSPeer } from './types';
+import { B58String, IPFSPeer } from './types';
 
-// process.env is a special object. Destructuring doesn't work
-// eslint-disable-next-line prefer-destructuring
-const TIMEOUT = process.env.CI ? 50000 : 10000;
 const NETWORK = process.env.NETWORK || 'local';
 
 const configMap = {
@@ -30,29 +27,11 @@ class IPFSNode {
 
   ready: Promise<boolean>;
 
-  constructor(
-    ipfs: IPFS,
-    { timeout = TIMEOUT }: IPFSNodeOptions = { timeout: TIMEOUT },
-  ) {
-    this._ipfs = ipfs;
-    this.ready = new Promise((resolve, reject) => {
-      // Check whether IPFS is already connected?
-      if (this._ipfs.isOnline()) {
-        resolve(true);
-        return;
-      }
-      const connectTimeout = setTimeout(() => {
-        reject(new Error('IPFS connection timed out.'));
-      }, timeout);
-      this._ipfs.on('ready', () => {
-        clearTimeout(connectTimeout);
-        resolve(true);
-      });
-      this._ipfs.on('error', err => {
-        clearTimeout(connectTimeout);
-        reject(err);
-      });
+  constructor() {
+    const promise = IPFS.create(IPFSNode.getIpfsConfig()).then(ipfs => {
+      this._ipfs = ipfs;
     });
+    this.ready = promise.then(() => true);
   }
 
   /** Get the IPFS instance */
