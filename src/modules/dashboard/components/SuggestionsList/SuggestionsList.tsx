@@ -116,9 +116,7 @@ const SuggestionsList = ({
   const [setSuggestionStatus] = useSetSuggestionStatusMutation({
     update: cacheUpdates.setSuggestionStatus(colonyAddress),
   });
-  const [createTaskFromSuggestion] = useCreateTaskFromSuggestionMutation({
-    update: cacheUpdates.createTask(colonyAddress),
-  });
+  const [createTaskFromSuggestion] = useCreateTaskFromSuggestionMutation();
   const handleNotPlanned = useCallback(
     async (id: string) => {
       await openDialog('ConfirmDialog').afterClosed();
@@ -141,6 +139,7 @@ const SuggestionsList = ({
     async (id: string) => {
       await openDialog('ConfirmDialog').afterClosed();
       const { data: createTaskData } = await createTaskFromSuggestion({
+        update: cacheUpdates.createTaskFromSuggestion(colonyAddress, id),
         variables: { input: { id } },
       });
       if (createTaskData && createTaskData.createTaskFromSuggestion) {
@@ -148,7 +147,7 @@ const SuggestionsList = ({
         history.push(`/colony/${colonyName}/task/${taskId}`);
       }
     },
-    [colonyName, createTaskFromSuggestion, history, openDialog],
+    [colonyAddress, colonyName, createTaskFromSuggestion, history, openDialog],
   );
 
   const suggestions = useMemo(
