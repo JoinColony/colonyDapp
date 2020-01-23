@@ -50,6 +50,10 @@
   color: var(--grey-3);
 }
 
+.authorText a:hover {
+  color: var(--sky-blue);
+}
+
 .titleContentContainer,
 .badgeContainer {
   margin-right: 10px;
