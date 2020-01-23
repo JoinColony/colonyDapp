@@ -37,7 +37,8 @@ const UserNavigation = () => {
     variables: { address: walletAddress },
   });
 
-  const notifications = (data && data.user && data.user.notifications) || [];
+  const notifications =
+    (data && data.user && data.user.notifications.reverse()) || [];
 
   return (
     <div className={styles.main}>
