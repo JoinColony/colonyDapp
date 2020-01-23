@@ -30,7 +30,7 @@ const MSG = defineMessages({
   },
   inputLabelTitle: {
     id: 'Dashboard.SuggestionCreate.inputLabelTitle',
-    defaultMessage: 'Suggest features, report bugs, or propose tasks',
+    defaultMessage: 'Suggest a task',
   },
 });
 
