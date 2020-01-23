@@ -29,7 +29,7 @@
         "typecheck": "tsc --noEmit",
         "webpack": "webpack-dev-server --config webpack.dev.js --port 9090",
         "webpack:build": "webpack-cli --config webpack.dev.js",
-        "webpack:build:prod": "NODE_ENV=production webpack-cli --config webpack.prod.js",
+        "webpack:build:prod": "NODE_OPTIONS=\"--max-old-space-size=4096\" NODE_ENV=production webpack-cli --config webpack.prod.js",
         "wssproxy": "scripts/start_wss_proxy.js"
     },
     "repository": {
