@@ -1,29 +1,23 @@
 import React, { useCallback } from 'react';
 
-import { Address } from '~types/strings';
 import TokenEditDialog from '~core/TokenEditDialog';
-import { SpinnerLoader } from '~core/Preloaders';
 import {
   useSetUserTokensMutation,
-  useAllTokensQuery,
   UserTokensDocument,
   UserTokensQueryVariables,
+  useUserTokensQuery,
 } from '~data/index';
+import { Address } from '~types/strings';
+
+import { tokenIsETH } from '../../../core/checks';
 
 interface Props {
   cancel: () => void;
   close: () => void;
-  selectedTokens: Address[];
   walletAddress: Address;
 }
 
-const UserTokenEditDialog = ({
-  selectedTokens = [],
-  cancel,
-  close,
-  walletAddress,
-}: Props) => {
-  const { data: allTokensData } = useAllTokensQuery();
+const UserTokenEditDialog = ({ cancel, close, walletAddress }: Props) => {
   const [setUserTokensMutation] = useSetUserTokensMutation({
     refetchQueries: [
       {
@@ -33,28 +27,47 @@ const UserTokenEditDialog = ({
     ],
   });
 
-  const setUserTokens = useCallback(
-    ({ tokens }) => {
-      setUserTokensMutation({
-        variables: { input: { tokenAddresses: tokens } },
+  const { data } = useUserTokensQuery({
+    variables: { address: walletAddress },
+  });
+
+  const userTokens = (data && data.user.tokens) || [];
+
+  const addToken = useCallback(
+    (newTokenAddress: Address) => {
+      const newAddresses = [
+        ...userTokens
+          .filter(token => !tokenIsETH(token))
+          .map(({ address }) => address),
+        newTokenAddress,
+      ];
+      return setUserTokensMutation({
+        variables: { input: { tokenAddresses: newAddresses } },
       });
     },
-    [setUserTokensMutation],
+    [setUserTokensMutation, userTokens],
   );
 
-  if (!allTokensData) {
-    return <SpinnerLoader />;
-  }
-
-  const { allTokens } = allTokensData;
+  const removeToken = useCallback(
+    (tokenAddressToRemove: Address) => {
+      const newAddresses = userTokens
+        .filter(token => !tokenIsETH(token))
+        .filter(({ address }) => address !== tokenAddressToRemove)
+        .map(({ address }) => address);
+      return setUserTokensMutation({
+        variables: { input: { tokenAddresses: newAddresses } },
+      });
+    },
+    [setUserTokensMutation, userTokens],
+  );
 
   return (
     <TokenEditDialog
       cancel={cancel}
       close={close}
-      availableTokens={allTokens}
-      selectedTokens={selectedTokens}
-      onSubmit={setUserTokens}
+      tokens={userTokens}
+      addTokenFn={addToken}
+      removeTokenFn={removeToken}
     />
   );
 };

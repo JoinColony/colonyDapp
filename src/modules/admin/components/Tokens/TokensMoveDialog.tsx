@@ -55,8 +55,7 @@ const TokensMoveDialog = ({
         const selectedToken = tokens.find(
           token => token.address === payload.tokenAddress,
         );
-        const decimals =
-          (selectedToken && selectedToken.details.decimals) || 18;
+        const decimals = (selectedToken && selectedToken.decimals) || 18;
 
         // Convert amount string with decimals to BigInt (eth to wei)
         const amount = new BigNumber(moveDecimal(payload.amount, decimals));

@@ -119,6 +119,7 @@
  * - primary: buttons with primary background color
  * - secondary: buttons with transparent background and no border
  * - danger: button with danger colored background
+ * - dangerLink: button with danger colored text, appearing as a link
  * - ghost: buttons with transparent background and border color
  * - underlined-bold: special button with fat underline
  * - blue: button with transparent background blue semi bold text and no padding
@@ -195,6 +196,17 @@
   border-color: var(--colony-white);
   border-right-color: transparent;
   border-top-color: transparent;
+}
+
+/*
+ * DangerLink
+ * Button with danger colored text, appearing as a link
+ */
+.themeDangerLink {
+  composes: main;
+  border-color: transparent;
+  background-color: transparent;
+  color: var(--danger);
 }
 
 /*

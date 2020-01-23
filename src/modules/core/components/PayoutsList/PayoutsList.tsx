@@ -64,11 +64,9 @@ const PayoutsList = ({ maxLines = 1, nativeTokenAddress, payouts }: Props) => {
               [styles.native]: token.address === nativeTokenAddress,
             })}
             key={token.address}
-            suffix={` ${token.details.symbol} `}
+            suffix={` ${token.symbol} `}
             unit={DEFAULT_TOKEN_DECIMALS}
-            value={
-              new BigNumber(moveDecimal(amount, token.details.decimals || 18))
-            }
+            value={new BigNumber(moveDecimal(amount, token.decimals || 18))}
           />
         ))}
       </div>
@@ -83,12 +81,10 @@ const PayoutsList = ({ maxLines = 1, nativeTokenAddress, payouts }: Props) => {
                   })}
                   key={token.address}
                   value={
-                    new BigNumber(
-                      moveDecimal(amount, token.details.decimals || 18),
-                    )
+                    new BigNumber(moveDecimal(amount, token.decimals || 18))
                   }
                   unit={DEFAULT_TOKEN_DECIMALS}
-                  suffix={` ${token.details.symbol} `}
+                  suffix={` ${token.symbol} `}
                 />
               ))}
             </div>

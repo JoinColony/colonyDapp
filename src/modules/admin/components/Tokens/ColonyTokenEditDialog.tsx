@@ -1,53 +1,80 @@
 import React, { useCallback } from 'react';
 
-import { Address } from '~types/index';
-import { SpinnerLoader } from '~core/Preloaders';
-import { useSetColonyTokensMutation, useAllTokensQuery } from '~data/index';
-
 import TokenEditDialog from '~core/TokenEditDialog';
+import {
+  useSetColonyTokensMutation,
+  useColonyTokensQuery,
+  ColonyTokensDocument,
+  ColonyTokensQueryVariables,
+} from '~data/index';
+import { Address } from '~types/index';
+
+import { tokenIsETH } from '../../../core/checks';
 
 interface Props {
   colonyAddress: Address;
   cancel: () => void;
   close: () => void;
   nativeTokenAddress: Address;
-  selectedTokens: Address[];
 }
 
 const ColonyTokenEditDialog = ({
   colonyAddress,
   nativeTokenAddress,
-  selectedTokens = [],
   cancel,
   close,
 }: Props) => {
-  const { data } = useAllTokensQuery();
+  const [setColonyTokensMutation] = useSetColonyTokensMutation({
+    refetchQueries: [
+      {
+        query: ColonyTokensDocument,
+        variables: { address: colonyAddress } as ColonyTokensQueryVariables,
+      },
+    ],
+  });
 
-  const [setColonyTokensMutation] = useSetColonyTokensMutation();
+  const { data } = useColonyTokensQuery({
+    variables: { address: colonyAddress },
+  });
 
-  const setColonyTokens = useCallback(
-    ({ tokens }) => {
-      setColonyTokensMutation({
-        variables: { input: { colonyAddress, tokenAddresses: tokens } },
+  const colonyTokens = (data && data.colony.tokens) || [];
+
+  const addToken = useCallback(
+    (newTokenAddress: Address) => {
+      const newAddresses = [
+        ...colonyTokens
+          .filter(token => !tokenIsETH(token))
+          .map(({ address }) => address),
+        newTokenAddress,
+      ];
+      return setColonyTokensMutation({
+        variables: { input: { colonyAddress, tokenAddresses: newAddresses } },
       });
     },
-    [colonyAddress, setColonyTokensMutation],
+    [colonyAddress, colonyTokens, setColonyTokensMutation],
   );
 
-  if (!data) {
-    return <SpinnerLoader />;
-  }
-
-  const { allTokens } = data;
+  const removeToken = useCallback(
+    (tokenAddressToRemove: Address) => {
+      const newAddresses = colonyTokens
+        .filter(token => !tokenIsETH(token))
+        .filter(({ address }) => address !== tokenAddressToRemove)
+        .map(({ address }) => address);
+      return setColonyTokensMutation({
+        variables: { input: { colonyAddress, tokenAddresses: newAddresses } },
+      });
+    },
+    [colonyAddress, colonyTokens, setColonyTokensMutation],
+  );
 
   return (
     <TokenEditDialog
       cancel={cancel}
       close={close}
-      availableTokens={allTokens}
+      tokens={colonyTokens}
       nativeTokenAddress={nativeTokenAddress}
-      selectedTokens={selectedTokens}
-      onSubmit={setColonyTokens}
+      addTokenFn={addToken}
+      removeTokenFn={removeToken}
     />
   );
 };

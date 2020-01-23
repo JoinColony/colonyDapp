@@ -8,6 +8,9 @@ import { ZERO_ADDRESS, ETHER_INFO } from '~utils/web3/constants';
 import { TokenInfo, TokenInfoDocument } from '~data/index';
 import { Address } from '~types/index';
 
+// Token data is used a lot and never change. They require a custom cache
+const tokenCache = new Map();
+
 const getBalanceForTokenAndDomain = async (
   colonyClient,
   tokenAddress,
@@ -31,26 +34,97 @@ const getBalanceForTokenAndDomain = async (
   return new BigNumber(rewardsPotTotal.toString(10));
 };
 
-const getEthplorerTokenData = async (address: string): Promise<TokenInfo> => {
-  // eslint-disable-next-line max-len, prettier/prettier
-  const endpoint = `//api.ethplorer.io/getTokenInfo/${address}?apiKey=${process
-    .env.ETHPLORER_API_KEY || 'freekey'}`;
-  const response = await fetch(endpoint);
-  const data = await response.json();
-  if (data.error) {
-    throw new Error(`Ethplorer error: ${data.error.message}`);
+const getTokenData = async (
+  {
+    colonyManager,
+    client,
+  }: {
+    colonyManager: ContextType['colonyManager'];
+    client: ApolloClient<object>;
+  },
+  address: Address,
+) => {
+  const tokenAddress = address === '0x0' ? ZERO_ADDRESS : address;
+
+  if (!isAddress(tokenAddress)) {
+    // don't bother looking it up if it's an invalid token address
+    throw Error('Invalid token address');
   }
-  const { name, symbol, decimals } = data;
-  const tokenDetails = {
-    name,
-    symbol,
-    decimals: parseInt(decimals, 10),
-    verified: true,
+
+  // If we're asking for ETH, just return static data
+  if (tokenAddress === ZERO_ADDRESS) {
+    return {
+      __typename: 'Token',
+      verified: true,
+      ...ETHER_INFO,
+    };
+  }
+
+  const tokenClient = await colonyManager.getTokenClient(tokenAddress);
+  const chainData: TokenInfo = await tokenClient.getTokenInfo.call();
+
+  let serverDataResult;
+  try {
+    const { data } = await client.query({
+      query: TokenInfoDocument,
+      variables: { address: tokenAddress },
+    });
+    serverDataResult = data;
+  } catch (e) {
+    console.warn(`Server error for token with address ${tokenAddress}`, e);
+  }
+
+  const serverData: TokenInfo = serverDataResult
+    ? serverDataResult.tokenInfo
+    : {};
+
+  return {
+    __typename: 'Token',
+    id: tokenAddress,
+    address: tokenAddress,
+    decimals: chainData.decimals || serverData.decimals || 18,
+    iconHash: serverData.iconHash || null,
+    name: chainData.name || serverData.name || 'Unknown token',
+    symbol: chainData.symbol || serverData.symbol || '???',
+    verified: serverData.verified || false,
   };
-  return tokenDetails;
+};
+
+export const getToken = (
+  {
+    colonyManager,
+    client,
+  }: {
+    colonyManager: ContextType['colonyManager'];
+    client: ApolloClient<object>;
+  },
+  address: Address,
+) => {
+  if (tokenCache.has(address)) return tokenCache.get(address);
+  const promise = getTokenData({ colonyManager, client }, address);
+  tokenCache.set(address, promise);
+  return promise;
 };
 
 export const tokenResolvers = ({ colonyManager }: ContextType): Resolvers => ({
+  Query: {
+    async token(
+      _,
+      { address }: { address: Address },
+      { client }: { client: ApolloClient<object> },
+    ) {
+      return getToken({ colonyManager, client }, address);
+    },
+    async tokens(
+      _,
+      { addresses }: { addresses: Address[] },
+      { client }: { client: ApolloClient<object> },
+    ) {
+      return Promise.all(
+        addresses.map(address => getToken({ colonyManager, client }, address)),
+      );
+    },
+  },
   Token: {
     async balance({ address }, { walletAddress }) {
       const {
@@ -92,61 +166,6 @@ export const tokenResolvers = ({ colonyManager }: ContextType): Resolvers => ({
         address,
         colonyAddress,
       }));
-    },
-    async details(
-      { address },
-      _,
-      { client }: { client: ApolloClient<object> },
-    ) {
-      const tokenAddress = address === '0x0' ? ZERO_ADDRESS : address;
-
-      if (!isAddress(tokenAddress)) {
-        // don't bother looking it up if it's an invalid token address
-        throw Error('Invalid token address');
-      }
-
-      // If we're asking for ETH, just return static data
-      if (tokenAddress === ZERO_ADDRESS) {
-        return {
-          __typename: 'TokenInfo',
-          verified: true,
-          ...ETHER_INFO,
-        };
-      }
-
-      const tokenClient = await colonyManager.getTokenClient(tokenAddress);
-      const chainData: TokenInfo = await tokenClient.getTokenInfo.call();
-
-      let ethplorerData = {} as TokenInfo;
-
-      // Token verification using ethplorer only really works on mainnet
-      if (process.env.NETWORK === 'mainnet') {
-        try {
-          ethplorerData = await getEthplorerTokenData(tokenAddress);
-        } catch (err) {
-          console.warn(`Could not verify token details for ${tokenAddress}`);
-        }
-      }
-
-      const { data: serverDataResult } = await client.query({
-        query: TokenInfoDocument,
-        variables: { address: tokenAddress },
-      });
-
-      const serverData: TokenInfo = serverDataResult
-        ? serverDataResult.token.info
-        : {};
-
-      const tokenInfo = {
-        __typename: 'TokenInfo',
-        name: chainData.name || ethplorerData.name || serverData.name,
-        decimals:
-          chainData.decimals || ethplorerData.decimals || serverData.decimals,
-        symbol: chainData.symbol || ethplorerData.symbol || serverData.symbol,
-        verified: ethplorerData.verified || false,
-      };
-
-      return tokenInfo;
     },
   },
 });

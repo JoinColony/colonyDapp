@@ -2,7 +2,10 @@ import BigNumber from 'bn.js';
 import { Resolvers } from 'apollo-client';
 
 import ENS from '~lib/ENS';
+import { Address } from '~types/index';
 import { ContextType } from '~context/index';
+
+import { getToken } from './token';
 
 export const colonyResolvers = ({
   colonyManager: { networkClient },
@@ -23,8 +26,8 @@ export const colonyResolvers = ({
     },
   },
   Colony: {
-    async canMintNativeToken(_, { address }) {
-      const colonyClient = await colonyManager.getColonyClient(address);
+    async canMintNativeToken({ colonyAddress }) {
+      const colonyClient = await colonyManager.getColonyClient(colonyAddress);
       // fetch whether the user is allowed to mint tokens via the colony
       let canMintNativeToken = true;
       try {
@@ -34,13 +37,13 @@ export const colonyResolvers = ({
       }
       return canMintNativeToken;
     },
-    async isInRecoveryMode(_, { address }) {
-      const colonyClient = await colonyManager.getColonyClient(address);
+    async isInRecoveryMode({ colonyAddress }) {
+      const colonyClient = await colonyManager.getColonyClient(colonyAddress);
       const { inRecoveryMode } = await colonyClient.isInRecoveryMode.call();
       return inRecoveryMode;
     },
-    async isNativeTokenLocked(_, { address }) {
-      const colonyClient = await colonyManager.getColonyClient(address);
+    async isNativeTokenLocked({ colonyAddress }) {
+      const colonyClient = await colonyManager.getColonyClient(colonyAddress);
       let isNativeTokenLocked;
       try {
         const { locked } = await colonyClient.tokenClient.isLocked.call();
@@ -50,8 +53,22 @@ export const colonyResolvers = ({
       }
       return isNativeTokenLocked;
     },
-    async canUnlockNativeToken(_, { address }) {
-      const colonyClient = await colonyManager.getColonyClient(address);
+    async nativeToken({ nativeTokenAddress }, _, { client }) {
+      return getToken({ colonyManager, client }, nativeTokenAddress);
+    },
+    async tokens(
+      { tokenAddresses }: { tokenAddresses: Address[] },
+      _,
+      { client },
+    ) {
+      return Promise.all(
+        ['0x0', ...tokenAddresses].map(tokenAddress =>
+          getToken({ colonyManager, client }, tokenAddress),
+        ),
+      );
+    },
+    async canUnlockNativeToken({ colonyAddress }) {
+      const colonyClient = await colonyManager.getColonyClient(colonyAddress);
       let canUnlockNativeToken = true;
       try {
         await colonyClient.tokenClient.unlock.call({});
@@ -60,8 +77,8 @@ export const colonyResolvers = ({
       }
       return canUnlockNativeToken;
     },
-    async version(_, { address }) {
-      const colonyClient = await colonyManager.getColonyClient(address);
+    async version({ colonyAddress }) {
+      const colonyClient = await colonyManager.getColonyClient(colonyAddress);
       const { version } = await colonyClient.getVersion.call();
       return version;
     },

@@ -223,7 +223,7 @@ const TaskFeedEventPayoutSet = ({
   },
 }: EventProps<SetTaskPayoutEvent>) => {
   const { data } = useTokenQuery({ variables: { address: tokenAddress } });
-  const { decimals = 18, symbol = '' } = (data && data.token.details) || {};
+  const { decimals = 18, symbol = '' } = (data && data.token) || {};
   return (
     <FormattedMessage
       {...MSG.payoutSet}

@@ -4,14 +4,11 @@ import React, { useCallback, useState } from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 import * as yup from 'yup';
 
-import { ActionTypes } from '~redux/index';
 import { WizardProps } from '~core/Wizard';
 import { Form, Input } from '~core/Fields';
 import Heading from '~core/Heading';
 import Button from '~core/Button';
-import { ActionFileUpload } from '~core/FileUpload';
 import { multiLineTextEllipsis } from '~utils/strings';
-import { mapPayload } from '~utils/actions';
 import ENS from '~lib/ENS';
 import { OneToken } from '~data/index';
 
@@ -92,15 +89,10 @@ const StepSelectToken = ({
   const handleTokenSelect = (token: OneToken, setFieldValue: SetFieldValue) => {
     setTokenData(token);
     if (token) {
-      setFieldValue('tokenName', token.details.name);
-      setFieldValue('tokenSymbol', token.details.symbol);
+      setFieldValue('tokenName', token.name);
+      setFieldValue('tokenSymbol', token.symbol);
     }
   };
-
-  const transform = useCallback(
-    mapPayload(({ data }) => ({ ipfsData: data })),
-    [],
-  );
 
   const goToTokenCreate = useCallback(() => {
     /* This is a custom link since it goes to a sibling step that appears
@@ -179,17 +171,6 @@ const StepSelectToken = ({
                         text={MSG.symbolHint}
                       />
                     }
-                  />
-                </div>
-                <div className={styles.tokenDetails}>
-                  <ActionFileUpload
-                    name="tokenIcon"
-                    submit={ActionTypes.IPFS_DATA_UPLOAD}
-                    success={ActionTypes.IPFS_DATA_UPLOAD_SUCCESS}
-                    error={ActionTypes.IPFS_DATA_UPLOAD_ERROR}
-                    transform={transform}
-                    label={MSG.fileUploadTitle}
-                    status={MSG.fileUploadHint}
                   />
                 </div>
               </>

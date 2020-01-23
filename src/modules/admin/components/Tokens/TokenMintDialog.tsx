@@ -53,9 +53,7 @@ const TokenMintDialog = ({
   colonyAddress,
   cancel,
   close,
-  nativeToken: {
-    details: { name, symbol, decimals },
-  },
+  nativeToken: { name, symbol, decimals },
   nativeToken,
 }: Props) => (
   <Dialog cancel={cancel}>
