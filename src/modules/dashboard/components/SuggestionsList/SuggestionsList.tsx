@@ -104,6 +104,7 @@ const SuggestionsList = ({
 
   const { data, loading } = useColonySuggestionsQuery({
     variables: { colonyAddress },
+    pollInterval: 5000,
   });
 
   const { data: domains, isFetching: isFetchingDomains } = useDataFetcher(
