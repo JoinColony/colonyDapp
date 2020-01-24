@@ -44,6 +44,30 @@ const MSG = defineMessages({
     defaultMessage:
       'Create a new suggestion, or switch domains to change the filter.',
   },
+  confirmCreateTaskHeading: {
+    id: 'Dashboard.SuggestionsList.confirmCreateTaskHeading',
+    defaultMessage: 'Accept suggestion and create a new task?',
+  },
+  confirmCreateTaskText: {
+    id: 'Dashboard.SuggestionsList.confirmCreateTaskHeading',
+    defaultMessage: `Would you like to mark this suggestion as Accepted and create a new task in your Colony?`,
+  },
+  confirmCreateTaskButton: {
+    id: 'Dashboard.SuggestionsList.confirmCreateTaskButton',
+    defaultMessage: 'Accept and Create',
+  },
+  confirmDeleteHeading: {
+    id: 'Dashboard.SuggestionsList.confirmDeleteHeading',
+    defaultMessage: 'Are you sure you would like to delete this suggestion?',
+  },
+  confirmDeleteText: {
+    id: 'Dashboard.SuggestionsList.confirmDeleteText',
+    defaultMessage: 'It is not possible to undo this action',
+  },
+  confirmDeleteButton: {
+    id: 'Dashboard.SuggestionsList.confirmDeleteButton',
+    defaultMessage: 'Yes, delete',
+  },
 });
 
 interface InProps {
@@ -126,7 +150,11 @@ const SuggestionsList = ({
   );
   const handleDeleted = useCallback(
     async (id: string) => {
-      await openDialog('ConfirmDialog').afterClosed();
+      await openDialog('ConfirmDialog', {
+        heading: MSG.confirmDeleteHeading,
+        children: MSG.confirmDeleteText,
+        confirmButtonText: MSG.confirmDeleteButton,
+      }).afterClosed();
       return setSuggestionStatus({
         variables: { input: { id, status: SuggestionStatus.Deleted } },
       });
@@ -135,7 +163,11 @@ const SuggestionsList = ({
   );
   const handleCreateTask = useCallback(
     async (id: string) => {
-      await openDialog('ConfirmDialog').afterClosed();
+      await openDialog('ConfirmDialog', {
+        heading: MSG.confirmCreateTaskHeading,
+        children: MSG.confirmCreateTaskText,
+        confirmButtonText: MSG.confirmCreateTaskButton,
+      }).afterClosed();
       const { data: createTaskData } = await createTaskFromSuggestion({
         update: cacheUpdates.createTaskFromSuggestion(colonyAddress, id),
         variables: { input: { id } },
