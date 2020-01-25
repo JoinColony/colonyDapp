@@ -1,5 +1,5 @@
 import React, { FC, useCallback, useMemo, useState } from 'react';
-import { defineMessages } from 'react-intl';
+import { defineMessages, FormattedMessage } from 'react-intl';
 import { useHistory } from 'react-router-dom';
 
 import { COLONY_TOTAL_BALANCE_DOMAIN_ID } from '~constants';
@@ -152,7 +152,7 @@ const SuggestionsList = ({
     async (id: string) => {
       await openDialog('ConfirmDialog', {
         heading: MSG.confirmDeleteHeading,
-        children: MSG.confirmDeleteText,
+        children: <FormattedMessage {...MSG.confirmDeleteText} />,
         confirmButtonText: MSG.confirmDeleteButton,
       }).afterClosed();
       return setSuggestionStatus({
@@ -165,7 +165,7 @@ const SuggestionsList = ({
     async (id: string) => {
       await openDialog('ConfirmDialog', {
         heading: MSG.confirmCreateTaskHeading,
-        children: MSG.confirmCreateTaskText,
+        children: <FormattedMessage {...MSG.confirmCreateTaskText} />,
         confirmButtonText: MSG.confirmCreateTaskButton,
       }).afterClosed();
       const { data: createTaskData } = await createTaskFromSuggestion({
