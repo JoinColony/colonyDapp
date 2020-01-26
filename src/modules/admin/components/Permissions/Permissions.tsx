@@ -163,6 +163,7 @@ const Permissions = ({ colonyAddress, domains, openDialog }: Props) => {
                     showDisplayName
                     showMaskedAddress
                     showUsername
+                    showInfo={false}
                   >
                     <TableCell>
                       <UserPermissions
