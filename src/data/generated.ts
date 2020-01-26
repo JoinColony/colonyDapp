@@ -1485,6 +1485,11 @@ export type UserNotificationsQuery = { user: (
     )> }
   ) };
 
+export type SystemInfoQueryVariables = {};
+
+
+export type SystemInfoQuery = { systemInfo: Pick<SystemInfo, 'version'> };
+
 export const PayoutsFragmentDoc = gql`
     fragment Payouts on Task {
   payouts {
@@ -3729,3 +3734,35 @@ export function useUserNotificationsLazyQuery(baseOptions?: ApolloReactHooks.Laz
 export type UserNotificationsQueryHookResult = ReturnType<typeof useUserNotificationsQuery>;
 export type UserNotificationsLazyQueryHookResult = ReturnType<typeof useUserNotificationsLazyQuery>;
 export type UserNotificationsQueryResult = ApolloReactCommon.QueryResult<UserNotificationsQuery, UserNotificationsQueryVariables>;
+export const SystemInfoDocument = gql`
+    query SystemInfo {
+  systemInfo {
+    version
+  }
+}
+    `;
+
+/**
+ * __useSystemInfoQuery__
+ *
+ * To run a query within a React component, call `useSystemInfoQuery` and pass it any options that fit your needs.
+ * When your component renders, `useSystemInfoQuery` returns an object from Apollo Client that contains loading, error, and data properties 
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useSystemInfoQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useSystemInfoQuery(baseOptions?: ApolloReactHooks.QueryHookOptions<SystemInfoQuery, SystemInfoQueryVariables>) {
+        return ApolloReactHooks.useQuery<SystemInfoQuery, SystemInfoQueryVariables>(SystemInfoDocument, baseOptions);
+      }
+export function useSystemInfoLazyQuery(baseOptions?: ApolloReactHooks.LazyQueryHookOptions<SystemInfoQuery, SystemInfoQueryVariables>) {
+          return ApolloReactHooks.useLazyQuery<SystemInfoQuery, SystemInfoQueryVariables>(SystemInfoDocument, baseOptions);
+        }
+export type SystemInfoQueryHookResult = ReturnType<typeof useSystemInfoQuery>;
+export type SystemInfoLazyQueryHookResult = ReturnType<typeof useSystemInfoLazyQuery>;
+export type SystemInfoQueryResult = ApolloReactCommon.QueryResult<SystemInfoQuery, SystemInfoQueryVariables>;

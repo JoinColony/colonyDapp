@@ -373,3 +373,9 @@ query UserNotifications($address: String!) {
     }
   }
 }
+
+query SystemInfo {
+  systemInfo {
+    version
+  }
+}
