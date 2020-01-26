@@ -596,6 +596,7 @@ export type Query = {
   domain: Domain,
   task: Task,
   tokenInfo: TokenInfo,
+  systemInfo: SystemInfo,
   loggedInUser: LoggedInUser,
   colonyAddress: Scalars['String'],
   colonyName: Scalars['String'],
@@ -799,6 +800,10 @@ export enum SuggestionStatus {
   Accepted = 'Accepted',
   Deleted = 'Deleted'
 }
+
+export type SystemInfo = {
+  version: Scalars['String'],
+};
 
 export type Task = {
   id: Scalars['String'],
