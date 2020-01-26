@@ -174,19 +174,21 @@ const Permissions = ({ colonyAddress, domains, openDialog }: Props) => {
                 ))}
               </TableBody>
             </Table>
-            <p className={styles.parentPermissionTip}>
-              <FormattedMessage
-                {...MSG.permissionInParent}
-                values={{
-                  learnMore: (
-                    <ExternalLink
-                      text={MSG.learnMore}
-                      href={DOMAINS_HELP_URL}
-                    />
-                  ),
-                }}
-              />
-            </p>
+            {selectedDomain && selectedDomain.id !== ROOT_DOMAIN && (
+              <p className={styles.parentPermissionTip}>
+                <FormattedMessage
+                  {...MSG.permissionInParent}
+                  values={{
+                    learnMore: (
+                      <ExternalLink
+                        text={MSG.learnMore}
+                        href={DOMAINS_HELP_URL}
+                      />
+                    ),
+                  }}
+                />
+              </p>
+            )}
           </>
         </div>
       </main>
