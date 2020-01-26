@@ -117,7 +117,7 @@ const UserListItem = ({
       {...rowProps}
     >
       <TableCell className={styles.userAvatar}>
-        <UserAvatar size="xs" address={address} user={user} showInfo />
+        <UserAvatar size="xs" address={address} user={user} />
       </TableCell>
       <TableCell className={styles.userDetails}>
         {showDisplayName && displayName && (
