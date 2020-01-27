@@ -49,7 +49,7 @@ const MSG = defineMessages({
     defaultMessage: 'Accept suggestion and create a new task?',
   },
   confirmCreateTaskText: {
-    id: 'Dashboard.SuggestionsList.confirmCreateTaskHeading',
+    id: 'Dashboard.SuggestionsList.confirmCreateTaskText',
     defaultMessage: `Would you like to mark this suggestion as Accepted and create a new task in your Colony?`,
   },
   confirmCreateTaskButton: {
