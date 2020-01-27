@@ -52,7 +52,7 @@ const ColonyHome = ({
     params: { colonyName },
   },
 }: Props) => {
-  const { walletAddress } = useLoggedInUser();
+  const { walletAddress, username } = useLoggedInUser();
 
   const [filteredDomainId, setFilteredDomainId] = useState(
     COLONY_TOTAL_BALANCE_DOMAIN_ID,
@@ -114,8 +114,7 @@ const ColonyHome = ({
 
   const { colony } = data;
 
-  // Eventually this has to be in the proper domain. There's probably going to be a different UI for that
-  const canCreateTask = canAdminister(currentDomainUserRoles);
+  const canCreateTask = canAdminister(currentDomainUserRoles) && !!username;
 
   const noFilter = (
     <Heading
