@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { FC, HTMLAttributes } from 'react';
 import {
   injectIntl,
   IntlShape,
@@ -21,9 +21,12 @@ type Appearance = {
   size?: 'tiny' | 'small' | 'normal' | 'medium' | 'large' | 'huge';
 };
 
-interface Props {
+interface InProps extends HTMLAttributes<HTMLElement> {
   /** Appearance object */
   appearance?: Appearance;
+
+  /** Disallow children */
+  children?: never;
 
   /** className for icon. Will override anything in appearance */
   className?: string;
@@ -39,7 +42,9 @@ interface Props {
 
   /** SVG viewbox string */
   viewBox?: string;
+}
 
+interface Props extends InProps {
   /** @ignore injected by `react-intl` */
   intl: IntlShape;
 }
@@ -89,4 +94,4 @@ const Icon = ({
 
 Icon.displayName = displayName;
 
-export default injectIntl(Icon);
+export default injectIntl(Icon) as FC<InProps>;

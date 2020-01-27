@@ -1,0 +1,12 @@
+.horizontalForm {
+  display: flex;
+  align-items: center;
+}
+
+.formItem:not(:last-of-type) {
+  flex: 1;
+}
+
+.formItem + .formItem {
+  margin-left: 10px;
+}

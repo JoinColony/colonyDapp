@@ -1,0 +1,86 @@
+@value paddingVertical: 20px;
+@value paddingHorizontal: 30px;
+
+.main {
+  display: flex;
+  align-items: center;
+  padding: paddingVertical paddingHorizontal;
+  position: relative;
+}
+
+.actionMenuContainer {
+  position: absolute;
+  top: calc(paddingVertical + 3px);
+  left: calc((paddingHorizontal / 2) - 5px);
+}
+
+.actionMenuButton {
+  composes: button from '~styles/reset.css';
+}
+
+.actionMenuIcon {
+  display: inline-block;
+  height: 14px;
+  width: 14px;
+}
+
+.actionMenuIcon svg {
+  stroke: var(--grey-4);
+  fill: var(--grey-4);
+}
+
+.actionMenuButton[aria-describedBy] .actionMenuIcon,
+.actionMenuButton:focus .actionMenuIcon {
+  border-radius: 200%;
+  background-color: var(--grey-blue-1);
+}
+
+.actionMenuButton[aria-describedBy] .actionMenuIcon svg,
+.actionMenuButton:focus .actionMenuIcon svg {
+  /* Popover applies `aria-describedBy` when open */
+  stroke: var(--violet);
+  fill: var(--violet);
+}
+
+.titleContainer {
+  flex-grow: 1;
+}
+
+.authorText {
+  color: var(--grey-3);
+}
+
+.authorText a:hover {
+  color: var(--sky-blue);
+}
+
+.titleContentContainer,
+.badgeContainer {
+  margin-right: 10px;
+}
+
+.taskLink {
+  font-size: 0.8rem;
+  color: var(--colony-blue);
+  opacity: 0;
+  transition: opacity 0.15s ease-in-out;
+}
+
+.main:hover .taskLink {
+  opacity: 1;
+}
+
+.upvoteContainer {
+  display: flex;
+  align-items: center;
+}
+
+.upvoteCount {
+  font-weight: var(--weight-medium);
+}
+
+.upvoteButtonContainer {
+  display: flex;
+  align-items: center;
+  padding-left: 30px;
+}

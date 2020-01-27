@@ -355,6 +355,15 @@ query ColonyDomains($colonyAddress: String!) {
   }
 }
 
+query ColonySuggestions($colonyAddress: String!) {
+  colony(address: $colonyAddress) {
+    id
+    suggestions {
+      ...SuggestionFields
+    }
+  }
+}
+
 query UserNotifications($address: String!) {
   user(address: $address) {
     id

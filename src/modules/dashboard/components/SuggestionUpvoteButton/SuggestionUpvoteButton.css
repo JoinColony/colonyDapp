@@ -1,0 +1,54 @@
+
+.main {
+  composes: button from '~styles/reset.css';
+  display: flex;
+  align-items: center;
+  padding: 6px;
+  border: 1px solid transparent;
+  border-radius: 100%;
+}
+
+.main i {
+  height: 10px;
+  width: 10px;
+}
+
+.main,
+.main:active {
+  border-color: transparent;
+  background-color: transparent;
+}
+
+.main svg,
+.main:active svg {
+  fill: var(--grey-4);
+  stroke: var(--grey-4);
+}
+
+.main:focus {
+  border-color: var(--violet);
+  background-color: var(--grey-blue-1);
+}
+
+.main:focus svg {
+  fill: var(--violet);
+  stroke: var(--violet);
+}
+
+/* State */
+
+.stateHasUpvoted,
+.stateHasUpvoted:active {
+  border-color: var(--grey-5);
+  background-color: var(--grey-5);
+}
+
+.stateHasUpvoted svg,
+.stateHasUpvoted:active svg {
+  stroke: var(--colony-white);
+  fill: var(--colony-white);
+}
+
+.stateHasUpvoted:focus {
+  background-color: var(--grey-5);
+}
