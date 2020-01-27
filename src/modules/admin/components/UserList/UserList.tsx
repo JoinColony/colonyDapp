@@ -56,6 +56,12 @@ interface Props {
 
   /* Colony address to use when removing the user */
   colonyAddress: Address;
+
+  /*
+   * Whether or not the items that render an avatar should show a UserInfo tooltip upon clicking them
+   * This gets passed down to `UserListItem`
+   */
+  showInfo?: boolean;
 }
 
 const displayName = 'admin.UserList';
@@ -71,6 +77,7 @@ const UserList = ({
   showUsername,
   showMaskedAddress,
   viewOnly = true,
+  showInfo,
 }: Props) => {
   const transform = pipe(
     withKey(colonyAddress),
@@ -110,6 +117,7 @@ const UserList = ({
                 showMaskedAddress={showMaskedAddress}
                 viewOnly={viewOnly}
                 onRemove={() => handleRemove(user)}
+                showInfo={showInfo}
               />
             ))}
           </TableBody>

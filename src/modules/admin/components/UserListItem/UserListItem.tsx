@@ -68,6 +68,11 @@ interface Props {
    * Method to call when clicking the remove button
    */
   onRemove?: (evt: MouseEvent) => void;
+
+  /*
+   * Whether or not to display a `UserInfo` tooltip component when clicking on the User's avatar
+   */
+  showInfo?: boolean;
 }
 
 const UserListItem = ({
@@ -79,6 +84,7 @@ const UserListItem = ({
   viewOnly = true,
   onClick: callbackFn,
   onRemove,
+  showInfo = true,
 }: Props) => {
   // @TODO pass down user to UserListItem
   // @body once the roles come through apollo, this can be sync and passed down from the parent as we can get the whole list of users easily
@@ -117,7 +123,12 @@ const UserListItem = ({
       {...rowProps}
     >
       <TableCell className={styles.userAvatar}>
-        <UserAvatar size="xs" address={address} user={user} showInfo />
+        <UserAvatar
+          size="xs"
+          address={address}
+          user={user}
+          showInfo={showInfo}
+        />
       </TableCell>
       <TableCell className={styles.userDetails}>
         {showDisplayName && displayName && (
