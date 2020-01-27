@@ -114,11 +114,6 @@ const ColonyHome = ({
 
   const { colony } = data;
 
-  /*
-   * Eventually this has to be in the proper domain. There's probably going to be a different UI for that
-   * Also prevent users w/o a claimed profile from creating tasks
-   * (even if the address got administrative permissions in the colony)
-   */
   const canCreateTask = canAdminister(currentDomainUserRoles) && !!username;
 
   const noFilter = (
