@@ -7,7 +7,7 @@ import { ActionTypes } from '~redux/index';
 import { DialogActionButton } from '~core/Button';
 import Heading from '~core/Heading';
 import ExternalLink from '~core/ExternalLink';
-import { FullColonyFragment } from '~data/index';
+import { FullColonyFragment, useSystemInfoQuery } from '~data/index';
 
 import { networkVersionSelector } from '../../../core/selectors';
 import { canEnterRecoveryMode } from '../../../users/checks';
@@ -30,6 +30,10 @@ const MSG = defineMessages({
   labelDappVersion: {
     id: 'admin.Profile.ProfileAdvanced.labelDappVersion',
     defaultMessage: 'Dapp Version',
+  },
+  labelServerVersion: {
+    id: 'admin.Profile.ProfileAdvanced.labelServerVersion',
+    defaultMessage: 'Server Version',
   },
   labelId: {
     id: 'admin.Profile.ProfileAdvanced.labelId',
@@ -97,6 +101,7 @@ const ProfileAdvanced = ({
   rootRoles,
 }: Props) => {
   const networkVersion = useSelector(networkVersionSelector);
+  const { data } = useSystemInfoQuery();
 
   return (
     <div className={styles.main}>
@@ -134,6 +139,17 @@ const ProfileAdvanced = ({
           <p className={styles.bigInfoText}>{dappVersion}</p>
         </div>
       </section>
+      {data && data.systemInfo && (
+        <section className={styles.section}>
+          <div>
+            <Heading
+              appearance={{ size: 'small', margin: 'none' }}
+              text={MSG.labelServerVersion}
+            />
+            <p className={styles.bigInfoText}>{data.systemInfo.version}</p>
+          </div>
+        </section>
+      )}
       <section className={styles.section}>
         <Heading
           appearance={{ size: 'small', margin: 'none' }}
