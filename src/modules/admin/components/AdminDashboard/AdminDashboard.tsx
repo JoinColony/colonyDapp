@@ -145,7 +145,7 @@ const AdminDashboard = ({
   const CURRENT_COLONY_ROUTE = colonyName ? `/colony/${colonyName}` : '';
 
   // @TODO: Try to get proper error handling going in resolvers (for colonies that don't exist)
-  const { data } = useColonyFromNameQuery({
+  const { data, error: colonyFetchError } = useColonyFromNameQuery({
     // We have to define an empty address here for type safety, will be replaced by the query
     variables: { name: colonyName, address: '' },
   });
@@ -177,7 +177,7 @@ const AdminDashboard = ({
     walletAddress,
   ]);
 
-  if (!colonyName) {
+  if (!colonyName || colonyFetchError) {
     return <Redirect to="/404" />;
   }
 
