@@ -71,7 +71,7 @@ const ColonyHome = ({
   const [activeTab, setActiveTab] = useState<TabName>(TabName.TasksTab);
 
   // @TODO: Try to get proper error handling going in resolvers (for colonies that don't exist)
-  const { data } = useColonyFromNameQuery({
+  const { data, error: colonyFetchError } = useColonyFromNameQuery({
     // We have to define an empty address here for type safety, will be replaced by the query
     variables: { name: colonyName, address: '' },
   });
@@ -109,7 +109,7 @@ const ColonyHome = ({
     }
   }, [domains, filteredDomainId]);
 
-  if (!colonyName) {
+  if (!colonyName || colonyFetchError) {
     return <Redirect to="/404" />;
   }
 
