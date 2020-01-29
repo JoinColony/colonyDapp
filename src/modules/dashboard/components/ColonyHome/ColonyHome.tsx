@@ -17,6 +17,7 @@ import { useDataFetcher, useTransformer } from '~utils/hooks';
 import { getUserRoles } from '../../../transformers';
 import { canAdminister, hasRoot } from '../../../users/checks';
 import { domainsAndRolesFetcher } from '../../fetchers';
+import { NOT_FOUND_ROUTE } from '~routes/index';
 
 import ColonyFunding from './ColonyFunding';
 import styles from './ColonyHome.css';
@@ -110,7 +111,7 @@ const ColonyHome = ({
   }, [domains, filteredDomainId]);
 
   if (!colonyName || colonyFetchError) {
-    return <Redirect to="/404" />;
+    return <Redirect to={NOT_FOUND_ROUTE} />;
   }
 
   if (

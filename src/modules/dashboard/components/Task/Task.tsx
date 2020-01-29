@@ -27,6 +27,7 @@ import LoadingTemplate from '~pages/LoadingTemplate';
 import { ActionTypes } from '~redux/index';
 import { mergePayload } from '~utils/actions';
 import { useDataFetcher, useTransformer } from '~utils/hooks';
+import { NOT_FOUND_ROUTE } from '~routes/index';
 
 import { getUserRoles } from '../../../transformers';
 import {
@@ -184,7 +185,7 @@ const Task = ({ openDialog }: Props) => {
   });
 
   if (!colonyName || colonyFetchError || taskFetchError) {
-    return <Redirect to="/404" />;
+    return <Redirect to={NOT_FOUND_ROUTE} />;
   }
 
   if (isFetchingDomains || !task || !colonyData || !domains || !walletAddress) {
