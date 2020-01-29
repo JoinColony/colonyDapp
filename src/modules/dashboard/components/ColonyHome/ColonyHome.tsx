@@ -17,6 +17,7 @@ import { useDataFetcher, useTransformer } from '~utils/hooks';
 import { getUserRoles } from '../../../transformers';
 import { canAdminister, hasRoot } from '../../../users/checks';
 import { domainsAndRolesFetcher } from '../../fetchers';
+import { NOT_FOUND_ROUTE } from '~routes/index';
 
 import ColonyFunding from './ColonyFunding';
 import styles from './ColonyHome.css';
@@ -71,7 +72,7 @@ const ColonyHome = ({
   const [activeTab, setActiveTab] = useState<TabName>(TabName.TasksTab);
 
   // @TODO: Try to get proper error handling going in resolvers (for colonies that don't exist)
-  const { data } = useColonyFromNameQuery({
+  const { data, error: colonyFetchError } = useColonyFromNameQuery({
     // We have to define an empty address here for type safety, will be replaced by the query
     variables: { name: colonyName, address: '' },
   });
@@ -109,8 +110,8 @@ const ColonyHome = ({
     }
   }, [domains, filteredDomainId]);
 
-  if (!colonyName) {
-    return <Redirect to="/404" />;
+  if (!colonyName || colonyFetchError) {
+    return <Redirect to={NOT_FOUND_ROUTE} />;
   }
 
   if (

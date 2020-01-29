@@ -34,13 +34,14 @@ const UserProfile = ({
     }
   }, [loadUser, userAddress]);
 
+  if (userAddressError) {
+    return <Redirect to={NOT_FOUND_ROUTE} />;
+  }
+
   if (!data || !data.user) {
     return <UserProfileSpinner />;
   }
 
-  if (userAddressError) {
-    return <Redirect to={NOT_FOUND_ROUTE} />;
-  }
   const { user } = data;
 
   return (

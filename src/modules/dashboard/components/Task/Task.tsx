@@ -1,6 +1,6 @@
 import React, { FC, useCallback, useState } from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
-import { useHistory, useParams } from 'react-router-dom';
+import { useHistory, useParams, Redirect } from 'react-router-dom';
 
 import Button, { ActionButton } from '~core/Button';
 import { OpenDialog } from '~core/Dialog/types';
@@ -27,6 +27,7 @@ import LoadingTemplate from '~pages/LoadingTemplate';
 import { ActionTypes } from '~redux/index';
 import { mergePayload } from '~utils/actions';
 import { useDataFetcher, useTransformer } from '~utils/hooks';
+import { NOT_FOUND_ROUTE } from '~routes/index';
 
 import { getUserRoles } from '../../../transformers';
 import {
@@ -122,13 +123,13 @@ const Task = ({ openDialog }: Props) => {
 
   const { walletAddress } = useLoggedInUser();
 
-  const { data } = useTaskQuery({
+  const { data, error: taskFetchError } = useTaskQuery({
     // @todo use subscription for `Task` instead of `pollInterval` (once supported by server)
     pollInterval: 5000,
     variables: { id: draftId },
   });
 
-  const { data: colonyData } = useColonyFromNameQuery({
+  const { data: colonyData, error: colonyFetchError } = useColonyFromNameQuery({
     variables: { address: '', name: colonyName },
   });
 
@@ -182,6 +183,10 @@ const Task = ({ openDialog }: Props) => {
   const [handleCancelTask] = useCancelTaskMutation({
     variables: { input: { id: draftId } },
   });
+
+  if (!colonyName || colonyFetchError || taskFetchError) {
+    return <Redirect to={NOT_FOUND_ROUTE} />;
+  }
 
   if (isFetchingDomains || !task || !colonyData || !domains || !walletAddress) {
     return <LoadingTemplate loadingText={MSG.loadingText} />;

@@ -14,11 +14,22 @@ export const colonyResolvers = ({
 }: ContextType): Resolvers => ({
   Query: {
     async colonyAddress(_, { name }) {
-      const address = await ens.getAddress(
-        ENS.getFullDomain('colony', name),
-        networkClient,
-      );
-      return address;
+      try {
+        const address = await ens.getAddress(
+          ENS.getFullDomain('colony', name),
+          networkClient,
+        );
+        return address;
+      } catch (error) {
+        /*
+         * @NOTE This makes the server query fail in case of an unexistent/unregistered colony ENS name
+         *
+         * Otherwise, the ENS resolution will fail, but not this query.
+         * This will then not proceed further to the server query and the data
+         * will try to load indefinitely w/o an error
+         */
+        return undefined;
+      }
     },
     async colonyName(_, { address }) {
       const domain = await ens.getDomain(address, networkClient);
