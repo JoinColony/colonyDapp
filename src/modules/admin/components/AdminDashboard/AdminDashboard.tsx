@@ -21,6 +21,7 @@ import {
   useColonyFromNameQuery,
   useLoggedInUser,
 } from '~data/index';
+import { NOT_FOUND_ROUTE } from '~routes/index';
 
 import {
   TEMP_getUserRolesWithRecovery,
@@ -178,7 +179,7 @@ const AdminDashboard = ({
   ]);
 
   if (!colonyName || colonyFetchError) {
-    return <Redirect to="/404" />;
+    return <Redirect to={NOT_FOUND_ROUTE} />;
   }
 
   if (!data || !domains || isFetchingDomains) {
