@@ -22,7 +22,7 @@ export const colonyResolvers = ({
         return address;
       } catch (error) {
         /*
-         * @NOTE This makes the server query fail in case of an unexistent error
+         * @NOTE This makes the server query fail in case of an unexistent/unregistered colony ENS name
          *
          * Otherwise, the ENS resolution will fail, but not this query.
          * This will then not proceed further to the server query and the data
