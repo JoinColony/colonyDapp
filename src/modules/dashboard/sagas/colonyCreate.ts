@@ -52,6 +52,8 @@ function* colonyCreate({
     Context.APOLLO_CLIENT,
   );
 
+  const { networkClient } = yield getContext(Context.COLONY_MANAGER);
+
   const TOKEN_DECIMALS = 18;
 
   /*
@@ -153,10 +155,16 @@ function* colonyCreate({
     });
 
     if (createToken) {
+      const { address: tokenLockingAddress } = yield call([
+        networkClient.getTokenLockingAddress,
+        networkClient.getTokenLockingAddress.call,
+      ]);
       yield createGroupedTransaction(deployTokenAuthority, {
         context: ContractContexts.TOKEN_CONTEXT,
         methodName: 'createTokenAuthority',
-        params: { allowedToTransfer: [] },
+        params: {
+          allowedToTransfer: [tokenLockingAddress],
+        },
         ready: false,
       });
 
