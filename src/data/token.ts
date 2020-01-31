@@ -133,7 +133,7 @@ export const tokenResolvers = ({ colonyManager }: ContextType): Resolvers => ({
         },
       } = colonyManager;
       if (address === ZERO_ADDRESS) {
-        const balance = provider.getBalance(walletAddress);
+        const balance = await provider.getBalance(walletAddress);
         return balance.toString();
       }
 
