@@ -8,7 +8,7 @@ import Dialog, { DialogSection } from '~core/Dialog';
 import { Form, Input } from '~core/Fields';
 import Heading from '~core/Heading';
 import { AnyToken } from '~data/index';
-import { Address } from '~types/strings';
+import { Address, createAddress } from '~types/strings';
 
 import TokenItem from './TokenItem/index';
 
@@ -77,7 +77,7 @@ const TokenEditDialog = ({
       { resetForm, setSubmitting, setFieldError }: FormikHelpers<FormValues>,
     ) => {
       try {
-        await addTokenFn(tokenAddress);
+        await addTokenFn(createAddress(tokenAddress));
         resetForm();
       } catch (e) {
         setFieldError('tokenAddress', MSG.errorAddingToken);
