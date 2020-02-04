@@ -4,6 +4,7 @@
 mutation AssignWorker($input: AssignWorkerInput!) {
   assignWorker(input: $input) {
     id
+    assignedWorkerAddress
     assignedWorker {
       id
     }
@@ -35,6 +36,7 @@ mutation CreateWorkRequest($input: CreateWorkRequestInput!) {
     events {
       ...TaskEvent
     }
+    workRequestAddresses
     workRequests {
       id
     }
@@ -75,6 +77,7 @@ mutation SendWorkInvite($input: SendWorkInviteInput!) {
     events {
       ...TaskEvent
     }
+    workInviteAddresses
     workInvites {
       id
     }
@@ -151,6 +154,7 @@ mutation SetTaskTitle($input: SetTaskTitleInput!) {
 mutation UnassignWorker($input: UnassignWorkerInput!) {
   unassignWorker(input: $input) {
     id
+    assignedWorkerAddress
     assignedWorker {
       id
     }
