@@ -24,8 +24,11 @@ import {
   useUnassignWorkerMutation,
   useSetTaskPayoutMutation,
   useRemoveTaskPayoutMutation,
+  useLoggedInUser,
+  UserTasksDocument,
+  UserTasksQueryVariables,
 } from '~data/index';
-import { Address } from '~types/index';
+import { Address, createAddress } from '~types/index';
 import HookedUserAvatar from '~users/HookedUserAvatar';
 
 import Payout, { FormPayout } from './Payout';
@@ -133,6 +136,7 @@ const TaskEditDialog = ({
   maxTokens = Infinity,
   minTokens = 0,
 }: Props) => {
+  const { walletAddress } = useLoggedInUser();
   // @TODO check for sufficient funds (asynchronous validation)
   const validateForm = useMemo(() => {
     const workerShape = yup
@@ -212,15 +216,31 @@ const TaskEditDialog = ({
           ),
         );
 
+      const refetchSelfTasks = [
+        {
+          query: UserTasksDocument,
+          variables: {
+            address: walletAddress,
+          } as UserTasksQueryVariables,
+        },
+      ];
+
       if (worker && worker.profile) {
+        const isSelfAssigned =
+          createAddress(walletAddress) ===
+          createAddress(worker.profile.walletAddress);
         assignWorker({
+          refetchQueries: isSelfAssigned ? refetchSelfTasks : [],
           variables: {
             input: { id: draftId, workerAddress: worker.profile.walletAddress },
           },
         });
       } else if (existingWorkerAddress) {
         // existing worker is set - unassign it
+        const wasSelfAssigned =
+          createAddress(walletAddress) === createAddress(existingWorkerAddress);
         unassignWorker({
+          refetchQueries: wasSelfAssigned ? refetchSelfTasks : [],
           variables: {
             input: {
               id: draftId,
@@ -276,6 +296,7 @@ const TaskEditDialog = ({
       removeTaskPayout,
       setTaskPayout,
       unassignWorker,
+      walletAddress,
     ],
   );
 
