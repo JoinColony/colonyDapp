@@ -2,7 +2,7 @@ import React, { FC, useCallback, useState } from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 import { useHistory, useParams, Redirect } from 'react-router-dom';
 
-import Button, { ActionButton } from '~core/Button';
+import Button from '~core/Button';
 import { OpenDialog } from '~core/Dialog/types';
 import withDialog from '~core/Dialog/withDialog';
 import Heading from '~core/Heading';
@@ -17,6 +17,7 @@ import TaskFeed from '~dashboard/TaskFeed';
 import TaskRequestWork from '~dashboard/TaskRequestWork';
 import TaskSkills from '~dashboard/TaskSkills';
 import TaskTitle from '~dashboard/TaskTitle';
+import TaskFinalize from '~dashboard/TaskFinalize';
 import {
   useCancelTaskMutation,
   useColonyFromNameQuery,
@@ -24,8 +25,6 @@ import {
   useTaskQuery,
 } from '~data/index';
 import LoadingTemplate from '~pages/LoadingTemplate';
-import { ActionTypes } from '~redux/index';
-import { mergePayload } from '~utils/actions';
 import { useDataFetcher, useTransformer } from '~utils/hooks';
 import { NOT_FOUND_ROUTE } from '~routes/index';
 
@@ -62,10 +61,6 @@ const MSG = defineMessages({
   discarded: {
     id: 'dashboard.Task.discarded',
     defaultMessage: 'Task discarded',
-  },
-  finalizeTask: {
-    id: 'dashboard.Task.finalizeTask',
-    defaultMessage: 'Finalize task',
   },
   discardTask: {
     id: 'dashboard.Task.discardTask',
@@ -171,14 +166,6 @@ const Task = ({ openDialog }: Props) => {
       minTokens: 0,
     });
   }, [colonyData, draftId, openDialog, task]);
-
-  const transform = useCallback(
-    mergePayload({
-      colonyAddress: colonyData && colonyData.colonyAddress,
-      draftId,
-    }),
-    [colonyData, draftId],
-  );
 
   const [handleCancelTask] = useCancelTaskMutation({
     variables: { input: { id: draftId } },
@@ -332,12 +319,9 @@ const Task = ({ openDialog }: Props) => {
           {!isDiscardConfirmDisplayed && (
             <>
               {canFinalizeTask(task, userRoles) && (
-                <ActionButton
-                  text={MSG.finalizeTask}
-                  submit={ActionTypes.TASK_FINALIZE}
-                  error={ActionTypes.TASK_FINALIZE_ERROR}
-                  success={ActionTypes.TASK_FINALIZE_SUCCESS}
-                  transform={transform}
+                <TaskFinalize
+                  draftId={draftId}
+                  colonyAddress={colonyData.colonyAddress}
                 />
               )}
               {isFinalized(task) && (
