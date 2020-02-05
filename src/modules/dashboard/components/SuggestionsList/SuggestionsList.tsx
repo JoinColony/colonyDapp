@@ -190,13 +190,14 @@ const SuggestionsList = ({
   );
 
   return loading || isFetchingDomains ? (
-    <SpinnerLoader size="medium" />
+    <SpinnerLoader appearance={{ size: 'medium' }} />
   ) : (
     <>
       <div className={styles.filterContainer}>
         <Select
-          connect={false}
           appearance={{ alignOptions: 'right', theme: 'alt' }}
+          connect={false}
+          elementOnly
           form={{ setFieldValue: handleSetFilterOption }}
           options={suggestionsFilterSelectOptions}
           name="suggestionsFilter"

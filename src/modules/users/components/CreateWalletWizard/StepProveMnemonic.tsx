@@ -82,15 +82,24 @@ const StepProveMnemonic = ({
           proofWord1: yup
             .string()
             .required()
-            .oneOf([mnemonicWords[chosenProofWords[0]]], MSG.errorWrongWord),
+            .oneOf(
+              [mnemonicWords[chosenProofWords[0]]],
+              () => MSG.errorWrongWord,
+            ),
           proofWord2: yup
             .string()
             .required()
-            .oneOf([mnemonicWords[chosenProofWords[1]]], MSG.errorWrongWord),
+            .oneOf(
+              [mnemonicWords[chosenProofWords[1]]],
+              () => MSG.errorWrongWord,
+            ),
           proofWord3: yup
             .string()
             .required()
-            .oneOf([mnemonicWords[chosenProofWords[2]]], MSG.errorWrongWord),
+            .oneOf(
+              [mnemonicWords[chosenProofWords[2]]],
+              () => MSG.errorWrongWord,
+            ),
         })}
         validateOnBlur={false}
         validateOnChange={false}

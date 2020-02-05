@@ -1,8 +1,10 @@
-import { MessageDescriptor, MessageValues } from 'react-intl';
+import { MessageDescriptor } from 'react-intl';
 import React, { ReactNode } from 'react';
 
 import Radio, { Appearance as RadioAppearance } from '~core/Fields/Radio';
+import { SimpleMessageValues } from '~types/index';
 import { getMainClasses } from '~utils/css';
+
 import styles from './RadioGroup.css';
 
 export interface RadioOption {
@@ -17,11 +19,11 @@ export interface RadioOption {
   /** Help text (will appear next to label text) */
   help?: string | MessageDescriptor;
   /** Values for help text (react-intl interpolation) */
-  helpValues?: MessageValues;
+  helpValues?: SimpleMessageValues;
   /** Label text */
   label: string | MessageDescriptor;
   /** Values for label text (react-intl interpolation) */
-  labelValues?: MessageValues;
+  labelValues?: SimpleMessageValues;
   /** Style object for the visible radio */
   radioStyle?: { [k: string]: string };
   /** Standard HTML input value */
@@ -55,7 +57,7 @@ const RadioGroup = ({
       <Radio
         appearance={appearance}
         checked={currentlyCheckedValue === value}
-        connect={String(connect)}
+        connect={connect}
         key={value}
         name={name}
         value={value}

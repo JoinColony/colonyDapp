@@ -72,7 +72,7 @@ const MSG = defineMessages({
 });
 
 export const validationSchema = yup.object({
-  tokenAddress: yup.string().address(MSG.invalidAddress),
+  tokenAddress: yup.string().address(() => MSG.invalidAddress),
   tokenSymbol: yup.string().max(6),
   tokenName: yup.string(),
 });
@@ -165,12 +165,7 @@ const StepSelectToken = ({
                   <Input
                     name="tokenSymbol"
                     label={MSG.tokenSymbol}
-                    hint={
-                      <Heading
-                        appearance={{ size: 'small', weight: 'thin' }}
-                        text={MSG.symbolHint}
-                      />
-                    }
+                    help={MSG.symbolHint}
                   />
                 </div>
               </>

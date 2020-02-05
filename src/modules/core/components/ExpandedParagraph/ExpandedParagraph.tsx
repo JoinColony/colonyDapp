@@ -1,9 +1,10 @@
 import React, { ReactNode, useState } from 'react';
-import { defineMessages, MessageDescriptor, MessageValues } from 'react-intl';
+import { defineMessages, MessageDescriptor } from 'react-intl';
 
 import Button from '~core/Button';
-
+import { SimpleMessageValues } from '~types/index';
 import { multiLineTextEllipsis } from '~utils/strings';
+
 import styles from './ExpandedParagraph.css';
 
 const MSG = defineMessages({
@@ -21,11 +22,11 @@ interface Props {
   /** A string or a `messageDescriptor` that makes up the "show more" control */
   expandText?: MessageDescriptor | string;
   /** Message descriptor Values for the "show more" control text (react-intl interpolation) */
-  expandTextValues?: MessageValues;
+  expandTextValues?: SimpleMessageValues;
   /** A string or a `messageDescriptor` that makes up the "show less" control */
   contractText?: MessageDescriptor | string;
   /** Message descriptor Values for the "show less" control text (react-intl interpolation) */
-  contractTextValues?: MessageValues;
+  contractTextValues?: SimpleMessageValues;
   /*
    * This contains a long text paragraph that initially gets shown
    * in a shortened version that can be extended clicking a more button

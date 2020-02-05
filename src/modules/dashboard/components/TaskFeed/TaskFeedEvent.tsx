@@ -1,10 +1,5 @@
 import React, { useMemo } from 'react';
-import {
-  defineMessages,
-  FormattedMessage,
-  injectIntl,
-  IntlShape,
-} from 'react-intl';
+import { defineMessages, FormattedMessage, useIntl } from 'react-intl';
 import BigNumber from 'bn.js';
 import moveDecimal from 'move-decimal-point';
 import formatDate from 'sugar-date/date/format';
@@ -159,8 +154,8 @@ const TaskFeedEventDomainSet = ({
   initiator: {
     profile: { walletAddress },
   },
-  intl: { formatMessage },
-}: EventProps<SetTaskDomainEvent> & { intl: IntlShape }) => {
+}: EventProps<SetTaskDomainEvent>) => {
+  const { formatMessage } = useIntl();
   const domain = useSelector(domainSelector, [colonyAddress, ethDomainId]);
   const domainName =
     ethDomainId === ROOT_DOMAIN
@@ -445,7 +440,7 @@ const TaskFeedEventWorkerUnassigned = ({
 );
 
 const FEED_EVENT_COMPONENTS = {
-  [EventType.SetTaskDomain]: injectIntl(TaskFeedEventDomainSet),
+  [EventType.SetTaskDomain]: TaskFeedEventDomainSet,
   [EventType.SetTaskDueDate]: TaskFeedEventDueDateSet,
   [EventType.SetTaskPayout]: TaskFeedEventPayoutSet,
   [EventType.RemoveTaskPayout]: TaskFeedEventPayoutRemoved,

@@ -1,5 +1,5 @@
-import { IntlShape, defineMessages, injectIntl } from 'react-intl';
-import React from 'react';
+import React, { HTMLAttributes } from 'react';
+import { defineMessages, useIntl } from 'react-intl';
 
 const MSG = defineMessages({
   timePhrase: {
@@ -14,17 +14,16 @@ const MSG = defineMessages({
   },
 });
 
-interface Props {
-  /** @ignore injected by `injectIntl` */
-  intl: IntlShape;
-
+interface Props extends HTMLAttributes<HTMLSpanElement> {
   /** Number of seconds for the duration. */
   value: number;
 }
 
 const displayName = 'Duration';
 
-const Duration = ({ intl: { formatMessage }, value, ...rest }: Props) => {
+const Duration = ({ value, ...rest }: Props) => {
+  const { formatMessage } = useIntl();
+
   let seconds = value;
   const days = Math.floor(seconds / (3600 * 24));
   seconds -= days * 3600 * 24;
@@ -48,4 +47,4 @@ const Duration = ({ intl: { formatMessage }, value, ...rest }: Props) => {
 
 Duration.displayName = displayName;
 
-export default injectIntl(Duration);
+export default Duration;

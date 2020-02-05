@@ -125,7 +125,7 @@ const ColonyPermissionsEditDialog = ({
                   <UserInfo
                     userAddress={userAddress}
                     user={user}
-                    placeholder={MSG.placeholder}
+                    placeholder={MSG.selectUser}
                   >
                     {user && user.profile
                       ? user.profile.displayName || user.profile.username

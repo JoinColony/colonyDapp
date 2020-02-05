@@ -1,12 +1,11 @@
-import React, { Component, SyntheticEvent } from 'react';
-import { MessageDescriptor, MessageValues } from 'react-intl';
+import React, { useCallback, InputHTMLAttributes } from 'react';
 import Cleave from 'cleave.js/react';
+import { CleaveOptions } from 'cleave.js/options';
+import { ChangeEvent } from 'cleave.js/react/props';
 
 import { getMainClasses } from '~utils/css';
 
 import styles from './InputComponent.css';
-
-import { CleaveOptions } from './types';
 
 export type Appearance = {
   theme?: 'fat' | 'underlined' | 'minimal' | 'dotted';
@@ -18,10 +17,8 @@ export type Appearance = {
 type CleaveHTMLInputElement = HTMLInputElement & { rawValue: string };
 
 // Left intentionally unsealed (passing props)
-interface Props {
-  /** Values for html title (react-intl interpolation) */
-  placeholderValues?: MessageValues;
-
+export interface Props
+  extends Omit<InputHTMLAttributes<HTMLInputElement>, 'form'> {
   /** Appearance object */
   appearance?: Appearance;
 
@@ -31,68 +28,53 @@ interface Props {
   /** Input field name (form variable) */
   name: string;
 
-  /** @ignore Will be injected by `asField` */
-  placeholder?: string | MessageDescriptor;
-
-  /** @ignore Will be injected by `asField` */
-  isSubmitting?: boolean;
-
   /** Pass a ref to the `<input>` element */
   innerRef?: (ref: HTMLInputElement | null) => void;
-
-  /** @ignore Standard input field property */
-  onChange?: (
-    arg0:
-      | SyntheticEvent<HTMLInputElement>
-      | SyntheticEvent<CleaveHTMLInputElement>,
-  ) => void;
 }
 
-class InputComponent extends Component<Props> {
-  static displayName = 'InputComponent';
+const displayName = 'InputComponent';
 
-  handleCleaveChange = (evt: SyntheticEvent<CleaveHTMLInputElement>): void => {
-    const {
-      props: { onChange },
-    } = this;
-    // We are reassigning the value here as cleave just adds a `rawValue` prop
-    // eslint-disable-next-line no-param-reassign
-    evt.currentTarget.value = evt.currentTarget.rawValue;
-    if (onChange) onChange(evt);
-  };
+const InputComponent = ({
+  appearance,
+  formattingOptions,
+  innerRef,
+  onChange,
+  placeholder,
+  ...props
+}: Props) => {
+  const handleCleaveChange = useCallback(
+    (evt: ChangeEvent<CleaveHTMLInputElement>): void => {
+      // We are reassigning the value here as cleave just adds a `rawValue` prop
+      // eslint-disable-next-line no-param-reassign
+      evt.currentTarget.value = evt.currentTarget.rawValue;
+      if (onChange) onChange(evt);
+    },
+    [onChange],
+  );
 
-  render() {
-    const {
-      appearance,
-      formattingOptions,
-      innerRef,
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      isSubmitting,
-      placeholder,
-      ...props
-    } = this.props;
-
-    if (formattingOptions) {
-      return (
-        <Cleave
-          {...props}
-          className={getMainClasses(appearance, styles)}
-          htmlRef={innerRef}
-          options={formattingOptions}
-          onChange={this.handleCleaveChange}
-          placeholder={placeholder}
-        />
-      );
-    }
+  if (formattingOptions) {
     return (
-      <input
-        className={getMainClasses(appearance, styles)}
-        placeholder={placeholder}
-        ref={innerRef}
+      <Cleave
         {...props}
+        className={getMainClasses(appearance, styles)}
+        htmlRef={innerRef}
+        options={formattingOptions}
+        onChange={handleCleaveChange}
+        placeholder={placeholder}
       />
     );
   }
-}
+  return (
+    <input
+      className={getMainClasses(appearance, styles)}
+      onChange={onChange}
+      placeholder={placeholder}
+      ref={innerRef}
+      {...props}
+    />
+  );
+};
+
+InputComponent.displayName = displayName;
 
 export default InputComponent;

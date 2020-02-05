@@ -1,5 +1,5 @@
 import React, { Fragment } from 'react';
-import { injectIntl, IntlShape, MessageDescriptor } from 'react-intl';
+import { MessageDescriptor, useIntl } from 'react-intl';
 
 import styles from './BreadCrumb.css';
 
@@ -10,12 +10,12 @@ interface Props {
    * of strings gets passed in. The last active element gets highlighted.
    */
   elements: (string | MessageDescriptor)[];
-  intl: IntlShape;
 }
 
 const displayName = 'core.BreadCrumb';
 
-const BreadCrumb = ({ elements, intl: { formatMessage } }: Props) => {
+const BreadCrumb = ({ elements }: Props) => {
+  const { formatMessage } = useIntl();
   return (
     <div className={styles.crumbContainer}>
       {elements.map((crumb, i) => {
@@ -43,4 +43,4 @@ const BreadCrumb = ({ elements, intl: { formatMessage } }: Props) => {
 
 BreadCrumb.displayName = displayName;
 
-export default injectIntl(BreadCrumb);
+export default BreadCrumb;

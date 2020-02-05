@@ -1,13 +1,19 @@
-import { MessageDescriptor, MessageValues } from 'react-intl';
 import React, { ReactNode, useCallback, useState } from 'react';
 import createDate from 'sugar-date/date/create';
 import formatDate from 'sugar-date/date/format';
 
+import { asField } from '~core/Fields';
 import { InputComponentAppearance } from '~core/Fields/Input';
-import Popover, { PopoverTriggerType } from '~core/Popover';
+import { AsFieldEnhancedProps } from '~core/Fields/types';
+import Popover from '~core/Popover';
+import {
+  PopoverChildFnProps,
+  PopoverTriggerElementType,
+} from '~core/Popover/types';
+
 import DatePickerContent from './DatePickerContent';
 import InputField from './InputField';
-import { asField } from '~core/Fields';
+
 import styles from './DatePicker.css';
 
 export type Close = (data?: any, modifiers?: { cancelled: boolean }) => void;
@@ -19,48 +25,14 @@ interface Props {
   /** Whether the picker should close when a day is selected */
   closeOnDayPick?: boolean;
 
-  /* eslint-disable react/no-unused-prop-types */
-
-  /** Connect to form state (will inject `$value`, `$id`, `$error`, `$touched`), is `true` by default */
-  connect?: boolean;
-
-  /* eslint-enable react/no-unused-prop-types */
-
-  /** Just render the `<input>` element without label */
-  elementOnly?: boolean;
-
-  /** Input field name (form variable) */
-  name: string;
-
-  /** Help text (will appear next to label text) */
-  help?: string | MessageDescriptor;
-
-  /** Values for help text (react-intl interpolation) */
-  helpValues?: MessageValues;
-
-  /** Label text */
-  label: string | MessageDescriptor;
-
-  /** Values for label text (react-intl interpolation) */
-  labelValues?: MessageValues;
-
-  /** Placeholder for input */
-  placeholder?: string;
-
   /** Render content below the date picker, inside the popover. Useful to combine with `preventClose` */
   renderContentFooter?: (close: Close, currentDate?: Date) => ReactNode;
 
   /** Custom trigger to render (render prop), see [Popover](#popover) for details */
-  renderTrigger?: PopoverTriggerType;
+  renderTrigger?: PopoverTriggerElementType;
 
   /** Whether or not to show the Popover's arrow */
   showArrow?: boolean;
-
-  /** @ignore Will be injected by `asField` */
-  $value?: Date;
-
-  /** @ignore Will be injected by `asField` */
-  setValue: (val?: Date) => void;
 
   /** Should it set the form value on pick. Useful when using a button to confirm choice & submit in rendered footer */
   setValueOnPick?: boolean;
@@ -75,18 +47,16 @@ const DatePicker = ({
   closeOnDayPick,
   elementOnly,
   help,
-  helpValues,
   label,
-  labelValues,
   name,
   placeholder,
   renderContentFooter,
   renderTrigger,
   showArrow,
-  setValue,
   setValueOnPick,
   $value,
-}: Props) => {
+  setValue,
+}: Props & AsFieldEnhancedProps) => {
   // Handles state of the input field if present
   const [inputValue, setInputValue] = useState('');
   // currentDate is a temporary value to represent the value when it's not set yet (active day in date picker)
@@ -95,7 +65,7 @@ const DatePicker = ({
   // Handle day picking via daypicker
   const handleDayPick = useCallback(
     day => {
-      if (setValueOnPick) {
+      if (setValueOnPick && setValue) {
         setValue(day);
       }
       setCurrentDate(day);
@@ -130,14 +100,18 @@ const DatePicker = ({
     */
       const date = day || currentDate;
       if (date) {
-        setValue(date);
+        if (setValue) {
+          setValue(date);
+        }
         setInputValue(getShortDate(date));
         setCurrentDate(undefined);
         return;
       }
       // User removed the input value and closed
       if (!inputValue) {
-        setValue(undefined);
+        if (setValue) {
+          setValue(undefined);
+        }
         setInputValue('');
         setCurrentDate(undefined);
       }
@@ -170,7 +144,6 @@ const DatePicker = ({
   return (
     <div className={styles.main}>
       <Popover
-        className={styles.picker}
         onClose={handlePopoverClose}
         placement="bottom"
         retainRefFocus
@@ -178,17 +151,13 @@ const DatePicker = ({
         content={({ close }) => renderDatePickerContent(close)}
       >
         {renderTrigger ||
-          // eslint-disable-next-line react/prop-types
-          (({ ref, ...props }) => (
-            // @ts-ignore
+          (({ ref, ...props }: PopoverChildFnProps) => (
             <InputField
               appearance={appearance}
               elementOnly={elementOnly}
               name={name}
               help={help}
-              helpValues={helpValues}
               label={label}
-              labelValues={labelValues}
               innerRef={ref}
               onChange={handleInputChange}
               placeholder={placeholder}
@@ -203,4 +172,4 @@ const DatePicker = ({
 
 DatePicker.displayName = displayName;
 
-export default asField()(DatePicker);
+export default asField<Props>()(DatePicker);

@@ -143,7 +143,7 @@ const TaskEditDialog = ({
       .object()
       .shape({
         profile: yup.object().shape({
-          walletAddress: yup.string().required(MSG.workerRequiredError),
+          walletAddress: yup.string().required(() => MSG.workerRequiredError),
         }),
       })
       .nullable()
@@ -153,12 +153,12 @@ const TaskEditDialog = ({
         .array()
         .of(
           yup.object().shape({
-            token: yup.string().required(MSG.tokenRequiredError),
+            token: yup.string().required(() => MSG.tokenRequiredError),
             amount: yup
               .number()
-              .typeError(MSG.amountPositiveError)
-              .required(MSG.amountRequiredError)
-              .moreThan(0, MSG.amountPositiveError),
+              .typeError(() => MSG.amountPositiveError)
+              .required(() => MSG.amountRequiredError)
+              .moreThan(0, () => MSG.amountPositiveError),
           }),
         )
         .min(minTokens)
@@ -410,7 +410,7 @@ const TaskEditDialog = ({
                             <Payout
                               canRemove={canRemove}
                               colonyAddress={colonyAddress}
-                              // wiill have at least one of `id` or `token`
+                              // will have at least one of `id` or `token`
                               key={payout.id || payout.token}
                               name={`payouts.${index}`}
                               payout={payout}

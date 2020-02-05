@@ -85,7 +85,7 @@ const InboxContainer = ({ full, close, notifications }: Props) => {
         <Button
           appearance={{ theme: 'blue' }}
           text={MSG.markAllAsRead}
-          onClick={markAllAsRead}
+          onClick={() => markAllAsRead()}
           disabled={!hasInboxItems}
         />
       </div>

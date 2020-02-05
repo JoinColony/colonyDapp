@@ -1,9 +1,9 @@
-import React, { FC, HTMLAttributes } from 'react';
+import React, { HTMLAttributes } from 'react';
 import BN from 'bn.js';
 import { fromWei } from 'ethjs-unit';
 import { UnifiedNumberFormatOptions } from '@formatjs/intl-unified-numberformat';
 import moveDecimal from 'move-decimal-point';
-import { injectIntl, WithIntlProps } from 'react-intl';
+import { useIntl } from 'react-intl';
 import { Unit } from 'web3-utils';
 
 interface Props extends HTMLAttributes<HTMLSpanElement> {
@@ -36,11 +36,11 @@ const displayName = 'AbbreviatedNumeral';
  */
 const AbbreviatedNumeral = ({
   formatOptions = {},
-  intl: { locale },
   value,
   ethUnit,
   ...rest
-}: WithIntlProps<Props>) => {
+}: Props) => {
+  const { locale } = useIntl();
   const convertedNum =
     typeof ethUnit === 'string'
       ? fromWei(value.toString(10), ethUnit)
@@ -55,4 +55,4 @@ const AbbreviatedNumeral = ({
 
 AbbreviatedNumeral.displayName = displayName;
 
-export default injectIntl(AbbreviatedNumeral) as FC<Props>;
+export default AbbreviatedNumeral;

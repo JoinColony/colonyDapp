@@ -1,21 +1,26 @@
-import { MessageDescriptor, MessageValues, defineMessages } from 'react-intl';
 import React, { Component, KeyboardEvent } from 'react';
+import { MessageDescriptor, defineMessages } from 'react-intl';
 
 import { getMainClasses } from '~utils/css';
+import {
+  DOWN,
+  ENTER,
+  ESC,
+  SPACE,
+  UP,
+  TAB,
+  SimpleMessageValues,
+} from '~types/index';
 
-import styles from './Select.css';
-
-import Icon from '../../Icon';
-
+import SelectListBox from './SelectListBox';
+import { Appearance } from './types';
 import asField from '../asField';
 import InputLabel from '../InputLabel';
 import InputStatus from '../InputStatus';
+import { AsFieldEnhancedProps } from '../types';
+import Icon from '../../Icon';
 
-import { Appearance } from './types';
-
-import SelectListBox from './SelectListBox';
-
-import { DOWN, ENTER, ESC, SPACE, UP, TAB } from '~types/index';
+import styles from './Select.css';
 
 const MSG = defineMessages({
   expandIconHTMLTitle: {
@@ -29,80 +34,17 @@ interface Props {
   options: {
     label: MessageDescriptor | string;
     value: string;
-    labelValues?: MessageValues;
+    labelValues?: SimpleMessageValues;
   }[];
 
   /** Appearance object */
-  appearance: Appearance;
-
-  /** Connect to form state (will inject `$value`, `$id`, `$error`, `$touched`), is `true` by default */
-  connect?: boolean;
+  appearance?: Appearance;
 
   /** Should `select` be disabled */
   disabled?: boolean;
 
-  /** Just render the `<input>` element without label */
-  elementOnly?: boolean;
-
-  /** Help text (will appear next to label text) */
-  help?: string | MessageDescriptor;
-
-  /** Values for help text (react-intl interpolation) */
-  helpValues?: MessageValues;
-
   /** Pass a ref to the `<input>` element */
   innerRef?: (ref: HTMLElement | null) => void;
-
-  /** Label text */
-  label: string | MessageDescriptor;
-
-  /** Values for label text (react-intl interpolation) */
-  labelValues?: MessageValues;
-
-  /** Input field name (form variable) */
-  name: string;
-
-  /** Placeholder for input */
-  placeholder?: string;
-
-  /** Will be injected by `asField`, or must be supplied if unconnected */
-  $value: string;
-
-  /** Will be injected by `asField`, or must be manually supplied if unconnected */
-  setValue: (val: any) => void;
-
-  /** Will be injected by `asField`, used for InputStatus */
-  status?: string | MessageDescriptor;
-
-  /** Will be injected by `asField`, used for InputStatus */
-  statusValues?: MessageValues;
-
-  /** @ignore Will be injected by `asField` */
-  $id: string;
-
-  /** @ignore Will be injected by `asField` */
-  $error?: string;
-
-  /** @ignore Will be injected by `asField` */
-  $touched?: boolean;
-
-  /** @ignore Will be injected by `asField` */
-  isSubmitting?: boolean;
-
-  /** @ignore Will be injected by `asField` */
-  'aria-labelledby': string;
-
-  /** @ignore Will be injected by `asField` */
-  formatIntl: (
-    text: string | MessageDescriptor,
-    textValues?: MessageValues,
-  ) => string;
-
-  /** @ignore Will be injected by `asField` */
-  setError: (val: any) => void;
-
-  /** @ignore Standard input field property */
-  onChange: (val: any) => void;
 }
 
 type State = {
@@ -110,14 +52,14 @@ type State = {
   selectedOption: number;
 };
 
-class Select extends Component<Props, State> {
+class Select extends Component<Props & AsFieldEnhancedProps, State> {
   comboboxNode?: HTMLElement | null;
 
   wrapperNode?: HTMLElement | null;
 
   static displayName = 'Select';
 
-  static defaultProps = {
+  static defaultProps: Partial<Props> = {
     appearance: { alignOptions: 'left', theme: 'default' },
     options: [],
   };
@@ -270,8 +212,10 @@ class Select extends Component<Props, State> {
       this.close();
       return;
     }
-    const { value } = options[selectedOption];
-    setValue(value);
+    if (setValue) {
+      const { value } = options[selectedOption];
+      setValue(value);
+    }
     this.close();
   };
 
@@ -300,7 +244,6 @@ class Select extends Component<Props, State> {
       placeholder,
       name,
       status,
-      statusValues,
       /* eslint-disable @typescript-eslint/no-unused-vars */
       $error,
       $value,
@@ -329,7 +272,7 @@ class Select extends Component<Props, State> {
             aria-haspopup="listbox"
             aria-controls={listboxId}
             aria-expanded={isOpen}
-            aria-label={label}
+            aria-label={formatIntl(label)}
             aria-labelledby={ariaLabelledby}
             aria-disabled={disabled}
             tabIndex={0}
@@ -369,7 +312,6 @@ class Select extends Component<Props, State> {
           <InputStatus
             appearance={{ theme: 'minimal' }}
             status={status}
-            statusValues={statusValues}
             error={$error}
           />
         )}
@@ -378,4 +320,4 @@ class Select extends Component<Props, State> {
   }
 }
 
-export default (asField() as any)(Select);
+export default asField<Props>()(Select);

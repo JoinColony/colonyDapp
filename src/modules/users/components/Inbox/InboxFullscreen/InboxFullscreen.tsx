@@ -19,7 +19,7 @@ const InboxFullscreen = () => {
   return (
     <CenteredTemplate appearance={{ theme: 'alt' }}>
       {loading ? (
-        <SpinnerLoader size="tiny" />
+        <SpinnerLoader appearance={{ size: 'small' }} />
       ) : (
         <InboxContainer full notifications={notifications} />
       )}

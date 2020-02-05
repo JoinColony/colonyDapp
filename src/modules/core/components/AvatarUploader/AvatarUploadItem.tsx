@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { defineMessages } from 'react-intl';
 
+import { AsFieldEnhancedProps } from '~core/Fields/types';
 import { log } from '~utils/debug';
 
 import styles from './AvatarUploadItem.css';
@@ -37,20 +38,14 @@ interface Props {
 
   /** @ignore Will be injected by `asField` */
   $value: UploadFile;
-
-  /** @ignore Will be injected by `asField` */
-  $error?: string;
-
-  /** @ignore Will be injected by `asField` */
-  setValue: (val: any) => void;
 }
 
-class AvatarUploadItem extends Component<Props> {
+class AvatarUploadItem extends Component<Props & AsFieldEnhancedProps> {
   readFiles: (files: any[]) => Promise<any[]>;
 
   static displayName = 'AvatarUploadItem';
 
-  constructor(props: Props) {
+  constructor(props) {
     super(props);
     const { accept, maxFileSize } = props;
     this.readFiles = fileReader({
@@ -76,7 +71,7 @@ class AvatarUploadItem extends Component<Props> {
     const { file } = $value;
     try {
       readFile = await this.read(file);
-      setValue({ ...$value, preview: readFile.data });
+      if (setValue) setValue({ ...$value, preview: readFile.data });
       await upload(readFile);
     } catch (e) {
       log(e);
@@ -84,7 +79,7 @@ class AvatarUploadItem extends Component<Props> {
       /**
        * @todo Improve error modes for uploading avatars.
        */
-      setValue({ ...$value, error: 'uploadError' });
+      if (setValue) setValue({ ...$value, error: 'uploadError' });
     }
     // After successfully uploading the file we'd like to immediately remove it again.
     reset();
@@ -121,4 +116,6 @@ class AvatarUploadItem extends Component<Props> {
 const validate = (value: UploadFile) =>
   value.error ? MSG[value.error] : undefined;
 
-export default asField({ alwaysConnected: true, validate })(AvatarUploadItem);
+export default asField<Props>({ alwaysConnected: true, validate })(
+  AvatarUploadItem,
+);

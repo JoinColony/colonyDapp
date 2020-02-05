@@ -45,7 +45,7 @@ const MSG = defineMessages({
 });
 
 const validationSchema = yup.object({
-  connectwalletmnemonic: yup.string().required(MSG.mnemonicRequired),
+  connectwalletmnemonic: yup.string().required(() => MSG.mnemonicRequired),
 });
 
 type FormValues = {

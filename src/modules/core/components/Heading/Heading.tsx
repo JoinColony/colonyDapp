@@ -1,11 +1,7 @@
-import React, { ReactNode } from 'react';
-import {
-  IntlShape,
-  MessageDescriptor,
-  MessageValues,
-  injectIntl,
-} from 'react-intl';
+import React, { HTMLAttributes, ReactNode, useMemo } from 'react';
+import { MessageDescriptor, useIntl } from 'react-intl';
 
+import { SimpleMessageValues } from '~types/index';
 import { getMainClasses } from '~utils/css';
 
 import styles from './Heading.css';
@@ -19,7 +15,7 @@ type Appearance = {
   weight?: 'thin' | 'medium' | 'bold';
 };
 
-interface Props {
+interface Props extends HTMLAttributes<HTMLHeadingElement> {
   /** Appearance object */
   appearance?: Appearance;
 
@@ -33,39 +29,18 @@ interface Props {
   text?: MessageDescriptor | string;
 
   /** Values for text (react-intl interpolation) */
-  textValues?: MessageValues;
-
-  /** @ignore injected by `react-intl` */
-  intl: IntlShape;
+  textValues?: SimpleMessageValues;
 }
-
-const getText = (
-  children?: Node,
-  text?: MessageDescriptor | string,
-  textValues?: any,
-  intlShape?: IntlShape,
-) => {
-  if (children) {
-    return children;
-  }
-  if (!text) {
-    return '';
-  }
-  if (typeof text === 'string') {
-    return text;
-  }
-  return intlShape.formatMessage(text, textValues);
-};
 
 const Heading = ({
   appearance = { size: 'huge' },
   children,
-  intl,
   tagName,
   text,
   textValues,
   ...props
 }: Props) => {
+  const { formatMessage } = useIntl();
   const { size } = appearance;
   const HeadingElement: any =
     tagName ||
@@ -77,7 +52,18 @@ const Heading = ({
       small: 'h5',
       tiny: 'h6',
     }[size || 'huge'];
-  const value = getText(children as any, text, textValues, intl);
+  const value = useMemo(() => {
+    if (children) {
+      return children;
+    }
+    if (!text) {
+      return '';
+    }
+    if (typeof text === 'string') {
+      return text;
+    }
+    return formatMessage(text, textValues);
+  }, [children, formatMessage, text, textValues]);
   return (
     <HeadingElement // If `value` is of type `Node` (i.e. children prop), don't add broken title.
       title={typeof value === 'string' ? value : null}
@@ -91,4 +77,4 @@ const Heading = ({
 
 Heading.displayName = displayName;
 
-export default injectIntl(Heading);
+export default Heading;

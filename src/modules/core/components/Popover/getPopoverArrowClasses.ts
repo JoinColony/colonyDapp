@@ -1,7 +1,7 @@
 import camelcase from 'camelcase';
+import { PopperProps } from 'react-popper';
 
 import { capitalize } from '~utils/strings';
-import { PopoverPlacementType } from './types';
 
 /**
  * This is a stripped down version of the `getMainClasses` method, that is specifically
@@ -22,7 +22,7 @@ import { PopoverPlacementType } from './types';
  */
 const getPopoverArrowClasses = (
   { theme = undefined }: any = {},
-  placement: PopoverPlacementType = 'auto',
+  placement: PopperProps['placement'] = 'auto',
   styleObject: { [k: string]: string } = {},
 ) => {
   /*

@@ -1,6 +1,6 @@
 import React, { useCallback } from 'react';
 import { FormikProps, FormikHelpers } from 'formik';
-import { defineMessages } from 'react-intl';
+import { defineMessages, useIntl } from 'react-intl';
 import * as yup from 'yup';
 
 import Button from '~core/Button';
@@ -57,7 +57,6 @@ interface FormValues {
 const validationSchema = yup.object({
   tokenAddress: yup
     .string()
-    // @ts-ignore
     .address()
     // @todo validate against entering a duplicate address
     .required(),
@@ -71,6 +70,8 @@ const TokenEditDialog = ({
   close,
   removeTokenFn,
 }: Props) => {
+  const { formatMessage } = useIntl();
+
   const handleSubmit = useCallback(
     async (
       { tokenAddress }: FormValues,
@@ -80,11 +81,11 @@ const TokenEditDialog = ({
         await addTokenFn(createAddress(tokenAddress));
         resetForm();
       } catch (e) {
-        setFieldError('tokenAddress', MSG.errorAddingToken);
+        setFieldError('tokenAddress', formatMessage(MSG.errorAddingToken));
         setSubmitting(false);
       }
     },
-    [addTokenFn],
+    [addTokenFn, formatMessage],
   );
   return (
     <Dialog cancel={cancel}>

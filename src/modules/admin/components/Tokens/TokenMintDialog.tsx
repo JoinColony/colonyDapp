@@ -105,7 +105,7 @@ const TokenMintDialog = ({
             />
             <Button
               appearance={{ theme: 'primary', size: 'large' }}
-              onClick={handleSubmit}
+              onClick={() => handleSubmit()}
               text={MSG.buttonConfirm}
               loading={isSubmitting}
               disabled={!isValid}

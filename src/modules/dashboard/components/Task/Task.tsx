@@ -311,7 +311,7 @@ const Task = ({ openDialog }: Props) => {
               appearance={{ theme: 'secondary', size: 'small' }}
               // @todo Use `ConfirmButton` for discard task button
               // confirmText={MSG.confirmText}
-              onClick={handleCancelTask}
+              onClick={() => handleCancelTask()}
               // onConfirmToggled={setDiscardConfirmDisplay}
               text={MSG.discardTask}
             />

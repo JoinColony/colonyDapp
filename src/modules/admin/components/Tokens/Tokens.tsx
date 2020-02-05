@@ -1,6 +1,5 @@
-import React, { useCallback, useMemo, useState } from 'react';
-import { defineMessages, injectIntl, IntlShape } from 'react-intl';
-import { compose } from 'recompose';
+import React, { FC, useCallback, useMemo, useState } from 'react';
+import { defineMessages, useIntl } from 'react-intl';
 import sortBy from 'lodash/sortBy';
 
 import { COLONY_TOTAL_BALANCE_DOMAIN_ID, ROLES } from '~constants';
@@ -45,27 +44,30 @@ const MSG = defineMessages({
   },
 });
 
-interface Props {
+interface InProps {
   canMintNativeToken?: boolean;
   colonyAddress: Address;
   domains: DomainsMapType;
-  intl: IntlShape;
   nativeTokenAddress: Address;
-  openDialog: (dialogName: string, dialogProps?: object) => DialogType;
   rootRoles: ROLES[];
   tokenAddresses: string[];
+}
+
+interface Props extends InProps {
+  openDialog: (dialogName: string, dialogProps?: object) => DialogType;
 }
 
 const Tokens = ({
   canMintNativeToken,
   colonyAddress,
   domains,
-  intl: { formatMessage },
   nativeTokenAddress,
   openDialog,
   rootRoles,
   tokenAddresses,
 }: Props) => {
+  const { formatMessage } = useIntl();
+
   const [selectedDomain, setSelectedDomain] = useState<string>(
     COLONY_TOTAL_BALANCE_DOMAIN_ID.toString(),
   );
@@ -221,9 +223,4 @@ const Tokens = ({
 
 Tokens.displayName = 'admin.Tokens';
 
-const enhance = compose(
-  withDialog(),
-  injectIntl,
-) as any;
-
-export default enhance(Tokens);
+export default withDialog()(Tokens) as FC<InProps>;

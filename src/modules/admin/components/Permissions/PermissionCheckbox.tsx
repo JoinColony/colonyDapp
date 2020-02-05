@@ -1,10 +1,5 @@
 import React, { useMemo } from 'react';
-import {
-  defineMessages,
-  FormattedMessage,
-  injectIntl,
-  IntlShape,
-} from 'react-intl';
+import { defineMessages, FormattedMessage, useIntl } from 'react-intl';
 import camelcase from 'camelcase';
 
 import { Checkbox } from '~core/Fields';
@@ -55,18 +50,12 @@ const MSG = defineMessages({
 interface Props {
   asterisk: boolean;
   disabled: boolean;
-  intl: IntlShape;
   role: string;
 }
 
 const displayName = 'admin.Permissions.PermissionCheckbox';
 
-const PermissionCheckbox = ({
-  asterisk,
-  disabled,
-  intl: { formatMessage },
-  role,
-}: Props) => {
+const PermissionCheckbox = ({ asterisk, disabled, role }: Props) => {
   const roleNameMessage = { id: `role.${role.toLowerCase()}` };
   const roleDescriptionMessage = useMemo(
     () =>
@@ -76,6 +65,9 @@ const PermissionCheckbox = ({
       },
     [role],
   );
+
+  const { formatMessage } = useIntl();
+
   const checkboxContent = useMemo(
     () => (
       <Checkbox
@@ -106,6 +98,7 @@ const PermissionCheckbox = ({
       roleNameMessage,
     ],
   );
+
   return disabled ? (
     <Popover
       appearance={{ theme: 'dark' }}
@@ -132,4 +125,4 @@ const PermissionCheckbox = ({
 
 PermissionCheckbox.displayName = displayName;
 
-export default injectIntl(PermissionCheckbox);
+export default PermissionCheckbox;

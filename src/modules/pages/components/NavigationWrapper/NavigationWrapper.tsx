@@ -1,11 +1,13 @@
-import { MessageDescriptor, MessageValues, defineMessages } from 'react-intl';
+import { MessageDescriptor, defineMessages } from 'react-intl';
 import React, { ReactElement, cloneElement } from 'react';
 
 import Alert from '~core/Alert';
+import { useLoggedInUser } from '~data/index';
+import { SimpleMessageValues } from '~types/index';
+import { getMainClasses } from '~utils/css';
+
 import HistoryNavigation from './HistoryNavigation';
 import UserNavigation from './UserNavigation';
-import { getMainClasses } from '~utils/css';
-import { useLoggedInUser } from '~data/index';
 
 import styles from './NavigationWrapper.css';
 
@@ -48,7 +50,9 @@ interface Props {
   /*
    * Works in conjuction with the above to provide message descriptor selector values
    */
-  backTextValues?: MessageValues | ((props: object) => MessageValues);
+  backTextValues?:
+    | SimpleMessageValues
+    | ((props: object) => SimpleMessageValues);
 
   /*
    * Appearance object

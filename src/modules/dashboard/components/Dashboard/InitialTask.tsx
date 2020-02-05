@@ -1,14 +1,11 @@
-import {
-  MessageDescriptor,
-  FormattedMessageValues,
-  FormattedMessage,
-} from 'react-intl';
+import { MessageDescriptor, FormattedMessage } from 'react-intl';
 import React from 'react';
 import { useHistory } from 'react-router-dom';
 
-import unfinishedProfileOpener from '~users/UnfinishedProfile';
 import { Table, TableBody, TableRow, TableCell } from '~core/Table';
+import { ComplexMessageValues } from '~types/index';
 import HookedUserAvatar from '~users/HookedUserAvatar';
+import unfinishedProfileOpener from '~users/UnfinishedProfile';
 
 import styles from './InitialTask.css';
 import taskListItemStyles from '../TaskList/TaskListItem.css';
@@ -17,7 +14,7 @@ const UserAvatar = HookedUserAvatar();
 
 export interface InitialTaskType {
   title: MessageDescriptor;
-  titleValues?: FormattedMessageValues;
+  titleValues?: ComplexMessageValues;
   walletAddress: string;
 }
 
