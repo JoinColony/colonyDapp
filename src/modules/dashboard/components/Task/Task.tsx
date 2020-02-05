@@ -27,6 +27,7 @@ import {
 import LoadingTemplate from '~pages/LoadingTemplate';
 import { useDataFetcher, useTransformer } from '~utils/hooks';
 import { NOT_FOUND_ROUTE } from '~routes/index';
+import { ROOT_DOMAIN } from '~constants';
 
 import { getUserRoles } from '../../../transformers';
 import {
@@ -249,7 +250,7 @@ const Task = ({ openDialog }: Props) => {
                 colonyAddress={colony.colonyAddress}
                 // Disable the change of domain for now
                 disabled
-                ethDomainId={ethDomainId || 1}
+                ethDomainId={ethDomainId || ROOT_DOMAIN}
                 draftId={draftId}
                 payouts={payouts}
               />
@@ -322,6 +323,8 @@ const Task = ({ openDialog }: Props) => {
                 <TaskFinalize
                   draftId={draftId}
                   colonyAddress={colonyData.colonyAddress}
+                  ethDomainId={ethDomainId || ROOT_DOMAIN}
+                  payouts={payouts}
                 />
               )}
               {isFinalized(task) && (
