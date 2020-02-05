@@ -1,8 +1,269 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`FileUpload component Renders initial component 1`] = `
-<FormikConnect(FieldArrayInner)
-  name="fileUpload"
-  render={[Function]}
-/>
+<Formik
+  initialValues={Object {}}
+  onSubmit={[Function]}
+>
+  <Component
+    help="Some help text"
+    label="Basic file upload"
+    maxFilesLimit={3}
+    name="fileUpload"
+  >
+    <FormikConnect(FieldArrayInner)
+      name="fileUpload"
+      render={[Function]}
+    >
+      <FieldArrayInner
+        formik={
+          Object {
+            "dirty": false,
+            "errors": Object {},
+            "getFieldMeta": [Function],
+            "getFieldProps": [Function],
+            "handleBlur": [Function],
+            "handleChange": [Function],
+            "handleReset": [Function],
+            "handleSubmit": [Function],
+            "initialErrors": Object {},
+            "initialStatus": undefined,
+            "initialTouched": Object {},
+            "initialValues": Object {},
+            "isSubmitting": false,
+            "isValid": true,
+            "isValidating": false,
+            "registerField": [Function],
+            "resetForm": [Function],
+            "setErrors": [Function],
+            "setFieldError": [Function],
+            "setFieldTouched": [Function],
+            "setFieldValue": [Function],
+            "setFormikState": [Function],
+            "setStatus": [Function],
+            "setSubmitting": [Function],
+            "setTouched": [Function],
+            "setValues": [Function],
+            "status": undefined,
+            "submitCount": 0,
+            "submitForm": [Function],
+            "touched": Object {},
+            "unregisterField": [Function],
+            "validateField": [Function],
+            "validateForm": [Function],
+            "validateOnBlur": true,
+            "validateOnChange": true,
+            "validateOnMount": false,
+            "values": Object {},
+          }
+        }
+        name="fileUpload"
+        render={[Function]}
+        validateOnChange={true}
+      >
+        <FileUpload
+          accept={
+            Array [
+              "image/svg+xml",
+              "image/png",
+              "image/jpeg",
+            ]
+          }
+          classNames={Object {}}
+          disableClick={false}
+          form={
+            Object {
+              "dirty": false,
+              "errors": Object {},
+              "getFieldMeta": [Function],
+              "getFieldProps": [Function],
+              "handleBlur": [Function],
+              "handleChange": [Function],
+              "handleReset": [Function],
+              "handleSubmit": [Function],
+              "initialErrors": Object {},
+              "initialStatus": undefined,
+              "initialTouched": Object {},
+              "initialValues": Object {},
+              "isSubmitting": false,
+              "isValid": true,
+              "isValidating": false,
+              "registerField": [Function],
+              "resetForm": [Function],
+              "setErrors": [Function],
+              "setFieldError": [Function],
+              "setFieldTouched": [Function],
+              "setFieldValue": [Function],
+              "setFormikState": [Function],
+              "setStatus": [Function],
+              "setSubmitting": [Function],
+              "setTouched": [Function],
+              "setValues": [Function],
+              "status": undefined,
+              "submitCount": 0,
+              "submitForm": [Function],
+              "touched": Object {},
+              "unregisterField": [Function],
+              "validateField": [Function],
+              "validateForm": [Function],
+              "validateOnBlur": true,
+              "validateOnChange": true,
+              "validateOnMount": false,
+              "values": Object {},
+            }
+          }
+          handleInsert={[Function]}
+          handleMove={[Function]}
+          handlePop={[Function]}
+          handlePush={[Function]}
+          handleRemove={[Function]}
+          handleReplace={[Function]}
+          handleSwap={[Function]}
+          handleUnshift={[Function]}
+          help="Some help text"
+          insert={[Function]}
+          itemComponent={[Function]}
+          label="Basic file upload"
+          maxFileSize={1048576}
+          maxFilesLimit={3}
+          move={[Function]}
+          name="fileUpload"
+          pop={[Function]}
+          push={[Function]}
+          remove={[Function]}
+          renderPlaceholder={<Placeholder />}
+          replace={[Function]}
+          swap={[Function]}
+          unshift={[Function]}
+        >
+          <div>
+            <InputLabel
+              help="Some help text"
+              label="Basic file upload"
+            >
+              <label
+                className=""
+              >
+                <span>
+                  Basic file upload
+                </span>
+                <span>
+                  Some help text
+                </span>
+              </label>
+            </InputLabel>
+            <n
+              accept={
+                Array [
+                  "image/svg+xml",
+                  "image/png",
+                  "image/jpeg",
+                ]
+              }
+              aria-invalid={false}
+              data-test="avatarUploaderDrop"
+              disableClick={false}
+              disabled={false}
+              getDataTransferItems={[Function]}
+              inputProps={Object {}}
+              maxSize={1048576}
+              minSize={0}
+              multiple={true}
+              onDropAccepted={[Function]}
+              onDropRejected={[Function]}
+              preventDropOnDocument={true}
+            >
+              <div
+                aria-disabled={false}
+                aria-invalid={false}
+                className=""
+                data-test="avatarUploaderDrop"
+                onClick={[Function]}
+                onDragEnter={[Function]}
+                onDragLeave={[Function]}
+                onDragOver={[Function]}
+                onDragStart={[Function]}
+                onDrop={[Function]}
+                style={
+                  Object {
+                    "borderColor": "#666",
+                    "borderRadius": 5,
+                    "borderStyle": "dashed",
+                    "borderWidth": 2,
+                    "height": 200,
+                    "position": "relative",
+                    "width": 200,
+                  }
+                }
+              >
+                <Placeholder>
+                  <div>
+                    <FormattedMessage
+                      defaultMessage="Drag or {browse}"
+                      id="FileUpload.dropzoneText"
+                      values={
+                        Object {
+                          "browse": <span>
+                            <FormattedMessage
+                              defaultMessage="browse"
+                              id="FileUpload.dropzoneTextBrowseAction"
+                              values={Object {}}
+                            />
+                          </span>,
+                        }
+                      }
+                    >
+                      Drag or 
+                      <span>
+                        <FormattedMessage
+                          defaultMessage="browse"
+                          id="FileUpload.dropzoneTextBrowseAction"
+                          values={Object {}}
+                        >
+                          browse
+                        </FormattedMessage>
+                      </span>
+                    </FormattedMessage>
+                  </div>
+                </Placeholder>
+                <input
+                  accept={
+                    Array [
+                      "image/svg+xml",
+                      "image/png",
+                      "image/jpeg",
+                    ]
+                  }
+                  autoComplete="off"
+                  disabled={false}
+                  multiple={true}
+                  onChange={[Function]}
+                  style={
+                    Object {
+                      "bottom": 0,
+                      "left": 0,
+                      "opacity": 0.00001,
+                      "pointerEvents": "none",
+                      "position": "absolute",
+                      "right": 0,
+                      "top": 0,
+                    }
+                  }
+                  type="file"
+                />
+              </div>
+            </n>
+            <InputStatus
+              error=""
+            >
+              <p
+                className=""
+              />
+            </InputStatus>
+          </div>
+        </FileUpload>
+      </FieldArrayInner>
+    </FormikConnect(FieldArrayInner)>
+  </Component>
+</Formik>
 `;

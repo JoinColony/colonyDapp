@@ -1,40 +1,597 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`DecisionHub component Renders initial component 1`] = `
-<div
-  data-test="hubOptions"
+<Formik
+  initialValues={Object {}}
+  onSubmit={[Function]}
 >
-  <InjectIntl(Component)
-    key="row-create"
-    option={
-      Object {
-        "subtitle": Object {
-          "defaultMessage": "Collaborate with others",
-          "id": "ComponentName.exceptional",
+  <DecisionHub
+    name="decisionHubTest"
+    options={
+      Array [
+        Object {
+          "subtitle": "Create Subtitle",
+          "title": "Create Title",
+          "value": "create",
         },
-        "title": Object {
-          "defaultMessage": "Rule the world",
-          "id": "ComponentName.special",
+        Object {
+          "subtitle": "Select Subtitle",
+          "title": "Select Title",
+          "value": "select",
         },
-        "value": "create",
-      }
+      ]
     }
-  />
-  <InjectIntl(Component)
-    key="row-select"
-    option={
-      Object {
-        "subtitle": Object {
-          "defaultMessage": "Collaborate with others",
-          "id": "ComponentName.exceptional",
-        },
-        "title": Object {
-          "defaultMessage": "Rule the world",
-          "id": "ComponentName.special",
-        },
-        "value": "select",
-      }
-    }
-  />
-</div>
+  >
+    <div
+      data-test="hubOptions"
+    >
+      <injectIntl(Component)
+        key="row-create"
+        name="decisionHubTest"
+        option={
+          Object {
+            "subtitle": "Create Subtitle",
+            "title": "Create Title",
+            "value": "create",
+          }
+        }
+      >
+        <Component
+          intl={
+            Object {
+              "defaultFormats": Object {},
+              "defaultLocale": "en",
+              "formatDate": [Function],
+              "formatDateToParts": [Function],
+              "formatHTMLMessage": [Function],
+              "formatList": [Function],
+              "formatMessage": [Function],
+              "formatNumber": [Function],
+              "formatNumberToParts": [Function],
+              "formatPlural": [Function],
+              "formatRelativeTime": [Function],
+              "formatTime": [Function],
+              "formatTimeToParts": [Function],
+              "formats": Object {},
+              "formatters": Object {
+                "getDateTimeFormat": [Function],
+                "getListFormat": [Function],
+                "getMessageFormat": [Function],
+                "getNumberFormat": [Function],
+                "getPluralRules": [Function],
+                "getRelativeTimeFormat": [Function],
+              },
+              "locale": "en",
+              "messages": Object {},
+              "onError": [Function],
+              "textComponent": Symbol(react.fragment),
+              "timeZone": undefined,
+            }
+          }
+          name="decisionHubTest"
+          option={
+            Object {
+              "subtitle": "Create Subtitle",
+              "title": "Create Title",
+              "value": "create",
+            }
+          }
+        >
+          <Field
+            component={[Function]}
+            connect={true}
+            intl={
+              Object {
+                "defaultFormats": Object {},
+                "defaultLocale": "en",
+                "formatDate": [Function],
+                "formatDateToParts": [Function],
+                "formatHTMLMessage": [Function],
+                "formatList": [Function],
+                "formatMessage": [Function],
+                "formatNumber": [Function],
+                "formatNumberToParts": [Function],
+                "formatPlural": [Function],
+                "formatRelativeTime": [Function],
+                "formatTime": [Function],
+                "formatTimeToParts": [Function],
+                "formats": Object {},
+                "formatters": Object {
+                  "getDateTimeFormat": [Function],
+                  "getListFormat": [Function],
+                  "getMessageFormat": [Function],
+                  "getNumberFormat": [Function],
+                  "getPluralRules": [Function],
+                  "getRelativeTimeFormat": [Function],
+                },
+                "locale": "en",
+                "messages": Object {},
+                "onError": [Function],
+                "textComponent": Symbol(react.fragment),
+                "timeZone": undefined,
+              }
+            }
+            name="decisionHubTest"
+            option={
+              Object {
+                "subtitle": "Create Subtitle",
+                "title": "Create Title",
+                "value": "create",
+              }
+            }
+          >
+            <mapProps(DecisionOption)
+              connect={true}
+              field={
+                Object {
+                  "name": "decisionHubTest",
+                  "onBlur": [Function],
+                  "onChange": [Function],
+                  "value": undefined,
+                }
+              }
+              form={
+                Object {
+                  "dirty": false,
+                  "errors": Object {},
+                  "getFieldMeta": [Function],
+                  "getFieldProps": [Function],
+                  "handleBlur": [Function],
+                  "handleChange": [Function],
+                  "handleReset": [Function],
+                  "handleSubmit": [Function],
+                  "initialErrors": Object {},
+                  "initialStatus": undefined,
+                  "initialTouched": Object {},
+                  "initialValues": Object {},
+                  "isSubmitting": false,
+                  "isValid": true,
+                  "isValidating": false,
+                  "registerField": [Function],
+                  "resetForm": [Function],
+                  "setErrors": [Function],
+                  "setFieldError": [Function],
+                  "setFieldTouched": [Function],
+                  "setFieldValue": [Function],
+                  "setFormikState": [Function],
+                  "setStatus": [Function],
+                  "setSubmitting": [Function],
+                  "setTouched": [Function],
+                  "setValues": [Function],
+                  "status": undefined,
+                  "submitCount": 0,
+                  "submitForm": [Function],
+                  "touched": Object {},
+                  "unregisterField": [Function],
+                  "validateField": [Function],
+                  "validateForm": [Function],
+                  "validateOnBlur": true,
+                  "validateOnChange": true,
+                  "validateOnMount": false,
+                  "values": Object {},
+                }
+              }
+              intl={
+                Object {
+                  "defaultFormats": Object {},
+                  "defaultLocale": "en",
+                  "formatDate": [Function],
+                  "formatDateToParts": [Function],
+                  "formatHTMLMessage": [Function],
+                  "formatList": [Function],
+                  "formatMessage": [Function],
+                  "formatNumber": [Function],
+                  "formatNumberToParts": [Function],
+                  "formatPlural": [Function],
+                  "formatRelativeTime": [Function],
+                  "formatTime": [Function],
+                  "formatTimeToParts": [Function],
+                  "formats": Object {},
+                  "formatters": Object {
+                    "getDateTimeFormat": [Function],
+                    "getListFormat": [Function],
+                    "getMessageFormat": [Function],
+                    "getNumberFormat": [Function],
+                    "getPluralRules": [Function],
+                    "getRelativeTimeFormat": [Function],
+                  },
+                  "locale": "en",
+                  "messages": Object {},
+                  "onError": [Function],
+                  "textComponent": Symbol(react.fragment),
+                  "timeZone": undefined,
+                }
+              }
+              option={
+                Object {
+                  "subtitle": "Create Subtitle",
+                  "title": "Create Title",
+                  "value": "create",
+                }
+              }
+            >
+              <DecisionOption
+                $id="decisionHubTest"
+                $value=""
+                aria-invalid={false}
+                aria-label="decisionHubTest"
+                aria-labelledby="decisionHubTest-label"
+                connect={true}
+                formatIntl={[Function]}
+                isSubmitting={false}
+                label="decisionHubTest"
+                name="decisionHubTest"
+                onBlur={[Function]}
+                onChange={[Function]}
+                option={
+                  Object {
+                    "subtitle": "Create Subtitle",
+                    "title": "Create Title",
+                    "value": "create",
+                  }
+                }
+                setError={[Function]}
+                setValue={[Function]}
+                title="decisionHubTest"
+              >
+                <button
+                  className=""
+                  onClick={[Function]}
+                  type="submit"
+                >
+                  <DecisionOptionIcon
+                    subtitle="Create Subtitle"
+                    title="Create Title"
+                    value="create"
+                  />
+                  <div>
+                    <Heading
+                      appearance={
+                        Object {
+                          "margin": "small",
+                          "size": "small",
+                          "weight": "bold",
+                        }
+                      }
+                      text="Create Title"
+                    >
+                      <h5
+                        className=""
+                        title="Create Title"
+                      >
+                        Create Title
+                      </h5>
+                    </Heading>
+                    <Heading
+                      appearance={
+                        Object {
+                          "margin": "small",
+                          "size": "tiny",
+                          "weight": "thin",
+                        }
+                      }
+                      text="Create Subtitle"
+                    >
+                      <h6
+                        className=""
+                        title="Create Subtitle"
+                      >
+                        Create Subtitle
+                      </h6>
+                    </Heading>
+                  </div>
+                  <Icon
+                    name="caret-right"
+                    title={
+                      Object {
+                        "defaultMessage": "Choose this option",
+                        "id": "DecisionOption.iconTitle",
+                      }
+                    }
+                  >
+                    <i
+                      className=""
+                      title="Choose this option"
+                    >
+                      <svg
+                        viewBox="0 0 30 30"
+                      >
+                        <use
+                          xlinkHref="#undefined"
+                        />
+                      </svg>
+                    </i>
+                  </Icon>
+                </button>
+              </DecisionOption>
+            </mapProps(DecisionOption)>
+          </Field>
+        </Component>
+      </injectIntl(Component)>
+      <injectIntl(Component)
+        key="row-select"
+        name="decisionHubTest"
+        option={
+          Object {
+            "subtitle": "Select Subtitle",
+            "title": "Select Title",
+            "value": "select",
+          }
+        }
+      >
+        <Component
+          intl={
+            Object {
+              "defaultFormats": Object {},
+              "defaultLocale": "en",
+              "formatDate": [Function],
+              "formatDateToParts": [Function],
+              "formatHTMLMessage": [Function],
+              "formatList": [Function],
+              "formatMessage": [Function],
+              "formatNumber": [Function],
+              "formatNumberToParts": [Function],
+              "formatPlural": [Function],
+              "formatRelativeTime": [Function],
+              "formatTime": [Function],
+              "formatTimeToParts": [Function],
+              "formats": Object {},
+              "formatters": Object {
+                "getDateTimeFormat": [Function],
+                "getListFormat": [Function],
+                "getMessageFormat": [Function],
+                "getNumberFormat": [Function],
+                "getPluralRules": [Function],
+                "getRelativeTimeFormat": [Function],
+              },
+              "locale": "en",
+              "messages": Object {},
+              "onError": [Function],
+              "textComponent": Symbol(react.fragment),
+              "timeZone": undefined,
+            }
+          }
+          name="decisionHubTest"
+          option={
+            Object {
+              "subtitle": "Select Subtitle",
+              "title": "Select Title",
+              "value": "select",
+            }
+          }
+        >
+          <Field
+            component={[Function]}
+            connect={true}
+            intl={
+              Object {
+                "defaultFormats": Object {},
+                "defaultLocale": "en",
+                "formatDate": [Function],
+                "formatDateToParts": [Function],
+                "formatHTMLMessage": [Function],
+                "formatList": [Function],
+                "formatMessage": [Function],
+                "formatNumber": [Function],
+                "formatNumberToParts": [Function],
+                "formatPlural": [Function],
+                "formatRelativeTime": [Function],
+                "formatTime": [Function],
+                "formatTimeToParts": [Function],
+                "formats": Object {},
+                "formatters": Object {
+                  "getDateTimeFormat": [Function],
+                  "getListFormat": [Function],
+                  "getMessageFormat": [Function],
+                  "getNumberFormat": [Function],
+                  "getPluralRules": [Function],
+                  "getRelativeTimeFormat": [Function],
+                },
+                "locale": "en",
+                "messages": Object {},
+                "onError": [Function],
+                "textComponent": Symbol(react.fragment),
+                "timeZone": undefined,
+              }
+            }
+            name="decisionHubTest"
+            option={
+              Object {
+                "subtitle": "Select Subtitle",
+                "title": "Select Title",
+                "value": "select",
+              }
+            }
+          >
+            <mapProps(DecisionOption)
+              connect={true}
+              field={
+                Object {
+                  "name": "decisionHubTest",
+                  "onBlur": [Function],
+                  "onChange": [Function],
+                  "value": undefined,
+                }
+              }
+              form={
+                Object {
+                  "dirty": false,
+                  "errors": Object {},
+                  "getFieldMeta": [Function],
+                  "getFieldProps": [Function],
+                  "handleBlur": [Function],
+                  "handleChange": [Function],
+                  "handleReset": [Function],
+                  "handleSubmit": [Function],
+                  "initialErrors": Object {},
+                  "initialStatus": undefined,
+                  "initialTouched": Object {},
+                  "initialValues": Object {},
+                  "isSubmitting": false,
+                  "isValid": true,
+                  "isValidating": false,
+                  "registerField": [Function],
+                  "resetForm": [Function],
+                  "setErrors": [Function],
+                  "setFieldError": [Function],
+                  "setFieldTouched": [Function],
+                  "setFieldValue": [Function],
+                  "setFormikState": [Function],
+                  "setStatus": [Function],
+                  "setSubmitting": [Function],
+                  "setTouched": [Function],
+                  "setValues": [Function],
+                  "status": undefined,
+                  "submitCount": 0,
+                  "submitForm": [Function],
+                  "touched": Object {},
+                  "unregisterField": [Function],
+                  "validateField": [Function],
+                  "validateForm": [Function],
+                  "validateOnBlur": true,
+                  "validateOnChange": true,
+                  "validateOnMount": false,
+                  "values": Object {},
+                }
+              }
+              intl={
+                Object {
+                  "defaultFormats": Object {},
+                  "defaultLocale": "en",
+                  "formatDate": [Function],
+                  "formatDateToParts": [Function],
+                  "formatHTMLMessage": [Function],
+                  "formatList": [Function],
+                  "formatMessage": [Function],
+                  "formatNumber": [Function],
+                  "formatNumberToParts": [Function],
+                  "formatPlural": [Function],
+                  "formatRelativeTime": [Function],
+                  "formatTime": [Function],
+                  "formatTimeToParts": [Function],
+                  "formats": Object {},
+                  "formatters": Object {
+                    "getDateTimeFormat": [Function],
+                    "getListFormat": [Function],
+                    "getMessageFormat": [Function],
+                    "getNumberFormat": [Function],
+                    "getPluralRules": [Function],
+                    "getRelativeTimeFormat": [Function],
+                  },
+                  "locale": "en",
+                  "messages": Object {},
+                  "onError": [Function],
+                  "textComponent": Symbol(react.fragment),
+                  "timeZone": undefined,
+                }
+              }
+              option={
+                Object {
+                  "subtitle": "Select Subtitle",
+                  "title": "Select Title",
+                  "value": "select",
+                }
+              }
+            >
+              <DecisionOption
+                $id="decisionHubTest"
+                $value=""
+                aria-invalid={false}
+                aria-label="decisionHubTest"
+                aria-labelledby="decisionHubTest-label"
+                connect={true}
+                formatIntl={[Function]}
+                isSubmitting={false}
+                label="decisionHubTest"
+                name="decisionHubTest"
+                onBlur={[Function]}
+                onChange={[Function]}
+                option={
+                  Object {
+                    "subtitle": "Select Subtitle",
+                    "title": "Select Title",
+                    "value": "select",
+                  }
+                }
+                setError={[Function]}
+                setValue={[Function]}
+                title="decisionHubTest"
+              >
+                <button
+                  className=""
+                  onClick={[Function]}
+                  type="submit"
+                >
+                  <DecisionOptionIcon
+                    subtitle="Select Subtitle"
+                    title="Select Title"
+                    value="select"
+                  />
+                  <div>
+                    <Heading
+                      appearance={
+                        Object {
+                          "margin": "small",
+                          "size": "small",
+                          "weight": "bold",
+                        }
+                      }
+                      text="Select Title"
+                    >
+                      <h5
+                        className=""
+                        title="Select Title"
+                      >
+                        Select Title
+                      </h5>
+                    </Heading>
+                    <Heading
+                      appearance={
+                        Object {
+                          "margin": "small",
+                          "size": "tiny",
+                          "weight": "thin",
+                        }
+                      }
+                      text="Select Subtitle"
+                    >
+                      <h6
+                        className=""
+                        title="Select Subtitle"
+                      >
+                        Select Subtitle
+                      </h6>
+                    </Heading>
+                  </div>
+                  <Icon
+                    name="caret-right"
+                    title={
+                      Object {
+                        "defaultMessage": "Choose this option",
+                        "id": "DecisionOption.iconTitle",
+                      }
+                    }
+                  >
+                    <i
+                      className=""
+                      title="Choose this option"
+                    >
+                      <svg
+                        viewBox="0 0 30 30"
+                      >
+                        <use
+                          xlinkHref="#undefined"
+                        />
+                      </svg>
+                    </i>
+                  </Icon>
+                </button>
+              </DecisionOption>
+            </mapProps(DecisionOption)>
+          </Field>
+        </Component>
+      </injectIntl(Component)>
+    </div>
+  </DecisionHub>
+</Formik>
 `;
