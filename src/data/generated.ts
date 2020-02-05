@@ -996,7 +996,7 @@ export type AssignWorkerMutationVariables = {
 
 
 export type AssignWorkerMutation = { assignWorker: Maybe<(
-    Pick<Task, 'id'>
+    Pick<Task, 'id' | 'assignedWorkerAddress'>
     & { assignedWorker: Maybe<Pick<User, 'id'>>, events: Array<TaskEventFragment> }
   )> };
 
@@ -1023,7 +1023,7 @@ export type CreateWorkRequestMutationVariables = {
 
 
 export type CreateWorkRequestMutation = { createWorkRequest: Maybe<(
-    Pick<Task, 'id'>
+    Pick<Task, 'id' | 'workRequestAddresses'>
     & { events: Array<TaskEventFragment>, workRequests: Array<Pick<User, 'id'>> }
   )> };
 
@@ -1054,7 +1054,7 @@ export type SendWorkInviteMutationVariables = {
 
 
 export type SendWorkInviteMutation = { sendWorkInvite: Maybe<(
-    Pick<Task, 'id'>
+    Pick<Task, 'id' | 'workInviteAddresses'>
     & { events: Array<TaskEventFragment>, workInvites: Array<Pick<User, 'id'>> }
   )> };
 
@@ -1127,7 +1127,7 @@ export type UnassignWorkerMutationVariables = {
 
 
 export type UnassignWorkerMutation = { unassignWorker: Maybe<(
-    Pick<Task, 'id'>
+    Pick<Task, 'id' | 'assignedWorkerAddress'>
     & { assignedWorker: Maybe<Pick<User, 'id'>>, events: Array<TaskEventFragment> }
   )> };
 
@@ -1763,6 +1763,7 @@ export const AssignWorkerDocument = gql`
     mutation AssignWorker($input: AssignWorkerInput!) {
   assignWorker(input: $input) {
     id
+    assignedWorkerAddress
     assignedWorker {
       id
     }
@@ -1872,6 +1873,7 @@ export const CreateWorkRequestDocument = gql`
     events {
       ...TaskEvent
     }
+    workRequestAddresses
     workRequests {
       id
     }
@@ -1991,6 +1993,7 @@ export const SendWorkInviteDocument = gql`
     events {
       ...TaskEvent
     }
+    workInviteAddresses
     workInvites {
       id
     }
@@ -2249,6 +2252,7 @@ export const UnassignWorkerDocument = gql`
     mutation UnassignWorker($input: UnassignWorkerInput!) {
   unassignWorker(input: $input) {
     id
+    assignedWorkerAddress
     assignedWorker {
       id
     }
