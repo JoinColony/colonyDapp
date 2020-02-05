@@ -192,7 +192,7 @@ const StepStart = ({ nextStep, wizardValues }: Props) => {
         <div className={styles.createWalletLink} data-test="createWalletLink">
           <DecisionOption
             appearance={{ theme: 'alt' }}
-            name="create"
+            name="method"
             option={createWalletOption}
             link={CREATE_WALLET_ROUTE}
           />

@@ -4,6 +4,7 @@ import { FormattedMessage } from 'react-intl';
 import Heading from '~core/Heading';
 import Card from '~core/Card';
 import { TransactionType } from '~immutable/index';
+import { SimpleMessageValues } from '~types/index';
 
 import {
   getGroupKey,
@@ -40,7 +41,7 @@ const GroupedTransaction = ({
             <Heading
               appearance={{ theme: 'dark', size: 'normal', margin: 'none' }}
               text={{ id: `transaction.${groupKey}.title` }}
-              textValues={values.params}
+              textValues={values.params as SimpleMessageValues}
             />
             <FormattedMessage
               id={

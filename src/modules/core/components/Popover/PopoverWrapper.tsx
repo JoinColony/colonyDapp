@@ -1,6 +1,6 @@
 import React, { ReactNode, FocusEvent, useMemo } from 'react';
-import { PopperArrowProps } from 'react-popper';
-import { PopoverAppearanceType, PopoverPlacementType } from './types';
+import { PopperArrowProps, PopperProps } from 'react-popper';
+import { PopoverAppearanceType } from './types';
 import { getMainClasses } from '~utils/css';
 import getPopoverArrowClasses from './getPopoverArrowClasses';
 
@@ -18,7 +18,7 @@ interface Props {
   innerRef: (arg0: HTMLElement | null) => void;
   onFocus: (evt: FocusEvent<HTMLElement>) => void;
   retainRefFocus?: boolean;
-  placement: PopoverPlacementType;
+  placement: PopperProps['placement'];
   style: any;
 }
 

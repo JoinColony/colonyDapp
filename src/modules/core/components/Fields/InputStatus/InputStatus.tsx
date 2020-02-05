@@ -1,5 +1,7 @@
-import { IntlShape, MessageDescriptor, injectIntl } from 'react-intl';
+import { MessageDescriptor, useIntl } from 'react-intl';
 import React from 'react';
+
+import { SimpleMessageValues } from '~types/index';
 import { getMainClasses } from '~utils/css';
 
 import styles from './InputStatus.css';
@@ -23,10 +25,7 @@ interface Props {
   status?: string | MessageDescriptor;
 
   /** Values for status text (react-intl interpolation) (if applicable) */
-  statusValues?: object;
-
-  /** @ignore injected by `react-intl` */
-  intl: IntlShape;
+  statusValues?: SimpleMessageValues;
 }
 
 const displayName = 'InputStatus';
@@ -34,10 +33,10 @@ const displayName = 'InputStatus';
 const InputStatus = ({
   appearance = {},
   error,
-  intl: { formatMessage },
   status,
   statusValues,
 }: Props) => {
+  const { formatMessage } = useIntl();
   const errorText = typeof error === 'object' ? formatMessage(error) : error;
   const statusText =
     typeof status === 'object' ? formatMessage(status, statusValues) : status;
@@ -57,4 +56,4 @@ const InputStatus = ({
 
 InputStatus.displayName = displayName;
 
-export default injectIntl(InputStatus);
+export default InputStatus;

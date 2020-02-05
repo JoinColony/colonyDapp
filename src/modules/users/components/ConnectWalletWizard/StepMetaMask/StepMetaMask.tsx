@@ -195,7 +195,7 @@ class MetaMask extends Component<Props, State> {
                 <Button
                   text={MSG.buttonRetry}
                   appearance={{ theme: 'primary', size: 'large' }}
-                  onClick={this.handleRetryClick}
+                  onClick={evt => this.handleRetryClick(evt)}
                   loading={isLoading || isSubmitting}
                 />
               )}

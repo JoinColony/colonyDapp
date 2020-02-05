@@ -197,7 +197,7 @@ const StepColonyName = ({
                 data-test="claimColonyNameInput"
                 extensionString=".colony.joincolony.eth"
                 label={MSG.label}
-                status={normalized !== colonyName ? MSG.statusText : null}
+                status={normalized !== colonyName ? MSG.statusText : undefined}
                 formattingOptions={{ lowercase: true }}
                 statusValues={{ normalized }}
                 extra={

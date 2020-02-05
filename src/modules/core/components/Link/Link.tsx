@@ -1,18 +1,13 @@
-import React, { ReactNode } from 'react';
+import React from 'react';
+import { MessageDescriptor, useIntl } from 'react-intl';
 import {
-  IntlShape,
-  MessageDescriptor,
-  MessageValues,
-  injectIntl,
-} from 'react-intl';
+  Link as LinkComponent,
+  LinkProps as LinkComponentProps,
+} from 'react-router-dom';
 
-import { Link as LinkComponent } from 'react-router-dom';
+import { SimpleMessageValues } from '~types/index';
 
-// Left intentionally unsealed (passing props)
-interface Props {
-  /** Link children to render inside link */
-  children?: ReactNode;
-
+interface Props extends LinkComponentProps {
   /** Link to go to (react-router's "to") */
   to: string;
 
@@ -20,20 +15,12 @@ interface Props {
   text?: MessageDescriptor | string;
 
   /** Values for text (react-intl interpolation) */
-  textValues?: MessageValues;
-
-  /** @ignore injected by `react-intl` */
-  intl: IntlShape;
+  textValues?: SimpleMessageValues;
 }
 
-const Link = ({
-  children,
-  intl: { formatMessage },
-  text,
-  textValues,
-  to,
-  ...linkProps
-}: Props) => {
+const Link = ({ children, text, textValues, to, ...linkProps }: Props) => {
+  const { formatMessage } = useIntl();
+
   const linkText =
     typeof text === 'string' ? text : text && formatMessage(text, textValues);
 
@@ -44,4 +31,4 @@ const Link = ({
   );
 };
 
-export default injectIntl(Link);
+export default Link;

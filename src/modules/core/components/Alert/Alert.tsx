@@ -1,16 +1,14 @@
-import React, { ReactNode, Component } from 'react';
-import {
-  IntlShape,
-  MessageDescriptor,
-  MessageValues,
-  injectIntl,
-} from 'react-intl';
+import React, { ReactNode, useCallback, useState } from 'react';
+import { MessageDescriptor, useIntl } from 'react-intl';
 
-import { getMainClasses } from '~utils/css';
 import Icon from '~core/Icon';
+import { SimpleMessageValues } from '~types/index';
+import { getMainClasses } from '~utils/css';
+
 import styles from './Alert.css';
 
 interface Appearance {
+  borderRadius?: 'small' | 'medium' | 'large' | 'round';
   theme?: 'primary' | 'info' | 'danger';
   size?: 'small';
 }
@@ -26,10 +24,7 @@ interface Props {
   text?: MessageDescriptor | string;
 
   /** Values for loading text (react-intl interpolation) */
-  textValues?: MessageValues;
-
-  /** @ignore Injected by `injectIntl` */
-  intl: IntlShape;
+  textValues?: SimpleMessageValues;
 
   /** Should the alert be dismissible */
   isDismissible?: boolean;
@@ -38,73 +33,54 @@ interface Props {
   onAlertDismissed?: () => void;
 }
 
-interface State {
-  isOpen: boolean;
-}
+const displayName = 'Alert';
 
-class Alert extends Component<Props, State> {
-  static defaultProps = {
-    appearance: {
-      theme: 'danger',
-    },
-    isDismissible: false,
-  };
+const Alert = ({
+  appearance = { theme: 'danger' },
+  onAlertDismissed: callback,
+  isDismissible = false,
+  children,
+  text,
+  textValues,
+}: Props) => {
+  const [isOpen, setIsOpen] = useState<boolean>(true);
 
-  static displayName = 'Alert';
+  const { formatMessage } = useIntl();
 
-  state = {
-    isOpen: true,
-  };
+  const handleDismiss = useCallback(() => {
+    if (!isDismissible) {
+      return;
+    }
+    setIsOpen(false);
+    if (typeof callback === 'function') {
+      callback();
+    }
+  }, [callback, isDismissible]);
 
-  handleDismiss = () => {
-    const { isDismissible, onAlertDismissed: callback } = this.props;
-    if (!isDismissible) return;
-    this.setState(
-      {
-        isOpen: false,
-      },
-      () => {
-        if (typeof callback === 'function') {
-          callback();
-        }
-      },
-    );
-  };
+  if (!isOpen) return null;
 
-  render() {
-    const {
-      appearance,
-      children,
-      intl: { formatMessage },
-      isDismissible,
-      text,
-      textValues,
-    } = this.props;
-    const { isOpen } = this.state;
+  const alertText =
+    typeof text === 'string' ? text : text && formatMessage(text, textValues);
+  return (
+    <div className={getMainClasses(appearance, styles)}>
+      {isDismissible && (
+        <button
+          className={styles.closeButton}
+          type="button"
+          onClick={handleDismiss}
+        >
+          <Icon
+            appearance={{ size: 'small' }}
+            name="close"
+            title={{ id: 'button.close' }}
+          />
+        </button>
+      )}
+      {alertText || children}
+    </div>
+  );
+};
 
-    if (!isOpen) return null;
+Alert.displayName = displayName;
 
-    const alertText =
-      typeof text === 'string' ? text : text && formatMessage(text, textValues);
-    return (
-      <div className={getMainClasses(appearance, styles)}>
-        {isDismissible && (
-          <button
-            className={styles.closeButton}
-            type="button"
-            onClick={this.handleDismiss}
-          >
-            <Icon
-              appearance={{ size: 'small' }}
-              name="close"
-              title={{ id: 'button.close' }}
-            />
-          </button>
-        )}
-        {alertText || children}
-      </div>
-    );
-  }
-}
-
-export default injectIntl(Alert);
+export default Alert;

@@ -59,7 +59,7 @@ type Props = WizardProps<FormValues>;
  * @body Provide some means in Trufflepig to get information for these accounts (at the moment we are assuming that 10 addresses are available). Waiting on PR: colonyJS#319
  */
 const accountIndexOptions = Array.from({ length: 10 }).map((_, value) => ({
-  value,
+  value: value.toString(),
   label: {
     id: `${MSG.accountIndex.id}.${value}`,
     defaultMessage: `${value}`,
@@ -144,10 +144,10 @@ const StepTrufflePig = ({ resetWizard, wizardForm, wizardValues }: Props) => {
                   appearance={{ size: 'medium' }}
                 />
                 <Select
-                  $value={Number(accountIndex)}
+                  $value={accountIndex.toString()}
                   form={{
-                    setFieldValue: (key: string, value: number) =>
-                      setAccountIndex(value),
+                    setFieldValue: (key: string, value: string) =>
+                      setAccountIndex(Number(value)),
                   }}
                   label={MSG.accountIndex}
                   name="accountIndex"

@@ -18,6 +18,10 @@ const MSG = defineMessages({
     id: 'UserInfo.placeholder',
     defaultMessage: 'None',
   },
+  selectUser: {
+    id: 'UserInfo.selectUser',
+    defaultMessage: 'Select user',
+  },
 });
 
 const UserAvatar = HookedUserAvatar({ fetchUser: false });
@@ -60,7 +64,7 @@ const UserInfo = ({
         <Icon
           className={styles.icon}
           name="circle-person"
-          title={MSG.selectMember}
+          title={MSG.selectUser}
         />
       )}
       <div className={styles.nameContainer}>

@@ -1,5 +1,7 @@
 import React, { ReactNode } from 'react';
-import { MessageDescriptor, MessageValues } from 'react-intl';
+import { MessageDescriptor } from 'react-intl';
+
+import { SimpleMessageValues } from '~types/index';
 
 import Icon from '../Icon';
 import Heading from '../Heading';
@@ -13,7 +15,7 @@ interface GroupListItem {
   title?: MessageDescriptor | string;
 
   /** Values for html title (react-intl interpolation) */
-  titleValues?: MessageValues;
+  titleValues?: SimpleMessageValues;
 
   /** Text in the second row of the second column */
   subtitleElement: ReactNode;
@@ -41,7 +43,7 @@ const GroupList = ({ items }: Props) => (
       ({ id, title, titleValues, subtitleElement, icon, extra, imageUrl }) => (
         <div key={id} className={styles.listMain}>
           <div className={styles.rowIcon}>
-            {icon && <Icon name={icon} title={icon || imageUrl} />}
+            {icon && <Icon name={icon} title={icon} />}
             {imageUrl && <img src={imageUrl} alt="logo" />}
           </div>
           <div className={styles.rowContent}>

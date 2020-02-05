@@ -1,10 +1,12 @@
 import React, { ReactNode, SyntheticEvent, Component } from 'react';
-import { MessageDescriptor, MessageValues } from 'react-intl';
+import { MessageDescriptor } from 'react-intl';
 import nanoid from 'nanoid';
 
-import { getMainClasses } from '~utils/css';
 import InputLabel from '~core/Fields/InputLabel';
 import asFieldArray from '~core/Fields/asFieldArray';
+import { SimpleMessageValues } from '~types/index';
+import { getMainClasses } from '~utils/css';
+
 import styles from './Checkbox.css';
 
 interface Appearance {
@@ -25,11 +27,11 @@ interface Props {
   /** Help text (will appear next to label text) */
   help?: string | MessageDescriptor;
   /** Values for help text (react-intl interpolation) */
-  helpValues?: MessageValues;
+  helpValues?: SimpleMessageValues;
   /** Label text */
   label: string | MessageDescriptor;
   /** Values for label text (react-intl interpolation) */
-  labelValues?: MessageValues;
+  labelValues?: SimpleMessageValues;
   /** Input field name (form variable) */
   name: string;
   /** Input field value */

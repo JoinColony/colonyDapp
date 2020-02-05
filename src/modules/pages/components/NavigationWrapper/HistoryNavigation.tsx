@@ -1,15 +1,10 @@
-import {
-  IntlShape,
-  MessageDescriptor,
-  MessageValues,
-  defineMessages,
-  injectIntl,
-} from 'react-intl';
+import { MessageDescriptor, defineMessages, useIntl } from 'react-intl';
 import React from 'react';
 import { useHistory } from 'react-router-dom';
 
 import Icon from '~core/Icon';
 import NavLink from '~core/NavLink';
+import { SimpleMessageValues } from '~types/index';
 
 import styles from './HistoryNavigation.css';
 
@@ -36,12 +31,7 @@ interface Props {
   /*
    * Works in conjuction with the above to provide message descriptor selector values
    */
-  backTextValues?: MessageValues;
-
-  /*
-   * Internationalization library object, injected by `react-intl`
-   */
-  intl: IntlShape;
+  backTextValues?: SimpleMessageValues;
 
   /*
    * If you would like to stay at the same route but handle the navigation manually
@@ -54,9 +44,10 @@ const HistoryNavigation = ({
   backRoute,
   backText,
   backTextValues,
-  intl: { formatMessage },
   customHandler,
 }: Props) => {
+  const { formatMessage } = useIntl();
+
   const history = useHistory();
   let linkText: string = formatMessage(MSG.backHistoryLink);
   if (backText) {
@@ -98,4 +89,4 @@ const HistoryNavigation = ({
 
 HistoryNavigation.displayName = displayName;
 
-export default injectIntl(HistoryNavigation);
+export default HistoryNavigation;

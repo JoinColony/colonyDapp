@@ -82,19 +82,19 @@ class StepBackupPhrase extends Component<Props, State> {
             <>
               <div className={styles.title}>
                 <Heading
-                  appearance={{ size: 'medium', width: 'thin' }}
+                  appearance={{ size: 'medium', weight: 'thin' }}
                   text={MSG.heading}
                 />
               </div>
               <div className={styles.subtitle}>
                 <Heading
-                  appearance={{ size: 'normal', width: 'thin' }}
+                  appearance={{ size: 'normal', weight: 'thin' }}
                   text={MSG.subTitle}
                 />
               </div>
               <div className={styles.mnemonicInstructions}>
                 <Heading
-                  appearance={{ margin: 'none', size: 'small', width: 'bold' }}
+                  appearance={{ margin: 'none', size: 'small', weight: 'bold' }}
                   text={MSG.titleBox}
                 />
                 <Button
@@ -109,7 +109,7 @@ class StepBackupPhrase extends Component<Props, State> {
               <div className={styles.divider} />
               <div className={styles.buttonsForBox}>
                 <Button
-                  appearance={{ theme: 'ghost', colorSchema: 'noBorder' }}
+                  appearance={{ theme: 'ghost' }}
                   text={MSG.backButton}
                   onClick={() => previousStep()}
                 />

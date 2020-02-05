@@ -48,13 +48,13 @@ const StepCreatePhrase = ({ nextStep, wizardForm }: Props) => (
     <Form onSubmit={nextStep} {...wizardForm}>
       <div className={styles.title}>
         <Heading
-          appearance={{ size: 'medium', width: 'thin' }}
+          appearance={{ size: 'medium', weight: 'thin' }}
           text={MSG.heading}
         />
       </div>
       <div className={styles.subtitle}>
         <Heading
-          appearance={{ size: 'normal', width: 'thin' }}
+          appearance={{ size: 'normal', weight: 'thin' }}
           text={MSG.subTitle}
         />
       </div>

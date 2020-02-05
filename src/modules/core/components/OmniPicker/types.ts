@@ -1,4 +1,11 @@
-import { ComponentType, ReactNode, SyntheticEvent, KeyboardEvent } from 'react';
+import {
+  ComponentType,
+  ReactNode,
+  SyntheticEvent,
+  InputHTMLAttributes,
+} from 'react';
+
+import { Props as InProps } from './withOmniPicker';
 
 export type ItemDataType<D> = D & {
   id: string;
@@ -19,22 +26,10 @@ export interface OmniPickerData {
   id: string;
 }
 
-export interface WrappedComponentProps {
+export interface WrappedComponentProps extends InProps {
   OmniPicker: ComponentType<any>;
-  inputProps: {
-    id: string;
-    autoComplete: 'off';
-    onKeyUp: (evt: KeyboardEvent<HTMLElement>) => void;
-    onKeyDown: (evt: KeyboardEvent<HTMLElement>) => void;
-    onFocus: (evt: SyntheticEvent<HTMLInputElement>) => void;
-    onBlur: (evt: SyntheticEvent<HTMLInputElement>) => void;
-    onChange: (evt: SyntheticEvent<HTMLInputElement>) => void;
-    value: string;
-    'aria-autocomplete': 'list';
-    'aria-controls': string;
-    'aria-activedescendant': string;
-  };
-  registerInputReactNode: (inputReactNode: HTMLInputElement | null) => void;
+  inputProps: InputHTMLAttributes<HTMLInputElement>;
+  registerInputNode: (inputNode: HTMLInputElement | null) => void;
   OmniPickerWrapper: ComponentType<any>;
   omniPickerIsOpen: boolean;
   openOmniPicker: () => void;

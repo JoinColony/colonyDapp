@@ -1,5 +1,5 @@
 import React from 'react';
-import { defineMessages, injectIntl, FormattedMessage } from 'react-intl';
+import { defineMessages, FormattedMessage } from 'react-intl';
 
 import styles from './StepBar.css';
 
@@ -30,4 +30,4 @@ const StepBar = ({ step, stepCount }: Props) => (
   </div>
 );
 
-export default injectIntl(StepBar);
+export default StepBar;

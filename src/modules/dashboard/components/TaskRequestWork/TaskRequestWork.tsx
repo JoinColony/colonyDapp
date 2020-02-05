@@ -49,7 +49,7 @@ const TaskRequestWork = ({ task: { id: draftId }, task, history }: Props) => {
   }
 
   if (!!username && canRequestToWork(task, walletAddress)) {
-    return <Button text={MSG.requestWork} onClick={sendWorkRequest} />;
+    return <Button text={MSG.requestWork} onClick={() => sendWorkRequest()} />;
   }
 
   return (

@@ -76,8 +76,8 @@ const validationSchema = yup.object({
   tokenSymbol: yup
     .string()
     .required()
-    .max(5, MSG.errorTokenSymbol),
-  tokenIcon: yup.array().max(1, MSG.errorTokenIcon),
+    .max(5, () => MSG.errorTokenSymbol),
+  tokenIcon: yup.array().max(1, () => MSG.errorTokenIcon),
 });
 
 type FormValues = {
@@ -176,7 +176,7 @@ const StepCreateToken = ({
               <Input
                 name="tokenSymbol"
                 appearance={{ theme: 'fat' }}
-                maxLength="5"
+                maxLength={5}
                 data-test="defineTokenSymbol"
                 formattingOptions={{ uppercase: true }}
                 label={MSG.labelTokenSymbol}

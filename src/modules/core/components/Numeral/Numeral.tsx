@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { HTMLAttributes } from 'react';
 import BN from 'bn.js';
 import formatNumber from 'format-number';
 import { fromWei } from 'ethjs-unit';
@@ -8,12 +8,12 @@ import { getMainClasses } from '~utils/css';
 
 import styles from './Numeral.css';
 
-type Appearance = {
+interface Appearance {
   theme: 'primary' | 'grey' | 'dark';
   size: 'medium' | 'large' | 'small';
-};
+}
 
-interface Props {
+export interface Props extends HTMLAttributes<HTMLSpanElement> {
   /** Appearance object */
   appearance?: Appearance;
 

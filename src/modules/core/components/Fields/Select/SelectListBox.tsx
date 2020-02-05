@@ -1,34 +1,34 @@
-import { MessageDescriptor, MessageValues } from 'react-intl';
+import { MessageDescriptor } from 'react-intl';
 import React from 'react';
 
+import { SimpleMessageValues } from '~types/index';
 import { getMainClasses } from '~utils/css';
 
-import styles from './SelectListBox.css';
-
 import SelectOption from '../SelectOption';
-
 import { Appearance } from './types';
+
+import styles from './SelectListBox.css';
 
 const displayName = 'SelectListBox';
 
 interface Props {
-  appearance: Appearance;
+  appearance?: Appearance;
   checkedOption: number;
   listboxId: string;
   options: {
     label: MessageDescriptor | string;
     value: string;
-    labelValues?: MessageValues;
+    labelValues?: SimpleMessageValues;
   }[];
   selectedOption: number;
-  ariaLabelledby: string;
+  ariaLabelledby?: string;
   name: string;
   onSelect: (idx: number) => void;
   onClick: () => void;
   formatIntl: (
     text: string | MessageDescriptor,
-    textValues?: MessageValues,
-  ) => string;
+    textValues?: SimpleMessageValues,
+  ) => string | undefined;
 }
 
 const getOptionId = (name, idx) =>

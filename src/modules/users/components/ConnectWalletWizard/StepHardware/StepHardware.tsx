@@ -86,7 +86,7 @@ const validationSchema = yup.object({
   hardwareWalletChoice: yup
     .string()
     .address()
-    .required(MSG.walletChoiceRequired),
+    .required(() => MSG.walletChoiceRequired),
 });
 
 interface FormValues {

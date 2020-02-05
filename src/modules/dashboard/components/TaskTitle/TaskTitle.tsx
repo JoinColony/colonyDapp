@@ -54,7 +54,9 @@ const TaskTitle = ({ disabled, title: existingTitle = '', draftId }: Props) => {
           name="title"
           placeholder={MSG.placeholder}
           readOnly={disabled}
-          onBlur={() => setTimeout(submitForm, 0)}
+          onBlur={() => {
+            setTimeout(submitForm, 0);
+          }}
         />
       )}
     </Form>

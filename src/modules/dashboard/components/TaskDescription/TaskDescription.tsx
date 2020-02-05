@@ -57,15 +57,17 @@ const TaskDescription = ({
     >
       {({ submitForm }: FormikProps<any>) => (
         <MultiLineEdit
+          elementOnly
+          label={MSG.placeholder}
           name="description"
-          placeholder={MSG.placeholder}
-          readOnly={disabled}
           onEditorBlur={() => {
             /*
              * Defer the form submission to let formik finish first.
              */
             setTimeout(submitForm, 0);
           }}
+          placeholder={MSG.placeholder}
+          readOnly={disabled}
         />
       )}
     </Form>

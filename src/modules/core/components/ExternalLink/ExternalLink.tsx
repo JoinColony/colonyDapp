@@ -1,10 +1,7 @@
-import {
-  IntlShape,
-  MessageDescriptor,
-  MessageValues,
-  injectIntl,
-} from 'react-intl';
+import { MessageDescriptor, useIntl } from 'react-intl';
 import React from 'react';
+
+import { SimpleMessageValues } from '~types/index';
 
 import styles from './ExternalLink.css';
 
@@ -16,10 +13,7 @@ interface Props {
   text?: MessageDescriptor | string;
 
   /** Values for text (react-intl interpolation) */
-  textValues?: MessageValues;
-
-  /** @ignore injected by `react-intl` */
-  intl: IntlShape;
+  textValues?: SimpleMessageValues;
 
   /*
    * Allows for link style customization (Eg: we need to disquise the link as a button)
@@ -28,13 +22,8 @@ interface Props {
   className?: string;
 }
 
-const ExternalLink = ({
-  href,
-  text,
-  textValues,
-  intl: { formatMessage },
-  className,
-}: Props) => {
+const ExternalLink = ({ href, text, textValues, className }: Props) => {
+  const { formatMessage } = useIntl();
   // eslint-disable-next-line max-len
   const typeOfText =
     typeof text == 'string' ? text : text && formatMessage(text, textValues);
@@ -51,4 +40,4 @@ const ExternalLink = ({
   );
 };
 
-export default injectIntl(ExternalLink);
+export default ExternalLink;

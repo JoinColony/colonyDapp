@@ -9,14 +9,20 @@ import {
 import nanoid from 'nanoid';
 
 import OmniPicker, { Props as OmniPickerProps } from './OmniPicker';
-import { OmniPickerData } from './types';
+import { OmniPickerData, WrappedComponentProps } from './types';
 import { ESC, TAB, UP, DOWN, ENTER } from '~types/index';
 
-interface Props {
-  data: (arg0: any) => any;
+const defaultProps = {
+  getItem: (filteredData: OmniPickerData[], selectedIdx: number) =>
+    filteredData[selectedIdx],
+};
+
+export interface Props extends Partial<DefaultProps> {
+  data: ((arg0: any) => any) | any[];
   filter: (data: any, filterStr: string) => OmniPickerData[];
-  getItem: (data: OmniPickerData[], selectedIdx: number) => OmniPickerData;
 }
+
+type DefaultProps = Readonly<typeof defaultProps>;
 
 interface State {
   isOpen: boolean;
@@ -33,10 +39,7 @@ const getClass = WrappedComponent => {
 
     omniPicker?: OmniPicker | null;
 
-    static defaultProps = {
-      getItem: (filteredData: OmniPickerData[], selectedIdx: number) =>
-        filteredData[selectedIdx],
-    };
+    static defaultProps = defaultProps;
 
     constructor(props: Props) {
       super(props);
@@ -189,7 +192,10 @@ const getClass = WrappedComponent => {
       const { getItem } = this.props;
       const { selected } = this.state;
       const filteredData = this.getFilteredData();
-      const next = getItem(filteredData, selected + 1);
+      let next;
+      if (getItem) {
+        next = getItem(filteredData, selected + 1);
+      }
       if (next) {
         this.setState({
           keyUsed: true,
@@ -203,7 +209,10 @@ const getClass = WrappedComponent => {
       const { selected } = this.state;
       const filteredData = this.getFilteredData();
       if (selected < 0) return;
-      const itemData = getItem(filteredData, selected);
+      let itemData;
+      if (getItem) {
+        itemData = getItem(filteredData, selected);
+      }
       if (this.omniPicker && itemData) {
         this.omniPicker.handlePick(itemData);
       }
@@ -251,7 +260,7 @@ const getClass = WrappedComponent => {
       });
     };
 
-    getInputProps = () => {
+    getInputProps = (): WrappedComponentProps['inputProps'] => {
       const { filterValue, selected } = this.state;
       const { id } = this;
       return {
@@ -271,7 +280,7 @@ const getClass = WrappedComponent => {
 
     render() {
       const { isOpen } = this.state;
-      const props = {
+      const props: WrappedComponentProps = {
         ...this.props,
         OmniPicker: this.getOmniPicker,
         OmniPickerWrapper: this.getWrapper,

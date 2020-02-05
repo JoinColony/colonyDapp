@@ -1,3 +1,5 @@
+import { ReactNode } from 'react';
+
 import { Address, ENSName } from '~types/index';
 
 export * from './keyTypes';
@@ -31,3 +33,15 @@ export interface KeyedDataObject<T> extends DataObject<T> {
 }
 
 export type AddressOrENSName = Address | ENSName;
+
+type PrimitiveType = string | number | boolean | null | undefined | Date;
+
+/**
+ * For messages that cannot contain JSX - use with `Intl.formatMessage()`;
+ */
+export type SimpleMessageValues = Record<string, PrimitiveType>;
+
+/**
+ * For messages that contain JSX - use with FormattedMessage
+ */
+export type ComplexMessageValues = Record<string, ReactNode>;

@@ -11,6 +11,7 @@ describe('Radio component', () => {
   test('Renders initial component', () => {
     const wrapper = shallowWithIntl(
       <Radio
+        checked={false}
         name="radioInput"
         help="halp"
         label="awesome"

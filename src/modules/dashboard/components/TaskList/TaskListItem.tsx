@@ -1,10 +1,4 @@
-import {
-  WrappedComponentProps,
-  defineMessages,
-  FormattedMessage,
-  IntlShape,
-  injectIntl,
-} from 'react-intl';
+import { defineMessages, FormattedMessage, useIntl } from 'react-intl';
 import React, { useCallback } from 'react';
 import { useHistory } from 'react-router-dom';
 import BigNumber from 'bn.js';
@@ -29,15 +23,16 @@ const MSG = defineMessages({
 
 const UserAvatar = HookedUserAvatar();
 
-interface Props extends WrappedComponentProps {
-  intl: IntlShape;
+interface Props {
   task: AnyTask;
 }
 
 const displayName = 'dashboard.TaskList.TaskListItem';
 
-const TaskListItem = ({ task, intl: { formatMessage } }: Props) => {
+const TaskListItem = ({ task }: Props) => {
   const history = useHistory();
+  const { formatMessage } = useIntl();
+
   const defaultTitle = formatMessage(MSG.untitled);
   const {
     id: draftId,
@@ -86,4 +81,4 @@ const TaskListItem = ({ task, intl: { formatMessage } }: Props) => {
 
 TaskListItem.displayName = displayName;
 
-export default injectIntl(TaskListItem);
+export default TaskListItem;

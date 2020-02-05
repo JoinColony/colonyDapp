@@ -147,7 +147,7 @@ const StepUserName = ({ wizardValues, nextStep }: Props) => {
                   name="username"
                   label={MSG.label}
                   extensionString=".user.joincolony.eth"
-                  status={normalized !== username ? MSG.statusText : null}
+                  status={normalized !== username ? MSG.statusText : undefined}
                   statusValues={{
                     normalized,
                   }}

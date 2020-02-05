@@ -1,12 +1,6 @@
-import React, { useCallback, useMemo, useState } from 'react';
+import React, { useCallback, useMemo, useState, FC } from 'react';
 
-import {
-  defineMessages,
-  injectIntl,
-  IntlShape,
-  FormattedMessage,
-} from 'react-intl';
-import { compose } from 'recompose';
+import { defineMessages, FormattedMessage } from 'react-intl';
 import sortBy from 'lodash/sortBy';
 
 import { ROLES, ROOT_DOMAIN } from '~constants';
@@ -55,10 +49,12 @@ const MSG = defineMessages({
   },
 });
 
-interface Props {
+interface InProps {
   colonyAddress: Address;
   domains: DomainsMapType;
-  intl: IntlShape;
+}
+
+interface Props extends InProps {
   openDialog: (
     dialogName: string,
     dialogProps?: Record<string, any>,
@@ -68,22 +64,24 @@ interface Props {
 const displayName = 'admin.Permissions';
 
 const Permissions = ({ colonyAddress, domains, openDialog }: Props) => {
-  const [selectedDomainId, setSelectedDomainId] = useState(ROOT_DOMAIN);
+  const [selectedDomainId, setSelectedDomainId] = useState<string>(
+    ROOT_DOMAIN.toString(),
+  );
 
   const domainRoles = useTransformer(getDomainRoles, [
     domains,
-    selectedDomainId,
+    Number(selectedDomainId),
   ]);
 
   const directDomainRoles = useTransformer(getDomainRoles, [
     domains,
-    selectedDomainId,
+    Number(selectedDomainId),
     true,
   ]);
 
   const domainSelectOptions = sortBy(
     (Object.values(domains) as DomainType[]).map(({ id, name }) => ({
-      value: id,
+      value: id.toString(),
       label: name,
     })),
     ['value'],
@@ -210,9 +208,4 @@ const Permissions = ({ colonyAddress, domains, openDialog }: Props) => {
 
 Permissions.displayName = displayName;
 
-const enhance = compose(
-  withDialog(),
-  injectIntl,
-) as any;
-
-export default enhance(Permissions);
+export default withDialog()(Permissions) as FC<InProps>;

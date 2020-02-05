@@ -1,5 +1,5 @@
 import React from 'react';
-import { FormattedRelative } from 'react-intl';
+import { FormattedRelativeTime } from 'react-intl';
 
 interface Props {
   /** Datetime to calculate relative/difference from. */
@@ -10,7 +10,13 @@ const displayName = 'TimeRelative';
 
 const TimeRelative = ({ value, ...rest }: Props) => (
   <span {...rest}>
-    <FormattedRelative value={value} />
+    <FormattedRelativeTime
+      numeric="auto"
+      // eslint-disable-next-line react/style-prop-object
+      style="short"
+      unit="minute"
+      value={(new Date(value).getTime() - new Date().getTime()) / 1000}
+    />
   </span>
 );
 

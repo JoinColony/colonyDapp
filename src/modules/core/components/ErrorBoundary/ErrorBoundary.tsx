@@ -3,7 +3,7 @@ import {
   defineMessages,
   injectIntl,
   MessageDescriptor,
-  IntlShape,
+  WrappedComponentProps,
 } from 'react-intl';
 
 const MSG = defineMessages({
@@ -13,17 +13,12 @@ const MSG = defineMessages({
   },
 });
 
-interface Props {
+interface Props extends WrappedComponentProps {
   /*
    * Message to render when an error happens
    * (can be a string or a message descriptor)
    */
   message?: MessageDescriptor | string;
-
-  /*
-   * React-intl, so we can format message descriptors
-   */
-  intl: IntlShape;
 
   /*
    * Children to render if everything goes according to plan
@@ -74,4 +69,4 @@ class ErrorBoundary extends Component<Props, State> {
   }
 }
 
-export default injectIntl(ErrorBoundary);
+export default injectIntl<'intl', Props>(ErrorBoundary);

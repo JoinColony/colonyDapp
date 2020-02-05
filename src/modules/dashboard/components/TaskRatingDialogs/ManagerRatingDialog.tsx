@@ -94,7 +94,7 @@ const validationSchema = yup.object().shape({
  * it would always throw an error since the Input field wouldn't actually show up
  */
 const validationSchemaExtended = validationSchema.shape({
-  workDescription: yup.string().required(MSG.workDescriptionError),
+  workDescription: yup.string().required(() => MSG.workDescriptionError),
 });
 
 const ManagerRatingDialog = ({ close, cancel, submitWork }: Props) => (

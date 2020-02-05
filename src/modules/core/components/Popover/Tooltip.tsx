@@ -1,26 +1,26 @@
 import React, { ReactNode } from 'react';
-
-import { PopoverPlacementType, ReactRef } from './types';
+import { PopperProps } from 'react-popper';
 
 import Popover from './Popover';
+import { PopoverTriggerType, PopoverChildFn } from './types';
 
 import styles from './Tooltip.css';
 
 interface Props {
   /** Child element to trigger the popover */
-  children: ReactNode | ((arg0: { ref: ReactRef }) => ReactNode);
+  children: ReactNode | PopoverChildFn;
 
   /** The tooltips' content */
   content: ReactNode;
 
   /** How the popover gets triggered */
-  trigger: 'hover' | 'click' | 'disabled';
+  trigger: PopoverTriggerType;
 
   /** The tooltips' placement */
-  placement?: PopoverPlacementType;
+  placement?: PopperProps['placement'];
 
   /** Options to pass through the <Popper> element. See here: https://github.com/FezVrasta/react-popper#api-documentation */
-  popperProps?: object;
+  popperProps?: Omit<PopperProps, 'children'>;
 
   /** Whether there should be an arrow on the tooltip */
   showArrow: boolean;
@@ -51,7 +51,7 @@ const Tooltip = ({
     openDelay={200}
     content={renderContent(content)}
     placement={placement}
-    popperProps={popperProps}
+    popperProps={popperProps as PopperProps}
     showArrow={showArrow}
     isOpen={isOpen}
   >

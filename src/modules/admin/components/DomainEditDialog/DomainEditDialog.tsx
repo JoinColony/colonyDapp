@@ -13,7 +13,7 @@ import {
 } from '~utils/actions';
 import Button from '~core/Button';
 import Dialog, { DialogSection } from '~core/Dialog';
-import { ActionForm, InputLabel, Input } from '~core/Fields';
+import { ActionForm, Input } from '~core/Fields';
 import Heading from '~core/Heading';
 
 const MSG = defineMessages({
@@ -86,8 +86,7 @@ const DomainEditDialog = ({
               />
             </DialogSection>
             <DialogSection>
-              <InputLabel label={MSG.fieldLabel} />
-              <Input name="domainName" />
+              <Input label={MSG.fieldLabel} name="domainName" />
             </DialogSection>
             <DialogSection appearance={{ align: 'right' }}>
               <Button

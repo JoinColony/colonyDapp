@@ -1,20 +1,11 @@
 import React from 'react';
-import { MessageDescriptor } from 'react-intl';
 
-import DecisionOption from './DecisionOption';
+import DecisionOption, { DecisionOptionType } from './DecisionOption';
 
 const displayName = 'DecisionHub';
 
-interface Option {
-  value: string;
-  title: MessageDescriptor | string;
-  subtitle: MessageDescriptor | string;
-  icon?: string;
-  tooltip?: MessageDescriptor | string;
-}
-
 interface Props {
-  options: Option[];
+  options: DecisionOptionType[];
   name: string;
 }
 

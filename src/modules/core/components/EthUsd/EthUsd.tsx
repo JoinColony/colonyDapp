@@ -1,11 +1,11 @@
-import { IntlShape, defineMessages, injectIntl } from 'react-intl';
-import React, { Component } from 'react';
-import { toWei } from 'ethjs-unit';
+import React, { useEffect, useState } from 'react';
 import BN from 'bn.js';
+import { toWei } from 'ethjs-unit';
+import { defineMessages, useIntl } from 'react-intl';
 
-import { getEthToUsd } from '~utils/external';
-import Numeral from '~core/Numeral';
+import Numeral, { Props as NumeralProps } from '~core/Numeral/Numeral';
 import { SpinnerLoader } from '~core/Preloaders';
+import { getEthToUsd } from '~utils/external';
 
 const MSG = defineMessages({
   usdAbbreviation: {
@@ -19,118 +19,87 @@ interface Appearance {
   size: 'medium' | 'large' | 'small';
 }
 
-interface Props {
+interface Props extends NumeralProps {
   /** Appearance object for numeral */
   appearance?: Appearance;
 
   /** Should the prefix be visible? */
-  showPrefix: boolean;
+  showPrefix?: boolean;
 
   /** Should the suffix be visible? */
-  showSuffix: boolean;
+  showSuffix?: boolean;
 
   /** Number of decimals to show */
-  truncate: number;
+  truncate?: number;
 
   /** Ether unit the number is notated in (e.g. 'ether' = 10^18 wei) */
   unit?: string;
 
   /** Value in ether to convert to USD */
   value: number | string | BN;
-
-  /** @ignore injected by `injectIntl` */
-  intl: IntlShape;
 }
 
-type State = {
-  valueUsd: number | null;
-  requested: boolean;
+const displayName = 'EthUsd';
+
+const EthUsd = ({
+  appearance,
+  showPrefix = true,
+  showSuffix = true,
+  truncate = 2,
+  unit = 'ether',
+  value,
+  ...rest
+}: Props) => {
+  const [valueUsd, setValueUsd] = useState<number | undefined>();
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+
+  const { formatMessage } = useIntl();
+
+  const suffixText = formatMessage(MSG.usdAbbreviation);
+
+  useEffect(() => {
+    let didCancel = false;
+
+    setIsLoading(true);
+
+    const convertEthToUsd = async () => {
+      let valueToConvert;
+      if (BN.isBN(value)) {
+        valueToConvert = value;
+      } else {
+        const fixedNum = typeof value === 'number' ? value.toFixed(18) : value;
+        valueToConvert = toWei(fixedNum, unit);
+      }
+      const newValue = await getEthToUsd(valueToConvert);
+      if (!didCancel) {
+        setValueUsd(newValue || undefined);
+        setIsLoading(false);
+      }
+    };
+
+    convertEthToUsd();
+
+    return () => {
+      didCancel = true;
+    };
+  }, [unit, value]);
+
+  if (isLoading) {
+    return <SpinnerLoader />;
+  }
+
+  return (
+    <Numeral
+      appearance={appearance}
+      prefix={showPrefix && valueUsd ? '~ ' : ''}
+      suffix={showSuffix ? ` ${suffixText}` : ''}
+      truncate={truncate}
+      value={valueUsd || '-'}
+      {...rest}
+    />
+  );
 };
 
-class EthUsd extends Component<Props, State> {
-  static displayName = 'EthUsd';
+EthUsd.displayName = displayName;
 
-  static defaultProps = {
-    showPrefix: true,
-    showSuffix: true,
-    truncate: 2,
-    unit: 'ether',
-  };
-
-  state = {
-    valueUsd: null,
-    requested: false,
-  };
-
-  componentDidMount() {
-    this.convertEthToUsd();
-  }
-
-  componentDidUpdate(prevProps) {
-    const { value } = this.props;
-    if (value !== prevProps.value) {
-      this.convertEthToUsd();
-    }
-  }
-
-  componentWillUnmount() {
-    this.mounted = false;
-  }
-
-  mounted = false;
-
-  convertEthToUsd = () => {
-    const { unit, value } = this.props;
-    let valueToConvert;
-    if (BN.isBN(value)) {
-      valueToConvert = value;
-    } else {
-      const fixedNum = typeof value === 'number' ? value.toFixed(18) : value;
-      valueToConvert = toWei(fixedNum, unit);
-    }
-    this.mounted = true;
-    getEthToUsd(valueToConvert)
-      .then((valueUsd: number) => {
-        this.setState({ requested: true });
-        if (this.mounted) {
-          this.setState({
-            valueUsd,
-          });
-        }
-      })
-      .catch(() => {
-        this.setState({ requested: true });
-      });
-  };
-
-  render() {
-    const { valueUsd, requested } = this.state;
-    const {
-      appearance,
-      intl: { formatMessage },
-      showPrefix,
-      showSuffix,
-      truncate,
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      unit,
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      value,
-      ...rest
-    } = this.props;
-    const suffixText = formatMessage(MSG.usdAbbreviation);
-    return requested ? (
-      <Numeral
-        appearance={appearance}
-        prefix={showPrefix && valueUsd ? '~ ' : ''}
-        suffix={showSuffix ? ` ${suffixText}` : ''}
-        truncate={truncate}
-        value={valueUsd || '-'}
-        {...rest}
-      />
-    ) : (
-      <SpinnerLoader />
-    );
-  }
-}
-
-export default injectIntl(EthUsd);
+export default EthUsd;
