@@ -3,7 +3,7 @@
 import React from 'react';
 import toJson from 'enzyme-to-json';
 
-import { shallowWithIntl } from 'enzyme-react-intl';
+import { mountWithIntl } from '../../../../../../__tests__/utils';
 
 import Select from '../Select';
 
@@ -26,7 +26,7 @@ const DEFAULT_PROPS = {
 
 describe('Select component', () => {
   test('Renders initial component', () => {
-    const wrapper = shallowWithIntl(<Select {...DEFAULT_PROPS} />);
+    const wrapper = mountWithIntl(<Select {...DEFAULT_PROPS} />);
     expect(toJson(wrapper)).toMatchSnapshot();
   });
 });

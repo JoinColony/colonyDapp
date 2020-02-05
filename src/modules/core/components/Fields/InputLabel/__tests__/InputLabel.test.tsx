@@ -3,20 +3,20 @@
 import React from 'react';
 import toJson from 'enzyme-to-json';
 
-import { shallowWithIntl } from 'enzyme-react-intl';
+import { mountWithIntl } from '../../../../../../__tests__/utils';
 
 import InputLabel from '../InputLabel';
 
 describe('InputLabel intl={intl} component', () => {
   test('Renders initial component', () => {
-    const wrapper = shallowWithIntl(
+    const wrapper = mountWithIntl(
       <InputLabel appearance={{}} inputId="foo" help="halp" label="awesome" />,
     );
     expect(toJson(wrapper)).toMatchSnapshot();
   });
 
   test('If error is false, and help is true, returns help field', () => {
-    const wrapper = shallowWithIntl(
+    const wrapper = mountWithIntl(
       <InputLabel inputId="foo" help="(halp)" label="awesome" />,
     );
     expect(wrapper.html()).toContain('(halp)');

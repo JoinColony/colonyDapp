@@ -3,24 +3,24 @@
 import React from 'react';
 import toJson from 'enzyme-to-json';
 
-import { shallowWithIntl, mountWithIntl } from 'enzyme-react-intl';
+import { mountWithIntl } from '../../../../../__tests__/utils';
 
 import Heading from '../Heading';
 
 describe('Heading component', () => {
   const mockTitle = 'Hello Rick';
   test('Renders initial component', () => {
-    const wrapper = shallowWithIntl(<Heading text={mockTitle} />);
+    const wrapper = mountWithIntl(<Heading text={mockTitle} />);
     expect(toJson(wrapper)).toMatchSnapshot();
   });
   test('Works with MessageDescriptors', () => {
-    const wrapper = shallowWithIntl(
+    const wrapper = mountWithIntl(
       <Heading text={{ id: 'rick', defaultMessage: mockTitle }} />,
     );
     expect(toJson(wrapper)).toMatchSnapshot();
   });
   test('Shows the title value', () => {
-    const wrapper = shallowWithIntl(<Heading text={mockTitle} />);
+    const wrapper = mountWithIntl(<Heading text={mockTitle} />);
     expect(wrapper.html()).toContain(mockTitle);
   });
   test('Has default heading element props', () => {
@@ -77,8 +77,8 @@ describe('Heading component', () => {
     expect(wrapper.html()).toContain('<h6');
   });
   test('Can overwrite the heading element', () => {
-    const eliteElement = 'h1337';
-    const wrapper = shallowWithIntl(
+    const eliteElement = 'button';
+    const wrapper = mountWithIntl(
       <Heading tagName={eliteElement} text={mockTitle} />,
     );
     expect(wrapper.html()).toContain(`<${eliteElement}`);

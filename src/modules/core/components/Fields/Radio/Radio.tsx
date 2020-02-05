@@ -25,6 +25,7 @@ interface Props {
   disabled?: boolean;
   /** Style object for the visible radio */
   radioStyle?: { [k: string]: string };
+  inputId?: string;
   value?: any;
 }
 
@@ -40,11 +41,13 @@ const Radio = ({
   elementOnly = false,
   $error,
   help,
+  inputId: inputIdProp,
   label,
   name,
   $value,
   radioStyle,
   /* eslint-disable @typescript-eslint/no-unused-vars */
+  connect,
   $id,
   formatIntl,
   $touched,
@@ -54,7 +57,7 @@ const Radio = ({
   /* eslint-enable @typescript-eslint/no-unused-vars */
   ...props
 }: Props & AsFieldEnhancedProps) => {
-  const { current: inputId } = useRef<string>(nanoid());
+  const { current: inputId } = useRef<string>(inputIdProp || nanoid());
   return (
     <label
       className={getMainClasses(appearance, styles, {
