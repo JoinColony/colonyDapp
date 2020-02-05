@@ -1,11 +1,12 @@
-import React, { useCallback } from 'react';
+import React, { useCallback, useState } from 'react';
 import { defineMessages } from 'react-intl';
 
-import { ActionButton } from '~core/Button';
+import Button from '~core/Button';
 import { ActionTypes } from '~redux/index';
 import { mergePayload } from '~utils/actions';
 import { AnyTask } from '~data/index';
 import { Address } from '~types/index';
+import { useAsyncFunction } from '~utils/hooks';
 
 const MSG = defineMessages({
   finalizeTask: {
@@ -22,6 +23,7 @@ interface Props {
 }
 
 const TaskFinalize = ({ draftId, colonyAddress }: Props) => {
+  const [isLoading, setIsLoading] = useState(false);
   const transform = useCallback(
     mergePayload({
       colonyAddress,
@@ -29,13 +31,26 @@ const TaskFinalize = ({ draftId, colonyAddress }: Props) => {
     }),
     [colonyAddress, draftId],
   );
+  const finalizeTask = useAsyncFunction({
+    submit: ActionTypes.TASK_FINALIZE,
+    error: ActionTypes.TASK_FINALIZE_ERROR,
+    success: ActionTypes.TASK_FINALIZE_SUCCESS,
+    transform,
+  });
+  const handleOnClick = async () => {
+    setIsLoading(true);
+    try {
+      await finalizeTask({});
+      setIsLoading(false);
+    } catch (error) {
+      setIsLoading(false);
+    }
+  };
   return (
-    <ActionButton
+    <Button
       text={MSG.finalizeTask}
-      submit={ActionTypes.TASK_FINALIZE}
-      error={ActionTypes.TASK_FINALIZE_ERROR}
-      success={ActionTypes.TASK_FINALIZE_SUCCESS}
-      transform={transform}
+      onClick={handleOnClick}
+      loading={isLoading}
     />
   );
 };
