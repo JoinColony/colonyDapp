@@ -29,7 +29,10 @@ const MSG = defineMessages({
   },
   callToSubscribe: {
     id: 'dashboard.Community.callToSubscribe',
-    defaultMessage: `{action} to become a member of this colony.`,
+    defaultMessage: `{noMembers, select,
+      true {No members yet. {action} to become the first member of this colony.}
+      other {{action} to become a member of this colony.}
+    }`,
   },
   subscribe: {
     id: 'dashboard.Community.subscribe',
@@ -156,6 +159,7 @@ const Community = ({ colonyAddress }: Props) => {
           <FormattedMessage
             {...MSG.callToSubscribe}
             values={{
+              noMembers: !communityUsers.length,
               action: (
                 <Button
                   className={styles.subscribeButton}
