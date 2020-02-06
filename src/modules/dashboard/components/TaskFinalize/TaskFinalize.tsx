@@ -1,13 +1,16 @@
-import React, { useCallback, useState } from 'react';
+import React, { FC, useCallback, useState } from 'react';
 import { defineMessages } from 'react-intl';
 import moveDecimal from 'move-decimal-point';
 
 import Button from '~core/Button';
+import { withDialog } from '~core/Dialog';
 
 import { Address } from '~types/index';
+import { OpenDialog } from '~core/Dialog/types';
 import {
   AnyTask,
   Payouts,
+  Domain,
   TokenWithBalances,
   useTokenBalancesForDomainsQuery,
 } from '~data/index';
@@ -25,11 +28,16 @@ const MSG = defineMessages({
 
 const displayName = 'dashboard.TaskFinalize';
 
-interface Props {
+interface InProps {
   draftId: AnyTask['id'];
   colonyAddress: Address;
-  ethDomainId: number,
-  payouts: Payouts,
+  ethDomainId: Domain['ethDomainId'];
+  payouts: Payouts;
+}
+
+interface Props extends InProps {
+  // Injected via `withDialog`
+  openDialog: OpenDialog;
 }
 
 const TaskFinalize = ({
@@ -37,6 +45,7 @@ const TaskFinalize = ({
   colonyAddress,
   ethDomainId,
   payouts,
+  openDialog,
 }: Props) => {
   const [isLoading, setIsLoading] = useState(false);
 
@@ -47,25 +56,6 @@ const TaskFinalize = ({
       tokenAddresses,
       domainIds: [ethDomainId],
     },
-  });
-  const enoughFundsAvailable = payouts.every(({ amount, tokenAddress }) => {
-    if (!tokenBalances) {
-      return false;
-    }
-    /*
-     * @NOTE About the types ignore
-     *
-     * For some reason I get a TS error about balances prop not existing, even though
-     * it's available on the union type. I must be missing something...
-     */
-    // @ts-ignore
-    const { balances: domainBalances, decimals } = tokenBalances.tokens.find(
-      ({ address: domainTokenAddress }) => domainTokenAddress === tokenAddress,
-    ) as TokenWithBalances;
-    return domainBalances.every(
-      ({ amount: availableDomainAmount }) =>
-        !bnLessThan(availableDomainAmount, moveDecimal(amount, decimals || 18)),
-    );
   });
 
   const transform = useCallback(
@@ -82,26 +72,56 @@ const TaskFinalize = ({
     transform,
   });
 
-  const handleOnClick = async () => {
-    setIsLoading(true);
+  const handleOnClick = useCallback(async () => {
     try {
+      setIsLoading(true);
+      const enoughFundsAvailable = payouts.every(({ amount, tokenAddress }) => {
+        if (!tokenBalances) {
+          return false;
+        }
+        /*
+         * @NOTE About the types ignore
+         *
+         * For some reason I get a TS error about balances prop not existing, even though
+         * it's available on the union type. I must be missing something...
+         */
+        const {
+          // @ts-ignore
+          balances: domainBalances,
+          decimals,
+        } = tokenBalances.tokens.find(
+          ({ address: domainTokenAddress }) =>
+            domainTokenAddress === tokenAddress,
+        ) as TokenWithBalances;
+        return domainBalances.every(
+          ({ amount: availableDomainAmount }) =>
+            !bnLessThan(
+              availableDomainAmount,
+              moveDecimal(amount, decimals || 18),
+            ),
+        );
+      });
+      if (!enoughFundsAvailable) {
+        return openDialog('TaskFinalizeDialog')
+          .afterClosed()
+          .then(() => setIsLoading(false), () => setIsLoading(false));
+      }
       await finalizeTask({});
-      setIsLoading(false);
+      return setIsLoading(false);
     } catch (error) {
-      setIsLoading(false);
+      return setIsLoading(false);
     }
-  };
+  }, [finalizeTask, openDialog, payouts, tokenBalances]);
 
   return (
     <Button
       text={MSG.finalizeTask}
       onClick={handleOnClick}
       loading={isLoading}
-      disabled={!enoughFundsAvailable}
     />
   );
 };
 
 TaskFinalize.displayName = displayName;
 
-export default TaskFinalize;
+export default (withDialog() as any)(TaskFinalize) as FC<InProps>;

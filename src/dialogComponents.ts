@@ -26,6 +26,7 @@ import {
 import RecoveryModeDialog from '~admin/RecoveryModeDialog';
 import UnlockTokenDialog from '~admin/Profile/UnlockTokenDialog';
 import UpgradeContractDialog from '~admin/UpgradeContractDialog';
+import { TaskFinalizeDialog } from '~dashboard/TaskFinalize';
 
 const dialogComponents: Record<string, DialogComponent> = {
   ActivityBarExample,
@@ -45,6 +46,7 @@ const dialogComponents: Record<string, DialogComponent> = {
   UpgradeContractDialog,
   UserTokenEditDialog,
   WorkerRatingDialog,
+  TaskFinalizeDialog,
 };
 
 export default dialogComponents;
