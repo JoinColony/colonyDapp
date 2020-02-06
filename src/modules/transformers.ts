@@ -186,7 +186,7 @@ export const getCommunityRoles = (
       parseInt(domainId, 10),
       founder,
     );
-    currentDomainAdmins.map(adminAddress => admins.add(adminAddress));
+    return currentDomainAdmins.map(adminAddress => admins.add(adminAddress));
   });
   return {
     founder,
