@@ -1,0 +1,12 @@
+.main {
+  margin-top: 20px;
+}
+
+.main table .tableBody {
+  overflow-y: auto;
+  overflow-x: none;
+}
+
+.main table .tableBody tr {
+  overflow-x: auto;
+}
