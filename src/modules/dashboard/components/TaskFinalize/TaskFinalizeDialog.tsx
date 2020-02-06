@@ -31,7 +31,7 @@ const TaskFinalizeDialog = ({ cancel, close }: Props) => (
       />
     </DialogSection>
     <DialogSection appearance={{ border: 'bottom' }}>
-      <FormattedMessage {...MSG.defaultText} />
+      <FormattedMessage {...MSG.description} />
     </DialogSection>
     <DialogSection appearance={{ align: 'right' }}>
       <Button
