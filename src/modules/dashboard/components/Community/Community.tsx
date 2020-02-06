@@ -1,8 +1,14 @@
-import React, { FC } from 'react';
+import React, { FC, useCallback } from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 
 import { Address } from '~types/index';
-import { useColonySubscribedUsersQuery } from '~data/index';
+import {
+  useColonySubscribedUsersQuery,
+  useLoggedInUser,
+  useUserColonyAddressesQuery,
+  useSubscribeToColonyMutation,
+  ColonySubscribedUsersDocument,
+} from '~data/index';
 import { domainsAndRolesFetcher } from '../../fetchers';
 import { getCommunityRoles } from '../../../transformers';
 import { useDataFetcher, useTransformer } from '~utils/hooks';
@@ -12,6 +18,7 @@ import { sortObjectsBy } from '~utils/arrays';
 import { Table, TableBody, TableCell } from '~core/Table';
 import { SpinnerLoader } from '~core/Preloaders';
 import UserListItem from '~admin/UserListItem';
+import Button from '~core/Button';
 
 import styles from './Community.css';
 
@@ -20,6 +27,18 @@ const MSG = defineMessages({
     id: 'dashboard.Community.loading',
     defaultMessage: "Loading Colony's users...",
   },
+  callToSubscribe: {
+    id: 'dashboard.Community.callToSubscribe',
+    defaultMessage: `{action} to become a member of this colony.`,
+  },
+  subscribe: {
+    id: 'dashboard.Community.subscribe',
+    defaultMessage: `Subscribe now`,
+  },
+  subscribedReward: {
+    id: 'dashboard.Community.subscribedReward',
+    defaultMessage: `{star} Subscribed!`,
+  },
 });
 
 interface Props {
@@ -27,14 +46,35 @@ interface Props {
 }
 
 const Community = ({ colonyAddress }: Props) => {
+  const { walletAddress } = useLoggedInUser();
+  const {
+    data: currentUserSubscribedColonies,
+    loading: loadingCurrentUserSubscribedColonies,
+  } = useUserColonyAddressesQuery({
+    variables: { address: walletAddress },
+  });
   const {
     data: colonySubscribedUsers,
-    loading,
+    loading: loadingColonySubscribedUsers,
   } = useColonySubscribedUsersQuery({
     variables: {
       colonyAddress,
     },
   });
+  const [subscribeToColonyMutation] = useSubscribeToColonyMutation();
+  const subscribeToColony = useCallback(() => {
+    if (colonyAddress) {
+      subscribeToColonyMutation({
+        variables: { input: { colonyAddress } },
+        refetchQueries: [
+          {
+            query: ColonySubscribedUsersDocument,
+            variables: { colonyAddress },
+          },
+        ],
+      });
+    }
+  }, [subscribeToColonyMutation, colonyAddress]);
 
   const { data: domains, isFetching: isFetchingDomains } = useDataFetcher(
     domainsAndRolesFetcher,
@@ -44,7 +84,12 @@ const Community = ({ colonyAddress }: Props) => {
 
   const communityRoles = useTransformer(getCommunityRoles, [domains]);
 
-  if (!colonySubscribedUsers || loading || isFetchingDomains) {
+  if (
+    !colonySubscribedUsers ||
+    loadingColonySubscribedUsers ||
+    isFetchingDomains ||
+    loadingCurrentUserSubscribedColonies
+  ) {
     return (
       <div className={styles.main}>
         <SpinnerLoader
@@ -93,8 +138,34 @@ const Community = ({ colonyAddress }: Props) => {
       }),
     );
 
+  let isSubscribed = false;
+  if (currentUserSubscribedColonies) {
+    const {
+      user: { colonyAddresses },
+    } = currentUserSubscribedColonies;
+    isSubscribed = (colonyAddresses || []).includes(colonyAddress);
+  }
+
   return (
     <div className={styles.main}>
+      {currentUserSubscribedColonies && !isSubscribed && (
+        <div className={styles.subscribeCallToAction}>
+          <FormattedMessage
+            {...MSG.callToSubscribe}
+            values={{
+              action: (
+                <Button
+                  className={styles.subscribeButton}
+                  onClick={subscribeToColony}
+                >
+                  <span className={styles.unsubscribedIcon} />
+                  <FormattedMessage {...MSG.subscribe} />
+                </Button>
+              ),
+            }}
+          />
+        </div>
+      )}
       <Table scrollable>
         <TableBody className={styles.tableBody}>
           {communityUsers.map(({ id: userAddress, communityRole }) => (
