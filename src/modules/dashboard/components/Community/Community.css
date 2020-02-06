@@ -18,3 +18,54 @@
   font-weight: var(--weight-semi);
   white-space: nowrap;
 }
+
+.subscribeCallToAction {
+  margin-bottom: 20px;
+  color: var(--text-dark);
+}
+
+.subscribeButton {
+  padding: 0px;
+  border: none;
+  background-color: rgb(0, 0, 0, 0);
+  color: var(--sky-blue);
+  cursor: pointer;
+}
+
+.subscribedIcon, .unsubscribedIcon {
+  display: inline-block;
+  margin-right: 5px;
+
+  /*
+   * @NOTE Negative margins
+   * Better align subscription icon with the text
+   */
+  margin-bottom: -1px;
+  padding: 0;
+  height: 18px;
+  width: 18px;
+  position: relative;
+  vertical-align: bottom;
+  border: none;
+  border-radius: 100%;
+  font-size: 13px;
+  line-height: 100%;
+  color: white;
+  cursor: pointer;
+}
+
+.subscribedIcon::before, .unsubscribedIcon::before {
+  width: 100%;
+  position: absolute;
+  top: 2px;
+  left: 0;
+  content: '\2605';
+}
+
+.subscribedIcon {
+  background: var(--golden);
+}
+
+.unsubscribedIcon {
+  background-color: var(--grey-4);
+}
