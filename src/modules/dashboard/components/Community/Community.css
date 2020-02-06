@@ -54,7 +54,21 @@
   cursor: pointer;
 }
 
-.subscribedIcon::before, .unsubscribedIcon::before {
+.subscribedIcon::before {
+  width: 100%;
+  position: absolute;
+  top: 2px;
+  left: 3px;
+  content: '\2605';
+}
+
+.subscribedIcon {
+  margin-right: 2px;
+  margin-bottom: 2px;
+  background: var(--golden);
+}
+
+.unsubscribedIcon::before {
   width: 100%;
   position: absolute;
   top: 2px;
@@ -62,10 +76,6 @@
   content: '\2605';
 }
 
-.subscribedIcon {
-  background: var(--golden);
-}
-
 .unsubscribedIcon {
-  background-color: var(--grey-4);
+  background-color: var(--temp-grey-12);
 }

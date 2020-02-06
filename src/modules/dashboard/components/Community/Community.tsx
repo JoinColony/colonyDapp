@@ -1,4 +1,4 @@
-import React, { FC, useCallback } from 'react';
+import React, { FC, useCallback, useState } from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 
 import { Address } from '~types/index';
@@ -46,6 +46,7 @@ interface Props {
 }
 
 const Community = ({ colonyAddress }: Props) => {
+  const [justSubscribed, setJustSubscribed] = useState<boolean>(false);
   const { walletAddress } = useLoggedInUser();
   const {
     data: currentUserSubscribedColonies,
@@ -73,8 +74,10 @@ const Community = ({ colonyAddress }: Props) => {
           },
         ],
       });
+      setJustSubscribed(true);
+      setTimeout(() => setJustSubscribed(false), 3000);
     }
-  }, [subscribeToColonyMutation, colonyAddress]);
+  }, [subscribeToColonyMutation, colonyAddress, setJustSubscribed]);
 
   const { data: domains, isFetching: isFetchingDomains } = useDataFetcher(
     domainsAndRolesFetcher,
@@ -166,6 +169,16 @@ const Community = ({ colonyAddress }: Props) => {
           />
         </div>
       )}
+      {justSubscribed && (
+        <div className={styles.subscribeCallToAction}>
+          <FormattedMessage
+            {...MSG.subscribedReward}
+            values={{
+              star: <span className={styles.subscribedIcon} />,
+            }}
+          />
+        </div>
+      )}
       <Table scrollable>
         <TableBody className={styles.tableBody}>
           {communityUsers.map(({ id: userAddress, communityRole }) => (
@@ -173,7 +186,6 @@ const Community = ({ colonyAddress }: Props) => {
               address={userAddress}
               key={userAddress}
               showDisplayName
-              showMaskedAddress
               showUsername
               showInfo={false}
             >
