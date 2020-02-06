@@ -10,6 +10,7 @@ import {
   useSubscribeToColonyMutation,
   useUnsubscribeFromColonyMutation,
   useUserColonyAddressesQuery,
+  ColonySubscribedUsersDocument,
 } from '~data/index';
 
 import styles from './ColonySubscribe.css';
@@ -44,12 +45,24 @@ const ColonySubscribe = ({ colonyAddress }: Props) => {
     { loading: loadingSubscribe },
   ] = useSubscribeToColonyMutation({
     variables: { input: { colonyAddress } },
+    refetchQueries: [
+      {
+        query: ColonySubscribedUsersDocument,
+        variables: { colonyAddress },
+      },
+    ],
   });
   const [
     unsubscribe,
     { loading: loadingUnsubscribe },
   ] = useUnsubscribeFromColonyMutation({
     variables: { input: { colonyAddress } },
+    refetchQueries: [
+      {
+        query: ColonySubscribedUsersDocument,
+        variables: { colonyAddress },
+      },
+    ],
   });
 
   if (!username || !data) return null;
