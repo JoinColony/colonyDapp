@@ -6,7 +6,7 @@
     "role.disabled": "Disabled",
     "role.member": "Member",
     "role.admin": "Admin",
-    "role.owner": "Owner",
+    "role.founder": "Founder",
     "role.administration": "Administration",
     "role.arbitration": "Arbitration",
     "role.architecture": "Architecture",
