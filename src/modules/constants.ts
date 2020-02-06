@@ -13,3 +13,9 @@ export enum ROLES {
   FUNDING = 'FUNDING',
   ADMINISTRATION = 'ADMINISTRATION',
 }
+
+export enum ROLES_COMMUNITY {
+  founder = 'role.founder',
+  admin = 'role.admin',
+  member = 'role.member',
+}
