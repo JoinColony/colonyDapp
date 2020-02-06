@@ -159,11 +159,35 @@ const getLegacyAdmins = (
  * util can be removed once the DLP project is completed.
  */
 export const getLegacyRoles = (
-  domains,
+  domains: Record<string, DomainType>,
 ): { founder: Address; admins: Address[] } | void => {
   const rootDomainRoles = getDomainRoles(domains, ROOT_DOMAIN);
   const founder = getLegacyFounder(rootDomainRoles);
   const admins = getLegacyAdmins(domains, ROOT_DOMAIN, founder);
+  return {
+    founder,
+    admins: Array.from(admins) as string[],
+  };
+};
+
+/*
+ * @NOTE This differs from the above transformer as it considers roles in any domain (root + subdomains)
+ * to be an admin role
+ */
+export const getCommunityRoles = (
+  domains: Record<string, DomainType>,
+): { founder: Address; admins: Address[] } => {
+  const rootDomainRoles = getDomainRoles(domains, ROOT_DOMAIN);
+  const founder = getLegacyFounder(rootDomainRoles);
+  const admins = new Set();
+  Object.keys(domains).map(domainId => {
+    const currentDomainAdmins = getLegacyAdmins(
+      domains,
+      parseInt(domainId, 10),
+      founder,
+    );
+    currentDomainAdmins.map(adminAddress => admins.add(adminAddress));
+  });
   return {
     founder,
     admins: Array.from(admins) as string[],
