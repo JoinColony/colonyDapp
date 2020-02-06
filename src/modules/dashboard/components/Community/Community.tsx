@@ -1,10 +1,15 @@
 import React, { FC } from 'react';
-import { defineMessages } from 'react-intl';
+import { defineMessages, FormattedMessage } from 'react-intl';
 
 import { Address } from '~types/index';
 import { useColonySubscribedUsersQuery } from '~data/index';
+import { domainsAndRolesFetcher } from '../../fetchers';
+import { getCommunityRoles } from '../../../transformers';
+import { useDataFetcher, useTransformer } from '~utils/hooks';
+import { ROLES_COMMUNITY } from '~constants';
+import { sortObjectsBy } from '~utils/arrays';
 
-import { Table, TableBody } from '~core/Table';
+import { Table, TableBody, TableCell } from '~core/Table';
 import { SpinnerLoader } from '~core/Preloaders';
 import UserListItem from '~admin/UserListItem';
 
@@ -31,7 +36,15 @@ const Community = ({ colonyAddress }: Props) => {
     },
   });
 
-  if (!colonySubscribedUsers || loading) {
+  const { data: domains, isFetching: isFetchingDomains } = useDataFetcher(
+    domainsAndRolesFetcher,
+    [colonyAddress],
+    [colonyAddress],
+  );
+
+  const communityRoles = useTransformer(getCommunityRoles, [domains]);
+
+  if (!colonySubscribedUsers || loading || isFetchingDomains) {
     return (
       <div className={styles.main}>
         <SpinnerLoader
@@ -46,11 +59,45 @@ const Community = ({ colonyAddress }: Props) => {
     colony: { subscribedUsers },
   } = colonySubscribedUsers;
 
+  const communityUsers = subscribedUsers
+    .map(user => {
+      const {
+        profile: { walletAddress: userAddress },
+      } = user;
+      let communityRole = 'member';
+      if (communityRoles.founder === userAddress) {
+        communityRole = 'founder';
+      }
+      if (
+        communityRoles.admins.find(adminAddress => adminAddress === userAddress)
+      ) {
+        communityRole = 'admin';
+      }
+      return {
+        ...user,
+        communityRole,
+      };
+    })
+    .sort(
+      sortObjectsBy({
+        name: 'communityRole',
+        compareFn: role => {
+          if (role === 'founder') {
+            return -1;
+          }
+          if (role === 'member') {
+            return 1;
+          }
+          return 0;
+        },
+      }),
+    );
+
   return (
     <div className={styles.main}>
       <Table scrollable>
         <TableBody className={styles.tableBody}>
-          {subscribedUsers.map(({ id: userAddress }) => (
+          {communityUsers.map(({ id: userAddress, communityRole }) => (
             <UserListItem
               address={userAddress}
               key={userAddress}
@@ -58,7 +105,13 @@ const Community = ({ colonyAddress }: Props) => {
               showMaskedAddress
               showUsername
               showInfo={false}
-            />
+            >
+              <TableCell>
+                <span className={styles.communityRole}>
+                  <FormattedMessage id={ROLES_COMMUNITY[communityRole]} />
+                </span>
+              </TableCell>
+            </UserListItem>
           ))}
         </TableBody>
       </Table>

@@ -10,3 +10,11 @@
 .main table .tableBody tr {
   overflow-x: auto;
 }
+
+.communityRole {
+  margin-left: auto;
+  padding: 0 30px;
+  font-size: var(--size-tiny);
+  font-weight: var(--weight-semi);
+  white-space: nowrap;
+}
