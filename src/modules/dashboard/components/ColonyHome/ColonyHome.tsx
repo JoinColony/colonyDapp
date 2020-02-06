@@ -9,6 +9,7 @@ import BreadCrumb from '~core/BreadCrumb';
 import Heading from '~core/Heading';
 import { Tab, TabList, TabPanel, Tabs } from '~core/Tabs';
 import Suggestions from '~dashboard/Suggestions';
+import Community from '~dashboard/Community';
 import { useLoggedInUser } from '~data/helpers';
 import { useColonyFromNameQuery } from '~data/index';
 import LoadingTemplate from '~pages/LoadingTemplate';
@@ -41,6 +42,10 @@ const MSG = defineMessages({
     id: 'dashboard.ColonyHome.tabTransactions',
     defaultMessage: 'Transactions',
   },
+  tabCommunity: {
+    id: 'dashboard.ColonyHome.tabCommunity',
+    defaultMessage: 'Community',
+  },
   noFilter: {
     id: 'dashboard.ColonyHome.noFilter',
     defaultMessage: 'All Transactions in Colony',
@@ -50,6 +55,7 @@ const MSG = defineMessages({
 enum TabName {
   SuggestionsTab = 'suggestions',
   TasksTab = 'tasks',
+  CommunityTab = 'community',
   TransactionsTab = 'transactions',
 }
 
@@ -164,6 +170,9 @@ const ColonyHome = ({
             <Tab onClick={() => setActiveTab(TabName.SuggestionsTab)}>
               <FormattedMessage {...MSG.tabSuggestions} />
             </Tab>
+            <Tab onClick={() => setActiveTab(TabName.CommunityTab)}>
+              <FormattedMessage {...MSG.tabCommunity} />
+            </Tab>
             <Tab onClick={() => setActiveTab(TabName.TransactionsTab)}>
               <FormattedMessage {...MSG.tabTransactions} />
             </Tab>
@@ -182,6 +191,9 @@ const ColonyHome = ({
               colonyName={colony.colonyName}
               domainId={filteredDomainId}
             />
+          </TabPanel>
+          <TabPanel>
+            <Community colonyAddress={colony.colonyAddress} />
           </TabPanel>
           <TabPanel>
             <Transactions colonyAddress={colony.colonyAddress} />
