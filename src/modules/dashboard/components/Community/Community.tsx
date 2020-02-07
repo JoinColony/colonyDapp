@@ -48,6 +48,8 @@ interface Props {
   colonyAddress: Address;
 }
 
+const displayName = 'dashboard.Community';
+
 const Community = ({ colonyAddress }: Props) => {
   const [justSubscribed, setJustSubscribed] = useState<boolean>(false);
   const subscribedMessageTimer = useRef<any>(null);
@@ -214,6 +216,6 @@ const Community = ({ colonyAddress }: Props) => {
   );
 };
 
-Community.displayName = 'admin.Community';
+Community.displayName = displayName;
 
 export default Community as FC<Props>;
