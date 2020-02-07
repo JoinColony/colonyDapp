@@ -10,7 +10,6 @@ import {
   useSubscribeToColonyMutation,
   useUnsubscribeFromColonyMutation,
   useUserColonyAddressesQuery,
-  ColonySubscribedUsersDocument,
   cacheUpdates,
 } from '~data/index';
 
@@ -46,12 +45,7 @@ const ColonySubscribe = ({ colonyAddress }: Props) => {
     { loading: loadingSubscribe },
   ] = useSubscribeToColonyMutation({
     variables: { input: { colonyAddress } },
-    refetchQueries: [
-      {
-        query: ColonySubscribedUsersDocument,
-        variables: { colonyAddress },
-      },
-    ],
+    update: cacheUpdates.subscribeToColony(colonyAddress),
   });
   const [
     unsubscribe,

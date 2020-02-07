@@ -7,7 +7,7 @@ import {
   useLoggedInUser,
   useUserColonyAddressesQuery,
   useSubscribeToColonyMutation,
-  ColonySubscribedUsersDocument,
+  cacheUpdates,
 } from '~data/index';
 import { domainsAndRolesFetcher } from '../../fetchers';
 import { getCommunityRoles } from '../../../transformers';
@@ -70,12 +70,7 @@ const Community = ({ colonyAddress }: Props) => {
     if (colonyAddress) {
       subscribeToColonyMutation({
         variables: { input: { colonyAddress } },
-        refetchQueries: [
-          {
-            query: ColonySubscribedUsersDocument,
-            variables: { colonyAddress },
-          },
-        ],
+        update: cacheUpdates.subscribeToColony(colonyAddress),
       });
       setJustSubscribed(true);
       setTimeout(() => setJustSubscribed(false), 3000);
