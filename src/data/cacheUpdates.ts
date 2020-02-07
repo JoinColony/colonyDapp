@@ -19,6 +19,9 @@ import {
   ColonySubscribedUsersQuery,
   ColonySubscribedUsersQueryVariables,
   ColonySubscribedUsersDocument,
+  UserQuery,
+  UserQueryVariables,
+  UserDocument,
 } from './generated';
 
 type Cache = typeof apolloCache;
@@ -199,6 +202,9 @@ const cacheUpdates = {
           const { subscribedUsers } = cacheData.colony;
           const updatedColonySubscription = subscribedUsers.filter(
             ({ id: userWalletAddress }) =>
+              /*
+               * Remove the unsubscribed user from the subscribers array
+               */
               userWalletAddress !== unsubscribedUserWalletAddress,
           );
           cache.writeQuery<
@@ -219,7 +225,78 @@ const cacheUpdates = {
         }
       } catch (e) {
         log.verbose(e);
-        log.verbose('Not updating colony subscriptions cache - not loaded yet');
+        log.verbose(
+          'Cannot update the colony subscriptions cache - not loaded yet',
+        );
+      }
+    };
+  },
+  subscribeToColony(colonyAddress: Address) {
+    return (cache: Cache, { data }: any) => {
+      try {
+        const cacheData = cache.readQuery<
+          ColonySubscribedUsersQuery,
+          ColonySubscribedUsersQueryVariables
+        >({
+          query: ColonySubscribedUsersDocument,
+          variables: {
+            colonyAddress,
+          },
+        });
+        if (cacheData && data && data.subscribeToColony) {
+          const { id: subscribedUserWalletAddress } = data.subscribeToColony;
+          const { subscribedUsers } = cacheData.colony;
+          /*
+           * The subscribed to colony mutation, only returns the user wallet address,
+           * but we also need the user's profile to update the subscribers array
+           */
+          const subscribedUserProfileFromCache = cache.readQuery<
+            UserQuery,
+            UserQueryVariables
+          >({
+            query: UserDocument,
+            variables: {
+              address: subscribedUserWalletAddress,
+            },
+          });
+          // console.log(subscribedUserProfileFromCache);
+          if (
+            subscribedUserProfileFromCache &&
+            subscribedUserProfileFromCache.user
+          ) {
+            const {
+              user: { profile: subscribedUserProfile },
+            } = subscribedUserProfileFromCache;
+            const updatedColonySubscription = [...subscribedUsers];
+            /*
+             * Add the subscribed user to the subscribers array
+             */
+            updatedColonySubscription.push({
+              ...data.subscribeToColony,
+              profile: subscribedUserProfile,
+            });
+            cache.writeQuery<
+              ColonySubscribedUsersQuery,
+              ColonySubscribedUsersQueryVariables
+            >({
+              query: ColonySubscribedUsersDocument,
+              data: {
+                colony: {
+                  ...cacheData.colony,
+                  subscribedUsers: updatedColonySubscription,
+                },
+              },
+              variables: {
+                colonyAddress,
+              },
+            });
+          }
+        }
+      } catch (e) {
+        log.verbose(e);
+        log.verbose(
+          'Cannot update the colony subscriptions cache - not loaded yet',
+        );
       }
     };
   },
