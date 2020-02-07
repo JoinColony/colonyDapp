@@ -16,6 +16,9 @@ import {
   SuggestionStatus,
   CreateTaskMutationResult,
   CreateTaskFromSuggestionMutationResult,
+  ColonySubscribedUsersQuery,
+  ColonySubscribedUsersQueryVariables,
+  ColonySubscribedUsersDocument,
 } from './generated';
 
 type Cache = typeof apolloCache;
@@ -174,6 +177,49 @@ const cacheUpdates = {
       } catch (e) {
         log.verbose(e);
         log.verbose('Not updating store - suggestions not loaded yet');
+      }
+    };
+  },
+  unsubscribeFromColony(colonyAddress: Address) {
+    return (cache: Cache, { data }: any) => {
+      try {
+        const cacheData = cache.readQuery<
+          ColonySubscribedUsersQuery,
+          ColonySubscribedUsersQueryVariables
+        >({
+          query: ColonySubscribedUsersDocument,
+          variables: {
+            colonyAddress,
+          },
+        });
+        if (cacheData && data && data.unsubscribeFromColony) {
+          const {
+            id: unsubscribedUserWalletAddress,
+          } = data.unsubscribeFromColony;
+          const { subscribedUsers } = cacheData.colony;
+          const updatedColonySubscription = subscribedUsers.filter(
+            ({ id: userWalletAddress }) =>
+              userWalletAddress !== unsubscribedUserWalletAddress,
+          );
+          cache.writeQuery<
+            ColonySubscribedUsersQuery,
+            ColonySubscribedUsersQueryVariables
+          >({
+            query: ColonySubscribedUsersDocument,
+            data: {
+              colony: {
+                ...cacheData.colony,
+                subscribedUsers: updatedColonySubscription,
+              },
+            },
+            variables: {
+              colonyAddress,
+            },
+          });
+        }
+      } catch (e) {
+        log.verbose(e);
+        log.verbose('Not updating colony subscriptions cache - not loaded yet');
       }
     };
   },
