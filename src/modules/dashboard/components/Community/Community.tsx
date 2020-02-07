@@ -48,6 +48,12 @@ interface Props {
   colonyAddress: Address;
 }
 
+enum ROLES {
+  FOUNDER = 'founder',
+  ADMIN = 'admin',
+  MEMBER = 'member',
+}
+
 const displayName = 'dashboard.Community';
 
 const Community = ({ colonyAddress }: Props) => {
@@ -125,14 +131,14 @@ const Community = ({ colonyAddress }: Props) => {
       const {
         profile: { walletAddress: userAddress },
       } = user;
-      let communityRole = 'member';
+      let communityRole = ROLES.MEMBER;
       if (communityRoles.founder === userAddress) {
-        communityRole = 'founder';
+        communityRole = ROLES.FOUNDER;
       }
       if (
         communityRoles.admins.find(adminAddress => adminAddress === userAddress)
       ) {
-        communityRole = 'admin';
+        communityRole = ROLES.ADMIN;
       }
       return {
         ...user,
@@ -143,10 +149,10 @@ const Community = ({ colonyAddress }: Props) => {
       sortObjectsBy({
         name: 'communityRole',
         compareFn: role => {
-          if (role === 'founder') {
+          if (role === ROLES.FOUNDER) {
             return -1;
           }
-          if (role === 'member') {
+          if (role === ROLES.MEMBER) {
             return 1;
           }
           return 0;
