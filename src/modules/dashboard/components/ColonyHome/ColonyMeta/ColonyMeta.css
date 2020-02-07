@@ -20,7 +20,6 @@
 .description {
   margin-top: 15px;
   padding-bottom: 15px;
-  min-height: 75px;
   border-bottom: 1px solid var(--temp-grey-5);
 }
 
@@ -46,28 +45,6 @@
   margin-top: 10px;
   position: absolute;
   left: 60px;
-}
-
-.simpleLinkWebsite {
-  display: block;
-  margin-top: 20px;
-  font-weight: var(--weight-normal);
-  color: var(--text);
-}
-
-.simpleLinkGuideline {
-  display: block;
-  margin-bottom: 10px;
-  font-weight: var(--weight-normal);
-  color: var(--text);
-}
-
-.simpleLinkWebsite:hover {
-  text-decoration: underline;
-}
-
-.simpleLinkGuideline:hover {
-  text-decoration: underline;
 }
 
 .spinnerContainer {
@@ -98,4 +75,24 @@
 .filterItemActive {
   composes: filterItem;
   font-weight: var(--weight-medium);
+}
+
+.headlineContainer {
+  /*
+   * @NOTE Negative margins
+   * In order to offset the 25px top margin of the headline elements
+   */
+  margin-top: -8px;
+  padding-bottom: 15px;
+  border-bottom: 1px solid var(--temp-grey-5);
+}
+
+.headline {
+  margin-top: 25px;
+}
+
+.headline p {
+  font-size: var(--size-small);
+  font-weight: var(--weight-medium);
+  color: var(--grey-dark);
 }
