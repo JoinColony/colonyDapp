@@ -11,6 +11,7 @@ import {
   useUnsubscribeFromColonyMutation,
   useUserColonyAddressesQuery,
   ColonySubscribedUsersDocument,
+  cacheUpdates,
 } from '~data/index';
 
 import styles from './ColonySubscribe.css';
@@ -57,12 +58,7 @@ const ColonySubscribe = ({ colonyAddress }: Props) => {
     { loading: loadingUnsubscribe },
   ] = useUnsubscribeFromColonyMutation({
     variables: { input: { colonyAddress } },
-    refetchQueries: [
-      {
-        query: ColonySubscribedUsersDocument,
-        variables: { colonyAddress },
-      },
-    ],
+    update: cacheUpdates.unsubscribeFromColony(colonyAddress),
   });
 
   if (!username || !data) return null;
