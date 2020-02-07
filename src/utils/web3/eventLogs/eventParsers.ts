@@ -111,10 +111,12 @@ export const parsePayoutClaimedEvent = async ({
   log: { transactionHash: hash },
   log,
   colonyClient,
+  colonyAddress,
 }: {
   colonyClient: ColonyClientType;
   event: any;
   log: any;
+  colonyAddress: string;
 }): Promise<ContractTransactionType | null> => {
   const date = await getLogDate(colonyClient.adapter.provider, log);
   const { typeId: paymentId, type } = await colonyClient.getFundingPot.call({
@@ -124,6 +126,7 @@ export const parsePayoutClaimedEvent = async ({
   const { recipient: to } = await colonyClient.getPayment.call({ paymentId });
   return createContractTxObj({
     amount,
+    colonyAddress,
     date,
     hash,
     incoming: false,
