@@ -1,4 +1,4 @@
-import React, { FC, useCallback, useState } from 'react';
+import React, { FC, useCallback, useState, useRef, useEffect } from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 
 import { Address } from '~types/index';
@@ -50,6 +50,7 @@ interface Props {
 
 const Community = ({ colonyAddress }: Props) => {
   const [justSubscribed, setJustSubscribed] = useState<boolean>(false);
+  const subscribedMessageTimer = useRef<any>(null);
   const { walletAddress } = useLoggedInUser();
   const {
     data: currentUserSubscribedColonies,
@@ -73,9 +74,21 @@ const Community = ({ colonyAddress }: Props) => {
         update: cacheUpdates.subscribeToColony(colonyAddress),
       });
       setJustSubscribed(true);
-      setTimeout(() => setJustSubscribed(false), 3000);
+      subscribedMessageTimer.current = setTimeout(
+        () => setJustSubscribed(false),
+        3000,
+      );
     }
   }, [subscribeToColonyMutation, colonyAddress, setJustSubscribed]);
+
+  /*
+   * We need to wrap the call in a second function, since only the returned
+   * function gets called on unmount.
+   * The first one is only called on render.
+   */
+  useEffect(() => () => clearTimeout(subscribedMessageTimer.current), [
+    subscribedMessageTimer,
+  ]);
 
   const { data: domains, isFetching: isFetchingDomains } = useDataFetcher(
     domainsAndRolesFetcher,
