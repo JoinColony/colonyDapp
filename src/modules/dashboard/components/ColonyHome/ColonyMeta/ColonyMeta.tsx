@@ -12,6 +12,7 @@ import Button from '~core/Button';
 import Link from '~core/Link';
 import ExternalLink from '~core/ExternalLink';
 import HookedColonyAvatar from '~dashboard/HookedColonyAvatar';
+import CopyableAddress from '~core/CopyableAddress';
 
 import ColonySubscribe from './ColonySubscribe';
 import ColonyInvite from './ColonyInvite';
@@ -34,6 +35,10 @@ const MSG = defineMessages({
   editColonyTitle: {
     id: 'dashboard.ColonyHome.ColonyMeta.editColonyTitle',
     defaultMessage: 'Edit Colony',
+  },
+  headlineColonyAddress: {
+    id: 'dashboard.ColonyHome.ColonyMeta.headlineColonyAddress',
+    defaultMessage: 'Colony Address',
   },
 });
 
@@ -91,6 +96,10 @@ const ColonyMeta = ({
           text={stripProtocol(multiLineTextEllipsis(guideline, 30))}
         />
       )}
+      <div className={styles.headline}>
+        <FormattedMessage {...MSG.headlineColonyAddress} tagName="p" />
+        <CopyableAddress>{colonyAddress}</CopyableAddress>
+      </div>
     </>
   );
   return (
@@ -134,6 +143,11 @@ const ColonyMeta = ({
             paragraph={description}
             expandedElements={renderExpandedElements}
           />
+        </section>
+      )}
+      {!description && (
+        <section className={styles.headlineContainer}>
+          {renderExpandedElements}
         </section>
       )}
       <section className={styles.domainContainer}>
