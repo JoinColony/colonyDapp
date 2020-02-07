@@ -11,7 +11,6 @@ import {
   AnyTask,
   Payouts,
   Domain,
-  TokenWithBalances,
   useTokenBalancesForDomainsQuery,
 } from '~data/index';
 import { ActionTypes } from '~redux/index';
@@ -76,28 +75,20 @@ const TaskFinalize = ({
     try {
       setIsLoading(true);
       const enoughFundsAvailable = payouts.every(({ amount, tokenAddress }) => {
-        if (!tokenBalances) {
+        const domainBalances =
+          tokenBalances &&
+          tokenBalances.tokens.find(
+            ({ address: domainTokenAddress }) =>
+              domainTokenAddress === tokenAddress,
+          );
+        if (!domainBalances) {
           return false;
         }
-        /*
-         * @NOTE About the types ignore
-         *
-         * For some reason I get a TS error about balances prop not existing, even though
-         * it's available on the union type. I must be missing something...
-         */
-        const {
-          // @ts-ignore
-          balances: domainBalances,
-          decimals,
-        } = tokenBalances.tokens.find(
-          ({ address: domainTokenAddress }) =>
-            domainTokenAddress === tokenAddress,
-        ) as TokenWithBalances;
-        return domainBalances.every(
+        return domainBalances.balances.every(
           ({ amount: availableDomainAmount }) =>
             !bnLessThan(
               availableDomainAmount,
-              moveDecimal(amount, decimals || 18),
+              moveDecimal(amount, domainBalances.decimals || 18),
             ),
         );
       });
