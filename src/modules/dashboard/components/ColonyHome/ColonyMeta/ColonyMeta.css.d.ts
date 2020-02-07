@@ -10,3 +10,4 @@ export const filterItem: string;
 export const filterItemActive: string;
 export const headlineContainer: string;
 export const headline: string;
+export const headlineLink: string;

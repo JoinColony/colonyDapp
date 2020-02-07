@@ -40,6 +40,14 @@ const MSG = defineMessages({
     id: 'dashboard.ColonyHome.ColonyMeta.headlineColonyAddress',
     defaultMessage: 'Colony Address',
   },
+  headlineWebsite: {
+    id: 'dashboard.ColonyHome.ColonyMeta.headlineWebsite',
+    defaultMessage: 'Website',
+  },
+  headlineGuidelines: {
+    id: 'dashboard.ColonyHome.ColonyMeta.headlineGuidelines',
+    defaultMessage: 'Contribution Guidelines',
+  },
 });
 
 const ColonyAvatar = HookedColonyAvatar({ fetchColony: false });
@@ -83,18 +91,24 @@ const ColonyMeta = ({
   const renderExpandedElements = (
     <>
       {website && (
-        <ExternalLink
-          className={styles.simpleLinkWebsite}
-          href={website}
-          text={stripProtocol(multiLineTextEllipsis(website, 30))}
-        />
+        <div className={styles.headline}>
+          <FormattedMessage {...MSG.headlineWebsite} tagName="p" />
+          <ExternalLink
+            className={styles.headlineLink}
+            href={website}
+            text={stripProtocol(multiLineTextEllipsis(website, 30))}
+          />
+        </div>
       )}
       {guideline && (
-        <ExternalLink
-          className={styles.simpleLinkGuideline}
-          href={guideline}
-          text={stripProtocol(multiLineTextEllipsis(guideline, 30))}
-        />
+        <div className={styles.headline}>
+          <FormattedMessage {...MSG.headlineGuidelines} tagName="p" />
+          <ExternalLink
+            className={styles.headlineLink}
+            href={guideline}
+            text={stripProtocol(multiLineTextEllipsis(guideline, 30))}
+          />
+        </div>
       )}
       <div className={styles.headline}>
         <FormattedMessage {...MSG.headlineColonyAddress} tagName="p" />

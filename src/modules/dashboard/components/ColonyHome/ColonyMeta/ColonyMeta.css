@@ -96,3 +96,12 @@
   font-weight: var(--weight-medium);
   color: var(--grey-dark);
 }
+
+.headlineLink {
+  font-weight: var(--weight-normal);
+  color: var(--text);
+}
+
+.headlineLink:hover {
+  text-decoration: underline;
+}
