@@ -1,7 +1,6 @@
-import React, { ReactNode } from 'react';
+import React, { ReactNode, TdHTMLAttributes } from 'react';
 
-// Left intentionally unsealed (passing props)
-interface Props {
+interface Props extends TdHTMLAttributes<HTMLTableDataCellElement> {
   className?: string;
   children: ReactNode;
 }

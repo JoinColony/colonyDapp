@@ -6,7 +6,6 @@ import { SimpleMessageValues } from '~types/index';
 
 import styles from './NavLink.css';
 
-// Left intentionally unsealed (passing props)
 interface Props extends NavLinkProps {
   /** className to add to the existing classNames when `to` matches the current route (react-router's "activeClassName") */
   activeClassName?: string;

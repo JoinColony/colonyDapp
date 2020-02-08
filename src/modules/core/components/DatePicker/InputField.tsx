@@ -12,7 +12,6 @@ import Input, { InputComponentAppearance } from '../Fields/Input';
 
 import { ESC, TAB } from './keyTypes';
 
-// Left intentionally unsealed (passing props)
 interface Props
   extends Omit<
       InputHTMLAttributes<HTMLInputElement>,

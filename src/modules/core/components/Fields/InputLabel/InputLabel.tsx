@@ -16,7 +16,6 @@ interface Appearance {
   readonly size?: 'small';
 }
 
-// Left intentionally unsealed (passing props)
 interface Props {
   /** Appearance object */
   appearance?: Appearance;

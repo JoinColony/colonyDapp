@@ -9,7 +9,6 @@ interface ModalStyles {
   beforeClose: string;
 }
 
-// Left intentionally unsealed (passing props)
 interface Props {
   /** className for the content elemenent */
   className?: string | ModalStyles;
