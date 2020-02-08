@@ -153,11 +153,5 @@ module.exports = {
       name: 'Wizard',
       components: ['./src/modules/core/components/DecisionHub/DecisionHub.tsx'],
     },
-    {
-      name: 'Errors',
-      components: [
-        './src/modules/core/components/ErrorBoundary/ErrorBoundary.tsx',
-      ],
-    },
   ],
 };
