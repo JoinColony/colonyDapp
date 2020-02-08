@@ -12,28 +12,6 @@ import messages from './i18n/en.json';
 import Routes from './routes';
 import apolloClient, { ApolloProvider } from './context/apolloClient';
 
-if (!Intl.PluralRules) {
-  // eslint-disable-next-line global-require
-  require('@formatjs/intl-pluralrules/polyfill');
-}
-
-// @ts-ignore
-if (!Intl.RelativeTimeFormat) {
-  // eslint-disable-next-line global-require
-  require('@formatjs/intl-relativetimeformat/polyfill');
-}
-
-// @ts-ignore
-// eslint-disable-next-line no-underscore-dangle
-if (typeof Intl.NumberFormat.__addLocaleData === 'function') {
-  // @ts-ignore
-  // eslint-disable-next-line no-underscore-dangle
-  Intl.NumberFormat.__addLocaleData(
-    // eslint-disable-next-line @typescript-eslint/no-var-requires, global-require
-    require('@formatjs/intl-unified-numberformat/dist/locale-data/en.json'),
-  );
-}
-
 interface Props {
   store: any;
 }
