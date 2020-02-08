@@ -10,13 +10,25 @@ exports[`DecisionHub component Renders initial component 1`] = `
     options={
       Array [
         Object {
-          "subtitle": "Create Subtitle",
-          "title": "Create Title",
+          "subtitle": Object {
+            "defaultMessage": "Collaborate with others",
+            "id": "ComponentName.exceptional",
+          },
+          "title": Object {
+            "defaultMessage": "Rule the world",
+            "id": "ComponentName.special",
+          },
           "value": "create",
         },
         Object {
-          "subtitle": "Select Subtitle",
-          "title": "Select Title",
+          "subtitle": Object {
+            "defaultMessage": "Collaborate with others",
+            "id": "ComponentName.exceptional",
+          },
+          "title": Object {
+            "defaultMessage": "Rule the world",
+            "id": "ComponentName.special",
+          },
           "value": "select",
         },
       ]
@@ -30,8 +42,14 @@ exports[`DecisionHub component Renders initial component 1`] = `
         name="decisionHubTest"
         option={
           Object {
-            "subtitle": "Create Subtitle",
-            "title": "Create Title",
+            "subtitle": Object {
+              "defaultMessage": "Collaborate with others",
+              "id": "ComponentName.exceptional",
+            },
+            "title": Object {
+              "defaultMessage": "Rule the world",
+              "id": "ComponentName.special",
+            },
             "value": "create",
           }
         }
@@ -71,8 +89,14 @@ exports[`DecisionHub component Renders initial component 1`] = `
           name="decisionHubTest"
           option={
             Object {
-              "subtitle": "Create Subtitle",
-              "title": "Create Title",
+              "subtitle": Object {
+                "defaultMessage": "Collaborate with others",
+                "id": "ComponentName.exceptional",
+              },
+              "title": Object {
+                "defaultMessage": "Rule the world",
+                "id": "ComponentName.special",
+              },
               "value": "create",
             }
           }
@@ -114,8 +138,14 @@ exports[`DecisionHub component Renders initial component 1`] = `
             name="decisionHubTest"
             option={
               Object {
-                "subtitle": "Create Subtitle",
-                "title": "Create Title",
+                "subtitle": Object {
+                  "defaultMessage": "Collaborate with others",
+                  "id": "ComponentName.exceptional",
+                },
+                "title": Object {
+                  "defaultMessage": "Rule the world",
+                  "id": "ComponentName.special",
+                },
                 "value": "create",
               }
             }
@@ -204,8 +234,14 @@ exports[`DecisionHub component Renders initial component 1`] = `
               }
               option={
                 Object {
-                  "subtitle": "Create Subtitle",
-                  "title": "Create Title",
+                  "subtitle": Object {
+                    "defaultMessage": "Collaborate with others",
+                    "id": "ComponentName.exceptional",
+                  },
+                  "title": Object {
+                    "defaultMessage": "Rule the world",
+                    "id": "ComponentName.special",
+                  },
                   "value": "create",
                 }
               }
@@ -225,8 +261,14 @@ exports[`DecisionHub component Renders initial component 1`] = `
                 onChange={[Function]}
                 option={
                   Object {
-                    "subtitle": "Create Subtitle",
-                    "title": "Create Title",
+                    "subtitle": Object {
+                      "defaultMessage": "Collaborate with others",
+                      "id": "ComponentName.exceptional",
+                    },
+                    "title": Object {
+                      "defaultMessage": "Rule the world",
+                      "id": "ComponentName.special",
+                    },
                     "value": "create",
                   }
                 }
@@ -240,8 +282,18 @@ exports[`DecisionHub component Renders initial component 1`] = `
                   type="submit"
                 >
                   <DecisionOptionIcon
-                    subtitle="Create Subtitle"
-                    title="Create Title"
+                    subtitle={
+                      Object {
+                        "defaultMessage": "Collaborate with others",
+                        "id": "ComponentName.exceptional",
+                      }
+                    }
+                    title={
+                      Object {
+                        "defaultMessage": "Rule the world",
+                        "id": "ComponentName.special",
+                      }
+                    }
                     value="create"
                   />
                   <div>
@@ -253,13 +305,18 @@ exports[`DecisionHub component Renders initial component 1`] = `
                           "weight": "bold",
                         }
                       }
-                      text="Create Title"
+                      text={
+                        Object {
+                          "defaultMessage": "Rule the world",
+                          "id": "ComponentName.special",
+                        }
+                      }
                     >
                       <h5
                         className=""
-                        title="Create Title"
+                        title="Rule the world"
                       >
-                        Create Title
+                        Rule the world
                       </h5>
                     </Heading>
                     <Heading
@@ -270,13 +327,18 @@ exports[`DecisionHub component Renders initial component 1`] = `
                           "weight": "thin",
                         }
                       }
-                      text="Create Subtitle"
+                      text={
+                        Object {
+                          "defaultMessage": "Collaborate with others",
+                          "id": "ComponentName.exceptional",
+                        }
+                      }
                     >
                       <h6
                         className=""
-                        title="Create Subtitle"
+                        title="Collaborate with others"
                       >
-                        Create Subtitle
+                        Collaborate with others
                       </h6>
                     </Heading>
                   </div>
@@ -313,8 +375,14 @@ exports[`DecisionHub component Renders initial component 1`] = `
         name="decisionHubTest"
         option={
           Object {
-            "subtitle": "Select Subtitle",
-            "title": "Select Title",
+            "subtitle": Object {
+              "defaultMessage": "Collaborate with others",
+              "id": "ComponentName.exceptional",
+            },
+            "title": Object {
+              "defaultMessage": "Rule the world",
+              "id": "ComponentName.special",
+            },
             "value": "select",
           }
         }
@@ -354,8 +422,14 @@ exports[`DecisionHub component Renders initial component 1`] = `
           name="decisionHubTest"
           option={
             Object {
-              "subtitle": "Select Subtitle",
-              "title": "Select Title",
+              "subtitle": Object {
+                "defaultMessage": "Collaborate with others",
+                "id": "ComponentName.exceptional",
+              },
+              "title": Object {
+                "defaultMessage": "Rule the world",
+                "id": "ComponentName.special",
+              },
               "value": "select",
             }
           }
@@ -397,8 +471,14 @@ exports[`DecisionHub component Renders initial component 1`] = `
             name="decisionHubTest"
             option={
               Object {
-                "subtitle": "Select Subtitle",
-                "title": "Select Title",
+                "subtitle": Object {
+                  "defaultMessage": "Collaborate with others",
+                  "id": "ComponentName.exceptional",
+                },
+                "title": Object {
+                  "defaultMessage": "Rule the world",
+                  "id": "ComponentName.special",
+                },
                 "value": "select",
               }
             }
@@ -487,8 +567,14 @@ exports[`DecisionHub component Renders initial component 1`] = `
               }
               option={
                 Object {
-                  "subtitle": "Select Subtitle",
-                  "title": "Select Title",
+                  "subtitle": Object {
+                    "defaultMessage": "Collaborate with others",
+                    "id": "ComponentName.exceptional",
+                  },
+                  "title": Object {
+                    "defaultMessage": "Rule the world",
+                    "id": "ComponentName.special",
+                  },
                   "value": "select",
                 }
               }
@@ -508,8 +594,14 @@ exports[`DecisionHub component Renders initial component 1`] = `
                 onChange={[Function]}
                 option={
                   Object {
-                    "subtitle": "Select Subtitle",
-                    "title": "Select Title",
+                    "subtitle": Object {
+                      "defaultMessage": "Collaborate with others",
+                      "id": "ComponentName.exceptional",
+                    },
+                    "title": Object {
+                      "defaultMessage": "Rule the world",
+                      "id": "ComponentName.special",
+                    },
                     "value": "select",
                   }
                 }
@@ -523,8 +615,18 @@ exports[`DecisionHub component Renders initial component 1`] = `
                   type="submit"
                 >
                   <DecisionOptionIcon
-                    subtitle="Select Subtitle"
-                    title="Select Title"
+                    subtitle={
+                      Object {
+                        "defaultMessage": "Collaborate with others",
+                        "id": "ComponentName.exceptional",
+                      }
+                    }
+                    title={
+                      Object {
+                        "defaultMessage": "Rule the world",
+                        "id": "ComponentName.special",
+                      }
+                    }
                     value="select"
                   />
                   <div>
@@ -536,13 +638,18 @@ exports[`DecisionHub component Renders initial component 1`] = `
                           "weight": "bold",
                         }
                       }
-                      text="Select Title"
+                      text={
+                        Object {
+                          "defaultMessage": "Rule the world",
+                          "id": "ComponentName.special",
+                        }
+                      }
                     >
                       <h5
                         className=""
-                        title="Select Title"
+                        title="Rule the world"
                       >
-                        Select Title
+                        Rule the world
                       </h5>
                     </Heading>
                     <Heading
@@ -553,13 +660,18 @@ exports[`DecisionHub component Renders initial component 1`] = `
                           "weight": "thin",
                         }
                       }
-                      text="Select Subtitle"
+                      text={
+                        Object {
+                          "defaultMessage": "Collaborate with others",
+                          "id": "ComponentName.exceptional",
+                        }
+                      }
                     >
                       <h6
                         className=""
-                        title="Select Subtitle"
+                        title="Collaborate with others"
                       >
-                        Select Subtitle
+                        Collaborate with others
                       </h6>
                     </Heading>
                   </div>

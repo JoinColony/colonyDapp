@@ -10,20 +10,38 @@ import DecisionHub from '../DecisionHub';
 
 describe('DecisionHub component', () => {
   test('Renders initial component', () => {
+    const MSG = {
+      createTokenTitle: {
+        id: 'ComponentName.special',
+        defaultMessage: 'Rule the world',
+      },
+      createTokenSubtitle: {
+        id: 'ComponentName.exceptional',
+        defaultMessage: 'Collaborate with others',
+      },
+      selectTokenTitle: {
+        id: 'ComponentName.special',
+        defaultMessage: 'Rule the world',
+      },
+      selectTokenSubtitle: {
+        id: 'ComponentName.exceptional',
+        defaultMessage: 'Collaborate with others',
+      },
+    };
+
     const options = [
       {
         value: 'create',
-        title: 'Create Title',
-        subtitle: 'Create Subtitle',
+        title: MSG.createTokenTitle,
+        subtitle: MSG.createTokenSubtitle,
       },
       {
         value: 'select',
-        title: 'Select Title',
-        subtitle: 'Select Subtitle',
+        title: MSG.selectTokenTitle,
+        subtitle: MSG.selectTokenSubtitle,
       },
     ];
 
-    // @ts-ignore
     const wrapper = mountWithIntl(
       <Formik initialValues={{}} onSubmit={() => undefined}>
         <DecisionHub name="decisionHubTest" options={options} />
