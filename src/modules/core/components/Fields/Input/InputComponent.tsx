@@ -16,7 +16,6 @@ export type Appearance = {
 
 type CleaveHTMLInputElement = HTMLInputElement & { rawValue: string };
 
-// Left intentionally unsealed (passing props)
 export interface Props
   extends Omit<InputHTMLAttributes<HTMLInputElement>, 'form'> {
   /** Appearance object */
