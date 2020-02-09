@@ -277,7 +277,7 @@ const Popover = ({
     }
   }, [close, isOpen, isOpenProp, lastIsOpenProp, requestOpen]);
 
-  // Timouts
+  // Timeouts
   useEffect(() => {
     const currentOpenTimeoutRef = openTimeoutRef && openTimeoutRef.current;
     return () => {
