@@ -63,7 +63,9 @@ class MnemonicGenerator extends Component<Props & AsFieldEnhancedProps, State> {
     const res = generateFn();
     if (res instanceof Promise && !!res.then && setValue) {
       res.then(phrase => setValue(phrase));
-    } else if (setValue) setValue(res);
+    } else if (setValue) {
+      setValue(res);
+    }
   };
 
   copyToClipboard = () => {
