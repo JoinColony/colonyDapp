@@ -110,6 +110,7 @@ const Payout = ({
           <div className={styles.setAmount}>
             <Input
               appearance={{ theme: 'minimal', align: 'right' }}
+              elementOnly
               label={{ id: 'label.amount' }}
               name={`${name}.amount`}
               formattingOptions={{
