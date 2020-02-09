@@ -9,11 +9,11 @@ import styles from './InputLabel.css';
 const displayName = 'InputLabel';
 
 interface Appearance {
-  readonly theme?: 'fat' | 'underlined' | 'minimal' | 'dotted';
-  readonly direction?: 'horizontal';
-  readonly colorSchema?: 'dark' | 'grey' | 'transparent';
-  readonly helpAlign?: 'right';
-  readonly size?: 'small';
+  theme?: 'fat' | 'underlined' | 'minimal' | 'dotted';
+  direction?: 'horizontal';
+  colorSchema?: 'dark' | 'grey' | 'transparent';
+  helpAlign?: 'right';
+  size?: 'small';
 }
 
 interface Props {
