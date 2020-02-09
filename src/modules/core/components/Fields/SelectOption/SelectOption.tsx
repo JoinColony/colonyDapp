@@ -3,6 +3,8 @@ import React, { Component, SyntheticEvent, KeyboardEvent } from 'react';
 
 import { SimpleMessageValues } from '~types/index';
 
+import { AsFieldEnhancedProps } from '../types';
+
 import styles from './SelectOption.css';
 
 const MSG = defineMessages({
@@ -24,10 +26,7 @@ interface Props {
   selected: boolean;
   onSelect: (idx: number) => void;
   onClick: () => void;
-  formatIntl: (
-    text: string | MessageDescriptor,
-    textValues?: SimpleMessageValues,
-  ) => string | undefined;
+  formatIntl: AsFieldEnhancedProps['formatIntl'];
 }
 
 class SelectOption extends Component<Props> {
