@@ -1,6 +1,6 @@
 import { ROLES, ROOT_DOMAIN } from '~constants';
 import { DomainRolesType, DomainType } from '~immutable/index';
-import { Address, DomainsMapType } from '~types/index';
+import { Address, RoleSetType, DomainsMapType } from '~types/index';
 import { ZERO_ADDRESS } from '~utils/web3/constants';
 
 export const getDomainRoles = (
@@ -117,34 +117,77 @@ export const getAllUserRoles = (
 };
 
 /*
+ * @NOTE Internal use only
+ */
+const getLegacyFounder = (
+  rootDomainRoles: Record<string, RoleSetType>,
+): Address =>
+  Object.keys(rootDomainRoles).find(address => {
+    const roles = rootDomainRoles[address];
+    return (
+      roles.includes(ROLES.ROOT) &&
+      roles.includes(ROLES.ADMINISTRATION) &&
+      roles.includes(ROLES.ARCHITECTURE) &&
+      roles.includes(ROLES.FUNDING)
+    );
+  }) || ZERO_ADDRESS;
+
+/*
+ * @NOTE Internal use only
+ */
+const getLegacyAdmins = (
+  domains: Record<string, DomainType>,
+  domainId: number = ROOT_DOMAIN,
+  founderAddress: Address,
+): Address[] => {
+  const domainRoles = getDomainRoles(domains, domainId);
+  return Array.from(
+    Object.keys(domainRoles).reduce(
+      (acc, address) =>
+        domainRoles[address].includes(ROLES.ADMINISTRATION) &&
+        address !== founderAddress
+          ? acc.add(address)
+          : acc,
+      new Set(),
+    ),
+  ) as string[];
+};
+
+/*
  * Eventually we'll switch all of the dApp to using new roles, but until then
  * we still need to be able to get the old roles `admins` and `founder`. This
  * util can be removed once the DLP project is completed.
  */
 export const getLegacyRoles = (
-  domains,
+  domains: Record<string, DomainType>,
 ): { founder: Address; admins: Address[] } | void => {
   const rootDomainRoles = getDomainRoles(domains, ROOT_DOMAIN);
-  const founder =
-    Object.keys(rootDomainRoles).find(address => {
-      const roles = rootDomainRoles[address];
-      return (
-        roles.includes(ROLES.ROOT) &&
-        roles.includes(ROLES.ADMINISTRATION) &&
-        roles.includes(ROLES.ARCHITECTURE) &&
-        roles.includes(ROLES.FUNDING)
-      );
-    }) || ZERO_ADDRESS;
+  const founder = getLegacyFounder(rootDomainRoles);
+  const admins = getLegacyAdmins(domains, ROOT_DOMAIN, founder);
+  return {
+    founder,
+    admins: Array.from(admins) as string[],
+  };
+};
 
-  const admins = Object.keys(rootDomainRoles).reduce(
-    (acc, address) =>
-      rootDomainRoles[address].includes(ROLES.ADMINISTRATION) &&
-      address !== founder
-        ? acc.add(address)
-        : acc,
-    new Set(),
-  );
-
+/*
+ * @NOTE This differs from the above transformer as it considers roles in any domain (root + subdomains)
+ * to be an admin role
+ */
+export const getCommunityRoles = (
+  domains: Record<string, DomainType>,
+): { founder: Address; admins: Address[] } => {
+  const rootDomainRoles = getDomainRoles(domains, ROOT_DOMAIN);
+  const founder = getLegacyFounder(rootDomainRoles);
+  const admins = new Set();
+  Object.keys(domains).map(domainId => {
+    const currentDomainAdmins = getLegacyAdmins(
+      domains,
+      parseInt(domainId, 10),
+      founder,
+    );
+    return currentDomainAdmins.map(adminAddress => admins.add(adminAddress));
+  });
   return {
     founder,
     admins: Array.from(admins) as string[],
