@@ -4,7 +4,7 @@ import React from 'react';
 import { Formik } from 'formik';
 import toJson from 'enzyme-to-json';
 
-import { mountWithIntl } from '../../../../../__tests__/utils';
+import { mountWithIntl } from '~testutils';
 
 import FileUpload from '../FileUpload';
 
