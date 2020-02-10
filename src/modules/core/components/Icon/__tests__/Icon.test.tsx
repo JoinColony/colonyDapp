@@ -3,7 +3,7 @@
 import React from 'react';
 import toJson from 'enzyme-to-json';
 
-import { mountWithIntl } from '../../../../../__tests__/utils';
+import { mountWithIntl } from '~testutils';
 
 import Icon from '../Icon';
 import { icons as iconNames } from '../icons.json';
