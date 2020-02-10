@@ -12,6 +12,7 @@ import Button from '~core/Button';
 import Link from '~core/Link';
 import ExternalLink from '~core/ExternalLink';
 import HookedColonyAvatar from '~dashboard/HookedColonyAvatar';
+import CopyableAddress from '~core/CopyableAddress';
 
 import ColonySubscribe from './ColonySubscribe';
 import ColonyInvite from './ColonyInvite';
@@ -34,6 +35,18 @@ const MSG = defineMessages({
   editColonyTitle: {
     id: 'dashboard.ColonyHome.ColonyMeta.editColonyTitle',
     defaultMessage: 'Edit Colony',
+  },
+  headlineColonyAddress: {
+    id: 'dashboard.ColonyHome.ColonyMeta.headlineColonyAddress',
+    defaultMessage: 'Colony Address',
+  },
+  headlineWebsite: {
+    id: 'dashboard.ColonyHome.ColonyMeta.headlineWebsite',
+    defaultMessage: 'Website',
+  },
+  headlineGuidelines: {
+    id: 'dashboard.ColonyHome.ColonyMeta.headlineGuidelines',
+    defaultMessage: 'Contribution Guidelines',
   },
 });
 
@@ -78,19 +91,29 @@ const ColonyMeta = ({
   const renderExpandedElements = (
     <>
       {website && (
-        <ExternalLink
-          className={styles.simpleLinkWebsite}
-          href={website}
-          text={stripProtocol(multiLineTextEllipsis(website, 30))}
-        />
+        <div className={styles.headline}>
+          <FormattedMessage {...MSG.headlineWebsite} tagName="p" />
+          <ExternalLink
+            className={styles.headlineLink}
+            href={website}
+            text={stripProtocol(multiLineTextEllipsis(website, 30))}
+          />
+        </div>
       )}
       {guideline && (
-        <ExternalLink
-          className={styles.simpleLinkGuideline}
-          href={guideline}
-          text={stripProtocol(multiLineTextEllipsis(guideline, 30))}
-        />
+        <div className={styles.headline}>
+          <FormattedMessage {...MSG.headlineGuidelines} tagName="p" />
+          <ExternalLink
+            className={styles.headlineLink}
+            href={guideline}
+            text={stripProtocol(multiLineTextEllipsis(guideline, 30))}
+          />
+        </div>
       )}
+      <div className={styles.headline}>
+        <FormattedMessage {...MSG.headlineColonyAddress} tagName="p" />
+        <CopyableAddress>{colonyAddress}</CopyableAddress>
+      </div>
     </>
   );
   return (
@@ -134,6 +157,11 @@ const ColonyMeta = ({
             paragraph={description}
             expandedElements={renderExpandedElements}
           />
+        </section>
+      )}
+      {!description && (
+        <section className={styles.headlineContainer}>
+          {renderExpandedElements}
         </section>
       )}
       <section className={styles.domainContainer}>
