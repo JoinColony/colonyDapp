@@ -259,7 +259,6 @@ const cacheUpdates = {
               address: subscribedUserWalletAddress,
             },
           });
-          // console.log(subscribedUserProfileFromCache);
           if (
             subscribedUserProfileFromCache &&
             subscribedUserProfileFromCache.user
