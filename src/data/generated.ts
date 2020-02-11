@@ -1547,6 +1547,13 @@ export type CreateTaskFromSuggestionMutationVariables = {
 
 export type CreateTaskFromSuggestionMutation = { createTaskFromSuggestion: Maybe<CreateTaskFieldsFragment> };
 
+export type CreateProgramMutationVariables = {
+  input: CreateProgramInput
+};
+
+
+export type CreateProgramMutation = { createProgram: Maybe<Pick<Program, 'id' | 'createdAt' | 'creatorAddress' | 'colonyAddress' | 'title' | 'description' | 'levelIds' | 'enrolledUserAddresses' | 'status'>> };
+
 export type TaskQueryVariables = {
   id: Scalars['String']
 };
@@ -3243,6 +3250,46 @@ export function useCreateTaskFromSuggestionMutation(baseOptions?: ApolloReactHoo
 export type CreateTaskFromSuggestionMutationHookResult = ReturnType<typeof useCreateTaskFromSuggestionMutation>;
 export type CreateTaskFromSuggestionMutationResult = ApolloReactCommon.MutationResult<CreateTaskFromSuggestionMutation>;
 export type CreateTaskFromSuggestionMutationOptions = ApolloReactCommon.BaseMutationOptions<CreateTaskFromSuggestionMutation, CreateTaskFromSuggestionMutationVariables>;
+export const CreateProgramDocument = gql`
+    mutation CreateProgram($input: CreateProgramInput!) {
+  createProgram(input: $input) {
+    id
+    createdAt
+    creatorAddress
+    colonyAddress
+    title
+    description
+    levelIds
+    enrolledUserAddresses
+    status
+  }
+}
+    `;
+export type CreateProgramMutationFn = ApolloReactCommon.MutationFunction<CreateProgramMutation, CreateProgramMutationVariables>;
+
+/**
+ * __useCreateProgramMutation__
+ *
+ * To run a mutation, you first call `useCreateProgramMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useCreateProgramMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [createProgramMutation, { data, loading, error }] = useCreateProgramMutation({
+ *   variables: {
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function useCreateProgramMutation(baseOptions?: ApolloReactHooks.MutationHookOptions<CreateProgramMutation, CreateProgramMutationVariables>) {
+        return ApolloReactHooks.useMutation<CreateProgramMutation, CreateProgramMutationVariables>(CreateProgramDocument, baseOptions);
+      }
+export type CreateProgramMutationHookResult = ReturnType<typeof useCreateProgramMutation>;
+export type CreateProgramMutationResult = ApolloReactCommon.MutationResult<CreateProgramMutation>;
+export type CreateProgramMutationOptions = ApolloReactCommon.BaseMutationOptions<CreateProgramMutation, CreateProgramMutationVariables>;
 export const TaskDocument = gql`
     query Task($id: String!) {
   task(id: $id) {
