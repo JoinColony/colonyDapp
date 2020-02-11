@@ -1,7 +1,7 @@
 import React, { useMemo } from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 
-import { COLONY_TOTAL_BALANCE_DOMAIN_ID, ROOT_DOMAIN } from '~constants';
+import { COLONY_TOTAL_BALANCE_DOMAIN_ID } from '~constants';
 import Button from '~core/Button';
 import CopyableAddress from '~core/CopyableAddress';
 import ExpandedParagraph from '~core/ExpandedParagraph';
@@ -10,19 +10,9 @@ import Heading from '~core/Heading';
 import Icon from '~core/Icon';
 import Link from '~core/Link';
 import HookedColonyAvatar from '~dashboard/HookedColonyAvatar';
-import {
-  AnyColonyProfile,
-  ProgramStatus,
-  useColonyProgramsQuery,
-  useLoggedInUser,
-} from '~data/index';
+import { AnyColonyProfile } from '~data/index';
 import { DomainsMapType } from '~types/index';
-import { useDataFetcher, useTransformer } from '~utils/hooks';
 import { multiLineTextEllipsis, stripProtocol } from '~utils/strings';
-
-import { canCreateProgram as canCreateProgramCheck } from '../../../checks';
-import { domainsAndRolesFetcher } from '../../../fetchers';
-import { getUserRoles } from '../../../../transformers';
 
 import ColonyInvite from './ColonyInvite';
 import ColonyPrograms from './ColonyPrograms';
@@ -91,8 +81,6 @@ const ColonyMeta = ({
   colony,
   canAdminister,
 }: Props) => {
-  const { walletAddress } = useLoggedInUser();
-
   const sortedDomains = useMemo(
     () =>
       Object.keys(domains || {})
@@ -101,31 +89,6 @@ const ColonyMeta = ({
     [domains],
   );
 
-  const { data: domainsAndRolesData } = useDataFetcher(
-    domainsAndRolesFetcher,
-    [colonyAddress],
-    [colonyAddress],
-  );
-  const userRoles = useTransformer(getUserRoles, [
-    domainsAndRolesData,
-    ROOT_DOMAIN,
-    walletAddress,
-  ]);
-
-  const { data: programsData } = useColonyProgramsQuery({
-    variables: { address: colonyAddress },
-  });
-
-  const canCreateProgram = canCreateProgramCheck(userRoles);
-
-  const unfilteredPrograms =
-    (programsData && programsData.colony.programs) || [];
-
-  const programs = unfilteredPrograms.filter(
-    ({ status }) =>
-      status === ProgramStatus.Active ||
-      (status === ProgramStatus.Draft && canCreateProgram),
-  );
   const renderExpandedElements = (
     <>
       {website && (
@@ -203,16 +166,7 @@ const ColonyMeta = ({
           {renderExpandedElements}
         </section>
       )}
-      {(canCreateProgram || programs.length > 0) && (
-        <section className={styles.programContainer}>
-          <ColonyPrograms
-            canCreate={canCreateProgram}
-            colonyAddress={colonyAddress}
-            colonyName={colonyName}
-            programs={programs}
-          />
-        </section>
-      )}
+      <ColonyPrograms colonyAddress={colonyAddress} colonyName={colonyName} />
       <section className={styles.domainContainer}>
         <ul>
           <li>
