@@ -1,24 +1,34 @@
 import React, { useMemo } from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 
-import { COLONY_TOTAL_BALANCE_DOMAIN_ID } from '~constants';
-import { DomainsMapType } from '~types/index';
-import { AnyColonyProfile } from '~data/index';
-import { stripProtocol, multiLineTextEllipsis } from '~utils/strings';
+import { COLONY_TOTAL_BALANCE_DOMAIN_ID, ROOT_DOMAIN } from '~constants';
+import Button from '~core/Button';
+import CopyableAddress from '~core/CopyableAddress';
 import ExpandedParagraph from '~core/ExpandedParagraph';
+import ExternalLink from '~core/ExternalLink';
 import Heading from '~core/Heading';
 import Icon from '~core/Icon';
-import Button from '~core/Button';
 import Link from '~core/Link';
-import ExternalLink from '~core/ExternalLink';
 import HookedColonyAvatar from '~dashboard/HookedColonyAvatar';
-import CopyableAddress from '~core/CopyableAddress';
+import {
+  AnyColonyProfile,
+  ProgramStatus,
+  useColonyProgramsQuery,
+  useLoggedInUser,
+} from '~data/index';
+import { DomainsMapType } from '~types/index';
+import { useDataFetcher, useTransformer } from '~utils/hooks';
+import { multiLineTextEllipsis, stripProtocol } from '~utils/strings';
 
-import ColonySubscribe from './ColonySubscribe';
+import { canCreateProgram as canCreateProgramCheck } from '../../../checks';
+import { domainsAndRolesFetcher } from '../../../fetchers';
+import { getUserRoles } from '../../../../transformers';
+
 import ColonyInvite from './ColonyInvite';
+import ColonyPrograms from './ColonyPrograms';
+import ColonySubscribe from './ColonySubscribe';
 
 import styles from './ColonyMeta.css';
-import ColonyPrograms from './ColonyPrograms';
 
 const MSG = defineMessages({
   addressLabel: {
@@ -81,6 +91,8 @@ const ColonyMeta = ({
   colony,
   canAdminister,
 }: Props) => {
+  const { walletAddress } = useLoggedInUser();
+
   const sortedDomains = useMemo(
     () =>
       Object.keys(domains || {})
@@ -89,6 +101,31 @@ const ColonyMeta = ({
     [domains],
   );
 
+  const { data: domainsAndRolesData } = useDataFetcher(
+    domainsAndRolesFetcher,
+    [colonyAddress],
+    [colonyAddress],
+  );
+  const userRoles = useTransformer(getUserRoles, [
+    domainsAndRolesData,
+    ROOT_DOMAIN,
+    walletAddress,
+  ]);
+
+  const { data: programsData } = useColonyProgramsQuery({
+    variables: { address: colonyAddress },
+  });
+
+  const canCreateProgram = canCreateProgramCheck(userRoles);
+
+  const unfilteredPrograms =
+    (programsData && programsData.colony.programs) || [];
+
+  const programs = unfilteredPrograms.filter(
+    ({ status }) =>
+      status === ProgramStatus.Active ||
+      (status === ProgramStatus.Draft && canCreateProgram),
+  );
   const renderExpandedElements = (
     <>
       {website && (
@@ -117,6 +154,7 @@ const ColonyMeta = ({
       </div>
     </>
   );
+
   return (
     <div className={styles.main}>
       <div className={styles.colonyAvatarAndName}>
@@ -165,9 +203,16 @@ const ColonyMeta = ({
           {renderExpandedElements}
         </section>
       )}
-      <section className={styles.programContainer}>
-        <ColonyPrograms colonyAddress={colonyAddress} />
-      </section>
+      {(canCreateProgram || programs.length > 0) && (
+        <section className={styles.programContainer}>
+          <ColonyPrograms
+            canCreate={canCreateProgram}
+            colonyAddress={colonyAddress}
+            colonyName={colonyName}
+            programs={programs}
+          />
+        </section>
+      )}
       <section className={styles.domainContainer}>
         <ul>
           <li>
