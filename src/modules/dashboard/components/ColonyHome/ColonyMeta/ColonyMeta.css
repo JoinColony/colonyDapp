@@ -51,6 +51,11 @@
   margin-top: 14px;
 }
 
+.programContainer {
+  padding: 25px 0;
+  border-bottom: 1px solid var(--temp-grey-5);
+}
+
 .domainContainer {
   margin-top: 19px;
 }

@@ -299,6 +299,23 @@ query ColonyTasks($address: String!) {
   }
 }
 
+query ColonyPrograms($address: String!) {
+  colony(address: $address) {
+    id
+    programs {
+      id
+      createdAt
+      creatorAddress
+      colonyAddress
+      title
+      description
+      levelIds
+      enrolledUserAddresses
+      status
+    }
+  }
+}
+
 query ColonySubscribedUsers($colonyAddress: String!) {
   colony(address: $colonyAddress) {
     id

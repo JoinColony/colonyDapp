@@ -5,6 +5,7 @@ export const editColony: string;
 export const colonyAvatarAndName: string;
 export const headingAndSettings: string;
 export const spinnerContainer: string;
+export const programContainer: string;
 export const domainContainer: string;
 export const filterItem: string;
 export const filterItemActive: string;
