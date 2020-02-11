@@ -1,0 +1,12 @@
+
+.programsNav {
+  margin-bottom: 10px;
+}
+
+.navLink {
+  font-weight: var(--weight-medium);
+}
+
+.navLink:hover {
+  opacity: 0.8;
+}
