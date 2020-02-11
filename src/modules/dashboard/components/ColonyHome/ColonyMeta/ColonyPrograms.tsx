@@ -16,6 +16,11 @@ import { Address } from '~types/index';
 import styles from './ColonyPrograms.css';
 
 const MSG = defineMessages({
+  linkUntitledProgramText: {
+    id:
+      'dashboard.ColonyHome.ColonyMeta.ColonyPrograms.linkUntitledProgramText',
+    defaultMessage: 'Untitled Program',
+  },
   buttonCreateProgram: {
     id: 'dashboard.ColonyHome.ColonyMeta.ColonyPrograms.buttonCreateProgram',
     defaultMessage: `Create {hasPrograms, select,
@@ -74,7 +79,7 @@ const ColonyPrograms = ({
             <NavLink
               className={className}
               key={id}
-              text={title}
+              text={title || MSG.linkUntitledProgramText}
               to={`/colony/${colonyName}/program/${id}`}
             />
           );
