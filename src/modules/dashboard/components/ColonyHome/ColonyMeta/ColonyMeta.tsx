@@ -18,6 +18,7 @@ import ColonySubscribe from './ColonySubscribe';
 import ColonyInvite from './ColonyInvite';
 
 import styles from './ColonyMeta.css';
+import ColonyPrograms from './ColonyPrograms';
 
 const MSG = defineMessages({
   addressLabel: {
@@ -164,6 +165,9 @@ const ColonyMeta = ({
           {renderExpandedElements}
         </section>
       )}
+      <section className={styles.programContainer}>
+        <ColonyPrograms colonyAddress={colonyAddress} />
+      </section>
       <section className={styles.domainContainer}>
         <ul>
           <li>
