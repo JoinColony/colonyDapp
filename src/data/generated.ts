@@ -157,6 +157,10 @@ export type Scalars = {
 };
 
 
+export type AcceptSubmissionInput = {
+  id: Scalars['String'],
+};
+
 export type AddUpvoteToSuggestionInput = {
   id: Scalars['String'],
 };
@@ -199,6 +203,7 @@ export type Colony = {
   founder?: Maybe<User>,
   isNativeTokenExternal: Scalars['Boolean'],
   nativeTokenAddress: Scalars['String'],
+  programs: Array<Program>,
   subscribedUsers: Array<User>,
   suggestions: Array<Suggestion>,
   tokenAddresses: Array<Scalars['String']>,
@@ -244,6 +249,24 @@ export type CreateDomainInput = {
   ethDomainId: Scalars['Int'],
   ethParentDomainId?: Maybe<Scalars['Int']>,
   name: Scalars['String'],
+};
+
+export type CreateLevelInput = {
+  programId: Scalars['String'],
+};
+
+export type CreateLevelTaskInput = {
+  levelId: Scalars['String'],
+};
+
+export type CreateLevelTaskSubmissionInput = {
+  levelId: Scalars['String'],
+  persistentTaskId: Scalars['String'],
+  submission: Scalars['String'],
+};
+
+export type CreateProgramInput = {
+  colonyAddress: Scalars['String'],
 };
 
 export type CreateSuggestionInput = {
@@ -315,12 +338,43 @@ export type EditDomainNameInput = {
   name: Scalars['String'],
 };
 
+export type EditLevelInput = {
+  id: Scalars['String'],
+  title?: Maybe<Scalars['String']>,
+  description?: Maybe<Scalars['String']>,
+  achievement?: Maybe<Scalars['String']>,
+  numRequiredSteps?: Maybe<Scalars['Int']>,
+};
+
+export type EditPersistentTaskInput = {
+  id: Scalars['String'],
+  ethDomainId?: Maybe<Scalars['Int']>,
+  ethSkillId?: Maybe<Scalars['Int']>,
+  title?: Maybe<Scalars['String']>,
+  description?: Maybe<Scalars['String']>,
+};
+
+export type EditProgramInput = {
+  id: Scalars['String'],
+  title?: Maybe<Scalars['String']>,
+  description?: Maybe<Scalars['String']>,
+};
+
+export type EditSubmissionInput = {
+  id: Scalars['String'],
+  submission: Scalars['String'],
+};
+
 export type EditUserInput = {
   avatarHash?: Maybe<Scalars['String']>,
   bio?: Maybe<Scalars['String']>,
   displayName?: Maybe<Scalars['String']>,
   location?: Maybe<Scalars['String']>,
   website?: Maybe<Scalars['String']>,
+};
+
+export type EnrollInProgramInput = {
+  id: Scalars['String'],
 };
 
 export type Event = {
@@ -365,6 +419,25 @@ export type FinalizeTaskInput = {
   id: Scalars['String'],
   ethPotId: Scalars['Int'],
 };
+
+export type Level = {
+  id: Scalars['String'],
+  createdAt: Scalars['DateTime'],
+  creatorAddress: Scalars['String'],
+  programId: Scalars['String'],
+  title?: Maybe<Scalars['String']>,
+  description?: Maybe<Scalars['String']>,
+  achievement?: Maybe<Scalars['String']>,
+  numRequiredSteps?: Maybe<Scalars['Int']>,
+  stepIds: Array<Scalars['String']>,
+  steps: Array<PersistentTask>,
+  status: LevelStatus,
+};
+
+export enum LevelStatus {
+  Active = 'Active',
+  Deleted = 'Deleted'
+}
 
 export type LoggedInUser = {
   id: Scalars['String'],
@@ -416,6 +489,25 @@ export type Mutation = {
   subscribeToColony?: Maybe<User>,
   unsubscribeFromColony?: Maybe<User>,
   setUserTokens?: Maybe<User>,
+  createLevelTaskSubmission?: Maybe<Submission>,
+  editSubmission?: Maybe<Submission>,
+  acceptSubmission?: Maybe<Submission>,
+  createLevelTask?: Maybe<PersistentTask>,
+  removeLevelTask?: Maybe<PersistentTask>,
+  editPersistentTask?: Maybe<PersistentTask>,
+  setPersistentTaskPayout?: Maybe<PersistentTask>,
+  removePersistentTaskPayout?: Maybe<PersistentTask>,
+  removePersistentTask?: Maybe<PersistentTask>,
+  createLevel?: Maybe<Level>,
+  editLevel?: Maybe<Level>,
+  reorderLevelSteps?: Maybe<Level>,
+  removeLevel?: Maybe<Level>,
+  createProgram?: Maybe<Program>,
+  enrollInProgram?: Maybe<Program>,
+  editProgram?: Maybe<Program>,
+  reorderProgramLevels?: Maybe<Program>,
+  publishProgram?: Maybe<Program>,
+  removeProgram?: Maybe<Program>,
   setLoggedInUser: LoggedInUser,
   clearLoggedInUser: LoggedInUser,
 };
@@ -576,6 +668,101 @@ export type MutationSetUserTokensArgs = {
 };
 
 
+export type MutationCreateLevelTaskSubmissionArgs = {
+  input: CreateLevelTaskSubmissionInput
+};
+
+
+export type MutationEditSubmissionArgs = {
+  input: EditSubmissionInput
+};
+
+
+export type MutationAcceptSubmissionArgs = {
+  input: AcceptSubmissionInput
+};
+
+
+export type MutationCreateLevelTaskArgs = {
+  input: CreateLevelTaskInput
+};
+
+
+export type MutationRemoveLevelTaskArgs = {
+  input: RemoveLevelTaskInput
+};
+
+
+export type MutationEditPersistentTaskArgs = {
+  input: EditPersistentTaskInput
+};
+
+
+export type MutationSetPersistentTaskPayoutArgs = {
+  input: SetTaskPayoutInput
+};
+
+
+export type MutationRemovePersistentTaskPayoutArgs = {
+  input: RemoveTaskPayoutInput
+};
+
+
+export type MutationRemovePersistentTaskArgs = {
+  input: RemovePersistentTaskInput
+};
+
+
+export type MutationCreateLevelArgs = {
+  input: CreateLevelInput
+};
+
+
+export type MutationEditLevelArgs = {
+  input: EditLevelInput
+};
+
+
+export type MutationReorderLevelStepsArgs = {
+  input: ReorderLevelStepsInput
+};
+
+
+export type MutationRemoveLevelArgs = {
+  input: RemoveLevelInput
+};
+
+
+export type MutationCreateProgramArgs = {
+  input: CreateProgramInput
+};
+
+
+export type MutationEnrollInProgramArgs = {
+  input: EnrollInProgramInput
+};
+
+
+export type MutationEditProgramArgs = {
+  input: EditProgramInput
+};
+
+
+export type MutationReorderProgramLevelsArgs = {
+  input: ReorderProgramLevelsInput
+};
+
+
+export type MutationPublishProgramArgs = {
+  input: PublishProgramInput
+};
+
+
+export type MutationRemoveProgramArgs = {
+  input: RemoveProgramInput
+};
+
+
 export type MutationSetLoggedInUserArgs = {
   input?: Maybe<LoggedInUserInput>
 };
@@ -588,6 +775,50 @@ export type Notification = {
   id: Scalars['String'],
   event: Event,
   read: Scalars['Boolean'],
+};
+
+export type PersistentTask = {
+  id: Scalars['String'],
+  createdAt: Scalars['DateTime'],
+  colonyAddress: Scalars['String'],
+  creatorAddress: Scalars['String'],
+  ethDomainId?: Maybe<Scalars['Int']>,
+  ethSkillId?: Maybe<Scalars['Int']>,
+  title?: Maybe<Scalars['String']>,
+  description?: Maybe<Scalars['String']>,
+  payouts: Array<TaskPayout>,
+  submissions: Array<Submission>,
+  status: PersistentTaskStatus,
+};
+
+export enum PersistentTaskStatus {
+  Active = 'Active',
+  Closed = 'Closed',
+  Deleted = 'Deleted'
+}
+
+export type Program = {
+  id: Scalars['String'],
+  createdAt: Scalars['DateTime'],
+  creatorAddress: Scalars['String'],
+  colonyAddress: Scalars['String'],
+  title?: Maybe<Scalars['String']>,
+  description?: Maybe<Scalars['String']>,
+  levelIds: Array<Scalars['String']>,
+  levels: Array<Level>,
+  enrolledUserAddresses: Array<Scalars['String']>,
+  status: ProgramStatus,
+  submissions: Array<Submission>,
+};
+
+export enum ProgramStatus {
+  Draft = 'Draft',
+  Active = 'Active',
+  Deleted = 'Deleted'
+}
+
+export type PublishProgramInput = {
+  id: Scalars['String'],
 };
 
 export type Query = {
@@ -662,6 +893,23 @@ export type QueryUsernameArgs = {
   address: Scalars['String']
 };
 
+export type RemoveLevelInput = {
+  id: Scalars['String'],
+};
+
+export type RemoveLevelTaskInput = {
+  id: Scalars['String'],
+  levelId: Scalars['String'],
+};
+
+export type RemovePersistentTaskInput = {
+  id: Scalars['String'],
+};
+
+export type RemoveProgramInput = {
+  id: Scalars['String'],
+};
+
 export type RemoveTaskPayoutEvent = TaskEvent & {
   type: EventType,
   taskId: Scalars['String'],
@@ -677,6 +925,16 @@ export type RemoveTaskPayoutInput = {
 
 export type RemoveUpvoteFromSuggestionInput = {
   id: Scalars['String'],
+};
+
+export type ReorderLevelStepsInput = {
+  id: Scalars['String'],
+  stepIds: Array<Scalars['String']>,
+};
+
+export type ReorderProgramLevelsInput = {
+  id: Scalars['String'],
+  levelIds: Array<Scalars['String']>,
 };
 
 export type SendTaskMessageInput = {
@@ -776,6 +1034,24 @@ export type SetTaskTitleInput = {
 export type SetUserTokensInput = {
   tokenAddresses: Array<Scalars['String']>,
 };
+
+export type Submission = {
+  id: Scalars['String'],
+  createdAt: Scalars['DateTime'],
+  creatorAddress: Scalars['String'],
+  creator: User,
+  persistentTaskId: Scalars['String'],
+  submission: Scalars['String'],
+  status: SubmissionStatus,
+  statusChangedAt?: Maybe<Scalars['DateTime']>,
+};
+
+export enum SubmissionStatus {
+  Open = 'Open',
+  Accepted = 'Accepted',
+  Rejected = 'Rejected',
+  Deleted = 'Deleted'
+}
 
 export type SubscribeToColonyInput = {
   colonyAddress: Scalars['String'],
@@ -1467,6 +1743,16 @@ export type ColonyTasksQuery = { colony: (
       )>, colony: Pick<Colony, 'id' | 'colonyName' | 'displayName' | 'nativeTokenAddress'> }
       & PayoutsFragment
     )> }
+  ) };
+
+export type ColonyProgramsQueryVariables = {
+  address: Scalars['String']
+};
+
+
+export type ColonyProgramsQuery = { colony: (
+    Pick<Colony, 'id'>
+    & { programs: Array<Pick<Program, 'id' | 'createdAt' | 'creatorAddress' | 'colonyAddress' | 'title' | 'description' | 'levelIds' | 'enrolledUserAddresses' | 'status'>> }
   ) };
 
 export type ColonySubscribedUsersQueryVariables = {
@@ -3745,6 +4031,50 @@ export function useColonyTasksLazyQuery(baseOptions?: ApolloReactHooks.LazyQuery
 export type ColonyTasksQueryHookResult = ReturnType<typeof useColonyTasksQuery>;
 export type ColonyTasksLazyQueryHookResult = ReturnType<typeof useColonyTasksLazyQuery>;
 export type ColonyTasksQueryResult = ApolloReactCommon.QueryResult<ColonyTasksQuery, ColonyTasksQueryVariables>;
+export const ColonyProgramsDocument = gql`
+    query ColonyPrograms($address: String!) {
+  colony(address: $address) {
+    id
+    programs {
+      id
+      createdAt
+      creatorAddress
+      colonyAddress
+      title
+      description
+      levelIds
+      enrolledUserAddresses
+      status
+    }
+  }
+}
+    `;
+
+/**
+ * __useColonyProgramsQuery__
+ *
+ * To run a query within a React component, call `useColonyProgramsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useColonyProgramsQuery` returns an object from Apollo Client that contains loading, error, and data properties 
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useColonyProgramsQuery({
+ *   variables: {
+ *      address: // value for 'address'
+ *   },
+ * });
+ */
+export function useColonyProgramsQuery(baseOptions?: ApolloReactHooks.QueryHookOptions<ColonyProgramsQuery, ColonyProgramsQueryVariables>) {
+        return ApolloReactHooks.useQuery<ColonyProgramsQuery, ColonyProgramsQueryVariables>(ColonyProgramsDocument, baseOptions);
+      }
+export function useColonyProgramsLazyQuery(baseOptions?: ApolloReactHooks.LazyQueryHookOptions<ColonyProgramsQuery, ColonyProgramsQueryVariables>) {
+          return ApolloReactHooks.useLazyQuery<ColonyProgramsQuery, ColonyProgramsQueryVariables>(ColonyProgramsDocument, baseOptions);
+        }
+export type ColonyProgramsQueryHookResult = ReturnType<typeof useColonyProgramsQuery>;
+export type ColonyProgramsLazyQueryHookResult = ReturnType<typeof useColonyProgramsLazyQuery>;
+export type ColonyProgramsQueryResult = ApolloReactCommon.QueryResult<ColonyProgramsQuery, ColonyProgramsQueryVariables>;
 export const ColonySubscribedUsersDocument = gql`
     query ColonySubscribedUsers($colonyAddress: String!) {
   colony(address: $colonyAddress) {
