@@ -1,6 +1,6 @@
-import React, { useCallback, useState } from 'react';
+import React, { useCallback, useState, FC } from 'react';
 import throttle from 'lodash/throttle';
-import { defineMessages } from 'react-intl';
+import { defineMessages, injectIntl, IntlShape } from 'react-intl';
 import { useHistory } from 'react-router';
 
 import { ROOT_DOMAIN } from '~constants';
@@ -28,6 +28,10 @@ const MSG = defineMessages({
       'dashboard.ColonyHome.ColonyMeta.ColonyPrograms.linkUntitledProgramText',
     defaultMessage: 'Untitled Program',
   },
+  linkProgramTitleText: {
+    id: 'dashboard.ColonyHome.ColonyMeta.ColonyPrograms.linkProgramTitleText',
+    defaultMessage: '{isDraft, select, true {Draft - } false {}}{title}',
+  },
   buttonCreateProgram: {
     id: 'dashboard.ColonyHome.ColonyMeta.ColonyPrograms.buttonCreateProgram',
     defaultMessage: `Create {hasPrograms, select,
@@ -42,9 +46,17 @@ interface Props {
   colonyName: string;
 }
 
+interface EnhancedProps extends Props {
+  intl: IntlShape;
+}
+
 const displayName = 'dashboard.ColonyHome.ColonyMeta.ColonyPrograms';
 
-const ColonyPrograms = ({ colonyAddress, colonyName }: Props) => {
+const ColonyPrograms = ({
+  colonyAddress,
+  colonyName,
+  intl: { formatMessage },
+}: EnhancedProps) => {
   const [isCreatingProgram, setIsCreatingProgram] = useState<boolean>(false);
 
   const history = useHistory();
@@ -103,15 +115,18 @@ const ColonyPrograms = ({ colonyAddress, colonyName }: Props) => {
     <section className={styles.main}>
       <nav className={styles.programsNav}>
         {programs.map(({ id, status, title }) => {
-          const className =
-            status === ProgramStatus.Draft
-              ? styles.navLinkDraft
-              : styles.navLink;
+          const isDraft = status === ProgramStatus.Draft;
+          const className = isDraft ? styles.navLinkDraft : styles.navLink;
           return (
             <NavLink
               className={className}
               key={id}
               text={title || MSG.linkUntitledProgramText}
+              title={MSG.linkProgramTitleText}
+              titleValues={{
+                isDraft,
+                title: title || formatMessage(MSG.linkUntitledProgramText),
+              }}
               to={`/colony/${colonyName}/program/${id}`}
             />
           );
@@ -132,4 +147,4 @@ const ColonyPrograms = ({ colonyAddress, colonyName }: Props) => {
 
 ColonyPrograms.displayName = displayName;
 
-export default ColonyPrograms;
+export default injectIntl(ColonyPrograms) as FC<Props>;
