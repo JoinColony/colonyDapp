@@ -3,15 +3,22 @@ import throttle from 'lodash/throttle';
 import { defineMessages } from 'react-intl';
 import { useHistory } from 'react-router';
 
+import { ROOT_DOMAIN } from '~constants';
 import Button from '~core/Button';
 import NavLink from '~core/NavLink';
 import {
-  ColonyPrograms as ColonyProgramsType,
-  useCreateProgramMutation,
-  ProgramStatus,
   cacheUpdates,
+  ProgramStatus,
+  useColonyProgramsQuery,
+  useCreateProgramMutation,
+  useLoggedInUser,
 } from '~data/index';
 import { Address } from '~types/index';
+import { useDataFetcher, useTransformer } from '~utils/hooks';
+
+import { canCreateProgram } from '../../../checks';
+import { domainsAndRolesFetcher } from '../../../fetchers';
+import { getUserRoles } from '../../../../transformers';
 
 import styles from './ColonyPrograms.css';
 
@@ -31,23 +38,44 @@ const MSG = defineMessages({
 });
 
 interface Props {
-  canCreate: boolean;
   colonyAddress: Address;
   colonyName: string;
-  programs: ColonyProgramsType;
 }
 
 const displayName = 'dashboard.ColonyHome.ColonyMeta.ColonyPrograms';
 
-const ColonyPrograms = ({
-  canCreate,
-  colonyAddress,
-  colonyName,
-  programs,
-}: Props) => {
+const ColonyPrograms = ({ colonyAddress, colonyName }: Props) => {
   const [isCreatingProgram, setIsCreatingProgram] = useState<boolean>(false);
 
   const history = useHistory();
+
+  const { walletAddress } = useLoggedInUser();
+
+  const { data: domainsAndRolesData } = useDataFetcher(
+    domainsAndRolesFetcher,
+    [colonyAddress],
+    [colonyAddress],
+  );
+  const userRoles = useTransformer(getUserRoles, [
+    domainsAndRolesData,
+    ROOT_DOMAIN,
+    walletAddress,
+  ]);
+
+  const { data: programsData } = useColonyProgramsQuery({
+    variables: { address: colonyAddress },
+  });
+
+  const canCreate = canCreateProgram(userRoles);
+
+  const unfilteredPrograms =
+    (programsData && programsData.colony.programs) || [];
+
+  const programs = unfilteredPrograms.filter(
+    ({ status }) =>
+      status === ProgramStatus.Active ||
+      (status === ProgramStatus.Draft && canCreate),
+  );
 
   const [createProgramFn, { error }] = useCreateProgramMutation({
     variables: { input: { colonyAddress } },
@@ -67,8 +95,12 @@ const ColonyPrograms = ({
     [colonyName, createProgramFn, history],
   );
 
+  if (!programsData || (!canCreate && programs.length === 0)) {
+    return null;
+  }
+
   return (
-    <>
+    <section className={styles.main}>
       <nav className={styles.programsNav}>
         {programs.map(({ id, status, title }) => {
           const className =
@@ -94,7 +126,7 @@ const ColonyPrograms = ({
           textValues={{ hasPrograms: programs.length > 0 }}
         />
       )}
-    </>
+    </section>
   );
 };
 
