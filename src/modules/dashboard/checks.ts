@@ -131,3 +131,10 @@ export const hasUpvotedSuggestion = (
   upvotes: OneSuggestion['upvotes'],
   userAddress: Address,
 ) => upvotes.includes(userAddress);
+
+/*
+ * Programs
+ */
+
+export const canCreateProgram = (userRoles: ROLES[]) =>
+  canAdminister(userRoles);
