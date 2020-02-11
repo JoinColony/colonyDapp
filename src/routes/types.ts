@@ -1,10 +1,12 @@
 import { ComponentType } from 'react';
 
+import { RouteProps as ReactRouterRouteProps } from 'react-router-dom';
+
 export interface RouteProps {
   /*
    * Route path
    */
-  path: string;
+  path: ReactRouterRouteProps['path'];
 
   /*
    * Component to render (with or without navigation)

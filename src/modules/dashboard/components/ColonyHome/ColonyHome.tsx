@@ -1,6 +1,6 @@
 import React, { useMemo, useState } from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
-import { Redirect } from 'react-router-dom';
+import { Redirect, Route, Switch } from 'react-router-dom';
 
 import RecoveryModeAlert from '~admin/RecoveryModeAlert';
 import Transactions from '~admin/Transactions';
@@ -157,48 +157,55 @@ const ColonyHome = ({
         </div>
       </aside>
       <main className={styles.content}>
-        <div className={styles.breadCrumbContainer}>
-          {domains && crumbs && <BreadCrumb elements={crumbs} />}
-        </div>
-        <Tabs>
-          <TabList
-            extra={activeTab === TabName.TransactionsTab ? noFilter : null}
-          >
-            <Tab onClick={() => setActiveTab(TabName.TasksTab)}>
-              <FormattedMessage {...MSG.tabContribute} />
-            </Tab>
-            <Tab onClick={() => setActiveTab(TabName.SuggestionsTab)}>
-              <FormattedMessage {...MSG.tabSuggestions} />
-            </Tab>
-            <Tab onClick={() => setActiveTab(TabName.CommunityTab)}>
-              <FormattedMessage {...MSG.tabCommunity} />
-            </Tab>
-            <Tab onClick={() => setActiveTab(TabName.TransactionsTab)}>
-              <FormattedMessage {...MSG.tabTransactions} />
-            </Tab>
-          </TabList>
-          <TabPanel>
-            <TabContribute
-              canCreateTask={canCreateTask}
-              colony={colony}
-              filteredDomainId={filteredDomainId}
-              showQrCode={hasRoot(rootUserRoles)}
-            />
-          </TabPanel>
-          <TabPanel>
-            <Suggestions
-              colonyAddress={colony.colonyAddress}
-              colonyName={colony.colonyName}
-              domainId={filteredDomainId}
-            />
-          </TabPanel>
-          <TabPanel>
-            <Community colonyAddress={colony.colonyAddress} />
-          </TabPanel>
-          <TabPanel>
-            <Transactions colonyAddress={colony.colonyAddress} />
-          </TabPanel>
-        </Tabs>
+        <Switch>
+          <Route exact path="/colony/:colonyName/program/:programId">
+            {/* Programs be here */}
+          </Route>
+          <Route>
+            <div className={styles.breadCrumbContainer}>
+              {domains && crumbs && <BreadCrumb elements={crumbs} />}
+            </div>
+            <Tabs>
+              <TabList
+                extra={activeTab === TabName.TransactionsTab ? noFilter : null}
+              >
+                <Tab onClick={() => setActiveTab(TabName.TasksTab)}>
+                  <FormattedMessage {...MSG.tabContribute} />
+                </Tab>
+                <Tab onClick={() => setActiveTab(TabName.SuggestionsTab)}>
+                  <FormattedMessage {...MSG.tabSuggestions} />
+                </Tab>
+                <Tab onClick={() => setActiveTab(TabName.CommunityTab)}>
+                  <FormattedMessage {...MSG.tabCommunity} />
+                </Tab>
+                <Tab onClick={() => setActiveTab(TabName.TransactionsTab)}>
+                  <FormattedMessage {...MSG.tabTransactions} />
+                </Tab>
+              </TabList>
+              <TabPanel>
+                <TabContribute
+                  canCreateTask={canCreateTask}
+                  colony={colony}
+                  filteredDomainId={filteredDomainId}
+                  showQrCode={hasRoot(rootUserRoles)}
+                />
+              </TabPanel>
+              <TabPanel>
+                <Suggestions
+                  colonyAddress={colony.colonyAddress}
+                  colonyName={colony.colonyName}
+                  domainId={filteredDomainId}
+                />
+              </TabPanel>
+              <TabPanel>
+                <Community colonyAddress={colony.colonyAddress} />
+              </TabPanel>
+              <TabPanel>
+                <Transactions colonyAddress={colony.colonyAddress} />
+              </TabPanel>
+            </Tabs>
+          </Route>
+        </Switch>
       </main>
       <aside className={styles.sidebar}>
         <ColonyFunding
