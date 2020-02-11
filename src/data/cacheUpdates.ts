@@ -22,11 +22,50 @@ import {
   UserQuery,
   UserQueryVariables,
   UserDocument,
+  CreateProgramMutationResult,
+  ColonyProgramsQuery,
+  ColonyProgramsQueryVariables,
+  ColonyProgramsDocument,
 } from './generated';
 
 type Cache = typeof apolloCache;
 
 const cacheUpdates = {
+  createProgram(colonyAddress: Address) {
+    return (cache: Cache, { data }: CreateProgramMutationResult) => {
+      try {
+        const cacheData = cache.readQuery<
+          ColonyProgramsQuery,
+          ColonyProgramsQueryVariables
+        >({
+          query: ColonyProgramsDocument,
+          variables: {
+            address: colonyAddress,
+          },
+        });
+        const createProgramData = data && data.createProgram;
+        if (cacheData && createProgramData) {
+          const programs = cacheData.colony.programs || [];
+          programs.push(createProgramData);
+          cache.writeQuery<ColonyProgramsQuery, ColonyProgramsQueryVariables>({
+            data: {
+              colony: {
+                ...cacheData.colony,
+                programs,
+              },
+            },
+            query: ColonyProgramsDocument,
+            variables: {
+              address: colonyAddress,
+            },
+          });
+        }
+      } catch (e) {
+        log.verbose(e);
+        log.verbose('Not updating store - colony programs not loaded yet');
+      }
+    };
+  },
   createTask(colonyAddress: Address) {
     return (cache: Cache, { data }: CreateTaskMutationResult) => {
       try {
