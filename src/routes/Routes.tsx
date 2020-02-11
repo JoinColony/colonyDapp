@@ -25,6 +25,7 @@ import {
   CREATE_COLONY_ROUTE,
   CREATE_USER_ROUTE,
   NOT_FOUND_ROUTE,
+  PROGRAM_ROUTE,
   TASK_ROUTE,
   CREATE_WALLET_ROUTE,
   DASHBOARD_ROUTE,
@@ -83,7 +84,7 @@ const Routes = () => {
       <ConnectedOnlyRoute
         exact
         isConnected={isConnected}
-        path={COLONY_HOME_ROUTE}
+        path={[COLONY_HOME_ROUTE, PROGRAM_ROUTE]}
         component={ColonyHome}
         layout={SimpleNav}
         routeProps={{
