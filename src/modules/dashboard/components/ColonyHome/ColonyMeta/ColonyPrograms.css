@@ -4,7 +4,12 @@
 }
 
 .navLink {
+  display: inline-block;
   font-weight: var(--weight-medium);
+}
+
+.navLink + .navLink {
+  margin-top: 10px;
 }
 
 .navLink:hover {
