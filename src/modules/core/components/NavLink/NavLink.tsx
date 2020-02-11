@@ -26,6 +26,12 @@ interface Props {
   /** Values for text (react-intl interpolation) */
   textValues?: MessageValues;
 
+  /** A string or a `messageDescriptor` that make up the nav link's title */
+  title?: MessageDescriptor | string;
+
+  /** Values for title (react-intl interpolation) */
+  titleValues?: MessageValues;
+
   /** @ignore injected by `react-intl` */
   intl: IntlShape;
 }
@@ -36,14 +42,26 @@ const NavLink = ({
   intl: { formatMessage },
   text,
   textValues,
+  title,
+  titleValues,
   to,
   ...linkProps
 }: Props) => {
   const linkText =
     typeof text === 'string' ? text : text && formatMessage(text, textValues);
 
+  const titleText =
+    typeof title === 'string'
+      ? title
+      : title && formatMessage(title, titleValues);
+
   return (
-    <NavLinkComponent to={to} activeClassName={activeClassName} {...linkProps}>
+    <NavLinkComponent
+      to={to}
+      activeClassName={activeClassName}
+      title={titleText}
+      {...linkProps}
+    >
       {linkText || children}
     </NavLinkComponent>
   );
