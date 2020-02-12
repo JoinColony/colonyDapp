@@ -34,13 +34,9 @@ const MSG = defineMessages({
     defaultMessage: `It looks like you don't have any tasks.
       Visit your colonies to find a task to work on.`,
   },
-  subscribe: {
-    id: 'dashboard.TaskList.subscribe',
-    defaultMessage: 'Subscribe to Colony',
-  },
-  myColonies: {
-    id: 'dashboard.TaskList.myColonies',
-    defaultMessage: 'My Colonies',
+  colonyToJoin: {
+    id: 'dashboard.TaskList.colonyToJoin',
+    defaultMessage: 'Colony',
   },
   noTaskDescription: {
     id: 'dashboard.TaskList.noTaskDescription',
@@ -57,12 +53,12 @@ const MSG = defineMessages({
       other {the Colony}
     }!`,
   },
-  subscribeToColony: {
-    id: 'dashboard.TaskList.subscribeToColony',
+  joinColony: {
+    id: 'dashboard.TaskList.joinColony',
     defaultMessage: `It looks like there are no open tasks right now.
-      {isSubscribed, select,
+      {hasJoined, select,
         true {}
-        false {Add this colony to {myColonies},
+        false {Join the {colonyToJoin},
           grab a coffee, and check again later.}}`,
   },
 });
@@ -165,7 +161,7 @@ const TaskList = ({
     variables: { address: walletAddress },
   });
 
-  const isSubscribed =
+  const hasJoined =
     typeof colonyAddress == 'string' &&
     userData &&
     userData.user &&
@@ -231,19 +227,22 @@ const TaskList = ({
               <div className={taskListItemStyles.emptyStateElements}>
                 <FormattedMessage
                   tagName="p"
-                  {...MSG.subscribeToColony}
+                  {...MSG.joinColony}
                   values={{
                     /*
                      * If the current user hasn't claimed a profile yet, then don't show the
                      * subscribe to colony call to action
                      */
-                    isSubscribed: username ? isSubscribed : true,
-                    myColonies: (
+                    hasJoined: username ? hasJoined : true,
+                    colonyToJoin: (
                       <Button
                         className={taskListItemStyles.subscribe}
                         onClick={subscribeToColony}
                       >
-                        <FormattedMessage tagName="span" {...MSG.myColonies} />
+                        <FormattedMessage
+                          tagName="span"
+                          {...MSG.colonyToJoin}
+                        />
                       </Button>
                     ),
                   }}
