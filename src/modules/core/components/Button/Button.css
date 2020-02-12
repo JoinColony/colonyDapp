@@ -204,8 +204,11 @@
  */
 .themeDangerLink {
   composes: main;
+  padding: 0;
+  height: 20px;
   border-color: transparent;
   background-color: transparent;
+  font-weight: var(--weight-semi);
   color: var(--danger);
 }
 
