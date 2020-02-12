@@ -37,3 +37,7 @@
   color: var(--colony-blue);
   letter-spacing: var(--spacing-medium);
 }
+
+.tokenInfo {
+  cursor: pointer;
+}
