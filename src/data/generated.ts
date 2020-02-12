@@ -1561,6 +1561,13 @@ export type EditProgramMutationVariables = {
 
 export type EditProgramMutation = { editProgram: Maybe<Pick<Program, 'id' | 'description' | 'title'>> };
 
+export type RemoveProgramMutationVariables = {
+  input: RemoveProgramInput
+};
+
+
+export type RemoveProgramMutation = { removeProgram: Maybe<Pick<Program, 'id' | 'status'>> };
+
 export type TaskQueryVariables = {
   id: Scalars['String']
 };
@@ -3331,6 +3338,39 @@ export function useEditProgramMutation(baseOptions?: ApolloReactHooks.MutationHo
 export type EditProgramMutationHookResult = ReturnType<typeof useEditProgramMutation>;
 export type EditProgramMutationResult = ApolloReactCommon.MutationResult<EditProgramMutation>;
 export type EditProgramMutationOptions = ApolloReactCommon.BaseMutationOptions<EditProgramMutation, EditProgramMutationVariables>;
+export const RemoveProgramDocument = gql`
+    mutation RemoveProgram($input: RemoveProgramInput!) {
+  removeProgram(input: $input) {
+    id
+    status
+  }
+}
+    `;
+export type RemoveProgramMutationFn = ApolloReactCommon.MutationFunction<RemoveProgramMutation, RemoveProgramMutationVariables>;
+
+/**
+ * __useRemoveProgramMutation__
+ *
+ * To run a mutation, you first call `useRemoveProgramMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useRemoveProgramMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [removeProgramMutation, { data, loading, error }] = useRemoveProgramMutation({
+ *   variables: {
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function useRemoveProgramMutation(baseOptions?: ApolloReactHooks.MutationHookOptions<RemoveProgramMutation, RemoveProgramMutationVariables>) {
+        return ApolloReactHooks.useMutation<RemoveProgramMutation, RemoveProgramMutationVariables>(RemoveProgramDocument, baseOptions);
+      }
+export type RemoveProgramMutationHookResult = ReturnType<typeof useRemoveProgramMutation>;
+export type RemoveProgramMutationResult = ApolloReactCommon.MutationResult<RemoveProgramMutation>;
+export type RemoveProgramMutationOptions = ApolloReactCommon.BaseMutationOptions<RemoveProgramMutation, RemoveProgramMutationVariables>;
 export const TaskDocument = gql`
     query Task($id: String!) {
   task(id: $id) {
