@@ -36,11 +36,11 @@ const MSG = defineMessages({
   },
   subscribe: {
     id: 'dashboard.Community.subscribe',
-    defaultMessage: `Subscribe now`,
+    defaultMessage: `Join now`,
   },
   subscribedReward: {
     id: 'dashboard.Community.subscribedReward',
-    defaultMessage: `{star} Subscribed!`,
+    defaultMessage: `{star} Joined!`,
   },
 });
 
