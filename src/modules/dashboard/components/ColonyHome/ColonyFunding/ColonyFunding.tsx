@@ -6,6 +6,7 @@ import Button from '~core/Button';
 import { DialogType } from '~core/Dialog';
 import withDialog from '~core/Dialog/withDialog';
 import Heading from '~core/Heading';
+import InfoPopover from '~core/InfoPopover';
 import { DomainsMapType } from '~types/index';
 import {
   useLoggedInUser,
@@ -54,7 +55,7 @@ const ColonyFunding = ({
     [walletAddress, domains],
   );
 
-  const { colonyAddress, tokens: colonyTokens } = colony;
+  const { colonyAddress, tokens: colonyTokens, nativeTokenAddress } = colony;
 
   const handleMoveTokens = useCallback(
     () =>
@@ -96,11 +97,16 @@ const ColonyFunding = ({
       {data && !isLoadingTokenBalances ? (
         <ul>
           {data.tokens.map(token => (
-            <TokenItem
-              currentDomainId={currentDomainId}
-              key={token.address}
-              token={token}
-            />
+            <li key={token.address}>
+              <InfoPopover
+                token={token}
+                isTokenNative={token.address === nativeTokenAddress}
+              >
+                <div className={styles.tokenBalance}>
+                  <TokenItem currentDomainId={currentDomainId} token={token} />
+                </div>
+              </InfoPopover>
+            </li>
           ))}
         </ul>
       ) : (
