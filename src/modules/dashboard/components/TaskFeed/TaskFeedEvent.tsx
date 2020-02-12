@@ -230,9 +230,9 @@ const TaskFeedEventPayoutSet = ({
   const { data: colonyData } = useColonyQuery({
     variables: { address: colonyAddress },
   });
-  const { decimals = 18, symbol = '', address } =
+  const { decimals = 18, symbol = '', address = '' } =
     (tokenData && tokenData.token) || {};
-  const { nativeTokenAddress } = (colonyData && colonyData.colony) || {};
+  const { nativeTokenAddress = '' } = (colonyData && colonyData.colony) || {};
   return (
     <FormattedMessage
       {...MSG.payoutSet}
