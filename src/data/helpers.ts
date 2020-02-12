@@ -29,7 +29,7 @@ export const useProgram = (
   colonyAddress: Address,
   programId: string,
 ): { data?: OneProgram; error?: string; loading: boolean } => {
-  const { data, loading } = useColonyProgramsQuery({
+  const { data, error, loading } = useColonyProgramsQuery({
     variables: { address: colonyAddress },
   });
 
@@ -38,7 +38,7 @@ export const useProgram = (
 
   return {
     data: program,
-    error: !program && !loading ? 'Program not found' : undefined,
+    error: error || (!program && !loading) ? 'Program not found' : undefined,
     loading,
   };
 };
