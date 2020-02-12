@@ -5,7 +5,7 @@ import * as yup from 'yup';
 import { FormikProps } from 'formik';
 import Button from '~core/Button';
 import Heading from '~core/Heading';
-import { Form, Input, Textarea } from '~core/Fields';
+import { Form, Input, Textarea, FormStatus } from '~core/Fields';
 import { OneProgram, ProgramStatus, useEditProgramMutation } from '~data/index';
 
 import styles from './ProgramEdit.css';
@@ -82,7 +82,12 @@ const ProgramEdit = ({
       validationSchema={validationSchema}
       validateOnMount
     >
-      {({ dirty, isSubmitting, isValid }: FormikProps<FormValues>) => (
+      {({
+        dirty,
+        isSubmitting,
+        isValid,
+        status: formStatus,
+      }: FormikProps<FormValues>) => (
         <>
           <div className={styles.formActions}>
             <div className={styles.headingContainer}>
@@ -125,6 +130,7 @@ const ProgramEdit = ({
             label={MSG.controlLabelDescription}
             name="description"
           />
+          <FormStatus status={formStatus} />
         </>
       )}
     </Form>
