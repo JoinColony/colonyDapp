@@ -20,11 +20,11 @@ interface Props {
 const MSG = defineMessages({
   currentUserNoColonies: {
     id: 'users.UserProfile.UserColonies.currentUserNoColonies',
-    defaultMessage: `It looks like you're not subscribed to any Colonies yet. You’ll need an invite link to join one. Ask your community for a link or {createColonyLink}.`,
+    defaultMessage: `It looks like you have not joined any Colonies yet. You’ll need an invite link to join one. Ask your community for a link or {createColonyLink}.`,
   },
   otherUserNoColonies: {
     id: 'users.UserProfile.UserColonies.otherUserNoColonies',
-    defaultMessage: `It looks like {friendlyUsername} isn't subscribed to any Colonies yet. You’ll might want to send them an invite link from a Colony you're part of.`,
+    defaultMessage: `It looks like {friendlyUsername} hasn't joined any Colonies yet. You’ll might want to send them an invite link from a Colony you're part of.`,
   },
   createColonyLink: {
     id: 'users.UserProfile.UserColonies.createColonyLink',
