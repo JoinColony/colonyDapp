@@ -8,24 +8,20 @@
   margin-bottom: 10px;
 }
 
-.navLink {
-  display: inline-block;
-  font-weight: var(--weight-medium);
+.baseStyles {
+  display: flex;
+  align-items: center;
 }
 
-.navLink + .navLink {
+.baseStyles + .baseStyles {
   margin-top: 10px;
 }
 
-.navLink:hover {
-  opacity: 0.8;
+.draft {
+  composes: baseStyles;
 }
 
-.navLinkDraft {
-  composes: navLink;
-}
-
-.navLinkDraft::after {
+.draft::after {
   display: inline-block;
   margin-bottom: 1px;
   margin-left: 10px;
@@ -34,4 +30,21 @@
   border-radius: 50%;
   background-color: var(--golden);
   content: '';
+}
+
+.navLink {
+  margin-right: 10px;
+  overflow: hidden;
+  font-weight: var(--weight-medium);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.draft .navLink {
+  /* Leave room for "pending dot" */
+  max-width: 87%;
+}
+
+.navLink:hover {
+  opacity: 0.8;
 }
