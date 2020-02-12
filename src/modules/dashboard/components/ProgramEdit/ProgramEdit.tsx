@@ -70,6 +70,8 @@ const ProgramEdit = ({
   colonyName,
   program: { id, description, status, title },
 }: Props) => {
+  const isDraft = status === ProgramStatus.Draft;
+
   const history = useHistory();
 
   const [editProgram] = useEditProgramMutation();
@@ -162,12 +164,13 @@ const ProgramEdit = ({
             </div>
           </div>
           <Input
-            appearance={{ theme: 'fat' }}
+            appearance={{
+              theme: 'fat',
+              colorSchema: isDraft ? 'info' : undefined,
+            }}
             label={MSG.controlLabelTitle}
             name="title"
-            status={
-              status === ProgramStatus.Draft ? MSG.draftStatusText : undefined
-            }
+            status={isDraft ? MSG.draftStatusText : undefined}
           />
           <br />
           <Textarea
