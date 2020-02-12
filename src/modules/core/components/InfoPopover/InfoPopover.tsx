@@ -1,4 +1,5 @@
 import React, { ReactNode } from 'react';
+import { defineMessages, FormattedMessage } from 'react-intl';
 
 import { Address } from '~types/index';
 import { AnyUser, AnyToken } from '~data/index';
@@ -6,10 +7,20 @@ import { AnyUser, AnyToken } from '~data/index';
 import { Tooltip } from '~core/Popover';
 import UserMention from '~core/UserMention';
 import CopyableAddress from '~core/CopyableAddress';
+import TokenLink from '~core/TokenLink';
 
 import styles from './InfoPopover.css';
 
-const componentDisplayName = 'InfoPopover';
+const MSG = defineMessages({
+  nativeTokenMessage: {
+    id: 'InfoPopover.nativeTokenMessage',
+    defaultMessage: "*This is the colony's native token",
+  },
+  viewOnEtherscan: {
+    id: 'InfoPopover.viewOnEtherscan',
+    defaultMessage: 'View on Etherscan',
+  },
+});
 
 interface Props {
   /** Children elemnts or components to wrap the tooltip around */
@@ -36,7 +47,7 @@ interface Props {
 interface ConditionalTooltipProps {
   user?: AnyUser;
   token?: AnyToken;
-  isTokenNative?: boolean;
+  isTokenNative: boolean;
 }
 
 interface UserTooltipProps {
@@ -51,6 +62,8 @@ interface TokenTooltipProps {
   address: Address;
   isTokenNative: boolean;
 }
+
+const componentDisplayName = 'InfoPopover';
 
 const userTooltipContent = ({
   displayName,
@@ -94,6 +107,14 @@ const tokenTooltipContent = ({
     <div title={address} className={styles.address}>
       <CopyableAddress full>{address}</CopyableAddress>
     </div>
+    {isTokenNative && (
+      <p className={styles.nativeTokenMessage}>
+        <FormattedMessage {...MSG.nativeTokenMessage} />
+      </p>
+    )}
+    <div className={styles.etherscanDivider}>
+      <TokenLink tokenAddress={address} text={MSG.viewOnEtherscan} />
+    </div>
   </div>
 );
 
@@ -112,8 +133,8 @@ const conditionallyRenderContent = ({
   }
   if (token) {
     const { name, symbol, address } = token;
-    console.log(token);
-    console.log(isTokenNative);
+    // console.log(token);
+    // console.log(isTokenNative);
     return tokenTooltipContent({
       name,
       symbol,

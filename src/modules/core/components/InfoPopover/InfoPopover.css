@@ -31,3 +31,13 @@
   font-weight: var(--weight-medium);
   color: var(--pink);
 }
+
+.nativeTokenMessage {
+  margin-top: 6px;
+}
+
+.etherscanDivider {
+  margin: 10px -10px 0 -10px;
+  padding: 12px 0 0 10px;
+  border-top: 1px solid var(--temp-grey-5);
+}
