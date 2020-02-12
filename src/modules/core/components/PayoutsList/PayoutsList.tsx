@@ -3,6 +3,7 @@ import { defineMessages, FormattedMessage, FormattedNumber } from 'react-intl';
 import cx from 'classnames';
 import BigNumber from 'bn.js';
 import moveDecimal from 'move-decimal-point';
+import InfoPopover from '~core/InfoPopover';
 
 import { DEFAULT_TOKEN_DECIMALS } from '~constants';
 import { Payouts } from '~data/index';
@@ -59,15 +60,25 @@ const PayoutsList = ({ maxLines = 1, nativeTokenAddress, payouts }: Props) => {
     <div className={styles.main}>
       <div>
         {firstPayouts.map(({ amount, token }) => (
-          <Numeral
-            className={cx(styles.payoutNumber, {
-              [styles.native]: token.address === nativeTokenAddress,
-            })}
-            key={token.address}
-            suffix={` ${token.symbol} `}
-            unit={DEFAULT_TOKEN_DECIMALS}
-            value={new BigNumber(moveDecimal(amount, token.decimals || 18))}
-          />
+          <div key={token.address} className={styles.tokenInfo}>
+            <InfoPopover
+              token={token}
+              isTokenNative={token.address === nativeTokenAddress}
+            >
+              <div className={styles.tokenPayout}>
+                <Numeral
+                  className={cx(styles.payoutNumber, {
+                    [styles.native]: token.address === nativeTokenAddress,
+                  })}
+                  suffix={` ${token.symbol} `}
+                  unit={DEFAULT_TOKEN_DECIMALS}
+                  value={
+                    new BigNumber(moveDecimal(amount, token.decimals || 18))
+                  }
+                />
+              </div>
+            </InfoPopover>
+          </div>
         ))}
       </div>
       {extraPayouts && extraPayouts.length ? (
