@@ -8,6 +8,7 @@ import { Tooltip } from '~core/Popover';
 import UserMention from '~core/UserMention';
 import CopyableAddress from '~core/CopyableAddress';
 import TokenLink from '~core/TokenLink';
+import TokenIcon from '~dashboard/HookedTokenIcon';
 
 import styles from './InfoPopover.css';
 
@@ -87,36 +88,35 @@ const userTooltipContent = ({
   </div>
 );
 
-const tokenTooltipContent = ({
-  name,
-  symbol,
-  address,
-  isTokenNative,
-}: TokenTooltipProps) => (
-  <div className={styles.main}>
-    {name && (
-      <p title={name} className={styles.displayName}>
-        {name}
-      </p>
-    )}
-    {symbol && (
-      <p title={symbol} className={styles.symbol}>
-        {symbol}
-      </p>
-    )}
-    <div title={address} className={styles.address}>
-      <CopyableAddress full>{address}</CopyableAddress>
+const tokenTooltipContent = (token: AnyToken, isTokenNative: boolean) => {
+  const { name, symbol, address } = token;
+  return (
+    <div className={styles.main}>
+      {name && (
+        <div title={name} className={styles.displayName}>
+          <TokenIcon token={token} name={token.name || undefined} size="xxs" />
+          {name}
+        </div>
+      )}
+      {symbol && (
+        <p title={symbol} className={styles.symbol}>
+          {symbol}
+        </p>
+      )}
+      <div title={address} className={styles.address}>
+        <CopyableAddress full>{address}</CopyableAddress>
+      </div>
+      {isTokenNative && (
+        <p className={styles.nativeTokenMessage}>
+          <FormattedMessage {...MSG.nativeTokenMessage} />
+        </p>
+      )}
+      <div className={styles.etherscanDivider}>
+        <TokenLink tokenAddress={address} text={MSG.viewOnEtherscan} />
+      </div>
     </div>
-    {isTokenNative && (
-      <p className={styles.nativeTokenMessage}>
-        <FormattedMessage {...MSG.nativeTokenMessage} />
-      </p>
-    )}
-    <div className={styles.etherscanDivider}>
-      <TokenLink tokenAddress={address} text={MSG.viewOnEtherscan} />
-    </div>
-  </div>
-);
+  );
+};
 
 const conditionallyRenderContent = ({
   user,
@@ -132,15 +132,7 @@ const conditionallyRenderContent = ({
     });
   }
   if (token) {
-    const { name, symbol, address } = token;
-    // console.log(token);
-    // console.log(isTokenNative);
-    return tokenTooltipContent({
-      name,
-      symbol,
-      address,
-      isTokenNative,
-    });
+    return tokenTooltipContent(token, isTokenNative);
   }
   return null;
 };

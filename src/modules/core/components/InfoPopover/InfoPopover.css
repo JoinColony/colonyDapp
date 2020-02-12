@@ -11,6 +11,23 @@
   color: var(--colony-black);
 }
 
+/*
+ * @NOTE Directly adding element styles
+ * This is because we needed to create a super-custom, super-small size for the icon
+ * Using our image sizing logic, this would have been: `xxxxs`
+ */
+.displayName div {
+  display: inline-block;
+  margin-right: 8px;
+  height: 12px;
+  width: 12px;
+}
+
+.displayName figure {
+  margin-right: 2px;
+  vertical-align: bottom;
+}
+
 .userName {
   composes: inlineEllipsis from '~styles/text.css';
   margin: 0 0 6px 0;
@@ -37,6 +54,10 @@
 }
 
 .etherscanDivider {
+  /*
+   * @NOTE Negative Margins
+   * This is be able to extend the border divider past the container's margin constraints
+   */
   margin: 10px -10px 0 -10px;
   padding: 12px 0 0 10px;
   border-top: 1px solid var(--temp-grey-5);
