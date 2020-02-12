@@ -3,6 +3,7 @@ import React from 'react';
 
 import { DEFAULT_NETWORK } from '~constants';
 import ExternalLink from '~core/ExternalLink';
+import { getEtherscanLink } from '~utils/external';
 
 interface Props {
   /*
@@ -32,22 +33,18 @@ const WalletLink = ({
   network = DEFAULT_NETWORK,
   text,
   textValues,
-}: Props) => {
-  const linkText = text || walletAddress;
-  const tld = network === 'tobalaba' ? 'com' : 'io';
-  const networkSubdomain =
-    network === 'homestead' || network === 'mainnet' ? '' : `${network}.`;
-  // eslint-disable-next-line max-len
-  const href = `https://${networkSubdomain}etherscan.${tld}/address/${walletAddress}`;
-  return (
-    <ExternalLink
-      className={className}
-      href={href}
-      text={linkText}
-      textValues={textValues}
-    />
-  );
-};
+}: Props) => (
+  <ExternalLink
+    className={className}
+    href={getEtherscanLink({
+      network,
+      linkType: 'address',
+      addressOrHash: walletAddress,
+    })}
+    text={text || walletAddress}
+    textValues={textValues}
+  />
+);
 
 WalletLink.displayName = displayName;
 
