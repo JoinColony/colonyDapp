@@ -116,19 +116,22 @@ const ColonyPrograms = ({
       <nav className={styles.programsNav}>
         {programs.map(({ id, status, title }) => {
           const isDraft = status === ProgramStatus.Draft;
-          const className = isDraft ? styles.navLinkDraft : styles.navLink;
           return (
-            <NavLink
-              className={className}
+            <span
+              className={isDraft ? styles.draft : styles.baseStyles}
               key={id}
-              text={title || MSG.linkUntitledProgramText}
-              title={MSG.linkProgramTitleText}
-              titleValues={{
-                isDraft,
-                title: title || formatMessage(MSG.linkUntitledProgramText),
-              }}
-              to={`/colony/${colonyName}/program/${id}`}
-            />
+            >
+              <NavLink
+                className={styles.navLink}
+                text={title || MSG.linkUntitledProgramText}
+                title={MSG.linkProgramTitleText}
+                titleValues={{
+                  isDraft,
+                  title: title || formatMessage(MSG.linkUntitledProgramText),
+                }}
+                to={`/colony/${colonyName}/program/${id}`}
+              />
+            </span>
           );
         })}
       </nav>
