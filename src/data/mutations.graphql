@@ -345,3 +345,10 @@ mutation EditProgram($input: EditProgramInput!) {
     title
   }
 }
+
+mutation RemoveProgram($input: RemoveProgramInput!) {
+  removeProgram(input: $input) {
+    id
+    status
+  }
+}
