@@ -8,8 +8,9 @@ import { COLONY_TOTAL_BALANCE_DOMAIN_ID, ROOT_DOMAIN } from '~constants';
 import BreadCrumb from '~core/BreadCrumb';
 import Heading from '~core/Heading';
 import { Tab, TabList, TabPanel, Tabs } from '~core/Tabs';
-import Suggestions from '~dashboard/Suggestions';
 import Community from '~dashboard/Community';
+import Program from '~dashboard/Program';
+import Suggestions from '~dashboard/Suggestions';
 import { useLoggedInUser } from '~data/helpers';
 import { useColonyFromNameQuery } from '~data/index';
 import LoadingTemplate from '~pages/LoadingTemplate';
@@ -160,7 +161,10 @@ const ColonyHome = ({
         <main className={styles.content}>
           <Switch>
             <Route exact path="/colony/:colonyName/program/:programId">
-              {/* Programs be here */}
+              <Program
+                colonyAddress={colony.colonyAddress}
+                colonyName={colony.colonyName}
+              />
             </Route>
             <Route>
               <div className={styles.breadCrumbContainer}>

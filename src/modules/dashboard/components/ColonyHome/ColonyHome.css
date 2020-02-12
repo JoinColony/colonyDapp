@@ -23,6 +23,7 @@
 }
 
 .content {
+  padding-top: 70px;
   height: 100%;
   grid-column: 2;
   grid-row: 1;
@@ -36,7 +37,6 @@
 }
 
 .breadCrumbContainer {
-  margin-top: 58px;
   margin-bottom: 16px;
   margin-left: 10px;
 }
