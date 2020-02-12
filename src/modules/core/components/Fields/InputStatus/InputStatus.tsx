@@ -10,7 +10,7 @@ interface Appearance {
   // Make it covariant: tell flow we're not changing it in here
   readonly theme?: 'fat' | 'underlined' | 'minimal' | 'dotted';
   readonly direction?: 'horizontal';
-  readonly colorSchema?: 'dark' | 'grey' | 'transparent';
+  readonly colorSchema?: 'dark' | 'grey' | 'transparent' | 'info';
   readonly size?: 'small';
 }
 
