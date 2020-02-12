@@ -26,4 +26,5 @@
   font-size: var(--size-small);
   font-weight: var(--weight-semi);
   color: var(--text);
+  cursor: pointer;
 }
