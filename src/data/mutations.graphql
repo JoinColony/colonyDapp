@@ -337,3 +337,11 @@ mutation CreateProgram($input: CreateProgramInput!) {
     status
   }
 }
+
+mutation EditProgram($input: EditProgramInput!) {
+  editProgram(input: $input) {
+    id
+    description
+    title
+  }
+}
