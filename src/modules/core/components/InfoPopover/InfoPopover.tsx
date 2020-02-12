@@ -15,7 +15,7 @@ interface Props {
   /** Children elemnts or components to wrap the tooltip around */
   children?: ReactNode;
   /** The address */
-  user: AnyUser;
+  user?: AnyUser;
   /** How the popover gets triggered */
   trigger?: 'hover' | 'click' | 'disabled';
 }
@@ -26,7 +26,7 @@ interface TooltipProps {
   walletAddress: Address;
 }
 
-const renderTooltipContent = ({
+const userTooltipContent = ({
   displayName,
   username,
   walletAddress,
@@ -48,16 +48,23 @@ const renderTooltipContent = ({
   </div>
 );
 
+const conditionallyRenderContent = (user: AnyUser) => {
+  if (user) {
+    const { displayName, username, walletAddress } = user.profile;
+    return userTooltipContent({
+      displayName,
+      username,
+      walletAddress,
+    });
+  }
+  return null;
+};
+
 const InfoPopover = ({ user, children, trigger = 'click' }: Props) => {
-  const { displayName, username, walletAddress } = user.profile;
   return (
     <Tooltip
-      content={renderTooltipContent({
-        displayName,
-        username,
-        walletAddress,
-      })}
-      trigger={trigger}
+      content={conditionallyRenderContent(user)}
+      trigger={user ? trigger : 'disabled'}
       darkTheme={false}
     >
       {children}
