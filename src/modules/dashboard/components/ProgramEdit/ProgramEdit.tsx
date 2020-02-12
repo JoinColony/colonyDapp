@@ -26,6 +26,10 @@ const MSG = defineMessages({
     id: 'dashboard.ProgramEdit.buttonPublish',
     defaultMessage: 'Publish',
   },
+  buttonPublishTitle: {
+    id: 'dashboard.ProgramEdit.buttonPublishTitle',
+    defaultMessage: 'Save and Publish',
+  },
   buttonSubmitText: {
     id: 'dashboard.ProgramEdit.buttonSubmitText',
     defaultMessage: 'Save Draft',
@@ -154,6 +158,7 @@ const ProgramEdit = ({
                 loading={isPublishing}
                 onClick={() => handlePublish(values)}
                 text={MSG.buttonPublish}
+                title={MSG.buttonPublishTitle}
               />
               <Button
                 disabled={!dirty || !isValid || isPublishing}
