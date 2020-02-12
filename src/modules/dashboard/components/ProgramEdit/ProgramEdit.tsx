@@ -11,6 +11,7 @@ import {
   OneProgram,
   ProgramStatus,
   useEditProgramMutation,
+  usePublishProgramMutation,
   useRemoveProgramMutation,
 } from '~data/index';
 
@@ -50,6 +51,7 @@ const MSG = defineMessages({
 interface FormValues {
   title: string;
   description: string;
+  publish?: boolean;
 }
 
 interface Props {
@@ -71,15 +73,35 @@ const ProgramEdit = ({
   const history = useHistory();
 
   const [editProgram] = useEditProgramMutation();
+  const [publishProgram, { loading: isPublishing }] = usePublishProgramMutation(
+    {
+      variables: { input: { id } },
+    },
+  );
   const [deleteProgram] = useRemoveProgramMutation({
     variables: { input: { id } },
   });
 
-  const handleSubmit = useCallback(
-    (values: FormValues) => {
-      editProgram({ variables: { input: { ...values, id } } });
+  const handleUpdate = useCallback(
+    async (values: FormValues) => {
+      editProgram({
+        variables: { input: { ...values, id } },
+      });
     },
     [editProgram, id],
+  );
+
+  const handlePublish = useCallback(
+    async (values: FormValues) => {
+      // Save the values first
+      const { errors } = await editProgram({
+        variables: { input: { ...values, id } },
+      });
+      if (!errors) {
+        await publishProgram();
+      }
+    },
+    [editProgram, id, publishProgram],
   );
 
   const handleDelete = useCallback(async () => {
@@ -98,7 +120,7 @@ const ProgramEdit = ({
           title: title || '',
         } as FormValues
       }
-      onSubmit={handleSubmit}
+      onSubmit={handleUpdate}
       validationSchema={validationSchema}
       validateOnMount
     >
@@ -107,6 +129,7 @@ const ProgramEdit = ({
         isSubmitting,
         isValid,
         status: formStatus,
+        values,
       }: FormikProps<FormValues>) => (
         <>
           <div className={styles.formActions}>
@@ -125,11 +148,13 @@ const ProgramEdit = ({
             <div className={styles.actionButtons}>
               <Button
                 appearance={{ theme: 'blue' }}
-                disabled={!isValid}
+                disabled={!isValid || isSubmitting}
+                loading={isPublishing}
+                onClick={() => handlePublish(values)}
                 text={MSG.buttonPublish}
               />
               <Button
-                disabled={!dirty || !isValid}
+                disabled={!dirty || !isValid || isPublishing}
                 loading={isSubmitting}
                 text={MSG.buttonSubmitText}
                 type="submit"
