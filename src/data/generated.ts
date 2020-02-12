@@ -1568,6 +1568,13 @@ export type RemoveProgramMutationVariables = {
 
 export type RemoveProgramMutation = { removeProgram: Maybe<Pick<Program, 'id' | 'status'>> };
 
+export type PublishProgramMutationVariables = {
+  input: PublishProgramInput
+};
+
+
+export type PublishProgramMutation = { publishProgram: Maybe<Pick<Program, 'id' | 'status'>> };
+
 export type TaskQueryVariables = {
   id: Scalars['String']
 };
@@ -3371,6 +3378,39 @@ export function useRemoveProgramMutation(baseOptions?: ApolloReactHooks.Mutation
 export type RemoveProgramMutationHookResult = ReturnType<typeof useRemoveProgramMutation>;
 export type RemoveProgramMutationResult = ApolloReactCommon.MutationResult<RemoveProgramMutation>;
 export type RemoveProgramMutationOptions = ApolloReactCommon.BaseMutationOptions<RemoveProgramMutation, RemoveProgramMutationVariables>;
+export const PublishProgramDocument = gql`
+    mutation PublishProgram($input: PublishProgramInput!) {
+  publishProgram(input: $input) {
+    id
+    status
+  }
+}
+    `;
+export type PublishProgramMutationFn = ApolloReactCommon.MutationFunction<PublishProgramMutation, PublishProgramMutationVariables>;
+
+/**
+ * __usePublishProgramMutation__
+ *
+ * To run a mutation, you first call `usePublishProgramMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `usePublishProgramMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [publishProgramMutation, { data, loading, error }] = usePublishProgramMutation({
+ *   variables: {
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function usePublishProgramMutation(baseOptions?: ApolloReactHooks.MutationHookOptions<PublishProgramMutation, PublishProgramMutationVariables>) {
+        return ApolloReactHooks.useMutation<PublishProgramMutation, PublishProgramMutationVariables>(PublishProgramDocument, baseOptions);
+      }
+export type PublishProgramMutationHookResult = ReturnType<typeof usePublishProgramMutation>;
+export type PublishProgramMutationResult = ApolloReactCommon.MutationResult<PublishProgramMutation>;
+export type PublishProgramMutationOptions = ApolloReactCommon.BaseMutationOptions<PublishProgramMutation, PublishProgramMutationVariables>;
 export const TaskDocument = gql`
     query Task($id: String!) {
   task(id: $id) {

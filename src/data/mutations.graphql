@@ -352,3 +352,10 @@ mutation RemoveProgram($input: RemoveProgramInput!) {
     status
   }
 }
+
+mutation PublishProgram($input: PublishProgramInput!) {
+  publishProgram(input: $input) {
+    id
+    status
+  }
+}
