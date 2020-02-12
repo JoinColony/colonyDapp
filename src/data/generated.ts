@@ -1554,6 +1554,13 @@ export type CreateProgramMutationVariables = {
 
 export type CreateProgramMutation = { createProgram: Maybe<Pick<Program, 'id' | 'createdAt' | 'creatorAddress' | 'colonyAddress' | 'title' | 'description' | 'levelIds' | 'enrolledUserAddresses' | 'status'>> };
 
+export type EditProgramMutationVariables = {
+  input: EditProgramInput
+};
+
+
+export type EditProgramMutation = { editProgram: Maybe<Pick<Program, 'id' | 'description' | 'title'>> };
+
 export type TaskQueryVariables = {
   id: Scalars['String']
 };
@@ -3290,6 +3297,40 @@ export function useCreateProgramMutation(baseOptions?: ApolloReactHooks.Mutation
 export type CreateProgramMutationHookResult = ReturnType<typeof useCreateProgramMutation>;
 export type CreateProgramMutationResult = ApolloReactCommon.MutationResult<CreateProgramMutation>;
 export type CreateProgramMutationOptions = ApolloReactCommon.BaseMutationOptions<CreateProgramMutation, CreateProgramMutationVariables>;
+export const EditProgramDocument = gql`
+    mutation EditProgram($input: EditProgramInput!) {
+  editProgram(input: $input) {
+    id
+    description
+    title
+  }
+}
+    `;
+export type EditProgramMutationFn = ApolloReactCommon.MutationFunction<EditProgramMutation, EditProgramMutationVariables>;
+
+/**
+ * __useEditProgramMutation__
+ *
+ * To run a mutation, you first call `useEditProgramMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useEditProgramMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [editProgramMutation, { data, loading, error }] = useEditProgramMutation({
+ *   variables: {
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function useEditProgramMutation(baseOptions?: ApolloReactHooks.MutationHookOptions<EditProgramMutation, EditProgramMutationVariables>) {
+        return ApolloReactHooks.useMutation<EditProgramMutation, EditProgramMutationVariables>(EditProgramDocument, baseOptions);
+      }
+export type EditProgramMutationHookResult = ReturnType<typeof useEditProgramMutation>;
+export type EditProgramMutationResult = ApolloReactCommon.MutationResult<EditProgramMutation>;
+export type EditProgramMutationOptions = ApolloReactCommon.BaseMutationOptions<EditProgramMutation, EditProgramMutationVariables>;
 export const TaskDocument = gql`
     query Task($id: String!) {
   task(id: $id) {
