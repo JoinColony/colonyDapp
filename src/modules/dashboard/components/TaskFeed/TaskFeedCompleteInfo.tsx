@@ -74,9 +74,9 @@ const TaskFeedCompleteInfo = ({
   const { data: colonyData, loading: isLoadingColony } = useColonyQuery({
     variables: { address: colonyAddress },
   });
-  const { decimals = 18, symbol = '', address } =
+  const { decimals = 18, symbol = '', address = '' } =
     (tokenData && tokenData.token) || {};
-  const { nativeTokenAddress } = (colonyData && colonyData.colony) || {};
+  const { nativeTokenAddress = '' } = (colonyData && colonyData.colony) || {};
   const metaColonyFee = new BigNumber(
     moveDecimal(fullPayoutAmount, decimals),
   ).sub(new BigNumber(amount));
