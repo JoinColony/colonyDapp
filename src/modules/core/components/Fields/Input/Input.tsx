@@ -11,11 +11,11 @@ import InputComponent, { Props as InputComponentProps } from './InputComponent';
 
 import styles from './Input.css';
 
-interface Appearance {
+export interface Appearance {
   theme?: 'fat' | 'underlined' | 'minimal' | 'dotted';
   align?: 'right';
   direction?: 'horizontal';
-  colorSchema?: 'dark' | 'grey' | 'transparent';
+  colorSchema?: 'dark' | 'grey' | 'transparent' | 'info';
   helpAlign?: 'right';
   size?: 'small';
 }
