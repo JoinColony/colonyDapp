@@ -104,67 +104,65 @@ const TaskFeedCompleteInfo = ({
         <div className={styles.receiptContainer}>
           <div className={styles.receiptSideBorder} />
           <div className={styles.receiptTextBlock}>
-            <p>
-              <FormattedMessage
-                {...MSG.receiptRecipientText}
-                values={{
-                  address: workerAddress,
-                }}
-              />
-              <br />
-              <FormattedMessage
-                {...MSG.tokenAddressText}
-                values={{ tokenAddress }}
-              />
-              <br />
-              <FormattedMessage
-                {...MSG.receiptAmountText}
-                values={{
-                  amount: (
-                    <InfoPopover
-                      token={tokenData && tokenData.token}
-                      isTokenNative={address === nativeTokenAddress}
-                    >
-                      <span className={styles.tokenInfo}>
-                        <Numeral
-                          integerSeparator=""
-                          unit={decimals || 18}
-                          value={amount}
-                        />
-                      </span>
-                    </InfoPopover>
-                  ),
-                  symbol,
-                }}
-              />
-              <br />
-              <FormattedMessage
-                {...MSG.receiptColonyFeeText}
-                values={{
-                  amount: (
-                    <InfoPopover
-                      token={tokenData && tokenData.token}
-                      isTokenNative={address === nativeTokenAddress}
-                    >
-                      <span className={styles.tokenInfo}>
-                        <Numeral unit={decimals || 18} value={metaColonyFee} />
-                      </span>
-                    </InfoPopover>
-                  ),
-                  symbol,
-                }}
-              />
-              {transactionHash && (
-                <>
-                  <br />
-                  <TransactionLink
-                    className={styles.receiptLink}
-                    hash={transactionHash}
-                    text={MSG.receiptViewTxLinkText}
-                  />
-                </>
-              )}
-            </p>
+            <FormattedMessage
+              {...MSG.receiptRecipientText}
+              values={{
+                address: workerAddress,
+              }}
+            />
+            <br />
+            <FormattedMessage
+              {...MSG.tokenAddressText}
+              values={{ tokenAddress }}
+            />
+            <br />
+            <FormattedMessage
+              {...MSG.receiptAmountText}
+              values={{
+                amount: (
+                  <InfoPopover
+                    token={tokenData && tokenData.token}
+                    isTokenNative={address === nativeTokenAddress}
+                  >
+                    <span className={styles.tokenInfo}>
+                      <Numeral
+                        integerSeparator=""
+                        unit={decimals || 18}
+                        value={amount}
+                      />
+                    </span>
+                  </InfoPopover>
+                ),
+                symbol,
+              }}
+            />
+            <br />
+            <FormattedMessage
+              {...MSG.receiptColonyFeeText}
+              values={{
+                amount: (
+                  <InfoPopover
+                    token={tokenData && tokenData.token}
+                    isTokenNative={address === nativeTokenAddress}
+                  >
+                    <span className={styles.tokenInfo}>
+                      <Numeral unit={decimals || 18} value={metaColonyFee} />
+                    </span>
+                  </InfoPopover>
+                ),
+                symbol,
+              }}
+            />
+            {transactionHash && (
+              <>
+                <br />
+                <TransactionLink
+                  className={styles.receiptLink}
+                  hash={transactionHash}
+                  text={MSG.receiptViewTxLinkText}
+                />
+              </>
+            )}
           </div>
         </div>
       )}
