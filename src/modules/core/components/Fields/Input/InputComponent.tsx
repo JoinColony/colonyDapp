@@ -10,7 +10,7 @@ import styles from './InputComponent.css';
 export type Appearance = {
   theme?: 'fat' | 'underlined' | 'minimal' | 'dotted';
   align?: 'right';
-  colorSchema?: 'dark' | 'grey' | 'transparent';
+  colorSchema?: 'dark' | 'grey' | 'transparent' | 'info';
   size?: 'small';
 };
 
