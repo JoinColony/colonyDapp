@@ -103,6 +103,7 @@ const ColonyPrograms = ({
         mutationResult.data.createProgram &&
         mutationResult.data.createProgram.id;
       history.replace(`/colony/${colonyName}/program/${id}`);
+      setIsCreatingProgram(false);
     }, 2000),
     [colonyName, createProgramFn, history],
   );
