@@ -22,11 +22,11 @@ const MSG = defineMessages({
   },
   subscribe: {
     id: 'dashboard.ColonyHome.ColonySubscribe.subscribe',
-    defaultMessage: 'Add to My Colonies',
+    defaultMessage: 'Join the Colony',
   },
   unsubscribe: {
     id: 'dashboard.ColonyHome.ColonySubscribe.unsubscribe',
-    defaultMessage: 'Remove from My Colonies',
+    defaultMessage: 'Leave the Colony',
   },
 });
 
