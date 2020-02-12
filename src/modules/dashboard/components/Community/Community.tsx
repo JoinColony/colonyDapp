@@ -27,19 +27,19 @@ const MSG = defineMessages({
     id: 'dashboard.Community.loading',
     defaultMessage: "Loading Colony's users...",
   },
-  callToSubscribe: {
-    id: 'dashboard.Community.callToSubscribe',
+  callToJoin: {
+    id: 'dashboard.Community.callToJoin',
     defaultMessage: `{noMembers, select,
       true {No members yet. {action} to become the first member of this colony.}
       other {{action} to become a member of this colony.}
     }`,
   },
-  subscribe: {
-    id: 'dashboard.Community.subscribe',
+  join: {
+    id: 'dashboard.Community.join',
     defaultMessage: `Join now`,
   },
-  subscribedReward: {
-    id: 'dashboard.Community.subscribedReward',
+  joined: {
+    id: 'dashboard.Community.joined',
     defaultMessage: `{star} Joined!`,
   },
 });
@@ -173,7 +173,7 @@ const Community = ({ colonyAddress }: Props) => {
       {currentUserSubscribedColonies && !isSubscribed && (
         <div className={styles.subscribeCallToAction}>
           <FormattedMessage
-            {...MSG.callToSubscribe}
+            {...MSG.callToJoin}
             values={{
               noMembers: !communityUsers.length,
               action: (
@@ -182,7 +182,7 @@ const Community = ({ colonyAddress }: Props) => {
                   onClick={subscribeToColony}
                 >
                   <span className={styles.unsubscribedIcon} />
-                  <FormattedMessage {...MSG.subscribe} />
+                  <FormattedMessage {...MSG.join} />
                 </Button>
               ),
             }}
@@ -192,7 +192,7 @@ const Community = ({ colonyAddress }: Props) => {
       {justSubscribed && (
         <div className={styles.subscribeCallToAction}>
           <FormattedMessage
-            {...MSG.subscribedReward}
+            {...MSG.joined}
             values={{
               star: <span className={styles.subscribedIcon} />,
             }}
