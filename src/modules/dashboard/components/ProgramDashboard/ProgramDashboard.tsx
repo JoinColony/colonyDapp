@@ -8,7 +8,9 @@ interface Props {
 
 const displayName = 'Dashboard.ProgramDashboard';
 
-const ProgramDashboard = ({ program }: Props) => <div>{program}</div>;
+const ProgramDashboard = ({ program }: Props) => (
+  <div>{JSON.stringify(program)}</div>
+);
 
 ProgramDashboard.displayName = displayName;
 
