@@ -13,10 +13,6 @@
   margin-left: 10px;
 }
 
-.formActions button {
-  z-index: 100;
-}
-
 .actionButtons button + button {
   /* `!important` to override `Button` styles */
   margin-left: 25px !important;
