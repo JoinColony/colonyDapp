@@ -3,14 +3,24 @@ import { defineMessages } from 'react-intl';
 import * as yup from 'yup';
 
 import { FormikProps } from 'formik';
+import { useHistory } from 'react-router';
 import Button from '~core/Button';
 import Heading from '~core/Heading';
 import { Form, Input, Textarea, FormStatus } from '~core/Fields';
-import { OneProgram, ProgramStatus, useEditProgramMutation } from '~data/index';
+import {
+  OneProgram,
+  ProgramStatus,
+  useEditProgramMutation,
+  useRemoveProgramMutation,
+} from '~data/index';
 
 import styles from './ProgramEdit.css';
 
 const MSG = defineMessages({
+  buttonDelete: {
+    id: 'dashboard.ProgramEdit.buttonDelete',
+    defaultMessage: 'Delete program',
+  },
   buttonPublish: {
     id: 'dashboard.ProgramEdit.buttonPublish',
     defaultMessage: 'Publish',
@@ -58,7 +68,12 @@ const ProgramEdit = ({
   colonyName,
   program: { id, description, status, title },
 }: Props) => {
+  const history = useHistory();
+
   const [editProgram] = useEditProgramMutation();
+  const [deleteProgram] = useRemoveProgramMutation({
+    variables: { input: { id } },
+  });
 
   const handleSubmit = useCallback(
     (values: FormValues) => {
@@ -66,6 +81,11 @@ const ProgramEdit = ({
     },
     [editProgram, id],
   );
+
+  const handleDelete = useCallback(async () => {
+    await deleteProgram();
+    history.push(`/colony/${colonyName}`);
+  }, [colonyName, deleteProgram, history]);
 
   return (
     <Form
@@ -129,6 +149,11 @@ const ProgramEdit = ({
             appearance={{ resizable: 'vertical' }}
             label={MSG.controlLabelDescription}
             name="description"
+          />
+          <Button
+            appearance={{ theme: 'dangerLink' }}
+            onClick={handleDelete}
+            text={MSG.buttonDelete}
           />
           <FormStatus status={formStatus} />
         </>

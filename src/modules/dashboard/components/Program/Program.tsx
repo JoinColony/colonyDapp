@@ -1,4 +1,5 @@
 import React from 'react';
+import { defineMessages, FormattedMessage } from 'react-intl';
 import { useParams, Redirect } from 'react-router-dom';
 
 import { ROOT_DOMAIN } from '~constants';
@@ -12,6 +13,13 @@ import { canCreateProgram } from '../../checks';
 import { domainsAndRolesFetcher } from '../../fetchers';
 import { getUserRoles } from '../../../transformers';
 import { SpinnerLoader } from '~core/Preloaders';
+
+const MSG = defineMessages({
+  programNotFoundText: {
+    id: 'dashboard.Program.programNotFoundText',
+    defaultMessage: 'Sorry, this program could not be loaded.',
+  },
+});
 
 interface Props {
   colonyAddress: Address;
@@ -35,7 +43,10 @@ const Program = ({ colonyAddress, colonyName }: Props) => {
     walletAddress,
   ]);
 
-  const { data: program, loading } = useProgram(colonyAddress, programId);
+  const { data: program, error, loading } = useProgram(
+    colonyAddress,
+    programId,
+  );
 
   const canAdmin = canCreateProgram(userRoles);
 
@@ -43,12 +54,16 @@ const Program = ({ colonyAddress, colonyName }: Props) => {
     return <SpinnerLoader />;
   }
 
-  if (!program) {
-    return null;
+  if (
+    program &&
+    (program.status === ProgramStatus.Deleted ||
+      (program.status === ProgramStatus.Draft && !canAdmin))
+  ) {
+    return <Redirect to={`/colony/${colonyName}`} />;
   }
 
-  if (program.status !== ProgramStatus.Active && !canAdmin) {
-    return <Redirect to={`/colony/${colonyName}`} />;
+  if (!program || !!error) {
+    return <FormattedMessage tag="p" {...MSG.programNotFoundText} />;
   }
 
   return program.status === ProgramStatus.Draft ? (
