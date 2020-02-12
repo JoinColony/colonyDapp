@@ -3,6 +3,7 @@ import React from 'react';
 
 import { DEFAULT_NETWORK } from '~constants';
 import ExternalLink from '~core/ExternalLink';
+import { getEtherscanLink } from '~utils/external';
 
 interface Props {
   /*
@@ -32,21 +33,18 @@ const TransactionLink = ({
   network = DEFAULT_NETWORK,
   text,
   textValues,
-}: Props) => {
-  const linkText = text || hash;
-  const tld = network === 'tobalaba' ? 'com' : 'io';
-  const networkSubdomain =
-    network === 'homestead' || network === 'mainnet' ? '' : `${network}.`;
-  const href = `https://${networkSubdomain}etherscan.${tld}/tx/${hash}`;
-  return (
-    <ExternalLink
-      className={className}
-      href={href}
-      text={linkText}
-      textValues={textValues}
-    />
-  );
-};
+}: Props) => (
+  <ExternalLink
+    className={className}
+    href={getEtherscanLink({
+      network,
+      linkType: 'tx',
+      addressOrHash: hash,
+    })}
+    text={text || hash}
+    textValues={textValues}
+  />
+);
 
 TransactionLink.displayName = displayName;
 

@@ -1,6 +1,8 @@
 import BN from 'bn.js';
 import { fromWei } from 'ethjs-unit';
 
+import { DEFAULT_NETWORK } from '~constants';
+
 interface EthUsdResponse {
   status: string;
   message: string;
@@ -12,6 +14,12 @@ interface EthUsdResponse {
     ethusd_timestamp: string;
     /* eslint-enable camelcase */
   };
+}
+
+interface EtherscanLinkProps {
+  network?: string;
+  linkType?: 'address' | 'tx' | 'token';
+  addressOrHash: string;
 }
 
 /*
@@ -63,4 +71,18 @@ export const getEthToUsd = (ethValue: BN): Promise<number | void> => {
       return fromWei(ethValue, 'ether') * parseFloat(ethUsd);
     })
     .catch(console.warn);
+};
+
+export const getEtherscanLink = ({
+  network = DEFAULT_NETWORK,
+  linkType = 'address',
+  addressOrHash,
+}: EtherscanLinkProps): string => {
+  if (!addressOrHash) {
+    return '';
+  }
+  const tld = network === 'tobalaba' ? 'com' : 'io';
+  const networkSubdomain =
+    network === 'homestead' || network === 'mainnet' ? '' : `${network}.`;
+  return `https://${networkSubdomain}etherscan.${tld}/${linkType}/${addressOrHash}`;
 };
