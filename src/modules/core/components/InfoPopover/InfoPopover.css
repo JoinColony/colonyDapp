@@ -24,3 +24,10 @@
 .address button {
   height: auto;
 }
+
+.symbol {
+  composes: inlineEllipsis from '~styles/text.css';
+  margin: 0 0 6px 0;
+  font-weight: var(--weight-medium);
+  color: var(--pink);
+}
