@@ -1,0 +1,14 @@
+
+.buttonTextContainer {
+  display: flex;
+  font-size: var(--size-large);
+}
+
+.buttonTextContainer svg {
+  fill: var(--grey-4);
+  stroke: var(--grey-4);
+}
+
+.buttonIcon {
+  margin-right: 20px;
+}
