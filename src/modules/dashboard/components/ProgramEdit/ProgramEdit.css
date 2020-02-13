@@ -17,3 +17,7 @@
   /* `!important` to override `Button` styles */
   margin-left: 25px !important;
 }
+
+.levelsContainer {
+  margin-bottom: 40px;
+}
