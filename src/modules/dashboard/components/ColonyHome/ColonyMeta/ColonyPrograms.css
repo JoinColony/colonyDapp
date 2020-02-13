@@ -40,11 +40,15 @@
   white-space: nowrap;
 }
 
+.navLink:not(.navLinkActive):hover {
+  opacity: 0.8;
+}
+
+.navLink.navLinkActive {
+  color: var(--colony-black);
+}
+
 .draft .navLink {
   /* Leave room for "pending dot" */
   max-width: 87%;
-}
-
-.navLink:hover {
-  opacity: 0.8;
 }
