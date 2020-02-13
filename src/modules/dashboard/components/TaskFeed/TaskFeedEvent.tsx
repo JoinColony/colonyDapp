@@ -18,6 +18,7 @@ import styles from '~dashboard/TaskFeed/TaskFeedEvent.css';
 import {
   useUser,
   useTokenQuery,
+  useColonyQuery,
   AnyUser,
   EventType,
   TaskEventFragment,
@@ -217,27 +218,40 @@ const TaskFeedEventDueDateSet = ({
 );
 
 const TaskFeedEventPayoutSet = ({
+  colonyAddress,
   context: { amount, tokenAddress },
   initiator: {
     profile: { walletAddress },
   },
 }: EventProps<SetTaskPayoutEvent>) => {
-  const { data } = useTokenQuery({ variables: { address: tokenAddress } });
-  const { decimals = 18, symbol = '' } = (data && data.token) || {};
+  const { data: tokenData } = useTokenQuery({
+    variables: { address: tokenAddress },
+  });
+  const { data: colonyData } = useColonyQuery({
+    variables: { address: colonyAddress },
+  });
+  const { decimals = 18, symbol = '', address = '' } =
+    (tokenData && tokenData.token) || {};
+  const { nativeTokenAddress = '' } = (colonyData && colonyData.colony) || {};
   return (
     <FormattedMessage
       {...MSG.payoutSet}
       values={{
         user: <InteractiveUsername userAddress={walletAddress} />,
         payout: (
-          <span className={styles.highlightNumeral}>
-            <Numeral
-              integerSeparator=""
-              unit={decimals || 18}
-              value={new BigNumber(moveDecimal(amount, decimals || 18))}
-              suffix={` ${symbol}`}
-            />
-          </span>
+          <InfoPopover
+            token={tokenData && tokenData.token}
+            isTokenNative={address === nativeTokenAddress}
+          >
+            <span className={styles.highlightNumeral}>
+              <Numeral
+                integerSeparator=""
+                unit={decimals || 18}
+                value={new BigNumber(moveDecimal(amount, decimals || 18))}
+                suffix={` ${symbol}`}
+              />
+            </span>
+          </InfoPopover>
         ),
       }}
     />

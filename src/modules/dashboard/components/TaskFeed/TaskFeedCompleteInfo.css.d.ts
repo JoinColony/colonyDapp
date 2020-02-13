@@ -5,3 +5,4 @@ export const receiptContainer: string;
 export const receiptSideBorder: string;
 export const receiptTextBlock: string;
 export const receiptLink: string;
+export const tokenInfo: string;

@@ -25,3 +25,13 @@
 .native {
   color: var(--violet);
 }
+
+.tokenInfo {
+  font-weight: normal;
+  text-align: left;
+  cursor: pointer;
+}
+
+.tokenPayout {
+  font-weight: var(--weight-semi);
+}

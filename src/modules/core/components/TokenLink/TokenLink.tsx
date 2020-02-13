@@ -12,24 +12,24 @@ interface Props {
    */
   className?: string;
 
-  /** Transaction hash */
-  hash: string;
+  /** Address of the token to link to */
+  tokenAddress: string;
 
   /** Optionally override current network */
   network?: string;
 
-  /** A string or a `messageDescriptor` that make up the link's text. Defaults to `hash`. */
+  /** A string or a `messageDescriptor` that make up the link's text. Defaults to `tokenAddress`. */
   text?: MessageDescriptor | string;
 
   /** Values for text (react-intl interpolation) */
   textValues?: MessageValues;
 }
 
-const displayName = 'TransactionLink';
+const displayName = 'TokenLink';
 
-const TransactionLink = ({
+const TokenLink = ({
   className,
-  hash,
+  tokenAddress,
   network = DEFAULT_NETWORK,
   text,
   textValues,
@@ -38,14 +38,14 @@ const TransactionLink = ({
     className={className}
     href={getEtherscanLink({
       network,
-      linkType: 'tx',
-      addressOrHash: hash,
+      linkType: 'token',
+      addressOrHash: tokenAddress,
     })}
-    text={text || hash}
+    text={text || tokenAddress}
     textValues={textValues}
   />
 );
 
-TransactionLink.displayName = displayName;
+TokenLink.displayName = displayName;
 
-export default TransactionLink;
+export default TokenLink;

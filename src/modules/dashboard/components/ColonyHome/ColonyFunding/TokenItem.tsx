@@ -19,9 +19,7 @@ const TokenItem = ({
   );
   const balance = domainBalance && domainBalance.amount;
   return typeof balance === 'undefined' ? null : (
-    <li>
-      <Numeral unit={decimals || 18} value={balance} suffix={` ${symbol}`} />
-    </li>
+    <Numeral unit={decimals || 18} value={balance} suffix={` ${symbol}`} />
   );
 };
 
