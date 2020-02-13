@@ -15,6 +15,8 @@ import {
   useRemoveProgramMutation,
 } from '~data/index';
 
+import EditLevels from './EditLevels';
+
 import styles from './ProgramEdit.css';
 
 const MSG = defineMessages({
@@ -116,82 +118,90 @@ const ProgramEdit = ({
   }, [colonyName, deleteProgram, history]);
 
   return (
-    <Form
-      enableReinitialize
-      // Use `key` to force form to reinitialize on route change
-      key={id}
-      initialValues={
-        {
-          description: description || '',
-          title: title || '',
-        } as FormValues
-      }
-      onSubmit={handleUpdate}
-      validationSchema={validationSchema}
-      validateOnMount
-    >
-      {({
-        dirty,
-        isSubmitting,
-        isValid,
-        status: formStatus,
-        values,
-      }: FormikProps<FormValues>) => (
-        <>
-          <div className={styles.formActions}>
-            <div className={styles.headingContainer}>
-              <div>
-                <Heading appearance={{ size: 'medium' }} text={MSG.pageTitle} />
+    <>
+      <Form
+        enableReinitialize
+        // Use `key` to force form to reinitialize on route change
+        key={id}
+        initialValues={
+          {
+            description: description || '',
+            title: title || '',
+          } as FormValues
+        }
+        onSubmit={handleUpdate}
+        validationSchema={validationSchema}
+        validateOnMount
+      >
+        {({
+          dirty,
+          isSubmitting,
+          isValid,
+          status: formStatus,
+          values,
+        }: FormikProps<FormValues>) => (
+          <>
+            <div className={styles.formActions}>
+              <div className={styles.headingContainer}>
+                <div>
+                  <Heading
+                    appearance={{ size: 'medium' }}
+                    text={MSG.pageTitle}
+                  />
+                </div>
+                <div className={styles.cancelButtonContainer}>
+                  <Button
+                    appearance={{ theme: 'blue' }}
+                    text={{ id: 'button.cancel' }}
+                    linkTo={`/colony/${colonyName}`}
+                  />
+                </div>
               </div>
-              <div className={styles.cancelButtonContainer}>
+              <div className={styles.actionButtons}>
                 <Button
                   appearance={{ theme: 'blue' }}
-                  text={{ id: 'button.cancel' }}
-                  linkTo={`/colony/${colonyName}`}
+                  disabled={!isValid || isSubmitting}
+                  loading={isPublishing}
+                  onClick={() => handlePublish(values)}
+                  text={MSG.buttonPublish}
+                  title={MSG.buttonPublishTitle}
+                />
+                <Button
+                  disabled={!dirty || !isValid || isPublishing}
+                  loading={isSubmitting}
+                  text={MSG.buttonSubmitText}
+                  type="submit"
                 />
               </div>
             </div>
-            <div className={styles.actionButtons}>
-              <Button
-                appearance={{ theme: 'blue' }}
-                disabled={!isValid || isSubmitting}
-                loading={isPublishing}
-                onClick={() => handlePublish(values)}
-                text={MSG.buttonPublish}
-                title={MSG.buttonPublishTitle}
-              />
-              <Button
-                disabled={!dirty || !isValid || isPublishing}
-                loading={isSubmitting}
-                text={MSG.buttonSubmitText}
-                type="submit"
-              />
-            </div>
-          </div>
-          <Input
-            appearance={{
-              theme: 'fat',
-              colorSchema: isDraft ? 'info' : undefined,
-            }}
-            label={MSG.controlLabelTitle}
-            name="title"
-            status={isDraft ? MSG.draftStatusText : undefined}
-          />
-          <br />
-          <Textarea
-            appearance={{ resizable: 'vertical' }}
-            label={MSG.controlLabelDescription}
-            name="description"
-          />
-          <Button
-            appearance={{ theme: 'dangerLink' }}
-            onClick={handleDelete}
-            text={MSG.buttonDelete}
-          />
-          <FormStatus status={formStatus} />
-        </>
-      )}
-    </Form>
+            <Input
+              appearance={{
+                theme: 'fat',
+                colorSchema: isDraft ? 'info' : undefined,
+              }}
+              label={MSG.controlLabelTitle}
+              name="title"
+              status={isDraft ? MSG.draftStatusText : undefined}
+            />
+            <br />
+            <Textarea
+              appearance={{ resizable: 'vertical' }}
+              label={MSG.controlLabelDescription}
+              name="description"
+            />
+            <FormStatus status={formStatus} />
+          </>
+        )}
+      </Form>
+      <div className={styles.levelsContainer}>
+        <EditLevels />
+      </div>
+      <Button
+        appearance={{ theme: 'dangerLink' }}
+        onClick={handleDelete}
+        text={MSG.buttonDelete}
+      />
+    </>
   );
 };
 
