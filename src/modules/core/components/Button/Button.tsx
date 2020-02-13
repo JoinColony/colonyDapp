@@ -20,7 +20,8 @@ export interface Appearance {
     | 'ghost'
     | 'underlinedBold'
     | 'blue'
-    | 'no-style';
+    | 'no-style'
+    | 'dottedArea';
   colorSchema?: 'inverted' | 'grey';
   size?: 'small' | 'medium' | 'large';
 }
