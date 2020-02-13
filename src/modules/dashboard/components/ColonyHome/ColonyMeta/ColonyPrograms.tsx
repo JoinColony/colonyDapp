@@ -124,6 +124,7 @@ const ColonyPrograms = ({
                 key={id}
               >
                 <NavLink
+                  activeClassName={styles.navLinkActive}
                   className={styles.navLink}
                   text={title || MSG.linkUntitledProgramText}
                   title={MSG.linkProgramTitleText}
