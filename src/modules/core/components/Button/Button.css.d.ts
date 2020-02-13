@@ -14,3 +14,4 @@ export const themeGhost: string;
 export const colorSchemaGrey: string;
 export const themeUnderlinedBold: string;
 export const themeBlue: string;
+export const themeDottedArea: string;
