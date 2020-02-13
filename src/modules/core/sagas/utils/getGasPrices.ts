@@ -61,13 +61,13 @@ const fetchGasPrices = async (
       timestamp: Date.now(),
       network: new BigNumber(networkGasPrice),
 
-      suggested: new BigNumber(data.fast).mul(pointOneGwei),
-      cheaper: new BigNumber(data.average).mul(pointOneGwei),
-      faster: new BigNumber(data.fastest).mul(pointOneGwei),
+      suggested: new BigNumber(data.average).mul(pointOneGwei),
+      cheaper: new BigNumber(data.safeLow).mul(pointOneGwei),
+      faster: new BigNumber(data.fast).mul(pointOneGwei),
 
-      suggestedWait: data.fastWait * 60,
-      cheaperWait: data.avgWait * 60,
-      fasterWait: data.fastestWait * 60,
+      suggestedWait: data.avgWait * 60,
+      cheaperWait: data.safeLowWait * 60,
+      fasterWait: data.fastWait * 60,
     };
   } catch (caughtError) {
     log.warn(`Could not get ETH gas prices: ${caughtError.message}`);
