@@ -20,13 +20,13 @@ const MSG = defineMessages({
     id: 'dashboard.ColonyHome.ColonySubscribe.changingSubscription',
     defaultMessage: 'Please wait',
   },
-  subscribe: {
-    id: 'dashboard.ColonyHome.ColonySubscribe.subscribe',
-    defaultMessage: 'Add to My Colonies',
+  join: {
+    id: 'dashboard.ColonyHome.ColonySubscribe.join',
+    defaultMessage: 'Join the Colony',
   },
-  unsubscribe: {
-    id: 'dashboard.ColonyHome.ColonySubscribe.unsubscribe',
-    defaultMessage: 'Remove from My Colonies',
+  leave: {
+    id: 'dashboard.ColonyHome.ColonySubscribe.leave',
+    defaultMessage: 'Leave the Colony',
   },
 });
 
@@ -75,9 +75,7 @@ const ColonySubscribe = ({ colonyAddress }: Props) => {
     <Tooltip
       content={
         <span>
-          <FormattedMessage
-            {...(isSubscribed ? MSG.unsubscribe : MSG.subscribe)}
-          />
+          <FormattedMessage {...(isSubscribed ? MSG.leave : MSG.join)} />
         </span>
       }
     >
