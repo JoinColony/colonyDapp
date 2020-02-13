@@ -307,3 +307,19 @@
 .themeBlue[disabled]:not([aria-busy="true"]):hover {
   text-decoration: none;
 }
+
+.themeDottedArea {
+  display: block;
+  padding: 30px;
+  width: 100%;
+  border: 2px dashed var(--grey-5);
+  border-radius: 5px;
+  background-color: transparent;
+  text-align: left;
+  color: var(--grey-4);
+  cursor: pointer;
+}
+
+.themeDottedArea:hover {
+  opacity: 0.7;
+}
