@@ -1585,6 +1585,13 @@ export type PublishProgramMutationVariables = {
 
 export type PublishProgramMutation = { publishProgram: Maybe<Pick<Program, 'id' | 'status'>> };
 
+export type CreateLevelMutationVariables = {
+  input: CreateLevelInput
+};
+
+
+export type CreateLevelMutation = { createLevel: Maybe<Pick<Level, 'id' | 'achievement' | 'description' | 'createdAt' | 'creatorAddress' | 'numRequiredSteps' | 'programId' | 'stepIds' | 'status' | 'title' | 'unlocked'>> };
+
 export type TaskQueryVariables = {
   id: Scalars['String']
 };
@@ -3445,6 +3452,48 @@ export function usePublishProgramMutation(baseOptions?: ApolloReactHooks.Mutatio
 export type PublishProgramMutationHookResult = ReturnType<typeof usePublishProgramMutation>;
 export type PublishProgramMutationResult = ApolloReactCommon.MutationResult<PublishProgramMutation>;
 export type PublishProgramMutationOptions = ApolloReactCommon.BaseMutationOptions<PublishProgramMutation, PublishProgramMutationVariables>;
+export const CreateLevelDocument = gql`
+    mutation CreateLevel($input: CreateLevelInput!) {
+  createLevel(input: $input) {
+    id
+    achievement
+    description
+    createdAt
+    creatorAddress
+    numRequiredSteps
+    programId
+    stepIds
+    status
+    title
+    unlocked
+  }
+}
+    `;
+export type CreateLevelMutationFn = ApolloReactCommon.MutationFunction<CreateLevelMutation, CreateLevelMutationVariables>;
+
+/**
+ * __useCreateLevelMutation__
+ *
+ * To run a mutation, you first call `useCreateLevelMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useCreateLevelMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [createLevelMutation, { data, loading, error }] = useCreateLevelMutation({
+ *   variables: {
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function useCreateLevelMutation(baseOptions?: ApolloReactHooks.MutationHookOptions<CreateLevelMutation, CreateLevelMutationVariables>) {
+        return ApolloReactHooks.useMutation<CreateLevelMutation, CreateLevelMutationVariables>(CreateLevelDocument, baseOptions);
+      }
+export type CreateLevelMutationHookResult = ReturnType<typeof useCreateLevelMutation>;
+export type CreateLevelMutationResult = ApolloReactCommon.MutationResult<CreateLevelMutation>;
+export type CreateLevelMutationOptions = ApolloReactCommon.BaseMutationOptions<CreateLevelMutation, CreateLevelMutationVariables>;
 export const TaskDocument = gql`
     query Task($id: String!) {
   task(id: $id) {

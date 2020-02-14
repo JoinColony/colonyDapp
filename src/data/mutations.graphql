@@ -351,3 +351,19 @@ mutation PublishProgram($input: PublishProgramInput!) {
     status
   }
 }
+
+mutation CreateLevel($input: CreateLevelInput!) {
+  createLevel(input: $input) {
+    id
+    achievement
+    description
+    createdAt
+    creatorAddress
+    numRequiredSteps
+    programId
+    stepIds
+    status
+    title
+    unlocked
+  }
+}
