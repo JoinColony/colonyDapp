@@ -1,5 +1,5 @@
 import React from 'react';
-import formatDate from 'sugar-date/date/format';
+import { FormattedDate } from 'react-intl';
 
 import styles from './CaptionElement.css';
 
@@ -9,7 +9,9 @@ interface Props {
 
 const CaptionElement = ({ date }: Props) => (
   <div className={styles.main}>
-    <div className={styles.monthName}>{formatDate(date, '{Month} {year}')}</div>
+    <div className={styles.monthName}>
+      <FormattedDate value={date} month="long" year="numeric" />
+    </div>
   </div>
 );
 
