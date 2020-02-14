@@ -93,7 +93,7 @@ const displayName = 'dashboard.ProgramEdit';
 
 const ProgramEdit = ({
   colonyName,
-  program: { id, description, status, title },
+  program: { id, description, levelIds, levels, status, title },
   toggleEditMode,
 }: Props) => {
   const isDraft = status === ProgramStatus.Draft;
@@ -240,7 +240,7 @@ const ProgramEdit = ({
         }}
       </Form>
       <div className={styles.levelsContainer}>
-        <EditLevels />
+        <EditLevels levelIds={levelIds} levels={levels} programId={id} />
       </div>
       <Button
         appearance={{ theme: 'dangerLink' }}
