@@ -85,7 +85,7 @@ interface Props extends WithOmnipickerInProps {
 
 interface EnhancedProps
   extends Props,
-    AsFieldEnhancedProps,
+    AsFieldEnhancedProps<AnyUser>,
     WrappedComponentProps {}
 
 const displayName = 'SingleUserPicker';
@@ -222,9 +222,9 @@ const SingleUserPicker = ({
 
 SingleUserPicker.displayName = displayName;
 
-const enhance = compose<EnhancedProps, Props & ExtraFieldProps>(
+const enhance = compose<EnhancedProps, Props & ExtraFieldProps<AnyUser>>(
   withOmniPicker(),
-  asField<Props>(),
+  asField<Props, AnyUser>(),
 );
 
 export default enhance(SingleUserPicker);

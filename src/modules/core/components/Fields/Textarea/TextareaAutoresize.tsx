@@ -103,6 +103,8 @@ const TextareaAutoresize = ({
 
 TextareaAutoresize.displayName = displayName;
 
-export default asField<Props, TextareaHTMLAttributes<HTMLTextAreaElement>>()(
-  TextareaAutoresize,
-);
+export default asField<
+  Props,
+  string,
+  TextareaHTMLAttributes<HTMLTextAreaElement>
+>()(TextareaAutoresize);

@@ -17,7 +17,7 @@ interface Props
       InputHTMLAttributes<HTMLInputElement>,
       'name' | 'placeholder' | 'onBlur' | 'onChange' | 'form' | 'title'
     >,
-    ExtraFieldProps {
+    ExtraFieldProps<string> {
   appearance?: InputComponentAppearance;
   close: (data?: any, modifiers?: { cancelled?: boolean }) => void;
   id: string;
