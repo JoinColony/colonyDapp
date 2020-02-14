@@ -226,8 +226,6 @@
         "request-promise": "^4.2.2",
         "reselect": "^4.0.0",
         "scroll-into-view-if-needed": "^2.2.16",
-        "sugar-core": "^2.0.4",
-        "sugar-date": "^2.0.4",
         "utility-types": "^3.7.0",
         "web3-eth-abi": "1.0.0-beta.36",
         "web3-utils": "^1.0.0-beta.37",

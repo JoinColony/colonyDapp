@@ -1,6 +1,5 @@
 import React, { ReactNode, useCallback, useState } from 'react';
-import createDate from 'sugar-date/date/create';
-import formatDate from 'sugar-date/date/format';
+import { useIntl } from 'react-intl';
 
 import { asField } from '~core/Fields';
 import { InputComponentAppearance } from '~core/Fields/Input';
@@ -38,8 +37,6 @@ interface Props {
   setValueOnPick?: boolean;
 }
 
-const getShortDate = (date: Date) => formatDate(date, '{date} {Mon} {year}');
-
 const displayName = 'DatePicker';
 
 const DatePicker = ({
@@ -62,6 +59,18 @@ const DatePicker = ({
   // currentDate is a temporary value to represent the value when it's not set yet (active day in date picker)
   const [currentDate, setCurrentDate] = useState<Date | undefined>($value);
 
+  const { formatDate } = useIntl();
+
+  const getShortDate = useCallback(
+    (date: Date) =>
+      formatDate(date, {
+        day: '2-digit',
+        month: '2-digit',
+        year: 'numeric',
+      }),
+    [formatDate],
+  );
+
   // Handle day picking via daypicker
   const handleDayPick = useCallback(
     day => {
@@ -71,12 +80,12 @@ const DatePicker = ({
       setCurrentDate(day);
       setInputValue(getShortDate(day));
     },
-    [setValue, setValueOnPick],
+    [getShortDate, setValue, setValueOnPick],
   );
 
   // Handle day picking via input field
   const handleInputChange = useCallback(evt => {
-    const maybeDate = createDate(evt.target.value);
+    const maybeDate = new Date(Date.parse(evt.target.value));
     setInputValue(evt.target.value);
     if (maybeDate instanceof Date && !Number.isNaN(maybeDate.valueOf())) {
       setCurrentDate(maybeDate);
@@ -116,7 +125,7 @@ const DatePicker = ({
         setCurrentDate(undefined);
       }
     },
-    [$value, currentDate, inputValue, setValue],
+    [$value, currentDate, getShortDate, inputValue, setValue],
   );
 
   const selectedDay = currentDate || $value;

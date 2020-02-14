@@ -2,7 +2,6 @@ import React, { useMemo } from 'react';
 import { defineMessages, FormattedMessage, useIntl } from 'react-intl';
 import BigNumber from 'bn.js';
 import moveDecimal from 'move-decimal-point';
-import formatDate from 'sugar-date/date/format';
 
 import { ROOT_DOMAIN } from '~constants';
 import { Address } from '~types/index';
@@ -194,23 +193,28 @@ const TaskFeedEventDueDateSet = ({
   initiator: {
     profile: { walletAddress },
   },
-}: EventProps<SetTaskDueDateEvent>) => (
-  <FormattedMessage
-    {...MSG.dueDateSet}
-    values={{
-      user: <InteractiveUsername userAddress={walletAddress} />,
-      dueDate: dueDate && (
-        <span
-          title={formatDate(new Date(dueDate), '{short}')}
-          className={styles.highlight}
-        >
-          {formatDate(new Date(dueDate), '{short}')}
-        </span>
-      ),
-      dueDateSet: !!dueDate,
-    }}
-  />
-);
+}: EventProps<SetTaskDueDateEvent>) => {
+  const { formatDate } = useIntl();
+  const formattedDate = formatDate(new Date(dueDate), {
+    day: '2-digit',
+    month: '2-digit',
+    year: 'numeric',
+  });
+  return (
+    <FormattedMessage
+      {...MSG.dueDateSet}
+      values={{
+        user: <InteractiveUsername userAddress={walletAddress} />,
+        dueDate: dueDate && (
+          <span title={formattedDate} className={styles.highlight}>
+            {formattedDate}
+          </span>
+        ),
+        dueDateSet: !!dueDate,
+      }}
+    />
+  );
+};
 
 const TaskFeedEventPayoutSet = ({
   colonyAddress,
