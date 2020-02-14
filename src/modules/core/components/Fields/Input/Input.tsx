@@ -61,7 +61,7 @@ const Input = ({
   $touched,
   /* eslint-enable @typescript-eslint/no-unused-vars */
   ...props
-}: Props & AsFieldEnhancedProps<InputComponentProps>) => {
+}: Props & AsFieldEnhancedProps<string, InputComponentProps>) => {
   const inputProps: InputComponentProps = {
     appearance,
     'aria-invalid': $error ? true : undefined,
@@ -112,4 +112,6 @@ const Input = ({
 
 Input.displayName = 'Input';
 
-export default asField<Props, InputComponentProps>({ initialValue: '' })(Input);
+export default asField<Props, string, InputComponentProps>({
+  initialValue: '',
+})(Input);

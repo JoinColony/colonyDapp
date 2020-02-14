@@ -56,11 +56,11 @@ const DatePicker = ({
   setValueOnPick,
   $value,
   setValue,
-}: Props & AsFieldEnhancedProps) => {
+}: Props & AsFieldEnhancedProps<Date>) => {
   // Handles state of the input field if present
   const [inputValue, setInputValue] = useState('');
   // currentDate is a temporary value to represent the value when it's not set yet (active day in date picker)
-  const [currentDate, setCurrentDate] = useState($value);
+  const [currentDate, setCurrentDate] = useState<Date | undefined>($value);
 
   // Handle day picking via daypicker
   const handleDayPick = useCallback(
@@ -172,4 +172,4 @@ const DatePicker = ({
 
 DatePicker.displayName = displayName;
 
-export default asField<Props>()(DatePicker);
+export default asField<Props, Date>()(DatePicker);

@@ -183,6 +183,7 @@ exports[`Radio component Renders initial component 1`] = `
         >
           <Radio
             $id="radioInput"
+            $value=""
             aria-invalid={false}
             aria-label="awesome"
             aria-labelledby="radioInput-label"

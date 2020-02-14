@@ -206,6 +206,6 @@ class SingleLineEdit extends Component<Props & AsFieldEnhancedProps, State> {
   }
 }
 
-export default asField<Props, InputComponentProps>({
+export default asField<Props, string, InputComponentProps>({
   initialValue: '',
 })(SingleLineEdit);

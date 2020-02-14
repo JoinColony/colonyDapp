@@ -40,7 +40,9 @@ interface Props {
   $value: UploadFile;
 }
 
-class AvatarUploadItem extends Component<Props & AsFieldEnhancedProps> {
+class AvatarUploadItem extends Component<
+  Props & AsFieldEnhancedProps<UploadFile>
+> {
   readFiles: (files: any[]) => Promise<any[]>;
 
   static displayName = 'AvatarUploadItem';
@@ -116,6 +118,6 @@ class AvatarUploadItem extends Component<Props & AsFieldEnhancedProps> {
 const validate = (value: UploadFile) =>
   value.error ? MSG[value.error] : undefined;
 
-export default asField<Props>({ alwaysConnected: true, validate })(
+export default asField<Props, UploadFile>({ alwaysConnected: true, validate })(
   AvatarUploadItem,
 );

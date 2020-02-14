@@ -44,7 +44,7 @@ interface Props {
   upload: (file: FileReaderFile) => any;
 }
 
-class UploadItem extends Component<Props & AsFieldEnhancedProps> {
+class UploadItem extends Component<Props & AsFieldEnhancedProps<UploadFile>> {
   _readFiles: (files: object[]) => Promise<object[]>;
 
   static displayName = 'UploadItem';
@@ -141,4 +141,6 @@ class UploadItem extends Component<Props & AsFieldEnhancedProps> {
 const validate = (value: UploadFile) =>
   value.error ? MSG[value.error] : undefined;
 
-export default asField<Props>({ alwaysConnected: true, validate })(UploadItem);
+export default asField<Props, UploadFile>({ alwaysConnected: true, validate })(
+  UploadItem,
+);

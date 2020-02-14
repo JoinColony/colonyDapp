@@ -38,13 +38,13 @@ const formatIntl = (
   return formatMessage(text, textValues);
 };
 
-const connectFormik = <P>({ alwaysConnected, validate }) => (
+const connectFormik = <P, V>({ alwaysConnected, validate }) => (
   FieldComponent: ComponentType<any>,
 ) => ({
   connect = true,
   ...props
-}: ExtraFieldProps & P): ReactElement<
-  FieldAttributes<any> & ExtraFieldProps & P
+}: ExtraFieldProps<V> & P): ReactElement<
+  FieldAttributes<V> & ExtraFieldProps<V> & P
 > =>
   connect || alwaysConnected
     ? createElement<FieldAttributes<any>>(Field, {
@@ -60,24 +60,27 @@ const connectFormik = <P>({ alwaysConnected, validate }) => (
       })
     : createElement<any>(FieldComponent, { connect, ...props });
 
-type InnerProps<P, T> = AsFieldEnhancedProps<T> & P;
+type InnerProps<P, V, T> = AsFieldEnhancedProps<V, T> & P;
 // prefer `AsFieldEnhancedProps` over `T`
-type OuterProps<P, T> = Omit<T, keyof AsFieldEnhancedProps<T>> &
-  Omit<ExtraFieldProps, keyof P> &
+type OuterProps<P, V, T> = Omit<T, keyof AsFieldEnhancedProps<V, T>> &
+  Omit<ExtraFieldProps<V>, keyof P> &
   P;
 
-type PropsMapperOuterProps<P> = ExtraFieldProps & WrappedComponentProps & P;
+type PropsMapperOuterProps<P, V> = ExtraFieldProps<V> &
+  WrappedComponentProps &
+  P;
 
 const asField = <
   P,
+  V = string,
   // `T` allows passing props along to element of type `T`
   // @todo default `T` to never type? Since most components won't pass props along to element of type `T`
   T extends HTMLAttributes<HTMLElement> | never = HTMLAttributes<HTMLElement>
->({ alwaysConnected, validate, initialValue }: AsFieldConfig = {}) =>
-  compose<InnerProps<P, T>, OuterProps<P, T>>(
+>({ alwaysConnected, validate, initialValue }: AsFieldConfig<V> = {}) =>
+  compose<InnerProps<P, V, T>, OuterProps<P, V, T>>(
     injectIntl,
-    connectFormik<P>({ alwaysConnected, validate }),
-    mapProps<AsFieldEnhancedProps<T>, PropsMapperOuterProps<P>>(
+    connectFormik<P, V>({ alwaysConnected, validate }),
+    mapProps<AsFieldEnhancedProps<V, T>, PropsMapperOuterProps<P, V>>(
       ({
         connect = true,
         id,
@@ -101,7 +104,8 @@ const asField = <
           isSubmitting,
         } = {},
         ...props
-      }: ExtraFieldProps & WrappedComponentProps & P): AsFieldEnhancedProps<
+      }: ExtraFieldProps<V> & WrappedComponentProps & P): AsFieldEnhancedProps<
+        V,
         T
       > => {
         const htmlFieldName = fieldName || name;
@@ -131,7 +135,7 @@ const asField = <
           title: $error || $title || $label || $placeholder,
           $id,
           $error,
-          $value: value || initialValue,
+          $value: value || initialValue || '',
           $touched,
           onChange,
           onBlur,

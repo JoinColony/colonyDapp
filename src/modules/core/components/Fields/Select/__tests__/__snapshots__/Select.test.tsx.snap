@@ -125,6 +125,7 @@ exports[`Select component Renders initial component 1`] = `
     >
       <Select
         $id="foo"
+        $value=""
         appearance={
           Object {
             "alignOptions": "left",
