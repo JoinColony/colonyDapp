@@ -6,7 +6,7 @@ import { getMainClasses } from '~utils/css';
 import asField from '../asField';
 import InputLabel from '../InputLabel';
 import InputStatus from '../InputStatus';
-import { AsFieldEnhancedProps } from '../types';
+import { FieldEnhancedProps } from '../types';
 
 import styles from './Textarea.css';
 
@@ -37,7 +37,7 @@ interface Props {
   maxLength?: number;
 }
 
-class Textarea extends Component<Props & AsFieldEnhancedProps> {
+class Textarea extends Component<Props & FieldEnhancedProps> {
   static displayName = 'Textarea';
 
   static defaultProps = {

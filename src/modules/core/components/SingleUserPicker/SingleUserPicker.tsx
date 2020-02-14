@@ -3,7 +3,7 @@ import { defineMessages } from 'react-intl';
 import compose from 'recompose/compose';
 
 import { asField } from '~core/Fields';
-import { AsFieldEnhancedProps, ExtraFieldProps } from '~core/Fields/types';
+import { FieldEnhancedProps, ExtraFieldProps } from '~core/Fields/types';
 import { AnyUser } from '~data/index';
 import { Address } from '~types/index';
 import { getMainClasses } from '~utils/css';
@@ -85,7 +85,7 @@ interface Props extends WithOmnipickerInProps {
 
 interface EnhancedProps
   extends Props,
-    AsFieldEnhancedProps<AnyUser>,
+    FieldEnhancedProps<AnyUser>,
     WrappedComponentProps {}
 
 const displayName = 'SingleUserPicker';

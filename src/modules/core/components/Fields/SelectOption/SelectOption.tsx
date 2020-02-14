@@ -3,7 +3,7 @@ import React, { Component, SyntheticEvent, KeyboardEvent } from 'react';
 
 import { SimpleMessageValues } from '~types/index';
 
-import { AsFieldEnhancedProps } from '../types';
+import { FieldEnhancedProps } from '../types';
 
 import styles from './SelectOption.css';
 
@@ -26,7 +26,7 @@ interface Props {
   selected: boolean;
   onSelect: (idx: number) => void;
   onClick: () => void;
-  formatIntl: AsFieldEnhancedProps['formatIntl'];
+  formatIntl: FieldEnhancedProps['formatIntl'];
 }
 
 class SelectOption extends Component<Props> {

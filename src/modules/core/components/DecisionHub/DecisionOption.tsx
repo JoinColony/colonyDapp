@@ -13,7 +13,7 @@ import { Tooltip } from '../Popover';
 import Heading from '../Heading';
 import { asField } from '../Fields';
 import styles from './DecisionOption.css';
-import { AsFieldEnhancedProps } from '~core/Fields/types';
+import { FieldEnhancedProps } from '~core/Fields/types';
 
 const MSG = defineMessages({
   iconTitle: {
@@ -76,7 +76,7 @@ const DecisionOption = ({
   option,
   setValue,
   link,
-}: Props & AsFieldEnhancedProps) => {
+}: Props & FieldEnhancedProps) => {
   const makeDecision = useCallback(() => {
     if (!disabled && value && setValue) setValue(value);
   }, [setValue, value, disabled]);

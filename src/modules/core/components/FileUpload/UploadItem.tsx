@@ -10,7 +10,7 @@ import Button from '../Button';
 import Icon from '../Icon';
 import ProgressBar from '../ProgressBar';
 import styles from './UploadItem.css';
-import { AsFieldEnhancedProps } from '~core/Fields/types';
+import { FieldEnhancedProps } from '~core/Fields/types';
 
 const MSG = defineMessages({
   removeActionText: {
@@ -44,7 +44,7 @@ interface Props {
   upload: (file: FileReaderFile) => any;
 }
 
-class UploadItem extends Component<Props & AsFieldEnhancedProps<UploadFile>> {
+class UploadItem extends Component<Props & FieldEnhancedProps<UploadFile>> {
   _readFiles: (files: object[]) => Promise<object[]>;
 
   static displayName = 'UploadItem';

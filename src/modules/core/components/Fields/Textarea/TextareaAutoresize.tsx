@@ -8,7 +8,7 @@ import styles from './Textarea.css';
 import asField from '../asField';
 import InputLabel from '../InputLabel';
 import InputStatus from '../InputStatus';
-import { AsFieldEnhancedProps } from '../types';
+import { FieldEnhancedProps } from '../types';
 
 type Appearance = {
   theme?: 'fat';
@@ -61,7 +61,7 @@ const TextareaAutoresize = ({
   connect,
   /* eslint-enable @typescript-eslint/no-unused-vars */
   ...rest
-}: Props & AsFieldEnhancedProps) => {
+}: Props & FieldEnhancedProps) => {
   const renderAutoresizingTextarea = inputProps => {
     const { innerRef, ...props } = inputProps;
     return (

@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { defineMessages } from 'react-intl';
 
-import { AsFieldEnhancedProps } from '~core/Fields/types';
+import { FieldEnhancedProps } from '~core/Fields/types';
 import { log } from '~utils/debug';
 
 import styles from './AvatarUploadItem.css';
@@ -41,7 +41,7 @@ interface Props {
 }
 
 class AvatarUploadItem extends Component<
-  Props & AsFieldEnhancedProps<UploadFile>
+  Props & FieldEnhancedProps<UploadFile>
 > {
   readFiles: (files: any[]) => Promise<any[]>;
 

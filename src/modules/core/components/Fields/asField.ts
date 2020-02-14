@@ -16,7 +16,7 @@ import { SimpleMessageValues } from '~types/index';
 
 import {
   AsFieldConfig,
-  AsFieldEnhancedProps,
+  FieldEnhancedProps,
   FormatMessage,
   ExtraFieldProps,
 } from './types';
@@ -60,9 +60,9 @@ const connectFormik = <P, V>({ alwaysConnected, validate }) => (
       })
     : createElement<any>(FieldComponent, { connect, ...props });
 
-type InnerProps<P, V, T> = AsFieldEnhancedProps<V, T> & P;
-// prefer `AsFieldEnhancedProps` over `T`
-type OuterProps<P, V, T> = Omit<T, keyof AsFieldEnhancedProps<V, T>> &
+type InnerProps<P, V, T> = FieldEnhancedProps<V, T> & P;
+// prefer `FieldEnhancedProps` over `T`
+type OuterProps<P, V, T> = Omit<T, keyof FieldEnhancedProps<V, T>> &
   Omit<ExtraFieldProps<V>, keyof P> &
   P;
 
@@ -80,7 +80,7 @@ const asField = <
   compose<InnerProps<P, V, T>, OuterProps<P, V, T>>(
     injectIntl,
     connectFormik<P, V>({ alwaysConnected, validate }),
-    mapProps<AsFieldEnhancedProps<V, T>, PropsMapperOuterProps<P, V>>(
+    mapProps<FieldEnhancedProps<V, T>, PropsMapperOuterProps<P, V>>(
       ({
         connect = true,
         id,
@@ -104,7 +104,7 @@ const asField = <
           isSubmitting,
         } = {},
         ...props
-      }: ExtraFieldProps<V> & WrappedComponentProps & P): AsFieldEnhancedProps<
+      }: ExtraFieldProps<V> & WrappedComponentProps & P): FieldEnhancedProps<
         V,
         T
       > => {

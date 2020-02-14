@@ -4,7 +4,7 @@ import formatDate from 'sugar-date/date/format';
 
 import { asField } from '~core/Fields';
 import { InputComponentAppearance } from '~core/Fields/Input';
-import { AsFieldEnhancedProps } from '~core/Fields/types';
+import { FieldEnhancedProps } from '~core/Fields/types';
 import Popover from '~core/Popover';
 import {
   PopoverChildFnProps,
@@ -56,7 +56,7 @@ const DatePicker = ({
   setValueOnPick,
   $value,
   setValue,
-}: Props & AsFieldEnhancedProps<Date>) => {
+}: Props & FieldEnhancedProps<Date>) => {
   // Handles state of the input field if present
   const [inputValue, setInputValue] = useState('');
   // currentDate is a temporary value to represent the value when it's not set yet (active day in date picker)

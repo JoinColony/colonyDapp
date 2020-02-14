@@ -6,7 +6,7 @@ import { MessageDescriptor } from 'react-intl';
 import asField from '../asField';
 import InputLabel from '../InputLabel';
 import InputStatus from '../InputStatus';
-import { AsFieldEnhancedProps } from '../types';
+import { FieldEnhancedProps } from '../types';
 import InputComponent, { Props as InputComponentProps } from './InputComponent';
 
 import styles from './Input.css';
@@ -61,7 +61,7 @@ const Input = ({
   $touched,
   /* eslint-enable @typescript-eslint/no-unused-vars */
   ...props
-}: Props & AsFieldEnhancedProps<string, InputComponentProps>) => {
+}: Props & FieldEnhancedProps<string, InputComponentProps>) => {
   const inputProps: InputComponentProps = {
     appearance,
     'aria-invalid': $error ? true : undefined,

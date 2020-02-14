@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { defineMessages } from 'react-intl';
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
 
-import { AsFieldEnhancedProps } from '~core/Fields/types';
+import { FieldEnhancedProps } from '~core/Fields/types';
 
 import InputLabel from '../Fields/InputLabel';
 import asField from '../Fields/asField';
@@ -35,7 +35,7 @@ type State = {
   items: Droppable[];
 };
 
-class MnemonicDnDSorter extends Component<Props & AsFieldEnhancedProps, State> {
+class MnemonicDnDSorter extends Component<Props & FieldEnhancedProps, State> {
   /**
    * Get items to sort from
    */
