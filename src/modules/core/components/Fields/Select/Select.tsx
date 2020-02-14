@@ -17,7 +17,7 @@ import { Appearance } from './types';
 import asField from '../asField';
 import InputLabel from '../InputLabel';
 import InputStatus from '../InputStatus';
-import { AsFieldEnhancedProps } from '../types';
+import { FieldEnhancedProps } from '../types';
 import Icon from '../../Icon';
 
 import styles from './Select.css';
@@ -52,7 +52,7 @@ type State = {
   selectedOption: number;
 };
 
-class Select extends Component<Props & AsFieldEnhancedProps, State> {
+class Select extends Component<Props & FieldEnhancedProps, State> {
   comboboxNode?: HTMLElement | null;
 
   wrapperNode?: HTMLElement | null;

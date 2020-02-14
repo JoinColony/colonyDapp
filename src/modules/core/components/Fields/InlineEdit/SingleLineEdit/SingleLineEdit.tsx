@@ -4,7 +4,7 @@ import { CleaveOptions } from 'cleave.js/options';
 import { asField } from '~core/Fields';
 import { InputComponent } from '~core/Fields/Input';
 import { Props as InputComponentProps } from '~core/Fields/Input/InputComponent';
-import { AsFieldEnhancedProps } from '~core/Fields/types';
+import { FieldEnhancedProps } from '~core/Fields/types';
 import { getMainClasses } from '~utils/css';
 
 import styles from './SingleLineEdit.css';
@@ -30,7 +30,7 @@ interface State {
   isEditing: boolean;
 }
 
-class SingleLineEdit extends Component<Props & AsFieldEnhancedProps, State> {
+class SingleLineEdit extends Component<Props & FieldEnhancedProps, State> {
   inputRef: any;
 
   static defaultProps = {

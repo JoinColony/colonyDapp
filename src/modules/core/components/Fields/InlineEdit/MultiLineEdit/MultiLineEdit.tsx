@@ -10,7 +10,7 @@ import 'draft-js/dist/Draft.css';
 
 import { asField, InputLabel } from '~core/Fields';
 import InputStatus from '~core/Fields/InputStatus';
-import { AsFieldEnhancedProps } from '~core/Fields/types';
+import { FieldEnhancedProps } from '~core/Fields/types';
 import { getMainClasses } from '~utils/css';
 
 import styles from './MultiLineEdit.css';
@@ -58,7 +58,7 @@ const MultiLineEdit = ({
   elementOnly = true,
   readOnly = false,
   spellCheck = false,
-}: Props & AsFieldEnhancedProps) => {
+}: Props & FieldEnhancedProps) => {
   const [editorState, setEditorState] = useState<EditorStateType>(() =>
     createEditorState($value),
   );

@@ -5,7 +5,7 @@ import { getMainClasses } from '~utils/css';
 
 import InputLabel from '../InputLabel';
 import asField from '../asField';
-import { AsFieldEnhancedProps } from '../types';
+import { FieldEnhancedProps } from '../types';
 
 import styles from './Radio.css';
 
@@ -56,7 +56,7 @@ const Radio = ({
   isSubmitting,
   /* eslint-enable @typescript-eslint/no-unused-vars */
   ...props
-}: Props & AsFieldEnhancedProps) => {
+}: Props & FieldEnhancedProps) => {
   const { current: inputId } = useRef<string>(inputIdProp || nanoid());
   return (
     <label

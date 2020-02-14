@@ -3,7 +3,7 @@ import { defineMessages, FormattedMessage } from 'react-intl';
 
 import Button from '~core/Button';
 import { asField } from '~core/Fields';
-import { AsFieldEnhancedProps } from '~core/Fields/types';
+import { FieldEnhancedProps } from '~core/Fields/types';
 import Popover, { Tooltip } from '~core/Popover';
 
 import { ConsumableItem } from './index';
@@ -66,7 +66,7 @@ interface State {
   setItem: number | void;
 }
 
-class ItemsList extends Component<Props & AsFieldEnhancedProps, State> {
+class ItemsList extends Component<Props & FieldEnhancedProps, State> {
   static displayName = 'ItemsList';
 
   state = {

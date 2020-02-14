@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { defineMessages } from 'react-intl';
 import copy from 'copy-to-clipboard';
 
-import { AsFieldEnhancedProps } from '~core/Fields/types';
+import { FieldEnhancedProps } from '~core/Fields/types';
 
 import styles from './MnemonicGenerator.css';
 import InputLabel from '../Fields/InputLabel';
@@ -40,7 +40,7 @@ interface State {
   copied: boolean;
 }
 
-class MnemonicGenerator extends Component<Props & AsFieldEnhancedProps, State> {
+class MnemonicGenerator extends Component<Props & FieldEnhancedProps, State> {
   timeout: any;
 
   static displayName = 'MnemonicGenerator';

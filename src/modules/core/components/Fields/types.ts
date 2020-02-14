@@ -15,7 +15,7 @@ export interface AsFieldConfig<V> {
   initialValue?: V;
 }
 
-export interface AsFieldEnhancedProps<
+export interface FieldEnhancedProps<
   V = string,
   T extends HTMLAttributes<HTMLElement> | never = HTMLAttributes<HTMLElement>
 >
