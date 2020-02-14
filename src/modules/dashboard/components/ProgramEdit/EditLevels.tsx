@@ -4,6 +4,8 @@ import { defineMessages, FormattedMessage } from 'react-intl';
 import Button from '~core/Button';
 import Heading from '~core/Heading';
 import Icon from '~core/Icon';
+import ProgramLevelsList from '~dashboard/ProgramLevelsList';
+import { OneProgram, useCreateLevelMutation } from '~data/index';
 
 import styles from './EditLevels.css';
 
@@ -22,10 +24,22 @@ const MSG = defineMessages({
   },
 });
 
+interface Props {
+  levelIds: OneProgram['levelIds'];
+  levels: OneProgram['levels'];
+  programId: OneProgram['id'];
+}
+
 const displayName = 'dashboard.EditLevels';
 
-const EditLevels = () => {
-  const handleAddLevel = useCallback(() => {}, []);
+const EditLevels = ({ levelIds, levels, programId }: Props) => {
+  const [createLevel] = useCreateLevelMutation({
+    variables: { input: { programId } },
+  });
+  // @todo redirect to level upon creation once level template exists (after #2019)
+  const handleAddLevel = useCallback(() => {
+    createLevel();
+  }, [createLevel]);
   return (
     <div>
       <Heading appearance={{ size: 'medium' }} text={MSG.title} />
@@ -33,6 +47,7 @@ const EditLevels = () => {
         appearance={{ size: 'normal', weight: 'thin' }}
         text={MSG.description}
       />
+      <ProgramLevelsList levelIds={levelIds} levels={levels} />
       <Button appearance={{ theme: 'dottedArea' }} onClick={handleAddLevel}>
         <span className={styles.buttonTextContainer}>
           <div className={styles.buttonIcon}>
