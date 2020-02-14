@@ -35,9 +35,6 @@ interface Props {
 
   /** Will reset the entire AvatarUploader state */
   reset: () => void;
-
-  /** @ignore Will be injected by `asField` */
-  $value: UploadFile;
 }
 
 class AvatarUploadItem extends Component<
