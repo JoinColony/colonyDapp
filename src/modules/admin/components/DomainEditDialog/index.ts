@@ -1,1 +1,1 @@
-export { default } from './DomainEditDialog';
+export { default, Props } from './DomainEditDialog';

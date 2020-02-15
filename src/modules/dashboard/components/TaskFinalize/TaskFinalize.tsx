@@ -1,12 +1,12 @@
-import React, { FC, useCallback, useState } from 'react';
+import React, { useCallback, useState } from 'react';
 import { defineMessages } from 'react-intl';
 import moveDecimal from 'move-decimal-point';
 
 import Button from '~core/Button';
-import { withDialog } from '~core/Dialog';
+import { useDialog } from '~core/Dialog';
+import TaskFinalizeDialog from './TaskFinalizeDialog';
 
 import { Address } from '~types/index';
-import { OpenDialog } from '~core/Dialog/types';
 import {
   AnyTask,
   Payouts,
@@ -27,16 +27,11 @@ const MSG = defineMessages({
 
 const displayName = 'dashboard.TaskFinalize';
 
-interface InProps {
+interface Props {
   draftId: AnyTask['id'];
   colonyAddress: Address;
   ethDomainId: Domain['ethDomainId'];
   payouts: Payouts;
-}
-
-interface Props extends InProps {
-  // Injected via `withDialog`
-  openDialog: OpenDialog;
 }
 
 const TaskFinalize = ({
@@ -44,9 +39,9 @@ const TaskFinalize = ({
   colonyAddress,
   ethDomainId,
   payouts,
-  openDialog,
 }: Props) => {
   const [isLoading, setIsLoading] = useState(false);
+  const openDialog = useDialog(TaskFinalizeDialog);
 
   const tokenAddresses = payouts.map(({ token }) => token.address);
   const { data: tokenBalances } = useTokenBalancesForDomainsQuery({
@@ -93,7 +88,7 @@ const TaskFinalize = ({
         );
       });
       if (!enoughFundsAvailable) {
-        return openDialog('TaskFinalizeDialog')
+        return openDialog()
           .afterClosed()
           .then(() => setIsLoading(false), () => setIsLoading(false));
       }
@@ -115,4 +110,4 @@ const TaskFinalize = ({
 
 TaskFinalize.displayName = displayName;
 
-export default (withDialog() as any)(TaskFinalize) as FC<InProps>;
+export default TaskFinalize;

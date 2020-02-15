@@ -14,14 +14,11 @@ const MSG = defineMessages({
   },
 });
 
-// Can't seal this object because of `withConsumerFactory`
 interface Props {
   /** Dialog needs the cancel function from your Dialog component */
   cancel: () => void;
-
   /** Children to render in this Dialog */
   children: ReactNode;
-
   /** Determines if the Dialog can be dismissed */
   isDismissable?: boolean;
 }

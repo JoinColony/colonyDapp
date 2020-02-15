@@ -4,6 +4,10 @@ import { defineMessages } from 'react-intl';
 import { AnyTask } from '~data/index';
 import { Address } from '~types/index';
 import { ActionButton, DialogActionButton } from '~core/Button';
+import {
+  ManagerRatingDialog,
+  WorkerRatingDialog,
+} from '~dashboard/TaskRatingDialogs';
 import { ActionTypes } from '~redux/index';
 import { mergePayload } from '~utils/actions';
 import {
@@ -47,7 +51,7 @@ const TaskRatingButtons = ({ task: { id: draftId }, task, address }: Props) => {
       {/* Worker misses deadline and rates manager */}
       {workerCanRateManager(task, address) && (
         <DialogActionButton
-          dialog="ManagerRatingDialog"
+          dialog={ManagerRatingDialog}
           dialogProps={{
             submitWork: false,
           }}
@@ -61,7 +65,7 @@ const TaskRatingButtons = ({ task: { id: draftId }, task, address }: Props) => {
       {/* Worker submits work, ends task + rates before deadline */}
       {workerCanEndTask(task, address) && (
         <DialogActionButton
-          dialog="ManagerRatingDialog"
+          dialog={ManagerRatingDialog}
           dialogProps={{
             submitWork: true,
           }}
@@ -75,8 +79,8 @@ const TaskRatingButtons = ({ task: { id: draftId }, task, address }: Props) => {
       {/* Worker misses deadline and manager ends task + rates */}
       {managerCanEndTask(task, address) && (
         <DialogActionButton
-          dialog="WorkerRatingDialog"
-          options={{
+          dialog={WorkerRatingDialog}
+          dialogProps={{
             workSubmitted: false,
           }}
           text={MSG.rateWorker}
@@ -89,8 +93,8 @@ const TaskRatingButtons = ({ task: { id: draftId }, task, address }: Props) => {
       {/* Worker makes deadline and manager rates worker */}
       {managerCanRateWorker(task, address) && (
         <DialogActionButton
-          dialog="WorkerRatingDialog"
-          options={{
+          dialog={WorkerRatingDialog}
+          dialogProps={{
             workSubmitted: true,
           }}
           text={MSG.rateWorker}

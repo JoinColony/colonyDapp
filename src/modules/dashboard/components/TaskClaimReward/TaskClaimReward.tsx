@@ -6,6 +6,8 @@ import { ActionTypes } from '~redux/index';
 import { Address } from '~types/index';
 import { AnyTask, Payouts } from '~data/index';
 
+import TaskClaimRewardDialog from './TaskClaimRewardDialog';
+
 const MSG = defineMessages({
   claimRewards: {
     id: 'dashboard.TaskClaimReward.claimRewards',
@@ -13,7 +15,6 @@ const MSG = defineMessages({
   },
 });
 
-// Can't seal this object because of HOC
 export interface Props {
   colonyAddress: Address;
   draftId: AnyTask['id'];
@@ -37,23 +38,21 @@ const TaskClaimReward = ({
   nativeTokenPayout,
   payouts,
   rating,
-  reputation,
   sortedPayouts,
   title,
 }: Props) => (
   <DialogActionButton
     text={MSG.claimRewards}
-    dialog="TaskClaimRewardDialog"
+    dialog={TaskClaimRewardDialog}
     dialogProps={{
-      colonyAddress,
-      lateRating,
-      lateReveal,
-      nativeTokenPayout,
-      payouts,
-      rating,
-      reputation,
-      sortedPayouts,
-      title,
+      task: {
+        title,
+        rating,
+        lateRating,
+        lateReveal,
+        sortedPayouts,
+        nativeTokenPayout,
+      },
     }}
     submit={ActionTypes.TASK_WORKER_CLAIM_REWARD}
     success={ActionTypes.TASK_WORKER_CLAIM_REWARD_SUCCESS}

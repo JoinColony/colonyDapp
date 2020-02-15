@@ -2,8 +2,6 @@ import React from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 import { History } from 'history';
 
-import { OpenDialog } from '~core/Dialog/types';
-import withDialog from '~core/Dialog/withDialog';
 import Button from '~core/Button';
 import unfinishedProfileOpener from '~users/UnfinishedProfile';
 import { useLoggedInUser } from '~data/helpers';
@@ -26,9 +24,7 @@ const MSG = defineMessages({
 
 const displayName = 'dashboard.TaskRequestWork';
 
-// Can't seal this object because of withConsumerFactory
 interface Props {
-  openDialog: OpenDialog;
   task: AnyTask;
   history: History;
 }
@@ -63,4 +59,4 @@ const TaskRequestWork = ({ task: { id: draftId }, task, history }: Props) => {
 
 TaskRequestWork.displayName = displayName;
 
-export default withDialog()(TaskRequestWork) as any;
+export default TaskRequestWork;

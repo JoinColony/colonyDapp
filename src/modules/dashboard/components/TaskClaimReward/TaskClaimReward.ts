@@ -1,12 +1,12 @@
 import { compose, withProps } from 'recompose';
 
 import { sortObjectsBy } from '~utils/arrays';
-import { AnyTask } from '~data/index';
 
 import TaskClaimReward from './TaskClaimReward';
 
 export interface Props {
-  task: AnyTask;
+  // @TODO This needs to be fixed
+  task: any;
 }
 
 const isEth = (prev: boolean, next: boolean): number => {

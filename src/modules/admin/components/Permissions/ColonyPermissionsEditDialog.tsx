@@ -4,7 +4,7 @@ import { defineMessages } from 'react-intl';
 
 import { Address } from '~types/index';
 import { mergePayload, withKey, mapPayload, pipe } from '~utils/actions';
-import { ActionTypeString, ActionTypes } from '~redux/index';
+import { ActionTypes } from '~redux/index';
 import { useDataFetcher, useTransformer } from '~utils/hooks';
 import Heading from '~core/Heading';
 import Button from '~core/Button';
@@ -41,9 +41,6 @@ interface Props {
   domainId: number;
   colonyAddress: Address;
   userAddress: Address;
-  submit: ActionTypeString;
-  success: ActionTypeString;
-  error: ActionTypeString;
 }
 
 const ColonyPermissionsEditDialog = ({

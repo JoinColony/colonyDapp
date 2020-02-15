@@ -7,7 +7,6 @@ import { IntlProvider } from 'react-intl';
 import layout from '~styles/layout.css';
 import { DialogProvider } from '~core/Dialog';
 
-import dialogComponents from './dialogComponents';
 import messages from './i18n/en.json';
 import Routes from './routes';
 import apolloClient, { ApolloProvider } from './context/apolloClient';
@@ -22,7 +21,7 @@ const App = ({ store }: Props) => (
       <StoreContext.Provider value={store}>
         <ReduxProvider store={store}>
           <BrowserRouter>
-            <DialogProvider dialogComponents={dialogComponents}>
+            <DialogProvider>
               <div className={layout.stretch}>
                 <Routes />
               </div>
