@@ -36,6 +36,7 @@ import { ContractContexts } from '../../../lib/ColonyManager/constants';
 import { ipfsUpload } from '../../core/sagas/ipfs';
 import { transactionLoadRelated } from '../../core/actionCreators';
 import { createTransaction, getTxChannel } from '../../core/sagas/transactions';
+import { clearLastWallet } from '~utils/autoLogin';
 
 function* userTokenTransfersFetch( // eslint-disable-next-line @typescript-eslint/no-unused-vars,no-unused-vars
   action: Action<ActionTypes.USER_TOKEN_TRANSFERS_FETCH>,
@@ -277,9 +278,10 @@ function* userLogout() {
     TEMP_removeNewContext('wallet');
 
     /*
-     *  3. Delete json web token
+     *  3. Delete json web token and last wallet from localstorage
      */
     clearToken(walletAddress);
+    clearLastWallet();
 
     /*
      *  4. Clear the currently logged in user
