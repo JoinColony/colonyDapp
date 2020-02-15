@@ -7,11 +7,14 @@ import { ActionTypes } from '~redux/index';
 import { DialogActionButton } from '~core/Button';
 import Heading from '~core/Heading';
 import ExternalLink from '~core/ExternalLink';
+import UpgradeContractDialog from '~admin/UpgradeContractDialog';
+import RecoveryModeDialog from '~admin/RecoveryModeDialog';
 import { FullColonyFragment, useSystemInfoQuery } from '~data/index';
 
 import { networkVersionSelector } from '../../../core/selectors';
 import { canEnterRecoveryMode } from '../../../users/checks';
 import { canBeUpgraded } from '../../../dashboard/checks';
+import UnlockTokenDialog from './UnlockTokenDialog';
 
 import styles from './ProfileAdvanced.css';
 
@@ -122,7 +125,7 @@ const ProfileAdvanced = ({
         <DialogActionButton
           appearance={{ theme: 'primary', size: 'large' }}
           text={MSG.buttonUpdate}
-          dialog="UpgradeContractDialog"
+          dialog={UpgradeContractDialog}
           submit={ActionTypes.COLONY_VERSION_UPGRADE}
           success={ActionTypes.COLONY_VERSION_UPGRADE_SUCCESS}
           error={ActionTypes.COLONY_VERSION_UPGRADE_ERROR}
@@ -173,7 +176,7 @@ const ProfileAdvanced = ({
         <DialogActionButton
           appearance={{ theme: 'primary', size: 'large' }}
           text={MSG.buttonRecoveryMode}
-          dialog="RecoveryModeDialog"
+          dialog={RecoveryModeDialog}
           submit={ActionTypes.COLONY_RECOVERY_MODE_ENTER}
           success={ActionTypes.COLONY_RECOVERY_MODE_ENTER_SUCCESS}
           error={ActionTypes.COLONY_RECOVERY_MODE_ENTER_ERROR}
@@ -205,7 +208,7 @@ const ProfileAdvanced = ({
             <DialogActionButton
               appearance={{ theme: 'blue', size: 'large' }}
               text={MSG.buttonUnlockToken}
-              dialog="UnlockTokenDialog"
+              dialog={UnlockTokenDialog}
               submit={ActionTypes.COLONY_NATIVE_TOKEN_UNLOCK}
               success={ActionTypes.COLONY_NATIVE_TOKEN_UNLOCK_SUCCESS}
               error={ActionTypes.COLONY_NATIVE_TOKEN_UNLOCK_ERROR}

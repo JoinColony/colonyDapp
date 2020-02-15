@@ -8,6 +8,7 @@ import { Address } from '~types/index';
 import { ActionTypes } from '~redux/index';
 import { TableRow, TableCell } from '~core/Table';
 import { DialogActionButton } from '~core/Button';
+import DomainEditDialog from '~admin/DomainEditDialog';
 
 import styles from './DomainListItem.css';
 
@@ -52,7 +53,7 @@ const DomainListItem = ({
       {!viewOnly && domain.id !== ROOT_DOMAIN && (
         <span title={MSG.buttonEdit.defaultMessage}>
           <DialogActionButton
-            dialog="DomainEditDialog"
+            dialog={DomainEditDialog}
             dialogProps={{
               domain,
               colonyAddress,

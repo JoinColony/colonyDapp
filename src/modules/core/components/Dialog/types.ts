@@ -4,22 +4,11 @@ export type Cancel = () => void;
 
 export type Close = (val: any) => void;
 
-export type DialogComponent = ComponentType<{
-  cancel: Cancel;
-  close: Close;
-  [k: string]: any;
-}>;
-
-export interface DialogType {
-  Dialog: DialogComponent;
-  cancel: Cancel;
-  close: Close;
+export interface DialogType<P> {
+  Dialog: ComponentType<P>;
+  cancel: () => void;
+  close: (val: any) => void;
   key: string;
-  props?: { [k: string]: any };
+  props: P | undefined;
   afterClosed: () => Promise<any>;
 }
-
-export type OpenDialog = (
-  dialogKey: string,
-  props?: { [k: string]: any },
-) => DialogType;

@@ -3,10 +3,10 @@ import { defineMessages, FormattedMessage } from 'react-intl';
 
 import { COLONY_TOTAL_BALANCE_DOMAIN_ID } from '~constants';
 import Button from '~core/Button';
-import { DialogType } from '~core/Dialog';
-import withDialog from '~core/Dialog/withDialog';
+import { useDialog } from '~core/Dialog';
 import Heading from '~core/Heading';
 import InfoPopover from '~core/InfoPopover';
+import { TokensMoveDialog } from '~admin/Tokens';
 import { DomainsMapType } from '~types/index';
 import {
   useLoggedInUser,
@@ -37,18 +37,13 @@ interface Props {
   colony: FullColonyFragment;
   currentDomainId: number;
   domains: DomainsMapType;
-  openDialog: (dialogName: string, dialogProps?: object) => DialogType;
 }
 
 const displayName = 'dashboard.ColonyHome.ColonyFunding';
 
-const ColonyFunding = ({
-  colony,
-  currentDomainId,
-  domains,
-  openDialog,
-}: Props) => {
+const ColonyFunding = ({ colony, currentDomainId, domains }: Props) => {
   const { walletAddress } = useLoggedInUser();
+  const openDialog = useDialog(TokensMoveDialog);
 
   const canMoveTokens = useMemo(
     () => canMoveTokensCheck(domains, walletAddress),
@@ -59,7 +54,7 @@ const ColonyFunding = ({
 
   const handleMoveTokens = useCallback(
     () =>
-      openDialog('TokensMoveDialog', {
+      openDialog({
         colonyAddress,
         toDomain:
           currentDomainId !== COLONY_TOTAL_BALANCE_DOMAIN_ID
@@ -118,4 +113,4 @@ const ColonyFunding = ({
 
 ColonyFunding.displayName = displayName;
 
-export default (withDialog() as any)(ColonyFunding);
+export default ColonyFunding;

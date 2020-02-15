@@ -1,15 +1,16 @@
 import React, { useCallback } from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 
-import { DialogType } from '~core/Dialog';
+import { useDialog } from '~core/Dialog';
 import CopyableAddress from '~core/CopyableAddress';
 import Button from '~core/Button';
 import Heading from '~core/Heading';
 import QRCode from '~core/QRCode';
 import WalletLink from '~core/WalletLink';
-import withDialog from '~core/Dialog/withDialog';
 import TokenList from '~admin/Tokens/TokenList';
 import { useLoggedInUser, useUserTokensQuery } from '~data/index';
+
+import UserTokenEditDialog from './UserTokenEditDialog';
 
 import styles from './Wallet.css';
 
@@ -44,24 +45,17 @@ const MSG = defineMessages({
   },
 });
 
-interface Props {
-  openDialog: (dialogName: string, dialogProps?: object) => DialogType;
-}
-
-const Wallet = ({ openDialog }: Props) => {
+const Wallet = () => {
   const { walletAddress } = useLoggedInUser();
+  const openDialog = useDialog(UserTokenEditDialog);
   const { data: userTokensData, loading: loadingTokens } = useUserTokensQuery({
     variables: { address: walletAddress },
   });
   const tokens = userTokensData ? userTokensData.user.tokens : [];
-  const editTokens = useCallback(
-    () =>
-      openDialog('UserTokenEditDialog', {
-        selectedTokens: tokens && tokens.map(({ address }) => address),
-        walletAddress,
-      }),
-    [openDialog, tokens, walletAddress],
-  );
+  const editTokens = useCallback(() => openDialog({ walletAddress }), [
+    openDialog,
+    walletAddress,
+  ]);
   return (
     <div className={styles.layoutMain}>
       <main className={styles.content}>
@@ -115,4 +109,4 @@ const Wallet = ({ openDialog }: Props) => {
 
 Wallet.displayName = 'dashboard.Wallet';
 
-export default withDialog()(Wallet);
+export default Wallet;

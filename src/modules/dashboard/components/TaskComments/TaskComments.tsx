@@ -3,9 +3,7 @@ import React, { useCallback, KeyboardEvent, SyntheticEvent } from 'react';
 import { defineMessages } from 'react-intl';
 import * as yup from 'yup';
 
-import { OpenDialog } from '~core/Dialog/types';
 import { ENTER } from '~types/index';
-import withDialog from '~core/Dialog/withDialog';
 import { Form, TextareaAutoresize } from '~core/Fields';
 import Button from '~core/Button';
 import unfinishedProfileOpener from '~users/UnfinishedProfile';
@@ -46,7 +44,6 @@ type FormValues = {
 };
 
 interface Props extends FormikProps<FormValues> {
-  openDialog: OpenDialog;
   draftId: AnyTask['id'];
   history: any;
 }
@@ -175,4 +172,4 @@ const TaskComments = ({ draftId, history }: Props) => {
 
 TaskComments.displayName = displayName;
 
-export default withDialog()(TaskComments) as any;
+export default TaskComments;

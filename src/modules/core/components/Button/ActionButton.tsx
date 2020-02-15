@@ -1,4 +1,5 @@
 import React, { useState, ReactType } from 'react';
+import { MessageDescriptor } from 'react-intl';
 
 import { ActionTransformFnType } from '~utils/actions';
 import { log } from '~utils/debug';
@@ -14,6 +15,7 @@ interface Props extends DefaultButtonProps {
   onSuccess?: (result: any) => void;
   submit: string;
   success: string;
+  text?: MessageDescriptor | string;
   transform?: ActionTransformFnType;
   values?: any | (() => any | Promise<any>);
 }

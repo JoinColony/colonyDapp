@@ -100,19 +100,13 @@ const TaskClaimRewardDialog = ({
   cancel,
   close,
   task: {
-    /* colonyAddress, */
     /* reputation, */
     /* payouts, */
     title,
-    // @ts-ignore
     rating,
-    // @ts-ignore
     lateRating,
-    // @ts-ignore
     lateReveal,
-    // @ts-ignore
     sortedPayouts,
-    // @ts-ignore
     nativeTokenPayout,
   },
 }: Props) => {
