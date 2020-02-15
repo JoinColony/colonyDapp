@@ -1,5 +1,7 @@
 import jwtDecode from 'jwt-decode';
 
+import { createAddress } from '~types/strings';
+
 const TOKEN_STORAGE = 'colony-server-token';
 
 const postRequest = async (path: string, data: object) => {
@@ -25,7 +27,7 @@ export const authenticate = async wallet => {
   if (token) {
     const tokenData = jwtDecode(token);
     if (
-      tokenData.address === wallet.address &&
+      createAddress(tokenData.address) === createAddress(wallet.address) &&
       // JWT expiry dates are noted in seconds
       tokenData.exp * 10 ** 3 > Date.now()
     ) {
