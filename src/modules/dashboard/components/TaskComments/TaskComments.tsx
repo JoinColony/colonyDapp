@@ -43,7 +43,7 @@ type FormValues = {
   comment: string;
 };
 
-interface Props extends FormikProps<FormValues> {
+interface Props {
   draftId: AnyTask['id'];
   history: any;
 }
