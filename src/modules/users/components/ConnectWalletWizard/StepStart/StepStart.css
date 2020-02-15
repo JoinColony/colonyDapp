@@ -1,5 +1,6 @@
 .content {
   width: 340px;
+  position: relative;
 }
 
 .title {
@@ -15,4 +16,25 @@
 
 .createWalletLink {
   margin-top: 64px;
+}
+
+.autoLoginOverlay {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: calc(0px - var(--pad-large));
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  border-radius: var(--radius-normal);
+  background-color: color-mod(var(--grey-5) alpha(60%));
+  box-shadow: 0 0 12px color-mod(var(--grey-5) alpha(60%));
+}
+
+.autoLoginSpinner {
+  padding: var(--pad-medium);
+  border-radius: var(--radius-normal);
+  background-color: var(--colony-white);
 }

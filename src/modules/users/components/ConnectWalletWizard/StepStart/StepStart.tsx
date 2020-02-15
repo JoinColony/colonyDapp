@@ -11,6 +11,7 @@ import DecisionHub, { DecisionOption } from '~core/DecisionHub';
 import { CREATE_WALLET_ROUTE } from '~routes/index';
 import styles from './StepStart.css';
 import { useAutoLogin } from '~utils/autoLogin';
+import { SpinnerLoader } from '~core/Preloaders';
 
 const MSG = defineMessages({
   heading: {
@@ -153,51 +154,49 @@ const StepStart = ({ nextStep, wizardValues }: Props) => {
   return (
     <Form onSubmit={nextStep} initialValues={wizardValues}>
       <main className={styles.content}>
-        {attemptingAutoLogin ? (
-          <p>Loading</p>
-        ) : (
-          <>
-            <div className={styles.title}>
-              <Heading
-                appearance={{ size: 'medium', weight: 'thin' }}
-                text={MSG.heading}
-              />
+        {attemptingAutoLogin && (
+          <div className={styles.autoLoginOverlay}>
+            <div className={styles.autoLoginSpinner}>
+              <SpinnerLoader appearance={{ size: 'large' }} />
             </div>
-            <div className={styles.subtitle}>
-              <Heading
-                appearance={{ size: 'normal', weight: 'thin' }}
-                text={MSG.subTitle}
-              />
-            </div>
-            <div className={styles.subtitle}>
-              <Heading appearance={{ size: 'normal', weight: 'thin' }}>
-                <FormattedMessage
-                  {...MSG.agreeToUseDapp}
-                  values={{
-                    tos: (
-                      <ExternalLink
-                        text={MSG.termsOfService}
-                        href="https://colony.io/pdf/terms.pdf"
-                      />
-                    ),
-                  }}
-                />
-              </Heading>
-            </div>
-            <DecisionHub name="method" options={options} />
-            <div
-              className={styles.createWalletLink}
-              data-test="createWalletLink"
-            >
-              <DecisionOption
-                appearance={{ theme: 'alt' }}
-                name="create"
-                option={createWalletOption}
-                link={CREATE_WALLET_ROUTE}
-              />
-            </div>
-          </>
+          </div>
         )}
+        <div className={styles.title}>
+          <Heading
+            appearance={{ size: 'medium', weight: 'thin' }}
+            text={MSG.heading}
+          />
+        </div>
+        <div className={styles.subtitle}>
+          <Heading
+            appearance={{ size: 'normal', weight: 'thin' }}
+            text={MSG.subTitle}
+          />
+        </div>
+        <div className={styles.subtitle}>
+          <Heading appearance={{ size: 'normal', weight: 'thin' }}>
+            <FormattedMessage
+              {...MSG.agreeToUseDapp}
+              values={{
+                tos: (
+                  <ExternalLink
+                    text={MSG.termsOfService}
+                    href="https://colony.io/pdf/terms.pdf"
+                  />
+                ),
+              }}
+            />
+          </Heading>
+        </div>
+        <DecisionHub name="method" options={options} />
+        <div className={styles.createWalletLink} data-test="createWalletLink">
+          <DecisionOption
+            appearance={{ theme: 'alt' }}
+            name="create"
+            option={createWalletOption}
+            link={CREATE_WALLET_ROUTE}
+          />
+        </div>
       </main>
     </Form>
   );
