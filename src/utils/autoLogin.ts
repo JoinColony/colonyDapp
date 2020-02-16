@@ -41,17 +41,19 @@ export const useMetaMaskAutoLogin = (
   useEffect(() => {
     (async () => {
       if (lastWalletType === WALLET_SPECIFICS.METAMASK) {
+        let wallet;
         try {
-          const wallet = await open();
+          wallet = await open();
+        } finally {
           if (
+            wallet !== undefined &&
             createAddress(wallet.address) === createAddress(lastWalletAddress)
           ) {
             setShouldTry(true);
           } else {
+            clearLastWallet();
             setLoading(false);
           }
-        } catch (e) {
-          setLoading(false);
         }
       }
     })();
@@ -64,6 +66,7 @@ export const useMetaMaskAutoLogin = (
         try {
           await login({ method: WALLET_SPECIFICS.METAMASK });
         } catch (e) {
+          clearLastWallet();
           setLoading(false);
         }
       }
