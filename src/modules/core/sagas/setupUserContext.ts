@@ -32,6 +32,7 @@ import setupNetworkSagas from './network';
 import { getGasPrices, getColonyManager, getWalletCategory } from './utils';
 import setupOnBeforeUnload from './setupOnBeforeUnload';
 import { setupUserBalanceListener } from './setupUserBalanceListener';
+import { setLastWallet } from '~utils/autoLogin';
 
 function* setupContextDependentSagas() {
   yield all([
@@ -75,6 +76,10 @@ export default function* setupUserContext(
         walletType: getWalletCategory(method),
       },
     });
+
+    if (method !== 'create') {
+      yield call(setLastWallet, method, walletAddress);
+    }
 
     /*
      * Set up the DDB instance and colony manager context.

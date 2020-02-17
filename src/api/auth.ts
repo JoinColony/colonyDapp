@@ -1,5 +1,8 @@
 import jwtDecode from 'jwt-decode';
 
+import { createAddress } from '~types/strings';
+import { log } from '~utils/debug';
+
 const TOKEN_STORAGE = 'colony-server-token';
 
 const postRequest = async (path: string, data: object) => {
@@ -21,17 +24,26 @@ export const clearToken = (walletAddress: string) =>
   localStorage.removeItem(`${TOKEN_STORAGE}-${walletAddress}`);
 
 export const authenticate = async wallet => {
-  const token = getToken(wallet.address);
-  if (token) {
-    const tokenData = jwtDecode(token);
-    if (
-      tokenData.address === wallet.address &&
-      // JWT expiry dates are noted in seconds
-      tokenData.exp * 10 ** 3 > Date.now()
-    ) {
-      return token;
+  try {
+    const token = getToken(wallet.address);
+    if (token) {
+      const tokenData = jwtDecode(token);
+      if (
+        createAddress(tokenData.address) === createAddress(wallet.address) &&
+        // JWT expiry dates are noted in seconds
+        tokenData.exp * 10 ** 3 > Date.now()
+      ) {
+        return token;
+      }
     }
+  } catch (error) {
+    log.error(error);
+    log.debug(
+      `Found invalid JWT, clearing token for address ${wallet.address}`,
+    );
+    clearToken(wallet.address);
   }
+
   const { challenge } = await postRequest('/auth/challenge', {
     address: wallet.address,
   });
