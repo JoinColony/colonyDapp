@@ -16,10 +16,14 @@ import {
   FinalizeTaskMutation,
   FinalizeTaskMutationVariables,
   cacheUpdates,
+  TokenBalancesForDomainsDocument,
+  TokenBalancesForDomainsQuery,
+  TokenBalancesForDomainsQueryVariables,
 } from '~data/index';
 import { Action, ActionTypes } from '~redux/index';
 import { ContractContexts } from '~types/index';
 import { putError, takeFrom } from '~utils/saga/effects';
+import { COLONY_TOTAL_BALANCE_DOMAIN_ID } from '~constants';
 
 import { createTransaction, getTxChannel } from '../../core/sagas';
 
@@ -134,6 +138,26 @@ function* taskFinalize({
           ethPotId: potId,
         },
       },
+    });
+
+    // Refetch token balances for the domains involved
+    yield apolloClient.query<
+      TokenBalancesForDomainsQuery,
+      TokenBalancesForDomainsQueryVariables
+    >({
+      query: TokenBalancesForDomainsDocument,
+      variables: {
+        colonyAddress,
+        tokenAddresses: [token],
+        /*
+         * @NOTE Also update the value in "All Domains"
+         */
+        domainIds: [COLONY_TOTAL_BALANCE_DOMAIN_ID, ethDomainId],
+      },
+      // Force resolvers to update, as query resolvers are only updated on a cache miss
+      // See #4: https://www.apollographql.com/docs/link/links/state/#resolvers
+      // Also: https://www.apollographql.com/docs/react/api/react-apollo/#optionsfetchpolicy
+      fetchPolicy: 'network-only',
     });
 
     yield put<AllActions>({
