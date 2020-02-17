@@ -4,7 +4,9 @@ import { open } from '@colony/purser-metamask';
 import { WALLET_SPECIFICS } from '~immutable/index';
 import { Address, createAddress } from '~types/index';
 import { ActionTypes } from '~redux/index';
+
 import { useAsyncFunction } from './hooks';
+import { log } from './debug';
 
 export const LAST_WALLET_KEY = 'colony-last-wallet-type';
 export const LAST_ADDRESS_KEY = 'colony-last-wallet-address';
@@ -35,43 +37,28 @@ export const useMetaMaskAutoLogin = (
   const [loading, setLoading] = useState(
     lastWalletType === WALLET_SPECIFICS.METAMASK,
   );
-  const [shouldTry, setShouldTry] = useState(false);
 
-  // Determine if we should attempt MM auto login
   useEffect(() => {
     (async () => {
       if (lastWalletType === WALLET_SPECIFICS.METAMASK) {
-        let wallet;
         try {
-          wallet = await open();
-        } finally {
+          const wallet = await open();
           if (
-            wallet !== undefined &&
             createAddress(wallet.address) === createAddress(lastWalletAddress)
           ) {
-            setShouldTry(true);
-          } else {
-            clearLastWallet();
-            setLoading(false);
+            await login({ method: WALLET_SPECIFICS.METAMASK });
+            return;
           }
+        } catch (error) {
+          log.error(error);
+          log.debug('MetaMask auto login was attempted and failed');
         }
-      }
-    })();
-  }, [lastWalletType, lastWalletAddress, setShouldTry]);
 
-  // If we shoulld attempt, then give it a go
-  useEffect(() => {
-    (async () => {
-      if (shouldTry) {
-        try {
-          await login({ method: WALLET_SPECIFICS.METAMASK });
-        } catch (e) {
-          clearLastWallet();
-          setLoading(false);
-        }
+        clearLastWallet();
+        setLoading(false);
       }
     })();
-  }, [login, shouldTry, setLoading]);
+  }, [lastWalletType, lastWalletAddress, login]);
 
   return loading;
 };
