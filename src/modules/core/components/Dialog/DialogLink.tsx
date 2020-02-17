@@ -11,7 +11,7 @@ interface Props {
   to: ComponentType<any>;
 }
 
-const DialogLink = ({ children, props, to }) => {
+const DialogLink = ({ children, props, to }: Props) => {
   const openDialog = useDialog(to);
   const open = useCallback(() => {
     return openDialog(props);
