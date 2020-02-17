@@ -28,6 +28,10 @@ const MSG = defineMessages({
   },
 });
 
+interface FormValues {
+  domainName: string;
+}
+
 interface Props {
   domain: DomainType;
   colonyAddress: Address;
@@ -52,7 +56,7 @@ const DomainEditDialog = ({ domain, colonyAddress, cancel, close }: Props) => {
           domainName: domain.name,
         }}
       >
-        {({ isSubmitting }: FormikProps<any>) => (
+        {({ isSubmitting }: FormikProps<FormValues>) => (
           <>
             <DialogSection>
               <Heading
