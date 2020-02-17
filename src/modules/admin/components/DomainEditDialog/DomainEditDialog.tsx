@@ -28,7 +28,7 @@ const MSG = defineMessages({
   },
 });
 
-export interface Props {
+interface Props {
   domain: DomainType;
   colonyAddress: Address;
   cancel: () => void;
