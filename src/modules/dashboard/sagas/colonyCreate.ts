@@ -19,7 +19,8 @@ import {
 } from '~data/index';
 import ENS from '~lib/ENS';
 import { ActionTypes, Action, AllActions } from '~redux/index';
-import { createAddress, ContractContexts } from '~types/index';
+import { createAddress } from '~utils/web3';
+import { ContractContexts } from '~types/index';
 import { log } from '~utils/debug';
 import { putError, takeFrom, takeLatestCancellable } from '~utils/saga/effects';
 import { parseExtensionDeployedLog } from '~utils/web3/eventLogs/eventParsers';

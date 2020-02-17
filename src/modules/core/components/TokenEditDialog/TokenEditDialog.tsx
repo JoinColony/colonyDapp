@@ -8,7 +8,8 @@ import Dialog, { DialogSection } from '~core/Dialog';
 import { Form, Input } from '~core/Fields';
 import Heading from '~core/Heading';
 import { AnyToken } from '~data/index';
-import { Address, createAddress } from '~types/strings';
+import { Address } from '~types/index';
+import { createAddress } from '~utils/web3';
 
 import TokenItem from './TokenItem/index';
 

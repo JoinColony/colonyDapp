@@ -1,6 +1,6 @@
 import jwtDecode from 'jwt-decode';
 
-import { createAddress } from '~types/strings';
+import { createAddress } from '~utils/web3';
 import { log } from '~utils/debug';
 
 const TOKEN_STORAGE = 'colony-server-token';

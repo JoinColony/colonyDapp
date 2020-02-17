@@ -7,7 +7,7 @@ import {
   UserTokensQueryVariables,
   useUserTokensQuery,
 } from '~data/index';
-import { Address } from '~types/strings';
+import { Address } from '~types/index';
 
 import { tokenIsETH } from '../../../core/checks';
 

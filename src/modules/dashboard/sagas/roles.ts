@@ -7,8 +7,8 @@ import { putError } from '~utils/saga/effects';
 import { Context, getContext } from '~context/index';
 import { ColonyRolesType, DomainRolesType } from '~immutable/index';
 import { ZERO_ADDRESS } from '~utils/web3/constants';
+import { createAddress } from '~utils/web3';
 import {
-  createAddress,
   Address,
   ContractContexts,
   ColonyClient,

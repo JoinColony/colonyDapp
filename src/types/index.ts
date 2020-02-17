@@ -1,10 +1,7 @@
 import { ReactNode } from 'react';
 
-import { Address, ENSName } from '~types/index';
-
 export * from './keyTypes';
 export * from './TransactionReceipt';
-export * from './strings';
 export * from './domains';
 export * from './DefaultValues';
 export * from './RecordToJS';
@@ -31,6 +28,10 @@ export interface DataObject<T> {
 export interface KeyedDataObject<T> extends DataObject<T> {
   key: string;
 }
+
+export type Address = string;
+
+export type ENSName = string;
 
 export type AddressOrENSName = Address | ENSName;
 

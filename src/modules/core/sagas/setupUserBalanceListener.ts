@@ -4,7 +4,7 @@ import { take } from '@redux-saga/core/effects';
 import { formatEther } from 'ethers/utils';
 
 import { Context, getContext } from '~context/index';
-import { Address } from '~types/strings';
+import { Address } from '~types/index';
 import { log } from '~utils/debug';
 import {
   SetLoggedInUserDocument,

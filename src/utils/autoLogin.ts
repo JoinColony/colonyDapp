@@ -2,7 +2,8 @@ import { useState, useEffect } from 'react';
 import { open } from '@colony/purser-metamask';
 
 import { WALLET_SPECIFICS } from '~immutable/index';
-import { Address, createAddress } from '~types/index';
+import { Address } from '~types/index';
+import { createAddress } from '~utils/web3';
 import { ActionTypes } from '~redux/index';
 
 import { useAsyncFunction } from './hooks';

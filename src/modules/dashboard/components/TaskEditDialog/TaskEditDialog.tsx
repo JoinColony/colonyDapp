@@ -28,7 +28,8 @@ import {
   UserTasksDocument,
   UserTasksQueryVariables,
 } from '~data/index';
-import { Address, createAddress } from '~types/index';
+import { createAddress } from '~utils/web3';
+import { Address } from '~types/index';
 import HookedUserAvatar from '~users/HookedUserAvatar';
 
 import Payout, { FormPayout } from './Payout';

@@ -11,7 +11,8 @@ import {
 import { Action, ActionTypes, AllActions } from '~redux/index';
 import { getContext, Context, TEMP_removeNewContext } from '~context/index';
 import ENS from '~lib/ENS';
-import { ColonyManager, createAddress } from '~types/index';
+import { ColonyManager } from '~types/index';
+import { createAddress } from '~utils/web3';
 import {
   getLoggedInUser,
   refetchUserNotifications,
