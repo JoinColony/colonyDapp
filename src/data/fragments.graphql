@@ -99,6 +99,30 @@ fragment SuggestionFields on Suggestion {
   upvotes
 }
 
+fragment ProgramFields on Program {
+  id
+  createdAt
+  creatorAddress
+  colonyAddress
+  title
+  description
+  levels {
+    id
+    achievement
+    description
+    createdAt
+    creatorAddress
+    numRequiredSteps
+    programId
+    stepIds
+    status
+    title
+  }
+  levelIds
+  enrolledUserAddresses
+  status
+}
+
 fragment EventFields on Event {
   createdAt
   initiator {
