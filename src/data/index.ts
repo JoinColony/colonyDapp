@@ -17,6 +17,7 @@ import {
   UserTokensQuery,
   ColonySuggestionsQuery,
   ColonyProgramsQuery,
+  ProgramQuery,
 } from './generated';
 import {
   loggedInUserResolvers,
@@ -68,7 +69,9 @@ export type AnyColonyProfile = FullColonyFragment | ColonyProfileFragment;
 export type OneSuggestion = ColonySuggestionsQuery['colony']['suggestions'][number];
 
 export type ColonyPrograms = ColonyProgramsQuery['colony']['programs'];
-export type OneProgram = ColonyProgramsQuery['colony']['programs'][number];
+export type OneProgram =
+  | ColonyProgramsQuery['colony']['programs'][number]
+  | ProgramQuery['program'];
 
 export type OneToken = TokenQuery['token'];
 export type ColonyTokens = ColonyQuery['colony']['tokens'];
