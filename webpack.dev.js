@@ -9,7 +9,7 @@ module.exports = () => ({
   /*
    * Add the rest of the DEVELOPMENT environment required configs here
    */
-  devtool: 'source-map',
+  devtool: 'inline-source-map',
   devServer: {
     historyApiFallback: true,
     contentBase: [path.resolve(__dirname, '..', 'colonyNetwork', 'build')],
@@ -34,6 +34,7 @@ module.exports = () => ({
             loader: 'ts-loader',
             options: {
               transpileOnly: true,
+              configFile: 'tsconfig.dev.json'
             },
           },
         ],
