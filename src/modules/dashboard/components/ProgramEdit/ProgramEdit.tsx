@@ -63,6 +63,7 @@ interface FormValues {
 interface Props {
   colonyName: string;
   program: OneProgram;
+  toggleEditMode: () => void;
 }
 
 const validationSchema = yup.object({
@@ -75,6 +76,7 @@ const displayName = 'dashboard.ProgramEdit';
 const ProgramEdit = ({
   colonyName,
   program: { id, description, status, title },
+  toggleEditMode,
 }: Props) => {
   const isDraft = status === ProgramStatus.Draft;
 
@@ -117,6 +119,14 @@ const ProgramEdit = ({
     history.push(`/colony/${colonyName}`);
   }, [colonyName, deleteProgram, history]);
 
+  const cancelButtonActionProps = isDraft
+    ? {
+        linkTo: `/colony/${colonyName}`,
+      }
+    : {
+        onClick: toggleEditMode,
+      };
+
   return (
     <>
       <Form
@@ -153,7 +163,7 @@ const ProgramEdit = ({
                   <Button
                     appearance={{ theme: 'blue' }}
                     text={{ id: 'button.cancel' }}
-                    linkTo={`/colony/${colonyName}`}
+                    {...cancelButtonActionProps}
                   />
                 </div>
               </div>
