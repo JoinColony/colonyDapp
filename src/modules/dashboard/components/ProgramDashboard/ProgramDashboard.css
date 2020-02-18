@@ -1,0 +1,15 @@
+.titleContainer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.headingContainer {
+  display: flex;
+  align-items: baseline;
+}
+
+.editButtonContainer {
+  margin-left: 20px;
+}
