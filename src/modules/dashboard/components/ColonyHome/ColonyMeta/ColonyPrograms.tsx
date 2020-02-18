@@ -113,28 +113,30 @@ const ColonyPrograms = ({
 
   return (
     <section className={styles.main}>
-      <nav className={styles.programsNav}>
-        {programs.map(({ id, status, title }) => {
-          const isDraft = status === ProgramStatus.Draft;
-          return (
-            <span
-              className={isDraft ? styles.draft : styles.baseStyles}
-              key={id}
-            >
-              <NavLink
-                className={styles.navLink}
-                text={title || MSG.linkUntitledProgramText}
-                title={MSG.linkProgramTitleText}
-                titleValues={{
-                  isDraft,
-                  title: title || formatMessage(MSG.linkUntitledProgramText),
-                }}
-                to={`/colony/${colonyName}/program/${id}`}
-              />
-            </span>
-          );
-        })}
-      </nav>
+      {programs.length > 0 && (
+        <nav className={styles.programsNav}>
+          {programs.map(({ id, status, title }) => {
+            const isDraft = status === ProgramStatus.Draft;
+            return (
+              <span
+                className={isDraft ? styles.draft : styles.baseStyles}
+                key={id}
+              >
+                <NavLink
+                  className={styles.navLink}
+                  text={title || MSG.linkUntitledProgramText}
+                  title={MSG.linkProgramTitleText}
+                  titleValues={{
+                    isDraft,
+                    title: title || formatMessage(MSG.linkUntitledProgramText),
+                  }}
+                  to={`/colony/${colonyName}/program/${id}`}
+                />
+              </span>
+            );
+          })}
+        </nav>
+      )}
       {canCreate && (
         <Button
           appearance={{ theme: 'blue' }}
