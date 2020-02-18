@@ -163,8 +163,9 @@ export type Scalars = {
 };
 
 
-export type AcceptSubmissionInput = {
-  id: Scalars['String'],
+export type AcceptLevelTaskSubmissionInput = {
+  levelId: Scalars['String'],
+  submissionId: Scalars['String'],
 };
 
 export type AddUpvoteToSuggestionInput = {
@@ -443,6 +444,7 @@ export type Level = {
   stepIds: Array<Scalars['String']>,
   steps: Array<PersistentTask>,
   status: LevelStatus,
+  unlocked: Scalars['Boolean'],
 };
 
 export enum LevelStatus {
@@ -502,14 +504,13 @@ export type Mutation = {
   unsubscribeFromColony?: Maybe<User>,
   setUserTokens?: Maybe<User>,
   createLevelTaskSubmission?: Maybe<Submission>,
+  acceptLevelTaskSubmission?: Maybe<Submission>,
   editSubmission?: Maybe<Submission>,
-  acceptSubmission?: Maybe<Submission>,
   createLevelTask?: Maybe<PersistentTask>,
   removeLevelTask?: Maybe<PersistentTask>,
   editPersistentTask?: Maybe<PersistentTask>,
   setPersistentTaskPayout?: Maybe<PersistentTask>,
   removePersistentTaskPayout?: Maybe<PersistentTask>,
-  removePersistentTask?: Maybe<PersistentTask>,
   createLevel?: Maybe<Level>,
   editLevel?: Maybe<Level>,
   reorderLevelSteps?: Maybe<Level>,
@@ -690,13 +691,13 @@ export type MutationCreateLevelTaskSubmissionArgs = {
 };
 
 
-export type MutationEditSubmissionArgs = {
-  input: EditSubmissionInput
+export type MutationAcceptLevelTaskSubmissionArgs = {
+  input: AcceptLevelTaskSubmissionInput
 };
 
 
-export type MutationAcceptSubmissionArgs = {
-  input: AcceptSubmissionInput
+export type MutationEditSubmissionArgs = {
+  input: EditSubmissionInput
 };
 
 
@@ -722,11 +723,6 @@ export type MutationSetPersistentTaskPayoutArgs = {
 
 export type MutationRemovePersistentTaskPayoutArgs = {
   input: RemoveTaskPayoutInput
-};
-
-
-export type MutationRemovePersistentTaskArgs = {
-  input: RemovePersistentTaskInput
 };
 
 
@@ -824,6 +820,7 @@ export type Program = {
   levelIds: Array<Scalars['String']>,
   levels: Array<Level>,
   enrolledUserAddresses: Array<Scalars['String']>,
+  enrolled: Scalars['Boolean'],
   status: ProgramStatus,
   submissions: Array<Submission>,
 };
@@ -842,6 +839,8 @@ export type Query = {
   user: User,
   colony: Colony,
   domain: Domain,
+  level: Level,
+  program: Program,
   task: Task,
   tokenInfo: TokenInfo,
   systemInfo: SystemInfo,
@@ -868,6 +867,16 @@ export type QueryColonyArgs = {
 export type QueryDomainArgs = {
   colonyAddress: Scalars['String'],
   ethDomainId: Scalars['Int']
+};
+
+
+export type QueryLevelArgs = {
+  id: Scalars['String']
+};
+
+
+export type QueryProgramArgs = {
+  id: Scalars['String']
 };
 
 
@@ -917,10 +926,6 @@ export type RemoveLevelInput = {
 export type RemoveLevelTaskInput = {
   id: Scalars['String'],
   levelId: Scalars['String'],
-};
-
-export type RemovePersistentTaskInput = {
-  id: Scalars['String'],
 };
 
 export type RemoveProgramInput = {
@@ -1291,6 +1296,11 @@ export type SuggestionFieldsFragment = (
   ) }
 );
 
+export type ProgramFieldsFragment = (
+  Pick<Program, 'id' | 'createdAt' | 'creatorAddress' | 'colonyAddress' | 'title' | 'description' | 'levelIds' | 'enrolledUserAddresses' | 'status'>
+  & { levels: Array<Pick<Level, 'id' | 'achievement' | 'description' | 'createdAt' | 'creatorAddress' | 'numRequiredSteps' | 'programId' | 'stepIds' | 'status' | 'title'>> }
+);
+
 export type EventFieldsFragment = (
   Pick<Event, 'createdAt' | 'initiatorAddress' | 'sourceId' | 'sourceType' | 'type'>
   & { initiator: Maybe<(
@@ -1602,7 +1612,7 @@ export type CreateProgramMutationVariables = {
 };
 
 
-export type CreateProgramMutation = { createProgram: Maybe<Pick<Program, 'id' | 'createdAt' | 'creatorAddress' | 'colonyAddress' | 'title' | 'description' | 'levelIds' | 'enrolledUserAddresses' | 'status'>> };
+export type CreateProgramMutation = { createProgram: Maybe<ProgramFieldsFragment> };
 
 export type EditProgramMutationVariables = {
   input: EditProgramInput
@@ -1830,8 +1840,15 @@ export type ColonyProgramsQueryVariables = {
 
 export type ColonyProgramsQuery = { colony: (
     Pick<Colony, 'id'>
-    & { programs: Array<Pick<Program, 'id' | 'createdAt' | 'creatorAddress' | 'colonyAddress' | 'title' | 'description' | 'levelIds' | 'enrolledUserAddresses' | 'status'>> }
+    & { programs: Array<ProgramFieldsFragment> }
   ) };
+
+export type ProgramQueryVariables = {
+  id: Scalars['String']
+};
+
+
+export type ProgramQuery = { program: ProgramFieldsFragment };
 
 export type ColonySubscribedUsersQueryVariables = {
   colonyAddress: Scalars['String']
@@ -2015,6 +2032,31 @@ export const SuggestionFieldsFragmentDoc = gql`
   title
   taskId
   upvotes
+}
+    `;
+export const ProgramFieldsFragmentDoc = gql`
+    fragment ProgramFields on Program {
+  id
+  createdAt
+  creatorAddress
+  colonyAddress
+  title
+  description
+  levels {
+    id
+    achievement
+    description
+    createdAt
+    creatorAddress
+    numRequiredSteps
+    programId
+    stepIds
+    status
+    title
+  }
+  levelIds
+  enrolledUserAddresses
+  status
 }
     `;
 export const EventFieldsFragmentDoc = gql`
@@ -3386,18 +3428,10 @@ export type CreateTaskFromSuggestionMutationOptions = ApolloReactCommon.BaseMuta
 export const CreateProgramDocument = gql`
     mutation CreateProgram($input: CreateProgramInput!) {
   createProgram(input: $input) {
-    id
-    createdAt
-    creatorAddress
-    colonyAddress
-    title
-    description
-    levelIds
-    enrolledUserAddresses
-    status
+    ...ProgramFields
   }
 }
-    `;
+    ${ProgramFieldsFragmentDoc}`;
 export type CreateProgramMutationFn = ApolloReactCommon.MutationFunction<CreateProgramMutation, CreateProgramMutationVariables>;
 
 /**
@@ -4316,19 +4350,11 @@ export const ColonyProgramsDocument = gql`
   colony(address: $address) {
     id
     programs {
-      id
-      createdAt
-      creatorAddress
-      colonyAddress
-      title
-      description
-      levelIds
-      enrolledUserAddresses
-      status
+      ...ProgramFields
     }
   }
 }
-    `;
+    ${ProgramFieldsFragmentDoc}`;
 
 /**
  * __useColonyProgramsQuery__
@@ -4355,6 +4381,39 @@ export function useColonyProgramsLazyQuery(baseOptions?: ApolloReactHooks.LazyQu
 export type ColonyProgramsQueryHookResult = ReturnType<typeof useColonyProgramsQuery>;
 export type ColonyProgramsLazyQueryHookResult = ReturnType<typeof useColonyProgramsLazyQuery>;
 export type ColonyProgramsQueryResult = ApolloReactCommon.QueryResult<ColonyProgramsQuery, ColonyProgramsQueryVariables>;
+export const ProgramDocument = gql`
+    query Program($id: String!) {
+  program(id: $id) {
+    ...ProgramFields
+  }
+}
+    ${ProgramFieldsFragmentDoc}`;
+
+/**
+ * __useProgramQuery__
+ *
+ * To run a query within a React component, call `useProgramQuery` and pass it any options that fit your needs.
+ * When your component renders, `useProgramQuery` returns an object from Apollo Client that contains loading, error, and data properties 
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useProgramQuery({
+ *   variables: {
+ *      id: // value for 'id'
+ *   },
+ * });
+ */
+export function useProgramQuery(baseOptions?: ApolloReactHooks.QueryHookOptions<ProgramQuery, ProgramQueryVariables>) {
+        return ApolloReactHooks.useQuery<ProgramQuery, ProgramQueryVariables>(ProgramDocument, baseOptions);
+      }
+export function useProgramLazyQuery(baseOptions?: ApolloReactHooks.LazyQueryHookOptions<ProgramQuery, ProgramQueryVariables>) {
+          return ApolloReactHooks.useLazyQuery<ProgramQuery, ProgramQueryVariables>(ProgramDocument, baseOptions);
+        }
+export type ProgramQueryHookResult = ReturnType<typeof useProgramQuery>;
+export type ProgramLazyQueryHookResult = ReturnType<typeof useProgramLazyQuery>;
+export type ProgramQueryResult = ApolloReactCommon.QueryResult<ProgramQuery, ProgramQueryVariables>;
 export const ColonySubscribedUsersDocument = gql`
     query ColonySubscribedUsers($colonyAddress: String!) {
   colony(address: $colonyAddress) {
