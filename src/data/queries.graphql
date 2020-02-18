@@ -303,16 +303,14 @@ query ColonyPrograms($address: String!) {
   colony(address: $address) {
     id
     programs {
-      id
-      createdAt
-      creatorAddress
-      colonyAddress
-      title
-      description
-      levelIds
-      enrolledUserAddresses
-      status
+      ...ProgramFields
     }
+  }
+}
+
+query Program($id: String!) {
+  program(id: $id) {
+    ...ProgramFields
   }
 }
 

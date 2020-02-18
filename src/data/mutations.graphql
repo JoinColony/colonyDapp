@@ -326,15 +326,7 @@ mutation CreateTaskFromSuggestion($input: CreateTaskFromSuggestionInput!) {
 
 mutation CreateProgram($input: CreateProgramInput!) {
   createProgram(input: $input) {
-    id
-    createdAt
-    creatorAddress
-    colonyAddress
-    title
-    description
-    levelIds
-    enrolledUserAddresses
-    status
+    ...ProgramFields
   }
 }
 

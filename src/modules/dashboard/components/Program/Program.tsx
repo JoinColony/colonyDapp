@@ -3,7 +3,7 @@ import { defineMessages, FormattedMessage } from 'react-intl';
 import { useParams, Redirect } from 'react-router-dom';
 
 import { ROOT_DOMAIN } from '~constants';
-import { useLoggedInUser, useProgram, ProgramStatus } from '~data/index';
+import { useLoggedInUser, ProgramStatus, useProgramQuery } from '~data/index';
 import { Address } from '~types/index';
 import { useDataFetcher, useTransformer } from '~utils/hooks';
 
@@ -43,16 +43,17 @@ const Program = ({ colonyAddress, colonyName }: Props) => {
     walletAddress,
   ]);
 
-  const { data: program, error, loading } = useProgram(
-    colonyAddress,
-    programId,
-  );
+  const { data, error, loading } = useProgramQuery({
+    variables: { id: programId },
+  });
 
   const canAdmin = canCreateProgram(userRoles);
 
   if (loading) {
     return <SpinnerLoader />;
   }
+
+  const program = data && data.program;
 
   if (
     program &&

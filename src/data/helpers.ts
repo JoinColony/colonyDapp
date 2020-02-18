@@ -16,32 +16,12 @@ import {
   UserNotificationsDocument,
   UserNotificationsQuery,
   UserNotificationsQueryVariables,
-  OneProgram,
 } from './index';
-import { useColonyProgramsQuery } from './generated';
 
 const getMinimalUser = (address: string): UserQuery['user'] => ({
   id: address,
   profile: { walletAddress: address },
 });
-
-export const useProgram = (
-  colonyAddress: Address,
-  programId: string,
-): { data?: OneProgram; error?: string; loading: boolean } => {
-  const { data, error, loading } = useColonyProgramsQuery({
-    variables: { address: colonyAddress },
-  });
-
-  const program =
-    data && data.colony.programs.find(({ id }) => id === programId);
-
-  return {
-    data: program,
-    error: error || (!program && !loading) ? 'Program not found' : undefined,
-    loading,
-  };
-};
 
 export const useUser = (address: Address) => {
   const { data } = useUserQuery({ variables: { address } });
