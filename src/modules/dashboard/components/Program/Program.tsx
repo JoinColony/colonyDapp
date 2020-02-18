@@ -1,8 +1,9 @@
-import React from 'react';
+import React, { useState, useCallback, useEffect } from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
-import { useParams, Redirect } from 'react-router-dom';
+import { useLocation, useParams, Redirect } from 'react-router-dom';
 
 import { ROOT_DOMAIN } from '~constants';
+import { SpinnerLoader } from '~core/Preloaders';
 import { useLoggedInUser, ProgramStatus, useProgramQuery } from '~data/index';
 import { Address } from '~types/index';
 import { useDataFetcher, useTransformer } from '~utils/hooks';
@@ -12,7 +13,6 @@ import ProgramEdit from '../ProgramEdit';
 import { canCreateProgram } from '../../checks';
 import { domainsAndRolesFetcher } from '../../fetchers';
 import { getUserRoles } from '../../../transformers';
-import { SpinnerLoader } from '~core/Preloaders';
 
 const MSG = defineMessages({
   programNotFoundText: {
@@ -29,8 +29,16 @@ interface Props {
 const displayName = 'dashboard.Program';
 
 const Program = ({ colonyAddress, colonyName }: Props) => {
+  const location = useLocation();
   const { programId } = useParams();
   const { walletAddress } = useLoggedInUser();
+
+  const [isEditing, setIsEditing] = useState<boolean>(false);
+
+  useEffect(() => {
+    setIsEditing(false);
+    // Force out of edit state after each route change
+  }, [location]);
 
   const { data: domainsAndRolesData } = useDataFetcher(
     domainsAndRolesFetcher,
@@ -46,6 +54,10 @@ const Program = ({ colonyAddress, colonyName }: Props) => {
   const { data, error, loading } = useProgramQuery({
     variables: { id: programId },
   });
+
+  const toggleEditMode = useCallback(() => {
+    setIsEditing(val => !val);
+  }, []);
 
   const canAdmin = canCreateProgram(userRoles);
 
@@ -67,10 +79,18 @@ const Program = ({ colonyAddress, colonyName }: Props) => {
     return <FormattedMessage tag="p" {...MSG.programNotFoundText} />;
   }
 
-  return program.status === ProgramStatus.Draft ? (
-    <ProgramEdit colonyName={colonyName} program={program} />
+  return canAdmin && (program.status === ProgramStatus.Draft || isEditing) ? (
+    <ProgramEdit
+      colonyName={colonyName}
+      program={program}
+      toggleEditMode={toggleEditMode}
+    />
   ) : (
-    <ProgramDashboard program={program} />
+    <ProgramDashboard
+      canAdmin={canAdmin}
+      program={program}
+      toggleEditMode={toggleEditMode}
+    />
   );
 };
 
