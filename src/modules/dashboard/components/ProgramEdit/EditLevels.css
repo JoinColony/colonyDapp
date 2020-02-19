@@ -1,4 +1,8 @@
 
+.programLevelsContainer {
+  margin-bottom: 10px;
+}
+
 .buttonTextContainer {
   display: flex;
   font-size: var(--size-large);
