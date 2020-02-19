@@ -367,3 +367,13 @@ mutation CreateLevel($input: CreateLevelInput!) {
     unlocked
   }
 }
+
+mutation ReorderProgramLevels($input: ReorderProgramLevelsInput!) {
+  reorderProgramLevels(input: $input) {
+    id
+    levelIds
+    levels {
+      id
+    }
+  }
+}

@@ -1592,6 +1592,16 @@ export type CreateLevelMutationVariables = {
 
 export type CreateLevelMutation = { createLevel: Maybe<Pick<Level, 'id' | 'achievement' | 'description' | 'createdAt' | 'creatorAddress' | 'numRequiredSteps' | 'programId' | 'stepIds' | 'status' | 'title' | 'unlocked'>> };
 
+export type ReorderProgramLevelsMutationVariables = {
+  input: ReorderProgramLevelsInput
+};
+
+
+export type ReorderProgramLevelsMutation = { reorderProgramLevels: Maybe<(
+    Pick<Program, 'id' | 'levelIds'>
+    & { levels: Array<Pick<Level, 'id'>> }
+  )> };
+
 export type TaskQueryVariables = {
   id: Scalars['String']
 };
@@ -3494,6 +3504,42 @@ export function useCreateLevelMutation(baseOptions?: ApolloReactHooks.MutationHo
 export type CreateLevelMutationHookResult = ReturnType<typeof useCreateLevelMutation>;
 export type CreateLevelMutationResult = ApolloReactCommon.MutationResult<CreateLevelMutation>;
 export type CreateLevelMutationOptions = ApolloReactCommon.BaseMutationOptions<CreateLevelMutation, CreateLevelMutationVariables>;
+export const ReorderProgramLevelsDocument = gql`
+    mutation ReorderProgramLevels($input: ReorderProgramLevelsInput!) {
+  reorderProgramLevels(input: $input) {
+    id
+    levelIds
+    levels {
+      id
+    }
+  }
+}
+    `;
+export type ReorderProgramLevelsMutationFn = ApolloReactCommon.MutationFunction<ReorderProgramLevelsMutation, ReorderProgramLevelsMutationVariables>;
+
+/**
+ * __useReorderProgramLevelsMutation__
+ *
+ * To run a mutation, you first call `useReorderProgramLevelsMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useReorderProgramLevelsMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [reorderProgramLevelsMutation, { data, loading, error }] = useReorderProgramLevelsMutation({
+ *   variables: {
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function useReorderProgramLevelsMutation(baseOptions?: ApolloReactHooks.MutationHookOptions<ReorderProgramLevelsMutation, ReorderProgramLevelsMutationVariables>) {
+        return ApolloReactHooks.useMutation<ReorderProgramLevelsMutation, ReorderProgramLevelsMutationVariables>(ReorderProgramLevelsDocument, baseOptions);
+      }
+export type ReorderProgramLevelsMutationHookResult = ReturnType<typeof useReorderProgramLevelsMutation>;
+export type ReorderProgramLevelsMutationResult = ApolloReactCommon.MutationResult<ReorderProgramLevelsMutation>;
+export type ReorderProgramLevelsMutationOptions = ApolloReactCommon.BaseMutationOptions<ReorderProgramLevelsMutation, ReorderProgramLevelsMutationVariables>;
 export const TaskDocument = gql`
     query Task($id: String!) {
   task(id: $id) {
