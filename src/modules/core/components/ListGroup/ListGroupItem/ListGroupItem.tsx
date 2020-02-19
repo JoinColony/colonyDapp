@@ -1,4 +1,4 @@
-import React, { ReactNode, FC } from 'react';
+import React, { ReactNode, Ref } from 'react';
 
 import { getMainClasses } from '~utils/css';
 
@@ -11,12 +11,13 @@ interface Appearance {
 interface Props {
   appearance?: Appearance;
   children: ReactNode;
+  innerRef?: Ref<HTMLLIElement>;
 }
 
 const displayName = 'ListGroup.ListGroupItem';
 
-const ListGroupItem: FC<Props> = ({ appearance, children, ...rest }: Props) => (
-  <li className={getMainClasses(appearance, styles)} {...rest}>
+const ListGroupItem = ({ appearance, children, innerRef, ...rest }: Props) => (
+  <li className={getMainClasses(appearance, styles)} ref={innerRef} {...rest}>
     {children}
   </li>
 );
