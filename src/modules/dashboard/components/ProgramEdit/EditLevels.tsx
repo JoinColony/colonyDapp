@@ -25,6 +25,7 @@ const MSG = defineMessages({
 });
 
 interface Props {
+  colonyName: string;
   levelIds: OneProgram['levelIds'];
   levels: OneProgram['levels'];
   programId: OneProgram['id'];
@@ -32,7 +33,7 @@ interface Props {
 
 const displayName = 'dashboard.EditLevels';
 
-const EditLevels = ({ levelIds, levels, programId }: Props) => {
+const EditLevels = ({ colonyName, levelIds, levels, programId }: Props) => {
   const [createLevel] = useCreateLevelMutation({
     variables: { input: { programId } },
   });
@@ -47,7 +48,14 @@ const EditLevels = ({ levelIds, levels, programId }: Props) => {
         appearance={{ size: 'normal', weight: 'thin' }}
         text={MSG.description}
       />
-      <ProgramLevelsList levelIds={levelIds} levels={levels} />
+      <div className={styles.programLevelsContainer}>
+        <ProgramLevelsList
+          colonyName={colonyName}
+          levelIds={levelIds}
+          levels={levels}
+          programId={programId}
+        />
+      </div>
       <Button appearance={{ theme: 'dottedArea' }} onClick={handleAddLevel}>
         <span className={styles.buttonTextContainer}>
           <div className={styles.buttonIcon}>

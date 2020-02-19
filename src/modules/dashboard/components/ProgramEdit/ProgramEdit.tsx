@@ -240,7 +240,12 @@ const ProgramEdit = ({
         }}
       </Form>
       <div className={styles.levelsContainer}>
-        <EditLevels levelIds={levelIds} levels={levels} programId={id} />
+        <EditLevels
+          colonyName={colonyName}
+          levelIds={levelIds}
+          levels={levels}
+          programId={id}
+        />
       </div>
       <Button
         appearance={{ theme: 'dangerLink' }}
