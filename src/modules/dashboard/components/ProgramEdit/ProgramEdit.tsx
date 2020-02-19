@@ -1,10 +1,11 @@
-import React, { useCallback } from 'react';
-import { defineMessages } from 'react-intl';
+import React, { useCallback, useState } from 'react';
+import { defineMessages, FormattedMessage } from 'react-intl';
 import * as yup from 'yup';
 
 import { FormikProps } from 'formik';
 import { useHistory } from 'react-router';
 import Button from '~core/Button';
+import { useDialog, ConfirmDialog } from '~core/Dialog';
 import Heading from '~core/Heading';
 import { Form, Input, Textarea, FormStatus } from '~core/Fields';
 import {
@@ -35,6 +36,19 @@ const MSG = defineMessages({
   buttonSubmitText: {
     id: 'dashboard.ProgramEdit.buttonSubmitText',
     defaultMessage: 'Save Draft',
+  },
+  confirmDeleteHeading: {
+    id: 'dashboard.ProgramEdit.confirmDeleteHeading',
+    defaultMessage: 'Delete Program',
+  },
+  confirmDeleteText: {
+    id: 'dashboard.ProgramEdit.confirmDeleteText',
+    defaultMessage: `Are you sure you would like to delete this program? All
+      levels and achievements will be deleted from your colony.`,
+  },
+  confirmDeleteButton: {
+    id: 'dashboard.ProgramEdit.confirmDeleteButton',
+    defaultMessage: 'Confirm',
   },
   controlLabelTitle: {
     id: 'dashboard.ProgramEdit.controlLabelTitle',
@@ -80,6 +94,8 @@ const ProgramEdit = ({
 }: Props) => {
   const isDraft = status === ProgramStatus.Draft;
 
+  const openDialog = useDialog(ConfirmDialog);
+  const [canPublish, setCanPublish] = useState(false);
   const history = useHistory();
 
   const [editProgram] = useEditProgramMutation();
@@ -115,9 +131,15 @@ const ProgramEdit = ({
   );
 
   const handleDelete = useCallback(async () => {
+    await openDialog({
+      appearance: { theme: 'danger' },
+      heading: MSG.confirmDeleteHeading,
+      children: <FormattedMessage {...MSG.confirmDeleteText} />,
+      confirmButtonText: MSG.confirmDeleteButton,
+    }).afterClosed();
     await deleteProgram();
     history.push(`/colony/${colonyName}`);
-  }, [colonyName, deleteProgram, history]);
+  }, [colonyName, deleteProgram, history, openDialog]);
 
   const cancelButtonActionProps = isDraft
     ? {
