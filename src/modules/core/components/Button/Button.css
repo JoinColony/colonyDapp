@@ -310,7 +310,7 @@
 
 .themeDottedArea {
   display: block;
-  padding: 30px;
+  padding: 25px;
   width: 100%;
   border: 2px dashed var(--grey-5);
   border-radius: 5px;
