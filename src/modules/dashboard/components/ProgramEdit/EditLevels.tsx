@@ -25,9 +25,7 @@ const MSG = defineMessages({
 const displayName = 'dashboard.EditLevels';
 
 const EditLevels = () => {
-  const handleAddLevel = useCallback(() => {
-    // console.log('Add level');
-  }, []);
+  const handleAddLevel = useCallback(() => {}, []);
   return (
     <div>
       <Heading appearance={{ size: 'medium' }} text={MSG.title} />
