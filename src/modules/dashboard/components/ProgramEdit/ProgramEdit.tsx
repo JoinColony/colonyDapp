@@ -35,6 +35,10 @@ const MSG = defineMessages({
   },
   buttonSubmitText: {
     id: 'dashboard.ProgramEdit.buttonSubmitText',
+    defaultMessage: 'Save',
+  },
+  buttonSubmitTextDraft: {
+    id: 'dashboard.ProgramEdit.buttonSubmitTextDraft',
     defaultMessage: 'Save Draft',
   },
   confirmDeleteHeading: {
@@ -201,7 +205,9 @@ const ProgramEdit = ({
                 <Button
                   disabled={!dirty || !isValid || isPublishing}
                   loading={isSubmitting}
-                  text={MSG.buttonSubmitText}
+                  text={
+                    isDraft ? MSG.buttonSubmitTextDraft : MSG.buttonSubmitText
+                  }
                   type="submit"
                 />
               </div>
