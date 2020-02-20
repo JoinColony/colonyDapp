@@ -34,7 +34,11 @@ const ProgramDashboard = ({
   <div>
     <div className={styles.titleContainer}>
       <div className={styles.headingContainer}>
-        <Heading appearance={{ margin: 'none', size: 'medium' }} text={title} />
+        <Heading
+          appearance={{ margin: 'none', size: 'medium' }}
+          // fallback to please typescript - can't publish unless there's a title, so this isn't an issue
+          text={title || ''}
+        />
         {canAdmin && (
           <div className={styles.editButtonContainer}>
             <Button
