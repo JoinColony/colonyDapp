@@ -5,7 +5,7 @@ import Button from '~core/Button';
 import Heading from '~core/Heading';
 import Icon from '~core/Icon';
 import ProgramLevelsList from '~dashboard/ProgramLevelsList';
-import { OneProgram, useCreateLevelMutation } from '~data/index';
+import { OneProgram, useCreateLevelMutation, cacheUpdates } from '~data/index';
 
 import styles from './EditLevels.css';
 
@@ -36,6 +36,7 @@ const displayName = 'dashboard.EditLevels';
 const EditLevels = ({ colonyName, levelIds, levels, programId }: Props) => {
   const [createLevel] = useCreateLevelMutation({
     variables: { input: { programId } },
+    update: cacheUpdates.createLevel(programId),
   });
   // @todo redirect to level upon creation once level template exists (after #2019)
   const handleAddLevel = useCallback(() => {
