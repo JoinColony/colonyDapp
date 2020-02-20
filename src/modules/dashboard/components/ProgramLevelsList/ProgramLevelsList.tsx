@@ -1,4 +1,10 @@
-import React, { useRef, useCallback } from 'react';
+import React, {
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from 'react';
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
 import { defineMessages } from 'react-intl';
 import nanoid from 'nanoid';
@@ -7,7 +13,7 @@ import Button from '~core/Button';
 import Heading from '~core/Heading';
 import Icon from '~core/Icon';
 import ListGroup, { ListGroupItem } from '~core/ListGroup';
-import { OneProgram } from '~data/index';
+import { OneProgram, useReorderProgramLevelsMutation } from '~data/index';
 
 import styles from './ProgramLevelsList.css';
 
@@ -33,14 +39,74 @@ interface Props {
   levels: OneProgram['levels'];
 }
 
+const hasOrderChanged = (arr1: string[], arr2: string[]): boolean => {
+  if (arr1.length !== arr2.length) return true;
+  return arr1.some((el, idx) => el !== arr2[idx]);
+};
+
 const displayName = 'dashboard.ProgramLevelsList';
 
-const ProgramLevelsList = ({ colonyName, programId, levels }: Props) => {
-  const { current: droppdableId } = useRef<string>(nanoid());
+const ProgramLevelsList = ({
+  colonyName,
+  programId,
+  levelIds: levelIdsProp,
+  levels: unsortedLevels,
+}: Props) => {
+  // Use local state to optimize optimistic UI - avoid FOIC `onDragEnd`
+  const [levelIds, setLevelIds] = useState<Props['levelIds']>(levelIdsProp);
 
-  const handleDragEnd = useCallback(() => {
-    return undefined;
-  }, []);
+  const { current: droppdableId } = useRef<string>(nanoid());
+  const lastLevelIdsRef = useRef<Props['levelIds']>(levelIds);
+
+  const [
+    reorderProgramLevels,
+    { data, error },
+  ] = useReorderProgramLevelsMutation();
+
+  const handleDragEnd = useCallback(
+    async ({ destination, source }) => {
+      // dropped outside the list
+      if (!destination) {
+        return;
+      }
+
+      const newLevelIds = [...levelIds];
+      const [removed] = newLevelIds.splice(source.index, 1);
+      newLevelIds.splice(destination.index, 0, removed);
+
+      if (hasOrderChanged(newLevelIds, lastLevelIdsRef.current)) {
+        setLevelIds(newLevelIds);
+
+        await reorderProgramLevels({
+          variables: { input: { id: programId, levelIds: newLevelIds } },
+        });
+      }
+    },
+    [levelIds, programId, reorderProgramLevels],
+  );
+
+  // Only update prev if the order has changed && mutation was successful
+  useEffect(() => {
+    if (hasOrderChanged(levelIds, lastLevelIdsRef.current) && data) {
+      lastLevelIdsRef.current = levelIds;
+    }
+  }, [data, levelIds]);
+
+  // Revert update if mutation fails
+  useEffect(() => {
+    if (error && lastLevelIdsRef.current) {
+      setLevelIds(lastLevelIdsRef.current);
+    }
+  }, [error]);
+
+  const levels = useMemo(
+    () =>
+      unsortedLevels.sort(
+        ({ id: idA }, { id: idB }) =>
+          levelIds.indexOf(idA) - levelIds.indexOf(idB),
+      ),
+    [levelIds, unsortedLevels],
+  );
 
   return (
     <DragDropContext onDragEnd={handleDragEnd}>
