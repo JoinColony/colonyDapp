@@ -1,13 +1,20 @@
 import React, { ReactNode, useCallback } from 'react';
-import { MessageDescriptor, MessageValues, defineMessages } from 'react-intl';
+import { defineMessages } from 'react-intl';
 import compose from 'recompose/compose';
 
+import { asField } from '~core/Fields';
+import { FieldEnhancedProps, ExtraFieldProps } from '~core/Fields/types';
 import { AnyUser } from '~data/index';
 import { Address } from '~types/index';
 import { getMainClasses } from '~utils/css';
 
-import { ItemDataType, OmniPickerProps, withOmniPicker } from '../OmniPicker';
-import { asField, InputLabel } from '../Fields';
+import {
+  ItemDataType,
+  withOmniPicker,
+  WrappedComponentProps,
+} from '../OmniPicker';
+import { Props as WithOmnipickerInProps } from '../OmniPicker/withOmniPicker';
+import { InputLabel } from '../Fields';
 import Icon from '../Icon';
 import Button from '../Button';
 import UserAvatar from '../UserAvatar';
@@ -52,18 +59,9 @@ interface Appearance {
   width?: 'wide';
 }
 
-interface Props extends OmniPickerProps {
+interface Props extends WithOmnipickerInProps {
   /** Appearance object */
   appearance?: Appearance;
-
-  /** Connect to form state (will inject `$value`, `$id`, `$error`, `$touched`), is `true` by default */
-  connect?: boolean;
-
-  /** Just render the `<textarea>` element without label */
-  elementOnly?: boolean;
-
-  /** Textarea field name (form variable) */
-  name: string;
 
   /** Renders an extra button to remove selection */
   isResettable?: boolean;
@@ -71,11 +69,7 @@ interface Props extends OmniPickerProps {
   /** Renders an extra button to remove selection */
   disabled?: boolean;
 
-  /** Help text (will appear next to label text) */
-  help?: string | MessageDescriptor;
-
-  /** Values for help text (react-intl interpolation) */
-  helpValues?: MessageValues;
+  name: string;
 
   /** Override avatar rendering */
   renderAvatar: AvatarRenderFn;
@@ -83,45 +77,31 @@ interface Props extends OmniPickerProps {
   /** Item component for omnipicker listbox */
   renderItem?: (user: ItemDataType<AnyUser>, selected?: boolean) => ReactNode;
 
-  /** Label text */
-  label: string | MessageDescriptor;
-
-  /** Values for label text (react-intl interpolation) */
-  labelValues?: MessageValues;
-
-  /** Placeholder for input */
-  placeholder?: string;
-
   /** Callback for things that happend after selection  */
   onSelected?: (user: AnyUser) => void;
 
-  /** @ignore Will be injected by `asField` */
-  $error?: string;
-
-  /** @ignore Will be injected by `asField` */
-  $value?: ItemDataType<AnyUser>;
-
-  /** @ignore Will be injected by `asField` */
-  $touched?: boolean;
-
-  /** @ignore Will be injected by `asField` */
-  setValue: (val: any) => void;
-
-  registerInputNode?: any;
+  value?: AnyUser;
 }
+
+interface EnhancedProps
+  extends Props,
+    FieldEnhancedProps<AnyUser>,
+    WrappedComponentProps {}
 
 const displayName = 'SingleUserPicker';
 
 const SingleUserPicker = ({
   // Form field
-  $error,
-  $touched,
-  $value,
   elementOnly,
   help,
   label,
   placeholder,
+  $value,
+  $error,
+  $touched,
   onSelected,
+  formatIntl,
+  setValue,
   // OmniPicker
   inputProps,
   OmniPicker,
@@ -135,23 +115,22 @@ const SingleUserPicker = ({
   renderAvatar = defaultRenderAvatar,
   renderItem: renderItemProp,
   openOmniPicker,
-  setValue,
-}: Props) => {
+}: EnhancedProps) => {
   const handleActiveUserClick = useCallback(() => {
     if (!disabled) {
-      setValue(null);
+      if (setValue) setValue(null);
       openOmniPicker();
     }
   }, [disabled, openOmniPicker, setValue]);
   const handlePick = useCallback(
     (user: AnyUser) => {
-      setValue(user);
+      if (setValue) setValue(user);
       if (onSelected) onSelected(user);
     },
     [onSelected, setValue],
   );
   const resetSelection = useCallback(() => {
-    if (!disabled) {
+    if (!disabled && setValue) {
       setValue(null);
     }
   }, [disabled, setValue]);
@@ -166,6 +145,11 @@ const SingleUserPicker = ({
   const labelAppearance = appearance
     ? { direction: appearance.direction }
     : undefined;
+
+  const placeholderText =
+    !placeholder || typeof placeholder === 'string'
+      ? placeholder
+      : formatIntl(placeholder);
 
   return (
     <div className={styles.omniContainer}>
@@ -212,7 +196,7 @@ const SingleUserPicker = ({
                 $touched && $error ? styles.inputInvalid : styles.input
               }
               {...inputProps}
-              placeholder={placeholder}
+              placeholder={placeholderText}
               hidden={!!$value}
               ref={registerInputNode}
             />
@@ -238,9 +222,9 @@ const SingleUserPicker = ({
 
 SingleUserPicker.displayName = displayName;
 
-const enhance = compose(
-  asField() as any,
+const enhance = compose<EnhancedProps, Props & ExtraFieldProps<AnyUser>>(
   withOmniPicker(),
-) as any;
+  asField<Props, AnyUser>(),
+);
 
 export default enhance(SingleUserPicker);

@@ -1,37 +1,256 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`Radio component Renders initial component 1`] = `
-<Component
-  help="halp"
-  intl={
-    Object {
-      "defaultFormats": Object {},
-      "defaultLocale": "en",
-      "formatDate": [Function],
-      "formatHTMLMessage": [Function],
-      "formatMessage": [Function],
-      "formatNumber": [Function],
-      "formatPlural": [Function],
-      "formatRelative": [Function],
-      "formatTime": [Function],
-      "formats": Object {},
-      "formatters": Object {
-        "getDateTimeFormat": [Function],
-        "getMessageFormat": [Function],
-        "getNumberFormat": [Function],
-        "getPluralFormat": [Function],
-        "getRelativeFormat": [Function],
-      },
-      "locale": "en",
-      "messages": Object {},
-      "now": [Function],
-      "onError": [Function],
-      "textComponent": "span",
-      "timeZone": null,
-    }
-  }
-  label="awesome"
-  name="radioInput"
-  value="radioInput"
-/>
+<Formik
+  initialValues={Object {}}
+  onSubmit={[Function]}
+>
+  <injectIntl(Component)
+    checked={false}
+    help="halp"
+    inputId="halpHalp"
+    label="awesome"
+    name="radioInput"
+    value="radioInput"
+  >
+    <Component
+      checked={false}
+      help="halp"
+      inputId="halpHalp"
+      intl={
+        Object {
+          "defaultFormats": Object {},
+          "defaultLocale": "en",
+          "formatDate": [Function],
+          "formatDateToParts": [Function],
+          "formatHTMLMessage": [Function],
+          "formatList": [Function],
+          "formatMessage": [Function],
+          "formatNumber": [Function],
+          "formatNumberToParts": [Function],
+          "formatPlural": [Function],
+          "formatRelativeTime": [Function],
+          "formatTime": [Function],
+          "formatTimeToParts": [Function],
+          "formats": Object {},
+          "formatters": Object {
+            "getDateTimeFormat": [Function],
+            "getListFormat": [Function],
+            "getMessageFormat": [Function],
+            "getNumberFormat": [Function],
+            "getPluralRules": [Function],
+            "getRelativeTimeFormat": [Function],
+          },
+          "locale": "en",
+          "messages": Object {},
+          "onError": [Function],
+          "textComponent": Symbol(react.fragment),
+          "timeZone": undefined,
+        }
+      }
+      label="awesome"
+      name="radioInput"
+      value="radioInput"
+    >
+      <Field
+        checked={false}
+        component={[Function]}
+        connect={true}
+        help="halp"
+        inputId="halpHalp"
+        intl={
+          Object {
+            "defaultFormats": Object {},
+            "defaultLocale": "en",
+            "formatDate": [Function],
+            "formatDateToParts": [Function],
+            "formatHTMLMessage": [Function],
+            "formatList": [Function],
+            "formatMessage": [Function],
+            "formatNumber": [Function],
+            "formatNumberToParts": [Function],
+            "formatPlural": [Function],
+            "formatRelativeTime": [Function],
+            "formatTime": [Function],
+            "formatTimeToParts": [Function],
+            "formats": Object {},
+            "formatters": Object {
+              "getDateTimeFormat": [Function],
+              "getListFormat": [Function],
+              "getMessageFormat": [Function],
+              "getNumberFormat": [Function],
+              "getPluralRules": [Function],
+              "getRelativeTimeFormat": [Function],
+            },
+            "locale": "en",
+            "messages": Object {},
+            "onError": [Function],
+            "textComponent": Symbol(react.fragment),
+            "timeZone": undefined,
+          }
+        }
+        label="awesome"
+        name="radioInput"
+        value="radioInput"
+      >
+        <mapProps(Radio)
+          checked={false}
+          connect={true}
+          field={
+            Object {
+              "name": "radioInput",
+              "onBlur": [Function],
+              "onChange": [Function],
+              "value": undefined,
+            }
+          }
+          form={
+            Object {
+              "dirty": false,
+              "errors": Object {},
+              "getFieldMeta": [Function],
+              "getFieldProps": [Function],
+              "handleBlur": [Function],
+              "handleChange": [Function],
+              "handleReset": [Function],
+              "handleSubmit": [Function],
+              "initialErrors": Object {},
+              "initialStatus": undefined,
+              "initialTouched": Object {},
+              "initialValues": Object {},
+              "isSubmitting": false,
+              "isValid": true,
+              "isValidating": false,
+              "registerField": [Function],
+              "resetForm": [Function],
+              "setErrors": [Function],
+              "setFieldError": [Function],
+              "setFieldTouched": [Function],
+              "setFieldValue": [Function],
+              "setFormikState": [Function],
+              "setStatus": [Function],
+              "setSubmitting": [Function],
+              "setTouched": [Function],
+              "setValues": [Function],
+              "status": undefined,
+              "submitCount": 0,
+              "submitForm": [Function],
+              "touched": Object {},
+              "unregisterField": [Function],
+              "validateField": [Function],
+              "validateForm": [Function],
+              "validateOnBlur": true,
+              "validateOnChange": true,
+              "validateOnMount": false,
+              "values": Object {},
+            }
+          }
+          help="halp"
+          inputId="halpHalp"
+          intl={
+            Object {
+              "defaultFormats": Object {},
+              "defaultLocale": "en",
+              "formatDate": [Function],
+              "formatDateToParts": [Function],
+              "formatHTMLMessage": [Function],
+              "formatList": [Function],
+              "formatMessage": [Function],
+              "formatNumber": [Function],
+              "formatNumberToParts": [Function],
+              "formatPlural": [Function],
+              "formatRelativeTime": [Function],
+              "formatTime": [Function],
+              "formatTimeToParts": [Function],
+              "formats": Object {},
+              "formatters": Object {
+                "getDateTimeFormat": [Function],
+                "getListFormat": [Function],
+                "getMessageFormat": [Function],
+                "getNumberFormat": [Function],
+                "getPluralRules": [Function],
+                "getRelativeTimeFormat": [Function],
+              },
+              "locale": "en",
+              "messages": Object {},
+              "onError": [Function],
+              "textComponent": Symbol(react.fragment),
+              "timeZone": undefined,
+            }
+          }
+          label="awesome"
+          value="radioInput"
+        >
+          <Radio
+            $id="radioInput"
+            $value=""
+            aria-invalid={false}
+            aria-label="awesome"
+            aria-labelledby="radioInput-label"
+            checked={false}
+            connect={true}
+            formatIntl={[Function]}
+            help="halp"
+            inputId="halpHalp"
+            isSubmitting={false}
+            label="awesome"
+            name="radioInput"
+            onBlur={[Function]}
+            onChange={[Function]}
+            setError={[Function]}
+            setValue={[Function]}
+            title="awesome"
+            value="radioInput"
+          >
+            <label
+              className=""
+            >
+              <input
+                aria-checked={false}
+                aria-disabled={false}
+                aria-invalid={false}
+                aria-label="awesome"
+                aria-labelledby="radioInput-label"
+                disabled={false}
+                id="halpHalp"
+                name="radioInput"
+                onBlur={[Function]}
+                onChange={[Function]}
+                title="awesome"
+                type="radio"
+                value="radioInput"
+              />
+              <span />
+              <span>
+                <InputLabel
+                  appearance={
+                    Object {
+                      "direction": "horizontal",
+                    }
+                  }
+                  help="halp"
+                  inputId="halpHalp"
+                  label="awesome"
+                >
+                  <label
+                    className=""
+                    htmlFor="halpHalp"
+                    id="halpHalp-label"
+                  >
+                    <span>
+                      awesome
+                    </span>
+                    <span>
+                      halp
+                    </span>
+                  </label>
+                </InputLabel>
+              </span>
+            </label>
+          </Radio>
+        </mapProps(Radio)>
+      </Field>
+    </Component>
+  </injectIntl(Component)>
+</Formik>
 `;

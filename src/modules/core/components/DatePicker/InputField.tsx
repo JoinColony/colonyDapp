@@ -1,21 +1,31 @@
+import React, {
+  Component,
+  InputHTMLAttributes,
+  KeyboardEvent,
+  SyntheticEvent,
+} from 'react';
 import { MessageDescriptor } from 'react-intl';
-import React, { Component, SyntheticEvent, KeyboardEvent } from 'react';
+
+import { ExtraFieldProps } from '~core/Fields/types';
 
 import Input, { InputComponentAppearance } from '../Fields/Input';
 
 import { ESC, TAB } from './keyTypes';
 
-// Left intentionally unsealed (passing props)
-interface Props {
+interface Props
+  extends Omit<
+      InputHTMLAttributes<HTMLInputElement>,
+      'name' | 'placeholder' | 'onBlur' | 'onChange' | 'form' | 'title'
+    >,
+    ExtraFieldProps<string> {
   appearance?: InputComponentAppearance;
   close: (data?: any, modifiers?: { cancelled?: boolean }) => void;
   id: string;
-  isOpen: boolean;
   innerRef: (ref: HTMLElement | null) => void;
-  label: string | MessageDescriptor;
-  name: string;
+  isOpen: boolean;
   onChange: (evt: SyntheticEvent<HTMLInputElement>) => void;
   open: () => void;
+  placeholder?: string | MessageDescriptor;
   toggle: () => void;
   value: string;
 }
@@ -55,8 +65,8 @@ class InputField extends Component<Props> {
         onFocus={this.handleClick}
         onKeyDown={this.handleInputKeyDown}
         innerRef={this.registerInputNode}
-        aria-describedby={isOpen ? id : null}
-        $value={value}
+        aria-describedby={isOpen ? id : undefined}
+        value={value}
         {...props}
       />
     );

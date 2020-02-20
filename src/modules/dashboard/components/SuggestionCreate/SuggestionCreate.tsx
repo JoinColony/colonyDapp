@@ -96,7 +96,7 @@ const SuggestionCreate = ({ colonyAddress, domainId }: Props) => {
           <div className={styles.formItem}>
             <Input
               appearance={{ theme: 'fat' }}
-              innerRef={inputRef}
+              innerRef={() => inputRef}
               label={MSG.inputLabelTitle}
               name="title"
             />

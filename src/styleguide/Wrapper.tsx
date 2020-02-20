@@ -1,9 +1,8 @@
 import React, { ReactNode } from 'react';
 import { Provider } from 'react-redux';
 import { createStore } from 'redux';
-import { addLocaleData, IntlProvider } from 'react-intl';
+import { IntlProvider } from 'react-intl';
 import { BrowserRouter } from 'react-router-dom';
-import en from 'react-intl/locale-data/en';
 import { Map as ImmutableMap, Record } from 'immutable';
 
 import { Wallet, WALLET_CATEGORIES } from '~immutable/index';
@@ -15,7 +14,16 @@ import '../styles/styleguide.css';
 
 import messages from '../i18n/en.json';
 
-addLocaleData(en);
+if (!Intl.PluralRules) {
+  // eslint-disable-next-line global-require
+  require('@formatjs/intl-pluralrules/polyfill');
+}
+
+// @ts-ignore
+if (!Intl.RelativeTimeFormat) {
+  // eslint-disable-next-line global-require
+  require('@formatjs/intl-relativetimeformat/polyfill');
+}
 
 interface Props {
   children: ReactNode;

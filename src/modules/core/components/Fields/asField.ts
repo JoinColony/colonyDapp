@@ -1,69 +1,34 @@
+import { Field, getIn, FieldAttributes } from 'formik';
 import {
-  IntlShape,
-  MessageDescriptor,
-  MessageValues,
+  createElement,
+  ComponentType,
+  HTMLAttributes,
+  ReactElement,
+} from 'react';
+import {
   injectIntl,
+  MessageDescriptor,
+  WrappedComponentProps,
 } from 'react-intl';
-import React, { ComponentType } from 'react';
+import { compose, mapProps } from 'recompose';
 
-import { Field, getIn } from 'formik';
+import { SimpleMessageValues } from '~types/index';
 
-import compose from 'recompose/compose';
-import mapProps from 'recompose/mapProps';
-
-type FormatMessage = (
-  messageDescriptor: MessageDescriptor,
-  values?: MessageValues,
-) => string;
-
-interface CommonProps {
-  appearance?: any;
-  label?: MessageDescriptor | string;
-  name: string;
-  placeholder?: MessageDescriptor | string;
-  title?: MessageDescriptor | string;
-}
-
-interface InProps extends CommonProps {
-  elementOnly?: boolean;
-  connect?: boolean;
-  id?: string;
-  intl: IntlShape;
-  help?: string;
-  helpValues?: MessageValues;
-  labelValues?: MessageValues;
-  statusValues?: MessageValues;
-  status?: string | MessageDescriptor;
-  form: {
-    touched: any;
-    errors: any;
-    setFieldValue: (
-      field: string,
-      value: any,
-      shouldValidate?: boolean,
-    ) => void;
-    setFieldError: (field: string, value: string) => void;
-  };
-  field: {
-    name: string;
-    value?: any;
-    onChange: Function;
-    onBlur: Function;
-    isSubmitting: boolean;
-  };
-}
-
-// interface OutProps extends CommonProps {
-//   $error?: string;
-//   $value?: any;
-//   $touched?: boolean;
-// }
+import {
+  AsFieldConfig,
+  FieldEnhancedProps,
+  FormatMessage,
+  ExtraFieldProps,
+} from './types';
 
 const formatIntl = (
-  text: MessageDescriptor | string,
+  text: MessageDescriptor | string | undefined,
   formatMessage: FormatMessage,
-  textValues?: MessageValues,
-): string => {
+  textValues?: SimpleMessageValues,
+): string | undefined => {
+  if (typeof text === 'undefined') {
+    return undefined;
+  }
   if (!text) {
     return '';
   }
@@ -73,11 +38,16 @@ const formatIntl = (
   return formatMessage(text, textValues);
 };
 
-const connectFormik = ({ alwaysConnected, validate }) => (
+const connectFormik = <P, V>({ alwaysConnected, validate }) => (
   FieldComponent: ComponentType<any>,
-) => ({ connect = true, ...props }: InProps) =>
+) => ({
+  connect = true,
+  ...props
+}: ExtraFieldProps<V> & P): ReactElement<
+  FieldAttributes<V> & ExtraFieldProps<V> & P
+> =>
   connect || alwaysConnected
-    ? React.createElement<any>(Field, {
+    ? createElement<FieldAttributes<any>>(Field, {
         component: FieldComponent,
         validate,
 
@@ -88,14 +58,31 @@ const connectFormik = ({ alwaysConnected, validate }) => (
         connect,
         ...props,
       })
-    : React.createElement<any>(FieldComponent, { connect, ...props });
+    : createElement<any>(FieldComponent, { connect, ...props });
 
-const asField = ({ alwaysConnected, validate, initialValue }: any = {}): any =>
-  compose(
+type InnerProps<P, V, T> = FieldEnhancedProps<V, T> & P;
+// prefer `FieldEnhancedProps` over `T`
+type OuterProps<P, V, T> = Omit<T, keyof FieldEnhancedProps<V, T>> &
+  Omit<ExtraFieldProps<V>, keyof P> &
+  P;
+
+type PropsMapperOuterProps<P, V> = ExtraFieldProps<V> &
+  WrappedComponentProps &
+  P;
+
+const asField = <
+  P,
+  V = string,
+  // `T` allows passing props along to element of type `T`
+  // @todo default `T` to never type? Since most components won't pass props along to element of type `T`
+  T extends HTMLAttributes<HTMLElement> | never = HTMLAttributes<HTMLElement>
+>({ alwaysConnected, validate, initialValue }: AsFieldConfig<V> = {}) =>
+  compose<InnerProps<P, V, T>, OuterProps<P, V, T>>(
     injectIntl,
-    connectFormik({ alwaysConnected, validate }),
-    mapProps(
+    connectFormik<P, V>({ alwaysConnected, validate }),
+    mapProps<FieldEnhancedProps<V, T>, PropsMapperOuterProps<P, V>>(
       ({
+        connect = true,
         id,
         intl: { formatMessage },
         elementOnly,
@@ -103,54 +90,71 @@ const asField = ({ alwaysConnected, validate, initialValue }: any = {}): any =>
         helpValues,
         label,
         labelValues,
-        name,
+        name = '',
         placeholder,
         status,
         statusValues,
         title,
-        // @ts-ignore
-        field: { name: fieldName, value, onChange, onBlur, isSubmitting } = {},
-        // @ts-ignore
-        form: { touched, errors, setFieldValue, setFieldError } = {},
+        field: { name: fieldName, value, onChange, onBlur } = {},
+        form: {
+          touched,
+          errors,
+          setFieldValue,
+          setFieldError,
+          isSubmitting,
+        } = {},
         ...props
-      }: InProps) => {
-        // @ts-ignore
+      }: ExtraFieldProps<V> & WrappedComponentProps & P): FieldEnhancedProps<
+        V,
+        T
+      > => {
         const htmlFieldName = fieldName || name;
         const $touched = getIn(touched, htmlFieldName);
         const fieldError = getIn(errors, htmlFieldName);
-        const $error = fieldError && formatIntl(fieldError, formatMessage);
+        const $error = formatIntl(fieldError, formatMessage);
         const $id = id || htmlFieldName;
         const $title = formatIntl(title, formatMessage);
-        const $label = formatIntl(label, formatMessage, labelValues) || $title;
+        const $label =
+          formatIntl(label, formatMessage, labelValues) ||
+          $title ||
+          htmlFieldName;
         const $help = formatIntl(help, formatMessage, helpValues);
         const $placeholder = formatIntl(placeholder, formatMessage);
         const $status = formatIntl(status, formatMessage, statusValues);
         return {
+          connect,
           elementOnly,
           'aria-invalid': !!$error,
-          'aria-label': $label,
-          'aria-labelledby': elementOnly ? null : `${$id}-label`,
+          'aria-label': $label || undefined,
+          'aria-labelledby': elementOnly ? undefined : `${$id}-label`,
           label: $label,
           help: $help,
-          name: htmlFieldName || id,
+          name: htmlFieldName,
           placeholder: $placeholder,
           status: $status,
           title: $error || $title || $label || $placeholder,
           $id,
           $error,
-          $value: value || initialValue,
+          $value: value || initialValue || '',
           $touched,
           onChange,
           onBlur,
           // We could consider creating a util/meta object for the following items:
           isSubmitting,
-          formatIntl: (
-            text?: string | MessageDescriptor,
-            textValues?: MessageValues,
-          ): string => formatIntl(text, formatMessage, textValues),
-          setError: (errorMessage: string) =>
-            setFieldError(htmlFieldName, errorMessage),
-          setValue: (val: any) => setFieldValue(htmlFieldName, val),
+          formatIntl: (text, textValues) =>
+            formatIntl(text, formatMessage, textValues),
+          setError:
+            typeof setFieldError === 'function'
+              ? errorMessage =>
+                  setFieldError(
+                    htmlFieldName,
+                    formatIntl(errorMessage, formatMessage) || '',
+                  )
+              : undefined,
+          setValue:
+            typeof setFieldValue === 'function'
+              ? (val: any) => setFieldValue(htmlFieldName, val)
+              : undefined,
           ...props,
         };
       },

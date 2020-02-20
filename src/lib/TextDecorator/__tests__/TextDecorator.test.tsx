@@ -6,8 +6,6 @@ import React from 'react';
 import Linkify from 'linkify-it';
 import { shallow } from 'enzyme';
 import toJson from 'enzyme-to-json';
-// Testutils has to be imported for test setup purposes, even if we don't need anything
-import 'testutils';
 
 import TextDecorator from '../index';
 

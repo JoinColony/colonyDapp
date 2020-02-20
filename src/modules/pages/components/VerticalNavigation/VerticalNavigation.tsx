@@ -92,8 +92,9 @@ class VerticalNavigation extends Component<Props, State> {
                   selectedClassName={styles.tabSelected}
                   disabledClassName={styles.tabDisabled}
                 >
-                  {title instanceof Object && title.id ? (
-                    <FormattedMessage {...title} />
+                  {title instanceof Object &&
+                  (title as MessageDescriptor).id ? (
+                    <FormattedMessage {...(title as MessageDescriptor)} />
                   ) : (
                     title
                   )}

@@ -1,16 +1,12 @@
 import React, { ReactNode } from 'react';
-import {
-  IntlShape,
-  MessageDescriptor,
-  MessageValues,
-  injectIntl,
-} from 'react-intl';
-import { NavLink as NavLinkComponent } from 'react-router-dom';
+import { MessageDescriptor, useIntl } from 'react-intl';
+import { NavLink as NavLinkComponent, NavLinkProps } from 'react-router-dom';
+
+import { SimpleMessageValues } from '~types/index';
 
 import styles from './NavLink.css';
 
-// Left intentionally unsealed (passing props)
-interface Props {
+interface Props extends NavLinkProps {
   /** className to add to the existing classNames when `to` matches the current route (react-router's "activeClassName") */
   activeClassName?: string;
 
@@ -24,21 +20,19 @@ interface Props {
   text?: MessageDescriptor | string;
 
   /** Values for text (react-intl interpolation) */
-  textValues?: MessageValues;
-
-  /** @ignore injected by `react-intl` */
-  intl: IntlShape;
+  textValues?: SimpleMessageValues;
 }
 
 const NavLink = ({
   activeClassName = styles.active,
   children,
-  intl: { formatMessage },
   text,
   textValues,
   to,
   ...linkProps
 }: Props) => {
+  const { formatMessage } = useIntl();
+
   const linkText =
     typeof text === 'string' ? text : text && formatMessage(text, textValues);
 
@@ -49,4 +43,4 @@ const NavLink = ({
   );
 };
 
-export default injectIntl(NavLink);
+export default NavLink;

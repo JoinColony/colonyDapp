@@ -6,7 +6,8 @@ import punycode from 'punycode';
 
 import ColonyNetworkClient from '@colony/colony-js-client';
 
-import { Address, ENSName, createAddress } from '~types/index';
+import { Address, ENSName } from '~types/index';
+import { createAddress } from '~utils/web3';
 
 const COLONY_NETWORK_ENS_NAME =
   process.env.COLONY_NETWORK_ENS_NAME || 'joincolony.eth';

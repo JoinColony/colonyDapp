@@ -100,19 +100,13 @@ const TaskClaimRewardDialog = ({
   cancel,
   close,
   task: {
-    /* colonyAddress, */
     /* reputation, */
     /* payouts, */
     title,
-    // @ts-ignore
     rating,
-    // @ts-ignore
     lateRating,
-    // @ts-ignore
     lateReveal,
-    // @ts-ignore
     sortedPayouts,
-    // @ts-ignore
     nativeTokenPayout,
   },
 }: Props) => {
@@ -132,7 +126,7 @@ const TaskClaimRewardDialog = ({
   return (
     <Dialog cancel={cancel}>
       <DialogSection appearance={{ border: 'bottom' }}>
-        <Heading appearance={{ size: 'medium' }} text={title} />
+        {title && <Heading appearance={{ size: 'medium' }} text={title} />}
         <section className={styles.starRating}>
           <p className={styles.starRatingDescription}>
             <FormattedMessage {...MSG.yourRating} />

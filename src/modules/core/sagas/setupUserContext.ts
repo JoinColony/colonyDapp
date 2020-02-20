@@ -9,7 +9,7 @@ import {
 } from 'redux-saga/effects';
 import { formatEther } from 'ethers/utils';
 
-import { createAddress } from '~types/index';
+import { createAddress } from '~utils/web3';
 import { Action, ActionTypes, AllActions } from '~redux/index';
 import { Context, ContextType, TEMP_setNewContext } from '~context/index';
 import { putError } from '~utils/saga/effects';

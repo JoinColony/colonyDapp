@@ -1,6 +1,8 @@
-import { MessageDescriptor, MessageValues, defineMessages } from 'react-intl';
 import React, { Component } from 'react';
+import { defineMessages } from 'react-intl';
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
+
+import { FieldEnhancedProps } from '~core/Fields/types';
 
 import InputLabel from '../Fields/InputLabel';
 import asField from '../Fields/asField';
@@ -26,54 +28,6 @@ const MSG = defineMessages({
 interface Props {
   /** Mnemonic passphrase of space-separated words */
   passphrase: string;
-
-  /** Connect to form state (will inject `$value`, `$id`, `$error`, `$touched`), is `true` by default */
-  connect?: boolean;
-
-  /** Just render the element without label */
-  elementOnly?: boolean;
-
-  /** Help text (will appear next to label text) */
-  help?: string | MessageDescriptor;
-
-  /** Label text */
-  label: string | MessageDescriptor;
-
-  /** Input field name (form variable) */
-  name: string;
-
-  /** @ignore Will be injected by `asField` */
-  isSubmitting?: boolean;
-
-  /** Placeholder text (can also be a MessageDescriptor) */
-  placeholder?: string;
-
-  /** @ignore Will be injected by `asField` */
-  $id: string;
-
-  /** @ignore Will be injected by `asField` */
-  $error?: string;
-
-  /** @ignore Will be injected by `asField` */
-  $value?: string;
-
-  /** @ignore Will be injected by `asField` */
-  $touched?: boolean;
-
-  /** @ignore Will be injected by `asField` */
-  formatIntl: (
-    text: string | MessageDescriptor,
-    textValues?: MessageValues,
-  ) => string;
-
-  /** @ignore Will be injected by `asField` */
-  setError: (val: any) => void;
-
-  /** @ignore Will be injected by `asField` */
-  setValue: (val: any) => void;
-
-  /** @ignore Standard input field property */
-  onBlur: Function;
 }
 
 type State = {
@@ -81,7 +35,7 @@ type State = {
   items: Droppable[];
 };
 
-class MnemonicDnDSorter extends Component<Props, State> {
+class MnemonicDnDSorter extends Component<Props & FieldEnhancedProps, State> {
   /**
    * Get items to sort from
    */
@@ -109,7 +63,7 @@ class MnemonicDnDSorter extends Component<Props, State> {
   handleDrop = () => {
     const { setValue } = this.props;
     const { items } = this.state;
-    if (items.length === 12) {
+    if (items.length === 12 && setValue) {
       const passphrase = items.map(element => element.content).join(' ');
       setValue(passphrase);
     }
@@ -372,4 +326,4 @@ class MnemonicDnDSorter extends Component<Props, State> {
   }
 }
 
-export default (asField() as any)(MnemonicDnDSorter);
+export default asField<Props>()(MnemonicDnDSorter);

@@ -123,7 +123,7 @@ const ColonyInitialFunding = ({
                   </span>
                   <Button
                     appearance={{ theme: 'primary', size: 'large' }}
-                    onClick={handleSubmit}
+                    onClick={() => handleSubmit()}
                     text={MSG.mintNewTokens}
                     loading={isSubmitting}
                     disabled={!isValid}
@@ -140,13 +140,13 @@ const ColonyInitialFunding = ({
             <QRCode address={colonyAddress} width={50} />
           </div>
           <div className={styles.qrCodeAddress}>
-            <FormattedMessage
-              className={styles.qrCodeDescription}
-              tagName="p"
-              {...MSG[
-                isExternal ? 'qrCodeDescriptionExternal' : 'qrCodeDescription'
-              ]}
-            />
+            <p className={styles.qrCodeDescription}>
+              <FormattedMessage
+                {...MSG[
+                  isExternal ? 'qrCodeDescriptionExternal' : 'qrCodeDescription'
+                ]}
+              />
+            </p>
             <CopyableAddress full>{colonyAddress}</CopyableAddress>
           </div>
         </div>

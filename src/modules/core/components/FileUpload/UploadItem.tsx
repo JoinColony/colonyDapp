@@ -10,6 +10,7 @@ import Button from '../Button';
 import Icon from '../Icon';
 import ProgressBar from '../ProgressBar';
 import styles from './UploadItem.css';
+import { FieldEnhancedProps } from '~core/Fields/types';
 
 const MSG = defineMessages({
   removeActionText: {
@@ -41,23 +42,14 @@ interface Props {
 
   /** Function used to perform the acutal upload action of the file */
   upload: (file: FileReaderFile) => any;
-
-  /** @ignore Will be injected by `asField` */
-  $value: UploadFile;
-
-  /** @ignore Will be injected by `asField` */
-  $error?: string;
-
-  /** @ignore Will be injected by `asField` */
-  setValue: (val: any) => void;
 }
 
-class UploadItem extends Component<Props> {
+class UploadItem extends Component<Props & FieldEnhancedProps<UploadFile>> {
   _readFiles: (files: object[]) => Promise<object[]>;
 
   static displayName = 'UploadItem';
 
-  constructor(props: Props) {
+  constructor(props) {
     super(props);
     const { accept, maxFileSize } = props;
     // @ts-ignore
@@ -85,6 +77,7 @@ class UploadItem extends Component<Props> {
 
   async uploadFile() {
     const { $value, setValue, upload } = this.props;
+    if (!setValue) return;
     let readFile;
     let fileReference;
     const { file } = $value;
@@ -148,6 +141,6 @@ class UploadItem extends Component<Props> {
 const validate = (value: UploadFile) =>
   value.error ? MSG[value.error] : undefined;
 
-export default (asField({ alwaysConnected: true, validate }) as any)(
+export default asField<Props, UploadFile>({ alwaysConnected: true, validate })(
   UploadItem,
 );

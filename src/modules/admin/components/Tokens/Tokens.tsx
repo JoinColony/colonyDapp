@@ -1,12 +1,10 @@
 import React, { useCallback, useMemo, useState } from 'react';
-import { defineMessages, injectIntl, IntlShape } from 'react-intl';
-import { compose } from 'recompose';
+import { defineMessages, useIntl } from 'react-intl';
 import sortBy from 'lodash/sortBy';
 
 import { COLONY_TOTAL_BALANCE_DOMAIN_ID, ROLES } from '~constants';
-import { DialogType } from '~core/Dialog';
 import Button from '~core/Button';
-import withDialog from '~core/Dialog/withDialog';
+import { useDialog } from '~core/Dialog';
 import Heading from '~core/Heading';
 import { Select } from '~core/Fields';
 import { Address, DomainsMapType } from '~types/index';
@@ -18,6 +16,9 @@ import { userHasRole } from '../../../users/checks';
 import { canEditTokens } from '../../checks';
 import FundingBanner from './FundingBanner';
 import TokenList from './TokenList';
+import ColonyTokenEditDialog from './ColonyTokenEditDialog';
+import TokenMintDialog from './TokenMintDialog';
+import TokensMoveDialog from './TokensMoveDialog';
 
 import styles from './Tokens.css';
 import { ZERO_ADDRESS } from '~utils/web3/constants';
@@ -49,9 +50,7 @@ interface Props {
   canMintNativeToken?: boolean;
   colonyAddress: Address;
   domains: DomainsMapType;
-  intl: IntlShape;
   nativeTokenAddress: Address;
-  openDialog: (dialogName: string, dialogProps?: object) => DialogType;
   rootRoles: ROLES[];
   tokenAddresses: string[];
 }
@@ -60,17 +59,21 @@ const Tokens = ({
   canMintNativeToken,
   colonyAddress,
   domains,
-  intl: { formatMessage },
   nativeTokenAddress,
-  openDialog,
   rootRoles,
   tokenAddresses,
 }: Props) => {
-  const [selectedDomain, setSelectedDomain] = useState<string>(
-    COLONY_TOTAL_BALANCE_DOMAIN_ID.toString(),
+  const { formatMessage } = useIntl();
+
+  const [selectedDomain, setSelectedDomain] = useState<number>(
+    COLONY_TOTAL_BALANCE_DOMAIN_ID,
   );
 
   const { walletAddress } = useLoggedInUser();
+
+  const openTokenEditDialog = useDialog(ColonyTokenEditDialog);
+  const openTokenMintDialog = useDialog(TokenMintDialog);
+  const openTokensMoveDialog = useDialog(TokensMoveDialog);
 
   const oldUserRoles = useTransformer(getLegacyRoles, [domains]);
   const canEdit = canEditTokens(oldUserRoles, walletAddress);
@@ -97,7 +100,8 @@ const Tokens = ({
 
   const selectedDomainLabel: string = useMemo(() => {
     const { label = '' } =
-      domainsArray.find(({ value }) => value === selectedDomain) || {};
+      domainsArray.find(({ value }) => value === selectedDomain.toString()) ||
+      {};
     return typeof label === 'string' ? label : formatMessage(label);
   }, [domainsArray, formatMessage, selectedDomain]);
 
@@ -122,28 +126,27 @@ const Tokens = ({
 
   const handleEditTokens = useCallback(
     () =>
-      openDialog('ColonyTokenEditDialog', {
+      openTokenEditDialog({
         colonyAddress,
         nativeTokenAddress,
-        selectedTokens: tokens && tokens.map(({ address }) => address),
       }),
-    [openDialog, colonyAddress, nativeTokenAddress, tokens],
+    [openTokenEditDialog, colonyAddress, nativeTokenAddress],
   );
-  const handleMintTokens = useCallback(
-    () =>
-      openDialog('TokenMintDialog', {
+  const handleMintTokens = useCallback(() => {
+    if (nativeToken) {
+      openTokenMintDialog({
         nativeToken,
         colonyAddress,
-      }),
-    [openDialog, nativeToken, colonyAddress],
-  );
+      });
+    }
+  }, [openTokenMintDialog, nativeToken, colonyAddress]);
   const handleMoveTokens = useCallback(
     () =>
-      openDialog('TokensMoveDialog', {
+      openTokensMoveDialog({
         colonyAddress,
         toDomain: selectedDomain,
       }),
-    [openDialog, colonyAddress, selectedDomain],
+    [colonyAddress, openTokensMoveDialog, selectedDomain],
   );
 
   return (
@@ -168,7 +171,7 @@ const Tokens = ({
               name="selectDomain"
               options={domainsArray}
               form={{ setFieldValue }}
-              $value={selectedDomain}
+              $value={selectedDomain.toString()}
             />
           </div>
           {tokens && (
@@ -221,9 +224,4 @@ const Tokens = ({
 
 Tokens.displayName = 'admin.Tokens';
 
-const enhance = compose(
-  withDialog(),
-  injectIntl,
-) as any;
-
-export default enhance(Tokens);
+export default Tokens;

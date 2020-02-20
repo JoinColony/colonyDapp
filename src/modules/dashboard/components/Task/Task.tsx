@@ -1,10 +1,9 @@
-import React, { FC, useCallback, useState } from 'react';
+import React, { useCallback, useState } from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 import { useHistory, useParams, Redirect } from 'react-router-dom';
 
 import Button from '~core/Button';
-import { OpenDialog } from '~core/Dialog/types';
-import withDialog from '~core/Dialog/withDialog';
+import { useDialog } from '~core/Dialog';
 import Heading from '~core/Heading';
 import Icon from '~core/Icon';
 import { Tooltip } from '~core/Popover';
@@ -18,6 +17,7 @@ import TaskRequestWork from '~dashboard/TaskRequestWork';
 import TaskSkills from '~dashboard/TaskSkills';
 import TaskTitle from '~dashboard/TaskTitle';
 import TaskFinalize from '~dashboard/TaskFinalize';
+import TaskEditDialog from '~dashboard/TaskEditDialog';
 import {
   useCancelTaskMutation,
   useColonyFromNameQuery,
@@ -97,20 +97,12 @@ const MSG = defineMessages({
   },
 });
 
-interface InProps {
-  openDialog: OpenDialog;
-}
-
-interface Props extends InProps {
-  // Injected via `withDialog`
-  openDialog: OpenDialog;
-}
-
 const displayName = 'dashboard.Task';
 
-const Task = ({ openDialog }: Props) => {
+const Task = () => {
   const { colonyName, draftId } = useParams();
   const history = useHistory();
+  const openDialog = useDialog(TaskEditDialog);
 
   const [
     isDiscardConfirmDisplayed,
@@ -156,12 +148,11 @@ const Task = ({ openDialog }: Props) => {
   const onEditTask = useCallback(() => {
     // If you've managed to click on the button that runs this without the
     // task being fetched yet, you are a wizard
-    if (!task) {
+    if (!task || !colonyData) {
       return;
     }
-
-    openDialog('TaskEditDialog', {
-      colonyAddress: colonyData && colonyData.colonyAddress,
+    openDialog({
+      colonyAddress: colonyData.colonyAddress,
       draftId,
       maxTokens: 1,
       minTokens: 0,
@@ -311,7 +302,7 @@ const Task = ({ openDialog }: Props) => {
               appearance={{ theme: 'secondary', size: 'small' }}
               // @todo Use `ConfirmButton` for discard task button
               // confirmText={MSG.confirmText}
-              onClick={handleCancelTask}
+              onClick={() => handleCancelTask()}
               // onConfirmToggled={setDiscardConfirmDisplay}
               text={MSG.discardTask}
             />
@@ -363,4 +354,4 @@ const Task = ({ openDialog }: Props) => {
 
 Task.displayName = displayName;
 
-export default (withDialog() as any)(Task) as FC<InProps>;
+export default Task;

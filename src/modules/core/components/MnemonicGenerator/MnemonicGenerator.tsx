@@ -1,6 +1,8 @@
-import { MessageDescriptor, MessageValues, defineMessages } from 'react-intl';
 import React, { Component } from 'react';
+import { defineMessages } from 'react-intl';
 import copy from 'copy-to-clipboard';
+
+import { FieldEnhancedProps } from '~core/Fields/types';
 
 import styles from './MnemonicGenerator.css';
 import InputLabel from '../Fields/InputLabel';
@@ -27,63 +29,18 @@ const MSG = defineMessages({
 });
 
 interface Props {
-  /** Connect to form state (will inject `$value`, `$id`, `$error`, `$touched`), is `true` by default */
-  connect?: boolean;
-
   /** Whether the field is disabled (no input possible) */
   disabled?: boolean;
 
-  /** Just render the element without label */
-  elementOnly?: boolean;
-
   /** Function to generate the mnemonic phrase (can return a string or a promise) */
   generateFn: () => string | Promise<string>;
-
-  /** Help text (will appear next to label text) */
-  help?: string | MessageDescriptor;
-
-  /** Label text */
-  label: string | MessageDescriptor;
-
-  /** Input field name (form variable) */
-  name: string;
-
-  /** @ignore Will be injected by `asField` */
-  isSubmitting?: boolean;
-
-  /** @ignore Will be injected by `asField` */
-  $id: string;
-
-  /** @ignore Will be injected by `asField` */
-  $error?: string;
-
-  /** @ignore Will be injected by `asField` */
-  $value?: string;
-
-  /** @ignore Will be injected by `asField` */
-  $touched?: boolean;
-
-  /** @ignore Will be injected by `asField` */
-  formatIntl: (
-    text: string | MessageDescriptor,
-    textValues?: MessageValues,
-  ) => string;
-
-  /** @ignore Will be injected by `asField` */
-  setError: (val: any) => void;
-
-  /** @ignore Will be injected by `asField` */
-  setValue: (val: any) => void;
-
-  /** @ignore Standard input field property */
-  onBlur: Function;
 }
 
 interface State {
   copied: boolean;
 }
 
-class MnemonicGenerator extends Component<Props, State> {
+class MnemonicGenerator extends Component<Props & FieldEnhancedProps, State> {
   timeout: any;
 
   static displayName = 'MnemonicGenerator';
@@ -104,9 +61,9 @@ class MnemonicGenerator extends Component<Props, State> {
   generateMnemonic = (): void => {
     const { generateFn, setValue } = this.props;
     const res = generateFn();
-    if (res instanceof Promise && !!res.then) {
+    if (res instanceof Promise && !!res.then && setValue) {
       res.then(phrase => setValue(phrase));
-    } else {
+    } else if (setValue) {
       setValue(res);
     }
   };
@@ -152,13 +109,13 @@ class MnemonicGenerator extends Component<Props, State> {
           />
           <div>
             <Button
-              appearance={{ theme: 'ghost', colorSchema: 'noBorderBlue' }}
+              appearance={{ theme: 'ghost' }}
               type="button"
               onClick={this.generateMnemonic}
               text={MSG.buttonRefresh}
             />
             <Button
-              appearance={{ theme: 'ghost', colorSchema: 'noBorderBlue' }}
+              appearance={{ theme: 'ghost' }}
               type="button"
               disabled={copied}
               onClick={this.copyToClipboard}
@@ -172,7 +129,9 @@ class MnemonicGenerator extends Component<Props, State> {
           aria-invalid={!!$error}
           aria-disabled={disabled}
         >
-          {!elementOnly && <InputLabel id={$id} label={label} help={help} />}
+          {!elementOnly && (
+            <InputLabel inputId={$id} label={label} help={help} />
+          )}
           <div className={styles.generator}>
             <span className={styles.mnemonic} data-test="mnemonicPhrase">
               {$value}
@@ -184,4 +143,4 @@ class MnemonicGenerator extends Component<Props, State> {
   }
 }
 
-export default (asField() as any)(MnemonicGenerator);
+export default asField<Props>()(MnemonicGenerator);

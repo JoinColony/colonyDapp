@@ -8,7 +8,8 @@ import Web3EthAbi from 'web3-eth-abi';
 import BigNumber from 'bn.js';
 
 import { ContractTransactionType } from '~immutable/index';
-import { Address, createAddress } from '~types/index';
+import { Address } from '~types/index';
+import { createAddress } from '~utils/web3';
 
 import { getLogDate } from './blocks';
 

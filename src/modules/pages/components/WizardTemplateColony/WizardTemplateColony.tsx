@@ -12,7 +12,7 @@ import styles from './WizardTemplateColony.css';
 
 export interface Props {
   children: ReactNode;
-  previousStep: () => void;
+  previousStep: () => boolean;
   hideQR: boolean;
 }
 

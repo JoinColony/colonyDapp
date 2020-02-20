@@ -4,16 +4,9 @@ import { defineMessages } from 'react-intl';
 
 import { DomainType } from '~immutable/index';
 import { Address } from '~types/index';
-import { ActionTypeString } from '~redux/index';
-import {
-  ActionTransformFnType,
-  pipe,
-  mergePayload,
-  withKey,
-} from '~utils/actions';
 import Button from '~core/Button';
 import Dialog, { DialogSection } from '~core/Dialog';
-import { ActionForm, InputLabel, Input } from '~core/Fields';
+import { Form, Input } from '~core/Fields';
 import Heading from '~core/Heading';
 
 const MSG = defineMessages({
@@ -35,49 +28,35 @@ const MSG = defineMessages({
   },
 });
 
+interface FormValues {
+  domainName: string;
+}
+
 interface Props {
   domain: DomainType;
   colonyAddress: Address;
   cancel: () => void;
-  close: () => void;
-  submit: ActionTypeString;
-  success: ActionTypeString;
-  error: ActionTypeString;
-  transform?: ActionTransformFnType;
+  close: (values: any) => void;
 }
 
 const displayName = 'core.DomainEditDialog';
 
-const DomainEditDialog = ({
-  domain,
-  colonyAddress,
-  cancel,
-  close,
-  submit,
-  error,
-  success,
-}: Props) => {
-  const transform = useCallback(
-    pipe(
-      withKey(colonyAddress),
-      mergePayload({ colonyAddress }),
-    ),
-    [colonyAddress],
+const DomainEditDialog = ({ domain, colonyAddress, cancel, close }: Props) => {
+  const handleSubmit = useCallback(
+    ({ domainName }) =>
+      close({ domainName, domainId: domain.id, colonyAddress }),
+    [close, colonyAddress, domain.id],
   );
+
   return (
     <Dialog cancel={cancel}>
-      <ActionForm
-        onSuccess={close}
-        submit={submit}
-        error={error}
-        success={success}
-        transform={transform}
+      <Form
+        onSubmit={handleSubmit}
         initialValues={{
           domainName: domain.name,
-          domainId: domain.id,
         }}
       >
-        {({ isSubmitting }: FormikProps<any>) => (
+        {({ isSubmitting }: FormikProps<FormValues>) => (
           <>
             <DialogSection>
               <Heading
@@ -86,8 +65,7 @@ const DomainEditDialog = ({
               />
             </DialogSection>
             <DialogSection>
-              <InputLabel label={MSG.fieldLabel} />
-              <Input name="domainName" />
+              <Input label={MSG.fieldLabel} name="domainName" />
             </DialogSection>
             <DialogSection appearance={{ align: 'right' }}>
               <Button
@@ -104,7 +82,7 @@ const DomainEditDialog = ({
             </DialogSection>
           </>
         )}
-      </ActionForm>
+      </Form>
     </Dialog>
   );
 };

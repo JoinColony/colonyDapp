@@ -81,7 +81,7 @@ const ColonySubscribe = ({ colonyAddress }: Props) => {
     >
       <Button
         className={isSubscribed ? styles.unsubscribe : styles.subscribe}
-        onClick={isSubscribed ? unsubscribe : subscribe}
+        onClick={isSubscribed ? () => unsubscribe() : () => subscribe()}
       />
     </Tooltip>
   );

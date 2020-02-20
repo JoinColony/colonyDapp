@@ -1,5 +1,9 @@
-import { MessageDescriptor, MessageValues, defineMessages } from 'react-intl';
+import { MessageDescriptor, defineMessages } from 'react-intl';
 import React, { Component, SyntheticEvent, KeyboardEvent } from 'react';
+
+import { SimpleMessageValues } from '~types/index';
+
+import { FieldEnhancedProps } from '../types';
 
 import styles from './SelectOption.css';
 
@@ -17,15 +21,12 @@ interface Props {
   option: {
     label: MessageDescriptor | string;
     value: string;
-    labelValues?: MessageValues;
+    labelValues?: SimpleMessageValues;
   };
   selected: boolean;
   onSelect: (idx: number) => void;
   onClick: () => void;
-  formatIntl: (
-    text: string | MessageDescriptor,
-    textValues?: MessageValues,
-  ) => string;
+  formatIntl: FieldEnhancedProps['formatIntl'];
 }
 
 class SelectOption extends Component<Props> {

@@ -2,67 +2,26 @@
 
 exports[`Icon component Renders initial component 1`] = `
 <Icon
-  intl={
-    Object {
-      "defaultFormats": Object {},
-      "defaultLocale": "en",
-      "formatDate": [Function],
-      "formatHTMLMessage": [Function],
-      "formatMessage": [Function],
-      "formatNumber": [Function],
-      "formatPlural": [Function],
-      "formatRelative": [Function],
-      "formatTime": [Function],
-      "formats": Object {},
-      "formatters": Object {
-        "getDateTimeFormat": [Function],
-        "getMessageFormat": [Function],
-        "getNumberFormat": [Function],
-        "getPluralFormat": [Function],
-        "getRelativeFormat": [Function],
-      },
-      "locale": "en",
-      "messages": Object {},
-      "now": [Function],
-      "onError": [Function],
-      "textComponent": "span",
-      "timeZone": null,
-    }
-  }
   name="active-task"
   title="The Greatest Icon Ever"
-/>
+>
+  <i
+    className=""
+    title="The Greatest Icon Ever"
+  >
+    <svg
+      viewBox="0 0 30 30"
+    >
+      <use
+        xlinkHref="#undefined"
+      />
+    </svg>
+  </i>
+</Icon>
 `;
 
 exports[`Icon component Works with MessageDescriptors 1`] = `
 <Icon
-  intl={
-    Object {
-      "defaultFormats": Object {},
-      "defaultLocale": "en",
-      "formatDate": [Function],
-      "formatHTMLMessage": [Function],
-      "formatMessage": [Function],
-      "formatNumber": [Function],
-      "formatPlural": [Function],
-      "formatRelative": [Function],
-      "formatTime": [Function],
-      "formats": Object {},
-      "formatters": Object {
-        "getDateTimeFormat": [Function],
-        "getMessageFormat": [Function],
-        "getNumberFormat": [Function],
-        "getPluralFormat": [Function],
-        "getRelativeFormat": [Function],
-      },
-      "locale": "en",
-      "messages": Object {},
-      "now": [Function],
-      "onError": [Function],
-      "textComponent": "span",
-      "timeZone": null,
-    }
-  }
   name="active-task"
   title={
     Object {
@@ -70,5 +29,18 @@ exports[`Icon component Works with MessageDescriptors 1`] = `
       "id": "iconTitle",
     }
   }
-/>
+>
+  <i
+    className=""
+    title="The Greatest Icon Ever"
+  >
+    <svg
+      viewBox="0 0 30 30"
+    >
+      <use
+        xlinkHref="#undefined"
+      />
+    </svg>
+  </i>
+</Icon>
 `;

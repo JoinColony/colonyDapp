@@ -51,7 +51,6 @@ const TaskSkills = ({ draftId, disabled, ethSkillId }: Props) => {
       }),
     [draftId, setSkill],
   );
-
   return (
     <div className={styles.main}>
       <ItemsList
@@ -73,7 +72,7 @@ const TaskSkills = ({ draftId, disabled, ethSkillId }: Props) => {
             <Button
               appearance={{ theme: 'blue', size: 'small' }}
               text={MSG.selectSkill}
-              textValues={{ skillSelected: ethSkillId }}
+              textValues={{ skillSelected: ethSkillId || undefined }}
             />
           )}
         </div>

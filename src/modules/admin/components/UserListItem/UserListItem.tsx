@@ -1,4 +1,9 @@
-import React, { KeyboardEvent, ReactNode, useCallback } from 'react';
+import React, {
+  MouseEventHandler,
+  KeyboardEvent,
+  ReactNode,
+  useCallback,
+} from 'react';
 import { defineMessages } from 'react-intl';
 
 import Button from '~core/Button';
@@ -67,7 +72,7 @@ interface Props {
   /*
    * Method to call when clicking the remove button
    */
-  onRemove?: (evt: MouseEvent) => void;
+  onRemove?: MouseEventHandler;
 
   /*
    * Whether or not to display a `UserInfo` tooltip component when clicking on the User's avatar

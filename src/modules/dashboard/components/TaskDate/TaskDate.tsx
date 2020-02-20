@@ -81,6 +81,7 @@ const TaskDate = ({ draftId, dueDate: existingDueDate, disabled }: Props) => {
                 elementOnly
                 name="taskDueDate"
                 showArrow={false}
+                label={MSG.title}
                 setValueOnPick
                 renderTrigger={
                   <Button

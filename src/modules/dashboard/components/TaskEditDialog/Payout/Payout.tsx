@@ -73,11 +73,12 @@ const Payout = ({
     selectedToken,
   ]);
   const tokenOptions =
-    tokens &&
-    tokens.map(({ address, symbol }) => ({
-      value: address,
-      label: symbol || MSG.unknownToken,
-    }));
+    (tokens &&
+      tokens.map(({ address, symbol }) => ({
+        value: address,
+        label: symbol || MSG.unknownToken,
+      }))) ||
+    [];
 
   const { symbol = '', decimals = DEFAULT_TOKEN_DECIMALS } =
     (selectedToken && selectedToken) || {};
@@ -109,6 +110,8 @@ const Payout = ({
           <div className={styles.setAmount}>
             <Input
               appearance={{ theme: 'minimal', align: 'right' }}
+              elementOnly
+              label={{ id: 'label.amount' }}
               name={`${name}.amount`}
               formattingOptions={{
                 delimiter: ',',
@@ -118,7 +121,7 @@ const Payout = ({
             />
           </div>
           <div className={styles.selectToken}>
-            <Select options={tokenOptions} name={`${name}.token`} />
+            <Select elementOnly options={tokenOptions} name={`${name}.token`} />
           </div>
         </div>
       </div>

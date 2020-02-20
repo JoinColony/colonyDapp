@@ -1,11 +1,7 @@
-import React, { FC, HTMLAttributes } from 'react';
-import {
-  injectIntl,
-  IntlShape,
-  MessageDescriptor,
-  MessageValues,
-} from 'react-intl';
+import React, { HTMLAttributes } from 'react';
+import { MessageDescriptor, useIntl } from 'react-intl';
 
+import { SimpleMessageValues } from '~types/index';
 import { getMainClasses } from '~utils/css';
 
 import {
@@ -21,7 +17,7 @@ type Appearance = {
   size?: 'tiny' | 'small' | 'normal' | 'medium' | 'large' | 'huge';
 };
 
-interface InProps extends HTMLAttributes<HTMLElement> {
+interface Props extends Omit<HTMLAttributes<HTMLElement>, 'title'> {
   /** Appearance object */
   appearance?: Appearance;
 
@@ -38,15 +34,10 @@ interface InProps extends HTMLAttributes<HTMLElement> {
   title: string | MessageDescriptor;
 
   /** Values for html title (react-intl interpolation) */
-  titleValues?: MessageValues;
+  titleValues?: SimpleMessageValues;
 
   /** SVG viewbox string */
   viewBox?: string;
-}
-
-interface Props extends InProps {
-  /** @ignore injected by `react-intl` */
-  intl: IntlShape;
 }
 
 const getIcons = (map: string[]) =>
@@ -62,13 +53,13 @@ const multiColorIcons = getIcons(multiColorIconNames);
 const Icon = ({
   appearance = { size: 'normal', theme: 'primary' },
   className,
-  intl: { formatMessage },
   viewBox: viewBoxOverride = '0 0 30 30',
   name,
   title,
   titleValues,
   ...props
 }: Props) => {
+  const { formatMessage } = useIntl();
   // Remove the theme if it's a multiColor icon
   const multiColorAppearance = multiColorIcons[name]
     ? { size: appearance.size || 'normal' }
@@ -94,4 +85,4 @@ const Icon = ({
 
 Icon.displayName = displayName;
 
-export default injectIntl(Icon) as FC<InProps>;
+export default Icon;

@@ -127,7 +127,7 @@ const TokensMoveDialogForm = ({
     () =>
       sortBy(
         Object.values(domains || {}).map(({ name, id }) => ({
-          value: id,
+          value: id.toString(),
           label: name,
         })),
         ['value'],
@@ -316,7 +316,7 @@ const TokensMoveDialogForm = ({
         />
         <Button
           appearance={{ theme: 'primary', size: 'large' }}
-          onClick={handleSubmit}
+          onClick={() => handleSubmit()}
           text={{ id: 'button.confirm' }}
           loading={isSubmitting}
           disabled={!isValid}

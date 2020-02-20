@@ -1,8 +1,9 @@
-import { MessageDescriptor, MessageValues } from 'react-intl';
+import { MessageDescriptor } from 'react-intl';
 import React from 'react';
 
 import { DEFAULT_NETWORK } from '~constants';
 import ExternalLink from '~core/ExternalLink';
+import { SimpleMessageValues } from '~types/index';
 import { getEtherscanLink } from '~utils/external';
 
 interface Props {
@@ -22,7 +23,7 @@ interface Props {
   text?: MessageDescriptor | string;
 
   /** Values for text (react-intl interpolation) */
-  textValues?: MessageValues;
+  textValues?: SimpleMessageValues;
 }
 
 const displayName = 'TransactionLink';

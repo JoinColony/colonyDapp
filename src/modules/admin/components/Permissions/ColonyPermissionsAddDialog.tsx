@@ -7,7 +7,7 @@ import { ROLES } from '~constants';
 import { Address } from '~types/index';
 import { mergePayload, withKey, mapPayload, pipe } from '~utils/actions';
 import { ItemDataType } from '~core/OmniPicker';
-import { ActionTypeString, ActionTypes } from '~redux/index';
+import { ActionTypes } from '~redux/index';
 import { useDataFetcher, useTransformer } from '~utils/hooks';
 import {
   ColonySubscribedUsersDocument,
@@ -55,9 +55,6 @@ interface Props {
   close: () => void;
   domainId: number;
   colonyAddress: Address;
-  submit: ActionTypeString;
-  success: ActionTypeString;
-  error: ActionTypeString;
 }
 
 const availableRoles: ROLES[] = [
@@ -172,6 +169,8 @@ const ColonyPermissionsAddDialog = ({
                   <SingleUserPicker
                     appearance={{ width: 'wide' }}
                     data={subscribedUsersData.colony.subscribedUsers}
+                    label={MSG.search}
+                    elementOnly
                     name="user"
                     placeholder={MSG.search}
                     filter={filterUserSelection}

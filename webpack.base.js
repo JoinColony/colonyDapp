@@ -46,6 +46,7 @@ const config = {
         '~routes': path.resolve(__dirname, 'src/routes'),
         '~utils': path.resolve(__dirname, 'src/utils'),
         '~styles': path.resolve(__dirname, 'src/styles/shared'),
+        '~testutils': path.resolve(__dirname, 'src/__tests__/utils.ts'),
         '~types': path.resolve(__dirname, 'src/types'),
         '~immutable': path.resolve(__dirname, 'src/immutable'),
       },

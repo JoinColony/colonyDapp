@@ -262,13 +262,7 @@ const TaskList = ({
       <TableBody>
         {filteredTasksData.map(taskData => (
           <Fragment key={taskData.id}>
-            {taskData.colony && (
-              <TaskListItem
-                colonyAddress={taskData.colonyAddress}
-                colonyName={taskData.colony.colonyName}
-                task={taskData}
-              />
-            )}
+            {taskData.colony && <TaskListItem task={taskData} />}
           </Fragment>
         ))}
       </TableBody>

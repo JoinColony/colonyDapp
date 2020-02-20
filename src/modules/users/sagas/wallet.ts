@@ -11,7 +11,8 @@ import { getNetworkClient } from '@colony/colony-js-client';
 
 import { Action, ActionTypes, AllActions } from '~redux/index';
 import { DEFAULT_NETWORK } from '~constants';
-import { Address, createAddress } from '~types/index';
+import { Address } from '~types/index';
+import { createAddress } from '~utils/web3';
 import { create, putError } from '~utils/saga/effects';
 
 import { WALLET_SPECIFICS, WALLET_CATEGORIES } from '~immutable/index';

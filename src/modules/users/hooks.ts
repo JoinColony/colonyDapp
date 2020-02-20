@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 
-import { Address } from '~types/strings';
+import { Address } from '~types/index';
 import { ActionTypes } from '~redux/index';
 import { useAsyncFunction } from '~utils/hooks';
 

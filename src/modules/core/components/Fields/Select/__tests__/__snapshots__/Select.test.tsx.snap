@@ -1,35 +1,8 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`Select component Renders initial component 1`] = `
-<Component
+<injectIntl(Component)
   connect={false}
-  intl={
-    Object {
-      "defaultFormats": Object {},
-      "defaultLocale": "en",
-      "formatDate": [Function],
-      "formatHTMLMessage": [Function],
-      "formatMessage": [Function],
-      "formatNumber": [Function],
-      "formatPlural": [Function],
-      "formatRelative": [Function],
-      "formatTime": [Function],
-      "formats": Object {},
-      "formatters": Object {
-        "getDateTimeFormat": [Function],
-        "getMessageFormat": [Function],
-        "getNumberFormat": [Function],
-        "getPluralFormat": [Function],
-        "getRelativeFormat": [Function],
-      },
-      "locale": "en",
-      "messages": Object {},
-      "now": [Function],
-      "onError": [Function],
-      "textComponent": "span",
-      "timeZone": null,
-    }
-  }
   label="Select me"
   name="foo"
   options={
@@ -47,5 +20,219 @@ exports[`Select component Renders initial component 1`] = `
       },
     ]
   }
-/>
+>
+  <Component
+    connect={false}
+    intl={
+      Object {
+        "defaultFormats": Object {},
+        "defaultLocale": "en",
+        "formatDate": [Function],
+        "formatDateToParts": [Function],
+        "formatHTMLMessage": [Function],
+        "formatList": [Function],
+        "formatMessage": [Function],
+        "formatNumber": [Function],
+        "formatNumberToParts": [Function],
+        "formatPlural": [Function],
+        "formatRelativeTime": [Function],
+        "formatTime": [Function],
+        "formatTimeToParts": [Function],
+        "formats": Object {},
+        "formatters": Object {
+          "getDateTimeFormat": [Function],
+          "getListFormat": [Function],
+          "getMessageFormat": [Function],
+          "getNumberFormat": [Function],
+          "getPluralRules": [Function],
+          "getRelativeTimeFormat": [Function],
+        },
+        "locale": "en",
+        "messages": Object {},
+        "onError": [Function],
+        "textComponent": Symbol(react.fragment),
+        "timeZone": undefined,
+      }
+    }
+    label="Select me"
+    name="foo"
+    options={
+      Array [
+        Object {
+          "label": "Foo",
+          "value": "foo_value",
+        },
+        Object {
+          "label": Object {
+            "defaultMessage": "Bar",
+            "id": "Select.Bar",
+          },
+          "value": "bar_value",
+        },
+      ]
+    }
+  >
+    <mapProps(Select)
+      connect={false}
+      intl={
+        Object {
+          "defaultFormats": Object {},
+          "defaultLocale": "en",
+          "formatDate": [Function],
+          "formatDateToParts": [Function],
+          "formatHTMLMessage": [Function],
+          "formatList": [Function],
+          "formatMessage": [Function],
+          "formatNumber": [Function],
+          "formatNumberToParts": [Function],
+          "formatPlural": [Function],
+          "formatRelativeTime": [Function],
+          "formatTime": [Function],
+          "formatTimeToParts": [Function],
+          "formats": Object {},
+          "formatters": Object {
+            "getDateTimeFormat": [Function],
+            "getListFormat": [Function],
+            "getMessageFormat": [Function],
+            "getNumberFormat": [Function],
+            "getPluralRules": [Function],
+            "getRelativeTimeFormat": [Function],
+          },
+          "locale": "en",
+          "messages": Object {},
+          "onError": [Function],
+          "textComponent": Symbol(react.fragment),
+          "timeZone": undefined,
+        }
+      }
+      label="Select me"
+      name="foo"
+      options={
+        Array [
+          Object {
+            "label": "Foo",
+            "value": "foo_value",
+          },
+          Object {
+            "label": Object {
+              "defaultMessage": "Bar",
+              "id": "Select.Bar",
+            },
+            "value": "bar_value",
+          },
+        ]
+      }
+    >
+      <Select
+        $id="foo"
+        $value=""
+        appearance={
+          Object {
+            "alignOptions": "left",
+            "theme": "default",
+          }
+        }
+        aria-invalid={false}
+        aria-label="Select me"
+        aria-labelledby="foo-label"
+        connect={false}
+        formatIntl={[Function]}
+        label="Select me"
+        name="foo"
+        options={
+          Array [
+            Object {
+              "label": "Foo",
+              "value": "foo_value",
+            },
+            Object {
+              "label": Object {
+                "defaultMessage": "Bar",
+                "id": "Select.Bar",
+              },
+              "value": "bar_value",
+            },
+          ]
+        }
+        title="Select me"
+      >
+        <div>
+          <InputLabel
+            inputId="foo"
+            label="Select me"
+          >
+            <label
+              className=""
+              htmlFor="foo"
+              id="foo-label"
+            >
+              <span>
+                Select me
+              </span>
+            </label>
+          </InputLabel>
+          <div>
+            <button
+              aria-controls="select-listbox-foo"
+              aria-expanded={false}
+              aria-haspopup="listbox"
+              aria-invalid={false}
+              aria-label="Select me"
+              aria-labelledby="foo-label"
+              className="undefined "
+              name="foo"
+              onClick={[Function]}
+              onKeyDown={[Function]}
+              onKeyUp={[Function]}
+              tabIndex={0}
+              title="Select me"
+              type="button"
+            >
+              <div>
+                <div>
+                  <span />
+                </div>
+                <span>
+                  <Icon
+                    name="caret-down-small"
+                    title={
+                      Object {
+                        "defaultMessage": "expand",
+                        "id": "Select.expandIconHTMLTitle",
+                      }
+                    }
+                  >
+                    <i
+                      className=""
+                      title="expand"
+                    >
+                      <svg
+                        viewBox="0 0 30 30"
+                      >
+                        <use
+                          xlinkHref="#undefined"
+                        />
+                      </svg>
+                    </i>
+                  </Icon>
+                </span>
+              </div>
+            </button>
+          </div>
+          <InputStatus
+            appearance={
+              Object {
+                "theme": "minimal",
+              }
+            }
+          >
+            <p
+              className=""
+            />
+          </InputStatus>
+        </div>
+      </Select>
+    </mapProps(Select)>
+  </Component>
+</injectIntl(Component)>
 `;

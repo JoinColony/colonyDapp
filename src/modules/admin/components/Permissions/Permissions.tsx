@@ -1,12 +1,6 @@
 import React, { useCallback, useMemo, useState } from 'react';
 
-import {
-  defineMessages,
-  injectIntl,
-  IntlShape,
-  FormattedMessage,
-} from 'react-intl';
-import { compose } from 'recompose';
+import { defineMessages, FormattedMessage } from 'react-intl';
 import sortBy from 'lodash/sortBy';
 
 import { ROLES, ROOT_DOMAIN } from '~constants';
@@ -16,14 +10,15 @@ import Heading from '~core/Heading';
 import { Select } from '~core/Fields';
 import { Table, TableBody, TableCell } from '~core/Table';
 import Button from '~core/Button';
-import withDialog from '~core/Dialog/withDialog';
-import { DialogType } from '~core/Dialog';
+import { useDialog } from '~core/Dialog';
 import ExternalLink from '~core/ExternalLink';
 import { useTransformer } from '~utils/hooks';
 
 import { getDomainRoles } from '../../../transformers';
 import UserListItem from '../UserListItem';
 import UserPermissions from './UserPermissions';
+import ColonyPermissionsAddDialog from './ColonyPermissionsAddDialog';
+import ColonyPermissionsEditDialog from './ColonyPermissionsEditDialog';
 
 import styles from './Permissions.css';
 
@@ -58,17 +53,15 @@ const MSG = defineMessages({
 interface Props {
   colonyAddress: Address;
   domains: DomainsMapType;
-  intl: IntlShape;
-  openDialog: (
-    dialogName: string,
-    dialogProps?: Record<string, any>,
-  ) => DialogType;
 }
 
 const displayName = 'admin.Permissions';
 
-const Permissions = ({ colonyAddress, domains, openDialog }: Props) => {
-  const [selectedDomainId, setSelectedDomainId] = useState(ROOT_DOMAIN);
+const Permissions = ({ colonyAddress, domains }: Props) => {
+  const [selectedDomainId, setSelectedDomainId] = useState<number>(ROOT_DOMAIN);
+
+  const openPermissionsAddDialog = useDialog(ColonyPermissionsAddDialog);
+  const openPermissionsEditDialog = useDialog(ColonyPermissionsEditDialog);
 
   const domainRoles = useTransformer(getDomainRoles, [
     domains,
@@ -77,37 +70,38 @@ const Permissions = ({ colonyAddress, domains, openDialog }: Props) => {
 
   const directDomainRoles = useTransformer(getDomainRoles, [
     domains,
-    selectedDomainId,
+    Number(selectedDomainId),
     true,
   ]);
 
   const domainSelectOptions = sortBy(
     (Object.values(domains) as DomainType[]).map(({ id, name }) => ({
-      value: id,
+      value: id.toString(),
       label: name,
     })),
     ['value'],
   );
 
-  const setFieldValue = useCallback((_, value) => setSelectedDomainId(value), [
-    setSelectedDomainId,
-  ]);
+  const setFieldValue = useCallback(
+    (_, value) => setSelectedDomainId(parseInt(value, 10)),
+    [setSelectedDomainId],
+  );
 
   const handleAddPermissions = useCallback(() => {
-    openDialog('ColonyPermissionsAddDialog', {
+    openPermissionsAddDialog({
       colonyAddress,
       domainId: selectedDomainId,
     });
-  }, [openDialog, colonyAddress, selectedDomainId]);
+  }, [openPermissionsAddDialog, colonyAddress, selectedDomainId]);
 
   const handleEditPermissions = useCallback(
     (userAddress: Address) =>
-      openDialog('ColonyPermissionsEditDialog', {
+      openPermissionsEditDialog({
         colonyAddress,
         domainId: selectedDomainId,
         userAddress,
       }),
-    [openDialog, colonyAddress, selectedDomainId],
+    [openPermissionsEditDialog, colonyAddress, selectedDomainId],
   );
 
   const domainRolesArray = useMemo(
@@ -148,7 +142,7 @@ const Permissions = ({ colonyAddress, domains, openDialog }: Props) => {
             name="filter"
             options={domainSelectOptions}
             form={{ setFieldValue }}
-            $value={selectedDomainId}
+            $value={selectedDomainId.toString()}
           />
         </div>
         <div className={styles.tableWrapper}>
@@ -210,9 +204,4 @@ const Permissions = ({ colonyAddress, domains, openDialog }: Props) => {
 
 Permissions.displayName = displayName;
 
-const enhance = compose(
-  withDialog(),
-  injectIntl,
-) as any;
-
-export default enhance(Permissions);
+export default Permissions;

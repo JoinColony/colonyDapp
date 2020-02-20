@@ -2,8 +2,9 @@
 
 import React from 'react';
 import toJson from 'enzyme-to-json';
+import { Formik } from 'formik';
 
-import { shallowWithIntl } from 'enzyme-react-intl';
+import { mountWithIntl } from '~testutils';
 
 import DecisionHub from '../DecisionHub';
 
@@ -41,8 +42,11 @@ describe('DecisionHub component', () => {
       },
     ];
 
-    // @ts-ignore
-    const wrapper = shallowWithIntl(<DecisionHub options={options} />);
+    const wrapper = mountWithIntl(
+      <Formik initialValues={{}} onSubmit={() => undefined}>
+        <DecisionHub name="decisionHubTest" options={options} />
+      </Formik>,
+    );
     expect(toJson(wrapper)).toMatchSnapshot();
   });
 });

@@ -1,10 +1,7 @@
 import React, { ReactNode } from 'react';
-import {
-  injectIntl,
-  IntlShape,
-  MessageDescriptor,
-  MessageValues,
-} from 'react-intl';
+import { MessageDescriptor, useIntl } from 'react-intl';
+
+import { SimpleMessageValues } from '~types/index';
 import { getMainClasses } from '~utils/css';
 
 import styles from './InputLabel.css';
@@ -12,14 +9,13 @@ import styles from './InputLabel.css';
 const displayName = 'InputLabel';
 
 interface Appearance {
-  readonly theme: 'fat' | 'underlined' | 'minimal' | 'dotted';
-  readonly direction: 'horizontal';
-  readonly colorSchema: 'dark' | 'grey' | 'transparent';
-  readonly helpAlign: 'right';
-  readonly size: 'small';
+  theme?: 'fat' | 'underlined' | 'minimal' | 'dotted';
+  direction?: 'horizontal';
+  colorSchema?: 'dark' | 'grey' | 'transparent';
+  helpAlign?: 'right';
+  size?: 'small';
 }
 
-// Left intentionally unsealed (passing props)
 interface Props {
   /** Appearance object */
   appearance?: Appearance;
@@ -31,7 +27,7 @@ interface Props {
   help?: string | MessageDescriptor;
 
   /** Values for help text (react-intl interpolation) */
-  helpValues?: MessageValues;
+  helpValues?: SimpleMessageValues;
 
   /** `id` attribute value of accompanied input field */
   inputId?: string;
@@ -40,10 +36,7 @@ interface Props {
   label: string | MessageDescriptor;
 
   /** Values for label text (react-intl interpolation) */
-  labelValues?: MessageValues;
-
-  /** @ignore injected by `react-intl` */
-  intl: IntlShape;
+  labelValues?: SimpleMessageValues;
 }
 
 const InputLabel = ({
@@ -52,10 +45,11 @@ const InputLabel = ({
   helpValues,
   extra,
   inputId = '',
-  intl: { formatMessage },
   label: inputLabel,
   labelValues,
 }: Props) => {
+  const { formatMessage } = useIntl();
+
   const helpText =
     typeof help === 'object' ? formatMessage(help, helpValues) : help;
   const labelText =
@@ -77,4 +71,4 @@ const InputLabel = ({
 
 InputLabel.displayName = displayName;
 
-export default injectIntl(InputLabel);
+export default InputLabel;

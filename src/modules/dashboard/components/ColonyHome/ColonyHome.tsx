@@ -201,7 +201,11 @@ const ColonyHome = ({
         </Tabs>
       </main>
       <aside className={styles.sidebar}>
-        <ColonyFunding colony={colony} currentDomainId={filteredDomainId} />
+        <ColonyFunding
+          colony={colony}
+          currentDomainId={filteredDomainId}
+          domains={domains}
+        />
       </aside>
       {colony.isInRecoveryMode && <RecoveryModeAlert />}
     </div>

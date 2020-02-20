@@ -3,13 +3,13 @@
 import React from 'react';
 import toJson from 'enzyme-to-json';
 
-import { mountWithIntl, shallowWithIntl } from 'enzyme-react-intl';
+import { mountWithIntl } from '~testutils';
 
 import Button from '../Button';
 
 describe('Button component', () => {
   test('Renders initial component', () => {
-    const wrapper = shallowWithIntl(<Button text="Some Text" />);
+    const wrapper = mountWithIntl(<Button text="Some Text" />);
     expect(toJson(wrapper)).toMatchSnapshot();
   });
 
@@ -38,23 +38,22 @@ describe('Button component', () => {
       wrapper
         .children()
         .children()
-        .children()
         .html(),
     ).toBe('<p>Child test</p>');
   });
 
   test('button is busy when loading', () => {
-    const wrapper = shallowWithIntl(<Button text="Some Text" loading />);
+    const wrapper = mountWithIntl(<Button text="Some Text" loading />);
     expect(wrapper.html()).toContain('aria-busy="true"');
   });
 
   test('button is disabled', () => {
-    const wrapper = shallowWithIntl(<Button text="Some Text" disabled />);
+    const wrapper = mountWithIntl(<Button text="Some Text" disabled />);
     expect(wrapper.prop('disabled')).toBe(true);
   });
 
   test('button has custom props', () => {
-    const wrapper = shallowWithIntl(
+    const wrapper = mountWithIntl(
       <Button text="Some Text" data-test="test additional props" />,
     );
     expect(wrapper.prop('data-test')).toBe('test additional props');

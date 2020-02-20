@@ -1,34 +1,39 @@
-import React, { ReactNode, Component } from 'react';
+import React, {
+  isValidElement,
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+  MutableRefObject,
+  HTMLAttributes,
+  ReactElement,
+  ReactNode,
+} from 'react';
+import { MessageDescriptor, useIntl } from 'react-intl';
 import {
-  IntlShape,
-  MessageDescriptor,
-  MessageValues,
-  injectIntl,
-} from 'react-intl';
-import { Manager, Reference, Popper } from 'react-popper';
+  Manager,
+  Reference,
+  Popper,
+  PopperProps,
+  ReferenceChildrenProps,
+} from 'react-popper';
 import nanoid from 'nanoid';
+
+import { SimpleMessageValues } from '~types/index';
 
 import {
   PopoverAppearanceType,
-  PopoverPlacementType,
+  PopoverChildFn,
   PopoverTriggerType,
-  ReactRef,
 } from './types';
 import PopoverWrapper from './PopoverWrapper';
+import { usePrevious } from '~utils/hooks';
 
-interface RefObj {
-  ref: ReactRef;
-}
-
-// Left intentionally unsealed (passing props)
 export interface Props {
   appearance?: PopoverAppearanceType;
 
   /** Child element to trigger the popover */
-  children: ReactNode | PopoverTriggerType;
-
-  /** Whether the popover should close when clicking anywhere */
-  closeOnOutsideClick?: boolean;
+  children: ReactNode | PopoverChildFn;
 
   /** Popover content */
   content:
@@ -37,7 +42,7 @@ export interface Props {
     | ((arg0: { close: () => void }) => ReactNode);
 
   /** Values for content (react-intl interpolation) */
-  contentValues?: MessageValues;
+  contentValues?: SimpleMessageValues;
 
   /** Set the open state from outside */
   isOpen?: boolean;
@@ -49,283 +54,273 @@ export interface Props {
   openDelay?: number;
 
   /** Popover placement */
-  placement?: PopoverPlacementType;
+  placement?: PopperProps['placement'];
 
   /** Options to pass through the <Popper> element. See here: https://github.com/FezVrasta/react-popper#api-documentation */
-  popperProps?: Record<string, any>;
+  // popperProps?: Record<string, any>;
+  popperProps?: PopperProps;
 
   /** Whether the reference element should retain focus when popover is open (only for `HTMLInputElements`) */
   retainRefFocus?: boolean;
 
   /** Whether there should be an arrow on the popover */
-  showArrow: boolean;
+  showArrow?: boolean;
 
   /** How the popover gets triggered. Won't work when using a render prop as `children` */
-  trigger?: 'hover' | 'click' | 'disabled';
-
-  /** @ignore injected by `react-intl` */
-  intl: IntlShape;
+  trigger?: PopoverTriggerType;
 }
 
-type State = {
-  isOpen: boolean;
+interface FnChildProps {
+  innerRef?: ReferenceChildrenProps['ref'];
+}
+
+interface OtherChildrenProps extends HTMLAttributes<HTMLElement> {
+  ref?: ReferenceChildrenProps['ref'];
+}
+
+type ChildProps = FnChildProps | OtherChildrenProps;
+
+const assignInnerRef = (refNode: MutableRefObject<HTMLElement | undefined>) => (
+  ref: HTMLElement,
+) => {
+  if (ref) {
+    // eslint-disable-next-line no-param-reassign
+    refNode.current = ref;
+  }
 };
 
-class Popover extends Component<Props, State> {
-  refNode?: HTMLElement | null;
+const displayName = 'Popover';
 
-  contentNode?: HTMLElement | null;
+const Popover = ({
+  appearance,
+  children,
+  content,
+  contentValues,
+  isOpen: isOpenProp = false,
+  onClose,
+  openDelay = 0,
+  placement: origPlacement = 'top',
+  popperProps,
+  retainRefFocus,
+  showArrow = true,
+  trigger = 'click',
+}: Props) => {
+  const [isOpen, setIsOpen] = useState<boolean>(isOpenProp); // when opening please use `requestOpen`
 
-  id: string;
+  const contentNode = useRef<HTMLElement>();
+  const referenceNode = useRef<HTMLElement>();
+  const openTimeoutRef = useRef<number>();
+  const { current: elementId } = useRef<string>(nanoid());
 
-  openTimeout: any;
+  const { formatMessage } = useIntl();
 
-  static displayName = 'Popover';
+  const lastIsOpenProp = usePrevious(isOpenProp);
 
-  static defaultProps = {
-    closeOnOutsideClick: true,
-    placement: 'top',
-    showArrow: true,
-    trigger: 'click',
-  };
-
-  constructor(props: Props) {
-    super(props);
-    this.id = nanoid();
-  }
-
-  state = {
-    // eslint-disable-next-line react/destructuring-assignment
-    isOpen: this.props.isOpen || false,
-  };
-
-  // @ts-ignore
-  componentDidUpdate(
-    { closeOnOutsideClick, isOpen: prevIsOpenProp, trigger },
-    { isOpen: prevOpen },
-  ) {
-    const { isOpen: isOpenProp } = this.props;
-    const { isOpen } = this.state;
-    const isFirstOpen = isOpen && !prevOpen;
-    if (
-      isFirstOpen &&
-      closeOnOutsideClick &&
-      document.body &&
-      (trigger === 'click' || !trigger)
-    ) {
-      document.body.addEventListener('click', this.handleOutsideClick, true);
-    } else if (isFirstOpen && trigger === 'hover' && this.refNode) {
-      /*
-       * Incase the `ref` contains a `disabled` button, we need to use the native `mouseleave` event,
-       * as React doesn't call `onMouseLeave` for `disabled` buttons.
-       *
-       * See: https://github.com/facebook/react/issues/4251
-       */
-      this.refNode.addEventListener('mouseleave', this.close);
-    } else if (!isOpen && prevOpen) {
-      this.removeEventListeners();
-    }
-    if (isOpenProp !== prevIsOpenProp) {
-      // We are guarded perfectly fine against this, only when the outside prop changes we change the state as well
-      // Maybe there's a better way that I'm not seeing right now
-      // eslint-disable-next-line react/no-did-update-set-state
-      this.setState({
-        isOpen: !!isOpenProp,
-      });
-    }
-  }
-
-  componentWillUnmount() {
-    this.removeEventListeners();
-  }
-
-  removeEventListeners = () => {
-    if (this.refNode) {
-      this.refNode.removeEventListener('mouseleave', this.close);
-    }
-    if (document.body) {
-      document.body.removeEventListener('click', this.handleOutsideClick, true);
-    }
-  };
-
-  getChildProps = (ref: ReactRef) => {
-    const { id } = this;
-    const { children, trigger } = this.props;
-    const { isOpen } = this.state;
-    const childProps: {
-      'aria-describedby': string | null;
-      innerRef?: ReactRef;
-      ref?: ReactRef;
-    } = {
-      'aria-describedby': isOpen ? id : null,
-    };
-    if (typeof (children as any).type == 'function') {
-      childProps.innerRef = ref;
-    } else {
-      childProps.ref = ref;
-    }
-    return {
-      ...childProps,
-      ...(trigger
-        ? {
-            hover: {
-              onMouseEnter: this.requestOpen,
-              /*
-               * Current version of React (16.11.0 as of now) does not call `onMouseLeave` for
-               * `disabled` buttons. Thus, we use a native event listener in `componentDidUpdate`.
-               *
-               * However, this may work in future versions.
-               */
-              // onMouseLeave: this.close,
-            },
-            click: { onClick: this.toggle },
-            disabled: null,
-          }[trigger]
-        : null),
-    };
-  };
-
-  handleOutsideClick = (evt: MouseEvent) => {
-    if (
-      (evt.target instanceof Node &&
-        this.contentNode &&
-        this.contentNode.contains(evt.target)) ||
-      (evt.target instanceof Node &&
-        this.refNode &&
-        this.refNode.contains(evt.target))
-    ) {
-      return;
-    }
-    this.close();
-  };
-
-  requestOpen = () => {
-    const { isOpen } = this.state;
-    const { openDelay } = this.props;
+  const requestOpen = useCallback(() => {
     if (isOpen) {
       return;
     }
-    if (openDelay) {
-      this.openTimeout = setTimeout(this.open.bind(this), openDelay);
+    if (openDelay && window) {
+      openTimeoutRef.current = window.setTimeout(() => {
+        setIsOpen(true);
+      }, openDelay);
       return;
     }
-    this.open();
-  };
+    setIsOpen(true);
+  }, [isOpen, openDelay]);
 
-  open = () => {
-    const { isOpen } = this.state;
-    if (isOpen) return;
-    this.setState({ isOpen: true });
-  };
+  const close = useCallback(
+    (data?: any, modifiers?: { cancelled: boolean }) => {
+      if (window) {
+        window.clearTimeout(openTimeoutRef.current);
+      }
+      if (!isOpen) return;
+      setIsOpen(false);
+      if (typeof onClose == 'function') onClose(data, modifiers);
+    },
+    [isOpen, onClose, setIsOpen],
+  );
 
-  close = (data?: any, modifiers?: { cancelled: boolean }) => {
-    const { onClose } = this.props;
-    const { isOpen } = this.state;
-    clearTimeout(this.openTimeout);
-    if (!isOpen) return;
-    this.setState({ isOpen: false });
-    if (typeof onClose == 'function') onClose(data, modifiers);
-  };
+  const getChildProps = useCallback(
+    (ref: ReferenceChildrenProps['ref']): ChildProps => {
+      const childProps: ChildProps = {
+        'aria-describedby': isOpen ? elementId : undefined,
+      };
+      if (typeof (children as any).type == 'function') {
+        (childProps as FnChildProps).innerRef = ref;
+      } else {
+        (childProps as OtherChildrenProps).ref = ref;
+      }
+      return {
+        ...childProps,
+        ...(trigger
+          ? {
+              hover: {
+                onMouseEnter: requestOpen,
+                /*
+                 * Current version of React (16.11.0 as of now) does not call `onMouseLeave` for
+                 * `disabled` buttons. Thus, we use a native event listener in `componentDidUpdate`.
+                 *
+                 * However, this may work in future versions.
+                 */
+                // onMouseLeave: close,
+              },
+              click: {
+                onClick: () => (isOpen ? close() : requestOpen()),
+              },
+              disabled: null,
+            }[trigger]
+          : null),
+      };
+    },
+    [children, close, elementId, isOpen, requestOpen, trigger],
+  );
 
-  toggle = () => {
-    const { isOpen } = this.state;
-    if (isOpen) {
-      return this.close();
+  const handleWrapperFocus = useCallback(() => {
+    if (retainRefFocus && referenceNode instanceof HTMLInputElement) {
+      referenceNode.focus();
     }
-    return this.requestOpen();
-  };
+  }, [retainRefFocus]);
 
-  registerRefNode = (node: HTMLElement | null) => {
-    this.refNode = node;
-  };
+  const handleOutsideClick = useCallback(
+    (evt: MouseEvent) => {
+      const targetInRefNode = (
+        refNode: MutableRefObject<HTMLElement | undefined>,
+      ) => {
+        const currentRefNode = refNode && refNode.current;
+        return (
+          evt.target instanceof Node &&
+          currentRefNode &&
+          currentRefNode.contains(evt.target)
+        );
+      };
+      if (targetInRefNode(contentNode) || targetInRefNode(referenceNode)) {
+        return;
+      }
+      close();
+    },
+    [close],
+  );
 
-  registerContentNode = (node: HTMLElement | null) => {
-    this.contentNode = node;
-  };
-
-  handleWrapperFocus = () => {
-    const { retainRefFocus } = this.props;
-    if (retainRefFocus && this.refNode instanceof HTMLInputElement) {
-      this.refNode.focus();
-    }
-  };
-
-  renderReference = () => {
-    const { children } = this.props;
-    const { isOpen } = this.state;
-    const { id, requestOpen, close, toggle } = this;
-
-    if (typeof children == 'function') {
-      return ({ ref }: RefObj) =>
-        // @ts-ignore
-        children({ ref, id, isOpen, open: requestOpen, close, toggle });
-    }
-    return ({ ref }: RefObj) =>
-      // @ts-ignore
-      React.cloneElement(children, this.getChildProps(ref));
-  };
-
-  renderContent = () => {
-    const {
-      content,
-      contentValues,
-      intl: { formatMessage },
-    } = this.props;
+  const renderContent = useCallback((): ReactNode => {
     if (typeof content == 'string') {
       return content;
     }
     if (typeof content == 'function') {
-      return content({ close: this.close });
+      return content({ close });
     }
-    if (React.isValidElement(content)) {
+    if (isValidElement(content)) {
       return content;
     }
-    return formatMessage(content, contentValues);
-  };
+    return formatMessage(content as MessageDescriptor, contentValues);
+  }, [close, content, contentValues, formatMessage]);
 
-  render() {
-    const {
-      appearance,
-      placement: origPlacement,
-      popperProps,
-      retainRefFocus,
-      showArrow,
-    } = this.props;
-    const { isOpen } = this.state;
-    const content = this.renderContent();
-    return (
-      <Manager>
-        <Reference innerRef={this.registerRefNode}>
-          {this.renderReference()}
-        </Reference>
-        {isOpen && (
-          <Popper
-            innerRef={this.registerContentNode}
-            placement={origPlacement}
-            {...popperProps}
-          >
-            {({ ref, style, placement, arrowProps }) => (
-              <PopoverWrapper
-                appearance={appearance}
-                id={this.id}
-                innerRef={ref}
-                style={style}
-                placement={placement}
-                arrowProps={{
-                  ...arrowProps,
-                  showArrow,
-                }}
-                onFocus={this.handleWrapperFocus}
-                retainRefFocus={retainRefFocus}
-              >
-                {content}
-              </PopoverWrapper>
-            )}
-          </Popper>
-        )}
-      </Manager>
-    );
-  }
-}
+  const renderReference = useCallback(() => {
+    if (typeof children == 'function') {
+      return ({ ref }: ReferenceChildrenProps): PopoverChildFn =>
+        children({
+          ref,
+          id: elementId,
+          isOpen: !!isOpen,
+          open: () => requestOpen(),
+          close,
+          toggle: () => (isOpen ? close() : requestOpen()),
+        });
+    }
+    return ({ ref }: ReferenceChildrenProps) =>
+      React.cloneElement(children as ReactElement, getChildProps(ref));
+  }, [children, close, elementId, getChildProps, isOpen, requestOpen]);
 
-export default injectIntl(Popover);
+  const handleMouseLeave = useCallback(() => {
+    const referenceNodeCurrent = referenceNode.current;
+    if (trigger === 'hover' && referenceNodeCurrent) {
+      close();
+    }
+  }, [close, trigger]);
+
+  // Event listeners
+  useEffect(() => {
+    const referenceNodeCurrent = referenceNode.current;
+    document.body.addEventListener('click', handleOutsideClick, true);
+    /*
+     * Incase the `ref` contains a `disabled` button, we need to use the native `mouseleave` event, as React doesn't call `onMouseLeave` for `disabled` buttons.
+     * See: https://github.com/facebook/react/issues/4251
+     */
+    if (referenceNodeCurrent) {
+      referenceNodeCurrent.addEventListener(
+        'mouseleave',
+        handleMouseLeave,
+        true,
+      );
+    }
+    return () => {
+      if (referenceNodeCurrent) {
+        referenceNodeCurrent.removeEventListener(
+          'mouseleave',
+          handleMouseLeave,
+          true,
+        );
+      }
+      document.body.removeEventListener('click', handleOutsideClick, true);
+    };
+  }, [handleMouseLeave, handleOutsideClick]);
+
+  // Keep in sync with parent component
+  useEffect(() => {
+    if (isOpenProp !== lastIsOpenProp && isOpenProp !== isOpen) {
+      if (!isOpen) {
+        requestOpen();
+      } else {
+        close();
+      }
+      setIsOpen(!!isOpenProp);
+    }
+  }, [close, isOpen, isOpenProp, lastIsOpenProp, requestOpen]);
+
+  // Timeouts
+  useEffect(() => {
+    const currentOpenTimeoutRef = openTimeoutRef && openTimeoutRef.current;
+    return () => {
+      if (window && currentOpenTimeoutRef) {
+        window.clearTimeout(currentOpenTimeoutRef);
+      }
+    };
+  }, []);
+
+  return (
+    <Manager>
+      <Reference innerRef={assignInnerRef(referenceNode)}>
+        {renderReference()}
+      </Reference>
+      {isOpen && (
+        <Popper
+          innerRef={assignInnerRef(contentNode)}
+          placement={origPlacement}
+          {...popperProps}
+        >
+          {({ ref, style, placement, arrowProps }) => (
+            <PopoverWrapper
+              appearance={appearance}
+              id={elementId}
+              innerRef={ref}
+              style={style}
+              placement={placement}
+              arrowProps={{
+                ...arrowProps,
+                showArrow,
+              }}
+              onFocus={handleWrapperFocus}
+              retainRefFocus={retainRefFocus}
+            >
+              {renderContent()}
+            </PopoverWrapper>
+          )}
+        </Popper>
+      )}
+    </Manager>
+  );
+};
+
+Popover.displayName = displayName;
+
+export default Popover;

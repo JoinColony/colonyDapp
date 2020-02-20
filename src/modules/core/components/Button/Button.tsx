@@ -1,15 +1,12 @@
 /* eslint-disable react/button-has-type */
 
-import React, { ReactNode } from 'react';
-import {
-  IntlShape,
-  MessageDescriptor,
-  MessageValues,
-  injectIntl,
-} from 'react-intl';
+import React, { ReactNode, ButtonHTMLAttributes } from 'react';
+import { MessageDescriptor, useIntl } from 'react-intl';
+import { NavLink, NavLinkProps } from 'react-router-dom';
 
-import { NavLink } from 'react-router-dom';
+import { SimpleMessageValues } from '~types/index';
 import { useMainClasses } from '~utils/hooks';
+
 import styles from './Button.css';
 
 const displayName = 'Button';
@@ -24,10 +21,12 @@ export interface Appearance {
     | 'underlinedBold'
     | 'blue'
     | 'no-style';
+  colorSchema?: 'inverted' | 'grey';
   size?: 'small' | 'medium' | 'large';
 }
 
-export interface Props {
+export interface Props
+  extends Omit<ButtonHTMLAttributes<HTMLButtonElement>, 'title'> {
   /** Appearance object */
   appearance?: Appearance;
 
@@ -59,10 +58,7 @@ export interface Props {
   text?: MessageDescriptor | string;
 
   /** Values for loading text (react-intl interpolation) */
-  textValues?: MessageValues;
-
-  /** @ignore injected by `react-intl` */
-  intl: IntlShape;
+  textValues?: SimpleMessageValues;
 }
 
 /*
@@ -84,7 +80,6 @@ const Button = ({
   className,
   disabled = false,
   innerRef,
-  intl: { formatMessage },
   linkTo,
   loading = false,
   title,
@@ -93,6 +88,8 @@ const Button = ({
   type = 'button',
   ...props
 }: Props) => {
+  const { formatMessage } = useIntl();
+
   const titleText =
     typeof title == 'string' ? title : title && formatMessage(title);
   const buttonText =
@@ -102,7 +99,7 @@ const Button = ({
 
   if (linkTo) {
     return (
-      <NavLink className={classNames} to={linkTo} {...props}>
+      <NavLink className={classNames} to={linkTo} {...(props as NavLinkProps)}>
         {buttonText || children}
       </NavLink>
     );
@@ -125,4 +122,4 @@ const Button = ({
 
 Button.displayName = displayName;
 
-export default injectIntl(Button);
+export default Button;

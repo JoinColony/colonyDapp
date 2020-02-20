@@ -1,15 +1,13 @@
-import {
-  defineMessages,
-  FormattedMessage,
-  MessageDescriptor,
-  MessageValues,
-} from 'react-intl';
 import React, { Component, Fragment, ReactNode } from 'react';
+import { defineMessages, FormattedMessage } from 'react-intl';
+
+import Button from '~core/Button';
+import { asField } from '~core/Fields';
+import { FieldEnhancedProps } from '~core/Fields/types';
+import Popover, { Tooltip } from '~core/Popover';
 
 import { ConsumableItem } from './index';
-import { asField } from '~core/Fields';
-import Button from '~core/Button';
-import Popover, { Tooltip } from '~core/Popover';
+
 import styles from './ItemsList.css';
 
 const MSG = defineMessages({
@@ -20,12 +18,6 @@ const MSG = defineMessages({
 });
 
 interface Props {
-  /** Connect to form state (will inject `$value`, `$id`, `$error`, `$touched`), is `true` by default */
-  connect?: boolean;
-
-  /** Input field name (form variable) */
-  name: string;
-
   /** The already nested list, generated from list by the wrapper */
   collapsedList: ConsumableItem[];
 
@@ -55,33 +47,9 @@ interface Props {
 
   /** Whether the value can be unset */
   nullable?: boolean;
-
-  /** @ignore Will be injected by `asField` */
-  $id: string;
-
-  /** @ignore Will be injected by `asField` */
-  $error?: string;
-
-  /** @ignore Will be injected by `asField` */
-  $value?: string;
-
-  /** @ignore Will be injected by `asField` */
-  $touched?: boolean;
-
-  /** @ignore Will be injected by `asField` */
-  formatIntl: (
-    text: string | MessageDescriptor,
-    textValues?: MessageValues,
-  ) => string;
-
-  /** @ignore Will be injected by `asField` */
-  setValue: (val: any) => void;
-
-  /** @ignore Will be injected by `asField` */
-  setError: (val: any) => void;
 }
 
-type State = {
+interface State {
   /*
    * This values determines if any item in the (newly opened) list was selected
    */
@@ -96,9 +64,9 @@ type State = {
    * Item that is actually set on the task
    */
   setItem: number | void;
-};
+}
 
-class ItemsList extends Component<Props, State> {
+class ItemsList extends Component<Props & FieldEnhancedProps, State> {
   static displayName = 'ItemsList';
 
   state = {
@@ -169,7 +137,10 @@ class ItemsList extends Component<Props, State> {
           if (!connect && itemId && name) {
             return callback({ id: itemId, name });
           }
-          return setValue(selectedItemId);
+          if (setValue) {
+            return setValue(selectedItemId);
+          }
+          return null;
         },
       );
     }
@@ -197,7 +168,10 @@ class ItemsList extends Component<Props, State> {
         if (!connect) {
           return callback();
         }
-        return setValue(null);
+        if (setValue) {
+          return setValue(null);
+        }
+        return null;
       },
     );
   };
@@ -363,6 +337,6 @@ class ItemsList extends Component<Props, State> {
   }
 }
 
-export default (asField({
+export default asField<Props>({
   initialValue: '',
-}) as any)(ItemsList);
+})(ItemsList);

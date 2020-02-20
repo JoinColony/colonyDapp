@@ -1,33 +1,22 @@
-import { ReactNode } from 'react';
+import { ReactNode, ReactElement } from 'react';
 
-export type ReactRef = (arg0: HTMLElement | null) => void;
-
-export type PopoverPlacementType =
-  | 'auto'
-  | 'auto-end'
-  | 'auto-start'
-  | 'top'
-  | 'top-end'
-  | 'top-start'
-  | 'right'
-  | 'right-end'
-  | 'right-start'
-  | 'bottom'
-  | 'bottom-end'
-  | 'bottom-start'
-  | 'left'
-  | 'left-end'
-  | 'left-start';
+import { RefHandler } from 'react-popper';
 
 export type PopoverAppearanceType = {
   theme: 'dark' | 'grey';
 };
 
-export type PopoverTriggerType = (arg0: {
-  ref: ReactRef;
+export interface PopoverChildFnProps {
+  ref: RefHandler;
   id: string;
   isOpen: boolean;
   open: () => void;
   close: () => void;
   toggle: () => void;
-}) => ReactNode;
+}
+
+export type PopoverChildFn = (arg0: PopoverChildFnProps) => ReactNode;
+
+export type PopoverTriggerElementType = PopoverChildFn | ReactElement;
+
+export type PopoverTriggerType = 'hover' | 'click' | 'disabled';

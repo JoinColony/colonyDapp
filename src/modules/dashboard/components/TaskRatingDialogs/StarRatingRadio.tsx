@@ -1,14 +1,11 @@
-import {
-  MessageDescriptor,
-  MessageValues,
-  FormattedMessageValues,
-  FormattedMessage,
-} from 'react-intl';
+import { MessageDescriptor, FormattedMessage } from 'react-intl';
 import React from 'react';
 
 import { Radio } from '~core/Fields';
 import Heading from '~core/Heading';
 import StarRating from '~core/StarRating';
+import { ComplexMessageValues, SimpleMessageValues } from '~types/index';
+
 import styles from './StarRatingRadio.css';
 
 interface Props {
@@ -22,9 +19,9 @@ interface Props {
   value: 1 | 2 | 3;
   checked: boolean;
   title: MessageDescriptor;
-  titleValues?: MessageValues;
+  titleValues?: SimpleMessageValues;
   description: MessageDescriptor;
-  descriptionValues?: FormattedMessageValues;
+  descriptionValues?: ComplexMessageValues;
 }
 
 const displayName = 'dashboard.TaskRatingDialogs.StarRatingRadio';

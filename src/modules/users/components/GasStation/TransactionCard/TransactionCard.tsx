@@ -1,16 +1,19 @@
 import React, { Component } from 'react';
 import { FormattedMessage } from 'react-intl';
 
-import Heading from '~core/Heading';
 import Card from '~core/Card';
+import Heading from '~core/Heading';
+import { TransactionType } from '~immutable/index';
+import { SimpleMessageValues } from '~types/index';
+
 import {
   getGroupKey,
   getGroupStatus,
   getGroupValues,
 } from '../transactionGroup';
-import styles from './TransactionCard.css';
 import TransactionStatus from './TransactionStatus';
-import { TransactionType } from '~immutable/index';
+
+import styles from './TransactionCard.css';
 
 interface Props {
   idx: number;
@@ -50,7 +53,7 @@ class TransactionCard extends Component<Props> {
                       : ''
                   }.title`,
                 }}
-                textValues={values.params}
+                textValues={values.params as SimpleMessageValues}
               />
               <FormattedMessage
                 id={`transaction.${groupKey}${

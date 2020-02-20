@@ -1,12 +1,13 @@
 import React, { ComponentType, ReactNode, Component } from 'react';
 import {
   MessageDescriptor,
-  MessageValues,
   defineMessages,
   FormattedMessage,
 } from 'react-intl';
 import Dropzone from 'react-dropzone';
 import { getIn } from 'formik';
+
+import { SimpleMessageValues } from '~types/index';
 
 import { FileReaderFile, UploadFile } from './types';
 import { DEFAULT_MIME_TYPES, DEFAULT_MAX_FILE_SIZE } from './limits';
@@ -74,13 +75,13 @@ interface Props {
   /** Help text (will appear next to label text) */
   help?: string | MessageDescriptor;
   /** Values for help text (react-intl interpolation) */
-  helpValues?: MessageValues;
+  helpValues?: SimpleMessageValues;
   /** Extra node to render on the top right in the label */
   extra?: ReactNode;
   /** Label text */
   label?: string | MessageDescriptor;
   /** Values for label text (react-intl interpolation) */
-  labelValues?: MessageValues;
+  labelValues?: SimpleMessageValues;
   /** Placeholder element for when no files have been picked yet (renderProp) */
   renderPlaceholder?: ReactNode | null;
   /** @ignore injected by `asFieldArray` */

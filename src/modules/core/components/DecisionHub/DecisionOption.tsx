@@ -1,10 +1,11 @@
-import React, { useCallback } from 'react';
+import React, { ButtonHTMLAttributes, useCallback } from 'react';
 import {
   MessageDescriptor,
   defineMessages,
   FormattedMessage,
 } from 'react-intl';
 
+import { LinkProps } from 'react-router-dom';
 import { getMainClasses } from '~utils/css';
 import Icon from '../Icon';
 import Link from '../Link';
@@ -12,6 +13,7 @@ import { Tooltip } from '../Popover';
 import Heading from '../Heading';
 import { asField } from '../Fields';
 import styles from './DecisionOption.css';
+import { FieldEnhancedProps } from '~core/Fields/types';
 
 const MSG = defineMessages({
   iconTitle: {
@@ -20,24 +22,24 @@ const MSG = defineMessages({
   },
 });
 
+export interface DecisionOptionType {
+  value: string | null;
+  title: MessageDescriptor | string;
+  subtitle: MessageDescriptor | string;
+  icon?: string;
+  tooltip?: MessageDescriptor;
+  disabled?: boolean;
+}
+
 interface Appearance {
   theme?: 'alt';
 }
 
 interface Props {
   appearance?: Appearance;
-  option: {
-    value: string;
-    title: MessageDescriptor | string;
-    subtitle: MessageDescriptor | string;
-    icon?: string;
-    tooltip?: MessageDescriptor;
-    disabled?: boolean;
-  };
+  option: DecisionOptionType;
   link?: string;
-
-  /** @ignore Will be injected by `asField` */
-  setValue: (val: string) => void;
+  name: string;
 }
 
 const displayName = 'DecisionOption';
@@ -74,21 +76,24 @@ const DecisionOption = ({
   option,
   setValue,
   link,
-}: Props) => {
+}: Props & FieldEnhancedProps) => {
   const makeDecision = useCallback(() => {
-    if (!disabled) setValue(value);
+    if (!disabled && value && setValue) setValue(value);
   }, [setValue, value, disabled]);
 
   const Element = link ? Link : 'button';
   const elmProps = link
-    ? { to: disabled ? '' : link }
-    : { onClick: makeDecision, disabled };
+    ? ({ to: disabled ? '' : link } as LinkProps)
+    : ({
+        onClick: makeDecision,
+        disabled,
+        type: 'submit',
+      } as ButtonHTMLAttributes<HTMLButtonElement>);
 
   return (
     <Element
-      type="submit"
       className={getMainClasses(appearance, styles, { disabled: !!disabled })}
-      {...elmProps}
+      {...(elmProps as any)}
     >
       <DecisionOptionIcon {...option} />
       <div className={styles.rowContent}>
@@ -108,4 +113,4 @@ const DecisionOption = ({
 
 DecisionOption.displayName = displayName;
 
-export default asField({ initialValue: '' })(DecisionOption);
+export default asField<Props>({ initialValue: '' })(DecisionOption);

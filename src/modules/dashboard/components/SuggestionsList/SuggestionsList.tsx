@@ -1,4 +1,4 @@
-import React, { FC, useCallback, useMemo, useState } from 'react';
+import React, { useCallback, useMemo, useState } from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 import { useHistory } from 'react-router-dom';
 
@@ -8,8 +8,7 @@ import { Select } from '~core/Fields';
 import ListGroup from '~core/ListGroup';
 import ListGroupItem from '~core/ListGroup/ListGroupItem';
 import { SpinnerLoader } from '~core/Preloaders';
-import { withDialog } from '~core/Dialog';
-import { OpenDialog } from '~core/Dialog/types';
+import { ConfirmDialog, useDialog } from '~core/Dialog';
 import SuggestionsListItem from '~dashboard/SuggestionsListItem';
 import {
   cacheUpdates,
@@ -70,15 +69,10 @@ const MSG = defineMessages({
   },
 });
 
-interface InProps {
+interface Props {
   colonyAddress: Address;
   colonyName: string;
   domainId: Domain['ethDomainId'];
-}
-
-interface Props extends InProps {
-  // Injected via `withDialog`
-  openDialog: OpenDialog;
 }
 
 const createdAtDesc = (
@@ -88,14 +82,10 @@ const createdAtDesc = (
 
 const displayName = 'Dashboard.SuggestionsList';
 
-const SuggestionsList = ({
-  colonyAddress,
-  colonyName,
-  domainId,
-  openDialog,
-}: Props) => {
+const SuggestionsList = ({ colonyAddress, colonyName, domainId }: Props) => {
   const history = useHistory();
   const { walletAddress } = useLoggedInUser();
+  const confirm = useDialog(ConfirmDialog);
 
   const [filterOption, setFilterOption] = useState<SuggestionsFilterOptionType>(
     'All',
@@ -150,7 +140,7 @@ const SuggestionsList = ({
   );
   const handleDeleted = useCallback(
     async (id: string) => {
-      await openDialog('ConfirmDialog', {
+      await confirm({
         heading: MSG.confirmDeleteHeading,
         children: <FormattedMessage {...MSG.confirmDeleteText} />,
         confirmButtonText: MSG.confirmDeleteButton,
@@ -159,11 +149,11 @@ const SuggestionsList = ({
         variables: { input: { id, status: SuggestionStatus.Deleted } },
       });
     },
-    [openDialog, setSuggestionStatus],
+    [confirm, setSuggestionStatus],
   );
   const handleCreateTask = useCallback(
     async (id: string) => {
-      await openDialog('ConfirmDialog', {
+      await confirm({
         heading: MSG.confirmCreateTaskHeading,
         children: <FormattedMessage {...MSG.confirmCreateTaskText} />,
         confirmButtonText: MSG.confirmCreateTaskButton,
@@ -177,7 +167,7 @@ const SuggestionsList = ({
         history.push(`/colony/${colonyName}/task/${taskId}`);
       }
     },
-    [colonyAddress, colonyName, createTaskFromSuggestion, history, openDialog],
+    [colonyAddress, colonyName, createTaskFromSuggestion, history, confirm],
   );
 
   const suggestions = useMemo(
@@ -190,13 +180,14 @@ const SuggestionsList = ({
   );
 
   return loading || isFetchingDomains ? (
-    <SpinnerLoader size="medium" />
+    <SpinnerLoader appearance={{ size: 'medium' }} />
   ) : (
     <>
       <div className={styles.filterContainer}>
         <Select
-          connect={false}
           appearance={{ alignOptions: 'right', theme: 'alt' }}
+          connect={false}
+          elementOnly
           form={{ setFieldValue: handleSetFilterOption }}
           options={suggestionsFilterSelectOptions}
           name="suggestionsFilter"
@@ -246,4 +237,4 @@ const SuggestionsList = ({
 
 SuggestionsList.displayName = displayName;
 
-export default (withDialog() as any)(SuggestionsList) as FC<InProps>;
+export default SuggestionsList;
