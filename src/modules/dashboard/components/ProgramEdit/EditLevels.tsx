@@ -1,6 +1,7 @@
 import React, { useCallback } from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 
+import { useHistory } from 'react-router';
 import Button from '~core/Button';
 import Heading from '~core/Heading';
 import Icon from '~core/Icon';
@@ -34,14 +35,24 @@ interface Props {
 const displayName = 'dashboard.EditLevels';
 
 const EditLevels = ({ colonyName, levelIds, levels, programId }: Props) => {
+  const history = useHistory();
+
   const [createLevel] = useCreateLevelMutation({
     variables: { input: { programId } },
     update: cacheUpdates.createLevel(programId),
   });
-  // @todo redirect to level upon creation once level template exists (after #2019)
-  const handleAddLevel = useCallback(() => {
-    createLevel();
-  }, [createLevel]);
+
+  const handleAddLevel = useCallback(async () => {
+    const { data: mutationResult } = await createLevel();
+    const id =
+      mutationResult &&
+      mutationResult.createLevel &&
+      mutationResult.createLevel.id;
+    if (id) {
+      history.replace(`/colony/${colonyName}/program/${programId}/level/${id}`);
+    }
+  }, [colonyName, createLevel, history, programId]);
+
   return (
     <div>
       <Heading appearance={{ size: 'medium' }} text={MSG.title} />
