@@ -85,7 +85,11 @@ const Program = ({ colonyAddress, colonyName }: Props) => {
   }
 
   if (!program || !!error) {
-    return <FormattedMessage tag="p" {...MSG.programNotFoundText} />;
+    return (
+      <p>
+        <FormattedMessage {...MSG.programNotFoundText} />
+      </p>
+    );
   }
 
   return canAdmin && (program.status === ProgramStatus.Draft || isEditing) ? (
