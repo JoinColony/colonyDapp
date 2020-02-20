@@ -112,6 +112,12 @@ const ProgramEdit = ({
     variables: { input: { id } },
   });
 
+  // As an alternative to `validateOnMount`
+  const checkCanPublish = useCallback(async (values: FormValues) => {
+    const result = await validationSchema.isValid(values);
+    setCanPublish(result);
+  }, []);
+
   const handleUpdate = useCallback(
     async (values: FormValues) => {
       editProgram({
@@ -167,7 +173,6 @@ const ProgramEdit = ({
         }
         onSubmit={handleUpdate}
         validationSchema={validationSchema}
-        validateOnMount
       >
         {({
           dirty,
@@ -175,61 +180,64 @@ const ProgramEdit = ({
           isValid,
           status: formStatus,
           values,
-        }: FormikProps<FormValues>) => (
-          <>
-            <div className={styles.formActions}>
-              <div className={styles.headingContainer}>
-                <div>
-                  <Heading
-                    appearance={{ size: 'medium' }}
-                    text={MSG.pageTitle}
-                  />
+        }: FormikProps<FormValues>) => {
+          checkCanPublish(values);
+          return (
+            <>
+              <div className={styles.formActions}>
+                <div className={styles.headingContainer}>
+                  <div>
+                    <Heading
+                      appearance={{ size: 'medium' }}
+                      text={MSG.pageTitle}
+                    />
+                  </div>
+                  <div className={styles.cancelButtonContainer}>
+                    <Button
+                      appearance={{ theme: 'blue' }}
+                      text={{ id: 'button.cancel' }}
+                      {...cancelButtonActionProps}
+                    />
+                  </div>
                 </div>
-                <div className={styles.cancelButtonContainer}>
+                <div className={styles.actionButtons}>
                   <Button
                     appearance={{ theme: 'blue' }}
-                    text={{ id: 'button.cancel' }}
-                    {...cancelButtonActionProps}
+                    disabled={!isValid || isSubmitting || !canPublish}
+                    loading={isPublishing}
+                    onClick={() => handlePublish(values)}
+                    text={MSG.buttonPublish}
+                    title={MSG.buttonPublishTitle}
+                  />
+                  <Button
+                    disabled={!dirty || !isValid || isPublishing}
+                    loading={isSubmitting}
+                    text={
+                      isDraft ? MSG.buttonSubmitTextDraft : MSG.buttonSubmitText
+                    }
+                    type="submit"
                   />
                 </div>
               </div>
-              <div className={styles.actionButtons}>
-                <Button
-                  appearance={{ theme: 'blue' }}
-                  disabled={!isValid || isSubmitting}
-                  loading={isPublishing}
-                  onClick={() => handlePublish(values)}
-                  text={MSG.buttonPublish}
-                  title={MSG.buttonPublishTitle}
-                />
-                <Button
-                  disabled={!dirty || !isValid || isPublishing}
-                  loading={isSubmitting}
-                  text={
-                    isDraft ? MSG.buttonSubmitTextDraft : MSG.buttonSubmitText
-                  }
-                  type="submit"
-                />
-              </div>
-            </div>
-            <Input
-              appearance={{
-                theme: 'fat',
-                colorSchema: isDraft ? 'info' : undefined,
-              }}
-              label={MSG.controlLabelTitle}
-              name="title"
-              status={isDraft ? MSG.draftStatusText : undefined}
-            />
-            <br />
-            <Textarea
-              appearance={{ resizable: 'vertical' }}
-              label={MSG.controlLabelDescription}
-              name="description"
-            />
-            <FormStatus status={formStatus} />
-          </>
-        )}
+              <Input
+                appearance={{
+                  theme: 'fat',
+                  colorSchema: isDraft ? 'info' : undefined,
+                }}
+                label={MSG.controlLabelTitle}
+                name="title"
+                status={isDraft ? MSG.draftStatusText : undefined}
+              />
+              <br />
+              <Textarea
+                appearance={{ resizable: 'vertical' }}
+                label={MSG.controlLabelDescription}
+                name="description"
+              />
+              <FormStatus status={formStatus} />
+            </>
+          );
+        }}
       </Form>
       <div className={styles.levelsContainer}>
         <EditLevels />
