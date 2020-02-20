@@ -15,6 +15,10 @@ import { domainsAndRolesFetcher } from '../../fetchers';
 import { getUserRoles } from '../../../transformers';
 
 const MSG = defineMessages({
+  loading: {
+    id: 'dashboard.Program.loading',
+    defaultMessage: 'Loading program...',
+  },
   programNotFoundText: {
     id: 'dashboard.Program.programNotFoundText',
     defaultMessage: 'Sorry, this program could not be loaded.',
@@ -62,7 +66,12 @@ const Program = ({ colonyAddress, colonyName }: Props) => {
   const canAdmin = canCreateProgram(userRoles);
 
   if (loading) {
-    return <SpinnerLoader />;
+    return (
+      <SpinnerLoader
+        loadingText={MSG.loading}
+        appearance={{ size: 'massive', theme: 'primary' }}
+      />
+    );
   }
 
   const program = data && data.program;
