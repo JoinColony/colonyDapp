@@ -14,15 +14,12 @@ import '../styles/styleguide.css';
 
 import messages from '../i18n/en.json';
 
-if (!Intl.PluralRules) {
-  // eslint-disable-next-line global-require
-  require('@formatjs/intl-pluralrules/polyfill');
-}
-
 // @ts-ignore
 if (!Intl.RelativeTimeFormat) {
-  // eslint-disable-next-line global-require
+  /* eslint-disable global-require */
   require('@formatjs/intl-relativetimeformat/polyfill');
+  require('@formatjs/intl-relativetimeformat/dist/locale-data/en');
+  /* eslint-enable global-require */
 }
 
 interface Props {
