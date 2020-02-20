@@ -110,8 +110,8 @@ export const useTransformer = <
     ...args,
   ]);
 
-export const usePrevious = (value: any) => {
-  const ref = useRef();
+export const usePrevious = <T extends any>(value: T): T | void => {
+  const ref = useRef<T>();
   useEffect(() => {
     ref.current = value;
   });
