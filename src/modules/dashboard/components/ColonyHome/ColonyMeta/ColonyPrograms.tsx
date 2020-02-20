@@ -1,6 +1,6 @@
-import React, { useCallback, useState, FC } from 'react';
+import React, { useCallback, useState } from 'react';
 import throttle from 'lodash/throttle';
-import { defineMessages, injectIntl, IntlShape } from 'react-intl';
+import { defineMessages, useIntl } from 'react-intl';
 import { useHistory } from 'react-router';
 
 import { ROOT_DOMAIN } from '~constants';
@@ -46,19 +46,11 @@ interface Props {
   colonyName: string;
 }
 
-interface EnhancedProps extends Props {
-  intl: IntlShape;
-}
-
 const displayName = 'dashboard.ColonyHome.ColonyMeta.ColonyPrograms';
 
-const ColonyPrograms = ({
-  colonyAddress,
-  colonyName,
-  intl: { formatMessage },
-}: EnhancedProps) => {
+const ColonyPrograms = ({ colonyAddress, colonyName }: Props) => {
+  const { formatMessage } = useIntl();
   const [isCreatingProgram, setIsCreatingProgram] = useState<boolean>(false);
-
   const history = useHistory();
 
   const { walletAddress } = useLoggedInUser();
@@ -154,4 +146,4 @@ const ColonyPrograms = ({
 
 ColonyPrograms.displayName = displayName;
 
-export default injectIntl(ColonyPrograms) as FC<Props>;
+export default ColonyPrograms;
