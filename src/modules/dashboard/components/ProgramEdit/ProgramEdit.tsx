@@ -201,14 +201,16 @@ const ProgramEdit = ({
                   </div>
                 </div>
                 <div className={styles.actionButtons}>
-                  <Button
-                    appearance={{ theme: 'blue' }}
-                    disabled={!isValid || isSubmitting || !canPublish}
-                    loading={isPublishing}
-                    onClick={() => handlePublish(values)}
-                    text={MSG.buttonPublish}
-                    title={MSG.buttonPublishTitle}
-                  />
+                  {status === ProgramStatus.Draft && (
+                    <Button
+                      appearance={{ theme: 'blue' }}
+                      disabled={!isValid || isSubmitting || !canPublish}
+                      loading={isPublishing}
+                      onClick={() => handlePublish(values)}
+                      text={MSG.buttonPublish}
+                      title={MSG.buttonPublishTitle}
+                    />
+                  )}
                   <Button
                     disabled={!dirty || !isValid || isPublishing}
                     loading={isSubmitting}
