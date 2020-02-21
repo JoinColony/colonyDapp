@@ -90,7 +90,7 @@ const TabContribute = ({
     throttle(async () => {
       setIsCreatingTask(true);
       const { id } = (await createTask({})) as { id: string };
-      history.replace(`/colony/${colonyName}/task/${id}`);
+      history.push(`/colony/${colonyName}/task/${id}`);
     }, 2000),
     [createTask],
   );

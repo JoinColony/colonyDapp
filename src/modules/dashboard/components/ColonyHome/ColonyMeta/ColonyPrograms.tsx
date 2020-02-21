@@ -94,7 +94,7 @@ const ColonyPrograms = ({ colonyAddress, colonyName }: Props) => {
         mutationResult.data &&
         mutationResult.data.createProgram &&
         mutationResult.data.createProgram.id;
-      history.replace(`/colony/${colonyName}/program/${id}`);
+      history.push(`/colony/${colonyName}/program/${id}`);
       setIsCreatingProgram(false);
     }, 2000),
     [colonyName, createProgramFn, history],

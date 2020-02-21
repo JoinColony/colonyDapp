@@ -49,7 +49,7 @@ const EditLevels = ({ colonyName, levelIds, levels, programId }: Props) => {
       mutationResult.createLevel &&
       mutationResult.createLevel.id;
     if (id) {
-      history.replace(`/colony/${colonyName}/program/${programId}/level/${id}`);
+      history.push(`/colony/${colonyName}/program/${programId}/level/${id}`);
     }
   }, [colonyName, createLevel, history, programId]);
 
