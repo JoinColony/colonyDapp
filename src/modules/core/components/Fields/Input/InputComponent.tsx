@@ -39,6 +39,13 @@ const InputComponent = ({
   innerRef,
   onChange,
   placeholder,
+  /* eslint-disable @typescript-eslint/no-unused-vars */
+  // Cleave TS defs don't expect/allow these
+  defaultValue,
+  contentEditable,
+  draggable,
+  spellCheck,
+  /* eslint-enable @typescript-eslint/no-unused-vars */
   ...props
 }: Props) => {
   const handleCleaveChange = useCallback(
