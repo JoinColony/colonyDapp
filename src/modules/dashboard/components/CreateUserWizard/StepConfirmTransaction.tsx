@@ -1,5 +1,5 @@
 import React from 'react';
-import { defineMessages, FormattedMessage } from 'react-intl';
+import { defineMessages } from 'react-intl';
 import { Redirect } from 'react-router-dom';
 
 import { DASHBOARD_ROUTE } from '~routes/index';
@@ -12,7 +12,6 @@ import {
   findNewestGroup,
 } from '~users/GasStation/transactionGroup';
 import Heading from '~core/Heading';
-import Link from '~core/Link';
 import GasStationContent from '~users/GasStation/GasStationContent';
 import styles from './StepConfirmTransaction.css';
 
@@ -21,10 +20,6 @@ const MSG = defineMessages({
     id: 'dashboard.CreateUserWizard.StepConfirmTransaction.heading',
     defaultMessage: `Complete this transaction to continue
       setting up your account`,
-  },
-  later: {
-    id: 'dashboard.CreateUserWizard.StepUserName.later',
-    defaultMessage: `I'll do it later`,
   },
 });
 
@@ -56,13 +51,6 @@ const StepConfirmTransaction = () => {
             transactionAndMessageGroups={[colonyTransaction]}
           />
         )}
-      </div>
-      <div className={styles.buttons}>
-        <p className={styles.reminder}>
-          <Link to={DASHBOARD_ROUTE}>
-            <FormattedMessage {...MSG.later} />
-          </Link>
-        </p>
       </div>
     </section>
   );
