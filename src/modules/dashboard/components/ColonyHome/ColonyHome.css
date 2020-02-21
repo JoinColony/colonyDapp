@@ -6,8 +6,6 @@
 
   /* vertical padding of 11px + nav height (70px) */
   padding: 11px 18px 16px 18px;
-  overflow: auto;
-  overflow: hidden;
   background: var(--gradient-default);
   grid-template-columns: 300px minmax(360px, auto) minmax(275px, 300px);
   grid-template-rows: auto;

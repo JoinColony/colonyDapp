@@ -1,34 +1,22 @@
-import React from 'react';
-import { Route, Redirect } from 'react-router-dom';
+import React, { ComponentType } from 'react';
+import { Route, Redirect, RouteProps } from 'react-router-dom';
 
 import { CONNECT_ROUTE } from './routeConstants';
-
-import NavigationWrapper from '~pages/NavigationWrapper';
-
-import { RouteProps } from './types';
+import { RouteComponentProps } from '~pages/RouteLayouts';
 
 interface Props extends RouteProps {
-  appearance?: any;
-  backRoute?: any;
-  backText?: any;
-  backTextValues?: any;
-  didClaimProfile?: boolean;
-  exact?: boolean;
-  hasBackLink?: boolean;
-  hasNavigation?: boolean;
+  component: ComponentType<any>;
+  layout: ComponentType<any>;
   isConnected?: boolean;
+  routeProps?: RouteComponentProps;
 }
 
 const ConnectedOnlyRoute = ({
   component: Component,
+  layout: Layout,
   path,
   isConnected,
-  hasNavigation = true,
-  hasBackLink,
-  /*
-   * ConnectedRoute props that are passed directly to the NavigationBar
-   */
-  ...rest
+  routeProps = {},
 }: Props) => (
   <Route
     path={path}
@@ -36,25 +24,12 @@ const ConnectedOnlyRoute = ({
      * Render props that are passed directly to the route Component
      */
     render={props => {
-      const {
-        match: { params },
-        location,
-      } = props;
+      const { location } = props;
       if (isConnected) {
-        // We disable the back link for locations we redirect to from /connect
-        return hasNavigation ? (
-          <NavigationWrapper
-            {...rest}
-            hasBackLink={
-              hasBackLink === undefined
-                ? location.state && location.state.hasBackLink
-                : hasBackLink
-            }
-          >
-            <Component {...props} params={params} />
-          </NavigationWrapper>
-        ) : (
-          <Component {...props} params={params} />
+        return (
+          <Layout routeProps={routeProps} {...props}>
+            <Component routeProps={routeProps} {...props} />
+          </Layout>
         );
       }
       return (

@@ -15,6 +15,8 @@ import CreateWalletWizard from '~users/CreateWalletWizard';
 import UserProfile from '~users/UserProfile';
 import UserProfileEdit from '~users/UserProfileEdit';
 import AdminDashboard from '~admin/AdminDashboard';
+import { NavBar, Plain, SimpleNav } from '~pages/RouteLayouts/index';
+
 import { useLoggedInUser } from '~data/index';
 
 import {
@@ -37,8 +39,8 @@ import ConnectedOnlyRoute from './ConnectedOnlyRoute';
 import DisconnectedOnlyRoute from './DisconnectedOnlyRoute';
 
 const MSG = defineMessages({
-  taskBack: {
-    id: 'routes.Routes.taskBack',
+  back: {
+    id: 'routes.Routes.back',
     defaultMessage: 'Go to {colonyName}',
   },
   userProfileEditBack: {
@@ -69,105 +71,119 @@ const Routes = () => {
         didClaimProfile={didClaimProfile}
         path={CONNECT_ROUTE}
         component={ConnectWalletWizard}
+        layout={Plain}
       />
       <DisconnectedOnlyRoute
         isConnected={isConnected}
         didClaimProfile={didClaimProfile}
         path={CREATE_WALLET_ROUTE}
         component={CreateWalletWizard}
+        layout={Plain}
       />
       <ConnectedOnlyRoute
         exact
         isConnected={isConnected}
-        didClaimProfile={didClaimProfile}
         path={COLONY_HOME_ROUTE}
         component={ColonyHome}
-        hasBackLink={false}
-        appearance={{ theme: 'transparent' }}
+        layout={SimpleNav}
+        routeProps={{
+          hasBackLink: false,
+        }}
       />
       <ConnectedOnlyRoute
         isConnected={isConnected}
-        didClaimProfile={didClaimProfile}
         path={INBOX_ROUTE}
         component={Inbox}
-        hasBackLink={false}
-        appearance={{ theme: 'transparent' }}
+        layout={SimpleNav}
+        routeProps={{
+          hasBackLink: false,
+        }}
       />
       <ConnectedOnlyRoute
         isConnected={isConnected}
-        didClaimProfile={didClaimProfile}
         path={WALLET_ROUTE}
         component={Wallet}
-        hasBackLink={false}
-        appearance={{ theme: 'transparent' }}
+        layout={SimpleNav}
+        routeProps={{
+          hasBackLink: false,
+        }}
       />
       <ConnectedOnlyRoute
         isConnected={isConnected}
-        didClaimProfile={didClaimProfile}
         path={DASHBOARD_ROUTE}
         component={Dashboard}
-        hasBackLink={false}
-        appearance={{ theme: 'transparent' }}
+        layout={SimpleNav}
+        routeProps={{
+          hasBackLink: false,
+        }}
       />
       <ConnectedOnlyRoute
         exact
         isConnected={isConnected}
-        didClaimProfile={didClaimProfile}
         path={ADMIN_DASHBOARD_ROUTE}
         component={AdminDashboard}
-        appearance={{ theme: 'transparent' }}
-        hasBackLink={false}
+        layout={NavBar}
+        // @TODO find a good solution for dynamic backTexts
+        /* backText={MSG.back} */
+        /* backTextValues={({ */
+        /*   computedMatch: { */
+        /*     params: { colonyName }, */
+        /*   }, */
+        /* }) => ({ colonyName })} */
+        /* backRoute={({ */
+        /*   computedMatch: { */
+        /*     params: { colonyName }, */
+        /*   }, */
+        /* }) => `/colony/${colonyName}`} */
       />
       <ConnectedOnlyRoute
         exact
         isConnected={isConnected}
-        didClaimProfile={didClaimProfile}
         path={TASK_ROUTE}
         component={Task}
-        backText={MSG.taskBack}
-        backTextValues={({
-          computedMatch: {
-            params: { colonyName },
-          },
-        }) => ({ colonyName })}
-        backRoute={({
-          computedMatch: {
-            params: { colonyName },
-          },
-        }) => `/colony/${colonyName}`}
-        hasBackLink
+        layout={NavBar}
+        /* backText={MSG.back} */
+        /* backTextValues={({ */
+        /*   computedMatch: { */
+        /*     params: { colonyName }, */
+        /*   }, */
+        /* }) => ({ colonyName })} */
+        /* backRoute={({ */
+        /*   computedMatch: { */
+        /*     params: { colonyName }, */
+        /*   }, */
+        /* }) => `/colony/${colonyName}`} */
       />
       <ConnectedOnlyRoute
         isConnected={isConnected}
-        didClaimProfile={didClaimProfile}
         path={CREATE_COLONY_ROUTE}
         component={CreateColonyWizard}
-        hasNavigation={false}
+        layout={Plain}
       />
       <ConnectedOnlyRoute
         isConnected={isConnected}
-        didClaimProfile={didClaimProfile}
         path={CREATE_USER_ROUTE}
         component={CreateUserWizard}
-        hasNavigation={false}
+        layout={Plain}
       />
       <ConnectedOnlyRoute
         isConnected={isConnected}
-        didClaimProfile={didClaimProfile}
         path={USER_ROUTE}
         component={UserProfile}
-        hasBackLink={false}
-        appearance={{ theme: 'transparent' }}
+        layout={SimpleNav}
+        routeProps={{
+          hasBackLink: false,
+        }}
       />
       <ConnectedOnlyRoute
         isConnected={isConnected}
-        didClaimProfile={didClaimProfile}
         path={USER_EDIT_ROUTE}
         component={UserProfileEdit}
-        appearance={{ theme: 'transparent' }}
-        backText={MSG.userProfileEditBack}
-        backRoute={`/user/${username}`}
-        hasBackLink
+        layout={NavBar}
+        routeProps={{
+          backText: MSG.userProfileEditBack,
+          backRoute: `/user/${username}`,
+        }}
       />
     </Switch>
   );

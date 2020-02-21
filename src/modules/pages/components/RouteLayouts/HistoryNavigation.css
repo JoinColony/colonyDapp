@@ -1,6 +1,10 @@
+.main {
+  position: relative;
+}
+
 .back {
   display: block;
-  margin: 4px 0 0 0;
+  margin: 4px 0 0 18px;
 
   /*
    * @NOTE Increase the click-able area

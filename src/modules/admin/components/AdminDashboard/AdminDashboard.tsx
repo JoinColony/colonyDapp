@@ -13,7 +13,6 @@ import Domains from '~admin/Domains';
 import Permissions from '~admin/Permissions';
 import ProfileAdvanced from '~admin/Profile/ProfileAdvanced';
 import VerticalNavigation from '~pages/VerticalNavigation';
-import { HistoryNavigation } from '~pages/NavigationWrapper';
 import { useDataFetcher, useTransformer } from '~utils/hooks';
 import { DomainsMapType } from '~types/index';
 import {
@@ -207,13 +206,6 @@ const AdminDashboard = ({
             : 0
         }
       >
-        <div className={styles.backNavigation}>
-          <HistoryNavigation
-            backRoute={CURRENT_COLONY_ROUTE}
-            backText={MSG.backButton}
-            backTextValues={{ displayName: colony.displayName }}
-          />
-        </div>
         <div className={styles.headingWrapper}>
           <Heading
             appearance={{

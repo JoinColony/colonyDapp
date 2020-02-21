@@ -4,9 +4,9 @@
 @value navigationIconBlue: rgb(5, 81, 253);
 
 .main {
-  display: flex;
+  display: inline-flex;
   align-items: center;
-  justify-content: flex-end;
+  text-align: left;
 }
 
 .navigationItem {

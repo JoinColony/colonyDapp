@@ -1,5 +1,9 @@
 @value navHeight: 70px;
 
+.main {
+  composes: stretchVertical stretchHorizontal from '~styles/layout.css';
+}
+
 .wrapper {
   composes: stretchVertical stretchHorizontal from '~styles/layout.css';
   display: grid;
@@ -15,6 +19,8 @@
   padding: 0 20px;
   z-index: var(--z-index-positioning);
   border: 1px solid transparent;
+  border-color: var(--grey-blue-0);
+  background-color: var(--grey-blue-3);
   grid-column: 1;
   grid-row: 1;
 }
@@ -30,6 +36,7 @@
   order: 2;
   flex-grow: 1;
   align-self: center;
+  text-align: right;
 }
 
 .content {
@@ -52,26 +59,4 @@
 .alertBanner button {
   top: 12px;
   right: 10px;
-}
-
-/*
- * Theme-ing
- */
-
-.themeMain, .themeTransparent {
-  composes: stretchVertical stretchHorizontal from '~styles/layout.css';
-}
-
-.themeMain .navigation {
-  border-color: var(--grey-blue-0);
-  background-color: var(--grey-blue-3);
-}
-
-.themeTransparent .navigation {
-  border-color: transparent;
-  background-color: transparent;
-}
-
-.themeTransparent .content {
-  margin-top: calc(-1 * navHeight);
 }

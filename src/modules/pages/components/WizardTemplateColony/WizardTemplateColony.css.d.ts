@@ -1,7 +1,6 @@
 export const layoutMain: string;
 export const header: string;
 export const steps: string;
-export const backButton: string;
 export const content: string;
 export const wallet: string;
 export const address: string;
