@@ -11,6 +11,14 @@ import messages from './i18n/en.json';
 import Routes from './routes';
 import apolloClient, { ApolloProvider } from './context/apolloClient';
 
+// @ts-ignore
+if (!Intl.RelativeTimeFormat) {
+  /* eslint-disable global-require */
+  require('@formatjs/intl-relativetimeformat/polyfill');
+  require('@formatjs/intl-relativetimeformat/dist/locale-data/en');
+  /* eslint-enable global-require */
+}
+
 interface Props {
   store: any;
 }
