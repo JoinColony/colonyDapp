@@ -1,0 +1,42 @@
+{
+  "compilerOptions": {
+    "baseUrl": ".",
+    "paths": {
+      "~constants": ["src/modules/constants.ts"],
+      "~admin/*": ["src/modules/admin/components/*"],
+      "~context/*": ["src/context/*"],
+      "~core/*": ["src/modules/core/components/*"],
+      "~dashboard/*": ["src/modules/dashboard/components/*"],
+      "~data/*": ["src/data/*"],
+      "~immutable/*": ["src/immutable/*"],
+      "~lib/*": ["src/lib/*"],
+      "~pages/*": ["src/modules/pages/components/*"],
+      "~redux/*": ["src/redux/*"],
+      "~routes/*": ["src/routes/*"],
+      "~styles/*": ["src/styles/shared/*"],
+      "~testutils": ["src/__tests__/utils.ts"],
+      "~types/*": ["src/types/*"],
+      "~users/*": ["src/modules/users/components/*"],
+      "~utils/*": ["src/utils/*"]
+    },
+    "allowSyntheticDefaultImports": true,
+    "downlevelIteration": true,
+    "esModuleInterop": true,
+    "jsx": "react",
+    "lib": [
+      "dom",
+      "es2018"
+    ],
+    "module": "commonjs",
+    "moduleResolution": "node",
+    "noEmit": true,
+    "noImplicitAny": false,
+    "resolveJsonModule": true,
+    "skipLibCheck": true,
+    "strictNullChecks": true,
+    "strictPropertyInitialization": true,
+    "target": "es6",
+    "typeRoots": ["src/typeDefs", "node_modules/@types"],
+    "types": ["node", "events", "jest"]
+  }
+}
