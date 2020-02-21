@@ -5,22 +5,23 @@ import { useHistory } from 'react-router';
 import Button from '~core/Button';
 import Heading from '~core/Heading';
 import Icon from '~core/Icon';
-import ProgramLevelsList from '~dashboard/ProgramLevelsList';
 import { OneProgram, useCreateLevelMutation, cacheUpdates } from '~data/index';
 
-import styles from './EditLevels.css';
+import LevelsList from './LevelsList';
+
+import styles from './ProgramLevelsEdit.css';
 
 const MSG = defineMessages({
   title: {
-    id: 'dashboard.EditLevels.title',
+    id: 'dashboard.ProgramLevelsEdit.title',
     defaultMessage: 'Levels',
   },
   description: {
-    id: 'dashboard.EditLevels.description',
+    id: 'dashboard.ProgramLevelsEdit.description',
     defaultMessage: `Levels must be completed in order. Subsequent levels are locked until the previous level is completed.`,
   },
   buttonAddLevel: {
-    id: 'dashboard.EditLevels.buttonAddLevel',
+    id: 'dashboard.ProgramLevelsEdit.buttonAddLevel',
     defaultMessage: 'Add level',
   },
 });
@@ -32,9 +33,14 @@ interface Props {
   programId: OneProgram['id'];
 }
 
-const displayName = 'dashboard.EditLevels';
+const displayName = 'dashboard.ProgramLevelsEdit';
 
-const EditLevels = ({ colonyName, levelIds, levels, programId }: Props) => {
+const ProgramLevelsEdit = ({
+  colonyName,
+  levelIds,
+  levels,
+  programId,
+}: Props) => {
   const history = useHistory();
 
   const [createLevel] = useCreateLevelMutation({
@@ -61,7 +67,7 @@ const EditLevels = ({ colonyName, levelIds, levels, programId }: Props) => {
         text={MSG.description}
       />
       <div className={styles.programLevelsContainer}>
-        <ProgramLevelsList
+        <LevelsList
           colonyName={colonyName}
           levelIds={levelIds}
           levels={levels}
@@ -84,6 +90,6 @@ const EditLevels = ({ colonyName, levelIds, levels, programId }: Props) => {
   );
 };
 
-EditLevels.displayName = displayName;
+ProgramLevelsEdit.displayName = displayName;
 
-export default EditLevels;
+export default ProgramLevelsEdit;

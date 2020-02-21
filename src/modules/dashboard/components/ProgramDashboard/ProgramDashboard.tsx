@@ -28,7 +28,7 @@ const displayName = 'Dashboard.ProgramDashboard';
 
 const ProgramDashboard = ({
   canAdmin,
-  program: { title, description },
+  program: { description, title },
   toggleEditMode,
 }: Props) => (
   <div>
