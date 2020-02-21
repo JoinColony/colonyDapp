@@ -16,7 +16,7 @@ import {
   useRemoveProgramMutation,
 } from '~data/index';
 
-import EditLevels from './EditLevels';
+import ProgramLevelsEdit from '../ProgramLevelsEdit';
 
 import styles from './ProgramEdit.css';
 
@@ -242,7 +242,7 @@ const ProgramEdit = ({
         }}
       </Form>
       <div className={styles.levelsContainer}>
-        <EditLevels
+        <ProgramLevelsEdit
           colonyName={colonyName}
           levelIds={levelIds}
           levels={levels}

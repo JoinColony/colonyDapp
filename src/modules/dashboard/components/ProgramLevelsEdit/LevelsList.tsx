@@ -15,19 +15,19 @@ import Icon from '~core/Icon';
 import ListGroup, { ListGroupItem } from '~core/ListGroup';
 import { OneProgram, useReorderProgramLevelsMutation } from '~data/index';
 
-import styles from './ProgramLevelsList.css';
+import styles from './LevelsList.css';
 
 const MSG = defineMessages({
   dragHandleTitle: {
-    id: 'dashboard.ProgramLevelsList.dragHandleTitle',
+    id: 'dashboard.LevelsList.dragHandleTitle',
     defaultMessage: 'Click, hold, and drag to re-order levels.',
   },
   linkView: {
-    id: 'dashboard.ProgramLevelsList.linkView',
+    id: 'dashboard.LevelsList.linkView',
     defaultMessage: 'View',
   },
   untitledLevel: {
-    id: 'dashboard.ProgramLevelsList.untitledLevel',
+    id: 'dashboard.LevelsList.untitledLevel',
     defaultMessage: 'Untitled Level',
   },
 });
@@ -44,9 +44,9 @@ const hasOrderChanged = (arr1: string[], arr2: string[]): boolean => {
   return arr1.some((el, idx) => el !== arr2[idx]);
 };
 
-const displayName = 'dashboard.ProgramLevelsList';
+const displayName = 'dashboard.LevelsList';
 
-const ProgramLevelsList = ({
+const LevelsList = ({
   colonyName,
   programId,
   levelIds: levelIdsProp,
@@ -165,6 +165,6 @@ const ProgramLevelsList = ({
   );
 };
 
-ProgramLevelsList.displayName = displayName;
+LevelsList.displayName = displayName;
 
-export default ProgramLevelsList;
+export default LevelsList;
