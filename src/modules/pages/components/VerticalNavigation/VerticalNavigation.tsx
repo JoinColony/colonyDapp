@@ -1,4 +1,4 @@
-import React, { Component, ReactElement, ReactNode } from 'react';
+import React, { ReactElement, ReactNode, useState } from 'react';
 import { FormattedMessage, MessageDescriptor } from 'react-intl';
 
 import { Tab, Tabs, VerticalTabList, TabPanel } from '~core/Tabs';
@@ -46,71 +46,53 @@ interface Props {
   initialTab: number;
 }
 
-class VerticalNavigation extends Component<Props, State> {
-  static displayName = 'pages.VerticalNavigation';
+const displayName = 'pages.VerticalNavigation';
 
-  static defaultProps = { initialTab: 0 };
+const VerticalNavigation = ({
+  children,
+  initialTab = 0,
+  navigationItems,
+}: Props) => {
+  const [tabIndex, setTabIndex] = useState<number>(initialTab);
 
-  state = {
-    tabIndex: 0,
-  };
-
-  componentWillMount() {
-    /**
-     * If there's a selectedTab prop set it otherwise
-     * handle tab setting like normal
-     */
-    const { initialTab } = this.props;
-    this.setState({
-      tabIndex: initialTab,
-    });
-  }
-
-  setTabIndex = (tabIndex: number) => {
-    this.setState({ tabIndex });
-  };
-
-  render() {
-    const { navigationItems, children } = this.props;
-    const { tabIndex } = this.state;
-    return (
-      <div className={styles.main}>
-        {navigationItems && navigationItems.length && (
-          <Tabs
-            className={styles.tabs}
-            selectedIndex={tabIndex}
-            onSelect={newIndex => {
-              this.setTabIndex(newIndex);
-            }}
-          >
-            <VerticalTabList className={styles.tabList}>
-              {children}
-              {navigationItems.map(({ title, id }) => (
-                <Tab
-                  key={id}
-                  className={styles.tab}
-                  selectedClassName={styles.tabSelected}
-                  disabledClassName={styles.tabDisabled}
-                >
-                  {title instanceof Object &&
-                  (title as MessageDescriptor).id ? (
-                    <FormattedMessage {...(title as MessageDescriptor)} />
-                  ) : (
-                    title
-                  )}
-                </Tab>
-              ))}
-            </VerticalTabList>
-            {navigationItems.map(({ content, id }) => (
-              <TabPanel key={id} className={styles.tabPanel}>
-                <div className={styles.contentWrapper}>{content}</div>
-              </TabPanel>
+  return (
+    <div className={styles.main}>
+      {navigationItems && navigationItems.length && (
+        <Tabs
+          className={styles.tabs}
+          selectedIndex={tabIndex}
+          onSelect={newIndex => {
+            setTabIndex(newIndex);
+          }}
+        >
+          <VerticalTabList className={styles.tabList}>
+            {children}
+            {navigationItems.map(({ title, id }) => (
+              <Tab
+                key={id}
+                className={styles.tab}
+                selectedClassName={styles.tabSelected}
+                disabledClassName={styles.tabDisabled}
+              >
+                {title instanceof Object && (title as MessageDescriptor).id ? (
+                  <FormattedMessage {...(title as MessageDescriptor)} />
+                ) : (
+                  title
+                )}
+              </Tab>
             ))}
-          </Tabs>
-        )}
-      </div>
-    );
-  }
-}
+          </VerticalTabList>
+          {navigationItems.map(({ content, id }) => (
+            <TabPanel key={id} className={styles.tabPanel}>
+              <div className={styles.contentWrapper}>{content}</div>
+            </TabPanel>
+          ))}
+        </Tabs>
+      )}
+    </div>
+  );
+};
+
+VerticalNavigation.displayName = displayName;
 
 export default VerticalNavigation;
