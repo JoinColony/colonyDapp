@@ -1482,17 +1482,17 @@
     "@colony/colony-js-contract-loader" "^1.12.0"
     bn.js "^4.11.8"
 
-"@colony/colony-js-client@^1.14.1-no.poll":
-  version "1.14.1-no.poll"
-  resolved "https://registry.yarnpkg.com/@colony/colony-js-client/-/colony-js-client-1.14.1-no.poll.tgz#528ea9a04e6a91a2d37ffce375739adc7bec500b"
-  integrity sha512-WwdtAj+jVmDFtPG1cAk6XPHR/XbO8HsbvDKl5jAslFQvJKp2RCm1s8chFnHc9jKTjYmJpaZXR4vTSihTv0tksg==
+"@colony/colony-js-client@^1.14.2-no.poll":
+  version "1.14.2-no.poll"
+  resolved "https://registry.yarnpkg.com/@colony/colony-js-client/-/colony-js-client-1.14.2-no.poll.tgz#2dd38c1332447a38534868642a9353f53795bdd7"
+  integrity sha512-WPcDBRGFvphl0r4xseki80cH7Ozdn4plV53ZjfuDG/CQZwrfQaho5c/jFuHEHbkaPRCIZobL4MjzufZXg+N/aQ==
   dependencies:
     "@colony/colony-js-adapter" "^1.14.0-beta.2"
     "@colony/colony-js-adapter-ethers" "^1.14.1-no.poll"
     "@colony/colony-js-contract-client" "^1.14.1-no.poll"
     "@colony/colony-js-contract-loader" "^1.12.0"
     "@colony/colony-js-contract-loader-http" "^1.14.0-beta.0"
-    "@colony/colony-js-contract-loader-network" "^1.14.1-no.poll"
+    "@colony/colony-js-contract-loader-network" "^1.14.2-no.poll"
     "@colony/colony-js-utils" "^1.12.0"
     "@colony/purser-core" "^2.1.0"
     assert "^2.0.0"
@@ -1531,10 +1531,10 @@
     babel-runtime "^6.26.0"
     isomorphic-fetch "^2.2.1"
 
-"@colony/colony-js-contract-loader-network@1.14.1-no.poll", "@colony/colony-js-contract-loader-network@^1.14.1-no.poll":
-  version "1.14.1-no.poll"
-  resolved "https://registry.yarnpkg.com/@colony/colony-js-contract-loader-network/-/colony-js-contract-loader-network-1.14.1-no.poll.tgz#d98e2f80c2180bbf61fe7b524669736f185a99ac"
-  integrity sha512-uRA3JhBiSeLZvGKbjYGTVIOtsHtvQF2iF52Mvo6FhaOkFTbi/MeyEST8pDv6+9vL4GUIVM4SxAen9bUt65RkRw==
+"@colony/colony-js-contract-loader-network@1.14.2-no.poll", "@colony/colony-js-contract-loader-network@^1.14.2-no.poll":
+  version "1.14.2-no.poll"
+  resolved "https://registry.yarnpkg.com/@colony/colony-js-contract-loader-network/-/colony-js-contract-loader-network-1.14.2-no.poll.tgz#b223179ccf0bcbb2dc58ee6e2a319edb26b28f93"
+  integrity sha512-/jj5mkWjaaeMp8yIN7rdrEhZPuqCGOniLzHzCXVCGl34dK0ctiNsy5s02CZUwx3VcSQxWZXLQEVyAZUc3W7ZQw==
   dependencies:
     "@colony/colony-js-contract-loader" "^1.12.0"
     assert "^2.0.0"
