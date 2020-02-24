@@ -73,6 +73,10 @@ export type OneProgram =
   | ColonyProgramsQuery['colony']['programs'][number]
   | ProgramQuery['program'];
 
+export type OneLevel =
+  | ColonyProgramsQuery['colony']['programs'][number]['levels'][number]
+  | ProgramQuery['program']['levels'][number];
+
 export type OneToken = TokenQuery['token'];
 export type ColonyTokens = ColonyQuery['colony']['tokens'];
 export type UserTokens = UserTokensQuery['user']['tokens'];
