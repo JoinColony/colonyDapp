@@ -9,7 +9,11 @@ import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
 import nanoid from 'nanoid';
 
 import ListGroup, { ListGroupItem } from '~core/ListGroup';
-import { OneProgram, useReorderProgramLevelsMutation } from '~data/index';
+import {
+  OneProgram,
+  ProgramStatus,
+  useReorderProgramLevelsMutation,
+} from '~data/index';
 import LevelsListItem from './LevelsListItem';
 
 interface Props {
@@ -26,7 +30,12 @@ const displayName = 'dashboard.LevelsList';
 
 const LevelsList = ({
   colonyName,
-  program: { id: programId, levelIds: levelIdsProp, levels: unsortedLevels },
+  program: {
+    id: programId,
+    levelIds: levelIdsProp,
+    levels: unsortedLevels,
+    status,
+  },
 }: Props) => {
   // Use local state to optimize optimistic UI - avoid FOIC `onDragEnd`
   const [levelIds, setLevelIds] = useState<Props['program']['levelIds']>(
@@ -86,17 +95,23 @@ const LevelsList = ({
     [levelIds, unsortedLevels],
   );
 
+  const isDisabled = status === ProgramStatus.Active;
+
   return (
     <DragDropContext onDragEnd={handleDragEnd}>
-      <Droppable droppableId={`program-levels-${droppdableId}`}>
+      <Droppable
+        droppableId={`program-levels-${droppdableId}`}
+        isDropDisabled={isDisabled}
+      >
         {({ innerRef: droppableInnerRef, droppableProps, placeholder }) => (
           <div ref={droppableInnerRef} {...droppableProps}>
             <ListGroup appearance={{ gaps: 'true' }}>
               {levels.map((level, idx) => (
                 <Draggable
-                  key={level.id}
                   draggableId={`draggableLevelId${level.id}`}
                   index={idx}
+                  isDragDisabled={isDisabled}
+                  key={level.id}
                 >
                   {({
                     innerRef: draggableInnerRef,
@@ -110,6 +125,7 @@ const LevelsList = ({
                       <LevelsListItem
                         colonyName={colonyName}
                         dragHandleProps={dragHandleProps}
+                        isDragDisabled={isDisabled}
                         level={level}
                         programId={programId}
                       />
