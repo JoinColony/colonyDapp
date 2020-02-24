@@ -1464,16 +1464,16 @@
     exec-sh "^0.3.2"
     minimist "^1.2.0"
 
-"@colony/colony-js-adapter-ethers@1.14.1-no.poll", "@colony/colony-js-adapter-ethers@^1.14.1-no.poll":
-  version "1.14.1-no.poll"
-  resolved "https://registry.yarnpkg.com/@colony/colony-js-adapter-ethers/-/colony-js-adapter-ethers-1.14.1-no.poll.tgz#2d892f4b619682d41d38366078e360a819b6fbff"
-  integrity sha512-mV1FcgTomE5oovFmMIYugwgmNQ5+eb5Q9q4R8vKanoeZ2BKu4CaVScKkd+6iludfgKeASW5MEyi5JIHitPNFUg==
+"@colony/colony-js-adapter-ethers@^1.14.2":
+  version "1.14.2"
+  resolved "https://registry.yarnpkg.com/@colony/colony-js-adapter-ethers/-/colony-js-adapter-ethers-1.14.2.tgz#eddbdb2e26f0098a00117087665e912f9732421c"
+  integrity sha512-rPIhy58OBIbCdC7QxHtYDzOhUhKL6hwgLqUuO1a41kNqtPAq6MGbn7xD5dMFn3DxWPa8Pvxqow8MiBJFDrrOyw==
   dependencies:
     "@colony/colony-js-adapter" "^1.14.0-beta.2"
     "@colony/colony-js-contract-loader" "^1.12.0"
     "@colony/colony-js-utils" "^1.12.0"
     babel-runtime "^6.26.0"
-    ethers JoinColony/ethers.js#v3-no-poll
+    ethers "^3.0.29"
 
 "@colony/colony-js-adapter@^1.14.0-beta.2":
   version "1.14.0-beta.2"
@@ -1482,14 +1482,14 @@
     "@colony/colony-js-contract-loader" "^1.12.0"
     bn.js "^4.11.8"
 
-"@colony/colony-js-client@^1.14.2-no.poll":
-  version "1.14.2-no.poll"
-  resolved "https://registry.yarnpkg.com/@colony/colony-js-client/-/colony-js-client-1.14.2-no.poll.tgz#2dd38c1332447a38534868642a9353f53795bdd7"
-  integrity sha512-WPcDBRGFvphl0r4xseki80cH7Ozdn4plV53ZjfuDG/CQZwrfQaho5c/jFuHEHbkaPRCIZobL4MjzufZXg+N/aQ==
+"@colony/colony-js-client@^1.14.2":
+  version "1.14.2"
+  resolved "https://registry.yarnpkg.com/@colony/colony-js-client/-/colony-js-client-1.14.2.tgz#ae7cf875e5c5ad8a3972dc96784235b9983adbf1"
+  integrity sha512-5WI28ZJpf0fj/yuYNJ8bVBdtqideiam/mgZJCiTxsNOcYNsOSOLmHZLmRZXSU1h1JZhqyhbvb/C6q/MTq3PW+Q==
   dependencies:
     "@colony/colony-js-adapter" "^1.14.0-beta.2"
-    "@colony/colony-js-adapter-ethers" "^1.14.1-no.poll"
-    "@colony/colony-js-contract-client" "^1.14.1-no.poll"
+    "@colony/colony-js-adapter-ethers" "^1.14.2"
+    "@colony/colony-js-contract-client" "^1.14.2"
     "@colony/colony-js-contract-loader" "^1.12.0"
     "@colony/colony-js-contract-loader-http" "^1.14.0-beta.0"
     "@colony/colony-js-contract-loader-network" "^1.14.2-no.poll"
@@ -1499,15 +1499,15 @@
     babel-runtime "^6.26.0"
     bn.js "^4.11.8"
     ethereumjs-tx "^1.3.7"
-    ethers JoinColony/ethers.js#v3-no-poll
+    ethers "^3.0.29"
     isomorphic-fetch "^2.2.1"
     promise-retry "^1.1.1"
     web3-utils "^1.0.0-beta.55"
 
-"@colony/colony-js-contract-client@^1.14.1-no.poll":
-  version "1.14.1-no.poll"
-  resolved "https://registry.yarnpkg.com/@colony/colony-js-contract-client/-/colony-js-contract-client-1.14.1-no.poll.tgz#1e0bb9c5c95a8a2ebc4738601524c428a032188f"
-  integrity sha512-Dn76euEZjHksn/AwsQJ1He6DQ6Bjo1XYBVl++15h4gqf8+GpmgUvo4IpKJu7O73TA4MbqOfLiI+xWieb8NX1Aw==
+"@colony/colony-js-contract-client@^1.14.2":
+  version "1.14.2"
+  resolved "https://registry.yarnpkg.com/@colony/colony-js-contract-client/-/colony-js-contract-client-1.14.2.tgz#1eb7d7df66f06f10d2a0c27e21fb5988b84d3bf3"
+  integrity sha512-oqkXIynNx2/PLMVD50jKxFfybLvCS1tNrCMpThOoxzoKL0sg2h82bPCoqxvtLgoPF6r9TxrkkjAmn/rWsfHtmg==
   dependencies:
     "@colony/colony-js-adapter" "^1.14.0-beta.2"
     "@colony/colony-js-contract-loader" "^1.12.0"
@@ -1516,7 +1516,7 @@
     babel-runtime "^6.26.0"
     bn.js "^4.11.8"
     bs58 "^4.0.1"
-    ethers JoinColony/ethers.js#v3-no-poll
+    ethers "^3.0.29"
     lodash.flatmap "^4.5.0"
     lodash.isequal "^4.5.0"
     lodash.isplainobject "^4.0.6"
@@ -1531,7 +1531,7 @@
     babel-runtime "^6.26.0"
     isomorphic-fetch "^2.2.1"
 
-"@colony/colony-js-contract-loader-network@1.14.2-no.poll", "@colony/colony-js-contract-loader-network@^1.14.2-no.poll":
+"@colony/colony-js-contract-loader-network@^1.14.2", "@colony/colony-js-contract-loader-network@^1.14.2-no.poll":
   version "1.14.2-no.poll"
   resolved "https://registry.yarnpkg.com/@colony/colony-js-contract-loader-network/-/colony-js-contract-loader-network-1.14.2-no.poll.tgz#b223179ccf0bcbb2dc58ee6e2a319edb26b28f93"
   integrity sha512-/jj5mkWjaaeMp8yIN7rdrEhZPuqCGOniLzHzCXVCGl34dK0ctiNsy5s02CZUwx3VcSQxWZXLQEVyAZUc3W7ZQw==
@@ -7376,9 +7376,10 @@ ethers@4.0.0-beta.1:
     uuid "2.0.1"
     xmlhttprequest "1.8.0"
 
-ethers@JoinColony/ethers.js#v3-no-poll:
-  version "3.0.1"
-  resolved "https://codeload.github.com/JoinColony/ethers.js/tar.gz/0ec27e2d5ab52bfaa2cc8c0b47ed11af66d78996"
+ethers@^3.0.29:
+  version "3.0.29"
+  resolved "https://registry.yarnpkg.com/ethers/-/ethers-3.0.29.tgz#ce8139955b4ed44456eb6764b089bb117c86775d"
+  integrity sha512-OGyA5pW5xFC5o/ZV5MfIoVp/EdA1QMg2bMJFf7Kznsz8m7IzzbgsPHTCjzSfKQDs/XDphGyRcA7A6bkIeJL4gw==
   dependencies:
     aes-js "3.0.0"
     bn.js "^4.4.0"
