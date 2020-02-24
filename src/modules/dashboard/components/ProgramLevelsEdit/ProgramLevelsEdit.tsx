@@ -28,18 +28,15 @@ const MSG = defineMessages({
 
 interface Props {
   colonyName: string;
-  levelIds: OneProgram['levelIds'];
-  levels: OneProgram['levels'];
-  programId: OneProgram['id'];
+  program: OneProgram;
 }
 
 const displayName = 'dashboard.ProgramLevelsEdit';
 
 const ProgramLevelsEdit = ({
   colonyName,
-  levelIds,
-  levels,
-  programId,
+  program: { id: programId },
+  program,
 }: Props) => {
   const history = useHistory();
 
@@ -67,12 +64,7 @@ const ProgramLevelsEdit = ({
         text={MSG.description}
       />
       <div className={styles.programLevelsContainer}>
-        <LevelsList
-          colonyName={colonyName}
-          levelIds={levelIds}
-          levels={levels}
-          programId={programId}
-        />
+        <LevelsList colonyName={colonyName} program={program} />
       </div>
       <Button appearance={{ theme: 'dottedArea' }} onClick={handleAddLevel}>
         <span className={styles.buttonTextContainer}>
