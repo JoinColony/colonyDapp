@@ -158,7 +158,7 @@
         "@colony/colony-js-adapter-ethers": "^1.14.2",
         "@colony/colony-js-client": "^1.14.2",
         "@colony/colony-js-contract-loader-http": "^1.14.0-beta.0",
-        "@colony/colony-js-contract-loader-network": "^1.14.2",
+        "@colony/colony-js-contract-loader-network": "^1.14.2-no.poll",
         "@colony/purser-core": "^2.2.1",
         "@colony/purser-ledger": "^1.4.1",
         "@colony/purser-metamask": "^2.4.1",
