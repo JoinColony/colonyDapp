@@ -89,7 +89,7 @@ const LevelsList = ({
   return (
     <DragDropContext onDragEnd={handleDragEnd}>
       <Droppable droppableId={`program-levels-${droppdableId}`}>
-        {({ innerRef: droppableInnerRef, droppableProps }) => (
+        {({ innerRef: droppableInnerRef, droppableProps, placeholder }) => (
           <div ref={droppableInnerRef} {...droppableProps}>
             <ListGroup appearance={{ gaps: 'true' }}>
               {levels.map((level, idx) => (
@@ -117,6 +117,7 @@ const LevelsList = ({
                   )}
                 </Draggable>
               ))}
+              {placeholder}
             </ListGroup>
           </div>
         )}
