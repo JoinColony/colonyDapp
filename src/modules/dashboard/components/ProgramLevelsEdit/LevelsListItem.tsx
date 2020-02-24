@@ -27,6 +27,7 @@ const MSG = defineMessages({
 interface Props {
   colonyName: string;
   dragHandleProps?: DraggableProvidedDragHandleProps;
+  isDragDisabled: boolean;
   level: OneLevel;
   programId: string;
 }
@@ -36,21 +37,24 @@ const displayName = 'dashboard.ProgramLevelsEdit.LevelsListItem';
 const LevelsListItem = ({
   colonyName,
   dragHandleProps,
+  isDragDisabled,
   level: { id: levelId, title },
   programId,
 }: Props) => {
   const levelUrl = `/colony/${colonyName}/program/${programId}/level/${levelId}`;
   return (
     <div className={styles.listItemInner}>
-      <div className={styles.dragHandleContainer}>
-        <div {...dragHandleProps}>
-          <Icon
-            className={styles.dragHandleIcon}
-            name="drag-handle"
-            title={MSG.dragHandleTitle}
-          />
+      {!isDragDisabled && (
+        <div className={styles.dragHandleContainer}>
+          <div {...dragHandleProps}>
+            <Icon
+              className={styles.dragHandleIcon}
+              name="drag-handle"
+              title={MSG.dragHandleTitle}
+            />
+          </div>
         </div>
-      </div>
+      )}
       {/* @todo Add level achievement here */}
       <div className={styles.itemContentContainer}>
         <Heading
