@@ -104,23 +104,33 @@ fragment ProgramFields on Program {
   createdAt
   creatorAddress
   colonyAddress
-  title
   description
+  enrolled
+  enrolledUserAddresses
   levels {
     id
     achievement
-    description
-    createdAt
-    creatorAddress
-    numRequiredSteps
     programId
     stepIds
     status
     title
   }
   levelIds
-  enrolledUserAddresses
   status
+  title
+}
+
+fragment LevelFields on Level {
+  id
+  achievement
+  createdAt
+  creatorAddress
+  description
+  numRequiredSteps
+  programId
+  status
+  stepIds
+  title
 }
 
 fragment EventFields on Event {
