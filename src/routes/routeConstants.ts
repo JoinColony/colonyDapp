@@ -1,6 +1,7 @@
 export const CONNECT_ROUTE = '/connect';
 export const COLONY_HOME_ROUTE = '/colony/:colonyName';
 export const PROGRAM_ROUTE = `${COLONY_HOME_ROUTE}/program/:programId`;
+export const LEVEL_ROUTE = `${PROGRAM_ROUTE}/level/:levelId`;
 export const TASK_ROUTE = `${COLONY_HOME_ROUTE}/task/:draftId`;
 export const CREATE_COLONY_ROUTE = '/create-colony';
 export const CREATE_USER_ROUTE = '/create-user';
