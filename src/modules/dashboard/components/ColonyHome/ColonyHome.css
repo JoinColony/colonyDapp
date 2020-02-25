@@ -1,13 +1,14 @@
 @value wideButton: 160px;
 
 .main {
+  padding: 11px 18px 16px 18px;
+}
+
+.grid {
   composes: stretchVertical stretchHorizontal from '~styles/layout.css';
   display: grid;
-
-  /* vertical padding of 11px + nav height (70px) */
-  padding: 11px 18px 16px 18px;
   grid-template-columns: 300px minmax(360px, auto) minmax(275px, 300px);
-  grid-template-rows: auto;
+  grid-template-rows: auto 1fr;
   column-gap: 80px;
 }
 
