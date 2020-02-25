@@ -6,6 +6,7 @@ import Heading from '~core/Heading';
 import { OneProgram } from '~data/index';
 
 import styles from './ProgramDashboard.css';
+import ProgramLevelsList from '~dashboard/ProgramLevelsList';
 
 const MSG = defineMessages({
   buttonJoinProgram: {
@@ -29,6 +30,7 @@ const displayName = 'Dashboard.ProgramDashboard';
 const ProgramDashboard = ({
   canAdmin,
   program: { description, title },
+  program,
   toggleEditMode,
 }: Props) => (
   <div>
@@ -54,6 +56,7 @@ const ProgramDashboard = ({
       </div>
     </div>
     {description && <p>{description}</p>}
+    <ProgramLevelsList program={program} />
   </div>
 );
 

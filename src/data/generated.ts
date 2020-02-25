@@ -1297,9 +1297,11 @@ export type SuggestionFieldsFragment = (
 );
 
 export type ProgramFieldsFragment = (
-  Pick<Program, 'id' | 'createdAt' | 'creatorAddress' | 'colonyAddress' | 'title' | 'description' | 'levelIds' | 'enrolledUserAddresses' | 'status'>
-  & { levels: Array<Pick<Level, 'id' | 'achievement' | 'description' | 'createdAt' | 'creatorAddress' | 'numRequiredSteps' | 'programId' | 'stepIds' | 'status' | 'title'>> }
+  Pick<Program, 'id' | 'createdAt' | 'creatorAddress' | 'colonyAddress' | 'description' | 'enrolled' | 'enrolledUserAddresses' | 'levelIds' | 'status' | 'title'>
+  & { levels: Array<Pick<Level, 'id' | 'achievement' | 'programId' | 'stepIds' | 'status' | 'title'>> }
 );
+
+export type LevelFieldsFragment = Pick<Level, 'id' | 'achievement' | 'createdAt' | 'creatorAddress' | 'description' | 'numRequiredSteps' | 'programId' | 'status' | 'stepIds' | 'title'>;
 
 export type EventFieldsFragment = (
   Pick<Event, 'createdAt' | 'initiatorAddress' | 'sourceId' | 'sourceType' | 'type'>
@@ -1867,6 +1869,29 @@ export type ProgramQueryVariables = {
 
 export type ProgramQuery = { program: ProgramFieldsFragment };
 
+export type ProgramLevelsQueryVariables = {
+  id: Scalars['String']
+};
+
+
+export type ProgramLevelsQuery = { program: (
+    Pick<Program, 'id' | 'levelIds'>
+    & { levels: Array<LevelFieldsFragment> }
+  ) };
+
+export type ProgramLevelsWithUnlockedQueryVariables = {
+  id: Scalars['String']
+};
+
+
+export type ProgramLevelsWithUnlockedQuery = { program: (
+    Pick<Program, 'id' | 'levelIds'>
+    & { levels: Array<(
+      Pick<Level, 'unlocked'>
+      & LevelFieldsFragment
+    )> }
+  ) };
+
 export type ColonySubscribedUsersQueryVariables = {
   colonyAddress: Scalars['String']
 };
@@ -2057,23 +2082,34 @@ export const ProgramFieldsFragmentDoc = gql`
   createdAt
   creatorAddress
   colonyAddress
-  title
   description
+  enrolled
+  enrolledUserAddresses
   levels {
     id
     achievement
-    description
-    createdAt
-    creatorAddress
-    numRequiredSteps
     programId
     stepIds
     status
     title
   }
   levelIds
-  enrolledUserAddresses
   status
+  title
+}
+    `;
+export const LevelFieldsFragmentDoc = gql`
+    fragment LevelFields on Level {
+  id
+  achievement
+  createdAt
+  creatorAddress
+  description
+  numRequiredSteps
+  programId
+  status
+  stepIds
+  title
 }
     `;
 export const EventFieldsFragmentDoc = gql`
@@ -4509,6 +4545,81 @@ export function useProgramLazyQuery(baseOptions?: ApolloReactHooks.LazyQueryHook
 export type ProgramQueryHookResult = ReturnType<typeof useProgramQuery>;
 export type ProgramLazyQueryHookResult = ReturnType<typeof useProgramLazyQuery>;
 export type ProgramQueryResult = ApolloReactCommon.QueryResult<ProgramQuery, ProgramQueryVariables>;
+export const ProgramLevelsDocument = gql`
+    query ProgramLevels($id: String!) {
+  program(id: $id) {
+    id
+    levelIds
+    levels {
+      ...LevelFields
+    }
+  }
+}
+    ${LevelFieldsFragmentDoc}`;
+
+/**
+ * __useProgramLevelsQuery__
+ *
+ * To run a query within a React component, call `useProgramLevelsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useProgramLevelsQuery` returns an object from Apollo Client that contains loading, error, and data properties 
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useProgramLevelsQuery({
+ *   variables: {
+ *      id: // value for 'id'
+ *   },
+ * });
+ */
+export function useProgramLevelsQuery(baseOptions?: ApolloReactHooks.QueryHookOptions<ProgramLevelsQuery, ProgramLevelsQueryVariables>) {
+        return ApolloReactHooks.useQuery<ProgramLevelsQuery, ProgramLevelsQueryVariables>(ProgramLevelsDocument, baseOptions);
+      }
+export function useProgramLevelsLazyQuery(baseOptions?: ApolloReactHooks.LazyQueryHookOptions<ProgramLevelsQuery, ProgramLevelsQueryVariables>) {
+          return ApolloReactHooks.useLazyQuery<ProgramLevelsQuery, ProgramLevelsQueryVariables>(ProgramLevelsDocument, baseOptions);
+        }
+export type ProgramLevelsQueryHookResult = ReturnType<typeof useProgramLevelsQuery>;
+export type ProgramLevelsLazyQueryHookResult = ReturnType<typeof useProgramLevelsLazyQuery>;
+export type ProgramLevelsQueryResult = ApolloReactCommon.QueryResult<ProgramLevelsQuery, ProgramLevelsQueryVariables>;
+export const ProgramLevelsWithUnlockedDocument = gql`
+    query ProgramLevelsWithUnlocked($id: String!) {
+  program(id: $id) {
+    id
+    levelIds
+    levels {
+      ...LevelFields
+      unlocked
+    }
+  }
+}
+    ${LevelFieldsFragmentDoc}`;
+
+/**
+ * __useProgramLevelsWithUnlockedQuery__
+ *
+ * To run a query within a React component, call `useProgramLevelsWithUnlockedQuery` and pass it any options that fit your needs.
+ * When your component renders, `useProgramLevelsWithUnlockedQuery` returns an object from Apollo Client that contains loading, error, and data properties 
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useProgramLevelsWithUnlockedQuery({
+ *   variables: {
+ *      id: // value for 'id'
+ *   },
+ * });
+ */
+export function useProgramLevelsWithUnlockedQuery(baseOptions?: ApolloReactHooks.QueryHookOptions<ProgramLevelsWithUnlockedQuery, ProgramLevelsWithUnlockedQueryVariables>) {
+        return ApolloReactHooks.useQuery<ProgramLevelsWithUnlockedQuery, ProgramLevelsWithUnlockedQueryVariables>(ProgramLevelsWithUnlockedDocument, baseOptions);
+      }
+export function useProgramLevelsWithUnlockedLazyQuery(baseOptions?: ApolloReactHooks.LazyQueryHookOptions<ProgramLevelsWithUnlockedQuery, ProgramLevelsWithUnlockedQueryVariables>) {
+          return ApolloReactHooks.useLazyQuery<ProgramLevelsWithUnlockedQuery, ProgramLevelsWithUnlockedQueryVariables>(ProgramLevelsWithUnlockedDocument, baseOptions);
+        }
+export type ProgramLevelsWithUnlockedQueryHookResult = ReturnType<typeof useProgramLevelsWithUnlockedQuery>;
+export type ProgramLevelsWithUnlockedLazyQueryHookResult = ReturnType<typeof useProgramLevelsWithUnlockedLazyQuery>;
+export type ProgramLevelsWithUnlockedQueryResult = ApolloReactCommon.QueryResult<ProgramLevelsWithUnlockedQuery, ProgramLevelsWithUnlockedQueryVariables>;
 export const ColonySubscribedUsersDocument = gql`
     query ColonySubscribedUsers($colonyAddress: String!) {
   colony(address: $colonyAddress) {
