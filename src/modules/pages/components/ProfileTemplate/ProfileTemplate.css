@@ -33,7 +33,6 @@
 
 .themeAlt {
   composes: main;
-  background: var(--gradient-default);
 
   & .sidebar {
     background: none;

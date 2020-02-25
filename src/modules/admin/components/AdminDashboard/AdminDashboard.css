@@ -1,6 +1,5 @@
 .main {
   composes: stretchVertical stretchHorizontal from '~styles/layout.css';
-  background: var(--gradient-default);
 }
 
 .headingWrapper {
