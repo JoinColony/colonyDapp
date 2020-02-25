@@ -1,5 +1,5 @@
+import React, { ComponentType, ReactNode } from 'react';
 import { MessageDescriptor, defineMessages, useIntl } from 'react-intl';
-import React from 'react';
 import { useHistory } from 'react-router-dom';
 
 import Icon from '~core/Icon';
@@ -26,7 +26,7 @@ interface Props {
   /*
    * If set, it will change the default back link text
    */
-  backText?: string | MessageDescriptor;
+  backText?: string | MessageDescriptor | ComponentType<{}>;
 
   /*
    * Works in conjuction with the above to provide message descriptor selector values
@@ -49,20 +49,33 @@ const HistoryNavigation = ({
   const { formatMessage } = useIntl();
 
   const history = useHistory();
-  let linkText: string = formatMessage(MSG.backHistoryLink);
-  if (backText) {
-    linkText =
-      typeof backText === 'string'
-        ? backText
-        : formatMessage(backText, backTextValues);
+  let linkText: string | ReactNode;
+  switch (typeof backText) {
+    case 'string': {
+      linkText = backText;
+      break;
+    }
+    case 'function': {
+      const BackText = backText;
+      linkText = <BackText />;
+      break;
+    }
+    case 'object': {
+      linkText = formatMessage(backText, backTextValues);
+      break;
+    }
+    default: {
+      linkText = formatMessage(MSG.backHistoryLink);
+    }
   }
+  const iconText = formatMessage(MSG.backHistoryLink);
   return (
     <div className={styles.main}>
       {backRoute ? (
         <NavLink to={backRoute} className={styles.back}>
           <Icon
             name="circle-back"
-            title={linkText}
+            title={iconText}
             appearance={{ size: 'medium' }}
           />
           {linkText}
@@ -77,7 +90,7 @@ const HistoryNavigation = ({
         >
           <Icon
             name="circle-back"
-            title={linkText}
+            title={iconText}
             appearance={{ size: 'medium' }}
           />
           {linkText}
