@@ -1482,17 +1482,17 @@
     "@colony/colony-js-contract-loader" "^1.12.0"
     bn.js "^4.11.8"
 
-"@colony/colony-js-client@^1.14.3":
-  version "1.14.3"
-  resolved "https://registry.yarnpkg.com/@colony/colony-js-client/-/colony-js-client-1.14.3.tgz#3e72a97805097766dc1e93a0f6d126c51d6c6f54"
-  integrity sha512-1nPQ4UnEE9XXEsiWsmLeo8t3au0FWUiYlo3GTDIt+lRLplfLUeVBLZ3fbGSMOG+26GnrYecIK+ROKkbmLVjMjw==
+"@colony/colony-js-client@^1.14.4":
+  version "1.14.4"
+  resolved "https://registry.yarnpkg.com/@colony/colony-js-client/-/colony-js-client-1.14.4.tgz#12bc07031b977597abf31691237c6806d5165465"
+  integrity sha512-WN1+V1elMydesVE1X/tpW9jvmxqO/VjRf6z1bdw/riJwQihB9LVnP9rnTiXCuRWRQeliONYbuwvpR9cw6YJm1A==
   dependencies:
     "@colony/colony-js-adapter" "^1.14.0-beta.2"
     "@colony/colony-js-adapter-ethers" "^1.14.3"
     "@colony/colony-js-contract-client" "^1.14.2"
     "@colony/colony-js-contract-loader" "^1.12.0"
     "@colony/colony-js-contract-loader-http" "^1.14.0-beta.0"
-    "@colony/colony-js-contract-loader-network" "^1.14.2-no.poll"
+    "@colony/colony-js-contract-loader-network" "^1.14.4"
     "@colony/colony-js-utils" "^1.12.0"
     "@colony/purser-core" "^2.1.0"
     assert "^2.0.0"
@@ -1531,10 +1531,10 @@
     babel-runtime "^6.26.0"
     isomorphic-fetch "^2.2.1"
 
-"@colony/colony-js-contract-loader-network@^1.14.2-no.poll":
-  version "1.14.2-no.poll"
-  resolved "https://registry.yarnpkg.com/@colony/colony-js-contract-loader-network/-/colony-js-contract-loader-network-1.14.2-no.poll.tgz#b223179ccf0bcbb2dc58ee6e2a319edb26b28f93"
-  integrity sha512-/jj5mkWjaaeMp8yIN7rdrEhZPuqCGOniLzHzCXVCGl34dK0ctiNsy5s02CZUwx3VcSQxWZXLQEVyAZUc3W7ZQw==
+"@colony/colony-js-contract-loader-network@^1.14.4":
+  version "1.14.4"
+  resolved "https://registry.yarnpkg.com/@colony/colony-js-contract-loader-network/-/colony-js-contract-loader-network-1.14.4.tgz#ae1d6c590bfdc30141843b9f630392c8a3629f51"
+  integrity sha512-WB49QrspYd9Yke/1D13xmnbniZsnc41co/kP67LVX/nPSK+U6Cv4BdYmv1bQJ7OFrkJsP3sg1vSAftaxXLiE1A==
   dependencies:
     "@colony/colony-js-contract-loader" "^1.12.0"
     assert "^2.0.0"
