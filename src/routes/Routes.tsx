@@ -15,8 +15,9 @@ import CreateWalletWizard from '~users/CreateWalletWizard';
 import UserProfile from '~users/UserProfile';
 import UserProfileEdit from '~users/UserProfileEdit';
 import AdminDashboard from '~admin/AdminDashboard';
+import LevelEdit from '~dashboard/LevelEdit';
 import { NavBar, Plain, SimpleNav } from '~pages/RouteLayouts/index';
-import { ColonyBackText } from '~pages/BackTexts';
+import { ColonyBackText, ProgramBackText } from '~pages/BackTexts';
 
 import { useLoggedInUser } from '~data/index';
 
@@ -25,6 +26,7 @@ import {
   COLONY_HOME_ROUTE,
   CREATE_COLONY_ROUTE,
   CREATE_USER_ROUTE,
+  LEVEL_ROUTE,
   NOT_FOUND_ROUTE,
   PROGRAM_ROUTE,
   TASK_ROUTE,
@@ -133,6 +135,16 @@ const Routes = () => {
         layout={NavBar}
         routeProps={{
           backText: ColonyBackText,
+        }}
+      />
+      <ConnectedOnlyRoute
+        exact
+        isConnected={isConnected}
+        path={LEVEL_ROUTE}
+        component={LevelEdit}
+        layout={NavBar}
+        routeProps={{
+          backText: ProgramBackText,
         }}
       />
       <ConnectedOnlyRoute
