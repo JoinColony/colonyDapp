@@ -89,6 +89,14 @@ const TokensMoveDialogForm = ({
   tokens,
   values,
 }: Props & FormikProps<FormValues>) => {
+  const { tokenAddress, amount } = values;
+  const fromDomain = values.fromDomain
+    ? parseInt(values.fromDomain, 10)
+    : ROOT_DOMAIN;
+  const toDomain = values.toDomain
+    ? parseInt(values.toDomain, 10)
+    : ROOT_DOMAIN;
+
   const selectedToken = useMemo(
     () => tokens.find(token => token.address === values.tokenAddress),
     [tokens, values.tokenAddress],
@@ -113,13 +121,13 @@ const TokensMoveDialogForm = ({
 
   const fromDomainRoles = useTransformer(getUserRoles, [
     domains,
-    values.fromDomain || ROOT_DOMAIN,
+    fromDomain,
     walletAddress,
   ]);
 
   const toDomainRoles = useTransformer(getUserRoles, [
     domains,
-    values.toDomain || ROOT_DOMAIN,
+    toDomain,
     walletAddress,
   ]);
 
@@ -136,12 +144,6 @@ const TokensMoveDialogForm = ({
     [domains],
   );
 
-  const {
-    fromDomain = ROOT_DOMAIN,
-    toDomain = ROOT_DOMAIN,
-    tokenAddress,
-    amount,
-  } = values;
   const [
     loadTokenBalances,
     { data: tokenBalancesData },
