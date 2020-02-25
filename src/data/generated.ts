@@ -1621,6 +1621,16 @@ export type PublishProgramMutationVariables = {
 
 export type PublishProgramMutation = { publishProgram: Maybe<Pick<Program, 'id' | 'status'>> };
 
+export type EnrollInProgramMutationVariables = {
+  input: EnrollInProgramInput
+};
+
+
+export type EnrollInProgramMutation = { enrollInProgram: Maybe<(
+    Pick<Program, 'id' | 'enrolled' | 'enrolledUserAddresses'>
+    & { levels: Array<Pick<Level, 'id' | 'unlocked'>> }
+  )> };
+
 export type CreateLevelMutationVariables = {
   input: CreateLevelInput
 };
@@ -3573,6 +3583,44 @@ export function usePublishProgramMutation(baseOptions?: ApolloReactHooks.Mutatio
 export type PublishProgramMutationHookResult = ReturnType<typeof usePublishProgramMutation>;
 export type PublishProgramMutationResult = ApolloReactCommon.MutationResult<PublishProgramMutation>;
 export type PublishProgramMutationOptions = ApolloReactCommon.BaseMutationOptions<PublishProgramMutation, PublishProgramMutationVariables>;
+export const EnrollInProgramDocument = gql`
+    mutation EnrollInProgram($input: EnrollInProgramInput!) {
+  enrollInProgram(input: $input) {
+    id
+    enrolled
+    enrolledUserAddresses
+    levels {
+      id
+      unlocked
+    }
+  }
+}
+    `;
+export type EnrollInProgramMutationFn = ApolloReactCommon.MutationFunction<EnrollInProgramMutation, EnrollInProgramMutationVariables>;
+
+/**
+ * __useEnrollInProgramMutation__
+ *
+ * To run a mutation, you first call `useEnrollInProgramMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useEnrollInProgramMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [enrollInProgramMutation, { data, loading, error }] = useEnrollInProgramMutation({
+ *   variables: {
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function useEnrollInProgramMutation(baseOptions?: ApolloReactHooks.MutationHookOptions<EnrollInProgramMutation, EnrollInProgramMutationVariables>) {
+        return ApolloReactHooks.useMutation<EnrollInProgramMutation, EnrollInProgramMutationVariables>(EnrollInProgramDocument, baseOptions);
+      }
+export type EnrollInProgramMutationHookResult = ReturnType<typeof useEnrollInProgramMutation>;
+export type EnrollInProgramMutationResult = ApolloReactCommon.MutationResult<EnrollInProgramMutation>;
+export type EnrollInProgramMutationOptions = ApolloReactCommon.BaseMutationOptions<EnrollInProgramMutation, EnrollInProgramMutationVariables>;
 export const CreateLevelDocument = gql`
     mutation CreateLevel($input: CreateLevelInput!) {
   createLevel(input: $input) {
