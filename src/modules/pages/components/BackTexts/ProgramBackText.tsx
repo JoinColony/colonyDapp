@@ -21,7 +21,11 @@ const ProgramBackText = () => {
     variables: { id: programId },
   });
   if (!data) return null;
-  const { title } = data.program;
+  let { title } = data.program;
+  if (!title) {
+    // Set title to undefined in cases of null or empty string to catch that in formatJS' `select` statement
+    title = undefined;
+  }
   return <FormattedMessage {...MSG.backText} values={{ title }} />;
 };
 
