@@ -1,3 +1,4 @@
+import { ComponentType } from 'react';
 import { MessageDescriptor } from 'react-intl';
 
 import { SimpleMessageValues } from '~types/index';
@@ -23,7 +24,7 @@ export interface RouteComponentProps {
   /*
    * If set, it will change the default back link text
    */
-  backText?: string | MessageDescriptor;
+  backText?: string | MessageDescriptor | ComponentType<{}>;
 
   /*
    * Works in conjuction with the above to provide message descriptor selector values
