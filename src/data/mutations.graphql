@@ -362,6 +362,18 @@ mutation PublishProgram($input: PublishProgramInput!) {
   }
 }
 
+mutation EnrollInProgram($input: EnrollInProgramInput!) {
+  enrollInProgram(input: $input) {
+    id
+    enrolled
+    enrolledUserAddresses
+    levels {
+      id
+      unlocked
+    }
+  }
+}
+
 mutation CreateLevel($input: CreateLevelInput!) {
   createLevel(input: $input) {
     id
