@@ -13,6 +13,7 @@ import {
   OneProgram,
   ProgramStatus,
   useReorderProgramLevelsMutation,
+  levelsByIds,
 } from '~data/index';
 import LevelsListItem from './LevelsListItem';
 
@@ -86,14 +87,10 @@ const LevelsList = ({
     }
   }, [error]);
 
-  const levels = useMemo(
-    () =>
-      unsortedLevels.sort(
-        ({ id: idA }, { id: idB }) =>
-          levelIds.indexOf(idA) - levelIds.indexOf(idB),
-      ),
-    [levelIds, unsortedLevels],
-  );
+  const levels = useMemo(() => unsortedLevels.sort(levelsByIds(levelIds)), [
+    levelIds,
+    unsortedLevels,
+  ]);
 
   const isDisabled = status === ProgramStatus.Active;
 
