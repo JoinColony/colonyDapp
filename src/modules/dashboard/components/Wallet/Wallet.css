@@ -2,7 +2,6 @@
   composes: stretchVertical stretchHorizontal from '~styles/layout.css';
   display: grid;
   padding: 70px 15% 0;
-  overflow: auto;
   grid-template-columns: auto 180px;
   grid-template-rows: auto;
   column-gap: 80px;

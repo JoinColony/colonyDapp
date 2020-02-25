@@ -4,13 +4,15 @@
 .main {
   display: flex;
   flex-direction: row;
+  height: 100%;
+  overflow-x: hidden;
 }
 
 .sidebar {
   display: flex;
   flex-shrink: 0;
   padding: 80px 50px;
-  height: 100vh;
+  height: 100%;
   width: sidebarWidth;
 }
 
@@ -21,19 +23,18 @@
 }
 
 .mainContainer {
+  height: 100%;
   width: 100%;
   background-color: var(--colony-white);
 }
 
 .mainContent {
   padding: 80px paddingHorizontal;
-  height: 100%;
   max-width: 930px;
 }
 
 .themeAlt {
   composes: main;
-  background: var(--gradient-default);
 
   & .sidebar {
     background: none;

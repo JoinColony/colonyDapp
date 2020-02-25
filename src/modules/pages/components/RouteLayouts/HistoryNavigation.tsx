@@ -57,7 +57,7 @@ const HistoryNavigation = ({
         : formatMessage(backText, backTextValues);
   }
   return (
-    <div>
+    <div className={styles.main}>
       {backRoute ? (
         <NavLink to={backRoute} className={styles.back}>
           <Icon

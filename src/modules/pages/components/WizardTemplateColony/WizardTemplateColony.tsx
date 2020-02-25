@@ -5,7 +5,7 @@ import { toWei } from 'ethjs-unit';
 import Numeral from '~core/Numeral';
 import QRCode from '~core/QRCode';
 import CopyableAddress from '~core/CopyableAddress';
-import { HistoryNavigation } from '~pages/NavigationWrapper';
+import { HistoryNavigation } from '~pages/RouteLayouts';
 import { useLoggedInUser } from '~data/index';
 
 import styles from './WizardTemplateColony.css';
@@ -36,9 +36,7 @@ const WizardTemplateColony = ({
   return (
     <main className={styles.layoutMain}>
       <header className={styles.header}>
-        <div className={styles.backButton}>
-          <HistoryNavigation customHandler={customHandler} backText=" " />
-        </div>
+        <HistoryNavigation customHandler={customHandler} backText=" " />
         <div className={styles.headerWallet}>
           <div className={styles.wallet}>
             <div className={styles.address}>

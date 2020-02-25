@@ -1,5 +1,6 @@
 export const wideButton: string;
 export const main: string;
+export const grid: string;
 export const colonyInfo: string;
 export const metaContainer: string;
 export const content: string;

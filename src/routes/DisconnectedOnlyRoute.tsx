@@ -1,23 +1,30 @@
 import React, { ComponentType } from 'react';
-import { Route, Redirect } from 'react-router-dom';
+import { Route, Redirect, RouteProps } from 'react-router-dom';
 
-import { RouteProps } from './types';
+import { RouteComponentProps } from '~pages/RouteLayouts';
+
 import { CREATE_USER_ROUTE, DASHBOARD_ROUTE } from './routeConstants';
 
+interface ComponentProps extends RouteProps {
+  routeProps?: RouteComponentProps;
+}
+
 interface Props extends RouteProps {
-  component: ComponentType<any>;
+  component: ComponentType<ComponentProps>;
+  layout: ComponentType<ComponentProps>;
   didClaimProfile?: boolean;
   isConnected?: boolean;
+  routeProps?: RouteComponentProps;
 }
 
 const DisconnectedOnlyRoute = ({
   component: Component,
   didClaimProfile,
   isConnected,
-  ...rest
+  layout: Layout,
+  routeProps,
 }: Props) => (
   <Route
-    {...rest}
     render={props => {
       if (isConnected) {
         const redirectTo =
@@ -29,7 +36,11 @@ const DisconnectedOnlyRoute = ({
         };
         return <Redirect to={location} />;
       }
-      return <Component {...props} />;
+      return (
+        <Layout routeProps={routeProps} {...props}>
+          <Component routeProps={routeProps} {...props} />
+        </Layout>
+      );
     }}
   />
 );

@@ -1,11 +1,5 @@
 .main {
   composes: stretchVertical stretchHorizontal from '~styles/layout.css';
-  background: var(--gradient-default);
-}
-
-.backNavigation {
-  margin: 11px 0 0 21px;
-  font-weight: var(--weight-medium);
 }
 
 .headingWrapper {

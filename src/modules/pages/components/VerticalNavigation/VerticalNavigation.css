@@ -36,14 +36,12 @@
 
 .tabPanel {
   composes: stretchVertical stretchHorizontal from '~styles/layout.css';
-  padding-top: 20px;
   border-left: 1px solid var(--temp-grey-5);
   grid-column: 2;
   grid-row: 1;
 }
 
 .contentWrapper {
-  padding: 5% 80px;
+  padding: 0 5% 80px;
   height: 100%;
-  overflow: auto;
 }

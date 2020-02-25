@@ -143,71 +143,73 @@ const ColonyHome = ({
 
   return (
     <div className={styles.main}>
-      <aside className={styles.colonyInfo}>
-        <div className={styles.metaContainer}>
-          <ColonyMeta
-            colony={colony}
-            canAdminister={
-              !colony.isInRecoveryMode && canAdminister(rootUserRoles)
-            }
-            domains={domains}
-            filteredDomainId={filteredDomainId}
-            setFilteredDomainId={setFilteredDomainId}
-          />
-        </div>
-      </aside>
-      <main className={styles.content}>
-        <div className={styles.breadCrumbContainer}>
-          {domains && crumbs && <BreadCrumb elements={crumbs} />}
-        </div>
-        <Tabs>
-          <TabList
-            extra={activeTab === TabName.TransactionsTab ? noFilter : null}
-          >
-            <Tab onClick={() => setActiveTab(TabName.TasksTab)}>
-              <FormattedMessage {...MSG.tabContribute} />
-            </Tab>
-            <Tab onClick={() => setActiveTab(TabName.SuggestionsTab)}>
-              <FormattedMessage {...MSG.tabSuggestions} />
-            </Tab>
-            <Tab onClick={() => setActiveTab(TabName.CommunityTab)}>
-              <FormattedMessage {...MSG.tabCommunity} />
-            </Tab>
-            <Tab onClick={() => setActiveTab(TabName.TransactionsTab)}>
-              <FormattedMessage {...MSG.tabTransactions} />
-            </Tab>
-          </TabList>
-          <TabPanel>
-            <TabContribute
-              canCreateTask={canCreateTask}
+      <div className={styles.grid}>
+        <aside className={styles.colonyInfo}>
+          <div className={styles.metaContainer}>
+            <ColonyMeta
               colony={colony}
+              canAdminister={
+                !colony.isInRecoveryMode && canAdminister(rootUserRoles)
+              }
+              domains={domains}
               filteredDomainId={filteredDomainId}
-              showQrCode={hasRoot(rootUserRoles)}
+              setFilteredDomainId={setFilteredDomainId}
             />
-          </TabPanel>
-          <TabPanel>
-            <Suggestions
-              colonyAddress={colony.colonyAddress}
-              colonyName={colony.colonyName}
-              domainId={filteredDomainId}
-            />
-          </TabPanel>
-          <TabPanel>
-            <Community colonyAddress={colony.colonyAddress} />
-          </TabPanel>
-          <TabPanel>
-            <Transactions colonyAddress={colony.colonyAddress} />
-          </TabPanel>
-        </Tabs>
-      </main>
-      <aside className={styles.sidebar}>
-        <ColonyFunding
-          colony={colony}
-          currentDomainId={filteredDomainId}
-          domains={domains}
-        />
-      </aside>
-      {colony.isInRecoveryMode && <RecoveryModeAlert />}
+          </div>
+        </aside>
+        <main className={styles.content}>
+          <div className={styles.breadCrumbContainer}>
+            {domains && crumbs && <BreadCrumb elements={crumbs} />}
+          </div>
+          <Tabs>
+            <TabList
+              extra={activeTab === TabName.TransactionsTab ? noFilter : null}
+            >
+              <Tab onClick={() => setActiveTab(TabName.TasksTab)}>
+                <FormattedMessage {...MSG.tabContribute} />
+              </Tab>
+              <Tab onClick={() => setActiveTab(TabName.SuggestionsTab)}>
+                <FormattedMessage {...MSG.tabSuggestions} />
+              </Tab>
+              <Tab onClick={() => setActiveTab(TabName.CommunityTab)}>
+                <FormattedMessage {...MSG.tabCommunity} />
+              </Tab>
+              <Tab onClick={() => setActiveTab(TabName.TransactionsTab)}>
+                <FormattedMessage {...MSG.tabTransactions} />
+              </Tab>
+            </TabList>
+            <TabPanel>
+              <TabContribute
+                canCreateTask={canCreateTask}
+                colony={colony}
+                filteredDomainId={filteredDomainId}
+                showQrCode={hasRoot(rootUserRoles)}
+              />
+            </TabPanel>
+            <TabPanel>
+              <Suggestions
+                colonyAddress={colony.colonyAddress}
+                colonyName={colony.colonyName}
+                domainId={filteredDomainId}
+              />
+            </TabPanel>
+            <TabPanel>
+              <Community colonyAddress={colony.colonyAddress} />
+            </TabPanel>
+            <TabPanel>
+              <Transactions colonyAddress={colony.colonyAddress} />
+            </TabPanel>
+          </Tabs>
+        </main>
+        <aside className={styles.sidebar}>
+          <ColonyFunding
+            colony={colony}
+            currentDomainId={filteredDomainId}
+            domains={domains}
+          />
+        </aside>
+        {colony.isInRecoveryMode && <RecoveryModeAlert />}
+      </div>
     </div>
   );
 };

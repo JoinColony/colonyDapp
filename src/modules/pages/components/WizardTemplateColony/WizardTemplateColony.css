@@ -17,10 +17,6 @@
   margin-top: 5px;
 }
 
-.backButton {
-  margin-left: 18px;
-}
-
 .content {
   composes: flexContainerColumn flexAlignCenter flexJustifyCenter from '~styles/layout.css';
   padding-bottom: 20px;
