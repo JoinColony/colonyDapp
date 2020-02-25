@@ -41,7 +41,7 @@ const MSG = defineMessages({
   },
   backButton: {
     id: 'dashboard.Admin.backButton',
-    defaultMessage: 'Go to {displayName}',
+    defaultMessage: 'Back to {displayName}',
   },
   colonySettings: {
     id: 'dashboard.Admin.colonySettings',
@@ -144,7 +144,6 @@ const AdminDashboard = ({
 }: Props) => {
   const CURRENT_COLONY_ROUTE = colonyName ? `/colony/${colonyName}` : '';
 
-  // @TODO: Try to get proper error handling going in resolvers (for colonies that don't exist)
   const { data, error: colonyFetchError } = useColonyFromNameQuery({
     // We have to define an empty address here for type safety, will be replaced by the query
     variables: { name: colonyName, address: '' },
