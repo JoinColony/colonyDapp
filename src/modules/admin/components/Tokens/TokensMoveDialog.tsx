@@ -14,8 +14,8 @@ import { useColonyTokensQuery } from '~data/index';
 import DialogForm from './TokensMoveDialogForm';
 
 export interface FormValues {
-  fromDomain?: number;
-  toDomain?: number;
+  fromDomain?: string;
+  toDomain?: string;
   amount: string;
   tokenAddress?: Address;
 }
@@ -60,7 +60,13 @@ const TokensMoveDialog = ({
         // Convert amount string with decimals to BigInt (eth to wei)
         const amount = new BigNumber(moveDecimal(payload.amount, decimals));
 
-        return { ...payload, colonyAddress, amount };
+        return {
+          ...payload,
+          colonyAddress,
+          amount,
+          fromDomain: parseInt(payload.fromDomain, 10),
+          toDomain: parseInt(payload.toDomain, 10),
+        };
       }),
       withKey(colonyAddress),
     ),
