@@ -17,9 +17,7 @@ const displayName = 'pages.CenteredTemplate';
 
 const CenteredTemplate = ({ appearance, children }: Props) => (
   <div className={getMainClasses(appearance, styles)}>
-    <div className={styles.mainContainer}>
-      <main className={styles.mainContent}>{children}</main>
-    </div>
+    <main className={styles.mainContainer}>{children}</main>
   </div>
 );
 
