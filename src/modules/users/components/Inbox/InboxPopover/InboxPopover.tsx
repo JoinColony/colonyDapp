@@ -17,7 +17,11 @@ const InboxPopover = ({ children, notifications }: Props) => {
     <Popover
       appearance={{ theme: 'grey' }}
       content={({ close }) => (
-        <InboxContainer close={close} notifications={notifications} />
+        <InboxContainer
+          close={close}
+          notifications={notifications}
+          limit={10}
+        />
       )}
       placement="bottom"
       showArrow={false}
