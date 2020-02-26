@@ -1,4 +1,5 @@
 import React, { useCallback } from 'react';
+import { defineMessages } from 'react-intl';
 import { FormikProps } from 'formik';
 import * as yup from 'yup';
 import moveDecimal from 'move-decimal-point';
@@ -12,6 +13,13 @@ import { ActionForm } from '~core/Fields';
 import { useColonyTokensQuery } from '~data/index';
 
 import DialogForm from './TokensMoveDialogForm';
+
+const MSG = defineMessages({
+  samePot: {
+    id: 'admin.Tokens.TokensMoveDialog.samePot',
+    defaultMessage: 'Cannot move to same domain pot',
+  },
+});
 
 export interface FormValues {
   fromDomain?: string;
@@ -27,6 +35,8 @@ interface Props {
   toDomain?: number;
 }
 
+const displayName = 'admin.Tokens.TokensMoveDialog';
+
 const TokensMoveDialog = ({
   colonyAddress,
   toDomain,
@@ -35,9 +45,15 @@ const TokensMoveDialog = ({
 }: Props) => {
   const validationSchema = yup.object().shape({
     fromDomain: yup.number().required(),
-    toDomain: yup.number().required(),
+    toDomain: yup
+      .number()
+      .notEqualTo(yup.ref('fromDomain'), () => MSG.samePot)
+      .required(),
     amount: yup.string().required(),
-    tokenAddress: yup.string().required(),
+    tokenAddress: yup
+      .string()
+      .address()
+      .required(),
   });
 
   const { data: colonyTokensData } = useColonyTokensQuery({
@@ -103,6 +119,6 @@ const TokensMoveDialog = ({
   );
 };
 
-TokensMoveDialog.displayName = 'admin.Tokens.TokensMoveDialog';
+TokensMoveDialog.displayName = displayName;
 
 export default TokensMoveDialog;

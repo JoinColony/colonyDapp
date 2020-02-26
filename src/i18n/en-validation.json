@@ -3,7 +3,7 @@
       "equalTo": "${path} must be the same as ${reference}"
     },
     "number": {
-        "lessThanPot": "Not enough funds in the pot"
+        "notEqualTo": "${path} cannot be the same as ${reference}"
     },
     "string": {
         "cid": "This is not a valid CID",

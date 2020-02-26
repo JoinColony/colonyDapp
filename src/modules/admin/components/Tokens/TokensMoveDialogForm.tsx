@@ -3,6 +3,7 @@ import { FormikProps } from 'formik';
 import { defineMessages, FormattedMessage } from 'react-intl';
 import BigNumber from 'bn.js';
 import moveDecimal from 'move-decimal-point';
+import isEqual from 'lodash/isEqual';
 import sortBy from 'lodash/sortBy';
 
 import { ROOT_DOMAIN, ROLES } from '~constants';
@@ -66,13 +67,9 @@ const MSG = defineMessages({
     id: 'admin.Tokens.TokensMoveDialogForm.noPermissionTo',
     defaultMessage: 'No permission in to domain',
   },
-  samePot: {
-    id: 'admin.Tokens.TokensMoveDialogForm.samePot',
-    defaultMessage: 'Cannot move to same domain pot',
-  },
 });
 
-interface Props {
+interface Props extends FormikProps<FormValues> {
   cancel: () => void;
   colonyAddress: Address;
   tokens: ColonyTokens;
@@ -84,12 +81,19 @@ const TokensMoveDialogForm = ({
   handleSubmit,
   isSubmitting,
   isValid,
+  errors: formErrors,
   setErrors,
   status,
   tokens,
   values,
-}: Props & FormikProps<FormValues>) => {
+  touched,
+}: Props) => {
   const { tokenAddress, amount } = values;
+  const {
+    amount: amountTouched,
+    fromDomain: fromDomainTouched,
+    toDomain: toDomainTouched,
+  } = touched;
   const fromDomain = values.fromDomain
     ? parseInt(values.fromDomain, 10)
     : ROOT_DOMAIN;
@@ -170,21 +174,28 @@ const TokensMoveDialogForm = ({
     return [from, to];
   }, [fromDomain, toDomain, tokenAddress, tokenBalancesData]);
 
+  const hasFundingInFrom = useMemo(
+    () => userHasRole(fromDomainRoles, ROLES.FUNDING),
+    [fromDomainRoles],
+  );
+
+  const hasFundingInTo = useMemo(
+    () => userHasRole(toDomainRoles, ROLES.FUNDING),
+    [toDomainRoles],
+  );
+
   // Perform form validations
   useEffect(() => {
     const errors: {
       amount?: any;
       fromDomain?: any;
       toDomain?: any;
-    } = {};
-
-    if (!selectedToken || !(amount && amount.length)) {
-      errors.amount = undefined; // silent error
-    } else {
+    } = { ...formErrors };
+    if (amountTouched && amount && selectedToken) {
       const convertedAmount = new BigNumber(
         moveDecimal(amount, selectedToken.decimals || 18),
       );
-      if (convertedAmount.eqn(0)) {
+      if (convertedAmount.lte(new BigNumber(0))) {
         errors.amount = MSG.noAmount;
       } else if (
         fromDomainTokenBalance &&
@@ -194,28 +205,30 @@ const TokensMoveDialogForm = ({
       }
     }
 
-    if (fromDomain && !userHasRole(fromDomainRoles, ROLES.FUNDING)) {
+    if (fromDomainTouched && fromDomain && !hasFundingInFrom) {
       errors.fromDomain = MSG.noPermissionFrom;
     }
 
-    if (toDomain && !userHasRole(toDomainRoles, ROLES.FUNDING)) {
+    if (toDomainTouched && toDomain && !hasFundingInTo) {
       errors.toDomain = MSG.noPermissionTo;
     }
 
-    if (toDomain !== undefined && toDomain === fromDomain) {
-      errors.toDomain = MSG.samePot;
+    if (!isEqual(formErrors, errors)) {
+      setErrors(errors);
     }
-
-    setErrors(errors);
   }, [
     amount,
     fromDomain,
-    fromDomainRoles,
     fromDomainTokenBalance,
+    hasFundingInFrom,
     selectedToken,
     setErrors,
     toDomain,
-    toDomainRoles,
+    hasFundingInTo,
+    formErrors,
+    amountTouched,
+    fromDomainTouched,
+    toDomainTouched,
   ]);
 
   return (

@@ -2,7 +2,6 @@ import * as yup from 'yup';
 import { isIPFS } from 'ipfs';
 import { isAddress } from 'web3-utils';
 import { normalize as ensNormalize } from 'eth-ens-namehash-ms';
-import BigNumber from 'bn.js';
 
 import en from '../i18n/en-validation.json';
 
@@ -30,6 +29,19 @@ function equalTo(ref, msg) {
     },
     test(value) {
       return value === this.resolve(ref);
+    },
+  });
+}
+
+function notEqualTo(ref, msg) {
+  return this.test({
+    name: 'notEqualTo',
+    message: msg || en.number.notEqualTo,
+    params: {
+      reference: ref.path,
+    },
+    test(value) {
+      return value !== this.resolve(ref);
     },
   });
 }
@@ -82,15 +94,8 @@ function includes(searchVal, msg) {
   });
 }
 
-export class BigNumberSchemaType extends yup.object {
-  _typeCheck(value: any) {
-    // @ts-ignore (_typeCheck is not typed in external types)
-    // eslint-disable-next-line no-underscore-dangle
-    return super._typeCheck(value) || BigNumber.isBN(value);
-  }
-}
-
 yup.addMethod(yup.mixed, 'equalTo', equalTo);
+yup.addMethod(yup.number, 'notEqualTo', notEqualTo);
 yup.addMethod(yup.string, 'address', address);
 yup.addMethod(yup.string, 'ensAddress', ensAddress);
 yup.addMethod(yup.array, 'includes', includes);
