@@ -33,6 +33,7 @@ interface PartialProps {
   placeholder?: MessageDescriptor | string;
   title?: MessageDescriptor | string;
   handleSetItem?: any;
+  handleRemoveItem?: any;
   connect?: any;
   showArrow?: boolean;
   itemId?: number;
