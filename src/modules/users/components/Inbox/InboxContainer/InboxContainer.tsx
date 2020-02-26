@@ -35,7 +35,7 @@ const MSG = defineMessages({
   title: {
     id: 'users.Inbox.InboxContainer.title',
     defaultMessage: `Inbox {hasInboxItems, select,
-      true { ({inboxItems})}
+      true { ({inboxItems} out of {totalItems})}
       other {}
     }`,
   },
@@ -45,7 +45,10 @@ const MSG = defineMessages({
   },
   seeAll: {
     id: 'users.Inbox.InboxContainer.seeAll',
-    defaultMessage: 'See All',
+    defaultMessage: `See all {hasInboxItems, select,
+      true {{totalItems}}
+      other {}
+    } notifications`,
   },
   noItems: {
     id: 'users.Inbox.InboxContainer.noItems',
@@ -124,12 +127,16 @@ const InboxContainer = ({ full, close, notifications, limit }: Props) => {
             </div>
           </div>
         )}
-        {!full && (
+        {!full && hasInboxItems && (
           <div className={styles.inboxFooter}>
             <NavLink to={INBOX_ROUTE}>
               <Button
                 appearance={{ theme: 'blue' }}
                 text={MSG.seeAll}
+                textValues={{
+                  hasInboxItems,
+                  totalItems: hasInboxItems ? notifications.length : 0,
+                }}
                 onClick={close}
               />
             </NavLink>
