@@ -1,7 +1,7 @@
 import React, { useCallback } from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
-
 import { useHistory } from 'react-router';
+
 import Button from '~core/Button';
 import Heading from '~core/Heading';
 import Icon from '~core/Icon';

@@ -3,18 +3,18 @@ import { defineMessages } from 'react-intl';
 
 import Button from '~core/Button';
 import Heading from '~core/Heading';
+import ProgramLevelsList from '~dashboard/ProgramLevelsList';
 import { OneProgram, useEnrollInProgramMutation } from '~data/index';
 
 import styles from './ProgramDashboard.css';
-import ProgramLevelsList from '~dashboard/ProgramLevelsList';
 
 const MSG = defineMessages({
   buttonJoinProgram: {
-    id: 'Dashboard.ProgramDashboard.buttonJoinProgram',
+    id: 'dashboard.ProgramDashboard.buttonJoinProgram',
     defaultMessage: 'Join Program',
   },
   linkEdit: {
-    id: 'Dashboard.ProgramDashboard.linkEdit',
+    id: 'dashboard.ProgramDashboard.linkEdit',
     defaultMessage: 'Edit',
   },
 });
@@ -25,7 +25,7 @@ interface Props {
   toggleEditMode: () => void;
 }
 
-const displayName = 'Dashboard.ProgramDashboard';
+const displayName = 'dashboard.ProgramDashboard';
 
 const ProgramDashboard = ({
   canAdmin,
