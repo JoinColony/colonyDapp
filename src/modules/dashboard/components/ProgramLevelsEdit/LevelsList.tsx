@@ -27,7 +27,7 @@ const hasOrderChanged = (arr1: string[], arr2: string[]): boolean => {
   return arr1.some((el, idx) => el !== arr2[idx]);
 };
 
-const displayName = 'dashboard.LevelsList';
+const displayName = 'dashboard.ProgramLevelsEdit.LevelsList';
 
 const LevelsList = ({
   colonyName,
