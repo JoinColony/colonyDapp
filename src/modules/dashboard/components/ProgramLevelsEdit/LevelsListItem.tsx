@@ -11,15 +11,15 @@ import styles from './LevelsListItem.css';
 
 const MSG = defineMessages({
   dragHandleTitle: {
-    id: 'dashboard.LevelsList.dragHandleTitle',
+    id: 'dashboard.ProgramLevelsEdit.LevelsListItem.dragHandleTitle',
     defaultMessage: 'Click, hold, and drag to re-order levels.',
   },
   linkView: {
-    id: 'dashboard.LevelsList.linkView',
+    id: 'dashboard.ProgramLevelsEdit.LevelsListItem.linkView',
     defaultMessage: 'View',
   },
   untitledLevel: {
-    id: 'dashboard.LevelsList.untitledLevel',
+    id: 'dashboard.ProgramLevelsEdit.LevelsListItem.untitledLevel',
     defaultMessage: 'Untitled Level',
   },
 });
