@@ -67,7 +67,10 @@ const ProgramDashboard = ({
         )}
       </div>
       {description && <p>{description}</p>}
-      <ProgramLevelsList program={program} />
+      {/* @todo use tabs (with "Review") if current user is admin */}
+      <div className={styles.levelsContainer}>
+        <ProgramLevelsList program={program} />
+      </div>
     </div>
   );
 };
