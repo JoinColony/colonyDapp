@@ -302,6 +302,36 @@ const cacheUpdates = {
       }
     };
   },
+  setTaskSkill(draftId: string) {
+    return (cache: Cache, { data }: any) => {
+      try {
+        const cacheData = cache.readQuery<TaskQuery, TaskQueryVariables>({
+          query: TaskDocument,
+          variables: {
+            id: draftId,
+          },
+        });
+        const taskData = data && data.setTaskSkill;
+        if (cacheData && taskData) {
+          cache.writeQuery<TaskQuery, TaskQueryVariables>({
+            query: TaskDocument,
+            data: {
+              task: {
+                ...cacheData.task,
+                ethSkillId: taskData.ethSkillId,
+              },
+            },
+            variables: {
+              id: draftId,
+            },
+          });
+        }
+      } catch (e) {
+        log.verbose(e);
+        log.verbose('Not updating store - task not loaded yet');
+      }
+    };
+  },
   removeTaskSkill(draftId: string) {
     return (cache: Cache) => {
       try {
