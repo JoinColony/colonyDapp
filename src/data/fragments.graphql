@@ -178,6 +178,11 @@ fragment EventContext on Event {
       taskId
       type
     }
+    ... on RemoveTaskSkillEvent {
+      ethSkillId
+      taskId
+      type
+    }
     ... on SetTaskTitleEvent {
       taskId
       title

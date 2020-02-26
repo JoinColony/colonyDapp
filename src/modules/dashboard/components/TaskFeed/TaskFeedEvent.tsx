@@ -18,6 +18,7 @@ import {
   TaskEventFragment,
   SetTaskDueDateEvent,
   SetTaskSkillEvent,
+  RemoveTaskSkillEvent,
   CreateTaskEvent,
   SetTaskTitleEvent,
   SetTaskDescriptionEvent,
@@ -61,10 +62,11 @@ const MSG = defineMessages({
   },
   skillSet: {
     id: 'dashboard.TaskFeedEvent.skillSet',
-    defaultMessage: `Task skill {skillSet, select,
-      true {set to {skillName}}
-      false {unset}
-    } by {user}`,
+    defaultMessage: `Task skill set to {skillName} by {user}`,
+  },
+  skillRemoved: {
+    id: 'dashboard.TaskFeedEvent.skillRemoved',
+    defaultMessage: `Task skill was removed by {user}`,
   },
   cancelled: {
     id: 'dashboard.TaskFeedEvent.cancelled',
@@ -291,7 +293,21 @@ const TaskFeedEventSkillSet = ({
             {skillName}
           </span>
         ),
-        skillSet: !!skillName,
+      }}
+    />
+  );
+};
+
+const TaskFeedEventSkillRemoved = ({
+  initiator: {
+    profile: { walletAddress },
+  },
+}: EventProps<RemoveTaskSkillEvent>) => {
+  return (
+    <FormattedMessage
+      {...MSG.skillRemoved}
+      values={{
+        user: <InteractiveUsername userAddress={walletAddress} />,
       }}
     />
   );
@@ -449,6 +465,7 @@ const FEED_EVENT_COMPONENTS = {
   [EventType.SetTaskPayout]: TaskFeedEventPayoutSet,
   [EventType.RemoveTaskPayout]: TaskFeedEventPayoutRemoved,
   [EventType.SetTaskSkill]: TaskFeedEventSkillSet,
+  [EventType.RemoveTaskSkill]: TaskFeedEventSkillRemoved,
   [EventType.CancelTask]: TaskFeedEventCancelled,
   [EventType.CreateTask]: TaskFeedEventCreated,
   [EventType.SetTaskDescription]: TaskFeedEventDescriptionSet,
