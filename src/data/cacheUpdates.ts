@@ -2,6 +2,9 @@ import {
   ColonyTasksQuery,
   ColonyTasksQueryVariables,
   ColonyTasksDocument,
+  TaskDocument,
+  TaskQuery,
+  TaskQueryVariables,
   OneSuggestion,
 } from '~data/index';
 import { Address } from '~types/index';
@@ -296,6 +299,35 @@ const cacheUpdates = {
         log.verbose(
           'Cannot update the colony subscriptions cache - not loaded yet',
         );
+      }
+    };
+  },
+  removeTaskSkill(draftId: string) {
+    return (cache: Cache) => {
+      try {
+        const cacheData = cache.readQuery<TaskQuery, TaskQueryVariables>({
+          query: TaskDocument,
+          variables: {
+            id: draftId,
+          },
+        });
+        if (cacheData) {
+          cache.writeQuery<TaskQuery, TaskQueryVariables>({
+            query: TaskDocument,
+            data: {
+              task: {
+                ...cacheData.task,
+                ethSkillId: null,
+              },
+            },
+            variables: {
+              id: draftId,
+            },
+          });
+        }
+      } catch (e) {
+        log.verbose(e);
+        log.verbose('Not updating store - task not loaded yet');
       }
     };
   },
