@@ -132,7 +132,6 @@ const StepSelectToken = ({
         </Heading>
       </div>
       <Form
-        className={styles.nameForm}
         onSubmit={nextStep}
         validationSchema={validationSchema}
         initialValues={initialValues}

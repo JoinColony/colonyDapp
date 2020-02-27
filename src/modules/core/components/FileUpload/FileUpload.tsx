@@ -28,6 +28,14 @@ const MSG = defineMessages({
     id: 'FileUpload.labelError',
     defaultMessage: 'There was an error processing your file. Try again.',
   },
+  uploadError: {
+    id: 'FileUpload.uploadError',
+    defaultMessage: 'There was an error uploading your file',
+  },
+  filetypeError: {
+    id: 'FileUpload.filetypeError',
+    defaultMessage: 'This filetype is not allowed or file is too big',
+  },
   dropzoneTextBrowseAction: {
     id: 'FileUpload.dropzoneTextBrowseAction',
     defaultMessage: 'browse',
@@ -106,6 +114,9 @@ const Placeholder = () => (
     />
   </div>
 );
+
+const validateFile = (value: UploadFile) =>
+  value.error ? MSG[value.error] : undefined;
 
 class FileUpload extends Component<Props> {
   static displayName = 'FileUpload';
@@ -230,6 +241,7 @@ class FileUpload extends Component<Props> {
                       remove={remove}
                       reset={resetForm}
                       upload={upload}
+                      validate={validateFile}
                     />
                   ))}
                 </div>

@@ -38,7 +38,7 @@ const formatIntl = (
   return formatMessage(text, textValues);
 };
 
-const connectFormik = <P, V>({ alwaysConnected, validate }) => (
+const connectFormik = <P, V>({ alwaysConnected }) => (
   FieldComponent: ComponentType<any>,
 ) => ({
   connect = true,
@@ -49,7 +49,6 @@ const connectFormik = <P, V>({ alwaysConnected, validate }) => (
   connect || alwaysConnected
     ? createElement<FieldAttributes<any>>(Field, {
         component: FieldComponent,
-        validate,
 
         /*
          * Expose the connect prop to use in more complex form wrapped components
@@ -76,10 +75,10 @@ const asField = <
   // `T` allows passing props along to element of type `T`
   // @todo default `T` to never type? Since most components won't pass props along to element of type `T`
   T extends HTMLAttributes<HTMLElement> | never = HTMLAttributes<HTMLElement>
->({ alwaysConnected, validate, initialValue }: AsFieldConfig<V> = {}) =>
+>({ alwaysConnected, initialValue }: AsFieldConfig<V> = {}) =>
   compose<InnerProps<P, V, T>, OuterProps<P, V, T>>(
     injectIntl,
-    connectFormik<P, V>({ alwaysConnected, validate }),
+    connectFormik<P, V>({ alwaysConnected }),
     mapProps<FieldEnhancedProps<V, T>, PropsMapperOuterProps<P, V>>(
       ({
         connect = true,
