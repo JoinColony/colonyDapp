@@ -3,11 +3,7 @@ import React from 'react';
 
 const displayName = 'Form';
 
-interface Props extends FormikConfig<any> {
-  className?: string;
-}
-
-const Form = ({ children, ...props }: Props) => (
+const Form = ({ children, ...props }: FormikConfig<any>) => (
   <Formik {...props}>
     {injectedProps => (
       <FormikForm>

@@ -1,6 +1,6 @@
 import { HTMLAttributes } from 'react';
 import { MessageDescriptor } from 'react-intl';
-import { FieldProps, FieldInputProps } from 'formik';
+import { FieldProps, FieldInputProps, FieldValidator } from 'formik';
 
 import { SimpleMessageValues } from '../../../../types/index';
 
@@ -11,7 +11,6 @@ export type FormatMessage = (
 
 export interface AsFieldConfig<V> {
   alwaysConnected?: boolean;
-  validate?: (value: V) => boolean;
   initialValue?: V;
 }
 
@@ -62,4 +61,5 @@ export interface ExtraFieldProps<V> {
   $value?: V;
   form?: Partial<FieldProps<any>['form']>;
   field?: Partial<FieldProps<V>['field']>;
+  validate?: FieldValidator;
 }

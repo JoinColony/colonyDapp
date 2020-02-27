@@ -17,14 +17,6 @@ const MSG = defineMessages({
     id: 'UploadItem.removeActionText',
     defaultMessage: 'Remove',
   },
-  uploadError: {
-    id: 'UploadItem.uploadError',
-    defaultMessage: 'There was an error uploading your file',
-  },
-  filetypeError: {
-    id: 'UploadItem.filetypeError',
-    defaultMessage: 'This filetype is not allowed or file is too big',
-  },
 });
 
 interface Props {
@@ -138,9 +130,6 @@ class UploadItem extends Component<Props & FieldEnhancedProps<UploadFile>> {
   }
 }
 
-const validate = (value: UploadFile) =>
-  value.error ? MSG[value.error] : undefined;
-
-export default asField<Props, UploadFile>({ alwaysConnected: true, validate })(
+export default asField<Props, UploadFile>({ alwaysConnected: true })(
   UploadItem,
 );

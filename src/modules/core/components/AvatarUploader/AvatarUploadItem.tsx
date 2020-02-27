@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-import { defineMessages } from 'react-intl';
 
 import { FieldEnhancedProps } from '~core/Fields/types';
 import { log } from '~utils/debug';
@@ -11,17 +10,6 @@ import { FileReaderFile, UploadFile } from '../FileUpload';
 import fileReader from '../../../../lib/fileReader';
 import { asField } from '../Fields';
 import Icon from '../Icon';
-
-const MSG = defineMessages({
-  uploadError: {
-    id: 'AvatarUploadItem.uploadError',
-    defaultMessage: 'There was an error uploading your file',
-  },
-  filetypeError: {
-    id: 'AvatarUploadItem.filetypeError',
-    defaultMessage: 'This filetype is not allowed or file is too big',
-  },
-});
 
 interface Props {
   /** Array of allowed file types */
@@ -112,9 +100,6 @@ class AvatarUploadItem extends Component<
   }
 }
 
-const validate = (value: UploadFile) =>
-  value.error ? MSG[value.error] : undefined;
-
-export default asField<Props, UploadFile>({ alwaysConnected: true, validate })(
+export default asField<Props, UploadFile>({ alwaysConnected: true })(
   AvatarUploadItem,
 );
