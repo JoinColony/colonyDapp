@@ -13,9 +13,10 @@ import {
   OneProgram,
   ProgramStatus,
   useReorderProgramLevelsMutation,
-  levelsByIds,
 } from '~data/index';
+
 import LevelsListItem from './LevelsListItem';
+import { sortLevelsByIds } from '../shared/levelsSort';
 
 interface Props {
   colonyName: string;
@@ -87,7 +88,7 @@ const LevelsList = ({
     }
   }, [error]);
 
-  const levels = useMemo(() => unsortedLevels.sort(levelsByIds(levelIds)), [
+  const levels = useMemo(() => unsortedLevels.sort(sortLevelsByIds(levelIds)), [
     levelIds,
     unsortedLevels,
   ]);
