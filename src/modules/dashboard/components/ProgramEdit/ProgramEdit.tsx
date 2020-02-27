@@ -196,18 +196,15 @@ const ProgramEdit = ({
                       text={MSG.pageTitle}
                     />
                   </div>
-                  <div className={styles.cancelButtonContainer}>
-                    <Button
-                      appearance={{ theme: 'blue' }}
-                      text={{ id: 'button.cancel' }}
-                      {...cancelButtonActionProps}
-                    />
-                  </div>
                 </div>
-                <div className={styles.actionButtons}>
+                <div>
+                  <Button
+                    appearance={{ theme: 'blue' }}
+                    text={{ id: 'button.cancel' }}
+                    {...cancelButtonActionProps}
+                  />
                   {status === ProgramStatus.Draft && (
                     <Button
-                      appearance={{ theme: 'blue' }}
                       disabled={!isValid || isSubmitting || !canPublish}
                       loading={isPublishing}
                       onClick={() => handlePublish(values)}
