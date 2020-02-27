@@ -93,7 +93,7 @@ const displayName = 'dashboard.ProgramEdit';
 
 const ProgramEdit = ({
   colonyName,
-  program: { id, description, status, title },
+  program: { id, description, levelIds, status, title },
   program,
   toggleEditMode,
 }: Props) => {
@@ -114,10 +114,13 @@ const ProgramEdit = ({
   });
 
   // As an alternative to `validateOnMount`
-  const checkCanPublish = useCallback(async (values: FormValues) => {
-    const result = await validationSchema.isValid(values);
-    setCanPublish(result);
-  }, []);
+  const checkCanPublish = useCallback(
+    async (values: FormValues) => {
+      const result = await validationSchema.isValid(values);
+      setCanPublish(result && levelIds.length > 0);
+    },
+    [levelIds.length],
+  );
 
   const handleUpdate = useCallback(
     async (values: FormValues) => {
