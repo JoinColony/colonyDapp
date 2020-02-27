@@ -9,15 +9,6 @@
   align-items: baseline;
 }
 
-.cancelButtonContainer {
-  margin-left: 10px;
-}
-
-.actionButtons button + button {
-  /* `!important` to override `Button` styles */
-  margin-left: 25px !important;
-}
-
 .levelsContainer {
   margin-bottom: 40px;
 }
