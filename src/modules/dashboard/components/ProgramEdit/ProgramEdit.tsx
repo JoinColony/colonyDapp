@@ -16,7 +16,7 @@ import {
   useRemoveProgramMutation,
 } from '~data/index';
 
-import EditLevels from './EditLevels';
+import ProgramLevelsEdit from '../ProgramLevelsEdit';
 
 import styles from './ProgramEdit.css';
 
@@ -93,7 +93,8 @@ const displayName = 'dashboard.ProgramEdit';
 
 const ProgramEdit = ({
   colonyName,
-  program: { id, description, status, title },
+  program: { id, description, levelIds, status, title },
+  program,
   toggleEditMode,
 }: Props) => {
   const isDraft = status === ProgramStatus.Draft;
@@ -113,10 +114,13 @@ const ProgramEdit = ({
   });
 
   // As an alternative to `validateOnMount`
-  const checkCanPublish = useCallback(async (values: FormValues) => {
-    const result = await validationSchema.isValid(values);
-    setCanPublish(result);
-  }, []);
+  const checkCanPublish = useCallback(
+    async (values: FormValues) => {
+      const result = await validationSchema.isValid(values);
+      setCanPublish(result && levelIds.length > 0);
+    },
+    [levelIds.length],
+  );
 
   const handleUpdate = useCallback(
     async (values: FormValues) => {
@@ -201,14 +205,16 @@ const ProgramEdit = ({
                   </div>
                 </div>
                 <div className={styles.actionButtons}>
-                  <Button
-                    appearance={{ theme: 'blue' }}
-                    disabled={!isValid || isSubmitting || !canPublish}
-                    loading={isPublishing}
-                    onClick={() => handlePublish(values)}
-                    text={MSG.buttonPublish}
-                    title={MSG.buttonPublishTitle}
-                  />
+                  {status === ProgramStatus.Draft && (
+                    <Button
+                      appearance={{ theme: 'blue' }}
+                      disabled={!isValid || isSubmitting || !canPublish}
+                      loading={isPublishing}
+                      onClick={() => handlePublish(values)}
+                      text={MSG.buttonPublish}
+                      title={MSG.buttonPublishTitle}
+                    />
+                  )}
                   <Button
                     disabled={!dirty || !isValid || isPublishing}
                     loading={isSubmitting}
@@ -240,7 +246,7 @@ const ProgramEdit = ({
         }}
       </Form>
       <div className={styles.levelsContainer}>
-        <EditLevels />
+        <ProgramLevelsEdit colonyName={colonyName} program={program} />
       </div>
       <Button
         appearance={{ theme: 'dangerLink' }}

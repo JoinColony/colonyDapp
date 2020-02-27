@@ -26,11 +26,50 @@ import {
   ColonyProgramsQuery,
   ColonyProgramsQueryVariables,
   ColonyProgramsDocument,
+  CreateLevelMutationResult,
+  ProgramQuery,
+  ProgramDocument,
+  ProgramQueryVariables,
 } from './generated';
 
 type Cache = typeof apolloCache;
 
 const cacheUpdates = {
+  createLevel(programId) {
+    return (cache: Cache, { data }: CreateLevelMutationResult) => {
+      try {
+        const cacheData = cache.readQuery<ProgramQuery, ProgramQueryVariables>({
+          query: ProgramDocument,
+          variables: {
+            id: programId,
+          },
+        });
+        const createLevelData = data && data.createLevel;
+        if (cacheData && createLevelData) {
+          const levels = cacheData.program.levels || [];
+          levels.push(createLevelData);
+          const levelIds = cacheData.program.levelIds || [];
+          levelIds.push(createLevelData.id);
+          cache.writeQuery<ProgramQuery, ProgramQueryVariables>({
+            data: {
+              program: {
+                ...cacheData.program,
+                levelIds,
+                levels,
+              },
+            },
+            query: ProgramDocument,
+            variables: {
+              id: programId,
+            },
+          });
+        }
+      } catch (e) {
+        log.verbose(e);
+        log.verbose('Not updating store - colony programs not loaded yet');
+      }
+    };
+  },
   createProgram(colonyAddress: Address) {
     return (cache: Cache, { data }: CreateProgramMutationResult) => {
       try {

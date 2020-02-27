@@ -1257,9 +1257,11 @@ export type SuggestionFieldsFragment = (
 );
 
 export type ProgramFieldsFragment = (
-  Pick<Program, 'id' | 'createdAt' | 'creatorAddress' | 'colonyAddress' | 'title' | 'description' | 'levelIds' | 'enrolledUserAddresses' | 'status'>
-  & { levels: Array<Pick<Level, 'id' | 'achievement' | 'description' | 'createdAt' | 'creatorAddress' | 'numRequiredSteps' | 'programId' | 'stepIds' | 'status' | 'title'>> }
+  Pick<Program, 'id' | 'createdAt' | 'creatorAddress' | 'colonyAddress' | 'description' | 'enrolled' | 'enrolledUserAddresses' | 'levelIds' | 'status' | 'title'>
+  & { levels: Array<Pick<Level, 'id' | 'achievement' | 'programId' | 'stepIds' | 'status' | 'title'>> }
 );
+
+export type LevelFieldsFragment = Pick<Level, 'id' | 'achievement' | 'createdAt' | 'creatorAddress' | 'description' | 'numRequiredSteps' | 'programId' | 'status' | 'stepIds' | 'title'>;
 
 export type EventFieldsFragment = (
   Pick<Event, 'createdAt' | 'initiatorAddress' | 'sourceId' | 'sourceType' | 'type'>
@@ -1585,6 +1587,33 @@ export type PublishProgramMutationVariables = {
 
 export type PublishProgramMutation = { publishProgram: Maybe<Pick<Program, 'id' | 'status'>> };
 
+export type EnrollInProgramMutationVariables = {
+  input: EnrollInProgramInput
+};
+
+
+export type EnrollInProgramMutation = { enrollInProgram: Maybe<(
+    Pick<Program, 'id' | 'enrolled' | 'enrolledUserAddresses'>
+    & { levels: Array<Pick<Level, 'id' | 'unlocked'>> }
+  )> };
+
+export type CreateLevelMutationVariables = {
+  input: CreateLevelInput
+};
+
+
+export type CreateLevelMutation = { createLevel: Maybe<Pick<Level, 'id' | 'achievement' | 'description' | 'createdAt' | 'creatorAddress' | 'numRequiredSteps' | 'programId' | 'stepIds' | 'status' | 'title' | 'unlocked'>> };
+
+export type ReorderProgramLevelsMutationVariables = {
+  input: ReorderProgramLevelsInput
+};
+
+
+export type ReorderProgramLevelsMutation = { reorderProgramLevels: Maybe<(
+    Pick<Program, 'id' | 'levelIds'>
+    & { levels: Array<Pick<Level, 'id'>> }
+  )> };
+
 export type TaskQueryVariables = {
   id: Scalars['String']
 };
@@ -1800,6 +1829,29 @@ export type ProgramQueryVariables = {
 
 export type ProgramQuery = { program: ProgramFieldsFragment };
 
+export type ProgramLevelsQueryVariables = {
+  id: Scalars['String']
+};
+
+
+export type ProgramLevelsQuery = { program: (
+    Pick<Program, 'id' | 'levelIds'>
+    & { levels: Array<LevelFieldsFragment> }
+  ) };
+
+export type ProgramLevelsWithUnlockedQueryVariables = {
+  id: Scalars['String']
+};
+
+
+export type ProgramLevelsWithUnlockedQuery = { program: (
+    Pick<Program, 'id' | 'levelIds'>
+    & { levels: Array<(
+      Pick<Level, 'unlocked'>
+      & LevelFieldsFragment
+    )> }
+  ) };
+
 export type ColonySubscribedUsersQueryVariables = {
   colonyAddress: Scalars['String']
 };
@@ -1990,23 +2042,34 @@ export const ProgramFieldsFragmentDoc = gql`
   createdAt
   creatorAddress
   colonyAddress
-  title
   description
+  enrolled
+  enrolledUserAddresses
   levels {
     id
     achievement
-    description
-    createdAt
-    creatorAddress
-    numRequiredSteps
     programId
     stepIds
     status
     title
   }
   levelIds
-  enrolledUserAddresses
   status
+  title
+}
+    `;
+export const LevelFieldsFragmentDoc = gql`
+    fragment LevelFields on Level {
+  id
+  achievement
+  createdAt
+  creatorAddress
+  description
+  numRequiredSteps
+  programId
+  status
+  stepIds
+  title
 }
     `;
 export const EventFieldsFragmentDoc = gql`
@@ -3445,6 +3508,122 @@ export function usePublishProgramMutation(baseOptions?: ApolloReactHooks.Mutatio
 export type PublishProgramMutationHookResult = ReturnType<typeof usePublishProgramMutation>;
 export type PublishProgramMutationResult = ApolloReactCommon.MutationResult<PublishProgramMutation>;
 export type PublishProgramMutationOptions = ApolloReactCommon.BaseMutationOptions<PublishProgramMutation, PublishProgramMutationVariables>;
+export const EnrollInProgramDocument = gql`
+    mutation EnrollInProgram($input: EnrollInProgramInput!) {
+  enrollInProgram(input: $input) {
+    id
+    enrolled
+    enrolledUserAddresses
+    levels {
+      id
+      unlocked
+    }
+  }
+}
+    `;
+export type EnrollInProgramMutationFn = ApolloReactCommon.MutationFunction<EnrollInProgramMutation, EnrollInProgramMutationVariables>;
+
+/**
+ * __useEnrollInProgramMutation__
+ *
+ * To run a mutation, you first call `useEnrollInProgramMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useEnrollInProgramMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [enrollInProgramMutation, { data, loading, error }] = useEnrollInProgramMutation({
+ *   variables: {
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function useEnrollInProgramMutation(baseOptions?: ApolloReactHooks.MutationHookOptions<EnrollInProgramMutation, EnrollInProgramMutationVariables>) {
+        return ApolloReactHooks.useMutation<EnrollInProgramMutation, EnrollInProgramMutationVariables>(EnrollInProgramDocument, baseOptions);
+      }
+export type EnrollInProgramMutationHookResult = ReturnType<typeof useEnrollInProgramMutation>;
+export type EnrollInProgramMutationResult = ApolloReactCommon.MutationResult<EnrollInProgramMutation>;
+export type EnrollInProgramMutationOptions = ApolloReactCommon.BaseMutationOptions<EnrollInProgramMutation, EnrollInProgramMutationVariables>;
+export const CreateLevelDocument = gql`
+    mutation CreateLevel($input: CreateLevelInput!) {
+  createLevel(input: $input) {
+    id
+    achievement
+    description
+    createdAt
+    creatorAddress
+    numRequiredSteps
+    programId
+    stepIds
+    status
+    title
+    unlocked
+  }
+}
+    `;
+export type CreateLevelMutationFn = ApolloReactCommon.MutationFunction<CreateLevelMutation, CreateLevelMutationVariables>;
+
+/**
+ * __useCreateLevelMutation__
+ *
+ * To run a mutation, you first call `useCreateLevelMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useCreateLevelMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [createLevelMutation, { data, loading, error }] = useCreateLevelMutation({
+ *   variables: {
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function useCreateLevelMutation(baseOptions?: ApolloReactHooks.MutationHookOptions<CreateLevelMutation, CreateLevelMutationVariables>) {
+        return ApolloReactHooks.useMutation<CreateLevelMutation, CreateLevelMutationVariables>(CreateLevelDocument, baseOptions);
+      }
+export type CreateLevelMutationHookResult = ReturnType<typeof useCreateLevelMutation>;
+export type CreateLevelMutationResult = ApolloReactCommon.MutationResult<CreateLevelMutation>;
+export type CreateLevelMutationOptions = ApolloReactCommon.BaseMutationOptions<CreateLevelMutation, CreateLevelMutationVariables>;
+export const ReorderProgramLevelsDocument = gql`
+    mutation ReorderProgramLevels($input: ReorderProgramLevelsInput!) {
+  reorderProgramLevels(input: $input) {
+    id
+    levelIds
+    levels {
+      id
+    }
+  }
+}
+    `;
+export type ReorderProgramLevelsMutationFn = ApolloReactCommon.MutationFunction<ReorderProgramLevelsMutation, ReorderProgramLevelsMutationVariables>;
+
+/**
+ * __useReorderProgramLevelsMutation__
+ *
+ * To run a mutation, you first call `useReorderProgramLevelsMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useReorderProgramLevelsMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [reorderProgramLevelsMutation, { data, loading, error }] = useReorderProgramLevelsMutation({
+ *   variables: {
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function useReorderProgramLevelsMutation(baseOptions?: ApolloReactHooks.MutationHookOptions<ReorderProgramLevelsMutation, ReorderProgramLevelsMutationVariables>) {
+        return ApolloReactHooks.useMutation<ReorderProgramLevelsMutation, ReorderProgramLevelsMutationVariables>(ReorderProgramLevelsDocument, baseOptions);
+      }
+export type ReorderProgramLevelsMutationHookResult = ReturnType<typeof useReorderProgramLevelsMutation>;
+export type ReorderProgramLevelsMutationResult = ApolloReactCommon.MutationResult<ReorderProgramLevelsMutation>;
+export type ReorderProgramLevelsMutationOptions = ApolloReactCommon.BaseMutationOptions<ReorderProgramLevelsMutation, ReorderProgramLevelsMutationVariables>;
 export const TaskDocument = gql`
     query Task($id: String!) {
   task(id: $id) {
@@ -4302,6 +4481,81 @@ export function useProgramLazyQuery(baseOptions?: ApolloReactHooks.LazyQueryHook
 export type ProgramQueryHookResult = ReturnType<typeof useProgramQuery>;
 export type ProgramLazyQueryHookResult = ReturnType<typeof useProgramLazyQuery>;
 export type ProgramQueryResult = ApolloReactCommon.QueryResult<ProgramQuery, ProgramQueryVariables>;
+export const ProgramLevelsDocument = gql`
+    query ProgramLevels($id: String!) {
+  program(id: $id) {
+    id
+    levelIds
+    levels {
+      ...LevelFields
+    }
+  }
+}
+    ${LevelFieldsFragmentDoc}`;
+
+/**
+ * __useProgramLevelsQuery__
+ *
+ * To run a query within a React component, call `useProgramLevelsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useProgramLevelsQuery` returns an object from Apollo Client that contains loading, error, and data properties 
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useProgramLevelsQuery({
+ *   variables: {
+ *      id: // value for 'id'
+ *   },
+ * });
+ */
+export function useProgramLevelsQuery(baseOptions?: ApolloReactHooks.QueryHookOptions<ProgramLevelsQuery, ProgramLevelsQueryVariables>) {
+        return ApolloReactHooks.useQuery<ProgramLevelsQuery, ProgramLevelsQueryVariables>(ProgramLevelsDocument, baseOptions);
+      }
+export function useProgramLevelsLazyQuery(baseOptions?: ApolloReactHooks.LazyQueryHookOptions<ProgramLevelsQuery, ProgramLevelsQueryVariables>) {
+          return ApolloReactHooks.useLazyQuery<ProgramLevelsQuery, ProgramLevelsQueryVariables>(ProgramLevelsDocument, baseOptions);
+        }
+export type ProgramLevelsQueryHookResult = ReturnType<typeof useProgramLevelsQuery>;
+export type ProgramLevelsLazyQueryHookResult = ReturnType<typeof useProgramLevelsLazyQuery>;
+export type ProgramLevelsQueryResult = ApolloReactCommon.QueryResult<ProgramLevelsQuery, ProgramLevelsQueryVariables>;
+export const ProgramLevelsWithUnlockedDocument = gql`
+    query ProgramLevelsWithUnlocked($id: String!) {
+  program(id: $id) {
+    id
+    levelIds
+    levels {
+      ...LevelFields
+      unlocked
+    }
+  }
+}
+    ${LevelFieldsFragmentDoc}`;
+
+/**
+ * __useProgramLevelsWithUnlockedQuery__
+ *
+ * To run a query within a React component, call `useProgramLevelsWithUnlockedQuery` and pass it any options that fit your needs.
+ * When your component renders, `useProgramLevelsWithUnlockedQuery` returns an object from Apollo Client that contains loading, error, and data properties 
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useProgramLevelsWithUnlockedQuery({
+ *   variables: {
+ *      id: // value for 'id'
+ *   },
+ * });
+ */
+export function useProgramLevelsWithUnlockedQuery(baseOptions?: ApolloReactHooks.QueryHookOptions<ProgramLevelsWithUnlockedQuery, ProgramLevelsWithUnlockedQueryVariables>) {
+        return ApolloReactHooks.useQuery<ProgramLevelsWithUnlockedQuery, ProgramLevelsWithUnlockedQueryVariables>(ProgramLevelsWithUnlockedDocument, baseOptions);
+      }
+export function useProgramLevelsWithUnlockedLazyQuery(baseOptions?: ApolloReactHooks.LazyQueryHookOptions<ProgramLevelsWithUnlockedQuery, ProgramLevelsWithUnlockedQueryVariables>) {
+          return ApolloReactHooks.useLazyQuery<ProgramLevelsWithUnlockedQuery, ProgramLevelsWithUnlockedQueryVariables>(ProgramLevelsWithUnlockedDocument, baseOptions);
+        }
+export type ProgramLevelsWithUnlockedQueryHookResult = ReturnType<typeof useProgramLevelsWithUnlockedQuery>;
+export type ProgramLevelsWithUnlockedLazyQueryHookResult = ReturnType<typeof useProgramLevelsWithUnlockedLazyQuery>;
+export type ProgramLevelsWithUnlockedQueryResult = ApolloReactCommon.QueryResult<ProgramLevelsWithUnlockedQuery, ProgramLevelsWithUnlockedQueryVariables>;
 export const ColonySubscribedUsersDocument = gql`
     query ColonySubscribedUsers($colonyAddress: String!) {
   colony(address: $colonyAddress) {

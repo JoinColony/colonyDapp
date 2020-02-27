@@ -3,17 +3,18 @@ import { defineMessages } from 'react-intl';
 
 import Button from '~core/Button';
 import Heading from '~core/Heading';
-import { OneProgram } from '~data/index';
+import ProgramLevelsList from '~dashboard/ProgramLevelsList';
+import { OneProgram, useEnrollInProgramMutation } from '~data/index';
 
 import styles from './ProgramDashboard.css';
 
 const MSG = defineMessages({
   buttonJoinProgram: {
-    id: 'Dashboard.ProgramDashboard.buttonJoinProgram',
+    id: 'dashboard.ProgramDashboard.buttonJoinProgram',
     defaultMessage: 'Join Program',
   },
   linkEdit: {
-    id: 'Dashboard.ProgramDashboard.linkEdit',
+    id: 'dashboard.ProgramDashboard.linkEdit',
     defaultMessage: 'Edit',
   },
 });
@@ -24,38 +25,55 @@ interface Props {
   toggleEditMode: () => void;
 }
 
-const displayName = 'Dashboard.ProgramDashboard';
+const displayName = 'dashboard.ProgramDashboard';
 
 const ProgramDashboard = ({
   canAdmin,
-  program: { title, description },
+  program: { id: programId, description, enrolled, title },
+  program,
   toggleEditMode,
-}: Props) => (
-  <div>
-    <div className={styles.titleContainer}>
-      <div className={styles.headingContainer}>
-        <Heading
-          appearance={{ margin: 'none', size: 'medium' }}
-          // fallback to please typescript - can't publish unless there's a title, so this isn't an issue
-          text={title || ''}
-        />
-        {canAdmin && (
-          <div className={styles.editButtonContainer}>
+}: Props) => {
+  const [enrollInProgram, { loading }] = useEnrollInProgramMutation({
+    variables: { input: { id: programId } },
+  });
+
+  return (
+    <div>
+      <div className={styles.titleContainer}>
+        <div className={styles.headingContainer}>
+          <Heading
+            appearance={{ margin: 'none', size: 'medium' }}
+            // fallback to please typescript - can't publish unless there's a title, so this isn't an issue
+            text={title || ''}
+          />
+          {canAdmin && (
+            <div className={styles.editButtonContainer}>
+              <Button
+                appearance={{ theme: 'blue' }}
+                onClick={toggleEditMode}
+                text={MSG.linkEdit}
+              />
+            </div>
+          )}
+        </div>
+        {!enrolled && (
+          <div>
             <Button
-              appearance={{ theme: 'blue' }}
-              onClick={toggleEditMode}
-              text={MSG.linkEdit}
+              loading={loading}
+              onClick={() => enrollInProgram()}
+              text={MSG.buttonJoinProgram}
             />
           </div>
         )}
       </div>
-      <div>
-        <Button text={MSG.buttonJoinProgram} />
+      {description && <p>{description}</p>}
+      {/* @todo use tabs (with "Review") if current user is admin */}
+      <div className={styles.levelsContainer}>
+        <ProgramLevelsList program={program} />
       </div>
     </div>
-    {description && <p>{description}</p>}
-  </div>
-);
+  );
+};
 
 ProgramDashboard.displayName = displayName;
 

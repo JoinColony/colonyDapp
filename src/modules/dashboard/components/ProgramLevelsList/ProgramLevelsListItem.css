@@ -1,0 +1,14 @@
+.main {
+  display: flex;
+  align-items: center;
+  padding: 10px 15px;
+}
+
+.content {
+  flex-grow: 1;
+}
+
+.linkContainer {
+  flex-basis: 100px;
+  text-align: right;
+}

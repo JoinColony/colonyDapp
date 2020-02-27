@@ -1,17 +1,24 @@
-import React, { ReactNode } from 'react';
+import React, { ReactNode, HTMLAttributes } from 'react';
 
 import { getMainClasses } from '~utils/css';
 
 import styles from './ListGroup.css';
 
-interface Props {
+interface Appearance {
+  gaps?: 'true';
+}
+
+interface Props extends HTMLAttributes<HTMLUListElement> {
+  appearance?: Appearance;
   children: ReactNode;
 }
 
 const displayName = 'ListGroup';
 
-const ListGroup = ({ children }: Props) => (
-  <ul className={getMainClasses({}, styles)}>{children}</ul>
+const ListGroup = ({ appearance, children, ...rest }: Props) => (
+  <ul className={getMainClasses(appearance, styles)} {...rest}>
+    {children}
+  </ul>
 );
 
 ListGroup.displayName = displayName;
