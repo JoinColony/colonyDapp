@@ -16,8 +16,6 @@ import {
   UserNotificationsDocument,
   UserNotificationsQuery,
   UserNotificationsQueryVariables,
-  OneLevel,
-  OneProgram,
 } from './index';
 
 const getMinimalUser = (address: string): UserQuery['user'] => ({
@@ -102,8 +100,3 @@ export function* refetchUserNotifications(walletAddress: string) {
     fetchPolicy: 'network-only',
   });
 }
-
-export const levelsByIds = (levelIds: OneProgram['levelIds']) => (
-  { id: idA }: OneLevel,
-  { id: idB }: OneLevel,
-) => levelIds.indexOf(idA) - levelIds.indexOf(idB);
