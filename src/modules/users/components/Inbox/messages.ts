@@ -101,6 +101,10 @@ const messages = defineMessages({
     id: 'dashboard.Inbox.InboxItem.notificationTaskFinalized',
     defaultMessage: '{user} finalized {task} and payouts have been made.',
   },
+  notificationTaskPayoutSet: {
+    id: 'dashboard.Inbox.InboxItem.notificationTaskPayoutSet',
+    defaultMessage: '{user} added payout to {task}: {amount}',
+  },
   /*
    * These are currently unused:
    *
