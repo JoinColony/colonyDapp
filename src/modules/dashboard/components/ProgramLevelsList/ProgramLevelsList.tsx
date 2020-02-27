@@ -1,13 +1,10 @@
 import React, { useMemo } from 'react';
 
-import {
-  OneProgram,
-  levelsByIds,
-  useProgramLevelsWithUnlockedQuery,
-} from '~data/index';
+import { OneProgram, useProgramLevelsWithUnlockedQuery } from '~data/index';
 import ListGroup, { ListGroupItem } from '~core/ListGroup';
 
 import ProgramLevelsListItem from './ProgramLevelsListItem';
+import { sortLevelsByIds } from '../shared/levelsSort';
 
 interface Props {
   program: OneProgram;
@@ -23,7 +20,7 @@ const ProgramLevelsList = ({ program: { id: programId, enrolled } }: Props) => {
   const levelIds = (data && data.program.levelIds) || [];
   const unsortedLevels = (data && data.program.levels) || [];
 
-  const levels = useMemo(() => unsortedLevels.sort(levelsByIds(levelIds)), [
+  const levels = useMemo(() => unsortedLevels.sort(sortLevelsByIds(levelIds)), [
     levelIds,
     unsortedLevels,
   ]);
