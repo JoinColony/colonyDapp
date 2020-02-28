@@ -1,17 +1,18 @@
 import React from 'react';
 
 import ListGroup, { ListGroupItem } from '~core/ListGroup';
-import { OneLevel, useLevelTasksQuery } from '~data/index';
+import { OneLevel, OnePersistentTask, useLevelTasksQuery } from '~data/index';
 
 import LevelTaskListItem from './LevelTaskListItem';
 
 interface Props {
+  createdTaskId?: OnePersistentTask['id'];
   levelId: OneLevel['id'];
 }
 
 const displayName = 'dashboard.LevelTasksEdit.LevelTasksList';
 
-const LeveltasksList = ({ levelId }: Props) => {
+const LeveltasksList = ({ createdTaskId, levelId }: Props) => {
   const { data } = useLevelTasksQuery({ variables: { id: levelId } });
   if (!data) {
     return null;
@@ -24,6 +25,7 @@ const LeveltasksList = ({ levelId }: Props) => {
       {persistentTasks.map(persistentTask => (
         <ListGroupItem key={persistentTask.id}>
           <LevelTaskListItem
+            isEditing={persistentTask.id === createdTaskId}
             levelId={levelId}
             persistentTask={persistentTask}
           />
