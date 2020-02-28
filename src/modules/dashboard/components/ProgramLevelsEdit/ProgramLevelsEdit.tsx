@@ -1,10 +1,9 @@
 import React, { useCallback } from 'react';
-import { defineMessages, FormattedMessage } from 'react-intl';
+import { defineMessages } from 'react-intl';
 import { useHistory } from 'react-router';
 
-import Button from '~core/Button';
+import { DottedAddButton } from '~core/Button';
 import Heading from '~core/Heading';
-import Icon from '~core/Icon';
 import { OneProgram, useCreateLevelMutation, cacheUpdates } from '~data/index';
 
 import LevelsList from './LevelsList';
@@ -66,18 +65,7 @@ const ProgramLevelsEdit = ({
       <div className={styles.programLevelsContainer}>
         <LevelsList colonyName={colonyName} program={program} />
       </div>
-      <Button appearance={{ theme: 'dottedArea' }} onClick={handleAddLevel}>
-        <span className={styles.buttonTextContainer}>
-          <div className={styles.buttonIcon}>
-            <Icon
-              appearance={{ size: 'medium' }}
-              name="circle-plus"
-              title={MSG.buttonAddLevel}
-            />
-          </div>
-          <FormattedMessage {...MSG.buttonAddLevel} />
-        </span>
-      </Button>
+      <DottedAddButton onClick={handleAddLevel} text={MSG.buttonAddLevel} />
     </div>
   );
 };
