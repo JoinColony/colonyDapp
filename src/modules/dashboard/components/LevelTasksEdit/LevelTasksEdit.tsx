@@ -36,13 +36,15 @@ const LevelTasksEdit = ({ levelId }: Props) => {
 
   return (
     <>
-      <div className={styles.taskListContainer}>
+      <div className={styles.section}>
         <LevelTasksList createdTaskId={createdTaskId} levelId={levelId} />
       </div>
-      <DottedAddButton
-        onClick={() => createPersistentTask()}
-        text={MSG.buttonAddPersistentTask}
-      />
+      <div className={styles.section}>
+        <DottedAddButton
+          onClick={() => createPersistentTask()}
+          text={MSG.buttonAddPersistentTask}
+        />
+      </div>
     </>
   );
 };
