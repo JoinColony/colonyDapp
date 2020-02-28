@@ -6,6 +6,10 @@
   border-top: 1px solid var(--grey-5);
 }
 
+.narrow {
+  width: 70%;
+}
+
 .actionsRow {
   display: flex;
   justify-content: space-between;

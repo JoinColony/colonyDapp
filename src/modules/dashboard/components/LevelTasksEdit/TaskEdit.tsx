@@ -177,20 +177,24 @@ const TaskEdit = ({
         />
       </div>
       <div className={styles.section}>
-        <Select
-          appearance={{ theme: 'grey' }}
-          label={MSG.labelTaskDomain}
-          name="domainId"
-          options={[]}
-        />
+        <div className={styles.narrow}>
+          <Select
+            appearance={{ theme: 'grey' }}
+            label={MSG.labelTaskDomain}
+            name="domainId"
+            options={[]}
+          />
+        </div>
       </div>
       <div className={styles.section}>
-        <Select
-          appearance={{ theme: 'grey' }}
-          label={MSG.labelTaskSkill}
-          name="skillId"
-          options={[]}
-        />
+        <div className={styles.narrow}>
+          <Select
+            appearance={{ theme: 'grey' }}
+            label={MSG.labelTaskSkill}
+            name="skillId"
+            options={[]}
+          />
+        </div>
       </div>
       {/* @todo payout */}
       <div className={styles.section}>
