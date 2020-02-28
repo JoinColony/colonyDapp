@@ -1,1 +1,1 @@
-export const taskListContainer: string;
+export const section: string;
