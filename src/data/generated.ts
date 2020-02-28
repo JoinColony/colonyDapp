@@ -1927,6 +1927,26 @@ export type ProgramLevelsWithUnlockedQuery = { program: (
     )> }
   ) };
 
+export type LevelQueryVariables = {
+  id: Scalars['String']
+};
+
+
+export type LevelQuery = { level: (
+    Pick<Level, 'unlocked'>
+    & LevelFieldsFragment
+  ) };
+
+export type LevelTasksQueryVariables = {
+  id: Scalars['String']
+};
+
+
+export type LevelTasksQuery = { level: (
+    Pick<Level, 'id'>
+    & { steps: Array<PersistentTaskFieldsFragment> }
+  ) };
+
 export type ColonySubscribedUsersQueryVariables = {
   colonyAddress: Scalars['String']
 };
@@ -4808,6 +4828,76 @@ export function useProgramLevelsWithUnlockedLazyQuery(baseOptions?: ApolloReactH
 export type ProgramLevelsWithUnlockedQueryHookResult = ReturnType<typeof useProgramLevelsWithUnlockedQuery>;
 export type ProgramLevelsWithUnlockedLazyQueryHookResult = ReturnType<typeof useProgramLevelsWithUnlockedLazyQuery>;
 export type ProgramLevelsWithUnlockedQueryResult = ApolloReactCommon.QueryResult<ProgramLevelsWithUnlockedQuery, ProgramLevelsWithUnlockedQueryVariables>;
+export const LevelDocument = gql`
+    query Level($id: String!) {
+  level(id: $id) {
+    ...LevelFields
+    unlocked
+  }
+}
+    ${LevelFieldsFragmentDoc}`;
+
+/**
+ * __useLevelQuery__
+ *
+ * To run a query within a React component, call `useLevelQuery` and pass it any options that fit your needs.
+ * When your component renders, `useLevelQuery` returns an object from Apollo Client that contains loading, error, and data properties 
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useLevelQuery({
+ *   variables: {
+ *      id: // value for 'id'
+ *   },
+ * });
+ */
+export function useLevelQuery(baseOptions?: ApolloReactHooks.QueryHookOptions<LevelQuery, LevelQueryVariables>) {
+        return ApolloReactHooks.useQuery<LevelQuery, LevelQueryVariables>(LevelDocument, baseOptions);
+      }
+export function useLevelLazyQuery(baseOptions?: ApolloReactHooks.LazyQueryHookOptions<LevelQuery, LevelQueryVariables>) {
+          return ApolloReactHooks.useLazyQuery<LevelQuery, LevelQueryVariables>(LevelDocument, baseOptions);
+        }
+export type LevelQueryHookResult = ReturnType<typeof useLevelQuery>;
+export type LevelLazyQueryHookResult = ReturnType<typeof useLevelLazyQuery>;
+export type LevelQueryResult = ApolloReactCommon.QueryResult<LevelQuery, LevelQueryVariables>;
+export const LevelTasksDocument = gql`
+    query LevelTasks($id: String!) {
+  level(id: $id) {
+    id
+    steps {
+      ...PersistentTaskFields
+    }
+  }
+}
+    ${PersistentTaskFieldsFragmentDoc}`;
+
+/**
+ * __useLevelTasksQuery__
+ *
+ * To run a query within a React component, call `useLevelTasksQuery` and pass it any options that fit your needs.
+ * When your component renders, `useLevelTasksQuery` returns an object from Apollo Client that contains loading, error, and data properties 
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useLevelTasksQuery({
+ *   variables: {
+ *      id: // value for 'id'
+ *   },
+ * });
+ */
+export function useLevelTasksQuery(baseOptions?: ApolloReactHooks.QueryHookOptions<LevelTasksQuery, LevelTasksQueryVariables>) {
+        return ApolloReactHooks.useQuery<LevelTasksQuery, LevelTasksQueryVariables>(LevelTasksDocument, baseOptions);
+      }
+export function useLevelTasksLazyQuery(baseOptions?: ApolloReactHooks.LazyQueryHookOptions<LevelTasksQuery, LevelTasksQueryVariables>) {
+          return ApolloReactHooks.useLazyQuery<LevelTasksQuery, LevelTasksQueryVariables>(LevelTasksDocument, baseOptions);
+        }
+export type LevelTasksQueryHookResult = ReturnType<typeof useLevelTasksQuery>;
+export type LevelTasksLazyQueryHookResult = ReturnType<typeof useLevelTasksLazyQuery>;
+export type LevelTasksQueryResult = ApolloReactCommon.QueryResult<LevelTasksQuery, LevelTasksQueryVariables>;
 export const ColonySubscribedUsersDocument = gql`
     query ColonySubscribedUsers($colonyAddress: String!) {
   colony(address: $colonyAddress) {

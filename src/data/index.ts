@@ -17,6 +17,8 @@ import {
   UserTokensQuery,
   ColonySuggestionsQuery,
   ColonyProgramsQuery,
+  LevelQuery,
+  LevelTasksQuery,
   ProgramLevelsQuery,
   ProgramLevelsWithUnlockedQuery,
   ProgramQuery,
@@ -78,10 +80,15 @@ export type OneProgram =
 export type ProgramLevels =
   | OneProgram['levels']
   | ProgramLevelsQuery['program']['levels'];
-export type OneLevel = ProgramLevels[number];
+export type OneLevel = ProgramLevels[number] | LevelQuery['level'];
 
 export type LevelsWithUnlocked = ProgramLevelsWithUnlockedQuery['program']['levels'];
-export type OneLevelWithUnlocked = LevelsWithUnlocked[number];
+export type OneLevelWithUnlocked =
+  | LevelsWithUnlocked[number]
+  | LevelQuery['level'];
+
+export type PersistentTasks = LevelTasksQuery['level']['steps'];
+export type OnePersistentTask = PersistentTasks[number];
 
 export type OneToken = TokenQuery['token'];
 export type ColonyTokens = ColonyQuery['colony']['tokens'];
