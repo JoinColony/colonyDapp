@@ -1,0 +1,13 @@
+.section {
+  padding: 25px;
+}
+
+.section + .section {
+  border-top: 1px solid var(--grey-5);
+}
+
+.actionsRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+}

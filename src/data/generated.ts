@@ -1285,7 +1285,7 @@ export type SubmissionFieldsFragment = Pick<Submission, 'id' | 'createdAt' | 'cr
 
 export type PersistentTaskFieldsFragment = (
   Pick<PersistentTask, 'id' | 'colonyAddress' | 'createdAt' | 'creatorAddress' | 'description' | 'ethDomainId' | 'ethSkillId' | 'status' | 'title'>
-  & { submissions: Array<SubmissionFieldsFragment> }
+  & { payouts: Array<Pick<TaskPayout, 'amount' | 'tokenAddress'>>, submissions: Array<SubmissionFieldsFragment> }
 );
 
 export type EventFieldsFragment = (
@@ -1665,6 +1665,13 @@ export type CreateLevelTaskMutationVariables = {
 
 
 export type CreateLevelTaskMutation = { createLevelTask: Maybe<PersistentTaskFieldsFragment> };
+
+export type EditPersistentTaskMutationVariables = {
+  input: EditPersistentTaskInput
+};
+
+
+export type EditPersistentTaskMutation = { editPersistentTask: Maybe<Pick<PersistentTask, 'id' | 'description' | 'ethDomainId' | 'ethSkillId' | 'title'>> };
 
 export type TaskQueryVariables = {
   id: Scalars['String']
@@ -2171,6 +2178,10 @@ export const PersistentTaskFieldsFragmentDoc = gql`
   description
   ethDomainId
   ethSkillId
+  payouts {
+    amount
+    tokenAddress
+  }
   status
   submissions {
     ...SubmissionFields
@@ -3826,6 +3837,42 @@ export function useCreateLevelTaskMutation(baseOptions?: ApolloReactHooks.Mutati
 export type CreateLevelTaskMutationHookResult = ReturnType<typeof useCreateLevelTaskMutation>;
 export type CreateLevelTaskMutationResult = ApolloReactCommon.MutationResult<CreateLevelTaskMutation>;
 export type CreateLevelTaskMutationOptions = ApolloReactCommon.BaseMutationOptions<CreateLevelTaskMutation, CreateLevelTaskMutationVariables>;
+export const EditPersistentTaskDocument = gql`
+    mutation EditPersistentTask($input: EditPersistentTaskInput!) {
+  editPersistentTask(input: $input) {
+    id
+    description
+    ethDomainId
+    ethSkillId
+    title
+  }
+}
+    `;
+export type EditPersistentTaskMutationFn = ApolloReactCommon.MutationFunction<EditPersistentTaskMutation, EditPersistentTaskMutationVariables>;
+
+/**
+ * __useEditPersistentTaskMutation__
+ *
+ * To run a mutation, you first call `useEditPersistentTaskMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useEditPersistentTaskMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [editPersistentTaskMutation, { data, loading, error }] = useEditPersistentTaskMutation({
+ *   variables: {
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function useEditPersistentTaskMutation(baseOptions?: ApolloReactHooks.MutationHookOptions<EditPersistentTaskMutation, EditPersistentTaskMutationVariables>) {
+        return ApolloReactHooks.useMutation<EditPersistentTaskMutation, EditPersistentTaskMutationVariables>(EditPersistentTaskDocument, baseOptions);
+      }
+export type EditPersistentTaskMutationHookResult = ReturnType<typeof useEditPersistentTaskMutation>;
+export type EditPersistentTaskMutationResult = ApolloReactCommon.MutationResult<EditPersistentTaskMutation>;
+export type EditPersistentTaskMutationOptions = ApolloReactCommon.BaseMutationOptions<EditPersistentTaskMutation, EditPersistentTaskMutationVariables>;
 export const TaskDocument = gql`
     query Task($id: String!) {
   task(id: $id) {
