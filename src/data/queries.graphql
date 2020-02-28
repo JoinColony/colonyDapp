@@ -341,6 +341,22 @@ query ProgramLevelsWithUnlocked($id: String!) {
   }
 }
 
+query Level($id: String!) {
+  level(id: $id) {
+    ...LevelFields
+    unlocked
+  }
+}
+
+query LevelTasks($id: String!) {
+  level(id: $id) {
+    id
+    steps {
+      ...PersistentTaskFields
+    }
+  }
+}
+
 query ColonySubscribedUsers($colonyAddress: String!) {
   colony(address: $colonyAddress) {
     id
