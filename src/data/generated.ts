@@ -1297,6 +1297,13 @@ export type ProgramFieldsFragment = (
 
 export type LevelFieldsFragment = Pick<Level, 'id' | 'achievement' | 'createdAt' | 'creatorAddress' | 'description' | 'numRequiredSteps' | 'programId' | 'status' | 'stepIds' | 'title'>;
 
+export type SubmissionFieldsFragment = Pick<Submission, 'id' | 'createdAt' | 'creatorAddress' | 'persistentTaskId' | 'status' | 'statusChangedAt' | 'submission'>;
+
+export type PersistentTaskFieldsFragment = (
+  Pick<PersistentTask, 'id' | 'colonyAddress' | 'createdAt' | 'creatorAddress' | 'description' | 'ethDomainId' | 'ethSkillId' | 'status' | 'title'>
+  & { submissions: Array<SubmissionFieldsFragment> }
+);
+
 export type EventFieldsFragment = (
   Pick<Event, 'createdAt' | 'initiatorAddress' | 'sourceId' | 'sourceType' | 'type'>
   & { initiator: Maybe<(
@@ -1667,6 +1674,13 @@ export type ReorderProgramLevelsMutation = { reorderProgramLevels: Maybe<(
     Pick<Program, 'id' | 'levelIds'>
     & { levels: Array<Pick<Level, 'id'>> }
   )> };
+
+export type CreateLevelTaskMutationVariables = {
+  input: CreateLevelTaskInput
+};
+
+
+export type CreateLevelTaskMutation = { createLevelTask: Maybe<PersistentTaskFieldsFragment> };
 
 export type TaskQueryVariables = {
   id: Scalars['String']
@@ -2133,6 +2147,33 @@ export const LevelFieldsFragmentDoc = gql`
   title
 }
     `;
+export const SubmissionFieldsFragmentDoc = gql`
+    fragment SubmissionFields on Submission {
+  id
+  createdAt
+  creatorAddress
+  persistentTaskId
+  status
+  statusChangedAt
+  submission
+}
+    `;
+export const PersistentTaskFieldsFragmentDoc = gql`
+    fragment PersistentTaskFields on PersistentTask {
+  id
+  colonyAddress
+  createdAt
+  creatorAddress
+  description
+  ethDomainId
+  ethSkillId
+  status
+  submissions {
+    ...SubmissionFields
+  }
+  title
+}
+    ${SubmissionFieldsFragmentDoc}`;
 export const EventFieldsFragmentDoc = gql`
     fragment EventFields on Event {
   createdAt
@@ -3770,6 +3811,38 @@ export function useReorderProgramLevelsMutation(baseOptions?: ApolloReactHooks.M
 export type ReorderProgramLevelsMutationHookResult = ReturnType<typeof useReorderProgramLevelsMutation>;
 export type ReorderProgramLevelsMutationResult = ApolloReactCommon.MutationResult<ReorderProgramLevelsMutation>;
 export type ReorderProgramLevelsMutationOptions = ApolloReactCommon.BaseMutationOptions<ReorderProgramLevelsMutation, ReorderProgramLevelsMutationVariables>;
+export const CreateLevelTaskDocument = gql`
+    mutation CreateLevelTask($input: CreateLevelTaskInput!) {
+  createLevelTask(input: $input) {
+    ...PersistentTaskFields
+  }
+}
+    ${PersistentTaskFieldsFragmentDoc}`;
+export type CreateLevelTaskMutationFn = ApolloReactCommon.MutationFunction<CreateLevelTaskMutation, CreateLevelTaskMutationVariables>;
+
+/**
+ * __useCreateLevelTaskMutation__
+ *
+ * To run a mutation, you first call `useCreateLevelTaskMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useCreateLevelTaskMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [createLevelTaskMutation, { data, loading, error }] = useCreateLevelTaskMutation({
+ *   variables: {
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function useCreateLevelTaskMutation(baseOptions?: ApolloReactHooks.MutationHookOptions<CreateLevelTaskMutation, CreateLevelTaskMutationVariables>) {
+        return ApolloReactHooks.useMutation<CreateLevelTaskMutation, CreateLevelTaskMutationVariables>(CreateLevelTaskDocument, baseOptions);
+      }
+export type CreateLevelTaskMutationHookResult = ReturnType<typeof useCreateLevelTaskMutation>;
+export type CreateLevelTaskMutationResult = ApolloReactCommon.MutationResult<CreateLevelTaskMutation>;
+export type CreateLevelTaskMutationOptions = ApolloReactCommon.BaseMutationOptions<CreateLevelTaskMutation, CreateLevelTaskMutationVariables>;
 export const TaskDocument = gql`
     query Task($id: String!) {
   task(id: $id) {
