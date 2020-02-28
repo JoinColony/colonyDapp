@@ -24,6 +24,7 @@ interface Props {
   close?: () => void;
   full?: boolean;
   notifications: Notifications;
+  limit?: number;
 }
 
 const MSG = defineMessages({
@@ -34,7 +35,7 @@ const MSG = defineMessages({
   title: {
     id: 'users.Inbox.InboxContainer.title',
     defaultMessage: `Inbox {hasInboxItems, select,
-      true { ({inboxItems})}
+      true { ({inboxItems} out of {totalItems})}
       other {}
     }`,
   },
@@ -44,7 +45,10 @@ const MSG = defineMessages({
   },
   seeAll: {
     id: 'users.Inbox.InboxContainer.seeAll',
-    defaultMessage: 'See All',
+    defaultMessage: `See all {hasInboxItems, select,
+      true {{totalItems}}
+      other {}
+    } notifications`,
   },
   noItems: {
     id: 'users.Inbox.InboxContainer.noItems',
@@ -53,7 +57,10 @@ Don't worry, we'll let you know when anything important happens.`,
   },
 });
 
-const InboxContainer = ({ full, close, notifications }: Props) => {
+const InboxContainer = ({ full, close, notifications, limit }: Props) => {
+  const notificationsWithLimit = limit
+    ? notifications.slice(0, limit)
+    : notifications;
   const { walletAddress } = useLoggedInUser();
   const [markAllAsRead] = useMarkAllNotificationsAsReadMutation({
     refetchQueries: [
@@ -64,7 +71,7 @@ const InboxContainer = ({ full, close, notifications }: Props) => {
     ],
   });
 
-  const hasInboxItems = notifications.length > 0;
+  const hasInboxItems = notificationsWithLimit.length > 0;
   return (
     <div
       className={
@@ -79,7 +86,8 @@ const InboxContainer = ({ full, close, notifications }: Props) => {
           text={MSG.title}
           textValues={{
             hasInboxItems,
-            inboxItems: hasInboxItems ? notifications.length : 0,
+            inboxItems: hasInboxItems ? notificationsWithLimit.length : 0,
+            totalItems: hasInboxItems ? notifications.length : 0,
           }}
         />
         <Button
@@ -97,14 +105,14 @@ const InboxContainer = ({ full, close, notifications }: Props) => {
         {hasInboxItems && (
           <Table scrollable appearance={{ separators: 'borders' }}>
             <TableBody>
-              {notifications.map(item => (
+              {notificationsWithLimit.map(item => (
                 <InboxItem full={full} key={item.id} item={item} />
               ))}
             </TableBody>
           </Table>
         )}
 
-        {!notifications && (
+        {!notificationsWithLimit && (
           <div className={!full ? styles.emptyPopoverPlaceholder : undefined}>
             <SpinnerLoader
               loadingText={MSG.loadingInbox}
@@ -119,12 +127,16 @@ const InboxContainer = ({ full, close, notifications }: Props) => {
             </div>
           </div>
         )}
-        {!full && (
+        {!full && hasInboxItems && (
           <div className={styles.inboxFooter}>
             <NavLink to={INBOX_ROUTE}>
               <Button
                 appearance={{ theme: 'blue' }}
                 text={MSG.seeAll}
+                textValues={{
+                  hasInboxItems,
+                  totalItems: hasInboxItems ? notifications.length : 0,
+                }}
                 onClick={close}
               />
             </NavLink>
