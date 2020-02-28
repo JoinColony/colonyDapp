@@ -133,6 +133,31 @@ fragment LevelFields on Level {
   title
 }
 
+fragment SubmissionFields on Submission {
+  id
+  createdAt
+  creatorAddress
+  persistentTaskId
+  status
+  statusChangedAt
+  submission
+}
+
+fragment PersistentTaskFields on PersistentTask {
+  id
+  colonyAddress
+  createdAt
+  creatorAddress
+  description
+  ethDomainId
+  ethSkillId
+  status
+  submissions {
+    ...SubmissionFields
+  }
+  title
+}
+
 fragment EventFields on Event {
   createdAt
   initiator {
