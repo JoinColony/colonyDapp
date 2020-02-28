@@ -403,3 +403,13 @@ mutation CreateLevelTask($input: CreateLevelTaskInput!) {
     ...PersistentTaskFields
   }
 }
+
+mutation EditPersistentTask($input: EditPersistentTaskInput!) {
+  editPersistentTask(input: $input) {
+    id
+    description
+    ethDomainId
+    ethSkillId
+    title
+  }
+}
