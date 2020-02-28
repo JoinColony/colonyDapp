@@ -404,6 +404,13 @@ mutation CreateLevelTask($input: CreateLevelTaskInput!) {
   }
 }
 
+mutation RemoveLevelTask($input: RemoveLevelTaskInput!) {
+  removeLevelTask(input: $input) {
+    id
+    status
+  }
+}
+
 mutation EditPersistentTask($input: EditPersistentTaskInput!) {
   editPersistentTask(input: $input) {
     id
