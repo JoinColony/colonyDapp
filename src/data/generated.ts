@@ -1682,6 +1682,13 @@ export type CreateLevelTaskMutationVariables = {
 
 export type CreateLevelTaskMutation = { createLevelTask: Maybe<PersistentTaskFieldsFragment> };
 
+export type RemoveLevelTaskMutationVariables = {
+  input: RemoveLevelTaskInput
+};
+
+
+export type RemoveLevelTaskMutation = { removeLevelTask: Maybe<Pick<PersistentTask, 'id' | 'status'>> };
+
 export type EditPersistentTaskMutationVariables = {
   input: EditPersistentTaskInput
 };
@@ -3874,6 +3881,39 @@ export function useCreateLevelTaskMutation(baseOptions?: ApolloReactHooks.Mutati
 export type CreateLevelTaskMutationHookResult = ReturnType<typeof useCreateLevelTaskMutation>;
 export type CreateLevelTaskMutationResult = ApolloReactCommon.MutationResult<CreateLevelTaskMutation>;
 export type CreateLevelTaskMutationOptions = ApolloReactCommon.BaseMutationOptions<CreateLevelTaskMutation, CreateLevelTaskMutationVariables>;
+export const RemoveLevelTaskDocument = gql`
+    mutation RemoveLevelTask($input: RemoveLevelTaskInput!) {
+  removeLevelTask(input: $input) {
+    id
+    status
+  }
+}
+    `;
+export type RemoveLevelTaskMutationFn = ApolloReactCommon.MutationFunction<RemoveLevelTaskMutation, RemoveLevelTaskMutationVariables>;
+
+/**
+ * __useRemoveLevelTaskMutation__
+ *
+ * To run a mutation, you first call `useRemoveLevelTaskMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useRemoveLevelTaskMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [removeLevelTaskMutation, { data, loading, error }] = useRemoveLevelTaskMutation({
+ *   variables: {
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function useRemoveLevelTaskMutation(baseOptions?: ApolloReactHooks.MutationHookOptions<RemoveLevelTaskMutation, RemoveLevelTaskMutationVariables>) {
+        return ApolloReactHooks.useMutation<RemoveLevelTaskMutation, RemoveLevelTaskMutationVariables>(RemoveLevelTaskDocument, baseOptions);
+      }
+export type RemoveLevelTaskMutationHookResult = ReturnType<typeof useRemoveLevelTaskMutation>;
+export type RemoveLevelTaskMutationResult = ApolloReactCommon.MutationResult<RemoveLevelTaskMutation>;
+export type RemoveLevelTaskMutationOptions = ApolloReactCommon.BaseMutationOptions<RemoveLevelTaskMutation, RemoveLevelTaskMutationVariables>;
 export const EditPersistentTaskDocument = gql`
     mutation EditPersistentTask($input: EditPersistentTaskInput!) {
   editPersistentTask(input: $input) {
