@@ -34,6 +34,7 @@ import {
   ProgramDocument,
   ProgramQuery,
   ProgramQueryVariables,
+  RemoveLevelTaskMutationResult,
   SetSuggestionStatusMutationResult,
   SuggestionStatus,
   UserDocument,
@@ -90,6 +91,38 @@ const cacheUpdates = {
         if (cacheData && persistentTaskData) {
           const persistentTasks = cacheData.level.steps || [];
           persistentTasks.push(persistentTaskData);
+          cache.writeQuery<LevelTasksQuery, LevelTasksQueryVariables>({
+            data: {
+              level: {
+                ...cacheData.level,
+                steps: persistentTasks,
+              },
+            },
+            query: LevelTasksDocument,
+            variables: { id: levelId },
+          });
+        }
+      } catch (e) {
+        log.verbose(e);
+        log.verbose('Not updating store - level tasks not loaded yet');
+      }
+    };
+  },
+  removeLevelTask(levelId: OneLevel['id']) {
+    return (cache: Cache, { data }: RemoveLevelTaskMutationResult) => {
+      try {
+        const cacheData = cache.readQuery<
+          LevelTasksQuery,
+          LevelTasksQueryVariables
+        >({
+          query: LevelTasksDocument,
+          variables: { id: levelId },
+        });
+        const removedLevelTaskData = data && data.removeLevelTask;
+        if (cacheData && removedLevelTaskData) {
+          const persistentTasks = cacheData.level.steps.filter(
+            ({ id }) => id !== removedLevelTaskData.id,
+          );
           cache.writeQuery<LevelTasksQuery, LevelTasksQueryVariables>({
             data: {
               level: {
