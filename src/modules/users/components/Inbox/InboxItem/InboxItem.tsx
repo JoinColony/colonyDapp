@@ -295,7 +295,7 @@ const InboxItem = ({
 
               {amount && token && (
                 <span>
-                  <span className={styles.pipe}>|</span>
+                  {colonyName && <span className={styles.pipe}>|</span>}
                   <Numeral
                     suffix={` ${token ? token.symbol : ''}`}
                     integerSeparator=""
