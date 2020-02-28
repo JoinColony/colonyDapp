@@ -64,6 +64,9 @@ export type Maybe<T> = T | null;
             "name": "SetTaskSkillEvent"
           },
           {
+            "name": "RemoveTaskSkillEvent"
+          },
+          {
             "name": "SetTaskTitleEvent"
           },
           {
@@ -113,6 +116,9 @@ export type Maybe<T> = T | null;
           },
           {
             "name": "SetTaskSkillEvent"
+          },
+          {
+            "name": "RemoveTaskSkillEvent"
           },
           {
             "name": "SetTaskTitleEvent"
@@ -334,7 +340,7 @@ export type Event = {
   context: EventContext,
 };
 
-export type EventContext = AssignWorkerEvent | CancelTaskEvent | CreateDomainEvent | CreateTaskEvent | CreateWorkRequestEvent | FinalizeTaskEvent | NewUserEvent | RemoveTaskPayoutEvent | SendWorkInviteEvent | SetTaskDescriptionEvent | SetTaskDomainEvent | SetTaskDueDateEvent | SetTaskPayoutEvent | SetTaskSkillEvent | SetTaskTitleEvent | TaskMessageEvent | UnassignWorkerEvent;
+export type EventContext = AssignWorkerEvent | CancelTaskEvent | CreateDomainEvent | CreateTaskEvent | CreateWorkRequestEvent | FinalizeTaskEvent | NewUserEvent | RemoveTaskPayoutEvent | SendWorkInviteEvent | SetTaskDescriptionEvent | SetTaskDomainEvent | SetTaskDueDateEvent | SetTaskPayoutEvent | SetTaskSkillEvent | RemoveTaskSkillEvent | SetTaskTitleEvent | TaskMessageEvent | UnassignWorkerEvent;
 
 export enum EventType {
   AssignWorker = 'AssignWorker',
@@ -351,6 +357,7 @@ export enum EventType {
   SetTaskDueDate = 'SetTaskDueDate',
   SetTaskPayout = 'SetTaskPayout',
   SetTaskSkill = 'SetTaskSkill',
+  RemoveTaskSkill = 'RemoveTaskSkill',
   SetTaskTitle = 'SetTaskTitle',
   TaskMessage = 'TaskMessage',
   UnassignWorker = 'UnassignWorker'
@@ -409,6 +416,7 @@ export type Mutation = {
   setTaskDueDate?: Maybe<Task>,
   setTaskPayout?: Maybe<Task>,
   setTaskSkill?: Maybe<Task>,
+  removeTaskSkill?: Maybe<Task>,
   setTaskTitle?: Maybe<Task>,
   unassignWorker?: Maybe<Task>,
   createUser?: Maybe<User>,
@@ -538,6 +546,11 @@ export type MutationSetTaskPayoutArgs = {
 
 export type MutationSetTaskSkillArgs = {
   input: SetTaskSkillInput
+};
+
+
+export type MutationRemoveTaskSkillArgs = {
+  input: RemoveTaskSkillInput
 };
 
 
@@ -673,6 +686,17 @@ export type RemoveTaskPayoutInput = {
   id: Scalars['String'],
   amount: Scalars['String'],
   tokenAddress: Scalars['String'],
+};
+
+export type RemoveTaskSkillEvent = TaskEvent & {
+  type: EventType,
+  taskId: Scalars['String'],
+  ethSkillId: Scalars['Int'],
+};
+
+export type RemoveTaskSkillInput = {
+  id: Scalars['String'],
+  ethSkillId: Scalars['Int'],
 };
 
 export type RemoveUpvoteFromSuggestionInput = {
@@ -983,7 +1007,7 @@ export type EventFieldsFragment = (
   )> }
 );
 
-export type EventContextFragment = { context: Pick<AssignWorkerEvent, 'taskId' | 'type' | 'workerAddress'> | Pick<CancelTaskEvent, 'taskId' | 'type'> | Pick<CreateTaskEvent, 'colonyAddress' | 'ethDomainId' | 'taskId' | 'type'> | Pick<CreateWorkRequestEvent, 'taskId' | 'type'> | Pick<FinalizeTaskEvent, 'taskId' | 'type'> | Pick<RemoveTaskPayoutEvent, 'amount' | 'taskId' | 'tokenAddress' | 'type'> | Pick<SendWorkInviteEvent, 'taskId' | 'type' | 'workerAddress'> | Pick<SetTaskDescriptionEvent, 'description' | 'taskId' | 'type'> | Pick<SetTaskDomainEvent, 'ethDomainId' | 'taskId' | 'type'> | Pick<SetTaskDueDateEvent, 'dueDate' | 'taskId' | 'type'> | Pick<SetTaskPayoutEvent, 'amount' | 'taskId' | 'tokenAddress' | 'type'> | Pick<SetTaskSkillEvent, 'ethSkillId' | 'taskId' | 'type'> | Pick<SetTaskTitleEvent, 'taskId' | 'title' | 'type'> | Pick<TaskMessageEvent, 'message' | 'taskId' | 'type'> | Pick<UnassignWorkerEvent, 'taskId' | 'type' | 'workerAddress'> };
+export type EventContextFragment = { context: Pick<AssignWorkerEvent, 'taskId' | 'type' | 'workerAddress'> | Pick<CancelTaskEvent, 'taskId' | 'type'> | Pick<CreateTaskEvent, 'colonyAddress' | 'ethDomainId' | 'taskId' | 'type'> | Pick<CreateWorkRequestEvent, 'taskId' | 'type'> | Pick<FinalizeTaskEvent, 'taskId' | 'type'> | Pick<RemoveTaskPayoutEvent, 'amount' | 'taskId' | 'tokenAddress' | 'type'> | Pick<SendWorkInviteEvent, 'taskId' | 'type' | 'workerAddress'> | Pick<SetTaskDescriptionEvent, 'description' | 'taskId' | 'type'> | Pick<SetTaskDomainEvent, 'ethDomainId' | 'taskId' | 'type'> | Pick<SetTaskDueDateEvent, 'dueDate' | 'taskId' | 'type'> | Pick<SetTaskPayoutEvent, 'amount' | 'taskId' | 'tokenAddress' | 'type'> | Pick<SetTaskSkillEvent, 'ethSkillId' | 'taskId' | 'type'> | Pick<RemoveTaskSkillEvent, 'ethSkillId' | 'taskId' | 'type'> | Pick<SetTaskTitleEvent, 'taskId' | 'title' | 'type'> | Pick<TaskMessageEvent, 'message' | 'taskId' | 'type'> | Pick<UnassignWorkerEvent, 'taskId' | 'type' | 'workerAddress'> };
 
 export type TaskEventFragment = (
   EventFieldsFragment
@@ -1107,6 +1131,16 @@ export type SetTaskSkillMutationVariables = {
 
 
 export type SetTaskSkillMutation = { setTaskSkill: Maybe<(
+    Pick<Task, 'id' | 'ethSkillId'>
+    & { events: Array<TaskEventFragment> }
+  )> };
+
+export type RemoveTaskSkillMutationVariables = {
+  input: RemoveTaskSkillInput
+};
+
+
+export type RemoveTaskSkillMutation = { removeTaskSkill: Maybe<(
     Pick<Task, 'id' | 'ethSkillId'>
     & { events: Array<TaskEventFragment> }
   )> };
@@ -1734,6 +1768,11 @@ export const EventContextFragmentDoc = gql`
       taskId
       type
     }
+    ... on RemoveTaskSkillEvent {
+      ethSkillId
+      taskId
+      type
+    }
     ... on SetTaskTitleEvent {
       taskId
       title
@@ -2212,6 +2251,42 @@ export function useSetTaskSkillMutation(baseOptions?: ApolloReactHooks.MutationH
 export type SetTaskSkillMutationHookResult = ReturnType<typeof useSetTaskSkillMutation>;
 export type SetTaskSkillMutationResult = ApolloReactCommon.MutationResult<SetTaskSkillMutation>;
 export type SetTaskSkillMutationOptions = ApolloReactCommon.BaseMutationOptions<SetTaskSkillMutation, SetTaskSkillMutationVariables>;
+export const RemoveTaskSkillDocument = gql`
+    mutation RemoveTaskSkill($input: RemoveTaskSkillInput!) {
+  removeTaskSkill(input: $input) {
+    id
+    ethSkillId
+    events {
+      ...TaskEvent
+    }
+  }
+}
+    ${TaskEventFragmentDoc}`;
+export type RemoveTaskSkillMutationFn = ApolloReactCommon.MutationFunction<RemoveTaskSkillMutation, RemoveTaskSkillMutationVariables>;
+
+/**
+ * __useRemoveTaskSkillMutation__
+ *
+ * To run a mutation, you first call `useRemoveTaskSkillMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useRemoveTaskSkillMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [removeTaskSkillMutation, { data, loading, error }] = useRemoveTaskSkillMutation({
+ *   variables: {
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function useRemoveTaskSkillMutation(baseOptions?: ApolloReactHooks.MutationHookOptions<RemoveTaskSkillMutation, RemoveTaskSkillMutationVariables>) {
+        return ApolloReactHooks.useMutation<RemoveTaskSkillMutation, RemoveTaskSkillMutationVariables>(RemoveTaskSkillDocument, baseOptions);
+      }
+export type RemoveTaskSkillMutationHookResult = ReturnType<typeof useRemoveTaskSkillMutation>;
+export type RemoveTaskSkillMutationResult = ApolloReactCommon.MutationResult<RemoveTaskSkillMutation>;
+export type RemoveTaskSkillMutationOptions = ApolloReactCommon.BaseMutationOptions<RemoveTaskSkillMutation, RemoveTaskSkillMutationVariables>;
 export const SetTaskTitleDocument = gql`
     mutation SetTaskTitle($input: SetTaskTitleInput!) {
   setTaskTitle(input: $input) {

@@ -39,6 +39,9 @@ interface Props {
   /** Callback to call when setting a new item (only when the Form isn't connected) */
   handleSetItem?: (value?: ConsumableItem) => void;
 
+  /** Callback to call when removing an item (only when the Form isn't connected) */
+  handleRemoveItem?: (value?: ConsumableItem) => void;
+
   /** The item ID given to the form as the current ID */
   itemId: number | void;
 
@@ -152,9 +155,10 @@ class ItemsList extends Component<Props & FieldEnhancedProps, State> {
   handleUnset = (close: () => void) => {
     const {
       props: {
-        handleSetItem: callback = (value?: ConsumableItem) => value,
+        handleRemoveItem: callback = (value: ConsumableItem) => value,
         connect,
         setValue,
+        itemId,
       },
     } = this;
     this.setState(
@@ -165,8 +169,12 @@ class ItemsList extends Component<Props & FieldEnhancedProps, State> {
       },
       () => {
         close();
-        if (!connect) {
-          return callback();
+        if (!connect && itemId) {
+          /*
+           * @NOTE Name doesn't really matter here, since we're just using the
+           * id to remove the item (skill)
+           */
+          return callback({ id: itemId, name: '' });
         }
         if (setValue) {
           return setValue(null);

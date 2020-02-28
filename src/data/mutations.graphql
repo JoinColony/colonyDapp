@@ -141,6 +141,16 @@ mutation SetTaskSkill($input: SetTaskSkillInput!) {
   }
 }
 
+mutation RemoveTaskSkill($input: RemoveTaskSkillInput!) {
+  removeTaskSkill(input: $input) {
+    id
+    ethSkillId
+    events {
+      ...TaskEvent
+    }
+  }
+}
+
 mutation SetTaskTitle($input: SetTaskTitleInput!) {
   setTaskTitle(input: $input) {
     id

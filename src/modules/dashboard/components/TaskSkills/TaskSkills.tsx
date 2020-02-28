@@ -4,7 +4,12 @@ import { defineMessages, FormattedMessage } from 'react-intl';
 import Button from '~core/Button';
 import Heading from '~core/Heading';
 import ItemsList from '~core/ItemsList';
-import { AnyTask, useSetTaskSkillMutation } from '~data/index';
+import {
+  AnyTask,
+  useSetTaskSkillMutation,
+  useRemoveTaskSkillMutation,
+  cacheUpdates,
+} from '~data/index';
 
 import taskSkillsTree from './taskSkillsTree';
 
@@ -38,6 +43,7 @@ const displayName = 'daskboard.TaskSKills';
 
 const TaskSkills = ({ draftId, disabled, ethSkillId }: Props) => {
   const [setSkill] = useSetTaskSkillMutation();
+  const [removeSkill] = useRemoveTaskSkillMutation();
 
   const handleSetSkill = useCallback(
     ({ id }: { id: number; name: string }) =>
@@ -48,14 +54,31 @@ const TaskSkills = ({ draftId, disabled, ethSkillId }: Props) => {
             ethSkillId: id,
           },
         },
+        update: cacheUpdates.setTaskSkill(draftId),
       }),
     [draftId, setSkill],
   );
+
+  const handleRemoveSkill = useCallback(
+    ({ id }: { id: number; name: string }) =>
+      removeSkill({
+        variables: {
+          input: {
+            id: draftId,
+            ethSkillId: id,
+          },
+        },
+        update: cacheUpdates.removeTaskSkill(draftId),
+      }),
+    [draftId, removeSkill],
+  );
+
   return (
     <div className={styles.main}>
       <ItemsList
         list={taskSkillsTree}
         handleSetItem={handleSetSkill}
+        handleRemoveItem={handleRemoveSkill}
         name="taskSkills"
         connect={false}
         showArrow={false}
