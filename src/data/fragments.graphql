@@ -151,6 +151,10 @@ fragment PersistentTaskFields on PersistentTask {
   description
   ethDomainId
   ethSkillId
+  payouts {
+    amount
+    tokenAddress
+  }
   status
   submissions {
     ...SubmissionFields

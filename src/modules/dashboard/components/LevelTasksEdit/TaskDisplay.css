@@ -1,0 +1,21 @@
+.main {
+  padding: 20px;
+}
+
+.headingContainer {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+}
+
+.description {
+  margin: 10px 0;
+}
+
+.rewardsContainer {
+  display: flex;
+}
+
+.rewardItem + .rewardItem {
+  margin-left: 10px;
+}
