@@ -5,5 +5,6 @@ export const themeMinimal: string;
 export const themeDotted: string;
 export const alignRight: string;
 export const sizeSmall: string;
+export const colorSchemaGrey: string;
 export const colorSchemaDark: string;
 export const colorSchemaTransparent: string;
