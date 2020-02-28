@@ -10,6 +10,7 @@ export const resizableBoth: string;
 export const layoutInline: string;
 export const themeFat: string;
 export const alignRight: string;
+export const colorSchemaGrey: string;
 export const colorSchemaDark: string;
 export const colorSchemaTransparent: string;
 export const error: string;
