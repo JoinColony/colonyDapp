@@ -6,6 +6,8 @@ import {
   TaskQuery,
   TaskQueryVariables,
   OneSuggestion,
+  OneLevel,
+  OneProgram,
 } from '~data/index';
 import { Address } from '~types/index';
 import { log } from '~utils/debug';
@@ -30,6 +32,10 @@ import {
   ColonyProgramsQueryVariables,
   ColonyProgramsDocument,
   CreateLevelMutationResult,
+  LevelTasksQuery,
+  LevelTasksQueryVariables,
+  LevelTasksDocument,
+  CreateLevelTaskMutationResult,
   ProgramQuery,
   ProgramDocument,
   ProgramQueryVariables,
@@ -38,7 +44,7 @@ import {
 type Cache = typeof apolloCache;
 
 const cacheUpdates = {
-  createLevel(programId) {
+  createLevel(programId: OneProgram['id']) {
     return (cache: Cache, { data }: CreateLevelMutationResult) => {
       try {
         const cacheData = cache.readQuery<ProgramQuery, ProgramQueryVariables>({
@@ -70,6 +76,34 @@ const cacheUpdates = {
       } catch (e) {
         log.verbose(e);
         log.verbose('Not updating store - colony programs not loaded yet');
+      }
+    };
+  },
+  createLevelTask(levelId: OneLevel['id']) {
+    return (cache: Cache, { data }: CreateLevelTaskMutationResult) => {
+      try {
+        const cacheData = cache.readQuery<
+          LevelTasksQuery,
+          LevelTasksQueryVariables
+        >({ query: LevelTasksDocument, variables: { id: levelId } });
+        const persistentTaskData = data && data.createLevelTask;
+        if (cacheData && persistentTaskData) {
+          const persistentTasks = cacheData.level.steps || [];
+          persistentTasks.push(persistentTaskData);
+          cache.writeQuery<LevelTasksQuery, LevelTasksQueryVariables>({
+            data: {
+              level: {
+                ...cacheData.level,
+                steps: persistentTasks,
+              },
+            },
+            query: LevelTasksDocument,
+            variables: { id: levelId },
+          });
+        }
+      } catch (e) {
+        log.verbose(e);
+        log.verbose('Not updating store - level tasks not loaded yet');
       }
     };
   },
