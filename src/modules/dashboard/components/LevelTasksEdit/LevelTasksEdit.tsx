@@ -26,14 +26,18 @@ interface Props {
 const displayName = 'dashboard.LevelTasksEdit';
 
 const LevelTasksEdit = ({ levelId }: Props) => {
-  const [createPersistentTask] = useCreateLevelTaskMutation({
+  const [createPersistentTask, { data }] = useCreateLevelTaskMutation({
     update: cacheUpdates.createLevelTask(levelId),
     variables: { input: { levelId } },
   });
+
+  const createdTaskId =
+    (data && data.createLevelTask && data.createLevelTask.id) || undefined;
+
   return (
     <>
       <div className={styles.taskListContainer}>
-        <LevelTasksList levelId={levelId} />
+        <LevelTasksList createdTaskId={createdTaskId} levelId={levelId} />
       </div>
       <DottedAddButton
         onClick={() => createPersistentTask()}
