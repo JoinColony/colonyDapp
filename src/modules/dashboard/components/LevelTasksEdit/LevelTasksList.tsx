@@ -23,7 +23,10 @@ const LeveltasksList = ({ levelId }: Props) => {
     <ListGroup appearance={{ gaps: 'true' }}>
       {persistentTasks.map(persistentTask => (
         <ListGroupItem key={persistentTask.id}>
-          <LevelTaskListItem persistentTask={persistentTask} />
+          <LevelTaskListItem
+            levelId={levelId}
+            persistentTask={persistentTask}
+          />
         </ListGroupItem>
       ))}
     </ListGroup>

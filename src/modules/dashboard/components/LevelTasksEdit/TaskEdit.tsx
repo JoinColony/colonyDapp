@@ -1,10 +1,17 @@
 import React, { Dispatch, SetStateAction, useCallback } from 'react';
-import { defineMessages } from 'react-intl';
+import { defineMessages, FormattedMessage } from 'react-intl';
 import * as yup from 'yup';
 
 import Button from '~core/Button';
+import { useDialog, ConfirmDialog } from '~core/Dialog';
 import { Form, Input, Textarea, Select } from '~core/Fields';
-import { OnePersistentTask, useEditPersistentTaskMutation } from '~data/index';
+import {
+  cacheUpdates,
+  OneLevel,
+  OnePersistentTask,
+  useEditPersistentTaskMutation,
+  useRemoveLevelTaskMutation,
+} from '~data/index';
 
 import styles from './TaskEdit.css';
 
@@ -12,6 +19,14 @@ const MSG = defineMessages({
   buttonDeleteTask: {
     id: 'dashboard.LevelTasksEdit.TaskEdit.buttonDeleteTask',
     defaultMessage: 'Delete task',
+  },
+  confirmDeleteHeading: {
+    id: 'dashboard.LevelTasksEdit.TaskEdit.confirmDeleteHeading',
+    defaultMessage: 'Delete task',
+  },
+  confirmDeleteText: {
+    id: 'dashboard.LevelTasksEdit.TaskEdit.confirmDeleteText',
+    defaultMessage: 'Are you sure you would like to delete this task?',
   },
   labelTaskDescription: {
     id: 'dashboard.LevelTasksEdit.TaskEdit.labelTaskDescription',
@@ -36,6 +51,7 @@ const MSG = defineMessages({
 });
 
 interface Props {
+  levelId: OneLevel['id'];
   persistentTask: OnePersistentTask;
   setIsEditing: Dispatch<SetStateAction<boolean>>;
 }
@@ -73,6 +89,7 @@ const validationSchema = yup.object().shape({
 const displayName = 'dashboard.LevelTasksEdit.TaskEdit';
 
 const TaskEdit = ({
+  levelId,
   persistentTask: {
     id: persistentTaskId,
     description,
@@ -83,12 +100,28 @@ const TaskEdit = ({
   },
   setIsEditing,
 }: Props) => {
+  const openDialog = useDialog(ConfirmDialog);
+
   const [editPersistentTask] = useEditPersistentTaskMutation();
+  const [removeLevelTask] = useRemoveLevelTaskMutation({
+    update: cacheUpdates.removeLevelTask(levelId),
+    variables: { input: { id: persistentTaskId, levelId } },
+  });
   // Only support one payout for now
   const { amount, tokenAddress } = payouts[0] || {
     amount: '',
     tokenAddress: '',
   };
+
+  const handleDelete = useCallback(async () => {
+    await openDialog({
+      appearance: { theme: 'danger' },
+      heading: MSG.confirmDeleteHeading,
+      children: <FormattedMessage {...MSG.confirmDeleteText} />,
+      confirmButtonText: { id: 'button.delete' },
+    }).afterClosed();
+    removeLevelTask();
+  }, [openDialog, removeLevelTask]);
 
   const handleSubmit = useCallback(
     async ({
@@ -165,6 +198,7 @@ const TaskEdit = ({
           <div>
             <Button
               appearance={{ theme: 'dangerLink' }}
+              onClick={handleDelete}
               text={MSG.buttonDeleteTask}
             />
           </div>
