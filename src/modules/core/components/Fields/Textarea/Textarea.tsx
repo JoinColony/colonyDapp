@@ -16,7 +16,7 @@ interface Appearance {
   layout?: 'inline';
   resizable?: 'both' | 'horizontal' | 'vertical';
   direction?: 'horizontal';
-  colorSchema?: 'dark' | 'transparent';
+  colorSchema?: 'dark' | 'transparent' | 'grey';
   size?: 'small';
 }
 
