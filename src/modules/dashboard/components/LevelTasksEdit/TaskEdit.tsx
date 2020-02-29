@@ -4,16 +4,20 @@ import * as yup from 'yup';
 
 import Button from '~core/Button';
 import { useDialog, ConfirmDialog } from '~core/Dialog';
-import { Form, Input, Textarea, Select } from '~core/Fields';
+import { AmountTokens, Form, Input, Select, Textarea } from '~core/Fields';
 import {
   cacheUpdates,
   OneLevel,
   OnePersistentTask,
+  useColonyTokensQuery,
   useEditPersistentTaskMutation,
   useRemoveLevelTaskMutation,
+  useRemovePersistentTaskPayoutMutation,
+  useSetPersistentTaskPayoutMutation,
 } from '~data/index';
 
 import styles from './TaskEdit.css';
+import { SpinnerLoader } from '~core/Preloaders';
 
 const MSG = defineMessages({
   buttonDeleteTask: {
@@ -92,6 +96,7 @@ const TaskEdit = ({
   levelId,
   persistentTask: {
     id: persistentTaskId,
+    colonyAddress,
     description,
     ethDomainId,
     ethSkillId,
@@ -102,7 +107,13 @@ const TaskEdit = ({
 }: Props) => {
   const openDialog = useDialog(ConfirmDialog);
 
+  const { data: colonyTokensData } = useColonyTokensQuery({
+    variables: { address: colonyAddress },
+  });
+
   const [editPersistentTask] = useEditPersistentTaskMutation();
+  const [removePersistentTaskPayout] = useRemovePersistentTaskPayoutMutation();
+  const [setPersistentTaskPayout] = useSetPersistentTaskPayoutMutation();
   const [removeLevelTask] = useRemoveLevelTaskMutation({
     update: cacheUpdates.removeLevelTask(levelId),
     variables: { input: { id: persistentTaskId, levelId } },
@@ -125,10 +136,12 @@ const TaskEdit = ({
 
   const handleSubmit = useCallback(
     async ({
+      amount: amountVal,
       description: descriptionVal,
       domainId,
       skillId,
       title: titleVal,
+      tokenAddress: tokenAddressVal,
     }: FormValues) => {
       await editPersistentTask({
         variables: {
@@ -141,10 +154,53 @@ const TaskEdit = ({
           },
         },
       });
+      if (amountVal !== amount || tokenAddressVal !== tokenAddress) {
+        // Remove the old payout before adding the new, as we currently only support one payout
+        await removePersistentTaskPayout({
+          variables: {
+            input: {
+              id: persistentTaskId,
+              amount,
+              tokenAddress,
+            },
+          },
+        });
+        await setPersistentTaskPayout({
+          variables: {
+            input: {
+              id: persistentTaskId,
+              amount: amountVal,
+              tokenAddress: tokenAddressVal,
+            },
+          },
+        });
+      }
       setIsEditing(val => !val);
     },
-    [editPersistentTask, persistentTaskId, setIsEditing],
+    [
+      amount,
+      editPersistentTask,
+      persistentTaskId,
+      removePersistentTaskPayout,
+      setIsEditing,
+      setPersistentTaskPayout,
+      tokenAddress,
+    ],
   );
+
+  if (!colonyTokensData) {
+    return (
+      <div className={styles.section}>
+        <div className={styles.centered}>
+          <SpinnerLoader appearance={{ size: 'large' }} />
+        </div>
+      </div>
+    );
+  }
+
+  const {
+    colony: { tokens },
+  } = colonyTokensData;
   return (
     <Form
       initialValues={
@@ -160,62 +216,76 @@ const TaskEdit = ({
       onSubmit={handleSubmit}
       validationSchema={validationSchema}
     >
-      <div className={styles.section}>
-        <Input
-          appearance={{ colorSchema: 'grey', theme: 'fat' }}
-          label={MSG.labelTaskTitle}
-          name="title"
-        />
-        <Textarea
-          appearance={{
-            colorSchema: 'grey',
-            resizable: 'vertical',
-            theme: 'fat',
-          }}
-          label={MSG.labelTaskDescription}
-          name="description"
-        />
-      </div>
-      <div className={styles.section}>
-        <div className={styles.narrow}>
-          <Select
-            appearance={{ theme: 'grey' }}
-            label={MSG.labelTaskDomain}
-            name="domainId"
-            options={[]}
-          />
-        </div>
-      </div>
-      <div className={styles.section}>
-        <div className={styles.narrow}>
-          <Select
-            appearance={{ theme: 'grey' }}
-            label={MSG.labelTaskSkill}
-            name="skillId"
-            options={[]}
-          />
-        </div>
-      </div>
-      {/* @todo payout */}
-      <div className={styles.section}>
-        <div className={styles.actionsRow}>
-          <div>
-            <Button
-              appearance={{ theme: 'dangerLink' }}
-              onClick={handleDelete}
-              text={MSG.buttonDeleteTask}
+      {({ values }) => (
+        <>
+          <div className={styles.section}>
+            <Input
+              appearance={{ colorSchema: 'grey', theme: 'fat' }}
+              label={MSG.labelTaskTitle}
+              name="title"
+            />
+            <Textarea
+              appearance={{
+                colorSchema: 'grey',
+                resizable: 'vertical',
+                theme: 'fat',
+              }}
+              label={MSG.labelTaskDescription}
+              name="description"
             />
           </div>
-          <div>
-            <Button
-              appearance={{ theme: 'secondary' }}
-              onClick={() => setIsEditing(val => !val)}
-              text={{ id: 'button.cancel' }}
-            />
-            <Button text={{ id: 'button.save' }} type="submit" />
+          <div className={styles.section}>
+            <div className={styles.narrow}>
+              <Select
+                appearance={{ theme: 'grey' }}
+                label={MSG.labelTaskDomain}
+                name="domainId"
+                options={[]}
+              />
+            </div>
           </div>
-        </div>
-      </div>
+          <div className={styles.section}>
+            <div className={styles.narrow}>
+              <Select
+                appearance={{ theme: 'grey' }}
+                label={MSG.labelTaskSkill}
+                name="skillId"
+                options={[]}
+              />
+            </div>
+          </div>
+          <div className={styles.section}>
+            <div className={styles.narrow}>
+              <AmountTokens
+                label={MSG.labelTaskPayout}
+                nameAmount="amount"
+                nameToken="tokenAddress"
+                selectedTokenAddress={values.tokenAddress}
+                tokens={tokens}
+              />
+            </div>
+          </div>
+          <div className={styles.section}>
+            <div className={styles.actionsRow}>
+              <div>
+                <Button
+                  appearance={{ theme: 'dangerLink' }}
+                  onClick={handleDelete}
+                  text={MSG.buttonDeleteTask}
+                />
+              </div>
+              <div>
+                <Button
+                  appearance={{ theme: 'secondary' }}
+                  onClick={() => setIsEditing(val => !val)}
+                  text={{ id: 'button.cancel' }}
+                />
+                <Button text={{ id: 'button.save' }} type="submit" />
+              </div>
+            </div>
+          </div>
+        </>
+      )}
     </Form>
   );
 };

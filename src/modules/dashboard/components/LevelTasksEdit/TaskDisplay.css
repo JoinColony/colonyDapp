@@ -9,13 +9,14 @@
 }
 
 .description {
-  margin: 10px 0;
+  margin: 15px 0;
 }
 
 .rewardsContainer {
   display: flex;
+  align-items: baseline;
 }
 
 .rewardItem + .rewardItem {
-  margin-left: 10px;
+  margin-left: 20px;
 }
