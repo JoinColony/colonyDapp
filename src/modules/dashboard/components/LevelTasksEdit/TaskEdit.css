@@ -6,6 +6,10 @@
   border-top: 1px solid var(--grey-5);
 }
 
+.centered {
+  text-align: center;
+}
+
 .narrow {
   width: 70%;
 }
