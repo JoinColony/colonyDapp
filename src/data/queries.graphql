@@ -238,6 +238,13 @@ query ColonyTokens($address: String!) {
   }
 }
 
+query ColonyNativeToken($address: String!) {
+  colony(address: $address) {
+    id
+    nativeTokenAddress
+  }
+}
+
 query TokenBalancesForDomains($colonyAddress: String!, $tokenAddresses: [String!]!, $domainIds: [Int!]) {
   tokens(addresses: $tokenAddresses) @client {
     id

@@ -1257,6 +1257,11 @@ export type PayoutsFragment = { payouts: Array<(
     & { token: Pick<Token, 'id' | 'address' | 'decimals' | 'name' | 'symbol'> }
   )> };
 
+export type PersistentTaskPayoutsFragment = { payouts: Array<(
+    Pick<TaskPayout, 'amount' | 'tokenAddress'>
+    & { token: Pick<Token, 'id' | 'address' | 'decimals' | 'name' | 'symbol'> }
+  )> };
+
 export type CreateTaskFieldsFragment = (
   Pick<Task, 'id' | 'assignedWorkerAddress' | 'cancelledAt' | 'colonyAddress' | 'createdAt' | 'creatorAddress' | 'dueDate' | 'ethDomainId' | 'ethSkillId' | 'finalizedAt' | 'title' | 'workRequestAddresses'>
   & { assignedWorker: Maybe<(
@@ -1301,7 +1306,8 @@ export type SubmissionFieldsFragment = Pick<Submission, 'id' | 'createdAt' | 'cr
 
 export type PersistentTaskFieldsFragment = (
   Pick<PersistentTask, 'id' | 'colonyAddress' | 'createdAt' | 'creatorAddress' | 'description' | 'ethDomainId' | 'ethSkillId' | 'status' | 'title'>
-  & { payouts: Array<Pick<TaskPayout, 'amount' | 'tokenAddress'>>, submissions: Array<SubmissionFieldsFragment> }
+  & { submissions: Array<SubmissionFieldsFragment> }
+  & PersistentTaskPayoutsFragment
 );
 
 export type EventFieldsFragment = (
@@ -1696,6 +1702,26 @@ export type EditPersistentTaskMutationVariables = {
 
 export type EditPersistentTaskMutation = { editPersistentTask: Maybe<Pick<PersistentTask, 'id' | 'description' | 'ethDomainId' | 'ethSkillId' | 'title'>> };
 
+export type SetPersistentTaskPayoutMutationVariables = {
+  input: SetTaskPayoutInput
+};
+
+
+export type SetPersistentTaskPayoutMutation = { setPersistentTaskPayout: Maybe<(
+    Pick<PersistentTask, 'id'>
+    & PersistentTaskPayoutsFragment
+  )> };
+
+export type RemovePersistentTaskPayoutMutationVariables = {
+  input: RemoveTaskPayoutInput
+};
+
+
+export type RemovePersistentTaskPayoutMutation = { removePersistentTaskPayout: Maybe<(
+    Pick<PersistentTask, 'id'>
+    & PersistentTaskPayoutsFragment
+  )> };
+
 export type TaskQueryVariables = {
   id: Scalars['String']
 };
@@ -1850,6 +1876,13 @@ export type ColonyTokensQuery = { colony: (
     Pick<Colony, 'id'>
     & TokensFragment
   ) };
+
+export type ColonyNativeTokenQueryVariables = {
+  address: Scalars['String']
+};
+
+
+export type ColonyNativeTokenQuery = { colony: Pick<Colony, 'id' | 'nativeTokenAddress'> };
 
 export type TokenBalancesForDomainsQueryVariables = {
   colonyAddress: Scalars['String'],
@@ -2181,6 +2214,21 @@ export const LevelFieldsFragmentDoc = gql`
   title
 }
     `;
+export const PersistentTaskPayoutsFragmentDoc = gql`
+    fragment PersistentTaskPayouts on PersistentTask {
+  payouts {
+    amount
+    tokenAddress
+    token @client {
+      id
+      address
+      decimals
+      name
+      symbol
+    }
+  }
+}
+    `;
 export const SubmissionFieldsFragmentDoc = gql`
     fragment SubmissionFields on Submission {
   id
@@ -2201,17 +2249,15 @@ export const PersistentTaskFieldsFragmentDoc = gql`
   description
   ethDomainId
   ethSkillId
-  payouts {
-    amount
-    tokenAddress
-  }
+  ...PersistentTaskPayouts
   status
   submissions {
     ...SubmissionFields
   }
   title
 }
-    ${SubmissionFieldsFragmentDoc}`;
+    ${PersistentTaskPayoutsFragmentDoc}
+${SubmissionFieldsFragmentDoc}`;
 export const EventFieldsFragmentDoc = gql`
     fragment EventFields on Event {
   createdAt
@@ -3950,6 +3996,72 @@ export function useEditPersistentTaskMutation(baseOptions?: ApolloReactHooks.Mut
 export type EditPersistentTaskMutationHookResult = ReturnType<typeof useEditPersistentTaskMutation>;
 export type EditPersistentTaskMutationResult = ApolloReactCommon.MutationResult<EditPersistentTaskMutation>;
 export type EditPersistentTaskMutationOptions = ApolloReactCommon.BaseMutationOptions<EditPersistentTaskMutation, EditPersistentTaskMutationVariables>;
+export const SetPersistentTaskPayoutDocument = gql`
+    mutation SetPersistentTaskPayout($input: SetTaskPayoutInput!) {
+  setPersistentTaskPayout(input: $input) {
+    id
+    ...PersistentTaskPayouts
+  }
+}
+    ${PersistentTaskPayoutsFragmentDoc}`;
+export type SetPersistentTaskPayoutMutationFn = ApolloReactCommon.MutationFunction<SetPersistentTaskPayoutMutation, SetPersistentTaskPayoutMutationVariables>;
+
+/**
+ * __useSetPersistentTaskPayoutMutation__
+ *
+ * To run a mutation, you first call `useSetPersistentTaskPayoutMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useSetPersistentTaskPayoutMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [setPersistentTaskPayoutMutation, { data, loading, error }] = useSetPersistentTaskPayoutMutation({
+ *   variables: {
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function useSetPersistentTaskPayoutMutation(baseOptions?: ApolloReactHooks.MutationHookOptions<SetPersistentTaskPayoutMutation, SetPersistentTaskPayoutMutationVariables>) {
+        return ApolloReactHooks.useMutation<SetPersistentTaskPayoutMutation, SetPersistentTaskPayoutMutationVariables>(SetPersistentTaskPayoutDocument, baseOptions);
+      }
+export type SetPersistentTaskPayoutMutationHookResult = ReturnType<typeof useSetPersistentTaskPayoutMutation>;
+export type SetPersistentTaskPayoutMutationResult = ApolloReactCommon.MutationResult<SetPersistentTaskPayoutMutation>;
+export type SetPersistentTaskPayoutMutationOptions = ApolloReactCommon.BaseMutationOptions<SetPersistentTaskPayoutMutation, SetPersistentTaskPayoutMutationVariables>;
+export const RemovePersistentTaskPayoutDocument = gql`
+    mutation RemovePersistentTaskPayout($input: RemoveTaskPayoutInput!) {
+  removePersistentTaskPayout(input: $input) {
+    id
+    ...PersistentTaskPayouts
+  }
+}
+    ${PersistentTaskPayoutsFragmentDoc}`;
+export type RemovePersistentTaskPayoutMutationFn = ApolloReactCommon.MutationFunction<RemovePersistentTaskPayoutMutation, RemovePersistentTaskPayoutMutationVariables>;
+
+/**
+ * __useRemovePersistentTaskPayoutMutation__
+ *
+ * To run a mutation, you first call `useRemovePersistentTaskPayoutMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useRemovePersistentTaskPayoutMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [removePersistentTaskPayoutMutation, { data, loading, error }] = useRemovePersistentTaskPayoutMutation({
+ *   variables: {
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function useRemovePersistentTaskPayoutMutation(baseOptions?: ApolloReactHooks.MutationHookOptions<RemovePersistentTaskPayoutMutation, RemovePersistentTaskPayoutMutationVariables>) {
+        return ApolloReactHooks.useMutation<RemovePersistentTaskPayoutMutation, RemovePersistentTaskPayoutMutationVariables>(RemovePersistentTaskPayoutDocument, baseOptions);
+      }
+export type RemovePersistentTaskPayoutMutationHookResult = ReturnType<typeof useRemovePersistentTaskPayoutMutation>;
+export type RemovePersistentTaskPayoutMutationResult = ApolloReactCommon.MutationResult<RemovePersistentTaskPayoutMutation>;
+export type RemovePersistentTaskPayoutMutationOptions = ApolloReactCommon.BaseMutationOptions<RemovePersistentTaskPayoutMutation, RemovePersistentTaskPayoutMutationVariables>;
 export const TaskDocument = gql`
     query Task($id: String!) {
   task(id: $id) {
@@ -4567,6 +4679,40 @@ export function useColonyTokensLazyQuery(baseOptions?: ApolloReactHooks.LazyQuer
 export type ColonyTokensQueryHookResult = ReturnType<typeof useColonyTokensQuery>;
 export type ColonyTokensLazyQueryHookResult = ReturnType<typeof useColonyTokensLazyQuery>;
 export type ColonyTokensQueryResult = ApolloReactCommon.QueryResult<ColonyTokensQuery, ColonyTokensQueryVariables>;
+export const ColonyNativeTokenDocument = gql`
+    query ColonyNativeToken($address: String!) {
+  colony(address: $address) {
+    id
+    nativeTokenAddress
+  }
+}
+    `;
+
+/**
+ * __useColonyNativeTokenQuery__
+ *
+ * To run a query within a React component, call `useColonyNativeTokenQuery` and pass it any options that fit your needs.
+ * When your component renders, `useColonyNativeTokenQuery` returns an object from Apollo Client that contains loading, error, and data properties 
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useColonyNativeTokenQuery({
+ *   variables: {
+ *      address: // value for 'address'
+ *   },
+ * });
+ */
+export function useColonyNativeTokenQuery(baseOptions?: ApolloReactHooks.QueryHookOptions<ColonyNativeTokenQuery, ColonyNativeTokenQueryVariables>) {
+        return ApolloReactHooks.useQuery<ColonyNativeTokenQuery, ColonyNativeTokenQueryVariables>(ColonyNativeTokenDocument, baseOptions);
+      }
+export function useColonyNativeTokenLazyQuery(baseOptions?: ApolloReactHooks.LazyQueryHookOptions<ColonyNativeTokenQuery, ColonyNativeTokenQueryVariables>) {
+          return ApolloReactHooks.useLazyQuery<ColonyNativeTokenQuery, ColonyNativeTokenQueryVariables>(ColonyNativeTokenDocument, baseOptions);
+        }
+export type ColonyNativeTokenQueryHookResult = ReturnType<typeof useColonyNativeTokenQuery>;
+export type ColonyNativeTokenLazyQueryHookResult = ReturnType<typeof useColonyNativeTokenLazyQuery>;
+export type ColonyNativeTokenQueryResult = ApolloReactCommon.QueryResult<ColonyNativeTokenQuery, ColonyNativeTokenQueryVariables>;
 export const TokenBalancesForDomainsDocument = gql`
     query TokenBalancesForDomains($colonyAddress: String!, $tokenAddresses: [String!]!, $domainIds: [Int!]) {
   tokens(addresses: $tokenAddresses) @client {
