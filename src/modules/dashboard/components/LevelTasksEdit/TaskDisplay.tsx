@@ -3,8 +3,13 @@ import { defineMessages, FormattedMessage } from 'react-intl';
 
 import Heading from '~core/Heading';
 import Button from '~core/Button';
+import PayoutsList from '~core/PayoutsList';
 import { SpinnerLoader } from '~core/Preloaders';
-import { OnePersistentTask, useDomainLazyQuery } from '~data/index';
+import {
+  OnePersistentTask,
+  useColonyNativeTokenQuery,
+  useDomainLazyQuery,
+} from '~data/index';
 
 import styles from './TaskDisplay.css';
 
@@ -37,6 +42,10 @@ const TaskDisplay = ({
   },
   setIsEditing,
 }: Props) => {
+  const { data } = useColonyNativeTokenQuery({
+    variables: { address: colonyAddress },
+  });
+  const nativeTokenAddress = data && data.colony.nativeTokenAddress;
   const [
     fetchDomain,
     { data: domainData, loading: loadingDomain },
@@ -65,11 +74,14 @@ const TaskDisplay = ({
       </div>
       {description && <p className={styles.description}>{description}</p>}
       <div className={styles.rewardsContainer}>
-        {payouts.map(({ amount, tokenAddress }) => (
+        {nativeTokenAddress && (
           <div className={styles.rewardItem}>
-            {amount} {tokenAddress}
+            <PayoutsList
+              nativeTokenAddress={nativeTokenAddress}
+              payouts={payouts}
+            />
           </div>
-        ))}
+        )}
         {(loadingDomain || domainName) && (
           <div className={styles.rewardItem}>
             {loadingDomain && <SpinnerLoader />}
