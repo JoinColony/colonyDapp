@@ -8,6 +8,7 @@ import {
   ColonyTasksQuery,
   FullColonyFragment,
   PayoutsFragment,
+  PersistentTaskPayoutsFragment,
   TaskQuery,
   TokenBalancesForDomainsQuery,
   TokenQuery,
@@ -63,7 +64,9 @@ export type AnyTask =
   | ColonyTasksQuery['colony']['tasks'][number]
   | UserTasksQuery['user']['tasks'][number];
 
-export type Payouts = PayoutsFragment['payouts'];
+export type Payouts =
+  | PayoutsFragment['payouts']
+  | PersistentTaskPayoutsFragment['payouts'];
 
 export type Notifications = UserNotificationsQuery['user']['notifications'];
 export type OneNotification = Notifications[number];
@@ -98,5 +101,12 @@ export type TokenWithBalances =
   | ColonyTokens[0]
   | UserTokens[0]
   | TokenBalancesForDomainsQuery['tokens'][0];
+
+// See: https://github.com/microsoft/TypeScript/issues/10620
+export type AnyTokens = (
+  | ColonyTokens[number]
+  | UserTokens[number]
+  | OneToken)[];
+
 // Almost all tokens with 'address' and 'iconHash'
 export type AnyToken = ColonyTokens[0] | UserTokens[0] | OneToken;
