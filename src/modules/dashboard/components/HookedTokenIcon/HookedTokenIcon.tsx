@@ -1,14 +1,29 @@
 import React, { useState, useEffect, ComponentType } from 'react';
 import mapping from 'eth-contract-metadata';
 
-import TokenIcon, { Props as TokenIconProps } from '~core/TokenIcon';
+import Avatar from '~core/Avatar';
 import { ZERO_ADDRESS } from '~utils/web3/constants';
 import { useDataFetcher } from '~utils/hooks';
+import { AnyToken } from '~data/index';
 
 import { ipfsDataFetcher } from '../../../core/fetchers';
 
 interface ImageType {
   default: string | (() => ComponentType<any>);
+}
+
+interface Props {
+  /** Token reference to display */
+  token: AnyToken;
+
+  /** Is passed through to Avatar */
+  className?: string;
+
+  /** Avatar size (default is between `s` and `m`) */
+  size?: 'xxs' | 'xs' | 's' | 'm' | 'l' | 'xl';
+
+  /** Optional name for the icon title */
+  name?: string;
 }
 
 const checkSVG = (fileName: string) =>
@@ -20,7 +35,7 @@ const loadTokenImages = async (logo): Promise<ImageType> =>
     /* webpackMode: "eager" */ `../../../../../node_modules/eth-contract-metadata/images/${logo}`
   );
 
-const HookedTokenIcon = ({ token, ...props }: TokenIconProps) => {
+const HookedTokenIcon = ({ name, token, ...props }: Props) => {
   const { iconHash, address } = token;
   const [tokenImage, setTokenImage] = useState();
   const [tokenSVG, setTokenSVG] = useState();
@@ -67,13 +82,15 @@ const HookedTokenIcon = ({ token, ...props }: TokenIconProps) => {
   }, [ipfsIcon, tokenImage, setTokenImage, address, tokenSVG]);
 
   return (
-    <TokenIcon
-      token={token}
-      iconURL={tokenImage || ipfsIcon || undefined}
+    <Avatar
+      avatarURL={tokenImage || ipfsIcon || undefined}
+      placeholderIcon="circle-close"
+      seed={address}
+      title={name || address}
       {...props}
     >
       {tokenSVG}
-    </TokenIcon>
+    </Avatar>
   );
 };
 
