@@ -18,6 +18,11 @@
     color: var(--primary);
     pointer-events: none;
   }
+
+  &[aria-disabled="true"] {
+    color: color-mod(var(--grey-1) alpha(50%));
+    pointer-events: none;
+  }
 }
 
 .checkedMsg {

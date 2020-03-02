@@ -5,7 +5,7 @@ import { SimpleMessageValues } from '~types/index';
 import { getMainClasses } from '~utils/css';
 
 import SelectOption from '../SelectOption';
-import { Appearance } from './types';
+import { Appearance, SelectOption as SelectOptionType } from './types';
 
 import styles from './SelectListBox.css';
 
@@ -15,11 +15,7 @@ interface Props {
   appearance?: Appearance;
   checkedOption: number;
   listboxId: string;
-  options: {
-    label: MessageDescriptor | string;
-    value: string;
-    labelValues?: SimpleMessageValues;
-  }[];
+  options: SelectOptionType[];
   selectedOption: number;
   ariaLabelledby?: string;
   name: string;
