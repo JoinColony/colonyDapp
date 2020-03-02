@@ -13,6 +13,7 @@ import {
   cacheUpdates,
   OneLevel,
   OnePersistentTask,
+  useColonyNativeTokenQuery,
   useColonyTokensQuery,
   useEditPersistentTaskMutation,
   useRemoveLevelTaskMutation,
@@ -117,6 +118,9 @@ const TaskEdit = ({
   const openDialog = useDialog(ConfirmDialog);
   const { walletAddress } = useLoggedInUser();
 
+  const { data: colonyNativeTokenData } = useColonyNativeTokenQuery({
+    variables: { address: colonyAddress },
+  });
   const { data: colonyTokensData } = useColonyTokensQuery({
     variables: { address: colonyAddress },
   });
@@ -253,15 +257,17 @@ const TaskEdit = ({
       initialValues={
         {
           amount,
-          description,
-          title,
+          description: description || '',
+          title: title || '',
           domainId:
             typeof ethDomainId === 'number'
               ? ethDomainId.toString()
-              : ethDomainId,
+              : ROOT_DOMAIN.toString(),
           skillId:
             typeof ethSkillId === 'number' ? ethSkillId.toString() : ethSkillId,
-          tokenAddress,
+          tokenAddress: colonyNativeTokenData
+            ? colonyNativeTokenData.colony.nativeTokenAddress
+            : tokenAddress,
         } as FormValues
       }
       onSubmit={handleSubmit}
