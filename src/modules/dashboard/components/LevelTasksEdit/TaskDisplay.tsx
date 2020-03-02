@@ -1,10 +1,11 @@
-import React, { Dispatch, SetStateAction, useEffect } from 'react';
+import React, { Dispatch, SetStateAction, useEffect, useMemo } from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 
 import Heading from '~core/Heading';
 import Button from '~core/Button';
 import PayoutsList from '~core/PayoutsList';
 import { SpinnerLoader } from '~core/Preloaders';
+import taskSkillsTree from '~dashboard/TaskSkills/taskSkillsTree';
 import {
   OnePersistentTask,
   useColonyNativeTokenQuery,
@@ -59,6 +60,13 @@ const TaskDisplay = ({
     }
   }, [colonyAddress, ethDomainId, fetchDomain]);
 
+  const skillName = useMemo(
+    () =>
+      ethSkillId &&
+      (taskSkillsTree.find(({ id }) => id === ethSkillId) || { name: '' }).name,
+    [ethSkillId],
+  );
+
   return (
     <div className={styles.main}>
       <div className={styles.headingContainer}>
@@ -90,7 +98,7 @@ const TaskDisplay = ({
             )}
           </div>
         )}
-        {ethSkillId && <>{ethSkillId}</>}
+        {skillName && <div className={styles.rewardItem}>{skillName}</div>}
       </div>
     </div>
   );
