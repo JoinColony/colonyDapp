@@ -1,10 +1,14 @@
-import React, { Dispatch, SetStateAction, useCallback } from 'react';
+import React, { Dispatch, SetStateAction, useCallback, useMemo } from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 import * as yup from 'yup';
 
+import { ROOT_DOMAIN } from '~constants';
 import Button from '~core/Button';
 import { useDialog, ConfirmDialog } from '~core/Dialog';
 import { AmountTokens, Form, Input, Select, Textarea } from '~core/Fields';
+import { SelectOption } from '~core/Fields/Select/types';
+import { SpinnerLoader } from '~core/Preloaders';
+import taskSkillsTree from '~dashboard/TaskSkills/taskSkillsTree';
 import {
   cacheUpdates,
   OneLevel,
@@ -14,10 +18,14 @@ import {
   useRemoveLevelTaskMutation,
   useRemovePersistentTaskPayoutMutation,
   useSetPersistentTaskPayoutMutation,
+  useLoggedInUser,
 } from '~data/index';
+import { useDataFetcher } from '~utils/hooks';
+
+import { domainsAndRolesFetcher } from '../../fetchers';
+import { canFund } from '../../../users/checks';
 
 import styles from './TaskEdit.css';
-import { SpinnerLoader } from '~core/Preloaders';
 
 const MSG = defineMessages({
   buttonDeleteTask: {
@@ -52,6 +60,10 @@ const MSG = defineMessages({
     id: 'dashboard.LevelTasksEdit.TaskEdit.labelTaskTitle',
     defaultMessage: 'Task Title',
   },
+  selectOptionNoSkill: {
+    id: 'dashboard.LevelTasksEdit.TaskEdit.selectOptionNoSkill',
+    defaultMessage: 'None',
+  },
 });
 
 interface Props {
@@ -63,7 +75,7 @@ interface Props {
 interface FormValues {
   title: string;
   description?: string;
-  domainId?: string;
+  domainId: string;
   skillId?: string;
   amount: string;
   tokenAddress: string;
@@ -79,10 +91,7 @@ const validationSchema = yup.object().shape({
     .number()
     .moreThan(0)
     .required(),
-  skillId: yup
-    .number()
-    .moreThan(0)
-    .nullable(),
+  skillId: yup.number().nullable(),
   title: yup.string().required(),
   tokenAddress: yup
     .string()
@@ -106,10 +115,48 @@ const TaskEdit = ({
   setIsEditing,
 }: Props) => {
   const openDialog = useDialog(ConfirmDialog);
+  const { walletAddress } = useLoggedInUser();
 
   const { data: colonyTokensData } = useColonyTokensQuery({
     variables: { address: colonyAddress },
   });
+
+  const { data: domains, isFetching: isFetchingDomains } = useDataFetcher(
+    domainsAndRolesFetcher,
+    [colonyAddress],
+    [colonyAddress],
+  );
+
+  const domainOptions = useMemo<SelectOption[]>(
+    () =>
+      domains
+        ? Object.keys(domains).map(key => {
+            const { id, name, roles } = domains[key];
+            const { roles: rootRoles } = domains[ROOT_DOMAIN];
+            const userRolesInDomain = roles[walletAddress] || [];
+            const userRolesInRoot = rootRoles[walletAddress] || [];
+            return {
+              disabled: !(
+                canFund(userRolesInRoot) || canFund(userRolesInDomain)
+              ),
+              label: name,
+              value: id.toString(),
+            };
+          })
+        : [],
+    [domains, walletAddress],
+  );
+
+  const skillOptions = useMemo<SelectOption[]>(
+    () => [
+      { label: MSG.selectOptionNoSkill, value: '' },
+      ...taskSkillsTree.map(({ id, name }) => ({
+        label: name,
+        value: id.toString(),
+      })),
+    ],
+    [],
+  );
 
   const [editPersistentTask] = useEditPersistentTaskMutation();
   const [removePersistentTaskPayout] = useRemovePersistentTaskPayoutMutation();
@@ -147,8 +194,8 @@ const TaskEdit = ({
         variables: {
           input: {
             description: descriptionVal,
-            ethDomainId: domainId ? parseInt(domainId, 10) : undefined,
-            ethSkillId: skillId ? parseInt(skillId, 10) : undefined,
+            ethDomainId: parseInt(domainId, 10),
+            ethSkillId: skillId ? parseInt(skillId, 10) : null,
             id: persistentTaskId,
             title: titleVal,
           },
@@ -188,7 +235,7 @@ const TaskEdit = ({
     ],
   );
 
-  if (!colonyTokensData) {
+  if (!colonyTokensData || isFetchingDomains) {
     return (
       <div className={styles.section}>
         <div className={styles.centered}>
@@ -208,8 +255,12 @@ const TaskEdit = ({
           amount,
           description,
           title,
-          domainId: ethDomainId,
-          skillId: ethSkillId,
+          domainId:
+            typeof ethDomainId === 'number'
+              ? ethDomainId.toString()
+              : ethDomainId,
+          skillId:
+            typeof ethSkillId === 'number' ? ethSkillId.toString() : ethSkillId,
           tokenAddress,
         } as FormValues
       }
@@ -240,7 +291,7 @@ const TaskEdit = ({
                 appearance={{ theme: 'grey' }}
                 label={MSG.labelTaskDomain}
                 name="domainId"
-                options={[]}
+                options={domainOptions}
               />
             </div>
           </div>
@@ -250,7 +301,7 @@ const TaskEdit = ({
                 appearance={{ theme: 'grey' }}
                 label={MSG.labelTaskSkill}
                 name="skillId"
-                options={[]}
+                options={skillOptions}
               />
             </div>
           </div>
