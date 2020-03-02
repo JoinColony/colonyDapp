@@ -149,7 +149,11 @@ const TransactionListItem = ({
             />
           </div>
         )}
-        <Numeral value={amount} unit="ether" suffix={` ${token.symbol}`} />
+        <Numeral
+          value={amount}
+          unit={token.decimals || 18}
+          suffix={` ${token.symbol}`}
+        />
       </TableCell>
     </TableRow>
   );
