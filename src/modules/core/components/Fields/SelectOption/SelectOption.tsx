@@ -1,7 +1,7 @@
-import { MessageDescriptor, defineMessages } from 'react-intl';
+import { defineMessages } from 'react-intl';
 import React, { Component, SyntheticEvent, KeyboardEvent } from 'react';
 
-import { SimpleMessageValues } from '~types/index';
+import { SelectOption as SelectOptionType } from '../Select/types';
 
 import { FieldEnhancedProps } from '../types';
 
@@ -18,11 +18,7 @@ interface Props {
   checked: boolean;
   id: string;
   idx: number;
-  option: {
-    label: MessageDescriptor | string;
-    value: string;
-    labelValues?: SimpleMessageValues;
-  };
+  option: SelectOptionType;
   selected: boolean;
   onSelect: (idx: number) => void;
   onClick: () => void;
@@ -55,6 +51,7 @@ class SelectOption extends Component<Props> {
     return (
       <li
         className={styles.main}
+        aria-disabled={option.disabled}
         aria-selected={selected}
         id={id}
         role="option"
