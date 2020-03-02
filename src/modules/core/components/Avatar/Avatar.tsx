@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { CSSProperties, ReactNode } from 'react';
 
 import getIcon from '../../../../lib/identicon';
 import Icon from '../Icon';
@@ -10,6 +10,9 @@ interface Props {
 
   /** Avatar image URL (can be a base64 encoded string) */
   avatarURL?: string;
+
+  /** If children are present, they will be rendered directly (for svg components) */
+  children?: ReactNode;
 
   /** Extra className */
   className?: string;
@@ -32,6 +35,7 @@ const displayName = 'Avatar';
 const Avatar = ({
   seed,
   avatarURL,
+  children,
   className,
   notSet,
   placeholderIcon,
@@ -39,19 +43,31 @@ const Avatar = ({
   title,
 }: Props) => {
   const avatar = notSet ? null : avatarURL || getIcon(seed);
-  // if using a blockie, do pixelated image scaling
-  const imageRendering = avatarURL ? undefined : 'pixelated';
-  const imageStyle = avatar
-    ? { backgroundImage: `url(${avatar})`, imageRendering }
+  const imageStyle: CSSProperties = avatar
+    ? {
+        backgroundImage: `url(${avatar})`,
+        // if using a blockie, do pixelated image scaling
+        imageRendering: avatarURL ? undefined : 'pixelated',
+      }
     : {};
   const mainClass = size ? styles[size] : styles.main;
+  if (children) {
+    return (
+      <figure
+        className={className ? `${mainClass} ${className}` : mainClass}
+        title={title}
+      >
+        {children}
+      </figure>
+    );
+  }
+
   return (
     <figure
       className={className ? `${mainClass} ${className}` : mainClass}
       title={title}
     >
       {avatar ? (
-        // @ts-ignore
         <div className={styles.image} style={imageStyle} />
       ) : (
         <Icon
