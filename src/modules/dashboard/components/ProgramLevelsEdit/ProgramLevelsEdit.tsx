@@ -46,12 +46,14 @@ const ProgramLevelsEdit = ({
 
   const handleAddLevel = useCallback(async () => {
     const { data: mutationResult } = await createLevel();
-    const id =
+    const levelId =
       mutationResult &&
       mutationResult.createLevel &&
       mutationResult.createLevel.id;
-    if (id) {
-      history.push(`/colony/${colonyName}/program/${programId}/level/${id}`);
+    if (levelId) {
+      history.push(
+        `/colony/${colonyName}/program/${programId}/level/${levelId}/edit`,
+      );
     }
   }, [colonyName, createLevel, history, programId]);
 
