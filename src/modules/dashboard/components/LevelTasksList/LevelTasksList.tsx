@@ -3,7 +3,6 @@ import { defineMessages } from 'react-intl';
 
 import Heading from '~core/Heading';
 import ListGroup, { ListGroupItem } from '~core/ListGroup';
-import PayoutsList from '~core/PayoutsList';
 import { SpinnerLoader } from '~core/Preloaders';
 import {
   OneLevelWithUnlocked,
@@ -12,11 +11,13 @@ import {
 } from '~data/index';
 import { Address } from '~types/index';
 
-import styles from './LevelTasks.css';
+import LevelTasksListItem from './LevelTasksListItem';
+
+import styles from './LevelTasksList.css';
 
 const MSG = defineMessages({
   title: {
-    id: 'dashboard.LevelDashboard.LevelTasks.title',
+    id: 'dashboard.LevelTasksList.title',
     defaultMessage: 'Tasks',
   },
 });
@@ -27,9 +28,9 @@ interface Props {
   unlocked: OneLevelWithUnlocked['unlocked'];
 }
 
-const displayName = 'dashboard.LevelDashboard.LevelTasks';
+const displayName = 'dashboard.LevelTasksList';
 
-const LevelTasks = ({ colonyAddress, levelId, unlocked }: Props) => {
+const LevelTasksList = ({ colonyAddress, levelId, unlocked }: Props) => {
   const { data: levelTasksData } = useLevelTasksQuery({
     variables: { id: levelId },
   });
@@ -49,30 +50,13 @@ const LevelTasks = ({ colonyAddress, levelId, unlocked }: Props) => {
     <div className={styles.main}>
       <Heading appearance={{ size: 'medium' }} text={MSG.title} />
       <ListGroup>
-        {steps.map(({ id: stepId, payouts, title }) => (
-          <ListGroupItem key={stepId}>
-            <div className={styles.item}>
-              {!unlocked && (
-                <div className={styles.locked}>
-                  {/* @todo locked icon here */}
-                </div>
-              )}
-              <div className={styles.content}>
-                {title && (
-                  <Heading
-                    appearance={{ margin: 'none', size: 'normal' }}
-                    text={title}
-                  />
-                )}
-                {/* @todo domain & skill here */}
-              </div>
-              <div>
-                <PayoutsList
-                  nativeTokenAddress={nativeTokenAddress}
-                  payouts={payouts}
-                />
-              </div>
-            </div>
+        {steps.map(persistentTask => (
+          <ListGroupItem key={persistentTask.id}>
+            <LevelTasksListItem
+              nativeTokenAddress={nativeTokenAddress}
+              persistentTask={persistentTask}
+              unlocked={unlocked}
+            />
           </ListGroupItem>
         ))}
       </ListGroup>
@@ -80,6 +64,6 @@ const LevelTasks = ({ colonyAddress, levelId, unlocked }: Props) => {
   );
 };
 
-LevelTasks.displayName = displayName;
+LevelTasksList.displayName = displayName;
 
-export default LevelTasks;
+export default LevelTasksList;
