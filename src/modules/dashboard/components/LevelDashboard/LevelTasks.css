@@ -1,0 +1,21 @@
+.main {
+  margin-top: 10px;
+}
+
+.item {
+  display: flex;
+  align-items: center;
+  padding: 25px;
+}
+
+.locked {
+  flex-basis: 30px;
+}
+
+.locked + .content {
+  margin-left: 15px;
+}
+
+.content {
+  flex-grow: 1;
+}
