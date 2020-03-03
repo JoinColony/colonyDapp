@@ -91,12 +91,14 @@ const config = {
         ],
       },
       /*
-       * To load company logo and token icons to import
+       * To load svg icons and token icons to import
        */
       {
         test: /\.svg$/,
-        exclude: path.resolve(__dirname, 'src', 'img', 'icons'),
-        use: ['@svgr/webpack'],
+        exclude: [
+          path.resolve(__dirname, 'src', 'img', 'icons'),
+        ],
+        use: '@svgr/webpack',
       },
       /*
        * We are only parsing images inside `src/client/img/icons`. Doing so allows us to bundle the commonly-used icons.
@@ -105,7 +107,9 @@ const config = {
        */
       {
         test: /\.svg$/,
-        include: [path.resolve(__dirname, 'src', 'img', 'icons')],
+        include: [
+          path.resolve(__dirname, 'src', 'img', 'icons'),
+        ],
         use: [
           {
             loader: 'svg-sprite-loader',
