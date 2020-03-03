@@ -1,10 +1,13 @@
 import React, { useEffect, useMemo } from 'react';
 import { useLocation, useParams } from 'react-router-dom';
 
+import BreadCrumb from '~core/BreadCrumb';
 import { useDialog } from '~core/Dialog';
 import { SpinnerLoader } from '~core/Preloaders';
 import { useLevelQuery, useProgramQuery } from '~data/index';
 
+import LevelAttributes from './LevelAttributes';
+import LevelTasks from './LevelTasks';
 import LevelWelcomeDialog from './LevelWelcomeDialog';
 
 const displayName = 'dashboard.LevelDashboard';
@@ -44,9 +47,31 @@ const LevelDashboard = () => {
     showWelcomeMessage,
   ]);
 
-  if (levelLoading || programLoading) return <SpinnerLoader />;
+  if (levelLoading || programLoading || !levelData || !programData) {
+    return <SpinnerLoader />;
+  }
 
-  return <div />;
+  const {
+    level: { title: levelTitle, unlocked },
+    level,
+  } = levelData;
+  const {
+    program: { colonyAddress, title: programTitle },
+  } = programData;
+  return (
+    <>
+      {programTitle && (
+        // @todo remove default `levelTitle` after level edit merged in
+        <BreadCrumb elements={[programTitle, levelTitle || 'Untitled']} />
+      )}
+      <LevelAttributes level={level} />
+      <LevelTasks
+        colonyAddress={colonyAddress}
+        levelId={level.id}
+        unlocked={unlocked}
+      />
+    </>
+  );
 };
 
 LevelDashboard.displayName = displayName;
