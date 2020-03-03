@@ -108,6 +108,7 @@ exports[`Radio component Renders initial component 1`] = `
             Object {
               "dirty": false,
               "errors": Object {},
+              "getFieldHelpers": [Function],
               "getFieldMeta": [Function],
               "getFieldProps": [Function],
               "handleBlur": [Function],
