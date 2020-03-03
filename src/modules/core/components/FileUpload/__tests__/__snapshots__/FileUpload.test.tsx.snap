@@ -20,6 +20,7 @@ exports[`FileUpload component Renders initial component 1`] = `
           Object {
             "dirty": false,
             "errors": Object {},
+            "getFieldHelpers": [Function],
             "getFieldMeta": [Function],
             "getFieldProps": [Function],
             "handleBlur": [Function],
@@ -75,6 +76,7 @@ exports[`FileUpload component Renders initial component 1`] = `
             Object {
               "dirty": false,
               "errors": Object {},
+              "getFieldHelpers": [Function],
               "getFieldMeta": [Function],
               "getFieldProps": [Function],
               "handleBlur": [Function],
