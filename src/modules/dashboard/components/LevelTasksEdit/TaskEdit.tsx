@@ -154,8 +154,8 @@ const TaskEdit = ({
   const skillOptions = useMemo<SelectOption[]>(
     () => [
       { label: MSG.selectOptionNoSkill, value: '' },
-      ...taskSkillsTree.map(({ id, name }) => ({
-        label: name,
+      ...taskSkillsTree.map(({ id, name, parent }) => ({
+        label: parent ? `- ${name}` : name,
         value: id.toString(),
       })),
     ],
