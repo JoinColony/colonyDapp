@@ -13,6 +13,7 @@ import { TokenMintForm } from '~admin/Tokens';
 import { useTokenQuery } from '~data/index';
 
 import styles from './ColonyInitialFunding.css';
+import { DEFAULT_TOKEN_DECIMALS } from '~constants';
 
 interface Props {
   canMintTokens: boolean;
@@ -109,7 +110,8 @@ const ColonyInitialFunding = ({
                       formattingOptions={{
                         numeral: true,
                         numeralPositiveOnly: true,
-                        numeralDecimalScale: nativeToken.decimals || 18,
+                        numeralDecimalScale:
+                          nativeToken.decimals || DEFAULT_TOKEN_DECIMALS,
                       }}
                       label={MSG.amountLabel}
                       name="mintAmount"

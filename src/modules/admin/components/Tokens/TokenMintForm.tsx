@@ -10,6 +10,7 @@ import { ActionForm } from '~core/Fields';
 import { pipe, mapPayload, mergePayload, withKey } from '~utils/actions';
 import { ActionTypes } from '~redux/index';
 import { ColonyTokens, OneToken } from '~data/index';
+import { DEFAULT_TOKEN_DECIMALS } from '~constants';
 
 const MSG = defineMessages({
   errorAmountMin: {
@@ -46,7 +47,9 @@ const TokenMintForm = ({
     pipe(
       mapPayload(({ mintAmount: inputAmount }) => ({
         // shift by the token's decimals (or default of 18)
-        amount: new BigNumber(moveDecimal(inputAmount, decimals || 18)),
+        amount: new BigNumber(
+          moveDecimal(inputAmount, decimals || DEFAULT_TOKEN_DECIMALS),
+        ),
       })),
       withKey(colonyAddress),
       mergePayload({ colonyAddress }),

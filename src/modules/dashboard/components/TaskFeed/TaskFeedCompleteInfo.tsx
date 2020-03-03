@@ -15,6 +15,7 @@ import { Address } from '~types/index';
 import { getFriendlyName } from '../../../users/transformers';
 
 import styles from './TaskFeedCompleteInfo.css';
+import { DEFAULT_TOKEN_DECIMALS } from '~constants';
 
 const MSG = defineMessages({
   eventTaskSentMessage: {
@@ -74,7 +75,7 @@ const TaskFeedCompleteInfo = ({
   const { data: colonyData, loading: isLoadingColony } = useColonyQuery({
     variables: { address: colonyAddress },
   });
-  const { decimals = 18, symbol = '', address = '' } =
+  const { decimals = DEFAULT_TOKEN_DECIMALS, symbol = '', address = '' } =
     (tokenData && tokenData.token) || {};
   const { nativeTokenAddress = '' } = (colonyData && colonyData.colony) || {};
   const metaColonyFee = new BigNumber(
@@ -127,7 +128,7 @@ const TaskFeedCompleteInfo = ({
                     <span className={styles.tokenInfo}>
                       <Numeral
                         integerSeparator=""
-                        unit={decimals || 18}
+                        unit={decimals || DEFAULT_TOKEN_DECIMALS}
                         value={amount}
                       />
                     </span>
@@ -146,7 +147,10 @@ const TaskFeedCompleteInfo = ({
                     isTokenNative={address === nativeTokenAddress}
                   >
                     <span className={styles.tokenInfo}>
-                      <Numeral unit={decimals || 18} value={metaColonyFee} />
+                      <Numeral
+                        unit={decimals || DEFAULT_TOKEN_DECIMALS}
+                        value={metaColonyFee}
+                      />
                     </span>
                   </InfoPopover>
                 ),

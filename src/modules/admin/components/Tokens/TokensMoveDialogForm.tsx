@@ -5,7 +5,7 @@ import BigNumber from 'bn.js';
 import moveDecimal from 'move-decimal-point';
 import sortBy from 'lodash/sortBy';
 
-import { ROOT_DOMAIN, ROLES } from '~constants';
+import { ROOT_DOMAIN, ROLES, DEFAULT_TOKEN_DECIMALS } from '~constants';
 import { Address } from '~types/index';
 import { useDataFetcher, useTransformer } from '~utils/hooks';
 import Button from '~core/Button';
@@ -182,7 +182,7 @@ const TokensMoveDialogForm = ({
       errors.amount = undefined; // silent error
     } else {
       const convertedAmount = new BigNumber(
-        moveDecimal(amount, selectedToken.decimals || 18),
+        moveDecimal(amount, selectedToken.decimals || DEFAULT_TOKEN_DECIMALS),
       );
       if (convertedAmount.eqn(0)) {
         errors.amount = MSG.noAmount;
@@ -241,7 +241,10 @@ const TokensMoveDialogForm = ({
                       theme: 'grey',
                     }}
                     value={fromDomainTokenBalance || 0}
-                    unit={(selectedToken && selectedToken.decimals) || 18}
+                    unit={
+                      (selectedToken && selectedToken.decimals) ||
+                      DEFAULT_TOKEN_DECIMALS
+                    }
                     truncate={3}
                   />
                 ),
@@ -265,7 +268,10 @@ const TokensMoveDialogForm = ({
                       theme: 'grey',
                     }}
                     value={toDomainTokenBalance || 0}
-                    unit={(selectedToken && selectedToken.decimals) || 18}
+                    unit={
+                      (selectedToken && selectedToken.decimals) ||
+                      DEFAULT_TOKEN_DECIMALS
+                    }
                     truncate={3}
                   />
                 ),
@@ -286,7 +292,8 @@ const TokensMoveDialogForm = ({
                 delimiter: ',',
                 numeral: true,
                 numeralDecimalScale:
-                  (selectedToken && selectedToken.decimals) || 18,
+                  (selectedToken && selectedToken.decimals) ||
+                  DEFAULT_TOKEN_DECIMALS,
               }}
             />
           </div>

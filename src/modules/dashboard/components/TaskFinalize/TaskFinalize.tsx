@@ -17,6 +17,7 @@ import { ActionTypes } from '~redux/index';
 import { useAsyncFunction } from '~utils/hooks';
 import { mergePayload } from '~utils/actions';
 import { bnLessThan } from '~utils/numbers';
+import { DEFAULT_TOKEN_DECIMALS } from '~constants';
 
 const MSG = defineMessages({
   finalizeTask: {
@@ -83,7 +84,10 @@ const TaskFinalize = ({
           ({ amount: availableDomainAmount }) =>
             !bnLessThan(
               availableDomainAmount,
-              moveDecimal(amount, domainBalances.decimals || 18),
+              moveDecimal(
+                amount,
+                domainBalances.decimals || DEFAULT_TOKEN_DECIMALS,
+              ),
             ),
         );
       });

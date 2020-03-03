@@ -14,6 +14,7 @@ import { useUserLazy, useTokenQuery } from '~data/index';
 import TransactionDetails from './TransactionDetails';
 
 import styles from './TransactionListItem.css';
+import { DEFAULT_TOKEN_DECIMALS } from '~constants';
 
 const MSG = defineMessages({
   buttonClaim: {
@@ -151,7 +152,7 @@ const TransactionListItem = ({
         )}
         <Numeral
           value={amount}
-          unit={token.decimals || 18}
+          unit={token.decimals || DEFAULT_TOKEN_DECIMALS}
           suffix={` ${token.symbol}`}
         />
       </TableCell>

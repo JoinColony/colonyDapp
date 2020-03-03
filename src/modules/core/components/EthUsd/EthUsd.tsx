@@ -6,6 +6,7 @@ import { defineMessages, useIntl } from 'react-intl';
 import Numeral, { Props as NumeralProps } from '~core/Numeral/Numeral';
 import { SpinnerLoader } from '~core/Preloaders';
 import { getEthToUsd } from '~utils/external';
+import { DEFAULT_TOKEN_DECIMALS } from '~constants';
 
 const MSG = defineMessages({
   usdAbbreviation: {
@@ -67,7 +68,10 @@ const EthUsd = ({
       if (BN.isBN(value)) {
         valueToConvert = value;
       } else {
-        const fixedNum = typeof value === 'number' ? value.toFixed(18) : value;
+        const fixedNum =
+          typeof value === 'number'
+            ? value.toFixed(DEFAULT_TOKEN_DECIMALS)
+            : value;
         valueToConvert = toWei(fixedNum, unit);
       }
       const newValue = await getEthToUsd(valueToConvert);
