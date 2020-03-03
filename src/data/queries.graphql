@@ -324,6 +324,12 @@ query ProgramLevels($id: String!) {
   }
 }
 
+query Level($id: String!) {
+  level(id: $id) {
+    ...LevelFields
+  }
+}
+
 query ProgramLevelsWithUnlocked($id: String!) {
   program(id: $id) {
     id
