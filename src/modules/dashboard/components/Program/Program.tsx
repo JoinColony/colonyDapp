@@ -101,6 +101,7 @@ const Program = ({ colonyAddress, colonyName }: Props) => {
   ) : (
     <ProgramDashboard
       canAdmin={canAdmin}
+      colonyName={colonyName}
       program={program}
       toggleEditMode={toggleEditMode}
     />

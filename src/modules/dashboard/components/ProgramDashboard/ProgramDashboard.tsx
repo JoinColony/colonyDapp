@@ -1,6 +1,6 @@
 import React, { useCallback } from 'react';
 import { defineMessages } from 'react-intl';
-import { useHistory, useParams } from 'react-router-dom';
+import { useHistory } from 'react-router-dom';
 
 import Button from '~core/Button';
 import Heading from '~core/Heading';
@@ -26,6 +26,7 @@ const MSG = defineMessages({
 
 interface Props {
   canAdmin: boolean;
+  colonyName: string;
   program: OneProgram;
   toggleEditMode: () => void;
 }
@@ -34,12 +35,12 @@ const displayName = 'dashboard.ProgramDashboard';
 
 const ProgramDashboard = ({
   canAdmin,
+  colonyName,
   program: { id: programId, description, enrolled, levelIds, title },
   program,
   toggleEditMode,
 }: Props) => {
   const history = useHistory();
-  const { colonyName } = useParams();
   const [enrollInProgramMutation, { loading }] = useEnrollInProgramMutation({
     variables: { input: { id: programId } },
   });
@@ -86,7 +87,7 @@ const ProgramDashboard = ({
       {description && <p>{description}</p>}
       {/* @todo use tabs (with "Review") if current user is admin */}
       <div className={styles.levelsContainer}>
-        <ProgramLevelsList program={program} />
+        <ProgramLevelsList colonyName={colonyName} program={program} />
       </div>
     </div>
   );
