@@ -9,17 +9,18 @@ import BreadCrumb from '~core/BreadCrumb';
 import Heading from '~core/Heading';
 import { Tab, TabList, TabPanel, Tabs } from '~core/Tabs';
 import Community from '~dashboard/Community';
+import LevelDashboard from '~dashboard/LevelDashboard';
 import Program from '~dashboard/Program';
 import Suggestions from '~dashboard/Suggestions';
 import { useLoggedInUser } from '~data/helpers';
 import { useColonyFromNameQuery } from '~data/index';
 import LoadingTemplate from '~pages/LoadingTemplate';
+import { NOT_FOUND_ROUTE, LEVEL_ROUTE, PROGRAM_ROUTE } from '~routes/index';
 import { useDataFetcher, useTransformer } from '~utils/hooks';
 
 import { getUserRoles } from '../../../transformers';
 import { canAdminister, hasRoot } from '../../../users/checks';
 import { domainsAndRolesFetcher } from '../../fetchers';
-import { NOT_FOUND_ROUTE } from '~routes/index';
 
 import ColonyFunding from './ColonyFunding';
 import styles from './ColonyHome.css';
@@ -160,11 +161,14 @@ const ColonyHome = ({
         </aside>
         <main className={styles.content}>
           <Switch>
-            <Route exact path="/colony/:colonyName/program/:programId">
+            <Route exact path={PROGRAM_ROUTE}>
               <Program
                 colonyAddress={colony.colonyAddress}
                 colonyName={colony.colonyName}
               />
+            </Route>
+            <Route exact path={LEVEL_ROUTE}>
+              <LevelDashboard />
             </Route>
             <Route>
               <div className={styles.breadCrumbContainer}>

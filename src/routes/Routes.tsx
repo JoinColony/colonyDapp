@@ -26,7 +26,7 @@ import {
   COLONY_HOME_ROUTE,
   CREATE_COLONY_ROUTE,
   CREATE_USER_ROUTE,
-  LEVEL_ROUTE,
+  LEVEL_EDIT_ROUTE,
   NOT_FOUND_ROUTE,
   PROGRAM_ROUTE,
   TASK_ROUTE,
@@ -37,6 +37,7 @@ import {
   USER_EDIT_ROUTE,
   USER_ROUTE,
   WALLET_ROUTE,
+  LEVEL_ROUTE,
 } from './routeConstants';
 
 import ConnectedOnlyRoute from './ConnectedOnlyRoute';
@@ -83,7 +84,7 @@ const Routes = () => {
       <ConnectedOnlyRoute
         exact
         isConnected={isConnected}
-        path={[COLONY_HOME_ROUTE, PROGRAM_ROUTE]}
+        path={[COLONY_HOME_ROUTE, LEVEL_ROUTE, PROGRAM_ROUTE]}
         component={ColonyHome}
         layout={SimpleNav}
         routeProps={{
@@ -140,7 +141,7 @@ const Routes = () => {
       <ConnectedOnlyRoute
         exact
         isConnected={isConnected}
-        path={LEVEL_ROUTE}
+        path={LEVEL_EDIT_ROUTE}
         component={LevelEdit}
         layout={NavBar}
         routeProps={{
