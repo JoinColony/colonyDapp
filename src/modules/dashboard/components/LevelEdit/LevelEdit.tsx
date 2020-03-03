@@ -40,6 +40,14 @@ const MSG = defineMessages({
     id: 'dashboard.LevelEdit.explainerRequirement',
     defaultMessage: `To complete the level and earn the achievement, users must complete {numRequiredSteps} of {numTotalSteps} tasks.`,
   },
+  labelAmountRequiredSteps: {
+    id: 'dashboard.LevelEdit.labelAmountRequiredSteps',
+    defaultMessage: 'Amount',
+  },
+  amountTotalSteps: {
+    id: 'dashboard.LevelEdit.amountTotalSteps',
+    defaultMessage: ' of {numTotalSteps} tasks',
+  },
 });
 
 interface FormValues {
@@ -161,10 +169,17 @@ const LevelEdit = () => {
                     }}
                   />
                 </p>
+              </div>
+              <div className={styles.numRequiredStepsInput}>
+                <InputLabel label={MSG.labelAmountRequiredSteps} />
                 <Input
                   elementOnly
                   appearance={{ theme: 'underlined' }}
                   name="numRequiredSteps"
+                />
+                <FormattedMessage
+                  {...MSG.amountTotalSteps}
+                  values={{ numTotalSteps }}
                 />
               </div>
             </>
