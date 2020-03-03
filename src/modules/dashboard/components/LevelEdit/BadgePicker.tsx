@@ -7,7 +7,7 @@ import { InputLabel } from '~core/Fields';
 import Avatar from '~core/Avatar';
 import Button from '~core/Button';
 
-import styles from './AvatarPicker.css';
+import styles from './BadgePicker.css';
 
 import { badges } from '../../../../img/icons.json';
 
@@ -23,13 +23,17 @@ const badgeIcons = badges.map(badgeName => {
 
 const MSG = defineMessages({
   label: {
-    id: 'core.AvatarPicker.label',
+    id: 'core.BadgePicker.label',
     defaultMessage: 'Select Avatar',
   },
   explainer: {
-    id: 'core.AvatarPicker.explainer',
+    id: 'core.BadgePicker.explainer',
     defaultMessage:
       'Users will earn the selected achievement once they complete the level.',
+  },
+  badgeTitleNone: {
+    id: 'core.BadgePicker.badgeTitleNone',
+    defaultMessage: 'None',
   },
 });
 
@@ -37,21 +41,22 @@ interface Props {
   name: string;
 }
 
-const displayName = 'core.AvatarPicker';
+const displayName = 'core.BadgePicker';
 
-const AvatarPicker = ({ name }: Props) => {
+const BadgePicker = ({ name }: Props) => {
   const [, { value }, { setValue }] = useField(name);
   return (
-    <div>
+    <div className={styles.main}>
       <InputLabel label={MSG.label} />
       <FormattedMessage {...MSG.explainer} />
       <div className={styles.avatars}>
         {badgeIcons.map(({ Badge, id, title }) => (
           <Button
+            key={id}
             className={value === id ? styles.avatarSelected : styles.avatar}
             onClick={() => setValue(id)}
           >
-            <Avatar key={id} placeholderIcon="cup" size="m" title={title}>
+            <Avatar placeholderIcon="question-mark" size="m" title={title}>
               <Badge />
             </Avatar>
           </Button>
@@ -61,6 +66,6 @@ const AvatarPicker = ({ name }: Props) => {
   );
 };
 
-AvatarPicker.displayName = displayName;
+BadgePicker.displayName = displayName;
 
-export default AvatarPicker;
+export default BadgePicker;
