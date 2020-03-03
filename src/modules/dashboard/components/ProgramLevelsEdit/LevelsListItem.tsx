@@ -42,7 +42,7 @@ const LevelsListItem = ({
   level: { achievement, id: levelId, title },
   programId,
 }: Props) => {
-  const levelUrl = `/colony/${colonyName}/program/${programId}/level/${levelId}`;
+  const levelUrl = `/colony/${colonyName}/program/${programId}/level/${levelId}/edit`;
   return (
     <div className={styles.listItemInner}>
       {!isDragDisabled && (

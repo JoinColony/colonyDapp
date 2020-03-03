@@ -32,6 +32,7 @@ const MSG = defineMessages({
 });
 
 interface Props {
+  colonyName: string;
   index: number;
   isUserEnrolled: boolean;
   level: OneLevelWithUnlocked;
@@ -40,10 +41,12 @@ interface Props {
 const displayName = 'dashboard.ProgramLevelsList.ProgramLevelsListItem';
 
 const ProgramLevelsListItem = ({
+  colonyName,
   index,
   isUserEnrolled,
-  level: { achievement, title, unlocked },
+  level: { id: levelId, achievement, programId, title, unlocked },
 }: Props) => {
+  const levelUrl = `/colony/${colonyName}/program/${programId}/level/${levelId}`;
   const statusText = useMemo(() => {
     if (!unlocked) {
       if (!isUserEnrolled && index === 0) {
@@ -65,7 +68,7 @@ const ProgramLevelsListItem = ({
         <FormattedMessage {...statusText} />
       </div>
       <div className={styles.linkContainer}>
-        <Button text={MSG.linkView} />
+        <Button linkTo={levelUrl} text={MSG.linkView} />
       </div>
     </div>
   );
