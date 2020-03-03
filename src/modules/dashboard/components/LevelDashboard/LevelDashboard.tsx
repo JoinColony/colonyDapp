@@ -7,7 +7,7 @@ import { SpinnerLoader } from '~core/Preloaders';
 import { useLevelQuery, useProgramQuery } from '~data/index';
 
 import LevelAttributes from './LevelAttributes';
-import LevelTasks from './LevelTasks';
+import LevelTasksList from '../LevelTasksList';
 import LevelWelcomeDialog from './LevelWelcomeDialog';
 
 const displayName = 'dashboard.LevelDashboard';
@@ -65,7 +65,7 @@ const LevelDashboard = () => {
         <BreadCrumb elements={[programTitle, levelTitle || 'Untitled']} />
       )}
       <LevelAttributes level={level} />
-      <LevelTasks
+      <LevelTasksList
         colonyAddress={colonyAddress}
         levelId={level.id}
         unlocked={unlocked}

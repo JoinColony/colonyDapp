@@ -1,7 +1,3 @@
-.main {
-  margin-top: 10px;
-}
-
 .item {
   display: flex;
   align-items: center;
@@ -18,4 +14,13 @@
 
 .content {
   flex-grow: 1;
+}
+
+.categories {
+  display: flex;
+  align-items: baseline;
+}
+
+.category + .category {
+  margin-left: 20px;
 }
