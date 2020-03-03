@@ -6,7 +6,7 @@ import styles from './Avatar.css';
 
 interface Props {
   /** Seed phrase for blockies fallback (usually an address) */
-  seed: string;
+  seed?: string;
 
   /** Avatar image URL (can be a base64 encoded string) */
   avatarURL?: string;
@@ -42,7 +42,7 @@ const Avatar = ({
   size,
   title,
 }: Props) => {
-  const avatar = notSet ? null : avatarURL || getIcon(seed);
+  const avatar = notSet ? null : avatarURL || getIcon(seed || title);
   const imageStyle: CSSProperties = avatar
     ? {
         backgroundImage: `url(${avatar})`,
