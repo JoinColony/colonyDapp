@@ -1,3 +1,18 @@
 .main {
   padding-top: 70px;
 }
+
+.formActions {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+}
+
+.headingContainer {
+  display: flex;
+  align-items: baseline;
+}
+
+.numRequiredStepsInput {
+  composes: field from '~styles/fields.css';
+}

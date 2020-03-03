@@ -1,3 +1,7 @@
+.main {
+  composes: field from '~styles/fields.css';
+}
+
 .avatars {
   display: flex;
   flex-direction: row;
