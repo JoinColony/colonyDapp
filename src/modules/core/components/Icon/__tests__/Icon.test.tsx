@@ -6,7 +6,7 @@ import toJson from 'enzyme-to-json';
 import { mountWithIntl } from '~testutils';
 
 import Icon from '../Icon';
-import { icons as iconNames } from '../icons.json';
+import { icons as iconNames } from '../../../../../img/icons.json';
 
 describe('Icon component', () => {
   const mockFileName = iconNames[0];

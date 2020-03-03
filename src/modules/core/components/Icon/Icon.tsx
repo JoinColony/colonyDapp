@@ -7,7 +7,7 @@ import { getMainClasses } from '~utils/css';
 import {
   icons as iconNames,
   multiColorIcons as multiColorIconNames,
-} from './icons.json';
+} from '../../../../img/icons.json';
 import styles from './Icon.css';
 
 const displayName = 'Icon';
