@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useCallback } from 'react';
 import { defineMessages } from 'react-intl';
 
 import { DottedAddButton } from '~core/Button';
@@ -31,6 +31,10 @@ const LevelTasksEdit = ({ levelId }: Props) => {
     variables: { input: { levelId } },
   });
 
+  const handleClick = useCallback(() => {
+    createPersistentTask();
+  }, [createPersistentTask]);
+
   const createdTaskId =
     (data && data.createLevelTask && data.createLevelTask.id) || undefined;
 
@@ -41,7 +45,7 @@ const LevelTasksEdit = ({ levelId }: Props) => {
       </div>
       <div className={styles.section}>
         <DottedAddButton
-          onClick={() => createPersistentTask()}
+          onClick={handleClick}
           text={MSG.buttonAddPersistentTask}
         />
       </div>
