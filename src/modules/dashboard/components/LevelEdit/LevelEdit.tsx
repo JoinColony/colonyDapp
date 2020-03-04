@@ -11,9 +11,9 @@ import { SpinnerLoader } from '~core/Preloaders';
 import CenteredTemplate from '~pages/CenteredTemplate';
 import { useLevelQuery, useEditLevelMutation } from '~data/index';
 
-import styles from './LevelEdit.css';
-
 import BadgePicker from './BadgePicker';
+
+import styles from './LevelEdit.css';
 
 const MSG = defineMessages({
   heading: {
@@ -160,7 +160,7 @@ const LevelEdit = () => {
                 name="description"
               />
               <BadgePicker name="achievement" />
-              <div className={styles.numRequiredStepsInput}>
+              <div className={styles.numRequiredStepsText}>
                 <InputLabel label={MSG.labelNumRequiredSteps} />
                 <p>
                   <FormattedMessage
@@ -173,16 +173,19 @@ const LevelEdit = () => {
                 </p>
               </div>
               <div className={styles.numRequiredStepsInput}>
-                <InputLabel label={MSG.labelAmountRequiredSteps} />
-                <Input
-                  elementOnly
-                  appearance={{ theme: 'underlined' }}
-                  name="numRequiredSteps"
-                />
-                <FormattedMessage
-                  {...MSG.amountTotalSteps}
-                  values={{ numTotalSteps }}
-                />
+                <span className={styles.requiredStepsInputContainer}>
+                  <Input
+                    label={MSG.labelAmountRequiredSteps}
+                    appearance={{ theme: 'underlined' }}
+                    name="numRequiredSteps"
+                  />
+                </span>
+                <span className={styles.requiredStepsExtensionText}>
+                  <FormattedMessage
+                    {...MSG.amountTotalSteps}
+                    values={{ numTotalSteps }}
+                  />
+                </span>
               </div>
             </>
           )}
