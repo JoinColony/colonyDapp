@@ -124,6 +124,7 @@ fragment ProgramFields on Program {
   levels {
     id
     achievement
+    numRequiredSteps
     programId
     stepIds
     status
