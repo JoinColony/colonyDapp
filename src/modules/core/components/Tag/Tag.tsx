@@ -3,7 +3,7 @@ import { FormattedMessage, MessageDescriptor } from 'react-intl';
 
 import { useMainClasses } from '~utils/hooks';
 
-import styles from './Badge.css';
+import styles from './Tag.css';
 
 interface Appearance {
   theme: 'primary' | 'light';
@@ -15,9 +15,9 @@ interface Props extends HTMLAttributes<HTMLSpanElement> {
   textValues?: { [key: string]: string };
 }
 
-const displayName = 'Badge';
+const displayName = 'Tag';
 
-const Badge = ({
+const Tag = ({
   appearance,
   children,
   className,
@@ -43,6 +43,6 @@ const Badge = ({
   );
 };
 
-Badge.displayName = displayName;
+Tag.displayName = displayName;
 
-export default Badge;
+export default Tag;
