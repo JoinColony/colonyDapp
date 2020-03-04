@@ -3,6 +3,7 @@ import { defineMessages, FormattedMessage } from 'react-intl';
 
 import Button from '~core/Button';
 import Heading from '~core/Heading';
+import Badge from '~core/Badge';
 import { OneLevelWithUnlocked } from '~data/index';
 
 import styles from './ProgramLevelsListItem.css';
@@ -41,7 +42,7 @@ const displayName = 'dashboard.ProgramLevelsList.ProgramLevelsListItem';
 const ProgramLevelsListItem = ({
   index,
   isUserEnrolled,
-  level: { title, unlocked },
+  level: { achievement, title, unlocked },
 }: Props) => {
   const statusText = useMemo(() => {
     if (!unlocked) {
@@ -54,6 +55,7 @@ const ProgramLevelsListItem = ({
   }, [index, isUserEnrolled, unlocked]);
   return (
     <div className={styles.main}>
+      {achievement && title && <Badge name={achievement} title={title} />}
       <div className={styles.content}>
         <Heading
           appearance={{ margin: 'none', size: 'medium' }}
