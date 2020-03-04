@@ -23,16 +23,16 @@ const badgeIcons = badges.map(badgeName => {
 
 const MSG = defineMessages({
   label: {
-    id: 'core.BadgePicker.label',
+    id: 'dashboard.LevelEdit.BadgePicker.label',
     defaultMessage: 'Select Avatar',
   },
   explainer: {
-    id: 'core.BadgePicker.explainer',
+    id: 'dashboard.LevelEdit.BadgePicker.explainer',
     defaultMessage:
       'Users will earn the selected achievement once they complete the level.',
   },
   badgeTitleNone: {
-    id: 'core.BadgePicker.badgeTitleNone',
+    id: 'dashboard.LevelEdit.BadgePicker.badgeTitleNone',
     defaultMessage: 'None',
   },
 });
@@ -41,7 +41,7 @@ interface Props {
   name: string;
 }
 
-const displayName = 'core.BadgePicker';
+const displayName = 'dashboard.LevelEdit.BadgePicker';
 
 const BadgePicker = ({ name }: Props) => {
   const [, { value }, { setValue }] = useField(name);
