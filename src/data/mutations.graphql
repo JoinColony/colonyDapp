@@ -417,20 +417,7 @@ mutation EditPersistentTask($input: EditPersistentTaskInput!) {
     description
     ethDomainId
     ethSkillId
+    ...PersistentTaskPayouts
     title
-  }
-}
-
-mutation SetPersistentTaskPayout($input: SetTaskPayoutInput!) {
-  setPersistentTaskPayout(input: $input) {
-    id
-    ...PersistentTaskPayouts
-  }
-}
-
-mutation RemovePersistentTaskPayout($input: RemoveTaskPayoutInput!) {
-  removePersistentTaskPayout(input: $input) {
-    id
-    ...PersistentTaskPayouts
   }
 }
