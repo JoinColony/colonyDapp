@@ -1,4 +1,6 @@
 export const row: string;
+export const editWrapper: string;
+export const actions: string;
 export const amount: string;
 export const editContainer: string;
 export const selectToken: string;
