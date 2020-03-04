@@ -12,3 +12,8 @@
   flex-basis: 100px;
   text-align: right;
 }
+
+.badgeContainer {
+  display: flex;
+  margin-right: 15px;
+}
