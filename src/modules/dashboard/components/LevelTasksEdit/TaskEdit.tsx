@@ -17,8 +17,6 @@ import {
   useColonyTokensQuery,
   useEditPersistentTaskMutation,
   useRemoveLevelTaskMutation,
-  useRemovePersistentTaskPayoutMutation,
-  useSetPersistentTaskPayoutMutation,
   useLoggedInUser,
 } from '~data/index';
 import { useDataFetcher } from '~utils/hooks';
@@ -163,8 +161,6 @@ const TaskEdit = ({
   );
 
   const [editPersistentTask] = useEditPersistentTaskMutation();
-  const [removePersistentTaskPayout] = useRemovePersistentTaskPayoutMutation();
-  const [setPersistentTaskPayout] = useSetPersistentTaskPayoutMutation();
   const [removeLevelTask] = useRemoveLevelTaskMutation({
     update: cacheUpdates.removeLevelTask(levelId),
     variables: { input: { id: persistentTaskId, levelId } },
@@ -201,42 +197,17 @@ const TaskEdit = ({
             ethDomainId: parseInt(domainId, 10),
             ethSkillId: skillId ? parseInt(skillId, 10) : null,
             id: persistentTaskId,
+            payouts:
+              amountVal && tokenAddressVal
+                ? [{ amount: amountVal, tokenAddress: tokenAddressVal }]
+                : [],
             title: titleVal,
           },
         },
       });
-      if (amountVal !== amount || tokenAddressVal !== tokenAddress) {
-        // Remove the old payout before adding the new, as we currently only support one payout
-        await removePersistentTaskPayout({
-          variables: {
-            input: {
-              id: persistentTaskId,
-              amount,
-              tokenAddress,
-            },
-          },
-        });
-        await setPersistentTaskPayout({
-          variables: {
-            input: {
-              id: persistentTaskId,
-              amount: amountVal,
-              tokenAddress: tokenAddressVal,
-            },
-          },
-        });
-      }
       setIsEditing(val => !val);
     },
-    [
-      amount,
-      editPersistentTask,
-      persistentTaskId,
-      removePersistentTaskPayout,
-      setIsEditing,
-      setPersistentTaskPayout,
-      tokenAddress,
-    ],
+    [editPersistentTask, persistentTaskId, setIsEditing],
   );
 
   if (!colonyTokensData || isFetchingDomains) {
