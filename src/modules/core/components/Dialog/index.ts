@@ -8,4 +8,4 @@ export { default as DialogLink } from './DialogLink';
 
 export { default as useDialog } from './useDialog';
 
-export { Cancel, Close, DialogType } from './types';
+export { DialogProps, DialogType } from './types';
