@@ -1,18 +1,12 @@
 import React, { ReactNode } from 'react';
 
-import { Cancel, Close } from '../Dialog';
+import { DialogProps } from '../Dialog';
 import Modal from '../Modal';
 import Icon from '../Icon';
 import styles from './ActivityBar.css';
 import modalStyles from '../Modal/Modal.css';
 
-interface Props {
-  /** close prop from concrete ActivityBar component */
-  close?: Close;
-
-  /** Needs a cancel prop from concrete ActivityBar component */
-  cancel: Cancel;
-
+interface Props extends DialogProps {
   /** Children that get rendered into ActivityBar content */
   children: ReactNode;
 

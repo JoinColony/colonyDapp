@@ -1,7 +1,7 @@
 import React from 'react';
 import camelcase from 'camelcase';
 
-import Avatar from '~core/Avatar';
+import Avatar, { Props as AvatarProps } from '~core/Avatar';
 
 import styles from './Badge.css';
 
@@ -18,18 +18,19 @@ const badgeIcons = badges.reduce((badgeObj, badgeName) => {
 
 interface Props {
   name: string;
+  size?: AvatarProps['size'];
   title: string;
 }
 
 const displayName = 'Badge';
 
-const Badge = ({ name, title }: Props) => {
+const Badge = ({ name, size = 'm', title }: Props) => {
   const BadgeIcon = badgeIcons[name];
   return (
     <Avatar
       className={styles.main}
       placeholderIcon="question-mark"
-      size="m"
+      size={size}
       title={title}
     >
       <BadgeIcon />
