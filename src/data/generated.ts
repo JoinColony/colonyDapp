@@ -359,6 +359,7 @@ export type EditPersistentTaskInput = {
   ethSkillId?: Maybe<Scalars['Int']>,
   title?: Maybe<Scalars['String']>,
   description?: Maybe<Scalars['String']>,
+  payouts: Array<Payout>,
 };
 
 export type EditProgramInput = {
@@ -505,8 +506,6 @@ export type Mutation = {
   createLevelTask?: Maybe<PersistentTask>,
   removeLevelTask?: Maybe<PersistentTask>,
   editPersistentTask?: Maybe<PersistentTask>,
-  setPersistentTaskPayout?: Maybe<PersistentTask>,
-  removePersistentTaskPayout?: Maybe<PersistentTask>,
   createLevel?: Maybe<Level>,
   editLevel?: Maybe<Level>,
   reorderLevelSteps?: Maybe<Level>,
@@ -712,16 +711,6 @@ export type MutationEditPersistentTaskArgs = {
 };
 
 
-export type MutationSetPersistentTaskPayoutArgs = {
-  input: SetTaskPayoutInput
-};
-
-
-export type MutationRemovePersistentTaskPayoutArgs = {
-  input: RemoveTaskPayoutInput
-};
-
-
 export type MutationCreateLevelArgs = {
   input: CreateLevelInput
 };
@@ -784,6 +773,11 @@ export type Notification = {
   id: Scalars['String'],
   event: Event,
   read: Scalars['Boolean'],
+};
+
+export type Payout = {
+  amount: Scalars['String'],
+  tokenAddress: Scalars['String'],
 };
 
 export type PersistentTask = {
@@ -1282,7 +1276,7 @@ export type SuggestionFieldsFragment = (
 
 export type ProgramFieldsFragment = (
   Pick<Program, 'id' | 'createdAt' | 'creatorAddress' | 'colonyAddress' | 'description' | 'enrolled' | 'enrolledUserAddresses' | 'levelIds' | 'status' | 'title'>
-  & { levels: Array<Pick<Level, 'id' | 'achievement' | 'programId' | 'stepIds' | 'status' | 'title'>> }
+  & { levels: Array<Pick<Level, 'id' | 'achievement' | 'numRequiredSteps' | 'programId' | 'stepIds' | 'status' | 'title'>> }
 );
 
 export type LevelFieldsFragment = Pick<Level, 'id' | 'achievement' | 'createdAt' | 'creatorAddress' | 'description' | 'numRequiredSteps' | 'programId' | 'status' | 'stepIds' | 'title'>;
@@ -2096,6 +2090,7 @@ export const ProgramFieldsFragmentDoc = gql`
   levels {
     id
     achievement
+    numRequiredSteps
     programId
     stepIds
     status
