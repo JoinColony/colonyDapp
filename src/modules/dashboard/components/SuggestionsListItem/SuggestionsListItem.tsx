@@ -1,7 +1,7 @@
 import React, { useCallback } from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 
-import Badge from '~core/Badge';
+import Badge from '~core/Tag';
 import Button from '~core/Button';
 import DropdownMenu, {
   DropdownMenuItem,
