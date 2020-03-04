@@ -1700,25 +1700,8 @@ export type EditPersistentTaskMutationVariables = {
 };
 
 
-export type EditPersistentTaskMutation = { editPersistentTask: Maybe<Pick<PersistentTask, 'id' | 'description' | 'ethDomainId' | 'ethSkillId' | 'title'>> };
-
-export type SetPersistentTaskPayoutMutationVariables = {
-  input: SetTaskPayoutInput
-};
-
-
-export type SetPersistentTaskPayoutMutation = { setPersistentTaskPayout: Maybe<(
-    Pick<PersistentTask, 'id'>
-    & PersistentTaskPayoutsFragment
-  )> };
-
-export type RemovePersistentTaskPayoutMutationVariables = {
-  input: RemoveTaskPayoutInput
-};
-
-
-export type RemovePersistentTaskPayoutMutation = { removePersistentTaskPayout: Maybe<(
-    Pick<PersistentTask, 'id'>
+export type EditPersistentTaskMutation = { editPersistentTask: Maybe<(
+    Pick<PersistentTask, 'id' | 'description' | 'ethDomainId' | 'ethSkillId' | 'title'>
     & PersistentTaskPayoutsFragment
   )> };
 
@@ -3967,10 +3950,11 @@ export const EditPersistentTaskDocument = gql`
     description
     ethDomainId
     ethSkillId
+    ...PersistentTaskPayouts
     title
   }
 }
-    `;
+    ${PersistentTaskPayoutsFragmentDoc}`;
 export type EditPersistentTaskMutationFn = ApolloReactCommon.MutationFunction<EditPersistentTaskMutation, EditPersistentTaskMutationVariables>;
 
 /**
@@ -3996,72 +3980,6 @@ export function useEditPersistentTaskMutation(baseOptions?: ApolloReactHooks.Mut
 export type EditPersistentTaskMutationHookResult = ReturnType<typeof useEditPersistentTaskMutation>;
 export type EditPersistentTaskMutationResult = ApolloReactCommon.MutationResult<EditPersistentTaskMutation>;
 export type EditPersistentTaskMutationOptions = ApolloReactCommon.BaseMutationOptions<EditPersistentTaskMutation, EditPersistentTaskMutationVariables>;
-export const SetPersistentTaskPayoutDocument = gql`
-    mutation SetPersistentTaskPayout($input: SetTaskPayoutInput!) {
-  setPersistentTaskPayout(input: $input) {
-    id
-    ...PersistentTaskPayouts
-  }
-}
-    ${PersistentTaskPayoutsFragmentDoc}`;
-export type SetPersistentTaskPayoutMutationFn = ApolloReactCommon.MutationFunction<SetPersistentTaskPayoutMutation, SetPersistentTaskPayoutMutationVariables>;
-
-/**
- * __useSetPersistentTaskPayoutMutation__
- *
- * To run a mutation, you first call `useSetPersistentTaskPayoutMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useSetPersistentTaskPayoutMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [setPersistentTaskPayoutMutation, { data, loading, error }] = useSetPersistentTaskPayoutMutation({
- *   variables: {
- *      input: // value for 'input'
- *   },
- * });
- */
-export function useSetPersistentTaskPayoutMutation(baseOptions?: ApolloReactHooks.MutationHookOptions<SetPersistentTaskPayoutMutation, SetPersistentTaskPayoutMutationVariables>) {
-        return ApolloReactHooks.useMutation<SetPersistentTaskPayoutMutation, SetPersistentTaskPayoutMutationVariables>(SetPersistentTaskPayoutDocument, baseOptions);
-      }
-export type SetPersistentTaskPayoutMutationHookResult = ReturnType<typeof useSetPersistentTaskPayoutMutation>;
-export type SetPersistentTaskPayoutMutationResult = ApolloReactCommon.MutationResult<SetPersistentTaskPayoutMutation>;
-export type SetPersistentTaskPayoutMutationOptions = ApolloReactCommon.BaseMutationOptions<SetPersistentTaskPayoutMutation, SetPersistentTaskPayoutMutationVariables>;
-export const RemovePersistentTaskPayoutDocument = gql`
-    mutation RemovePersistentTaskPayout($input: RemoveTaskPayoutInput!) {
-  removePersistentTaskPayout(input: $input) {
-    id
-    ...PersistentTaskPayouts
-  }
-}
-    ${PersistentTaskPayoutsFragmentDoc}`;
-export type RemovePersistentTaskPayoutMutationFn = ApolloReactCommon.MutationFunction<RemovePersistentTaskPayoutMutation, RemovePersistentTaskPayoutMutationVariables>;
-
-/**
- * __useRemovePersistentTaskPayoutMutation__
- *
- * To run a mutation, you first call `useRemovePersistentTaskPayoutMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useRemovePersistentTaskPayoutMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [removePersistentTaskPayoutMutation, { data, loading, error }] = useRemovePersistentTaskPayoutMutation({
- *   variables: {
- *      input: // value for 'input'
- *   },
- * });
- */
-export function useRemovePersistentTaskPayoutMutation(baseOptions?: ApolloReactHooks.MutationHookOptions<RemovePersistentTaskPayoutMutation, RemovePersistentTaskPayoutMutationVariables>) {
-        return ApolloReactHooks.useMutation<RemovePersistentTaskPayoutMutation, RemovePersistentTaskPayoutMutationVariables>(RemovePersistentTaskPayoutDocument, baseOptions);
-      }
-export type RemovePersistentTaskPayoutMutationHookResult = ReturnType<typeof useRemovePersistentTaskPayoutMutation>;
-export type RemovePersistentTaskPayoutMutationResult = ApolloReactCommon.MutationResult<RemovePersistentTaskPayoutMutation>;
-export type RemovePersistentTaskPayoutMutationOptions = ApolloReactCommon.BaseMutationOptions<RemovePersistentTaskPayoutMutation, RemovePersistentTaskPayoutMutationVariables>;
 export const TaskDocument = gql`
     query Task($id: String!) {
   task(id: $id) {
