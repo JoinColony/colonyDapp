@@ -55,6 +55,12 @@ const InputComponent = ({
     return (
       <Cleave
         {...props}
+        /*
+         * @NOTE Coerce cleave into handling dynamically changing options
+         * See here for why this isn't yet supported "officially":
+         * https://github.com/nosir/cleave.js/issues/352#issuecomment-447640572
+         */
+        key={JSON.stringify(formattingOptions)}
         className={getMainClasses(appearance, styles)}
         htmlRef={innerRef}
         options={formattingOptions}
