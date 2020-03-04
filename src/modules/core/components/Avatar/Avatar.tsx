@@ -43,13 +43,6 @@ const Avatar = ({
   title,
 }: Props) => {
   const avatar = notSet ? null : avatarURL || getIcon(seed || title);
-  const imageStyle: CSSProperties = avatar
-    ? {
-        backgroundImage: `url(${avatar})`,
-        // if using a blockie, do pixelated image scaling
-        imageRendering: avatarURL ? undefined : 'pixelated',
-      }
-    : {};
   const mainClass = size ? styles[size] : styles.main;
   if (children) {
     return (
@@ -62,6 +55,13 @@ const Avatar = ({
     );
   }
 
+  const imageStyle: CSSProperties = avatar
+    ? {
+        backgroundImage: `url(${avatar})`,
+        // if using a blockie, do pixelated image scaling
+        imageRendering: avatarURL ? undefined : 'pixelated',
+      }
+    : {};
   return (
     <figure
       className={className ? `${mainClass} ${className}` : mainClass}
