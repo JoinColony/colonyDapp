@@ -1297,7 +1297,7 @@ export type SuggestionFieldsFragment = (
 
 export type ProgramFieldsFragment = (
   Pick<Program, 'id' | 'createdAt' | 'creatorAddress' | 'colonyAddress' | 'description' | 'enrolled' | 'enrolledUserAddresses' | 'levelIds' | 'status' | 'title'>
-  & { levels: Array<Pick<Level, 'id' | 'achievement' | 'programId' | 'stepIds' | 'status' | 'title'>> }
+  & { levels: Array<Pick<Level, 'id' | 'achievement' | 'numRequiredSteps' | 'programId' | 'stepIds' | 'status' | 'title'>> }
 );
 
 export type LevelFieldsFragment = Pick<Level, 'id' | 'achievement' | 'createdAt' | 'creatorAddress' | 'description' | 'numRequiredSteps' | 'programId' | 'status' | 'stepIds' | 'title'>;
@@ -2166,6 +2166,7 @@ export const ProgramFieldsFragmentDoc = gql`
   levels {
     id
     achievement
+    numRequiredSteps
     programId
     stepIds
     status
