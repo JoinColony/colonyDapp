@@ -6,7 +6,7 @@ import { useMainClasses } from '~utils/hooks';
 import styles from './Tag.css';
 
 interface Appearance {
-  theme: 'primary' | 'light';
+  theme: 'primary' | 'light' | 'golden';
 }
 
 interface Props extends HTMLAttributes<HTMLSpanElement> {
