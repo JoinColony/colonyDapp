@@ -359,6 +359,7 @@ export type EditPersistentTaskInput = {
   ethSkillId?: Maybe<Scalars['Int']>,
   title?: Maybe<Scalars['String']>,
   description?: Maybe<Scalars['String']>,
+  payouts: Array<Payout>,
 };
 
 export type EditProgramInput = {
@@ -505,8 +506,6 @@ export type Mutation = {
   createLevelTask?: Maybe<PersistentTask>,
   removeLevelTask?: Maybe<PersistentTask>,
   editPersistentTask?: Maybe<PersistentTask>,
-  setPersistentTaskPayout?: Maybe<PersistentTask>,
-  removePersistentTaskPayout?: Maybe<PersistentTask>,
   createLevel?: Maybe<Level>,
   editLevel?: Maybe<Level>,
   reorderLevelSteps?: Maybe<Level>,
@@ -712,16 +711,6 @@ export type MutationEditPersistentTaskArgs = {
 };
 
 
-export type MutationSetPersistentTaskPayoutArgs = {
-  input: SetTaskPayoutInput
-};
-
-
-export type MutationRemovePersistentTaskPayoutArgs = {
-  input: RemoveTaskPayoutInput
-};
-
-
 export type MutationCreateLevelArgs = {
   input: CreateLevelInput
 };
@@ -784,6 +773,11 @@ export type Notification = {
   id: Scalars['String'],
   event: Event,
   read: Scalars['Boolean'],
+};
+
+export type Payout = {
+  amount: Scalars['String'],
+  tokenAddress: Scalars['String'],
 };
 
 export type PersistentTask = {
@@ -1636,7 +1630,10 @@ export type CreateLevelMutationVariables = {
 };
 
 
-export type CreateLevelMutation = { createLevel: Maybe<LevelFieldsFragment> };
+export type CreateLevelMutation = { createLevel: Maybe<(
+    Pick<Level, 'unlocked'>
+    & LevelFieldsFragment
+  )> };
 
 export type EditLevelMutationVariables = {
   input: EditLevelInput
@@ -3639,6 +3636,7 @@ export const CreateLevelDocument = gql`
     mutation CreateLevel($input: CreateLevelInput!) {
   createLevel(input: $input) {
     ...LevelFields
+    unlocked
   }
 }
     ${LevelFieldsFragmentDoc}`;

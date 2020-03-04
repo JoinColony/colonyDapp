@@ -377,6 +377,7 @@ mutation EnrollInProgram($input: EnrollInProgramInput!) {
 mutation CreateLevel($input: CreateLevelInput!) {
   createLevel(input: $input) {
     ...LevelFields
+    unlocked
   }
 }
 
