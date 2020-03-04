@@ -4,7 +4,7 @@ import getIcon from '../../../../lib/identicon';
 import Icon from '../Icon';
 import styles from './Avatar.css';
 
-interface Props {
+export interface Props {
   /** Seed phrase for blockies fallback (usually an address) */
   seed?: string;
 

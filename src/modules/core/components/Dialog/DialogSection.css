@@ -8,6 +8,10 @@
   text-align: right;
 }
 
+.alignCenter {
+  text-align: center;
+}
+
 .borderNone {
   border-color: transparent;
 }
