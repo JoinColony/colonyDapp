@@ -13,6 +13,21 @@
   align-items: baseline;
 }
 
+.numRequiredStepsText {
+  composes: field from '~styles/fields.css';
+}
+
 .numRequiredStepsInput {
   composes: field from '~styles/fields.css';
+  display: flex;
+  align-items: flex-end;
+}
+
+.requiredStepsInputContainer {
+  display: inline-block;
+}
+
+.requiredStepsExtensionText {
+  padding: 0 0 15px 15px;
+  font-size: var(--size-medium-l);
 }
