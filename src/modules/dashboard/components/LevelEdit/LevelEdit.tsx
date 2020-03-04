@@ -68,6 +68,8 @@ const validationSchema = yup.object({
     .max(yup.ref('numTotalSteps'), () => MSG.errorValidateNumStepsMax),
 });
 
+const displayName = 'dashboard.LevelEdit';
+
 const LevelEdit = () => {
   const { colonyName, levelId, programId } = useParams();
 
@@ -189,5 +191,7 @@ const LevelEdit = () => {
     </CenteredTemplate>
   );
 };
+
+LevelEdit.displayName = displayName;
 
 export default LevelEdit;
