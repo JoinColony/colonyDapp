@@ -58,7 +58,11 @@ const ProgramLevelsListItem = ({
   }, [index, isUserEnrolled, unlocked]);
   return (
     <div className={styles.main}>
-      {achievement && title && <Badge name={achievement} title={title} />}
+      {achievement && title && (
+        <div className={styles.badgeContainer}>
+          <Badge name={achievement} title={title} />
+        </div>
+      )}
       <div className={styles.content}>
         <Heading
           appearance={{ margin: 'none', size: 'medium' }}
