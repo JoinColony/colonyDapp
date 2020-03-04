@@ -7,8 +7,7 @@ import { DEFAULT_TOKEN_DECIMALS } from '~constants';
 import Button from '~core/Button';
 import EthUsd from '~core/EthUsd';
 import Heading from '~core/Heading';
-import Input from '~core/Fields/Input';
-import Select from '~core/Fields/Select';
+import { AmountTokens } from '~core/Fields';
 import Numeral from '~core/Numeral';
 import { AnyToken } from '~data/index';
 
@@ -43,7 +42,7 @@ interface Props {
   remove?: () => void;
   reputation?: number;
   reset?: () => void;
-  tokens?: AnyToken[];
+  tokens: AnyToken[];
 }
 
 const displayName = 'dashboard.TaskEditDialog.Payout';
@@ -72,57 +71,35 @@ const Payout = ({
   const isEth = useMemo(() => selectedToken && tokenIsETH(selectedToken), [
     selectedToken,
   ]);
-  const tokenOptions =
-    (tokens &&
-      tokens.map(({ address, symbol }) => ({
-        value: address,
-        label: symbol || MSG.unknownToken,
-      }))) ||
-    [];
 
   const { symbol = '', decimals = DEFAULT_TOKEN_DECIMALS } =
     (selectedToken && selectedToken) || {};
 
   return (
     <div>
-      <div hidden={!isEditing}>
-        <div className={styles.row}>
-          <Heading
-            appearance={{ size: 'small', margin: 'small' }}
-            text={{ id: 'label.amount' }}
-          />
-          <span>
-            {canRemove && (
-              <Button
-                appearance={{ theme: 'blue', size: 'small' }}
-                text={{ id: 'button.remove' }}
-                onClick={remove}
-              />
-            )}
+      <div className={styles.editWrapper} hidden={!isEditing}>
+        <div className={styles.actions}>
+          {canRemove && (
             <Button
               appearance={{ theme: 'blue', size: 'small' }}
-              text={{ id: 'button.cancel' }}
-              onClick={exitEditAndCancel}
+              text={{ id: 'button.remove' }}
+              onClick={remove}
             />
-          </span>
+          )}
+          <Button
+            appearance={{ theme: 'blue', size: 'small' }}
+            text={{ id: 'button.cancel' }}
+            onClick={exitEditAndCancel}
+          />
         </div>
         <div className={styles.editContainer}>
-          <div className={styles.setAmount}>
-            <Input
-              appearance={{ theme: 'minimal', align: 'right' }}
-              elementOnly
-              label={{ id: 'label.amount' }}
-              name={`${name}.amount`}
-              formattingOptions={{
-                delimiter: ',',
-                numeral: true,
-                numeralDecimalScale: decimals,
-              }}
-            />
-          </div>
-          <div className={styles.selectToken}>
-            <Select elementOnly options={tokenOptions} name={`${name}.token`} />
-          </div>
+          <AmountTokens
+            label={{ id: 'label.amount' }}
+            nameAmount={`${name}.amount`}
+            nameToken={`${name}.token`}
+            tokens={tokens}
+            selectedTokenAddress={token}
+          />
         </div>
       </div>
       <div hidden={isEditing}>

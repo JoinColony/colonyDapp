@@ -4,6 +4,17 @@
   margin-top: 8px;
 }
 
+.editWrapper {
+  padding-top: 10px;
+  position: relative;
+}
+
+.actions {
+  position: absolute;
+  top: 0;
+  right: 0;
+}
+
 .amount {
   padding-right: 5px;
   font-size: var(--size-medium-l);
