@@ -16,6 +16,7 @@ import { FormStatus, Form } from '~core/Fields';
 import { FullscreenDialog } from '~core/Dialog';
 import DialogSection from '~core/Dialog/DialogSection';
 import Heading from '~core/Heading';
+import { SpinnerLoader } from '~core/Preloaders';
 import Payout, { FormPayout } from '~dashboard/TaskEditDialog/Payout';
 import DialogBox from '~core/Dialog/DialogBox';
 
@@ -79,6 +80,10 @@ const TaskInviteDialog = ({
   const { data: colonyData } = useColonyTokensQuery({
     variables: { address: colonyAddress },
   });
+
+  if (!colonyData) {
+    return <SpinnerLoader />;
+  }
 
   const tokens = colonyData && colonyData.colony.tokens;
   const nativeTokenAddress =
