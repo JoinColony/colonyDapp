@@ -56,7 +56,11 @@ const LevelsListItem = ({
           </div>
         </div>
       )}
-      {achievement && title && <Badge name={achievement} title={title} />}
+      {achievement && title && (
+        <div className={styles.badgeContainer}>
+          <Badge name={achievement} title={title} />
+        </div>
+      )}
       <div className={styles.itemContentContainer}>
         <Heading
           appearance={{ margin: 'none', size: 'medium' }}
