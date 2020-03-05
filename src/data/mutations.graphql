@@ -397,3 +397,27 @@ mutation ReorderProgramLevels($input: ReorderProgramLevelsInput!) {
     }
   }
 }
+
+mutation CreateLevelTask($input: CreateLevelTaskInput!) {
+  createLevelTask(input: $input) {
+    ...PersistentTaskFields
+  }
+}
+
+mutation RemoveLevelTask($input: RemoveLevelTaskInput!) {
+  removeLevelTask(input: $input) {
+    id
+    status
+  }
+}
+
+mutation EditPersistentTask($input: EditPersistentTaskInput!) {
+  editPersistentTask(input: $input) {
+    id
+    description
+    ethDomainId
+    ethSkillId
+    ...PersistentTaskPayouts
+    title
+  }
+}

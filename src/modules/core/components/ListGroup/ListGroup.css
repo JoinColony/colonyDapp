@@ -10,16 +10,16 @@
   border-top: 1px solid var(--grey-blue-1);
 }
 
-.main li {
+.main > li {
   background-color: var(--colony-white);
 }
 
-.main li:first-of-type {
+.main > li:first-of-type {
   border-top-left-radius: var(--radius-large);
   border-top-right-radius: var(--radius-large);
 }
 
-.main li:last-of-type {
+.main > li:last-of-type {
   border-bottom-left-radius: var(--radius-large);
   border-bottom-right-radius: var(--radius-large);
 }
@@ -28,11 +28,11 @@
   box-shadow: none;
 }
 
-.main.gapsTrue li {
+.main.gapsTrue > li {
   border-radius: var(--radius-large);
   box-shadow: groupBoxShadow;
 }
 
-.gapsTrue li + li {
+.gapsTrue > li + li {
   margin-top: 10px;
 }

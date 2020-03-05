@@ -238,6 +238,13 @@ query ColonyTokens($address: String!) {
   }
 }
 
+query ColonyNativeToken($address: String!) {
+  colony(address: $address) {
+    id
+    nativeTokenAddress
+  }
+}
+
 query TokenBalancesForDomains($colonyAddress: String!, $tokenAddresses: [String!]!, $domainIds: [Int!]) {
   tokens(addresses: $tokenAddresses) @client {
     id
@@ -327,6 +334,7 @@ query ProgramLevels($id: String!) {
 query Level($id: String!) {
   level(id: $id) {
     ...LevelFields
+    unlocked
   }
 }
 
@@ -337,6 +345,15 @@ query ProgramLevelsWithUnlocked($id: String!) {
     levels {
       ...LevelFields
       unlocked
+    }
+  }
+}
+
+query LevelTasks($id: String!) {
+  level(id: $id) {
+    id
+    steps {
+      ...PersistentTaskFields
     }
   }
 }

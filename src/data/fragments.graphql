@@ -12,6 +12,20 @@ fragment Payouts on Task {
   }
 }
 
+fragment PersistentTaskPayouts on PersistentTask {
+  payouts {
+    amount
+    tokenAddress
+    token @client {
+      id
+      address
+      decimals
+      name
+      symbol
+    }
+  }
+}
+
 fragment CreateTaskFields on Task {
   id
   ...Payouts
@@ -130,6 +144,32 @@ fragment LevelFields on Level {
   programId
   status
   stepIds
+  title
+}
+
+fragment SubmissionFields on Submission {
+  id
+  createdAt
+  creatorAddress
+  persistentTaskId
+  status
+  statusChangedAt
+  submission
+}
+
+fragment PersistentTaskFields on PersistentTask {
+  id
+  colonyAddress
+  createdAt
+  creatorAddress
+  description
+  ethDomainId
+  ethSkillId
+  ...PersistentTaskPayouts
+  status
+  submissions {
+    ...SubmissionFields
+  }
   title
 }
 

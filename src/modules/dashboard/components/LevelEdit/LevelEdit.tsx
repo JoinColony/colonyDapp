@@ -5,11 +5,12 @@ import * as yup from 'yup';
 import { FormikProps } from 'formik';
 
 import Button from '~core/Button';
-import Heading from '~core/Heading';
 import { Form, Input, InputLabel, Textarea, FormStatus } from '~core/Fields';
+import Heading from '~core/Heading';
 import { SpinnerLoader } from '~core/Preloaders';
-import CenteredTemplate from '~pages/CenteredTemplate';
+import LevelTasksEdit from '~dashboard/LevelTasksEdit';
 import { useLevelQuery, useEditLevelMutation } from '~data/index';
+import CenteredTemplate from '~pages/CenteredTemplate';
 
 import BadgePicker from './BadgePicker';
 
@@ -190,6 +191,7 @@ const LevelEdit = () => {
             </>
           )}
         </Form>
+        <LevelTasksEdit levelId={levelId} />
       </div>
     </CenteredTemplate>
   );
