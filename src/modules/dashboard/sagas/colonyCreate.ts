@@ -4,6 +4,7 @@ import { Channel } from 'redux-saga';
 import { all, call, fork, put } from 'redux-saga/effects';
 
 import { Context, getContext } from '~context/index';
+import { DEFAULT_TOKEN_DECIMALS } from '~constants';
 import {
   getLoggedInUser,
   refetchUserNotifications,
@@ -54,8 +55,6 @@ function* colonyCreate({
   );
 
   const { networkClient } = yield getContext(Context.COLONY_MANAGER);
-
-  const TOKEN_DECIMALS = 18;
 
   /*
    * Define a manifest of transaction ids and their respective channels.
@@ -137,7 +136,7 @@ function* colonyCreate({
         params: {
           name: tokenName,
           symbol: tokenSymbol,
-          decimals: TOKEN_DECIMALS,
+          decimals: DEFAULT_TOKEN_DECIMALS,
         },
       });
     }
@@ -308,7 +307,7 @@ function* colonyCreate({
           tokenName,
           tokenSymbol,
           tokenIconHash: tokenIcon,
-          tokenDecimals: TOKEN_DECIMALS,
+          tokenDecimals: DEFAULT_TOKEN_DECIMALS,
         },
       },
       update: cache => {

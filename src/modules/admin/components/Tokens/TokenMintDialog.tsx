@@ -11,6 +11,7 @@ import Heading from '~core/Heading';
 import { ColonyTokens } from '~data/index';
 
 import TokenMintForm from './TokenMintForm';
+import { DEFAULT_TOKEN_DECIMALS } from '~constants';
 
 import styles from '~admin/Tokens/TokenMintDialog.css';
 
@@ -86,7 +87,7 @@ const TokenMintDialog = ({
                   formattingOptions={{
                     numeral: true,
                     numeralPositiveOnly: true,
-                    numeralDecimalScale: decimals || 18,
+                    numeralDecimalScale: decimals || DEFAULT_TOKEN_DECIMALS,
                   }}
                   label={MSG.amountLabel}
                   name="mintAmount"

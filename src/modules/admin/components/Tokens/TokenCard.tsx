@@ -11,6 +11,7 @@ import { ColonyTokens, UserTokens } from '~data/index';
 import { getBalanceFromToken } from '~utils/tokens';
 
 import { tokenIsETH, tokenBalanceIsNotPositive } from '../../../core/checks';
+import { DEFAULT_TOKEN_DECIMALS } from '~constants';
 
 import styles from './TokenCard.css';
 
@@ -67,7 +68,7 @@ const TokenCard = ({ domainId, nativeTokenAddress, token }: Props) => {
         <Numeral
           className={styles.balanceNumeral}
           integerSeparator=""
-          unit={token.decimals ? token.decimals : 18}
+          unit={token.decimals ? token.decimals : DEFAULT_TOKEN_DECIMALS}
           value={balance || 0}
         />
       </div>

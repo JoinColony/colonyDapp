@@ -29,6 +29,7 @@ import { transformNotificationEventNames } from '../events';
 
 import styles from './InboxItem.css';
 import MSG from '../messages';
+import { DEFAULT_TOKEN_DECIMALS } from '~constants';
 
 const UserAvatar = HookedUserAvatar();
 
@@ -215,7 +216,7 @@ const InboxItem = ({
                     <Numeral
                       suffix={` ${token ? token.symbol : ''}`}
                       integerSeparator=""
-                      unit={(token && token.decimals) || 18}
+                      unit={(token && token.decimals) || DEFAULT_TOKEN_DECIMALS}
                       value={value}
                     />
                   )),
@@ -299,7 +300,7 @@ const InboxItem = ({
                   <Numeral
                     suffix={` ${token ? token.symbol : ''}`}
                     integerSeparator=""
-                    unit={(token && token.decimals) || 18}
+                    unit={(token && token.decimals) || DEFAULT_TOKEN_DECIMALS}
                     value={amount}
                     appearance={{ size: 'small', theme: 'grey' }}
                   />

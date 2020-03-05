@@ -3,7 +3,7 @@ import { defineMessages, FormattedMessage, useIntl } from 'react-intl';
 import BigNumber from 'bn.js';
 import moveDecimal from 'move-decimal-point';
 
-import { ROOT_DOMAIN } from '~constants';
+import { ROOT_DOMAIN, DEFAULT_TOKEN_DECIMALS } from '~constants';
 import { Address } from '~types/index';
 import TimeRelative from '~core/TimeRelative';
 import Numeral from '~core/Numeral';
@@ -231,7 +231,7 @@ const TaskFeedEventPayoutSet = ({
   const { data: colonyData } = useColonyQuery({
     variables: { address: colonyAddress },
   });
-  const { decimals = 18, symbol = '', address = '' } =
+  const { decimals = DEFAULT_TOKEN_DECIMALS, symbol = '', address = '' } =
     (tokenData && tokenData.token) || {};
   const { nativeTokenAddress = '' } = (colonyData && colonyData.colony) || {};
   return (
@@ -247,8 +247,12 @@ const TaskFeedEventPayoutSet = ({
             <span className={styles.highlightNumeral}>
               <Numeral
                 integerSeparator=""
-                unit={decimals || 18}
-                value={new BigNumber(moveDecimal(amount, decimals || 18))}
+                unit={decimals || DEFAULT_TOKEN_DECIMALS}
+                value={
+                  new BigNumber(
+                    moveDecimal(amount, decimals || DEFAULT_TOKEN_DECIMALS),
+                  )
+                }
                 suffix={` ${symbol}`}
               />
             </span>
