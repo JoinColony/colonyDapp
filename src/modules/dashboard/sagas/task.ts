@@ -7,14 +7,8 @@ import { Context, getContext } from '~context/index';
 import {
   CreateTaskDocument,
   CreateTaskMutationResult,
-  FinalizeTaskDocument,
-  TaskDocument,
   CreateTaskMutation,
   CreateTaskMutationVariables,
-  TaskQuery,
-  TaskQueryVariables,
-  FinalizeTaskMutation,
-  FinalizeTaskMutationVariables,
   cacheUpdates,
   TokenBalancesForDomainsDocument,
   TokenBalancesForDomainsQuery,
@@ -77,7 +71,14 @@ function* taskCreate({
  * As manager, finalize task (`completeTask` group)
  */
 function* taskFinalize({
-  payload: { colonyAddress, draftId },
+  payload: {
+    colonyAddress,
+    draftId,
+    workerAddress,
+    domainId,
+    skillId,
+    payouts,
+  },
   meta,
 }: Action<ActionTypes.TASK_FINALIZE>) {
   try {
@@ -85,20 +86,9 @@ function* taskFinalize({
       Context.APOLLO_CLIENT,
     );
 
-    const {
-      data: { task },
-    } = yield apolloClient.query<TaskQuery, TaskQueryVariables>({
-      query: TaskDocument,
-      variables: {
-        id: draftId,
-      },
-    });
-
-    const { assignedWorker, ethDomainId, ethSkillId, payouts } = task;
-
-    if (!assignedWorker)
+    if (!workerAddress)
       throw new Error(`Worker not assigned for task ${draftId}`);
-    if (!ethDomainId) throw new Error(`Domain not set for task ${draftId}`);
+    if (!domainId) throw new Error(`Domain not set for task ${draftId}`);
     if (!payouts.length) throw new Error(`No payout set for task ${draftId}`);
     const {
       amount,
@@ -111,11 +101,11 @@ function* taskFinalize({
       methodName: 'makePaymentFundedFromDomain',
       identifier: colonyAddress,
       params: {
-        recipient: assignedWorker.id,
+        recipient: workerAddress,
         token,
         amount: new BigNumber(moveDecimal(amount, decimals)),
-        domainId: ethDomainId,
-        skillId: ethSkillId || 0,
+        domainId,
+        skillId: skillId || 0,
       },
     });
 
@@ -126,19 +116,6 @@ function* taskFinalize({
         eventData: { potId },
       },
     } = yield takeFrom(txChannel, ActionTypes.TRANSACTION_SUCCEEDED);
-
-    yield apolloClient.mutate<
-      FinalizeTaskMutation,
-      FinalizeTaskMutationVariables
-    >({
-      mutation: FinalizeTaskDocument,
-      variables: {
-        input: {
-          id: draftId,
-          ethPotId: potId,
-        },
-      },
-    });
 
     // Refetch token balances for the domains involved
     yield apolloClient.query<
@@ -152,7 +129,7 @@ function* taskFinalize({
         /*
          * @NOTE Also update the value in "All Domains"
          */
-        domainIds: [COLONY_TOTAL_BALANCE_DOMAIN_ID, ethDomainId],
+        domainIds: [COLONY_TOTAL_BALANCE_DOMAIN_ID, domainId],
       },
       // Force resolvers to update, as query resolvers are only updated on a cache miss
       // See #4: https://www.apollographql.com/docs/link/links/state/#resolvers
@@ -162,6 +139,8 @@ function* taskFinalize({
 
     yield put<AllActions>({
       type: ActionTypes.TASK_FINALIZE_SUCCESS,
+      payload: { potId, draftId },
+      meta,
     });
   } catch (error) {
     return yield putError(ActionTypes.TASK_FINALIZE_ERROR, error, meta);
