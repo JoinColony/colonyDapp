@@ -1,4 +1,4 @@
-import React, { useCallback, InputHTMLAttributes } from 'react';
+import React, { useCallback, InputHTMLAttributes, useMemo } from 'react';
 import Cleave from 'cleave.js/react';
 import { CleaveOptions } from 'cleave.js/options';
 import { ChangeEvent } from 'cleave.js/react/props';
@@ -50,17 +50,21 @@ const InputComponent = ({
     },
     [onChange],
   );
+  /*
+   * @NOTE Coerce cleave into handling dynamically changing options
+   * See here for why this isn't yet supported "officially":
+   * https://github.com/nosir/cleave.js/issues/352#issuecomment-447640572
+   */
+  const dynamicCleaveOptionKey = useMemo(
+    () => JSON.stringify(formattingOptions),
+    [formattingOptions],
+  );
 
   if (formattingOptions) {
     return (
       <Cleave
         {...props}
-        /*
-         * @NOTE Coerce cleave into handling dynamically changing options
-         * See here for why this isn't yet supported "officially":
-         * https://github.com/nosir/cleave.js/issues/352#issuecomment-447640572
-         */
-        key={JSON.stringify(formattingOptions)}
+        key={dynamicCleaveOptionKey}
         className={getMainClasses(appearance, styles)}
         htmlRef={innerRef}
         options={formattingOptions}
