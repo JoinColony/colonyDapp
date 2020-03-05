@@ -10,12 +10,11 @@ import { Address } from '~types/index';
 import {
   AnyTask,
   Payouts,
-  Domain,
   useTokenBalancesForDomainsQuery,
+  useFinalizeTaskMutation,
 } from '~data/index';
 import { ActionTypes } from '~redux/index';
 import { useAsyncFunction } from '~utils/hooks';
-import { mergePayload } from '~utils/actions';
 import { bnLessThan } from '~utils/numbers';
 
 const MSG = defineMessages({
@@ -30,15 +29,19 @@ const displayName = 'dashboard.TaskFinalize';
 interface Props {
   draftId: AnyTask['id'];
   colonyAddress: Address;
-  ethDomainId: Domain['ethDomainId'];
+  ethDomainId: AnyTask['ethDomainId'];
+  ethSkillId: AnyTask['ethSkillId'];
   payouts: Payouts;
+  workerAddress: AnyTask['assignedWorkerAddress'];
 }
 
 const TaskFinalize = ({
   draftId,
   colonyAddress,
   ethDomainId,
+  ethSkillId,
   payouts,
+  workerAddress,
 }: Props) => {
   const [isLoading, setIsLoading] = useState(false);
   const openDialog = useDialog(TaskFinalizeDialog);
@@ -51,19 +54,12 @@ const TaskFinalize = ({
       domainIds: [ethDomainId],
     },
   });
+  const [finalizeTaskMutation] = useFinalizeTaskMutation();
 
-  const transform = useCallback(
-    mergePayload({
-      colonyAddress,
-      draftId,
-    }),
-    [colonyAddress, draftId],
-  );
   const finalizeTask = useAsyncFunction({
     submit: ActionTypes.TASK_FINALIZE,
     error: ActionTypes.TASK_FINALIZE_ERROR,
     success: ActionTypes.TASK_FINALIZE_SUCCESS,
-    transform,
   });
 
   const handleOnClick = useCallback(async () => {
@@ -92,12 +88,38 @@ const TaskFinalize = ({
           .afterClosed()
           .then(() => setIsLoading(false), () => setIsLoading(false));
       }
-      await finalizeTask({});
+
+      const { potId } = (await finalizeTask({
+        colonyAddress,
+        domainId: ethDomainId,
+        draftId,
+        payouts,
+        skillId: ethSkillId,
+        workerAddress,
+      })) as {
+        draftId: string;
+        potId: number;
+      };
+      await finalizeTaskMutation({
+        variables: { input: { id: draftId, ethPotId: potId } },
+      });
       return setIsLoading(false);
     } catch (error) {
+      console.error(error);
       return setIsLoading(false);
     }
-  }, [finalizeTask, openDialog, payouts, tokenBalances]);
+  }, [
+    colonyAddress,
+    draftId,
+    ethDomainId,
+    ethSkillId,
+    finalizeTask,
+    finalizeTaskMutation,
+    openDialog,
+    payouts,
+    tokenBalances,
+    workerAddress,
+  ]);
 
   return (
     <Button
