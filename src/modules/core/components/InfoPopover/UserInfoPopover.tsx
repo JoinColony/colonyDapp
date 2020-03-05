@@ -12,7 +12,7 @@ interface Props {
   user: AnyUser;
 }
 
-const displayName = 'core.InfoPopover.UserInfoPopover';
+const displayName = 'InfoPopover.UserInfoPopover';
 
 const UserInfoPopover = ({ user }: Props) => {
   const {
