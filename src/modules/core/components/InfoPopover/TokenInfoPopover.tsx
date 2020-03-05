@@ -10,11 +10,11 @@ import styles from './InfoPopover.css';
 
 const MSG = defineMessages({
   nativeTokenMessage: {
-    id: 'InfoPopover.nativeTokenMessage',
+    id: 'InfoPopover.TokenInfoPopover.nativeTokenMessage',
     defaultMessage: "*This is the colony's native token",
   },
   viewOnEtherscan: {
-    id: 'InfoPopover.viewOnEtherscan',
+    id: 'InfoPopover.TokenInfoPopover.viewOnEtherscan',
     defaultMessage: 'View on Etherscan',
   },
 });
@@ -24,7 +24,7 @@ interface Props {
   isTokenNative: boolean;
 }
 
-const displayName = 'core.InfoPopover.TokenInfoPopover';
+const displayName = 'InfoPopover.TokenInfoPopover';
 
 const TokenInfoPopover = ({ token, isTokenNative }: Props) => {
   const { name, symbol, address } = token;
