@@ -425,6 +425,17 @@ query UserNotifications($address: String!) {
   }
 }
 
+query UserBadges($address: String!) {
+  user(address: $address) {
+    id
+    completedLevels {
+      id
+      achievement
+      title
+    }
+  }
+}
+
 query SystemInfo {
   systemInfo {
     version
