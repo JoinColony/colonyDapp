@@ -334,6 +334,7 @@ query ProgramLevels($id: String!) {
 query Level($id: String!) {
   level(id: $id) {
     ...LevelFields
+    unlocked
   }
 }
 
@@ -345,13 +346,6 @@ query ProgramLevelsWithUnlocked($id: String!) {
       ...LevelFields
       unlocked
     }
-  }
-}
-
-query Level($id: String!) {
-  level(id: $id) {
-    ...LevelFields
-    unlocked
   }
 }
 
