@@ -11,9 +11,8 @@ const displayName = 'dashboard.LevelDashboard';
 
 const LevelDashboard = () => {
   const { levelId, programId } = useParams();
-  const {
-    state: { showWelcomeMessage } = { showWelcomeMessage: false },
-  } = useLocation();
+  const { state } = useLocation();
+  const showWelcomeMessage = (state && state.showWelcomeMessage) || false;
   const openDialog = useDialog(LevelWelcomeDialog);
   const { data: levelData, loading: levelLoading } = useLevelQuery({
     variables: { id: levelId },
