@@ -1234,6 +1234,7 @@ export type User = {
   taskIds: Array<Scalars['String']>,
   tokenAddresses: Array<Scalars['String']>,
   notifications: Array<Notification>,
+  completedLevels: Array<Level>,
   tokens: Array<Token>,
 };
 
@@ -2039,6 +2040,16 @@ export type UserNotificationsQuery = { user: (
         & EventContextFragment
       ) }
     )> }
+  ) };
+
+export type UserBadgesQueryVariables = {
+  address: Scalars['String']
+};
+
+
+export type UserBadgesQuery = { user: (
+    Pick<User, 'id'>
+    & { completedLevels: Array<Pick<Level, 'id' | 'achievement' | 'title'>> }
   ) };
 
 export type SystemInfoQueryVariables = {};
@@ -5284,6 +5295,44 @@ export function useUserNotificationsLazyQuery(baseOptions?: ApolloReactHooks.Laz
 export type UserNotificationsQueryHookResult = ReturnType<typeof useUserNotificationsQuery>;
 export type UserNotificationsLazyQueryHookResult = ReturnType<typeof useUserNotificationsLazyQuery>;
 export type UserNotificationsQueryResult = ApolloReactCommon.QueryResult<UserNotificationsQuery, UserNotificationsQueryVariables>;
+export const UserBadgesDocument = gql`
+    query UserBadges($address: String!) {
+  user(address: $address) {
+    id
+    completedLevels {
+      id
+      achievement
+      title
+    }
+  }
+}
+    `;
+
+/**
+ * __useUserBadgesQuery__
+ *
+ * To run a query within a React component, call `useUserBadgesQuery` and pass it any options that fit your needs.
+ * When your component renders, `useUserBadgesQuery` returns an object from Apollo Client that contains loading, error, and data properties 
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useUserBadgesQuery({
+ *   variables: {
+ *      address: // value for 'address'
+ *   },
+ * });
+ */
+export function useUserBadgesQuery(baseOptions?: ApolloReactHooks.QueryHookOptions<UserBadgesQuery, UserBadgesQueryVariables>) {
+        return ApolloReactHooks.useQuery<UserBadgesQuery, UserBadgesQueryVariables>(UserBadgesDocument, baseOptions);
+      }
+export function useUserBadgesLazyQuery(baseOptions?: ApolloReactHooks.LazyQueryHookOptions<UserBadgesQuery, UserBadgesQueryVariables>) {
+          return ApolloReactHooks.useLazyQuery<UserBadgesQuery, UserBadgesQueryVariables>(UserBadgesDocument, baseOptions);
+        }
+export type UserBadgesQueryHookResult = ReturnType<typeof useUserBadgesQuery>;
+export type UserBadgesLazyQueryHookResult = ReturnType<typeof useUserBadgesLazyQuery>;
+export type UserBadgesQueryResult = ApolloReactCommon.QueryResult<UserBadgesQuery, UserBadgesQueryVariables>;
 export const SystemInfoDocument = gql`
     query SystemInfo {
   systemInfo {
