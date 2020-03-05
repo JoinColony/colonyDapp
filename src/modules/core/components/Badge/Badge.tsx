@@ -1,45 +1,40 @@
-import React, { HTMLAttributes } from 'react';
-import { FormattedMessage, MessageDescriptor } from 'react-intl';
+import React from 'react';
+import camelcase from 'camelcase';
 
-import { useMainClasses } from '~utils/hooks';
+import Avatar, { Props as AvatarProps } from '~core/Avatar';
 
 import styles from './Badge.css';
 
-interface Appearance {
-  theme: 'primary' | 'light';
-}
+import { badges } from '../../../../img/icons.json';
 
-interface Props extends HTMLAttributes<HTMLSpanElement> {
-  appearance?: Appearance;
-  text?: MessageDescriptor | string;
-  textValues?: { [key: string]: string };
+const badgeIcons = badges.reduce((badgeObj, badgeName) => {
+  const id = camelcase(badgeName);
+  return {
+    ...badgeObj,
+    // eslint-disable-next-line no-param-reassign, global-require, import/no-dynamic-require
+    [id]: require(`../../../../img/badges/${id}.svg`).default,
+  };
+}, {});
+
+interface Props {
+  name: string;
+  size?: AvatarProps['size'];
+  title: string;
 }
 
 const displayName = 'Badge';
 
-const Badge = ({
-  appearance,
-  children,
-  className,
-  text,
-  textValues,
-  ...rest
-}: Props) => {
-  const classNames = useMainClasses(appearance, styles, className);
+const Badge = ({ name, size = 'm', title }: Props) => {
+  const BadgeIcon = badgeIcons[name];
   return (
-    <span className={classNames} {...rest}>
-      {text ? (
-        <>
-          {typeof text === 'string' ? (
-            text
-          ) : (
-            <FormattedMessage {...text} values={textValues} />
-          )}
-        </>
-      ) : (
-        children
-      )}
-    </span>
+    <Avatar
+      className={styles.main}
+      placeholderIcon="question-mark"
+      size={size}
+      title={title}
+    >
+      <BadgeIcon />
+    </Avatar>
   );
 };
 

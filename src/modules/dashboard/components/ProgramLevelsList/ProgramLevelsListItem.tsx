@@ -3,6 +3,7 @@ import { defineMessages, FormattedMessage } from 'react-intl';
 
 import Button from '~core/Button';
 import Heading from '~core/Heading';
+import Badge from '~core/Badge';
 import { OneLevelWithUnlocked } from '~data/index';
 
 import styles from './ProgramLevelsListItem.css';
@@ -31,6 +32,7 @@ const MSG = defineMessages({
 });
 
 interface Props {
+  colonyName: string;
   index: number;
   isUserEnrolled: boolean;
   level: OneLevelWithUnlocked;
@@ -39,10 +41,12 @@ interface Props {
 const displayName = 'dashboard.ProgramLevelsList.ProgramLevelsListItem';
 
 const ProgramLevelsListItem = ({
+  colonyName,
   index,
   isUserEnrolled,
-  level: { title, unlocked },
+  level: { id: levelId, achievement, programId, title, unlocked },
 }: Props) => {
+  const levelUrl = `/colony/${colonyName}/program/${programId}/level/${levelId}`;
   const statusText = useMemo(() => {
     if (!unlocked) {
       if (!isUserEnrolled && index === 0) {
@@ -54,6 +58,11 @@ const ProgramLevelsListItem = ({
   }, [index, isUserEnrolled, unlocked]);
   return (
     <div className={styles.main}>
+      {achievement && title && (
+        <div className={styles.badgeContainer}>
+          <Badge name={achievement} title={title} />
+        </div>
+      )}
       <div className={styles.content}>
         <Heading
           appearance={{ margin: 'none', size: 'medium' }}
@@ -63,7 +72,7 @@ const ProgramLevelsListItem = ({
         <FormattedMessage {...statusText} />
       </div>
       <div className={styles.linkContainer}>
-        <Button text={MSG.linkView} />
+        <Button linkTo={levelUrl} text={MSG.linkView} />
       </div>
     </div>
   );

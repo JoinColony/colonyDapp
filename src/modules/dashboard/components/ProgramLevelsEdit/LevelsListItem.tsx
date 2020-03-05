@@ -5,6 +5,7 @@ import { defineMessages } from 'react-intl';
 import Button from '~core/Button';
 import Heading from '~core/Heading';
 import Icon from '~core/Icon';
+import Badge from '~core/Badge';
 import { OneLevel } from '~data/index';
 
 import styles from './LevelsListItem.css';
@@ -38,10 +39,10 @@ const LevelsListItem = ({
   colonyName,
   dragHandleProps,
   isDragDisabled,
-  level: { id: levelId, title },
+  level: { achievement, id: levelId, title },
   programId,
 }: Props) => {
-  const levelUrl = `/colony/${colonyName}/program/${programId}/level/${levelId}`;
+  const levelUrl = `/colony/${colonyName}/program/${programId}/level/${levelId}/edit`;
   return (
     <div className={styles.listItemInner}>
       {!isDragDisabled && (
@@ -55,7 +56,11 @@ const LevelsListItem = ({
           </div>
         </div>
       )}
-      {/* @todo Add level achievement here */}
+      {achievement && title && (
+        <div className={styles.badgeContainer}>
+          <Badge name={achievement} title={title} />
+        </div>
+      )}
       <div className={styles.itemContentContainer}>
         <Heading
           appearance={{ margin: 'none', size: 'medium' }}

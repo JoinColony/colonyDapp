@@ -7,12 +7,16 @@ import ProgramLevelsListItem from './ProgramLevelsListItem';
 import { sortLevelsByIds } from '../shared/levelsSort';
 
 interface Props {
+  colonyName: string;
   program: OneProgram;
 }
 
 const displayName = 'dashboard.ProgramLevelsList';
 
-const ProgramLevelsList = ({ program: { id: programId, enrolled } }: Props) => {
+const ProgramLevelsList = ({
+  colonyName,
+  program: { id: programId, enrolled },
+}: Props) => {
   const { data } = useProgramLevelsWithUnlockedQuery({
     variables: { id: programId },
   });
@@ -29,6 +33,7 @@ const ProgramLevelsList = ({ program: { id: programId, enrolled } }: Props) => {
       {levels.map((level, idx) => (
         <ListGroupItem key={level.id}>
           <ProgramLevelsListItem
+            colonyName={colonyName}
             index={idx}
             isUserEnrolled={enrolled}
             level={level}

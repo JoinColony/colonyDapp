@@ -5,7 +5,7 @@ import { getMainClasses } from '~utils/css';
 import styles from './DialogSection.css';
 
 interface Appearance {
-  align?: 'right';
+  align?: 'center' | 'right';
   border?: 'top' | 'bottom' | 'none';
 }
 

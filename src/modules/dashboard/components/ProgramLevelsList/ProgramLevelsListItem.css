@@ -1,7 +1,7 @@
 .main {
   display: flex;
   align-items: center;
-  padding: 10px 15px;
+  padding: 15px 20px;
 }
 
 .content {
@@ -11,4 +11,9 @@
 .linkContainer {
   flex-basis: 100px;
   text-align: right;
+}
+
+.badgeContainer {
+  display: flex;
+  margin-right: 15px;
 }
