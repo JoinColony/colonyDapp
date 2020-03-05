@@ -30,7 +30,7 @@
 
 .userName {
   composes: inlineEllipsis from '~styles/text.css';
-  margin: 0 0 6px 0;
+  margin-bottom: 6px;
 }
 
 .userName a {
@@ -38,8 +38,21 @@
   color: var(--pink);
 }
 
+.address {
+  margin-bottom: 6px;
+}
+
 .address button {
   height: auto;
+}
+
+.badges {
+  display: flex;
+  align-items: center;
+}
+
+.badges > figure {
+  margin-right: 5px;
 }
 
 .symbol {
