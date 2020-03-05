@@ -376,18 +376,16 @@ mutation EnrollInProgram($input: EnrollInProgramInput!) {
 
 mutation CreateLevel($input: CreateLevelInput!) {
   createLevel(input: $input) {
-    id
-    achievement
-    description
-    createdAt
-    creatorAddress
-    numRequiredSteps
-    programId
-    stepIds
-    status
-    title
+    ...LevelFields
     unlocked
   }
+}
+
+mutation EditLevel($input: EditLevelInput!) {
+  editLevel(input: $input) {
+    ...LevelFields
+  }
+
 }
 
 mutation ReorderProgramLevels($input: ReorderProgramLevelsInput!) {

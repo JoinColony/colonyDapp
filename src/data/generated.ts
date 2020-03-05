@@ -359,6 +359,7 @@ export type EditPersistentTaskInput = {
   ethSkillId?: Maybe<Scalars['Int']>,
   title?: Maybe<Scalars['String']>,
   description?: Maybe<Scalars['String']>,
+  payouts: Array<Payout>,
 };
 
 export type EditProgramInput = {
@@ -505,8 +506,6 @@ export type Mutation = {
   createLevelTask?: Maybe<PersistentTask>,
   removeLevelTask?: Maybe<PersistentTask>,
   editPersistentTask?: Maybe<PersistentTask>,
-  setPersistentTaskPayout?: Maybe<PersistentTask>,
-  removePersistentTaskPayout?: Maybe<PersistentTask>,
   createLevel?: Maybe<Level>,
   editLevel?: Maybe<Level>,
   reorderLevelSteps?: Maybe<Level>,
@@ -712,16 +711,6 @@ export type MutationEditPersistentTaskArgs = {
 };
 
 
-export type MutationSetPersistentTaskPayoutArgs = {
-  input: SetTaskPayoutInput
-};
-
-
-export type MutationRemovePersistentTaskPayoutArgs = {
-  input: RemoveTaskPayoutInput
-};
-
-
 export type MutationCreateLevelArgs = {
   input: CreateLevelInput
 };
@@ -784,6 +773,11 @@ export type Notification = {
   id: Scalars['String'],
   event: Event,
   read: Scalars['Boolean'],
+};
+
+export type Payout = {
+  amount: Scalars['String'],
+  tokenAddress: Scalars['String'],
 };
 
 export type PersistentTask = {
@@ -1636,7 +1630,17 @@ export type CreateLevelMutationVariables = {
 };
 
 
-export type CreateLevelMutation = { createLevel: Maybe<Pick<Level, 'id' | 'achievement' | 'description' | 'createdAt' | 'creatorAddress' | 'numRequiredSteps' | 'programId' | 'stepIds' | 'status' | 'title' | 'unlocked'>> };
+export type CreateLevelMutation = { createLevel: Maybe<(
+    Pick<Level, 'unlocked'>
+    & LevelFieldsFragment
+  )> };
+
+export type EditLevelMutationVariables = {
+  input: EditLevelInput
+};
+
+
+export type EditLevelMutation = { editLevel: Maybe<LevelFieldsFragment> };
 
 export type ReorderProgramLevelsMutationVariables = {
   input: ReorderProgramLevelsInput
@@ -1872,6 +1876,13 @@ export type ProgramLevelsQuery = { program: (
     Pick<Program, 'id' | 'levelIds'>
     & { levels: Array<LevelFieldsFragment> }
   ) };
+
+export type LevelQueryVariables = {
+  id: Scalars['String']
+};
+
+
+export type LevelQuery = { level: LevelFieldsFragment };
 
 export type ProgramLevelsWithUnlockedQueryVariables = {
   id: Scalars['String']
@@ -3624,20 +3635,11 @@ export type EnrollInProgramMutationOptions = ApolloReactCommon.BaseMutationOptio
 export const CreateLevelDocument = gql`
     mutation CreateLevel($input: CreateLevelInput!) {
   createLevel(input: $input) {
-    id
-    achievement
-    description
-    createdAt
-    creatorAddress
-    numRequiredSteps
-    programId
-    stepIds
-    status
-    title
+    ...LevelFields
     unlocked
   }
 }
-    `;
+    ${LevelFieldsFragmentDoc}`;
 export type CreateLevelMutationFn = ApolloReactCommon.MutationFunction<CreateLevelMutation, CreateLevelMutationVariables>;
 
 /**
@@ -3663,6 +3665,38 @@ export function useCreateLevelMutation(baseOptions?: ApolloReactHooks.MutationHo
 export type CreateLevelMutationHookResult = ReturnType<typeof useCreateLevelMutation>;
 export type CreateLevelMutationResult = ApolloReactCommon.MutationResult<CreateLevelMutation>;
 export type CreateLevelMutationOptions = ApolloReactCommon.BaseMutationOptions<CreateLevelMutation, CreateLevelMutationVariables>;
+export const EditLevelDocument = gql`
+    mutation EditLevel($input: EditLevelInput!) {
+  editLevel(input: $input) {
+    ...LevelFields
+  }
+}
+    ${LevelFieldsFragmentDoc}`;
+export type EditLevelMutationFn = ApolloReactCommon.MutationFunction<EditLevelMutation, EditLevelMutationVariables>;
+
+/**
+ * __useEditLevelMutation__
+ *
+ * To run a mutation, you first call `useEditLevelMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useEditLevelMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [editLevelMutation, { data, loading, error }] = useEditLevelMutation({
+ *   variables: {
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function useEditLevelMutation(baseOptions?: ApolloReactHooks.MutationHookOptions<EditLevelMutation, EditLevelMutationVariables>) {
+        return ApolloReactHooks.useMutation<EditLevelMutation, EditLevelMutationVariables>(EditLevelDocument, baseOptions);
+      }
+export type EditLevelMutationHookResult = ReturnType<typeof useEditLevelMutation>;
+export type EditLevelMutationResult = ApolloReactCommon.MutationResult<EditLevelMutation>;
+export type EditLevelMutationOptions = ApolloReactCommon.BaseMutationOptions<EditLevelMutation, EditLevelMutationVariables>;
 export const ReorderProgramLevelsDocument = gql`
     mutation ReorderProgramLevels($input: ReorderProgramLevelsInput!) {
   reorderProgramLevels(input: $input) {
@@ -4593,6 +4627,39 @@ export function useProgramLevelsLazyQuery(baseOptions?: ApolloReactHooks.LazyQue
 export type ProgramLevelsQueryHookResult = ReturnType<typeof useProgramLevelsQuery>;
 export type ProgramLevelsLazyQueryHookResult = ReturnType<typeof useProgramLevelsLazyQuery>;
 export type ProgramLevelsQueryResult = ApolloReactCommon.QueryResult<ProgramLevelsQuery, ProgramLevelsQueryVariables>;
+export const LevelDocument = gql`
+    query Level($id: String!) {
+  level(id: $id) {
+    ...LevelFields
+  }
+}
+    ${LevelFieldsFragmentDoc}`;
+
+/**
+ * __useLevelQuery__
+ *
+ * To run a query within a React component, call `useLevelQuery` and pass it any options that fit your needs.
+ * When your component renders, `useLevelQuery` returns an object from Apollo Client that contains loading, error, and data properties 
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useLevelQuery({
+ *   variables: {
+ *      id: // value for 'id'
+ *   },
+ * });
+ */
+export function useLevelQuery(baseOptions?: ApolloReactHooks.QueryHookOptions<LevelQuery, LevelQueryVariables>) {
+        return ApolloReactHooks.useQuery<LevelQuery, LevelQueryVariables>(LevelDocument, baseOptions);
+      }
+export function useLevelLazyQuery(baseOptions?: ApolloReactHooks.LazyQueryHookOptions<LevelQuery, LevelQueryVariables>) {
+          return ApolloReactHooks.useLazyQuery<LevelQuery, LevelQueryVariables>(LevelDocument, baseOptions);
+        }
+export type LevelQueryHookResult = ReturnType<typeof useLevelQuery>;
+export type LevelLazyQueryHookResult = ReturnType<typeof useLevelLazyQuery>;
+export type LevelQueryResult = ApolloReactCommon.QueryResult<LevelQuery, LevelQueryVariables>;
 export const ProgramLevelsWithUnlockedDocument = gql`
     query ProgramLevelsWithUnlocked($id: String!) {
   program(id: $id) {
