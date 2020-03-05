@@ -123,6 +123,7 @@ const Task = () => {
 
   const {
     task: {
+      assignedWorkerAddress = undefined,
       description = undefined,
       ethDomainId = undefined,
       dueDate = undefined,
@@ -315,7 +316,9 @@ const Task = () => {
                   draftId={draftId}
                   colonyAddress={colonyData.colonyAddress}
                   ethDomainId={ethDomainId || ROOT_DOMAIN}
+                  ethSkillId={ethSkillId}
                   payouts={payouts}
+                  workerAddress={assignedWorkerAddress}
                 />
               )}
               {isFinalized(task) && (
