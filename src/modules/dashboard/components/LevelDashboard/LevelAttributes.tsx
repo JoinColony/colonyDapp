@@ -160,13 +160,10 @@ const LevelAttributes = ({
                     </p>
                   </div>
                   <div className={styles.progressBarContainer}>
-                    <ProgressBar
-                      value={stepsCompleted}
-                      max={numRequiredSteps || stepIds.length}
-                    />
+                    <ProgressBar value={stepsCompleted} max={stepIds.length} />
                   </div>
                   <div className={styles.progressTextContainer}>
-                    {stepsCompleted} / {numRequiredSteps}
+                    {stepsCompleted} / {stepIds.length}
                   </div>
                 </div>
               )}
