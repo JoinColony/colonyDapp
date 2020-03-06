@@ -6,6 +6,7 @@ import Button from '~core/Button';
 import Heading from '~core/Heading';
 import { Tab, TabList, TabPanel, Tabs } from '~core/Tabs';
 import ProgramLevelsList from '~dashboard/ProgramLevelsList';
+import ProgramReview from '~dashboard/ProgramReview';
 import { OneProgram, useEnrollInProgramMutation } from '~data/index';
 
 import styles from './ProgramDashboard.css';
@@ -107,7 +108,9 @@ const ProgramDashboard = ({
           <TabPanel>
             <ProgramLevelsList colonyName={colonyName} program={program} />
           </TabPanel>
-          <TabPanel>REVIEW</TabPanel>
+          <TabPanel>
+            <ProgramReview program={program} />
+          </TabPanel>
         </Tabs>
       ) : (
         <div className={styles.levelsContainer}>
