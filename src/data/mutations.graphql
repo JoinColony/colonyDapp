@@ -421,3 +421,10 @@ mutation EditPersistentTask($input: EditPersistentTaskInput!) {
     title
   }
 }
+
+mutation AcceptLevelTaskSubmission($input: AcceptLevelTaskSubmissionInput!) {
+  acceptLevelTaskSubmission(input: $input) {
+    id
+    status
+  }
+}
