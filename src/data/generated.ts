@@ -1299,7 +1299,7 @@ export type SuggestionFieldsFragment = (
 
 export type ProgramFieldsFragment = (
   Pick<Program, 'id' | 'createdAt' | 'creatorAddress' | 'colonyAddress' | 'description' | 'enrolled' | 'enrolledUserAddresses' | 'levelIds' | 'status' | 'title'>
-  & { levels: Array<Pick<Level, 'id' | 'achievement' | 'numRequiredSteps' | 'programId' | 'stepIds' | 'status' | 'title'>> }
+  & { levels: Array<Pick<Level, 'id' | 'achievement' | 'description' | 'numRequiredSteps' | 'programId' | 'stepIds' | 'status' | 'title'>> }
 );
 
 export type LevelFieldsFragment = Pick<Level, 'id' | 'achievement' | 'createdAt' | 'creatorAddress' | 'description' | 'numRequiredSteps' | 'programId' | 'status' | 'stepIds' | 'title'>;
@@ -1323,7 +1323,7 @@ export type SubmissionFieldsFragment = (
 
 export type PersistentTaskFieldsFragment = (
   Pick<PersistentTask, 'id' | 'colonyAddress' | 'createdAt' | 'creatorAddress' | 'description' | 'ethDomainId' | 'ethSkillId' | 'status' | 'title'>
-  & { submissions: Array<SubmissionFieldsFragment> }
+  & { currentUserSubmission: Maybe<SubmissionFieldsFragment>, submissions: Array<SubmissionFieldsFragment> }
   & PersistentTaskPayoutsFragment
 );
 
@@ -2210,6 +2210,7 @@ export const ProgramFieldsFragmentDoc = gql`
   levels {
     id
     achievement
+    description
     numRequiredSteps
     programId
     stepIds
@@ -2303,6 +2304,9 @@ export const PersistentTaskFieldsFragmentDoc = gql`
   colonyAddress
   createdAt
   creatorAddress
+  currentUserSubmission {
+    ...SubmissionFields
+  }
   description
   ethDomainId
   ethSkillId
@@ -2313,8 +2317,8 @@ export const PersistentTaskFieldsFragmentDoc = gql`
   }
   title
 }
-    ${PersistentTaskPayoutsFragmentDoc}
-${SubmissionFieldsFragmentDoc}`;
+    ${SubmissionFieldsFragmentDoc}
+${PersistentTaskPayoutsFragmentDoc}`;
 export const EventFieldsFragmentDoc = gql`
     fragment EventFields on Event {
   createdAt
