@@ -22,6 +22,7 @@ import {
   LevelTasksQuery,
   ProgramLevelsQuery,
   ProgramLevelsWithUnlockedQuery,
+  ProgramSubmissionsQuery,
   ProgramQuery,
 } from './generated';
 import {
@@ -92,6 +93,12 @@ export type OneLevelWithUnlocked =
 
 export type PersistentTasks = LevelTasksQuery['level']['steps'];
 export type OnePersistentTask = PersistentTasks[number];
+
+export type Submissions = ProgramSubmissionsQuery['program']['submissions'];
+export type OneSubmission = Submissions[0];
+
+export type ProgramSubmissions = ProgramSubmissionsQuery['program']['submissions'];
+export type OneProgramSubmission = ProgramSubmissions[0];
 
 export type OneToken = TokenQuery['token'];
 export type ColonyTokens = ColonyQuery['colony']['tokens'];
