@@ -5,6 +5,16 @@
 .headingContainer {
   display: flex;
   justify-content: space-between;
+  align-items: center;
+}
+
+.headingRewardsContainer {
+  display: flex;
+  align-items: center;
+}
+
+.rewardItem + .rewardItem {
+  margin-left: 12px;
 }
 
 .requirementsContainer {
