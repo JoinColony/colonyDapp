@@ -1,5 +1,7 @@
 export const main: string;
 export const headingContainer: string;
+export const headingRewardsContainer: string;
+export const rewardItem: string;
 export const requirementsContainer: string;
 export const progressContainer: string;
 export const progressContainerInner: string;
