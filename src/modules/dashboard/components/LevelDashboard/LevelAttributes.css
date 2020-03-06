@@ -1,0 +1,53 @@
+.main {
+  margin: 20px 0;
+}
+
+.headingContainer {
+  display: flex;
+  justify-content: space-between;
+}
+
+.requirementsContainer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.progressContainer {
+  flex-basis: 50%;
+  flex-shrink: 0;
+}
+
+.progressContainerInner {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.completionCopy {
+  flex-shrink: 0;
+  font-size: var(--size-tiny);
+}
+
+.progressBarContainer {
+  display: flex;
+  flex-grow: 1;
+  align-items: center;
+  padding: 0 10px;
+}
+
+.progressTextContainer {
+  flex-shrink: 0;
+  font-size: var(--size-tiny);
+}
+
+.enrollmentStatusContainer {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+}
+
+.enrollmentStatusText {
+  margin-left: 10px;
+  text-align: right;
+}
