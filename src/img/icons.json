@@ -51,8 +51,9 @@
     "wallet"
   ],
   "multiColorIcons": [
-    "metamask",
-    "hugging"
+    "circle-check-primary",
+    "hugging",
+    "metamask"
   ],
   "badges": [
     "Ava Ant",
