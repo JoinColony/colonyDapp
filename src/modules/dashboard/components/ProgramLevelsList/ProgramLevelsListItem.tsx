@@ -70,7 +70,9 @@ const ProgramLevelsListItem = ({
     const steps = (levelTasksData && levelTasksData.level.steps) || [];
     return numStepsCompleted(steps);
   }, [levelTasksData]);
-  const isComplete = stepsCompleted === stepIds.length;
+  const isComplete =
+    (numRequiredSteps && stepsCompleted >= numRequiredSteps) ||
+    stepsCompleted === stepIds.length;
   const statusText = useMemo<MessageDescriptor | undefined>(() => {
     if (!unlocked) {
       if (!isUserEnrolled && index === 0) {
@@ -97,10 +99,7 @@ const ProgramLevelsListItem = ({
         />
         {!statusText && (
           <div className={styles.progressBarContainer}>
-            <ProgressBar
-              value={stepsCompleted}
-              max={numRequiredSteps || stepIds.length}
-            />
+            <ProgressBar value={stepsCompleted} max={stepIds.length} />
           </div>
         )}
         {statusText && (
