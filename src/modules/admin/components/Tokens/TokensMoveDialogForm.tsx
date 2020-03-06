@@ -310,7 +310,14 @@ const TokensMoveDialogForm = ({
               <EthUsd
                 appearance={{ theme: 'grey', size: 'small' }}
                 value={
-                  values.amount && values.amount.length ? values.amount : 0
+                  /*
+                   * @NOTE Set value to 0 if amount is only the decimal point
+                   * Just entering the decimal point will pass it through to EthUsd
+                   * and that will try to fetch the balance for, which, obviously, will fail
+                   */
+                  values.amount && values.amount.length && values.amount !== '.'
+                    ? values.amount
+                    : 0
                 }
               />
             </div>
