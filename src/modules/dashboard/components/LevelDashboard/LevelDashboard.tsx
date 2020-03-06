@@ -121,7 +121,12 @@ const LevelDashboard = () => {
           </div>
         )}
       </div>
-      <LevelAttributes enrolled={enrolled} level={level} levelIds={levelIds} />
+      <LevelAttributes
+        enrolled={enrolled}
+        level={level}
+        levelIds={levelIds}
+        levelTotalPayouts={levelTotalPayouts}
+      />
       <LevelTasksList
         colonyAddress={colonyAddress}
         levelId={level.id}
