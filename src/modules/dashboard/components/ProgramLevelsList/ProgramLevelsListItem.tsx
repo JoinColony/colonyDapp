@@ -1,12 +1,20 @@
 import React, { useMemo } from 'react';
-import { defineMessages, FormattedMessage } from 'react-intl';
+import {
+  defineMessages,
+  FormattedMessage,
+  MessageDescriptor,
+} from 'react-intl';
 
 import Button from '~core/Button';
 import Heading from '~core/Heading';
 import Badge from '~core/Badge';
-import { OneLevelWithUnlocked } from '~data/index';
+import { OneLevelWithUnlocked, useLevelTasksQuery } from '~data/index';
+
+import { numStepsCompleted } from '../shared/levelSteps';
 
 import styles from './ProgramLevelsListItem.css';
+import ProgressBar from '~core/ProgressBar';
+import Icon from '~core/Icon';
 
 const MSG = defineMessages({
   linkView: {
@@ -44,18 +52,37 @@ const ProgramLevelsListItem = ({
   colonyName,
   index,
   isUserEnrolled,
-  level: { id: levelId, achievement, programId, title, unlocked },
+  level: {
+    id: levelId,
+    achievement,
+    numRequiredSteps,
+    programId,
+    stepIds,
+    title,
+    unlocked,
+  },
 }: Props) => {
   const levelUrl = `/colony/${colonyName}/program/${programId}/level/${levelId}`;
-  const statusText = useMemo(() => {
+  const { data: levelTasksData } = useLevelTasksQuery({
+    variables: { id: levelId },
+  });
+  const stepsCompleted = useMemo(() => {
+    const steps = (levelTasksData && levelTasksData.level.steps) || [];
+    return numStepsCompleted(steps);
+  }, [levelTasksData]);
+  const isComplete = stepsCompleted === stepIds.length;
+  const statusText = useMemo<MessageDescriptor | undefined>(() => {
     if (!unlocked) {
       if (!isUserEnrolled && index === 0) {
         return MSG.statusJoinProgramText;
       }
       return MSG.statusLockedText;
     }
-    return MSG.statusCompleteText;
-  }, [index, isUserEnrolled, unlocked]);
+    if (isComplete) {
+      return MSG.statusCompleteText;
+    }
+    return undefined;
+  }, [index, isComplete, isUserEnrolled, unlocked]);
   return (
     <div className={styles.main}>
       {achievement && title && (
@@ -68,8 +95,27 @@ const ProgramLevelsListItem = ({
           appearance={{ margin: 'none', size: 'medium' }}
           text={title || MSG.untitledLevel}
         />
-        {/* @todo return progress bar if enrolled and step not locked */}
-        <FormattedMessage {...statusText} />
+        {!statusText && (
+          <div className={styles.progressBarContainer}>
+            <ProgressBar
+              value={stepsCompleted}
+              max={numRequiredSteps || stepIds.length}
+            />
+          </div>
+        )}
+        {statusText && (
+          <div className={styles.statusTextContainer}>
+            <FormattedMessage {...statusText} />
+            {isComplete && (
+              <Icon
+                className={styles.iconComplete}
+                name="circle-check-primary"
+                title={MSG.statusCompleteText}
+                viewBox="0 0 21 22"
+              />
+            )}
+          </div>
+        )}
       </div>
       <div className={styles.linkContainer}>
         <Button linkTo={levelUrl} text={MSG.linkView} />

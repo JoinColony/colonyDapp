@@ -6,17 +6,31 @@ import PayoutsList from '~core/PayoutsList';
 import {
   OneLevelWithUnlocked,
   OnePersistentTask,
+  SubmissionStatus,
   useDomainLazyQuery,
 } from '~data/index';
 import { Address } from '~types/index';
 
 import styles from './LevelTasksListItem.css';
 import taskSkillsTree from '~dashboard/TaskSkills/taskSkillsTree';
+import Icon from '~core/Icon';
 
 const MSG = defineMessages({
   domainText: {
     id: 'dashboard.LevelTasksList.LevelTasksListItem.domainText',
     defaultMessage: 'in {domainName}',
+  },
+  statusCompleteText: {
+    id: 'dashboard.LevelTasksList.LevelTasksListItem.statusCompleteText',
+    defaultMessage: 'Complete',
+  },
+  statusPendingText: {
+    id: 'dashboard.LevelTasksList.LevelTasksListItem.statusPendingText',
+    defaultMessage: 'Pending review',
+  },
+  titleLocked: {
+    id: 'dashboard.LevelTasksList.LevelTasksListItem.titleLocked',
+    defaultMessage: 'Locked',
   },
 });
 
@@ -30,9 +44,22 @@ const displayName = 'dashboard.LevelTasksList.LevelTasksListItem';
 
 const LevelTasksListItem = ({
   nativeTokenAddress,
-  persistentTask: { colonyAddress, ethDomainId, ethSkillId, payouts, title },
+  persistentTask: {
+    colonyAddress,
+    currentUserSubmission,
+    ethDomainId,
+    ethSkillId,
+    payouts,
+    title,
+  },
   unlocked,
 }: Props) => {
+  const isSubmissionAccepted =
+    currentUserSubmission &&
+    currentUserSubmission.status === SubmissionStatus.Accepted;
+  const isSubmissionPending =
+    currentUserSubmission &&
+    currentUserSubmission.status === SubmissionStatus.Open;
   const [fetchDomain, { data: domainData }] = useDomainLazyQuery();
   useEffect(() => {
     if (ethDomainId) {
@@ -50,14 +77,30 @@ const LevelTasksListItem = ({
   return (
     <div className={styles.item}>
       {!unlocked && (
-        <div className={styles.locked}>{/* @todo locked icon here */}</div>
+        <div className={styles.locked}>
+          <Icon name="lock" title={MSG.titleLocked} />
+        </div>
       )}
       <div className={styles.content}>
         {title && (
-          <Heading
-            appearance={{ margin: 'none', size: 'normal' }}
-            text={title}
-          />
+          <div className={styles.headingContainer}>
+            <Heading
+              appearance={{
+                margin: 'none',
+                size: 'normal',
+                theme: !isSubmissionAccepted ? 'dark' : undefined,
+              }}
+              text={title}
+            />
+            {isSubmissionAccepted && (
+              <Icon
+                className={styles.iconComplete}
+                name="circle-check-primary"
+                title={MSG.statusCompleteText}
+                viewBox="0 0 21 22"
+              />
+            )}
+          </div>
         )}
         <div className={styles.categories}>
           {domainData && (
@@ -71,11 +114,22 @@ const LevelTasksListItem = ({
           {skillName && <div className={styles.category}>{skillName}</div>}
         </div>
       </div>
-      <div>
-        <PayoutsList
-          nativeTokenAddress={nativeTokenAddress}
-          payouts={payouts}
-        />
+      <div className={styles.rewardsContainer}>
+        <div className={styles.payoutsContainer}>
+          <PayoutsList
+            nativeTokenAddress={nativeTokenAddress}
+            payouts={payouts}
+          />
+        </div>
+        {isSubmissionPending && (
+          <div className={styles.pendingText}>
+            <Heading
+              appearance={{ margin: 'none', size: 'small' }}
+              text={MSG.statusPendingText}
+            />
+            <div className={styles.dot} />
+          </div>
+        )}
       </div>
     </div>
   );
