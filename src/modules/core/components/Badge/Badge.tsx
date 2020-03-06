@@ -7,6 +7,7 @@ import styles from './Badge.css';
 
 import { badges } from '../../../../img/icons.json';
 
+// @todo we should have typed badges / icon names
 const badgeIcons = badges.reduce((badgeObj, badgeName) => {
   const id = camelcase(badgeName);
   return {
