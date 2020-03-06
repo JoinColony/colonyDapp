@@ -124,6 +124,7 @@ fragment ProgramFields on Program {
   levels {
     id
     achievement
+    description
     numRequiredSteps
     programId
     stepIds
@@ -198,6 +199,9 @@ fragment PersistentTaskFields on PersistentTask {
   colonyAddress
   createdAt
   creatorAddress
+  currentUserSubmission {
+    ...SubmissionFields
+  }
   description
   ethDomainId
   ethSkillId
