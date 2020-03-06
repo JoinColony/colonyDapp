@@ -115,8 +115,15 @@ const canAddTokens = (values, maxTokens) =>
 const canRemoveTokens = (values, minTokens) =>
   !minTokens || (values.payouts && values.payouts.length > minTokens);
 
-const removePayout = (arrayHelpers: ArrayHelpers, index: number) =>
-  arrayHelpers.remove(index);
+/*
+ * @TODO Figure out a way to validate the form (without doing by hand, forcefully) when we handle multiple payouts
+ *
+ * For some reason, when you call arrayHelpers.remove(...) the field goes automatically into an error state
+ * disregarding the validation schema rules
+ * For now, we can circumvent this by pop-ing the last index in the array, since we only have one payout / task,
+ * but this will need to be properly fixed once we need to handle multiple payouts
+ */
+const removePayout = (arrayHelpers: ArrayHelpers) => arrayHelpers.pop();
 
 const resetPayout = (
   arrayHelpers: ArrayHelpers,
@@ -346,7 +353,7 @@ const TaskEditDialog = ({
         onSubmit={onSubmit}
         validationSchema={validateForm}
       >
-        {({ status, values, dirty, isSubmitting, isValid }) => {
+        {({ status, values, isSubmitting, isValid }) => {
           const canRemove = canRemoveTokens(values, minTokens);
           return (
             <>
@@ -416,7 +423,7 @@ const TaskEditDialog = ({
                               name={`payouts.${index}`}
                               payout={payout}
                               reputation={0}
-                              remove={() => removePayout(arrayHelpers, index)}
+                              remove={() => removePayout(arrayHelpers)}
                               reset={() =>
                                 resetPayout(arrayHelpers, index, payouts)
                               }
@@ -439,7 +446,7 @@ const TaskEditDialog = ({
                   appearance={{ theme: 'primary', size: 'large' }}
                   text={{ id: 'button.confirm' }}
                   type="submit"
-                  disabled={!dirty || !isValid}
+                  disabled={!isValid}
                   loading={isSubmitting}
                 />
               </div>
