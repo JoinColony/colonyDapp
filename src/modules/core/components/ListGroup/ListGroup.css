@@ -1,9 +1,7 @@
-@value groupBoxShadow: 0px 2px 11px var(--drop-shadow);
-
 .main {
   display: block;
   width: 100%;
-  box-shadow: groupBoxShadow;
+  box-shadow: var(--box-shadow-medium);
 }
 
 .main > :not(:first-child) {
@@ -30,7 +28,7 @@
 
 .main.gapsTrue > li {
   border-radius: var(--radius-large);
-  box-shadow: groupBoxShadow;
+  box-shadow: var(--box-shadow-medium);
 }
 
 .gapsTrue > li + li {
