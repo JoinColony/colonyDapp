@@ -126,9 +126,11 @@ const LevelAttributes = ({
                   />
                 </div>
               ))}
-              <div className={styles.rewardItem}>
-                <Badge size="s" title={title || ''} name={achievement || ''} />
-              </div>
+              {achievement && (
+                <div className={styles.rewardItem}>
+                  <Badge size="s" title={title || ''} name={achievement} />
+                </div>
+              )}
             </div>
           </div>
         </PanelSection>
@@ -160,10 +162,13 @@ const LevelAttributes = ({
                     </p>
                   </div>
                   <div className={styles.progressBarContainer}>
-                    <ProgressBar value={stepsCompleted} max={stepIds.length} />
+                    <ProgressBar
+                      value={stepsCompleted}
+                      max={numRequiredSteps || stepIds.length}
+                    />
                   </div>
                   <div className={styles.progressTextContainer}>
-                    {stepsCompleted} / {stepIds.length}
+                    {stepsCompleted} / {numRequiredSteps}
                   </div>
                 </div>
               )}
