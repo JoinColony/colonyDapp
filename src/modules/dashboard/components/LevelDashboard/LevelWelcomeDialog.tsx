@@ -88,13 +88,15 @@ const LevelWelcomeDialog = ({
       </DialogSection>
       <DialogSection>
         <OverviewList>
-          <OverviewListItem
-            title={MSG.overviewBadgeTitle}
-            description={MSG.overviewBadgeDescription}
-            descriptionValues={{ levelTitle }}
-          >
-            <Badge size="s" title={levelTitle || ''} name={achievement || ''} />
-          </OverviewListItem>
+          {achievement && (
+            <OverviewListItem
+              title={MSG.overviewBadgeTitle}
+              description={MSG.overviewBadgeDescription}
+              descriptionValues={{ levelTitle }}
+            >
+              <Badge size="s" title={levelTitle || ''} name={achievement} />
+            </OverviewListItem>
+          )}
           <OverviewListItem
             title={MSG.overviewRewardTitle}
             description={MSG.overviewRewardDescription}
