@@ -349,6 +349,15 @@ query ProgramLevelsWithUnlocked($id: String!) {
   }
 }
 
+query ProgramSubmissions($id: String!) {
+  program(id: $id) {
+    id
+    submissions {
+      ...ProgramSubmissionFields
+    }
+  }
+}
+
 query LevelTasks($id: String!) {
   level(id: $id) {
     id
