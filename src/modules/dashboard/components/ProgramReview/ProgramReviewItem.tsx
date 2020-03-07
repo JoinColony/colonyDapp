@@ -48,7 +48,7 @@ interface Props {
   worker: OneSubmission['creator'];
 }
 
-const displayName = 'dashboard.ProgramLevelsList.ProgramReviewItem';
+const displayName = 'dashboard.ProgramReview.ProgramReviewItem';
 
 const ProgramReviewItem = ({
   colonyAddress,
