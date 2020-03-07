@@ -1,10 +1,12 @@
 import React, { useCallback } from 'react';
-import { defineMessages } from 'react-intl';
+import { defineMessages, FormattedMessage } from 'react-intl';
 import { useHistory } from 'react-router-dom';
 
 import Button from '~core/Button';
 import Heading from '~core/Heading';
+import { Tab, TabList, TabPanel, Tabs } from '~core/Tabs';
 import ProgramLevelsList from '~dashboard/ProgramLevelsList';
+import ProgramReview from '~dashboard/ProgramReview';
 import { OneProgram, useEnrollInProgramMutation } from '~data/index';
 
 import styles from './ProgramDashboard.css';
@@ -21,6 +23,14 @@ const MSG = defineMessages({
   unnamedProgramTitle: {
     id: 'dashboard.ProgramDashboard.unnamedProgramTitle',
     defaultMessage: 'Unnamed Program',
+  },
+  tabLevels: {
+    id: 'dashboard.ProgramDashboard.tabLevels',
+    defaultMessage: 'Levels',
+  },
+  tabReview: {
+    id: 'dashboard.ProgramDashboard.tabReview',
+    defaultMessage: 'Review',
   },
 });
 
@@ -84,11 +94,29 @@ const ProgramDashboard = ({
           </div>
         )}
       </div>
-      {description && <p>{description}</p>}
-      {/* @todo use tabs (with "Review") if current user is admin */}
-      <div className={styles.levelsContainer}>
-        <ProgramLevelsList colonyName={colonyName} program={program} />
-      </div>
+      {description && <p className={styles.description}>{description}</p>}
+      {canAdmin ? (
+        <Tabs>
+          <TabList>
+            <Tab>
+              <FormattedMessage {...MSG.tabLevels} />
+            </Tab>
+            <Tab>
+              <FormattedMessage {...MSG.tabReview} />
+            </Tab>
+          </TabList>
+          <TabPanel>
+            <ProgramLevelsList colonyName={colonyName} program={program} />
+          </TabPanel>
+          <TabPanel>
+            <ProgramReview program={program} />
+          </TabPanel>
+        </Tabs>
+      ) : (
+        <div className={styles.levelsContainer}>
+          <ProgramLevelsList colonyName={colonyName} program={program} />
+        </div>
+      )}
     </div>
   );
 };

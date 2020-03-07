@@ -540,7 +540,6 @@ export const useAsyncFunction = <P, R>({
   // Unsubscribe from the previous async function when it changes
   const prevAsyncFunc = usePrevious(asyncFunc);
   if (prevAsyncFunc && prevAsyncFunc !== asyncFunc) {
-    // @ts-ignore
     prevAsyncFunc.unsubscribe();
   }
   // Automatically unsubscribe on unmount

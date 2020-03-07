@@ -5,7 +5,7 @@ import {
   ErrorActionType,
   UniqueActionType,
 } from '~redux/index';
-import { AnyTask } from '~data/index';
+import { AnyTask, Payouts } from '~data/index';
 
 type TaskActionMeta = {
   key: string; // draftId
@@ -62,10 +62,18 @@ export type TaskActionTypes =
       {
         colonyAddress: Address;
         draftId: AnyTask['id'];
+        workerAddress: Address;
+        domainId: number;
+        skillId: number;
+        payouts: Payouts;
       }
     >
   | TaskErrorActionType<ActionTypes.TASK_FINALIZE_ERROR>
-  | ActionType<ActionTypes.TASK_FINALIZE_SUCCESS>
+  | UniqueActionType<
+      ActionTypes.TASK_FINALIZE_SUCCESS,
+      { draftId: string; potId: string },
+      object
+    >
   | TaskActionType<ActionTypes.TASK_MANAGER_COMPLETE, object>
   | TaskErrorActionType<ActionTypes.TASK_MANAGER_COMPLETE_ERROR>
   | TaskActionType<ActionTypes.TASK_MANAGER_COMPLETE_SUCCESS, object>

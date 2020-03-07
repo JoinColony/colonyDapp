@@ -8,6 +8,8 @@ import { AnyUser } from '~data/index';
 
 import { getUsername } from '../../../users/transformers';
 
+import styles from './UserAvatar.css';
+
 export interface Props {
   /** Address of the current user for identicon fallback */
   address: Address;
@@ -52,7 +54,7 @@ const UserAvatar = ({
   const username = getUsername(user);
   const avatar = (
     <InfoPopover trigger={showInfo ? 'click' : 'disabled'} user={user}>
-      <div>
+      <div className={styles.main}>
         <Avatar
           avatarURL={avatarURL}
           className={className}

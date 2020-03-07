@@ -101,6 +101,8 @@ const LevelWelcomeDialog = ({
           >
             {levelTotalPayouts.map(({ amount, symbol }) => (
               <Tag
+                // Theoretically it's still possible to create two entries with the same key but we really don't care about that right now
+                key={`${amount}-${symbol}`}
                 appearance={{ theme: 'golden' }}
                 text={`${amount} ${symbol}`}
               />
