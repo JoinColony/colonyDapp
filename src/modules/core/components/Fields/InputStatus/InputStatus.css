@@ -16,7 +16,7 @@
   }
 }
 
-.colorSchemaInfo {
+.statusSchemaInfo {
   &::before {
     background-color: var(--golden);
   }
