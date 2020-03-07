@@ -1,6 +1,7 @@
 import React, { useCallback, useEffect, useMemo } from 'react';
 import { defineMessages } from 'react-intl';
 import { useLocation, useParams } from 'react-router-dom';
+import BigNumber from 'bn.js';
 
 import BreadCrumb from '~core/BreadCrumb';
 import Button from '~core/Button';
@@ -10,6 +11,7 @@ import {
   useLevelQuery,
   useProgramQuery,
   useEnrollInProgramMutation,
+  useLevelTasksQuery,
 } from '~data/index';
 
 import LevelAttributes from './LevelAttributes';
@@ -28,6 +30,11 @@ const MSG = defineMessages({
     defaultMessage: 'Untitled Level',
   },
 });
+
+interface PayoutBadge {
+  amount: string;
+  symbol: string;
+}
 
 const displayName = 'dashboard.LevelDashboard';
 
@@ -48,12 +55,33 @@ const LevelDashboard = () => {
   const { data: programData, loading: programLoading } = useProgramQuery({
     variables: { id: programId },
   });
+  const { data: levelStepsData } = useLevelTasksQuery({
+    variables: { id: levelId },
+  });
 
-  // @TODO actually calculate this (useMemo is mandatory here!)
-  const levelTotalPayouts = useMemo(
-    () => [{ amount: '2000', symbol: 'CLNY' }],
-    [],
-  );
+  const levelTotalPayouts = useMemo<PayoutBadge[]>(() => {
+    if (!levelStepsData || !levelStepsData.level.steps) {
+      return [];
+    }
+    const newPayouts: Record<
+      PayoutBadge['symbol'],
+      PayoutBadge['amount']
+    > = levelStepsData.level.steps.reduce((prev, { payouts }) => {
+      const current = prev;
+      payouts.forEach(({ amount, token: { symbol } }) => {
+        const newBnAmount = new BigNumber(amount);
+        const currentVal = prev[symbol];
+        current[symbol] = !currentVal
+          ? newBnAmount.toString()
+          : new BigNumber(currentVal).add(newBnAmount).toString();
+      });
+      return current;
+    }, {});
+    return Object.keys(newPayouts).map(payoutKey => ({
+      amount: newPayouts[payoutKey],
+      symbol: payoutKey,
+    }));
+  }, [levelStepsData]);
 
   const enrollInProgram = useCallback(async () => {
     await enrollInProgramMutation();
