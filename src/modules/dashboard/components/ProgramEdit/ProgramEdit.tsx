@@ -8,6 +8,7 @@ import Button from '~core/Button';
 import { useDialog, ConfirmDialog } from '~core/Dialog';
 import Heading from '~core/Heading';
 import { Form, Input, Textarea, FormStatus } from '~core/Fields';
+import Panel, { PanelSection } from '~core/Panel';
 import {
   OneProgram,
   ProgramStatus,
@@ -222,21 +223,29 @@ const ProgramEdit = ({
                   />
                 </div>
               </div>
-              <Input
-                appearance={{
-                  theme: 'fat',
-                  colorSchema: isDraft ? 'info' : undefined,
-                }}
-                label={MSG.controlLabelTitle}
-                name="title"
-                status={isDraft ? MSG.draftStatusText : undefined}
-              />
-              <br />
-              <Textarea
-                appearance={{ resizable: 'vertical' }}
-                label={MSG.controlLabelDescription}
-                name="description"
-              />
+              <Panel>
+                <PanelSection>
+                  <Input
+                    appearance={{
+                      colorSchema: isDraft ? 'info' : 'grey',
+                      theme: 'fat',
+                    }}
+                    label={MSG.controlLabelTitle}
+                    name="title"
+                    status={isDraft ? MSG.draftStatusText : undefined}
+                  />
+                  <br />
+                  <Textarea
+                    appearance={{
+                      colorSchema: 'grey',
+                      resizable: 'vertical',
+                      theme: 'fat',
+                    }}
+                    label={MSG.controlLabelDescription}
+                    name="description"
+                  />
+                </PanelSection>
+              </Panel>
               <FormStatus status={formStatus} />
             </>
           );
