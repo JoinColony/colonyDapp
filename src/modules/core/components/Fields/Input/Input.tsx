@@ -15,9 +15,10 @@ export interface Appearance {
   theme?: 'fat' | 'underlined' | 'minimal' | 'dotted';
   align?: 'right';
   direction?: 'horizontal';
-  colorSchema?: 'dark' | 'grey' | 'transparent' | 'info';
+  colorSchema?: 'dark' | 'grey' | 'transparent';
   helpAlign?: 'right';
   size?: 'small';
+  statusSchema?: 'info';
 }
 
 export interface Props {
