@@ -1,5 +1,5 @@
 export const main: string;
-export const colorSchemaInfo: string;
+export const statusSchemaInfo: string;
 export const directionHorizontal: string;
 export const stateHidden: string;
 export const stateError: string;

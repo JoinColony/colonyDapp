@@ -227,7 +227,8 @@ const ProgramEdit = ({
                 <PanelSection>
                   <Input
                     appearance={{
-                      colorSchema: isDraft ? 'info' : 'grey',
+                      colorSchema: 'grey',
+                      statusSchema: 'info',
                       theme: 'fat',
                     }}
                     label={MSG.controlLabelTitle}
