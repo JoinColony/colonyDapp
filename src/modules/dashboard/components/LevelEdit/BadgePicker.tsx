@@ -10,6 +10,7 @@ import Button from '~core/Button';
 import styles from './BadgePicker.css';
 
 import { badges } from '../../../../img/icons.json';
+import InputStatus from '~core/Fields/InputStatus';
 
 const badgeIcons = badges.map(badgeName => {
   const id = camelcase(badgeName);
@@ -44,7 +45,7 @@ interface Props {
 const displayName = 'dashboard.LevelEdit.BadgePicker';
 
 const BadgePicker = ({ name }: Props) => {
-  const [, { value }, { setValue }] = useField(name);
+  const [, { error, value }, { setValue }] = useField(name);
   return (
     <div className={styles.main}>
       <InputLabel label={MSG.label} />
@@ -62,6 +63,7 @@ const BadgePicker = ({ name }: Props) => {
           </Button>
         ))}
       </div>
+      <InputStatus error={error} />
     </div>
   );
 };
