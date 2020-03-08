@@ -129,10 +129,18 @@ const cacheUpdates = {
           const stepIds = cacheData.level.stepIds.filter(
             id => id !== removedLevelTaskData.id,
           );
+          let { numRequiredSteps } = cacheData.level;
+          if (
+            typeof numRequiredSteps === 'number' &&
+            numRequiredSteps > stepIds.length
+          ) {
+            numRequiredSteps = stepIds.length;
+          }
           cache.writeQuery<LevelTasksQuery, LevelTasksQueryVariables>({
             data: {
               level: {
                 ...cacheData.level,
+                numRequiredSteps,
                 stepIds,
                 steps: persistentTasks,
               },
