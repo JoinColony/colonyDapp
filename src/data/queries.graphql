@@ -361,6 +361,7 @@ query ProgramSubmissions($id: String!) {
 query LevelTasks($id: String!) {
   level(id: $id) {
     id
+    stepIds
     steps {
       ...PersistentTaskFields
     }
