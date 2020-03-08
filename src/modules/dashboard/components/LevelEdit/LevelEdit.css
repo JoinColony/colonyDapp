@@ -28,6 +28,10 @@
 }
 
 .requiredStepsExtensionText {
-  padding: 0 0 15px 15px;
+  padding: 0 0 25px 25px;
   font-size: var(--size-medium-l);
+}
+
+.levelTasksContainer {
+  margin-top: 10px;
 }
