@@ -50,6 +50,10 @@ const MSG = defineMessages({
     id: 'dashboard.LevelEdit.amountTotalSteps',
     defaultMessage: ' of {numTotalSteps} tasks',
   },
+  badgeRequiredText: {
+    id: 'dashboard.LevelEdit.badgeRequiredText',
+    defaultMessage: 'A badge must be selected',
+  },
 });
 
 interface FormValues {
@@ -63,7 +67,10 @@ interface FormValues {
 const validationSchema = yup.object({
   title: yup.string().required(),
   description: yup.string(),
-  achievement: yup.string(),
+  achievement: yup
+    .string()
+    .typeError(() => MSG.badgeRequiredText)
+    .required(() => MSG.badgeRequiredText),
   numRequiredSteps: yup
     .number()
     .min(0)
