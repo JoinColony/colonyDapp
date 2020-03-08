@@ -5,3 +5,4 @@ export const numRequiredStepsText: string;
 export const numRequiredStepsInput: string;
 export const requiredStepsInputContainer: string;
 export const requiredStepsExtensionText: string;
+export const levelTasksContainer: string;
