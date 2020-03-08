@@ -91,10 +91,13 @@ const cacheUpdates = {
         if (cacheData && persistentTaskData) {
           const persistentTasks = cacheData.level.steps || [];
           persistentTasks.push(persistentTaskData);
+          const persistentTaskIds = cacheData.level.stepIds || [];
+          persistentTaskIds.push(persistentTaskData.id);
           cache.writeQuery<LevelTasksQuery, LevelTasksQueryVariables>({
             data: {
               level: {
                 ...cacheData.level,
+                stepIds: persistentTaskIds,
                 steps: persistentTasks,
               },
             },
@@ -123,10 +126,14 @@ const cacheUpdates = {
           const persistentTasks = cacheData.level.steps.filter(
             ({ id }) => id !== removedLevelTaskData.id,
           );
+          const stepIds = cacheData.level.stepIds.filter(
+            id => id !== removedLevelTaskData.id,
+          );
           cache.writeQuery<LevelTasksQuery, LevelTasksQueryVariables>({
             data: {
               level: {
                 ...cacheData.level,
+                stepIds,
                 steps: persistentTasks,
               },
             },
