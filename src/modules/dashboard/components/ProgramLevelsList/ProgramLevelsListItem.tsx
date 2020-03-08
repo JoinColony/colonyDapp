@@ -5,16 +5,16 @@ import {
   MessageDescriptor,
 } from 'react-intl';
 
+import Badge from '~core/Badge';
 import Button from '~core/Button';
 import Heading from '~core/Heading';
-import Badge from '~core/Badge';
+import Icon from '~core/Icon';
+import ProgressBar from '~core/ProgressBar';
 import { OneLevelWithUnlocked, useLevelTasksQuery } from '~data/index';
 
 import { numStepsCompleted } from '../shared/levelSteps';
 
 import styles from './ProgramLevelsListItem.css';
-import ProgressBar from '~core/ProgressBar';
-import Icon from '~core/Icon';
 
 const MSG = defineMessages({
   linkView: {
