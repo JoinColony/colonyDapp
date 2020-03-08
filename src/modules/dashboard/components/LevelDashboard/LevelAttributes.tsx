@@ -23,9 +23,15 @@ const MSG = defineMessages({
   completeNumText: {
     id: 'dashboard.LevelDashboard.LevelAttributes.completeNumText',
     defaultMessage: `Complete {allStepsRequired, select,
-      true {all}
+      true {{numRequiredSteps, plural,
+        one {the only}
+        other {all}
+      }}
       false {at least {numRequiredSteps}}
-    } tasks`,
+    } {numRequiredSteps, plural,
+      one {task}
+      other {tasks}
+    }`,
   },
   completeToUnlockText: {
     id: 'dashboard.LevelDashboard.LevelAttributes.completeToUnlockText',
