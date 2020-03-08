@@ -7,6 +7,7 @@ import { FormikProps } from 'formik';
 import Button from '~core/Button';
 import { Form, Input, InputLabel, Textarea, FormStatus } from '~core/Fields';
 import Heading from '~core/Heading';
+import Panel, { PanelSection } from '~core/Panel';
 import { SpinnerLoader } from '~core/Preloaders';
 import LevelTasksEdit from '~dashboard/LevelTasksEdit';
 import { useLevelQuery, useEditLevelMutation } from '~data/index';
@@ -149,49 +150,63 @@ const LevelEdit = () => {
                   />
                 </div>
               </div>
-              <FormStatus status={formStatus} />
-              <Input
-                appearance={{ theme: 'fat' }}
-                label={MSG.labelTitle}
-                name="title"
-              />
-              <Textarea
-                appearance={{ resizable: 'vertical' }}
-                label={MSG.labelDescription}
-                name="description"
-              />
-              <BadgePicker name="achievement" />
-              <div className={styles.numRequiredStepsText}>
-                <InputLabel label={MSG.labelNumRequiredSteps} />
-                <p>
-                  <FormattedMessage
-                    {...MSG.explainerRequirement}
-                    values={{
-                      numRequiredSteps: numRequiredSteps || 0,
-                      numTotalSteps,
-                    }}
-                  />
-                </p>
-              </div>
-              <div className={styles.numRequiredStepsInput}>
-                <span className={styles.requiredStepsInputContainer}>
+              <Panel>
+                <PanelSection>
+                  <FormStatus status={formStatus} />
                   <Input
-                    label={MSG.labelAmountRequiredSteps}
-                    appearance={{ theme: 'underlined' }}
-                    name="numRequiredSteps"
+                    appearance={{ colorSchema: 'grey', theme: 'fat' }}
+                    label={MSG.labelTitle}
+                    name="title"
                   />
-                </span>
-                <span className={styles.requiredStepsExtensionText}>
-                  <FormattedMessage
-                    {...MSG.amountTotalSteps}
-                    values={{ numTotalSteps }}
+                  <Textarea
+                    appearance={{
+                      colorSchema: 'grey',
+                      resizable: 'vertical',
+                      theme: 'fat',
+                    }}
+                    label={MSG.labelDescription}
+                    name="description"
                   />
-                </span>
-              </div>
+                </PanelSection>
+                <PanelSection>
+                  <BadgePicker name="achievement" />
+                </PanelSection>
+                <PanelSection>
+                  <div className={styles.numRequiredStepsText}>
+                    <InputLabel label={MSG.labelNumRequiredSteps} />
+                    <p>
+                      <FormattedMessage
+                        {...MSG.explainerRequirement}
+                        values={{
+                          numRequiredSteps: numRequiredSteps || 0,
+                          numTotalSteps,
+                        }}
+                      />
+                    </p>
+                  </div>
+                  <div className={styles.numRequiredStepsInput}>
+                    <span className={styles.requiredStepsInputContainer}>
+                      <Input
+                        label={MSG.labelAmountRequiredSteps}
+                        appearance={{ theme: 'underlined' }}
+                        name="numRequiredSteps"
+                      />
+                    </span>
+                    <span className={styles.requiredStepsExtensionText}>
+                      <FormattedMessage
+                        {...MSG.amountTotalSteps}
+                        values={{ numTotalSteps }}
+                      />
+                    </span>
+                  </div>
+                </PanelSection>
+              </Panel>
             </>
           )}
         </Form>
-        <LevelTasksEdit levelId={levelId} />
+        <div className={styles.levelTasksContainer}>
+          <LevelTasksEdit levelId={levelId} />
+        </div>
       </div>
     </CenteredTemplate>
   );
