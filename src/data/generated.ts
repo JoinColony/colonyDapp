@@ -2016,7 +2016,7 @@ export type LevelTasksQueryVariables = {
 
 
 export type LevelTasksQuery = { level: (
-    Pick<Level, 'id'>
+    Pick<Level, 'id' | 'stepIds'>
     & { steps: Array<PersistentTaskFieldsFragment> }
   ) };
 
@@ -5147,6 +5147,7 @@ export const LevelTasksDocument = gql`
     query LevelTasks($id: String!) {
   level(id: $id) {
     id
+    stepIds
     steps {
       ...PersistentTaskFields
     }
