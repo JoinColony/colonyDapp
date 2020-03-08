@@ -67,7 +67,6 @@ const LevelTasksListItem = ({
     }
   }, [colonyAddress, ethDomainId, fetchDomain]);
 
-  // @todo make a helper for this
   const skillName = useMemo(
     () =>
       ethSkillId &&
