@@ -138,6 +138,13 @@ const SuggestionsList = ({ colonyAddress, colonyName, domainId }: Props) => {
       }),
     [setSuggestionStatus],
   );
+  const handleReopen = useCallback(
+    (id: string) =>
+      setSuggestionStatus({
+        variables: { input: { id, status: SuggestionStatus.Open } },
+      }),
+    [setSuggestionStatus],
+  );
   const handleDeleted = useCallback(
     async (id: string) => {
       await confirm({
@@ -211,6 +218,7 @@ const SuggestionsList = ({ colonyAddress, colonyName, domainId }: Props) => {
                   onNotPlanned={handleNotPlanned}
                   onDeleted={handleDeleted}
                   onCreateTask={handleCreateTask}
+                  onReopen={handleReopen}
                   suggestion={suggestion}
                   domains={domains}
                   walletAddress={walletAddress}

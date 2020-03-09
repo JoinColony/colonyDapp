@@ -69,6 +69,7 @@ interface Props {
   onNotPlanned: (id: string) => void;
   onDeleted: (id: string) => void;
   onCreateTask: (id: string) => void;
+  onReopen: (id: string) => void;
   suggestion: OneSuggestion;
   walletAddress: Address;
 }
