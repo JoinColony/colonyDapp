@@ -104,8 +104,8 @@ const LevelWelcomeDialog = ({
             {levelTotalPayouts.map(({ amount, symbol }) => (
               <Tag
                 appearance={{ theme: 'golden' }}
-                // Use symbol, since sums will be aggregated by token
-                key={symbol}
+                // Sums will be aggregated by token
+                key={`${symbol}-${amount}`}
                 text={`${amount} ${symbol}`}
               />
             ))}
