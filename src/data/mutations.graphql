@@ -422,6 +422,13 @@ mutation EditPersistentTask($input: EditPersistentTaskInput!) {
   }
 }
 
+mutation CreateLevelTaskSubmission($input: CreateLevelTaskSubmissionInput!) {
+  createLevelTaskSubmission(input: $input) {
+    id
+    status
+  }
+}
+
 mutation AcceptLevelTaskSubmission($input: AcceptLevelTaskSubmissionInput!) {
   acceptLevelTaskSubmission(input: $input) {
     id
