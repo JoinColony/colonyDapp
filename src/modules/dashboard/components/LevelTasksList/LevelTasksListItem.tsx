@@ -1,19 +1,22 @@
-import React, { useEffect, useMemo } from 'react';
+import React, { KeyboardEvent, useEffect, useMemo, useCallback } from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 
+import { useDialog } from '~core/Dialog';
 import Heading from '~core/Heading';
+import Icon from '~core/Icon';
 import PayoutsList from '~core/PayoutsList';
+import PersistentTaskSubmitWorkModal from '~dashboard/PersistentTaskSubmitWorkModal';
+import taskSkillsTree from '~dashboard/TaskSkills/taskSkillsTree';
 import {
   OneLevelWithUnlocked,
   OnePersistentTask,
   SubmissionStatus,
   useDomainLazyQuery,
+  OneLevel,
 } from '~data/index';
-import { Address } from '~types/index';
+import { Address, ENTER } from '~types/index';
 
 import styles from './LevelTasksListItem.css';
-import taskSkillsTree from '~dashboard/TaskSkills/taskSkillsTree';
-import Icon from '~core/Icon';
 
 const MSG = defineMessages({
   domainText: {
@@ -35,6 +38,7 @@ const MSG = defineMessages({
 });
 
 interface Props {
+  levelId: OneLevel['id'];
   nativeTokenAddress: Address;
   persistentTask: OnePersistentTask;
   unlocked: OneLevelWithUnlocked['unlocked'];
@@ -43,6 +47,7 @@ interface Props {
 const displayName = 'dashboard.LevelTasksList.LevelTasksListItem';
 
 const LevelTasksListItem = ({
+  levelId,
   nativeTokenAddress,
   persistentTask: {
     colonyAddress,
@@ -52,6 +57,7 @@ const LevelTasksListItem = ({
     payouts,
     title,
   },
+  persistentTask,
   unlocked,
 }: Props) => {
   const isSubmissionAccepted =
@@ -61,6 +67,32 @@ const LevelTasksListItem = ({
     currentUserSubmission &&
     currentUserSubmission.status === SubmissionStatus.Open;
   const [fetchDomain, { data: domainData }] = useDomainLazyQuery();
+
+  const openDialog = useDialog(PersistentTaskSubmitWorkModal);
+
+  const handleClick = useCallback(() => {
+    // Can't use `pointer-events: none` css because of `PayoutsList` child
+    if (unlocked) {
+      openDialog({
+        levelId,
+        persistentTask,
+      });
+    }
+  }, [levelId, openDialog, persistentTask, unlocked]);
+
+  const handleKeyDown = useCallback(
+    (evt: KeyboardEvent<HTMLDivElement>) => {
+      // Can't use `pointer-events: none` css because of `PayoutsList` child
+      if (evt.key === ENTER && unlocked) {
+        openDialog({
+          levelId,
+          persistentTask,
+        });
+      }
+    },
+    [levelId, openDialog, persistentTask, unlocked],
+  );
+
   useEffect(() => {
     if (ethDomainId) {
       fetchDomain({ variables: { ethDomainId, colonyAddress } });
@@ -74,7 +106,14 @@ const LevelTasksListItem = ({
     [ethSkillId],
   );
   return (
-    <div className={styles.item}>
+    <div
+      aria-disabled={!unlocked}
+      className={styles.item}
+      onClick={handleClick}
+      onKeyDown={handleKeyDown}
+      role="button"
+      tabIndex={unlocked ? 0 : -1}
+    >
       {!unlocked && (
         <div className={styles.locked}>
           <Icon name="lock" title={MSG.titleLocked} />
@@ -116,6 +155,7 @@ const LevelTasksListItem = ({
       <div className={styles.rewardsContainer}>
         <div className={styles.payoutsContainer}>
           <PayoutsList
+            clickDisabled={unlocked}
             nativeTokenAddress={nativeTokenAddress}
             payouts={payouts}
           />

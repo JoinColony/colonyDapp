@@ -4,6 +4,10 @@
   text-align: right;
 }
 
+.main[aria-disabled="true"] {
+  pointer-events: none;
+}
+
 .payoutNumber {
   display: block;
   font-size: inherit;

@@ -4,6 +4,11 @@
   padding: 25px;
 }
 
+.item[aria-disabled="false"]:hover {
+  background-color: color-mod(var(--grey-5) alpha(10%));
+  cursor: pointer;
+}
+
 .headingContainer {
   display: flex;
   align-items: center;
