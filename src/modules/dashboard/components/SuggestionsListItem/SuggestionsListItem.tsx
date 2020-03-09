@@ -48,6 +48,10 @@ const MSG = defineMessages({
     id: 'Dashboard.SuggestionsListItem.buttonDelete',
     defaultMessage: 'Delete',
   },
+  buttonReopen: {
+    id: 'Dashboard.SuggestionsListItem.buttonReopen',
+    defaultMessage: 'Open',
+  },
   titleActionMenu: {
     id: 'Dashboard.SuggestionsListItem.titleActionMenu',
     defaultMessage: 'Change status',
@@ -82,6 +86,7 @@ const SuggestionsListItem = ({
   onNotPlanned,
   onDeleted,
   onCreateTask,
+  onReopen,
   suggestion: { ethDomainId, id, status, title, creator, upvotes, taskId },
   walletAddress,
 }: Props) => {
@@ -93,6 +98,7 @@ const SuggestionsListItem = ({
   const canDelete = walletAddress === creator.profile.walletAddress;
   const canModify = canAdminister(userRoles);
   const isAccepted = status === SuggestionStatus.Accepted;
+  const isRejected = status === SuggestionStatus.NotPlanned;
 
   const handleNotPlanned = useCallback(() => onNotPlanned(id), [
     id,
@@ -103,6 +109,7 @@ const SuggestionsListItem = ({
     id,
     onCreateTask,
   ]);
+  const handleReopen = useCallback(() => onReopen(id), [id, onReopen]);
 
   const statusBadgeText = suggestionStatusBadgeText[status];
 
@@ -115,6 +122,15 @@ const SuggestionsListItem = ({
             content={({ close }) => (
               <DropdownMenu onClick={close}>
                 <DropdownMenuSection separator>
+                  {canModify && isRejected && (
+                    <DropdownMenuItem>
+                      <Button
+                        onClick={handleReopen}
+                        appearance={{ theme: 'no-style' }}
+                        text={MSG.buttonReopen}
+                      />
+                    </DropdownMenuItem>
+                  )}
                   {canModify && !isAccepted && (
                     <DropdownMenuItem>
                       <Button
@@ -124,7 +140,7 @@ const SuggestionsListItem = ({
                       />
                     </DropdownMenuItem>
                   )}
-                  {canModify && !isAccepted && (
+                  {canModify && !isAccepted && !isRejected && (
                     <DropdownMenuItem>
                       <Button
                         onClick={handleNotPlanned}
