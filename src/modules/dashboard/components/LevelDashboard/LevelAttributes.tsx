@@ -124,8 +124,8 @@ const LevelAttributes = ({
                 />
               </div>
               {levelTotalPayouts.map(({ amount, symbol }) => (
-                // Use symbol for key, since sums will be aggregated by token
-                <div className={styles.rewardItem} key={symbol}>
+                // Sums will be aggregated by token
+                <div className={styles.rewardItem} key={`${symbol}-${amount}`}>
                   <Tag
                     appearance={{ theme: 'golden' }}
                     text={`${amount} ${symbol}`}
