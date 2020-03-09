@@ -15,7 +15,7 @@ import {
   useLevelLazyQuery,
 } from '~data/index';
 
-import { numStepsCompleted } from '../shared/levelSteps';
+import { useStepsCompleted } from '../../hooks/useStepsCompleted';
 
 import styles from './LevelAttributes.css';
 
@@ -94,11 +94,9 @@ const LevelAttributes = ({
     () => levelIds[levelIds.indexOf(levelId) - 1],
     [levelId, levelIds],
   );
-
-  const stepsCompleted = useMemo(() => {
-    const steps = (levelTasksData && levelTasksData.level.steps) || [];
-    return numStepsCompleted(steps);
-  }, [levelTasksData]);
+  const stepsCompleted = useStepsCompleted(
+    (levelTasksData && levelTasksData.level.steps) || [],
+  );
 
   useEffect(() => {
     if (dependentLevelId) {
