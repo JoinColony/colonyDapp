@@ -12,7 +12,7 @@ import Icon from '~core/Icon';
 import ProgressBar from '~core/ProgressBar';
 import { OneLevelWithUnlocked, useLevelTasksQuery } from '~data/index';
 
-import { numStepsCompleted } from '../shared/levelSteps';
+import { useStepsCompleted } from '../../hooks/useStepsCompleted';
 
 import styles from './ProgramLevelsListItem.css';
 
@@ -66,10 +66,9 @@ const ProgramLevelsListItem = ({
   const { data: levelTasksData } = useLevelTasksQuery({
     variables: { id: levelId },
   });
-  const stepsCompleted = useMemo(() => {
-    const steps = (levelTasksData && levelTasksData.level.steps) || [];
-    return numStepsCompleted(steps);
-  }, [levelTasksData]);
+  const stepsCompleted = useStepsCompleted(
+    (levelTasksData && levelTasksData.level.steps) || [],
+  );
   const isComplete =
     (numRequiredSteps && stepsCompleted >= numRequiredSteps) ||
     stepsCompleted === stepIds.length;
