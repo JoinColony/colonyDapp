@@ -91,6 +91,7 @@ const SuggestionsListItem = ({
   ]);
   const canDelete = walletAddress === creator.profile.walletAddress;
   const canModify = canAdminister(userRoles);
+  const isAccepted = status === SuggestionStatus.Accepted;
 
   const handleNotPlanned = useCallback(() => onNotPlanned(id), [
     id,
@@ -113,7 +114,7 @@ const SuggestionsListItem = ({
             content={({ close }) => (
               <DropdownMenu onClick={close}>
                 <DropdownMenuSection separator>
-                  {canModify && (
+                  {canModify && !isAccepted && (
                     <DropdownMenuItem>
                       <Button
                         onClick={handleCreateTask}
@@ -122,7 +123,7 @@ const SuggestionsListItem = ({
                       />
                     </DropdownMenuItem>
                   )}
-                  {canModify && (
+                  {canModify && !isAccepted && (
                     <DropdownMenuItem>
                       <Button
                         onClick={handleNotPlanned}
