@@ -1722,6 +1722,13 @@ export type EditPersistentTaskMutation = { editPersistentTask: Maybe<(
     & PersistentTaskPayoutsFragment
   )> };
 
+export type CreateLevelTaskSubmissionMutationVariables = {
+  input: CreateLevelTaskSubmissionInput
+};
+
+
+export type CreateLevelTaskSubmissionMutation = { createLevelTaskSubmission: Maybe<Pick<Submission, 'id' | 'status'>> };
+
 export type AcceptLevelTaskSubmissionMutationVariables = {
   input: AcceptLevelTaskSubmissionInput
 };
@@ -4037,6 +4044,39 @@ export function useEditPersistentTaskMutation(baseOptions?: ApolloReactHooks.Mut
 export type EditPersistentTaskMutationHookResult = ReturnType<typeof useEditPersistentTaskMutation>;
 export type EditPersistentTaskMutationResult = ApolloReactCommon.MutationResult<EditPersistentTaskMutation>;
 export type EditPersistentTaskMutationOptions = ApolloReactCommon.BaseMutationOptions<EditPersistentTaskMutation, EditPersistentTaskMutationVariables>;
+export const CreateLevelTaskSubmissionDocument = gql`
+    mutation CreateLevelTaskSubmission($input: CreateLevelTaskSubmissionInput!) {
+  createLevelTaskSubmission(input: $input) {
+    id
+    status
+  }
+}
+    `;
+export type CreateLevelTaskSubmissionMutationFn = ApolloReactCommon.MutationFunction<CreateLevelTaskSubmissionMutation, CreateLevelTaskSubmissionMutationVariables>;
+
+/**
+ * __useCreateLevelTaskSubmissionMutation__
+ *
+ * To run a mutation, you first call `useCreateLevelTaskSubmissionMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useCreateLevelTaskSubmissionMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [createLevelTaskSubmissionMutation, { data, loading, error }] = useCreateLevelTaskSubmissionMutation({
+ *   variables: {
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function useCreateLevelTaskSubmissionMutation(baseOptions?: ApolloReactHooks.MutationHookOptions<CreateLevelTaskSubmissionMutation, CreateLevelTaskSubmissionMutationVariables>) {
+        return ApolloReactHooks.useMutation<CreateLevelTaskSubmissionMutation, CreateLevelTaskSubmissionMutationVariables>(CreateLevelTaskSubmissionDocument, baseOptions);
+      }
+export type CreateLevelTaskSubmissionMutationHookResult = ReturnType<typeof useCreateLevelTaskSubmissionMutation>;
+export type CreateLevelTaskSubmissionMutationResult = ApolloReactCommon.MutationResult<CreateLevelTaskSubmissionMutation>;
+export type CreateLevelTaskSubmissionMutationOptions = ApolloReactCommon.BaseMutationOptions<CreateLevelTaskSubmissionMutation, CreateLevelTaskSubmissionMutationVariables>;
 export const AcceptLevelTaskSubmissionDocument = gql`
     mutation AcceptLevelTaskSubmission($input: AcceptLevelTaskSubmissionInput!) {
   acceptLevelTaskSubmission(input: $input) {
