@@ -53,6 +53,7 @@ const LevelTasksList = ({ colonyAddress, levelId, unlocked }: Props) => {
         {steps.map(persistentTask => (
           <ListGroupItem key={persistentTask.id}>
             <LevelTasksListItem
+              levelId={levelId}
               nativeTokenAddress={nativeTokenAddress}
               persistentTask={persistentTask}
               unlocked={unlocked}
