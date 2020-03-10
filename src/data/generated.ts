@@ -1727,7 +1727,14 @@ export type CreateLevelTaskSubmissionMutationVariables = {
 };
 
 
-export type CreateLevelTaskSubmissionMutation = { createLevelTaskSubmission: Maybe<Pick<Submission, 'id' | 'status'>> };
+export type CreateLevelTaskSubmissionMutation = { createLevelTaskSubmission: Maybe<Pick<Submission, 'id' | 'status' | 'submission'>> };
+
+export type EditSubmissionMutationVariables = {
+  input: EditSubmissionInput
+};
+
+
+export type EditSubmissionMutation = { editSubmission: Maybe<Pick<Submission, 'id' | 'status' | 'submission'>> };
 
 export type AcceptLevelTaskSubmissionMutationVariables = {
   input: AcceptLevelTaskSubmissionInput
@@ -4049,6 +4056,7 @@ export const CreateLevelTaskSubmissionDocument = gql`
   createLevelTaskSubmission(input: $input) {
     id
     status
+    submission
   }
 }
     `;
@@ -4077,6 +4085,40 @@ export function useCreateLevelTaskSubmissionMutation(baseOptions?: ApolloReactHo
 export type CreateLevelTaskSubmissionMutationHookResult = ReturnType<typeof useCreateLevelTaskSubmissionMutation>;
 export type CreateLevelTaskSubmissionMutationResult = ApolloReactCommon.MutationResult<CreateLevelTaskSubmissionMutation>;
 export type CreateLevelTaskSubmissionMutationOptions = ApolloReactCommon.BaseMutationOptions<CreateLevelTaskSubmissionMutation, CreateLevelTaskSubmissionMutationVariables>;
+export const EditSubmissionDocument = gql`
+    mutation EditSubmission($input: EditSubmissionInput!) {
+  editSubmission(input: $input) {
+    id
+    status
+    submission
+  }
+}
+    `;
+export type EditSubmissionMutationFn = ApolloReactCommon.MutationFunction<EditSubmissionMutation, EditSubmissionMutationVariables>;
+
+/**
+ * __useEditSubmissionMutation__
+ *
+ * To run a mutation, you first call `useEditSubmissionMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useEditSubmissionMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [editSubmissionMutation, { data, loading, error }] = useEditSubmissionMutation({
+ *   variables: {
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function useEditSubmissionMutation(baseOptions?: ApolloReactHooks.MutationHookOptions<EditSubmissionMutation, EditSubmissionMutationVariables>) {
+        return ApolloReactHooks.useMutation<EditSubmissionMutation, EditSubmissionMutationVariables>(EditSubmissionDocument, baseOptions);
+      }
+export type EditSubmissionMutationHookResult = ReturnType<typeof useEditSubmissionMutation>;
+export type EditSubmissionMutationResult = ApolloReactCommon.MutationResult<EditSubmissionMutation>;
+export type EditSubmissionMutationOptions = ApolloReactCommon.BaseMutationOptions<EditSubmissionMutation, EditSubmissionMutationVariables>;
 export const AcceptLevelTaskSubmissionDocument = gql`
     mutation AcceptLevelTaskSubmission($input: AcceptLevelTaskSubmissionInput!) {
   acceptLevelTaskSubmission(input: $input) {

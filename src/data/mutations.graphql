@@ -426,6 +426,15 @@ mutation CreateLevelTaskSubmission($input: CreateLevelTaskSubmissionInput!) {
   createLevelTaskSubmission(input: $input) {
     id
     status
+    submission
+  }
+}
+
+mutation EditSubmission($input: EditSubmissionInput!) {
+  editSubmission(input: $input) {
+    id
+    status
+    submission
   }
 }
 
