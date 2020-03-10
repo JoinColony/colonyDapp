@@ -14,6 +14,7 @@ import {
   OneLevel,
   useLevelLazyQuery,
 } from '~data/index';
+import { Address } from '~types/index';
 
 import { useStepsCompleted } from '../../hooks/useStepsCompleted';
 
@@ -63,7 +64,7 @@ interface Props {
   enrolled: OneProgram['enrolled'];
   level: OneLevelWithUnlocked;
   levelIds: OneProgram['levelIds'];
-  levelTotalPayouts: { amount: string; symbol: string }[];
+  levelTotalPayouts: { address: Address; amount: string; symbol: string }[];
 }
 
 const displayName = 'dashboard.LevelDashboard.LevelAttributes';
@@ -121,12 +122,12 @@ const LevelAttributes = ({
                   text={MSG.titleRewards}
                 />
               </div>
-              {levelTotalPayouts.map(({ amount, symbol }) => (
-                // Sums will be aggregated by token
-                <div className={styles.rewardItem} key={`${symbol}-${amount}`}>
+              {levelTotalPayouts.map(({ address, amount, symbol }) => (
+                <div className={styles.rewardItem} key={address}>
                   <Tag
                     appearance={{ theme: 'golden' }}
                     text={`${amount} ${symbol}`}
+                    title={address}
                   />
                 </div>
               ))}

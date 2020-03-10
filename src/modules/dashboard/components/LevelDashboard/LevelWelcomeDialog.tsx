@@ -8,6 +8,7 @@ import Badge from '~core/Badge';
 import OverviewList, { OverviewListItem } from '~core/OverviewList';
 import Heading from '~core/Heading';
 import { OneLevel } from '~data/index';
+import { Address } from '~types/index';
 
 const MSG = defineMessages({
   title: {
@@ -51,7 +52,7 @@ const MSG = defineMessages({
 interface Props extends DialogProps {
   level: OneLevel;
   programTitle: string;
-  levelTotalPayouts: { amount: string; symbol: string }[];
+  levelTotalPayouts: { address: Address; amount: string; symbol: string }[];
 }
 
 const LevelWelcomeDialog = ({
@@ -101,12 +102,12 @@ const LevelWelcomeDialog = ({
             title={MSG.overviewRewardTitle}
             description={MSG.overviewRewardDescription}
           >
-            {levelTotalPayouts.map(({ amount, symbol }) => (
+            {levelTotalPayouts.map(({ amount, address, symbol }) => (
               <Tag
                 appearance={{ theme: 'golden' }}
-                // Sums will be aggregated by token
-                key={`${symbol}-${amount}`}
+                key={address}
                 text={`${amount} ${symbol}`}
+                title={address}
               />
             ))}
           </OverviewListItem>
