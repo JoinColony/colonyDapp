@@ -19,10 +19,6 @@ const MSG = defineMessages({
     id: 'dashboard.LevelTasksEdit.TaskDisplay.inDomain',
     defaultMessage: 'in {domainName}',
   },
-  untitledTask: {
-    id: 'dashboard.LevelTasksEdit.TaskDisplay.untitledTask',
-    defaultMessage: 'Untitled task',
-  },
 });
 
 interface Props {
@@ -72,7 +68,7 @@ const TaskDisplay = ({
       <div className={styles.headingContainer}>
         <Heading
           appearance={{ margin: 'none', size: 'normal' }}
-          text={title || MSG.untitledTask}
+          text={title || { id: 'levelStep.untitled' }}
         />
         <Button
           appearance={{ theme: 'blue' }}

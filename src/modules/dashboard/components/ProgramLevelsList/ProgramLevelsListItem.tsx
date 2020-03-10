@@ -21,10 +21,6 @@ const MSG = defineMessages({
     id: 'dashboard.ProgramLevelsList.ProgramLevelsListItem.linkView',
     defaultMessage: 'View',
   },
-  untitledLevel: {
-    id: 'dashboard.ProgramLevelsList.ProgramLevelsListItem.untitledLevel',
-    defaultMessage: 'Untitled Level',
-  },
   statusCompleteText: {
     id: 'dashboard.ProgramLevelsList.LevelStatusContent.completeText',
     defaultMessage: 'Complete!',
@@ -94,7 +90,7 @@ const ProgramLevelsListItem = ({
       <div className={styles.content}>
         <Heading
           appearance={{ margin: 'none', size: 'medium' }}
-          text={title || MSG.untitledLevel}
+          text={title || { id: 'level.untitled' }}
         />
         {!statusText && (
           <div className={styles.progressBarContainer}>

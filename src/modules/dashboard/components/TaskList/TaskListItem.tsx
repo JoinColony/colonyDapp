@@ -15,10 +15,6 @@ const MSG = defineMessages({
     id: 'dashboard.TaskList.TaskListItem.reputation',
     defaultMessage: '+{reputation} max rep',
   },
-  untitled: {
-    id: 'dashboard.TaskList.TaskListItem.untitled',
-    defaultMessage: 'Untitled task',
-  },
 });
 
 const UserAvatar = HookedUserAvatar();
@@ -33,7 +29,7 @@ const TaskListItem = ({ task }: Props) => {
   const history = useHistory();
   const { formatMessage } = useIntl();
 
-  const defaultTitle = formatMessage(MSG.untitled);
+  const defaultTitle = formatMessage({ id: 'task.untitled' });
   const {
     id: draftId,
     assignedWorkerAddress,

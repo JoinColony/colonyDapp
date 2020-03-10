@@ -23,11 +23,6 @@ import { getUserRoles } from '../../../../transformers';
 import styles from './ColonyPrograms.css';
 
 const MSG = defineMessages({
-  linkUntitledProgramText: {
-    id:
-      'dashboard.ColonyHome.ColonyMeta.ColonyPrograms.linkUntitledProgramText',
-    defaultMessage: 'Untitled Program',
-  },
   linkProgramTitleText: {
     id: 'dashboard.ColonyHome.ColonyMeta.ColonyPrograms.linkProgramTitleText',
     defaultMessage: '{isDraft, select, true {Draft - } false {}}{title}',
@@ -118,11 +113,11 @@ const ColonyPrograms = ({ colonyAddress, colonyName }: Props) => {
                 <NavLink
                   activeClassName={styles.navLinkActive}
                   className={styles.navLink}
-                  text={title || MSG.linkUntitledProgramText}
+                  text={title || { id: 'program.untitled' }}
                   title={MSG.linkProgramTitleText}
                   titleValues={{
                     isDraft,
-                    title: title || formatMessage(MSG.linkUntitledProgramText),
+                    title: title || formatMessage({ id: 'program.untitled' }),
                   }}
                   to={`/colony/${colonyName}/program/${id}`}
                 />
