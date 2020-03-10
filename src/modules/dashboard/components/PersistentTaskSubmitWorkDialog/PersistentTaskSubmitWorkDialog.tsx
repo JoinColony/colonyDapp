@@ -171,60 +171,58 @@ const PersistentTaskSubmitWorkDialog = ({
         >
           {({ dirty, isValid }) => (
             <>
-              {title && (
-                <DialogSection>
-                  <div className={styles.headingContainer}>
-                    <div>
-                      <div className={styles.headingInner}>
-                        <Heading
-                          appearance={{ margin: 'none', size: 'medium' }}
-                          text={title}
+              <DialogSection>
+                <div className={styles.headingContainer}>
+                  <div>
+                    <div className={styles.headingInner}>
+                      <Heading
+                        appearance={{ margin: 'none', size: 'medium' }}
+                        text={title || { id: 'levelStep.untitled' }}
+                      />
+                      {isSubmissionAccepted && (
+                        <Icon
+                          className={styles.iconComplete}
+                          name="circle-check-primary"
+                          title={MSG.statusCompleteText}
+                          viewBox="0 0 21 22"
                         />
-                        {isSubmissionAccepted && (
-                          <Icon
-                            className={styles.iconComplete}
-                            name="circle-check-primary"
-                            title={MSG.statusCompleteText}
-                            viewBox="0 0 21 22"
-                          />
-                        )}
-                      </div>
-                      <div className={styles.categories}>
-                        {domainData && (
-                          <div className={styles.category}>
-                            <FormattedMessage
-                              {...MSG.domainText}
-                              values={{ domainName: domainData.domain.name }}
-                            />
-                          </div>
-                        )}
-                        {skillName && (
-                          <div className={styles.category}>{skillName}</div>
-                        )}
-                      </div>
+                      )}
                     </div>
-                    <div className={styles.rewardsContainer}>
-                      <div className={styles.payoutsContainer}>
-                        <PayoutsList
-                          nativeTokenAddress={
-                            nativeTokenData.colony.nativeTokenAddress
-                          }
-                          payouts={payouts}
-                        />
-                      </div>
-                      {isSubmissionPending && (
-                        <div className={styles.pendingText}>
-                          <Heading
-                            appearance={{ margin: 'none', size: 'small' }}
-                            text={MSG.statusPendingText}
+                    <div className={styles.categories}>
+                      {domainData && (
+                        <div className={styles.category}>
+                          <FormattedMessage
+                            {...MSG.domainText}
+                            values={{ domainName: domainData.domain.name }}
                           />
-                          <div className={styles.dot} />
                         </div>
+                      )}
+                      {skillName && (
+                        <div className={styles.category}>{skillName}</div>
                       )}
                     </div>
                   </div>
-                </DialogSection>
-              )}
+                  <div className={styles.rewardsContainer}>
+                    <div className={styles.payoutsContainer}>
+                      <PayoutsList
+                        nativeTokenAddress={
+                          nativeTokenData.colony.nativeTokenAddress
+                        }
+                        payouts={payouts}
+                      />
+                    </div>
+                    {isSubmissionPending && (
+                      <div className={styles.pendingText}>
+                        <Heading
+                          appearance={{ margin: 'none', size: 'small' }}
+                          text={MSG.statusPendingText}
+                        />
+                        <div className={styles.dot} />
+                      </div>
+                    )}
+                  </div>
+                </div>
+              </DialogSection>
               {description && (
                 <DialogSection appearance={{ border: 'top' }}>
                   <Heading
