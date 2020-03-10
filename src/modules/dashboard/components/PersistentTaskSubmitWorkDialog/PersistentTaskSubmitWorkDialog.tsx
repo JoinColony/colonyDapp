@@ -5,9 +5,11 @@ import * as yup from 'yup';
 import Button from '~core/Button';
 import Dialog, { DialogProps, DialogSection } from '~core/Dialog';
 import Heading from '~core/Heading';
+import Icon from '~core/Icon';
 import {
   OneLevel,
   OnePersistentTask,
+  SubmissionStatus,
   useColonyNativeTokenQuery,
   useCreateLevelTaskSubmissionMutation,
   useDomainLazyQuery,
@@ -32,6 +34,14 @@ const MSG = defineMessages({
   labelSubmitWork: {
     id: 'dashboard.PersistentTaskSubmitWorkDialog.labelSubmitWork',
     defaultMessage: 'Submit your work',
+  },
+  statusCompleteText: {
+    id: 'dashboard.PersistentTaskSubmitWorkDialog.statusCompleteText',
+    defaultMessage: 'Complete',
+  },
+  statusPendingText: {
+    id: 'dashboard.PersistentTaskSubmitWorkDialog.statusPendingText',
+    defaultMessage: 'Pending review',
   },
   titleDescription: {
     id: 'dashboard.PersistentTaskSubmitWorkDialog.titleDescription',
@@ -61,6 +71,7 @@ const PersistentTaskSubmitWorkDialog = ({
   persistentTask: {
     id: persistentTaskId,
     colonyAddress,
+    currentUserSubmission,
     description,
     ethDomainId,
     ethSkillId,
@@ -68,6 +79,13 @@ const PersistentTaskSubmitWorkDialog = ({
     title,
   },
 }: Props) => {
+  const isSubmissionAccepted =
+    currentUserSubmission &&
+    currentUserSubmission.status === SubmissionStatus.Accepted;
+  const isSubmissionPending =
+    currentUserSubmission &&
+    currentUserSubmission.status === SubmissionStatus.Open;
+
   const [fetchDomain, { data: domainData }] = useDomainLazyQuery();
 
   const { data: nativeTokenData } = useColonyNativeTokenQuery({
@@ -123,10 +141,20 @@ const PersistentTaskSubmitWorkDialog = ({
                 <DialogSection>
                   <div className={styles.headingContainer}>
                     <div>
-                      <Heading
-                        appearance={{ margin: 'none', size: 'medium' }}
-                        text={title}
-                      />
+                      <div className={styles.headingInner}>
+                        <Heading
+                          appearance={{ margin: 'none', size: 'medium' }}
+                          text={title}
+                        />
+                        {isSubmissionAccepted && (
+                          <Icon
+                            className={styles.iconComplete}
+                            name="circle-check-primary"
+                            title={MSG.statusCompleteText}
+                            viewBox="0 0 21 22"
+                          />
+                        )}
+                      </div>
                       <div className={styles.categories}>
                         {domainData && (
                           <div className={styles.category}>
@@ -141,13 +169,24 @@ const PersistentTaskSubmitWorkDialog = ({
                         )}
                       </div>
                     </div>
-                    <div>
-                      <PayoutsList
-                        nativeTokenAddress={
-                          nativeTokenData.colony.nativeTokenAddress
-                        }
-                        payouts={payouts}
-                      />
+                    <div className={styles.rewardsContainer}>
+                      <div className={styles.payoutsContainer}>
+                        <PayoutsList
+                          nativeTokenAddress={
+                            nativeTokenData.colony.nativeTokenAddress
+                          }
+                          payouts={payouts}
+                        />
+                      </div>
+                      {isSubmissionPending && (
+                        <div className={styles.pendingText}>
+                          <Heading
+                            appearance={{ margin: 'none', size: 'small' }}
+                            text={MSG.statusPendingText}
+                          />
+                          <div className={styles.dot} />
+                        </div>
+                      )}
                     </div>
                   </div>
                 </DialogSection>
