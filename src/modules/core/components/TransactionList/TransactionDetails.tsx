@@ -23,10 +23,6 @@ const MSG = defineMessages({
     id: 'admin.TransactionList.TransactionDetails.toText',
     defaultMessage: 'To {recipientString}',
   },
-  untitled: {
-    id: 'admin.TransactionList.TransactionDetails.untitled',
-    defaultMessage: 'Untitled task',
-  },
 });
 
 const displayName = 'admin.TransactionList.TransactionDetails';
@@ -115,7 +111,7 @@ const ColonyDetails = ({
 const TaskDetails = ({ colonyName, task: { id, title } }: TaskDetailsProps) => (
   <span>
     <Link
-      text={title || MSG.untitled}
+      text={title || { id: 'task.untitled' }}
       to={`/colony/${colonyName}/task/${id}`}
       className={styles.taskLink}
     />

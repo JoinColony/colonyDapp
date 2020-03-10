@@ -19,10 +19,6 @@ const MSG = defineMessages({
     id: 'dashboard.ProgramLevelsEdit.LevelsListItem.linkView',
     defaultMessage: 'View',
   },
-  untitledLevel: {
-    id: 'dashboard.ProgramLevelsEdit.LevelsListItem.untitledLevel',
-    defaultMessage: 'Untitled Level',
-  },
 });
 
 interface Props {
@@ -64,7 +60,7 @@ const LevelsListItem = ({
       <div className={styles.itemContentContainer}>
         <Heading
           appearance={{ margin: 'none', size: 'medium' }}
-          text={title || MSG.untitledLevel}
+          text={title || { id: 'level.untitled' }}
         />
       </div>
       <div className={styles.itemActionContainer}>

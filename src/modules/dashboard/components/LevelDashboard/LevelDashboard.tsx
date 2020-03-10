@@ -26,10 +26,6 @@ const MSG = defineMessages({
     id: 'dashboard.LevelDashboard.buttonJoinProgram',
     defaultMessage: 'Join Program',
   },
-  untitledLevel: {
-    id: 'dashboard.LevelDashboard.untitledLevel',
-    defaultMessage: 'Untitled Level',
-  },
 });
 
 const displayName = 'dashboard.LevelDashboard';
@@ -110,7 +106,7 @@ const LevelDashboard = () => {
         <div>
           {programTitle && (
             <BreadCrumb
-              elements={[programTitle, levelTitle || MSG.untitledLevel]}
+              elements={[programTitle, levelTitle || { id: 'level.untitled' }]}
             />
           )}
         </div>

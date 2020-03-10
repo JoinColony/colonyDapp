@@ -54,10 +54,6 @@ const MSG = defineMessages({
     id: 'dashboard.LevelDashboard.LevelAttributes.titleRewards',
     defaultMessage: 'Rewards',
   },
-  untitled: {
-    id: 'dashboard.LevelDashboard.LevelAttributes.untitled',
-    defaultMessage: 'Untitled',
-  },
 });
 
 interface Props {
@@ -113,7 +109,7 @@ const LevelAttributes = ({
           <div className={styles.headingContainer}>
             <Heading
               appearance={{ margin: 'none', size: 'medium', weight: 'thin' }}
-              text={title || MSG.untitled}
+              text={title || { id: 'level.untitled' }}
             />
             <div className={styles.headingRewardsContainer}>
               <div className={styles.rewardItem}>
@@ -185,8 +181,8 @@ const LevelAttributes = ({
                       <FormattedMessage
                         {...MSG.completeToUnlockText}
                         values={{
-                          dependentLevelName:
-                            dependentLevelData.level.title || MSG.untitled,
+                          dependentLevelName: dependentLevelData.level
+                            .title || { id: 'level.untitled' },
                         }}
                       />
                     ) : (
