@@ -85,7 +85,7 @@ const validationSchema = yup.object().shape({
     .number()
     .moreThan(0)
     .required(),
-  description: yup.string().required(),
+  description: yup.string().nullable(),
   domainId: yup
     .number()
     .moreThan(0)
