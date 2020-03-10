@@ -64,7 +64,7 @@ const PayoutsList = ({
   const extraPayouts = sortedPayouts.slice(maxLines);
 
   return (
-    <div aria-disabled={!!clickDisabled} className={styles.main}>
+    <div aria-disabled={clickDisabled} className={styles.main}>
       <div>
         {firstPayouts.map(({ amount, token }) => (
           <div key={token.address} className={styles.tokenInfo}>
