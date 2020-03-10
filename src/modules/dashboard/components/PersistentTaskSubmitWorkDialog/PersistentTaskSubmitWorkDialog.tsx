@@ -13,6 +13,7 @@ import {
   useColonyNativeTokenQuery,
   useCreateLevelTaskSubmissionMutation,
   useDomainLazyQuery,
+  useEditSubmissionMutation,
 } from '~data/index';
 import { Input, Form } from '~core/Fields';
 import PayoutsList from '~core/PayoutsList';
@@ -97,16 +98,35 @@ const PersistentTaskSubmitWorkDialog = ({
   });
   const [
     createLevelTaskSubmission,
-    { data, loading },
+    { data: dataFromCreation, loading: loadingCreation },
   ] = useCreateLevelTaskSubmissionMutation();
+  const [
+    editSubmission,
+    { data: dataFromEdit, loading: loadingEdit },
+  ] = useEditSubmissionMutation();
+
+  const data = dataFromEdit || dataFromCreation;
+  const loading = loadingEdit || loadingCreation;
 
   const handleSubmit = useCallback(
     ({ submission }: FormValues) => {
-      createLevelTaskSubmission({
-        variables: { input: { levelId, persistentTaskId, submission } },
-      });
+      if (currentUserSubmission) {
+        editSubmission({
+          variables: { input: { id: currentUserSubmission.id, submission } },
+        });
+      } else {
+        createLevelTaskSubmission({
+          variables: { input: { levelId, persistentTaskId, submission } },
+        });
+      }
     },
-    [createLevelTaskSubmission, levelId, persistentTaskId],
+    [
+      createLevelTaskSubmission,
+      currentUserSubmission,
+      editSubmission,
+      levelId,
+      persistentTaskId,
+    ],
   );
 
   useEffect(() => {
