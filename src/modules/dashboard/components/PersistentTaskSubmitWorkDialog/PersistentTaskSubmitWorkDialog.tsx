@@ -7,6 +7,8 @@ import Dialog, { DialogProps, DialogSection } from '~core/Dialog';
 import Heading from '~core/Heading';
 import Icon from '~core/Icon';
 import {
+  LevelTasksDocument,
+  LevelTasksQueryVariables,
   OneLevel,
   OnePersistentTask,
   SubmissionStatus,
@@ -116,6 +118,13 @@ const PersistentTaskSubmitWorkDialog = ({
         });
       } else {
         createLevelTaskSubmission({
+          // Refetch in lieu of cache updates because of server-side resolvers (most notably `currentUserSubmission`)
+          refetchQueries: [
+            {
+              query: LevelTasksDocument,
+              variables: { id: levelId } as LevelTasksQueryVariables,
+            },
+          ],
           variables: { input: { levelId, persistentTaskId, submission } },
         });
       }
