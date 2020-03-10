@@ -120,26 +120,24 @@ const LevelTasksListItem = ({
         </div>
       )}
       <div className={styles.content}>
-        {title && (
-          <div className={styles.headingContainer}>
-            <Heading
-              appearance={{
-                margin: 'none',
-                size: 'normal',
-                theme: !isSubmissionAccepted ? 'dark' : undefined,
-              }}
-              text={title}
+        <div className={styles.headingContainer}>
+          <Heading
+            appearance={{
+              margin: 'none',
+              size: 'normal',
+              theme: !isSubmissionAccepted ? 'dark' : undefined,
+            }}
+            text={title || { id: 'levelStep.untitled' }}
+          />
+          {isSubmissionAccepted && (
+            <Icon
+              className={styles.iconComplete}
+              name="circle-check-primary"
+              title={MSG.statusCompleteText}
+              viewBox="0 0 21 22"
             />
-            {isSubmissionAccepted && (
-              <Icon
-                className={styles.iconComplete}
-                name="circle-check-primary"
-                title={MSG.statusCompleteText}
-                viewBox="0 0 21 22"
-              />
-            )}
-          </div>
-        )}
+          )}
+        </div>
         <div className={styles.categories}>
           {domainData && (
             <div className={styles.category}>

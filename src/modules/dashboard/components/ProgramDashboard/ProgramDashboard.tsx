@@ -20,10 +20,6 @@ const MSG = defineMessages({
     id: 'dashboard.ProgramDashboard.linkEdit',
     defaultMessage: 'Edit',
   },
-  unnamedProgramTitle: {
-    id: 'dashboard.ProgramDashboard.unnamedProgramTitle',
-    defaultMessage: 'Unnamed Program',
-  },
   tabLevels: {
     id: 'dashboard.ProgramDashboard.tabLevels',
     defaultMessage: 'Levels',
@@ -72,7 +68,7 @@ const ProgramDashboard = ({
         <div className={styles.headingContainer}>
           <Heading
             appearance={{ margin: 'none', size: 'medium' }}
-            text={title || MSG.unnamedProgramTitle}
+            text={title || { id: 'program.untitled' }}
           />
           {canAdmin && (
             <div className={styles.editButtonContainer}>
