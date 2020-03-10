@@ -99,6 +99,7 @@ const SuggestionsListItem = ({
   const canModify = canAdminister(userRoles);
   const isAccepted = status === SuggestionStatus.Accepted;
   const isRejected = status === SuggestionStatus.NotPlanned;
+  const isOpen = status === SuggestionStatus.Open;
 
   const handleNotPlanned = useCallback(() => onNotPlanned(id), [
     id,
@@ -140,7 +141,7 @@ const SuggestionsListItem = ({
                       />
                     </DropdownMenuItem>
                   )}
-                  {canModify && !isAccepted && !isRejected && (
+                  {canModify && isOpen && (
                     <DropdownMenuItem>
                       <Button
                         onClick={handleNotPlanned}
