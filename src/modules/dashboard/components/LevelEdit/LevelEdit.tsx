@@ -1,19 +1,29 @@
 import React, { useCallback } from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
-import { useParams } from 'react-router-dom';
+import { useParams, Redirect } from 'react-router-dom';
 import * as yup from 'yup';
 import { FormikProps } from 'formik';
 
+import { ROOT_DOMAIN } from '~constants';
 import Button from '~core/Button';
 import { Form, Input, InputLabel, Textarea, FormStatus } from '~core/Fields';
 import Heading from '~core/Heading';
 import Panel, { PanelSection } from '~core/Panel';
 import { SpinnerLoader } from '~core/Preloaders';
 import LevelTasksEdit from '~dashboard/LevelTasksEdit';
-import { useLevelQuery, useEditLevelMutation } from '~data/index';
+import {
+  useEditLevelMutation,
+  useLevelQuery,
+  useLoggedInUser,
+  useColonyAddressQuery,
+} from '~data/index';
 import CenteredTemplate from '~pages/CenteredTemplate';
+import { useDataFetcher, useTransformer } from '~utils/hooks';
 
 import BadgePicker from './BadgePicker';
+import { domainsAndRolesFetcher } from '../../fetchers';
+import { getUserRoles } from '../../../transformers';
+import { canAdminister } from '../../../users/checks';
 
 import styles from './LevelEdit.css';
 
@@ -81,7 +91,11 @@ const displayName = 'dashboard.LevelEdit';
 
 const LevelEdit = () => {
   const { colonyName, levelId, programId } = useParams();
+  const { walletAddress } = useLoggedInUser();
 
+  const { data: colonyAddressData } = useColonyAddressQuery({
+    variables: { name: colonyName },
+  });
   const { data } = useLevelQuery({ variables: { id: levelId } });
   const [editLevel] = useEditLevelMutation();
 
@@ -100,8 +114,25 @@ const LevelEdit = () => {
       }),
     [editLevel, levelId],
   );
+  const { data: domains, isFetching: isFetchingDomains } = useDataFetcher(
+    domainsAndRolesFetcher,
+    [colonyAddressData && colonyAddressData.colonyAddress],
+    [colonyAddressData && colonyAddressData.colonyAddress],
+  );
+  const userRoles = useTransformer(getUserRoles, [
+    domains,
+    ROOT_DOMAIN,
+    walletAddress,
+  ]);
 
-  if (!data) return <SpinnerLoader />;
+  if (!data || isFetchingDomains) return <SpinnerLoader />;
+  if (!canAdminister(userRoles)) {
+    return (
+      <Redirect
+        to={`/colony/${colonyName}/program/${programId}/level/${levelId}`}
+      />
+    );
+  }
 
   const {
     achievement,
