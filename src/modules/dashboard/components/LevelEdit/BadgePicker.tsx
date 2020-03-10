@@ -25,7 +25,7 @@ const badgeIcons = badges.map(badgeName => {
 const MSG = defineMessages({
   label: {
     id: 'dashboard.LevelEdit.BadgePicker.label',
-    defaultMessage: 'Select Avatar',
+    defaultMessage: 'Select Achievement',
   },
   explainer: {
     id: 'dashboard.LevelEdit.BadgePicker.explainer',
