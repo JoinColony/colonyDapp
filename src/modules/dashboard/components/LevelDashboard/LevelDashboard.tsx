@@ -1,8 +1,8 @@
-import React, { useCallback, useEffect, useMemo } from 'react';
+import React, { useCallback, useEffect } from 'react';
 import { defineMessages } from 'react-intl';
 import { useLocation, useParams } from 'react-router-dom';
-import BigNumber from 'bn.js';
 
+import { getLevelTotalPayouts } from '../../../transformers';
 import BreadCrumb from '~core/BreadCrumb';
 import Button from '~core/Button';
 import { useDialog } from '~core/Dialog';
@@ -13,9 +13,10 @@ import {
   useEnrollInProgramMutation,
   useLevelTasksQuery,
 } from '~data/index';
+import { useTransformer } from '~utils/hooks';
 
-import LevelAttributes from './LevelAttributes';
 import LevelTasksList from '../LevelTasksList';
+import LevelAttributes from './LevelAttributes';
 import LevelWelcomeDialog from './LevelWelcomeDialog';
 
 import styles from './LevelDashboard.css';
@@ -30,11 +31,6 @@ const MSG = defineMessages({
     defaultMessage: 'Untitled Level',
   },
 });
-
-interface PayoutBadge {
-  amount: string;
-  symbol: string;
-}
 
 const displayName = 'dashboard.LevelDashboard';
 
@@ -59,29 +55,8 @@ const LevelDashboard = () => {
     variables: { id: levelId },
   });
 
-  const levelTotalPayouts = useMemo<PayoutBadge[]>(() => {
-    if (!levelStepsData || !levelStepsData.level.steps) {
-      return [];
-    }
-    const newPayouts: Record<
-      PayoutBadge['symbol'],
-      PayoutBadge['amount']
-    > = levelStepsData.level.steps.reduce((prev, { payouts }) => {
-      const current = prev;
-      payouts.forEach(({ amount, token: { symbol } }) => {
-        const newBnAmount = new BigNumber(amount);
-        const currentVal = prev[symbol];
-        current[symbol] = !currentVal
-          ? newBnAmount.toString()
-          : new BigNumber(currentVal).add(newBnAmount).toString();
-      });
-      return current;
-    }, {});
-    return Object.keys(newPayouts).map(payoutKey => ({
-      amount: newPayouts[payoutKey],
-      symbol: payoutKey,
-    }));
-  }, [levelStepsData]);
+  const levelSteps = levelStepsData ? levelStepsData.level.steps : [];
+  const levelTotalPayouts = useTransformer(getLevelTotalPayouts, [levelSteps]);
 
   const enrollInProgram = useCallback(async () => {
     await enrollInProgramMutation();
