@@ -100,24 +100,23 @@ const PersistentTaskSubmitWorkDialog = ({
   });
   const [
     createLevelTaskSubmission,
-    { data: dataFromCreation, loading: loadingCreation },
+    { loading: loadingCreation },
   ] = useCreateLevelTaskSubmissionMutation();
   const [
     editSubmission,
-    { data: dataFromEdit, loading: loadingEdit },
+    { loading: loadingEdit },
   ] = useEditSubmissionMutation();
 
-  const data = dataFromEdit || dataFromCreation;
   const loading = loadingEdit || loadingCreation;
 
   const handleSubmit = useCallback(
-    ({ submission }: FormValues) => {
+    async ({ submission }: FormValues) => {
       if (currentUserSubmission) {
-        editSubmission({
+        await editSubmission({
           variables: { input: { id: currentUserSubmission.id, submission } },
         });
       } else {
-        createLevelTaskSubmission({
+        await createLevelTaskSubmission({
           // Refetch in lieu of cache updates because of server-side resolvers (most notably `currentUserSubmission`)
           refetchQueries: [
             {
@@ -128,8 +127,10 @@ const PersistentTaskSubmitWorkDialog = ({
           variables: { input: { levelId, persistentTaskId, submission } },
         });
       }
+      close(submission);
     },
     [
+      close,
       createLevelTaskSubmission,
       currentUserSubmission,
       editSubmission,
@@ -137,12 +138,6 @@ const PersistentTaskSubmitWorkDialog = ({
       persistentTaskId,
     ],
   );
-
-  useEffect(() => {
-    if (data) {
-      close(data);
-    }
-  }, [close, data]);
 
   useEffect(() => {
     if (ethDomainId) {
