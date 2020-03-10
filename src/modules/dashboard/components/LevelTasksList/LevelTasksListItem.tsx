@@ -5,7 +5,7 @@ import { useDialog } from '~core/Dialog';
 import Heading from '~core/Heading';
 import Icon from '~core/Icon';
 import PayoutsList from '~core/PayoutsList';
-import PersistentTaskSubmitWorkModal from '~dashboard/PersistentTaskSubmitWorkModal';
+import PersistentTaskSubmitWorkDialog from '~dashboard/PersistentTaskSubmitWorkDialog';
 import taskSkillsTree from '~dashboard/TaskSkills/taskSkillsTree';
 import {
   OneLevelWithUnlocked,
@@ -68,7 +68,7 @@ const LevelTasksListItem = ({
     currentUserSubmission.status === SubmissionStatus.Open;
   const [fetchDomain, { data: domainData }] = useDomainLazyQuery();
 
-  const openDialog = useDialog(PersistentTaskSubmitWorkModal);
+  const openDialog = useDialog(PersistentTaskSubmitWorkDialog);
 
   const handleClick = useCallback(() => {
     // Can't use `pointer-events: none` css because of `PayoutsList` child
