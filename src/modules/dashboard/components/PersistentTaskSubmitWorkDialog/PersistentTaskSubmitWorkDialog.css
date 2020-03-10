@@ -4,10 +4,50 @@
   align-items: center;
 }
 
+.headingInner {
+  display: flex;
+  align-items: center;
+}
+
+.iconComplete {
+  margin-left: 15px;
+  height: 14px;
+  width: 14px;
+  line-height: 14px;
+}
+
+.iconComplete svg {
+  height: 14px;
+  width: 14px;
+}
+
 .categories {
   display: flex;
 }
 
 .category + .category {
   margin-left: 10px;
+}
+
+.rewardsContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+}
+
+.payoutsContainer {
+  max-width: max-content;
+}
+
+.pendingText {
+  display: flex;
+  align-items: center;
+}
+
+.pendingText .dot {
+  margin-left: 7px;
+  height: 9px;
+  width: 9px;
+  border-radius: 50%;
+  background-color: var(--golden);
 }
