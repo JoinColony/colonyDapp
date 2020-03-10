@@ -31,6 +31,10 @@ const MSG = defineMessages({
     defaultMessage:
       'Add a comment or drop in a link so the admin can review your work.',
   },
+  headingSubmission: {
+    id: 'dashboard.PersistentTaskSubmitWorkDialog.headingSubmission',
+    defaultMessage: 'Submission',
+  },
   labelSubmitWork: {
     id: 'dashboard.PersistentTaskSubmitWorkDialog.labelSubmitWork',
     defaultMessage: 'Submit your work',
@@ -131,7 +135,13 @@ const PersistentTaskSubmitWorkDialog = ({
         </DialogSection>
       ) : (
         <Form
-          initialValues={{ submission: '' } as FormValues}
+          initialValues={
+            {
+              submission: currentUserSubmission
+                ? currentUserSubmission.submission
+                : '',
+            } as FormValues
+          }
           onSubmit={handleSubmit}
           validationSchema={validationSchema}
         >
@@ -201,12 +211,22 @@ const PersistentTaskSubmitWorkDialog = ({
                 </DialogSection>
               )}
               <DialogSection appearance={{ border: 'top' }}>
-                <Input
-                  appearance={{ colorSchema: 'grey', theme: 'fat' }}
-                  status={MSG.helpSubmitWork}
-                  label={MSG.labelSubmitWork}
-                  name="submission"
-                />
+                {currentUserSubmission && isSubmissionAccepted ? (
+                  <>
+                    <Heading
+                      appearance={{ size: 'normal' }}
+                      text={MSG.headingSubmission}
+                    />
+                    <b>{currentUserSubmission.submission}</b>
+                  </>
+                ) : (
+                  <Input
+                    appearance={{ colorSchema: 'grey', theme: 'fat' }}
+                    status={MSG.helpSubmitWork}
+                    label={MSG.labelSubmitWork}
+                    name="submission"
+                  />
+                )}
               </DialogSection>
               <DialogSection appearance={{ align: 'right', border: 'top' }}>
                 <Button
