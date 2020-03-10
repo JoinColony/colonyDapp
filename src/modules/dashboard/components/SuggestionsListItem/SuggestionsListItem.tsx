@@ -48,6 +48,10 @@ const MSG = defineMessages({
     id: 'Dashboard.SuggestionsListItem.buttonDelete',
     defaultMessage: 'Delete',
   },
+  buttonReopen: {
+    id: 'Dashboard.SuggestionsListItem.buttonReopen',
+    defaultMessage: 'Open',
+  },
   titleActionMenu: {
     id: 'Dashboard.SuggestionsListItem.titleActionMenu',
     defaultMessage: 'Change status',
@@ -69,6 +73,7 @@ interface Props {
   onNotPlanned: (id: string) => void;
   onDeleted: (id: string) => void;
   onCreateTask: (id: string) => void;
+  onReopen: (id: string) => void;
   suggestion: OneSuggestion;
   walletAddress: Address;
 }
@@ -81,6 +86,7 @@ const SuggestionsListItem = ({
   onNotPlanned,
   onDeleted,
   onCreateTask,
+  onReopen,
   suggestion: { ethDomainId, id, status, title, creator, upvotes, taskId },
   walletAddress,
 }: Props) => {
@@ -91,6 +97,9 @@ const SuggestionsListItem = ({
   ]);
   const canDelete = walletAddress === creator.profile.walletAddress;
   const canModify = canAdminister(userRoles);
+  const isAccepted = status === SuggestionStatus.Accepted;
+  const isRejected = status === SuggestionStatus.NotPlanned;
+  const isOpen = status === SuggestionStatus.Open;
 
   const handleNotPlanned = useCallback(() => onNotPlanned(id), [
     id,
@@ -101,6 +110,7 @@ const SuggestionsListItem = ({
     id,
     onCreateTask,
   ]);
+  const handleReopen = useCallback(() => onReopen(id), [id, onReopen]);
 
   const statusBadgeText = suggestionStatusBadgeText[status];
 
@@ -113,7 +123,16 @@ const SuggestionsListItem = ({
             content={({ close }) => (
               <DropdownMenu onClick={close}>
                 <DropdownMenuSection separator>
-                  {canModify && (
+                  {canModify && isRejected && (
+                    <DropdownMenuItem>
+                      <Button
+                        onClick={handleReopen}
+                        appearance={{ theme: 'no-style' }}
+                        text={MSG.buttonReopen}
+                      />
+                    </DropdownMenuItem>
+                  )}
+                  {canModify && !isAccepted && (
                     <DropdownMenuItem>
                       <Button
                         onClick={handleCreateTask}
@@ -122,7 +141,7 @@ const SuggestionsListItem = ({
                       />
                     </DropdownMenuItem>
                   )}
-                  {canModify && (
+                  {canModify && isOpen && (
                     <DropdownMenuItem>
                       <Button
                         onClick={handleNotPlanned}
