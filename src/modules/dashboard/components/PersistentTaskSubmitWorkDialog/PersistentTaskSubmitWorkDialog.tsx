@@ -16,25 +16,25 @@ import { Input, Form } from '~core/Fields';
 import PayoutsList from '~core/PayoutsList';
 import { SpinnerLoader } from '~core/Preloaders';
 
-import styles from './PersistentTaskSubmitWorkModal.css';
+import styles from './PersistentTaskSubmitWorkDialog.css';
 import taskSkillsTree from '~dashboard/TaskSkills/taskSkillsTree';
 
 const MSG = defineMessages({
   domainText: {
-    id: 'dashboard.PersistentTaskSubmitWorkModal.domainText',
+    id: 'dashboard.PersistentTaskSubmitWorkDialog.domainText',
     defaultMessage: 'in {domainName}',
   },
   helpSubmitWork: {
-    id: 'dashboard.PersistentTaskSubmitWorkModal.helpSubmitWork',
+    id: 'dashboard.PersistentTaskSubmitWorkDialog.helpSubmitWork',
     defaultMessage:
       'Add a comment or drop in a link so the admin can review your work.',
   },
   labelSubmitWork: {
-    id: 'dashboard.PersistentTaskSubmitWorkModal.labelSubmitWork',
+    id: 'dashboard.PersistentTaskSubmitWorkDialog.labelSubmitWork',
     defaultMessage: 'Submit your work',
   },
   titleDescription: {
-    id: 'dashboard.PersistentTaskSubmitWorkModal.titleDescription',
+    id: 'dashboard.PersistentTaskSubmitWorkDialog.titleDescription',
     defaultMessage: 'Description',
   },
 });
@@ -48,13 +48,13 @@ interface Props extends DialogProps {
   persistentTask: OnePersistentTask;
 }
 
-const displayName = 'dashboard.PersistentTaskSubmitWorkModal';
+const displayName = 'dashboard.PersistentTaskSubmitWorkDialog';
 
 const validationSchema = yup.object({
   submission: yup.string().required(),
 });
 
-const PersistentTaskSubmitWorkModal = ({
+const PersistentTaskSubmitWorkDialog = ({
   cancel,
   close,
   levelId,
@@ -192,6 +192,6 @@ const PersistentTaskSubmitWorkModal = ({
   );
 };
 
-PersistentTaskSubmitWorkModal.displayName = displayName;
+PersistentTaskSubmitWorkDialog.displayName = displayName;
 
-export default PersistentTaskSubmitWorkModal;
+export default PersistentTaskSubmitWorkDialog;
