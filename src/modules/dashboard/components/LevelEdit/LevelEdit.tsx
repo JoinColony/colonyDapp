@@ -21,6 +21,7 @@ import CenteredTemplate from '~pages/CenteredTemplate';
 import { useDataFetcher, useTransformer } from '~utils/hooks';
 
 import BadgePicker from './BadgePicker';
+import NumTotalSteps from './NumTotalSteps';
 import { domainsAndRolesFetcher } from '../../fetchers';
 import { getUserRoles } from '../../../transformers';
 import { canAdminister } from '../../../users/checks';
@@ -147,7 +148,6 @@ const LevelEdit = () => {
     <CenteredTemplate>
       <div className={styles.main}>
         <Form
-          enableReinitialize
           key={levelId}
           initialValues={
             {
@@ -236,6 +236,7 @@ const LevelEdit = () => {
                         values={{ numTotalSteps }}
                       />
                     </span>
+                    <NumTotalSteps name="numTotalSteps" value={numTotalSteps} />
                   </div>
                 </PanelSection>
               </Panel>
