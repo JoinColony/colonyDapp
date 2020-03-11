@@ -19,6 +19,9 @@ import {
   SetLoggedInUserDocument,
   SetLoggedInUserMutation,
   SetLoggedInUserMutationVariables,
+  UserQuery,
+  UserQueryVariables,
+  UserDocument,
 } from '~data/index';
 
 import setupResolvers from '../../../context/setupResolvers';
@@ -106,11 +109,14 @@ export default function* setupUserContext(
 
     let username;
     try {
-      const domain = yield ens.getDomain(
-        walletAddress,
-        colonyManager.networkClient,
-      );
-      username = ens.constructor.stripDomainParts('user', domain);
+      const { data } = yield apolloClient.query<UserQuery, UserQueryVariables>({
+        query: UserDocument,
+        variables: {
+          address: walletAddress,
+        },
+      });
+      username =
+        data && data.user && data.user.profile && data.user.profile.username;
     } catch (caughtError) {
       log.verbose(`Could not find username for ${walletAddress}`);
     }
