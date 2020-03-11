@@ -26,13 +26,12 @@ import {
 } from '../shared/tasksFilter';
 import TaskListItem from './TaskListItem';
 
-import taskListItemStyles from './TaskListItem.css';
+import styles from './TaskList.css';
 
 const MSG = defineMessages({
   noTasks: {
     id: 'dashboard.TaskList.noTasks',
-    defaultMessage: `It looks like you don't have any tasks.
-      Visit your colonies to find a task to work on.`,
+    defaultMessage: `It looks like you don't have any tasks. Visit your colonies to find a task to work on.`,
   },
   colonyToJoin: {
     id: 'dashboard.TaskList.colonyToJoin',
@@ -175,7 +174,7 @@ const TaskList = ({
    */
   if (filteredTasksData.length === 0 && !colonyAddress) {
     return (
-      <div className={taskListItemStyles.empty}>
+      <div className={styles.empty}>
         {emptyState || (
           <p>
             <FormattedMessage {...MSG.noTasks} />
@@ -188,33 +187,33 @@ const TaskList = ({
   const colonyName = colonyNameData && colonyNameData.colonyName;
 
   return filteredTasksData.length === 0 && colonyAddress ? (
-    <div>
+    <div className={styles.main}>
       {showEmptyState && (
         <>
           {filteredDomainId ? (
             <div>
               <Icon
-                className={taskListItemStyles.noTask}
+                className={styles.noTask}
                 name="empty-task"
                 title={MSG.noTasks}
                 viewBox="0 0 120 120"
               />
-              <div className={taskListItemStyles.emptyStateElements}>
+              <div className={styles.emptyStateElements}>
                 <FormattedMessage tagName="p" {...MSG.noTaskDescription} />
               </div>
-              <div className={taskListItemStyles.emptyStateElements}>
+              <div className={styles.emptyStateElements}>
                 <FormattedMessage tagName="p" {...MSG.noTaskAddition} />
               </div>
             </div>
           ) : (
             <div>
               <Icon
-                className={taskListItemStyles.noTask}
+                className={styles.noTask}
                 name="cup"
                 title={MSG.noTasks}
                 viewBox="0 0 120 120"
               />
-              <div className={taskListItemStyles.emptyStateElements}>
+              <div className={styles.emptyStateElements}>
                 <FormattedMessage
                   tagName="p"
                   {...MSG.welcomeToColony}
@@ -224,7 +223,7 @@ const TaskList = ({
                   }}
                 />
               </div>
-              <div className={taskListItemStyles.emptyStateElements}>
+              <div className={styles.emptyStateElements}>
                 <FormattedMessage
                   tagName="p"
                   {...MSG.joinColony}
@@ -236,7 +235,7 @@ const TaskList = ({
                     hasJoined: username ? hasJoined : true,
                     colonyToJoin: (
                       <Button
-                        className={taskListItemStyles.subscribe}
+                        className={styles.subscribe}
                         onClick={subscribeToColony}
                       >
                         <FormattedMessage

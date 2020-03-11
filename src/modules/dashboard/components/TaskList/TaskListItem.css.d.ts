@@ -7,7 +7,3 @@ export const taskDetailsTitle: string;
 export const taskDetailsReputation: string;
 export const taskPayouts: string;
 export const userAvatar: string;
-export const noTask: string;
-export const emptyStateElements: string;
-export const subscribe: string;
-export const empty: string;
