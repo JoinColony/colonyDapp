@@ -167,13 +167,13 @@ const PersistentTaskSubmitWorkDialog = ({
             {
               submission: currentUserSubmission
                 ? currentUserSubmission.submission
-                : null,
+                : '',
             } as FormValues
           }
           onSubmit={handleSubmit}
           validationSchema={validationSchema}
         >
-          {({ dirty, isValid }) => (
+          {({ isValid }) => (
             <>
               <DialogSection>
                 <div className={styles.headingContainer}>
@@ -272,7 +272,7 @@ const PersistentTaskSubmitWorkDialog = ({
                     />
                     <Button
                       appearance={{ size: 'large', theme: 'primary' }}
-                      disabled={!isValid || !dirty}
+                      disabled={!isValid}
                       loading={loading}
                       text={
                         currentUserSubmission
