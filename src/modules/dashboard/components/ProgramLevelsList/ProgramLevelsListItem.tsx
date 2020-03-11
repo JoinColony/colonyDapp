@@ -11,6 +11,7 @@ import Heading from '~core/Heading';
 import Icon from '~core/Icon';
 import ProgressBar from '~core/ProgressBar';
 import { OneLevelWithUnlocked, useLevelTasksQuery } from '~data/index';
+import { getMainClasses } from '~utils/css';
 
 import { useStepsCompleted } from '../../hooks/useStepsCompleted';
 
@@ -81,7 +82,11 @@ const ProgramLevelsListItem = ({
     return undefined;
   }, [index, isComplete, isUserEnrolled, unlocked]);
   return (
-    <div className={styles.main}>
+    <div
+      className={getMainClasses({}, styles, {
+        isLocked: !unlocked,
+      })}
+    >
       {achievement && title && (
         <div className={styles.badgeContainer}>
           <Badge name={achievement} title={title} />
