@@ -28,6 +28,10 @@ const MSG = defineMessages({
     id: 'dashboard.ProgramReview.ProgramReviewItem.submissionHeading',
     defaultMessage: 'Submission',
   },
+  noSubmission: {
+    id: 'dashboard.ProgramReview.ProgramReviewItem.noSubmission',
+    defaultMessage: 'No submission',
+  },
 });
 
 const UserAvatar = HookedUserAvatar({ fetchUser: false });
@@ -154,7 +158,7 @@ const ProgramReviewItem = ({
         appearance={{ margin: 'small', size: 'normal' }}
         text={MSG.submissionHeading}
       />
-      <p>{submission}</p>
+      <p>{submission || <FormattedMessage {...MSG.noSubmission} />}</p>
     </div>
   );
 };

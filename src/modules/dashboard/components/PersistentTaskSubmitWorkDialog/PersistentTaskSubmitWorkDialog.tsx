@@ -72,7 +72,7 @@ interface Props extends DialogProps {
 const displayName = 'dashboard.PersistentTaskSubmitWorkDialog';
 
 const validationSchema = yup.object({
-  submission: yup.string().required(),
+  submission: yup.string(),
 });
 
 const PersistentTaskSubmitWorkDialog = ({
@@ -167,7 +167,7 @@ const PersistentTaskSubmitWorkDialog = ({
             {
               submission: currentUserSubmission
                 ? currentUserSubmission.submission
-                : '',
+                : null,
             } as FormValues
           }
           onSubmit={handleSubmit}
