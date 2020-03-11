@@ -37,3 +37,10 @@
   height: 22px;
   width: 22px;
 }
+
+/* state */
+
+.stateIsLocked .badgeContainer svg {
+  filter: brightness(0.6) saturate(140%);
+  opacity: 0.5;
+}
