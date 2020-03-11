@@ -3,7 +3,6 @@ import throttle from 'lodash/throttle';
 import { defineMessages, useIntl } from 'react-intl';
 import { useHistory } from 'react-router';
 
-import { ROOT_DOMAIN } from '~constants';
 import Button from '~core/Button';
 import NavLink from '~core/NavLink';
 import {
@@ -14,11 +13,9 @@ import {
   useLoggedInUser,
 } from '~data/index';
 import { Address } from '~types/index';
-import { useDataFetcher, useTransformer } from '~utils/hooks';
 
-import { canCreateProgram } from '../../../checks';
-import { domainsAndRolesFetcher } from '../../../fetchers';
-import { getUserRoles } from '../../../../transformers';
+import { canAdminister } from '../../../../users/checks';
+import { useUserRolesInDomain } from '../../../hooks/useUserRolesInDomain';
 
 import styles from './ColonyPrograms.css';
 
@@ -50,22 +47,12 @@ const ColonyPrograms = ({ colonyAddress, colonyName }: Props) => {
 
   const { walletAddress } = useLoggedInUser();
 
-  const { data: domainsAndRolesData } = useDataFetcher(
-    domainsAndRolesFetcher,
-    [colonyAddress],
-    [colonyAddress],
-  );
-  const userRoles = useTransformer(getUserRoles, [
-    domainsAndRolesData,
-    ROOT_DOMAIN,
-    walletAddress,
-  ]);
+  const userRolesInRoot = useUserRolesInDomain(walletAddress, colonyAddress);
+  const canCreate = canAdminister(userRolesInRoot);
 
   const { data: programsData } = useColonyProgramsQuery({
     variables: { address: colonyAddress },
   });
-
-  const canCreate = canCreateProgram(userRoles);
 
   const unfilteredPrograms =
     (programsData && programsData.colony.programs) || [];
