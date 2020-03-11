@@ -14,6 +14,7 @@ import { log } from '~utils/debug';
 
 import apolloCache from './cache';
 import {
+  AcceptLevelTaskSubmissionMutationResult,
   ColonyProgramsDocument,
   ColonyProgramsQuery,
   ColonyProgramsQueryVariables,
@@ -34,17 +35,65 @@ import {
   ProgramDocument,
   ProgramQuery,
   ProgramQueryVariables,
+  ProgramSubmissionsDocument,
+  ProgramSubmissionsQuery,
+  ProgramSubmissionsQueryVariables,
   RemoveLevelTaskMutationResult,
   SetSuggestionStatusMutationResult,
   SuggestionStatus,
   UserDocument,
   UserQuery,
   UserQueryVariables,
+  SubmissionStatus,
 } from './generated';
 
 type Cache = typeof apolloCache;
 
 const cacheUpdates = {
+  acceptLevelTaskSubmission(programId: OneProgram['id']) {
+    return (
+      cache: Cache,
+      { data }: AcceptLevelTaskSubmissionMutationResult,
+    ) => {
+      try {
+        const cacheData = cache.readQuery<
+          ProgramSubmissionsQuery,
+          ProgramSubmissionsQueryVariables
+        >({
+          query: ProgramSubmissionsDocument,
+          variables: { id: programId },
+        });
+        const acceptSubmissionData = data && data.acceptLevelTaskSubmission;
+        if (cacheData && acceptSubmissionData) {
+          const isAccepted =
+            acceptSubmissionData.status === SubmissionStatus.Accepted;
+          const submissions = isAccepted
+            ? cacheData.program.submissions.filter(
+                ({ id }) => id !== acceptSubmissionData.id,
+              )
+            : cacheData.program.submissions;
+          cache.writeQuery<
+            ProgramSubmissionsQuery,
+            ProgramSubmissionsQueryVariables
+          >({
+            data: {
+              program: {
+                ...cacheData.program,
+                submissions,
+              },
+            },
+            query: ProgramSubmissionsDocument,
+            variables: { id: programId },
+          });
+        }
+      } catch (e) {
+        log.verbose(e);
+        log.verbose(
+          'Not updating store - level step submissions not loaded yet',
+        );
+      }
+    };
+  },
   createLevel(programId: OneProgram['id']) {
     return (cache: Cache, { data }: CreateLevelMutationResult) => {
       try {

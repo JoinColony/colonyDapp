@@ -61,6 +61,7 @@ const ProgramReview = ({
                 levelTitle={levelTitle}
                 nativeTokenAddress={nativeTokenAddress}
                 payouts={payouts}
+                programId={programId}
                 skillId={ethSkillId || 0}
                 submissionId={id}
                 submission={submission}

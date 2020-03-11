@@ -11,8 +11,9 @@ import { ActionTypes } from '~redux/index';
 import { Address } from '~types/index';
 import { useAsyncFunction } from '~utils/hooks';
 import {
-  Payouts,
+  cacheUpdates,
   OneSubmission,
+  Payouts,
   useAcceptLevelTaskSubmissionMutation,
 } from '~data/index';
 
@@ -39,6 +40,7 @@ interface Props {
   levelTitle?: string | null;
   nativeTokenAddress: Address;
   payouts: Payouts;
+  programId: string;
   skillId: number;
   submission: string;
   submissionId: string;
@@ -58,6 +60,7 @@ const ProgramReviewItem = ({
   levelTitle,
   nativeTokenAddress,
   payouts,
+  programId,
   skillId,
   submission,
   submissionId,
@@ -73,6 +76,7 @@ const ProgramReviewItem = ({
   });
 
   const [acceptLevelTaskSubmission] = useAcceptLevelTaskSubmissionMutation({
+    update: cacheUpdates.acceptLevelTaskSubmission(programId),
     variables: { input: { levelId, submissionId } },
   });
 
@@ -84,7 +88,6 @@ const ProgramReviewItem = ({
 
   const handleAccept = useCallback(async () => {
     if (await checkDomainBalance()) {
-      await acceptLevelTaskSubmission();
       await finalizeTask({
         colonyAddress,
         domainId,
@@ -93,6 +96,7 @@ const ProgramReviewItem = ({
         skillId,
         workerAddress: worker.profile.walletAddress,
       });
+      await acceptLevelTaskSubmission();
     }
   }, [
     acceptLevelTaskSubmission,
