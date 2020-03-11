@@ -244,6 +244,7 @@ const PersistentTaskSubmitWorkDialog = ({
                 ) : (
                   <Input
                     appearance={{ colorSchema: 'grey', theme: 'fat' }}
+                    autoComplete="off"
                     status={MSG.helpSubmitWork}
                     label={MSG.labelSubmitWork}
                     name="submission"
