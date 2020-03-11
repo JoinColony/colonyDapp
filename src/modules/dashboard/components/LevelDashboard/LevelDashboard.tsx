@@ -8,6 +8,7 @@ import Button from '~core/Button';
 import { useDialog } from '~core/Dialog';
 import { SpinnerLoader } from '~core/Preloaders';
 import {
+  ProgramStatus,
   useEnrollInProgramMutation,
   useLevelTasksQuery,
   useLevelQuery,
@@ -107,7 +108,7 @@ const LevelDashboard = () => {
     level,
   } = levelData;
   const {
-    program: { colonyAddress, enrolled, levelIds, title: programTitle },
+    program: { colonyAddress, enrolled, levelIds, status, title: programTitle },
   } = programData;
   const editPath = `/colony/${colonyName}/program/${programId}/level/${levelId}/edit`;
   return (
@@ -128,7 +129,7 @@ const LevelDashboard = () => {
               text={{ id: 'button.edit' }}
             />
           )}
-          {!enrolled && (
+          {!enrolled && status === ProgramStatus.Active && (
             <Button
               loading={enrolling}
               onClick={enrollInProgram}
