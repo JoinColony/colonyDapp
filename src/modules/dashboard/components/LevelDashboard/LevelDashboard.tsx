@@ -8,16 +8,19 @@ import Button from '~core/Button';
 import { useDialog } from '~core/Dialog';
 import { SpinnerLoader } from '~core/Preloaders';
 import {
-  useLevelQuery,
-  useProgramQuery,
   useEnrollInProgramMutation,
   useLevelTasksQuery,
+  useLevelQuery,
+  useLoggedInUser,
+  useProgramQuery,
 } from '~data/index';
 import { useTransformer } from '~utils/hooks';
 
 import LevelTasksList from '../LevelTasksList';
 import LevelAttributes from './LevelAttributes';
 import LevelWelcomeDialog from './LevelWelcomeDialog';
+import { useUserRolesInDomain } from '../../hooks/useUserRolesInDomain';
+import { canAdminister } from '../../../users/checks';
 
 import styles from './LevelDashboard.css';
 
@@ -31,7 +34,8 @@ const MSG = defineMessages({
 const displayName = 'dashboard.LevelDashboard';
 
 const LevelDashboard = () => {
-  const { levelId, programId } = useParams();
+  const { colonyName, levelId, programId } = useParams();
+  const { walletAddress } = useLoggedInUser();
   const { state } = useLocation();
   const showWelcomeMessage = (state && state.showWelcomeMessage) || false;
   const openDialog = useDialog(LevelWelcomeDialog);
@@ -72,6 +76,11 @@ const LevelDashboard = () => {
     programData,
   ]);
 
+  const userRolesInRoot = useUserRolesInDomain(
+    walletAddress,
+    programData && programData.program.colonyAddress,
+  );
+
   useEffect(() => {
     if (showWelcomeMessage && levelData && programData) {
       const { title: programTitle } = programData.program;
@@ -100,6 +109,7 @@ const LevelDashboard = () => {
   const {
     program: { colonyAddress, enrolled, levelIds, title: programTitle },
   } = programData;
+  const editPath = `/colony/${colonyName}/program/${programId}/level/${levelId}/edit`;
   return (
     <>
       <div className={styles.headingContainer}>
@@ -110,15 +120,22 @@ const LevelDashboard = () => {
             />
           )}
         </div>
-        {!enrolled && (
-          <div>
+        <div>
+          {canAdminister(userRolesInRoot) && (
+            <Button
+              appearance={{ theme: 'blue' }}
+              linkTo={editPath}
+              text={{ id: 'button.edit' }}
+            />
+          )}
+          {!enrolled && (
             <Button
               loading={enrolling}
               onClick={enrollInProgram}
               text={MSG.buttonJoinProgram}
             />
-          </div>
-        )}
+          )}
+        </div>
       </div>
       <LevelAttributes
         enrolled={enrolled}
