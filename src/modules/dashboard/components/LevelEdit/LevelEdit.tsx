@@ -65,6 +65,10 @@ const MSG = defineMessages({
     id: 'dashboard.LevelEdit.badgeRequiredText',
     defaultMessage: 'A badge must be selected',
   },
+  numRequiredStepsRequiredText: {
+    id: 'dashboard.LevelEdit.numRequiredStepsRequiredText',
+    defaultMessage: 'Number of required steps must be a number.',
+  },
 });
 
 interface FormValues {
@@ -84,8 +88,10 @@ const validationSchema = yup.object({
     .required(() => MSG.badgeRequiredText),
   numRequiredSteps: yup
     .number()
-    .min(0)
-    .max(yup.ref('numTotalSteps'), () => MSG.errorValidateNumStepsMax),
+    .moreThan(0)
+    .max(yup.ref('numTotalSteps'), () => MSG.errorValidateNumStepsMax)
+    .typeError(() => MSG.numRequiredStepsRequiredText)
+    .required(),
 });
 
 const displayName = 'dashboard.LevelEdit';
