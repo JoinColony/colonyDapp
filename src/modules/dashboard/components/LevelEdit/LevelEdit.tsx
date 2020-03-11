@@ -133,12 +133,10 @@ const LevelEdit = () => {
   ]);
 
   if (!data || isFetchingDomains) return <SpinnerLoader />;
+
+  const levelUrl = `/colony/${colonyName}/program/${programId}/level/${levelId}`;
   if (!canAdminister(userRoles)) {
-    return (
-      <Redirect
-        to={`/colony/${colonyName}/program/${programId}/level/${levelId}`}
-      />
-    );
+    return <Redirect to={levelUrl} />;
   }
 
   const {
@@ -184,7 +182,7 @@ const LevelEdit = () => {
                   <Button
                     appearance={{ theme: 'blue' }}
                     text={{ id: 'button.cancel' }}
-                    linkTo={`/colony/${colonyName}/program/${programId}`}
+                    linkTo={levelUrl}
                   />
                   <Button
                     disabled={!dirty || !isValid}
