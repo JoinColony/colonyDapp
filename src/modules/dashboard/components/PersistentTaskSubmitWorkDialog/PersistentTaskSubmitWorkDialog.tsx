@@ -25,6 +25,10 @@ import styles from './PersistentTaskSubmitWorkDialog.css';
 import taskSkillsTree from '~dashboard/TaskSkills/taskSkillsTree';
 
 const MSG = defineMessages({
+  buttonResubmit: {
+    id: 'dashboard.PersistentTaskSubmitWorkDialog.buttonResubmit',
+    defaultMessage: 'Re-submit',
+  },
   domainText: {
     id: 'dashboard.PersistentTaskSubmitWorkDialog.domainText',
     defaultMessage: 'in {domainName}',
@@ -252,19 +256,33 @@ const PersistentTaskSubmitWorkDialog = ({
                 )}
               </DialogSection>
               <DialogSection appearance={{ align: 'right', border: 'top' }}>
-                <Button
-                  appearance={{ size: 'large', theme: 'secondary' }}
-                  disabled={loading}
-                  onClick={cancel}
-                  text={{ id: 'button.cancel' }}
-                />
-                <Button
-                  appearance={{ size: 'large', theme: 'primary' }}
-                  disabled={!isValid || !dirty}
-                  loading={loading}
-                  text={{ id: 'button.submit' }}
-                  type="submit"
-                />
+                {isSubmissionAccepted ? (
+                  <Button
+                    appearance={{ size: 'large', theme: 'primary' }}
+                    onClick={close}
+                    text={{ id: 'button.close' }}
+                  />
+                ) : (
+                  <>
+                    <Button
+                      appearance={{ size: 'large', theme: 'secondary' }}
+                      disabled={loading}
+                      onClick={cancel}
+                      text={{ id: 'button.cancel' }}
+                    />
+                    <Button
+                      appearance={{ size: 'large', theme: 'primary' }}
+                      disabled={!isValid || !dirty}
+                      loading={loading}
+                      text={
+                        currentUserSubmission
+                          ? MSG.buttonResubmit
+                          : { id: 'button.submit' }
+                      }
+                      type="submit"
+                    />
+                  </>
+                )}
               </DialogSection>
             </>
           )}
