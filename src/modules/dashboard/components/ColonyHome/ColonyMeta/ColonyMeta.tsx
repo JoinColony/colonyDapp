@@ -57,7 +57,6 @@ interface Props {
   colony: AnyColonyProfile;
   canAdminister: boolean;
   domains: DomainsMapType;
-  setFilteredDomainId: (domainId: number) => void;
   filteredDomainId: number;
 }
 
@@ -76,7 +75,6 @@ const ColonyMeta = ({
     website = '',
   },
   domains,
-  setFilteredDomainId,
   filteredDomainId,
   colony,
   canAdminister,
@@ -169,24 +167,25 @@ const ColonyMeta = ({
       <ColonyPrograms colonyAddress={colonyAddress} colonyName={colonyName} />
       <section className={styles.domainContainer}>
         <ul>
-          <li>
+          <li className={styles.domainFilterItem}>
             <Button
               className={getActiveDomainFilterClass(
                 COLONY_TOTAL_BALANCE_DOMAIN_ID,
                 filteredDomainId,
               )}
-              onClick={() =>
-                setFilteredDomainId(COLONY_TOTAL_BALANCE_DOMAIN_ID)
-              }
-            >
-              <FormattedMessage id="domain.all" />
-            </Button>
+              linkTo={`/colony/${colonyName}`}
+              text={{ id: 'domain.all' }}
+            />
           </li>
           {sortedDomains.map(({ name, id }) => (
-            <li key={`domain_${id}`} title={name}>
+            <li
+              className={styles.domainFilterItem}
+              key={`domain_${id}`}
+              title={name}
+            >
               <Button
                 className={getActiveDomainFilterClass(id, filteredDomainId)}
-                onClick={() => setFilteredDomainId(id)}
+                linkTo={`/colony/${colonyName}?domainFilter=${id}`}
               >
                 {name}
               </Button>

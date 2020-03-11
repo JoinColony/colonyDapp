@@ -44,7 +44,7 @@ export interface Props
   innerRef?: (ref: HTMLElement | null) => void;
 
   /** Use a link instead of a button. Like ReactRouter's `to` property */
-  linkTo?: string;
+  linkTo?: NavLinkProps['to'];
 
   /** Setting this to `true` will apply loading styles via `aria-busy` (show a spinner) */
   loading?: boolean;
