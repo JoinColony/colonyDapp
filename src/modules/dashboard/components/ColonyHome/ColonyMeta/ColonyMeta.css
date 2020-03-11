@@ -52,7 +52,7 @@
 }
 
 .domainContainer {
-  margin-top: 19px;
+  margin: 20px 0;
 }
 
 .filterItem {
@@ -104,4 +104,8 @@
 
 .headlineLink:hover {
   text-decoration: underline;
+}
+
+.domainFilterItem {
+  margin-top: 8px;
 }

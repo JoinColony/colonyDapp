@@ -11,3 +11,4 @@ export const filterItemActive: string;
 export const headlineContainer: string;
 export const headline: string;
 export const headlineLink: string;
+export const domainFilterItem: string;
