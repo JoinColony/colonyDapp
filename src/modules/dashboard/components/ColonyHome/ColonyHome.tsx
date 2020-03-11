@@ -1,6 +1,7 @@
 import React, { useMemo, useState } from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
-import { Redirect, Route, Switch } from 'react-router-dom';
+import { Redirect, Route, RouteChildrenProps, Switch } from 'react-router-dom';
+import { parse as parseQS } from 'query-string';
 
 import RecoveryModeAlert from '~admin/RecoveryModeAlert';
 import Transactions from '~admin/Transactions';
@@ -61,22 +62,26 @@ enum TabName {
   TransactionsTab = 'transactions',
 }
 
-interface Props {
-  match: any;
-}
+type Props = RouteChildrenProps<{ colonyName: string }>;
 
 const displayName = 'dashboard.ColonyHome';
 
-const ColonyHome = ({
-  match: {
-    params: { colonyName },
-  },
-}: Props) => {
+const ColonyHome = ({ match, location }: Props) => {
+  if (!match) {
+    throw new Error(
+      `No match found for route in ${displayName} Please check route setup.`,
+    );
+  }
+  const { colonyName } = match.params;
   const { walletAddress, username } = useLoggedInUser();
 
-  const [filteredDomainId, setFilteredDomainId] = useState(
-    COLONY_TOTAL_BALANCE_DOMAIN_ID,
-  );
+  const { domainFilter } = parseQS(location.search) as {
+    domainFilter: string | undefined;
+  };
+  const filteredDomainId = domainFilter
+    ? parseInt(domainFilter, 10) || COLONY_TOTAL_BALANCE_DOMAIN_ID
+    : COLONY_TOTAL_BALANCE_DOMAIN_ID;
+
   const [activeTab, setActiveTab] = useState<TabName>(TabName.TasksTab);
 
   // @TODO: Try to get proper error handling going in resolvers (for colonies that don't exist)
@@ -155,7 +160,6 @@ const ColonyHome = ({
               }
               domains={domains}
               filteredDomainId={filteredDomainId}
-              setFilteredDomainId={setFilteredDomainId}
             />
           </div>
         </aside>

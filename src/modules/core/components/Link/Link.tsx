@@ -8,9 +8,6 @@ import {
 import { SimpleMessageValues } from '~types/index';
 
 interface Props extends LinkComponentProps {
-  /** Link to go to (react-router's "to") */
-  to: string;
-
   /** A string or a `messageDescriptor` that make up the link's text */
   text?: MessageDescriptor | string;
 
@@ -18,17 +15,13 @@ interface Props extends LinkComponentProps {
   textValues?: SimpleMessageValues;
 }
 
-const Link = ({ children, text, textValues, to, ...linkProps }: Props) => {
+const Link = ({ children, text, textValues, ...linkProps }: Props) => {
   const { formatMessage } = useIntl();
 
   const linkText =
     typeof text === 'string' ? text : text && formatMessage(text, textValues);
 
-  return (
-    <LinkComponent to={to} {...linkProps}>
-      {linkText || children}
-    </LinkComponent>
-  );
+  return <LinkComponent {...linkProps}>{linkText || children}</LinkComponent>;
 };
 
 export default Link;
