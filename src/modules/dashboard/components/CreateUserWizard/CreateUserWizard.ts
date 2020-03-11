@@ -7,16 +7,10 @@ import { withLoggedInUser } from '~data/index';
 // @ts-ignore
 import CreateUser from './CreateUserWizard.tsx';
 import StepUserName from './StepUserName';
-import StepConfirmTransaction from './StepConfirmTransaction';
 
-const wizardSteps = [StepUserName, StepConfirmTransaction];
+const wizardSteps = [StepUserName];
 
-const steps = (step: number, formValues: any, props: any) => {
-  if (props && props.loggedInUser && props.loggedInUser.username) {
-    return StepConfirmTransaction as ComponentType<any>;
-  }
-  return wizardSteps[step] as ComponentType<any>;
-};
+const steps = (step: number) => wizardSteps[step] as ComponentType<any>;
 
 const CreateUserContainer = compose(
   withLoggedInUser,

@@ -2,18 +2,20 @@ import React, { useCallback } from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 import * as yup from 'yup';
 import { useApolloClient } from '@apollo/react-hooks';
+import { Redirect } from 'react-router-dom';
 
-import { WizardProps } from '~core/Wizard';
-import { ActionForm, Input } from '~core/Fields';
+import { Input, Form } from '~core/Fields';
 import Heading from '~core/Heading';
 import Button from '~core/Button';
-import { ActionTypes } from '~redux/index';
 import ENS from '~lib/ENS';
 import {
   UserAddressDocument,
   UserAddressQuery,
   UserAddressQueryVariables,
+  useCreateUserMutation,
+  useLoggedInUser,
 } from '~data/index';
+import { DASHBOARD_ROUTE } from '~routes/index';
 
 import en from '../../../../i18n/en-validation.json';
 
@@ -22,8 +24,6 @@ import styles from './StepUserName.css';
 interface FormValues {
   username: string;
 }
-
-type Props = WizardProps<FormValues>;
 
 const MSG = defineMessages({
   heading: {
@@ -65,7 +65,7 @@ const validationSchema = yup.object({
     .ensAddress(en.string.username),
 });
 
-const StepUserName = ({ wizardValues, nextStep }: Props) => {
+const StepUserName = () => {
   const apolloClient = useApolloClient();
 
   const checkUsernameTaken = useCallback(
@@ -95,7 +95,7 @@ const StepUserName = ({ wizardValues, nextStep }: Props) => {
     [apolloClient],
   );
 
-  const validateDomain = useCallback(
+  const validateUsername = useCallback(
     async (values: FormValues) => {
       try {
         // Let's check whether this is even valid first
@@ -116,15 +116,30 @@ const StepUserName = ({ wizardValues, nextStep }: Props) => {
     },
     [checkUsernameTaken],
   );
+
+  const [createUsername] = useCreateUserMutation();
+  const onSubmit = useCallback(
+    (values: FormValues) =>
+      createUsername({
+        variables: {
+          createUserInput: { username: values.username },
+          loggedInUserInput: { username: values.username },
+        },
+      }),
+    [createUsername],
+  );
+
+  const { username: registeredUsername } = useLoggedInUser();
+  if (registeredUsername) {
+    return <Redirect to={DASHBOARD_ROUTE} />;
+  }
+
   return (
-    <ActionForm
+    <Form
       initialValues={{}}
-      onSuccess={() => nextStep(wizardValues)}
-      submit={ActionTypes.USERNAME_CREATE}
-      error={ActionTypes.USERNAME_CREATE_ERROR}
-      success={ActionTypes.TRANSACTION_CREATED}
-      validate={validateDomain}
+      validate={validateUsername}
       validationSchema={validationSchema}
+      onSubmit={onSubmit}
     >
       {({ dirty, isValid, isSubmitting, values: { username } }) => {
         const normalized = ENS.normalizeAsText(username);
@@ -162,7 +177,7 @@ const StepUserName = ({ wizardValues, nextStep }: Props) => {
           </section>
         );
       }}
-    </ActionForm>
+    </Form>
   );
 };
 
