@@ -5,3 +5,4 @@ export const progressBarContainer: string;
 export const badgeContainer: string;
 export const statusTextContainer: string;
 export const iconComplete: string;
+export const stateIsLocked: string;
