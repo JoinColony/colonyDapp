@@ -189,6 +189,7 @@ fragment EventContext on Event {
       type
     }
     ... on TaskMessageEvent {
+      colonyAddress
       message
       taskId
       type
