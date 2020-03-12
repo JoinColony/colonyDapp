@@ -6,6 +6,7 @@ import ListGroup, { ListGroupItem } from '~core/ListGroup';
 import { SpinnerLoader } from '~core/Preloaders';
 import {
   OneLevelWithUnlocked,
+  OneProgram,
   useLevelTasksQuery,
   useColonyNativeTokenQuery,
 } from '~data/index';
@@ -25,12 +26,18 @@ const MSG = defineMessages({
 interface Props {
   colonyAddress: Address;
   levelId: OneLevelWithUnlocked['id'];
+  programId: OneProgram['id'];
   unlocked: OneLevelWithUnlocked['unlocked'];
 }
 
 const displayName = 'dashboard.LevelTasksList';
 
-const LevelTasksList = ({ colonyAddress, levelId, unlocked }: Props) => {
+const LevelTasksList = ({
+  colonyAddress,
+  levelId,
+  programId,
+  unlocked,
+}: Props) => {
   const { data: levelTasksData } = useLevelTasksQuery({
     variables: { id: levelId },
   });
@@ -56,6 +63,7 @@ const LevelTasksList = ({ colonyAddress, levelId, unlocked }: Props) => {
               levelId={levelId}
               nativeTokenAddress={nativeTokenAddress}
               persistentTask={persistentTask}
+              programId={programId}
               unlocked={unlocked}
             />
           </ListGroupItem>

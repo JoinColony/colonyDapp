@@ -147,6 +147,7 @@ const LevelDashboard = () => {
       <LevelTasksList
         colonyAddress={colonyAddress}
         levelId={level.id}
+        programId={programId}
         unlocked={unlocked}
       />
     </>
