@@ -16,6 +16,8 @@ import {
   useCreateLevelTaskSubmissionMutation,
   useDomainLazyQuery,
   useEditSubmissionMutation,
+  ProgramSubmissionsDocument,
+  ProgramSubmissionsQueryVariables,
 } from '~data/index';
 import { Input, Form } from '~core/Fields';
 import PayoutsList from '~core/PayoutsList';
@@ -67,6 +69,7 @@ interface FormValues {
 interface Props extends DialogProps {
   levelId: OneLevel['id'];
   persistentTask: OnePersistentTask;
+  programId: OneLevel['programId'];
 }
 
 const displayName = 'dashboard.PersistentTaskSubmitWorkDialog';
@@ -89,6 +92,7 @@ const PersistentTaskSubmitWorkDialog = ({
     payouts,
     title,
   },
+  programId,
 }: Props) => {
   const isSubmissionAccepted =
     currentUserSubmission &&
@@ -115,19 +119,25 @@ const PersistentTaskSubmitWorkDialog = ({
 
   const handleSubmit = useCallback(
     async ({ submission }: FormValues) => {
+      const refetchQueries = [
+        // Refetch in lieu of cache updates because of server-side resolvers (most notably `currentUserSubmission`)
+        {
+          query: LevelTasksDocument,
+          variables: { id: levelId } as LevelTasksQueryVariables,
+        },
+        {
+          query: ProgramSubmissionsDocument,
+          variables: { id: programId } as ProgramSubmissionsQueryVariables,
+        },
+      ];
       if (currentUserSubmission) {
         await editSubmission({
+          refetchQueries,
           variables: { input: { id: currentUserSubmission.id, submission } },
         });
       } else {
         await createLevelTaskSubmission({
-          // Refetch in lieu of cache updates because of server-side resolvers (most notably `currentUserSubmission`)
-          refetchQueries: [
-            {
-              query: LevelTasksDocument,
-              variables: { id: levelId } as LevelTasksQueryVariables,
-            },
-          ],
+          refetchQueries,
           variables: { input: { levelId, persistentTaskId, submission } },
         });
       }
@@ -140,6 +150,7 @@ const PersistentTaskSubmitWorkDialog = ({
       editSubmission,
       levelId,
       persistentTaskId,
+      programId,
     ],
   );
 
