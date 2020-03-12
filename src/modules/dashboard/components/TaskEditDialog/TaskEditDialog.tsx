@@ -130,7 +130,7 @@ const resetPayout = (
   index: number,
   payouts: Payouts,
 ) =>
-  payouts.length > 0
+  payouts.length > 0 && payouts[index].amount !== '.'
     ? arrayHelpers.replace(index, payouts[index])
     : arrayHelpers.remove(index);
 
