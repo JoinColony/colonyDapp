@@ -49,7 +49,7 @@ const ProgramReview = ({
           level: { id: levelId, title: levelTitle },
           creator,
         }) => {
-          if (!taskTitle || !domain) return null;
+          if (!domain) return null;
           const { ethDomainId, name: domainName } = domain;
           return (
             <ListGroupItem key={id}>
