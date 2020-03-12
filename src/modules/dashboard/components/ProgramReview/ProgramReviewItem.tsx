@@ -12,6 +12,7 @@ import { Address } from '~types/index';
 import { useAsyncFunction } from '~utils/hooks';
 import {
   cacheUpdates,
+  OnePersistentTask,
   OneSubmission,
   Payouts,
   useAcceptLevelTaskSubmissionMutation,
@@ -50,7 +51,7 @@ interface Props {
   submissionId: string;
   taskDescription: string;
   taskId: string;
-  taskTitle: string;
+  taskTitle: OnePersistentTask['title'];
   worker: OneSubmission['creator'];
 }
 
@@ -125,7 +126,9 @@ const ProgramReviewItem = ({
             showInfo
           />
           <div className={styles.titleContainer}>
-            <div className={styles.title}>{taskTitle}</div>
+            <div className={styles.title}>
+              {taskTitle || <FormattedMessage id="levelStep.untitled" />}
+            </div>
             <div className={styles.meta}>
               <span>{levelTitle}</span>
               <span>
