@@ -41,6 +41,7 @@ interface Props {
   levelId: OneLevel['id'];
   nativeTokenAddress: Address;
   persistentTask: OnePersistentTask;
+  programId: OneLevel['programId'];
   unlocked: OneLevelWithUnlocked['unlocked'];
 }
 
@@ -58,6 +59,7 @@ const LevelTasksListItem = ({
     title,
   },
   persistentTask,
+  programId,
   unlocked,
 }: Props) => {
   const isSubmissionAccepted =
@@ -76,9 +78,10 @@ const LevelTasksListItem = ({
       openDialog({
         levelId,
         persistentTask,
+        programId,
       });
     }
-  }, [levelId, openDialog, persistentTask, unlocked]);
+  }, [levelId, openDialog, persistentTask, programId, unlocked]);
 
   const handleKeyDown = useCallback(
     (evt: KeyboardEvent<HTMLDivElement>) => {
@@ -87,10 +90,11 @@ const LevelTasksListItem = ({
         openDialog({
           levelId,
           persistentTask,
+          programId,
         });
       }
     },
-    [levelId, openDialog, persistentTask, unlocked],
+    [levelId, openDialog, persistentTask, programId, unlocked],
   );
 
   useEffect(() => {
