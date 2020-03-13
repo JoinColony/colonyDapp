@@ -385,7 +385,13 @@ mutation EditLevel($input: EditLevelInput!) {
   editLevel(input: $input) {
     ...LevelFields
   }
+}
 
+mutation RemoveLevel($input: RemoveLevelInput!) {
+  removeLevel(input: $input) {
+    id
+    status
+  }
 }
 
 mutation ReorderProgramLevels($input: ReorderProgramLevelsInput!) {
