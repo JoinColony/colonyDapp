@@ -78,7 +78,7 @@ const TaskDisplay = ({
       </div>
       {description && <p className={styles.description}>{description}</p>}
       <div className={styles.rewardsContainer}>
-        {nativeTokenAddress && (
+        {nativeTokenAddress && payouts.length > 0 && (
           <div className={styles.rewardItem}>
             <PayoutsList
               nativeTokenAddress={nativeTokenAddress}
