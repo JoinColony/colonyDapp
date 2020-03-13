@@ -156,8 +156,8 @@ const InboxItem = ({
 
   const { data: domains, isFetching: isFetchingDomains } = useDataFetcher(
     domainsFetcher,
-    [colonyAddress],
-    [colonyAddress],
+    [colonyAddress || undefined],
+    [colonyAddress || undefined],
   );
 
   const currentDomain: DomainType | undefined = domains && domains[domainId];

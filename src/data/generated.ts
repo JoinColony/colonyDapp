@@ -171,6 +171,7 @@ export type AssignWorkerEvent = TaskEvent & {
   type: EventType,
   taskId: Scalars['String'],
   workerAddress: Scalars['String'],
+  colonyAddress?: Maybe<Scalars['String']>,
 };
 
 export type AssignWorkerInput = {
@@ -186,6 +187,7 @@ export enum CacheControlScope {
 export type CancelTaskEvent = TaskEvent & {
   type: EventType,
   taskId: Scalars['String'],
+  colonyAddress?: Maybe<Scalars['String']>,
 };
 
 export type Colony = {
@@ -281,6 +283,7 @@ export type CreateUserInput = {
 export type CreateWorkRequestEvent = TaskEvent & {
   type: EventType,
   taskId: Scalars['String'],
+  colonyAddress?: Maybe<Scalars['String']>,
 };
 
 export type CreateWorkRequestInput = {
@@ -366,6 +369,7 @@ export enum EventType {
 export type FinalizeTaskEvent = TaskEvent & {
   type: EventType,
   taskId: Scalars['String'],
+  colonyAddress?: Maybe<Scalars['String']>,
 };
 
 export type FinalizeTaskInput = {
@@ -680,6 +684,7 @@ export type RemoveTaskPayoutEvent = TaskEvent & {
   taskId: Scalars['String'],
   tokenAddress: Scalars['String'],
   amount: Scalars['String'],
+  colonyAddress?: Maybe<Scalars['String']>,
 };
 
 export type RemoveTaskPayoutInput = {
@@ -692,6 +697,7 @@ export type RemoveTaskSkillEvent = TaskEvent & {
   type: EventType,
   taskId: Scalars['String'],
   ethSkillId: Scalars['Int'],
+  colonyAddress?: Maybe<Scalars['String']>,
 };
 
 export type RemoveTaskSkillInput = {
@@ -712,6 +718,7 @@ export type SendWorkInviteEvent = TaskEvent & {
   type: EventType,
   taskId: Scalars['String'],
   workerAddress: Scalars['String'],
+  colonyAddress?: Maybe<Scalars['String']>,
 };
 
 export type SendWorkInviteInput = {
@@ -733,6 +740,7 @@ export type SetTaskDescriptionEvent = TaskEvent & {
   type: EventType,
   taskId: Scalars['String'],
   description: Scalars['String'],
+  colonyAddress?: Maybe<Scalars['String']>,
 };
 
 export type SetTaskDescriptionInput = {
@@ -744,6 +752,7 @@ export type SetTaskDomainEvent = TaskEvent & {
   type: EventType,
   taskId: Scalars['String'],
   ethDomainId: Scalars['Int'],
+  colonyAddress?: Maybe<Scalars['String']>,
 };
 
 export type SetTaskDomainInput = {
@@ -755,6 +764,7 @@ export type SetTaskDueDateEvent = TaskEvent & {
   type: EventType,
   taskId: Scalars['String'],
   dueDate: Scalars['DateTime'],
+  colonyAddress?: Maybe<Scalars['String']>,
 };
 
 export type SetTaskDueDateInput = {
@@ -767,6 +777,7 @@ export type SetTaskPayoutEvent = TaskEvent & {
   taskId: Scalars['String'],
   tokenAddress: Scalars['String'],
   amount: Scalars['String'],
+  colonyAddress?: Maybe<Scalars['String']>,
 };
 
 export type SetTaskPayoutInput = {
@@ -779,6 +790,7 @@ export type SetTaskSkillEvent = TaskEvent & {
   type: EventType,
   taskId: Scalars['String'],
   ethSkillId: Scalars['Int'],
+  colonyAddress?: Maybe<Scalars['String']>,
 };
 
 export type SetTaskSkillInput = {
@@ -790,6 +802,7 @@ export type SetTaskTitleEvent = TaskEvent & {
   type: EventType,
   taskId: Scalars['String'],
   title: Scalars['String'],
+  colonyAddress?: Maybe<Scalars['String']>,
 };
 
 export type SetTaskTitleInput = {
@@ -859,6 +872,7 @@ export type Task = {
 export type TaskEvent = {
   type: EventType,
   taskId: Scalars['String'],
+  colonyAddress?: Maybe<Scalars['String']>,
 };
 
 export type TaskFinalizedPayment = {
@@ -922,6 +936,7 @@ export type UnassignWorkerEvent = TaskEvent & {
   type: EventType,
   taskId: Scalars['String'],
   workerAddress: Scalars['String'],
+  colonyAddress?: Maybe<Scalars['String']>,
 };
 
 export type UnassignWorkerInput = {
@@ -1008,7 +1023,7 @@ export type EventFieldsFragment = (
   )> }
 );
 
-export type EventContextFragment = { context: Pick<AssignWorkerEvent, 'taskId' | 'type' | 'workerAddress'> | Pick<CancelTaskEvent, 'taskId' | 'type'> | Pick<CreateTaskEvent, 'colonyAddress' | 'ethDomainId' | 'taskId' | 'type'> | Pick<CreateWorkRequestEvent, 'taskId' | 'type'> | Pick<FinalizeTaskEvent, 'taskId' | 'type'> | Pick<RemoveTaskPayoutEvent, 'amount' | 'taskId' | 'tokenAddress' | 'type'> | Pick<SendWorkInviteEvent, 'taskId' | 'type' | 'workerAddress'> | Pick<SetTaskDescriptionEvent, 'description' | 'taskId' | 'type'> | Pick<SetTaskDomainEvent, 'ethDomainId' | 'taskId' | 'type'> | Pick<SetTaskDueDateEvent, 'dueDate' | 'taskId' | 'type'> | Pick<SetTaskPayoutEvent, 'amount' | 'taskId' | 'tokenAddress' | 'type'> | Pick<SetTaskSkillEvent, 'ethSkillId' | 'taskId' | 'type'> | Pick<RemoveTaskSkillEvent, 'ethSkillId' | 'taskId' | 'type'> | Pick<SetTaskTitleEvent, 'taskId' | 'title' | 'type'> | Pick<TaskMessageEvent, 'colonyAddress' | 'message' | 'taskId' | 'type'> | Pick<UnassignWorkerEvent, 'taskId' | 'type' | 'workerAddress'> };
+export type EventContextFragment = { context: Pick<AssignWorkerEvent, 'taskId' | 'type' | 'workerAddress' | 'colonyAddress'> | Pick<CancelTaskEvent, 'taskId' | 'type' | 'colonyAddress'> | Pick<CreateTaskEvent, 'colonyAddress' | 'ethDomainId' | 'taskId' | 'type'> | Pick<CreateWorkRequestEvent, 'taskId' | 'type' | 'colonyAddress'> | Pick<FinalizeTaskEvent, 'taskId' | 'type' | 'colonyAddress'> | Pick<RemoveTaskPayoutEvent, 'amount' | 'taskId' | 'tokenAddress' | 'type' | 'colonyAddress'> | Pick<SendWorkInviteEvent, 'taskId' | 'type' | 'workerAddress' | 'colonyAddress'> | Pick<SetTaskDescriptionEvent, 'description' | 'taskId' | 'type' | 'colonyAddress'> | Pick<SetTaskDomainEvent, 'ethDomainId' | 'taskId' | 'type' | 'colonyAddress'> | Pick<SetTaskDueDateEvent, 'dueDate' | 'taskId' | 'type' | 'colonyAddress'> | Pick<SetTaskPayoutEvent, 'amount' | 'taskId' | 'tokenAddress' | 'type' | 'colonyAddress'> | Pick<SetTaskSkillEvent, 'ethSkillId' | 'taskId' | 'type' | 'colonyAddress'> | Pick<RemoveTaskSkillEvent, 'ethSkillId' | 'taskId' | 'type' | 'colonyAddress'> | Pick<SetTaskTitleEvent, 'taskId' | 'title' | 'type' | 'colonyAddress'> | Pick<TaskMessageEvent, 'colonyAddress' | 'message' | 'taskId' | 'type'> | Pick<UnassignWorkerEvent, 'taskId' | 'type' | 'workerAddress' | 'colonyAddress'> };
 
 export type TaskEventFragment = (
   EventFieldsFragment
@@ -1713,10 +1728,12 @@ export const EventContextFragmentDoc = gql`
       taskId
       type
       workerAddress
+      colonyAddress
     }
     ... on CancelTaskEvent {
       taskId
       type
+      colonyAddress
     }
     ... on CreateTaskEvent {
       colonyAddress
@@ -1727,68 +1744,81 @@ export const EventContextFragmentDoc = gql`
     ... on CreateWorkRequestEvent {
       taskId
       type
+      colonyAddress
     }
     ... on FinalizeTaskEvent {
       taskId
       type
+      colonyAddress
     }
     ... on RemoveTaskPayoutEvent {
       amount
       taskId
       tokenAddress
       type
+      colonyAddress
     }
     ... on SendWorkInviteEvent {
       taskId
       type
       workerAddress
+      colonyAddress
     }
     ... on SetTaskDescriptionEvent {
       description
       taskId
       type
+      colonyAddress
     }
     ... on SetTaskDomainEvent {
       ethDomainId
       taskId
       type
+      colonyAddress
     }
     ... on SetTaskDueDateEvent {
       dueDate
       taskId
       type
+      colonyAddress
     }
     ... on SetTaskPayoutEvent {
       amount
       taskId
       tokenAddress
       type
+      colonyAddress
     }
     ... on SetTaskSkillEvent {
       ethSkillId
       taskId
       type
+      colonyAddress
     }
     ... on RemoveTaskSkillEvent {
       ethSkillId
       taskId
       type
+      colonyAddress
     }
     ... on SetTaskTitleEvent {
       taskId
       title
       type
+      colonyAddress
     }
     ... on TaskMessageEvent {
       colonyAddress
       message
       taskId
       type
+      colonyAddress
     }
     ... on UnassignWorkerEvent {
       taskId
       type
       workerAddress
+      colonyAddress
     }
   }
 }
