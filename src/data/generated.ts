@@ -1706,6 +1706,13 @@ export type EditLevelMutationVariables = {
 
 export type EditLevelMutation = { editLevel: Maybe<LevelFieldsFragment> };
 
+export type RemoveLevelMutationVariables = {
+  input: RemoveLevelInput
+};
+
+
+export type RemoveLevelMutation = { removeLevel: Maybe<Pick<Level, 'id' | 'status'>> };
+
 export type ReorderProgramLevelsMutationVariables = {
   input: ReorderProgramLevelsInput
 };
@@ -3951,6 +3958,39 @@ export function useEditLevelMutation(baseOptions?: ApolloReactHooks.MutationHook
 export type EditLevelMutationHookResult = ReturnType<typeof useEditLevelMutation>;
 export type EditLevelMutationResult = ApolloReactCommon.MutationResult<EditLevelMutation>;
 export type EditLevelMutationOptions = ApolloReactCommon.BaseMutationOptions<EditLevelMutation, EditLevelMutationVariables>;
+export const RemoveLevelDocument = gql`
+    mutation RemoveLevel($input: RemoveLevelInput!) {
+  removeLevel(input: $input) {
+    id
+    status
+  }
+}
+    `;
+export type RemoveLevelMutationFn = ApolloReactCommon.MutationFunction<RemoveLevelMutation, RemoveLevelMutationVariables>;
+
+/**
+ * __useRemoveLevelMutation__
+ *
+ * To run a mutation, you first call `useRemoveLevelMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useRemoveLevelMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [removeLevelMutation, { data, loading, error }] = useRemoveLevelMutation({
+ *   variables: {
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function useRemoveLevelMutation(baseOptions?: ApolloReactHooks.MutationHookOptions<RemoveLevelMutation, RemoveLevelMutationVariables>) {
+        return ApolloReactHooks.useMutation<RemoveLevelMutation, RemoveLevelMutationVariables>(RemoveLevelDocument, baseOptions);
+      }
+export type RemoveLevelMutationHookResult = ReturnType<typeof useRemoveLevelMutation>;
+export type RemoveLevelMutationResult = ApolloReactCommon.MutationResult<RemoveLevelMutation>;
+export type RemoveLevelMutationOptions = ApolloReactCommon.BaseMutationOptions<RemoveLevelMutation, RemoveLevelMutationVariables>;
 export const ReorderProgramLevelsDocument = gql`
     mutation ReorderProgramLevels($input: ReorderProgramLevelsInput!) {
   reorderProgramLevels(input: $input) {
