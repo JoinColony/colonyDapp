@@ -214,6 +214,11 @@ fragment EventContext on Event {
       workerAddress
       colonyAddress
     }
+    ... on CreateDomainEvent {
+      type
+      ethDomainId
+      colonyAddress
+    }
   }
 }
 

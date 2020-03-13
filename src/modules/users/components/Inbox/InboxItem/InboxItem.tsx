@@ -1,4 +1,4 @@
-import React, { ReactNode, useCallback, useEffect } from 'react';
+import React, { ReactNode, useCallback } from 'react';
 import { FormattedMessage, defineMessages } from 'react-intl';
 
 import { EventType } from '../types';
@@ -11,13 +11,12 @@ import HookedUserAvatar from '~users/HookedUserAvatar';
 import { SpinnerLoader } from '~core/Preloaders';
 import { useDataFetcher } from '~utils/hooks';
 import {
-  useColonyNameLazyQuery,
+  useColonyNameQuery,
   useLoggedInUser,
   useMarkNotificationAsReadMutation,
-  useTokenLazyQuery,
+  useTokenQuery,
   useUserQuery,
-  useUserLazyQuery,
-  useTaskLazyQuery,
+  useTaskQuery,
   OneNotification,
   UserNotificationsDocument,
 } from '~data/index';
@@ -104,40 +103,37 @@ const InboxItem = ({
   // Let's see what event type context props we have
 
   // We might have more than just the worker as the target in the future
-  const { workerAddress: targetUserAddress = undefined } =
+  const { workerAddress: targetUserAddress = '' } =
     'workerAddress' in context ? context : {};
-  const { taskId = undefined } = 'taskId' in context ? context : {};
+  const { taskId = '' } = 'taskId' in context ? context : {};
   const { colonyAddress = undefined } =
     'colonyAddress' in context ? context : {};
-  const { domainId = 0 } = 'domainId' in context ? context : {};
-  const { tokenAddress = undefined } = 'tokenAddress' in context ? context : {};
+  const { ethDomainId = 0 } = 'ethDomainId' in context ? context : {};
+  const { tokenAddress = '' } = 'tokenAddress' in context ? context : {};
   const { amount = undefined } = 'amount' in context ? context : {};
   const { message = undefined } = 'message' in context ? context : {};
 
+  /*
+   * @NOTE On Perfomance
+   * Trying to fetch query data directly, even if it fails (empty variable passed along) has better
+   * performance than trying to load it conditionally via `useEffect()` (useQuery v. useLazyQuery)
+   */
   const { data: initiatorUser } = useUserQuery({
     variables: { address: initiatorAddress },
   });
 
-  const [loadTargetUser, { data: targetUser }] = useUserLazyQuery();
-  useEffect(() => {
-    if (targetUserAddress) {
-      loadTargetUser({ variables: { address: targetUserAddress } });
-    }
+  const { data: targetUser } = useUserQuery({
+    variables: { address: targetUserAddress },
   });
 
-  const [loadTask, { data: taskData }] = useTaskLazyQuery();
-  useEffect(() => {
-    if (taskId) loadTask({ variables: { id: taskId } });
+  const { data: taskData } = useTaskQuery({ variables: { id: taskId } });
+
+  const { data: colonyNameData } = useColonyNameQuery({
+    variables: { address: colonyAddress || '' },
   });
 
-  const [loadColony, { data: colonyNameData }] = useColonyNameLazyQuery();
-  useEffect(() => {
-    if (colonyAddress) loadColony({ variables: { address: colonyAddress } });
-  });
-
-  const [loadToken, { data: tokenData }] = useTokenLazyQuery();
-  useEffect(() => {
-    if (tokenAddress) loadToken({ variables: { address: tokenAddress } });
+  const { data: tokenData } = useTokenQuery({
+    variables: { address: tokenAddress },
   });
 
   const initiatorFriendlyName = !initiatorUser
@@ -160,7 +156,7 @@ const InboxItem = ({
     [colonyAddress || undefined],
   );
 
-  const currentDomain: DomainType | undefined = domains && domains[domainId];
+  const currentDomain: DomainType | undefined = domains && domains[ethDomainId];
 
   const [markAsReadMutation] = useMarkNotificationAsReadMutation({
     variables: { input: { id } },
