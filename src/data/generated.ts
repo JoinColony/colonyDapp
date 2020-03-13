@@ -829,16 +829,9 @@ export enum ProgramStatus {
 
 export type ProgramSubmission = {
   id: Scalars['String'],
-  createdAt: Scalars['DateTime'],
-  creatorAddress: Scalars['String'],
-  creator: User,
-  persistentTaskId: Scalars['String'],
-  submission: Scalars['String'],
-  status: SubmissionStatus,
-  statusChangedAt?: Maybe<Scalars['DateTime']>,
-  task: PersistentTask,
   levelId: Scalars['String'],
   level: Level,
+  submission: Submission,
 };
 
 export type PublishProgramInput = {
@@ -1321,14 +1314,17 @@ export type ProgramFieldsFragment = (
 export type LevelFieldsFragment = Pick<Level, 'id' | 'achievement' | 'createdAt' | 'creatorAddress' | 'description' | 'numRequiredSteps' | 'programId' | 'status' | 'stepIds' | 'title'>;
 
 export type ProgramSubmissionFieldsFragment = (
-  Pick<ProgramSubmission, 'id' | 'createdAt' | 'status' | 'statusChangedAt' | 'submission'>
-  & { creator: (
-    Pick<User, 'id'>
-    & { profile: Pick<UserProfile, 'avatarHash' | 'displayName' | 'username' | 'walletAddress'> }
-  ), level: Pick<Level, 'id' | 'title'>, task: (
-    Pick<PersistentTask, 'id' | 'colonyAddress' | 'description' | 'ethSkillId' | 'title'>
-    & { domain: Maybe<Pick<Domain, 'id' | 'ethDomainId' | 'name'>> }
-    & PersistentTaskPayoutsFragment
+  Pick<ProgramSubmission, 'id'>
+  & { level: Pick<Level, 'id' | 'title'>, submission: (
+    Pick<Submission, 'id' | 'createdAt' | 'status' | 'statusChangedAt' | 'submission'>
+    & { creator: (
+      Pick<User, 'id'>
+      & { profile: Pick<UserProfile, 'avatarHash' | 'displayName' | 'username' | 'walletAddress'> }
+    ), task: (
+      Pick<PersistentTask, 'id' | 'colonyAddress' | 'description' | 'ethSkillId' | 'title'>
+      & { domain: Maybe<Pick<Domain, 'id' | 'ethDomainId' | 'name'>> }
+      & PersistentTaskPayoutsFragment
+    ) }
   ) }
 );
 
@@ -2284,36 +2280,39 @@ export const PersistentTaskPayoutsFragmentDoc = gql`
 export const ProgramSubmissionFieldsFragmentDoc = gql`
     fragment ProgramSubmissionFields on ProgramSubmission {
   id
-  createdAt
-  creator {
-    id
-    profile {
-      avatarHash
-      displayName
-      username
-      walletAddress
-    }
-  }
   level {
     id
     title
   }
-  task {
+  submission {
     id
-    colonyAddress
-    description
-    ethSkillId
-    title
-    domain {
+    createdAt
+    creator {
       id
-      ethDomainId
-      name
+      profile {
+        avatarHash
+        displayName
+        username
+        walletAddress
+      }
     }
-    ...PersistentTaskPayouts
+    task {
+      id
+      colonyAddress
+      description
+      ethSkillId
+      title
+      domain {
+        id
+        ethDomainId
+        name
+      }
+      ...PersistentTaskPayouts
+    }
+    status
+    statusChangedAt
+    submission
   }
-  status
-  statusChangedAt
-  submission
 }
     ${PersistentTaskPayoutsFragmentDoc}`;
 export const SubmissionFieldsFragmentDoc = gql`

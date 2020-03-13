@@ -151,36 +151,39 @@ fragment LevelFields on Level {
 
 fragment ProgramSubmissionFields on ProgramSubmission {
   id
-  createdAt
-  creator {
-    id
-    profile {
-      avatarHash
-      displayName
-      username
-      walletAddress
-    }
-  }
   level {
     id
     title
   }
-  task {
+  submission {
     id
-    colonyAddress
-    description
-    ethSkillId
-    title
-    domain {
+    createdAt
+    creator {
       id
-      ethDomainId
-      name
+      profile {
+        avatarHash
+        displayName
+        username
+        walletAddress
+      }
     }
-    ...PersistentTaskPayouts
+    task {
+      id
+      colonyAddress
+      description
+      ethSkillId
+      title
+      domain {
+        id
+        ethDomainId
+        name
+      }
+      ...PersistentTaskPayouts
+    }
+    status
+    statusChangedAt
+    submission
   }
-  status
-  statusChangedAt
-  submission
 }
 
 fragment SubmissionFields on Submission {

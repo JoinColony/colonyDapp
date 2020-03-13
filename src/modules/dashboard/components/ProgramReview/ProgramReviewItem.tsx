@@ -13,7 +13,7 @@ import { useAsyncFunction } from '~utils/hooks';
 import {
   cacheUpdates,
   OnePersistentTask,
-  OneSubmission,
+  OneProgramSubmission,
   Payouts,
   useAcceptLevelTaskSubmissionMutation,
 } from '~data/index';
@@ -52,7 +52,7 @@ interface Props {
   taskDescription: string;
   taskId: string;
   taskTitle: OnePersistentTask['title'];
-  worker: OneSubmission['creator'];
+  worker: OneProgramSubmission['submission']['creator'];
 }
 
 const displayName = 'dashboard.ProgramReview.ProgramReviewItem';
