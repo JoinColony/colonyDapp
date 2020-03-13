@@ -1,5 +1,6 @@
 .buttonTextContainer {
   display: flex;
+  align-items: center;
   font-size: var(--size-large);
 }
 
@@ -10,4 +11,5 @@
 
 .buttonIcon {
   margin-right: 20px;
+  max-height: 28px;
 }
