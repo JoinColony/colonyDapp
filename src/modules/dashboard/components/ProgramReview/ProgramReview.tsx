@@ -4,7 +4,7 @@ import ListGroup, { ListGroupItem } from '~core/ListGroup';
 import { SpinnerLoader } from '~core/Preloaders';
 import {
   OneProgram,
-  useProgramSubmissionsQuery,
+  ProgramSubmissionsQuery,
   useColonyNativeTokenQuery,
 } from '~data/index';
 
@@ -12,24 +12,21 @@ import ProgramReviewItem from './ProgramReviewItem';
 
 interface Props {
   program: OneProgram;
+  submissions: ProgramSubmissionsQuery['program']['submissions'];
 }
 
 const displayName = 'dashboard.ProgramReview';
 
 const ProgramReview = ({
   program: { id: programId, colonyAddress },
+  submissions,
 }: Props) => {
-  const { data } = useProgramSubmissionsQuery({
-    variables: { id: programId },
-  });
-
   const { data: nativeTokenData } = useColonyNativeTokenQuery({
     variables: { address: colonyAddress },
   });
 
-  if (!data || !nativeTokenData) return <SpinnerLoader />;
+  if (!nativeTokenData) return <SpinnerLoader />;
 
-  const { submissions } = data.program;
   const { nativeTokenAddress } = nativeTokenData.colony;
 
   return (
