@@ -1,23 +1,20 @@
-import React, { useCallback, useState } from 'react';
+import React, { useCallback } from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 import * as yup from 'yup';
 
-import { FormikProps } from 'formik';
 import { useHistory } from 'react-router';
 import Button from '~core/Button';
 import { useDialog, ConfirmDialog } from '~core/Dialog';
-import Heading from '~core/Heading';
-import { Form, Input, Textarea, FormStatus } from '~core/Fields';
-import Panel, { PanelSection } from '~core/Panel';
+import { Form } from '~core/Fields';
 import {
   OneProgram,
   ProgramStatus,
   useEditProgramMutation,
-  usePublishProgramMutation,
   useRemoveProgramMutation,
 } from '~data/index';
 
 import ProgramLevelsEdit from '../ProgramLevelsEdit';
+import ProgramEditForm from './ProgramEditForm';
 
 import styles from './ProgramEdit.css';
 
@@ -90,55 +87,27 @@ const displayName = 'dashboard.ProgramEdit';
 
 const ProgramEdit = ({
   colonyName,
-  program: { id, description, levelIds, status, title },
+  program: { id: programId, description, levelIds, status, title },
   program,
   toggleEditMode,
 }: Props) => {
   const isDraft = status === ProgramStatus.Draft;
 
   const openDialog = useDialog(ConfirmDialog);
-  const [canPublish, setCanPublish] = useState(false);
   const history = useHistory();
 
   const [editProgram] = useEditProgramMutation();
-  const [publishProgram, { loading: isPublishing }] = usePublishProgramMutation(
-    {
-      variables: { input: { id } },
-    },
-  );
   const [deleteProgram] = useRemoveProgramMutation({
-    variables: { input: { id } },
+    variables: { input: { id: programId } },
   });
-
-  // As an alternative to `validateOnMount`
-  const checkCanPublish = useCallback(
-    async (values: FormValues) => {
-      const result = await validationSchema.isValid(values);
-      setCanPublish(result && levelIds.length > 0);
-    },
-    [levelIds.length],
-  );
 
   const handleUpdate = useCallback(
     async (values: FormValues) => {
       editProgram({
-        variables: { input: { ...values, id } },
+        variables: { input: { ...values, id: programId } },
       });
     },
-    [editProgram, id],
-  );
-
-  const handlePublish = useCallback(
-    async (values: FormValues) => {
-      // Save the values first
-      const { errors } = await editProgram({
-        variables: { input: { ...values, id } },
-      });
-      if (!errors) {
-        await publishProgram();
-      }
-    },
-    [editProgram, id, publishProgram],
+    [editProgram, programId],
   );
 
   const handleDelete = useCallback(async () => {
@@ -152,20 +121,12 @@ const ProgramEdit = ({
     history.push(`/colony/${colonyName}`);
   }, [colonyName, deleteProgram, history, openDialog]);
 
-  const cancelButtonActionProps = isDraft
-    ? {
-        linkTo: `/colony/${colonyName}`,
-      }
-    : {
-        onClick: toggleEditMode,
-      };
-
   return (
     <>
       <Form
         enableReinitialize
         // Use `key` to force form to reinitialize on route change
-        key={id}
+        key={programId}
         initialValues={
           {
             description: description || '',
@@ -175,79 +136,19 @@ const ProgramEdit = ({
         onSubmit={handleUpdate}
         validationSchema={validationSchema}
       >
-        {({
-          dirty,
-          isSubmitting,
-          isValid,
-          status: formStatus,
-          values,
-        }: FormikProps<FormValues>) => {
-          checkCanPublish(values);
-          return (
-            <>
-              <div className={styles.formActions}>
-                <div className={styles.headingContainer}>
-                  <div>
-                    <Heading
-                      appearance={{ size: 'medium' }}
-                      text={MSG.pageTitle}
-                    />
-                  </div>
-                </div>
-                <div>
-                  <Button
-                    appearance={{ theme: 'blue' }}
-                    text={{ id: 'button.cancel' }}
-                    {...cancelButtonActionProps}
-                  />
-                  {status === ProgramStatus.Draft && (
-                    <Button
-                      disabled={!isValid || isSubmitting || !canPublish}
-                      loading={isPublishing}
-                      onClick={() => handlePublish(values)}
-                      text={MSG.buttonPublish}
-                      title={MSG.buttonPublishTitle}
-                    />
-                  )}
-                  <Button
-                    disabled={!dirty || !isValid || isPublishing}
-                    loading={isSubmitting}
-                    text={
-                      isDraft ? MSG.buttonSubmitTextDraft : MSG.buttonSubmitText
-                    }
-                    type="submit"
-                  />
-                </div>
-              </div>
-              <Panel>
-                <PanelSection>
-                  <Input
-                    appearance={{
-                      colorSchema: 'grey',
-                      statusSchema: 'info',
-                      theme: 'fat',
-                    }}
-                    label={MSG.controlLabelTitle}
-                    name="title"
-                    status={isDraft ? MSG.draftStatusText : undefined}
-                  />
-                  <br />
-                  <Textarea
-                    appearance={{
-                      colorSchema: 'grey',
-                      resizable: 'vertical',
-                      theme: 'fat',
-                    }}
-                    label={MSG.controlLabelDescription}
-                    name="description"
-                    maxLength={4000}
-                  />
-                </PanelSection>
-              </Panel>
-              <FormStatus status={formStatus} />
-            </>
-          );
-        }}
+        {formikProps => (
+          <ProgramEditForm<FormValues>
+            colonyName={colonyName}
+            editProgram={editProgram}
+            formikProps={formikProps}
+            isDraft={isDraft}
+            levelIds={levelIds}
+            programId={programId}
+            programStatus={status}
+            toggleEditMode={toggleEditMode}
+            validationSchema={validationSchema}
+          />
+        )}
       </Form>
       <div className={styles.levelsContainer}>
         <ProgramLevelsEdit colonyName={colonyName} program={program} />
