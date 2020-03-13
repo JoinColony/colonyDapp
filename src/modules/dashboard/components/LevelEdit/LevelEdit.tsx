@@ -81,10 +81,6 @@ const MSG = defineMessages({
     defaultMessage: `Are you sure you would like to delete this level? All
       achievements will be deleted from your colony`,
   },
-  confirmDeleteButton: {
-    id: 'dashboard.LevelEdit.confirmDeleteButton',
-    defaultMessage: 'Confirm',
-  },
   buttonDeleteLevel: {
     id: 'dashboard.LevelEdit.buttonDeleteLevel',
     defaultMessage: 'Delete Level',
@@ -154,7 +150,7 @@ const LevelEdit = () => {
       appearance: { theme: 'danger' },
       heading: MSG.confirmDeleteHeading,
       children: <FormattedMessage {...MSG.confirmDeleteText} />,
-      confirmButtonText: MSG.confirmDeleteButton,
+      confirmButtonText: { id: 'button.delete' },
     }).afterClosed();
     await deleteLevel();
     history.push(`/colony/${colonyName}/program/${programId}`);
