@@ -1,4 +1,5 @@
 import React from 'react';
+import { defineMessages, FormattedMessage } from 'react-intl';
 
 import ListGroup, { ListGroupItem } from '~core/ListGroup';
 import { SpinnerLoader } from '~core/Preloaders';
@@ -9,6 +10,15 @@ import {
 } from '~data/index';
 
 import ProgramReviewItem from './ProgramReviewItem';
+
+import styles from './ProgramReview.css';
+
+const MSG = defineMessages({
+  emptyText: {
+    id: 'dashboard.ProgramReview.emptyText',
+    defaultMessage: 'Nothing left to review. Great work!',
+  },
+});
 
 interface Props {
   program: OneProgram;
@@ -28,6 +38,13 @@ const ProgramReview = ({
   if (!nativeTokenData) return <SpinnerLoader />;
 
   const { nativeTokenAddress } = nativeTokenData.colony;
+
+  if (!submissions.length)
+    return (
+      <p className={styles.emptyText}>
+        <FormattedMessage {...MSG.emptyText} />
+      </p>
+    );
 
   return (
     <ListGroup appearance={{ gaps: 'true' }}>
