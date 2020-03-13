@@ -44,6 +44,7 @@ import {
   UserQuery,
   UserQueryVariables,
   SubmissionStatus,
+  RemoveLevelMutationResult,
 } from './generated';
 
 type Cache = typeof apolloCache;
@@ -125,6 +126,44 @@ const cacheUpdates = {
       } catch (e) {
         log.verbose(e);
         log.verbose('Not updating store - colony programs not loaded yet');
+      }
+    };
+  },
+  removeLevel(programId: OneProgram['id']) {
+    return (cache: Cache, { data }: RemoveLevelMutationResult) => {
+      try {
+        const cacheData = cache.readQuery<ProgramQuery, ProgramQueryVariables>({
+          query: ProgramDocument,
+          variables: {
+            id: programId,
+          },
+        });
+        const removeLevelData = data && data.removeLevel;
+        if (cacheData && removeLevelData) {
+          const { id: removedId } = removeLevelData;
+          const levels = cacheData.program.levels.filter(
+            ({ id }) => id !== removedId,
+          );
+          const levelIds = cacheData.program.levelIds.filter(
+            id => id !== removedId,
+          );
+          cache.writeQuery<ProgramQuery, ProgramQueryVariables>({
+            data: {
+              program: {
+                ...cacheData.program,
+                levelIds,
+                levels,
+              },
+            },
+            query: ProgramDocument,
+            variables: {
+              id: programId,
+            },
+          });
+        }
+      } catch (e) {
+        log.verbose(e);
+        log.verbose('Not updating store - program levels not loaded yet');
       }
     };
   },

@@ -1,21 +1,24 @@
 import React, { useCallback } from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
-import { useParams, Redirect } from 'react-router-dom';
+import { useHistory, useParams, Redirect } from 'react-router-dom';
 import * as yup from 'yup';
 import { FormikProps } from 'formik';
 
 import { ROOT_DOMAIN } from '~constants';
 import Button from '~core/Button';
+import { useDialog, ConfirmDialog } from '~core/Dialog';
 import { Form, Input, InputLabel, Textarea, FormStatus } from '~core/Fields';
 import Heading from '~core/Heading';
 import Panel, { PanelSection } from '~core/Panel';
 import { SpinnerLoader } from '~core/Preloaders';
 import LevelTasksEdit from '~dashboard/LevelTasksEdit';
 import {
+  cacheUpdates,
+  useColonyAddressQuery,
   useEditLevelMutation,
   useLevelQuery,
   useLoggedInUser,
-  useColonyAddressQuery,
+  useRemoveLevelMutation,
 } from '~data/index';
 import CenteredTemplate from '~pages/CenteredTemplate';
 import { useDataFetcher, useTransformer } from '~utils/hooks';
@@ -69,6 +72,23 @@ const MSG = defineMessages({
     id: 'dashboard.LevelEdit.numRequiredStepsRequiredText',
     defaultMessage: 'Number of required steps must be a number.',
   },
+  confirmDeleteHeading: {
+    id: 'dashboard.LevelEdit.confirmDeleteHeading',
+    defaultMessage: 'Delete Level',
+  },
+  confirmDeleteText: {
+    id: 'dashboard.LevelEdit.confirmDeleteText',
+    defaultMessage: `Are you sure you would like to delete this level? All
+      achievements will be deleted from your colony`,
+  },
+  confirmDeleteButton: {
+    id: 'dashboard.LevelEdit.confirmDeleteButton',
+    defaultMessage: 'Confirm',
+  },
+  buttonDeleteLevel: {
+    id: 'dashboard.LevelEdit.buttonDeleteLevel',
+    defaultMessage: 'Delete Level',
+  },
 });
 
 interface FormValues {
@@ -98,13 +118,20 @@ const displayName = 'dashboard.LevelEdit';
 
 const LevelEdit = () => {
   const { colonyName, levelId, programId } = useParams();
+  const history = useHistory();
   const { walletAddress } = useLoggedInUser();
+
+  const openDialog = useDialog(ConfirmDialog);
 
   const { data: colonyAddressData } = useColonyAddressQuery({
     variables: { name: colonyName },
   });
   const { data } = useLevelQuery({ variables: { id: levelId } });
   const [editLevel] = useEditLevelMutation();
+  const [deleteLevel] = useRemoveLevelMutation({
+    update: cacheUpdates.removeLevel(programId),
+    variables: { input: { id: levelId } },
+  });
 
   const handleUpdate = useCallback(
     ({ achievement, title, description, numRequiredSteps }: FormValues) =>
@@ -121,6 +148,18 @@ const LevelEdit = () => {
       }),
     [editLevel, levelId],
   );
+
+  const handleDelete = useCallback(async () => {
+    await openDialog({
+      appearance: { theme: 'danger' },
+      heading: MSG.confirmDeleteHeading,
+      children: <FormattedMessage {...MSG.confirmDeleteText} />,
+      confirmButtonText: MSG.confirmDeleteButton,
+    }).afterClosed();
+    await deleteLevel();
+    history.push(`/colony/${colonyName}/program/${programId}`);
+  }, [colonyName, deleteLevel, history, openDialog, programId]);
+
   const { data: domains, isFetching: isFetchingDomains } = useDataFetcher(
     domainsAndRolesFetcher,
     [colonyAddressData && colonyAddressData.colonyAddress],
@@ -244,6 +283,13 @@ const LevelEdit = () => {
                     </span>
                     <NumTotalSteps name="numTotalSteps" value={numTotalSteps} />
                   </div>
+                </PanelSection>
+                <PanelSection>
+                  <Button
+                    appearance={{ theme: 'dangerLink' }}
+                    onClick={handleDelete}
+                    text={MSG.buttonDeleteLevel}
+                  />
                 </PanelSection>
               </Panel>
             </>
