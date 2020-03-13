@@ -5,9 +5,14 @@ import { useHistory } from 'react-router-dom';
 import Button from '~core/Button';
 import Heading from '~core/Heading';
 import { Tab, TabList, TabPanel, Tabs } from '~core/Tabs';
+import { SpinnerLoader } from '~core/Preloaders';
 import ProgramLevelsList from '~dashboard/ProgramLevelsList';
 import ProgramReview from '~dashboard/ProgramReview';
-import { OneProgram, useEnrollInProgramMutation } from '~data/index';
+import {
+  OneProgram,
+  useEnrollInProgramMutation,
+  useProgramSubmissionsQuery,
+} from '~data/index';
 
 import styles from './ProgramDashboard.css';
 
@@ -47,6 +52,10 @@ const ProgramDashboard = ({
   toggleEditMode,
 }: Props) => {
   const history = useHistory();
+  const { data } = useProgramSubmissionsQuery({
+    variables: { id: programId },
+  });
+
   const [enrollInProgramMutation, { loading }] = useEnrollInProgramMutation({
     variables: { input: { id: programId } },
   });
@@ -61,6 +70,11 @@ const ProgramDashboard = ({
       );
     }
   }, [colonyName, enrollInProgramMutation, history, levelIds, programId]);
+
+  if (!data) return <SpinnerLoader />;
+
+  const { submissions } = data.program;
+  const hasSubmissions = !!submissions.length;
 
   return (
     <div>
@@ -98,14 +112,16 @@ const ProgramDashboard = ({
               <FormattedMessage {...MSG.tabLevels} />
             </Tab>
             <Tab>
-              <FormattedMessage {...MSG.tabReview} />
+              <span className={hasSubmissions ? styles.tabReview : undefined}>
+                <FormattedMessage {...MSG.tabReview} />
+              </span>
             </Tab>
           </TabList>
           <TabPanel>
             <ProgramLevelsList colonyName={colonyName} program={program} />
           </TabPanel>
           <TabPanel>
-            <ProgramReview program={program} />
+            <ProgramReview submissions={submissions} program={program} />
           </TabPanel>
         </Tabs>
       ) : (
