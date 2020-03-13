@@ -52,6 +52,12 @@
   outline: none;
 }
 
+.themeUnderlined.sizeMedium {
+  height: 30px;
+  font-size: var(--size-normal);
+  line-height: 30px;
+}
+
 .themeUnderlined:focus {
   border-color: var(--primary);
 }

@@ -17,7 +17,7 @@ export interface Appearance {
   direction?: 'horizontal';
   colorSchema?: 'dark' | 'grey' | 'transparent';
   helpAlign?: 'right';
-  size?: 'small';
+  size?: 'small' | 'medium';
   statusSchema?: 'info';
 }
 
