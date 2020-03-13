@@ -1,14 +1,3 @@
-.formActions {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-}
-
-.headingContainer {
-  display: flex;
-  align-items: baseline;
-}
-
 .levelsContainer {
   margin: 20px 0 40px;
 }
