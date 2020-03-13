@@ -208,6 +208,7 @@ const LevelEdit = () => {
                     }}
                     label={MSG.labelDescription}
                     name="description"
+                    maxLength={4000}
                   />
                 </PanelSection>
                 <PanelSection>

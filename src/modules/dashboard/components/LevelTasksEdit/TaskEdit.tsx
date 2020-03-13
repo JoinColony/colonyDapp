@@ -254,6 +254,7 @@ const TaskEdit = ({
               }}
               label={MSG.labelTaskDescription}
               name="description"
+              maxLength={4000}
             />
           </div>
           <div className={styles.section}>
