@@ -11,7 +11,7 @@ export type Appearance = {
   theme?: 'fat' | 'underlined' | 'minimal' | 'dotted';
   align?: 'right';
   colorSchema?: 'dark' | 'grey' | 'transparent' | 'info';
-  size?: 'small';
+  size?: 'small' | 'medium';
 };
 
 type CleaveHTMLInputElement = HTMLInputElement & { rawValue: string };

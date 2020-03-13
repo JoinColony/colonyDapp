@@ -11,7 +11,7 @@ interface Appearance {
   direction?: 'horizontal';
   colorSchema?: 'dark' | 'grey' | 'transparent';
   statusShema?: 'info';
-  size?: 'small';
+  size?: 'small' | 'medium';
 }
 
 interface Props {
