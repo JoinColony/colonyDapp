@@ -19,7 +19,6 @@ import {
   ColonySuggestionsQuery,
   ColonyProgramsQuery,
   LevelQuery,
-  LevelTasksQuery,
   ProgramLevelsQuery,
   ProgramLevelsWithUnlockedQuery,
   ProgramSubmissionsQuery,
@@ -91,7 +90,7 @@ export type OneLevelWithUnlocked =
   | LevelsWithUnlocked[number]
   | LevelQuery['level'];
 
-export type PersistentTasks = LevelTasksQuery['level']['steps'];
+export type PersistentTasks = LevelQuery['level']['steps'];
 export type OnePersistentTask = PersistentTasks[number];
 
 export type Submissions = ProgramSubmissionsQuery['program']['submissions'];

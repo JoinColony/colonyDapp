@@ -128,6 +128,9 @@ fragment ProgramFields on Program {
     numRequiredSteps
     programId
     stepIds
+    steps {
+      ...PersistentTaskFields
+    }
     status
     title
   }
@@ -146,6 +149,9 @@ fragment LevelFields on Level {
   programId
   status
   stepIds
+  steps {
+    ...PersistentTaskFields
+  }
   title
 }
 

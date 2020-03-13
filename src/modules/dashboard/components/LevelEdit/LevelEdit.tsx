@@ -144,6 +144,7 @@ const LevelEdit = () => {
     description,
     numRequiredSteps,
     stepIds,
+    steps,
     title,
   } = data.level;
   const numTotalSteps = stepIds.length;
@@ -249,7 +250,7 @@ const LevelEdit = () => {
           )}
         </Form>
         <div className={styles.levelTasksContainer}>
-          <LevelTasksEdit levelId={levelId} />
+          <LevelTasksEdit levelId={levelId} levelSteps={steps} />
         </div>
       </div>
     </CenteredTemplate>

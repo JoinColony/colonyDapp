@@ -10,7 +10,6 @@ import Tag from '~core/Tag';
 import {
   OneLevelWithUnlocked,
   OneProgram,
-  useLevelTasksQuery,
   OneLevel,
   useLevelLazyQuery,
 } from '~data/index';
@@ -73,6 +72,7 @@ const LevelAttributes = ({
     achievement,
     description,
     stepIds,
+    steps,
     title,
     numRequiredSteps,
     unlocked,
@@ -83,17 +83,12 @@ const LevelAttributes = ({
     fetchDependentLevel,
     { data: dependentLevelData },
   ] = useLevelLazyQuery();
-  const { data: levelTasksData } = useLevelTasksQuery({
-    variables: { id: levelId },
-  });
 
   const dependentLevelId = useMemo<OneLevel['id'] | undefined>(
     () => levelIds[levelIds.indexOf(levelId) - 1],
     [levelId, levelIds],
   );
-  const stepsCompleted = useStepsCompleted(
-    (levelTasksData && levelTasksData.level.steps) || [],
-  );
+  const stepsCompleted = useStepsCompleted(steps);
 
   useEffect(() => {
     if (dependentLevelId) {
