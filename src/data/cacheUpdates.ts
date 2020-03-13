@@ -25,13 +25,12 @@ import {
   ColonySuggestionsQuery,
   ColonySuggestionsQueryVariables,
   CreateLevelMutationResult,
-  CreateLevelTaskMutationResult,
   CreateProgramMutationResult,
   CreateTaskFromSuggestionMutationResult,
   CreateTaskMutationResult,
-  LevelTasksDocument,
-  LevelTasksQuery,
-  LevelTasksQueryVariables,
+  LevelDocument,
+  LevelQuery,
+  LevelQueryVariables,
   ProgramDocument,
   ProgramQuery,
   ProgramQueryVariables,
@@ -129,50 +128,16 @@ const cacheUpdates = {
       }
     };
   },
-  createLevelTask(levelId: OneLevel['id']) {
-    return (cache: Cache, { data }: CreateLevelTaskMutationResult) => {
-      try {
-        const cacheData = cache.readQuery<
-          LevelTasksQuery,
-          LevelTasksQueryVariables
-        >({ query: LevelTasksDocument, variables: { id: levelId } });
-        const persistentTaskData = data && data.createLevelTask;
-        if (cacheData && persistentTaskData) {
-          const persistentTasks = cacheData.level.steps || [];
-          persistentTasks.push(persistentTaskData);
-          const persistentTaskIds = cacheData.level.stepIds || [];
-          persistentTaskIds.push(persistentTaskData.id);
-          cache.writeQuery<LevelTasksQuery, LevelTasksQueryVariables>({
-            data: {
-              level: {
-                ...cacheData.level,
-                stepIds: persistentTaskIds,
-                steps: persistentTasks,
-              },
-            },
-            query: LevelTasksDocument,
-            variables: { id: levelId },
-          });
-        }
-      } catch (e) {
-        log.verbose(e);
-        log.verbose('Not updating store - level tasks not loaded yet');
-      }
-    };
-  },
   removeLevelTask(levelId: OneLevel['id']) {
     return (cache: Cache, { data }: RemoveLevelTaskMutationResult) => {
       try {
-        const cacheData = cache.readQuery<
-          LevelTasksQuery,
-          LevelTasksQueryVariables
-        >({
-          query: LevelTasksDocument,
+        const cacheData = cache.readQuery<LevelQuery, LevelQueryVariables>({
+          query: LevelDocument,
           variables: { id: levelId },
         });
         const removedLevelTaskData = data && data.removeLevelTask;
         if (cacheData && removedLevelTaskData) {
-          const persistentTasks = cacheData.level.steps.filter(
+          const steps = cacheData.level.steps.filter(
             ({ id }) => id !== removedLevelTaskData.id,
           );
           const stepIds = cacheData.level.stepIds.filter(
@@ -185,16 +150,16 @@ const cacheUpdates = {
           ) {
             numRequiredSteps = stepIds.length;
           }
-          cache.writeQuery<LevelTasksQuery, LevelTasksQueryVariables>({
+          cache.writeQuery<LevelQuery, LevelQueryVariables>({
             data: {
               level: {
                 ...cacheData.level,
                 numRequiredSteps,
                 stepIds,
-                steps: persistentTasks,
+                steps,
               },
             },
-            query: LevelTasksDocument,
+            query: LevelDocument,
             variables: { id: levelId },
           });
         }

@@ -10,7 +10,7 @@ import Button from '~core/Button';
 import Heading from '~core/Heading';
 import Icon from '~core/Icon';
 import ProgressBar from '~core/ProgressBar';
-import { OneLevelWithUnlocked, useLevelTasksQuery } from '~data/index';
+import { OneLevelWithUnlocked } from '~data/index';
 import { getMainClasses } from '~utils/css';
 
 import { useStepsCompleted } from '../../hooks/useStepsCompleted';
@@ -55,17 +55,13 @@ const ProgramLevelsListItem = ({
     numRequiredSteps,
     programId,
     stepIds,
+    steps,
     title,
     unlocked,
   },
 }: Props) => {
   const levelUrl = `/colony/${colonyName}/program/${programId}/level/${levelId}`;
-  const { data: levelTasksData } = useLevelTasksQuery({
-    variables: { id: levelId },
-  });
-  const stepsCompleted = useStepsCompleted(
-    (levelTasksData && levelTasksData.level.steps) || [],
-  );
+  const stepsCompleted = useStepsCompleted(steps);
   const isComplete =
     (numRequiredSteps && stepsCompleted >= numRequiredSteps) ||
     stepsCompleted === stepIds.length;
