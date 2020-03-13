@@ -36,18 +36,20 @@ const ProgramReview = ({
     <ListGroup appearance={{ gaps: 'true' }}>
       {submissions.map(
         ({
-          id,
-          submission,
-          task: {
-            id: taskId,
-            description: taskDescription,
-            ethSkillId,
-            payouts,
-            title: taskTitle,
-            domain,
+          submission: {
+            id,
+            creator,
+            submission,
+            task: {
+              id: taskId,
+              description: taskDescription,
+              ethSkillId,
+              payouts,
+              title: taskTitle,
+              domain,
+            },
           },
           level: { id: levelId, title: levelTitle },
-          creator,
         }) => {
           if (!domain) return null;
           const { ethDomainId, name: domainName } = domain;
