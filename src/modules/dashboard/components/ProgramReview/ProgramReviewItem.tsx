@@ -93,14 +93,16 @@ const ProgramReviewItem = ({
 
   const handleAccept = useCallback(async () => {
     if (await checkDomainBalance()) {
-      await finalizeTask({
-        colonyAddress,
-        domainId,
-        draftId: taskId,
-        payouts,
-        skillId,
-        workerAddress: worker.profile.walletAddress,
-      });
+      if (payouts.length > 0) {
+        await finalizeTask({
+          colonyAddress,
+          domainId,
+          draftId: taskId,
+          payouts,
+          skillId,
+          workerAddress: worker.profile.walletAddress,
+        });
+      }
       await acceptLevelTaskSubmission();
     }
   }, [
