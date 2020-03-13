@@ -7,7 +7,6 @@ import { SpinnerLoader } from '~core/Preloaders';
 import {
   OneLevelWithUnlocked,
   OneProgram,
-  useLevelTasksQuery,
   useColonyNativeTokenQuery,
 } from '~data/index';
 import { Address } from '~types/index';
@@ -26,6 +25,7 @@ const MSG = defineMessages({
 interface Props {
   colonyAddress: Address;
   levelId: OneLevelWithUnlocked['id'];
+  levelSteps: OneLevelWithUnlocked['steps'];
   programId: OneProgram['id'];
   unlocked: OneLevelWithUnlocked['unlocked'];
 }
@@ -35,21 +35,16 @@ const displayName = 'dashboard.LevelTasksList';
 const LevelTasksList = ({
   colonyAddress,
   levelId,
+  levelSteps,
   programId,
   unlocked,
 }: Props) => {
-  const { data: levelTasksData } = useLevelTasksQuery({
-    variables: { id: levelId },
-  });
   const { data: nativeTokenData } = useColonyNativeTokenQuery({
     variables: { address: colonyAddress },
   });
-  if (!(levelTasksData && nativeTokenData)) {
+  if (!nativeTokenData) {
     return <SpinnerLoader />;
   }
-  const {
-    level: { steps },
-  } = levelTasksData;
   const {
     colony: { nativeTokenAddress },
   } = nativeTokenData;
@@ -57,7 +52,7 @@ const LevelTasksList = ({
     <div className={styles.main}>
       <Heading appearance={{ size: 'medium' }} text={MSG.title} />
       <ListGroup>
-        {steps.map(persistentTask => (
+        {levelSteps.map(persistentTask => (
           <ListGroupItem key={persistentTask.id}>
             <LevelTasksListItem
               levelId={levelId}

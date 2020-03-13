@@ -358,17 +358,6 @@ query ProgramSubmissions($id: String!) {
   }
 }
 
-query LevelTasks($id: String!) {
-  level(id: $id) {
-    id
-    numRequiredSteps
-    stepIds
-    steps {
-      ...PersistentTaskFields
-    }
-  }
-}
-
 query ColonySubscribedUsers($colonyAddress: String!) {
   colony(address: $colonyAddress) {
     id

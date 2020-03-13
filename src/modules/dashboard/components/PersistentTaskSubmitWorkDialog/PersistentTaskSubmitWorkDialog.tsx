@@ -7,8 +7,6 @@ import Dialog, { DialogProps, DialogSection } from '~core/Dialog';
 import Heading from '~core/Heading';
 import Icon from '~core/Icon';
 import {
-  LevelTasksDocument,
-  LevelTasksQueryVariables,
   OneLevel,
   OnePersistentTask,
   SubmissionStatus,
@@ -18,6 +16,8 @@ import {
   useEditSubmissionMutation,
   ProgramSubmissionsDocument,
   ProgramSubmissionsQueryVariables,
+  LevelDocument,
+  LevelQueryVariables,
 } from '~data/index';
 import { Input, Form } from '~core/Fields';
 import PayoutsList from '~core/PayoutsList';
@@ -122,8 +122,8 @@ const PersistentTaskSubmitWorkDialog = ({
       const refetchQueries = [
         // Refetch in lieu of cache updates because of server-side resolvers (most notably `currentUserSubmission`)
         {
-          query: LevelTasksDocument,
-          variables: { id: levelId } as LevelTasksQueryVariables,
+          query: LevelDocument,
+          variables: { id: levelId } as LevelQueryVariables,
         },
         {
           query: ProgramSubmissionsDocument,

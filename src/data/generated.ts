@@ -1308,10 +1308,16 @@ export type SuggestionFieldsFragment = (
 
 export type ProgramFieldsFragment = (
   Pick<Program, 'id' | 'createdAt' | 'creatorAddress' | 'colonyAddress' | 'description' | 'enrolled' | 'enrolledUserAddresses' | 'levelIds' | 'status' | 'title'>
-  & { levels: Array<Pick<Level, 'id' | 'achievement' | 'description' | 'numRequiredSteps' | 'programId' | 'stepIds' | 'status' | 'title'>> }
+  & { levels: Array<(
+    Pick<Level, 'id' | 'achievement' | 'description' | 'numRequiredSteps' | 'programId' | 'stepIds' | 'status' | 'title'>
+    & { steps: Array<PersistentTaskFieldsFragment> }
+  )> }
 );
 
-export type LevelFieldsFragment = Pick<Level, 'id' | 'achievement' | 'createdAt' | 'creatorAddress' | 'description' | 'numRequiredSteps' | 'programId' | 'status' | 'stepIds' | 'title'>;
+export type LevelFieldsFragment = (
+  Pick<Level, 'id' | 'achievement' | 'createdAt' | 'creatorAddress' | 'description' | 'numRequiredSteps' | 'programId' | 'status' | 'stepIds' | 'title'>
+  & { steps: Array<PersistentTaskFieldsFragment> }
+);
 
 export type ProgramSubmissionFieldsFragment = (
   Pick<ProgramSubmission, 'id'>
@@ -2020,16 +2026,6 @@ export type ProgramSubmissionsQuery = { program: (
     & { submissions: Array<ProgramSubmissionFieldsFragment> }
   ) };
 
-export type LevelTasksQueryVariables = {
-  id: Scalars['String']
-};
-
-
-export type LevelTasksQuery = { level: (
-    Pick<Level, 'id' | 'numRequiredSteps' | 'stepIds'>
-    & { steps: Array<PersistentTaskFieldsFragment> }
-  ) };
-
 export type ColonySubscribedUsersQueryVariables = {
   colonyAddress: Scalars['String']
 };
@@ -2224,42 +2220,16 @@ export const SuggestionFieldsFragmentDoc = gql`
   upvotes
 }
     `;
-export const ProgramFieldsFragmentDoc = gql`
-    fragment ProgramFields on Program {
+export const SubmissionFieldsFragmentDoc = gql`
+    fragment SubmissionFields on Submission {
   id
   createdAt
-  creatorAddress
-  colonyAddress
-  description
-  enrolled
-  enrolledUserAddresses
-  levels {
+  task {
     id
-    achievement
-    description
-    numRequiredSteps
-    programId
-    stepIds
-    status
-    title
   }
-  levelIds
   status
-  title
-}
-    `;
-export const LevelFieldsFragmentDoc = gql`
-    fragment LevelFields on Level {
-  id
-  achievement
-  createdAt
-  creatorAddress
-  description
-  numRequiredSteps
-  programId
-  status
-  stepIds
-  title
+  statusChangedAt
+  submission
 }
     `;
 export const PersistentTaskPayoutsFragmentDoc = gql`
@@ -2277,6 +2247,71 @@ export const PersistentTaskPayoutsFragmentDoc = gql`
   }
 }
     `;
+export const PersistentTaskFieldsFragmentDoc = gql`
+    fragment PersistentTaskFields on PersistentTask {
+  id
+  colonyAddress
+  createdAt
+  creatorAddress
+  currentUserSubmission {
+    ...SubmissionFields
+  }
+  description
+  ethDomainId
+  ethSkillId
+  ...PersistentTaskPayouts
+  status
+  submissions {
+    ...SubmissionFields
+  }
+  title
+}
+    ${SubmissionFieldsFragmentDoc}
+${PersistentTaskPayoutsFragmentDoc}`;
+export const ProgramFieldsFragmentDoc = gql`
+    fragment ProgramFields on Program {
+  id
+  createdAt
+  creatorAddress
+  colonyAddress
+  description
+  enrolled
+  enrolledUserAddresses
+  levels {
+    id
+    achievement
+    description
+    numRequiredSteps
+    programId
+    stepIds
+    steps {
+      ...PersistentTaskFields
+    }
+    status
+    title
+  }
+  levelIds
+  status
+  title
+}
+    ${PersistentTaskFieldsFragmentDoc}`;
+export const LevelFieldsFragmentDoc = gql`
+    fragment LevelFields on Level {
+  id
+  achievement
+  createdAt
+  creatorAddress
+  description
+  numRequiredSteps
+  programId
+  status
+  stepIds
+  steps {
+    ...PersistentTaskFields
+  }
+  title
+}
+    ${PersistentTaskFieldsFragmentDoc}`;
 export const ProgramSubmissionFieldsFragmentDoc = gql`
     fragment ProgramSubmissionFields on ProgramSubmission {
   id
@@ -2315,39 +2350,6 @@ export const ProgramSubmissionFieldsFragmentDoc = gql`
   }
 }
     ${PersistentTaskPayoutsFragmentDoc}`;
-export const SubmissionFieldsFragmentDoc = gql`
-    fragment SubmissionFields on Submission {
-  id
-  createdAt
-  task {
-    id
-  }
-  status
-  statusChangedAt
-  submission
-}
-    `;
-export const PersistentTaskFieldsFragmentDoc = gql`
-    fragment PersistentTaskFields on PersistentTask {
-  id
-  colonyAddress
-  createdAt
-  creatorAddress
-  currentUserSubmission {
-    ...SubmissionFields
-  }
-  description
-  ethDomainId
-  ethSkillId
-  ...PersistentTaskPayouts
-  status
-  submissions {
-    ...SubmissionFields
-  }
-  title
-}
-    ${SubmissionFieldsFragmentDoc}
-${PersistentTaskPayoutsFragmentDoc}`;
 export const EventFieldsFragmentDoc = gql`
     fragment EventFields on Event {
   createdAt
@@ -5224,44 +5226,6 @@ export function useProgramSubmissionsLazyQuery(baseOptions?: ApolloReactHooks.La
 export type ProgramSubmissionsQueryHookResult = ReturnType<typeof useProgramSubmissionsQuery>;
 export type ProgramSubmissionsLazyQueryHookResult = ReturnType<typeof useProgramSubmissionsLazyQuery>;
 export type ProgramSubmissionsQueryResult = ApolloReactCommon.QueryResult<ProgramSubmissionsQuery, ProgramSubmissionsQueryVariables>;
-export const LevelTasksDocument = gql`
-    query LevelTasks($id: String!) {
-  level(id: $id) {
-    id
-    numRequiredSteps
-    stepIds
-    steps {
-      ...PersistentTaskFields
-    }
-  }
-}
-    ${PersistentTaskFieldsFragmentDoc}`;
-
-/**
- * __useLevelTasksQuery__
- *
- * To run a query within a React component, call `useLevelTasksQuery` and pass it any options that fit your needs.
- * When your component renders, `useLevelTasksQuery` returns an object from Apollo Client that contains loading, error, and data properties 
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useLevelTasksQuery({
- *   variables: {
- *      id: // value for 'id'
- *   },
- * });
- */
-export function useLevelTasksQuery(baseOptions?: ApolloReactHooks.QueryHookOptions<LevelTasksQuery, LevelTasksQueryVariables>) {
-        return ApolloReactHooks.useQuery<LevelTasksQuery, LevelTasksQueryVariables>(LevelTasksDocument, baseOptions);
-      }
-export function useLevelTasksLazyQuery(baseOptions?: ApolloReactHooks.LazyQueryHookOptions<LevelTasksQuery, LevelTasksQueryVariables>) {
-          return ApolloReactHooks.useLazyQuery<LevelTasksQuery, LevelTasksQueryVariables>(LevelTasksDocument, baseOptions);
-        }
-export type LevelTasksQueryHookResult = ReturnType<typeof useLevelTasksQuery>;
-export type LevelTasksLazyQueryHookResult = ReturnType<typeof useLevelTasksLazyQuery>;
-export type LevelTasksQueryResult = ApolloReactCommon.QueryResult<LevelTasksQuery, LevelTasksQueryVariables>;
 export const ColonySubscribedUsersDocument = gql`
     query ColonySubscribedUsers($colonyAddress: String!) {
   colony(address: $colonyAddress) {

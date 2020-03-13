@@ -3,9 +3,10 @@ import { defineMessages } from 'react-intl';
 
 import { DottedAddButton } from '~core/Button';
 import {
-  useCreateLevelTaskMutation,
+  LevelDocument,
+  LevelQueryVariables,
   OneLevel,
-  cacheUpdates,
+  useCreateLevelTaskMutation,
 } from '~data/index';
 
 import LevelTasksList from './LevelTasksList';
@@ -21,13 +22,20 @@ const MSG = defineMessages({
 
 interface Props {
   levelId: OneLevel['id'];
+  levelSteps: OneLevel['steps'];
 }
 
 const displayName = 'dashboard.LevelTasksEdit';
 
-const LevelTasksEdit = ({ levelId }: Props) => {
+const LevelTasksEdit = ({ levelId, levelSteps }: Props) => {
   const [createPersistentTask, { data }] = useCreateLevelTaskMutation({
-    update: cacheUpdates.createLevelTask(levelId),
+    refetchQueries: [
+      // Prefer refetch of query over cache update
+      {
+        query: LevelDocument,
+        variables: { id: levelId } as LevelQueryVariables,
+      },
+    ],
     variables: { input: { levelId } },
   });
 
@@ -41,7 +49,11 @@ const LevelTasksEdit = ({ levelId }: Props) => {
   return (
     <>
       <div className={styles.section}>
-        <LevelTasksList createdTaskId={createdTaskId} levelId={levelId} />
+        <LevelTasksList
+          createdTaskId={createdTaskId}
+          levelId={levelId}
+          levelSteps={levelSteps}
+        />
       </div>
       <div className={styles.section}>
         <DottedAddButton

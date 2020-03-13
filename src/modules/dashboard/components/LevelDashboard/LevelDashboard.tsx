@@ -10,7 +10,6 @@ import { SpinnerLoader } from '~core/Preloaders';
 import {
   ProgramStatus,
   useEnrollInProgramMutation,
-  useLevelTasksQuery,
   useLevelQuery,
   useLoggedInUser,
   useProgramQuery,
@@ -52,11 +51,8 @@ const LevelDashboard = () => {
   const { data: programData, loading: programLoading } = useProgramQuery({
     variables: { id: programId },
   });
-  const { data: levelStepsData } = useLevelTasksQuery({
-    variables: { id: levelId },
-  });
 
-  const levelSteps = levelStepsData ? levelStepsData.level.steps : [];
+  const levelSteps = levelData ? levelData.level.steps : [];
   const levelTotalPayouts = useTransformer(getLevelTotalPayouts, [levelSteps]);
 
   const enrollInProgram = useCallback(async () => {
@@ -147,6 +143,7 @@ const LevelDashboard = () => {
       <LevelTasksList
         colonyAddress={colonyAddress}
         levelId={level.id}
+        levelSteps={levelSteps}
         programId={programId}
         unlocked={unlocked}
       />
