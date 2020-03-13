@@ -244,6 +244,7 @@ const ProgramEdit = ({
                     }}
                     label={MSG.controlLabelDescription}
                     name="description"
+                    maxLength={4000}
                   />
                 </PanelSection>
               </Panel>
