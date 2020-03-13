@@ -13,7 +13,7 @@ interface Appearance {
   direction?: 'horizontal';
   colorSchema?: 'dark' | 'grey' | 'transparent' | 'info';
   helpAlign?: 'right';
-  size?: 'small';
+  size?: 'small' | 'medium';
 }
 
 interface Props {

@@ -1,6 +1,7 @@
 export const main: string;
 export const themeFat: string;
 export const themeUnderlined: string;
+export const sizeMedium: string;
 export const themeMinimal: string;
 export const themeDotted: string;
 export const alignRight: string;

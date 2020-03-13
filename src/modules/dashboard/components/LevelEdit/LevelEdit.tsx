@@ -231,7 +231,7 @@ const LevelEdit = () => {
                     <span className={styles.requiredStepsInputContainer}>
                       <Input
                         label={MSG.labelAmountRequiredSteps}
-                        appearance={{ theme: 'underlined' }}
+                        appearance={{ theme: 'underlined', size: 'medium' }}
                         name="numRequiredSteps"
                       />
                     </span>
