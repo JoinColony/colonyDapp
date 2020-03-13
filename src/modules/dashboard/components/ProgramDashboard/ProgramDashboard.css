@@ -21,3 +21,19 @@
 .description {
   margin-bottom: 20px;
 }
+
+.tabReview {
+  position: relative;
+}
+
+.tabReview::after {
+  display: inline-block;
+  height: 8px;
+  width: 8px;
+  position: absolute;
+  top: 0;
+  right: -14px;
+  border-radius: 50%;
+  background-color: var(--danger);
+  content: '';
+}
