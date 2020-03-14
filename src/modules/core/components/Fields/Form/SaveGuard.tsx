@@ -8,15 +8,15 @@ import { useDialog, ConfirmDialog } from '~core/Dialog';
 
 const MSG = defineMessages({
   dialogButtonConfirm: {
-    id: 'Fields.Form.UnsavedGuard.dialogButtonConfirm',
+    id: 'Fields.Form.SaveGuard.dialogButtonConfirm',
     defaultMessage: 'Yes, discard my changes',
   },
   dialogTitle: {
-    id: 'Fields.Form.UnsavedGuard.dialogTitle',
+    id: 'Fields.Form.SaveGuard.dialogTitle',
     defaultMessage: 'Unsaved Changes',
   },
   dialogText: {
-    id: 'Fields.Form.UnsavedGuard.dialogText',
+    id: 'Fields.Form.SaveGuard.dialogText',
     defaultMessage: `You have unsaved changes. Leaving this page will
       discard your changes.
       {br}{br}
@@ -24,9 +24,9 @@ const MSG = defineMessages({
   },
 });
 
-const displayName = 'Fields.Form.UnsavedGuard';
+const displayName = 'Fields.Form.SaveGuard';
 
-const UnsavedGuard = () => {
+const SaveGuard = () => {
   const { dirty } = useFormikContext();
   const openDialog = useDialog(ConfirmDialog);
   const history = useHistory();
@@ -59,6 +59,6 @@ const UnsavedGuard = () => {
   return <Prompt when={dirty} message={getMessage} />;
 };
 
-UnsavedGuard.displayName = displayName;
+SaveGuard.displayName = displayName;
 
-export default UnsavedGuard;
+export default SaveGuard;
