@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect } from 'react';
 import { defineMessages } from 'react-intl';
-import { useLocation, useParams } from 'react-router-dom';
+import { useLocation, useParams, useHistory } from 'react-router-dom';
 
 import { getLevelTotalPayouts } from '../../../transformers';
 import BreadCrumb from '~core/BreadCrumb';
@@ -36,7 +36,9 @@ const displayName = 'dashboard.LevelDashboard';
 const LevelDashboard = () => {
   const { colonyName, levelId, programId } = useParams();
   const { walletAddress } = useLoggedInUser();
-  const { state } = useLocation();
+  const location = useLocation();
+  const history = useHistory();
+  const { state } = location;
   const showWelcomeMessage = (state && state.showWelcomeMessage) || false;
   const openDialog = useDialog(LevelWelcomeDialog);
   const [
@@ -86,10 +88,17 @@ const LevelDashboard = () => {
         programTitle: programTitle || '',
         levelTotalPayouts,
       });
+      /* .afterClosed() */
+      /* .then(() => { */
+      /*   // Make sure we don't show the welcome message again */
+      /*   history.replace({ ...location, state: undefined }); */
+      /* }); */
     }
   }, [
+    history,
     levelData,
     levelTotalPayouts,
+    location,
     openDialog,
     programData,
     showWelcomeMessage,
