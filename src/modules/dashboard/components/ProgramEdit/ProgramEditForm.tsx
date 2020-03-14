@@ -3,7 +3,7 @@ import { FormikProps, FormikConfig } from 'formik';
 import { defineMessages } from 'react-intl';
 
 import Button from '~core/Button';
-import { Input, Textarea, FormStatus, UnsavedGuard } from '~core/Fields';
+import { Input, Textarea, FormStatus } from '~core/Fields';
 import Heading from '~core/Heading';
 import Panel, { PanelSection } from '~core/Panel';
 import {
@@ -136,7 +136,6 @@ const ProgramEditForm = <V extends object>({
   );
   return (
     <>
-      <UnsavedGuard />
       <div className={styles.formActions}>
         <div className={styles.headingContainer}>
           <div>
