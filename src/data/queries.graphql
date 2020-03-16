@@ -449,6 +449,9 @@ query UserBadges($address: String!) {
       id
       achievement
       title
+      program {
+        title
+      }
     }
   }
 }

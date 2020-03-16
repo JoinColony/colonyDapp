@@ -1,4 +1,5 @@
 import React from 'react';
+import { defineMessages, useIntl } from 'react-intl';
 
 import UserMention from '~core/UserMention';
 import CopyableAddress from '~core/CopyableAddress';
@@ -12,9 +13,17 @@ interface Props {
   user: AnyUser;
 }
 
+const MSG = defineMessages({
+  achievement: {
+    id: 'core.InfoPopover.UserInfoPopover.achievement',
+    defaultMessage: '{title} achievement earned in {programTitle}',
+  },
+});
+
 const displayName = 'InfoPopover.UserInfoPopover';
 
 const UserInfoPopover = ({ user }: Props) => {
+  const { formatMessage } = useIntl();
   const {
     displayName: userDisplayName,
     username,
@@ -45,10 +54,18 @@ const UserInfoPopover = ({ user }: Props) => {
           <SpinnerLoader appearance={{ size: 'small' }} />
         ) : (
           completedLevels.map(
-            ({ achievement, id, title }) =>
+            ({ achievement, id, title, program: { title: programTitle } }) =>
               achievement &&
               title && (
-                <Badge key={id} size="xs" name={achievement} title={title} />
+                <Badge
+                  key={id}
+                  size="xs"
+                  name={achievement}
+                  title={formatMessage(MSG.achievement, {
+                    title,
+                    programTitle,
+                  })}
+                />
               ),
           )
         )}
