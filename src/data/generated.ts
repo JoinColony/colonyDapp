@@ -437,11 +437,12 @@ export type Level = {
   id: Scalars['String'],
   createdAt: Scalars['DateTime'],
   creatorAddress: Scalars['String'],
-  programId: Scalars['String'],
   title?: Maybe<Scalars['String']>,
   description?: Maybe<Scalars['String']>,
   achievement?: Maybe<Scalars['String']>,
   numRequiredSteps?: Maybe<Scalars['Int']>,
+  programId: Scalars['String'],
+  program: Program,
   stepIds: Array<Scalars['String']>,
   steps: Array<PersistentTask>,
   status: LevelStatus,
@@ -2111,7 +2112,10 @@ export type UserBadgesQueryVariables = {
 
 export type UserBadgesQuery = { user: (
     Pick<User, 'id'>
-    & { completedLevels: Array<Pick<Level, 'id' | 'achievement' | 'title'>> }
+    & { completedLevels: Array<(
+      Pick<Level, 'id' | 'achievement' | 'title'>
+      & { program: Pick<Program, 'title'> }
+    )> }
   ) };
 
 export type SystemInfoQueryVariables = {};
@@ -5548,6 +5552,9 @@ export const UserBadgesDocument = gql`
       id
       achievement
       title
+      program {
+        title
+      }
     }
   }
 }
