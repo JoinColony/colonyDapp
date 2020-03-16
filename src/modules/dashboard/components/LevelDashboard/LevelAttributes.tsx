@@ -147,15 +147,14 @@ const LevelAttributes = ({
               {unlocked && (
                 <div className={styles.progressContainerInner}>
                   <div className={styles.completionCopy}>
-                    <p>
-                      <FormattedMessage
-                        {...MSG.completeNumText}
-                        values={{
-                          allStepsRequired,
-                          numRequiredSteps: numRequiredSteps || stepIds.length,
-                        }}
-                      />
-                    </p>
+                    <FormattedMessage
+                      {...MSG.completeNumText}
+                      tagName="p"
+                      values={{
+                        allStepsRequired,
+                        numRequiredSteps: numRequiredSteps || stepIds.length,
+                      }}
+                    />
                   </div>
                   <div className={styles.progressBarContainer}>
                     <ProgressBar
@@ -177,7 +176,7 @@ const LevelAttributes = ({
                         {...MSG.completeToUnlockText}
                         values={{
                           dependentLevelName: dependentLevelData.level
-                            .title || { id: 'level.untitled' },
+                            .title || <FormattedMessage id="level.untitled" />,
                         }}
                       />
                     ) : (
