@@ -20,7 +20,7 @@
 .numRequiredStepsInput {
   composes: field from '~styles/fields.css';
   display: flex;
-  align-items: flex-end;
+  align-items: baseline;
 }
 
 .requiredStepsInputContainer {
@@ -28,7 +28,7 @@
 }
 
 .requiredStepsExtensionText {
-  padding: 0 0 25px 15px;
+  padding-left: 15px;
 }
 
 .levelTasksContainer {

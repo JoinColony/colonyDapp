@@ -30,6 +30,7 @@ import { getUserRoles } from '../../../transformers';
 import { canAdminister } from '../../../users/checks';
 
 import styles from './LevelEdit.css';
+import InputStatus from '~core/Fields/InputStatus';
 
 const MSG = defineMessages({
   heading: {
@@ -55,10 +56,6 @@ const MSG = defineMessages({
   explainerRequirement: {
     id: 'dashboard.LevelEdit.explainerRequirement',
     defaultMessage: `To complete the level and earn the achievement, users must complete {numRequiredSteps} of {numTotalSteps} tasks.`,
-  },
-  labelAmountRequiredSteps: {
-    id: 'dashboard.LevelEdit.labelAmountRequiredSteps',
-    defaultMessage: 'Amount',
   },
   amountTotalSteps: {
     id: 'dashboard.LevelEdit.amountTotalSteps',
@@ -107,7 +104,7 @@ const validationSchema = yup.object({
     .moreThan(0)
     .max(yup.ref('numTotalSteps'), () => MSG.errorValidateNumStepsMax)
     .typeError(() => MSG.numRequiredStepsRequiredText)
-    .required(),
+    .required(() => MSG.numRequiredStepsRequiredText),
 });
 
 const displayName = 'dashboard.LevelEdit';
@@ -205,6 +202,7 @@ const LevelEdit = () => {
         >
           {({
             dirty,
+            errors,
             isSubmitting,
             isValid,
             status: formStatus,
@@ -266,8 +264,9 @@ const LevelEdit = () => {
                   <div className={styles.numRequiredStepsInput}>
                     <span className={styles.requiredStepsInputContainer}>
                       <Input
-                        label={MSG.labelAmountRequiredSteps}
                         appearance={{ theme: 'underlined', size: 'medium' }}
+                        elementOnly
+                        label={MSG.labelNumRequiredSteps}
                         name="numRequiredSteps"
                       />
                     </span>
@@ -279,6 +278,7 @@ const LevelEdit = () => {
                     </span>
                     <NumTotalSteps name="numTotalSteps" value={numTotalSteps} />
                   </div>
+                  <InputStatus error={errors.numRequiredSteps} />
                 </PanelSection>
                 <PanelSection>
                   <Button
