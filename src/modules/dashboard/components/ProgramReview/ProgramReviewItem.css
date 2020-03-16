@@ -44,4 +44,11 @@
 
 .taskDescription {
   margin: 20px 0 30px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.submission {
+  overflow: hidden;
+  text-overflow: ellipsis;
 }

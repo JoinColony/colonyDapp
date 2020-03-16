@@ -163,7 +163,9 @@ const ProgramReviewItem = ({
         appearance={{ margin: 'small', size: 'normal' }}
         text={MSG.submissionHeading}
       />
-      <p>{submission || <FormattedMessage {...MSG.noSubmission} />}</p>
+      <p className={styles.submission}>
+        {submission || <FormattedMessage {...MSG.noSubmission} />}
+      </p>
     </div>
   );
 };
