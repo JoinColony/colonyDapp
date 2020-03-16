@@ -7,3 +7,4 @@ export const title: string;
 export const meta: string;
 export const button: string;
 export const taskDescription: string;
+export const submission: string;
