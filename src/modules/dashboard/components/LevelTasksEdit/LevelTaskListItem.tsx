@@ -1,9 +1,15 @@
 import React, { useState } from 'react';
+import { useLocation } from 'react-router-dom';
+import { LocationState } from 'history';
 
 import { OneLevel, OnePersistentTask } from '~data/index';
 
 import TaskDisplay from './TaskDisplay';
 import TaskEdit from './TaskEdit';
+
+export interface RouteState extends LocationState {
+  isEditingInitialTask: boolean;
+}
 
 interface Props {
   isEditing?: boolean;
@@ -18,7 +24,11 @@ const LevelTaskListItem = ({
   levelId,
   persistentTask,
 }: Props) => {
-  const [isEditing, setIsEditing] = useState<boolean>(isEditingProp);
+  const { state } = useLocation<RouteState>();
+  const isEditingInitialTask = (state && state.isEditingInitialTask) || false;
+  const [isEditing, setIsEditing] = useState<boolean>(
+    isEditingProp || isEditingInitialTask,
+  );
   return isEditing ? (
     <TaskEdit
       levelId={levelId}

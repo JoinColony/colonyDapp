@@ -4,6 +4,7 @@ import { useHistory } from 'react-router';
 
 import { DottedAddButton } from '~core/Button';
 import Heading from '~core/Heading';
+import { RouteState } from '~dashboard/LevelTasksEdit/LevelTaskListItem';
 import { OneProgram, useCreateLevelMutation, cacheUpdates } from '~data/index';
 
 import LevelsList from './LevelsList';
@@ -53,6 +54,7 @@ const ProgramLevelsEdit = ({
     if (levelId) {
       history.push(
         `/colony/${colonyName}/program/${programId}/level/${levelId}/edit`,
+        { isEditingInitialTask: true } as RouteState,
       );
     }
   }, [colonyName, createLevel, history, programId]);
