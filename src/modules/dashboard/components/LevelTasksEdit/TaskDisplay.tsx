@@ -3,6 +3,7 @@ import { defineMessages, FormattedMessage } from 'react-intl';
 
 import Heading from '~core/Heading';
 import Button from '~core/Button';
+import Paragraph from '~core/Paragraph';
 import PayoutsList from '~core/PayoutsList';
 import { SpinnerLoader } from '~core/Preloaders';
 import taskSkillsTree from '~dashboard/TaskSkills/taskSkillsTree';
@@ -76,7 +77,9 @@ const TaskDisplay = ({
           text={{ id: 'button.edit' }}
         />
       </div>
-      {description && <p className={styles.description}>{description}</p>}
+      {description && (
+        <Paragraph className={styles.description}>{description}</Paragraph>
+      )}
       <div className={styles.rewardsContainer}>
         {nativeTokenAddress && payouts.length > 0 && (
           <div className={styles.rewardItem}>
