@@ -34,4 +34,7 @@
 .avatarSelected {
   composes: avatar;
   border-color: var(--colony-blue);
+  box-shadow: 0px 4px 10px rgba(52, 55, 56, 0.25);
+  filter: brightness(0.6) saturate(140%);
+  opacity: 0.5;
 }
