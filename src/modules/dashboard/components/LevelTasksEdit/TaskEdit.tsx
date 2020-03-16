@@ -238,7 +238,7 @@ const TaskEdit = ({
       onSubmit={handleSubmit}
       validationSchema={validationSchema}
     >
-      {({ values }) => (
+      {({ dirty, isValid, values }) => (
         <>
           <div className={styles.section}>
             <Input
@@ -303,7 +303,11 @@ const TaskEdit = ({
                   onClick={() => setIsEditing(val => !val)}
                   text={{ id: 'button.cancel' }}
                 />
-                <Button text={{ id: 'button.save' }} type="submit" />
+                <Button
+                  disabled={!dirty || !isValid}
+                  text={{ id: 'button.save' }}
+                  type="submit"
+                />
               </div>
             </div>
           </div>
