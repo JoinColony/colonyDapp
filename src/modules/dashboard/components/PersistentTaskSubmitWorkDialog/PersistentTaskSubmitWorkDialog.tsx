@@ -20,6 +20,7 @@ import {
   LevelQueryVariables,
 } from '~data/index';
 import { Input, Form } from '~core/Fields';
+import Paragraph from '~core/Paragraph';
 import PayoutsList from '~core/PayoutsList';
 import { SpinnerLoader } from '~core/Preloaders';
 
@@ -244,7 +245,7 @@ const PersistentTaskSubmitWorkDialog = ({
                     appearance={{ margin: 'small', size: 'normal' }}
                     text={MSG.titleDescription}
                   />
-                  <p>{description}</p>
+                  <Paragraph>{description}</Paragraph>
                 </DialogSection>
               )}
               <DialogSection appearance={{ border: 'top' }}>

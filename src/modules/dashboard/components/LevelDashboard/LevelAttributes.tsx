@@ -5,6 +5,7 @@ import Badge from '~core/Badge';
 import Heading from '~core/Heading';
 import Icon from '~core/Icon';
 import Panel, { PanelSection } from '~core/Panel';
+import Paragraph from '~core/Paragraph';
 import ProgressBar from '~core/ProgressBar';
 import Tag from '~core/Tag';
 import {
@@ -132,7 +133,7 @@ const LevelAttributes = ({
         </PanelSection>
         {description && (
           <PanelSection>
-            <p>{description}</p>
+            <Paragraph>{description}</Paragraph>
           </PanelSection>
         )}
         <PanelSection>

@@ -4,8 +4,9 @@ import { useHistory } from 'react-router-dom';
 
 import Button from '~core/Button';
 import Heading from '~core/Heading';
-import { Tab, TabList, TabPanel, Tabs } from '~core/Tabs';
+import Paragraph from '~core/Paragraph';
 import { SpinnerLoader } from '~core/Preloaders';
+import { Tab, TabList, TabPanel, Tabs } from '~core/Tabs';
 import ProgramLevelsList from '~dashboard/ProgramLevelsList';
 import ProgramReview from '~dashboard/ProgramReview';
 import {
@@ -104,7 +105,9 @@ const ProgramDashboard = ({
           </div>
         )}
       </div>
-      {description && <p className={styles.description}>{description}</p>}
+      {description && (
+        <Paragraph className={styles.description}>{description}</Paragraph>
+      )}
       {canAdmin ? (
         <Tabs>
           <TabList>
