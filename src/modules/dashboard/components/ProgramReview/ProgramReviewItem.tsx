@@ -15,7 +15,10 @@ import {
   OnePersistentTask,
   OneProgramSubmission,
   Payouts,
+  ProgramLevelsWithUnlockedDocument,
+  ProgramLevelsWithUnlockedQueryVariables,
   useAcceptLevelTaskSubmissionMutation,
+  useLoggedInUser,
 } from '~data/index';
 
 import styles from './ProgramReviewItem.css';
@@ -74,13 +77,28 @@ const ProgramReviewItem = ({
   taskTitle,
   worker,
 }: Props) => {
+  const { walletAddress } = useLoggedInUser();
   const finalizeTask = useAsyncFunction({
     submit: ActionTypes.TASK_FINALIZE,
     error: ActionTypes.TASK_FINALIZE_ERROR,
     success: ActionTypes.TASK_FINALIZE_SUCCESS,
   });
 
+  const refetchQueries =
+    // In case accepting submission unlocks next level
+    walletAddress === worker.profile.walletAddress
+      ? [
+          {
+            query: ProgramLevelsWithUnlockedDocument,
+            variables: {
+              id: programId,
+            } as ProgramLevelsWithUnlockedQueryVariables,
+          },
+        ]
+      : [];
+
   const [acceptLevelTaskSubmission] = useAcceptLevelTaskSubmissionMutation({
+    refetchQueries,
     update: cacheUpdates.acceptLevelTaskSubmission(programId),
     variables: { input: { levelId, submissionId } },
   });
