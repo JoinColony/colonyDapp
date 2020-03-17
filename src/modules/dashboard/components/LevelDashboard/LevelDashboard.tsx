@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect } from 'react';
+import React, { useCallback, useEffect, useMemo } from 'react';
 import { defineMessages } from 'react-intl';
 import { useLocation, useParams, useHistory } from 'react-router-dom';
 
@@ -8,11 +8,13 @@ import Button from '~core/Button';
 import { useDialog } from '~core/Dialog';
 import { SpinnerLoader } from '~core/Preloaders';
 import {
+  OneLevel,
   ProgramStatus,
   useEnrollInProgramMutation,
   useLevelQuery,
   useLoggedInUser,
   useProgramQuery,
+  useLevelLazyQuery,
 } from '~data/index';
 import { useTransformer } from '~utils/hooks';
 
@@ -47,6 +49,7 @@ const LevelDashboard = () => {
   ] = useEnrollInProgramMutation({
     variables: { input: { id: programId } },
   });
+  const [fetchLevel, { data: nextLevelData }] = useLevelLazyQuery();
   const { data: levelData, loading: levelLoading } = useLevelQuery({
     variables: { id: levelId },
   });
@@ -57,20 +60,36 @@ const LevelDashboard = () => {
   const levelSteps = levelData ? levelData.level.steps : [];
   const levelTotalPayouts = useTransformer(getLevelTotalPayouts, [levelSteps]);
 
+  const nextLevel = useMemo<OneLevel | undefined>(
+    () => (nextLevelData ? nextLevelData.level : undefined),
+    [nextLevelData],
+  );
+
+  useEffect(() => {
+    if (programData) {
+      const { levelIds } = programData.program;
+      const currentLevelIdx = levelIds.indexOf(levelId);
+      const nextLevelId = levelIds[currentLevelIdx + 1];
+      fetchLevel({ variables: { id: nextLevelId } });
+    }
+  }, [fetchLevel, levelId, programData]);
+
   const enrollInProgram = useCallback(async () => {
     await enrollInProgramMutation();
     if (levelData && programData) {
       const { title: programTitle } = programData.program;
       openDialog({
         level: levelData.level,
-        programTitle: programTitle || '',
         levelTotalPayouts,
+        nextLevel,
+        programTitle: programTitle || '',
       });
     }
   }, [
     enrollInProgramMutation,
     levelData,
     levelTotalPayouts,
+    nextLevel,
     openDialog,
     programData,
   ]);
@@ -85,8 +104,9 @@ const LevelDashboard = () => {
       const { title: programTitle } = programData.program;
       openDialog({
         level: levelData.level,
-        programTitle: programTitle || '',
         levelTotalPayouts,
+        nextLevel,
+        programTitle: programTitle || '',
       })
         .afterClosed()
         .then(() => {
@@ -99,6 +119,7 @@ const LevelDashboard = () => {
     levelData,
     levelTotalPayouts,
     location,
+    nextLevel,
     openDialog,
     programData,
     showWelcomeMessage,
