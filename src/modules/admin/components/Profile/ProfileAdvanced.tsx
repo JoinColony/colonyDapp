@@ -25,6 +25,15 @@ const TOKEN_LOCKED_URL =
   // eslint-disable-next-line max-len
   'https://help.colony.io/hc/en-us/articles/360025429094-How-to-unlock-your-colony-s-native-token';
 
+/*
+ * @NOTE This const has an obnoxious name to draw attention to the fact
+ * that we manually hard-code, or otherwise interfere with the default operation
+ * of the dapp, in this case, by disabling the user's ability to upgrade the
+ * colony contract to the latest version.
+ */
+// eslint-disable-next-line no-underscore-dangle
+const __MANUALLY_DISABLE_COLONY_UPGRADES__ = true;
+
 const MSG = defineMessages({
   labelVersion: {
     id: 'admin.Profile.ProfileAdvanced.labelVersion',
@@ -130,7 +139,11 @@ const ProfileAdvanced = ({
           success={ActionTypes.COLONY_VERSION_UPGRADE_SUCCESS}
           error={ActionTypes.COLONY_VERSION_UPGRADE_ERROR}
           values={{ colonyAddress }}
-          disabled={!networkVersion || !canBeUpgraded(colony, networkVersion)}
+          disabled={
+            __MANUALLY_DISABLE_COLONY_UPGRADES__ ||
+            !networkVersion ||
+            !canBeUpgraded(colony, networkVersion)
+          }
         />
       </section>
       <section className={styles.section}>
