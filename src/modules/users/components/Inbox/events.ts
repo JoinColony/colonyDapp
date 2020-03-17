@@ -17,6 +17,7 @@ const notificationsToEventsMapping = {
   [EventType.UnassignWorker]: 'notificationWorkerUnassigned',
   [EventType.SetTaskPayout]: 'notificationTaskPayoutSet',
   [EventType.RemoveTaskPayout]: 'notificationTaskPayoutRemove',
+  [EventType.CancelTask]: 'notificationTaskCancel',
 };
 
 export const transformNotificationEventNames = (eventName: string): string =>

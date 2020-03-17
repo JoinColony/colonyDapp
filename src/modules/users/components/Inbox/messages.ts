@@ -109,6 +109,10 @@ const messages = defineMessages({
     id: 'dashboard.Inbox.InboxItem.notificationTaskPayoutRemove',
     defaultMessage: '{user} removed the payout from {task}',
   },
+  notificationTaskCancel: {
+    id: 'dashboard.Inbox.InboxItem.notificationTaskCancel',
+    defaultMessage: '{user} has cancelled the task: {task}.',
+  },
   /*
    * These are currently unused:
    *
