@@ -13,23 +13,25 @@ import { Address } from '~types/index';
 const MSG = defineMessages({
   title: {
     id: 'dashboard.LevelDashboard.LevelWelcomeDialog.title',
-    defaultMessage: 'Welcome to the {levelTitle} level',
+    defaultMessage: 'Welcome to {programTitle}',
   },
   welcomeText: {
     id: 'dashboard.LevelDashboard.LevelWelcomeDialog.welcomeText',
-    defaultMessage: `Congratulations, you’ve joined the {programTitle} Program! This is the {levelTitle} level where you need to complete {numRequiredSteps} out of {numTotalSteps} tasks to complete. Once you do this you will recieve the {levelTitle} badge.`,
+    defaultMessage: `Congratulations, you’ve joined {programTitle}! The first
+      level is {levelTitle}. To complete this level, you need to finish
+      {numRequiredSteps} out of {numTotalSteps} tasks. Once you do, you will
+      earn an achievement{nextLevelTitle, select,
+        undefined {}
+        other { and will gain access to the next level, {nextLevelTitle}}
+      }.`,
   },
   overviewBadgeTitle: {
     id: 'dashboard.LevelDashboard.LevelWelcomeDialog.overviewBadgeTitle',
-    defaultMessage: 'Badge',
-  },
-  overviewBadgeDescription: {
-    id: 'dashboard.LevelDashboard.LevelWelcomeDialog.overviewBadgeDescription',
-    defaultMessage: '{levelTitle} level',
+    defaultMessage: 'Achievement',
   },
   overviewRewardTitle: {
     id: 'dashboard.LevelDashboard.LevelWelcomeDialog.overviewRewardTitle',
-    defaultMessage: 'Rewards',
+    defaultMessage: 'Payout',
   },
   overviewRewardDescription: {
     id: 'dashboard.LevelDashboard.LevelWelcomeDialog.overviewRewardDescription',
@@ -41,7 +43,7 @@ const MSG = defineMessages({
   },
   overviewRequirementDescription: {
     id: `dashboard.LevelDashboard.LevelWelcomeDialog.overviewRequirementDescription`,
-    defaultMessage: 'Complete {numRequiredSteps} out of {numTotalSteps}',
+    defaultMessage: 'Number of tasks to complete',
   },
   overviewRequirementText: {
     id: 'dashboard.LevelDashboard.LevelWelcomeDialog.overviewRequirementText',
@@ -51,6 +53,7 @@ const MSG = defineMessages({
 
 interface Props extends DialogProps {
   level: OneLevel;
+  nextLevel?: OneLevel;
   programTitle: string;
   levelTotalPayouts: { address: Address; amount: string; symbol: string }[];
 }
@@ -59,10 +62,12 @@ const LevelWelcomeDialog = ({
   cancel,
   close,
   level,
+  nextLevel,
   programTitle,
   levelTotalPayouts,
 }: Props) => {
   const { achievement, title: levelTitle, numRequiredSteps, stepIds } = level;
+  const nextLevelTitle = nextLevel ? nextLevel.title : undefined;
   const numTotalSteps = stepIds.length;
   const requirementValues = {
     numRequiredSteps: numRequiredSteps || '0',
@@ -74,7 +79,7 @@ const LevelWelcomeDialog = ({
         <Heading
           appearance={{ margin: 'none', size: 'medium' }}
           text={MSG.title}
-          textValues={{ levelTitle }}
+          textValues={{ programTitle }}
         />
       </DialogSection>
       <DialogSection appearance={{ border: 'top' }}>
@@ -83,19 +88,19 @@ const LevelWelcomeDialog = ({
           values={{
             levelTitle,
             programTitle,
+            nextLevelTitle,
             ...requirementValues,
           }}
         />
       </DialogSection>
       <DialogSection>
         <OverviewList>
-          {achievement && (
+          {achievement && levelTitle && (
             <OverviewListItem
               title={MSG.overviewBadgeTitle}
-              description={MSG.overviewBadgeDescription}
-              descriptionValues={{ levelTitle }}
+              description={levelTitle}
             >
-              <Badge size="s" title={levelTitle || ''} name={achievement} />
+              <Badge size="s" title={levelTitle} name={achievement} />
             </OverviewListItem>
           )}
           <OverviewListItem
@@ -114,7 +119,6 @@ const LevelWelcomeDialog = ({
           <OverviewListItem
             title={MSG.overviewRequirementTitle}
             description={MSG.overviewRequirementDescription}
-            descriptionValues={requirementValues}
           >
             <FormattedMessage
               {...MSG.overviewRequirementText}
