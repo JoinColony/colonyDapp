@@ -122,10 +122,12 @@ fragment EventContext on Event {
       taskId
       type
       workerAddress
+      colonyAddress
     }
     ... on CancelTaskEvent {
       taskId
       type
+      colonyAddress
     }
     ... on CreateTaskEvent {
       colonyAddress
@@ -136,67 +138,86 @@ fragment EventContext on Event {
     ... on CreateWorkRequestEvent {
       taskId
       type
+      colonyAddress
     }
     ... on FinalizeTaskEvent {
       taskId
       type
+      colonyAddress
     }
     ... on RemoveTaskPayoutEvent {
       amount
       taskId
       tokenAddress
       type
+      colonyAddress
     }
     ... on SendWorkInviteEvent {
       taskId
       type
       workerAddress
+      colonyAddress
     }
     ... on SetTaskDescriptionEvent {
       description
       taskId
       type
+      colonyAddress
     }
     ... on SetTaskDomainEvent {
       ethDomainId
       taskId
       type
+      colonyAddress
     }
     ... on SetTaskDueDateEvent {
       dueDate
       taskId
       type
+      colonyAddress
     }
     ... on SetTaskPayoutEvent {
       amount
       taskId
       tokenAddress
       type
+      colonyAddress
     }
     ... on SetTaskSkillEvent {
       ethSkillId
       taskId
       type
+      colonyAddress
     }
     ... on RemoveTaskSkillEvent {
       ethSkillId
       taskId
       type
+      colonyAddress
     }
     ... on SetTaskTitleEvent {
       taskId
       title
       type
+      colonyAddress
     }
     ... on TaskMessageEvent {
+      colonyAddress
       message
       taskId
       type
+      colonyAddress
     }
     ... on UnassignWorkerEvent {
       taskId
       type
       workerAddress
+      colonyAddress
+    }
+    ... on CreateDomainEvent {
+      type
+      ethDomainId
+      colonyAddress
     }
   }
 }

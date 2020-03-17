@@ -23,7 +23,7 @@ const messages = defineMessages({
   },
   metaColonyAndDomain: {
     id: 'dashboard.Inbox.InboxItem.metaColonyAndDomain',
-    defaultMessage: '{colonyDisplayName} in {domainName}',
+    defaultMessage: '{domainName} in {colonyDisplayName}',
   },
   actionColonyFundingReceived: {
     id: 'dashboard.Inbox.InboxItem.actionColonyFundingReceived',
