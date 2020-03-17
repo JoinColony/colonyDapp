@@ -15,6 +15,8 @@ import {
   useLoggedInUser,
   useProgramQuery,
   useLevelLazyQuery,
+  UserNotificationsDocument,
+  UserNotificationsQueryVariables,
 } from '~data/index';
 import { useTransformer } from '~utils/hooks';
 
@@ -47,6 +49,14 @@ const LevelDashboard = () => {
     enrollInProgramMutation,
     { loading: enrolling },
   ] = useEnrollInProgramMutation({
+    refetchQueries: [
+      {
+        query: UserNotificationsDocument,
+        variables: {
+          address: walletAddress,
+        } as UserNotificationsQueryVariables,
+      },
+    ],
     variables: { input: { id: programId } },
   });
   const [fetchLevel, { data: nextLevelData }] = useLevelLazyQuery();

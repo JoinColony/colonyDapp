@@ -1,4 +1,5 @@
 import React, { useCallback, useEffect, useMemo } from 'react';
+import { PureQueryOptions } from 'apollo-client';
 import { defineMessages, FormattedMessage } from 'react-intl';
 import * as yup from 'yup';
 
@@ -6,6 +7,11 @@ import Button from '~core/Button';
 import Dialog, { DialogProps, DialogSection } from '~core/Dialog';
 import Heading from '~core/Heading';
 import Icon from '~core/Icon';
+import { Input, Form } from '~core/Fields';
+import Paragraph from '~core/Paragraph';
+import PayoutsList from '~core/PayoutsList';
+import { SpinnerLoader } from '~core/Preloaders';
+import taskSkillsTree from '~dashboard/TaskSkills/taskSkillsTree';
 import {
   OneLevel,
   OnePersistentTask,
@@ -18,14 +24,15 @@ import {
   ProgramSubmissionsQueryVariables,
   LevelDocument,
   LevelQueryVariables,
+  useLoggedInUser,
+  UserNotificationsDocument,
+  UserNotificationsQueryVariables,
 } from '~data/index';
-import { Input, Form } from '~core/Fields';
-import Paragraph from '~core/Paragraph';
-import PayoutsList from '~core/PayoutsList';
-import { SpinnerLoader } from '~core/Preloaders';
+
+import { useUserRolesInDomain } from '../../hooks/useUserRolesInDomain';
+import { canAdminister } from '../../../users/checks';
 
 import styles from './PersistentTaskSubmitWorkDialog.css';
-import taskSkillsTree from '~dashboard/TaskSkills/taskSkillsTree';
 
 const MSG = defineMessages({
   buttonResubmit: {
@@ -95,6 +102,7 @@ const PersistentTaskSubmitWorkDialog = ({
   },
   programId,
 }: Props) => {
+  const { walletAddress } = useLoggedInUser();
   const isSubmissionAccepted =
     currentUserSubmission &&
     currentUserSubmission.status === SubmissionStatus.Accepted;
@@ -116,21 +124,31 @@ const PersistentTaskSubmitWorkDialog = ({
     { loading: loadingEdit },
   ] = useEditSubmissionMutation();
 
+  const rootRoles = useUserRolesInDomain(walletAddress, colonyAddress);
+
   const loading = loadingEdit || loadingCreation;
 
   const handleSubmit = useCallback(
     async ({ submission }: FormValues) => {
-      const refetchQueries = [
+      const refetchQueries: PureQueryOptions[] = [
         // Refetch in lieu of cache updates because of server-side resolvers (most notably `currentUserSubmission`)
         {
           query: LevelDocument,
           variables: { id: levelId } as LevelQueryVariables,
         },
-        {
+      ];
+      if (canAdminister(rootRoles)) {
+        refetchQueries.push({
           query: ProgramSubmissionsDocument,
           variables: { id: programId } as ProgramSubmissionsQueryVariables,
-        },
-      ];
+        });
+        refetchQueries.push({
+          query: UserNotificationsDocument,
+          variables: {
+            address: walletAddress,
+          } as UserNotificationsQueryVariables,
+        });
+      }
       if (currentUserSubmission) {
         await editSubmission({
           refetchQueries,
@@ -152,6 +170,8 @@ const PersistentTaskSubmitWorkDialog = ({
       levelId,
       persistentTaskId,
       programId,
+      rootRoles,
+      walletAddress,
     ],
   );
 
