@@ -244,6 +244,18 @@ fragment EventContext on Event {
     ... on AcceptLevelTaskSubmissionEvent {
       acceptedBy
       levelId
+      payouts {
+        amount
+        tokenAddress
+        token @client {
+          id
+          address
+          decimals
+          name
+          symbol
+        }
+      }
+      persistentTaskId
       programId
       submissionId
       type
