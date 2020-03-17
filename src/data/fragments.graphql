@@ -241,6 +241,13 @@ fragment EventFields on Event {
 
 fragment EventContext on Event {
     context {
+    ... on AcceptLevelTaskSubmissionEvent {
+      acceptedBy
+      levelId
+      programId
+      submissionId
+      type
+    }
     ... on AssignWorkerEvent {
       taskId
       type
@@ -252,6 +259,13 @@ fragment EventContext on Event {
       type
       colonyAddress
     }
+    ... on CreateLevelTaskSubmissionEvent {
+      levelId
+      persistentTaskId
+      programId
+      submissionId
+      type
+    }
     ... on CreateTaskEvent {
       colonyAddress
       ethDomainId
@@ -262,6 +276,10 @@ fragment EventContext on Event {
       taskId
       type
       colonyAddress
+    }
+    ... on EnrollUserInProgramEvent {
+      programId
+      type
     }
     ... on FinalizeTaskEvent {
       taskId
@@ -341,6 +359,14 @@ fragment EventContext on Event {
       type
       ethDomainId
       colonyAddress
+    }
+    ... on UnlockNextLevelEvent {
+      levelId
+      nextLevelId
+      persistentTaskId
+      programId
+      submissionId
+      type
     }
   }
 }
