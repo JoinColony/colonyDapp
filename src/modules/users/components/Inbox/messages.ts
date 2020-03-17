@@ -85,6 +85,11 @@ const messages = defineMessages({
       'Your first transaction is complete! Your username is {user}. Enjoy colony 🎉',
   },
   // payments notifications
+  notificationLevelTaskAccepted: {
+    id: 'dashboard.Inbox.InboxItem.notificationLevelTaskAccepted',
+    defaultMessage:
+      '{user} accepted {task} in {program}. You received {amount}.',
+  },
   notificationWorkerAssigned: {
     id: 'dashboard.Inbox.InboxItem.notificationWorkerAssigned',
     defaultMessage: '{user} assigned you as a worker for {task}.',

@@ -22,6 +22,9 @@ export type Maybe<T> = T | null;
         "name": "EventContext",
         "possibleTypes": [
           {
+            "name": "AcceptLevelTaskSubmissionEvent"
+          },
+          {
             "name": "AssignWorkerEvent"
           },
           {
@@ -34,7 +37,13 @@ export type Maybe<T> = T | null;
             "name": "CreateTaskEvent"
           },
           {
+            "name": "CreateLevelTaskSubmissionEvent"
+          },
+          {
             "name": "CreateWorkRequestEvent"
+          },
+          {
+            "name": "EnrollUserInProgramEvent"
           },
           {
             "name": "FinalizeTaskEvent"
@@ -74,6 +83,9 @@ export type Maybe<T> = T | null;
           },
           {
             "name": "UnassignWorkerEvent"
+          },
+          {
+            "name": "UnlockNextLevelEvent"
           }
         ]
       },
@@ -162,6 +174,14 @@ export type Scalars = {
   Upload: any,
 };
 
+
+export type AcceptLevelTaskSubmissionEvent = {
+  type: EventType,
+  acceptedBy: Scalars['String'],
+  levelId: Scalars['String'],
+  programId: Scalars['String'],
+  submissionId: Scalars['String'],
+};
 
 export type AcceptLevelTaskSubmissionInput = {
   levelId: Scalars['String'],
@@ -266,6 +286,14 @@ export type CreateLevelInput = {
 
 export type CreateLevelTaskInput = {
   levelId: Scalars['String'],
+};
+
+export type CreateLevelTaskSubmissionEvent = {
+  type: EventType,
+  programId: Scalars['String'],
+  persistentTaskId: Scalars['String'],
+  levelId: Scalars['String'],
+  submissionId: Scalars['String'],
 };
 
 export type CreateLevelTaskSubmissionInput = {
@@ -388,6 +416,11 @@ export type EnrollInProgramInput = {
   id: Scalars['String'],
 };
 
+export type EnrollUserInProgramEvent = {
+  type: EventType,
+  programId: Scalars['String'],
+};
+
 export type Event = {
   id: Scalars['String'],
   type: EventType,
@@ -399,14 +432,17 @@ export type Event = {
   context: EventContext,
 };
 
-export type EventContext = AssignWorkerEvent | CancelTaskEvent | CreateDomainEvent | CreateTaskEvent | CreateWorkRequestEvent | FinalizeTaskEvent | NewUserEvent | RemoveTaskPayoutEvent | SendWorkInviteEvent | SetTaskDescriptionEvent | SetTaskDomainEvent | SetTaskDueDateEvent | SetTaskPayoutEvent | SetTaskSkillEvent | RemoveTaskSkillEvent | SetTaskTitleEvent | TaskMessageEvent | UnassignWorkerEvent;
+export type EventContext = AcceptLevelTaskSubmissionEvent | AssignWorkerEvent | CancelTaskEvent | CreateDomainEvent | CreateTaskEvent | CreateLevelTaskSubmissionEvent | CreateWorkRequestEvent | EnrollUserInProgramEvent | FinalizeTaskEvent | NewUserEvent | RemoveTaskPayoutEvent | SendWorkInviteEvent | SetTaskDescriptionEvent | SetTaskDomainEvent | SetTaskDueDateEvent | SetTaskPayoutEvent | SetTaskSkillEvent | RemoveTaskSkillEvent | SetTaskTitleEvent | TaskMessageEvent | UnassignWorkerEvent | UnlockNextLevelEvent;
 
 export enum EventType {
+  AcceptLevelTaskSubmission = 'AcceptLevelTaskSubmission',
   AssignWorker = 'AssignWorker',
   CancelTask = 'CancelTask',
   CreateDomain = 'CreateDomain',
+  CreateLevelTaskSubmission = 'CreateLevelTaskSubmission',
   CreateTask = 'CreateTask',
   CreateWorkRequest = 'CreateWorkRequest',
+  EnrollUserInProgram = 'EnrollUserInProgram',
   FinalizeTask = 'FinalizeTask',
   NewUser = 'NewUser',
   RemoveTaskPayout = 'RemoveTaskPayout',
@@ -419,7 +455,8 @@ export enum EventType {
   RemoveTaskSkill = 'RemoveTaskSkill',
   SetTaskTitle = 'SetTaskTitle',
   TaskMessage = 'TaskMessage',
-  UnassignWorker = 'UnassignWorker'
+  UnassignWorker = 'UnassignWorker',
+  UnlockNextLevel = 'UnlockNextLevel'
 }
 
 export type FinalizeTaskEvent = TaskEvent & {
@@ -1230,6 +1267,15 @@ export type UnassignWorkerInput = {
   workerAddress: Scalars['String'],
 };
 
+export type UnlockNextLevelEvent = {
+  type: EventType,
+  levelId: Scalars['String'],
+  nextLevelId?: Maybe<Scalars['String']>,
+  persistentTaskId: Scalars['String'],
+  programId: Scalars['String'],
+  submissionId: Scalars['String'],
+};
+
 export type UnsubscribeFromColonyInput = {
   colonyAddress: Scalars['String'],
 };
@@ -1354,7 +1400,7 @@ export type EventFieldsFragment = (
   )> }
 );
 
-export type EventContextFragment = { context: Pick<AssignWorkerEvent, 'taskId' | 'type' | 'workerAddress' | 'colonyAddress'> | Pick<CancelTaskEvent, 'taskId' | 'type' | 'colonyAddress'> | Pick<CreateDomainEvent, 'type' | 'ethDomainId' | 'colonyAddress'> | Pick<CreateTaskEvent, 'colonyAddress' | 'ethDomainId' | 'taskId' | 'type'> | Pick<CreateWorkRequestEvent, 'taskId' | 'type' | 'colonyAddress'> | Pick<FinalizeTaskEvent, 'taskId' | 'type' | 'colonyAddress'> | Pick<RemoveTaskPayoutEvent, 'amount' | 'taskId' | 'tokenAddress' | 'type' | 'colonyAddress'> | Pick<SendWorkInviteEvent, 'taskId' | 'type' | 'workerAddress' | 'colonyAddress'> | Pick<SetTaskDescriptionEvent, 'description' | 'taskId' | 'type' | 'colonyAddress'> | Pick<SetTaskDomainEvent, 'ethDomainId' | 'taskId' | 'type' | 'colonyAddress'> | Pick<SetTaskDueDateEvent, 'dueDate' | 'taskId' | 'type' | 'colonyAddress'> | Pick<SetTaskPayoutEvent, 'amount' | 'taskId' | 'tokenAddress' | 'type' | 'colonyAddress'> | Pick<SetTaskSkillEvent, 'ethSkillId' | 'taskId' | 'type' | 'colonyAddress'> | Pick<RemoveTaskSkillEvent, 'ethSkillId' | 'taskId' | 'type' | 'colonyAddress'> | Pick<SetTaskTitleEvent, 'taskId' | 'title' | 'type' | 'colonyAddress'> | Pick<TaskMessageEvent, 'colonyAddress' | 'message' | 'taskId' | 'type'> | Pick<UnassignWorkerEvent, 'taskId' | 'type' | 'workerAddress' | 'colonyAddress'> };
+export type EventContextFragment = { context: Pick<AcceptLevelTaskSubmissionEvent, 'acceptedBy' | 'levelId' | 'programId' | 'submissionId' | 'type'> | Pick<AssignWorkerEvent, 'taskId' | 'type' | 'workerAddress' | 'colonyAddress'> | Pick<CancelTaskEvent, 'taskId' | 'type' | 'colonyAddress'> | Pick<CreateDomainEvent, 'type' | 'ethDomainId' | 'colonyAddress'> | Pick<CreateTaskEvent, 'colonyAddress' | 'ethDomainId' | 'taskId' | 'type'> | Pick<CreateLevelTaskSubmissionEvent, 'levelId' | 'persistentTaskId' | 'programId' | 'submissionId' | 'type'> | Pick<CreateWorkRequestEvent, 'taskId' | 'type' | 'colonyAddress'> | Pick<EnrollUserInProgramEvent, 'programId' | 'type'> | Pick<FinalizeTaskEvent, 'taskId' | 'type' | 'colonyAddress'> | Pick<RemoveTaskPayoutEvent, 'amount' | 'taskId' | 'tokenAddress' | 'type' | 'colonyAddress'> | Pick<SendWorkInviteEvent, 'taskId' | 'type' | 'workerAddress' | 'colonyAddress'> | Pick<SetTaskDescriptionEvent, 'description' | 'taskId' | 'type' | 'colonyAddress'> | Pick<SetTaskDomainEvent, 'ethDomainId' | 'taskId' | 'type' | 'colonyAddress'> | Pick<SetTaskDueDateEvent, 'dueDate' | 'taskId' | 'type' | 'colonyAddress'> | Pick<SetTaskPayoutEvent, 'amount' | 'taskId' | 'tokenAddress' | 'type' | 'colonyAddress'> | Pick<SetTaskSkillEvent, 'ethSkillId' | 'taskId' | 'type' | 'colonyAddress'> | Pick<RemoveTaskSkillEvent, 'ethSkillId' | 'taskId' | 'type' | 'colonyAddress'> | Pick<SetTaskTitleEvent, 'taskId' | 'title' | 'type' | 'colonyAddress'> | Pick<TaskMessageEvent, 'colonyAddress' | 'message' | 'taskId' | 'type'> | Pick<UnassignWorkerEvent, 'taskId' | 'type' | 'workerAddress' | 'colonyAddress'> | Pick<UnlockNextLevelEvent, 'levelId' | 'nextLevelId' | 'persistentTaskId' | 'programId' | 'submissionId' | 'type'> };
 
 export type TaskEventFragment = (
   EventFieldsFragment
@@ -2382,6 +2428,13 @@ export const EventFieldsFragmentDoc = gql`
 export const EventContextFragmentDoc = gql`
     fragment EventContext on Event {
   context {
+    ... on AcceptLevelTaskSubmissionEvent {
+      acceptedBy
+      levelId
+      programId
+      submissionId
+      type
+    }
     ... on AssignWorkerEvent {
       taskId
       type
@@ -2393,6 +2446,13 @@ export const EventContextFragmentDoc = gql`
       type
       colonyAddress
     }
+    ... on CreateLevelTaskSubmissionEvent {
+      levelId
+      persistentTaskId
+      programId
+      submissionId
+      type
+    }
     ... on CreateTaskEvent {
       colonyAddress
       ethDomainId
@@ -2403,6 +2463,10 @@ export const EventContextFragmentDoc = gql`
       taskId
       type
       colonyAddress
+    }
+    ... on EnrollUserInProgramEvent {
+      programId
+      type
     }
     ... on FinalizeTaskEvent {
       taskId
@@ -2482,6 +2546,14 @@ export const EventContextFragmentDoc = gql`
       type
       ethDomainId
       colonyAddress
+    }
+    ... on UnlockNextLevelEvent {
+      levelId
+      nextLevelId
+      persistentTaskId
+      programId
+      submissionId
+      type
     }
   }
 }
