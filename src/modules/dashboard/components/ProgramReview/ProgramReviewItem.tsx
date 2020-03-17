@@ -19,6 +19,8 @@ import {
   ProgramLevelsWithUnlockedQueryVariables,
   useAcceptLevelTaskSubmissionMutation,
   useLoggedInUser,
+  UserNotificationsDocument,
+  UserNotificationsQueryVariables,
 } from '~data/index';
 
 import styles from './ProgramReviewItem.css';
@@ -85,9 +87,15 @@ const ProgramReviewItem = ({
   });
 
   const refetchQueries =
-    // In case accepting submission unlocks next level
+    // When accepting a user's own submissions
     walletAddress === worker.profile.walletAddress
       ? [
+          {
+            query: UserNotificationsDocument,
+            variables: {
+              address: walletAddress,
+            } as UserNotificationsQueryVariables,
+          },
           {
             query: ProgramLevelsWithUnlockedDocument,
             variables: {

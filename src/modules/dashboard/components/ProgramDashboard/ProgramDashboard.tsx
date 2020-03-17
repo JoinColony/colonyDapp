@@ -13,6 +13,9 @@ import {
   OneProgram,
   useEnrollInProgramMutation,
   useProgramSubmissionsQuery,
+  UserNotificationsDocument,
+  UserNotificationsQueryVariables,
+  useLoggedInUser,
 } from '~data/index';
 
 import styles from './ProgramDashboard.css';
@@ -52,12 +55,21 @@ const ProgramDashboard = ({
   program,
   toggleEditMode,
 }: Props) => {
+  const { walletAddress } = useLoggedInUser();
   const history = useHistory();
   const { data } = useProgramSubmissionsQuery({
     variables: { id: programId },
   });
 
   const [enrollInProgramMutation, { loading }] = useEnrollInProgramMutation({
+    refetchQueries: [
+      {
+        query: UserNotificationsDocument,
+        variables: {
+          address: walletAddress,
+        } as UserNotificationsQueryVariables,
+      },
+    ],
     variables: { input: { id: programId } },
   });
 
