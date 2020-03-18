@@ -13,6 +13,8 @@ interface Props {
   descriptionValues?: SimpleMessageValues;
 }
 
+const displayName = 'OverviewList.OverviewListItem';
+
 const OverviewListItem = ({
   title,
   titleValues,
@@ -39,5 +41,7 @@ const OverviewListItem = ({
     </li>
   );
 };
+
+OverviewListItem.displayName = displayName;
 
 export default OverviewListItem;

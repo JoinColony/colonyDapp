@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { CSSProperties } from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 
 import Tag from '~core/Tag';
@@ -9,6 +9,8 @@ import OverviewList, { OverviewListItem } from '~core/OverviewList';
 import Heading from '~core/Heading';
 import { OneLevel } from '~data/index';
 import { Address } from '~types/index';
+
+import styles from './LevelWelcomeDialog.css';
 
 const MSG = defineMessages({
   title: {
@@ -51,6 +53,8 @@ const MSG = defineMessages({
   },
 });
 
+const MAX_PAYOUTS_PER_COLUMN = 3;
+
 interface Props extends DialogProps {
   level: OneLevel;
   nextLevel?: OneLevel;
@@ -72,6 +76,12 @@ const LevelWelcomeDialog = ({
   const requirementValues = {
     numRequiredSteps: numRequiredSteps || '0',
     numTotalSteps,
+  };
+  const numPayouts = levelTotalPayouts.length;
+  const payoutStyles: CSSProperties = {
+    gridTemplateRows: `repeat(${
+      numPayouts <= MAX_PAYOUTS_PER_COLUMN ? numPayouts : MAX_PAYOUTS_PER_COLUMN
+    }, 1fr)`,
   };
   return (
     <Dialog cancel={cancel}>
@@ -107,14 +117,16 @@ const LevelWelcomeDialog = ({
             title={MSG.overviewRewardTitle}
             description={MSG.overviewRewardDescription}
           >
-            {levelTotalPayouts.map(({ amount, address, symbol }) => (
-              <Tag
-                appearance={{ theme: 'golden' }}
-                key={address}
-                text={`${amount} ${symbol}`}
-                title={address}
-              />
-            ))}
+            <div className={styles.payouts} style={payoutStyles}>
+              {levelTotalPayouts.map(({ amount, address, symbol }) => (
+                <Tag
+                  appearance={{ theme: 'golden' }}
+                  key={address}
+                  text={`${amount} ${symbol}`}
+                  title={address}
+                />
+              ))}
+            </div>
           </OverviewListItem>
           <OverviewListItem
             title={MSG.overviewRequirementTitle}
