@@ -8,7 +8,6 @@
  */
 
 .main {
-  composes: field from '~styles/fields.css';
   composes: busySpin from '~styles/animations.css';
   display: inline-block;
   padding: 4px 16px;
@@ -204,8 +203,11 @@
  */
 .themeDangerLink {
   composes: main;
+  padding: 0;
+  height: 20px;
   border-color: transparent;
   background-color: transparent;
+  font-weight: var(--weight-semi);
   color: var(--danger);
 }
 
@@ -303,4 +305,20 @@
 
 .themeBlue[disabled]:not([aria-busy="true"]):hover {
   text-decoration: none;
+}
+
+.themeDottedArea {
+  display: block;
+  padding: 31.5px 25px;
+  width: 100%;
+  border: 2px dashed var(--grey-5);
+  border-radius: 5px;
+  background-color: transparent;
+  text-align: left;
+  color: var(--grey-4);
+  cursor: pointer;
+}
+
+.themeDottedArea:hover {
+  opacity: 0.7;
 }

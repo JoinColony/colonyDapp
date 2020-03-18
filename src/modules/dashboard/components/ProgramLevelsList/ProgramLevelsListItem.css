@@ -1,0 +1,46 @@
+.main {
+  display: flex;
+  align-items: center;
+  padding: 15px 20px;
+}
+
+.content {
+  flex-grow: 1;
+}
+
+.linkContainer {
+  flex-basis: 100px;
+  text-align: right;
+}
+
+.progressBarContainer {
+  max-width: 160px;
+}
+
+.badgeContainer {
+  display: flex;
+  margin-right: 15px;
+}
+
+.statusTextContainer {
+  display: flex;
+  align-items: center;
+}
+
+.iconComplete {
+  margin-left: 15px;
+  height: 22px;
+  width: 22px;
+}
+
+.iconComplete svg {
+  height: 22px;
+  width: 22px;
+}
+
+/* state */
+
+.stateIsLocked .badgeContainer svg {
+  filter: brightness(0.6) saturate(140%);
+  opacity: 0.5;
+}

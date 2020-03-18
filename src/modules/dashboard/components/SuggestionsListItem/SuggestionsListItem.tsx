@@ -1,7 +1,7 @@
 import React, { useCallback } from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 
-import Badge from '~core/Badge';
+import Tag from '~core/Tag';
 import Button from '~core/Button';
 import DropdownMenu, {
   DropdownMenuItem,
@@ -182,7 +182,7 @@ const SuggestionsListItem = ({
           {statusBadgeText && (
             <span className={styles.badgeContainer}>
               &nbsp;
-              <Badge text={statusBadgeText} />
+              <Tag text={statusBadgeText} />
             </span>
           )}
           {taskId && (

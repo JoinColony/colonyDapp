@@ -7,11 +7,11 @@ import { getMainClasses } from '~utils/css';
 import styles from './InputStatus.css';
 
 interface Appearance {
-  // Make it covariant: tell flow we're not changing it in here
-  readonly theme?: 'fat' | 'underlined' | 'minimal' | 'dotted';
-  readonly direction?: 'horizontal';
-  readonly colorSchema?: 'dark' | 'grey' | 'transparent';
-  readonly size?: 'small';
+  theme?: 'fat' | 'underlined' | 'minimal' | 'dotted';
+  direction?: 'horizontal';
+  colorSchema?: 'dark' | 'grey' | 'transparent';
+  statusShema?: 'info';
+  size?: 'small' | 'medium';
 }
 
 interface Props {

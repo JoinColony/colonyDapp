@@ -2,20 +2,21 @@ import React, { useMemo } from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 
 import { COLONY_TOTAL_BALANCE_DOMAIN_ID } from '~constants';
-import { DomainsMapType } from '~types/index';
-import { AnyColonyProfile } from '~data/index';
-import { stripProtocol, multiLineTextEllipsis } from '~utils/strings';
+import Button from '~core/Button';
+import CopyableAddress from '~core/CopyableAddress';
 import ExpandedParagraph from '~core/ExpandedParagraph';
+import ExternalLink from '~core/ExternalLink';
 import Heading from '~core/Heading';
 import Icon from '~core/Icon';
-import Button from '~core/Button';
 import Link from '~core/Link';
-import ExternalLink from '~core/ExternalLink';
 import HookedColonyAvatar from '~dashboard/HookedColonyAvatar';
-import CopyableAddress from '~core/CopyableAddress';
+import { AnyColonyProfile } from '~data/index';
+import { DomainsMapType } from '~types/index';
+import { multiLineTextEllipsis, stripProtocol } from '~utils/strings';
 
-import ColonySubscribe from './ColonySubscribe';
 import ColonyInvite from './ColonyInvite';
+import ColonyPrograms from './ColonyPrograms';
+import ColonySubscribe from './ColonySubscribe';
 
 import styles from './ColonyMeta.css';
 
@@ -56,7 +57,6 @@ interface Props {
   colony: AnyColonyProfile;
   canAdminister: boolean;
   domains: DomainsMapType;
-  setFilteredDomainId: (domainId: number) => void;
   filteredDomainId: number;
 }
 
@@ -75,7 +75,6 @@ const ColonyMeta = ({
     website = '',
   },
   domains,
-  setFilteredDomainId,
   filteredDomainId,
   colony,
   canAdminister,
@@ -116,6 +115,7 @@ const ColonyMeta = ({
       </div>
     </>
   );
+
   return (
     <div className={styles.main}>
       <div className={styles.colonyAvatarAndName}>
@@ -164,26 +164,28 @@ const ColonyMeta = ({
           {renderExpandedElements}
         </section>
       )}
+      <ColonyPrograms colonyAddress={colonyAddress} colonyName={colonyName} />
       <section className={styles.domainContainer}>
         <ul>
-          <li>
+          <li className={styles.domainFilterItem}>
             <Button
               className={getActiveDomainFilterClass(
                 COLONY_TOTAL_BALANCE_DOMAIN_ID,
                 filteredDomainId,
               )}
-              onClick={() =>
-                setFilteredDomainId(COLONY_TOTAL_BALANCE_DOMAIN_ID)
-              }
-            >
-              <FormattedMessage id="domain.all" />
-            </Button>
+              linkTo={`/colony/${colonyName}`}
+              text={{ id: 'domain.all' }}
+            />
           </li>
           {sortedDomains.map(({ name, id }) => (
-            <li key={`domain_${id}`} title={name}>
+            <li
+              className={styles.domainFilterItem}
+              key={`domain_${id}`}
+              title={name}
+            >
               <Button
                 className={getActiveDomainFilterClass(id, filteredDomainId)}
-                onClick={() => setFilteredDomainId(id)}
+                linkTo={`/colony/${colonyName}?domainFilter=${id}`}
               >
                 {name}
               </Button>

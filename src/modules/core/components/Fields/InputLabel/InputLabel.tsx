@@ -11,9 +11,9 @@ const displayName = 'InputLabel';
 interface Appearance {
   theme?: 'fat' | 'underlined' | 'minimal' | 'dotted';
   direction?: 'horizontal';
-  colorSchema?: 'dark' | 'grey' | 'transparent';
+  colorSchema?: 'dark' | 'grey' | 'transparent' | 'info';
   helpAlign?: 'right';
-  size?: 'small';
+  size?: 'small' | 'medium';
 }
 
 interface Props {

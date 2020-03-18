@@ -1,0 +1,9 @@
+.main {
+  display: flex;
+  align-items: center;
+}
+
+.inputContainer {
+  flex-grow: 1;
+  padding-right: 20px;
+}

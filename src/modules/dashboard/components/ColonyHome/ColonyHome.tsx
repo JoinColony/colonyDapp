@@ -1,6 +1,7 @@
 import React, { useMemo, useState } from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
-import { Redirect } from 'react-router-dom';
+import { Redirect, Route, RouteChildrenProps, Switch } from 'react-router-dom';
+import { parse as parseQS } from 'query-string';
 
 import RecoveryModeAlert from '~admin/RecoveryModeAlert';
 import Transactions from '~admin/Transactions';
@@ -8,17 +9,19 @@ import { COLONY_TOTAL_BALANCE_DOMAIN_ID, ROOT_DOMAIN } from '~constants';
 import BreadCrumb from '~core/BreadCrumb';
 import Heading from '~core/Heading';
 import { Tab, TabList, TabPanel, Tabs } from '~core/Tabs';
-import Suggestions from '~dashboard/Suggestions';
 import Community from '~dashboard/Community';
+import LevelDashboard from '~dashboard/LevelDashboard';
+import Program from '~dashboard/Program';
+import Suggestions from '~dashboard/Suggestions';
 import { useLoggedInUser } from '~data/helpers';
 import { useColonyFromNameQuery } from '~data/index';
 import LoadingTemplate from '~pages/LoadingTemplate';
+import { NOT_FOUND_ROUTE, LEVEL_ROUTE, PROGRAM_ROUTE } from '~routes/index';
 import { useDataFetcher, useTransformer } from '~utils/hooks';
 
 import { getUserRoles } from '../../../transformers';
 import { canAdminister, hasRoot } from '../../../users/checks';
 import { domainsAndRolesFetcher } from '../../fetchers';
-import { NOT_FOUND_ROUTE } from '~routes/index';
 
 import ColonyFunding from './ColonyFunding';
 import styles from './ColonyHome.css';
@@ -59,22 +62,26 @@ enum TabName {
   TransactionsTab = 'transactions',
 }
 
-interface Props {
-  match: any;
-}
+type Props = RouteChildrenProps<{ colonyName: string }>;
 
 const displayName = 'dashboard.ColonyHome';
 
-const ColonyHome = ({
-  match: {
-    params: { colonyName },
-  },
-}: Props) => {
+const ColonyHome = ({ match, location }: Props) => {
+  if (!match) {
+    throw new Error(
+      `No match found for route in ${displayName} Please check route setup.`,
+    );
+  }
+  const { colonyName } = match.params;
   const { walletAddress, username } = useLoggedInUser();
 
-  const [filteredDomainId, setFilteredDomainId] = useState(
-    COLONY_TOTAL_BALANCE_DOMAIN_ID,
-  );
+  const { domainFilter } = parseQS(location.search) as {
+    domainFilter: string | undefined;
+  };
+  const filteredDomainId = domainFilter
+    ? parseInt(domainFilter, 10) || COLONY_TOTAL_BALANCE_DOMAIN_ID
+    : COLONY_TOTAL_BALANCE_DOMAIN_ID;
+
   const [activeTab, setActiveTab] = useState<TabName>(TabName.TasksTab);
 
   // @TODO: Try to get proper error handling going in resolvers (for colonies that don't exist)
@@ -153,53 +160,67 @@ const ColonyHome = ({
               }
               domains={domains}
               filteredDomainId={filteredDomainId}
-              setFilteredDomainId={setFilteredDomainId}
             />
           </div>
         </aside>
         <main className={styles.content}>
-          <div className={styles.breadCrumbContainer}>
-            {domains && crumbs && <BreadCrumb elements={crumbs} />}
-          </div>
-          <Tabs>
-            <TabList
-              extra={activeTab === TabName.TransactionsTab ? noFilter : null}
-            >
-              <Tab onClick={() => setActiveTab(TabName.TasksTab)}>
-                <FormattedMessage {...MSG.tabContribute} />
-              </Tab>
-              <Tab onClick={() => setActiveTab(TabName.SuggestionsTab)}>
-                <FormattedMessage {...MSG.tabSuggestions} />
-              </Tab>
-              <Tab onClick={() => setActiveTab(TabName.CommunityTab)}>
-                <FormattedMessage {...MSG.tabCommunity} />
-              </Tab>
-              <Tab onClick={() => setActiveTab(TabName.TransactionsTab)}>
-                <FormattedMessage {...MSG.tabTransactions} />
-              </Tab>
-            </TabList>
-            <TabPanel>
-              <TabContribute
-                canCreateTask={canCreateTask}
-                colony={colony}
-                filteredDomainId={filteredDomainId}
-                showQrCode={hasRoot(rootUserRoles)}
-              />
-            </TabPanel>
-            <TabPanel>
-              <Suggestions
+          <Switch>
+            <Route exact path={PROGRAM_ROUTE}>
+              <Program
                 colonyAddress={colony.colonyAddress}
                 colonyName={colony.colonyName}
-                domainId={filteredDomainId}
               />
-            </TabPanel>
-            <TabPanel>
-              <Community colonyAddress={colony.colonyAddress} />
-            </TabPanel>
-            <TabPanel>
-              <Transactions colonyAddress={colony.colonyAddress} />
-            </TabPanel>
-          </Tabs>
+            </Route>
+            <Route exact path={LEVEL_ROUTE}>
+              <LevelDashboard />
+            </Route>
+            <Route>
+              <div className={styles.breadCrumbContainer}>
+                {domains && crumbs && <BreadCrumb elements={crumbs} />}
+              </div>
+              <Tabs>
+                <TabList
+                  extra={
+                    activeTab === TabName.TransactionsTab ? noFilter : null
+                  }
+                >
+                  <Tab onClick={() => setActiveTab(TabName.TasksTab)}>
+                    <FormattedMessage {...MSG.tabContribute} />
+                  </Tab>
+                  <Tab onClick={() => setActiveTab(TabName.SuggestionsTab)}>
+                    <FormattedMessage {...MSG.tabSuggestions} />
+                  </Tab>
+                  <Tab onClick={() => setActiveTab(TabName.CommunityTab)}>
+                    <FormattedMessage {...MSG.tabCommunity} />
+                  </Tab>
+                  <Tab onClick={() => setActiveTab(TabName.TransactionsTab)}>
+                    <FormattedMessage {...MSG.tabTransactions} />
+                  </Tab>
+                </TabList>
+                <TabPanel>
+                  <TabContribute
+                    canCreateTask={canCreateTask}
+                    colony={colony}
+                    filteredDomainId={filteredDomainId}
+                    showQrCode={hasRoot(rootUserRoles)}
+                  />
+                </TabPanel>
+                <TabPanel>
+                  <Suggestions
+                    colonyAddress={colony.colonyAddress}
+                    colonyName={colony.colonyName}
+                    domainId={filteredDomainId}
+                  />
+                </TabPanel>
+                <TabPanel>
+                  <Community colonyAddress={colony.colonyAddress} />
+                </TabPanel>
+                <TabPanel>
+                  <Transactions colonyAddress={colony.colonyAddress} />
+                </TabPanel>
+              </Tabs>
+            </Route>
+          </Switch>
         </main>
         <aside className={styles.sidebar}>
           <ColonyFunding

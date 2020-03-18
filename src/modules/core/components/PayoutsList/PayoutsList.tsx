@@ -22,6 +22,8 @@ const MSG = defineMessages({
 });
 
 interface Props {
+  clickDisabled?: boolean;
+
   /** Maximum lines to show before switching to popover */
   maxLines?: number;
 
@@ -34,7 +36,12 @@ interface Props {
 
 const displayName = 'PayoutsList';
 
-const PayoutsList = ({ maxLines = 1, nativeTokenAddress, payouts }: Props) => {
+const PayoutsList = ({
+  clickDisabled,
+  maxLines = 1,
+  nativeTokenAddress,
+  payouts,
+}: Props) => {
   const sortedPayouts = payouts.sort(
     (
       { token: { address: firstToken } },
@@ -57,7 +64,7 @@ const PayoutsList = ({ maxLines = 1, nativeTokenAddress, payouts }: Props) => {
   const extraPayouts = sortedPayouts.slice(maxLines);
 
   return (
-    <div className={styles.main}>
+    <div aria-disabled={clickDisabled} className={styles.main}>
       <div>
         {firstPayouts.map(({ amount, token }) => (
           <div key={token.address} className={styles.tokenInfo}>

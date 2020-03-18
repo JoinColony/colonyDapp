@@ -85,7 +85,6 @@ module.exports = {
         './src/modules/core/components/Button/IconButton.tsx',
         './src/modules/core/components/FileUpload/FileUpload.tsx',
         './src/modules/core/components/MnemonicGenerator/MnemonicGenerator.tsx',
-        './src/modules/core/components/MnemonicDnDSorter/MnemonicDnDSorter.tsx',
       ],
       content: 'docs/Forms.md',
     },

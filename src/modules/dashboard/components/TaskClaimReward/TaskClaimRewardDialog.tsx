@@ -126,7 +126,10 @@ const TaskClaimRewardDialog = ({
   return (
     <Dialog cancel={cancel}>
       <DialogSection appearance={{ border: 'bottom' }}>
-        {title && <Heading appearance={{ size: 'medium' }} text={title} />}
+        <Heading
+          appearance={{ size: 'medium' }}
+          text={title || { id: 'task.untitled' }}
+        />
         <section className={styles.starRating}>
           <p className={styles.starRatingDescription}>
             <FormattedMessage {...MSG.yourRating} />

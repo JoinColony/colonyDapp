@@ -6,7 +6,7 @@ import { SimpleMessageValues } from '~types/index';
 
 import styles from './NavLink.css';
 
-interface Props extends NavLinkProps {
+interface Props extends Omit<NavLinkProps, 'title'> {
   /** className to add to the existing classNames when `to` matches the current route (react-router's "activeClassName") */
   activeClassName?: string;
 
@@ -21,6 +21,12 @@ interface Props extends NavLinkProps {
 
   /** Values for text (react-intl interpolation) */
   textValues?: SimpleMessageValues;
+
+  /** A string or a `messageDescriptor` that make up the nav link's title */
+  title?: MessageDescriptor | string;
+
+  /** Values for title (react-intl interpolation) */
+  titleValues?: SimpleMessageValues;
 }
 
 const NavLink = ({
@@ -28,6 +34,8 @@ const NavLink = ({
   children,
   text,
   textValues,
+  title,
+  titleValues,
   to,
   ...linkProps
 }: Props) => {
@@ -36,8 +44,18 @@ const NavLink = ({
   const linkText =
     typeof text === 'string' ? text : text && formatMessage(text, textValues);
 
+  const titleText =
+    typeof title === 'string'
+      ? title
+      : title && formatMessage(title, titleValues);
+
   return (
-    <NavLinkComponent to={to} activeClassName={activeClassName} {...linkProps}>
+    <NavLinkComponent
+      to={to}
+      activeClassName={activeClassName}
+      title={titleText}
+      {...linkProps}
+    >
       {linkText || children}
     </NavLinkComponent>
   );

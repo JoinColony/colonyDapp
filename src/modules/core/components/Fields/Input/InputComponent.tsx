@@ -10,8 +10,8 @@ import styles from './InputComponent.css';
 export type Appearance = {
   theme?: 'fat' | 'underlined' | 'minimal' | 'dotted';
   align?: 'right';
-  colorSchema?: 'dark' | 'grey' | 'transparent';
-  size?: 'small';
+  colorSchema?: 'dark' | 'grey' | 'transparent' | 'info';
+  size?: 'small' | 'medium';
 };
 
 type CleaveHTMLInputElement = HTMLInputElement & { rawValue: string };
@@ -39,6 +39,13 @@ const InputComponent = ({
   innerRef,
   onChange,
   placeholder,
+  /* eslint-disable @typescript-eslint/no-unused-vars */
+  // Cleave TS defs don't expect/allow these
+  defaultValue,
+  contentEditable,
+  draggable,
+  spellCheck,
+  /* eslint-enable @typescript-eslint/no-unused-vars */
   ...props
 }: Props) => {
   const handleCleaveChange = useCallback(

@@ -1,0 +1,36 @@
+.listItemInner {
+  display: flex;
+  align-items: center;
+  padding: 20px 15px;
+  min-height: 100px;
+}
+
+.dragHandleContainer {
+  flex-basis: 20px;
+  text-align: center;
+}
+
+.dragHandleIcon {
+  display: block;
+  height: 18px;
+  width: 12px;
+}
+
+.dragHandleIcon svg {
+  fill: var(--grey-5);
+  stroke: var(--grey-5);
+}
+
+.itemContentContainer {
+  flex-grow: 1;
+}
+
+.itemActionContainer {
+  flex-basis: 100px;
+  text-align: right;
+}
+
+.badgeContainer {
+  display: flex;
+  margin-right: 15px;
+}

@@ -333,3 +333,120 @@ mutation CreateTaskFromSuggestion($input: CreateTaskFromSuggestionInput!) {
     ...CreateTaskFields
   }
 }
+
+mutation CreateProgram($input: CreateProgramInput!) {
+  createProgram(input: $input) {
+    ...ProgramFields
+  }
+}
+
+mutation EditProgram($input: EditProgramInput!) {
+  editProgram(input: $input) {
+    id
+    description
+    title
+  }
+}
+
+mutation RemoveProgram($input: RemoveProgramInput!) {
+  removeProgram(input: $input) {
+    id
+    status
+  }
+}
+
+mutation PublishProgram($input: PublishProgramInput!) {
+  publishProgram(input: $input) {
+    id
+    status
+  }
+}
+
+mutation EnrollInProgram($input: EnrollInProgramInput!) {
+  enrollInProgram(input: $input) {
+    id
+    enrolled
+    enrolledUserAddresses
+    levels {
+      id
+      unlocked
+    }
+  }
+}
+
+mutation CreateLevel($input: CreateLevelInput!) {
+  createLevel(input: $input) {
+    ...LevelFields
+    unlocked
+  }
+}
+
+mutation EditLevel($input: EditLevelInput!) {
+  editLevel(input: $input) {
+    ...LevelFields
+  }
+}
+
+mutation RemoveLevel($input: RemoveLevelInput!) {
+  removeLevel(input: $input) {
+    id
+    status
+  }
+}
+
+mutation ReorderProgramLevels($input: ReorderProgramLevelsInput!) {
+  reorderProgramLevels(input: $input) {
+    id
+    levelIds
+    levels {
+      id
+    }
+  }
+}
+
+mutation CreateLevelTask($input: CreateLevelTaskInput!) {
+  createLevelTask(input: $input) {
+    ...PersistentTaskFields
+  }
+}
+
+mutation RemoveLevelTask($input: RemoveLevelTaskInput!) {
+  removeLevelTask(input: $input) {
+    id
+    status
+  }
+}
+
+mutation EditPersistentTask($input: EditPersistentTaskInput!) {
+  editPersistentTask(input: $input) {
+    id
+    description
+    ethDomainId
+    ethSkillId
+    ...PersistentTaskPayouts
+    title
+  }
+}
+
+mutation CreateLevelTaskSubmission($input: CreateLevelTaskSubmissionInput!) {
+  createLevelTaskSubmission(input: $input) {
+    id
+    status
+    submission
+  }
+}
+
+mutation EditSubmission($input: EditSubmissionInput!) {
+  editSubmission(input: $input) {
+    id
+    status
+    submission
+  }
+}
+
+mutation AcceptLevelTaskSubmission($input: AcceptLevelTaskSubmissionInput!) {
+  acceptLevelTaskSubmission(input: $input) {
+    id
+    status
+  }
+}

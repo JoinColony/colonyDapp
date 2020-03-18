@@ -1,0 +1,40 @@
+.main {
+  composes: field from '~styles/fields.css';
+}
+
+.avatars {
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+  flex-wrap: wrap;
+  padding: 15px 0;
+  overflow: auto;
+}
+
+.avatar {
+  margin-right: 10px;
+  padding: 0;
+  height: 60px;
+  width: 60px;
+  overflow: hidden;
+  border-style: solid;
+  border-radius: 50%;
+  border-color: transparent;
+  border-width: 2px;
+  background-color: transparent;
+  box-sizing: content-box;
+  outline: none;
+  cursor: pointer;
+
+  &:hover {
+    border-color: color-mod(var(--colony-blue) alpha(60%));
+  }
+}
+
+.avatarSelected {
+  composes: avatar;
+  border-color: var(--colony-blue);
+  box-shadow: 0px 4px 10px rgba(52, 55, 56, 0.25);
+  filter: brightness(0.6) saturate(140%);
+  opacity: 0.5;
+}

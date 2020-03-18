@@ -1,35 +1,248 @@
 import {
+  ColonyTasksDocument,
   ColonyTasksQuery,
   ColonyTasksQueryVariables,
-  ColonyTasksDocument,
+  OneLevel,
+  OneProgram,
+  OneSuggestion,
   TaskDocument,
   TaskQuery,
   TaskQueryVariables,
-  OneSuggestion,
 } from '~data/index';
 import { Address } from '~types/index';
 import { log } from '~utils/debug';
 
 import apolloCache from './cache';
 import {
-  ColonySuggestionsQuery,
-  ColonySuggestionsQueryVariables,
-  ColonySuggestionsDocument,
-  SetSuggestionStatusMutationResult,
-  SuggestionStatus,
-  CreateTaskMutationResult,
-  CreateTaskFromSuggestionMutationResult,
+  AcceptLevelTaskSubmissionMutationResult,
+  ColonyProgramsDocument,
+  ColonyProgramsQuery,
+  ColonyProgramsQueryVariables,
+  ColonySubscribedUsersDocument,
   ColonySubscribedUsersQuery,
   ColonySubscribedUsersQueryVariables,
-  ColonySubscribedUsersDocument,
+  ColonySuggestionsDocument,
+  ColonySuggestionsQuery,
+  ColonySuggestionsQueryVariables,
+  CreateLevelMutationResult,
+  CreateProgramMutationResult,
+  CreateTaskFromSuggestionMutationResult,
+  CreateTaskMutationResult,
+  LevelDocument,
+  LevelQuery,
+  LevelQueryVariables,
+  ProgramDocument,
+  ProgramQuery,
+  ProgramQueryVariables,
+  ProgramSubmissionsDocument,
+  ProgramSubmissionsQuery,
+  ProgramSubmissionsQueryVariables,
+  RemoveLevelTaskMutationResult,
+  SetSuggestionStatusMutationResult,
+  SuggestionStatus,
+  UserDocument,
   UserQuery,
   UserQueryVariables,
-  UserDocument,
+  SubmissionStatus,
+  RemoveLevelMutationResult,
 } from './generated';
 
 type Cache = typeof apolloCache;
 
 const cacheUpdates = {
+  acceptLevelTaskSubmission(programId: OneProgram['id']) {
+    return (
+      cache: Cache,
+      { data }: AcceptLevelTaskSubmissionMutationResult,
+    ) => {
+      try {
+        const cacheData = cache.readQuery<
+          ProgramSubmissionsQuery,
+          ProgramSubmissionsQueryVariables
+        >({
+          query: ProgramSubmissionsDocument,
+          variables: { id: programId },
+        });
+        const acceptSubmissionData = data && data.acceptLevelTaskSubmission;
+        if (cacheData && acceptSubmissionData) {
+          const isAccepted =
+            acceptSubmissionData.status === SubmissionStatus.Accepted;
+          const submissions = isAccepted
+            ? cacheData.program.submissions.filter(
+                ({ id }) => id !== acceptSubmissionData.id,
+              )
+            : cacheData.program.submissions;
+          cache.writeQuery<
+            ProgramSubmissionsQuery,
+            ProgramSubmissionsQueryVariables
+          >({
+            data: {
+              program: {
+                ...cacheData.program,
+                submissions,
+              },
+            },
+            query: ProgramSubmissionsDocument,
+            variables: { id: programId },
+          });
+        }
+      } catch (e) {
+        log.verbose(e);
+        log.verbose(
+          'Not updating store - level step submissions not loaded yet',
+        );
+      }
+    };
+  },
+  createLevel(programId: OneProgram['id']) {
+    return (cache: Cache, { data }: CreateLevelMutationResult) => {
+      try {
+        const cacheData = cache.readQuery<ProgramQuery, ProgramQueryVariables>({
+          query: ProgramDocument,
+          variables: {
+            id: programId,
+          },
+        });
+        const createLevelData = data && data.createLevel;
+        if (cacheData && createLevelData) {
+          const levels = cacheData.program.levels || [];
+          levels.push(createLevelData);
+          const levelIds = cacheData.program.levelIds || [];
+          levelIds.push(createLevelData.id);
+          cache.writeQuery<ProgramQuery, ProgramQueryVariables>({
+            data: {
+              program: {
+                ...cacheData.program,
+                levelIds,
+                levels,
+              },
+            },
+            query: ProgramDocument,
+            variables: {
+              id: programId,
+            },
+          });
+        }
+      } catch (e) {
+        log.verbose(e);
+        log.verbose('Not updating store - colony programs not loaded yet');
+      }
+    };
+  },
+  removeLevel(programId: OneProgram['id']) {
+    return (cache: Cache, { data }: RemoveLevelMutationResult) => {
+      try {
+        const cacheData = cache.readQuery<ProgramQuery, ProgramQueryVariables>({
+          query: ProgramDocument,
+          variables: {
+            id: programId,
+          },
+        });
+        const removeLevelData = data && data.removeLevel;
+        if (cacheData && removeLevelData) {
+          const { id: removedId } = removeLevelData;
+          const levels = cacheData.program.levels.filter(
+            ({ id }) => id !== removedId,
+          );
+          const levelIds = cacheData.program.levelIds.filter(
+            id => id !== removedId,
+          );
+          cache.writeQuery<ProgramQuery, ProgramQueryVariables>({
+            data: {
+              program: {
+                ...cacheData.program,
+                levelIds,
+                levels,
+              },
+            },
+            query: ProgramDocument,
+            variables: {
+              id: programId,
+            },
+          });
+        }
+      } catch (e) {
+        log.verbose(e);
+        log.verbose('Not updating store - program levels not loaded yet');
+      }
+    };
+  },
+  removeLevelTask(levelId: OneLevel['id']) {
+    return (cache: Cache, { data }: RemoveLevelTaskMutationResult) => {
+      try {
+        const cacheData = cache.readQuery<LevelQuery, LevelQueryVariables>({
+          query: LevelDocument,
+          variables: { id: levelId },
+        });
+        const removedLevelTaskData = data && data.removeLevelTask;
+        if (cacheData && removedLevelTaskData) {
+          const steps = cacheData.level.steps.filter(
+            ({ id }) => id !== removedLevelTaskData.id,
+          );
+          const stepIds = cacheData.level.stepIds.filter(
+            id => id !== removedLevelTaskData.id,
+          );
+          let { numRequiredSteps } = cacheData.level;
+          if (
+            typeof numRequiredSteps === 'number' &&
+            numRequiredSteps > stepIds.length
+          ) {
+            numRequiredSteps = stepIds.length;
+          }
+          cache.writeQuery<LevelQuery, LevelQueryVariables>({
+            data: {
+              level: {
+                ...cacheData.level,
+                numRequiredSteps,
+                stepIds,
+                steps,
+              },
+            },
+            query: LevelDocument,
+            variables: { id: levelId },
+          });
+        }
+      } catch (e) {
+        log.verbose(e);
+        log.verbose('Not updating store - level tasks not loaded yet');
+      }
+    };
+  },
+  createProgram(colonyAddress: Address) {
+    return (cache: Cache, { data }: CreateProgramMutationResult) => {
+      try {
+        const cacheData = cache.readQuery<
+          ColonyProgramsQuery,
+          ColonyProgramsQueryVariables
+        >({
+          query: ColonyProgramsDocument,
+          variables: {
+            address: colonyAddress,
+          },
+        });
+        const createProgramData = data && data.createProgram;
+        if (cacheData && createProgramData) {
+          const programs = cacheData.colony.programs || [];
+          programs.push(createProgramData);
+          cache.writeQuery<ColonyProgramsQuery, ColonyProgramsQueryVariables>({
+            data: {
+              colony: {
+                ...cacheData.colony,
+                programs,
+              },
+            },
+            query: ColonyProgramsDocument,
+            variables: {
+              address: colonyAddress,
+            },
+          });
+        }
+      } catch (e) {
+        log.verbose(e);
+        log.verbose('Not updating store - colony programs not loaded yet');
+      }
+    };
+  },
   createTask(colonyAddress: Address) {
     return (cache: Cache, { data }: CreateTaskMutationResult) => {
       try {

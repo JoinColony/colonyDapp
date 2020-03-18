@@ -18,9 +18,12 @@
     "button.cancel": "Cancel",
     "button.choose": "Choose",
     "button.decline": "Decline",
+    "button.delete": "Delete",
     "button.dismiss": "Dismiss",
+    "button.edit": "Edit",
     "button.remove": "Remove",
     "button.retry": "Retry",
+    "button.submit": "Submit",
     "button.ok": "Okay",
     "button.yes": "Yes",
     "button.no": "No",
@@ -43,6 +46,11 @@
     "placeholder.password": "Password",
 
     "wallet.metamask": "MetaMask",
+
+    "program.untitled": "Untitled Program",
+    "level.untitled": "Untitled Level",
+    "levelStep.untitled": "Untitled Task",
+    "task.untitled": "Untitled Task",
 
     "transaction.debug.description": "DEBUG: context: {context} methodName: {methodName}",
 

@@ -238,6 +238,13 @@ query ColonyTokens($address: String!) {
   }
 }
 
+query ColonyNativeToken($address: String!) {
+  colony(address: $address) {
+    id
+    nativeTokenAddress
+  }
+}
+
 query TokenBalancesForDomains($colonyAddress: String!, $tokenAddresses: [String!]!, $domainIds: [Int!]) {
   tokens(addresses: $tokenAddresses) @client {
     id
@@ -295,6 +302,58 @@ query ColonyTasks($address: String!) {
       finalizedAt
       title
       workRequestAddresses
+    }
+  }
+}
+
+query ColonyPrograms($address: String!) {
+  colony(address: $address) {
+    id
+    programs {
+      ...ProgramFields
+    }
+  }
+}
+
+query Program($id: String!) {
+  program(id: $id) {
+    ...ProgramFields
+  }
+}
+
+query ProgramLevels($id: String!) {
+  program(id: $id) {
+    id
+    levelIds
+    levels {
+      ...LevelFields
+    }
+  }
+}
+
+query Level($id: String!) {
+  level(id: $id) {
+    ...LevelFields
+    unlocked
+  }
+}
+
+query ProgramLevelsWithUnlocked($id: String!) {
+  program(id: $id) {
+    id
+    levelIds
+    levels {
+      ...LevelFields
+      unlocked
+    }
+  }
+}
+
+query ProgramSubmissions($id: String!) {
+  program(id: $id) {
+    id
+    submissions {
+      ...ProgramSubmissionFields
     }
   }
 }
@@ -379,6 +438,20 @@ query UserNotifications($address: String!) {
         ...EventContext
       }
       read
+    }
+  }
+}
+
+query UserBadges($address: String!) {
+  user(address: $address) {
+    id
+    completedLevels {
+      id
+      achievement
+      title
+      program {
+        title
+      }
     }
   }
 }

@@ -89,7 +89,7 @@ const asField = <
         helpValues,
         label,
         labelValues,
-        name = '',
+        name,
         placeholder,
         status,
         statusValues,
@@ -108,6 +108,11 @@ const asField = <
         T
       > => {
         const htmlFieldName = fieldName || name;
+        if (!htmlFieldName) {
+          throw new Error(
+            'Input component was initialized without a `name` property.',
+          );
+        }
         const $touched = getIn(touched, htmlFieldName);
         const fieldError = getIn(errors, htmlFieldName);
         const $error = formatIntl(fieldError, formatMessage);

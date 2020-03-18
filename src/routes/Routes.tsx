@@ -15,7 +15,9 @@ import CreateWalletWizard from '~users/CreateWalletWizard';
 import UserProfile from '~users/UserProfile';
 import UserProfileEdit from '~users/UserProfileEdit';
 import AdminDashboard from '~admin/AdminDashboard';
+import LevelEdit from '~dashboard/LevelEdit';
 import { NavBar, Plain, SimpleNav } from '~pages/RouteLayouts/index';
+import { ColonyBackText, ProgramBackText } from '~pages/BackTexts';
 
 import { useLoggedInUser } from '~data/index';
 
@@ -24,7 +26,9 @@ import {
   COLONY_HOME_ROUTE,
   CREATE_COLONY_ROUTE,
   CREATE_USER_ROUTE,
+  LEVEL_EDIT_ROUTE,
   NOT_FOUND_ROUTE,
+  PROGRAM_ROUTE,
   TASK_ROUTE,
   CREATE_WALLET_ROUTE,
   DASHBOARD_ROUTE,
@@ -33,16 +37,13 @@ import {
   USER_EDIT_ROUTE,
   USER_ROUTE,
   WALLET_ROUTE,
+  LEVEL_ROUTE,
 } from './routeConstants';
 
 import ConnectedOnlyRoute from './ConnectedOnlyRoute';
 import DisconnectedOnlyRoute from './DisconnectedOnlyRoute';
 
 const MSG = defineMessages({
-  back: {
-    id: 'routes.Routes.back',
-    defaultMessage: 'Go to {colonyName}',
-  },
   userProfileEditBack: {
     id: 'routes.Routes.userProfileEditBack',
     defaultMessage: 'Go to profile',
@@ -83,7 +84,7 @@ const Routes = () => {
       <ConnectedOnlyRoute
         exact
         isConnected={isConnected}
-        path={COLONY_HOME_ROUTE}
+        path={[COLONY_HOME_ROUTE, LEVEL_ROUTE, PROGRAM_ROUTE]}
         component={ColonyHome}
         layout={SimpleNav}
         routeProps={{
@@ -123,18 +124,9 @@ const Routes = () => {
         path={ADMIN_DASHBOARD_ROUTE}
         component={AdminDashboard}
         layout={NavBar}
-        // @TODO find a good solution for dynamic backTexts
-        /* backText={MSG.back} */
-        /* backTextValues={({ */
-        /*   computedMatch: { */
-        /*     params: { colonyName }, */
-        /*   }, */
-        /* }) => ({ colonyName })} */
-        /* backRoute={({ */
-        /*   computedMatch: { */
-        /*     params: { colonyName }, */
-        /*   }, */
-        /* }) => `/colony/${colonyName}`} */
+        routeProps={{
+          backText: ColonyBackText,
+        }}
       />
       <ConnectedOnlyRoute
         exact
@@ -142,17 +134,19 @@ const Routes = () => {
         path={TASK_ROUTE}
         component={Task}
         layout={NavBar}
-        /* backText={MSG.back} */
-        /* backTextValues={({ */
-        /*   computedMatch: { */
-        /*     params: { colonyName }, */
-        /*   }, */
-        /* }) => ({ colonyName })} */
-        /* backRoute={({ */
-        /*   computedMatch: { */
-        /*     params: { colonyName }, */
-        /*   }, */
-        /* }) => `/colony/${colonyName}`} */
+        routeProps={{
+          backText: ColonyBackText,
+        }}
+      />
+      <ConnectedOnlyRoute
+        exact
+        isConnected={isConnected}
+        path={LEVEL_EDIT_ROUTE}
+        component={LevelEdit}
+        layout={NavBar}
+        routeProps={{
+          backText: ProgramBackText,
+        }}
       />
       <ConnectedOnlyRoute
         isConnected={isConnected}

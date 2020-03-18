@@ -1,23 +1,13 @@
-import React, { useCallback, useState } from 'react';
+import React, { useCallback } from 'react';
 import { defineMessages } from 'react-intl';
-import moveDecimal from 'move-decimal-point';
 
 import Button from '~core/Button';
-import { useDialog } from '~core/Dialog';
-import TaskFinalizeDialog from './TaskFinalizeDialog';
-
+import { Form } from '~core/Fields';
+import { useDomainFundsCheck } from '~dashboard/TaskFinalizeDialog';
 import { Address } from '~types/index';
-import {
-  AnyTask,
-  Payouts,
-  Domain,
-  useTokenBalancesForDomainsQuery,
-} from '~data/index';
+import { AnyTask, Payouts, useFinalizeTaskMutation } from '~data/index';
 import { ActionTypes } from '~redux/index';
 import { useAsyncFunction } from '~utils/hooks';
-import { mergePayload } from '~utils/actions';
-import { bnLessThan } from '~utils/numbers';
-import { DEFAULT_TOKEN_DECIMALS } from '~constants';
 
 const MSG = defineMessages({
   finalizeTask: {
@@ -31,84 +21,69 @@ const displayName = 'dashboard.TaskFinalize';
 interface Props {
   draftId: AnyTask['id'];
   colonyAddress: Address;
-  ethDomainId: Domain['ethDomainId'];
+  ethDomainId: AnyTask['ethDomainId'];
+  ethSkillId: AnyTask['ethSkillId'];
   payouts: Payouts;
+  workerAddress: AnyTask['assignedWorkerAddress'];
 }
 
 const TaskFinalize = ({
   draftId,
   colonyAddress,
   ethDomainId,
+  ethSkillId,
   payouts,
+  workerAddress,
 }: Props) => {
-  const [isLoading, setIsLoading] = useState(false);
-  const openDialog = useDialog(TaskFinalizeDialog);
+  const [finalizeTaskMutation] = useFinalizeTaskMutation();
 
-  const tokenAddresses = payouts.map(({ token }) => token.address);
-  const { data: tokenBalances } = useTokenBalancesForDomainsQuery({
-    variables: {
-      colonyAddress,
-      tokenAddresses,
-      domainIds: [ethDomainId],
-    },
-  });
-
-  const transform = useCallback(
-    mergePayload({
-      colonyAddress,
-      draftId,
-    }),
-    [colonyAddress, draftId],
-  );
   const finalizeTask = useAsyncFunction({
     submit: ActionTypes.TASK_FINALIZE,
     error: ActionTypes.TASK_FINALIZE_ERROR,
     success: ActionTypes.TASK_FINALIZE_SUCCESS,
-    transform,
   });
 
-  const handleOnClick = useCallback(async () => {
-    try {
-      setIsLoading(true);
-      const enoughFundsAvailable = payouts.every(({ amount, tokenAddress }) => {
-        const domainBalances =
-          tokenBalances &&
-          tokenBalances.tokens.find(
-            ({ address: domainTokenAddress }) =>
-              domainTokenAddress === tokenAddress,
-          );
-        if (!domainBalances) {
-          return false;
-        }
-        return domainBalances.balances.every(
-          ({ amount: availableDomainAmount }) =>
-            !bnLessThan(
-              availableDomainAmount,
-              moveDecimal(
-                amount,
-                domainBalances.decimals || DEFAULT_TOKEN_DECIMALS,
-              ),
-            ),
-        );
+  const checkDomainFunds = useDomainFundsCheck(
+    colonyAddress,
+    payouts,
+    ethDomainId,
+  );
+
+  const handleSubmit = useCallback(async () => {
+    if (await checkDomainFunds()) {
+      const { potId } = (await finalizeTask({
+        colonyAddress,
+        domainId: ethDomainId,
+        draftId,
+        payouts,
+        skillId: ethSkillId,
+        workerAddress,
+      })) as {
+        draftId: string;
+        potId: number;
+      };
+      await finalizeTaskMutation({
+        variables: { input: { id: draftId, ethPotId: potId } },
       });
-      if (!enoughFundsAvailable) {
-        return openDialog()
-          .afterClosed()
-          .then(() => setIsLoading(false), () => setIsLoading(false));
-      }
-      await finalizeTask({});
-      return setIsLoading(false);
-    } catch (error) {
-      return setIsLoading(false);
     }
-  }, [finalizeTask, openDialog, payouts, tokenBalances]);
+  }, [
+    checkDomainFunds,
+    colonyAddress,
+    draftId,
+    ethDomainId,
+    ethSkillId,
+    finalizeTask,
+    finalizeTaskMutation,
+    payouts,
+    workerAddress,
+  ]);
 
   return (
-    <Button
-      text={MSG.finalizeTask}
-      onClick={handleOnClick}
-      loading={isLoading}
-    />
+    <Form onSubmit={handleSubmit} initialValues={{}}>
+      {({ isSubmitting }) => (
+        <Button text={MSG.finalizeTask} loading={isSubmitting} type="submit" />
+      )}
+    </Form>
   );
 };
 

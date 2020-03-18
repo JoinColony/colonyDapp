@@ -1,0 +1,5 @@
+.main {
+  border-radius: var(--radius-large);
+  background-color: var(--colony-white);
+  box-shadow: var(--box-shadow-medium);
+}

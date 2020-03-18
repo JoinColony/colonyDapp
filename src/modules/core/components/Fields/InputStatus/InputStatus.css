@@ -16,6 +16,12 @@
   }
 }
 
+.statusSchemaInfo {
+  &::before {
+    background-color: var(--golden);
+  }
+}
+
 .directionHorizontal {
   margin-left: 5px;
 }

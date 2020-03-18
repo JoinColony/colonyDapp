@@ -1,13 +1,18 @@
 import { ComponentType } from 'react';
 
-export type Cancel = () => void;
+type Cancel = () => void;
 
-export type Close = (val: any) => void;
+type Close = (val: any) => void;
+
+export interface DialogProps {
+  cancel: Cancel;
+  close: Close;
+}
 
 export interface DialogType<P> {
   Dialog: ComponentType<P>;
-  cancel: () => void;
-  close: (val: any) => void;
+  cancel: Cancel;
+  close: Close;
   key: string;
   props: P | undefined;
   afterClosed: () => Promise<any>;

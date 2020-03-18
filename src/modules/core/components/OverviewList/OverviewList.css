@@ -1,0 +1,32 @@
+.list {
+  margin: 0 auto;
+  max-width: 320px;
+}
+
+.listItem {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 0;
+  border-bottom: 1px solid var(--grey-blue-0);
+}
+
+.listItem:first-child {
+  border-top: 1px solid var(--grey-blue-0);
+}
+
+.listItemContent {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.listItemTitle {
+  display: block;
+  font-weight: var(--weight-semi);
+}
+
+.listItemDescription {
+  display: block;
+  font-size: var(--size-small);
+}

@@ -1,19 +1,11 @@
 import React, { Component, KeyboardEvent } from 'react';
-import { MessageDescriptor, defineMessages } from 'react-intl';
+import { defineMessages } from 'react-intl';
 
 import { getMainClasses } from '~utils/css';
-import {
-  DOWN,
-  ENTER,
-  ESC,
-  SPACE,
-  UP,
-  TAB,
-  SimpleMessageValues,
-} from '~types/index';
+import { DOWN, ENTER, ESC, SPACE, UP, TAB } from '~types/index';
 
 import SelectListBox from './SelectListBox';
-import { Appearance } from './types';
+import { Appearance, SelectOption } from './types';
 import asField from '../asField';
 import InputLabel from '../InputLabel';
 import InputStatus from '../InputStatus';
@@ -31,11 +23,7 @@ const MSG = defineMessages({
 
 interface Props {
   /** Available `option`s for the select */
-  options: {
-    label: MessageDescriptor | string;
-    value: string;
-    labelValues?: SimpleMessageValues;
-  }[];
+  options: SelectOption[];
 
   /** Appearance object */
   appearance?: Appearance;

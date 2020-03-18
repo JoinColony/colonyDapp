@@ -1,4 +1,7 @@
+import BigNumber from 'bn.js';
+
 import { ROLES, ROOT_DOMAIN } from '~constants';
+import { PersistentTasks } from '~data/index';
 import { DomainRolesType, DomainType } from '~immutable/index';
 import { Address, RoleSetType, DomainsMapType } from '~types/index';
 import { ZERO_ADDRESS } from '~utils/web3/constants';
@@ -192,4 +195,32 @@ export const getCommunityRoles = (
     founder,
     admins: Array.from(admins) as string[],
   };
+};
+
+export const getLevelTotalPayouts = (
+  levelSteps: PersistentTasks,
+): {
+  address: Address;
+  amount: string;
+  symbol: string;
+}[] => {
+  const levelTotalPayouts = levelSteps.reduce((prev, { payouts }) => {
+    const current = prev;
+    payouts.forEach(({ amount, token: { address, symbol } }) => {
+      if (!current[address]) {
+        const currentPayout = {
+          amount,
+          address,
+          symbol,
+        };
+        current[address] = currentPayout;
+      } else {
+        const prevAmountBn = new BigNumber(current[address].amount);
+        const summedAmountBn = new BigNumber(amount).add(prevAmountBn);
+        current[address].amount = summedAmountBn.toString();
+      }
+    });
+    return current;
+  }, {});
+  return Object.values(levelTotalPayouts);
 };
