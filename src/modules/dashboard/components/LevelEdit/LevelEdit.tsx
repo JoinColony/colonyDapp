@@ -216,7 +216,7 @@ const LevelEdit = () => {
                   <Button
                     appearance={{ theme: 'blue' }}
                     text={{ id: 'button.cancel' }}
-                    linkTo={levelUrl}
+                    onClick={history.goBack}
                   />
                   <Button
                     disabled={!dirty || !isValid}
