@@ -125,7 +125,9 @@ const LevelAttributes = ({
               ))}
               {achievement && (
                 <div className={styles.rewardItem}>
-                  <Badge size="s" title={title || ''} name={achievement} />
+                  <div className={styles.rewardItemAchievement}>
+                    <Badge size="s" title={title || ''} name={achievement} />
+                  </div>
                 </div>
               )}
             </div>

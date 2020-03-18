@@ -17,6 +17,10 @@
   margin-left: 12px;
 }
 
+.rewardItemAchievement {
+  max-height: 34px;
+}
+
 .requirementsContainer {
   display: flex;
   justify-content: space-between;
