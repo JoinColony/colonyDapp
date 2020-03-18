@@ -174,6 +174,7 @@ const ProgramEditForm = <V extends object>({
               theme: 'fat',
             }}
             label={MSG.controlLabelTitle}
+            maxLength={90}
             name="title"
             status={isDraft ? MSG.draftStatusText : undefined}
           />

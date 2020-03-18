@@ -98,6 +98,7 @@ const SuggestionCreate = ({ colonyAddress, domainId }: Props) => {
               appearance={{ theme: 'fat' }}
               innerRef={() => inputRef}
               label={MSG.inputLabelTitle}
+              maxLength={90}
               name="title"
             />
           </div>

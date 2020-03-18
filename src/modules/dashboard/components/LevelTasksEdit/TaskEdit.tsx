@@ -244,6 +244,7 @@ const TaskEdit = ({
             <Input
               appearance={{ colorSchema: 'grey', theme: 'fat' }}
               label={MSG.labelTaskTitle}
+              maxLength={90}
               name="title"
             />
             <Textarea
