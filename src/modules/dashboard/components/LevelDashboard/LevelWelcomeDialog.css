@@ -1,0 +1,7 @@
+.payouts {
+  display: grid;
+  grid-auto-columns: 1fr;
+  grid-auto-flow: column;
+  grid-gap: 5px 10px;
+  grid-template-columns: 1fr;
+}
