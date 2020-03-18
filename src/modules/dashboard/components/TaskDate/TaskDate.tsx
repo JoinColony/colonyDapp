@@ -44,7 +44,7 @@ const TaskDate = ({ draftId, dueDate: existingDueDate, disabled }: Props) => {
 
   const onSubmit = useCallback(
     ({ taskDueDate: taskDueDateValue }: FormValues) => {
-      const taskDueDate = taskDueDateValue.toISOString();
+      const taskDueDate = taskDueDateValue && taskDueDateValue.toISOString();
       // only update if the date has changed
       if (taskDueDate !== existingDueDate) {
         setDueDate({
