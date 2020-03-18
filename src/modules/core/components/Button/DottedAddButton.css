@@ -1,12 +1,9 @@
 .buttonTextContainer {
   display: flex;
   align-items: center;
-  font-size: var(--size-large);
-}
-
-.buttonTextContainer svg {
-  fill: var(--grey-4);
-  stroke: var(--grey-4);
+  font-size: 18px;
+  color: rgb(60, 68, 77);
+  letter-spacing: 0.25px;
 }
 
 .buttonIcon {

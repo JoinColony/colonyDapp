@@ -314,7 +314,6 @@
   border: 2px dashed var(--grey-5);
   border-radius: 5px;
   background-color: transparent;
-  font-weight: var(--weight-thin);
   text-align: left;
   color: var(--grey-4);
   cursor: pointer;
