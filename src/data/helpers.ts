@@ -9,7 +9,6 @@ import { Address } from '~types/index';
 import {
   LoggedInUserDocument,
   LoggedInUserQuery,
-  OneProgram,
   useLoggedInUserQuery,
   useUserLazyQuery,
   useUserQuery,
@@ -101,12 +100,3 @@ export function* refetchUserNotifications(walletAddress: string) {
     fetchPolicy: 'network-only',
   });
 }
-
-export const getNextLevel = (
-  program: OneProgram,
-  currentLevelId: OneProgram['levels'][number]['id'],
-): OneProgram['levels'][number] | undefined => {
-  const currentLevelIdx = program.levelIds.indexOf(currentLevelId);
-  const nextLevelId = program.levelIds[currentLevelIdx + 1];
-  return program.levels.find(({ id }) => id === nextLevelId);
-};
