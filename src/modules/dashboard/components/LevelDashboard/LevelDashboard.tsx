@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useMemo } from 'react';
+import React, { useCallback, useEffect } from 'react';
 import { defineMessages } from 'react-intl';
 import { useLocation, useParams, useHistory } from 'react-router-dom';
 
@@ -8,13 +8,11 @@ import Button from '~core/Button';
 import { useDialog } from '~core/Dialog';
 import { SpinnerLoader } from '~core/Preloaders';
 import {
-  OneLevel,
   ProgramStatus,
   useEnrollInProgramMutation,
   useLevelQuery,
   useLoggedInUser,
   useProgramQuery,
-  useLevelLazyQuery,
   UserNotificationsDocument,
   UserNotificationsQueryVariables,
 } from '~data/index';
@@ -25,6 +23,7 @@ import LevelAttributes from './LevelAttributes';
 import LevelWelcomeDialog from './LevelWelcomeDialog';
 import { useUserRolesInDomain } from '../../hooks/useUserRolesInDomain';
 import { canAdminister } from '../../../users/checks';
+import { useLevelAfter } from '../../hooks/useLevelAfter';
 
 import styles from './LevelDashboard.css';
 
@@ -59,7 +58,6 @@ const LevelDashboard = () => {
     ],
     variables: { input: { id: programId } },
   });
-  const [fetchLevel, { data: nextLevelData }] = useLevelLazyQuery();
   const { data: levelData, loading: levelLoading } = useLevelQuery({
     variables: { id: levelId },
   });
@@ -70,19 +68,7 @@ const LevelDashboard = () => {
   const levelSteps = levelData ? levelData.level.steps : [];
   const levelTotalPayouts = useTransformer(getLevelTotalPayouts, [levelSteps]);
 
-  const nextLevel = useMemo<OneLevel | undefined>(
-    () => (nextLevelData ? nextLevelData.level : undefined),
-    [nextLevelData],
-  );
-
-  useEffect(() => {
-    if (programData) {
-      const { levelIds } = programData.program;
-      const currentLevelIdx = levelIds.indexOf(levelId);
-      const nextLevelId = levelIds[currentLevelIdx + 1];
-      fetchLevel({ variables: { id: nextLevelId } });
-    }
-  }, [fetchLevel, levelId, programData]);
+  const nextLevel = useLevelAfter(programData && programData.program, levelId);
 
   const enrollInProgram = useCallback(async () => {
     await enrollInProgramMutation();

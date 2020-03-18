@@ -11,7 +11,6 @@ import HookedUserAvatar from '~users/HookedUserAvatar';
 import { SpinnerLoader } from '~core/Preloaders';
 import { useDataFetcher } from '~utils/hooks';
 import {
-  getNextLevel,
   useColonyNameQuery,
   useLoggedInUser,
   useMarkNotificationAsReadMutation,
@@ -23,6 +22,7 @@ import {
   useProgramQuery,
 } from '~data/index';
 
+import { useLevelAfter } from '../../../../dashboard/hooks/useLevelAfter';
 import { domainsFetcher } from '../../../../dashboard/fetchers';
 
 import { getFriendlyName, getUsername } from '../../../transformers';
@@ -194,10 +194,7 @@ const InboxItem = ({
     [levelId, program],
   );
   const levelTitle = level && level.title;
-  const nextLevel = useMemo(
-    () => (program && levelId ? getNextLevel(program, levelId) : undefined),
-    [levelId, program],
-  );
+  const nextLevel = useLevelAfter(program, levelId);
   const nextLevelTitle = nextLevel && nextLevel.title;
   const persistentTask = useMemo(
     () => level && level.steps.find(step => step.id === persistentTaskId),
