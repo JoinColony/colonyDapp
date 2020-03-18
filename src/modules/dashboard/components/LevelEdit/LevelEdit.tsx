@@ -232,6 +232,7 @@ const LevelEdit = () => {
                   <Input
                     appearance={{ colorSchema: 'grey', theme: 'fat' }}
                     label={MSG.labelTitle}
+                    maxLength={90}
                     name="title"
                   />
                   <Textarea
