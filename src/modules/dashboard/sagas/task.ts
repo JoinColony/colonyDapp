@@ -18,15 +18,8 @@ import {
   SetTaskPendingMutationVariables,
 } from '~data/index';
 import { Action, ActionTypes } from '~redux/index';
-// import { ContractContexts } from '~types/index';
 import { ColonyClient, ColonyManager, ContractContexts } from '~types/index';
-import {
-  getLogsAndEvents,
-  // parseColonyFundsClaimedEvent,
-  // parseColonyFundsMovedBetweenFundingPotsEvent,
-  parseTaskPayoutEvents,
-  // parseUnclaimedTransferEvent,
-} from '~utils/web3/eventLogs';
+import { getLogsAndEvents, parseTaskPayoutEvents } from '~utils/web3/eventLogs';
 import { putError, takeFrom } from '~utils/saga/effects';
 import { COLONY_TOTAL_BALANCE_DOMAIN_ID } from '~constants';
 
