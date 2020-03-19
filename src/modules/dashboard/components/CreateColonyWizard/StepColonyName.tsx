@@ -204,9 +204,9 @@ const StepColonyName = ({
                   <Tooltip
                     placement="right"
                     content={
-                      <span>
+                      <div className={styles.tooltipContent}>
                         <FormattedMessage {...MSG.tooltip} />
-                      </span>
+                      </div>
                     }
                   >
                     <div className={styles.iconContainer}>

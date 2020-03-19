@@ -31,3 +31,7 @@
   position: relative;
   bottom: 5px;
 }
+
+.tooltipContent {
+  min-width: 200px;
+}
