@@ -47,8 +47,8 @@ export const isCancelled = ({ cancelledAt }: AnyTask) => !!cancelledAt;
 // @todo reimplement isRating
 export const isRating = (task: AnyTask) => task && false;
 
-export const isActive = ({ cancelledAt, finalizedAt }: AnyTask) =>
-  !cancelledAt && !finalizedAt;
+export const isActive = ({ cancelledAt, finalizedAt, txHash }: AnyTask) =>
+  !txHash && !cancelledAt && !finalizedAt;
 
 // @todo reimplement isReveal
 export const isReveal = (task: AnyTask) => task && false;

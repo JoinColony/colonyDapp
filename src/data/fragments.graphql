@@ -52,6 +52,7 @@ fragment CreateTaskFields on Task {
   finalizedAt
   title
   workRequestAddresses
+  txHash
 }
 
 fragment Tokens on Colony {

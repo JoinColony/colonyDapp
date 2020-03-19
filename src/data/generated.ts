@@ -1349,7 +1349,7 @@ export type PersistentTaskPayoutsFragment = { payouts: Array<(
   )> };
 
 export type CreateTaskFieldsFragment = (
-  Pick<Task, 'id' | 'assignedWorkerAddress' | 'cancelledAt' | 'colonyAddress' | 'createdAt' | 'creatorAddress' | 'dueDate' | 'ethDomainId' | 'ethSkillId' | 'finalizedAt' | 'title' | 'workRequestAddresses'>
+  Pick<Task, 'id' | 'assignedWorkerAddress' | 'cancelledAt' | 'colonyAddress' | 'createdAt' | 'creatorAddress' | 'dueDate' | 'ethDomainId' | 'ethSkillId' | 'finalizedAt' | 'title' | 'workRequestAddresses' | 'txHash'>
   & { assignedWorker: Maybe<(
     Pick<User, 'id'>
     & { profile: Pick<UserProfile, 'avatarHash'> }
@@ -1865,7 +1865,7 @@ export type TaskQueryVariables = {
 
 
 export type TaskQuery = { task: (
-    Pick<Task, 'id' | 'assignedWorkerAddress' | 'cancelledAt' | 'colonyAddress' | 'createdAt' | 'creatorAddress' | 'description' | 'dueDate' | 'ethDomainId' | 'ethSkillId' | 'ethPotId' | 'finalizedAt' | 'title' | 'workInviteAddresses' | 'workRequestAddresses'>
+    Pick<Task, 'id' | 'assignedWorkerAddress' | 'cancelledAt' | 'colonyAddress' | 'createdAt' | 'creatorAddress' | 'description' | 'dueDate' | 'ethDomainId' | 'ethSkillId' | 'ethPotId' | 'finalizedAt' | 'title' | 'workInviteAddresses' | 'workRequestAddresses' | 'txHash'>
     & { assignedWorker: Maybe<(
       Pick<User, 'id'>
       & { profile: Pick<UserProfile, 'avatarHash' | 'displayName' | 'username' | 'walletAddress'> }
@@ -1911,7 +1911,7 @@ export type TaskFeedEventsQueryVariables = {
 
 
 export type TaskFeedEventsQuery = { task: (
-    Pick<Task, 'id' | 'colonyAddress' | 'ethPotId' | 'finalizedAt'>
+    Pick<Task, 'id' | 'colonyAddress' | 'ethPotId' | 'finalizedAt' | 'txHash'>
     & { events: Array<TaskEventFragment>, finalizedPayment: Maybe<Pick<TaskFinalizedPayment, 'amount' | 'tokenAddress' | 'workerAddress' | 'transactionHash'>> }
     & PayoutsFragment
   ) };
@@ -1939,7 +1939,7 @@ export type UserTasksQueryVariables = {
 export type UserTasksQuery = { user: (
     Pick<User, 'id'>
     & { tasks: Array<(
-      Pick<Task, 'id' | 'assignedWorkerAddress' | 'cancelledAt' | 'colonyAddress' | 'createdAt' | 'creatorAddress' | 'dueDate' | 'ethDomainId' | 'ethSkillId' | 'finalizedAt' | 'title' | 'workRequestAddresses'>
+      Pick<Task, 'id' | 'assignedWorkerAddress' | 'cancelledAt' | 'colonyAddress' | 'createdAt' | 'creatorAddress' | 'dueDate' | 'ethDomainId' | 'ethSkillId' | 'finalizedAt' | 'title' | 'workRequestAddresses' | 'txHash'>
       & { assignedWorker: Maybe<(
         Pick<User, 'id'>
         & { profile: Pick<UserProfile, 'avatarHash'> }
@@ -2055,7 +2055,7 @@ export type ColonyTasksQueryVariables = {
 export type ColonyTasksQuery = { colony: (
     Pick<Colony, 'id'>
     & { tasks: Array<(
-      Pick<Task, 'id' | 'assignedWorkerAddress' | 'cancelledAt' | 'colonyAddress' | 'createdAt' | 'creatorAddress' | 'dueDate' | 'ethDomainId' | 'ethSkillId' | 'finalizedAt' | 'title' | 'workRequestAddresses'>
+      Pick<Task, 'id' | 'assignedWorkerAddress' | 'cancelledAt' | 'colonyAddress' | 'createdAt' | 'creatorAddress' | 'dueDate' | 'ethDomainId' | 'ethSkillId' | 'finalizedAt' | 'title' | 'workRequestAddresses' | 'txHash'>
       & { assignedWorker: Maybe<(
         Pick<User, 'id'>
         & { profile: Pick<UserProfile, 'avatarHash'> }
@@ -2255,6 +2255,7 @@ export const CreateTaskFieldsFragmentDoc = gql`
   finalizedAt
   title
   workRequestAddresses
+  txHash
 }
     ${PayoutsFragmentDoc}`;
 export const ColonyProfileFragmentDoc = gql`
@@ -4466,6 +4467,7 @@ export const TaskDocument = gql`
       }
     }
     workRequestAddresses
+    txHash
   }
 }
     ${PayoutsFragmentDoc}`;
@@ -4578,6 +4580,7 @@ export const TaskFeedEventsDocument = gql`
     }
     ethPotId
     finalizedAt
+    txHash
     finalizedPayment @client {
       amount
       tokenAddress
@@ -4721,6 +4724,7 @@ export const UserTasksDocument = gql`
       finalizedAt
       title
       workRequestAddresses
+      txHash
     }
   }
 }
@@ -5195,6 +5199,7 @@ export const ColonyTasksDocument = gql`
       finalizedAt
       title
       workRequestAddresses
+      txHash
     }
   }
 }
