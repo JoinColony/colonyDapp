@@ -5,7 +5,7 @@
 }
 
 .editWrapper {
-  padding-top: 10px;
+  padding-top: 15px;
   position: relative;
 }
 
@@ -13,6 +13,14 @@
   position: absolute;
   top: 0;
   right: 0;
+}
+
+.actions button + button {
+  /*
+    This is very fragile - it aligns the `Remove` button with the left edge of the select box.
+    It won't align correctly in other locales - will need a more elegant solution to do so.
+  */
+  margin-left: 18px !important;
 }
 
 .amount {

@@ -46,7 +46,7 @@ const AmountTokens = ({
     <div className={styles.main}>
       <div className={styles.inputContainer}>
         <Input
-          appearance={{ theme: 'underlined' }}
+          appearance={{ size: 'medium', theme: 'underlined' }}
           formattingOptions={{
             delimiter: ',',
             numeral: true,
