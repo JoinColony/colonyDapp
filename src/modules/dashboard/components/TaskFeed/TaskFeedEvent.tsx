@@ -480,7 +480,9 @@ const TaskFeedEventPending = ({
       {...MSG.pending}
       values={{
         user: <InteractiveUsername userAddress={walletAddress} />,
-        txHash: <TransactionLink hash={txHash} />,
+        txHash: (
+          <TransactionLink hash={txHash} className={styles.highlightTxHash} />
+        ),
       }}
     />
   );

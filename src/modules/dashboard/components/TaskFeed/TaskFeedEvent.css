@@ -28,3 +28,8 @@
   color: var(--text);
   cursor: pointer;
 }
+
+.highlightTxHash {
+  font-weight: var(--weight-semi);
+  color: var(--colony-blue);
+}
