@@ -18,7 +18,15 @@ import {
   SetTaskPendingMutationVariables,
 } from '~data/index';
 import { Action, ActionTypes } from '~redux/index';
-import { ContractContexts } from '~types/index';
+// import { ContractContexts } from '~types/index';
+import { ColonyClient, ColonyManager, ContractContexts } from '~types/index';
+import {
+  getLogsAndEvents,
+  // parseColonyFundsClaimedEvent,
+  // parseColonyFundsMovedBetweenFundingPotsEvent,
+  parseTaskPayoutEvents,
+  // parseUnclaimedTransferEvent,
+} from '~utils/web3/eventLogs';
 import { putError, takeFrom } from '~utils/saga/effects';
 import { COLONY_TOTAL_BALANCE_DOMAIN_ID } from '~constants';
 
@@ -171,7 +179,71 @@ function* taskFinalize({
   return null;
 }
 
+/*
+ * @NOTE Check if a pending task's transaction was mined in the background
+ */
+function* taskComplete({
+  payload: { colonyAddress, txHash },
+  meta,
+}: Action<ActionTypes.TASK_TRANSACTION_COMPLETED_FETCH>) {
+  try {
+    const colonyManager: ColonyManager = yield getContext(
+      Context.COLONY_MANAGER,
+    );
+    const colonyClient: ColonyClient = yield colonyManager.getColonyClient(
+      colonyAddress,
+    );
+    const {
+      events: { PayoutClaimed },
+    } = colonyClient;
+    const { events, logs } = yield getLogsAndEvents(
+      colonyClient,
+      {
+        address: colonyAddress,
+        fromBlock: 1,
+      },
+      {
+        events: [PayoutClaimed],
+      },
+    );
+
+    const transactions = yield Promise.all(
+      logs
+        .filter(({ transactionHash }) => transactionHash === txHash)
+        .map((log, i) =>
+          parseTaskPayoutEvents({
+            event: events[i],
+            log,
+            colonyClient,
+            colonyAddress,
+            taskTxHash: txHash,
+          }),
+        ),
+    );
+
+    const { potId } = transactions[0] || {};
+
+    if (!potId) {
+      return null;
+    }
+
+    yield put<AllActions>({
+      type: ActionTypes.TASK_TRANSACTION_COMPLETED_FETCH_SUCCESS,
+      meta,
+      payload: { potId },
+    });
+  } catch (error) {
+    return yield putError(
+      ActionTypes.COLONY_TRANSACTIONS_FETCH_ERROR,
+      error,
+      meta,
+    );
+  }
+  return null;
+}
+
 export default function* tasksSagas() {
   yield takeEvery(ActionTypes.TASK_CREATE, taskCreate);
   yield takeEvery(ActionTypes.TASK_FINALIZE, taskFinalize);
+  yield takeEvery(ActionTypes.TASK_TRANSACTION_COMPLETED_FETCH, taskComplete);
 }

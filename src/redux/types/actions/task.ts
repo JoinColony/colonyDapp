@@ -1,9 +1,10 @@
-import { Address } from '~types/index';
+import { Address, WithKey } from '~types/index';
 import {
   ActionTypes,
   ActionType,
   ErrorActionType,
   UniqueActionType,
+  ActionTypeWithPayloadAndMeta,
 } from '~redux/index';
 import { AnyTask, Payouts } from '~data/index';
 
@@ -73,6 +74,17 @@ export type TaskActionTypes =
       ActionTypes.TASK_FINALIZE_SUCCESS,
       { draftId: string; potId: string },
       object
+    >
+  | ActionTypeWithPayloadAndMeta<
+      ActionTypes.TASK_TRANSACTION_COMPLETED_FETCH,
+      { colonyAddress: Address; txHash: string },
+      WithKey
+    >
+  | ErrorActionType<ActionTypes.TASK_TRANSACTION_COMPLETED_FETCH_ERROR, WithKey>
+  | ActionTypeWithPayloadAndMeta<
+      ActionTypes.TASK_TRANSACTION_COMPLETED_FETCH_SUCCESS,
+      { potId: string },
+      WithKey
     >
   | TaskActionType<ActionTypes.TASK_MANAGER_COMPLETE, object>
   | TaskErrorActionType<ActionTypes.TASK_MANAGER_COMPLETE_ERROR>
