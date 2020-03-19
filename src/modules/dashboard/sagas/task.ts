@@ -13,6 +13,9 @@ import {
   TokenBalancesForDomainsDocument,
   TokenBalancesForDomainsQuery,
   TokenBalancesForDomainsQueryVariables,
+  SetTaskPendingDocument,
+  SetTaskPendingMutation,
+  SetTaskPendingMutationVariables,
 } from '~data/index';
 import { Action, ActionTypes } from '~redux/index';
 import { ContractContexts } from '~types/index';
@@ -109,7 +112,27 @@ function* taskFinalize({
       },
     });
 
-    yield takeFrom(txChannel, ActionTypes.TRANSACTION_RECEIPT_RECEIVED);
+    const {
+      payload: {
+        receipt: { transactionHash: txHash },
+      },
+    } = yield takeFrom(txChannel, ActionTypes.TRANSACTION_RECEIPT_RECEIVED);
+
+    /*
+     * @NOTE Put the task in a pending state
+     */
+    yield apolloClient.mutate<
+      SetTaskPendingMutation,
+      SetTaskPendingMutationVariables
+    >({
+      mutation: SetTaskPendingDocument,
+      variables: {
+        input: {
+          id: draftId,
+          txHash,
+        },
+      },
+    });
 
     const {
       payload: {
