@@ -121,11 +121,10 @@ function* taskFinalize({
     });
 
     const {
-      payload: {
-        receipt: { transactionHash: txHash },
-      },
-    } = yield takeFrom(txChannel, ActionTypes.TRANSACTION_RECEIPT_RECEIVED);
+      payload: { hash: txHash },
+    } = yield takeFrom(txChannel, ActionTypes.TRANSACTION_HASH_RECEIVED);
 
+    yield takeFrom(txChannel, ActionTypes.TRANSACTION_RECEIPT_RECEIVED);
     /*
      * @NOTE Put the task in a pending state
      */
