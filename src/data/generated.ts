@@ -1069,7 +1069,7 @@ export type SetTaskDomainInput = {
 export type SetTaskDueDateEvent = TaskEvent & {
   type: EventType,
   taskId: Scalars['String'],
-  dueDate: Scalars['DateTime'],
+  dueDate?: Maybe<Scalars['DateTime']>,
   colonyAddress?: Maybe<Scalars['String']>,
 };
 
