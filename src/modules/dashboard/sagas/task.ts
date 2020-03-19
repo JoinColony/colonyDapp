@@ -221,7 +221,7 @@ function* taskComplete({
         ),
     );
 
-    const { potId } = transactions[0] || {};
+    const { potId } = transactions[0] || { potId: undefined };
 
     if (!potId) {
       return null;
