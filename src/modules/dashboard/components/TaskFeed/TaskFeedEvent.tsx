@@ -8,6 +8,7 @@ import { Address } from '~types/index';
 import TimeRelative from '~core/TimeRelative';
 import Numeral from '~core/Numeral';
 import InfoPopover from '~core/InfoPopover';
+import TransactionLink from '~core/TransactionLink';
 import styles from '~dashboard/TaskFeed/TaskFeedEvent.css';
 import {
   useUser,
@@ -31,6 +32,7 @@ import {
   AssignWorkerEvent,
   UnassignWorkerEvent,
   SetTaskDomainEvent,
+  SetTaskPendingEvent,
 } from '~data/index';
 import { useSelector } from '~utils/hooks';
 
@@ -119,6 +121,10 @@ const MSG = defineMessages({
   workerUnassigned: {
     id: 'dashboard.TaskFeedEvent.workerUnassigned',
     defaultMessage: '{worker} was unassigned from the task by {user}',
+  },
+  pending: {
+    id: 'dashboard.TaskFeedEvent.pending',
+    defaultMessage: 'Task payment initiated by {user} via transaction {txHash}',
   },
 });
 
@@ -463,6 +469,23 @@ const TaskFeedEventWorkerUnassigned = ({
   />
 );
 
+const TaskFeedEventPending = ({
+  context: { txHash },
+  initiator: {
+    profile: { walletAddress },
+  },
+}: EventProps<SetTaskPendingEvent>) => {
+  return (
+    <FormattedMessage
+      {...MSG.pending}
+      values={{
+        user: <InteractiveUsername userAddress={walletAddress} />,
+        txHash: <TransactionLink hash={txHash} />,
+      }}
+    />
+  );
+};
+
 const FEED_EVENT_COMPONENTS = {
   [EventType.SetTaskDomain]: TaskFeedEventDomainSet,
   [EventType.SetTaskDueDate]: TaskFeedEventDueDateSet,
@@ -479,6 +502,7 @@ const FEED_EVENT_COMPONENTS = {
   [EventType.CreateWorkRequest]: TaskFeedEventWorkRequestCreated,
   [EventType.AssignWorker]: TaskFeedEventWorkerAssigned,
   [EventType.UnassignWorker]: TaskFeedEventWorkerUnassigned,
+  [EventType.SetTaskPending]: TaskFeedEventPending,
 };
 
 const TaskFeedEvent = ({ colonyAddress, event }: Props) => {
