@@ -354,6 +354,12 @@ fragment EventContext on Event {
       type
       colonyAddress
     }
+    ... on SetTaskPendingEvent {
+      taskId
+      type
+      colonyAddress
+      txHash
+    }
     ... on TaskMessageEvent {
       colonyAddress
       message
