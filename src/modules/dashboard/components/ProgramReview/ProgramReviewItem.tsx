@@ -127,6 +127,7 @@ const ProgramReviewItem = ({
           payouts,
           skillId,
           workerAddress: worker.profile.walletAddress,
+          persistent: true,
         });
       }
       await acceptLevelTaskSubmission();

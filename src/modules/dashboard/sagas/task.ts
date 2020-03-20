@@ -81,6 +81,7 @@ function* taskFinalize({
     domainId,
     skillId,
     payouts,
+    persistent = false,
   },
   meta,
 }: Action<ActionTypes.TASK_FINALIZE>) {
@@ -116,21 +117,23 @@ function* taskFinalize({
       payload: { hash: txHash },
     } = yield takeFrom(txChannel, ActionTypes.TRANSACTION_HASH_RECEIVED);
 
-    /*
-     * @NOTE Put the task in a pending state
-     */
-    yield apolloClient.mutate<
-      SetTaskPendingMutation,
-      SetTaskPendingMutationVariables
-    >({
-      mutation: SetTaskPendingDocument,
-      variables: {
-        input: {
-          id: draftId,
-          txHash,
+    if (!persistent) {
+      /*
+       * @NOTE Put the task in a pending state
+       */
+      yield apolloClient.mutate<
+        SetTaskPendingMutation,
+        SetTaskPendingMutationVariables
+      >({
+        mutation: SetTaskPendingDocument,
+        variables: {
+          input: {
+            id: draftId,
+            txHash,
+          },
         },
-      },
-    });
+      });
+    }
 
     yield takeFrom(txChannel, ActionTypes.TRANSACTION_RECEIPT_RECEIVED);
 
