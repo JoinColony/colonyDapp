@@ -22,7 +22,6 @@ import { ColonyClient, ColonyManager, ContractContexts } from '~types/index';
 import { getLogsAndEvents, parseTaskPayoutEvents } from '~utils/web3/eventLogs';
 import { putError, takeFrom } from '~utils/saga/effects';
 import { COLONY_TOTAL_BALANCE_DOMAIN_ID } from '~constants';
-
 import { createTransaction, getTxChannel } from '../../core/sagas';
 
 import { AllActions } from '../../../redux/types/actions';
@@ -117,7 +116,6 @@ function* taskFinalize({
       payload: { hash: txHash },
     } = yield takeFrom(txChannel, ActionTypes.TRANSACTION_HASH_RECEIVED);
 
-    yield takeFrom(txChannel, ActionTypes.TRANSACTION_RECEIPT_RECEIVED);
     /*
      * @NOTE Put the task in a pending state
      */
@@ -133,6 +131,8 @@ function* taskFinalize({
         },
       },
     });
+
+    yield takeFrom(txChannel, ActionTypes.TRANSACTION_RECEIPT_RECEIVED);
 
     const {
       payload: {
