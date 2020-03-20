@@ -11,6 +11,7 @@ import Input from '../Input';
 import styles from './AmountTokens.css';
 
 interface Props {
+  id?: string;
   label: MessageDescriptor | string;
   nameAmount: string;
   nameToken: string;
@@ -21,6 +22,7 @@ interface Props {
 const displayName = 'Fields.AmountTokens';
 
 const AmountTokens = ({
+  id,
   label,
   nameAmount,
   nameToken,
@@ -54,6 +56,7 @@ const AmountTokens = ({
           }}
           label={label}
           name={nameAmount}
+          id={`${id}-amount`}
         />
       </div>
       <div>
@@ -63,6 +66,7 @@ const AmountTokens = ({
           label={label}
           name={nameToken}
           options={tokenOptions}
+          id={`${id}-token`}
         />
       </div>
     </div>

@@ -246,6 +246,7 @@ const TaskEdit = ({
               label={MSG.labelTaskTitle}
               maxLength={90}
               name="title"
+              id={`task-${persistentTaskId}-title`}
             />
             <Textarea
               appearance={{
@@ -256,6 +257,7 @@ const TaskEdit = ({
               label={MSG.labelTaskDescription}
               name="description"
               maxLength={4000}
+              id={`task-${persistentTaskId}-description`}
             />
           </div>
           <div className={styles.section}>
@@ -265,6 +267,7 @@ const TaskEdit = ({
                 label={MSG.labelTaskDomain}
                 name="domainId"
                 options={domainOptions}
+                id={`task-${persistentTaskId}-domainId`}
               />
             </div>
           </div>
@@ -275,6 +278,7 @@ const TaskEdit = ({
                 label={MSG.labelTaskSkill}
                 name="skillId"
                 options={skillOptions}
+                id={`task-${persistentTaskId}-skillId`}
               />
             </div>
           </div>
@@ -286,6 +290,7 @@ const TaskEdit = ({
                 nameToken="tokenAddress"
                 selectedTokenAddress={values.tokenAddress}
                 tokens={tokens}
+                id={`task-${persistentTaskId}-payouts`}
               />
             </div>
           </div>
