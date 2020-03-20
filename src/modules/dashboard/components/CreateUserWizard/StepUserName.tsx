@@ -8,11 +8,9 @@ import { ActionForm, Input } from '~core/Fields';
 import Heading from '~core/Heading';
 import Button from '~core/Button';
 import Icon from '~core/Icon';
-import Link from '~core/Link';
 import { Tooltip } from '~core/Popover';
 import { ActionTypes } from '~redux/index';
 import ENS from '~lib/ENS';
-import { DASHBOARD_ROUTE } from '~routes/index';
 import {
   UserAddressDocument,
   UserAddressQuery,
@@ -30,12 +28,11 @@ type Props = WizardProps<FormValues>;
 const MSG = defineMessages({
   heading: {
     id: 'dashboard.CreateUserWizard.StepUserName.heading',
-    defaultMessage: 'Welcome to Colony!',
+    defaultMessage: 'Create your user account',
   },
   descriptionOne: {
     id: 'dashboard.CreateUserWizard.StepUserName.descriptionOne',
-    // eslint-disable-next-line max-len
-    defaultMessage: `Let's get your account set up. Pick a username.`,
+    defaultMessage: `Choose carefully, it is not possible to change your username later.`,
   },
   label: {
     id: 'dashboard.CreateUserWizard.StepUserName.label',
@@ -44,10 +41,6 @@ const MSG = defineMessages({
   continue: {
     id: 'dashboard.CreateUserWizard.StepUserName.continue',
     defaultMessage: 'Continue',
-  },
-  later: {
-    id: 'dashboard.CreateUserWizard.StepUserName.later',
-    defaultMessage: `I'll do it later`,
   },
   errorDomainTaken: {
     id: 'dashboard.CreateUserWizard.StepUserName.errorDomainTaken',
@@ -59,8 +52,7 @@ const MSG = defineMessages({
   },
   tooltip: {
     id: 'dashboard.CreateUserWizard.StepUserName.tooltip',
-    // eslint-disable-next-line max-len
-    defaultMessage: `We use ENS to create a .joincolony.eth subdomain for your colony. You can use this to create a custom URL and invite people to join your colony.`,
+    defaultMessage: `We use ENS to create a .joincolony.eth subdomain for your wallet address. This allows us to provide a good user experience while using the ethereum network.`,
   },
   statusText: {
     id: 'users.CreateUserWizard.StepUserName.statusText',
@@ -157,9 +149,9 @@ const StepUserName = ({ wizardValues, nextStep }: Props) => {
                     <Tooltip
                       placement="right"
                       content={
-                        <span>
+                        <div className={styles.tooltipContent}>
                           <FormattedMessage {...MSG.tooltip} />
-                        </span>
+                        </div>
                       }
                     >
                       <div className={styles.iconContainer}>
@@ -173,11 +165,6 @@ const StepUserName = ({ wizardValues, nextStep }: Props) => {
                   }
                 />
                 <div className={styles.buttons}>
-                  <p className={styles.reminder}>
-                    <Link to={DASHBOARD_ROUTE}>
-                      <FormattedMessage {...MSG.later} />
-                    </Link>
-                  </p>
                   <Button
                     appearance={{ theme: 'primary', size: 'large' }}
                     type="submit"

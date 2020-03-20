@@ -15,9 +15,7 @@
 
 .buttons {
   display: flex;
-  justify-content: space-between;
-  align-items: flex-end;
-  align-items: baseline;
+  justify-content: flex-end;
   margin-top: 13px;
 }
 
@@ -32,4 +30,8 @@
 .iconContainer {
   position: relative;
   bottom: 5px;
+}
+
+.tooltipContent {
+  min-width: 280px;
 }

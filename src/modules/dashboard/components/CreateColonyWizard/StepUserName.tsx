@@ -27,12 +27,11 @@ type Props = WizardProps<FormValues>;
 const MSG = defineMessages({
   heading: {
     id: 'dashboard.CreateColonyWizard.StepUserName.heading',
-    defaultMessage: 'Welcome to Colony!',
+    defaultMessage: 'Create your user account',
   },
   descriptionOne: {
     id: 'dashboard.CreateColonyWizard.StepUserName.descriptionOne',
-    // eslint-disable-next-line max-len
-    defaultMessage: `Let's get your account set up. Pick a username.`,
+    defaultMessage: `Choose carefully, it is not possible to change your username later.`,
   },
   label: {
     id: 'dashboard.CreateColonyWizard.StepUserName.label',
@@ -57,8 +56,7 @@ const MSG = defineMessages({
   },
   tooltip: {
     id: 'dashboard.CreateColonyWizard.StepUserName.tooltip',
-    // eslint-disable-next-line max-len
-    defaultMessage: `We use ENS to create a .joincolony.eth subdomain for your colony. You can use this to create a custom URL and invite people to join your colony.`,
+    defaultMessage: `We use ENS to create a .joincolony.eth subdomain for your wallet address. This allows us to provide a good user experience while using the ethereum network.`,
   },
   statusText: {
     id: 'users.CreateColonyWizard.StepUserName.statusText',
@@ -152,9 +150,9 @@ const StepUserName = ({ stepCompleted, wizardForm, nextStep }: Props) => {
                     <Tooltip
                       placement="right"
                       content={
-                        <span>
+                        <div className={styles.tooltipContent}>
                           <FormattedMessage {...MSG.tooltip} />
-                        </span>
+                        </div>
                       }
                     >
                       <div className={styles.iconContainer}>

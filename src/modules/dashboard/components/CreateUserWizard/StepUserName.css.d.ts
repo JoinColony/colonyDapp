@@ -4,3 +4,4 @@ export const nameForm: string;
 export const buttons: string;
 export const reminder: string;
 export const iconContainer: string;
+export const tooltipContent: string;
