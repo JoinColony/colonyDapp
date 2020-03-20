@@ -124,7 +124,7 @@ const StepUserName = ({ wizardValues, nextStep }: Props) => {
       validate={validateDomain}
       validationSchema={validationSchema}
     >
-      {({ isValid, isSubmitting, values: { username } }) => {
+      {({ dirty, isValid, isSubmitting, values: { username } }) => {
         const normalized = ENS.normalizeAsText(username);
         return (
           <section className={styles.main}>
@@ -168,7 +168,7 @@ const StepUserName = ({ wizardValues, nextStep }: Props) => {
                   <Button
                     appearance={{ theme: 'primary', size: 'large' }}
                     type="submit"
-                    disabled={!isValid}
+                    disabled={!isValid || !dirty}
                     loading={isSubmitting}
                     text={MSG.continue}
                     data-test="claimUsernameConfirm"
