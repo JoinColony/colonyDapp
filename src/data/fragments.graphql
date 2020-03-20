@@ -52,6 +52,7 @@ fragment CreateTaskFields on Task {
   finalizedAt
   title
   workRequestAddresses
+  txHash
 }
 
 fragment Tokens on Colony {
@@ -353,6 +354,12 @@ fragment EventContext on Event {
       title
       type
       colonyAddress
+    }
+    ... on SetTaskPendingEvent {
+      taskId
+      type
+      colonyAddress
+      txHash
     }
     ... on TaskMessageEvent {
       colonyAddress

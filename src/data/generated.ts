@@ -70,6 +70,9 @@ export type Maybe<T> = T | null;
             "name": "SetTaskPayoutEvent"
           },
           {
+            "name": "SetTaskPendingEvent"
+          },
+          {
             "name": "SetTaskSkillEvent"
           },
           {
@@ -125,6 +128,9 @@ export type Maybe<T> = T | null;
           },
           {
             "name": "SetTaskPayoutEvent"
+          },
+          {
+            "name": "SetTaskPendingEvent"
           },
           {
             "name": "SetTaskSkillEvent"
@@ -434,7 +440,7 @@ export type Event = {
   context: EventContext,
 };
 
-export type EventContext = AcceptLevelTaskSubmissionEvent | AssignWorkerEvent | CancelTaskEvent | CreateDomainEvent | CreateTaskEvent | CreateLevelTaskSubmissionEvent | CreateWorkRequestEvent | EnrollUserInProgramEvent | FinalizeTaskEvent | NewUserEvent | RemoveTaskPayoutEvent | SendWorkInviteEvent | SetTaskDescriptionEvent | SetTaskDomainEvent | SetTaskDueDateEvent | SetTaskPayoutEvent | SetTaskSkillEvent | RemoveTaskSkillEvent | SetTaskTitleEvent | TaskMessageEvent | UnassignWorkerEvent | UnlockNextLevelEvent;
+export type EventContext = AcceptLevelTaskSubmissionEvent | AssignWorkerEvent | CancelTaskEvent | CreateDomainEvent | CreateTaskEvent | CreateLevelTaskSubmissionEvent | CreateWorkRequestEvent | EnrollUserInProgramEvent | FinalizeTaskEvent | NewUserEvent | RemoveTaskPayoutEvent | SendWorkInviteEvent | SetTaskDescriptionEvent | SetTaskDomainEvent | SetTaskDueDateEvent | SetTaskPayoutEvent | SetTaskPendingEvent | SetTaskSkillEvent | RemoveTaskSkillEvent | SetTaskTitleEvent | TaskMessageEvent | UnassignWorkerEvent | UnlockNextLevelEvent;
 
 export enum EventType {
   AcceptLevelTaskSubmission = 'AcceptLevelTaskSubmission',
@@ -453,6 +459,7 @@ export enum EventType {
   SetTaskDomain = 'SetTaskDomain',
   SetTaskDueDate = 'SetTaskDueDate',
   SetTaskPayout = 'SetTaskPayout',
+  SetTaskPending = 'SetTaskPending',
   SetTaskSkill = 'SetTaskSkill',
   RemoveTaskSkill = 'RemoveTaskSkill',
   SetTaskTitle = 'SetTaskTitle',
@@ -535,6 +542,7 @@ export type Mutation = {
   setTaskDescription?: Maybe<Task>,
   setTaskDueDate?: Maybe<Task>,
   setTaskPayout?: Maybe<Task>,
+  setTaskPending?: Maybe<Task>,
   setTaskSkill?: Maybe<Task>,
   removeTaskSkill?: Maybe<Task>,
   setTaskTitle?: Maybe<Task>,
@@ -677,6 +685,11 @@ export type MutationSetTaskDueDateArgs = {
 
 export type MutationSetTaskPayoutArgs = {
   input: SetTaskPayoutInput
+};
+
+
+export type MutationSetTaskPendingArgs = {
+  input: SetTaskPendingInput
 };
 
 
@@ -1092,6 +1105,18 @@ export type SetTaskPayoutInput = {
   tokenAddress: Scalars['String'],
 };
 
+export type SetTaskPendingEvent = TaskEvent & {
+  type: EventType,
+  taskId: Scalars['String'],
+  txHash: Scalars['String'],
+  colonyAddress?: Maybe<Scalars['String']>,
+};
+
+export type SetTaskPendingInput = {
+  id: Scalars['String'],
+  txHash: Scalars['String'],
+};
+
 export type SetTaskSkillEvent = TaskEvent & {
   type: EventType,
   taskId: Scalars['String'],
@@ -1191,6 +1216,7 @@ export type Task = {
   workRequestAddresses: Array<Scalars['String']>,
   events: Array<Event>,
   payouts: Array<TaskPayout>,
+  txHash?: Maybe<Scalars['String']>,
   finalizedPayment?: Maybe<TaskFinalizedPayment>,
 };
 
@@ -1323,7 +1349,7 @@ export type PersistentTaskPayoutsFragment = { payouts: Array<(
   )> };
 
 export type CreateTaskFieldsFragment = (
-  Pick<Task, 'id' | 'assignedWorkerAddress' | 'cancelledAt' | 'colonyAddress' | 'createdAt' | 'creatorAddress' | 'dueDate' | 'ethDomainId' | 'ethSkillId' | 'finalizedAt' | 'title' | 'workRequestAddresses'>
+  Pick<Task, 'id' | 'assignedWorkerAddress' | 'cancelledAt' | 'colonyAddress' | 'createdAt' | 'creatorAddress' | 'dueDate' | 'ethDomainId' | 'ethSkillId' | 'finalizedAt' | 'title' | 'workRequestAddresses' | 'txHash'>
   & { assignedWorker: Maybe<(
     Pick<User, 'id'>
     & { profile: Pick<UserProfile, 'avatarHash'> }
@@ -1408,7 +1434,7 @@ export type EventContextFragment = { context: (
       Pick<TaskPayout, 'amount' | 'tokenAddress'>
       & { token: Pick<Token, 'id' | 'address' | 'decimals' | 'name' | 'symbol'> }
     )> }
-  ) | Pick<AssignWorkerEvent, 'taskId' | 'type' | 'workerAddress' | 'colonyAddress'> | Pick<CancelTaskEvent, 'taskId' | 'type' | 'colonyAddress'> | Pick<CreateDomainEvent, 'type' | 'ethDomainId' | 'colonyAddress'> | Pick<CreateTaskEvent, 'colonyAddress' | 'ethDomainId' | 'taskId' | 'type'> | Pick<CreateLevelTaskSubmissionEvent, 'levelId' | 'persistentTaskId' | 'programId' | 'submissionId' | 'type'> | Pick<CreateWorkRequestEvent, 'taskId' | 'type' | 'colonyAddress'> | Pick<EnrollUserInProgramEvent, 'programId' | 'type'> | Pick<FinalizeTaskEvent, 'taskId' | 'type' | 'colonyAddress'> | Pick<RemoveTaskPayoutEvent, 'amount' | 'taskId' | 'tokenAddress' | 'type' | 'colonyAddress'> | Pick<SendWorkInviteEvent, 'taskId' | 'type' | 'workerAddress' | 'colonyAddress'> | Pick<SetTaskDescriptionEvent, 'description' | 'taskId' | 'type' | 'colonyAddress'> | Pick<SetTaskDomainEvent, 'ethDomainId' | 'taskId' | 'type' | 'colonyAddress'> | Pick<SetTaskDueDateEvent, 'dueDate' | 'taskId' | 'type' | 'colonyAddress'> | Pick<SetTaskPayoutEvent, 'amount' | 'taskId' | 'tokenAddress' | 'type' | 'colonyAddress'> | Pick<SetTaskSkillEvent, 'ethSkillId' | 'taskId' | 'type' | 'colonyAddress'> | Pick<RemoveTaskSkillEvent, 'ethSkillId' | 'taskId' | 'type' | 'colonyAddress'> | Pick<SetTaskTitleEvent, 'taskId' | 'title' | 'type' | 'colonyAddress'> | Pick<TaskMessageEvent, 'colonyAddress' | 'message' | 'taskId' | 'type'> | Pick<UnassignWorkerEvent, 'taskId' | 'type' | 'workerAddress' | 'colonyAddress'> | Pick<UnlockNextLevelEvent, 'levelId' | 'nextLevelId' | 'persistentTaskId' | 'programId' | 'submissionId' | 'type'> };
+  ) | Pick<AssignWorkerEvent, 'taskId' | 'type' | 'workerAddress' | 'colonyAddress'> | Pick<CancelTaskEvent, 'taskId' | 'type' | 'colonyAddress'> | Pick<CreateDomainEvent, 'type' | 'ethDomainId' | 'colonyAddress'> | Pick<CreateTaskEvent, 'colonyAddress' | 'ethDomainId' | 'taskId' | 'type'> | Pick<CreateLevelTaskSubmissionEvent, 'levelId' | 'persistentTaskId' | 'programId' | 'submissionId' | 'type'> | Pick<CreateWorkRequestEvent, 'taskId' | 'type' | 'colonyAddress'> | Pick<EnrollUserInProgramEvent, 'programId' | 'type'> | Pick<FinalizeTaskEvent, 'taskId' | 'type' | 'colonyAddress'> | Pick<RemoveTaskPayoutEvent, 'amount' | 'taskId' | 'tokenAddress' | 'type' | 'colonyAddress'> | Pick<SendWorkInviteEvent, 'taskId' | 'type' | 'workerAddress' | 'colonyAddress'> | Pick<SetTaskDescriptionEvent, 'description' | 'taskId' | 'type' | 'colonyAddress'> | Pick<SetTaskDomainEvent, 'ethDomainId' | 'taskId' | 'type' | 'colonyAddress'> | Pick<SetTaskDueDateEvent, 'dueDate' | 'taskId' | 'type' | 'colonyAddress'> | Pick<SetTaskPayoutEvent, 'amount' | 'taskId' | 'tokenAddress' | 'type' | 'colonyAddress'> | Pick<SetTaskPendingEvent, 'taskId' | 'type' | 'colonyAddress' | 'txHash'> | Pick<SetTaskSkillEvent, 'ethSkillId' | 'taskId' | 'type' | 'colonyAddress'> | Pick<RemoveTaskSkillEvent, 'ethSkillId' | 'taskId' | 'type' | 'colonyAddress'> | Pick<SetTaskTitleEvent, 'taskId' | 'title' | 'type' | 'colonyAddress'> | Pick<TaskMessageEvent, 'colonyAddress' | 'message' | 'taskId' | 'type'> | Pick<UnassignWorkerEvent, 'taskId' | 'type' | 'workerAddress' | 'colonyAddress'> | Pick<UnlockNextLevelEvent, 'levelId' | 'nextLevelId' | 'persistentTaskId' | 'programId' | 'submissionId' | 'type'> };
 
 export type TaskEventFragment = (
   EventFieldsFragment
@@ -1564,6 +1590,16 @@ export type UnassignWorkerMutationVariables = {
 export type UnassignWorkerMutation = { unassignWorker: Maybe<(
     Pick<Task, 'id' | 'assignedWorkerAddress'>
     & { assignedWorker: Maybe<Pick<User, 'id'>>, events: Array<TaskEventFragment> }
+  )> };
+
+export type SetTaskPendingMutationVariables = {
+  input: SetTaskPendingInput
+};
+
+
+export type SetTaskPendingMutation = { setTaskPending: Maybe<(
+    Pick<Task, 'id'>
+    & { events: Array<TaskEventFragment> }
   )> };
 
 export type SendTaskMessageMutationVariables = {
@@ -1829,7 +1865,7 @@ export type TaskQueryVariables = {
 
 
 export type TaskQuery = { task: (
-    Pick<Task, 'id' | 'assignedWorkerAddress' | 'cancelledAt' | 'colonyAddress' | 'createdAt' | 'creatorAddress' | 'description' | 'dueDate' | 'ethDomainId' | 'ethSkillId' | 'ethPotId' | 'finalizedAt' | 'title' | 'workInviteAddresses' | 'workRequestAddresses'>
+    Pick<Task, 'id' | 'assignedWorkerAddress' | 'cancelledAt' | 'colonyAddress' | 'createdAt' | 'creatorAddress' | 'description' | 'dueDate' | 'ethDomainId' | 'ethSkillId' | 'ethPotId' | 'finalizedAt' | 'title' | 'workInviteAddresses' | 'workRequestAddresses' | 'txHash'>
     & { assignedWorker: Maybe<(
       Pick<User, 'id'>
       & { profile: Pick<UserProfile, 'avatarHash' | 'displayName' | 'username' | 'walletAddress'> }
@@ -1875,7 +1911,7 @@ export type TaskFeedEventsQueryVariables = {
 
 
 export type TaskFeedEventsQuery = { task: (
-    Pick<Task, 'id' | 'colonyAddress' | 'ethPotId' | 'finalizedAt'>
+    Pick<Task, 'id' | 'colonyAddress' | 'ethPotId' | 'finalizedAt' | 'txHash'>
     & { events: Array<TaskEventFragment>, finalizedPayment: Maybe<Pick<TaskFinalizedPayment, 'amount' | 'tokenAddress' | 'workerAddress' | 'transactionHash'>> }
     & PayoutsFragment
   ) };
@@ -1903,7 +1939,7 @@ export type UserTasksQueryVariables = {
 export type UserTasksQuery = { user: (
     Pick<User, 'id'>
     & { tasks: Array<(
-      Pick<Task, 'id' | 'assignedWorkerAddress' | 'cancelledAt' | 'colonyAddress' | 'createdAt' | 'creatorAddress' | 'dueDate' | 'ethDomainId' | 'ethSkillId' | 'finalizedAt' | 'title' | 'workRequestAddresses'>
+      Pick<Task, 'id' | 'assignedWorkerAddress' | 'cancelledAt' | 'colonyAddress' | 'createdAt' | 'creatorAddress' | 'dueDate' | 'ethDomainId' | 'ethSkillId' | 'finalizedAt' | 'title' | 'workRequestAddresses' | 'txHash'>
       & { assignedWorker: Maybe<(
         Pick<User, 'id'>
         & { profile: Pick<UserProfile, 'avatarHash'> }
@@ -2019,7 +2055,7 @@ export type ColonyTasksQueryVariables = {
 export type ColonyTasksQuery = { colony: (
     Pick<Colony, 'id'>
     & { tasks: Array<(
-      Pick<Task, 'id' | 'assignedWorkerAddress' | 'cancelledAt' | 'colonyAddress' | 'createdAt' | 'creatorAddress' | 'dueDate' | 'ethDomainId' | 'ethSkillId' | 'finalizedAt' | 'title' | 'workRequestAddresses'>
+      Pick<Task, 'id' | 'assignedWorkerAddress' | 'cancelledAt' | 'colonyAddress' | 'createdAt' | 'creatorAddress' | 'dueDate' | 'ethDomainId' | 'ethSkillId' | 'finalizedAt' | 'title' | 'workRequestAddresses' | 'txHash'>
       & { assignedWorker: Maybe<(
         Pick<User, 'id'>
         & { profile: Pick<UserProfile, 'avatarHash'> }
@@ -2219,6 +2255,7 @@ export const CreateTaskFieldsFragmentDoc = gql`
   finalizedAt
   title
   workRequestAddresses
+  txHash
 }
     ${PayoutsFragmentDoc}`;
 export const ColonyProfileFragmentDoc = gql`
@@ -2548,6 +2585,12 @@ export const EventContextFragmentDoc = gql`
       title
       type
       colonyAddress
+    }
+    ... on SetTaskPendingEvent {
+      taskId
+      type
+      colonyAddress
+      txHash
     }
     ... on TaskMessageEvent {
       colonyAddress
@@ -3149,6 +3192,41 @@ export function useUnassignWorkerMutation(baseOptions?: ApolloReactHooks.Mutatio
 export type UnassignWorkerMutationHookResult = ReturnType<typeof useUnassignWorkerMutation>;
 export type UnassignWorkerMutationResult = ApolloReactCommon.MutationResult<UnassignWorkerMutation>;
 export type UnassignWorkerMutationOptions = ApolloReactCommon.BaseMutationOptions<UnassignWorkerMutation, UnassignWorkerMutationVariables>;
+export const SetTaskPendingDocument = gql`
+    mutation SetTaskPending($input: SetTaskPendingInput!) {
+  setTaskPending(input: $input) {
+    id
+    events {
+      ...TaskEvent
+    }
+  }
+}
+    ${TaskEventFragmentDoc}`;
+export type SetTaskPendingMutationFn = ApolloReactCommon.MutationFunction<SetTaskPendingMutation, SetTaskPendingMutationVariables>;
+
+/**
+ * __useSetTaskPendingMutation__
+ *
+ * To run a mutation, you first call `useSetTaskPendingMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useSetTaskPendingMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [setTaskPendingMutation, { data, loading, error }] = useSetTaskPendingMutation({
+ *   variables: {
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function useSetTaskPendingMutation(baseOptions?: ApolloReactHooks.MutationHookOptions<SetTaskPendingMutation, SetTaskPendingMutationVariables>) {
+        return ApolloReactHooks.useMutation<SetTaskPendingMutation, SetTaskPendingMutationVariables>(SetTaskPendingDocument, baseOptions);
+      }
+export type SetTaskPendingMutationHookResult = ReturnType<typeof useSetTaskPendingMutation>;
+export type SetTaskPendingMutationResult = ApolloReactCommon.MutationResult<SetTaskPendingMutation>;
+export type SetTaskPendingMutationOptions = ApolloReactCommon.BaseMutationOptions<SetTaskPendingMutation, SetTaskPendingMutationVariables>;
 export const SendTaskMessageDocument = gql`
     mutation SendTaskMessage($input: SendTaskMessageInput!) {
   sendTaskMessage(input: $input)
@@ -4389,6 +4467,7 @@ export const TaskDocument = gql`
       }
     }
     workRequestAddresses
+    txHash
   }
 }
     ${PayoutsFragmentDoc}`;
@@ -4501,6 +4580,7 @@ export const TaskFeedEventsDocument = gql`
     }
     ethPotId
     finalizedAt
+    txHash
     finalizedPayment @client {
       amount
       tokenAddress
@@ -4644,6 +4724,7 @@ export const UserTasksDocument = gql`
       finalizedAt
       title
       workRequestAddresses
+      txHash
     }
   }
 }
@@ -5118,6 +5199,7 @@ export const ColonyTasksDocument = gql`
       finalizedAt
       title
       workRequestAddresses
+      txHash
     }
   }
 }

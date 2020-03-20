@@ -241,3 +241,34 @@ export const parseExtensionDeployedLog = (log: any) => {
   );
   return extensionAddress;
 };
+
+/*
+ * Try to get the the task's completed tx (and extract the potId) from a list
+ * of payout claimed events
+ */
+export const parseTaskPayoutEvents = async ({
+  event: { potId },
+  log: { transactionHash },
+  colonyClient,
+  colonyAddress,
+  taskTxHash: taskTransactionHash,
+}: {
+  event: any;
+  log: any;
+  colonyClient: ColonyClientType;
+  colonyAddress: string;
+  taskTxHash: string;
+}): Promise<ContractTransactionType | null> => {
+  const { type } = await colonyClient.getFundingPot.call({
+    potId,
+  });
+  if (type !== FUNDING_POT_TYPE_PAYMENT) return null;
+  if (transactionHash === taskTransactionHash) {
+    return createContractTxObj({
+      colonyAddress,
+      hash: transactionHash,
+      potId,
+    });
+  }
+  return null;
+};
