@@ -258,7 +258,7 @@ export const parseTaskPayoutEvents = async ({
   colonyClient: ColonyClientType;
   colonyAddress: string;
   taskTxHash: string;
-}): Promise<any | null> => {
+}): Promise<ContractTransactionType | null> => {
   const { type } = await colonyClient.getFundingPot.call({
     potId,
   });

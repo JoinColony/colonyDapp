@@ -145,7 +145,7 @@ const Task = () => {
    * This is to provide fallback for cases where a user closed the browser before
    * the transaction has been mined.
    *
-   * If the task is "peding", then look at the recent task payout events&logs and
+   * If the task is "pending", then look at the recent task payout events&logs and
    * see if any of them matches the task's payout transaction hash.
    *
    * If it does, fire the mutation, set the transaction as "complete" and show
