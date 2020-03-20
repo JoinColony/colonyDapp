@@ -67,6 +67,7 @@ export type TaskActionTypes =
         domainId: number;
         skillId: number;
         payouts: Payouts;
+        persistent: boolean;
       }
     >
   | TaskErrorActionType<ActionTypes.TASK_FINALIZE_ERROR>
