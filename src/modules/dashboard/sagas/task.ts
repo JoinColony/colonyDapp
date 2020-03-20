@@ -200,20 +200,20 @@ function* taskComplete({
     );
 
     const transactions = yield Promise.all(
-      logs
-        .filter(({ transactionHash }) => transactionHash === txHash)
-        .map((log, i) =>
-          parseTaskPayoutEvents({
-            event: events[i],
-            log,
-            colonyClient,
-            colonyAddress,
-            taskTxHash: txHash,
-          }),
-        ),
+      logs.map((log, i) =>
+        parseTaskPayoutEvents({
+          event: events[i],
+          log,
+          colonyClient,
+          colonyAddress,
+          taskTxHash: txHash,
+        }),
+      ),
     );
 
-    const { potId } = transactions[0] || { potId: undefined };
+    const [parsedTransaction] = transactions.filter(Boolean);
+
+    const { potId } = parsedTransaction || { potId: undefined };
 
     if (!potId) {
       return null;
