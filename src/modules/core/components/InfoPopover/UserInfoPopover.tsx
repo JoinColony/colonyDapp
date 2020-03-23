@@ -1,28 +1,61 @@
-import React from 'react';
-import { defineMessages, useIntl } from 'react-intl';
+import React, { useEffect } from 'react';
+import { defineMessages, FormattedMessage, useIntl } from 'react-intl';
 
-import UserMention from '~core/UserMention';
-import CopyableAddress from '~core/CopyableAddress';
 import Badge from '~core/Badge';
+import CopyableAddress from '~core/CopyableAddress';
+import Heading from '~core/Heading';
+import Numeral from '~core/Numeral';
 import { SpinnerLoader } from '~core/Preloaders';
-import { AnyUser, useUserBadgesQuery } from '~data/index';
+import UserMention from '~core/UserMention';
+import {
+  AnyUser,
+  useUserBadgesQuery,
+  useUserReputationLazyQuery,
+} from '~data/index';
+import { Address } from '~types/index';
 
 import styles from './InfoPopover.css';
 
-interface Props {
+interface StandardProps {
+  colonyAddress?: undefined;
+  skillId?: undefined;
   user: AnyUser;
 }
 
+interface PropsWithReputation {
+  colonyAddress: Address;
+  skillId?: number;
+  user: AnyUser;
+}
+
+type Props = StandardProps | PropsWithReputation;
+
 const MSG = defineMessages({
-  achievement: {
-    id: 'core.InfoPopover.UserInfoPopover.achievement',
+  achievementsHeading: {
+    id: 'InfoPopover.UserInfoPopover.achievementsHeading',
+    defaultMessage: 'Achievements',
+  },
+  achievementTitleText: {
+    id: 'InfoPopover.UserInfoPopover.achievementTitleText',
     defaultMessage: '{title} achievement earned in {programTitle}',
+  },
+  headingReputation: {
+    id: 'InfoPopover.UserInfoPopover.headingReputation',
+    defaultMessage: 'Reputation',
+  },
+  descriptionReputation: {
+    id: 'InfoPopover.UserInfoPopover.descriptionReputation',
+    defaultMessage: 'earned for tasks paid in native tokens',
+  },
+  errorReputation: {
+    id: 'InfoPopover.UserInfoPopover.errorReputation',
+    defaultMessage: 'We had a problem loading the data',
   },
 });
 
 const displayName = 'InfoPopover.UserInfoPopover';
 
-const UserInfoPopover = ({ user }: Props) => {
+const UserInfoPopover = ({ colonyAddress, skillId, user }: Props) => {
   const { formatMessage } = useIntl();
   const {
     displayName: userDisplayName,
@@ -30,7 +63,24 @@ const UserInfoPopover = ({ user }: Props) => {
     walletAddress,
   } = user.profile;
 
-  const { data, loading } = useUserBadgesQuery({
+  const [
+    fetchUserReputation,
+    {
+      data: userReputationData,
+      loading: loadingUserReputation,
+      error: errorReputation,
+    },
+  ] = useUserReputationLazyQuery();
+
+  useEffect(() => {
+    if (colonyAddress) {
+      fetchUserReputation({
+        variables: { address: walletAddress, colonyAddress, skillId },
+      });
+    }
+  }, [colonyAddress, fetchUserReputation, skillId, walletAddress]);
+
+  const { data } = useUserBadgesQuery({
     variables: { address: walletAddress },
   });
 
@@ -38,38 +88,74 @@ const UserInfoPopover = ({ user }: Props) => {
 
   return (
     <div className={styles.main}>
-      {userDisplayName && (
-        <p className={styles.displayName}>{userDisplayName}</p>
-      )}
-      {username && (
-        <p className={styles.userName}>
-          <UserMention username={username} hasLink />
-        </p>
-      )}
-      <div className={styles.address}>
-        <CopyableAddress full>{walletAddress}</CopyableAddress>
-      </div>
-      <div className={styles.badges}>
-        {loading ? (
-          <SpinnerLoader appearance={{ size: 'small' }} />
-        ) : (
-          completedLevels.map(
-            ({ achievement, id, title, program: { title: programTitle } }) =>
-              achievement &&
-              title && (
-                <Badge
-                  key={id}
-                  size="xs"
-                  name={achievement}
-                  title={formatMessage(MSG.achievement, {
-                    title,
-                    programTitle,
-                  })}
-                />
-              ),
-          )
+      <div className={styles.section}>
+        {userDisplayName && (
+          <Heading
+            appearance={{ margin: 'none', size: 'normal', theme: 'dark' }}
+            text={userDisplayName}
+          />
         )}
+        {username && (
+          <p className={styles.userName}>
+            <UserMention username={username} hasLink />
+          </p>
+        )}
+        <div className={styles.address}>
+          <CopyableAddress full>{walletAddress}</CopyableAddress>
+        </div>
       </div>
+      {colonyAddress && (
+        <div className={styles.section}>
+          <div className={styles.reputation}>
+            <div className={styles.reputationHeading}>
+              <Heading
+                appearance={{ margin: 'none', size: 'normal', theme: 'dark' }}
+                text={MSG.headingReputation}
+              />
+            </div>
+            {userReputationData && (
+              <Numeral
+                appearance={{ theme: 'blue', weight: 'medium' }}
+                value={userReputationData.userReputation}
+              />
+            )}
+          </div>
+          {loadingUserReputation && <SpinnerLoader />}
+          {userReputationData && (
+            <>
+              <FormattedMessage tagName="b" {...MSG.descriptionReputation} />
+            </>
+          )}
+          {errorReputation && (
+            <FormattedMessage tagName="i" {...MSG.errorReputation} />
+          )}
+        </div>
+      )}
+      {completedLevels.length > 0 && (
+        <div className={styles.section}>
+          <Heading
+            appearance={{ margin: 'none', size: 'normal', theme: 'dark' }}
+            text={MSG.achievementsHeading}
+          />
+          <div className={styles.badges}>
+            {completedLevels.map(
+              ({ achievement, id, title, program: { title: programTitle } }) =>
+                achievement &&
+                title && (
+                  <Badge
+                    key={id}
+                    size="xs"
+                    name={achievement}
+                    title={formatMessage(MSG.achievementTitleText, {
+                      title,
+                      programTitle,
+                    })}
+                  />
+                ),
+            )}
+          </div>
+        </div>
+      )}
     </div>
   );
 };

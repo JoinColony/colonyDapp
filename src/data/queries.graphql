@@ -155,6 +155,26 @@ query User($address: String!) {
   }
 }
 
+query UserWithReputation($address: String!, $colonyAddress: String!, $skillId: Int) {
+  user(address: $address) {
+    id
+    profile {
+      username
+      walletAddress
+      displayName
+      bio
+      location
+      website
+      avatarHash
+    }
+    reputation(colonyAddress: $colonyAddress, skillId: $skillId) @client
+  }
+}
+
+query UserReputation($address: String!, $colonyAddress: String!, $skillId: Int) {
+  userReputation(address: $address, colonyAddress: $colonyAddress, skillId: $skillId) @client
+}
+
 query UserTasks($address: String!) {
   user(address: $address) {
     id

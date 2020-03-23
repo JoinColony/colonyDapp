@@ -23,6 +23,7 @@ import {
   ProgramLevelsWithUnlockedQuery,
   ProgramSubmissionsQuery,
   ProgramQuery,
+  UserWithReputationQuery,
 } from './generated';
 import {
   loggedInUserResolvers,
@@ -57,7 +58,7 @@ export const resolvers: ResolverFactory[] = [
 export * from './generated';
 export * from './helpers';
 
-export type AnyUser = UserQuery['user'];
+export type AnyUser = UserQuery['user'] | UserWithReputationQuery['user'];
 
 export type AnyTask =
   | TaskQuery['task']

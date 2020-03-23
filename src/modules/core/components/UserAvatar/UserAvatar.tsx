@@ -17,6 +17,9 @@ export interface Props {
   /** Avatar image URL (can be a base64 encoded url string) */
   avatarURL?: string;
 
+  /** Used for the infopopover (displaying reputation) */
+  colonyAddress?: Address;
+
   /** Is passed through to Avatar */
   className?: string;
 
@@ -32,6 +35,9 @@ export interface Props {
   /** Avatar size (default is between `s` and `m`) */
   size?: 'xxs' | 'xs' | 's' | 'm' | 'l' | 'xl';
 
+  /** Used for the infopopover (displaying reputation) */
+  skillId?: number;
+
   /** The corresponding user object if available */
   user?: AnyUser;
 }
@@ -42,10 +48,12 @@ const UserAvatar = ({
   address,
   avatarURL,
   className,
+  colonyAddress,
   showInfo,
   showLink,
   notSet,
   size,
+  skillId,
   user = {
     id: address,
     profile: { walletAddress: address },
@@ -53,7 +61,12 @@ const UserAvatar = ({
 }: Props) => {
   const username = getUsername(user);
   const avatar = (
-    <InfoPopover trigger={showInfo ? 'click' : 'disabled'} user={user}>
+    <InfoPopover
+      colonyAddress={colonyAddress}
+      skillId={skillId}
+      trigger={showInfo ? 'click' : 'disabled'}
+      user={user}
+    >
       <div className={styles.main}>
         <Avatar
           avatarURL={avatarURL}

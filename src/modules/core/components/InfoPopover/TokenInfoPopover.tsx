@@ -30,26 +30,32 @@ const TokenInfoPopover = ({ token, isTokenNative }: Props) => {
   const { name, symbol, address } = token;
   return (
     <div className={styles.main}>
-      {name && (
-        <div title={name} className={styles.displayName}>
-          <TokenIcon token={token} name={token.name || undefined} size="xxs" />
-          {name}
+      <div className={styles.section}>
+        {name && (
+          <div title={name} className={styles.displayName}>
+            <TokenIcon
+              token={token}
+              name={token.name || undefined}
+              size="xxs"
+            />
+            {name}
+          </div>
+        )}
+        {symbol && (
+          <p title={symbol} className={styles.symbol}>
+            {symbol}
+          </p>
+        )}
+        <div title={address} className={styles.address}>
+          <CopyableAddress full>{address}</CopyableAddress>
         </div>
-      )}
-      {symbol && (
-        <p title={symbol} className={styles.symbol}>
-          {symbol}
-        </p>
-      )}
-      <div title={address} className={styles.address}>
-        <CopyableAddress full>{address}</CopyableAddress>
+        {isTokenNative && (
+          <p className={styles.nativeTokenMessage}>
+            <FormattedMessage {...MSG.nativeTokenMessage} />
+          </p>
+        )}
       </div>
-      {isTokenNative && (
-        <p className={styles.nativeTokenMessage}>
-          <FormattedMessage {...MSG.nativeTokenMessage} />
-        </p>
-      )}
-      <div className={styles.etherscanDivider}>
+      <div className={styles.section}>
         <TokenLink tokenAddress={address} text={MSG.viewOnEtherscan} />
       </div>
     </div>

@@ -38,6 +38,7 @@ interface Props {
   renderAvatar?: (address: Address, user?: AnyUser) => ReactNode;
 }
 
+// TODO add support for reputation (colonyAddress, skillId) here
 const UserInfo = ({
   children,
   placeholder = MSG.placeholder,
