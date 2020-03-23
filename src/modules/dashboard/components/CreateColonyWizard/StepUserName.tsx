@@ -7,8 +7,6 @@ import { WizardProps } from '~core/Wizard';
 import { Form, Input } from '~core/Fields';
 import Heading from '~core/Heading';
 import Button from '~core/Button';
-import Icon from '~core/Icon';
-import { Tooltip } from '~core/Popover';
 import ENS from '~lib/ENS';
 import {
   UserAddressDocument,
@@ -53,10 +51,6 @@ const MSG = defineMessages({
   errorDomainInvalid: {
     id: 'dashboard.CreateColonyWizard.StepUserName.errorDomainInvalid',
     defaultMessage: 'Only characters a-z, 0-9, - and . are allowed',
-  },
-  tooltip: {
-    id: 'dashboard.CreateColonyWizard.StepUserName.tooltip',
-    defaultMessage: `We use ENS to create a .joincolony.eth subdomain for your wallet address. This allows us to provide a good user experience while using the ethereum network.`,
   },
   statusText: {
     id: 'users.CreateColonyWizard.StepUserName.statusText',
@@ -146,24 +140,6 @@ const StepUserName = ({ stepCompleted, wizardForm, nextStep }: Props) => {
                   }}
                   formattingOptions={{ lowercase: true }}
                   data-test="claimUsernameInput"
-                  extra={
-                    <Tooltip
-                      placement="right"
-                      content={
-                        <div className={styles.tooltipContent}>
-                          <FormattedMessage {...MSG.tooltip} />
-                        </div>
-                      }
-                    >
-                      <div className={styles.iconContainer}>
-                        <Icon
-                          name="question-mark"
-                          title="helper"
-                          appearance={{ size: 'small' }}
-                        />
-                      </div>
-                    </Tooltip>
-                  }
                 />
                 <div className={styles.buttons}>
                   <p className={styles.reminder}>
