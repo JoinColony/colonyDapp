@@ -31,13 +31,11 @@ type Props = WizardProps<FormValues>;
 const MSG = defineMessages({
   heading: {
     id: 'dashboard.CreateColonyWizard.StepColonyName.heading',
-    defaultMessage: "Welcome @{username}, let's create your colony.",
+    defaultMessage: `Welcome @{username}, let's begin creating your colony.`,
   },
   descriptionOne: {
     id: 'dashboard.CreateColonyWizard.StepColonyName.descriptionOne',
-    defaultMessage:
-      // eslint-disable-next-line max-len
-      'First thing is choosing a name. What would you like to name your colony?',
+    defaultMessage: `What would you like to name your colony? Note, it is not possible to change it later.`,
   },
   label: {
     id: 'dashboard.CreateColonyWizard.StepColonyName.label',
@@ -65,9 +63,7 @@ const MSG = defineMessages({
   },
   tooltip: {
     id: 'users.CreateColonyWizard.StepColonyName.tooltip',
-    defaultMessage:
-      // eslint-disable-next-line max-len
-      'We use ENS to create a .joincolony.eth subdomain for your colony. You can use this to create a custom URL and invite people to join your colony.',
+    defaultMessage: `We use ENS to create a .joincolony.eth subdomain for your colony. You can use this to create a custom URL and invite people to join your colony.`,
   },
 });
 
@@ -204,9 +200,9 @@ const StepColonyName = ({
                   <Tooltip
                     placement="right"
                     content={
-                      <span>
+                      <div className={styles.tooltipContent}>
                         <FormattedMessage {...MSG.tooltip} />
-                      </span>
+                      </div>
                     }
                   >
                     <div className={styles.iconContainer}>

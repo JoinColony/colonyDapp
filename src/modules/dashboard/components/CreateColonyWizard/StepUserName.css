@@ -26,8 +26,3 @@
   font-weight: var(--weight-medium);
   line-height: 18px;
 }
-
-.iconContainer {
-  position: relative;
-  bottom: 5px;
-}

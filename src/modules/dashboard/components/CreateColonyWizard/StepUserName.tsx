@@ -7,8 +7,6 @@ import { WizardProps } from '~core/Wizard';
 import { Form, Input } from '~core/Fields';
 import Heading from '~core/Heading';
 import Button from '~core/Button';
-import Icon from '~core/Icon';
-import { Tooltip } from '~core/Popover';
 import ENS from '~lib/ENS';
 import {
   UserAddressDocument,
@@ -27,12 +25,11 @@ type Props = WizardProps<FormValues>;
 const MSG = defineMessages({
   heading: {
     id: 'dashboard.CreateColonyWizard.StepUserName.heading',
-    defaultMessage: 'Welcome to Colony!',
+    defaultMessage: 'Create your user account',
   },
   descriptionOne: {
     id: 'dashboard.CreateColonyWizard.StepUserName.descriptionOne',
-    // eslint-disable-next-line max-len
-    defaultMessage: `Let's get your account set up. Pick a username.`,
+    defaultMessage: `Choose carefully, it is not possible to change your username later.`,
   },
   label: {
     id: 'dashboard.CreateColonyWizard.StepUserName.label',
@@ -54,11 +51,6 @@ const MSG = defineMessages({
   errorDomainInvalid: {
     id: 'dashboard.CreateColonyWizard.StepUserName.errorDomainInvalid',
     defaultMessage: 'Only characters a-z, 0-9, - and . are allowed',
-  },
-  tooltip: {
-    id: 'dashboard.CreateColonyWizard.StepUserName.tooltip',
-    // eslint-disable-next-line max-len
-    defaultMessage: `We use ENS to create a .joincolony.eth subdomain for your colony. You can use this to create a custom URL and invite people to join your colony.`,
   },
   statusText: {
     id: 'users.CreateColonyWizard.StepUserName.statusText',
@@ -148,24 +140,6 @@ const StepUserName = ({ stepCompleted, wizardForm, nextStep }: Props) => {
                   }}
                   formattingOptions={{ lowercase: true }}
                   data-test="claimUsernameInput"
-                  extra={
-                    <Tooltip
-                      placement="right"
-                      content={
-                        <span>
-                          <FormattedMessage {...MSG.tooltip} />
-                        </span>
-                      }
-                    >
-                      <div className={styles.iconContainer}>
-                        <Icon
-                          name="question-mark"
-                          title="helper"
-                          appearance={{ size: 'small' }}
-                        />
-                      </div>
-                    </Tooltip>
-                  }
                 />
                 <div className={styles.buttons}>
                   <p className={styles.reminder}>
