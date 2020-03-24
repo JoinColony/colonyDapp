@@ -53,3 +53,15 @@
 .themeDark {
   color: var(--grey-3);
 }
+
+.themeBlue {
+  color: var(--colony-blue);
+}
+
+/**
+ * Weight
+ */
+
+.weightMedium {
+  font-weight: var(--weight-medium);
+}
