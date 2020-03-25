@@ -19,7 +19,7 @@ interface BasicUserContentProps {
 
 interface MemberContentProps {
   colonyAddress: Address;
-  skillId?: number;
+  skillId: number | undefined;
   user: AnyUser;
 }
 

@@ -55,6 +55,7 @@ interface Props {
   };
   payouts: AnyTask['payouts'];
   colonyAddress: Address;
+  skillId?: number;
 }
 
 const displayName = 'dashboard.TaskFeed.TaskFeedCompleteInfo';
@@ -64,6 +65,7 @@ const TaskFeedCompleteInfo = ({
   finalizedPayment: { amount, tokenAddress, workerAddress, transactionHash },
   payouts,
   colonyAddress,
+  skillId,
 }: Props) => {
   const user = useUser(workerAddress);
   const payout = payouts.find(
@@ -97,7 +99,15 @@ const TaskFeedCompleteInfo = ({
             {...MSG.eventTaskSentMessage}
             values={{
               user: (
-                <span className={styles.username}>{getFriendlyName(user)}</span>
+                <InfoPopover
+                  colonyAddress={colonyAddress}
+                  skillId={skillId}
+                  user={user}
+                >
+                  <span className={styles.username}>
+                    {getFriendlyName(user)}
+                  </span>
+                </InfoPopover>
               ),
             }}
           />

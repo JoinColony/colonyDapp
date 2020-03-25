@@ -138,17 +138,24 @@ interface EventProps<C> {
   colonyAddress: Address;
   initiator: AnyUser;
   context: C;
+  skillId?: number;
 }
 
 interface InteractiveUsernameProps {
+  colonyAddress: Address;
+  skillId: number | undefined;
   userAddress: Address;
 }
 
-const InteractiveUsername = ({ userAddress }: InteractiveUsernameProps) => {
+const InteractiveUsername = ({
+  colonyAddress,
+  skillId,
+  userAddress,
+}: InteractiveUsernameProps) => {
   const user = useUser(userAddress);
   const friendlyName = getFriendlyName(user);
   return (
-    <InfoPopover user={user}>
+    <InfoPopover colonyAddress={colonyAddress} skillId={skillId} user={user}>
       <span title={friendlyName} className={styles.highlightCursor}>
         {friendlyName}
       </span>
@@ -162,6 +169,7 @@ const TaskFeedEventDomainSet = ({
   initiator: {
     profile: { walletAddress },
   },
+  skillId,
 }: EventProps<SetTaskDomainEvent>) => {
   const { formatMessage } = useIntl();
   const domain = useSelector(domainSelector, [colonyAddress, ethDomainId]);
@@ -178,30 +186,46 @@ const TaskFeedEventDomainSet = ({
             {domainName}
           </span>
         ),
-        user: <InteractiveUsername userAddress={walletAddress} />,
+        user: (
+          <InteractiveUsername
+            colonyAddress={colonyAddress}
+            userAddress={walletAddress}
+            skillId={skillId}
+          />
+        ),
       }}
     />
   );
 };
 
 const TaskFeedEventCreated = ({
+  colonyAddress,
   initiator: {
     profile: { walletAddress },
   },
+  skillId,
 }: EventProps<CreateTaskEvent>) => (
   <FormattedMessage
     {...MSG.created}
     values={{
-      user: <InteractiveUsername userAddress={walletAddress} />,
+      user: (
+        <InteractiveUsername
+          colonyAddress={colonyAddress}
+          skillId={skillId}
+          userAddress={walletAddress}
+        />
+      ),
     }}
   />
 );
 
 const TaskFeedEventDueDateSet = ({
+  colonyAddress,
   context: { dueDate },
   initiator: {
     profile: { walletAddress },
   },
+  skillId,
 }: EventProps<SetTaskDueDateEvent>) => {
   const { formatDate } = useIntl();
   const formattedDate = formatDate(new Date(dueDate), {
@@ -213,7 +237,13 @@ const TaskFeedEventDueDateSet = ({
     <FormattedMessage
       {...MSG.dueDateSet}
       values={{
-        user: <InteractiveUsername userAddress={walletAddress} />,
+        user: (
+          <InteractiveUsername
+            colonyAddress={colonyAddress}
+            skillId={skillId}
+            userAddress={walletAddress}
+          />
+        ),
         dueDate: dueDate && (
           <span title={formattedDate} className={styles.highlight}>
             {formattedDate}
@@ -231,6 +261,7 @@ const TaskFeedEventPayoutSet = ({
   initiator: {
     profile: { walletAddress },
   },
+  skillId,
 }: EventProps<SetTaskPayoutEvent>) => {
   const { data: tokenData } = useTokenQuery({
     variables: { address: tokenAddress },
@@ -248,7 +279,13 @@ const TaskFeedEventPayoutSet = ({
     <FormattedMessage
       {...MSG.payoutSet}
       values={{
-        user: <InteractiveUsername userAddress={walletAddress} />,
+        user: (
+          <InteractiveUsername
+            colonyAddress={colonyAddress}
+            skillId={skillId}
+            userAddress={walletAddress}
+          />
+        ),
         payout: (
           <InfoPopover
             token={tokenData.token}
@@ -274,23 +311,33 @@ const TaskFeedEventPayoutSet = ({
 };
 
 const TaskFeedEventPayoutRemoved = ({
+  colonyAddress,
   initiator: {
     profile: { walletAddress },
   },
+  skillId,
 }: EventProps<RemoveTaskPayoutEvent>) => (
   <FormattedMessage
     {...MSG.payoutRemoved}
     values={{
-      user: <InteractiveUsername userAddress={walletAddress} />,
+      user: (
+        <InteractiveUsername
+          colonyAddress={colonyAddress}
+          skillId={skillId}
+          userAddress={walletAddress}
+        />
+      ),
     }}
   />
 );
 
 const TaskFeedEventSkillSet = ({
+  colonyAddress,
   context: { ethSkillId },
   initiator: {
     profile: { walletAddress },
   },
+  skillId,
 }: EventProps<SetTaskSkillEvent>) => {
   const skill = useMemo(
     () => taskSkillsTree.find(({ id }) => id === ethSkillId),
@@ -301,7 +348,13 @@ const TaskFeedEventSkillSet = ({
     <FormattedMessage
       {...MSG.skillSet}
       values={{
-        user: <InteractiveUsername userAddress={walletAddress} />,
+        user: (
+          <InteractiveUsername
+            colonyAddress={colonyAddress}
+            skillId={skillId}
+            userAddress={walletAddress}
+          />
+        ),
         skillName: (
           <span title={skillName} className={styles.highlight}>
             {skillName}
@@ -313,45 +366,69 @@ const TaskFeedEventSkillSet = ({
 };
 
 const TaskFeedEventSkillRemoved = ({
+  colonyAddress,
   initiator: {
     profile: { walletAddress },
   },
+  skillId,
 }: EventProps<RemoveTaskSkillEvent>) => {
   return (
     <FormattedMessage
       {...MSG.skillRemoved}
       values={{
-        user: <InteractiveUsername userAddress={walletAddress} />,
+        user: (
+          <InteractiveUsername
+            colonyAddress={colonyAddress}
+            skillId={skillId}
+            userAddress={walletAddress}
+          />
+        ),
       }}
     />
   );
 };
 
 const TaskFeedEventCancelled = ({
+  colonyAddress,
   initiator: {
     profile: { walletAddress },
   },
+  skillId,
 }: EventProps<CancelTaskEvent>) => (
   <FormattedMessage
     {...MSG.cancelled}
     values={{
-      user: <InteractiveUsername userAddress={walletAddress} />,
+      user: (
+        <InteractiveUsername
+          colonyAddress={colonyAddress}
+          skillId={skillId}
+          userAddress={walletAddress}
+        />
+      ),
     }}
   />
 );
 
 const TaskFeedEventDescriptionSet = ({
+  colonyAddress,
   context: { description },
   initiator: {
     profile: { walletAddress },
   },
+  skillId,
 }: EventProps<SetTaskDescriptionEvent>) => {
   if (!description) {
     return (
       <FormattedMessage
         {...MSG.descriptionRemoved}
         values={{
-          user: <InteractiveUsername userAddress={walletAddress} />,
+          user: (
+            <InteractiveUsername
+              colonyAddress={colonyAddress}
+              skillId={skillId}
+              userAddress={walletAddress}
+            />
+          ),
         }}
       />
     );
@@ -360,7 +437,13 @@ const TaskFeedEventDescriptionSet = ({
     <FormattedMessage
       {...MSG.descriptionSet}
       values={{
-        user: <InteractiveUsername userAddress={walletAddress} />,
+        user: (
+          <InteractiveUsername
+            colonyAddress={colonyAddress}
+            skillId={skillId}
+            userAddress={walletAddress}
+          />
+        ),
         description: (
           <span title={description} className={styles.highlight}>
             {description}
@@ -372,30 +455,46 @@ const TaskFeedEventDescriptionSet = ({
 };
 
 const TaskFeedEventFinalized = ({
+  colonyAddress,
   initiator: {
     profile: { walletAddress },
   },
+  skillId,
 }: EventProps<FinalizeTaskEvent>) => (
   <FormattedMessage
     {...MSG.finalized}
     values={{
-      user: <InteractiveUsername userAddress={walletAddress} />,
+      user: (
+        <InteractiveUsername
+          colonyAddress={colonyAddress}
+          skillId={skillId}
+          userAddress={walletAddress}
+        />
+      ),
     }}
   />
 );
 
 const TaskFeedEventTitleSet = ({
+  colonyAddress,
   context: { title },
   initiator: {
     profile: { walletAddress },
   },
+  skillId,
 }: EventProps<SetTaskTitleEvent>) => {
   if (!title) {
     return (
       <FormattedMessage
         {...MSG.titleRemoved}
         values={{
-          user: <InteractiveUsername userAddress={walletAddress} />,
+          user: (
+            <InteractiveUsername
+              colonyAddress={colonyAddress}
+              skillId={skillId}
+              userAddress={walletAddress}
+            />
+          ),
         }}
       />
     );
@@ -404,7 +503,13 @@ const TaskFeedEventTitleSet = ({
     <FormattedMessage
       {...MSG.titleSet}
       values={{
-        user: <InteractiveUsername userAddress={walletAddress} />,
+        user: (
+          <InteractiveUsername
+            colonyAddress={colonyAddress}
+            skillId={skillId}
+            userAddress={walletAddress}
+          />
+        ),
         title: (
           <span title={title} className={styles.highlight}>
             {title}
@@ -416,74 +521,132 @@ const TaskFeedEventTitleSet = ({
 };
 
 const TaskFeedEventWorkInviteSent = ({
+  colonyAddress,
   context: { workerAddress },
   initiator: {
     profile: { walletAddress },
   },
+  skillId,
 }: EventProps<SendWorkInviteEvent>) => (
   <FormattedMessage
     {...MSG.workInviteSent}
     values={{
-      user: <InteractiveUsername userAddress={walletAddress} />,
-      invitedUser: <InteractiveUsername userAddress={workerAddress} />,
+      user: (
+        <InteractiveUsername
+          colonyAddress={colonyAddress}
+          skillId={skillId}
+          userAddress={walletAddress}
+        />
+      ),
+      invitedUser: (
+        <InteractiveUsername
+          colonyAddress={colonyAddress}
+          skillId={skillId}
+          userAddress={workerAddress}
+        />
+      ),
     }}
   />
 );
 
 const TaskFeedEventWorkRequestCreated = ({
+  colonyAddress,
   initiator: {
     profile: { walletAddress },
   },
+  skillId,
 }: EventProps<CreateWorkRequestEvent>) => (
   <FormattedMessage
     {...MSG.workRequestCreated}
     values={{
-      user: <InteractiveUsername userAddress={walletAddress} />,
+      user: (
+        <InteractiveUsername
+          colonyAddress={colonyAddress}
+          skillId={skillId}
+          userAddress={walletAddress}
+        />
+      ),
     }}
   />
 );
 
 const TaskFeedEventWorkerAssigned = ({
+  colonyAddress,
   context: { workerAddress },
   initiator: {
     profile: { walletAddress },
   },
+  skillId,
 }: EventProps<AssignWorkerEvent>) => (
   <FormattedMessage
     {...MSG.workerAssigned}
     values={{
-      user: <InteractiveUsername userAddress={walletAddress} />,
-      worker: <InteractiveUsername userAddress={workerAddress} />,
+      user: (
+        <InteractiveUsername
+          colonyAddress={colonyAddress}
+          skillId={skillId}
+          userAddress={walletAddress}
+        />
+      ),
+      worker: (
+        <InteractiveUsername
+          colonyAddress={colonyAddress}
+          skillId={skillId}
+          userAddress={workerAddress}
+        />
+      ),
     }}
   />
 );
 
 const TaskFeedEventWorkerUnassigned = ({
+  colonyAddress,
   context: { workerAddress },
   initiator: {
     profile: { walletAddress },
   },
+  skillId,
 }: EventProps<UnassignWorkerEvent>) => (
   <FormattedMessage
     {...MSG.workerUnassigned}
     values={{
-      user: <InteractiveUsername userAddress={walletAddress} />,
-      worker: <InteractiveUsername userAddress={workerAddress} />,
+      user: (
+        <InteractiveUsername
+          colonyAddress={colonyAddress}
+          skillId={skillId}
+          userAddress={walletAddress}
+        />
+      ),
+      worker: (
+        <InteractiveUsername
+          colonyAddress={colonyAddress}
+          skillId={skillId}
+          userAddress={workerAddress}
+        />
+      ),
     }}
   />
 );
 
 const TaskFeedEventPending = ({
+  colonyAddress,
   context: { txHash },
   initiator: {
     profile: { walletAddress },
   },
+  skillId,
 }: EventProps<SetTaskPendingEvent>) => {
   return (
     <FormattedMessage
       {...MSG.pending}
       values={{
-        user: <InteractiveUsername userAddress={walletAddress} />,
+        user: (
+          <InteractiveUsername
+            colonyAddress={colonyAddress}
+            skillId={skillId}
+            userAddress={walletAddress}
+          />
+        ),
         txHash: (
           <TransactionLink hash={txHash} className={styles.highlightTxHash} />
         ),
