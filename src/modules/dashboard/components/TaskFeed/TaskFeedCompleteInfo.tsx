@@ -41,7 +41,7 @@ const MSG = defineMessages({
   },
   receiptViewTxLinkText: {
     id: 'dashboard.TaskFeed.TaskFeedCompleteInfo.receiptViewTxLinkText',
-    defaultMessage: 'View the task on Etherscan',
+    defaultMessage: 'View the transaction on Etherscan',
   },
 });
 
