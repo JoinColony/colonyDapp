@@ -9,6 +9,7 @@ import { AnyUser } from '~data/index';
 import { getUsername } from '../../../users/transformers';
 
 import styles from './UserAvatar.css';
+import { getMainClasses } from '~utils/css';
 
 interface BaseProps {
   /** Address of the current user for identicon fallback */
@@ -75,7 +76,11 @@ const UserAvatar = ({
   }
   const avatar = (
     <InfoPopover {...popoverProps}>
-      <div className={styles.main}>
+      <div
+        className={getMainClasses({}, styles, {
+          showOnClick: popoverProps.trigger === 'click',
+        })}
+      >
         <Avatar
           avatarURL={avatarURL}
           className={className}
