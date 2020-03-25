@@ -1338,6 +1338,11 @@ export type UserNotificationsArgs = {
 };
 
 
+export type UserCompletedLevelsArgs = {
+  colonyAddress: Scalars['String']
+};
+
+
 export type UserReputationArgs = {
   colonyAddress: Scalars['String'],
   skillId?: Maybe<Scalars['Int']>
@@ -2232,7 +2237,8 @@ export type UserNotificationsQuery = { user: (
   ) };
 
 export type UserBadgesQueryVariables = {
-  address: Scalars['String']
+  address: Scalars['String'],
+  colonyAddress: Scalars['String']
 };
 
 
@@ -5833,10 +5839,10 @@ export type UserNotificationsQueryHookResult = ReturnType<typeof useUserNotifica
 export type UserNotificationsLazyQueryHookResult = ReturnType<typeof useUserNotificationsLazyQuery>;
 export type UserNotificationsQueryResult = ApolloReactCommon.QueryResult<UserNotificationsQuery, UserNotificationsQueryVariables>;
 export const UserBadgesDocument = gql`
-    query UserBadges($address: String!) {
+    query UserBadges($address: String!, $colonyAddress: String!) {
   user(address: $address) {
     id
-    completedLevels {
+    completedLevels(colonyAddress: $colonyAddress) {
       id
       achievement
       title
@@ -5861,6 +5867,7 @@ export const UserBadgesDocument = gql`
  * const { data, loading, error } = useUserBadgesQuery({
  *   variables: {
  *      address: // value for 'address'
+ *      colonyAddress: // value for 'colonyAddress'
  *   },
  * });
  */

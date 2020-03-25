@@ -106,7 +106,7 @@ const TaskFeedCompleteInfo = ({
           </span>
         </p>
       </div>
-      {isLoadingToken || isLoadingColony ? (
+      {isLoadingToken || isLoadingColony || !tokenData ? (
         <SpinnerLoader />
       ) : (
         <div className={styles.receiptContainer}>
@@ -129,7 +129,7 @@ const TaskFeedCompleteInfo = ({
               values={{
                 amount: (
                   <InfoPopover
-                    token={tokenData && tokenData.token}
+                    token={tokenData.token}
                     isTokenNative={address === nativeTokenAddress}
                   >
                     <span className={styles.tokenInfo}>
@@ -150,7 +150,7 @@ const TaskFeedCompleteInfo = ({
               values={{
                 amount: (
                   <InfoPopover
-                    token={tokenData && tokenData.token}
+                    token={tokenData.token}
                     isTokenNative={address === nativeTokenAddress}
                   >
                     <span className={styles.tokenInfo}>

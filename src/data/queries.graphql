@@ -466,10 +466,10 @@ query UserNotifications($address: String!) {
   }
 }
 
-query UserBadges($address: String!) {
+query UserBadges($address: String!, $colonyAddress: String!) {
   user(address: $address) {
     id
-    completedLevels {
+    completedLevels(colonyAddress: $colonyAddress) {
       id
       achievement
       title

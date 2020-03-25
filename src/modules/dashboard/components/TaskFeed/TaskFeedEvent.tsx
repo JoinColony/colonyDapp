@@ -39,6 +39,7 @@ import { useSelector } from '~utils/hooks';
 import { getFriendlyName } from '../../../users/transformers';
 import { domainSelector } from '../../selectors';
 import taskSkillsTree from '../TaskSkills/taskSkillsTree';
+import { SpinnerLoader } from '~core/Preloaders';
 
 const componentDisplayName = 'dashboard.TaskFeedEvent';
 
@@ -240,6 +241,9 @@ const TaskFeedEventPayoutSet = ({
   const { decimals = DEFAULT_TOKEN_DECIMALS, symbol = '', address = '' } =
     (tokenData && tokenData.token) || {};
   const { nativeTokenAddress = '' } = (colonyData && colonyData.colony) || {};
+  if (!tokenData) {
+    return <SpinnerLoader />;
+  }
   return (
     <FormattedMessage
       {...MSG.payoutSet}
@@ -247,7 +251,7 @@ const TaskFeedEventPayoutSet = ({
         user: <InteractiveUsername userAddress={walletAddress} />,
         payout: (
           <InfoPopover
-            token={tokenData && tokenData.token}
+            token={tokenData.token}
             isTokenNative={address === nativeTokenAddress}
           >
             <span className={styles.highlightNumeral}>
