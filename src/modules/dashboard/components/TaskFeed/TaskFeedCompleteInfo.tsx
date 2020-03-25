@@ -72,7 +72,8 @@ const TaskFeedCompleteInfo = ({
      * exist some values in the databased that are not checksummed at all, meaning that
      * this will fail for those cases (payment will always be 0)
      */
-    ({ token: { address } }) => address === createAddress(tokenAddress),
+    ({ token: { address } }) =>
+      createAddress(address) === createAddress(tokenAddress),
   );
   const fullPayoutAmount = (payout && payout.amount) || 0;
   const { data: tokenData, loading: isLoadingToken } = useTokenQuery({
