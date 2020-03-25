@@ -1,0 +1,37 @@
+.main {
+  display: flex;
+  align-items: center;
+}
+
+.section {
+  padding: 20px;
+}
+
+.section + .section {
+  padding-left: 0;
+}
+
+.avatarSection {
+  composes: section;
+  flex-basis: 76px;
+}
+
+.usernameSection {
+  composes: section;
+  flex-grow: 1;
+}
+
+.displayName {
+  font-weight: var(--weight-medium);
+  color: var(--grey-1);
+}
+
+.displayName + .username {
+  margin-left: 5px;
+}
+
+.address {
+  display: block;
+  width: 100%;
+  font-size: var(--size-small);
+}
