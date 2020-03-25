@@ -232,7 +232,7 @@ const TaskList = ({
                      * If the current user hasn't claimed a profile yet, then don't show the
                      * subscribe to colony call to action
                      */
-                    hasJoined: username ? hasJoined : true,
+                    hasJoined: username ? !!hasJoined : true,
                     colonyToJoin: (
                       <Button
                         className={styles.subscribe}
