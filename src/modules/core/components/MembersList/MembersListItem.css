@@ -1,6 +1,7 @@
 .main {
   display: flex;
   align-items: center;
+  overflow-y: auto;
 }
 
 .section {
