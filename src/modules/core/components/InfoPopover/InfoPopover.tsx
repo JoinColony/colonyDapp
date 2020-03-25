@@ -1,4 +1,5 @@
 import React, { ReactNode } from 'react';
+import { PopperProps } from 'react-popper';
 
 import Popover from '~core/Popover';
 import { AnyUser, AnyToken } from '~data/index';
@@ -31,6 +32,8 @@ type ContentProps =
 export type Props = ContentProps & {
   /** Children elemnts or components to wrap the tooltip around */
   children?: ReactNode;
+  /** Passed onto `Popover` component */
+  popperProps?: PopperProps;
   /** How the popover gets triggered */
   trigger?: 'hover' | 'click' | 'disabled';
 };
@@ -67,11 +70,16 @@ const renderContent = (contentProps: ContentProps) => {
 
 const InfoPopover = ({
   children,
+  popperProps,
   trigger = 'click',
   ...contentProps
 }: Props) => {
   return (
-    <Popover content={renderContent(contentProps)} trigger={trigger}>
+    <Popover
+      content={renderContent(contentProps)}
+      popperProps={popperProps}
+      trigger={trigger}
+    >
       {children}
     </Popover>
   );

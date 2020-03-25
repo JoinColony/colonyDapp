@@ -1,4 +1,5 @@
 import React from 'react';
+import { PopperProps } from 'react-popper';
 
 import Avatar from '~core/Avatar';
 import InfoPopover, { Props as InfoPopoverProps } from '~core/InfoPopover';
@@ -23,6 +24,9 @@ interface BaseProps {
 
   /** Avatars that are not set have a different placeholder */
   notSet?: boolean;
+
+  /** Passed on to the `Popper` component */
+  popperProps?: PopperProps;
 
   /** If true the UserAvatar links to the user's profile */
   showLink?: boolean;
@@ -54,6 +58,7 @@ const UserAvatar = ({
   showInfo,
   showLink,
   notSet,
+  popperProps,
   size,
   user = {
     id: address,
@@ -63,6 +68,7 @@ const UserAvatar = ({
 }: Props) => {
   const username = getUsername(user);
   let popoverProps: InfoPopoverProps = {
+    popperProps,
     trigger: showInfo ? 'click' : 'disabled',
     user,
   };
