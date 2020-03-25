@@ -1,24 +1,24 @@
-import React, { FC, useCallback, useState, useRef, useEffect } from 'react';
+import React, { FC, useCallback, useEffect, useRef, useState } from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 
-import { Address } from '~types/index';
+import { ROLES_COMMUNITY } from '~constants';
+import Button from '~core/Button';
+import MembersList from '~core/MembersList';
+import { SpinnerLoader } from '~core/Preloaders';
 import {
+  AnyUser,
+  cacheUpdates,
   useColonySubscribedUsersQuery,
   useLoggedInUser,
-  useUserColonyAddressesQuery,
   useSubscribeToColonyMutation,
-  cacheUpdates,
+  useUserColonyAddressesQuery,
 } from '~data/index';
-import { domainsAndRolesFetcher } from '../../fetchers';
-import { getCommunityRoles } from '../../../transformers';
-import { useDataFetcher, useTransformer } from '~utils/hooks';
-import { ROLES_COMMUNITY } from '~constants';
+import { Address } from '~types/index';
 import { sortObjectsBy } from '~utils/arrays';
+import { useDataFetcher, useTransformer } from '~utils/hooks';
 
-import { Table, TableBody, TableCell } from '~core/Table';
-import { SpinnerLoader } from '~core/Preloaders';
-import UserListItem from '~admin/UserListItem';
-import Button from '~core/Button';
+import { getCommunityRoles } from '../../../transformers';
+import { domainsAndRolesFetcher } from '../../fetchers';
 
 import styles from './Community.css';
 
@@ -53,6 +53,10 @@ enum Roles {
   Admin = 'admin',
   Member = 'member',
 }
+
+type CommunityUser = AnyUser & {
+  communityRole: Roles;
+};
 
 const displayName = 'dashboard.Community';
 
@@ -126,7 +130,7 @@ const Community = ({ colonyAddress }: Props) => {
     colony: { subscribedUsers },
   } = colonySubscribedUsers;
 
-  const communityUsers = subscribedUsers
+  const communityUsers: CommunityUser[] = subscribedUsers
     .map(user => {
       const {
         profile: { walletAddress: userAddress },
@@ -199,25 +203,16 @@ const Community = ({ colonyAddress }: Props) => {
           />
         </div>
       )}
-      <Table scrollable>
-        <TableBody className={styles.tableBody}>
-          {communityUsers.map(({ id: userAddress, communityRole }) => (
-            <UserListItem
-              address={userAddress}
-              key={userAddress}
-              showDisplayName
-              showUsername
-              showInfo={false}
-            >
-              <TableCell>
-                <span className={styles.communityRole}>
-                  <FormattedMessage id={ROLES_COMMUNITY[communityRole]} />
-                </span>
-              </TableCell>
-            </UserListItem>
-          ))}
-        </TableBody>
-      </Table>
+      <MembersList<CommunityUser>
+        colonyAddress={colonyAddress}
+        extraItemContent={({ communityRole }) => (
+          <span className={styles.communityRole}>
+            <FormattedMessage id={ROLES_COMMUNITY[communityRole]} />
+          </span>
+        )}
+        skillId={undefined}
+        users={communityUsers}
+      />
     </div>
   );
 };
