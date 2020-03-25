@@ -2,6 +2,7 @@ import { Resolvers } from 'apollo-client';
 import { padLeft, toHex } from 'web3-utils';
 
 import { ContextType } from '~context/index';
+import { createAddress } from '~utils/web3';
 
 import { getToken } from './token';
 
@@ -40,7 +41,10 @@ export const taskResolvers = ({ colonyManager }: ContextType): Resolvers => ({
       return {
         __typename: 'TaskFinalizedPayment',
         amount: amount.toString(),
-        tokenAddress: token,
+        /*
+         * @NOTE Checksum the token address coming from logs / events
+         */
+        tokenAddress: createAddress(token),
         workerAddress: recipient,
         transactionHash,
       };
