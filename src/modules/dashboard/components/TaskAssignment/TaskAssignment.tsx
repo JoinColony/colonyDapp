@@ -21,11 +21,12 @@ const TaskAssignment = ({ draftId, nativeTokenAddress, tokens }: Props) => {
   }
 
   const {
-    task: { assignedWorker, payouts },
+    task: { assignedWorker, colonyAddress, payouts },
   } = data;
 
   return tokens ? (
     <Assignment
+      colonyAddress={colonyAddress}
       payouts={payouts}
       reputation={undefined}
       nativeTokenAddress={nativeTokenAddress}

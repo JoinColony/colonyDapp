@@ -1,7 +1,7 @@
 import React from 'react';
 
 import Avatar from '~core/Avatar';
-import InfoPopover from '~core/InfoPopover';
+import InfoPopover, { Props as InfoPopoverProps } from '~core/InfoPopover';
 import Link from '~core/NavLink';
 import { Address } from '~types/index';
 import { AnyUser } from '~data/index';
@@ -10,15 +10,12 @@ import { getUsername } from '../../../users/transformers';
 
 import styles from './UserAvatar.css';
 
-export interface Props {
+interface BaseProps {
   /** Address of the current user for identicon fallback */
   address: Address;
 
   /** Avatar image URL (can be a base64 encoded url string) */
   avatarURL?: string;
-
-  /** Used for the infopopover (displaying reputation) */
-  colonyAddress?: Address;
 
   /** Is passed through to Avatar */
   className?: string;
@@ -35,12 +32,17 @@ export interface Props {
   /** Avatar size (default is between `s` and `m`) */
   size?: 'xxs' | 'xs' | 's' | 'm' | 'l' | 'xl';
 
-  /** Used for the infopopover (displaying reputation) */
-  skillId?: number;
-
   /** The corresponding user object if available */
   user?: AnyUser;
 }
+
+/** Used for the infopopover */
+interface PropsForReputation extends BaseProps {
+  colonyAddress?: Address;
+  skillId?: number;
+}
+
+export type Props = BaseProps | PropsForReputation;
 
 const displayName = 'UserAvatar';
 
@@ -48,25 +50,31 @@ const UserAvatar = ({
   address,
   avatarURL,
   className,
-  colonyAddress,
   showInfo,
   showLink,
   notSet,
   size,
-  skillId,
   user = {
     id: address,
     profile: { walletAddress: address },
   },
+  ...rest
 }: Props) => {
   const username = getUsername(user);
+  let popoverProps: InfoPopoverProps = {
+    trigger: showInfo ? 'click' : 'disabled',
+    user,
+  };
+  if ('colonyAddress' in rest) {
+    const { colonyAddress, skillId } = rest;
+    popoverProps = {
+      ...popoverProps,
+      colonyAddress,
+      skillId,
+    };
+  }
   const avatar = (
-    <InfoPopover
-      colonyAddress={colonyAddress}
-      skillId={skillId}
-      trigger={showInfo ? 'click' : 'disabled'}
-      user={user}
-    >
+    <InfoPopover {...popoverProps}>
       <div className={styles.main}>
         <Avatar
           avatarURL={avatarURL}

@@ -120,6 +120,7 @@ const ColonyPermissionsEditDialog = ({
                 <div className={styles.titleContainer}>
                   <InputLabel label={MSG.selectUser} />
                   <UserInfo
+                    colonyAddress={colonyAddress}
                     userAddress={userAddress}
                     user={user}
                     placeholder={MSG.selectUser}

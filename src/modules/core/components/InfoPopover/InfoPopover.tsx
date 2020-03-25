@@ -28,7 +28,7 @@ type ContentProps =
   | BasicUserContentProps
   | MemberContentProps;
 
-type Props = ContentProps & {
+export type Props = ContentProps & {
   /** Children elemnts or components to wrap the tooltip around */
   children?: ReactNode;
   /** How the popover gets triggered */
