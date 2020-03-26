@@ -38,22 +38,6 @@ export const userResolvers = ({
       );
       return address;
     },
-    async userReputation(
-      _,
-      {
-        address,
-        colonyAddress,
-        domainId = ROOT_DOMAIN,
-      }: { address: Address; colonyAddress: Address; domainId?: number },
-    ) {
-      const reputation = await getUserReputation(
-        colonyManager,
-        address,
-        colonyAddress,
-        domainId,
-      );
-      return reputation;
-    },
     async username(_, { address }) {
       const domain = await ens.getDomain(address, networkClient);
       return ENS.stripDomainParts('user', domain);

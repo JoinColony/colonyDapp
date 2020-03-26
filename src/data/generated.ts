@@ -893,6 +893,7 @@ export type PublishProgramInput = {
 
 export type Query = {
   user: User,
+  userByName: User,
   colony: Colony,
   domain: Domain,
   level: Level,
@@ -913,6 +914,11 @@ export type Query = {
 
 export type QueryUserArgs = {
   address: Scalars['String']
+};
+
+
+export type QueryUserByNameArgs = {
+  name: Scalars['String']
 };
 
 
@@ -2005,14 +2011,20 @@ export type UsernameQueryVariables = {
 };
 
 
-export type UsernameQuery = Pick<Query, 'username'>;
+export type UsernameQuery = { user: (
+    Pick<User, 'id'>
+    & { profile: Pick<UserProfile, 'username'> }
+  ) };
 
 export type UserAddressQueryVariables = {
   name: Scalars['String']
 };
 
 
-export type UserAddressQuery = Pick<Query, 'userAddress'>;
+export type UserAddressQuery = { userByName: (
+    Pick<User, 'id'>
+    & { profile: Pick<UserProfile, 'walletAddress'> }
+  ) };
 
 export type ColonyFromNameQueryVariables = {
   name: Scalars['String'],
@@ -4936,7 +4948,12 @@ export type UserTokensLazyQueryHookResult = ReturnType<typeof useUserTokensLazyQ
 export type UserTokensQueryResult = ApolloReactCommon.QueryResult<UserTokensQuery, UserTokensQueryVariables>;
 export const UsernameDocument = gql`
     query Username($address: String!) {
-  username(address: $address) @client
+  user(address: $address) {
+    id
+    profile {
+      username
+    }
+  }
 }
     `;
 
@@ -4967,7 +4984,12 @@ export type UsernameLazyQueryHookResult = ReturnType<typeof useUsernameLazyQuery
 export type UsernameQueryResult = ApolloReactCommon.QueryResult<UsernameQuery, UsernameQueryVariables>;
 export const UserAddressDocument = gql`
     query UserAddress($name: String!) {
-  userAddress(name: $name) @client
+  userByName(name: $name) {
+    id
+    profile {
+      walletAddress
+    }
+  }
 }
     `;
 

@@ -239,11 +239,21 @@ query UserTokens($address: String!) {
 }
 
 query Username($address: String!) {
-  username(address: $address) @client
+  user(address: $address) {
+    id
+    profile {
+      username
+    }
+  }
 }
 
 query UserAddress($name: String!) {
-  userAddress(name: $name) @client
+  userByName(name: $name) {
+    id
+    profile {
+      walletAddress
+    }
+  }
 }
 
 query ColonyFromName($name: String!, $address: String!) {
