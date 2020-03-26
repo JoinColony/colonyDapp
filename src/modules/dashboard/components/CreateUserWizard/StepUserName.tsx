@@ -15,6 +15,8 @@ import {
   UserAddressQueryVariables,
 } from '~data/index';
 
+import en from '../../../../i18n/en-validation.json';
+
 import styles from './StepUserName.css';
 
 interface FormValues {
@@ -60,13 +62,13 @@ const validationSchema = yup.object({
   username: yup
     .string()
     .required()
-    .ensAddress(),
+    .ensAddress(en.string.username),
 });
 
 const StepUserName = ({ wizardValues, nextStep }: Props) => {
   const apolloClient = useApolloClient();
 
-  const checkDomainTaken = useCallback(
+  const checkUsernameTaken = useCallback(
     async (values: FormValues) => {
       try {
         const { data } = await apolloClient.query<
@@ -78,7 +80,13 @@ const StepUserName = ({ wizardValues, nextStep }: Props) => {
             name: values.username,
           },
         });
-        if (data && data.userAddress) return true;
+        if (
+          data &&
+          data.userByName &&
+          data.userByName.profile &&
+          data.userByName.profile.walletAddress
+        )
+          return true;
         return false;
       } catch (e) {
         return false;
@@ -97,7 +105,7 @@ const StepUserName = ({ wizardValues, nextStep }: Props) => {
         // validationSchema
         return {};
       }
-      const taken = await checkDomainTaken(values);
+      const taken = await checkUsernameTaken(values);
       if (taken) {
         const errors = {
           username: MSG.errorDomainTaken,
@@ -106,7 +114,7 @@ const StepUserName = ({ wizardValues, nextStep }: Props) => {
       }
       return {};
     },
-    [checkDomainTaken],
+    [checkUsernameTaken],
   );
   return (
     <ActionForm
@@ -132,7 +140,6 @@ const StepUserName = ({ wizardValues, nextStep }: Props) => {
                   appearance={{ theme: 'fat' }}
                   name="username"
                   label={MSG.label}
-                  extensionString=".user.joincolony.eth"
                   status={normalized !== username ? MSG.statusText : undefined}
                   statusValues={{
                     normalized,
