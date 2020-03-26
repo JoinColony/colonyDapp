@@ -1,7 +1,6 @@
 import ApolloClient from 'apollo-client';
 import {
   call,
-  fork,
   put,
   takeEvery,
   takeLatest,
@@ -15,11 +14,7 @@ import { ColonyManager } from '~types/index';
 import { createAddress } from '~utils/web3';
 import {
   getLoggedInUser,
-  refetchUserNotifications,
   ColonySubscribedUsersDocument,
-  CreateUserDocument,
-  CreateUserMutation,
-  CreateUserMutationVariables,
   EditUserDocument,
   EditUserMutation,
   EditUserMutationVariables,
@@ -29,14 +24,11 @@ import {
   ClearLoggedInUserMutation,
   ClearLoggedInUserMutationVariables,
 } from '~data/index';
-import { putError, takeFrom } from '~utils/saga/effects';
+import { putError } from '~utils/saga/effects';
 import { getEventLogs, parseUserTransferEvent } from '~utils/web3/eventLogs';
 
 import { clearToken } from '../../../api/auth';
-import { ContractContexts } from '../../../lib/ColonyManager/constants';
 import { ipfsUpload } from '../../core/sagas/ipfs';
-import { transactionLoadRelated } from '../../core/actionCreators';
-import { createTransaction, getTxChannel } from '../../core/sagas/transactions';
 import { clearLastWallet } from '~utils/autoLogin';
 
 function* userTokenTransfersFetch( // eslint-disable-next-line @typescript-eslint/no-unused-vars,no-unused-vars
@@ -202,64 +194,6 @@ function* userAvatarUpload({
   return null;
 }
 
-function* usernameCreate({
-  meta: { id },
-  meta,
-  payload: { username: givenUsername },
-}: Action<ActionTypes.USERNAME_CREATE>) {
-  const { walletAddress } = yield getLoggedInUser();
-  const txChannel = yield call(getTxChannel, id);
-  try {
-    // Normalize again, just to be sure
-    const username = ENS.normalize(givenUsername);
-
-    yield fork(createTransaction, id, {
-      context: ContractContexts.NETWORK_CONTEXT,
-      methodName: 'registerUserLabel',
-      ready: true,
-      params: { username, orbitDBPath: '' },
-      group: {
-        key: 'transaction.batch.createUser',
-        id,
-        index: 0,
-      },
-    });
-
-    const apolloClient: ApolloClient<object> = yield getContext(
-      Context.APOLLO_CLIENT,
-    );
-
-    yield takeFrom(txChannel, ActionTypes.TRANSACTION_SUCCEEDED);
-
-    yield put(transactionLoadRelated(id, true));
-
-    yield apolloClient.mutate<CreateUserMutation, CreateUserMutationVariables>({
-      mutation: CreateUserDocument,
-      variables: {
-        createUserInput: { username },
-        loggedInUserInput: { username },
-      },
-    });
-
-    yield put(transactionLoadRelated(id, false));
-
-    yield refetchUserNotifications(walletAddress);
-
-    yield put<AllActions>({
-      type: ActionTypes.USERNAME_CREATE_SUCCESS,
-      payload: {
-        username,
-      },
-      meta,
-    });
-  } catch (error) {
-    return yield putError(ActionTypes.USERNAME_CREATE_ERROR, error, meta);
-  } finally {
-    txChannel.close();
-  }
-  return null;
-}
-
 function* userLogout() {
   try {
     const apolloClient: ApolloClient<object> = yield getContext(
@@ -312,5 +246,4 @@ export function* setupUsersSagas() {
   yield takeLatest(ActionTypes.USER_AVATAR_REMOVE, userAvatarRemove);
   yield takeLatest(ActionTypes.USER_AVATAR_UPLOAD, userAvatarUpload);
   yield takeLatest(ActionTypes.USER_LOGOUT, userLogout);
-  yield takeLatest(ActionTypes.USERNAME_CREATE, usernameCreate);
 }
