@@ -5,6 +5,7 @@ import BigNumber from 'bn.js';
 import { ContextType } from '~context/index';
 import { COLONY_TOTAL_BALANCE_DOMAIN_ID } from '~constants';
 import { ZERO_ADDRESS, ETHER_INFO } from '~utils/web3/constants';
+import { createAddress } from '~utils/web3';
 import { TokenInfo, TokenInfoDocument } from '~data/index';
 import { Address } from '~types/index';
 
@@ -81,7 +82,13 @@ const getTokenData = async (
   return {
     __typename: 'Token',
     id: tokenAddress,
-    address: tokenAddress,
+    /*
+     * @NOTE Checksum the token address before returning it
+     * This is only needed for legacy reasons as not all entries in the
+     * database are checksummed, so this, while cosuming more cycles, will
+     * prevent us headache in the future
+     */
+    address: createAddress(tokenAddress),
     decimals: chainData.decimals || serverData.decimals || 18,
     iconHash: serverData.iconHash || null,
     name: chainData.name || serverData.name || 'Unknown token',
