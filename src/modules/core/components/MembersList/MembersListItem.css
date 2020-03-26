@@ -12,11 +12,6 @@
   padding-left: 0;
 }
 
-.avatarSection {
-  composes: section;
-  flex-basis: 76px;
-}
-
 .usernameSection {
   composes: section;
   flex-grow: 1;

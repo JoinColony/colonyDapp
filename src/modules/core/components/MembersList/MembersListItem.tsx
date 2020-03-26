@@ -67,7 +67,7 @@ const MembersListItem = <U extends AnyUser = AnyUser>(props: Props<U>) => {
         // eslint-disable-next-line jsx-a11y/no-noninteractive-tabindex
         tabIndex={onRowClick ? 0 : undefined}
       >
-        <div className={styles.avatarSection}>
+        <div className={styles.section}>
           <UserAvatar
             size="xs"
             colonyAddress={colonyAddress}
