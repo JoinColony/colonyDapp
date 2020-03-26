@@ -94,27 +94,23 @@ const TaskFeedCompleteInfo = ({
   return (
     <div>
       <div className={styles.transactionSentCopy}>
-        <p>
-          <FormattedMessage
-            {...MSG.eventTaskSentMessage}
-            values={{
-              user: (
-                <InfoPopover
-                  colonyAddress={colonyAddress}
-                  skillId={skillId}
-                  user={user}
-                >
-                  <span className={styles.username}>
-                    {getFriendlyName(user)}
-                  </span>
-                </InfoPopover>
-              ),
-            }}
-          />
-          <span className={styles.timeSinceTx}>
-            <TimeRelative value={new Date(finalizedAt)} />
-          </span>
-        </p>
+        <FormattedMessage
+          {...MSG.eventTaskSentMessage}
+          values={{
+            user: (
+              <InfoPopover
+                colonyAddress={colonyAddress}
+                skillId={skillId}
+                user={user}
+              >
+                <span className={styles.username}>{getFriendlyName(user)}</span>
+              </InfoPopover>
+            ),
+          }}
+        />
+        <span className={styles.timeSinceTx}>
+          <TimeRelative value={new Date(finalizedAt)} />
+        </span>
       </div>
       {isLoadingToken || isLoadingColony || !tokenData ? (
         <SpinnerLoader />
