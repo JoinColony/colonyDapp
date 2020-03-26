@@ -155,7 +155,11 @@ const StepUserName = () => {
                   appearance={{ theme: 'fat' }}
                   name="username"
                   label={MSG.label}
-                  status={normalized !== username ? MSG.statusText : undefined}
+                  status={
+                    normalized && normalized === username
+                      ? MSG.statusText
+                      : undefined
+                  }
                   statusValues={{
                     normalized,
                   }}
