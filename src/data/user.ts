@@ -71,10 +71,7 @@ export const userResolvers = ({
         colonyAddress,
         skillId,
       );
-      return {
-        ...user,
-        reputation,
-      };
+      return reputation;
     },
     async tokens(
       { tokenAddresses }: { tokenAddresses: Address[] },
