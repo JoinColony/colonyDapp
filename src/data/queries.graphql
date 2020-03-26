@@ -155,6 +155,9 @@ query User($address: String!) {
   }
 }
 
+# This isn't currently being used anywhere, but... here it is anyways.
+# In most cases, we'll want to fetch the reputation *after* the user is already fetched,
+# as fetching reputation takes quite a bit longer.
 query UserWithReputation($address: String!, $colonyAddress: String!, $skillId: Int) {
   user(address: $address) {
     id
