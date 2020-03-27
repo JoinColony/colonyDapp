@@ -12,7 +12,10 @@ import {
   UserAddressDocument,
   UserAddressQuery,
   UserAddressQueryVariables,
+  useCreateUserMutation,
 } from '~data/index';
+
+import en from '../../../../i18n/en-validation.json';
 
 import styles from './StepUserName.css';
 
@@ -64,13 +67,13 @@ const validationSchema = yup.object({
   username: yup
     .string()
     .required()
-    .ensAddress(),
+    .ensAddress(en.string.username),
 });
 
 const StepUserName = ({ stepCompleted, wizardForm, nextStep }: Props) => {
   const apolloClient = useApolloClient();
 
-  const checkDomainTaken = useCallback(
+  const checkUsernameTaken = useCallback(
     async (values: FormValues) => {
       try {
         const { data } = await apolloClient.query<
@@ -82,7 +85,13 @@ const StepUserName = ({ stepCompleted, wizardForm, nextStep }: Props) => {
             name: values.username,
           },
         });
-        if (data && data.userAddress) return true;
+        if (
+          data &&
+          data.userByName &&
+          data.userByName.profile &&
+          data.userByName.profile.walletAddress
+        )
+          return true;
         return false;
       } catch (e) {
         return false;
@@ -91,7 +100,7 @@ const StepUserName = ({ stepCompleted, wizardForm, nextStep }: Props) => {
     [apolloClient],
   );
 
-  const validateDomain = useCallback(
+  const validateUsername = useCallback(
     async (values: FormValues) => {
       try {
         // Let's check whether this is even valid first
@@ -101,7 +110,7 @@ const StepUserName = ({ stepCompleted, wizardForm, nextStep }: Props) => {
         // validationSchema
         return {};
       }
-      const taken = await checkDomainTaken(values);
+      const taken = await checkUsernameTaken(values);
       if (taken) {
         const errors = {
           username: MSG.errorDomainTaken,
@@ -110,12 +119,33 @@ const StepUserName = ({ stepCompleted, wizardForm, nextStep }: Props) => {
       }
       return {};
     },
-    [checkDomainTaken],
+    [checkUsernameTaken],
   );
+
+  const [createUsername] = useCreateUserMutation();
+  const onSubmit = useCallback(
+    async (values: FormValues) => {
+      await createUsername({
+        variables: {
+          createUserInput: { username: values.username },
+          loggedInUserInput: { username: values.username },
+        },
+      });
+      return nextStep;
+    },
+    [createUsername, nextStep],
+  );
+
+  /*
+   * @NOTE We don't need to redirect manually at this point (user created)
+   * as the wizard tracks this itself, and skips this step if a username value
+   * already exists
+   */
   return (
     <Form
-      onSubmit={nextStep}
-      validate={validateDomain}
+      initialValues={{}}
+      onSubmit={onSubmit}
+      validate={validateUsername}
       validationSchema={validationSchema}
       {...wizardForm}
     >
@@ -133,8 +163,11 @@ const StepUserName = ({ stepCompleted, wizardForm, nextStep }: Props) => {
                   appearance={{ theme: 'fat' }}
                   name="username"
                   label={MSG.label}
-                  extensionString=".user.joincolony.eth"
-                  status={normalized !== username ? MSG.statusText : undefined}
+                  status={
+                    normalized && normalized === username
+                      ? MSG.statusText
+                      : undefined
+                  }
                   statusValues={{
                     normalized,
                   }}
