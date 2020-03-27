@@ -76,7 +76,6 @@ const StepConfirmAllInput = ({
     tokenIcon,
     tokenName,
     tokenSymbol,
-    username,
   },
   wizardValues,
 }: Props) => {
@@ -89,9 +88,8 @@ const StepConfirmAllInput = ({
       tokenIcon,
       tokenName,
       tokenSymbol,
-      username,
     }),
-    [username, displayName, colonyName, tokenName, tokenIcon, tokenSymbol],
+    [displayName, colonyName, tokenName, tokenIcon, tokenSymbol],
   );
   return (
     <ActionForm
