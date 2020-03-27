@@ -9,9 +9,7 @@ import {
 
 import { Action, ActionTypes, AllActions } from '~redux/index';
 import { getContext, Context, TEMP_removeNewContext } from '~context/index';
-import ENS from '~lib/ENS';
 import { ColonyManager } from '~types/index';
-import { createAddress } from '~utils/web3';
 import {
   getLoggedInUser,
   ColonySubscribedUsersDocument,
@@ -115,32 +113,6 @@ function* userTokenTransfersFetch( // eslint-disable-next-line @typescript-eslin
   return null;
 }
 
-function* userAddressFetch({
-  payload: { username },
-  meta,
-}: Action<ActionTypes.USER_ADDRESS_FETCH>) {
-  try {
-    const ens: ENS = yield getContext(Context.ENS_INSTANCE);
-    const colonyManager: ColonyManager = yield getContext(
-      Context.COLONY_MANAGER,
-    );
-
-    const address = yield ens.getAddress(
-      ENS.getFullDomain('user', username),
-      colonyManager.networkClient,
-    );
-
-    yield put({
-      type: ActionTypes.USER_ADDRESS_FETCH_SUCCESS,
-      payload: { userAddress: createAddress(address) },
-      meta,
-    });
-  } catch (error) {
-    return yield putError(ActionTypes.USER_ADDRESS_FETCH_ERROR, error, meta);
-  }
-  return null;
-}
-
 function* userAvatarRemove({ meta }: Action<ActionTypes.USER_AVATAR_REMOVE>) {
   try {
     const { walletAddress } = yield getLoggedInUser();
@@ -238,7 +210,6 @@ function* userLogout() {
 }
 
 export function* setupUsersSagas() {
-  yield takeEvery(ActionTypes.USER_ADDRESS_FETCH, userAddressFetch);
   yield takeEvery(
     ActionTypes.USER_TOKEN_TRANSFERS_FETCH,
     userTokenTransfersFetch,
