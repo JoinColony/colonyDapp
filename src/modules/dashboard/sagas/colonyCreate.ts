@@ -10,7 +10,8 @@ import {
   CreateColonyDocument,
   CreateColonyMutation,
   CreateColonyMutationVariables,
-  cacheUpdates,
+  UserDocument,
+  UserQueryVariables,
 } from '~data/index';
 import ENS from '~lib/ENS';
 import { ActionTypes, Action, AllActions } from '~redux/index';
@@ -40,7 +41,7 @@ function* colonyCreate({
     tokenSymbol,
   },
 }: Action<ActionTypes.COLONY_CREATE>) {
-  const { username: currentUsername } = yield getLoggedInUser();
+  const { username: currentUsername, walletAddress } = yield getLoggedInUser();
 
   /*
    * @NOTE This should not happen
@@ -277,7 +278,16 @@ function* colonyCreate({
           tokenDecimals: DEFAULT_TOKEN_DECIMALS,
         },
       },
-      update: cacheUpdates.subscribeToColony(colonyAddress),
+      /*
+       * @NOTE Refetch the current user to refresh the new colony subscription
+       * As just using the cache update proved to be unreliable when a user already existed
+       */
+      refetchQueries: [
+        {
+          query: UserDocument,
+          variables: { address: walletAddress } as UserQueryVariables,
+        },
+      ],
     });
 
     yield put(transactionLoadRelated(createColony.id, false));
