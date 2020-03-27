@@ -7,22 +7,15 @@ import { Context, getContext } from '~context/index';
 import { DEFAULT_TOKEN_DECIMALS } from '~constants';
 import {
   getLoggedInUser,
-  refetchUserNotifications,
   CreateColonyDocument,
   CreateColonyMutation,
   CreateColonyMutationVariables,
-  CreateUserMutation,
-  CreateUserDocument,
-  CreateUserMutationVariables,
-  UserColonyAddressesDocument,
-  UserColonyAddressesQueryVariables,
-  UserColonyAddressesQuery,
+  cacheUpdates,
 } from '~data/index';
 import ENS from '~lib/ENS';
 import { ActionTypes, Action, AllActions } from '~redux/index';
 import { createAddress } from '~utils/web3';
 import { ContractContexts } from '~types/index';
-import { log } from '~utils/debug';
 import { putError, takeFrom, takeLatestCancellable } from '~utils/saga/effects';
 import { parseExtensionDeployedLog } from '~utils/web3/eventLogs/eventParsers';
 
@@ -45,10 +38,23 @@ function* colonyCreate({
     tokenIcon,
     tokenName,
     tokenSymbol,
-    username: givenUsername,
   },
 }: Action<ActionTypes.COLONY_CREATE>) {
-  const { username: currentUsername, walletAddress } = yield getLoggedInUser();
+  const { username: currentUsername } = yield getLoggedInUser();
+
+  /*
+   * @NOTE This should not happen
+   *
+   * Only instance I can think of this actually happening in a real-live environment
+   * is that the database fails half way through the process of creating a colony
+   */
+  if (!currentUsername) {
+    return yield putError(
+      ActionTypes.COLONY_CREATE_ERROR,
+      new Error('User does not have registered username'),
+      meta,
+    );
+  }
 
   const apolloClient: ApolloClient<object> = yield getContext(
     Context.APOLLO_CLIENT,
@@ -62,10 +68,6 @@ function* colonyCreate({
   const channels: {
     [id: string]: { channel: Channel<any>; index: number; id: string };
   } = yield call(createTransactionChannels, meta.id, [
-    /*
-     * If the user did not claim a profile yet, define a tx to create the user.
-     */
-    ...(!currentUsername ? ['createUser'] : []),
     /*
      * If the user opted to create a token, define a tx to create the token.
      */
@@ -92,7 +94,6 @@ function* colonyCreate({
     createColony,
     createLabel,
     createToken,
-    createUser,
     deployOneTx,
     setOneTxRoleAdministration,
     setOneTxRoleFunding,
@@ -118,16 +119,6 @@ function* colonyCreate({
    */
   try {
     const colonyName = ENS.normalize(givenColonyName);
-    const username = ENS.normalize(givenUsername);
-
-    if (createUser) {
-      yield createGroupedTransaction(createUser, {
-        context: ContractContexts.NETWORK_CONTEXT,
-        methodName: 'registerUserLabel',
-        params: { username, orbitDBPath: '' },
-        ready: true,
-      });
-    }
 
     if (createToken) {
       yield createGroupedTransaction(createToken, {
@@ -217,30 +208,6 @@ function* colonyCreate({
       payload: undefined,
     });
 
-    if (createUser) {
-      /*
-       * If the username is being created, wait for the transaction to succeed
-       * before creating the profile store and dispatching a success action.
-       */
-      yield takeFrom(createUser.channel, ActionTypes.TRANSACTION_SUCCEEDED);
-      yield put<AllActions>(transactionLoadRelated(createUser.id, true));
-
-      yield apolloClient.mutate<
-        CreateUserMutation,
-        CreateUserMutationVariables
-      >({
-        mutation: CreateUserDocument,
-        variables: {
-          createUserInput: { username },
-          loggedInUserInput: { username },
-        },
-      });
-
-      yield put<AllActions>(transactionLoadRelated(createUser.id, false));
-
-      yield refetchUserNotifications(walletAddress);
-    }
-
     /*
      * For transactions that rely on the receipt/event data of previous transactions,
      * wait for these transactions to succeed, collect the data, and apply it to
@@ -310,40 +277,7 @@ function* colonyCreate({
           tokenDecimals: DEFAULT_TOKEN_DECIMALS,
         },
       },
-      update: cache => {
-        try {
-          const cacheData = cache.readQuery<
-            UserColonyAddressesQuery,
-            UserColonyAddressesQueryVariables
-          >({
-            query: UserColonyAddressesDocument,
-            variables: {
-              address: walletAddress,
-            },
-          });
-          if (cacheData) {
-            const colonyAddresses = cacheData.user.colonyAddresses || [];
-            colonyAddresses.push(colonyAddress);
-            cache.writeQuery<
-              UserColonyAddressesQuery,
-              UserColonyAddressesQueryVariables
-            >({
-              query: UserColonyAddressesDocument,
-              data: {
-                user: {
-                  ...cacheData.user,
-                  colonyAddresses,
-                },
-              },
-              variables: {
-                address: walletAddress,
-              },
-            });
-          }
-        } catch (e) {
-          log.error(e);
-        }
-      },
+      update: cacheUpdates.subscribeToColony(colonyAddress),
     });
 
     yield put(transactionLoadRelated(createColony.id, false));

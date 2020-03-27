@@ -55,7 +55,6 @@ export type ColonyActionTypes =
         tokenIcon: string;
         tokenName: string;
         tokenSymbol: string;
-        username: string;
       },
       object
     >
