@@ -124,9 +124,10 @@ const Routes = () => {
         path={ADMIN_DASHBOARD_ROUTE}
         component={AdminDashboard}
         layout={NavBar}
-        routeProps={{
+        routeProps={({ colonyName }) => ({
           backText: ColonyBackText,
-        }}
+          backRoute: `/colony/${colonyName}`,
+        })}
       />
       <ConnectedOnlyRoute
         exact
@@ -134,9 +135,10 @@ const Routes = () => {
         path={TASK_ROUTE}
         component={Task}
         layout={NavBar}
-        routeProps={{
+        routeProps={({ colonyName }) => ({
           backText: ColonyBackText,
-        }}
+          backRoute: `/colony/${colonyName}`,
+        })}
       />
       <ConnectedOnlyRoute
         exact
