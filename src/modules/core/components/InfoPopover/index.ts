@@ -1,1 +1,1 @@
-export { default } from './InfoPopover';
+export { default, Props } from './InfoPopover';

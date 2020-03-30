@@ -87,6 +87,7 @@ const TaskFeed = ({ colonyAddress, draftId }: Props) => {
                     const { message } = context as TaskMessageEvent;
                     return (
                       <TaskFeedComment
+                        colonyAddress={colonyAddress}
                         createdAt={createdAt}
                         initiatorAddress={initiatorAddress}
                         key={sourceId}

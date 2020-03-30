@@ -1,4 +1,7 @@
 .main {
-  display: inline-block;
   line-height: 0;
+}
+
+.stateShowOnClick {
+  cursor: pointer;
 }

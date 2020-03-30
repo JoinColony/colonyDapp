@@ -57,7 +57,6 @@ export interface Props {
   placement?: PopperProps['placement'];
 
   /** Options to pass through the <Popper> element. See here: https://github.com/FezVrasta/react-popper#api-documentation */
-  // popperProps?: Record<string, any>;
   popperProps?: PopperProps;
 
   /** Whether the reference element should retain focus when popover is open (only for `HTMLInputElements`) */

@@ -34,6 +34,9 @@ const MSG = defineMessages({
 });
 
 interface Props {
+  /** 'Nuff said */
+  colonyAddress: Address;
+
   /** The worker that is assigned */
   worker?: AnyUser;
 
@@ -52,15 +55,20 @@ interface Props {
   /** Should the funding be rendered (if set) */
   showFunding?: boolean;
 
+  /** Domain id (for reputation display) */
+  domainId?: number;
+
   /** Ahem... */
   nativeTokenAddress: Address;
 }
 
 const Assignment = ({
+  colonyAddress,
   nativeTokenAddress,
   payouts,
   pending,
   reputation,
+  domainId,
   showFunding,
   worker,
   workerAddress,
@@ -72,9 +80,11 @@ const Assignment = ({
   return (
     <div>
       <UserInfo
-        userAddress={workerAddress}
-        user={worker}
+        colonyAddress={colonyAddress}
         placeholder={MSG.placeholder}
+        domainId={domainId}
+        user={worker}
+        userAddress={workerAddress}
       >
         {worker ? getFriendlyName(worker) : workerAddress}
         {pending && (

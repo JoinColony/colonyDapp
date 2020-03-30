@@ -906,6 +906,7 @@ export type Query = {
   token: Token,
   tokens: Array<Token>,
   userAddress: Scalars['String'],
+  userReputation: Scalars['String'],
   username: Scalars['String'],
 };
 
@@ -968,6 +969,13 @@ export type QueryTokensArgs = {
 
 export type QueryUserAddressArgs = {
   name: Scalars['String']
+};
+
+
+export type QueryUserReputationArgs = {
+  address: Scalars['String'],
+  colonyAddress: Scalars['String'],
+  domainId?: Maybe<Scalars['Int']>
 };
 
 
@@ -1321,11 +1329,23 @@ export type User = {
   notifications: Array<Notification>,
   completedLevels: Array<Level>,
   tokens: Array<Token>,
+  reputation: Scalars['String'],
 };
 
 
 export type UserNotificationsArgs = {
   read?: Maybe<Scalars['Boolean']>
+};
+
+
+export type UserCompletedLevelsArgs = {
+  colonyAddress: Scalars['String']
+};
+
+
+export type UserReputationArgs = {
+  colonyAddress: Scalars['String'],
+  domainId?: Maybe<Scalars['Int']>
 };
 
 export type UserProfile = {
@@ -1931,6 +1951,27 @@ export type UserQuery = { user: (
     & { profile: Pick<UserProfile, 'username' | 'walletAddress' | 'displayName' | 'bio' | 'location' | 'website' | 'avatarHash'> }
   ) };
 
+export type UserWithReputationQueryVariables = {
+  address: Scalars['String'],
+  colonyAddress: Scalars['String'],
+  domainId?: Maybe<Scalars['Int']>
+};
+
+
+export type UserWithReputationQuery = { user: (
+    Pick<User, 'id' | 'reputation'>
+    & { profile: Pick<UserProfile, 'username' | 'walletAddress' | 'displayName' | 'bio' | 'location' | 'website' | 'avatarHash'> }
+  ) };
+
+export type UserReputationQueryVariables = {
+  address: Scalars['String'],
+  colonyAddress: Scalars['String'],
+  domainId?: Maybe<Scalars['Int']>
+};
+
+
+export type UserReputationQuery = Pick<Query, 'userReputation'>;
+
 export type UserTasksQueryVariables = {
   address: Scalars['String']
 };
@@ -2196,7 +2237,8 @@ export type UserNotificationsQuery = { user: (
   ) };
 
 export type UserBadgesQueryVariables = {
-  address: Scalars['String']
+  address: Scalars['String'],
+  colonyAddress: Scalars['String']
 };
 
 
@@ -4694,6 +4736,84 @@ export function useUserLazyQuery(baseOptions?: ApolloReactHooks.LazyQueryHookOpt
 export type UserQueryHookResult = ReturnType<typeof useUserQuery>;
 export type UserLazyQueryHookResult = ReturnType<typeof useUserLazyQuery>;
 export type UserQueryResult = ApolloReactCommon.QueryResult<UserQuery, UserQueryVariables>;
+export const UserWithReputationDocument = gql`
+    query UserWithReputation($address: String!, $colonyAddress: String!, $domainId: Int) {
+  user(address: $address) {
+    id
+    profile {
+      username
+      walletAddress
+      displayName
+      bio
+      location
+      website
+      avatarHash
+    }
+    reputation(colonyAddress: $colonyAddress, domainId: $domainId) @client
+  }
+}
+    `;
+
+/**
+ * __useUserWithReputationQuery__
+ *
+ * To run a query within a React component, call `useUserWithReputationQuery` and pass it any options that fit your needs.
+ * When your component renders, `useUserWithReputationQuery` returns an object from Apollo Client that contains loading, error, and data properties 
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useUserWithReputationQuery({
+ *   variables: {
+ *      address: // value for 'address'
+ *      colonyAddress: // value for 'colonyAddress'
+ *      domainId: // value for 'domainId'
+ *   },
+ * });
+ */
+export function useUserWithReputationQuery(baseOptions?: ApolloReactHooks.QueryHookOptions<UserWithReputationQuery, UserWithReputationQueryVariables>) {
+        return ApolloReactHooks.useQuery<UserWithReputationQuery, UserWithReputationQueryVariables>(UserWithReputationDocument, baseOptions);
+      }
+export function useUserWithReputationLazyQuery(baseOptions?: ApolloReactHooks.LazyQueryHookOptions<UserWithReputationQuery, UserWithReputationQueryVariables>) {
+          return ApolloReactHooks.useLazyQuery<UserWithReputationQuery, UserWithReputationQueryVariables>(UserWithReputationDocument, baseOptions);
+        }
+export type UserWithReputationQueryHookResult = ReturnType<typeof useUserWithReputationQuery>;
+export type UserWithReputationLazyQueryHookResult = ReturnType<typeof useUserWithReputationLazyQuery>;
+export type UserWithReputationQueryResult = ApolloReactCommon.QueryResult<UserWithReputationQuery, UserWithReputationQueryVariables>;
+export const UserReputationDocument = gql`
+    query UserReputation($address: String!, $colonyAddress: String!, $domainId: Int) {
+  userReputation(address: $address, colonyAddress: $colonyAddress, domainId: $domainId) @client
+}
+    `;
+
+/**
+ * __useUserReputationQuery__
+ *
+ * To run a query within a React component, call `useUserReputationQuery` and pass it any options that fit your needs.
+ * When your component renders, `useUserReputationQuery` returns an object from Apollo Client that contains loading, error, and data properties 
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useUserReputationQuery({
+ *   variables: {
+ *      address: // value for 'address'
+ *      colonyAddress: // value for 'colonyAddress'
+ *      domainId: // value for 'domainId'
+ *   },
+ * });
+ */
+export function useUserReputationQuery(baseOptions?: ApolloReactHooks.QueryHookOptions<UserReputationQuery, UserReputationQueryVariables>) {
+        return ApolloReactHooks.useQuery<UserReputationQuery, UserReputationQueryVariables>(UserReputationDocument, baseOptions);
+      }
+export function useUserReputationLazyQuery(baseOptions?: ApolloReactHooks.LazyQueryHookOptions<UserReputationQuery, UserReputationQueryVariables>) {
+          return ApolloReactHooks.useLazyQuery<UserReputationQuery, UserReputationQueryVariables>(UserReputationDocument, baseOptions);
+        }
+export type UserReputationQueryHookResult = ReturnType<typeof useUserReputationQuery>;
+export type UserReputationLazyQueryHookResult = ReturnType<typeof useUserReputationLazyQuery>;
+export type UserReputationQueryResult = ApolloReactCommon.QueryResult<UserReputationQuery, UserReputationQueryVariables>;
 export const UserTasksDocument = gql`
     query UserTasks($address: String!) {
   user(address: $address) {
@@ -5719,10 +5839,10 @@ export type UserNotificationsQueryHookResult = ReturnType<typeof useUserNotifica
 export type UserNotificationsLazyQueryHookResult = ReturnType<typeof useUserNotificationsLazyQuery>;
 export type UserNotificationsQueryResult = ApolloReactCommon.QueryResult<UserNotificationsQuery, UserNotificationsQueryVariables>;
 export const UserBadgesDocument = gql`
-    query UserBadges($address: String!) {
+    query UserBadges($address: String!, $colonyAddress: String!) {
   user(address: $address) {
     id
-    completedLevels {
+    completedLevels(colonyAddress: $colonyAddress) {
       id
       achievement
       title
@@ -5747,6 +5867,7 @@ export const UserBadgesDocument = gql`
  * const { data, loading, error } = useUserBadgesQuery({
  *   variables: {
  *      address: // value for 'address'
+ *      colonyAddress: // value for 'colonyAddress'
  *   },
  * });
  */

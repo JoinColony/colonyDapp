@@ -26,24 +26,45 @@ const MSG = defineMessages({
 
 const UserAvatar = HookedUserAvatar({ fetchUser: false });
 
-const defaultRenderAvatar = (address: Address, user?: AnyUser) => (
-  <UserAvatar address={address} user={user} showInfo size="xs" />
+const defaultRenderAvatar = (
+  address: Address,
+  user?: AnyUser,
+  colonyAddress?: Address,
+  domainId?: number,
+) => (
+  <UserAvatar
+    address={address}
+    colonyAddress={colonyAddress}
+    domainId={domainId}
+    user={user}
+    showInfo
+    size="xs"
+  />
 );
 
 interface Props {
   children?: ReactNode;
+  colonyAddress: Address;
   placeholder?: MessageDescriptor;
   user?: AnyUser;
   userAddress?: Address;
-  renderAvatar?: (address: Address, user?: AnyUser) => ReactNode;
+  renderAvatar?: (
+    address: Address,
+    user?: AnyUser,
+    colonyAddress?: Address,
+    domainId?: number,
+  ) => ReactNode;
+  domainId?: number;
 }
 
 const UserInfo = ({
   children,
+  colonyAddress,
   placeholder = MSG.placeholder,
   user,
   userAddress,
   renderAvatar = defaultRenderAvatar,
+  domainId,
 }: Props) => {
   let displayedName;
   if (children) {
@@ -58,7 +79,7 @@ const UserInfo = ({
     <div className={styles.main}>
       {userAddress ? (
         <div className={styles.avatarContainer}>
-          {renderAvatar(userAddress, user)}
+          {renderAvatar(userAddress, user, colonyAddress, domainId)}
         </div>
       ) : (
         <Icon

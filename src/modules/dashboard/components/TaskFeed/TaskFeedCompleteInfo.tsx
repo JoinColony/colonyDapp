@@ -55,6 +55,7 @@ interface Props {
   };
   payouts: AnyTask['payouts'];
   colonyAddress: Address;
+  domainId?: number;
 }
 
 const displayName = 'dashboard.TaskFeed.TaskFeedCompleteInfo';
@@ -64,6 +65,7 @@ const TaskFeedCompleteInfo = ({
   finalizedPayment: { amount, tokenAddress, workerAddress, transactionHash },
   payouts,
   colonyAddress,
+  domainId,
 }: Props) => {
   const user = useUser(workerAddress);
   const payout = payouts.find(
@@ -92,21 +94,25 @@ const TaskFeedCompleteInfo = ({
   return (
     <div>
       <div className={styles.transactionSentCopy}>
-        <p>
-          <FormattedMessage
-            {...MSG.eventTaskSentMessage}
-            values={{
-              user: (
+        <FormattedMessage
+          {...MSG.eventTaskSentMessage}
+          values={{
+            user: (
+              <InfoPopover
+                colonyAddress={colonyAddress}
+                domainId={domainId}
+                user={user}
+              >
                 <span className={styles.username}>{getFriendlyName(user)}</span>
-              ),
-            }}
-          />
-          <span className={styles.timeSinceTx}>
-            <TimeRelative value={new Date(finalizedAt)} />
-          </span>
-        </p>
+              </InfoPopover>
+            ),
+          }}
+        />
+        <span className={styles.timeSinceTx}>
+          <TimeRelative value={new Date(finalizedAt)} />
+        </span>
       </div>
-      {isLoadingToken || isLoadingColony ? (
+      {isLoadingToken || isLoadingColony || !tokenData ? (
         <SpinnerLoader />
       ) : (
         <div className={styles.receiptContainer}>
@@ -129,7 +135,7 @@ const TaskFeedCompleteInfo = ({
               values={{
                 amount: (
                   <InfoPopover
-                    token={tokenData && tokenData.token}
+                    token={tokenData.token}
                     isTokenNative={address === nativeTokenAddress}
                   >
                     <span className={styles.tokenInfo}>
@@ -150,7 +156,7 @@ const TaskFeedCompleteInfo = ({
               values={{
                 amount: (
                   <InfoPopover
-                    token={tokenData && tokenData.token}
+                    token={tokenData.token}
                     isTokenNative={address === nativeTokenAddress}
                   >
                     <span className={styles.tokenInfo}>

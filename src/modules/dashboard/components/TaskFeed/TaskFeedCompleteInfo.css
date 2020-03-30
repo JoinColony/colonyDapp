@@ -5,6 +5,7 @@
 
 .username {
   font-weight: var(--weight-semi);
+  cursor: pointer;
 }
 
 .timeSinceTx {

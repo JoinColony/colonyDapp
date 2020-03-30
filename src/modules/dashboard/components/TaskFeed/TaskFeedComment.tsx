@@ -6,6 +6,7 @@ import TimeRelative from '~core/TimeRelative';
 import UserMention from '~core/UserMention';
 import HookedUserAvatar from '~users/HookedUserAvatar';
 import { useLoggedInUser, useUser, Event, TaskMessageEvent } from '~data/index';
+import { Address } from '~types/index';
 
 import TextDecorator from '../../../../lib/TextDecorator';
 import { getFriendlyName } from '../../../users/transformers';
@@ -17,12 +18,18 @@ const UserAvatar = HookedUserAvatar();
 const displayName = 'dashboard.TaskFeed.TaskFeedComment';
 
 interface Props {
+  colonyAddress: Address;
   createdAt: Event['createdAt'];
   initiatorAddress: Event['initiatorAddress'];
   message: TaskMessageEvent['message'];
 }
 
-const TaskFeedComment = ({ createdAt, initiatorAddress, message }: Props) => {
+const TaskFeedComment = ({
+  colonyAddress,
+  createdAt,
+  initiatorAddress,
+  message,
+}: Props) => {
   const { Decorate } = new TextDecorator({
     email: (text, normalized) => <ExternalLink text={text} href={normalized} />,
     link: (text, normalized) => <ExternalLink text={text} href={normalized} />,
@@ -44,7 +51,12 @@ const TaskFeedComment = ({ createdAt, initiatorAddress, message }: Props) => {
     >
       {!isCurrentUser && (
         <div className={styles.commentAvatar}>
-          <UserAvatar address={initiatorAddress} showInfo size="s" />
+          <UserAvatar
+            address={initiatorAddress}
+            colonyAddress={colonyAddress}
+            showInfo
+            size="s"
+          />
         </div>
       )}
       <div className={styles.commentMain}>

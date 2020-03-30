@@ -1,58 +1,87 @@
 import React, { ReactNode } from 'react';
+import { PopperProps } from 'react-popper';
 
+import Popover from '~core/Popover';
 import { AnyUser, AnyToken } from '~data/index';
+import { Address } from '~types/index';
 
-import { Tooltip } from '~core/Popover';
-
-import UserInfoPopover from './UserInfoPopover';
+import MemberInfoPopover from './MemberInfoPopover';
 import TokenInfoPopover from './TokenInfoPopover';
+import UserInfoPopover from './UserInfoPopover';
 
-interface Props {
+interface TokenContentProps {
+  isTokenNative: boolean;
+  token: AnyToken;
+}
+
+interface BasicUserContentProps {
+  user: AnyUser;
+}
+
+interface MemberContentProps {
+  colonyAddress: Address;
+  domainId: number | undefined;
+  user: AnyUser;
+}
+
+type ContentProps =
+  | TokenContentProps
+  | BasicUserContentProps
+  | MemberContentProps;
+
+export type Props = ContentProps & {
   /** Children elemnts or components to wrap the tooltip around */
   children?: ReactNode;
-  /** The complete user object, optional */
-  user?: AnyUser;
-  /** The complete token object, optional */
-  token?: AnyToken;
-  /** Used in conjuction with `token` to be able to display a user message informing that we're dealing with a native token */
-  isTokenNative?: boolean;
+  /** Passed onto `Popover` component */
+  popperProps?: PopperProps;
   /** How the popover gets triggered */
   trigger?: 'hover' | 'click' | 'disabled';
-}
-
-interface ContentProps {
-  user?: AnyUser;
-  token?: AnyToken;
-  isTokenNative: boolean;
-}
+};
 
 const displayName = 'InfoPopover';
 
-const renderContent = ({ user, token, isTokenNative }: ContentProps) => {
-  if (user) return <UserInfoPopover user={user} />;
-
-  if (token) {
-    return <TokenInfoPopover token={token} isTokenNative={isTokenNative} />;
+const renderContent = (contentProps: ContentProps) => {
+  /**
+   * Use exhaustive checks to satisfy both TS & graphql (each in their own way)
+   */
+  if (
+    'colonyAddress' in contentProps &&
+    typeof contentProps.colonyAddress !== 'undefined'
+  ) {
+    const { colonyAddress, domainId, user } = contentProps;
+    return (
+      <MemberInfoPopover
+        colonyAddress={colonyAddress}
+        domainId={domainId}
+        user={user}
+      />
+    );
   }
-
+  if ('token' in contentProps && typeof contentProps.token !== 'undefined') {
+    const { isTokenNative, token } = contentProps;
+    return <TokenInfoPopover token={token} isTokenNative={!!isTokenNative} />;
+  }
+  if ('user' in contentProps && typeof contentProps.user !== 'undefined') {
+    const { user } = contentProps;
+    return <UserInfoPopover user={user} />;
+  }
   return null;
 };
 
 const InfoPopover = ({
-  user,
-  token,
-  isTokenNative = false,
   children,
+  popperProps,
   trigger = 'click',
+  ...contentProps
 }: Props) => {
   return (
-    <Tooltip
-      content={renderContent({ user, token, isTokenNative })}
-      trigger={user || token ? trigger : 'disabled'}
-      darkTheme={false}
+    <Popover
+      content={renderContent(contentProps)}
+      popperProps={popperProps}
+      trigger={trigger}
     >
       {children}
-    </Tooltip>
+    </Popover>
   );
 };
 

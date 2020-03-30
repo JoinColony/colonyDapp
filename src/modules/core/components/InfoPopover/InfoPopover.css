@@ -1,7 +1,22 @@
 .main {
-  padding: 9px 4px;
   max-width: 430px;
   font-size: var(--size-small);
+}
+
+.section {
+  padding: 10px 15px;
+}
+
+.section:first-of-type {
+  padding-top: 15px;
+}
+
+.section:last-of-type {
+  padding-bottom: 15px;
+}
+
+.section + .section {
+  border-top: 1px solid var(--temp-grey-5);
 }
 
 .displayName {
@@ -46,9 +61,19 @@
   height: auto;
 }
 
+.reputation {
+  display: flex;
+  align-items: baseline;
+}
+
+.reputationHeading {
+  margin-right: 8px;
+}
+
 .badges {
   display: flex;
   align-items: center;
+  margin-top: 5px;
 }
 
 .badges > figure {
@@ -64,14 +89,4 @@
 
 .nativeTokenMessage {
   margin-top: 6px;
-}
-
-.etherscanDivider {
-  /*
-   * @NOTE Negative Margins
-   * This is be able to extend the border divider past the container's margin constraints
-   */
-  margin: 10px -10px 0 -10px;
-  padding: 12px 0 0 10px;
-  border-top: 1px solid var(--temp-grey-5);
 }

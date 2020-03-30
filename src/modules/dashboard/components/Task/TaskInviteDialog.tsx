@@ -114,6 +114,7 @@ const TaskInviteDialog = ({
                 />
                 {tokens && (
                   <Assignment
+                    colonyAddress={colonyAddress}
                     payouts={payouts}
                     nativeTokenAddress={nativeTokenAddress}
                     pending

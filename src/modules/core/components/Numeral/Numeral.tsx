@@ -9,8 +9,9 @@ import { getMainClasses } from '~utils/css';
 import styles from './Numeral.css';
 
 interface Appearance {
-  theme: 'primary' | 'grey' | 'dark';
-  size: 'medium' | 'large' | 'small';
+  theme: 'primary' | 'grey' | 'dark' | 'blue';
+  size?: 'medium' | 'large' | 'small';
+  weight?: 'medium';
 }
 
 export interface Props extends HTMLAttributes<HTMLSpanElement> {

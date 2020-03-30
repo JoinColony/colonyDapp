@@ -39,6 +39,7 @@ import { useSelector } from '~utils/hooks';
 import { getFriendlyName } from '../../../users/transformers';
 import { domainSelector } from '../../selectors';
 import taskSkillsTree from '../TaskSkills/taskSkillsTree';
+import { SpinnerLoader } from '~core/Preloaders';
 
 const componentDisplayName = 'dashboard.TaskFeedEvent';
 
@@ -137,17 +138,24 @@ interface EventProps<C> {
   colonyAddress: Address;
   initiator: AnyUser;
   context: C;
+  domainId?: number;
 }
 
 interface InteractiveUsernameProps {
+  colonyAddress: Address;
+  domainId: number | undefined;
   userAddress: Address;
 }
 
-const InteractiveUsername = ({ userAddress }: InteractiveUsernameProps) => {
+const InteractiveUsername = ({
+  colonyAddress,
+  domainId,
+  userAddress,
+}: InteractiveUsernameProps) => {
   const user = useUser(userAddress);
   const friendlyName = getFriendlyName(user);
   return (
-    <InfoPopover user={user}>
+    <InfoPopover colonyAddress={colonyAddress} domainId={domainId} user={user}>
       <span title={friendlyName} className={styles.highlightCursor}>
         {friendlyName}
       </span>
@@ -161,6 +169,7 @@ const TaskFeedEventDomainSet = ({
   initiator: {
     profile: { walletAddress },
   },
+  domainId,
 }: EventProps<SetTaskDomainEvent>) => {
   const { formatMessage } = useIntl();
   const domain = useSelector(domainSelector, [colonyAddress, ethDomainId]);
@@ -177,30 +186,46 @@ const TaskFeedEventDomainSet = ({
             {domainName}
           </span>
         ),
-        user: <InteractiveUsername userAddress={walletAddress} />,
+        user: (
+          <InteractiveUsername
+            colonyAddress={colonyAddress}
+            userAddress={walletAddress}
+            domainId={domainId}
+          />
+        ),
       }}
     />
   );
 };
 
 const TaskFeedEventCreated = ({
+  colonyAddress,
   initiator: {
     profile: { walletAddress },
   },
+  domainId,
 }: EventProps<CreateTaskEvent>) => (
   <FormattedMessage
     {...MSG.created}
     values={{
-      user: <InteractiveUsername userAddress={walletAddress} />,
+      user: (
+        <InteractiveUsername
+          colonyAddress={colonyAddress}
+          domainId={domainId}
+          userAddress={walletAddress}
+        />
+      ),
     }}
   />
 );
 
 const TaskFeedEventDueDateSet = ({
+  colonyAddress,
   context: { dueDate },
   initiator: {
     profile: { walletAddress },
   },
+  domainId,
 }: EventProps<SetTaskDueDateEvent>) => {
   const { formatDate } = useIntl();
   const formattedDate = formatDate(new Date(dueDate), {
@@ -212,7 +237,13 @@ const TaskFeedEventDueDateSet = ({
     <FormattedMessage
       {...MSG.dueDateSet}
       values={{
-        user: <InteractiveUsername userAddress={walletAddress} />,
+        user: (
+          <InteractiveUsername
+            colonyAddress={colonyAddress}
+            domainId={domainId}
+            userAddress={walletAddress}
+          />
+        ),
         dueDate: dueDate && (
           <span title={formattedDate} className={styles.highlight}>
             {formattedDate}
@@ -230,6 +261,7 @@ const TaskFeedEventPayoutSet = ({
   initiator: {
     profile: { walletAddress },
   },
+  domainId,
 }: EventProps<SetTaskPayoutEvent>) => {
   const { data: tokenData } = useTokenQuery({
     variables: { address: tokenAddress },
@@ -240,14 +272,23 @@ const TaskFeedEventPayoutSet = ({
   const { decimals = DEFAULT_TOKEN_DECIMALS, symbol = '', address = '' } =
     (tokenData && tokenData.token) || {};
   const { nativeTokenAddress = '' } = (colonyData && colonyData.colony) || {};
+  if (!tokenData) {
+    return <SpinnerLoader />;
+  }
   return (
     <FormattedMessage
       {...MSG.payoutSet}
       values={{
-        user: <InteractiveUsername userAddress={walletAddress} />,
+        user: (
+          <InteractiveUsername
+            colonyAddress={colonyAddress}
+            domainId={domainId}
+            userAddress={walletAddress}
+          />
+        ),
         payout: (
           <InfoPopover
-            token={tokenData && tokenData.token}
+            token={tokenData.token}
             isTokenNative={address === nativeTokenAddress}
           >
             <span className={styles.highlightNumeral}>
@@ -270,23 +311,33 @@ const TaskFeedEventPayoutSet = ({
 };
 
 const TaskFeedEventPayoutRemoved = ({
+  colonyAddress,
   initiator: {
     profile: { walletAddress },
   },
+  domainId,
 }: EventProps<RemoveTaskPayoutEvent>) => (
   <FormattedMessage
     {...MSG.payoutRemoved}
     values={{
-      user: <InteractiveUsername userAddress={walletAddress} />,
+      user: (
+        <InteractiveUsername
+          colonyAddress={colonyAddress}
+          domainId={domainId}
+          userAddress={walletAddress}
+        />
+      ),
     }}
   />
 );
 
 const TaskFeedEventSkillSet = ({
+  colonyAddress,
   context: { ethSkillId },
   initiator: {
     profile: { walletAddress },
   },
+  domainId,
 }: EventProps<SetTaskSkillEvent>) => {
   const skill = useMemo(
     () => taskSkillsTree.find(({ id }) => id === ethSkillId),
@@ -297,7 +348,13 @@ const TaskFeedEventSkillSet = ({
     <FormattedMessage
       {...MSG.skillSet}
       values={{
-        user: <InteractiveUsername userAddress={walletAddress} />,
+        user: (
+          <InteractiveUsername
+            colonyAddress={colonyAddress}
+            domainId={domainId}
+            userAddress={walletAddress}
+          />
+        ),
         skillName: (
           <span title={skillName} className={styles.highlight}>
             {skillName}
@@ -309,45 +366,69 @@ const TaskFeedEventSkillSet = ({
 };
 
 const TaskFeedEventSkillRemoved = ({
+  colonyAddress,
   initiator: {
     profile: { walletAddress },
   },
+  domainId,
 }: EventProps<RemoveTaskSkillEvent>) => {
   return (
     <FormattedMessage
       {...MSG.skillRemoved}
       values={{
-        user: <InteractiveUsername userAddress={walletAddress} />,
+        user: (
+          <InteractiveUsername
+            colonyAddress={colonyAddress}
+            domainId={domainId}
+            userAddress={walletAddress}
+          />
+        ),
       }}
     />
   );
 };
 
 const TaskFeedEventCancelled = ({
+  colonyAddress,
   initiator: {
     profile: { walletAddress },
   },
+  domainId,
 }: EventProps<CancelTaskEvent>) => (
   <FormattedMessage
     {...MSG.cancelled}
     values={{
-      user: <InteractiveUsername userAddress={walletAddress} />,
+      user: (
+        <InteractiveUsername
+          colonyAddress={colonyAddress}
+          domainId={domainId}
+          userAddress={walletAddress}
+        />
+      ),
     }}
   />
 );
 
 const TaskFeedEventDescriptionSet = ({
+  colonyAddress,
   context: { description },
   initiator: {
     profile: { walletAddress },
   },
+  domainId,
 }: EventProps<SetTaskDescriptionEvent>) => {
   if (!description) {
     return (
       <FormattedMessage
         {...MSG.descriptionRemoved}
         values={{
-          user: <InteractiveUsername userAddress={walletAddress} />,
+          user: (
+            <InteractiveUsername
+              colonyAddress={colonyAddress}
+              domainId={domainId}
+              userAddress={walletAddress}
+            />
+          ),
         }}
       />
     );
@@ -356,7 +437,13 @@ const TaskFeedEventDescriptionSet = ({
     <FormattedMessage
       {...MSG.descriptionSet}
       values={{
-        user: <InteractiveUsername userAddress={walletAddress} />,
+        user: (
+          <InteractiveUsername
+            colonyAddress={colonyAddress}
+            domainId={domainId}
+            userAddress={walletAddress}
+          />
+        ),
         description: (
           <span title={description} className={styles.highlight}>
             {description}
@@ -368,30 +455,46 @@ const TaskFeedEventDescriptionSet = ({
 };
 
 const TaskFeedEventFinalized = ({
+  colonyAddress,
   initiator: {
     profile: { walletAddress },
   },
+  domainId,
 }: EventProps<FinalizeTaskEvent>) => (
   <FormattedMessage
     {...MSG.finalized}
     values={{
-      user: <InteractiveUsername userAddress={walletAddress} />,
+      user: (
+        <InteractiveUsername
+          colonyAddress={colonyAddress}
+          domainId={domainId}
+          userAddress={walletAddress}
+        />
+      ),
     }}
   />
 );
 
 const TaskFeedEventTitleSet = ({
+  colonyAddress,
   context: { title },
   initiator: {
     profile: { walletAddress },
   },
+  domainId,
 }: EventProps<SetTaskTitleEvent>) => {
   if (!title) {
     return (
       <FormattedMessage
         {...MSG.titleRemoved}
         values={{
-          user: <InteractiveUsername userAddress={walletAddress} />,
+          user: (
+            <InteractiveUsername
+              colonyAddress={colonyAddress}
+              domainId={domainId}
+              userAddress={walletAddress}
+            />
+          ),
         }}
       />
     );
@@ -400,7 +503,13 @@ const TaskFeedEventTitleSet = ({
     <FormattedMessage
       {...MSG.titleSet}
       values={{
-        user: <InteractiveUsername userAddress={walletAddress} />,
+        user: (
+          <InteractiveUsername
+            colonyAddress={colonyAddress}
+            domainId={domainId}
+            userAddress={walletAddress}
+          />
+        ),
         title: (
           <span title={title} className={styles.highlight}>
             {title}
@@ -412,74 +521,132 @@ const TaskFeedEventTitleSet = ({
 };
 
 const TaskFeedEventWorkInviteSent = ({
+  colonyAddress,
   context: { workerAddress },
   initiator: {
     profile: { walletAddress },
   },
+  domainId,
 }: EventProps<SendWorkInviteEvent>) => (
   <FormattedMessage
     {...MSG.workInviteSent}
     values={{
-      user: <InteractiveUsername userAddress={walletAddress} />,
-      invitedUser: <InteractiveUsername userAddress={workerAddress} />,
+      user: (
+        <InteractiveUsername
+          colonyAddress={colonyAddress}
+          domainId={domainId}
+          userAddress={walletAddress}
+        />
+      ),
+      invitedUser: (
+        <InteractiveUsername
+          colonyAddress={colonyAddress}
+          domainId={domainId}
+          userAddress={workerAddress}
+        />
+      ),
     }}
   />
 );
 
 const TaskFeedEventWorkRequestCreated = ({
+  colonyAddress,
   initiator: {
     profile: { walletAddress },
   },
+  domainId,
 }: EventProps<CreateWorkRequestEvent>) => (
   <FormattedMessage
     {...MSG.workRequestCreated}
     values={{
-      user: <InteractiveUsername userAddress={walletAddress} />,
+      user: (
+        <InteractiveUsername
+          colonyAddress={colonyAddress}
+          domainId={domainId}
+          userAddress={walletAddress}
+        />
+      ),
     }}
   />
 );
 
 const TaskFeedEventWorkerAssigned = ({
+  colonyAddress,
   context: { workerAddress },
   initiator: {
     profile: { walletAddress },
   },
+  domainId,
 }: EventProps<AssignWorkerEvent>) => (
   <FormattedMessage
     {...MSG.workerAssigned}
     values={{
-      user: <InteractiveUsername userAddress={walletAddress} />,
-      worker: <InteractiveUsername userAddress={workerAddress} />,
+      user: (
+        <InteractiveUsername
+          colonyAddress={colonyAddress}
+          domainId={domainId}
+          userAddress={walletAddress}
+        />
+      ),
+      worker: (
+        <InteractiveUsername
+          colonyAddress={colonyAddress}
+          domainId={domainId}
+          userAddress={workerAddress}
+        />
+      ),
     }}
   />
 );
 
 const TaskFeedEventWorkerUnassigned = ({
+  colonyAddress,
   context: { workerAddress },
   initiator: {
     profile: { walletAddress },
   },
+  domainId,
 }: EventProps<UnassignWorkerEvent>) => (
   <FormattedMessage
     {...MSG.workerUnassigned}
     values={{
-      user: <InteractiveUsername userAddress={walletAddress} />,
-      worker: <InteractiveUsername userAddress={workerAddress} />,
+      user: (
+        <InteractiveUsername
+          colonyAddress={colonyAddress}
+          domainId={domainId}
+          userAddress={walletAddress}
+        />
+      ),
+      worker: (
+        <InteractiveUsername
+          colonyAddress={colonyAddress}
+          domainId={domainId}
+          userAddress={workerAddress}
+        />
+      ),
     }}
   />
 );
 
 const TaskFeedEventPending = ({
+  colonyAddress,
   context: { txHash },
   initiator: {
     profile: { walletAddress },
   },
+  domainId,
 }: EventProps<SetTaskPendingEvent>) => {
   return (
     <FormattedMessage
       {...MSG.pending}
       values={{
-        user: <InteractiveUsername userAddress={walletAddress} />,
+        user: (
+          <InteractiveUsername
+            colonyAddress={colonyAddress}
+            domainId={domainId}
+            userAddress={walletAddress}
+          />
+        ),
         txHash: (
           <TransactionLink hash={txHash} className={styles.highlightTxHash} />
         ),

@@ -1,7 +1,8 @@
 import React from 'react';
+import { PopperProps } from 'react-popper';
 
 import Avatar from '~core/Avatar';
-import InfoPopover from '~core/InfoPopover';
+import InfoPopover, { Props as InfoPopoverProps } from '~core/InfoPopover';
 import Link from '~core/NavLink';
 import { Address } from '~types/index';
 import { AnyUser } from '~data/index';
@@ -9,8 +10,9 @@ import { AnyUser } from '~data/index';
 import { getUsername } from '../../../users/transformers';
 
 import styles from './UserAvatar.css';
+import { getMainClasses } from '~utils/css';
 
-export interface Props {
+interface BaseProps {
   /** Address of the current user for identicon fallback */
   address: Address;
 
@@ -22,6 +24,9 @@ export interface Props {
 
   /** Avatars that are not set have a different placeholder */
   notSet?: boolean;
+
+  /** Passed on to the `Popper` component */
+  popperProps?: PopperProps;
 
   /** If true the UserAvatar links to the user's profile */
   showLink?: boolean;
@@ -36,6 +41,14 @@ export interface Props {
   user?: AnyUser;
 }
 
+/** Used for the infopopover */
+interface PropsForReputation extends BaseProps {
+  colonyAddress?: Address;
+  domainId?: number;
+}
+
+export type Props = BaseProps | PropsForReputation;
+
 const displayName = 'UserAvatar';
 
 const UserAvatar = ({
@@ -45,16 +58,35 @@ const UserAvatar = ({
   showInfo,
   showLink,
   notSet,
+  popperProps,
   size,
   user = {
     id: address,
     profile: { walletAddress: address },
   },
+  ...rest
 }: Props) => {
   const username = getUsername(user);
+  let popoverProps: InfoPopoverProps = {
+    popperProps,
+    trigger: showInfo ? 'click' : 'disabled',
+    user,
+  };
+  if ('colonyAddress' in rest) {
+    const { colonyAddress, domainId } = rest;
+    popoverProps = {
+      ...popoverProps,
+      colonyAddress,
+      domainId,
+    };
+  }
   const avatar = (
-    <InfoPopover trigger={showInfo ? 'click' : 'disabled'} user={user}>
-      <div className={styles.main}>
+    <InfoPopover {...popoverProps}>
+      <div
+        className={getMainClasses({}, styles, {
+          showOnClick: popoverProps.trigger === 'click',
+        })}
+      >
         <Avatar
           avatarURL={avatarURL}
           className={className}

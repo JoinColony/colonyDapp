@@ -155,6 +155,29 @@ query User($address: String!) {
   }
 }
 
+# This isn't currently being used anywhere, but... here it is anyways.
+# In most cases, we'll want to fetch the reputation *after* the user is already fetched,
+# as fetching reputation takes quite a bit longer.
+query UserWithReputation($address: String!, $colonyAddress: String!, $domainId: Int) {
+  user(address: $address) {
+    id
+    profile {
+      username
+      walletAddress
+      displayName
+      bio
+      location
+      website
+      avatarHash
+    }
+    reputation(colonyAddress: $colonyAddress, domainId: $domainId) @client
+  }
+}
+
+query UserReputation($address: String!, $colonyAddress: String!, $domainId: Int) {
+  userReputation(address: $address, colonyAddress: $colonyAddress, domainId: $domainId) @client
+}
+
 query UserTasks($address: String!) {
   user(address: $address) {
     id
@@ -446,10 +469,10 @@ query UserNotifications($address: String!) {
   }
 }
 
-query UserBadges($address: String!) {
+query UserBadges($address: String!, $colonyAddress: String!) {
   user(address: $address) {
     id
-    completedLevels {
+    completedLevels(colonyAddress: $colonyAddress) {
       id
       achievement
       title
