@@ -146,9 +146,10 @@ const Routes = () => {
         path={LEVEL_EDIT_ROUTE}
         component={LevelEdit}
         layout={NavBar}
-        routeProps={{
+        routeProps={({ colonyName, programId }) => ({
           backText: ProgramBackText,
-        }}
+          backRoute: `/colony/${colonyName}/program/${programId}`,
+        })}
       />
       <ConnectedOnlyRoute
         isConnected={isConnected}

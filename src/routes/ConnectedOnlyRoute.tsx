@@ -4,7 +4,7 @@ import { Route, Redirect, RouteProps } from 'react-router-dom';
 import { CONNECT_ROUTE } from './routeConstants';
 import { RouteComponentProps } from '~pages/RouteLayouts';
 
-type routePropsFn = (params: any, search?: string) => RouteComponentProps;
+type routePropsFn = (params: any) => RouteComponentProps;
 
 interface Props extends RouteProps {
   component: ComponentType<any>;
@@ -27,14 +27,11 @@ const ConnectedOnlyRoute = ({
      */
     render={props => {
       const {
-        location: { search },
         location,
         match: { params },
       } = props;
       const passedDownRouteProps =
-        typeof routeProps !== 'function'
-          ? routeProps
-          : routeProps(params, search);
+        typeof routeProps !== 'function' ? routeProps : routeProps(params);
       if (isConnected) {
         return (
           <Layout routeProps={passedDownRouteProps} {...props}>
