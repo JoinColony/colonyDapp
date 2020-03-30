@@ -49,6 +49,10 @@ fragment CreateTaskFields on Task {
   dueDate
   ethDomainId
   ethSkillId
+  events {
+    id
+    type
+  }
   finalizedAt
   title
   workRequestAddresses

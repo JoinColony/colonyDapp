@@ -40,6 +40,10 @@ query Task($id: String!) {
     ethDomainId
     ethSkillId
     ethPotId
+    events {
+      id
+      type
+    }
     finalizedAt
     title
     workInvites {
@@ -204,6 +208,10 @@ query UserTasks($address: String!) {
       dueDate
       ethDomainId
       ethSkillId
+      events {
+        id
+        type
+      }
       finalizedAt
       title
       workRequestAddresses
@@ -325,6 +333,10 @@ query ColonyTasks($address: String!) {
       dueDate
       ethDomainId
       ethSkillId
+      events {
+        id
+        type
+      }
       finalizedAt
       title
       workRequestAddresses

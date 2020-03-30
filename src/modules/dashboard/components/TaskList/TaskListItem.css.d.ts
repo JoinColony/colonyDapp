@@ -5,5 +5,7 @@ export const taskLoading: string;
 export const taskDetails: string;
 export const taskDetailsTitle: string;
 export const taskDetailsReputation: string;
+export const extraInfo: string;
+export const extraInfoItem: string;
 export const taskPayouts: string;
 export const userAvatar: string;

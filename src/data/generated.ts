@@ -1373,7 +1373,7 @@ export type CreateTaskFieldsFragment = (
   & { assignedWorker: Maybe<(
     Pick<User, 'id'>
     & { profile: Pick<UserProfile, 'avatarHash'> }
-  )>, colony: Pick<Colony, 'id' | 'colonyName' | 'displayName' | 'nativeTokenAddress'> }
+  )>, colony: Pick<Colony, 'id' | 'colonyName' | 'displayName' | 'nativeTokenAddress'>, events: Array<Pick<Event, 'id' | 'type'>> }
   & PayoutsFragment
 );
 
@@ -1892,7 +1892,7 @@ export type TaskQuery = { task: (
     )>, colony: Pick<Colony, 'id' | 'colonyAddress' | 'colonyName' | 'avatarHash' | 'displayName' | 'nativeTokenAddress'>, creator: (
       Pick<User, 'id'>
       & { profile: Pick<UserProfile, 'avatarHash' | 'displayName' | 'username' | 'walletAddress'> }
-    ), workInvites: Array<(
+    ), events: Array<Pick<Event, 'id' | 'type'>>, workInvites: Array<(
       Pick<User, 'id'>
       & { profile: Pick<UserProfile, 'avatarHash' | 'displayName' | 'username' | 'walletAddress'> }
     )>, workRequests: Array<(
@@ -1984,7 +1984,7 @@ export type UserTasksQuery = { user: (
       & { assignedWorker: Maybe<(
         Pick<User, 'id'>
         & { profile: Pick<UserProfile, 'avatarHash'> }
-      )>, colony: Pick<Colony, 'id' | 'colonyName' | 'displayName' | 'nativeTokenAddress'> }
+      )>, colony: Pick<Colony, 'id' | 'colonyName' | 'displayName' | 'nativeTokenAddress'>, events: Array<Pick<Event, 'id' | 'type'>> }
       & PayoutsFragment
     )> }
   ) };
@@ -2100,7 +2100,7 @@ export type ColonyTasksQuery = { colony: (
       & { assignedWorker: Maybe<(
         Pick<User, 'id'>
         & { profile: Pick<UserProfile, 'avatarHash'> }
-      )>, colony: Pick<Colony, 'id' | 'colonyName' | 'displayName' | 'nativeTokenAddress'> }
+      )>, colony: Pick<Colony, 'id' | 'colonyName' | 'displayName' | 'nativeTokenAddress'>, events: Array<Pick<Event, 'id' | 'type'>> }
       & PayoutsFragment
     )> }
   ) };
@@ -2294,6 +2294,10 @@ export const CreateTaskFieldsFragmentDoc = gql`
   dueDate
   ethDomainId
   ethSkillId
+  events {
+    id
+    type
+  }
   finalizedAt
   title
   workRequestAddresses
@@ -4487,6 +4491,10 @@ export const TaskDocument = gql`
     ethDomainId
     ethSkillId
     ethPotId
+    events {
+      id
+      type
+    }
     finalizedAt
     title
     workInvites {
@@ -4841,6 +4849,10 @@ export const UserTasksDocument = gql`
       dueDate
       ethDomainId
       ethSkillId
+      events {
+        id
+        type
+      }
       finalizedAt
       title
       workRequestAddresses
@@ -5316,6 +5328,10 @@ export const ColonyTasksDocument = gql`
       dueDate
       ethDomainId
       ethSkillId
+      events {
+        id
+        type
+      }
       finalizedAt
       title
       workRequestAddresses
