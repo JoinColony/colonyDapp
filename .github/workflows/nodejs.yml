@@ -39,10 +39,10 @@ jobs:
       with:
         node-version: ${{ matrix.node-version }}
     - run: yarn install
-    # - run: yarn provision --skip-colony-network-build
     - run: yarn typecheck
     - run: yarn lint:ci
     - run: yarn stylelint:ci
     - run: yarn test:ci
+    - run: yarn webpack:build:prod
       env:
         CI: true
