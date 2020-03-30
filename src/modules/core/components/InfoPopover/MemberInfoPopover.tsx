@@ -1,7 +1,6 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { defineMessages, FormattedMessage, useIntl } from 'react-intl';
 
-import { DEFAULT_TOKEN_DECIMALS } from '~constants';
 import Badge from '~core/Badge';
 import Heading from '~core/Heading';
 import Numeral from '~core/Numeral';
@@ -11,6 +10,7 @@ import {
   useUserBadgesQuery,
   useUserReputationQuery,
   useColonyNativeTokenQuery,
+  useTokenInfoLazyQuery,
 } from '~data/index';
 import { Address } from '~types/index';
 
@@ -56,6 +56,18 @@ const MemberInfoPopover = ({ colonyAddress, domainId, user }: Props) => {
   } = user;
 
   const {
+    data: nativeTokenAddressData,
+    loading: loadingNativeTokenAddress,
+  } = useColonyNativeTokenQuery({
+    variables: { address: colonyAddress },
+  });
+
+  const [
+    fetchTokenInfo,
+    { data: tokenInfoData, loading: loadingTokenInfoData },
+  ] = useTokenInfoLazyQuery();
+
+  const {
     data: userReputationData,
     loading: loadingUserReputation,
     error: errorReputation,
@@ -63,16 +75,18 @@ const MemberInfoPopover = ({ colonyAddress, domainId, user }: Props) => {
     variables: { address: walletAddress, colonyAddress, domainId },
   });
 
-  const {
-    data: nativeTokenData,
-    loading: loadingNativeToken,
-  } = useColonyNativeTokenQuery({
-    variables: { address: colonyAddress },
-  });
-
   const { data } = useUserBadgesQuery({
     variables: { address: walletAddress, colonyAddress },
   });
+
+  useEffect(() => {
+    if (nativeTokenAddressData) {
+      const {
+        colony: { nativeTokenAddress },
+      } = nativeTokenAddressData;
+      fetchTokenInfo({ variables: { address: nativeTokenAddress } });
+    }
+  }, [fetchTokenInfo, nativeTokenAddressData]);
 
   const completedLevels = data ? data.user.completedLevels : [];
 
@@ -89,16 +103,18 @@ const MemberInfoPopover = ({ colonyAddress, domainId, user }: Props) => {
               text={MSG.headingReputation}
             />
           </div>
-          {userReputationData && nativeTokenData && (
+          {userReputationData && tokenInfoData && (
             <Numeral
               appearance={{ theme: 'blue', weight: 'medium' }}
               value={userReputationData.userReputation}
-              unit={DEFAULT_TOKEN_DECIMALS}
+              unit={tokenInfoData.tokenInfo.decimals}
             />
           )}
         </div>
-        {(loadingUserReputation || loadingNativeToken) && <SpinnerLoader />}
-        {userReputationData && (
+        {(loadingUserReputation ||
+          loadingNativeTokenAddress ||
+          loadingTokenInfoData) && <SpinnerLoader />}
+        {userReputationData && tokenInfoData && (
           <>
             <FormattedMessage tagName="b" {...MSG.descriptionReputation} />
           </>
