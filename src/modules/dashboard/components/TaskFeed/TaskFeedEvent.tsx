@@ -138,24 +138,24 @@ interface EventProps<C> {
   colonyAddress: Address;
   initiator: AnyUser;
   context: C;
-  skillId?: number;
+  domainId?: number;
 }
 
 interface InteractiveUsernameProps {
   colonyAddress: Address;
-  skillId: number | undefined;
+  domainId: number | undefined;
   userAddress: Address;
 }
 
 const InteractiveUsername = ({
   colonyAddress,
-  skillId,
+  domainId,
   userAddress,
 }: InteractiveUsernameProps) => {
   const user = useUser(userAddress);
   const friendlyName = getFriendlyName(user);
   return (
-    <InfoPopover colonyAddress={colonyAddress} skillId={skillId} user={user}>
+    <InfoPopover colonyAddress={colonyAddress} domainId={domainId} user={user}>
       <span title={friendlyName} className={styles.highlightCursor}>
         {friendlyName}
       </span>
@@ -169,7 +169,7 @@ const TaskFeedEventDomainSet = ({
   initiator: {
     profile: { walletAddress },
   },
-  skillId,
+  domainId,
 }: EventProps<SetTaskDomainEvent>) => {
   const { formatMessage } = useIntl();
   const domain = useSelector(domainSelector, [colonyAddress, ethDomainId]);
@@ -190,7 +190,7 @@ const TaskFeedEventDomainSet = ({
           <InteractiveUsername
             colonyAddress={colonyAddress}
             userAddress={walletAddress}
-            skillId={skillId}
+            domainId={domainId}
           />
         ),
       }}
@@ -203,7 +203,7 @@ const TaskFeedEventCreated = ({
   initiator: {
     profile: { walletAddress },
   },
-  skillId,
+  domainId,
 }: EventProps<CreateTaskEvent>) => (
   <FormattedMessage
     {...MSG.created}
@@ -211,7 +211,7 @@ const TaskFeedEventCreated = ({
       user: (
         <InteractiveUsername
           colonyAddress={colonyAddress}
-          skillId={skillId}
+          domainId={domainId}
           userAddress={walletAddress}
         />
       ),
@@ -225,7 +225,7 @@ const TaskFeedEventDueDateSet = ({
   initiator: {
     profile: { walletAddress },
   },
-  skillId,
+  domainId,
 }: EventProps<SetTaskDueDateEvent>) => {
   const { formatDate } = useIntl();
   const formattedDate = formatDate(new Date(dueDate), {
@@ -240,7 +240,7 @@ const TaskFeedEventDueDateSet = ({
         user: (
           <InteractiveUsername
             colonyAddress={colonyAddress}
-            skillId={skillId}
+            domainId={domainId}
             userAddress={walletAddress}
           />
         ),
@@ -261,7 +261,7 @@ const TaskFeedEventPayoutSet = ({
   initiator: {
     profile: { walletAddress },
   },
-  skillId,
+  domainId,
 }: EventProps<SetTaskPayoutEvent>) => {
   const { data: tokenData } = useTokenQuery({
     variables: { address: tokenAddress },
@@ -282,7 +282,7 @@ const TaskFeedEventPayoutSet = ({
         user: (
           <InteractiveUsername
             colonyAddress={colonyAddress}
-            skillId={skillId}
+            domainId={domainId}
             userAddress={walletAddress}
           />
         ),
@@ -315,7 +315,7 @@ const TaskFeedEventPayoutRemoved = ({
   initiator: {
     profile: { walletAddress },
   },
-  skillId,
+  domainId,
 }: EventProps<RemoveTaskPayoutEvent>) => (
   <FormattedMessage
     {...MSG.payoutRemoved}
@@ -323,7 +323,7 @@ const TaskFeedEventPayoutRemoved = ({
       user: (
         <InteractiveUsername
           colonyAddress={colonyAddress}
-          skillId={skillId}
+          domainId={domainId}
           userAddress={walletAddress}
         />
       ),
@@ -337,7 +337,7 @@ const TaskFeedEventSkillSet = ({
   initiator: {
     profile: { walletAddress },
   },
-  skillId,
+  domainId,
 }: EventProps<SetTaskSkillEvent>) => {
   const skill = useMemo(
     () => taskSkillsTree.find(({ id }) => id === ethSkillId),
@@ -351,7 +351,7 @@ const TaskFeedEventSkillSet = ({
         user: (
           <InteractiveUsername
             colonyAddress={colonyAddress}
-            skillId={skillId}
+            domainId={domainId}
             userAddress={walletAddress}
           />
         ),
@@ -370,7 +370,7 @@ const TaskFeedEventSkillRemoved = ({
   initiator: {
     profile: { walletAddress },
   },
-  skillId,
+  domainId,
 }: EventProps<RemoveTaskSkillEvent>) => {
   return (
     <FormattedMessage
@@ -379,7 +379,7 @@ const TaskFeedEventSkillRemoved = ({
         user: (
           <InteractiveUsername
             colonyAddress={colonyAddress}
-            skillId={skillId}
+            domainId={domainId}
             userAddress={walletAddress}
           />
         ),
@@ -393,7 +393,7 @@ const TaskFeedEventCancelled = ({
   initiator: {
     profile: { walletAddress },
   },
-  skillId,
+  domainId,
 }: EventProps<CancelTaskEvent>) => (
   <FormattedMessage
     {...MSG.cancelled}
@@ -401,7 +401,7 @@ const TaskFeedEventCancelled = ({
       user: (
         <InteractiveUsername
           colonyAddress={colonyAddress}
-          skillId={skillId}
+          domainId={domainId}
           userAddress={walletAddress}
         />
       ),
@@ -415,7 +415,7 @@ const TaskFeedEventDescriptionSet = ({
   initiator: {
     profile: { walletAddress },
   },
-  skillId,
+  domainId,
 }: EventProps<SetTaskDescriptionEvent>) => {
   if (!description) {
     return (
@@ -425,7 +425,7 @@ const TaskFeedEventDescriptionSet = ({
           user: (
             <InteractiveUsername
               colonyAddress={colonyAddress}
-              skillId={skillId}
+              domainId={domainId}
               userAddress={walletAddress}
             />
           ),
@@ -440,7 +440,7 @@ const TaskFeedEventDescriptionSet = ({
         user: (
           <InteractiveUsername
             colonyAddress={colonyAddress}
-            skillId={skillId}
+            domainId={domainId}
             userAddress={walletAddress}
           />
         ),
@@ -459,7 +459,7 @@ const TaskFeedEventFinalized = ({
   initiator: {
     profile: { walletAddress },
   },
-  skillId,
+  domainId,
 }: EventProps<FinalizeTaskEvent>) => (
   <FormattedMessage
     {...MSG.finalized}
@@ -467,7 +467,7 @@ const TaskFeedEventFinalized = ({
       user: (
         <InteractiveUsername
           colonyAddress={colonyAddress}
-          skillId={skillId}
+          domainId={domainId}
           userAddress={walletAddress}
         />
       ),
@@ -481,7 +481,7 @@ const TaskFeedEventTitleSet = ({
   initiator: {
     profile: { walletAddress },
   },
-  skillId,
+  domainId,
 }: EventProps<SetTaskTitleEvent>) => {
   if (!title) {
     return (
@@ -491,7 +491,7 @@ const TaskFeedEventTitleSet = ({
           user: (
             <InteractiveUsername
               colonyAddress={colonyAddress}
-              skillId={skillId}
+              domainId={domainId}
               userAddress={walletAddress}
             />
           ),
@@ -506,7 +506,7 @@ const TaskFeedEventTitleSet = ({
         user: (
           <InteractiveUsername
             colonyAddress={colonyAddress}
-            skillId={skillId}
+            domainId={domainId}
             userAddress={walletAddress}
           />
         ),
@@ -526,7 +526,7 @@ const TaskFeedEventWorkInviteSent = ({
   initiator: {
     profile: { walletAddress },
   },
-  skillId,
+  domainId,
 }: EventProps<SendWorkInviteEvent>) => (
   <FormattedMessage
     {...MSG.workInviteSent}
@@ -534,14 +534,14 @@ const TaskFeedEventWorkInviteSent = ({
       user: (
         <InteractiveUsername
           colonyAddress={colonyAddress}
-          skillId={skillId}
+          domainId={domainId}
           userAddress={walletAddress}
         />
       ),
       invitedUser: (
         <InteractiveUsername
           colonyAddress={colonyAddress}
-          skillId={skillId}
+          domainId={domainId}
           userAddress={workerAddress}
         />
       ),
@@ -554,7 +554,7 @@ const TaskFeedEventWorkRequestCreated = ({
   initiator: {
     profile: { walletAddress },
   },
-  skillId,
+  domainId,
 }: EventProps<CreateWorkRequestEvent>) => (
   <FormattedMessage
     {...MSG.workRequestCreated}
@@ -562,7 +562,7 @@ const TaskFeedEventWorkRequestCreated = ({
       user: (
         <InteractiveUsername
           colonyAddress={colonyAddress}
-          skillId={skillId}
+          domainId={domainId}
           userAddress={walletAddress}
         />
       ),
@@ -576,7 +576,7 @@ const TaskFeedEventWorkerAssigned = ({
   initiator: {
     profile: { walletAddress },
   },
-  skillId,
+  domainId,
 }: EventProps<AssignWorkerEvent>) => (
   <FormattedMessage
     {...MSG.workerAssigned}
@@ -584,14 +584,14 @@ const TaskFeedEventWorkerAssigned = ({
       user: (
         <InteractiveUsername
           colonyAddress={colonyAddress}
-          skillId={skillId}
+          domainId={domainId}
           userAddress={walletAddress}
         />
       ),
       worker: (
         <InteractiveUsername
           colonyAddress={colonyAddress}
-          skillId={skillId}
+          domainId={domainId}
           userAddress={workerAddress}
         />
       ),
@@ -605,7 +605,7 @@ const TaskFeedEventWorkerUnassigned = ({
   initiator: {
     profile: { walletAddress },
   },
-  skillId,
+  domainId,
 }: EventProps<UnassignWorkerEvent>) => (
   <FormattedMessage
     {...MSG.workerUnassigned}
@@ -613,14 +613,14 @@ const TaskFeedEventWorkerUnassigned = ({
       user: (
         <InteractiveUsername
           colonyAddress={colonyAddress}
-          skillId={skillId}
+          domainId={domainId}
           userAddress={walletAddress}
         />
       ),
       worker: (
         <InteractiveUsername
           colonyAddress={colonyAddress}
-          skillId={skillId}
+          domainId={domainId}
           userAddress={workerAddress}
         />
       ),
@@ -634,7 +634,7 @@ const TaskFeedEventPending = ({
   initiator: {
     profile: { walletAddress },
   },
-  skillId,
+  domainId,
 }: EventProps<SetTaskPendingEvent>) => {
   return (
     <FormattedMessage
@@ -643,7 +643,7 @@ const TaskFeedEventPending = ({
         user: (
           <InteractiveUsername
             colonyAddress={colonyAddress}
-            skillId={skillId}
+            domainId={domainId}
             userAddress={walletAddress}
           />
         ),

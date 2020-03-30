@@ -20,7 +20,7 @@ interface BasicUserContentProps {
 
 interface MemberContentProps {
   colonyAddress: Address;
-  skillId: number | undefined;
+  domainId: number | undefined;
   user: AnyUser;
 }
 
@@ -48,11 +48,11 @@ const renderContent = (contentProps: ContentProps) => {
     'colonyAddress' in contentProps &&
     typeof contentProps.colonyAddress !== 'undefined'
   ) {
-    const { colonyAddress, skillId, user } = contentProps;
+    const { colonyAddress, domainId, user } = contentProps;
     return (
       <MemberInfoPopover
         colonyAddress={colonyAddress}
-        skillId={skillId}
+        domainId={domainId}
         user={user}
       />
     );

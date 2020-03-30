@@ -14,7 +14,7 @@ interface Props<U> {
   colonyAddress: Address;
   onRowClick?: (user: U) => void;
   showUserInfo: boolean;
-  skillId: number | undefined;
+  domainId: number | undefined;
   user: U;
 }
 
@@ -24,11 +24,11 @@ const componentDisplayName = 'MembersList.MembersListItem';
 
 const MembersListItem = <U extends AnyUser = AnyUser>(props: Props<U>) => {
   const {
-    extraItemContent,
     colonyAddress,
+    domainId,
+    extraItemContent,
     onRowClick,
     showUserInfo,
-    skillId,
     user,
   } = props;
   const {
@@ -83,7 +83,7 @@ const MembersListItem = <U extends AnyUser = AnyUser>(props: Props<U>) => {
             }}
             user={user}
             showInfo={!onRowClick || showUserInfo}
-            skillId={skillId}
+            domainId={domainId}
           />
         </div>
         <div className={styles.usernameSection}>

@@ -44,7 +44,7 @@ interface BaseProps {
 /** Used for the infopopover */
 interface PropsForReputation extends BaseProps {
   colonyAddress?: Address;
-  skillId?: number;
+  domainId?: number;
 }
 
 export type Props = BaseProps | PropsForReputation;
@@ -73,11 +73,11 @@ const UserAvatar = ({
     user,
   };
   if ('colonyAddress' in rest) {
-    const { colonyAddress, skillId } = rest;
+    const { colonyAddress, domainId } = rest;
     popoverProps = {
       ...popoverProps,
       colonyAddress,
-      skillId,
+      domainId,
     };
   }
   const avatar = (

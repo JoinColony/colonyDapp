@@ -210,7 +210,7 @@ const Community = ({ colonyAddress }: Props) => {
             <FormattedMessage id={ROLES_COMMUNITY[communityRole]} />
           </span>
         )}
-        skillId={undefined}
+        domainId={undefined}
         users={communityUsers}
       />
     </div>

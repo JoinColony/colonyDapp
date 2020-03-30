@@ -26,16 +26,16 @@ const UserAvatar = HookedUserAvatar();
 
 interface Props {
   colonyAddress: Address;
+  domainId?: number;
   rating: TaskRatingType;
-  skillId?: number;
 }
 
 const displayName = 'dashboard.TaskFeed.TaskFeedRating';
 
 const TaskFeedRating = ({
   colonyAddress,
+  domainId,
   rating: { rater: raterAddress, ratee: rateeAddress, rating },
-  skillId,
 }: Props) => {
   const rater = useUser(raterAddress);
   const ratee = useUser(rateeAddress);
@@ -60,7 +60,7 @@ const TaskFeedRating = ({
               rater: (
                 <InfoPopover
                   colonyAddress={colonyAddress}
-                  skillId={skillId}
+                  domainId={domainId}
                   user={rater}
                 >
                   <span className={styles.userPart}>{friendlyNameRater}</span>
@@ -69,7 +69,7 @@ const TaskFeedRating = ({
               ratee: (
                 <InfoPopover
                   colonyAddress={colonyAddress}
-                  skillId={skillId}
+                  domainId={domainId}
                   user={ratee}
                 >
                   <span className={styles.userPart}>{friendlyNameRatee}</span>

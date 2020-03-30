@@ -1,5 +1,6 @@
 import { Resolvers } from 'apollo-client';
 
+import { ROOT_DOMAIN } from '~constants';
 import { ContextType } from '~context/index';
 import ENS from '~lib/ENS';
 import { Address } from '~types/index';
@@ -7,12 +8,16 @@ import { Address } from '~types/index';
 import { getToken } from './token';
 
 const getUserReputation = async (
-  { networkClient }: ContextType['colonyManager'],
+  colonyManager: ContextType['colonyManager'],
   address: Address,
   colonyAddress: Address,
-  skillId: number,
+  domainId: number,
 ): Promise<string> => {
-  const { reputationAmount } = await networkClient.getReputation({
+  const colonyClient = await colonyManager.getColonyClient(colonyAddress);
+  const { skillId } = await colonyClient.getDomain.call({
+    domainId,
+  });
+  const { reputationAmount } = await colonyManager.networkClient.getReputation({
     address,
     colonyAddress,
     skillId,
@@ -38,14 +43,14 @@ export const userResolvers = ({
       {
         address,
         colonyAddress,
-        skillId = 0,
-      }: { address: Address; colonyAddress: Address; skillId?: number },
+        domainId = ROOT_DOMAIN,
+      }: { address: Address; colonyAddress: Address; domainId?: number },
     ) {
       const reputation = await getUserReputation(
         colonyManager,
         address,
         colonyAddress,
-        skillId,
+        domainId,
       );
       return reputation;
     },
@@ -59,8 +64,8 @@ export const userResolvers = ({
       user,
       {
         colonyAddress,
-        skillId = 0,
-      }: { colonyAddress: Address; skillId: number },
+        domainId = ROOT_DOMAIN,
+      }: { colonyAddress: Address; domainId: number },
     ) {
       const {
         profile: { walletAddress },
@@ -69,7 +74,7 @@ export const userResolvers = ({
         colonyManager,
         walletAddress,
         colonyAddress,
-        skillId,
+        domainId,
       );
       return reputation;
     },

@@ -1,6 +1,7 @@
 import React from 'react';
 import { defineMessages, FormattedMessage, useIntl } from 'react-intl';
 
+import { DEFAULT_TOKEN_DECIMALS } from '~constants';
 import Badge from '~core/Badge';
 import Heading from '~core/Heading';
 import Numeral from '~core/Numeral';
@@ -9,6 +10,7 @@ import {
   AnyUser,
   useUserBadgesQuery,
   useUserReputationQuery,
+  useColonyNativeTokenQuery,
 } from '~data/index';
 import { Address } from '~types/index';
 
@@ -18,7 +20,7 @@ import styles from './InfoPopover.css';
 
 interface Props {
   colonyAddress: Address;
-  skillId?: number;
+  domainId?: number;
   user: AnyUser;
 }
 
@@ -47,7 +49,7 @@ const MSG = defineMessages({
 
 const displayName = 'InfoPopover.MemberInfoPopover';
 
-const MemberInfoPopover = ({ colonyAddress, skillId, user }: Props) => {
+const MemberInfoPopover = ({ colonyAddress, domainId, user }: Props) => {
   const { formatMessage } = useIntl();
   const {
     profile: { walletAddress },
@@ -58,7 +60,14 @@ const MemberInfoPopover = ({ colonyAddress, skillId, user }: Props) => {
     loading: loadingUserReputation,
     error: errorReputation,
   } = useUserReputationQuery({
-    variables: { address: walletAddress, colonyAddress, skillId },
+    variables: { address: walletAddress, colonyAddress, domainId },
+  });
+
+  const {
+    data: nativeTokenData,
+    loading: loadingNativeToken,
+  } = useColonyNativeTokenQuery({
+    variables: { address: colonyAddress },
   });
 
   const { data } = useUserBadgesQuery({
@@ -80,14 +89,15 @@ const MemberInfoPopover = ({ colonyAddress, skillId, user }: Props) => {
               text={MSG.headingReputation}
             />
           </div>
-          {userReputationData && (
+          {userReputationData && nativeTokenData && (
             <Numeral
               appearance={{ theme: 'blue', weight: 'medium' }}
               value={userReputationData.userReputation}
+              unit={DEFAULT_TOKEN_DECIMALS}
             />
           )}
         </div>
-        {loadingUserReputation && <SpinnerLoader />}
+        {(loadingUserReputation || loadingNativeToken) && <SpinnerLoader />}
         {userReputationData && (
           <>
             <FormattedMessage tagName="b" {...MSG.descriptionReputation} />

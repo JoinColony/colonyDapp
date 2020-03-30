@@ -55,8 +55,8 @@ interface Props {
   /** Should the funding be rendered (if set) */
   showFunding?: boolean;
 
-  /** Skill id (for reputation display) */
-  skillId?: number;
+  /** Domain id (for reputation display) */
+  domainId?: number;
 
   /** Ahem... */
   nativeTokenAddress: Address;
@@ -68,7 +68,7 @@ const Assignment = ({
   payouts,
   pending,
   reputation,
-  skillId,
+  domainId,
   showFunding,
   worker,
   workerAddress,
@@ -82,7 +82,7 @@ const Assignment = ({
       <UserInfo
         colonyAddress={colonyAddress}
         placeholder={MSG.placeholder}
-        skillId={skillId}
+        domainId={domainId}
         user={worker}
         userAddress={workerAddress}
       >

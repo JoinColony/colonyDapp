@@ -30,12 +30,12 @@ const defaultRenderAvatar = (
   address: Address,
   user?: AnyUser,
   colonyAddress?: Address,
-  skillId?: number,
+  domainId?: number,
 ) => (
   <UserAvatar
     address={address}
     colonyAddress={colonyAddress}
-    skillId={skillId}
+    domainId={domainId}
     user={user}
     showInfo
     size="xs"
@@ -52,9 +52,9 @@ interface Props {
     address: Address,
     user?: AnyUser,
     colonyAddress?: Address,
-    skillId?: number,
+    domainId?: number,
   ) => ReactNode;
-  skillId?: number;
+  domainId?: number;
 }
 
 const UserInfo = ({
@@ -64,7 +64,7 @@ const UserInfo = ({
   user,
   userAddress,
   renderAvatar = defaultRenderAvatar,
-  skillId,
+  domainId,
 }: Props) => {
   let displayedName;
   if (children) {
@@ -79,7 +79,7 @@ const UserInfo = ({
     <div className={styles.main}>
       {userAddress ? (
         <div className={styles.avatarContainer}>
-          {renderAvatar(userAddress, user, colonyAddress, skillId)}
+          {renderAvatar(userAddress, user, colonyAddress, domainId)}
         </div>
       ) : (
         <Icon

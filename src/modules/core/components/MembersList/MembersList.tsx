@@ -11,7 +11,7 @@ interface Props<U> {
   extraItemContent?: (user: U) => ReactNode;
   onRowClick?: (user: U) => void;
   showUserInfo?: boolean;
-  skillId: number | undefined;
+  domainId: number | undefined;
   users: U[];
 }
 
@@ -22,7 +22,7 @@ const MembersList = <U extends AnyUser = AnyUser>({
   extraItemContent,
   onRowClick,
   showUserInfo = true,
-  skillId,
+  domainId,
   users,
 }: Props<U>) => (
   <ListGroup>
@@ -33,7 +33,7 @@ const MembersList = <U extends AnyUser = AnyUser>({
         key={user.id}
         onRowClick={onRowClick}
         showUserInfo={showUserInfo}
-        skillId={skillId}
+        domainId={domainId}
         user={user}
       />
     ))}

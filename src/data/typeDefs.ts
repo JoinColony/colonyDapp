@@ -59,7 +59,7 @@ export default gql`
 
   extend type User {
     tokens: [Token!]!
-    reputation(colonyAddress: String!, skillId: Int): String!
+    reputation(colonyAddress: String!, domainId: Int): String!
   }
 
   extend type Query {
@@ -72,7 +72,7 @@ export default gql`
     userReputation(
       address: String!
       colonyAddress: String!
-      skillId: Int
+      domainId: Int
     ): String!
     username(address: String!): String!
   }

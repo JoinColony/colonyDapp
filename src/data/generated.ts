@@ -975,7 +975,7 @@ export type QueryUserAddressArgs = {
 export type QueryUserReputationArgs = {
   address: Scalars['String'],
   colonyAddress: Scalars['String'],
-  skillId?: Maybe<Scalars['Int']>
+  domainId?: Maybe<Scalars['Int']>
 };
 
 
@@ -1345,7 +1345,7 @@ export type UserCompletedLevelsArgs = {
 
 export type UserReputationArgs = {
   colonyAddress: Scalars['String'],
-  skillId?: Maybe<Scalars['Int']>
+  domainId?: Maybe<Scalars['Int']>
 };
 
 export type UserProfile = {
@@ -1954,7 +1954,7 @@ export type UserQuery = { user: (
 export type UserWithReputationQueryVariables = {
   address: Scalars['String'],
   colonyAddress: Scalars['String'],
-  skillId?: Maybe<Scalars['Int']>
+  domainId?: Maybe<Scalars['Int']>
 };
 
 
@@ -1966,7 +1966,7 @@ export type UserWithReputationQuery = { user: (
 export type UserReputationQueryVariables = {
   address: Scalars['String'],
   colonyAddress: Scalars['String'],
-  skillId?: Maybe<Scalars['Int']>
+  domainId?: Maybe<Scalars['Int']>
 };
 
 
@@ -4737,7 +4737,7 @@ export type UserQueryHookResult = ReturnType<typeof useUserQuery>;
 export type UserLazyQueryHookResult = ReturnType<typeof useUserLazyQuery>;
 export type UserQueryResult = ApolloReactCommon.QueryResult<UserQuery, UserQueryVariables>;
 export const UserWithReputationDocument = gql`
-    query UserWithReputation($address: String!, $colonyAddress: String!, $skillId: Int) {
+    query UserWithReputation($address: String!, $colonyAddress: String!, $domainId: Int) {
   user(address: $address) {
     id
     profile {
@@ -4749,7 +4749,7 @@ export const UserWithReputationDocument = gql`
       website
       avatarHash
     }
-    reputation(colonyAddress: $colonyAddress, skillId: $skillId) @client
+    reputation(colonyAddress: $colonyAddress, domainId: $domainId) @client
   }
 }
     `;
@@ -4768,7 +4768,7 @@ export const UserWithReputationDocument = gql`
  *   variables: {
  *      address: // value for 'address'
  *      colonyAddress: // value for 'colonyAddress'
- *      skillId: // value for 'skillId'
+ *      domainId: // value for 'domainId'
  *   },
  * });
  */
@@ -4782,8 +4782,8 @@ export type UserWithReputationQueryHookResult = ReturnType<typeof useUserWithRep
 export type UserWithReputationLazyQueryHookResult = ReturnType<typeof useUserWithReputationLazyQuery>;
 export type UserWithReputationQueryResult = ApolloReactCommon.QueryResult<UserWithReputationQuery, UserWithReputationQueryVariables>;
 export const UserReputationDocument = gql`
-    query UserReputation($address: String!, $colonyAddress: String!, $skillId: Int) {
-  userReputation(address: $address, colonyAddress: $colonyAddress, skillId: $skillId) @client
+    query UserReputation($address: String!, $colonyAddress: String!, $domainId: Int) {
+  userReputation(address: $address, colonyAddress: $colonyAddress, domainId: $domainId) @client
 }
     `;
 
@@ -4801,7 +4801,7 @@ export const UserReputationDocument = gql`
  *   variables: {
  *      address: // value for 'address'
  *      colonyAddress: // value for 'colonyAddress'
- *      skillId: // value for 'skillId'
+ *      domainId: // value for 'domainId'
  *   },
  * });
  */
