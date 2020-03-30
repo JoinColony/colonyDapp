@@ -47,6 +47,26 @@ td.taskDetails > div {
   margin-left: 20px;
 }
 
+.commentCountItem {
+  composes: extraInfoItem;
+  display: flex;
+  align-items: center;
+}
+
+.commentCountIcon {
+  margin-right: 5px;
+  margin-bottom: 2px;
+  height: 12px;
+  width: 12px;
+  stroke: none;
+}
+
+.commentCountIcon svg {
+  display: block;
+  height: 12px;
+  width: 12px;
+}
+
 td.taskPayouts {
   flex-basis: 15%;
   justify-content: flex-end;

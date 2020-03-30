@@ -7,5 +7,7 @@ export const taskDetailsTitle: string;
 export const taskDetailsReputation: string;
 export const extraInfo: string;
 export const extraInfoItem: string;
+export const commentCountItem: string;
+export const commentCountIcon: string;
 export const taskPayouts: string;
 export const userAvatar: string;

@@ -3,10 +3,11 @@ import React, { useCallback, useMemo } from 'react';
 import { useHistory } from 'react-router-dom';
 import BigNumber from 'bn.js';
 
-import { AnyTask, Payouts, EventType } from '~data/index';
+import Icon from '~core/Icon';
 import { AbbreviatedNumeral } from '~core/Numeral';
 import PayoutsList from '~core/PayoutsList';
 import { TableRow, TableCell } from '~core/Table';
+import { AnyTask, Payouts, EventType } from '~data/index';
 import HookedUserAvatar from '~users/HookedUserAvatar';
 
 import styles from './TaskListItem.css';
@@ -80,7 +81,16 @@ const TaskListItem = ({ task }: Props) => {
               </div>
             )}
             {commentCount && (
-              <div className={styles.extraInfoItem}>
+              <div className={styles.commentCountItem}>
+                <Icon
+                  appearance={{ size: 'extraTiny' }}
+                  className={styles.commentCountIcon}
+                  name="comment"
+                  title={formatMessage(MSG.titleCommentCount, {
+                    commentCount,
+                    formattedCommentCount: formatNumber(commentCount),
+                  })}
+                />
                 <AbbreviatedNumeral
                   formatOptions={{
                     notation: 'compact',
