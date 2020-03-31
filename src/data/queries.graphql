@@ -24,6 +24,7 @@ query Task($id: String!) {
       nativeTokenAddress
     }
     colonyAddress
+    commentCount @client
     createdAt
     creator {
       id
@@ -203,6 +204,7 @@ query UserTasks($address: String!) {
         nativeTokenAddress
       }
       colonyAddress
+      commentCount @client
       createdAt
       creatorAddress
       dueDate
@@ -328,6 +330,7 @@ query ColonyTasks($address: String!) {
         nativeTokenAddress
       }
       colonyAddress
+      commentCount @client
       createdAt
       creatorAddress
       dueDate

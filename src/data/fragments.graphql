@@ -44,6 +44,7 @@ fragment CreateTaskFields on Task {
     nativeTokenAddress
   }
   colonyAddress
+  commentCount @client
   createdAt
   creatorAddress
   dueDate

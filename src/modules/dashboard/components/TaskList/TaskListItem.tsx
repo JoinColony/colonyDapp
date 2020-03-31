@@ -1,5 +1,5 @@
 import { defineMessages, FormattedMessage, useIntl } from 'react-intl';
-import React, { useCallback, useMemo } from 'react';
+import React, { useCallback } from 'react';
 import { useHistory } from 'react-router-dom';
 import BigNumber from 'bn.js';
 
@@ -7,7 +7,7 @@ import Icon from '~core/Icon';
 import { AbbreviatedNumeral } from '~core/Numeral';
 import PayoutsList from '~core/PayoutsList';
 import { TableRow, TableCell } from '~core/Table';
-import { AnyTask, Payouts, EventType } from '~data/index';
+import { AnyTask, Payouts } from '~data/index';
 import HookedUserAvatar from '~users/HookedUserAvatar';
 
 import styles from './TaskListItem.css';
@@ -42,7 +42,7 @@ const TaskListItem = ({ task }: Props) => {
   const {
     id: draftId,
     assignedWorkerAddress,
-    events,
+    commentCount,
     payouts,
     title = defaultTitle,
     colony: { colonyName, nativeTokenAddress },
@@ -56,11 +56,6 @@ const TaskListItem = ({ task }: Props) => {
       pathname: `/colony/${colonyName}/task/${draftId}`,
     });
   }, [colonyName, draftId, history]);
-
-  const commentCount = useMemo<number>(
-    () => events.filter(({ type }) => type === EventType.TaskMessage).length,
-    [events],
-  );
 
   return (
     <TableRow className={styles.globalLink} onClick={() => handleClick()}>

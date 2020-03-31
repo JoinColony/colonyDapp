@@ -54,6 +54,7 @@ export default gql`
   }
 
   extend type Task {
+    commentCount: Int!
     finalizedPayment: TaskFinalizedPayment
   }
 
