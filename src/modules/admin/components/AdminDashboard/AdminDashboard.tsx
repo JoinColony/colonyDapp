@@ -26,7 +26,12 @@ import {
   TEMP_getUserRolesWithRecovery,
   getAllUserRoles,
 } from '../../../transformers';
-import { canArchitect, hasRoot } from '../../../users/checks';
+import {
+  canArchitect,
+  hasRoot,
+  canFund,
+  canAdminister,
+} from '../../../users/checks';
 import {
   domainsAndRolesFetcher,
   TEMP_userHasRecoveryRoleFetcher,
@@ -82,55 +87,79 @@ const navigationItems = (
 ): NavigationItem[] => {
   const items = [] as NavigationItem[];
 
+  const profileTab = {
+    id: 1,
+    title: MSG.tabProfile,
+    content: <ProfileEdit colony={colony} />,
+  };
+  const tokensTab = {
+    id: 2,
+    title: MSG.tabTokens,
+    content: (
+      <Tokens
+        colonyAddress={colony.colonyAddress}
+        canMintNativeToken={colony.canMintNativeToken}
+        domains={domains}
+        nativeTokenAddress={colony.nativeTokenAddress}
+        rootRoles={rootRoles}
+        tokenAddresses={colony.tokenAddresses}
+      />
+    ),
+  };
+  const domainsTab = {
+    id: 3,
+    title: MSG.tabDomains,
+    content: (
+      <Domains
+        colonyAddress={colony.colonyAddress}
+        domains={domains}
+        rootRoles={rootRoles}
+      />
+    ),
+  };
+  const advancedTab = {
+    id: 5,
+    title: MSG.tabAdvanced,
+    content: <ProfileAdvanced colony={colony} rootRoles={rootRoles} />,
+  };
+  const permissionsTab = {
+    id: 4,
+    title: MSG.tabPermissions,
+    content: (
+      <Permissions colonyAddress={colony.colonyAddress} domains={domains} />
+    ),
+  };
+
+  /*
+   * @NOTE Root role needs have access to the colony's management
+   */
   if (hasRoot(rootRoles)) {
-    items.push({
-      id: 1,
-      title: MSG.tabProfile,
-      content: <ProfileEdit colony={colony} />,
-    });
-    items.push({
-      id: 2,
-      title: MSG.tabTokens,
-      content: (
-        <Tokens
-          colonyAddress={colony.colonyAddress}
-          canMintNativeToken={colony.canMintNativeToken}
-          domains={domains}
-          nativeTokenAddress={colony.nativeTokenAddress}
-          rootRoles={rootRoles}
-          tokenAddresses={colony.tokenAddresses}
-        />
-      ),
-    });
+    items.push(profileTab);
   }
 
+  /*
+   * @NOTE Architecture role can create new domains and change permissions
+   * But what exact permissions can be changed is handled by the component
+   */
   if (canArchitect(allRoles)) {
-    items.push({
-      id: 3,
-      title: MSG.tabDomains,
-      content: (
-        <Domains
-          colonyAddress={colony.colonyAddress}
-          domains={domains}
-          rootRoles={rootRoles}
-        />
-      ),
-    });
-    items.push({
-      id: 4,
-      title: MSG.tabPermissions,
-      content: (
-        <Permissions colonyAddress={colony.colonyAddress} domains={domains} />
-      ),
-    });
+    items.push(domainsTab);
+    items.push(permissionsTab);
   }
 
+  /*
+   * @NOTE Funding role can just transfer funds between *available* domains
+   * It can't also mint more tokens, but that is being handled by the component itself
+   */
+  if (canFund(allRoles)) {
+    items.push(tokensTab);
+  }
+
+  /*
+   * @NOTE Root role needs have access to the colony's management
+   * This needs to be the last call, so that we have the required tab sorting
+   */
   if (hasRoot(rootRoles)) {
-    items.push({
-      id: 5,
-      title: MSG.tabAdvanced,
-      content: <ProfileAdvanced colony={colony} rootRoles={rootRoles} />,
-    });
+    items.push(advancedTab);
   }
 
   return items;
@@ -184,7 +213,10 @@ const AdminDashboard = ({
     return <LoadingTemplate loadingText={MSG.loadingText} />;
   }
 
-  if (!hasRoot(rootUserRoles) && !canArchitect(allUserRoles)) {
+  /*
+   * @NOTE All roles require, in addition to the specific role, the administration role
+   */
+  if (!canAdminister(rootUserRoles)) {
     return <Redirect to={CURRENT_COLONY_ROUTE} />;
   }
 
