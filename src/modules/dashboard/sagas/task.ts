@@ -93,75 +93,78 @@ function* taskFinalize({
     if (!workerAddress)
       throw new Error(`Worker not assigned for task ${draftId}`);
     if (!domainId) throw new Error(`Domain not set for task ${draftId}`);
-    if (!payouts.length) throw new Error(`No payout set for task ${draftId}`);
-    const {
-      amount,
-      token: { address: token, decimals },
-    } = payouts[0];
 
-    const txChannel = yield call(getTxChannel, meta.id);
-    yield fork(createTransaction, meta.id, {
-      context: ContractContexts.COLONY_CONTEXT,
-      methodName: 'makePaymentFundedFromDomain',
-      identifier: colonyAddress,
-      params: {
-        recipient: workerAddress,
-        token,
-        amount: new BigNumber(moveDecimal(amount, decimals)),
-        domainId,
-        skillId: skillId || 0,
-      },
-    });
+    let potId;
 
-    const {
-      payload: { hash: txHash },
-    } = yield takeFrom(txChannel, ActionTypes.TRANSACTION_HASH_RECEIVED);
+    if (payouts.length > 0) {
+      const {
+        amount,
+        token: { address: token, decimals },
+      } = payouts[0];
 
-    if (!persistent) {
-      /*
-       * @NOTE Put the task in a pending state
-       */
-      yield apolloClient.mutate<
-        SetTaskPendingMutation,
-        SetTaskPendingMutationVariables
-      >({
-        mutation: SetTaskPendingDocument,
-        variables: {
-          input: {
-            id: draftId,
-            txHash,
-          },
+      const txChannel = yield call(getTxChannel, meta.id);
+      yield fork(createTransaction, meta.id, {
+        context: ContractContexts.COLONY_CONTEXT,
+        methodName: 'makePaymentFundedFromDomain',
+        identifier: colonyAddress,
+        params: {
+          recipient: workerAddress,
+          token,
+          amount: new BigNumber(moveDecimal(amount, decimals)),
+          domainId,
+          skillId: skillId || 0,
         },
       });
-    }
 
-    yield takeFrom(txChannel, ActionTypes.TRANSACTION_RECEIPT_RECEIVED);
+      const {
+        payload: { hash: txHash },
+      } = yield takeFrom(txChannel, ActionTypes.TRANSACTION_HASH_RECEIVED);
 
-    const {
-      payload: {
-        eventData: { potId },
-      },
-    } = yield takeFrom(txChannel, ActionTypes.TRANSACTION_SUCCEEDED);
-
-    // Refetch token balances for the domains involved
-    yield apolloClient.query<
-      TokenBalancesForDomainsQuery,
-      TokenBalancesForDomainsQueryVariables
-    >({
-      query: TokenBalancesForDomainsDocument,
-      variables: {
-        colonyAddress,
-        tokenAddresses: [token],
+      if (!persistent) {
         /*
-         * @NOTE Also update the value in "All Domains"
+         * @NOTE Put the task in a pending state
          */
-        domainIds: [COLONY_TOTAL_BALANCE_DOMAIN_ID, domainId],
-      },
-      // Force resolvers to update, as query resolvers are only updated on a cache miss
-      // See #4: https://www.apollographql.com/docs/link/links/state/#resolvers
-      // Also: https://www.apollographql.com/docs/react/api/react-apollo/#optionsfetchpolicy
-      fetchPolicy: 'network-only',
-    });
+        yield apolloClient.mutate<
+          SetTaskPendingMutation,
+          SetTaskPendingMutationVariables
+        >({
+          mutation: SetTaskPendingDocument,
+          variables: {
+            input: {
+              id: draftId,
+              txHash,
+            },
+          },
+        });
+      }
+
+      yield takeFrom(txChannel, ActionTypes.TRANSACTION_RECEIPT_RECEIVED);
+
+      const {
+        payload: { eventData },
+      } = yield takeFrom(txChannel, ActionTypes.TRANSACTION_SUCCEEDED);
+      potId = eventData.potId;
+
+      // Refetch token balances for the domains involved
+      yield apolloClient.query<
+        TokenBalancesForDomainsQuery,
+        TokenBalancesForDomainsQueryVariables
+      >({
+        query: TokenBalancesForDomainsDocument,
+        variables: {
+          colonyAddress,
+          tokenAddresses: [token],
+          /*
+           * @NOTE Also update the value in "All Domains"
+           */
+          domainIds: [COLONY_TOTAL_BALANCE_DOMAIN_ID, domainId],
+        },
+        // Force resolvers to update, as query resolvers are only updated on a cache miss
+        // See #4: https://www.apollographql.com/docs/link/links/state/#resolvers
+        // Also: https://www.apollographql.com/docs/react/api/react-apollo/#optionsfetchpolicy
+        fetchPolicy: 'network-only',
+      });
+    }
 
     yield put<AllActions>({
       type: ActionTypes.TASK_FINALIZE_SUCCESS,

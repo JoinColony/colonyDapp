@@ -117,7 +117,6 @@ export const canFinalizeTask = (task: AnyTask, roles: ROLES[]) =>
   isActive(task) &&
   isWorkerSet(task) &&
   isDomainSet(task) &&
-  isPayoutsSet(task) &&
   canAdminister(roles) &&
   canFund(roles);
 
