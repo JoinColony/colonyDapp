@@ -1,4 +1,5 @@
 export const main: string;
+export const extraTiny: string;
 export const sizeTiny: string;
 export const sizeSmall: string;
 export const sizeNormal: string;

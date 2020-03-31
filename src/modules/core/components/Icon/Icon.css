@@ -33,6 +33,11 @@
  * Next set of classes will define the icons's size
  */
 
+.extraTiny {
+  height: 12px;
+  width: 12px;
+}
+
 .sizeTiny {
   height: 14px;
   width: 14px;

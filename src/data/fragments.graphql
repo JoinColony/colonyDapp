@@ -44,11 +44,16 @@ fragment CreateTaskFields on Task {
     nativeTokenAddress
   }
   colonyAddress
+  commentCount @client
   createdAt
   creatorAddress
   dueDate
   ethDomainId
   ethSkillId
+  events {
+    id
+    type
+  }
   finalizedAt
   title
   workRequestAddresses

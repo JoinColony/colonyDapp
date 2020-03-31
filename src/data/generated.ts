@@ -1225,6 +1225,7 @@ export type Task = {
   events: Array<Event>,
   payouts: Array<TaskPayout>,
   txHash?: Maybe<Scalars['String']>,
+  commentCount: Scalars['Int'],
   finalizedPayment?: Maybe<TaskFinalizedPayment>,
 };
 
@@ -1369,11 +1370,11 @@ export type PersistentTaskPayoutsFragment = { payouts: Array<(
   )> };
 
 export type CreateTaskFieldsFragment = (
-  Pick<Task, 'id' | 'assignedWorkerAddress' | 'cancelledAt' | 'colonyAddress' | 'createdAt' | 'creatorAddress' | 'dueDate' | 'ethDomainId' | 'ethSkillId' | 'finalizedAt' | 'title' | 'workRequestAddresses' | 'txHash'>
+  Pick<Task, 'id' | 'assignedWorkerAddress' | 'cancelledAt' | 'colonyAddress' | 'commentCount' | 'createdAt' | 'creatorAddress' | 'dueDate' | 'ethDomainId' | 'ethSkillId' | 'finalizedAt' | 'title' | 'workRequestAddresses' | 'txHash'>
   & { assignedWorker: Maybe<(
     Pick<User, 'id'>
     & { profile: Pick<UserProfile, 'avatarHash'> }
-  )>, colony: Pick<Colony, 'id' | 'colonyName' | 'displayName' | 'nativeTokenAddress'> }
+  )>, colony: Pick<Colony, 'id' | 'colonyName' | 'displayName' | 'nativeTokenAddress'>, events: Array<Pick<Event, 'id' | 'type'>> }
   & PayoutsFragment
 );
 
@@ -1885,14 +1886,14 @@ export type TaskQueryVariables = {
 
 
 export type TaskQuery = { task: (
-    Pick<Task, 'id' | 'assignedWorkerAddress' | 'cancelledAt' | 'colonyAddress' | 'createdAt' | 'creatorAddress' | 'description' | 'dueDate' | 'ethDomainId' | 'ethSkillId' | 'ethPotId' | 'finalizedAt' | 'title' | 'workInviteAddresses' | 'workRequestAddresses' | 'txHash'>
+    Pick<Task, 'id' | 'assignedWorkerAddress' | 'cancelledAt' | 'colonyAddress' | 'commentCount' | 'createdAt' | 'creatorAddress' | 'description' | 'dueDate' | 'ethDomainId' | 'ethSkillId' | 'ethPotId' | 'finalizedAt' | 'title' | 'workInviteAddresses' | 'workRequestAddresses' | 'txHash'>
     & { assignedWorker: Maybe<(
       Pick<User, 'id'>
       & { profile: Pick<UserProfile, 'avatarHash' | 'displayName' | 'username' | 'walletAddress'> }
     )>, colony: Pick<Colony, 'id' | 'colonyAddress' | 'colonyName' | 'avatarHash' | 'displayName' | 'nativeTokenAddress'>, creator: (
       Pick<User, 'id'>
       & { profile: Pick<UserProfile, 'avatarHash' | 'displayName' | 'username' | 'walletAddress'> }
-    ), workInvites: Array<(
+    ), events: Array<Pick<Event, 'id' | 'type'>>, workInvites: Array<(
       Pick<User, 'id'>
       & { profile: Pick<UserProfile, 'avatarHash' | 'displayName' | 'username' | 'walletAddress'> }
     )>, workRequests: Array<(
@@ -1980,11 +1981,11 @@ export type UserTasksQueryVariables = {
 export type UserTasksQuery = { user: (
     Pick<User, 'id'>
     & { tasks: Array<(
-      Pick<Task, 'id' | 'assignedWorkerAddress' | 'cancelledAt' | 'colonyAddress' | 'createdAt' | 'creatorAddress' | 'dueDate' | 'ethDomainId' | 'ethSkillId' | 'finalizedAt' | 'title' | 'workRequestAddresses' | 'txHash'>
+      Pick<Task, 'id' | 'assignedWorkerAddress' | 'cancelledAt' | 'colonyAddress' | 'commentCount' | 'createdAt' | 'creatorAddress' | 'dueDate' | 'ethDomainId' | 'ethSkillId' | 'finalizedAt' | 'title' | 'workRequestAddresses' | 'txHash'>
       & { assignedWorker: Maybe<(
         Pick<User, 'id'>
         & { profile: Pick<UserProfile, 'avatarHash'> }
-      )>, colony: Pick<Colony, 'id' | 'colonyName' | 'displayName' | 'nativeTokenAddress'> }
+      )>, colony: Pick<Colony, 'id' | 'colonyName' | 'displayName' | 'nativeTokenAddress'>, events: Array<Pick<Event, 'id' | 'type'>> }
       & PayoutsFragment
     )> }
   ) };
@@ -2096,11 +2097,11 @@ export type ColonyTasksQueryVariables = {
 export type ColonyTasksQuery = { colony: (
     Pick<Colony, 'id'>
     & { tasks: Array<(
-      Pick<Task, 'id' | 'assignedWorkerAddress' | 'cancelledAt' | 'colonyAddress' | 'createdAt' | 'creatorAddress' | 'dueDate' | 'ethDomainId' | 'ethSkillId' | 'finalizedAt' | 'title' | 'workRequestAddresses' | 'txHash'>
+      Pick<Task, 'id' | 'assignedWorkerAddress' | 'cancelledAt' | 'colonyAddress' | 'commentCount' | 'createdAt' | 'creatorAddress' | 'dueDate' | 'ethDomainId' | 'ethSkillId' | 'finalizedAt' | 'title' | 'workRequestAddresses' | 'txHash'>
       & { assignedWorker: Maybe<(
         Pick<User, 'id'>
         & { profile: Pick<UserProfile, 'avatarHash'> }
-      )>, colony: Pick<Colony, 'id' | 'colonyName' | 'displayName' | 'nativeTokenAddress'> }
+      )>, colony: Pick<Colony, 'id' | 'colonyName' | 'displayName' | 'nativeTokenAddress'>, events: Array<Pick<Event, 'id' | 'type'>> }
       & PayoutsFragment
     )> }
   ) };
@@ -2289,11 +2290,16 @@ export const CreateTaskFieldsFragmentDoc = gql`
     nativeTokenAddress
   }
   colonyAddress
+  commentCount @client
   createdAt
   creatorAddress
   dueDate
   ethDomainId
   ethSkillId
+  events {
+    id
+    type
+  }
   finalizedAt
   title
   workRequestAddresses
@@ -4471,6 +4477,7 @@ export const TaskDocument = gql`
       nativeTokenAddress
     }
     colonyAddress
+    commentCount @client
     createdAt
     creator {
       id
@@ -4487,6 +4494,10 @@ export const TaskDocument = gql`
     ethDomainId
     ethSkillId
     ethPotId
+    events {
+      id
+      type
+    }
     finalizedAt
     title
     workInvites {
@@ -4836,11 +4847,16 @@ export const UserTasksDocument = gql`
         nativeTokenAddress
       }
       colonyAddress
+      commentCount @client
       createdAt
       creatorAddress
       dueDate
       ethDomainId
       ethSkillId
+      events {
+        id
+        type
+      }
       finalizedAt
       title
       workRequestAddresses
@@ -5311,11 +5327,16 @@ export const ColonyTasksDocument = gql`
         nativeTokenAddress
       }
       colonyAddress
+      commentCount @client
       createdAt
       creatorAddress
       dueDate
       ethDomainId
       ethSkillId
+      events {
+        id
+        type
+      }
       finalizedAt
       title
       workRequestAddresses

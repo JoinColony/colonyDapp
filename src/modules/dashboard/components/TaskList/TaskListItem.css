@@ -15,10 +15,16 @@ td.taskLoading {
 }
 
 td.taskDetails {
-  flex-wrap: wrap;
+  flex-direction: column;
+  flex-grow: 1;
+  justify-content: center;
+  align-items: flex-start;
   padding: cellPaddingVertical 0 cellPaddingVertical cellPaddingHorizontal;
-  width: calc(85% - 74px);
   font-weight: var(--weight-semi);
+}
+
+td.taskDetails > div {
+  width: 100%;
 }
 
 .taskDetailsTitle {
@@ -32,18 +38,50 @@ td.taskDetails {
   color: var(--violet);
 }
 
+.extraInfo {
+  display: flex;
+  align-items: baseline;
+}
+
+.extraInfoItem + .extraInfoItem {
+  margin-left: 20px;
+}
+
+.commentCountItem {
+  composes: extraInfoItem;
+  display: flex;
+  align-items: center;
+}
+
+.commentCountIcon {
+  margin-right: 5px;
+  margin-bottom: 2px;
+  height: 12px;
+  width: 12px;
+  stroke: none;
+}
+
+.commentCountIcon svg {
+  display: block;
+  height: 12px;
+  width: 12px;
+}
+
 td.taskPayouts {
+  flex-basis: 15%;
   justify-content: flex-end;
   padding: cellPaddingVertical 0;
-  width: 15%;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
 
 td.userAvatar {
+  flex-basis: 84px;
+
+  /* !important to override table styles */
+  flex-grow: 0 !important;
   justify-content: center;
   padding: cellPaddingVertical cellPaddingHorizontal calc(cellPaddingVertical - 6px);
   height: 88px;
-  width: 84px;
 }

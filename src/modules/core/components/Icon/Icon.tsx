@@ -14,7 +14,14 @@ const displayName = 'Icon';
 
 type Appearance = {
   theme?: 'primary' | 'invert';
-  size?: 'tiny' | 'small' | 'normal' | 'medium' | 'large' | 'huge';
+  size?:
+    | 'extraTiny'
+    | 'tiny'
+    | 'small'
+    | 'normal'
+    | 'medium'
+    | 'large'
+    | 'huge';
 };
 
 interface Props extends Omit<HTMLAttributes<HTMLElement>, 'title'> {

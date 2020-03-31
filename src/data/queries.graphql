@@ -24,6 +24,7 @@ query Task($id: String!) {
       nativeTokenAddress
     }
     colonyAddress
+    commentCount @client
     createdAt
     creator {
       id
@@ -40,6 +41,10 @@ query Task($id: String!) {
     ethDomainId
     ethSkillId
     ethPotId
+    events {
+      id
+      type
+    }
     finalizedAt
     title
     workInvites {
@@ -199,11 +204,16 @@ query UserTasks($address: String!) {
         nativeTokenAddress
       }
       colonyAddress
+      commentCount @client
       createdAt
       creatorAddress
       dueDate
       ethDomainId
       ethSkillId
+      events {
+        id
+        type
+      }
       finalizedAt
       title
       workRequestAddresses
@@ -320,11 +330,16 @@ query ColonyTasks($address: String!) {
         nativeTokenAddress
       }
       colonyAddress
+      commentCount @client
       createdAt
       creatorAddress
       dueDate
       ethDomainId
       ethSkillId
+      events {
+        id
+        type
+      }
       finalizedAt
       title
       workRequestAddresses
