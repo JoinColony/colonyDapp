@@ -117,6 +117,9 @@ const ColonyHome = ({ match, location }: Props) => {
         return [{ id: 'domain.root' }];
 
       default:
+        if (!domains) {
+          return [{ id: 'domain.root' }];
+        }
         return domains[filteredDomainId]
           ? [{ id: 'domain.root' }, domains[filteredDomainId].name]
           : [{ id: 'domain.root' }];
