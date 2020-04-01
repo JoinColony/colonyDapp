@@ -15,8 +15,6 @@ import {
   useCreateUserMutation,
 } from '~data/index';
 
-import en from '../../../../i18n/en-validation.json';
-
 import styles from './StepUserName.css';
 
 type FormValues = {
@@ -67,7 +65,7 @@ const validationSchema = yup.object({
   username: yup
     .string()
     .required()
-    .ensAddress(en.string.username),
+    .username(),
 });
 
 const StepUserName = ({ stepCompleted, wizardForm, nextStep }: Props) => {

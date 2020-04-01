@@ -17,8 +17,6 @@ import {
 } from '~data/index';
 import { DASHBOARD_ROUTE } from '~routes/index';
 
-import en from '../../../../i18n/en-validation.json';
-
 import styles from './StepUserName.css';
 
 interface FormValues {
@@ -62,7 +60,7 @@ const validationSchema = yup.object({
   username: yup
     .string()
     .required()
-    .ensAddress(en.string.username),
+    .username(),
 });
 
 const StepUserName = () => {

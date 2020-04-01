@@ -69,6 +69,21 @@ function ensAddress(msg) {
   });
 }
 
+function username(msg) {
+  return this.test({
+    name: 'username',
+    message: msg || en.string.username,
+    test(value) {
+      try {
+        ensNormalize(value);
+      } catch (e) {
+        return false;
+      }
+      return value ? !!value.match(new RegExp(ENS_DOMAIN_REGEX)) : true;
+    },
+  });
+}
+
 function includes(searchVal, msg) {
   return this.test({
     name: 'includes',
@@ -95,3 +110,4 @@ yup.addMethod(yup.string, 'address', address);
 yup.addMethod(yup.string, 'ensAddress', ensAddress);
 yup.addMethod(yup.array, 'includes', includes);
 yup.addMethod(yup.string, 'cid', cid);
+yup.addMethod(yup.string, 'username', username);
