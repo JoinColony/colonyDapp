@@ -21,6 +21,7 @@ import {
   UserNotificationsDocument,
   useProgramQuery,
 } from '~data/index';
+import { DEFAULT_NETWORK } from '~constants';
 
 import { useLevelAfter } from '../../../../dashboard/hooks/useLevelAfter';
 import { domainsFetcher } from '../../../../dashboard/fetchers';
@@ -233,6 +234,18 @@ const InboxItem = ({
               <FormattedMessage
                 {...MSG[transformNotificationEventNames(eventType)]}
                 values={{
+                  /*
+                   * @NOTE As we do on the server, we hard-code the betacolony for easier user access
+                   * Also, to prevent non-mainnet network breakage we only link to it when we're running
+                   * the app on mainnet
+                   */
+                  betacolony: makeInboxDetail('Betacolony', value =>
+                    DEFAULT_NETWORK === 'mainnet' ? (
+                      <Link to="/colony/beta">{value}</Link>
+                    ) : (
+                      value
+                    ),
+                  ),
                   amount: makeInboxDetail(amount, value => (
                     <Numeral
                       suffix={` ${token ? token.symbol : ''}`}

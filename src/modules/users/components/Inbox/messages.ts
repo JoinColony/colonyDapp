@@ -82,7 +82,7 @@ const messages = defineMessages({
   notificationUserClaimedProfile: {
     id: 'dashboard.Inbox.InboxItem.notificationUserClaimedProfile',
     defaultMessage:
-      'Your first transaction is complete! Your username is {user}. Enjoy colony 🎉',
+      'Welcome, {user} 🎉. Get started by creating a new colony or contributing to the {betacolony}.',
   },
   // structured work notifications
   notificationLevelTaskAccepted: {
