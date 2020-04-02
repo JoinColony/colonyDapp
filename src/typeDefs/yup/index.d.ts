@@ -4,5 +4,6 @@ declare module 'yup' {
   interface StringSchema<T> {
     address(message?: TestOptionsMessage): StringSchema<T>;
     ensAddress(message?: TestOptionsMessage): StringSchema<T>;
+    username(message?: TestOptionsMessage): StringSchema<T>;
   }
 }
