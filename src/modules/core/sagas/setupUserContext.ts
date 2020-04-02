@@ -115,8 +115,7 @@ export default function* setupUserContext(
           address: walletAddress,
         },
       });
-      username =
-        data && data.user && data.user.profile && data.user.profile.username;
+      username = data && data.user.profile.username;
     } catch (caughtError) {
       log.verbose(`Could not find username for ${walletAddress}`);
     }

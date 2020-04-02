@@ -78,13 +78,9 @@ const StepUserName = () => {
             name: values.username,
           },
         });
-        if (
-          data &&
-          data.userByName &&
-          data.userByName.profile &&
-          data.userByName.profile.walletAddress
-        )
+        if (data && data.userByName.profile.walletAddress) {
           return true;
+        }
         return false;
       } catch (e) {
         return false;
