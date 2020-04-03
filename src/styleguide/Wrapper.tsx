@@ -3,7 +3,7 @@ import { Provider } from 'react-redux';
 import { createStore } from 'redux';
 import { IntlProvider } from 'react-intl';
 import { BrowserRouter } from 'react-router-dom';
-import { Map as ImmutableMap, Record } from 'immutable';
+import { Map as ImmutableMap, Record as ImmutableRecord } from 'immutable';
 
 import { Wallet, WALLET_CATEGORIES } from '~immutable/index';
 
@@ -26,14 +26,26 @@ interface Props {
   children: ReactNode;
 }
 
-const MockState = Record({
+interface State {
+  admin: Record<string, any> | undefined;
+  core: Record<string, any> | undefined;
+  dashboard: Record<string, any> | undefined;
+  users: Record<string, any> | undefined;
+}
+
+const MockState = ImmutableRecord<State>({
   admin: undefined,
   core: undefined,
   dashboard: undefined,
   users: undefined,
 });
 
-// @ts-ignore
+/**
+ * @TODO Since we are hardly using redux these days, this should be (at least mostly) removed.
+ * However, since the styleguide won't even run right now, I'm not willing to touch this quite yet.
+ *
+ * Please remove this upon fixing the styleguide.
+ */
 const initialState = MockState({
   admin: {
     transactions: ImmutableMap(),

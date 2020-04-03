@@ -85,14 +85,6 @@ type MaybeFetchedData<T extends undefined | null | { record: any }> = T extends
           : T['record'])
       : T);
 
-// This conditional type allows data to be undefined/null, but uses a
-// further conditional type in order to get the possibly-toJS'ed type.
-type MaybeSelected<
-  T extends undefined | null | { toJS: (...args: any[]) => any }
-> = T extends undefined | null
-  ? T
-  : (T extends { toJS: Function } ? ReturnType<T['toJS']> : T);
-
 /* Used in cases where we need to memoize the transformed output of any data.
  * Transform function has to be pure, obviously
  */
