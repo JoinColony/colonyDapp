@@ -8,7 +8,7 @@ Most common usage: Skills, Domains.
 
 ```jsx
 import { Form, Formik } from 'formik';
-import WrappedItemsList from './ItemsList.js';
+import WrappedItemsList from './index';
 import Button from '../Button';
 
 const singleLevel = [
@@ -35,7 +35,7 @@ const singleLevel = [
 ### Single Level List (unconnected)
 
 ```js
-import WrappedItemsList from './ItemsList.js';
+import WrappedItemsList from './index';
 
 const singleLevel = [
   { id: 1, name: 'Abruzzenhund' },
@@ -66,7 +66,7 @@ const singleLevel = [
 ### Multi Level, Nested List (unconnected)
 
 ```js
-import WrappedItemsList from './ItemsList.js';
+import WrappedItemsList from './index';
 
 const multiLevel = [
   { id: 1, name: 'Metals' },

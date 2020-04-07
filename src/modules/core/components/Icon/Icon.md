@@ -1,7 +1,7 @@
 ### All Icons
 
 ```jsx noeditor
-const { icons, multiColorIcons } = require('./icons.json');
+const { icons, multiColorIcons } = require('../../../../img/icons.json');
 const stringSort = (a, b) => {
   if(a<b) {
     return -1

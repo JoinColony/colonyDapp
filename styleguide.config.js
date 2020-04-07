@@ -1,11 +1,9 @@
 /* eslint-disable */
 
 const path = require('path');
-const webpackConfig = require('./webpack.config.js');
-const propsParser = require('react-docgen-typescript')
-  .withCustomConfig('./tsconfig.json', {})
-  .parse;
-const { findAllComponentDefinitions } = require('react-docgen').resolver;
+const webpackConfig = require('./webpack.dev.js');
+
+const { resolver: { findAllComponentDefinitions } } = require('react-docgen');
 
 module.exports = {
   title: 'Colony UI Style Guide',
@@ -14,7 +12,6 @@ module.exports = {
   },
   resolver: findAllComponentDefinitions,
   webpackConfig,
-  propsParser,
   sections: [
     {
       name: 'Component conventions',
