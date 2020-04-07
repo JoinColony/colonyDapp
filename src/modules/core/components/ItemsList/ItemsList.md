@@ -20,7 +20,8 @@ const singleLevel = [
 <Formik
   initialValues={{ 'connectedItemList': '' }}
   onSubmit={console.log}
-  render={({ values }) => (
+>
+  {({ values }) => (
     <Form>
       <WrappedItemsList list={singleLevel} name="connectedItemList">
         <span style={{ fontWeight: 'bold', color: 'blue' }}>Select a hound</span>
@@ -29,7 +30,7 @@ const singleLevel = [
       <Button type="submit">Submit Hound</Button>
     </Form>
   )}
-/>
+</Formik>
 ```
 
 ### Single Level List (unconnected)
@@ -60,7 +61,7 @@ const singleLevel = [
   { id: 20, name: 'American Alsatian' },
 ];
 
-<WrappedItemsList list={singleLevel} connect={false} />
+<WrappedItemsList name="singleLevelItemList" list={singleLevel} connect={false} />
 ```
 
 ### Multi Level, Nested List (unconnected)
@@ -86,7 +87,7 @@ const multiLevel = [
   { id: 302, name: 'AB-Negative', parent: 30 },
 ];
 
-<WrappedItemsList list={multiLevel} connect={false}>
+<WrappedItemsList name="multiLevelItemList" list={multiLevel} connect={false}>
   <span>This is a nested list (click me!)</span>
 </WrappedItemsList>
 ```
