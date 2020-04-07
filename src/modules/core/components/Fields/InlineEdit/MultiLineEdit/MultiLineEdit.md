@@ -8,12 +8,9 @@ import { Form } from '../..';
 
 <Form
   initialValues={{
-    multiLineEdit: EditorState.createEmpty(),
+    multiLineEdit: '',
   }}
-  onSubmit={({ multiLineEdit }) => {
-    console.log('EditorState:', multiLineEdit);
-    console.log('Plain text value:', multiLineEdit.getCurrentContent().getPlainText());
-  }}
+  onSubmit={(values) => console.log(values)}
 >
   <MultiLineEdit
     label="Multi Line Edit"
