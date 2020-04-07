@@ -1,4 +1,4 @@
-import React, { ReactNode } from 'react';
+import React, { ReactNode, useMemo } from 'react';
 import { PopperProps } from 'react-popper';
 
 import Popover from '~core/Popover';
@@ -40,43 +40,43 @@ export type Props = ContentProps & {
 
 const displayName = 'InfoPopover';
 
-const renderContent = (contentProps: ContentProps) => {
-  /**
-   * Use exhaustive checks to satisfy both TS & graphql (each in their own way)
-   */
-  if (
-    'colonyAddress' in contentProps &&
-    typeof contentProps.colonyAddress !== 'undefined'
-  ) {
-    const { colonyAddress, domainId, user } = contentProps;
-    return (
-      <MemberInfoPopover
-        colonyAddress={colonyAddress}
-        domainId={domainId}
-        user={user}
-      />
-    );
-  }
-  if ('token' in contentProps && typeof contentProps.token !== 'undefined') {
-    const { isTokenNative, token } = contentProps;
-    return <TokenInfoPopover token={token} isTokenNative={!!isTokenNative} />;
-  }
-  if ('user' in contentProps && typeof contentProps.user !== 'undefined') {
-    const { user } = contentProps;
-    return <UserInfoPopover user={user} />;
-  }
-  return null;
-};
-
 const InfoPopover = ({
   children,
   popperProps,
   trigger = 'click',
   ...contentProps
 }: Props) => {
+  const renderContent = useMemo(() => {
+    /**
+     * Use exhaustive checks to satisfy both TS & graphql (each in their own way)
+     */
+    if (
+      'colonyAddress' in contentProps &&
+      typeof contentProps.colonyAddress !== 'undefined'
+    ) {
+      const { colonyAddress, domainId, user } = contentProps;
+      return (
+        <MemberInfoPopover
+          colonyAddress={colonyAddress}
+          domainId={domainId}
+          user={user}
+        />
+      );
+    }
+    if ('token' in contentProps && typeof contentProps.token !== 'undefined') {
+      const { isTokenNative, token } = contentProps;
+      return <TokenInfoPopover token={token} isTokenNative={!!isTokenNative} />;
+    }
+    if ('user' in contentProps && typeof contentProps.user !== 'undefined') {
+      const { user } = contentProps;
+      return <UserInfoPopover user={user} />;
+    }
+    return null;
+  }, [contentProps]);
+
   return (
     <Popover
-      content={renderContent(contentProps)}
+      content={renderContent}
       popperProps={popperProps}
       trigger={trigger}
     >
