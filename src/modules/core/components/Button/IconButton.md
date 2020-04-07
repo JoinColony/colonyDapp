@@ -12,10 +12,8 @@ const MSG = defineMessages({
     defaultMessage: 'Click Me',
   },
 });
-```
 
-```js
-<IconButton text={buttonText} />
+<IconButton text={MSG.buttonText} />
 ```
 
 ### Icons
@@ -23,7 +21,16 @@ const MSG = defineMessages({
 All icons available to the `<Icon />` component are also supported here.
 
 ```js
-<IconButton text={buttonText} icon="circle-plus" />
+import { defineMessages } from 'react-intl';
+
+const MSG = defineMessages({
+  buttonText: {
+    id: 'styleguide.buttonText',
+    defaultMessage: 'Click Me',
+  },
+});
+
+<IconButton text={MSG.buttonText} icon="circle-plus" />
 ```
 
 ### Themes
@@ -31,12 +38,23 @@ All icons available to the `<Icon />` component are also supported here.
 This component supports all the themes the `<Button />` component, on which is based on, supports.
 
 ```js
-<IconButton appearance={{ theme: 'primary', size: 'medium' }} text={buttonText} />
-<IconButton appearance={{ theme: 'secondary', size: 'medium' }} text={buttonText} />
-<IconButton appearance={{ theme: 'danger', size: 'medium' }} text={buttonText} />
-<IconButton appearance={{ theme: 'ghost', size: 'medium' }} text={buttonText} />
-<IconButton appearance={{ theme: 'underlinedBold', size: 'medium' }} text={buttonText} />
-<IconButton appearance={{ theme: 'blue', size: 'medium' }} text={buttonText} />
+import { defineMessages } from 'react-intl';
+
+const MSG = defineMessages({
+  buttonText: {
+    id: 'styleguide.buttonText',
+    defaultMessage: 'Click Me',
+  },
+});
+
+<>
+  <IconButton appearance={{ theme: 'primary', size: 'medium' }} text={MSG.buttonText} />
+  <IconButton appearance={{ theme: 'secondary', size: 'medium' }} text={MSG.buttonText} />
+  <IconButton appearance={{ theme: 'danger', size: 'medium' }} text={MSG.buttonText} />
+  <IconButton appearance={{ theme: 'ghost', size: 'medium' }} text={MSG.buttonText} />
+  <IconButton appearance={{ theme: 'underlinedBold', size: 'medium' }} text={MSG.buttonText} />
+  <IconButton appearance={{ theme: 'blue', size: 'medium' }} text={MSG.buttonText} />
+</>
 ```
 
 ### Sizes
@@ -44,9 +62,20 @@ This component supports all the themes the `<Button />` component, on which is b
 As with themes, this component supports all 3 sizes the base component has: `small`, `medium`, `large`.
 
 ```js
-<IconButton appearance={{ theme: 'primary', size: 'small' }} text={buttonText} />
-<IconButton appearance={{ theme: 'primary', size: 'medium' }} text={buttonText} />
-<IconButton appearance={{ theme: 'primary', size: 'large' }} text={buttonText} />
+import { defineMessages } from 'react-intl';
+
+const MSG = defineMessages({
+  buttonText: {
+    id: 'styleguide.buttonText',
+    defaultMessage: 'Click Me',
+  },
+});
+
+<>
+  <IconButton appearance={{ theme: 'primary', size: 'small' }} text={MSG.buttonText} />
+  <IconButton appearance={{ theme: 'primary', size: 'medium' }} text={MSG.buttonText} />
+  <IconButton appearance={{ theme: 'primary', size: 'large' }} text={MSG.buttonText} />
+</>
 ```
 
 ### Limitations
