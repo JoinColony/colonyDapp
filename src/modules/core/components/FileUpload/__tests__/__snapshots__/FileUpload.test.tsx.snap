@@ -133,7 +133,7 @@ exports[`FileUpload component Renders initial component 1`] = `
           pop={[Function]}
           push={[Function]}
           remove={[Function]}
-          renderPlaceholder={<Placeholder />}
+          renderPlaceholder={<FileUpload.DefaultPlaceholder />}
           replace={[Function]}
           swap={[Function]}
           unshift={[Function]}
@@ -198,17 +198,17 @@ exports[`FileUpload component Renders initial component 1`] = `
                   }
                 }
               >
-                <Placeholder>
+                <FileUpload.DefaultPlaceholder>
                   <div>
                     <FormattedMessage
                       defaultMessage="Drag or {browse}"
-                      id="FileUpload.dropzoneText"
+                      id="FileUpload.DefaultPlaceholder.dropzoneText"
                       values={
                         Object {
                           "browse": <span>
                             <FormattedMessage
                               defaultMessage="browse"
-                              id="FileUpload.dropzoneTextBrowseAction"
+                              id="FileUpload.DefaultPlaceholder.dropzoneTextBrowseAction"
                               values={Object {}}
                             />
                           </span>,
@@ -219,7 +219,7 @@ exports[`FileUpload component Renders initial component 1`] = `
                       <span>
                         <FormattedMessage
                           defaultMessage="browse"
-                          id="FileUpload.dropzoneTextBrowseAction"
+                          id="FileUpload.DefaultPlaceholder.dropzoneTextBrowseAction"
                           values={Object {}}
                         >
                           browse
@@ -227,7 +227,7 @@ exports[`FileUpload component Renders initial component 1`] = `
                       </span>
                     </FormattedMessage>
                   </div>
-                </Placeholder>
+                </FileUpload.DefaultPlaceholder>
                 <input
                   accept={
                     Array [
