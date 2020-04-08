@@ -4,7 +4,10 @@
 ```jsx
 import { Form } from '../..';
 
-<Form>
+<Form
+  initialValues={{ singleLineEdit: undefined }}
+  onSubmit={(values) => console.log(values)}
+>
   {({ values }) => (
     <div>
       <SingleLineEdit
