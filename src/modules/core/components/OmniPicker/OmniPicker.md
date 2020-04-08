@@ -5,6 +5,7 @@ The OmniPicker allows you to create your own picker ("Combobox") with filters an
 Here's a super simple implementation of an OmniPicker:
 
 ```jsx
+import { useState } from 'react';
 import { Input } from '../Fields';
 
 const { withOmniPicker } = require('.');
@@ -18,37 +19,29 @@ const Item = ({ itemData: { username, name }, selected }) => (
 
 const renderItem = (itemData, selected) => <Item itemData={itemData} selected={selected} />;
 
-class SimpleUserPicker extends React.Component {
-  constructor(props) {
-    super(props);
-    this.setUser = this.setUser.bind(this);
-    this.state = {
-      selectedUser: null,
-    };
-  }
+const SimpleUserPicker = ({
+  OmniPicker,
+  inputProps,
+  registerInputNode,
+  OmniPickerWrapper,
+}) => {
+  const [selectedUser, setSelectedUser] = useState(null);
 
-  setUser(user) {
-    this.setState({ selectedUser: user });
-  };
-
-  render() {
-    const { OmniPicker, inputProps, registerInputNode, OmniPickerWrapper } = this.props;
-    const { selectedUser } = this.state;
-    return (
-      <OmniPickerWrapper style={{ position: 'relative' }}>
-        <p>Selected user: {selectedUser ? selectedUser.name : 'No one'}</p>
-        <br />
-        <Input
-          label="Pick a user"
-          connect={false}
-          innerRef={registerInputNode}
-          placeholder="Filter here"
-          {...inputProps}
-        />
-        <OmniPicker onPick={this.setUser} renderItem={renderItem} />
-      </OmniPickerWrapper>
-    )
-  }
+  return (
+    <OmniPickerWrapper style={{ position: 'relative' }}>
+      <p>Selected user: {selectedUser ? selectedUser.name : 'No one'}</p>
+      <br />
+      <Input
+        label="Pick a user"
+        connect={false}
+        innerRef={registerInputNode}
+        placeholder="Filter here"
+        name="ourOmniPicker"
+        {...inputProps}
+      />
+      <OmniPicker onPick={setSelectedUser} renderItem={renderItem} />
+    </OmniPickerWrapper>
+  )
 }
 
 const data = [
