@@ -10,7 +10,7 @@ For available `Formik` options see here: https://jaredpalmer.com/formik/docs/api
 import { FieldSet, Input, FormStatus } from '..';
 import Button from '../../Button';
 
-<Form onSubmit={values => alert(JSON.stringify(values))}>
+<Form initialValues={{ foo: undefined }} onSubmit={values => alert(JSON.stringify(values))}>
   {({ status }) => (
     <div>
       <FieldSet>
