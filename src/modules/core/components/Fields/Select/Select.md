@@ -11,8 +11,13 @@ const options = [
   { label: 'Option three', value: 'three' },
 ];
 <Formik
+  initialValues={{
+    basicSelect: undefined,
+    selectAltTheme: undefined,
+  }}
   onSubmit={(values) => console.log(values)}
-  render={({ handleSubmit }) => (
+>
+  {({ handleSubmit }) => (
     <form onSubmit={handleSubmit}>
       <Select
         label="I'm a Select"
@@ -30,12 +35,13 @@ const options = [
       <Button type="submit">Press Me</Button>
     </form>
   )}
-/>
+</Formik>
 ```
 
 ### Unconnected select input
 
 ```jsx
+import { useState } from 'react';
 import Button from '../../Button';
 
 const options = [
@@ -43,14 +49,15 @@ const options = [
   { label: 'Option 2', value: 2 },
   { label: 'Option three', value: 'three' },
 ];
-initialState = { $value: ''};
+
+const [currentValue, setCurrentValue] = useState();
 <div style={{width: '120px'}}>
   <Select
     connect={false}
     // with connect={false}, `$value` and `setValue` are required
-    $value={state.$value}
-    setValue={val => setState({ $value: val })}
-    appearance={{ alignOptions: 'right', theme: 'alt', width: 'strict' }}
+    $value={currentValue}
+    setValue={val => setCurrentValue(val)}
+    appearance={{ theme: 'alt', width: 'strict' }}
     elementOnly={true}
     label="I'm an unconnected Select"
     options={options}
@@ -59,7 +66,7 @@ initialState = { $value: ''};
   />
   <Button
     onClick={() => {
-      console.log(`Currenly chosen value: ${state.$value}`);
+      console.log(`Currenly chosen value: ${currentValue}`);
     }}
   >
     Press Me
