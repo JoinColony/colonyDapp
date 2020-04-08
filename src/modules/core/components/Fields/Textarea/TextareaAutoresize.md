@@ -7,6 +7,9 @@ For simple usage, the only thing you need to change is the `minRows` and `maxRow
 If you're looking for more advanced usage, take a look at the underlying component's documentation: [`react-textarea-autosize`](https://github.com/andreypopp/react-textarea-autosize)
 
 ```js
+import { useState } from 'react';
+
+const [currentValue, setCurrentValue] = useState();
 <TextareaAutoresize
   name="textarea-which-resizes"
   placeholder="I resize as you add new lines (up to three rows)"
@@ -14,5 +17,7 @@ If you're looking for more advanced usage, take a look at the underlying compone
   connect={false}
   minRows={1}
   maxRows={3}
+  value={currentValue}
+  onChange={(e) => setCurrentValue(e.currentTarget.value)}
 />
 ```
