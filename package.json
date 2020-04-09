@@ -174,7 +174,7 @@
         "bn.js": "^4.11.8",
         "camelcase": "^5.0.0",
         "classnames": "^2.2.6",
-        "cleave.js": "^1.4.0",
+        "cleave.js": "^1.5.10",
         "copy-to-clipboard": "^3.0.8",
         "cypress": "^3.4.1",
         "draft-js": "^0.11.4",
