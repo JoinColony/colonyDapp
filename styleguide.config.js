@@ -135,7 +135,6 @@ module.exports = {
     {
       name: 'Loaders & Progress',
       components: [
-        './src/modules/core/components/Preloaders/LogoLoader.tsx',
         './src/modules/core/components/Preloaders/SpinnerLoader.tsx',
         './src/modules/core/components/Preloaders/DotsLoader.tsx',
         './src/modules/core/components/ProgressBar/ProgressBar.tsx',
