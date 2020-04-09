@@ -112,7 +112,6 @@ module.exports = {
         './src/modules/core/components/Modal/Modal.tsx',
         './src/modules/core/components/Dialog/Dialog.tsx',
         './src/modules/core/components/Dialog/DialogProvider.tsx',
-        './src/modules/core/components/Dialog/DialogLink.tsx',
         './src/modules/core/components/Dialog/DialogSection.tsx',
         './src/modules/core/components/Dialog/ConfirmDialog.tsx',
         './src/modules/core/components/ActivityBar/ActivityBar.tsx',
