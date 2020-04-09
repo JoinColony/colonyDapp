@@ -117,7 +117,6 @@ module.exports = {
         './src/modules/core/components/ActivityBar/ActivityBar.tsx',
         './src/modules/core/components/Popover/Popover.tsx',
         './src/modules/core/components/Popover/Tooltip.tsx',
-        './src/modules/core/components/Popover/RegisteredPopover.tsx',
       ],
     },
     {
