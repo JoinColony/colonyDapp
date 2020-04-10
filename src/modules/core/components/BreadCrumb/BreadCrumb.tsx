@@ -4,11 +4,7 @@ import { MessageDescriptor, useIntl } from 'react-intl';
 import styles from './BreadCrumb.css';
 
 interface Props {
-  /*
-   * The bread crumb elements have to get filtered to the correct
-   * array of elements outside of this components and just an array
-   * of strings gets passed in. The last active element gets highlighted.
-   */
+  /** BreadCrumb hierarchy. Last element will be bold text */
   elements: (string | MessageDescriptor)[];
 }
 
