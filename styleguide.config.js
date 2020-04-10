@@ -37,6 +37,7 @@ module.exports = {
     {
       name: 'Images and Icons',
       components: [
+        './src/modules/core/components/Badge/Badge.tsx',
         './src/modules/core/components/Icon/Icon.tsx',
         './src/modules/core/components/QRCode/QRCode.tsx',
         './src/modules/core/components/StarRating/StarRating.tsx',

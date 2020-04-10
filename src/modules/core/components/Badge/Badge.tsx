@@ -18,8 +18,11 @@ const badgeIcons = badges.reduce((badgeObj, badgeName) => {
 }, {});
 
 interface Props {
+  /** Name of the icon (camelCase) */
   name: string;
+  /** Size of the icon */
   size?: AvatarProps['size'];
+  /** HTML title attribute */
   title: string;
 }
 
