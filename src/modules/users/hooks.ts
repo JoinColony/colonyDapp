@@ -8,7 +8,7 @@ export const useUserAddressFetcher = (
   username: string | null,
 ): { userAddress: Address | void; error: Error | null } => {
   const [userAddress, setUserAddress] = useState(undefined);
-  const [error, setError] = useState();
+  const [error, setError] = useState(null);
   const userAddressFetch = useAsyncFunction({
     error: ActionTypes.USER_ADDRESS_FETCH_ERROR,
     submit: ActionTypes.USER_ADDRESS_FETCH,

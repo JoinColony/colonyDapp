@@ -84,7 +84,7 @@ const StepSelectToken = ({
   wizardForm: { initialValues },
   wizardValues,
 }: Props) => {
-  const [tokenData, setTokenData] = useState();
+  const [tokenData, setTokenData] = useState<OneToken | undefined>();
 
   const handleTokenSelect = (token: OneToken, setFieldValue: SetFieldValue) => {
     setTokenData(token);

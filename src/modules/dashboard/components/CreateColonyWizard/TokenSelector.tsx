@@ -7,7 +7,12 @@ import { usePrevious } from '~utils/hooks';
 import { Input } from '~core/Fields';
 import Button from '~core/Button';
 import { log } from '~utils/debug';
-import { TokenQuery, TokenQueryVariables, TokenDocument } from '~data/index';
+import {
+  OneToken,
+  TokenDocument,
+  TokenQuery,
+  TokenQueryVariables,
+} from '~data/index';
 
 import styles from './StepSelectToken.css';
 
@@ -38,18 +43,16 @@ const MSG = defineMessages({
   },
 });
 
-type Token = TokenQuery['token'];
-
 interface Props {
   tokenAddress: string;
-  onTokenSelect: (arg0: Token | null | void) => any;
-  tokenData: Token;
+  onTokenSelect: (arg0: OneToken | null | void) => any;
+  tokenData?: OneToken;
 
   /** Extra node to render on the top right in the label */
   extra?: ReactNode;
 }
 
-const getStatusText = (isLoading: boolean, tokenData?: Token) => {
+const getStatusText = (isLoading: boolean, tokenData?: OneToken) => {
   if (isLoading) {
     return { status: MSG.statusLoading };
   }
@@ -81,7 +84,7 @@ const TokenSelector = ({
   const [isLoading, setLoading] = useState(false);
 
   const handleGetTokenSuccess = useCallback(
-    (token: Token) => {
+    (token: OneToken) => {
       const { name, symbol } = token;
       setLoading(false);
       if (!name || !symbol) {
@@ -121,7 +124,7 @@ const TokenSelector = ({
 
     // Get the token address and handle success/error
     getToken()
-      .then((token: Token) => handleGetTokenSuccess(token))
+      .then((token: OneToken) => handleGetTokenSuccess(token))
       .catch(error => handleGetTokenError(error));
   }, [
     tokenAddress,

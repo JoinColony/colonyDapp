@@ -35,10 +35,13 @@ const loadTokenImages = async (logo): Promise<ImageType> =>
     /* webpackMode: "eager" */ `../../../../../node_modules/eth-contract-metadata/images/${logo}`
   );
 
-const HookedTokenIcon = ({ name, token, ...props }: Props) => {
-  const { iconHash, address } = token;
-  const [tokenImage, setTokenImage] = useState();
-  const [tokenSVG, setTokenSVG] = useState();
+const HookedTokenIcon = ({
+  name,
+  token: { iconHash, address },
+  ...props
+}: Props) => {
+  const [tokenImage, setTokenImage] = useState<string | undefined>();
+  const [tokenSVG, setTokenSVG] = useState<ImageType['default'] | undefined>();
   const { data: ipfsIcon } = useDataFetcher(
     ipfsDataFetcher,
     [iconHash as string], // Technically a bug, shouldn't need type override
@@ -64,10 +67,10 @@ const HookedTokenIcon = ({ name, token, ...props }: Props) => {
       if (metaData) {
         const response = await loadTokenImages(metaData.logo);
         if (response) {
-          if (checkSVG(metaData.logo) && response) {
+          if (checkSVG(metaData.logo)) {
             setTokenSVG(response.default);
           } else {
-            setTokenImage(response.default);
+            setTokenImage(response.default as string);
           }
         }
       }

@@ -108,7 +108,7 @@ const StepColonyName = ({
 
   const { username } = useLoggedInUser();
 
-  const [currentENSName, setCurrentENSName] = useState();
+  const [currentENSName, setCurrentENSName] = useState<string | undefined>();
 
   // @TODO debounce colony name validation
   // @BODY this is a bit harder than you'd expect. We have to make sure that validation still works and that the user can't just remove a character quickly and then move on without the validation to happen.

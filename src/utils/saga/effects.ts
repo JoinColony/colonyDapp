@@ -77,7 +77,7 @@ export function* selectAsJS(
 export const takeLatestCancellable = (
   actionOrPattern: ActionPattern,
   cancelActionOrPattern: ActionPattern,
-  saga: (action: Action<any>) => IterableIterator<any>,
+  saga: (action: Action<any>) => Generator<any>,
 ) => {
   let currentTask;
 

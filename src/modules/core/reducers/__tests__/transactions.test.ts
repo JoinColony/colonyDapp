@@ -4,7 +4,7 @@ import { Transaction, TRANSACTION_STATUSES } from '~immutable/index';
 import { ContractContexts } from '~types/index';
 
 import reducer from '../transactions';
-import { CoreTransactions } from '../../state/index';
+import { CoreTransactions, TransactionsListMap } from '../../state/index';
 
 import {
   createTxAction,
@@ -28,7 +28,6 @@ describe(`core: reducers (transactions)`, () => {
   test('Initial state', () => {
     // @ts-ignore
     const newState = reducer(undefined, {
-      // @ts-ignore
       type: 'NOT_SUPPORTED_BY_THIS_REDUCER',
     });
     expect(newState.list).toEqual(ImmutableMap());
@@ -56,9 +55,7 @@ describe(`core: reducers (transactions)`, () => {
         params,
         status: TRANSACTION_STATUSES.READY,
       }),
-    }),
-    // @ts-ignore
-    gasPrices: {},
+    }) as TransactionsListMap,
   });
 
   // Actions

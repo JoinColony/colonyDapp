@@ -1,5 +1,5 @@
 import { createSelector } from 'reselect';
-import { Map as ImmutableMap, List } from 'immutable';
+import { Collection, Map as ImmutableMap, List } from 'immutable';
 
 import { TransactionRecord, TRANSACTION_STATUSES } from '~immutable/index';
 
@@ -98,7 +98,8 @@ export const groupedTransactionsAndMessages = createSelector(
        * at the top and messages at the bottom
        */
       .sortBy(
-        group => (group.first() as TransactionRecord).createdAt,
+        (group: Collection<number, TransactionRecord>) =>
+          (group.first() as TransactionRecord).createdAt,
         // Descending createdAt order (most recent groups first)
         (createdAtA, createdAtB) => Number(createdAtB) - Number(createdAtA),
       ),
