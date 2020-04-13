@@ -5,7 +5,9 @@ import DecisionOption, { DecisionOptionType } from './DecisionOption';
 const displayName = 'DecisionHub';
 
 interface Props {
+  /** Array of decision options */
   options: DecisionOptionType[];
+  /** Html input `name` attribute */
   name: string;
 }
 
