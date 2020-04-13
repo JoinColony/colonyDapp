@@ -99,6 +99,7 @@ module.exports = {
       components: [
         './src/modules/core/components/Card/Card.tsx',
         './src/modules/core/components/CardList/CardList.tsx',
+        './src/modules/core/components/Panel/Panel.tsx',
       ],
     },
     {
