@@ -1,14 +1,13 @@
-import React, { ReactNode } from 'react';
+import React, { HTMLAttributes } from 'react';
 
 import styles from './DropdownMenuItem.css';
 
-interface Props {
-  children: ReactNode;
-}
-
 const displayName = 'DropdownMenuItem';
 
-const DropdownMenuItem = ({ children, ...props }: Props) => (
+const DropdownMenuItem = ({
+  children,
+  ...props
+}: HTMLAttributes<HTMLLIElement>) => (
   <li className={styles.main} {...props} role="menuitem">
     {children}
   </li>
