@@ -51,6 +51,7 @@ module.exports = {
       components: [
         './src/modules/core/components/ActivityFeed/ActivityFeed.tsx',
         './src/modules/core/components/BreadCrumb/BreadCrumb.tsx',
+        './src/modules/core/components/ClipboardCopy/ClipboardCopy.tsx',
         './src/modules/core/components/CopyableAddress/CopyableAddress.tsx',
         './src/modules/core/components/MaskedAddress/MaskedAddress.tsx',
         './src/modules/core/components/EthUsd/EthUsd.tsx',

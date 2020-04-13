@@ -5,7 +5,9 @@ import copyToClipboard from 'copy-to-clipboard';
 import Button from '../Button';
 
 interface Props {
+  /** Text for the button copy. Supports interpolation with the following variable: `valueIsCopied: boolean` */
   text?: MessageDescriptor;
+  /** Value to be copied to the clipboard */
   value: string;
 }
 
