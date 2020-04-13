@@ -24,6 +24,7 @@ module.exports = {
         './src/modules/core/components/Heading/Heading.tsx',
         './src/modules/core/components/UserMention/UserMention.tsx',
         './src/modules/core/components/Link/Link.tsx',
+        './src/modules/core/components/TokenLink/TokenLink.tsx',
         './src/modules/core/components/NavLink/NavLink.tsx',
         './src/modules/core/components/ExternalLink/ExternalLink.tsx',
         './src/modules/core/components/TransactionLink/TransactionLink.tsx',
