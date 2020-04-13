@@ -4,7 +4,7 @@
   box-shadow: var(--box-shadow-medium);
 }
 
-.main > :not(:first-child) {
+.main:not(.gapsTrue) > :not(:first-child) {
   border-top: 1px solid var(--grey-blue-1);
 }
 

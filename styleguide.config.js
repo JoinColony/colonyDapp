@@ -124,7 +124,10 @@ module.exports = {
     },
     {
       name: 'Tables',
-      components: ['./src/modules/core/components/Table/Table.tsx'],
+      components: [
+        './src/modules/core/components/ListGroup/ListGroup.tsx',
+        './src/modules/core/components/Table/Table.tsx',
+      ],
     },
     {
       name: 'Tabs',
