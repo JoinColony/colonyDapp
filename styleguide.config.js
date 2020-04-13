@@ -33,6 +33,7 @@ module.exports = {
         './src/modules/core/components/Duration/Duration.tsx',
         './src/modules/core/components/TimeRelative/TimeRelative.tsx',
         './src/modules/core/components/ExpandedParagraph/ExpandedParagraph.tsx',
+        './src/modules/core/components/Paragraph/Paragraph.tsx',
         './src/modules/core/components/Tag/Tag.tsx',
       ],
     },
