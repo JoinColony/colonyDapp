@@ -1,6 +1,4 @@
-Some introductory text describing forms followed by some cool examples.
-
-TODO: Write something about disconnecting form fields from Formik (`connect={false}`), setFieldValue, etc.
+Colony uses [Formik](https://jaredpalmer.com/formik/) for handling forms. All fields work with Formik out-of-the-box; Fields can either use the formik context (default behavior), or can be used with local state (`connect={false}` and `setValue={(val) => setStateFn(val)}`).
 
 ### Wizard
 
