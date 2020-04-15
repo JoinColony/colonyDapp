@@ -228,6 +228,6 @@
         "utility-types": "^3.7.0",
         "web3-eth-abi": "1.0.0-beta.36",
         "web3-utils": "^1.0.0-beta.37",
-        "yup": "^0.27.0"
+        "yup": "^0.28.0"
     }
 }
