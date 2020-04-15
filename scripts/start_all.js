@@ -117,7 +117,7 @@ addProcess('server', async () => {
 addProcess('webpack', () =>
   new Promise((resolve, reject) => {
     let webpackArgs = ['run', 'webpack'];
-    const webpackProcess = spawn('yarn', webpackArgs, {
+    const webpackProcess = spawn('npm', webpackArgs, {
       cwd: path.resolve(__dirname, '..'),
       stdio: 'pipe',
     });
@@ -139,6 +139,7 @@ addProcess('webpack', () =>
 
 const pids = {};
 const startAll = async () => {
+  console.log(args);
   const startSerial = processes.reduce((promise, process) => {
     if (`skip-${process.name}` in args) return promise;
     return promise
