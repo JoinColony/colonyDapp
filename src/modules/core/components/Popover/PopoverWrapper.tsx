@@ -1,67 +1,96 @@
-import React, { ReactNode, FocusEvent, useMemo } from 'react';
-import { PopperArrowProps, PopperProps } from 'react-popper';
-import { PopoverAppearanceType } from './types';
+import React, {
+  CSSProperties,
+  Dispatch,
+  FocusEvent,
+  isValidElement,
+  SetStateAction,
+  useMemo,
+} from 'react';
+import { MessageDescriptor, useIntl } from 'react-intl';
+import { State as PopperJsState } from '@popperjs/core';
+
+import { SimpleMessageValues } from '~types/index';
 import { getMainClasses } from '~utils/css';
+
 import getPopoverArrowClasses from './getPopoverArrowClasses';
+import {
+  PopoverAppearanceType,
+  PopoverContent as PopoverContentType,
+} from './types';
 
 import styles from './PopoverWrapper.css';
 
-interface ArrowProps extends PopperArrowProps {
-  showArrow: boolean;
-}
-
 interface Props {
   appearance?: PopoverAppearanceType;
-  arrowProps: ArrowProps;
-  children: ReactNode;
-  id: string;
-  innerRef: (arg0: HTMLElement | null) => void;
+  arrowRef: Dispatch<SetStateAction<HTMLElement | null>>;
+  close: () => void;
+  content: PopoverContentType;
+  contentRef: Dispatch<SetStateAction<HTMLElement | null>>;
+  contentValues?: SimpleMessageValues;
   onFocus: (evt: FocusEvent<HTMLElement>) => void;
+  popperAttributes: Record<string, object>;
+  popperStyles: Record<string, CSSProperties>;
   retainRefFocus?: boolean;
-  placement: PopperProps['placement'];
-  style: any;
+  showArrow: boolean;
+  state: PopperJsState;
 }
 
+const displayName = 'PopoverWrapper';
+
 const PopoverWrapper = ({
-  appearance: origAppearance,
-  arrowProps,
-  children,
-  id,
-  innerRef,
+  appearance,
+  arrowRef,
+  close,
+  content,
+  contentRef,
+  contentValues,
   onFocus,
-  placement,
+  popperAttributes,
+  popperStyles,
   retainRefFocus,
-  style,
+  showArrow,
+  state,
 }: Props) => {
-  const appearance = useMemo(
-    () => ({
-      ...origAppearance,
-      placement,
-    }),
-    [origAppearance, placement],
-  );
+  const { formatMessage } = useIntl();
+  const popoverContent = useMemo(() => {
+    if (typeof content === 'string' || isValidElement(content)) {
+      return content;
+    }
+    if (typeof content === 'function') {
+      return content({ close });
+    }
+    return formatMessage(content as MessageDescriptor, contentValues);
+  }, [close, content, contentValues, formatMessage]);
   return (
     <div
       className={getMainClasses(appearance, styles, {
-        hideArrow: !arrowProps.showArrow,
-        showArrow: arrowProps.showArrow,
+        hideArrow: !showArrow,
+        showArrow,
       })}
-      id={id}
-      role="tooltip"
-      ref={innerRef}
-      style={style}
-      data-placement={placement}
-      tabIndex={retainRefFocus ? -1 : undefined}
       onFocus={onFocus}
+      ref={contentRef}
+      role="tooltip"
+      style={popperStyles.popper}
+      tabIndex={retainRefFocus ? -1 : undefined}
+      {...popperAttributes.popper}
     >
-      {children}
-      <span
-        className={getPopoverArrowClasses(appearance, placement, styles)}
-        ref={arrowProps.ref}
-        style={arrowProps.style}
-      />
+      {popoverContent}
+      {state && state.placement && (
+        <span
+          className={getPopoverArrowClasses(
+            appearance,
+            // Use placement derived from popperjs so `auto` isn't used
+            state.placement,
+            styles,
+          )}
+          ref={arrowRef}
+          style={popperStyles.arrow}
+        />
+      )}
     </div>
   );
 };
+
+PopoverWrapper.displayName = displayName;
 
 export default PopoverWrapper;

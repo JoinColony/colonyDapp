@@ -1,13 +1,12 @@
 import { ReactNode, ReactElement } from 'react';
-
-import { RefHandler } from 'react-popper';
+import { MessageDescriptor } from 'react-intl';
 
 export type PopoverAppearanceType = {
   theme: 'dark' | 'grey';
 };
 
 export interface PopoverChildFnProps {
-  ref: RefHandler;
+  ref: (arg0: HTMLElement | null) => void;
   id: string;
   isOpen: boolean;
   open: () => void;
@@ -20,3 +19,8 @@ export type PopoverChildFn = (arg0: PopoverChildFnProps) => ReactNode;
 export type PopoverTriggerElementType = PopoverChildFn | ReactElement;
 
 export type PopoverTriggerType = 'hover' | 'click' | 'disabled';
+
+export type PopoverContent =
+  | ReactNode
+  | MessageDescriptor
+  | ((arg0: { close: () => void }) => ReactNode);

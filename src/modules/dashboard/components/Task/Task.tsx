@@ -102,7 +102,10 @@ const MSG = defineMessages({
 const displayName = 'dashboard.Task';
 
 const Task = () => {
-  const { colonyName, draftId } = useParams();
+  const { colonyName, draftId } = useParams<{
+    colonyName: string;
+    draftId: string;
+  }>();
   const history = useHistory();
   const openDialog = useDialog(TaskEditDialog);
   const [finalizeTaskMutation] = useFinalizeTaskMutation();

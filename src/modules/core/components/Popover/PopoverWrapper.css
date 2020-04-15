@@ -186,29 +186,3 @@
 .stateShowArrow .arrow {
   display: block;
 }
-
-.stateShowArrow {
-  &.placementTop,
-  &.placementTop-end,
-  &.placementTop-start {
-    top: calc(0px - arrowSize) !important;
-  }
-
-  &.placementRight,
-  &.placementRight-end,
-  &.placementRight-start {
-    left: calc(arrowSize + arrowBorder * 2) !important;
-  }
-
-  &.placementBottom,
-  &.placementBottom-end,
-  &.placementBottom-start {
-    top: arrowSize !important;
-  }
-
-  &.placementLeft,
-  &.placementLeft-end,
-  &.placementLeft-start {
-    left: calc(0px - arrowSize - arrowBorder * 2) !important;
-  }
-}

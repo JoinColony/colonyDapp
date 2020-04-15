@@ -31,7 +31,7 @@ const displayName = 'dashboard.Program';
 
 const Program = ({ colonyAddress, colonyName }: Props) => {
   const location = useLocation();
-  const { programId } = useParams();
+  const { programId } = useParams<{ programId: string }>();
   const { walletAddress } = useLoggedInUser();
 
   const [isEditing, setIsEditing] = useState<boolean>(false);

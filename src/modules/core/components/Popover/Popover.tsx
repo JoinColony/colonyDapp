@@ -1,92 +1,78 @@
 import React, {
-  isValidElement,
+  cloneElement,
+  ReactElement,
+  ReactNode,
   useCallback,
   useEffect,
   useRef,
   useState,
-  MutableRefObject,
+  useMemo,
+  Dispatch,
+  SetStateAction,
   HTMLAttributes,
-  ReactElement,
-  ReactNode,
 } from 'react';
-import { MessageDescriptor, useIntl } from 'react-intl';
-import {
-  Manager,
-  Reference,
-  Popper,
-  PopperProps,
-  ReferenceChildrenProps,
-} from 'react-popper';
 import nanoid from 'nanoid';
+import { usePopper, PopperProps } from 'react-popper';
+import { Placement } from '@popperjs/core';
+import { Unionize } from 'utility-types';
 
 import { SimpleMessageValues } from '~types/index';
+import { usePrevious } from '~utils/hooks';
 
+import PopoverWrapper from './PopoverWrapper';
 import {
   PopoverAppearanceType,
   PopoverChildFn,
+  PopoverContent,
   PopoverTriggerType,
 } from './types';
-import PopoverWrapper from './PopoverWrapper';
-import { usePrevious } from '~utils/hooks';
 
-export interface Props {
+interface PopoverChildFnProps {
+  ref: (arg0: HTMLElement | null) => void;
+  id: string;
+  isOpen: boolean;
+  open: () => void;
+  close: () => void;
+  toggle: () => void;
+}
+
+interface Props {
+  /** Appearance object for styling */
   appearance?: PopoverAppearanceType;
-
   /** Child element to trigger the popover */
   children: ReactNode | PopoverChildFn;
-
   /** Popover content */
-  content:
-    | ReactNode
-    | MessageDescriptor
-    | ((arg0: { close: () => void }) => ReactNode);
-
+  content: PopoverContent;
   /** Values for content (react-intl interpolation) */
   contentValues?: SimpleMessageValues;
-
   /** Set the open state from outside */
   isOpen?: boolean;
-
   /** Called when Popover closes */
   onClose?: (data?: any, modifiers?: { cancelled: boolean }) => void;
-
   /** Delay opening of popover for `openDelay` ms */
   openDelay?: number;
-
   /** Popover placement */
-  placement?: PopperProps['placement'];
-
+  placement?: Placement;
   /** Options to pass through the <Popper> element. See here: https://github.com/FezVrasta/react-popper#api-documentation */
-  popperProps?: PopperProps;
-
+  popperProps?: Omit<PopperProps, 'children'>;
   /** Whether the reference element should retain focus when popover is open (only for `HTMLInputElements`) */
   retainRefFocus?: boolean;
-
   /** Whether there should be an arrow on the popover */
   showArrow?: boolean;
-
   /** How the popover gets triggered. Won't work when using a render prop as `children` */
   trigger?: PopoverTriggerType;
 }
 
-interface FnChildProps {
-  innerRef?: ReferenceChildrenProps['ref'];
+interface AllTriggerProps {
+  onClick: () => void;
+  onMouseEnter: () => void;
+  disabled: null;
 }
 
-interface OtherChildrenProps extends HTMLAttributes<HTMLElement> {
-  ref?: ReferenceChildrenProps['ref'];
-}
-
-type ChildProps = FnChildProps | OtherChildrenProps;
-
-const assignInnerRef = (refNode: MutableRefObject<HTMLElement | undefined>) => (
-  ref: HTMLElement,
-) => {
-  if (ref) {
-    // eslint-disable-next-line no-param-reassign
-    refNode.current = ref;
-  }
-};
+type ReferenceElementProps = Unionize<AllTriggerProps> &
+  Pick<HTMLAttributes<HTMLElement>, 'aria-describedby'> & {
+    ref: Dispatch<SetStateAction<HTMLElement>>;
+  };
 
 const displayName = 'Popover';
 
@@ -97,21 +83,33 @@ const Popover = ({
   contentValues,
   isOpen: isOpenProp = false,
   onClose,
-  openDelay = 0,
-  placement: origPlacement = 'top',
-  popperProps,
+  openDelay,
+  placement: placementProp = 'auto',
+  popperProps = {},
   retainRefFocus,
   showArrow = true,
   trigger = 'click',
 }: Props) => {
-  const [isOpen, setIsOpen] = useState<boolean>(isOpenProp); // when opening please use `requestOpen`
+  // Use dangle to encourage use of callbackFn for setting state
+  const [isOpen, _setIsOpen] = useState<boolean>(isOpenProp);
+  const [referenceElement, setReferenceElement] = useState<Element | null>(
+    null,
+  );
+  const [popperElement, setPopperElement] = useState<HTMLElement | null>(null);
+  const [arrowElement, setArrowElement] = useState<HTMLElement | null>(null);
 
-  const contentNode = useRef<HTMLElement>();
-  const referenceNode = useRef<HTMLElement>();
   const openTimeoutRef = useRef<number>();
   const { current: elementId } = useRef<string>(nanoid());
 
-  const { formatMessage } = useIntl();
+  const { attributes, styles, state } = usePopper(
+    referenceElement,
+    popperElement,
+    {
+      modifiers: [{ name: 'arrow', options: { element: arrowElement } }],
+      placement: placementProp,
+      ...popperProps,
+    },
+  );
 
   const lastIsOpenProp = usePrevious(isOpenProp);
 
@@ -121,11 +119,11 @@ const Popover = ({
     }
     if (openDelay && window) {
       openTimeoutRef.current = window.setTimeout(() => {
-        setIsOpen(true);
+        _setIsOpen(true);
       }, openDelay);
       return;
     }
-    setIsOpen(true);
+    _setIsOpen(true);
   }, [isOpen, openDelay]);
 
   const close = useCallback(
@@ -134,24 +132,59 @@ const Popover = ({
         window.clearTimeout(openTimeoutRef.current);
       }
       if (!isOpen) return;
-      setIsOpen(false);
+      _setIsOpen(false);
       if (typeof onClose == 'function') onClose(data, modifiers);
     },
-    [isOpen, onClose, setIsOpen],
+    [isOpen, onClose],
   );
 
-  const getChildProps = useCallback(
-    (ref: ReferenceChildrenProps['ref']): ChildProps => {
-      const childProps: ChildProps = {
-        'aria-describedby': isOpen ? elementId : undefined,
+  const handleWrapperFocus = useCallback(() => {
+    if (retainRefFocus && referenceElement instanceof HTMLInputElement) {
+      referenceElement.focus();
+    }
+  }, [referenceElement, retainRefFocus]);
+
+  const handleMouseLeave = useCallback(() => {
+    if (trigger === 'hover' && referenceElement) {
+      close();
+    }
+  }, [close, referenceElement, trigger]);
+
+  const handleOutsideClick = useCallback(
+    (evt: MouseEvent) => {
+      const targetInRefNode = (refNode: Element | null) => {
+        return (
+          evt.target instanceof Node && refNode && refNode.contains(evt.target)
+        );
       };
-      if (typeof (children as any).type == 'function') {
-        (childProps as FnChildProps).innerRef = ref;
-      } else {
-        (childProps as OtherChildrenProps).ref = ref;
+      if (targetInRefNode(popperElement) || targetInRefNode(referenceElement)) {
+        return;
       }
-      return {
-        ...childProps,
+      close();
+    },
+    [close, popperElement, referenceElement],
+  );
+
+  const ReferenceContent = useMemo<() => ReactElement>(() => {
+    if (typeof children === 'function') {
+      return () =>
+        children({
+          ref: setReferenceElement,
+          id: elementId,
+          isOpen: !!isOpen,
+          open: () => requestOpen(),
+          close,
+          toggle: () => (isOpen ? close() : requestOpen()),
+        });
+    }
+    return () =>
+      cloneElement<ReferenceElementProps>(children as ReactElement, {
+        'aria-describedby': isOpen ? elementId : undefined,
+        ...(typeof (children as any).type === 'function'
+          ? {
+              innerRef: setReferenceElement,
+            }
+          : { ref: setReferenceElement }),
         ...(trigger
           ? {
               hover: {
@@ -170,91 +203,22 @@ const Popover = ({
               disabled: null,
             }[trigger]
           : null),
-      };
-    },
-    [children, close, elementId, isOpen, requestOpen, trigger],
-  );
-
-  const handleWrapperFocus = useCallback(() => {
-    if (retainRefFocus && referenceNode instanceof HTMLInputElement) {
-      referenceNode.focus();
-    }
-  }, [retainRefFocus]);
-
-  const handleOutsideClick = useCallback(
-    (evt: MouseEvent) => {
-      const targetInRefNode = (
-        refNode: MutableRefObject<HTMLElement | undefined>,
-      ) => {
-        const currentRefNode = refNode && refNode.current;
-        return (
-          evt.target instanceof Node &&
-          currentRefNode &&
-          currentRefNode.contains(evt.target)
-        );
-      };
-      if (targetInRefNode(contentNode) || targetInRefNode(referenceNode)) {
-        return;
-      }
-      close();
-    },
-    [close],
-  );
-
-  const renderContent = useCallback((): ReactNode => {
-    if (typeof content == 'string') {
-      return content;
-    }
-    if (typeof content == 'function') {
-      return content({ close });
-    }
-    if (isValidElement(content)) {
-      return content;
-    }
-    return formatMessage(content as MessageDescriptor, contentValues);
-  }, [close, content, contentValues, formatMessage]);
-
-  const renderReference = useCallback(() => {
-    if (typeof children == 'function') {
-      return ({ ref }: ReferenceChildrenProps): PopoverChildFn =>
-        children({
-          ref,
-          id: elementId,
-          isOpen: !!isOpen,
-          open: () => requestOpen(),
-          close,
-          toggle: () => (isOpen ? close() : requestOpen()),
-        });
-    }
-    return ({ ref }: ReferenceChildrenProps) =>
-      React.cloneElement(children as ReactElement, getChildProps(ref));
-  }, [children, close, elementId, getChildProps, isOpen, requestOpen]);
-
-  const handleMouseLeave = useCallback(() => {
-    const referenceNodeCurrent = referenceNode.current;
-    if (trigger === 'hover' && referenceNodeCurrent) {
-      close();
-    }
-  }, [close, trigger]);
+      });
+  }, [children, close, elementId, isOpen, requestOpen, trigger]);
 
   // Event listeners
   useEffect(() => {
-    const referenceNodeCurrent = referenceNode.current;
     document.body.addEventListener('click', handleOutsideClick, true);
     /*
      * Incase the `ref` contains a `disabled` button, we need to use the native `mouseleave` event, as React doesn't call `onMouseLeave` for `disabled` buttons.
      * See: https://github.com/facebook/react/issues/4251
      */
-    if (referenceNodeCurrent) {
-      referenceNodeCurrent.addEventListener(
-        'mouseleave',
-        handleMouseLeave,
-        true,
-      );
+    if (referenceElement) {
+      referenceElement.addEventListener('mouseleave', handleMouseLeave, true);
     }
     return () => {
-      if (referenceNodeCurrent) {
-        referenceNodeCurrent.removeEventListener(
+      if (referenceElement) {
+        referenceElement.removeEventListener(
           'mouseleave',
           handleMouseLeave,
           true,
@@ -262,7 +226,7 @@ const Popover = ({
       }
       document.body.removeEventListener('click', handleOutsideClick, true);
     };
-  }, [handleMouseLeave, handleOutsideClick]);
+  }, [handleMouseLeave, handleOutsideClick, referenceElement]);
 
   // Keep in sync with parent component
   useEffect(() => {
@@ -272,7 +236,7 @@ const Popover = ({
       } else {
         close();
       }
-      setIsOpen(!!isOpenProp);
+      _setIsOpen(!!isOpenProp);
     }
   }, [close, isOpen, isOpenProp, lastIsOpenProp, requestOpen]);
 
@@ -287,36 +251,25 @@ const Popover = ({
   }, []);
 
   return (
-    <Manager>
-      <Reference innerRef={assignInnerRef(referenceNode)}>
-        {renderReference()}
-      </Reference>
+    <>
+      <ReferenceContent />
       {isOpen && (
-        <Popper
-          innerRef={assignInnerRef(contentNode)}
-          placement={origPlacement}
-          {...popperProps}
-        >
-          {({ ref, style, placement, arrowProps }) => (
-            <PopoverWrapper
-              appearance={appearance}
-              id={elementId}
-              innerRef={ref}
-              style={style}
-              placement={placement}
-              arrowProps={{
-                ...arrowProps,
-                showArrow,
-              }}
-              onFocus={handleWrapperFocus}
-              retainRefFocus={retainRefFocus}
-            >
-              {renderContent()}
-            </PopoverWrapper>
-          )}
-        </Popper>
+        <PopoverWrapper
+          appearance={appearance}
+          arrowRef={setArrowElement}
+          close={close}
+          contentRef={setPopperElement}
+          content={content}
+          contentValues={contentValues}
+          onFocus={handleWrapperFocus}
+          popperAttributes={attributes}
+          popperStyles={styles}
+          retainRefFocus={retainRefFocus}
+          showArrow={showArrow}
+          state={state}
+        />
       )}
-    </Manager>
+    </>
   );
 };
 

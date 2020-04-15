@@ -1,6 +1,12 @@
 import React, { ComponentType } from 'react';
-import { Route, Redirect, RouteProps } from 'react-router-dom';
+import {
+  Route,
+  Redirect,
+  RouteProps,
+  RouteComponentProps as ReactRouterComponentProps,
+} from 'react-router-dom';
 
+import { StaticContext } from 'react-router';
 import { RouteComponentProps } from '~pages/RouteLayouts';
 
 import { CREATE_USER_ROUTE, DASHBOARD_ROUTE } from './routeConstants';
@@ -25,7 +31,13 @@ const DisconnectedOnlyRoute = ({
   routeProps,
 }: Props) => (
   <Route
-    render={props => {
+    render={(
+      props: ReactRouterComponentProps<
+        {},
+        StaticContext,
+        { redirectTo?: Location }
+      >,
+    ) => {
       if (isConnected) {
         const redirectTo =
           props.location.state && props.location.state.redirectTo;

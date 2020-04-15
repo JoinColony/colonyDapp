@@ -46,7 +46,7 @@ const SaveGuard = () => {
   );
 
   const getMessage = useCallback(
-    (location: Location) => {
+    (location: Location<{ discardChanges?: boolean }>) => {
       const discardChanges = location.state && location.state.discardChanges;
       if (dirty && !discardChanges) {
         handleCustomDialog(location);

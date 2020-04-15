@@ -139,7 +139,6 @@ addProcess('webpack', () =>
 
 const pids = {};
 const startAll = async () => {
-  console.log(args);
   const startSerial = processes.reduce((promise, process) => {
     if (`skip-${process.name}` in args) return promise;
     return promise

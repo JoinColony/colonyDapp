@@ -16,7 +16,7 @@ const MSG = defineMessages({
 });
 
 const ProgramBackText = () => {
-  const { programId } = useParams();
+  const { programId } = useParams<{ programId: string }>();
   const { data } = useProgramQuery({
     variables: { id: programId },
   });

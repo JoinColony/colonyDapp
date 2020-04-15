@@ -57,6 +57,14 @@
   display: table-row;
 }
 
+.weekNumber {
+  /** Force ts to create this property */
+}
+
+.todayButton {
+  /** Force ts to create this property */
+}
+
 .day {
   display: table-cell;
   padding: 8px;

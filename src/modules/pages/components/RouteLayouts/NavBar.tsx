@@ -39,7 +39,7 @@ const NavBar = ({
   children,
 }: Props) => {
   const { username } = useLoggedInUser();
-  const location = useLocation();
+  const location = useLocation<{ hasBackLink?: boolean }>();
 
   const backLinkExists =
     hasBackLink === undefined
