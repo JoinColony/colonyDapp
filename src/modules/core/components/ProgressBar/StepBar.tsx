@@ -13,12 +13,12 @@ const MSG = defineMessages({
 });
 
 interface Props {
+  /** Steps completed */
   step: number;
+  /** Total steps */
   stepCount: number;
 }
 
-// Disclaimer: this might not necessarily be a core component,
-// so if we see that we're using it just once or it's too specific, we can act accordingly
 const StepBar = ({ step, stepCount }: Props) => (
   <div className={styles.main}>
     <div className={styles.stepCounter}>

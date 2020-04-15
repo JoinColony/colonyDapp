@@ -10,8 +10,11 @@ interface Appearance {
 }
 
 interface Props extends HTMLAttributes<HTMLSpanElement> {
+  /** Appearance object */
   appearance?: Appearance;
+  /** Text to display in the tag */
   text?: MessageDescriptor | string;
+  /** Text values for intl interpolation */
   textValues?: { [key: string]: string };
 }
 

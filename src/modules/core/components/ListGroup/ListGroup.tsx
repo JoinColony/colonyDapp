@@ -1,16 +1,16 @@
-import React, { ReactNode, HTMLAttributes } from 'react';
+import React, { HTMLAttributes } from 'react';
 
 import { getMainClasses } from '~utils/css';
 
 import styles from './ListGroup.css';
 
 interface Appearance {
+  /** Should there be gaps between each element in the list */
   gaps?: 'true';
 }
 
 interface Props extends HTMLAttributes<HTMLUListElement> {
   appearance?: Appearance;
-  children: ReactNode;
 }
 
 const displayName = 'ListGroup';

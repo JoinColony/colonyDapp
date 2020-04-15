@@ -1,13 +1,10 @@
-import React from 'react';
+import React, { HTMLAttributes } from 'react';
 
 import styles from './DropdownMenuSeparator.css';
 
-// eslint-disable-next-line @typescript-eslint/no-empty-interface
-interface Props {}
-
 const displayName = 'DropdownMenuSeparator';
 
-const DropdownMenuSeparator = ({ ...props }: Props) => (
+const DropdownMenuSeparator = ({ ...props }: HTMLAttributes<HTMLLIElement>) => (
   <li className={styles.main} {...props} role="separator" />
 );
 

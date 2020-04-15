@@ -8,7 +8,7 @@ Most common usage: Skills, Domains.
 
 ```jsx
 import { Form, Formik } from 'formik';
-import WrappedItemsList from './ItemsList.js';
+import WrappedItemsList from './index';
 import Button from '../Button';
 
 const singleLevel = [
@@ -20,7 +20,8 @@ const singleLevel = [
 <Formik
   initialValues={{ 'connectedItemList': '' }}
   onSubmit={console.log}
-  render={({ values }) => (
+>
+  {({ values }) => (
     <Form>
       <WrappedItemsList list={singleLevel} name="connectedItemList">
         <span style={{ fontWeight: 'bold', color: 'blue' }}>Select a hound</span>
@@ -29,13 +30,13 @@ const singleLevel = [
       <Button type="submit">Submit Hound</Button>
     </Form>
   )}
-/>
+</Formik>
 ```
 
 ### Single Level List (unconnected)
 
 ```js
-import WrappedItemsList from './ItemsList.js';
+import WrappedItemsList from './index';
 
 const singleLevel = [
   { id: 1, name: 'Abruzzenhund' },
@@ -60,13 +61,13 @@ const singleLevel = [
   { id: 20, name: 'American Alsatian' },
 ];
 
-<WrappedItemsList list={singleLevel} connect={false} />
+<WrappedItemsList name="singleLevelItemList" list={singleLevel} connect={false} />
 ```
 
 ### Multi Level, Nested List (unconnected)
 
 ```js
-import WrappedItemsList from './ItemsList.js';
+import WrappedItemsList from './index';
 
 const multiLevel = [
   { id: 1, name: 'Metals' },
@@ -86,7 +87,7 @@ const multiLevel = [
   { id: 302, name: 'AB-Negative', parent: 30 },
 ];
 
-<WrappedItemsList list={multiLevel} connect={false}>
+<WrappedItemsList name="multiLevelItemList" list={multiLevel} connect={false}>
   <span>This is a nested list (click me!)</span>
 </WrappedItemsList>
 ```

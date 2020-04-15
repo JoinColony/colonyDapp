@@ -35,7 +35,7 @@ const ActivityBar = ({
 
   return (
     <Modal
-      cancel={cancel}
+      ariaHideApp={!isDismissable}
       role="dialog"
       onRequestClose={isDismissable ? cancel : () => false}
       shouldCloseOnEsc={isDismissable && shouldCloseOnEsc}

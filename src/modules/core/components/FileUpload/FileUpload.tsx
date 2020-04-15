@@ -1,9 +1,5 @@
 import React, { ComponentType, ReactNode, Component } from 'react';
-import {
-  MessageDescriptor,
-  defineMessages,
-  FormattedMessage,
-} from 'react-intl';
+import { MessageDescriptor, defineMessages } from 'react-intl';
 import Dropzone from 'react-dropzone';
 import { getIn } from 'formik';
 
@@ -16,14 +12,11 @@ import { asFieldArray } from '../Fields';
 import InputLabel from '../Fields/InputLabel';
 import InputStatus from '../Fields/InputStatus';
 import UploadItem from './UploadItem';
+import DefaultPlaceholder from './DefaultPlaceholder';
 
 import styles from './FileUpload.css';
 
 const MSG = defineMessages({
-  dropzoneText: {
-    id: 'FileUpload.dropzoneText',
-    defaultMessage: 'Drag or {browse}',
-  },
   labelError: {
     id: 'FileUpload.labelError',
     defaultMessage: 'There was an error processing your file. Try again.',
@@ -35,10 +28,6 @@ const MSG = defineMessages({
   filetypeError: {
     id: 'FileUpload.filetypeError',
     defaultMessage: 'This filetype is not allowed or file is too big',
-  },
-  dropzoneTextBrowseAction: {
-    id: 'FileUpload.dropzoneTextBrowseAction',
-    defaultMessage: 'browse',
   },
 });
 
@@ -100,21 +89,6 @@ interface Props {
   remove: (idx: number) => void;
 }
 
-const Placeholder = () => (
-  <div className={styles.placeholderText}>
-    <FormattedMessage
-      {...MSG.dropzoneText}
-      values={{
-        browse: (
-          <span className={styles.browseButton}>
-            <FormattedMessage {...MSG.dropzoneTextBrowseAction} />
-          </span>
-        ),
-      }}
-    />
-  </div>
-);
-
 const validateFile = (value: UploadFile) =>
   value.error ? MSG[value.error] : undefined;
 
@@ -128,7 +102,7 @@ class FileUpload extends Component<Props> {
     itemComponent: UploadItem,
     maxFilesLimit: 1,
     maxFileSize: DEFAULT_MAX_FILE_SIZE,
-    renderPlaceholder: <Placeholder />,
+    renderPlaceholder: <DefaultPlaceholder />,
   };
 
   addFiles = (acceptedFiles: File[]): void => {

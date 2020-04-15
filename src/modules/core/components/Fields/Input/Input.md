@@ -232,23 +232,22 @@ import Button from '../../Button';
     forminput2: '',
   }}
   onSubmit={values => console.log(values)}
-  render={
-    ({ handleSubmit }) => (
-      <form onSubmit={handleSubmit}>
-        <Input
-          name="forminput1"
-          label="Type a string"
-          placeholder="Type here"
-        />
-        <Input
-          name="forminput2"
-          label="Type a number"
-          formattingOptions={{ numeral: true, delimiter: ',' }}
-          placeholder="And here"
-        />
-        <Button appearance={{ theme: 'primary' }} type="submit">And press me</Button>
-      </form>
-    )
-  }
-/>
+>
+  {({ handleSubmit }) => (
+    <form onSubmit={handleSubmit}>
+      <Input
+        name="forminput1"
+        label="Type a string"
+        placeholder="Type here"
+      />
+      <Input
+        name="forminput2"
+        label="Type a number"
+        formattingOptions={{ numeral: true, delimiter: ',' }}
+        placeholder="And here"
+      />
+      <Button appearance={{ theme: 'primary' }} type="submit">And press me</Button>
+    </form>
+  )}
+</Formik>
 ```

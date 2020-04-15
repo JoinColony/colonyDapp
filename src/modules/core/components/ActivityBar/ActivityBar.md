@@ -23,26 +23,22 @@ You can toggle the mode to `isDismissable={false}` which makes the backdrop opaq
 
 ```js
 import ActivityBarExample from './ActivityBarExample.tsx';
-import { withDialog, DialogProvider } from '../Dialog';
+import { useDialog, DialogProvider } from '../Dialog';
 import Button from '../Button';
 
-const ComponentThatOpensAnActivityBar = ({ openDialog }) => (
-  <div>
-    <Button
-      onClick={() => openDialog('ActivityBarExample').afterClosed().then(
-        () => alert('Confirmed'),
-        () => alert('Cancelled')
-      )}
-    >
-      Click to open ActivityBar
-    </Button>
-  </div>
-);
+const ComponentThatOpensAnActivityBar = () => {
+  const openDialog = useDialog(ActivityBarExample);
+  return (
+    <div>
+      <Button onClick={() => openDialog()}>
+        Click to open ActivityBar
+      </Button>
+    </div>
+  );
+};
 
-const Wrapped = withDialog()(ComponentThatOpensAnActivityBar);
-
-<DialogProvider dialogComponents={{ ActivityBarExample }}>
-  <Wrapped />
+<DialogProvider>
+  <ComponentThatOpensAnActivityBar />
 </DialogProvider>
 ```
 

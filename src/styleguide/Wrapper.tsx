@@ -40,12 +40,6 @@ const MockState = ImmutableRecord<State>({
   users: undefined,
 });
 
-/**
- * @TODO Since we are hardly using redux these days, this should be (at least mostly) removed.
- * However, since the styleguide won't even run right now, I'm not willing to touch this quite yet.
- *
- * Please remove this upon fixing the styleguide.
- */
 const initialState = MockState({
   admin: {
     transactions: ImmutableMap(),

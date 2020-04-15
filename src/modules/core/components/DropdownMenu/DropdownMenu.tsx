@@ -1,4 +1,4 @@
-import React, { ReactNode } from 'react';
+import React, { HTMLAttributes } from 'react';
 
 import { getMainClasses } from '~utils/css';
 
@@ -8,16 +8,14 @@ interface Appearance {
   theme?: 'dark';
 }
 
-interface Props {
-  children: ReactNode;
+interface Props extends HTMLAttributes<HTMLDivElement> {
+  /** Appearance object */
   appearance?: Appearance;
-  onClick?: Function;
 }
 
 const displayName = 'DropdownMenu';
 
 const DropdownMenu = ({ appearance, children, ...props }: Props) => (
-  // @ts-ignore
   <div className={getMainClasses(appearance, styles)} {...props}>
     {children}
   </div>

@@ -67,7 +67,16 @@ const ItemWithCurrentUser = (props) => <ItemDefault currentUserId={data[1].id} {
 
 const renderAvatar = (address) => <UserAvatar address={address} />;
 
-<Formik>
+<Formik
+  initialValues={{
+    singleuserpickerDefault: undefined,
+    singleuserpickerAddress: undefined,
+    singleuserpickerAddressMasked: undefined,
+    singleuserpickerCurrentUser: undefined,
+    singleuserpickerDisabled: undefined,
+  }}
+  onSubmit={(values) => console.log(values)}
+>
   <div>
     <Heading appearance={{ size: "medium" }}>Default item</Heading>
     <SingleUserPicker

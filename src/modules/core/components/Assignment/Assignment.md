@@ -41,28 +41,59 @@ const assignee = {
 
 const reputation =  19.5;
 
-const colonyTokens = [
-  { address: '123', decimals: 18, name: 'Cool Token', symbol: 'COOL' },
-  { address: '0x0', decimals: 18, name: 'Ether', symbol: 'ETH' },
-  { address: '234', decimals: 18, name: 'Token Token', symbol: 'TKN' },
-  { address: '345', decimals: 18, name: 'Twitch Token', symbol: 'TWCH' },
-];
+const nativeTokenAddress = '123';
 
 const payouts = [
-  { token: '123', amount: new BN(moveDecimal('9200', 18)) },
-  { token: '0x0', amount: new BN(moveDecimal('75000', 18)) },
-  { token: '234', amount: new BN(moveDecimal('460000', 18)) },
-  { token: '345', amount: new BN(moveDecimal('210000', 18)) },
+  {
+    tokenAddress: nativeTokenAddress,
+    amount: new BN(moveDecimal('9200', 18)),
+    token: {
+      id: nativeTokenAddress,
+      address: nativeTokenAddress,
+      decimals: 18,
+      name: 'Cool Token',
+      symbol: 'COOL',
+    },
+  },
+  {
+    tokenAddress: '0x0',
+    amount: new BN(moveDecimal('7500', 18)),
+    token: {
+      id: '0x0',
+      address: '0x0',
+      decimals: 18,
+      name: 'Ether',
+      symbol: 'Eth',
+    },
+  },
+  {
+    tokenAddress: '234',
+    amount: new BN(moveDecimal('46000', 18)),
+    token: {
+      id: '234',
+      address: '234',
+      decimals: 18,
+      name: 'Another Token',
+      symbol: 'ANTT',
+    },
+  },
+  {
+    tokenAddress: '345',
+    amount: new BN(moveDecimal('210000', 18)),
+    token: {
+      id: '345',
+      address: '345',
+      decimals: 18,
+      name: 'Twitch Token',
+      symbol: 'TWCH',
+    },
+  },
 ];
-
-const nativeToken = { address: '123' };
 
 <Assignment
   assignee={assignee}
-  nativeToken={nativeToken}
+  nativeTokenAddress={nativeTokenAddress}
   payouts={payouts}
-  renderAvatar={renderAvatar}
   reputation={reputation}
-  tokenOptions={colonyTokens}
 />
 ```

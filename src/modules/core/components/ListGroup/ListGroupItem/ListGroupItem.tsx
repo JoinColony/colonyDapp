@@ -1,4 +1,4 @@
-import React, { ReactNode, Ref } from 'react';
+import React, { Ref, HTMLAttributes } from 'react';
 
 import { getMainClasses } from '~utils/css';
 
@@ -8,9 +8,8 @@ interface Appearance {
   padding: 'none' | 'medium';
 }
 
-interface Props {
+interface Props extends HTMLAttributes<HTMLLIElement> {
   appearance?: Appearance;
-  children: ReactNode;
   innerRef?: Ref<HTMLLIElement>;
 }
 

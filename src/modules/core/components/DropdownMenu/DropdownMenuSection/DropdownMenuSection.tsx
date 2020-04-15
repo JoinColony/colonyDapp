@@ -1,9 +1,9 @@
-import React, { ReactNode } from 'react';
+import React, { HTMLAttributes } from 'react';
 
 import styles from './DropdownMenuSection.css';
 
-interface Props {
-  children: ReactNode;
+interface Props extends HTMLAttributes<HTMLUListElement> {
+  /** Should this section have a top border */
   separator?: boolean;
 }
 

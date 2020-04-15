@@ -10,7 +10,8 @@ const checkboxOptions = [
 ];
 <Formik
   initialValues={{ 'someCheckbox': [] }}
-  render={({ values }) => (
+>
+  {({ values }) => (
     <Form>
       {checkboxOptions.map(option => (
         <Checkbox
@@ -23,5 +24,5 @@ const checkboxOptions = [
       <pre>{JSON.stringify(values, null, 2)}</pre>
     </Form>
   )}
-/>
+</Formik>
 ```

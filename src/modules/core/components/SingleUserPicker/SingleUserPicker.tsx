@@ -42,18 +42,6 @@ const MSG = defineMessages({
   },
 });
 
-const defaultRenderAvatar = (
-  address: Address,
-  item?: ItemDataType<AnyUser>,
-) => <UserAvatar address={address} user={item} size="xs" />;
-
-const defaultRenderItem = (
-  user: ItemDataType<AnyUser>,
-  renderAvatar: AvatarRenderFn,
-) => (
-  <ItemDefault itemData={user} renderAvatar={renderAvatar} showMaskedAddress />
-);
-
 interface Appearance {
   direction?: 'horizontal';
   width?: 'wide';
@@ -112,7 +100,9 @@ const SingleUserPicker = ({
   appearance,
   disabled,
   isResettable,
-  renderAvatar = defaultRenderAvatar,
+  renderAvatar = (address: Address, item?: ItemDataType<AnyUser>) => (
+    <UserAvatar address={address} user={item} size="xs" />
+  ),
   renderItem: renderItemProp,
   openOmniPicker,
 }: EnhancedProps) => {
@@ -138,7 +128,13 @@ const SingleUserPicker = ({
   const renderItem =
     renderItemProp || // eslint-disable-next-line react-hooks/rules-of-hooks
     useCallback(
-      (user: ItemDataType<AnyUser>) => defaultRenderItem(user, renderAvatar),
+      (user: ItemDataType<AnyUser>) => (
+        <ItemDefault
+          itemData={user}
+          renderAvatar={renderAvatar}
+          showMaskedAddress
+        />
+      ),
       [renderAvatar],
     );
 

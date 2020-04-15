@@ -14,6 +14,7 @@ interface Props {
   /** Either just display mention or link to profile or so  */
   hasLink?: boolean;
 
+  /** Html title attribute  */
   title?: string;
 }
 
