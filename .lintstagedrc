@@ -4,10 +4,6 @@
       "eslint --fix",
       "git add"
     ],
-    "cypress/**/*.ts": [
-      "eslint --fix",
-      "git add"
-    ],
     "src/**/*.css": [
       "stylelint --fix",
       "git add"
