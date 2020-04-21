@@ -1,4 +1,4 @@
-import React, { ReactNode, Component } from 'react';
+import React, { ReactNode, useState, useCallback } from 'react';
 
 import Icon from '~core/Icon';
 import styles from './Card.css';
@@ -17,70 +17,49 @@ interface Props {
   onCardDismissed?: () => void;
 }
 
-interface State {
-  isOpen: boolean;
-}
+const displayName = 'Card';
 
-class Card extends Component<Props, State> {
-  static defaultProps = {
-    isDismissible: false,
-  };
+const Card = ({
+  children,
+  className,
+  isDismissible = false,
+  onCardDismissed: callback,
+  ...rest
+}: Props) => {
+  const [isOpen, setIsOpen] = useState<boolean>(true);
 
-  static displayName = 'Card';
-
-  state = {
-    isOpen: true,
-  };
-
-  handleClose = () => {
-    const { isDismissible, onCardDismissed: callback } = this.props;
+  const handleClose = useCallback(() => {
     if (!isDismissible) return;
-    this.setState(
-      {
-        isOpen: false,
-      },
-      () => {
-        if (typeof callback === 'function') {
-          callback();
-        }
-      },
-    );
-  };
+    setIsOpen(false);
+    if (typeof callback === 'function') {
+      callback();
+    }
+  }, [callback, isDismissible]);
 
-  render() {
-    const {
-      children,
-      className,
-      isDismissible,
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      onCardDismissed,
-      ...props
-    } = this.props;
-    const { isOpen } = this.state;
+  if (!isOpen) return null;
 
-    if (!isOpen) return null;
+  const mainClass = styles.main;
+  const classNames = className ? `${mainClass} ${className}` : mainClass;
+  return (
+    <li className={classNames} {...rest}>
+      {isDismissible && (
+        <button
+          className={styles.closeButton}
+          onClick={handleClose}
+          type="button"
+        >
+          <Icon
+            appearance={{ size: 'normal' }}
+            name="close"
+            title={{ id: 'button.close' }}
+          />
+        </button>
+      )}
+      {children}
+    </li>
+  );
+};
 
-    const mainClass = styles.main;
-    const classNames = className ? `${mainClass} ${className}` : mainClass;
-    return (
-      <li className={classNames} {...props}>
-        {isDismissible && (
-          <button
-            className={styles.closeButton}
-            onClick={this.handleClose}
-            type="button"
-          >
-            <Icon
-              appearance={{ size: 'normal' }}
-              name="close"
-              title={{ id: 'button.close' }}
-            />
-          </button>
-        )}
-        {children}
-      </li>
-    );
-  }
-}
+Card.displayName = displayName;
 
 export default Card;
