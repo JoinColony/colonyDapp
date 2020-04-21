@@ -93,6 +93,7 @@ module.exports = {
     'import/no-unresolved': 'off',
     'import/no-extraneous-dependencies': 'off',
     'import/prefer-default-export': 'off',
+    'import/extensions': 'off',
 
     // Disallow TODO but not @todo; these are expected to be handled by the jsdoc plugin
     'no-warning-comments': ['error', { terms: ['fixme', 'todo', 'xxx', '@fixme'], location: 'start' }],
