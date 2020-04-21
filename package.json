@@ -17,7 +17,6 @@
         "provision": "scripts/provision_submodules.sh",
         "styleguide": "styleguidist server",
         "styleguide:build": "styleguidist build",
-        "styleguide:deploy": "gh-pages -d styleguide -r git@github.com:JoinColony/colonyUI.git",
         "stylelint": "stylelint --fix \"src/**/*.css\"",
         "stylelint:ci": "stylelint \"src/**/*.css\"",
         "test": "jest --config=jest.conf.json",
