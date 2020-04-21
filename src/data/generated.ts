@@ -165,51 +165,50 @@ export type Maybe<T> = T | null;
     
 /** All built-in and custom scalars, mapped to their actual values */
 export type Scalars = {
-  ID: string,
-  String: string,
-  Boolean: boolean,
-  Int: number,
-  Float: number,
-  /** 
- * A date-time string at UTC, such as 2007-12-03T10:15:30Z, compliant with the
+  ID: string;
+  String: string;
+  Boolean: boolean;
+  Int: number;
+  Float: number;
+  /**
+   * A date-time string at UTC, such as 2007-12-03T10:15:30Z, compliant with the
    * `date-time` format outlined in section 5.6 of the RFC 3339 profile of the ISO
    * 8601 standard for representation of dates and times using the Gregorian calendar.
- */
-  DateTime: any,
+   */
+  DateTime: any;
   /** The `Upload` scalar type represents a file upload. */
-  Upload: any,
+  Upload: any;
 };
 
-
 export type AcceptLevelTaskSubmissionEvent = {
-  type: EventType,
-  acceptedBy: Scalars['String'],
-  levelId: Scalars['String'],
-  payouts: Array<TaskPayout>,
-  persistentTaskId: Scalars['String'],
-  programId: Scalars['String'],
-  submissionId: Scalars['String'],
+  type: EventType;
+  acceptedBy: Scalars['String'];
+  levelId: Scalars['String'];
+  payouts: Array<TaskPayout>;
+  persistentTaskId: Scalars['String'];
+  programId: Scalars['String'];
+  submissionId: Scalars['String'];
 };
 
 export type AcceptLevelTaskSubmissionInput = {
-  levelId: Scalars['String'],
-  submissionId: Scalars['String'],
+  levelId: Scalars['String'];
+  submissionId: Scalars['String'];
 };
 
 export type AddUpvoteToSuggestionInput = {
-  id: Scalars['String'],
+  id: Scalars['String'];
 };
 
 export type AssignWorkerEvent = TaskEvent & {
-  type: EventType,
-  taskId: Scalars['String'],
-  workerAddress: Scalars['String'],
-  colonyAddress?: Maybe<Scalars['String']>,
+  type: EventType;
+  taskId: Scalars['String'];
+  workerAddress: Scalars['String'];
+  colonyAddress?: Maybe<Scalars['String']>;
 };
 
 export type AssignWorkerInput = {
-  id: Scalars['String'],
-  workerAddress: Scalars['String'],
+  id: Scalars['String'];
+  workerAddress: Scalars['String'];
 };
 
 export enum CacheControlScope {
@@ -218,226 +217,226 @@ export enum CacheControlScope {
 }
 
 export type CancelTaskEvent = TaskEvent & {
-  type: EventType,
-  taskId: Scalars['String'],
-  colonyAddress?: Maybe<Scalars['String']>,
+  type: EventType;
+  taskId: Scalars['String'];
+  colonyAddress?: Maybe<Scalars['String']>;
 };
 
 export type Colony = {
-  id: Scalars['String'],
-  createdAt: Scalars['DateTime'],
-  colonyAddress: Scalars['String'],
-  founderAddress: Scalars['String'],
-  colonyName: Scalars['String'],
-  avatarHash?: Maybe<Scalars['String']>,
-  description?: Maybe<Scalars['String']>,
-  displayName?: Maybe<Scalars['String']>,
-  guideline?: Maybe<Scalars['String']>,
-  website?: Maybe<Scalars['String']>,
-  taskIds: Array<Scalars['String']>,
-  tasks: Array<Task>,
-  domains: Array<Domain>,
-  founder?: Maybe<User>,
-  isNativeTokenExternal: Scalars['Boolean'],
-  nativeTokenAddress: Scalars['String'],
-  programs: Array<Program>,
-  subscribedUsers: Array<User>,
-  suggestions: Array<Suggestion>,
-  tokenAddresses: Array<Scalars['String']>,
-  canMintNativeToken: Scalars['Boolean'],
-  canUnlockNativeToken: Scalars['Boolean'],
-  isInRecoveryMode: Scalars['Boolean'],
-  isNativeTokenLocked: Scalars['Boolean'],
-  nativeToken: Token,
-  tokens: Array<Token>,
-  version: Scalars['Int'],
+  avatarHash?: Maybe<Scalars['String']>;
+  canMintNativeToken: Scalars['Boolean'];
+  canUnlockNativeToken: Scalars['Boolean'];
+  colonyAddress: Scalars['String'];
+  colonyName: Scalars['String'];
+  createdAt: Scalars['DateTime'];
+  description?: Maybe<Scalars['String']>;
+  displayName?: Maybe<Scalars['String']>;
+  domains: Array<Domain>;
+  founder?: Maybe<User>;
+  founderAddress: Scalars['String'];
+  guideline?: Maybe<Scalars['String']>;
+  id: Scalars['String'];
+  isInRecoveryMode: Scalars['Boolean'];
+  isNativeTokenExternal: Scalars['Boolean'];
+  isNativeTokenLocked: Scalars['Boolean'];
+  nativeToken: Token;
+  nativeTokenAddress: Scalars['String'];
+  programs: Array<Program>;
+  subscribedUsers: Array<User>;
+  suggestions: Array<Suggestion>;
+  taskIds: Array<Scalars['String']>;
+  tasks: Array<Task>;
+  tokenAddresses: Array<Scalars['String']>;
+  tokens: Array<Token>;
+  version: Scalars['Int'];
+  website?: Maybe<Scalars['String']>;
 };
 
 
 export type ColonyTokensArgs = {
-  addresses?: Maybe<Array<Scalars['String']>>
+  addresses?: Maybe<Array<Scalars['String']>>;
 };
 
 export type ColonyEvent = {
-  type: EventType,
-  colonyAddress?: Maybe<Scalars['String']>,
+  type: EventType;
+  colonyAddress?: Maybe<Scalars['String']>;
 };
 
 export type CreateColonyInput = {
-  colonyAddress: Scalars['String'],
-  colonyName: Scalars['String'],
-  displayName: Scalars['String'],
-  tokenAddress: Scalars['String'],
-  tokenName: Scalars['String'],
-  tokenSymbol: Scalars['String'],
-  tokenDecimals: Scalars['Int'],
-  tokenIsExternal: Scalars['Boolean'],
-  tokenIconHash?: Maybe<Scalars['String']>,
+  colonyAddress: Scalars['String'];
+  colonyName: Scalars['String'];
+  displayName: Scalars['String'];
+  tokenAddress: Scalars['String'];
+  tokenName: Scalars['String'];
+  tokenSymbol: Scalars['String'];
+  tokenDecimals: Scalars['Int'];
+  tokenIsExternal: Scalars['Boolean'];
+  tokenIconHash?: Maybe<Scalars['String']>;
 };
 
 export type CreateDomainEvent = ColonyEvent & {
-  type: EventType,
-  ethDomainId: Scalars['Int'],
-  colonyAddress?: Maybe<Scalars['String']>,
+  type: EventType;
+  ethDomainId: Scalars['Int'];
+  colonyAddress?: Maybe<Scalars['String']>;
 };
 
 export type CreateDomainInput = {
-  colonyAddress: Scalars['String'],
-  ethDomainId: Scalars['Int'],
-  ethParentDomainId?: Maybe<Scalars['Int']>,
-  name: Scalars['String'],
+  colonyAddress: Scalars['String'];
+  ethDomainId: Scalars['Int'];
+  ethParentDomainId?: Maybe<Scalars['Int']>;
+  name: Scalars['String'];
 };
 
 export type CreateLevelInput = {
-  programId: Scalars['String'],
+  programId: Scalars['String'];
 };
 
 export type CreateLevelTaskInput = {
-  levelId: Scalars['String'],
+  levelId: Scalars['String'];
 };
 
 export type CreateLevelTaskSubmissionEvent = {
-  type: EventType,
-  programId: Scalars['String'],
-  persistentTaskId: Scalars['String'],
-  levelId: Scalars['String'],
-  submissionId: Scalars['String'],
+  type: EventType;
+  programId: Scalars['String'];
+  persistentTaskId: Scalars['String'];
+  levelId: Scalars['String'];
+  submissionId: Scalars['String'];
 };
 
 export type CreateLevelTaskSubmissionInput = {
-  levelId: Scalars['String'],
-  persistentTaskId: Scalars['String'],
-  submission: Scalars['String'],
+  levelId: Scalars['String'];
+  persistentTaskId: Scalars['String'];
+  submission: Scalars['String'];
 };
 
 export type CreateProgramInput = {
-  colonyAddress: Scalars['String'],
+  colonyAddress: Scalars['String'];
 };
 
 export type CreateSuggestionInput = {
-  colonyAddress: Scalars['String'],
-  ethDomainId: Scalars['Int'],
-  title: Scalars['String'],
+  colonyAddress: Scalars['String'];
+  ethDomainId: Scalars['Int'];
+  title: Scalars['String'];
 };
 
 export type CreateTaskEvent = TaskEvent & {
-  type: EventType,
-  taskId: Scalars['String'],
-  ethDomainId: Scalars['Int'],
-  colonyAddress?: Maybe<Scalars['String']>,
+  type: EventType;
+  taskId: Scalars['String'];
+  ethDomainId: Scalars['Int'];
+  colonyAddress?: Maybe<Scalars['String']>;
 };
 
 export type CreateTaskFromSuggestionInput = {
-  id: Scalars['String'],
+  id: Scalars['String'];
 };
 
 export type CreateTaskInput = {
-  colonyAddress: Scalars['String'],
-  ethDomainId: Scalars['Int'],
+  colonyAddress: Scalars['String'];
+  ethDomainId: Scalars['Int'];
 };
 
 export type CreateUserInput = {
-  username: Scalars['String'],
+  username: Scalars['String'];
 };
 
 export type CreateWorkRequestEvent = TaskEvent & {
-  type: EventType,
-  taskId: Scalars['String'],
-  colonyAddress?: Maybe<Scalars['String']>,
+  type: EventType;
+  taskId: Scalars['String'];
+  colonyAddress?: Maybe<Scalars['String']>;
 };
 
 export type CreateWorkRequestInput = {
-  id: Scalars['String'],
+  id: Scalars['String'];
 };
 
 
 export type Domain = {
-  id: Scalars['String'],
-  createdAt: Scalars['DateTime'],
-  colonyAddress: Scalars['String'],
-  ethDomainId: Scalars['Int'],
-  ethParentDomainId?: Maybe<Scalars['Int']>,
-  name: Scalars['String'],
-  colony?: Maybe<Colony>,
-  parent?: Maybe<Domain>,
-  tasks: Array<Task>,
+  id: Scalars['String'];
+  createdAt: Scalars['DateTime'];
+  colonyAddress: Scalars['String'];
+  ethDomainId: Scalars['Int'];
+  ethParentDomainId?: Maybe<Scalars['Int']>;
+  name: Scalars['String'];
+  colony?: Maybe<Colony>;
+  parent?: Maybe<Domain>;
+  tasks: Array<Task>;
 };
 
 export type DomainBalance = {
-  id: Scalars['Int'],
-  domainId: Scalars['Int'],
-  amount: Scalars['String'],
+  id: Scalars['Int'];
+  domainId: Scalars['Int'];
+  amount: Scalars['String'];
 };
 
 export type EditColonyProfileInput = {
-  colonyAddress: Scalars['String'],
-  avatarHash?: Maybe<Scalars['String']>,
-  description?: Maybe<Scalars['String']>,
-  displayName?: Maybe<Scalars['String']>,
-  guideline?: Maybe<Scalars['String']>,
-  website?: Maybe<Scalars['String']>,
+  colonyAddress: Scalars['String'];
+  avatarHash?: Maybe<Scalars['String']>;
+  description?: Maybe<Scalars['String']>;
+  displayName?: Maybe<Scalars['String']>;
+  guideline?: Maybe<Scalars['String']>;
+  website?: Maybe<Scalars['String']>;
 };
 
 export type EditDomainNameInput = {
-  colonyAddress: Scalars['String'],
-  ethDomainId: Scalars['Int'],
-  name: Scalars['String'],
+  colonyAddress: Scalars['String'];
+  ethDomainId: Scalars['Int'];
+  name: Scalars['String'];
 };
 
 export type EditLevelInput = {
-  id: Scalars['String'],
-  title?: Maybe<Scalars['String']>,
-  description?: Maybe<Scalars['String']>,
-  achievement?: Maybe<Scalars['String']>,
-  numRequiredSteps?: Maybe<Scalars['Int']>,
+  id: Scalars['String'];
+  title?: Maybe<Scalars['String']>;
+  description?: Maybe<Scalars['String']>;
+  achievement?: Maybe<Scalars['String']>;
+  numRequiredSteps?: Maybe<Scalars['Int']>;
 };
 
 export type EditPersistentTaskInput = {
-  id: Scalars['String'],
-  ethDomainId?: Maybe<Scalars['Int']>,
-  ethSkillId?: Maybe<Scalars['Int']>,
-  title?: Maybe<Scalars['String']>,
-  description?: Maybe<Scalars['String']>,
-  payouts?: Maybe<Array<Payout>>,
+  id: Scalars['String'];
+  ethDomainId?: Maybe<Scalars['Int']>;
+  ethSkillId?: Maybe<Scalars['Int']>;
+  title?: Maybe<Scalars['String']>;
+  description?: Maybe<Scalars['String']>;
+  payouts?: Maybe<Array<Payout>>;
 };
 
 export type EditProgramInput = {
-  id: Scalars['String'],
-  title?: Maybe<Scalars['String']>,
-  description?: Maybe<Scalars['String']>,
+  id: Scalars['String'];
+  title?: Maybe<Scalars['String']>;
+  description?: Maybe<Scalars['String']>;
 };
 
 export type EditSubmissionInput = {
-  id: Scalars['String'],
-  submission: Scalars['String'],
+  id: Scalars['String'];
+  submission: Scalars['String'];
 };
 
 export type EditUserInput = {
-  avatarHash?: Maybe<Scalars['String']>,
-  bio?: Maybe<Scalars['String']>,
-  displayName?: Maybe<Scalars['String']>,
-  location?: Maybe<Scalars['String']>,
-  website?: Maybe<Scalars['String']>,
+  avatarHash?: Maybe<Scalars['String']>;
+  bio?: Maybe<Scalars['String']>;
+  displayName?: Maybe<Scalars['String']>;
+  location?: Maybe<Scalars['String']>;
+  website?: Maybe<Scalars['String']>;
 };
 
 export type EnrollInProgramInput = {
-  id: Scalars['String'],
+  id: Scalars['String'];
 };
 
 export type EnrollUserInProgramEvent = {
-  type: EventType,
-  programId: Scalars['String'],
+  type: EventType;
+  programId: Scalars['String'];
 };
 
 export type Event = {
-  id: Scalars['String'],
-  type: EventType,
-  createdAt: Scalars['DateTime'],
-  initiator?: Maybe<User>,
-  initiatorAddress: Scalars['String'],
-  sourceId: Scalars['String'],
-  sourceType: Scalars['String'],
-  context: EventContext,
+  id: Scalars['String'];
+  type: EventType;
+  createdAt: Scalars['DateTime'];
+  initiator?: Maybe<User>;
+  initiatorAddress: Scalars['String'];
+  sourceId: Scalars['String'];
+  sourceType: Scalars['String'];
+  context: EventContext;
 };
 
 export type EventContext = AcceptLevelTaskSubmissionEvent | AssignWorkerEvent | CancelTaskEvent | CreateDomainEvent | CreateTaskEvent | CreateLevelTaskSubmissionEvent | CreateWorkRequestEvent | EnrollUserInProgramEvent | FinalizeTaskEvent | NewUserEvent | RemoveTaskPayoutEvent | SendWorkInviteEvent | SetTaskDescriptionEvent | SetTaskDomainEvent | SetTaskDueDateEvent | SetTaskPayoutEvent | SetTaskPendingEvent | SetTaskSkillEvent | RemoveTaskSkillEvent | SetTaskTitleEvent | TaskMessageEvent | UnassignWorkerEvent | UnlockNextLevelEvent;
@@ -469,30 +468,30 @@ export enum EventType {
 }
 
 export type FinalizeTaskEvent = TaskEvent & {
-  type: EventType,
-  taskId: Scalars['String'],
-  colonyAddress?: Maybe<Scalars['String']>,
+  type: EventType;
+  taskId: Scalars['String'];
+  colonyAddress?: Maybe<Scalars['String']>;
 };
 
 export type FinalizeTaskInput = {
-  id: Scalars['String'],
-  ethPotId: Scalars['Int'],
+  id: Scalars['String'];
+  ethPotId: Scalars['Int'];
 };
 
 export type Level = {
-  id: Scalars['String'],
-  createdAt: Scalars['DateTime'],
-  creatorAddress: Scalars['String'],
-  title?: Maybe<Scalars['String']>,
-  description?: Maybe<Scalars['String']>,
-  achievement?: Maybe<Scalars['String']>,
-  numRequiredSteps?: Maybe<Scalars['Int']>,
-  programId: Scalars['String'],
-  program: Program,
-  stepIds: Array<Scalars['String']>,
-  steps: Array<PersistentTask>,
-  status: LevelStatus,
-  unlocked: Scalars['Boolean'],
+  id: Scalars['String'];
+  createdAt: Scalars['DateTime'];
+  creatorAddress: Scalars['String'];
+  title?: Maybe<Scalars['String']>;
+  description?: Maybe<Scalars['String']>;
+  achievement?: Maybe<Scalars['String']>;
+  numRequiredSteps?: Maybe<Scalars['Int']>;
+  programId: Scalars['String'];
+  program: Program;
+  stepIds: Array<Scalars['String']>;
+  steps: Array<PersistentTask>;
+  status: LevelStatus;
+  unlocked: Scalars['Boolean'];
 };
 
 export enum LevelStatus {
@@ -501,356 +500,356 @@ export enum LevelStatus {
 }
 
 export type LoggedInUser = {
-  id: Scalars['String'],
-  balance: Scalars['String'],
-  username?: Maybe<Scalars['String']>,
-  walletAddress: Scalars['String'],
+  id: Scalars['String'];
+  balance: Scalars['String'];
+  username?: Maybe<Scalars['String']>;
+  walletAddress: Scalars['String'];
 };
 
 export type LoggedInUserInput = {
-  balance?: Maybe<Scalars['String']>,
-  username?: Maybe<Scalars['String']>,
-  walletAddress?: Maybe<Scalars['String']>,
+  balance?: Maybe<Scalars['String']>;
+  username?: Maybe<Scalars['String']>;
+  walletAddress?: Maybe<Scalars['String']>;
 };
 
 export type MarkNotificationAsReadInput = {
-  id: Scalars['String'],
+  id: Scalars['String'];
 };
 
 export type Mutation = {
-  createColony?: Maybe<Colony>,
-  editColonyProfile?: Maybe<Colony>,
-  setColonyTokens?: Maybe<Colony>,
-  createDomain?: Maybe<Domain>,
-  editDomainName?: Maybe<Domain>,
-  sendTaskMessage: Scalars['Boolean'],
-  markAllNotificationsAsRead: Scalars['Boolean'],
-  markNotificationAsRead: Scalars['Boolean'],
-  createSuggestion?: Maybe<Suggestion>,
-  setSuggestionStatus?: Maybe<Suggestion>,
-  addUpvoteToSuggestion?: Maybe<Suggestion>,
-  removeUpvoteFromSuggestion?: Maybe<Suggestion>,
-  assignWorker?: Maybe<Task>,
-  cancelTask?: Maybe<Task>,
-  createTask?: Maybe<Task>,
-  createTaskFromSuggestion?: Maybe<Task>,
-  createWorkRequest?: Maybe<Task>,
-  finalizeTask?: Maybe<Task>,
-  removeTaskPayout?: Maybe<Task>,
-  sendWorkInvite?: Maybe<Task>,
-  setTaskDomain?: Maybe<Task>,
-  setTaskDescription?: Maybe<Task>,
-  setTaskDueDate?: Maybe<Task>,
-  setTaskPayout?: Maybe<Task>,
-  setTaskPending?: Maybe<Task>,
-  setTaskSkill?: Maybe<Task>,
-  removeTaskSkill?: Maybe<Task>,
-  setTaskTitle?: Maybe<Task>,
-  unassignWorker?: Maybe<Task>,
-  createUser?: Maybe<User>,
-  editUser?: Maybe<User>,
-  subscribeToColony?: Maybe<User>,
-  unsubscribeFromColony?: Maybe<User>,
-  setUserTokens?: Maybe<User>,
-  createLevelTaskSubmission?: Maybe<Submission>,
-  acceptLevelTaskSubmission?: Maybe<Submission>,
-  editSubmission?: Maybe<Submission>,
-  createLevelTask?: Maybe<PersistentTask>,
-  removeLevelTask?: Maybe<PersistentTask>,
-  editPersistentTask?: Maybe<PersistentTask>,
-  createLevel?: Maybe<Level>,
-  editLevel?: Maybe<Level>,
-  reorderLevelSteps?: Maybe<Level>,
-  removeLevel?: Maybe<Level>,
-  createProgram?: Maybe<Program>,
-  enrollInProgram?: Maybe<Program>,
-  editProgram?: Maybe<Program>,
-  reorderProgramLevels?: Maybe<Program>,
-  publishProgram?: Maybe<Program>,
-  removeProgram?: Maybe<Program>,
-  setLoggedInUser: LoggedInUser,
-  clearLoggedInUser: LoggedInUser,
-};
-
-
-export type MutationCreateColonyArgs = {
-  input: CreateColonyInput
-};
-
-
-export type MutationEditColonyProfileArgs = {
-  input: EditColonyProfileInput
-};
-
-
-export type MutationSetColonyTokensArgs = {
-  input: SetColonyTokensInput
-};
-
-
-export type MutationCreateDomainArgs = {
-  input: CreateDomainInput
-};
-
-
-export type MutationEditDomainNameArgs = {
-  input: EditDomainNameInput
-};
-
-
-export type MutationSendTaskMessageArgs = {
-  input: SendTaskMessageInput
-};
-
-
-export type MutationMarkNotificationAsReadArgs = {
-  input: MarkNotificationAsReadInput
-};
-
-
-export type MutationCreateSuggestionArgs = {
-  input: CreateSuggestionInput
-};
-
-
-export type MutationSetSuggestionStatusArgs = {
-  input: SetSuggestionStatusInput
-};
-
-
-export type MutationAddUpvoteToSuggestionArgs = {
-  input: AddUpvoteToSuggestionInput
-};
-
-
-export type MutationRemoveUpvoteFromSuggestionArgs = {
-  input: RemoveUpvoteFromSuggestionInput
-};
-
-
-export type MutationAssignWorkerArgs = {
-  input: AssignWorkerInput
-};
-
-
-export type MutationCancelTaskArgs = {
-  input: TaskIdInput
-};
-
-
-export type MutationCreateTaskArgs = {
-  input: CreateTaskInput
-};
-
-
-export type MutationCreateTaskFromSuggestionArgs = {
-  input: CreateTaskFromSuggestionInput
-};
-
-
-export type MutationCreateWorkRequestArgs = {
-  input: CreateWorkRequestInput
-};
-
-
-export type MutationFinalizeTaskArgs = {
-  input: FinalizeTaskInput
-};
-
-
-export type MutationRemoveTaskPayoutArgs = {
-  input: RemoveTaskPayoutInput
-};
-
-
-export type MutationSendWorkInviteArgs = {
-  input: SendWorkInviteInput
-};
-
-
-export type MutationSetTaskDomainArgs = {
-  input: SetTaskDomainInput
-};
-
-
-export type MutationSetTaskDescriptionArgs = {
-  input: SetTaskDescriptionInput
-};
-
-
-export type MutationSetTaskDueDateArgs = {
-  input: SetTaskDueDateInput
-};
-
-
-export type MutationSetTaskPayoutArgs = {
-  input: SetTaskPayoutInput
-};
-
-
-export type MutationSetTaskPendingArgs = {
-  input: SetTaskPendingInput
-};
-
-
-export type MutationSetTaskSkillArgs = {
-  input: SetTaskSkillInput
-};
-
-
-export type MutationRemoveTaskSkillArgs = {
-  input: RemoveTaskSkillInput
-};
-
-
-export type MutationSetTaskTitleArgs = {
-  input: SetTaskTitleInput
-};
-
-
-export type MutationUnassignWorkerArgs = {
-  input: UnassignWorkerInput
-};
-
-
-export type MutationCreateUserArgs = {
-  input: CreateUserInput
-};
-
-
-export type MutationEditUserArgs = {
-  input: EditUserInput
-};
-
-
-export type MutationSubscribeToColonyArgs = {
-  input: SubscribeToColonyInput
-};
-
-
-export type MutationUnsubscribeFromColonyArgs = {
-  input: UnsubscribeFromColonyInput
-};
-
-
-export type MutationSetUserTokensArgs = {
-  input: SetUserTokensInput
-};
-
-
-export type MutationCreateLevelTaskSubmissionArgs = {
-  input: CreateLevelTaskSubmissionInput
+  acceptLevelTaskSubmission?: Maybe<Submission>;
+  addUpvoteToSuggestion?: Maybe<Suggestion>;
+  assignWorker?: Maybe<Task>;
+  cancelTask?: Maybe<Task>;
+  clearLoggedInUser: LoggedInUser;
+  createColony?: Maybe<Colony>;
+  createDomain?: Maybe<Domain>;
+  createLevel?: Maybe<Level>;
+  createLevelTask?: Maybe<PersistentTask>;
+  createLevelTaskSubmission?: Maybe<Submission>;
+  createProgram?: Maybe<Program>;
+  createSuggestion?: Maybe<Suggestion>;
+  createTask?: Maybe<Task>;
+  createTaskFromSuggestion?: Maybe<Task>;
+  createUser?: Maybe<User>;
+  createWorkRequest?: Maybe<Task>;
+  editColonyProfile?: Maybe<Colony>;
+  editDomainName?: Maybe<Domain>;
+  editLevel?: Maybe<Level>;
+  editPersistentTask?: Maybe<PersistentTask>;
+  editProgram?: Maybe<Program>;
+  editSubmission?: Maybe<Submission>;
+  editUser?: Maybe<User>;
+  enrollInProgram?: Maybe<Program>;
+  finalizeTask?: Maybe<Task>;
+  markAllNotificationsAsRead: Scalars['Boolean'];
+  markNotificationAsRead: Scalars['Boolean'];
+  publishProgram?: Maybe<Program>;
+  removeLevel?: Maybe<Level>;
+  removeLevelTask?: Maybe<PersistentTask>;
+  removeProgram?: Maybe<Program>;
+  removeTaskPayout?: Maybe<Task>;
+  removeTaskSkill?: Maybe<Task>;
+  removeUpvoteFromSuggestion?: Maybe<Suggestion>;
+  reorderLevelSteps?: Maybe<Level>;
+  reorderProgramLevels?: Maybe<Program>;
+  sendTaskMessage: Scalars['Boolean'];
+  sendWorkInvite?: Maybe<Task>;
+  setColonyTokens?: Maybe<Colony>;
+  setLoggedInUser: LoggedInUser;
+  setSuggestionStatus?: Maybe<Suggestion>;
+  setTaskDescription?: Maybe<Task>;
+  setTaskDomain?: Maybe<Task>;
+  setTaskDueDate?: Maybe<Task>;
+  setTaskPayout?: Maybe<Task>;
+  setTaskPending?: Maybe<Task>;
+  setTaskSkill?: Maybe<Task>;
+  setTaskTitle?: Maybe<Task>;
+  setUserTokens?: Maybe<User>;
+  subscribeToColony?: Maybe<User>;
+  unassignWorker?: Maybe<Task>;
+  unsubscribeFromColony?: Maybe<User>;
 };
 
 
 export type MutationAcceptLevelTaskSubmissionArgs = {
-  input: AcceptLevelTaskSubmissionInput
+  input: AcceptLevelTaskSubmissionInput;
 };
 
 
-export type MutationEditSubmissionArgs = {
-  input: EditSubmissionInput
+export type MutationAddUpvoteToSuggestionArgs = {
+  input: AddUpvoteToSuggestionInput;
 };
 
 
-export type MutationCreateLevelTaskArgs = {
-  input: CreateLevelTaskInput
+export type MutationAssignWorkerArgs = {
+  input: AssignWorkerInput;
 };
 
 
-export type MutationRemoveLevelTaskArgs = {
-  input: RemoveLevelTaskInput
+export type MutationCancelTaskArgs = {
+  input: TaskIdInput;
 };
 
 
-export type MutationEditPersistentTaskArgs = {
-  input: EditPersistentTaskInput
+export type MutationCreateColonyArgs = {
+  input: CreateColonyInput;
+};
+
+
+export type MutationCreateDomainArgs = {
+  input: CreateDomainInput;
 };
 
 
 export type MutationCreateLevelArgs = {
-  input: CreateLevelInput
+  input: CreateLevelInput;
 };
 
 
-export type MutationEditLevelArgs = {
-  input: EditLevelInput
+export type MutationCreateLevelTaskArgs = {
+  input: CreateLevelTaskInput;
 };
 
 
-export type MutationReorderLevelStepsArgs = {
-  input: ReorderLevelStepsInput
-};
-
-
-export type MutationRemoveLevelArgs = {
-  input: RemoveLevelInput
+export type MutationCreateLevelTaskSubmissionArgs = {
+  input: CreateLevelTaskSubmissionInput;
 };
 
 
 export type MutationCreateProgramArgs = {
-  input: CreateProgramInput
+  input: CreateProgramInput;
 };
 
 
-export type MutationEnrollInProgramArgs = {
-  input: EnrollInProgramInput
+export type MutationCreateSuggestionArgs = {
+  input: CreateSuggestionInput;
+};
+
+
+export type MutationCreateTaskArgs = {
+  input: CreateTaskInput;
+};
+
+
+export type MutationCreateTaskFromSuggestionArgs = {
+  input: CreateTaskFromSuggestionInput;
+};
+
+
+export type MutationCreateUserArgs = {
+  input: CreateUserInput;
+};
+
+
+export type MutationCreateWorkRequestArgs = {
+  input: CreateWorkRequestInput;
+};
+
+
+export type MutationEditColonyProfileArgs = {
+  input: EditColonyProfileInput;
+};
+
+
+export type MutationEditDomainNameArgs = {
+  input: EditDomainNameInput;
+};
+
+
+export type MutationEditLevelArgs = {
+  input: EditLevelInput;
+};
+
+
+export type MutationEditPersistentTaskArgs = {
+  input: EditPersistentTaskInput;
 };
 
 
 export type MutationEditProgramArgs = {
-  input: EditProgramInput
+  input: EditProgramInput;
 };
 
 
-export type MutationReorderProgramLevelsArgs = {
-  input: ReorderProgramLevelsInput
+export type MutationEditSubmissionArgs = {
+  input: EditSubmissionInput;
+};
+
+
+export type MutationEditUserArgs = {
+  input: EditUserInput;
+};
+
+
+export type MutationEnrollInProgramArgs = {
+  input: EnrollInProgramInput;
+};
+
+
+export type MutationFinalizeTaskArgs = {
+  input: FinalizeTaskInput;
+};
+
+
+export type MutationMarkNotificationAsReadArgs = {
+  input: MarkNotificationAsReadInput;
 };
 
 
 export type MutationPublishProgramArgs = {
-  input: PublishProgramInput
+  input: PublishProgramInput;
+};
+
+
+export type MutationRemoveLevelArgs = {
+  input: RemoveLevelInput;
+};
+
+
+export type MutationRemoveLevelTaskArgs = {
+  input: RemoveLevelTaskInput;
 };
 
 
 export type MutationRemoveProgramArgs = {
-  input: RemoveProgramInput
+  input: RemoveProgramInput;
+};
+
+
+export type MutationRemoveTaskPayoutArgs = {
+  input: RemoveTaskPayoutInput;
+};
+
+
+export type MutationRemoveTaskSkillArgs = {
+  input: RemoveTaskSkillInput;
+};
+
+
+export type MutationRemoveUpvoteFromSuggestionArgs = {
+  input: RemoveUpvoteFromSuggestionInput;
+};
+
+
+export type MutationReorderLevelStepsArgs = {
+  input: ReorderLevelStepsInput;
+};
+
+
+export type MutationReorderProgramLevelsArgs = {
+  input: ReorderProgramLevelsInput;
+};
+
+
+export type MutationSendTaskMessageArgs = {
+  input: SendTaskMessageInput;
+};
+
+
+export type MutationSendWorkInviteArgs = {
+  input: SendWorkInviteInput;
+};
+
+
+export type MutationSetColonyTokensArgs = {
+  input: SetColonyTokensInput;
 };
 
 
 export type MutationSetLoggedInUserArgs = {
-  input?: Maybe<LoggedInUserInput>
+  input?: Maybe<LoggedInUserInput>;
+};
+
+
+export type MutationSetSuggestionStatusArgs = {
+  input: SetSuggestionStatusInput;
+};
+
+
+export type MutationSetTaskDescriptionArgs = {
+  input: SetTaskDescriptionInput;
+};
+
+
+export type MutationSetTaskDomainArgs = {
+  input: SetTaskDomainInput;
+};
+
+
+export type MutationSetTaskDueDateArgs = {
+  input: SetTaskDueDateInput;
+};
+
+
+export type MutationSetTaskPayoutArgs = {
+  input: SetTaskPayoutInput;
+};
+
+
+export type MutationSetTaskPendingArgs = {
+  input: SetTaskPendingInput;
+};
+
+
+export type MutationSetTaskSkillArgs = {
+  input: SetTaskSkillInput;
+};
+
+
+export type MutationSetTaskTitleArgs = {
+  input: SetTaskTitleInput;
+};
+
+
+export type MutationSetUserTokensArgs = {
+  input: SetUserTokensInput;
+};
+
+
+export type MutationSubscribeToColonyArgs = {
+  input: SubscribeToColonyInput;
+};
+
+
+export type MutationUnassignWorkerArgs = {
+  input: UnassignWorkerInput;
+};
+
+
+export type MutationUnsubscribeFromColonyArgs = {
+  input: UnsubscribeFromColonyInput;
 };
 
 export type NewUserEvent = {
-  type: EventType,
+  type: EventType;
 };
 
 export type Notification = {
-  id: Scalars['String'],
-  event: Event,
-  read: Scalars['Boolean'],
+  id: Scalars['String'];
+  event: Event;
+  read: Scalars['Boolean'];
 };
 
 export type Payout = {
-  amount: Scalars['String'],
-  tokenAddress: Scalars['String'],
+  amount: Scalars['String'];
+  tokenAddress: Scalars['String'];
 };
 
 export type PersistentTask = {
-  id: Scalars['String'],
-  createdAt: Scalars['DateTime'],
-  colonyAddress: Scalars['String'],
-  creatorAddress: Scalars['String'],
-  ethDomainId?: Maybe<Scalars['Int']>,
-  domain?: Maybe<Domain>,
-  ethSkillId?: Maybe<Scalars['Int']>,
-  title?: Maybe<Scalars['String']>,
-  description?: Maybe<Scalars['String']>,
-  payouts: Array<TaskPayout>,
-  submissions: Array<Submission>,
-  status: PersistentTaskStatus,
-  currentUserSubmission?: Maybe<Submission>,
+  id: Scalars['String'];
+  createdAt: Scalars['DateTime'];
+  colonyAddress: Scalars['String'];
+  creatorAddress: Scalars['String'];
+  ethDomainId?: Maybe<Scalars['Int']>;
+  domain?: Maybe<Domain>;
+  ethSkillId?: Maybe<Scalars['Int']>;
+  title?: Maybe<Scalars['String']>;
+  description?: Maybe<Scalars['String']>;
+  payouts: Array<TaskPayout>;
+  submissions: Array<Submission>;
+  status: PersistentTaskStatus;
+  currentUserSubmission?: Maybe<Submission>;
 };
 
 export enum PersistentTaskStatus {
@@ -860,18 +859,18 @@ export enum PersistentTaskStatus {
 }
 
 export type Program = {
-  id: Scalars['String'],
-  createdAt: Scalars['DateTime'],
-  creatorAddress: Scalars['String'],
-  colonyAddress: Scalars['String'],
-  title?: Maybe<Scalars['String']>,
-  description?: Maybe<Scalars['String']>,
-  levelIds: Array<Scalars['String']>,
-  levels: Array<Level>,
-  enrolledUserAddresses: Array<Scalars['String']>,
-  enrolled: Scalars['Boolean'],
-  status: ProgramStatus,
-  submissions: Array<ProgramSubmission>,
+  id: Scalars['String'];
+  createdAt: Scalars['DateTime'];
+  creatorAddress: Scalars['String'];
+  colonyAddress: Scalars['String'];
+  title?: Maybe<Scalars['String']>;
+  description?: Maybe<Scalars['String']>;
+  levelIds: Array<Scalars['String']>;
+  levels: Array<Level>;
+  enrolledUserAddresses: Array<Scalars['String']>;
+  enrolled: Scalars['Boolean'];
+  status: ProgramStatus;
+  submissions: Array<ProgramSubmission>;
 };
 
 export enum ProgramStatus {
@@ -881,288 +880,288 @@ export enum ProgramStatus {
 }
 
 export type ProgramSubmission = {
-  id: Scalars['String'],
-  levelId: Scalars['String'],
-  level: Level,
-  submission: Submission,
+  id: Scalars['String'];
+  levelId: Scalars['String'];
+  level: Level;
+  submission: Submission;
 };
 
 export type PublishProgramInput = {
-  id: Scalars['String'],
+  id: Scalars['String'];
 };
 
 export type Query = {
-  user: User,
-  colony: Colony,
-  domain: Domain,
-  level: Level,
-  program: Program,
-  task: Task,
-  tokenInfo: TokenInfo,
-  systemInfo: SystemInfo,
-  loggedInUser: LoggedInUser,
-  colonyAddress: Scalars['String'],
-  colonyName: Scalars['String'],
-  token: Token,
-  tokens: Array<Token>,
-  userAddress: Scalars['String'],
-  userReputation: Scalars['String'],
-  username: Scalars['String'],
-};
-
-
-export type QueryUserArgs = {
-  address: Scalars['String']
+  colony: Colony;
+  colonyAddress: Scalars['String'];
+  colonyName: Scalars['String'];
+  domain: Domain;
+  level: Level;
+  loggedInUser: LoggedInUser;
+  program: Program;
+  systemInfo: SystemInfo;
+  task: Task;
+  token: Token;
+  tokenInfo: TokenInfo;
+  tokens: Array<Token>;
+  user: User;
+  userAddress: Scalars['String'];
+  userReputation: Scalars['String'];
+  username: Scalars['String'];
 };
 
 
 export type QueryColonyArgs = {
-  address: Scalars['String']
-};
-
-
-export type QueryDomainArgs = {
-  colonyAddress: Scalars['String'],
-  ethDomainId: Scalars['Int']
-};
-
-
-export type QueryLevelArgs = {
-  id: Scalars['String']
-};
-
-
-export type QueryProgramArgs = {
-  id: Scalars['String']
-};
-
-
-export type QueryTaskArgs = {
-  id: Scalars['String']
-};
-
-
-export type QueryTokenInfoArgs = {
-  address: Scalars['String']
+  address: Scalars['String'];
 };
 
 
 export type QueryColonyAddressArgs = {
-  name: Scalars['String']
+  name: Scalars['String'];
 };
 
 
 export type QueryColonyNameArgs = {
-  address: Scalars['String']
+  address: Scalars['String'];
+};
+
+
+export type QueryDomainArgs = {
+  colonyAddress: Scalars['String'];
+  ethDomainId: Scalars['Int'];
+};
+
+
+export type QueryLevelArgs = {
+  id: Scalars['String'];
+};
+
+
+export type QueryProgramArgs = {
+  id: Scalars['String'];
+};
+
+
+export type QueryTaskArgs = {
+  id: Scalars['String'];
 };
 
 
 export type QueryTokenArgs = {
-  address: Scalars['String']
+  address: Scalars['String'];
+};
+
+
+export type QueryTokenInfoArgs = {
+  address: Scalars['String'];
 };
 
 
 export type QueryTokensArgs = {
-  addresses?: Maybe<Array<Scalars['String']>>
+  addresses?: Maybe<Array<Scalars['String']>>;
+};
+
+
+export type QueryUserArgs = {
+  address: Scalars['String'];
 };
 
 
 export type QueryUserAddressArgs = {
-  name: Scalars['String']
+  name: Scalars['String'];
 };
 
 
 export type QueryUserReputationArgs = {
-  address: Scalars['String'],
-  colonyAddress: Scalars['String'],
-  domainId?: Maybe<Scalars['Int']>
+  address: Scalars['String'];
+  colonyAddress: Scalars['String'];
+  domainId?: Maybe<Scalars['Int']>;
 };
 
 
 export type QueryUsernameArgs = {
-  address: Scalars['String']
+  address: Scalars['String'];
 };
 
 export type RemoveLevelInput = {
-  id: Scalars['String'],
+  id: Scalars['String'];
 };
 
 export type RemoveLevelTaskInput = {
-  id: Scalars['String'],
-  levelId: Scalars['String'],
+  id: Scalars['String'];
+  levelId: Scalars['String'];
 };
 
 export type RemoveProgramInput = {
-  id: Scalars['String'],
+  id: Scalars['String'];
 };
 
 export type RemoveTaskPayoutEvent = TaskEvent & {
-  type: EventType,
-  taskId: Scalars['String'],
-  tokenAddress: Scalars['String'],
-  amount: Scalars['String'],
-  colonyAddress?: Maybe<Scalars['String']>,
+  type: EventType;
+  taskId: Scalars['String'];
+  tokenAddress: Scalars['String'];
+  amount: Scalars['String'];
+  colonyAddress?: Maybe<Scalars['String']>;
 };
 
 export type RemoveTaskPayoutInput = {
-  id: Scalars['String'],
-  amount: Scalars['String'],
-  tokenAddress: Scalars['String'],
+  id: Scalars['String'];
+  amount: Scalars['String'];
+  tokenAddress: Scalars['String'];
 };
 
 export type RemoveTaskSkillEvent = TaskEvent & {
-  type: EventType,
-  taskId: Scalars['String'],
-  ethSkillId: Scalars['Int'],
-  colonyAddress?: Maybe<Scalars['String']>,
+  type: EventType;
+  taskId: Scalars['String'];
+  ethSkillId: Scalars['Int'];
+  colonyAddress?: Maybe<Scalars['String']>;
 };
 
 export type RemoveTaskSkillInput = {
-  id: Scalars['String'],
-  ethSkillId: Scalars['Int'],
+  id: Scalars['String'];
+  ethSkillId: Scalars['Int'];
 };
 
 export type RemoveUpvoteFromSuggestionInput = {
-  id: Scalars['String'],
+  id: Scalars['String'];
 };
 
 export type ReorderLevelStepsInput = {
-  id: Scalars['String'],
-  stepIds: Array<Scalars['String']>,
+  id: Scalars['String'];
+  stepIds: Array<Scalars['String']>;
 };
 
 export type ReorderProgramLevelsInput = {
-  id: Scalars['String'],
-  levelIds: Array<Scalars['String']>,
+  id: Scalars['String'];
+  levelIds: Array<Scalars['String']>;
 };
 
 export type SendTaskMessageInput = {
-  id: Scalars['String'],
-  message: Scalars['String'],
+  id: Scalars['String'];
+  message: Scalars['String'];
 };
 
 export type SendWorkInviteEvent = TaskEvent & {
-  type: EventType,
-  taskId: Scalars['String'],
-  workerAddress: Scalars['String'],
-  colonyAddress?: Maybe<Scalars['String']>,
+  type: EventType;
+  taskId: Scalars['String'];
+  workerAddress: Scalars['String'];
+  colonyAddress?: Maybe<Scalars['String']>;
 };
 
 export type SendWorkInviteInput = {
-  id: Scalars['String'],
-  workerAddress: Scalars['String'],
+  id: Scalars['String'];
+  workerAddress: Scalars['String'];
 };
 
 export type SetColonyTokensInput = {
-  tokenAddresses: Array<Maybe<Scalars['String']>>,
-  colonyAddress: Scalars['String'],
+  tokenAddresses: Array<Maybe<Scalars['String']>>;
+  colonyAddress: Scalars['String'];
 };
 
 export type SetSuggestionStatusInput = {
-  id: Scalars['String'],
-  status: SuggestionStatus,
+  id: Scalars['String'];
+  status: SuggestionStatus;
 };
 
 export type SetTaskDescriptionEvent = TaskEvent & {
-  type: EventType,
-  taskId: Scalars['String'],
-  description: Scalars['String'],
-  colonyAddress?: Maybe<Scalars['String']>,
+  type: EventType;
+  taskId: Scalars['String'];
+  description: Scalars['String'];
+  colonyAddress?: Maybe<Scalars['String']>;
 };
 
 export type SetTaskDescriptionInput = {
-  id: Scalars['String'],
-  description: Scalars['String'],
+  id: Scalars['String'];
+  description: Scalars['String'];
 };
 
 export type SetTaskDomainEvent = TaskEvent & {
-  type: EventType,
-  taskId: Scalars['String'],
-  ethDomainId: Scalars['Int'],
-  colonyAddress?: Maybe<Scalars['String']>,
+  type: EventType;
+  taskId: Scalars['String'];
+  ethDomainId: Scalars['Int'];
+  colonyAddress?: Maybe<Scalars['String']>;
 };
 
 export type SetTaskDomainInput = {
-  id: Scalars['String'],
-  ethDomainId: Scalars['Int'],
+  id: Scalars['String'];
+  ethDomainId: Scalars['Int'];
 };
 
 export type SetTaskDueDateEvent = TaskEvent & {
-  type: EventType,
-  taskId: Scalars['String'],
-  dueDate?: Maybe<Scalars['DateTime']>,
-  colonyAddress?: Maybe<Scalars['String']>,
+  type: EventType;
+  taskId: Scalars['String'];
+  dueDate?: Maybe<Scalars['DateTime']>;
+  colonyAddress?: Maybe<Scalars['String']>;
 };
 
 export type SetTaskDueDateInput = {
-  id: Scalars['String'],
-  dueDate?: Maybe<Scalars['DateTime']>,
+  id: Scalars['String'];
+  dueDate?: Maybe<Scalars['DateTime']>;
 };
 
 export type SetTaskPayoutEvent = TaskEvent & {
-  type: EventType,
-  taskId: Scalars['String'],
-  tokenAddress: Scalars['String'],
-  amount: Scalars['String'],
-  colonyAddress?: Maybe<Scalars['String']>,
+  type: EventType;
+  taskId: Scalars['String'];
+  tokenAddress: Scalars['String'];
+  amount: Scalars['String'];
+  colonyAddress?: Maybe<Scalars['String']>;
 };
 
 export type SetTaskPayoutInput = {
-  id: Scalars['String'],
-  amount: Scalars['String'],
-  tokenAddress: Scalars['String'],
+  id: Scalars['String'];
+  amount: Scalars['String'];
+  tokenAddress: Scalars['String'];
 };
 
 export type SetTaskPendingEvent = TaskEvent & {
-  type: EventType,
-  taskId: Scalars['String'],
-  txHash: Scalars['String'],
-  colonyAddress?: Maybe<Scalars['String']>,
+  type: EventType;
+  taskId: Scalars['String'];
+  txHash: Scalars['String'];
+  colonyAddress?: Maybe<Scalars['String']>;
 };
 
 export type SetTaskPendingInput = {
-  id: Scalars['String'],
-  txHash: Scalars['String'],
+  id: Scalars['String'];
+  txHash: Scalars['String'];
 };
 
 export type SetTaskSkillEvent = TaskEvent & {
-  type: EventType,
-  taskId: Scalars['String'],
-  ethSkillId: Scalars['Int'],
-  colonyAddress?: Maybe<Scalars['String']>,
+  type: EventType;
+  taskId: Scalars['String'];
+  ethSkillId: Scalars['Int'];
+  colonyAddress?: Maybe<Scalars['String']>;
 };
 
 export type SetTaskSkillInput = {
-  id: Scalars['String'],
-  ethSkillId: Scalars['Int'],
+  id: Scalars['String'];
+  ethSkillId: Scalars['Int'];
 };
 
 export type SetTaskTitleEvent = TaskEvent & {
-  type: EventType,
-  taskId: Scalars['String'],
-  title: Scalars['String'],
-  colonyAddress?: Maybe<Scalars['String']>,
+  type: EventType;
+  taskId: Scalars['String'];
+  title: Scalars['String'];
+  colonyAddress?: Maybe<Scalars['String']>;
 };
 
 export type SetTaskTitleInput = {
-  id: Scalars['String'],
-  title: Scalars['String'],
+  id: Scalars['String'];
+  title: Scalars['String'];
 };
 
 export type SetUserTokensInput = {
-  tokenAddresses: Array<Scalars['String']>,
+  tokenAddresses: Array<Scalars['String']>;
 };
 
 export type Submission = {
-  id: Scalars['String'],
-  createdAt: Scalars['DateTime'],
-  creatorAddress: Scalars['String'],
-  creator: User,
-  persistentTaskId: Scalars['String'],
-  submission: Scalars['String'],
-  status: SubmissionStatus,
-  statusChangedAt?: Maybe<Scalars['DateTime']>,
-  task: PersistentTask,
+  id: Scalars['String'];
+  createdAt: Scalars['DateTime'];
+  creatorAddress: Scalars['String'];
+  creator: User;
+  persistentTaskId: Scalars['String'];
+  submission: Scalars['String'];
+  status: SubmissionStatus;
+  statusChangedAt?: Maybe<Scalars['DateTime']>;
+  task: PersistentTask;
 };
 
 export enum SubmissionStatus {
@@ -1173,20 +1172,20 @@ export enum SubmissionStatus {
 }
 
 export type SubscribeToColonyInput = {
-  colonyAddress: Scalars['String'],
+  colonyAddress: Scalars['String'];
 };
 
 export type Suggestion = {
-  id: Scalars['String'],
-  createdAt: Scalars['DateTime'],
-  colonyAddress: Scalars['String'],
-  creatorAddress: Scalars['String'],
-  creator: User,
-  ethDomainId: Scalars['Int'],
-  status: SuggestionStatus,
-  title: Scalars['String'],
-  taskId?: Maybe<Scalars['String']>,
-  upvotes: Array<Scalars['String']>,
+  id: Scalars['String'];
+  createdAt: Scalars['DateTime'];
+  colonyAddress: Scalars['String'];
+  creatorAddress: Scalars['String'];
+  creator: User;
+  ethDomainId: Scalars['Int'];
+  status: SuggestionStatus;
+  title: Scalars['String'];
+  taskId?: Maybe<Scalars['String']>;
+  upvotes: Array<Scalars['String']>;
 };
 
 export enum SuggestionStatus {
@@ -1197,166 +1196,166 @@ export enum SuggestionStatus {
 }
 
 export type SystemInfo = {
-  version: Scalars['String'],
+  version: Scalars['String'];
 };
 
 export type Task = {
-  id: Scalars['String'],
-  createdAt: Scalars['DateTime'],
-  ethDomainId: Scalars['Int'],
-  ethPotId?: Maybe<Scalars['Int']>,
-  ethSkillId?: Maybe<Scalars['Int']>,
-  cancelledAt?: Maybe<Scalars['DateTime']>,
-  description?: Maybe<Scalars['String']>,
-  dueDate?: Maybe<Scalars['DateTime']>,
-  finalizedAt?: Maybe<Scalars['DateTime']>,
-  title?: Maybe<Scalars['String']>,
-  colony: Colony,
-  colonyAddress: Scalars['String'],
-  creator: User,
-  creatorAddress: Scalars['String'],
-  domain: Domain,
-  assignedWorker?: Maybe<User>,
-  assignedWorkerAddress?: Maybe<Scalars['String']>,
-  workInvites: Array<User>,
-  workInviteAddresses: Array<Scalars['String']>,
-  workRequests: Array<User>,
-  workRequestAddresses: Array<Scalars['String']>,
-  events: Array<Event>,
-  payouts: Array<TaskPayout>,
-  txHash?: Maybe<Scalars['String']>,
-  commentCount: Scalars['Int'],
-  finalizedPayment?: Maybe<TaskFinalizedPayment>,
+  assignedWorker?: Maybe<User>;
+  assignedWorkerAddress?: Maybe<Scalars['String']>;
+  cancelledAt?: Maybe<Scalars['DateTime']>;
+  colony: Colony;
+  colonyAddress: Scalars['String'];
+  commentCount: Scalars['Int'];
+  createdAt: Scalars['DateTime'];
+  creator: User;
+  creatorAddress: Scalars['String'];
+  description?: Maybe<Scalars['String']>;
+  domain: Domain;
+  dueDate?: Maybe<Scalars['DateTime']>;
+  ethDomainId: Scalars['Int'];
+  ethPotId?: Maybe<Scalars['Int']>;
+  ethSkillId?: Maybe<Scalars['Int']>;
+  events: Array<Event>;
+  finalizedAt?: Maybe<Scalars['DateTime']>;
+  finalizedPayment?: Maybe<TaskFinalizedPayment>;
+  id: Scalars['String'];
+  payouts: Array<TaskPayout>;
+  title?: Maybe<Scalars['String']>;
+  txHash?: Maybe<Scalars['String']>;
+  workInviteAddresses: Array<Scalars['String']>;
+  workInvites: Array<User>;
+  workRequestAddresses: Array<Scalars['String']>;
+  workRequests: Array<User>;
 };
 
 export type TaskEvent = {
-  type: EventType,
-  taskId: Scalars['String'],
-  colonyAddress?: Maybe<Scalars['String']>,
+  type: EventType;
+  taskId: Scalars['String'];
+  colonyAddress?: Maybe<Scalars['String']>;
 };
 
 export type TaskFinalizedPayment = {
-  amount: Scalars['String'],
-  tokenAddress: Scalars['String'],
-  workerAddress: Scalars['String'],
-  transactionHash: Scalars['String'],
+  amount: Scalars['String'];
+  tokenAddress: Scalars['String'];
+  workerAddress: Scalars['String'];
+  transactionHash: Scalars['String'];
 };
 
 export type TaskIdInput = {
-  id: Scalars['String'],
+  id: Scalars['String'];
 };
 
 export type TaskMessageEvent = TaskEvent & {
-  type: EventType,
-  taskId: Scalars['String'],
-  message: Scalars['String'],
-  colonyAddress?: Maybe<Scalars['String']>,
+  type: EventType;
+  taskId: Scalars['String'];
+  message: Scalars['String'];
+  colonyAddress?: Maybe<Scalars['String']>;
 };
 
 export type TaskPayout = {
-  amount: Scalars['String'],
-  tokenAddress: Scalars['String'],
-  token: Token,
+  amount: Scalars['String'];
+  token: Token;
+  tokenAddress: Scalars['String'];
 };
 
 export type Token = {
-  id: Scalars['String'],
-  address: Scalars['String'],
-  decimals: Scalars['Int'],
-  name: Scalars['String'],
-  symbol: Scalars['String'],
-  iconHash?: Maybe<Scalars['String']>,
-  verified: Scalars['Boolean'],
-  balance: Scalars['String'],
-  balances: Array<DomainBalance>,
+  id: Scalars['String'];
+  address: Scalars['String'];
+  decimals: Scalars['Int'];
+  name: Scalars['String'];
+  symbol: Scalars['String'];
+  iconHash?: Maybe<Scalars['String']>;
+  verified: Scalars['Boolean'];
+  balance: Scalars['String'];
+  balances: Array<DomainBalance>;
 };
 
 
 export type TokenBalanceArgs = {
-  walletAddress: Scalars['String']
+  walletAddress: Scalars['String'];
 };
 
 
 export type TokenBalancesArgs = {
-  colonyAddress: Scalars['String'],
-  domainIds?: Maybe<Array<Scalars['Int']>>
+  colonyAddress: Scalars['String'];
+  domainIds?: Maybe<Array<Scalars['Int']>>;
 };
 
 export type TokenInfo = {
-  id: Scalars['String'],
-  address: Scalars['String'],
-  iconHash?: Maybe<Scalars['String']>,
-  name: Scalars['String'],
-  decimals: Scalars['Int'],
-  symbol: Scalars['String'],
-  verified: Scalars['Boolean'],
+  id: Scalars['String'];
+  address: Scalars['String'];
+  iconHash?: Maybe<Scalars['String']>;
+  name: Scalars['String'];
+  decimals: Scalars['Int'];
+  symbol: Scalars['String'];
+  verified: Scalars['Boolean'];
 };
 
 export type UnassignWorkerEvent = TaskEvent & {
-  type: EventType,
-  taskId: Scalars['String'],
-  workerAddress: Scalars['String'],
-  colonyAddress?: Maybe<Scalars['String']>,
+  type: EventType;
+  taskId: Scalars['String'];
+  workerAddress: Scalars['String'];
+  colonyAddress?: Maybe<Scalars['String']>;
 };
 
 export type UnassignWorkerInput = {
-  id: Scalars['String'],
-  workerAddress: Scalars['String'],
+  id: Scalars['String'];
+  workerAddress: Scalars['String'];
 };
 
 export type UnlockNextLevelEvent = {
-  type: EventType,
-  levelId: Scalars['String'],
-  nextLevelId?: Maybe<Scalars['String']>,
-  persistentTaskId: Scalars['String'],
-  programId: Scalars['String'],
-  submissionId: Scalars['String'],
+  type: EventType;
+  levelId: Scalars['String'];
+  nextLevelId?: Maybe<Scalars['String']>;
+  persistentTaskId: Scalars['String'];
+  programId: Scalars['String'];
+  submissionId: Scalars['String'];
 };
 
 export type UnsubscribeFromColonyInput = {
-  colonyAddress: Scalars['String'],
+  colonyAddress: Scalars['String'];
 };
 
 
 export type User = {
-  id: Scalars['String'],
-  createdAt: Scalars['DateTime'],
-  profile: UserProfile,
-  colonies: Array<Colony>,
-  colonyAddresses: Array<Scalars['String']>,
-  tasks: Array<Task>,
-  taskIds: Array<Scalars['String']>,
-  tokenAddresses: Array<Scalars['String']>,
-  notifications: Array<Notification>,
-  completedLevels: Array<Level>,
-  tokens: Array<Token>,
-  reputation: Scalars['String'],
-};
-
-
-export type UserNotificationsArgs = {
-  read?: Maybe<Scalars['Boolean']>
+  colonies: Array<Colony>;
+  colonyAddresses: Array<Scalars['String']>;
+  completedLevels: Array<Level>;
+  createdAt: Scalars['DateTime'];
+  id: Scalars['String'];
+  notifications: Array<Notification>;
+  profile: UserProfile;
+  reputation: Scalars['String'];
+  taskIds: Array<Scalars['String']>;
+  tasks: Array<Task>;
+  tokenAddresses: Array<Scalars['String']>;
+  tokens: Array<Token>;
 };
 
 
 export type UserCompletedLevelsArgs = {
-  colonyAddress: Scalars['String']
+  colonyAddress: Scalars['String'];
+};
+
+
+export type UserNotificationsArgs = {
+  read?: Maybe<Scalars['Boolean']>;
 };
 
 
 export type UserReputationArgs = {
-  colonyAddress: Scalars['String'],
-  domainId?: Maybe<Scalars['Int']>
+  colonyAddress: Scalars['String'];
+  domainId?: Maybe<Scalars['Int']>;
 };
 
 export type UserProfile = {
-  username?: Maybe<Scalars['String']>,
-  avatarHash?: Maybe<Scalars['String']>,
-  bio?: Maybe<Scalars['String']>,
-  displayName?: Maybe<Scalars['String']>,
-  location?: Maybe<Scalars['String']>,
-  walletAddress: Scalars['String'],
-  website?: Maybe<Scalars['String']>,
+  username?: Maybe<Scalars['String']>;
+  avatarHash?: Maybe<Scalars['String']>;
+  bio?: Maybe<Scalars['String']>;
+  displayName?: Maybe<Scalars['String']>;
+  location?: Maybe<Scalars['String']>;
+  walletAddress: Scalars['String'];
+  website?: Maybe<Scalars['String']>;
 };
 
 export type PayoutsFragment = { payouts: Array<(
@@ -1371,7 +1370,7 @@ export type PersistentTaskPayoutsFragment = { payouts: Array<(
 
 export type CreateTaskFieldsFragment = (
   Pick<Task, 'id' | 'assignedWorkerAddress' | 'cancelledAt' | 'colonyAddress' | 'commentCount' | 'createdAt' | 'creatorAddress' | 'dueDate' | 'ethDomainId' | 'ethSkillId' | 'finalizedAt' | 'title' | 'workRequestAddresses' | 'txHash'>
-  & { assignedWorker: Maybe<(
+  & { assignedWorker?: Maybe<(
     Pick<User, 'id'>
     & { profile: Pick<UserProfile, 'avatarHash'> }
   )>, colony: Pick<Colony, 'id' | 'colonyName' | 'displayName' | 'nativeTokenAddress'>, events: Array<Pick<Event, 'id' | 'type'>> }
@@ -1424,7 +1423,7 @@ export type ProgramSubmissionFieldsFragment = (
       & { profile: Pick<UserProfile, 'avatarHash' | 'displayName' | 'username' | 'walletAddress'> }
     ), task: (
       Pick<PersistentTask, 'id' | 'colonyAddress' | 'description' | 'ethSkillId' | 'title'>
-      & { domain: Maybe<Pick<Domain, 'id' | 'ethDomainId' | 'name'>> }
+      & { domain?: Maybe<Pick<Domain, 'id' | 'ethDomainId' | 'name'>> }
       & PersistentTaskPayoutsFragment
     ) }
   ) }
@@ -1437,13 +1436,13 @@ export type SubmissionFieldsFragment = (
 
 export type PersistentTaskFieldsFragment = (
   Pick<PersistentTask, 'id' | 'colonyAddress' | 'createdAt' | 'creatorAddress' | 'description' | 'ethDomainId' | 'ethSkillId' | 'status' | 'title'>
-  & { currentUserSubmission: Maybe<SubmissionFieldsFragment>, submissions: Array<SubmissionFieldsFragment> }
+  & { currentUserSubmission?: Maybe<SubmissionFieldsFragment>, submissions: Array<SubmissionFieldsFragment> }
   & PersistentTaskPayoutsFragment
 );
 
 export type EventFieldsFragment = (
   Pick<Event, 'createdAt' | 'initiatorAddress' | 'sourceId' | 'sourceType' | 'type'>
-  & { initiator: Maybe<(
+  & { initiator?: Maybe<(
     Pick<User, 'id'>
     & { profile: Pick<UserProfile, 'avatarHash' | 'displayName' | 'username' | 'walletAddress'> }
   )> }
@@ -1463,109 +1462,109 @@ export type TaskEventFragment = (
 );
 
 export type AssignWorkerMutationVariables = {
-  input: AssignWorkerInput
+  input: AssignWorkerInput;
 };
 
 
-export type AssignWorkerMutation = { assignWorker: Maybe<(
+export type AssignWorkerMutation = { assignWorker?: Maybe<(
     Pick<Task, 'id' | 'assignedWorkerAddress'>
-    & { assignedWorker: Maybe<Pick<User, 'id'>>, events: Array<TaskEventFragment> }
+    & { assignedWorker?: Maybe<Pick<User, 'id'>>, events: Array<TaskEventFragment> }
   )> };
 
 export type CancelTaskMutationVariables = {
-  input: TaskIdInput
+  input: TaskIdInput;
 };
 
 
-export type CancelTaskMutation = { cancelTask: Maybe<(
+export type CancelTaskMutation = { cancelTask?: Maybe<(
     Pick<Task, 'id' | 'cancelledAt'>
     & { events: Array<TaskEventFragment> }
   )> };
 
 export type CreateTaskMutationVariables = {
-  input: CreateTaskInput
+  input: CreateTaskInput;
 };
 
 
-export type CreateTaskMutation = { createTask: Maybe<CreateTaskFieldsFragment> };
+export type CreateTaskMutation = { createTask?: Maybe<CreateTaskFieldsFragment> };
 
 export type CreateWorkRequestMutationVariables = {
-  input: CreateWorkRequestInput
+  input: CreateWorkRequestInput;
 };
 
 
-export type CreateWorkRequestMutation = { createWorkRequest: Maybe<(
+export type CreateWorkRequestMutation = { createWorkRequest?: Maybe<(
     Pick<Task, 'id' | 'workRequestAddresses'>
     & { events: Array<TaskEventFragment>, workRequests: Array<Pick<User, 'id'>> }
   )> };
 
 export type FinalizeTaskMutationVariables = {
-  input: FinalizeTaskInput
+  input: FinalizeTaskInput;
 };
 
 
-export type FinalizeTaskMutation = { finalizeTask: Maybe<(
+export type FinalizeTaskMutation = { finalizeTask?: Maybe<(
     Pick<Task, 'id' | 'colonyAddress' | 'ethPotId' | 'finalizedAt'>
-    & { events: Array<TaskEventFragment>, finalizedPayment: Maybe<Pick<TaskFinalizedPayment, 'amount' | 'tokenAddress' | 'workerAddress' | 'transactionHash'>> }
+    & { events: Array<TaskEventFragment>, finalizedPayment?: Maybe<Pick<TaskFinalizedPayment, 'amount' | 'tokenAddress' | 'workerAddress' | 'transactionHash'>> }
   )> };
 
 export type RemoveTaskPayoutMutationVariables = {
-  input: RemoveTaskPayoutInput
+  input: RemoveTaskPayoutInput;
 };
 
 
-export type RemoveTaskPayoutMutation = { removeTaskPayout: Maybe<(
+export type RemoveTaskPayoutMutation = { removeTaskPayout?: Maybe<(
     Pick<Task, 'id'>
     & { events: Array<TaskEventFragment> }
     & PayoutsFragment
   )> };
 
 export type SendWorkInviteMutationVariables = {
-  input: SendWorkInviteInput
+  input: SendWorkInviteInput;
 };
 
 
-export type SendWorkInviteMutation = { sendWorkInvite: Maybe<(
+export type SendWorkInviteMutation = { sendWorkInvite?: Maybe<(
     Pick<Task, 'id' | 'workInviteAddresses'>
     & { events: Array<TaskEventFragment>, workInvites: Array<Pick<User, 'id'>> }
   )> };
 
 export type SetTaskDomainMutationVariables = {
-  input: SetTaskDomainInput
+  input: SetTaskDomainInput;
 };
 
 
-export type SetTaskDomainMutation = { setTaskDomain: Maybe<(
+export type SetTaskDomainMutation = { setTaskDomain?: Maybe<(
     Pick<Task, 'id' | 'ethDomainId'>
     & { events: Array<TaskEventFragment> }
   )> };
 
 export type SetTaskDescriptionMutationVariables = {
-  input: SetTaskDescriptionInput
+  input: SetTaskDescriptionInput;
 };
 
 
-export type SetTaskDescriptionMutation = { setTaskDescription: Maybe<(
+export type SetTaskDescriptionMutation = { setTaskDescription?: Maybe<(
     Pick<Task, 'id' | 'description'>
     & { events: Array<TaskEventFragment> }
   )> };
 
 export type SetTaskDueDateMutationVariables = {
-  input: SetTaskDueDateInput
+  input: SetTaskDueDateInput;
 };
 
 
-export type SetTaskDueDateMutation = { setTaskDueDate: Maybe<(
+export type SetTaskDueDateMutation = { setTaskDueDate?: Maybe<(
     Pick<Task, 'id' | 'dueDate'>
     & { events: Array<TaskEventFragment> }
   )> };
 
 export type SetTaskPayoutMutationVariables = {
-  input: SetTaskPayoutInput
+  input: SetTaskPayoutInput;
 };
 
 
-export type SetTaskPayoutMutation = { setTaskPayout: Maybe<(
+export type SetTaskPayoutMutation = { setTaskPayout?: Maybe<(
     Pick<Task, 'id'>
     & { events: Array<TaskEventFragment>, payouts: Array<(
       Pick<TaskPayout, 'amount' | 'tokenAddress'>
@@ -1574,64 +1573,64 @@ export type SetTaskPayoutMutation = { setTaskPayout: Maybe<(
   )> };
 
 export type SetTaskSkillMutationVariables = {
-  input: SetTaskSkillInput
+  input: SetTaskSkillInput;
 };
 
 
-export type SetTaskSkillMutation = { setTaskSkill: Maybe<(
+export type SetTaskSkillMutation = { setTaskSkill?: Maybe<(
     Pick<Task, 'id' | 'ethSkillId'>
     & { events: Array<TaskEventFragment> }
   )> };
 
 export type RemoveTaskSkillMutationVariables = {
-  input: RemoveTaskSkillInput
+  input: RemoveTaskSkillInput;
 };
 
 
-export type RemoveTaskSkillMutation = { removeTaskSkill: Maybe<(
+export type RemoveTaskSkillMutation = { removeTaskSkill?: Maybe<(
     Pick<Task, 'id' | 'ethSkillId'>
     & { events: Array<TaskEventFragment> }
   )> };
 
 export type SetTaskTitleMutationVariables = {
-  input: SetTaskTitleInput
+  input: SetTaskTitleInput;
 };
 
 
-export type SetTaskTitleMutation = { setTaskTitle: Maybe<(
+export type SetTaskTitleMutation = { setTaskTitle?: Maybe<(
     Pick<Task, 'id' | 'title'>
     & { events: Array<TaskEventFragment> }
   )> };
 
 export type UnassignWorkerMutationVariables = {
-  input: UnassignWorkerInput
+  input: UnassignWorkerInput;
 };
 
 
-export type UnassignWorkerMutation = { unassignWorker: Maybe<(
+export type UnassignWorkerMutation = { unassignWorker?: Maybe<(
     Pick<Task, 'id' | 'assignedWorkerAddress'>
-    & { assignedWorker: Maybe<Pick<User, 'id'>>, events: Array<TaskEventFragment> }
+    & { assignedWorker?: Maybe<Pick<User, 'id'>>, events: Array<TaskEventFragment> }
   )> };
 
 export type SetTaskPendingMutationVariables = {
-  input: SetTaskPendingInput
+  input: SetTaskPendingInput;
 };
 
 
-export type SetTaskPendingMutation = { setTaskPending: Maybe<(
+export type SetTaskPendingMutation = { setTaskPending?: Maybe<(
     Pick<Task, 'id'>
     & { events: Array<TaskEventFragment> }
   )> };
 
 export type SendTaskMessageMutationVariables = {
-  input: SendTaskMessageInput
+  input: SendTaskMessageInput;
 };
 
 
 export type SendTaskMessageMutation = Pick<Mutation, 'sendTaskMessage'>;
 
 export type SetLoggedInUserMutationVariables = {
-  input: LoggedInUserInput
+  input: LoggedInUserInput;
 };
 
 
@@ -1643,53 +1642,53 @@ export type ClearLoggedInUserMutationVariables = {};
 export type ClearLoggedInUserMutation = { clearLoggedInUser: Pick<LoggedInUser, 'id'> };
 
 export type CreateUserMutationVariables = {
-  createUserInput: CreateUserInput,
-  loggedInUserInput: LoggedInUserInput
+  createUserInput: CreateUserInput;
+  loggedInUserInput: LoggedInUserInput;
 };
 
 
-export type CreateUserMutation = { createUser: Maybe<Pick<User, 'id'>>, setLoggedInUser: Pick<LoggedInUser, 'id'> };
+export type CreateUserMutation = { createUser?: Maybe<Pick<User, 'id'>>, setLoggedInUser: Pick<LoggedInUser, 'id'> };
 
 export type EditUserMutationVariables = {
-  input: EditUserInput
+  input: EditUserInput;
 };
 
 
-export type EditUserMutation = { editUser: Maybe<(
+export type EditUserMutation = { editUser?: Maybe<(
     Pick<User, 'id'>
     & { profile: Pick<UserProfile, 'avatarHash' | 'bio' | 'displayName' | 'location' | 'website'> }
   )> };
 
 export type SetUserTokensMutationVariables = {
-  input: SetUserTokensInput
+  input: SetUserTokensInput;
 };
 
 
-export type SetUserTokensMutation = { setUserTokens: Maybe<Pick<User, 'id' | 'tokenAddresses'>> };
+export type SetUserTokensMutation = { setUserTokens?: Maybe<Pick<User, 'id' | 'tokenAddresses'>> };
 
 export type SetColonyTokensMutationVariables = {
-  input: SetColonyTokensInput
+  input: SetColonyTokensInput;
 };
 
 
-export type SetColonyTokensMutation = { setColonyTokens: Maybe<Pick<Colony, 'id' | 'tokenAddresses'>> };
+export type SetColonyTokensMutation = { setColonyTokens?: Maybe<Pick<Colony, 'id' | 'tokenAddresses'>> };
 
 export type CreateColonyMutationVariables = {
-  input: CreateColonyInput
+  input: CreateColonyInput;
 };
 
 
-export type CreateColonyMutation = { createColony: Maybe<Pick<Colony, 'id' | 'colonyAddress' | 'colonyName' | 'avatarHash' | 'description' | 'displayName' | 'guideline' | 'website'>> };
+export type CreateColonyMutation = { createColony?: Maybe<Pick<Colony, 'id' | 'colonyAddress' | 'colonyName' | 'avatarHash' | 'description' | 'displayName' | 'guideline' | 'website'>> };
 
 export type EditColonyProfileMutationVariables = {
-  input: EditColonyProfileInput
+  input: EditColonyProfileInput;
 };
 
 
-export type EditColonyProfileMutation = { editColonyProfile: Maybe<Pick<Colony, 'id' | 'colonyName' | 'avatarHash' | 'description' | 'displayName' | 'guideline' | 'website'>> };
+export type EditColonyProfileMutation = { editColonyProfile?: Maybe<Pick<Colony, 'id' | 'colonyName' | 'avatarHash' | 'description' | 'displayName' | 'guideline' | 'website'>> };
 
 export type MarkNotificationAsReadMutationVariables = {
-  input: MarkNotificationAsReadInput
+  input: MarkNotificationAsReadInput;
 };
 
 
@@ -1701,193 +1700,193 @@ export type MarkAllNotificationsAsReadMutationVariables = {};
 export type MarkAllNotificationsAsReadMutation = Pick<Mutation, 'markAllNotificationsAsRead'>;
 
 export type SubscribeToColonyMutationVariables = {
-  input: SubscribeToColonyInput
+  input: SubscribeToColonyInput;
 };
 
 
-export type SubscribeToColonyMutation = { subscribeToColony: Maybe<Pick<User, 'id' | 'colonyAddresses'>> };
+export type SubscribeToColonyMutation = { subscribeToColony?: Maybe<Pick<User, 'id' | 'colonyAddresses'>> };
 
 export type UnsubscribeFromColonyMutationVariables = {
-  input: UnsubscribeFromColonyInput
+  input: UnsubscribeFromColonyInput;
 };
 
 
-export type UnsubscribeFromColonyMutation = { unsubscribeFromColony: Maybe<Pick<User, 'id' | 'colonyAddresses'>> };
+export type UnsubscribeFromColonyMutation = { unsubscribeFromColony?: Maybe<Pick<User, 'id' | 'colonyAddresses'>> };
 
 export type CreateDomainMutationVariables = {
-  input: CreateDomainInput
+  input: CreateDomainInput;
 };
 
 
-export type CreateDomainMutation = { createDomain: Maybe<Pick<Domain, 'id' | 'ethDomainId' | 'ethParentDomainId' | 'name'>> };
+export type CreateDomainMutation = { createDomain?: Maybe<Pick<Domain, 'id' | 'ethDomainId' | 'ethParentDomainId' | 'name'>> };
 
 export type EditDomainMutationVariables = {
-  input: EditDomainNameInput
+  input: EditDomainNameInput;
 };
 
 
-export type EditDomainMutation = { editDomainName: Maybe<Pick<Domain, 'id' | 'ethDomainId' | 'ethParentDomainId' | 'name'>> };
+export type EditDomainMutation = { editDomainName?: Maybe<Pick<Domain, 'id' | 'ethDomainId' | 'ethParentDomainId' | 'name'>> };
 
 export type CreateSuggestionMutationVariables = {
-  input: CreateSuggestionInput
+  input: CreateSuggestionInput;
 };
 
 
-export type CreateSuggestionMutation = { createSuggestion: Maybe<SuggestionFieldsFragment> };
+export type CreateSuggestionMutation = { createSuggestion?: Maybe<SuggestionFieldsFragment> };
 
 export type SetSuggestionStatusMutationVariables = {
-  input: SetSuggestionStatusInput
+  input: SetSuggestionStatusInput;
 };
 
 
-export type SetSuggestionStatusMutation = { setSuggestionStatus: Maybe<Pick<Suggestion, 'id' | 'status' | 'taskId'>> };
+export type SetSuggestionStatusMutation = { setSuggestionStatus?: Maybe<Pick<Suggestion, 'id' | 'status' | 'taskId'>> };
 
 export type AddUpvoteToSuggestionMutationVariables = {
-  input: AddUpvoteToSuggestionInput
+  input: AddUpvoteToSuggestionInput;
 };
 
 
-export type AddUpvoteToSuggestionMutation = { addUpvoteToSuggestion: Maybe<Pick<Suggestion, 'id' | 'upvotes'>> };
+export type AddUpvoteToSuggestionMutation = { addUpvoteToSuggestion?: Maybe<Pick<Suggestion, 'id' | 'upvotes'>> };
 
 export type RemoveUpvoteFromSuggestionMutationVariables = {
-  input: RemoveUpvoteFromSuggestionInput
+  input: RemoveUpvoteFromSuggestionInput;
 };
 
 
-export type RemoveUpvoteFromSuggestionMutation = { removeUpvoteFromSuggestion: Maybe<Pick<Suggestion, 'id' | 'upvotes'>> };
+export type RemoveUpvoteFromSuggestionMutation = { removeUpvoteFromSuggestion?: Maybe<Pick<Suggestion, 'id' | 'upvotes'>> };
 
 export type CreateTaskFromSuggestionMutationVariables = {
-  input: CreateTaskFromSuggestionInput
+  input: CreateTaskFromSuggestionInput;
 };
 
 
-export type CreateTaskFromSuggestionMutation = { createTaskFromSuggestion: Maybe<CreateTaskFieldsFragment> };
+export type CreateTaskFromSuggestionMutation = { createTaskFromSuggestion?: Maybe<CreateTaskFieldsFragment> };
 
 export type CreateProgramMutationVariables = {
-  input: CreateProgramInput
+  input: CreateProgramInput;
 };
 
 
-export type CreateProgramMutation = { createProgram: Maybe<ProgramFieldsFragment> };
+export type CreateProgramMutation = { createProgram?: Maybe<ProgramFieldsFragment> };
 
 export type EditProgramMutationVariables = {
-  input: EditProgramInput
+  input: EditProgramInput;
 };
 
 
-export type EditProgramMutation = { editProgram: Maybe<Pick<Program, 'id' | 'description' | 'title'>> };
+export type EditProgramMutation = { editProgram?: Maybe<Pick<Program, 'id' | 'description' | 'title'>> };
 
 export type RemoveProgramMutationVariables = {
-  input: RemoveProgramInput
+  input: RemoveProgramInput;
 };
 
 
-export type RemoveProgramMutation = { removeProgram: Maybe<Pick<Program, 'id' | 'status'>> };
+export type RemoveProgramMutation = { removeProgram?: Maybe<Pick<Program, 'id' | 'status'>> };
 
 export type PublishProgramMutationVariables = {
-  input: PublishProgramInput
+  input: PublishProgramInput;
 };
 
 
-export type PublishProgramMutation = { publishProgram: Maybe<Pick<Program, 'id' | 'status'>> };
+export type PublishProgramMutation = { publishProgram?: Maybe<Pick<Program, 'id' | 'status'>> };
 
 export type EnrollInProgramMutationVariables = {
-  input: EnrollInProgramInput
+  input: EnrollInProgramInput;
 };
 
 
-export type EnrollInProgramMutation = { enrollInProgram: Maybe<(
+export type EnrollInProgramMutation = { enrollInProgram?: Maybe<(
     Pick<Program, 'id' | 'enrolled' | 'enrolledUserAddresses'>
     & { levels: Array<Pick<Level, 'id' | 'unlocked'>> }
   )> };
 
 export type CreateLevelMutationVariables = {
-  input: CreateLevelInput
+  input: CreateLevelInput;
 };
 
 
-export type CreateLevelMutation = { createLevel: Maybe<(
+export type CreateLevelMutation = { createLevel?: Maybe<(
     Pick<Level, 'unlocked'>
     & LevelFieldsFragment
   )> };
 
 export type EditLevelMutationVariables = {
-  input: EditLevelInput
+  input: EditLevelInput;
 };
 
 
-export type EditLevelMutation = { editLevel: Maybe<LevelFieldsFragment> };
+export type EditLevelMutation = { editLevel?: Maybe<LevelFieldsFragment> };
 
 export type RemoveLevelMutationVariables = {
-  input: RemoveLevelInput
+  input: RemoveLevelInput;
 };
 
 
-export type RemoveLevelMutation = { removeLevel: Maybe<Pick<Level, 'id' | 'status'>> };
+export type RemoveLevelMutation = { removeLevel?: Maybe<Pick<Level, 'id' | 'status'>> };
 
 export type ReorderProgramLevelsMutationVariables = {
-  input: ReorderProgramLevelsInput
+  input: ReorderProgramLevelsInput;
 };
 
 
-export type ReorderProgramLevelsMutation = { reorderProgramLevels: Maybe<(
+export type ReorderProgramLevelsMutation = { reorderProgramLevels?: Maybe<(
     Pick<Program, 'id' | 'levelIds'>
     & { levels: Array<Pick<Level, 'id'>> }
   )> };
 
 export type CreateLevelTaskMutationVariables = {
-  input: CreateLevelTaskInput
+  input: CreateLevelTaskInput;
 };
 
 
-export type CreateLevelTaskMutation = { createLevelTask: Maybe<PersistentTaskFieldsFragment> };
+export type CreateLevelTaskMutation = { createLevelTask?: Maybe<PersistentTaskFieldsFragment> };
 
 export type RemoveLevelTaskMutationVariables = {
-  input: RemoveLevelTaskInput
+  input: RemoveLevelTaskInput;
 };
 
 
-export type RemoveLevelTaskMutation = { removeLevelTask: Maybe<Pick<PersistentTask, 'id' | 'status'>> };
+export type RemoveLevelTaskMutation = { removeLevelTask?: Maybe<Pick<PersistentTask, 'id' | 'status'>> };
 
 export type EditPersistentTaskMutationVariables = {
-  input: EditPersistentTaskInput
+  input: EditPersistentTaskInput;
 };
 
 
-export type EditPersistentTaskMutation = { editPersistentTask: Maybe<(
+export type EditPersistentTaskMutation = { editPersistentTask?: Maybe<(
     Pick<PersistentTask, 'id' | 'description' | 'ethDomainId' | 'ethSkillId' | 'title'>
     & PersistentTaskPayoutsFragment
   )> };
 
 export type CreateLevelTaskSubmissionMutationVariables = {
-  input: CreateLevelTaskSubmissionInput
+  input: CreateLevelTaskSubmissionInput;
 };
 
 
-export type CreateLevelTaskSubmissionMutation = { createLevelTaskSubmission: Maybe<Pick<Submission, 'id' | 'status' | 'submission'>> };
+export type CreateLevelTaskSubmissionMutation = { createLevelTaskSubmission?: Maybe<Pick<Submission, 'id' | 'status' | 'submission'>> };
 
 export type EditSubmissionMutationVariables = {
-  input: EditSubmissionInput
+  input: EditSubmissionInput;
 };
 
 
-export type EditSubmissionMutation = { editSubmission: Maybe<Pick<Submission, 'id' | 'status' | 'submission'>> };
+export type EditSubmissionMutation = { editSubmission?: Maybe<Pick<Submission, 'id' | 'status' | 'submission'>> };
 
 export type AcceptLevelTaskSubmissionMutationVariables = {
-  input: AcceptLevelTaskSubmissionInput
+  input: AcceptLevelTaskSubmissionInput;
 };
 
 
-export type AcceptLevelTaskSubmissionMutation = { acceptLevelTaskSubmission: Maybe<Pick<Submission, 'id' | 'status'>> };
+export type AcceptLevelTaskSubmissionMutation = { acceptLevelTaskSubmission?: Maybe<Pick<Submission, 'id' | 'status'>> };
 
 export type TaskQueryVariables = {
-  id: Scalars['String']
+  id: Scalars['String'];
 };
 
 
 export type TaskQuery = { task: (
     Pick<Task, 'id' | 'assignedWorkerAddress' | 'cancelledAt' | 'colonyAddress' | 'commentCount' | 'createdAt' | 'creatorAddress' | 'description' | 'dueDate' | 'ethDomainId' | 'ethSkillId' | 'ethPotId' | 'finalizedAt' | 'title' | 'workInviteAddresses' | 'workRequestAddresses' | 'txHash'>
-    & { assignedWorker: Maybe<(
+    & { assignedWorker?: Maybe<(
       Pick<User, 'id'>
       & { profile: Pick<UserProfile, 'avatarHash' | 'displayName' | 'username' | 'walletAddress'> }
     )>, colony: Pick<Colony, 'id' | 'colonyAddress' | 'colonyName' | 'avatarHash' | 'displayName' | 'nativeTokenAddress'>, creator: (
@@ -1904,13 +1903,13 @@ export type TaskQuery = { task: (
   ) };
 
 export type TaskToEditQueryVariables = {
-  id: Scalars['String']
+  id: Scalars['String'];
 };
 
 
 export type TaskToEditQuery = { task: (
     Pick<Task, 'id'>
-    & { assignedWorker: Maybe<(
+    & { assignedWorker?: Maybe<(
       Pick<User, 'id'>
       & { profile: Pick<UserProfile, 'avatarHash' | 'displayName' | 'username' | 'walletAddress'> }
     )>, workRequests: Array<(
@@ -1927,13 +1926,13 @@ export type TaskToEditQuery = { task: (
   ) };
 
 export type TaskFeedEventsQueryVariables = {
-  id: Scalars['String']
+  id: Scalars['String'];
 };
 
 
 export type TaskFeedEventsQuery = { task: (
     Pick<Task, 'id' | 'colonyAddress' | 'ethPotId' | 'finalizedAt' | 'txHash'>
-    & { events: Array<TaskEventFragment>, finalizedPayment: Maybe<Pick<TaskFinalizedPayment, 'amount' | 'tokenAddress' | 'workerAddress' | 'transactionHash'>> }
+    & { events: Array<TaskEventFragment>, finalizedPayment?: Maybe<Pick<TaskFinalizedPayment, 'amount' | 'tokenAddress' | 'workerAddress' | 'transactionHash'>> }
     & PayoutsFragment
   ) };
 
@@ -1943,7 +1942,7 @@ export type LoggedInUserQueryVariables = {};
 export type LoggedInUserQuery = { loggedInUser: Pick<LoggedInUser, 'walletAddress' | 'balance' | 'username'> };
 
 export type UserQueryVariables = {
-  address: Scalars['String']
+  address: Scalars['String'];
 };
 
 
@@ -1953,9 +1952,9 @@ export type UserQuery = { user: (
   ) };
 
 export type UserWithReputationQueryVariables = {
-  address: Scalars['String'],
-  colonyAddress: Scalars['String'],
-  domainId?: Maybe<Scalars['Int']>
+  address: Scalars['String'];
+  colonyAddress: Scalars['String'];
+  domainId?: Maybe<Scalars['Int']>;
 };
 
 
@@ -1965,16 +1964,16 @@ export type UserWithReputationQuery = { user: (
   ) };
 
 export type UserReputationQueryVariables = {
-  address: Scalars['String'],
-  colonyAddress: Scalars['String'],
-  domainId?: Maybe<Scalars['Int']>
+  address: Scalars['String'];
+  colonyAddress: Scalars['String'];
+  domainId?: Maybe<Scalars['Int']>;
 };
 
 
 export type UserReputationQuery = Pick<Query, 'userReputation'>;
 
 export type UserTasksQueryVariables = {
-  address: Scalars['String']
+  address: Scalars['String'];
 };
 
 
@@ -1982,7 +1981,7 @@ export type UserTasksQuery = { user: (
     Pick<User, 'id'>
     & { tasks: Array<(
       Pick<Task, 'id' | 'assignedWorkerAddress' | 'cancelledAt' | 'colonyAddress' | 'commentCount' | 'createdAt' | 'creatorAddress' | 'dueDate' | 'ethDomainId' | 'ethSkillId' | 'finalizedAt' | 'title' | 'workRequestAddresses' | 'txHash'>
-      & { assignedWorker: Maybe<(
+      & { assignedWorker?: Maybe<(
         Pick<User, 'id'>
         & { profile: Pick<UserProfile, 'avatarHash'> }
       )>, colony: Pick<Colony, 'id' | 'colonyName' | 'displayName' | 'nativeTokenAddress'>, events: Array<Pick<Event, 'id' | 'type'>> }
@@ -1991,7 +1990,7 @@ export type UserTasksQuery = { user: (
   ) };
 
 export type UserTokensQueryVariables = {
-  address: Scalars['String']
+  address: Scalars['String'];
 };
 
 
@@ -2001,22 +2000,22 @@ export type UserTokensQuery = { user: (
   ) };
 
 export type UsernameQueryVariables = {
-  address: Scalars['String']
+  address: Scalars['String'];
 };
 
 
 export type UsernameQuery = Pick<Query, 'username'>;
 
 export type UserAddressQueryVariables = {
-  name: Scalars['String']
+  name: Scalars['String'];
 };
 
 
 export type UserAddressQuery = Pick<Query, 'userAddress'>;
 
 export type ColonyFromNameQueryVariables = {
-  name: Scalars['String'],
-  address: Scalars['String']
+  name: Scalars['String'];
+  address: Scalars['String'];
 };
 
 
@@ -2026,28 +2025,28 @@ export type ColonyFromNameQuery = (
 );
 
 export type ColonyNameQueryVariables = {
-  address: Scalars['String']
+  address: Scalars['String'];
 };
 
 
 export type ColonyNameQuery = Pick<Query, 'colonyName'>;
 
 export type ColonyAddressQueryVariables = {
-  name: Scalars['String']
+  name: Scalars['String'];
 };
 
 
 export type ColonyAddressQuery = Pick<Query, 'colonyAddress'>;
 
 export type ColonyQueryVariables = {
-  address: Scalars['String']
+  address: Scalars['String'];
 };
 
 
 export type ColonyQuery = { colony: FullColonyFragment };
 
 export type ColonyTokensQueryVariables = {
-  address: Scalars['String']
+  address: Scalars['String'];
 };
 
 
@@ -2057,16 +2056,16 @@ export type ColonyTokensQuery = { colony: (
   ) };
 
 export type ColonyNativeTokenQueryVariables = {
-  address: Scalars['String']
+  address: Scalars['String'];
 };
 
 
 export type ColonyNativeTokenQuery = { colony: Pick<Colony, 'id' | 'nativeTokenAddress'> };
 
 export type TokenBalancesForDomainsQueryVariables = {
-  colonyAddress: Scalars['String'],
-  tokenAddresses: Array<Scalars['String']>,
-  domainIds?: Maybe<Array<Scalars['Int']>>
+  colonyAddress: Scalars['String'];
+  tokenAddresses: Array<Scalars['String']>;
+  domainIds?: Maybe<Array<Scalars['Int']>>;
 };
 
 
@@ -2076,21 +2075,21 @@ export type TokenBalancesForDomainsQuery = { tokens: Array<(
   )> };
 
 export type ColonyProfileQueryVariables = {
-  address: Scalars['String']
+  address: Scalars['String'];
 };
 
 
 export type ColonyProfileQuery = { colony: ColonyProfileFragment };
 
 export type UserColonyAddressesQueryVariables = {
-  address: Scalars['String']
+  address: Scalars['String'];
 };
 
 
 export type UserColonyAddressesQuery = { user: Pick<User, 'id' | 'colonyAddresses'> };
 
 export type ColonyTasksQueryVariables = {
-  address: Scalars['String']
+  address: Scalars['String'];
 };
 
 
@@ -2098,7 +2097,7 @@ export type ColonyTasksQuery = { colony: (
     Pick<Colony, 'id'>
     & { tasks: Array<(
       Pick<Task, 'id' | 'assignedWorkerAddress' | 'cancelledAt' | 'colonyAddress' | 'commentCount' | 'createdAt' | 'creatorAddress' | 'dueDate' | 'ethDomainId' | 'ethSkillId' | 'finalizedAt' | 'title' | 'workRequestAddresses' | 'txHash'>
-      & { assignedWorker: Maybe<(
+      & { assignedWorker?: Maybe<(
         Pick<User, 'id'>
         & { profile: Pick<UserProfile, 'avatarHash'> }
       )>, colony: Pick<Colony, 'id' | 'colonyName' | 'displayName' | 'nativeTokenAddress'>, events: Array<Pick<Event, 'id' | 'type'>> }
@@ -2107,7 +2106,7 @@ export type ColonyTasksQuery = { colony: (
   ) };
 
 export type ColonyProgramsQueryVariables = {
-  address: Scalars['String']
+  address: Scalars['String'];
 };
 
 
@@ -2117,14 +2116,14 @@ export type ColonyProgramsQuery = { colony: (
   ) };
 
 export type ProgramQueryVariables = {
-  id: Scalars['String']
+  id: Scalars['String'];
 };
 
 
 export type ProgramQuery = { program: ProgramFieldsFragment };
 
 export type ProgramLevelsQueryVariables = {
-  id: Scalars['String']
+  id: Scalars['String'];
 };
 
 
@@ -2134,7 +2133,7 @@ export type ProgramLevelsQuery = { program: (
   ) };
 
 export type LevelQueryVariables = {
-  id: Scalars['String']
+  id: Scalars['String'];
 };
 
 
@@ -2144,7 +2143,7 @@ export type LevelQuery = { level: (
   ) };
 
 export type ProgramLevelsWithUnlockedQueryVariables = {
-  id: Scalars['String']
+  id: Scalars['String'];
 };
 
 
@@ -2157,7 +2156,7 @@ export type ProgramLevelsWithUnlockedQuery = { program: (
   ) };
 
 export type ProgramSubmissionsQueryVariables = {
-  id: Scalars['String']
+  id: Scalars['String'];
 };
 
 
@@ -2167,7 +2166,7 @@ export type ProgramSubmissionsQuery = { program: (
   ) };
 
 export type ColonySubscribedUsersQueryVariables = {
-  colonyAddress: Scalars['String']
+  colonyAddress: Scalars['String'];
 };
 
 
@@ -2180,29 +2179,29 @@ export type ColonySubscribedUsersQuery = { colony: (
   ) };
 
 export type DomainQueryVariables = {
-  colonyAddress: Scalars['String'],
-  ethDomainId: Scalars['Int']
+  colonyAddress: Scalars['String'];
+  ethDomainId: Scalars['Int'];
 };
 
 
 export type DomainQuery = { domain: Pick<Domain, 'id' | 'ethDomainId' | 'name' | 'ethParentDomainId'> };
 
 export type TokenQueryVariables = {
-  address: Scalars['String']
+  address: Scalars['String'];
 };
 
 
 export type TokenQuery = { token: Pick<Token, 'id' | 'address' | 'iconHash' | 'decimals' | 'name' | 'symbol'> };
 
 export type TokenInfoQueryVariables = {
-  address: Scalars['String']
+  address: Scalars['String'];
 };
 
 
 export type TokenInfoQuery = { tokenInfo: Pick<TokenInfo, 'decimals' | 'name' | 'symbol' | 'iconHash'> };
 
 export type ColonyDomainsQueryVariables = {
-  colonyAddress: Scalars['String']
+  colonyAddress: Scalars['String'];
 };
 
 
@@ -2212,7 +2211,7 @@ export type ColonyDomainsQuery = { colony: (
   ) };
 
 export type ColonySuggestionsQueryVariables = {
-  colonyAddress: Scalars['String']
+  colonyAddress: Scalars['String'];
 };
 
 
@@ -2222,7 +2221,7 @@ export type ColonySuggestionsQuery = { colony: (
   ) };
 
 export type UserNotificationsQueryVariables = {
-  address: Scalars['String']
+  address: Scalars['String'];
 };
 
 
@@ -2238,8 +2237,8 @@ export type UserNotificationsQuery = { user: (
   ) };
 
 export type UserBadgesQueryVariables = {
-  address: Scalars['String'],
-  colonyAddress: Scalars['String']
+  address: Scalars['String'];
+  colonyAddress: Scalars['String'];
 };
 
 
@@ -4529,7 +4528,7 @@ export const TaskDocument = gql`
  * __useTaskQuery__
  *
  * To run a query within a React component, call `useTaskQuery` and pass it any options that fit your needs.
- * When your component renders, `useTaskQuery` returns an object from Apollo Client that contains loading, error, and data properties 
+ * When your component renders, `useTaskQuery` returns an object from Apollo Client that contains loading, error, and data properties
  * you can use to render your UI.
  *
  * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
@@ -4602,7 +4601,7 @@ export const TaskToEditDocument = gql`
  * __useTaskToEditQuery__
  *
  * To run a query within a React component, call `useTaskToEditQuery` and pass it any options that fit your needs.
- * When your component renders, `useTaskToEditQuery` returns an object from Apollo Client that contains loading, error, and data properties 
+ * When your component renders, `useTaskToEditQuery` returns an object from Apollo Client that contains loading, error, and data properties
  * you can use to render your UI.
  *
  * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
@@ -4650,7 +4649,7 @@ ${PayoutsFragmentDoc}`;
  * __useTaskFeedEventsQuery__
  *
  * To run a query within a React component, call `useTaskFeedEventsQuery` and pass it any options that fit your needs.
- * When your component renders, `useTaskFeedEventsQuery` returns an object from Apollo Client that contains loading, error, and data properties 
+ * When your component renders, `useTaskFeedEventsQuery` returns an object from Apollo Client that contains loading, error, and data properties
  * you can use to render your UI.
  *
  * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
@@ -4685,7 +4684,7 @@ export const LoggedInUserDocument = gql`
  * __useLoggedInUserQuery__
  *
  * To run a query within a React component, call `useLoggedInUserQuery` and pass it any options that fit your needs.
- * When your component renders, `useLoggedInUserQuery` returns an object from Apollo Client that contains loading, error, and data properties 
+ * When your component renders, `useLoggedInUserQuery` returns an object from Apollo Client that contains loading, error, and data properties
  * you can use to render your UI.
  *
  * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
@@ -4726,7 +4725,7 @@ export const UserDocument = gql`
  * __useUserQuery__
  *
  * To run a query within a React component, call `useUserQuery` and pass it any options that fit your needs.
- * When your component renders, `useUserQuery` returns an object from Apollo Client that contains loading, error, and data properties 
+ * When your component renders, `useUserQuery` returns an object from Apollo Client that contains loading, error, and data properties
  * you can use to render your UI.
  *
  * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
@@ -4769,7 +4768,7 @@ export const UserWithReputationDocument = gql`
  * __useUserWithReputationQuery__
  *
  * To run a query within a React component, call `useUserWithReputationQuery` and pass it any options that fit your needs.
- * When your component renders, `useUserWithReputationQuery` returns an object from Apollo Client that contains loading, error, and data properties 
+ * When your component renders, `useUserWithReputationQuery` returns an object from Apollo Client that contains loading, error, and data properties
  * you can use to render your UI.
  *
  * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
@@ -4802,7 +4801,7 @@ export const UserReputationDocument = gql`
  * __useUserReputationQuery__
  *
  * To run a query within a React component, call `useUserReputationQuery` and pass it any options that fit your needs.
- * When your component renders, `useUserReputationQuery` returns an object from Apollo Client that contains loading, error, and data properties 
+ * When your component renders, `useUserReputationQuery` returns an object from Apollo Client that contains loading, error, and data properties
  * you can use to render your UI.
  *
  * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
@@ -4870,7 +4869,7 @@ export const UserTasksDocument = gql`
  * __useUserTasksQuery__
  *
  * To run a query within a React component, call `useUserTasksQuery` and pass it any options that fit your needs.
- * When your component renders, `useUserTasksQuery` returns an object from Apollo Client that contains loading, error, and data properties 
+ * When your component renders, `useUserTasksQuery` returns an object from Apollo Client that contains loading, error, and data properties
  * you can use to render your UI.
  *
  * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
@@ -4913,7 +4912,7 @@ export const UserTokensDocument = gql`
  * __useUserTokensQuery__
  *
  * To run a query within a React component, call `useUserTokensQuery` and pass it any options that fit your needs.
- * When your component renders, `useUserTokensQuery` returns an object from Apollo Client that contains loading, error, and data properties 
+ * When your component renders, `useUserTokensQuery` returns an object from Apollo Client that contains loading, error, and data properties
  * you can use to render your UI.
  *
  * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
@@ -4944,7 +4943,7 @@ export const UsernameDocument = gql`
  * __useUsernameQuery__
  *
  * To run a query within a React component, call `useUsernameQuery` and pass it any options that fit your needs.
- * When your component renders, `useUsernameQuery` returns an object from Apollo Client that contains loading, error, and data properties 
+ * When your component renders, `useUsernameQuery` returns an object from Apollo Client that contains loading, error, and data properties
  * you can use to render your UI.
  *
  * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
@@ -4975,7 +4974,7 @@ export const UserAddressDocument = gql`
  * __useUserAddressQuery__
  *
  * To run a query within a React component, call `useUserAddressQuery` and pass it any options that fit your needs.
- * When your component renders, `useUserAddressQuery` returns an object from Apollo Client that contains loading, error, and data properties 
+ * When your component renders, `useUserAddressQuery` returns an object from Apollo Client that contains loading, error, and data properties
  * you can use to render your UI.
  *
  * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
@@ -5009,7 +5008,7 @@ export const ColonyFromNameDocument = gql`
  * __useColonyFromNameQuery__
  *
  * To run a query within a React component, call `useColonyFromNameQuery` and pass it any options that fit your needs.
- * When your component renders, `useColonyFromNameQuery` returns an object from Apollo Client that contains loading, error, and data properties 
+ * When your component renders, `useColonyFromNameQuery` returns an object from Apollo Client that contains loading, error, and data properties
  * you can use to render your UI.
  *
  * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
@@ -5041,7 +5040,7 @@ export const ColonyNameDocument = gql`
  * __useColonyNameQuery__
  *
  * To run a query within a React component, call `useColonyNameQuery` and pass it any options that fit your needs.
- * When your component renders, `useColonyNameQuery` returns an object from Apollo Client that contains loading, error, and data properties 
+ * When your component renders, `useColonyNameQuery` returns an object from Apollo Client that contains loading, error, and data properties
  * you can use to render your UI.
  *
  * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
@@ -5072,7 +5071,7 @@ export const ColonyAddressDocument = gql`
  * __useColonyAddressQuery__
  *
  * To run a query within a React component, call `useColonyAddressQuery` and pass it any options that fit your needs.
- * When your component renders, `useColonyAddressQuery` returns an object from Apollo Client that contains loading, error, and data properties 
+ * When your component renders, `useColonyAddressQuery` returns an object from Apollo Client that contains loading, error, and data properties
  * you can use to render your UI.
  *
  * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
@@ -5105,7 +5104,7 @@ export const ColonyDocument = gql`
  * __useColonyQuery__
  *
  * To run a query within a React component, call `useColonyQuery` and pass it any options that fit your needs.
- * When your component renders, `useColonyQuery` returns an object from Apollo Client that contains loading, error, and data properties 
+ * When your component renders, `useColonyQuery` returns an object from Apollo Client that contains loading, error, and data properties
  * you can use to render your UI.
  *
  * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
@@ -5139,7 +5138,7 @@ export const ColonyTokensDocument = gql`
  * __useColonyTokensQuery__
  *
  * To run a query within a React component, call `useColonyTokensQuery` and pass it any options that fit your needs.
- * When your component renders, `useColonyTokensQuery` returns an object from Apollo Client that contains loading, error, and data properties 
+ * When your component renders, `useColonyTokensQuery` returns an object from Apollo Client that contains loading, error, and data properties
  * you can use to render your UI.
  *
  * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
@@ -5173,7 +5172,7 @@ export const ColonyNativeTokenDocument = gql`
  * __useColonyNativeTokenQuery__
  *
  * To run a query within a React component, call `useColonyNativeTokenQuery` and pass it any options that fit your needs.
- * When your component renders, `useColonyNativeTokenQuery` returns an object from Apollo Client that contains loading, error, and data properties 
+ * When your component renders, `useColonyNativeTokenQuery` returns an object from Apollo Client that contains loading, error, and data properties
  * you can use to render your UI.
  *
  * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
@@ -5215,7 +5214,7 @@ export const TokenBalancesForDomainsDocument = gql`
  * __useTokenBalancesForDomainsQuery__
  *
  * To run a query within a React component, call `useTokenBalancesForDomainsQuery` and pass it any options that fit your needs.
- * When your component renders, `useTokenBalancesForDomainsQuery` returns an object from Apollo Client that contains loading, error, and data properties 
+ * When your component renders, `useTokenBalancesForDomainsQuery` returns an object from Apollo Client that contains loading, error, and data properties
  * you can use to render your UI.
  *
  * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
@@ -5250,7 +5249,7 @@ export const ColonyProfileDocument = gql`
  * __useColonyProfileQuery__
  *
  * To run a query within a React component, call `useColonyProfileQuery` and pass it any options that fit your needs.
- * When your component renders, `useColonyProfileQuery` returns an object from Apollo Client that contains loading, error, and data properties 
+ * When your component renders, `useColonyProfileQuery` returns an object from Apollo Client that contains loading, error, and data properties
  * you can use to render your UI.
  *
  * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
@@ -5284,7 +5283,7 @@ export const UserColonyAddressesDocument = gql`
  * __useUserColonyAddressesQuery__
  *
  * To run a query within a React component, call `useUserColonyAddressesQuery` and pass it any options that fit your needs.
- * When your component renders, `useUserColonyAddressesQuery` returns an object from Apollo Client that contains loading, error, and data properties 
+ * When your component renders, `useUserColonyAddressesQuery` returns an object from Apollo Client that contains loading, error, and data properties
  * you can use to render your UI.
  *
  * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
@@ -5350,7 +5349,7 @@ export const ColonyTasksDocument = gql`
  * __useColonyTasksQuery__
  *
  * To run a query within a React component, call `useColonyTasksQuery` and pass it any options that fit your needs.
- * When your component renders, `useColonyTasksQuery` returns an object from Apollo Client that contains loading, error, and data properties 
+ * When your component renders, `useColonyTasksQuery` returns an object from Apollo Client that contains loading, error, and data properties
  * you can use to render your UI.
  *
  * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
@@ -5386,7 +5385,7 @@ export const ColonyProgramsDocument = gql`
  * __useColonyProgramsQuery__
  *
  * To run a query within a React component, call `useColonyProgramsQuery` and pass it any options that fit your needs.
- * When your component renders, `useColonyProgramsQuery` returns an object from Apollo Client that contains loading, error, and data properties 
+ * When your component renders, `useColonyProgramsQuery` returns an object from Apollo Client that contains loading, error, and data properties
  * you can use to render your UI.
  *
  * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
@@ -5419,7 +5418,7 @@ export const ProgramDocument = gql`
  * __useProgramQuery__
  *
  * To run a query within a React component, call `useProgramQuery` and pass it any options that fit your needs.
- * When your component renders, `useProgramQuery` returns an object from Apollo Client that contains loading, error, and data properties 
+ * When your component renders, `useProgramQuery` returns an object from Apollo Client that contains loading, error, and data properties
  * you can use to render your UI.
  *
  * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
@@ -5456,7 +5455,7 @@ export const ProgramLevelsDocument = gql`
  * __useProgramLevelsQuery__
  *
  * To run a query within a React component, call `useProgramLevelsQuery` and pass it any options that fit your needs.
- * When your component renders, `useProgramLevelsQuery` returns an object from Apollo Client that contains loading, error, and data properties 
+ * When your component renders, `useProgramLevelsQuery` returns an object from Apollo Client that contains loading, error, and data properties
  * you can use to render your UI.
  *
  * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
@@ -5490,7 +5489,7 @@ export const LevelDocument = gql`
  * __useLevelQuery__
  *
  * To run a query within a React component, call `useLevelQuery` and pass it any options that fit your needs.
- * When your component renders, `useLevelQuery` returns an object from Apollo Client that contains loading, error, and data properties 
+ * When your component renders, `useLevelQuery` returns an object from Apollo Client that contains loading, error, and data properties
  * you can use to render your UI.
  *
  * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
@@ -5528,7 +5527,7 @@ export const ProgramLevelsWithUnlockedDocument = gql`
  * __useProgramLevelsWithUnlockedQuery__
  *
  * To run a query within a React component, call `useProgramLevelsWithUnlockedQuery` and pass it any options that fit your needs.
- * When your component renders, `useProgramLevelsWithUnlockedQuery` returns an object from Apollo Client that contains loading, error, and data properties 
+ * When your component renders, `useProgramLevelsWithUnlockedQuery` returns an object from Apollo Client that contains loading, error, and data properties
  * you can use to render your UI.
  *
  * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
@@ -5564,7 +5563,7 @@ export const ProgramSubmissionsDocument = gql`
  * __useProgramSubmissionsQuery__
  *
  * To run a query within a React component, call `useProgramSubmissionsQuery` and pass it any options that fit your needs.
- * When your component renders, `useProgramSubmissionsQuery` returns an object from Apollo Client that contains loading, error, and data properties 
+ * When your component renders, `useProgramSubmissionsQuery` returns an object from Apollo Client that contains loading, error, and data properties
  * you can use to render your UI.
  *
  * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
@@ -5606,7 +5605,7 @@ export const ColonySubscribedUsersDocument = gql`
  * __useColonySubscribedUsersQuery__
  *
  * To run a query within a React component, call `useColonySubscribedUsersQuery` and pass it any options that fit your needs.
- * When your component renders, `useColonySubscribedUsersQuery` returns an object from Apollo Client that contains loading, error, and data properties 
+ * When your component renders, `useColonySubscribedUsersQuery` returns an object from Apollo Client that contains loading, error, and data properties
  * you can use to render your UI.
  *
  * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
@@ -5642,7 +5641,7 @@ export const DomainDocument = gql`
  * __useDomainQuery__
  *
  * To run a query within a React component, call `useDomainQuery` and pass it any options that fit your needs.
- * When your component renders, `useDomainQuery` returns an object from Apollo Client that contains loading, error, and data properties 
+ * When your component renders, `useDomainQuery` returns an object from Apollo Client that contains loading, error, and data properties
  * you can use to render your UI.
  *
  * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
@@ -5681,7 +5680,7 @@ export const TokenDocument = gql`
  * __useTokenQuery__
  *
  * To run a query within a React component, call `useTokenQuery` and pass it any options that fit your needs.
- * When your component renders, `useTokenQuery` returns an object from Apollo Client that contains loading, error, and data properties 
+ * When your component renders, `useTokenQuery` returns an object from Apollo Client that contains loading, error, and data properties
  * you can use to render your UI.
  *
  * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
@@ -5717,7 +5716,7 @@ export const TokenInfoDocument = gql`
  * __useTokenInfoQuery__
  *
  * To run a query within a React component, call `useTokenInfoQuery` and pass it any options that fit your needs.
- * When your component renders, `useTokenInfoQuery` returns an object from Apollo Client that contains loading, error, and data properties 
+ * When your component renders, `useTokenInfoQuery` returns an object from Apollo Client that contains loading, error, and data properties
  * you can use to render your UI.
  *
  * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
@@ -5756,7 +5755,7 @@ export const ColonyDomainsDocument = gql`
  * __useColonyDomainsQuery__
  *
  * To run a query within a React component, call `useColonyDomainsQuery` and pass it any options that fit your needs.
- * When your component renders, `useColonyDomainsQuery` returns an object from Apollo Client that contains loading, error, and data properties 
+ * When your component renders, `useColonyDomainsQuery` returns an object from Apollo Client that contains loading, error, and data properties
  * you can use to render your UI.
  *
  * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
@@ -5792,7 +5791,7 @@ export const ColonySuggestionsDocument = gql`
  * __useColonySuggestionsQuery__
  *
  * To run a query within a React component, call `useColonySuggestionsQuery` and pass it any options that fit your needs.
- * When your component renders, `useColonySuggestionsQuery` returns an object from Apollo Client that contains loading, error, and data properties 
+ * When your component renders, `useColonySuggestionsQuery` returns an object from Apollo Client that contains loading, error, and data properties
  * you can use to render your UI.
  *
  * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
@@ -5838,7 +5837,7 @@ export const UserNotificationsDocument = gql`
  * __useUserNotificationsQuery__
  *
  * To run a query within a React component, call `useUserNotificationsQuery` and pass it any options that fit your needs.
- * When your component renders, `useUserNotificationsQuery` returns an object from Apollo Client that contains loading, error, and data properties 
+ * When your component renders, `useUserNotificationsQuery` returns an object from Apollo Client that contains loading, error, and data properties
  * you can use to render your UI.
  *
  * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
@@ -5879,7 +5878,7 @@ export const UserBadgesDocument = gql`
  * __useUserBadgesQuery__
  *
  * To run a query within a React component, call `useUserBadgesQuery` and pass it any options that fit your needs.
- * When your component renders, `useUserBadgesQuery` returns an object from Apollo Client that contains loading, error, and data properties 
+ * When your component renders, `useUserBadgesQuery` returns an object from Apollo Client that contains loading, error, and data properties
  * you can use to render your UI.
  *
  * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
@@ -5913,7 +5912,7 @@ export const SystemInfoDocument = gql`
  * __useSystemInfoQuery__
  *
  * To run a query within a React component, call `useSystemInfoQuery` and pass it any options that fit your needs.
- * When your component renders, `useSystemInfoQuery` returns an object from Apollo Client that contains loading, error, and data properties 
+ * When your component renders, `useSystemInfoQuery` returns an object from Apollo Client that contains loading, error, and data properties
  * you can use to render your UI.
  *
  * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
