@@ -26,6 +26,7 @@
         "truffle": "yarn --cwd ./src/lib/colonyNetwork truffle",
         "trufflepig": "scripts/start_trufflepig.js",
         "typecheck": "tsc -p tsconfig.json --noEmit",
+        "typecheck:watch": "tsc -p tsconfig.json --noEmit --watch",
         "webpack": "webpack-dev-server --config webpack.dev.js --port 9090",
         "webpack:build": "webpack-cli --config webpack.dev.js",
         "webpack:build:prod": "NODE_OPTIONS=\"--max-old-space-size=4096\" NODE_ENV=production webpack-cli --config webpack.prod.js",
