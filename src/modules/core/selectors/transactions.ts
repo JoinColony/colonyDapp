@@ -34,9 +34,8 @@ const allTransactions = (state: RootStateRecord): TransactionsListMap =>
   state.getIn([ns, CORE_TRANSACTIONS, CORE_TRANSACTIONS_LIST]);
 
 export const transactionByHash = (state: RootStateRecord, hash: string) =>
-  createSelector(
-    allTransactions,
-    transactions => transactions.find(tx => tx.hash === hash),
+  createSelector(allTransactions, transactions =>
+    transactions.find(tx => tx.hash === hash),
   )(state);
 
 export const groupedTransactions = createSelector(

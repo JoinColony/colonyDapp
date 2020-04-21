@@ -43,10 +43,7 @@ const removeActions = {
 
 const ColonyAvatarUploader = ({ colony: { colonyAddress }, colony }: Props) => {
   const transform = useCallback(
-    pipe(
-      withKey(colonyAddress),
-      mergePayload({ colonyAddress }),
-    ),
+    pipe(withKey(colonyAddress), mergePayload({ colonyAddress })),
     [colonyAddress],
   );
   const upload = useAsyncFunction({ ...uploadActions, transform }) as any;

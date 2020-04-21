@@ -104,10 +104,7 @@ const StepJSONUpload = ({
   wizardValues,
 }: Props) => {
   const transform = useCallback(
-    pipe(
-      mergePayload(wizardValues),
-      mapPayload(transformPayload),
-    ),
+    pipe(mergePayload(wizardValues), mapPayload(transformPayload)),
     [wizardValues],
   );
   return (

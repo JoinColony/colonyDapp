@@ -39,13 +39,13 @@ export type TransactionActionTypes =
       >,
       WithId
     >
-  | ActionTypeWithPayloadAndMeta<
+  | (ActionTypeWithPayloadAndMeta<
       ActionTypes.TRANSACTION_ERROR,
       { error: TransactionError },
       { id: string }
     > & {
       error: true;
-    }
+    })
   | ActionTypeWithMeta<ActionTypes.TRANSACTION_ESTIMATE_GAS, WithId>
   | ActionTypeWithPayloadAndMeta<
       ActionTypes.TRANSACTION_HASH_RECEIVED,

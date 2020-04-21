@@ -79,11 +79,11 @@ type MaybeFetchedData<T extends undefined | null | { record: any }> = T extends
   | undefined
   | null
   ? T
-  : (T extends { record: any }
-      ? (T extends { record: { toJS: Function } }
-          ? ReturnType<T['record']['toJS']>
-          : T['record'])
-      : T);
+  : T extends { record: any }
+  ? T extends { record: { toJS: Function } }
+    ? ReturnType<T['record']['toJS']>
+    : T['record']
+  : T;
 
 /* Used in cases where we need to memoize the transformed output of any data.
  * Transform function has to be pure, obviously

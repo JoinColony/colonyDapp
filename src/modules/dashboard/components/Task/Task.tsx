@@ -168,7 +168,7 @@ const Task = () => {
         const { potId } = (await taskCompletedTxFetch({
           colonyAddress: colonyData.colonyAddress,
           txHash,
-        })) as ({ potId: number });
+        })) as { potId: number };
         if (potId) {
           finalizeTaskMutation({
             variables: {

@@ -74,27 +74,30 @@ const StepTrufflePig = ({ resetWizard, wizardForm, wizardValues }: Props) => {
   const [accountIndex, setAccountIndex] = useState(0);
   const [retryAttempts, setRetryAttempts] = useState(0);
 
-  useEffect(() => {
-    const connectTrufflepig = async () => {
-      setIsLoading(true);
-      try {
-        const loader = new TrufflepigLoader();
-        await loader.getAccount(accountIndex);
-        setIsValid(true);
-      } catch (caughtError) {
-        /*
-         * Since this is a dev-only loader, logging the error is enough.
-         */
-        log.error(caughtError);
-        setIsValid(false);
-      }
-      setIsLoading(false);
-    };
-    connectTrufflepig();
-  }, /*
-   * Reconnect to Trufflepig whenever the account index or retry
-   * attempts change
-   */ [accountIndex, retryAttempts]);
+  useEffect(
+    () => {
+      const connectTrufflepig = async () => {
+        setIsLoading(true);
+        try {
+          const loader = new TrufflepigLoader();
+          await loader.getAccount(accountIndex);
+          setIsValid(true);
+        } catch (caughtError) {
+          /*
+           * Since this is a dev-only loader, logging the error is enough.
+           */
+          log.error(caughtError);
+          setIsValid(false);
+        }
+        setIsLoading(false);
+      };
+      connectTrufflepig();
+    },
+    /*
+     * Reconnect to Trufflepig whenever the account index or retry
+     * attempts change
+     */ [accountIndex, retryAttempts],
+  );
 
   const handleRetryClick = useCallback(
     () => (event: SyntheticEvent) => {

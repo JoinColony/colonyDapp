@@ -10,6 +10,7 @@ import { ActionTypes, ReducerType } from '~redux/index';
 
 import { AdminUnclaimedTransactionsState } from '../state/index';
 
+// eslint-disable-next-line prettier/prettier
 const colonyUnclaimedTransactionsReducer: ReducerType<
   AdminUnclaimedTransactionsState
 > = (

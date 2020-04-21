@@ -49,10 +49,11 @@ describe('reducers - withFetchableDataMap', () => {
       }
     });
 
-    // @ts-ignore
-    const myWrappedReducer = withFetchableDataMap(MY_FETCH, ImmutableMap())(
-      myReducer,
-    );
+    const myWrappedReducer = withFetchableDataMap(
+      // @ts-ignore
+      MY_FETCH,
+      ImmutableMap(),
+    )(myReducer);
 
     const initialState = ImmutableMap();
 

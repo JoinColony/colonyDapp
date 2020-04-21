@@ -108,6 +108,7 @@ const allDomainsReducer: ReducerType<AllDomainsMap> = (
 export default withFetchableDataMap<
   AllDomainsMap,
   ImmutableMap<DomainRecord['id'], DomainRecord>
->(ActionTypes.COLONY_DOMAINS_FETCH, ImmutableMap() as AllDomainsMap)(
-  allDomainsReducer,
-);
+>(
+  ActionTypes.COLONY_DOMAINS_FETCH,
+  ImmutableMap() as AllDomainsMap,
+)(allDomainsReducer);
