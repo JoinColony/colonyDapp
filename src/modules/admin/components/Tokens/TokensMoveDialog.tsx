@@ -12,7 +12,7 @@ import { ActionForm } from '~core/Fields';
 import { useColonyTokensQuery } from '~data/index';
 
 import DialogForm from './TokensMoveDialogForm';
-import { DEFAULT_TOKEN_DECIMALS } from '~constants';
+import { getTokenDecimalsWithFallback } from '~utils/tokens';
 
 export interface FormValues {
   fromDomain?: string;
@@ -56,8 +56,9 @@ const TokensMoveDialog = ({
         const selectedToken = tokens.find(
           token => token.address === payload.tokenAddress,
         );
-        const decimals =
-          (selectedToken && selectedToken.decimals) || DEFAULT_TOKEN_DECIMALS;
+        const decimals = getTokenDecimalsWithFallback(
+          selectedToken && selectedToken.decimals,
+        );
 
         // Convert amount string with decimals to BigInt (eth to wei)
         const amount = new BigNumber(moveDecimal(payload.amount, decimals));

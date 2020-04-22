@@ -5,7 +5,7 @@ import BigNumber from 'bn.js';
 import moveDecimal from 'move-decimal-point';
 import sortBy from 'lodash/sortBy';
 
-import { ROOT_DOMAIN, ROLES, DEFAULT_TOKEN_DECIMALS } from '~constants';
+import { ROOT_DOMAIN, ROLES } from '~constants';
 import { Address } from '~types/index';
 import { useDataFetcher, useTransformer } from '~utils/hooks';
 import Button from '~core/Button';
@@ -20,7 +20,10 @@ import {
 import EthUsd from '~core/EthUsd';
 import Numeral from '~core/Numeral';
 import { ZERO_ADDRESS } from '~utils/web3/constants';
-import { getBalanceFromToken } from '~utils/tokens';
+import {
+  getBalanceFromToken,
+  getTokenDecimalsWithFallback,
+} from '~utils/tokens';
 
 import { getUserRoles } from '../../../transformers';
 import { domainsAndRolesFetcher } from '../../../dashboard/fetchers';
@@ -182,7 +185,10 @@ const TokensMoveDialogForm = ({
       errors.amount = undefined; // silent error
     } else {
       const convertedAmount = new BigNumber(
-        moveDecimal(amount, selectedToken.decimals || DEFAULT_TOKEN_DECIMALS),
+        moveDecimal(
+          amount,
+          getTokenDecimalsWithFallback(selectedToken.decimals),
+        ),
       );
       if (convertedAmount.eqn(0)) {
         errors.amount = MSG.noAmount;
@@ -241,10 +247,9 @@ const TokensMoveDialogForm = ({
                       theme: 'grey',
                     }}
                     value={fromDomainTokenBalance || 0}
-                    unit={
-                      (selectedToken && selectedToken.decimals) ||
-                      DEFAULT_TOKEN_DECIMALS
-                    }
+                    unit={getTokenDecimalsWithFallback(
+                      selectedToken && selectedToken.decimals,
+                    )}
                     truncate={3}
                   />
                 ),
@@ -268,10 +273,9 @@ const TokensMoveDialogForm = ({
                       theme: 'grey',
                     }}
                     value={toDomainTokenBalance || 0}
-                    unit={
-                      (selectedToken && selectedToken.decimals) ||
-                      DEFAULT_TOKEN_DECIMALS
-                    }
+                    unit={getTokenDecimalsWithFallback(
+                      selectedToken && selectedToken.decimals,
+                    )}
                     truncate={3}
                   />
                 ),
@@ -291,9 +295,9 @@ const TokensMoveDialogForm = ({
               formattingOptions={{
                 delimiter: ',',
                 numeral: true,
-                numeralDecimalScale:
-                  (selectedToken && selectedToken.decimals) ||
-                  DEFAULT_TOKEN_DECIMALS,
+                numeralDecimalScale: getTokenDecimalsWithFallback(
+                  selectedToken && selectedToken.decimals,
+                ),
               }}
             />
           </div>
