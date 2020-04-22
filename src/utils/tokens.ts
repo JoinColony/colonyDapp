@@ -29,7 +29,15 @@ export const getBalanceFromToken = (
  * a number, and return that number (even if that number is 0).
  * If it's not a number then fallback to the default token decimals value.
  */
-export const getTokenDecimals = (decimals: any): number =>
-  Number.isInteger(decimals) && decimals >= 0
-    ? decimals
-    : DEFAULT_TOKEN_DECIMALS;
+export const getTokenDecimalsWithFallback = (
+  decimals: any,
+  fallbackDecimals?: any,
+): number => {
+  if (Number.isInteger(decimals) && decimals >= 0) {
+    return decimals;
+  }
+  if (Number.isInteger(fallbackDecimals) && fallbackDecimals >= 0) {
+    return fallbackDecimals;
+  }
+  return DEFAULT_TOKEN_DECIMALS;
+};
