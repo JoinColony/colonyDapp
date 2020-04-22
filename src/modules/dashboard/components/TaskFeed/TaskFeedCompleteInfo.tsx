@@ -10,6 +10,7 @@ import TransactionLink from '~core/TransactionLink';
 import { useUser, useTokenQuery, useColonyQuery, AnyTask } from '~data/index';
 import InfoPopover from '~core/InfoPopover';
 import { createAddress } from '~utils/web3';
+import { getTokenDecimalsWithFallback } from '~utils/tokens';
 
 import { Address } from '~types/index';
 
@@ -141,7 +142,7 @@ const TaskFeedCompleteInfo = ({
                     <span className={styles.tokenInfo}>
                       <Numeral
                         integerSeparator=""
-                        unit={decimals || DEFAULT_TOKEN_DECIMALS}
+                        unit={getTokenDecimalsWithFallback(decimals)}
                         value={amount}
                       />
                     </span>
@@ -161,7 +162,7 @@ const TaskFeedCompleteInfo = ({
                   >
                     <span className={styles.tokenInfo}>
                       <Numeral
-                        unit={decimals || DEFAULT_TOKEN_DECIMALS}
+                        unit={getTokenDecimalsWithFallback(decimals)}
                         value={metaColonyFee}
                       />
                     </span>
