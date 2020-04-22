@@ -10,11 +10,11 @@ import TransactionLink from '~core/TransactionLink';
 import { ActionTypes } from '~redux/index';
 import { mergePayload } from '~utils/actions';
 import { useUserLazy, useTokenQuery } from '~data/index';
+import { getTokenDecimalsWithFallback } from '~utils/tokens';
 
 import TransactionDetails from './TransactionDetails';
 
 import styles from './TransactionListItem.css';
-import { DEFAULT_TOKEN_DECIMALS } from '~constants';
 
 const MSG = defineMessages({
   buttonClaim: {
@@ -152,7 +152,7 @@ const TransactionListItem = ({
         )}
         <Numeral
           value={amount}
-          unit={token.decimals || DEFAULT_TOKEN_DECIMALS}
+          unit={getTokenDecimalsWithFallback(token.decimals)}
           suffix={` ${token.symbol}`}
         />
       </TableCell>
