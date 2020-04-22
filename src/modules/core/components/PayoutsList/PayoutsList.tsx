@@ -4,8 +4,8 @@ import cx from 'classnames';
 import BigNumber from 'bn.js';
 import moveDecimal from 'move-decimal-point';
 import InfoPopover from '~core/InfoPopover';
+import { getTokenDecimalsWithFallback } from '~utils/tokens';
 
-import { DEFAULT_TOKEN_DECIMALS } from '~constants';
 import { Payouts } from '~data/index';
 import { Address } from '~types/index';
 import { ZERO_ADDRESS } from '~utils/web3/constants';
@@ -78,12 +78,12 @@ const PayoutsList = ({
                     [styles.native]: token.address === nativeTokenAddress,
                   })}
                   suffix={` ${token.symbol} `}
-                  unit={token.decimals || DEFAULT_TOKEN_DECIMALS}
+                  unit={getTokenDecimalsWithFallback(token.decimals)}
                   value={
                     new BigNumber(
                       moveDecimal(
                         amount,
-                        token.decimals || DEFAULT_TOKEN_DECIMALS,
+                        getTokenDecimalsWithFallback(token.decimals),
                       ),
                     )
                   }
@@ -107,11 +107,11 @@ const PayoutsList = ({
                     new BigNumber(
                       moveDecimal(
                         amount,
-                        token.decimals || DEFAULT_TOKEN_DECIMALS,
+                        getTokenDecimalsWithFallback(token.decimals),
                       ),
                     )
                   }
-                  unit={token.decimals || DEFAULT_TOKEN_DECIMALS}
+                  unit={getTokenDecimalsWithFallback(token.decimals)}
                   suffix={` ${token.symbol} `}
                 />
               ))}
