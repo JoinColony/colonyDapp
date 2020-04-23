@@ -1,9 +1,10 @@
 /* eslint-disable */
 
 const path = require('path');
-const webpackConfig = require('./webpack.dev.js');
-
 const { resolver: { findAllComponentDefinitions } } = require('react-docgen');
+const TerserPlugin = require('terser-webpack-plugin');
+
+const webpackConfig = require('./webpack.prod.js');
 
 module.exports = {
   title: 'Colony UI Style Guide',
@@ -12,6 +13,11 @@ module.exports = {
   },
   resolver: findAllComponentDefinitions,
   webpackConfig,
+  dangerouslyUpdateWebpackConfig(webpackConfig, env) {
+    // Terser doesn't like our environment - match it with our webpack config
+    webpackConfig.optimization.minimizer = [new TerserPlugin()];
+    return webpackConfig
+  },
   sections: [
     {
       name: 'Component conventions',
