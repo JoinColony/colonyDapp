@@ -2,7 +2,7 @@ import React from 'react';
 
 import Numeral from '~core/Numeral';
 import { FullColonyFragment } from '~data/index';
-import { DEFAULT_TOKEN_DECIMALS } from '~constants';
+import { getTokenDecimalsWithFallback } from '~utils/tokens';
 
 interface Props {
   currentDomainId: number;
@@ -21,7 +21,7 @@ const TokenItem = ({
   const balance = domainBalance && domainBalance.amount;
   return typeof balance === 'undefined' ? null : (
     <Numeral
-      unit={decimals || DEFAULT_TOKEN_DECIMALS}
+      unit={getTokenDecimalsWithFallback(decimals)}
       value={balance}
       suffix={` ${symbol}`}
     />

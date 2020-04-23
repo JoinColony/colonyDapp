@@ -8,6 +8,7 @@ import { ZERO_ADDRESS, ETHER_INFO } from '~utils/web3/constants';
 import { createAddress } from '~utils/web3';
 import { TokenInfo, TokenInfoDocument } from '~data/index';
 import { Address } from '~types/index';
+import { getTokenDecimalsWithFallback } from '~utils/tokens';
 
 // Token data is used a lot and never change. They require a custom cache
 const tokenCache = new Map();
@@ -89,7 +90,10 @@ const getTokenData = async (
      * prevent us headache in the future
      */
     address: createAddress(tokenAddress),
-    decimals: chainData.decimals || serverData.decimals || 18,
+    decimals: getTokenDecimalsWithFallback(
+      chainData.decimals,
+      serverData.decimals,
+    ),
     iconHash: serverData.iconHash || null,
     name: chainData.name || serverData.name || 'Unknown token',
     symbol: chainData.symbol || serverData.symbol || '???',

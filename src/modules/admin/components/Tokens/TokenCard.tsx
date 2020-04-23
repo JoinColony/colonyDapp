@@ -8,10 +8,12 @@ import CopyableAddress from '~core/CopyableAddress';
 import TokenIcon from '~dashboard/HookedTokenIcon';
 import { Address } from '~types/index';
 import { ColonyTokens, UserTokens } from '~data/index';
-import { getBalanceFromToken } from '~utils/tokens';
+import {
+  getBalanceFromToken,
+  getTokenDecimalsWithFallback,
+} from '~utils/tokens';
 
 import { tokenIsETH, tokenBalanceIsNotPositive } from '../../../core/checks';
-import { DEFAULT_TOKEN_DECIMALS } from '~constants';
 
 import styles from './TokenCard.css';
 
@@ -68,7 +70,7 @@ const TokenCard = ({ domainId, nativeTokenAddress, token }: Props) => {
         <Numeral
           className={styles.balanceNumeral}
           integerSeparator=""
-          unit={token.decimals ? token.decimals : DEFAULT_TOKEN_DECIMALS}
+          unit={getTokenDecimalsWithFallback(token.decimals)}
           value={balance || 0}
         />
       </div>

@@ -1,7 +1,7 @@
 import React, { useMemo } from 'react';
 import { MessageDescriptor } from 'react-intl';
 
-import { DEFAULT_TOKEN_DECIMALS } from '~constants';
+import { getTokenDecimalsWithFallback } from '~utils/tokens';
 import { AnyTokens } from '~data/index';
 import { Address } from '~types/index';
 
@@ -42,8 +42,9 @@ const AmountTokens = ({
     () => tokens.find(({ address }) => address === selectedTokenAddress),
     [selectedTokenAddress, tokens],
   );
-  const decimals =
-    (selectedToken && selectedToken.decimals) || DEFAULT_TOKEN_DECIMALS;
+  const decimals = getTokenDecimalsWithFallback(
+    selectedToken && selectedToken.decimals,
+  );
   return (
     <div className={styles.main}>
       <div className={styles.inputContainer}>

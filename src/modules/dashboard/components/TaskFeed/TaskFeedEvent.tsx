@@ -35,6 +35,7 @@ import {
   SetTaskPendingEvent,
 } from '~data/index';
 import { useSelector } from '~utils/hooks';
+import { getTokenDecimalsWithFallback } from '~utils/tokens';
 
 import { getFriendlyName } from '../../../users/transformers';
 import { domainSelector } from '../../selectors';
@@ -294,10 +295,10 @@ const TaskFeedEventPayoutSet = ({
             <span className={styles.highlightNumeral}>
               <Numeral
                 integerSeparator=""
-                unit={decimals || DEFAULT_TOKEN_DECIMALS}
+                unit={getTokenDecimalsWithFallback(decimals)}
                 value={
                   new BigNumber(
-                    moveDecimal(amount, decimals || DEFAULT_TOKEN_DECIMALS),
+                    moveDecimal(amount, getTokenDecimalsWithFallback(decimals)),
                   )
                 }
                 suffix={` ${symbol}`}
