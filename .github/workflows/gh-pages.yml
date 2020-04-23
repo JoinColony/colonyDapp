@@ -6,9 +6,12 @@ name: Build styleguide and deploy
 on:
   push:
     branches: [ master ]
-
 jobs:
   build-and-deploy:
+    strategy:
+      matrix:
+        node-version: [10.19.0]
+
     runs-on: ubuntu-latest
     steps:
       - name: Checkout 🛎️
