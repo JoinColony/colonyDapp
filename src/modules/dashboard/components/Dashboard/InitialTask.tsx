@@ -32,16 +32,12 @@ const InitialTask = ({
     <div className={styles.main}>
       <Table appearance={{ theme: 'rounder' }}>
         <TableBody>
-          <TableRow>
+          <TableRow
+            className={styles.clickableRow}
+            onClick={() => unfinishedProfileOpener(history)}
+          >
             <TableCell className={styles.taskDetails}>
-              <button
-                className={styles.callToAction}
-                type="button"
-                data-test="createColony"
-                onClick={() => unfinishedProfileOpener(history)}
-              >
-                <FormattedMessage {...title} values={titleValues} />
-              </button>
+              <FormattedMessage {...title} values={titleValues} />
             </TableCell>
             <TableCell className={taskListItemStyles.userAvatar}>
               <UserAvatar size="s" address={walletAddress} />
