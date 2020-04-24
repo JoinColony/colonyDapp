@@ -2,16 +2,14 @@
   margin-bottom: 20px;
 }
 
-.taskDetails {
-  flex-wrap: wrap;
-  width: calc(100% - 74px);
+.clickableRow {
+  cursor: pointer;
 }
 
-.callToAction {
-  composes: taskDetailsTitle from '../TaskList/TaskListItem.css';
-  margin: 0;
-  padding: 37px 25px;
+.taskDetails {
+  padding-left: 22px;
   width: 100%;
+  vertical-align: middle;
   overflow: hidden;
   border: none;
   background-color: transparent;
@@ -20,6 +18,5 @@
   text-align: left;
   text-overflow: ellipsis;
   white-space: nowrap;
-  cursor: pointer;
-  outline: none;
+  color: var(--colony-black);
 }
