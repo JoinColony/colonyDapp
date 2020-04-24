@@ -140,7 +140,6 @@
     "tsconfig-paths": "^3.8.0",
     "typescript": "^3.8.3",
     "typings-for-css-modules-loader": "^1.7.0",
-    "url-loader": "^1.0.1",
     "wait-on": "^3.2.0",
     "webpack": "^4.43.0",
     "webpack-bundle-analyzer": "^3.6.0",
