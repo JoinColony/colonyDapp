@@ -18,6 +18,72 @@ export type Maybe<T> = T | null;
   "__schema": {
     "types": [
       {
+        "kind": "INTERFACE",
+        "name": "TaskEvent",
+        "possibleTypes": [
+          {
+            "name": "AssignWorkerEvent"
+          },
+          {
+            "name": "UnassignWorkerEvent"
+          },
+          {
+            "name": "CancelTaskEvent"
+          },
+          {
+            "name": "CreateTaskEvent"
+          },
+          {
+            "name": "CreateWorkRequestEvent"
+          },
+          {
+            "name": "FinalizeTaskEvent"
+          },
+          {
+            "name": "SetTaskPendingEvent"
+          },
+          {
+            "name": "RemoveTaskPayoutEvent"
+          },
+          {
+            "name": "SendWorkInviteEvent"
+          },
+          {
+            "name": "SetTaskDescriptionEvent"
+          },
+          {
+            "name": "SetTaskDomainEvent"
+          },
+          {
+            "name": "SetTaskDueDateEvent"
+          },
+          {
+            "name": "SetTaskPayoutEvent"
+          },
+          {
+            "name": "SetTaskSkillEvent"
+          },
+          {
+            "name": "RemoveTaskSkillEvent"
+          },
+          {
+            "name": "SetTaskTitleEvent"
+          },
+          {
+            "name": "TaskMessageEvent"
+          }
+        ]
+      },
+      {
+        "kind": "INTERFACE",
+        "name": "ColonyEvent",
+        "possibleTypes": [
+          {
+            "name": "CreateDomainEvent"
+          }
+        ]
+      },
+      {
         "kind": "UNION",
         "name": "EventContext",
         "possibleTypes": [
@@ -91,72 +157,6 @@ export type Maybe<T> = T | null;
             "name": "UnlockNextLevelEvent"
           }
         ]
-      },
-      {
-        "kind": "INTERFACE",
-        "name": "TaskEvent",
-        "possibleTypes": [
-          {
-            "name": "AssignWorkerEvent"
-          },
-          {
-            "name": "CancelTaskEvent"
-          },
-          {
-            "name": "CreateTaskEvent"
-          },
-          {
-            "name": "CreateWorkRequestEvent"
-          },
-          {
-            "name": "FinalizeTaskEvent"
-          },
-          {
-            "name": "RemoveTaskPayoutEvent"
-          },
-          {
-            "name": "SendWorkInviteEvent"
-          },
-          {
-            "name": "SetTaskDescriptionEvent"
-          },
-          {
-            "name": "SetTaskDomainEvent"
-          },
-          {
-            "name": "SetTaskDueDateEvent"
-          },
-          {
-            "name": "SetTaskPayoutEvent"
-          },
-          {
-            "name": "SetTaskPendingEvent"
-          },
-          {
-            "name": "SetTaskSkillEvent"
-          },
-          {
-            "name": "RemoveTaskSkillEvent"
-          },
-          {
-            "name": "SetTaskTitleEvent"
-          },
-          {
-            "name": "TaskMessageEvent"
-          },
-          {
-            "name": "UnassignWorkerEvent"
-          }
-        ]
-      },
-      {
-        "kind": "INTERFACE",
-        "name": "ColonyEvent",
-        "possibleTypes": [
-          {
-            "name": "CreateDomainEvent"
-          }
-        ]
       }
     ]
   }
@@ -170,56 +170,10 @@ export type Scalars = {
   Boolean: boolean;
   Int: number;
   Float: number;
-  /**
-   * A date-time string at UTC, such as 2007-12-03T10:15:30Z, compliant with the
-   * `date-time` format outlined in section 5.6 of the RFC 3339 profile of the ISO
-   * 8601 standard for representation of dates and times using the Gregorian calendar.
-   */
+  /** A date-time string at UTC, such as 2007-12-03T10:15:30Z, compliant with the `date-time` format outlined in section 5.6 of the RFC 3339 profile of the ISO 8601 standard for representation of dates and times using the Gregorian calendar. */
   DateTime: any;
   /** The `Upload` scalar type represents a file upload. */
   Upload: any;
-};
-
-export type AcceptLevelTaskSubmissionEvent = {
-  type: EventType;
-  acceptedBy: Scalars['String'];
-  levelId: Scalars['String'];
-  payouts: Array<TaskPayout>;
-  persistentTaskId: Scalars['String'];
-  programId: Scalars['String'];
-  submissionId: Scalars['String'];
-};
-
-export type AcceptLevelTaskSubmissionInput = {
-  levelId: Scalars['String'];
-  submissionId: Scalars['String'];
-};
-
-export type AddUpvoteToSuggestionInput = {
-  id: Scalars['String'];
-};
-
-export type AssignWorkerEvent = TaskEvent & {
-  type: EventType;
-  taskId: Scalars['String'];
-  workerAddress: Scalars['String'];
-  colonyAddress?: Maybe<Scalars['String']>;
-};
-
-export type AssignWorkerInput = {
-  id: Scalars['String'];
-  workerAddress: Scalars['String'];
-};
-
-export enum CacheControlScope {
-  Public = 'PUBLIC',
-  Private = 'PRIVATE'
-}
-
-export type CancelTaskEvent = TaskEvent & {
-  type: EventType;
-  taskId: Scalars['String'];
-  colonyAddress?: Maybe<Scalars['String']>;
 };
 
 export type Colony = {
@@ -257,99 +211,6 @@ export type ColonyTokensArgs = {
   addresses?: Maybe<Array<Scalars['String']>>;
 };
 
-export type ColonyEvent = {
-  type: EventType;
-  colonyAddress?: Maybe<Scalars['String']>;
-};
-
-export type CreateColonyInput = {
-  colonyAddress: Scalars['String'];
-  colonyName: Scalars['String'];
-  displayName: Scalars['String'];
-  tokenAddress: Scalars['String'];
-  tokenName: Scalars['String'];
-  tokenSymbol: Scalars['String'];
-  tokenDecimals: Scalars['Int'];
-  tokenIsExternal: Scalars['Boolean'];
-  tokenIconHash?: Maybe<Scalars['String']>;
-};
-
-export type CreateDomainEvent = ColonyEvent & {
-  type: EventType;
-  ethDomainId: Scalars['Int'];
-  colonyAddress?: Maybe<Scalars['String']>;
-};
-
-export type CreateDomainInput = {
-  colonyAddress: Scalars['String'];
-  ethDomainId: Scalars['Int'];
-  ethParentDomainId?: Maybe<Scalars['Int']>;
-  name: Scalars['String'];
-};
-
-export type CreateLevelInput = {
-  programId: Scalars['String'];
-};
-
-export type CreateLevelTaskInput = {
-  levelId: Scalars['String'];
-};
-
-export type CreateLevelTaskSubmissionEvent = {
-  type: EventType;
-  programId: Scalars['String'];
-  persistentTaskId: Scalars['String'];
-  levelId: Scalars['String'];
-  submissionId: Scalars['String'];
-};
-
-export type CreateLevelTaskSubmissionInput = {
-  levelId: Scalars['String'];
-  persistentTaskId: Scalars['String'];
-  submission: Scalars['String'];
-};
-
-export type CreateProgramInput = {
-  colonyAddress: Scalars['String'];
-};
-
-export type CreateSuggestionInput = {
-  colonyAddress: Scalars['String'];
-  ethDomainId: Scalars['Int'];
-  title: Scalars['String'];
-};
-
-export type CreateTaskEvent = TaskEvent & {
-  type: EventType;
-  taskId: Scalars['String'];
-  ethDomainId: Scalars['Int'];
-  colonyAddress?: Maybe<Scalars['String']>;
-};
-
-export type CreateTaskFromSuggestionInput = {
-  id: Scalars['String'];
-};
-
-export type CreateTaskInput = {
-  colonyAddress: Scalars['String'];
-  ethDomainId: Scalars['Int'];
-};
-
-export type CreateUserInput = {
-  username: Scalars['String'];
-};
-
-export type CreateWorkRequestEvent = TaskEvent & {
-  type: EventType;
-  taskId: Scalars['String'];
-  colonyAddress?: Maybe<Scalars['String']>;
-};
-
-export type CreateWorkRequestInput = {
-  id: Scalars['String'];
-};
-
-
 export type Domain = {
   id: Scalars['String'];
   createdAt: Scalars['DateTime'];
@@ -362,71 +223,178 @@ export type Domain = {
   tasks: Array<Task>;
 };
 
-export type DomainBalance = {
-  id: Scalars['Int'];
-  domainId: Scalars['Int'];
-  amount: Scalars['String'];
+export type TaskEvent = {
+  type: EventType;
+  taskId: Scalars['String'];
+  colonyAddress?: Maybe<Scalars['String']>;
 };
 
-export type EditColonyProfileInput = {
-  colonyAddress: Scalars['String'];
-  avatarHash?: Maybe<Scalars['String']>;
-  description?: Maybe<Scalars['String']>;
-  displayName?: Maybe<Scalars['String']>;
-  guideline?: Maybe<Scalars['String']>;
-  website?: Maybe<Scalars['String']>;
+export type ColonyEvent = {
+  type: EventType;
+  colonyAddress?: Maybe<Scalars['String']>;
 };
 
-export type EditDomainNameInput = {
-  colonyAddress: Scalars['String'];
+export type AssignWorkerEvent = TaskEvent & {
+  type: EventType;
+  taskId: Scalars['String'];
+  workerAddress: Scalars['String'];
+  colonyAddress?: Maybe<Scalars['String']>;
+};
+
+export type UnassignWorkerEvent = TaskEvent & {
+  type: EventType;
+  taskId: Scalars['String'];
+  workerAddress: Scalars['String'];
+  colonyAddress?: Maybe<Scalars['String']>;
+};
+
+export type CancelTaskEvent = TaskEvent & {
+  type: EventType;
+  taskId: Scalars['String'];
+  colonyAddress?: Maybe<Scalars['String']>;
+};
+
+export type CreateDomainEvent = ColonyEvent & {
+  type: EventType;
   ethDomainId: Scalars['Int'];
-  name: Scalars['String'];
+  colonyAddress?: Maybe<Scalars['String']>;
 };
 
-export type EditLevelInput = {
-  id: Scalars['String'];
-  title?: Maybe<Scalars['String']>;
-  description?: Maybe<Scalars['String']>;
-  achievement?: Maybe<Scalars['String']>;
-  numRequiredSteps?: Maybe<Scalars['Int']>;
+export type CreateTaskEvent = TaskEvent & {
+  type: EventType;
+  taskId: Scalars['String'];
+  ethDomainId: Scalars['Int'];
+  colonyAddress?: Maybe<Scalars['String']>;
 };
 
-export type EditPersistentTaskInput = {
-  id: Scalars['String'];
-  ethDomainId?: Maybe<Scalars['Int']>;
-  ethSkillId?: Maybe<Scalars['Int']>;
-  title?: Maybe<Scalars['String']>;
-  description?: Maybe<Scalars['String']>;
-  payouts?: Maybe<Array<Payout>>;
+export type CreateWorkRequestEvent = TaskEvent & {
+  type: EventType;
+  taskId: Scalars['String'];
+  colonyAddress?: Maybe<Scalars['String']>;
 };
 
-export type EditProgramInput = {
-  id: Scalars['String'];
-  title?: Maybe<Scalars['String']>;
-  description?: Maybe<Scalars['String']>;
+export type FinalizeTaskEvent = TaskEvent & {
+  type: EventType;
+  taskId: Scalars['String'];
+  colonyAddress?: Maybe<Scalars['String']>;
 };
 
-export type EditSubmissionInput = {
-  id: Scalars['String'];
-  submission: Scalars['String'];
+export type SetTaskPendingEvent = TaskEvent & {
+  type: EventType;
+  taskId: Scalars['String'];
+  txHash: Scalars['String'];
+  colonyAddress?: Maybe<Scalars['String']>;
 };
 
-export type EditUserInput = {
-  avatarHash?: Maybe<Scalars['String']>;
-  bio?: Maybe<Scalars['String']>;
-  displayName?: Maybe<Scalars['String']>;
-  location?: Maybe<Scalars['String']>;
-  website?: Maybe<Scalars['String']>;
+export type RemoveTaskPayoutEvent = TaskEvent & {
+  type: EventType;
+  taskId: Scalars['String'];
+  tokenAddress: Scalars['String'];
+  amount: Scalars['String'];
+  colonyAddress?: Maybe<Scalars['String']>;
 };
 
-export type EnrollInProgramInput = {
-  id: Scalars['String'];
+export type SendWorkInviteEvent = TaskEvent & {
+  type: EventType;
+  taskId: Scalars['String'];
+  workerAddress: Scalars['String'];
+  colonyAddress?: Maybe<Scalars['String']>;
+};
+
+export type SetTaskDescriptionEvent = TaskEvent & {
+  type: EventType;
+  taskId: Scalars['String'];
+  description: Scalars['String'];
+  colonyAddress?: Maybe<Scalars['String']>;
+};
+
+export type SetTaskDomainEvent = TaskEvent & {
+  type: EventType;
+  taskId: Scalars['String'];
+  ethDomainId: Scalars['Int'];
+  colonyAddress?: Maybe<Scalars['String']>;
+};
+
+export type SetTaskDueDateEvent = TaskEvent & {
+  type: EventType;
+  taskId: Scalars['String'];
+  dueDate?: Maybe<Scalars['DateTime']>;
+  colonyAddress?: Maybe<Scalars['String']>;
+};
+
+export type SetTaskPayoutEvent = TaskEvent & {
+  type: EventType;
+  taskId: Scalars['String'];
+  tokenAddress: Scalars['String'];
+  amount: Scalars['String'];
+  colonyAddress?: Maybe<Scalars['String']>;
+};
+
+export type SetTaskSkillEvent = TaskEvent & {
+  type: EventType;
+  taskId: Scalars['String'];
+  ethSkillId: Scalars['Int'];
+  colonyAddress?: Maybe<Scalars['String']>;
+};
+
+export type RemoveTaskSkillEvent = TaskEvent & {
+  type: EventType;
+  taskId: Scalars['String'];
+  ethSkillId: Scalars['Int'];
+  colonyAddress?: Maybe<Scalars['String']>;
+};
+
+export type SetTaskTitleEvent = TaskEvent & {
+  type: EventType;
+  taskId: Scalars['String'];
+  title: Scalars['String'];
+  colonyAddress?: Maybe<Scalars['String']>;
+};
+
+export type TaskMessageEvent = TaskEvent & {
+  type: EventType;
+  taskId: Scalars['String'];
+  message: Scalars['String'];
+  colonyAddress?: Maybe<Scalars['String']>;
+};
+
+export type NewUserEvent = {
+  type: EventType;
+};
+
+export type AcceptLevelTaskSubmissionEvent = {
+  type: EventType;
+  acceptedBy: Scalars['String'];
+  levelId: Scalars['String'];
+  payouts: Array<TaskPayout>;
+  persistentTaskId: Scalars['String'];
+  programId: Scalars['String'];
+  submissionId: Scalars['String'];
+};
+
+export type CreateLevelTaskSubmissionEvent = {
+  type: EventType;
+  programId: Scalars['String'];
+  persistentTaskId: Scalars['String'];
+  levelId: Scalars['String'];
+  submissionId: Scalars['String'];
 };
 
 export type EnrollUserInProgramEvent = {
   type: EventType;
   programId: Scalars['String'];
 };
+
+export type UnlockNextLevelEvent = {
+  type: EventType;
+  levelId: Scalars['String'];
+  nextLevelId?: Maybe<Scalars['String']>;
+  persistentTaskId: Scalars['String'];
+  programId: Scalars['String'];
+  submissionId: Scalars['String'];
+};
+
+export type EventContext = AcceptLevelTaskSubmissionEvent | AssignWorkerEvent | CancelTaskEvent | CreateDomainEvent | CreateTaskEvent | CreateLevelTaskSubmissionEvent | CreateWorkRequestEvent | EnrollUserInProgramEvent | FinalizeTaskEvent | NewUserEvent | RemoveTaskPayoutEvent | SendWorkInviteEvent | SetTaskDescriptionEvent | SetTaskDomainEvent | SetTaskDueDateEvent | SetTaskPayoutEvent | SetTaskPendingEvent | SetTaskSkillEvent | RemoveTaskSkillEvent | SetTaskTitleEvent | TaskMessageEvent | UnassignWorkerEvent | UnlockNextLevelEvent;
 
 export type Event = {
   id: Scalars['String'];
@@ -439,44 +407,16 @@ export type Event = {
   context: EventContext;
 };
 
-export type EventContext = AcceptLevelTaskSubmissionEvent | AssignWorkerEvent | CancelTaskEvent | CreateDomainEvent | CreateTaskEvent | CreateLevelTaskSubmissionEvent | CreateWorkRequestEvent | EnrollUserInProgramEvent | FinalizeTaskEvent | NewUserEvent | RemoveTaskPayoutEvent | SendWorkInviteEvent | SetTaskDescriptionEvent | SetTaskDomainEvent | SetTaskDueDateEvent | SetTaskPayoutEvent | SetTaskPendingEvent | SetTaskSkillEvent | RemoveTaskSkillEvent | SetTaskTitleEvent | TaskMessageEvent | UnassignWorkerEvent | UnlockNextLevelEvent;
-
-export enum EventType {
-  AcceptLevelTaskSubmission = 'AcceptLevelTaskSubmission',
-  AssignWorker = 'AssignWorker',
-  CancelTask = 'CancelTask',
-  CreateDomain = 'CreateDomain',
-  CreateLevelTaskSubmission = 'CreateLevelTaskSubmission',
-  CreateTask = 'CreateTask',
-  CreateWorkRequest = 'CreateWorkRequest',
-  EnrollUserInProgram = 'EnrollUserInProgram',
-  FinalizeTask = 'FinalizeTask',
-  NewUser = 'NewUser',
-  RemoveTaskPayout = 'RemoveTaskPayout',
-  SendWorkInvite = 'SendWorkInvite',
-  SetTaskDescription = 'SetTaskDescription',
-  SetTaskDomain = 'SetTaskDomain',
-  SetTaskDueDate = 'SetTaskDueDate',
-  SetTaskPayout = 'SetTaskPayout',
-  SetTaskPending = 'SetTaskPending',
-  SetTaskSkill = 'SetTaskSkill',
-  RemoveTaskSkill = 'RemoveTaskSkill',
-  SetTaskTitle = 'SetTaskTitle',
-  TaskMessage = 'TaskMessage',
-  UnassignWorker = 'UnassignWorker',
-  UnlockNextLevel = 'UnlockNextLevel'
-}
-
-export type FinalizeTaskEvent = TaskEvent & {
-  type: EventType;
-  taskId: Scalars['String'];
-  colonyAddress?: Maybe<Scalars['String']>;
-};
-
-export type FinalizeTaskInput = {
+export type Notification = {
   id: Scalars['String'];
-  ethPotId: Scalars['Int'];
+  event: Event;
+  read: Scalars['Boolean'];
 };
+
+export enum LevelStatus {
+  Active = 'Active',
+  Deleted = 'Deleted'
+}
 
 export type Level = {
   id: Scalars['String'];
@@ -494,25 +434,265 @@ export type Level = {
   unlocked: Scalars['Boolean'];
 };
 
-export enum LevelStatus {
-  Active = 'Active',
-  Deleted = 'Deleted'
-}
-
-export type LoggedInUser = {
-  id: Scalars['String'];
-  balance: Scalars['String'];
-  username?: Maybe<Scalars['String']>;
-  walletAddress: Scalars['String'];
+export type CreateUserInput = {
+  username: Scalars['String'];
 };
 
-export type LoggedInUserInput = {
-  balance?: Maybe<Scalars['String']>;
-  username?: Maybe<Scalars['String']>;
-  walletAddress?: Maybe<Scalars['String']>;
+export type EditUserInput = {
+  avatarHash?: Maybe<Scalars['String']>;
+  bio?: Maybe<Scalars['String']>;
+  displayName?: Maybe<Scalars['String']>;
+  location?: Maybe<Scalars['String']>;
+  website?: Maybe<Scalars['String']>;
+};
+
+export type CreateColonyInput = {
+  colonyAddress: Scalars['String'];
+  colonyName: Scalars['String'];
+  displayName: Scalars['String'];
+  tokenAddress: Scalars['String'];
+  tokenName: Scalars['String'];
+  tokenSymbol: Scalars['String'];
+  tokenDecimals: Scalars['Int'];
+  tokenIsExternal: Scalars['Boolean'];
+  tokenIconHash?: Maybe<Scalars['String']>;
+};
+
+export type CreateTaskInput = {
+  colonyAddress: Scalars['String'];
+  ethDomainId: Scalars['Int'];
+};
+
+export type SetTaskDomainInput = {
+  id: Scalars['String'];
+  ethDomainId: Scalars['Int'];
+};
+
+export type SetTaskSkillInput = {
+  id: Scalars['String'];
+  ethSkillId: Scalars['Int'];
+};
+
+export type RemoveTaskSkillInput = {
+  id: Scalars['String'];
+  ethSkillId: Scalars['Int'];
+};
+
+export type SetTaskTitleInput = {
+  id: Scalars['String'];
+  title: Scalars['String'];
+};
+
+export type SetTaskDescriptionInput = {
+  id: Scalars['String'];
+  description: Scalars['String'];
+};
+
+export type SetTaskDueDateInput = {
+  id: Scalars['String'];
+  dueDate?: Maybe<Scalars['DateTime']>;
+};
+
+export type CreateWorkRequestInput = {
+  id: Scalars['String'];
+};
+
+export type SendWorkInviteInput = {
+  id: Scalars['String'];
+  workerAddress: Scalars['String'];
+};
+
+export type SetTaskPayoutInput = {
+  id: Scalars['String'];
+  amount: Scalars['String'];
+  tokenAddress: Scalars['String'];
+};
+
+export type RemoveTaskPayoutInput = {
+  id: Scalars['String'];
+  amount: Scalars['String'];
+  tokenAddress: Scalars['String'];
+};
+
+export type AssignWorkerInput = {
+  id: Scalars['String'];
+  workerAddress: Scalars['String'];
+};
+
+export type UnassignWorkerInput = {
+  id: Scalars['String'];
+  workerAddress: Scalars['String'];
+};
+
+export type TaskIdInput = {
+  id: Scalars['String'];
+};
+
+export type SetTaskPendingInput = {
+  id: Scalars['String'];
+  txHash: Scalars['String'];
+};
+
+export type FinalizeTaskInput = {
+  id: Scalars['String'];
+  ethPotId: Scalars['Int'];
+};
+
+export type EditColonyProfileInput = {
+  colonyAddress: Scalars['String'];
+  avatarHash?: Maybe<Scalars['String']>;
+  description?: Maybe<Scalars['String']>;
+  displayName?: Maybe<Scalars['String']>;
+  guideline?: Maybe<Scalars['String']>;
+  website?: Maybe<Scalars['String']>;
+};
+
+export type SubscribeToColonyInput = {
+  colonyAddress: Scalars['String'];
+};
+
+export type UnsubscribeFromColonyInput = {
+  colonyAddress: Scalars['String'];
 };
 
 export type MarkNotificationAsReadInput = {
+  id: Scalars['String'];
+};
+
+export type SendTaskMessageInput = {
+  id: Scalars['String'];
+  message: Scalars['String'];
+};
+
+export type CreateDomainInput = {
+  colonyAddress: Scalars['String'];
+  ethDomainId: Scalars['Int'];
+  ethParentDomainId?: Maybe<Scalars['Int']>;
+  name: Scalars['String'];
+};
+
+export type EditDomainNameInput = {
+  colonyAddress: Scalars['String'];
+  ethDomainId: Scalars['Int'];
+  name: Scalars['String'];
+};
+
+export type SetColonyTokensInput = {
+  tokenAddresses: Array<Maybe<Scalars['String']>>;
+  colonyAddress: Scalars['String'];
+};
+
+export type SetUserTokensInput = {
+  tokenAddresses: Array<Scalars['String']>;
+};
+
+export type CreateSuggestionInput = {
+  colonyAddress: Scalars['String'];
+  ethDomainId: Scalars['Int'];
+  title: Scalars['String'];
+};
+
+export type SetSuggestionStatusInput = {
+  id: Scalars['String'];
+  status: SuggestionStatus;
+};
+
+export type AddUpvoteToSuggestionInput = {
+  id: Scalars['String'];
+};
+
+export type RemoveUpvoteFromSuggestionInput = {
+  id: Scalars['String'];
+};
+
+export type CreateTaskFromSuggestionInput = {
+  id: Scalars['String'];
+};
+
+export type CreateLevelTaskSubmissionInput = {
+  levelId: Scalars['String'];
+  persistentTaskId: Scalars['String'];
+  submission: Scalars['String'];
+};
+
+export type EditSubmissionInput = {
+  id: Scalars['String'];
+  submission: Scalars['String'];
+};
+
+export type AcceptLevelTaskSubmissionInput = {
+  levelId: Scalars['String'];
+  submissionId: Scalars['String'];
+};
+
+export type CreateLevelTaskInput = {
+  levelId: Scalars['String'];
+};
+
+export type RemoveLevelTaskInput = {
+  id: Scalars['String'];
+  levelId: Scalars['String'];
+};
+
+export type Payout = {
+  amount: Scalars['String'];
+  tokenAddress: Scalars['String'];
+};
+
+export type EditPersistentTaskInput = {
+  id: Scalars['String'];
+  ethDomainId?: Maybe<Scalars['Int']>;
+  ethSkillId?: Maybe<Scalars['Int']>;
+  title?: Maybe<Scalars['String']>;
+  description?: Maybe<Scalars['String']>;
+  payouts?: Maybe<Array<Payout>>;
+};
+
+export type CreateLevelInput = {
+  programId: Scalars['String'];
+};
+
+export type EditLevelInput = {
+  id: Scalars['String'];
+  title?: Maybe<Scalars['String']>;
+  description?: Maybe<Scalars['String']>;
+  achievement?: Maybe<Scalars['String']>;
+  numRequiredSteps?: Maybe<Scalars['Int']>;
+};
+
+export type ReorderLevelStepsInput = {
+  id: Scalars['String'];
+  stepIds: Array<Scalars['String']>;
+};
+
+export type RemoveLevelInput = {
+  id: Scalars['String'];
+};
+
+export type CreateProgramInput = {
+  colonyAddress: Scalars['String'];
+};
+
+export type EnrollInProgramInput = {
+  id: Scalars['String'];
+};
+
+export type EditProgramInput = {
+  id: Scalars['String'];
+  title?: Maybe<Scalars['String']>;
+  description?: Maybe<Scalars['String']>;
+};
+
+export type ReorderProgramLevelsInput = {
+  id: Scalars['String'];
+  levelIds: Array<Scalars['String']>;
+};
+
+export type PublishProgramInput = {
+  id: Scalars['String'];
+};
+
+export type RemoveProgramInput = {
   id: Scalars['String'];
 };
 
@@ -821,20 +1001,11 @@ export type MutationUnsubscribeFromColonyArgs = {
   input: UnsubscribeFromColonyInput;
 };
 
-export type NewUserEvent = {
-  type: EventType;
-};
-
-export type Notification = {
-  id: Scalars['String'];
-  event: Event;
-  read: Scalars['Boolean'];
-};
-
-export type Payout = {
-  amount: Scalars['String'];
-  tokenAddress: Scalars['String'];
-};
+export enum PersistentTaskStatus {
+  Active = 'Active',
+  Closed = 'Closed',
+  Deleted = 'Deleted'
+}
 
 export type PersistentTask = {
   id: Scalars['String'];
@@ -852,9 +1023,9 @@ export type PersistentTask = {
   currentUserSubmission?: Maybe<Submission>;
 };
 
-export enum PersistentTaskStatus {
+export enum ProgramStatus {
+  Draft = 'Draft',
   Active = 'Active',
-  Closed = 'Closed',
   Deleted = 'Deleted'
 }
 
@@ -871,23 +1042,6 @@ export type Program = {
   enrolled: Scalars['Boolean'];
   status: ProgramStatus;
   submissions: Array<ProgramSubmission>;
-};
-
-export enum ProgramStatus {
-  Draft = 'Draft',
-  Active = 'Active',
-  Deleted = 'Deleted'
-}
-
-export type ProgramSubmission = {
-  id: Scalars['String'];
-  levelId: Scalars['String'];
-  level: Level;
-  submission: Submission;
-};
-
-export type PublishProgramInput = {
-  id: Scalars['String'];
 };
 
 export type Query = {
@@ -982,175 +1136,12 @@ export type QueryUsernameArgs = {
   address: Scalars['String'];
 };
 
-export type RemoveLevelInput = {
-  id: Scalars['String'];
-};
-
-export type RemoveLevelTaskInput = {
-  id: Scalars['String'];
-  levelId: Scalars['String'];
-};
-
-export type RemoveProgramInput = {
-  id: Scalars['String'];
-};
-
-export type RemoveTaskPayoutEvent = TaskEvent & {
-  type: EventType;
-  taskId: Scalars['String'];
-  tokenAddress: Scalars['String'];
-  amount: Scalars['String'];
-  colonyAddress?: Maybe<Scalars['String']>;
-};
-
-export type RemoveTaskPayoutInput = {
-  id: Scalars['String'];
-  amount: Scalars['String'];
-  tokenAddress: Scalars['String'];
-};
-
-export type RemoveTaskSkillEvent = TaskEvent & {
-  type: EventType;
-  taskId: Scalars['String'];
-  ethSkillId: Scalars['Int'];
-  colonyAddress?: Maybe<Scalars['String']>;
-};
-
-export type RemoveTaskSkillInput = {
-  id: Scalars['String'];
-  ethSkillId: Scalars['Int'];
-};
-
-export type RemoveUpvoteFromSuggestionInput = {
-  id: Scalars['String'];
-};
-
-export type ReorderLevelStepsInput = {
-  id: Scalars['String'];
-  stepIds: Array<Scalars['String']>;
-};
-
-export type ReorderProgramLevelsInput = {
-  id: Scalars['String'];
-  levelIds: Array<Scalars['String']>;
-};
-
-export type SendTaskMessageInput = {
-  id: Scalars['String'];
-  message: Scalars['String'];
-};
-
-export type SendWorkInviteEvent = TaskEvent & {
-  type: EventType;
-  taskId: Scalars['String'];
-  workerAddress: Scalars['String'];
-  colonyAddress?: Maybe<Scalars['String']>;
-};
-
-export type SendWorkInviteInput = {
-  id: Scalars['String'];
-  workerAddress: Scalars['String'];
-};
-
-export type SetColonyTokensInput = {
-  tokenAddresses: Array<Maybe<Scalars['String']>>;
-  colonyAddress: Scalars['String'];
-};
-
-export type SetSuggestionStatusInput = {
-  id: Scalars['String'];
-  status: SuggestionStatus;
-};
-
-export type SetTaskDescriptionEvent = TaskEvent & {
-  type: EventType;
-  taskId: Scalars['String'];
-  description: Scalars['String'];
-  colonyAddress?: Maybe<Scalars['String']>;
-};
-
-export type SetTaskDescriptionInput = {
-  id: Scalars['String'];
-  description: Scalars['String'];
-};
-
-export type SetTaskDomainEvent = TaskEvent & {
-  type: EventType;
-  taskId: Scalars['String'];
-  ethDomainId: Scalars['Int'];
-  colonyAddress?: Maybe<Scalars['String']>;
-};
-
-export type SetTaskDomainInput = {
-  id: Scalars['String'];
-  ethDomainId: Scalars['Int'];
-};
-
-export type SetTaskDueDateEvent = TaskEvent & {
-  type: EventType;
-  taskId: Scalars['String'];
-  dueDate?: Maybe<Scalars['DateTime']>;
-  colonyAddress?: Maybe<Scalars['String']>;
-};
-
-export type SetTaskDueDateInput = {
-  id: Scalars['String'];
-  dueDate?: Maybe<Scalars['DateTime']>;
-};
-
-export type SetTaskPayoutEvent = TaskEvent & {
-  type: EventType;
-  taskId: Scalars['String'];
-  tokenAddress: Scalars['String'];
-  amount: Scalars['String'];
-  colonyAddress?: Maybe<Scalars['String']>;
-};
-
-export type SetTaskPayoutInput = {
-  id: Scalars['String'];
-  amount: Scalars['String'];
-  tokenAddress: Scalars['String'];
-};
-
-export type SetTaskPendingEvent = TaskEvent & {
-  type: EventType;
-  taskId: Scalars['String'];
-  txHash: Scalars['String'];
-  colonyAddress?: Maybe<Scalars['String']>;
-};
-
-export type SetTaskPendingInput = {
-  id: Scalars['String'];
-  txHash: Scalars['String'];
-};
-
-export type SetTaskSkillEvent = TaskEvent & {
-  type: EventType;
-  taskId: Scalars['String'];
-  ethSkillId: Scalars['Int'];
-  colonyAddress?: Maybe<Scalars['String']>;
-};
-
-export type SetTaskSkillInput = {
-  id: Scalars['String'];
-  ethSkillId: Scalars['Int'];
-};
-
-export type SetTaskTitleEvent = TaskEvent & {
-  type: EventType;
-  taskId: Scalars['String'];
-  title: Scalars['String'];
-  colonyAddress?: Maybe<Scalars['String']>;
-};
-
-export type SetTaskTitleInput = {
-  id: Scalars['String'];
-  title: Scalars['String'];
-};
-
-export type SetUserTokensInput = {
-  tokenAddresses: Array<Scalars['String']>;
-};
+export enum SubmissionStatus {
+  Open = 'Open',
+  Accepted = 'Accepted',
+  Rejected = 'Rejected',
+  Deleted = 'Deleted'
+}
 
 export type Submission = {
   id: Scalars['String'];
@@ -1164,16 +1155,19 @@ export type Submission = {
   task: PersistentTask;
 };
 
-export enum SubmissionStatus {
+export type ProgramSubmission = {
+  id: Scalars['String'];
+  levelId: Scalars['String'];
+  level: Level;
+  submission: Submission;
+};
+
+export enum SuggestionStatus {
   Open = 'Open',
+  NotPlanned = 'NotPlanned',
   Accepted = 'Accepted',
-  Rejected = 'Rejected',
   Deleted = 'Deleted'
 }
-
-export type SubscribeToColonyInput = {
-  colonyAddress: Scalars['String'];
-};
 
 export type Suggestion = {
   id: Scalars['String'];
@@ -1188,15 +1182,10 @@ export type Suggestion = {
   upvotes: Array<Scalars['String']>;
 };
 
-export enum SuggestionStatus {
-  Open = 'Open',
-  NotPlanned = 'NotPlanned',
-  Accepted = 'Accepted',
-  Deleted = 'Deleted'
-}
-
-export type SystemInfo = {
-  version: Scalars['String'];
+export type TaskPayout = {
+  amount: Scalars['String'];
+  token: Token;
+  tokenAddress: Scalars['String'];
 };
 
 export type Task = {
@@ -1228,59 +1217,6 @@ export type Task = {
   workRequests: Array<User>;
 };
 
-export type TaskEvent = {
-  type: EventType;
-  taskId: Scalars['String'];
-  colonyAddress?: Maybe<Scalars['String']>;
-};
-
-export type TaskFinalizedPayment = {
-  amount: Scalars['String'];
-  tokenAddress: Scalars['String'];
-  workerAddress: Scalars['String'];
-  transactionHash: Scalars['String'];
-};
-
-export type TaskIdInput = {
-  id: Scalars['String'];
-};
-
-export type TaskMessageEvent = TaskEvent & {
-  type: EventType;
-  taskId: Scalars['String'];
-  message: Scalars['String'];
-  colonyAddress?: Maybe<Scalars['String']>;
-};
-
-export type TaskPayout = {
-  amount: Scalars['String'];
-  token: Token;
-  tokenAddress: Scalars['String'];
-};
-
-export type Token = {
-  id: Scalars['String'];
-  address: Scalars['String'];
-  decimals: Scalars['Int'];
-  name: Scalars['String'];
-  symbol: Scalars['String'];
-  iconHash?: Maybe<Scalars['String']>;
-  verified: Scalars['Boolean'];
-  balance: Scalars['String'];
-  balances: Array<DomainBalance>;
-};
-
-
-export type TokenBalanceArgs = {
-  walletAddress: Scalars['String'];
-};
-
-
-export type TokenBalancesArgs = {
-  colonyAddress: Scalars['String'];
-  domainIds?: Maybe<Array<Scalars['Int']>>;
-};
-
 export type TokenInfo = {
   id: Scalars['String'];
   address: Scalars['String'];
@@ -1291,31 +1227,9 @@ export type TokenInfo = {
   verified: Scalars['Boolean'];
 };
 
-export type UnassignWorkerEvent = TaskEvent & {
-  type: EventType;
-  taskId: Scalars['String'];
-  workerAddress: Scalars['String'];
-  colonyAddress?: Maybe<Scalars['String']>;
+export type SystemInfo = {
+  version: Scalars['String'];
 };
-
-export type UnassignWorkerInput = {
-  id: Scalars['String'];
-  workerAddress: Scalars['String'];
-};
-
-export type UnlockNextLevelEvent = {
-  type: EventType;
-  levelId: Scalars['String'];
-  nextLevelId?: Maybe<Scalars['String']>;
-  persistentTaskId: Scalars['String'];
-  programId: Scalars['String'];
-  submissionId: Scalars['String'];
-};
-
-export type UnsubscribeFromColonyInput = {
-  colonyAddress: Scalars['String'];
-};
-
 
 export type User = {
   colonies: Array<Colony>;
@@ -1356,6 +1270,88 @@ export type UserProfile = {
   location?: Maybe<Scalars['String']>;
   walletAddress: Scalars['String'];
   website?: Maybe<Scalars['String']>;
+};
+
+
+export enum EventType {
+  AcceptLevelTaskSubmission = 'AcceptLevelTaskSubmission',
+  AssignWorker = 'AssignWorker',
+  CancelTask = 'CancelTask',
+  CreateDomain = 'CreateDomain',
+  CreateLevelTaskSubmission = 'CreateLevelTaskSubmission',
+  CreateTask = 'CreateTask',
+  CreateWorkRequest = 'CreateWorkRequest',
+  EnrollUserInProgram = 'EnrollUserInProgram',
+  FinalizeTask = 'FinalizeTask',
+  NewUser = 'NewUser',
+  RemoveTaskPayout = 'RemoveTaskPayout',
+  SendWorkInvite = 'SendWorkInvite',
+  SetTaskDescription = 'SetTaskDescription',
+  SetTaskDomain = 'SetTaskDomain',
+  SetTaskDueDate = 'SetTaskDueDate',
+  SetTaskPayout = 'SetTaskPayout',
+  SetTaskPending = 'SetTaskPending',
+  SetTaskSkill = 'SetTaskSkill',
+  RemoveTaskSkill = 'RemoveTaskSkill',
+  SetTaskTitle = 'SetTaskTitle',
+  TaskMessage = 'TaskMessage',
+  UnassignWorker = 'UnassignWorker',
+  UnlockNextLevel = 'UnlockNextLevel'
+}
+
+export enum CacheControlScope {
+  Public = 'PUBLIC',
+  Private = 'PRIVATE'
+}
+
+
+export type LoggedInUserInput = {
+  balance?: Maybe<Scalars['String']>;
+  username?: Maybe<Scalars['String']>;
+  walletAddress?: Maybe<Scalars['String']>;
+};
+
+export type LoggedInUser = {
+  id: Scalars['String'];
+  balance: Scalars['String'];
+  username?: Maybe<Scalars['String']>;
+  walletAddress: Scalars['String'];
+};
+
+export type DomainBalance = {
+  id: Scalars['Int'];
+  domainId: Scalars['Int'];
+  amount: Scalars['String'];
+};
+
+export type Token = {
+  id: Scalars['String'];
+  address: Scalars['String'];
+  decimals: Scalars['Int'];
+  name: Scalars['String'];
+  symbol: Scalars['String'];
+  iconHash?: Maybe<Scalars['String']>;
+  verified: Scalars['Boolean'];
+  balance: Scalars['String'];
+  balances: Array<DomainBalance>;
+};
+
+
+export type TokenBalanceArgs = {
+  walletAddress: Scalars['String'];
+};
+
+
+export type TokenBalancesArgs = {
+  colonyAddress: Scalars['String'];
+  domainIds?: Maybe<Array<Scalars['Int']>>;
+};
+
+export type TaskFinalizedPayment = {
+  amount: Scalars['String'];
+  tokenAddress: Scalars['String'];
+  workerAddress: Scalars['String'];
+  transactionHash: Scalars['String'];
 };
 
 export type PayoutsFragment = { payouts: Array<(
