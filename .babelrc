@@ -7,7 +7,7 @@
          "@babel/plugin-proposal-class-properties",
          "@babel/plugin-syntax-dynamic-import",
          "@babel/plugin-transform-runtime"
-        ],
+        ]
       },
     "development": {
       "presets": ["@babel/preset-env", "@babel/preset-typescript", "@babel/preset-react"],
@@ -17,10 +17,9 @@
          "@babel/plugin-syntax-dynamic-import",
          "@babel/plugin-transform-runtime",
          ["react-intl", {
-           "messagesDir": "./dist/i18n",
-           "enforceDescriptions": false
+           "messagesDir": "./dist/i18n"
           }]
-        ],
+        ]
        },
     "production": {
       "presets": ["@babel/preset-env", "@babel/preset-typescript", "@babel/preset-react"],
@@ -31,8 +30,7 @@
         "@babel/plugin-syntax-dynamic-import",
         "@babel/plugin-transform-runtime",
         ["react-intl", {
-          "messagesDir": "./dist/i18n",
-          "enforceDescriptions": false
+          "messagesDir": "./dist/i18n"
          }]
        ]
     }

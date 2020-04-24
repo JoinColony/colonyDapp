@@ -21,28 +21,28 @@ jobs:
     steps:
     - uses: actions/checkout@v2
 
-    - name: Get yarn cache directory path
-      id: yarn-cache-dir-path
-      run: echo "::set-output name=dir::$(yarn cache dir)"
-
+    - name: Get npm cache directory
+      id: npm-cache
+      run: |
+        echo "::set-output name=dir::$(npm config get cache)"
+  
     - name: Cache node modules
       uses: actions/cache@v1
-      id: yarn-cache # use this to check for `cache-hit` (`steps.yarn-cache.outputs.cache-hit != 'true'`)
       with:
-        path: ${{ steps.yarn-cache-dir-path.outputs.dir }}
-        key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
+        path: ${{ steps.npm-cache.outputs.dir }}
+        key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
         restore-keys: |
-          ${{ runner.os }}-yarn-
+          ${{ runner.os }}-node-
 
     - name: Use Node.js ${{ matrix.node-version }}
       uses: actions/setup-node@v1
       with:
         node-version: ${{ matrix.node-version }}
-    - run: yarn install
-    - run: yarn typecheck
-    - run: yarn lint:ci
-    - run: yarn stylelint:ci
-    - run: yarn test:ci
-    - run: yarn webpack:build:prod
+    - run: npm install
+    - run: npm run typecheck
+    - run: npm run lint:ci
+    - run: npm run stylelint:ci
+    - run: npm run test:ci
+    - run: npm run webpack:build:prod
       env:
         CI: true
