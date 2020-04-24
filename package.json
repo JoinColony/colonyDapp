@@ -171,7 +171,7 @@
     "apollo-link-context": "^1.0.19",
     "apollo-link-http": "^1.5.16",
     "bn.js": "^5.0.0",
-    "camelcase": "^5.0.0",
+    "camelcase": "^6.0.0",
     "classnames": "^2.2.6",
     "cleave.js": "^1.5.10",
     "copy-to-clipboard": "^3.0.8",
