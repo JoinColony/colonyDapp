@@ -80,21 +80,12 @@ interface FormValues {
 }
 
 const validationSchema = yup.object().shape({
-  amount: yup
-    .number()
-    .moreThan(0)
-    .required(),
+  amount: yup.number().moreThan(0).required(),
   description: yup.string().nullable(),
-  domainId: yup
-    .number()
-    .moreThan(0)
-    .required(),
+  domainId: yup.number().moreThan(0).required(),
   skillId: yup.number().nullable(),
   title: yup.string().required(),
-  tokenAddress: yup
-    .string()
-    .address()
-    .required(),
+  tokenAddress: yup.string().address().required(),
 });
 
 const displayName = 'dashboard.LevelTasksEdit.TaskEdit';

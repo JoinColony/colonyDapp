@@ -74,9 +74,7 @@ class MetaMask extends Component<Props, State> {
   };
 
   componentDidMount() {
-    this.connectMetaMask()
-      .then()
-      .catch();
+    this.connectMetaMask().then().catch();
   }
 
   componentWilUnmount() {

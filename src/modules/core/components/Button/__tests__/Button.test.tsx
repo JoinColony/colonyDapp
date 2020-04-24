@@ -34,12 +34,7 @@ describe('Button component', () => {
       </Button>,
     );
     // https://github.com/airbnb/enzyme/blob/master/docs/guides/migration-from-2-to-3.md#children-now-has-slightly-different-meaning
-    expect(
-      wrapper
-        .children()
-        .children()
-        .html(),
-    ).toBe('<p>Child test</p>');
+    expect(wrapper.children().children().html()).toBe('<p>Child test</p>');
   });
 
   test('button is busy when loading', () => {

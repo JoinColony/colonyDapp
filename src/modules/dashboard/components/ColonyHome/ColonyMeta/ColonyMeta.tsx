@@ -129,14 +129,16 @@ const ColonyMeta = ({
         <Heading appearance={{ margin: 'none', size: 'medium', theme: 'dark' }}>
           <div className={styles.headingAndSettings}>
             <span title={displayName || colonyName}>
-              {/*
-               * @NOTE We need to use a JS string truncate here, rather then CSS as we do with the other fields,
-               * since we also have to show the settings icon, after the truncated name, otherwise the icon
-               * will be hidden with the rest of the text
-               *
-               * To fix this properly (ie: without JS), we'll need a re-design
-               */
-              multiLineTextEllipsis(displayName || colonyName, 16)}
+              {
+                /*
+                 * @NOTE We need to use a JS string truncate here, rather then CSS as we do with the other fields,
+                 * since we also have to show the settings icon, after the truncated name, otherwise the icon
+                 * will be hidden with the rest of the text
+                 *
+                 * To fix this properly (ie: without JS), we'll need a re-design
+                 */
+                multiLineTextEllipsis(displayName || colonyName, 16)
+              }
             </span>
             {canAdminister && (
               <Link

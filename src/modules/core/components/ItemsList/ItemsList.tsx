@@ -226,8 +226,9 @@ class ItemsList extends Component<Props & FieldEnhancedProps, State> {
         <li
           className={selectedItem === id ? styles.selectedItem : undefined}
           style={{
-            paddingLeft: `${nestingCounter *
-              parseInt(styles.paddingValue, 10)}px`,
+            paddingLeft: `${
+              nestingCounter * parseInt(styles.paddingValue, 10)
+            }px`,
           }}
         >
           <Tooltip content={tooltipContent} placement="bottom-start">

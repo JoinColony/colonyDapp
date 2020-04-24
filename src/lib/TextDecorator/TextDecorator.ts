@@ -32,10 +32,7 @@ export default class TextDecorator {
     // Disable ftp links by default
     this._linkify.add('ftp:', null);
     if (!validDecorators.link) {
-      this._linkify
-        .add('http:', null)
-        .add('https:', null)
-        .add('//', null);
+      this._linkify.add('http:', null).add('https:', null).add('//', null);
     }
     if (!validDecorators.email) {
       this._linkify.add('mailto:', null);

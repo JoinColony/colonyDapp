@@ -65,10 +65,7 @@ const validationSchema = yup.object({
   bio: yup.string().nullable(),
   displayName: yup.string().nullable(),
   location: yup.string().nullable(),
-  website: yup
-    .string()
-    .url()
-    .nullable(),
+  website: yup.string().url().nullable(),
 });
 
 const UserProfileEdit = () => {

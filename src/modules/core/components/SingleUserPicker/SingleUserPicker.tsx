@@ -171,20 +171,22 @@ const SingleUserPicker = ({
             />
           )}
           <div className={styles.container}>
-            {/* eslint-disable jsx-a11y/click-events-have-key-events */
-            $value && (
-              <div
-                role="button"
-                className={styles.recipientName}
-                onClick={handleActiveUserClick}
-                onFocus={handleActiveUserClick}
-                tabIndex={0}
-              >
-                {$value.profile.displayName ||
-                  $value.profile.username ||
-                  $value.profile.walletAddress}
-              </div>
-            )}
+            {
+              /* eslint-disable jsx-a11y/click-events-have-key-events */
+              $value && (
+                <div
+                  role="button"
+                  className={styles.recipientName}
+                  onClick={handleActiveUserClick}
+                  onFocus={handleActiveUserClick}
+                  tabIndex={0}
+                >
+                  {$value.profile.displayName ||
+                    $value.profile.username ||
+                    $value.profile.walletAddress}
+                </div>
+              )
+            }
             {/* eslint-enable jsx-a11y/click-events-have-key-events */}
             <input
               disabled={disabled}

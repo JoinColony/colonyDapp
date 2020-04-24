@@ -51,11 +51,7 @@ interface Props {
 const displayName = 'dashboard.TaskComments';
 
 const validationSchema = yup.object().shape({
-  comment: yup
-    .string()
-    .trim()
-    .min(1)
-    .required(),
+  comment: yup.string().trim().min(1).required(),
 });
 
 const handleKeyboardSubmit = (
