@@ -29,6 +29,7 @@ exports[`Select component Renders initial component 1`] = `
         "defaultLocale": "en",
         "formatDate": [Function],
         "formatDateToParts": [Function],
+        "formatDisplayName": [Function],
         "formatHTMLMessage": [Function],
         "formatList": [Function],
         "formatMessage": [Function],
@@ -41,6 +42,7 @@ exports[`Select component Renders initial component 1`] = `
         "formats": Object {},
         "formatters": Object {
           "getDateTimeFormat": [Function],
+          "getDisplayNames": [Function],
           "getListFormat": [Function],
           "getMessageFormat": [Function],
           "getNumberFormat": [Function],
@@ -80,6 +82,7 @@ exports[`Select component Renders initial component 1`] = `
           "defaultLocale": "en",
           "formatDate": [Function],
           "formatDateToParts": [Function],
+          "formatDisplayName": [Function],
           "formatHTMLMessage": [Function],
           "formatList": [Function],
           "formatMessage": [Function],
@@ -92,6 +95,7 @@ exports[`Select component Renders initial component 1`] = `
           "formats": Object {},
           "formatters": Object {
             "getDateTimeFormat": [Function],
+            "getDisplayNames": [Function],
             "getListFormat": [Function],
             "getMessageFormat": [Function],
             "getNumberFormat": [Function],
