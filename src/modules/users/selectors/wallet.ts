@@ -8,5 +8,5 @@ export const walletSelector = (state: RootStateRecord) =>
 
 export const walletTypeSelector = createSelector(
   walletSelector,
-  wallet => wallet && wallet.walletType,
+  (wallet) => wallet && wallet.walletType,
 );

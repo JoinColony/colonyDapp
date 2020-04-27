@@ -26,7 +26,9 @@ const colonyUnclaimedTransactionsReducer: ReducerType<
       return state.set(
         key,
         FetchableData<ListType<ContractTransactionRecord>>({
-          record: List(transactions.map(tx => ContractTransaction(fromJS(tx)))),
+          record: List(
+            transactions.map((tx) => ContractTransaction(fromJS(tx))),
+          ),
         }),
       );
     }

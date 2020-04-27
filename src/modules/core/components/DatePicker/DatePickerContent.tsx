@@ -28,7 +28,7 @@ const DatePickerContent = ({
   selectedDay,
 }: Props) => {
   const handleDayPick = useCallback(
-    day => {
+    (day) => {
       onDayPick(day);
       if (closeOnDayPick) {
         close(day);
@@ -38,7 +38,7 @@ const DatePickerContent = ({
   );
 
   const isSelectedDay = useCallback(
-    day => {
+    (day) => {
       if (selectedDay) {
         return DateUtils.isSameDay(selectedDay, day) ? day : undefined;
       }
@@ -54,8 +54,8 @@ const DatePickerContent = ({
         month={currentDate || new Date()}
         onDayClick={handleDayPick}
         selectedDays={isSelectedDay}
-        captionElement={props => <CaptionElement {...props} />}
-        navbarElement={props => <NavbarElement {...props} />}
+        captionElement={(props) => <CaptionElement {...props} />}
+        navbarElement={(props) => <NavbarElement {...props} />}
       />
       {typeof renderContentFooter == 'function'
         ? renderContentFooter(close, currentDate)

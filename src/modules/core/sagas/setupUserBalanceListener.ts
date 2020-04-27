@@ -20,8 +20,8 @@ export function* setupUserBalanceListener(walletAddress: Address) {
       Context.APOLLO_CLIENT,
     );
 
-    channel = eventChannel(emit => {
-      const listener = balance => emit(formatEther(balance));
+    channel = eventChannel((emit) => {
+      const listener = (balance) => emit(formatEther(balance));
       networkClient.adapter.provider.on(walletAddress, listener);
       return () => {
         networkClient.adapter.provider.removeListener(walletAddress, listener);

@@ -116,7 +116,7 @@ const transactionChannel = (
   txPromise: Promise<ContractResponse<any>>,
   tx: TransactionRecord,
 ) =>
-  eventChannel(emit => {
+  eventChannel((emit) => {
     channelStart(tx, txPromise, emit);
     return () => {};
   }, buffers.fixed());

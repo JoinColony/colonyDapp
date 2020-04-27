@@ -113,12 +113,12 @@ class FileUpload extends Component<Props> {
       push,
     } = this.props;
     const files = getIn(values, name) || [];
-    const countAcceptedFiles = files.filter(file => !file.error);
+    const countAcceptedFiles = files.filter((file) => !file.error);
     const newFiles = Array.from(acceptedFiles).slice(
       0,
       maxFilesLimit - countAcceptedFiles.length,
     );
-    newFiles.forEach(file => {
+    newFiles.forEach((file) => {
       push({ file });
     });
   };
@@ -131,7 +131,7 @@ class FileUpload extends Component<Props> {
       name,
     } = this.props;
     const files = getIn(values, name) || [];
-    rejectedFiles.slice(0, maxFilesLimit - files.length).forEach(file => {
+    rejectedFiles.slice(0, maxFilesLimit - files.length).forEach((file) => {
       push({ file, error: 'filetypeError' });
     });
   };
@@ -201,7 +201,7 @@ class FileUpload extends Component<Props> {
           ref={dropzoneRef}
           data-test="avatarUploaderDrop"
         >
-          {childProps => (
+          {(childProps) => (
             <>
               {maxFileLimitNotMet && renderPlaceholder}
               {files && files.length > 0 && (

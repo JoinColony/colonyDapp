@@ -30,10 +30,10 @@ export const getMainClasses = (
 ) => {
   const styles = [styleObject[theme ? `theme${capitalize(theme)}` : 'main']];
   const modifierClasses = Object.keys(modifiers)
-    .map(key => styleObject[`${key}${capitalize(modifiers[key])}`])
+    .map((key) => styleObject[`${key}${capitalize(modifiers[key])}`])
     .filter(Boolean);
   const stateClasses = Object.keys(state)
-    .map(key => (state[key] ? styleObject[`state${capitalize(key)}`] : ''))
+    .map((key) => (state[key] ? styleObject[`state${capitalize(key)}`] : ''))
     .filter(Boolean);
   return [...styles, ...modifierClasses, ...stateClasses].join(' ');
 };

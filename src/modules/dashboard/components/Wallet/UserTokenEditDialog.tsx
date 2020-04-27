@@ -37,7 +37,7 @@ const UserTokenEditDialog = ({ cancel, close, walletAddress }: Props) => {
     (newTokenAddress: Address) => {
       const newAddresses = [
         ...userTokens
-          .filter(token => !tokenIsETH(token))
+          .filter((token) => !tokenIsETH(token))
           .map(({ address }) => address),
         newTokenAddress,
       ];
@@ -51,7 +51,7 @@ const UserTokenEditDialog = ({ cancel, close, walletAddress }: Props) => {
   const removeToken = useCallback(
     (tokenAddressToRemove: Address) => {
       const newAddresses = userTokens
-        .filter(token => !tokenIsETH(token))
+        .filter((token) => !tokenIsETH(token))
         .filter(({ address }) => address !== tokenAddressToRemove)
         .map(({ address }) => address);
       return setUserTokensMutation({

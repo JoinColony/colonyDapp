@@ -190,14 +190,15 @@ const InboxItem = ({
   const program = programData && programData.program;
   const programTitle = program && program.title;
   const level = useMemo(
-    () => program && program.levels.find(levelItem => levelItem.id === levelId),
+    () =>
+      program && program.levels.find((levelItem) => levelItem.id === levelId),
     [levelId, program],
   );
   const levelTitle = level && level.title;
   const nextLevel = useLevelAfter(program, levelId);
   const nextLevelTitle = nextLevel && nextLevel.title;
   const persistentTask = useMemo(
-    () => level && level.steps.find(step => step.id === persistentTaskId),
+    () => level && level.steps.find((step) => step.id === persistentTaskId),
     [level, persistentTaskId],
   );
   const persistentTaskTitle = persistentTask && persistentTask.title;
@@ -233,7 +234,7 @@ const InboxItem = ({
               <FormattedMessage
                 {...MSG[transformNotificationEventNames(eventType)]}
                 values={{
-                  amount: makeInboxDetail(amount, value => (
+                  amount: makeInboxDetail(amount, (value) => (
                     <Numeral
                       suffix={` ${token ? token.symbol : ''}`}
                       integerSeparator=""
@@ -242,7 +243,7 @@ const InboxItem = ({
                   )),
                   colonyAddress: makeInboxDetail(colonyAddress),
                   colonyName: makeInboxDetail(colonyName),
-                  colonyDisplayName: makeInboxDetail(colonyName, value =>
+                  colonyDisplayName: makeInboxDetail(colonyName, (value) =>
                     colonyName ? (
                       <Link to={`/colony/${colonyName}`}>{value}</Link>
                     ) : (
@@ -255,14 +256,14 @@ const InboxItem = ({
                   ),
                   level: makeInboxDetail(levelTitle),
                   nextLevel: makeInboxDetail(nextLevelTitle),
-                  otherUser: makeInboxDetail(targetUserFriendlyName, value =>
+                  otherUser: makeInboxDetail(targetUserFriendlyName, (value) =>
                     targetUserUsername ? (
                       <Link to={`/user/${targetUserUsername}`}>{value}</Link>
                     ) : (
                       value
                     ),
                   ),
-                  submissionPayout: makeInboxDetail(payout, value => (
+                  submissionPayout: makeInboxDetail(payout, (value) => (
                     <Numeral
                       suffix={` ${payout ? payout.token.symbol : ''}`}
                       integerSeparator=""
@@ -271,7 +272,7 @@ const InboxItem = ({
                   )),
                   persistentTask: makeInboxDetail(persistentTaskTitle),
                   program: makeInboxDetail(programTitle),
-                  task: makeInboxDetail(taskTitle, value =>
+                  task: makeInboxDetail(taskTitle, (value) =>
                     colonyName && taskId ? (
                       <Link to={`/colony/${colonyName}/task/${taskId}`}>
                         {value}
@@ -281,10 +282,10 @@ const InboxItem = ({
                     ),
                   ),
                   type: eventType,
-                  time: makeInboxDetail(createdAt, value => (
+                  time: makeInboxDetail(createdAt, (value) => (
                     <TimeRelative value={value} />
                   )),
-                  user: makeInboxDetail(initiatorFriendlyName, value =>
+                  user: makeInboxDetail(initiatorFriendlyName, (value) =>
                     initiatorUsername ? (
                       <Link to={`/user/${initiatorUsername}`}>{value}</Link>
                     ) : (

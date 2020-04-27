@@ -26,7 +26,7 @@ const MembersList = <U extends AnyUser = AnyUser>({
   users,
 }: Props<U>) => (
   <ListGroup>
-    {users.map(user => (
+    {users.map((user) => (
       <MembersListItem<U>
         colonyAddress={colonyAddress}
         extraItemContent={extraItemContent}

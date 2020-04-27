@@ -145,7 +145,7 @@ const cacheUpdates = {
             ({ id }) => id !== removedId,
           );
           const levelIds = cacheData.program.levelIds.filter(
-            id => id !== removedId,
+            (id) => id !== removedId,
           );
           cache.writeQuery<ProgramQuery, ProgramQueryVariables>({
             data: {
@@ -180,7 +180,7 @@ const cacheUpdates = {
             ({ id }) => id !== removedLevelTaskData.id,
           );
           const stepIds = cacheData.level.stepIds.filter(
-            id => id !== removedLevelTaskData.id,
+            (id) => id !== removedLevelTaskData.id,
           );
           let { numRequiredSteps } = cacheData.level;
           if (
@@ -294,7 +294,7 @@ const cacheUpdates = {
           },
         });
         if (cacheData) {
-          const suggestions = cacheData.colony.suggestions.map(suggestion =>
+          const suggestions = cacheData.colony.suggestions.map((suggestion) =>
             suggestion.id === suggestionId
               ? { ...suggestion, status: SuggestionStatus.Accepted } // update status of changed suggestion
               : suggestion,
@@ -372,7 +372,7 @@ const cacheUpdates = {
                   // remove suggestion from cache
                   ({ id }) => id !== suggestionId,
                 )
-              : cacheData.colony.suggestions.map(suggestion =>
+              : cacheData.colony.suggestions.map((suggestion) =>
                   suggestion.id === suggestionId // update status of changed suggestion
                     ? { ...suggestion, status }
                     : suggestion,

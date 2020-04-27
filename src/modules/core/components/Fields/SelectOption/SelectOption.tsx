@@ -55,7 +55,7 @@ class SelectOption extends Component<Props> {
         aria-selected={selected}
         id={id}
         role="option"
-        ref={e => selected && e && e.focus()}
+        ref={(e) => selected && e && e.focus()}
         onClick={this.handleItemClick}
         onKeyPress={this.handleItemKeyPress}
         onMouseEnter={this.handleItemSelect}

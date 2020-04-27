@@ -137,7 +137,7 @@ const ProgramEdit = ({
         saveGuard
         validationSchema={validationSchema}
       >
-        {formikProps => (
+        {(formikProps) => (
           <ProgramEditForm<FormValues>
             colonyName={colonyName}
             editProgram={editProgram}

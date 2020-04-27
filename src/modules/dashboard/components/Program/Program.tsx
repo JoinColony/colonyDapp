@@ -49,7 +49,7 @@ const Program = ({ colonyAddress, colonyName }: Props) => {
   });
 
   const toggleEditMode = useCallback(() => {
-    setIsEditing(val => !val);
+    setIsEditing((val) => !val);
   }, []);
 
   if (loading) {

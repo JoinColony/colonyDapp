@@ -120,7 +120,7 @@ const TokenEditDialog = ({
       <DialogSection appearance={{ border: 'top' }}>
         {tokens.length > 0 ? (
           <div className={styles.tokenChoiceContainer}>
-            {tokens.map(token => (
+            {tokens.map((token) => (
               <TokenItem
                 key={token.address}
                 nativeTokenAddress={nativeTokenAddress}

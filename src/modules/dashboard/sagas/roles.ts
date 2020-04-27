@@ -57,7 +57,7 @@ function* getColonyRoles(colonyAddress: Address) {
   return (
     events
       // Normalize the address
-      .map(event => ({ ...event, address: createAddress(event.address) }))
+      .map((event) => ({ ...event, address: createAddress(event.address) }))
       // Don't include roles of extensions
       .filter(({ address }) => !extensionAddresses.includes(address))
       // Reduce events to { [domainId]: { [address]: Set<Role> } }
@@ -231,7 +231,7 @@ function* colonyDomainUserRolesSet({
     yield all(
       toChange.map(([methodName]) =>
         take(
-          action =>
+          (action) =>
             (action.type === ActionTypes.TRANSACTION_SUCCEEDED ||
               action.type === ActionTypes.TRANSACTION_ERROR ||
               action.type === ActionTypes.TRANSACTION_CANCEL) &&

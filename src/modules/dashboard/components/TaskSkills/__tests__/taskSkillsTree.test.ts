@@ -10,10 +10,10 @@ describe('taskSkillsTree data', () => {
   test('All items with parents have parents that exist', () => {
     const taskIds = taskSkills.map(({ id }) => id);
     const taskParentIds = taskSkills
-      .filter(skill => !!skill.parent)
+      .filter((skill) => !!skill.parent)
       .map(({ parent }) => parent);
     expect(
-      taskParentIds.every(parentId => taskIds.includes(parentId as number)),
+      taskParentIds.every((parentId) => taskIds.includes(parentId as number)),
     ).toBeTruthy();
   });
 });

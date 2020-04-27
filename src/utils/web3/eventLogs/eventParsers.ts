@@ -204,7 +204,7 @@ export const parseUserTransferEvent = async ({
   const from = createAddress(event.from);
 
   const colonyAddress = userColonyAddresses.find(
-    address => address === from || address === to,
+    (address) => address === from || address === to,
   );
 
   return createContractTxObj({

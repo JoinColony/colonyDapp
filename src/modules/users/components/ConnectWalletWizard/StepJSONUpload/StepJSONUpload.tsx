@@ -115,7 +115,7 @@ const StepJSONUpload = ({
       onError={(_: object, { setStatus }: FormikBag<object, FormValues>) => {
         setStatus({ error: MSG.errorUnlockWallet });
       }}
-      onSuccess={values => nextStep({ ...values })}
+      onSuccess={(values) => nextStep({ ...values })}
       validationSchema={validationSchema}
       transform={transform}
       {...wizardForm}

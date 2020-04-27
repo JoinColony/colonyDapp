@@ -55,7 +55,7 @@ const enhance = compose(
          * Take out the native token
          */
         // @ts-ignore
-        .filter(payout => !payout.token.isNative)
+        .filter((payout) => !payout.token.isNative)
         /*
          * Sort ETH to the top
          */
@@ -65,7 +65,7 @@ const enhance = compose(
          * See if we have a native token
          */
         // @ts-ignore
-        .find(payout => payout.token.isNative),
+        .find((payout) => payout.token.isNative),
     };
   }),
 );

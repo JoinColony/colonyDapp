@@ -89,7 +89,7 @@ describe(`core: reducers (transactions)`, () => {
       [
         [
           createdTx,
-          state => {
+          (state) => {
             // Ideally we should evaluate the state based on the whole map,
             // but jest has some unexpected results when using `toEqual`
             // with immutable maps.
@@ -128,7 +128,7 @@ describe(`core: reducers (transactions)`, () => {
         ],
         [
           sentTx,
-          state => {
+          (state) => {
             expect(state.list.size).toBe(2);
 
             const existingTx = state.list.get(existingTxId);
@@ -164,7 +164,7 @@ describe(`core: reducers (transactions)`, () => {
         ],
         [
           hashReceived,
-          state => {
+          (state) => {
             expect(state.list.size).toBe(2);
 
             const existingTx = state.list.get(existingTxId);
@@ -200,7 +200,7 @@ describe(`core: reducers (transactions)`, () => {
         ],
         [
           receiptReceived,
-          state => {
+          (state) => {
             expect(state.list.size).toBe(2);
 
             const existingTx = state.list.get(existingTxId);
@@ -232,7 +232,7 @@ describe(`core: reducers (transactions)`, () => {
         ],
         [
           eventDataReceived,
-          state => {
+          (state) => {
             expect(state.list.size).toBe(2);
 
             const existingTx = state.list.get(existingTxId);
@@ -277,7 +277,7 @@ describe(`core: reducers (transactions)`, () => {
         [createdTx],
         [
           sendError,
-          state => {
+          (state) => {
             expect(state.list.size).toBe(2);
 
             const existingTx = state.list.get(existingTxId);
@@ -327,7 +327,7 @@ describe(`core: reducers (transactions)`, () => {
         [hashReceived],
         [
           receiptError,
-          state => {
+          (state) => {
             expect(state.list.size).toBe(2);
 
             const existingTx = state.list.get(existingTxId);
@@ -378,7 +378,7 @@ describe(`core: reducers (transactions)`, () => {
         [receiptReceived],
         [
           estimateError,
-          state => {
+          (state) => {
             expect(state.list.size).toBe(2);
 
             const existingTx = state.list.get(existingTxId);

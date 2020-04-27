@@ -136,7 +136,7 @@ class MetaMask extends Component<Props, State> {
         onError={(_: string, { setStatus }: FormikBag<object, FormValues>) => {
           setStatus({ error: MSG.errorOpenMetamask });
         }}
-        onSuccess={values => nextStep({ ...values })}
+        onSuccess={(values) => nextStep({ ...values })}
         transform={mergePayload(wizardValues)}
         {...wizardForm}
       >
@@ -193,7 +193,7 @@ class MetaMask extends Component<Props, State> {
                 <Button
                   text={MSG.buttonRetry}
                   appearance={{ theme: 'primary', size: 'large' }}
-                  onClick={evt => this.handleRetryClick(evt)}
+                  onClick={(evt) => this.handleRetryClick(evt)}
                   loading={isLoading || isSubmitting}
                 />
               )}

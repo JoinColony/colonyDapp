@@ -13,7 +13,7 @@ interface Props {
 
 const DecisionHub = ({ options, name }: Props) => (
   <div data-test="hubOptions">
-    {options.map(option => (
+    {options.map((option) => (
       <DecisionOption name={name} option={option} key={`row-${option.value}`} />
     ))}
   </div>

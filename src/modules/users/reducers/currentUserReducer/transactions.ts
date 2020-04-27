@@ -19,7 +19,7 @@ const currentUserTransactionsReducer: ReducerType<
       return state.set(
         'record',
         List<ContractTransactionRecord>(
-          transactions.map(tx => ContractTransaction(fromJS(tx))),
+          transactions.map((tx) => ContractTransaction(fromJS(tx))),
         ),
       );
     }

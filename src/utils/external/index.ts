@@ -51,7 +51,7 @@ export const getEthToUsd = (ethValue: BN): Promise<number | void> => {
   }
 
   return fetch(conversionRateEndpoint)
-    .then(response => {
+    .then((response) => {
       if (!response.ok) {
         throw Error(response.statusText);
       }

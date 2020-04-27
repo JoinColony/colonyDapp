@@ -38,7 +38,7 @@ export default class TextDecorator {
       this._linkify.add('mailto:', null);
     }
 
-    Object.keys(TextDecorator.SCHEMAS).map(key => {
+    Object.keys(TextDecorator.SCHEMAS).map((key) => {
       const schema = TextDecorator.SCHEMAS[key];
       if (validDecorators[schema.name]) {
         this._linkify.add(schema.prefix, schema.schema);
@@ -86,7 +86,7 @@ export default class TextDecorator {
       ({ lastIndex } = matches[i]);
     }
     result[result.length - 1] += text.slice(lastIndex, text.length);
-    return result.filter(identity => !!identity);
+    return result.filter((identity) => !!identity);
   }
 
   _Decorate({ children, tagName = 'span', decorators, ...props }: any) {

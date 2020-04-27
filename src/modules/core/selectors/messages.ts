@@ -25,13 +25,13 @@ export const getAllMessages = (state: RootStateRecord): MessagesListMap =>
  * be able to merge them with the transactions groups and display them in the
  * gas station properly
  */
-export const messageGroups = createSelector(getAllMessages, messages =>
+export const messageGroups = createSelector(getAllMessages, (messages) =>
   messages
     /*
      * Group by id and convert each group to a list
      */
-    .groupBy(message => message.get('id'))
-    .map(messageGroup => messageGroup.toList())
+    .groupBy((message) => message.get('id'))
+    .map((messageGroup) => messageGroup.toList())
     /*
      * Convert the whole map to a List
      */
@@ -40,5 +40,7 @@ export const messageGroups = createSelector(getAllMessages, messages =>
      * Sort everything by the 'first' (and only) entry in the group
      * This is only useful if this selector is to be used individually
      */
-    .sortBy(messageGroup => (messageGroup.first() as MessageRecord).createdAt),
+    .sortBy(
+      (messageGroup) => (messageGroup.first() as MessageRecord).createdAt,
+    ),
 );

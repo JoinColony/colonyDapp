@@ -89,7 +89,8 @@ class UploadItem extends Component<Props & FieldEnhancedProps<UploadFile>> {
     setValue({ ...$value, preview: readFile.data, uploaded: fileReference });
   }
 
-  read = (file: File) => this._readFiles([file]).then(contents => contents[0]);
+  read = (file: File) =>
+    this._readFiles([file]).then((contents) => contents[0]);
 
   render() {
     const {

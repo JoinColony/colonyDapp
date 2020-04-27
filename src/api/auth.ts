@@ -23,7 +23,7 @@ export const getToken = (walletAddress: string) =>
 export const clearToken = (walletAddress: string) =>
   localStorage.removeItem(`${TOKEN_STORAGE}-${walletAddress}`);
 
-export const authenticate = async wallet => {
+export const authenticate = async (wallet) => {
   try {
     const token = getToken(wallet.address);
     if (token) {

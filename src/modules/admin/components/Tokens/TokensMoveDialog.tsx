@@ -51,10 +51,10 @@ const TokensMoveDialog = ({
 
   const transform = useCallback(
     pipe(
-      mapPayload(payload => {
+      mapPayload((payload) => {
         // Find the selected token's decimals
         const selectedToken = tokens.find(
-          token => token.address === payload.tokenAddress,
+          (token) => token.address === payload.tokenAddress,
         );
         const decimals = getTokenDecimalsWithFallback(
           selectedToken && selectedToken.decimals,

@@ -139,7 +139,7 @@ Props) => {
     () =>
       Object.keys(domains || {})
         .sort()
-        .map(id => ({
+        .map((id) => ({
           ...(domains || {})[id],
           disabled: false,
           /* disabled: !domainHasEnoughFunds(parseInt(id, 10)), */

@@ -23,7 +23,7 @@ const displayName = 'users.Inbox.InboxIcon';
 
 const InboxIcon = ({ title = MSG.fallbackTitle, notifications }: Props) => {
   const hasUnreadNotifications = notifications.some(
-    notification => !notification.read,
+    (notification) => !notification.read,
   );
   return (
     <span

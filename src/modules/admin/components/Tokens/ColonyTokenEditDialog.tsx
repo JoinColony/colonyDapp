@@ -43,7 +43,7 @@ const ColonyTokenEditDialog = ({
     (newTokenAddress: Address) => {
       const newAddresses = [
         ...colonyTokens
-          .filter(token => !tokenIsETH(token))
+          .filter((token) => !tokenIsETH(token))
           .map(({ address }) => address),
         newTokenAddress,
       ];
@@ -57,7 +57,7 @@ const ColonyTokenEditDialog = ({
   const removeToken = useCallback(
     (tokenAddressToRemove: Address) => {
       const newAddresses = colonyTokens
-        .filter(token => !tokenIsETH(token))
+        .filter((token) => !tokenIsETH(token))
         .filter(({ address }) => address !== tokenAddressToRemove)
         .map(({ address }) => address);
       return setColonyTokensMutation({

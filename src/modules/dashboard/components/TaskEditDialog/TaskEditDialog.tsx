@@ -377,7 +377,7 @@ const TaskEditDialog = ({
                 <DialogSection>
                   <FieldArray
                     name="payouts"
-                    render={arrayHelpers => (
+                    render={(arrayHelpers) => (
                       <>
                         <div className={styles.editor}>
                           <Heading

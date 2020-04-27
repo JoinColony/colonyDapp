@@ -51,7 +51,7 @@ const TransactionList = ({
       (transactions && transactions.length ? (
         <Table scrollable>
           <TableBody>
-            {transactions.map(transaction => (
+            {transactions.map((transaction) => (
               <TransactionListItem
                 key={transaction.hash}
                 linkToEtherscan={linkToEtherscan}

@@ -72,7 +72,7 @@ class AvatarUploadItem extends Component<
     reset();
   }
 
-  read = (file: File) => this.readFiles([file]).then(contents => contents[0]);
+  read = (file: File) => this.readFiles([file]).then((contents) => contents[0]);
 
   render() {
     const {

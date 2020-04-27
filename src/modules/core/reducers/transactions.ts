@@ -182,8 +182,8 @@ const coreTransactionsReducer: ReducerType<CoreTransactionsRecord> = (
       const tx = state.list.get(id);
       if (!tx) return state;
       if (tx.group) {
-        return state.update(CORE_TRANSACTIONS_LIST, list =>
-          list.filter(filterTx => {
+        return state.update(CORE_TRANSACTIONS_LIST, (list) =>
+          list.filter((filterTx) => {
             // Keep all transactions with no group
             if (!filterTx.group || !tx.group) return true;
             // Keep all transactions with a different groupId

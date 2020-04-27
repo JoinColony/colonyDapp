@@ -61,7 +61,7 @@ const VerticalNavigation = ({
         <Tabs
           className={styles.tabs}
           selectedIndex={tabIndex}
-          onSelect={newIndex => {
+          onSelect={(newIndex) => {
             setTabIndex(newIndex);
           }}
         >

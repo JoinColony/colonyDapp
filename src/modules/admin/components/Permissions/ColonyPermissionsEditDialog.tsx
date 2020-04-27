@@ -75,7 +75,7 @@ const ColonyPermissionsEditDialog = ({
   const transform = useCallback(
     pipe(
       withKey(colonyAddress),
-      mapPayload(p => ({
+      mapPayload((p) => ({
         ...p,
         roles: availableRoles.reduce(
           (acc, role) => ({

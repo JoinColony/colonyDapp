@@ -10,7 +10,7 @@ const fragmentMatcher = new IntrospectionFragmentMatcher({
   introspectionQueryResultData: introspectionResult,
 });
 
-const dataIdFromObject = obj => {
+const dataIdFromObject = (obj) => {
   // eslint-disable-next-line no-underscore-dangle
   if (obj.__typename === 'DomainBalance') {
     // Avoid having array arguments inside the cache key

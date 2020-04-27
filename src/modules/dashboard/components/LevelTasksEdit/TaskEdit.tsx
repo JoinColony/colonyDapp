@@ -119,7 +119,7 @@ const TaskEdit = ({
   const domainOptions = useMemo<SelectOption[]>(
     () =>
       domains
-        ? Object.keys(domains).map(key => {
+        ? Object.keys(domains).map((key) => {
             const { id, name, roles } = domains[key];
             const { roles: rootRoles } = domains[ROOT_DOMAIN];
             const userRolesInDomain = roles[walletAddress] || [];
@@ -192,7 +192,7 @@ const TaskEdit = ({
           },
         },
       });
-      setIsEditing(val => !val);
+      setIsEditing((val) => !val);
     },
     [editPersistentTask, persistentTaskId, setIsEditing],
   );
@@ -297,7 +297,7 @@ const TaskEdit = ({
               <div>
                 <Button
                   appearance={{ theme: 'secondary' }}
-                  onClick={() => setIsEditing(val => !val)}
+                  onClick={() => setIsEditing((val) => !val)}
                   text={{ id: 'button.cancel' }}
                 />
                 <Button

@@ -31,7 +31,7 @@ interface State {
   keyUsed: boolean;
 }
 
-const getClass = WrappedComponent => {
+const getClass = (WrappedComponent) => {
   class OmniPickerBase extends Component<Props, State> {
     id: string;
 

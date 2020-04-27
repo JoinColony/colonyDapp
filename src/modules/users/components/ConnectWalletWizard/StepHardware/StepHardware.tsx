@@ -218,7 +218,7 @@ class StepHardware extends Component<Props> {
           _: Record<string, any>,
           { setStatus }: FormikBag<Record<string, any>, FormValues>,
         ) => setStatus({ error: MSG.errorPickAddress })}
-        onSuccess={values => nextStep({ ...values })}
+        onSuccess={(values) => nextStep({ ...values })}
         validationSchema={validationSchema}
         transform={mergePayload(wizardValues)}
         {...wizardForm}

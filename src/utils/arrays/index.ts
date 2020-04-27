@@ -77,7 +77,7 @@ export const sortObjectsBy = (
     return valA < valB ? -1 : 1;
   };
 
-  const sortByConfigs = sortByPropertyNames.map(sortKey =>
+  const sortByConfigs = sortByPropertyNames.map((sortKey) =>
     typeof sortKey === 'string' ? { name: sortKey } : sortKey,
   );
 
@@ -170,7 +170,7 @@ export const recursiveNestChildren = (
   firstParentLevel = 0,
 ) => {
   const collapsedItems: CollapsedItem[] = [];
-  items.forEach(item => {
+  items.forEach((item) => {
     if (!item.parent) {
       /*
        * If the current item doesn't have the `parent` prop, we add it with id 0

@@ -132,7 +132,9 @@ export const tokenResolvers = ({ colonyManager }: ContextType): Resolvers => ({
       { client }: { client: ApolloClient<object> },
     ) {
       return Promise.all(
-        addresses.map(address => getToken({ colonyManager, client }, address)),
+        addresses.map((address) =>
+          getToken({ colonyManager, client }, address),
+        ),
       );
     },
   },
@@ -164,7 +166,7 @@ export const tokenResolvers = ({ colonyManager }: ContextType): Resolvers => ({
       const colonyClient = await colonyManager.getColonyClient(colonyAddress);
 
       const balances: BigNumber[] = await Promise.all(
-        domainIds.map(domainId =>
+        domainIds.map((domainId) =>
           getBalanceForTokenAndDomain(colonyClient, address, domainId),
         ),
       );

@@ -150,7 +150,7 @@ const TaskList = ({
   const filteredTasksData: AnyTask[] = useMemo(
     () =>
       filter
-        ? tasks.sort(sort).filter(task => (task ? filter(task) : true))
+        ? tasks.sort(sort).filter((task) => (task ? filter(task) : true))
         : tasks,
     [filter, sort, tasks],
   );
@@ -259,7 +259,7 @@ const TaskList = ({
       scrollable
     >
       <TableBody>
-        {filteredTasksData.map(taskData => (
+        {filteredTasksData.map((taskData) => (
           <Fragment key={taskData.id}>
             {taskData.colony && <TaskListItem task={taskData} />}
           </Fragment>

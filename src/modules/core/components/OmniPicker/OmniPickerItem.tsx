@@ -36,7 +36,7 @@ class OmniPickerItem extends Component<Props> {
         role="option"
         aria-selected={selected}
         onMouseEnter={this.select}
-        ref={ref => this.scrollToElement(ref)}
+        ref={(ref) => this.scrollToElement(ref)}
       >
         {renderItem(itemData, selected)}
       </li>

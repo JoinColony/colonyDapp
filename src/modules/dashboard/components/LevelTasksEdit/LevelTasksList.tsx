@@ -15,7 +15,7 @@ const displayName = 'dashboard.LevelTasksEdit.LevelTasksList';
 
 const LeveltasksList = ({ createdTaskId, levelId, levelSteps }: Props) => (
   <ListGroup appearance={{ gaps: 'true' }}>
-    {levelSteps.map(persistentTask => (
+    {levelSteps.map((persistentTask) => (
       <ListGroupItem key={persistentTask.id}>
         <LevelTaskListItem
           isEditing={persistentTask.id === createdTaskId}

@@ -64,7 +64,7 @@ function* fetchAccounts(action: Action<ActionTypes.WALLET_FETCH_ACCOUNTS>) {
     );
 
     const addressesWithBalance = yield all(
-      otherAddresses.map(address =>
+      otherAddresses.map((address) =>
         call(fetchAddressBalance, address, provider),
       ),
     );
@@ -90,7 +90,7 @@ function* openMnemonicWallet(action: Action<ActionTypes.WALLET_CREATE>) {
  * Watch for changes in Metamask account, and log the user out when they happen.
  */
 function* metamaskWatch(walletAddress: Address) {
-  const channel = eventChannel(emit => {
+  const channel = eventChannel((emit) => {
     accountChangeHook(({ selectedAddress }: { selectedAddress: string }) =>
       emit(createAddress(selectedAddress)),
     );
@@ -131,7 +131,7 @@ function* openHardwareWallet(action: Action<ActionTypes.WALLET_CREATE>) {
     addressCount: 100,
   });
   const selectedAddressIndex = wallet.otherAddresses.findIndex(
-    address => address === hardwareWalletChoice,
+    (address) => address === hardwareWalletChoice,
   );
   wallet.setDefaultAddress(selectedAddressIndex);
   return wallet;

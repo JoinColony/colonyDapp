@@ -93,7 +93,7 @@ const validationSchema = yup.object().shape({
   transactionSpeed: yup
     .string()
     .required()
-    .oneOf(transactionSpeedOptions.map(speed => speed.value)),
+    .oneOf(transactionSpeedOptions.map((speed) => speed.value)),
 });
 
 const displayName = 'users.GasStation.GasStationPrice';
@@ -180,9 +180,9 @@ const GasStationPrice = ({ transaction: { id, gasLimit, error } }: Props) => {
                     appearance={{ theme: 'buttonGroup' }}
                     currentlyCheckedValue={transactionSpeed}
                     name="transactionSpeed"
-                    options={transactionSpeedOptions.map(option => ({
+                    options={transactionSpeedOptions.map((option) => ({
                       ...option,
-                      onClick: e => {
+                      onClick: (e) => {
                         updateGas(gasPrices[e.target.value]);
                       },
                     }))}

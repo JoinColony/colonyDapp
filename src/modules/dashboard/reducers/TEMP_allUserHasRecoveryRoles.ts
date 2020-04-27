@@ -20,7 +20,7 @@ const allDomainsReducer: ReducerType<TEMP_AllUserHasRecoveryRoles> = (
 
       if (!userHasRecoveryRole) {
         if (state.getIn([colonyAddress, 'record'])) {
-          return state.updateIn([colonyAddress, 'record'], set =>
+          return state.updateIn([colonyAddress, 'record'], (set) =>
             set.remove(userAddress),
           );
         }
@@ -28,7 +28,7 @@ const allDomainsReducer: ReducerType<TEMP_AllUserHasRecoveryRoles> = (
       }
 
       if (state.getIn([colonyAddress, 'record'])) {
-        return state.updateIn([colonyAddress, 'record'], set =>
+        return state.updateIn([colonyAddress, 'record'], (set) =>
           set.add(userAddress),
         );
       }

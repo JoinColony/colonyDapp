@@ -85,7 +85,7 @@ const CardRow = ({ cardOptions, values }: CardProps) => {
   const { username } = useLoggedInUser();
 
   const getHeadingPreviewText = useCallback(
-    option => {
+    (option) => {
       if (option.valueKey === 'colonyName') {
         return formatColonyName(values, option);
       }
@@ -102,7 +102,7 @@ const CardRow = ({ cardOptions, values }: CardProps) => {
 
   return (
     <>
-      {cardOptions.map(option => (
+      {cardOptions.map((option) => (
         <div className={styles.cardRow} key={`option ${option.valueKey[0]}`}>
           <Heading
             appearance={{ size: 'tiny', weight: 'medium', margin: 'small' }}

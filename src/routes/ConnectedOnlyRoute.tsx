@@ -25,7 +25,7 @@ const ConnectedOnlyRoute = ({
     /*
      * Render props that are passed directly to the route Component
      */
-    render={props => {
+    render={(props) => {
       const {
         location,
         match: { params },

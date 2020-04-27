@@ -20,7 +20,7 @@ class IPFSNode {
   ready: Promise<boolean>;
 
   constructor() {
-    const promise = IPFS.create(IPFSNode.getIpfsConfig()).then(ipfs => {
+    const promise = IPFS.create(IPFSNode.getIpfsConfig()).then((ipfs) => {
       this._ipfs = ipfs;
     });
     this.ready = promise.then(() => true);

@@ -108,7 +108,7 @@ const UserList = ({
       <div className={styles.listWrapper}>
         <Table scrollable>
           <TableBody>
-            {users.map(user => (
+            {users.map((user) => (
               <UserListItem
                 key={user}
                 address={user}

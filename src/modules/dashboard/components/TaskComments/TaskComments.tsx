@@ -146,7 +146,7 @@ const TaskComments = ({ draftId, history }: Props) => {
               appearance={{ colorSchema: 'transparent' }}
               minRows={3}
               maxRows={8}
-              onKeyDown={event => handleKeyboardSubmit(event, handleSubmit)}
+              onKeyDown={(event) => handleKeyboardSubmit(event, handleSubmit)}
               value={values.comment || ''}
               disabled={!username || isSubmitting}
             />

@@ -202,7 +202,7 @@ function* colonyCreate({
      * Wait until all transactions are created.
      */
     yield all(
-      Object.keys(channels).map(id =>
+      Object.keys(channels).map((id) =>
         takeFrom(channels[id].channel, ActionTypes.TRANSACTION_CREATED),
       ),
     );
@@ -310,7 +310,7 @@ function* colonyCreate({
           tokenDecimals: DEFAULT_TOKEN_DECIMALS,
         },
       },
-      update: cache => {
+      update: (cache) => {
         try {
           const cacheData = cache.readQuery<
             UserColonyAddressesQuery,
@@ -459,7 +459,7 @@ function* colonyCreate({
      * Close all transaction channels.
      */
     yield all(
-      Object.keys(channels).map(id =>
+      Object.keys(channels).map((id) =>
         call([channels[id].channel, channels[id].channel.close]),
       ),
     );

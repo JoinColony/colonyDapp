@@ -65,7 +65,7 @@ class Select extends Component<Props & FieldEnhancedProps, State> {
 
   getCheckedOption = () => {
     const { $value, options } = this.props;
-    return options.findIndex(option => option.value === $value);
+    return options.findIndex((option) => option.value === $value);
   };
 
   handleOutsideClick = (evt: MouseEvent) => {

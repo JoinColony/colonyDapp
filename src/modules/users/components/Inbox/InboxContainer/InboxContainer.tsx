@@ -105,7 +105,7 @@ const InboxContainer = ({ full, close, notifications, limit }: Props) => {
         {hasInboxItems && (
           <Table scrollable appearance={{ separators: 'borders' }}>
             <TableBody>
-              {notificationsWithLimit.map(item => (
+              {notificationsWithLimit.map((item) => (
                 <InboxItem full={full} key={item.id} item={item} />
               ))}
             </TableBody>

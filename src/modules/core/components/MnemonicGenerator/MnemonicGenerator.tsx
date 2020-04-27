@@ -62,7 +62,7 @@ class MnemonicGenerator extends Component<Props & FieldEnhancedProps, State> {
     const { generateFn, setValue } = this.props;
     const res = generateFn();
     if (res instanceof Promise && !!res.then && setValue) {
-      res.then(phrase => setValue(phrase));
+      res.then((phrase) => setValue(phrase));
     } else if (setValue) {
       setValue(res);
     }

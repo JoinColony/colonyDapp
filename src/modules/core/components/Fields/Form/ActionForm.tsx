@@ -92,13 +92,13 @@ const ActionForm = ({
   const handleSubmit = (values, formikBag) => {
     formikBag.setStatus({});
     asyncFunction(values).then(
-      res => {
+      (res) => {
         formikBag.setSubmitting(false);
         if (typeof onSuccess === 'function') {
           onSuccess(res, formikBag, values);
         }
       },
-      err => {
+      (err) => {
         formikBag.setSubmitting(false);
         if (typeof onError === 'function') onError(err, formikBag, values);
       },

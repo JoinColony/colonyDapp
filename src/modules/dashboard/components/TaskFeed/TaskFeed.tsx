@@ -77,7 +77,7 @@ const TaskFeed = ({ colonyAddress, draftId }: Props) => {
                 </div>
               ) : (
                 <div>
-                  {events.map(event => {
+                  {events.map((event) => {
                     const {
                       context,
                       createdAt,

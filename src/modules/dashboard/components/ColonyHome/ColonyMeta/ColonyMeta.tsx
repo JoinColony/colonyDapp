@@ -83,7 +83,7 @@ const ColonyMeta = ({
     () =>
       Object.keys(domains || {})
         .sort()
-        .map(id => domains[id]),
+        .map((id) => domains[id]),
     [domains],
   );
 
