@@ -1,15 +1,8 @@
 {
-  "linters": {
-    "src/**/*.{js,jsx,ts,tsx}": [
-      "eslint --fix",
-      "git add"
-    ],
-    "src/**/*.css": [
-      "stylelint --fix",
-      "git add"
-    ]
-  },
-  "ignore": [
-    "src/lib/colonyNetwork",
+  "src/**/*.{js,jsx,ts,tsx}": [
+    "eslint --fix"
+  ],
+  "src/**/*.css": [
+    "stylelint --fix"
   ]
 }
