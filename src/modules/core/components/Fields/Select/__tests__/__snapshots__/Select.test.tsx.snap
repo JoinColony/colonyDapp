@@ -53,6 +53,7 @@ exports[`Select component Renders initial component 1`] = `
         "onError": [Function],
         "textComponent": Symbol(react.fragment),
         "timeZone": undefined,
+        "wrapRichTextChunksInFragment": undefined,
       }
     }
     label="Select me"
@@ -105,6 +106,7 @@ exports[`Select component Renders initial component 1`] = `
           "onError": [Function],
           "textComponent": Symbol(react.fragment),
           "timeZone": undefined,
+          "wrapRichTextChunksInFragment": undefined,
         }
       }
       label="Select me"

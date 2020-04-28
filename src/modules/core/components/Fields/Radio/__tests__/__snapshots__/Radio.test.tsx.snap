@@ -47,6 +47,7 @@ exports[`Radio component Renders initial component 1`] = `
           "onError": [Function],
           "textComponent": Symbol(react.fragment),
           "timeZone": undefined,
+          "wrapRichTextChunksInFragment": undefined,
         }
       }
       label="awesome"
@@ -89,6 +90,7 @@ exports[`Radio component Renders initial component 1`] = `
             "onError": [Function],
             "textComponent": Symbol(react.fragment),
             "timeZone": undefined,
+            "wrapRichTextChunksInFragment": undefined,
           }
         }
         label="awesome"
@@ -180,6 +182,7 @@ exports[`Radio component Renders initial component 1`] = `
               "onError": [Function],
               "textComponent": Symbol(react.fragment),
               "timeZone": undefined,
+              "wrapRichTextChunksInFragment": undefined,
             }
           }
           label="awesome"

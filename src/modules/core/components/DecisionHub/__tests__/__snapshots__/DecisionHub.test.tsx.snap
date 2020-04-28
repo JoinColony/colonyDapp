@@ -85,6 +85,7 @@ exports[`DecisionHub component Renders initial component 1`] = `
               "onError": [Function],
               "textComponent": Symbol(react.fragment),
               "timeZone": undefined,
+              "wrapRichTextChunksInFragment": undefined,
             }
           }
           name="decisionHubTest"
@@ -135,6 +136,7 @@ exports[`DecisionHub component Renders initial component 1`] = `
                 "onError": [Function],
                 "textComponent": Symbol(react.fragment),
                 "timeZone": undefined,
+                "wrapRichTextChunksInFragment": undefined,
               }
             }
             name="decisionHubTest"
@@ -234,6 +236,7 @@ exports[`DecisionHub component Renders initial component 1`] = `
                   "onError": [Function],
                   "textComponent": Symbol(react.fragment),
                   "timeZone": undefined,
+                  "wrapRichTextChunksInFragment": undefined,
                 }
               }
               option={
@@ -422,6 +425,7 @@ exports[`DecisionHub component Renders initial component 1`] = `
               "onError": [Function],
               "textComponent": Symbol(react.fragment),
               "timeZone": undefined,
+              "wrapRichTextChunksInFragment": undefined,
             }
           }
           name="decisionHubTest"
@@ -472,6 +476,7 @@ exports[`DecisionHub component Renders initial component 1`] = `
                 "onError": [Function],
                 "textComponent": Symbol(react.fragment),
                 "timeZone": undefined,
+                "wrapRichTextChunksInFragment": undefined,
               }
             }
             name="decisionHubTest"
@@ -571,6 +576,7 @@ exports[`DecisionHub component Renders initial component 1`] = `
                   "onError": [Function],
                   "textComponent": Symbol(react.fragment),
                   "timeZone": undefined,
+                  "wrapRichTextChunksInFragment": undefined,
                 }
               }
               option={
