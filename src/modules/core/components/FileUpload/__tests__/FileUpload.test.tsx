@@ -17,6 +17,7 @@ describe('FileUpload component', () => {
           label="Basic file upload"
           help="Some help text"
           maxFilesLimit={3}
+          upload={() => null}
         />
       </Formik>,
     );

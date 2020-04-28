@@ -5,28 +5,15 @@ import { log } from '~utils/debug';
 
 import styles from './AvatarUploadItem.css';
 
-import { FileReaderFile, UploadFile } from '../FileUpload';
+import { UploadFile } from '../FileUpload';
 
 import fileReader from '../../../../lib/fileReader';
 import { asField } from '../Fields';
 import Icon from '../Icon';
-
-interface Props {
-  /** Array of allowed file types */
-  accept?: string[];
-
-  /** Function used to perform the acutal upload action of the file */
-  upload: (file: FileReaderFile) => any;
-
-  /** Maximum size of file in bytes */
-  maxFileSize?: number;
-
-  /** Will reset the entire AvatarUploader state */
-  reset: () => void;
-}
+import { UploadItemComponentProps } from '~core/FileUpload/types';
 
 class AvatarUploadItem extends Component<
-  Props & FieldEnhancedProps<UploadFile>
+  UploadItemComponentProps & FieldEnhancedProps<UploadFile>
 > {
   readFiles: (files: any[]) => Promise<any[]>;
 
@@ -44,7 +31,8 @@ class AvatarUploadItem extends Component<
 
   componentDidMount() {
     const {
-      $value: { error, file, uploaded },
+      error,
+      $value: { file, uploaded },
     } = this.props;
 
     if (file && !error && !uploaded) {
@@ -76,12 +64,12 @@ class AvatarUploadItem extends Component<
 
   render() {
     const {
-      $error,
+      error,
       $value: { preview },
     } = this.props;
     return (
       <div className={styles.main}>
-        {!$error ? (
+        {!error ? (
           <div
             className={styles.previewImage}
             style={{ backgroundImage: preview ? `url(${preview}` : undefined }}
@@ -92,7 +80,7 @@ class AvatarUploadItem extends Component<
           </div>
         ) : (
           <div className={styles.error}>
-            <Icon name="file" appearance={{ size: 'large' }} title={$error} />
+            <Icon name="file" appearance={{ size: 'large' }} title={error} />
           </div>
         )}
       </div>
@@ -100,6 +88,6 @@ class AvatarUploadItem extends Component<
   }
 }
 
-export default asField<Props, UploadFile>({ alwaysConnected: true })(
-  AvatarUploadItem,
-);
+export default asField<UploadItemComponentProps, UploadFile>({
+  alwaysConnected: true,
+})(AvatarUploadItem);

@@ -4,3 +4,4 @@ export const dropzoneAccept: string;
 export const dropzoneReject: string;
 export const placeholderText: string;
 export const browseButton: string;
+export const filesContainer: string;

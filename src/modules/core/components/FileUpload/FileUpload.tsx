@@ -1,18 +1,28 @@
-import React, { ComponentType, ReactNode, Component } from 'react';
+import React, {
+  ComponentType,
+  ReactNode,
+  useCallback,
+  useMemo,
+  useImperativeHandle,
+  Ref,
+} from 'react';
 import { MessageDescriptor, defineMessages } from 'react-intl';
-import Dropzone from 'react-dropzone';
+import { DropzoneOptions, DropzoneState, useDropzone } from 'react-dropzone';
 import { getIn } from 'formik';
+import { compose } from 'recompose';
 
+import { AsFieldArrayEnhancedProps } from '~core/Fields/asFieldArray';
 import { SimpleMessageValues } from '~types/index';
+import { withForwardingRef, ForwardedRefProps } from '~utils/hoc';
 
-import { FileReaderFile, UploadFile } from './types';
+import DefaultPlaceholder from './DefaultPlaceholder';
 import { DEFAULT_MIME_TYPES, DEFAULT_MAX_FILE_SIZE } from './limits';
+import { UploadFn, UploadItemComponentProps, ValidateFileFn } from './types';
+import UploadItem from './UploadItem';
 
 import { asFieldArray } from '../Fields';
 import InputLabel from '../Fields/InputLabel';
 import InputStatus from '../Fields/InputStatus';
-import UploadItem from './UploadItem';
-import DefaultPlaceholder from './DefaultPlaceholder';
 
 import styles from './FileUpload.css';
 
@@ -31,203 +41,202 @@ const MSG = defineMessages({
   },
 });
 
-interface ChildProps {
-  isDragActive: boolean;
-  isDragAccept: boolean;
-  isDragReject: boolean;
-}
-
 interface Props {
-  /** Allow specific types of files. See https://github.com/okonet/attr-accept for more information. Keep in mind that mime type determination is not reliable across platforms. CSV files, for example, are reported as text/plain under macOS but as application/vnd.ms-excel under Windows. In some cases there might not be a mime type set at all. See: https://github.com/react-dropzone/react-dropzone/issues/276 */
-  accept?: string[];
-  children?: ReactNode | ((props: ChildProps) => ReactNode);
+  /** Content to render inside the dropzone */
+  children?: ReactNode | ((props: DropzoneState) => ReactNode);
   /** Custom classNames for different elements of the component */
-  classNames: {
-    main: string;
-    dropzone: string;
-    dropzoneActive: string;
-    dropzoneReject: string;
-    filesContainer: string;
+  classNames?: {
+    main?: string;
+    dropzone?: string;
+    dropzoneAccept?: string;
+    dropzoneReject?: string;
+    filesContainer?: string;
   };
-  /** Disable the file selection dialog box opening when clicking anywhere in the dropzone */
-  disableClick?: boolean;
-  /** Get a reference to dropzone, if needed */
-  dropzoneRef?: (ref: Dropzone) => void;
-  /** Just render the element without label */
+  /** Options for the dropzone provider */
+  dropzoneOptions?: DropzoneOptions;
+  /** Whether to display the element all by itself, or with labels & whatnot */
   elementOnly?: boolean;
-  /** Standard html ID */
-  id?: string;
-  /** Component to act as the form field  */
-  itemComponent: ComponentType<any>;
-  /** Maximum number of files to accept */
-  maxFilesLimit: number;
-  /** Maximum filesize to accept (per-file) */
-  maxFileSize: number;
-  /** Function to handle the actual uploading of the file */
-  upload: (fileData: FileReaderFile) => string;
-  /** Input field name (form variable) */
-  name: string;
-  /** Status text */
-  status?: string | MessageDescriptor;
+  /** Extra node to render on the top right in the label */
+  extra?: ReactNode;
   /** Help text (will appear next to label text) */
   help?: string | MessageDescriptor;
   /** Values for help text (react-intl interpolation) */
   helpValues?: SimpleMessageValues;
-  /** Extra node to render on the top right in the label */
-  extra?: ReactNode;
+  /** Element html `id` */
+  id?: string;
+  /** The component to render each item to be uploaded */
+  itemComponent?: ComponentType<UploadItemComponentProps>;
   /** Label text */
   label?: string | MessageDescriptor;
   /** Values for label text (react-intl interpolation) */
   labelValues?: SimpleMessageValues;
+  /** Maximum number of files to accept */
+  maxFilesLimit?: number;
+  /** Input control `name` attribute */
+  name: string;
   /** Placeholder element for when no files have been picked yet (renderProp) */
   renderPlaceholder?: ReactNode | null;
-  /** @ignore injected by `asFieldArray` */
-  form: { [k: string]: any };
-  /** @ignore injected by `asFieldArray` */
-  push: (file: UploadFile) => void;
-  /** @ignore injected by `asFieldArray` */
-  remove: (idx: number) => void;
+  /** Ref for programmatic opening */
+  ref?: Ref<any>;
+  /** Status text */
+  status?: string | MessageDescriptor;
+  /** Function to handle the actual uploading of the file */
+  upload: UploadFn;
 }
 
-const validateFile = (value: UploadFile) =>
+const validateFile: ValidateFileFn = (value) =>
   value.error ? MSG[value.error] : undefined;
 
-class FileUpload extends Component<Props> {
-  static displayName = 'FileUpload';
+const FileUpload = ({
+  children,
+  classNames = styles,
+  dropzoneOptions: { accept: acceptProp, disabled, ...dropzoneOptions } = {},
+  elementOnly,
+  extra,
+  form: { errors, resetForm, values },
+  forwardedRef: ref,
+  help,
+  helpValues,
+  id,
+  itemComponent: FileUploaderItem = UploadItem,
+  label,
+  labelValues,
+  maxFilesLimit = 1,
+  name,
+  push,
+  remove,
+  renderPlaceholder = <DefaultPlaceholder />,
+  status,
+  upload,
+}: AsFieldArrayEnhancedProps<Props> & ForwardedRefProps) => {
+  const files = useMemo(() => getIn(values, name) || [], [name, values]);
+  const fileErrors = useMemo(() => getIn(errors, name) || [], [errors, name]);
 
-  static defaultProps = {
-    accept: DEFAULT_MIME_TYPES,
-    classNames: styles,
-    disableClick: false,
-    itemComponent: UploadItem,
-    maxFilesLimit: 1,
-    maxFileSize: DEFAULT_MAX_FILE_SIZE,
-    renderPlaceholder: <DefaultPlaceholder />,
-  };
+  const maxFileLimitNotMet = files.length < maxFilesLimit;
+  const hasError = !!fileErrors.length;
 
-  addFiles = (acceptedFiles: File[]): void => {
-    const {
-      form: { values },
-      name,
-      maxFilesLimit,
-      push,
-    } = this.props;
-    const files = getIn(values, name) || [];
-    const countAcceptedFiles = files.filter((file) => !file.error);
-    const newFiles = Array.from(acceptedFiles).slice(
-      0,
-      maxFilesLimit - countAcceptedFiles.length,
-    );
-    newFiles.forEach((file) => {
-      push({ file });
-    });
-  };
+  const accept = useMemo<string[]>(() => {
+    if (!acceptProp) {
+      return DEFAULT_MIME_TYPES;
+    }
+    if (!Array.isArray(acceptProp)) {
+      return [acceptProp];
+    }
+    return acceptProp;
+  }, [acceptProp]);
 
-  addRejectedFiles = (rejectedFiles: any[]): void => {
-    const {
-      form: { values },
-      maxFilesLimit,
-      push,
-      name,
-    } = this.props;
-    const files = getIn(values, name) || [];
-    rejectedFiles.slice(0, maxFilesLimit - files.length).forEach((file) => {
-      push({ file, error: 'filetypeError' });
-    });
-  };
+  const onDropAccepted = useCallback(
+    (acceptedFiles) => {
+      const countAcceptedFiles = files.filter(({ error }) => !error);
+      const newFiles = Array.from(acceptedFiles).slice(
+        0,
+        maxFilesLimit - countAcceptedFiles.length,
+      );
+      newFiles.forEach((file) => push({ file }));
+    },
+    [files, maxFilesLimit, push],
+  );
 
-  renderExtraChildren = (childProps: ChildProps) => {
-    const { children } = this.props;
+  const onDropRejected = useCallback(
+    (rejectedFiles) => {
+      rejectedFiles
+        .slice(0, maxFilesLimit - files.length)
+        .forEach((file) => push({ file, error: 'filetypeError' }));
+    },
+    [files.length, maxFilesLimit, push],
+  );
+
+  const dropzoneState = useDropzone({
+    accept,
+    disabled: disabled || !maxFileLimitNotMet,
+    maxSize: DEFAULT_MAX_FILE_SIZE,
+    onDropAccepted,
+    onDropRejected,
+    // We can override the above properties by providing these in the `dropzoneOptions` prop
+    ...dropzoneOptions,
+  });
+
+  const {
+    getRootProps,
+    getInputProps,
+    isDragAccept,
+    isDragReject,
+    open,
+  } = dropzoneState;
+
+  const renderExtraChildren = useCallback(() => {
     if (!children) return null;
-    if (typeof children == 'function') {
-      // @ts-ignore
-      return children(childProps);
+    if (typeof children === 'function') {
+      return children(dropzoneState);
     }
     return children;
-  };
+  }, [children, dropzoneState]);
 
-  render() {
-    const {
-      accept,
-      classNames,
-      disableClick,
-      elementOnly,
-      dropzoneRef,
-      form: { values, errors, resetForm },
-      help,
-      extra,
-      helpValues,
-      itemComponent: FileUploaderItem,
-      id,
-      label,
-      labelValues,
-      maxFileSize,
-      maxFilesLimit,
-      name,
-      renderPlaceholder,
-      remove,
-      upload,
-      status,
-    } = this.props;
+  const dropzoneClassName = useMemo(() => {
+    const classes = [classNames.dropzone];
+    if (isDragAccept) {
+      classes.push(classNames.dropzoneAccept);
+    } else if (isDragReject) {
+      classes.push(classNames.dropzoneReject);
+    }
+    return classes.join(' ');
+  }, [
+    classNames.dropzone,
+    classNames.dropzoneAccept,
+    classNames.dropzoneReject,
+    isDragAccept,
+    isDragReject,
+  ]);
 
-    const files = getIn(values, name) || [];
-    const fileErrors = getIn(errors, name) || [];
+  useImperativeHandle(ref, () => ({
+    open,
+  }));
 
-    const maxFileLimitNotMet = files.length < maxFilesLimit;
-    const hasError = !!fileErrors.length;
-
-    return (
-      <div className={classNames.main} id={id}>
-        {!elementOnly && label && (
-          <InputLabel
-            label={label}
-            help={help}
-            labelValues={labelValues}
-            helpValues={helpValues}
-            extra={extra}
-          />
+  return (
+    <div className={classNames.main} id={id}>
+      {!elementOnly && label && (
+        <InputLabel
+          label={label}
+          help={help}
+          labelValues={labelValues}
+          helpValues={helpValues}
+          extra={extra}
+        />
+      )}
+      <div className={dropzoneClassName} {...getRootProps()}>
+        <input {...getInputProps()} />
+        {maxFileLimitNotMet && renderPlaceholder}
+        {files && files.length > 0 && (
+          <div className={classNames.filesContainer}>
+            {files.map(({ error, file }, idx) => (
+              <FileUploaderItem
+                accept={accept}
+                error={error}
+                key={`${file.name}-${file.size}`}
+                idx={idx}
+                name={`${name}.${idx}`}
+                remove={remove}
+                reset={resetForm}
+                upload={upload}
+                validate={validateFile}
+              />
+            ))}
+          </div>
         )}
-        <Dropzone
-          // @ts-ignore
-          accept={accept}
-          aria-invalid={hasError}
-          className={classNames.dropzone}
-          activeClassName={classNames.dropzoneActive}
-          rejectClassName={classNames.dropzoneReject}
-          onDropAccepted={this.addFiles}
-          onDropRejected={this.addRejectedFiles}
-          disableClick={disableClick || !maxFileLimitNotMet}
-          maxSize={maxFileSize}
-          ref={dropzoneRef}
-          data-test="avatarUploaderDrop"
-        >
-          {(childProps) => (
-            <>
-              {maxFileLimitNotMet && renderPlaceholder}
-              {files && files.length > 0 && (
-                <div className={classNames.filesContainer}>
-                  {files.map(({ file }, idx) => (
-                    <FileUploaderItem
-                      accept={accept}
-                      key={`${file.name}-${file.size}`}
-                      idx={idx}
-                      name={`${name}.${idx}`}
-                      remove={remove}
-                      reset={resetForm}
-                      upload={upload}
-                      validate={validateFile}
-                    />
-                  ))}
-                </div>
-              )}
-              {this.renderExtraChildren(childProps)}
-            </>
-          )}
-        </Dropzone>
-        <InputStatus status={status} error={hasError ? MSG.labelError : ''} />
+        {renderExtraChildren()}
       </div>
-    );
-  }
-}
+      <InputStatus status={status} error={hasError ? MSG.labelError : ''} />
+    </div>
+  );
+};
 
-export default asFieldArray()(FileUpload);
+const enhance = compose<
+  AsFieldArrayEnhancedProps<Props> & ForwardedRefProps,
+  Props
+>(
+  // @NOTE ordering matters here - refs first!
+  withForwardingRef,
+  asFieldArray(),
+);
+
+export default enhance(FileUpload) as ComponentType<Props>;

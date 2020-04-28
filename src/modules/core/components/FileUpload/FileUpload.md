@@ -15,7 +15,9 @@ import Button from '../Button';
       <FileUpload
         accept={['application/json',]}
         label="File upload with Formik"
+        maxFilesLimit={4}
         name="fileUploadFormik"
+        upload={() => 'uploaded!'}
       />
       <Button appearance={{ theme: 'primary' }} disabled={!isValid} type="submit">And press me</Button>
     </form>
@@ -42,6 +44,7 @@ import Button from '../Button';
         label="File upload"
         name="fileUpload"
         extra={<span>Wink! Wink!</span>}
+        upload={() => 'uploaded!'}
       />
       <Button appearance={{ theme: 'primary' }} disabled={!isValid} type="submit">Upload everything!</Button>
     </form>

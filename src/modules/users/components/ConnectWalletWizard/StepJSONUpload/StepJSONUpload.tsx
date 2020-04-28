@@ -126,7 +126,7 @@ const StepJSONUpload = ({
             <Heading text={MSG.heading} appearance={{ size: 'medium' }} />
             <div className={styles.uploadArea}>
               <FileUpload
-                accept={ACCEPTED_MIME_TYPES}
+                dropzoneOptions={{ accept: ACCEPTED_MIME_TYPES }}
                 name="walletJsonFileUpload"
                 label={MSG.fileUploadLabel}
                 help={MSG.fileUploadHelp}
