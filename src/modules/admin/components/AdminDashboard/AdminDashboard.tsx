@@ -133,7 +133,7 @@ const navigationItems = (
   /*
    * @NOTE Root role needs have access to the colony's management
    */
-  if (hasRoot(rootRoles)) {
+  if (hasRoot(rootRoles) || canAdminister(rootRoles)) {
     items.push(profileTab);
   }
 
