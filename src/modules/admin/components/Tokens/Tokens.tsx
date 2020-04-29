@@ -8,15 +8,9 @@ import { useDialog } from '~core/Dialog';
 import Heading from '~core/Heading';
 import { Select } from '~core/Fields';
 import { Address, DomainsMapType } from '~types/index';
-// import { useTransformer } from '~utils/hooks';
-import {
-  // useLoggedInUser,
-  useTokenBalancesForDomainsQuery,
-} from '~data/index';
+import { useTokenBalancesForDomainsQuery } from '~data/index';
 
-// import { getLegacyRoles } from '../../../transformers';
 import { userHasRole } from '../../../users/checks';
-// import { canEditTokens } from '../../checks';
 import FundingBanner from './FundingBanner';
 import TokenList from './TokenList';
 import ColonyTokenEditDialog from './ColonyTokenEditDialog';
@@ -78,7 +72,6 @@ const Tokens = ({
   const openTokenMintDialog = useDialog(TokenMintDialog);
   const openTokensMoveDialog = useDialog(TokensMoveDialog);
 
-  // const oldUserRoles = useTransformer(getLegacyRoles, [domains]);
   const canEdit =
     userHasRole(rootRoles, ROLES.ROOT) ||
     userHasRole(rootRoles, ROLES.ADMINISTRATION);

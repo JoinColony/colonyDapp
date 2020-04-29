@@ -157,23 +157,6 @@ const getLegacyAdmins = (
 };
 
 /*
- * Eventually we'll switch all of the dApp to using new roles, but until then
- * we still need to be able to get the old roles `admins` and `founder`. This
- * util can be removed once the DLP project is completed.
- */
-export const getLegacyRoles = (
-  domains: Record<string, DomainType>,
-): { founder: Address; admins: Address[] } | void => {
-  const rootDomainRoles = getDomainRoles(domains, ROOT_DOMAIN);
-  const founder = getLegacyFounder(rootDomainRoles);
-  const admins = getLegacyAdmins(domains, ROOT_DOMAIN, founder);
-  return {
-    founder,
-    admins: Array.from(admins) as string[],
-  };
-};
-
-/*
  * @NOTE This differs from the above transformer as it considers roles in any domain (root + subdomains)
  * to be an admin role
  */
