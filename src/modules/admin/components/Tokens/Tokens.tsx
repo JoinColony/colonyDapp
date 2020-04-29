@@ -66,8 +66,6 @@ const Tokens = ({
     COLONY_TOTAL_BALANCE_DOMAIN_ID,
   );
 
-  // const { walletAddress } = useLoggedInUser();
-
   const openTokenEditDialog = useDialog(ColonyTokenEditDialog);
   const openTokenMintDialog = useDialog(TokenMintDialog);
   const openTokensMoveDialog = useDialog(TokensMoveDialog);
