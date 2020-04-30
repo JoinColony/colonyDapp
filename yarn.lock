@@ -1997,17 +1997,17 @@
     "@colony/colony-js-contract-loader" "^1.12.0"
     bn.js "^4.11.8"
 
-"@colony/colony-js-client@^1.14.5":
-  version "1.14.5"
-  resolved "https://registry.yarnpkg.com/@colony/colony-js-client/-/colony-js-client-1.14.5.tgz#f768ae89d91aec94a411ce793a01023bf14d18f1"
-  integrity sha512-bRc9jafM61EcIu+LmKWKFwh3Jt0ZWdbqM/uQd+693V69BgMf/odZEo2RYS1jrMVMPziw/SmzMpsP2sPUTA29rA==
+"@colony/colony-js-client@^1.14.8":
+  version "1.14.8"
+  resolved "https://registry.yarnpkg.com/@colony/colony-js-client/-/colony-js-client-1.14.8.tgz#8b2162b0e363c0636c284a87c030a8b8455b5d80"
+  integrity sha512-ZqrXKl/a4nl47yBEVkMkDuwIharx7HDdp6U4fFb0qq7uEi39zhYPiPnfECILIwhezLcB7edvqH1SIypqowESPQ==
   dependencies:
     "@colony/colony-js-adapter" "^1.14.0-beta.2"
     "@colony/colony-js-adapter-ethers" "^1.14.3"
     "@colony/colony-js-contract-client" "^1.14.2"
     "@colony/colony-js-contract-loader" "^1.12.0"
     "@colony/colony-js-contract-loader-http" "^1.14.0-beta.0"
-    "@colony/colony-js-contract-loader-network" "^1.14.5"
+    "@colony/colony-js-contract-loader-network" "^1.14.6"
     "@colony/colony-js-utils" "^1.12.0"
     "@colony/purser-core" "^2.1.0"
     assert "^2.0.0"
@@ -2050,6 +2050,15 @@
   version "1.14.5"
   resolved "https://registry.yarnpkg.com/@colony/colony-js-contract-loader-network/-/colony-js-contract-loader-network-1.14.5.tgz#89935013e2b36b28d2b19c11629d12c893e9b7e9"
   integrity sha512-c4VZfkrrc0OVTM/HyOoU/Vci1r4QVNnDqw6tEEWH9CJx64ppbQ3xHFkIKu2Cz4S9M0izohZgSIg3pcs+uC3tYw==
+  dependencies:
+    "@colony/colony-js-contract-loader" "^1.12.0"
+    assert "^2.0.0"
+    babel-runtime "^6.26.0"
+
+"@colony/colony-js-contract-loader-network@^1.14.6":
+  version "1.14.6"
+  resolved "https://registry.yarnpkg.com/@colony/colony-js-contract-loader-network/-/colony-js-contract-loader-network-1.14.6.tgz#dced2ca26f8f962ef0ea465d0ef2e423a6667aca"
+  integrity sha512-MhFoPE3cXlGsDUl7PrTfbVx/LjQyU4rqpRwee1YYxK697Jbh74+5KeXF3iWo5kW988CRTN6obpBgIq/a65RUUg==
   dependencies:
     "@colony/colony-js-contract-loader" "^1.12.0"
     assert "^2.0.0"
