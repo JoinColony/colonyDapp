@@ -167,7 +167,7 @@
     "formik": "2.1.4",
     "graphql-tag": "^2.10.1",
     "immutable": "^4.0.0-rc.12",
-    "ipfs": "^0.40.0",
+    "ipfs": "^0.43.1",
     "jwt-decode": "^2.2.0",
     "linkify-it": "^2.0.3",
     "localforage": "^1.7.3",
