@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { useState } from 'react';
 import { defineMessages } from 'react-intl';
 
 import Heading from '~core/Heading';
@@ -46,41 +46,25 @@ interface Props {
   transactionAndMessageGroups: TransactionOrMessageGroups;
 }
 
-type State = {
-  selectedGroupIdx: number;
-};
+const displayName = 'users.GasStation.GasStationContent';
 
-class GasStationContent extends Component<Props, State> {
-  // eslint-disable-next-line react/static-property-placement
-  static displayName = 'users.GasStation.GasStationContent';
+const GasStationContent = ({
+  appearance: { interactive },
+  appearance,
+  close,
+  transactionAndMessageGroups,
+}: Props) => {
+  const [selectedGroupIdx, setSelectedGroupIdx] = useState<number>(-1);
 
-  // eslint-disable-next-line react/static-property-placement
-  static defaultProps = {
-    appearance: {
-      interactive: true,
-      required: false,
-    },
+  const unselectTransactionGroup = () => {
+    setSelectedGroupIdx(-1);
   };
 
-  state = {
-    selectedGroupIdx: -1,
+  const selectTransactionGroup = (idx: number) => {
+    setSelectedGroupIdx(idx);
   };
 
-  unselectTransactionGroup = () => {
-    this.setState({ selectedGroupIdx: -1 });
-  };
-
-  selectTransactionGroup = (idx: number) => {
-    this.setState({ selectedGroupIdx: idx });
-  };
-
-  renderTransactions() {
-    const { selectedGroupIdx } = this.state;
-    const {
-      transactionAndMessageGroups,
-      appearance: { interactive },
-      appearance,
-    } = this.props;
+  const renderTransactions = () => {
     let detailsTransactionGroup = transactionAndMessageGroups[selectedGroupIdx];
 
     /*  If the GasStationContent is less interactive,
@@ -96,7 +80,7 @@ class GasStationContent extends Component<Props, State> {
         return (
           <TransactionDetails
             transactionGroup={detailsTransactionGroup as TransactionType[]}
-            onClose={this.unselectTransactionGroup}
+            onClose={unselectTransactionGroup}
             appearance={appearance}
           />
         );
@@ -104,45 +88,47 @@ class GasStationContent extends Component<Props, State> {
       return (
         <MessageCardDetails
           message={detailsTransactionGroup[0] as MessageType}
-          onClose={this.unselectTransactionGroup}
+          onClose={unselectTransactionGroup}
         />
       );
     }
     return (
       <TransactionList
         transactionAndMessageGroups={transactionAndMessageGroups}
-        onClickGroup={this.selectTransactionGroup}
+        onClickGroup={selectTransactionGroup}
       />
     );
-  }
+  };
 
-  render() {
-    const {
-      close,
-      transactionAndMessageGroups,
-      appearance: { interactive },
-    } = this.props;
-    const isEmpty =
-      !transactionAndMessageGroups || !transactionAndMessageGroups.length;
-    return (
-      <div
-        className={getMainClasses({}, styles, { isEmpty })}
-        data-test="gasStation"
-      >
-        {interactive && <GasStationHeader close={close} />}
-        <div className={styles.transactionsContainer}>
-          {isEmpty ? (
-            <Heading
-              appearance={{ margin: 'none', size: 'normal' }}
-              text={MSG.transactionsEmptyStateText}
-            />
-          ) : (
-            this.renderTransactions()
-          )}
-        </div>
+  const isEmpty =
+    !transactionAndMessageGroups || !transactionAndMessageGroups.length;
+  return (
+    <div
+      className={getMainClasses({}, styles, { isEmpty })}
+      data-test="gasStation"
+    >
+      {interactive && <GasStationHeader close={close} />}
+      <div className={styles.transactionsContainer}>
+        {isEmpty ? (
+          <Heading
+            appearance={{ margin: 'none', size: 'normal' }}
+            text={MSG.transactionsEmptyStateText}
+          />
+        ) : (
+          renderTransactions()
+        )}
       </div>
-    );
-  }
-}
+    </div>
+  );
+};
+
+GasStationContent.defaultProps = {
+  appearance: {
+    interactive: true,
+    required: false,
+  },
+};
+
+GasStationContent.displayName = displayName;
 
 export default GasStationContent;
