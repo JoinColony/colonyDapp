@@ -1,5 +1,5 @@
 {
-  "src/**/*.{js,jsx,ts,tsx}": [
+  "src/**/*.{ts,tsx}": [
     "eslint --fix"
   ],
   "src/**/*.css": [
