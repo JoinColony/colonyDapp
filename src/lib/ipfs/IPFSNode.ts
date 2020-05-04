@@ -1,12 +1,8 @@
 import IPFS from 'ipfs';
 
-import { sleep } from '../../utils/time';
-
 import devConfig from './ipfsConfig.development';
 import prodConfig from './ipfsConfig.production';
 import qaConfig from './ipfsConfig.qa';
-
-import { B58String, IPFSPeer } from './types';
 
 const NETWORK = process.env.NETWORK || 'local';
 
@@ -18,10 +14,6 @@ const configMap = {
 
 class IPFSNode {
   static getIpfsConfig = configMap[NETWORK];
-
-  /** Turn a `swarm.peers()` result item into its B58 representation (Qm....) */
-  static peerToB58String = (peerItem: IPFSPeer): B58String =>
-    peerItem.peer.id.toB58String();
 
   _ipfs: IPFS;
 
@@ -39,58 +31,6 @@ class IPFSNode {
     return this._ipfs;
   }
 
-  /**
-   * Get the peers swarm'd by this ipfs node.
-   * Return a promise that'll resolve to undefined
-   * (no peer found) or the list of peers.
-   */
-  async getPeers(): Promise<IPFSPeer[] | null> {
-    const peers: IPFSPeer[] | null = await this._ipfs.swarm.peers();
-
-    if (peers && peers.length && peers.length > 0) {
-      return peers;
-    }
-
-    return null;
-  }
-
-  /**
-   * Wait until some peers have been detected.
-   * Returns a promise that'll resolve into the list
-   * of current peers.
-   */
-  async waitForSomePeers(): Promise<IPFSPeer[]> {
-    let peers: IPFSPeer[] | null = await this.getPeers();
-
-    /**
-     * @todo : in offline mode this would go into an infinite loop.
-     */
-    while (!peers || !peers.length) {
-      /* eslint-disable no-await-in-loop */
-      await sleep(500);
-      peers = await this.getPeers();
-      /* eslint-enable no-await-in-loop */
-    }
-
-    return peers;
-  }
-
-  /** Wait until the peer identified by peerID (B58 string representation) shows up */
-  async waitForPeer(peerID: B58String): Promise<boolean> {
-    let peers = await this.waitForSomePeers();
-    let peersB58 = peers.map(IPFSNode.peerToB58String);
-
-    while (peersB58.indexOf(peerID) < 0) {
-      /* eslint-disable no-await-in-loop */
-      await sleep(500);
-      peers = await this.waitForSomePeers();
-      peersB58 = peers.map(IPFSNode.peerToB58String);
-      /* eslint-enable no-await-in-loop */
-    }
-
-    return true;
-  }
-
   /** Return a file from IPFS as text */
   async getString(hash: string): Promise<string> {
     if (!hash) return '';
@@ -105,12 +45,6 @@ class IPFSNode {
     await this.ready;
     const [result] = await this._ipfs.add(IPFS.Buffer.from(data));
     return result.path;
-  }
-
-  /** Promise that returns the given node ID */
-  async getNodeID(): Promise<B58String> {
-    const { id } = await this._ipfs.id();
-    return id;
   }
 
   /** Start the connection to IPFS (if not connected already) */
