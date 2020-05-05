@@ -36,3 +36,26 @@
     url('../fonts/IBMPlexMono-Regular.woff') format('woff'),
     url('../fonts/IBMPlexMono-Regular.woff2') format('woff2');
 }
+
+@font-face {
+  font-family: Muli;
+  src:
+    url('../fonts/muli-regular.woff2') format('woff'),
+    url('../fonts/muli-regular.woff') format('woff2');
+}
+
+@font-face {
+  font-family: Muli;
+  font-style: italic;
+  src:
+    url('../fonts/muli-italic.woff') format('woff'),
+    url('../fonts/muli-italic.woff2') format('woff2');
+}
+
+@font-face {
+  font-family: Muli;
+  font-weight: 700;
+  src:
+    url('../fonts/muli-bold.woff') format('woff'),
+    url('../fonts/muli-bold.woff2') format('woff2');
+}

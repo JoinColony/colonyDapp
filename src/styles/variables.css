@@ -81,7 +81,7 @@
   /*
    * Fonts
    */
-  --family-primary: "Avenir Next", sans-serif;
+  --family-primary: "Muli", sans-serif;
   --family-monospace: "Source Code Pro", "Monaco", "Inconsolata", monospace;
   --family-techie: "IBM Plex Mono", sans-serif;
   --text: color-mod(var(--grey-dark) alpha(70%));
@@ -91,6 +91,7 @@
   --weight-normal: 400;
   --weight-medium: 500;
   --weight-semi: 600;
+  --weight-bold: 700;
   --size-unreadable: 10px;
   --size-tiny: 11px;
   --size-small: 12px;
