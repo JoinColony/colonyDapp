@@ -72,6 +72,8 @@ interface Props {
   labelValues?: SimpleMessageValues;
   /** Maximum number of files to accept */
   maxFilesLimit?: number;
+  /** Max file size */
+  maxSize?: number;
   /** Input control `name` attribute */
   name: string;
   /** Placeholder element for when no files have been picked yet (renderProp) */
@@ -102,6 +104,7 @@ const FileUpload = ({
   label,
   labelValues,
   maxFilesLimit = 1,
+  maxSize = DEFAULT_MAX_FILE_SIZE,
   name,
   push,
   remove,
@@ -149,7 +152,7 @@ const FileUpload = ({
   const dropzoneState = useDropzone({
     accept,
     disabled: disabled || !maxFileLimitNotMet,
-    maxSize: DEFAULT_MAX_FILE_SIZE,
+    maxSize,
     onDropAccepted,
     onDropRejected,
     // We can override the above properties by providing these in the `dropzoneOptions` prop
@@ -214,6 +217,7 @@ const FileUpload = ({
                 error={error}
                 key={`${file.name}-${file.size}`}
                 idx={idx}
+                maxFileSize={maxSize}
                 name={`${name}.${idx}`}
                 remove={remove}
                 reset={resetForm}

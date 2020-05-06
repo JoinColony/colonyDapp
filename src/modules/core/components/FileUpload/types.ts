@@ -21,6 +21,7 @@ export interface UploadItemComponentProps {
   error?: string;
   key: string;
   idx: number;
+  maxFileSize: number;
   name: string;
   remove: FieldArrayRenderProps['remove'];
   reset: FieldArrayRenderProps['form']['resetForm'];
