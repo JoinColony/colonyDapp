@@ -102,7 +102,7 @@ const PermissionForm = ({
   return (
     <>
       <InputLabel label={MSG.permissionsLabel} />
-      {availableRoles.map(role => {
+      {availableRoles.map((role) => {
         const roleIsInherited =
           !userRoles.includes(role) && userInheritedRoles.includes(role);
         return (

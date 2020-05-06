@@ -131,7 +131,7 @@ const Community = ({ colonyAddress }: Props) => {
   } = colonySubscribedUsers;
 
   const communityUsers: CommunityUser[] = subscribedUsers
-    .map(user => {
+    .map((user) => {
       const {
         profile: { walletAddress: userAddress },
       } = user;
@@ -140,7 +140,9 @@ const Community = ({ colonyAddress }: Props) => {
         communityRole = Roles.Founder;
       }
       if (
-        communityRoles.admins.find(adminAddress => adminAddress === userAddress)
+        communityRoles.admins.find(
+          (adminAddress) => adminAddress === userAddress,
+        )
       ) {
         communityRole = Roles.Admin;
       }
@@ -152,7 +154,7 @@ const Community = ({ colonyAddress }: Props) => {
     .sort(
       sortObjectsBy({
         name: 'communityRole',
-        compareFn: role => {
+        compareFn: (role) => {
           if (role === Roles.Founder) {
             return -1;
           }

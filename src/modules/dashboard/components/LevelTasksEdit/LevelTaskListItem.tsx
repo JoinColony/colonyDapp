@@ -1,13 +1,12 @@
 import React, { useState } from 'react';
 import { useLocation } from 'react-router-dom';
-import { LocationState } from 'history';
 
 import { OneLevel, OnePersistentTask } from '~data/index';
 
 import TaskDisplay from './TaskDisplay';
 import TaskEdit from './TaskEdit';
 
-export interface RouteState extends LocationState {
+export interface RouteState {
   isEditingInitialTask: boolean;
 }
 

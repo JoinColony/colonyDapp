@@ -47,9 +47,6 @@ module.exports = () => ({
               transpileOnly: true,
             },
           },
-          {
-            loader: 'babel-loader',
-          },
         ],
       },
     ],

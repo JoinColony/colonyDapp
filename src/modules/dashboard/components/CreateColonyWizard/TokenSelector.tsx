@@ -125,7 +125,7 @@ const TokenSelector = ({
     // Get the token address and handle success/error
     getToken()
       .then((token: OneToken) => handleGetTokenSuccess(token))
-      .catch(error => handleGetTokenError(error));
+      .catch((error) => handleGetTokenError(error));
   }, [
     tokenAddress,
     getToken,

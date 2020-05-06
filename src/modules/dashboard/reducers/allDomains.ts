@@ -31,7 +31,7 @@ const allDomainsReducer: ReducerType<AllDomainsMap> = (
         return state;
       }
 
-      return state.updateIn([colonyAddress, 'record'], record =>
+      return state.updateIn([colonyAddress, 'record'], (record) =>
         record.withMutations((mutable: DomainsMap) => {
           Object.entries(payload).forEach(
             // string because Object.entries casts to string
@@ -55,7 +55,7 @@ const allDomainsReducer: ReducerType<AllDomainsMap> = (
       return state.getIn(path)
         ? state.updateIn(
             path,
-            domains => domains && domains.set(domain.id, Domain(domain)),
+            (domains) => domains && domains.set(domain.id, Domain(domain)),
           )
         : state.set(
             colonyAddress,
@@ -75,7 +75,7 @@ const allDomainsReducer: ReducerType<AllDomainsMap> = (
       return state.getIn(path)
         ? state.updateIn(
             path,
-            domain => domain && domain.merge({ name: domainName, parentId }),
+            (domain) => domain && domain.merge({ name: domainName, parentId }),
           )
         : state;
     }
@@ -88,7 +88,7 @@ const allDomainsReducer: ReducerType<AllDomainsMap> = (
         key,
         FetchableData({
           record: ImmutableMap(
-            domains.map(domain => [
+            domains.map((domain) => [
               domain.id,
               Domain({
                 ...domain,
@@ -108,6 +108,7 @@ const allDomainsReducer: ReducerType<AllDomainsMap> = (
 export default withFetchableDataMap<
   AllDomainsMap,
   ImmutableMap<DomainRecord['id'], DomainRecord>
->(ActionTypes.COLONY_DOMAINS_FETCH, ImmutableMap() as AllDomainsMap)(
-  allDomainsReducer,
-);
+>(
+  ActionTypes.COLONY_DOMAINS_FETCH,
+  ImmutableMap() as AllDomainsMap,
+)(allDomainsReducer);

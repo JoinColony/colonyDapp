@@ -27,7 +27,7 @@ export default class AsyncComponentLoader extends Component<Props, State> {
 
   componentDidMount() {
     const { loaderFn } = this.props;
-    loaderFn().then(component =>
+    loaderFn().then((component) =>
       this.setState({
         loadedComponent: component.default,
       }),

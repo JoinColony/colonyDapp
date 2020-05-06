@@ -62,7 +62,7 @@ const TextareaAutoresize = ({
   /* eslint-enable @typescript-eslint/no-unused-vars */
   ...rest
 }: Props & FieldEnhancedProps) => {
-  const renderAutoresizingTextarea = inputProps => {
+  const renderAutoresizingTextarea = (inputProps) => {
     const { innerRef, ...props } = inputProps;
     return (
       <div className={styles.TextareaAutoresizeWrapper}>

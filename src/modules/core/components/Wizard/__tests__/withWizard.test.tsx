@@ -45,7 +45,7 @@ describe('withWizard HoC', () => {
     const stepsArray = [createStep(1), createStep(2)];
 
     // Very simple. See next test for complex example
-    const stepsFunction = step => stepsArray[step];
+    const stepsFunction = (step) => stepsArray[step];
 
     const Wizard = withWizard({ steps: stepsFunction })(Wrapper);
     const wrapper = mount(<Wizard />);

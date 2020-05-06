@@ -37,9 +37,13 @@ const MSG = defineMessages({
 const displayName = 'dashboard.LevelDashboard';
 
 const LevelDashboard = () => {
-  const { colonyName, levelId, programId } = useParams();
+  const { colonyName, levelId, programId } = useParams<{
+    colonyName: string;
+    levelId: string;
+    programId: string;
+  }>();
   const { walletAddress } = useLoggedInUser();
-  const location = useLocation();
+  const location = useLocation<{ showWelcomeMessage?: boolean }>();
   const history = useHistory();
   const { state } = location;
   const showWelcomeMessage = (state && state.showWelcomeMessage) || false;

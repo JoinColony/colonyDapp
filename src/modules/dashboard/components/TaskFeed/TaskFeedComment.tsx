@@ -33,7 +33,7 @@ const TaskFeedComment = ({
   const { Decorate } = new TextDecorator({
     email: (text, normalized) => <ExternalLink text={text} href={normalized} />,
     link: (text, normalized) => <ExternalLink text={text} href={normalized} />,
-    username: text => (
+    username: (text) => (
       <UserMention username={text.slice(1)} to={`/user/${text.slice(1)}`} />
     ),
   });

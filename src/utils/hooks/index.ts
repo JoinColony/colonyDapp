@@ -79,11 +79,11 @@ type MaybeFetchedData<T extends undefined | null | { record: any }> = T extends
   | undefined
   | null
   ? T
-  : (T extends { record: any }
-      ? (T extends { record: { toJS: Function } }
-          ? ReturnType<T['record']['toJS']>
-          : T['record'])
-      : T);
+  : T extends { record: any }
+  ? T extends { record: { toJS: Function } }
+    ? ReturnType<T['record']['toJS']>
+    : T['record']
+  : T;
 
 /* Used in cases where we need to memoize the transformed output of any data.
  * Transform function has to be pure, obviously
@@ -139,7 +139,7 @@ export const useSelector = <
   args: A = [] as A,
 ) => {
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  const mapState = useCallback(state => select(state, ...args), [
+  const mapState = useCallback((state) => select(state, ...args), [
     // eslint-disable-next-line react-hooks/exhaustive-deps
     ...args,
     select,
@@ -219,7 +219,7 @@ export const useDataFetcher = <
   { ttl: ttlOverride }: DataFetcherOptions = {},
 ) => {
   const dispatch = useDispatch();
-  const mapState = useCallback(state => select(state, ...selectArgs), [
+  const mapState = useCallback((state) => select(state, ...selectArgs), [
     select,
     selectArgs,
   ]);
@@ -264,7 +264,7 @@ export const useDataMapFetcher = <T>(
 ) => {
   const dispatch = useDispatch();
 
-  const mapState = useCallback(state => select(state), [select]);
+  const mapState = useCallback((state) => select(state), [select]);
   const rawData: ImmutableMap<string, FetchableDataRecord<T>> = useMappedState(
     mapState,
   );
@@ -287,7 +287,7 @@ export const useDataMapFetcher = <T>(
    */
   const keysToFetchFor = useMemo(
     () =>
-      keys.filter(key =>
+      keys.filter((key) =>
         shouldFetchData(rawData.get(key), ttl, isFirstMount.current, [key]),
       ),
     [rawData, keys, ttl],
@@ -298,7 +298,7 @@ export const useDataMapFetcher = <T>(
    */
   useEffect(() => {
     isFirstMount.current = false;
-    keysToFetchFor.map(key => dispatch(fetch(key)));
+    keysToFetchFor.map((key) => dispatch(fetch(key)));
   }, [keysToFetchFor, dispatch, fetch]);
 
   /*
@@ -309,7 +309,7 @@ export const useDataMapFetcher = <T>(
     KeyedDataObject<MaybeFetchedData<ReturnType<typeof allData['get']>>>[]
   >(
     () =>
-      keys.map(key => {
+      keys.map((key) => {
         const data = allData.get(key);
         return {
           key,
@@ -334,7 +334,7 @@ export const useDataSubscriber = <
   subArgs: any[],
 ) => {
   const dispatch = useDispatch();
-  const mapState = useCallback(state => select(state, ...selectArgs), [
+  const mapState = useCallback((state) => select(state, ...selectArgs), [
     select,
     selectArgs,
   ]);
@@ -387,14 +387,14 @@ export const useDataTupleSubscriber = <T>(
     string,
     FetchableDataRecord<any>
   > = useMappedState(
-    useCallback(state => select(state, memoizedKeys), [select, memoizedKeys]),
+    useCallback((state) => select(state, memoizedKeys), [select, memoizedKeys]),
   );
 
   const isFirstMount = useRef(true);
 
   const keysToFetchFor = useMemo(
     () =>
-      memoizedKeys.filter(entry =>
+      memoizedKeys.filter((entry) =>
         shouldFetchData(
           allData.get(entry[1]),
           Infinity,
@@ -408,19 +408,19 @@ export const useDataTupleSubscriber = <T>(
 
   useEffect(() => {
     isFirstMount.current = false;
-    keysToFetchFor.map(key => dispatch(start(...key)));
+    keysToFetchFor.map((key) => dispatch(start(...key)));
   }, [keysToFetchFor, dispatch, memoizedKeys, start]);
 
   useEffect(
     () => () => {
-      keysToFetchFor.map(key => dispatch(stop(...key)));
+      keysToFetchFor.map((key) => dispatch(stop(...key)));
     },
     [dispatch, keysToFetchFor, stop],
   );
 
   return useMemo(
     () =>
-      memoizedKeys.map(entry => {
+      memoizedKeys.map((entry) => {
         const data = allData.get(entry[1]);
         return {
           key: entry[1],
@@ -454,7 +454,7 @@ export const useDataTupleFetcher = <T>(
     string,
     FetchableDataRecord<any>
   > = useMappedState(
-    useCallback(state => select(state, memoizedKeys), [select, memoizedKeys]),
+    useCallback((state) => select(state, memoizedKeys), [select, memoizedKeys]),
   );
 
   const isFirstMount = useRef(true);
@@ -467,7 +467,7 @@ export const useDataTupleFetcher = <T>(
    */
   const keysToFetchFor = useMemo(
     () =>
-      memoizedKeys.filter(entry =>
+      memoizedKeys.filter((entry) =>
         shouldFetchData(allData.get(entry[1]), ttl, isFirstMount.current, [
           entry,
         ]),
@@ -480,7 +480,7 @@ export const useDataTupleFetcher = <T>(
    */
   useEffect(() => {
     isFirstMount.current = false;
-    keysToFetchFor.map(key => dispatch(fetch(key)));
+    keysToFetchFor.map((key) => dispatch(fetch(key)));
   }, [keysToFetchFor, dispatch, fetch, memoizedKeys]);
 
   /*
@@ -489,7 +489,7 @@ export const useDataTupleFetcher = <T>(
    */
   return useMemo(
     () =>
-      memoizedKeys.map(entry => {
+      memoizedKeys.map((entry) => {
         const data = allData.get(entry[1]);
         return {
           key: entry[1],

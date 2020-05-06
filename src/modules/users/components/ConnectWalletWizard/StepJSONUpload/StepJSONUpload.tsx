@@ -104,10 +104,7 @@ const StepJSONUpload = ({
   wizardValues,
 }: Props) => {
   const transform = useCallback(
-    pipe(
-      mergePayload(wizardValues),
-      mapPayload(transformPayload),
-    ),
+    pipe(mergePayload(wizardValues), mapPayload(transformPayload)),
     [wizardValues],
   );
   return (
@@ -118,7 +115,7 @@ const StepJSONUpload = ({
       onError={(_: object, { setStatus }: FormikBag<object, FormValues>) => {
         setStatus({ error: MSG.errorUnlockWallet });
       }}
-      onSuccess={values => nextStep({ ...values })}
+      onSuccess={(values) => nextStep({ ...values })}
       validationSchema={validationSchema}
       transform={transform}
       {...wizardForm}
@@ -129,7 +126,7 @@ const StepJSONUpload = ({
             <Heading text={MSG.heading} appearance={{ size: 'medium' }} />
             <div className={styles.uploadArea}>
               <FileUpload
-                accept={ACCEPTED_MIME_TYPES}
+                dropzoneOptions={{ accept: ACCEPTED_MIME_TYPES }}
                 name="walletJsonFileUpload"
                 label={MSG.fileUploadLabel}
                 help={MSG.fileUploadHelp}

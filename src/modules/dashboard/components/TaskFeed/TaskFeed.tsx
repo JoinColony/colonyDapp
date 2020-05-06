@@ -64,78 +64,80 @@ const TaskFeed = ({ colonyAddress, draftId }: Props) => {
       {events && (
         <div className={styles.main}>
           <div className={styles.items}>
-            {/*
-             * There is always at least one task event: TASK_CREATED
-             */
-            events.length < 1 ? (
-              <div className={styles.eventsLoader}>
-                <SpinnerLoader appearance={{ size: 'small' }} />
-                <span className={styles.eventsLoaderText}>
-                  <FormattedMessage {...MSG.feedLoadingText} />
-                </span>
-              </div>
-            ) : (
-              <div>
-                {events.map(event => {
-                  const {
-                    context,
-                    createdAt,
-                    initiatorAddress,
-                    sourceId,
-                  } = event;
-                  if (context.type === EventType.TaskMessage) {
-                    const { message } = context as TaskMessageEvent;
+            {
+              /*
+               * There is always at least one task event: TASK_CREATED
+               */
+              events.length < 1 ? (
+                <div className={styles.eventsLoader}>
+                  <SpinnerLoader appearance={{ size: 'small' }} />
+                  <span className={styles.eventsLoaderText}>
+                    <FormattedMessage {...MSG.feedLoadingText} />
+                  </span>
+                </div>
+              ) : (
+                <div>
+                  {events.map((event) => {
+                    const {
+                      context,
+                      createdAt,
+                      initiatorAddress,
+                      sourceId,
+                    } = event;
+                    if (context.type === EventType.TaskMessage) {
+                      const { message } = context as TaskMessageEvent;
+                      return (
+                        <TaskFeedComment
+                          colonyAddress={colonyAddress}
+                          createdAt={createdAt}
+                          initiatorAddress={initiatorAddress}
+                          key={sourceId}
+                          message={message}
+                        />
+                      );
+                    }
+
+                    if (
+                      context.type === EventType.FinalizeTask &&
+                      finalizedAt &&
+                      finalizedPayment
+                    ) {
+                      return (
+                        <Fragment key={sourceId}>
+                          <TaskFeedCompleteInfo
+                            colonyAddress={colonyAddress}
+                            payouts={payouts}
+                            finalizedAt={finalizedAt}
+                            finalizedPayment={finalizedPayment}
+                          />
+                          <TaskFeedEvent
+                            colonyAddress={colonyAddress}
+                            event={event}
+                          />
+                        </Fragment>
+                      );
+                    }
+
+                    // /**
+                    //  * @todo Check that the reveal period is over for ratings
+                    //  * (task feed).
+                    //  */
+                    // if (rating) {
+                    //   return <TaskFeedRating key={sourceId} rating={rating} />;
+                    // }
+
                     return (
-                      <TaskFeedComment
+                      <TaskFeedEvent
                         colonyAddress={colonyAddress}
-                        createdAt={createdAt}
-                        initiatorAddress={initiatorAddress}
+                        event={event}
                         key={sourceId}
-                        message={message}
                       />
                     );
-                  }
-
-                  if (
-                    context.type === EventType.FinalizeTask &&
-                    finalizedAt &&
-                    finalizedPayment
-                  ) {
-                    return (
-                      <Fragment key={sourceId}>
-                        <TaskFeedCompleteInfo
-                          colonyAddress={colonyAddress}
-                          payouts={payouts}
-                          finalizedAt={finalizedAt}
-                          finalizedPayment={finalizedPayment}
-                        />
-                        <TaskFeedEvent
-                          colonyAddress={colonyAddress}
-                          event={event}
-                        />
-                      </Fragment>
-                    );
-                  }
-
-                  // /**
-                  //  * @todo Check that the reveal period is over for ratings
-                  //  * (task feed).
-                  //  */
-                  // if (rating) {
-                  //   return <TaskFeedRating key={sourceId} rating={rating} />;
-                  // }
-
-                  return (
-                    <TaskFeedEvent
-                      colonyAddress={colonyAddress}
-                      event={event}
-                      key={sourceId}
-                    />
-                  );
-                })}
-                <div ref={bottomEl} />
-              </div>
-            )}
+                  })}
+                  <div ref={bottomEl} />
+                </div>
+              )
+            }
           </div>
         </div>
       )}

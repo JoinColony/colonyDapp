@@ -13,7 +13,7 @@ matcher // Remove default matchers, as we don't care about those here
 
 const matchUsernames = (text: string) => {
   const matches = matcher.match(text);
-  return matches ? matches.map(match => match.text.substr(1)) : [];
+  return matches ? matches.map((match) => match.text.substr(1)) : [];
 };
 
 export default matchUsernames;

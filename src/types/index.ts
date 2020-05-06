@@ -17,7 +17,9 @@ export type ExcludesNull = <T>(x: T | null) => x is T;
 // https://stackoverflow.com/questions/54607400/typescript-remove-entries-from-tuple-type
 export type RemoveFirstFromTuple<T extends any[]> = T['length'] extends 0
   ? []
-  : (((...b: T) => void) extends (a, ...b: infer I) => void ? I : []);
+  : ((...b: T) => void) extends (a, ...b: infer I) => void
+  ? I
+  : [];
 
 export interface DataObject<T> {
   data?: T;

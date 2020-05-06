@@ -17,7 +17,7 @@ const displayName = 'admin.Permissions.UserPermissions';
 const UserPermissions = ({ roles, directRoles }: Props) => {
   const sortedRoles = roles
     .filter(
-      role =>
+      (role) =>
         // Don't display ARCHITECTURE_SUBDOMAIN in listed roles
         role !== ROLES.ARCHITECTURE_SUBDOMAIN,
     )
@@ -30,7 +30,7 @@ const UserPermissions = ({ roles, directRoles }: Props) => {
 
   return (
     <div className={styles.main}>
-      {sortedRoles.map(role => (
+      {sortedRoles.map((role) => (
         <span className={styles.permission} key={role}>
           <FormattedMessage id={ROLE_MESSAGES[role]} />
           {!directRoles.includes(role) ? '*' : null}

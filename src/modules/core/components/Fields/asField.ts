@@ -149,7 +149,7 @@ const asField = <
             formatIntl(text, formatMessage, textValues),
           setError:
             typeof setFieldError === 'function'
-              ? errorMessage =>
+              ? (errorMessage) =>
                   setFieldError(
                     htmlFieldName,
                     formatIntl(errorMessage, formatMessage) || '',

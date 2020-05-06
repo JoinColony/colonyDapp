@@ -29,18 +29,19 @@ const tx = Transaction({ id, params });
  * store context.
  */
 describe('core: sagas (transactionChannel)', () => {
-  const takePromise = channel => new Promise(resolve => channel.take(resolve));
+  const takePromise = (channel) =>
+    new Promise((resolve) => channel.take(resolve));
 
-  const chainPromisesAsArray = promises =>
+  const chainPromisesAsArray = (promises) =>
     promises.reduce(
       (chainedPromise, promise) =>
-        chainedPromise.then(values =>
-          promise.then(value => values.concat(value)),
+        chainedPromise.then((values) =>
+          promise.then((value) => values.concat(value)),
         ),
       Promise.resolve([]),
     );
 
-  const takeAllFromChannel = async channel => {
+  const takeAllFromChannel = async (channel) => {
     // Create promises to take actions from the channel (more than will be emitted)
     const actions = await chainPromisesAsArray([
       takePromise(channel),
@@ -59,9 +60,9 @@ describe('core: sagas (transactionChannel)', () => {
   };
 
   test('It captures events of a successful tx correctly', async () => {
-    const receiptPromise = new Promise(resolve => resolve(receipt));
-    const eventDataPromise = new Promise(resolve => resolve(eventData));
-    const txPromise = new Promise(resolve =>
+    const receiptPromise = new Promise((resolve) => resolve(receipt));
+    const eventDataPromise = new Promise((resolve) => resolve(eventData));
+    const txPromise = new Promise((resolve) =>
       resolve({
         eventDataPromise,
         meta: {
@@ -146,9 +147,9 @@ describe('core: sagas (transactionChannel)', () => {
       status: 0,
       hash,
     };
-    const receiptPromise = new Promise(resolve => resolve(failedReceipt));
-    const eventDataPromise = new Promise(resolve => resolve(eventData));
-    const txPromise = new Promise(resolve =>
+    const receiptPromise = new Promise((resolve) => resolve(failedReceipt));
+    const eventDataPromise = new Promise((resolve) => resolve(eventData));
+    const txPromise = new Promise((resolve) =>
       resolve({
         eventDataPromise,
         meta: {
@@ -209,8 +210,8 @@ describe('core: sagas (transactionChannel)', () => {
     const receiptPromise = new Promise((resolve, reject) =>
       reject(new Error('could not get receipt')),
     );
-    const eventDataPromise = new Promise(resolve => resolve(eventData));
-    const txPromise = new Promise(resolve =>
+    const eventDataPromise = new Promise((resolve) => resolve(eventData));
+    const txPromise = new Promise((resolve) =>
       resolve({
         eventDataPromise,
         meta: {
@@ -260,11 +261,11 @@ describe('core: sagas (transactionChannel)', () => {
   });
 
   test('It captures events of a tx with event errors correctly', async () => {
-    const receiptPromise = new Promise(resolve => resolve(receipt));
+    const receiptPromise = new Promise((resolve) => resolve(receipt));
     const eventDataPromise = new Promise((resolve, reject) =>
       reject(new Error('could not get eventData')),
     );
-    const txPromise = new Promise(resolve =>
+    const txPromise = new Promise((resolve) =>
       resolve({
         eventDataPromise,
         meta: {

@@ -26,8 +26,8 @@ jobs:
 
       - name: Install and Build 🔧 
         run: |
-          yarn
-          yarn styleguide:build
+          npm install
+          npm run styleguide:build
 
       - name: Deploy 🚀
         uses: JamesIves/github-pages-deploy-action@releases/v3

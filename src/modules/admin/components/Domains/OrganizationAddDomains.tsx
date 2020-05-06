@@ -36,10 +36,7 @@ const validationSchema = yup.object({
 
 const OrganizationAddDomains = ({ colonyAddress }: Props) => {
   const transform = useCallback(
-    pipe(
-      withKey(colonyAddress),
-      mergePayload({ colonyAddress }),
-    ),
+    pipe(withKey(colonyAddress), mergePayload({ colonyAddress })),
     [colonyAddress],
   );
   return (

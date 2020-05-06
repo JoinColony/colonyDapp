@@ -44,7 +44,7 @@ class Textarea extends Component<Props & FieldEnhancedProps> {
     appearance: {},
   };
 
-  renderTextarea = inputProps => {
+  renderTextarea = (inputProps) => {
     const { innerRef, maxLength, ...props } = inputProps;
     const { $value } = this.props;
     const length = $value ? $value.length : 0;

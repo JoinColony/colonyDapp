@@ -229,7 +229,7 @@ const TaskClaimRewardDialog = ({
                     suffix={` ${nativeTokenPayout.symbol}`}
                   />
                 )}
-                {sortedPayouts.map(payout => {
+                {sortedPayouts.map((payout) => {
                   const { symbol } = getToken(payout.token);
                   return (
                     <Numeral
@@ -259,7 +259,7 @@ const TaskClaimRewardDialog = ({
                     suffix={` ${nativeTokenPayout.token.symbol}`}
                   />
                 )}
-                {sortedPayouts.map(payout => {
+                {sortedPayouts.map((payout) => {
                   const { symbol } = getToken(payout.token);
                   return (
                     <Numeral

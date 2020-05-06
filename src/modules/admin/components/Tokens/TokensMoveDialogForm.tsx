@@ -101,7 +101,7 @@ const TokensMoveDialogForm = ({
     : ROOT_DOMAIN;
 
   const selectedToken = useMemo(
-    () => tokens.find(token => token.address === values.tokenAddress),
+    () => tokens.find((token) => token.address === values.tokenAddress),
     [tokens, values.tokenAddress],
   );
 

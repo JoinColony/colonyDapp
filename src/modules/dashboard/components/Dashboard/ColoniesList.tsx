@@ -49,7 +49,7 @@ const ColoniesList = () => {
   if (colonyAddresses && colonyAddresses.length > 0) {
     return (
       <div className={styles.main}>
-        {colonyAddresses.map(colonyAddress => (
+        {colonyAddresses.map((colonyAddress) => (
           <ColoniesListItem key={colonyAddress} colonyAddress={colonyAddress} />
         ))}
       </div>

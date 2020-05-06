@@ -46,7 +46,9 @@ const SelectListBox = ({
     (_, idx) => selectedOption === idx,
   );
   const activeDescendantIdx = activeDescendantOption
-    ? options.findIndex(option => option.value === activeDescendantOption.value)
+    ? options.findIndex(
+        (option) => option.value === activeDescendantOption.value,
+      )
     : -1;
   return (
     <ul

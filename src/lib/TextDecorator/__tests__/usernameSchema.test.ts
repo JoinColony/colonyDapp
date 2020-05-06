@@ -6,7 +6,7 @@ import TextDecorator from '../index';
 
 describe('username TextDecorator schema', () => {
   const replacer = new TextDecorator({
-    username: text => ({ username: text }),
+    username: (text) => ({ username: text }),
   });
   test('Parse username', () => {
     const decorated = replacer._decorate('@username');
@@ -45,7 +45,7 @@ describe('username TextDecorator schema', () => {
   });
   test('Does not interfere with email', () => {
     const emailReplacer = new TextDecorator({
-      username: text => ({ username: text }),
+      username: (text) => ({ username: text }),
       email: true,
     });
     const decorated = emailReplacer._decorate(

@@ -1,16 +1,19 @@
 import React, { Component, SyntheticEvent } from 'react';
 import { defineMessages } from 'react-intl';
 
-import { log } from '~utils/debug';
-import fileReader from '../../../../lib/fileReader';
-import { UploadFile, FileReaderFile } from './types';
-import { asField } from '../Fields';
-import { Tooltip } from '../Popover';
-import Button from '../Button';
-import Icon from '../Icon';
-import ProgressBar from '../ProgressBar';
-import styles from './UploadItem.css';
 import { FieldEnhancedProps } from '~core/Fields/types';
+import { log } from '~utils/debug';
+
+import { UploadFile, UploadItemComponentProps } from './types';
+import Button from '../Button';
+import { asField } from '../Fields';
+import Icon from '../Icon';
+import { Tooltip } from '../Popover';
+import ProgressBar from '../ProgressBar';
+
+import fileReader from '../../../../lib/fileReader';
+
+import styles from './UploadItem.css';
 
 const MSG = defineMessages({
   removeActionText: {
@@ -19,24 +22,9 @@ const MSG = defineMessages({
   },
 });
 
-interface Props {
-  /** Array of allowed file types */
-  accept?: string[];
-
-  /** Index of file in list of files to be uploaded */
-  idx: number;
-
-  /** Maximum size of file in bytes */
-  maxFileSize?: number;
-
-  /** Function used to remove each file from the list of files to upload */
-  remove: (idx: number) => void;
-
-  /** Function used to perform the acutal upload action of the file */
-  upload: (file: FileReaderFile) => any;
-}
-
-class UploadItem extends Component<Props & FieldEnhancedProps<UploadFile>> {
+class UploadItem extends Component<
+  UploadItemComponentProps & FieldEnhancedProps<UploadFile>
+> {
   _readFiles: (files: object[]) => Promise<object[]>;
 
   static displayName = 'UploadItem';
@@ -89,27 +77,28 @@ class UploadItem extends Component<Props & FieldEnhancedProps<UploadFile>> {
     setValue({ ...$value, preview: readFile.data, uploaded: fileReference });
   }
 
-  read = (file: File) => this._readFiles([file]).then(contents => contents[0]);
+  read = (file: File) =>
+    this._readFiles([file]).then((contents) => contents[0]);
 
   render() {
     const {
-      $error,
+      error,
       $value: { file, uploaded },
     } = this.props;
 
     return (
-      <div className={styles.uploadItem} aria-invalid={!!$error}>
+      <div className={styles.uploadItem} aria-invalid={!!error}>
         <div className={styles.fileInfo}>
           <Tooltip
             placement="left"
-            content={$error || null}
-            trigger={$error ? 'hover' : 'disabled'}
+            content={error || null}
+            trigger={error ? 'hover' : 'disabled'}
           >
             <span className={styles.itemIcon}>
               <Icon name="file" title={file.name} />
             </span>
           </Tooltip>
-          {uploaded || $error ? (
+          {uploaded || error ? (
             <span>{file.name}</span>
           ) : (
             <div className={styles.itemProgress}>
@@ -130,6 +119,6 @@ class UploadItem extends Component<Props & FieldEnhancedProps<UploadFile>> {
   }
 }
 
-export default asField<Props, UploadFile>({ alwaysConnected: true })(
-  UploadItem,
-);
+export default asField<UploadItemComponentProps, UploadFile>({
+  alwaysConnected: true,
+})(UploadItem);

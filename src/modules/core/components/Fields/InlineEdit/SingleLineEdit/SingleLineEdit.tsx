@@ -33,11 +33,11 @@ interface State {
 class SingleLineEdit extends Component<Props & FieldEnhancedProps, State> {
   inputRef: any;
 
+  static displayName = 'SingleLineEdit';
+
   static defaultProps = {
     readOnly: false,
   };
-
-  static displayName = 'SingleLineEdit';
 
   state = {
     isEditing: false,

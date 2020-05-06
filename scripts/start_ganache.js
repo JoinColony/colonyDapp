@@ -8,9 +8,8 @@ let stdio;
 
 const startGanache = async () => {
   const process = spawn(
-    'yarn',
+    'ganache-cli',
     [
-      'ganache-cli',
       '--acctKeys', './src/lib/colonyNetwork/ganache-accounts.json',
       '--noVMErrorsOnRPCResponse',
       '--gasLimit', '6721975',

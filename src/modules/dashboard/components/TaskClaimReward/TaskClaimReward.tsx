@@ -60,7 +60,7 @@ const TaskClaimReward = ({
     values={{
       draftId,
       colonyAddress,
-      tokenAddresses: payouts.map(payout => payout.token.address),
+      tokenAddresses: payouts.map((payout) => payout.token.address),
     }}
   />
 );

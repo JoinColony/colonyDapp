@@ -6,7 +6,6 @@
 const path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const Dotenv = require('dotenv-webpack');
-const webpack = require('webpack');
 
 const utils = require('./scripts/utils');
 
@@ -158,10 +157,6 @@ const config = {
     ],
   },
   plugins: [
-    // For packages that still rely on babel 6 stuff, e.g. ledger: https://github.com/JoinColony/purser/issues/184
-    new webpack.ProvidePlugin({
-      regeneratorRuntime: '@babel/runtime/regenerator',
-    }),
     new Dotenv({
       systemvars: !!process.env.CI,
     }),

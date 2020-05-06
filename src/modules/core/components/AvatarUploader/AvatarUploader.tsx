@@ -1,4 +1,4 @@
-import React, { ReactNode, Component } from 'react';
+import React, { ReactNode, useCallback, useRef } from 'react';
 import {
   MessageDescriptor,
   defineMessages,
@@ -6,7 +6,6 @@ import {
 } from 'react-intl';
 
 import { Formik } from 'formik';
-import Dropzone from 'react-dropzone';
 
 import styles from './AvatarUploader.css';
 
@@ -54,74 +53,69 @@ interface Props {
   isSet?: boolean;
 }
 
-class AvatarUploader extends Component<Props> {
-  dropzoneRef?: Dropzone | null;
+const AvatarUploader = ({
+  elementOnly,
+  label,
+  help,
+  placeholder,
+  remove,
+  upload,
+  isSet = true,
+}: Props) => {
+  const dropzoneRef = useRef<{ open: () => void }>();
 
-  registerDropzone = (dropzone: Dropzone | null) => {
-    this.dropzoneRef = dropzone;
-  };
-
-  choose = () => {
-    if (this.dropzoneRef) {
-      this.dropzoneRef.open();
+  const choose = useCallback(() => {
+    if (dropzoneRef.current) {
+      dropzoneRef.current.open();
     }
-  };
+  }, []);
 
   // FileUpload children are renderProps (functions)
-  renderOverlay = () => () => (
+  const renderOverlay = () => () => (
     <div className={styles.overlay}>
       <FormattedMessage {...MSG.dropNow} />
     </div>
   );
 
-  render() {
-    const {
-      elementOnly,
-      label,
-      help,
-      placeholder,
-      remove,
-      upload,
-      isSet = true,
-    } = this.props;
-    // Formik is used for state and error handling through FileUpload, nothing else
-    return (
-      <Formik onSubmit={() => {}} initialValues={{ avatarUploader: [] }}>
-        <form>
-          <FileUpload
-            dropzoneRef={this.registerDropzone}
-            elementOnly={elementOnly}
-            classNames={styles}
-            accept={ACCEPTED_MIME_TYPES}
-            label={label}
-            help={help}
-            maxFilesLimit={1}
-            maxFileSize={ACCEPTED_MAX_FILE_SIZE}
-            name="avatarUploader"
-            renderPlaceholder={placeholder}
-            itemComponent={AvatarUploadItem}
-            upload={upload}
-          >
-            {this.renderOverlay()}
-          </FileUpload>
-          <div className={styles.buttonContainer}>
-            <Button
-              appearance={{ theme: 'danger' }}
-              text={{ id: 'button.remove' }}
-              onClick={remove}
-              disabled={!isSet}
-              data-test="avatarUploaderRemove"
-            />
-            <Button
-              text={{ id: 'button.choose' }}
-              onClick={this.choose}
-              data-test="avatarUploaderChoose"
-            />
-          </div>
-        </form>
-      </Formik>
-    );
-  }
-}
+  // Formik is used for state and error handling through FileUpload, nothing else
+  return (
+    <Formik onSubmit={() => {}} initialValues={{ avatarUploader: [] }}>
+      <form>
+        <FileUpload
+          elementOnly={elementOnly}
+          classNames={styles}
+          dropzoneOptions={{
+            accept: ACCEPTED_MIME_TYPES,
+            maxSize: ACCEPTED_MAX_FILE_SIZE,
+          }}
+          label={label}
+          help={help}
+          maxFilesLimit={1}
+          name="avatarUploader"
+          renderPlaceholder={placeholder}
+          ref={dropzoneRef}
+          itemComponent={AvatarUploadItem}
+          upload={upload}
+        >
+          {renderOverlay()}
+        </FileUpload>
+        <div className={styles.buttonContainer}>
+          <Button
+            appearance={{ theme: 'danger' }}
+            text={{ id: 'button.remove' }}
+            onClick={remove}
+            disabled={!isSet}
+            data-test="avatarUploaderRemove"
+          />
+          <Button
+            text={{ id: 'button.choose' }}
+            onClick={choose}
+            data-test="avatarUploaderChoose"
+          />
+        </div>
+      </form>
+    </Formik>
+  );
+};
 
 export default AvatarUploader;

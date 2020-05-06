@@ -52,7 +52,7 @@ const LevelTasksList = ({
     <div className={styles.main}>
       <Heading appearance={{ size: 'medium' }} text={MSG.title} />
       <ListGroup>
-        {levelSteps.map(persistentTask => (
+        {levelSteps.map((persistentTask) => (
           <ListGroupItem key={persistentTask.id}>
             <LevelTasksListItem
               levelId={levelId}

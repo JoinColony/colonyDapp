@@ -42,7 +42,7 @@ const ActivityFeed = ({ activities }: Props) => (
         </TableRow>
       </TableHeader>
       <TableBody>
-        {activities.map(activity => (
+        {activities.map((activity) => (
           <ActivityFeedItem key={activity.id} activity={activity} />
         ))}
       </TableBody>

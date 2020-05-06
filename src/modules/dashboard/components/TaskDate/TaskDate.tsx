@@ -92,7 +92,7 @@ const TaskDate = ({ draftId, dueDate: existingDueDate, disabled }: Props) => {
                     }}
                   />
                 }
-                renderContentFooter={close => (
+                renderContentFooter={(close) => (
                   <div className={styles.dateControls}>
                     <Button
                       appearance={{ theme: 'secondary' }}
@@ -104,7 +104,7 @@ const TaskDate = ({ draftId, dueDate: existingDueDate, disabled }: Props) => {
                       disabled={!existingDueDate}
                       text={{ id: 'button.remove' }}
                       onClick={() => {
-                        setFormikState(state => ({
+                        setFormikState((state) => ({
                           ...state,
                           values: {},
                         }));

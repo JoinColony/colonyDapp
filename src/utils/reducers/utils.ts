@@ -7,11 +7,11 @@ export const getActionTypes = (
     typeof actionTypes === 'string' ? new Set<any>([actionTypes]) : actionTypes;
   const successTypes = new Set<any>(
     // @ts-ignore
-    [...fetchTypes.values()].map(type => `${type}_SUCCESS`),
+    [...fetchTypes.values()].map((type) => `${type}_SUCCESS`),
   );
   const errorTypes = new Set<any>(
     // @ts-ignore
-    [...fetchTypes.values()].map(type => `${type}_ERROR`),
+    [...fetchTypes.values()].map((type) => `${type}_ERROR`),
   );
   return { fetchTypes, successTypes, errorTypes };
 };

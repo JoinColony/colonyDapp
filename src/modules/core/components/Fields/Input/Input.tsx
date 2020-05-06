@@ -71,7 +71,7 @@ const Input = ({
     innerRef,
     name,
     onChange,
-    value: undefined as (string | undefined),
+    value: undefined as string | undefined,
     ...props,
   };
 

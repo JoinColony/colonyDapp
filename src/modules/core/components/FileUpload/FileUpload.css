@@ -39,3 +39,8 @@
   color: var(--sky-blue);
   cursor: pointer;
 }
+
+.filesContainer {
+  height: 100%;
+  width: 100%;
+}

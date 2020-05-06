@@ -61,10 +61,7 @@ const MSG = defineMessages({
 const displayName = 'dashboard.CreateColonyWizard.StepUserName';
 
 const validationSchema = yup.object({
-  username: yup
-    .string()
-    .required()
-    .ensAddress(),
+  username: yup.string().required().ensAddress(),
 });
 
 const StepUserName = ({ stepCompleted, wizardForm, nextStep }: Props) => {

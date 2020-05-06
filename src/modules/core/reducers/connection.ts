@@ -18,7 +18,7 @@ const connectionStatsReducer: ReducerType<ConnectionRecord> = (
       // Should the errors be unset here?
       return state.set(CORE_CONNECTION_STATS, ConnectionStats(action.payload));
     case ActionTypes.CONNECTION_STATS_SUB_ERROR:
-      return state.update(CORE_CONNECTION_ERRORS, errors =>
+      return state.update(CORE_CONNECTION_ERRORS, (errors) =>
         errors.add(
           ConnectionError({
             error: action.payload,

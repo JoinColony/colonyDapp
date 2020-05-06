@@ -156,7 +156,12 @@ const InteractiveUsername = ({
   const user = useUser(userAddress);
   const friendlyName = getFriendlyName(user);
   return (
-    <InfoPopover colonyAddress={colonyAddress} domainId={domainId} user={user}>
+    <InfoPopover
+      colonyAddress={colonyAddress}
+      domainId={domainId}
+      user={user}
+      popperProps={{ strategy: 'fixed' }}
+    >
       <span title={friendlyName} className={styles.highlightCursor}>
         {friendlyName}
       </span>

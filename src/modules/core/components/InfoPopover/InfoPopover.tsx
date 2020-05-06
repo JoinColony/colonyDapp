@@ -33,7 +33,7 @@ export type Props = ContentProps & {
   /** Children elemnts or components to wrap the tooltip around */
   children?: ReactNode;
   /** Passed onto `Popover` component */
-  popperProps?: PopperProps;
+  popperProps?: Omit<PopperProps, 'children'>;
   /** How the popover gets triggered */
   trigger?: 'hover' | 'click' | 'disabled';
 };

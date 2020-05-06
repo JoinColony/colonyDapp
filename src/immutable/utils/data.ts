@@ -13,7 +13,7 @@ export const shouldFetchData = (
 ): boolean => {
   // If there are arguments in the fetch args that are still undefined, don't fetch yet
   // Useful when using multiple fetchers consecutively (with depedencies on each other)
-  if (fetchArgs.some(arg => typeof arg === 'undefined')) return false;
+  if (fetchArgs.some((arg) => typeof arg === 'undefined')) return false;
 
   // If we don't have any data yet, definitely fetch
   if (data == null) return true;

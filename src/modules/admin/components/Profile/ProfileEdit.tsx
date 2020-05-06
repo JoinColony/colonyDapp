@@ -73,14 +73,8 @@ interface FormValues {
 const validationSchema = yup.object({
   description: yup.string().nullable(),
   displayName: yup.string().nullable(),
-  guideline: yup
-    .string()
-    .url()
-    .nullable(),
-  website: yup
-    .string()
-    .url()
-    .nullable(),
+  guideline: yup.string().url().nullable(),
+  website: yup.string().url().nullable(),
 });
 
 interface Props {

@@ -29,7 +29,7 @@ exports[`Select component Renders initial component 1`] = `
         "defaultLocale": "en",
         "formatDate": [Function],
         "formatDateToParts": [Function],
-        "formatHTMLMessage": [Function],
+        "formatDisplayName": [Function],
         "formatList": [Function],
         "formatMessage": [Function],
         "formatNumber": [Function],
@@ -41,6 +41,7 @@ exports[`Select component Renders initial component 1`] = `
         "formats": Object {},
         "formatters": Object {
           "getDateTimeFormat": [Function],
+          "getDisplayNames": [Function],
           "getListFormat": [Function],
           "getMessageFormat": [Function],
           "getNumberFormat": [Function],
@@ -52,6 +53,7 @@ exports[`Select component Renders initial component 1`] = `
         "onError": [Function],
         "textComponent": Symbol(react.fragment),
         "timeZone": undefined,
+        "wrapRichTextChunksInFragment": undefined,
       }
     }
     label="Select me"
@@ -80,7 +82,7 @@ exports[`Select component Renders initial component 1`] = `
           "defaultLocale": "en",
           "formatDate": [Function],
           "formatDateToParts": [Function],
-          "formatHTMLMessage": [Function],
+          "formatDisplayName": [Function],
           "formatList": [Function],
           "formatMessage": [Function],
           "formatNumber": [Function],
@@ -92,6 +94,7 @@ exports[`Select component Renders initial component 1`] = `
           "formats": Object {},
           "formatters": Object {
             "getDateTimeFormat": [Function],
+            "getDisplayNames": [Function],
             "getListFormat": [Function],
             "getMessageFormat": [Function],
             "getNumberFormat": [Function],
@@ -103,6 +106,7 @@ exports[`Select component Renders initial component 1`] = `
           "onError": [Function],
           "textComponent": Symbol(react.fragment),
           "timeZone": undefined,
+          "wrapRichTextChunksInFragment": undefined,
         }
       }
       label="Select me"

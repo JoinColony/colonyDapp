@@ -109,7 +109,7 @@ const ColonyPermissionsAddDialog = ({
   const transform = useCallback(
     pipe(
       withKey(colonyAddress),
-      mapPayload(p => ({
+      mapPayload((p) => ({
         userAddress: p.user.profile.walletAddress,
         domainId,
         colonyAddress,

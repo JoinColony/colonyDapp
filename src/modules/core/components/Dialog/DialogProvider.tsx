@@ -24,8 +24,8 @@ const DialogProvider = ({ children }: Props) => {
   const [openDialogs, setOpenDialogs] = useState<DialogType<any>[]>([]);
 
   const closeDialog = useCallback((key: string) => {
-    setOpenDialogs(prevOpenDialogs => {
-      const idx = prevOpenDialogs.findIndex(dialog => dialog.key === key);
+    setOpenDialogs((prevOpenDialogs) => {
+      const idx = prevOpenDialogs.findIndex((dialog) => dialog.key === key);
       if (idx < 0) {
         return prevOpenDialogs;
       }
@@ -61,7 +61,7 @@ const DialogProvider = ({ children }: Props) => {
             rejectPromise = reject;
           }),
       };
-      setOpenDialogs(prevOpenDialogs => [...prevOpenDialogs, dialog]);
+      setOpenDialogs((prevOpenDialogs) => [...prevOpenDialogs, dialog]);
       return dialog;
     },
     [closeDialog],

@@ -70,10 +70,7 @@ const MSG = defineMessages({
 const displayName = 'dashboard.CreateColonyWizard.StepColonyName';
 
 const validationSchema = yup.object({
-  colonyName: yup
-    .string()
-    .required()
-    .ensAddress(),
+  colonyName: yup.string().required().ensAddress(),
   displayName: yup.string().required(),
 });
 

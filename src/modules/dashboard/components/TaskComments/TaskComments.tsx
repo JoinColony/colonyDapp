@@ -51,11 +51,7 @@ interface Props {
 const displayName = 'dashboard.TaskComments';
 
 const validationSchema = yup.object().shape({
-  comment: yup
-    .string()
-    .trim()
-    .min(1)
-    .required(),
+  comment: yup.string().trim().min(1).required(),
 });
 
 const handleKeyboardSubmit = (
@@ -150,7 +146,7 @@ const TaskComments = ({ draftId, history }: Props) => {
               appearance={{ colorSchema: 'transparent' }}
               minRows={3}
               maxRows={8}
-              onKeyDown={event => handleKeyboardSubmit(event, handleSubmit)}
+              onKeyDown={(event) => handleKeyboardSubmit(event, handleSubmit)}
               value={values.comment || ''}
               disabled={!username || isSubmitting}
             />

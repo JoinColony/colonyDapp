@@ -8,7 +8,7 @@ export const filterUserSelection = (data, filterValue) => {
   }
 
   const filtered = data.filter(
-    user =>
+    (user) =>
       user &&
       user.profile &&
       user.profile.username &&

@@ -45,7 +45,7 @@ export function* createTransaction(id: string, config: TxConfig) {
 
   // Wait for a success or cancel action before cancelling the tasks
   yield take(
-    action =>
+    (action) =>
       (action.type === ActionTypes.TRANSACTION_SUCCEEDED ||
         action.type === ActionTypes.TRANSACTION_CANCEL) &&
       action.meta.id === id,
@@ -63,8 +63,8 @@ export function* createTransactionChannels(
 ): IterableIterator<{
   [id: string]: { channel: Channel<any>; index: number; id: string };
 }> {
-  const txIds = ids.map(id => `${batchId}-${id}`);
-  const channels = yield all(txIds.map(id => call(getTxChannel, id))) as any;
+  const txIds = ids.map((id) => `${batchId}-${id}`);
+  const channels = yield all(txIds.map((id) => call(getTxChannel, id))) as any;
   return ids.reduce(
     (result, id, index) => ({
       ...result,

@@ -72,15 +72,6 @@ const MembersListItem = <U extends AnyUser = AnyUser>(props: Props<U>) => {
             size="xs"
             colonyAddress={colonyAddress}
             address={walletAddress}
-            popperProps={{
-              children: () => null,
-              modifiers: {
-                preventOverflow: {
-                  enabled: true,
-                  boundariesElement: 'viewport',
-                },
-              },
-            }}
             user={user}
             showInfo={!onRowClick || showUserInfo}
             domainId={domainId}

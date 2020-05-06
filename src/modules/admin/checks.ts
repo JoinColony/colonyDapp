@@ -6,7 +6,7 @@ export const canMoveTokens = (
   walletAddress: Address,
 ) =>
   colonyRoles &&
-  !!Object.values(colonyRoles).find(users =>
+  !!Object.values(colonyRoles).find((users) =>
     Object.entries(users).find(
       ([userAddress, roles]) =>
         userAddress === walletAddress && roles[ROLES.FUNDING],

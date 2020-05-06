@@ -38,7 +38,7 @@ const TokenList = ({
   <div className={styles.tokenCardContainer}>
     <CardList appearance={appearance}>
       {isLoading && <SpinnerLoader appearance={{ size: 'large' }} />}
-      {tokens.map(token => (
+      {tokens.map((token) => (
         <div key={token.address}>
           {'balances' in token && (
             <TokenCard

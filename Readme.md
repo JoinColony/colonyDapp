@@ -4,7 +4,6 @@
 (for versions see package.json -> engines)
 * A running docker daemon
 * Node.js
-* Yarn
 * [mkcert](https://github.com/FiloSottile/mkcert) (for self-signed SSL certificates)
 
 ## Installation
@@ -43,7 +42,7 @@ This will create the certificate files needed.
 
 This project depends on external libraries, so after cloning, they need to be provisioned:
 ```bash
-yarn provision
+npm run provision
 ```
 
 Under the hood, this will initialize the `submodule`s, install their packages, and build them. Furthermore this will create the SSL certificate needed to run the dev server
@@ -51,7 +50,7 @@ Under the hood, this will initialize the `submodule`s, install their packages, a
 ### Install packages
 
 ```bash
-yarn
+npm install
 ```
 
 ### Define environment variables
@@ -75,7 +74,7 @@ console.log(MY_API_URL); // https://my-api-url.example.com/api
 ## Running dev environment
 
 ```bash
-yarn dev
+npm run dev
 ```
 
 This will run the _whole stack_ which starts `ganache`, deploys the contracts, starts `trufflepig` and `webpack`. The webpack dev server will be available under `https://localhost:9090` (mind the `s` after `http`!)
@@ -83,10 +82,10 @@ This will run the _whole stack_ which starts `ganache`, deploys the contracts, s
 You can run these individually using the following commands:
 
 ```
-yarn ganache
-yarn contracts:deploy
-yarn trufflepig
-yarn webpack
+npm run ganache
+npm run contracts:deploy
+npm run trufflepig
+npm run webpack
 ```
 
 ### Verbose logging
@@ -100,7 +99,7 @@ If you're brave enough to set the `DEBUG` environment variable, you'll get a lot
 
 If you want to build the bundle locally for inspection, you can do it via:
 ```bash
-yarn webpack:build
+npm run webpack:build
 ````
 
 _Note: It's a straight-up dev build. Just bundled, no code optimizations whatsoever._
@@ -109,22 +108,22 @@ _Note: It's a straight-up dev build. Just bundled, no code optimizations whatsoe
 
 Linting your code via `eslint` can be done as such:
 ```bash
-yarn lint
+npm run lint
 ```
 
 To lint the project's style sheets you run:
 ```bash
-yarn stylelint
+npm run stylelint
 ```
 
 ## Type checking
 
 Type checking using TypeScript can be accessed using this npm script:
 ```bash
-yarn typecheck
+npm run typecheck
 
 # Or, with file watching (or any other `tsc optional arguments`)
-yarn typecheck --watch
+npm run typecheck --watch
 ```
 
 ## Testing
@@ -132,5 +131,5 @@ yarn typecheck --watch
 To run unit tests you have the following npm script:
 
 ```bash
-yarn test
+npm run test
 ```

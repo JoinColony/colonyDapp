@@ -73,7 +73,7 @@ const DatePicker = ({
 
   // Handle day picking via daypicker
   const handleDayPick = useCallback(
-    day => {
+    (day) => {
       if (setValueOnPick && setValue) {
         setValue(day);
       }
@@ -84,7 +84,7 @@ const DatePicker = ({
   );
 
   // Handle day picking via input field
-  const handleInputChange = useCallback(evt => {
+  const handleInputChange = useCallback((evt) => {
     const maybeDate = new Date(Date.parse(evt.target.value));
     setInputValue(evt.target.value);
     if (maybeDate instanceof Date && !Number.isNaN(maybeDate.valueOf())) {
@@ -131,7 +131,7 @@ const DatePicker = ({
   const selectedDay = currentDate || $value;
 
   const renderDatePickerContent = useCallback(
-    close => (
+    (close) => (
       <DatePickerContent
         close={close}
         closeOnDayPick={closeOnDayPick}

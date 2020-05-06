@@ -73,7 +73,7 @@ const TaskDisplay = ({
         />
         <Button
           appearance={{ theme: 'blue' }}
-          onClick={() => setIsEditing(val => !val)}
+          onClick={() => setIsEditing((val) => !val)}
           text={{ id: 'button.edit' }}
         />
       </div>

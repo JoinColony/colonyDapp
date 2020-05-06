@@ -9,7 +9,7 @@ const hasPendingTransactions = () => {
 };
 
 export default function setupOnBeforeUnload() {
-  const handleBeforeunload = evt => {
+  const handleBeforeunload = (evt) => {
     const disallowUnload = hasPendingTransactions();
     if (disallowUnload) {
       evt.preventDefault();

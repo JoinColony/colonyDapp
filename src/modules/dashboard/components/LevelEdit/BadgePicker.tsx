@@ -12,7 +12,7 @@ import styles from './BadgePicker.css';
 import { badges } from '../../../../img/icons.json';
 import InputStatus from '~core/Fields/InputStatus';
 
-const badgeIcons = badges.map(badgeName => {
+const badgeIcons = badges.map((badgeName) => {
   const id = camelcase(badgeName);
   return {
     id,

@@ -13,7 +13,7 @@ interface Props {
   transform?: ActionTransformFnType;
   accept?: string[];
   maxFileSize?: number;
-  name?: string;
+  name: string;
   label?: any;
   status?: any;
 }

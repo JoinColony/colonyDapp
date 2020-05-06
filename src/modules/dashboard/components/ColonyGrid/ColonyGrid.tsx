@@ -68,7 +68,7 @@ const ColonyGrid = ({
           <Heading text={MSG.title} appearance={{ size: 'medium' }} />
         </div>
         <div className={styles.colonyGrid}>
-          {colonyAddresses.map(colonyAddress => (
+          {colonyAddresses.map((colonyAddress) => (
             <ColonyGridItem colonyAddress={colonyAddress} key={colonyAddress} />
           ))}
         </div>

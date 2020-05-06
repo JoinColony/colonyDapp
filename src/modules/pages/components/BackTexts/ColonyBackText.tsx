@@ -16,7 +16,7 @@ const MSG = defineMessages({
 });
 
 const ColonyBackText = () => {
-  const { colonyName } = useParams();
+  const { colonyName } = useParams<{ colonyName: string }>();
   const { data } = useColonyFromNameQuery({
     // We have to define an empty address here for type safety, will be replaced by the query
     variables: { name: colonyName, address: '' },

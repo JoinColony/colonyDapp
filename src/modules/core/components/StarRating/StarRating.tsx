@@ -31,8 +31,8 @@ const displayName = 'StarRating';
 const StarRating = ({ highestPossible = 3, rating }: Props) => (
   <>
     {[...Array(highestPossible).keys()]
-      .map(val => val + 1)
-      .map(possibleValue => (
+      .map((val) => val + 1)
+      .map((possibleValue) => (
         <Icon
           key={`star-rating-${possibleValue}`}
           name="star"

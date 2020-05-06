@@ -110,7 +110,11 @@ const validationSchema = yup.object({
 const displayName = 'dashboard.LevelEdit';
 
 const LevelEdit = () => {
-  const { colonyName, levelId, programId } = useParams();
+  const { colonyName, levelId, programId } = useParams<{
+    colonyName: string;
+    levelId: string;
+    programId: string;
+  }>();
   const history = useHistory();
   const { walletAddress } = useLoggedInUser();
 

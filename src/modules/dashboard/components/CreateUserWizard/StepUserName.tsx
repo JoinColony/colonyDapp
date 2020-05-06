@@ -57,10 +57,7 @@ const MSG = defineMessages({
 const displayName = 'dashboard.CreateUserWizard.StepUserName';
 
 const validationSchema = yup.object({
-  username: yup
-    .string()
-    .required()
-    .ensAddress(),
+  username: yup.string().required().ensAddress(),
 });
 
 const StepUserName = ({ wizardValues, nextStep }: Props) => {

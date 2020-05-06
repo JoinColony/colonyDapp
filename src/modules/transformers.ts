@@ -29,7 +29,7 @@ export const getDomainRoles = (
       if (!roleSets[userAddress]) {
         roleSets[userAddress] = new Set(roles);
       } else {
-        roles.forEach(role => roleSets[userAddress].add(role));
+        roles.forEach((role) => roleSets[userAddress].add(role));
       }
     });
     parent = parent.parentId ? domains[parent.parentId] : null;
@@ -110,7 +110,7 @@ export const getAllUserRoles = (
       (allUserRoles: Set<ROLES>, domain: DomainType) => {
         if (!userAddress) return allUserRoles;
         if (domain.roles[userAddress]) {
-          domain.roles[userAddress].forEach(role => allUserRoles.add(role));
+          domain.roles[userAddress].forEach((role) => allUserRoles.add(role));
         }
         return allUserRoles;
       },
@@ -125,7 +125,7 @@ export const getAllUserRoles = (
 const getLegacyFounder = (
   rootDomainRoles: Record<string, RoleSetType>,
 ): Address =>
-  Object.keys(rootDomainRoles).find(address => {
+  Object.keys(rootDomainRoles).find((address) => {
     const roles = rootDomainRoles[address];
     return (
       roles.includes(ROLES.ROOT) &&
@@ -166,13 +166,13 @@ export const getCommunityRoles = (
   const rootDomainRoles = getDomainRoles(domains, ROOT_DOMAIN);
   const founder = getLegacyFounder(rootDomainRoles);
   const admins = new Set();
-  Object.keys(domains).map(domainId => {
+  Object.keys(domains).map((domainId) => {
     const currentDomainAdmins = getLegacyAdmins(
       domains,
       parseInt(domainId, 10),
       founder,
     );
-    return currentDomainAdmins.map(adminAddress => admins.add(adminAddress));
+    return currentDomainAdmins.map((adminAddress) => admins.add(adminAddress));
   });
   return {
     founder,

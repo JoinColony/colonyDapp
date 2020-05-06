@@ -101,61 +101,59 @@ const displayName = 'dashboard.CreateColonyWizard.StepTokenChoice';
 
 const StepTokenChoice = ({ nextStep, wizardForm, wizardValues }: Props) => (
   <Form onSubmit={nextStep} {...wizardForm}>
-    {
-      <section className={styles.content}>
-        <div className={styles.title}>
-          <Heading appearance={{ size: 'medium', weight: 'bold' }}>
-            <FormattedMessage
-              {...MSG.heading}
-              values={{
-                /*
-                 * @NOTE We need to use a JS string truncate here, rather then CSS,
-                 * since we're dealing with a string that needs to be truncated,
-                 * inside a sentence that does not
-                 */
-                colony: (
-                  <span title={ENS.normalizeAsText(wizardValues.colonyName)}>
-                    {multiLineTextEllipsis(
-                      ENS.normalizeAsText(wizardValues.colonyName),
-                      29,
-                    )}
-                  </span>
-                ),
-              }}
-            />
-          </Heading>
-        </div>
-        <div className={styles.subtitle}>
-          <Heading
-            appearance={{ size: 'normal', weight: 'thin' }}
-            text={MSG.subtitle}
-          />
-        </div>
-        <div className={styles.subtitleWithExampleBox}>
-          <Heading
-            className={styles.subtitleWithExample}
-            appearance={{ size: 'normal', weight: 'thin' }}
-            text={MSG.subtitleWithExample}
-          />
-        </div>
-        <DecisionHub name="tokenChoice" options={options} />
-        <div className={styles.titleAndButton}>
-          <Heading
-            appearance={{
-              size: 'tiny',
-              weight: 'bold',
-              margin: 'none',
+    <section className={styles.content}>
+      <div className={styles.title}>
+        <Heading appearance={{ size: 'medium', weight: 'bold' }}>
+          <FormattedMessage
+            {...MSG.heading}
+            values={{
+              /*
+               * @NOTE We need to use a JS string truncate here, rather then CSS,
+               * since we're dealing with a string that needs to be truncated,
+               * inside a sentence that does not
+               */
+              colony: (
+                <span title={ENS.normalizeAsText(wizardValues.colonyName)}>
+                  {multiLineTextEllipsis(
+                    ENS.normalizeAsText(wizardValues.colonyName),
+                    29,
+                  )}
+                </span>
+              ),
             }}
-            text={MSG.notSure}
           />
-          <ExternalLink
-            className={styles.link}
-            text={MSG.learnMore}
-            href={LEARN_MORE_URL}
-          />
-        </div>
-      </section>
-    }
+        </Heading>
+      </div>
+      <div className={styles.subtitle}>
+        <Heading
+          appearance={{ size: 'normal', weight: 'thin' }}
+          text={MSG.subtitle}
+        />
+      </div>
+      <div className={styles.subtitleWithExampleBox}>
+        <Heading
+          className={styles.subtitleWithExample}
+          appearance={{ size: 'normal', weight: 'thin' }}
+          text={MSG.subtitleWithExample}
+        />
+      </div>
+      <DecisionHub name="tokenChoice" options={options} />
+      <div className={styles.titleAndButton}>
+        <Heading
+          appearance={{
+            size: 'tiny',
+            weight: 'bold',
+            margin: 'none',
+          }}
+          text={MSG.notSure}
+        />
+        <ExternalLink
+          className={styles.link}
+          text={MSG.learnMore}
+          href={LEARN_MORE_URL}
+        />
+      </div>
+    </section>
   </Form>
 );
 

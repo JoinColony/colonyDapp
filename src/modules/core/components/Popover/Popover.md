@@ -112,6 +112,21 @@ import Button from '../Button';
 </Popover>
 ```
 
+### Popover without arrow
+
+```js
+import Button from '../Button';
+
+<Popover
+  trigger="click"
+  appearance={{ theme: 'dark' }}
+  content="Stop poking me!"
+  showArrow={false}
+>
+  <Button appearance={{ theme: 'primary' }}>Click me</Button>
+</Popover>
+```
+
 ### Popover using a render prop (function)
 
 Use this method if you have complex elements for the trigger. You can also see how to use the content render prop.

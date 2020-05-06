@@ -11,7 +11,7 @@ const displayName = 'Form';
 
 const Form = ({ children, saveGuard = false, ...props }: Props) => (
   <Formik {...props}>
-    {injectedProps => (
+    {(injectedProps) => (
       <FormikForm>
         {saveGuard && <SaveGuard />}
         {typeof children == 'function' ? children(injectedProps) : children}

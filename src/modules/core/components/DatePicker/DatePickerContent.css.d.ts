@@ -8,6 +8,8 @@ export const weekdaysRow: string;
 export const weekday: string;
 export const body: string;
 export const week: string;
+export const weekNumber: string;
+export const todayButton: string;
 export const day: string;
 export const interactionDisabled: string;
 export const footer: string;

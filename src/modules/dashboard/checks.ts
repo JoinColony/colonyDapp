@@ -102,7 +102,7 @@ export const hasRequestedToWork = (
   userAddress: Address,
 ) =>
   workRequestAddresses.find(
-    workRequestAddress => workRequestAddress === userAddress,
+    (workRequestAddress) => workRequestAddress === userAddress,
   );
 
 export const canRequestToWork = (task: AnyTask, userAddress: Address) =>

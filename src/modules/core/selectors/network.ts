@@ -16,17 +16,15 @@ import {
 export const networkSelector = (state: RootStateRecord): NetworkRecord =>
   state.getIn([ns, CORE_NETWORK]);
 
-export const networkFeeSelector = createSelector(
-  networkSelector,
-  state => state.getIn(['record', CORE_NETWORK_FEE]),
+export const networkFeeSelector = createSelector(networkSelector, (state) =>
+  state.getIn(['record', CORE_NETWORK_FEE]),
 );
 
 export const networkFeeInverseSelector = createSelector(
   networkSelector,
-  state => state.getIn(['record', CORE_NETWORK_FEE_INVERSE]),
+  (state) => state.getIn(['record', CORE_NETWORK_FEE_INVERSE]),
 );
 
-export const networkVersionSelector = createSelector(
-  networkSelector,
-  state => state.getIn(['record', CORE_NETWORK_VERSION]),
+export const networkVersionSelector = createSelector(networkSelector, (state) =>
+  state.getIn(['record', CORE_NETWORK_VERSION]),
 );

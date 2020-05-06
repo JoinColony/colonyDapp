@@ -110,7 +110,7 @@ const Tokens = ({
       colonyAddress,
       domainIds: [
         COLONY_TOTAL_BALANCE_DOMAIN_ID,
-        ...Object.keys(domains || {}).map(domainId => parseInt(domainId, 10)),
+        ...Object.keys(domains || {}).map((domainId) => parseInt(domainId, 10)),
       ],
       tokenAddresses: [ZERO_ADDRESS, ...tokenAddresses],
     },

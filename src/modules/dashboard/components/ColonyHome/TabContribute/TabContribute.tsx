@@ -98,7 +98,7 @@ const TabContribute = ({
   const nativeToken = tokens.find(
     ({ address }) => address === nativeTokenAddress,
   );
-  const ethToken = tokens.find(token => tokenIsETH(token));
+  const ethToken = tokens.find((token) => tokenIsETH(token));
 
   const nativeTokenBalance = getBalanceFromToken(
     nativeToken,

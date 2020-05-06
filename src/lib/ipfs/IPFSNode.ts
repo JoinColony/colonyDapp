@@ -20,7 +20,7 @@ class IPFSNode {
   ready: Promise<boolean>;
 
   constructor() {
-    const promise = IPFS.create(IPFSNode.getIpfsConfig()).then(ipfs => {
+    const promise = IPFS.create(IPFSNode.getIpfsConfig()).then((ipfs) => {
       this._ipfs = ipfs;
     });
     this.ready = promise.then(() => true);
@@ -35,16 +35,20 @@ class IPFSNode {
   async getString(hash: string): Promise<string> {
     if (!hash) return '';
     await this.ready;
-    const result = await this._ipfs.cat(hash);
-    if (!result) throw new Error('No such file');
-    return result.toString();
+    const resultIterator = await this._ipfs.cat(hash);
+    const { value } = await resultIterator.next();
+    if (!value) throw new Error('No such file');
+    return value.toString();
   }
 
   /** Upload a string */
   async addString(data: string): Promise<string> {
     await this.ready;
-    const [result] = await this._ipfs.add(IPFS.Buffer.from(data));
-    return result.path;
+    const resultIterator = await this._ipfs.add(data);
+    const {
+      value: { path },
+    } = await resultIterator.next();
+    return path;
   }
 
   /** Start the connection to IPFS (if not connected already) */

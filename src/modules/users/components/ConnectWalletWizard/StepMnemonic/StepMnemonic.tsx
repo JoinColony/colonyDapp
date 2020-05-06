@@ -73,7 +73,7 @@ const StepMnemonic = ({
       onError={(_: object, { setStatus }: FormikBag<object, FormValues>) => {
         setStatus({ error: MSG.errorOpenMnemonic });
       }}
-      onSuccess={values => nextStep({ ...values })}
+      onSuccess={(values) => nextStep({ ...values })}
       validationSchema={validationSchema}
       transform={transform}
       {...wizardForm}

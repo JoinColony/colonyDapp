@@ -9,6 +9,7 @@ import { ReducerType, ActionTypes } from '~redux/index';
 import { withFetchableData } from '~utils/reducers';
 import { FetchableContractTransactionList } from '../../../admin/state';
 
+// eslint-disable-next-line prettier/prettier
 const currentUserTransactionsReducer: ReducerType<
   FetchableContractTransactionList
 > = (state = FetchableData() as FetchableContractTransactionList, action) => {
@@ -18,7 +19,7 @@ const currentUserTransactionsReducer: ReducerType<
       return state.set(
         'record',
         List<ContractTransactionRecord>(
-          transactions.map(tx => ContractTransaction(fromJS(tx))),
+          transactions.map((tx) => ContractTransaction(fromJS(tx))),
         ),
       );
     }

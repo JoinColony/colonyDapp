@@ -113,7 +113,8 @@ export type TokenWithBalances =
 export type AnyTokens = (
   | ColonyTokens[number]
   | UserTokens[number]
-  | OneToken)[];
+  | OneToken
+)[];
 
 // Almost all tokens with 'address' and 'iconHash'
 export type AnyToken = ColonyTokens[0] | UserTokens[0] | OneToken;

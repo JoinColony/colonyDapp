@@ -47,7 +47,7 @@ const DomainList = ({
       <Table scrollable>
         <TableBody>
           {domains ? (
-            Object.keys(domains).map(domainId => (
+            Object.keys(domains).map((domainId) => (
               <DomainListItem
                 key={domainId}
                 domain={domains[domainId]}
