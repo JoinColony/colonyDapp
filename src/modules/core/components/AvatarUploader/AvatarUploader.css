@@ -1,6 +1,7 @@
 .dropzone {
   height: 160px;
   width: 160px;
+  position: relative;
   overflow: hidden;
   border-radius: 50%;
 }

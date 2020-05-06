@@ -28,48 +28,35 @@ const upload = (file) => new Promise(resolve => setTimeout(resolve, 3000));
 Here we passing the result of the upload process (in this case the avatarURL) back into the uploader. Normally this would be done via a database or IPFS.
 
 ```js
-const { Component } = require('react');
+const { useState } = require('react');
 import UserAvatar from '../UserAvatar';
 
-class AvatarUploadWrapper extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      avatarURL: null
-    }
-    this.uploadAvatar = this.uploadAvatar.bind(this);
-    this.removeAvatar = this.removeAvatar.bind(this);
-  }
-  uploadAvatar(file) {
+const AvatarUploadWrapper = () => {
+  const [avatarUrl, setAvatarUrl] = useState(null);
+  const uploadAvatar = (file) => {
     return new Promise(resolve => setTimeout(() => {
-      this.setState({
-        avatarURL: file.data
-      })
+      setAvatarUrl(file.data);
       resolve();
     }, 3000));
   }
-  removeAvatar() {
-    this.setState({
-      avatarURL: null
-    })
+  const removeAvatar = () => {
+    setAvatarUrl(null);
   }
-  render() {
-    return (
-      <AvatarUploader
-        label="Upload your avatar!"
-        placeholder={
-          <UserAvatar
-            avatarURL={this.state.avatarURL}
-            size="xl"
-            address="0x1afb213afa8729fa7908154b90e256f1be70989a"
-            user={{profile: { username: 'testuser' }}}
-          />
-        }
-        upload={this.uploadAvatar}
-        remove={this.removeAvatar}
-      />
-    );
-  }
+  return (
+    <AvatarUploader
+      label="Upload your avatar!"
+      placeholder={
+        <UserAvatar
+          avatarURL={avatarUrl}
+          size="xl"
+          address="0x1afb213afa8729fa7908154b90e256f1be70989a"
+          user={{profile: { username: 'testuser' }}}
+        />
+      }
+      upload={uploadAvatar}
+      remove={removeAvatar}
+    />
+  );
 }
 
 <AvatarUploadWrapper />
