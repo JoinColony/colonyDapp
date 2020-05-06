@@ -1,4 +1,4 @@
-import React, { ReactNode, SyntheticEvent, Component } from 'react';
+import React, { ReactNode, SyntheticEvent, useState, useCallback } from 'react';
 import { MessageDescriptor } from 'react-intl';
 import nanoid from 'nanoid';
 
@@ -15,11 +15,12 @@ interface Appearance {
 }
 
 interface Props {
+  /** Appearance object */
   appearance?: Appearance;
-  /** Additional className for customizing styles */
-  className?: string;
   /** Children to render in place of the default label */
   children?: ReactNode;
+  /** Additional className for customizing styles */
+  className?: string;
   /** Disable the input */
   disabled: boolean;
   /** Display the element without label */
@@ -34,10 +35,10 @@ interface Props {
   labelValues?: SimpleMessageValues;
   /** Input field name (form variable) */
   name: string;
-  /** Input field value */
-  value: string;
   /** Standard input field property */
   onChange?: Function;
+  /** Input field value */
+  value: string;
   /** @ignore injected by `asFieldArray` */
   form: { [s: string]: any };
   /** @ignore injected by `asFieldArray` */
@@ -46,100 +47,90 @@ interface Props {
   remove: (value: string) => void;
 }
 
-interface State {
-  inputId: string;
-}
+const displayName = 'Checkbox';
 
-class Checkbox extends Component<Props, State> {
-  static displayName = 'Checkbox';
+const Checkbox = ({
+  appearance,
+  children,
+  className,
+  disabled,
+  elementOnly,
+  form: { values },
+  help,
+  helpValues,
+  label,
+  labelValues,
+  name,
+  onChange,
+  push,
+  remove,
+  value,
+}: Props) => {
+  const [inputId] = useState<string>(nanoid());
 
-  static defaultProps = {
-    appearance: {
-      direction: 'vertical',
+  const handleOnChange = useCallback(
+    (e: SyntheticEvent<HTMLInputElement>) => {
+      const idx = values[name].indexOf(value);
+      if (idx >= 0) {
+        remove(idx);
+      } else {
+        push(value);
+      }
+      if (onChange) {
+        onChange(e);
+      }
     },
-    checked: false,
-    disabled: false,
-    elementOnly: false,
-  };
+    [name, onChange, push, remove, value, values],
+  );
 
-  state = {
-    inputId: nanoid(),
-  };
-
-  handleOnChange = (e: SyntheticEvent<HTMLInputElement>) => {
-    const {
-      push,
-      remove,
-      name,
-      value,
-      form: { values },
-      onChange,
-    } = this.props;
-    const idx = values[name].indexOf(value);
-    if (idx >= 0) {
-      remove(idx);
-    } else {
-      push(value);
-    }
-    if (onChange) {
-      onChange(e);
-    }
-  };
-
-  render() {
-    const {
-      appearance,
-      children,
-      className,
-      disabled,
-      elementOnly,
-      form: { values },
-      help,
-      helpValues,
-      label,
-      labelValues,
-      value,
-      name,
-    } = this.props;
-    const { inputId } = this.state;
-    const isChecked = values[name].indexOf(value) >= 0;
-    const mainClasses = getMainClasses(appearance, styles, {
-      isChecked,
-      disabled,
-    });
-    const classNames = className ? `${mainClasses} ${className}` : mainClasses;
-    return (
-      <label className={classNames} htmlFor={elementOnly ? inputId : undefined}>
-        <>
-          <input
-            id={inputId}
-            className={styles.delegate}
-            name={name}
-            type="checkbox"
-            disabled={disabled}
-            onChange={this.handleOnChange}
-            aria-disabled={disabled}
-            aria-checked={isChecked}
+  const isChecked = values[name].indexOf(value) >= 0;
+  const mainClasses = getMainClasses(appearance, styles, {
+    isChecked,
+    disabled,
+  });
+  const classNames = className ? `${mainClasses} ${className}` : mainClasses;
+  return (
+    <label className={classNames} htmlFor={elementOnly ? inputId : undefined}>
+      <>
+        <input
+          id={inputId}
+          className={styles.delegate}
+          name={name}
+          type="checkbox"
+          disabled={disabled}
+          onChange={handleOnChange}
+          aria-disabled={disabled}
+          aria-checked={isChecked}
+        />
+        <span className={styles.checkbox}>
+          <span className={styles.checkmark} />
+        </span>
+        {!elementOnly && !!label ? (
+          <InputLabel
+            inputId={inputId}
+            label={label}
+            labelValues={labelValues}
+            help={help}
+            helpValues={helpValues}
+            appearance={{ direction: 'horizontal' }}
           />
-          <span className={styles.checkbox}>
-            <span className={styles.checkmark} />
-          </span>
-          {!elementOnly && !!label ? (
-            <InputLabel
-              inputId={inputId}
-              label={label}
-              labelValues={labelValues}
-              help={help}
-              helpValues={helpValues}
-              appearance={{ direction: 'horizontal' }}
-            />
-          ) : (
-            label || children
-          )}
-        </>
-      </label>
-    );
-  }
-}
+        ) : (
+          label || children
+        )}
+      </>
+    </label>
+  );
+};
+
+Checkbox.displayName = displayName;
+
+Checkbox.defaultProps = {
+  appearance: {
+    direction: 'vertical',
+  },
+  checked: false,
+  disabled: false,
+  elementOnly: false,
+};
 
 export default asFieldArray()(Checkbox);
