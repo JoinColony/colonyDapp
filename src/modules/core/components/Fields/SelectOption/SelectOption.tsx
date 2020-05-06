@@ -1,5 +1,5 @@
+import React, { KeyboardEvent, SyntheticEvent, useCallback } from 'react';
 import { defineMessages } from 'react-intl';
-import React, { Component, SyntheticEvent, KeyboardEvent } from 'react';
 
 import { SelectOption as SelectOptionType } from '../Select/types';
 
@@ -25,52 +25,63 @@ interface Props {
   formatIntl: FieldEnhancedProps['formatIntl'];
 }
 
-class SelectOption extends Component<Props> {
-  static displayName = 'SelectOption';
+const displayName = 'SelectOption';
 
-  handleItemClick = (evt: SyntheticEvent<HTMLElement>) => {
-    const { onClick } = this.props;
-    evt.stopPropagation();
-    onClick();
-  };
+const SelectOption = ({
+  checked,
+  id,
+  idx,
+  onClick,
+  onSelect,
+  option,
+  selected,
+  formatIntl,
+}: Props) => {
+  const handleItemClick = useCallback(
+    (evt: SyntheticEvent<HTMLElement>) => {
+      evt.stopPropagation();
+      onClick();
+    },
+    [onClick],
+  );
 
-  handleItemKeyPress = (evt: KeyboardEvent<any>) => {
-    const { onClick } = this.props;
-    evt.stopPropagation();
-    onClick();
-  };
+  const handleItemKeyPress = useCallback(
+    (evt: KeyboardEvent<any>) => {
+      evt.stopPropagation();
+      onClick();
+    },
+    [onClick],
+  );
 
-  handleItemSelect = () => {
-    const { idx, onSelect } = this.props;
+  const handleItemSelect = useCallback(() => {
     onSelect(idx);
-  };
+  }, [idx, onSelect]);
 
-  render() {
-    const { checked, id, option, selected, formatIntl } = this.props;
-    const label = formatIntl(option.label, option.labelValues);
-    return (
-      <li
-        className={styles.main}
-        aria-disabled={option.disabled}
-        aria-selected={selected}
-        id={id}
-        role="option"
-        ref={(e) => selected && e && e.focus()}
-        onClick={this.handleItemClick}
-        onKeyPress={this.handleItemKeyPress}
-        onMouseEnter={this.handleItemSelect}
-      >
-        <span title={label}>
-          {label}
-          {checked && (
-            <small className={styles.selectedHelpText}>
-              ({formatIntl(MSG.selectedLabelHelp)})
-            </small>
-          )}
-        </span>
-      </li>
-    );
-  }
-}
+  const label = formatIntl(option.label, option.labelValues);
+  return (
+    <li
+      className={styles.main}
+      aria-disabled={option.disabled}
+      aria-selected={selected}
+      id={id}
+      role="option"
+      ref={(e) => selected && e && e.focus()}
+      onClick={handleItemClick}
+      onKeyPress={handleItemKeyPress}
+      onMouseEnter={handleItemSelect}
+    >
+      <span title={label}>
+        {label}
+        {checked && (
+          <small className={styles.selectedHelpText}>
+            ({formatIntl(MSG.selectedLabelHelp)})
+          </small>
+        )}
+      </span>
+    </li>
+  );
+};
+
+SelectOption.displayName = displayName;
 
 export default SelectOption;
