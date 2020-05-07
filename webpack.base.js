@@ -83,11 +83,14 @@ const config = {
       },
       {
         test: /\.(woff|woff2|png|jpe?g|gif)$/,
-        use: 'file-loader',
+        loader: 'file-loader',
         include: [
           path.resolve('src'),
           path.resolve('node_modules', 'eth-contract-metadata', 'images'),
         ],
+        options: {
+          esModule: false,
+        }
       },
       /*
        * To load svg icons and token icons to import
