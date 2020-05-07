@@ -2,10 +2,12 @@ import { eventChannel } from 'redux-saga';
 
 import { call, put, spawn, take, takeLatest, all } from 'redux-saga/effects';
 
-import softwareWallet from '@colony/purser-software';
-import metamaskWallet, { accountChangeHook } from '@colony/purser-metamask';
-import ledgerWallet from '@colony/purser-ledger';
-import trezorWallet from '@colony/purser-trezor';
+import { open as openSoftwareWallet } from '@purser/software';
+import {
+  accountChangeHook,
+  open as openMetaMaskWallet,
+  MetaMaskInpageProvider,
+} from '@purser/metamask';
 import { TrufflepigLoader } from '@colony/colony-js-contract-loader-http';
 import { getNetworkClient } from '@colony/colony-js-client';
 
@@ -18,16 +20,14 @@ import { create, putError } from '~utils/saga/effects';
 import { WALLET_SPECIFICS, WALLET_CATEGORIES } from '~immutable/index';
 import { HARDWARE_WALLET_DEFAULT_ADDRESS_COUNT } from '../constants';
 
-// This should be typed better
-type WalletInstance = object;
-
-const hardwareWallets = {
-  ledger: ledgerWallet,
-  trezor: trezorWallet,
-  json: softwareWallet,
-  mnemonic: softwareWallet,
-  metamask: metamaskWallet,
-  trufflepig: softwareWallet,
+const walletOpenFunctions = {
+  // Disabled for now
+  // ledger: ledgerWallet,
+  // trezor: trezorWallet,
+  json: openSoftwareWallet,
+  mnemonic: openSoftwareWallet,
+  metamask: openMetaMaskWallet,
+  trufflepig: openSoftwareWallet,
 };
 
 function* fetchAddressBalance(address, provider) {
@@ -46,7 +46,7 @@ function* fetchAccounts(action: Action<ActionTypes.WALLET_FETCH_ACCOUNTS>) {
   const { walletType } = action.payload;
 
   try {
-    const { otherAddresses } = yield call(hardwareWallets[walletType].open, {
+    const { otherAddresses } = yield call(walletOpenFunctions[walletType], {
       addressCount: HARDWARE_WALLET_DEFAULT_ADDRESS_COUNT,
     });
 
@@ -81,7 +81,7 @@ function* fetchAccounts(action: Action<ActionTypes.WALLET_FETCH_ACCOUNTS>) {
 
 function* openMnemonicWallet(action: Action<ActionTypes.WALLET_CREATE>) {
   const { connectwalletmnemonic } = action.payload;
-  return yield call(softwareWallet.open, {
+  return yield call(openSoftwareWallet, {
     mnemonic: connectwalletmnemonic,
   });
 }
@@ -91,9 +91,9 @@ function* openMnemonicWallet(action: Action<ActionTypes.WALLET_CREATE>) {
  */
 function* metamaskWatch(walletAddress: Address) {
   const channel = eventChannel((emit) => {
-    accountChangeHook(({ selectedAddress }: { selectedAddress: string }) =>
-      emit(createAddress(selectedAddress)),
-    );
+    accountChangeHook(({ selectedAddress }: MetaMaskInpageProvider) => {
+      if (selectedAddress) emit(createAddress(selectedAddress));
+    });
     return () => {
       // @todo Nicer unsubscribe once supported in purser-metamask
       // @ts-ignore
@@ -117,14 +117,14 @@ function* metamaskWatch(walletAddress: Address) {
 }
 
 function* openMetamaskWallet() {
-  const wallet = yield call(metamaskWallet.open);
+  const wallet = yield call(openMetamaskWallet);
   yield spawn(metamaskWatch, createAddress(wallet.address));
   return wallet;
 }
 
 function* openHardwareWallet(action: Action<ActionTypes.WALLET_CREATE>) {
   const { hardwareWalletChoice, method } = action.payload;
-  const wallet = yield call(hardwareWallets[method].open, {
+  const wallet = yield call(walletOpenFunctions[method], {
     /**
      * @todo : is 100 addresses really what we want?
      */
@@ -142,14 +142,14 @@ function* openTrufflepigWallet({
 }: Action<ActionTypes.WALLET_CREATE>) {
   const loader = yield create(TrufflepigLoader);
   const { privateKey } = yield call([loader, loader.getAccount], accountIndex);
-  return yield call(softwareWallet.open, {
+  return yield call(openSoftwareWallet, {
     privateKey,
   });
 }
 
 function* createWallet(action: Action<ActionTypes.WALLET_CREATE>) {
   const { mnemonic } = action.payload;
-  return yield call(softwareWallet.open, {
+  return yield call(openSoftwareWallet, {
     mnemonic,
   });
 }

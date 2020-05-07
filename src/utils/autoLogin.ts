@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { open } from '@colony/purser-metamask';
+import { open } from '@purser/metamask';
 
 import { WALLET_SPECIFICS } from '~immutable/index';
 import { Address } from '~types/index';
