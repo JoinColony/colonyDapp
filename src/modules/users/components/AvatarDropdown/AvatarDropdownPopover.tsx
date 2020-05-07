@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { useCallback } from 'react';
 import { defineMessages } from 'react-intl';
 
 import { ActionButton } from '~core/Button';
@@ -56,11 +56,10 @@ interface Props {
   username?: string | null;
 }
 
-class AvatarDropdownPopover extends Component<Props> {
-  static displayName = 'users.AvatarDropdown.AvatarDropdownPopover';
+const displayName = 'users.AvatarDropdown.AvatarDropdownPopover';
 
-  renderUserSection = () => {
-    const { username } = this.props;
+const AvatarDropdownPopover = ({ closePopover, username }: Props) => {
+  const renderUserSection = useCallback(() => {
     return (
       <DropdownMenuSection separator>
         {!username && (
@@ -88,9 +87,9 @@ class AvatarDropdownPopover extends Component<Props> {
         )}
       </DropdownMenuSection>
     );
-  };
+  }, [username]);
 
-  renderColonySection = () => (
+  const renderColonySection = () => (
     <DropdownMenuSection separator>
       <DropdownMenuItem>
         <NavLink to={CREATE_COLONY_ROUTE} text={MSG.createColony} />
@@ -98,7 +97,7 @@ class AvatarDropdownPopover extends Component<Props> {
     </DropdownMenuSection>
   );
 
-  renderHelperSection = () => (
+  const renderHelperSection = () => (
     <DropdownMenuSection separator>
       <DropdownMenuItem>
         <ExternalLink
@@ -124,7 +123,7 @@ class AvatarDropdownPopover extends Component<Props> {
     </DropdownMenuSection>
   );
 
-  renderMetaSection = () => (
+  const renderMetaSection = () => (
     <DropdownMenuSection separator>
       <DropdownMenuItem>
         <ActionButton
@@ -138,17 +137,16 @@ class AvatarDropdownPopover extends Component<Props> {
     </DropdownMenuSection>
   );
 
-  render() {
-    const { closePopover } = this.props;
-    return (
-      <DropdownMenu onClick={closePopover}>
-        {this.renderUserSection()}
-        {this.renderColonySection()}
-        {this.renderHelperSection()}
-        {this.renderMetaSection()}
-      </DropdownMenu>
-    );
-  }
-}
+  return (
+    <DropdownMenu onClick={closePopover}>
+      {renderUserSection()}
+      {renderColonySection()}
+      {renderHelperSection()}
+      {renderMetaSection()}
+    </DropdownMenu>
+  );
+};
+
+AvatarDropdownPopover.displayName = displayName;
 
 export default AvatarDropdownPopover;

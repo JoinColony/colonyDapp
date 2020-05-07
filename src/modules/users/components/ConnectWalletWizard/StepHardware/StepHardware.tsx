@@ -1,7 +1,7 @@
 import { FormikBag } from 'formik';
 import * as yup from 'yup';
 import { connect } from 'react-redux';
-import React, { Component } from 'react';
+import React, { useCallback, useEffect } from 'react';
 import { defineMessages } from 'react-intl';
 import BigNumber from 'bn.js';
 
@@ -101,163 +101,170 @@ interface Props extends WizardProps<FormValues> {
   availableAddresses: { address: Address; balance: BigNumber }[];
 }
 
-class StepHardware extends Component<Props> {
-  static displayName = 'users.ConnectWalletWizard.StepHardware';
+const displayName = 'users.ConnectWalletWizard.StepHardware';
 
-  static defaultProps = {
-    availableAddresses: [],
-    wizardValues: {
-      method: WALLET_SPECIFICS.LEDGER,
-      hardwareWalletChoice: '0x0',
-      hardwareWalletFilter: '0x0',
-    },
-  };
-
-  componentDidMount() {
-    const {
-      fetchAccounts,
-      wizardValues: { method },
-    } = this.props;
+const StepHardware = ({
+  nextStep,
+  availableAddresses,
+  fetchAccounts,
+  isLoading,
+  resetWizard,
+  stepCompleted,
+  wizardForm,
+  wizardValues: { method },
+  wizardValues,
+}: Props) => {
+  useEffect(() => {
     fetchAccounts(method);
-  }
+  }, [fetchAccounts, method]);
 
-  renderContent(formValues: FormValues) {
-    const { availableAddresses, isLoading } = this.props;
-    const { hardwareWalletChoice = '', hardwareWalletFilter = '' } = formValues;
+  const renderContent = useCallback(
+    (formValues: FormValues) => {
+      const {
+        hardwareWalletChoice = '',
+        hardwareWalletFilter = '',
+      } = formValues;
 
-    if (isLoading) {
-      return (
-        <SpinnerLoader
-          loadingText={MSG.loadingAddresses}
-          appearance={{ size: 'massive' }}
-        />
-      );
-    }
+      if (isLoading) {
+        return (
+          <SpinnerLoader
+            loadingText={MSG.loadingAddresses}
+            appearance={{ size: 'massive' }}
+          />
+        );
+      }
 
-    if (availableAddresses.length) {
-      const filteredWalletChoices = availableAddresses.filter(({ address }) =>
-        address
-          .toLocaleLowerCase()
-          .includes(hardwareWalletFilter.toLowerCase()),
-      );
+      if (availableAddresses.length) {
+        const filteredWalletChoices = availableAddresses.filter(({ address }) =>
+          address
+            .toLocaleLowerCase()
+            .includes(hardwareWalletFilter.toLowerCase()),
+        );
 
-      const iconClassName = hardwareWalletFilter
-        ? styles.searchBoxIconContainerActive
-        : styles.searchBoxIconContainer;
+        const iconClassName = hardwareWalletFilter
+          ? styles.searchBoxIconContainerActive
+          : styles.searchBoxIconContainer;
+
+        return (
+          <>
+            <Heading
+              text={MSG.heading}
+              appearance={{ size: 'medium', weight: 'thin' }}
+            />
+            <InputLabel label={MSG.walletSelectionLabel} />
+            <div className={styles.choiceHeadingRow}>
+              <div className={styles.searchBox}>
+                <div className={iconClassName}>
+                  <Icon name="wallet" title={MSG.walletIconTitle} />
+                </div>
+                <Input
+                  appearance={{ theme: 'minimal' }}
+                  name="hardwareWalletFilter"
+                  label={MSG.walletSelectionLabel}
+                  placeholder={MSG.searchInputPlacholder}
+                  elementOnly
+                />
+              </div>
+              <div className={styles.balanceHeading}>
+                <Heading
+                  text={MSG.balanceText}
+                  appearance={{ size: 'normal' }}
+                />
+              </div>
+            </div>
+            <div className={styles.walletChoicesContainer}>
+              {filteredWalletChoices.length === 0 &&
+                hardwareWalletFilter.length > 0 && (
+                  <Heading
+                    text={MSG.emptySearchResultsText}
+                    appearance={{ size: 'normal' }}
+                  />
+                )}
+              {filteredWalletChoices.map(({ address, balance }) => (
+                <div className={styles.choiceRow} key={address}>
+                  <AddressItem
+                    address={address}
+                    checked={hardwareWalletChoice === address}
+                    balance={balance}
+                  />
+                </div>
+              ))}
+            </div>
+          </>
+        );
+      }
 
       return (
         <>
+          <Icon name="wallet" title={MSG.walletIconTitle} />
+          <Heading text={MSG.errorHeading} appearance={{ size: 'large' }} />
           <Heading
-            text={MSG.heading}
-            appearance={{ size: 'medium', weight: 'thin' }}
+            text={MSG.errorDescription}
+            appearance={{ size: 'normal' }}
           />
-          <InputLabel label={MSG.walletSelectionLabel} />
-          <div className={styles.choiceHeadingRow}>
-            <div className={styles.searchBox}>
-              <div className={iconClassName}>
-                <Icon name="wallet" title={MSG.walletIconTitle} />
-              </div>
-              <Input
-                appearance={{ theme: 'minimal' }}
-                name="hardwareWalletFilter"
-                label={MSG.walletSelectionLabel}
-                placeholder={MSG.searchInputPlacholder}
-                elementOnly
-              />
-            </div>
-            <div className={styles.balanceHeading}>
-              <Heading text={MSG.balanceText} appearance={{ size: 'normal' }} />
-            </div>
-          </div>
-          <div className={styles.walletChoicesContainer}>
-            {filteredWalletChoices.length === 0 &&
-              hardwareWalletFilter.length > 0 && (
-                <Heading
-                  text={MSG.emptySearchResultsText}
-                  appearance={{ size: 'normal' }}
-                />
-              )}
-            {filteredWalletChoices.map(({ address, balance }) => (
-              <div className={styles.choiceRow} key={address}>
-                <AddressItem
-                  address={address}
-                  checked={hardwareWalletChoice === address}
-                  balance={balance}
-                />
-              </div>
-            ))}
-          </div>
         </>
       );
-    }
+    },
+    [availableAddresses, isLoading],
+  );
 
-    return (
-      <>
-        <Icon name="wallet" title={MSG.walletIconTitle} />
-        <Heading text={MSG.errorHeading} appearance={{ size: 'large' }} />
-        <Heading text={MSG.errorDescription} appearance={{ size: 'normal' }} />
-      </>
-    );
-  }
-
-  render() {
-    const {
-      nextStep,
-      availableAddresses,
-      resetWizard,
-      stepCompleted,
-      wizardForm,
-      wizardValues,
-    } = this.props;
-    return (
-      <ActionForm
-        submit={ActionTypes.WALLET_CREATE}
-        success={ActionTypes.USER_CONTEXT_SETUP_SUCCESS}
-        error={ActionTypes.WALLET_CREATE_ERROR}
-        onError={(
-          _: Record<string, any>,
-          { setStatus }: FormikBag<Record<string, any>, FormValues>,
-        ) => setStatus({ error: MSG.errorPickAddress })}
-        onSuccess={(values) => nextStep({ ...values })}
-        validationSchema={validationSchema}
-        transform={mergePayload(wizardValues)}
-        {...wizardForm}
-      >
-        {({ dirty, isSubmitting, isValid, status, values }) => (
-          <div>
-            <section className={styles.content}>
-              {this.renderContent(values)}
-            </section>
-            <FormStatus status={status} />
-            {isValid && values.hardwareWalletChoice && (
-              <div className={styles.interactionPrompt}>
-                <WalletInteraction walletType={WALLET_CATEGORIES.HARDWARE} />
-              </div>
-            )}
-            <div className={styles.actions}>
-              <Button
-                text={MSG.buttonBack}
-                appearance={{ theme: 'secondary', size: 'large' }}
-                onClick={resetWizard}
-              />
-              <Button
-                text={
-                  availableAddresses.length > 0
-                    ? MSG.buttonAdvance
-                    : MSG.buttonRetry
-                }
-                appearance={{ theme: 'primary', size: 'large' }}
-                type="submit"
-                disabled={!isValid || (!dirty && !stepCompleted)}
-                loading={isSubmitting}
-              />
+  return (
+    <ActionForm
+      submit={ActionTypes.WALLET_CREATE}
+      success={ActionTypes.USER_CONTEXT_SETUP_SUCCESS}
+      error={ActionTypes.WALLET_CREATE_ERROR}
+      onError={(
+        _: Record<string, any>,
+        { setStatus }: FormikBag<Record<string, any>, FormValues>,
+      ) => setStatus({ error: MSG.errorPickAddress })}
+      onSuccess={(values) => nextStep({ ...values })}
+      validationSchema={validationSchema}
+      transform={mergePayload(wizardValues)}
+      {...wizardForm}
+    >
+      {({ dirty, isSubmitting, isValid, status, values }) => (
+        <div>
+          <section className={styles.content}>{renderContent(values)}</section>
+          <FormStatus status={status} />
+          {isValid && values.hardwareWalletChoice && (
+            <div className={styles.interactionPrompt}>
+              <WalletInteraction walletType={WALLET_CATEGORIES.HARDWARE} />
             </div>
+          )}
+          <div className={styles.actions}>
+            <Button
+              text={MSG.buttonBack}
+              appearance={{ theme: 'secondary', size: 'large' }}
+              onClick={resetWizard}
+            />
+            <Button
+              text={
+                availableAddresses.length > 0
+                  ? MSG.buttonAdvance
+                  : MSG.buttonRetry
+              }
+              appearance={{ theme: 'primary', size: 'large' }}
+              type="submit"
+              disabled={!isValid || (!dirty && !stepCompleted)}
+              loading={isSubmitting}
+            />
           </div>
-        )}
-      </ActionForm>
-    );
-  }
-}
+        </div>
+      )}
+    </ActionForm>
+  );
+};
+
+StepHardware.defaultProps = {
+  availableAddresses: [],
+  wizardValues: {
+    method: WALLET_SPECIFICS.LEDGER,
+    hardwareWalletChoice: '0x0',
+    hardwareWalletFilter: '0x0',
+  },
+};
+
+StepHardware.displayName = displayName;
 
 const enhance = connect(
   (state: any) => {

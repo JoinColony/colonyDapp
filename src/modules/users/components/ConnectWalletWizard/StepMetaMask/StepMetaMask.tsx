@@ -1,5 +1,11 @@
 import { FormikBag } from 'formik';
-import React, { Component, SyntheticEvent } from 'react';
+import React, {
+  SyntheticEvent,
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+} from 'react';
 import { defineMessages } from 'react-intl';
 import { open } from '@colony/purser-metamask';
 import { staticMethods as metamaskMessages } from '@colony/purser-metamask/messages';
@@ -62,147 +68,158 @@ interface State {
   metamaskError: string | null;
 }
 
-class MetaMask extends Component<Props, State> {
-  timerHandle!: ReturnType<typeof setTimeout>;
+const displayName = 'users.ConnectWalletWizard.StepMetaMask';
 
-  static displayName = 'users.ConnectWalletWizard.StepMetaMask';
+const MetaMask = ({
+  nextStep,
+  resetWizard,
+  wizardForm,
+  wizardValues,
+}: Props) => {
+  const timerHandle = useRef<number>();
 
-  state = {
-    isLoading: false,
-    isValid: false,
-    metamaskError: null,
-  };
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [isValid, setIsValid] = useState<boolean>(false);
+  const [metamaskError, setMetamaskError] = useState<string | null>(null);
 
-  componentDidMount() {
-    this.connectMetaMask().then().catch();
-  }
-
-  componentWilUnmount() {
-    if (this.timerHandle) {
-      clearTimeout(this.timerHandle);
-    }
-  }
-
-  connectMetaMask = async () => {
+  const connectMetaMask = useCallback(async () => {
     const {
       didNotAuthorize,
       cancelMessageSign,
       metamaskNotAvailable,
     } = metamaskMessages;
-    let metamaskError;
+    let mmError;
     let wallet;
     try {
       wallet = await open();
     } catch (error) {
-      metamaskError = error.message;
+      mmError = error.message;
       if (error.message.includes(didNotAuthorize)) {
-        metamaskError = 'notAuthorized';
+        mmError = 'notAuthorized';
       }
       if (error.message.includes(cancelMessageSign)) {
-        metamaskError = 'cancelSign';
+        mmError = 'cancelSign';
       }
       if (error.message.includes(metamaskNotAvailable)) {
-        metamaskError = 'notAvailable';
+        mmError = 'notAvailable';
       }
     }
-    this.setState({
-      isValid: !metamaskError || !!(wallet && wallet.ensAddress),
-      isLoading: false,
-      metamaskError,
-    });
-  };
+    setIsValid(!mmError || !!(wallet && wallet.ensAddress));
+    setIsLoading(false);
+    setMetamaskError(mmError);
+  }, []);
 
-  handleRetryClick = (evt: SyntheticEvent<HTMLButtonElement>) => {
-    evt.preventDefault();
-    this.setState({ isLoading: true });
+  const handleRetryClick = useCallback(
+    (evt: SyntheticEvent<HTMLButtonElement>) => {
+      evt.preventDefault();
+      setIsLoading(true);
 
-    /*
-     * This is here only to show a spinner on the button after being clicked
-     * Without this, the user can't tell if the click actually registered
-     */
-    this.timerHandle = setTimeout(async () => {
-      await this.connectMetaMask();
-    }, 500);
-  };
+      /*
+       * This is here only to show a spinner on the button after being clicked
+       * Without this, the user can't tell if the click actually registered
+       */
+      if (window) {
+        timerHandle.current = window.setTimeout(async () => {
+          await connectMetaMask();
+        }, 500);
+      }
+    },
+    [connectMetaMask],
+  );
 
-  render() {
-    const { nextStep, resetWizard, wizardForm, wizardValues } = this.props;
-    const { isLoading, isValid, metamaskError } = this.state;
-    return (
-      <ActionForm
-        submit={ActionTypes.WALLET_CREATE}
-        success={ActionTypes.USER_CONTEXT_SETUP_SUCCESS}
-        error={ActionTypes.WALLET_CREATE_ERROR}
-        onError={(_: string, { setStatus }: FormikBag<object, FormValues>) => {
-          setStatus({ error: MSG.errorOpenMetamask });
-        }}
-        onSuccess={(values) => nextStep({ ...values })}
-        transform={mergePayload(wizardValues)}
-        {...wizardForm}
-      >
-        {({ isSubmitting, status }) => (
-          <main>
-            <div className={styles.content}>
-              <div className={styles.iconContainer}>
-                <Icon
-                  name="metamask"
-                  title={{ id: 'wallet.metamask' }}
-                  appearance={{ size: 'medium' }}
-                />
-              </div>
-              {isValid ? (
-                <>
-                  <Heading
-                    text={MSG.heading}
-                    appearance={{ size: 'medium', margin: 'none' }}
-                  />
-                  <Heading
-                    text={MSG.subHeading}
-                    appearance={{ size: 'medium', margin: 'none' }}
-                  />
-                </>
-              ) : (
+  useEffect(() => {
+    const connect = async () => {
+      try {
+        await connectMetaMask();
+      } catch (err) {
+        console.error(err);
+      }
+    };
+
+    connect();
+
+    // Cleanup timeout
+    return () => {
+      if (window) {
+        window.clearTimeout(timerHandle.current);
+      }
+    };
+  }, [connectMetaMask]);
+
+  return (
+    <ActionForm
+      submit={ActionTypes.WALLET_CREATE}
+      success={ActionTypes.USER_CONTEXT_SETUP_SUCCESS}
+      error={ActionTypes.WALLET_CREATE_ERROR}
+      onError={(_: string, { setStatus }: FormikBag<object, FormValues>) => {
+        setStatus({ error: MSG.errorOpenMetamask });
+      }}
+      onSuccess={(values) => nextStep({ ...values })}
+      transform={mergePayload(wizardValues)}
+      {...wizardForm}
+    >
+      {({ isSubmitting, status }) => (
+        <main>
+          <div className={styles.content}>
+            <div className={styles.iconContainer}>
+              <Icon
+                name="metamask"
+                title={{ id: 'wallet.metamask' }}
+                appearance={{ size: 'medium' }}
+              />
+            </div>
+            {isValid ? (
+              <>
                 <Heading
-                  text={
-                    status && status.error ? status.error : MSG.errorHeading
-                  }
-                  textValues={{ metamaskError }}
+                  text={MSG.heading}
                   appearance={{ size: 'medium', margin: 'none' }}
                 />
-              )}
-            </div>
-            {isValid && (
-              <div className={styles.interactionPrompt}>
-                <WalletInteraction walletType={WALLET_CATEGORIES.METAMASK} />
-              </div>
-            )}
-            <div className={styles.actions}>
-              <Button
-                text={MSG.buttonBack}
-                appearance={{ theme: 'secondary', size: 'large' }}
-                onClick={resetWizard}
+                <Heading
+                  text={MSG.subHeading}
+                  appearance={{ size: 'medium', margin: 'none' }}
+                />
+              </>
+            ) : (
+              <Heading
+                text={status && status.error ? status.error : MSG.errorHeading}
+                textValues={{ metamaskError }}
+                appearance={{ size: 'medium', margin: 'none' }}
               />
-              {isValid ? (
-                <Button
-                  text={MSG.buttonAdvance}
-                  appearance={{ theme: 'primary', size: 'large' }}
-                  type="submit"
-                  loading={isLoading || isSubmitting}
-                />
-              ) : (
-                <Button
-                  text={MSG.buttonRetry}
-                  appearance={{ theme: 'primary', size: 'large' }}
-                  onClick={(evt) => this.handleRetryClick(evt)}
-                  loading={isLoading || isSubmitting}
-                />
-              )}
+            )}
+          </div>
+          {isValid && (
+            <div className={styles.interactionPrompt}>
+              <WalletInteraction walletType={WALLET_CATEGORIES.METAMASK} />
             </div>
-          </main>
-        )}
-      </ActionForm>
-    );
-  }
-}
+          )}
+          <div className={styles.actions}>
+            <Button
+              text={MSG.buttonBack}
+              appearance={{ theme: 'secondary', size: 'large' }}
+              onClick={resetWizard}
+            />
+            {isValid ? (
+              <Button
+                text={MSG.buttonAdvance}
+                appearance={{ theme: 'primary', size: 'large' }}
+                type="submit"
+                loading={isLoading || isSubmitting}
+              />
+            ) : (
+              <Button
+                text={MSG.buttonRetry}
+                appearance={{ theme: 'primary', size: 'large' }}
+                onClick={handleRetryClick}
+                loading={isLoading || isSubmitting}
+              />
+            )}
+          </div>
+        </main>
+      )}
+    </ActionForm>
+  );
+};
+
+MetaMask.displayName = displayName;
 
 export default MetaMask;
