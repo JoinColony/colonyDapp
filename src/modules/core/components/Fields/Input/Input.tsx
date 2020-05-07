@@ -1,4 +1,4 @@
-import React, { ReactNode } from 'react';
+import React, { ReactNode, RefObject } from 'react';
 import cx from 'classnames';
 import { CleaveOptions } from 'cleave.js/options';
 import { MessageDescriptor } from 'react-intl';
@@ -35,7 +35,7 @@ export interface Props {
   formattingOptions?: CleaveOptions;
 
   /** Pass a ref to the `<input>` element */
-  innerRef?: (ref: HTMLElement | null) => void;
+  innerRef?: RefObject<any> | ((ref: HTMLElement | null) => void);
 }
 
 const Input = ({
