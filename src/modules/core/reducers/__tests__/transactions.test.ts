@@ -1,7 +1,7 @@
 import { Map as ImmutableMap, Record } from 'immutable';
 
 import { Transaction, TRANSACTION_STATUSES } from '~immutable/index';
-import { ContractContexts } from '~types/index';
+import { ContractContext } from '~types/index';
 
 import reducer from '../transactions';
 import { CoreTransactions, TransactionsListMap } from '../../state/index';
@@ -40,7 +40,7 @@ describe(`core: reducers (transactions)`, () => {
   const params = { param1: 123 };
   const id = 'my transaction id';
   const existingTxId = 'my existing tx id';
-  const context = ContractContexts.NETWORK_CONTEXT;
+  const context = ContractContext.Network;
   const methodName = 'createColony';
 
   const initialState = CoreTransactions({

@@ -2,7 +2,7 @@ import React from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 
 import { WizardProps } from '~core/Wizard';
-import { WALLET_SPECIFICS } from '~immutable/index';
+import { WalletMethod } from '~immutable/index';
 import { isDev } from '~utils/debug';
 import Heading from '~core/Heading';
 import { Form } from '~core/Fields';
@@ -81,20 +81,20 @@ const MSG = defineMessages({
 });
 
 type FormValues = {
-  method: WALLET_SPECIFICS;
+  method: WalletMethod;
 };
 
 const displayName = 'users.ConnectWalletWizard.StepStart';
 
 const options = [
   {
-    value: WALLET_SPECIFICS.METAMASK,
+    value: WalletMethod.MetaMask,
     title: { id: 'wallet.metamask' },
     subtitle: MSG.metaMaskSubtitle,
     icon: 'metamask',
   },
   {
-    value: WALLET_SPECIFICS.MNEMONIC,
+    value: WalletMethod.Mnemonic,
     title: MSG.mnemonicTitle,
     subtitle: MSG.mnemonicSubtitle,
     icon: 'wallet',
@@ -115,11 +115,27 @@ const options = [
   //   subtitle: MSG.trezorSubtitle,
   //   icon: 'wallet',
   // },
+  {
+    value: WalletMethod.Ledger,
+    title: MSG.ledgerTitle,
+    subtitle: MSG.ledgerSubtitle,
+    icon: 'wallet',
+    // To be re-enabled for colonyDapp#1760
+    disabled: true,
+  },
+  {
+    value: WalletMethod.Trezor,
+    title: MSG.trezorTitle,
+    subtitle: MSG.trezorSubtitle,
+    icon: 'wallet',
+    // To be re-enabled for colonyDapp#1760
+    disabled: true,
+  },
 ];
 
 if (isDev) {
   options.push({
-    value: WALLET_SPECIFICS.TRUFFLEPIG,
+    value: WalletMethod.Ganache,
     title: MSG.trufflepigTitle,
     subtitle: MSG.trufflepigSubtitle,
     icon: 'wallet',

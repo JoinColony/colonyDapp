@@ -1,5 +1,5 @@
-import BigNumber from 'bn.js';
 import { Resolvers } from 'apollo-client';
+import { bigNumberify } from 'ethers/utils';
 
 import ENS from '~lib/ENS';
 import { Address } from '~types/index';
@@ -42,7 +42,7 @@ export const colonyResolvers = ({
       // fetch whether the user is allowed to mint tokens via the colony
       let canMintNativeToken = true;
       try {
-        await colonyClient.mintTokens.estimate({ amount: new BigNumber(1) });
+        await colonyClient.estimate.mintTokens(bigNumberify(1));
       } catch (error) {
         canMintNativeToken = false;
       }
@@ -50,14 +50,13 @@ export const colonyResolvers = ({
     },
     async isInRecoveryMode({ colonyAddress }) {
       const colonyClient = await colonyManager.getColonyClient(colonyAddress);
-      const { inRecoveryMode } = await colonyClient.isInRecoveryMode.call();
-      return inRecoveryMode;
+      return colonyClient.isInRecoveryMode();
     },
     async isNativeTokenLocked({ colonyAddress }) {
       const colonyClient = await colonyManager.getColonyClient(colonyAddress);
       let isNativeTokenLocked;
       try {
-        const { locked } = await colonyClient.tokenClient.isLocked.call();
+        const locked = await colonyClient.tokenClient.locked();
         isNativeTokenLocked = locked;
       } catch (error) {
         isNativeTokenLocked = false;
@@ -82,7 +81,7 @@ export const colonyResolvers = ({
       const colonyClient = await colonyManager.getColonyClient(colonyAddress);
       let canUnlockNativeToken = true;
       try {
-        await colonyClient.tokenClient.unlock.call({});
+        await colonyClient.tokenClient.unlock();
       } catch (error) {
         canUnlockNativeToken = false;
       }
@@ -90,8 +89,7 @@ export const colonyResolvers = ({
     },
     async version({ colonyAddress }) {
       const colonyClient = await colonyManager.getColonyClient(colonyAddress);
-      const { version } = await colonyClient.getVersion.call();
-      return version;
+      return colonyClient.version();
     },
   },
 });

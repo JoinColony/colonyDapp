@@ -1,7 +1,7 @@
 import React from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
+import { ColonyRole } from '@colony/colony-js';
 
-import { ROLES } from '~constants';
 import { Address, DomainsMapType } from '~types/index';
 import Heading from '~core/Heading';
 
@@ -15,7 +15,7 @@ import styles from './Domains.css';
 interface Props {
   colonyAddress: Address;
   domains: DomainsMapType;
-  rootRoles: ROLES[];
+  rootRoles: ColonyRole[];
 }
 
 const MSG = defineMessages({

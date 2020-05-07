@@ -1,7 +1,10 @@
 import { ReactNode } from 'react';
 
+// FIXME get from ethers?
+export type TransactionReceipt = any;
+
 export * from './keyTypes';
-export * from './TransactionReceipt';
+// export * from './TransactionReceipt';
 export * from './domains';
 export * from './DefaultValues';
 export * from './RecordToJS';

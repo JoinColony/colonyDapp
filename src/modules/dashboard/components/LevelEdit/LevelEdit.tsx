@@ -3,8 +3,8 @@ import { defineMessages, FormattedMessage } from 'react-intl';
 import { useHistory, useParams, Redirect } from 'react-router-dom';
 import * as yup from 'yup';
 import { FormikProps } from 'formik';
+import { ROOT_DOMAIN_ID } from '@colony/colony-js';
 
-import { ROOT_DOMAIN } from '~constants';
 import Button from '~core/Button';
 import { useDialog, ConfirmDialog } from '~core/Dialog';
 import { Form, Input, InputLabel, Textarea, FormStatus } from '~core/Fields';
@@ -164,7 +164,7 @@ const LevelEdit = () => {
   );
   const userRoles = useTransformer(getUserRoles, [
     domains,
-    ROOT_DOMAIN,
+    ROOT_DOMAIN_ID,
     walletAddress,
   ]);
 

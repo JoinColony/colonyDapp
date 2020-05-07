@@ -1,6 +1,6 @@
 import React from 'react';
+import { ROOT_DOMAIN_ID } from '@colony/colony-js';
 
-import { ROOT_DOMAIN } from '~constants';
 import CardList from '~core/CardList';
 import { Address } from '~types/index';
 import { ColonyTokens, UserTokens } from '~data/index';
@@ -30,7 +30,7 @@ const displayName = 'admin.Tokens.TokenList';
 
 const TokenList = ({
   appearance,
-  domainId = ROOT_DOMAIN,
+  domainId = ROOT_DOMAIN_ID,
   isLoading,
   nativeTokenAddress,
   tokens,

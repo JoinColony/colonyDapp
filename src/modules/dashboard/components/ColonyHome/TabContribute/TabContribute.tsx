@@ -2,8 +2,9 @@ import React, { useState, useCallback } from 'react';
 import { defineMessages } from 'react-intl';
 import { useHistory } from 'react-router-dom';
 import throttle from 'lodash/throttle';
+import { ROOT_DOMAIN_ID } from '@colony/colony-js';
 
-import { COLONY_TOTAL_BALANCE_DOMAIN_ID, ROOT_DOMAIN } from '~constants';
+import { COLONY_TOTAL_BALANCE_DOMAIN_ID } from '~constants';
 import { FullColonyFragment } from '~data/index';
 import { getBalanceFromToken } from '~utils/tokens';
 import { useAsyncFunction } from '~utils/hooks';
@@ -67,7 +68,7 @@ const TabContribute = ({
     mergePayload({
       colonyAddress,
       // Use ROOT_DOMAIN if filtered domain id equals 0
-      ethDomainId: filteredDomainId || ROOT_DOMAIN,
+      ethDomainId: filteredDomainId || ROOT_DOMAIN_ID,
     }),
     [colonyAddress, filteredDomainId],
   );

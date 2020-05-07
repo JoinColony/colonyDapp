@@ -4,8 +4,8 @@ import { defineMessages, FormattedMessage } from 'react-intl';
 import BigNumber from 'bn.js';
 import moveDecimal from 'move-decimal-point';
 import sortBy from 'lodash/sortBy';
+import { ColonyRole, ROOT_DOMAIN_ID } from '@colony/colony-js';
 
-import { ROOT_DOMAIN, ROLES } from '~constants';
 import { Address } from '~types/index';
 import { useDataFetcher, useTransformer } from '~utils/hooks';
 import Button from '~core/Button';
@@ -99,10 +99,10 @@ const TokensMoveDialogForm = ({
   const { tokenAddress, amount } = values;
   const fromDomain = values.fromDomain
     ? parseInt(values.fromDomain, 10)
-    : ROOT_DOMAIN;
+    : ROOT_DOMAIN_ID;
   const toDomain = values.toDomain
     ? parseInt(values.toDomain, 10)
-    : ROOT_DOMAIN;
+    : ROOT_DOMAIN_ID;
 
   const selectedToken = useMemo(
     () => tokens.find((token) => token.address === values.tokenAddress),
@@ -204,11 +204,11 @@ const TokensMoveDialogForm = ({
       }
     }
 
-    if (fromDomain && !userHasRole(fromDomainRoles, ROLES.FUNDING)) {
+    if (fromDomain && !userHasRole(fromDomainRoles, ColonyRole.Funding)) {
       errors.fromDomain = MSG.noPermissionFrom;
     }
 
-    if (toDomain && !userHasRole(toDomainRoles, ROLES.FUNDING)) {
+    if (toDomain && !userHasRole(toDomainRoles, ColonyRole.Funding)) {
       errors.toDomain = MSG.noPermissionTo;
     }
 

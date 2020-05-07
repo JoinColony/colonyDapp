@@ -10,7 +10,7 @@ import {
 
 import { Action, ActionTypes, AllActions } from '~redux/index';
 import { putError, takeFrom } from '~utils/saga/effects';
-import { ContractContexts } from '~types/index';
+import { ContractContext } from '~types/index';
 import {
   EditColonyProfileDocument,
   EditColonyProfileMutation,
@@ -88,7 +88,7 @@ function* colonyRecoveryModeEnter({
 
   try {
     yield fork(createTransaction, meta.id, {
-      context: ContractContexts.COLONY_CONTEXT,
+      context: ContractContext.Colony,
       methodName: 'enterRecoveryMode',
       identifier: colonyAddress,
     });
@@ -134,7 +134,7 @@ function* colonyUpgradeContract({
 
   try {
     yield fork(createTransaction, meta.id, {
-      context: ContractContexts.COLONY_CONTEXT,
+      context: ContractContext.Colony,
       methodName: 'upgrade',
       identifier: colonyAddress,
       params: { newVersion },
@@ -179,7 +179,7 @@ function* colonyNativeTokenUnlock({
 
   try {
     yield fork(createTransaction, meta.id, {
-      context: ContractContexts.TOKEN_CONTEXT,
+      context: ContractContext.Token,
       methodName: 'unlock',
       identifier: colonyAddress,
     });

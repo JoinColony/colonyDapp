@@ -1,6 +1,6 @@
 import BigNumber from 'bn.js';
+import { ColonyRole, ROOT_DOMAIN_ID } from '@colony/colony-js';
 
-import { ROLES, ROOT_DOMAIN } from '~constants';
 import { PersistentTasks } from '~data/index';
 import { DomainRolesType, DomainType } from '~immutable/index';
 import { Address, RoleSetType, DomainsMapType } from '~types/index';
@@ -35,7 +35,7 @@ export const getDomainRoles = (
     parent = parent.parentId ? domains[parent.parentId] : null;
   }
   return Object.entries(roleSets).reduce(
-    (acc, [userAddress, roles]: [string, Set<ROLES>]) => {
+    (acc, [userAddress, roles]: [string, Set<ColonyRole>]) => {
       // Ignore empty role sets
       if (!roles.size) return acc;
       acc[userAddress] = Array.from(roles);
@@ -50,7 +50,7 @@ export const getUserRoles = (
   domainId: number | null,
   userAddress: Address | null,
   excludeInherited = false,
-): ROLES[] => {
+): ColonyRole[] => {
   if (!domainId || !userAddress) return [];
 
   const roles = getDomainRoles(domains, domainId, excludeInherited);
@@ -65,14 +65,14 @@ export const getAllRootAccounts = (
 ): Address[] => {
   if (!domains) return [];
 
-  const rootDomain = domains[ROOT_DOMAIN];
+  const rootDomain = domains[ROOT_DOMAIN_ID];
   if (!rootDomain) return [];
 
   const rootAccountSet = new Set<Address>();
 
   Object.entries(rootDomain.roles).forEach(
-    ([userAddress, roles]: [Address, ROLES[]]) => {
-      if (roles.includes(ROLES.ROOT)) {
+    ([userAddress, roles]: [Address, ColonyRole[]]) => {
+      if (roles.includes(ColonyRole.Root)) {
         rootAccountSet.add(userAddress);
       }
     },
@@ -87,14 +87,14 @@ export const TEMP_getUserRolesWithRecovery = (
   domainId: number | null,
   userAddress: Address | undefined,
   excludeInherited = false,
-): ROLES[] => {
+): ColonyRole[] => {
   if (!domainId || !userAddress) return [];
 
   const roles = getDomainRoles(domains, domainId, excludeInherited);
   if (!roles || !roles[userAddress]) return [];
 
-  if (domainId === ROOT_DOMAIN && recoveryRoles.includes(userAddress)) {
-    return roles[userAddress].concat(ROLES.RECOVERY);
+  if (domainId === ROOT_DOMAIN_ID && recoveryRoles.includes(userAddress)) {
+    return roles[userAddress].concat(ColonyRole.Recovery);
   }
 
   return roles[userAddress];
@@ -103,11 +103,11 @@ export const TEMP_getUserRolesWithRecovery = (
 export const getAllUserRoles = (
   domains: DomainsMapType | null,
   userAddress: Address | null,
-): ROLES[] => {
-  if (!domains) return [] as ROLES[];
+): ColonyRole[] => {
+  if (!domains) return [] as ColonyRole[];
   return Array.from(
     Object.values(domains).reduce(
-      (allUserRoles: Set<ROLES>, domain: DomainType) => {
+      (allUserRoles: Set<ColonyRole>, domain: DomainType) => {
         if (!userAddress) return allUserRoles;
         if (domain.roles[userAddress]) {
           domain.roles[userAddress].forEach((role) => allUserRoles.add(role));
@@ -128,10 +128,10 @@ const getLegacyFounder = (
   Object.keys(rootDomainRoles).find((address) => {
     const roles = rootDomainRoles[address];
     return (
-      roles.includes(ROLES.ROOT) &&
-      roles.includes(ROLES.ADMINISTRATION) &&
-      roles.includes(ROLES.ARCHITECTURE) &&
-      roles.includes(ROLES.FUNDING)
+      roles.includes(ColonyRole.Root) &&
+      roles.includes(ColonyRole.Administration) &&
+      roles.includes(ColonyRole.Architecture) &&
+      roles.includes(ColonyRole.Funding)
     );
   }) || ZERO_ADDRESS;
 
@@ -140,14 +140,14 @@ const getLegacyFounder = (
  */
 const getLegacyAdmins = (
   domains: Record<string, DomainType>,
-  domainId: number = ROOT_DOMAIN,
+  domainId: number = ROOT_DOMAIN_ID,
   founderAddress: Address,
 ): Address[] => {
   const domainRoles = getDomainRoles(domains, domainId);
   return Array.from(
     Object.keys(domainRoles).reduce(
       (acc, address) =>
-        domainRoles[address].includes(ROLES.ADMINISTRATION) &&
+        domainRoles[address].includes(ColonyRole.Administration) &&
         address !== founderAddress
           ? acc.add(address)
           : acc,
@@ -163,7 +163,7 @@ const getLegacyAdmins = (
 export const getCommunityRoles = (
   domains: Record<string, DomainType>,
 ): { founder: Address; admins: Address[] } => {
-  const rootDomainRoles = getDomainRoles(domains, ROOT_DOMAIN);
+  const rootDomainRoles = getDomainRoles(domains, ROOT_DOMAIN_ID);
   const founder = getLegacyFounder(rootDomainRoles);
   const admins = new Set();
   Object.keys(domains).map((domainId) => {

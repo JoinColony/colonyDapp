@@ -1,4 +1,5 @@
-import { ROOT_DOMAIN } from '~constants';
+import { ROOT_DOMAIN_ID } from '@colony/colony-js';
+
 import { Address } from '~types/index';
 import { useDataFetcher, useTransformer } from '~utils/hooks';
 
@@ -8,7 +9,7 @@ import { getUserRoles } from '../../transformers';
 export const useUserRolesInDomain = (
   walletAddress: Address,
   colonyAddress: Address | undefined,
-  domainId: number = ROOT_DOMAIN,
+  domainId: number = ROOT_DOMAIN_ID,
 ) => {
   const { data: domainsAndRolesData } = useDataFetcher(
     domainsAndRolesFetcher,
@@ -17,7 +18,7 @@ export const useUserRolesInDomain = (
   );
   const userRoles = useTransformer(getUserRoles, [
     domainsAndRolesData,
-    domainId || ROOT_DOMAIN,
+    domainId || ROOT_DOMAIN_ID,
     walletAddress,
   ]);
   return userRoles;

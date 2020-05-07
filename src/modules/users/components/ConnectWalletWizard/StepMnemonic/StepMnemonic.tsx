@@ -45,7 +45,7 @@ const MSG = defineMessages({
 });
 
 const validationSchema = yup.object({
-  connectwalletmnemonic: yup.string().required(() => MSG.mnemonicRequired),
+  connectWalletMnemonic: yup.string().required(() => MSG.mnemonicRequired),
 });
 
 type FormValues = {
@@ -89,7 +89,7 @@ const StepMnemonic = ({
             <Heading text={MSG.heading} appearance={{ size: 'medium' }} />
             <Textarea
               label={MSG.instructionText}
-              name="connectwalletmnemonic"
+              name="connectWalletMnemonic"
             />
           </div>
           <FormStatus status={status} />

@@ -1,4 +1,5 @@
-import { ContractResponse } from '@colony/colony-js-client';
+// FIXME
+// import { ContractResponse } from '@colony/colony-js-client';
 import { buffers, END, eventChannel } from 'redux-saga';
 
 import { TransactionRecord } from '~immutable/index';
@@ -13,6 +14,9 @@ import {
   transactionHashReceived,
   transactionSucceeded,
 } from '../../actionCreators';
+
+// FIXME
+type ContractResponse<T> = any;
 
 const channelSendTransaction = async ({ id, params }, txPromise, emit) => {
   if (!txPromise) {

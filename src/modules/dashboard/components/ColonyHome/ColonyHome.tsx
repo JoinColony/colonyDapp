@@ -2,10 +2,11 @@ import React, { useMemo, useState } from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 import { Redirect, Route, RouteChildrenProps, Switch } from 'react-router-dom';
 import { parse as parseQS } from 'query-string';
+import { ROOT_DOMAIN_ID } from '@colony/colony-js';
 
 import RecoveryModeAlert from '~admin/RecoveryModeAlert';
 import Transactions from '~admin/Transactions';
-import { COLONY_TOTAL_BALANCE_DOMAIN_ID, ROOT_DOMAIN } from '~constants';
+import { COLONY_TOTAL_BALANCE_DOMAIN_ID } from '~constants';
 import BreadCrumb from '~core/BreadCrumb';
 import Heading from '~core/Heading';
 import { Tab, TabList, TabPanel, Tabs } from '~core/Tabs';
@@ -122,13 +123,13 @@ const ColonyHome = ({ match, location }: Props) => {
 
   const currentDomainUserRoles = useTransformer(getUserRoles, [
     domains,
-    filteredDomainId || ROOT_DOMAIN,
+    filteredDomainId || ROOT_DOMAIN_ID,
     walletAddress,
   ]);
 
   const rootUserRoles = useTransformer(getUserRoles, [
     domains,
-    ROOT_DOMAIN,
+    ROOT_DOMAIN_ID,
     walletAddress,
   ]);
 

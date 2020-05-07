@@ -21,10 +21,11 @@ import {
 import ENS from '~lib/ENS';
 import { ActionTypes, Action, AllActions } from '~redux/index';
 import { createAddress } from '~utils/web3';
-import { ContractContexts } from '~types/index';
+import { ContractContext } from '~types/index';
 import { log } from '~utils/debug';
 import { putError, takeFrom, takeLatestCancellable } from '~utils/saga/effects';
-import { parseExtensionDeployedLog } from '~utils/web3/eventLogs/eventParsers';
+// FIXME
+// import { parseExtensionDeployedLog } from '~utils/web3/eventLogs/eventParsers';
 
 import { TxConfig } from '../../core/types';
 import {
@@ -122,7 +123,7 @@ function* colonyCreate({
 
     if (createUser) {
       yield createGroupedTransaction(createUser, {
-        context: ContractContexts.NETWORK_CONTEXT,
+        context: ContractContext.Network,
         methodName: 'registerUserLabel',
         params: { username, orbitDBPath: '' },
         ready: true,
@@ -131,7 +132,7 @@ function* colonyCreate({
 
     if (createToken) {
       yield createGroupedTransaction(createToken, {
-        context: ContractContexts.NETWORK_CONTEXT,
+        context: ContractContext.Network,
         methodName: 'createToken',
         params: {
           name: tokenName,
@@ -142,13 +143,13 @@ function* colonyCreate({
     }
 
     yield createGroupedTransaction(createColony, {
-      context: ContractContexts.NETWORK_CONTEXT,
+      context: ContractContext.Network,
       methodName: 'createColony',
       ready: false,
     });
 
     yield createGroupedTransaction(createLabel, {
-      context: ContractContexts.COLONY_CONTEXT,
+      context: ContractContext.Colony,
       methodName: 'registerColonyLabel',
       params: { colonyName },
       ready: false,
@@ -160,7 +161,7 @@ function* colonyCreate({
         networkClient.getTokenLockingAddress.call,
       ]);
       yield createGroupedTransaction(deployTokenAuthority, {
-        context: ContractContexts.TOKEN_CONTEXT,
+        context: ContractContext.Token,
         methodName: 'createTokenAuthority',
         params: {
           allowedToTransfer: [tokenLockingAddress],
@@ -169,21 +170,21 @@ function* colonyCreate({
       });
 
       yield createGroupedTransaction(setTokenAuthority, {
-        context: ContractContexts.TOKEN_CONTEXT,
+        context: ContractContext.Token,
         methodName: 'setAuthority',
         ready: false,
       });
     }
 
     yield createGroupedTransaction(deployOneTx, {
-      context: ContractContexts.COLONY_CONTEXT,
+      context: ContractContext.Colony,
       methodName: 'addExtension',
       params: { contractName: 'OneTxPayment' },
       ready: false,
     });
 
     yield createGroupedTransaction(setOneTxRoleAdministration, {
-      context: ContractContexts.COLONY_CONTEXT,
+      context: ContractContext.Colony,
       methodContext: 'setOneTxRoles',
       methodName: 'setAdministrationRole',
       params: { setTo: true, domainId: 1 },
@@ -191,7 +192,7 @@ function* colonyCreate({
     });
 
     yield createGroupedTransaction(setOneTxRoleFunding, {
-      context: ContractContexts.COLONY_CONTEXT,
+      context: ContractContext.Colony,
       methodContext: 'setOneTxRoles',
       methodName: 'setFundingRole',
       params: { setTo: true, domainId: 1 },
@@ -421,7 +422,9 @@ function* colonyCreate({
         },
       },
     } = yield takeFrom(deployOneTx.channel, ActionTypes.TRANSACTION_SUCCEEDED);
-    const oneTxAddress = parseExtensionDeployedLog(deployOneTxLog);
+    // FIXME rewrite (+move) parser
+    // const oneTxAddress = parseExtensionDeployedLog(deployOneTxLog);
+    const oneTxAddress = '0xacab';
 
     /*
      * Set OneTx administration role

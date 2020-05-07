@@ -2,32 +2,33 @@ import { eventChannel } from 'redux-saga';
 
 import { call, put, spawn, take, takeLatest, all } from 'redux-saga/effects';
 
-import { open as openSoftwareWallet } from '@purser/software';
+import {
+  create as createSoftwareWallet,
+  open as openSoftwareWallet,
+} from '@purser/software';
 import {
   accountChangeHook,
   open as openMetaMaskWallet,
   MetaMaskInpageProvider,
 } from '@purser/metamask';
-import { TrufflepigLoader } from '@colony/colony-js-contract-loader-http';
-import { getNetworkClient } from '@colony/colony-js-client';
+import type { ColonyNetworkClient } from '@colony/colony-js';
 
+import { WalletMethod } from '~immutable/index';
 import { Action, ActionTypes, AllActions } from '~redux/index';
-import { DEFAULT_NETWORK } from '~constants';
 import { Address } from '~types/index';
 import { createAddress } from '~utils/web3';
-import { create, putError } from '~utils/saga/effects';
+import { putError } from '~utils/saga/effects';
 
-import { WALLET_SPECIFICS, WALLET_CATEGORIES } from '~immutable/index';
+import getColonyNetworkClient from '../../core/sagas/utils/getNetworkClient';
 import { HARDWARE_WALLET_DEFAULT_ADDRESS_COUNT } from '../constants';
 
 const walletOpenFunctions = {
   // Disabled for now
-  // ledger: ledgerWallet,
-  // trezor: trezorWallet,
-  json: openSoftwareWallet,
-  mnemonic: openSoftwareWallet,
-  metamask: openMetaMaskWallet,
-  trufflepig: openSoftwareWallet,
+  // [WalletMethod.Ledger]: ledgerWallet,
+  // [WalletMethod.Trezor]: trezorWallet,
+  [WalletMethod.Mnemonic]: openSoftwareWallet,
+  [WalletMethod.MetaMask]: openMetaMaskWallet,
+  [WalletMethod.Ganache]: openSoftwareWallet,
 };
 
 function* fetchAddressBalance(address, provider) {
@@ -50,18 +51,7 @@ function* fetchAccounts(action: Action<ActionTypes.WALLET_FETCH_ACCOUNTS>) {
       addressCount: HARDWARE_WALLET_DEFAULT_ADDRESS_COUNT,
     });
 
-    const {
-      adapter: { provider },
-    } = yield call(
-      getNetworkClient,
-      DEFAULT_NETWORK,
-      {
-        type: WALLET_CATEGORIES.HARDWARE,
-        subtype: walletType,
-      },
-      process.env.INFURA_ID,
-      !!process.env.VERBOSE,
-    );
+    const { provider }: ColonyNetworkClient = yield getColonyNetworkClient();
 
     const addressesWithBalance = yield all(
       otherAddresses.map((address) =>
@@ -80,9 +70,9 @@ function* fetchAccounts(action: Action<ActionTypes.WALLET_FETCH_ACCOUNTS>) {
 }
 
 function* openMnemonicWallet(action: Action<ActionTypes.WALLET_CREATE>) {
-  const { connectwalletmnemonic } = action.payload;
+  const { connnectWalletMnemonic } = action.payload;
   return yield call(openSoftwareWallet, {
-    mnemonic: connectwalletmnemonic,
+    mnemonic: connnectWalletMnemonic,
   });
 }
 
@@ -122,26 +112,24 @@ function* openMetamaskWallet() {
   return wallet;
 }
 
-function* openHardwareWallet(action: Action<ActionTypes.WALLET_CREATE>) {
-  const { hardwareWalletChoice, method } = action.payload;
-  const wallet = yield call(walletOpenFunctions[method], {
-    /**
-     * @todo : is 100 addresses really what we want?
-     */
-    addressCount: 100,
-  });
-  const selectedAddressIndex = wallet.otherAddresses.findIndex(
-    (address) => address === hardwareWalletChoice,
-  );
-  wallet.setDefaultAddress(selectedAddressIndex);
-  return wallet;
-}
+// function* openHardwareWallet(action: Action<ActionTypes.WALLET_CREATE>) {
+//   const { hardwareWalletChoice, method } = action.payload;
+//   const wallet = yield call(walletOpenFunctions[method], {
+//     /**
+//      * @todo : is 100 addresses really what we want?
+//      */
+//     addressCount: 100,
+//   });
+//   const selectedAddressIndex = wallet.otherAddresses.findIndex(
+//     (address) => address === hardwareWalletChoice,
+//   );
+//   wallet.setDefaultAddress(selectedAddressIndex);
+//   return wallet;
+// }
 
-function* openTrufflepigWallet({
-  payload: { accountIndex },
+function* openGanacheWallet({
+  payload: { privateKey },
 }: Action<ActionTypes.WALLET_CREATE>) {
-  const loader = yield create(TrufflepigLoader);
-  const { privateKey } = yield call([loader, loader.getAccount], accountIndex);
   return yield call(openSoftwareWallet, {
     privateKey,
   });
@@ -165,7 +153,7 @@ function* createEtherealWallet() {
    * That being said, we should still plan to change this when we'll have some
    * time for proper maintenance
    */
-  const wallet = yield call(softwareWallet.create);
+  const wallet = yield call(createSoftwareWallet);
   return {
     ...wallet,
     type: 'ethereal',
@@ -175,20 +163,20 @@ function* createEtherealWallet() {
 export function* getWallet(action: Action<ActionTypes.WALLET_CREATE>) {
   const { method } = action.payload;
   switch (method) {
-    case 'create':
+    case WalletMethod.Create:
       return yield call(createWallet, action);
-    case WALLET_SPECIFICS.METAMASK:
+    case WalletMethod.MetaMask:
       return yield call(openMetamaskWallet);
-    case WALLET_SPECIFICS.TREZOR:
-      return yield call(openHardwareWallet, action);
-    case WALLET_SPECIFICS.LEDGER:
-      return yield call(openHardwareWallet, action);
-    case WALLET_SPECIFICS.MNEMONIC:
+    // case WalletMethod.Trezor:
+    //   return yield call(openHardwareWallet, action);
+    // case WalletMethod.Ledger:
+    //   return yield call(openHardwareWallet, action);
+    case WalletMethod.Mnemonic:
       return yield call(openMnemonicWallet, action);
-    case WALLET_SPECIFICS.TRUFFLEPIG:
-      return yield call(openTrufflepigWallet, action);
-    case WALLET_SPECIFICS.ETHEREAL:
+    case WalletMethod.Ethereal:
       return yield call(createEtherealWallet);
+    case WalletMethod.Ganache:
+      return yield call(openGanacheWallet, action);
     default:
       throw new Error(
         `Method ${method} is not recognized for getting a wallet`,

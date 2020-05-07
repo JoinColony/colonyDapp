@@ -1,20 +1,23 @@
 import { call } from 'redux-saga/effects';
-import { getNetworkClient } from '@colony/colony-js-client';
+import { InfuraProvider } from 'ethers/providers';
+import { getColonyNetworkClient, Network } from '@colony/colony-js';
+import { EthersSigner } from '@purser/signer-ethers';
 
 import { DEFAULT_NETWORK } from '~constants';
-import { TEMP_getNewContext } from '~context/index';
+import { TEMP_getContext } from '~context/index';
 
 /*
  * Return an initialized ColonyNetworkClient instance.
  */
-export default function* getClient() {
-  const wallet = TEMP_getNewContext('wallet');
+export default function* getNetworkClient() {
+  const wallet = TEMP_getContext('wallet');
 
-  return yield call(
-    getNetworkClient,
-    DEFAULT_NETWORK,
-    wallet,
-    process.env.INFURA_ID,
-    !!process.env.VERBOSE,
-  );
+  if (!wallet) throw new Error('No wallet in context');
+
+  const network = DEFAULT_NETWORK as Network;
+
+  const provider = new InfuraProvider(network, process.env.INFURA_ID);
+  const signer = new EthersSigner({ purserWallet: wallet, provider });
+
+  return yield call(getColonyNetworkClient, network, signer);
 }

@@ -1,8 +1,8 @@
 import React, { Dispatch, SetStateAction, useCallback, useMemo } from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 import * as yup from 'yup';
+import { ROOT_DOMAIN_ID } from '@colony/colony-js';
 
-import { ROOT_DOMAIN } from '~constants';
 import Button from '~core/Button';
 import { useDialog, ConfirmDialog } from '~core/Dialog';
 import { AmountTokens, Form, Input, Select, Textarea } from '~core/Fields';
@@ -121,7 +121,7 @@ const TaskEdit = ({
       domains
         ? Object.keys(domains).map((key) => {
             const { id, name, roles } = domains[key];
-            const { roles: rootRoles } = domains[ROOT_DOMAIN];
+            const { roles: rootRoles } = domains[ROOT_DOMAIN_ID];
             const userRolesInDomain = roles[walletAddress] || [];
             const userRolesInRoot = rootRoles[walletAddress] || [];
             return {
@@ -220,7 +220,7 @@ const TaskEdit = ({
           domainId:
             typeof ethDomainId === 'number'
               ? ethDomainId.toString()
-              : ROOT_DOMAIN.toString(),
+              : ROOT_DOMAIN_ID.toString(),
           skillId:
             typeof ethSkillId === 'number' ? ethSkillId.toString() : ethSkillId,
           tokenAddress: tokenAddress || nativeTokenAddress,

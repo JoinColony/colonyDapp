@@ -3,8 +3,9 @@ import { FormikHelpers } from 'formik';
 import { defineMessages } from 'react-intl';
 import { useHistory } from 'react-router';
 import * as yup from 'yup';
+import { ROOT_DOMAIN_ID } from '@colony/colony-js';
 
-import { COLONY_TOTAL_BALANCE_DOMAIN_ID, ROOT_DOMAIN } from '~constants';
+import { COLONY_TOTAL_BALANCE_DOMAIN_ID } from '~constants';
 import Button from '~core/Button';
 import { Form, Input } from '~core/Fields';
 import {
@@ -67,7 +68,7 @@ const SuggestionCreate = ({ colonyAddress, domainId }: Props) => {
     async ({ title }: FormValues, { resetForm }: FormikHelpers<FormValues>) => {
       // Suggestion must be associated with an actual domain
       const ethDomainId =
-        domainId === COLONY_TOTAL_BALANCE_DOMAIN_ID ? ROOT_DOMAIN : domainId;
+        domainId === COLONY_TOTAL_BALANCE_DOMAIN_ID ? ROOT_DOMAIN_ID : domainId;
       await createSuggestion({
         variables: { input: { colonyAddress, ethDomainId, title } },
         refetchQueries: [

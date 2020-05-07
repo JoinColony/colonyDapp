@@ -1,4 +1,5 @@
-import { ContractResponse } from '@colony/colony-js-client';
+// FIXME
+// import { ContractResponse } from '@colony/colony-js-client';
 import { call, put, take } from 'redux-saga/effects';
 
 import { ActionTypes } from '~redux/index';
@@ -14,6 +15,9 @@ import { oneTransaction } from '../../selectors';
 import { getTransactionMethod } from '../utils';
 
 import transactionChannel from './transactionChannel';
+
+// FIXME
+type ContractResponse<T> = any;
 
 /*
  * Given a method and a transaction record, create a promise for sending the

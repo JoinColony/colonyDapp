@@ -1,7 +1,7 @@
 import ApolloClient from 'apollo-client';
 import { all, call, fork, put, takeEvery } from 'redux-saga/effects';
+import { ROOT_DOMAIN_ID } from '@colony/colony-js';
 
-import { ROOT_DOMAIN } from '~constants';
 import { getContext, Context } from '~context/index';
 import {
   ColonyDomainsQuery,
@@ -19,7 +19,7 @@ import {
   TokenBalancesForDomainsQueryVariables,
 } from '~data/index';
 import { Action, ActionTypes, AllActions } from '~redux/index';
-import { ContractContexts } from '~types/index';
+import { ContractContext } from '~types/index';
 import { log } from '~utils/debug';
 import { putError, takeFrom } from '~utils/saga/effects';
 
@@ -81,7 +81,7 @@ function* colonyDomainsFetch({
 }
 
 function* domainCreate({
-  payload: { colonyAddress, domainName: name, parentDomainId = ROOT_DOMAIN },
+  payload: { colonyAddress, domainName: name, parentDomainId = ROOT_DOMAIN_ID },
   meta,
 }: Action<ActionTypes.DOMAIN_CREATE>) {
   const txChannel = yield call(getTxChannel, meta.id);
@@ -94,7 +94,7 @@ function* domainCreate({
      * @body Idempotency could be improved here by looking for a pending transaction.
      */
     yield fork(createTransaction, meta.id, {
-      context: ContractContexts.COLONY_CONTEXT,
+      context: ContractContext.Colony,
       methodName: 'addDomain',
       identifier: colonyAddress,
       params: { parentDomainId },
@@ -212,7 +212,12 @@ function* domainEdit({
       type: ActionTypes.DOMAIN_EDIT_SUCCESS,
       meta,
       // For now parentId is just root domain
-      payload: { colonyAddress, domainId, domainName, parentId: ROOT_DOMAIN },
+      payload: {
+        colonyAddress,
+        domainId,
+        domainName,
+        parentId: ROOT_DOMAIN_ID,
+      },
     });
   } catch (error) {
     return yield putError(ActionTypes.DOMAIN_EDIT_ERROR, error, meta);
@@ -247,7 +252,7 @@ function* moveFundsBetweenPots({
     ]);
 
     yield fork(createTransaction, meta.id, {
-      context: ContractContexts.COLONY_CONTEXT,
+      context: ContractContext.Colony,
       methodName: 'moveFundsBetweenPots',
       identifier: colonyAddress,
       params: { token: tokenAddress, fromPot, toPot, amount },

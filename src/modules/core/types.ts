@@ -1,12 +1,17 @@
-import { SendOptions, ContractResponse } from '@colony/colony-js-client';
+// FIXME
+// import { SendOptions, ContractResponse } from '@colony/colony-js-client';
 import BigNumber from 'bn.js';
 
-import { ContractContexts, TransactionReceipt } from '~types/index';
+import { ContractContext, TransactionReceipt } from '~types/index';
 import {
   TransactionEventData,
   TransactionMultisig,
   TransactionParams,
 } from '~immutable/index';
+
+// FIXME replace with actual values
+type SendOptions = any;
+type ContractResponse<T> = any;
 
 export type Sender = {
   client: {
@@ -30,7 +35,7 @@ export type MultisigSender = Sender & {
 };
 
 export type TxConfig = {
-  context: ContractContexts;
+  context: ContractContext;
   group?: {
     key: string;
     id: string | string[];

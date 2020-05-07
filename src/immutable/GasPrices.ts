@@ -1,4 +1,4 @@
-import BigNumber from 'bn.js';
+import { BigNumber } from 'ethers/utils';
 import { Record } from 'immutable';
 
 import { DefaultValues, RecordToJS } from '~types/index';

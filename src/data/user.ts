@@ -1,6 +1,6 @@
 import { Resolvers } from 'apollo-client';
+import { ROOT_DOMAIN_ID } from '@colony/colony-js';
 
-import { ROOT_DOMAIN } from '~constants';
 import { ContextType } from '~context/index';
 import ENS from '~lib/ENS';
 import { Address } from '~types/index';
@@ -43,7 +43,7 @@ export const userResolvers = ({
       {
         address,
         colonyAddress,
-        domainId = ROOT_DOMAIN,
+        domainId = ROOT_DOMAIN_ID,
       }: { address: Address; colonyAddress: Address; domainId?: number },
     ) {
       const reputation = await getUserReputation(
@@ -64,7 +64,7 @@ export const userResolvers = ({
       user,
       {
         colonyAddress,
-        domainId = ROOT_DOMAIN,
+        domainId = ROOT_DOMAIN_ID,
       }: { colonyAddress: Address; domainId: number },
     ) {
       const {

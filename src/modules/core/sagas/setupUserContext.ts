@@ -9,9 +9,10 @@ import {
 } from 'redux-saga/effects';
 import { formatEther } from 'ethers/utils';
 
+import { WalletMethod } from '~immutable/index';
 import { createAddress } from '~utils/web3';
 import { Action, ActionTypes, AllActions } from '~redux/index';
-import { Context, ContextType, TEMP_setNewContext } from '~context/index';
+import { Context, ContextType, TEMP_setContext } from '~context/index';
 import { putError } from '~utils/saga/effects';
 import { log } from '~utils/debug';
 import {
@@ -34,7 +35,7 @@ import setupDashboardSagas from '../../dashboard/sagas';
 import { getWallet, setupUsersSagas } from '../../users/sagas/index';
 import setupTransactionsSagas from './transactions';
 import setupNetworkSagas from './network';
-import { getGasPrices, getColonyManager, getWalletCategory } from './utils';
+import { getGasPrices, getColonyManager } from './utils';
 import setupOnBeforeUnload from './setupOnBeforeUnload';
 import { setupUserBalanceListener } from './setupUserBalanceListener';
 import { setLastWallet } from '~utils/autoLogin';
@@ -96,18 +97,18 @@ export default function* setupUserContext(
      */
     const wallet = yield call(getWallet, action);
     const walletAddress = createAddress(wallet.address);
-    TEMP_setNewContext('wallet', wallet);
+    TEMP_setContext('wallet', wallet);
 
     yield authenticate(wallet);
 
     yield put<AllActions>({
       type: ActionTypes.WALLET_CREATE_SUCCESS,
       payload: {
-        walletType: getWalletCategory(method),
+        walletType: method,
       },
     });
 
-    if (method !== 'create') {
+    if (method !== WalletMethod.Create) {
       yield call(setLastWallet, method, walletAddress);
     }
 

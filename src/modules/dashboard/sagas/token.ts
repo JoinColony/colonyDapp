@@ -2,7 +2,7 @@ import { call, fork, put, takeEvery } from 'redux-saga/effects';
 
 import { Action, ActionTypes } from '~redux/index';
 import { putError, takeFrom } from '~utils/saga/effects';
-import { ContractContexts } from '~types/index';
+import { ContractContext } from '~types/index';
 
 import { createTransaction, getTxChannel } from '../../core/sagas';
 
@@ -14,7 +14,7 @@ function* tokenCreate({
 
   try {
     yield fork(createTransaction, meta.id, {
-      context: ContractContexts.NETWORK_CONTEXT,
+      context: ContractContext.Network,
       methodName: 'createToken',
       params: { name, symbol },
     });

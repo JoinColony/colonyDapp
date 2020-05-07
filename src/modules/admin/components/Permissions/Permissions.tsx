@@ -1,9 +1,8 @@
 import React, { useCallback, useMemo, useState } from 'react';
-
 import { defineMessages, FormattedMessage } from 'react-intl';
 import sortBy from 'lodash/sortBy';
+import { ColonyRole, ROOT_DOMAIN_ID } from '@colony/colony-js';
 
-import { ROLES, ROOT_DOMAIN } from '~constants';
 import { Address, DomainsMapType } from '~types/index';
 import { DomainType } from '~immutable/index';
 import Heading from '~core/Heading';
@@ -58,7 +57,9 @@ interface Props {
 const displayName = 'admin.Permissions';
 
 const Permissions = ({ colonyAddress, domains }: Props) => {
-  const [selectedDomainId, setSelectedDomainId] = useState<number>(ROOT_DOMAIN);
+  const [selectedDomainId, setSelectedDomainId] = useState<number>(
+    ROOT_DOMAIN_ID,
+  );
 
   const openPermissionsAddDialog = useDialog(ColonyPermissionsAddDialog);
   const openPermissionsEditDialog = useDialog(ColonyPermissionsEditDialog);
@@ -107,7 +108,7 @@ const Permissions = ({ colonyAddress, domains }: Props) => {
   const domainRolesArray = useMemo(
     () =>
       Object.entries(domainRoles)
-        .sort(([, roles]) => (roles.includes(ROLES.ROOT) ? -1 : 1))
+        .sort(([, roles]) => (roles.includes(ColonyRole.Root) ? -1 : 1))
         .filter(([, roles]) => !!roles.length)
         .map(([userAddress, roles]) => ({
           userAddress,
@@ -172,7 +173,7 @@ const Permissions = ({ colonyAddress, domains }: Props) => {
                 ))}
               </TableBody>
             </Table>
-            {selectedDomain && selectedDomain.id !== ROOT_DOMAIN && (
+            {selectedDomain && selectedDomain.id !== ROOT_DOMAIN_ID && (
               <p className={styles.parentPermissionTip}>
                 <FormattedMessage
                   {...MSG.permissionInParent}

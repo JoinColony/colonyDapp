@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { open } from '@purser/metamask';
 
-import { WALLET_SPECIFICS } from '~immutable/index';
+import { WalletMethod } from '~immutable/index';
 import { Address } from '~types/index';
 import { createAddress } from '~utils/web3';
 import { ActionTypes } from '~redux/index';
@@ -16,12 +16,14 @@ export const getLastWallet = () => ({
   type: localStorage.getItem(LAST_WALLET_KEY),
   address: localStorage.getItem(LAST_ADDRESS_KEY),
 });
-export const setLastWallet = (type: WALLET_SPECIFICS, address: Address) => {
-  if (type !== WALLET_SPECIFICS.ETHEREAL) {
+
+export const setLastWallet = (type: WalletMethod, address: Address) => {
+  if (type !== WalletMethod.Ethereal) {
     localStorage.setItem(LAST_WALLET_KEY, type);
     localStorage.setItem(LAST_ADDRESS_KEY, address);
   }
 };
+
 export const clearLastWallet = () => {
   localStorage.removeItem(LAST_WALLET_KEY);
   localStorage.removeItem(LAST_ADDRESS_KEY);
@@ -38,18 +40,18 @@ export const useMetaMaskAutoLogin = (
   });
 
   const [loading, setLoading] = useState(
-    lastWalletType === WALLET_SPECIFICS.METAMASK,
+    lastWalletType === WalletMethod.MetaMask,
   );
 
   useEffect(() => {
     (async () => {
-      if (lastWalletType === WALLET_SPECIFICS.METAMASK) {
+      if (lastWalletType === WalletMethod.MetaMask) {
         try {
           const wallet = await open();
           if (
             createAddress(wallet.address) === createAddress(lastWalletAddress)
           ) {
-            await login({ method: WALLET_SPECIFICS.METAMASK });
+            await login({ method: WalletMethod.MetaMask });
             return;
           }
         } catch (error) {

@@ -3,7 +3,6 @@ import { useQuery } from '@apollo/react-hooks';
 import React, { useCallback, useState } from 'react';
 import { defineMessages } from 'react-intl';
 
-import { ROLES } from '~constants';
 import { Address } from '~types/index';
 import { mergePayload, withKey, mapPayload, pipe } from '~utils/actions';
 import { ItemDataType } from '~core/OmniPicker';
@@ -27,6 +26,7 @@ import {
   domainsAndRolesFetcher,
   TEMP_userHasRecoveryRoleFetcher,
 } from '../../../dashboard/fetchers';
+import { availableRoles } from './constants';
 import PermissionForm from './PermissionForm';
 
 import styles from './ColonyPermissionsDialog.css';
@@ -56,15 +56,6 @@ interface Props {
   domainId: number;
   colonyAddress: Address;
 }
-
-const availableRoles: ROLES[] = [
-  ROLES.ROOT,
-  ROLES.ADMINISTRATION,
-  ROLES.ARCHITECTURE,
-  ROLES.FUNDING,
-  ROLES.RECOVERY,
-  ROLES.ARBITRATION,
-];
 
 const UserAvatar = HookedUserAvatar({ fetchUser: false });
 

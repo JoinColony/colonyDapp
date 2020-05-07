@@ -1,7 +1,7 @@
 import React, { useCallback } from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
+import { ColonyRole, ROOT_DOMAIN_ID } from '@colony/colony-js';
 
-import { ROLES, ROOT_DOMAIN } from '~constants';
 import { Address, DomainsMapType } from '~types/index';
 import { useTransformer } from '~utils/hooks';
 import { InputLabel } from '~core/Fields';
@@ -42,7 +42,7 @@ interface Props {
   domainId: number;
   domains: DomainsMapType;
   userAddress: Address | undefined;
-  userRoles: ROLES[];
+  userRoles: ColonyRole[];
 }
 
 const PermissionForm = ({
@@ -71,26 +71,26 @@ const PermissionForm = ({
 
   // Check which roles the current user is allowed to set in this domain
   const canRoleBeSet = useCallback(
-    (role: ROLES) => {
+    (role: ColonyRole) => {
       switch (role) {
         // Can't set arbitration at all yet
-        case ROLES.ARBITRATION:
+        case ColonyRole.Arbitration:
           return false;
 
         // Can only be set by root and in root domain (and only unset if other root accounts exist)
-        case ROLES.ROOT:
-        case ROLES.RECOVERY:
+        case ColonyRole.Root:
+        case ColonyRole.Recovery:
           return (
-            domainId === ROOT_DOMAIN &&
-            currentUserRoles.includes(ROLES.ROOT) &&
-            (!userRoles.includes(ROLES.ROOT) || rootAccounts.length > 1)
+            domainId === ROOT_DOMAIN_ID &&
+            currentUserRoles.includes(ColonyRole.Root) &&
+            (!userRoles.includes(ColonyRole.Root) || rootAccounts.length > 1)
           );
 
         // Must be root for these
-        case ROLES.ADMINISTRATION:
-        case ROLES.FUNDING:
-        case ROLES.ARCHITECTURE:
-          return currentUserRoles.includes(ROLES.ROOT);
+        case ColonyRole.Administration:
+        case ColonyRole.Funding:
+        case ColonyRole.Architecture:
+          return currentUserRoles.includes(ColonyRole.Root);
 
         default:
           return false;

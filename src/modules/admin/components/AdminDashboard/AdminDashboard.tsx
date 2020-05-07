@@ -1,8 +1,8 @@
 import React from 'react';
 import { Redirect } from 'react-router-dom';
 import { defineMessages } from 'react-intl';
+import { ColonyRole, ROOT_DOMAIN_ID } from '@colony/colony-js';
 
-import { ROLES, ROOT_DOMAIN } from '~constants';
 import { NavigationItem } from '~pages/VerticalNavigation/VerticalNavigation';
 import Heading from '~core/Heading';
 import LoadingTemplate from '~pages/LoadingTemplate';
@@ -82,8 +82,8 @@ interface Props {
 const navigationItems = (
   colony: FullColonyFragment,
   domains: DomainsMapType,
-  rootRoles: ROLES[],
-  allRoles: ROLES[],
+  rootRoles: ColonyRole[],
+  allRoles: ColonyRole[],
 ): NavigationItem[] => {
   const items = [] as NavigationItem[];
 
@@ -212,7 +212,7 @@ const AdminDashboard = ({
   const rootUserRoles = useTransformer(TEMP_getUserRolesWithRecovery, [
     domains,
     colonyRecoveryRoles,
-    ROOT_DOMAIN,
+    ROOT_DOMAIN_ID,
     walletAddress,
   ]);
 

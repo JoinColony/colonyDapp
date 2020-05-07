@@ -1,4 +1,5 @@
-import { ROLES } from '~constants';
+import { ColonyRole } from '@colony/colony-js';
+
 import { AnyTask, FullColonyFragment, OneSuggestion } from '~data/index';
 import { TaskUserType } from '~immutable/index';
 import { Address } from '~types/index';
@@ -59,7 +60,7 @@ export const didDueDateElapse = ({ dueDate }: AnyTask) =>
 export const isWorkerSet = ({ assignedWorkerAddress }: AnyTask) =>
   !!assignedWorkerAddress;
 
-export const canEditTask = (task: AnyTask, roles: ROLES[]) =>
+export const canEditTask = (task: AnyTask, roles: ColonyRole[]) =>
   !isFinalized(task) && !isCancelled(task) && canAdminister(roles);
 
 export const isDomainSet = ({ ethDomainId }: AnyTask) => !!ethDomainId;
@@ -94,7 +95,7 @@ export const managerCanRevealWorkerRating = (
   userAddress: Address,
 ) => isManager(task, userAddress) && isReveal(task);
 
-export const canCancelTask = (task: AnyTask, roles: ROLES[]) =>
+export const canCancelTask = (task: AnyTask, roles: ColonyRole[]) =>
   isActive(task) && canAdminister(roles);
 
 export const hasRequestedToWork = (
@@ -112,7 +113,7 @@ export const canRequestToWork = (task: AnyTask, userAddress: Address) =>
     hasRequestedToWork(task, userAddress)
   ) && isActive(task);
 
-export const canFinalizeTask = (task: AnyTask, roles: ROLES[]) =>
+export const canFinalizeTask = (task: AnyTask, roles: ColonyRole[]) =>
   task &&
   isActive(task) &&
   isWorkerSet(task) &&

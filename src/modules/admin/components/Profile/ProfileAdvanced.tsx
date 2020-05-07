@@ -1,7 +1,7 @@
 import React from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
+import { ColonyRole } from '@colony/colony-js';
 
-import { ROLES } from '~constants';
 import { useSelector } from '~utils/hooks';
 import { ActionTypes } from '~redux/index';
 import { DialogActionButton } from '~core/Button';
@@ -98,7 +98,7 @@ const displayName = 'admin.Profile.ProfileAdvanced';
 
 interface Props {
   colony: FullColonyFragment;
-  rootRoles: ROLES[];
+  rootRoles: ColonyRole[];
 }
 
 const ProfileAdvanced = ({

@@ -1,6 +1,7 @@
 import React, { useCallback, useState, useEffect } from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 import { useHistory, useParams, Redirect } from 'react-router-dom';
+import { ROOT_DOMAIN_ID } from '@colony/colony-js';
 
 import Button from '~core/Button';
 import { useDialog } from '~core/Dialog';
@@ -29,7 +30,6 @@ import LoadingTemplate from '~pages/LoadingTemplate';
 import { useDataFetcher, useTransformer, useAsyncFunction } from '~utils/hooks';
 import { ActionTypes } from '~redux/index';
 import { NOT_FOUND_ROUTE } from '~routes/index';
-import { ROOT_DOMAIN } from '~constants';
 
 import { getUserRoles } from '../../../transformers';
 import {
@@ -332,7 +332,7 @@ const Task = () => {
                 colonyAddress={colony.colonyAddress}
                 // Disable the change of domain for now
                 disabled
-                ethDomainId={ethDomainId || ROOT_DOMAIN}
+                ethDomainId={ethDomainId || ROOT_DOMAIN_ID}
                 draftId={draftId}
                 payouts={payouts}
               />
@@ -405,7 +405,7 @@ const Task = () => {
                 <TaskFinalize
                   draftId={draftId}
                   colonyAddress={colonyData.colonyAddress}
-                  ethDomainId={ethDomainId || ROOT_DOMAIN}
+                  ethDomainId={ethDomainId || ROOT_DOMAIN_ID}
                   ethSkillId={ethSkillId}
                   payouts={payouts}
                   workerAddress={assignedWorkerAddress}

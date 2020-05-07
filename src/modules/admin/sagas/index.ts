@@ -5,7 +5,7 @@ import BigNumber from 'bn.js';
 import { ZERO_ADDRESS } from '~utils/web3/constants';
 import { AllActions, Action, ActionTypes } from '~redux/index';
 import { takeFrom, putError } from '~utils/saga/effects';
-import { ColonyClient, ColonyManager, ContractContexts } from '~types/index';
+import { ColonyManager, ContractContext } from '~types/index';
 import { Context } from '~context/index';
 import {
   ColonyQuery,
@@ -15,13 +15,14 @@ import {
   TokenBalancesForDomainsQueryVariables,
   TokenBalancesForDomainsDocument,
 } from '~data/index';
-import {
-  getLogsAndEvents,
-  parseColonyFundsClaimedEvent,
-  parseColonyFundsMovedBetweenFundingPotsEvent,
-  parsePayoutClaimedEvent,
-  parseUnclaimedTransferEvent,
-} from '~utils/web3/eventLogs';
+// FIXME
+// import {
+//   getLogsAndEvents,
+//   parseColonyFundsClaimedEvent,
+//   parseColonyFundsMovedBetweenFundingPotsEvent,
+//   parsePayoutClaimedEvent,
+//   parseUnclaimedTransferEvent,
+// } from '~utils/web3/eventLogs';
 import { ContractTransactionType } from '~immutable/index';
 
 import { createTransaction, getTxChannel } from '../../core/sagas';
@@ -31,174 +32,175 @@ import {
   fetchColonyUnclaimedTransactions,
 } from '../actionCreators';
 
-const EVENT_PARSERS = {
-  ColonyFundsClaimed: parseColonyFundsClaimedEvent,
-  // eslint-disable-next-line max-len
-  ColonyFundsMovedBetweenFundingPots: parseColonyFundsMovedBetweenFundingPotsEvent,
-  PayoutClaimed: parsePayoutClaimedEvent,
-};
+// const EVENT_PARSERS = {
+//   ColonyFundsClaimed: parseColonyFundsClaimedEvent,
+//   // eslint-disable-next-line max-len
+//   ColonyFundsMovedBetweenFundingPots: parseColonyFundsMovedBetweenFundingPotsEvent,
+//   PayoutClaimed: parsePayoutClaimedEvent,
+// };
 
-function* colonyTransactionsFetch({
-  payload: { colonyAddress },
-  meta,
-}: Action<ActionTypes.COLONY_TRANSACTIONS_FETCH>) {
-  try {
-    const colonyManager: ColonyManager = yield getContext(
-      Context.COLONY_MANAGER,
-    );
-    const colonyClient: ColonyClient = yield colonyManager.getColonyClient(
-      colonyAddress,
-    );
-    const {
-      events: {
-        ColonyFundsClaimed,
-        // ColonyFundsMovedBetweenFundingPots,
-        PayoutClaimed,
-      },
-    } = colonyClient;
-    const { events, logs } = yield getLogsAndEvents(
-      colonyClient,
-      {
-        address: colonyAddress,
-        fromBlock: 1,
-      },
-      {
-        events: [
-          ColonyFundsClaimed,
-          /*
-        @todo Refactor Colony transactions
-        @body The Colony transactions list is currently really just
-        events, vaguely displayed as transactions. It should be refactored
-        along with the user wallet transactions list.
-       */
-          // ColonyFundsMovedBetweenFundingPots,
-          PayoutClaimed,
-        ],
-      },
-    );
-    const transactions = yield Promise.all(
-      events.map((event, i) =>
-        EVENT_PARSERS[event.eventName]({
-          event,
-          log: logs[i],
-          colonyClient,
-          colonyAddress,
-        }),
-      ),
-    );
+// FIXME all of these!!
+// function* colonyTransactionsFetch({
+//   payload: { colonyAddress },
+//   meta,
+// }: Action<ActionTypes.COLONY_TRANSACTIONS_FETCH>) {
+//   try {
+//     const colonyManager: ColonyManager = yield getContext(
+//       Context.COLONY_MANAGER,
+//     );
+//     const colonyClient: ColonyClient = yield colonyManager.getColonyClient(
+//       colonyAddress,
+//     );
+//     const {
+//       events: {
+//         ColonyFundsClaimed,
+//         // ColonyFundsMovedBetweenFundingPots,
+//         PayoutClaimed,
+//       },
+//     } = colonyClient;
+//     const { events, logs } = yield getLogsAndEvents(
+//       colonyClient,
+//       {
+//         address: colonyAddress,
+//         fromBlock: 1,
+//       },
+//       {
+//         events: [
+//           ColonyFundsClaimed,
+//           /*
+//         @todo Refactor Colony transactions
+//         @body The Colony transactions list is currently really just
+//         events, vaguely displayed as transactions. It should be refactored
+//         along with the user wallet transactions list.
+//        */
+//           // ColonyFundsMovedBetweenFundingPots,
+//           PayoutClaimed,
+//         ],
+//       },
+//     );
+//     const transactions = yield Promise.all(
+//       events.map((event, i) =>
+//         EVENT_PARSERS[event.eventName]({
+//           event,
+//           log: logs[i],
+//           colonyClient,
+//           colonyAddress,
+//         }),
+//       ),
+//     );
 
-    yield put<AllActions>({
-      type: ActionTypes.COLONY_TRANSACTIONS_FETCH_SUCCESS,
-      meta,
-      payload: { colonyAddress, transactions: transactions.filter(Boolean) },
-    });
-  } catch (error) {
-    return yield putError(
-      ActionTypes.COLONY_TRANSACTIONS_FETCH_ERROR,
-      error,
-      meta,
-    );
-  }
-  return null;
-}
+//     yield put<AllActions>({
+//       type: ActionTypes.COLONY_TRANSACTIONS_FETCH_SUCCESS,
+//       meta,
+//       payload: { colonyAddress, transactions: transactions.filter(Boolean) },
+//     });
+//   } catch (error) {
+//     return yield putError(
+//       ActionTypes.COLONY_TRANSACTIONS_FETCH_ERROR,
+//       error,
+//       meta,
+//     );
+//   }
+//   return null;
+// }
 
-function* colonyUnclaimedTransactionsFetch({
-  payload: { colonyAddress },
-  meta,
-}: Action<ActionTypes.COLONY_UNCLAIMED_TRANSACTIONS_FETCH>) {
-  try {
-    const colonyManager: ColonyManager = yield getContext(
-      Context.COLONY_MANAGER,
-    );
-    const colonyClient: ColonyClient = yield colonyManager.getColonyClient(
-      colonyAddress,
-    );
-    const {
-      events: { ColonyFundsClaimed },
-      tokenClient,
-    } = colonyClient;
-    const {
-      events: { Transfer },
-    } = tokenClient;
+// function* colonyUnclaimedTransactionsFetch({
+//   payload: { colonyAddress },
+//   meta,
+// }: Action<ActionTypes.COLONY_UNCLAIMED_TRANSACTIONS_FETCH>) {
+//   try {
+//     const colonyManager: ColonyManager = yield getContext(
+//       Context.COLONY_MANAGER,
+//     );
+//     const colonyClient: ColonyClient = yield colonyManager.getColonyClient(
+//       colonyAddress,
+//     );
+//     const {
+//       events: { ColonyFundsClaimed },
+//       tokenClient,
+//     } = colonyClient;
+//     const {
+//       events: { Transfer },
+//     } = tokenClient;
 
-    // Get logs & events for token transfer to this colony
-    const {
-      logs: transferLogs,
-      events: transferEvents,
-    } = yield getLogsAndEvents(
-      tokenClient,
-      { fromBlock: 1 },
-      { events: [Transfer], to: colonyAddress },
-    );
+//     // Get logs & events for token transfer to this colony
+//     const {
+//       logs: transferLogs,
+//       events: transferEvents,
+//     } = yield getLogsAndEvents(
+//       tokenClient,
+//       { fromBlock: 1 },
+//       { events: [Transfer], to: colonyAddress },
+//     );
 
-    // Get logs & events for token claims by this colony
-    const { logs: claimLogs, events: claimEvents } = yield getLogsAndEvents(
-      colonyClient,
-      { address: colonyAddress, fromBlock: 1 },
-      { events: [ColonyFundsClaimed] },
-    );
+//     // Get logs & events for token claims by this colony
+//     const { logs: claimLogs, events: claimEvents } = yield getLogsAndEvents(
+//       colonyClient,
+//       { address: colonyAddress, fromBlock: 1 },
+//       { events: [ColonyFundsClaimed] },
+//     );
 
-    const unclaimedTransfers = yield Promise.all(
-      transferEvents.map((transferEvent, i) =>
-        parseUnclaimedTransferEvent({
-          claimEvents,
-          claimLogs,
-          colonyClient,
-          colonyAddress,
-          transferEvent,
-          transferLog: transferLogs[i],
-        }),
-      ),
-    );
+//     const unclaimedTransfers = yield Promise.all(
+//       transferEvents.map((transferEvent, i) =>
+//         parseUnclaimedTransferEvent({
+//           claimEvents,
+//           claimLogs,
+//           colonyClient,
+//           colonyAddress,
+//           transferEvent,
+//           transferLog: transferLogs[i],
+//         }),
+//       ),
+//     );
 
-    // Get ether balance and add a fake transaction if there's any unclaimed
-    const colonyEtherBalance = yield colonyClient.adapter.provider.getBalance(
-      colonyAddress,
-    );
-    const {
-      total: colonyNonRewardsPotsTotal,
-    } = yield colonyClient.getNonRewardPotsTotal.call({ token: ZERO_ADDRESS });
-    const {
-      balance: colonyRewardsPotTotal,
-    } = yield colonyClient.getFundingPotBalance.call({
-      potId: 0,
-      token: ZERO_ADDRESS,
-    });
-    const unclaimedEther = new BigNumber(
-      colonyEtherBalance
-        .sub(colonyNonRewardsPotsTotal)
-        .sub(colonyRewardsPotTotal)
-        .toString(10),
-    );
-    if (unclaimedEther.gtn(0)) {
-      unclaimedTransfers.push({
-        amount: unclaimedEther,
-        colonyAddress,
-        date: new Date(),
-        hash: '0x0',
-        incoming: true,
-        token: ZERO_ADDRESS,
-      });
-    }
+//     // Get ether balance and add a fake transaction if there's any unclaimed
+//     const colonyEtherBalance = yield colonyClient.adapter.provider.getBalance(
+//       colonyAddress,
+//     );
+//     const {
+//       total: colonyNonRewardsPotsTotal,
+//     } = yield colonyClient.getNonRewardPotsTotal.call({ token: ZERO_ADDRESS });
+//     const {
+//       balance: colonyRewardsPotTotal,
+//     } = yield colonyClient.getFundingPotBalance.call({
+//       potId: 0,
+//       token: ZERO_ADDRESS,
+//     });
+//     const unclaimedEther = new BigNumber(
+//       colonyEtherBalance
+//         .sub(colonyNonRewardsPotsTotal)
+//         .sub(colonyRewardsPotTotal)
+//         .toString(10),
+//     );
+//     if (unclaimedEther.gtn(0)) {
+//       unclaimedTransfers.push({
+//         amount: unclaimedEther,
+//         colonyAddress,
+//         date: new Date(),
+//         hash: '0x0',
+//         incoming: true,
+//         token: ZERO_ADDRESS,
+//       });
+//     }
 
-    const transactions = unclaimedTransfers.filter(
-      Boolean,
-    ) as ContractTransactionType[];
+//     const transactions = unclaimedTransfers.filter(
+//       Boolean,
+//     ) as ContractTransactionType[];
 
-    yield put<Action<ActionTypes.COLONY_UNCLAIMED_TRANSACTIONS_FETCH_SUCCESS>>({
-      type: ActionTypes.COLONY_UNCLAIMED_TRANSACTIONS_FETCH_SUCCESS,
-      meta,
-      payload: { colonyAddress, transactions },
-    });
-  } catch (error) {
-    return yield putError(
-      ActionTypes.COLONY_UNCLAIMED_TRANSACTIONS_FETCH_ERROR,
-      error,
-      meta,
-    );
-  }
-  return null;
-}
+//     yield put<Action<ActionTypes.COLONY_UNCLAIMED_TRANSACTIONS_FETCH_SUCCESS>>({
+//       type: ActionTypes.COLONY_UNCLAIMED_TRANSACTIONS_FETCH_SUCCESS,
+//       meta,
+//       payload: { colonyAddress, transactions },
+//     });
+//   } catch (error) {
+//     return yield putError(
+//       ActionTypes.COLONY_UNCLAIMED_TRANSACTIONS_FETCH_ERROR,
+//       error,
+//       meta,
+//     );
+//   }
+//   return null;
+// }
 
 /*
  * Claim tokens, then reload unclaimed transactions list.
@@ -215,7 +217,7 @@ function* colonyClaimToken({
 
     txChannel = yield call(getTxChannel, meta.id);
     yield fork(createTransaction, meta.id, {
-      context: ContractContexts.COLONY_CONTEXT,
+      context: ContractContext.Colony,
       methodName: 'claimColonyFunds',
       identifier: colonyAddress,
       params: { token: tokenAddress },
@@ -291,7 +293,7 @@ function* colonyMintTokens({
 
     // create transactions
     yield fork(createTransaction, mintTokens.id, {
-      context: ContractContexts.COLONY_CONTEXT,
+      context: ContractContext.Colony,
       methodName: 'mintTokens',
       identifier: colonyAddress,
       params: { amount },
@@ -303,7 +305,7 @@ function* colonyMintTokens({
       ready: false,
     });
     yield fork(createTransaction, claimColonyFunds.id, {
-      context: ContractContexts.COLONY_CONTEXT,
+      context: ContractContext.Colony,
       methodName: 'claimColonyFunds',
       identifier: colonyAddress,
       params: {
@@ -369,14 +371,14 @@ function* colonyMintTokens({
 }
 
 export default function* adminSagas() {
-  yield takeEvery(
-    ActionTypes.COLONY_TRANSACTIONS_FETCH,
-    colonyTransactionsFetch,
-  );
-  yield takeEvery(
-    ActionTypes.COLONY_UNCLAIMED_TRANSACTIONS_FETCH,
-    colonyUnclaimedTransactionsFetch,
-  );
+  // yield takeEvery(
+  //   ActionTypes.COLONY_TRANSACTIONS_FETCH,
+  //   colonyTransactionsFetch,
+  // );
+  // yield takeEvery(
+  //   ActionTypes.COLONY_UNCLAIMED_TRANSACTIONS_FETCH,
+  //   colonyUnclaimedTransactionsFetch,
+  // );
   yield takeEvery(ActionTypes.COLONY_CLAIM_TOKEN, colonyClaimToken);
   yield takeEvery(ActionTypes.COLONY_MINT_TOKENS, colonyMintTokens);
 }

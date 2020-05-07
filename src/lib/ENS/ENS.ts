@@ -4,7 +4,7 @@ import namehash from 'eth-ens-namehash-ms';
 import { isAddress } from 'web3-utils';
 import punycode from 'punycode';
 
-import ColonyNetworkClient from '@colony/colony-js-client';
+import { ColonyNetworkClient } from '@colony/colony-js';
 
 import { Address, ENSName } from '~types/index';
 import { createAddress } from '~utils/web3';
@@ -54,9 +54,9 @@ class ENS {
       // The default value is here to satisfy flow.
       return createAddress(this._domainCache.get(normalizedDomain) || '');
     }
-    const { ensAddress } = await networkClient.getAddressForENSHash.call({
-      nameHash: namehash.hash(normalizedDomain),
-    });
+    const ensAddress = await networkClient.addr(
+      namehash.hash(normalizedDomain),
+    );
 
     if (ensAddress) {
       const address = createAddress(ensAddress);
@@ -76,11 +76,7 @@ class ENS {
       return this._addressCache.get(address) || '';
     }
 
-    const {
-      domain: ensName,
-    } = await networkClient.lookupRegisteredENSDomain.call({
-      ensAddress: address,
-    });
+    const ensName = await networkClient.lookupRegisteredENSDomain(address);
 
     if (ensName) {
       this._updateCaches(ensName, address);

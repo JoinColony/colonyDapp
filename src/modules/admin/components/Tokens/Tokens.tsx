@@ -1,8 +1,9 @@
 import React, { useCallback, useMemo, useState } from 'react';
 import { defineMessages, useIntl } from 'react-intl';
 import sortBy from 'lodash/sortBy';
+import { ColonyRole } from '@colony/colony-js';
 
-import { COLONY_TOTAL_BALANCE_DOMAIN_ID, ROLES } from '~constants';
+import { COLONY_TOTAL_BALANCE_DOMAIN_ID } from '~constants';
 import Button from '~core/Button';
 import { useDialog } from '~core/Dialog';
 import Heading from '~core/Heading';
@@ -48,7 +49,7 @@ interface Props {
   colonyAddress: Address;
   domains: DomainsMapType;
   nativeTokenAddress: Address;
-  rootRoles: ROLES[];
+  rootRoles: ColonyRole[];
   tokenAddresses: string[];
 }
 
@@ -71,9 +72,9 @@ const Tokens = ({
   const openTokensMoveDialog = useDialog(TokensMoveDialog);
 
   const canEdit =
-    userHasRole(rootRoles, ROLES.ROOT) ||
-    userHasRole(rootRoles, ROLES.ADMINISTRATION);
-  const canMoveTokens = userHasRole(rootRoles, ROLES.FUNDING);
+    userHasRole(rootRoles, ColonyRole.Root) ||
+    userHasRole(rootRoles, ColonyRole.Administration);
+  const canMoveTokens = userHasRole(rootRoles, ColonyRole.Funding);
 
   const domainsArray = useMemo(
     () => [

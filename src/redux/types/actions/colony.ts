@@ -1,6 +1,6 @@
 import BigNumber from 'bn.js';
+import { ColonyRole } from '@colony/colony-js';
 
-import { ROLES } from '~constants';
 import { ActionTypes } from '~redux/index';
 import { Address, WithKey } from '~types/index';
 import {
@@ -153,7 +153,7 @@ export type ColonyActionTypes =
       {
         colonyAddress: Address;
         domainId: number;
-        roles: Record<ROLES, boolean>;
+        roles: Record<ColonyRole, boolean>;
         userAddress: Address;
       },
       WithKey
@@ -167,7 +167,7 @@ export type ColonyActionTypes =
       {
         colonyAddress: Address;
         domainId: number;
-        roles: Record<ROLES, boolean>;
+        roles: Record<ColonyRole, boolean>;
         userAddress: Address;
       },
       WithKey

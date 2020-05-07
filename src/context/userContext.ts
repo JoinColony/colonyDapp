@@ -1,8 +1,10 @@
-import { WalletObjectType } from '@colony/purser-core';
+import { PurserWallet } from '@purser/core';
 
 import ColonyManager from '../lib/ColonyManager';
 
+import { Context } from './constants';
+
 export type UserContext = {
-  colonyManager: ColonyManager;
-  wallet: WalletObjectType;
+  [Context.COLONY_MANAGER]: ColonyManager;
+  [Context.WALLET]: PurserWallet;
 };

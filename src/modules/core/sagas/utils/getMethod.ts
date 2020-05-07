@@ -1,16 +1,15 @@
 import { call } from 'redux-saga/effects';
 
 import { Context, getContext } from '~context/index';
-
 import { TransactionRecord } from '~immutable/index';
-import { AddressOrENSName, ContractContexts } from '~types/index';
+import { AddressOrENSName, ContractContext, ColonyManager } from '~types/index';
 
 export function* getMethod(
-  context: ContractContexts,
+  context: ContractContext,
   methodName: string,
   identifier?: AddressOrENSName,
 ) {
-  const colonyManager = yield getContext(Context.COLONY_MANAGER);
+  const colonyManager: ColonyManager = yield getContext(Context.COLONY_MANAGER);
   return yield call(
     [colonyManager, colonyManager.getMethod],
     context,

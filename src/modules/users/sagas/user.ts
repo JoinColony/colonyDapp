@@ -9,7 +9,7 @@ import {
 } from 'redux-saga/effects';
 
 import { Action, ActionTypes, AllActions } from '~redux/index';
-import { getContext, Context, TEMP_removeNewContext } from '~context/index';
+import { getContext, Context, TEMP_removeContext } from '~context/index';
 import ENS from '~lib/ENS';
 import { ColonyManager } from '~types/index';
 import { createAddress } from '~utils/web3';
@@ -30,98 +30,100 @@ import {
   ClearLoggedInUserMutationVariables,
 } from '~data/index';
 import { putError, takeFrom } from '~utils/saga/effects';
-import { getEventLogs, parseUserTransferEvent } from '~utils/web3/eventLogs';
+// FIXME
+// import { getEventLogs, parseUserTransferEvent } from '~utils/web3/eventLogs';
 
 import { clearToken } from '../../../api/auth';
-import { ContractContexts } from '../../../lib/ColonyManager/constants';
+import { ContractContext } from '../../../lib/ColonyManager/constants';
 import { ipfsUpload } from '../../core/sagas/ipfs';
 import { transactionLoadRelated } from '../../core/actionCreators';
 import { createTransaction, getTxChannel } from '../../core/sagas/transactions';
 import { clearLastWallet } from '~utils/autoLogin';
 
-function* userTokenTransfersFetch( // eslint-disable-next-line @typescript-eslint/no-unused-vars,no-unused-vars
-  action: Action<ActionTypes.USER_TOKEN_TRANSFERS_FETCH>,
-) {
-  try {
-    const { walletAddress } = yield getLoggedInUser();
-    const apolloClient: ApolloClient<object> = yield getContext(
-      Context.APOLLO_CLIENT,
-    );
-    const colonyManager: ColonyManager = yield getContext(
-      Context.COLONY_MANAGER,
-    );
+// FIXME
+// function* userTokenTransfersFetch( // eslint-disable-next-line @typescript-eslint/no-unused-vars,no-unused-vars
+//   action: Action<ActionTypes.USER_TOKEN_TRANSFERS_FETCH>,
+// ) {
+//   try {
+//     const { walletAddress } = yield getLoggedInUser();
+//     const apolloClient: ApolloClient<object> = yield getContext(
+//       Context.APOLLO_CLIENT,
+//     );
+//     const colonyManager: ColonyManager = yield getContext(
+//       Context.COLONY_MANAGER,
+//     );
 
-    const { data } = yield apolloClient.query<
-      UserColonyAddressesQuery,
-      UserColonyAddressesQueryVariables
-    >({
-      query: ColonySubscribedUsersDocument,
-      variables: { address: walletAddress },
-    });
+//     const { data } = yield apolloClient.query<
+//       UserColonyAddressesQuery,
+//       UserColonyAddressesQueryVariables
+//     >({
+//       query: ColonySubscribedUsersDocument,
+//       variables: { address: walletAddress },
+//     });
 
-    if (!data) {
-      throw new Error('Could not get user colonies');
-    }
+//     if (!data) {
+//       throw new Error('Could not get user colonies');
+//     }
 
-    const {
-      user: { colonyAddresses: userColonyAddresses },
-    } = data;
+//     const {
+//       user: { colonyAddresses: userColonyAddresses },
+//     } = data;
 
-    const metaColonyClient = yield colonyManager.getMetaColonyClient();
+//     const metaColonyClient = yield colonyManager.getMetaColonyClient();
 
-    const { tokenClient } = metaColonyClient;
-    const {
-      events: { Transfer },
-    } = tokenClient;
-    const logFilterOptions = {
-      events: [Transfer],
-    };
+//     const { tokenClient } = metaColonyClient;
+//     const {
+//       events: { Transfer },
+//     } = tokenClient;
+//     const logFilterOptions = {
+//       events: [Transfer],
+//     };
 
-    const transferToEventLogs = yield getEventLogs(
-      tokenClient,
-      { fromBlock: 1 },
-      {
-        ...logFilterOptions,
-        to: walletAddress,
-      },
-    );
+//     const transferToEventLogs = yield getEventLogs(
+//       tokenClient,
+//       { fromBlock: 1 },
+//       {
+//         ...logFilterOptions,
+//         to: walletAddress,
+//       },
+//     );
 
-    const transferFromEventLogs = yield getEventLogs(
-      tokenClient,
-      { fromBlock: 1 },
-      {
-        ...logFilterOptions,
-        from: walletAddress,
-      },
-    );
+//     const transferFromEventLogs = yield getEventLogs(
+//       tokenClient,
+//       { fromBlock: 1 },
+//       {
+//         ...logFilterOptions,
+//         from: walletAddress,
+//       },
+//     );
 
-    // Combine and sort logs by blockNumber, then parse events from thihs
-    const logs = [...transferToEventLogs, ...transferFromEventLogs].sort(
-      (a, b) => a.blockNumber - b.blockNumber,
-    );
-    const transferEvents = yield tokenClient.parseLogs(logs);
+//     // Combine and sort logs by blockNumber, then parse events from thihs
+//     const logs = [...transferToEventLogs, ...transferFromEventLogs].sort(
+//       (a, b) => a.blockNumber - b.blockNumber,
+//     );
+//     const transferEvents = yield tokenClient.parseLogs(logs);
 
-    const transactions = yield Promise.all(
-      transferEvents.map((event, i) =>
-        parseUserTransferEvent({
-          event,
-          log: logs[i],
-          tokenClient,
-          userColonyAddresses,
-          walletAddress,
-        }),
-      ),
-    );
+//     const transactions = yield Promise.all(
+//       transferEvents.map((event, i) =>
+//         parseUserTransferEvent({
+//           event,
+//           log: logs[i],
+//           tokenClient,
+//           userColonyAddresses,
+//           walletAddress,
+//         }),
+//       ),
+//     );
 
-    yield put<AllActions>({
-      type: ActionTypes.USER_TOKEN_TRANSFERS_FETCH_SUCCESS,
-      payload: { transactions },
-    });
-  } catch (error) {
-    return yield putError(ActionTypes.USER_TOKEN_TRANSFERS_FETCH_ERROR, error);
-  }
-  return null;
-}
+//     yield put<AllActions>({
+//       type: ActionTypes.USER_TOKEN_TRANSFERS_FETCH_SUCCESS,
+//       payload: { transactions },
+//     });
+//   } catch (error) {
+//     return yield putError(ActionTypes.USER_TOKEN_TRANSFERS_FETCH_ERROR, error);
+//   }
+//   return null;
+// }
 
 function* userAddressFetch({
   payload: { username },
@@ -214,7 +216,7 @@ function* usernameCreate({
     const username = ENS.normalize(givenUsername);
 
     yield fork(createTransaction, id, {
-      context: ContractContexts.NETWORK_CONTEXT,
+      context: ContractContext.Network,
       methodName: 'registerUserLabel',
       ready: true,
       params: { username, orbitDBPath: '' },
@@ -276,7 +278,7 @@ function* userLogout() {
     /*
      *  2. The purser wallet is reset
      */
-    TEMP_removeNewContext('wallet');
+    TEMP_removeContext('wallet');
 
     /*
      *  3. Delete json web token and last wallet from localstorage
@@ -305,10 +307,11 @@ function* userLogout() {
 
 export function* setupUsersSagas() {
   yield takeEvery(ActionTypes.USER_ADDRESS_FETCH, userAddressFetch);
-  yield takeEvery(
-    ActionTypes.USER_TOKEN_TRANSFERS_FETCH,
-    userTokenTransfersFetch,
-  );
+  // FIXME
+  // yield takeEvery(
+  //   ActionTypes.USER_TOKEN_TRANSFERS_FETCH,
+  //   userTokenTransfersFetch,
+  // );
   yield takeLatest(ActionTypes.USER_AVATAR_REMOVE, userAvatarRemove);
   yield takeLatest(ActionTypes.USER_AVATAR_UPLOAD, userAvatarUpload);
   yield takeLatest(ActionTypes.USER_LOGOUT, userLogout);

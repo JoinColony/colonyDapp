@@ -1,2 +1,2 @@
-export { ContractContexts } from './constants';
+export { ContractContext } from './constants';
 export { default as ColonyManager } from './index';

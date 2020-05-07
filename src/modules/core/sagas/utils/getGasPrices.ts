@@ -1,13 +1,11 @@
-import { ColonyNetworkClient } from '@colony/colony-js-client';
-
-import BigNumber from 'bn.js';
-
+import { ColonyNetworkClient } from '@colony/colony-js';
+import { BigNumber, bigNumberify } from 'ethers/utils';
 import { call, put, select } from 'redux-saga/effects';
 
 import { GasPricesProps } from '~immutable/index';
-
 import { Context, getContext } from '~context/index';
 import { log } from '~utils/debug';
+
 import { gasPrices as gasPricesSelector } from '../../selectors';
 import { updateGasPrices } from '../../actionCreators';
 
@@ -33,8 +31,9 @@ const DEFAULT_GAS_PRICE = '1';
 const getNetworkGasPrice = async (
   networkClient: ColonyNetworkClient,
 ): Promise<string> => {
-  const price: BigNumber = await networkClient.adapter.provider.getGasPrice();
-  // Handling the weird ethers BN implementation. Remove when web3
+  const price = await networkClient.provider.getGasPrice();
+  // Handling the weird ethers BN implementation
+  // FIXME maybe leave it wehn moving to ethers BN
   return price.toString();
 };
 
@@ -59,11 +58,11 @@ const fetchGasPrices = async (
 
     return {
       timestamp: Date.now(),
-      network: new BigNumber(networkGasPrice),
+      network: bigNumberify(networkGasPrice),
 
-      suggested: new BigNumber(data.average).mul(pointOneGwei),
-      cheaper: new BigNumber(data.safeLow).mul(pointOneGwei),
-      faster: new BigNumber(data.fast).mul(pointOneGwei),
+      suggested: bigNumberify(data.average).mul(pointOneGwei),
+      cheaper: bigNumberify(data.safeLow).mul(pointOneGwei),
+      faster: bigNumberify(data.fast).mul(pointOneGwei),
 
       suggestedWait: data.avgWait * 60,
       cheaperWait: data.safeLowWait * 60,

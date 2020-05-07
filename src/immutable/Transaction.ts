@@ -1,15 +1,17 @@
 import { Record } from 'immutable';
-import { SendOptions } from '@colony/colony-js-client';
 import BigNumber from 'bn.js';
 
 import {
   Address,
   AddressOrENSName,
-  ContractContexts,
+  ContractContext,
   DefaultValues,
   RecordToJS,
   TransactionReceipt,
 } from '~types/index';
+
+// FIXME
+type SendOptions = any;
 
 export enum TRANSACTION_ERRORS {
   ESTIMATE = 'ESTIMATE',
@@ -52,7 +54,7 @@ export interface TransactionMultisig {
 }
 
 export interface TransactionRecordProps {
-  context: ContractContexts;
+  context: ContractContext;
   createdAt: Date;
   error?: TransactionError;
   eventData?: TransactionEventData;

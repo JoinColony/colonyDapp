@@ -1,6 +1,6 @@
 import { Map as ImmutableMap, Set as ImmutableSet } from 'immutable';
+import { ColonyRole } from '@colony/colony-js';
 
-import { ROLES } from '~constants';
 import { DomainRecord, DomainType } from '~immutable/index';
 
 export type DomainsMap = ImmutableMap<DomainRecord['id'], DomainRecord> & {
@@ -9,6 +9,6 @@ export type DomainsMap = ImmutableMap<DomainRecord['id'], DomainRecord> & {
 
 export type DomainsMapType = Record<string, DomainType>;
 
-export type RoleSet = ImmutableSet<ROLES>;
+export type RoleSet = ImmutableSet<ColonyRole>;
 
-export type RoleSetType = ROLES[];
+export type RoleSetType = ColonyRole[];

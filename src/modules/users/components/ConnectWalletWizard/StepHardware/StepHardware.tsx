@@ -3,11 +3,11 @@ import * as yup from 'yup';
 import { connect } from 'react-redux';
 import React, { useCallback, useEffect } from 'react';
 import { defineMessages } from 'react-intl';
-import BigNumber from 'bn.js';
+import { BigNumber } from 'ethers/utils';
 
 import { WizardProps } from '~core/Wizard';
 import { Address } from '~types/index';
-import { WALLET_CATEGORIES, WALLET_SPECIFICS } from '~immutable/index';
+import { WalletKind, WalletMethod } from '~immutable/index';
 import { ActionTypes } from '~redux/index';
 import { mergePayload } from '~utils/actions';
 import { SpinnerLoader } from '~core/Preloaders';
@@ -90,7 +90,7 @@ const validationSchema = yup.object({
 });
 
 interface FormValues {
-  method: WALLET_SPECIFICS;
+  method: WalletMethod;
   hardwareWalletChoice: string;
   hardwareWalletFilter: string;
 }
@@ -228,7 +228,7 @@ const StepHardware = ({
           <FormStatus status={status} />
           {isValid && values.hardwareWalletChoice && (
             <div className={styles.interactionPrompt}>
-              <WalletInteraction walletType={WALLET_CATEGORIES.HARDWARE} />
+              <WalletInteraction walletKind={WalletKind.Hardware} />
             </div>
           )}
           <div className={styles.actions}>
@@ -258,7 +258,7 @@ const StepHardware = ({
 StepHardware.defaultProps = {
   availableAddresses: [],
   wizardValues: {
-    method: WALLET_SPECIFICS.LEDGER,
+    method: WalletMethod.Ledger,
     hardwareWalletChoice: '0x0',
     hardwareWalletFilter: '0x0',
   },

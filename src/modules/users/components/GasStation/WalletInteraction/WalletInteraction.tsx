@@ -1,7 +1,7 @@
 import React from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 
-import { WALLET_CATEGORIES } from '~immutable/index';
+import { WalletKind } from '~immutable/index';
 
 import Icon from '~core/Icon';
 
@@ -10,9 +10,9 @@ import styles from './WalletInteraction.css';
 const MSG = defineMessages({
   walletPromptText: {
     id: 'users.GasStation.WalletInteraction.walletPromptText',
-    defaultMessage: `Please finish this action on {walletType, select,
-      metamask {MetaMask}
-      hardware {your hardware wallet}
+    defaultMessage: `Please finish this action on {walletKind, select,
+      MetaMask {MetaMask}
+      HardWare {your hardware wallet}
     }`,
   },
   hardware: {
@@ -22,26 +22,26 @@ const MSG = defineMessages({
 });
 
 interface Props {
-  walletType: WALLET_CATEGORIES;
+  walletKind: WalletKind;
 }
 
 const displayName = 'users.GasStation.WalletInteraction';
 
-const WalletInteraction = ({ walletType }: Props) => {
-  if (walletType === WALLET_CATEGORIES.SOFTWARE) {
+const WalletInteraction = ({ walletKind }: Props) => {
+  if (walletKind === WalletKind.Software) {
     return null;
   }
   return (
     <div className={styles.main}>
       <div className={styles.content}>
-        {walletType === WALLET_CATEGORIES.METAMASK && (
+        {walletKind === WalletKind.MetaMask && (
           <Icon
             name="metamask"
             title={{ id: 'wallet.metamask' }}
             appearance={{ size: 'medium' }}
           />
         )}
-        {walletType === WALLET_CATEGORIES.HARDWARE && (
+        {walletKind === WalletKind.Hardware && (
           <Icon
             name="wallet"
             title={MSG.hardware}
@@ -49,7 +49,7 @@ const WalletInteraction = ({ walletType }: Props) => {
           />
         )}
         <span className={styles.text}>
-          <FormattedMessage {...MSG.walletPromptText} values={{ walletType }} />
+          <FormattedMessage {...MSG.walletPromptText} values={{ walletKind }} />
         </span>
       </div>
     </div>
