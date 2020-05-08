@@ -24,7 +24,7 @@
   display: inline-block;
   max-width: 38ch;
   vertical-align: bottom;
-  font-weight: 500;
+  font-weight: var(--weight-bold);
   color: var(--colony-black);
 }
 
