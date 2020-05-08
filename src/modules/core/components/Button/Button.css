@@ -10,7 +10,7 @@
 .main {
   composes: busySpin from '~styles/animations.css';
   display: inline-block;
-  padding: 4px 16px;
+  padding: 3px 16px;
   height: 27px;
   position: relative;
   border: 1px solid transparent;
@@ -93,7 +93,7 @@
 
 .sizeSmall {
   padding: 0 10px;
-  height: 14px;
+  height: 18px;
   font-size: var(--size-tiny);
   font-weight: var(--weight-normal);
 }
@@ -105,7 +105,7 @@
 }
 
 .sizeLarge {
-  padding: 11px 32px;
+  padding: 9px 32px;
   height: 43px;
   font-size: var(--size-normal);
 }
