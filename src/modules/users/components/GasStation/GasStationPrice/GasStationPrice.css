@@ -44,7 +44,7 @@
 }
 
 .transactionFeeInfo {
-  margin-left: 20px;
+  margin-left: 10px;
 }
 
 .transactionSpeedLabel,
@@ -54,6 +54,7 @@
 }
 
 .transactionDuration {
+  margin-top: -2px;
   font-size: var(--size-small);
 }
 
@@ -113,5 +114,5 @@
 }
 
 .transactionFeeEthUsd {
-  /* There is no style defined for this, but it is used in the component */
+  margin-top: -4px;
 }
