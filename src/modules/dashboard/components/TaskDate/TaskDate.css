@@ -40,3 +40,7 @@
   font-style: italic;
   color: var(--grey-4);
 }
+
+.datePicker {
+  margin-top: -2px;
+}

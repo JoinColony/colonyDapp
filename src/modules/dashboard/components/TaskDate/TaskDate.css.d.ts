@@ -4,3 +4,4 @@ export const controls: string;
 export const dateControls: string;
 export const currentDate: string;
 export const notSet: string;
+export const datePicker: string;
