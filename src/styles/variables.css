@@ -82,14 +82,11 @@
    * Fonts
    */
   --family-primary: "Muli", sans-serif;
-  --family-monospace: "Source Code Pro", "Monaco", "Inconsolata", monospace;
-  --family-techie: "IBM Plex Mono", sans-serif;
   --text: color-mod(var(--grey-dark) alpha(70%));
   --text-dark: var(--colony-black);
   --text-invert: var(--colony-white);
   --weight-thin: 300;
   --weight-normal: 400;
-  --weight-medium: 500;
   --weight-semi: 600;
   --weight-bold: 700;
   --size-unreadable: 10px;
@@ -102,6 +99,13 @@
   --size-huge: 36px;
   --spacing-normal: 0.25px;
   --spacing-medium: 0.5px;
+
+  /**
+   * @NOTE Weight medium is olny available on the techie font family
+   */
+  --family-monospace: "Source Code Pro", "Monaco", "Inconsolata", monospace;
+  --family-techie: "IBM Plex Mono", sans-serif;
+  --weight-medium: 500;
 
   /*
    * Media queries
