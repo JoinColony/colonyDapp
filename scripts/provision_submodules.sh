@@ -35,13 +35,6 @@ log() {
   echo "${GREEN}${BOLD}$1${NC}"
 }
 
-log "Generating ssl certificate"
-if [ ! -f ssl/localhost+2.pem ]; then
-  cd ssl && mkcert localhost 127.0.0.1 ::1 && cd ${ROOT_PATH}
-else
-  echo "Certificate already exists"
-fi
-
 # Update / re-pull submodules
 log "Initialize submodule libs"
 git submodule update --init --recursive
