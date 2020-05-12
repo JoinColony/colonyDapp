@@ -10,7 +10,7 @@
 
 .bold {
   composes: main;
-  font-weight: var(--weight-semi);
+  font-weight: var(--weight-bold);
 }
 
 .invert {
@@ -48,7 +48,7 @@
   display: block;
   margin-bottom: 6px;
   font-size: var(--size-small);
-  font-weight: var(--weight-semi);
+  font-weight: var(--weight-bold);
   text-align: left;
   line-height: calc(var(--size-small) + 2px);
 }

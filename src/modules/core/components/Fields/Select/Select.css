@@ -51,7 +51,7 @@
 .activeOption {
   height: 100%;
   overflow: hidden;
-  font-weight: var(--weight-semi);
+  font-weight: var(--weight-bold);
   text-overflow: ellipsis;
   white-space: nowrap;
 }

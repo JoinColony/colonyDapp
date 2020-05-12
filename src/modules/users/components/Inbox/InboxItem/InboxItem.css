@@ -12,7 +12,7 @@
   display: inline-block;
   padding: 24px 20px;
   position: relative;
-  font-weight: var(--weight-semi);
+  font-weight: var(--weight-bold);
 }
 
 .inboxDetails a:hover {
@@ -24,7 +24,7 @@
   display: inline-block;
   max-width: 38ch;
   vertical-align: bottom;
-  font-weight: 500;
+  font-weight: var(--weight-bold);
   color: var(--colony-black);
 }
 
@@ -52,12 +52,12 @@
 }
 
 .time {
-  font-weight: var(--weight-thin);
+  font-weight: var(--weight-normal);
 }
 
 .pipe {
   margin: 0 10px;
-  font-weight: var(--weight-thin);
+  font-weight: var(--weight-normal);
 }
 
 .inboxDomain {

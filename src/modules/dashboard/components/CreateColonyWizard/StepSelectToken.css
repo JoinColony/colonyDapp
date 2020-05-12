@@ -15,7 +15,7 @@
 .title {
   margin-top: 310px;
   margin-bottom: 45px;
-  font-weight: var(--weight-medium);
+  font-weight: var(--weight-bold);
 }
 
 .tokenDetails {
@@ -36,7 +36,7 @@
   border: none;
   background-color: transparent;
   font-size: var(--size-small);
-  font-weight: var(--weight-semi);
+  font-weight: var(--weight-bold);
   color: var(--sky-blue);
   cursor: pointer;
 }

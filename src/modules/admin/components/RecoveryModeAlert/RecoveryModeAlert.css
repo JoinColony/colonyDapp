@@ -6,7 +6,7 @@
   left: 0;
   z-index: var(--z-index-alert);
   background-color: var(--danger);
-  font-weight: var(--weight-medium);
+  font-weight: var(--weight-bold);
   text-align: center;
   color: white;
 }

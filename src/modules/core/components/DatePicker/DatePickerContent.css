@@ -115,7 +115,7 @@
 }
 
 .today {
-  font-weight: var(--weight-semi);
+  font-weight: var(--weight-bold);
   text-decoration: underline;
   color: var(--colony-black);
 }

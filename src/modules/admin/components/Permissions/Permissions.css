@@ -47,5 +47,5 @@
 .parentPermissionTip {
   margin: 10px;
   font-size: var(--size-small);
-  font-weight: var(--weight-medium);
+  font-weight: var(--weight-bold);
 }

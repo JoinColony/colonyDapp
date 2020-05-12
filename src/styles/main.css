@@ -170,7 +170,7 @@ span {
 }
 
 strong {
-  font-weight: var(--weight-semi);
+  font-weight: var(--weight-bold);
   color: var(--grey-1);
 }
 

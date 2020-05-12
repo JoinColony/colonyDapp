@@ -32,14 +32,14 @@
 }
 
 .tokenLink {
-  font-weight: var(--weight-medium);
+  font-weight: var(--weight-bold);
   color: var(--sky-blue);
 }
 
 .walletLink {
   margin-left: 5px;
   font-size: var(--size-tiny);
-  font-weight: var(--weight-semi);
+  font-weight: var(--weight-bold);
   color: var(--sky-blue);
 }
 

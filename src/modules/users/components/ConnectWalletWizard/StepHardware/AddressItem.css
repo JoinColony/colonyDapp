@@ -1,18 +1,14 @@
 @value paddingHorizontal: 30px;
 @value paddingVertical: 5px;
 
-.choiceCell {
-  font-weight: var(--weight-medium);
-}
-
 .choiceInputContainer {
   padding: paddingVertical calc(paddingHorizontal / 2) paddingVertical 0;
   font-family: var(--family-monospace);
 }
 
 .choiceBalanceContainer {
-  composes: choiceCell;
   padding: paddingVertical paddingVertical paddingVertical paddingHorizontal;
+  font-weight: var(--weight-medium);
 }
 
 .addressSpacer {

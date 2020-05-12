@@ -15,7 +15,7 @@
   border: none;
   background-color: transparent;
   font-size: var(--size-small);
-  font-weight: var(--weight-medium);
+  font-weight: var(--weight-bold);
   text-overflow: ellipsis;
   white-space: nowrap;
   color: var(--text);

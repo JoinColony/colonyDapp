@@ -25,7 +25,7 @@
   display: block;
   margin-bottom: 10px;
   font-size: var(--size-small);
-  font-weight: var(--weight-medium);
+  font-weight: var(--weight-bold);
 
   &:hover .cancelButton {
     display: inline;

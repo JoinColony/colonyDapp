@@ -30,7 +30,7 @@
    * @NOTE Negative Margins
    * Added in order to perfectly align the settings icon
    */
-  margin: -2px 0 0 6px;
+  margin: -5px 0 0 6px;
   padding: 0;
   vertical-align: -webkit-baseline-middle;
 }
@@ -74,7 +74,7 @@
 
 .filterItemActive {
   composes: filterItem;
-  font-weight: var(--weight-medium);
+  font-weight: var(--weight-bold);
 }
 
 .headlineContainer {
@@ -93,7 +93,7 @@
 
 .headline p {
   font-size: var(--size-small);
-  font-weight: var(--weight-medium);
+  font-weight: var(--weight-bold);
   color: var(--grey-dark);
 }
 

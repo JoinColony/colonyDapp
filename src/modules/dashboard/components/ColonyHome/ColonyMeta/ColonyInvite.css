@@ -3,7 +3,7 @@
   padding: 25px 0;
   border-top: 1px solid var(--temp-grey-5);
   font-size: var(--size-small);
-  font-weight: var(--weight-medium);
+  font-weight: var(--weight-bold);
   color: var(--grey-dark);
 }
 

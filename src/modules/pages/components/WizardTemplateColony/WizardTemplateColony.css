@@ -30,11 +30,10 @@
 
 .address {
   display: flex;
-  justify-content: flex-end;
   justify-content: space-between;
   width: 185px;
   position: relative;
-  font-weight: var(--weight-medium);
+  font-weight: var(--weight-bold);
 }
 
 .headerWallet {
@@ -72,6 +71,7 @@
 }
 
 .hello {
+  margin-top: -3px;
   font-weight: var(--weight-normal);
 }
 

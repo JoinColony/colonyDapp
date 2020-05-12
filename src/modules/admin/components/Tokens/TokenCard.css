@@ -62,7 +62,7 @@
 }
 
 .ethUsdText {
-  font-weight: var(--weight-semi);
+  font-weight: var(--weight-bold);
 }
 
 .cardFooter span {

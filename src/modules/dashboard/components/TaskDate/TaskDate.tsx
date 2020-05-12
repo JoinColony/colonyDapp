@@ -77,56 +77,58 @@ const TaskDate = ({ draftId, dueDate: existingDueDate, disabled }: Props) => {
             onSubmit={onSubmit}
           >
             {({ submitForm, setFormikState }) => (
-              <DatePicker
-                elementOnly
-                name="taskDueDate"
-                showArrow={false}
-                label={MSG.title}
-                setValueOnPick
-                renderTrigger={
-                  <Button
-                    appearance={{ theme: 'blue', size: 'small' }}
-                    text={MSG.selectDate}
-                    textValues={{
-                      dateSelected: !!existingDueDate,
-                    }}
-                  />
-                }
-                renderContentFooter={(close) => (
-                  <div className={styles.dateControls}>
+              <div className={styles.datePicker}>
+                <DatePicker
+                  elementOnly
+                  name="taskDueDate"
+                  showArrow={false}
+                  label={MSG.title}
+                  setValueOnPick
+                  renderTrigger={
                     <Button
-                      appearance={{ theme: 'secondary' }}
-                      text={{ id: 'button.cancel' }}
-                      onClick={() => close(null, { cancelled: true })}
-                    />
-                    <Button
-                      appearance={{ theme: 'danger' }}
-                      disabled={!existingDueDate}
-                      text={{ id: 'button.remove' }}
-                      onClick={() => {
-                        setFormikState((state) => ({
-                          ...state,
-                          values: {},
-                        }));
-                        const result: any = submitForm();
-                        result.then(() => {
-                          close();
-                        });
+                      appearance={{ theme: 'blue', size: 'small' }}
+                      text={MSG.selectDate}
+                      textValues={{
+                        dateSelected: !!existingDueDate,
                       }}
                     />
-                    <Button
-                      appearance={{ theme: 'primary' }}
-                      text={{ id: 'button.confirm' }}
-                      onClick={() => {
-                        const result: any = submitForm();
-                        result.then(() => {
-                          close();
-                        });
-                      }}
-                    />
-                  </div>
-                )}
-              />
+                  }
+                  renderContentFooter={(close) => (
+                    <div className={styles.dateControls}>
+                      <Button
+                        appearance={{ theme: 'secondary' }}
+                        text={{ id: 'button.cancel' }}
+                        onClick={() => close(null, { cancelled: true })}
+                      />
+                      <Button
+                        appearance={{ theme: 'danger' }}
+                        disabled={!existingDueDate}
+                        text={{ id: 'button.remove' }}
+                        onClick={() => {
+                          setFormikState((state) => ({
+                            ...state,
+                            values: {},
+                          }));
+                          const result: any = submitForm();
+                          result.then(() => {
+                            close();
+                          });
+                        }}
+                      />
+                      <Button
+                        appearance={{ theme: 'primary' }}
+                        text={{ id: 'button.confirm' }}
+                        onClick={() => {
+                          const result: any = submitForm();
+                          result.then(() => {
+                            close();
+                          });
+                        }}
+                      />
+                    </div>
+                  )}
+                />
+              </div>
             )}
           </Form>
         )}

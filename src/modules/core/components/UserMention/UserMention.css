@@ -1,4 +1,4 @@
 .mention {
-  font-weight: var(--weight-medium);
+  font-weight: var(--weight-bold);
   color: var(--pink);
 }

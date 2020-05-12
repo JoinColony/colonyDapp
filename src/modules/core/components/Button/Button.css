@@ -10,14 +10,14 @@
 .main {
   composes: busySpin from '~styles/animations.css';
   display: inline-block;
-  padding: 4px 16px;
+  padding: 3px 16px;
   height: 27px;
   position: relative;
   border: 1px solid transparent;
   border-radius: var(--radius-tiny);
   background-color: transparent;
   font-size: var(--size-small);
-  font-weight: var(--weight-semi);
+  font-weight: var(--weight-bold);
   text-align: center;
   white-space: nowrap;
   letter-spacing: 0.25px;
@@ -93,7 +93,7 @@
 
 .sizeSmall {
   padding: 0 10px;
-  height: 14px;
+  height: 18px;
   font-size: var(--size-tiny);
   font-weight: var(--weight-normal);
 }
@@ -105,7 +105,7 @@
 }
 
 .sizeLarge {
-  padding: 11px 32px;
+  padding: 9px 32px;
   height: 43px;
   font-size: var(--size-normal);
 }
@@ -207,7 +207,7 @@
   height: 20px;
   border-color: transparent;
   background-color: transparent;
-  font-weight: var(--weight-semi);
+  font-weight: var(--weight-bold);
   color: var(--danger);
 }
 
@@ -288,7 +288,7 @@
   composes: main;
   padding: 0;
   height: 20px;
-  font-weight: var(--weight-semi);
+  font-weight: var(--weight-bold);
   color: var(--colony-blue);
 }
 

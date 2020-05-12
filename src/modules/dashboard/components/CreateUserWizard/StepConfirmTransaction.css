@@ -1,6 +1,6 @@
 .main {
   padding-top: 193px;
-  width: 460px;
+  width: 500px;
 }
 
 .container {
@@ -29,6 +29,6 @@
 .reminder {
   max-width: 215px;
   font-size: var(--size-tiny);
-  font-weight: var(--weight-medium);
+  font-weight: var(--weight-bold);
   line-height: 18px;
 }

@@ -21,7 +21,7 @@
   left: 0;
   background-color: var(--primary);
   font-size: var(--size-medium);
-  font-weight: var(--weight-semi);
+  font-weight: var(--weight-bold);
   color: white;
   opacity: 0.7;
 }

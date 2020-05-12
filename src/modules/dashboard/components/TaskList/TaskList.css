@@ -34,5 +34,5 @@
 .empty {
   flex-wrap: wrap;
   padding: cellPaddingVertical cellPaddingHorizontal cellPaddingVertical 0;
-  font-weight: var(--weight-semi);
+  font-weight: var(--weight-bold);
 }

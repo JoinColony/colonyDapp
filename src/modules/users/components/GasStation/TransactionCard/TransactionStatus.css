@@ -5,13 +5,12 @@
 
 .counter {
   display: inline-block;
-  padding-top: 3px;
   height: 20px;
   width: 20px;
   border-radius: 50%;
   background-color: var(--pink);
   font-size: var(--size-small);
-  font-weight: var(--weight-medium);
+  font-weight: var(--weight-bold);
   text-align: center;
   color: white;
   box-shadow: 0 0 6px color-mod(var(--grey-5) alpha(60%));
@@ -46,7 +45,7 @@
   display: inline-block;
   width: 20px;
   font-size: var(--size-medium-l);
-  font-weight: var(--weight-medium);
+  font-weight: var(--weight-bold);
   text-align: center;
   color: var(--danger);
 }

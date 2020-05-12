@@ -14,7 +14,7 @@
   border: none;
   background-color: transparent;
   font-size: var(--size-small);
-  font-weight: var(--weight-semi);
+  font-weight: var(--weight-bold);
   text-align: left;
   text-overflow: ellipsis;
   white-space: nowrap;

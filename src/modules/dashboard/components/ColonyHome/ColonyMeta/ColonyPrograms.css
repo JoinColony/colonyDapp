@@ -35,7 +35,7 @@
 .navLink {
   margin-right: 10px;
   overflow: hidden;
-  font-weight: var(--weight-medium);
+  font-weight: var(--weight-bold);
   text-overflow: ellipsis;
   white-space: nowrap;
 }

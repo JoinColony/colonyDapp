@@ -24,7 +24,7 @@
   border: none;
   background-color: transparent;
   font-size: var(--size-small);
-  font-weight: var(--weight-semi);
+  font-weight: var(--weight-bold);
   color: var(--sky-blue);
   cursor: pointer;
 }

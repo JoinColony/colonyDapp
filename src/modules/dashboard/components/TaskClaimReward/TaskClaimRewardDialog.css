@@ -11,7 +11,7 @@
 
 .starRatingDescription {
   flex: 1 1 auto;
-  font-weight: var(--weight-medium);
+  font-weight: var(--weight-bold);
 }
 
 .stars {
@@ -25,7 +25,7 @@
 
 .earnedReputationDescription {
   flex: 1 1 auto;
-  font-weight: var(--weight-medium);
+  font-weight: var(--weight-bold);
 }
 
 .earnedReputationDetails {
@@ -65,7 +65,7 @@
 
 .rewardItemDescription {
   flex: 1 1 auto;
-  font-weight: var(--weight-medium);
+  font-weight: var(--weight-bold);
 }
 
 .rewardItemValue {
@@ -85,6 +85,6 @@
 }
 
 .oneStarRating {
-  font-weight: var(--weight-medium);
+  font-weight: var(--weight-bold);
   color: var(--danger);
 }

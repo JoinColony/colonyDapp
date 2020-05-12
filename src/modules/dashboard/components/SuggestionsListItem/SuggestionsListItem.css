@@ -76,7 +76,7 @@
 }
 
 .upvoteCount {
-  font-weight: var(--weight-medium);
+  font-weight: var(--weight-bold);
 }
 
 .upvoteButtonContainer {

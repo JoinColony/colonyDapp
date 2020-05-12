@@ -6,7 +6,7 @@
   border-left: 3px solid var(--temp-grey-5);
   border-top: 1px solid var(--grey-blue-1);
   font-size: var(--size-small);
-  font-weight: var(--weight-medium);
+  font-weight: var(--weight-bold);
   color: var(--grey-dark);
 
   &:hover .cancelButton {
@@ -31,7 +31,7 @@
   border-bottom: 1px solid transparent;
   background-color: transparent;
   font-size: var(--size-small);
-  font-weight: var(--weight-semi);
+  font-weight: var(--weight-bold);
   color: var(--sky-blue);
   cursor: pointer;
 
@@ -90,7 +90,7 @@
    */
   margin: -4px 0 -12px 14px;
   font-size: var(--size-unreadable);
-  font-weight: var(--weight-medium);
+  font-weight: var(--weight-bold);
   color: var(--danger);
 }
 

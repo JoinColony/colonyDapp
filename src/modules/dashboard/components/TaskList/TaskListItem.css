@@ -20,7 +20,7 @@ td.taskDetails {
   justify-content: center;
   align-items: flex-start;
   padding: cellPaddingVertical 0 cellPaddingVertical cellPaddingHorizontal;
-  font-weight: var(--weight-semi);
+  font-weight: var(--weight-bold);
 }
 
 td.taskDetails > div {
@@ -82,6 +82,6 @@ td.userAvatar {
   /* !important to override table styles */
   flex-grow: 0 !important;
   justify-content: center;
-  padding: cellPaddingVertical cellPaddingHorizontal calc(cellPaddingVertical - 6px);
+  padding: calc(cellPaddingVertical - 6px) cellPaddingHorizontal calc(cellPaddingVertical - 6px);
   height: 88px;
 }

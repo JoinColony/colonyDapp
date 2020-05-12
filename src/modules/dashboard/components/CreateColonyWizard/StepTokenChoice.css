@@ -9,7 +9,7 @@
 
 .title {
   margin-bottom: 28px;
-  font-weight: var(--weight-medium);
+  font-weight: var(--weight-bold);
 }
 
 .subtitle {
@@ -35,6 +35,6 @@
 .link {
   margin-left: 5px;
   font-size: var(--size-tiny);
-  font-weight: var(--weight-medium);
+  font-weight: var(--weight-bold);
   color: var(--sky-blue);
 }
