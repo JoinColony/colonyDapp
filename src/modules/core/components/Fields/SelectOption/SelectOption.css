@@ -34,5 +34,5 @@
 
 .selectedHelpText {
   padding-left: 5px;
-  font-weight: var(--weight-thin);
+  font-weight: var(--weight-normal);
 }

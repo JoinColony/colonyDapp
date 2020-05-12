@@ -96,7 +96,7 @@
  * Next set of classes will define the headings's weight
  */
 .weightThin {
-  font-weight: var(--weight-thin);
+  font-weight: var(--weight-normal);
 }
 
 .weightMedium {

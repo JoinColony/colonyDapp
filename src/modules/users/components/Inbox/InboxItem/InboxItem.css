@@ -52,12 +52,12 @@
 }
 
 .time {
-  font-weight: var(--weight-thin);
+  font-weight: var(--weight-normal);
 }
 
 .pipe {
   margin: 0 10px;
-  font-weight: var(--weight-thin);
+  font-weight: var(--weight-normal);
 }
 
 .inboxDomain {
