@@ -8,7 +8,7 @@
   margin: 0 auto;
   width: 70%;
   border-bottom: 1px solid var(--colony-black);
-  font-weight: var(--weight-semi);
+  font-weight: var(--weight-bold);
   text-align: center;
   color: var(--colony-black);
 }

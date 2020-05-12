@@ -13,7 +13,7 @@
   display: inline-block;
   max-width: 64ch;
   vertical-align: bottom;
-  font-weight: var(--weight-semi);
+  font-weight: var(--weight-bold);
   color: var(--text);
 }
 
@@ -24,12 +24,12 @@
 
 .highlightNumeral span {
   font-size: var(--size-small);
-  font-weight: var(--weight-semi);
+  font-weight: var(--weight-bold);
   color: var(--text);
   cursor: pointer;
 }
 
 .highlightTxHash {
-  font-weight: var(--weight-semi);
+  font-weight: var(--weight-bold);
   color: var(--colony-blue);
 }

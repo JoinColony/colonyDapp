@@ -1,5 +1,5 @@
 .main {
-  font-weight: var(--weight-semi);
+  font-weight: var(--weight-bold);
   text-overflow: ellipsis;
   line-height: 2;
   white-space: nowrap;

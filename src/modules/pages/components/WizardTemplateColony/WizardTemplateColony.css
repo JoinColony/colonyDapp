@@ -33,7 +33,7 @@
   justify-content: space-between;
   width: 185px;
   position: relative;
-  font-weight: var(--weight-medium);
+  font-weight: var(--weight-bold);
 }
 
 .headerWallet {

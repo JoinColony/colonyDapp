@@ -5,7 +5,7 @@
 .confirmText {
   margin: 0 10px;
   font-size: var(--size-small);
-  font-weight: var(--weight-medium);
+  font-weight: var(--weight-bold);
 }
 
 .separator {

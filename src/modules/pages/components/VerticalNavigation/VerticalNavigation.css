@@ -19,7 +19,7 @@
 .tab {
   padding: 5px 10px 5px 60px;
   font-size: var(--size-normal);
-  font-weight: var(--weight-semi);
+  font-weight: var(--weight-bold);
   color: var(--colony-black);
   cursor: pointer;
 }

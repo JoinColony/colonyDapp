@@ -2,7 +2,7 @@
   margin-top: 4px;
   height: 15px;
   font-size: var(--size-tiny);
-  font-weight: var(--weight-semi);
+  font-weight: var(--weight-bold);
   white-space: nowrap;
 
   &::before {

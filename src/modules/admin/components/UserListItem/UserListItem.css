@@ -24,7 +24,7 @@ td.userRemove {
 }
 
 .displayName {
-  font-weight: var(--weight-medium);
+  font-weight: var(--weight-bold);
   color: var(--grey-1);
 }
 

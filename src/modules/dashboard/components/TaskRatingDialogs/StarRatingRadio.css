@@ -36,7 +36,7 @@
 
 .ratingItemDescription {
   font-size: var(--size-small);
-  font-weight: var(--weight-medium);
+  font-weight: var(--weight-bold);
   color: var(--temp-grey-4);
 }
 

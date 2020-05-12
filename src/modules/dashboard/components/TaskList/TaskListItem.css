@@ -20,7 +20,7 @@ td.taskDetails {
   justify-content: center;
   align-items: flex-start;
   padding: cellPaddingVertical 0 cellPaddingVertical cellPaddingHorizontal;
-  font-weight: var(--weight-semi);
+  font-weight: var(--weight-bold);
 }
 
 td.taskDetails > div {

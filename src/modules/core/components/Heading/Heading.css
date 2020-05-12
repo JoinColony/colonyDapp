@@ -2,7 +2,7 @@
   margin-bottom: 20px;
   font-family: var(--family-primary);
   font-size: var(--size-medium-l);
-  font-weight: var(--weight-semi);
+  font-weight: var(--weight-bold);
   line-height: 1.5;
   word-break: normal;
   white-space: pre-line;
@@ -100,9 +100,9 @@
 }
 
 .weightMedium {
-  font-weight: var(--weight-medium);
+  font-weight: var(--weight-bold);
 }
 
 .weightBold {
-  font-weight: var(--weight-semi);
+  font-weight: var(--weight-bold);
 }

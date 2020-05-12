@@ -4,7 +4,7 @@
 }
 
 .username {
-  font-weight: var(--weight-semi);
+  font-weight: var(--weight-bold);
   cursor: pointer;
 }
 
@@ -34,7 +34,7 @@
 
 .receiptLink {
   font-size: var(--size-tiny);
-  font-weight: var(--weight-semi);
+  font-weight: var(--weight-bold);
   color: var(--colony-blue);
   letter-spacing: var(--spacing-medium);
 }

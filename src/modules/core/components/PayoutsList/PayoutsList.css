@@ -1,6 +1,6 @@
 .main {
   font-size: var(--size-small);
-  font-weight: var(--weight-semi);
+  font-weight: var(--weight-bold);
   text-align: right;
 }
 
@@ -37,5 +37,5 @@
 }
 
 .tokenPayout {
-  font-weight: var(--weight-semi);
+  font-weight: var(--weight-bold);
 }

@@ -23,6 +23,6 @@
   margin-left: 50%;
   max-width: 215px;
   font-size: var(--size-tiny);
-  font-weight: var(--weight-medium);
+  font-weight: var(--weight-bold);
   line-height: 18px;
 }

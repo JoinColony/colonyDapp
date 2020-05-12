@@ -9,7 +9,7 @@
   position: relative;
   top: 10px;
   font-size: var(--size-small);
-  font-weight: var(--weight-medium);
+  font-weight: var(--weight-bold);
   text-align: center;
   color: var(--temp-grey-2);
 }

@@ -21,7 +21,7 @@
 .notEditingValue {
   display: inline-block;
   border-bottom: 1px color-mod(var(--text) alpha(50%)) dotted;
-  font-weight: var(--weight-medium);
+  font-weight: var(--weight-bold);
   white-space: nowrap;
 }
 
@@ -39,7 +39,7 @@
   right: 2px;
   bottom: 0;
   font-size: var(--size-small);
-  font-weight: var(--weight-medium);
+  font-weight: var(--weight-bold);
   color: var(--grey-5);
 }
 

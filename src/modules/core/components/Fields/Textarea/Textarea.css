@@ -74,7 +74,7 @@
   font-size: var(--size-medium);
 
   &::placeholder {
-    font-weight: var(--weight-semi);
+    font-weight: var(--weight-bold);
   }
 }
 
@@ -131,7 +131,7 @@
   right: 5px;
   bottom: 10px;
   font-size: var(--size-unreadable);
-  font-weight: var(--weight-semi);
+  font-weight: var(--weight-bold);
   color: var(--temp-grey-4);
 }
 
