@@ -1,5 +1,5 @@
 import { Record } from 'immutable';
-import BigNumber from 'bn.js';
+import { BigNumber } from 'ethers/utils';
 
 import {
   Address,

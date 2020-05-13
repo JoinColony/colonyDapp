@@ -41,7 +41,7 @@ export default class ColonyManager {
     // Check if the colony exists by calling `getVersion` (in lieu of an
     // explicit means of checking whether a colony exists at an address).
     try {
-      await client.getVersion.call();
+      await client.version();
     } catch (caughtError) {
       throw new Error(`Colony with address ${address} not found`);
     }

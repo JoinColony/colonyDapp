@@ -1,4 +1,4 @@
-import BN from 'bn.js';
+import { BigNumber } from 'ethers/utils';
 import { fromWei } from 'ethjs-unit';
 
 import { DEFAULT_NETWORK } from '~constants';
@@ -25,7 +25,7 @@ interface EtherscanLinkProps {
 /*
   Request dollar conversion value from etherScan
 */
-export const getEthToUsd = (ethValue: BN): Promise<number | void> => {
+export const getEthToUsd = (ethValue: BigNumber): Promise<number | void> => {
   const ETH_USD_KEY = 'ethUsd';
   const ETH_USD_TIMESTAMP_KEY = 'ethUsdTimestamp';
 

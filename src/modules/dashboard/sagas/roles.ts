@@ -8,12 +8,7 @@ import { Context, getContext } from '~context/index';
 import { ColonyRolesType, DomainRolesType } from '~immutable/index';
 import { ZERO_ADDRESS } from '~utils/web3/constants';
 import { createAddress } from '~utils/web3';
-import {
-  Address,
-  ContractContext,
-  ColonyManager,
-  RoleSet,
-} from '~types/index';
+import { Address, ContractContext, ColonyManager, RoleSet } from '~types/index';
 // FIXME
 // import { getEvents } from '~utils/web3/eventLogs';
 
@@ -93,9 +88,7 @@ function* TEMP_getUserHasRecoveryRole(
   userAddress: Address = ZERO_ADDRESS,
 ) {
   const colonyManager: ColonyManager = yield getContext(Context.COLONY_MANAGER);
-  const colonyClient = yield colonyManager.getColonyClient(
-    colonyAddress,
-  );
+  const colonyClient = yield colonyManager.getColonyClient(colonyAddress);
   if (!userAddress || userAddress === ZERO_ADDRESS) return false;
   const { hasRole } = yield colonyClient.hasColonyRole.call({
     address: userAddress,

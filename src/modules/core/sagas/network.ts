@@ -1,5 +1,5 @@
 import { call, put } from 'redux-saga/effects';
-import BigNumber from 'bn.js';
+import { bigNumberify } from 'ethers/utils';
 
 import { AllActions, ActionTypes } from '~redux/index';
 
@@ -11,17 +11,12 @@ function* networkFetch() {
   try {
     const colonyManager = yield getContext(Context.COLONY_MANAGER);
 
-    const { feeInverse: feeInverseContract } = yield call([
+    const { feeInverse } = yield call([
       colonyManager.networkClient.getFeeInverse,
       colonyManager.networkClient.getFeeInverse.call,
     ]);
 
-    /*
-     * @NOTE We need to re-convert this to a BigNumber as the version that's coming
-     * from the networkClient is stripped-down and will fail our version of BN's validations
-     */
-    const feeInverse = new BigNumber(feeInverseContract.toString());
-    const fee = new BigNumber(1).div(feeInverse).toString();
+    const fee = bigNumberify(1).div(feeInverse).toString();
 
     const { version } = yield call([
       colonyManager.networkClient.getCurrentColonyVersion,

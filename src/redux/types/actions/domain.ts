@@ -1,4 +1,4 @@
-import BigNumber from 'bn.js';
+import { BigNumber } from 'ethers/utils';
 import { Address } from '~types/index';
 import { DomainType } from '~immutable/index';
 import { ActionType, ErrorActionType, UniqueActionType } from './index';

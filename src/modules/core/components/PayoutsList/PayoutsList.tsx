@@ -1,7 +1,7 @@
 import React from 'react';
 import { defineMessages, FormattedMessage, FormattedNumber } from 'react-intl';
 import cx from 'classnames';
-import BigNumber from 'bn.js';
+import { bigNumberify } from 'ethers/utils';
 import moveDecimal from 'move-decimal-point';
 import InfoPopover from '~core/InfoPopover';
 import { getTokenDecimalsWithFallback } from '~utils/tokens';
@@ -79,14 +79,12 @@ const PayoutsList = ({
                   })}
                   suffix={` ${token.symbol} `}
                   unit={getTokenDecimalsWithFallback(token.decimals)}
-                  value={
-                    new BigNumber(
-                      moveDecimal(
-                        amount,
-                        getTokenDecimalsWithFallback(token.decimals),
-                      ),
-                    )
-                  }
+                  value={bigNumberify(
+                    moveDecimal(
+                      amount,
+                      getTokenDecimalsWithFallback(token.decimals),
+                    ),
+                  )}
                 />
               </div>
             </InfoPopover>
@@ -103,14 +101,12 @@ const PayoutsList = ({
                     [styles.native]: token.address === nativeTokenAddress,
                   })}
                   key={token.address}
-                  value={
-                    new BigNumber(
-                      moveDecimal(
-                        amount,
-                        getTokenDecimalsWithFallback(token.decimals),
-                      ),
-                    )
-                  }
+                  value={bigNumberify(
+                    moveDecimal(
+                      amount,
+                      getTokenDecimalsWithFallback(token.decimals),
+                    ),
+                  )}
                   unit={getTokenDecimalsWithFallback(token.decimals)}
                   suffix={` ${token.symbol} `}
                 />

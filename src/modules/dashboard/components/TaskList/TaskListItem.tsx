@@ -1,7 +1,7 @@
 import { defineMessages, FormattedMessage, useIntl } from 'react-intl';
 import React, { useCallback } from 'react';
 import { useHistory } from 'react-router-dom';
-import BigNumber from 'bn.js';
+import { BigNumber } from 'ethers/utils';
 
 import Icon from '~core/Icon';
 import { AbbreviatedNumeral } from '~core/Numeral';

@@ -1,6 +1,5 @@
 import ApolloClient from 'apollo-client';
 import { call, fork, getContext, put, takeEvery } from 'redux-saga/effects';
-import BigNumber from 'bn.js';
 
 import { ZERO_ADDRESS } from '~utils/web3/constants';
 import { AllActions, Action, ActionTypes } from '~redux/index';
@@ -166,7 +165,7 @@ import {
 //       potId: 0,
 //       token: ZERO_ADDRESS,
 //     });
-//     const unclaimedEther = new BigNumber(
+//     const unclaimedEther = bigNumberify(
 //       colonyEtherBalance
 //         .sub(colonyNonRewardsPotsTotal)
 //         .sub(colonyRewardsPotTotal)

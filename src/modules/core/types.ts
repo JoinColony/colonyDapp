@@ -1,6 +1,6 @@
 // FIXME
 // import { SendOptions, ContractResponse } from '@colony/colony-js-client';
-import BigNumber from 'bn.js';
+import { BigNumber } from 'ethers/utils';
 
 import { ContractContext, TransactionReceipt } from '~types/index';
 import {

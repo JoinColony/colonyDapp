@@ -19,7 +19,7 @@ export const tokenBalanceIsPositive = (
   domainId: number,
 ) => {
   const balance = getBalanceFromToken(token, domainId);
-  return balance.gten(0);
+  return balance.gte(0);
 };
 
 export const tokenBalanceIsNotPositive = (
@@ -27,7 +27,7 @@ export const tokenBalanceIsNotPositive = (
   domainId: number,
 ) => {
   const balance = getBalanceFromToken(token, domainId);
-  return balance.lten(0);
+  return balance.lte(0);
 };
 
 export const tokenIsETH = ({ address }: AnyToken) => address === ZERO_ADDRESS;

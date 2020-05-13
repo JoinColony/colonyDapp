@@ -1,5 +1,4 @@
 import { call, put } from 'redux-saga/effects';
-import BigNumber from 'bn.js';
 
 import { ActionTypes, Action } from '~redux/index';
 import { selectAsJS } from '~utils/saga/effects';
@@ -33,13 +32,7 @@ export default function* estimateGasCost({
       transaction.params,
     );
 
-    /*
-     * @NOTE
-     * 1. We're converting estimatedGas to our version of BN, since that's using a different library (BigNumber vs bn.js)
-     * 2. We're using `muln` so that we multiply using the float number
-     * 3. Not that this operation rounds down, as BigNumber instances can only be integers
-     */
-    const suggestedGasLimit = new BigNumber(estimatedGas.toString()).muln(
+    const suggestedGasLimit = estimatedGas.mul(
       // The suggested gas limit (briefly above the estimated gas cost)
       SAFE_GAS_LIMIT_MULTIPLIER,
     );

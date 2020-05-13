@@ -1,6 +1,6 @@
 import React, { HTMLAttributes } from 'react';
-import BN from 'bn.js';
 import { fromWei } from 'ethjs-unit';
+import { BigNumber } from 'ethers/utils';
 import { UnifiedNumberFormatOptions } from '@formatjs/intl-unified-numberformat';
 import moveDecimal from 'move-decimal-point';
 import { useIntl } from 'react-intl';
@@ -14,7 +14,7 @@ interface Props extends HTMLAttributes<HTMLSpanElement> {
   /** Format options for `intl-unified-numberformat` */
   formatOptions: UnifiedNumberFormatOptions;
   /** Actual value */
-  value: number | string | BN;
+  value: number | string | BigNumber;
 }
 
 const displayName = 'AbbreviatedNumeral';

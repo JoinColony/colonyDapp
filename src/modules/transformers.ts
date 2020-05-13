@@ -1,4 +1,4 @@
-import BigNumber from 'bn.js';
+import { bigNumberify } from 'ethers/utils';
 import { ColonyRole, ROOT_DOMAIN_ID } from '@colony/colony-js';
 
 import { PersistentTasks } from '~data/index';
@@ -198,8 +198,8 @@ export const getLevelTotalPayouts = (
         };
         current[address] = currentPayout;
       } else {
-        const prevAmountBn = new BigNumber(current[address].amount);
-        const summedAmountBn = new BigNumber(amount).add(prevAmountBn);
+        const prevAmountBn = bigNumberify(current[address].amount);
+        const summedAmountBn = bigNumberify(amount).add(prevAmountBn);
         current[address].amount = summedAmountBn.toString();
       }
     });

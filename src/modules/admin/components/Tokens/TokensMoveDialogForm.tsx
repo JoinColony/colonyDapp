@@ -1,7 +1,7 @@
 import React, { useMemo, useEffect } from 'react';
 import { FormikProps } from 'formik';
 import { defineMessages, FormattedMessage } from 'react-intl';
-import BigNumber from 'bn.js';
+import { bigNumberify } from 'ethers/utils';
 import moveDecimal from 'move-decimal-point';
 import sortBy from 'lodash/sortBy';
 import { ColonyRole, ROOT_DOMAIN_ID } from '@colony/colony-js';
@@ -188,13 +188,13 @@ const TokensMoveDialogForm = ({
     if (!selectedToken || !(amount && amount.length)) {
       errors.amount = undefined; // silent error
     } else {
-      const convertedAmount = new BigNumber(
+      const convertedAmount = bigNumberify(
         moveDecimal(
           amount,
           getTokenDecimalsWithFallback(selectedToken.decimals),
         ),
       );
-      if (convertedAmount.eqn(0)) {
+      if (!convertedAmount.eq(0)) {
         errors.amount = MSG.noAmount;
       } else if (
         fromDomainTokenBalance &&

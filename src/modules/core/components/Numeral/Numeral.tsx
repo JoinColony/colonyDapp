@@ -1,8 +1,8 @@
 import React, { HTMLAttributes } from 'react';
-import BN from 'bn.js';
 import formatNumber from 'format-number';
 import { fromWei } from 'ethjs-unit';
 import moveDecimal from 'move-decimal-point';
+import { BigNumber } from 'ethers/utils';
 
 import { getMainClasses } from '~utils/css';
 
@@ -37,7 +37,7 @@ export interface Props extends HTMLAttributes<HTMLSpanElement> {
   unit?: number | string;
 
   /** Actual value */
-  value: number | string | BN;
+  value: number | string | BigNumber;
 }
 
 const Numeral = ({

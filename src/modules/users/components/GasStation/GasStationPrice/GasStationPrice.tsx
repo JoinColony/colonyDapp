@@ -1,7 +1,7 @@
 import { FormikProps } from 'formik';
 import React, { useState, useEffect, useCallback } from 'react';
 import { useDispatch } from 'redux-react-hook';
-import BigNumber from 'bn.js';
+import { BigNumber, bigNumberify } from 'ethers/utils';
 import { defineMessages, FormattedMessage } from 'react-intl';
 import nanoid from 'nanoid';
 import * as yup from 'yup';
@@ -162,7 +162,7 @@ const GasStationPrice = ({ transaction: { id, gasLimit, error } }: Props) => {
           const transactionFee =
             currentGasPrice &&
             gasLimit &&
-            currentGasPrice.mul(new BigNumber(gasLimit));
+            currentGasPrice.mul(bigNumberify(gasLimit));
           isBalanceLessThanTxFee(transactionFee);
           const waitTime = gasPrices[`${transactionSpeed}Wait`];
           return (

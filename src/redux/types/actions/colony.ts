@@ -1,4 +1,4 @@
-import BigNumber from 'bn.js';
+import { BigNumber } from 'ethers/utils';
 import { ColonyRole } from '@colony/colony-js';
 
 import { ActionTypes } from '~redux/index';

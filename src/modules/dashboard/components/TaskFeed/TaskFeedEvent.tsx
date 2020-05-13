@@ -1,7 +1,7 @@
 import React, { useMemo } from 'react';
 import { defineMessages, FormattedMessage, useIntl } from 'react-intl';
-import BigNumber from 'bn.js';
 import moveDecimal from 'move-decimal-point';
+import { bigNumberify } from 'ethers/utils';
 import { ROOT_DOMAIN_ID } from '@colony/colony-js';
 
 import { DEFAULT_TOKEN_DECIMALS } from '~constants';
@@ -302,11 +302,9 @@ const TaskFeedEventPayoutSet = ({
               <Numeral
                 integerSeparator=""
                 unit={getTokenDecimalsWithFallback(decimals)}
-                value={
-                  new BigNumber(
-                    moveDecimal(amount, getTokenDecimalsWithFallback(decimals)),
-                  )
-                }
+                value={bigNumberify(
+                  moveDecimal(amount, getTokenDecimalsWithFallback(decimals)),
+                )}
                 suffix={` ${symbol}`}
               />
             </span>

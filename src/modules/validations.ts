@@ -2,7 +2,7 @@ import * as yup from 'yup';
 import { isIPFS } from 'ipfs';
 import { isAddress } from 'web3-utils';
 import { normalize as ensNormalize } from 'eth-ens-namehash-ms';
-import BigNumber from 'bn.js';
+import { BigNumber } from 'ethers/utils';
 
 import en from '../i18n/en-validation.json';
 
@@ -86,7 +86,11 @@ export class BigNumberSchemaType extends yup.object {
   _typeCheck(value: any) {
     // @ts-ignore (_typeCheck is not typed in external types)
     // eslint-disable-next-line no-underscore-dangle
-    return super._typeCheck(value) || BigNumber.isBN(value);
+    const checked = super._typeCheck(value);
+    if (checked) {
+      return checked;
+    }
+    return BigNumber.isBigNumber(value);
   }
 }
 

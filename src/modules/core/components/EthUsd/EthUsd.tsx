@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import BN from 'bn.js';
+import { BigNumber } from 'ethers/utils';
 import { toWei } from 'ethjs-unit';
 import { defineMessages, useIntl } from 'react-intl';
 
@@ -37,7 +37,7 @@ interface Props extends NumeralProps {
   unit?: string;
 
   /** Value in ether to convert to USD */
-  value: number | string | BN;
+  value: number | string | BigNumber;
 }
 
 const displayName = 'EthUsd';
@@ -65,7 +65,7 @@ const EthUsd = ({
 
     const convertEthToUsd = async () => {
       let valueToConvert;
-      if (BN.isBN(value)) {
+      if (BigNumber.isBigNumber(value)) {
         valueToConvert = value;
       } else {
         const fixedNum =

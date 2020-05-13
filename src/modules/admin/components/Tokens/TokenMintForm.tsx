@@ -3,7 +3,7 @@ import React, { DependencyList, useCallback } from 'react';
 import { defineMessages } from 'react-intl';
 import * as yup from 'yup';
 import moveDecimal from 'move-decimal-point';
-import BigNumber from 'bn.js';
+import { bigNumberify } from 'ethers/utils';
 
 import { Address } from '~types/index';
 import { ActionForm } from '~core/Fields';
@@ -47,7 +47,7 @@ const TokenMintForm = ({
     pipe(
       mapPayload(({ mintAmount: inputAmount }) => ({
         // shift by the token's decimals (or default of 18)
-        amount: new BigNumber(
+        amount: bigNumberify(
           moveDecimal(inputAmount, getTokenDecimalsWithFallback(decimals)),
         ),
       })),

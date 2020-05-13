@@ -1,6 +1,6 @@
 import ApolloClient from 'apollo-client';
 import { call, fork, put, takeEvery } from 'redux-saga/effects';
-import BigNumber from 'bn.js';
+import { bigNumberify } from 'ethers/utils';
 import moveDecimal from 'move-decimal-point';
 
 import { Context, getContext } from '~context/index';
@@ -107,7 +107,7 @@ function* taskFinalize({
       params: {
         recipient: workerAddress,
         token,
-        amount: new BigNumber(moveDecimal(amount, decimals)),
+        amount: bigNumberify(moveDecimal(amount, decimals)),
         domainId,
         skillId: skillId || 0,
       },

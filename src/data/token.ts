@@ -1,6 +1,6 @@
 import ApolloClient, { Resolvers } from 'apollo-client';
 import { isAddress } from 'web3-utils';
-import BigNumber from 'bn.js';
+import { BigNumber, bigNumberify } from 'ethers/utils';
 
 import { ContextType } from '~context/index';
 import { COLONY_TOTAL_BALANCE_DOMAIN_ID } from '~constants';
@@ -31,9 +31,9 @@ const getBalanceForTokenAndDomain = async (
     } = await colonyClient.getNonRewardPotsTotal.call({
       token: tokenAddress,
     });
-    return new BigNumber(nonRewardsPotsTotal.add(rewardsPotTotal).toString(10));
+    return bigNumberify(nonRewardsPotsTotal.add(rewardsPotTotal).toString(10));
   }
-  return new BigNumber(rewardsPotTotal.toString(10));
+  return bigNumberify(rewardsPotTotal.toString(10));
 };
 
 const getTokenData = async (

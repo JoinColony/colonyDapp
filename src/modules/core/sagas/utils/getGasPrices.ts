@@ -1,5 +1,5 @@
 import { ColonyNetworkClient } from '@colony/colony-js';
-import { BigNumber, bigNumberify } from 'ethers/utils';
+import { bigNumberify } from 'ethers/utils';
 import { call, put, select } from 'redux-saga/effects';
 
 import { GasPricesProps } from '~immutable/index';
@@ -54,7 +54,7 @@ const fetchGasPrices = async (
     const data: EthGasStationAPIResponse = await response.json();
 
     // API prices are in 10Gwei, so they need to be normalised
-    const pointOneGwei = new BigNumber(10 ** 8);
+    const pointOneGwei = bigNumberify(10 ** 8);
 
     return {
       timestamp: Date.now(),
@@ -73,7 +73,7 @@ const fetchGasPrices = async (
     // Default values
     return {
       timestamp: -Infinity, // Do not cache this
-      suggested: new BigNumber(networkGasPrice),
+      suggested: bigNumberify(networkGasPrice),
     };
   }
 };

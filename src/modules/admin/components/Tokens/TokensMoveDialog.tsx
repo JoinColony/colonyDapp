@@ -2,7 +2,7 @@ import React, { useCallback } from 'react';
 import { FormikProps } from 'formik';
 import * as yup from 'yup';
 import moveDecimal from 'move-decimal-point';
-import BigNumber from 'bn.js';
+import { bigNumberify } from 'ethers/utils';
 
 import { pipe, mapPayload, withKey } from '~utils/actions';
 import { Address } from '~types/index';
@@ -61,7 +61,7 @@ const TokensMoveDialog = ({
         );
 
         // Convert amount string with decimals to BigInt (eth to wei)
-        const amount = new BigNumber(moveDecimal(payload.amount, decimals));
+        const amount = bigNumberify(moveDecimal(payload.amount, decimals));
 
         return {
           ...payload,
