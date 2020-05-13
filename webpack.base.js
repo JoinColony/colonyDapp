@@ -159,6 +159,9 @@ const config = {
       },
     ],
   },
+  node: {
+    net: 'empty',
+  },
   plugins: [
     new Dotenv({
       systemvars: !!process.env.CI,
