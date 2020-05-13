@@ -3,32 +3,26 @@ import { bigNumberify } from 'ethers/utils';
 
 import { AllActions, ActionTypes } from '~redux/index';
 
-import { Context, getContext } from '~context/index';
+import { TEMP_getContext } from '~context/index';
 
 import { putError } from '~utils/saga/effects';
 
 function* networkFetch() {
   try {
-    const colonyManager = yield getContext(Context.COLONY_MANAGER);
+    const colonyManager = TEMP_getContext('colonyManger');
 
-    const { feeInverse } = yield call([
-      colonyManager.networkClient.getFeeInverse,
-      colonyManager.networkClient.getFeeInverse.call,
-    ]);
+    const feeInverse = yield colonyManager.networkClient.getFeeInverse;
 
     const fee = bigNumberify(1).div(feeInverse).toString();
 
-    const { version } = yield call([
-      colonyManager.networkClient.getCurrentColonyVersion,
-      colonyManager.networkClient.getCurrentColonyVersion.call,
-    ]);
+    const version = yield colonyManager.networkClient.getCurrentColonyVersion;
 
     yield put<AllActions>({
       type: ActionTypes.NETWORK_FETCH_SUCCESS,
       payload: {
         fee,
         feeInverse: feeInverse.toString(),
-        version,
+        version: version.toString(),
       },
     });
   } catch (error) {

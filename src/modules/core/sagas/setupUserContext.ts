@@ -116,6 +116,8 @@ export default function* setupUserContext(
      * Set up the DDB instance and colony manager context.
      */
     const colonyManager = yield call(getColonyManager);
+    TEMP_setContext('colonyManger', colonyManager);
+    // FIXME this is just temporary
     yield setContext({
       [Context.COLONY_MANAGER]: colonyManager,
     });

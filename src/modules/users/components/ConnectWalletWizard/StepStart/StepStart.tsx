@@ -42,9 +42,9 @@ const MSG = defineMessages({
     id: 'users.ConnectWalletWizard.StepStart.ledgerTitle',
     defaultMessage: 'Ledger Hardware Wallet',
   },
-  trufflepigTitle: {
-    id: 'users.ConnectWalletWizard.StepStart.trufflepigTitle',
-    defaultMessage: 'TrufflePig',
+  ganacheTitle: {
+    id: 'users.ConnectWalletWizard.StepStart.ganacheTitle',
+    defaultMessage: 'Ganache',
   },
   ledgerSubtitle: {
     id: 'users.ConnectWalletWizard.StepStart.ledgerSubtitle',
@@ -62,9 +62,9 @@ const MSG = defineMessages({
     id: 'users.ConnectWalletWizard.StepStart.mnemonicSubtitle',
     defaultMessage: 'Access with your mnemonic',
   },
-  trufflepigSubtitle: {
-    id: 'users.ConnectWalletWizard.StepStart.trufflepigSubtitle',
-    defaultMessage: 'Use wallet from TrufflePig (dev mode only)',
+  ganacheSubtitle: {
+    id: 'users.ConnectWalletWizard.StepStart.ganacheSubtitle',
+    defaultMessage: 'Use wallet from Ganache (dev mode only)',
   },
   agreeToUseDapp: {
     id: 'users.ConnectWalletWizard.StepStart.agreeToUseDapp',
@@ -136,8 +136,8 @@ const options = [
 if (isDev) {
   options.push({
     value: WalletMethod.Ganache,
-    title: MSG.trufflepigTitle,
-    subtitle: MSG.trufflepigSubtitle,
+    title: MSG.ganacheTitle,
+    subtitle: MSG.ganacheSubtitle,
     icon: 'wallet',
   });
 }

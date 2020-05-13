@@ -29,16 +29,14 @@ export const taskResolvers = ({ colonyManager }: ContextType): Resolvers => ({
           address: colonyAddress,
           topics,
         }),
-        colonyClient.getFundingPot.call({
-          potId: ethPotId,
-        }),
+        colonyClient.getFundingPot(ethPotId),
       ]);
       if (!logs || !logs.length) return null;
       const events = colonyClient.parseLogs(logs);
       if (!events || !events.length || !fundingPot) return null;
-      const payment = await colonyClient.getPayment.call({
-        paymentId: fundingPot.typeId,
-      });
+      const payment = await colonyClient.getPayment(
+        fundingPot.associatedTypeId,
+      );
       const [{ amount, token }] = events;
       const { recipient } = payment;
       const [{ transactionHash }] = logs;

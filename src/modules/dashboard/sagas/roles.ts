@@ -1,6 +1,6 @@
 import { all, call, fork, put, take, takeEvery } from 'redux-saga/effects';
 import { Set as ImmutableSet } from 'immutable';
-import { ColonyRole, ROOT_DOMAIN_ID } from '@colony/colony-js';
+import { ColonyClient, ColonyRole, ROOT_DOMAIN_ID } from '@colony/colony-js';
 
 import { Action, ActionTypes, AllActions } from '~redux/index';
 import { putError } from '~utils/saga/effects';
@@ -88,13 +88,15 @@ function* TEMP_getUserHasRecoveryRole(
   userAddress: Address = ZERO_ADDRESS,
 ) {
   const colonyManager: ColonyManager = yield getContext(Context.COLONY_MANAGER);
-  const colonyClient = yield colonyManager.getColonyClient(colonyAddress);
+  const colonyClient: ColonyClient = yield colonyManager.getColonyClient(
+    colonyAddress,
+  );
   if (!userAddress || userAddress === ZERO_ADDRESS) return false;
-  const { hasRole } = yield colonyClient.hasColonyRole.call({
-    address: userAddress,
-    domainId: ROOT_DOMAIN_ID,
-    role: ColonyRole.Recovery,
-  });
+  const hasRole = yield colonyClient.hasUserRole(
+    userAddress,
+    ROOT_DOMAIN_ID,
+    ColonyRole.Recovery,
+  );
   return hasRole;
 }
 

@@ -14,9 +14,7 @@ const getUserReputation = async (
   domainId: number,
 ): Promise<string> => {
   const colonyClient = await colonyManager.getColonyClient(colonyAddress);
-  const { skillId } = await colonyClient.getDomain.call({
-    domainId,
-  });
+  const { skillId } = await colonyClient.getDomain(domainId);
   const { reputationAmount } = await colonyManager.networkClient.getReputation({
     address,
     colonyAddress,

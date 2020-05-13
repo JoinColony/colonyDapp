@@ -51,6 +51,8 @@ function* fetchAccounts(action: Action<ActionTypes.WALLET_FETCH_ACCOUNTS>) {
       addressCount: HARDWARE_WALLET_DEFAULT_ADDRESS_COUNT,
     });
 
+    // FIXME this is weird, let's get the provider in a better way
+    // ACtually this is going to be replaced by something else entirely
     const { provider }: ColonyNetworkClient = yield getColonyNetworkClient();
 
     const addressesWithBalance = yield all(

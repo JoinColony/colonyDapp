@@ -1,6 +1,7 @@
 import ApolloClient, { Resolvers } from 'apollo-client';
 import { isAddress } from 'web3-utils';
 import { BigNumber, bigNumberify } from 'ethers/utils';
+import { ColonyClient } from '@colony/colony-js';
 
 import { ContextType } from '~context/index';
 import { COLONY_TOTAL_BALANCE_DOMAIN_ID } from '~constants';
@@ -14,26 +15,22 @@ import { getTokenDecimalsWithFallback } from '~utils/tokens';
 const tokenCache = new Map();
 
 const getBalanceForTokenAndDomain = async (
-  colonyClient,
-  tokenAddress,
-  domainId,
+  colonyClient: ColonyClient,
+  tokenAddress: string,
+  domainId: number,
 ): Promise<BigNumber> => {
-  const { potId } = await colonyClient.getDomain.call({ domainId });
-  const {
-    balance: rewardsPotTotal,
-  } = await colonyClient.getFundingPotBalance.call({
-    potId,
-    token: tokenAddress,
-  });
+  const { fundingPotId } = await colonyClient.getDomain(domainId);
+  const rewardsPotTotal = await colonyClient.getFundingPotBalance(
+    fundingPotId,
+    tokenAddress,
+  );
   if (domainId === COLONY_TOTAL_BALANCE_DOMAIN_ID) {
-    const {
-      total: nonRewardsPotsTotal,
-    } = await colonyClient.getNonRewardPotsTotal.call({
-      token: tokenAddress,
-    });
-    return bigNumberify(nonRewardsPotsTotal.add(rewardsPotTotal).toString(10));
+    const nonRewardsPotsTotal = await colonyClient.getNonRewardPotsTotal(
+      tokenAddress,
+    );
+    return bigNumberify(nonRewardsPotsTotal.add(rewardsPotTotal).toString());
   }
-  return bigNumberify(rewardsPotTotal.toString(10));
+  return bigNumberify(rewardsPotTotal.toString());
 };
 
 const getTokenData = async (
@@ -63,7 +60,7 @@ const getTokenData = async (
   }
 
   const tokenClient = await colonyManager.getTokenClient(tokenAddress);
-  const chainData: TokenInfo = await tokenClient.getTokenInfo.call();
+  const chainData = await tokenClient.getTokenInfo();
 
   let serverDataResult;
   try {
@@ -151,9 +148,7 @@ export const tokenResolvers = ({ colonyManager }: ContextType): Resolvers => ({
       }
 
       const tokenClient = await colonyManager.getTokenClient(address);
-      const { amount } = await tokenClient.getBalanceOf.call({
-        sourceAddress: walletAddress,
-      });
+      const amount = await tokenClient.balanceOf(walletAddress);
       return amount.toString();
     },
     async balances(
