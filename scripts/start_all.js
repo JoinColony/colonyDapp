@@ -32,28 +32,6 @@ addProcess('truffle', () =>
   })
 );
 
-addProcess('trufflepig', () =>
-  new Promise((resolve, reject) => {
-    const trufflepigProcess = spawn(
-      path.resolve(__dirname, './start_trufflepig.js'),
-      {
-        stdio: 'pipe',
-      },
-    );
-    trufflepigProcess.stdout.on('data', chunk => {
-      if (chunk.includes('Serving contracts')) resolve(trufflepigProcess);
-    });
-    if (args.foreground) {
-      trufflepigProcess.stdout.pipe(process.stdout);
-      trufflepigProcess.stderr.pipe(process.stderr);
-    }
-    trufflepigProcess.on('error', e => {
-      trufflepigProcess.kill();
-      reject(e);
-    });
-  })
-);
-
 addProcess('db', async () => {
   const dbProcess = spawn('npm', ['run', 'db:start'], {
     cwd: path.resolve(__dirname, '..', 'src/lib/colonyServer'),
