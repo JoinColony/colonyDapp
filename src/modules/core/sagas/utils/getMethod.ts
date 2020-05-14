@@ -1,11 +1,12 @@
 import { call } from 'redux-saga/effects';
+import { ClientType } from '@colony/colony-js';
 
 import { ContextModule, TEMP_getContext } from '~context/index';
 import { TransactionRecord } from '~immutable/index';
-import { AddressOrENSName, ContractContext } from '~types/index';
+import { AddressOrENSName } from '~types/index';
 
 export function* getMethod(
-  context: ContractContext,
+  context: ClientType,
   methodName: string,
   identifier?: AddressOrENSName,
 ) {

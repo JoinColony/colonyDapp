@@ -1,8 +1,8 @@
 import { call, fork, put, takeEvery } from 'redux-saga/effects';
+import { ClientType } from '@colony/colony-js';
 
 import { Action, ActionTypes } from '~redux/index';
 import { putError, takeFrom } from '~utils/saga/effects';
-import { ContractContext } from '~types/index';
 
 import { createTransaction, getTxChannel } from '../../core/sagas';
 
@@ -14,7 +14,7 @@ function* tokenCreate({
 
   try {
     yield fork(createTransaction, meta.id, {
-      context: ContractContext.Network,
+      context: ClientType.NetworkClient,
       methodName: 'createToken',
       params: { name, symbol },
     });

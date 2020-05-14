@@ -3,7 +3,8 @@ import { ROOT_DOMAIN_ID } from '@colony/colony-js';
 
 import { Context, ContextModule } from '~context/index';
 import ENS from '~lib/ENS';
-import { Address, ColonyManager } from '~types/index';
+import ColonyManager from '~lib/ColonyManager';
+import { Address } from '~types/index';
 
 import { getToken } from './token';
 

@@ -1,8 +1,9 @@
 // FIXME
 // import { SendOptions, ContractResponse } from '@colony/colony-js-client';
 import { BigNumber } from 'ethers/utils';
+import { ClientType } from '@colony/colony-js';
 
-import { ContractContext, TransactionReceipt } from '~types/index';
+import { TransactionReceipt } from '~types/index';
 import {
   TransactionEventData,
   TransactionMultisig,
@@ -35,7 +36,7 @@ export type MultisigSender = Sender & {
 };
 
 export type TxConfig = {
-  context: ContractContext;
+  context: ClientType;
   group?: {
     key: string;
     id: string | string[];

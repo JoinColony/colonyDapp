@@ -26,6 +26,8 @@ export default function* estimateGasCost({
 
     const method = yield call(getTransactionMethod, transaction);
 
+    console.log(method);
+
     // Estimate the gas limit with the method.
     const estimatedGas = yield call(
       [method, method.estimate],

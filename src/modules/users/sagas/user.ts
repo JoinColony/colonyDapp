@@ -1,5 +1,5 @@
-import ApolloClient from 'apollo-client';
 import { call, fork, put, takeEvery, takeLatest } from 'redux-saga/effects';
+import { ClientType } from '@colony/colony-js';
 
 import { Action, ActionTypes, AllActions } from '~redux/index';
 import {
@@ -30,7 +30,6 @@ import { putError, takeFrom } from '~utils/saga/effects';
 // import { getEventLogs, parseUserTransferEvent } from '~utils/web3/eventLogs';
 
 import { clearToken } from '../../../api/auth';
-import { ContractContext } from '../../../lib/ColonyManager/constants';
 import { ipfsUpload } from '../../core/sagas/ipfs';
 import { transactionLoadRelated } from '../../core/actionCreators';
 import { createTransaction, getTxChannel } from '../../core/sagas/transactions';
@@ -206,7 +205,7 @@ function* usernameCreate({
     const username = ENS.normalize(givenUsername);
 
     yield fork(createTransaction, id, {
-      context: ContractContext.Network,
+      context: ClientType.NetworkClient,
       methodName: 'registerUserLabel',
       ready: true,
       params: { username, orbitDBPath: '' },

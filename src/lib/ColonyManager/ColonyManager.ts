@@ -2,6 +2,7 @@ import { Signer } from 'ethers';
 import { Provider } from 'ethers/providers';
 import {
   getTokenClient,
+  ClientType,
   ColonyNetworkClient,
   ColonyClient,
   TokenClient,
@@ -11,14 +12,9 @@ import { isAddress } from 'web3-utils';
 import ENS from '~lib/ENS';
 import { Address, AddressOrENSName } from '~types/index';
 
-import { ContractContext } from './types';
 import ens from '../../context/ensContext';
 
-type ContractMethodMap = {
-  [ContractContext.Colony]: ColonyClient;
-  [ContractContext.Network]: ColonyNetworkClient;
-  [ContractContext.Token]: TokenClient;
-};
+type ContractClient = ColonyClient | ColonyNetworkClient | TokenClient;
 
 export default class ColonyManager {
   private metaColonyClient?: ColonyClient;
@@ -113,32 +109,52 @@ export default class ColonyManager {
     return Reflect.get(client.tokenClient, methodName);
   }
 
-  async getMethod<
-    C extends ContractContext,
-    M extends keyof ContractMethodMap[C]
+  async getEstimationMethod<
+    C extends ClientType,
+    M extends keyof ContractClient['estimate']
   >(
     context: C,
     methodName: M,
     identifier?: AddressOrENSName,
-  ): Promise<ContractMethodMap[C][M]> {
+  ): Promise<ContractClient['estimate'][M]> {
     switch (context) {
-      case ContractContext.Colony: {
+      case ClientType.ColonyClient: {
         if (!identifier) throw new Error('Need identifier for Colony methods');
-        // FIXME when refactoring transaction senders we need to sort this out
-        // @ts-ignore
+        const client = await this.getColonyClient(identifier);
+        // FIXME will this work without reflect? Do we need to bind it???
+        return Reflect.get(client.estimate, methodName);
+      }
+      case ClientType.NetworkClient: {
+        return Reflect.get(this.networkClient.estimate, methodName);
+      }
+      case ClientType.TokenClient: {
+        if (!identifier) throw new Error('Need identifier for Colony methods');
+        const client = await this.getColonyClient(identifier);
+        return Reflect.get(client.tokenClient.estimate, methodName);
+      }
+      default: {
+        throw new Error('No valid context specified');
+      }
+    }
+  }
+
+  async getMethod<C extends ClientType, M extends keyof ContractClient>(
+    context: C,
+    methodName: M,
+    identifier?: AddressOrENSName,
+  ): Promise<ContractClient[M]> {
+    switch (context) {
+      case ClientType.ColonyClient: {
+        if (!identifier) throw new Error('Need identifier for Colony methods');
         return this.getColonyMethod(methodName, identifier);
       }
-      case ContractContext.Token: {
+      case ClientType.TokenClient: {
         if (!identifier) {
           throw new Error('Need Colony identifier for Token methods');
         }
-        // FIXME when refactoring transaction senders we need to sort this out
-        // @ts-ignore
         return this.getTokenMethod(methodName, identifier);
       }
-      case ContractContext.Network: {
-        // FIXME when refactoring transaction senders we need to sort this out
-        // @ts-ignore
+      case ClientType.NetworkClient: {
         return this.getNetworkMethod(methodName);
       }
       default: {

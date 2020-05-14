@@ -1,6 +1,7 @@
 import { $Values } from 'utility-types';
 import { Channel } from 'redux-saga';
 import { all, call, fork, put } from 'redux-saga/effects';
+import { ClientType } from '@colony/colony-js';
 
 import { ContextModule, TEMP_getContext } from '~context/index';
 import { DEFAULT_TOKEN_DECIMALS } from '~constants';
@@ -20,7 +21,6 @@ import {
 import ENS from '~lib/ENS';
 import { ActionTypes, Action, AllActions } from '~redux/index';
 import { createAddress } from '~utils/web3';
-import { ContractContext } from '~types/index';
 import { log } from '~utils/debug';
 import { putError, takeFrom, takeLatestCancellable } from '~utils/saga/effects';
 // FIXME
@@ -118,7 +118,7 @@ function* colonyCreate({
 
     if (createUser) {
       yield createGroupedTransaction(createUser, {
-        context: ContractContext.Network,
+        context: ClientType.NetworkClient,
         methodName: 'registerUserLabel',
         params: { username, orbitDBPath: '' },
         ready: true,
@@ -127,7 +127,7 @@ function* colonyCreate({
 
     if (createToken) {
       yield createGroupedTransaction(createToken, {
-        context: ContractContext.Network,
+        context: ClientType.NetworkClient,
         methodName: 'createToken',
         params: {
           name: tokenName,
@@ -138,13 +138,13 @@ function* colonyCreate({
     }
 
     yield createGroupedTransaction(createColony, {
-      context: ContractContext.Network,
+      context: ClientType.NetworkClient,
       methodName: 'createColony',
       ready: false,
     });
 
     yield createGroupedTransaction(createLabel, {
-      context: ContractContext.Colony,
+      context: ClientType.ColonyClient,
       methodName: 'registerColonyLabel',
       params: { colonyName },
       ready: false,
@@ -156,7 +156,7 @@ function* colonyCreate({
         networkClient.getTokenLockingAddress.call,
       ]);
       yield createGroupedTransaction(deployTokenAuthority, {
-        context: ContractContext.Token,
+        context: ClientType.TokenClient,
         methodName: 'createTokenAuthority',
         params: {
           allowedToTransfer: [tokenLockingAddress],
@@ -165,21 +165,21 @@ function* colonyCreate({
       });
 
       yield createGroupedTransaction(setTokenAuthority, {
-        context: ContractContext.Token,
+        context: ClientType.TokenClient,
         methodName: 'setAuthority',
         ready: false,
       });
     }
 
     yield createGroupedTransaction(deployOneTx, {
-      context: ContractContext.Colony,
+      context: ClientType.ColonyClient,
       methodName: 'addExtension',
       params: { contractName: 'OneTxPayment' },
       ready: false,
     });
 
     yield createGroupedTransaction(setOneTxRoleAdministration, {
-      context: ContractContext.Colony,
+      context: ClientType.ColonyClient,
       methodContext: 'setOneTxRoles',
       methodName: 'setAdministrationRole',
       params: { setTo: true, domainId: 1 },
@@ -187,7 +187,7 @@ function* colonyCreate({
     });
 
     yield createGroupedTransaction(setOneTxRoleFunding, {
-      context: ContractContext.Colony,
+      context: ClientType.ColonyClient,
       methodContext: 'setOneTxRoles',
       methodName: 'setFundingRole',
       params: { setTo: true, domainId: 1 },

@@ -1,10 +1,10 @@
 import { Record } from 'immutable';
 import { BigNumber } from 'ethers/utils';
+import { ClientType } from '@colony/colony-js';
 
 import {
   Address,
   AddressOrENSName,
-  ContractContext,
   DefaultValues,
   RecordToJS,
   TransactionReceipt,
@@ -54,7 +54,7 @@ export interface TransactionMultisig {
 }
 
 export interface TransactionRecordProps {
-  context: ContractContext;
+  context: ClientType;
   createdAt: Date;
   error?: TransactionError;
   eventData?: TransactionEventData;

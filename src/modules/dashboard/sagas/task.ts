@@ -1,6 +1,7 @@
 import { call, fork, put, takeEvery } from 'redux-saga/effects';
 import { bigNumberify } from 'ethers/utils';
 import moveDecimal from 'move-decimal-point';
+import { ClientType } from '@colony/colony-js';
 
 import { ContextModule, TEMP_getContext } from '~context/index';
 import {
@@ -17,7 +18,6 @@ import {
   SetTaskPendingMutationVariables,
 } from '~data/index';
 import { Action, ActionTypes } from '~redux/index';
-import { ContractContext } from '~types/index';
 // import { getLogsAndEvents, parseTaskPayoutEvents } from '~utils/web3/eventLogs';
 import { putError, takeFrom } from '~utils/saga/effects';
 import { COLONY_TOTAL_BALANCE_DOMAIN_ID } from '~constants';
@@ -96,7 +96,7 @@ function* taskFinalize({
 
     const txChannel = yield call(getTxChannel, meta.id);
     yield fork(createTransaction, meta.id, {
-      context: ContractContext.Colony,
+      context: ClientType.ColonyClient,
       methodName: 'makePaymentFundedFromDomain',
       identifier: colonyAddress,
       params: {

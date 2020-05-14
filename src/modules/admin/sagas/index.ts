@@ -1,9 +1,9 @@
 import { call, fork, put, takeEvery } from 'redux-saga/effects';
 import { AddressZero } from 'ethers/constants';
+import { ClientType } from '@colony/colony-js';
 
 import { AllActions, Action, ActionTypes } from '~redux/index';
 import { takeFrom, putError } from '~utils/saga/effects';
-import { ContractContext } from '~types/index';
 import { ContextModule, TEMP_getContext } from '~context/index';
 import {
   ColonyQuery,
@@ -213,7 +213,7 @@ function* colonyClaimToken({
 
     txChannel = yield call(getTxChannel, meta.id);
     yield fork(createTransaction, meta.id, {
-      context: ContractContext.Colony,
+      context: ClientType.ColonyClient,
       methodName: 'claimColonyFunds',
       identifier: colonyAddress,
       params: { token: tokenAddress },
@@ -287,7 +287,7 @@ function* colonyMintTokens({
 
     // create transactions
     yield fork(createTransaction, mintTokens.id, {
-      context: ContractContext.Colony,
+      context: ClientType.ColonyClient,
       methodName: 'mintTokens',
       identifier: colonyAddress,
       params: { amount },
@@ -299,7 +299,7 @@ function* colonyMintTokens({
       ready: false,
     });
     yield fork(createTransaction, claimColonyFunds.id, {
-      context: ContractContext.Colony,
+      context: ClientType.ColonyClient,
       methodName: 'claimColonyFunds',
       identifier: colonyAddress,
       params: {

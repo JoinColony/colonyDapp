@@ -1,5 +1,5 @@
 import { all, call, fork, put, takeEvery } from 'redux-saga/effects';
-import { ColonyClient, ROOT_DOMAIN_ID } from '@colony/colony-js';
+import { ClientType, ColonyClient, ROOT_DOMAIN_ID } from '@colony/colony-js';
 
 import { ContextModule, TEMP_getContext } from '~context/index';
 import {
@@ -18,7 +18,6 @@ import {
   TokenBalancesForDomainsQueryVariables,
 } from '~data/index';
 import { Action, ActionTypes, AllActions } from '~redux/index';
-import { ContractContext } from '~types/index';
 import { log } from '~utils/debug';
 import { putError, takeFrom } from '~utils/saga/effects';
 
@@ -89,7 +88,7 @@ function* domainCreate({
      * @body Idempotency could be improved here by looking for a pending transaction.
      */
     yield fork(createTransaction, meta.id, {
-      context: ContractContext.Colony,
+      context: ClientType.ColonyClient,
       methodName: 'addDomain',
       identifier: colonyAddress,
       params: { parentDomainId },
@@ -243,7 +242,7 @@ function* moveFundsBetweenPots({
     ]);
 
     yield fork(createTransaction, meta.id, {
-      context: ContractContext.Colony,
+      context: ClientType.ColonyClient,
       methodName: 'moveFundsBetweenPots',
       identifier: colonyAddress,
       params: { token: tokenAddress, fromPot, toPot, amount },

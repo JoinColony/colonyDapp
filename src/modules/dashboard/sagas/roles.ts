@@ -1,6 +1,11 @@
 import { all, call, fork, put, take, takeEvery } from 'redux-saga/effects';
 import { Set as ImmutableSet } from 'immutable';
-import { ColonyClient, ColonyRole, ROOT_DOMAIN_ID } from '@colony/colony-js';
+import {
+  ClientType,
+  ColonyClient,
+  ColonyRole,
+  ROOT_DOMAIN_ID,
+} from '@colony/colony-js';
 import { AddressZero } from 'ethers/constants';
 
 import { Action, ActionTypes, AllActions } from '~redux/index';
@@ -8,7 +13,7 @@ import { putError } from '~utils/saga/effects';
 import { ContextModule, TEMP_getContext } from '~context/index';
 import { ColonyRolesType, DomainRolesType } from '~immutable/index';
 import { createAddress } from '~utils/web3';
-import { Address, ContractContext, ColonyManager, RoleSet } from '~types/index';
+import { Address, RoleSet } from '~types/index';
 // FIXME
 // import { getEvents } from '~utils/web3/eventLogs';
 
