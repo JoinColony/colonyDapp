@@ -2,6 +2,7 @@ import React, { useCallback, useMemo, useState } from 'react';
 import { defineMessages, useIntl } from 'react-intl';
 import sortBy from 'lodash/sortBy';
 import { ColonyRole } from '@colony/colony-js';
+import { AddressZero } from 'ethers/constants';
 
 import { COLONY_TOTAL_BALANCE_DOMAIN_ID } from '~constants';
 import Button from '~core/Button';
@@ -19,7 +20,6 @@ import TokenMintDialog from './TokenMintDialog';
 import TokensMoveDialog from './TokensMoveDialog';
 
 import styles from './Tokens.css';
-import { ZERO_ADDRESS } from '~utils/web3/constants';
 
 const MSG = defineMessages({
   labelSelectDomain: {
@@ -113,7 +113,7 @@ const Tokens = ({
         COLONY_TOTAL_BALANCE_DOMAIN_ID,
         ...Object.keys(domains || {}).map((domainId) => parseInt(domainId, 10)),
       ],
-      tokenAddresses: [ZERO_ADDRESS, ...tokenAddresses],
+      tokenAddresses: [AddressZero, ...tokenAddresses],
     },
   });
 

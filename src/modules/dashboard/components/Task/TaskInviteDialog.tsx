@@ -1,5 +1,6 @@
 import React, { useCallback } from 'react';
 import { defineMessages } from 'react-intl';
+import { AddressZero } from 'ethers/constants';
 
 import { Address } from '~types/index';
 import {
@@ -9,7 +10,6 @@ import {
   useAssignWorkerMutation,
   useColonyTokensQuery,
 } from '~data/index';
-import { ZERO_ADDRESS } from '~utils/web3/constants';
 import Assignment from '~core/Assignment';
 import Button from '~core/Button';
 import { FormStatus, Form } from '~core/Fields';
@@ -76,7 +76,7 @@ const TaskInviteDialog = ({
   );
 
   // @TODO revise if the token query is still necessary
-  // @BODY This component is currently unused. Depending on from where we are opening it we can probably pass in all the required information via props. Then remove the ZERO_ADDRESS fallback!
+  // @BODY This component is currently unused. Depending on from where we are opening it we can probably pass in all the required information via props. Then remove the AddressZero fallback!
   const { data: colonyData } = useColonyTokensQuery({
     variables: { address: colonyAddress },
   });
@@ -87,7 +87,7 @@ const TaskInviteDialog = ({
 
   const tokens = colonyData && colonyData.colony.tokens;
   const nativeTokenAddress =
-    (colonyData && colonyData.colony.nativeTokenAddress) || ZERO_ADDRESS;
+    (colonyData && colonyData.colony.nativeTokenAddress) || AddressZero;
 
   const initialPayouts = payouts.map(({ amount, token }) => ({
     amount,

@@ -1,14 +1,14 @@
 import { Resolvers } from 'apollo-client';
 import { ROOT_DOMAIN_ID } from '@colony/colony-js';
 
-import { ContextType } from '~context/index';
+import { Context, ContextModule } from '~context/index';
 import ENS from '~lib/ENS';
-import { Address } from '~types/index';
+import { Address, ColonyManager } from '~types/index';
 
 import { getToken } from './token';
 
 const getUserReputation = async (
-  colonyManager: ContextType['colonyManager'],
+  colonyManager: Required<Context>[ContextModule.ColonyManager],
   address: Address,
   colonyAddress: Address,
   domainId: number,
@@ -27,7 +27,7 @@ export const userResolvers = ({
   colonyManager: { networkClient },
   colonyManager,
   ens,
-}: ContextType): Resolvers => ({
+}: Required<Context>): Resolvers => ({
   Query: {
     async userAddress(_, { name }) {
       const address = await ens.getAddress(

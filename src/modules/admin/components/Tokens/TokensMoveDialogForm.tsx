@@ -5,6 +5,7 @@ import { bigNumberify } from 'ethers/utils';
 import moveDecimal from 'move-decimal-point';
 import sortBy from 'lodash/sortBy';
 import { ColonyRole, ROOT_DOMAIN_ID } from '@colony/colony-js';
+import { AddressZero } from 'ethers/constants';
 
 import { Address } from '~types/index';
 import { useDataFetcher, useTransformer } from '~utils/hooks';
@@ -19,7 +20,6 @@ import {
 } from '~data/index';
 import EthUsd from '~core/EthUsd';
 import Numeral from '~core/Numeral';
-import { ZERO_ADDRESS } from '~utils/web3/constants';
 import {
   getBalanceFromToken,
   getTokenDecimalsWithFallback,
@@ -314,7 +314,7 @@ const TokensMoveDialogForm = ({
               appearance={{ alignOptions: 'right', theme: 'default' }}
             />
           </div>
-          {values.tokenAddress === ZERO_ADDRESS && (
+          {values.tokenAddress === AddressZero && (
             <div className={styles.tokenAmountUsd}>
               <EthUsd
                 appearance={{ theme: 'grey', size: 'small' }}

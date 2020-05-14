@@ -1,15 +1,25 @@
 import ApolloClient, { Resolvers } from 'apollo-client';
 import { isAddress } from 'web3-utils';
 import { BigNumber, bigNumberify } from 'ethers/utils';
+import { AddressZero } from 'ethers/constants';
 import { ColonyClient } from '@colony/colony-js';
 
-import { ContextType } from '~context/index';
+import { Context, ContextModule } from '~context/index';
 import { COLONY_TOTAL_BALANCE_DOMAIN_ID } from '~constants';
-import { ZERO_ADDRESS, ETHER_INFO } from '~utils/web3/constants';
 import { createAddress } from '~utils/web3';
 import { TokenInfo, TokenInfoDocument } from '~data/index';
 import { Address } from '~types/index';
 import { getTokenDecimalsWithFallback } from '~utils/tokens';
+
+const ETHER_INFO = Object.freeze({
+  id: AddressZero,
+  address: AddressZero,
+  name: 'Ether',
+  symbol: 'ETH',
+  decimals: 18,
+  verified: true,
+  iconHash: '',
+});
 
 // Token data is used a lot and never change. They require a custom cache
 const tokenCache = new Map();
@@ -38,12 +48,12 @@ const getTokenData = async (
     colonyManager,
     client,
   }: {
-    colonyManager: ContextType['colonyManager'];
+    colonyManager: Required<Context>[ContextModule.ColonyManager];
     client: ApolloClient<object>;
   },
   address: Address,
 ) => {
-  const tokenAddress = address === '0x0' ? ZERO_ADDRESS : address;
+  const tokenAddress = address === '0x0' ? AddressZero : address;
 
   if (!isAddress(tokenAddress)) {
     // don't bother looking it up if it's an invalid token address
@@ -51,7 +61,7 @@ const getTokenData = async (
   }
 
   // If we're asking for ETH, just return static data
-  if (tokenAddress === ZERO_ADDRESS) {
+  if (tokenAddress === AddressZero) {
     return {
       __typename: 'Token',
       verified: true,
@@ -103,7 +113,7 @@ export const getToken = (
     colonyManager,
     client,
   }: {
-    colonyManager: ContextType['colonyManager'];
+    colonyManager: Required<Context>[ContextModule.ColonyManager];
     client: ApolloClient<object>;
   },
   address: Address,
@@ -114,7 +124,9 @@ export const getToken = (
   return promise;
 };
 
-export const tokenResolvers = ({ colonyManager }: ContextType): Resolvers => ({
+export const tokenResolvers = ({
+  colonyManager,
+}: Required<Context>): Resolvers => ({
   Query: {
     async token(
       _,
@@ -142,7 +154,7 @@ export const tokenResolvers = ({ colonyManager }: ContextType): Resolvers => ({
           adapter: { provider },
         },
       } = colonyManager;
-      if (address === ZERO_ADDRESS) {
+      if (address === AddressZero) {
         const balance = await provider.getBalance(walletAddress);
         return balance.toString();
       }

@@ -1,9 +1,8 @@
-import ApolloClient from 'apollo-client';
 import { call, fork, put, takeEvery } from 'redux-saga/effects';
 import { bigNumberify } from 'ethers/utils';
 import moveDecimal from 'move-decimal-point';
 
-import { Context, getContext } from '~context/index';
+import { ContextModule, TEMP_getContext } from '~context/index';
 import {
   CreateTaskDocument,
   CreateTaskMutationResult,
@@ -31,9 +30,7 @@ function* taskCreate({
   payload: { colonyAddress, ethDomainId },
 }: Action<ActionTypes.TASK_CREATE>) {
   try {
-    const apolloClient: ApolloClient<any> = yield getContext(
-      Context.APOLLO_CLIENT,
-    );
+    const apolloClient = TEMP_getContext(ContextModule.ApolloClient);
 
     const { data }: CreateTaskMutationResult = yield apolloClient.mutate<
       CreateTaskMutation,
@@ -86,9 +83,7 @@ function* taskFinalize({
   meta,
 }: Action<ActionTypes.TASK_FINALIZE>) {
   try {
-    const apolloClient: ApolloClient<any> = yield getContext(
-      Context.APOLLO_CLIENT,
-    );
+    const apolloClient = TEMP_getContext(ContextModule.ApolloClient);
 
     if (!workerAddress)
       throw new Error(`Worker not assigned for task ${draftId}`);

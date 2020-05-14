@@ -1,12 +1,12 @@
 import { all, call, fork, put, take, takeEvery } from 'redux-saga/effects';
 import { Set as ImmutableSet } from 'immutable';
 import { ColonyClient, ColonyRole, ROOT_DOMAIN_ID } from '@colony/colony-js';
+import { AddressZero } from 'ethers/constants';
 
 import { Action, ActionTypes, AllActions } from '~redux/index';
 import { putError } from '~utils/saga/effects';
-import { Context, getContext } from '~context/index';
+import { ContextModule, TEMP_getContext } from '~context/index';
 import { ColonyRolesType, DomainRolesType } from '~immutable/index';
-import { ZERO_ADDRESS } from '~utils/web3/constants';
 import { createAddress } from '~utils/web3';
 import { Address, ContractContext, ColonyManager, RoleSet } from '~types/index';
 // FIXME
@@ -85,13 +85,13 @@ interface ColonyRoleSetEventData {
 // This will be unnecessary as soon as we have the RecoveryRoleSet event on the ColonyClient
 function* TEMP_getUserHasRecoveryRole(
   colonyAddress: Address,
-  userAddress: Address = ZERO_ADDRESS,
+  userAddress: Address = AddressZero,
 ) {
-  const colonyManager: ColonyManager = yield getContext(Context.COLONY_MANAGER);
+  const colonyManager = TEMP_getContext(ContextModule.ColonyManager);
   const colonyClient: ColonyClient = yield colonyManager.getColonyClient(
     colonyAddress,
   );
-  if (!userAddress || userAddress === ZERO_ADDRESS) return false;
+  if (!userAddress || userAddress === AddressZero) return false;
   const hasRole = yield colonyClient.hasUserRole(
     userAddress,
     ROOT_DOMAIN_ID,

@@ -1,9 +1,8 @@
-import ApolloClient from 'apollo-client';
 import { $Values } from 'utility-types';
 import { Channel } from 'redux-saga';
 import { all, call, fork, put } from 'redux-saga/effects';
 
-import { Context, getContext } from '~context/index';
+import { ContextModule, TEMP_getContext } from '~context/index';
 import { DEFAULT_TOKEN_DECIMALS } from '~constants';
 import {
   getLoggedInUser,
@@ -50,12 +49,8 @@ function* colonyCreate({
   },
 }: Action<ActionTypes.COLONY_CREATE>) {
   const { username: currentUsername, walletAddress } = yield getLoggedInUser();
-
-  const apolloClient: ApolloClient<object> = yield getContext(
-    Context.APOLLO_CLIENT,
-  );
-
-  const { networkClient } = yield getContext(Context.COLONY_MANAGER);
+  const apolloClient = TEMP_getContext(ContextModule.ApolloClient);
+  const { networkClient } = TEMP_getContext(ContextModule.ColonyManager);
 
   /*
    * Define a manifest of transaction ids and their respective channels.

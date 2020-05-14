@@ -27,12 +27,15 @@ export default class ColonyManager {
 
   networkClient: ColonyNetworkClient;
 
-  signerOrProvider: Signer | Provider;
+  provider: Provider;
+
+  signer: Signer;
 
   constructor(networkClient: ColonyNetworkClient) {
     this.clients = new Map();
     this.networkClient = networkClient;
-    this.signerOrProvider = networkClient.signer || networkClient.provider;
+    this.provider = networkClient.provider;
+    this.signer = networkClient.signer;
   }
 
   private async getColonyPromise(address: Address) {
@@ -85,7 +88,7 @@ export default class ColonyManager {
    * the functions do not exist on the contract.
    */
   async getTokenClient(contractAddress: string) {
-    return getTokenClient(contractAddress, this.signerOrProvider);
+    return getTokenClient(contractAddress, this.signer);
   }
 
   async getNetworkMethod<M extends keyof ColonyNetworkClient>(

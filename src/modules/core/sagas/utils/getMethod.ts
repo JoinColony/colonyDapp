@@ -1,15 +1,15 @@
 import { call } from 'redux-saga/effects';
 
-import { Context, getContext } from '~context/index';
+import { ContextModule, TEMP_getContext } from '~context/index';
 import { TransactionRecord } from '~immutable/index';
-import { AddressOrENSName, ContractContext, ColonyManager } from '~types/index';
+import { AddressOrENSName, ContractContext } from '~types/index';
 
 export function* getMethod(
   context: ContractContext,
   methodName: string,
   identifier?: AddressOrENSName,
 ) {
-  const colonyManager: ColonyManager = yield getContext(Context.COLONY_MANAGER);
+  const colonyManager = TEMP_getContext(ContextModule.ColonyManager);
   return yield call(
     [colonyManager, colonyManager.getMethod],
     context,

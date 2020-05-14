@@ -1,11 +1,10 @@
-import ApolloClient from 'apollo-client';
-import { call, fork, getContext, put, takeEvery } from 'redux-saga/effects';
+import { call, fork, put, takeEvery } from 'redux-saga/effects';
+import { AddressZero } from 'ethers/constants';
 
-import { ZERO_ADDRESS } from '~utils/web3/constants';
 import { AllActions, Action, ActionTypes } from '~redux/index';
 import { takeFrom, putError } from '~utils/saga/effects';
-import { ColonyManager, ContractContext } from '~types/index';
-import { Context } from '~context/index';
+import { ContractContext } from '~types/index';
+import { ContextModule, TEMP_getContext } from '~context/index';
 import {
   ColonyQuery,
   ColonyQueryVariables,
@@ -158,12 +157,12 @@ import {
 //     );
 //     const {
 //       total: colonyNonRewardsPotsTotal,
-//     } = yield colonyClient.getNonRewardPotsTotal.call({ token: ZERO_ADDRESS });
+//     } = yield colonyClient.getNonRewardPotsTotal.call({ token: AddressZero });
 //     const {
 //       balance: colonyRewardsPotTotal,
 //     } = yield colonyClient.getFundingPotBalance.call({
 //       potId: 0,
-//       token: ZERO_ADDRESS,
+//       token: AddressZero,
 //     });
 //     const unclaimedEther = bigNumberify(
 //       colonyEtherBalance
@@ -178,7 +177,7 @@ import {
 //         date: new Date(),
 //         hash: '0x0',
 //         incoming: true,
-//         token: ZERO_ADDRESS,
+//         token: AddressZero,
 //       });
 //     }
 
@@ -210,9 +209,7 @@ function* colonyClaimToken({
 }: Action<ActionTypes.COLONY_CLAIM_TOKEN>) {
   let txChannel;
   try {
-    const apolloClient: ApolloClient<object> = yield getContext(
-      Context.APOLLO_CLIENT,
-    );
+    const apolloClient = TEMP_getContext(ContextModule.ApolloClient);
 
     txChannel = yield call(getTxChannel, meta.id);
     yield fork(createTransaction, meta.id, {
@@ -257,9 +254,7 @@ function* colonyMintTokens({
   let txChannel;
   try {
     txChannel = yield call(getTxChannel, meta.id);
-    const apolloClient: ApolloClient<object> = yield getContext(
-      Context.APOLLO_CLIENT,
-    );
+    const apolloClient = TEMP_getContext(ContextModule.ApolloClient);
     const { data } = yield apolloClient.query<
       ColonyQuery,
       ColonyQueryVariables

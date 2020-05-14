@@ -4,7 +4,7 @@ import { getColonyNetworkClient, Network } from '@colony/colony-js';
 import { EthersSigner } from '@purser/signer-ethers';
 
 import { DEFAULT_NETWORK } from '~constants';
-import { TEMP_getContext } from '~context/index';
+import { ContextModule, TEMP_getContext } from '~context/index';
 
 interface EtherRouterABI {
   networks: Record<string, { address: string }>;
@@ -14,11 +14,12 @@ const getLocalEtherRouterAddress = () => {
   // NOTE we are hoping that webpack will ignore this for the production build
   if (process.env.NODE_ENV === 'development') {
     try {
-      const etherRouterABI: EtherRouterABI = require('../../../../lib/colonyNetwork/build/contracts/EtherRouter.json');
+      // eslint-disable-next-line @typescript-eslint/no-var-requires, max-len, global-require
+      const etherRouterABI: EtherRouterABI = require(`../../../../lib/colonyNetwork/build/contracts/EtherRouter.json`);
       return Object.values(etherRouterABI.networks)[0].address;
     } catch {
       throw new Error(
-        'Could not get local Ether router address. Please deploy contracts first',
+        `Could not get local Ether router address. Please deploy contracts first`,
       );
     }
   }
@@ -29,7 +30,7 @@ const getLocalEtherRouterAddress = () => {
  * Return an initialized ColonyNetworkClient instance.
  */
 export default function* getNetworkClient() {
-  const wallet = TEMP_getContext('wallet');
+  const wallet = TEMP_getContext(ContextModule.Wallet);
 
   if (!wallet) throw new Error('No wallet in context');
 

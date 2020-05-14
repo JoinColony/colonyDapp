@@ -1,20 +1,39 @@
-import { SagaIterator } from 'redux-saga';
-import { getContext as getContextOriginal } from 'redux-saga/effects';
+import ApolloClientClass from 'apollo-client';
 import { PurserWallet } from '@purser/core';
 
-import ColonyManager from '../lib/ColonyManager';
-import { rootContext, RootContext } from './rootContext';
-import { UserContext } from './userContext';
+import ColonyManagerClass from '../lib/ColonyManager';
 
-interface Context {
-  wallet?: PurserWallet;
-  colonyManger?: ColonyManager;
+import ENSClass from '../lib/ENS';
+import IPFSNode from '../lib/ipfs';
+
+import ipfsNode from './ipfsNodeContext';
+import ens from './ensContext';
+import apolloClient from './apolloClient';
+
+export enum ContextModule {
+  Wallet = 'wallet',
+  ColonyManager = 'colonyManager',
+  IPFS = 'ipfs',
+  ApolloClient = 'apolloClient',
+  ENS = 'ens',
+}
+
+export interface Context {
+  [ContextModule.Wallet]?: PurserWallet;
+  [ContextModule.ColonyManager]?: ColonyManagerClass;
+  // @todo type the client cache properly
+  [ContextModule.ApolloClient]?: ApolloClientClass<object>;
+  [ContextModule.IPFS]?: IPFSNode;
+  [ContextModule.ENS]?: ENSClass;
 }
 
 /* Eventually the whole context will live in the newContext (not in sagas anymore). This becomes more important as we move away from redux and redux-saga entirely */
 const TEMP_newContext: Context = {
-  wallet: undefined,
-  colonyManger: undefined,
+  [ContextModule.ApolloClient]: apolloClient,
+  [ContextModule.ColonyManager]: undefined,
+  [ContextModule.ENS]: ens,
+  [ContextModule.IPFS]: ipfsNode,
+  [ContextModule.Wallet]: undefined,
 };
 
 export const TEMP_setContext = <K extends keyof Context>(
@@ -37,17 +56,3 @@ export const TEMP_getContext = <K extends keyof Context>(
 export const TEMP_removeContext = <K extends keyof Context>(contextKey: K) => {
   TEMP_newContext[contextKey] = undefined;
 };
-
-export type ContextType = RootContext & UserContext;
-
-export type ContextName = keyof ContextType;
-
-export * from './constants';
-
-export function* getContext<C extends ContextName>(
-  contextName: C,
-): SagaIterator<ContextType[C]> {
-  return yield getContextOriginal(contextName);
-}
-
-export default rootContext;

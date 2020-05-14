@@ -1,17 +1,13 @@
 import ApolloClient from 'apollo-client';
-import {
-  call,
-  fork,
-  put,
-  takeEvery,
-  takeLatest,
-  setContext,
-} from 'redux-saga/effects';
+import { call, fork, put, takeEvery, takeLatest } from 'redux-saga/effects';
 
 import { Action, ActionTypes, AllActions } from '~redux/index';
-import { getContext, Context, TEMP_removeContext } from '~context/index';
+import {
+  TEMP_getContext,
+  ContextModule,
+  TEMP_removeContext,
+} from '~context/index';
 import ENS from '~lib/ENS';
-import { ColonyManager } from '~types/index';
 import { createAddress } from '~utils/web3';
 import {
   getLoggedInUser,
@@ -130,10 +126,8 @@ function* userAddressFetch({
   meta,
 }: Action<ActionTypes.USER_ADDRESS_FETCH>) {
   try {
-    const ens: ENS = yield getContext(Context.ENS_INSTANCE);
-    const colonyManager: ColonyManager = yield getContext(
-      Context.COLONY_MANAGER,
-    );
+    const ens = TEMP_getContext(ContextModule.ENS);
+    const colonyManager = TEMP_getContext(ContextModule.ColonyManager);
 
     const address = yield ens.getAddress(
       ENS.getFullDomain('user', username),
@@ -154,9 +148,7 @@ function* userAddressFetch({
 function* userAvatarRemove({ meta }: Action<ActionTypes.USER_AVATAR_REMOVE>) {
   try {
     const { walletAddress } = yield getLoggedInUser();
-    const apolloClient: ApolloClient<object> = yield getContext(
-      Context.APOLLO_CLIENT,
-    );
+    const apolloClient = TEMP_getContext(ContextModule.ApolloClient);
     yield apolloClient.mutate<EditUserMutation, EditUserMutationVariables>({
       mutation: EditUserDocument,
       variables: { input: { avatarHash: null } },
@@ -179,9 +171,7 @@ function* userAvatarUpload({
 }: Action<ActionTypes.USER_AVATAR_UPLOAD>) {
   try {
     const { walletAddress } = yield getLoggedInUser();
-    const apolloClient: ApolloClient<object> = yield getContext(
-      Context.APOLLO_CLIENT,
-    );
+    const apolloClient = TEMP_getContext(ContextModule.ApolloClient);
     const ipfsHash = yield call(ipfsUpload, payload.data);
 
     yield apolloClient.mutate<EditUserMutation, EditUserMutationVariables>({
@@ -227,9 +217,7 @@ function* usernameCreate({
       },
     });
 
-    const apolloClient: ApolloClient<object> = yield getContext(
-      Context.APOLLO_CLIENT,
-    );
+    const apolloClient = TEMP_getContext(ContextModule.ApolloClient);
 
     yield takeFrom(txChannel, ActionTypes.TRANSACTION_SUCCEEDED);
 
@@ -264,21 +252,17 @@ function* usernameCreate({
 
 function* userLogout() {
   try {
-    const apolloClient: ApolloClient<object> = yield getContext(
-      Context.APOLLO_CLIENT,
-    );
+    const apolloClient = TEMP_getContext(ContextModule.ApolloClient);
     const { walletAddress } = yield getLoggedInUser();
     /*
      *  1. Destroy instances of colonyJS in the colonyManager? Probably.
      */
-    yield setContext({
-      [Context.COLONY_MANAGER]: undefined,
-    });
+    TEMP_removeContext(ContextModule.ColonyManager);
 
     /*
      *  2. The purser wallet is reset
      */
-    TEMP_removeContext('wallet');
+    TEMP_removeContext(ContextModule.Wallet);
 
     /*
      *  3. Delete json web token and last wallet from localstorage

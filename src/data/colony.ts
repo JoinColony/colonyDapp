@@ -3,7 +3,7 @@ import { bigNumberify } from 'ethers/utils';
 
 import ENS from '~lib/ENS';
 import { Address } from '~types/index';
-import { ContextType } from '~context/index';
+import { Context } from '~context/index';
 
 import { getToken } from './token';
 
@@ -11,7 +11,7 @@ export const colonyResolvers = ({
   colonyManager: { networkClient },
   colonyManager,
   ens,
-}: ContextType): Resolvers => ({
+}: Required<Context>): Resolvers => ({
   Query: {
     async colonyAddress(_, { name }) {
       try {

@@ -4,10 +4,10 @@ import { call, put, race, take } from 'redux-saga/effects';
 import { putError } from '~utils/saga/effects';
 import { ActionTypes } from '~redux/index';
 import { AllActions } from '~redux/types/actions';
-import { TEMP_getContext } from '~context/index';
+import { ContextModule, TEMP_getContext } from '~context/index';
 
 export function* signMessage(purpose, message) {
-  const wallet = TEMP_getContext('wallet');
+  const wallet = TEMP_getContext(ContextModule.Wallet);
 
   if (!wallet) throw new Error('Could not get wallet');
 

@@ -1,10 +1,10 @@
 import { bigNumberify } from 'ethers/utils';
+import { AddressZero } from 'ethers/constants';
 import { ColonyRole, ROOT_DOMAIN_ID } from '@colony/colony-js';
 
 import { PersistentTasks } from '~data/index';
 import { DomainRolesType, DomainType } from '~immutable/index';
 import { Address, RoleSetType, DomainsMapType } from '~types/index';
-import { ZERO_ADDRESS } from '~utils/web3/constants';
 
 export const getDomainRoles = (
   domains: DomainsMapType | null,
@@ -133,7 +133,7 @@ const getLegacyFounder = (
       roles.includes(ColonyRole.Architecture) &&
       roles.includes(ColonyRole.Funding)
     );
-  }) || ZERO_ADDRESS;
+  }) || AddressZero;
 
 /*
  * @NOTE Internal use only

@@ -1,13 +1,15 @@
 import { Resolvers } from 'apollo-client';
 import { padLeft, toHex } from 'web3-utils';
 
-import { ContextType } from '~context/index';
+import { Context } from '~context/index';
 import { createAddress } from '~utils/web3';
 
 import { getToken } from './token';
 import { EventType } from './index';
 
-export const taskResolvers = ({ colonyManager }: ContextType): Resolvers => ({
+export const taskResolvers = ({
+  colonyManager,
+}: Required<Context>): Resolvers => ({
   Task: {
     commentCount({ events }): number {
       return events.filter(({ type }) => type === EventType.TaskMessage).length;

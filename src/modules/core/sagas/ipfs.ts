@@ -2,10 +2,9 @@ import { call, put, takeEvery } from 'redux-saga/effects';
 import nanoid from 'nanoid';
 
 import { Action, ActionTypes, AllActions } from '~redux/index';
-
 import { putError, raceError } from '~utils/saga/effects';
 import { filterUniqueAction } from '~utils/actions';
-import { Context, getContext } from '~context/index';
+import { ContextModule, TEMP_getContext } from '~context/index';
 
 import { uploadIpfsData } from '../actionCreators';
 
@@ -35,9 +34,9 @@ function* ipfsDataUpload({
   payload: { ipfsData },
 }: Action<ActionTypes.IPFS_DATA_UPLOAD>) {
   try {
-    const ipfsNode = yield getContext(Context.IPFS_NODE);
+    const ipfs = TEMP_getContext(ContextModule.IPFS);
 
-    const ipfsHash = yield call([ipfsNode, ipfsNode.addString], ipfsData);
+    const ipfsHash = yield call([ipfs, ipfs.addString], ipfsData);
 
     yield put<AllActions>({
       type: ActionTypes.IPFS_DATA_UPLOAD_SUCCESS,
@@ -55,8 +54,8 @@ function* ipfsDataFetch({
   payload: { ipfsHash },
 }: Action<ActionTypes.IPFS_DATA_FETCH>) {
   try {
-    const ipfsNode = yield getContext(Context.IPFS_NODE);
-    const ipfsData = yield call([ipfsNode, ipfsNode.getString], ipfsHash);
+    const ipfs = TEMP_getContext(ContextModule.IPFS);
+    const ipfsData = yield call([ipfs, ipfs.getString], ipfsHash);
 
     yield put<AllActions>({
       type: ActionTypes.IPFS_DATA_FETCH_SUCCESS,

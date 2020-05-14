@@ -3,7 +3,7 @@ import { bigNumberify } from 'ethers/utils';
 import { call, put, select } from 'redux-saga/effects';
 
 import { GasPricesProps } from '~immutable/index';
-import { Context, getContext } from '~context/index';
+import { ContextModule, TEMP_getContext } from '~context/index';
 import { log } from '~utils/debug';
 
 import { gasPrices as gasPricesSelector } from '../../selectors';
@@ -85,7 +85,7 @@ export default function* getGasPrices() {
     return cachedPrices;
   }
 
-  const { networkClient } = yield getContext(Context.COLONY_MANAGER);
+  const { networkClient } = TEMP_getContext(ContextModule.ColonyManager);
 
   const gasPrices: GasPricesProps = yield call(fetchGasPrices, networkClient);
 

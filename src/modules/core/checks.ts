@@ -1,6 +1,7 @@
+import { AddressZero } from 'ethers/constants';
+
 import { TransactionType } from '~immutable/index';
 import { TokenWithBalances, AnyToken } from '~data/index';
-import { ZERO_ADDRESS } from '~utils/web3/constants';
 import { getBalanceFromToken } from '~utils/tokens';
 
 /*
@@ -30,4 +31,4 @@ export const tokenBalanceIsNotPositive = (
   return balance.lte(0);
 };
 
-export const tokenIsETH = ({ address }: AnyToken) => address === ZERO_ADDRESS;
+export const tokenIsETH = ({ address }: AnyToken) => address === AddressZero;

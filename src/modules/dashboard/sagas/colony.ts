@@ -1,4 +1,3 @@
-import ApolloClient from 'apollo-client';
 import {
   call,
   fork,
@@ -19,7 +18,7 @@ import {
   ColonyQuery,
   ColonyQueryVariables,
 } from '~data/index';
-import { getContext, Context } from '~context/index';
+import { ContextModule, TEMP_getContext } from '~context/index';
 
 import { createTransaction, getTxChannel } from '../../core/sagas';
 import { ipfsUpload } from '../../core/sagas/ipfs';
@@ -30,9 +29,7 @@ function* colonyAvatarUpload({
   payload: { colonyAddress, data },
 }: Action<ActionTypes.COLONY_AVATAR_UPLOAD>) {
   try {
-    const apolloClient: ApolloClient<object> = yield getContext(
-      Context.APOLLO_CLIENT,
-    );
+    const apolloClient = TEMP_getContext(ContextModule.ApolloClient);
     const ipfsHash = yield call(ipfsUpload, data);
 
     yield apolloClient.mutate<
@@ -59,9 +56,7 @@ function* colonyAvatarRemove({
   payload: { colonyAddress },
 }: Action<ActionTypes.COLONY_AVATAR_REMOVE>) {
   try {
-    const apolloClient: ApolloClient<object> = yield getContext(
-      Context.APOLLO_CLIENT,
-    );
+    const apolloClient = TEMP_getContext(ContextModule.ApolloClient);
     yield apolloClient.mutate<
       EditColonyProfileMutation,
       EditColonyProfileMutationVariables
@@ -102,9 +97,7 @@ function* colonyRecoveryModeEnter({
 
     yield takeFrom(txChannel, ActionTypes.TRANSACTION_SUCCEEDED);
 
-    const apolloClient: ApolloClient<object> = yield getContext(
-      Context.APOLLO_CLIENT,
-    );
+    const apolloClient = TEMP_getContext(ContextModule.ApolloClient);
 
     yield apolloClient.query<ColonyQuery, ColonyQueryVariables>({
       query: ColonyDocument,
@@ -149,9 +142,7 @@ function* colonyUpgradeContract({
 
     yield takeFrom(txChannel, ActionTypes.TRANSACTION_SUCCEEDED);
 
-    const apolloClient: ApolloClient<object> = yield getContext(
-      Context.APOLLO_CLIENT,
-    );
+    const apolloClient = TEMP_getContext(ContextModule.ApolloClient);
 
     yield apolloClient.query<ColonyQuery, ColonyQueryVariables>({
       query: ColonyDocument,
@@ -191,9 +182,7 @@ function* colonyNativeTokenUnlock({
       meta,
     });
 
-    const apolloClient: ApolloClient<object> = yield getContext(
-      Context.APOLLO_CLIENT,
-    );
+    const apolloClient = TEMP_getContext(ContextModule.ApolloClient);
 
     yield apolloClient.query<ColonyQuery, ColonyQueryVariables>({
       query: ColonyDocument,

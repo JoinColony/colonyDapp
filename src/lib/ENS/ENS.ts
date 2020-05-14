@@ -3,6 +3,7 @@
 import namehash from 'eth-ens-namehash-ms';
 import { isAddress } from 'web3-utils';
 import punycode from 'punycode';
+import { AddressZero } from 'ethers/constants';
 
 import { ColonyNetworkClient } from '@colony/colony-js';
 
@@ -58,7 +59,7 @@ class ENS {
       namehash.hash(normalizedDomain),
     );
 
-    if (ensAddress) {
+    if (ensAddress !== AddressZero) {
       const address = createAddress(ensAddress);
       this._updateCaches(normalizedDomain, address);
       return address;

@@ -1,8 +1,7 @@
-import ApolloClient from 'apollo-client';
 import { all, call, fork, put, takeEvery } from 'redux-saga/effects';
-import { ROOT_DOMAIN_ID } from '@colony/colony-js';
+import { ColonyClient, ROOT_DOMAIN_ID } from '@colony/colony-js';
 
-import { getContext, Context } from '~context/index';
+import { ContextModule, TEMP_getContext } from '~context/index';
 import {
   ColonyDomainsQuery,
   ColonyDomainsQueryVariables,
@@ -35,9 +34,7 @@ function* colonyDomainsFetch({
   },
 }: Action<ActionTypes.COLONY_DOMAINS_FETCH>) {
   try {
-    const apolloClient: ApolloClient<object> = yield getContext(
-      Context.APOLLO_CLIENT,
-    );
+    const apolloClient = TEMP_getContext(ContextModule.ApolloClient);
 
     const { data }: ColonyDomainsQueryResult = yield apolloClient.query<
       ColonyDomainsQuery,
@@ -86,9 +83,7 @@ function* domainCreate({
 }: Action<ActionTypes.DOMAIN_CREATE>) {
   const txChannel = yield call(getTxChannel, meta.id);
   try {
-    const apolloClient: ApolloClient<object> = yield getContext(
-      Context.APOLLO_CLIENT,
-    );
+    const apolloClient = TEMP_getContext(ContextModule.ApolloClient);
     /*
      * @todo Create the domain on the colony with a transaction.
      * @body Idempotency could be improved here by looking for a pending transaction.
@@ -190,9 +185,7 @@ function* domainEdit({
   meta,
 }: Action<ActionTypes.DOMAIN_EDIT>) {
   try {
-    const apolloClient: ApolloClient<object> = yield getContext(
-      Context.APOLLO_CLIENT,
-    );
+    const apolloClient = TEMP_getContext(ContextModule.ApolloClient);
 
     /*
      * Update the domain's name in the mongo database
@@ -231,14 +224,12 @@ function* moveFundsBetweenPots({
 }: Action<ActionTypes.MOVE_FUNDS_BETWEEN_POTS>) {
   let txChannel;
   try {
-    const apolloClient: ApolloClient<object> = yield getContext(
-      Context.APOLLO_CLIENT,
-    );
+    const apolloClient = TEMP_getContext(ContextModule.ApolloClient);
+    const colonyManager = TEMP_getContext(ContextModule.ColonyManager);
 
     txChannel = yield call(getTxChannel, meta.id);
 
-    const colonyManager = yield getContext(Context.COLONY_MANAGER);
-    const colonyClient = yield call(
+    const colonyClient: ColonyClient = yield call(
       [colonyManager, colonyManager.getColonyClient],
       colonyAddress,
     );
