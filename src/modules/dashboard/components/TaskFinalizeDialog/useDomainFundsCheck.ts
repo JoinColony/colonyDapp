@@ -2,6 +2,8 @@ import { useCallback } from 'react';
 import { useApolloClient } from '@apollo/react-hooks';
 import moveDecimal from 'move-decimal-point';
 
+import { getTokenDecimalsWithFallback } from '~utils/tokens';
+
 import { useDialog } from '~core/Dialog';
 import TaskFinalizeDialog from './TaskFinalizeDialog';
 
@@ -44,7 +46,10 @@ const useDomainFundsCheck = (
         ({ amount: availableDomainAmount }) =>
           !bnLessThan(
             availableDomainAmount,
-            moveDecimal(amount, domainBalances.decimals || 18),
+            moveDecimal(
+              amount,
+              getTokenDecimalsWithFallback(domainBalances.decimals),
+            ),
           ),
       );
     });
