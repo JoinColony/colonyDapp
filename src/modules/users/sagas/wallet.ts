@@ -137,14 +137,6 @@ function* openHardwareWallet(action: Action<ActionTypes.WALLET_CREATE>) {
   return wallet;
 }
 
-function* openKeystoreWallet(action: Action<ActionTypes.WALLET_CREATE>) {
-  const { keystore, password } = action.payload;
-  return yield call(softwareWallet.open, {
-    keystore,
-    password,
-  });
-}
-
 function* openTrufflepigWallet({
   payload: { accountIndex },
 }: Action<ActionTypes.WALLET_CREATE>) {
@@ -162,6 +154,10 @@ function* createWallet(action: Action<ActionTypes.WALLET_CREATE>) {
   });
 }
 
+function* createTempWallet() {
+  return yield call(softwareWallet.create);
+}
+
 export function* getWallet(action: Action<ActionTypes.WALLET_CREATE>) {
   const { method } = action.payload;
   switch (method) {
@@ -175,14 +171,13 @@ export function* getWallet(action: Action<ActionTypes.WALLET_CREATE>) {
       return yield call(openHardwareWallet, action);
     case WALLET_SPECIFICS.MNEMONIC:
       return yield call(openMnemonicWallet, action);
-    case WALLET_SPECIFICS.JSON:
-      return yield call(openKeystoreWallet, action);
     case WALLET_SPECIFICS.TRUFFLEPIG:
       return yield call(openTrufflepigWallet, action);
     default:
-      throw new Error(
-        `Method ${method} is not recognized for getting a wallet`,
-      );
+      return yield call(createTempWallet);
+    // throw new Error(
+    //   `Method ${method} is not recognized for getting a wallet`,
+    // );
   }
 }
 
