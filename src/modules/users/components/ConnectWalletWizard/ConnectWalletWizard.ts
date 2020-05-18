@@ -9,7 +9,6 @@ import StepStart from './StepStart';
 import StepHardware from './StepHardware';
 import StepMetaMask from './StepMetaMask';
 import StepMnemonic from './StepMnemonic';
-import StepJSONUpload from './StepJSONUpload';
 import StepTrufflePig from './StepTrufflePig';
 
 interface StepValues {
@@ -39,8 +38,6 @@ const stepFunction = (step: number, { method }: StepValues) => {
       return StepMetaMask;
     case WALLET_SPECIFICS.MNEMONIC:
       return StepMnemonic;
-    case WALLET_SPECIFICS.JSON:
-      return StepJSONUpload;
     case WALLET_SPECIFICS.TRUFFLEPIG:
       return StepTrufflePig;
     default:

@@ -36,9 +36,7 @@ const MSG = defineMessages({
   },
   trezorSubtitle: {
     id: 'users.ConnectWalletWizard.StepStart.trezorSubtitle',
-    defaultMessage: 'Coming soon',
-    // To be re-enabled for colonyDapp#1760
-    // defaultMessage: 'Log in using the Trezor hardware wallet',
+    defaultMessage: 'Log in using the Trezor hardware wallet',
   },
   ledgerTitle: {
     id: 'users.ConnectWalletWizard.StepStart.ledgerTitle',
@@ -50,9 +48,7 @@ const MSG = defineMessages({
   },
   ledgerSubtitle: {
     id: 'users.ConnectWalletWizard.StepStart.ledgerSubtitle',
-    defaultMessage: 'Coming soon',
-    // To be re-enabled for colonyDapp#1760
-    // defaultMessage: 'Log in using the Ledger hardware wallet',
+    defaultMessage: 'Log in using the Ledger hardware wallet',
   },
   mnemonicTitle: {
     id: 'users.ConnectWalletWizard.StepStart.mnemonicTitle',
@@ -99,22 +95,22 @@ const options = [
     subtitle: MSG.mnemonicSubtitle,
     icon: 'wallet',
   },
-  {
-    value: WALLET_SPECIFICS.LEDGER,
-    title: MSG.ledgerTitle,
-    subtitle: MSG.ledgerSubtitle,
-    icon: 'wallet',
-    // To be re-enabled for colonyDapp#1760
-    disabled: true,
-  },
-  {
-    value: WALLET_SPECIFICS.TREZOR,
-    title: MSG.trezorTitle,
-    subtitle: MSG.trezorSubtitle,
-    icon: 'wallet',
-    // To be re-enabled for colonyDapp#1760
-    disabled: true,
-  },
+  // To be re-enabled for colonyDapp#1760
+  // @NOTE This is a hard-disable to prevent the options from showing up,
+  // until we get to re-enable them
+  //
+  // {
+  //   value: WALLET_SPECIFICS.LEDGER,
+  //   title: MSG.ledgerTitle,
+  //   subtitle: MSG.ledgerSubtitle,
+  //   icon: 'wallet',
+  // },
+  // {
+  //   value: WALLET_SPECIFICS.TREZOR,
+  //   title: MSG.trezorTitle,
+  //   subtitle: MSG.trezorSubtitle,
+  //   icon: 'wallet',
+  // },
 ];
 
 if (isDev) {
