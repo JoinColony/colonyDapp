@@ -58,10 +58,6 @@ const MSG = defineMessages({
     id: 'users.ConnectWalletWizard.StepStart.mnemonicTitle',
     defaultMessage: 'Mnemonic Phrase',
   },
-  JSONTitle: {
-    id: 'users.ConnectWalletWizard.StepStart.JSONTitle',
-    defaultMessage: 'JSON File',
-  },
   metaMaskSubtitle: {
     id: 'users.ConnectWalletWizard.StepStart.metaMaskSubtitle',
     defaultMessage: 'Requires MetaMask browser extension',
@@ -69,10 +65,6 @@ const MSG = defineMessages({
   mnemonicSubtitle: {
     id: 'users.ConnectWalletWizard.StepStart.mnemonicSubtitle',
     defaultMessage: 'Access with your mnemonic',
-  },
-  JSONSubtitle: {
-    id: 'users.ConnectWalletWizard.StepStart.JSONSubtitle',
-    defaultMessage: 'We do not recommend this method',
   },
   trufflepigSubtitle: {
     id: 'users.ConnectWalletWizard.StepStart.trufflepigSubtitle',
@@ -106,12 +98,6 @@ const options = [
     title: MSG.mnemonicTitle,
     subtitle: MSG.mnemonicSubtitle,
     icon: 'wallet',
-  },
-  {
-    value: WALLET_SPECIFICS.JSON,
-    title: MSG.JSONTitle,
-    subtitle: MSG.JSONSubtitle,
-    icon: 'file',
   },
   {
     value: WALLET_SPECIFICS.LEDGER,

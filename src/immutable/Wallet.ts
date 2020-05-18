@@ -12,7 +12,6 @@ export enum WALLET_CATEGORIES {
 }
 
 export enum WALLET_SPECIFICS {
-  JSON = 'json',
   MNEMONIC = 'mnemonic',
   TREZOR = 'trezor',
   LEDGER = 'ledger',
