@@ -51,23 +51,25 @@ const MSG = defineMessages({
 });
 
 const Routes = () => {
-  const { walletAddress, username } = useLoggedInUser();
-  const isConnected = !!walletAddress;
-  const didClaimProfile = !!username;
+  // const { walletAddress, username } = useLoggedInUser();
+  // const isConnected = !!walletAddress;
+  // const didClaimProfile = !!username;
+  const isConnected = true;
   return (
     <Switch>
       <Route
         exact
         path="/"
-        render={() => {
-          const connectedRoute = didClaimProfile
-            ? DASHBOARD_ROUTE
-            : CREATE_USER_ROUTE;
-          return <Redirect to={isConnected ? connectedRoute : CONNECT_ROUTE} />;
-        }}
+        // render={() => {
+        //   const connectedRoute = didClaimProfile
+        //     ? DASHBOARD_ROUTE
+        //     : CREATE_USER_ROUTE;
+        //   return <Redirect to={isConnected ? connectedRoute : CONNECT_ROUTE} />;
+        // }}
+        render={() => <Redirect to={DASHBOARD_ROUTE} />}
       />
       <Route exact path={NOT_FOUND_ROUTE} component={FourOFour} />
-      <DisconnectedOnlyRoute
+      {/* <DisconnectedOnlyRoute
         isConnected={isConnected}
         didClaimProfile={didClaimProfile}
         path={CONNECT_ROUTE}
@@ -80,7 +82,7 @@ const Routes = () => {
         path={CREATE_WALLET_ROUTE}
         component={CreateWalletWizard}
         layout={Plain}
-      />
+      /> */}
       <ConnectedOnlyRoute
         exact
         isConnected={isConnected}
@@ -177,10 +179,10 @@ const Routes = () => {
         path={USER_EDIT_ROUTE}
         component={UserProfileEdit}
         layout={NavBar}
-        routeProps={{
-          backText: MSG.userProfileEditBack,
-          backRoute: `/user/${username}`,
-        }}
+        // routeProps={{
+        //   backText: MSG.userProfileEditBack,
+        //   backRoute: `/user/${username}`,
+        // }}
       />
     </Switch>
   );
