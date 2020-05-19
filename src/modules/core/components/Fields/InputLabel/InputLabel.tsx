@@ -37,6 +37,9 @@ interface Props {
 
   /** Values for label text (react-intl interpolation) */
   labelValues?: SimpleMessageValues;
+
+  /** Should only be visible for screenreaders, but not for display users */
+  screenReaderOnly?: boolean;
 }
 
 const InputLabel = ({
@@ -47,6 +50,7 @@ const InputLabel = ({
   inputId = '',
   label: inputLabel,
   labelValues,
+  screenReaderOnly = false,
 }: Props) => {
   const { formatMessage } = useIntl();
 
@@ -58,7 +62,9 @@ const InputLabel = ({
       : inputLabel;
   return (
     <label
-      className={getMainClasses(appearance, styles)}
+      className={getMainClasses(appearance, styles, {
+        screenReaderOnly,
+      })}
       id={inputId ? `${inputId}-label` : undefined}
       htmlFor={inputId || undefined}
     >
