@@ -1,4 +1,9 @@
-import React, { useCallback, InputHTMLAttributes, useMemo } from 'react';
+import React, {
+  useCallback,
+  InputHTMLAttributes,
+  useMemo,
+  RefObject,
+} from 'react';
 import Cleave from 'cleave.js/react';
 import { CleaveOptions } from 'cleave.js/options';
 import { ChangeEvent } from 'cleave.js/react/props';
@@ -28,7 +33,7 @@ export interface Props
   name: string;
 
   /** Pass a ref to the `<input>` element */
-  innerRef?: (ref: HTMLInputElement | null) => void;
+  innerRef?: RefObject<any> | ((ref: HTMLInputElement | null) => void);
 }
 
 const displayName = 'InputComponent';
@@ -68,6 +73,10 @@ const InputComponent = ({
   );
 
   if (formattingOptions) {
+    if (typeof innerRef === 'object') {
+      console.error('Cleave inner ref must be a function');
+      return null;
+    }
     return (
       <Cleave
         {...props}

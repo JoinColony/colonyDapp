@@ -1,8 +1,8 @@
 import React, {
-  Component,
   InputHTMLAttributes,
   KeyboardEvent,
   SyntheticEvent,
+  useCallback,
 } from 'react';
 import { MessageDescriptor } from 'react-intl';
 
@@ -26,51 +26,44 @@ interface Props
   onChange: (evt: SyntheticEvent<HTMLInputElement>) => void;
   open: () => void;
   placeholder?: string | MessageDescriptor;
-  toggle: () => void;
   value: string;
 }
 
-class InputField extends Component<Props> {
-  inputNode?: HTMLInputElement | null;
+const InputField = ({
+  close,
+  id,
+  innerRef,
+  isOpen,
+  open,
+  value,
+  ...rest
+}: Props) => {
+  const handleInputKeyDown = useCallback(
+    (e: KeyboardEvent<HTMLInputElement>) => {
+      if (e.key === TAB) {
+        e.preventDefault();
+        close();
+      } else if (e.key === ESC) {
+        close(null, { cancelled: true });
+      } else {
+        open();
+      }
+    },
+    [close, open],
+  );
 
-  registerInputNode = (ref: HTMLInputElement | null) => {
-    const { innerRef } = this.props;
-    this.inputNode = ref;
-    innerRef(ref);
-  };
-
-  handleClick = () => {
-    const { open } = this.props;
-    open();
-  };
-
-  handleInputKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
-    const { close, open } = this.props;
-    if (e.key === TAB) {
-      close();
-    } else if (e.key === ESC) {
-      close(null, { cancelled: true });
-    } else {
-      open();
-    }
-  };
-
-  render() {
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const { close, open, toggle, id, isOpen, value, ...props } = this.props;
-    return (
-      <Input
-        connect={false}
-        onClick={this.handleClick}
-        onFocus={this.handleClick}
-        onKeyDown={this.handleInputKeyDown}
-        innerRef={this.registerInputNode}
-        aria-describedby={isOpen ? id : undefined}
-        value={value}
-        {...props}
-      />
-    );
-  }
-}
+  return (
+    <Input
+      connect={false}
+      onClick={open}
+      onFocus={open}
+      onKeyDown={handleInputKeyDown}
+      innerRef={innerRef}
+      aria-describedby={isOpen ? id : undefined}
+      value={value}
+      {...rest}
+    />
+  );
+};
 
 export default InputField;

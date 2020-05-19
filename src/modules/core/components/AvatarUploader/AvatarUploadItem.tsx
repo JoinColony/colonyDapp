@@ -1,51 +1,47 @@
-import React, { Component } from 'react';
+import React, { useCallback, useEffect, useMemo } from 'react';
 
 import { FieldEnhancedProps } from '~core/Fields/types';
+import { UploadItemComponentProps } from '~core/FileUpload/types';
 import { log } from '~utils/debug';
 
 import styles from './AvatarUploadItem.css';
 
-import { UploadFile } from '../FileUpload';
-
 import fileReader from '../../../../lib/fileReader';
 import { asField } from '../Fields';
+import { UploadFile } from '../FileUpload';
 import Icon from '../Icon';
-import { UploadItemComponentProps } from '~core/FileUpload/types';
 
-class AvatarUploadItem extends Component<
-  UploadItemComponentProps & FieldEnhancedProps<UploadFile>
-> {
-  readFiles: (files: any[]) => Promise<any[]>;
+const displayName = 'AvatarUploadItem';
 
-  static displayName = 'AvatarUploadItem';
+const AvatarUploadItem = ({
+  accept,
+  error,
+  maxFileSize,
+  reset,
+  setValue,
+  upload,
+  $value: { file, preview, uploaded },
+  $value,
+}: UploadItemComponentProps & FieldEnhancedProps<UploadFile>) => {
+  const readFiles = useMemo(
+    () =>
+      fileReader({
+        maxFilesLimit: 1,
+        maxFileSize,
+        allowedTypes: accept,
+      }),
+    [accept, maxFileSize],
+  );
 
-  constructor(props) {
-    super(props);
-    const { accept, maxFileSize } = props;
-    this.readFiles = fileReader({
-      maxFilesLimit: 1,
-      maxFileSize,
-      allowedTypes: accept,
-    });
-  }
+  const read = useCallback(async () => {
+    const [contents] = await readFiles([file]);
+    return contents;
+  }, [file, readFiles]);
 
-  componentDidMount() {
-    const {
-      error,
-      $value: { file, uploaded },
-    } = this.props;
-
-    if (file && !error && !uploaded) {
-      this.uploadFile();
-    }
-  }
-
-  async uploadFile() {
-    const { $value, setValue, reset, upload } = this.props;
+  const uploadFile = useCallback(async () => {
     let readFile;
-    const { file } = $value;
     try {
-      readFile = await this.read(file);
+      readFile = await read();
       if (setValue) setValue({ ...$value, preview: readFile.data });
       await upload(readFile);
     } catch (e) {
@@ -58,35 +54,37 @@ class AvatarUploadItem extends Component<
     }
     // After successfully uploading the file we'd like to immediately remove it again.
     reset();
-  }
+  }, [$value, read, reset, setValue, upload]);
 
-  read = (file: File) => this.readFiles([file]).then((contents) => contents[0]);
+  useEffect(() => {
+    if (file && !error && !uploaded) {
+      uploadFile();
+    }
+    // Only on first render
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
-  render() {
-    const {
-      error,
-      $value: { preview },
-    } = this.props;
-    return (
-      <div className={styles.main}>
-        {!error ? (
-          <div
-            className={styles.previewImage}
-            style={{ backgroundImage: preview ? `url(${preview}` : undefined }}
-          >
-            <div className={styles.overlay}>
-              <div className={styles.loader} />
-            </div>
+  return (
+    <div className={styles.main}>
+      {!error ? (
+        <div
+          className={styles.previewImage}
+          style={{ backgroundImage: preview ? `url(${preview}` : undefined }}
+        >
+          <div className={styles.overlay}>
+            <div className={styles.loader} />
           </div>
-        ) : (
-          <div className={styles.error}>
-            <Icon name="file" appearance={{ size: 'large' }} title={error} />
-          </div>
-        )}
-      </div>
-    );
-  }
-}
+        </div>
+      ) : (
+        <div className={styles.error}>
+          <Icon name="file" appearance={{ size: 'large' }} title={error} />
+        </div>
+      )}
+    </div>
+  );
+};
+
+AvatarUploadItem.displayName = displayName;
 
 export default asField<UploadItemComponentProps, UploadFile>({
   alwaysConnected: true,

@@ -1,4 +1,4 @@
-import React, { Component, SyntheticEvent } from 'react';
+import React, { SyntheticEvent, useEffect, useCallback, useMemo } from 'react';
 import { defineMessages } from 'react-intl';
 
 import { FieldEnhancedProps } from '~core/Fields/types';
@@ -22,47 +22,46 @@ const MSG = defineMessages({
   },
 });
 
-class UploadItem extends Component<
-  UploadItemComponentProps & FieldEnhancedProps<UploadFile>
-> {
-  _readFiles: (files: object[]) => Promise<object[]>;
+const displayName = 'UploadItem';
 
-  static displayName = 'UploadItem';
+const UploadItem = ({
+  accept,
+  error,
+  idx,
+  maxFileSize,
+  remove,
+  setValue,
+  upload,
+  $value: { file, uploaded },
+  $value,
+}: UploadItemComponentProps & FieldEnhancedProps<UploadFile>) => {
+  // eslint-disable-next-line no-underscore-dangle
+  const _readFiles = useMemo(
+    () =>
+      fileReader({
+        maxFilesLimit: 1,
+        maxFileSize,
+        allowedTypes: accept,
+      }),
+    [accept, maxFileSize],
+  );
 
-  constructor(props) {
-    super(props);
-    const { accept, maxFileSize } = props;
-    // @ts-ignore
-    this._readFiles = fileReader({
-      maxFilesLimit: 1,
-      maxFileSize,
-      allowedTypes: accept,
-    });
-  }
+  const read = useCallback(async () => {
+    const [contents] = await _readFiles([file]);
+    return contents;
+  }, [_readFiles, file]);
 
-  componentDidMount() {
-    const {
-      $value: { error, file, uploaded },
-    } = this.props;
-    if (file && !error && !uploaded) {
-      this.uploadFile();
-    }
-  }
-
-  handleRemoveClick = (evt: SyntheticEvent<HTMLButtonElement>) => {
-    const { idx, remove } = this.props;
+  const handleRemoveClick = (evt: SyntheticEvent<HTMLButtonElement>) => {
     evt.stopPropagation();
     remove(idx);
   };
 
-  async uploadFile() {
-    const { $value, setValue, upload } = this.props;
+  const uploadFile = useCallback(async () => {
     if (!setValue) return;
     let readFile;
     let fileReference;
-    const { file } = $value;
     try {
-      readFile = await this.read(file);
+      readFile = await read();
       setValue({ ...$value, preview: readFile.data });
       fileReference = await upload(readFile);
     } catch (caughtError) {
@@ -75,49 +74,49 @@ class UploadItem extends Component<
       return;
     }
     setValue({ ...$value, preview: readFile.data, uploaded: fileReference });
-  }
+  }, [read, setValue, upload, $value]);
 
-  read = (file: File) =>
-    this._readFiles([file]).then((contents) => contents[0]);
+  useEffect(() => {
+    if (file && !error && !uploaded) {
+      uploadFile();
+    }
+    // Only upload on mount
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
-  render() {
-    const {
-      error,
-      $value: { file, uploaded },
-    } = this.props;
-
-    return (
-      <div className={styles.uploadItem} aria-invalid={!!error}>
-        <div className={styles.fileInfo}>
-          <Tooltip
-            placement="left"
-            content={error || null}
-            trigger={error ? 'hover' : 'disabled'}
-          >
-            <span className={styles.itemIcon}>
-              <Icon name="file" title={file.name} />
-            </span>
-          </Tooltip>
-          {uploaded || error ? (
-            <span>{file.name}</span>
-          ) : (
-            <div className={styles.itemProgress}>
-              <ProgressBar value={uploaded ? 100 : 0} />
-            </div>
-          )}
-        </div>
-        <div>
-          <Button
-            type="button"
-            onClick={this.handleRemoveClick}
-            appearance={{ theme: 'blue' }}
-            text={MSG.removeActionText}
-          />
-        </div>
+  return (
+    <div className={styles.uploadItem} aria-invalid={!!error}>
+      <div className={styles.fileInfo}>
+        <Tooltip
+          placement="left"
+          content={error || null}
+          trigger={error ? 'hover' : 'disabled'}
+        >
+          <span className={styles.itemIcon}>
+            <Icon name="file" title={file.name} />
+          </span>
+        </Tooltip>
+        {uploaded || error ? (
+          <span>{file.name}</span>
+        ) : (
+          <div className={styles.itemProgress}>
+            <ProgressBar value={uploaded ? 100 : 0} />
+          </div>
+        )}
       </div>
-    );
-  }
-}
+      <div>
+        <Button
+          type="button"
+          onClick={handleRemoveClick}
+          appearance={{ theme: 'blue' }}
+          text={MSG.removeActionText}
+        />
+      </div>
+    </div>
+  );
+};
+
+UploadItem.displayName = displayName;
 
 export default asField<UploadItemComponentProps, UploadFile>({
   alwaysConnected: true,

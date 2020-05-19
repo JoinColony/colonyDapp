@@ -1,4 +1,11 @@
-import React, { Component, KeyboardEvent } from 'react';
+import React, {
+  KeyboardEvent,
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from 'react';
 import { defineMessages } from 'react-intl';
 
 import { getMainClasses } from '~utils/css';
@@ -35,277 +42,251 @@ interface Props {
   innerRef?: (ref: HTMLElement | null) => void;
 }
 
-type State = {
-  isOpen: boolean;
-  selectedOption: number;
-};
+const displayName = 'Select';
 
-class Select extends Component<Props & FieldEnhancedProps, State> {
-  comboboxNode?: HTMLElement | null;
+const Select = ({
+  appearance,
+  elementOnly,
+  help,
+  disabled,
+  $id,
+  formatIntl,
+  label,
+  options,
+  placeholder,
+  name,
+  status,
+  /* eslint-disable @typescript-eslint/no-unused-vars */
+  $error,
+  $value,
+  $touched,
+  setValue,
+  isSubmitting,
+  setError,
+  connect,
+  /* eslint-enable @typescript-eslint/no-unused-vars */
+  ...props
+}: Props & FieldEnhancedProps) => {
+  const comboboxRef = useRef<HTMLButtonElement>(null);
+  const wrapperRef = useRef<HTMLDivElement>(null);
 
-  wrapperNode?: HTMLElement | null;
+  const [isOpen, setIsOpen] = useState<boolean>(false);
+  const [selectedOption, setSelectedOption] = useState<number>(-1);
 
-  static displayName = 'Select';
+  const checkedOption = useMemo(
+    () => options.findIndex((option) => option.value === $value),
+    [$value, options],
+  );
 
-  static defaultProps: Partial<Props> = {
-    appearance: { alignOptions: 'left', theme: 'default' },
-    options: [],
-  };
-
-  state = {
-    isOpen: false,
-    selectedOption: -1,
-  };
-
-  componentWillUnmount() {
-    if (document.body) {
-      document.body.removeEventListener('click', this.handleOutsideClick, true);
-    }
-  }
-
-  getCheckedOption = () => {
-    const { $value, options } = this.props;
-    return options.findIndex((option) => option.value === $value);
-  };
-
-  handleOutsideClick = (evt: MouseEvent) => {
-    if (
-      this.wrapperNode &&
-      evt.target instanceof Node &&
-      !this.wrapperNode.contains(evt.target)
-    ) {
-      this.close();
-    }
-  };
-
-  open = () => {
-    const { disabled } = this.props;
+  const open = () => {
     if (disabled) return;
-    this.setState({ isOpen: true });
-    if (document.body) {
-      document.body.addEventListener('click', this.handleOutsideClick, true);
-    }
+    setIsOpen(true);
   };
 
-  close = () => {
-    this.setState({ isOpen: false, selectedOption: -1 });
-    if (this.comboboxNode) {
-      this.comboboxNode.focus();
+  const close = useCallback(() => {
+    setIsOpen(false);
+    setSelectedOption(-1);
+    if (comboboxRef.current) {
+      comboboxRef.current.focus();
     }
-    if (document.body) {
-      document.body.removeEventListener('click', this.handleOutsideClick, true);
-    }
-  };
+  }, []);
 
-  goUp = () => {
-    const { selectedOption } = this.state;
+  const handleOutsideClick = useCallback(
+    (evt: MouseEvent) => {
+      if (
+        wrapperRef.current &&
+        evt.target instanceof Node &&
+        !wrapperRef.current.contains(evt.target)
+      ) {
+        close();
+      }
+    },
+    [close],
+  );
+
+  const goUp = () => {
     if (selectedOption > 0) {
-      this.setState({ selectedOption: selectedOption - 1 });
+      setSelectedOption(selectedOption - 1);
     }
   };
 
-  goDown = () => {
-    const { options } = this.props;
-    const { selectedOption } = this.state;
+  const goDown = () => {
     if (selectedOption < options.length - 1) {
-      this.setState({ selectedOption: selectedOption + 1 });
+      setSelectedOption(selectedOption + 1);
     }
   };
 
-  handleKeyOnOpen = (evt: KeyboardEvent<any>) => {
-    const { key } = evt;
-    const { selectedOption } = this.state;
-    const checkedOption = this.getCheckedOption();
-    switch (key) {
-      case SPACE: {
-        // prevent page long-scroll when in view
-        evt.preventDefault();
-        this.close();
-        break;
-      }
-      case UP: {
-        // prevent page scroll when in view
-        evt.preventDefault();
-        this.goUp();
-        break;
-      }
-      case DOWN: {
-        // prevent page scroll when in view
-        evt.preventDefault();
-        this.goDown();
-        break;
-      }
-      case TAB: {
-        if (checkedOption === selectedOption || selectedOption === -1) {
-          // no change
-          this.close();
-        }
-        this.checkOption();
-        break;
-      }
-      case ENTER: {
-        // Do not submit form
-        evt.preventDefault();
-        this.checkOption();
-        break;
-      }
-      default:
-    }
-  };
-
-  handleKeyOnClosed = (evt: KeyboardEvent<HTMLElement>) => {
-    const { key } = evt;
-    const checkedOption = this.getCheckedOption();
-    if ([UP, DOWN, SPACE].indexOf(key) > -1) {
-      evt.preventDefault();
-      this.setState({ selectedOption: checkedOption });
-      this.open();
-    }
-  };
-
-  handleKeyUp = (evt: KeyboardEvent<HTMLElement>) => {
-    // Special keyUp handling for ESC (modals)
-    const { isOpen } = this.state;
-    const { key } = evt;
-    if (isOpen && key === ESC) {
-      evt.stopPropagation();
-      this.close();
-    }
-  };
-
-  handleKeyDown = (evt: KeyboardEvent<HTMLElement>) => {
-    const { isOpen } = this.state;
-    if (isOpen) {
-      this.handleKeyOnOpen(evt);
-      return;
-    }
-    this.handleKeyOnClosed(evt);
-  };
-
-  toggle = () => {
-    const { isOpen } = this.state;
-    if (isOpen) {
-      this.close();
-    } else {
-      this.open();
-    }
-  };
-
-  checkOption = () => {
-    const { setValue, options } = this.props;
-    const { selectedOption } = this.state;
-    const checkedOption = this.getCheckedOption();
+  const checkOption = () => {
     if (selectedOption === checkedOption || selectedOption === -1) {
       // No change
-      this.close();
+      close();
       return;
     }
     if (setValue) {
       const { value } = options[selectedOption];
       setValue(value);
     }
-    this.close();
+    close();
   };
 
-  registerComboboxNode = (node: HTMLElement | null) => {
-    this.comboboxNode = node;
+  const handleKeyOnOpen = (evt: KeyboardEvent<any>) => {
+    const { key } = evt;
+    switch (key) {
+      case SPACE: {
+        // prevent page long-scroll when in view
+        evt.preventDefault();
+        close();
+        break;
+      }
+      case UP: {
+        // prevent page scroll when in view
+        evt.preventDefault();
+        goUp();
+        break;
+      }
+      case DOWN: {
+        // prevent page scroll when in view
+        evt.preventDefault();
+        goDown();
+        break;
+      }
+      case TAB: {
+        if (checkedOption === selectedOption || selectedOption === -1) {
+          // no change
+          close();
+        }
+        checkOption();
+        break;
+      }
+      case ENTER: {
+        // Do not submit form
+        evt.preventDefault();
+        checkOption();
+        break;
+      }
+      default:
+    }
   };
 
-  registerWrapperNode = (node: HTMLElement | null) => {
-    this.wrapperNode = node;
+  const handleKeyOnClosed = (evt: KeyboardEvent<HTMLElement>) => {
+    const { key } = evt;
+    if ([UP, DOWN, SPACE].indexOf(key) > -1) {
+      evt.preventDefault();
+      setSelectedOption(checkedOption);
+      open();
+    }
   };
 
-  selectOption = (idx: number) => {
-    this.setState({ selectedOption: idx });
+  const handleKeyUp = (evt: KeyboardEvent<HTMLElement>) => {
+    // Special keyUp handling for ESC (modals)
+    const { key } = evt;
+    if (isOpen && key === ESC) {
+      evt.stopPropagation();
+      close();
+    }
   };
 
-  render() {
-    const {
-      appearance,
-      elementOnly,
-      help,
-      disabled,
-      $id,
-      formatIntl,
-      label,
-      options,
-      placeholder,
-      name,
-      status,
-      /* eslint-disable @typescript-eslint/no-unused-vars */
-      $error,
-      $value,
-      $touched,
-      setValue,
-      isSubmitting,
-      setError,
-      connect,
-      /* eslint-enable @typescript-eslint/no-unused-vars */
-      ...props
-    } = this.props;
-    const { isOpen, selectedOption } = this.state;
-    const checkedOption = this.getCheckedOption();
-    const activeOption = options[checkedOption];
-    const listboxId = `select-listbox-${$id}`;
-    const activeOptionLabel = formatIntl(activeOption && activeOption.label);
-    const ariaLabelledby = props['aria-labelledby'];
-    return (
-      <div className={styles.main} ref={this.registerWrapperNode}>
-        {!elementOnly && label ? (
-          <InputLabel inputId={$id} label={label} help={help} />
-        ) : null}
-        <div className={styles.inputWrapper}>
-          <button
-            className={`${styles.select} ${getMainClasses(appearance, styles)}`}
-            aria-haspopup="listbox"
-            aria-controls={listboxId}
-            aria-expanded={isOpen}
-            aria-label={formatIntl(label)}
-            aria-labelledby={ariaLabelledby}
-            aria-disabled={disabled}
-            tabIndex={0}
-            ref={this.registerComboboxNode}
-            onClick={this.toggle}
-            onKeyUp={this.handleKeyUp}
-            onKeyDown={this.handleKeyDown}
-            type="button"
-            name={name}
-            {...props}
-          >
-            <div className={styles.selectInner}>
-              <div className={styles.activeOption}>
-                <span>{activeOptionLabel || placeholder}</span>
-              </div>
-              <span className={styles.selectExpandContainer}>
-                <Icon name="caret-down-small" title={MSG.expandIconHTMLTitle} />
-              </span>
+  const handleKeyDown = (evt: KeyboardEvent<HTMLElement>) => {
+    if (isOpen) {
+      handleKeyOnOpen(evt);
+      return;
+    }
+    handleKeyOnClosed(evt);
+  };
+
+  const toggle = () => {
+    if (isOpen) {
+      close();
+    } else {
+      open();
+    }
+  };
+
+  const selectOption = (idx: number) => {
+    setSelectedOption(idx);
+  };
+
+  useEffect(() => {
+    if (isOpen) {
+      if (document.body) {
+        document.body.addEventListener('click', handleOutsideClick, true);
+      }
+    }
+    return () => {
+      if (document.body) {
+        document.body.removeEventListener('click', handleOutsideClick, true);
+      }
+    };
+  }, [handleOutsideClick, isOpen]);
+
+  const activeOption = options[checkedOption];
+  const listboxId = `select-listbox-${$id}`;
+  const activeOptionLabel = formatIntl(activeOption && activeOption.label);
+  // eslint-disable-next-line react/destructuring-assignment
+  const ariaLabelledby = props['aria-labelledby'];
+  return (
+    <div className={styles.main} ref={wrapperRef}>
+      {!elementOnly && label ? (
+        <InputLabel inputId={$id} label={label} help={help} />
+      ) : null}
+      <div className={styles.inputWrapper}>
+        <button
+          className={`${styles.select} ${getMainClasses(appearance, styles)}`}
+          aria-haspopup="listbox"
+          aria-controls={listboxId}
+          aria-expanded={isOpen}
+          aria-label={formatIntl(label)}
+          aria-labelledby={ariaLabelledby}
+          aria-disabled={disabled}
+          tabIndex={0}
+          ref={comboboxRef}
+          onClick={toggle}
+          onKeyUp={handleKeyUp}
+          onKeyDown={handleKeyDown}
+          type="button"
+          name={name}
+          {...props}
+        >
+          <div className={styles.selectInner}>
+            <div className={styles.activeOption}>
+              <span>{activeOptionLabel || placeholder}</span>
             </div>
-          </button>
-          {isOpen && !!options.length && (
-            <SelectListBox
-              checkedOption={checkedOption}
-              selectedOption={selectedOption}
-              listboxId={listboxId}
-              options={options}
-              onSelect={this.selectOption}
-              onClick={this.checkOption}
-              formatIntl={formatIntl}
-              appearance={appearance}
-              ariaLabelledby={ariaLabelledby}
-              name={name}
-            />
-          )}
-        </div>
-        {!elementOnly && (
-          <InputStatus
-            appearance={{ theme: 'minimal' }}
-            status={status}
-            error={$error}
+            <span className={styles.selectExpandContainer}>
+              <Icon name="caret-down-small" title={MSG.expandIconHTMLTitle} />
+            </span>
+          </div>
+        </button>
+        {isOpen && !!options.length && (
+          <SelectListBox
+            checkedOption={checkedOption}
+            selectedOption={selectedOption}
+            listboxId={listboxId}
+            options={options}
+            onSelect={selectOption}
+            onClick={checkOption}
+            formatIntl={formatIntl}
+            appearance={appearance}
+            ariaLabelledby={ariaLabelledby}
+            name={name}
           />
         )}
       </div>
-    );
-  }
-}
+      {!elementOnly && (
+        <InputStatus
+          appearance={{ theme: 'minimal' }}
+          status={status}
+          error={$error}
+        />
+      )}
+    </div>
+  );
+};
+
+Select.displayName = displayName;
+
+Select.defaultProps = {
+  appearance: { alignOptions: 'left', theme: 'default' } as Appearance,
+  options: [],
+};
 
 export default asField<Props>()(Select);

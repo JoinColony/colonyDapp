@@ -1,4 +1,11 @@
-import React, { Component, Fragment, ReactNode } from 'react';
+import React, {
+  Fragment,
+  ReactNode,
+  useCallback,
+  useMemo,
+  useState,
+  useEffect,
+} from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 
 import Button from '~core/Button';
@@ -52,299 +59,255 @@ interface Props {
   nullable?: boolean;
 }
 
-interface State {
-  /*
-   * This values determines if any item in the (newly opened) list was selected
-   */
-  listTouched: boolean;
+const displayName = 'ItemsList';
+
+const ItemsList = ({
+  showArrow = true,
+  list = [],
+  collapsedList = [],
+  children,
+  itemDisplayPrefix = '',
+  itemDisplaySuffix = '',
+  itemId,
+  disabled,
+  nullable,
+  handleRemoveItem = (value: ConsumableItem) => value,
+  handleSetItem: callback = (value: ConsumableItem) => value,
+  connect,
+  setValue,
+}: Props & FieldEnhancedProps) => {
+  // Item that is actually set on the task
+  const [currentItem, setCurrentItem] = useState<number | undefined>();
+  // This values determines if any item in the (newly opened) list was selected
+  const [listTouched, setListTouched] = useState<boolean>(false);
+  // Item selected in the popover list
+  const [selectedItem, setSelectedItem] = useState<number | undefined>();
+  // Whether or not the component needs value cleanup (after close)
+  const [needsCleanup, setNeedsCleanup] = useState<boolean>(false);
 
   /*
-   * Item selected in the popover list
+   * Handle resetting state on popover close
    */
-  selectedItem: number | void;
-
-  /*
-   * Item that is actually set on the task
-   */
-  setItem: number | void;
-}
-
-class ItemsList extends Component<Props & FieldEnhancedProps, State> {
-  static displayName = 'ItemsList';
-
-  state = {
-    listTouched: false,
-    setItem: undefined,
-    selectedItem: -1,
+  const handleCleanup = (cleanupCallback?: () => void) => {
+    setNeedsCleanup(true);
+    if (cleanupCallback) {
+      cleanupCallback();
+    }
   };
 
   /*
    * Handle clicking on each individual item in the list
    */
-  handleSelectItem = (id: number) => {
-    /*
-     * Prevent selecting a negative index items
-     */
+  const handleSelectItem = (id: number) => {
     if (id >= 0) {
-      this.setState({ selectedItem: id, listTouched: true });
+      setSelectedItem(id);
+      setListTouched(true);
     }
   };
 
   /*
-   * Handle cleanup when closing the popover (or pressing cancel)
-   *
-   * If an item was selected, but not set (didn't submit the form) then we
-   * need to re-set it back to the original set item.
-   *
-   * Otherwise the next time it will open it will show the selected one, and not
-   * the actual set one.
+   * Set the item when clicking the `confirm` button
    */
-  handleCleanup = (callback?: () => void): void => {
-    const { setItem } = this.state || undefined;
-    this.setState({ selectedItem: setItem, listTouched: false }, callback);
-  };
+  const handleSet = useCallback(
+    (close: () => void) => {
+      const { id: currentItemId, name } =
+        list.find(({ id }) => id === selectedItem) || {};
+      setCurrentItem(currentItemId);
+      setListTouched(false);
+      close();
+      if (!connect && currentItemId && name) {
+        return callback({ id: currentItemId, name });
+      }
+      if (setValue) {
+        return setValue(currentItemId);
+      }
+      return null;
+    },
+    [callback, connect, list, selectedItem, setValue],
+  );
 
   /*
-   * Set the item when clicking the confirm button
+   * Unset the item when clicking the `remove` button
    */
-  handleSet = (close: () => void) => {
-    const {
-      state: { selectedItem: selectedItemId },
-      props: {
-        handleSetItem: callback = (value: ConsumableItem) => value,
-        list = [],
-        connect,
-        setValue,
-      },
-    } = this;
-    const { id: itemId = undefined, name = undefined } =
-      list.find(({ id }) => id === selectedItemId) || {};
-
-    /*
-     * Prevent setting a negative index items
-     */
-    if (selectedItemId >= 0) {
-      this.setState(
-        {
-          setItem: selectedItemId,
-          selectedItem: undefined,
-          listTouched: false,
-        },
-        () => {
-          close();
-
-          /*
-           * @NOTE If we don't deconstruct here and filter the values passed down,
-           * the nested values will also be passed down
-           */
-          if (!connect && itemId && name) {
-            return callback({ id: itemId, name });
-          }
-          if (setValue) {
-            return setValue(selectedItemId);
-          }
-          return null;
-        },
-      );
-    }
-  };
-
-  /*
-   * Set the item when clicking the confirm button
-   */
-  handleUnset = (close: () => void) => {
-    const {
-      props: {
-        handleRemoveItem: callback = (value: ConsumableItem) => value,
-        connect,
-        setValue,
-        itemId,
-      },
-    } = this;
-    this.setState(
-      {
-        setItem: undefined,
-        selectedItem: -1,
-        listTouched: false,
-      },
-      () => {
-        close();
-        if (!connect && itemId) {
-          /*
-           * @NOTE Name doesn't really matter here, since we're just using the
-           * id to remove the item (skill)
-           */
-          return callback({ id: itemId, name: '' });
-        }
-        if (setValue) {
-          return setValue(null);
-        }
-        return null;
-      },
-    );
-  };
+  const handleUnset = useCallback(
+    (close: () => void) => {
+      setCurrentItem(undefined);
+      setSelectedItem(undefined);
+      setListTouched(false);
+      close();
+      if (!connect && handleRemoveItem && itemId) {
+        return handleRemoveItem({ id: itemId, name: '' });
+      }
+      if (setValue) {
+        return setValue(null);
+      }
+      return null;
+    },
+    [connect, handleRemoveItem, itemId, setValue],
+  );
 
   /*
    * Helper to render an entry in the items list
    *
    * @NOTE This will recursevly render nested children
    */
-  renderListItem = (
-    { disabled, disabledText, id, name, children }: ConsumableItem,
-    nestingCounter = 0,
-  ) => {
-    const { selectedItem } = this.state;
-    const { itemDisplayPrefix = '', itemDisplaySuffix = '' } = this.props;
-    /*
-     * Add prefix/suffix
-     */
-    const decoratedName = `${itemDisplayPrefix}${name}${itemDisplaySuffix}`;
-    /*
-     * Recursevly render nested children
-     */
-    const recursiveChildRender = () => {
-      if (children && children.length) {
-        return children.map((item: ConsumableItem) =>
-          this.renderListItem(item, nestingCounter + 1),
-        );
+  const renderListItem = useCallback(
+    (
+      {
+        disabled: itemDisabled,
+        disabledText,
+        id,
+        name,
+        children: itemChildren,
+      }: ConsumableItem,
+      nestingCounter = 0,
+    ) => {
+      /*
+       * Add prefix/suffix
+       */
+      const decoratedName = `${itemDisplayPrefix}${name}${itemDisplaySuffix}`;
+      /*
+       * Recursevly render nested children
+       */
+      const recursiveChildRender = () => {
+        if (itemChildren && itemChildren.length) {
+          return itemChildren.map((item: ConsumableItem) =>
+            renderListItem(item, nestingCounter + 1),
+          );
+        }
+        return null;
+      };
+
+      let tooltipContent;
+      if (disabledText) {
+        tooltipContent =
+          typeof disabledText === 'string' ? (
+            <>{disabledText}</>
+          ) : (
+            <FormattedMessage {...disabledText} />
+          );
       }
-      return null;
-    };
 
-    let tooltipContent;
-    if (disabledText) {
-      tooltipContent =
-        typeof disabledText === 'string' ? (
-          <>{disabledText}</>
-        ) : (
-          <FormattedMessage {...disabledText} />
-        );
-    }
-
-    return (
-      <Fragment key={id}>
-        <li
-          className={selectedItem === id ? styles.selectedItem : undefined}
-          style={{
-            paddingLeft: `${
-              nestingCounter * parseInt(styles.paddingValue, 10)
-            }px`,
-          }}
-        >
-          <Tooltip content={tooltipContent} placement="bottom-start">
-            {/*
-             * Must use a `div` here, as `mouseleave` event isn't fired on buttons that are `disabled`.
-             * See: https://github.com/facebook/react/issues/4251
-             */}
-            <div>
-              <button
-                disabled={disabled}
-                type="button"
-                className={id < 0 ? styles.itemHeading : styles.item}
-                onClick={() => this.handleSelectItem(id)}
-                title={disabled ? undefined : decoratedName}
-              >
-                {decoratedName}
-              </button>
-            </div>
-          </Tooltip>
-        </li>
-        {recursiveChildRender()}
-      </Fragment>
-    );
-  };
-
-  render() {
-    const {
-      state: { setItem: setItemId, listTouched },
-      props: {
-        showArrow = true,
-        list = [],
-        collapsedList = [],
-        children,
-        itemDisplayPrefix = '',
-        itemDisplaySuffix = '',
-        itemId,
-        disabled,
-        nullable,
-      },
-      handleSet,
-      handleUnset,
-      renderListItem,
-    } = this;
-    const currentItem: ConsumableItem | void = list.find(
-      ({ id }) => id === (setItemId || itemId),
-    );
-
-    return (
-      <div className={styles.main}>
-        <Popover
-          trigger={disabled ? 'disabled' : 'click'}
-          placement="bottom"
-          onClose={this.handleCleanup}
-          showArrow={showArrow}
-          content={({ close }) => (
-            <div className={styles.itemsWrapper}>
-              <ul className={styles.itemList}>
-                {collapsedList.map((item: ConsumableItem) =>
-                  renderListItem(item),
-                )}
-              </ul>
-              <div className={styles.controls}>
-                <Button
-                  appearance={{ theme: 'secondary' }}
-                  text={{ id: 'button.cancel' }}
-                  onClick={() => this.handleCleanup(close)}
-                />
-                {nullable && (
-                  <Button
-                    appearance={{ theme: 'danger' }}
-                    text={{ id: 'button.remove' }}
-                    disabled={!currentItem}
-                    onClick={() => handleUnset(close)}
-                  />
-                )}
-                <Button
-                  appearance={{ theme: 'primary' }}
-                  text={{ id: 'button.confirm' }}
-                  disabled={!listTouched}
-                  onClick={() => handleSet(close)}
-                />
+      return (
+        <Fragment key={id}>
+          <li
+            className={selectedItem === id ? styles.selectedItem : undefined}
+            style={{
+              paddingLeft: `${
+                nestingCounter * parseInt(styles.paddingValue, 10)
+              }px`,
+            }}
+          >
+            <Tooltip content={tooltipContent} placement="bottom-start">
+              {/*
+               * Must use a `div` here, as `mouseleave` event isn't fired on buttons that are `disabled`.
+               * See: https://github.com/facebook/react/issues/4251
+               */}
+              <div>
+                <button
+                  disabled={itemDisabled}
+                  type="button"
+                  className={id < 0 ? styles.itemHeading : styles.item}
+                  onClick={() => handleSelectItem(id)}
+                  title={itemDisabled ? undefined : decoratedName}
+                >
+                  {decoratedName}
+                </button>
               </div>
+            </Tooltip>
+          </li>
+          {recursiveChildRender()}
+        </Fragment>
+      );
+    },
+    [itemDisplayPrefix, itemDisplaySuffix, selectedItem],
+  );
+
+  useEffect(() => {
+    if (needsCleanup) {
+      if (selectedItem !== currentItem && listTouched) {
+        setSelectedItem(currentItem);
+        setListTouched(false);
+      }
+      setNeedsCleanup(false);
+    }
+  }, [currentItem, listTouched, needsCleanup, selectedItem]);
+
+  const currentItemElement = useMemo(
+    () => list.find(({ id }) => id === currentItem || itemId),
+    [currentItem, itemId, list],
+  );
+
+  return (
+    <div className={styles.main}>
+      <Popover
+        trigger={disabled ? 'disabled' : 'click'}
+        placement="bottom"
+        onClose={handleCleanup}
+        showArrow={showArrow}
+        content={({ close }) => (
+          <div className={styles.itemsWrapper}>
+            <ul className={styles.itemList}>
+              {collapsedList.map((item: ConsumableItem) =>
+                renderListItem(item),
+              )}
+            </ul>
+            <div className={styles.controls}>
+              <Button
+                appearance={{ theme: 'secondary' }}
+                text={{ id: 'button.cancel' }}
+                onClick={() => handleCleanup(close)}
+              />
+              {nullable && (
+                <Button
+                  appearance={{ theme: 'danger' }}
+                  text={{ id: 'button.remove' }}
+                  disabled={!currentItemElement}
+                  onClick={() => handleUnset(close)}
+                />
+              )}
+              <Button
+                appearance={{ theme: 'primary' }}
+                text={{ id: 'button.confirm' }}
+                disabled={!listTouched}
+                onClick={() => handleSet(close)}
+              />
             </div>
-          )}
-        >
-          {children || (
-            /*
-             * @NOTE In case there wasn't a child passed in, we render a
-             * fallback button
-             */
-            <Button
-              appearance={{ theme: 'primary' }}
-              text={MSG.fallbackListButton}
-            />
-          )}
-        </Popover>
-        {/*
-         * TODO This should be passed _somehow_ outside of this component, so
-         * that displaying it has a bigger degree of customization.
-         * (Consumers maybe?)
-         */}
-        <div
-          className={styles.selectedItemDisplay}
-          title={
-            currentItem
-              ? `${itemDisplayPrefix}${currentItem.name}${itemDisplaySuffix}`
-              : undefined
-          }
-        >
-          {!!currentItem &&
-            `${itemDisplayPrefix}${currentItem.name}${itemDisplaySuffix}`}
-        </div>
+          </div>
+        )}
+      >
+        {children || (
+          /*
+           * @NOTE In case there wasn't a child passed in, we render a
+           * fallback button
+           */
+          <Button
+            appearance={{ theme: 'primary' }}
+            text={MSG.fallbackListButton}
+          />
+        )}
+      </Popover>
+      {/*
+       * TODO This should be passed _somehow_ outside of this component, so
+       * that displaying it has a bigger degree of customization.
+       * (Consumers maybe?)
+       */}
+      <div
+        className={styles.selectedItemDisplay}
+        title={
+          currentItemElement
+            ? `${itemDisplayPrefix}${currentItemElement.name}${itemDisplaySuffix}`
+            : undefined
+        }
+      >
+        {!!currentItemElement &&
+          `${itemDisplayPrefix}${currentItemElement.name}${itemDisplaySuffix}`}
       </div>
-    );
-  }
-}
+    </div>
+  );
+};
+
+ItemsList.displayName = displayName;
 
 export default asField<Props>({
   initialValue: '',

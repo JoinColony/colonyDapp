@@ -1,4 +1,4 @@
-import React, { ReactNode, Component } from 'react';
+import React, { ReactNode, useCallback } from 'react';
 import cx from 'classnames';
 
 import { getMainClasses } from '~utils/css';
@@ -37,20 +37,46 @@ interface Props {
   maxLength?: number;
 }
 
-class Textarea extends Component<Props & FieldEnhancedProps> {
-  static displayName = 'Textarea';
+const displayName = 'Textarea';
 
-  static defaultProps = {
-    appearance: {},
+const Textarea = ({
+  $id,
+  $value,
+  $error,
+  appearance = {},
+  elementOnly,
+  help,
+  extra,
+  label,
+  maxLength = undefined,
+  name,
+  status,
+  /* eslint-disable @typescript-eslint/no-unused-vars */
+  $touched,
+  formatIntl,
+  isSubmitting,
+  setError,
+  setValue,
+  connect,
+  /* eslint-enable @typescript-eslint/no-unused-vars */
+  ...props
+}: Props & FieldEnhancedProps) => {
+  const inputProps = {
+    id: $id,
+    name,
+    'aria-invalid': $error ? true : undefined,
+    className: getMainClasses(appearance, styles),
+    maxLength,
+    value: $value,
+    ...props,
   };
 
-  renderTextarea = (inputProps) => {
-    const { innerRef, maxLength, ...props } = inputProps;
-    const { $value } = this.props;
+  const renderTextarea = useCallback(() => {
+    const { innerRef, ...restInputProps } = inputProps;
     const length = $value ? $value.length : 0;
     return (
       <div className={styles.textareaWrapper}>
-        <textarea ref={innerRef} {...props} maxLength={maxLength} />
+        <textarea ref={innerRef} {...restInputProps} maxLength={maxLength} />
         {maxLength && (
           <span
             className={cx(styles.count, {
@@ -62,60 +88,27 @@ class Textarea extends Component<Props & FieldEnhancedProps> {
         )}
       </div>
     );
-  };
+  }, [inputProps, $value, maxLength]);
 
-  render() {
-    const {
-      $id,
-      $value,
-      $error,
-      appearance = {},
-      elementOnly,
-      help,
-      extra,
-      label,
-      maxLength = null,
-      name,
-      status,
-      /* eslint-disable @typescript-eslint/no-unused-vars */
-      $touched,
-      formatIntl,
-      isSubmitting,
-      setError,
-      setValue,
-      connect,
-      /* eslint-enable @typescript-eslint/no-unused-vars */
-      ...props
-    } = this.props;
-
-    const inputProps = {
-      id: $id,
-      name,
-      'aria-invalid': $error ? true : null,
-      className: getMainClasses(appearance, styles),
-      maxLength,
-      value: $value,
-      ...props,
-    };
-
-    if (elementOnly) {
-      return this.renderTextarea(inputProps);
-    }
-
-    return (
-      <div className={styles.container}>
-        <InputLabel
-          appearance={appearance}
-          inputId={$id}
-          label={label}
-          help={help}
-          extra={extra}
-        />
-        {this.renderTextarea(inputProps)}
-        <InputStatus appearance={appearance} status={status} error={$error} />
-      </div>
-    );
+  if (elementOnly) {
+    return renderTextarea();
   }
-}
+
+  return (
+    <div className={styles.container}>
+      <InputLabel
+        appearance={appearance}
+        inputId={$id}
+        label={label}
+        help={help}
+        extra={extra}
+      />
+      {renderTextarea()}
+      <InputStatus appearance={appearance} status={status} error={$error} />
+    </div>
+  );
+};
+
+Textarea.displayName = displayName;
 
 export default asField<Props>()(Textarea);

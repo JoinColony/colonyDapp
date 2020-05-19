@@ -160,7 +160,12 @@ const DatePicker = ({
         content={({ close }) => renderDatePickerContent(close)}
       >
         {renderTrigger ||
-          (({ ref, ...props }: PopoverChildFnProps) => (
+          (({
+            ref,
+            // eslint-disable-next-line @typescript-eslint/no-unused-vars
+            toggle,
+            ...props
+          }: PopoverChildFnProps) => (
             <InputField
               appearance={appearance}
               elementOnly={elementOnly}
