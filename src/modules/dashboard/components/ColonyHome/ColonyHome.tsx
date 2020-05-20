@@ -136,7 +136,9 @@ const ColonyHome = ({ match, location }: Props) => {
   }, [domains, filteredDomainId]);
 
   if (!colonyName || colonyFetchError) {
-    return <Redirect to={NOT_FOUND_ROUTE} />;
+    // @TODO We still need a way to detect if a colony name is not registered
+    //
+    // return <Redirect to={NOT_FOUND_ROUTE} />;
   }
 
   if (
