@@ -154,8 +154,12 @@ function* createWallet(action: Action<ActionTypes.WALLET_CREATE>) {
   });
 }
 
-function* createTempWallet() {
-  return yield call(softwareWallet.create);
+function* createEtherealWallet() {
+  const wallet = yield call(softwareWallet.create);
+  return {
+    ...wallet,
+    type: 'ethereal',
+  };
 }
 
 export function* getWallet(action: Action<ActionTypes.WALLET_CREATE>) {
@@ -173,11 +177,12 @@ export function* getWallet(action: Action<ActionTypes.WALLET_CREATE>) {
       return yield call(openMnemonicWallet, action);
     case WALLET_SPECIFICS.TRUFFLEPIG:
       return yield call(openTrufflepigWallet, action);
+    case WALLET_SPECIFICS.ETHEREAL:
+      return yield call(createEtherealWallet);
     default:
-      return yield call(createTempWallet);
-    // throw new Error(
-    //   `Method ${method} is not recognized for getting a wallet`,
-    // );
+      throw new Error(
+        `Method ${method} is not recognized for getting a wallet`,
+      );
   }
 }
 

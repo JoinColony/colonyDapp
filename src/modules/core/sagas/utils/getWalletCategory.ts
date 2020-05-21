@@ -12,6 +12,8 @@ export default function getWalletCategory(
       return WALLET_CATEGORIES.HARDWARE;
     case WALLET_SPECIFICS.METAMASK:
       return WALLET_CATEGORIES.METAMASK;
+    case WALLET_SPECIFICS.ETHEREAL:
+      return WALLET_CATEGORIES.ETHEREAL;
 
     /*
      * Everything else we categorize as a software wallet

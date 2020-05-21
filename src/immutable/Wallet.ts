@@ -6,9 +6,11 @@ export enum WALLET_CATEGORIES {
   SOFTWARE = 'software',
   HARDWARE = 'hardware',
   /**
-   * @NOTE Metamask is a wallet category as well as a specific type
+   * @NOTE Metamask and Ethereal are the only two wallet categories
+   * that are a specific type as well
    */
   METAMASK = 'metamask',
+  ETHEREAL = 'ethereal', // ie: temprorary wallet for non-connected users
 }
 
 export enum WALLET_SPECIFICS {
@@ -16,6 +18,7 @@ export enum WALLET_SPECIFICS {
   TREZOR = 'trezor',
   LEDGER = 'ledger',
   METAMASK = 'metamask',
+  ETHEREAL = 'ethereal', // ie: temprorary wallet for non-connected users
 
   /**
    * @NOTE Dev Only
