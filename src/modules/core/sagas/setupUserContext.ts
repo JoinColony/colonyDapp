@@ -20,6 +20,7 @@ import {
   SetLoggedInUserMutation,
   SetLoggedInUserMutationVariables,
 } from '~data/index';
+import { WALLET_SPECIFICS } from '~immutable/index';
 
 import setupResolvers from '../../../context/setupResolvers';
 import IPFSNode from '../../../lib/ipfs';
@@ -142,6 +143,7 @@ export default function* setupUserContext(
           balance: formatEther(balance),
           username,
           walletAddress,
+          ethereal: method === WALLET_SPECIFICS.ETHEREAL,
         },
       },
     });

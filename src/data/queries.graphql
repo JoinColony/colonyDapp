@@ -142,6 +142,7 @@ query LoggedInUser {
     walletAddress
     balance
     username
+    ethereal
   }
 }
 
