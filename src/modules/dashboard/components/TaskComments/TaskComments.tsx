@@ -127,15 +127,11 @@ const TaskComments = ({ draftId, history }: Props) => {
         onSubmit={onSubmit}
         validateOnMount
       >
-        {({
-          isSubmitting,
-          isValid,
-          handleSubmit,
-          values,
-        }: FormikProps<FormValues>) => (
+        {({ isSubmitting, isValid, handleSubmit }: FormikProps<FormValues>) => (
           <>
             <TextareaAutoresize
               elementOnly
+              label={isMac ? MSG.placeholderMac : MSG.placeholderWinNix}
               name="comment"
               /*
                * @NOTE We need two message descriptors here, and can't just use
@@ -147,7 +143,6 @@ const TaskComments = ({ draftId, history }: Props) => {
               minRows={3}
               maxRows={8}
               onKeyDown={(event) => handleKeyboardSubmit(event, handleSubmit)}
-              value={values.comment || ''}
               disabled={!username || isSubmitting}
             />
             <div className={styles.commentControls}>
