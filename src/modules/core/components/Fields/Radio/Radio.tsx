@@ -1,11 +1,12 @@
 import React, { ReactNode, useRef } from 'react';
 import nanoid from 'nanoid';
+import { useField } from 'formik';
+import { MessageDescriptor } from 'react-intl';
 
+import { SimpleMessageValues } from '~types/index';
 import { getMainClasses } from '~utils/css';
 
 import InputLabel from '../InputLabel';
-import asField from '../asField';
-import { FieldEnhancedProps } from '../types';
 
 import styles from './Radio.css';
 
@@ -23,10 +24,24 @@ interface Props {
   children?: ReactNode;
   /** Disable the input */
   disabled?: boolean;
+  /** Should render label with input */
+  elementOnly?: boolean;
+  /** Help text */
+  help?: string | MessageDescriptor;
+  /** Help text values for intl interpolation */
+  helpValues?: SimpleMessageValues;
+  /** Label text */
+  label?: string | MessageDescriptor;
+  /** Label text values for intl interpolation */
+  labelValues?: SimpleMessageValues;
+  /** Input `name` attribute */
+  name: string;
   /** Style object for the visible radio */
   radioStyle?: { [k: string]: string };
+  /** Html input `id` attribute */
   inputId?: string;
-  value?: any;
+  /** Value of radio input */
+  value: string;
 }
 
 const displayName = 'Radio';
@@ -39,24 +54,16 @@ const Radio = ({
   children,
   disabled = false,
   elementOnly = false,
-  $error,
   help,
+  helpValues,
   inputId: inputIdProp,
   label,
+  labelValues,
   name,
-  $value,
   radioStyle,
-  /* eslint-disable @typescript-eslint/no-unused-vars */
-  connect,
-  $id,
-  formatIntl,
-  $touched,
-  setError,
-  setValue,
-  isSubmitting,
-  /* eslint-enable @typescript-eslint/no-unused-vars */
-  ...props
-}: Props & FieldEnhancedProps) => {
+  value: valueProp,
+}: Props) => {
+  const [, { error }, { setValue }] = useField(name);
   const { current: inputId } = useRef<string>(inputIdProp || nanoid());
   return (
     <label
@@ -69,16 +76,15 @@ const Radio = ({
     >
       <>
         <input
-          className={styles.delegate}
-          value={$value}
-          name={name}
-          type="radio"
-          id={inputId}
-          disabled={disabled}
           aria-checked={checked}
           aria-disabled={disabled}
-          aria-invalid={!!$error}
-          {...props}
+          aria-invalid={!!error}
+          className={styles.delegate}
+          disabled={disabled}
+          id={inputId}
+          onClick={() => setValue(valueProp)}
+          type="radio"
+          value={valueProp}
         />
         <span className={styles.radio} style={radioStyle}>
           {!!appearance && appearance.theme === 'fakeCheckbox' && (
@@ -90,7 +96,9 @@ const Radio = ({
             <InputLabel
               appearance={{ direction: 'horizontal' }}
               label={label}
+              labelValues={labelValues}
               help={help}
+              helpValues={helpValues}
               inputId={inputId}
             />
           </span>
@@ -104,4 +112,4 @@ const Radio = ({
 
 Radio.displayName = displayName;
 
-export default asField<Props>()(Radio);
+export default Radio;

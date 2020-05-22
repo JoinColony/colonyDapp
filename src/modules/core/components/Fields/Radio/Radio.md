@@ -1,12 +1,12 @@
 ### Radio Inputs
 
 ```jsx
-import { Formik } from 'formik';
+import { Form } from '../';
 import Heading from '../../Heading';
 import Button from '../../Button';
 
 const radioChoices = ['foo', 'bar', 'baz'];
-<Formik
+<Form
   initialValues={{
     radioInput: undefined,
     radioInputDisabled: undefined,
@@ -17,8 +17,8 @@ const radioChoices = ['foo', 'bar', 'baz'];
   }}
   onSubmit={values => console.log(values)}
 >
-  {({ handleSubmit, values }) => (
-    <form onSubmit={handleSubmit}>
+  {({ values }) => (
+    <>
       <Heading appearance={{ size: 'medium' }} text="Standard Radio" />
       {radioChoices.map(radioChoice => (
         <Radio
@@ -87,7 +87,7 @@ const radioChoices = ['foo', 'bar', 'baz'];
       />
       <div style={{ marginTop: '20px' }} />
       <Button appearance={{ theme: 'primary' }} type="submit">And press me</Button>
-    </form>
+    </>
   )}
-</Formik>
+</Form>
 ```
