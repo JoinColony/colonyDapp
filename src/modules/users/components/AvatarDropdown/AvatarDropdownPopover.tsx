@@ -7,6 +7,7 @@ import {
   USER_EDIT_ROUTE,
   CREATE_COLONY_ROUTE,
   CREATE_USER_ROUTE,
+  CONNECT_ROUTE,
 } from '~routes/index';
 import DropdownMenu, {
   DropdownMenuSection,
@@ -64,7 +65,7 @@ const AvatarDropdownPopover = ({ closePopover, username }: Props) => {
       <DropdownMenuSection separator>
         {!username && (
           <DropdownMenuItem>
-            <NavLink to={CREATE_USER_ROUTE} text={MSG.buttonGetStarted} />
+            <NavLink to={CONNECT_ROUTE} text={MSG.buttonGetStarted} />
           </DropdownMenuItem>
         )}
         {username && (

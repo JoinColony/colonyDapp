@@ -12,6 +12,7 @@ interface Props extends RouteProps {
   component: ComponentType<any>;
   layout: ComponentType<any>;
   isConnected?: boolean;
+  isEthereal: boolean;
   routeProps?: RouteComponentProps | routePropsFn;
 }
 
@@ -21,15 +22,17 @@ const ConnectedOnlyRoute = ({
   path,
   isConnected,
   routeProps = {},
+  isEthereal = true,
 }: Props) => {
   const dispatch = useDispatch();
   useEffect(() => {
-    dispatch({
-      type: ActionTypes.WALLET_CREATE,
-      payload: { method: 'software' },
-    });
-  }, [dispatch]);
-
+    if (isEthereal) {
+      dispatch({
+        type: ActionTypes.WALLET_CREATE,
+        payload: { method: 'ethereal' },
+      });
+    }
+  }, [dispatch, isEthereal]);
   return (
     <Route
       path={path}

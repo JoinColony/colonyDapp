@@ -25,36 +25,43 @@ interface Props extends RouteProps {
 
 const DisconnectedOnlyRoute = ({
   component: Component,
-  didClaimProfile,
+  // didClaimProfile,
   isConnected,
   layout: Layout,
   routeProps,
-}: Props) => (
-  <Route
-    render={(
-      props: ReactRouterComponentProps<
-        {},
-        StaticContext,
-        { redirectTo?: Location }
-      >,
-    ) => {
-      if (isConnected) {
-        const redirectTo =
-          props.location.state && props.location.state.redirectTo;
-        const location = {
-          pathname: didClaimProfile ? DASHBOARD_ROUTE : CREATE_USER_ROUTE,
-          ...redirectTo,
-          state: { hasBackLink: false },
-        };
-        return <Redirect to={location} />;
-      }
-      return (
-        <Layout routeProps={routeProps} {...props}>
-          <Component routeProps={routeProps} {...props} />
-        </Layout>
-      );
-    }}
-  />
-);
+}: Props) => {
+  return (
+    <Route
+      render={(
+        props: ReactRouterComponentProps<
+          {},
+          StaticContext,
+          { redirectTo?: Location }
+        >,
+      ) => {
+        if (isConnected) {
+          const redirectTo =
+            props.location.state && props.location.state.redirectTo;
+          let pathname = DASHBOARD_ROUTE;
+          // if (!ethereal) {
+          //   pathname = CREATE_USER_ROUTE;
+          // }
+          const location = {
+            // pathname: didClaimProfile ? DASHBOARD_ROUTE : CREATE_USER_ROUTE,
+            pathname,
+            ...redirectTo,
+            state: { hasBackLink: false },
+          };
+          return <Redirect to={location} />;
+        }
+        return (
+          <Layout routeProps={routeProps} {...props}>
+            <Component routeProps={routeProps} {...props} />
+          </Layout>
+        );
+      }}
+    />
+  );
+};
 
 export default DisconnectedOnlyRoute;

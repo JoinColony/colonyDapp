@@ -51,9 +51,9 @@ const MSG = defineMessages({
 });
 
 const Routes = () => {
-  // const { walletAddress, username } = useLoggedInUser();
-  // const isConnected = !!walletAddress;
-  // const didClaimProfile = !!username;
+  const { walletAddress, username, ethereal } = useLoggedInUser();
+  // const isConnected = walletAddress && !ethereal;
+  const didClaimProfile = !!username;
   const isConnected = true;
   return (
     <Switch>
@@ -69,14 +69,15 @@ const Routes = () => {
         render={() => <Redirect to={DASHBOARD_ROUTE} />}
       />
       <Route exact path={NOT_FOUND_ROUTE} component={FourOFour} />
-      {/* <DisconnectedOnlyRoute
-        isConnected={isConnected}
+      <DisconnectedOnlyRoute
+        isConnected={!ethereal}
         didClaimProfile={didClaimProfile}
+        // didClaimProfile
         path={CONNECT_ROUTE}
         component={ConnectWalletWizard}
         layout={Plain}
       />
-      <DisconnectedOnlyRoute
+      {/* <DisconnectedOnlyRoute
         isConnected={isConnected}
         didClaimProfile={didClaimProfile}
         path={CREATE_WALLET_ROUTE}
@@ -92,6 +93,7 @@ const Routes = () => {
         routeProps={{
           hasBackLink: false,
         }}
+        isEthereal={ethereal}
       />
       <ConnectedOnlyRoute
         isConnected={isConnected}
@@ -101,6 +103,7 @@ const Routes = () => {
         routeProps={{
           hasBackLink: false,
         }}
+        isEthereal={ethereal}
       />
       <ConnectedOnlyRoute
         isConnected={isConnected}
@@ -110,6 +113,7 @@ const Routes = () => {
         routeProps={{
           hasBackLink: false,
         }}
+        isEthereal={ethereal}
       />
       <ConnectedOnlyRoute
         isConnected={isConnected}
@@ -119,6 +123,7 @@ const Routes = () => {
         routeProps={{
           hasBackLink: false,
         }}
+        isEthereal={ethereal}
       />
       <ConnectedOnlyRoute
         exact
@@ -130,6 +135,7 @@ const Routes = () => {
           backText: ColonyBackText,
           backRoute: `/colony/${colonyName}`,
         })}
+        isEthereal={ethereal}
       />
       <ConnectedOnlyRoute
         exact
@@ -141,6 +147,7 @@ const Routes = () => {
           backText: ColonyBackText,
           backRoute: `/colony/${colonyName}`,
         })}
+        isEthereal={ethereal}
       />
       <ConnectedOnlyRoute
         exact
@@ -152,18 +159,21 @@ const Routes = () => {
           backText: ProgramBackText,
           backRoute: `/colony/${colonyName}/program/${programId}`,
         })}
+        isEthereal={ethereal}
       />
       <ConnectedOnlyRoute
         isConnected={isConnected}
         path={CREATE_COLONY_ROUTE}
         component={CreateColonyWizard}
         layout={Plain}
+        isEthereal={ethereal}
       />
       <ConnectedOnlyRoute
         isConnected={isConnected}
         path={CREATE_USER_ROUTE}
         component={CreateUserWizard}
         layout={Plain}
+        isEthereal={ethereal}
       />
       <ConnectedOnlyRoute
         isConnected={isConnected}
@@ -173,12 +183,14 @@ const Routes = () => {
         routeProps={{
           hasBackLink: false,
         }}
+        isEthereal={ethereal}
       />
       <ConnectedOnlyRoute
         isConnected={isConnected}
         path={USER_EDIT_ROUTE}
         component={UserProfileEdit}
         layout={NavBar}
+        isEthereal={ethereal}
         // routeProps={{
         //   backText: MSG.userProfileEditBack,
         //   backRoute: `/user/${username}`,
