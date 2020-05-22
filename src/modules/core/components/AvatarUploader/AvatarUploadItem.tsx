@@ -1,13 +1,12 @@
 import React, { useCallback, useEffect, useMemo } from 'react';
 
-import { FieldEnhancedProps } from '~core/Fields/types';
+import { useField } from 'formik';
 import { UploadItemComponentProps } from '~core/FileUpload/types';
 import { log } from '~utils/debug';
 
 import styles from './AvatarUploadItem.css';
 
 import fileReader from '../../../../lib/fileReader';
-import { asField } from '../Fields';
 import { UploadFile } from '../FileUpload';
 import Icon from '../Icon';
 
@@ -17,12 +16,18 @@ const AvatarUploadItem = ({
   accept,
   error,
   maxFileSize,
+  name,
   reset,
-  setValue,
   upload,
-  $value: { file, preview, uploaded },
-  $value,
-}: UploadItemComponentProps & FieldEnhancedProps<UploadFile>) => {
+}: UploadItemComponentProps) => {
+  const [
+    ,
+    {
+      value: { file, preview, uploaded },
+      value,
+    },
+    { setValue },
+  ] = useField<UploadFile>(name);
   const readFiles = useMemo(
     () =>
       fileReader({
@@ -42,7 +47,7 @@ const AvatarUploadItem = ({
     let readFile;
     try {
       readFile = await read();
-      if (setValue) setValue({ ...$value, preview: readFile.data });
+      setValue({ ...value, preview: readFile.data });
       await upload(readFile);
     } catch (e) {
       log(e);
@@ -50,11 +55,11 @@ const AvatarUploadItem = ({
       /**
        * @todo Improve error modes for uploading avatars.
        */
-      if (setValue) setValue({ ...$value, error: 'uploadError' });
+      setValue({ ...value, error: 'uploadError' });
     }
     // After successfully uploading the file we'd like to immediately remove it again.
     reset();
-  }, [$value, read, reset, setValue, upload]);
+  }, [value, read, reset, setValue, upload]);
 
   useEffect(() => {
     if (file && !error && !uploaded) {
@@ -86,6 +91,4 @@ const AvatarUploadItem = ({
 
 AvatarUploadItem.displayName = displayName;
 
-export default asField<UploadItemComponentProps, UploadFile>({
-  alwaysConnected: true,
-})(AvatarUploadItem);
+export default AvatarUploadItem;
