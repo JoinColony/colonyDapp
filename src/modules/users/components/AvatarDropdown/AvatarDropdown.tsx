@@ -13,11 +13,15 @@ const UserAvatar = HookedUserAvatar();
 const displayName = 'users.AvatarDropdown';
 
 const AvatarDropdown = () => {
-  const { username, walletAddress } = useLoggedInUser();
+  const { username, walletAddress, ethereal } = useLoggedInUser();
   return (
     <Popover
       content={({ close }) => (
-        <AvatarDropdownPopover username={username} closePopover={close} />
+        <AvatarDropdownPopover
+          username={username}
+          closePopover={close}
+          isEthereal={ethereal}
+        />
       )}
       trigger="click"
     >

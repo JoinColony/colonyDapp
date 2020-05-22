@@ -50,22 +50,36 @@ const MSG = defineMessages({
     id: 'users.AvatarDropdown.AvatarDropdownPopover.link.signOut',
     defaultMessage: 'Sign Out',
   },
+  buttonConnect: {
+    id: 'users.AvatarDropdown.AvatarDropdownPopover.buttonConnect',
+    defaultMessage: 'Connect Wallet',
+  },
 });
 
 interface Props {
   closePopover: () => void;
   username?: string | null;
+  isEthereal: boolean;
 }
 
 const displayName = 'users.AvatarDropdown.AvatarDropdownPopover';
 
-const AvatarDropdownPopover = ({ closePopover, username }: Props) => {
+const AvatarDropdownPopover = ({
+  closePopover,
+  username,
+  isEthereal,
+}: Props) => {
   const renderUserSection = useCallback(() => {
     return (
       <DropdownMenuSection separator>
+        {isEthereal && (
+          <DropdownMenuItem>
+            <NavLink to={CONNECT_ROUTE} text={MSG.buttonConnect} />
+          </DropdownMenuItem>
+        )}
         {!username && (
           <DropdownMenuItem>
-            <NavLink to={CONNECT_ROUTE} text={MSG.buttonGetStarted} />
+            <NavLink to={CREATE_USER_ROUTE} text={MSG.buttonGetStarted} />
           </DropdownMenuItem>
         )}
         {username && (
