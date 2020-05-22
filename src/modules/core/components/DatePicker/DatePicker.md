@@ -1,11 +1,10 @@
 ### DatePicker in Formik form
 
 ```tsx
-import { Formik } from 'formik';
-
+import { Form } from '../Fields';
 import Button from '../Button';
 
-<Formik
+<Form
   initialValues={{ datepicker: undefined }}
   onSubmit={(values) => console.log(values)}
 >
@@ -17,25 +16,34 @@ import Button from '../Button';
       <Button type="submit">Submit</Button>
     </>
   )}
-</Formik>
+</Form>
 ```
 
-### Unconnected DatePicker
-
-For compatibility purposes the function which is called after a day is picked is passed through the `setValue` prop.
+### DatePicker with custom `renderTrigger`
 
 ```tsx
+import { Form } from '../Fields';
 import Button from '../Button';
 
-<DatePicker
-  closeOnDayPick
-  connect={false}
-  name="datepicker-unconnected"
-  label="Pick a date"
-  setValue={date => alert(date)}
-  renderTrigger={
-    ({ open, ref }) => (
-      <Button innerRef={ref} onClick={open}>Click to pick!</Button>
-    )}
-  />
+<Form
+  initialValues={{ datepicker: undefined }}
+  onSubmit={(values) => console.log(values)}
+>
+  {({ values: { datepicker } }) => (
+    <DatePicker
+      closeOnDayPick
+      name="datepicker"
+      label="Pick a date"
+      renderTrigger={
+        ({ open, ref }) => (
+          <>
+            <Button innerRef={ref} onClick={open}>Click to pick!</Button>
+            {datepicker && (
+              <p>{datepicker.toString()}</p>
+            )}
+          </>
+        )}
+      />
+  )}
+</Form>
 ```

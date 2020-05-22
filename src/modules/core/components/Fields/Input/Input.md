@@ -1,110 +1,149 @@
 ### Input text
 
 ```js
-<Input
-  elementOnly
-  name="input"
-  placeholder="I'm an input"
-  label="Label"
-  connect={false}
-/>
+import { Form } from '../';
+
+<Form initialValues={{ input: '' }}>
+  <Input
+    elementOnly
+    name="input"
+    placeholder="I'm an input"
+    label="Label"
+  />
+</Form>
 ```
 
 ### Input text with error
 
 ```js
-<Input
-  elementOnly
-  name="inputerror"
-  placeholder="Hover over me to see error"
-  label="Label"
-  form={{ errors: { inputerror: 'Wrong!' }, touched: { inputerror: true }}}
-  connect={false}
-/>
+import { Form } from '../';
+
+<Form
+  initialValues={{ input: '' }}
+  initialErrors={{ input: 'Wrong!' }}
+  touched={{ input: true }}
+  validate={{ input: 'Wrong!' }}  
+>
+  <Input
+    elementOnly
+    name="input"
+    placeholder="I have an error"
+    label="Label"
+  />
+</Form>
 ```
 
 ### Input text with label
 
 ```js
-<Input
-  name="inputWithlabel"
-  placeholder="I have a label"
-  label="Your details"
-  connect={false}
-/>
+import { Form } from '../';
+
+<Form initialValues={{ input: '' }}>
+  <Input
+    name="input"
+    placeholder="I have a label"
+    label="Your details"
+  />
+</Form>
 ```
 
 ### Input text aligned right
 
 ```js
-<Input
-  appearance={{ align: 'right' }}
-  name="inputlabelright"
-  placeholder="I'm on the right side!"
-  label="You came to the right place"
-  connect={false}
-/>
+import { Form } from '../';
+
+<Form initialValues={{ input: '' }}>
+  <Input
+    appearance={{ align: 'right' }}
+    name="input"
+    placeholder="I'm on the right side!"
+    label="You came to the right place"
+  />
+</Form>
 ```
 
 ### Input text with label and error
 
 ```js
-<Input
-  name="inputlabelerror"
-  placeholder="I'm wrong as well!"
-  label="Label"
-  form={{ errors: { inputlabelerror: 'Wrong!' }, touched: { inputlabelerror: true }}}
-  connect={false}
-/>
+import { Form } from '../';
+
+<Form
+  initialValues={{ input: '' }}
+  initialErrors={{ input: 'Wrong!' }}
+  touched={{ input: true }}
+  validate={{ input: 'Wrong!' }}  
+>
+  <Input
+    name="input"
+    placeholder="I'm wrong as well!"
+    label="Label"
+  />
+</Form>
 ```
 
 ### Input text with label and status
 
 ```js
-<Input
-  name="inputlabelstatus"
-  placeholder="I have a custom status!"
-  label="Look!"
-  status="This is all good now"
-  connect={false}
-/>
+import { Form } from '../';
+
+<Form initialValues={{ input: '' }}>
+  <Input
+    name="input"
+    placeholder="I have a custom status!"
+    label="Look!"
+    status="This is all good now"
+  />
+</Form>
 ```
 
 ### Input text with label and extra node
 
 ```js
-<Input
-  name="inputlabelextra"
-  placeholder="I have an extra node!"
-  label="Look right ->"
-  extra={<a href="#">I'm an extra node!</a>}
-  connect={false}
-/>
+import { Form } from '../';
+
+<Form initialValues={{ input: '' }}>
+  <Input
+    name="input"
+    placeholder="I have an extra node!"
+    label="Look right ->"
+    extra={<a href="#">I'm an extra node!</a>}
+  />
+</Form>
 ```
 
 ### Input text with horizontal label
 
 ```js
-<Input
-  appearance={{ direction: 'horizontal' }}
-  name="inputhorizontal"
-  placeholder="I'm horizontal!"
-  label="Label"
-  connect={false}
-/>
+import { Form } from '../';
+
+<Form initialValues={{ input: '' }}>
+  <Input
+    appearance={{ direction: 'horizontal' }}
+    name="input"
+    placeholder="I'm horizontal!"
+    label="Label"
+  />
+</Form>
 ```
 
 ### Input text with horizontal label and error
 
 ```js
-<Input
-  appearance={{ direction: 'horizontal' }}
-  name="inputhorizontalerror"
-  placeholder="I'm horizontal and wrong!"
-  label="Label"
-  form={{ errors: { inputhorizontalerror: 'Wrong!' }, touched: { inputhorizontalerror: true }}}
-  connect={false}
-/>
+import { Form } from '../';
+
+<Form
+  initialValues={{ input: '' }}
+  initialErrors={{ input: 'Wrong!' }}
+  touched={{ input: true }}
+  validate={{ input: 'Wrong!' }}  
+>
+  <Input
+    appearance={{ direction: 'horizontal' }}
+    name="input"
+    placeholder="I'm horizontal and wrong!"
+    label="Label"
+  />
+</Form>
 ```
 
 ### Input with dark color schema
@@ -112,13 +151,16 @@
 Looks great on dark backgrounds. This should also work for the fat theme.
 
 ```js
-<Input
-  appearance={{ colorSchema: 'dark' }}
-  name="inputdark"
-  placeholder="I'm dark!"
-  label="Dark label"
-  connect={false}
-/>
+import { Form } from '../';
+
+<Form initialValues={{ input: '' }}>
+  <Input
+    appearance={{ colorSchema: 'dark' }}
+    name="input"
+    placeholder="I'm dark!"
+    label="Dark label" 
+  />
+</Form>
 ```
 
 ### Input with transparent color schema
@@ -126,128 +168,124 @@ Looks great on dark backgrounds. This should also work for the fat theme.
 Uses the background color of its background (same for text). This should also work for the fat theme.
 
 ```js
-<Input
-  appearance={{ colorSchema: 'transparent' }}
-  name="inputtransparent"
-  placeholder="I'm a placeholder"
-  label="Cool label"
-  connect={false}
-/>
+import { Form } from '../';
+
+<Form initialValues={{ input: '' }}>
+  <Input
+    appearance={{ colorSchema: 'transparent' }}
+    name="input"
+    placeholder="I'm a placeholder"
+    label="Cool label"
+  />
+</Form>
 ```
 
 ### Fat input field
 
 ```js
-<Input
-  appearance={{ theme: 'fat' }}
-  name="inputfat"
-  placeholder="I'm fat"
-  label="Fat label"
-  connect={false}
-/>
+import { Form } from '../';
+
+<Form initialValues={{ input: '' }}>
+  <Input
+    appearance={{ theme: 'fat' }}
+    name="input"
+    placeholder="I'm fat"
+    label="Fat label"
+  />
+</Form>
 ```
 
 ### Underlined theme
 
 ```js
-<Input
-  appearance={{ theme: 'underlined', direction: 'horizontal' }}
-  name="inputunderlined"
-  placeholder="I'm underlined"
-  label="A label"
-  connect={false}
-/>
+import { Form } from '../';
+
+<Form initialValues={{ input: '' }}>
+  <Input
+    appearance={{ theme: 'underlined', direction: 'horizontal' }}
+    name="input"
+    placeholder="I'm underlined"
+    label="A label"
+  />
+</Form>
 ```
 
 ### Underlined theme error
 
 ```js
-<Input
-  appearance={{ theme: 'underlined', direction: 'horizontal' }}
-  name="inputunderlinederror"
-  placeholder="I'm underlined"
-  label="A label"
-  form={{ errors: { inputunderlinederror: 'A meaningful error' }, touched: { inputunderlinederror: true }}}
-  connect={false}
-/>
+import { Form } from '../';
+
+<Form
+  initialValues={{ input: '' }}
+  initialErrors={{ input: 'Wrong!' }}
+  touched={{ input: true }}
+  validate={{ input: 'Wrong!' }}  
+>
+  <Input
+    appearance={{ theme: 'underlined', direction: 'horizontal' }}
+    name="input"
+    placeholder="I'm underlined"
+    label="A label"
+  />
+</Form>
 ```
 
 ### Minimal theme
 
 ```js
-<Input
-  appearance={{ theme: 'minimal' }}
-  name="inputminimal"
-  placeholder="I'm minimal"
-  label="Minimal label"
-  connect={false}
-/>
+import { Form } from '../';
+
+<Form initialValues={{ input: '' }}>
+  <Input
+    appearance={{ theme: 'minimal' }}
+    name="input"
+    placeholder="I'm minimal"
+    label="Minimal label"
+  />
+</Form>
 ```
 
 ### Underline Dotted theme
 
 ```js
-<Input
-  appearance={{ theme: 'dotted', colorSchema: 'grey' }}
-  name="inputdotted"
-  placeholder="I have funny dots"
-  label="Dotted label"
-  connect={false}
-/>
+import { Form } from '../';
+
+<Form initialValues={{ input: '' }}>
+  <Input
+    appearance={{ theme: 'dotted', colorSchema: 'grey' }}
+    name="input"
+    placeholder="I have funny dots"
+    label="Dotted label"
+  />
+</Form>
 ```
 
 ### Input that displays extension
 
 ```js
-<Input
-  name="ENSname"
-  appearance={{ theme: 'fat' }}
-  label="Tell me your name"
-  extensionString=".joincolony.eth"
-  connect={false}
-/>
+import { Form } from '../';
+
+<Form initialValues={{ input: '' }}>
+  <Input
+    name="input"
+    appearance={{ theme: 'fat' }}
+    label="Tell me your name"
+    extensionString=".joincolony.eth"
+  />
+</Form>
 ```
 
 ### Formatting using [Cleave.js](https://nosir.github.io/cleave.js/)
 
 ```js
-<Input
-  name="inputcleave"
-  placeholder="Put in a big number"
-  label="Number formatted"
-  formattingOptions={{ numeral: true, delimiter: ',' }}
-  connect={false}
-/>
-```
+import { Form } from '../';
 
-### A form embedded in Formik
-
-```js
-import { Formik } from 'formik';
-import Button from '../../Button';
-
-<Formik
-  initialValues={{
-    forminput1: '',
-    forminput2: '',
-  }}
-  onSubmit={values => console.log(values)}
->
-  {({ handleSubmit }) => (
-    <form onSubmit={handleSubmit}>
-      <Input
-        name="forminput1"
-        label="Type a string"
-        placeholder="Type here"
-      />
-      <Input
-        name="forminput2"
-        label="Type a number"
-        formattingOptions={{ numeral: true, delimiter: ',' }}
-        placeholder="And here"
-      />
-      <Button appearance={{ theme: 'primary' }} type="submit">And press me</Button>
-    </form>
-  )}
-</Formik>
+<Form initialValues={{ input: '' }}>
+  <Input
+    name="input"
+    placeholder="Put in a big number"
+    label="Number formatted"
+    formattingOptions={{ numeral: true, delimiter: ',' }}
+  />
+</Form>
 ```
