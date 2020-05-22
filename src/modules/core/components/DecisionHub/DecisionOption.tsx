@@ -4,6 +4,7 @@ import {
   defineMessages,
   FormattedMessage,
 } from 'react-intl';
+import { useField } from 'formik';
 
 import { LinkProps } from 'react-router-dom';
 import { getMainClasses } from '~utils/css';
@@ -11,9 +12,7 @@ import Icon from '../Icon';
 import Link from '../Link';
 import { Tooltip } from '../Popover';
 import Heading from '../Heading';
-import { asField } from '../Fields';
 import styles from './DecisionOption.css';
-import { FieldEnhancedProps } from '~core/Fields/types';
 
 const MSG = defineMessages({
   iconTitle: {
@@ -72,11 +71,12 @@ const DecisionOptionIcon = ({ icon, tooltip, title }: Props['option']) => {
 
 const DecisionOption = ({
   appearance,
+  name,
   option: { title, subtitle, disabled, value },
   option,
-  setValue,
   link,
-}: Props & FieldEnhancedProps) => {
+}: Props) => {
+  const [, , { setValue }] = useField(name);
   const makeDecision = useCallback(() => {
     if (!disabled && value && setValue) setValue(value);
   }, [setValue, value, disabled]);
@@ -113,4 +113,4 @@ const DecisionOption = ({
 
 DecisionOption.displayName = displayName;
 
-export default asField<Props>({ initialValue: '' })(DecisionOption);
+export default DecisionOption;
