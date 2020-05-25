@@ -3,11 +3,13 @@
 import React from 'react';
 import toJson from 'enzyme-to-json';
 
+import { Form } from '~core/Fields';
 import { mountWithIntl } from '~testutils';
 
 import Select from '../Select';
 
 const DEFAULT_PROPS = {
+  id: 'someStaticId',
   label: 'Select me',
   name: 'foo',
   options: [
@@ -26,7 +28,11 @@ const DEFAULT_PROPS = {
 
 describe('Select component', () => {
   test('Renders initial component', () => {
-    const wrapper = mountWithIntl(<Select {...DEFAULT_PROPS} />);
+    const wrapper = mountWithIntl(
+      <Form initialValues={{ foo: undefined }} onSubmit={() => {}}>
+        <Select {...DEFAULT_PROPS} />
+      </Form>,
+    );
     expect(toJson(wrapper)).toMatchSnapshot();
   });
 });

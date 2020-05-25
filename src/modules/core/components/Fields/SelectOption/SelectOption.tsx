@@ -1,9 +1,7 @@
 import React, { KeyboardEvent, SyntheticEvent, useCallback } from 'react';
-import { defineMessages } from 'react-intl';
+import { defineMessages, useIntl } from 'react-intl';
 
 import { SelectOption as SelectOptionType } from '../Select/types';
-
-import { FieldEnhancedProps } from '../types';
 
 import styles from './SelectOption.css';
 
@@ -22,7 +20,6 @@ interface Props {
   selected: boolean;
   onSelect: (idx: number) => void;
   onClick: () => void;
-  formatIntl: FieldEnhancedProps['formatIntl'];
 }
 
 const displayName = 'SelectOption';
@@ -35,8 +32,9 @@ const SelectOption = ({
   onSelect,
   option,
   selected,
-  formatIntl,
 }: Props) => {
+  const { formatMessage } = useIntl();
+
   const handleItemClick = useCallback(
     (evt: SyntheticEvent<HTMLElement>) => {
       evt.stopPropagation();
@@ -57,7 +55,10 @@ const SelectOption = ({
     onSelect(idx);
   }, [idx, onSelect]);
 
-  const label = formatIntl(option.label, option.labelValues);
+  const label =
+    typeof option.label === 'object'
+      ? formatMessage(option.label, option.labelValues)
+      : option.label;
   return (
     <li
       className={styles.main}
@@ -74,7 +75,7 @@ const SelectOption = ({
         {label}
         {checked && (
           <small className={styles.selectedHelpText}>
-            ({formatIntl(MSG.selectedLabelHelp)})
+            ({formatMessage(MSG.selectedLabelHelp)})
           </small>
         )}
       </span>

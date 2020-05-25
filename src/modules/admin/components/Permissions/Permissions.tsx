@@ -7,7 +7,7 @@ import { ROLES, ROOT_DOMAIN } from '~constants';
 import { Address, DomainsMapType } from '~types/index';
 import { DomainType } from '~immutable/index';
 import Heading from '~core/Heading';
-import { Select } from '~core/Fields';
+import { Select, Form } from '~core/Fields';
 import { Table, TableBody, TableCell } from '~core/Table';
 import Button from '~core/Button';
 import { useDialog } from '~core/Dialog';
@@ -83,7 +83,7 @@ const Permissions = ({ colonyAddress, domains }: Props) => {
   );
 
   const setFieldValue = useCallback(
-    (_, value) => setSelectedDomainId(parseInt(value, 10)),
+    (value) => setSelectedDomainId(parseInt(value, 10)),
     [setSelectedDomainId],
   );
 
@@ -130,20 +130,23 @@ const Permissions = ({ colonyAddress, domains }: Props) => {
             }}
             appearance={{ size: 'medium', theme: 'dark' }}
           />
-          <Select
-            appearance={{
-              alignOptions: 'right',
-              theme: 'alt',
-              width: 'strict',
-            }}
-            connect={false}
-            elementOnly
-            label={MSG.labelFilter}
-            name="filter"
-            options={domainSelectOptions}
-            form={{ setFieldValue }}
-            $value={selectedDomainId.toString()}
-          />
+          <Form
+            initialValues={{ filter: ROOT_DOMAIN.toString() }}
+            onSubmit={() => {}}
+          >
+            <Select
+              appearance={{
+                alignOptions: 'right',
+                theme: 'alt',
+                width: 'strict',
+              }}
+              elementOnly
+              label={MSG.labelFilter}
+              name="filter"
+              onChange={setFieldValue}
+              options={domainSelectOptions}
+            />
+          </Form>
         </div>
         <div className={styles.tableWrapper}>
           <>

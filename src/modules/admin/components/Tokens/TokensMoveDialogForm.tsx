@@ -49,6 +49,10 @@ const MSG = defineMessages({
     id: 'admin.Tokens.TokensMoveDialogForm.amount',
     defaultMessage: 'Amount',
   },
+  token: {
+    id: 'admin.Tokens.TokensMoveDialogForm.address',
+    defaultMessage: 'Token',
+  },
   domainTokenAmount: {
     id: 'admin.Tokens.TokensMoveDialogForm.domainTokenAmount',
     defaultMessage: 'Amount: {amount} {symbol}',
@@ -303,6 +307,7 @@ const TokensMoveDialogForm = ({
           </div>
           <div className={styles.tokenAmountSelect}>
             <Select
+              label={MSG.token}
               options={tokenOptions}
               name="tokenAddress"
               elementOnly

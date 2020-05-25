@@ -125,6 +125,7 @@ const StepTrufflePig = ({ resetWizard, wizardForm, wizardValues }: Props) => {
       }}
       transform={transform}
       {...wizardForm}
+      initialValues={{ accountIndex: '0' }}
     >
       {({ status, isSubmitting }) => (
         <main>
@@ -147,13 +148,9 @@ const StepTrufflePig = ({ resetWizard, wizardForm, wizardValues }: Props) => {
                   appearance={{ size: 'medium' }}
                 />
                 <Select
-                  $value={accountIndex.toString()}
-                  form={{
-                    setFieldValue: (key: string, value: string) =>
-                      setAccountIndex(Number(value)),
-                  }}
                   label={MSG.accountIndex}
                   name="accountIndex"
+                  onChange={(value) => setAccountIndex(Number(value))}
                   options={accountIndexOptions}
                   data-test="trufflepigAccountSelector"
                 />

@@ -1,7 +1,5 @@
-import { MessageDescriptor } from 'react-intl';
 import React from 'react';
 
-import { SimpleMessageValues } from '~types/index';
 import { getMainClasses } from '~utils/css';
 
 import SelectOption from '../SelectOption';
@@ -17,14 +15,9 @@ interface Props {
   listboxId: string;
   options: SelectOptionType[];
   selectedOption: number;
-  ariaLabelledby?: string;
   name: string;
   onSelect: (idx: number) => void;
   onClick: () => void;
-  formatIntl: (
-    text: string | MessageDescriptor,
-    textValues?: SimpleMessageValues,
-  ) => string | undefined;
 }
 
 const getOptionId = (name, idx) =>
@@ -38,8 +31,6 @@ const SelectListBox = ({
   checkedOption,
   onSelect,
   onClick,
-  formatIntl,
-  ariaLabelledby,
   name,
 }: Props) => {
   const activeDescendantOption = options.find(
@@ -57,7 +48,6 @@ const SelectListBox = ({
       role="listbox"
       aria-activedescendant={getOptionId(name, activeDescendantIdx)}
       id={listboxId}
-      aria-labelledby={ariaLabelledby}
     >
       {options.map((option, idx) => (
         <SelectOption
@@ -69,7 +59,6 @@ const SelectListBox = ({
           option={option}
           onSelect={onSelect}
           onClick={onClick}
-          formatIntl={formatIntl}
         />
       ))}
     </ul>
