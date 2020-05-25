@@ -1,11 +1,10 @@
 import React, { ReactNode, useCallback } from 'react';
-import { defineMessages } from 'react-intl';
+import { defineMessages, MessageDescriptor, useIntl } from 'react-intl';
 import compose from 'recompose/compose';
 
-import { asField } from '~core/Fields';
-import { FieldEnhancedProps, ExtraFieldProps } from '~core/Fields/types';
+import { useField } from 'formik';
 import { AnyUser } from '~data/index';
-import { Address } from '~types/index';
+import { Address, SimpleMessageValues } from '~types/index';
 import { getMainClasses } from '~utils/css';
 
 import {
@@ -57,7 +56,26 @@ interface Props extends WithOmnipickerInProps {
   /** Renders an extra button to remove selection */
   disabled?: boolean;
 
+  /** Should render the select without a label */
+  elementOnly?: boolean;
+
+  /** Help text */
+  help?: string | MessageDescriptor;
+
+  /** Help text values for intl interpolation */
+  helpValues?: SimpleMessageValues;
+
+  /** Label text */
+  label: string | MessageDescriptor;
+
+  /** Label text values for intl interpolation */
+  labelValues?: SimpleMessageValues;
+
+  /** Html `name` attribute */
   name: string;
+
+  /** Status text */
+  placeholder?: string | MessageDescriptor;
 
   /** Override avatar rendering */
   renderAvatar: AvatarRenderFn;
@@ -71,44 +89,41 @@ interface Props extends WithOmnipickerInProps {
   value?: AnyUser;
 }
 
-interface EnhancedProps
-  extends Props,
-    FieldEnhancedProps<AnyUser>,
-    WrappedComponentProps {}
+interface EnhancedProps extends Props, WrappedComponentProps {}
 
 const displayName = 'SingleUserPicker';
 
 const SingleUserPicker = ({
-  // Form field
-  elementOnly,
-  help,
-  label,
-  placeholder,
-  $value,
-  $error,
-  $touched,
-  onSelected,
-  formatIntl,
-  setValue,
-  // OmniPicker
-  inputProps,
-  OmniPicker,
-  OmniPickerWrapper,
-  omniPickerIsOpen,
-  registerInputNode,
-  // Rest
   appearance,
   disabled,
+  elementOnly,
+  help,
+  helpValues,
+  inputProps,
   isResettable,
+  label,
+  labelValues,
+  name,
+  OmniPicker,
+  omniPickerIsOpen,
+  OmniPickerWrapper,
+  onSelected,
+  openOmniPicker,
+  placeholder,
+  registerInputNode,
   renderAvatar = (address: Address, item?: ItemDataType<AnyUser>) => (
     <UserAvatar address={address} user={item} size="xs" />
   ),
   renderItem: renderItemProp,
-  openOmniPicker,
 }: EnhancedProps) => {
+  const [, { error, touched, value }, { setValue }] = useField<AnyUser | null>(
+    name,
+  );
+  const { formatMessage } = useIntl();
+
   const handleActiveUserClick = useCallback(() => {
     if (!disabled) {
-      if (setValue) setValue(null);
+      setValue(null);
       openOmniPicker();
     }
   }, [disabled, openOmniPicker, setValue]);
@@ -145,23 +160,24 @@ const SingleUserPicker = ({
   const placeholderText =
     !placeholder || typeof placeholder === 'string'
       ? placeholder
-      : formatIntl(placeholder);
+      : formatMessage(placeholder);
 
   return (
     <div className={styles.omniContainer}>
       <OmniPickerWrapper className={getMainClasses(appearance, styles)}>
         <div className={styles.inputContainer}>
-          {!elementOnly && label && (
-            <InputLabel
-              inputId={inputProps.id}
-              label={label}
-              help={help}
-              appearance={labelAppearance}
-            />
-          )}
-          {$value ? (
+          <InputLabel
+            inputId={inputProps.id}
+            label={label}
+            labelValues={labelValues}
+            help={help}
+            helpValues={helpValues}
+            appearance={labelAppearance}
+            screenReaderOnly={elementOnly}
+          />
+          {value ? (
             <div className={styles.avatarContainer}>
-              {renderAvatar($value.profile.walletAddress, $value)}
+              {renderAvatar(value.profile.walletAddress, value)}
             </div>
           ) : (
             <Icon
@@ -173,7 +189,7 @@ const SingleUserPicker = ({
           <div className={styles.container}>
             {
               /* eslint-disable jsx-a11y/click-events-have-key-events */
-              $value && (
+              value && (
                 <div
                   role="button"
                   className={styles.recipientName}
@@ -181,25 +197,23 @@ const SingleUserPicker = ({
                   onFocus={handleActiveUserClick}
                   tabIndex={0}
                 >
-                  {$value.profile.displayName ||
-                    $value.profile.username ||
-                    $value.profile.walletAddress}
+                  {value.profile.displayName ||
+                    value.profile.username ||
+                    value.profile.walletAddress}
                 </div>
               )
             }
             {/* eslint-enable jsx-a11y/click-events-have-key-events */}
             <input
               disabled={disabled}
-              className={
-                $touched && $error ? styles.inputInvalid : styles.input
-              }
+              className={touched && error ? styles.inputInvalid : styles.input}
               {...inputProps}
               placeholder={placeholderText}
-              hidden={!!$value}
+              hidden={!!value}
               ref={registerInputNode}
             />
-            {$error && appearance && appearance.direction === 'horizontal' && (
-              <span className={styles.errorHorizontal}>{$error}</span>
+            {error && appearance && appearance.direction === 'horizontal' && (
+              <span className={styles.errorHorizontal}>{error}</span>
             )}
             <div className={styles.omniPickerContainer}>
               <OmniPicker renderItem={renderItem} onPick={handlePick} />
@@ -207,7 +221,7 @@ const SingleUserPicker = ({
           </div>
         </div>
       </OmniPickerWrapper>
-      {$value && isResettable && (
+      {value && isResettable && (
         <Button
           onClick={resetSelection}
           appearance={{ theme: 'blue', size: 'small' }}
@@ -220,9 +234,6 @@ const SingleUserPicker = ({
 
 SingleUserPicker.displayName = displayName;
 
-const enhance = compose<EnhancedProps, Props & ExtraFieldProps<AnyUser>>(
-  withOmniPicker(),
-  asField<Props, AnyUser>(),
-);
+const enhance = compose<EnhancedProps, Props>(withOmniPicker());
 
 export default enhance(SingleUserPicker);
