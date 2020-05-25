@@ -93,7 +93,8 @@ function* TEMP_getUserHasRecoveryRole(
   userAddress: Address = AddressZero,
 ) {
   const colonyManager = TEMP_getContext(ContextModule.ColonyManager);
-  const colonyClient: ColonyClient = yield colonyManager.getColonyClient(
+  const colonyClient: ColonyClient = yield colonyManager.getClient(
+    ClientType.ColonyClient,
     colonyAddress,
   );
   if (!userAddress || userAddress === AddressZero) return false;

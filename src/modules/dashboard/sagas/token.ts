@@ -15,8 +15,8 @@ function* tokenCreate({
   try {
     yield fork(createTransaction, meta.id, {
       context: ClientType.NetworkClient,
-      methodName: 'createToken',
-      params: { name, symbol },
+      methodName: 'deployToken',
+      params: [name, symbol],
     });
     // These are just temporary for now until we have the new onboarding workflow Normally these are done by the user
     yield put({

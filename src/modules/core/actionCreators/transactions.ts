@@ -1,7 +1,7 @@
 import { $PropertyType } from 'utility-types';
 
 import { AllActions, ActionTypes } from '~redux/index';
-import { TransactionReceipt } from '~types/index';
+import { MethodParams, TransactionReceipt, TxConfig } from '~types/index';
 import {
   GasPricesProps,
   TransactionError,
@@ -9,8 +9,6 @@ import {
   TRANSACTION_STATUSES,
   TRANSACTION_ERRORS,
 } from '~immutable/index';
-
-import { TxConfig } from '../types';
 
 export const createTxAction = (
   id: string,
@@ -23,7 +21,7 @@ export const createTxAction = (
     methodName,
     multisig: multisigConfig,
     options,
-    params,
+    params = [],
     ready,
   }: TxConfig,
 ) => ({
@@ -177,7 +175,7 @@ export const transactionAddIdentifier = (
 
 export const transactionAddParams = (
   id: string,
-  params: object,
+  params: MethodParams,
 ): AllActions => ({
   type: ActionTypes.TRANSACTION_ADD_PARAMS,
   meta: { id },

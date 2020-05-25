@@ -1,8 +1,7 @@
 import React, { HTMLAttributes } from 'react';
 import formatNumber from 'format-number';
-import { fromWei } from 'ethjs-unit';
 import moveDecimal from 'move-decimal-point';
-import { BigNumber } from 'ethers/utils';
+import { BigNumber, formatUnits } from 'ethers/utils';
 
 import { getMainClasses } from '~utils/css';
 
@@ -53,7 +52,7 @@ const Numeral = ({
 }: Props) => {
   const convertedNum =
     typeof unit === 'string'
-      ? fromWei(value.toString(10), unit)
+      ? formatUnits(value, unit)
       : moveDecimal(value.toString(10), -(unit || 0));
 
   const formattedNumber = formatNumber({
@@ -61,7 +60,7 @@ const Numeral = ({
     suffix,
     integerSeparator,
     truncate,
-  })(convertedNum);
+  })(parseFloat(convertedNum));
 
   return (
     <span

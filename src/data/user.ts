@@ -1,5 +1,5 @@
 import { Resolvers } from 'apollo-client';
-import { ROOT_DOMAIN_ID } from '@colony/colony-js';
+import { ClientType, ROOT_DOMAIN_ID } from '@colony/colony-js';
 
 import { Context, ContextModule } from '~context/index';
 import ENS from '~lib/ENS';
@@ -14,9 +14,14 @@ const getUserReputation = async (
   colonyAddress: Address,
   domainId: number,
 ): Promise<string> => {
-  const colonyClient = await colonyManager.getColonyClient(colonyAddress);
+  const colonyClient = await colonyManager.getClient(
+    ClientType.ColonyClient,
+    colonyAddress,
+  );
   const { skillId } = await colonyClient.getDomain(domainId);
-  const { reputationAmount } = await colonyManager.networkClient.getReputation({
+  const networkClient = await colonyManager.getClient(ClientType.NetworkClient);
+  // FIXME getReputation doesn't exist on the networkClient yet
+  const { reputationAmount } = await networkClient.getReputation({
     address,
     colonyAddress,
     skillId,

@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { BigNumber } from 'ethers/utils';
-import { toWei } from 'ethjs-unit';
+import { BigNumber, parseUnits } from 'ethers/utils';
 import { defineMessages, useIntl } from 'react-intl';
 
 import Numeral, { Props as NumeralProps } from '~core/Numeral/Numeral';
@@ -72,7 +71,7 @@ const EthUsd = ({
           typeof value === 'number'
             ? value.toFixed(DEFAULT_TOKEN_DECIMALS)
             : value;
-        valueToConvert = toWei(fixedNum, unit);
+        valueToConvert = parseUnits(fixedNum, unit);
       }
       const newValue = await getEthToUsd(valueToConvert);
       if (!didCancel) {

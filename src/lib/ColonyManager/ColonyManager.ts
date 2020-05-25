@@ -3,8 +3,9 @@ import { Provider } from 'ethers/providers';
 import {
   getTokenClient,
   ClientType,
-  ColonyNetworkClient,
   ColonyClient,
+  ContractClient,
+  NetworkClient,
   TokenClient,
 } from '@colony/colony-js';
 import { isAddress } from 'web3-utils';
@@ -14,20 +15,18 @@ import { Address, AddressOrENSName } from '~types/index';
 
 import ens from '../../context/ensContext';
 
-type ContractClient = ColonyClient | ColonyNetworkClient | TokenClient;
-
 export default class ColonyManager {
   private metaColonyClient?: ColonyClient;
 
   clients: Map<Address, Promise<ColonyClient>>;
 
-  networkClient: ColonyNetworkClient;
+  networkClient: NetworkClient;
 
   provider: Provider;
 
   signer: Signer;
 
-  constructor(networkClient: ColonyNetworkClient) {
+  constructor(networkClient: NetworkClient) {
     this.clients = new Map();
     this.networkClient = networkClient;
     this.provider = networkClient.provider;
@@ -45,6 +44,17 @@ export default class ColonyManager {
       throw new Error(`Colony with address ${address} not found`);
     }
     return client;
+  }
+
+  private async getColonyClient(
+    identifier?: AddressOrENSName,
+  ): Promise<ColonyClient> {
+    if (!(typeof identifier === 'string' && identifier.length)) {
+      throw new Error('A colony address or ENS name must be provided');
+    }
+
+    const address = await this.resolveColonyIdentifier(identifier);
+    return this.clients.get(address) || this.setColonyClient(address);
   }
 
   async resolveColonyIdentifier(identifier: AddressOrENSName): Promise<any> {
@@ -69,97 +79,146 @@ export default class ColonyManager {
     return this.metaColonyClient;
   }
 
-  async getColonyClient(identifier: AddressOrENSName): Promise<ColonyClient> {
-    if (!(typeof identifier === 'string' && identifier.length)) {
-      throw new Error('A colony address or ENS name must be provided');
+  async getClient<T extends ClientType>(
+    type: T,
+    identifier?: AddressOrENSName,
+  ): Promise<
+    T extends ClientType.ColonyClient
+      ? ColonyClient
+      : T extends ClientType.NetworkClient
+      ? NetworkClient
+      : TokenClient
+  > {
+    switch (type) {
+      case ClientType.NetworkClient: {
+        // FIXME fix this
+        // @ts-ignore
+        return this.networkClient;
+      }
+      case ClientType.ColonyClient: {
+        // FIXME fix this
+        // @ts-ignore
+        return this.getColonyClient(identifier);
+      }
+      case ClientType.TokenClient: {
+        const colonyClient = await this.getColonyClient(identifier);
+        // FIXME fix this
+        // @ts-ignore
+        return colonyClient.tokenClient;
+      }
+      default: {
+        throw new Error('A valid contract client type has to be specified');
+      }
     }
-
-    const address = await this.resolveColonyIdentifier(identifier);
-    return this.clients.get(address) || this.setColonyClient(address);
   }
 
-  /**
-   * Given a token contract address, create a `TokenClient` with the minimal
-   * token ABI loader and return it. The promise will be rejected if
-   * the functions do not exist on the contract.
-   */
   async getTokenClient(contractAddress: string) {
     return getTokenClient(contractAddress, this.signer);
   }
 
-  async getNetworkMethod<M extends keyof ColonyNetworkClient>(
-    methodName: M,
-  ): Promise<ColonyNetworkClient[M]> {
-    return Reflect.get(this.networkClient, methodName);
-  }
+  // async getNetworkMethod<M extends keyof ColonyNetworkClient>(
+  //   methodName: M,
+  // ): Promise<ColonyNetworkClient[M]> {
+  //   return Reflect.get(this.networkClient, methodName);
+  // }
 
-  async getColonyMethod<M extends keyof ColonyClient>(
-    methodName: M,
-    identifier: AddressOrENSName,
-  ): Promise<ColonyClient[M]> {
-    const client = await this.getColonyClient(identifier);
-    return Reflect.get(client, methodName);
-  }
+  // async getColonyMethod<M extends keyof ColonyClient>(
+  //   methodName: M,
+  //   identifier: AddressOrENSName,
+  // ): Promise<ColonyClient[M]> {
+  //   const client = await this.getColonyClient(identifier);
+  //   return Reflect.get(client, methodName);
+  // }
 
-  async getTokenMethod<M extends keyof TokenClient>(
-    methodName: M,
-    identifier: AddressOrENSName,
-  ): Promise<TokenClient[M]> {
-    const client = await this.getColonyClient(identifier);
-    return Reflect.get(client.tokenClient, methodName);
-  }
+  // async getTokenMethod<M extends keyof TokenClient>(
+  //   methodName: M,
+  //   identifier: AddressOrENSName,
+  // ): Promise<TokenClient[M]> {
+  //   const client = await this.getColonyClient(identifier);
+  //   return Reflect.get(client.tokenClient, methodName);
+  // }
 
-  async getEstimationMethod<
-    C extends ClientType,
-    M extends keyof ContractClient['estimate']
-  >(
-    context: C,
-    methodName: M,
-    identifier?: AddressOrENSName,
-  ): Promise<ContractClient['estimate'][M]> {
-    switch (context) {
-      case ClientType.ColonyClient: {
-        if (!identifier) throw new Error('Need identifier for Colony methods');
-        const client = await this.getColonyClient(identifier);
-        // FIXME will this work without reflect? Do we need to bind it???
-        return Reflect.get(client.estimate, methodName);
-      }
-      case ClientType.NetworkClient: {
-        return Reflect.get(this.networkClient.estimate, methodName);
-      }
-      case ClientType.TokenClient: {
-        if (!identifier) throw new Error('Need identifier for Colony methods');
-        const client = await this.getColonyClient(identifier);
-        return Reflect.get(client.tokenClient.estimate, methodName);
-      }
-      default: {
-        throw new Error('No valid context specified');
-      }
-    }
-  }
+  // FIXME get the types right for this
+  // async getEstimationMethod<
+  //   C extends ClientType
+  //   // M extends keyof ContractClient['estimate']
+  // >(
+  //   context: C,
+  //   // FIXME M
+  //   methodName: any,
+  //   identifier?: AddressOrENSName,
+  //   // FIXME any
+  // ): Promise<any> {
+  //   switch (context) {
+  //     case ClientType.ColonyClient: {
+  //       if (!identifier) throw new Error('Need identifier for Colony methods');
+  //       const client = await this.getColonyClient(identifier);
+  //       return client.estimate[methodName].bind(client);
+  //     }
+  //     case ClientType.NetworkClient: {
+  //       return this.networkClient.estimate[methodName].bind(this.networkClient);
+  //     }
+  //     case ClientType.TokenClient: {
+  //       if (!identifier) throw new Error('Need identifier for Colony methods');
+  //       const client = await this.getColonyClient(identifier);
+  //       return client.tokenClient.estimate[methodName].bind(client.tokenClient);
+  //     }
+  //     case ClientType.OneTxPaymentFactoryClient: {
+  //       if (!identifier) throw new Error('Need identifier for Colony methods');
+  //       const client = await this.getColonyClient(identifier);
+  //       return client.oneTxPaymentFactoryClient.estimate[methodName].bind(
+  //         client.oneTxPaymentFactoryClient,
+  //       );
+  //     }
+  //     case ClientType.OneTxPaymentClient: {
+  //       if (!identifier) throw new Error('Need identifier for Colony methods');
+  //       const client = await this.getColonyClient(identifier);
+  //       return client.oneTxPaymentClient.estimate[methodName].bind(
+  //         client.oneTxPaymentClient,
+  //       );
+  //     }
+  //     default: {
+  //       throw new Error('No valid context specified');
+  //     }
+  //   }
+  // }
 
-  async getMethod<C extends ClientType, M extends keyof ContractClient>(
-    context: C,
-    methodName: M,
-    identifier?: AddressOrENSName,
-  ): Promise<ContractClient[M]> {
-    switch (context) {
-      case ClientType.ColonyClient: {
-        if (!identifier) throw new Error('Need identifier for Colony methods');
-        return this.getColonyMethod(methodName, identifier);
-      }
-      case ClientType.TokenClient: {
-        if (!identifier) {
-          throw new Error('Need Colony identifier for Token methods');
-        }
-        return this.getTokenMethod(methodName, identifier);
-      }
-      case ClientType.NetworkClient: {
-        return this.getNetworkMethod(methodName);
-      }
-      default: {
-        throw new Error('No valid context specified');
-      }
-    }
-  }
+  // async getMethod<C extends ClientType, M extends keyof ContractClient>(
+  //   context: C,
+  //   methodName: M,
+  //   identifier?: AddressOrENSName,
+  // ): Promise<ContractClient[M]> {
+  //   switch (context) {
+  //     case ClientType.ColonyClient: {
+  //       if (!identifier) throw new Error('Need identifier for Colony methods');
+  //       return this.getColonyMethod(methodName, identifier);
+  //     }
+  //     case ClientType.NetworkClient: {
+  //       return this.getNetworkMethod(methodName);
+  //     }
+  //     case ClientType.TokenClient: {
+  //       if (!identifier) {
+  //         throw new Error('Need Colony identifier for Token methods');
+  //       }
+  //       return this.getTokenMethod(methodName, identifier);
+  //     }
+  //     case ClientType.OneTxPaymentFactoryClient: {
+  //       if (!identifier) throw new Error('Need identifier for Colony methods');
+  //       const client = await this.getColonyClient(identifier);
+  //       return client.oneTxPaymentFactoryClient[methodName].bind(
+  //         client.oneTxPaymentFactoryClient,
+  //       );
+  //     }
+  //     case ClientType.OneTxPaymentClient: {
+  //       if (!identifier) throw new Error('Need identifier for Colony methods');
+  //       const client = await this.getColonyClient(identifier);
+  //       return client.oneTxPaymentClient[methodName].bind(
+  //         client.oneTxPaymentClient,
+  //       );
+  //     }
+  //     default: {
+  //       throw new Error('No valid context specified');
+  //     }
+  //   }
+  // }
 }

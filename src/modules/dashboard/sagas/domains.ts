@@ -89,10 +89,14 @@ function* domainCreate({
      */
     yield fork(createTransaction, meta.id, {
       context: ClientType.ColonyClient,
-      methodName: 'addDomain',
+      methodName: 'addDomainWithProofs',
       identifier: colonyAddress,
-      params: { parentDomainId },
+      params: [parentDomainId],
+      parseEvents: ['DomainAdded'],
     });
+
+    // HERE WE ARE
+    debugger;
 
     /*
      * Get the new domain ID from the successful transaction.
@@ -228,8 +232,8 @@ function* moveFundsBetweenPots({
 
     txChannel = yield call(getTxChannel, meta.id);
 
-    const colonyClient: ColonyClient = yield call(
-      [colonyManager, colonyManager.getColonyClient],
+    const colonyClient: ColonyClient = yield colonyManager.getClient(
+      ClientType.ColonyClient,
       colonyAddress,
     );
     const [{ potId: fromPot }, { potId: toPot }] = yield all([
@@ -243,9 +247,9 @@ function* moveFundsBetweenPots({
 
     yield fork(createTransaction, meta.id, {
       context: ClientType.ColonyClient,
-      methodName: 'moveFundsBetweenPots',
+      methodName: 'moveFundsBetweenPotsWithProofs',
       identifier: colonyAddress,
-      params: { token: tokenAddress, fromPot, toPot, amount },
+      params: [fromPot, toPot, amount, tokenAddress],
     });
 
     // Replace with TRANSACTION_CREATED if

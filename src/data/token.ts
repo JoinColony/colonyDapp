@@ -2,7 +2,7 @@ import ApolloClient, { Resolvers } from 'apollo-client';
 import { isAddress } from 'web3-utils';
 import { BigNumber, bigNumberify } from 'ethers/utils';
 import { AddressZero } from 'ethers/constants';
-import { ColonyClient } from '@colony/colony-js';
+import { ClientType, ColonyClient } from '@colony/colony-js';
 
 import { Context, ContextModule } from '~context/index';
 import { COLONY_TOTAL_BALANCE_DOMAIN_ID } from '~constants';
@@ -170,7 +170,10 @@ export const tokenResolvers = ({
         domainIds = [0, 1],
       }: { colonyAddress: Address; domainIds?: number[] },
     ) {
-      const colonyClient = await colonyManager.getColonyClient(colonyAddress);
+      const colonyClient = await colonyManager.getClient(
+        ClientType.ColonyClient,
+        colonyAddress,
+      );
 
       const balances: BigNumber[] = await Promise.all(
         domainIds.map((domainId) =>

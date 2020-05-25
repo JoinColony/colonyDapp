@@ -130,7 +130,7 @@ function* colonyUpgradeContract({
       context: ClientType.ColonyClient,
       methodName: 'upgrade',
       identifier: colonyAddress,
-      params: { newVersion },
+      params: [newVersion],
     });
 
     yield takeFrom(txChannel, ActionTypes.TRANSACTION_CREATED);

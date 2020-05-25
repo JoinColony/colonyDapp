@@ -1,7 +1,7 @@
 import { $Values } from 'utility-types';
 import { Channel } from 'redux-saga';
 import { all, call, fork, put } from 'redux-saga/effects';
-import { ClientType } from '@colony/colony-js';
+import { ClientType, ROOT_DOMAIN_ID } from '@colony/colony-js';
 
 import { ContextModule, TEMP_getContext } from '~context/index';
 import { DEFAULT_TOKEN_DECIMALS } from '~constants';
@@ -23,10 +23,10 @@ import { ActionTypes, Action, AllActions } from '~redux/index';
 import { createAddress } from '~utils/web3';
 import { log } from '~utils/debug';
 import { putError, takeFrom, takeLatestCancellable } from '~utils/saga/effects';
+import { TxConfig } from '~types/index';
 // FIXME
 // import { parseExtensionDeployedLog } from '~utils/web3/eventLogs/eventParsers';
 
-import { TxConfig } from '../../core/types';
 import {
   transactionAddParams,
   transactionAddIdentifier,
@@ -120,7 +120,7 @@ function* colonyCreate({
       yield createGroupedTransaction(createUser, {
         context: ClientType.NetworkClient,
         methodName: 'registerUserLabel',
-        params: { username, orbitDBPath: '' },
+        params: [username, ''],
         ready: true,
       });
     }
@@ -128,12 +128,8 @@ function* colonyCreate({
     if (createToken) {
       yield createGroupedTransaction(createToken, {
         context: ClientType.NetworkClient,
-        methodName: 'createToken',
-        params: {
-          name: tokenName,
-          symbol: tokenSymbol,
-          decimals: DEFAULT_TOKEN_DECIMALS,
-        },
+        methodName: 'deployToken',
+        params: [tokenName, tokenSymbol],
       });
     }
 
@@ -146,21 +142,14 @@ function* colonyCreate({
     yield createGroupedTransaction(createLabel, {
       context: ClientType.ColonyClient,
       methodName: 'registerColonyLabel',
-      params: { colonyName },
+      params: [colonyName, ''],
       ready: false,
     });
 
     if (createToken) {
-      const { address: tokenLockingAddress } = yield call([
-        networkClient.getTokenLockingAddress,
-        networkClient.getTokenLockingAddress.call,
-      ]);
       yield createGroupedTransaction(deployTokenAuthority, {
         context: ClientType.TokenClient,
-        methodName: 'createTokenAuthority',
-        params: {
-          allowedToTransfer: [tokenLockingAddress],
-        },
+        methodName: 'deployTokenAuthority',
         ready: false,
       });
 
@@ -173,16 +162,14 @@ function* colonyCreate({
 
     yield createGroupedTransaction(deployOneTx, {
       context: ClientType.ColonyClient,
-      methodName: 'addExtension',
-      params: { contractName: 'OneTxPayment' },
+      methodName: 'deployOneTxPayment',
       ready: false,
     });
 
     yield createGroupedTransaction(setOneTxRoleAdministration, {
       context: ClientType.ColonyClient,
       methodContext: 'setOneTxRoles',
-      methodName: 'setAdministrationRole',
-      params: { setTo: true, domainId: 1 },
+      methodName: 'setAdministrationRoleWithProofs',
       ready: false,
     });
 
@@ -190,7 +177,6 @@ function* colonyCreate({
       context: ClientType.ColonyClient,
       methodContext: 'setOneTxRoles',
       methodName: 'setFundingRole',
-      params: { setTo: true, domainId: 1 },
       ready: false,
     });
 
@@ -266,7 +252,7 @@ function* colonyCreate({
      * Pass through tokenAddress after token creation to the colony creation
      * transaction and wait for it to succeed.
      */
-    yield put(transactionAddParams(createColony.id, { tokenAddress }));
+    yield put(transactionAddParams(createColony.id, [tokenAddress]));
     yield put(transactionReady(createColony.id));
 
     const {
@@ -370,11 +356,16 @@ function* colonyCreate({
       /*
        * Deploy TokenAuthority
        */
+      const { address: tokenLockingAddress } = yield call([
+        networkClient.getTokenLockingAddress,
+        networkClient.getTokenLockingAddress.call,
+      ]);
       yield put(
-        transactionAddParams(deployTokenAuthority.id, {
+        transactionAddParams(deployTokenAuthority.id, [
           colonyAddress,
           tokenAddress,
-        }),
+          !!tokenLockingAddress,
+        ]),
       );
       yield put(transactionReady(deployTokenAuthority.id));
       const {
@@ -392,9 +383,7 @@ function* colonyCreate({
        * Set Token authority (to deployed TokenAuthority)
        */
       yield put(
-        transactionAddParams(setTokenAuthority.id, {
-          authority: tokenAuthorityAddress,
-        }),
+        transactionAddParams(setTokenAuthority.id, [tokenAuthorityAddress]),
       );
       yield put(transactionReady(setTokenAuthority.id));
       yield takeFrom(
@@ -425,9 +414,11 @@ function* colonyCreate({
      * Set OneTx administration role
      */
     yield put(
-      transactionAddParams(setOneTxRoleAdministration.id, {
-        address: oneTxAddress,
-      }),
+      transactionAddParams(setOneTxRoleAdministration.id, [
+        oneTxAddress,
+        ROOT_DOMAIN_ID,
+        true,
+      ]),
     );
     yield put(transactionReady(setOneTxRoleAdministration.id));
     yield takeFrom(
@@ -439,7 +430,11 @@ function* colonyCreate({
      * Set OneTx funding role
      */
     yield put(
-      transactionAddParams(setOneTxRoleFunding.id, { address: oneTxAddress }),
+      transactionAddParams(setOneTxRoleFunding.id, [
+        oneTxAddress,
+        ROOT_DOMAIN_ID,
+        true,
+      ]),
     );
     yield put(transactionReady(setOneTxRoleFunding.id));
     yield takeFrom(

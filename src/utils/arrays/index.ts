@@ -182,3 +182,10 @@ export const recursiveNestChildren = (
   });
   return collapsedItems;
 };
+
+export const arrayToObject = (arr: any[]) =>
+  arr.reduce((obj, current, idx) => {
+    // eslint-disable-next-line no-param-reassign
+    obj[idx.toString()] = current;
+    return obj;
+  }, {});

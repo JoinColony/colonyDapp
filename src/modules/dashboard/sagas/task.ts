@@ -96,16 +96,16 @@ function* taskFinalize({
 
     const txChannel = yield call(getTxChannel, meta.id);
     yield fork(createTransaction, meta.id, {
-      context: ClientType.ColonyClient,
-      methodName: 'makePaymentFundedFromDomain',
+      context: ClientType.OneTxPaymentClient,
+      methodName: 'makePaymentFundedFromDomainWithProofs',
       identifier: colonyAddress,
-      params: {
-        recipient: workerAddress,
+      params: [
+        workerAddress,
         token,
-        amount: bigNumberify(moveDecimal(amount, decimals)),
+        bigNumberify(moveDecimal(amount, decimals)),
         domainId,
-        skillId: skillId || 0,
-      },
+        skillId || 0,
+      ],
     });
 
     const {

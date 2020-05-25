@@ -1,5 +1,6 @@
 import { Resolvers } from 'apollo-client';
 import { padLeft, toHex } from 'web3-utils';
+import { ClientType } from '@colony/colony-js';
 
 import { Context } from '~context/index';
 import { createAddress } from '~utils/web3';
@@ -16,10 +17,15 @@ export const taskResolvers = ({
     },
     async finalizedPayment({ colonyAddress, finalizedAt, ethPotId }) {
       if (!finalizedAt || !ethPotId) return null;
-      const colonyClient = await colonyManager.getColonyClient(colonyAddress);
+      const colonyClient = await colonyManager.getClient(
+        ClientType.ColonyClient,
+        colonyAddress,
+      );
       const {
         events: { PayoutClaimed },
       } = colonyClient;
+      // FIXME this won't work
+      // Idea: remove the any type from ethers contract temporarily and fix everything
       const topics = [
         ...PayoutClaimed.interface.topics,
         padLeft(toHex(ethPotId), 64),

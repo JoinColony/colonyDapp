@@ -4,7 +4,7 @@ import {
   ActionTypes,
 } from '~redux/index';
 import { TransactionError, TransactionType } from '~immutable/index';
-import { TransactionReceipt } from '~types/index';
+import { MethodParams, TransactionReceipt } from '~types/index';
 
 type WithId = { id: string };
 
@@ -16,7 +16,7 @@ export type TransactionActionTypes =
     >
   | ActionTypeWithPayloadAndMeta<
       ActionTypes.TRANSACTION_ADD_PARAMS,
-      { params: object },
+      { params: MethodParams },
       WithId
     >
   | ActionTypeWithMeta<ActionTypes.TRANSACTION_READY, WithId>

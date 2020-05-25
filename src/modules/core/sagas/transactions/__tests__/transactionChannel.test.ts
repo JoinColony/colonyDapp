@@ -71,6 +71,8 @@ describe('core: sagas (transactionChannel)', () => {
         },
       }),
     );
+    // FIXME
+    // @ts-ignore
     const channel = transactionChannel(txPromise, tx);
 
     const actions = await takeAllFromChannel(channel);
@@ -124,6 +126,8 @@ describe('core: sagas (transactionChannel)', () => {
     const txPromise = new Promise((resolve, reject) =>
       reject(new Error('could not send')),
     );
+    // FIXME
+    // @ts-ignore
     const channel = transactionChannel(txPromise, tx);
 
     const actions = await takeAllFromChannel(channel);
@@ -158,6 +162,8 @@ describe('core: sagas (transactionChannel)', () => {
         },
       }),
     );
+    // FIXME
+    // @ts-ignore
     const channel = transactionChannel(txPromise, tx);
 
     const actions = await takeAllFromChannel(channel);
@@ -220,6 +226,8 @@ describe('core: sagas (transactionChannel)', () => {
         },
       }),
     );
+    // FIXME
+    // @ts-ignore
     const channel = transactionChannel(txPromise, tx);
 
     const actions = await takeAllFromChannel(channel);
@@ -274,6 +282,8 @@ describe('core: sagas (transactionChannel)', () => {
         },
       }),
     );
+    // FIXME
+    // @ts-ignore
     const channel = transactionChannel(txPromise, tx);
 
     const actions = await takeAllFromChannel(channel);

@@ -13,7 +13,7 @@ import { ActionTypes } from '~redux/index';
 import { filterUniqueAction } from '~utils/actions';
 import { getLoggedInUser } from '~data/index';
 
-import { TxConfig } from '../../types';
+import { TxConfig } from '~types/index';
 import { createTxAction } from '../../actionCreators';
 import estimateGasCost from './estimateGasCost';
 import sendTransaction from './sendTransaction';

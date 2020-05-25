@@ -1,11 +1,12 @@
 import { Record } from 'immutable';
-import { BigNumber } from 'ethers/utils';
+import { BigNumber, BigNumberish } from 'ethers/utils';
 import { ClientType } from '@colony/colony-js';
 
 import {
   Address,
   AddressOrENSName,
   DefaultValues,
+  MethodParams,
   RecordToJS,
   TransactionReceipt,
 } from '~types/index';
@@ -41,8 +42,6 @@ export interface TransactionError {
 
 export type TransactionId = string;
 
-export type TransactionParams = object;
-
 export type TransactionEventData = object;
 
 export interface TransactionMultisig {
@@ -73,7 +72,7 @@ export interface TransactionRecordProps {
   methodName: string;
   multisig?: TransactionMultisig; // Indicates tx is multisig if set
   options: SendOptions;
-  params: TransactionParams;
+  params: MethodParams;
   receipt?: TransactionReceipt;
   status: TRANSACTION_STATUSES;
   loadingRelated?: boolean;

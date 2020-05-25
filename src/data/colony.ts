@@ -1,5 +1,6 @@
 import { Resolvers } from 'apollo-client';
 import { bigNumberify } from 'ethers/utils';
+import { ClientType } from '@colony/colony-js';
 
 import ENS from '~lib/ENS';
 import { Address } from '~types/index';
@@ -38,7 +39,10 @@ export const colonyResolvers = ({
   },
   Colony: {
     async canMintNativeToken({ colonyAddress }) {
-      const colonyClient = await colonyManager.getColonyClient(colonyAddress);
+      const colonyClient = await colonyManager.getClient(
+        ClientType.ColonyClient,
+        colonyAddress,
+      );
       // fetch whether the user is allowed to mint tokens via the colony
       let canMintNativeToken = true;
       try {
@@ -49,11 +53,17 @@ export const colonyResolvers = ({
       return canMintNativeToken;
     },
     async isInRecoveryMode({ colonyAddress }) {
-      const colonyClient = await colonyManager.getColonyClient(colonyAddress);
+      const colonyClient = await colonyManager.getClient(
+        ClientType.ColonyClient,
+        colonyAddress,
+      );
       return colonyClient.isInRecoveryMode();
     },
     async isNativeTokenLocked({ colonyAddress }) {
-      const colonyClient = await colonyManager.getColonyClient(colonyAddress);
+      const colonyClient = await colonyManager.getClient(
+        ClientType.ColonyClient,
+        colonyAddress,
+      );
       let isNativeTokenLocked;
       try {
         const locked = await colonyClient.tokenClient.locked();
@@ -78,7 +88,10 @@ export const colonyResolvers = ({
       );
     },
     async canUnlockNativeToken({ colonyAddress }) {
-      const colonyClient = await colonyManager.getColonyClient(colonyAddress);
+      const colonyClient = await colonyManager.getClient(
+        ClientType.ColonyClient,
+        colonyAddress,
+      );
       let canUnlockNativeToken = true;
       try {
         await colonyClient.tokenClient.unlock();
@@ -88,7 +101,10 @@ export const colonyResolvers = ({
       return canUnlockNativeToken;
     },
     async version({ colonyAddress }) {
-      const colonyClient = await colonyManager.getColonyClient(colonyAddress);
+      const colonyClient = await colonyManager.getClient(
+        ClientType.ColonyClient,
+        colonyAddress,
+      );
       return colonyClient.version();
     },
   },

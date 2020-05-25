@@ -208,7 +208,7 @@ function* usernameCreate({
       context: ClientType.NetworkClient,
       methodName: 'registerUserLabel',
       ready: true,
-      params: { username, orbitDBPath: '' },
+      params: [username, ''],
       group: {
         key: 'transaction.batch.createUser',
         id,

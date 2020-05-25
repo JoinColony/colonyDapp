@@ -216,7 +216,7 @@ function* colonyClaimToken({
       context: ClientType.ColonyClient,
       methodName: 'claimColonyFunds',
       identifier: colonyAddress,
-      params: { token: tokenAddress },
+      params: [tokenAddress],
     });
 
     const { payload } = yield takeFrom(
@@ -290,7 +290,7 @@ function* colonyMintTokens({
       context: ClientType.ColonyClient,
       methodName: 'mintTokens',
       identifier: colonyAddress,
-      params: { amount },
+      params: [amount],
       group: {
         key: batchKey,
         id: meta.id,
@@ -302,9 +302,7 @@ function* colonyMintTokens({
       context: ClientType.ColonyClient,
       methodName: 'claimColonyFunds',
       identifier: colonyAddress,
-      params: {
-        token: nativeTokenAddress,
-      },
+      params: [nativeTokenAddress],
       group: {
         key: batchKey,
         id: meta.id,

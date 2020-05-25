@@ -1,7 +1,11 @@
-// FIXME
-// import { ContractResponse } from '@colony/colony-js-client';
+import {
+  Provider,
+  TransactionReceipt,
+  TransactionResponse,
+} from 'ethers/providers';
 import { buffers, END, eventChannel } from 'redux-saga';
 
+import { RequireProps } from '~types/index';
 import { TransactionRecord } from '~immutable/index';
 
 import {
@@ -15,10 +19,13 @@ import {
   transactionSucceeded,
 } from '../../actionCreators';
 
-// FIXME
-type ContractResponse<T> = any;
+type TransactionResponseWithHash = RequireProps<TransactionResponse, 'hash'>;
 
-const channelSendTransaction = async ({ id, params }, txPromise, emit) => {
+const channelSendTransaction = async (
+  { id, params }: TransactionRecord,
+  txPromise: Promise<TransactionResponse>,
+  emit,
+) => {
   if (!txPromise) {
     emit(transactionSendError(id, new Error('No send promise found')));
     return null;
@@ -26,10 +33,14 @@ const channelSendTransaction = async ({ id, params }, txPromise, emit) => {
 
   try {
     emit(transactionSent(id));
-    const result = await txPromise;
-    const { hash } = result.meta.transaction;
+    const transaction = await txPromise;
+    const { hash } = transaction;
+    if (!hash) {
+      emit(transactionSendError(id, new Error('No tx hash found')));
+      return null;
+    }
     emit(transactionHashReceived(id, { hash, params }));
-    return result;
+    return transaction as TransactionResponseWithHash;
   } catch (caughtError) {
     emit(transactionSendError(id, caughtError));
   }
@@ -38,17 +49,13 @@ const channelSendTransaction = async ({ id, params }, txPromise, emit) => {
 };
 
 const channelGetTransactionReceipt = async (
-  { id, params },
-  { meta: { receiptPromise } },
+  { id, params }: TransactionRecord,
+  { hash }: TransactionResponseWithHash,
+  provider: Provider,
   emit,
 ) => {
-  if (!receiptPromise) {
-    emit(transactionReceiptError(id, new Error('No receipt promise found')));
-    return null;
-  }
-
   try {
-    const receipt = await receiptPromise;
+    const receipt = await provider.getTransactionReceipt(hash);
     emit(transactionReceiptReceived(id, { receipt, params }));
     return receipt;
   } catch (caughtError) {
@@ -59,17 +66,13 @@ const channelGetTransactionReceipt = async (
 };
 
 const channelGetEventData = async (
-  { id, params },
-  { eventDataPromise },
+  { id, params }: TransactionRecord,
+  receipt: TransactionReceipt,
   emit,
 ) => {
-  if (!eventDataPromise) {
-    emit(transactionEventDataError(id, new Error('No event promise found')));
-    return null;
-  }
-
   try {
-    const eventData = await eventDataPromise;
+    // FIXME we add this once it comes up
+    const eventData = {};
     emit(transactionSucceeded(id, { eventData, params }));
     return eventData;
   } catch (caughtError) {
@@ -79,16 +82,26 @@ const channelGetEventData = async (
   return null;
 };
 
-const channelStart = async (tx, txPromise, emit) => {
+const channelStart = async (
+  tx: TransactionRecord,
+  txPromise: Promise<TransactionResponse>,
+  provider: Provider,
+  emit,
+) => {
   try {
     const sentTx = await channelSendTransaction(tx, txPromise, emit);
     if (!sentTx) return null;
 
-    const receipt = await channelGetTransactionReceipt(tx, sentTx, emit);
+    const receipt = await channelGetTransactionReceipt(
+      tx,
+      sentTx,
+      provider,
+      emit,
+    );
     if (!receipt) return null;
 
     if (receipt.status === 1) {
-      await channelGetEventData(tx, sentTx, emit);
+      await channelGetEventData(tx, receipt, emit);
     } else {
       /**
        * @todo Use revert reason strings (once supported) in transactions.
@@ -117,11 +130,12 @@ const channelStart = async (tx, txPromise, emit) => {
  * emit actions with the transaction status.
  */
 const transactionChannel = (
-  txPromise: Promise<ContractResponse<any>>,
+  txPromise: Promise<TransactionResponse>,
   tx: TransactionRecord,
+  provider: Provider,
 ) =>
   eventChannel((emit) => {
-    channelStart(tx, txPromise, emit);
+    channelStart(tx, txPromise, provider, emit);
     return () => {};
   }, buffers.fixed());
 

@@ -1,11 +1,10 @@
 import { FormikProps } from 'formik';
 import React, { useState, useEffect, useCallback } from 'react';
 import { useDispatch } from 'redux-react-hook';
-import { BigNumber, bigNumberify } from 'ethers/utils';
+import { BigNumber, bigNumberify, parseEther } from 'ethers/utils';
 import { defineMessages, FormattedMessage } from 'react-intl';
 import nanoid from 'nanoid';
 import * as yup from 'yup';
-import { toWei } from 'ethjs-unit';
 
 import { TransactionType, WalletKind } from '~immutable/index';
 import { RadioOption } from '~core/Fields/RadioGroup';
@@ -125,7 +124,7 @@ const GasStationPrice = ({ transaction: { id, gasLimit, error } }: Props) => {
     (currentFeeInWei: BigNumber) => {
       // Check if the user can afford the transaction fee
       if (currentFeeInWei) {
-        const balanceInWei = toWei(balance, 'ether');
+        const balanceInWei = parseEther(balance);
         const enoughEth = currentFeeInWei.lte(balanceInWei);
         if (!enoughEth && !insufficientFunds) {
           setInsufficientFunds(true);

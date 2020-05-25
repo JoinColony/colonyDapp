@@ -1,4 +1,4 @@
-import { ColonyNetworkClient } from '@colony/colony-js';
+import { NetworkClient } from '@colony/colony-js';
 import { bigNumberify } from 'ethers/utils';
 import { call, put, select } from 'redux-saga/effects';
 
@@ -29,7 +29,7 @@ const ETH_GAS_STATION_ENDPOINT =
 const DEFAULT_GAS_PRICE = '1';
 
 const getNetworkGasPrice = async (
-  networkClient: ColonyNetworkClient,
+  networkClient: NetworkClient,
 ): Promise<string> => {
   const price = await networkClient.provider.getGasPrice();
   // Handling the weird ethers BN implementation
@@ -38,7 +38,7 @@ const getNetworkGasPrice = async (
 };
 
 const fetchGasPrices = async (
-  networkClient: ColonyNetworkClient,
+  networkClient: NetworkClient,
 ): Promise<GasPricesProps> => {
   let networkGasPrice = DEFAULT_GAS_PRICE;
 

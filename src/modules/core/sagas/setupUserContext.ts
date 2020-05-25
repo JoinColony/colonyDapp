@@ -30,7 +30,6 @@ import ENS from '../../../lib/ENS';
 import setupAdminSagas from '../../admin/sagas';
 import setupDashboardSagas from '../../dashboard/sagas';
 import { getWallet, setupUsersSagas } from '../../users/sagas/index';
-import setupTransactionsSagas from './transactions';
 import setupNetworkSagas from './network';
 import { getGasPrices, getColonyManager } from './utils';
 import setupOnBeforeUnload from './setupOnBeforeUnload';
@@ -42,7 +41,6 @@ function* setupContextDependentSagas() {
     call(setupAdminSagas),
     call(setupDashboardSagas),
     call(setupUsersSagas),
-    call(setupTransactionsSagas),
     call(setupNetworkSagas),
     /**
      * We've loaded all the context sagas, so we can proceed with redering

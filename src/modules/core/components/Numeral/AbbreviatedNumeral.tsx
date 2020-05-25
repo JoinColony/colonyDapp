@@ -1,6 +1,5 @@
 import React, { HTMLAttributes } from 'react';
-import { fromWei } from 'ethjs-unit';
-import { BigNumber } from 'ethers/utils';
+import { BigNumber, formatUnits } from 'ethers/utils';
 import { UnifiedNumberFormatOptions } from '@formatjs/intl-unified-numberformat';
 import moveDecimal from 'move-decimal-point';
 import { useIntl } from 'react-intl';
@@ -43,11 +42,11 @@ const AbbreviatedNumeral = ({
   const { locale } = useIntl();
   const convertedNum =
     typeof ethUnit === 'string'
-      ? fromWei(value.toString(10), ethUnit)
+      ? formatUnits(value.toString(10), ethUnit)
       : moveDecimal(value.toString(10), -(ethUnit || 0));
 
   const formattedNumber = new Intl.NumberFormat(locale, formatOptions).format(
-    convertedNum,
+    parseFloat(convertedNum),
   );
 
   return <span {...rest}>{formattedNumber}</span>;

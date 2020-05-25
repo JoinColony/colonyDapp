@@ -11,7 +11,7 @@ import {
   open as openMetaMaskWallet,
   MetaMaskInpageProvider,
 } from '@purser/metamask';
-import type { ColonyNetworkClient } from '@colony/colony-js';
+import type { NetworkClient } from '@colony/colony-js';
 
 import { WalletMethod } from '~immutable/index';
 import { Action, ActionTypes, AllActions } from '~redux/index';
@@ -53,7 +53,7 @@ function* fetchAccounts(action: Action<ActionTypes.WALLET_FETCH_ACCOUNTS>) {
 
     // FIXME this is weird, let's get the provider in a better way
     // ACtually this is going to be replaced by something else entirely
-    const { provider }: ColonyNetworkClient = yield getColonyNetworkClient();
+    const { provider }: NetworkClient = yield getColonyNetworkClient();
 
     const addressesWithBalance = yield all(
       otherAddresses.map((address) =>
