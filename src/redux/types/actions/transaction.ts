@@ -1,10 +1,11 @@
+import { TransactionReceipt } from 'ethers/providers';
 import {
   ActionTypeWithPayloadAndMeta,
   ActionTypeWithMeta,
   ActionTypes,
 } from '~redux/index';
 import { TransactionError, TransactionType } from '~immutable/index';
-import { MethodParams, TransactionReceipt } from '~types/index';
+import { MethodParams } from '~types/index';
 
 type WithId = { id: string };
 
@@ -35,6 +36,7 @@ export type TransactionActionTypes =
         | 'multisig'
         | 'options'
         | 'params'
+        | 'parseEvents'
         | 'status'
       >,
       WithId
@@ -64,13 +66,17 @@ export type TransactionActionTypes =
     >
   | ActionTypeWithPayloadAndMeta<
       ActionTypes.TRANSACTION_RECEIPT_RECEIVED,
-      { receipt: TransactionReceipt; params: object },
+      { receipt: TransactionReceipt; params: MethodParams },
       WithId
     >
   | ActionTypeWithMeta<ActionTypes.TRANSACTION_SEND, WithId>
   | ActionTypeWithMeta<ActionTypes.TRANSACTION_SENT, WithId>
   | ActionTypeWithPayloadAndMeta<
       ActionTypes.TRANSACTION_SUCCEEDED,
-      { eventData: object; params: object },
+      {
+        eventData: object;
+        params: MethodParams;
+        deployedContractAddress?: string;
+      },
       WithId
     >;

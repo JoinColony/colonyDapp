@@ -4,8 +4,9 @@ import {
   TransactionResponse,
 } from 'ethers/providers';
 import { buffers, END, eventChannel } from 'redux-saga';
+import { ContractClient } from '@colony/colony-js';
 
-import { RequireProps } from '~types/index';
+import { MethodParams, RequireProps } from '~types/index';
 import { TransactionRecord } from '~immutable/index';
 
 import {
@@ -20,6 +21,12 @@ import {
 } from '../../actionCreators';
 
 type TransactionResponseWithHash = RequireProps<TransactionResponse, 'hash'>;
+// @TODO typing here is not great but I have no idea how to improve it atm
+type TxSucceededEvent = {
+  eventData: object;
+  params: MethodParams;
+  deployedContractAddress?: string;
+};
 
 const channelSendTransaction = async (
   { id, params }: TransactionRecord,
@@ -42,6 +49,7 @@ const channelSendTransaction = async (
     emit(transactionHashReceived(id, { hash, params }));
     return transaction as TransactionResponseWithHash;
   } catch (caughtError) {
+    console.error(caughtError);
     emit(transactionSendError(id, caughtError));
   }
 
@@ -59,6 +67,7 @@ const channelGetTransactionReceipt = async (
     emit(transactionReceiptReceived(id, { receipt, params }));
     return receipt;
   } catch (caughtError) {
+    console.error(caughtError);
     emit(transactionReceiptError(id, caughtError));
   }
 
@@ -68,14 +77,27 @@ const channelGetTransactionReceipt = async (
 const channelGetEventData = async (
   { id, params }: TransactionRecord,
   receipt: TransactionReceipt,
+  client,
   emit,
 ) => {
   try {
+    debugger;
     // FIXME we add this once it comes up
     const eventData = {};
-    emit(transactionSucceeded(id, { eventData, params }));
+    const txSucceededEvent: TxSucceededEvent = {
+      eventData,
+      params,
+      deployedContractAddress: undefined,
+    };
+    console.log(receipt);
+    console.log(client);
+    if (receipt.contractAddress) {
+      txSucceededEvent.deployedContractAddress = receipt.contractAddress;
+    }
+    emit(transactionSucceeded(id, txSucceededEvent));
     return eventData;
   } catch (caughtError) {
+    console.error(caughtError);
     emit(transactionEventDataError(id, caughtError));
   }
 
@@ -85,7 +107,7 @@ const channelGetEventData = async (
 const channelStart = async (
   tx: TransactionRecord,
   txPromise: Promise<TransactionResponse>,
-  provider: Provider,
+  client: ContractClient,
   emit,
 ) => {
   try {
@@ -95,13 +117,13 @@ const channelStart = async (
     const receipt = await channelGetTransactionReceipt(
       tx,
       sentTx,
-      provider,
+      client.provider,
       emit,
     );
     if (!receipt) return null;
 
     if (receipt.status === 1) {
-      await channelGetEventData(tx, receipt, emit);
+      await channelGetEventData(tx, receipt, client, emit);
     } else {
       /**
        * @todo Use revert reason strings (once supported) in transactions.
@@ -132,10 +154,10 @@ const channelStart = async (
 const transactionChannel = (
   txPromise: Promise<TransactionResponse>,
   tx: TransactionRecord,
-  provider: Provider,
+  client: ContractClient,
 ) =>
   eventChannel((emit) => {
-    channelStart(tx, txPromise, provider, emit);
+    channelStart(tx, txPromise, client, emit);
     return () => {};
   }, buffers.fixed());
 

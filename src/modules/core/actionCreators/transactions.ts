@@ -1,7 +1,7 @@
-import { $PropertyType } from 'utility-types';
+import { TransactionReceipt } from 'ethers/providers';
 
 import { AllActions, ActionTypes } from '~redux/index';
-import { MethodParams, TransactionReceipt, TxConfig } from '~types/index';
+import { MethodParams, TxConfig } from '~types/index';
 import {
   GasPricesProps,
   TransactionError,
@@ -22,6 +22,7 @@ export const createTxAction = (
     multisig: multisigConfig,
     options,
     params = [],
+    parseEvents,
     ready,
   }: TxConfig,
 ) => ({
@@ -43,12 +44,13 @@ export const createTxAction = (
       ready === false
         ? TRANSACTION_STATUSES.CREATED
         : TRANSACTION_STATUSES.READY,
+    parseEvents,
   },
   meta: { id },
 });
 
 const transactionError = (
-  type: $PropertyType<TransactionError, 'type'>,
+  type: TransactionError['type'],
   id: string,
   error: Error,
 ): AllActions => ({
@@ -134,7 +136,7 @@ export const multisigTransactionReject = (id: string): AllActions => ({
 
 export const transactionReceiptReceived = (
   id: string,
-  payload: { receipt: TransactionReceipt; params: object },
+  payload: { receipt: TransactionReceipt; params: MethodParams },
 ): AllActions => ({
   type: ActionTypes.TRANSACTION_RECEIPT_RECEIVED,
   payload,
@@ -148,7 +150,7 @@ export const transactionSent = (id: string): AllActions => ({
 
 export const transactionHashReceived = (
   id: string,
-  payload: { hash: string; params: object },
+  payload: { hash: string; params: MethodParams },
 ): AllActions => ({
   type: ActionTypes.TRANSACTION_HASH_RECEIVED,
   payload,
@@ -157,7 +159,11 @@ export const transactionHashReceived = (
 
 export const transactionSucceeded = (
   id: string,
-  payload: { eventData: object; params: object },
+  payload: {
+    eventData: object;
+    params: MethodParams;
+    deployedContractAddress?: string;
+  },
 ): AllActions => ({
   type: ActionTypes.TRANSACTION_SUCCEEDED,
   payload,

@@ -22,6 +22,7 @@ export type MultisigActionTypes =
         | 'multisig'
         | 'options'
         | 'params'
+        | 'parseEvents'
         | 'status'
       >,
       WithId

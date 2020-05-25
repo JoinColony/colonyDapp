@@ -1,6 +1,7 @@
 import { Record } from 'immutable';
-import { BigNumber, BigNumberish } from 'ethers/utils';
-import { ClientType } from '@colony/colony-js';
+import { BigNumber } from 'ethers/utils';
+import { TransactionReceipt } from 'ethers/providers';
+import type { ClientType, TransactionOverrides } from '@colony/colony-js';
 
 import {
   Address,
@@ -8,11 +9,7 @@ import {
   DefaultValues,
   MethodParams,
   RecordToJS,
-  TransactionReceipt,
 } from '~types/index';
-
-// FIXME
-type SendOptions = any;
 
 export enum TRANSACTION_ERRORS {
   ESTIMATE = 'ESTIMATE',
@@ -42,8 +39,6 @@ export interface TransactionError {
 
 export type TransactionId = string;
 
-export type TransactionEventData = object;
-
 export interface TransactionMultisig {
   missingSignees?: Address[];
   nonce?: number;
@@ -55,8 +50,9 @@ export interface TransactionMultisig {
 export interface TransactionRecordProps {
   context: ClientType;
   createdAt: Date;
+  deployedContractAddress?: string;
   error?: TransactionError;
-  eventData?: TransactionEventData;
+  eventData?: object;
   from: string;
   gasLimit?: number;
   gasPrice?: BigNumber;
@@ -71,11 +67,12 @@ export interface TransactionRecordProps {
   methodContext?: string; // Context in which method is used e.g. setOneTxRole
   methodName: string;
   multisig?: TransactionMultisig; // Indicates tx is multisig if set
-  options: SendOptions;
+  options: TransactionOverrides;
   params: MethodParams;
   receipt?: TransactionReceipt;
   status: TRANSACTION_STATUSES;
   loadingRelated?: boolean;
+  parseEvents?: string[];
 }
 
 export type TransactionType = Readonly<TransactionRecordProps>;
@@ -84,6 +81,7 @@ const defaultValues: DefaultValues<TransactionRecordProps> = {
   // Just because we have to pick one
   context: undefined,
   createdAt: new Date(),
+  deployedContractAddress: undefined,
   error: undefined,
   eventData: undefined,
   from: undefined,
@@ -101,6 +99,7 @@ const defaultValues: DefaultValues<TransactionRecordProps> = {
   receipt: undefined,
   status: undefined,
   loadingRelated: false,
+  parseEvents: undefined,
 };
 
 export class TransactionRecord

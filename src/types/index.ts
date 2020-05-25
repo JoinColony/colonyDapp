@@ -1,11 +1,9 @@
 import { ReactNode } from 'react';
+import { TransactionReceipt } from 'ethers/providers';
 import { BigNumberish } from 'ethers/utils';
 import { ClientType, TransactionOverrides } from '@colony/colony-js';
 
-import { TransactionEventData, TransactionMultisig } from '~immutable/index';
-
-// FIXME get from ethers?
-export type TransactionReceipt = any;
+import { TransactionMultisig } from '~immutable/index';
 
 export * from './keyTypes';
 // export * from './TransactionReceipt';
@@ -20,7 +18,8 @@ export type WithKey = {
 };
 
 export type ExcludesNull = <T>(x: T | null) => x is T;
-export type RequireProps<T, K extends keyof T> = Omit<T, K> & Required<Pick<T, K>>;
+export type RequireProps<T, K extends keyof T> = Omit<T, K> &
+  Required<Pick<T, K>>;
 
 // https://stackoverflow.com/questions/54607400/typescript-remove-entries-from-tuple-type
 export type RemoveFirstFromTuple<T extends any[]> = T['length'] extends 0
@@ -78,7 +77,7 @@ export interface TxConfig {
 
 export interface TransactionResponse {
   receipt?: TransactionReceipt;
-  eventData?: TransactionEventData;
+  eventData?: object;
   error?: Error;
 }
 

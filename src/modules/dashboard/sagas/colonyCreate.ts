@@ -129,7 +129,7 @@ function* colonyCreate({
       yield createGroupedTransaction(createToken, {
         context: ClientType.NetworkClient,
         methodName: 'deployToken',
-        params: [tokenName, tokenSymbol],
+        params: [tokenName, tokenSymbol, DEFAULT_TOKEN_DECIMALS],
       });
     }
 
@@ -230,23 +230,19 @@ function* colonyCreate({
      */
     let tokenAddress: string;
     if (createToken) {
-      ({
-        payload: {
-          transaction: {
-            receipt: { contractAddress: tokenAddress },
-          },
-        },
+      const {
+        payload: { deployedContractAddress },
       } = yield takeFrom(
         createToken.channel,
         ActionTypes.TRANSACTION_SUCCEEDED,
-      ));
+      );
+      tokenAddress = createAddress(deployedContractAddress);
     } else {
       if (!givenTokenAddress) {
         throw new Error('Token address not provided');
       }
-      tokenAddress = givenTokenAddress;
+      tokenAddress = createAddress(givenTokenAddress);
     }
-    tokenAddress = createAddress(tokenAddress);
 
     /*
      * Pass through tokenAddress after token creation to the colony creation

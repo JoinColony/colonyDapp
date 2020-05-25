@@ -1,6 +1,6 @@
 import { call, put, take } from 'redux-saga/effects';
 import { TransactionResponse } from 'ethers/providers';
-import { ContractClient } from '@colony/colony-js';
+import type { ContractClient, TransactionOverrides } from '@colony/colony-js';
 
 import { ActionTypes } from '~redux/index';
 import { selectAsJS } from '~utils/saga/effects';
@@ -34,7 +34,7 @@ async function getMethodTransactionPromise(
     gasLimit,
     gasPrice,
   } = tx;
-  const sendOptions = {
+  const sendOptions: TransactionOverrides = {
     gasLimit: gasLimitOverride || gasLimit,
     gasPrice: gasPriceOverride || gasPrice,
     ...restOptions,
@@ -62,7 +62,7 @@ export default function* sendTransaction({
     transactionChannel,
     txPromise,
     transaction,
-    colonyManager.provider,
+    client,
   );
 
   try {

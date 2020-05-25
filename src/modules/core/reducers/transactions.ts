@@ -43,6 +43,7 @@ const coreTransactionsReducer: ReducerType<CoreTransactionsRecord> = (
           multisig,
           options,
           params,
+          parseEvents,
           status,
         },
       } = action;
@@ -59,6 +60,7 @@ const coreTransactionsReducer: ReducerType<CoreTransactionsRecord> = (
         multisig,
         options,
         params,
+        parseEvents,
         status,
       } as TransactionRecordProps);
 
@@ -161,9 +163,10 @@ const coreTransactionsReducer: ReducerType<CoreTransactionsRecord> = (
     case ActionTypes.TRANSACTION_SUCCEEDED: {
       const {
         meta: { id },
-        payload: { eventData },
+        payload: { eventData, deployedContractAddress },
       } = action;
       return state.mergeIn([CORE_TRANSACTIONS_LIST, id], {
+        deployedContractAddress,
         eventData,
         status: TRANSACTION_STATUSES.SUCCEEDED,
       });
