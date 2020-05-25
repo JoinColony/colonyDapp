@@ -6,16 +6,19 @@ import React, {
   useState,
   useEffect,
 } from 'react';
-import { defineMessages, FormattedMessage } from 'react-intl';
+import {
+  defineMessages,
+  FormattedMessage,
+  MessageDescriptor,
+} from 'react-intl';
+import { useField } from 'formik';
 
 import Button from '~core/Button';
-import { asField } from '~core/Fields';
-import { FieldEnhancedProps } from '~core/Fields/types';
 import Popover, { Tooltip } from '~core/Popover';
-
-import { ConsumableItem } from './index';
+import { sortObjectsBy, recursiveNestChildren } from '~utils/arrays';
 
 import styles from './ItemsList.css';
+import { usePrevious } from '~utils/hooks';
 
 const MSG = defineMessages({
   fallbackListButton: {
@@ -24,18 +27,21 @@ const MSG = defineMessages({
   },
 });
 
+export interface ConsumableItem {
+  disabled?: boolean;
+  disabledText?: MessageDescriptor | string;
+  id: number;
+  name: string;
+  parent?: number;
+  children?: ConsumableItem[];
+}
+
 interface Props {
-  /** The already nested list, generated from list by the wrapper */
-  collapsedList: ConsumableItem[];
-
-  /** Wheather or not to show the Popover's arrow */
-  showArrow?: boolean;
-
-  /** The intial list of items to display (before collapsing it) */
-  list: ConsumableItem[];
-
   /** Children to render and to use as a trigger for the Popover */
   children?: ReactNode;
+
+  /** Whether the selector should be disabled */
+  disabled?: boolean;
 
   /** Prefix to display before the individual item when rendering it */
   itemDisplayPrefix?: string;
@@ -43,53 +49,53 @@ interface Props {
   /** Suffix to display after the individual item when rendering it */
   itemDisplaySuffix?: string;
 
-  /** Callback to call when setting a new item (only when the Form isn't connected) */
-  handleSetItem?: (value?: ConsumableItem) => void;
+  /** The intial list of items to display (before collapsing it) */
+  list: ConsumableItem[];
 
-  /** Callback to call when removing an item (only when the Form isn't connected) */
-  handleRemoveItem?: (value?: ConsumableItem) => void;
-
-  /** The item ID given to the form as the current ID */
-  itemId: number | void;
-
-  /** Whether the selector should be disabled */
-  disabled?: boolean;
+  /** Field name */
+  name: string;
 
   /** Whether the value can be unset */
   nullable?: boolean;
+
+  /** Callback function, called after the field value has been set */
+  onChange?: (value: number | null | undefined) => void;
+
+  /** Wheather or not to show the Popover's arrow */
+  showArrow?: boolean;
 }
 
 const displayName = 'ItemsList';
 
 const ItemsList = ({
-  showArrow = true,
-  list = [],
-  collapsedList = [],
   children,
+  disabled,
   itemDisplayPrefix = '',
   itemDisplaySuffix = '',
-  itemId,
-  disabled,
+  list,
+  name: fieldName,
+  onChange: onChangeCallback,
   nullable,
-  handleRemoveItem = (value: ConsumableItem) => value,
-  handleSetItem: callback = (value: ConsumableItem) => value,
-  connect,
-  setValue,
-}: Props & FieldEnhancedProps) => {
-  // Item that is actually set on the task
-  const [currentItem, setCurrentItem] = useState<number | undefined>();
+  showArrow = true,
+}: Props) => {
+  const [, { initialValue, value }, { setValue }] = useField<
+    number | null | undefined
+  >(fieldName);
   // This values determines if any item in the (newly opened) list was selected
   const [listTouched, setListTouched] = useState<boolean>(false);
   // Item selected in the popover list
-  const [selectedItem, setSelectedItem] = useState<number | undefined>();
-  // Whether or not the component needs value cleanup (after close)
-  const [needsCleanup, setNeedsCleanup] = useState<boolean>(false);
+  const [selectedItem, setSelectedItem] = useState<number | null>();
+
+  const previousValue = usePrevious<number | null | undefined>(value);
 
   /*
    * Handle resetting state on popover close
    */
   const handleCleanup = (cleanupCallback?: () => void) => {
-    setNeedsCleanup(true);
+    if (selectedItem !== value && listTouched) {
+      setSelectedItem(value);
+      setListTouched(false);
+    }
     if (cleanupCallback) {
       cleanupCallback();
     }
@@ -110,20 +116,16 @@ const ItemsList = ({
    */
   const handleSet = useCallback(
     (close: () => void) => {
-      const { id: currentItemId, name } =
+      const { id: currentItemId } =
         list.find(({ id }) => id === selectedItem) || {};
-      setCurrentItem(currentItemId);
       setListTouched(false);
+      setValue(currentItemId);
       close();
-      if (!connect && currentItemId && name) {
-        return callback({ id: currentItemId, name });
+      if (onChangeCallback) {
+        onChangeCallback(value);
       }
-      if (setValue) {
-        return setValue(currentItemId);
-      }
-      return null;
     },
-    [callback, connect, list, selectedItem, setValue],
+    [list, onChangeCallback, selectedItem, setValue, value],
   );
 
   /*
@@ -131,19 +133,15 @@ const ItemsList = ({
    */
   const handleUnset = useCallback(
     (close: () => void) => {
-      setCurrentItem(undefined);
       setSelectedItem(undefined);
       setListTouched(false);
+      setValue(null);
       close();
-      if (!connect && handleRemoveItem && itemId) {
-        return handleRemoveItem({ id: itemId, name: '' });
+      if (onChangeCallback) {
+        onChangeCallback(value);
       }
-      if (setValue) {
-        return setValue(null);
-      }
-      return null;
     },
-    [connect, handleRemoveItem, itemId, setValue],
+    [onChangeCallback, setValue, value],
   );
 
   /*
@@ -224,18 +222,25 @@ const ItemsList = ({
   );
 
   useEffect(() => {
-    if (needsCleanup) {
-      if (selectedItem !== currentItem && listTouched) {
-        setSelectedItem(currentItem);
-        setListTouched(false);
-      }
-      setNeedsCleanup(false);
+    if (value !== previousValue) {
+      setSelectedItem(value);
     }
-  }, [currentItem, listTouched, needsCleanup, selectedItem]);
+  }, [previousValue, value]);
+
+  useEffect(() => {
+    if (initialValue) {
+      setSelectedItem(initialValue);
+    }
+  }, [initialValue]);
+
+  const collapsedList = useMemo(
+    () => recursiveNestChildren(list.sort(sortObjectsBy('name'))),
+    [list],
+  );
 
   const currentItemElement = useMemo(
-    () => list.find(({ id }) => id === (currentItem || itemId)),
-    [currentItem, itemId, list],
+    () => list.find(({ id }) => id === value),
+    [value, list],
   );
 
   return (
@@ -309,6 +314,4 @@ const ItemsList = ({
 
 ItemsList.displayName = displayName;
 
-export default asField<Props>({
-  initialValue: '',
-})(ItemsList);
+export default ItemsList;

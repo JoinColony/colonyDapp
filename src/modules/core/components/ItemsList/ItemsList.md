@@ -4,39 +4,11 @@ It can handle both single and multi levels of lists.
 
 Most common usage: Skills, Domains.
 
-### Connected to a Form (default)
-
-```jsx
-import { Form, Formik } from 'formik';
-import WrappedItemsList from './index';
-import Button from '../Button';
-
-const singleLevel = [
-  { id: 1, name: 'Abruzzenhund' },
-  { id: 2, name: 'Affenpinscher' },
-  { id: 3, name: 'Afghan Hound' },
-];
-
-<Formik
-  initialValues={{ 'connectedItemList': '' }}
-  onSubmit={console.log}
->
-  {({ values }) => (
-    <Form>
-      <WrappedItemsList list={singleLevel} name="connectedItemList">
-        <span style={{ fontWeight: 'bold', color: 'blue' }}>Select a hound</span>
-      </WrappedItemsList>
-      <pre>{JSON.stringify(values, null, 2)}</pre>
-      <Button type="submit">Submit Hound</Button>
-    </Form>
-  )}
-</Formik>
-```
-
-### Single Level List (unconnected)
+### Single Level List
 
 ```js
-import WrappedItemsList from './index';
+import Button from '../Button';
+import { Form } from '../Fields';
 
 const singleLevel = [
   { id: 1, name: 'Abruzzenhund' },
@@ -61,13 +33,21 @@ const singleLevel = [
   { id: 20, name: 'American Alsatian' },
 ];
 
-<WrappedItemsList name="singleLevelItemList" list={singleLevel} connect={false} />
+<Form
+  initialValues={{ itemsList: undefined }}
+  onSubmit={values => console.log(values)}
+>
+  <ItemsList name="itemsList" list={singleLevel} />
+  <br />
+  <Button text="submit" type="submit" />
+</Form>
 ```
 
-### Multi Level, Nested List (unconnected)
+### Multi Level, Nested List
 
 ```js
-import WrappedItemsList from './index';
+import Button from '../Button';
+import { Form } from '../Fields';
 
 const multiLevel = [
   { id: 1, name: 'Metals' },
@@ -87,7 +67,42 @@ const multiLevel = [
   { id: 302, name: 'AB-Negative', parent: 30 },
 ];
 
-<WrappedItemsList name="multiLevelItemList" list={multiLevel} connect={false}>
-  <span>This is a nested list (click me!)</span>
-</WrappedItemsList>
+<Form
+  initialValues={{ itemsList: undefined }}
+  onSubmit={values => console.log(values)}
+>
+  <ItemsList name="itemsList" list={multiLevel}>
+    <span>This is a nested list (click me!)</span>
+  </ItemsList>
+  <br />
+  <Button text="submit" type="submit" />
+</Form>
+```
+
+### Nullable items list
+
+```jsx
+import Button from '../Button';
+import { Form } from '../Fields';
+
+const singleLevel = [
+  { id: 1, name: 'Abruzzenhund' },
+  { id: 2, name: 'Affenpinscher' },
+  { id: 3, name: 'Afghan Hound' },
+];
+
+<Form
+  initialValues={{ itemsList: 2 }}
+  onSubmit={values => console.log(values)}
+>
+  {({ values }) => (
+    <>
+      <ItemsList list={singleLevel} name="itemsList" nullable>
+        <span style={{ fontWeight: 'bold', color: 'blue' }}>Select a hound</span>
+      </ItemsList>
+      <pre>{JSON.stringify(values, null, 2)}</pre>
+      <Button type="submit">Submit Hound</Button>
+    </>
+  )}
+</Form>
 ```

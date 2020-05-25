@@ -1,10 +1,11 @@
-import React, { useCallback, /* useEffect, */ useMemo, useState } from 'react';
+import React, { useCallback, /* useEffect, */ useMemo } from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 /* import BigNumber from 'bn.js'; */
 
 import { COLONY_TOTAL_BALANCE_DOMAIN_ID } from '~constants';
-import Heading from '~core/Heading';
 import Button from '~core/Button';
+import { Form } from '~core/Fields';
+import Heading from '~core/Heading';
 import ItemsList from '~core/ItemsList';
 import {
   useSetTaskDomainMutation,
@@ -45,6 +46,10 @@ const MSG = defineMessages({
   },
 });
 
+interface FormValues {
+  taskDomains: number;
+}
+
 interface Props {
   colonyAddress: Address;
   disabled?: boolean;
@@ -72,21 +77,16 @@ const TaskDomains = ({
 Props) => {
   const [setDomain] = useSetTaskDomainMutation();
 
-  const [selectedDomainId, setSelectedDomainId] = useState<number | undefined>(
-    ethDomainId,
-  );
-
   const handleSetDomain = useCallback(
-    (domainValue: number) => {
+    ({ taskDomains }: FormValues) => {
       setDomain({
         variables: {
           input: {
-            ethDomainId: domainValue,
+            ethDomainId: taskDomains,
             id: draftId,
           },
         },
       });
-      setSelectedDomainId(domainValue);
     },
     [draftId, setDomain],
   );
@@ -162,34 +162,43 @@ Props) => {
 
   return (
     <div className={styles.main}>
-      <ItemsList
-        list={consumableDomains}
-        handleSetItem={handleSetDomain}
-        name="taskDomains"
-        connect={false}
-        showArrow={false}
-        itemId={ethDomainId || COLONY_TOTAL_BALANCE_DOMAIN_ID}
-        disabled={disabled}
+      <Form
+        initialValues={{
+          taskDomains: ethDomainId || COLONY_TOTAL_BALANCE_DOMAIN_ID,
+        }}
+        onSubmit={handleSetDomain}
       >
-        <div className={styles.controls}>
-          <Heading
-            appearance={{ size: 'small', margin: 'none' }}
-            text={MSG.title}
-          />
-          {!disabled && (
-            <Button
-              appearance={{ theme: 'blue', size: 'small' }}
-              text={MSG.selectDomain}
-              textValues={{ domainSelected: selectedDomainId }}
-            />
-          )}
-        </div>
-      </ItemsList>
-      {!ethDomainId && (
-        <span className={styles.notSet}>
-          <FormattedMessage {...MSG.notSet} />
-        </span>
-      )}
+        {({ submitForm, values: { taskDomains } }) => (
+          <>
+            <ItemsList
+              list={consumableDomains}
+              name="taskDomains"
+              showArrow={false}
+              onChange={submitForm}
+              disabled={disabled}
+            >
+              <div className={styles.controls}>
+                <Heading
+                  appearance={{ size: 'small', margin: 'none' }}
+                  text={MSG.title}
+                />
+                {!disabled && (
+                  <Button
+                    appearance={{ theme: 'blue', size: 'small' }}
+                    text={MSG.selectDomain}
+                    textValues={{ domainSelected: taskDomains }}
+                  />
+                )}
+              </div>
+            </ItemsList>
+            {!ethDomainId && (
+              <span className={styles.notSet}>
+                <FormattedMessage {...MSG.notSet} />
+              </span>
+            )}
+          </>
+        )}
+      </Form>
     </div>
   );
 };
