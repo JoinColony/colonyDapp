@@ -11,7 +11,6 @@ export { default as Textarea, TextareaAutoresize } from './Textarea';
 export { default as Radio } from './Radio';
 export { default as RadioGroup } from './RadioGroup';
 
-export { default as asField } from './asField';
 export { default as asFieldArray } from './asFieldArray';
 
 export { SingleLineEdit, MultiLineEdit } from './InlineEdit';
