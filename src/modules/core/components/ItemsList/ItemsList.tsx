@@ -234,7 +234,7 @@ const ItemsList = ({
   }, [currentItem, listTouched, needsCleanup, selectedItem]);
 
   const currentItemElement = useMemo(
-    () => list.find(({ id }) => id === currentItem || itemId),
+    () => list.find(({ id }) => id === (currentItem || itemId)),
     [currentItem, itemId, list],
   );
 
