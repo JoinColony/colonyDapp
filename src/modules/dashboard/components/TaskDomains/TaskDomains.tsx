@@ -144,8 +144,20 @@ Props) => {
           disabled: false,
           /* disabled: !domainHasEnoughFunds(parseInt(id, 10)), */
           id: parseInt(id, 10),
-        })),
-    [domains],
+        }))
+        /**
+         * @NOTE Temporary patch
+         *
+         * This will return just the selected domain from the consumables array
+         * This is needed since the items list will sort the array and such will
+         * always return ROOT as the first domain, which will be "selected" on the task
+         *
+         * This is a visual change only, to display the "correct" domain, but one
+         * that will need to be removed once we bring back the feature to be able
+         * to select domains after a task's creation.
+         */
+        .filter(({ id }) => id === ethDomainId),
+    [domains, ethDomainId],
   );
 
   return (
