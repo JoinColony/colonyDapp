@@ -43,7 +43,6 @@ const coreTransactionsReducer: ReducerType<CoreTransactionsRecord> = (
           multisig,
           options,
           params,
-          parseEvents,
           status,
         },
       } = action;
@@ -60,7 +59,6 @@ const coreTransactionsReducer: ReducerType<CoreTransactionsRecord> = (
         multisig,
         options,
         params,
-        parseEvents,
         status,
       } as TransactionRecordProps);
 

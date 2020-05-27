@@ -106,6 +106,11 @@ export default class ColonyManager {
         // @ts-ignore
         return colonyClient.tokenClient;
       }
+      case ClientType.OneTxPaymentFactoryClient: {
+        // FIXME fix this
+        // @ts-ignore
+        return this.networkClient.oneTxPaymentFactoryClient;
+      }
       default: {
         throw new Error('A valid contract client type has to be specified');
       }

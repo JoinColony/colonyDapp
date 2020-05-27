@@ -22,7 +22,6 @@ export const createTxAction = (
     multisig: multisigConfig,
     options,
     params = [],
-    parseEvents,
     ready,
   }: TxConfig,
 ) => ({
@@ -44,7 +43,6 @@ export const createTxAction = (
       ready === false
         ? TRANSACTION_STATUSES.CREATED
         : TRANSACTION_STATUSES.READY,
-    parseEvents,
   },
   meta: { id },
 });

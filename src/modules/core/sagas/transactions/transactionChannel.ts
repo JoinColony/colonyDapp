@@ -25,7 +25,25 @@ type TransactionResponseWithHash = RequireProps<TransactionResponse, 'hash'>;
 type TxSucceededEvent = {
   eventData: object;
   params: MethodParams;
+  receipt: TransactionReceipt;
   deployedContractAddress?: string;
+};
+
+const parseEventData = (
+  client: ContractClient,
+  receipt: TransactionReceipt,
+) => {
+  const parsedLogs =
+    receipt && receipt.logs
+      ? receipt.logs.map((log) => client.interface.parseLog(log))
+      : [];
+  return parsedLogs
+    .filter((log) => !!log)
+    .reduce((events, log) => {
+      // eslint-disable-next-line no-param-reassign
+      events[log.name] = log.values;
+      return events;
+    }, {});
 };
 
 const channelSendTransaction = async (
@@ -77,20 +95,16 @@ const channelGetTransactionReceipt = async (
 const channelGetEventData = async (
   { id, params }: TransactionRecord,
   receipt: TransactionReceipt,
-  client,
+  client: ContractClient,
   emit,
 ) => {
   try {
-    debugger;
-    // FIXME we add this once it comes up
-    const eventData = {};
+    const eventData = parseEventData(client, receipt);
     const txSucceededEvent: TxSucceededEvent = {
       eventData,
       params,
-      deployedContractAddress: undefined,
+      receipt,
     };
-    console.log(receipt);
-    console.log(client);
     if (receipt.contractAddress) {
       txSucceededEvent.deployedContractAddress = receipt.contractAddress;
     }

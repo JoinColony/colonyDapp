@@ -36,7 +36,6 @@ export type TransactionActionTypes =
         | 'multisig'
         | 'options'
         | 'params'
-        | 'parseEvents'
         | 'status'
       >,
       WithId
@@ -76,6 +75,7 @@ export type TransactionActionTypes =
       {
         eventData: object;
         params: MethodParams;
+        receipt: TransactionReceipt;
         deployedContractAddress?: string;
       },
       WithId

@@ -72,7 +72,6 @@ export interface TxConfig {
   options?: TransactionOverrides;
   params?: MethodParams;
   ready?: boolean;
-  parseEvents?: string[];
 }
 
 export interface TransactionResponse {

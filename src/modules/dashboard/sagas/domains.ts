@@ -92,7 +92,6 @@ function* domainCreate({
       methodName: 'addDomainWithProofs',
       identifier: colonyAddress,
       params: [parentDomainId],
-      parseEvents: ['DomainAdded'],
     });
 
     // HERE WE ARE

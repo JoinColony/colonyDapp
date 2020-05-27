@@ -72,7 +72,6 @@ export interface TransactionRecordProps {
   receipt?: TransactionReceipt;
   status: TRANSACTION_STATUSES;
   loadingRelated?: boolean;
-  parseEvents?: string[];
 }
 
 export type TransactionType = Readonly<TransactionRecordProps>;
@@ -99,7 +98,6 @@ const defaultValues: DefaultValues<TransactionRecordProps> = {
   receipt: undefined,
   status: undefined,
   loadingRelated: false,
-  parseEvents: undefined,
 };
 
 export class TransactionRecord

@@ -24,8 +24,6 @@ import { createAddress } from '~utils/web3';
 import { log } from '~utils/debug';
 import { putError, takeFrom, takeLatestCancellable } from '~utils/saga/effects';
 import { TxConfig } from '~types/index';
-// FIXME
-// import { parseExtensionDeployedLog } from '~utils/web3/eventLogs/eventParsers';
 
 import {
   transactionAddParams,
@@ -161,8 +159,8 @@ function* colonyCreate({
     }
 
     yield createGroupedTransaction(deployOneTx, {
-      context: ClientType.ColonyClient,
-      methodName: 'deployOneTxPayment',
+      context: ClientType.OneTxPaymentFactoryClient,
+      methodName: 'deployExtension',
       ready: false,
     });
 
@@ -176,7 +174,7 @@ function* colonyCreate({
     yield createGroupedTransaction(setOneTxRoleFunding, {
       context: ClientType.ColonyClient,
       methodContext: 'setOneTxRoles',
-      methodName: 'setFundingRole',
+      methodName: 'setFundingRoleWithProofs',
       ready: false,
     });
 
@@ -253,7 +251,9 @@ function* colonyCreate({
 
     const {
       payload: {
-        eventData: { colonyAddress },
+        eventData: {
+          ColonyAdded: { colonyAddress },
+        },
       },
     } = yield takeFrom(createColony.channel, ActionTypes.TRANSACTION_SUCCEEDED);
 
@@ -334,7 +334,6 @@ function* colonyCreate({
         createLabel,
         deployTokenAuthority,
         setTokenAuthority,
-        deployOneTx,
         setOneTxRoleAdministration,
         setOneTxRoleFunding,
       ]
@@ -352,24 +351,17 @@ function* colonyCreate({
       /*
        * Deploy TokenAuthority
        */
-      const { address: tokenLockingAddress } = yield call([
-        networkClient.getTokenLockingAddress,
-        networkClient.getTokenLockingAddress.call,
-      ]);
+      const tokenLockingAddress = yield networkClient.getTokenLocking();
       yield put(
         transactionAddParams(deployTokenAuthority.id, [
           colonyAddress,
           tokenAddress,
-          !!tokenLockingAddress,
+          [tokenLockingAddress],
         ]),
       );
       yield put(transactionReady(deployTokenAuthority.id));
       const {
-        payload: {
-          transaction: {
-            receipt: { contractAddress: tokenAuthorityAddress },
-          },
-        },
+        payload: { deployedContractAddress },
       } = yield takeFrom(
         deployTokenAuthority.channel,
         ActionTypes.TRANSACTION_SUCCEEDED,
@@ -379,7 +371,7 @@ function* colonyCreate({
        * Set Token authority (to deployed TokenAuthority)
        */
       yield put(
-        transactionAddParams(setTokenAuthority.id, [tokenAuthorityAddress]),
+        transactionAddParams(setTokenAuthority.id, [deployedContractAddress]),
       );
       yield put(transactionReady(setTokenAuthority.id));
       yield takeFrom(
@@ -391,27 +383,23 @@ function* colonyCreate({
     /*
      * Deploy OneTx
      */
+    yield put(transactionAddParams(deployOneTx.id, [colonyAddress]));
     yield put(transactionReady(deployOneTx.id));
 
     const {
       payload: {
-        transaction: {
-          receipt: {
-            logs: [deployOneTxLog],
-          },
+        eventData: {
+          ExtensionDeployed: { _extension: extensionAddress },
         },
       },
     } = yield takeFrom(deployOneTx.channel, ActionTypes.TRANSACTION_SUCCEEDED);
-    // FIXME rewrite (+move) parser
-    // const oneTxAddress = parseExtensionDeployedLog(deployOneTxLog);
-    const oneTxAddress = '0xacab';
 
     /*
      * Set OneTx administration role
      */
     yield put(
       transactionAddParams(setOneTxRoleAdministration.id, [
-        oneTxAddress,
+        extensionAddress,
         ROOT_DOMAIN_ID,
         true,
       ]),
@@ -427,7 +415,7 @@ function* colonyCreate({
      */
     yield put(
       transactionAddParams(setOneTxRoleFunding.id, [
-        oneTxAddress,
+        extensionAddress,
         ROOT_DOMAIN_ID,
         true,
       ]),
