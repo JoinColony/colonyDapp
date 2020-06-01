@@ -1,6 +1,7 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Route, Redirect, Switch } from 'react-router-dom';
 import { defineMessages } from 'react-intl';
+import { useDispatch } from 'redux-react-hook';
 
 import CreateColonyWizard from '~dashboard/CreateColonyWizard';
 import CreateUserWizard from '~dashboard/CreateUserWizard';
@@ -18,8 +19,12 @@ import AdminDashboard from '~admin/AdminDashboard';
 import LevelEdit from '~dashboard/LevelEdit';
 import { NavBar, Plain, SimpleNav } from '~pages/RouteLayouts/index';
 import { ColonyBackText, ProgramBackText } from '~pages/BackTexts';
+import LoadingTemplate from '~pages/LoadingTemplate';
 
 import { useLoggedInUser } from '~data/index';
+import { ActionTypes } from '~redux/index';
+import { useSelector } from '~utils/hooks';
+import { setupSagasLoadedSelector } from '../modules/core/selectors';
 
 import {
   CONNECT_ROUTE,
@@ -48,13 +53,34 @@ const MSG = defineMessages({
     id: 'routes.Routes.userProfileEditBack',
     defaultMessage: 'Go to profile',
   },
+  loadingAppMessage: {
+    id: 'routes.Routes.loadingAppMessage',
+    defaultMessage: 'Loading App',
+  },
 });
 
 const Routes = () => {
+  const contextSagasLoaded = useSelector(setupSagasLoadedSelector);
+
   const { walletAddress, username, ethereal } = useLoggedInUser();
+
+  const dispatch = useDispatch();
+  useEffect(() => {
+    if (ethereal) {
+      dispatch({
+        type: ActionTypes.WALLET_CREATE,
+        payload: { method: 'ethereal' },
+      });
+    }
+  }, [dispatch, ethereal]);
   // const isConnected = walletAddress && !ethereal;
   const didClaimProfile = !!username;
   const isConnected = true;
+
+  if (!contextSagasLoaded) {
+    return <LoadingTemplate loadingText={MSG.loadingAppMessage} />;
+  }
+
   return (
     <Switch>
       <Route

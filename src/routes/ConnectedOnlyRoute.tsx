@@ -22,17 +22,16 @@ const ConnectedOnlyRoute = ({
   path,
   isConnected,
   routeProps = {},
-  isEthereal = true,
 }: Props) => {
-  const dispatch = useDispatch();
-  useEffect(() => {
-    if (isEthereal) {
-      dispatch({
-        type: ActionTypes.WALLET_CREATE,
-        payload: { method: 'ethereal' },
-      });
-    }
-  }, [dispatch, isEthereal]);
+  // const dispatch = useDispatch();
+  // useEffect(() => {
+  //   if (isEthereal) {
+  //     dispatch({
+  //       type: ActionTypes.WALLET_CREATE,
+  //       payload: { method: 'ethereal' },
+  //     });
+  //   }
+  // }, [dispatch, isEthereal]);
   return (
     <Route
       path={path}
