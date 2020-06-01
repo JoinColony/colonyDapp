@@ -64,7 +64,7 @@
     "@types/react-router-dom": "^5.1.5",
     "@types/recompose": "^0.30.0",
     "@types/reselect": "^2.2.0",
-    "@types/yup": "^0.28.0",
+    "@types/yup": "^0.29.0",
     "@typescript-eslint/eslint-plugin": "^2.30.0",
     "@typescript-eslint/parser": "^2.30.0",
     "caniuse-lite": "^1.0.30001048",
@@ -204,6 +204,6 @@
     "utility-types": "^3.7.0",
     "web3-eth-abi": "1.0.0-beta.36",
     "web3-utils": "^1.2.7",
-    "yup": "^0.28.5"
+    "yup": "^0.29.0"
   }
 }
