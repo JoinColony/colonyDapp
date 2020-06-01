@@ -122,7 +122,7 @@
     "tsconfig-paths": "^3.8.0",
     "typescript": "^3.8.3",
     "typings-for-css-modules-loader": "^1.7.0",
-    "wait-on": "^4.0.2",
+    "wait-on": "^5.0.0",
     "webpack": "^4.43.0",
     "webpack-bundle-analyzer": "^3.6.0",
     "webpack-cli": "^3.3.7",
