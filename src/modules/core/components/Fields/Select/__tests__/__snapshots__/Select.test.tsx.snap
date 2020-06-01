@@ -1,242 +1,131 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`Select component Renders initial component 1`] = `
-<injectIntl(Component)
-  connect={false}
-  label="Select me"
-  name="foo"
-  options={
-    Array [
-      Object {
-        "label": "Foo",
-        "value": "foo_value",
-      },
-      Object {
-        "label": Object {
-          "defaultMessage": "Bar",
-          "id": "Select.Bar",
-        },
-        "value": "bar_value",
-      },
-    ]
+<Form.ActionForm
+  initialValues={
+    Object {
+      "foo": undefined,
+    }
   }
+  onSubmit={[Function]}
 >
-  <Component
-    connect={false}
-    intl={
+  <Formik
+    initialValues={
       Object {
-        "defaultFormats": Object {},
-        "defaultLocale": "en",
-        "formatDate": [Function],
-        "formatDateToParts": [Function],
-        "formatDisplayName": [Function],
-        "formatList": [Function],
-        "formatMessage": [Function],
-        "formatNumber": [Function],
-        "formatNumberToParts": [Function],
-        "formatPlural": [Function],
-        "formatRelativeTime": [Function],
-        "formatTime": [Function],
-        "formatTimeToParts": [Function],
-        "formats": Object {},
-        "formatters": Object {
-          "getDateTimeFormat": [Function],
-          "getDisplayNames": [Function],
-          "getListFormat": [Function],
-          "getMessageFormat": [Function],
-          "getNumberFormat": [Function],
-          "getPluralRules": [Function],
-          "getRelativeTimeFormat": [Function],
-        },
-        "locale": "en",
-        "messages": Object {},
-        "onError": [Function],
-        "textComponent": Symbol(react.fragment),
-        "timeZone": undefined,
-        "wrapRichTextChunksInFragment": undefined,
+        "foo": undefined,
       }
     }
-    label="Select me"
-    name="foo"
-    options={
-      Array [
-        Object {
-          "label": "Foo",
-          "value": "foo_value",
-        },
-        Object {
-          "label": Object {
-            "defaultMessage": "Bar",
-            "id": "Select.Bar",
-          },
-          "value": "bar_value",
-        },
-      ]
-    }
+    onSubmit={[Function]}
   >
-    <mapProps(Select)
-      connect={false}
-      intl={
-        Object {
-          "defaultFormats": Object {},
-          "defaultLocale": "en",
-          "formatDate": [Function],
-          "formatDateToParts": [Function],
-          "formatDisplayName": [Function],
-          "formatList": [Function],
-          "formatMessage": [Function],
-          "formatNumber": [Function],
-          "formatNumberToParts": [Function],
-          "formatPlural": [Function],
-          "formatRelativeTime": [Function],
-          "formatTime": [Function],
-          "formatTimeToParts": [Function],
-          "formats": Object {},
-          "formatters": Object {
-            "getDateTimeFormat": [Function],
-            "getDisplayNames": [Function],
-            "getListFormat": [Function],
-            "getMessageFormat": [Function],
-            "getNumberFormat": [Function],
-            "getPluralRules": [Function],
-            "getRelativeTimeFormat": [Function],
-          },
-          "locale": "en",
-          "messages": Object {},
-          "onError": [Function],
-          "textComponent": Symbol(react.fragment),
-          "timeZone": undefined,
-          "wrapRichTextChunksInFragment": undefined,
-        }
-      }
-      label="Select me"
-      name="foo"
-      options={
-        Array [
-          Object {
-            "label": "Foo",
-            "value": "foo_value",
-          },
-          Object {
-            "label": Object {
-              "defaultMessage": "Bar",
-              "id": "Select.Bar",
-            },
-            "value": "bar_value",
-          },
-        ]
-      }
-    >
-      <Select
-        $id="foo"
-        $value=""
-        appearance={
-          Object {
-            "alignOptions": "left",
-            "theme": "default",
-          }
-        }
-        aria-invalid={false}
-        aria-label="Select me"
-        aria-labelledby="foo-label"
-        connect={false}
-        formatIntl={[Function]}
-        label="Select me"
-        name="foo"
-        options={
-          Array [
-            Object {
-              "label": "Foo",
-              "value": "foo_value",
-            },
-            Object {
-              "label": Object {
-                "defaultMessage": "Bar",
-                "id": "Select.Bar",
-              },
-              "value": "bar_value",
-            },
-          ]
-        }
-        title="Select me"
+    <Form>
+      <form
+        action="#"
+        onReset={[Function]}
+        onSubmit={[Function]}
       >
-        <div>
-          <InputLabel
-            inputId="foo"
-            label="Select me"
-          >
-            <label
-              className=""
-              htmlFor="foo"
-              id="foo-label"
-            >
-              <span>
-                Select me
-              </span>
-            </label>
-          </InputLabel>
-          <div>
-            <button
-              aria-controls="select-listbox-foo"
-              aria-expanded={false}
-              aria-haspopup="listbox"
-              aria-invalid={false}
-              aria-label="Select me"
-              aria-labelledby="foo-label"
-              className="undefined "
-              name="foo"
-              onClick={[Function]}
-              onKeyDown={[Function]}
-              onKeyUp={[Function]}
-              tabIndex={0}
-              title="Select me"
-              type="button"
-            >
-              <div>
-                <div>
-                  <span />
-                </div>
-                <span>
-                  <Icon
-                    name="caret-down-small"
-                    title={
-                      Object {
-                        "defaultMessage": "expand",
-                        "id": "Select.expandIconHTMLTitle",
-                      }
-                    }
-                  >
-                    <i
-                      className=""
-                      title="expand"
-                    >
-                      <svg
-                        viewBox="0 0 30 30"
-                      >
-                        <use
-                          xlinkHref="#undefined"
-                        />
-                      </svg>
-                    </i>
-                  </Icon>
-                </span>
-              </div>
-            </button>
-          </div>
-          <InputStatus
-            appearance={
-              Object {
-                "theme": "minimal",
-              }
+        <Select
+          appearance={
+            Object {
+              "alignOptions": "left",
+              "theme": "default",
             }
-          >
-            <p
-              className=""
-            />
-          </InputStatus>
-        </div>
-      </Select>
-    </mapProps(Select)>
-  </Component>
-</injectIntl(Component)>
+          }
+          connect={false}
+          id="someStaticId"
+          label="Select me"
+          name="foo"
+          options={
+            Array [
+              Object {
+                "label": "Foo",
+                "value": "foo_value",
+              },
+              Object {
+                "label": Object {
+                  "defaultMessage": "Bar",
+                  "id": "Select.Bar",
+                },
+                "value": "bar_value",
+              },
+            ]
+          }
+        >
+          <div>
+            <InputLabel
+              inputId="someStaticId"
+              label="Select me"
+            >
+              <label
+                className=""
+                htmlFor="someStaticId"
+                id="someStaticId-label"
+              >
+                <span>
+                  Select me
+                </span>
+              </label>
+            </InputLabel>
+            <div>
+              <button
+                aria-controls="select-listbox-someStaticId"
+                aria-expanded={false}
+                aria-haspopup="listbox"
+                aria-label="Select me"
+                className="undefined "
+                id="someStaticId"
+                name="foo"
+                onClick={[Function]}
+                onKeyDown={[Function]}
+                onKeyUp={[Function]}
+                tabIndex={0}
+                type="button"
+              >
+                <div>
+                  <div>
+                    <span />
+                  </div>
+                  <span>
+                    <Icon
+                      name="caret-down-small"
+                      title={
+                        Object {
+                          "defaultMessage": "expand",
+                          "id": "Select.expandIconHTMLTitle",
+                        }
+                      }
+                    >
+                      <i
+                        className=""
+                        title="expand"
+                      >
+                        <svg
+                          viewBox="0 0 30 30"
+                        >
+                          <use
+                            xlinkHref="#undefined"
+                          />
+                        </svg>
+                      </i>
+                    </Icon>
+                  </span>
+                </div>
+              </button>
+            </div>
+            <InputStatus
+              appearance={
+                Object {
+                  "theme": "minimal",
+                }
+              }
+            >
+              <p
+                className=""
+              />
+            </InputStatus>
+          </div>
+        </Select>
+      </form>
+    </Form>
+  </Formik>
+</Form.ActionForm>
 `;

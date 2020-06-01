@@ -18,6 +18,10 @@ const MSG = defineMessages({
     id: 'CreateWalletWizard.StepCreatePhrase.heading',
     defaultMessage: 'Great, let’s get started by creating your new wallet!',
   },
+  label: {
+    id: 'CreateWalletWizard.StepCreatePhrase.label',
+    defaultMessage: 'Mnemonic Phrase',
+  },
   subTitle: {
     id: 'CreateWalletWizard.StepCreatePhrase.subTitle',
     defaultMessage: `The key to your wallet is your mnemonic phrase. Write it down and put it in a safe place; you’ll use it to access Colony. Once you’ve safely stored your mnemonic, we’ll go to the next step.`,
@@ -59,7 +63,12 @@ const StepCreatePhrase = ({ nextStep, wizardForm }: Props) => (
         />
       </div>
       <div className={styles.greyBox}>
-        <MnemonicGenerator name="mnemonic" generateFn={createMnemonic} />
+        <MnemonicGenerator
+          elementOnly
+          label={MSG.label}
+          name="mnemonic"
+          generateFn={createMnemonic}
+        />
       </div>
       <div className={styles.buttonsForBox}>
         <Button

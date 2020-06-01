@@ -5,18 +5,34 @@ import React, {
   useRef,
   useState,
 } from 'react';
+import { MessageDescriptor, useIntl } from 'react-intl';
+import { useField } from 'formik';
+import nanoid from 'nanoid';
 
-import { asField } from '~core/Fields';
 import { InputComponent } from '~core/Fields/Input';
-import { Props as InputComponentProps } from '~core/Fields/Input/InputComponent';
-import { FieldEnhancedProps } from '~core/Fields/types';
+import { SimpleMessageValues } from '~types/index';
 import { getMainClasses } from '~utils/css';
 
 import styles from './SingleLineEdit.css';
 
 interface Props {
+  /** Html `id` attribute (for label & input) */
+  id?: string;
+
   /** The maximum length of the input value. If provided, remaining character count will be displayed */
   maxLength?: number;
+
+  /** Html `name` attribute */
+  name: string;
+
+  /** Callback to be called on input blur */
+  onBlur?: (evt: FocusEvent<HTMLInputElement>) => void;
+
+  /** Placeholder text when the field doesn't have a value */
+  placeholder?: string | MessageDescriptor;
+
+  /** Placeholder text values for intl interpolation */
+  placeholderValues?: SimpleMessageValues;
 
   /** Should the component be read only */
   readOnly?: boolean;
@@ -25,27 +41,27 @@ interface Props {
 const displayName = 'SingleLineEdit';
 
 const SingleLineEdit = ({
-  $error,
-  $id,
+  id: idProp,
   maxLength,
   name,
-  placeholder,
+  onBlur: onBlurCallback,
+  placeholder: placeholderProp,
+  placeholderValues,
   readOnly = false,
-  /* eslint-disable @typescript-eslint/no-unused-vars */
-  $touched,
-  $value,
-  connect,
-  elementOnly,
-  formatIntl,
-  isSubmitting,
-  onBlur,
-  setError,
-  setValue,
-  /* eslint-enable @typescript-eslint/no-unused-vars */
-  ...rest
-}: Props & FieldEnhancedProps) => {
+}: Props) => {
+  const [id] = useState(idProp || nanoid());
   const inputRef = useRef<HTMLInputElement>(null);
   const [isEditing, _setIsEditing] = useState<boolean>(false);
+  const { formatMessage } = useIntl();
+
+  const placeholder =
+    typeof placeholderProp === 'object'
+      ? formatMessage(placeholderProp, placeholderValues)
+      : placeholderProp;
+
+  const [{ onBlur, onChange }, { error, value = '' }, { setValue }] = useField<
+    string
+  >(name);
 
   const setIsEditing = useCallback(
     (newIsEditing: boolean) => {
@@ -57,7 +73,7 @@ const SingleLineEdit = ({
       }
       _setIsEditing(newIsEditing);
       if (!newIsEditing) {
-        if (setValue && $value.trim() === '') {
+        if (value.trim() === '') {
           /*
            * This ensures the heading is always clickable to enter editing mode.
            * For instance, in the case of only spaces entered
@@ -66,13 +82,14 @@ const SingleLineEdit = ({
         }
       }
     },
-    [$value, isEditing, readOnly, setValue],
+    [value, isEditing, readOnly, setValue],
   );
 
   const handleOnBlur = (evt: FocusEvent<HTMLInputElement>) => {
     setIsEditing(false);
-    if (onBlur) {
-      onBlur(evt);
+    onBlur(evt);
+    if (onBlurCallback) {
+      onBlurCallback(evt);
     }
   };
 
@@ -118,20 +135,20 @@ const SingleLineEdit = ({
   }, [handleOutsideClick, isEditing]);
 
   const inputProps = {
-    'aria-invalid': !!$error,
-    id: $id,
+    'aria-invalid': !!error,
+    id,
     maxLength,
     name,
     onBlur: handleOnBlur,
+    onChange,
     placeholder,
-    value: $value,
-    ...rest,
+    value,
   };
   return (
     <div
       className={getMainClasses({}, styles, {
-        hasReachedMaxLength: $value.length === maxLength,
-        hasValue: !!$value,
+        hasReachedMaxLength: value.length === maxLength,
+        hasValue: !!value,
         readOnly: !!readOnly,
       })}
     >
@@ -140,7 +157,7 @@ const SingleLineEdit = ({
           <InputComponent {...inputProps} innerRef={inputRef} />
           {!!maxLength && (
             <span className={styles.maxLengthText}>
-              {$value.length}/{maxLength}
+              {value.length}/{maxLength}
             </span>
           )}
         </div>
@@ -153,8 +170,8 @@ const SingleLineEdit = ({
             tabIndex={0}
             role="textbox"
           >
-            <p className={styles.notEditingValue} title={$value || placeholder}>
-              {$value || placeholder}
+            <p className={styles.notEditingValue} title={value || placeholder}>
+              {value || placeholder}
             </p>
           </div>
         </div>
@@ -165,6 +182,4 @@ const SingleLineEdit = ({
 
 SingleLineEdit.displayName = displayName;
 
-export default asField<Props, string, InputComponentProps>({
-  initialValue: '',
-})(SingleLineEdit);
+export default SingleLineEdit;

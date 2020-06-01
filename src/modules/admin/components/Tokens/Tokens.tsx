@@ -6,7 +6,7 @@ import { COLONY_TOTAL_BALANCE_DOMAIN_ID, ROLES } from '~constants';
 import Button from '~core/Button';
 import { useDialog } from '~core/Dialog';
 import Heading from '~core/Heading';
-import { Select } from '~core/Fields';
+import { Select, Form } from '~core/Fields';
 import { Address, DomainsMapType } from '~types/index';
 import { useTokenBalancesForDomainsQuery } from '~data/index';
 
@@ -101,7 +101,7 @@ const Tokens = ({
     return typeof label === 'string' ? label : formatMessage(label);
   }, [domainsArray, formatMessage, selectedDomain]);
 
-  const setFieldValue = useCallback((_, value) => setSelectedDomain(value), [
+  const setFieldValue = useCallback((value) => setSelectedDomain(value), [
     setSelectedDomain,
   ]);
 
@@ -155,20 +155,25 @@ const Tokens = ({
               textValues={{ selectedDomainLabel }}
               appearance={{ size: 'medium', theme: 'dark' }}
             />
-            <Select
-              appearance={{
-                alignOptions: 'right',
-                width: 'strict',
-                theme: 'alt',
+            <Form
+              initialValues={{
+                selectDomain: COLONY_TOTAL_BALANCE_DOMAIN_ID.toString(),
               }}
-              connect={false}
-              elementOnly
-              label={MSG.labelSelectDomain}
-              name="selectDomain"
-              options={domainsArray}
-              form={{ setFieldValue }}
-              $value={selectedDomain.toString()}
-            />
+              onSubmit={() => {}}
+            >
+              <Select
+                appearance={{
+                  alignOptions: 'right',
+                  width: 'strict',
+                  theme: 'alt',
+                }}
+                elementOnly
+                label={MSG.labelSelectDomain}
+                name="selectDomain"
+                onChange={setFieldValue}
+                options={domainsArray}
+              />
+            </Form>
           </div>
           {tokens && (
             <TokenList

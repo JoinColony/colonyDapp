@@ -9,11 +9,10 @@ import { getBalanceFromToken } from '~utils/tokens';
 import { useAsyncFunction } from '~utils/hooks';
 import { mergePayload } from '~utils/actions';
 import { ActionTypes } from '~redux/index';
-import { Select } from '~core/Fields';
+import { Select, Form } from '~core/Fields';
 import Button from '~core/Button';
 
 import {
-  TasksFilterOptionType,
   TasksFilterOptions,
   tasksFilterSelectOptions,
 } from '../../shared/tasksFilter';
@@ -62,13 +61,7 @@ const TabContribute = ({
   showQrCode,
 }: Props) => {
   const history = useHistory();
-  const [filterOption, setFilterOption] = useState(TasksFilterOptions.ALL_OPEN);
   const [isCreatingTask, setIsCreatingTask] = useState(false);
-
-  const formSetFilter = useCallback(
-    (_: string, value: TasksFilterOptionType) => setFilterOption(value as any),
-    [setFilterOption],
-  );
 
   const transform = useCallback(
     mergePayload({
@@ -122,55 +115,60 @@ const TabContribute = ({
   );
 
   return (
-    <>
-      <div className={styles.interactiveBar}>
-        <Select
-          appearance={{ alignOptions: 'left', theme: 'alt' }}
-          connect={false}
-          elementOnly
-          label={MSG.labelFilter}
-          name="filter"
-          options={tasksFilterSelectOptions}
-          placeholder={MSG.placeholderFilter}
-          form={{ setFieldValue: formSetFilter }}
-          $value={filterOption}
-        />
-        {canCreateTask && (
-          <Button
-            appearance={{ theme: 'primary', size: 'medium' }}
-            text={MSG.newTaskButton}
-            disabled={isInRecoveryMode}
-            loading={isCreatingTask}
-            onClick={handleCreateTask}
+    <Form
+      initialValues={{ filter: TasksFilterOptions.ALL_OPEN }}
+      onSubmit={() => {}}
+    >
+      {({ values: { filter } }) => (
+        <>
+          <div className={styles.interactiveBar}>
+            <Select
+              appearance={{ alignOptions: 'left', theme: 'alt' }}
+              elementOnly
+              label={MSG.labelFilter}
+              name="filter"
+              options={tasksFilterSelectOptions}
+              placeholder={MSG.placeholderFilter}
+            />
+            {canCreateTask && (
+              <Button
+                appearance={{ theme: 'primary', size: 'medium' }}
+                text={MSG.newTaskButton}
+                disabled={isInRecoveryMode}
+                loading={isCreatingTask}
+                onClick={handleCreateTask}
+              />
+            )}
+          </div>
+          {/* eslint-disable-next-line max-len */}
+          {nativeToken && nativeTokenBalance.isZero() && ethBalance.isZero() && (
+            /*
+             * The funding panel should be shown if the colony's balance of
+             * both the native token and ETH is zero.
+             */
+            <ColonyInitialFunding
+              canMintTokens={canMintTokens}
+              colonyAddress={colonyAddress}
+              displayName={displayName}
+              isExternal={isNativeTokenExternal}
+              showQrCode={showQrCode}
+              tokenAddress={nativeToken.address}
+            />
+          )}
+          <ColonyTasks
+            canCreateTask={canCreateTask}
+            colonyAddress={colonyAddress}
+            onCreateTask={handleCreateTask}
+            filteredDomainId={filteredDomainId}
+            filterOption={filter}
+            isCreatingTask={isCreatingTask}
+            isInRecoveryMode={isInRecoveryMode}
+            canMintTokens={canMintTokens}
+            showEmptyState={showEmptyState}
           />
-        )}
-      </div>
-      {nativeToken && nativeTokenBalance.isZero() && ethBalance.isZero() && (
-        /*
-         * The funding panel should be shown if the colony's balance of
-         * both the native token and ETH is zero.
-         */
-        <ColonyInitialFunding
-          canMintTokens={canMintTokens}
-          colonyAddress={colonyAddress}
-          displayName={displayName}
-          isExternal={isNativeTokenExternal}
-          showQrCode={showQrCode}
-          tokenAddress={nativeToken.address}
-        />
+        </>
       )}
-      <ColonyTasks
-        canCreateTask={canCreateTask}
-        colonyAddress={colonyAddress}
-        onCreateTask={handleCreateTask}
-        filteredDomainId={filteredDomainId}
-        filterOption={filterOption}
-        isCreatingTask={isCreatingTask}
-        isInRecoveryMode={isInRecoveryMode}
-        canMintTokens={canMintTokens}
-        showEmptyState={showEmptyState}
-      />
-    </>
+    </Form>
   );
 };
 

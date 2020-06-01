@@ -4,7 +4,7 @@ import { useHistory } from 'react-router-dom';
 
 import { COLONY_TOTAL_BALANCE_DOMAIN_ID } from '~constants';
 import Heading from '~core/Heading';
-import { Select } from '~core/Fields';
+import { Select, Form } from '~core/Fields';
 import ListGroup from '~core/ListGroup';
 import ListGroupItem from '~core/ListGroup/ListGroupItem';
 import { SpinnerLoader } from '~core/Preloaders';
@@ -67,6 +67,10 @@ const MSG = defineMessages({
     id: 'Dashboard.SuggestionsList.confirmDeleteButton',
     defaultMessage: 'Yes, delete',
   },
+  labelFilter: {
+    id: 'Dashboard.SuggestionsList.labelFilter',
+    defaultMessage: 'Filter',
+  },
 });
 
 interface Props {
@@ -92,7 +96,7 @@ const SuggestionsList = ({ colonyAddress, colonyName, domainId }: Props) => {
   );
 
   const handleSetFilterOption = useCallback(
-    (_: string, value: SuggestionsFilterOptionType) => {
+    (value: SuggestionsFilterOptionType) => {
       setFilterOption(value);
     },
     [setFilterOption],
@@ -191,15 +195,16 @@ const SuggestionsList = ({ colonyAddress, colonyName, domainId }: Props) => {
   ) : (
     <>
       <div className={styles.filterContainer}>
-        <Select
-          appearance={{ alignOptions: 'right', theme: 'alt' }}
-          connect={false}
-          elementOnly
-          form={{ setFieldValue: handleSetFilterOption }}
-          options={suggestionsFilterSelectOptions}
-          name="suggestionsFilter"
-          $value={filterOption}
-        />
+        <Form initialValues={{ suggestionsFilter: 'All' }} onSubmit={() => {}}>
+          <Select
+            appearance={{ alignOptions: 'right', theme: 'alt' }}
+            elementOnly
+            label={MSG.labelFilter}
+            onChange={handleSetFilterOption}
+            options={suggestionsFilterSelectOptions}
+            name="suggestionsFilter"
+          />
+        </Form>
       </div>
       <div
         className={getMainClasses({}, styles, {

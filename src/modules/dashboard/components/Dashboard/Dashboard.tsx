@@ -1,7 +1,7 @@
-import React, { useState, useCallback } from 'react';
+import React from 'react';
 import { defineMessages } from 'react-intl';
 
-import { Select } from '~core/Fields';
+import { Select, Form } from '~core/Fields';
 import Heading from '~core/Heading';
 import { useLoggedInUser } from '~data/index';
 
@@ -40,69 +40,64 @@ const MSG = defineMessages({
 const displayName = 'dashboard.Dashboard';
 
 const Dashboard = () => {
-  const [filterOption, setFilterOption] = useState(TasksFilterOptions.ALL_OPEN);
-
-  const handleSetFilterOption = useCallback(
-    (_: string, value: TasksFilterOptions) => {
-      setFilterOption(value);
-    },
-    [setFilterOption],
-  );
-
   const { username, walletAddress } = useLoggedInUser();
 
   return (
-    <div className={styles.layoutMain} data-test="dashboard">
-      <main className={styles.content}>
-        <div className={styles.sectionTitle}>
-          <Heading
-            appearance={{
-              size: 'normal',
-              margin: 'none',
-              theme: 'dark',
-            }}
-            text={MSG.myTasks}
-          />
-        </div>
-        <UserTasks
-          initialTask={{
-            title: MSG.initialTaskTitle,
-            walletAddress,
-          }}
-          filter={
-            <div className={styles.selectWrapper}>
-              <Select
-                appearance={{ alignOptions: 'right', theme: 'alt' }}
-                connect={false}
-                elementOnly
-                label={MSG.labelFilter}
-                name="filter"
-                options={tasksFilterSelectOptions}
-                placeholder={MSG.placeholderFilter}
-                form={{ setFieldValue: handleSetFilterOption }}
-                $value={filterOption}
+    <Form
+      initialValues={{ filter: TasksFilterOptions.ALL_OPEN }}
+      onSubmit={() => {}}
+    >
+      {({ values: { filter } }) => (
+        <div className={styles.layoutMain} data-test="dashboard">
+          <main className={styles.content}>
+            <div className={styles.sectionTitle}>
+              <Heading
+                appearance={{
+                  size: 'normal',
+                  margin: 'none',
+                  theme: 'dark',
+                }}
+                text={MSG.myTasks}
               />
             </div>
-          }
-          userClaimedProfile={!!username}
-          filterOption={filterOption}
-          walletAddress={walletAddress}
-        />
-      </main>
-      <aside className={styles.sidebar}>
-        <div className={styles.sectionTitle}>
-          <Heading
-            appearance={{
-              size: 'normal',
-              margin: 'none',
-              theme: 'dark',
-            }}
-            text={MSG.myColonies}
-          />
+            <UserTasks
+              initialTask={{
+                title: MSG.initialTaskTitle,
+                walletAddress,
+              }}
+              filter={
+                <div className={styles.selectWrapper}>
+                  <Select
+                    appearance={{ alignOptions: 'right', theme: 'alt' }}
+                    elementOnly
+                    label={MSG.labelFilter}
+                    name="filter"
+                    options={tasksFilterSelectOptions}
+                    placeholder={MSG.placeholderFilter}
+                  />
+                </div>
+              }
+              userClaimedProfile={!!username}
+              filterOption={filter}
+              walletAddress={walletAddress}
+            />
+          </main>
+          <aside className={styles.sidebar}>
+            <div className={styles.sectionTitle}>
+              <Heading
+                appearance={{
+                  size: 'normal',
+                  margin: 'none',
+                  theme: 'dark',
+                }}
+                text={MSG.myColonies}
+              />
+            </div>
+            <ColoniesList />
+          </aside>
         </div>
-        <ColoniesList />
-      </aside>
-    </div>
+      )}
+    </Form>
   );
 };
 

@@ -1,12 +1,11 @@
 import React, { SyntheticEvent, useEffect, useCallback, useMemo } from 'react';
 import { defineMessages } from 'react-intl';
 
-import { FieldEnhancedProps } from '~core/Fields/types';
+import { useField } from 'formik';
 import { log } from '~utils/debug';
 
 import { UploadFile, UploadItemComponentProps } from './types';
 import Button from '../Button';
-import { asField } from '../Fields';
 import Icon from '../Icon';
 import { Tooltip } from '../Popover';
 import ProgressBar from '../ProgressBar';
@@ -29,12 +28,19 @@ const UploadItem = ({
   error,
   idx,
   maxFileSize,
+  name,
   remove,
-  setValue,
   upload,
-  $value: { file, uploaded },
-  $value,
-}: UploadItemComponentProps & FieldEnhancedProps<UploadFile>) => {
+}: UploadItemComponentProps) => {
+  const [
+    ,
+    {
+      value: { file, uploaded },
+      value,
+    },
+    { setValue },
+  ] = useField<UploadFile>(name);
+
   // eslint-disable-next-line no-underscore-dangle
   const _readFiles = useMemo(
     () =>
@@ -62,7 +68,7 @@ const UploadItem = ({
     let fileReference;
     try {
       readFile = await read();
-      setValue({ ...$value, preview: readFile.data });
+      setValue({ ...value, preview: readFile.data });
       fileReference = await upload(readFile);
     } catch (caughtError) {
       log.error(caughtError);
@@ -70,11 +76,11 @@ const UploadItem = ({
       /**
        * @todo  better error handling here
        */
-      setValue({ ...$value, error: 'uploadError' });
+      setValue({ ...value, error: 'uploadError' });
       return;
     }
-    setValue({ ...$value, preview: readFile.data, uploaded: fileReference });
-  }, [read, setValue, upload, $value]);
+    setValue({ ...value, preview: readFile.data, uploaded: fileReference });
+  }, [read, setValue, upload, value]);
 
   useEffect(() => {
     if (file && !error && !uploaded) {
@@ -118,6 +124,4 @@ const UploadItem = ({
 
 UploadItem.displayName = displayName;
 
-export default asField<UploadItemComponentProps, UploadFile>({
-  alwaysConnected: true,
-})(UploadItem);
+export default UploadItem;

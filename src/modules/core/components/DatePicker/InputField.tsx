@@ -6,26 +6,26 @@ import React, {
 } from 'react';
 import { MessageDescriptor } from 'react-intl';
 
-import { ExtraFieldProps } from '~core/Fields/types';
-
-import Input, { InputComponentAppearance } from '../Fields/Input';
-
 import { ESC, TAB } from './keyTypes';
+import { InputComponentAppearance, InputComponent } from '../Fields/Input';
+import { SimpleMessageValues } from '~types/index';
 
 interface Props
-  extends Omit<
-      InputHTMLAttributes<HTMLInputElement>,
-      'name' | 'placeholder' | 'onBlur' | 'onChange' | 'form' | 'title'
-    >,
-    ExtraFieldProps<string> {
+  extends Omit<InputHTMLAttributes<HTMLInputElement>, 'onChange'> {
   appearance?: InputComponentAppearance;
   close: (data?: any, modifiers?: { cancelled?: boolean }) => void;
+  elementOnly?: boolean;
+  help?: string | MessageDescriptor;
+  helpValues?: SimpleMessageValues;
   id: string;
   innerRef: (ref: HTMLElement | null) => void;
   isOpen: boolean;
+  label: string | MessageDescriptor;
+  labelValues?: SimpleMessageValues;
+  name: string;
   onChange: (evt: SyntheticEvent<HTMLInputElement>) => void;
   open: () => void;
-  placeholder?: string | MessageDescriptor;
+  placeholder?: string;
   value: string;
 }
 
@@ -53,8 +53,7 @@ const InputField = ({
   );
 
   return (
-    <Input
-      connect={false}
+    <InputComponent
       onClick={open}
       onFocus={open}
       onKeyDown={handleInputKeyDown}

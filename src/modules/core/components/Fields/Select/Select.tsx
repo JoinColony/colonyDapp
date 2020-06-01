@@ -6,17 +6,25 @@ import React, {
   useRef,
   useState,
 } from 'react';
-import { defineMessages } from 'react-intl';
+import { defineMessages, MessageDescriptor, useIntl } from 'react-intl';
+import { useField } from 'formik';
+import nanoid from 'nanoid';
 
 import { getMainClasses } from '~utils/css';
-import { DOWN, ENTER, ESC, SPACE, UP, TAB } from '~types/index';
+import {
+  DOWN,
+  ENTER,
+  ESC,
+  SimpleMessageValues,
+  SPACE,
+  TAB,
+  UP,
+} from '~types/index';
 
 import SelectListBox from './SelectListBox';
 import { Appearance, SelectOption } from './types';
-import asField from '../asField';
 import InputLabel from '../InputLabel';
 import InputStatus from '../InputStatus';
-import { FieldEnhancedProps } from '../types';
 import Icon from '../../Icon';
 
 import styles from './Select.css';
@@ -29,53 +37,79 @@ const MSG = defineMessages({
 });
 
 interface Props {
-  /** Available `option`s for the select */
-  options: SelectOption[];
-
   /** Appearance object */
   appearance?: Appearance;
 
   /** Should `select` be disabled */
   disabled?: boolean;
 
-  /** Pass a ref to the `<input>` element */
-  innerRef?: (ref: HTMLElement | null) => void;
+  /** Should render the select without a label */
+  elementOnly?: boolean;
+
+  /** Help text */
+  help?: string | MessageDescriptor;
+
+  /** Help text values for intl interpolation */
+  helpValues?: SimpleMessageValues;
+
+  /** Html id attribute */
+  id?: string;
+
+  /** Label text */
+  label: string | MessageDescriptor;
+
+  /** Label text values for intl interpolation */
+  labelValues?: SimpleMessageValues;
+
+  /** Html name attribute */
+  name: string;
+
+  /** Callback function, called after value is changed */
+  onChange?: (value: SelectOption['value']) => void;
+
+  /** Available `option`s for the select */
+  options: SelectOption[];
+
+  /** Status text */
+  placeholder?: string | MessageDescriptor;
+
+  /** Status text */
+  status?: string | MessageDescriptor;
+
+  /** Status text values for intl interpolation */
+  statusValues?: SimpleMessageValues;
 }
 
 const displayName = 'Select';
 
 const Select = ({
   appearance,
+  disabled,
   elementOnly,
   help,
-  disabled,
-  $id,
-  formatIntl,
+  helpValues,
+  id: idProp,
   label,
+  labelValues,
+  name,
+  onChange: onChangeCallback,
   options,
   placeholder,
-  name,
   status,
-  /* eslint-disable @typescript-eslint/no-unused-vars */
-  $error,
-  $value,
-  $touched,
-  setValue,
-  isSubmitting,
-  setError,
-  connect,
-  /* eslint-enable @typescript-eslint/no-unused-vars */
-  ...props
-}: Props & FieldEnhancedProps) => {
+  statusValues,
+}: Props) => {
+  const [id] = useState<string>(idProp || nanoid());
+  const [, { error, value }, { setValue }] = useField(name);
   const comboboxRef = useRef<HTMLButtonElement>(null);
   const wrapperRef = useRef<HTMLDivElement>(null);
+  const { formatMessage } = useIntl();
 
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const [selectedOption, setSelectedOption] = useState<number>(-1);
 
   const checkedOption = useMemo(
-    () => options.findIndex((option) => option.value === $value),
-    [$value, options],
+    () => options.findIndex((option) => option.value === value),
+    [value, options],
   );
 
   const open = () => {
@@ -122,9 +156,10 @@ const Select = ({
       close();
       return;
     }
-    if (setValue) {
-      const { value } = options[selectedOption];
-      setValue(value);
+    const { value: optionValue } = options[selectedOption];
+    setValue(optionValue);
+    if (onChangeCallback) {
+      onChangeCallback(optionValue);
     }
     close();
   };
@@ -220,24 +255,41 @@ const Select = ({
   }, [handleOutsideClick, isOpen]);
 
   const activeOption = options[checkedOption];
-  const listboxId = `select-listbox-${$id}`;
-  const activeOptionLabel = formatIntl(activeOption && activeOption.label);
-  // eslint-disable-next-line react/destructuring-assignment
-  const ariaLabelledby = props['aria-labelledby'];
+  const listboxId = `select-listbox-${id}`;
+  let activeOptionLabel;
+  if (activeOption) {
+    if (typeof activeOption.label === 'object') {
+      activeOptionLabel = formatMessage(
+        activeOption.label,
+        activeOption.labelValues,
+      );
+    } else {
+      activeOptionLabel = activeOption.label;
+    }
+  }
   return (
     <div className={styles.main} ref={wrapperRef}>
-      {!elementOnly && label ? (
-        <InputLabel inputId={$id} label={label} help={help} />
-      ) : null}
+      <InputLabel
+        inputId={id}
+        label={label}
+        labelValues={labelValues}
+        help={help}
+        helpValues={helpValues}
+        screenReaderOnly={elementOnly}
+      />
       <div className={styles.inputWrapper}>
         <button
           className={`${styles.select} ${getMainClasses(appearance, styles)}`}
           aria-haspopup="listbox"
           aria-controls={listboxId}
           aria-expanded={isOpen}
-          aria-label={formatIntl(label)}
-          aria-labelledby={ariaLabelledby}
+          aria-label={
+            typeof label === 'object'
+              ? formatMessage(label, labelValues)
+              : label
+          }
           aria-disabled={disabled}
+          id={id}
           tabIndex={0}
           ref={comboboxRef}
           onClick={toggle}
@@ -245,7 +297,6 @@ const Select = ({
           onKeyDown={handleKeyDown}
           type="button"
           name={name}
-          {...props}
         >
           <div className={styles.selectInner}>
             <div className={styles.activeOption}>
@@ -264,9 +315,7 @@ const Select = ({
             options={options}
             onSelect={selectOption}
             onClick={checkOption}
-            formatIntl={formatIntl}
             appearance={appearance}
-            ariaLabelledby={ariaLabelledby}
             name={name}
           />
         )}
@@ -275,7 +324,8 @@ const Select = ({
         <InputStatus
           appearance={{ theme: 'minimal' }}
           status={status}
-          error={$error}
+          statusValues={statusValues}
+          error={error}
         />
       )}
     </div>
@@ -289,4 +339,4 @@ Select.defaultProps = {
   options: [],
 };
 
-export default asField<Props>()(Select);
+export default Select;

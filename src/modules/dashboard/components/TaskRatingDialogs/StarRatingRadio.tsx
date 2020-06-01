@@ -35,7 +35,12 @@ const StarRatingRadio = ({
   name,
   checked = false,
 }: Props) => (
-  <Radio checked={checked} name={name} value={value} radioStyle={{ top: '0' }}>
+  <Radio
+    checked={checked}
+    name={name}
+    value={value.toString()}
+    radioStyle={{ top: '0' }}
+  >
     <div className={styles.ratingItem}>
       <div className={styles.ratingText}>
         <Heading

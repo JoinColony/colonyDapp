@@ -118,10 +118,10 @@ const ProfileEdit = ({ colony }: Props) => {
         <main className={styles.content}>
           <Form
             initialValues={{
-              description,
-              displayName,
-              guideline,
-              website,
+              description: description || undefined,
+              displayName: displayName || undefined,
+              guideline: guideline || undefined,
+              website: website || undefined,
             }}
             onSubmit={onSubmit}
             validationSchema={validationSchema}

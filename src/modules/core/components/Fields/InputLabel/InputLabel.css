@@ -60,3 +60,14 @@
   top: 0;
   right: 0;
 }
+
+.stateScreenReaderOnly {
+  margin: -1px;
+  padding: 0;
+  height: 1px;
+  width: 1px;
+  position: absolute;
+  overflow: hidden;
+  border: 0;
+  clip: rect(0, 0, 0, 0);
+}

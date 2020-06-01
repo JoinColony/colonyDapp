@@ -2,7 +2,7 @@
 The Decision Hub renders a list of links divided by borders
 
 ```js
-const { Formik } = require('formik');
+import { Form } from '../Fields';
 
 const MSG = {
   createTokenTitle: {
@@ -36,15 +36,15 @@ const options = [
   },
 ];
 
-<Formik>
+<Form initialValues={{ thatField: '' }} onSubmit={(values) => console.log(values)}>
   <DecisionHub name="thatField" options={options} />
-</Formik>
+</Form>
 ```
 
 Decision Hub with icons for each row
 
 ```js
-const { Formik } = require('formik');
+import { Form } from '../Fields';
 
 const MSG = {
   createTokenTitle: {
@@ -80,15 +80,15 @@ const options = [
   },
 ];
 
-
-<Formik>
+<Form initialValues={{ thatField: '' }} onSubmit={(values) => console.log(values)}>
   <DecisionHub name="thatField" options={options} />
-</Formik>
+</Form>
 ```
 
 Decision Hub with tooltips
 ```js
-const { Formik } = require('formik');
+import { Form } from '../Fields';
+
 const MSG = {
   createTokenTitle: {
     id: 'ComponentName.special',
@@ -126,7 +126,8 @@ const options = [
     tooltip: MSG.tooltip
   },
 ];
-<Formik>
+
+<Form initialValues={{ thatField: '' }} onSubmit={(values) => console.log(values)}>
   <DecisionHub name="thatField" options={options} />
-</Formik>
+</Form>
 ```

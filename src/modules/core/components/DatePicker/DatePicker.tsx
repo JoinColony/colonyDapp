@@ -1,14 +1,14 @@
-import React, { ReactNode, useCallback, useState } from 'react';
-import { useIntl } from 'react-intl';
+import React, { ReactNode, useCallback, useState, ChangeEvent } from 'react';
+import { useField } from 'formik';
+import { MessageDescriptor, useIntl } from 'react-intl';
 
-import { asField } from '~core/Fields';
 import { InputComponentAppearance } from '~core/Fields/Input';
-import { FieldEnhancedProps } from '~core/Fields/types';
 import Popover from '~core/Popover';
 import {
   PopoverChildFnProps,
   PopoverTriggerElementType,
 } from '~core/Popover/types';
+import { SimpleMessageValues } from '~types/index';
 
 import DatePickerContent from './DatePickerContent';
 import InputField from './InputField';
@@ -23,6 +23,30 @@ interface Props {
 
   /** Whether the picker should close when a day is selected */
   closeOnDayPick?: boolean;
+
+  /** Whether to render the label with the input (when no `renderTrigger` provided) */
+  elementOnly?: boolean;
+
+  /** Help text (for form input) */
+  help?: string | MessageDescriptor;
+
+  /** Help text values for intl interpolation */
+  helpValues?: SimpleMessageValues;
+
+  /** Input label text */
+  label: string | MessageDescriptor;
+
+  /** Input label values for intl interpolation */
+  labelValues?: SimpleMessageValues;
+
+  /** Html input name */
+  name: string;
+
+  /** Placeholder text */
+  placeholder?: string | MessageDescriptor;
+
+  /** Placeholder text values for intl interpolation */
+  placeholderValues?: SimpleMessageValues;
 
   /** Render content below the date picker, inside the popover. Useful to combine with `preventClose` */
   renderContentFooter?: (close: Close, currentDate?: Date) => ReactNode;
@@ -44,61 +68,51 @@ const DatePicker = ({
   closeOnDayPick,
   elementOnly,
   help,
+  helpValues,
   label,
+  labelValues,
   name,
-  placeholder,
+  placeholder: placeholderProp,
+  placeholderValues,
   renderContentFooter,
   renderTrigger,
   showArrow,
   setValueOnPick,
-  $value,
-  setValue,
-}: Props & FieldEnhancedProps<Date>) => {
-  // Handles state of the input field if present
-  const [inputValue, setInputValue] = useState('');
+}: Props) => {
+  const [, { value }, { setValue }] = useField(name);
   // currentDate is a temporary value to represent the value when it's not set yet (active day in date picker)
-  const [currentDate, setCurrentDate] = useState<Date | undefined>($value);
-
-  const { formatDate } = useIntl();
-
-  const getShortDate = useCallback(
-    (date: Date) =>
-      formatDate(date, {
-        day: '2-digit',
-        month: '2-digit',
-        year: 'numeric',
-      }),
-    [formatDate],
-  );
+  const [currentDate, setCurrentDate] = useState<Date | undefined>(value);
+  const { formatDate, formatMessage } = useIntl();
 
   // Handle day picking via daypicker
   const handleDayPick = useCallback(
     (day) => {
-      if (setValueOnPick && setValue) {
+      if (setValueOnPick) {
         setValue(day);
       }
       setCurrentDate(day);
-      setInputValue(getShortDate(day));
     },
-    [getShortDate, setValue, setValueOnPick],
+    [setValue, setValueOnPick],
   );
 
   // Handle day picking via input field
-  const handleInputChange = useCallback((evt) => {
-    const maybeDate = new Date(Date.parse(evt.target.value));
-    setInputValue(evt.target.value);
-    if (maybeDate instanceof Date && !Number.isNaN(maybeDate.valueOf())) {
-      setCurrentDate(maybeDate);
-    }
-  }, []);
+  const handleInputChange = useCallback(
+    (evt: ChangeEvent<HTMLInputElement>) => {
+      const maybeDate = new Date(Date.parse(evt.target.value));
+      setValue(evt.target.value);
+      if (maybeDate instanceof Date && !Number.isNaN(maybeDate.valueOf())) {
+        setCurrentDate(maybeDate);
+      }
+    },
+    [setValue],
+  );
 
   // Handle what should happen when the popover closes based on current state
   const handlePopoverClose = useCallback(
     (day, { cancelled } = {}) => {
       // User cancelled using ESC
       if (cancelled) {
-        setInputValue($value ? getShortDate($value) : '');
-        setCurrentDate($value);
+        setCurrentDate(value);
         return;
       }
 
@@ -109,26 +123,22 @@ const DatePicker = ({
     */
       const date = day || currentDate;
       if (date) {
-        if (setValue) {
-          setValue(date);
-        }
-        setInputValue(getShortDate(date));
+        setValue(date);
         setCurrentDate(undefined);
         return;
       }
       // User removed the input value and closed
-      if (!inputValue) {
+      if (!currentDate) {
         if (setValue) {
           setValue(undefined);
         }
-        setInputValue('');
         setCurrentDate(undefined);
       }
     },
-    [$value, currentDate, getShortDate, inputValue, setValue],
+    [currentDate, setValue, value],
   );
 
-  const selectedDay = currentDate || $value;
+  const selectedDay = currentDate || value;
 
   const renderDatePickerContent = useCallback(
     (close) => (
@@ -149,6 +159,11 @@ const DatePicker = ({
       selectedDay,
     ],
   );
+
+  const placeholder =
+    typeof placeholderProp === 'object'
+      ? formatMessage(placeholderProp, placeholderValues)
+      : placeholderProp;
 
   return (
     <div className={styles.main}>
@@ -171,11 +186,13 @@ const DatePicker = ({
               elementOnly={elementOnly}
               name={name}
               help={help}
+              helpValues={helpValues}
               label={label}
+              labelValues={labelValues}
               innerRef={ref}
               onChange={handleInputChange}
               placeholder={placeholder}
-              value={inputValue}
+              value={formatDate(value)}
               {...props}
             />
           ))}
@@ -186,4 +203,4 @@ const DatePicker = ({
 
 DatePicker.displayName = displayName;
 
-export default asField<Props, Date>()(DatePicker);
+export default DatePicker;

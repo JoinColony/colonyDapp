@@ -1,12 +1,14 @@
-import React, { ReactNode, RefObject } from 'react';
+import React, { ReactNode, RefObject, useState } from 'react';
 import cx from 'classnames';
 import { CleaveOptions } from 'cleave.js/options';
-import { MessageDescriptor } from 'react-intl';
+import { MessageDescriptor, useIntl } from 'react-intl';
+import { useField } from 'formik';
+import nanoid from 'nanoid';
 
-import asField from '../asField';
+import { SimpleMessageValues } from '~types/index';
+
 import InputLabel from '../InputLabel';
 import InputStatus from '../InputStatus';
-import { FieldEnhancedProps } from '../types';
 import InputComponent, { Props as InputComponentProps } from './InputComponent';
 
 import styles from './Input.css';
@@ -21,9 +23,12 @@ export interface Appearance {
   statusSchema?: 'info';
 }
 
-export interface Props {
+export interface Props extends Omit<InputComponentProps, 'placeholder'> {
   /** Appearance object */
   appearance?: Appearance;
+
+  /** Should display the input with the label hidden */
+  elementOnly?: boolean;
 
   /** Add extension of input to the right of it, i.e. for ENS name */
   extensionString?: string | MessageDescriptor;
@@ -34,8 +39,35 @@ export interface Props {
   /** Options for cleave.js formatting (see [this list](https://github.com/nosir/cleave.js/blob/master/doc/options.md)) */
   formattingOptions?: CleaveOptions;
 
+  /** Help text */
+  help?: string | MessageDescriptor;
+
+  /** Help text values for intl interpolation */
+  helpValues?: SimpleMessageValues;
+
+  /** Html `id` for label & input */
+  id?: string;
+
   /** Pass a ref to the `<input>` element */
   innerRef?: RefObject<any> | ((ref: HTMLElement | null) => void);
+
+  /** Label text */
+  label: string | MessageDescriptor;
+
+  /** Label text values for intl interpolation */
+  labelValues?: SimpleMessageValues;
+
+  /** Placeholder text */
+  placeholder?: string | MessageDescriptor;
+
+  /** Placeholder text values for intl interpolation */
+  placeholderValues?: SimpleMessageValues;
+
+  /** Status text */
+  status?: string | MessageDescriptor;
+
+  /** Status text values for intl interpolation */
+  statusValues?: SimpleMessageValues;
 }
 
 const Input = ({
@@ -44,50 +76,43 @@ const Input = ({
   extensionString,
   extra,
   formattingOptions,
-  formatIntl,
   help,
+  helpValues,
   innerRef,
-  $id,
+  id: idProp,
   label,
+  labelValues,
   name,
-  onChange,
+  placeholder: placeholderProp,
+  placeholderValues,
   status,
-  $value,
-  $error,
-  /* eslint-disable @typescript-eslint/no-unused-vars */
-  connect,
-  setValue,
-  setError,
-  isSubmitting,
-  $touched,
-  /* eslint-enable @typescript-eslint/no-unused-vars */
-  ...props
-}: Props & FieldEnhancedProps<string, InputComponentProps>) => {
+  statusValues,
+}: Props) => {
+  const [id] = useState(idProp || nanoid());
+  const { formatMessage } = useIntl();
+  const [inputFieldProps, { error }] = useField<string>(name);
+
+  const placeholder =
+    typeof placeholderProp === 'object'
+      ? formatMessage(placeholderProp, placeholderValues)
+      : placeholderProp;
+
   const inputProps: InputComponentProps = {
     appearance,
-    'aria-invalid': $error ? true : undefined,
+    'aria-invalid': !!error,
     formattingOptions,
-    id: $id,
+    id,
     innerRef,
     name,
-    onChange,
-    value: undefined as string | undefined,
-    ...props,
+    placeholder,
+    ...inputFieldProps,
   };
-
-  // If there is an onChange handler, make it a controlled input
-  if (onChange) {
-    inputProps.value = $value;
-  }
 
   const extensionStringText: string | undefined =
     !extensionString || typeof extensionString === 'string'
       ? extensionString
-      : formatIntl(extensionString);
+      : formatMessage(extensionString);
 
-  if (elementOnly) {
-    return <InputComponent {...inputProps} />;
-  }
   const containerClasses = cx(styles.container, {
     [styles.containerHorizontal]: appearance.direction === 'horizontal',
   });
@@ -95,10 +120,13 @@ const Input = ({
     <div className={containerClasses}>
       <InputLabel
         appearance={appearance}
-        inputId={$id}
+        inputId={id}
         label={label}
+        labelValues={labelValues}
         help={help}
+        helpValues={helpValues}
         extra={extra}
+        screenReaderOnly={elementOnly}
       />
       <div className={styles.extensionContainer}>
         <InputComponent {...inputProps} />
@@ -106,13 +134,18 @@ const Input = ({
           <div className={styles.extension}>{extensionStringText}</div>
         )}
       </div>
-      <InputStatus appearance={appearance} status={status} error={$error} />
+      {!elementOnly && (
+        <InputStatus
+          appearance={appearance}
+          status={status}
+          statusValues={statusValues}
+          error={error}
+        />
+      )}
     </div>
   );
 };
 
 Input.displayName = 'Input';
 
-export default asField<Props, string, InputComponentProps>({
-  initialValue: '',
-})(Input);
+export default Input;

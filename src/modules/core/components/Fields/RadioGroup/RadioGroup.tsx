@@ -33,8 +33,6 @@ export interface RadioOption {
 interface Props {
   /** Appearance object for the `Radio` fields */
   appearance?: RadioAppearance;
-  /** Connect to form state (will inject `$value`, `$id`, `$error`, `$touched`), is `true` by default */
-  connect?: boolean;
   /** Currently selected value (from the `Form` values) */
   currentlyCheckedValue: string;
   /** HTML field name */
@@ -47,7 +45,6 @@ const displayName = 'RadioGroup';
 
 const RadioGroup = ({
   appearance,
-  connect,
   currentlyCheckedValue,
   name,
   options,
@@ -57,7 +54,6 @@ const RadioGroup = ({
       <Radio
         appearance={appearance}
         checked={currentlyCheckedValue === value}
-        connect={connect}
         key={value}
         name={name}
         value={value}

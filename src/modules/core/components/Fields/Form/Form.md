@@ -14,7 +14,7 @@ import Button from '../../Button';
   {({ status }) => (
     <div>
       <FieldSet>
-        <Input connect={false} name="foo" label="A foo label" />
+        <Input name="foo" label="A foo label" />
       </FieldSet>
       <FieldSet>
         <Button text="Cool" type="submit" />
