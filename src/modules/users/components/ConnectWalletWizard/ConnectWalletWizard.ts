@@ -49,12 +49,16 @@ const stepFunction = (step: number, { method }: StepValues) => {
 
 const ConnectWalletFactory = (
   WrapperComponent: ComponentType<any> = WizardTemplate,
+  props?: any,
 ) =>
   withWizard({
     steps: stepFunction,
     stepCount: 3,
-  })(WrapperComponent);
+  })(WrapperComponent, props);
 
 export const ConnectWalletContainer = ConnectWalletFactory(WizardTemplate);
 
-export const ConnectWalletContent = ConnectWalletFactory(WalletPopoverTemplate);
+export const ConnectWalletContent = ConnectWalletFactory(
+  WalletPopoverTemplate,
+  { simplified: true },
+);

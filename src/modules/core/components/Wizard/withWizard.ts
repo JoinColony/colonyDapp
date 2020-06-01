@@ -32,6 +32,7 @@ const getStep = (steps: Steps, step: number, values: any, props?: any) =>
 
 const withWizard = ({ steps, stepCount: maxSteps }: WizardArgs) => (
   OuterComponent: ComponentType,
+  stepsProps?: any,
 ) => {
   class Wizard extends Component<Props, State> {
     state = { step: 0, values: List() };
@@ -103,6 +104,7 @@ const withWizard = ({ steps, stepCount: maxSteps }: WizardArgs) => (
             // It should be valid if we submitted values for this step before
             validateOnMount: !!stepValues,
           },
+          ...stepsProps,
         }),
       );
     }
