@@ -222,7 +222,10 @@ const Task = () => {
   });
 
   if (!colonyName || colonyFetchError || taskFetchError) {
-    return <Redirect to={NOT_FOUND_ROUTE} />;
+    // @TODO We still need a way to detect if a colony name is not registered
+    // or a task does not exist
+    //
+    // return <Redirect to={NOT_FOUND_ROUTE} />;
   }
 
   if (isFetchingDomains || !task || !colonyData || !domains || !walletAddress) {
