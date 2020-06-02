@@ -16,7 +16,7 @@ import { SpinnerLoader } from '~core/Preloaders';
 const MSG = defineMessages({
   heading: {
     id: 'users.ConnectWalletWizard.StepStart.heading',
-    defaultMessage: 'How would you like to access Colony?',
+    defaultMessage: 'Connect Wallet to Log in',
   },
   subTitle: {
     id: 'users.ConnectWalletWizard.StepStart.subTitle',
@@ -72,7 +72,11 @@ const MSG = defineMessages({
   },
   termsOfService: {
     id: 'users.ConnectWalletWizard.StepStart.termsOfService',
-    defaultMessage: 'Terms and Conditions of Use',
+    defaultMessage: 'Terms and Conditions',
+  },
+  agreeToUseDappSimplified: {
+    id: 'users.ConnectWalletWizard.StepStart.agreeToUseDappSimplified',
+    defaultMessage: 'By signing in I accept {tos}.',
   },
 });
 
@@ -129,10 +133,18 @@ const createWalletOption = {
   icon: 'hugging',
 };
 
-type Props = WizardProps<FormValues>;
+type Props = {
+  simplified?: boolean;
+} & WizardProps<FormValues>;
 
-const StepStart = ({ nextStep, wizardValues }: Props) => {
+const StepStart = ({ nextStep, wizardValues, simplified = false }: Props) => {
   const attemptingAutoLogin = useAutoLogin();
+  const tos = (
+    <ExternalLink
+      text={MSG.termsOfService}
+      href="https://colony.io/pdf/terms.pdf"
+    />
+  );
   return (
     <Form onSubmit={nextStep} initialValues={wizardValues}>
       <main className={styles.content}>
@@ -143,33 +155,27 @@ const StepStart = ({ nextStep, wizardValues }: Props) => {
             </div>
           </div>
         )}
-        <div className={styles.title}>
+        <div className={simplified ? styles.titleSimplified : styles.title}>
           <Heading
             appearance={{ size: 'medium', weight: 'thin' }}
             text={MSG.heading}
           />
         </div>
-        <div className={styles.subtitle}>
-          <Heading
-            appearance={{ size: 'normal', weight: 'thin' }}
-            text={MSG.subTitle}
-          />
-        </div>
-        <div className={styles.subtitle}>
-          <Heading appearance={{ size: 'normal', weight: 'thin' }}>
-            <FormattedMessage
-              {...MSG.agreeToUseDapp}
-              values={{
-                tos: (
-                  <ExternalLink
-                    text={MSG.termsOfService}
-                    href="https://colony.io/pdf/terms.pdf"
-                  />
-                ),
-              }}
+        {!simplified && (
+          <div className={styles.subtitle}>
+            <Heading
+              appearance={{ size: 'normal', weight: 'thin' }}
+              text={MSG.subTitle}
             />
-          </Heading>
-        </div>
+          </div>
+        )}
+        {!simplified && (
+          <div className={styles.subtitle}>
+            <Heading appearance={{ size: 'normal', weight: 'thin' }}>
+              <FormattedMessage {...MSG.agreeToUseDapp} values={{ tos }} />
+            </Heading>
+          </div>
+        )}
         <DecisionHub name="method" options={options} />
         <div className={styles.createWalletLink} data-test="createWalletLink">
           <DecisionOption
@@ -179,6 +185,16 @@ const StepStart = ({ nextStep, wizardValues }: Props) => {
             link={CREATE_WALLET_ROUTE}
           />
         </div>
+        {simplified && (
+          <div className={styles.tosSimplified}>
+            <Heading appearance={{ size: 'normal', weight: 'thin' }}>
+              <FormattedMessage
+                {...MSG.agreeToUseDappSimplified}
+                values={{ tos }}
+              />
+            </Heading>
+          </div>
+        )}
       </main>
     </Form>
   );
