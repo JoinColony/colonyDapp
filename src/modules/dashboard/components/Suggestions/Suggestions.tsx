@@ -2,25 +2,23 @@ import React from 'react';
 
 import SuggestionCreate from '~dashboard/SuggestionCreate';
 import SuggestionsList from '~dashboard/SuggestionsList';
-import { Domain } from '~data/index';
-import { Address } from '~types/index';
+import { Colony, Domain } from '~data/index';
 
 interface Props {
-  colonyAddress: Address;
-  colonyName: string;
+  colony: Colony;
   domainId: Domain['ethDomainId'];
 }
 
 const displayName = 'dashboard.Suggestions';
 
-const Suggestions = ({ colonyAddress, colonyName, domainId }: Props) => (
+const Suggestions = ({
+  colony,
+  colony: { colonyAddress },
+  domainId,
+}: Props) => (
   <div>
     <SuggestionCreate colonyAddress={colonyAddress} domainId={domainId} />
-    <SuggestionsList
-      colonyAddress={colonyAddress}
-      colonyName={colonyName}
-      domainId={domainId}
-    />
+    <SuggestionsList colony={colony} domainId={domainId} />
   </div>
 );
 

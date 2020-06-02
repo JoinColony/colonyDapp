@@ -41,12 +41,23 @@ export default gql`
     transactionHash: String!
   }
 
+  type DomainRoles {
+    domainId: Int!
+    roles: [Int!]!
+  }
+
+  type UserRoles {
+    address: String!
+    domains: [DomainRoles!]!
+  }
+
   extend type Colony {
     canMintNativeToken: Boolean!
     canUnlockNativeToken: Boolean!
     isInRecoveryMode: Boolean!
     isNativeTokenLocked: Boolean!
     nativeToken: Token!
+    roles: [UserRoles!]!
     tokens(addresses: [String!]): [Token!]!
     version: Int!
   }

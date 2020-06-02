@@ -1,7 +1,7 @@
 import { $Values } from 'utility-types';
 import { Channel } from 'redux-saga';
 import { all, call, fork, put } from 'redux-saga/effects';
-import { ClientType, ROOT_DOMAIN_ID } from '@colony/colony-js';
+import { ClientType, ROOT_DOMAIN_ID, ColonyVersion } from '@colony/colony-js';
 
 import { ContextModule, TEMP_getContext } from '~context/index';
 import { DEFAULT_TOKEN_DECIMALS } from '~constants';
@@ -68,7 +68,6 @@ function* colonyCreate({
      * Always create the following transactions..
      */
     'createColony',
-    'createLabel',
     /*
      * If the user opted to create a token, define txs to manage the token.
      */
@@ -84,7 +83,6 @@ function* colonyCreate({
   ]);
   const {
     createColony,
-    createLabel,
     createToken,
     createUser,
     deployOneTx,
@@ -133,14 +131,7 @@ function* colonyCreate({
 
     yield createGroupedTransaction(createColony, {
       context: ClientType.NetworkClient,
-      methodName: 'createColony',
-      ready: false,
-    });
-
-    yield createGroupedTransaction(createLabel, {
-      context: ClientType.ColonyClient,
-      methodName: 'registerColonyLabel',
-      params: [colonyName, ''],
+      methodName: 'createColony(address,uint256,string,string,bool)',
       ready: false,
     });
 
@@ -246,7 +237,16 @@ function* colonyCreate({
      * Pass through tokenAddress after token creation to the colony creation
      * transaction and wait for it to succeed.
      */
-    yield put(transactionAddParams(createColony.id, [tokenAddress]));
+
+    yield put(
+      transactionAddParams(createColony.id, [
+        tokenAddress,
+        ColonyVersion.BurgundyGlider,
+        colonyName,
+        '',
+        true,
+      ]),
+    );
     yield put(transactionReady(createColony.id));
 
     const {
@@ -331,7 +331,6 @@ function* colonyCreate({
      */
     yield all(
       [
-        createLabel,
         deployTokenAuthority,
         setTokenAuthority,
         setOneTxRoleAdministration,
@@ -340,12 +339,6 @@ function* colonyCreate({
         .filter(Boolean)
         .map(({ id }) => put(transactionAddIdentifier(id, colonyAddress))),
     );
-
-    /*
-     * Create label
-     */
-    yield put(transactionReady(createLabel.id));
-    yield takeFrom(createLabel.channel, ActionTypes.TRANSACTION_SUCCEEDED);
 
     if (deployTokenAuthority) {
       /*

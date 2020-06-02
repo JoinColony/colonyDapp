@@ -1,5 +1,5 @@
 import { call, put } from 'redux-saga/effects';
-import { BigNumber, bigNumberify } from 'ethers/utils';
+import { bigNumberify } from 'ethers/utils';
 
 import { ActionTypes, Action } from '~redux/index';
 import { selectAsJS } from '~utils/saga/effects';
@@ -37,13 +37,7 @@ export default function* estimateGasCost({
     const client = yield colonyManager.getClient(context, identifier);
 
     // Estimate the gas limit with the method.
-    let estimatedGas: BigNumber;
-    try {
-      estimatedGas = yield client.estimate[methodName](...params);
-    } catch (e) {
-      console.error(e);
-      throw e;
-    }
+    const estimatedGas = yield client.estimate[methodName](...params);
 
     const suggestedGasLimit = estimatedGas
       .div(SAFE_GAS_LIMIT_MULTIPLIER)

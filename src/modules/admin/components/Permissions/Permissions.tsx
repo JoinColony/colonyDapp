@@ -3,8 +3,7 @@ import { defineMessages, FormattedMessage } from 'react-intl';
 import sortBy from 'lodash/sortBy';
 import { ColonyRole, ROOT_DOMAIN_ID } from '@colony/colony-js';
 
-import { Address, DomainsMapType } from '~types/index';
-import { DomainType } from '~immutable/index';
+import { Address } from '~types/index';
 import Heading from '~core/Heading';
 import { Select, Form } from '~core/Fields';
 import { Table, TableBody, TableCell } from '~core/Table';
@@ -12,8 +11,9 @@ import Button from '~core/Button';
 import { useDialog } from '~core/Dialog';
 import ExternalLink from '~core/ExternalLink';
 import { useTransformer } from '~utils/hooks';
+import { Colony } from '~data/index';
 
-import { getDomainRoles } from '../../../transformers';
+import { getAllUserRolesForDomain } from '../../../transformers';
 import UserListItem from '../UserListItem';
 import UserPermissions from './UserPermissions';
 import ColonyPermissionsAddDialog from './ColonyPermissionsAddDialog';
@@ -50,13 +50,12 @@ const MSG = defineMessages({
 });
 
 interface Props {
-  colonyAddress: Address;
-  domains: DomainsMapType;
+  colony: Colony;
 }
 
 const displayName = 'admin.Permissions';
 
-const Permissions = ({ colonyAddress, domains }: Props) => {
+const Permissions = ({ colony: { colonyAddress, domains }, colony }: Props) => {
   const [selectedDomainId, setSelectedDomainId] = useState<number>(
     ROOT_DOMAIN_ID,
   );
@@ -64,19 +63,19 @@ const Permissions = ({ colonyAddress, domains }: Props) => {
   const openPermissionsAddDialog = useDialog(ColonyPermissionsAddDialog);
   const openPermissionsEditDialog = useDialog(ColonyPermissionsEditDialog);
 
-  const domainRoles = useTransformer(getDomainRoles, [
-    domains,
+  const domainRoles = useTransformer(getAllUserRolesForDomain, [
+    colony,
     selectedDomainId,
   ]);
 
-  const directDomainRoles = useTransformer(getDomainRoles, [
-    domains,
-    Number(selectedDomainId),
+  const directDomainRoles = useTransformer(getAllUserRolesForDomain, [
+    colony,
+    selectedDomainId,
     true,
   ]);
 
   const domainSelectOptions = sortBy(
-    (Object.values(domains) as DomainType[]).map(({ id, name }) => ({
+    domains.map(({ id, name }) => ({
       value: id.toString(),
       label: name,
     })),
@@ -107,18 +106,25 @@ const Permissions = ({ colonyAddress, domains }: Props) => {
 
   const domainRolesArray = useMemo(
     () =>
-      Object.entries(domainRoles)
-        .sort(([, roles]) => (roles.includes(ColonyRole.Root) ? -1 : 1))
-        .filter(([, roles]) => !!roles.length)
-        .map(([userAddress, roles]) => ({
-          userAddress,
-          roles,
-          directRoles: directDomainRoles[userAddress] || [],
-        })),
+      domainRoles
+        .sort(({ roles }) => (roles.includes(ColonyRole.Root) ? -1 : 1))
+        .filter(({ roles }) => !!roles.length)
+        .map(({ address, roles }) => {
+          const directUserRoles = directDomainRoles.find(
+            ({ address: userAddress }) => userAddress === address,
+          );
+          return {
+            userAddress: address,
+            roles,
+            directRoles: directUserRoles ? directUserRoles.roles : [],
+          };
+        }),
     [directDomainRoles, domainRoles],
   );
 
-  const selectedDomain = domains[selectedDomainId];
+  const selectedDomain = domains.find(
+    ({ ethDomainId }) => ethDomainId === selectedDomainId,
+  );
 
   return (
     <div className={styles.main}>
@@ -173,7 +179,7 @@ const Permissions = ({ colonyAddress, domains }: Props) => {
                 ))}
               </TableBody>
             </Table>
-            {selectedDomain && selectedDomain.id !== ROOT_DOMAIN_ID && (
+            {!(selectedDomainId === ROOT_DOMAIN_ID) && (
               <p className={styles.parentPermissionTip}>
                 <FormattedMessage
                   {...MSG.permissionInParent}

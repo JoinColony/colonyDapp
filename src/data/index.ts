@@ -6,6 +6,7 @@ import {
   ColonyProfileFragment,
   ColonyQuery,
   ColonyTasksQuery,
+  DomainFieldsFragment,
   FullColonyFragment,
   PayoutsFragment,
   PersistentTaskPayoutsFragment,
@@ -73,6 +74,9 @@ export type Notifications = UserNotificationsQuery['user']['notifications'];
 export type OneNotification = Notifications[number];
 
 export type AnyColonyProfile = FullColonyFragment | ColonyProfileFragment;
+export type Colony = FullColonyFragment;
+
+export type OneDomain = DomainFieldsFragment;
 
 export type OneSuggestion = ColonySuggestionsQuery['colony']['suggestions'][number];
 

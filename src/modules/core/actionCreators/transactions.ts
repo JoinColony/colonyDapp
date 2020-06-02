@@ -160,6 +160,7 @@ export const transactionSucceeded = (
   payload: {
     eventData: object;
     params: MethodParams;
+    receipt: TransactionReceipt;
     deployedContractAddress?: string;
   },
 ): AllActions => ({

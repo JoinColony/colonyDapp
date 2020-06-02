@@ -1,5 +1,6 @@
-import React, { useMemo } from 'react';
+import React from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
+import sortBy from 'lodash/sortBy';
 
 import { COLONY_TOTAL_BALANCE_DOMAIN_ID } from '~constants';
 import Button from '~core/Button';
@@ -10,8 +11,7 @@ import Heading from '~core/Heading';
 import Icon from '~core/Icon';
 import Link from '~core/Link';
 import HookedColonyAvatar from '~dashboard/HookedColonyAvatar';
-import { AnyColonyProfile } from '~data/index';
-import { DomainsMapType } from '~types/index';
+import { Colony } from '~data/index';
 import { multiLineTextEllipsis, stripProtocol } from '~utils/strings';
 
 import ColonyInvite from './ColonyInvite';
@@ -54,9 +54,8 @@ const MSG = defineMessages({
 const ColonyAvatar = HookedColonyAvatar({ fetchColony: false });
 
 interface Props {
-  colony: AnyColonyProfile;
+  colony: Colony;
   canAdminister: boolean;
-  domains: DomainsMapType;
   filteredDomainId: number;
 }
 
@@ -69,23 +68,17 @@ const ColonyMeta = ({
   colony: {
     colonyAddress,
     description,
+    domains,
     colonyName,
     guideline = '',
     displayName,
     website = '',
   },
-  domains,
   filteredDomainId,
   colony,
   canAdminister,
 }: Props) => {
-  const sortedDomains = useMemo(
-    () =>
-      Object.keys(domains || {})
-        .sort()
-        .map((id) => domains[id]),
-    [domains],
-  );
+  const sortedDomains = sortBy(domains, 'name');
 
   const renderExpandedElements = (
     <>
@@ -166,7 +159,11 @@ const ColonyMeta = ({
           {renderExpandedElements}
         </section>
       )}
-      <ColonyPrograms colonyAddress={colonyAddress} colonyName={colonyName} />
+      <ColonyPrograms
+        canAdminister={canAdminister}
+        colonyAddress={colonyAddress}
+        colonyName={colonyName}
+      />
       <section className={styles.domainContainer}>
         <ul>
           <li className={styles.domainFilterItem}>
@@ -179,15 +176,18 @@ const ColonyMeta = ({
               text={{ id: 'domain.all' }}
             />
           </li>
-          {sortedDomains.map(({ name, id }) => (
+          {sortedDomains.map(({ name, ethDomainId }) => (
             <li
               className={styles.domainFilterItem}
-              key={`domain_${id}`}
+              key={`domain_${ethDomainId}`}
               title={name}
             >
               <Button
-                className={getActiveDomainFilterClass(id, filteredDomainId)}
-                linkTo={`/colony/${colonyName}?domainFilter=${id}`}
+                className={getActiveDomainFilterClass(
+                  ethDomainId,
+                  filteredDomainId,
+                )}
+                linkTo={`/colony/${colonyName}?domainFilter=${ethDomainId}`}
               >
                 {name}
               </Button>

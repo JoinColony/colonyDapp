@@ -2,13 +2,13 @@ import React from 'react';
 
 import Assignment from '~core/Assignment';
 import { SpinnerLoader } from '~core/Preloaders';
-import { AnyTask, FullColonyFragment, useTaskQuery } from '~data/index';
+import { AnyTask, Colony, useTaskQuery } from '~data/index';
 import { Address } from '~types/index';
 
 interface Props {
   draftId: AnyTask['id'];
   nativeTokenAddress: Address;
-  tokens: FullColonyFragment['tokens'];
+  tokens: Colony['tokens'];
 }
 
 const displayName = 'dashboard.TaskAssignment';

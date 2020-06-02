@@ -209,6 +209,7 @@ const areTupleArraysEqual = (arr1: [any, any][], arr2: [any, any][]) => {
 export const useMemoWithFlatArray = createCustomMemo(areFlatArraysEqual);
 export const useMemoWithTupleArray = createCustomMemo(areTupleArraysEqual);
 
+// FIXME REMOVE
 export const useDataFetcher = <
   S extends (...args: any[]) => any,
   A extends RemoveFirstFromTuple<Parameters<S>>

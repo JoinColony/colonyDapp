@@ -6,12 +6,13 @@ import Button from '~core/Button';
 import { Form } from '~core/Fields';
 import Heading from '~core/Heading';
 import ItemsList from '~core/ItemsList';
-import { useSetTaskDomainMutation, AnyTask, Payouts } from '~data/index';
-import { DomainType } from '~immutable/index';
+import {
+  useColonyDomainsQuery,
+  useSetTaskDomainMutation,
+  AnyTask,
+  Payouts,
+} from '~data/index';
 import { Address } from '~types/index';
-import { useDataFetcher } from '~utils/hooks';
-
-import { domainsFetcher } from '../../fetchers';
 
 import styles from './TaskDomains.css';
 
@@ -49,14 +50,6 @@ interface Props {
   payouts: Payouts;
 }
 
-// This odd typing makes DomainType compatible with ConsumableItem
-interface ConsumableDomainType extends Omit<DomainType, 'id'> {
-  id: number;
-  children?: any;
-  parent?: any;
-}
-type ConsumableDomainArray = ConsumableDomainType[];
-
 const displayName = 'dashboard.TaskDomains';
 
 const TaskDomains = ({
@@ -81,35 +74,18 @@ const TaskDomains = ({
     [draftId, setDomain],
   );
 
-  const { data: domains } = useDataFetcher(
-    domainsFetcher,
-    [colonyAddress],
-    [colonyAddress],
-  );
+  const { data } = useColonyDomainsQuery({ variables: { colonyAddress } });
 
-  const consumableDomains: ConsumableDomainArray = useMemo(
+  const domainList = useMemo(
     () =>
-      Object.keys(domains || {})
-        .sort()
-        .map((id) => ({
-          ...(domains || {})[id],
-          disabled: false,
-          /* disabled: !domainHasEnoughFunds(parseInt(id, 10)), */
-          id: parseInt(id, 10),
-        }))
-        /**
-         * @NOTE Temporary patch
-         *
-         * This will return just the selected domain from the consumables array
-         * This is needed since the items list will sort the array and such will
-         * always return ROOT as the first domain, which will be "selected" on the task
-         *
-         * This is a visual change only, to display the "correct" domain, but one
-         * that will need to be removed once we bring back the feature to be able
-         * to select domains after a task's creation.
-         */
-        .filter(({ id }) => id === ethDomainId),
-    [domains, ethDomainId],
+      data && data.colony
+        ? data.colony.domains.map(({ ethDomainId: id, name }) => ({
+            id,
+            name,
+            disabled: false,
+          }))
+        : [],
+    [data],
   );
 
   return (
@@ -123,7 +99,7 @@ const TaskDomains = ({
         {({ submitForm, values: { taskDomains } }) => (
           <>
             <ItemsList
-              list={consumableDomains}
+              list={domainList}
               name="taskDomains"
               showArrow={false}
               onChange={submitForm}

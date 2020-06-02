@@ -14,19 +14,18 @@ import { SpinnerLoader } from '~core/Preloaders';
 import LevelTasksEdit from '~dashboard/LevelTasksEdit';
 import {
   cacheUpdates,
-  useColonyAddressQuery,
+  useColonyFromNameQuery,
   useEditLevelMutation,
   useLevelQuery,
   useLoggedInUser,
   useRemoveLevelMutation,
 } from '~data/index';
 import CenteredTemplate from '~pages/CenteredTemplate';
-import { useDataFetcher, useTransformer } from '~utils/hooks';
+import { useTransformer } from '~utils/hooks';
 
 import BadgePicker from './BadgePicker';
 import NumTotalSteps from './NumTotalSteps';
-import { domainsAndRolesFetcher } from '../../fetchers';
-import { getUserRoles } from '../../../transformers';
+import { getUserRolesForDomain } from '../../../transformers';
 import { canAdminister } from '../../../users/checks';
 
 import styles from './LevelEdit.css';
@@ -119,11 +118,13 @@ const LevelEdit = () => {
   const { walletAddress } = useLoggedInUser();
 
   const openDialog = useDialog(ConfirmDialog);
-
-  const { data: colonyAddressData } = useColonyAddressQuery({
-    variables: { name: colonyName },
+  const { data: colonyData } = useColonyFromNameQuery({
+    variables: { name: colonyName, address: '' },
   });
-  const { data } = useLevelQuery({ variables: { id: levelId } });
+
+  const { data: levelData } = useLevelQuery({
+    variables: { id: levelId },
+  });
   const [editLevel] = useEditLevelMutation();
   const [deleteLevel] = useRemoveLevelMutation({
     update: cacheUpdates.removeLevel(programId),
@@ -157,18 +158,13 @@ const LevelEdit = () => {
     history.push(`/colony/${colonyName}/program/${programId}`);
   }, [colonyName, deleteLevel, history, openDialog, programId]);
 
-  const { data: domains, isFetching: isFetchingDomains } = useDataFetcher(
-    domainsAndRolesFetcher,
-    [colonyAddressData && colonyAddressData.colonyAddress],
-    [colonyAddressData && colonyAddressData.colonyAddress],
-  );
-  const userRoles = useTransformer(getUserRoles, [
-    domains,
-    ROOT_DOMAIN_ID,
+  const userRoles = useTransformer(getUserRolesForDomain, [
+    colonyData && colonyData.colony,
     walletAddress,
+    ROOT_DOMAIN_ID,
   ]);
 
-  if (!data || isFetchingDomains) return <SpinnerLoader />;
+  if (!levelData || !colonyData) return <SpinnerLoader />;
 
   const levelUrl = `/colony/${colonyName}/program/${programId}/level/${levelId}`;
   if (!canAdminister(userRoles)) {
@@ -182,7 +178,7 @@ const LevelEdit = () => {
     stepIds,
     steps,
     title,
-  } = data.level;
+  } = levelData.level;
   const numTotalSteps = stepIds.length;
 
   return (

@@ -2,7 +2,7 @@ import React from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 import { ROOT_DOMAIN_ID } from '@colony/colony-js';
 
-import { DomainType } from '~immutable/index';
+import { OneDomain } from '~data/index';
 import { Address } from '~types/index';
 
 import { ActionTypes } from '~redux/index';
@@ -31,10 +31,7 @@ const displayName = 'admin.DomainList.DomainListItem';
 
 interface Props {
   contributions?: number;
-  /*
-   * Domain data object, follows the same format as UserPicker
-   */
-  domain: DomainType;
+  domain: OneDomain;
   viewOnly: boolean;
   colonyAddress: Address;
 }
@@ -50,7 +47,7 @@ const DomainListItem = ({
       <span className={styles.domainName} title={domain.name}>
         {domain.name}
       </span>
-      {!viewOnly && domain.id !== ROOT_DOMAIN_ID && (
+      {!viewOnly && domain.ethDomainId !== ROOT_DOMAIN_ID && (
         <span title={MSG.buttonEdit.defaultMessage}>
           <DialogActionButton
             dialog={DomainEditDialog}

@@ -2,28 +2,26 @@ import React, { ReactNode, useCallback, useMemo } from 'react';
 import { FormattedMessage, defineMessages } from 'react-intl';
 
 import { EventType } from '../types';
-import { DomainType } from '~immutable/index';
 import TimeRelative from '~core/TimeRelative';
 import { TableRow, TableCell } from '~core/Table';
 import Numeral from '~core/Numeral';
 import Link from '~core/Link';
 import HookedUserAvatar from '~users/HookedUserAvatar';
 import { SpinnerLoader } from '~core/Preloaders';
-import { useDataFetcher } from '~utils/hooks';
 import {
   useColonyNameQuery,
+  useDomainQuery,
   useLoggedInUser,
   useMarkNotificationAsReadMutation,
   useTokenQuery,
   useUserQuery,
   useTaskQuery,
+  useProgramQuery,
   OneNotification,
   UserNotificationsDocument,
-  useProgramQuery,
 } from '~data/index';
 
 import { useLevelAfter } from '../../../../dashboard/hooks/useLevelAfter';
-import { domainsFetcher } from '../../../../dashboard/fetchers';
 
 import { getFriendlyName, getUsername } from '../../../transformers';
 import { transformNotificationEventNames } from '../events';
@@ -148,6 +146,10 @@ const InboxItem = ({
     variables: { id: programId || '' },
   });
 
+  const { data: domainData } = useDomainQuery({
+    variables: { colonyAddress: colonyAddress || '', ethDomainId },
+  });
+
   const initiatorFriendlyName = !initiatorUser
     ? initiatorAddress
     : getFriendlyName(initiatorUser.user);
@@ -161,14 +163,6 @@ const InboxItem = ({
   const targetUserUsername = !targetUser
     ? targetUserAddress
     : getUsername(targetUser.user);
-
-  const { data: domains, isFetching: isFetchingDomains } = useDataFetcher(
-    domainsFetcher,
-    [colonyAddress || undefined],
-    [colonyAddress || undefined],
-  );
-
-  const currentDomain: DomainType | undefined = domains && domains[ethDomainId];
 
   const [markAsReadMutation] = useMarkNotificationAsReadMutation({
     variables: { input: { id } },
@@ -202,15 +196,14 @@ const InboxItem = ({
     [level, persistentTaskId],
   );
   const persistentTaskTitle = persistentTask && persistentTask.title;
+  const domainName = domainData && domainData.domain.name;
 
   return (
     <TableRow onClick={markAsRead}>
       <TableCell
         className={full ? styles.inboxRowCellFull : styles.inboxRowCellPopover}
       >
-        {(colonyAddress && !colonyName) ||
-        (tokenAddress && !token) ||
-        isFetchingDomains ? (
+        {(colonyAddress && !colonyName) || (tokenAddress && !token) ? (
           <div className={styles.spinnerWrapper}>
             <SpinnerLoader
               loadingText={LOCAL_MSG.loadingText}
@@ -251,9 +244,7 @@ const InboxItem = ({
                     ),
                   ),
                   comment: makeInboxDetail(message),
-                  domainName: makeInboxDetail(
-                    currentDomain && currentDomain.name,
-                  ),
+                  domainName: makeInboxDetail(domainName),
                   level: makeInboxDetail(levelTitle),
                   nextLevel: makeInboxDetail(nextLevelTitle),
                   otherUser: makeInboxDetail(targetUserFriendlyName, (value) =>
@@ -303,14 +294,14 @@ const InboxItem = ({
                   title={colonyName}
                   className={styles.additionalDetailsTruncate}
                 >
-                  {currentDomain ? (
+                  {domainName ? (
                     <FormattedMessage
                       {...MSG.metaColonyAndDomain}
                       values={{
                         colonyDisplayName: (
                           <Link to={`/colony/${colonyName}`}>{colonyName}</Link>
                         ),
-                        domainName: currentDomain && currentDomain.name,
+                        domainName,
                       }}
                     />
                   ) : (

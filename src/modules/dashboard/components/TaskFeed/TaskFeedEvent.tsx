@@ -15,6 +15,7 @@ import {
   useUser,
   useTokenQuery,
   useColonyQuery,
+  useDomainQuery,
   AnyUser,
   EventType,
   TaskEventFragment,
@@ -35,11 +36,9 @@ import {
   SetTaskDomainEvent,
   SetTaskPendingEvent,
 } from '~data/index';
-import { useSelector } from '~utils/hooks';
 import { getTokenDecimalsWithFallback } from '~utils/tokens';
 
 import { getFriendlyName } from '../../../users/transformers';
-import { domainSelector } from '../../selectors';
 import taskSkillsTree from '../TaskSkills/taskSkillsTree';
 import { SpinnerLoader } from '~core/Preloaders';
 
@@ -179,11 +178,13 @@ const TaskFeedEventDomainSet = ({
   domainId,
 }: EventProps<SetTaskDomainEvent>) => {
   const { formatMessage } = useIntl();
-  const domain = useSelector(domainSelector, [colonyAddress, ethDomainId]);
+  const { data } = useDomainQuery({
+    variables: { colonyAddress, ethDomainId },
+  });
   const domainName =
     ethDomainId === ROOT_DOMAIN_ID
       ? formatMessage(MSG.rootDomain)
-      : domain && domain.name;
+      : data && data.domain && data.domain.name;
   return (
     <FormattedMessage
       {...MSG.domainSet}

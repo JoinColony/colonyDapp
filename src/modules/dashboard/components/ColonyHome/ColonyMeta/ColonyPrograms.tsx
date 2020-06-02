@@ -10,12 +10,8 @@ import {
   ProgramStatus,
   useColonyProgramsQuery,
   useCreateProgramMutation,
-  useLoggedInUser,
 } from '~data/index';
 import { Address } from '~types/index';
-
-import { canAdminister } from '../../../../users/checks';
-import { useUserRolesInDomain } from '../../../hooks/useUserRolesInDomain';
 
 import styles from './ColonyPrograms.css';
 
@@ -34,21 +30,21 @@ const MSG = defineMessages({
 });
 
 interface Props {
+  canAdminister: boolean;
   colonyAddress: Address;
   colonyName: string;
 }
 
 const displayName = 'dashboard.ColonyHome.ColonyMeta.ColonyPrograms';
 
-const ColonyPrograms = ({ colonyAddress, colonyName }: Props) => {
+const ColonyPrograms = ({
+  colonyAddress,
+  colonyName,
+  canAdminister,
+}: Props) => {
   const { formatMessage } = useIntl();
   const [isCreatingProgram, setIsCreatingProgram] = useState<boolean>(false);
   const history = useHistory();
-
-  const { walletAddress } = useLoggedInUser();
-
-  const userRolesInRoot = useUserRolesInDomain(walletAddress, colonyAddress);
-  const canCreate = canAdminister(userRolesInRoot);
 
   const { data: programsData } = useColonyProgramsQuery({
     variables: { address: colonyAddress },
@@ -60,7 +56,7 @@ const ColonyPrograms = ({ colonyAddress, colonyName }: Props) => {
   const programs = unfilteredPrograms.filter(
     ({ status }) =>
       status === ProgramStatus.Active ||
-      (status === ProgramStatus.Draft && canCreate),
+      (status === ProgramStatus.Draft && canAdminister),
   );
 
   const [createProgramFn, { error }] = useCreateProgramMutation({
@@ -82,7 +78,7 @@ const ColonyPrograms = ({ colonyAddress, colonyName }: Props) => {
     [colonyName, createProgramFn, history],
   );
 
-  if (!programsData || (!canCreate && programs.length === 0)) {
+  if (!programsData || (!canAdminister && programs.length === 0)) {
     return null;
   }
 
@@ -113,7 +109,7 @@ const ColonyPrograms = ({ colonyAddress, colonyName }: Props) => {
           })}
         </nav>
       )}
-      {canCreate && (
+      {canAdminister && (
         <Button
           appearance={{ theme: 'blue' }}
           loading={isCreatingProgram && !error}

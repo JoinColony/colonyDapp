@@ -27,11 +27,11 @@ import {
   useFinalizeTaskMutation,
 } from '~data/index';
 import LoadingTemplate from '~pages/LoadingTemplate';
-import { useDataFetcher, useTransformer, useAsyncFunction } from '~utils/hooks';
+import { useTransformer, useAsyncFunction } from '~utils/hooks';
 import { ActionTypes } from '~redux/index';
 import { NOT_FOUND_ROUTE } from '~routes/index';
 
-import { getUserRoles } from '../../../transformers';
+import { getUserRolesForDomain } from '../../../transformers';
 import {
   canCancelTask,
   canEditTask,
@@ -40,7 +40,6 @@ import {
   isCancelled,
   isFinalized,
 } from '../../checks';
-import { domainsAndRolesFetcher } from '../../fetchers';
 
 import styles from './Task.css';
 
@@ -220,16 +219,10 @@ const Task = () => {
     finalizeTaskMutation,
   ]);
 
-  const { data: domains, isFetching: isFetchingDomains } = useDataFetcher(
-    domainsAndRolesFetcher,
-    [colonyData && colonyData.colonyAddress],
-    [colonyData && colonyData.colonyAddress],
-  );
-
-  const userRoles = useTransformer(getUserRoles, [
-    domains,
-    ethDomainId || null,
+  const userRoles = useTransformer(getUserRolesForDomain, [
+    colonyData && colonyData.colony,
     walletAddress,
+    ethDomainId,
   ]);
 
   const onEditTask = useCallback(() => {
@@ -258,7 +251,7 @@ const Task = () => {
     return <Redirect to={NOT_FOUND_ROUTE} />;
   }
 
-  if (isFetchingDomains || !task || !colonyData || !domains || !walletAddress) {
+  if (!task || !colonyData || !walletAddress) {
     return <LoadingTemplate loadingText={MSG.loadingText} />;
   }
 

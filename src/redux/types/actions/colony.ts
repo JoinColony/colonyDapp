@@ -3,11 +3,7 @@ import { ColonyRole } from '@colony/colony-js';
 
 import { ActionTypes } from '~redux/index';
 import { Address, WithKey } from '~types/index';
-import {
-  ContractTransactionType,
-  DomainType,
-  ColonyRolesType,
-} from '~immutable/index';
+import { ContractTransactionType } from '~immutable/index';
 import {
   ActionType,
   ActionTypeWithPayloadAndMeta,
@@ -62,22 +58,6 @@ export type ColonyActionTypes =
   | ActionType<typeof ActionTypes.COLONY_CREATE_CANCEL>
   | ErrorActionType<ActionTypes.COLONY_CREATE_ERROR, object>
   | UniqueActionType<ActionTypes.COLONY_CREATE_SUCCESS, void, object>
-  | ActionTypeWithPayloadAndMeta<
-      ActionTypes.COLONY_DOMAINS_FETCH,
-      {
-        colonyAddress: Address;
-        options?: {
-          fetchRoles?: boolean;
-        };
-      },
-      WithKey
-    >
-  | ErrorActionType<ActionTypes.COLONY_DOMAINS_FETCH_ERROR, WithKey>
-  | ActionTypeWithPayloadAndMeta<
-      ActionTypes.COLONY_DOMAINS_FETCH_SUCCESS,
-      { colonyAddress: Address; domains: DomainType[] },
-      WithKey
-    >
   | UniqueActionType<
       ActionTypes.COLONY_NATIVE_TOKEN_UNLOCK,
       { colonyAddress: Address },
@@ -137,17 +117,6 @@ export type ColonyActionTypes =
       object,
       object
     >
-  | ActionTypeWithPayloadAndMeta<
-      ActionTypes.COLONY_ROLES_FETCH,
-      { colonyAddress: Address },
-      WithKey
-    >
-  | ErrorActionType<ActionTypes.COLONY_ROLES_FETCH_ERROR, WithKey>
-  | ActionTypeWithPayloadAndMeta<
-      ActionTypes.COLONY_ROLES_FETCH_SUCCESS,
-      ColonyRolesType,
-      WithKey
-    >
   | UniqueActionType<
       ActionTypes.COLONY_DOMAIN_USER_ROLES_SET,
       {
@@ -178,22 +147,4 @@ export type ColonyActionTypes =
       object
     >
   | UniqueActionType<ActionTypes.COLONY_VERSION_UPGRADE_SUCCESS, object, object>
-  | ErrorActionType<ActionTypes.COLONY_VERSION_UPGRADE_ERROR, object>
-  | ActionTypeWithPayloadAndMeta<
-      ActionTypes.TEMP_COLONY_USER_HAS_RECOVERY_ROLE_FETCH,
-      { colonyAddress: Address; userAddress: Address },
-      WithKey
-    >
-  | ErrorActionType<
-      ActionTypes.TEMP_COLONY_USER_HAS_RECOVERY_ROLE_FETCH_ERROR,
-      WithKey
-    >
-  | ActionTypeWithPayloadAndMeta<
-      ActionTypes.TEMP_COLONY_USER_HAS_RECOVERY_ROLE_FETCH_SUCCESS,
-      {
-        colonyAddress: Address;
-        userAddress: Address;
-        userHasRecoveryRole: boolean;
-      },
-      WithKey
-    >;
+  | ErrorActionType<ActionTypes.COLONY_VERSION_UPGRADE_ERROR, object>;

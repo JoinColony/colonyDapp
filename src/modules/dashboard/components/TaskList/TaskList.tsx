@@ -8,7 +8,6 @@ import React, {
 import { defineMessages, FormattedMessage } from 'react-intl';
 
 import { Address } from '~types/index';
-import { DomainId } from '~immutable/index';
 import {
   useColonyNameLazyQuery,
   useLoggedInUser,
@@ -65,7 +64,7 @@ const MSG = defineMessages({
 interface Props {
   tasks: AnyTask[];
   emptyState?: ReactNode;
-  filteredDomainId?: DomainId;
+  filteredDomainId?: number;
   filterOption: TasksFilterOptionType;
   colonyAddress?: Address;
   showEmptyState?: boolean;

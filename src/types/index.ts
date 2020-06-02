@@ -1,13 +1,15 @@
 import { ReactNode } from 'react';
 import { TransactionReceipt } from 'ethers/providers';
 import { BigNumberish } from 'ethers/utils';
-import { ClientType, TransactionOverrides } from '@colony/colony-js';
+import {
+  ClientType,
+  ColonyRole,
+  TransactionOverrides,
+} from '@colony/colony-js';
 
 import { TransactionMultisig } from '~immutable/index';
 
 export * from './keyTypes';
-// export * from './TransactionReceipt';
-export * from './domains';
 export * from './DefaultValues';
 export * from './RecordToJS';
 export * from './context';
@@ -84,4 +86,10 @@ export interface MultisigOperationJSON {
   nonce: number;
   payload: object; // MultisigOperationPayload
   signers: object; // Signers
+}
+
+export interface UserRolesForDomain {
+  address: string;
+  domainId: number;
+  roles: ColonyRole[];
 }

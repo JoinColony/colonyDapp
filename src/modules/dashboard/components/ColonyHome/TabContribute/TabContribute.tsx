@@ -5,7 +5,7 @@ import throttle from 'lodash/throttle';
 import { ROOT_DOMAIN_ID } from '@colony/colony-js';
 
 import { COLONY_TOTAL_BALANCE_DOMAIN_ID } from '~constants';
-import { FullColonyFragment } from '~data/index';
+import { Colony } from '~data/index';
 import { getBalanceFromToken } from '~utils/tokens';
 import { useAsyncFunction } from '~utils/hooks';
 import { mergePayload } from '~utils/actions';
@@ -26,7 +26,7 @@ import styles from './TabContribute.css';
 
 interface Props {
   canCreateTask: boolean;
-  colony: FullColonyFragment;
+  colony: Colony;
   filteredDomainId: number;
   showQrCode: boolean;
 }

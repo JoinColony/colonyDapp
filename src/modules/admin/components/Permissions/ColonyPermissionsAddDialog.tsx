@@ -7,10 +7,12 @@ import { Address } from '~types/index';
 import { mergePayload, withKey, mapPayload, pipe } from '~utils/actions';
 import { ItemDataType } from '~core/OmniPicker';
 import { ActionTypes } from '~redux/index';
-import { useDataFetcher, useTransformer } from '~utils/hooks';
+import { useTransformer } from '~utils/hooks';
 import {
   ColonySubscribedUsersDocument,
   AnyUser,
+  useColonyQuery,
+  useLoggedInUser,
   useUserLazy,
 } from '~data/index';
 import SingleUserPicker, { filterUserSelection } from '~core/SingleUserPicker';
@@ -21,11 +23,10 @@ import Dialog, { DialogSection } from '~core/Dialog';
 import { ActionForm, InputLabel } from '~core/Fields';
 import HookedUserAvatar from '~users/HookedUserAvatar';
 
-import { TEMP_getUserRolesWithRecovery } from '../../../transformers';
 import {
-  domainsAndRolesFetcher,
-  TEMP_userHasRecoveryRoleFetcher,
-} from '../../../dashboard/fetchers';
+  getAllRootAccounts,
+  getUserRolesForDomain,
+} from '../../../transformers';
 import { availableRoles } from './constants';
 import PermissionForm from './PermissionForm';
 
@@ -69,25 +70,37 @@ const ColonyPermissionsAddDialog = ({
   close,
   domainId,
 }: Props) => {
+  const { walletAddress } = useLoggedInUser();
   const [selectedUserAddress, setSelectedUserAddress] = useState<string>();
 
-  const { data: domains } = useDataFetcher(
-    domainsAndRolesFetcher,
-    [colonyAddress],
-    [colonyAddress],
-  );
+  const { data: colonyData } = useColonyQuery({
+    variables: { address: colonyAddress },
+  });
 
-  const { data: colonyRecoveryRoles = [] } = useDataFetcher(
-    TEMP_userHasRecoveryRoleFetcher,
-    [colonyAddress],
-    [colonyAddress, selectedUserAddress],
-  );
-
-  const roles = useTransformer(TEMP_getUserRolesWithRecovery, [
-    domains,
-    colonyRecoveryRoles,
+  const currentUserRoles = useTransformer(getUserRolesForDomain, [
+    colonyData && colonyData.colony,
+    // CURRENT USER!
+    walletAddress,
     domainId,
+  ]);
+
+  const userDirectRoles = useTransformer(getUserRolesForDomain, [
+    colonyData && colonyData.colony,
+    // USER TO SET PERMISSIONS FOR!
     selectedUserAddress,
+    domainId,
+    true,
+  ]);
+
+  const userInheritedRoles = useTransformer(getUserRolesForDomain, [
+    colonyData && colonyData.colony,
+    // USER TO SET PERMISSIONS FOR!
+    selectedUserAddress,
+    domainId,
+  ]);
+
+  const rootAccounts = useTransformer(getAllRootAccounts, [
+    colonyData && colonyData.colony,
   ]);
 
   const updateSelectedUser = useCallback(
@@ -125,10 +138,16 @@ const ColonyPermissionsAddDialog = ({
   );
 
   const user = useUserLazy(selectedUserAddress);
+  const domain =
+    colonyData &&
+    colonyData.colony.domains.find(
+      ({ ethDomainId }) => ethDomainId === domainId,
+    );
 
   return (
     <Dialog cancel={cancel}>
-      {!domains ||
+      {!colonyData ||
+      !domain ||
       !subscribedUsersData ||
       !subscribedUsersData.colony.subscribedUsers ? (
         <SpinnerLoader />
@@ -137,7 +156,7 @@ const ColonyPermissionsAddDialog = ({
           enableReinitialize
           initialValues={{
             domainId,
-            roles,
+            roles: userInheritedRoles,
             user,
           }}
           onSuccess={close}
@@ -147,7 +166,6 @@ const ColonyPermissionsAddDialog = ({
           transform={transform}
         >
           {({ isSubmitting }: FormikProps<any>) => {
-            const domain = domains[domainId];
             return (
               <div className={styles.dialogContainer}>
                 <Heading
@@ -170,11 +188,11 @@ const ColonyPermissionsAddDialog = ({
                   />
                 </div>
                 <PermissionForm
-                  colonyRecoveryRoles={colonyRecoveryRoles}
+                  currentUserRoles={currentUserRoles}
                   domainId={domainId}
-                  domains={domains}
-                  userAddress={selectedUserAddress}
-                  userRoles={roles}
+                  rootAccounts={rootAccounts}
+                  userDirectRoles={userDirectRoles}
+                  userInheritedRoles={userInheritedRoles}
                 />
                 <DialogSection appearance={{ align: 'right' }}>
                   <Button

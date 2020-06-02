@@ -1,7 +1,7 @@
 import React, { useCallback, useMemo, useState } from 'react';
 import { defineMessages, useIntl } from 'react-intl';
 import sortBy from 'lodash/sortBy';
-import { ColonyRole } from '@colony/colony-js';
+import { ColonyRole, ROOT_DOMAIN_ID } from '@colony/colony-js';
 import { AddressZero } from 'ethers/constants';
 
 import { COLONY_TOTAL_BALANCE_DOMAIN_ID } from '~constants';
@@ -9,9 +9,15 @@ import Button from '~core/Button';
 import { useDialog } from '~core/Dialog';
 import Heading from '~core/Heading';
 import { Select, Form } from '~core/Fields';
-import { Address, DomainsMapType } from '~types/index';
-import { useTokenBalancesForDomainsQuery } from '~data/index';
 
+import {
+  useLoggedInUser,
+  useTokenBalancesForDomainsQuery,
+  Colony,
+} from '~data/index';
+import { useTransformer } from '~utils/hooks';
+
+import { getUserRolesForDomain } from '../../../transformers';
 import { userHasRole } from '../../../users/checks';
 import FundingBanner from './FundingBanner';
 import TokenList from './TokenList';
@@ -45,22 +51,20 @@ const MSG = defineMessages({
 });
 
 interface Props {
-  canMintNativeToken?: boolean;
-  colonyAddress: Address;
-  domains: DomainsMapType;
-  nativeTokenAddress: Address;
-  rootRoles: ColonyRole[];
-  tokenAddresses: string[];
+  colony: Colony;
 }
 
 const Tokens = ({
-  canMintNativeToken,
-  colonyAddress,
-  domains,
-  nativeTokenAddress,
-  rootRoles,
-  tokenAddresses,
+  colony,
+  colony: {
+    canMintNativeToken,
+    colonyAddress,
+    domains,
+    nativeTokenAddress,
+    tokenAddresses,
+  },
 }: Props) => {
+  const { walletAddress } = useLoggedInUser();
   const { formatMessage } = useIntl();
 
   const [selectedDomain, setSelectedDomain] = useState<number>(
@@ -70,6 +74,12 @@ const Tokens = ({
   const openTokenEditDialog = useDialog(ColonyTokenEditDialog);
   const openTokenMintDialog = useDialog(TokenMintDialog);
   const openTokensMoveDialog = useDialog(TokensMoveDialog);
+
+  const rootRoles = useTransformer(getUserRolesForDomain, [
+    colony,
+    walletAddress,
+    ROOT_DOMAIN_ID,
+  ]);
 
   const canEdit =
     userHasRole(rootRoles, ColonyRole.Root) ||

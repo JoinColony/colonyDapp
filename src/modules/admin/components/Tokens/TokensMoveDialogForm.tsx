@@ -7,16 +7,15 @@ import sortBy from 'lodash/sortBy';
 import { ColonyRole, ROOT_DOMAIN_ID } from '@colony/colony-js';
 import { AddressZero } from 'ethers/constants';
 
-import { Address } from '~types/index';
-import { useDataFetcher, useTransformer } from '~utils/hooks';
+import { useTransformer } from '~utils/hooks';
 import Button from '~core/Button';
 import DialogSection from '~core/Dialog/DialogSection';
 import { Select, Input, FormStatus } from '~core/Fields';
 import Heading from '~core/Heading';
 import {
-  ColonyTokens,
   useLoggedInUser,
   useTokenBalancesForDomainsLazyQuery,
+  Colony,
 } from '~data/index';
 import EthUsd from '~core/EthUsd';
 import Numeral from '~core/Numeral';
@@ -25,8 +24,7 @@ import {
   getTokenDecimalsWithFallback,
 } from '~utils/tokens';
 
-import { getUserRoles } from '../../../transformers';
-import { domainsAndRolesFetcher } from '../../../dashboard/fetchers';
+import { getUserRolesForDomain } from '../../../transformers';
 import { userHasRole } from '../../../users/checks';
 
 import styles from './TokensMoveDialogForm.css';
@@ -81,19 +79,18 @@ const MSG = defineMessages({
 
 interface Props {
   cancel: () => void;
-  colonyAddress: Address;
-  tokens: ColonyTokens;
+  colony: Colony;
 }
 
 const TokensMoveDialogForm = ({
   cancel,
-  colonyAddress,
+  colony,
+  colony: { colonyAddress, domains, tokens },
   handleSubmit,
   isSubmitting,
   isValid,
   setErrors,
   status,
-  tokens,
   values,
 }: Props & FormikProps<FormValues>) => {
   const { tokenAddress, amount } = values;
@@ -118,30 +115,24 @@ const TokensMoveDialogForm = ({
     [tokens],
   );
 
-  const { data: domains } = useDataFetcher(
-    domainsAndRolesFetcher,
-    [colonyAddress],
-    [colonyAddress],
-  );
-
   const { walletAddress } = useLoggedInUser();
 
-  const fromDomainRoles = useTransformer(getUserRoles, [
-    domains,
-    fromDomain,
+  const fromDomainRoles = useTransformer(getUserRolesForDomain, [
+    colony,
     walletAddress,
+    fromDomain,
   ]);
 
-  const toDomainRoles = useTransformer(getUserRoles, [
-    domains,
-    toDomain,
+  const toDomainRoles = useTransformer(getUserRolesForDomain, [
+    colony,
     walletAddress,
+    toDomain,
   ]);
 
   const domainOptions = useMemo(
     () =>
       sortBy(
-        Object.values(domains || {}).map(({ name, id }) => ({
+        domains.map(({ name, id }) => ({
           value: id.toString(),
           label: name,
         })),

@@ -196,6 +196,7 @@ export type Colony = {
   nativeToken: Token;
   nativeTokenAddress: Scalars['String'];
   programs: Array<Program>;
+  roles: Array<UserRoles>;
   subscribedUsers: Array<User>;
   suggestions: Array<Suggestion>;
   taskIds: Array<Scalars['String']>;
@@ -1356,6 +1357,16 @@ export type TaskFinalizedPayment = {
   transactionHash: Scalars['String'];
 };
 
+export type DomainRoles = {
+  domainId: Scalars['Int'];
+  roles: Array<Scalars['Int']>;
+};
+
+export type UserRoles = {
+  address: Scalars['String'];
+  domains: Array<DomainRoles>;
+};
+
 export type PayoutsFragment = { payouts: Array<(
     Pick<TaskPayout, 'amount' | 'tokenAddress'>
     & { token: Pick<Token, 'id' | 'address' | 'decimals' | 'name' | 'symbol'> }
@@ -1385,8 +1396,14 @@ export type TokensFragment = (
 
 export type ColonyProfileFragment = Pick<Colony, 'id' | 'colonyAddress' | 'colonyName' | 'avatarHash' | 'description' | 'displayName' | 'guideline' | 'website'>;
 
+export type DomainFieldsFragment = Pick<Domain, 'id' | 'ethDomainId' | 'name' | 'ethParentDomainId'>;
+
 export type FullColonyFragment = (
   Pick<Colony, 'isNativeTokenExternal' | 'version' | 'canMintNativeToken' | 'canUnlockNativeToken' | 'isInRecoveryMode' | 'isNativeTokenLocked'>
+  & { domains: Array<DomainFieldsFragment>, roles: Array<(
+    Pick<UserRoles, 'address'>
+    & { domains: Array<Pick<DomainRoles, 'domainId' | 'roles'>> }
+  )> }
   & ColonyProfileFragment
   & TokensFragment
 );
@@ -2333,11 +2350,29 @@ export const TokensFragmentDoc = gql`
   }
 }
     `;
+export const DomainFieldsFragmentDoc = gql`
+    fragment DomainFields on Domain {
+  id
+  ethDomainId
+  name
+  ethParentDomainId
+}
+    `;
 export const FullColonyFragmentDoc = gql`
     fragment FullColony on Colony {
   ...ColonyProfile
   ...Tokens
   isNativeTokenExternal
+  domains {
+    ...DomainFields
+  }
+  roles @client {
+    address
+    domains {
+      domainId
+      roles
+    }
+  }
   version @client
   canMintNativeToken @client
   canUnlockNativeToken @client
@@ -2345,7 +2380,8 @@ export const FullColonyFragmentDoc = gql`
   isNativeTokenLocked @client
 }
     ${ColonyProfileFragmentDoc}
-${TokensFragmentDoc}`;
+${TokensFragmentDoc}
+${DomainFieldsFragmentDoc}`;
 export const SuggestionFieldsFragmentDoc = gql`
     fragment SuggestionFields on Suggestion {
   id

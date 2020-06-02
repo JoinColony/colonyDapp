@@ -13,29 +13,17 @@ import Domains from '~admin/Domains';
 import Permissions from '~admin/Permissions';
 import ProfileAdvanced from '~admin/Profile/ProfileAdvanced';
 import VerticalNavigation from '~pages/VerticalNavigation';
-import { useDataFetcher, useTransformer } from '~utils/hooks';
-import { DomainsMapType } from '~types/index';
-import {
-  FullColonyFragment,
-  useColonyFromNameQuery,
-  useLoggedInUser,
-} from '~data/index';
+import { useTransformer } from '~utils/hooks';
+import { Colony, useColonyFromNameQuery, useLoggedInUser } from '~data/index';
 import { NOT_FOUND_ROUTE } from '~routes/index';
 
-import {
-  TEMP_getUserRolesWithRecovery,
-  getAllUserRoles,
-} from '../../../transformers';
+import { getAllUserRoles, getUserRolesForDomain } from '../../../transformers';
 import {
   canArchitect,
   hasRoot,
   canFund,
   canAdminister,
 } from '../../../users/checks';
-import {
-  domainsAndRolesFetcher,
-  TEMP_userHasRecoveryRoleFetcher,
-} from '../../../dashboard/fetchers';
 
 import styles from './AdminDashboard.css';
 
@@ -80,8 +68,7 @@ interface Props {
 }
 
 const navigationItems = (
-  colony: FullColonyFragment,
-  domains: DomainsMapType,
+  colony: Colony,
   rootRoles: ColonyRole[],
   allRoles: ColonyRole[],
 ): NavigationItem[] => {
@@ -95,39 +82,22 @@ const navigationItems = (
   const tokensTab = {
     id: 2,
     title: MSG.tabTokens,
-    content: (
-      <Tokens
-        colonyAddress={colony.colonyAddress}
-        canMintNativeToken={colony.canMintNativeToken}
-        domains={domains}
-        nativeTokenAddress={colony.nativeTokenAddress}
-        rootRoles={rootRoles}
-        tokenAddresses={colony.tokenAddresses}
-      />
-    ),
+    content: <Tokens colony={colony} />,
   };
   const domainsTab = {
     id: 3,
     title: MSG.tabDomains,
-    content: (
-      <Domains
-        colonyAddress={colony.colonyAddress}
-        domains={domains}
-        rootRoles={rootRoles}
-      />
-    ),
+    content: <Domains colony={colony} />,
   };
   const advancedTab = {
     id: 5,
     title: MSG.tabAdvanced,
-    content: <ProfileAdvanced colony={colony} rootRoles={rootRoles} />,
+    content: <ProfileAdvanced colony={colony} />,
   };
   const permissionsTab = {
     id: 4,
     title: MSG.tabPermissions,
-    content: (
-      <Permissions colonyAddress={colony.colonyAddress} domains={domains} />
-    ),
+    content: <Permissions colony={colony} />,
   };
 
   /*
@@ -173,59 +143,29 @@ const AdminDashboard = ({
 }: Props) => {
   const CURRENT_COLONY_ROUTE = colonyName ? `/colony/${colonyName}` : '';
 
-  const {
-    data,
-    /**
-     * @NOTE Hooking into the return variable value
-     *
-     * Since this is a client side query it's return value will never end up
-     * in the final result from the main query hook, either the value or the
-     * eventual error.
-     *
-     * For this we hook into the `address` value which will be set internally
-     * by the `@client` query so that we can act on it if we encounter an ENS
-     * error.
-     *
-     * Based on that error we can determine if the colony is registered or not.
-     */
-    variables: { address: reverseENSAddress },
-  } = useColonyFromNameQuery({
+  const { data: colonyData, error: colonyFetchError } = useColonyFromNameQuery({
     // We have to define an empty address here for type safety, will be replaced by the query
     variables: { name: colonyName, address: '' },
   });
 
   const { walletAddress } = useLoggedInUser();
-  const colonyAddress = data && data.colonyAddress;
 
-  const { data: domains, isFetching: isFetchingDomains } = useDataFetcher(
-    domainsAndRolesFetcher,
-    [colonyAddress],
-    [colonyAddress],
-  );
-
-  const { data: colonyRecoveryRoles = [] } = useDataFetcher(
-    TEMP_userHasRecoveryRoleFetcher,
-    [colonyAddress],
-    [colonyAddress, walletAddress],
-  );
-
-  const rootUserRoles = useTransformer(TEMP_getUserRolesWithRecovery, [
-    domains,
-    colonyRecoveryRoles,
-    ROOT_DOMAIN_ID,
+  const rootUserRoles = useTransformer(getUserRolesForDomain, [
+    colonyData && colonyData.colony,
     walletAddress,
+    ROOT_DOMAIN_ID,
   ]);
 
   const allUserRoles = useTransformer(getAllUserRoles, [
-    domains,
+    colonyData && colonyData.colony,
     walletAddress,
   ]);
 
-  if (!colonyName || (reverseENSAddress as any) instanceof Error) {
+  if (!colonyName || colonyFetchError instanceof Error) {
     return <Redirect to={NOT_FOUND_ROUTE} />;
   }
 
-  if (!data || !domains || isFetchingDomains) {
+  if (!colonyData) {
     return <LoadingTemplate loadingText={MSG.loadingText} />;
   }
 
@@ -237,17 +177,12 @@ const AdminDashboard = ({
     return <Redirect to={CURRENT_COLONY_ROUTE} />;
   }
 
-  const { colony } = data;
+  const { colony } = colonyData;
 
   return (
     <div className={styles.main}>
       <VerticalNavigation
-        navigationItems={navigationItems(
-          colony,
-          domains,
-          rootUserRoles,
-          allUserRoles,
-        )}
+        navigationItems={navigationItems(colony, rootUserRoles, allUserRoles)}
         initialTab={
           location && location.state && location.state.initialTab
             ? location.state.initialTab

@@ -18,12 +18,11 @@ import { useLoggedInUser } from '~data/helpers';
 import { useColonyFromNameQuery } from '~data/index';
 import LoadingTemplate from '~pages/LoadingTemplate';
 import { NOT_FOUND_ROUTE, LEVEL_ROUTE, PROGRAM_ROUTE } from '~routes/index';
-import { useDataFetcher, useTransformer } from '~utils/hooks';
 import { capitalize } from '~utils/strings';
+import { useTransformer } from '~utils/hooks';
 
-import { getUserRoles } from '../../../transformers';
+import { getUserRolesForDomain } from '../../../transformers';
 import { canAdminister, canArchitect, hasRoot } from '../../../users/checks';
-import { domainsAndRolesFetcher } from '../../fetchers';
 
 import ColonyFunding from './ColonyFunding';
 import styles from './ColonyHome.css';
@@ -115,22 +114,22 @@ const ColonyHome = ({ match, location }: Props) => {
     variables: { name: colonyName, address: '' },
   });
 
-  const { data: domains, isFetching: isFetchingDomains } = useDataFetcher(
-    domainsAndRolesFetcher,
-    [data && data.colonyAddress],
-    [data && data.colonyAddress],
-  );
+  const colonyDomains = data && data.colony && data.colony.domains;
 
-  const currentDomainUserRoles = useTransformer(getUserRoles, [
-    domains,
-    filteredDomainId || ROOT_DOMAIN_ID,
+  const filteredDomain = colonyDomains
+    ? colonyDomains.find(({ ethDomainId }) => ethDomainId === filteredDomainId)
+    : undefined;
+
+  const currentDomainUserRoles = useTransformer(getUserRolesForDomain, [
+    data && data.colony,
     walletAddress,
+    filteredDomainId || ROOT_DOMAIN_ID,
   ]);
 
-  const rootUserRoles = useTransformer(getUserRoles, [
-    domains,
-    ROOT_DOMAIN_ID,
+  const rootUserRoles = useTransformer(getUserRolesForDomain, [
+    data && data.colony,
     walletAddress,
+    ROOT_DOMAIN_ID,
   ]);
 
   const crumbs = useMemo(() => {
@@ -142,26 +141,20 @@ const ColonyHome = ({ match, location }: Props) => {
         return [{ id: 'domain.root' }];
 
       default:
-        if (!domains) {
+        if (!colonyDomains || !colonyDomains.length) {
           return [{ id: 'domain.root' }];
         }
-        return domains[filteredDomainId]
-          ? [{ id: 'domain.root' }, domains[filteredDomainId].name]
+        return filteredDomain
+          ? [{ id: 'domain.root' }, filteredDomain.name]
           : [{ id: 'domain.root' }];
     }
-  }, [domains, filteredDomainId]);
+  }, [colonyDomains, filteredDomain, filteredDomainId]);
 
   if (!colonyName || (reverseENSAddress as any) instanceof Error) {
     return <Redirect to={NOT_FOUND_ROUTE} />;
   }
 
-  if (
-    !domains ||
-    isFetchingDomains ||
-    !data ||
-    !data.colonyAddress ||
-    !data.colony
-  ) {
+  if (!data || !data.colonyAddress || !data.colony) {
     return <LoadingTemplate loadingText={MSG.loadingText} />;
   }
 
@@ -187,7 +180,6 @@ const ColonyHome = ({ match, location }: Props) => {
                 !colony.isInRecoveryMode &&
                 (canAdminister(rootUserRoles) || canArchitect(rootUserRoles))
               }
-              domains={domains}
               filteredDomainId={filteredDomainId}
             />
           </div>
@@ -195,17 +187,14 @@ const ColonyHome = ({ match, location }: Props) => {
         <main className={styles.content}>
           <Switch>
             <Route exact path={PROGRAM_ROUTE}>
-              <Program
-                colonyAddress={colony.colonyAddress}
-                colonyName={colony.colonyName}
-              />
+              <Program colony={colony} />
             </Route>
             <Route exact path={LEVEL_ROUTE}>
-              <LevelDashboard />
+              <LevelDashboard colony={colony} />
             </Route>
             <Route>
               <div className={styles.breadCrumbContainer}>
-                {domains && crumbs && <BreadCrumb elements={crumbs} />}
+                {crumbs && <BreadCrumb elements={crumbs} />}
               </div>
               <Tabs defaultIndex={Object.values(TabName).indexOf(activeTab)}>
                 <TabList
@@ -235,14 +224,10 @@ const ColonyHome = ({ match, location }: Props) => {
                   />
                 </TabPanel>
                 <TabPanel>
-                  <Suggestions
-                    colonyAddress={colony.colonyAddress}
-                    colonyName={colony.colonyName}
-                    domainId={filteredDomainId}
-                  />
+                  <Suggestions colony={colony} domainId={filteredDomainId} />
                 </TabPanel>
                 <TabPanel>
-                  <Community colonyAddress={colony.colonyAddress} />
+                  <Community colony={colony} />
                 </TabPanel>
                 <TabPanel>
                   <Transactions colonyAddress={colony.colonyAddress} />
@@ -252,11 +237,7 @@ const ColonyHome = ({ match, location }: Props) => {
           </Switch>
         </main>
         <aside className={styles.sidebar}>
-          <ColonyFunding
-            colony={colony}
-            currentDomainId={filteredDomainId}
-            domains={domains}
-          />
+          <ColonyFunding colony={colony} currentDomainId={filteredDomainId} />
         </aside>
         {colony.isInRecoveryMode && <RecoveryModeAlert />}
       </div>

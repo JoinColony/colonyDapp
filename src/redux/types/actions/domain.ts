@@ -1,6 +1,6 @@
 import { BigNumber } from 'ethers/utils';
 import { Address } from '~types/index';
-import { DomainType } from '~immutable/index';
+import { OneDomain } from '~data/index';
 import { ActionType, ErrorActionType, UniqueActionType } from './index';
 import { ActionTypes } from '../../index';
 
@@ -36,7 +36,7 @@ export type DomainActionTypes =
   | ErrorActionType<ActionTypes.DOMAIN_CREATE_ERROR, object>
   | UniqueActionType<
       ActionTypes.DOMAIN_CREATE_SUCCESS,
-      { colonyAddress: string; domain: DomainType },
+      { colonyAddress: string; domain: OneDomain },
       object
     >
   | ActionType<ActionTypes.DOMAIN_CREATE_TX>

@@ -1,6 +1,6 @@
 import { ColonyRole } from '@colony/colony-js';
 
-import { AnyTask, FullColonyFragment, OneSuggestion } from '~data/index';
+import { AnyTask, Colony, OneSuggestion } from '~data/index';
 import { TaskUserType } from '~immutable/index';
 import { Address } from '~types/index';
 import { hasRoot, canAdminister, canFund } from '../users/checks';
@@ -9,7 +9,7 @@ import { hasRoot, canAdminister, canFund } from '../users/checks';
  * Colony
  */
 export const canBeUpgraded = (
-  colony: FullColonyFragment | undefined,
+  colony: Colony | undefined,
   networkVersion: number | null,
 ) =>
   colony && colony.version && networkVersion && networkVersion > colony.version;

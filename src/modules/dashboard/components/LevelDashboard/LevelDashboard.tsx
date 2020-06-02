@@ -1,29 +1,33 @@
 import React, { useCallback, useEffect } from 'react';
 import { defineMessages } from 'react-intl';
 import { useLocation, useParams, useHistory } from 'react-router-dom';
+import { ROOT_DOMAIN_ID } from '@colony/colony-js';
 
-import { getLevelTotalPayouts } from '../../../transformers';
 import BreadCrumb from '~core/BreadCrumb';
 import Button from '~core/Button';
 import { useDialog } from '~core/Dialog';
 import { SpinnerLoader } from '~core/Preloaders';
 import {
-  ProgramStatus,
   useEnrollInProgramMutation,
   useLevelQuery,
   useLoggedInUser,
   useProgramQuery,
+  Colony,
+  ProgramStatus,
   UserNotificationsDocument,
   UserNotificationsQueryVariables,
 } from '~data/index';
 import { useTransformer } from '~utils/hooks';
 
+import {
+  getLevelTotalPayouts,
+  getUserRolesForDomain,
+} from '../../../transformers';
+import { canAdminister } from '../../../users/checks';
+import { useLevelAfter } from '../../hooks/useLevelAfter';
 import LevelTasksList from '../LevelTasksList';
 import LevelAttributes from './LevelAttributes';
 import LevelWelcomeDialog from './LevelWelcomeDialog';
-import { useUserRolesInDomain } from '../../hooks/useUserRolesInDomain';
-import { canAdminister } from '../../../users/checks';
-import { useLevelAfter } from '../../hooks/useLevelAfter';
 
 import styles from './LevelDashboard.css';
 
@@ -34,9 +38,13 @@ const MSG = defineMessages({
   },
 });
 
+interface Props {
+  colony: Colony;
+}
+
 const displayName = 'dashboard.LevelDashboard';
 
-const LevelDashboard = () => {
+const LevelDashboard = ({ colony }: Props) => {
   const { colonyName, levelId, programId } = useParams<{
     colonyName: string;
     levelId: string;
@@ -94,9 +102,10 @@ const LevelDashboard = () => {
     programData,
   ]);
 
-  const userRolesInRoot = useUserRolesInDomain(
+  const userRolesInRoot = getUserRolesForDomain(
+    colony,
     walletAddress,
-    programData && programData.program.colonyAddress,
+    ROOT_DOMAIN_ID,
   );
 
   useEffect(() => {

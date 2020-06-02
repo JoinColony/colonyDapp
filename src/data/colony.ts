@@ -1,6 +1,6 @@
 import { Resolvers } from 'apollo-client';
 import { bigNumberify } from 'ethers/utils';
-import { ClientType } from '@colony/colony-js';
+import { ClientType, ColonyVersion, getColonyRoles } from '@colony/colony-js';
 
 import ENS from '~lib/ENS';
 import { Address } from '~types/index';
@@ -99,6 +99,26 @@ export const colonyResolvers = ({
         canUnlockNativeToken = false;
       }
       return canUnlockNativeToken;
+    },
+    async roles({ colonyAddress }) {
+      const colonyClient = await colonyManager.getClient(
+        ClientType.ColonyClient,
+        colonyAddress,
+      );
+
+      if (colonyClient.clientVersion === ColonyVersion.GoerliGlider) {
+        throw new Error(`Not supported in this version of Colony`);
+      }
+
+      const roles = await getColonyRoles(colonyClient);
+      return roles.map((userRoles) => ({
+        ...userRoles,
+        domains: userRoles.domains.map((domainRoles) => ({
+          ...domainRoles,
+          __typename: 'DomainRoles',
+        })),
+        __typename: 'UserRoles',
+      }));
     },
     async version({ colonyAddress }) {
       const colonyClient = await colonyManager.getClient(

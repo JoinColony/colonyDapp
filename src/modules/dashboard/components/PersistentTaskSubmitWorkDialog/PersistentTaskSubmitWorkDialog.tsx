@@ -1,7 +1,8 @@
-import React, { useCallback, useEffect, useMemo } from 'react';
+import React, { useCallback, useMemo } from 'react';
 import { PureQueryOptions } from 'apollo-client';
 import { defineMessages, FormattedMessage } from 'react-intl';
 import * as yup from 'yup';
+import { ROOT_DOMAIN_ID } from '@colony/colony-js';
 
 import Button from '~core/Button';
 import Dialog, { DialogProps, DialogSection } from '~core/Dialog';
@@ -12,25 +13,25 @@ import Paragraph from '~core/Paragraph';
 import PayoutsList from '~core/PayoutsList';
 import { SpinnerLoader } from '~core/Preloaders';
 import taskSkillsTree from '~dashboard/TaskSkills/taskSkillsTree';
+import { useTransformer } from '~utils/hooks';
 import {
+  useColonyQuery,
+  useCreateLevelTaskSubmissionMutation,
+  useLoggedInUser,
+  useEditSubmissionMutation,
+  LevelDocument,
+  LevelQueryVariables,
+  ProgramSubmissionsDocument,
+  ProgramSubmissionsQueryVariables,
   OneLevel,
   OnePersistentTask,
   SubmissionStatus,
-  useColonyNativeTokenQuery,
-  useCreateLevelTaskSubmissionMutation,
-  useDomainLazyQuery,
-  useEditSubmissionMutation,
-  ProgramSubmissionsDocument,
-  ProgramSubmissionsQueryVariables,
-  LevelDocument,
-  LevelQueryVariables,
-  useLoggedInUser,
   UserNotificationsDocument,
   UserNotificationsQueryVariables,
 } from '~data/index';
 
-import { useUserRolesInDomain } from '../../hooks/useUserRolesInDomain';
 import { canAdminister } from '../../../users/checks';
+import { getUserRolesForDomain } from '../../../transformers';
 
 import styles from './PersistentTaskSubmitWorkDialog.css';
 
@@ -110,11 +111,10 @@ const PersistentTaskSubmitWorkDialog = ({
     currentUserSubmission &&
     currentUserSubmission.status === SubmissionStatus.Open;
 
-  const [fetchDomain, { data: domainData }] = useDomainLazyQuery();
-
-  const { data: nativeTokenData } = useColonyNativeTokenQuery({
+  const { data: colonyData, loading: loadingColony } = useColonyQuery({
     variables: { address: colonyAddress },
   });
+
   const [
     createLevelTaskSubmission,
     { loading: loadingCreation },
@@ -124,9 +124,26 @@ const PersistentTaskSubmitWorkDialog = ({
     { loading: loadingEdit },
   ] = useEditSubmissionMutation();
 
-  const rootRoles = useUserRolesInDomain(walletAddress, colonyAddress);
+  const rootRoles = useTransformer(getUserRolesForDomain, [
+    colonyData && colonyData.colony,
+    walletAddress,
+    ROOT_DOMAIN_ID,
+  ]);
 
-  const loading = loadingEdit || loadingCreation;
+  const domainName = useMemo(() => {
+    if (!ethDomainId || !colonyData) return '';
+    const domain = colonyData.colony.domains.find(
+      ({ ethDomainId: domainId }) => domainId === ethDomainId,
+    );
+    return domain ? domain.name : '';
+  }, [ethDomainId, colonyData]);
+
+  const nativeTokenAddress = useMemo(() => {
+    if (!colonyData) return '';
+    return colonyData.colony.nativeTokenAddress;
+  }, [colonyData]);
+
+  const loading = loadingColony || loadingEdit || loadingCreation;
 
   const handleSubmit = useCallback(
     async ({ submission }: FormValues) => {
@@ -175,12 +192,6 @@ const PersistentTaskSubmitWorkDialog = ({
     ],
   );
 
-  useEffect(() => {
-    if (ethDomainId) {
-      fetchDomain({ variables: { ethDomainId, colonyAddress } });
-    }
-  }, [colonyAddress, ethDomainId, fetchDomain]);
-
   const skillName = useMemo(
     () =>
       ethSkillId &&
@@ -189,7 +200,7 @@ const PersistentTaskSubmitWorkDialog = ({
   );
   return (
     <Dialog cancel={cancel}>
-      {!nativeTokenData ? (
+      {!nativeTokenAddress ? (
         <DialogSection appearance={{ align: 'center' }}>
           <SpinnerLoader appearance={{ size: 'large' }} />
         </DialogSection>
@@ -225,11 +236,11 @@ const PersistentTaskSubmitWorkDialog = ({
                       )}
                     </div>
                     <div className={styles.categories}>
-                      {domainData && (
+                      {domainName && (
                         <div className={styles.category}>
                           <FormattedMessage
                             {...MSG.domainText}
-                            values={{ domainName: domainData.domain.name }}
+                            values={{ domainName }}
                           />
                         </div>
                       )}
@@ -241,9 +252,7 @@ const PersistentTaskSubmitWorkDialog = ({
                   <div className={styles.rewardsContainer}>
                     <div className={styles.payoutsContainer}>
                       <PayoutsList
-                        nativeTokenAddress={
-                          nativeTokenData.colony.nativeTokenAddress
-                        }
+                        nativeTokenAddress={nativeTokenAddress}
                         payouts={payouts}
                       />
                     </div>

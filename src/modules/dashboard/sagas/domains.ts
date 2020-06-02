@@ -5,7 +5,6 @@ import { ContextModule, TEMP_getContext } from '~context/index';
 import {
   ColonyDomainsQuery,
   ColonyDomainsQueryVariables,
-  ColonyDomainsQueryResult,
   ColonyDomainsDocument,
   CreateDomainMutation,
   CreateDomainMutationVariables,
@@ -22,59 +21,6 @@ import { log } from '~utils/debug';
 import { putError, takeFrom } from '~utils/saga/effects';
 
 import { createTransaction, getTxChannel } from '../../core/sagas';
-
-function* colonyDomainsFetch({
-  meta,
-  payload: {
-    colonyAddress,
-    options: { fetchRoles } = {
-      fetchRoles: true,
-    },
-  },
-}: Action<ActionTypes.COLONY_DOMAINS_FETCH>) {
-  try {
-    const apolloClient = TEMP_getContext(ContextModule.ApolloClient);
-
-    const { data }: ColonyDomainsQueryResult = yield apolloClient.query<
-      ColonyDomainsQuery,
-      ColonyDomainsQueryVariables
-    >({
-      query: ColonyDomainsDocument,
-      variables: { colonyAddress },
-    });
-
-    if (!data) throw new Error("Could not get the colony's domain metadata");
-
-    const domains = data.colony.domains.map(
-      ({ ethDomainId, ethParentDomainId, name }) => ({
-        id: ethDomainId,
-        parentId: ethParentDomainId,
-        name,
-        roles: {},
-      }),
-    );
-
-    yield put<AllActions>({
-      type: ActionTypes.COLONY_DOMAINS_FETCH_SUCCESS,
-      meta,
-      payload: {
-        colonyAddress,
-        domains,
-      },
-    });
-
-    if (fetchRoles) {
-      yield put<AllActions>({
-        type: ActionTypes.COLONY_ROLES_FETCH,
-        payload: { colonyAddress },
-        meta,
-      });
-    }
-  } catch (error) {
-    return yield putError(ActionTypes.COLONY_DOMAINS_FETCH_ERROR, error, meta);
-  }
-  return null;
-}
 
 function* domainCreate({
   payload: { colonyAddress, domainName: name, parentDomainId = ROOT_DOMAIN_ID },
@@ -102,18 +48,18 @@ function* domainCreate({
      */
     const {
       payload: {
-        eventData: { domainId: id }, // transaction: {
-        //   receipt: {
-        //     logs: [, domainAddedLog],
-        //   },
-        // },
+        eventData: { domainId: ethDomainId }, // transaction: {
       },
     } = yield takeFrom(txChannel, ActionTypes.TRANSACTION_SUCCEEDED);
 
     /*
      * Add the Domain's metadata to the Mongo database
      */
-    yield apolloClient.mutate<
+    const {
+      data: {
+        createDomain: { id },
+      },
+    } = yield apolloClient.mutate<
       CreateDomainMutation,
       CreateDomainMutationVariables
     >({
@@ -121,7 +67,7 @@ function* domainCreate({
       variables: {
         input: {
           colonyAddress,
-          ethDomainId: id,
+          ethDomainId,
           ethParentDomainId: parentDomainId,
           name,
         },
@@ -161,10 +107,9 @@ function* domainCreate({
     yield put<AllActions>({
       type: ActionTypes.DOMAIN_CREATE_SUCCESS,
       meta,
-      // For now parentId is just root domain
       payload: {
         colonyAddress,
-        domain: { id, name, parentId: parentDomainId, roles: {} },
+        domain: { id, name, ethParentDomainId: parentDomainId, ethDomainId },
       },
     });
 
@@ -285,7 +230,6 @@ function* moveFundsBetweenPots({
 }
 
 export default function* domainSagas() {
-  yield takeEvery(ActionTypes.COLONY_DOMAINS_FETCH, colonyDomainsFetch);
   yield takeEvery(ActionTypes.DOMAIN_CREATE, domainCreate);
   yield takeEvery(ActionTypes.DOMAIN_EDIT, domainEdit);
   yield takeEvery(ActionTypes.MOVE_FUNDS_BETWEEN_POTS, moveFundsBetweenPots);

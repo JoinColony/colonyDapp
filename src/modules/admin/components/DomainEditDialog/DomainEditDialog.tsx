@@ -2,7 +2,7 @@ import React, { useCallback } from 'react';
 import { FormikProps } from 'formik';
 import { defineMessages } from 'react-intl';
 
-import { DomainType } from '~immutable/index';
+import { OneDomain } from '~data/index';
 import { Address } from '~types/index';
 import Button from '~core/Button';
 import Dialog, { DialogSection } from '~core/Dialog';
@@ -33,7 +33,7 @@ interface FormValues {
 }
 
 interface Props {
-  domain: DomainType;
+  domain: OneDomain;
   colonyAddress: Address;
   cancel: () => void;
   close: (values: any) => void;
@@ -44,8 +44,8 @@ const displayName = 'core.DomainEditDialog';
 const DomainEditDialog = ({ domain, colonyAddress, cancel, close }: Props) => {
   const handleSubmit = useCallback(
     ({ domainName }) =>
-      close({ domainName, domainId: domain.id, colonyAddress }),
-    [close, colonyAddress, domain.id],
+      close({ domainName, domainId: domain.ethDomainId, colonyAddress }),
+    [close, colonyAddress, domain.ethDomainId],
   );
 
   return (

@@ -1,16 +1,17 @@
 import React from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
-import { ColonyRole } from '@colony/colony-js';
+import { ROOT_DOMAIN_ID } from '@colony/colony-js';
 
-import { useSelector } from '~utils/hooks';
+import { useSelector, useTransformer } from '~utils/hooks';
 import { ActionTypes } from '~redux/index';
 import { DialogActionButton } from '~core/Button';
 import Heading from '~core/Heading';
 import ExternalLink from '~core/ExternalLink';
 import UpgradeContractDialog from '~admin/UpgradeContractDialog';
 import RecoveryModeDialog from '~admin/RecoveryModeDialog';
-import { FullColonyFragment, useSystemInfoQuery } from '~data/index';
+import { Colony, useLoggedInUser, useSystemInfoQuery } from '~data/index';
 
+import { getUserRolesForDomain } from '../../../transformers';
 import { networkVersionSelector } from '../../../core/selectors';
 import { canEnterRecoveryMode } from '../../../users/checks';
 import { canBeUpgraded } from '../../../dashboard/checks';
@@ -97,8 +98,7 @@ const MSG = defineMessages({
 const displayName = 'admin.Profile.ProfileAdvanced';
 
 interface Props {
-  colony: FullColonyFragment;
-  rootRoles: ColonyRole[];
+  colony: Colony;
 }
 
 const ProfileAdvanced = ({
@@ -110,10 +110,16 @@ const ProfileAdvanced = ({
     isNativeTokenLocked,
   },
   colony,
-  rootRoles,
 }: Props) => {
+  const { walletAddress } = useLoggedInUser();
   const networkVersion = useSelector(networkVersionSelector);
   const { data } = useSystemInfoQuery();
+
+  const rootRoles = useTransformer(getUserRolesForDomain, [
+    colony,
+    walletAddress,
+    ROOT_DOMAIN_ID,
+  ]);
 
   return (
     <div className={styles.main}>

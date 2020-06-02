@@ -88,10 +88,27 @@ fragment ColonyProfile on Colony {
   website
 }
 
+fragment DomainFields on Domain {
+  id
+  ethDomainId
+  name
+  ethParentDomainId
+}
+
 fragment FullColony on Colony {
   ...ColonyProfile
   ...Tokens
   isNativeTokenExternal
+  domains {
+    ...DomainFields
+  }
+  roles @client {
+    address
+    domains {
+      domainId
+      roles
+    }
+  }
   version @client
   canMintNativeToken @client
   canUnlockNativeToken @client
