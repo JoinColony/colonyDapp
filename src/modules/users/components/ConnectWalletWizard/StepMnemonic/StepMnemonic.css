@@ -6,3 +6,8 @@
 .actions {
   composes: alignRight from '~styles/text.css';
 }
+
+.contentSimplified {
+  composes: content;
+  margin-top: 30px;
+}
