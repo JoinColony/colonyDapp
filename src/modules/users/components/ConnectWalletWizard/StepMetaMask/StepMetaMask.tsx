@@ -60,7 +60,9 @@ const MSG = defineMessages({
 // eslint-disable-next-line @typescript-eslint/no-empty-interface
 interface FormValues {}
 
-type Props = WizardProps<FormValues>;
+type Props = {
+  simplified?: boolean;
+} & WizardProps<FormValues>;
 
 interface State {
   isLoading: boolean;
@@ -75,6 +77,7 @@ const MetaMask = ({
   resetWizard,
   wizardForm,
   wizardValues,
+  simplified = false,
 }: Props) => {
   const timerHandle = useRef<number>();
 
@@ -160,7 +163,9 @@ const MetaMask = ({
     >
       {({ isSubmitting, status }) => (
         <main>
-          <div className={styles.content}>
+          <div
+            className={simplified ? styles.contentSimplified : styles.content}
+          >
             <div className={styles.iconContainer}>
               <Icon
                 name="metamask"
