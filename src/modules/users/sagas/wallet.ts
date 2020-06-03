@@ -11,7 +11,6 @@ import {
   open as openMetaMaskWallet,
   MetaMaskInpageProvider,
 } from '@purser/metamask';
-import type { NetworkClient } from '@colony/colony-js';
 
 import { WalletMethod } from '~immutable/index';
 import { Action, ActionTypes, AllActions } from '~redux/index';
@@ -19,7 +18,7 @@ import { Address } from '~types/index';
 import { createAddress } from '~utils/web3';
 import { putError } from '~utils/saga/effects';
 
-import getColonyNetworkClient from '../../core/sagas/utils/getNetworkClient';
+import { getProvider } from '../../core/sagas/utils';
 import { HARDWARE_WALLET_DEFAULT_ADDRESS_COUNT } from '../constants';
 
 const walletOpenFunctions = {
@@ -51,9 +50,7 @@ function* fetchAccounts(action: Action<ActionTypes.WALLET_FETCH_ACCOUNTS>) {
       addressCount: HARDWARE_WALLET_DEFAULT_ADDRESS_COUNT,
     });
 
-    // FIXME this is weird, let's get the provider in a better way
-    // ACtually this is going to be replaced by something else entirely
-    const { provider }: NetworkClient = yield getColonyNetworkClient();
+    const provider = getProvider();
 
     const addressesWithBalance = yield all(
       otherAddresses.map((address) =>

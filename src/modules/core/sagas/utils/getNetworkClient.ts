@@ -1,10 +1,11 @@
 import { call } from 'redux-saga/effects';
-import { InfuraProvider, JsonRpcProvider } from 'ethers/providers';
 import { getColonyNetworkClient, Network } from '@colony/colony-js';
 import { EthersSigner } from '@purser/signer-ethers';
 
 import { DEFAULT_NETWORK } from '~constants';
 import { ContextModule, TEMP_getContext } from '~context/index';
+
+import getProvider from './getProvider';
 
 interface LocalContractABI {
   networks: Record<string, { address: string }>;
@@ -36,10 +37,7 @@ export default function* getNetworkClient() {
 
   const network = DEFAULT_NETWORK as Network;
 
-  const provider =
-    network === Network.Local
-      ? new JsonRpcProvider()
-      : new InfuraProvider(network, process.env.INFURA_ID);
+  const provider = getProvider();
 
   const signer = new EthersSigner({ purserWallet: wallet, provider });
 
