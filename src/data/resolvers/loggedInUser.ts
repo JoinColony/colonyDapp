@@ -1,7 +1,7 @@
 import { Resolvers } from 'apollo-client';
 import assignWith from 'lodash/fp/assignWith';
 
-import { LoggedInUserDocument } from './index';
+import { LoggedInUserDocument } from '../generated';
 
 // Merges source object(s) into target object, but values that are truthy
 // Move this to a utils file if used somewhere else as well

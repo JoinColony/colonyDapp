@@ -51,6 +51,18 @@ export default gql`
     domains: [DomainRoles!]!
   }
 
+  type TokenTransfer {
+    amount: String!
+    colonyAddress: String!
+    date: Int!
+    from: String
+    hash: String
+    incoming: Boolean!
+    taskId: Int
+    to: String
+    token: String!
+  }
+
   extend type Colony {
     canMintNativeToken: Boolean!
     canUnlockNativeToken: Boolean!
@@ -72,8 +84,9 @@ export default gql`
   }
 
   extend type User {
-    tokens: [Token!]!
     reputation(colonyAddress: String!, domainId: Int): String!
+    tokens: [Token!]!
+    tokenTransfers: [TokenTransfer!]!
   }
 
   extend type Query {

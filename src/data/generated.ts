@@ -1244,6 +1244,7 @@ export type User = {
   taskIds: Array<Scalars['String']>;
   tasks: Array<Task>;
   tokenAddresses: Array<Scalars['String']>;
+  tokenTransfers: Array<TokenTransfer>;
   tokens: Array<Token>;
 };
 
@@ -1365,6 +1366,18 @@ export type DomainRoles = {
 export type UserRoles = {
   address: Scalars['String'];
   domains: Array<DomainRoles>;
+};
+
+export type TokenTransfer = {
+  amount: Scalars['String'];
+  colonyAddress: Scalars['String'];
+  date: Scalars['Int'];
+  from?: Maybe<Scalars['String']>;
+  hash?: Maybe<Scalars['String']>;
+  incoming: Scalars['Boolean'];
+  taskId?: Maybe<Scalars['Int']>;
+  to?: Maybe<Scalars['String']>;
+  token: Scalars['String'];
 };
 
 export type PayoutsFragment = { payouts: Array<(

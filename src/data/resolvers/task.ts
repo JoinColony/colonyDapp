@@ -5,7 +5,7 @@ import { Context } from '~context/index';
 import { createAddress, padLeft, toHex } from '~utils/web3';
 
 import { getToken } from './token';
-import { EventType } from './index';
+import { EventType } from '../generated';
 
 export const taskResolvers = ({
   colonyManager,
