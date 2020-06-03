@@ -155,6 +155,16 @@ function* createWallet(action: Action<ActionTypes.WALLET_CREATE>) {
 }
 
 function* createEtherealWallet() {
+  /**
+   * @NOTE It would be better if we could create a wallet that is not functional
+   * within the etherem ecosystem. Something like: 0x00000...
+   *
+   * But as it stands we have so many address checks within both the app and the
+   * server that to change the logic there would be quite a feat.
+   *
+   * That being said, we should still plan to change this when we'll have some
+   * time for proper maintenance
+   */
   const wallet = yield call(softwareWallet.create);
   return {
     ...wallet,
