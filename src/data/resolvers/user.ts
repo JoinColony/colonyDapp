@@ -5,8 +5,9 @@ import {
   getBlockTime,
   getLogs,
 } from '@colony/colony-js';
+import { BigNumber } from 'ethers/utils';
 
-import { Context, ContextModule } from '~context/index';
+import { Context } from '~context/index';
 import ENS from '~lib/ENS';
 import ColonyManager from '~lib/ColonyManager';
 import { Address } from '~types/index';
@@ -16,24 +17,21 @@ import { TokenTransfer } from '../generated';
 import { getToken } from './token';
 
 const getUserReputation = async (
-  colonyManager: Required<Context>[ContextModule.ColonyManager],
+  colonyManager: ColonyManager,
   address: Address,
   colonyAddress: Address,
   domainId: number,
-): Promise<string> => {
+): Promise<BigNumber> => {
   const colonyClient = await colonyManager.getClient(
     ClientType.ColonyClient,
     colonyAddress,
   );
   const { skillId } = await colonyClient.getDomain(domainId);
-  const networkClient = await colonyManager.getClient(ClientType.NetworkClient);
-  // FIXME getReputation doesn't exist on the networkClient yet
-  const { reputationAmount } = await networkClient.getReputation({
-    address,
-    colonyAddress,
+  const { reputationAmount } = await colonyClient.getReputation(
     skillId,
-  });
-  return reputationAmount || '0';
+    address,
+  );
+  return reputationAmount;
 };
 
 export const userResolvers = ({
@@ -63,7 +61,7 @@ export const userResolvers = ({
         colonyAddress,
         domainId,
       );
-      return reputation;
+      return reputation.toString();
     },
     async username(_, { address }): Promise<string> {
       const domain = await ens.getDomain(address, networkClient);
@@ -87,7 +85,7 @@ export const userResolvers = ({
         colonyAddress,
         domainId,
       );
-      return reputation;
+      return reputation.toString();
     },
     async tokens(
       { tokenAddresses }: { tokenAddresses: Address[] },
