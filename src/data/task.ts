@@ -1,9 +1,8 @@
 import { Resolvers } from 'apollo-client';
-import { padLeft, toHex } from 'web3-utils';
 import { ClientType } from '@colony/colony-js';
 
 import { Context } from '~context/index';
-import { createAddress } from '~utils/web3';
+import { createAddress, padLeft, toHex } from '~utils/web3';
 
 import { getToken } from './token';
 import { EventType } from './index';

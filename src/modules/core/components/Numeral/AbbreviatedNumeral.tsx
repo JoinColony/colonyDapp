@@ -3,7 +3,8 @@ import { BigNumber, formatUnits } from 'ethers/utils';
 import { UnifiedNumberFormatOptions } from '@formatjs/intl-unified-numberformat';
 import moveDecimal from 'move-decimal-point';
 import { useIntl } from 'react-intl';
-import { Unit } from 'web3-utils';
+
+import type { Unit } from '~utils/web3';
 
 interface Props extends HTMLAttributes<HTMLSpanElement> {
   /** When dealing with ethereum units */

@@ -4,13 +4,13 @@ import {
   getTokenClient,
   ClientType,
   ColonyClient,
-  ContractClient,
+  // ContractClient,
   NetworkClient,
   TokenClient,
 } from '@colony/colony-js';
-import { isAddress } from 'web3-utils';
 
 import ENS from '~lib/ENS';
+import { isAddress } from '~utils/web3';
 import { Address, AddressOrENSName } from '~types/index';
 
 import ens from '../../context/ensContext';
@@ -120,110 +120,4 @@ export default class ColonyManager {
   async getTokenClient(contractAddress: string) {
     return getTokenClient(contractAddress, this.signer);
   }
-
-  // async getNetworkMethod<M extends keyof ColonyNetworkClient>(
-  //   methodName: M,
-  // ): Promise<ColonyNetworkClient[M]> {
-  //   return Reflect.get(this.networkClient, methodName);
-  // }
-
-  // async getColonyMethod<M extends keyof ColonyClient>(
-  //   methodName: M,
-  //   identifier: AddressOrENSName,
-  // ): Promise<ColonyClient[M]> {
-  //   const client = await this.getColonyClient(identifier);
-  //   return Reflect.get(client, methodName);
-  // }
-
-  // async getTokenMethod<M extends keyof TokenClient>(
-  //   methodName: M,
-  //   identifier: AddressOrENSName,
-  // ): Promise<TokenClient[M]> {
-  //   const client = await this.getColonyClient(identifier);
-  //   return Reflect.get(client.tokenClient, methodName);
-  // }
-
-  // FIXME get the types right for this
-  // async getEstimationMethod<
-  //   C extends ClientType
-  //   // M extends keyof ContractClient['estimate']
-  // >(
-  //   context: C,
-  //   // FIXME M
-  //   methodName: any,
-  //   identifier?: AddressOrENSName,
-  //   // FIXME any
-  // ): Promise<any> {
-  //   switch (context) {
-  //     case ClientType.ColonyClient: {
-  //       if (!identifier) throw new Error('Need identifier for Colony methods');
-  //       const client = await this.getColonyClient(identifier);
-  //       return client.estimate[methodName].bind(client);
-  //     }
-  //     case ClientType.NetworkClient: {
-  //       return this.networkClient.estimate[methodName].bind(this.networkClient);
-  //     }
-  //     case ClientType.TokenClient: {
-  //       if (!identifier) throw new Error('Need identifier for Colony methods');
-  //       const client = await this.getColonyClient(identifier);
-  //       return client.tokenClient.estimate[methodName].bind(client.tokenClient);
-  //     }
-  //     case ClientType.OneTxPaymentFactoryClient: {
-  //       if (!identifier) throw new Error('Need identifier for Colony methods');
-  //       const client = await this.getColonyClient(identifier);
-  //       return client.oneTxPaymentFactoryClient.estimate[methodName].bind(
-  //         client.oneTxPaymentFactoryClient,
-  //       );
-  //     }
-  //     case ClientType.OneTxPaymentClient: {
-  //       if (!identifier) throw new Error('Need identifier for Colony methods');
-  //       const client = await this.getColonyClient(identifier);
-  //       return client.oneTxPaymentClient.estimate[methodName].bind(
-  //         client.oneTxPaymentClient,
-  //       );
-  //     }
-  //     default: {
-  //       throw new Error('No valid context specified');
-  //     }
-  //   }
-  // }
-
-  // async getMethod<C extends ClientType, M extends keyof ContractClient>(
-  //   context: C,
-  //   methodName: M,
-  //   identifier?: AddressOrENSName,
-  // ): Promise<ContractClient[M]> {
-  //   switch (context) {
-  //     case ClientType.ColonyClient: {
-  //       if (!identifier) throw new Error('Need identifier for Colony methods');
-  //       return this.getColonyMethod(methodName, identifier);
-  //     }
-  //     case ClientType.NetworkClient: {
-  //       return this.getNetworkMethod(methodName);
-  //     }
-  //     case ClientType.TokenClient: {
-  //       if (!identifier) {
-  //         throw new Error('Need Colony identifier for Token methods');
-  //       }
-  //       return this.getTokenMethod(methodName, identifier);
-  //     }
-  //     case ClientType.OneTxPaymentFactoryClient: {
-  //       if (!identifier) throw new Error('Need identifier for Colony methods');
-  //       const client = await this.getColonyClient(identifier);
-  //       return client.oneTxPaymentFactoryClient[methodName].bind(
-  //         client.oneTxPaymentFactoryClient,
-  //       );
-  //     }
-  //     case ClientType.OneTxPaymentClient: {
-  //       if (!identifier) throw new Error('Need identifier for Colony methods');
-  //       const client = await this.getColonyClient(identifier);
-  //       return client.oneTxPaymentClient[methodName].bind(
-  //         client.oneTxPaymentClient,
-  //       );
-  //     }
-  //     default: {
-  //       throw new Error('No valid context specified');
-  //     }
-  //   }
-  // }
 }

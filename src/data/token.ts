@@ -1,14 +1,13 @@
 import ApolloClient, { Resolvers } from 'apollo-client';
-import { isAddress } from 'web3-utils';
 import { BigNumber, bigNumberify } from 'ethers/utils';
 import { AddressZero } from 'ethers/constants';
 import { ClientType, ColonyClient } from '@colony/colony-js';
 
 import { Context, ContextModule } from '~context/index';
 import { COLONY_TOTAL_BALANCE_DOMAIN_ID } from '~constants';
-import { createAddress } from '~utils/web3';
 import { TokenInfo, TokenInfoDocument } from '~data/index';
 import { Address } from '~types/index';
+import { createAddress, isAddress } from '~utils/web3';
 import { getTokenDecimalsWithFallback } from '~utils/tokens';
 
 const ETHER_INFO = Object.freeze({

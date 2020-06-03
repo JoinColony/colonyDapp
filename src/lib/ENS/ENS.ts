@@ -1,14 +1,13 @@
 /* eslint-disable no-underscore-dangle */
 
 import namehash from 'eth-ens-namehash-ms';
-import { isAddress } from 'web3-utils';
 import punycode from 'punycode';
 import { AddressZero } from 'ethers/constants';
 
 import type { NetworkClient } from '@colony/colony-js';
 
 import { Address, ENSName } from '~types/index';
-import { createAddress } from '~utils/web3';
+import { createAddress, isAddress } from '~utils/web3';
 
 const COLONY_NETWORK_ENS_NAME =
   process.env.COLONY_NETWORK_ENS_NAME || 'joincolony.eth';

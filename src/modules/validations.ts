@@ -1,8 +1,9 @@
 import * as yup from 'yup';
 import { isIPFS } from 'ipfs';
-import { isAddress } from 'web3-utils';
 import { normalize as ensNormalize } from 'eth-ens-namehash-ms';
 import { BigNumber } from 'ethers/utils';
+
+import { isAddress } from '~utils/web3';
 
 import en from '../i18n/en-validation.json';
 
