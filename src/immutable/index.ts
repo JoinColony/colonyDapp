@@ -2,7 +2,6 @@ export * from './utils/index';
 
 export * from './ActivityFeedItem';
 export * from './Connection';
-export * from './ContractTransaction';
 export * from './FetchableData';
 export * from './GasPrices';
 export * from './Message';

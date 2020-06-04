@@ -6,6 +6,7 @@ import {
   getLogs,
 } from '@colony/colony-js';
 import { BigNumber } from 'ethers/utils';
+import { HashZero } from 'ethers/constants';
 
 import { Context } from '~context/index';
 import ENS from '~lib/ENS';
@@ -145,7 +146,8 @@ export const userResolvers = ({
             colonyAddress,
             date,
             from: createAddress(src),
-            hash: log.transactionHash,
+            // I have no idea why this would ever by empty but we rely on this being there
+            hash: log.transactionHash || HashZero,
             incoming: to === walletAddress,
             to,
             token: createAddress(log.address),

@@ -1,7 +1,6 @@
 import React, { useCallback } from 'react';
 import { defineMessages, FormattedDate } from 'react-intl';
 
-import { ContractTransactionType } from '~immutable/index';
 import { TableRow, TableCell } from '~core/Table';
 import { ActionButton } from '~core/Button';
 import Numeral from '~core/Numeral';
@@ -9,7 +8,7 @@ import Icon from '~core/Icon';
 import TransactionLink from '~core/TransactionLink';
 import { ActionTypes } from '~redux/index';
 import { mergePayload } from '~utils/actions';
-import { useUserLazy, useTokenQuery } from '~data/index';
+import { useUserLazy, useTokenQuery, ColonyTransaction } from '~data/index';
 import { getTokenDecimalsWithFallback } from '~utils/tokens';
 
 import TransactionDetails from './TransactionDetails';
@@ -41,7 +40,7 @@ interface Props {
   /*
    * The given contract transaction.
    */
-  transaction: ContractTransactionType;
+  transaction: ColonyTransaction;
 
   /*
    * User and colony addresses will always be shown; this controls whether the
@@ -73,7 +72,7 @@ const TransactionListItem = ({
 }: Props) => {
   const userAddress = incoming ? senderAddress : recipientAddress;
 
-  const user = useUserLazy(userAddress);
+  const user = useUserLazy(userAddress || undefined);
 
   const { data: tokenData } = useTokenQuery({
     variables: { address: tokenAddress },

@@ -1,4 +1,5 @@
 import { Resolvers } from 'apollo-client';
+import { AddressZero, HashZero } from 'ethers/constants';
 import { bigNumberify } from 'ethers/utils';
 import { ClientType, ColonyVersion, getColonyRoles } from '@colony/colony-js';
 
@@ -11,6 +12,7 @@ import { getToken } from './token';
 import {
   getColonyFundsClaimedTransactions,
   getPayoutClaimedTransactions,
+  getColonyUnclaimedTransfers,
 } from './transactions';
 
 export const colonyResolvers = ({
@@ -144,6 +146,46 @@ export const colonyResolvers = ({
         ...colonyFundsClaimedTransactions,
         ...payoutClaimedTransactions,
       ].sort((a, b) => b.date - a.date);
+    },
+    async unclaimedTransfers({ colonyAddress }): Promise<Transaction[]> {
+      const colonyClient = await colonyManager.getClient(
+        ClientType.ColonyClient,
+        colonyAddress,
+      );
+
+      // eslint-disable-next-line max-len
+      const colonyUnclaimedTransfers = await getColonyUnclaimedTransfers(
+        colonyClient,
+      );
+
+      // Get ether balance and add a fake transaction if there's any unclaimed
+      const colonyEtherBalance = await colonyClient.provider.getBalance(
+        colonyAddress,
+      );
+      // eslint-disable-next-line max-len
+      const colonyNonRewardsPotsTotal = await colonyClient.getNonRewardPotsTotal(
+        AddressZero,
+      );
+      const colonyRewardsPotTotal = await colonyClient.getFundingPotBalance(
+        0,
+        AddressZero,
+      );
+
+      const unclaimedEther = colonyEtherBalance
+        .sub(colonyNonRewardsPotsTotal)
+        .sub(colonyRewardsPotTotal);
+
+      if (unclaimedEther.gt(0)) {
+        colonyUnclaimedTransfers.push({
+          amount: unclaimedEther.toString(),
+          colonyAddress,
+          date: new Date().getTime(),
+          hash: HashZero,
+          incoming: true,
+          token: AddressZero,
+        });
+      }
+      return colonyUnclaimedTransfers;
     },
     async version({ colonyAddress }) {
       const colonyClient = await colonyManager.getClient(

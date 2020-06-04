@@ -3,13 +3,7 @@ import { ColonyRole } from '@colony/colony-js';
 
 import { ActionTypes } from '~redux/index';
 import { Address, WithKey } from '~types/index';
-import { ContractTransactionType } from '~immutable/index';
-import {
-  ActionType,
-  ActionTypeWithPayloadAndMeta,
-  ErrorActionType,
-  UniqueActionType,
-} from './index';
+import { ActionType, ErrorActionType, UniqueActionType } from './index';
 
 export type ColonyActionTypes =
   | UniqueActionType<
@@ -68,20 +62,6 @@ export type ColonyActionTypes =
       ActionTypes.COLONY_NATIVE_TOKEN_UNLOCK_SUCCESS,
       object,
       object
-    >
-  | ActionTypeWithPayloadAndMeta<
-      ActionTypes.COLONY_UNCLAIMED_TRANSACTIONS_FETCH,
-      { colonyAddress: Address },
-      WithKey
-    >
-  | ErrorActionType<
-      ActionTypes.COLONY_UNCLAIMED_TRANSACTIONS_FETCH_ERROR,
-      WithKey
-    >
-  | ActionTypeWithPayloadAndMeta<
-      ActionTypes.COLONY_UNCLAIMED_TRANSACTIONS_FETCH_SUCCESS,
-      { colonyAddress: Address; transactions: ContractTransactionType[] },
-      WithKey
     >
   | UniqueActionType<
       ActionTypes.COLONY_MINT_TOKENS,

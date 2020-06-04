@@ -1,13 +1,8 @@
 import React from 'react';
 
 import { Address } from '~types/index';
-
-import { useDataFetcher } from '~utils/hooks';
-import {
-  colonyTransactionsFetcher,
-  colonyUnclaimedTransactionsFetcher,
-} from '../../fetchers';
-
+import { useColonyTransactionsQuery } from '~data/index';
+import { SpinnerLoader } from '~core/Preloaders';
 import TransactionList from '~core/TransactionList';
 
 import styles from './Transactions.css';
@@ -17,41 +12,32 @@ interface Props {
 }
 
 const Transactions = ({ colonyAddress }: Props) => {
-  const {
-    data: transactions,
-    isFetching: isFetchingTransactions,
-    // eslint-disable-next-line prettier/prettier
-  } = useDataFetcher(
-    colonyTransactionsFetcher,
-    [colonyAddress],
-    [colonyAddress],
-  );
-
-  const {
-    data: unclaimedTransactions,
-    isFetching: isFetchingUnclaimedTransactions,
-  } = useDataFetcher(
-    colonyUnclaimedTransactionsFetcher,
-    [colonyAddress],
-    [colonyAddress],
-  );
+  const { data: transactionsData } = useColonyTransactionsQuery({
+    variables: { address: colonyAddress },
+  });
 
   return (
     <div className={styles.main}>
       <div className={styles.transactionsWrapper}>
         <div className={styles.pendingTransactionsWrapper}>
-          <TransactionList
-            isLoading={isFetchingUnclaimedTransactions}
-            linkToEtherscan={false}
-            transactions={unclaimedTransactions}
-          />
+          {transactionsData ? (
+            <TransactionList
+              linkToEtherscan={false}
+              transactions={transactionsData.colony.unclaimedTransfers}
+            />
+          ) : (
+            <SpinnerLoader />
+          )}
         </div>
         <div className={styles.historyTransactionsWrapper}>
-          <TransactionList
-            isLoading={isFetchingTransactions}
-            linkToEtherscan
-            transactions={transactions}
-          />
+          {transactionsData ? (
+            <TransactionList
+              linkToEtherscan
+              transactions={transactionsData.colony.transactions}
+            />
+          ) : (
+            <SpinnerLoader />
+          )}
         </div>
       </div>
     </div>

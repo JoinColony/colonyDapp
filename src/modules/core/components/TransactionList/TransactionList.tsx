@@ -3,17 +3,15 @@ import { MessageDescriptor } from 'react-intl';
 
 import { Table, TableBody } from '~core/Table';
 import Heading from '~core/Heading';
-import { SpinnerLoader } from '~core/Preloaders';
+import { ColonyTransaction } from '~data/index';
 import TransactionListItem from './TransactionListItem';
-import { ContractTransactionType } from '~immutable/index';
 
 interface Props {
   /*
    * Title to show before the list
    */
   label?: string | MessageDescriptor;
-  transactions: ContractTransactionType[] | void;
-  isLoading?: boolean;
+  transactions: ColonyTransaction[];
 
   /*
    * The user's address will always be shown, this just controls if it's
@@ -34,7 +32,6 @@ const displayName = 'admin.TransactionList';
 const TransactionList = ({
   label,
   transactions,
-  isLoading = false,
   showMaskedAddress,
   linkToEtherscan = true,
   emptyState,
@@ -46,24 +43,22 @@ const TransactionList = ({
         text={label}
       />
     )}
-    {isLoading && <SpinnerLoader />}
-    {!isLoading &&
-      (transactions && transactions.length ? (
-        <Table scrollable>
-          <TableBody>
-            {transactions.map((transaction) => (
-              <TransactionListItem
-                key={transaction.hash}
-                linkToEtherscan={linkToEtherscan}
-                showMaskedAddress={showMaskedAddress}
-                transaction={transaction}
-              />
-            ))}
-          </TableBody>
-        </Table>
-      ) : (
-        emptyState || null
-      ))}
+    {transactions && transactions.length ? (
+      <Table scrollable>
+        <TableBody>
+          {transactions.map((transaction) => (
+            <TransactionListItem
+              key={transaction.hash}
+              linkToEtherscan={linkToEtherscan}
+              showMaskedAddress={showMaskedAddress}
+              transaction={transaction}
+            />
+          ))}
+        </TableBody>
+      </Table>
+    ) : (
+      emptyState || null
+    )}
   </div>
 );
 

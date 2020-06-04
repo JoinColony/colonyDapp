@@ -6,6 +6,7 @@ import {
   ColonyProfileFragment,
   ColonyQuery,
   ColonyTasksQuery,
+  ColonyTransactionsQuery,
   DomainFieldsFragment,
   FullColonyFragment,
   PayoutsFragment,
@@ -77,6 +78,8 @@ export type AnyColonyProfile = FullColonyFragment | ColonyProfileFragment;
 export type Colony = FullColonyFragment;
 
 export type OneDomain = DomainFieldsFragment;
+
+export type ColonyTransaction = ColonyTransactionsQuery['colony']['transactions'][number];
 
 export type OneSuggestion = ColonySuggestionsQuery['colony']['suggestions'][number];
 

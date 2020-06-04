@@ -56,7 +56,7 @@ export default gql`
     colonyAddress: String!
     date: Int!
     from: String
-    hash: String
+    hash: String!
     incoming: Boolean!
     taskId: Int
     to: String
@@ -72,6 +72,7 @@ export default gql`
     roles: [UserRoles!]!
     tokens(addresses: [String!]): [Token!]!
     transactions: [Transaction!]!
+    unclaimedTransfers: [Transaction!]!
     version: Int!
   }
 

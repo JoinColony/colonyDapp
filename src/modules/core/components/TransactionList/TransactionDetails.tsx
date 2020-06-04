@@ -7,9 +7,9 @@ import {
   AnyUser,
   AnyColonyProfile,
   AnyTask,
+  ColonyTransaction,
   useColonyQuery,
 } from '~data/index';
-import { ContractTransactionType } from '~immutable/index';
 import { Address, ENSName } from '~types/index';
 
 import styles from './TransactionDetails.css';
@@ -53,20 +53,20 @@ interface UserDetailsProps extends BaseProps {
 interface IncomingTransactionProps extends BaseProps {
   colony: AnyColonyProfile;
   task?: AnyTask;
-  transaction: ContractTransactionType;
+  transaction: ColonyTransaction;
   user?: AnyUser;
 }
 
 interface OutgoingTransactionProps extends BaseProps {
   colony: AnyColonyProfile;
   task?: AnyTask;
-  transaction: ContractTransactionType;
+  transaction: ColonyTransaction;
   user: AnyUser;
 }
 
 interface Props extends BaseProps {
   task?: AnyTask;
-  transaction: ContractTransactionType;
+  transaction: ColonyTransaction;
   user?: AnyUser;
 }
 
@@ -253,7 +253,7 @@ const OutgoingTransaction = ({
           values={{
             senderString: (
               <ColonyDetails
-                address={from}
+                address={from || undefined}
                 colony={colony}
                 showMaskedAddress={showMaskedAddress}
               />

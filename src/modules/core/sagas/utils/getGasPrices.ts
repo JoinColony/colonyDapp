@@ -26,16 +26,7 @@ interface EthGasStationAPIResponse {
 
 const ETH_GAS_STATION_ENDPOINT =
   'https://ethgasstation.info/json/ethgasAPI.json';
-const DEFAULT_GAS_PRICE = '1';
-
-const getNetworkGasPrice = async (
-  networkClient: NetworkClient,
-): Promise<string> => {
-  const price = await networkClient.provider.getGasPrice();
-  // Handling the weird ethers BN implementation
-  // FIXME maybe leave it wehn moving to ethers BN
-  return price.toString();
-};
+const DEFAULT_GAS_PRICE = bigNumberify(1);
 
 const fetchGasPrices = async (
   networkClient: NetworkClient,
@@ -43,7 +34,7 @@ const fetchGasPrices = async (
   let networkGasPrice = DEFAULT_GAS_PRICE;
 
   try {
-    networkGasPrice = await getNetworkGasPrice(networkClient);
+    networkGasPrice = await networkClient.provider.getGasPrice();
 
     const response = await fetch(ETH_GAS_STATION_ENDPOINT);
 
@@ -58,7 +49,7 @@ const fetchGasPrices = async (
 
     return {
       timestamp: Date.now(),
-      network: bigNumberify(networkGasPrice),
+      network: networkGasPrice,
 
       suggested: bigNumberify(data.average).mul(pointOneGwei),
       cheaper: bigNumberify(data.safeLow).mul(pointOneGwei),

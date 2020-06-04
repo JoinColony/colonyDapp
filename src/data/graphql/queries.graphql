@@ -285,7 +285,26 @@ query ColonyNativeToken($address: String!) {
 query ColonyTransactions($address: String!) {
   colony(address: $address) {
     transactions @client {
+      amount
       hash
+      colonyAddress
+      date
+      from
+      hash
+      incoming
+      to
+      token
+    }
+    unclaimedTransfers @client {
+      amount
+      hash
+      colonyAddress
+      date
+      from
+      hash
+      incoming
+      to
+      token
     }
   }
 }

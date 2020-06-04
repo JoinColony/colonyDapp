@@ -204,6 +204,7 @@ export type Colony = {
   tokenAddresses: Array<Scalars['String']>;
   tokens: Array<Token>;
   transactions: Array<Transaction>;
+  unclaimedTransfers: Array<Transaction>;
   version: Scalars['Int'];
   website?: Maybe<Scalars['String']>;
 };
@@ -1374,7 +1375,7 @@ export type Transaction = {
   colonyAddress: Scalars['String'];
   date: Scalars['Int'];
   from?: Maybe<Scalars['String']>;
-  hash?: Maybe<Scalars['String']>;
+  hash: Scalars['String'];
   incoming: Scalars['Boolean'];
   taskId?: Maybe<Scalars['Int']>;
   to?: Maybe<Scalars['String']>;
@@ -2096,7 +2097,7 @@ export type ColonyTransactionsQueryVariables = {
 };
 
 
-export type ColonyTransactionsQuery = { colony: { transactions: Array<Pick<Transaction, 'hash'>> } };
+export type ColonyTransactionsQuery = { colony: { transactions: Array<Pick<Transaction, 'amount' | 'hash' | 'colonyAddress' | 'date' | 'from' | 'incoming' | 'to' | 'token'>>, unclaimedTransfers: Array<Pick<Transaction, 'amount' | 'hash' | 'colonyAddress' | 'date' | 'from' | 'incoming' | 'to' | 'token'>> } };
 
 export type TokenBalancesForDomainsQueryVariables = {
   colonyAddress: Scalars['String'];
@@ -5253,7 +5254,26 @@ export const ColonyTransactionsDocument = gql`
     query ColonyTransactions($address: String!) {
   colony(address: $address) {
     transactions @client {
+      amount
       hash
+      colonyAddress
+      date
+      from
+      hash
+      incoming
+      to
+      token
+    }
+    unclaimedTransfers @client {
+      amount
+      hash
+      colonyAddress
+      date
+      from
+      hash
+      incoming
+      to
+      token
     }
   }
 }

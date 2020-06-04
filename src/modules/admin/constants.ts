@@ -1,9 +1,5 @@
 import { ColonyRole } from '@colony/colony-js';
 
-export const ADMIN_NAMESPACE = 'admin';
-export const ADMIN_TRANSACTIONS = 'transactions';
-export const ADMIN_UNCLAIMED_TRANSACTIONS = 'unclaimedTransactions';
-
 export const ROLE_MESSAGES = {
   [ColonyRole.Administration]: 'role.administration',
   [ColonyRole.Arbitration]: 'role.arbitration',
