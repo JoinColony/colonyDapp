@@ -12,113 +12,23 @@ import { createAddress } from '~utils/web3';
 import {
   getLoggedInUser,
   refetchUserNotifications,
-  ColonySubscribedUsersDocument,
   CreateUserDocument,
   CreateUserMutation,
   CreateUserMutationVariables,
   EditUserDocument,
   EditUserMutation,
   EditUserMutationVariables,
-  UserColonyAddressesQuery,
-  UserColonyAddressesQueryVariables,
   ClearLoggedInUserDocument,
   ClearLoggedInUserMutation,
   ClearLoggedInUserMutationVariables,
 } from '~data/index';
 import { putError, takeFrom } from '~utils/saga/effects';
-// FIXME
-// import { getEventLogs, parseUserTransferEvent } from '~utils/web3/eventLogs';
 
 import { clearToken } from '../../../api/auth';
 import { ipfsUpload } from '../../core/sagas/ipfs';
 import { transactionLoadRelated } from '../../core/actionCreators';
 import { createTransaction, getTxChannel } from '../../core/sagas/transactions';
 import { clearLastWallet } from '~utils/autoLogin';
-
-// FIXME
-// function* userTokenTransfersFetch( // eslint-disable-next-line @typescript-eslint/no-unused-vars,no-unused-vars
-//   action: Action<ActionTypes.USER_TOKEN_TRANSFERS_FETCH>,
-// ) {
-//   try {
-//     const { walletAddress } = yield getLoggedInUser();
-//     const apolloClient: ApolloClient<object> = yield getContext(
-//       Context.APOLLO_CLIENT,
-//     );
-//     const colonyManager: ColonyManager = yield getContext(
-//       Context.COLONY_MANAGER,
-//     );
-
-//     const { data } = yield apolloClient.query<
-//       UserColonyAddressesQuery,
-//       UserColonyAddressesQueryVariables
-//     >({
-//       query: ColonySubscribedUsersDocument,
-//       variables: { address: walletAddress },
-//     });
-
-//     if (!data) {
-//       throw new Error('Could not get user colonies');
-//     }
-
-//     const {
-//       user: { colonyAddresses: userColonyAddresses },
-//     } = data;
-
-//     const metaColonyClient = yield colonyManager.getMetaColonyClient();
-
-//     const { tokenClient } = metaColonyClient;
-//     const {
-//       events: { Transfer },
-//     } = tokenClient;
-//     const logFilterOptions = {
-//       events: [Transfer],
-//     };
-
-//     const transferToEventLogs = yield getEventLogs(
-//       tokenClient,
-//       { fromBlock: 1 },
-//       {
-//         ...logFilterOptions,
-//         to: walletAddress,
-//       },
-//     );
-
-//     const transferFromEventLogs = yield getEventLogs(
-//       tokenClient,
-//       { fromBlock: 1 },
-//       {
-//         ...logFilterOptions,
-//         from: walletAddress,
-//       },
-//     );
-
-//     // Combine and sort logs by blockNumber, then parse events from thihs
-//     const logs = [...transferToEventLogs, ...transferFromEventLogs].sort(
-//       (a, b) => a.blockNumber - b.blockNumber,
-//     );
-//     const transferEvents = yield tokenClient.parseLogs(logs);
-
-//     const transactions = yield Promise.all(
-//       transferEvents.map((event, i) =>
-//         parseUserTransferEvent({
-//           event,
-//           log: logs[i],
-//           tokenClient,
-//           userColonyAddresses,
-//           walletAddress,
-//         }),
-//       ),
-//     );
-
-//     yield put<AllActions>({
-//       type: ActionTypes.USER_TOKEN_TRANSFERS_FETCH_SUCCESS,
-//       payload: { transactions },
-//     });
-//   } catch (error) {
-//     return yield putError(ActionTypes.USER_TOKEN_TRANSFERS_FETCH_ERROR, error);
-//   }
-//   return null;
-// }
 
 function* userAddressFetch({
   payload: { username },
@@ -290,11 +200,6 @@ function* userLogout() {
 
 export function* setupUsersSagas() {
   yield takeEvery(ActionTypes.USER_ADDRESS_FETCH, userAddressFetch);
-  // FIXME
-  // yield takeEvery(
-  //   ActionTypes.USER_TOKEN_TRANSFERS_FETCH,
-  //   userTokenTransfersFetch,
-  // );
   yield takeLatest(ActionTypes.USER_AVATAR_REMOVE, userAvatarRemove);
   yield takeLatest(ActionTypes.USER_AVATAR_UPLOAD, userAvatarUpload);
   yield takeLatest(ActionTypes.USER_LOGOUT, userLogout);
