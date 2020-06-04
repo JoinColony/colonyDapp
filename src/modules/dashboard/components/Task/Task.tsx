@@ -1,4 +1,4 @@
-import React, { useCallback, useState, useEffect } from 'react';
+import React, { useCallback, useState } from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 import { useHistory, useParams, Redirect } from 'react-router-dom';
 import { ROOT_DOMAIN_ID } from '@colony/colony-js';
@@ -24,11 +24,9 @@ import {
   useColonyFromNameQuery,
   useLoggedInUser,
   useTaskQuery,
-  useFinalizeTaskMutation,
 } from '~data/index';
 import LoadingTemplate from '~pages/LoadingTemplate';
-import { useTransformer, useAsyncFunction } from '~utils/hooks';
-import { ActionTypes } from '~redux/index';
+import { useTransformer } from '~utils/hooks';
 import { NOT_FOUND_ROUTE } from '~routes/index';
 
 import { getUserRolesForDomain } from '../../../transformers';
@@ -120,7 +118,6 @@ const Task = () => {
   }>();
   const history = useHistory();
   const openDialog = useDialog(TaskEditDialog);
-  const [finalizeTaskMutation] = useFinalizeTaskMutation();
 
   const [
     isDiscardConfirmDisplayed,
@@ -164,60 +161,9 @@ const Task = () => {
       ethSkillId = undefined,
       payouts = [],
       title = undefined,
-      finalizedAt = undefined,
-      txHash = undefined,
     } = {},
     task = undefined,
   } = data || {};
-
-  /*
-   * @NOTE This checks the task payout transaction on mount
-   *
-   * This is to provide fallback for cases where a user closed the browser before
-   * the transaction has been mined.
-   *
-   * If the task is "pending", then look at the recent task payout events&logs and
-   * see if any of them matches the task's payout transaction hash.
-   *
-   * If it does, fire the mutation, set the transaction as "complete" and show
-   * the task complete event
-   */
-  const taskCompletedTxFetch = useAsyncFunction({
-    error: ActionTypes.TASK_TRANSACTION_COMPLETED_FETCH_ERROR,
-    submit: ActionTypes.TASK_TRANSACTION_COMPLETED_FETCH,
-    success: ActionTypes.TASK_TRANSACTION_COMPLETED_FETCH_SUCCESS,
-  });
-  useEffect(() => {
-    async function fetchTaskCompletedTx() {
-      if (!(colonyData && colonyData.colonyAddress)) {
-        return;
-      }
-      if (!finalizedAt && txHash) {
-        const { potId } = (await taskCompletedTxFetch({
-          colonyAddress: colonyData.colonyAddress,
-          txHash,
-        })) as { potId: number };
-        if (potId) {
-          finalizeTaskMutation({
-            variables: {
-              input: {
-                id: draftId,
-                ethPotId: potId,
-              },
-            },
-          });
-        }
-      }
-    }
-    fetchTaskCompletedTx();
-  }, [
-    colonyData,
-    draftId,
-    finalizedAt,
-    txHash,
-    taskCompletedTxFetch,
-    finalizeTaskMutation,
-  ]);
 
   const userRoles = useTransformer(getUserRolesForDomain, [
     colonyData && colonyData.colony,

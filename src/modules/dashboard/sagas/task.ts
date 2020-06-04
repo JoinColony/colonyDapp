@@ -169,73 +169,7 @@ function* taskFinalize({
   return null;
 }
 
-/*
- * @NOTE Check if a pending task's transaction was mined in the background
- */
-// FIXME
-// function* taskComplete({
-//   payload: { colonyAddress, txHash },
-//   meta,
-// }: Action<ActionTypes.TASK_TRANSACTION_COMPLETED_FETCH>) {
-//   try {
-//     const colonyManager: ColonyManager = yield getContext(
-//       Context.COLONY_MANAGER,
-//     );
-//     const colonyClient: ColonyClient = yield colonyManager.getColonyClient(
-//       colonyAddress,
-//     );
-//     const {
-//       events: { PayoutClaimed },
-//     } = colonyClient;
-//     const { events, logs } = yield getLogsAndEvents(
-//       colonyClient,
-//       {
-//         address: colonyAddress,
-//         fromBlock: 1,
-//       },
-//       {
-//         events: [PayoutClaimed],
-//       },
-//     );
-
-//     const transactions = yield Promise.all(
-//       logs.map((log, i) =>
-//         parseTaskPayoutEvents({
-//           event: events[i],
-//           log,
-//           colonyClient,
-//           colonyAddress,
-//           taskTxHash: txHash,
-//         }),
-//       ),
-//     );
-
-//     const [parsedTransaction] = transactions.filter(Boolean);
-
-//     const { potId } = parsedTransaction || { potId: undefined };
-
-//     if (!potId) {
-//       return null;
-//     }
-
-//     yield put<AllActions>({
-//       type: ActionTypes.TASK_TRANSACTION_COMPLETED_FETCH_SUCCESS,
-//       meta,
-//       payload: { potId },
-//     });
-//   } catch (error) {
-//     return yield putError(
-//       ActionTypes.COLONY_TRANSACTIONS_FETCH_ERROR,
-//       error,
-//       meta,
-//     );
-//   }
-//   return null;
-// }
-
 export default function* tasksSagas() {
   yield takeEvery(ActionTypes.TASK_CREATE, taskCreate);
   yield takeEvery(ActionTypes.TASK_FINALIZE, taskFinalize);
-  // FIXME
-  // yield takeEvery(ActionTypes.TASK_TRANSACTION_COMPLETED_FETCH, taskComplete);
 }
