@@ -45,8 +45,8 @@ import {
   LEVEL_ROUTE,
 } from './routeConstants';
 
-import ConnectedOnlyRoute from './ConnectedOnlyRoute';
 import DisconnectedOnlyRoute from './DisconnectedOnlyRoute';
+import AlwaysAccesibleRoute from './AlwaysAccesibleRoute';
 
 const MSG = defineMessages({
   userProfileEditBack: {
@@ -103,57 +103,33 @@ const Routes = () => {
         component={ConnectWalletWizard}
         layout={Plain}
       />
-      {/* <DisconnectedOnlyRoute
+      <DisconnectedOnlyRoute
         isConnected={isConnected}
         didClaimProfile={didClaimProfile}
         path={CREATE_WALLET_ROUTE}
         component={CreateWalletWizard}
         layout={Plain}
-      /> */}
-      <ConnectedOnlyRoute
-        exact
-        isConnected={isConnected}
-        path={[COLONY_HOME_ROUTE, LEVEL_ROUTE, PROGRAM_ROUTE]}
-        component={ColonyHome}
-        layout={SimpleNav}
-        routeProps={{
-          hasBackLink: false,
-        }}
-        isEthereal={ethereal}
       />
-      <ConnectedOnlyRoute
-        isConnected={isConnected}
-        path={INBOX_ROUTE}
-        component={Inbox}
-        layout={SimpleNav}
-        routeProps={{
-          hasBackLink: false,
-        }}
-        isEthereal={ethereal}
-      />
-      <ConnectedOnlyRoute
-        isConnected={isConnected}
-        path={WALLET_ROUTE}
-        component={Wallet}
-        layout={SimpleNav}
-        routeProps={{
-          hasBackLink: false,
-        }}
-        isEthereal={ethereal}
-      />
-      <ConnectedOnlyRoute
-        isConnected={isConnected}
+
+      <AlwaysAccesibleRoute
         path={DASHBOARD_ROUTE}
         component={Dashboard}
         layout={SimpleNav}
         routeProps={{
           hasBackLink: false,
         }}
-        isEthereal={ethereal}
       />
-      <ConnectedOnlyRoute
+      <AlwaysAccesibleRoute
         exact
-        isConnected={isConnected}
+        path={[COLONY_HOME_ROUTE, LEVEL_ROUTE, PROGRAM_ROUTE]}
+        component={ColonyHome}
+        layout={SimpleNav}
+        routeProps={{
+          hasBackLink: false,
+        }}
+      />
+      <AlwaysAccesibleRoute
+        exact
         path={ADMIN_DASHBOARD_ROUTE}
         component={AdminDashboard}
         layout={NavBar}
@@ -161,23 +137,9 @@ const Routes = () => {
           backText: ColonyBackText,
           backRoute: `/colony/${colonyName}`,
         })}
-        isEthereal={ethereal}
       />
-      <ConnectedOnlyRoute
+      <AlwaysAccesibleRoute
         exact
-        isConnected={isConnected}
-        path={TASK_ROUTE}
-        component={Task}
-        layout={NavBar}
-        routeProps={({ colonyName }) => ({
-          backText: ColonyBackText,
-          backRoute: `/colony/${colonyName}`,
-        })}
-        isEthereal={ethereal}
-      />
-      <ConnectedOnlyRoute
-        exact
-        isConnected={isConnected}
         path={LEVEL_EDIT_ROUTE}
         component={LevelEdit}
         layout={NavBar}
@@ -185,42 +147,71 @@ const Routes = () => {
           backText: ProgramBackText,
           backRoute: `/colony/${colonyName}/program/${programId}`,
         })}
-        isEthereal={ethereal}
       />
-      <ConnectedOnlyRoute
-        isConnected={isConnected}
-        path={CREATE_COLONY_ROUTE}
-        component={CreateColonyWizard}
-        layout={Plain}
-        isEthereal={ethereal}
-      />
-      <ConnectedOnlyRoute
-        isConnected={isConnected}
-        path={CREATE_USER_ROUTE}
-        component={CreateUserWizard}
-        layout={Plain}
-        isEthereal={ethereal}
-      />
-      <ConnectedOnlyRoute
-        isConnected={isConnected}
+      <AlwaysAccesibleRoute
         path={USER_ROUTE}
         component={UserProfile}
         layout={SimpleNav}
         routeProps={{
           hasBackLink: false,
         }}
-        isEthereal={ethereal}
       />
-      <ConnectedOnlyRoute
-        isConnected={isConnected}
+      <AlwaysAccesibleRoute
         path={USER_EDIT_ROUTE}
         component={UserProfileEdit}
         layout={NavBar}
-        isEthereal={ethereal}
-        // routeProps={{
-        //   backText: MSG.userProfileEditBack,
-        //   backRoute: `/user/${username}`,
-        // }}
+        routeProps={{
+          backText: MSG.userProfileEditBack,
+          backRoute: `/user/${username}`,
+        }}
+      />
+      <AlwaysAccesibleRoute
+        exact
+        path={TASK_ROUTE}
+        component={Task}
+        layout={NavBar}
+        routeProps={({ colonyName }) => ({
+          backText: ColonyBackText,
+          backRoute: `/colony/${colonyName}`,
+        })}
+      />
+      {/*
+       * @TODO Redirect to connect wallet
+       */}
+      <AlwaysAccesibleRoute
+        path={WALLET_ROUTE}
+        component={Wallet}
+        layout={SimpleNav}
+        routeProps={{
+          hasBackLink: false,
+        }}
+      />
+      {/*
+       * @TODO Redirect to connect wallet
+       */}
+      <AlwaysAccesibleRoute
+        path={INBOX_ROUTE}
+        component={Inbox}
+        layout={SimpleNav}
+        routeProps={{
+          hasBackLink: false,
+        }}
+      />
+      {/*
+       * @TODO Redirect to connect wallet
+       */}
+      <AlwaysAccesibleRoute
+        path={CREATE_COLONY_ROUTE}
+        component={CreateColonyWizard}
+        layout={Plain}
+      />
+      {/*
+       * @TODO Redirect to connect wallet
+       */}
+      <AlwaysAccesibleRoute
+        path={CREATE_USER_ROUTE}
+        component={CreateUserWizard}
+        layout={Plain}
       />
     </Switch>
   );
