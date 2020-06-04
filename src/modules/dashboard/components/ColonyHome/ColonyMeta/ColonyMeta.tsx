@@ -14,6 +14,7 @@ import { AnyColonyProfile } from '~data/index';
 import { DomainsMapType } from '~types/index';
 import { multiLineTextEllipsis, stripProtocol } from '~utils/strings';
 
+import ColonyBuyTokens from './ColonyBuyTokens';
 import ColonyInvite from './ColonyInvite';
 import ColonyPrograms from './ColonyPrograms';
 import ColonySubscribe from './ColonySubscribe';
@@ -166,6 +167,7 @@ const ColonyMeta = ({
           {renderExpandedElements}
         </section>
       )}
+      <ColonyBuyTokens colonyAddress={colonyAddress} colonyName={colonyName} />
       <ColonyPrograms colonyAddress={colonyAddress} colonyName={colonyName} />
       <section className={styles.domainContainer}>
         <ul>
