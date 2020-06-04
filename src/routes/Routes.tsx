@@ -75,7 +75,6 @@ const Routes = () => {
 
   const isConnected = !!walletAddress && !ethereal;
   const didClaimProfile = !!username;
-
   /**
    * @NOTE Memoized Switch
    *
