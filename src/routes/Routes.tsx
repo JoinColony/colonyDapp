@@ -38,6 +38,7 @@ import {
   USER_ROUTE,
   WALLET_ROUTE,
   LEVEL_ROUTE,
+  COLONY_PURCHASE_TOKENS_ROUTE,
 } from './routeConstants';
 
 import ConnectedOnlyRoute from './ConnectedOnlyRoute';
@@ -84,7 +85,12 @@ const Routes = () => {
       <ConnectedOnlyRoute
         exact
         isConnected={isConnected}
-        path={[COLONY_HOME_ROUTE, LEVEL_ROUTE, PROGRAM_ROUTE]}
+        path={[
+          COLONY_HOME_ROUTE,
+          COLONY_PURCHASE_TOKENS_ROUTE,
+          LEVEL_ROUTE,
+          PROGRAM_ROUTE,
+        ]}
         component={ColonyHome}
         layout={SimpleNav}
         routeProps={{

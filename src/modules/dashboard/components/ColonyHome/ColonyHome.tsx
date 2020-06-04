@@ -16,7 +16,12 @@ import Suggestions from '~dashboard/Suggestions';
 import { useLoggedInUser } from '~data/helpers';
 import { useColonyFromNameQuery } from '~data/index';
 import LoadingTemplate from '~pages/LoadingTemplate';
-import { NOT_FOUND_ROUTE, LEVEL_ROUTE, PROGRAM_ROUTE } from '~routes/index';
+import {
+  NOT_FOUND_ROUTE,
+  LEVEL_ROUTE,
+  PROGRAM_ROUTE,
+  COLONY_PURCHASE_TOKENS_ROUTE,
+} from '~routes/index';
 import { useDataFetcher, useTransformer } from '~utils/hooks';
 
 import { getUserRoles } from '../../../transformers';
@@ -27,6 +32,7 @@ import ColonyFunding from './ColonyFunding';
 import styles from './ColonyHome.css';
 import ColonyMeta from './ColonyMeta';
 import TabContribute from './TabContribute';
+import BuyTokens from '~dashboard/BuyTokens';
 
 const MSG = defineMessages({
   loadingText: {
@@ -144,6 +150,10 @@ const ColonyHome = ({ match, location }: Props) => {
 
   const canCreateTask = canAdminister(currentDomainUserRoles) && !!username;
 
+  const nativeToken = colony.tokens.find(
+    ({ address }) => address === colony.nativeTokenAddress,
+  );
+
   const noFilter = (
     <Heading
       text={MSG.noFilter}
@@ -168,6 +178,15 @@ const ColonyHome = ({ match, location }: Props) => {
         </aside>
         <main className={styles.content}>
           <Switch>
+            <Route exact path={COLONY_PURCHASE_TOKENS_ROUTE}>
+              {nativeToken && (
+                <BuyTokens
+                  colonyAddress={colony.colonyAddress}
+                  colonyName={colony.colonyName}
+                  nativeToken={nativeToken}
+                />
+              )}
+            </Route>
             <Route exact path={PROGRAM_ROUTE}>
               <Program
                 colonyAddress={colony.colonyAddress}
