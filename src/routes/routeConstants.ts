@@ -4,6 +4,7 @@ export const PROGRAM_ROUTE = `${COLONY_HOME_ROUTE}/program/:programId`;
 export const LEVEL_ROUTE = `${PROGRAM_ROUTE}/level/:levelId`;
 export const LEVEL_EDIT_ROUTE = `${PROGRAM_ROUTE}/level/:levelId/edit`;
 export const TASK_ROUTE = `${COLONY_HOME_ROUTE}/task/:draftId`;
+export const COLONY_PURCHASE_TOKENS_ROUTE = `${COLONY_HOME_ROUTE}/tokens/purchase`;
 export const CREATE_COLONY_ROUTE = '/create-colony';
 export const CREATE_USER_ROUTE = '/create-user';
 export const CREATE_WALLET_ROUTE = '/create-wallet';

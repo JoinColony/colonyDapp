@@ -14,6 +14,7 @@ import HookedColonyAvatar from '~dashboard/HookedColonyAvatar';
 import { Colony } from '~data/index';
 import { multiLineTextEllipsis, stripProtocol } from '~utils/strings';
 
+import ColonyBuyTokens from './ColonyBuyTokens';
 import ColonyInvite from './ColonyInvite';
 import ColonyPrograms from './ColonyPrograms';
 import ColonySubscribe from './ColonySubscribe';
@@ -159,6 +160,7 @@ const ColonyMeta = ({
           {renderExpandedElements}
         </section>
       )}
+      <ColonyBuyTokens colonyAddress={colonyAddress} colonyName={colonyName} />
       <ColonyPrograms
         canAdminister={canAdminister}
         colonyAddress={colonyAddress}

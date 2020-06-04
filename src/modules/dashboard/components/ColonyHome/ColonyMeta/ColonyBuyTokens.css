@@ -1,0 +1,12 @@
+.main {
+  padding: 25px 0;
+  border-bottom: 1px solid var(--temp-grey-5);
+}
+
+.linkContainer {
+  margin-top: 10px;
+}
+
+.activeLink {
+  color: var(--primary);
+}
