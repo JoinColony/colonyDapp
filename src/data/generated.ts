@@ -203,6 +203,7 @@ export type Colony = {
   tasks: Array<Task>;
   tokenAddresses: Array<Scalars['String']>;
   tokens: Array<Token>;
+  transactions: Array<Transaction>;
   version: Scalars['Int'];
   website?: Maybe<Scalars['String']>;
 };
@@ -1244,7 +1245,7 @@ export type User = {
   taskIds: Array<Scalars['String']>;
   tasks: Array<Task>;
   tokenAddresses: Array<Scalars['String']>;
-  tokenTransfers: Array<TokenTransfer>;
+  tokenTransfers: Array<Transaction>;
   tokens: Array<Token>;
 };
 
@@ -1368,7 +1369,7 @@ export type UserRoles = {
   domains: Array<DomainRoles>;
 };
 
-export type TokenTransfer = {
+export type Transaction = {
   amount: Scalars['String'];
   colonyAddress: Scalars['String'];
   date: Scalars['Int'];
@@ -2089,6 +2090,13 @@ export type ColonyNativeTokenQueryVariables = {
 
 
 export type ColonyNativeTokenQuery = { colony: Pick<Colony, 'id' | 'nativeTokenAddress'> };
+
+export type ColonyTransactionsQueryVariables = {
+  address: Scalars['String'];
+};
+
+
+export type ColonyTransactionsQuery = { colony: { transactions: Array<Pick<Transaction, 'hash'>> } };
 
 export type TokenBalancesForDomainsQueryVariables = {
   colonyAddress: Scalars['String'];
@@ -5241,6 +5249,41 @@ export function useColonyNativeTokenLazyQuery(baseOptions?: ApolloReactHooks.Laz
 export type ColonyNativeTokenQueryHookResult = ReturnType<typeof useColonyNativeTokenQuery>;
 export type ColonyNativeTokenLazyQueryHookResult = ReturnType<typeof useColonyNativeTokenLazyQuery>;
 export type ColonyNativeTokenQueryResult = ApolloReactCommon.QueryResult<ColonyNativeTokenQuery, ColonyNativeTokenQueryVariables>;
+export const ColonyTransactionsDocument = gql`
+    query ColonyTransactions($address: String!) {
+  colony(address: $address) {
+    transactions @client {
+      hash
+    }
+  }
+}
+    `;
+
+/**
+ * __useColonyTransactionsQuery__
+ *
+ * To run a query within a React component, call `useColonyTransactionsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useColonyTransactionsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useColonyTransactionsQuery({
+ *   variables: {
+ *      address: // value for 'address'
+ *   },
+ * });
+ */
+export function useColonyTransactionsQuery(baseOptions?: ApolloReactHooks.QueryHookOptions<ColonyTransactionsQuery, ColonyTransactionsQueryVariables>) {
+        return ApolloReactHooks.useQuery<ColonyTransactionsQuery, ColonyTransactionsQueryVariables>(ColonyTransactionsDocument, baseOptions);
+      }
+export function useColonyTransactionsLazyQuery(baseOptions?: ApolloReactHooks.LazyQueryHookOptions<ColonyTransactionsQuery, ColonyTransactionsQueryVariables>) {
+          return ApolloReactHooks.useLazyQuery<ColonyTransactionsQuery, ColonyTransactionsQueryVariables>(ColonyTransactionsDocument, baseOptions);
+        }
+export type ColonyTransactionsQueryHookResult = ReturnType<typeof useColonyTransactionsQuery>;
+export type ColonyTransactionsLazyQueryHookResult = ReturnType<typeof useColonyTransactionsLazyQuery>;
+export type ColonyTransactionsQueryResult = ApolloReactCommon.QueryResult<ColonyTransactionsQuery, ColonyTransactionsQueryVariables>;
 export const TokenBalancesForDomainsDocument = gql`
     query TokenBalancesForDomains($colonyAddress: String!, $tokenAddresses: [String!]!, $domainIds: [Int!]) {
   tokens(addresses: $tokenAddresses) @client {

@@ -189,3 +189,6 @@ export const arrayToObject = (arr: any[]) =>
     obj[idx.toString()] = current;
     return obj;
   }, {});
+
+// To filter arrays
+export const notUndefined = <T>(x: T | undefined): x is T => x !== undefined;

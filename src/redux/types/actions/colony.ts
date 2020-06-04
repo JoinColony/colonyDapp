@@ -70,17 +70,6 @@ export type ColonyActionTypes =
       object
     >
   | ActionTypeWithPayloadAndMeta<
-      ActionTypes.COLONY_TRANSACTIONS_FETCH,
-      { colonyAddress: Address },
-      WithKey
-    >
-  | ErrorActionType<ActionTypes.COLONY_TRANSACTIONS_FETCH_ERROR, WithKey>
-  | ActionTypeWithPayloadAndMeta<
-      ActionTypes.COLONY_TRANSACTIONS_FETCH_SUCCESS,
-      { colonyAddress: Address; transactions: ContractTransactionType[] },
-      WithKey
-    >
-  | ActionTypeWithPayloadAndMeta<
       ActionTypes.COLONY_UNCLAIMED_TRANSACTIONS_FETCH,
       { colonyAddress: Address },
       WithKey

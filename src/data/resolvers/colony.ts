@@ -5,8 +5,13 @@ import { ClientType, ColonyVersion, getColonyRoles } from '@colony/colony-js';
 import ENS from '~lib/ENS';
 import { Address } from '~types/index';
 import { Context } from '~context/index';
+import { Transaction } from '~data/index';
 
 import { getToken } from './token';
+import {
+  getColonyFundsClaimedTransactions,
+  getPayoutClaimedTransactions,
+} from './transactions';
 
 export const colonyResolvers = ({
   colonyManager: { networkClient },
@@ -119,6 +124,26 @@ export const colonyResolvers = ({
         })),
         __typename: 'UserRoles',
       }));
+    },
+    async transactions({ colonyAddress }): Promise<Transaction[]> {
+      const colonyClient = await colonyManager.getClient(
+        ClientType.ColonyClient,
+        colonyAddress,
+      );
+
+      // eslint-disable-next-line max-len
+      const colonyFundsClaimedTransactions = await getColonyFundsClaimedTransactions(
+        colonyClient,
+      );
+
+      const payoutClaimedTransactions = await getPayoutClaimedTransactions(
+        colonyClient,
+      );
+
+      return [
+        ...colonyFundsClaimedTransactions,
+        ...payoutClaimedTransactions,
+      ].sort((a, b) => b.date - a.date);
     },
     async version({ colonyAddress }) {
       const colonyClient = await colonyManager.getClient(

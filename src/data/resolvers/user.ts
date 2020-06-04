@@ -12,8 +12,8 @@ import ENS from '~lib/ENS';
 import ColonyManager from '~lib/ColonyManager';
 import { Address } from '~types/index';
 import { createAddress } from '~utils/web3';
+import { Transaction } from '~data/index';
 
-import { TokenTransfer } from '../generated';
 import { getToken } from './token';
 
 const getUserReputation = async (
@@ -101,7 +101,7 @@ export const userResolvers = ({
     async tokenTransfers({
       walletAddress,
       colonyAddresses,
-    }): Promise<TokenTransfer[]> {
+    }): Promise<Transaction[]> {
       const metaColonyClient = await colonyManager.getMetaColonyClient();
       const { tokenClient } = metaColonyClient;
 
@@ -140,6 +140,7 @@ export const userResolvers = ({
           );
 
           return {
+            __typename: 'Transaction',
             amount: wad.toString(),
             colonyAddress,
             date,
