@@ -1,7 +1,7 @@
 import { Record } from 'immutable';
 import { BigNumber } from 'ethers/utils';
 import { TransactionReceipt } from 'ethers/providers';
-import type { ClientType, TransactionOverrides } from '@colony/colony-js';
+import { ClientType, TransactionOverrides } from '@colony/colony-js';
 
 import {
   Address,

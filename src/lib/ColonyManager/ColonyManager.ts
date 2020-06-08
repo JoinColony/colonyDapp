@@ -4,8 +4,10 @@ import {
   getTokenClient,
   ClientType,
   ColonyClient,
-  // ContractClient,
+  ContractClient,
   NetworkClient,
+  OneTxPaymentClient,
+  OneTxPaymentFactoryClient,
   TokenClient,
 } from '@colony/colony-js';
 
@@ -79,35 +81,53 @@ export default class ColonyManager {
     return this.metaColonyClient;
   }
 
-  async getClient<T extends ClientType>(
-    type: T,
+  async getClient(type: ClientType.NetworkClient): Promise<NetworkClient>;
+
+  async getClient(
+    type: ClientType.ColonyClient,
     identifier?: AddressOrENSName,
-  ): Promise<
-    T extends ClientType.ColonyClient
-      ? ColonyClient
-      : T extends ClientType.NetworkClient
-      ? NetworkClient
-      : TokenClient
-  > {
+  ): Promise<ColonyClient>;
+
+  async getClient(
+    type: ClientType.TokenClient,
+    identifier?: AddressOrENSName,
+  ): Promise<TokenClient>;
+
+  async getClient(
+    type: ClientType.OneTxPaymentFactoryClient,
+  ): Promise<OneTxPaymentFactoryClient>;
+
+  async getClient(
+    type: ClientType.OneTxPaymentClient,
+    identifier?: AddressOrENSName,
+  ): Promise<OneTxPaymentClient>;
+
+  async getClient(
+    type: ClientType,
+    identifier?: AddressOrENSName,
+  ): Promise<ContractClient>;
+
+  async getClient(
+    type: ClientType,
+    identifier?: AddressOrENSName,
+  ): Promise<ContractClient> {
     switch (type) {
-      // @TODO: Somehow it should be possible to fix these types
-      // See https://www.typescriptlang.org/play/?#code/MYewdgzgLgBA5gUygNQIYBsCuCYF4YA8AUDDAMIwIAeUCYAJhDAOTQBOAlmHMzAD4swmALYAjBG2YAaIgD4AFMAAqATwAOCAFzkAlNvkVqtBk1ZRO3XgH4Y7LnBjahYiTryyYAbxIwOAMxhFVQ08fDMLHjdvUlI2JEw2MBZUW3N7ZgBuHwBfSnQIHH9A5XUcXDDncUkon1j4xJgAVizSbJ84qASkoXR0LOysolBIWCo8eCQ0LAR5ZkqJZh0gA
       case ClientType.NetworkClient: {
-        // @ts-ignore
         return this.networkClient;
       }
       case ClientType.ColonyClient: {
-        // @ts-ignore
         return this.getColonyClient(identifier);
       }
       case ClientType.TokenClient: {
         const colonyClient = await this.getColonyClient(identifier);
-        // @ts-ignore
         return colonyClient.tokenClient;
       }
       case ClientType.OneTxPaymentFactoryClient: {
-        // @ts-ignore
         return this.networkClient.oneTxPaymentFactoryClient;
+      }
+      case ClientType.OneTxPaymentClient: {
+        const colonyClient = await this.getColonyClient(identifier);
+        return colonyClient.oneTxPaymentClient;
       }
       default: {
         throw new Error('A valid contract client type has to be specified');
