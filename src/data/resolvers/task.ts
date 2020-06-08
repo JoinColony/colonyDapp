@@ -1,5 +1,11 @@
 import { ApolloClient, Resolvers } from 'apollo-client';
-import { ClientType, ColonyClient, getLogs } from '@colony/colony-js';
+import {
+  ClientType,
+  ColonyClient,
+  ColonyRole,
+  getLogs,
+  getColonyRoles,
+} from '@colony/colony-js';
 
 import { Context } from '~context/index';
 import { createAddress } from '~utils/web3';
@@ -11,6 +17,7 @@ import {
   Task,
 } from '~data/index';
 
+import { getRolesForUserAndDomain } from '../../modules/transformers';
 import { getToken } from './token';
 
 // @TODO we might want to do this on the server which should monitor events
@@ -29,6 +36,7 @@ const finalizeTaskWithTxHash = async (
   apolloClient: ApolloClient<object>,
   id: string,
   txHash: string,
+  ethDomainId: number,
 ) => {
   const payoutClaimedFilter = colonyClient.filters.PayoutClaimed(
     null,
@@ -44,17 +52,24 @@ const finalizeTaskWithTxHash = async (
     : undefined;
   const ethPotId = event && event.values.fundingPotId;
   if (ethPotId) {
-    // FIXME check roles and send off mutation (FinalizeTaskMutation)
-    // then return what it states below (combine!)
-    await apolloClient.mutate<
-      FinalizeTaskMutation,
-      FinalizeTaskMutationVariables
-    >({
-      mutation: FinalizeTaskDocument,
-      variables: {
-        input: { id, ethPotId },
-      },
-    });
+    const roles = await getColonyRoles(colonyClient);
+    const userAddress = await colonyClient.signer.getAddress();
+    const domainRoles = getRolesForUserAndDomain(
+      roles,
+      userAddress,
+      ethDomainId,
+    );
+    if (domainRoles.includes(ColonyRole.Administration)) {
+      await apolloClient.mutate<
+        FinalizeTaskMutation,
+        FinalizeTaskMutationVariables
+      >({
+        mutation: FinalizeTaskDocument,
+        variables: {
+          input: { id, ethPotId },
+        },
+      });
+    }
     return ethPotId;
   }
   return undefined;
@@ -68,11 +83,10 @@ export const taskResolvers = ({
       return events.filter(({ type }) => type === EventType.TaskMessage).length;
     },
     async finalizedPayment(
-      { colonyAddress, id, finalizedAt, ethPotId, txHash }: Task,
+      { colonyAddress, id, ethDomainId, finalizedAt, ethPotId, txHash }: Task,
       _,
-      { client, ...context },
+      { client },
     ) {
-      console.log(context);
       const colonyClient = await colonyManager.getClient(
         ClientType.ColonyClient,
         colonyAddress,
@@ -86,6 +100,7 @@ export const taskResolvers = ({
           client,
           id,
           txHash,
+          ethDomainId,
         );
       }
       if (existingEthPotId) {
