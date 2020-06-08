@@ -40,17 +40,18 @@ function* domainCreate({
       params: [parentDomainId],
     });
 
-    // HERE WE ARE
-    debugger;
-
     /*
      * Get the new domain ID from the successful transaction.
      */
     const {
       payload: {
-        eventData: { domainId: ethDomainId }, // transaction: {
+        eventData: {
+          DomainAdded: { domainId },
+        },
       },
     } = yield takeFrom(txChannel, ActionTypes.TRANSACTION_SUCCEEDED);
+
+    const ethDomainId = domainId.toNumber();
 
     /*
      * Add the Domain's metadata to the Mongo database
