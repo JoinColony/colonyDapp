@@ -10,20 +10,16 @@ import {
 import { Action, ActionTypes, AllActions } from '~redux/index';
 import { putError } from '~utils/saga/effects';
 import { ContextModule, TEMP_getContext } from '~context/index';
-import { Address } from '~types/index';
+import {
+  ColonyRolesQuery,
+  ColonyRolesQueryVariables,
+  ColonyRolesDocument,
+} from '~data/index';
 
 import { createTransaction } from '../../core/sagas';
 import { getRolesForUserAndDomain } from '../../transformers';
 
 const asColonyRole = (role: string) => (role as unknown) as ColonyRole;
-
-interface ColonyRoleSetEventData {
-  address: Address;
-  domainId: number;
-  role: ColonyRole;
-  setTo: boolean;
-  eventName: 'ColonyRoleSet';
-}
 
 const getRoleMethodName = (role: ColonyRole, setTo: boolean) => {
   switch (role) {
@@ -57,6 +53,7 @@ function* colonyDomainUserRolesSet({
 }: Action<ActionTypes.COLONY_DOMAIN_USER_ROLES_SET>) {
   try {
     const colonyManager = TEMP_getContext(ContextModule.ColonyManager);
+    const apolloClient = TEMP_getContext(ContextModule.ApolloClient);
     const colonyClient: ColonyClient = yield colonyManager.getClient(
       ClientType.ColonyClient,
       colonyAddress,
@@ -121,8 +118,14 @@ function* colonyDomainUserRolesSet({
         ),
       ),
     );
-
-    // FIXME re-fetch colony roles here
+    // Refresh the colony roles in cache
+    yield apolloClient.query<ColonyRolesQuery, ColonyRolesQueryVariables>({
+      query: ColonyRolesDocument,
+      variables: {
+        address: colonyAddress,
+      },
+      fetchPolicy: 'network-only',
+    });
   } catch (error) {
     return yield putError(
       ActionTypes.COLONY_DOMAIN_USER_ROLES_SET_ERROR,

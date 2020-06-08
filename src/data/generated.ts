@@ -2092,6 +2092,16 @@ export type ColonyNativeTokenQueryVariables = {
 
 export type ColonyNativeTokenQuery = { colony: Pick<Colony, 'id' | 'nativeTokenAddress'> };
 
+export type ColonyRolesQueryVariables = {
+  address: Scalars['String'];
+};
+
+
+export type ColonyRolesQuery = { colony: { roles: Array<(
+      Pick<UserRoles, 'address'>
+      & { domains: Array<Pick<DomainRoles, 'domainId' | 'roles'>> }
+    )> } };
+
 export type ColonyTransactionsQueryVariables = {
   address: Scalars['String'];
 };
@@ -5250,6 +5260,45 @@ export function useColonyNativeTokenLazyQuery(baseOptions?: ApolloReactHooks.Laz
 export type ColonyNativeTokenQueryHookResult = ReturnType<typeof useColonyNativeTokenQuery>;
 export type ColonyNativeTokenLazyQueryHookResult = ReturnType<typeof useColonyNativeTokenLazyQuery>;
 export type ColonyNativeTokenQueryResult = ApolloReactCommon.QueryResult<ColonyNativeTokenQuery, ColonyNativeTokenQueryVariables>;
+export const ColonyRolesDocument = gql`
+    query ColonyRoles($address: String!) {
+  colony(address: $address) {
+    roles @client {
+      address
+      domains {
+        domainId
+        roles
+      }
+    }
+  }
+}
+    `;
+
+/**
+ * __useColonyRolesQuery__
+ *
+ * To run a query within a React component, call `useColonyRolesQuery` and pass it any options that fit your needs.
+ * When your component renders, `useColonyRolesQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useColonyRolesQuery({
+ *   variables: {
+ *      address: // value for 'address'
+ *   },
+ * });
+ */
+export function useColonyRolesQuery(baseOptions?: ApolloReactHooks.QueryHookOptions<ColonyRolesQuery, ColonyRolesQueryVariables>) {
+        return ApolloReactHooks.useQuery<ColonyRolesQuery, ColonyRolesQueryVariables>(ColonyRolesDocument, baseOptions);
+      }
+export function useColonyRolesLazyQuery(baseOptions?: ApolloReactHooks.LazyQueryHookOptions<ColonyRolesQuery, ColonyRolesQueryVariables>) {
+          return ApolloReactHooks.useLazyQuery<ColonyRolesQuery, ColonyRolesQueryVariables>(ColonyRolesDocument, baseOptions);
+        }
+export type ColonyRolesQueryHookResult = ReturnType<typeof useColonyRolesQuery>;
+export type ColonyRolesLazyQueryHookResult = ReturnType<typeof useColonyRolesLazyQuery>;
+export type ColonyRolesQueryResult = ApolloReactCommon.QueryResult<ColonyRolesQuery, ColonyRolesQueryVariables>;
 export const ColonyTransactionsDocument = gql`
     query ColonyTransactions($address: String!) {
   colony(address: $address) {

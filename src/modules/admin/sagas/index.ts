@@ -8,6 +8,9 @@ import {
   ColonyQuery,
   ColonyQueryVariables,
   ColonyDocument,
+  ColonyTransactionsDocument,
+  ColonyTransactionsQueryVariables,
+  ColonyTransactionsQuery,
   TokenBalancesForDomainsQuery,
   TokenBalancesForDomainsQueryVariables,
   TokenBalancesForDomainsDocument,
@@ -45,16 +48,23 @@ function* colonyClaimToken({
       payload,
       meta,
     });
-    // FIXME refresh Colony transaction queries
-    // yield put<AllActions>(fetchColonyTransactions(colonyAddress));
-    // yield put<AllActions>(fetchColonyUnclaimedTransactions(colonyAddress));
 
+    // Refresh relevant values
+    yield apolloClient.query<
+      ColonyTransactionsQuery,
+      ColonyTransactionsQueryVariables
+    >({
+      query: ColonyTransactionsDocument,
+      variables: { address: colonyAddress },
+      fetchPolicy: 'network-only',
+    });
     yield apolloClient.query<
       TokenBalancesForDomainsQuery,
       TokenBalancesForDomainsQueryVariables
     >({
       query: TokenBalancesForDomainsDocument,
       variables: { colonyAddress, tokenAddresses: [tokenAddress] },
+      fetchPolicy: 'network-only',
     });
   } catch (error) {
     return yield putError(ActionTypes.COLONY_CLAIM_TOKEN_ERROR, error, meta);

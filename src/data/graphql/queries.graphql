@@ -282,6 +282,18 @@ query ColonyNativeToken($address: String!) {
   }
 }
 
+query ColonyRoles($address: String!) {
+  colony(address: $address) {
+    roles @client {
+      address
+      domains {
+        domainId
+        roles
+      }
+    }
+  }
+}
+
 query ColonyTransactions($address: String!) {
   colony(address: $address) {
     transactions @client {
