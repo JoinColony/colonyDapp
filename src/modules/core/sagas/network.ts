@@ -1,5 +1,4 @@
 import { call, put } from 'redux-saga/effects';
-import { bigNumberify } from 'ethers/utils';
 
 import { AllActions, ActionTypes } from '~redux/index';
 import { ContextModule, TEMP_getContext } from '~context/index';
@@ -9,15 +8,14 @@ function* networkFetch() {
   try {
     const colonyManager = TEMP_getContext(ContextModule.ColonyManager);
     const feeInverse = yield colonyManager.networkClient.getFeeInverse();
-    // FIXME fee value
-    // Fee will always be a zero string
-    const fee = bigNumberify(1).div(feeInverse).toString();
+    // @TODO any way we could be more precise here?
+    const fee = 1 / feeInverse.toNumber();
     const version = yield colonyManager.networkClient.getCurrentColonyVersion();
 
     yield put<AllActions>({
       type: ActionTypes.NETWORK_FETCH_SUCCESS,
       payload: {
-        fee,
+        fee: fee.toString(),
         feeInverse: feeInverse.toString(),
         version: version.toString(),
       },
