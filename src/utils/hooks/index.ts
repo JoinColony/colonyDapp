@@ -117,6 +117,7 @@ const transformSelectedData = (data?: any) => {
   return record && typeof record.toJS === 'function' ? record.toJS() : record;
 };
 
+// @TODO-redux (remove this)
 const defaultTransform = <T extends { toJS(): any }>(
   obj: T,
   // The return type of this could be improved if there was a way
@@ -209,7 +210,7 @@ const areTupleArraysEqual = (arr1: [any, any][], arr2: [any, any][]) => {
 export const useMemoWithFlatArray = createCustomMemo(areFlatArraysEqual);
 export const useMemoWithTupleArray = createCustomMemo(areTupleArraysEqual);
 
-// FIXME REMOVE
+// @TODO-redux (remove)
 export const useDataFetcher = <
   S extends (...args: any[]) => any,
   A extends RemoveFirstFromTuple<Parameters<S>>

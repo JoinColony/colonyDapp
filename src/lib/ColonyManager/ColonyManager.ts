@@ -90,24 +90,22 @@ export default class ColonyManager {
       : TokenClient
   > {
     switch (type) {
+      // @TODO: Somehow it should be possible to fix these types
+      // See https://www.typescriptlang.org/play/?#code/MYewdgzgLgBA5gUygNQIYBsCuCYF4YA8AUDDAMIwIAeUCYAJhDAOTQBOAlmHMzAD4swmALYAjBG2YAaIgD4AFMAAqATwAOCAFzkAlNvkVqtBk1ZRO3XgH4Y7LnBjahYiTryyYAbxIwOAMxhFVQ08fDMLHjdvUlI2JEw2MBZUW3N7ZgBuHwBfSnQIHH9A5XUcXDDncUkon1j4xJgAVizSbJ84qASkoXR0LOysolBIWCo8eCQ0LAR5ZkqJZh0gA
       case ClientType.NetworkClient: {
-        // FIXME fix this
         // @ts-ignore
         return this.networkClient;
       }
       case ClientType.ColonyClient: {
-        // FIXME fix this
         // @ts-ignore
         return this.getColonyClient(identifier);
       }
       case ClientType.TokenClient: {
         const colonyClient = await this.getColonyClient(identifier);
-        // FIXME fix this
         // @ts-ignore
         return colonyClient.tokenClient;
       }
       case ClientType.OneTxPaymentFactoryClient: {
-        // FIXME fix this
         // @ts-ignore
         return this.networkClient.oneTxPaymentFactoryClient;
       }
