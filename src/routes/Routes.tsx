@@ -45,8 +45,8 @@ import {
   LEVEL_ROUTE,
 } from './routeConstants';
 
-import DisconnectedOnlyRoute from './DisconnectedOnlyRoute';
 import AlwaysAccesibleRoute from './AlwaysAccesibleRoute';
+import WalletRequiredRoute from './WalletRequiredRoute';
 
 const MSG = defineMessages({
   userProfileEditBack: {
@@ -61,7 +61,6 @@ const MSG = defineMessages({
 
 const Routes = () => {
   const contextSagasLoaded = useSelector(setupSagasLoadedSelector);
-
   const { walletAddress, username, ethereal } = useLoggedInUser();
 
   const dispatch = useDispatch();
@@ -73,9 +72,9 @@ const Routes = () => {
       });
     }
   }, [dispatch, ethereal]);
+
   const isConnected = !!walletAddress && !ethereal;
   const didClaimProfile = !!username;
-  // const isConnected = true;
 
   if (!contextSagasLoaded) {
     return <LoadingTemplate loadingText={MSG.loadingAppMessage} />;
@@ -83,34 +82,58 @@ const Routes = () => {
 
   return (
     <Switch>
-      <Route
-        exact
-        path="/"
-        // render={() => {
-        //   const connectedRoute = didClaimProfile
-        //     ? DASHBOARD_ROUTE
-        //     : CREATE_USER_ROUTE;
-        //   return <Redirect to={isConnected ? connectedRoute : CONNECT_ROUTE} />;
-        // }}
-        render={() => <Redirect to={DASHBOARD_ROUTE} />}
-      />
+      <Route exact path="/" render={() => <Redirect to={DASHBOARD_ROUTE} />} />
       <Route exact path={NOT_FOUND_ROUTE} component={FourOFour} />
-      <DisconnectedOnlyRoute
+
+      <WalletRequiredRoute
         isConnected={isConnected}
-        // didClaimProfile={didClaimProfile}
-        // didClaimProfile
+        didClaimProfile={didClaimProfile}
         path={CONNECT_ROUTE}
         component={ConnectWalletWizard}
         layout={Plain}
       />
-      <DisconnectedOnlyRoute
+      <WalletRequiredRoute
         isConnected={isConnected}
-        // didClaimProfile={didClaimProfile}
+        didClaimProfile={didClaimProfile}
+        path={CREATE_USER_ROUTE}
+        component={CreateUserWizard}
+        layout={Plain}
+      />
+      <WalletRequiredRoute
+        isConnected={isConnected}
+        didClaimProfile={didClaimProfile}
+        path={CREATE_COLONY_ROUTE}
+        component={CreateColonyWizard}
+        layout={Plain}
+      />
+      <WalletRequiredRoute
+        isConnected={isConnected}
+        didClaimProfile={didClaimProfile}
+        path={WALLET_ROUTE}
+        component={Wallet}
+        layout={SimpleNav}
+        routeProps={{
+          hasBackLink: false,
+        }}
+      />
+      <WalletRequiredRoute
+        isConnected={isConnected}
+        didClaimProfile={didClaimProfile}
+        path={INBOX_ROUTE}
+        component={Inbox}
+        layout={SimpleNav}
+        routeProps={{
+          hasBackLink: false,
+        }}
+      />
+
+      <AlwaysAccesibleRoute
+        isConnected={isConnected}
+        didClaimProfile={didClaimProfile}
         path={CREATE_WALLET_ROUTE}
         component={CreateWalletWizard}
         layout={Plain}
       />
-
       <AlwaysAccesibleRoute
         path={DASHBOARD_ROUTE}
         component={Dashboard}
@@ -186,52 +209,6 @@ const Routes = () => {
           backText: ColonyBackText,
           backRoute: `/colony/${colonyName}`,
         })}
-        isConnected={isConnected}
-        didClaimProfile={didClaimProfile}
-      />
-      {/*
-       * @TODO Redirect to connect wallet
-       */}
-      <AlwaysAccesibleRoute
-        path={WALLET_ROUTE}
-        component={Wallet}
-        layout={SimpleNav}
-        routeProps={{
-          hasBackLink: false,
-        }}
-        isConnected={isConnected}
-        didClaimProfile={didClaimProfile}
-      />
-      {/*
-       * @TODO Redirect to connect wallet
-       */}
-      <AlwaysAccesibleRoute
-        path={INBOX_ROUTE}
-        component={Inbox}
-        layout={SimpleNav}
-        routeProps={{
-          hasBackLink: false,
-        }}
-        isConnected={isConnected}
-        didClaimProfile={didClaimProfile}
-      />
-      {/*
-       * @TODO Redirect to connect wallet
-       */}
-      <AlwaysAccesibleRoute
-        path={CREATE_COLONY_ROUTE}
-        component={CreateColonyWizard}
-        layout={Plain}
-        isConnected={isConnected}
-        didClaimProfile={didClaimProfile}
-      />
-      {/*
-       * @TODO Redirect to connect wallet
-       */}
-      <AlwaysAccesibleRoute
-        path={CREATE_USER_ROUTE}
-        component={CreateUserWizard}
-        layout={Plain}
         isConnected={isConnected}
         didClaimProfile={didClaimProfile}
       />
