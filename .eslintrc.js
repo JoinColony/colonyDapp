@@ -45,6 +45,8 @@ module.exports = {
     },
   ],
   rules: {
+    // Using the typescript-eslint version for that
+    'no-unused-vars': 'off',
     'camelcase': ['error', {allow: ["^TEMP_"]}],
     'eslint-comments/disable-enable-pair': ['error', { allowWholeFile: true }],
 
