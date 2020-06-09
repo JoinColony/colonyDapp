@@ -7,7 +7,6 @@ import {
   USER_EDIT_ROUTE,
   CREATE_COLONY_ROUTE,
   CREATE_USER_ROUTE,
-  CONNECT_ROUTE,
 } from '~routes/index';
 import DropdownMenu, {
   DropdownMenuSection,
@@ -59,24 +58,14 @@ const MSG = defineMessages({
 interface Props {
   closePopover: () => void;
   username?: string | null;
-  isEthereal: boolean;
 }
 
 const displayName = 'users.AvatarDropdown.AvatarDropdownPopover';
 
-const AvatarDropdownPopover = ({
-  closePopover,
-  username,
-  isEthereal,
-}: Props) => {
+const AvatarDropdownPopover = ({ closePopover, username }: Props) => {
   const renderUserSection = useCallback(() => {
     return (
       <DropdownMenuSection separator>
-        {isEthereal && (
-          <DropdownMenuItem>
-            <NavLink to={CONNECT_ROUTE} text={MSG.buttonConnect} />
-          </DropdownMenuItem>
-        )}
         {!username && (
           <DropdownMenuItem>
             <NavLink to={CREATE_USER_ROUTE} text={MSG.buttonGetStarted} />
