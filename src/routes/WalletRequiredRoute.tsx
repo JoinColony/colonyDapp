@@ -47,25 +47,62 @@ const WalletRequiredRoute = ({
           { redirectTo?: Location | string }
         >,
       ) => {
+        /**
+         * Connected
+         */
         if (isConnected) {
           const redirectTo =
             props.location.state && props.location.state.redirectTo;
+          /**
+           * Has username
+           */
           if (didClaimProfile) {
+            /**
+             * If we're entered the app through a different route before
+             * connecting the wallet, then redirect back to it
+             */
             if (redirectTo) {
               return <Redirect to={redirectTo} />;
             }
+            /**
+             * We've connected, but already have a profile, just redirect to
+             * the dashboard.
+             *
+             * This is the case when you enter the app using the /connect route
+             */
             if (path === CONNECT_ROUTE) {
               return <Redirect to={DASHBOARD_ROUTE} />;
             }
+            /**
+             * We've connected, have a profile, and no redirect available.
+             * In this case just render the underlying component.
+             *
+             * This is the case when accessing the /wallet or /inbox route,
+             * then connecting your wallet
+             */
             return (
               <Layout routeProps={routeProps} {...props}>
                 <Component routeProps={routeProps} {...props} />
               </Layout>
             );
           }
+          /**
+           * Doesn't have a username
+           */
+          /**
+           * If we don't have a username, and entered the app through the
+           * create a colony route, just redirect back to it, since the
+           * Wizard can handle creating a username alongside a colony.
+           */
           if (redirectTo === CREATE_COLONY_ROUTE) {
             return <Redirect to={CREATE_COLONY_ROUTE} />;
           }
+          /**
+           * This is the next step from the above redirect. If we've just
+           * redirected, just render the create colony Wizard.
+           *
+           * If we don't have this check, we'll end up redirecting ad infinitum.
+           */
           if (path === CREATE_COLONY_ROUTE) {
             return (
               <Layout routeProps={routeProps} {...props}>
@@ -73,6 +110,11 @@ const WalletRequiredRoute = ({
               </Layout>
             );
           }
+          /**
+           * If we don't have a username, redirect to the create user route,
+           * but be mindfull of the redirect path, and after creating the
+           * username, redirect back to your original entry point
+           */
           if (path !== CREATE_USER_ROUTE) {
             return (
               <Redirect
@@ -86,6 +128,15 @@ const WalletRequiredRoute = ({
             );
           }
         }
+        /**
+         * Not connected
+         */
+        /**
+         * We don't have a wallet connected, but did not enter the app through
+         * the /connect route. Just redirect to the connect page, but be mindfull
+         * of the initial entry point, and redirect back to it, once the wallet
+         * has been connected.
+         */
         if (!isConnected && path !== CONNECT_ROUTE) {
           return (
             <Redirect
@@ -100,6 +151,9 @@ const WalletRequiredRoute = ({
         }
         /**
          * Catch all component render
+         *
+         * This is the case when you enter the app directly using the /connect
+         * route, but before you connect the wallet.
          */
         return (
           <Layout routeProps={routeProps} {...props}>
