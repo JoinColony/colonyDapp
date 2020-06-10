@@ -28,9 +28,10 @@ const MSG = defineMessages({
     id: 'dashboard.CreateUserWizard.StepUserName.heading',
     defaultMessage: 'Create your user account',
   },
-  descriptionOne: {
-    id: 'dashboard.CreateUserWizard.StepUserName.descriptionOne',
-    defaultMessage: `Choose carefully, it is not possible to change your username later.`,
+  description: {
+    id: 'dashboard.CreateUserWizard.StepUserName.description',
+    defaultMessage: `To use Colony, you must create a username for your account.
+    \nChoose carefully, it is not possible to change your username later.`,
   },
   label: {
     id: 'dashboard.CreateUserWizard.StepUserName.label',
@@ -122,7 +123,7 @@ const StepUserName = ({ wizardValues, nextStep }: Props) => {
             <div>
               <Heading appearance={{ size: 'medium' }} text={MSG.heading} />
               <p className={styles.paragraph}>
-                <FormattedMessage {...MSG.descriptionOne} />
+                <FormattedMessage {...MSG.description} />
               </p>
               <div className={styles.nameForm}>
                 <Input
