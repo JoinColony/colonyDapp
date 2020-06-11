@@ -73,9 +73,9 @@ const Routes = () => {
       });
     }
   }, [dispatch, ethereal]);
-  // const isConnected = walletAddress && !ethereal;
+  const isConnected = !!walletAddress && !ethereal;
   const didClaimProfile = !!username;
-  const isConnected = true;
+  // const isConnected = true;
 
   if (!contextSagasLoaded) {
     return <LoadingTemplate loadingText={MSG.loadingAppMessage} />;
@@ -96,8 +96,8 @@ const Routes = () => {
       />
       <Route exact path={NOT_FOUND_ROUTE} component={FourOFour} />
       <DisconnectedOnlyRoute
-        isConnected={!ethereal}
-        didClaimProfile={didClaimProfile}
+        isConnected={isConnected}
+        // didClaimProfile={didClaimProfile}
         // didClaimProfile
         path={CONNECT_ROUTE}
         component={ConnectWalletWizard}
@@ -105,7 +105,7 @@ const Routes = () => {
       />
       <DisconnectedOnlyRoute
         isConnected={isConnected}
-        didClaimProfile={didClaimProfile}
+        // didClaimProfile={didClaimProfile}
         path={CREATE_WALLET_ROUTE}
         component={CreateWalletWizard}
         layout={Plain}
@@ -118,6 +118,8 @@ const Routes = () => {
         routeProps={{
           hasBackLink: false,
         }}
+        isConnected={isConnected}
+        didClaimProfile={didClaimProfile}
       />
       <AlwaysAccesibleRoute
         exact
@@ -127,6 +129,8 @@ const Routes = () => {
         routeProps={{
           hasBackLink: false,
         }}
+        isConnected={isConnected}
+        didClaimProfile={didClaimProfile}
       />
       <AlwaysAccesibleRoute
         exact
@@ -137,6 +141,8 @@ const Routes = () => {
           backText: ColonyBackText,
           backRoute: `/colony/${colonyName}`,
         })}
+        isConnected={isConnected}
+        didClaimProfile={didClaimProfile}
       />
       <AlwaysAccesibleRoute
         exact
@@ -147,6 +153,8 @@ const Routes = () => {
           backText: ProgramBackText,
           backRoute: `/colony/${colonyName}/program/${programId}`,
         })}
+        isConnected={isConnected}
+        didClaimProfile={didClaimProfile}
       />
       <AlwaysAccesibleRoute
         path={USER_ROUTE}
@@ -155,6 +163,8 @@ const Routes = () => {
         routeProps={{
           hasBackLink: false,
         }}
+        isConnected={isConnected}
+        didClaimProfile={didClaimProfile}
       />
       <AlwaysAccesibleRoute
         path={USER_EDIT_ROUTE}
@@ -164,6 +174,8 @@ const Routes = () => {
           backText: MSG.userProfileEditBack,
           backRoute: `/user/${username}`,
         }}
+        isConnected={isConnected}
+        didClaimProfile={didClaimProfile}
       />
       <AlwaysAccesibleRoute
         exact
@@ -174,6 +186,8 @@ const Routes = () => {
           backText: ColonyBackText,
           backRoute: `/colony/${colonyName}`,
         })}
+        isConnected={isConnected}
+        didClaimProfile={didClaimProfile}
       />
       {/*
        * @TODO Redirect to connect wallet
@@ -185,6 +199,8 @@ const Routes = () => {
         routeProps={{
           hasBackLink: false,
         }}
+        isConnected={isConnected}
+        didClaimProfile={didClaimProfile}
       />
       {/*
        * @TODO Redirect to connect wallet
@@ -196,6 +212,8 @@ const Routes = () => {
         routeProps={{
           hasBackLink: false,
         }}
+        isConnected={isConnected}
+        didClaimProfile={didClaimProfile}
       />
       {/*
        * @TODO Redirect to connect wallet
@@ -204,6 +222,8 @@ const Routes = () => {
         path={CREATE_COLONY_ROUTE}
         component={CreateColonyWizard}
         layout={Plain}
+        isConnected={isConnected}
+        didClaimProfile={didClaimProfile}
       />
       {/*
        * @TODO Redirect to connect wallet
@@ -212,6 +232,8 @@ const Routes = () => {
         path={CREATE_USER_ROUTE}
         component={CreateUserWizard}
         layout={Plain}
+        isConnected={isConnected}
+        didClaimProfile={didClaimProfile}
       />
     </Switch>
   );
