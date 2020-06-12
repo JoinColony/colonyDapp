@@ -38,6 +38,11 @@ const WalletRequiredRoute = ({
   routeProps,
   path,
 }: Props) => {
+  const RouteComponent = ({ ...props }) => (
+    <Layout routeProps={routeProps} {...props}>
+      <Component routeProps={routeProps} {...props} />
+    </Layout>
+  );
   return (
     <Route
       render={(
@@ -80,11 +85,7 @@ const WalletRequiredRoute = ({
              * This is the case when accessing the /wallet or /inbox route,
              * then connecting your wallet
              */
-            return (
-              <Layout routeProps={routeProps} {...props}>
-                <Component routeProps={routeProps} {...props} />
-              </Layout>
-            );
+            return <RouteComponent {...props} />;
           }
           /**
            * Doesn't have a username
@@ -155,11 +156,7 @@ const WalletRequiredRoute = ({
          * This is the case when you enter the app directly using the /connect
          * route, but before you connect the wallet.
          */
-        return (
-          <Layout routeProps={routeProps} {...props}>
-            <Component routeProps={routeProps} {...props} />
-          </Layout>
-        );
+        return <RouteComponent {...props} />;
       }}
     />
   );
