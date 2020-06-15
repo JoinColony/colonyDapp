@@ -28,7 +28,7 @@ export const colonyResolvers = ({
          * This will then not proceed further to the server query and the data
          * will try to load indefinitely w/o an error
          */
-        return undefined;
+        return error;
       }
     },
     async colonyName(_, { address }) {

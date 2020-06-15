@@ -93,8 +93,23 @@ const ColonyHome = ({ match, location }: Props) => {
 
   const [activeTab, setActiveTab] = useState<TabName>(defaultActiveTab);
 
-  // @TODO: Try to get proper error handling going in resolvers (for colonies that don't exist)
-  const { data, error: colonyFetchError } = useColonyFromNameQuery({
+  const {
+    data,
+    /**
+     * @NOTE Hooking into the return variable value
+     *
+     * Since this is a client side query it's return value will never end up
+     * in the final result from the main query hook, either the value or the
+     * eventual error.
+     *
+     * For this we hook into the `address` value which will be set internally
+     * by the `@client` query so that we can act on it if we encounter an ENS
+     * error.
+     *
+     * Based on that error we can determine if the colony is registered or not.
+     */
+    variables: { address: reverseENSAddress },
+  } = useColonyFromNameQuery({
     // We have to define an empty address here for type safety, will be replaced by the query
     variables: { name: colonyName, address: '' },
   });
@@ -135,10 +150,8 @@ const ColonyHome = ({ match, location }: Props) => {
     }
   }, [domains, filteredDomainId]);
 
-  if (!colonyName || colonyFetchError) {
-    // @TODO We still need a way to detect if a colony name is not registered
-    //
-    // return <Redirect to={NOT_FOUND_ROUTE} />;
+  if (!colonyName || (reverseENSAddress as any) instanceof Error) {
+    return <Redirect to={NOT_FOUND_ROUTE} />;
   }
 
   if (
