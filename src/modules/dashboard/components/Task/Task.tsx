@@ -123,7 +123,23 @@ const Task = () => {
     variables: { id: draftId },
   });
 
-  const { data: colonyData, error: colonyFetchError } = useColonyFromNameQuery({
+  const {
+    data: colonyData,
+    /**
+     * @NOTE Hooking into the return variable value
+     *
+     * Since this is a client side query it's return value will never end up
+     * in the final result from the main query hook, either the value or the
+     * eventual error.
+     *
+     * For this we hook into the `address` value which will be set internally
+     * by the `@client` query so that we can act on it if we encounter an ENS
+     * error.
+     *
+     * Based on that error we can determine if the colony is registered or not.
+     */
+    variables: { address: reverseENSAddress },
+  } = useColonyFromNameQuery({
     variables: { address: '', name: colonyName },
   });
 
@@ -221,11 +237,12 @@ const Task = () => {
     variables: { input: { id: draftId } },
   });
 
-  if (!colonyName || colonyFetchError || taskFetchError) {
-    // @TODO We still need a way to detect if a colony name is not registered
-    // or a task does not exist
-    //
-    // return <Redirect to={NOT_FOUND_ROUTE} />;
+  if (
+    !colonyName ||
+    (reverseENSAddress as any) instanceof Error ||
+    taskFetchError
+  ) {
+    return <Redirect to={NOT_FOUND_ROUTE} />;
   }
 
   if (isFetchingDomains || !task || !colonyData || !domains || !walletAddress) {
