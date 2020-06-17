@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useMemo } from 'react';
 import { Route, Redirect, Switch } from 'react-router-dom';
 import { defineMessages } from 'react-intl';
 import { useDispatch } from 'redux-react-hook';
@@ -76,144 +76,169 @@ const Routes = () => {
   const isConnected = !!walletAddress && !ethereal;
   const didClaimProfile = !!username;
 
+  /**
+   * @NOTE Memoized Switch
+   *
+   * We need to memoize the entire route switch to prevent re-renders at not
+   * so oportune times.
+   *
+   * The `balance` value, accessible through `useLoggedInUser`, even if we don't
+   * use it here directly, will cause a re-render of the `<Routes />` component
+   * every time it changes (using the subscription).
+   *
+   * To prevent this, we memoize the whole routes logic, to only render it again
+   * when the user connects a new wallet.
+   *
+   * This was particularly problematic when creating a new colony, and after
+   * the first TX, the balance would change and as a result everything would
+   * re-render, reseting the wizard.
+   */
+  const MemoizedSwitch = useMemo(
+    () => (
+      <Switch>
+        <Route
+          exact
+          path="/"
+          render={() => <Redirect to={DASHBOARD_ROUTE} />}
+        />
+        <Route exact path={NOT_FOUND_ROUTE} component={FourOFour} />
+
+        <WalletRequiredRoute
+          isConnected={isConnected}
+          didClaimProfile={didClaimProfile}
+          path={CONNECT_ROUTE}
+          component={ConnectWalletWizard}
+          layout={Plain}
+        />
+        <WalletRequiredRoute
+          isConnected={isConnected}
+          didClaimProfile={didClaimProfile}
+          path={CREATE_USER_ROUTE}
+          component={CreateUserWizard}
+          layout={Plain}
+        />
+        <WalletRequiredRoute
+          isConnected={isConnected}
+          didClaimProfile={didClaimProfile}
+          path={CREATE_COLONY_ROUTE}
+          component={CreateColonyWizard}
+          layout={Plain}
+        />
+        <WalletRequiredRoute
+          isConnected={isConnected}
+          didClaimProfile={didClaimProfile}
+          path={WALLET_ROUTE}
+          component={Wallet}
+          layout={SimpleNav}
+          routeProps={{
+            hasBackLink: false,
+          }}
+        />
+        <WalletRequiredRoute
+          isConnected={isConnected}
+          didClaimProfile={didClaimProfile}
+          path={INBOX_ROUTE}
+          component={Inbox}
+          layout={SimpleNav}
+          routeProps={{
+            hasBackLink: false,
+          }}
+        />
+
+        <AlwaysAccesibleRoute
+          isConnected={isConnected}
+          didClaimProfile={didClaimProfile}
+          path={CREATE_WALLET_ROUTE}
+          component={CreateWalletWizard}
+          layout={Plain}
+        />
+        <AlwaysAccesibleRoute
+          path={DASHBOARD_ROUTE}
+          component={Dashboard}
+          layout={SimpleNav}
+          routeProps={{
+            hasBackLink: false,
+          }}
+          isConnected={isConnected}
+          didClaimProfile={didClaimProfile}
+        />
+        <AlwaysAccesibleRoute
+          exact
+          path={[COLONY_HOME_ROUTE, LEVEL_ROUTE, PROGRAM_ROUTE]}
+          component={ColonyHome}
+          layout={SimpleNav}
+          routeProps={{
+            hasBackLink: false,
+          }}
+          isConnected={isConnected}
+          didClaimProfile={didClaimProfile}
+        />
+        <AlwaysAccesibleRoute
+          exact
+          path={ADMIN_DASHBOARD_ROUTE}
+          component={AdminDashboard}
+          layout={NavBar}
+          routeProps={({ colonyName }) => ({
+            backText: ColonyBackText,
+            backRoute: `/colony/${colonyName}`,
+          })}
+          isConnected={isConnected}
+          didClaimProfile={didClaimProfile}
+        />
+        <AlwaysAccesibleRoute
+          exact
+          path={LEVEL_EDIT_ROUTE}
+          component={LevelEdit}
+          layout={NavBar}
+          routeProps={({ colonyName, programId }) => ({
+            backText: ProgramBackText,
+            backRoute: `/colony/${colonyName}/program/${programId}`,
+          })}
+          isConnected={isConnected}
+          didClaimProfile={didClaimProfile}
+        />
+        <AlwaysAccesibleRoute
+          path={USER_ROUTE}
+          component={UserProfile}
+          layout={SimpleNav}
+          routeProps={{
+            hasBackLink: false,
+          }}
+          isConnected={isConnected}
+          didClaimProfile={didClaimProfile}
+        />
+        <AlwaysAccesibleRoute
+          path={USER_EDIT_ROUTE}
+          component={UserProfileEdit}
+          layout={NavBar}
+          routeProps={{
+            backText: MSG.userProfileEditBack,
+            backRoute: `/user/${username}`,
+          }}
+          isConnected={isConnected}
+          didClaimProfile={didClaimProfile}
+        />
+        <AlwaysAccesibleRoute
+          exact
+          path={TASK_ROUTE}
+          component={Task}
+          layout={NavBar}
+          routeProps={({ colonyName }) => ({
+            backText: ColonyBackText,
+            backRoute: `/colony/${colonyName}`,
+          })}
+          isConnected={isConnected}
+          didClaimProfile={didClaimProfile}
+        />
+      </Switch>
+    ),
+    [didClaimProfile, isConnected, username],
+  );
+
   if (!contextSagasLoaded) {
     return <LoadingTemplate loadingText={MSG.loadingAppMessage} />;
   }
-
-  return (
-    <Switch>
-      <Route exact path="/" render={() => <Redirect to={DASHBOARD_ROUTE} />} />
-      <Route exact path={NOT_FOUND_ROUTE} component={FourOFour} />
-
-      <WalletRequiredRoute
-        isConnected={isConnected}
-        didClaimProfile={didClaimProfile}
-        path={CONNECT_ROUTE}
-        component={ConnectWalletWizard}
-        layout={Plain}
-      />
-      <WalletRequiredRoute
-        isConnected={isConnected}
-        didClaimProfile={didClaimProfile}
-        path={CREATE_USER_ROUTE}
-        component={CreateUserWizard}
-        layout={Plain}
-      />
-      <WalletRequiredRoute
-        isConnected={isConnected}
-        didClaimProfile={didClaimProfile}
-        path={CREATE_COLONY_ROUTE}
-        component={CreateColonyWizard}
-        layout={Plain}
-      />
-      <WalletRequiredRoute
-        isConnected={isConnected}
-        didClaimProfile={didClaimProfile}
-        path={WALLET_ROUTE}
-        component={Wallet}
-        layout={SimpleNav}
-        routeProps={{
-          hasBackLink: false,
-        }}
-      />
-      <WalletRequiredRoute
-        isConnected={isConnected}
-        didClaimProfile={didClaimProfile}
-        path={INBOX_ROUTE}
-        component={Inbox}
-        layout={SimpleNav}
-        routeProps={{
-          hasBackLink: false,
-        }}
-      />
-
-      <AlwaysAccesibleRoute
-        isConnected={isConnected}
-        didClaimProfile={didClaimProfile}
-        path={CREATE_WALLET_ROUTE}
-        component={CreateWalletWizard}
-        layout={Plain}
-      />
-      <AlwaysAccesibleRoute
-        path={DASHBOARD_ROUTE}
-        component={Dashboard}
-        layout={SimpleNav}
-        routeProps={{
-          hasBackLink: false,
-        }}
-        isConnected={isConnected}
-        didClaimProfile={didClaimProfile}
-      />
-      <AlwaysAccesibleRoute
-        exact
-        path={[COLONY_HOME_ROUTE, LEVEL_ROUTE, PROGRAM_ROUTE]}
-        component={ColonyHome}
-        layout={SimpleNav}
-        routeProps={{
-          hasBackLink: false,
-        }}
-        isConnected={isConnected}
-        didClaimProfile={didClaimProfile}
-      />
-      <AlwaysAccesibleRoute
-        exact
-        path={ADMIN_DASHBOARD_ROUTE}
-        component={AdminDashboard}
-        layout={NavBar}
-        routeProps={({ colonyName }) => ({
-          backText: ColonyBackText,
-          backRoute: `/colony/${colonyName}`,
-        })}
-        isConnected={isConnected}
-        didClaimProfile={didClaimProfile}
-      />
-      <AlwaysAccesibleRoute
-        exact
-        path={LEVEL_EDIT_ROUTE}
-        component={LevelEdit}
-        layout={NavBar}
-        routeProps={({ colonyName, programId }) => ({
-          backText: ProgramBackText,
-          backRoute: `/colony/${colonyName}/program/${programId}`,
-        })}
-        isConnected={isConnected}
-        didClaimProfile={didClaimProfile}
-      />
-      <AlwaysAccesibleRoute
-        path={USER_ROUTE}
-        component={UserProfile}
-        layout={SimpleNav}
-        routeProps={{
-          hasBackLink: false,
-        }}
-        isConnected={isConnected}
-        didClaimProfile={didClaimProfile}
-      />
-      <AlwaysAccesibleRoute
-        path={USER_EDIT_ROUTE}
-        component={UserProfileEdit}
-        layout={NavBar}
-        routeProps={{
-          backText: MSG.userProfileEditBack,
-          backRoute: `/user/${username}`,
-        }}
-        isConnected={isConnected}
-        didClaimProfile={didClaimProfile}
-      />
-      <AlwaysAccesibleRoute
-        exact
-        path={TASK_ROUTE}
-        component={Task}
-        layout={NavBar}
-        routeProps={({ colonyName }) => ({
-          backText: ColonyBackText,
-          backRoute: `/colony/${colonyName}`,
-        })}
-        isConnected={isConnected}
-        didClaimProfile={didClaimProfile}
-      />
-    </Switch>
-  );
+  return MemoizedSwitch;
 };
 
 export default Routes;
