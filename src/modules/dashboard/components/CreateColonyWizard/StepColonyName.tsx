@@ -94,7 +94,12 @@ const StepColonyName = ({
             name: values.colonyName,
           },
         });
-        if (data && data.colonyAddress) return true;
+        if (data && data.colonyAddress) {
+          if ((data.colonyAddress as any) instanceof Error) {
+            return false;
+          }
+          return true;
+        }
         return false;
       } catch (e) {
         return false;
