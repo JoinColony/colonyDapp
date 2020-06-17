@@ -58,11 +58,16 @@ const MSG = defineMessages({
 interface Props {
   closePopover: () => void;
   username?: string | null;
+  walletConnected?: boolean;
 }
 
 const displayName = 'users.AvatarDropdown.AvatarDropdownPopover';
 
-const AvatarDropdownPopover = ({ closePopover, username }: Props) => {
+const AvatarDropdownPopover = ({
+  closePopover,
+  username,
+  walletConnected = false,
+}: Props) => {
   const renderUserSection = useCallback(() => {
     return (
       <DropdownMenuSection separator>
@@ -126,19 +131,20 @@ const AvatarDropdownPopover = ({ closePopover, username }: Props) => {
     </DropdownMenuSection>
   );
 
-  const renderMetaSection = () => (
-    <DropdownMenuSection separator>
-      <DropdownMenuItem>
-        <ActionButton
-          appearance={{ theme: 'no-style' }}
-          text={MSG.signOut}
-          submit={ActionTypes.USER_LOGOUT}
-          error={ActionTypes.USER_LOGOUT_ERROR}
-          success={ActionTypes.USER_LOGOUT_SUCCESS}
-        />
-      </DropdownMenuItem>
-    </DropdownMenuSection>
-  );
+  const renderMetaSection = () =>
+    walletConnected && (
+      <DropdownMenuSection separator>
+        <DropdownMenuItem>
+          <ActionButton
+            appearance={{ theme: 'no-style' }}
+            text={MSG.signOut}
+            submit={ActionTypes.USER_LOGOUT}
+            error={ActionTypes.USER_LOGOUT_ERROR}
+            success={ActionTypes.USER_LOGOUT_SUCCESS}
+          />
+        </DropdownMenuItem>
+      </DropdownMenuSection>
+    );
 
   return (
     <DropdownMenu onClick={closePopover}>
