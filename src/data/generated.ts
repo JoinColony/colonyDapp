@@ -2107,7 +2107,10 @@ export type ColonyTransactionsQueryVariables = {
 };
 
 
-export type ColonyTransactionsQuery = { colony: { transactions: Array<Pick<Transaction, 'amount' | 'hash' | 'colonyAddress' | 'date' | 'from' | 'incoming' | 'to' | 'token'>>, unclaimedTransfers: Array<Pick<Transaction, 'amount' | 'hash' | 'colonyAddress' | 'date' | 'from' | 'incoming' | 'to' | 'token'>> } };
+export type ColonyTransactionsQuery = { colony: (
+    Pick<Colony, 'id' | 'colonyAddress'>
+    & { transactions: Array<Pick<Transaction, 'amount' | 'hash' | 'colonyAddress' | 'date' | 'from' | 'incoming' | 'to' | 'token'>>, unclaimedTransfers: Array<Pick<Transaction, 'amount' | 'hash' | 'colonyAddress' | 'date' | 'from' | 'incoming' | 'to' | 'token'>> }
+  ) };
 
 export type TokenBalancesForDomainsQueryVariables = {
   colonyAddress: Scalars['String'];
@@ -5302,6 +5305,8 @@ export type ColonyRolesQueryResult = ApolloReactCommon.QueryResult<ColonyRolesQu
 export const ColonyTransactionsDocument = gql`
     query ColonyTransactions($address: String!) {
   colony(address: $address) {
+    id
+    colonyAddress
     transactions @client {
       amount
       hash

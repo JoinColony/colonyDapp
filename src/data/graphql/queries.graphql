@@ -296,6 +296,8 @@ query ColonyRoles($address: String!) {
 
 query ColonyTransactions($address: String!) {
   colony(address: $address) {
+    id
+    colonyAddress
     transactions @client {
       amount
       hash

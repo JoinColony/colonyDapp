@@ -24,28 +24,31 @@ export const getColonyFundsClaimedTransactions = async (
       const date = log.blockHash
         ? await getBlockTime(provider, log.blockHash)
         : 0;
-      const { values } = event;
+      const {
+        values: { token, payoutRemainder },
+      } = event;
 
       const tx = log.transactionHash
         ? await provider.getTransaction(log.transactionHash)
         : undefined;
-      const { token, payoutRemainder } = values;
 
       // Don't show claims of zero
       if (!payoutRemainder.gt(bigNumberify(0))) return undefined;
 
       return {
         __typename: 'Transaction',
-        amount: payoutRemainder,
+        amount: payoutRemainder.toString(),
         colonyAddress: colonyClient.address,
         date,
         from: tx ? tx.from : undefined,
         hash: log.transactionHash || HashZero,
         incoming: true,
+        to: colonyClient.address,
         token,
       };
     }),
   );
+
   return transactions.filter(notUndefined);
 };
 
@@ -62,9 +65,10 @@ export const getPayoutClaimedTransactions = async (
       const date = log.blockHash
         ? await getBlockTime(provider, log.blockHash)
         : 0;
-      const { values } = event;
+      const {
+        values: { fundingPotId, token, amount },
+      } = event;
 
-      const { fundingPotId, token, amount } = values;
       const {
         associatedType,
         associatedTypeId,
@@ -76,7 +80,7 @@ export const getPayoutClaimedTransactions = async (
 
       return {
         __typename: 'Transaction',
-        amount,
+        amount: amount.toString(),
         colonyAddress: colonyClient.address,
         date,
         hash: log.transactionHash || HashZero,
@@ -121,14 +125,14 @@ export const getColonyUnclaimedTransfers = async (
 
   const transactions = await Promise.all(
     tokenTransferLogs.map(async (log) => {
-      const event = colonyClient.interface.parseLog(log);
+      const event = tokenClient.interface.parseLog(log);
       const date = log.blockHash
         ? await getBlockTime(provider, log.blockHash)
         : 0;
-      const { values } = event;
+      const {
+        values: { src, wad },
+      } = event;
       const { blockNumber } = log;
-
-      const { src, wad } = values;
 
       const transferClaimed = !!claimedTransferEvents.find(
         ({ values: { token } }, i) =>
@@ -146,12 +150,13 @@ export const getColonyUnclaimedTransfers = async (
 
       return {
         __typename: 'Transaction',
-        amount: wad,
+        amount: wad.toString(),
         colonyAddress: colonyClient.address,
         date,
         from: src,
         hash: log.transactionHash || HashZero,
         incoming: true,
+        to: colonyClient.address,
         token: log.address,
       };
     }),
