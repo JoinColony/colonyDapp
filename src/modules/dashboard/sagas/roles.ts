@@ -19,7 +19,7 @@ import {
 import { createTransaction } from '../../core/sagas';
 import { getRolesForUserAndDomain } from '../../transformers';
 
-const asColonyRole = (role: string) => (role as unknown) as ColonyRole;
+const asColonyRole = (role: string) => parseInt(role, 10);
 
 const getRoleMethodName = (role: ColonyRole, setTo: boolean) => {
   switch (role) {

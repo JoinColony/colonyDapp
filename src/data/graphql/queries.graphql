@@ -284,6 +284,8 @@ query ColonyNativeToken($address: String!) {
 
 query ColonyRoles($address: String!) {
   colony(address: $address) {
+    id
+    colonyAddress
     roles @client {
       address
       domains {

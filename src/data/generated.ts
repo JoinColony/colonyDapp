@@ -2097,10 +2097,13 @@ export type ColonyRolesQueryVariables = {
 };
 
 
-export type ColonyRolesQuery = { colony: { roles: Array<(
+export type ColonyRolesQuery = { colony: (
+    Pick<Colony, 'id' | 'colonyAddress'>
+    & { roles: Array<(
       Pick<UserRoles, 'address'>
       & { domains: Array<Pick<DomainRoles, 'domainId' | 'roles'>> }
-    )> } };
+    )> }
+  ) };
 
 export type ColonyTransactionsQueryVariables = {
   address: Scalars['String'];
@@ -5266,6 +5269,8 @@ export type ColonyNativeTokenQueryResult = ApolloReactCommon.QueryResult<ColonyN
 export const ColonyRolesDocument = gql`
     query ColonyRoles($address: String!) {
   colony(address: $address) {
+    id
+    colonyAddress
     roles @client {
       address
       domains {
