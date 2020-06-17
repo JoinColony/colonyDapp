@@ -90,7 +90,7 @@
     "transaction.ColonyClient.upgrade.description": "Update Colony",
     "transaction.ColonyClient.enterRecoveryMode.title": "Enter Recovery mode",
     "transaction.ColonyClient.enterRecoveryMode.description": "Enter Recovery mode",
-    "transaction.group.mintTokens.title": "Mint.Token.",
+    "transaction.group.mintTokens.title": "Mint Tokens",
     "transaction.group.mintTokens.description": "Mint and claim native Token",
     "transaction.ColonyClient.mintTokens.title": "Mint New Tokens",
     "transaction.ColonyClient.mintTokens.description": "Mint New Tokens",
@@ -101,7 +101,7 @@
     "transaction.ColonyClient.addDomainWithProofs.title": "Create Domain",
     "transaction.ColonyClient.addDomainWithProofs.description": "Create Domain",
     "transaction.ColonyClient.moveFundsBetweenPots.title": "Move Funds Between Pots",
-    "transaction.ColonyClient.moveFundsBetweenPots.description": "Move.Token. from one domain pot to another",
+    "transaction.ColonyClient.moveFundsBetweenPots.description": "Move Token from one domain pot to another",
 
     "transaction.group.setRoles.title": "Set roles",
     "transaction.group.setRoles.description": "Sign the transactions required to set the selected roles.",

@@ -347,8 +347,8 @@ function* colonyCreate({
       const tokenLockingAddress = yield networkClient.getTokenLocking();
       yield put(
         transactionAddParams(deployTokenAuthority.id, [
-          colonyAddress,
           tokenAddress,
+          colonyAddress,
           [tokenLockingAddress],
         ]),
       );
