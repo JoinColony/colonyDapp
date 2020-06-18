@@ -50,8 +50,8 @@ const finalizeTaskWithTxHash = async (
   const event = claimedLogForTask
     ? colonyClient.interface.parseLog(claimedLogForTask)
     : undefined;
-  const ethPotId = event && event.values.fundingPotId;
-  if (ethPotId) {
+  const potId = event && event.values.fundingPotId;
+  if (potId) {
     const roles = await getColonyRoles(colonyClient);
     const userAddress = await colonyClient.signer.getAddress();
     const domainRoles = getRolesForUserAndDomain(
@@ -66,11 +66,11 @@ const finalizeTaskWithTxHash = async (
       >({
         mutation: FinalizeTaskDocument,
         variables: {
-          input: { id, ethPotId },
+          input: { id, ethPotId: potId.toNumber() },
         },
       });
     }
-    return ethPotId;
+    return potId;
   }
   return undefined;
 };

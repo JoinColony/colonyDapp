@@ -1961,7 +1961,7 @@ export type TaskFeedEventsQueryVariables = {
 
 
 export type TaskFeedEventsQuery = { task: (
-    Pick<Task, 'id' | 'colonyAddress' | 'ethPotId' | 'finalizedAt' | 'txHash'>
+    Pick<Task, 'id' | 'colonyAddress' | 'ethDomainId' | 'ethPotId' | 'finalizedAt' | 'txHash'>
     & { events: Array<TaskEventFragment>, finalizedPayment?: Maybe<Pick<TaskFinalizedPayment, 'amount' | 'tokenAddress' | 'workerAddress' | 'transactionHash'>> }
     & PayoutsFragment
   ) };
@@ -4702,6 +4702,7 @@ export const TaskFeedEventsDocument = gql`
     events {
       ...TaskEvent
     }
+    ethDomainId
     ethPotId
     finalizedAt
     txHash

@@ -124,6 +124,7 @@ query TaskFeedEvents($id: String!) {
     events {
       ...TaskEvent
     }
+    ethDomainId
     ethPotId
     finalizedAt
     txHash

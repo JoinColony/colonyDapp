@@ -84,6 +84,11 @@ function* taskFinalize({
 }: Action<ActionTypes.TASK_FINALIZE>) {
   try {
     const apolloClient = TEMP_getContext(ContextModule.ApolloClient);
+    const colonyManager = TEMP_getContext(ContextModule.ColonyManager);
+    const colonyClient = yield colonyManager.getClient(
+      ClientType.ColonyClient,
+      colonyAddress,
+    );
 
     if (!workerAddress)
       throw new Error(`Worker not assigned for task ${draftId}`);
@@ -130,13 +135,23 @@ function* taskFinalize({
       });
     }
 
-    yield takeFrom(txChannel, ActionTypes.TRANSACTION_RECEIPT_RECEIVED);
-
     const {
       payload: {
-        eventData: { potId },
+        receipt: { logs },
       },
     } = yield takeFrom(txChannel, ActionTypes.TRANSACTION_SUCCEEDED);
+
+    // We need to manually parse the logs as the events are not emitted on the OneTxPayment contract
+    const events = logs.map((log) => colonyClient.interface.parseLog(log));
+    const potAddedEvent = events.find((evt) => evt.name === 'FundingPotAdded');
+
+    if (!potAddedEvent) {
+      throw new Error('No corresponding potId found. Can not finalize task');
+    }
+
+    const {
+      values: { fundingPotId },
+    } = potAddedEvent;
 
     // Refetch token balances for the domains involved
     yield apolloClient.query<
@@ -160,7 +175,7 @@ function* taskFinalize({
 
     yield put<AllActions>({
       type: ActionTypes.TASK_FINALIZE_SUCCESS,
-      payload: { potId, draftId },
+      payload: { potId: fundingPotId.toNumber(), draftId },
       meta,
     });
   } catch (error) {

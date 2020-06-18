@@ -55,9 +55,9 @@
     "transaction.debug.description": "DEBUG: context: {context} methodName: {methodName}",
 
     "transaction.group.transaction.batch.createUser.title": "Claim Username",
-    "transaction.group.transaction.batch.createUser.description": "Claim Your Username \"{username}\"",
+    "transaction.group.transaction.batch.createUser.description": "Claim Your Username \"{0}\"",
     "transaction.NetworkClient.registerUserLabel.title": "Claim Username",
-    "transaction.NetworkClient.registerUserLabel.description": "Confirm Your Username \"{username}\"",
+    "transaction.NetworkClient.registerUserLabel.description": "Confirm Your Username \"{0}\"",
 
     "transaction.group.createColony.title": "Create Colony",
     "transaction.group.createColony.description": "Create Colony",
@@ -81,10 +81,8 @@
     "transaction.TokenClient.unlock.title": "Unlock Token",
     "transaction.TokenClient.unlock.description": "Unlock Token",
 
-    "transaction.ColonyClient.makePayment.title": "Make payment",
-    "transaction.ColonyClient.makePayment.description": "Make payment",
-    "transaction.ColonyClient.makePaymentFundedFromDomain.title": "Make payment",
-    "transaction.ColonyClient.makePaymentFundedFromDomain.description": "Make payment",
+    "transaction.OneTxPaymentClient.makePaymentFundedFromDomainWithProofs.title": "Make payment",
+    "transaction.OneTxPaymentClient.makePaymentFundedFromDomainWithProofs.description": "Make payment",
 
     "transaction.ColonyClient.upgrade.title": "Update Colony",
     "transaction.ColonyClient.upgrade.description": "Update Colony",
