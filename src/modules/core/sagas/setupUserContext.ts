@@ -19,12 +19,15 @@ import {
   SetLoggedInUserDocument,
   SetLoggedInUserMutation,
   SetLoggedInUserMutationVariables,
+  LoggedInUserQuery,
+  LoggedInUserQueryVariables,
+  LoggedInUserDocument,
 } from '~data/index';
 import { WALLET_SPECIFICS } from '~immutable/index';
 
 import setupResolvers from '../../../context/setupResolvers';
 import IPFSNode from '../../../lib/ipfs';
-import { authenticate } from '../../../api';
+import { authenticate, clearToken } from '../../../api';
 import setupAdminSagas from '../../admin/sagas';
 import setupDashboardSagas from '../../dashboard/sagas';
 import { getWallet, setupUsersSagas } from '../../users/sagas/index';
@@ -75,16 +78,35 @@ export default function* setupUserContext(
     payload: { method },
   } = action;
   try {
+    const apolloClient: ApolloClient<object> = yield getContext(
+      Context.APOLLO_CLIENT,
+    );
     /*
-     * Get the wallet and set it in context.
+     * Get the "old" wallet address, and if it's ethereal, remove it's authetication
+     * token from local host as it won't be needed anymore
+     */
+    const {
+      data: {
+        loggedInUser: {
+          walletAddress: etherealWalletAddress,
+          ethereal: isWalletTypeEthereal,
+        },
+      },
+    } = yield apolloClient.query<LoggedInUserQuery, LoggedInUserQueryVariables>(
+      {
+        query: LoggedInUserDocument,
+      },
+    );
+    if (isWalletTypeEthereal && etherealWalletAddress) {
+      clearToken(etherealWalletAddress);
+    }
+
+    /*
+     * Get the new wallet and set it in context.
      */
     const wallet = yield call(getWallet, action);
     const walletAddress = createAddress(wallet.address);
     TEMP_setNewContext('wallet', wallet);
-
-    const apolloClient: ApolloClient<object> = yield getContext(
-      Context.APOLLO_CLIENT,
-    );
 
     yield authenticate(wallet);
 
