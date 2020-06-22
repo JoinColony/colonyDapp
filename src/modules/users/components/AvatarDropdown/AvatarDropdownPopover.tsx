@@ -107,7 +107,7 @@ const AvatarDropdownPopover = ({ closePopover, username }: Props) => {
       </DropdownMenuItem>
       <DropdownMenuItem>
         <ExternalLink
-          href="https://help.colony.io/hc/en-us/community/topics/360001293833"
+          href="https://github.com/JoinColony/colonyDapp/issues"
           text={MSG.reportBugs}
           className={styles.externalLink}
         />
