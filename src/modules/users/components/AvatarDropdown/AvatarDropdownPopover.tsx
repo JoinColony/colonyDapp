@@ -100,10 +100,9 @@ const AvatarDropdownPopover = ({ closePopover, username }: Props) => {
   const renderHelperSection = () => (
     <DropdownMenuSection separator>
       <DropdownMenuItem>
-        <ExternalLink
-          href="https://help.colony.io/hc/en-us/community/topics/360001237594"
+        <NavLink
+          to="/colony/beta?tabSelect=suggestions"
           text={MSG.requestFeatures}
-          className={styles.externalLink}
         />
       </DropdownMenuItem>
       <DropdownMenuItem>
