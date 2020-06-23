@@ -4,11 +4,11 @@ import { call, put, spawn, take, takeLatest, all } from 'redux-saga/effects';
 
 import {
   create as createSoftwareWallet,
-  open as openSoftwareWallet,
+  open as purserOpenSoftwareWallet,
 } from '@purser/software';
 import {
   accountChangeHook,
-  open as openMetaMaskWallet,
+  open as purserOpenMetaMaskWallet,
   MetaMaskInpageProvider,
 } from '@purser/metamask';
 
@@ -25,9 +25,9 @@ const walletOpenFunctions = {
   // Disabled for now
   // [WalletMethod.Ledger]: ledgerWallet,
   // [WalletMethod.Trezor]: trezorWallet,
-  [WalletMethod.Mnemonic]: openSoftwareWallet,
-  [WalletMethod.MetaMask]: openMetaMaskWallet,
-  [WalletMethod.Ganache]: openSoftwareWallet,
+  [WalletMethod.Mnemonic]: purserOpenSoftwareWallet,
+  [WalletMethod.MetaMask]: purserOpenMetaMaskWallet,
+  [WalletMethod.Ganache]: purserOpenSoftwareWallet,
 };
 
 function* fetchAddressBalance(address, provider) {
@@ -70,7 +70,7 @@ function* fetchAccounts(action: Action<ActionTypes.WALLET_FETCH_ACCOUNTS>) {
 
 function* openMnemonicWallet(action: Action<ActionTypes.WALLET_CREATE>) {
   const { connnectWalletMnemonic } = action.payload;
-  return yield call(openSoftwareWallet, {
+  return yield call(purserOpenSoftwareWallet, {
     mnemonic: connnectWalletMnemonic,
   });
 }
@@ -78,7 +78,7 @@ function* openMnemonicWallet(action: Action<ActionTypes.WALLET_CREATE>) {
 /**
  * Watch for changes in Metamask account, and log the user out when they happen.
  */
-function* metamaskWatch(walletAddress: Address) {
+function* metaMaskWatch(walletAddress: Address) {
   const channel = eventChannel((emit) => {
     accountChangeHook(({ selectedAddress }: MetaMaskInpageProvider) => {
       if (selectedAddress) emit(createAddress(selectedAddress));
@@ -106,8 +106,8 @@ function* metamaskWatch(walletAddress: Address) {
 }
 
 function* openMetamaskWallet() {
-  const wallet = yield call(openMetamaskWallet);
-  yield spawn(metamaskWatch, createAddress(wallet.address));
+  const wallet = yield call(purserOpenMetaMaskWallet);
+  yield spawn(metaMaskWatch, createAddress(wallet.address));
   return wallet;
 }
 
@@ -129,14 +129,14 @@ function* openMetamaskWallet() {
 function* openGanacheWallet({
   payload: { privateKey },
 }: Action<ActionTypes.WALLET_CREATE>) {
-  return yield call(openSoftwareWallet, {
+  return yield call(purserOpenSoftwareWallet, {
     privateKey,
   });
 }
 
 function* createWallet(action: Action<ActionTypes.WALLET_CREATE>) {
   const { mnemonic } = action.payload;
-  return yield call(openSoftwareWallet, {
+  return yield call(purserOpenSoftwareWallet, {
     mnemonic,
   });
 }
