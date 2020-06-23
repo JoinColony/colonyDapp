@@ -63,6 +63,9 @@ const TabContribute = ({
 }: Props) => {
   const history = useHistory();
   const [isCreatingTask, setIsCreatingTask] = useState(false);
+  const [tasksFilter, setTasksFilter] = useState<string>(
+    TasksFilterOptions.ALL_OPEN,
+  );
 
   const transform = useCallback(
     mergePayload({
@@ -116,60 +119,60 @@ const TabContribute = ({
   );
 
   return (
-    <Form
-      initialValues={{ filter: TasksFilterOptions.ALL_OPEN }}
-      onSubmit={() => {}}
-    >
-      {({ values: { filter } }) => (
-        <>
-          <div className={styles.interactiveBar}>
-            <Select
-              appearance={{ alignOptions: 'left', theme: 'alt' }}
-              elementOnly
-              label={MSG.labelFilter}
-              name="filter"
-              options={tasksFilterSelectOptions}
-              placeholder={MSG.placeholderFilter}
-            />
-            {canCreateTask && (
-              <Button
-                appearance={{ theme: 'primary', size: 'medium' }}
-                text={MSG.newTaskButton}
-                disabled={isInRecoveryMode}
-                loading={isCreatingTask}
-                onClick={handleCreateTask}
-              />
-            )}
-          </div>
-          {/* eslint-disable-next-line max-len */}
-          {nativeToken && nativeTokenBalance.isZero() && ethBalance.isZero() && (
-            /*
-             * The funding panel should be shown if the colony's balance of
-             * both the native token and ETH is zero.
-             */
-            <ColonyInitialFunding
-              canMintTokens={canMintTokens}
-              colonyAddress={colonyAddress}
-              displayName={displayName}
-              isExternal={isNativeTokenExternal}
-              showQrCode={showQrCode}
-              tokenAddress={nativeToken.address}
+    <>
+      <Form
+        initialValues={{ filter: TasksFilterOptions.ALL_OPEN }}
+        onSubmit={() => {}}
+      >
+        <div className={styles.interactiveBar}>
+          <Select
+            appearance={{ alignOptions: 'left', theme: 'alt' }}
+            elementOnly
+            label={MSG.labelFilter}
+            name="filter"
+            options={tasksFilterSelectOptions}
+            onChange={setTasksFilter}
+            placeholder={MSG.placeholderFilter}
+          />
+          {canCreateTask && (
+            <Button
+              appearance={{ theme: 'primary', size: 'medium' }}
+              text={MSG.newTaskButton}
+              disabled={isInRecoveryMode}
+              loading={isCreatingTask}
+              onClick={handleCreateTask}
             />
           )}
-          <ColonyTasks
-            canCreateTask={canCreateTask}
-            colonyAddress={colonyAddress}
-            onCreateTask={handleCreateTask}
-            filteredDomainId={filteredDomainId}
-            filterOption={filter}
-            isCreatingTask={isCreatingTask}
-            isInRecoveryMode={isInRecoveryMode}
-            canMintTokens={canMintTokens}
-            showEmptyState={showEmptyState}
-          />
-        </>
+        </div>
+      </Form>
+
+      {/* eslint-disable-next-line max-len */}
+      {nativeToken && nativeTokenBalance.isZero() && ethBalance.isZero() && (
+        /*
+         * The funding panel should be shown if the colony's balance of
+         * both the native token and ETH is zero.
+         */
+        <ColonyInitialFunding
+          canMintTokens={canMintTokens}
+          colonyAddress={colonyAddress}
+          displayName={displayName}
+          isExternal={isNativeTokenExternal}
+          showQrCode={showQrCode}
+          tokenAddress={nativeToken.address}
+        />
       )}
-    </Form>
+      <ColonyTasks
+        canCreateTask={canCreateTask}
+        colonyAddress={colonyAddress}
+        onCreateTask={handleCreateTask}
+        filteredDomainId={filteredDomainId}
+        filterOption={tasksFilter}
+        isCreatingTask={isCreatingTask}
+        isInRecoveryMode={isInRecoveryMode}
+        canMintTokens={canMintTokens}
+        showEmptyState={showEmptyState}
+      />
+    </>
   );
 };
 
