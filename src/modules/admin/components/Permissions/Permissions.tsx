@@ -138,7 +138,7 @@ const Permissions = ({ colony: { colonyAddress, domains }, colony }: Props) => {
             appearance={{ size: 'medium', theme: 'dark' }}
           />
           <Form
-            initialValues={{ filter: ROOT_DOMAIN.toString() }}
+            initialValues={{ filter: ROOT_DOMAIN_ID.toString() }}
             onSubmit={() => {}}
           >
             <Select
