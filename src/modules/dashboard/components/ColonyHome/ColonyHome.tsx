@@ -93,7 +93,7 @@ const ColonyHome = ({ match, location }: Props) => {
 
   const [activeTab, setActiveTab] = useState<TabName>(defaultActiveTab);
 
-  // @TODO: Try to get proper error stringhandling going in resolvers (for colonies that don't exist)
+  // @TODO: Try to get proper error handling going in resolvers (for colonies that don't exist)
   const { data, error: colonyFetchError } = useColonyFromNameQuery({
     // We have to define an empty address here for type safety, will be replaced by the query
     variables: { name: colonyName, address: '' },
