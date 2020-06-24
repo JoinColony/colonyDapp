@@ -133,7 +133,8 @@ const options = [
   },
 ];
 
-if (isDev) {
+// process.env.DEV is set by the QA server in case we want to have a debug build. We don't have access to ganache then
+if (isDev && !process.env.DEV) {
   options.push({
     value: WalletMethod.Ganache,
     title: MSG.ganacheTitle,
