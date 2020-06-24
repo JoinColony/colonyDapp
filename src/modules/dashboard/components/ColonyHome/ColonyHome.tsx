@@ -18,6 +18,7 @@ import { useColonyFromNameQuery } from '~data/index';
 import LoadingTemplate from '~pages/LoadingTemplate';
 import { NOT_FOUND_ROUTE, LEVEL_ROUTE, PROGRAM_ROUTE } from '~routes/index';
 import { useDataFetcher, useTransformer } from '~utils/hooks';
+import { capitalize } from '~utils/strings';
 
 import { getUserRoles } from '../../../transformers';
 import { canAdminister, hasRoot } from '../../../users/checks';
@@ -55,9 +56,13 @@ const MSG = defineMessages({
   },
 });
 
+/**
+ * @NOTE These values need to appear in the order the actual tabs are rendered
+ * as we use them to infer the default active tab
+ */
 enum TabName {
-  SuggestionsTab = 'suggestions',
   TasksTab = 'tasks',
+  SuggestionsTab = 'suggestions',
   CommunityTab = 'community',
   TransactionsTab = 'transactions',
 }
@@ -75,14 +80,18 @@ const ColonyHome = ({ match, location }: Props) => {
   const { colonyName } = match.params;
   const { walletAddress, username } = useLoggedInUser();
 
-  const { domainFilter } = parseQS(location.search) as {
+  const { domainFilter, tabSelect = '' } = parseQS(location.search) as {
     domainFilter: string | undefined;
+    tabSelect: TabName | undefined;
   };
   const filteredDomainId = domainFilter
     ? parseInt(domainFilter, 10) || COLONY_TOTAL_BALANCE_DOMAIN_ID
     : COLONY_TOTAL_BALANCE_DOMAIN_ID;
 
-  const [activeTab, setActiveTab] = useState<TabName>(TabName.TasksTab);
+  const defaultActiveTab =
+    TabName[`${capitalize(tabSelect)}Tab`] || TabName.TasksTab;
+
+  const [activeTab, setActiveTab] = useState<TabName>(defaultActiveTab);
 
   // @TODO: Try to get proper error handling going in resolvers (for colonies that don't exist)
   const { data, error: colonyFetchError } = useColonyFromNameQuery({
@@ -181,7 +190,7 @@ const ColonyHome = ({ match, location }: Props) => {
               <div className={styles.breadCrumbContainer}>
                 {domains && crumbs && <BreadCrumb elements={crumbs} />}
               </div>
-              <Tabs>
+              <Tabs defaultIndex={Object.values(TabName).indexOf(activeTab)}>
                 <TabList
                   extra={
                     activeTab === TabName.TransactionsTab ? noFilter : null
