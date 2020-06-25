@@ -3,6 +3,7 @@ import {
   TransactionReceipt,
   TransactionResponse,
 } from 'ethers/providers';
+import { poll } from 'ethers/utils';
 import { buffers, END, eventChannel } from 'redux-saga';
 import { ContractClient } from '@colony/colony-js';
 
@@ -81,7 +82,16 @@ const channelGetTransactionReceipt = async (
   emit,
 ) => {
   try {
-    const receipt = await provider.getTransactionReceipt(hash);
+    // Sometimes the provider does not return a transaction receipt, so we try again
+    // (for a really long time)
+    const receipt = await poll(
+      async () => {
+        const res = await provider.getTransactionReceipt(hash);
+        if (!res) return undefined;
+        return res;
+      },
+      { timeout: 60 * 60 * 1000 },
+    );
     emit(transactionReceiptReceived(id, { receipt, params }));
     return receipt;
   } catch (caughtError) {
