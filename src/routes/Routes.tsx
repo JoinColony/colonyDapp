@@ -23,8 +23,7 @@ import LoadingTemplate from '~pages/LoadingTemplate';
 
 import { useLoggedInUser } from '~data/index';
 import { ActionTypes } from '~redux/index';
-import { useSelector } from '~utils/hooks';
-import { setupSagasLoadedSelector } from '../modules/core/selectors';
+import appLoadingContext from '~context/appLoadingState';
 
 import {
   CONNECT_ROUTE,
@@ -60,7 +59,7 @@ const MSG = defineMessages({
 });
 
 const Routes = () => {
-  const contextSagasLoaded = useSelector(setupSagasLoadedSelector);
+  const isAppLoading = appLoadingContext.getIsLoading();
   const { walletAddress, username, ethereal } = useLoggedInUser();
 
   const dispatch = useDispatch();
@@ -235,7 +234,7 @@ const Routes = () => {
     [didClaimProfile, isConnected, username],
   );
 
-  if (!contextSagasLoaded) {
+  if (isAppLoading) {
     return <LoadingTemplate loadingText={MSG.loadingAppMessage} />;
   }
   return MemoizedSwitch;
