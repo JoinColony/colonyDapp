@@ -75,6 +75,7 @@ const MembersListItem = <U extends AnyUser = AnyUser>(props: Props<U>) => {
             user={user}
             showInfo={!onRowClick || showUserInfo}
             domainId={domainId}
+            notSet={false}
           />
         </div>
         <div className={styles.usernameSection}>
