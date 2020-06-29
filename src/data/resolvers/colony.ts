@@ -71,7 +71,7 @@ export const colonyResolvers = ({
         ClientType.ColonyClient,
         colonyAddress,
       );
-      let isNativeTokenLocked;
+      let isNativeTokenLocked: boolean;
       try {
         const locked = await colonyClient.tokenClient.locked();
         isNativeTokenLocked = locked;
@@ -101,7 +101,7 @@ export const colonyResolvers = ({
       );
       let canUnlockNativeToken = true;
       try {
-        await colonyClient.tokenClient.unlock();
+        await colonyClient.tokenClient.estimate.unlock();
       } catch (error) {
         canUnlockNativeToken = false;
       }
