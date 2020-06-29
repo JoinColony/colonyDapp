@@ -177,14 +177,19 @@ export const colonyResolvers = ({
 
       if (unclaimedEther.gt(0)) {
         colonyUnclaimedTransfers.push({
+          // @ts-ignore
+          __typename: 'Transfer',
           amount: unclaimedEther.toString(),
           colonyAddress,
           date: new Date().getTime(),
+          from: AddressZero,
           hash: HashZero,
           incoming: true,
+          to: colonyClient.address,
           token: AddressZero,
         });
       }
+
       return colonyUnclaimedTransfers;
     },
     async version({ colonyAddress }) {
