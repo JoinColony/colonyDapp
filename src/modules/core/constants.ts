@@ -10,7 +10,6 @@ export const CORE_NETWORK_FEE = 'fee';
 export const CORE_NETWORK_FEE_INVERSE = 'feeInverse';
 export const CORE_NETWORK_VERSION = 'version';
 export const CORE_IPFS_DATA = 'ipfsData';
-export const CORE_SETUP = 'setup';
 
 /*
  * @NOTE Messages that need to be signed using the user's wallet

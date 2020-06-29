@@ -9,8 +9,6 @@ import {
   GasPrices,
   GasPricesRecord,
   NetworkRecord,
-  Setup,
-  SetupRecord,
 } from '~immutable/index';
 
 import {
@@ -20,7 +18,6 @@ import {
   CORE_MESSAGES,
   CORE_NETWORK,
   CORE_TRANSACTIONS,
-  CORE_SETUP,
 } from '../constants';
 import { CoreTransactions, CoreTransactionsRecord } from './CoreTransactions';
 import { CoreMessages, CoreMessagesRecord } from './Messages';
@@ -39,7 +36,6 @@ type CoreStateProps = {
   [CORE_MESSAGES]: CoreMessagesRecord;
   [CORE_NETWORK]: FetchableDataRecord<NetworkRecord>;
   [CORE_TRANSACTIONS]: CoreTransactionsRecord;
-  [CORE_SETUP]: SetupRecord;
 };
 
 export class CoreStateRecord extends Record<CoreStateProps>({
@@ -49,5 +45,4 @@ export class CoreStateRecord extends Record<CoreStateProps>({
   [CORE_MESSAGES]: CoreMessages(),
   [CORE_NETWORK]: FetchableData(),
   [CORE_TRANSACTIONS]: CoreTransactions(),
-  [CORE_SETUP]: Setup(),
 }) {}

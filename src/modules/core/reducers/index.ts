@@ -6,7 +6,6 @@ import networkReducer from './network';
 import ipfsDataReducer from './ipfsData';
 import messagesReducer from './messages';
 import connectionReducer from './connection';
-import setupReducer from './setup';
 
 import {
   CORE_CONNECTION,
@@ -15,7 +14,6 @@ import {
   CORE_MESSAGES,
   CORE_NETWORK,
   CORE_TRANSACTIONS,
-  CORE_SETUP,
 } from '../constants';
 
 const coreReducer = combineReducers({
@@ -25,7 +23,6 @@ const coreReducer = combineReducers({
   [CORE_MESSAGES]: messagesReducer,
   [CORE_NETWORK]: networkReducer,
   [CORE_TRANSACTIONS]: transactionsReducer,
-  [CORE_SETUP]: setupReducer,
 });
 
 export default coreReducer;

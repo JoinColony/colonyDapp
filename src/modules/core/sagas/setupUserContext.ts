@@ -39,18 +39,6 @@ import setupOnBeforeUnload from './setupOnBeforeUnload';
 import { setupUserBalanceListener } from './setupUserBalanceListener';
 import { setLastWallet } from '~utils/autoLogin';
 
-/**
- * @NOTE This is needed in order to inform the app that all listeners that we
- * depend on were set up.
- * Otherwise we run into race conditions where actions are dispatched but there's
- * no listener set up yet to handle it. (eg: fetch user address)
- */
-function* loadedContextDependentSagas() {
-  yield put({
-    type: ActionTypes.SETUP_SAGAS_LOADED,
-  });
-}
-
 function* setupContextDependentSagas() {
   const appLoadingState: typeof AppLoadingState = AppLoadingState;
   yield all([
@@ -63,7 +51,6 @@ function* setupContextDependentSagas() {
      * We've loaded all the context sagas, so we can proceed with redering
      * all the app's routes
      */
-    call(loadedContextDependentSagas),
     call([appLoadingState, appLoadingState.setIsLoading], false),
   ]);
 }

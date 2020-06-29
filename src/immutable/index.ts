@@ -13,4 +13,3 @@ export * from './TaskMetadata';
 export * from './TaskUser';
 export * from './Transaction';
 export * from './Wallet';
-export * from './Setup';

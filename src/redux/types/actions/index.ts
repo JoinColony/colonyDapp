@@ -11,7 +11,6 @@ import { TransactionActionTypes } from './transaction';
 import { MessageActionTypes } from './message';
 import { UserActionTypes } from './user';
 import { WalletActionTypes } from './wallet';
-import { SetupActionTypes } from './setup';
 
 /*
  * Type that represents an action (bare minimum).
@@ -106,8 +105,7 @@ export type AllActions =
   | TransactionActionTypes
   | MessageActionTypes
   | UserActionTypes
-  | WalletActionTypes
-  | SetupActionTypes;
+  | WalletActionTypes;
 
 export type Action<T extends AllActions['type']> = Extract<
   AllActions,
