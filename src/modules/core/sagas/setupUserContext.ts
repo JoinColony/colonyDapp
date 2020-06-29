@@ -25,7 +25,8 @@ import {
 } from '~data/index';
 import { WALLET_SPECIFICS } from '~immutable/index';
 
-import setupResolvers from '../../../context/setupResolvers';
+import setupResolvers from '~context/setupResolvers';
+import AppLoadingState from '~context/appLoadingState';
 import IPFSNode from '../../../lib/ipfs';
 import { authenticate, clearToken } from '../../../api';
 import setupAdminSagas from '../../admin/sagas';
@@ -51,6 +52,7 @@ function* loadedContextDependentSagas() {
 }
 
 function* setupContextDependentSagas() {
+  const appLoadingState: typeof AppLoadingState = AppLoadingState;
   yield all([
     call(setupAdminSagas),
     call(setupDashboardSagas),
@@ -62,6 +64,7 @@ function* setupContextDependentSagas() {
      * all the app's routes
      */
     call(loadedContextDependentSagas),
+    call([appLoadingState, appLoadingState.setIsLoading], false),
   ]);
 }
 

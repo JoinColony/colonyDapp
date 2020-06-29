@@ -13,17 +13,25 @@ class AppLoadingState {
     if (!instance) {
       instance = this;
     }
-    this.loading = false;
+    this.loading = true;
     return instance;
   }
 
-  get isLoading() {
+  /**
+   * @NOTE We're using named getter and setters as opposed as the built-in ones
+   *
+   * Ie: set isLoading() { ... }
+   * Because otherwise we would need to jump through various hoops in order to
+   * call the setter from a redux saga.
+   * So in order to cut down on code boilerplate, we're just doing this
+   */
+  getIsLoading() {
     return this.loading;
   }
 
-  set isLoading(loadingState) {
+  setIsLoading(loadingState) {
     this.loading = loadingState;
   }
 }
 
-export default AppLoadingState;
+export default new AppLoadingState();
