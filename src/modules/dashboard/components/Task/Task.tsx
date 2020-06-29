@@ -99,6 +99,19 @@ const MSG = defineMessages({
   },
 });
 
+/**
+ * @NOTE On the specific colony address type
+ *
+ * This came about as a result of hooking into the result of the colony query,
+ * on the client side query, before it sends the result on to the server query,
+ * and act upon that if that's in an error state (in which case, it won't actually
+ * reach the server)
+ *
+ * See the comment below, where we actually set the reverseENSAddress for a more
+ * in depth explanation.
+ */
+type SuperSpecificColonyAddress = string | Error;
+
 const displayName = 'dashboard.Task';
 
 const Task = () => {
@@ -239,7 +252,7 @@ const Task = () => {
 
   if (
     !colonyName ||
-    (reverseENSAddress as any) instanceof Error ||
+    (reverseENSAddress as SuperSpecificColonyAddress) instanceof Error ||
     taskFetchError
   ) {
     return <Redirect to={NOT_FOUND_ROUTE} />;
