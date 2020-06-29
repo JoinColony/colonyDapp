@@ -19,11 +19,16 @@ import {
   SetLoggedInUserDocument,
   SetLoggedInUserMutation,
   SetLoggedInUserMutationVariables,
+  LoggedInUserQuery,
+  LoggedInUserQueryVariables,
+  LoggedInUserDocument,
 } from '~data/index';
+import { WALLET_SPECIFICS } from '~immutable/index';
 
-import setupResolvers from '../../../context/setupResolvers';
+import setupResolvers from '~context/setupResolvers';
+import AppLoadingState from '~context/appLoadingState';
 import IPFSNode from '../../../lib/ipfs';
-import { authenticate } from '../../../api';
+import { authenticate, clearToken } from '../../../api';
 import setupAdminSagas from '../../admin/sagas';
 import setupDashboardSagas from '../../dashboard/sagas';
 import { getWallet, setupUsersSagas } from '../../users/sagas/index';
@@ -35,12 +40,18 @@ import { setupUserBalanceListener } from './setupUserBalanceListener';
 import { setLastWallet } from '~utils/autoLogin';
 
 function* setupContextDependentSagas() {
+  const appLoadingState: typeof AppLoadingState = AppLoadingState;
   yield all([
     call(setupAdminSagas),
     call(setupDashboardSagas),
     call(setupUsersSagas),
     call(setupTransactionsSagas),
     call(setupNetworkSagas),
+    /**
+     * We've loaded all the context sagas, so we can proceed with redering
+     * all the app's routes
+     */
+    call([appLoadingState, appLoadingState.setIsLoading], false),
   ]);
 }
 
@@ -57,16 +68,35 @@ export default function* setupUserContext(
     payload: { method },
   } = action;
   try {
+    const apolloClient: ApolloClient<object> = yield getContext(
+      Context.APOLLO_CLIENT,
+    );
     /*
-     * Get the wallet and set it in context.
+     * Get the "old" wallet address, and if it's ethereal, remove it's authetication
+     * token from local host as it won't be needed anymore
+     */
+    const {
+      data: {
+        loggedInUser: {
+          walletAddress: etherealWalletAddress,
+          ethereal: isWalletTypeEthereal,
+        },
+      },
+    } = yield apolloClient.query<LoggedInUserQuery, LoggedInUserQueryVariables>(
+      {
+        query: LoggedInUserDocument,
+      },
+    );
+    if (isWalletTypeEthereal && etherealWalletAddress) {
+      clearToken(etherealWalletAddress);
+    }
+
+    /*
+     * Get the new wallet and set it in context.
      */
     const wallet = yield call(getWallet, action);
     const walletAddress = createAddress(wallet.address);
     TEMP_setNewContext('wallet', wallet);
-
-    const apolloClient: ApolloClient<object> = yield getContext(
-      Context.APOLLO_CLIENT,
-    );
 
     yield authenticate(wallet);
 
@@ -142,6 +172,7 @@ export default function* setupUserContext(
           balance: formatEther(balance),
           username,
           walletAddress,
+          ethereal: method === WALLET_SPECIFICS.ETHEREAL,
         },
       },
     });

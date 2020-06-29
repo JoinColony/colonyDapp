@@ -9,6 +9,7 @@ import { GasStationPopover } from '~users/GasStation';
 import AvatarDropdown from '~users/AvatarDropdown';
 import { InboxIcon } from '~users/Inbox';
 import InboxPopover from '~users/Inbox/InboxPopover';
+import { ConnectWalletPopover } from '~users/ConnectWalletWizard';
 import { useUserNotificationsQuery, useLoggedInUser } from '~data/index';
 
 import styles from './UserNavigation.css';
@@ -31,7 +32,9 @@ const MSG = defineMessages({
 const displayName = 'pages.NavigationWrapper.UserNavigation';
 
 const UserNavigation = () => {
-  const { walletAddress } = useLoggedInUser();
+  const { walletAddress, ethereal } = useLoggedInUser();
+
+  const WalletComponent = ethereal ? ConnectWalletPopover : GasStationPopover;
 
   const { data } = useUserNotificationsQuery({
     variables: { address: walletAddress },
@@ -49,7 +52,7 @@ const UserNavigation = () => {
       >
         <Icon name="home" title={MSG.dashboardTitle} />
       </NavLink>
-      <GasStationPopover>
+      <WalletComponent>
         {({ isOpen, toggle, ref }) => (
           <button
             type="button"
@@ -66,7 +69,7 @@ const UserNavigation = () => {
             </div>
           </button>
         )}
-      </GasStationPopover>
+      </WalletComponent>
       <InboxPopover notifications={notifications}>
         {({ isOpen, toggle, ref }) => (
           <button

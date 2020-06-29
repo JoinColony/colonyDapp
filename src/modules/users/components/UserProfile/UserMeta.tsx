@@ -44,6 +44,7 @@ const UserMeta = ({
           address={walletAddress}
           size="xl"
           user={user}
+          notSet={false}
         />
       </div>
       <div className={styles.headingContainer}>

@@ -17,8 +17,10 @@ export const getLastWallet = () => ({
   address: localStorage.getItem(LAST_ADDRESS_KEY),
 });
 export const setLastWallet = (type: WALLET_SPECIFICS, address: Address) => {
-  localStorage.setItem(LAST_WALLET_KEY, type);
-  localStorage.setItem(LAST_ADDRESS_KEY, address);
+  if (type !== WALLET_SPECIFICS.ETHEREAL) {
+    localStorage.setItem(LAST_WALLET_KEY, type);
+    localStorage.setItem(LAST_ADDRESS_KEY, address);
+  }
 };
 export const clearLastWallet = () => {
   localStorage.removeItem(LAST_WALLET_KEY);

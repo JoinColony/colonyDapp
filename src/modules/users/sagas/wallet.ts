@@ -137,14 +137,6 @@ function* openHardwareWallet(action: Action<ActionTypes.WALLET_CREATE>) {
   return wallet;
 }
 
-function* openKeystoreWallet(action: Action<ActionTypes.WALLET_CREATE>) {
-  const { keystore, password } = action.payload;
-  return yield call(softwareWallet.open, {
-    keystore,
-    password,
-  });
-}
-
 function* openTrufflepigWallet({
   payload: { accountIndex },
 }: Action<ActionTypes.WALLET_CREATE>) {
@@ -162,6 +154,24 @@ function* createWallet(action: Action<ActionTypes.WALLET_CREATE>) {
   });
 }
 
+function* createEtherealWallet() {
+  /**
+   * @NOTE It would be better if we could create a wallet that is not functional
+   * within the etherem ecosystem. Something like: 0x00000...
+   *
+   * But as it stands we have so many address checks within both the app and the
+   * server that to change the logic there would be quite a feat.
+   *
+   * That being said, we should still plan to change this when we'll have some
+   * time for proper maintenance
+   */
+  const wallet = yield call(softwareWallet.create);
+  return {
+    ...wallet,
+    type: 'ethereal',
+  };
+}
+
 export function* getWallet(action: Action<ActionTypes.WALLET_CREATE>) {
   const { method } = action.payload;
   switch (method) {
@@ -175,10 +185,10 @@ export function* getWallet(action: Action<ActionTypes.WALLET_CREATE>) {
       return yield call(openHardwareWallet, action);
     case WALLET_SPECIFICS.MNEMONIC:
       return yield call(openMnemonicWallet, action);
-    case WALLET_SPECIFICS.JSON:
-      return yield call(openKeystoreWallet, action);
     case WALLET_SPECIFICS.TRUFFLEPIG:
       return yield call(openTrufflepigWallet, action);
+    case WALLET_SPECIFICS.ETHEREAL:
+      return yield call(createEtherealWallet);
     default:
       throw new Error(
         `Method ${method} is not recognized for getting a wallet`,

@@ -99,6 +99,19 @@ const MSG = defineMessages({
   },
 });
 
+/**
+ * @NOTE On the specific colony address type
+ *
+ * This came about as a result of hooking into the result of the colony query,
+ * on the client side query, before it sends the result on to the server query,
+ * and act upon that if that's in an error state (in which case, it won't actually
+ * reach the server)
+ *
+ * See the comment below, where we actually set the reverseENSAddress for a more
+ * in depth explanation.
+ */
+type SuperSpecificColonyAddress = string | Error;
+
 const displayName = 'dashboard.Task';
 
 const Task = () => {
@@ -123,7 +136,23 @@ const Task = () => {
     variables: { id: draftId },
   });
 
-  const { data: colonyData, error: colonyFetchError } = useColonyFromNameQuery({
+  const {
+    data: colonyData,
+    /**
+     * @NOTE Hooking into the return variable value
+     *
+     * Since this is a client side query it's return value will never end up
+     * in the final result from the main query hook, either the value or the
+     * eventual error.
+     *
+     * For this we hook into the `address` value which will be set internally
+     * by the `@client` query so that we can act on it if we encounter an ENS
+     * error.
+     *
+     * Based on that error we can determine if the colony is registered or not.
+     */
+    variables: { address: reverseENSAddress },
+  } = useColonyFromNameQuery({
     variables: { address: '', name: colonyName },
   });
 
@@ -221,7 +250,11 @@ const Task = () => {
     variables: { input: { id: draftId } },
   });
 
-  if (!colonyName || colonyFetchError || taskFetchError) {
+  if (
+    !colonyName ||
+    (reverseENSAddress as SuperSpecificColonyAddress) instanceof Error ||
+    taskFetchError
+  ) {
     return <Redirect to={NOT_FOUND_ROUTE} />;
   }
 

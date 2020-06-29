@@ -13,3 +13,8 @@
 .iconContainer {
   composes: marginBottomMedium from '~styles/layout.css';
 }
+
+.contentSimplified {
+  composes: content;
+  margin-top: 30px;
+}

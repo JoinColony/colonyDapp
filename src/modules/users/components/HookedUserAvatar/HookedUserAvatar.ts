@@ -12,7 +12,10 @@ export default withHooks<
   UserAvatarProps,
   { user: AnyUser | void; avatarURL: string | void }
 >((hookParams, { user, address }) => {
-  const result: { user: AnyUser | void; avatarURL: string | void } = {
+  const result: {
+    user: AnyUser | void;
+    avatarURL: string | void;
+  } = {
     user,
     avatarURL: undefined,
   };

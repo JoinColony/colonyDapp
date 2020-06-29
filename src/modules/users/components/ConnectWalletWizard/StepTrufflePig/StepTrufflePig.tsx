@@ -52,7 +52,9 @@ const MSG = defineMessages({
 
 type FormValues = {};
 
-type Props = WizardProps<FormValues>;
+type Props = {
+  simplified?: boolean;
+} & WizardProps<FormValues>;
 
 /**
  * @todo Get information for Trufflepig accounts.
@@ -68,7 +70,12 @@ const accountIndexOptions = Array.from({ length: 10 }).map((_, value) => ({
 
 const displayName = 'users.ConnectWalletWizard.StepTrufflePig';
 
-const StepTrufflePig = ({ resetWizard, wizardForm, wizardValues }: Props) => {
+const StepTrufflePig = ({
+  resetWizard,
+  wizardForm,
+  wizardValues,
+  simplified = false,
+}: Props) => {
   const [isLoading, setIsLoading] = useState(true);
   const [isValid, setIsValid] = useState(false);
   const [accountIndex, setAccountIndex] = useState(0);
@@ -129,7 +136,9 @@ const StepTrufflePig = ({ resetWizard, wizardForm, wizardValues }: Props) => {
     >
       {({ status, isSubmitting }) => (
         <main>
-          <div className={styles.content}>
+          <div
+            className={simplified ? styles.contentSimplified : styles.content}
+          >
             <div className={styles.iconContainer}>
               <Icon
                 name="wallet"

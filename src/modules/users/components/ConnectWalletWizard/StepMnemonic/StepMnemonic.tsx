@@ -52,7 +52,9 @@ type FormValues = {
   connectwalletmnemonic: string;
 };
 
-type Props = WizardProps<FormValues>;
+type Props = {
+  simplified?: boolean;
+} & WizardProps<FormValues>;
 
 const displayName = 'users.ConnectWalletWizard.StepMnemonic';
 
@@ -62,6 +64,7 @@ const StepMnemonic = ({
   stepCompleted,
   wizardForm,
   wizardValues,
+  simplified = false,
 }: Props) => {
   const transform = useCallback(mergePayload(wizardValues), [wizardValues]);
 
@@ -80,7 +83,9 @@ const StepMnemonic = ({
     >
       {({ dirty, isSubmitting, isValid, status }) => (
         <main>
-          <div className={styles.content}>
+          <div
+            className={simplified ? styles.contentSimplified : styles.content}
+          >
             <Heading text={MSG.heading} appearance={{ size: 'medium' }} />
             <Textarea
               label={MSG.instructionText}

@@ -1,4 +1,5 @@
 .content {
+  margin: 0 auto;
   width: 340px;
   position: relative;
 }
@@ -9,9 +10,20 @@
   font-weight: var(--weight-bold);
 }
 
+.titleSimplified {
+  composes: title;
+  margin-top: 0;
+}
+
 .subtitle {
   margin-bottom: 50px;
   font-size: 14px;
+}
+
+.tosSimplified {
+  margin-top: 30px;
+  font-size: 14px;
+  text-align: center;
 }
 
 .createWalletLink {

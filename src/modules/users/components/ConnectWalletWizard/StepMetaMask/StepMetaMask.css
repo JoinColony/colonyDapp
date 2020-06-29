@@ -17,3 +17,8 @@
 .interactionPrompt {
   composes: interactionPrompt from '../StepHardware/StepHardware.css';
 }
+
+.contentSimplified {
+  composes: content;
+  margin-top: 30px;
+}

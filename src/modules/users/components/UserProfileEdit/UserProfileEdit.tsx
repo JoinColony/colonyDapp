@@ -1,6 +1,7 @@
 import React, { useCallback } from 'react';
 import { defineMessages } from 'react-intl';
 import * as yup from 'yup';
+import { Redirect } from 'react-router-dom';
 
 import CopyableAddress from '~core/CopyableAddress';
 import UserMention from '~core/UserMention';
@@ -16,6 +17,7 @@ import {
 import Button from '~core/Button';
 import ProfileTemplate from '~pages/ProfileTemplate';
 import { useLoggedInUser, useUser, useEditUserMutation } from '~data/index';
+import { DASHBOARD_ROUTE } from '~routes/index';
 
 import UserProfileSpinner from '../UserProfile/UserProfileSpinner';
 import Sidebar from './Sidebar';
@@ -69,7 +71,7 @@ const validationSchema = yup.object({
 });
 
 const UserProfileEdit = () => {
-  const { walletAddress } = useLoggedInUser();
+  const { walletAddress, ethereal } = useLoggedInUser();
 
   const [editUser] = useEditUserMutation();
   const onSubmit = useCallback(
@@ -81,6 +83,10 @@ const UserProfileEdit = () => {
 
   if (!user) {
     return <UserProfileSpinner />;
+  }
+
+  if (ethereal) {
+    return <Redirect to={DASHBOARD_ROUTE} />;
   }
 
   return (

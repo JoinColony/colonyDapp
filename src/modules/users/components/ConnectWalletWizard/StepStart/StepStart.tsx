@@ -16,7 +16,7 @@ import { SpinnerLoader } from '~core/Preloaders';
 const MSG = defineMessages({
   heading: {
     id: 'users.ConnectWalletWizard.StepStart.heading',
-    defaultMessage: 'How would you like to access Colony?',
+    defaultMessage: 'Connect Wallet to Log in',
   },
   subTitle: {
     id: 'users.ConnectWalletWizard.StepStart.subTitle',
@@ -36,9 +36,7 @@ const MSG = defineMessages({
   },
   trezorSubtitle: {
     id: 'users.ConnectWalletWizard.StepStart.trezorSubtitle',
-    defaultMessage: 'Coming soon',
-    // To be re-enabled for colonyDapp#1760
-    // defaultMessage: 'Log in using the Trezor hardware wallet',
+    defaultMessage: 'Log in using the Trezor hardware wallet',
   },
   ledgerTitle: {
     id: 'users.ConnectWalletWizard.StepStart.ledgerTitle',
@@ -50,17 +48,11 @@ const MSG = defineMessages({
   },
   ledgerSubtitle: {
     id: 'users.ConnectWalletWizard.StepStart.ledgerSubtitle',
-    defaultMessage: 'Coming soon',
-    // To be re-enabled for colonyDapp#1760
-    // defaultMessage: 'Log in using the Ledger hardware wallet',
+    defaultMessage: 'Log in using the Ledger hardware wallet',
   },
   mnemonicTitle: {
     id: 'users.ConnectWalletWizard.StepStart.mnemonicTitle',
     defaultMessage: 'Mnemonic Phrase',
-  },
-  JSONTitle: {
-    id: 'users.ConnectWalletWizard.StepStart.JSONTitle',
-    defaultMessage: 'JSON File',
   },
   metaMaskSubtitle: {
     id: 'users.ConnectWalletWizard.StepStart.metaMaskSubtitle',
@@ -69,10 +61,6 @@ const MSG = defineMessages({
   mnemonicSubtitle: {
     id: 'users.ConnectWalletWizard.StepStart.mnemonicSubtitle',
     defaultMessage: 'Access with your mnemonic',
-  },
-  JSONSubtitle: {
-    id: 'users.ConnectWalletWizard.StepStart.JSONSubtitle',
-    defaultMessage: 'We do not recommend this method',
   },
   trufflepigSubtitle: {
     id: 'users.ConnectWalletWizard.StepStart.trufflepigSubtitle',
@@ -84,7 +72,11 @@ const MSG = defineMessages({
   },
   termsOfService: {
     id: 'users.ConnectWalletWizard.StepStart.termsOfService',
-    defaultMessage: 'Terms and Conditions of Use',
+    defaultMessage: 'Terms and Conditions',
+  },
+  agreeToUseDappSimplified: {
+    id: 'users.ConnectWalletWizard.StepStart.agreeToUseDappSimplified',
+    defaultMessage: 'By signing in I accept {tos}.',
   },
 });
 
@@ -107,28 +99,22 @@ const options = [
     subtitle: MSG.mnemonicSubtitle,
     icon: 'wallet',
   },
-  {
-    value: WALLET_SPECIFICS.JSON,
-    title: MSG.JSONTitle,
-    subtitle: MSG.JSONSubtitle,
-    icon: 'file',
-  },
-  {
-    value: WALLET_SPECIFICS.LEDGER,
-    title: MSG.ledgerTitle,
-    subtitle: MSG.ledgerSubtitle,
-    icon: 'wallet',
-    // To be re-enabled for colonyDapp#1760
-    disabled: true,
-  },
-  {
-    value: WALLET_SPECIFICS.TREZOR,
-    title: MSG.trezorTitle,
-    subtitle: MSG.trezorSubtitle,
-    icon: 'wallet',
-    // To be re-enabled for colonyDapp#1760
-    disabled: true,
-  },
+  // To be re-enabled for colonyDapp#1760
+  // @NOTE This is a hard-disable to prevent the options from showing up,
+  // until we get to re-enable them
+  //
+  // {
+  //   value: WALLET_SPECIFICS.LEDGER,
+  //   title: MSG.ledgerTitle,
+  //   subtitle: MSG.ledgerSubtitle,
+  //   icon: 'wallet',
+  // },
+  // {
+  //   value: WALLET_SPECIFICS.TREZOR,
+  //   title: MSG.trezorTitle,
+  //   subtitle: MSG.trezorSubtitle,
+  //   icon: 'wallet',
+  // },
 ];
 
 if (isDev) {
@@ -147,10 +133,18 @@ const createWalletOption = {
   icon: 'hugging',
 };
 
-type Props = WizardProps<FormValues>;
+type Props = {
+  simplified?: boolean;
+} & WizardProps<FormValues>;
 
-const StepStart = ({ nextStep, wizardValues }: Props) => {
+const StepStart = ({ nextStep, wizardValues, simplified = false }: Props) => {
   const attemptingAutoLogin = useAutoLogin();
+  const tos = (
+    <ExternalLink
+      text={MSG.termsOfService}
+      href="https://colony.io/pdf/terms.pdf"
+    />
+  );
   return (
     <Form onSubmit={nextStep} initialValues={wizardValues}>
       <main className={styles.content}>
@@ -161,33 +155,27 @@ const StepStart = ({ nextStep, wizardValues }: Props) => {
             </div>
           </div>
         )}
-        <div className={styles.title}>
+        <div className={simplified ? styles.titleSimplified : styles.title}>
           <Heading
             appearance={{ size: 'medium', weight: 'thin' }}
             text={MSG.heading}
           />
         </div>
-        <div className={styles.subtitle}>
-          <Heading
-            appearance={{ size: 'normal', weight: 'thin' }}
-            text={MSG.subTitle}
-          />
-        </div>
-        <div className={styles.subtitle}>
-          <Heading appearance={{ size: 'normal', weight: 'thin' }}>
-            <FormattedMessage
-              {...MSG.agreeToUseDapp}
-              values={{
-                tos: (
-                  <ExternalLink
-                    text={MSG.termsOfService}
-                    href="https://colony.io/pdf/terms.pdf"
-                  />
-                ),
-              }}
+        {!simplified && (
+          <div className={styles.subtitle}>
+            <Heading
+              appearance={{ size: 'normal', weight: 'thin' }}
+              text={MSG.subTitle}
             />
-          </Heading>
-        </div>
+          </div>
+        )}
+        {!simplified && (
+          <div className={styles.subtitle}>
+            <Heading appearance={{ size: 'normal', weight: 'thin' }}>
+              <FormattedMessage {...MSG.agreeToUseDapp} values={{ tos }} />
+            </Heading>
+          </div>
+        )}
         <DecisionHub name="method" options={options} />
         <div className={styles.createWalletLink} data-test="createWalletLink">
           <DecisionOption
@@ -197,6 +185,16 @@ const StepStart = ({ nextStep, wizardValues }: Props) => {
             link={CREATE_WALLET_ROUTE}
           />
         </div>
+        {simplified && (
+          <div className={styles.tosSimplified}>
+            <Heading appearance={{ size: 'normal', weight: 'thin' }}>
+              <FormattedMessage
+                {...MSG.agreeToUseDappSimplified}
+                values={{ tos }}
+              />
+            </Heading>
+          </div>
+        )}
       </main>
     </Form>
   );

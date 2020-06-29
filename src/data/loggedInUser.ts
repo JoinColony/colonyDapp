@@ -14,6 +14,7 @@ export const initialCache = {
     walletAddress: '',
     balance: '0',
     username: null,
+    ethereal: true,
   },
 };
 
@@ -23,8 +24,12 @@ export const loggedInUserResolvers = (): Resolvers => ({
       const { loggedInUser } = cache.readQuery({ query: LoggedInUserDocument });
       const changedData = {
         loggedInUser: assignDefined(
-          { ...loggedInUser, id: loggedInUser.walletAddress },
-          input,
+          {
+            ...loggedInUser,
+            id: loggedInUser.walletAddress,
+            ethereal: input.ethereal,
+          },
+          { ...input, id: input.walletAddress },
         ),
       };
       cache.writeQuery({ query: LoggedInUserDocument, data: changedData });

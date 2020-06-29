@@ -1,3 +1,4 @@
+import { ComponentType } from 'react';
 import { withProps } from 'recompose';
 import ledgerWallet from '@colony/purser-ledger';
 import trezorWallet from '@colony/purser-trezor';
@@ -5,11 +6,11 @@ import trezorWallet from '@colony/purser-trezor';
 import { WALLET_SPECIFICS } from '~immutable/index';
 import withWizard from '~core/Wizard/withWizard';
 import WizardTemplate from '~pages/WizardTemplate/WizardTemplate';
+import { WalletPopoverTemplate } from './ConnectWalletPopover';
 import StepStart from './StepStart';
 import StepHardware from './StepHardware';
 import StepMetaMask from './StepMetaMask';
 import StepMnemonic from './StepMnemonic';
-import StepJSONUpload from './StepJSONUpload';
 import StepTrufflePig from './StepTrufflePig';
 
 interface StepValues {
@@ -39,8 +40,6 @@ const stepFunction = (step: number, { method }: StepValues) => {
       return StepMetaMask;
     case WALLET_SPECIFICS.MNEMONIC:
       return StepMnemonic;
-    case WALLET_SPECIFICS.JSON:
-      return StepJSONUpload;
     case WALLET_SPECIFICS.TRUFFLEPIG:
       return StepTrufflePig;
     default:
@@ -48,9 +47,18 @@ const stepFunction = (step: number, { method }: StepValues) => {
   }
 };
 
-const ConnectWalletContainer = withWizard({
-  steps: stepFunction,
-  stepCount: 3,
-})(WizardTemplate);
+const ConnectWalletFactory = (
+  WrapperComponent: ComponentType<any> = WizardTemplate,
+  props?: any,
+) =>
+  withWizard({
+    steps: stepFunction,
+    stepCount: 3,
+  })(WrapperComponent, props);
 
-export default ConnectWalletContainer;
+export const ConnectWalletContainer = ConnectWalletFactory(WizardTemplate);
+
+export const ConnectWalletContent = ConnectWalletFactory(
+  WalletPopoverTemplate,
+  { simplified: true },
+);

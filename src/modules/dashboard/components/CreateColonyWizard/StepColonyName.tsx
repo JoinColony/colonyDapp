@@ -28,6 +28,16 @@ interface FormValues {
 
 type Props = WizardProps<FormValues>;
 
+/**
+ * @NOTE On the specific colony address type
+ *
+ * This came about as a result of hooking into the result of the colony query,
+ * on the client side query, before it sends the result on to the server query,
+ * and act upon that if that's in an error state (in which case, it won't actually
+ * reach the server)
+ */
+type SuperSpecificColonyAddress = string | Error;
+
 const MSG = defineMessages({
   heading: {
     id: 'dashboard.CreateColonyWizard.StepColonyName.heading',
@@ -94,7 +104,14 @@ const StepColonyName = ({
             name: values.colonyName,
           },
         });
-        if (data && data.colonyAddress) return true;
+        if (data && data.colonyAddress) {
+          if (
+            (data.colonyAddress as SuperSpecificColonyAddress) instanceof Error
+          ) {
+            return false;
+          }
+          return true;
+        }
         return false;
       } catch (e) {
         return false;
