@@ -19,6 +19,8 @@ import {
 import { createTransaction } from '../../core/sagas';
 import { getRolesForUserAndDomain } from '../../transformers';
 
+type SetRoleParams = [string] | [string, boolean] | [string, number, boolean];
+
 const asColonyRole = (role: string) => parseInt(role, 10);
 
 const getRoleMethodName = (role: ColonyRole, setTo: boolean) => {
@@ -84,20 +86,28 @@ function* colonyDomainUserRolesSet({
       );
 
     yield all(
-      toChange.map(([methodName, setTo], index) =>
-        fork(createTransaction, `${meta.id}_${methodName}`, {
+      toChange.map(([methodName, setTo], index) => {
+        let params: SetRoleParams;
+        if (methodName === 'setRecoveryRole') {
+          params = [userAddress];
+        } else if (methodName === 'setRootRole') {
+          params = [userAddress, setTo];
+        } else {
+          params = [userAddress, domainId, setTo];
+        }
+        return fork(createTransaction, `${meta.id}_${methodName}`, {
           context: ClientType.ColonyClient,
           identifier: colonyAddress,
           methodName,
-          params: [userAddress, domainId, setTo],
+          params,
           ready: true,
           group: {
             key: 'setRoles',
             id: meta.id,
             index,
           },
-        }),
-      ),
+        });
+      }),
     );
 
     yield put<AllActions>({
