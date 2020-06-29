@@ -197,7 +197,8 @@ export const colonyResolvers = ({
         ClientType.ColonyClient,
         colonyAddress,
       );
-      return colonyClient.version();
+      const version = await colonyClient.version();
+      return version.toString();
     },
   },
 });
