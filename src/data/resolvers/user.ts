@@ -13,7 +13,7 @@ import ENS from '~lib/ENS';
 import ColonyManager from '~lib/ColonyManager';
 import { Address } from '~types/index';
 import { createAddress } from '~utils/web3';
-import { Transaction } from '~data/index';
+import { Transfer } from '~data/index';
 
 import { getToken } from './token';
 
@@ -102,7 +102,7 @@ export const userResolvers = ({
     async tokenTransfers({
       walletAddress,
       colonyAddresses,
-    }): Promise<Transaction[]> {
+    }): Promise<Transfer[]> {
       const metaColonyClient = await colonyManager.getMetaColonyClient();
       const { tokenClient } = metaColonyClient;
 

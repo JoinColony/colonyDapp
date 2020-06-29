@@ -6,12 +6,12 @@ import { ClientType, ColonyVersion, getColonyRoles } from '@colony/colony-js';
 import ENS from '~lib/ENS';
 import { Address } from '~types/index';
 import { Context } from '~context/index';
-import { Transaction } from '~data/index';
+import { Transfer } from '~data/index';
 
 import { getToken } from './token';
 import {
-  getColonyFundsClaimedTransactions,
-  getPayoutClaimedTransactions,
+  getColonyFundsClaimedTransfers,
+  getPayoutClaimedTransfers,
   getColonyUnclaimedTransfers,
 } from './transactions';
 
@@ -127,18 +127,18 @@ export const colonyResolvers = ({
         __typename: 'UserRoles',
       }));
     },
-    async transactions({ colonyAddress }): Promise<Transaction[]> {
+    async transfers({ colonyAddress }): Promise<Transfer[]> {
       const colonyClient = await colonyManager.getClient(
         ClientType.ColonyClient,
         colonyAddress,
       );
 
       // eslint-disable-next-line max-len
-      const colonyFundsClaimedTransactions = await getColonyFundsClaimedTransactions(
+      const colonyFundsClaimedTransactions = await getColonyFundsClaimedTransfers(
         colonyClient,
       );
 
-      const payoutClaimedTransactions = await getPayoutClaimedTransactions(
+      const payoutClaimedTransactions = await getPayoutClaimedTransfers(
         colonyClient,
       );
 
@@ -147,7 +147,7 @@ export const colonyResolvers = ({
         ...payoutClaimedTransactions,
       ].sort((a, b) => b.date - a.date);
     },
-    async unclaimedTransfers({ colonyAddress }): Promise<Transaction[]> {
+    async unclaimedTransfers({ colonyAddress }): Promise<Transfer[]> {
       const colonyClient = await colonyManager.getClient(
         ClientType.ColonyClient,
         colonyAddress,

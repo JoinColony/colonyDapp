@@ -7,18 +7,18 @@ import {
 import { bigNumberify } from 'ethers/utils';
 import { HashZero } from 'ethers/constants';
 
-import { Transaction } from '~data/index';
+import { Transfer } from '~data/index';
 import { notUndefined } from '~utils/arrays';
 
-export const getColonyFundsClaimedTransactions = async (
+export const getColonyFundsClaimedTransfers = async (
   colonyClient: ColonyClient,
-): Promise<Transaction[]> => {
+): Promise<Transfer[]> => {
   const { provider } = colonyClient;
 
   const filter = colonyClient.filters.ColonyFundsClaimed(null, null, null);
   const logs = await getLogs(colonyClient, filter);
 
-  const transactions = await Promise.all(
+  const transfers = await Promise.all(
     logs.map(async (log) => {
       const event = colonyClient.interface.parseLog(log);
       const date = log.blockHash
@@ -36,7 +36,7 @@ export const getColonyFundsClaimedTransactions = async (
       if (!payoutRemainder.gt(bigNumberify(0))) return undefined;
 
       return {
-        __typename: 'Transaction',
+        __typename: 'Transfer',
         amount: payoutRemainder.toString(),
         colonyAddress: colonyClient.address,
         date,
@@ -49,17 +49,17 @@ export const getColonyFundsClaimedTransactions = async (
     }),
   );
 
-  return transactions.filter(notUndefined);
+  return transfers.filter(notUndefined);
 };
 
-export const getPayoutClaimedTransactions = async (
+export const getPayoutClaimedTransfers = async (
   colonyClient: ColonyClient,
-): Promise<Transaction[]> => {
+): Promise<Transfer[]> => {
   const { provider } = colonyClient;
   const filter = colonyClient.filters.PayoutClaimed(null, null, null);
   const logs = await getLogs(colonyClient, filter);
 
-  const transactions = await Promise.all(
+  const transfers = await Promise.all(
     logs.map(async (log) => {
       const event = colonyClient.interface.parseLog(log);
       const date = log.blockHash
@@ -79,7 +79,7 @@ export const getPayoutClaimedTransactions = async (
       const { recipient: to } = await colonyClient.getPayment(associatedTypeId);
 
       return {
-        __typename: 'Transaction',
+        __typename: 'Transfer',
         amount: amount.toString(),
         colonyAddress: colonyClient.address,
         date,
@@ -91,12 +91,12 @@ export const getPayoutClaimedTransactions = async (
     }),
   );
 
-  return transactions.filter(notUndefined);
+  return transfers.filter(notUndefined);
 };
 
 export const getColonyUnclaimedTransfers = async (
   colonyClient: ColonyClient,
-): Promise<Transaction[]> => {
+): Promise<Transfer[]> => {
   const { provider } = colonyClient;
   const { tokenClient } = colonyClient;
   const claimedTransferFilter = colonyClient.filters.ColonyFundsClaimed(
@@ -123,7 +123,7 @@ export const getColonyUnclaimedTransfers = async (
     topics: tokenTransferFilter.topics,
   });
 
-  const transactions = await Promise.all(
+  const transfers = await Promise.all(
     tokenTransferLogs.map(async (log) => {
       const event = tokenClient.interface.parseLog(log);
       const date = log.blockHash
@@ -149,7 +149,7 @@ export const getColonyUnclaimedTransfers = async (
       if (transferClaimed) return undefined;
 
       return {
-        __typename: 'Transaction',
+        __typename: 'Transfer',
         amount: wad.toString(),
         colonyAddress: colonyClient.address,
         date,
@@ -162,5 +162,5 @@ export const getColonyUnclaimedTransfers = async (
     }),
   );
 
-  return transactions.filter(notUndefined);
+  return transfers.filter(notUndefined);
 };

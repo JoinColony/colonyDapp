@@ -1,7 +1,7 @@
 import React from 'react';
 
 import { Address } from '~types/index';
-import { useColonyTransactionsQuery } from '~data/index';
+import { useColonyTransfersQuery } from '~data/index';
 import { SpinnerLoader } from '~core/Preloaders';
 import TransactionList from '~core/TransactionList';
 
@@ -12,7 +12,7 @@ interface Props {
 }
 
 const Transactions = ({ colonyAddress }: Props) => {
-  const { data: transactionsData } = useColonyTransactionsQuery({
+  const { data: transactionsData } = useColonyTransfersQuery({
     variables: { address: colonyAddress },
   });
 
@@ -33,7 +33,7 @@ const Transactions = ({ colonyAddress }: Props) => {
           {transactionsData ? (
             <TransactionList
               linkToEtherscan
-              transactions={transactionsData.colony.transactions}
+              transactions={transactionsData.colony.transfers}
             />
           ) : (
             <SpinnerLoader />

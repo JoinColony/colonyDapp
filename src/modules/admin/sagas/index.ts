@@ -8,9 +8,9 @@ import {
   ColonyQuery,
   ColonyQueryVariables,
   ColonyDocument,
-  ColonyTransactionsDocument,
-  ColonyTransactionsQueryVariables,
-  ColonyTransactionsQuery,
+  ColonyTransfersDocument,
+  ColonyTransfersQueryVariables,
+  ColonyTransfersQuery,
   TokenBalancesForDomainsQuery,
   TokenBalancesForDomainsQueryVariables,
   TokenBalancesForDomainsDocument,
@@ -51,10 +51,10 @@ function* colonyClaimToken({
 
     // Refresh relevant values
     yield apolloClient.query<
-      ColonyTransactionsQuery,
-      ColonyTransactionsQueryVariables
+      ColonyTransfersQuery,
+      ColonyTransfersQueryVariables
     >({
-      query: ColonyTransactionsDocument,
+      query: ColonyTransfersDocument,
       variables: { address: colonyAddress },
       fetchPolicy: 'network-only',
     });

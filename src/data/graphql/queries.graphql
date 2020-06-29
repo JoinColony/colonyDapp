@@ -297,11 +297,11 @@ query ColonyRoles($address: String!) {
   }
 }
 
-query ColonyTransactions($address: String!) {
+query ColonyTransfers($address: String!) {
   colony(address: $address) {
     id
     colonyAddress
-    transactions @client {
+    transfers @client {
       amount
       hash
       colonyAddress

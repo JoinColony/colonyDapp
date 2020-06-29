@@ -51,7 +51,7 @@ export default gql`
     domains: [DomainRoles!]!
   }
 
-  type Transaction {
+  type Transfer {
     amount: String!
     colonyAddress: String!
     date: Int!
@@ -71,8 +71,8 @@ export default gql`
     nativeToken: Token!
     roles: [UserRoles!]!
     tokens(addresses: [String!]): [Token!]!
-    transactions: [Transaction!]!
-    unclaimedTransfers: [Transaction!]!
+    transfers: [Transfer!]!
+    unclaimedTransfers: [Transfer!]!
     version: Int!
   }
 
@@ -88,7 +88,7 @@ export default gql`
   extend type User {
     reputation(colonyAddress: String!, domainId: Int): String!
     tokens: [Token!]!
-    tokenTransfers: [Transaction!]!
+    tokenTransfers: [Transfer!]!
   }
 
   extend type Query {
