@@ -1,4 +1,5 @@
 export const main: string;
+export const breadcrumbsContainer: string;
 export const grid: string;
 export const purchase: string;
 export const previousSales: string;
