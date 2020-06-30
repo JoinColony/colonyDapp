@@ -8,11 +8,11 @@ import { Address } from '~types/index';
 
 const MSG = defineMessages({
   title: {
-    id: 'dashboard.BuyTokens.title',
+    id: 'dashboard.CoinMachine.title',
     defaultMessage: 'Tokens',
   },
   buyTokens: {
-    id: 'dashboard.BuyTokens.buyTokens',
+    id: 'dashboard.CoinMachine.buyTokens',
     defaultMessage: 'Buy {symbol}',
   },
 });
@@ -23,9 +23,9 @@ interface Props {
   nativeToken: AnyToken;
 }
 
-const displayName = 'dashboard.BuyTokens';
+const displayName = 'dashboard.CoinMachine';
 
-const BuyTokens = ({
+const CoinMachine = ({
   // @todo remove this `disable` once `colonyAddress` is used for check
   // eslint-disable-next-line @typescript-eslint/no-unused-vars, no-unused-vars
   colonyAddress,
@@ -50,6 +50,6 @@ const BuyTokens = ({
   );
 };
 
-BuyTokens.displayName = displayName;
+CoinMachine.displayName = displayName;
 
-export default BuyTokens;
+export default CoinMachine;

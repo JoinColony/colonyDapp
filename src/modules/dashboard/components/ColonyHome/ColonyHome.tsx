@@ -10,6 +10,7 @@ import { COLONY_TOTAL_BALANCE_DOMAIN_ID } from '~constants';
 import BreadCrumb from '~core/BreadCrumb';
 import Heading from '~core/Heading';
 import { Tab, TabList, TabPanel, Tabs } from '~core/Tabs';
+import CoinMachine from '~dashboard/CoinMachine';
 import Community from '~dashboard/Community';
 import LevelDashboard from '~dashboard/LevelDashboard';
 import Program from '~dashboard/Program';
@@ -33,7 +34,6 @@ import ColonyFunding from './ColonyFunding';
 import styles from './ColonyHome.css';
 import ColonyMeta from './ColonyMeta';
 import TabContribute from './TabContribute';
-import BuyTokens from '~dashboard/BuyTokens';
 
 const MSG = defineMessages({
   loadingText: {
@@ -202,7 +202,7 @@ const ColonyHome = ({ match, location }: Props) => {
           <Switch>
             <Route exact path={COLONY_PURCHASE_TOKENS_ROUTE}>
               {nativeToken && (
-                <BuyTokens
+                <CoinMachine
                   colonyAddress={colony.colonyAddress}
                   colonyName={colony.colonyName}
                   nativeToken={nativeToken}
