@@ -3,6 +3,15 @@
   height: 100%;
 }
 
+.breadcrumbsContainer {
+  align-items: baseline;
+  display: flex;
+}
+
+.breadcrumbsContainer > *:not(:last-child) {
+  margin-right: 10px;
+}
+
 .grid {
   display: grid;
   grid-template-columns: minmax(400px, auto) minmax(300px, 42%);

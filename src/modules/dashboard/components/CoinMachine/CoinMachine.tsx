@@ -3,6 +3,7 @@ import { defineMessages, useIntl } from 'react-intl';
 import { Redirect } from 'react-router-dom';
 
 import BreadCrumb from '~core/BreadCrumb';
+import Button from '~core/Button';
 import { AnyToken } from '~data/index';
 import { Address } from '~types/index';
 
@@ -16,6 +17,10 @@ const MSG = defineMessages({
   buyTokens: {
     id: 'dashboard.CoinMachine.buyTokens',
     defaultMessage: 'Buy {symbol}',
+  },
+  learnMoreLinkText: {
+    id: 'dashboard.CoinMachine.learnMoreLinkText',
+    defaultMessage: 'Learn More',
   },
 });
 
@@ -39,6 +44,12 @@ const CoinMachine = ({
 
   const { formatMessage } = useIntl();
 
+  const handleLearnMoreClick = () => {
+    // @todo open welcome modal via #2205
+    // eslint-disable-next-line no-console
+    console.log('Learn more clicked');
+  };
+
   if (!canColonySellTokens) {
     return <Redirect to={`/colony/${colonyName}`} />;
   }
@@ -47,7 +58,19 @@ const CoinMachine = ({
 
   return (
     <div className={styles.main}>
-      <BreadCrumb elements={breadCrumbs} />
+      <div className={styles.breadcrumbsContainer}>
+        <div>
+          <BreadCrumb elements={breadCrumbs} />
+        </div>
+        <div>
+          <Button
+            appearance={{ theme: 'blue' }}
+            onClick={handleLearnMoreClick}
+            text={MSG.learnMoreLinkText}
+            type="button"
+          />
+        </div>
+      </div>
       <div className={styles.grid}>
         <div className={styles.purchase}>
           {/* Purchase info / post-purchase in #2207 */}
