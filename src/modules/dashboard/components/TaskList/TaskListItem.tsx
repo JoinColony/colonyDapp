@@ -109,7 +109,7 @@ const TaskListItem = ({ task }: Props) => {
       </TableCell>
       <TableCell className={styles.userAvatar}>
         {assignedWorkerAddress && (
-          <UserAvatar size="s" address={assignedWorkerAddress} />
+          <UserAvatar size="s" address={assignedWorkerAddress} notSet={false} />
         )}
       </TableCell>
     </TableRow>
