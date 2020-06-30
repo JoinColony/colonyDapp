@@ -6,6 +6,8 @@ import BreadCrumb from '~core/BreadCrumb';
 import { AnyToken } from '~data/index';
 import { Address } from '~types/index';
 
+import styles from './CoinMachine.css';
+
 const MSG = defineMessages({
   title: {
     id: 'dashboard.CoinMachine.title',
@@ -44,9 +46,18 @@ const CoinMachine = ({
   const breadCrumbs = [MSG.title, formatMessage(MSG.buyTokens, { symbol })];
 
   return (
-    <>
+    <div className={styles.main}>
       <BreadCrumb elements={breadCrumbs} />
-    </>
+      <div className={styles.grid}>
+        <div className={styles.purchase}>
+          {/* Purchase info / post-purchase in #2207 */}
+        </div>
+        <div className={styles.previousSales}>
+          {/* Previous sales in #2210 */}
+        </div>
+        <div className={styles.chat}>{/* Chat in #2211 */}</div>
+      </div>
+    </div>
   );
 };
 

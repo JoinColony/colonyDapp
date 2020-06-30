@@ -1,6 +1,12 @@
 import React, { useMemo, useState } from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
-import { Redirect, Route, RouteChildrenProps, Switch } from 'react-router-dom';
+import {
+  Redirect,
+  Route,
+  RouteChildrenProps,
+  Switch,
+  useRouteMatch,
+} from 'react-router-dom';
 import { parse as parseQS } from 'query-string';
 import { ROOT_DOMAIN_ID } from '@colony/colony-js';
 
@@ -34,6 +40,7 @@ import ColonyFunding from './ColonyFunding';
 import styles from './ColonyHome.css';
 import ColonyMeta from './ColonyMeta';
 import TabContribute from './TabContribute';
+import { getMainClasses } from '~utils/css';
 
 const MSG = defineMessages({
   loadingText: {
@@ -85,6 +92,7 @@ const ColonyHome = ({ match, location }: Props) => {
   }
   const { colonyName } = match.params;
   const { walletAddress, username } = useLoggedInUser();
+  const isCoinMachine = useRouteMatch(COLONY_PURCHASE_TOKENS_ROUTE);
 
   const { domainFilter, tabSelect = '' } = parseQS(location.search) as {
     domainFilter: string | undefined;
@@ -184,7 +192,11 @@ const ColonyHome = ({ match, location }: Props) => {
   );
 
   return (
-    <div className={styles.main}>
+    <div
+      className={getMainClasses({}, styles, {
+        withFundingSidebar: !isCoinMachine,
+      })}
+    >
       <div className={styles.grid}>
         <aside className={styles.colonyInfo}>
           <div className={styles.metaContainer}>
@@ -259,9 +271,11 @@ const ColonyHome = ({ match, location }: Props) => {
             </Route>
           </Switch>
         </main>
-        <aside className={styles.sidebar}>
-          <ColonyFunding colony={colony} currentDomainId={filteredDomainId} />
-        </aside>
+        {!isCoinMachine && (
+          <aside className={styles.sidebar}>
+            <ColonyFunding colony={colony} currentDomainId={filteredDomainId} />
+          </aside>
+        )}
         {colony.isInRecoveryMode && <RecoveryModeAlert />}
       </div>
     </div>
