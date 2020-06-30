@@ -69,7 +69,7 @@ const availableRoles: ROLES[] = [
 const UserAvatar = HookedUserAvatar({ fetchUser: false });
 
 const supRenderAvatar = (address: string, item: ItemDataType<AnyUser>) => (
-  <UserAvatar address={address} user={item} size="xs" />
+  <UserAvatar address={address} user={item} size="xs" notSet={false} />
 );
 
 const ColonyPermissionsAddDialog = ({
