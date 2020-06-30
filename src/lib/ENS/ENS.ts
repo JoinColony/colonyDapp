@@ -76,7 +76,10 @@ class ENS {
       return this._addressCache.get(address) || '';
     }
 
-    const ensName = await networkClient.lookupRegisteredENSDomain(address);
+    // eslint-disable-next-line max-len
+    const ensName = await networkClient.lookupRegisteredENSDomainWithGoerliPatch(
+      address,
+    );
 
     if (ensName) {
       this._updateCaches(ensName, address);
