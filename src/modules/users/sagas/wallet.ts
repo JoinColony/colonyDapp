@@ -153,10 +153,7 @@ function* createEtherealWallet() {
    * time for proper maintenance
    */
   const wallet = yield call(createSoftwareWallet);
-  return {
-    ...wallet,
-    type: 'ethereal',
-  };
+  return wallet;
 }
 
 export function* getWallet(action: Action<ActionTypes.WALLET_CREATE>) {

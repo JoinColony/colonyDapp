@@ -3,6 +3,7 @@ import { Route, Redirect, Switch } from 'react-router-dom';
 import { defineMessages } from 'react-intl';
 import { useDispatch } from 'redux-react-hook';
 
+import { WalletMethod } from '~immutable/index';
 import CreateColonyWizard from '~dashboard/CreateColonyWizard';
 import CreateUserWizard from '~dashboard/CreateUserWizard';
 import ColonyHome from '~dashboard/ColonyHome';
@@ -67,7 +68,7 @@ const Routes = () => {
     if (ethereal) {
       dispatch({
         type: ActionTypes.WALLET_CREATE,
-        payload: { method: 'ethereal' },
+        payload: { method: WalletMethod.Ethereal },
       });
     }
   }, [dispatch, ethereal]);

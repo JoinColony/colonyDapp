@@ -20,7 +20,7 @@ export const walletKindSelector = createSelector(walletSelector, (wallet) => {
     }
     case WalletMethod.Create:
     case WalletMethod.Ganache:
-    case WalletMethod.JSON:
+    case WalletMethod.Ethereal:
     case WalletMethod.Mnemonic: {
       return WalletKind.Software;
     }
