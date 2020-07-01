@@ -56,6 +56,7 @@ const TaskFeedComment = ({
             colonyAddress={colonyAddress}
             showInfo
             size="s"
+            notSet={false}
           />
         </div>
       )}

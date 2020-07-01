@@ -153,6 +153,7 @@ const ProgramReviewItem = ({
             address={worker.profile.walletAddress}
             user={worker}
             showInfo
+            notSet={false}
           />
           <div className={styles.titleContainer}>
             <div className={styles.title}>

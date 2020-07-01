@@ -39,6 +39,7 @@ const defaultRenderAvatar = (
     user={user}
     showInfo
     size="xs"
+    notSet={false}
   />
 );
 

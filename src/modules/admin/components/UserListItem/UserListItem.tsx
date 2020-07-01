@@ -133,6 +133,7 @@ const UserListItem = ({
           address={address}
           user={user}
           showInfo={showInfo}
+          notSet={false}
         />
       </TableCell>
       <TableCell className={styles.userDetails}>
