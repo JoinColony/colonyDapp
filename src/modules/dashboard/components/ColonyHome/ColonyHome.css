@@ -1,15 +1,20 @@
 @value wideButton: 160px;
 
 .main {
+  height: 100vh;
   padding: 11px 18px 16px 18px;
 }
 
 .grid {
   composes: stretchVertical stretchHorizontal from '~styles/layout.css';
   display: grid;
-  grid-template-columns: 300px minmax(360px, auto) minmax(275px, 300px);
-  grid-template-rows: auto 1fr;
+  grid-template-columns: 300px auto;
+  grid-template-rows: 1fr;
   column-gap: 80px;
+}
+
+.main.stateWithFundingSidebar .grid {
+  grid-template-columns: 300px minmax(360px, auto) minmax(275px, 300px);
 }
 
 .colonyInfo {

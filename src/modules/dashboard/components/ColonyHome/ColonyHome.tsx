@@ -1,6 +1,12 @@
 import React, { useMemo, useState } from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
-import { Redirect, Route, RouteChildrenProps, Switch } from 'react-router-dom';
+import {
+  Redirect,
+  Route,
+  RouteChildrenProps,
+  Switch,
+  useRouteMatch,
+} from 'react-router-dom';
 import { parse as parseQS } from 'query-string';
 
 import RecoveryModeAlert from '~admin/RecoveryModeAlert';
@@ -9,6 +15,7 @@ import { COLONY_TOTAL_BALANCE_DOMAIN_ID, ROOT_DOMAIN } from '~constants';
 import BreadCrumb from '~core/BreadCrumb';
 import Heading from '~core/Heading';
 import { Tab, TabList, TabPanel, Tabs } from '~core/Tabs';
+import CoinMachine from '~dashboard/CoinMachine';
 import Community from '~dashboard/Community';
 import LevelDashboard from '~dashboard/LevelDashboard';
 import Program from '~dashboard/Program';
@@ -33,7 +40,7 @@ import ColonyFunding from './ColonyFunding';
 import styles from './ColonyHome.css';
 import ColonyMeta from './ColonyMeta';
 import TabContribute from './TabContribute';
-import BuyTokens from '~dashboard/BuyTokens';
+import { getMainClasses } from '~utils/css';
 
 const MSG = defineMessages({
   loadingText: {
@@ -85,6 +92,7 @@ const ColonyHome = ({ match, location }: Props) => {
   }
   const { colonyName } = match.params;
   const { walletAddress, username } = useLoggedInUser();
+  const isCoinMachine = useRouteMatch(COLONY_PURCHASE_TOKENS_ROUTE);
 
   const { domainFilter, tabSelect = '' } = parseQS(location.search) as {
     domainFilter: string | undefined;
@@ -186,7 +194,11 @@ const ColonyHome = ({ match, location }: Props) => {
   );
 
   return (
-    <div className={styles.main}>
+    <div
+      className={getMainClasses({}, styles, {
+        withFundingSidebar: !isCoinMachine,
+      })}
+    >
       <div className={styles.grid}>
         <aside className={styles.colonyInfo}>
           <div className={styles.metaContainer}>
@@ -204,7 +216,7 @@ const ColonyHome = ({ match, location }: Props) => {
           <Switch>
             <Route exact path={COLONY_PURCHASE_TOKENS_ROUTE}>
               {nativeToken && (
-                <BuyTokens
+                <CoinMachine
                   colonyAddress={colony.colonyAddress}
                   colonyName={colony.colonyName}
                   nativeToken={nativeToken}
@@ -268,13 +280,15 @@ const ColonyHome = ({ match, location }: Props) => {
             </Route>
           </Switch>
         </main>
-        <aside className={styles.sidebar}>
-          <ColonyFunding
-            colony={colony}
-            currentDomainId={filteredDomainId}
-            domains={domains}
-          />
-        </aside>
+        {!isCoinMachine && (
+          <aside className={styles.sidebar}>
+            <ColonyFunding
+              colony={colony}
+              currentDomainId={filteredDomainId}
+              domains={domains}
+            />
+          </aside>
+        )}
         {colony.isInRecoveryMode && <RecoveryModeAlert />}
       </div>
     </div>

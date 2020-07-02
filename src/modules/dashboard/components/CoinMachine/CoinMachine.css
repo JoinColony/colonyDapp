@@ -1,0 +1,35 @@
+
+.main {
+  height: 100%;
+}
+
+.breadcrumbsContainer {
+  align-items: baseline;
+  display: flex;
+}
+
+.breadcrumbsContainer > *:not(:last-child) {
+  margin-right: 10px;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: minmax(400px, auto) minmax(300px, 42%);
+  grid-template-rows: 380px 1fr;
+  min-height: 735px;
+  padding: 45px 12px 10px 0;
+  height: 95%;
+  gap: 20px;
+}
+
+.purchase {
+  grid-area: 1 / 1 / 2 / 2;
+}
+
+.previousSales {
+  grid-area: 2 / 1 / 3 / 2;
+}
+
+.chat {
+  grid-area: 1 / 2 / 3 / 3;
+}
