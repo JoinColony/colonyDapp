@@ -4,8 +4,8 @@
 }
 
 .breadcrumbsContainer {
-  align-items: baseline;
   display: flex;
+  align-items: baseline;
 }
 
 .breadcrumbsContainer > *:not(:last-child) {
@@ -14,11 +14,11 @@
 
 .grid {
   display: grid;
-  grid-template-columns: minmax(400px, auto) minmax(300px, 42%);
-  grid-template-rows: 380px 1fr;
-  min-height: 735px;
   padding: 45px 12px 10px 0;
   height: 95%;
+  min-height: 735px;
+  grid-template-columns: minmax(400px, auto) minmax(300px, 42%);
+  grid-template-rows: 380px 1fr;
   gap: 20px;
 }
 

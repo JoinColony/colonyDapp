@@ -1,8 +1,8 @@
 @value wideButton: 160px;
 
 .main {
-  height: 100vh;
   padding: 11px 18px 16px 18px;
+  height: 100vh;
 }
 
 .grid {
