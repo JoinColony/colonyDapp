@@ -156,7 +156,6 @@
     "ipfs": "^0.43.1",
     "jwt-decode": "^2.2.0",
     "linkify-it": "^2.0.3",
-    "localforage": "^1.7.3",
     "lodash": "^4.17.15",
     "move-decimal-point": "^0.0.4",
     "nanoid": "^2.0.0",
