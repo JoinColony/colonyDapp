@@ -219,6 +219,7 @@ const ColonyHome = ({ match, location }: Props) => {
                 <CoinMachine
                   colonyAddress={colony.colonyAddress}
                   colonyName={colony.colonyName}
+                  colonyDisplayName={colony.displayName || colony.colonyName}
                   nativeToken={nativeToken}
                 />
               )}
