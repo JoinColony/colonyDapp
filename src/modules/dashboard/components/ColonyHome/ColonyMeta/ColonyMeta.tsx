@@ -68,11 +68,13 @@ const getActiveDomainFilterClass = (
 const ColonyMeta = ({
   colony: {
     colonyAddress,
-    description,
     domains,
     colonyName,
-    guideline = '',
+    description,
     displayName,
+    guideline = '',
+    nativeTokenAddress,
+    tokens,
     website = '',
   },
   filteredDomainId,
@@ -160,7 +162,11 @@ const ColonyMeta = ({
           {renderExpandedElements}
         </section>
       )}
-      <ColonyBuyTokens colonyAddress={colonyAddress} colonyName={colonyName} />
+      <ColonyBuyTokens
+        colonyName={colonyName}
+        nativeTokenAddress={nativeTokenAddress}
+        tokens={tokens}
+      />
       <ColonyPrograms
         canAdminister={canAdminister}
         colonyAddress={colonyAddress}
