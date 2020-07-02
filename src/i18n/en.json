@@ -96,8 +96,8 @@
     "transaction.ColonyClient.claimColonyFunds.description": "Claim Pending Transactions",
     "transaction.ColonyClient.addDomainWithProofs.title": "Create Domain",
     "transaction.ColonyClient.addDomainWithProofs.description": "Create Domain",
-    "transaction.ColonyClient.moveFundsBetweenPots.title": "Move Funds Between Pots",
-    "transaction.ColonyClient.moveFundsBetweenPots.description": "Move Token from one domain pot to another",
+    "transaction.ColonyClient.moveFundsBetweenPotsWithProofs.title": "Move Funds Between Pots",
+    "transaction.ColonyClient.moveFundsBetweenPotsWithProofs.description": "Move Token from one domain pot to another",
 
     "transaction.group.setRoles.title": "Set roles",
     "transaction.group.setRoles.description": "Sign the transactions required to set the selected roles.",

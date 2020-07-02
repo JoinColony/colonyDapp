@@ -181,13 +181,9 @@ function* moveFundsBetweenPots({
       ClientType.ColonyClient,
       colonyAddress,
     );
-    const [{ potId: fromPot }, { potId: toPot }] = yield all([
-      call([colonyClient.getDomain, colonyClient.getDomain.call], {
-        domainId: fromDomain,
-      }),
-      call([colonyClient.getDomain, colonyClient.getDomain.call], {
-        domainId: toDomain,
-      }),
+    const [{ fundingPotId: fromPot }, { fundingPotId: toPot }] = yield all([
+      call([colonyClient, colonyClient.getDomain], fromDomain),
+      call([colonyClient, colonyClient.getDomain], toDomain),
     ]);
 
     yield fork(createTransaction, meta.id, {

@@ -132,8 +132,8 @@ const TokensMoveDialogForm = ({
   const domainOptions = useMemo(
     () =>
       sortBy(
-        domains.map(({ name, id }) => ({
-          value: id.toString(),
+        domains.map(({ name, ethDomainId }) => ({
+          value: ethDomainId.toString(),
           label: name,
         })),
         ['value'],
