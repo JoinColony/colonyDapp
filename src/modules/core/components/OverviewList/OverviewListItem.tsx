@@ -8,7 +8,7 @@ import styles from './OverviewList.css';
 interface Props {
   children: ReactNode;
   title: string | MessageDescriptor;
-  description: string | MessageDescriptor;
+  description?: string | MessageDescriptor;
   titleValues?: SimpleMessageValues;
   descriptionValues?: SimpleMessageValues;
 }
@@ -25,10 +25,15 @@ const OverviewListItem = ({
   const { formatMessage } = useIntl();
   const formattedTitle =
     typeof title === 'string' ? title : formatMessage(title, titleValues);
-  const formattedDescription =
-    typeof description === 'string'
-      ? description
-      : formatMessage(description, descriptionValues);
+  let formattedDescription: string;
+  if (description) {
+    formattedDescription =
+      typeof description === 'string'
+        ? description
+        : formatMessage(description, descriptionValues);
+  } else {
+    formattedDescription = '';
+  }
   return (
     <li className={styles.listItem}>
       <p>

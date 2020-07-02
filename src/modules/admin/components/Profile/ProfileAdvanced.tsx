@@ -72,10 +72,6 @@ const MSG = defineMessages({
       // eslint-disable-next-line max-len
       'Your token is locked. It will not be transferable between accounts unless it is first unlocked. It is still usable within your colony to fund tasks. {link}.',
   },
-  tokenLockedLearnMore: {
-    id: 'admin.Profile.ProfileAdvanced.tokenLockedLearnMore',
-    defaultMessage: 'Learn more',
-  },
   buttonUnlockToken: {
     id: 'admin.Profile.ProfileAdvanced.buttonUnlockToken',
     defaultMessage: 'Unlock token',
@@ -203,7 +199,7 @@ const ProfileAdvanced = ({
               values={{
                 link: (
                   <ExternalLink
-                    text={MSG.tokenLockedLearnMore}
+                    text={{ id: 'text.learnmore' }}
                     href={TOKEN_LOCKED_URL}
                   />
                 ),
