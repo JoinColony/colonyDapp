@@ -1,9 +1,9 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import { defineMessages } from 'react-intl';
 
 import Heading from '~core/Heading';
 import NavLink from '~core/NavLink';
-import { useColonyNativeTokenQuery, useTokenInfoLazyQuery } from '~data/index';
+import { FullColony } from '~data/index';
 import { Address } from '~types/index';
 
 import styles from './ColonyBuyTokens.css';
@@ -20,38 +20,24 @@ const MSG = defineMessages({
 });
 
 interface Props {
-  colonyAddress: Address;
   colonyName: string;
+  nativeTokenAddress: Address;
+  tokens: FullColony['tokens'];
 }
 
 const displayName = 'dashboard.ColonyHome.ColonyMeta.ColonyBuyTokens';
 
-const ColonyBuyTokens = ({ colonyAddress, colonyName }: Props) => {
+const ColonyBuyTokens = ({ nativeTokenAddress, colonyName, tokens }: Props) => {
   // @todo use real check for this
   const canColonySellTokens = true;
 
-  const { data: nativeTokenAddressData } = useColonyNativeTokenQuery({
-    variables: { address: colonyAddress },
-  });
+  const nativeToken = tokens.find(
+    (token) => token.address === nativeTokenAddress,
+  );
 
-  const [fetchTokenInfo, { data: nativeTokenData }] = useTokenInfoLazyQuery();
-
-  useEffect(() => {
-    if (nativeTokenAddressData) {
-      const {
-        colony: { nativeTokenAddress },
-      } = nativeTokenAddressData;
-      fetchTokenInfo({ variables: { address: nativeTokenAddress } });
-    }
-  }, [fetchTokenInfo, nativeTokenAddressData]);
-
-  if (!canColonySellTokens || !nativeTokenData) {
+  if (!canColonySellTokens || !nativeToken) {
     return null;
   }
-
-  const {
-    tokenInfo: { symbol },
-  } = nativeTokenData;
 
   return (
     <section className={styles.main}>
@@ -63,7 +49,7 @@ const ColonyBuyTokens = ({ colonyAddress, colonyName }: Props) => {
         <NavLink
           activeClassName={styles.activeLink}
           text={MSG.buyLink}
-          textValues={{ symbol }}
+          textValues={{ symbol: nativeToken.symbol }}
           to={`/colony/${colonyName}/tokens/purchase`}
         />
       </div>

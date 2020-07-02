@@ -73,6 +73,7 @@ export type Notifications = UserNotificationsQuery['user']['notifications'];
 export type OneNotification = Notifications[number];
 
 export type AnyColonyProfile = FullColonyFragment | ColonyProfileFragment;
+export type FullColony = FullColonyFragment;
 
 export type OneSuggestion = ColonySuggestionsQuery['colony']['suggestions'][number];
 
