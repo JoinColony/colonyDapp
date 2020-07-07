@@ -27,7 +27,7 @@ export const loggedInUserResolvers = (): Resolvers => ({
           {
             ...loggedInUser,
             id: loggedInUser.walletAddress,
-            ethereal: !!input.ethereal,
+            ethereal: input.ethereal,
           },
           { ...input, id: input.walletAddress },
         ),
