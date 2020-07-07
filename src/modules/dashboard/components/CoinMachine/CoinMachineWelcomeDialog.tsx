@@ -66,7 +66,7 @@ const CoinMachineWelcomeDialog = ({
           values={{
             link: (
               <ExternalLink
-                text={{ id: 'text.learnmore' }}
+                text={{ id: 'text.learnMore' }}
                 href={LEARN_MORE_LINK}
               />
             ),

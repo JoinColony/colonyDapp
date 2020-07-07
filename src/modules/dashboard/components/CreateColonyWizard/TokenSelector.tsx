@@ -21,10 +21,6 @@ const MSG = defineMessages({
     id: 'dashboard.CreateColonyWizard.TokenSelector.label',
     defaultMessage: 'Token Address',
   },
-  learnMore: {
-    id: 'dashboard.CreateColonyWizard.TokenSelector.learnMore',
-    defaultMessage: 'Learn More',
-  },
   hint: {
     id: 'dashboard.CreateColonyWizard.TokenSelector.hint',
     defaultMessage: 'You can find them here: https://etherscan.io/tokens',
@@ -146,7 +142,10 @@ const TokenSelector = ({
         label={MSG.inputLabel}
         extra={
           extra || (
-            <Button text={MSG.learnMore} appearance={{ theme: 'blue' }} />
+            <Button
+              text={{ id: 'text.learnMore' }}
+              appearance={{ theme: 'blue' }}
+            />
           )
         }
         {...getStatusText(isLoading, tokenData)}

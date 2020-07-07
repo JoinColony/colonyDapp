@@ -31,14 +31,6 @@ const MSG = defineMessages({
       uses DAI as its native token, she also earns 5 reputation in that\
       colony.`,
   },
-  button: {
-    id: 'dashboard.CreateColonyWizard.StepTokenChoice.button',
-    defaultMessage: 'Back',
-  },
-  learnMore: {
-    id: 'dashboard.CreateColonyWizard.StepTokenChoice.learnMore',
-    defaultMessage: 'Learn More',
-  },
   notSure: {
     id: 'dashboard.CreateColonyWizard.StepTokenChoice.notSure',
     defaultMessage: 'Not sure?',
@@ -149,7 +141,7 @@ const StepTokenChoice = ({ nextStep, wizardForm, wizardValues }: Props) => (
         />
         <ExternalLink
           className={styles.link}
-          text={MSG.learnMore}
+          text={{ id: 'text.learnMore' }}
           href={LEARN_MORE_URL}
         />
       </div>

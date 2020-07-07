@@ -206,7 +206,7 @@ const ProfileAdvanced = ({
               values={{
                 link: (
                   <ExternalLink
-                    text={{ id: 'text.learnmore' }}
+                    text={{ id: 'text.learnMore' }}
                     href={TOKEN_LOCKED_URL}
                   />
                 ),

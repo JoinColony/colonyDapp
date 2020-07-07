@@ -15,17 +15,9 @@ const MSG = defineMessages({
     id: 'dashboard.CreateColonyWizard.StepCreateToken.heading',
     defaultMessage: 'Create new token for {colony}',
   },
-  learnMoreLink: {
-    id: 'dashboard.CreateColonyWizard.StepCreateToken.learnMoreLink',
-    defaultMessage: 'Learn More',
-  },
   nextButton: {
     id: 'dashboard.CreateColonyWizard.StepCreateToken.confirmButton',
     defaultMessage: 'Continue',
-  },
-  backButton: {
-    id: 'dashboard.CreateColonyWizard.StepCreateToken.backButton',
-    defaultMessage: 'Back',
   },
   labelTokenName: {
     id: 'dashboard.CreateColonyWizard.StepCreateToken.labelTokenName',
@@ -43,21 +35,9 @@ const MSG = defineMessages({
     id: 'dashboard.CreateColonyWizard.StepCreateToken.helpTokenName',
     defaultMessage: '(e.g., My Awesome Token)',
   },
-  labelTokenIcon: {
-    id: 'dashboard.CreateColonyWizard.StepCreateToken.labelTokenIcon',
-    defaultMessage: 'Token Icon (Optional)',
-  },
-  tokenIconHint: {
-    id: 'dashboard.CreateColonyWizard.StepCreateToken.tokenIconHint',
-    defaultMessage: 'Recommended format: .png or .svg',
-  },
   link: {
     id: 'dashboard.CreateColonyWizard.StepCreateToken.link',
     defaultMessage: 'I want to use an existing token',
-  },
-  errorCreateToken: {
-    id: 'error.colony.createToken',
-    defaultMessage: 'Could not create Token',
   },
   errorTokenSymbol: {
     id: 'dashboard.CreateColonyWizard.StepCreateToken.errorTokenSymbol',
