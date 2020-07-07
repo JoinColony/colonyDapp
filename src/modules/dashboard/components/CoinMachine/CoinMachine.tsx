@@ -79,7 +79,7 @@ const CoinMachine = ({
           <Button
             appearance={{ theme: 'blue' }}
             onClick={handleOpenDialog}
-            text={{ id: 'text.learnmore' }}
+            text={{ id: 'text.learnMore' }}
             type="button"
           />
         </div>

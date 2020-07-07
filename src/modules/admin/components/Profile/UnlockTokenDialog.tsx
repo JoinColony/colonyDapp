@@ -13,10 +13,6 @@ const MSG = defineMessages({
     id: 'admin.UnlockTokenDialog.description',
     defaultMessage: 'This cannot be undone. {learnMore}.',
   },
-  learnMore: {
-    id: 'admin.UnlockTokenDialog.learnMore',
-    defaultMessage: 'Learn more',
-  },
   unlockButton: {
     id: 'admin.UnlockTokenDialog.unlockButton',
     defaultMessage: 'Confirm',
@@ -50,7 +46,9 @@ const UnlockTokenDialog = ({ cancel, close }: Props) => (
     <FormattedMessage
       {...MSG.description}
       values={{
-        learnMore: <ExternalLink href={LEARN_MORE_URL} text={MSG.learnMore} />,
+        learnMore: (
+          <ExternalLink href={LEARN_MORE_URL} text={{ id: 'text.learnMore' }} />
+        ),
       }}
     />
   </ConfirmDialog>
