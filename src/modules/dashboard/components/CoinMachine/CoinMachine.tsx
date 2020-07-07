@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useCallback, useEffect } from 'react';
 import { defineMessages, useIntl } from 'react-intl';
 import { Redirect } from 'react-router-dom';
 
@@ -6,8 +6,13 @@ import BreadCrumb from '~core/BreadCrumb';
 import Button from '~core/Button';
 import { AnyToken } from '~data/index';
 import { Address } from '~types/index';
+import { useDialog } from '~core/Dialog';
+
+import CoinMachineWelcomeDialog from './CoinMachineWelcomeDialog';
 
 import styles from './CoinMachine.css';
+
+const LOCALSTORAGE_KEY = 'colony-coinmachine-welcome';
 
 const MSG = defineMessages({
   title: {
@@ -18,15 +23,12 @@ const MSG = defineMessages({
     id: 'dashboard.CoinMachine.buyTokens',
     defaultMessage: 'Buy {symbol}',
   },
-  learnMoreLinkText: {
-    id: 'dashboard.CoinMachine.learnMoreLinkText',
-    defaultMessage: 'Learn More',
-  },
 });
 
 interface Props {
   colonyAddress: Address;
   colonyName: string;
+  colonyDisplayName: string;
   nativeToken: AnyToken;
 }
 
@@ -37,18 +39,29 @@ const CoinMachine = ({
   // eslint-disable-next-line @typescript-eslint/no-unused-vars, no-unused-vars
   colonyAddress,
   colonyName,
+  colonyDisplayName,
   nativeToken: { symbol },
 }: Props) => {
   // @todo use a real check here
   const canColonySellTokens = true;
 
   const { formatMessage } = useIntl();
+  const openDialog = useDialog(CoinMachineWelcomeDialog);
+  const handleOpenDialog = useCallback(
+    () =>
+      openDialog({
+        colonyDisplayName,
+        tokenSymbol: symbol,
+      }),
+    [colonyDisplayName, openDialog, symbol],
+  );
 
-  const handleLearnMoreClick = () => {
-    // @todo open welcome modal via #2205
-    // eslint-disable-next-line no-console
-    console.log('Learn more clicked');
-  };
+  useEffect(() => {
+    if (!localStorage.getItem(LOCALSTORAGE_KEY)) {
+      localStorage.setItem(LOCALSTORAGE_KEY, JSON.stringify(true));
+      handleOpenDialog();
+    }
+  }, [handleOpenDialog]);
 
   if (!canColonySellTokens) {
     return <Redirect to={`/colony/${colonyName}`} />;
@@ -65,8 +78,8 @@ const CoinMachine = ({
         <div>
           <Button
             appearance={{ theme: 'blue' }}
-            onClick={handleLearnMoreClick}
-            text={MSG.learnMoreLinkText}
+            onClick={handleOpenDialog}
+            text={{ id: 'text.learnMore' }}
             type="button"
           />
         </div>

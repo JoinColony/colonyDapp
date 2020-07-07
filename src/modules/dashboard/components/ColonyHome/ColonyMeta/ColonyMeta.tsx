@@ -10,7 +10,7 @@ import Heading from '~core/Heading';
 import Icon from '~core/Icon';
 import Link from '~core/Link';
 import HookedColonyAvatar from '~dashboard/HookedColonyAvatar';
-import { AnyColonyProfile } from '~data/index';
+import { FullColony } from '~data/index';
 import { DomainsMapType } from '~types/index';
 import { multiLineTextEllipsis, stripProtocol } from '~utils/strings';
 
@@ -55,7 +55,7 @@ const MSG = defineMessages({
 const ColonyAvatar = HookedColonyAvatar({ fetchColony: false });
 
 interface Props {
-  colony: AnyColonyProfile;
+  colony: FullColony;
   canAdminister: boolean;
   domains: DomainsMapType;
   filteredDomainId: number;
@@ -69,10 +69,12 @@ const getActiveDomainFilterClass = (
 const ColonyMeta = ({
   colony: {
     colonyAddress,
-    description,
     colonyName,
-    guideline = '',
+    description,
     displayName,
+    guideline = '',
+    nativeTokenAddress,
+    tokens,
     website = '',
   },
   domains,
@@ -167,7 +169,11 @@ const ColonyMeta = ({
           {renderExpandedElements}
         </section>
       )}
-      <ColonyBuyTokens colonyAddress={colonyAddress} colonyName={colonyName} />
+      <ColonyBuyTokens
+        colonyName={colonyName}
+        nativeTokenAddress={nativeTokenAddress}
+        tokens={tokens}
+      />
       <ColonyPrograms colonyAddress={colonyAddress} colonyName={colonyName} />
       <section className={styles.domainContainer}>
         <ul>

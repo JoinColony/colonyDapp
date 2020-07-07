@@ -44,10 +44,6 @@ const MSG = defineMessages({
     id: 'admin.Permissions.permissionInParent',
     defaultMessage: '*Permission granted via parent domain. {learnMore}',
   },
-  learnMore: {
-    id: 'admin.Permissions.learnMore',
-    defaultMessage: 'Learn more',
-  },
 });
 
 interface Props {
@@ -179,7 +175,7 @@ const Permissions = ({ colonyAddress, domains }: Props) => {
                   values={{
                     learnMore: (
                       <ExternalLink
-                        text={MSG.learnMore}
+                        text={{ id: 'text.learnMore' }}
                         href={DOMAINS_HELP_URL}
                       />
                     ),

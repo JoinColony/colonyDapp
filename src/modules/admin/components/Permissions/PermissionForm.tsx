@@ -27,10 +27,6 @@ const MSG = defineMessages({
     id: 'admin.ColonyPermissionEditDialog.permissionInParent',
     defaultMessage: '*Permission granted via parent domain. {learnMore}',
   },
-  learnMore: {
-    id: 'admin.ColonyPermissionEditDialog.learnMore',
-    defaultMessage: 'Learn more',
-  },
 });
 
 const DOMAINS_HELP_URL =
@@ -120,7 +116,10 @@ const PermissionForm = ({
           {...MSG.permissionInParent}
           values={{
             learnMore: (
-              <ExternalLink text={MSG.learnMore} href={DOMAINS_HELP_URL} />
+              <ExternalLink
+                text={{ id: 'text.learnMore' }}
+                href={DOMAINS_HELP_URL}
+              />
             ),
           }}
         />
