@@ -230,9 +230,10 @@ const AdminDashboard = ({
   }
 
   /*
-   * @NOTE All roles require, in addition to the specific role, the administration role
+   * @NOTE All roles require, in addition to the specific role, the administration
+   * or the architecture role
    */
-  if (!canAdminister(rootUserRoles)) {
+  if (!(canAdminister(rootUserRoles) || canArchitect(rootUserRoles))) {
     return <Redirect to={CURRENT_COLONY_ROUTE} />;
   }
 

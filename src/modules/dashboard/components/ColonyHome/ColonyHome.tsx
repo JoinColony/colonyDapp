@@ -21,7 +21,7 @@ import { useDataFetcher, useTransformer } from '~utils/hooks';
 import { capitalize } from '~utils/strings';
 
 import { getUserRoles } from '../../../transformers';
-import { canAdminister, hasRoot } from '../../../users/checks';
+import { canAdminister, canArchitect, hasRoot } from '../../../users/checks';
 import { domainsAndRolesFetcher } from '../../fetchers';
 
 import ColonyFunding from './ColonyFunding';
@@ -183,7 +183,8 @@ const ColonyHome = ({ match, location }: Props) => {
             <ColonyMeta
               colony={colony}
               canAdminister={
-                !colony.isInRecoveryMode && canAdminister(rootUserRoles)
+                !colony.isInRecoveryMode &&
+                (canAdminister(rootUserRoles) || canArchitect(rootUserRoles))
               }
               domains={domains}
               filteredDomainId={filteredDomainId}
