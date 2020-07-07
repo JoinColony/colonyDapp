@@ -129,6 +129,8 @@ export default function* setupUserContext(
         colonyManager.networkClient,
       );
       username = ENS.stripDomainParts('user', domain);
+
+      yield refetchUserNotifications(walletAddress);
     } catch (caughtError) {
       log.verbose(`Could not find username for ${walletAddress}`);
     }
@@ -161,8 +163,6 @@ export default function* setupUserContext(
         },
       },
     });
-
-    yield refetchUserNotifications(walletAddress);
 
     setupOnBeforeUnload();
 
