@@ -86,7 +86,9 @@ const CoinMachine = ({
       </div>
       <div className={styles.grid}>
         <div className={styles.purchase}>
-          {/* Purchase info / post-purchase in #2207 */}
+          <div className={styles.buyCLNY} />
+          <div className={styles.timeRemaining} />
+          <div className={styles.tokensRemaining} />
         </div>
         <div className={styles.previousSales}>
           {/* Previous sales in #2210 */}
