@@ -18,7 +18,7 @@ const cardContentData = [
 ];
 <CardList>
   {cardContentData.map(({ id, heading, content, extraContent }) => (
-    <Card key={id}>
+    <Card key={id} listItem>
       <p><strong>{heading}</strong></p>
       <p>{content}</p>
       {extraContent && (

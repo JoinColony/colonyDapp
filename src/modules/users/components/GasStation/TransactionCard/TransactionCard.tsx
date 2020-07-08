@@ -32,7 +32,7 @@ const TransactionCard = ({ idx, transactionGroup, onClick }: Props) => {
   const status = getGroupStatus(transactionGroup);
   const values = getGroupValues<TransactionType>(transactionGroup);
   return (
-    <Card className={styles.main}>
+    <Card className={styles.main} listItem>
       <button
         type="button"
         className={styles.button}
