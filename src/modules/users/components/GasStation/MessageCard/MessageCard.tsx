@@ -16,7 +16,7 @@ interface Props {
 }
 
 const MessageCard = ({ message: { status, purpose }, onClick, idx }: Props) => (
-  <Card className={styles.main}>
+  <Card className={styles.main} listItem>
     <button
       type="button"
       className={styles.button}

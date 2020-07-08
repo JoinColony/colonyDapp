@@ -13,6 +13,9 @@ interface Props {
   /** Whether or not the card should be dismissable. If `true`, will add close icon in top right corner. */
   isDismissible?: boolean;
 
+  /** Render as a list item (`<li>`) */
+  listItem?: boolean;
+
   /** Callback function called on card dismiss. (Only if `isDismissible` is set to `true`) */
   onCardDismissed?: () => void;
 }
@@ -22,6 +25,7 @@ const displayName = 'Card';
 const Card = ({
   children,
   className,
+  listItem,
   isDismissible = false,
   onCardDismissed: callback,
   ...rest
@@ -40,8 +44,11 @@ const Card = ({
 
   const mainClass = styles.main;
   const classNames = className ? `${mainClass} ${className}` : mainClass;
+
+  const ElementTag = listItem ? 'li' : 'div';
+
   return (
-    <li className={classNames} {...rest}>
+    <ElementTag className={classNames} {...rest}>
       {isDismissible && (
         <button
           className={styles.closeButton}
@@ -56,7 +63,7 @@ const Card = ({
         </button>
       )}
       {children}
-    </li>
+    </ElementTag>
   );
 };
 

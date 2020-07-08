@@ -51,7 +51,7 @@ const MessageCardDetails = ({
     <div>
       <TransactionBackToList onClose={onClose} />
       <CardList appearance={{ numCols: '1' }}>
-        <Card className={styles.main}>
+        <Card className={styles.main} listItem>
           <div className={styles.summary}>
             <div className={styles.description}>
               <Heading
