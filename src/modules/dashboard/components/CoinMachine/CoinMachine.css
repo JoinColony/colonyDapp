@@ -23,7 +23,21 @@
 }
 
 .purchase {
+  display: grid;
+  grid-template-columns: 60% 40%;
   grid-area: 1 / 1 / 2 / 2;
+}
+
+.buyCLNY {
+  grid-area: 1 / 1 / 3 / 2;
+}
+
+.timeRemaining {
+  grid-area: 1 / 2 / 2 / 3;
+}
+
+.tokensRemaining {
+  grid-area: 2 / 2 / 3 / 3;
 }
 
 .previousSales {
