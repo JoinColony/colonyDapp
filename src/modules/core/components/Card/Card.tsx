@@ -15,9 +15,6 @@ interface Props {
 
   /** Render as a list item (`<li>`) */
   listItem?: boolean;
-
-  /** Callback function called on card dismiss. (Only if `isDismissible` is set to `true`) */
-  onCardDismissed?: () => void;
 }
 
 const displayName = 'Card';
@@ -27,7 +24,6 @@ const Card = ({
   className,
   listItem,
   isDismissible = false,
-  onCardDismissed: callback,
   ...rest
 }: Props) => {
   const [isOpen, setIsOpen] = useState<boolean>(true);
@@ -35,10 +31,7 @@ const Card = ({
   const handleClose = useCallback(() => {
     if (!isDismissible) return;
     setIsOpen(false);
-    if (typeof callback === 'function') {
-      callback();
-    }
-  }, [callback, isDismissible]);
+  }, [isDismissible]);
 
   if (!isOpen) return null;
 
