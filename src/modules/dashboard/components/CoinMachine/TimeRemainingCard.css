@@ -1,0 +1,39 @@
+.main {
+  height: 100%;
+}
+
+.heading {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+}
+
+.content {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+  width: 100%;
+}
+
+.time {
+  font-size: var(--size-large);
+}
+
+.stateHurryUp .time {
+  color: var(--danger);
+}
+
+.themeRed {
+  composes: main;
+  background-color: var(--danger);
+}
+
+.themeRed i svg {
+  /* If we decide to use this on more occasions we can make it a Card theme */
+  fill: var(--text-invert);
+}
+
+.themeRed .content {
+  color: var(--text-invert);
+}

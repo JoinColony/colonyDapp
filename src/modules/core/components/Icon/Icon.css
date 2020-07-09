@@ -9,6 +9,7 @@
 
 .main svg {
   vertical-align: top;
+  fill: currentColor;
 }
 
 .main svg use {
@@ -89,7 +90,7 @@
   composes: main;
 
   & svg {
-    fill: var(--colony-white);
-    stroke: var(--colony-white);
+    fill: var(--text-invert);
+    stroke: var(--text-invert);
   }
 }

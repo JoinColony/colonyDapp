@@ -9,6 +9,7 @@ import { Address } from '~types/index';
 import { useDialog } from '~core/Dialog';
 
 import CoinMachineWelcomeDialog from './CoinMachineWelcomeDialog';
+import TimeRemainingCard from './TimeRemainingCard';
 
 import styles from './CoinMachine.css';
 
@@ -44,6 +45,9 @@ const CoinMachine = ({
 }: Props) => {
   // @todo use a real check here
   const canColonySellTokens = true;
+
+  // @todo get this somehow
+  const timeRemaining = 20 * 60 * 1000;
 
   const { formatMessage } = useIntl();
   const openDialog = useDialog(CoinMachineWelcomeDialog);
@@ -87,7 +91,9 @@ const CoinMachine = ({
       <div className={styles.grid}>
         <div className={styles.purchase}>
           <div className={styles.buyCLNY} />
-          <div className={styles.timeRemaining} />
+          <div className={styles.timeRemaining}>
+            <TimeRemainingCard msRemaining={timeRemaining} />
+          </div>
           <div className={styles.tokensRemaining} />
         </div>
         <div className={styles.previousSales}>
