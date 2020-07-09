@@ -7,9 +7,17 @@
   box-shadow: 0 0 6px color-mod(var(--grey-5) alpha(60%));
 }
 
+.icon {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+}
+
 .closeButton {
   composes: button from '~styles/reset.css';
-  position: absolute;
-  top: 5px;
-  right: 5px;
+  composes: icon;
+}
+
+.help {
+  composes: icon;
 }

@@ -1,6 +1,8 @@
 import React, { ReactNode, useState, useCallback } from 'react';
+import { FormattedMessage, MessageDescriptor } from 'react-intl';
 
 import Icon from '~core/Icon';
+import { Tooltip } from '~core/Popover';
 import styles from './Card.css';
 
 interface Props {
@@ -9,6 +11,9 @@ interface Props {
 
   /** Optional additional class name for further styling */
   className?: string;
+
+  /** Shows a popover in the top right corner with some help text */
+  help?: string | MessageDescriptor;
 
   /** Whether or not the card should be dismissable. If `true`, will add close icon in top right corner. */
   isDismissible?: boolean;
@@ -22,8 +27,9 @@ const displayName = 'Card';
 const Card = ({
   children,
   className,
-  listItem,
+  help,
   isDismissible = false,
+  listItem,
   ...rest
 }: Props) => {
   const [isOpen, setIsOpen] = useState<boolean>(true);
@@ -54,6 +60,21 @@ const Card = ({
             title={{ id: 'button.close' }}
           />
         </button>
+      )}
+      {help && (
+        <span className={styles.help}>
+          <Tooltip
+            content={
+              typeof help == 'string' ? help : <FormattedMessage {...help} />
+            }
+          >
+            <Icon
+              appearance={{ size: 'normal' }}
+              name="question-mark"
+              title=""
+            />
+          </Tooltip>
+        </span>
       )}
       {children}
     </ElementTag>
