@@ -115,22 +115,6 @@ const options = [
   //   subtitle: MSG.trezorSubtitle,
   //   icon: 'wallet',
   // },
-  {
-    value: WalletMethod.Ledger,
-    title: MSG.ledgerTitle,
-    subtitle: MSG.ledgerSubtitle,
-    icon: 'wallet',
-    // To be re-enabled for colonyDapp#1760
-    disabled: true,
-  },
-  {
-    value: WalletMethod.Trezor,
-    title: MSG.trezorTitle,
-    subtitle: MSG.trezorSubtitle,
-    icon: 'wallet',
-    // To be re-enabled for colonyDapp#1760
-    disabled: true,
-  },
 ];
 
 // process.env.DEV is set by the QA server in case we want to have a debug build. We don't have access to ganache then
