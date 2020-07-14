@@ -1,0 +1,65 @@
+.main {
+  height: 100%;
+}
+
+.heading {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+}
+
+.content {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+  width: 100%;
+  font-size: var(--size-large);
+}
+
+.footer {
+  display: flex;
+  align-items: center;
+  position: absolute;
+  bottom: 10px;
+  left: 10px;
+  font-weight: var(--weight-bold);
+
+  & i {
+    margin-left: 4px;
+  }
+
+  & svg {
+    fill: var(--primary) !important;
+    stroke: var(--primary) !important;
+  }
+}
+
+.themeRed {
+  composes: main;
+  background-color: var(--danger);
+}
+
+.themeRed i svg {
+  fill: var(--text-invert);
+}
+
+.themeRed .content {
+  color: var(--text-invert);
+}
+
+.stateHurryUp .content {
+  color: var(--danger);
+}
+
+.stateJustSoldOut {
+  background-image: url(../../../../img/clapping.gif);
+}
+
+.stateJustSoldOut i svg {
+  fill: var(--text-invert);
+}
+
+.stateJustSoldOut .footer, .stateJustSoldOut .content {
+  color: var(--text-invert);
+}
