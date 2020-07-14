@@ -6,6 +6,7 @@ import { TEMP_getContext, ContextModule } from '~context/index';
 import { Address } from '~types/index';
 import { log } from '~utils/debug';
 import {
+  getLoggedInUser,
   SetLoggedInUserDocument,
   SetLoggedInUserMutation,
   SetLoggedInUserMutationVariables,
@@ -14,6 +15,8 @@ import {
 export function* setupUserBalanceListener(walletAddress: Address) {
   let channel;
   try {
+    const currentLoggedInUser = yield getLoggedInUser();
+
     const { provider } = TEMP_getContext(ContextModule.ColonyManager);
     const apolloClient = TEMP_getContext(ContextModule.ApolloClient);
 
@@ -33,7 +36,7 @@ export function* setupUserBalanceListener(walletAddress: Address) {
       >({
         mutation: SetLoggedInUserDocument,
         variables: {
-          input: { balance },
+          input: { ...currentLoggedInUser, balance },
         },
       });
     }
