@@ -10,6 +10,7 @@ import { useDialog } from '~core/Dialog';
 
 import CoinMachineWelcomeDialog from './CoinMachineWelcomeDialog';
 import TimeRemainingCard from './TimeRemainingCard';
+import TokensRemainingCard from './TokensRemainingCard';
 
 import styles from './CoinMachine.css';
 
@@ -47,7 +48,11 @@ const CoinMachine = ({
   const canColonySellTokens = true;
 
   // @todo get this somehow
-  const timeRemaining = 20 * 60 * 1000;
+  const timeRemaining = 10 * 60 * 1000;
+  const totalSaleTime = 100 * 60 * 1000;
+  const tokensRemaining = 100;
+  const totalSupply = 300;
+  const tokenTarget = 150;
 
   const { formatMessage } = useIntl();
   const openDialog = useDialog(CoinMachineWelcomeDialog);
@@ -92,9 +97,18 @@ const CoinMachine = ({
         <div className={styles.purchase}>
           <div className={styles.buyCLNY} />
           <div className={styles.timeRemaining}>
-            <TimeRemainingCard msRemaining={timeRemaining} />
+            <TimeRemainingCard
+              msRemaining={timeRemaining}
+              totalTime={totalSaleTime}
+            />
           </div>
-          <div className={styles.tokensRemaining} />
+          <div className={styles.tokensRemaining}>
+            <TokensRemainingCard
+              target={tokenTarget}
+              tokensRemaining={tokensRemaining}
+              totalSupply={totalSupply}
+            />
+          </div>
         </div>
         <div className={styles.previousSales}>
           {/* Previous sales in #2210 */}
