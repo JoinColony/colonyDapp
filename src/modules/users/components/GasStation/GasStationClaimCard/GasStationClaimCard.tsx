@@ -42,14 +42,7 @@ const GasStationClaimCard = ({ numberOfSteps = 3 }: Props) => {
   const { balance } = useLoggedInUser();
   const bigNumberBalance = new BigNumber(balance);
   return (
-    <Card
-      className={styles.main}
-      isDismissible
-      onCardDismissed={() => {
-        /* eslint-disable-next-line no-console */
-        console.log('Dismissed');
-      }}
-    >
+    <Card className={styles.main} isDismissible>
       <Heading
         appearance={{ margin: 'none', size: 'normal', theme: 'dark' }}
         text={MSG.headingText}

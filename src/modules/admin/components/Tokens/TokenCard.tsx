@@ -41,7 +41,7 @@ const TokenCard = ({ domainId, nativeTokenAddress, token }: Props) => {
   const balance = getBalanceFromToken(token, parseInt(domainId as string, 10));
 
   return (
-    <Card key={token.address} className={styles.main}>
+    <Card key={token.address} className={styles.main} listItem>
       <div className={styles.cardHeading}>
         <TokenIcon token={token} name={token.name || undefined} size="xs" />
         <div className={styles.tokenSymbol}>
