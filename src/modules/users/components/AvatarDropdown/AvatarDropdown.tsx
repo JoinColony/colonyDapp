@@ -30,7 +30,7 @@ const AvatarDropdown = () => {
         type="button"
         data-test="avatarDropdown"
       >
-        <UserAvatar address={walletAddress} />
+        <UserAvatar address={walletAddress} notSet={ethereal} />
       </button>
     </Popover>
   );
