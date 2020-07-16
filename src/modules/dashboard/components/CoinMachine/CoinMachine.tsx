@@ -11,6 +11,7 @@ import { useDialog } from '~core/Dialog';
 import CoinMachineWelcomeDialog from './CoinMachineWelcomeDialog';
 import TimeRemainingCard from './TimeRemainingCard';
 import TokensRemainingCard from './TokensRemainingCard';
+import CoinMachineChat from './CoinMachineChat';
 
 import styles from './CoinMachine.css';
 
@@ -113,7 +114,9 @@ const CoinMachine = ({
         <div className={styles.previousSales}>
           {/* Previous sales in #2210 */}
         </div>
-        <div className={styles.chat}>{/* Chat in #2211 */}</div>
+        <div className={styles.chat}>
+          <CoinMachineChat />
+        </div>
       </div>
     </div>
   );
