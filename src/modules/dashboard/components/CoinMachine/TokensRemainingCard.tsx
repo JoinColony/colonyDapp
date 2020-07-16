@@ -55,8 +55,7 @@ const TokensRemainingCard = ({
   const initialTokens = useRef(tokensRemaining);
   const hurryUp = tokensRemaining / totalSupply <= 1 / 3;
   const targetReached = totalSupply - tokensRemaining >= target;
-  /* const justSoldOut = initialTokens.current > 0 && tokensRemaining === 0; */
-  const justSoldOut = true;
+  const justSoldOut = initialTokens.current > 0 && tokensRemaining === 0;
   return (
     <Card
       className={getMainClasses({}, styles, { hurryUp, justSoldOut })}
