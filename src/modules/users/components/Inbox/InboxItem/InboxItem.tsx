@@ -220,6 +220,7 @@ const InboxItem = ({
                   size="xxs"
                   address={initiatorUser.user.profile.walletAddress}
                   className={styles.userAvatar}
+                  notSet={false}
                 />
               </div>
             )}
