@@ -76,10 +76,9 @@ const TokensRemainingCard = ({
         {initialTokens.current === 0 && tokensRemaining === 0 ? (
           <FormattedMessage {...MSG.soldOut} />
         ) : (
-          [
-            <CountUp start={totalSupply} end={tokensRemaining} />,
-            `/${totalSupply}`,
-          ]
+          <span>
+            <CountUp start={totalSupply} end={tokensRemaining} />/{totalSupply}
+          </span>
         )}
       </div>
       {targetReached && (
