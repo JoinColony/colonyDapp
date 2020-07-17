@@ -27,7 +27,17 @@ export const loggedInUserResolvers = (): Resolvers => ({
           {
             ...loggedInUser,
             id: loggedInUser.walletAddress,
-            ethereal: input.ethereal,
+            /**
+             * @NOTE Only set the ethereal value if one is provided
+             * This is so that we can call the mutation without the ethereal value set,
+             * otherwise `assignDefined` kicks in and removes all the falsey values,
+             * even if `false` in our case is a correct outcome
+             */
+            ...(typeof input.ethereal !== 'undefined'
+              ? {
+                  ethereal: input.ethereal,
+                }
+              : {}),
           },
           { ...input, id: input.walletAddress },
         ),
