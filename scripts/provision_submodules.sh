@@ -26,6 +26,8 @@ SERVER="colonyServer"
 
 ROOT_PATH=$(pwd)
 
+YARN="${ROOT_PATH}/node_modules/.bin/yarn"
+
 log() {
   # Colors
   GREEN=`tput setaf 2`
@@ -44,8 +46,8 @@ then
     # Build network
     log "Building '${NETWORK}' submodule"
     cd "${ROOT_PATH}/${LIB_PATH}/${NETWORK}"
-    yarn
-    yarn provision:token:contracts
+    $YARN
+    $YARN provision:token:contracts
     cd ${ROOT_PATH}
 fi
 
