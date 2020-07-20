@@ -1,8 +1,11 @@
 import { MessageDescriptor } from 'react-intl';
+import { useQuery } from '@apollo/react-hooks';
+import gql from 'graphql-tag';
 
 import React from 'react';
 
 import { Address, DomainsMapType } from '~types/index';
+import { createAddress } from '~utils/web3';
 
 import { Table, TableBody } from '~core/Table';
 import Heading from '~core/Heading';
@@ -35,36 +38,56 @@ const DomainList = ({
   viewOnly = true,
   label,
   colonyAddress,
-}: Props) => (
-  <div className={styles.main}>
-    {label && (
-      <Heading
-        appearance={{ size: 'small', weight: 'bold', margin: 'small' }}
-        text={label}
-      />
-    )}
-    <div className={styles.listWrapper}>
-      <Table scrollable>
-        <TableBody>
-          {domains ? (
-            Object.keys(domains).map((domainId) => (
-              <DomainListItem
-                key={domainId}
-                domain={domains[domainId]}
-                viewOnly={viewOnly}
-                colonyAddress={colonyAddress}
-              />
-            ))
-          ) : (
-            <div>
-              {/* //TODO: Add empty state here once we have it designed */}
-            </div>
-          )}
-        </TableBody>
-      </Table>
+}: Props) => {
+  const GET_SUBGRAPH_DOMAINS = gql`
+    query AllDomains {
+    domains {
+      id
+      name
+    }
+  }`;
+  const { data: subgraphDomainsData } = useQuery(GET_SUBGRAPH_DOMAINS, {
+    context: { endpoint: 'subgraph' }
+  });
+  const subgraphDomains = subgraphDomainsData.domains.filter(({ id, name }) => {
+    const extractedColonyAddress = createAddress(id.replace(/_\d/, ''));
+    return extractedColonyAddress === colonyAddress;
+  });
+
+  return (
+    <div className={styles.main}>
+      {label && (
+        <Heading
+          appearance={{ size: 'small', weight: 'bold', margin: 'small' }}
+          text={label}
+        />
+      )}
+      <div className={styles.listWrapper}>
+        <Table scrollable>
+          <TableBody>
+            {subgraphDomains ? (
+              subgraphDomains.map(({ id, name }) => (
+                <DomainListItem
+                  key={id}
+                  domain={{
+                    id,
+                    name,
+                  }}
+                  viewOnly
+                  colonyAddress={colonyAddress}
+                />
+              ))
+            ) : (
+                <div>
+                  {/* //TODO: Add empty state here once we have it designed */}
+                </div>
+              )}
+          </TableBody>
+        </Table>
+      </div>
     </div>
-  </div>
-);
+  );
+};
 
 DomainList.displayName = displayName;
 
