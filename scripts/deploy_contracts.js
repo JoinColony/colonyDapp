@@ -9,6 +9,10 @@ const deployContracts = () => {
   return spawn('node_modules/.bin/truffle', ['migrate', '--reset', '--compile-all'], {
     stdio: 'inherit',
     cwd: NETWORK_ROOT,
+    env: {
+      ...process.env,
+      DISABLE_DOCKER: true,
+    }
   });
 }
 

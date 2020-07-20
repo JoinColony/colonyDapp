@@ -22,7 +22,6 @@
     "stylelint:ci": "stylelint \"src/**/*.css\"",
     "test": "jest --config=jest.conf.json",
     "test:ci": "jest -w 1 --ci --verbose=true --config=jest.conf.json",
-    "trufflepig": "scripts/start_trufflepig.js",
     "typecheck": "tsc -p tsconfig.json --noEmit",
     "typecheck:watch": "tsc -p tsconfig.json --noEmit --watch",
     "webpack": "webpack-dev-server --config webpack.dev.js --port 9090",

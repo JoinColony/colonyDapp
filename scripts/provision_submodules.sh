@@ -37,6 +37,8 @@ log() {
   echo "${GREEN}${BOLD}$1${NC}"
 }
 
+cp .env.example .env
+
 # Update / re-pull submodules
 log "Initialize submodule libs"
 git submodule update --init --recursive
@@ -47,7 +49,7 @@ then
     log "Building '${NETWORK}' submodule"
     cd "${ROOT_PATH}/${LIB_PATH}/${NETWORK}"
     $YARN
-    $YARN provision:token:contracts
+    DISABLE_DOCKER=true $YARN provision:token:contracts
     cd ${ROOT_PATH}
 fi
 
@@ -56,6 +58,7 @@ then
     # Build pinning service
     log "Building '${SERVER}' submodule"
     cd "${ROOT_PATH}/${LIB_PATH}/${SERVER}"
+    cp .env.example .env
     mkdir -p mongo-data
     npm install
     cd ${ROOT_PATH}
