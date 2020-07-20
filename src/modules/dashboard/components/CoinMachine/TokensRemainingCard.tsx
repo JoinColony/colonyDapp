@@ -1,4 +1,4 @@
-import React, { useRef } from 'react';
+import React from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 import CountUp from 'react-countup';
 
@@ -12,6 +12,8 @@ import Icon from '~core/Icon';
 interface Props {
   /* Target token amount for this run */
   target: number;
+  /** Tokens that were remaining when the user loaded the page */
+  initialTokensRemaining: number;
   /* Tokens remaining in this run */
   tokensRemaining: number;
   /* Total token supply in this run */
@@ -49,13 +51,13 @@ const MSG = defineMessages({
 
 const TokensRemainingCard = ({
   target = 0,
+  initialTokensRemaining = 0,
   tokensRemaining = 0,
   totalSupply = 0,
 }: Props) => {
-  const initialTokens = useRef(tokensRemaining);
   const hurryUp = tokensRemaining / totalSupply <= 1 / 3;
   const targetReached = totalSupply - tokensRemaining >= target;
-  const justSoldOut = initialTokens.current > 0 && tokensRemaining === 0;
+  const justSoldOut = initialTokensRemaining > 0 && tokensRemaining === 0;
   return (
     <Card
       className={getMainClasses({}, styles, { hurryUp, justSoldOut })}
@@ -73,7 +75,7 @@ const TokensRemainingCard = ({
         />
       </div>
       <div className={styles.content}>
-        {initialTokens.current === 0 && tokensRemaining === 0 ? (
+        {initialTokensRemaining === 0 && tokensRemaining === 0 ? (
           <FormattedMessage {...MSG.soldOut} />
         ) : (
           [
