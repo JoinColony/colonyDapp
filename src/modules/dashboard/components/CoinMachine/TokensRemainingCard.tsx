@@ -68,7 +68,7 @@ const TokensRemainingCard = ({
           appearance={{
             margin: 'none',
             size: 'normal',
-            theme: justSoldOut ? 'invert' : undefined,
+            theme: justSoldOut ? 'invert' : 'dark',
           }}
           text={MSG.title}
           textValues={{ saleOver: !tokensRemaining }}

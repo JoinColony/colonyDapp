@@ -45,7 +45,7 @@ const TimeRemainingCard = ({ totalTime = 0, msRemaining = 0 }: Props) => {
           appearance={{
             margin: 'none',
             size: 'normal',
-            theme: saleOver ? 'invert' : undefined,
+            theme: saleOver ? 'invert' : 'dark',
           }}
           text={MSG.title}
           textValues={{ saleOver }}
