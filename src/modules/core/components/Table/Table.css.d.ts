@@ -1,4 +1,5 @@
 export const tableRadii: string;
+export const rowPaddingVertical: string;
 export const baseStyles: string;
 export const stateScrollable: string;
 export const separatorsBorders: string;
@@ -6,3 +7,4 @@ export const separatorsRows: string;
 export const main: string;
 export const themeDark: string;
 export const themeRounder: string;
+export const themeTransparent: string;

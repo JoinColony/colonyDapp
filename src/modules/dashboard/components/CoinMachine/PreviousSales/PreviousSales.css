@@ -1,0 +1,78 @@
+.main {
+  height: 100%;
+  overflow-y: scroll;
+}
+
+.tableContainer {
+  margin: 0 27px;
+}
+
+.soldOutText {
+  color: var(--pink);
+}
+
+.main table thead th:first-of-type,
+.main table tbody td:first-of-type {
+  text-align: right;
+  white-space: nowrap;
+}
+
+.main table thead th:nth-of-type(2),
+.main table tbody td:nth-of-type(2) {
+  width: 50%;
+  text-align: right;
+}
+
+.main table thead th:last-of-type,
+.main table tbody td:last-of-type {
+  width: 50%;
+  text-align: right;
+}
+
+.main table thead {
+  color: rgb(60, 68, 77);
+}
+
+.main table thead .muted {
+  color: rgb(118, 116, 139);
+}
+
+tbody.tableBody {
+  font-size: 13px;
+  font-weight: var(--weight-bold);
+}
+
+tr.decrease svg {
+  fill: rgb(194, 204, 204) !important;
+  stroke: rgb(194, 204, 204) !important;
+}
+
+tr.increase svg {
+  fill: var(--primary) !important;
+  stroke: var(--primary) !important;
+}
+
+tr.push svg {
+  fill: var(--primary) !important;
+  stroke: var(--primary) !important;
+}
+
+tr.soldOut svg {
+  fill: var(--primary) !important;
+  stroke: var(--primary) !important;
+}
+
+.priceCellText {
+  display: inline;
+}
+
+.priceCellIcon {
+  display: inline;
+  margin-left: 11px;
+}
+
+.icon {
+  display: inline-block;
+  margin-top: 4px;
+  max-height: min-content;
+}

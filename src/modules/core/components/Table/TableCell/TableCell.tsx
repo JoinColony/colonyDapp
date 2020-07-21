@@ -1,7 +1,6 @@
 import React, { ReactNode, TdHTMLAttributes } from 'react';
 
 interface Props extends TdHTMLAttributes<HTMLTableDataCellElement> {
-  className?: string;
   children: ReactNode;
 }
 

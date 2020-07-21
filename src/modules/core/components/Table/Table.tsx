@@ -4,7 +4,7 @@ import { getMainClasses } from '~utils/css';
 import styles from './Table.css';
 
 interface Appearance {
-  theme?: 'dark' | 'rounder';
+  theme?: 'dark' | 'rounder' | 'transparent';
   separators?: 'borders' | 'none' | 'rows';
 }
 

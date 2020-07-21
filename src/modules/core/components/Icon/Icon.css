@@ -37,16 +37,19 @@
 .sizeExtraTiny {
   height: 12px;
   width: 12px;
+  line-height: 12px;
 }
 
 .sizeTiny {
   height: 14px;
   width: 14px;
+  line-height: 14px;
 }
 
 .sizeSmall {
   height: 16px;
   width: 16px;
+  line-height: 16px;
 }
 
 .sizeNormal {
