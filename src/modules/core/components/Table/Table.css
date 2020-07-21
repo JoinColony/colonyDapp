@@ -1,4 +1,5 @@
 @value tableRadii: 4px; /* --radius-normal */
+@value rowPaddingVertical: 12px;
 
 .baseStyles {
   border-radius: tableRadii;
@@ -175,5 +176,25 @@
   /* bottom right cell */
   & tbody tr:last-child td:last-child {
     border-bottom-right-radius: var(--radius-large);
+  }
+}
+
+.themeTransparent {
+  composes: baseStyles;
+
+  & thead {
+    border-bottom: 1px solid var(--grey-5);
+  }
+
+  & thead th {
+    padding-bottom: rowPaddingVertical;
+  }
+
+  & tbody td {
+    padding: rowPaddingVertical 0;
+  }
+
+  & tbody tr:first-of-type td {
+    padding-top: calc(rowPaddingVertical * 2);
   }
 }

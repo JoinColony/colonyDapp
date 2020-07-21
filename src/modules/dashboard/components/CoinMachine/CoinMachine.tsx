@@ -1,6 +1,7 @@
 import React, { useCallback, useEffect, useRef } from 'react';
 import { defineMessages, useIntl } from 'react-intl';
 import { Redirect } from 'react-router-dom';
+import BN from 'bn.js';
 
 import BreadCrumb from '~core/BreadCrumb';
 import Button from '~core/Button';
@@ -10,6 +11,7 @@ import { useDialog } from '~core/Dialog';
 import Confetti from '~core/Confetti';
 
 import CoinMachineWelcomeDialog from './CoinMachineWelcomeDialog';
+import PreviousSales from './PreviousSales';
 import TimeRemainingCard from './TimeRemainingCard';
 import TokensRemainingCard from './TokensRemainingCard';
 import CoinMachineChat from './CoinMachineChat';
@@ -85,6 +87,19 @@ const CoinMachine = ({
 
   const breadCrumbs = [MSG.title, formatMessage(MSG.buyTokens, { symbol })];
 
+  const prices = ['600000000000000', '700000000000000', '800000000000000'];
+
+  const salesData = [...Array(25)].map((_, idx) => {
+    const nextDate = new Date();
+    nextDate.setTime(nextDate.getTime() - idx * 60 * 60 * 1000);
+    return {
+      priceEth: new BN(prices[Math.floor(Math.random() * (prices.length - 1))]),
+      end: nextDate,
+      tokensForSale: 4500,
+      tokensSold: 2000,
+    };
+  });
+
   return (
     <div className={styles.main}>
       {justSoldOut ? <Confetti /> : null}
@@ -120,7 +135,7 @@ const CoinMachine = ({
           </div>
         </div>
         <div className={styles.previousSales}>
-          {/* Previous sales in #2210 */}
+          <PreviousSales salesData={salesData} symbol={symbol} />
         </div>
         <div className={styles.chat}>
           <CoinMachineChat />
