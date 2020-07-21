@@ -9,7 +9,7 @@
   composes: stretchVertical stretchHorizontal from '~styles/layout.css';
   display: grid;
   grid-template-columns: 300px auto;
-  grid-template-rows: 1fr;
+  grid-template-rows: minmax(0, 1fr);
   column-gap: 80px;
 }
 

@@ -1,11 +1,9 @@
-@import 'variables.css';
-
 .noTaskAddition {
   margin-top: 20px;
 }
 
 .taskList {
   display: flex;
+  margin-bottom: 20px;
   min-height: 88px;
-  max-height: calc(100vh - 350px);
 }
