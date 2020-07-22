@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 import * as yup from 'yup';
 import nanoid from 'nanoid';
@@ -46,6 +46,7 @@ const validationSchema = yup.object().shape({
 
 const Chat = ({ room }: Props) => {
   const { walletAddress, username } = useLoggedInUser();
+  const scrollElmRef = useRef<HTMLDivElement | null>(null);
   // @todo get that from somewhere I guess (ref is just for fake-persistence)
   const [messages, setMessages] = useState<Comment[]>([]);
   const handleCommentSubmit = useCallback(
@@ -65,6 +66,12 @@ const Chat = ({ room }: Props) => {
     },
     [room, walletAddress],
   );
+
+  useEffect(() => {
+    if (scrollElmRef.current) {
+      scrollElmRef.current.scrollIntoView({ behavior: 'smooth' });
+    }
+  }, [messages]);
   return (
     <div className={styles.main}>
       <div className={styles.messages}>
@@ -75,6 +82,7 @@ const Chat = ({ room }: Props) => {
         ) : (
           <FormattedMessage {...MSG.emptyText} />
         )}
+        <div ref={scrollElmRef} />
       </div>
       <div className={styles.inputBox}>
         <Form
