@@ -1,0 +1,14 @@
+.main {
+  height: 100%;
+  position: relative;
+}
+
+.card {
+  height: 100%;
+}
+
+.toggleCommentsButton {
+  position: absolute;
+  top: -22px;
+  right: 0;
+}
