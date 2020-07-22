@@ -1,18 +1,27 @@
+import React, { useMemo } from 'react';
 import { MessageDescriptor } from 'react-intl';
 import { useQuery } from '@apollo/react-hooks';
 import gql from 'graphql-tag';
 
-import React from 'react';
 
 import { Address, DomainsMapType } from '~types/index';
-import { createAddress } from '~utils/web3';
 
 import { Table, TableBody } from '~core/Table';
 import Heading from '~core/Heading';
+import { filterSgDomains } from '../../transformers';
 
 import DomainListItem from './DomainListItem';
 
 import styles from './DomainList.css';
+
+const GET_SUBGRAPH_DOMAINS = gql`
+  query AllDomains {
+    domains {
+      id
+      name
+    }
+  }
+`;
 
 interface Props {
   /*
@@ -34,26 +43,21 @@ interface Props {
 const displayName = 'admin.DomainList';
 
 const DomainList = ({
-  domains,
-  viewOnly = true,
   label,
   colonyAddress,
 }: Props) => {
-  const GET_SUBGRAPH_DOMAINS = gql`
-    query AllDomains {
-    domains {
-      id
-      name
-    }
-  }`;
   const { data: subgraphDomainsData } = useQuery(GET_SUBGRAPH_DOMAINS, {
     context: { endpoint: 'subgraph' }
   });
-  const subgraphDomains = subgraphDomainsData.domains.filter(({ id, name }) => {
-    const extractedColonyAddress = createAddress(id.replace(/_\d/, ''));
-    return extractedColonyAddress === colonyAddress;
-  });
-
+  const subgraphDomains = useMemo(
+    () => {
+      if (subgraphDomainsData && subgraphDomainsData.domains) {
+        return filterSgDomains(subgraphDomainsData.domains, colonyAddress);
+      }
+      return [];
+    },
+    [filterSgDomains, colonyAddress, subgraphDomainsData],
+  );
   return (
     <div className={styles.main}>
       {label && (
