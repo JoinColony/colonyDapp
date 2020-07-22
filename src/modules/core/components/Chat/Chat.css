@@ -6,8 +6,9 @@
 }
 
 .messages {
-  flex: 1 0 auto;
+  flex: 1 0 0;
   margin-bottom: 20px;
+  overflow: auto;
 }
 
 .inputBox {
