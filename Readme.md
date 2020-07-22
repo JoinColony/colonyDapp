@@ -42,7 +42,9 @@ Also take a look at the `src/lib/colonyServer/.env` file that the provision scri
 npm run dev
 ```
 
-This will run the _whole stack_ which starts `ganache`, deploys the contracts, starts a database instance as well as the server and `webpack`. The webpack dev server will be available under `http://localhost:9090`.
+This will run the _whole stack_ which starts `ganache`, deploys the contracts, starts a database instance as well as the server and `webpack`.
+
+**The webpack dev server will be available under `http://localhost:9090`.**
 
 You can run some of these individually using the following commands:
 
