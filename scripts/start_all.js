@@ -45,7 +45,7 @@ addProcess('db', async () => {
     console.error(e);
     dbProcess.kill();
   });
-  await waitOn({ resources: ['tcp:27017'] });
+  await waitOn({ resources: ['tcp:27018'] });
   const cleanProcess = spawn('npm', ['run', 'db:clean'], {
     cwd: path.resolve(__dirname, '..', 'src/lib/colonyServer'),
     stdio: 'pipe',

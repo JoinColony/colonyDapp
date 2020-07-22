@@ -1,42 +1,25 @@
 # Colony Dapp
 
 ## Prerequisites
-(for versions see package.json -> engines)
-* A running docker daemon
-* Node.js
-* [mkcert](https://github.com/FiloSottile/mkcert) (for self-signed SSL certificates)
+* Node.js (Best use [nvm](https://github.com/nvm-sh/nvm))
 
 ## Installation
 
-Clone this repository :)
+First, clone this repository :)
 
-### Setup docker
+### Install packages
 
-We use docker for:
+Pick the right node version (as seen in `.nvmrc`):
 
-- Compiling the Solidity smart contracts
-- Running an IPFS node for the pinning service
-
-- You need to install docker on your machine, see the [documentation](https://docs.docker.com/install/#supported-platforms) for installation instructions.
-- We also assume docker is accessible as a non-root user, remember to complete the [post-install instructions](https://docs.docker.com/install/linux/linux-postinstall/) on linux.
-
-### Setup self-signed certificates for HTTPS
-
-Various new browser technologies require the dev environment to be run via https. For that we need self-signed certificates for the domain you run the dApp in dev mode (most likely `localhost` or `127.0.0.1`). We also can't just use "untrusted" self-signed certificates as IPFS won't run using those via secure websockets.
-
-So we're using the great [mkcert](https://github.com/FiloSottile/mkcert) tool:
-
-1) Install mkcert using the instructions in their [readme](https://github.com/FiloSottile/mkcert#installation) (mind the note regarding Firefox!)
-2) Install the root CA certificate: `mkcert -install`
-
-Move on to the `provision` step. The needed certificates and corresponding keys will be generated automatically.
-
-If you don't want to do a full provision you can also execute the following command (from the root repo directory):
-```
-mkdir -p ssl && cd ssl && mkcert localhost 127.0.0.1 ::1
+```bash
+nvm use
 ```
 
-This will create the certificate files needed.
+Install all dependencies:
+
+```bash
+npm install
+```
 
 ### Provision dependent libraries
 
@@ -47,46 +30,44 @@ npm run provision
 
 Under the hood, this will initialize the `submodule`s, install their packages, and build them. Furthermore this will create the SSL certificate needed to run the dev server
 
-### Install packages
-
-```bash
-npm install
-```
-
 ### Define environment variables
 
-Firstly copy the example env file:
-```bash
-cp .env.example .env
-```
+The provision step will set up a `.env` file for you. It should work right out of the bat. If needed, customize the variables in the `.env` file to your desires.
 
-Then customize the variables in the `.env` file to your needs.
+Also take a look at the `src/lib/colonyServer/.env` file that the provision script created. As with the one in the root, it should work just fine for most cases.
 
-When adding a new environment variable, you must add it to both files _(otherwise, the `dotenv-webpack` plugin will throw an error)_; this is designed to keep the expected environment defined in a simple way.
-
-To use the environment variables in the dApp:
-
-```js
-const { MY_API_URL } = process.env;
-console.log(MY_API_URL); // https://my-api-url.example.com/api
-```
-
-## Running dev environment
+## Running the dev environment
 
 ```bash
 npm run dev
 ```
 
-This will run the _whole stack_ which starts `ganache`, deploys the contracts, starts `trufflepig` and `webpack`. The webpack dev server will be available under `https://localhost:9090` (mind the `s` after `http`!)
+This will run the _whole stack_ which starts `ganache`, deploys the contracts, starts a database instance as well as the server and `webpack`. The webpack dev server will be available under `http://localhost:9090`.
 
-You can run these individually using the following commands:
+You can run some of these individually using the following commands:
 
 ```
 npm run ganache
 npm run contracts:deploy
-npm run trufflepig
 npm run webpack
 ```
+
+When run individually, some processes might need an own terminal window.
+
+You can also run the whole stack and skip some commands, e.g.:
+
+```bash
+npm run dev --skip-webpack
+```
+
+Then run `webpack` individually, if you like:
+
+```bash
+npm run webpack
+```
+
+Like this you could restart the `webpack` process in cases of hiccups without restarting the whole stack (that happens!)
+
 
 ### Verbose logging
 
