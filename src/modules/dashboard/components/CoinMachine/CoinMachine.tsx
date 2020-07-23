@@ -89,7 +89,7 @@ const CoinMachine = ({
 
   const prices = ['600000000000000', '700000000000000', '800000000000000'];
 
-  const salesData = [...Array(25)].map((_, idx) => {
+  const salesData = [...Array(0)].map((_, idx) => {
     const nextDate = new Date();
     nextDate.setTime(nextDate.getTime() - idx * 60 * 60 * 1000);
     return {

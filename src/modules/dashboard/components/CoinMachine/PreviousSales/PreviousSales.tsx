@@ -1,11 +1,12 @@
-import React, { useMemo } from 'react';
+import React, { useMemo, CSSProperties } from 'react';
 import {
   defineMessages,
   FormattedDate,
-  FormattedNumber,
   FormattedMessage,
+  FormattedNumber,
   FormattedTime,
   MessageDescriptor,
+  useIntl,
 } from 'react-intl';
 import { useMeasure } from 'react-use';
 import BN from 'bn.js';
@@ -26,6 +27,9 @@ import {
 
 import styles from './PreviousSales.css';
 
+// eslint-disable-next-line @typescript-eslint/no-var-requires
+const vincentvega = require('../../../../../img/vincentvega.gif');
+
 const MSG = defineMessages({
   decrease: {
     id: 'dashboard.CoinMachine.PreviousSales.decrease',
@@ -34,6 +38,10 @@ const MSG = defineMessages({
   increase: {
     id: 'dashboard.CoinMachine.PreviousSales.increase',
     defaultMessage: 'Price increased from previous sale',
+  },
+  noPriorSales: {
+    id: 'dashboard.CoinMachine.PreviousSales.noPriorSales',
+    defaultMessage: 'No prior sales',
   },
   numberSold: {
     id: 'dashboard.CoinMachine.PreviousSales.numberSold',
@@ -123,24 +131,34 @@ const getSaleStatus = (price: BN, prevPrice?: BN): SaleStatus => {
 const displayName = 'dashboard.CoinMachine.PreviousSales';
 
 const PreviousSales = ({ salesData, symbol }: Props) => {
+  const { formatMessage } = useIntl();
+
   const [containerRef, { height: containerHeight }] = useMeasure<
     HTMLDivElement
   >();
-  const [headingRef, { height: headingHeight }] = useMeasure<HTMLDivElement>();
+  const [cardHeadingRef, { height: cardHeadingHeight }] = useMeasure<
+    HTMLDivElement
+  >();
   const [tableHeadingRef, { height: tableHeadingHeight }] = useMeasure<
     HTMLTableRowElement
   >();
 
   // @Note: Necessary to make table body scrollable with fixed heading
   const tableWindowHeight = useMemo(
-    // minus 15px for bottom padding within scrollable area
-    () => containerHeight - headingHeight - tableHeadingHeight - 35,
-    [containerHeight, headingHeight, tableHeadingHeight],
+    // minus 35px for bottom padding within scrollable area
+    () => containerHeight - cardHeadingHeight - tableHeadingHeight - 35,
+    [cardHeadingHeight, containerHeight, tableHeadingHeight],
   );
+  const tableContainerScrollWindowHeight: CSSProperties = {
+    height:
+      salesData.length > 0
+        ? `${tableWindowHeight}px`
+        : `calc(100% - ${cardHeadingHeight + tableHeadingHeight}px)`,
+  };
   return (
     <div className={styles.main} ref={containerRef}>
       <Card className={styles.card}>
-        <div ref={headingRef}>
+        <div ref={cardHeadingRef}>
           <Heading
             appearance={{ size: 'normal', theme: 'dark' }}
             text={MSG.title}
@@ -148,7 +166,7 @@ const PreviousSales = ({ salesData, symbol }: Props) => {
         </div>
         <div
           className={styles.tableContainer}
-          style={{ maxHeight: `${tableWindowHeight}px` }}
+          style={tableContainerScrollWindowHeight}
         >
           <Table appearance={{ theme: 'transparent' }}>
             <TableHeader>
@@ -249,6 +267,14 @@ const PreviousSales = ({ salesData, symbol }: Props) => {
               </TableBody>
             )}
           </Table>
+          {salesData.length === 0 && (
+            <img
+              alt="Vincent Vega"
+              className={styles.vinceGif}
+              src={vincentvega}
+              title={formatMessage(MSG.noPriorSales)}
+            />
+          )}
         </div>
       </Card>
     </div>

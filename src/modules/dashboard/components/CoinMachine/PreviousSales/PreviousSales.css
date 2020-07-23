@@ -2,7 +2,6 @@
 
 .main {
   height: 100%;
-  overflow-y: hidden;
 }
 
 .card {
@@ -89,4 +88,9 @@ tr.soldOut svg {
   display: inline-block;
   margin-top: 4px;
   max-height: min-content;
+}
+
+.vinceGif {
+  display: block;
+  margin: 0 auto;
 }

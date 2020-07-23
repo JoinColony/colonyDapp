@@ -12,3 +12,4 @@ export const soldOut: string;
 export const priceCellText: string;
 export const priceCellIcon: string;
 export const icon: string;
+export const vinceGif: string;
