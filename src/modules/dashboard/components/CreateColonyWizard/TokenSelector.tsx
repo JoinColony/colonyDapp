@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useState, ReactNode } from 'react';
 import { defineMessages } from 'react-intl';
-import { useApolloClient } from '@apollo/react-hooks';
+import { useApolloClient } from '@apollo/client';
 
 import { Input } from '~core/Fields';
 import Button from '~core/Button';

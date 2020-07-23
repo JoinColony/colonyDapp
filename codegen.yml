@@ -12,6 +12,8 @@ generates:
       withComponent: false
       withHOC: false
       withHooks: true
+      apolloReactCommonImportFrom: '@apollo/client/react'
+      apolloReactHooksImportFrom: '@apollo/client/react'
     plugins:
       - 'fragment-matcher'
       - 'typescript'

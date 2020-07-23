@@ -1,13 +1,10 @@
-import ApolloClient from 'apollo-client';
-import { createHttpLink } from 'apollo-link-http';
-import { setContext } from 'apollo-link-context';
+import { ApolloClient, createHttpLink } from '@apollo/client';
+import { setContext } from '@apollo/client/link/context';
 
 import { cache, typeDefs } from '~data/index';
 import { ContextModule, TEMP_getContext } from '~context/index';
 
 import { getToken } from '../api/auth';
-
-export { ApolloProvider } from '@apollo/react-hooks';
 
 const httpLink = createHttpLink({
   uri: `${process.env.SERVER_ENDPOINT}/graphql`,

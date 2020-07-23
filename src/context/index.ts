@@ -1,4 +1,4 @@
-import ApolloClientClass from 'apollo-client';
+import { ApolloClient as ApolloClientClass } from '@apollo/client';
 import { PurserWallet } from '@purser/core';
 
 import ColonyManagerClass from '../lib/ColonyManager';

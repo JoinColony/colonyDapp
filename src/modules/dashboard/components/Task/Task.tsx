@@ -147,10 +147,12 @@ const Task = () => {
      *
      * Based on that error we can determine if the colony is registered or not.
      */
-    variables: { address: reverseENSAddress },
+    variables: dataVariables,
   } = useColonyFromNameQuery({
     variables: { address: '', name: colonyName },
   });
+
+  const reverseENSAddress = dataVariables && dataVariables.address;
 
   const {
     task: {

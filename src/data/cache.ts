@@ -1,14 +1,10 @@
-import {
-  InMemoryCache,
-  IntrospectionFragmentMatcher,
-  defaultDataIdFromObject,
-} from 'apollo-cache-inmemory';
+import { InMemoryCache, defaultDataIdFromObject } from '@apollo/client/cache/';
 
-import introspectionResult from './generated';
+// import introspectionResult from './generated';
 
-const fragmentMatcher = new IntrospectionFragmentMatcher({
-  introspectionQueryResultData: introspectionResult,
-});
+// const fragmentMatcher = new IntrospectionFragmentMatcher({
+//   introspectionQueryResultData: introspectionResult,
+// });
 
 const dataIdFromObject = (obj) => {
   // eslint-disable-next-line no-underscore-dangle
@@ -23,5 +19,5 @@ const dataIdFromObject = (obj) => {
 
 export default new InMemoryCache({
   dataIdFromObject,
-  fragmentMatcher,
+  // fragmentMatcher,
 });

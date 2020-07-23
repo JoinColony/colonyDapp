@@ -1,7 +1,8 @@
 import gql from 'graphql-tag';
-import * as ApolloReactCommon from '@apollo/react-common';
-import * as ApolloReactHooks from '@apollo/react-hooks';
+import * as ApolloReactCommon from '@apollo/client/react';
+import * as ApolloReactHooks from '@apollo/client/react';
 export type Maybe<T> = T | null;
+export type Exact<T extends { [key: string]: any }> = { [K in keyof T]: T[K] };
 
       export interface IntrospectionResultData {
         __schema: {
@@ -1491,9 +1492,9 @@ export type TaskEventFragment = (
   & EventContextFragment
 );
 
-export type AssignWorkerMutationVariables = {
+export type AssignWorkerMutationVariables = Exact<{
   input: AssignWorkerInput;
-};
+}>;
 
 
 export type AssignWorkerMutation = { assignWorker?: Maybe<(
@@ -1501,9 +1502,9 @@ export type AssignWorkerMutation = { assignWorker?: Maybe<(
     & { assignedWorker?: Maybe<Pick<User, 'id'>>, events: Array<TaskEventFragment> }
   )> };
 
-export type CancelTaskMutationVariables = {
+export type CancelTaskMutationVariables = Exact<{
   input: TaskIdInput;
-};
+}>;
 
 
 export type CancelTaskMutation = { cancelTask?: Maybe<(
@@ -1511,16 +1512,16 @@ export type CancelTaskMutation = { cancelTask?: Maybe<(
     & { events: Array<TaskEventFragment> }
   )> };
 
-export type CreateTaskMutationVariables = {
+export type CreateTaskMutationVariables = Exact<{
   input: CreateTaskInput;
-};
+}>;
 
 
 export type CreateTaskMutation = { createTask?: Maybe<CreateTaskFieldsFragment> };
 
-export type CreateWorkRequestMutationVariables = {
+export type CreateWorkRequestMutationVariables = Exact<{
   input: CreateWorkRequestInput;
-};
+}>;
 
 
 export type CreateWorkRequestMutation = { createWorkRequest?: Maybe<(
@@ -1528,9 +1529,9 @@ export type CreateWorkRequestMutation = { createWorkRequest?: Maybe<(
     & { events: Array<TaskEventFragment>, workRequests: Array<Pick<User, 'id'>> }
   )> };
 
-export type FinalizeTaskMutationVariables = {
+export type FinalizeTaskMutationVariables = Exact<{
   input: FinalizeTaskInput;
-};
+}>;
 
 
 export type FinalizeTaskMutation = { finalizeTask?: Maybe<(
@@ -1538,9 +1539,9 @@ export type FinalizeTaskMutation = { finalizeTask?: Maybe<(
     & { events: Array<TaskEventFragment>, finalizedPayment?: Maybe<Pick<TaskFinalizedPayment, 'amount' | 'tokenAddress' | 'workerAddress' | 'transactionHash'>> }
   )> };
 
-export type RemoveTaskPayoutMutationVariables = {
+export type RemoveTaskPayoutMutationVariables = Exact<{
   input: RemoveTaskPayoutInput;
-};
+}>;
 
 
 export type RemoveTaskPayoutMutation = { removeTaskPayout?: Maybe<(
@@ -1549,9 +1550,9 @@ export type RemoveTaskPayoutMutation = { removeTaskPayout?: Maybe<(
     & PayoutsFragment
   )> };
 
-export type SendWorkInviteMutationVariables = {
+export type SendWorkInviteMutationVariables = Exact<{
   input: SendWorkInviteInput;
-};
+}>;
 
 
 export type SendWorkInviteMutation = { sendWorkInvite?: Maybe<(
@@ -1559,9 +1560,9 @@ export type SendWorkInviteMutation = { sendWorkInvite?: Maybe<(
     & { events: Array<TaskEventFragment>, workInvites: Array<Pick<User, 'id'>> }
   )> };
 
-export type SetTaskDomainMutationVariables = {
+export type SetTaskDomainMutationVariables = Exact<{
   input: SetTaskDomainInput;
-};
+}>;
 
 
 export type SetTaskDomainMutation = { setTaskDomain?: Maybe<(
@@ -1569,9 +1570,9 @@ export type SetTaskDomainMutation = { setTaskDomain?: Maybe<(
     & { events: Array<TaskEventFragment> }
   )> };
 
-export type SetTaskDescriptionMutationVariables = {
+export type SetTaskDescriptionMutationVariables = Exact<{
   input: SetTaskDescriptionInput;
-};
+}>;
 
 
 export type SetTaskDescriptionMutation = { setTaskDescription?: Maybe<(
@@ -1579,9 +1580,9 @@ export type SetTaskDescriptionMutation = { setTaskDescription?: Maybe<(
     & { events: Array<TaskEventFragment> }
   )> };
 
-export type SetTaskDueDateMutationVariables = {
+export type SetTaskDueDateMutationVariables = Exact<{
   input: SetTaskDueDateInput;
-};
+}>;
 
 
 export type SetTaskDueDateMutation = { setTaskDueDate?: Maybe<(
@@ -1589,9 +1590,9 @@ export type SetTaskDueDateMutation = { setTaskDueDate?: Maybe<(
     & { events: Array<TaskEventFragment> }
   )> };
 
-export type SetTaskPayoutMutationVariables = {
+export type SetTaskPayoutMutationVariables = Exact<{
   input: SetTaskPayoutInput;
-};
+}>;
 
 
 export type SetTaskPayoutMutation = { setTaskPayout?: Maybe<(
@@ -1602,9 +1603,9 @@ export type SetTaskPayoutMutation = { setTaskPayout?: Maybe<(
     )> }
   )> };
 
-export type SetTaskSkillMutationVariables = {
+export type SetTaskSkillMutationVariables = Exact<{
   input: SetTaskSkillInput;
-};
+}>;
 
 
 export type SetTaskSkillMutation = { setTaskSkill?: Maybe<(
@@ -1612,9 +1613,9 @@ export type SetTaskSkillMutation = { setTaskSkill?: Maybe<(
     & { events: Array<TaskEventFragment> }
   )> };
 
-export type RemoveTaskSkillMutationVariables = {
+export type RemoveTaskSkillMutationVariables = Exact<{
   input: RemoveTaskSkillInput;
-};
+}>;
 
 
 export type RemoveTaskSkillMutation = { removeTaskSkill?: Maybe<(
@@ -1622,9 +1623,9 @@ export type RemoveTaskSkillMutation = { removeTaskSkill?: Maybe<(
     & { events: Array<TaskEventFragment> }
   )> };
 
-export type SetTaskTitleMutationVariables = {
+export type SetTaskTitleMutationVariables = Exact<{
   input: SetTaskTitleInput;
-};
+}>;
 
 
 export type SetTaskTitleMutation = { setTaskTitle?: Maybe<(
@@ -1632,9 +1633,9 @@ export type SetTaskTitleMutation = { setTaskTitle?: Maybe<(
     & { events: Array<TaskEventFragment> }
   )> };
 
-export type UnassignWorkerMutationVariables = {
+export type UnassignWorkerMutationVariables = Exact<{
   input: UnassignWorkerInput;
-};
+}>;
 
 
 export type UnassignWorkerMutation = { unassignWorker?: Maybe<(
@@ -1642,9 +1643,9 @@ export type UnassignWorkerMutation = { unassignWorker?: Maybe<(
     & { assignedWorker?: Maybe<Pick<User, 'id'>>, events: Array<TaskEventFragment> }
   )> };
 
-export type SetTaskPendingMutationVariables = {
+export type SetTaskPendingMutationVariables = Exact<{
   input: SetTaskPendingInput;
-};
+}>;
 
 
 export type SetTaskPendingMutation = { setTaskPending?: Maybe<(
@@ -1652,36 +1653,36 @@ export type SetTaskPendingMutation = { setTaskPending?: Maybe<(
     & { events: Array<TaskEventFragment> }
   )> };
 
-export type SendTaskMessageMutationVariables = {
+export type SendTaskMessageMutationVariables = Exact<{
   input: SendTaskMessageInput;
-};
+}>;
 
 
 export type SendTaskMessageMutation = Pick<Mutation, 'sendTaskMessage'>;
 
-export type SetLoggedInUserMutationVariables = {
+export type SetLoggedInUserMutationVariables = Exact<{
   input: LoggedInUserInput;
-};
+}>;
 
 
 export type SetLoggedInUserMutation = { setLoggedInUser: Pick<LoggedInUser, 'id'> };
 
-export type ClearLoggedInUserMutationVariables = {};
+export type ClearLoggedInUserMutationVariables = Exact<{ [key: string]: never; }>;
 
 
 export type ClearLoggedInUserMutation = { clearLoggedInUser: Pick<LoggedInUser, 'id'> };
 
-export type CreateUserMutationVariables = {
+export type CreateUserMutationVariables = Exact<{
   createUserInput: CreateUserInput;
   loggedInUserInput: LoggedInUserInput;
-};
+}>;
 
 
 export type CreateUserMutation = { createUser?: Maybe<Pick<User, 'id'>>, setLoggedInUser: Pick<LoggedInUser, 'id'> };
 
-export type EditUserMutationVariables = {
+export type EditUserMutationVariables = Exact<{
   input: EditUserInput;
-};
+}>;
 
 
 export type EditUserMutation = { editUser?: Maybe<(
@@ -1689,140 +1690,140 @@ export type EditUserMutation = { editUser?: Maybe<(
     & { profile: Pick<UserProfile, 'avatarHash' | 'bio' | 'displayName' | 'location' | 'website'> }
   )> };
 
-export type SetUserTokensMutationVariables = {
+export type SetUserTokensMutationVariables = Exact<{
   input: SetUserTokensInput;
-};
+}>;
 
 
 export type SetUserTokensMutation = { setUserTokens?: Maybe<Pick<User, 'id' | 'tokenAddresses'>> };
 
-export type SetColonyTokensMutationVariables = {
+export type SetColonyTokensMutationVariables = Exact<{
   input: SetColonyTokensInput;
-};
+}>;
 
 
 export type SetColonyTokensMutation = { setColonyTokens?: Maybe<Pick<Colony, 'id' | 'tokenAddresses'>> };
 
-export type CreateColonyMutationVariables = {
+export type CreateColonyMutationVariables = Exact<{
   input: CreateColonyInput;
-};
+}>;
 
 
 export type CreateColonyMutation = { createColony?: Maybe<Pick<Colony, 'id' | 'colonyAddress' | 'colonyName' | 'avatarHash' | 'description' | 'displayName' | 'guideline' | 'website'>> };
 
-export type EditColonyProfileMutationVariables = {
+export type EditColonyProfileMutationVariables = Exact<{
   input: EditColonyProfileInput;
-};
+}>;
 
 
 export type EditColonyProfileMutation = { editColonyProfile?: Maybe<Pick<Colony, 'id' | 'colonyName' | 'avatarHash' | 'description' | 'displayName' | 'guideline' | 'website'>> };
 
-export type MarkNotificationAsReadMutationVariables = {
+export type MarkNotificationAsReadMutationVariables = Exact<{
   input: MarkNotificationAsReadInput;
-};
+}>;
 
 
 export type MarkNotificationAsReadMutation = Pick<Mutation, 'markNotificationAsRead'>;
 
-export type MarkAllNotificationsAsReadMutationVariables = {};
+export type MarkAllNotificationsAsReadMutationVariables = Exact<{ [key: string]: never; }>;
 
 
 export type MarkAllNotificationsAsReadMutation = Pick<Mutation, 'markAllNotificationsAsRead'>;
 
-export type SubscribeToColonyMutationVariables = {
+export type SubscribeToColonyMutationVariables = Exact<{
   input: SubscribeToColonyInput;
-};
+}>;
 
 
 export type SubscribeToColonyMutation = { subscribeToColony?: Maybe<Pick<User, 'id' | 'colonyAddresses'>> };
 
-export type UnsubscribeFromColonyMutationVariables = {
+export type UnsubscribeFromColonyMutationVariables = Exact<{
   input: UnsubscribeFromColonyInput;
-};
+}>;
 
 
 export type UnsubscribeFromColonyMutation = { unsubscribeFromColony?: Maybe<Pick<User, 'id' | 'colonyAddresses'>> };
 
-export type CreateDomainMutationVariables = {
+export type CreateDomainMutationVariables = Exact<{
   input: CreateDomainInput;
-};
+}>;
 
 
 export type CreateDomainMutation = { createDomain?: Maybe<Pick<Domain, 'id' | 'ethDomainId' | 'ethParentDomainId' | 'name'>> };
 
-export type EditDomainMutationVariables = {
+export type EditDomainMutationVariables = Exact<{
   input: EditDomainNameInput;
-};
+}>;
 
 
 export type EditDomainMutation = { editDomainName?: Maybe<Pick<Domain, 'id' | 'ethDomainId' | 'ethParentDomainId' | 'name'>> };
 
-export type CreateSuggestionMutationVariables = {
+export type CreateSuggestionMutationVariables = Exact<{
   input: CreateSuggestionInput;
-};
+}>;
 
 
 export type CreateSuggestionMutation = { createSuggestion?: Maybe<SuggestionFieldsFragment> };
 
-export type SetSuggestionStatusMutationVariables = {
+export type SetSuggestionStatusMutationVariables = Exact<{
   input: SetSuggestionStatusInput;
-};
+}>;
 
 
 export type SetSuggestionStatusMutation = { setSuggestionStatus?: Maybe<Pick<Suggestion, 'id' | 'status' | 'taskId'>> };
 
-export type AddUpvoteToSuggestionMutationVariables = {
+export type AddUpvoteToSuggestionMutationVariables = Exact<{
   input: AddUpvoteToSuggestionInput;
-};
+}>;
 
 
 export type AddUpvoteToSuggestionMutation = { addUpvoteToSuggestion?: Maybe<Pick<Suggestion, 'id' | 'upvotes'>> };
 
-export type RemoveUpvoteFromSuggestionMutationVariables = {
+export type RemoveUpvoteFromSuggestionMutationVariables = Exact<{
   input: RemoveUpvoteFromSuggestionInput;
-};
+}>;
 
 
 export type RemoveUpvoteFromSuggestionMutation = { removeUpvoteFromSuggestion?: Maybe<Pick<Suggestion, 'id' | 'upvotes'>> };
 
-export type CreateTaskFromSuggestionMutationVariables = {
+export type CreateTaskFromSuggestionMutationVariables = Exact<{
   input: CreateTaskFromSuggestionInput;
-};
+}>;
 
 
 export type CreateTaskFromSuggestionMutation = { createTaskFromSuggestion?: Maybe<CreateTaskFieldsFragment> };
 
-export type CreateProgramMutationVariables = {
+export type CreateProgramMutationVariables = Exact<{
   input: CreateProgramInput;
-};
+}>;
 
 
 export type CreateProgramMutation = { createProgram?: Maybe<ProgramFieldsFragment> };
 
-export type EditProgramMutationVariables = {
+export type EditProgramMutationVariables = Exact<{
   input: EditProgramInput;
-};
+}>;
 
 
 export type EditProgramMutation = { editProgram?: Maybe<Pick<Program, 'id' | 'description' | 'title'>> };
 
-export type RemoveProgramMutationVariables = {
+export type RemoveProgramMutationVariables = Exact<{
   input: RemoveProgramInput;
-};
+}>;
 
 
 export type RemoveProgramMutation = { removeProgram?: Maybe<Pick<Program, 'id' | 'status'>> };
 
-export type PublishProgramMutationVariables = {
+export type PublishProgramMutationVariables = Exact<{
   input: PublishProgramInput;
-};
+}>;
 
 
 export type PublishProgramMutation = { publishProgram?: Maybe<Pick<Program, 'id' | 'status'>> };
 
-export type EnrollInProgramMutationVariables = {
+export type EnrollInProgramMutationVariables = Exact<{
   input: EnrollInProgramInput;
-};
+}>;
 
 
 export type EnrollInProgramMutation = { enrollInProgram?: Maybe<(
@@ -1830,9 +1831,9 @@ export type EnrollInProgramMutation = { enrollInProgram?: Maybe<(
     & { levels: Array<Pick<Level, 'id' | 'unlocked'>> }
   )> };
 
-export type CreateLevelMutationVariables = {
+export type CreateLevelMutationVariables = Exact<{
   input: CreateLevelInput;
-};
+}>;
 
 
 export type CreateLevelMutation = { createLevel?: Maybe<(
@@ -1840,23 +1841,23 @@ export type CreateLevelMutation = { createLevel?: Maybe<(
     & LevelFieldsFragment
   )> };
 
-export type EditLevelMutationVariables = {
+export type EditLevelMutationVariables = Exact<{
   input: EditLevelInput;
-};
+}>;
 
 
 export type EditLevelMutation = { editLevel?: Maybe<LevelFieldsFragment> };
 
-export type RemoveLevelMutationVariables = {
+export type RemoveLevelMutationVariables = Exact<{
   input: RemoveLevelInput;
-};
+}>;
 
 
 export type RemoveLevelMutation = { removeLevel?: Maybe<Pick<Level, 'id' | 'status'>> };
 
-export type ReorderProgramLevelsMutationVariables = {
+export type ReorderProgramLevelsMutationVariables = Exact<{
   input: ReorderProgramLevelsInput;
-};
+}>;
 
 
 export type ReorderProgramLevelsMutation = { reorderProgramLevels?: Maybe<(
@@ -1864,23 +1865,23 @@ export type ReorderProgramLevelsMutation = { reorderProgramLevels?: Maybe<(
     & { levels: Array<Pick<Level, 'id'>> }
   )> };
 
-export type CreateLevelTaskMutationVariables = {
+export type CreateLevelTaskMutationVariables = Exact<{
   input: CreateLevelTaskInput;
-};
+}>;
 
 
 export type CreateLevelTaskMutation = { createLevelTask?: Maybe<PersistentTaskFieldsFragment> };
 
-export type RemoveLevelTaskMutationVariables = {
+export type RemoveLevelTaskMutationVariables = Exact<{
   input: RemoveLevelTaskInput;
-};
+}>;
 
 
 export type RemoveLevelTaskMutation = { removeLevelTask?: Maybe<Pick<PersistentTask, 'id' | 'status'>> };
 
-export type EditPersistentTaskMutationVariables = {
+export type EditPersistentTaskMutationVariables = Exact<{
   input: EditPersistentTaskInput;
-};
+}>;
 
 
 export type EditPersistentTaskMutation = { editPersistentTask?: Maybe<(
@@ -1888,30 +1889,30 @@ export type EditPersistentTaskMutation = { editPersistentTask?: Maybe<(
     & PersistentTaskPayoutsFragment
   )> };
 
-export type CreateLevelTaskSubmissionMutationVariables = {
+export type CreateLevelTaskSubmissionMutationVariables = Exact<{
   input: CreateLevelTaskSubmissionInput;
-};
+}>;
 
 
 export type CreateLevelTaskSubmissionMutation = { createLevelTaskSubmission?: Maybe<Pick<Submission, 'id' | 'status' | 'submission'>> };
 
-export type EditSubmissionMutationVariables = {
+export type EditSubmissionMutationVariables = Exact<{
   input: EditSubmissionInput;
-};
+}>;
 
 
 export type EditSubmissionMutation = { editSubmission?: Maybe<Pick<Submission, 'id' | 'status' | 'submission'>> };
 
-export type AcceptLevelTaskSubmissionMutationVariables = {
+export type AcceptLevelTaskSubmissionMutationVariables = Exact<{
   input: AcceptLevelTaskSubmissionInput;
-};
+}>;
 
 
 export type AcceptLevelTaskSubmissionMutation = { acceptLevelTaskSubmission?: Maybe<Pick<Submission, 'id' | 'status'>> };
 
-export type TaskQueryVariables = {
+export type TaskQueryVariables = Exact<{
   id: Scalars['String'];
-};
+}>;
 
 
 export type TaskQuery = { task: (
@@ -1932,9 +1933,9 @@ export type TaskQuery = { task: (
     & PayoutsFragment
   ) };
 
-export type TaskToEditQueryVariables = {
+export type TaskToEditQueryVariables = Exact<{
   id: Scalars['String'];
-};
+}>;
 
 
 export type TaskToEditQuery = { task: (
@@ -1955,9 +1956,9 @@ export type TaskToEditQuery = { task: (
     & PayoutsFragment
   ) };
 
-export type TaskFeedEventsQueryVariables = {
+export type TaskFeedEventsQueryVariables = Exact<{
   id: Scalars['String'];
-};
+}>;
 
 
 export type TaskFeedEventsQuery = { task: (
@@ -1966,14 +1967,14 @@ export type TaskFeedEventsQuery = { task: (
     & PayoutsFragment
   ) };
 
-export type LoggedInUserQueryVariables = {};
+export type LoggedInUserQueryVariables = Exact<{ [key: string]: never; }>;
 
 
 export type LoggedInUserQuery = { loggedInUser: Pick<LoggedInUser, 'walletAddress' | 'balance' | 'username' | 'ethereal'> };
 
-export type UserQueryVariables = {
+export type UserQueryVariables = Exact<{
   address: Scalars['String'];
-};
+}>;
 
 
 export type UserQuery = { user: (
@@ -1981,11 +1982,11 @@ export type UserQuery = { user: (
     & { profile: Pick<UserProfile, 'username' | 'walletAddress' | 'displayName' | 'bio' | 'location' | 'website' | 'avatarHash'> }
   ) };
 
-export type UserWithReputationQueryVariables = {
+export type UserWithReputationQueryVariables = Exact<{
   address: Scalars['String'];
   colonyAddress: Scalars['String'];
   domainId?: Maybe<Scalars['Int']>;
-};
+}>;
 
 
 export type UserWithReputationQuery = { user: (
@@ -1993,18 +1994,18 @@ export type UserWithReputationQuery = { user: (
     & { profile: Pick<UserProfile, 'username' | 'walletAddress' | 'displayName' | 'bio' | 'location' | 'website' | 'avatarHash'> }
   ) };
 
-export type UserReputationQueryVariables = {
+export type UserReputationQueryVariables = Exact<{
   address: Scalars['String'];
   colonyAddress: Scalars['String'];
   domainId?: Maybe<Scalars['Int']>;
-};
+}>;
 
 
 export type UserReputationQuery = Pick<Query, 'userReputation'>;
 
-export type UserTasksQueryVariables = {
+export type UserTasksQueryVariables = Exact<{
   address: Scalars['String'];
-};
+}>;
 
 
 export type UserTasksQuery = { user: (
@@ -2019,9 +2020,9 @@ export type UserTasksQuery = { user: (
     )> }
   ) };
 
-export type UserTokensQueryVariables = {
+export type UserTokensQueryVariables = Exact<{
   address: Scalars['String'];
-};
+}>;
 
 
 export type UserTokensQuery = { user: (
@@ -2029,24 +2030,24 @@ export type UserTokensQuery = { user: (
     & { tokens: Array<Pick<Token, 'id' | 'address' | 'iconHash' | 'decimals' | 'name' | 'symbol' | 'balance'>> }
   ) };
 
-export type UsernameQueryVariables = {
+export type UsernameQueryVariables = Exact<{
   address: Scalars['String'];
-};
+}>;
 
 
 export type UsernameQuery = Pick<Query, 'username'>;
 
-export type UserAddressQueryVariables = {
+export type UserAddressQueryVariables = Exact<{
   name: Scalars['String'];
-};
+}>;
 
 
 export type UserAddressQuery = Pick<Query, 'userAddress'>;
 
-export type ColonyFromNameQueryVariables = {
+export type ColonyFromNameQueryVariables = Exact<{
   name: Scalars['String'];
   address: Scalars['String'];
-};
+}>;
 
 
 export type ColonyFromNameQuery = (
@@ -2054,30 +2055,30 @@ export type ColonyFromNameQuery = (
   & { colony: FullColonyFragment }
 );
 
-export type ColonyNameQueryVariables = {
+export type ColonyNameQueryVariables = Exact<{
   address: Scalars['String'];
-};
+}>;
 
 
 export type ColonyNameQuery = Pick<Query, 'colonyName'>;
 
-export type ColonyAddressQueryVariables = {
+export type ColonyAddressQueryVariables = Exact<{
   name: Scalars['String'];
-};
+}>;
 
 
 export type ColonyAddressQuery = Pick<Query, 'colonyAddress'>;
 
-export type ColonyQueryVariables = {
+export type ColonyQueryVariables = Exact<{
   address: Scalars['String'];
-};
+}>;
 
 
 export type ColonyQuery = { colony: FullColonyFragment };
 
-export type ColonyTokensQueryVariables = {
+export type ColonyTokensQueryVariables = Exact<{
   address: Scalars['String'];
-};
+}>;
 
 
 export type ColonyTokensQuery = { colony: (
@@ -2085,16 +2086,16 @@ export type ColonyTokensQuery = { colony: (
     & TokensFragment
   ) };
 
-export type ColonyNativeTokenQueryVariables = {
+export type ColonyNativeTokenQueryVariables = Exact<{
   address: Scalars['String'];
-};
+}>;
 
 
 export type ColonyNativeTokenQuery = { colony: Pick<Colony, 'id' | 'nativeTokenAddress'> };
 
-export type ColonyRolesQueryVariables = {
+export type ColonyRolesQueryVariables = Exact<{
   address: Scalars['String'];
-};
+}>;
 
 
 export type ColonyRolesQuery = { colony: (
@@ -2105,9 +2106,9 @@ export type ColonyRolesQuery = { colony: (
     )> }
   ) };
 
-export type ColonyTransfersQueryVariables = {
+export type ColonyTransfersQueryVariables = Exact<{
   address: Scalars['String'];
-};
+}>;
 
 
 export type ColonyTransfersQuery = { colony: (
@@ -2115,11 +2116,11 @@ export type ColonyTransfersQuery = { colony: (
     & { transfers: Array<Pick<Transfer, 'amount' | 'hash' | 'colonyAddress' | 'date' | 'from' | 'incoming' | 'to' | 'token'>>, unclaimedTransfers: Array<Pick<Transfer, 'amount' | 'hash' | 'colonyAddress' | 'date' | 'from' | 'incoming' | 'to' | 'token'>> }
   ) };
 
-export type TokenBalancesForDomainsQueryVariables = {
+export type TokenBalancesForDomainsQueryVariables = Exact<{
   colonyAddress: Scalars['String'];
   tokenAddresses: Array<Scalars['String']>;
   domainIds?: Maybe<Array<Scalars['Int']>>;
-};
+}>;
 
 
 export type TokenBalancesForDomainsQuery = { tokens: Array<(
@@ -2127,23 +2128,23 @@ export type TokenBalancesForDomainsQuery = { tokens: Array<(
     & { balances: Array<Pick<DomainBalance, 'domainId' | 'amount'>> }
   )> };
 
-export type ColonyProfileQueryVariables = {
+export type ColonyProfileQueryVariables = Exact<{
   address: Scalars['String'];
-};
+}>;
 
 
 export type ColonyProfileQuery = { colony: ColonyProfileFragment };
 
-export type UserColonyAddressesQueryVariables = {
+export type UserColonyAddressesQueryVariables = Exact<{
   address: Scalars['String'];
-};
+}>;
 
 
 export type UserColonyAddressesQuery = { user: Pick<User, 'id' | 'colonyAddresses'> };
 
-export type ColonyTasksQueryVariables = {
+export type ColonyTasksQueryVariables = Exact<{
   address: Scalars['String'];
-};
+}>;
 
 
 export type ColonyTasksQuery = { colony: (
@@ -2158,9 +2159,9 @@ export type ColonyTasksQuery = { colony: (
     )> }
   ) };
 
-export type ColonyProgramsQueryVariables = {
+export type ColonyProgramsQueryVariables = Exact<{
   address: Scalars['String'];
-};
+}>;
 
 
 export type ColonyProgramsQuery = { colony: (
@@ -2168,16 +2169,16 @@ export type ColonyProgramsQuery = { colony: (
     & { programs: Array<ProgramFieldsFragment> }
   ) };
 
-export type ProgramQueryVariables = {
+export type ProgramQueryVariables = Exact<{
   id: Scalars['String'];
-};
+}>;
 
 
 export type ProgramQuery = { program: ProgramFieldsFragment };
 
-export type ProgramLevelsQueryVariables = {
+export type ProgramLevelsQueryVariables = Exact<{
   id: Scalars['String'];
-};
+}>;
 
 
 export type ProgramLevelsQuery = { program: (
@@ -2185,9 +2186,9 @@ export type ProgramLevelsQuery = { program: (
     & { levels: Array<LevelFieldsFragment> }
   ) };
 
-export type LevelQueryVariables = {
+export type LevelQueryVariables = Exact<{
   id: Scalars['String'];
-};
+}>;
 
 
 export type LevelQuery = { level: (
@@ -2195,9 +2196,9 @@ export type LevelQuery = { level: (
     & LevelFieldsFragment
   ) };
 
-export type ProgramLevelsWithUnlockedQueryVariables = {
+export type ProgramLevelsWithUnlockedQueryVariables = Exact<{
   id: Scalars['String'];
-};
+}>;
 
 
 export type ProgramLevelsWithUnlockedQuery = { program: (
@@ -2208,9 +2209,9 @@ export type ProgramLevelsWithUnlockedQuery = { program: (
     )> }
   ) };
 
-export type ProgramSubmissionsQueryVariables = {
+export type ProgramSubmissionsQueryVariables = Exact<{
   id: Scalars['String'];
-};
+}>;
 
 
 export type ProgramSubmissionsQuery = { program: (
@@ -2218,9 +2219,9 @@ export type ProgramSubmissionsQuery = { program: (
     & { submissions: Array<ProgramSubmissionFieldsFragment> }
   ) };
 
-export type ColonySubscribedUsersQueryVariables = {
+export type ColonySubscribedUsersQueryVariables = Exact<{
   colonyAddress: Scalars['String'];
-};
+}>;
 
 
 export type ColonySubscribedUsersQuery = { colony: (
@@ -2231,31 +2232,31 @@ export type ColonySubscribedUsersQuery = { colony: (
     )> }
   ) };
 
-export type DomainQueryVariables = {
+export type DomainQueryVariables = Exact<{
   colonyAddress: Scalars['String'];
   ethDomainId: Scalars['Int'];
-};
+}>;
 
 
 export type DomainQuery = { domain: Pick<Domain, 'id' | 'ethDomainId' | 'name' | 'ethParentDomainId'> };
 
-export type TokenQueryVariables = {
+export type TokenQueryVariables = Exact<{
   address: Scalars['String'];
-};
+}>;
 
 
 export type TokenQuery = { token: Pick<Token, 'id' | 'address' | 'iconHash' | 'decimals' | 'name' | 'symbol'> };
 
-export type TokenInfoQueryVariables = {
+export type TokenInfoQueryVariables = Exact<{
   address: Scalars['String'];
-};
+}>;
 
 
 export type TokenInfoQuery = { tokenInfo: Pick<TokenInfo, 'decimals' | 'name' | 'symbol' | 'iconHash'> };
 
-export type ColonyDomainsQueryVariables = {
+export type ColonyDomainsQueryVariables = Exact<{
   colonyAddress: Scalars['String'];
-};
+}>;
 
 
 export type ColonyDomainsQuery = { colony: (
@@ -2263,9 +2264,9 @@ export type ColonyDomainsQuery = { colony: (
     & { domains: Array<Pick<Domain, 'id' | 'ethDomainId' | 'name' | 'ethParentDomainId'>> }
   ) };
 
-export type ColonySuggestionsQueryVariables = {
+export type ColonySuggestionsQueryVariables = Exact<{
   colonyAddress: Scalars['String'];
-};
+}>;
 
 
 export type ColonySuggestionsQuery = { colony: (
@@ -2273,9 +2274,9 @@ export type ColonySuggestionsQuery = { colony: (
     & { suggestions: Array<SuggestionFieldsFragment> }
   ) };
 
-export type UserNotificationsQueryVariables = {
+export type UserNotificationsQueryVariables = Exact<{
   address: Scalars['String'];
-};
+}>;
 
 
 export type UserNotificationsQuery = { user: (
@@ -2289,10 +2290,10 @@ export type UserNotificationsQuery = { user: (
     )> }
   ) };
 
-export type UserBadgesQueryVariables = {
+export type UserBadgesQueryVariables = Exact<{
   address: Scalars['String'];
   colonyAddress: Scalars['String'];
-};
+}>;
 
 
 export type UserBadgesQuery = { user: (
@@ -2303,7 +2304,7 @@ export type UserBadgesQuery = { user: (
     )> }
   ) };
 
-export type SystemInfoQueryVariables = {};
+export type SystemInfoQueryVariables = Exact<{ [key: string]: never; }>;
 
 
 export type SystemInfoQuery = { systemInfo: Pick<SystemInfo, 'version'> };

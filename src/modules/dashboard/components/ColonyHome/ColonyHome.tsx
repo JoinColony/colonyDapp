@@ -109,7 +109,7 @@ const ColonyHome = ({ match, location }: Props) => {
      *
      * Based on that error we can determine if the colony is registered or not.
      */
-    variables: { address: reverseENSAddress },
+    variables: dataVariables,
   } = useColonyFromNameQuery({
     // We have to define an empty address here for type safety, will be replaced by the query
     variables: { name: colonyName, address: '' },
@@ -118,6 +118,7 @@ const ColonyHome = ({ match, location }: Props) => {
   if (error) console.error(error);
 
   const colonyDomains = data && data.colony && data.colony.domains;
+  const reverseENSAddress = dataVariables && dataVariables.address;
 
   const filteredDomain = colonyDomains
     ? colonyDomains.find(({ ethDomainId }) => ethDomainId === filteredDomainId)

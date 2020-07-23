@@ -1,4 +1,4 @@
-import ApolloClient from 'apollo-client';
+import { ApolloClient } from '@apollo/client';
 
 import { Context } from '~context/index';
 import { resolvers } from '~data/index';
