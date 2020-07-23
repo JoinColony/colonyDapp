@@ -146,8 +146,6 @@ const Routes = () => {
         />
 
         <AlwaysAccesibleRoute
-          isConnected={isConnected}
-          didClaimProfile={didClaimProfile}
           path={CREATE_WALLET_ROUTE}
           component={CreateWalletWizard}
           layout={Plain}
@@ -159,8 +157,6 @@ const Routes = () => {
           routeProps={{
             hasBackLink: false,
           }}
-          isConnected={isConnected}
-          didClaimProfile={didClaimProfile}
         />
         <AlwaysAccesibleRoute
           exact
@@ -170,8 +166,6 @@ const Routes = () => {
           routeProps={{
             hasBackLink: false,
           }}
-          isConnected={isConnected}
-          didClaimProfile={didClaimProfile}
         />
         <AlwaysAccesibleRoute
           exact
@@ -182,8 +176,6 @@ const Routes = () => {
             backText: ColonyBackText,
             backRoute: `/colony/${colonyName}`,
           })}
-          isConnected={isConnected}
-          didClaimProfile={didClaimProfile}
         />
         <AlwaysAccesibleRoute
           exact
@@ -194,8 +186,6 @@ const Routes = () => {
             backText: ProgramBackText,
             backRoute: `/colony/${colonyName}/program/${programId}`,
           })}
-          isConnected={isConnected}
-          didClaimProfile={didClaimProfile}
         />
         <AlwaysAccesibleRoute
           path={USER_ROUTE}
@@ -204,8 +194,6 @@ const Routes = () => {
           routeProps={{
             hasBackLink: false,
           }}
-          isConnected={isConnected}
-          didClaimProfile={didClaimProfile}
         />
         <AlwaysAccesibleRoute
           path={USER_EDIT_ROUTE}
@@ -215,8 +203,6 @@ const Routes = () => {
             backText: MSG.userProfileEditBack,
             backRoute: `/user/${username}`,
           }}
-          isConnected={isConnected}
-          didClaimProfile={didClaimProfile}
         />
         <AlwaysAccesibleRoute
           exact
@@ -227,8 +213,6 @@ const Routes = () => {
             backText: ColonyBackText,
             backRoute: `/colony/${colonyName}`,
           })}
-          isConnected={isConnected}
-          didClaimProfile={didClaimProfile}
         />
       </Switch>
     ),
