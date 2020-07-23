@@ -182,12 +182,11 @@
 .themeTransparent {
   composes: baseStyles;
 
-  & thead {
-    border-bottom: 1px solid var(--grey-5);
-  }
-
   & thead th {
     padding-bottom: rowPaddingVertical;
+
+    /* Use box-shadow instead of border-bottom for fixed table headers */
+    box-shadow: inset 0px -2px 2px -2px var(--grey-5);
   }
 
   & tbody td {

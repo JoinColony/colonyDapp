@@ -1,4 +1,6 @@
+export const scrollWidth: string;
 export const main: string;
+export const card: string;
 export const tableContainer: string;
 export const soldOutText: string;
 export const muted: string;
