@@ -25,50 +25,50 @@ import {
   TableRow,
 } from '~core/Table';
 
-import styles from './PreviousSales.css';
+import styles from './PreviousSalesCard.css';
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
-const vincentvega = require('../../../../../img/vincentvega.gif');
+const vincentvega = require('../../../../img/vincentvega.gif');
 
 const MSG = defineMessages({
   decrease: {
-    id: 'dashboard.CoinMachine.PreviousSales.decrease',
+    id: 'dashboard.CoinMachine.PreviousSalesCard.decrease',
     defaultMessage: 'Price decreased from previous sale',
   },
   increase: {
-    id: 'dashboard.CoinMachine.PreviousSales.increase',
+    id: 'dashboard.CoinMachine.PreviousSalesCard.increase',
     defaultMessage: 'Price increased from previous sale',
   },
   noPriorSales: {
-    id: 'dashboard.CoinMachine.PreviousSales.noPriorSales',
+    id: 'dashboard.CoinMachine.PreviousSalesCard.noPriorSales',
     defaultMessage: 'No prior sales',
   },
   numberSold: {
-    id: 'dashboard.CoinMachine.PreviousSales.numberSold',
+    id: 'dashboard.CoinMachine.PreviousSalesCard.numberSold',
     defaultMessage: '{tokensSold}/{tokensForSale}',
   },
   push: {
-    id: 'dashboard.CoinMachine.PreviousSales.push',
+    id: 'dashboard.CoinMachine.PreviousSalesCard.push',
     defaultMessage: 'Price unchanged from previous sale',
   },
   soldOut: {
-    id: 'dashboard.CoinMachine.PreviousSales.soldOut',
+    id: 'dashboard.CoinMachine.PreviousSalesCard.soldOut',
     defaultMessage: 'SOLD OUT',
   },
   tableHeaderEnd: {
-    id: 'dashboard.CoinMachine.PreviousSales.tableHeaderEnd',
+    id: 'dashboard.CoinMachine.PreviousSalesCard.tableHeaderEnd',
     defaultMessage: 'Sale End',
   },
   tableHeaderAmount: {
-    id: 'dashboard.CoinMachine.PreviousSales.tableHeaderAmount',
+    id: 'dashboard.CoinMachine.PreviousSalesCard.tableHeaderAmount',
     defaultMessage: 'Amount {symbol}',
   },
   tableHeaderPrice: {
-    id: 'dashboard.CoinMachine.PreviousSales.tableHeaderPrice',
+    id: 'dashboard.CoinMachine.PreviousSalesCard.tableHeaderPrice',
     defaultMessage: 'Price {symbol}',
   },
   title: {
-    id: 'dashboard.CoinMachine.PreviousSales.title',
+    id: 'dashboard.CoinMachine.PreviousSalesCard.title',
     defaultMessage: 'Previous Sales',
   },
 });
@@ -128,9 +128,9 @@ const getSaleStatus = (price: BN, prevPrice?: BN): SaleStatus => {
   return SaleStatus.Push;
 };
 
-const displayName = 'dashboard.CoinMachine.PreviousSales';
+const displayName = 'dashboard.CoinMachine.PreviousSalesCard';
 
-const PreviousSales = ({ salesData, symbol }: Props) => {
+const PreviousSalesCard = ({ salesData, symbol }: Props) => {
   const { formatMessage } = useIntl();
 
   const [containerRef, { height: containerHeight }] = useMeasure<
@@ -281,6 +281,6 @@ const PreviousSales = ({ salesData, symbol }: Props) => {
   );
 };
 
-PreviousSales.displayName = displayName;
+PreviousSalesCard.displayName = displayName;
 
-export default PreviousSales;
+export default PreviousSalesCard;

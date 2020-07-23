@@ -11,7 +11,7 @@ import { useDialog } from '~core/Dialog';
 import Confetti from '~core/Confetti';
 
 import CoinMachineWelcomeDialog from './CoinMachineWelcomeDialog';
-import PreviousSales from './PreviousSales';
+import PreviousSalesCard from './PreviousSalesCard';
 import TimeRemainingCard from './TimeRemainingCard';
 import TokensRemainingCard from './TokensRemainingCard';
 import CoinMachineChat from './CoinMachineChat';
@@ -89,7 +89,7 @@ const CoinMachine = ({
 
   const prices = ['600000000000000', '700000000000000', '800000000000000'];
 
-  const salesData = [...Array(0)].map((_, idx) => {
+  const salesData = [...Array(25)].map((_, idx) => {
     const nextDate = new Date();
     nextDate.setTime(nextDate.getTime() - idx * 60 * 60 * 1000);
     return {
@@ -135,7 +135,7 @@ const CoinMachine = ({
           </div>
         </div>
         <div className={styles.previousSales}>
-          <PreviousSales salesData={salesData} symbol={symbol} />
+          <PreviousSalesCard salesData={salesData} symbol={symbol} />
         </div>
         <div className={styles.chat}>
           <CoinMachineChat />
