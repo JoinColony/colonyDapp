@@ -1,10 +1,18 @@
+@value scrollWidth: 20px;
+
 .main {
   height: 100%;
-  overflow-y: scroll;
+  overflow-y: hidden;
+}
+
+.card {
+  height: 100%;
 }
 
 .tableContainer {
-  margin: 0 27px;
+  margin: 0 calc(27px - scrollWidth) 0 27px;
+  padding-right: scrollWidth;
+  overflow-y: auto;
 }
 
 .soldOutText {
@@ -31,6 +39,12 @@
 
 .main table thead {
   color: rgb(60, 68, 77);
+}
+
+.main table thead th {
+  position: sticky;
+  top: 0;
+  background-color: var(--colony-white);
 }
 
 .main table thead .muted {
