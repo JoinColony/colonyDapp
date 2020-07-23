@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect } from 'react';
+import React, { useCallback, useEffect, useRef } from 'react';
 import { defineMessages, useIntl } from 'react-intl';
 import { Redirect } from 'react-router-dom';
 
@@ -7,6 +7,7 @@ import Button from '~core/Button';
 import { AnyToken } from '~data/index';
 import { Address } from '~types/index';
 import { useDialog } from '~core/Dialog';
+import Confetti from '~core/Confetti';
 
 import CoinMachineWelcomeDialog from './CoinMachineWelcomeDialog';
 import TimeRemainingCard from './TimeRemainingCard';
@@ -51,7 +52,7 @@ const CoinMachine = ({
   // @todo get this somehow
   const timeRemaining = 10 * 60 * 1000;
   const totalSaleTime = 100 * 60 * 1000;
-  const tokensRemaining = 100;
+  const tokensRemaining = Math.round(Math.random() * 300);
   const totalSupply = 300;
   const tokenTarget = 150;
 
@@ -65,6 +66,11 @@ const CoinMachine = ({
       }),
     [colonyDisplayName, openDialog, symbol],
   );
+
+  const initialTokensRemaining = useRef<number>(tokensRemaining);
+  // Turns true if it was sold out during the user's session
+  const justSoldOut =
+    initialTokensRemaining.current > 0 && tokensRemaining === 0;
 
   useEffect(() => {
     if (!localStorage.getItem(LOCALSTORAGE_KEY)) {
@@ -81,6 +87,7 @@ const CoinMachine = ({
 
   return (
     <div className={styles.main}>
+      {justSoldOut ? <Confetti /> : null}
       <div className={styles.breadcrumbsContainer}>
         <div>
           <BreadCrumb elements={breadCrumbs} />
@@ -106,6 +113,7 @@ const CoinMachine = ({
           <div className={styles.tokensRemaining}>
             <TokensRemainingCard
               target={tokenTarget}
+              initialTokensRemaining={initialTokensRemaining.current}
               tokensRemaining={tokensRemaining}
               totalSupply={totalSupply}
             />
