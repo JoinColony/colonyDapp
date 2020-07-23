@@ -87,6 +87,10 @@ const StepGanache = ({
       error={ActionTypes.WALLET_CREATE_ERROR}
       transform={transform}
       {...wizardForm}
+      initialValues={{
+        ...wizardForm.initialValues,
+        privateKey,
+      }}
     >
       {({ isSubmitting }) => (
         <main>
