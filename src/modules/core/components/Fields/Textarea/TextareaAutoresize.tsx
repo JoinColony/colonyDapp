@@ -6,20 +6,11 @@ import { MessageDescriptor, useIntl } from 'react-intl';
 import { SimpleMessageValues } from '~types/index';
 import { getMainClasses } from '~utils/css';
 
+import { Appearance } from './Textarea';
 import styles from './Textarea.css';
 
 import InputLabel from '../InputLabel';
 import InputStatus from '../InputStatus';
-
-type Appearance = {
-  theme?: 'fat';
-  align?: 'right';
-  layout?: 'inline';
-  resizable?: 'both' | 'horizontal' | 'vertical';
-  direction?: 'horizontal';
-  colorSchema?: 'dark' | 'transparent';
-  size?: 'small';
-};
 
 interface Props
   extends Omit<HTMLAttributes<HTMLTextAreaElement>, 'placeholder'> {

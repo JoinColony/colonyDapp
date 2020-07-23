@@ -105,6 +105,7 @@ const Chat = ({ room }: Props) => {
               }}
             >
               <TextareaAutoresize
+                appearance={{ colorSchema: 'grey' }}
                 elementOnly
                 disabled={!username}
                 label={MSG.labelLeaveComment}
