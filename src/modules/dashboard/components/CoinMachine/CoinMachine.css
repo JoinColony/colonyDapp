@@ -19,15 +19,15 @@
   min-height: 735px;
   grid-template-columns: minmax(400px, auto) minmax(300px, 42%);
   grid-template-rows: 380px minmax(0, 1fr);
-  gap: 10px;
+  gap: 20px;
 }
 
-.purchase {
+.purchaseGrid {
   display: grid;
   grid-template-columns: 3fr 2fr;
   grid-template-rows: 1fr 1fr;
   grid-area: 1 / 1 / 2 / 2;
-  gap: 10px;
+  gap: 20px;
 }
 
 .buyCLNY {

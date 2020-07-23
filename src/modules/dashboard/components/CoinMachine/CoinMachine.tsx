@@ -102,7 +102,7 @@ const CoinMachine = ({
         </div>
       </div>
       <div className={styles.grid}>
-        <div className={styles.purchase}>
+        <div className={styles.purchaseGrid}>
           <div className={styles.buyCLNY} />
           <div className={styles.timeRemaining}>
             <TimeRemainingCard
