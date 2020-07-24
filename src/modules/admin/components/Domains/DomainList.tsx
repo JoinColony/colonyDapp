@@ -47,7 +47,14 @@ const DomainList = ({
   colonyAddress,
 }: Props) => {
   const { data: subgraphDomainsData } = useQuery(GET_SUBGRAPH_DOMAINS, {
-    context: { endpoint: 'subgraph' }
+    /**
+     * Tell the apollo client to use the subgraph endpoint link
+    */
+    context: { endpoint: 'subgraph' },
+    /**
+     * Fake having this in real time
+    */
+    pollInterval: 500,
   });
   const subgraphDomains = useMemo(
     () => {
@@ -73,10 +80,7 @@ const DomainList = ({
               subgraphDomains.map(({ id, name }) => (
                 <DomainListItem
                   key={id}
-                  domain={{
-                    id,
-                    name,
-                  }}
+                  domain={{ id, name }}
                   viewOnly
                   colonyAddress={colonyAddress}
                 />
