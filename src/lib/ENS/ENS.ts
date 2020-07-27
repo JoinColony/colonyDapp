@@ -4,7 +4,7 @@ import namehash from 'eth-ens-namehash-ms';
 import punycode from 'punycode';
 import { AddressZero } from 'ethers/constants';
 
-import type { NetworkClient } from '@colony/colony-js';
+import { ColonyNetworkClient } from '@colony/colony-js';
 
 import { Address, ENSName } from '~types/index';
 import { createAddress, isAddress } from '~utils/web3';
@@ -42,7 +42,7 @@ class ENS {
 
   async _getRawAddress(
     domain: string,
-    networkClient: NetworkClient,
+    networkClient: ColonyNetworkClient,
   ): Promise<Address | null> {
     let normalizedDomain;
     try {
@@ -69,7 +69,7 @@ class ENS {
 
   async _getRawDomain(
     address: Address,
-    networkClient: NetworkClient,
+    networkClient: ColonyNetworkClient,
   ): Promise<ENSName | null> {
     if (this._addressCache.has(address)) {
       // The default value is here to satisfy flow.
@@ -92,7 +92,7 @@ class ENS {
   async isENSNameAvailable(
     scope: 'user' | 'colony',
     ensName: ENSName,
-    networkClient: NetworkClient,
+    networkClient: ColonyNetworkClient,
   ): Promise<boolean> {
     const domain = ENS.getFullDomain(scope, ensName);
 
@@ -103,7 +103,7 @@ class ENS {
   /* Returns an Ethereum address, when given the human-readable name */
   async getAddress(
     domain: string,
-    networkClient: NetworkClient,
+    networkClient: ColonyNetworkClient,
   ): Promise<Address> {
     let normalizedDomain = domain;
     if (domain.startsWith(EXTERNAL_PREFIX)) {
@@ -121,7 +121,7 @@ class ENS {
 
   async getDomain(
     address: Address,
-    networkClient: NetworkClient,
+    networkClient: ColonyNetworkClient,
   ): Promise<ENSName> {
     const rawDomain = await this._getRawDomain(address, networkClient);
 

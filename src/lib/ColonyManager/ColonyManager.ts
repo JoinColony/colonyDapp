@@ -5,7 +5,7 @@ import {
   ClientType,
   ColonyClient,
   ContractClient,
-  NetworkClient,
+  ColonyNetworkClient,
   OneTxPaymentClient,
   OneTxPaymentFactoryClient,
   TokenClient,
@@ -22,13 +22,13 @@ export default class ColonyManager {
 
   clients: Map<Address, Promise<ColonyClient>>;
 
-  networkClient: NetworkClient;
+  networkClient: ColonyNetworkClient;
 
   provider: Provider;
 
   signer: Signer;
 
-  constructor(networkClient: NetworkClient) {
+  constructor(networkClient: ColonyNetworkClient) {
     this.clients = new Map();
     this.networkClient = networkClient;
     this.provider = networkClient.provider;
@@ -81,7 +81,7 @@ export default class ColonyManager {
     return this.metaColonyClient;
   }
 
-  async getClient(type: ClientType.NetworkClient): Promise<NetworkClient>;
+  async getClient(type: ClientType.NetworkClient): Promise<ColonyNetworkClient>;
 
   async getClient(
     type: ClientType.ColonyClient,
