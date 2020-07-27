@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import BN from 'bn.js';
-import { toWei } from 'ethjs-unit';
+import { BigNumber, parseUnits } from 'ethers/utils';
 import { defineMessages, useIntl } from 'react-intl';
 
 import Numeral, { Props as NumeralProps } from '~core/Numeral/Numeral';
@@ -37,7 +36,7 @@ interface Props extends NumeralProps {
   unit?: string;
 
   /** Value in ether to convert to USD */
-  value: number | string | BN;
+  value: number | string | BigNumber;
 }
 
 const displayName = 'EthUsd';
@@ -65,14 +64,14 @@ const EthUsd = ({
 
     const convertEthToUsd = async () => {
       let valueToConvert;
-      if (BN.isBN(value)) {
+      if (BigNumber.isBigNumber(value)) {
         valueToConvert = value;
       } else {
         const fixedNum =
           typeof value === 'number'
             ? value.toFixed(DEFAULT_TOKEN_DECIMALS)
             : value;
-        valueToConvert = toWei(fixedNum, unit);
+        valueToConvert = parseUnits(fixedNum, unit);
       }
       const newValue = await getEthToUsd(valueToConvert);
       if (!didCancel) {

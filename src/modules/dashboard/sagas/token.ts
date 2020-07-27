@@ -1,8 +1,8 @@
 import { call, fork, put, takeEvery } from 'redux-saga/effects';
+import { ClientType } from '@colony/colony-js';
 
 import { Action, ActionTypes } from '~redux/index';
 import { putError, takeFrom } from '~utils/saga/effects';
-import { ContractContexts } from '~types/index';
 
 import { createTransaction, getTxChannel } from '../../core/sagas';
 
@@ -14,9 +14,9 @@ function* tokenCreate({
 
   try {
     yield fork(createTransaction, meta.id, {
-      context: ContractContexts.NETWORK_CONTEXT,
-      methodName: 'createToken',
-      params: { name, symbol },
+      context: ClientType.NetworkClient,
+      methodName: 'deployToken',
+      params: [name, symbol],
     });
     // These are just temporary for now until we have the new onboarding workflow Normally these are done by the user
     yield put({

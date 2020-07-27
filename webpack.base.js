@@ -159,9 +159,12 @@ const config = {
       },
     ],
   },
+  node: {
+    net: 'empty',
+  },
   plugins: [
     new Dotenv({
-      systemvars: !!process.env.CI,
+      systemvars: !!process.env.CI || !!process.env.DEV,
     }),
     new HtmlWebpackPlugin({
       template: 'src/templates/index.html',

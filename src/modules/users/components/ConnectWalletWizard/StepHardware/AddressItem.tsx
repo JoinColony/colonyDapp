@@ -1,5 +1,5 @@
 import React from 'react';
-import BigNumber from 'bn.js';
+import { BigNumber } from 'ethers/utils';
 
 import { Address } from '~types/index';
 import Radio from '~core/Fields/Radio';

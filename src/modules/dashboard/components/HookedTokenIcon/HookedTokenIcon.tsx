@@ -1,8 +1,8 @@
 import React, { useState, useEffect, ComponentType } from 'react';
 import mapping from 'eth-contract-metadata';
+import { AddressZero } from 'ethers/constants';
 
 import Avatar from '~core/Avatar';
-import { ZERO_ADDRESS } from '~utils/web3/constants';
 import { useDataFetcher } from '~utils/hooks';
 import { AnyToken } from '~data/index';
 
@@ -74,7 +74,7 @@ const HookedTokenIcon = ({
           }
         }
       }
-      if (address === ZERO_ADDRESS) {
+      if (address === AddressZero) {
         const response = await import(
           /* webpackMode: "eager" */ `../../../../img/tokens/ether.svg`
         );

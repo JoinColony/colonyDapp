@@ -7,10 +7,9 @@ import { useDialog } from '~core/Dialog';
 import Heading from '~core/Heading';
 import InfoPopover from '~core/InfoPopover';
 import { TokensMoveDialog } from '~admin/Tokens';
-import { DomainsMapType } from '~types/index';
 import {
   useLoggedInUser,
-  FullColonyFragment,
+  Colony,
   useTokenBalancesForDomainsQuery,
 } from '~data/index';
 
@@ -34,20 +33,19 @@ const MSG = defineMessages({
 // SHOW button if user has COLONY_ROLE_FUNDING or ROOT in any domain
 
 interface Props {
-  colony: FullColonyFragment;
+  colony: Colony;
   currentDomainId: number;
-  domains: DomainsMapType;
 }
 
 const displayName = 'dashboard.ColonyHome.ColonyFunding';
 
-const ColonyFunding = ({ colony, currentDomainId, domains }: Props) => {
+const ColonyFunding = ({ colony, currentDomainId }: Props) => {
   const { walletAddress } = useLoggedInUser();
   const openDialog = useDialog(TokensMoveDialog);
 
   const canMoveTokens = useMemo(
-    () => canMoveTokensCheck(domains, walletAddress),
-    [walletAddress, domains],
+    () => canMoveTokensCheck(colony.roles, walletAddress),
+    [colony.roles, walletAddress],
   );
 
   const { colonyAddress, tokens: colonyTokens, nativeTokenAddress } = colony;

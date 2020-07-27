@@ -1,7 +1,7 @@
 import { Map as ImmutableMap, Record } from 'immutable';
+import { ClientType } from '@colony/colony-js';
 
 import { Transaction, TRANSACTION_STATUSES } from '~immutable/index';
-import { ContractContexts } from '~types/index';
 
 import reducer from '../transactions';
 import { CoreTransactions, TransactionsListMap } from '../../state/index';
@@ -37,10 +37,10 @@ describe(`core: reducers (transactions)`, () => {
   const from = 'my wallet address';
   const hash = 'my transaction hash';
   const options = { gasPrice: 4 };
-  const params = { param1: 123 };
+  const params = [123];
   const id = 'my transaction id';
   const existingTxId = 'my existing tx id';
-  const context = ContractContexts.NETWORK_CONTEXT;
+  const context = ClientType.NetworkClient;
   const methodName = 'createColony';
 
   const initialState = CoreTransactions({

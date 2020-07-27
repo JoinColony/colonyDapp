@@ -84,8 +84,18 @@ const WalletRequiredRoute = ({
              *
              * This is the case when accessing the /wallet or /inbox route,
              * then connecting your wallet
+             *
+             * But we have to prevent it for the /create-colony route, otherwise,
+             * in cases were we also create a username alongside the new colony,
+             * after the user tx is mined, the page will try to re-render as
+             * the logged in user state changes.
+             * The below check will prevent that from happening as it will not
+             * allow the route component to render again, keeping the wizard
+             * flow intact.
              */
-            return <RouteComponent {...props} />;
+            if (path !== CREATE_COLONY_ROUTE) {
+              return <RouteComponent {...props} />;
+            }
           }
           /**
            * Doesn't have a username

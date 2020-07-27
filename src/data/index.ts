@@ -6,6 +6,8 @@ import {
   ColonyProfileFragment,
   ColonyQuery,
   ColonyTasksQuery,
+  ColonyTransfersQuery,
+  DomainFieldsFragment,
   FullColonyFragment,
   PayoutsFragment,
   PersistentTaskPayoutsFragment,
@@ -28,11 +30,11 @@ import {
 import {
   loggedInUserResolvers,
   initialCache as loggedInUser,
-} from './loggedInUser';
-import { colonyResolvers } from './colony';
-import { userResolvers } from './user';
-import { tokenResolvers } from './token';
-import { taskResolvers } from './task';
+} from './resolvers/loggedInUser';
+import { colonyResolvers } from './resolvers/colony';
+import { userResolvers } from './resolvers/user';
+import { tokenResolvers } from './resolvers/token';
+import { taskResolvers } from './resolvers/task';
 
 type ResolverFactory = (context?: any) => Resolvers;
 
@@ -45,7 +47,7 @@ apolloCache.writeData({
 
 export { default as cache } from './cache';
 export { default as cacheUpdates } from './cacheUpdates';
-export { default as typeDefs } from './typeDefs';
+export { default as typeDefs } from './graphql/typeDefs';
 export const resolvers: ResolverFactory[] = [
   colonyResolvers,
   loggedInUserResolvers,
@@ -73,6 +75,11 @@ export type Notifications = UserNotificationsQuery['user']['notifications'];
 export type OneNotification = Notifications[number];
 
 export type AnyColonyProfile = FullColonyFragment | ColonyProfileFragment;
+export type Colony = FullColonyFragment;
+
+export type OneDomain = DomainFieldsFragment;
+
+export type ColonyTransaction = ColonyTransfersQuery['colony']['transfers'][number];
 
 export type OneSuggestion = ColonySuggestionsQuery['colony']['suggestions'][number];
 

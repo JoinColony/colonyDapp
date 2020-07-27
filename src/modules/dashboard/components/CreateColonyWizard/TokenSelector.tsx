@@ -1,12 +1,12 @@
 import React, { useCallback, useEffect, useState, ReactNode } from 'react';
 import { defineMessages } from 'react-intl';
 import { useApolloClient } from '@apollo/react-hooks';
-import { isAddress } from 'web3-utils';
 
-import { usePrevious } from '~utils/hooks';
 import { Input } from '~core/Fields';
 import Button from '~core/Button';
 import { log } from '~utils/debug';
+import { usePrevious } from '~utils/hooks';
+import { isAddress } from '~utils/web3';
 import {
   OneToken,
   TokenDocument,

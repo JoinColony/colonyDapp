@@ -1,19 +1,19 @@
-import { ROLES } from '~constants';
+import { ColonyRole } from '@colony/colony-js';
 
-export const userHasRole = (userRoles: ROLES[], role: ROLES) =>
+export const userHasRole = (userRoles: ColonyRole[], role: ColonyRole) =>
   userRoles.includes(role);
 
-export const canEnterRecoveryMode = (userRoles: ROLES[]) =>
-  userHasRole(userRoles, ROLES.RECOVERY);
+export const canEnterRecoveryMode = (userRoles: ColonyRole[]) =>
+  userHasRole(userRoles, ColonyRole.Recovery);
 
-export const canAdminister = (userRoles: ROLES[]) =>
-  userHasRole(userRoles, ROLES.ADMINISTRATION);
+export const canAdminister = (userRoles: ColonyRole[]) =>
+  userHasRole(userRoles, ColonyRole.Administration);
 
-export const canFund = (userRoles: ROLES[]) =>
-  userHasRole(userRoles, ROLES.FUNDING);
+export const canFund = (userRoles: ColonyRole[]) =>
+  userHasRole(userRoles, ColonyRole.Funding);
 
-export const hasRoot = (userRoles: ROLES[]) =>
-  userHasRole(userRoles, ROLES.ROOT);
+export const hasRoot = (userRoles: ColonyRole[]) =>
+  userHasRole(userRoles, ColonyRole.Root);
 
-export const canArchitect = (userRoles: ROLES[]) =>
-  userHasRole(userRoles, ROLES.ARCHITECTURE);
+export const canArchitect = (userRoles: ColonyRole[]) =>
+  userHasRole(userRoles, ColonyRole.Architecture);

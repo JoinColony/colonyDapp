@@ -1,9 +1,10 @@
-import { ROLES } from '~constants';
+import { ColonyRole } from '@colony/colony-js';
 
-export const availableRoles: ROLES[] = [
-  ROLES.ROOT,
-  ROLES.ADMINISTRATION,
-  ROLES.ARCHITECTURE,
-  ROLES.FUNDING,
-  ROLES.RECOVERY,
+export const availableRoles = [
+  ColonyRole.Root,
+  ColonyRole.Administration,
+  ColonyRole.Architecture,
+  ColonyRole.Funding,
+  ColonyRole.Recovery,
+  ColonyRole.Arbitration,
 ];

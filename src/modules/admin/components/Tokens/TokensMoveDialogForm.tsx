@@ -1,32 +1,30 @@
 import React, { useMemo, useEffect } from 'react';
 import { FormikProps } from 'formik';
 import { defineMessages, FormattedMessage } from 'react-intl';
-import BigNumber from 'bn.js';
+import { bigNumberify } from 'ethers/utils';
 import moveDecimal from 'move-decimal-point';
 import sortBy from 'lodash/sortBy';
+import { ColonyRole, ROOT_DOMAIN_ID } from '@colony/colony-js';
+import { AddressZero } from 'ethers/constants';
 
-import { ROOT_DOMAIN, ROLES } from '~constants';
-import { Address } from '~types/index';
-import { useDataFetcher, useTransformer } from '~utils/hooks';
+import { useTransformer } from '~utils/hooks';
 import Button from '~core/Button';
 import DialogSection from '~core/Dialog/DialogSection';
 import { Select, Input, FormStatus } from '~core/Fields';
 import Heading from '~core/Heading';
 import {
-  ColonyTokens,
   useLoggedInUser,
   useTokenBalancesForDomainsLazyQuery,
+  Colony,
 } from '~data/index';
 import EthUsd from '~core/EthUsd';
 import Numeral from '~core/Numeral';
-import { ZERO_ADDRESS } from '~utils/web3/constants';
 import {
   getBalanceFromToken,
   getTokenDecimalsWithFallback,
 } from '~utils/tokens';
 
-import { getUserRoles } from '../../../transformers';
-import { domainsAndRolesFetcher } from '../../../dashboard/fetchers';
+import { getUserRolesForDomain } from '../../../transformers';
 import { userHasRole } from '../../../users/checks';
 
 import styles from './TokensMoveDialogForm.css';
@@ -81,28 +79,27 @@ const MSG = defineMessages({
 
 interface Props {
   cancel: () => void;
-  colonyAddress: Address;
-  tokens: ColonyTokens;
+  colony: Colony;
 }
 
 const TokensMoveDialogForm = ({
   cancel,
-  colonyAddress,
+  colony,
+  colony: { colonyAddress, domains, tokens },
   handleSubmit,
   isSubmitting,
   isValid,
   setErrors,
   status,
-  tokens,
   values,
 }: Props & FormikProps<FormValues>) => {
   const { tokenAddress, amount } = values;
   const fromDomain = values.fromDomain
     ? parseInt(values.fromDomain, 10)
-    : ROOT_DOMAIN;
+    : ROOT_DOMAIN_ID;
   const toDomain = values.toDomain
     ? parseInt(values.toDomain, 10)
-    : ROOT_DOMAIN;
+    : ROOT_DOMAIN_ID;
 
   const selectedToken = useMemo(
     () => tokens.find((token) => token.address === values.tokenAddress),
@@ -118,31 +115,25 @@ const TokensMoveDialogForm = ({
     [tokens],
   );
 
-  const { data: domains } = useDataFetcher(
-    domainsAndRolesFetcher,
-    [colonyAddress],
-    [colonyAddress],
-  );
-
   const { walletAddress } = useLoggedInUser();
 
-  const fromDomainRoles = useTransformer(getUserRoles, [
-    domains,
-    fromDomain,
+  const fromDomainRoles = useTransformer(getUserRolesForDomain, [
+    colony,
     walletAddress,
+    fromDomain,
   ]);
 
-  const toDomainRoles = useTransformer(getUserRoles, [
-    domains,
-    toDomain,
+  const toDomainRoles = useTransformer(getUserRolesForDomain, [
+    colony,
     walletAddress,
+    toDomain,
   ]);
 
   const domainOptions = useMemo(
     () =>
       sortBy(
-        Object.values(domains || {}).map(({ name, id }) => ({
-          value: id.toString(),
+        domains.map(({ name, ethDomainId }) => ({
+          value: ethDomainId.toString(),
           label: name,
         })),
         ['value'],
@@ -188,13 +179,13 @@ const TokensMoveDialogForm = ({
     if (!selectedToken || !(amount && amount.length)) {
       errors.amount = undefined; // silent error
     } else {
-      const convertedAmount = new BigNumber(
+      const convertedAmount = bigNumberify(
         moveDecimal(
           amount,
           getTokenDecimalsWithFallback(selectedToken.decimals),
         ),
       );
-      if (convertedAmount.eqn(0)) {
+      if (!convertedAmount.eq(0)) {
         errors.amount = MSG.noAmount;
       } else if (
         fromDomainTokenBalance &&
@@ -204,11 +195,11 @@ const TokensMoveDialogForm = ({
       }
     }
 
-    if (fromDomain && !userHasRole(fromDomainRoles, ROLES.FUNDING)) {
+    if (fromDomain && !userHasRole(fromDomainRoles, ColonyRole.Funding)) {
       errors.fromDomain = MSG.noPermissionFrom;
     }
 
-    if (toDomain && !userHasRole(toDomainRoles, ROLES.FUNDING)) {
+    if (toDomain && !userHasRole(toDomainRoles, ColonyRole.Funding)) {
       errors.toDomain = MSG.noPermissionTo;
     }
 
@@ -314,7 +305,7 @@ const TokensMoveDialogForm = ({
               appearance={{ alignOptions: 'right', theme: 'default' }}
             />
           </div>
-          {values.tokenAddress === ZERO_ADDRESS && (
+          {values.tokenAddress === AddressZero && (
             <div className={styles.tokenAmountUsd}>
               <EthUsd
                 appearance={{ theme: 'grey', size: 'small' }}

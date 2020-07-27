@@ -4,7 +4,7 @@ import { FormattedMessage } from 'react-intl';
 import Card from '~core/Card';
 import Heading from '~core/Heading';
 import { TransactionType } from '~immutable/index';
-import { SimpleMessageValues } from '~types/index';
+import { arrayToObject } from '~utils/arrays';
 
 import {
   getGroupKey,
@@ -50,7 +50,7 @@ const TransactionCard = ({ idx, transactionGroup, onClick }: Props) => {
                     : ''
                 }.title`,
               }}
-              textValues={values.params as SimpleMessageValues}
+              textValues={arrayToObject(values.params)}
             />
             <FormattedMessage
               id={`transaction.${groupKey}${
@@ -58,7 +58,7 @@ const TransactionCard = ({ idx, transactionGroup, onClick }: Props) => {
                   ? `.${transactionGroup[0].methodContext}`
                   : ''
               }.description`}
-              values={values.params}
+              values={arrayToObject(values.params)}
             />
           </div>
           {/* For multisig, how do we pass it in here? */}

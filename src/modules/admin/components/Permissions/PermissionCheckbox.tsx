@@ -1,11 +1,10 @@
 import React, { useMemo } from 'react';
 import { defineMessages, FormattedMessage, useIntl } from 'react-intl';
-import camelcase from 'camelcase';
+import { ColonyRole } from '@colony/colony-js';
 
 import { Checkbox } from '~core/Fields';
 import Heading from '~core/Heading';
 import Popover from '~core/Popover';
-import { capitalize } from '~utils/strings';
 
 import styles from './PermissionCheckbox.css';
 
@@ -14,32 +13,31 @@ const MSG = defineMessages({
     id: 'admin.ColonyPermissionEditDialog.roleWithAsterisk',
     defaultMessage: '{role}{asterisk, select, true {*} false {} }',
   },
-  roleDescriptionRoot: {
+  roleDescription0: {
+    id: 'admin.ColonyPermissionEditDialog.roleDescriptionRecovery',
+    defaultMessage: 'Put the Colony into recovery mode.',
+  },
+  roleDescription1: {
     id: 'admin.ColonyPermissionEditDialog.roleDescriptionRoot',
     defaultMessage:
       'The highest permission, control all aspects of running a colony.',
   },
-  roleDescriptionAdministration: {
-    id: 'admin.ColonyPermissionEditDialog.roleDescriptionAdministration',
-    defaultMessage: 'Create and manage new tasks.',
+  roleDescription2: {
+    id: 'admin.ColonyPermissionEditDialog.roleDescriptionArbitration',
+    defaultMessage: 'Coming soon...',
   },
-  roleDescriptionArchitecture: {
+  roleDescription3: {
     id: 'admin.ColonyPermissionEditDialog.roleDescriptionArchitecture',
-    defaultMessage:
-      // eslint-disable-next-line max-len
-      'Set the administration, funding, and architecture roles in any subdomain.',
+    defaultMessage: `Set the administration, funding, and architecture roles in any subdomain.`,
   },
-  roleDescriptionFunding: {
+  // We don't have architecture_subdomain (which would be 4)
+  roleDescription5: {
     id: 'admin.ColonyPermissionEditDialog.roleDescriptionFunding',
     defaultMessage: 'Fund tasks and transfer funds between domains.',
   },
-  roleDescriptionRecovery: {
-    id: 'admin.ColonyPermissionEditDialog.roleDescriptionRecovery',
-    defaultMessage: 'Put the Colony into recovery mode.',
-  },
-  roleDescriptionArbitration: {
-    id: 'admin.ColonyPermissionEditDialog.roleDescriptionArbitration',
-    defaultMessage: 'Coming soon...',
+  roleDescription6: {
+    id: 'admin.ColonyPermissionEditDialog.roleDescriptionAdministration',
+    defaultMessage: 'Create and manage new tasks.',
   },
   tooltipNoPermissionsText: {
     id: 'admin.Permissions.PermissionCheckbox.tooltipNoPermissionsText',
@@ -50,16 +48,16 @@ const MSG = defineMessages({
 interface Props {
   asterisk: boolean;
   disabled: boolean;
-  role: string;
+  role: ColonyRole;
 }
 
 const displayName = 'admin.Permissions.PermissionCheckbox';
 
 const PermissionCheckbox = ({ asterisk, disabled, role }: Props) => {
-  const roleNameMessage = { id: `role.${role.toLowerCase()}` };
+  const roleNameMessage = { id: `role.${role}` };
   const roleDescriptionMessage = useMemo(
     () =>
-      MSG[`roleDescription${capitalize(camelcase(role))}`] || {
+      MSG[`roleDescription${role}`] || {
         id: '',
         defaultMessage: '',
       },

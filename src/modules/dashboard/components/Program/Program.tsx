@@ -1,15 +1,21 @@
 import React, { useState, useCallback, useEffect } from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 import { useLocation, useParams, Redirect } from 'react-router-dom';
+import { ROOT_DOMAIN_ID } from '@colony/colony-js';
 
 import { SpinnerLoader } from '~core/Preloaders';
-import { useLoggedInUser, ProgramStatus, useProgramQuery } from '~data/index';
-import { Address } from '~types/index';
+import {
+  useLoggedInUser,
+  useProgramQuery,
+  Colony,
+  ProgramStatus,
+} from '~data/index';
+import { useTransformer } from '~utils/hooks';
 
+import { getUserRolesForDomain } from '../../../transformers';
+import { canAdminister } from '../../../users/checks';
 import ProgramDashboard from '../ProgramDashboard';
 import ProgramEdit from '../ProgramEdit';
-import { canAdminister } from '../../../users/checks';
-import { useUserRolesInDomain } from '../../hooks/useUserRolesInDomain';
 
 const MSG = defineMessages({
   loading: {
@@ -23,13 +29,12 @@ const MSG = defineMessages({
 });
 
 interface Props {
-  colonyAddress: Address;
-  colonyName: string;
+  colony: Colony;
 }
 
 const displayName = 'dashboard.Program';
 
-const Program = ({ colonyAddress, colonyName }: Props) => {
+const Program = ({ colony, colony: { colonyName } }: Props) => {
   const location = useLocation();
   const { programId } = useParams<{ programId: string }>();
   const { walletAddress } = useLoggedInUser();
@@ -41,7 +46,12 @@ const Program = ({ colonyAddress, colonyName }: Props) => {
     // Force out of edit state after each route change
   }, [location]);
 
-  const userRolesInRoot = useUserRolesInDomain(walletAddress, colonyAddress);
+  const userRolesInRoot = useTransformer(getUserRolesForDomain, [
+    colony,
+    walletAddress,
+    ROOT_DOMAIN_ID,
+  ]);
+
   const canAdmin = canAdminister(userRolesInRoot);
 
   const { data, error, loading } = useProgramQuery({

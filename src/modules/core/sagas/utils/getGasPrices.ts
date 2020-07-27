@@ -1,13 +1,11 @@
-import { ColonyNetworkClient } from '@colony/colony-js-client';
-
-import BigNumber from 'bn.js';
-
+import { ColonyNetworkClient } from '@colony/colony-js';
+import { bigNumberify } from 'ethers/utils';
 import { call, put, select } from 'redux-saga/effects';
 
 import { GasPricesProps } from '~immutable/index';
-
-import { Context, getContext } from '~context/index';
+import { ContextModule, TEMP_getContext } from '~context/index';
 import { log } from '~utils/debug';
+
 import { gasPrices as gasPricesSelector } from '../../selectors';
 import { updateGasPrices } from '../../actionCreators';
 
@@ -28,15 +26,7 @@ interface EthGasStationAPIResponse {
 
 const ETH_GAS_STATION_ENDPOINT =
   'https://ethgasstation.info/json/ethgasAPI.json';
-const DEFAULT_GAS_PRICE = '1';
-
-const getNetworkGasPrice = async (
-  networkClient: ColonyNetworkClient,
-): Promise<string> => {
-  const price: BigNumber = await networkClient.adapter.provider.getGasPrice();
-  // Handling the weird ethers BN implementation. Remove when web3
-  return price.toString();
-};
+const DEFAULT_GAS_PRICE = bigNumberify(1);
 
 const fetchGasPrices = async (
   networkClient: ColonyNetworkClient,
@@ -44,7 +34,7 @@ const fetchGasPrices = async (
   let networkGasPrice = DEFAULT_GAS_PRICE;
 
   try {
-    networkGasPrice = await getNetworkGasPrice(networkClient);
+    networkGasPrice = await networkClient.provider.getGasPrice();
 
     const response = await fetch(ETH_GAS_STATION_ENDPOINT);
 
@@ -55,15 +45,15 @@ const fetchGasPrices = async (
     const data: EthGasStationAPIResponse = await response.json();
 
     // API prices are in 10Gwei, so they need to be normalised
-    const pointOneGwei = new BigNumber(10 ** 8);
+    const pointOneGwei = bigNumberify(10 ** 8);
 
     return {
       timestamp: Date.now(),
-      network: new BigNumber(networkGasPrice),
+      network: networkGasPrice,
 
-      suggested: new BigNumber(data.average).mul(pointOneGwei),
-      cheaper: new BigNumber(data.safeLow).mul(pointOneGwei),
-      faster: new BigNumber(data.fast).mul(pointOneGwei),
+      suggested: bigNumberify(data.average).mul(pointOneGwei),
+      cheaper: bigNumberify(data.safeLow).mul(pointOneGwei),
+      faster: bigNumberify(data.fast).mul(pointOneGwei),
 
       suggestedWait: data.avgWait * 60,
       cheaperWait: data.safeLowWait * 60,
@@ -74,7 +64,7 @@ const fetchGasPrices = async (
     // Default values
     return {
       timestamp: -Infinity, // Do not cache this
-      suggested: new BigNumber(networkGasPrice),
+      suggested: bigNumberify(networkGasPrice),
     };
   }
 };
@@ -86,7 +76,7 @@ export default function* getGasPrices() {
     return cachedPrices;
   }
 
-  const { networkClient } = yield getContext(Context.COLONY_MANAGER);
+  const { networkClient } = TEMP_getContext(ContextModule.ColonyManager);
 
   const gasPrices: GasPricesProps = yield call(fetchGasPrices, networkClient);
 

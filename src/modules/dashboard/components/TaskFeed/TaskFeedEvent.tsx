@@ -1,9 +1,10 @@
 import React, { useMemo } from 'react';
 import { defineMessages, FormattedMessage, useIntl } from 'react-intl';
-import BigNumber from 'bn.js';
 import moveDecimal from 'move-decimal-point';
+import { bigNumberify } from 'ethers/utils';
+import { ROOT_DOMAIN_ID } from '@colony/colony-js';
 
-import { ROOT_DOMAIN, DEFAULT_TOKEN_DECIMALS } from '~constants';
+import { DEFAULT_TOKEN_DECIMALS } from '~constants';
 import { Address } from '~types/index';
 import TimeRelative from '~core/TimeRelative';
 import Numeral from '~core/Numeral';
@@ -14,6 +15,7 @@ import {
   useUser,
   useTokenQuery,
   useColonyQuery,
+  useDomainQuery,
   AnyUser,
   EventType,
   TaskEventFragment,
@@ -34,11 +36,9 @@ import {
   SetTaskDomainEvent,
   SetTaskPendingEvent,
 } from '~data/index';
-import { useSelector } from '~utils/hooks';
 import { getTokenDecimalsWithFallback } from '~utils/tokens';
 
 import { getFriendlyName } from '../../../users/transformers';
-import { domainSelector } from '../../selectors';
 import taskSkillsTree from '../TaskSkills/taskSkillsTree';
 import { SpinnerLoader } from '~core/Preloaders';
 
@@ -178,11 +178,13 @@ const TaskFeedEventDomainSet = ({
   domainId,
 }: EventProps<SetTaskDomainEvent>) => {
   const { formatMessage } = useIntl();
-  const domain = useSelector(domainSelector, [colonyAddress, ethDomainId]);
+  const { data } = useDomainQuery({
+    variables: { colonyAddress, ethDomainId },
+  });
   const domainName =
-    ethDomainId === ROOT_DOMAIN
+    ethDomainId === ROOT_DOMAIN_ID
       ? formatMessage(MSG.rootDomain)
-      : domain && domain.name;
+      : data && data.domain && data.domain.name;
   return (
     <FormattedMessage
       {...MSG.domainSet}
@@ -301,11 +303,9 @@ const TaskFeedEventPayoutSet = ({
               <Numeral
                 integerSeparator=""
                 unit={getTokenDecimalsWithFallback(decimals)}
-                value={
-                  new BigNumber(
-                    moveDecimal(amount, getTokenDecimalsWithFallback(decimals)),
-                  )
-                }
+                value={bigNumberify(
+                  moveDecimal(amount, getTokenDecimalsWithFallback(decimals)),
+                )}
                 suffix={` ${symbol}`}
               />
             </span>

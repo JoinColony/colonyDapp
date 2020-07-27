@@ -1,4 +1,4 @@
-import BigNumber from 'bn.js';
+import { bigNumberify } from 'ethers/utils';
 
 import { TokenWithBalances } from '~data/index';
 import { DEFAULT_TOKEN_DECIMALS } from '~constants';
@@ -8,7 +8,7 @@ export const getBalanceFromToken = (
   tokenDomainId = 0,
 ) => {
   let result;
-  if (!token) return new BigNumber(0);
+  if (!token) return bigNumberify(0);
   if ('balances' in token) {
     const domainBalance = token.balances.find(
       ({ domainId }) => domainId === tokenDomainId,
@@ -19,7 +19,7 @@ export const getBalanceFromToken = (
   } else {
     result = 0;
   }
-  return new BigNumber(result);
+  return bigNumberify(result);
 };
 
 /*

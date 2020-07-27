@@ -2,32 +2,32 @@ import { eventChannel } from 'redux-saga';
 
 import { call, put, spawn, take, takeLatest, all } from 'redux-saga/effects';
 
-import softwareWallet from '@colony/purser-software';
-import metamaskWallet, { accountChangeHook } from '@colony/purser-metamask';
-import ledgerWallet from '@colony/purser-ledger';
-import trezorWallet from '@colony/purser-trezor';
-import { TrufflepigLoader } from '@colony/colony-js-contract-loader-http';
-import { getNetworkClient } from '@colony/colony-js-client';
+import {
+  create as createSoftwareWallet,
+  open as purserOpenSoftwareWallet,
+} from '@purser/software';
+import {
+  accountChangeHook,
+  open as purserOpenMetaMaskWallet,
+  MetaMaskInpageProvider,
+} from '@purser/metamask';
 
+import { WalletMethod } from '~immutable/index';
 import { Action, ActionTypes, AllActions } from '~redux/index';
-import { DEFAULT_NETWORK } from '~constants';
 import { Address } from '~types/index';
 import { createAddress } from '~utils/web3';
-import { create, putError } from '~utils/saga/effects';
+import { putError } from '~utils/saga/effects';
 
-import { WALLET_SPECIFICS, WALLET_CATEGORIES } from '~immutable/index';
+import { getProvider } from '../../core/sagas/utils';
 import { HARDWARE_WALLET_DEFAULT_ADDRESS_COUNT } from '../constants';
 
-// This should be typed better
-type WalletInstance = object;
-
-const hardwareWallets = {
-  ledger: ledgerWallet,
-  trezor: trezorWallet,
-  json: softwareWallet,
-  mnemonic: softwareWallet,
-  metamask: metamaskWallet,
-  trufflepig: softwareWallet,
+const walletOpenFunctions = {
+  // Disabled for now
+  // [WalletMethod.Ledger]: ledgerWallet,
+  // [WalletMethod.Trezor]: trezorWallet,
+  [WalletMethod.Mnemonic]: purserOpenSoftwareWallet,
+  [WalletMethod.MetaMask]: purserOpenMetaMaskWallet,
+  [WalletMethod.Ganache]: purserOpenSoftwareWallet,
 };
 
 function* fetchAddressBalance(address, provider) {
@@ -46,22 +46,11 @@ function* fetchAccounts(action: Action<ActionTypes.WALLET_FETCH_ACCOUNTS>) {
   const { walletType } = action.payload;
 
   try {
-    const { otherAddresses } = yield call(hardwareWallets[walletType].open, {
+    const { otherAddresses } = yield call(walletOpenFunctions[walletType], {
       addressCount: HARDWARE_WALLET_DEFAULT_ADDRESS_COUNT,
     });
 
-    const {
-      adapter: { provider },
-    } = yield call(
-      getNetworkClient,
-      DEFAULT_NETWORK,
-      {
-        type: WALLET_CATEGORIES.HARDWARE,
-        subtype: walletType,
-      },
-      process.env.INFURA_ID,
-      !!process.env.VERBOSE,
-    );
+    const provider = getProvider();
 
     const addressesWithBalance = yield all(
       otherAddresses.map((address) =>
@@ -80,20 +69,20 @@ function* fetchAccounts(action: Action<ActionTypes.WALLET_FETCH_ACCOUNTS>) {
 }
 
 function* openMnemonicWallet(action: Action<ActionTypes.WALLET_CREATE>) {
-  const { connectwalletmnemonic } = action.payload;
-  return yield call(softwareWallet.open, {
-    mnemonic: connectwalletmnemonic,
+  const { connnectWalletMnemonic } = action.payload;
+  return yield call(purserOpenSoftwareWallet, {
+    mnemonic: connnectWalletMnemonic,
   });
 }
 
 /**
  * Watch for changes in Metamask account, and log the user out when they happen.
  */
-function* metamaskWatch(walletAddress: Address) {
+function* metaMaskWatch(walletAddress: Address) {
   const channel = eventChannel((emit) => {
-    accountChangeHook(({ selectedAddress }: { selectedAddress: string }) =>
-      emit(createAddress(selectedAddress)),
-    );
+    accountChangeHook(({ selectedAddress }: MetaMaskInpageProvider) => {
+      if (selectedAddress) emit(createAddress(selectedAddress));
+    });
     return () => {
       // @todo Nicer unsubscribe once supported in purser-metamask
       // @ts-ignore
@@ -117,39 +106,37 @@ function* metamaskWatch(walletAddress: Address) {
 }
 
 function* openMetamaskWallet() {
-  const wallet = yield call(metamaskWallet.open);
-  yield spawn(metamaskWatch, createAddress(wallet.address));
+  const wallet = yield call(purserOpenMetaMaskWallet);
+  yield spawn(metaMaskWatch, createAddress(wallet.address));
   return wallet;
 }
 
-function* openHardwareWallet(action: Action<ActionTypes.WALLET_CREATE>) {
-  const { hardwareWalletChoice, method } = action.payload;
-  const wallet = yield call(hardwareWallets[method].open, {
-    /**
-     * @todo : is 100 addresses really what we want?
-     */
-    addressCount: 100,
-  });
-  const selectedAddressIndex = wallet.otherAddresses.findIndex(
-    (address) => address === hardwareWalletChoice,
-  );
-  wallet.setDefaultAddress(selectedAddressIndex);
-  return wallet;
-}
+// function* openHardwareWallet(action: Action<ActionTypes.WALLET_CREATE>) {
+//   const { hardwareWalletChoice, method } = action.payload;
+//   const wallet = yield call(walletOpenFunctions[method], {
+//     /**
+//      * @todo : is 100 addresses really what we want?
+//      */
+//     addressCount: 100,
+//   });
+//   const selectedAddressIndex = wallet.otherAddresses.findIndex(
+//     (address) => address === hardwareWalletChoice,
+//   );
+//   wallet.setDefaultAddress(selectedAddressIndex);
+//   return wallet;
+// }
 
-function* openTrufflepigWallet({
-  payload: { accountIndex },
+function* openGanacheWallet({
+  payload: { privateKey },
 }: Action<ActionTypes.WALLET_CREATE>) {
-  const loader = yield create(TrufflepigLoader);
-  const { privateKey } = yield call([loader, loader.getAccount], accountIndex);
-  return yield call(softwareWallet.open, {
+  return yield call(purserOpenSoftwareWallet, {
     privateKey,
   });
 }
 
 function* createWallet(action: Action<ActionTypes.WALLET_CREATE>) {
   const { mnemonic } = action.payload;
-  return yield call(softwareWallet.open, {
+  return yield call(purserOpenSoftwareWallet, {
     mnemonic,
   });
 }
@@ -165,30 +152,27 @@ function* createEtherealWallet() {
    * That being said, we should still plan to change this when we'll have some
    * time for proper maintenance
    */
-  const wallet = yield call(softwareWallet.create);
-  return {
-    ...wallet,
-    type: 'ethereal',
-  };
+  const wallet = yield call(createSoftwareWallet);
+  return wallet;
 }
 
 export function* getWallet(action: Action<ActionTypes.WALLET_CREATE>) {
   const { method } = action.payload;
   switch (method) {
-    case 'create':
+    case WalletMethod.Create:
       return yield call(createWallet, action);
-    case WALLET_SPECIFICS.METAMASK:
+    case WalletMethod.MetaMask:
       return yield call(openMetamaskWallet);
-    case WALLET_SPECIFICS.TREZOR:
-      return yield call(openHardwareWallet, action);
-    case WALLET_SPECIFICS.LEDGER:
-      return yield call(openHardwareWallet, action);
-    case WALLET_SPECIFICS.MNEMONIC:
+    // case WalletMethod.Trezor:
+    //   return yield call(openHardwareWallet, action);
+    // case WalletMethod.Ledger:
+    //   return yield call(openHardwareWallet, action);
+    case WalletMethod.Mnemonic:
       return yield call(openMnemonicWallet, action);
-    case WALLET_SPECIFICS.TRUFFLEPIG:
-      return yield call(openTrufflepigWallet, action);
-    case WALLET_SPECIFICS.ETHEREAL:
+    case WalletMethod.Ethereal:
       return yield call(createEtherealWallet);
+    case WalletMethod.Ganache:
+      return yield call(openGanacheWallet, action);
     default:
       throw new Error(
         `Method ${method} is not recognized for getting a wallet`,

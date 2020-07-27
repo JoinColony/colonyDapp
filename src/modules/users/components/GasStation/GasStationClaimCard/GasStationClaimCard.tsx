@@ -1,6 +1,6 @@
 import React from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
-import BigNumber from 'bn.js';
+import { bigNumberify } from 'ethers/utils';
 
 import Card from '~core/Card';
 import Heading from '~core/Heading';
@@ -40,7 +40,7 @@ const displayName = 'users.GasStation.GasStationClaimCard';
  */
 const GasStationClaimCard = ({ numberOfSteps = 3 }: Props) => {
   const { balance } = useLoggedInUser();
-  const bigNumberBalance = new BigNumber(balance);
+  const bigNumberBalance = bigNumberify(balance);
   return (
     <Card
       className={styles.main}
@@ -54,7 +54,7 @@ const GasStationClaimCard = ({ numberOfSteps = 3 }: Props) => {
         appearance={{ margin: 'none', size: 'normal', theme: 'dark' }}
         text={MSG.headingText}
         textValues={{
-          numberOfSteps: bigNumberBalance.gt(new BigNumber(0))
+          numberOfSteps: bigNumberBalance.gt(bigNumberify(0))
             ? 2
             : numberOfSteps,
         }}

@@ -2,35 +2,32 @@ import { Record } from 'immutable';
 
 import { Address, DefaultValues, RecordToJS } from '~types/index';
 
-export enum WALLET_CATEGORIES {
-  SOFTWARE = 'software',
-  HARDWARE = 'hardware',
+export enum WalletMethod {
+  Create = 'Create',
+  Ethereal = 'Ethereal',
+  Ganache = 'Ganache',
+  Ledger = 'Ledger',
   /**
    * @NOTE Metamask and Ethereal are the only two wallet categories
    * that are a specific type as well
    */
-  METAMASK = 'metamask',
-  ETHEREAL = 'ethereal', // ie: temprorary wallet for non-connected users
+  MetaMask = 'MetaMask',
+  Mnemonic = 'Mnemonic',
+  Trezor = 'Trezor',
 }
 
-export enum WALLET_SPECIFICS {
-  MNEMONIC = 'mnemonic',
-  TREZOR = 'trezor',
-  LEDGER = 'ledger',
-  METAMASK = 'metamask',
-  ETHEREAL = 'ethereal', // ie: temprorary wallet for non-connected users
-
-  /**
-   * @NOTE Dev Only
-   */
-  TRUFFLEPIG = 'trufflepig',
+export enum WalletKind {
+  Software = 'Software',
+  Hardware = 'Hardware',
+  MetaMask = 'MetaMask',
+  Ethereal = 'Ethereal',
 }
 
 export interface WalletProps {
   availableAddresses?: Address[];
   currentAddress?: Address;
   isLoading?: boolean;
-  walletType?: WALLET_CATEGORIES;
+  walletType?: WalletMethod;
 }
 
 export type WalletType = Readonly<WalletProps>;
@@ -39,7 +36,7 @@ const defaultValues: DefaultValues<WalletProps> = {
   availableAddresses: [],
   currentAddress: undefined,
   isLoading: false,
-  walletType: WALLET_CATEGORIES.SOFTWARE,
+  walletType: WalletMethod.Create,
 };
 
 export class WalletRecord extends Record<WalletProps>(defaultValues)

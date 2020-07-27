@@ -2,13 +2,13 @@ import { FormikProps } from 'formik';
 import React from 'react';
 import * as yup from 'yup';
 
-import { MessageType, WALLET_CATEGORIES } from '~immutable/index';
+import { MessageType, WalletKind } from '~immutable/index';
 import Button from '~core/Button';
 import { ActionForm } from '~core/Fields';
 import WalletInteraction from '../WalletInteraction';
 import { ActionTypes } from '~redux/index';
 import { useSelector } from '~utils/hooks';
-import { walletTypeSelector } from '../../../selectors';
+import { walletKindSelector } from '../../../selectors';
 import styles from './MessageCardControls.css';
 
 interface Props {
@@ -26,7 +26,7 @@ const validationSchema = yup.object().shape({
 });
 
 const MessageCardControls = ({ message: { id } }: Props) => {
-  const walletType = useSelector(walletTypeSelector);
+  const walletKind = useSelector(walletKindSelector);
   return (
     <div className={styles.main}>
       <ActionForm
@@ -44,9 +44,9 @@ const MessageCardControls = ({ message: { id } }: Props) => {
           />
         )}
       </ActionForm>
-      {walletType !== WALLET_CATEGORIES.SOFTWARE && (
+      {walletKind !== WalletKind.Software && (
         <div className={styles.alert}>
-          <WalletInteraction walletType={walletType} />
+          <WalletInteraction walletKind={walletKind} />
         </div>
       )}
     </div>

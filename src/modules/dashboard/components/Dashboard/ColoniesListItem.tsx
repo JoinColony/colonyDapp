@@ -3,7 +3,7 @@ import React from 'react';
 import Link from '~core/Link';
 import { SpinnerLoader } from '~core/Preloaders';
 import HookedColonyAvatar from '~dashboard/HookedColonyAvatar';
-import { useColonyQuery } from '~data/index';
+import { useColonyProfileQuery } from '~data/index';
 
 import styles from './ColoniesListItem.css';
 
@@ -13,7 +13,7 @@ interface Props {
 }
 
 const ColoniesListItem = ({ colonyAddress }: Props) => {
-  const { loading, data } = useColonyQuery({
+  const { loading, data } = useColonyProfileQuery({
     variables: { address: colonyAddress },
   });
 

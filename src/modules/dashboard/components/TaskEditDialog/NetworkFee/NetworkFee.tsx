@@ -1,6 +1,6 @@
 import React, { useMemo } from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
-import BigNumber from 'bn.js';
+import { BigNumber, bigNumberify } from 'ethers/utils';
 import moveDecimal from 'move-decimal-point';
 
 import Icon from '~core/Icon';
@@ -45,15 +45,15 @@ const NetworkFee = ({ amount, decimals, symbol }: Props) => {
   const networkFee = useSelector(networkFeeSelector);
   const networkFeeInverse = useSelector(networkFeeInverseSelector);
   const metaColonyFee = useMemo(() => {
-    const amountBn = new BigNumber(moveDecimal(amount, decimals));
+    const amountBn = bigNumberify(moveDecimal(amount, decimals));
     if (amountBn.isZero() || networkFeeInverse === 1) {
       return amountBn;
     }
     return (
-      new BigNumber(amountBn)
-        .div(new BigNumber(networkFeeInverse))
+      bigNumberify(amountBn)
+        .div(bigNumberify(networkFeeInverse))
         // Add 1 wei to network fee, because the contracts do too
-        .add(new BigNumber(1))
+        .add(bigNumberify(1))
     );
   }, [amount, decimals, networkFeeInverse]);
   return (

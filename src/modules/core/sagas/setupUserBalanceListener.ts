@@ -1,9 +1,8 @@
-import ApolloClient from 'apollo-client';
 import { eventChannel } from '@redux-saga/core';
 import { take } from '@redux-saga/core/effects';
 import { formatEther } from 'ethers/utils';
 
-import { Context, getContext } from '~context/index';
+import { TEMP_getContext, ContextModule } from '~context/index';
 import { Address } from '~types/index';
 import { log } from '~utils/debug';
 import {
@@ -15,16 +14,14 @@ import {
 export function* setupUserBalanceListener(walletAddress: Address) {
   let channel;
   try {
-    const { networkClient } = yield getContext(Context.COLONY_MANAGER);
-    const apolloClient: ApolloClient<object> = yield getContext(
-      Context.APOLLO_CLIENT,
-    );
+    const { provider } = TEMP_getContext(ContextModule.ColonyManager);
+    const apolloClient = TEMP_getContext(ContextModule.ApolloClient);
 
     channel = eventChannel((emit) => {
       const listener = (balance) => emit(formatEther(balance));
-      networkClient.adapter.provider.on(walletAddress, listener);
+      provider.on(walletAddress, listener);
       return () => {
-        networkClient.adapter.provider.removeListener(walletAddress, listener);
+        provider.removeListener(walletAddress, listener);
       };
     });
 

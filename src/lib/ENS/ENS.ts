@@ -1,13 +1,13 @@
 /* eslint-disable no-underscore-dangle */
 
 import namehash from 'eth-ens-namehash-ms';
-import { isAddress } from 'web3-utils';
 import punycode from 'punycode';
+import { AddressZero } from 'ethers/constants';
 
-import ColonyNetworkClient from '@colony/colony-js-client';
+import { ColonyNetworkClient } from '@colony/colony-js';
 
 import { Address, ENSName } from '~types/index';
-import { createAddress } from '~utils/web3';
+import { createAddress, isAddress } from '~utils/web3';
 
 const COLONY_NETWORK_ENS_NAME =
   process.env.COLONY_NETWORK_ENS_NAME || 'joincolony.eth';
@@ -54,11 +54,11 @@ class ENS {
       // The default value is here to satisfy flow.
       return createAddress(this._domainCache.get(normalizedDomain) || '');
     }
-    const { ensAddress } = await networkClient.getAddressForENSHash.call({
-      nameHash: namehash.hash(normalizedDomain),
-    });
+    const ensAddress = await networkClient.addr(
+      namehash.hash(normalizedDomain),
+    );
 
-    if (ensAddress) {
+    if (ensAddress !== AddressZero) {
       const address = createAddress(ensAddress);
       this._updateCaches(normalizedDomain, address);
       return address;
@@ -76,11 +76,10 @@ class ENS {
       return this._addressCache.get(address) || '';
     }
 
-    const {
-      domain: ensName,
-    } = await networkClient.lookupRegisteredENSDomain.call({
-      ensAddress: address,
-    });
+    // eslint-disable-next-line max-len
+    const ensName = await networkClient.lookupRegisteredENSDomainWithGoerliPatch(
+      address,
+    );
 
     if (ensName) {
       this._updateCaches(ensName, address);

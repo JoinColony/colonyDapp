@@ -3,10 +3,10 @@ schema:
   - 'http://localhost:3000/graphql':
       headers:
         'authorization': 'codegen'
-documents: 'src/data/*.graphql'
+documents: 'src/data/graphql/*.graphql'
 generates:
   src/data/generated.ts:
-    schema: 'src/data/typeDefs.ts'
+    schema: 'src/data/graphql/typeDefs.ts'
     config:
       skipTypename: true
       withComponent: false

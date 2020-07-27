@@ -1,10 +1,10 @@
 import React, { HTMLAttributes } from 'react';
-import BN from 'bn.js';
-import { fromWei } from 'ethjs-unit';
+import { BigNumber, formatUnits } from 'ethers/utils';
 import { UnifiedNumberFormatOptions } from '@formatjs/intl-unified-numberformat';
 import moveDecimal from 'move-decimal-point';
 import { useIntl } from 'react-intl';
-import { Unit } from 'web3-utils';
+
+import type { Unit } from '~utils/web3';
 
 interface Props extends HTMLAttributes<HTMLSpanElement> {
   /** When dealing with ethereum units */
@@ -14,7 +14,7 @@ interface Props extends HTMLAttributes<HTMLSpanElement> {
   /** Format options for `intl-unified-numberformat` */
   formatOptions: UnifiedNumberFormatOptions;
   /** Actual value */
-  value: number | string | BN;
+  value: number | string | BigNumber;
 }
 
 const displayName = 'AbbreviatedNumeral';
@@ -43,11 +43,11 @@ const AbbreviatedNumeral = ({
   const { locale } = useIntl();
   const convertedNum =
     typeof ethUnit === 'string'
-      ? fromWei(value.toString(10), ethUnit)
+      ? formatUnits(value.toString(10), ethUnit)
       : moveDecimal(value.toString(10), -(ethUnit || 0));
 
   const formattedNumber = new Intl.NumberFormat(locale, formatOptions).format(
-    convertedNum,
+    parseFloat(convertedNum),
   );
 
   return <span {...rest}>{formattedNumber}</span>;

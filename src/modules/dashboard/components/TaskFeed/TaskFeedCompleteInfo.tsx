@@ -1,7 +1,7 @@
 import React from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
-import BigNumber from 'bn.js';
 import moveDecimal from 'move-decimal-point';
+import { bigNumberify } from 'ethers/utils';
 
 import Numeral from '~core/Numeral';
 import { SpinnerLoader } from '~core/Preloaders';
@@ -88,9 +88,9 @@ const TaskFeedCompleteInfo = ({
   const { decimals = DEFAULT_TOKEN_DECIMALS, symbol = '', address = '' } =
     (tokenData && tokenData.token) || {};
   const { nativeTokenAddress = '' } = (colonyData && colonyData.colony) || {};
-  const metaColonyFee = new BigNumber(
+  const metaColonyFee = bigNumberify(
     moveDecimal(fullPayoutAmount, decimals),
-  ).sub(new BigNumber(amount));
+  ).sub(bigNumberify(amount));
 
   return (
     <div>

@@ -26,6 +26,8 @@ SERVER="colonyServer"
 
 ROOT_PATH=$(pwd)
 
+YARN="${ROOT_PATH}/node_modules/.bin/yarn"
+
 log() {
   # Colors
   GREEN=`tput setaf 2`
@@ -34,6 +36,8 @@ log() {
   BOLD=`tput bold`
   echo "${GREEN}${BOLD}$1${NC}"
 }
+
+cp .env.example .env
 
 # Update / re-pull submodules
 log "Initialize submodule libs"
@@ -44,8 +48,8 @@ then
     # Build network
     log "Building '${NETWORK}' submodule"
     cd "${ROOT_PATH}/${LIB_PATH}/${NETWORK}"
-    yarn
-    yarn provision:token:contracts
+    $YARN
+    DISABLE_DOCKER=true $YARN provision:token:contracts
     cd ${ROOT_PATH}
 fi
 
@@ -54,6 +58,7 @@ then
     # Build pinning service
     log "Building '${SERVER}' submodule"
     cd "${ROOT_PATH}/${LIB_PATH}/${SERVER}"
+    cp .env.example .env
     mkdir -p mongo-data
     npm install
     cd ${ROOT_PATH}

@@ -1,19 +1,17 @@
-import ApolloClient from 'apollo-client';
-import {
-  all,
-  call,
-  fork,
-  getContext,
-  put,
-  setContext,
-} from 'redux-saga/effects';
+import { all, call, fork, put } from 'redux-saga/effects';
 import { formatEther } from 'ethers/utils';
 
+import { WalletMethod } from '~immutable/index';
 import { createAddress } from '~utils/web3';
 import { Action, ActionTypes, AllActions } from '~redux/index';
-import { Context, ContextType, TEMP_setNewContext } from '~context/index';
+import {
+  TEMP_getContext,
+  TEMP_setContext,
+  ContextModule,
+} from '~context/index';
 import { putError } from '~utils/saga/effects';
 import { log } from '~utils/debug';
+import { setLastWallet } from '~utils/autoLogin';
 import {
   refetchUserNotifications,
   SetLoggedInUserDocument,
@@ -23,21 +21,19 @@ import {
   LoggedInUserQueryVariables,
   LoggedInUserDocument,
 } from '~data/index';
-import { WALLET_SPECIFICS } from '~immutable/index';
 
 import setupResolvers from '~context/setupResolvers';
 import AppLoadingState from '~context/appLoadingState';
-import IPFSNode from '../../../lib/ipfs';
 import { authenticate, clearToken } from '../../../api';
+
+import ENS from '../../../lib/ENS';
 import setupAdminSagas from '../../admin/sagas';
 import setupDashboardSagas from '../../dashboard/sagas';
 import { getWallet, setupUsersSagas } from '../../users/sagas/index';
-import setupTransactionsSagas from './transactions';
 import setupNetworkSagas from './network';
-import { getGasPrices, getColonyManager, getWalletCategory } from './utils';
+import { getGasPrices, getColonyManager } from './utils';
 import setupOnBeforeUnload from './setupOnBeforeUnload';
 import { setupUserBalanceListener } from './setupUserBalanceListener';
-import { setLastWallet } from '~utils/autoLogin';
 
 function* setupContextDependentSagas() {
   const appLoadingState: typeof AppLoadingState = AppLoadingState;
@@ -45,7 +41,6 @@ function* setupContextDependentSagas() {
     call(setupAdminSagas),
     call(setupDashboardSagas),
     call(setupUsersSagas),
-    call(setupTransactionsSagas),
     call(setupNetworkSagas),
     /**
      * We've loaded all the context sagas, so we can proceed with redering
@@ -68,9 +63,7 @@ export default function* setupUserContext(
     payload: { method },
   } = action;
   try {
-    const apolloClient: ApolloClient<object> = yield getContext(
-      Context.APOLLO_CLIENT,
-    );
+    const apolloClient = TEMP_getContext(ContextModule.ApolloClient);
     /*
      * Get the "old" wallet address, and if it's ethereal, remove it's authetication
      * token from local host as it won't be needed anymore
@@ -96,32 +89,27 @@ export default function* setupUserContext(
      */
     const wallet = yield call(getWallet, action);
     const walletAddress = createAddress(wallet.address);
-    TEMP_setNewContext('wallet', wallet);
+    TEMP_setContext(ContextModule.Wallet, wallet);
 
     yield authenticate(wallet);
 
     yield put<AllActions>({
       type: ActionTypes.WALLET_CREATE_SUCCESS,
       payload: {
-        walletType: getWalletCategory(method),
+        walletType: method,
       },
     });
 
-    if (method !== 'create') {
+    if (method !== WalletMethod.Create) {
       yield call(setLastWallet, method, walletAddress);
     }
 
-    /*
-     * Set up the DDB instance and colony manager context.
-     */
     const colonyManager = yield call(getColonyManager);
-    yield setContext({
-      [Context.COLONY_MANAGER]: colonyManager,
-    });
+    TEMP_setContext(ContextModule.ColonyManager, colonyManager);
 
     yield call(getGasPrices);
 
-    const ens = yield getContext(Context.ENS_INSTANCE);
+    const ens = TEMP_getContext(ContextModule.ENS);
 
     /*
      * This needs to happen first because USER_CONTEXT_SETUP_SUCCESS causes a redirect
@@ -140,24 +128,23 @@ export default function* setupUserContext(
         walletAddress,
         colonyManager.networkClient,
       );
-      username = ens.constructor.stripDomainParts('user', domain);
+      username = ENS.stripDomainParts('user', domain);
+
+      yield refetchUserNotifications(walletAddress);
     } catch (caughtError) {
       log.verbose(`Could not find username for ${walletAddress}`);
     }
 
-    const {
-      adapter: { provider },
-    } = colonyManager.networkClient;
-    const balance = yield provider.getBalance(walletAddress);
+    const balance = yield colonyManager.provider.getBalance(walletAddress);
 
     // @TODO refactor setupUserContext for graphql
     // @BODY eventually we want to move everything to resolvers, so all of this has to happen outside of sagas. There is no need to have a separate state or anything, just set it up in an aync function (instead of WALLET_CREATE), then call this function
-    const ipfsNode: IPFSNode = yield getContext(Context.IPFS_NODE);
-    const userContext: ContextType = {
+    const ipfs = TEMP_getContext(ContextModule.IPFS);
+    const userContext = {
       apolloClient,
       colonyManager,
       ens,
-      ipfsNode,
+      ipfs,
       wallet,
     };
     yield setupResolvers(apolloClient, userContext);
@@ -172,12 +159,10 @@ export default function* setupUserContext(
           balance: formatEther(balance),
           username,
           walletAddress,
-          ethereal: method === WALLET_SPECIFICS.ETHEREAL,
+          ethereal: method === WalletMethod.Ethereal,
         },
       },
     });
-
-    yield refetchUserNotifications(walletAddress);
 
     setupOnBeforeUnload();
 

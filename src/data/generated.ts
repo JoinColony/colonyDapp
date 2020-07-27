@@ -196,12 +196,15 @@ export type Colony = {
   nativeToken: Token;
   nativeTokenAddress: Scalars['String'];
   programs: Array<Program>;
+  roles: Array<UserRoles>;
   subscribedUsers: Array<User>;
   suggestions: Array<Suggestion>;
   taskIds: Array<Scalars['String']>;
   tasks: Array<Task>;
   tokenAddresses: Array<Scalars['String']>;
   tokens: Array<Token>;
+  transfers: Array<Transfer>;
+  unclaimedTransfers: Array<Transfer>;
   version: Scalars['Int'];
   website?: Maybe<Scalars['String']>;
 };
@@ -1243,6 +1246,7 @@ export type User = {
   taskIds: Array<Scalars['String']>;
   tasks: Array<Task>;
   tokenAddresses: Array<Scalars['String']>;
+  tokenTransfers: Array<Transfer>;
   tokens: Array<Token>;
 };
 
@@ -1356,6 +1360,28 @@ export type TaskFinalizedPayment = {
   transactionHash: Scalars['String'];
 };
 
+export type DomainRoles = {
+  domainId: Scalars['Int'];
+  roles: Array<Scalars['Int']>;
+};
+
+export type UserRoles = {
+  address: Scalars['String'];
+  domains: Array<DomainRoles>;
+};
+
+export type Transfer = {
+  amount: Scalars['String'];
+  colonyAddress: Scalars['String'];
+  date: Scalars['Int'];
+  from?: Maybe<Scalars['String']>;
+  hash: Scalars['String'];
+  incoming: Scalars['Boolean'];
+  taskId?: Maybe<Scalars['Int']>;
+  to?: Maybe<Scalars['String']>;
+  token: Scalars['String'];
+};
+
 export type PayoutsFragment = { payouts: Array<(
     Pick<TaskPayout, 'amount' | 'tokenAddress'>
     & { token: Pick<Token, 'id' | 'address' | 'decimals' | 'name' | 'symbol'> }
@@ -1385,8 +1411,14 @@ export type TokensFragment = (
 
 export type ColonyProfileFragment = Pick<Colony, 'id' | 'colonyAddress' | 'colonyName' | 'avatarHash' | 'description' | 'displayName' | 'guideline' | 'website'>;
 
+export type DomainFieldsFragment = Pick<Domain, 'id' | 'ethDomainId' | 'name' | 'ethParentDomainId'>;
+
 export type FullColonyFragment = (
   Pick<Colony, 'isNativeTokenExternal' | 'version' | 'canMintNativeToken' | 'canUnlockNativeToken' | 'isInRecoveryMode' | 'isNativeTokenLocked'>
+  & { domains: Array<DomainFieldsFragment>, roles: Array<(
+    Pick<UserRoles, 'address'>
+    & { domains: Array<Pick<DomainRoles, 'domainId' | 'roles'>> }
+  )> }
   & ColonyProfileFragment
   & TokensFragment
 );
@@ -1929,7 +1961,7 @@ export type TaskFeedEventsQueryVariables = {
 
 
 export type TaskFeedEventsQuery = { task: (
-    Pick<Task, 'id' | 'colonyAddress' | 'ethPotId' | 'finalizedAt' | 'txHash'>
+    Pick<Task, 'id' | 'colonyAddress' | 'ethDomainId' | 'ethPotId' | 'finalizedAt' | 'txHash'>
     & { events: Array<TaskEventFragment>, finalizedPayment?: Maybe<Pick<TaskFinalizedPayment, 'amount' | 'tokenAddress' | 'workerAddress' | 'transactionHash'>> }
     & PayoutsFragment
   ) };
@@ -2059,6 +2091,29 @@ export type ColonyNativeTokenQueryVariables = {
 
 
 export type ColonyNativeTokenQuery = { colony: Pick<Colony, 'id' | 'nativeTokenAddress'> };
+
+export type ColonyRolesQueryVariables = {
+  address: Scalars['String'];
+};
+
+
+export type ColonyRolesQuery = { colony: (
+    Pick<Colony, 'id' | 'colonyAddress'>
+    & { roles: Array<(
+      Pick<UserRoles, 'address'>
+      & { domains: Array<Pick<DomainRoles, 'domainId' | 'roles'>> }
+    )> }
+  ) };
+
+export type ColonyTransfersQueryVariables = {
+  address: Scalars['String'];
+};
+
+
+export type ColonyTransfersQuery = { colony: (
+    Pick<Colony, 'id' | 'colonyAddress'>
+    & { transfers: Array<Pick<Transfer, 'amount' | 'hash' | 'colonyAddress' | 'date' | 'from' | 'incoming' | 'to' | 'token'>>, unclaimedTransfers: Array<Pick<Transfer, 'amount' | 'hash' | 'colonyAddress' | 'date' | 'from' | 'incoming' | 'to' | 'token'>> }
+  ) };
 
 export type TokenBalancesForDomainsQueryVariables = {
   colonyAddress: Scalars['String'];
@@ -2333,11 +2388,29 @@ export const TokensFragmentDoc = gql`
   }
 }
     `;
+export const DomainFieldsFragmentDoc = gql`
+    fragment DomainFields on Domain {
+  id
+  ethDomainId
+  name
+  ethParentDomainId
+}
+    `;
 export const FullColonyFragmentDoc = gql`
     fragment FullColony on Colony {
   ...ColonyProfile
   ...Tokens
   isNativeTokenExternal
+  domains {
+    ...DomainFields
+  }
+  roles @client {
+    address
+    domains {
+      domainId
+      roles
+    }
+  }
   version @client
   canMintNativeToken @client
   canUnlockNativeToken @client
@@ -2345,7 +2418,8 @@ export const FullColonyFragmentDoc = gql`
   isNativeTokenLocked @client
 }
     ${ColonyProfileFragmentDoc}
-${TokensFragmentDoc}`;
+${TokensFragmentDoc}
+${DomainFieldsFragmentDoc}`;
 export const SuggestionFieldsFragmentDoc = gql`
     fragment SuggestionFields on Suggestion {
   id
@@ -4628,6 +4702,7 @@ export const TaskFeedEventsDocument = gql`
     events {
       ...TaskEvent
     }
+    ethDomainId
     ethPotId
     finalizedAt
     txHash
@@ -5192,6 +5267,103 @@ export function useColonyNativeTokenLazyQuery(baseOptions?: ApolloReactHooks.Laz
 export type ColonyNativeTokenQueryHookResult = ReturnType<typeof useColonyNativeTokenQuery>;
 export type ColonyNativeTokenLazyQueryHookResult = ReturnType<typeof useColonyNativeTokenLazyQuery>;
 export type ColonyNativeTokenQueryResult = ApolloReactCommon.QueryResult<ColonyNativeTokenQuery, ColonyNativeTokenQueryVariables>;
+export const ColonyRolesDocument = gql`
+    query ColonyRoles($address: String!) {
+  colony(address: $address) {
+    id
+    colonyAddress
+    roles @client {
+      address
+      domains {
+        domainId
+        roles
+      }
+    }
+  }
+}
+    `;
+
+/**
+ * __useColonyRolesQuery__
+ *
+ * To run a query within a React component, call `useColonyRolesQuery` and pass it any options that fit your needs.
+ * When your component renders, `useColonyRolesQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useColonyRolesQuery({
+ *   variables: {
+ *      address: // value for 'address'
+ *   },
+ * });
+ */
+export function useColonyRolesQuery(baseOptions?: ApolloReactHooks.QueryHookOptions<ColonyRolesQuery, ColonyRolesQueryVariables>) {
+        return ApolloReactHooks.useQuery<ColonyRolesQuery, ColonyRolesQueryVariables>(ColonyRolesDocument, baseOptions);
+      }
+export function useColonyRolesLazyQuery(baseOptions?: ApolloReactHooks.LazyQueryHookOptions<ColonyRolesQuery, ColonyRolesQueryVariables>) {
+          return ApolloReactHooks.useLazyQuery<ColonyRolesQuery, ColonyRolesQueryVariables>(ColonyRolesDocument, baseOptions);
+        }
+export type ColonyRolesQueryHookResult = ReturnType<typeof useColonyRolesQuery>;
+export type ColonyRolesLazyQueryHookResult = ReturnType<typeof useColonyRolesLazyQuery>;
+export type ColonyRolesQueryResult = ApolloReactCommon.QueryResult<ColonyRolesQuery, ColonyRolesQueryVariables>;
+export const ColonyTransfersDocument = gql`
+    query ColonyTransfers($address: String!) {
+  colony(address: $address) {
+    id
+    colonyAddress
+    transfers @client {
+      amount
+      hash
+      colonyAddress
+      date
+      from
+      hash
+      incoming
+      to
+      token
+    }
+    unclaimedTransfers @client {
+      amount
+      hash
+      colonyAddress
+      date
+      from
+      hash
+      incoming
+      to
+      token
+    }
+  }
+}
+    `;
+
+/**
+ * __useColonyTransfersQuery__
+ *
+ * To run a query within a React component, call `useColonyTransfersQuery` and pass it any options that fit your needs.
+ * When your component renders, `useColonyTransfersQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useColonyTransfersQuery({
+ *   variables: {
+ *      address: // value for 'address'
+ *   },
+ * });
+ */
+export function useColonyTransfersQuery(baseOptions?: ApolloReactHooks.QueryHookOptions<ColonyTransfersQuery, ColonyTransfersQueryVariables>) {
+        return ApolloReactHooks.useQuery<ColonyTransfersQuery, ColonyTransfersQueryVariables>(ColonyTransfersDocument, baseOptions);
+      }
+export function useColonyTransfersLazyQuery(baseOptions?: ApolloReactHooks.LazyQueryHookOptions<ColonyTransfersQuery, ColonyTransfersQueryVariables>) {
+          return ApolloReactHooks.useLazyQuery<ColonyTransfersQuery, ColonyTransfersQueryVariables>(ColonyTransfersDocument, baseOptions);
+        }
+export type ColonyTransfersQueryHookResult = ReturnType<typeof useColonyTransfersQuery>;
+export type ColonyTransfersLazyQueryHookResult = ReturnType<typeof useColonyTransfersLazyQuery>;
+export type ColonyTransfersQueryResult = ApolloReactCommon.QueryResult<ColonyTransfersQuery, ColonyTransfersQueryVariables>;
 export const TokenBalancesForDomainsDocument = gql`
     query TokenBalancesForDomains($colonyAddress: String!, $tokenAddresses: [String!]!, $domainIds: [Int!]) {
   tokens(addresses: $tokenAddresses) @client {

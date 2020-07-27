@@ -1,14 +1,14 @@
 import React from 'react';
 import { defineMessages, FormattedMessage, FormattedNumber } from 'react-intl';
 import cx from 'classnames';
-import BigNumber from 'bn.js';
+import { bigNumberify } from 'ethers/utils';
+import { AddressZero } from 'ethers/constants';
 import moveDecimal from 'move-decimal-point';
 import InfoPopover from '~core/InfoPopover';
 import { getTokenDecimalsWithFallback } from '~utils/tokens';
 
 import { Payouts } from '~data/index';
 import { Address } from '~types/index';
-import { ZERO_ADDRESS } from '~utils/web3/constants';
 
 import { Tooltip } from '../Popover';
 import Numeral from '../Numeral';
@@ -47,13 +47,13 @@ const PayoutsList = ({
       { token: { address: firstToken } },
       { token: { address: secondToken } },
     ) => {
-      if (firstToken === nativeTokenAddress && secondToken === ZERO_ADDRESS) {
+      if (firstToken === nativeTokenAddress && secondToken === AddressZero) {
         return -1;
       }
-      if (secondToken === nativeTokenAddress && secondToken === ZERO_ADDRESS) {
+      if (secondToken === nativeTokenAddress && secondToken === AddressZero) {
         return 1;
       }
-      if (firstToken === nativeTokenAddress || secondToken === ZERO_ADDRESS) {
+      if (firstToken === nativeTokenAddress || secondToken === AddressZero) {
         return -1;
       }
       return 1;
@@ -79,14 +79,12 @@ const PayoutsList = ({
                   })}
                   suffix={` ${token.symbol} `}
                   unit={getTokenDecimalsWithFallback(token.decimals)}
-                  value={
-                    new BigNumber(
-                      moveDecimal(
-                        amount,
-                        getTokenDecimalsWithFallback(token.decimals),
-                      ),
-                    )
-                  }
+                  value={bigNumberify(
+                    moveDecimal(
+                      amount,
+                      getTokenDecimalsWithFallback(token.decimals),
+                    ),
+                  )}
                 />
               </div>
             </InfoPopover>
@@ -103,14 +101,12 @@ const PayoutsList = ({
                     [styles.native]: token.address === nativeTokenAddress,
                   })}
                   key={token.address}
-                  value={
-                    new BigNumber(
-                      moveDecimal(
-                        amount,
-                        getTokenDecimalsWithFallback(token.decimals),
-                      ),
-                    )
-                  }
+                  value={bigNumberify(
+                    moveDecimal(
+                      amount,
+                      getTokenDecimalsWithFallback(token.decimals),
+                    ),
+                  )}
                   unit={getTokenDecimalsWithFallback(token.decimals)}
                   suffix={` ${token.symbol} `}
                 />

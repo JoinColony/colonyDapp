@@ -2,7 +2,7 @@ import React from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 
 import { WizardProps } from '~core/Wizard';
-import { WALLET_SPECIFICS } from '~immutable/index';
+import { WalletMethod } from '~immutable/index';
 import { isDev } from '~utils/debug';
 import Heading from '~core/Heading';
 import { Form } from '~core/Fields';
@@ -42,9 +42,9 @@ const MSG = defineMessages({
     id: 'users.ConnectWalletWizard.StepStart.ledgerTitle',
     defaultMessage: 'Ledger Hardware Wallet',
   },
-  trufflepigTitle: {
-    id: 'users.ConnectWalletWizard.StepStart.trufflepigTitle',
-    defaultMessage: 'TrufflePig',
+  ganacheTitle: {
+    id: 'users.ConnectWalletWizard.StepStart.ganacheTitle',
+    defaultMessage: 'Ganache',
   },
   ledgerSubtitle: {
     id: 'users.ConnectWalletWizard.StepStart.ledgerSubtitle',
@@ -62,9 +62,9 @@ const MSG = defineMessages({
     id: 'users.ConnectWalletWizard.StepStart.mnemonicSubtitle',
     defaultMessage: 'Access with your mnemonic',
   },
-  trufflepigSubtitle: {
-    id: 'users.ConnectWalletWizard.StepStart.trufflepigSubtitle',
-    defaultMessage: 'Use wallet from TrufflePig (dev mode only)',
+  ganacheSubtitle: {
+    id: 'users.ConnectWalletWizard.StepStart.ganacheSubtitle',
+    defaultMessage: 'Use wallet from Ganache (dev mode only)',
   },
   agreeToUseDapp: {
     id: 'users.ConnectWalletWizard.StepStart.agreeToUseDapp',
@@ -81,20 +81,20 @@ const MSG = defineMessages({
 });
 
 type FormValues = {
-  method: WALLET_SPECIFICS;
+  method: WalletMethod;
 };
 
 const displayName = 'users.ConnectWalletWizard.StepStart';
 
 const options = [
   {
-    value: WALLET_SPECIFICS.METAMASK,
+    value: WalletMethod.MetaMask,
     title: { id: 'wallet.metamask' },
     subtitle: MSG.metaMaskSubtitle,
     icon: 'metamask',
   },
   {
-    value: WALLET_SPECIFICS.MNEMONIC,
+    value: WalletMethod.Mnemonic,
     title: MSG.mnemonicTitle,
     subtitle: MSG.mnemonicSubtitle,
     icon: 'wallet',
@@ -117,11 +117,12 @@ const options = [
   // },
 ];
 
-if (isDev) {
+// process.env.DEV is set by the QA server in case we want to have a debug build. We don't have access to ganache then
+if (isDev && !process.env.DEV) {
   options.push({
-    value: WALLET_SPECIFICS.TRUFFLEPIG,
-    title: MSG.trufflepigTitle,
-    subtitle: MSG.trufflepigSubtitle,
+    value: WalletMethod.Ganache,
+    title: MSG.ganacheTitle,
+    subtitle: MSG.ganacheSubtitle,
     icon: 'wallet',
   });
 }

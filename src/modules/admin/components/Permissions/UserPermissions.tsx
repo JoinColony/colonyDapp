@@ -1,15 +1,12 @@
 import React from 'react';
 import { FormattedMessage } from 'react-intl';
-
-import { ROLES } from '~constants';
-
-import { ROLE_MESSAGES } from '../../constants';
+import { ColonyRole } from '@colony/colony-js';
 
 import styles from './UserPermissions.css';
 
 interface Props {
-  roles: ROLES[];
-  directRoles: ROLES[];
+  roles: ColonyRole[];
+  directRoles: ColonyRole[];
 }
 
 const displayName = 'admin.Permissions.UserPermissions';
@@ -18,12 +15,12 @@ const UserPermissions = ({ roles, directRoles }: Props) => {
   const sortedRoles = roles
     .filter(
       (role) =>
-        // Don't display ARCHITECTURE_SUBDOMAIN in listed roles
-        role !== ROLES.ARCHITECTURE_SUBDOMAIN,
+        // Don't display ArchitectureSubdomain role in listed roles
+        role !== ColonyRole.ArchitectureSubdomain_DEPRECATED,
     )
     .sort((a, b) => {
-      if (a === ROLES.ROOT || b === ROLES.ROOT) {
-        return a === ROLES.ROOT ? 1 : -1;
+      if (a === ColonyRole.Root || b === ColonyRole.Root) {
+        return a === ColonyRole.Root ? 1 : -1;
       }
       return 0;
     });
@@ -32,7 +29,7 @@ const UserPermissions = ({ roles, directRoles }: Props) => {
     <div className={styles.main}>
       {sortedRoles.map((role) => (
         <span className={styles.permission} key={role}>
-          <FormattedMessage id={ROLE_MESSAGES[role]} />
+          <FormattedMessage id={`role.${role}`} />
           {!directRoles.includes(role) ? '*' : null}
         </span>
       ))}

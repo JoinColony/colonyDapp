@@ -28,7 +28,7 @@ const Assignee = {
 ```js
 const renderAvatar = () => null;
 
-const BN = require('bn.js');
+const { bigNumberify } = require('ethers/utils');
 const moveDecimal = require('move-decimal-point');
 
 const assignee = {
@@ -46,7 +46,7 @@ const nativeTokenAddress = '123';
 const payouts = [
   {
     tokenAddress: nativeTokenAddress,
-    amount: new BN(moveDecimal('9200', 18)),
+    amount: bigNumberify(moveDecimal('9200', 18)),
     token: {
       id: nativeTokenAddress,
       address: nativeTokenAddress,
@@ -57,7 +57,7 @@ const payouts = [
   },
   {
     tokenAddress: '0x0',
-    amount: new BN(moveDecimal('7500', 18)),
+    amount: bigNumberify(moveDecimal('7500', 18)),
     token: {
       id: '0x0',
       address: '0x0',
@@ -68,7 +68,7 @@ const payouts = [
   },
   {
     tokenAddress: '234',
-    amount: new BN(moveDecimal('46000', 18)),
+    amount: bigNumberify(moveDecimal('46000', 18)),
     token: {
       id: '234',
       address: '234',
@@ -79,7 +79,7 @@ const payouts = [
   },
   {
     tokenAddress: '345',
-    amount: new BN(moveDecimal('210000', 18)),
+    amount: bigNumberify(moveDecimal('210000', 18)),
     token: {
       id: '345',
       address: '345',

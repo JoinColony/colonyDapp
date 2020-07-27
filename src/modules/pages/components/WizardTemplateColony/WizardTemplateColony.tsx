@@ -1,6 +1,6 @@
 import React, { ReactNode, useCallback } from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
-import { toWei } from 'ethjs-unit';
+import { parseEther } from 'ethers/utils';
 
 import Numeral from '~core/Numeral';
 import QRCode from '~core/QRCode';
@@ -32,7 +32,7 @@ const WizardTemplateColony = ({
 }: Props) => {
   const { balance, walletAddress } = useLoggedInUser();
   const customHandler = useCallback(() => previousStep(), [previousStep]);
-  const ethBalance = toWei(balance, 'ether');
+  const ethBalance = parseEther(balance);
   return (
     <main className={styles.layoutMain}>
       <header className={styles.header}>

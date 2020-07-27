@@ -1,13 +1,12 @@
 import { FormikProps } from 'formik';
 import React, { useState, useEffect, useCallback } from 'react';
 import { useDispatch } from 'redux-react-hook';
-import BigNumber from 'bn.js';
+import { BigNumber, bigNumberify, parseEther } from 'ethers/utils';
 import { defineMessages, FormattedMessage } from 'react-intl';
 import nanoid from 'nanoid';
 import * as yup from 'yup';
-import { toWei } from 'ethjs-unit';
 
-import { TransactionType, WALLET_CATEGORIES } from '~immutable/index';
+import { TransactionType, WalletKind } from '~immutable/index';
 import { RadioOption } from '~core/Fields/RadioGroup';
 import { getMainClasses } from '~utils/css';
 import { withId } from '~utils/actions';
@@ -28,7 +27,7 @@ import {
   transactionEstimateGas,
   transactionUpdateGas,
 } from '../../../../core/actionCreators';
-import { walletTypeSelector } from '../../../selectors';
+import { walletKindSelector } from '../../../selectors';
 import WalletInteraction from '../WalletInteraction';
 
 import styles from './GasStationPrice.css';
@@ -109,7 +108,7 @@ const GasStationPrice = ({ transaction: { id, gasLimit, error } }: Props) => {
 
   const gasPrices = useSelector(gasPricesSelector);
   const { balance } = useLoggedInUser();
-  const walletType = useSelector(walletTypeSelector);
+  const walletKind = useSelector(walletKindSelector);
 
   const transform = useCallback(withId(id), [id]);
   const toggleSpeedMenu = useCallback(() => {
@@ -125,7 +124,7 @@ const GasStationPrice = ({ transaction: { id, gasLimit, error } }: Props) => {
     (currentFeeInWei: BigNumber) => {
       // Check if the user can afford the transaction fee
       if (currentFeeInWei) {
-        const balanceInWei = toWei(balance, 'ether');
+        const balanceInWei = parseEther(balance);
         const enoughEth = currentFeeInWei.lte(balanceInWei);
         if (!enoughEth && !insufficientFunds) {
           setInsufficientFunds(true);
@@ -162,7 +161,7 @@ const GasStationPrice = ({ transaction: { id, gasLimit, error } }: Props) => {
           const transactionFee =
             currentGasPrice &&
             gasLimit &&
-            currentGasPrice.mul(new BigNumber(gasLimit));
+            currentGasPrice.mul(bigNumberify(gasLimit));
           isBalanceLessThanTxFee(transactionFee);
           const waitTime = gasPrices[`${transactionSpeed}Wait`];
           return (
@@ -260,8 +259,8 @@ const GasStationPrice = ({ transaction: { id, gasLimit, error } }: Props) => {
       <div>
         <>
           {isNetworkCongested && <Alert text={MSG.networkCongestedWarning} />}
-          {walletType !== WALLET_CATEGORIES.SOFTWARE && (
-            <WalletInteraction walletType={walletType} />
+          {walletKind !== WalletKind.Software && (
+            <WalletInteraction walletKind={walletKind} />
           )}
           {insufficientFunds && (
             <Alert

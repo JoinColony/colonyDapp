@@ -1,9 +1,7 @@
 import { useEffect } from 'react';
-import ApolloClient from 'apollo-client';
 import { graphql, DataValue } from '@apollo/react-hoc';
-import { getContext } from 'redux-saga/effects';
 
-import { Context } from '~context/index';
+import { ContextModule, TEMP_getContext } from '~context/index';
 import { Address } from '~types/index';
 
 import {
@@ -57,9 +55,7 @@ export const useLoggedInUser = () => {
 
 // Meant to be used as a saga in a proper context
 export function* getLoggedInUser() {
-  const apolloClient: ApolloClient<object> = yield getContext(
-    Context.APOLLO_CLIENT,
-  );
+  const apolloClient = TEMP_getContext(ContextModule.ApolloClient);
   const result = yield apolloClient.query({ query: LoggedInUserDocument });
   const {
     data: { loggedInUser },
@@ -88,9 +84,7 @@ export const withLoggedInUser = graphql(LoggedInUserDocument, {
 
 // Re-fetch user notifications and write to cache
 export function* refetchUserNotifications(walletAddress: string) {
-  const apolloClient: ApolloClient<object> = yield getContext(
-    Context.APOLLO_CLIENT,
-  );
+  const apolloClient = TEMP_getContext(ContextModule.ApolloClient);
   yield apolloClient.query<
     UserNotificationsQuery,
     UserNotificationsQueryVariables

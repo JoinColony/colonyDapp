@@ -4,7 +4,7 @@ import Heading from '~core/Heading';
 import Link from '~core/Link';
 import { SpinnerLoader } from '~core/Preloaders';
 import HookedColonyAvatar from '~dashboard/HookedColonyAvatar';
-import { useColonyQuery } from '~data/index';
+import { useColonyProfileQuery } from '~data/index';
 
 import styles from './ColonyGridItem.css';
 
@@ -15,7 +15,7 @@ interface Props {
 const ColonyAvatar = HookedColonyAvatar({ fetchColony: false });
 
 const ColonyGridItem = ({ colonyAddress }: Props) => {
-  const { data, loading } = useColonyQuery({
+  const { data, loading } = useColonyProfileQuery({
     variables: { address: colonyAddress },
   });
 

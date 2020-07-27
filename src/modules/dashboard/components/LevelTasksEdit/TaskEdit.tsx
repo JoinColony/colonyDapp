@@ -1,8 +1,8 @@
 import React, { Dispatch, SetStateAction, useCallback, useMemo } from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 import * as yup from 'yup';
+import { ROOT_DOMAIN_ID } from '@colony/colony-js';
 
-import { ROOT_DOMAIN } from '~constants';
 import Button from '~core/Button';
 import { useDialog, ConfirmDialog } from '~core/Dialog';
 import { AmountTokens, Form, Input, Select, Textarea } from '~core/Fields';
@@ -13,15 +13,14 @@ import {
   cacheUpdates,
   OneLevel,
   OnePersistentTask,
-  useColonyTokensQuery,
+  useColonyQuery,
   useEditPersistentTaskMutation,
   useRemoveLevelTaskMutation,
   useLoggedInUser,
 } from '~data/index';
-import { useDataFetcher } from '~utils/hooks';
 
-import { domainsAndRolesFetcher } from '../../fetchers';
 import { canFund } from '../../../users/checks';
+import { getRolesForUserAndDomain } from '../../../transformers';
 
 import styles from './TaskEdit.css';
 
@@ -106,34 +105,36 @@ const TaskEdit = ({
   const openDialog = useDialog(ConfirmDialog);
   const { walletAddress } = useLoggedInUser();
 
-  const { data: colonyTokensData } = useColonyTokensQuery({
+  const { data: colonyData } = useColonyQuery({
     variables: { address: colonyAddress },
   });
 
-  const { data: domains, isFetching: isFetchingDomains } = useDataFetcher(
-    domainsAndRolesFetcher,
-    [colonyAddress],
-    [colonyAddress],
-  );
-
   const domainOptions = useMemo<SelectOption[]>(
     () =>
-      domains
-        ? Object.keys(domains).map((key) => {
-            const { id, name, roles } = domains[key];
-            const { roles: rootRoles } = domains[ROOT_DOMAIN];
-            const userRolesInDomain = roles[walletAddress] || [];
-            const userRolesInRoot = rootRoles[walletAddress] || [];
-            return {
-              disabled: !(
-                canFund(userRolesInRoot) || canFund(userRolesInDomain)
-              ),
-              label: name,
-              value: id.toString(),
-            };
-          })
+      colonyData && colonyData.colony
+        ? colonyData.colony.domains.map(
+            ({ ethDomainId: domainId, id, name }) => {
+              const userRolesInDomain = getRolesForUserAndDomain(
+                colonyData.colony.roles,
+                walletAddress,
+                domainId,
+              );
+              const userRolesInRoot = getRolesForUserAndDomain(
+                colonyData.colony.roles,
+                walletAddress,
+                ROOT_DOMAIN_ID,
+              );
+              return {
+                disabled: !(
+                  canFund(userRolesInRoot) || canFund(userRolesInDomain)
+                ),
+                label: name,
+                value: id.toString(),
+              };
+            },
+          )
         : [],
-    [domains, walletAddress],
+    [colonyData, walletAddress],
   );
 
   const skillOptions = useMemo<SelectOption[]>(
@@ -197,7 +198,7 @@ const TaskEdit = ({
     [editPersistentTask, persistentTaskId, setIsEditing],
   );
 
-  if (!colonyTokensData || isFetchingDomains) {
+  if (!colonyData) {
     return (
       <div className={styles.section}>
         <div className={styles.centered}>
@@ -209,7 +210,7 @@ const TaskEdit = ({
 
   const {
     colony: { nativeTokenAddress, tokens },
-  } = colonyTokensData;
+  } = colonyData;
   return (
     <Form
       initialValues={
@@ -220,7 +221,7 @@ const TaskEdit = ({
           domainId:
             typeof ethDomainId === 'number'
               ? ethDomainId.toString()
-              : ROOT_DOMAIN.toString(),
+              : ROOT_DOMAIN_ID.toString(),
           skillId:
             typeof ethSkillId === 'number' ? ethSkillId.toString() : ethSkillId,
           tokenAddress: tokenAddress || nativeTokenAddress,

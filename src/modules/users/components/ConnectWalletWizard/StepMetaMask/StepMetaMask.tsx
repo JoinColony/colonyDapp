@@ -7,8 +7,7 @@ import React, {
   useState,
 } from 'react';
 import { defineMessages } from 'react-intl';
-import { open } from '@colony/purser-metamask';
-import { staticMethods as metamaskMessages } from '@colony/purser-metamask/messages';
+import { messages as metaMaskMessages, open } from '@purser/metamask';
 
 import { WizardProps } from '~core/Wizard';
 import { mergePayload } from '~utils/actions';
@@ -18,7 +17,7 @@ import Icon from '~core/Icon';
 import { ActionForm } from '~core/Fields';
 import WalletInteraction from '~users/GasStation/WalletInteraction';
 import { ActionTypes } from '~redux/index';
-import { WALLET_CATEGORIES } from '~immutable/index';
+import { WalletKind } from '~immutable/index';
 import styles from './StepMetaMask.css';
 
 const MSG = defineMessages({
@@ -90,7 +89,7 @@ const MetaMask = ({
       didNotAuthorize,
       cancelMessageSign,
       metamaskNotAvailable,
-    } = metamaskMessages;
+    } = metaMaskMessages;
     let mmError;
     let wallet;
     try {
@@ -194,7 +193,7 @@ const MetaMask = ({
           </div>
           {isValid && (
             <div className={styles.interactionPrompt}>
-              <WalletInteraction walletType={WALLET_CATEGORIES.METAMASK} />
+              <WalletInteraction walletKind={WalletKind.MetaMask} />
             </div>
           )}
           <div className={styles.actions}>

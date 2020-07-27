@@ -4,7 +4,7 @@ import { FormattedMessage } from 'react-intl';
 import Heading from '~core/Heading';
 import Card from '~core/Card';
 import { TransactionType } from '~immutable/index';
-import { SimpleMessageValues } from '~types/index';
+import { arrayToObject } from '~utils/arrays';
 
 import {
   getGroupKey,
@@ -41,7 +41,7 @@ const GroupedTransaction = ({
             <Heading
               appearance={{ theme: 'dark', size: 'normal', margin: 'none' }}
               text={{ id: `transaction.${groupKey}.title` }}
-              textValues={values.params as SimpleMessageValues}
+              textValues={arrayToObject(values.params)}
             />
             <FormattedMessage
               id={
@@ -49,7 +49,7 @@ const GroupedTransaction = ({
                   ? `transaction.debug.description`
                   : `transaction.${groupKey}.description`
               }
-              values={values.params}
+              values={arrayToObject(values.params)}
             />
           </div>
           {/* For multisig, we have to pass in _something_ */}

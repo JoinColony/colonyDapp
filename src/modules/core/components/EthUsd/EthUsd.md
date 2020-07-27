@@ -2,8 +2,8 @@
 ### Using BN instance
 
 ```jsx
-const { toWei } = require('ethjs-unit');
-const ethBalance = toWei('1.555555555555555555', 'ether');
+const { parseEther } = require('ethers/utils');
+const ethBalance = parseEther('1.555555555555555555');
 <EthUsd value={ethBalance} decimals={15} />
 ```
 

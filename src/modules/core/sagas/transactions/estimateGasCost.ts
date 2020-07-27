@@ -1,48 +1,47 @@
 import { call, put } from 'redux-saga/effects';
-import BigNumber from 'bn.js';
+import { bigNumberify } from 'ethers/utils';
 
 import { ActionTypes, Action } from '~redux/index';
 import { selectAsJS } from '~utils/saga/effects';
+import { ContextModule, TEMP_getContext } from '~context/index';
+import { TransactionRecordProps } from '~immutable/index';
 
 import { oneTransaction } from '../../selectors';
 import {
   transactionUpdateGas,
   transactionEstimateError,
 } from '../../actionCreators';
-import { getTransactionMethod, getGasPrices } from '../utils';
+import { getGasPrices } from '../utils';
 
 /*
  * @area: including a bit of buffer on the gas sent can be a good thing.
  * Your tx might be applied against a different state from when you
  * estimateGas'd it, which might cause it to still work, but use a bit more gas
  */
-const SAFE_GAS_LIMIT_MULTIPLIER = 1.1;
+// Plus 10%
+const SAFE_GAS_LIMIT_MULTIPLIER = bigNumberify(10);
 
 export default function* estimateGasCost({
   meta: { id },
 }: Action<ActionTypes.TRANSACTION_ESTIMATE_GAS>) {
   try {
     // Get the given transaction
-    const transaction = yield selectAsJS(oneTransaction, id);
+    const {
+      context,
+      methodName,
+      identifier,
+      params,
+    }: TransactionRecordProps = yield selectAsJS(oneTransaction, id);
+    const colonyManager = TEMP_getContext(ContextModule.ColonyManager);
 
-    const method = yield call(getTransactionMethod, transaction);
+    const client = yield colonyManager.getClient(context, identifier);
 
     // Estimate the gas limit with the method.
-    const estimatedGas = yield call(
-      [method, method.estimate],
-      transaction.params,
-    );
+    const estimatedGas = yield client.estimate[methodName](...params);
 
-    /*
-     * @NOTE
-     * 1. We're converting estimatedGas to our version of BN, since that's using a different library (BigNumber vs bn.js)
-     * 2. We're using `muln` so that we multiply using the float number
-     * 3. Not that this operation rounds down, as BigNumber instances can only be integers
-     */
-    const suggestedGasLimit = new BigNumber(estimatedGas.toString()).muln(
-      // The suggested gas limit (briefly above the estimated gas cost)
-      SAFE_GAS_LIMIT_MULTIPLIER,
-    );
+    const suggestedGasLimit = estimatedGas
+      .div(SAFE_GAS_LIMIT_MULTIPLIER)
+      .add(estimatedGas);
 
     const { network, suggested } = yield call(getGasPrices);
 
@@ -53,6 +52,7 @@ export default function* estimateGasCost({
       }),
     );
   } catch (error) {
+    console.error(error);
     return yield put(transactionEstimateError(id, error));
   }
   return null;

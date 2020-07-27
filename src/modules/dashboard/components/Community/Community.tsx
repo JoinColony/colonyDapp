@@ -6,19 +6,18 @@ import Button from '~core/Button';
 import MembersList from '~core/MembersList';
 import { SpinnerLoader } from '~core/Preloaders';
 import {
-  AnyUser,
   cacheUpdates,
   useColonySubscribedUsersQuery,
   useLoggedInUser,
   useSubscribeToColonyMutation,
   useUserColonyAddressesQuery,
+  AnyUser,
+  Colony,
 } from '~data/index';
-import { Address } from '~types/index';
 import { sortObjectsBy } from '~utils/arrays';
-import { useDataFetcher, useTransformer } from '~utils/hooks';
+import { useTransformer } from '~utils/hooks';
 
 import { getCommunityRoles } from '../../../transformers';
-import { domainsAndRolesFetcher } from '../../fetchers';
 
 import styles from './Community.css';
 
@@ -45,7 +44,7 @@ const MSG = defineMessages({
 });
 
 interface Props {
-  colonyAddress: Address;
+  colony: Colony;
 }
 
 enum Roles {
@@ -60,7 +59,7 @@ type CommunityUser = AnyUser & {
 
 const displayName = 'dashboard.Community';
 
-const Community = ({ colonyAddress }: Props) => {
+const Community = ({ colony }: Props) => {
   const [justSubscribed, setJustSubscribed] = useState<boolean>(false);
   const subscribedMessageTimer = useRef<any>(null);
   const { walletAddress } = useLoggedInUser();
@@ -75,23 +74,21 @@ const Community = ({ colonyAddress }: Props) => {
     loading: loadingColonySubscribedUsers,
   } = useColonySubscribedUsersQuery({
     variables: {
-      colonyAddress,
+      colonyAddress: colony.colonyAddress,
     },
   });
   const [subscribeToColonyMutation] = useSubscribeToColonyMutation();
   const subscribeToColony = useCallback(() => {
-    if (colonyAddress) {
-      subscribeToColonyMutation({
-        variables: { input: { colonyAddress } },
-        update: cacheUpdates.subscribeToColony(colonyAddress),
-      });
-      setJustSubscribed(true);
-      subscribedMessageTimer.current = setTimeout(
-        () => setJustSubscribed(false),
-        3000,
-      );
-    }
-  }, [subscribeToColonyMutation, colonyAddress, setJustSubscribed]);
+    subscribeToColonyMutation({
+      variables: { input: { colonyAddress: colony.colonyAddress } },
+      update: cacheUpdates.subscribeToColony(colony.colonyAddress),
+    });
+    setJustSubscribed(true);
+    subscribedMessageTimer.current = setTimeout(
+      () => setJustSubscribed(false),
+      3000,
+    );
+  }, [subscribeToColonyMutation, colony, setJustSubscribed]);
 
   /*
    * We need to wrap the call in a second function, since only the returned
@@ -102,18 +99,11 @@ const Community = ({ colonyAddress }: Props) => {
     subscribedMessageTimer,
   ]);
 
-  const { data: domains, isFetching: isFetchingDomains } = useDataFetcher(
-    domainsAndRolesFetcher,
-    [colonyAddress],
-    [colonyAddress],
-  );
-
-  const communityRoles = useTransformer(getCommunityRoles, [domains]);
+  const communityRoles = useTransformer(getCommunityRoles, [colony]);
 
   if (
     !colonySubscribedUsers ||
     loadingColonySubscribedUsers ||
-    isFetchingDomains ||
     loadingCurrentUserSubscribedColonies
   ) {
     return (
@@ -171,7 +161,7 @@ const Community = ({ colonyAddress }: Props) => {
     const {
       user: { colonyAddresses },
     } = currentUserSubscribedColonies;
-    isSubscribed = (colonyAddresses || []).includes(colonyAddress);
+    isSubscribed = (colonyAddresses || []).includes(colony.colonyAddress);
   }
 
   return (
@@ -206,7 +196,7 @@ const Community = ({ colonyAddress }: Props) => {
         </div>
       )}
       <MembersList<CommunityUser>
-        colonyAddress={colonyAddress}
+        colonyAddress={colony.colonyAddress}
         extraItemContent={({ communityRole }) => (
           <span className={styles.communityRole}>
             <FormattedMessage id={ROLES_COMMUNITY[communityRole]} />

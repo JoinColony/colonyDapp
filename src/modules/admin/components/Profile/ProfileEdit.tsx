@@ -14,7 +14,7 @@ import {
 } from '~core/Fields';
 import Button from '~core/Button';
 import ENS from '~lib/ENS';
-import { useEditColonyProfileMutation, FullColonyFragment } from '~data/index';
+import { useEditColonyProfileMutation, Colony } from '~data/index';
 import ColonyAvatarUploader from './ColonyAvatarUploader';
 
 import styles from './ProfileEdit.css';
@@ -78,7 +78,7 @@ const validationSchema = yup.object({
 });
 
 interface Props {
-  colony: FullColonyFragment;
+  colony: Colony;
 }
 
 const ProfileEdit = ({ colony }: Props) => {

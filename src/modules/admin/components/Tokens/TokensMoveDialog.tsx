@@ -2,14 +2,15 @@ import React, { useCallback } from 'react';
 import { FormikProps } from 'formik';
 import * as yup from 'yup';
 import moveDecimal from 'move-decimal-point';
-import BigNumber from 'bn.js';
+import { bigNumberify } from 'ethers/utils';
 
 import { pipe, mapPayload, withKey } from '~utils/actions';
 import { Address } from '~types/index';
 import { ActionTypes } from '~redux/index';
 import Dialog from '~core/Dialog';
 import { ActionForm } from '~core/Fields';
-import { useColonyTokensQuery } from '~data/index';
+import { SpinnerLoader } from '~core/Preloaders';
+import { useColonyQuery } from '~data/index';
 
 import DialogForm from './TokensMoveDialogForm';
 import { getTokenDecimalsWithFallback } from '~utils/tokens';
@@ -41,13 +42,12 @@ const TokensMoveDialog = ({
     tokenAddress: yup.string().required(),
   });
 
-  const { data: colonyTokensData } = useColonyTokensQuery({
+  const { data: colonyData } = useColonyQuery({
     variables: { address: colonyAddress },
   });
 
-  const tokens = (colonyTokensData && colonyTokensData.colony.tokens) || [];
-  const nativeTokenAddress =
-    colonyTokensData && colonyTokensData.colony.nativeTokenAddress;
+  const tokens = (colonyData && colonyData.colony.tokens) || [];
+  const nativeTokenAddress = colonyData && colonyData.colony.nativeTokenAddress;
 
   const transform = useCallback(
     pipe(
@@ -61,7 +61,7 @@ const TokensMoveDialog = ({
         );
 
         // Convert amount string with decimals to BigInt (eth to wei)
-        const amount = new BigNumber(moveDecimal(payload.amount, decimals));
+        const amount = bigNumberify(moveDecimal(payload.amount, decimals));
 
         return {
           ...payload,
@@ -92,16 +92,18 @@ const TokensMoveDialog = ({
       onSuccess={close}
       transform={transform}
     >
-      {(formValues: FormikProps<FormValues>) => (
-        <Dialog cancel={cancel}>
-          <DialogForm
-            {...formValues}
-            colonyAddress={colonyAddress}
-            cancel={cancel}
-            tokens={tokens}
-          />
-        </Dialog>
-      )}
+      {(formValues: FormikProps<FormValues>) => {
+        if (!colonyData) return <SpinnerLoader />;
+        return (
+          <Dialog cancel={cancel}>
+            <DialogForm
+              {...formValues}
+              colony={colonyData.colony}
+              cancel={cancel}
+            />
+          </Dialog>
+        );
+      }}
     </ActionForm>
   );
 };

@@ -1,14 +1,14 @@
 import { Record } from 'immutable';
-import { SendOptions } from '@colony/colony-js-client';
-import BigNumber from 'bn.js';
+import { BigNumber } from 'ethers/utils';
+import { TransactionReceipt } from 'ethers/providers';
+import { ClientType, TransactionOverrides } from '@colony/colony-js';
 
 import {
   Address,
   AddressOrENSName,
-  ContractContexts,
   DefaultValues,
+  MethodParams,
   RecordToJS,
-  TransactionReceipt,
 } from '~types/index';
 
 export enum TRANSACTION_ERRORS {
@@ -39,10 +39,6 @@ export interface TransactionError {
 
 export type TransactionId = string;
 
-export type TransactionParams = object;
-
-export type TransactionEventData = object;
-
 export interface TransactionMultisig {
   missingSignees?: Address[];
   nonce?: number;
@@ -52,10 +48,11 @@ export interface TransactionMultisig {
 }
 
 export interface TransactionRecordProps {
-  context: ContractContexts;
+  context: ClientType;
   createdAt: Date;
+  deployedContractAddress?: string;
   error?: TransactionError;
-  eventData?: TransactionEventData;
+  eventData?: object;
   from: string;
   gasLimit?: number;
   gasPrice?: BigNumber;
@@ -70,8 +67,8 @@ export interface TransactionRecordProps {
   methodContext?: string; // Context in which method is used e.g. setOneTxRole
   methodName: string;
   multisig?: TransactionMultisig; // Indicates tx is multisig if set
-  options: SendOptions;
-  params: TransactionParams;
+  options: TransactionOverrides;
+  params: MethodParams;
   receipt?: TransactionReceipt;
   status: TRANSACTION_STATUSES;
   loadingRelated?: boolean;
@@ -83,6 +80,7 @@ const defaultValues: DefaultValues<TransactionRecordProps> = {
   // Just because we have to pick one
   context: undefined,
   createdAt: new Date(),
+  deployedContractAddress: undefined,
   error: undefined,
   eventData: undefined,
   from: undefined,

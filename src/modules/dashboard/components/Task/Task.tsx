@@ -1,6 +1,7 @@
-import React, { useCallback, useState, useEffect } from 'react';
+import React, { useCallback, useState } from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 import { useHistory, useParams, Redirect } from 'react-router-dom';
+import { ROOT_DOMAIN_ID } from '@colony/colony-js';
 
 import Button from '~core/Button';
 import { useDialog } from '~core/Dialog';
@@ -23,15 +24,12 @@ import {
   useColonyFromNameQuery,
   useLoggedInUser,
   useTaskQuery,
-  useFinalizeTaskMutation,
 } from '~data/index';
 import LoadingTemplate from '~pages/LoadingTemplate';
-import { useDataFetcher, useTransformer, useAsyncFunction } from '~utils/hooks';
-import { ActionTypes } from '~redux/index';
+import { useTransformer } from '~utils/hooks';
 import { NOT_FOUND_ROUTE } from '~routes/index';
-import { ROOT_DOMAIN } from '~constants';
 
-import { getUserRoles } from '../../../transformers';
+import { getUserRolesForDomain } from '../../../transformers';
 import {
   canCancelTask,
   canEditTask,
@@ -40,7 +38,6 @@ import {
   isCancelled,
   isFinalized,
 } from '../../checks';
-import { domainsAndRolesFetcher } from '../../fetchers';
 
 import styles from './Task.css';
 
@@ -121,7 +118,6 @@ const Task = () => {
   }>();
   const history = useHistory();
   const openDialog = useDialog(TaskEditDialog);
-  const [finalizeTaskMutation] = useFinalizeTaskMutation();
 
   const [
     isDiscardConfirmDisplayed,
@@ -165,71 +161,14 @@ const Task = () => {
       ethSkillId = undefined,
       payouts = [],
       title = undefined,
-      finalizedAt = undefined,
-      txHash = undefined,
     } = {},
     task = undefined,
   } = data || {};
 
-  /*
-   * @NOTE This checks the task payout transaction on mount
-   *
-   * This is to provide fallback for cases where a user closed the browser before
-   * the transaction has been mined.
-   *
-   * If the task is "pending", then look at the recent task payout events&logs and
-   * see if any of them matches the task's payout transaction hash.
-   *
-   * If it does, fire the mutation, set the transaction as "complete" and show
-   * the task complete event
-   */
-  const taskCompletedTxFetch = useAsyncFunction({
-    error: ActionTypes.TASK_TRANSACTION_COMPLETED_FETCH_ERROR,
-    submit: ActionTypes.TASK_TRANSACTION_COMPLETED_FETCH,
-    success: ActionTypes.TASK_TRANSACTION_COMPLETED_FETCH_SUCCESS,
-  });
-  useEffect(() => {
-    async function fetchTaskCompletedTx() {
-      if (!(colonyData && colonyData.colonyAddress)) {
-        return;
-      }
-      if (!finalizedAt && txHash) {
-        const { potId } = (await taskCompletedTxFetch({
-          colonyAddress: colonyData.colonyAddress,
-          txHash,
-        })) as { potId: number };
-        if (potId) {
-          finalizeTaskMutation({
-            variables: {
-              input: {
-                id: draftId,
-                ethPotId: potId,
-              },
-            },
-          });
-        }
-      }
-    }
-    fetchTaskCompletedTx();
-  }, [
-    colonyData,
-    draftId,
-    finalizedAt,
-    txHash,
-    taskCompletedTxFetch,
-    finalizeTaskMutation,
-  ]);
-
-  const { data: domains, isFetching: isFetchingDomains } = useDataFetcher(
-    domainsAndRolesFetcher,
-    [colonyData && colonyData.colonyAddress],
-    [colonyData && colonyData.colonyAddress],
-  );
-
-  const userRoles = useTransformer(getUserRoles, [
-    domains,
-    ethDomainId || null,
+  const userRoles = useTransformer(getUserRolesForDomain, [
+    colonyData && colonyData.colony,
     walletAddress,
+    ethDomainId,
   ]);
 
   const onEditTask = useCallback(() => {
@@ -258,7 +197,7 @@ const Task = () => {
     return <Redirect to={NOT_FOUND_ROUTE} />;
   }
 
-  if (isFetchingDomains || !task || !colonyData || !domains || !walletAddress) {
+  if (!task || !colonyData || !walletAddress) {
     return <LoadingTemplate loadingText={MSG.loadingText} />;
   }
 
@@ -332,7 +271,7 @@ const Task = () => {
                 colonyAddress={colony.colonyAddress}
                 // Disable the change of domain for now
                 disabled
-                ethDomainId={ethDomainId || ROOT_DOMAIN}
+                ethDomainId={ethDomainId || ROOT_DOMAIN_ID}
                 draftId={draftId}
                 payouts={payouts}
               />
@@ -405,7 +344,7 @@ const Task = () => {
                 <TaskFinalize
                   draftId={draftId}
                   colonyAddress={colonyData.colonyAddress}
-                  ethDomainId={ethDomainId || ROOT_DOMAIN}
+                  ethDomainId={ethDomainId || ROOT_DOMAIN_ID}
                   ethSkillId={ethSkillId}
                   payouts={payouts}
                   workerAddress={assignedWorkerAddress}

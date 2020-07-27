@@ -1,14 +1,14 @@
-import { ROLES } from '~constants';
-import { Address, DomainsMapType } from '~types/index';
+import { ColonyRole, ColonyRoles } from '@colony/colony-js';
+
+import { Address } from '~types/index';
 
 export const canMoveTokens = (
-  colonyRoles: DomainsMapType,
+  colonyRoles: ColonyRoles,
   walletAddress: Address,
 ) =>
   colonyRoles &&
-  !!Object.values(colonyRoles).find((users) =>
-    Object.entries(users).find(
-      ([userAddress, roles]) =>
-        userAddress === walletAddress && roles[ROLES.FUNDING],
-    ),
+  !!colonyRoles.find(
+    (user) =>
+      user.address === walletAddress &&
+      user.domains.find((domain) => domain.roles.includes(ColonyRole.Funding)),
   );

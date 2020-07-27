@@ -1,7 +1,7 @@
-import { $PropertyType } from 'utility-types';
+import { TransactionReceipt } from 'ethers/providers';
 
 import { AllActions, ActionTypes } from '~redux/index';
-import { TransactionReceipt } from '~types/index';
+import { MethodParams, TxConfig } from '~types/index';
 import {
   GasPricesProps,
   TransactionError,
@@ -9,8 +9,6 @@ import {
   TRANSACTION_STATUSES,
   TRANSACTION_ERRORS,
 } from '~immutable/index';
-
-import { TxConfig } from '../types';
 
 export const createTxAction = (
   id: string,
@@ -23,7 +21,7 @@ export const createTxAction = (
     methodName,
     multisig: multisigConfig,
     options,
-    params,
+    params = [],
     ready,
   }: TxConfig,
 ) => ({
@@ -50,7 +48,7 @@ export const createTxAction = (
 });
 
 const transactionError = (
-  type: $PropertyType<TransactionError, 'type'>,
+  type: TransactionError['type'],
   id: string,
   error: Error,
 ): AllActions => ({
@@ -136,7 +134,7 @@ export const multisigTransactionReject = (id: string): AllActions => ({
 
 export const transactionReceiptReceived = (
   id: string,
-  payload: { receipt: TransactionReceipt; params: object },
+  payload: { receipt: TransactionReceipt; params: MethodParams },
 ): AllActions => ({
   type: ActionTypes.TRANSACTION_RECEIPT_RECEIVED,
   payload,
@@ -150,7 +148,7 @@ export const transactionSent = (id: string): AllActions => ({
 
 export const transactionHashReceived = (
   id: string,
-  payload: { hash: string; params: object },
+  payload: { hash: string; params: MethodParams },
 ): AllActions => ({
   type: ActionTypes.TRANSACTION_HASH_RECEIVED,
   payload,
@@ -159,7 +157,12 @@ export const transactionHashReceived = (
 
 export const transactionSucceeded = (
   id: string,
-  payload: { eventData: object; params: object },
+  payload: {
+    eventData: object;
+    params: MethodParams;
+    receipt: TransactionReceipt;
+    deployedContractAddress?: string;
+  },
 ): AllActions => ({
   type: ActionTypes.TRANSACTION_SUCCEEDED,
   payload,
@@ -177,7 +180,7 @@ export const transactionAddIdentifier = (
 
 export const transactionAddParams = (
   id: string,
-  params: object,
+  params: MethodParams,
 ): AllActions => ({
   type: ActionTypes.TRANSACTION_ADD_PARAMS,
   meta: { id },

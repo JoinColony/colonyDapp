@@ -1,6 +1,6 @@
 import React from 'react';
 import { defineMessages } from 'react-intl';
-import softwareWallet from '@colony/purser-software';
+import { create } from '@purser/software';
 
 import { WizardProps } from '~core/Wizard';
 
@@ -43,8 +43,9 @@ type FormValues = {
 type Props = WizardProps<FormValues>;
 
 const createMnemonic = async () => {
-  const newWalletInstance = await softwareWallet.create();
-  return newWalletInstance.mnemonic;
+  const newWalletInstance = await create();
+  if (!newWalletInstance) throw new Error('Could not create wallet instance');
+  return newWalletInstance.getMnemonic();
 };
 
 const StepCreatePhrase = ({ nextStep, wizardForm }: Props) => (

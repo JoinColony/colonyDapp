@@ -3,6 +3,7 @@ import { Route, Redirect, Switch } from 'react-router-dom';
 import { defineMessages } from 'react-intl';
 import { useDispatch } from 'redux-react-hook';
 
+import { WalletMethod } from '~immutable/index';
 import CreateColonyWizard from '~dashboard/CreateColonyWizard';
 import CreateUserWizard from '~dashboard/CreateUserWizard';
 import ColonyHome from '~dashboard/ColonyHome';
@@ -67,7 +68,7 @@ const Routes = () => {
     if (ethereal) {
       dispatch({
         type: ActionTypes.WALLET_CREATE,
-        payload: { method: 'ethereal' },
+        payload: { method: WalletMethod.Ethereal },
       });
     }
   }, [dispatch, ethereal]);
@@ -145,8 +146,6 @@ const Routes = () => {
         />
 
         <AlwaysAccesibleRoute
-          isConnected={isConnected}
-          didClaimProfile={didClaimProfile}
           path={CREATE_WALLET_ROUTE}
           component={CreateWalletWizard}
           layout={Plain}
@@ -158,8 +157,6 @@ const Routes = () => {
           routeProps={{
             hasBackLink: false,
           }}
-          isConnected={isConnected}
-          didClaimProfile={didClaimProfile}
         />
         <AlwaysAccesibleRoute
           exact
@@ -169,8 +166,6 @@ const Routes = () => {
           routeProps={{
             hasBackLink: false,
           }}
-          isConnected={isConnected}
-          didClaimProfile={didClaimProfile}
         />
         <AlwaysAccesibleRoute
           exact
@@ -181,8 +176,6 @@ const Routes = () => {
             backText: ColonyBackText,
             backRoute: `/colony/${colonyName}`,
           })}
-          isConnected={isConnected}
-          didClaimProfile={didClaimProfile}
         />
         <AlwaysAccesibleRoute
           exact
@@ -193,8 +186,6 @@ const Routes = () => {
             backText: ProgramBackText,
             backRoute: `/colony/${colonyName}/program/${programId}`,
           })}
-          isConnected={isConnected}
-          didClaimProfile={didClaimProfile}
         />
         <AlwaysAccesibleRoute
           path={USER_ROUTE}
@@ -203,8 +194,6 @@ const Routes = () => {
           routeProps={{
             hasBackLink: false,
           }}
-          isConnected={isConnected}
-          didClaimProfile={didClaimProfile}
         />
         <AlwaysAccesibleRoute
           path={USER_EDIT_ROUTE}
@@ -214,8 +203,6 @@ const Routes = () => {
             backText: MSG.userProfileEditBack,
             backRoute: `/user/${username}`,
           }}
-          isConnected={isConnected}
-          didClaimProfile={didClaimProfile}
         />
         <AlwaysAccesibleRoute
           exact
@@ -226,8 +213,6 @@ const Routes = () => {
             backText: ColonyBackText,
             backRoute: `/colony/${colonyName}`,
           })}
-          isConnected={isConnected}
-          didClaimProfile={didClaimProfile}
         />
       </Switch>
     ),

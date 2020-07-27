@@ -5,20 +5,19 @@ import { defineMessages } from 'react-intl';
 import { Address } from '~types/index';
 import { mergePayload, withKey, mapPayload, pipe } from '~utils/actions';
 import { ActionTypes } from '~redux/index';
-import { useDataFetcher, useTransformer } from '~utils/hooks';
+import { useTransformer } from '~utils/hooks';
 import Heading from '~core/Heading';
 import Button from '~core/Button';
 import Dialog, { DialogSection } from '~core/Dialog';
 import { ActionForm, InputLabel } from '~core/Fields';
 import { SpinnerLoader } from '~core/Preloaders';
 import UserInfo from '~users/UserInfo';
-import { useUser } from '~data/index';
+import { useColonyQuery, useLoggedInUser, useUser } from '~data/index';
 
-import { TEMP_getUserRolesWithRecovery } from '../../../transformers';
 import {
-  domainsAndRolesFetcher,
-  TEMP_userHasRecoveryRoleFetcher,
-} from '../../../dashboard/fetchers';
+  getUserRolesForDomain,
+  getAllRootAccounts,
+} from '../../../transformers';
 import PermissionForm from './PermissionForm';
 import { availableRoles } from './constants';
 
@@ -50,26 +49,37 @@ const ColonyPermissionsEditDialog = ({
   domainId,
   userAddress,
 }: Props) => {
+  const { walletAddress } = useLoggedInUser();
+
   const user = useUser(userAddress);
+  const { data: colonyData } = useColonyQuery({
+    variables: { address: colonyAddress },
+  });
 
-  const { data: domains } = useDataFetcher(
-    domainsAndRolesFetcher,
-    [colonyAddress],
-    [colonyAddress],
-  );
-
-  const { data: colonyRecoveryRoles = [] } = useDataFetcher(
-    TEMP_userHasRecoveryRoleFetcher,
-    [colonyAddress],
-    [colonyAddress, userAddress],
-  );
-
-  const userRoles = useTransformer(TEMP_getUserRolesWithRecovery, [
-    domains,
-    colonyRecoveryRoles,
+  const currentUserRoles = useTransformer(getUserRolesForDomain, [
+    colonyData && colonyData.colony,
+    // CURRENT USER!
+    walletAddress,
     domainId,
+  ]);
+
+  const userDirectRoles = useTransformer(getUserRolesForDomain, [
+    colonyData && colonyData.colony,
+    // USER TO SET PERMISSIONS FOR!
     userAddress,
+    domainId,
     true,
+  ]);
+
+  const userInheritedRoles = useTransformer(getUserRolesForDomain, [
+    colonyData && colonyData.colony,
+    // USER TO SET PERMISSIONS FOR!
+    userAddress,
+    domainId,
+  ]);
+
+  const rootAccounts = useTransformer(getAllRootAccounts, [
+    colonyData && colonyData.colony,
   ]);
 
   const transform = useCallback(
@@ -90,16 +100,22 @@ const ColonyPermissionsEditDialog = ({
     [colonyAddress, domainId],
   );
 
+  const domain =
+    colonyData &&
+    colonyData.colony.domains.find(
+      ({ ethDomainId }) => ethDomainId === domainId,
+    );
+
   return (
     <Dialog cancel={cancel}>
-      {!userAddress || !domains ? (
+      {!userAddress || !colonyData || !domain ? (
         <SpinnerLoader />
       ) : (
         <ActionForm
           enableReinitialize
           initialValues={{
             domainId,
-            roles: userRoles,
+            roles: userDirectRoles,
             userAddress,
           }}
           onSuccess={close}
@@ -108,51 +124,48 @@ const ColonyPermissionsEditDialog = ({
           success={ActionTypes.COLONY_DOMAIN_USER_ROLES_SET_SUCCESS}
           transform={transform}
         >
-          {({ isSubmitting }: FormikProps<any>) => {
-            const domain = domains[domainId];
-            return (
-              <div className={styles.dialogContainer}>
-                <Heading
-                  appearance={{ size: 'medium', margin: 'none' }}
-                  text={MSG.title}
-                  textValues={{ domain: domain && domain.name }}
-                />
-                <div className={styles.titleContainer}>
-                  <InputLabel label={MSG.selectUser} />
-                  <UserInfo
-                    colonyAddress={colonyAddress}
-                    userAddress={userAddress}
-                    user={user}
-                    placeholder={MSG.selectUser}
-                  >
-                    {user && user.profile
-                      ? user.profile.displayName || user.profile.username
-                      : userAddress}
-                  </UserInfo>
-                </div>
-                <PermissionForm
-                  colonyRecoveryRoles={colonyRecoveryRoles}
-                  domainId={domainId}
-                  domains={domains}
+          {({ isSubmitting }: FormikProps<any>) => (
+            <div className={styles.dialogContainer}>
+              <Heading
+                appearance={{ size: 'medium', margin: 'none' }}
+                text={MSG.title}
+                textValues={{ domain: domain && domain.name }}
+              />
+              <div className={styles.titleContainer}>
+                <InputLabel label={MSG.selectUser} />
+                <UserInfo
+                  colonyAddress={colonyAddress}
                   userAddress={userAddress}
-                  userRoles={userRoles}
-                />
-                <DialogSection appearance={{ align: 'right' }}>
-                  <Button
-                    appearance={{ theme: 'secondary', size: 'large' }}
-                    onClick={cancel}
-                    text={{ id: 'button.cancel' }}
-                  />
-                  <Button
-                    appearance={{ theme: 'primary', size: 'large' }}
-                    loading={isSubmitting}
-                    text={{ id: 'button.confirm' }}
-                    type="submit"
-                  />
-                </DialogSection>
+                  user={user}
+                  placeholder={MSG.selectUser}
+                >
+                  {user && user.profile
+                    ? user.profile.displayName || user.profile.username
+                    : userAddress}
+                </UserInfo>
               </div>
-            );
-          }}
+              <PermissionForm
+                currentUserRoles={currentUserRoles}
+                domainId={domainId}
+                rootAccounts={rootAccounts}
+                userDirectRoles={userDirectRoles}
+                userInheritedRoles={userInheritedRoles}
+              />
+              <DialogSection appearance={{ align: 'right' }}>
+                <Button
+                  appearance={{ theme: 'secondary', size: 'large' }}
+                  onClick={cancel}
+                  text={{ id: 'button.cancel' }}
+                />
+                <Button
+                  appearance={{ theme: 'primary', size: 'large' }}
+                  loading={isSubmitting}
+                  text={{ id: 'button.confirm' }}
+                  type="submit"
+                />
+              </DialogSection>
+            </div>
+          )}
         </ActionForm>
       )}
     </Dialog>

@@ -1,9 +1,6 @@
 import difference from 'lodash/difference';
 
 import { Address } from '~types/index';
-import { AnyToken } from '~data/index';
-
-import { ZERO_ADDRESS } from '../web3/constants';
 
 /**
  * pass in array of strings and shuffle them around
@@ -113,15 +110,6 @@ export const diffAddresses = (
 ): [Address[], Address[]] => [difference(a, b), difference(b, a)];
 
 /**
- * Sort an array of TokenReferences so that any of address `0x0` are first.
- */
-export const sortTokensByEth = (a: AnyToken, b: AnyToken) => {
-  if (a.address === ZERO_ADDRESS) return -1;
-  if (b.address === ZERO_ADDRESS) return 1;
-  return 0;
-};
-
-/**
  * Nest a an array of object using ids and they're parents ids
  *
  * @NOTE The parent must be always be declared (have a lower id) than the child
@@ -194,3 +182,13 @@ export const recursiveNestChildren = (
   });
   return collapsedItems;
 };
+
+export const arrayToObject = (arr: any[]) =>
+  arr.reduce((obj, current, idx) => {
+    // eslint-disable-next-line no-param-reassign
+    obj[idx.toString()] = current;
+    return obj;
+  }, {});
+
+// To filter arrays
+export const notUndefined = <T>(x: T | undefined): x is T => x !== undefined;

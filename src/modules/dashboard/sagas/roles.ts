@@ -1,170 +1,47 @@
-import { all, call, fork, put, take, takeEvery } from 'redux-saga/effects';
-import { Set as ImmutableSet } from 'immutable';
+import { all, fork, put, take, takeEvery } from 'redux-saga/effects';
+import {
+  ClientType,
+  ColonyClient,
+  ColonyRoles,
+  getColonyRoles,
+  ColonyRole,
+} from '@colony/colony-js';
 
-import { ROLES, ROOT_DOMAIN } from '~constants';
 import { Action, ActionTypes, AllActions } from '~redux/index';
 import { putError } from '~utils/saga/effects';
-import { Context, getContext } from '~context/index';
-import { ColonyRolesType, DomainRolesType } from '~immutable/index';
-import { ZERO_ADDRESS } from '~utils/web3/constants';
-import { createAddress } from '~utils/web3';
+import { ContextModule, TEMP_getContext } from '~context/index';
 import {
-  Address,
-  ContractContexts,
-  ColonyClient,
-  ColonyManager,
-  RoleSet,
-} from '~types/index';
-import { getEvents } from '~utils/web3/eventLogs';
+  ColonyRolesQuery,
+  ColonyRolesQueryVariables,
+  ColonyRolesDocument,
+} from '~data/index';
 
 import { createTransaction } from '../../core/sagas';
+import { getRolesForUserAndDomain } from '../../transformers';
 
-interface ColonyRoleSetEventData {
-  address: Address;
-  domainId: number;
-  role: ROLES;
-  setTo: boolean;
-  eventName: 'ColonyRoleSet';
-}
+type SetRoleParams = [string] | [string, boolean] | [string, number, boolean];
 
-function* getColonyRoles(colonyAddress: Address) {
-  const colonyManager: ColonyManager = yield getContext(Context.COLONY_MANAGER);
-  const colonyClient: ColonyClient = yield colonyManager.getColonyClient(
-    colonyAddress,
-  );
-  const {
-    events: { ColonyRoleSet },
-  } = colonyClient;
-  const events = yield getEvents(
-    colonyClient,
-    {
-      address: colonyAddress,
-      fromBlock: 1,
-    },
-    {
-      events: [ColonyRoleSet],
-    },
-  );
+const asColonyRole = (role: string) => parseInt(role, 10);
 
-  // get extension addresses for the colony
-  const { address: oneTxAddress } = yield colonyClient.getExtensionAddress.call(
-    {
-      contractName: 'OneTxPayment',
-    },
-  );
-  const extensionAddresses = [createAddress(oneTxAddress)];
-
-  return (
-    events
-      // Normalize the address
-      .map((event) => ({ ...event, address: createAddress(event.address) }))
-      // Don't include roles of extensions
-      .filter(({ address }) => !extensionAddresses.includes(address))
-      // Reduce events to { [domainId]: { [address]: Set<Role> } }
-      .reduce(
-        (
-          colonyRoles,
-          { address, setTo, role, domainId }: ColonyRoleSetEventData,
-        ) => {
-          const domainRoles =
-            colonyRoles[domainId.toString()] || ({} as DomainRolesType);
-          const userRoles: RoleSet =
-            ImmutableSet(domainRoles[address]) || ImmutableSet();
-
-          return {
-            ...colonyRoles,
-            [domainId.toString()]: {
-              ...domainRoles,
-              // Add or remove the role, depending on the value of setTo
-              [address as Address]: setTo
-                ? Array.from(userRoles.add(role))
-                : Array.from(userRoles.remove(role)),
-            },
-          };
-        },
-        {} as ColonyRolesType,
-      )
-  );
-}
-
-// This will be unnecessary as soon as we have the RecoveryRoleSet event on the ColonyClient
-function* TEMP_getUserHasRecoveryRole(
-  colonyAddress: Address,
-  userAddress: Address = ZERO_ADDRESS,
-) {
-  const colonyManager: ColonyManager = yield getContext(Context.COLONY_MANAGER);
-  const colonyClient: ColonyClient = yield colonyManager.getColonyClient(
-    colonyAddress,
-  );
-  if (!userAddress || userAddress === ZERO_ADDRESS) return false;
-  const { hasRole } = yield colonyClient.hasColonyRole.call({
-    address: userAddress,
-    domainId: ROOT_DOMAIN,
-    role: ROLES.RECOVERY,
-  });
-  return hasRole;
-}
-
-function* colonyRolesFetch({
-  payload: { colonyAddress },
-  meta,
-}: Action<ActionTypes.COLONY_ROLES_FETCH>) {
-  try {
-    const roles = yield call(getColonyRoles, colonyAddress);
-    yield put<AllActions>({
-      type: ActionTypes.COLONY_ROLES_FETCH_SUCCESS,
-      meta,
-      payload: roles,
-    });
-  } catch (error) {
-    return yield putError(ActionTypes.COLONY_ROLES_FETCH_ERROR, error, meta);
-  }
-  return null;
-}
-
-function* TEMP_userHasRecoveryRoleFetch({
-  payload: { colonyAddress, userAddress },
-  meta,
-}: Action<ActionTypes.TEMP_COLONY_USER_HAS_RECOVERY_ROLE_FETCH>) {
-  try {
-    const userHasRecoveryRole = yield call(
-      TEMP_getUserHasRecoveryRole,
-      colonyAddress,
-      userAddress,
-    );
-    yield put<AllActions>({
-      type: ActionTypes.TEMP_COLONY_USER_HAS_RECOVERY_ROLE_FETCH_SUCCESS,
-      meta,
-      payload: { colonyAddress, userAddress, userHasRecoveryRole },
-    });
-  } catch (error) {
-    yield putError(
-      ActionTypes.TEMP_COLONY_USER_HAS_RECOVERY_ROLE_FETCH_ERROR,
-      error,
-      meta,
-    );
-  }
-}
-
-const getRoleMethodName = (role: string, setTo: boolean) => {
+const getRoleMethodName = (role: ColonyRole, setTo: boolean) => {
   switch (role) {
-    case ROLES.ADMINISTRATION:
-      return 'setAdministrationRole';
+    case ColonyRole.Administration:
+      return 'setAdministrationRoleWithProofs';
 
-    // case COLONY_ROLE_ARBITRATION:
-    //   return 'setArbitrationRole';
+    case ColonyRole.Arbitration:
+      return 'setArbitrationRoleWithProofs';
 
-    case ROLES.ARCHITECTURE:
-    case ROLES.ARCHITECTURE_SUBDOMAIN:
-      return 'setArchitectureRole';
+    case ColonyRole.Architecture:
+    case ColonyRole.ArchitectureSubdomain_DEPRECATED:
+      return 'setArchitectureRoleWithProofs';
 
-    case ROLES.FUNDING:
-      return 'setFundingRole';
+    case ColonyRole.Funding:
+      return 'setFundingRoleWithProofs';
 
-    case ROLES.RECOVERY:
+    case ColonyRole.Recovery:
       return setTo ? 'setRecoveryRole' : 'removeRecoveryRole';
 
-    case ROLES.ROOT:
+    case ColonyRole.Root:
       return 'setRootRole';
 
     default:
@@ -177,48 +54,60 @@ function* colonyDomainUserRolesSet({
   meta,
 }: Action<ActionTypes.COLONY_DOMAIN_USER_ROLES_SET>) {
   try {
-    const existingColonyRoles = yield call(getColonyRoles, colonyAddress);
-
-    const userHasRecoveryRole = yield call(
-      TEMP_getUserHasRecoveryRole,
+    const colonyManager = TEMP_getContext(ContextModule.ColonyManager);
+    const apolloClient = TEMP_getContext(ContextModule.ApolloClient);
+    const colonyClient: ColonyClient = yield colonyManager.getClient(
+      ClientType.ColonyClient,
       colonyAddress,
-      userAddress,
     );
 
-    const existingDomainRoles = existingColonyRoles[domainId.toString()] || {};
-    const existingUserRoles = existingDomainRoles[userAddress] || [];
-
-    if (userHasRecoveryRole) {
-      existingUserRoles.push(ROLES.RECOVERY);
-    }
+    const colonyRoles: ColonyRoles = yield getColonyRoles(colonyClient);
+    const userDomainRoles = getRolesForUserAndDomain(
+      colonyRoles,
+      userAddress,
+      domainId,
+    );
 
     const toChange = Object.entries(roles)
-      .filter(([role, setTo]: [ROLES, boolean]) => {
-        if (existingUserRoles.includes(role) && setTo === true) return false;
-        if (!existingUserRoles.includes(role) && setTo === false) return false;
+      .filter(([role, setTo]) => {
+        if (userDomainRoles.includes(asColonyRole(role)) && setTo === true)
+          return false;
+        if (!userDomainRoles.includes(asColonyRole(role)) && setTo === false)
+          return false;
         return true;
       })
-      .sort(([role]) => (role === ROLES.ROOT ? 1 : -1))
+      .sort(([role]) => (asColonyRole(role) === ColonyRole.Root ? 1 : -1))
       .map(
         ([role, setTo]) =>
-          [getRoleMethodName(role, setTo), setTo] as [string, boolean],
+          [getRoleMethodName(asColonyRole(role), setTo), setTo] as [
+            string,
+            boolean,
+          ],
       );
 
     yield all(
-      toChange.map(([methodName, setTo], index) =>
-        fork(createTransaction, `${meta.id}_${methodName}`, {
-          context: ContractContexts.COLONY_CONTEXT,
+      toChange.map(([methodName, setTo], index) => {
+        let params: SetRoleParams;
+        if (methodName === 'setRecoveryRole') {
+          params = [userAddress];
+        } else if (methodName === 'setRootRole') {
+          params = [userAddress, setTo];
+        } else {
+          params = [userAddress, domainId, setTo];
+        }
+        return fork(createTransaction, `${meta.id}_${methodName}`, {
+          context: ClientType.ColonyClient,
           identifier: colonyAddress,
           methodName,
-          params: { address: userAddress, domainId, setTo },
+          params,
           ready: true,
           group: {
             key: 'setRoles',
             id: meta.id,
             index,
           },
-        }),
-      ),
+        });
+      }),
     );
 
     yield put<AllActions>({
@@ -239,11 +128,13 @@ function* colonyDomainUserRolesSet({
         ),
       ),
     );
-
-    yield put<AllActions>({
-      type: ActionTypes.COLONY_ROLES_FETCH,
-      payload: { colonyAddress },
-      meta,
+    // Refresh the colony roles in cache
+    yield apolloClient.query<ColonyRolesQuery, ColonyRolesQueryVariables>({
+      query: ColonyRolesDocument,
+      variables: {
+        address: colonyAddress,
+      },
+      fetchPolicy: 'network-only',
     });
   } catch (error) {
     return yield putError(
@@ -256,13 +147,8 @@ function* colonyDomainUserRolesSet({
 }
 
 export default function* rolesSagas() {
-  yield takeEvery(ActionTypes.COLONY_ROLES_FETCH, colonyRolesFetch);
   yield takeEvery(
     ActionTypes.COLONY_DOMAIN_USER_ROLES_SET,
     colonyDomainUserRolesSet,
-  );
-  yield takeEvery(
-    ActionTypes.TEMP_COLONY_USER_HAS_RECOVERY_ROLE_FETCH,
-    TEMP_userHasRecoveryRoleFetch,
   );
 }

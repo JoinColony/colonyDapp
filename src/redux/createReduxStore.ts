@@ -1,8 +1,6 @@
 import { createStore, compose, applyMiddleware } from 'redux';
 import createSagaMiddleware from 'redux-saga';
 
-import context from '~context/index';
-
 import setupSagas from '../modules/core/sagas';
 import reduxPromiseListener from './createPromiseListener';
 import createRootReducer from './createRootReducer';
@@ -10,7 +8,7 @@ import { createDuplicateActionGuardMiddleware } from './createDuplicateActionGua
 import { createSubscriberMiddleware } from './createSubscriberMiddleware';
 import { ActionTypes } from './actionTypes';
 
-const sagaMiddleware = createSagaMiddleware({ context });
+const sagaMiddleware = createSagaMiddleware();
 
 /*
  * @todo Remove action black-hole Redux middlewares

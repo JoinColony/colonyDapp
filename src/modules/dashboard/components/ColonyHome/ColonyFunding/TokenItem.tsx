@@ -1,12 +1,12 @@
 import React from 'react';
 
 import Numeral from '~core/Numeral';
-import { FullColonyFragment } from '~data/index';
+import { Colony } from '~data/index';
 import { getTokenDecimalsWithFallback } from '~utils/tokens';
 
 interface Props {
   currentDomainId: number;
-  token: FullColonyFragment['tokens'][0];
+  token: Colony['tokens'][0];
 }
 
 const displayName = 'dashboard.ColonyHome.ColonyFunding.TokenItem';

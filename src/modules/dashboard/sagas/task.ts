@@ -1,9 +1,9 @@
-import ApolloClient from 'apollo-client';
 import { call, fork, put, takeEvery } from 'redux-saga/effects';
-import BigNumber from 'bn.js';
+import { bigNumberify } from 'ethers/utils';
 import moveDecimal from 'move-decimal-point';
+import { ClientType } from '@colony/colony-js';
 
-import { Context, getContext } from '~context/index';
+import { ContextModule, TEMP_getContext } from '~context/index';
 import {
   CreateTaskDocument,
   CreateTaskMutationResult,
@@ -18,8 +18,7 @@ import {
   SetTaskPendingMutationVariables,
 } from '~data/index';
 import { Action, ActionTypes } from '~redux/index';
-import { ColonyClient, ColonyManager, ContractContexts } from '~types/index';
-import { getLogsAndEvents, parseTaskPayoutEvents } from '~utils/web3/eventLogs';
+// import { getLogsAndEvents, parseTaskPayoutEvents } from '~utils/web3/eventLogs';
 import { putError, takeFrom } from '~utils/saga/effects';
 import { COLONY_TOTAL_BALANCE_DOMAIN_ID } from '~constants';
 import { createTransaction, getTxChannel } from '../../core/sagas';
@@ -31,9 +30,7 @@ function* taskCreate({
   payload: { colonyAddress, ethDomainId },
 }: Action<ActionTypes.TASK_CREATE>) {
   try {
-    const apolloClient: ApolloClient<any> = yield getContext(
-      Context.APOLLO_CLIENT,
-    );
+    const apolloClient = TEMP_getContext(ContextModule.ApolloClient);
 
     const { data }: CreateTaskMutationResult = yield apolloClient.mutate<
       CreateTaskMutation,
@@ -86,8 +83,11 @@ function* taskFinalize({
   meta,
 }: Action<ActionTypes.TASK_FINALIZE>) {
   try {
-    const apolloClient: ApolloClient<any> = yield getContext(
-      Context.APOLLO_CLIENT,
+    const apolloClient = TEMP_getContext(ContextModule.ApolloClient);
+    const colonyManager = TEMP_getContext(ContextModule.ColonyManager);
+    const colonyClient = yield colonyManager.getClient(
+      ClientType.ColonyClient,
+      colonyAddress,
     );
 
     if (!workerAddress)
@@ -101,16 +101,16 @@ function* taskFinalize({
 
     const txChannel = yield call(getTxChannel, meta.id);
     yield fork(createTransaction, meta.id, {
-      context: ContractContexts.COLONY_CONTEXT,
-      methodName: 'makePaymentFundedFromDomain',
+      context: ClientType.OneTxPaymentClient,
+      methodName: 'makePaymentFundedFromDomainWithProofs',
       identifier: colonyAddress,
-      params: {
-        recipient: workerAddress,
+      params: [
+        workerAddress,
         token,
-        amount: new BigNumber(moveDecimal(amount, decimals)),
+        bigNumberify(moveDecimal(amount, decimals)),
         domainId,
-        skillId: skillId || 0,
-      },
+        skillId || 0,
+      ],
     });
 
     const {
@@ -135,13 +135,23 @@ function* taskFinalize({
       });
     }
 
-    yield takeFrom(txChannel, ActionTypes.TRANSACTION_RECEIPT_RECEIVED);
-
     const {
       payload: {
-        eventData: { potId },
+        receipt: { logs },
       },
     } = yield takeFrom(txChannel, ActionTypes.TRANSACTION_SUCCEEDED);
+
+    // We need to manually parse the logs as the events are not emitted on the OneTxPayment contract
+    const events = logs.map((log) => colonyClient.interface.parseLog(log));
+    const potAddedEvent = events.find((evt) => evt.name === 'FundingPotAdded');
+
+    if (!potAddedEvent) {
+      throw new Error('No corresponding potId found. Can not finalize task');
+    }
+
+    const {
+      values: { fundingPotId },
+    } = potAddedEvent;
 
     // Refetch token balances for the domains involved
     yield apolloClient.query<
@@ -165,7 +175,7 @@ function* taskFinalize({
 
     yield put<AllActions>({
       type: ActionTypes.TASK_FINALIZE_SUCCESS,
-      payload: { potId, draftId },
+      payload: { potId: fundingPotId.toNumber(), draftId },
       meta,
     });
   } catch (error) {
@@ -174,71 +184,7 @@ function* taskFinalize({
   return null;
 }
 
-/*
- * @NOTE Check if a pending task's transaction was mined in the background
- */
-function* taskComplete({
-  payload: { colonyAddress, txHash },
-  meta,
-}: Action<ActionTypes.TASK_TRANSACTION_COMPLETED_FETCH>) {
-  try {
-    const colonyManager: ColonyManager = yield getContext(
-      Context.COLONY_MANAGER,
-    );
-    const colonyClient: ColonyClient = yield colonyManager.getColonyClient(
-      colonyAddress,
-    );
-    const {
-      events: { PayoutClaimed },
-    } = colonyClient;
-    const { events, logs } = yield getLogsAndEvents(
-      colonyClient,
-      {
-        address: colonyAddress,
-        fromBlock: 1,
-      },
-      {
-        events: [PayoutClaimed],
-      },
-    );
-
-    const transactions = yield Promise.all(
-      logs.map((log, i) =>
-        parseTaskPayoutEvents({
-          event: events[i],
-          log,
-          colonyClient,
-          colonyAddress,
-          taskTxHash: txHash,
-        }),
-      ),
-    );
-
-    const [parsedTransaction] = transactions.filter(Boolean);
-
-    const { potId } = parsedTransaction || { potId: undefined };
-
-    if (!potId) {
-      return null;
-    }
-
-    yield put<AllActions>({
-      type: ActionTypes.TASK_TRANSACTION_COMPLETED_FETCH_SUCCESS,
-      meta,
-      payload: { potId },
-    });
-  } catch (error) {
-    return yield putError(
-      ActionTypes.COLONY_TRANSACTIONS_FETCH_ERROR,
-      error,
-      meta,
-    );
-  }
-  return null;
-}
-
 export default function* tasksSagas() {
   yield takeEvery(ActionTypes.TASK_CREATE, taskCreate);
   yield takeEvery(ActionTypes.TASK_FINALIZE, taskFinalize);
-  yield takeEvery(ActionTypes.TASK_TRANSACTION_COMPLETED_FETCH, taskComplete);
 }

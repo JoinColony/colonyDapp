@@ -16,15 +16,13 @@ import {
   useLoggedInUser,
   useSetSuggestionStatusMutation,
   useCreateTaskFromSuggestionMutation,
+  Colony,
   Domain,
   OneSuggestion,
   SuggestionStatus,
 } from '~data/index';
-import { Address } from '~types/index';
-import { useDataFetcher } from '~utils/hooks';
 import { getMainClasses } from '~utils/css';
 
-import { domainsAndRolesFetcher } from '../../fetchers';
 import {
   SuggestionsFilterOptions,
   SuggestionsFilterOptionType,
@@ -74,8 +72,7 @@ const MSG = defineMessages({
 });
 
 interface Props {
-  colonyAddress: Address;
-  colonyName: string;
+  colony: Colony;
   domainId: Domain['ethDomainId'];
 }
 
@@ -86,7 +83,11 @@ const createdAtDesc = (
 
 const displayName = 'Dashboard.SuggestionsList';
 
-const SuggestionsList = ({ colonyAddress, colonyName, domainId }: Props) => {
+const SuggestionsList = ({
+  colony,
+  colony: { colonyAddress, colonyName },
+  domainId,
+}: Props) => {
   const history = useHistory();
   const { walletAddress } = useLoggedInUser();
   const confirm = useDialog(ConfirmDialog);
@@ -124,12 +125,6 @@ const SuggestionsList = ({ colonyAddress, colonyName, domainId }: Props) => {
     variables: { colonyAddress },
     pollInterval: 5000,
   });
-
-  const { data: domains, isFetching: isFetchingDomains } = useDataFetcher(
-    domainsAndRolesFetcher,
-    [colonyAddress],
-    [colonyAddress],
-  );
 
   const [setSuggestionStatus] = useSetSuggestionStatusMutation({
     update: cacheUpdates.setSuggestionStatus(colonyAddress),
@@ -190,7 +185,7 @@ const SuggestionsList = ({ colonyAddress, colonyName, domainId }: Props) => {
     [data, filterByDomain, filterByStatus],
   );
 
-  return loading || isFetchingDomains ? (
+  return loading ? (
     <SpinnerLoader appearance={{ size: 'medium' }} />
   ) : (
     <>
@@ -219,13 +214,12 @@ const SuggestionsList = ({ colonyAddress, colonyName, domainId }: Props) => {
                 key={suggestion.id}
               >
                 <SuggestionsListItem
-                  colonyName={colonyName}
+                  colony={colony}
                   onNotPlanned={handleNotPlanned}
                   onDeleted={handleDeleted}
                   onCreateTask={handleCreateTask}
                   onReopen={handleReopen}
                   suggestion={suggestion}
-                  domains={domains}
                   walletAddress={walletAddress}
                 />
               </ListGroupItem>

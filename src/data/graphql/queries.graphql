@@ -1,0 +1,550 @@
+# import './fragments.graphql'
+
+query Task($id: String!) {
+  task(id: $id) {
+    id
+    ...Payouts
+    assignedWorker {
+      id
+      profile {
+        avatarHash
+        displayName
+        username
+        walletAddress
+      }
+    }
+    assignedWorkerAddress
+    cancelledAt
+    colony {
+      id
+      colonyAddress
+      colonyName
+      avatarHash
+      displayName
+      nativeTokenAddress
+    }
+    colonyAddress
+    commentCount @client
+    createdAt
+    creator {
+      id
+      profile {
+        avatarHash
+        displayName
+        username
+        walletAddress
+      }
+    }
+    creatorAddress
+    description
+    dueDate
+    ethDomainId
+    ethSkillId
+    ethPotId
+    events {
+      id
+      type
+    }
+    finalizedAt
+    title
+    workInvites {
+      id
+      profile {
+        avatarHash
+        displayName
+        username
+        walletAddress
+      }
+    }
+    workInviteAddresses
+    workRequests {
+      id
+      profile {
+        avatarHash
+        displayName
+        username
+        walletAddress
+      }
+    }
+    workRequestAddresses
+    txHash
+  }
+}
+
+query TaskToEdit($id: String!) {
+  task(id: $id) {
+    id
+    ...Payouts
+    assignedWorker {
+      id
+      profile {
+        avatarHash
+        displayName
+        username
+        walletAddress
+      }
+    }
+    workRequests {
+      id
+      profile {
+        avatarHash
+        displayName
+        username
+        walletAddress
+      }
+    }
+    colony {
+      id
+      nativeTokenAddress
+      subscribedUsers {
+        id
+        profile {
+          displayName
+          walletAddress
+          username
+          avatarHash
+        }
+      }
+      tokenAddresses
+      tokens @client {
+        id
+        address
+        decimals
+        name
+        symbol
+      }
+    }
+  }
+}
+
+query TaskFeedEvents($id: String!) {
+  task(id: $id) {
+    id
+    colonyAddress
+    events {
+      ...TaskEvent
+    }
+    ethDomainId
+    ethPotId
+    finalizedAt
+    txHash
+    finalizedPayment @client {
+      amount
+      tokenAddress
+      workerAddress
+      transactionHash
+    }
+    ...Payouts
+  }
+}
+
+query LoggedInUser {
+  loggedInUser @client {
+    walletAddress
+    balance
+    username
+    ethereal
+  }
+}
+
+query User($address: String!) {
+  user(address: $address) {
+    id
+    profile {
+      username
+      walletAddress
+      displayName
+      bio
+      location
+      website
+      avatarHash
+    }
+  }
+}
+
+# This isn't currently being used anywhere, but... here it is anyways.
+# In most cases, we'll want to fetch the reputation *after* the user is already fetched,
+# as fetching reputation takes quite a bit longer.
+query UserWithReputation($address: String!, $colonyAddress: String!, $domainId: Int) {
+  user(address: $address) {
+    id
+    profile {
+      username
+      walletAddress
+      displayName
+      bio
+      location
+      website
+      avatarHash
+    }
+    reputation(colonyAddress: $colonyAddress, domainId: $domainId) @client
+  }
+}
+
+query UserReputation($address: String!, $colonyAddress: String!, $domainId: Int) {
+  userReputation(address: $address, colonyAddress: $colonyAddress, domainId: $domainId) @client
+}
+
+query UserTasks($address: String!) {
+  user(address: $address) {
+    id
+    tasks {
+      id
+      ...Payouts
+      assignedWorker {
+        id
+        profile {
+          avatarHash
+        }
+      }
+      assignedWorkerAddress
+      cancelledAt
+      colony {
+        id
+        colonyName
+        displayName
+        nativeTokenAddress
+      }
+      colonyAddress
+      commentCount @client
+      createdAt
+      creatorAddress
+      dueDate
+      ethDomainId
+      ethSkillId
+      events {
+        id
+        type
+      }
+      finalizedAt
+      title
+      workRequestAddresses
+      txHash
+    }
+  }
+}
+
+query UserTokens($address: String!) {
+  user(address: $address) {
+    id
+    tokenAddresses
+    tokens @client {
+      id
+      address
+      iconHash
+      decimals
+      name
+      symbol
+      balance(walletAddress: $address)
+    }
+  }
+}
+
+query Username($address: String!) {
+  username(address: $address) @client
+}
+
+query UserAddress($name: String!) {
+  userAddress(name: $name) @client
+}
+
+query ColonyFromName($name: String!, $address: String!) {
+  colonyAddress(name: $name) @client @export(as: "address")
+  colony(address: $address) {
+    ...FullColony
+  }
+}
+
+query ColonyName($address: String!) {
+  colonyName(address: $address) @client
+}
+
+query ColonyAddress($name: String!) {
+  colonyAddress(name: $name) @client
+}
+
+query Colony($address: String!) {
+  colony(address: $address) {
+    ...FullColony
+  }
+}
+
+query ColonyTokens($address: String!) {
+  colony(address: $address) {
+    id
+    ...Tokens
+  }
+}
+
+query ColonyNativeToken($address: String!) {
+  colony(address: $address) {
+    id
+    nativeTokenAddress
+  }
+}
+
+query ColonyRoles($address: String!) {
+  colony(address: $address) {
+    id
+    colonyAddress
+    roles @client {
+      address
+      domains {
+        domainId
+        roles
+      }
+    }
+  }
+}
+
+query ColonyTransfers($address: String!) {
+  colony(address: $address) {
+    id
+    colonyAddress
+    transfers @client {
+      amount
+      hash
+      colonyAddress
+      date
+      from
+      hash
+      incoming
+      to
+      token
+    }
+    unclaimedTransfers @client {
+      amount
+      hash
+      colonyAddress
+      date
+      from
+      hash
+      incoming
+      to
+      token
+    }
+  }
+}
+
+query TokenBalancesForDomains($colonyAddress: String!, $tokenAddresses: [String!]!, $domainIds: [Int!]) {
+  tokens(addresses: $tokenAddresses) @client {
+    id
+    address
+    iconHash
+    decimals
+    name
+    symbol
+    balances(colonyAddress: $colonyAddress, domainIds: $domainIds) {
+      domainId
+      amount
+    }
+  }
+}
+
+query ColonyProfile($address: String!) {
+  colony(address: $address) {
+    ...ColonyProfile
+  }
+}
+
+query UserColonyAddresses($address: String!) {
+  user(address: $address) {
+    id
+    colonyAddresses
+  }
+}
+
+query ColonyTasks($address: String!) {
+  colony(address: $address) {
+    id
+    tasks {
+      id
+      ...Payouts
+      assignedWorker {
+        id
+        profile {
+          avatarHash
+        }
+      }
+      assignedWorkerAddress
+      cancelledAt
+      colony {
+        id
+        colonyName
+        displayName
+        nativeTokenAddress
+      }
+      colonyAddress
+      commentCount @client
+      createdAt
+      creatorAddress
+      dueDate
+      ethDomainId
+      ethSkillId
+      events {
+        id
+        type
+      }
+      finalizedAt
+      title
+      workRequestAddresses
+      txHash
+    }
+  }
+}
+
+query ColonyPrograms($address: String!) {
+  colony(address: $address) {
+    id
+    programs {
+      ...ProgramFields
+    }
+  }
+}
+
+query Program($id: String!) {
+  program(id: $id) {
+    ...ProgramFields
+  }
+}
+
+query ProgramLevels($id: String!) {
+  program(id: $id) {
+    id
+    levelIds
+    levels {
+      ...LevelFields
+    }
+  }
+}
+
+query Level($id: String!) {
+  level(id: $id) {
+    ...LevelFields
+    unlocked
+  }
+}
+
+query ProgramLevelsWithUnlocked($id: String!) {
+  program(id: $id) {
+    id
+    levelIds
+    levels {
+      ...LevelFields
+      unlocked
+    }
+  }
+}
+
+query ProgramSubmissions($id: String!) {
+  program(id: $id) {
+    id
+    submissions {
+      ...ProgramSubmissionFields
+    }
+  }
+}
+
+query ColonySubscribedUsers($colonyAddress: String!) {
+  colony(address: $colonyAddress) {
+    id
+    subscribedUsers {
+      id
+      profile {
+        avatarHash
+        displayName
+        username
+        walletAddress
+      }
+    }
+  }
+}
+
+query Domain($colonyAddress: String!, $ethDomainId: Int!) {
+  domain(colonyAddress: $colonyAddress, ethDomainId: $ethDomainId) {
+    id
+    ethDomainId
+    name
+    ethParentDomainId
+  }
+}
+
+query Token($address: String!) {
+  token(address: $address) @client {
+    id
+    address
+    iconHash
+    decimals
+    name
+    symbol
+  }
+}
+
+query TokenInfo($address: String!) {
+  tokenInfo(address: $address) {
+    decimals
+    name
+    symbol
+    iconHash
+  }
+}
+
+query ColonyDomains($colonyAddress: String!) {
+  colony(address: $colonyAddress) {
+    id
+    domains {
+      id
+      ethDomainId
+      name
+      ethParentDomainId
+    }
+  }
+}
+
+query ColonySuggestions($colonyAddress: String!) {
+  colony(address: $colonyAddress) {
+    id
+    suggestions {
+      ...SuggestionFields
+    }
+  }
+}
+
+query UserNotifications($address: String!) {
+  user(address: $address) {
+    id
+    notifications {
+      id
+      event {
+        id
+        type
+        createdAt
+        initiatorAddress
+        sourceId
+        sourceType
+        ...EventContext
+      }
+      read
+    }
+  }
+}
+
+query UserBadges($address: String!, $colonyAddress: String!) {
+  user(address: $address) {
+    id
+    completedLevels(colonyAddress: $colonyAddress) {
+      id
+      achievement
+      title
+      program {
+        title
+      }
+    }
+  }
+}
+
+query SystemInfo {
+  systemInfo {
+    version
+  }
+}

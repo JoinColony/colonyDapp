@@ -5,7 +5,7 @@ import Avatar from '~core/Avatar';
 import InfoPopover, { Props as InfoPopoverProps } from '~core/InfoPopover';
 import Link from '~core/NavLink';
 import { Address } from '~types/index';
-import { AnyUser, useLoggedInUser } from '~data/index';
+import { AnyUser } from '~data/index';
 
 import { getUsername } from '../../../users/transformers';
 
@@ -67,17 +67,6 @@ const UserAvatar = ({
   ...rest
 }: Props) => {
   const username = getUsername(user);
-  /**
-   * @NOTE Using the logged in user data
-   *
-   * We need to perform this check in the core component, rather then the
-   * Hooked Avatar since we also need to ability to control it on an individual
-   * level from the component render directly.
-   *
-   * Eg: We still need to show an avatar when browsing to a user's profile,
-   * while not having a wallet connected.
-   */
-  const { ethereal } = useLoggedInUser();
   let popoverProps: InfoPopoverProps = {
     popperProps,
     trigger: showInfo ? 'click' : 'disabled',
@@ -101,7 +90,7 @@ const UserAvatar = ({
         <Avatar
           avatarURL={avatarURL}
           className={className}
-          notSet={typeof notSet === 'undefined' ? !!ethereal : notSet}
+          notSet={typeof notSet === 'undefined' ? true : notSet}
           placeholderIcon="circle-person"
           seed={address && address.toLowerCase()}
           size={size}

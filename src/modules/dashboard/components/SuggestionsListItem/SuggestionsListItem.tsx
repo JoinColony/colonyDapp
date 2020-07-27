@@ -13,11 +13,11 @@ import Link from '~core/Link';
 import { AbbreviatedNumeral } from '~core/Numeral';
 import Popover from '~core/Popover';
 import SuggestionUpvoteButton from '~dashboard/SuggestionUpvoteButton';
-import { OneSuggestion, SuggestionStatus } from '~data/index';
-import { Address, DomainsMapType } from '~types/index';
+import { Colony, OneSuggestion, SuggestionStatus } from '~data/index';
+import { Address } from '~types/index';
 import { useTransformer } from '~utils/hooks';
 
-import { getUserRoles } from '../../../transformers';
+import { getUserRolesForDomain } from '../../../transformers';
 import { canAdminister } from '../../../users/checks';
 import { getFriendlyName } from '../../../users/transformers';
 
@@ -68,8 +68,7 @@ const suggestionStatusBadgeText = {
 };
 
 interface Props {
-  colonyName: string;
-  domains: DomainsMapType;
+  colony: Colony;
   onNotPlanned: (id: string) => void;
   onDeleted: (id: string) => void;
   onCreateTask: (id: string) => void;
@@ -81,8 +80,8 @@ interface Props {
 const displayName = 'Dashboard.SuggestionsListItem';
 
 const SuggestionsListItem = ({
-  colonyName,
-  domains,
+  colony,
+  colony: { colonyName },
   onNotPlanned,
   onDeleted,
   onCreateTask,
@@ -90,10 +89,10 @@ const SuggestionsListItem = ({
   suggestion: { ethDomainId, id, status, title, creator, upvotes, taskId },
   walletAddress,
 }: Props) => {
-  const userRoles = useTransformer(getUserRoles, [
-    domains,
-    ethDomainId,
+  const userRoles = useTransformer(getUserRolesForDomain, [
+    colony,
     walletAddress,
+    ethDomainId,
   ]);
   const canDelete = walletAddress === creator.profile.walletAddress;
   const canModify = canAdminister(userRoles);

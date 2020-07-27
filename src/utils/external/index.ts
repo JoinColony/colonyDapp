@@ -1,5 +1,4 @@
-import BN from 'bn.js';
-import { fromWei } from 'ethjs-unit';
+import { BigNumber, formatUnits } from 'ethers/utils';
 
 import { DEFAULT_NETWORK } from '~constants';
 
@@ -25,7 +24,7 @@ interface EtherscanLinkProps {
 /*
   Request dollar conversion value from etherScan
 */
-export const getEthToUsd = (ethValue: BN): Promise<number | void> => {
+export const getEthToUsd = (ethValue: BigNumber): Promise<number | void> => {
   const ETH_USD_KEY = 'ethUsd';
   const ETH_USD_TIMESTAMP_KEY = 'ethUsdTimestamp';
 
@@ -45,7 +44,7 @@ export const getEthToUsd = (ethValue: BN): Promise<number | void> => {
       currentTimestamp - parseInt(cachedEthUsdTimestamp, 10) > 86400000;
     if (!olderThanOneDay) {
       return Promise.resolve(
-        fromWei(ethValue, 'ether') * parseFloat(cachedEthUsd),
+        parseFloat(formatUnits(ethValue, 'ether')) * parseFloat(cachedEthUsd),
       );
     }
   }
@@ -68,7 +67,7 @@ export const getEthToUsd = (ethValue: BN): Promise<number | void> => {
 
       localStorage.setItem(ETH_USD_KEY, ethUsd);
       localStorage.setItem(ETH_USD_TIMESTAMP_KEY, currentTimestamp.toString());
-      return fromWei(ethValue, 'ether') * parseFloat(ethUsd);
+      return parseFloat(formatUnits(ethValue, 'ether')) * parseFloat(ethUsd);
     })
     .catch(console.warn);
 };

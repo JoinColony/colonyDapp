@@ -5,7 +5,7 @@ import { IntlProvider } from 'react-intl';
 import { BrowserRouter } from 'react-router-dom';
 import { Map as ImmutableMap, Record as ImmutableRecord } from 'immutable';
 
-import { Wallet, WALLET_CATEGORIES } from '~immutable/index';
+import { Wallet, WalletMethod } from '~immutable/index';
 
 import { CoreTransactions } from '../modules/core/state/index';
 
@@ -69,7 +69,7 @@ const initialState = MockState({
       },
     },
     wallet: Wallet({
-      walletType: WALLET_CATEGORIES.SOFTWARE,
+      walletType: WalletMethod.Create,
     }),
     allUsers: ImmutableMap(),
   },
