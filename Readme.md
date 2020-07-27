@@ -28,7 +28,7 @@ This project depends on external libraries, so after cloning, they need to be pr
 npm run provision
 ```
 
-Under the hood, this will initialize the `submodule`s, install their packages, and build them. Furthermore this will create the SSL certificate needed to run the dev server
+Under the hood, this will initialize the `submodule`s, install their packages, and build them.
 
 ### Define environment variables
 
