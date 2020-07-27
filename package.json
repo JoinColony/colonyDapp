@@ -149,7 +149,6 @@
     "cleave.js": "^1.5.10",
     "copy-to-clipboard": "^3.0.8",
     "draft-js": "^0.11.4",
-    "elliptic": "^6.4.1",
     "eslint-plugin-eslint-comments": "^3.1.2",
     "eth-contract-metadata": "^1.13.0",
     "eth-ens-namehash-ms": "^2.2.0",
