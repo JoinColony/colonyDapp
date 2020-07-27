@@ -20,7 +20,7 @@ const mode = process.env.NODE_ENV || 'development';
 const generateModulesAliases = () => {
   let modulesAliases = {};
   const foundDappModules = utils.getDappModules();
-  foundDappModules.map(dappModule => {
+  foundDappModules.map((dappModule) => {
     modulesAliases = Object.assign(
       {},
       modulesAliases,
@@ -90,16 +90,14 @@ const config = {
         ],
         options: {
           esModule: false,
-        }
+        },
       },
       /*
        * To load svg icons and token icons to import
        */
       {
         test: /\.svg$/,
-        exclude: [
-          path.resolve(__dirname, 'src', 'img', 'icons'),
-        ],
+        exclude: [path.resolve(__dirname, 'src', 'img', 'icons')],
         use: '@svgr/webpack',
       },
       /*
@@ -109,9 +107,7 @@ const config = {
        */
       {
         test: /\.svg$/,
-        include: [
-          path.resolve(__dirname, 'src', 'img', 'icons'),
-        ],
+        include: [path.resolve(__dirname, 'src', 'img', 'icons')],
         use: [
           {
             loader: 'svg-sprite-loader',
@@ -161,6 +157,8 @@ const config = {
   },
   node: {
     net: 'empty',
+    child_process: 'empty',
+    fs: 'empty',
   },
   plugins: [
     new Dotenv({
