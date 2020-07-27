@@ -8,7 +8,7 @@ import { Address, DomainsMapType } from '~types/index';
 
 import { Table, TableBody } from '~core/Table';
 import Heading from '~core/Heading';
-import { filterSgDomains } from '../../transformers';
+import { filterSgDomains, normalizeSgDomains } from '../../transformers';
 
 import DomainListItem from './DomainListItem';
 
@@ -77,7 +77,7 @@ const DomainList = ({
         <Table scrollable>
           <TableBody>
             {subgraphDomains ? (
-              subgraphDomains.map(({ id, name }) => (
+              normalizeSgDomains(subgraphDomains).map(({ id, name }) => (
                 <DomainListItem
                   key={id}
                   domain={{ id, name }}
