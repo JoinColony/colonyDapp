@@ -1,5 +1,7 @@
 import React, { useMemo } from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
+import gql from 'graphql-tag';
+import { useQuery } from '@apollo/react-hooks';
 
 import { COLONY_TOTAL_BALANCE_DOMAIN_ID } from '~constants';
 import Button from '~core/Button';
@@ -13,6 +15,10 @@ import HookedColonyAvatar from '~dashboard/HookedColonyAvatar';
 import { AnyColonyProfile } from '~data/index';
 import { DomainsMapType } from '~types/index';
 import { multiLineTextEllipsis, stripProtocol } from '~utils/strings';
+import {
+  filterSgDomains,
+  normalizeSgDomains,
+} from '../../../../admin/transformers';
 
 import ColonyInvite from './ColonyInvite';
 import ColonyPrograms from './ColonyPrograms';
@@ -53,6 +59,15 @@ const MSG = defineMessages({
 
 const ColonyAvatar = HookedColonyAvatar({ fetchColony: false });
 
+const GET_SUBGRAPH_DOMAINS = gql`
+  query AllDomains {
+    domains {
+      id
+      name
+    }
+  }
+`;
+
 interface Props {
   colony: AnyColonyProfile;
   canAdminister: boolean;
@@ -79,12 +94,24 @@ const ColonyMeta = ({
   colony,
   canAdminister,
 }: Props) => {
-  const sortedDomains = useMemo(
-    () =>
-      Object.keys(domains || {})
-        .sort()
-        .map((id) => domains[id]),
-    [domains],
+  const { data: subgraphDomainsData } = useQuery(GET_SUBGRAPH_DOMAINS, {
+    /**
+     * Tell the apollo client to use the subgraph endpoint link
+    */
+    context: { endpoint: 'subgraph' },
+    /**
+     * Fake having this in real time
+    */
+    pollInterval: 500,
+  });
+  const subgraphDomains = useMemo(
+    () => {
+      if (subgraphDomainsData && subgraphDomainsData.domains) {
+        return filterSgDomains(subgraphDomainsData.domains, colonyAddress);
+      }
+      return [];
+    },
+    [filterSgDomains, colonyAddress, subgraphDomainsData],
   );
 
   const renderExpandedElements = (
@@ -179,7 +206,7 @@ const ColonyMeta = ({
               text={{ id: 'domain.all' }}
             />
           </li>
-          {sortedDomains.map(({ name, id }) => (
+          {normalizeSgDomains(subgraphDomains).map(({ name, id }) => (
             <li
               className={styles.domainFilterItem}
               key={`domain_${id}`}

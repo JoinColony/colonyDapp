@@ -15,7 +15,7 @@ const httpLink = createHttpLink({
 });
 
 const subgraphHttpLink = createHttpLink({
-  uri: 'http://127.0.0.1:8000/subgraphs/name/joinColony/subgraph',
+  uri: `${process.env.SUBGRAPH_ENDPOINT}/graphql`,
 });
 
 const authLink = setContext((_, { headers }) => {
