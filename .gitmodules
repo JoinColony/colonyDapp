@@ -1,7 +1,7 @@
 [submodule "src/lib/colonyNetwork"]
 	path = src/lib/colonyNetwork
-	url = git@github.com:JoinColony/colonyNetwork.git
+	url = https://github.com/JoinColony/colonyNetwork.git
 	branch = develop
 [submodule "src/lib/colonyServer"]
 	path = src/lib/colonyServer
-	url = git@github.com:JoinColony/colonyServer.git
+	url = https://github.com/JoinColony/colonyServer.git
