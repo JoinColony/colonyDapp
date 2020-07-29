@@ -1,0 +1,33 @@
+
+.mainContent {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 20px 42px;
+  height: 100%;
+
+  & a {
+    color: var(--colony-blue);
+  }
+}
+
+.headingRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 30px;
+}
+
+.bodyContainer {
+  margin-top: 15px;
+}
+
+.buttonContainer {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+
+  & .buttonAdjacent {
+    margin-right: 26px;
+  }
+}

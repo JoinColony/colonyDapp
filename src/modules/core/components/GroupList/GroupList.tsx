@@ -7,6 +7,7 @@ import Icon from '../Icon';
 import Heading from '../Heading';
 
 import styles from './GroupList.css';
+import { getMainClasses } from '~utils/css';
 
 interface GroupListItem {
   id: string;
@@ -18,7 +19,7 @@ interface GroupListItem {
   titleValues?: SimpleMessageValues;
 
   /** Text in the second row of the second column */
-  subtitleElement: ReactNode;
+  subtitleElement?: ReactNode;
 
   /** Icon to be rendered in the first column */
   icon?: string;
@@ -31,24 +32,36 @@ interface GroupListItem {
   extra?: ReactNode;
 }
 
+interface Appearance {
+  margin?: 'none';
+  layout?: 'compact';
+}
+
 interface Props {
+  appearance?: Appearance;
   items: GroupListItem[];
 }
 
 const displayName = 'GroupList';
 
-const GroupList = ({ items }: Props) => (
-  <div className={styles.container}>
+const GroupList = ({ appearance, items }: Props) => (
+  <div className={getMainClasses(appearance, styles)}>
     {items.map(
       ({ id, title, titleValues, subtitleElement, icon, extra, imageUrl }) => (
         <div key={id} className={styles.listMain}>
-          <div className={styles.rowIcon}>
-            {icon && <Icon name={icon} title={icon} />}
-            {imageUrl && <img src={imageUrl} alt="logo" />}
-          </div>
+          {(icon || imageUrl) && (
+            <div className={styles.rowIcon}>
+              {icon && <Icon name={icon} title={icon} />}
+              {imageUrl && <img src={imageUrl} alt="logo" />}
+            </div>
+          )}
           <div className={styles.rowContent}>
             <Heading
-              appearance={{ size: 'small', weight: 'bold', margin: 'small' }}
+              appearance={{
+                size: 'small',
+                weight: 'bold',
+                margin: subtitleElement ? 'small' : 'none',
+              }}
               text={title}
               textValues={titleValues}
             />
