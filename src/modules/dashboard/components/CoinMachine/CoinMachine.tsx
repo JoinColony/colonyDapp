@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useRef } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { defineMessages, useIntl } from 'react-intl';
 import { Redirect } from 'react-router-dom';
 import BN from 'bn.js';
@@ -15,6 +15,9 @@ import PreviousSalesCard from './PreviousSalesCard';
 import TimeRemainingCard from './TimeRemainingCard';
 import TokensRemainingCard from './TokensRemainingCard';
 import CoinMachineChat from './CoinMachineChat';
+import PostPurchaseCard from './PostPurchaseCard';
+
+import { PurchaseStatus } from './types';
 
 import styles from './CoinMachine.css';
 
@@ -47,7 +50,11 @@ const CoinMachine = ({
   colonyName,
   colonyDisplayName,
   nativeToken: { symbol },
+  nativeToken,
 }: Props) => {
+  // @todo use mutation result to update state if purchase is being/has been made
+  const [purchaseStatus, setPurchaseStatus] = useState<PurchaseStatus | null>();
+
   // @todo use a real check here
   const canColonySellTokens = true;
 
@@ -117,23 +124,32 @@ const CoinMachine = ({
         </div>
       </div>
       <div className={styles.grid}>
-        <div className={styles.purchaseGrid}>
-          <div className={styles.buyCLNY} />
-          <div className={styles.timeRemaining}>
-            <TimeRemainingCard
-              msRemaining={timeRemaining}
-              totalTime={totalSaleTime}
-            />
+        {purchaseStatus ? (
+          <PostPurchaseCard
+            msRemaining={timeRemaining}
+            purchaseStatus={purchaseStatus}
+            setPurchaseStatus={setPurchaseStatus}
+            token={nativeToken}
+          />
+        ) : (
+          <div className={styles.purchaseGrid}>
+            <div className={styles.buyCLNY} />
+            <div className={styles.timeRemaining}>
+              <TimeRemainingCard
+                msRemaining={timeRemaining}
+                totalTime={totalSaleTime}
+              />
+            </div>
+            <div className={styles.tokensRemaining}>
+              <TokensRemainingCard
+                target={tokenTarget}
+                initialTokensRemaining={initialTokensRemaining.current}
+                tokensRemaining={tokensRemaining}
+                totalSupply={totalSupply}
+              />
+            </div>
           </div>
-          <div className={styles.tokensRemaining}>
-            <TokensRemainingCard
-              target={tokenTarget}
-              initialTokensRemaining={initialTokensRemaining.current}
-              tokensRemaining={tokensRemaining}
-              totalSupply={totalSupply}
-            />
-          </div>
-        </div>
+        )}
         <div className={styles.previousSales}>
           <PreviousSalesCard salesData={salesData} symbol={symbol} />
         </div>
