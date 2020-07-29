@@ -8,10 +8,8 @@ import DialogSection from '~core/Dialog/DialogSection';
 import Heading from '~core/Heading';
 import Numeral from '~core/Numeral';
 import StarRating from '~core/StarRating';
-import { useSelector } from '~utils/hooks';
 import { Payouts } from '~data/index';
 
-import { networkFeeSelector } from '../../../core/selectors';
 import { Props as TaskClaimRewardProps } from './TaskClaimReward';
 
 import styles from './TaskClaimRewardDialog.css';
@@ -110,8 +108,9 @@ const TaskClaimRewardDialog = ({
     nativeTokenPayout,
   },
 }: Props) => {
-  const networkFee = useSelector(networkFeeSelector);
   // @TODO This component is unused. Get token options if needbe
+  // We can't get the absolute network fee (only the inverse one)
+  const networkFee = 0;
   const payouts = [];
   const reputation = 0;
   const tokenOptions = [];

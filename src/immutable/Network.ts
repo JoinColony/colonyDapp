@@ -4,12 +4,6 @@ import { DefaultValues, RecordToJS } from '~types/index';
 
 export interface NetworkProps {
   /*
-   * Current network fee, calculated using `feeInverse`.
-   * If the current fee is 1%, this will be `.01`.
-   */
-  fee?: string;
-
-  /*
    * Network fee inverse as defined by the ColonyNetwork contract.
    * If the current fee is 1%, this will be `100`.
    */
@@ -18,7 +12,6 @@ export interface NetworkProps {
 }
 
 const defaultValues: DefaultValues<NetworkProps> = {
-  fee: undefined,
   feeInverse: undefined,
   version: undefined,
 };

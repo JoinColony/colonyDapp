@@ -5,12 +5,8 @@ import moveDecimal from 'move-decimal-point';
 
 import Icon from '~core/Icon';
 import Numeral from '~core/Numeral';
-import { Tooltip } from '~core/Popover';
 import { useSelector } from '~utils/hooks';
-import {
-  networkFeeInverseSelector,
-  networkFeeSelector,
-} from '../../../../core/selectors';
+import { networkFeeInverseSelector } from '../../../../core/selectors';
 import styles from './NetworkFee.css';
 
 const MSG = defineMessages({
@@ -42,7 +38,6 @@ interface Props {
 const displayName = 'dashboard.Task.Payout.NetworkFee';
 
 const NetworkFee = ({ amount, decimals, symbol }: Props) => {
-  const networkFee = useSelector(networkFeeSelector);
   const networkFeeInverse = useSelector(networkFeeInverseSelector);
   const metaColonyFee = useMemo(() => {
     const amountBn = bigNumberify(moveDecimal(amount, decimals));
@@ -73,28 +68,13 @@ const NetworkFee = ({ amount, decimals, symbol }: Props) => {
         />
       </div>
       <div className={styles.help}>
-        <Tooltip
-          content={
-            <div className={styles.tooltipText}>
-              <FormattedMessage
-                {...MSG.helpText}
-                values={{
-                  percentage: (
-                    <Numeral value={networkFee * 1e2} suffix="%" truncate={1} />
-                  ),
-                }}
-              />
-            </div>
-          }
-        >
-          <button className={styles.helpButton} type="button">
-            <Icon
-              appearance={{ size: 'small', theme: 'invert' }}
-              name="question-mark"
-              title={MSG.helpIconTitle}
-            />
-          </button>
-        </Tooltip>
+        <button className={styles.helpButton} type="button">
+          <Icon
+            appearance={{ size: 'small', theme: 'invert' }}
+            name="question-mark"
+            title={MSG.helpIconTitle}
+          />
+        </button>
       </div>
     </>
   );
