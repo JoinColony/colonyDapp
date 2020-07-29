@@ -20,7 +20,9 @@ import ens from '../../context/ensContext';
 export default class ColonyManager {
   private metaColonyClient?: ColonyClient;
 
-  clients: Map<Address, Promise<ColonyClient>>;
+  colonyClients: Map<Address, Promise<ColonyClient>>;
+
+  tokenClients: Map<Address, Promise<TokenClient>>;
 
   networkClient: ColonyNetworkClient;
 
@@ -29,7 +31,8 @@ export default class ColonyManager {
   signer: Signer;
 
   constructor(networkClient: ColonyNetworkClient) {
-    this.clients = new Map();
+    this.colonyClients = new Map();
+    this.tokenClients = new Map();
     this.networkClient = networkClient;
     this.provider = networkClient.provider;
     this.signer = networkClient.signer;
@@ -38,7 +41,7 @@ export default class ColonyManager {
   private async getColonyPromise(address: Address) {
     const client = await this.networkClient.getColonyClient(address);
 
-    // Check if the colony exists by calling `getVersion` (in lieu of an
+    // Check if the colony exists by calling `version()` (in lieu of an
     // explicit means of checking whether a colony exists at an address).
     try {
       await client.version();
@@ -56,10 +59,12 @@ export default class ColonyManager {
     }
 
     const address = await this.resolveColonyIdentifier(identifier);
-    return this.clients.get(address) || this.setColonyClient(address);
+    return this.colonyClients.get(address) || this.setColonyClient(address);
   }
 
-  async resolveColonyIdentifier(identifier: AddressOrENSName): Promise<any> {
+  private async resolveColonyIdentifier(
+    identifier: AddressOrENSName,
+  ): Promise<any> {
     return isAddress(identifier)
       ? identifier
       : ens.getAddress(
@@ -68,10 +73,10 @@ export default class ColonyManager {
         );
   }
 
-  async setColonyClient(address: Address): Promise<ColonyClient> {
+  private async setColonyClient(address: Address): Promise<ColonyClient> {
     const clientPromise = this.getColonyPromise(address);
-    this.clients.set(address, clientPromise);
-    clientPromise.catch(() => this.clients.delete(address));
+    this.colonyClients.set(address, clientPromise);
+    clientPromise.catch(() => this.colonyClients.delete(address));
     return clientPromise;
   }
 
@@ -135,7 +140,12 @@ export default class ColonyManager {
     }
   }
 
-  async getTokenClient(contractAddress: string) {
-    return getTokenClient(contractAddress, this.signer);
+  async getTokenClient(address: Address): Promise<TokenClient> {
+    let clientPromise = this.tokenClients.get(address);
+    if (!clientPromise) {
+      clientPromise = getTokenClient(address, this.signer);
+      this.tokenClients.set(address, clientPromise);
+    }
+    return clientPromise;
   }
 }
