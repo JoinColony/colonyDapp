@@ -16,7 +16,7 @@ const getLocalContractAddress = (contractName: string) => {
   if (process.env.NODE_ENV === 'development' && !process.env.DEV) {
     try {
       // eslint-disable-next-line @typescript-eslint/no-var-requires, max-len, global-require, import/no-dynamic-require
-      const contractABI: LocalContractABI = require(`../../../../lib/colonyNetwork/build/contracts/${contractName}.json`);
+      const contractABI: LocalContractABI = require(`~lib/colonyNetwork/build/contracts/${contractName}.json`);
       return Object.values(contractABI.networks)[0].address;
     } catch {
       throw new Error(

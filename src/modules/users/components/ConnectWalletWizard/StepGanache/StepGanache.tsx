@@ -52,7 +52,7 @@ const getAccounts = (): SelectOption[] => {
   // process.env.DEV is set by the QA server in case we want to have a debug build. We also don't want to load the accounts then
   if (process.env.NODE_ENV === 'development' && !process.env.DEV) {
     // eslint-disable-next-line @typescript-eslint/no-var-requires, global-require, max-len
-    ganacheAccounts = require(`../../../../../lib/colonyNetwork/ganache-accounts.json`);
+    ganacheAccounts = require(`~lib/colonyNetwork/ganache-accounts.json`);
   } else {
     ganacheAccounts = [];
   }
