@@ -1,6 +1,7 @@
 const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 const path = require('path');
 const TerserPlugin = require('terser-webpack-plugin');
+const webpack = require('webpack');
 
 const webpackBaseConfig = require('./webpack.base');
 
@@ -57,5 +58,12 @@ module.exports = () => ({
      * Add the rest of the PRODUCTION environment required plugins here
      */
     new CleanWebpackPlugin(),
+    /**
+     * Ignore the colonyNetwork imports from the final bundle
+     */
+    new webpack.IgnorePlugin({
+      resourceRegExp: /^(.*)\.json$/,
+      contextRegExp: /colonyNetwork\/build\/contracts$/
+    }),
   ],
 });
