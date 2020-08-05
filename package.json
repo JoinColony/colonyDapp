@@ -132,7 +132,7 @@
     "@colony/colony-js": "^2.0.0-rc.2",
     "@colony/redux-promise-listener": "^1.2.0",
     "@formatjs/intl-pluralrules": "^1.5.7",
-    "@formatjs/intl-relativetimeformat": "^4.5.14",
+    "@formatjs/intl-relativetimeformat": "^7.0.0",
     "@formatjs/intl-unified-numberformat": "^3.3.5",
     "@popperjs/core": "^2.3.3",
     "@purser/core": "^3.0.0-alpha.2",
