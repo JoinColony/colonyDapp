@@ -95,6 +95,7 @@ const ColonyHome = ({ match, location }: Props) => {
 
   const {
     data,
+    error,
     /**
      * @NOTE Hooking into the return variable value
      *
@@ -113,6 +114,8 @@ const ColonyHome = ({ match, location }: Props) => {
     // We have to define an empty address here for type safety, will be replaced by the query
     variables: { name: colonyName, address: '' },
   });
+
+  if (error) console.error(error);
 
   const colonyDomains = data && data.colony && data.colony.domains;
 
