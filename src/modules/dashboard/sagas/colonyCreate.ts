@@ -66,6 +66,8 @@ function* getRecoveryInfo(recoveryAddress: string) {
     colonyAddress: '',
     colonyName: '',
     tokenAddress: '',
+    tokenName: '',
+    tokenSymbol: '',
   };
 
   if (!username) {
@@ -102,6 +104,11 @@ function* getRecoveryInfo(recoveryAddress: string) {
   }
 
   const { tokenClient } = colonyClient;
+
+  const tokenInfo = yield tokenClient.getTokenInfo();
+
+  colonyInfo.tokenName = tokenInfo.name;
+  colonyInfo.tokenSymbol = tokenInfo.symbol;
 
   colonyInfo.colonyAddress = colonyClient.address;
   colonyInfo.tokenAddress = tokenClient.address;
@@ -147,8 +154,8 @@ function* colonyCreate({
     tokenAddress: givenTokenAddress,
     tokenChoice,
     tokenIcon,
-    tokenName,
-    tokenSymbol,
+    tokenName: givenTokenName,
+    tokenSymbol: givenTokenSymbol,
     username: givenUsername,
   },
 }: Action<ActionTypes.COLONY_CREATE>) {
@@ -239,6 +246,11 @@ function* colonyCreate({
       (recoveryInfo && recoveryInfo.colonyName) || givenColonyName,
     );
     const username = ENS.normalize(givenUsername);
+
+    const tokenName =
+      (recoveryInfo && recoveryInfo.tokenName) || givenTokenName;
+    const tokenSymbol =
+      (recoveryInfo && recoveryInfo.tokenSymbol) || givenTokenSymbol;
 
     if (createUser) {
       yield createGroupedTransaction(createUser, {
