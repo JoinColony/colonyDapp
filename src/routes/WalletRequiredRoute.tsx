@@ -35,6 +35,7 @@ const WalletRequiredRoute = ({
   didClaimProfile,
   isConnected,
   layout: Layout,
+  location,
   routeProps,
   path,
 }: Props) => {
@@ -43,6 +44,7 @@ const WalletRequiredRoute = ({
       <Component routeProps={routeProps} {...props} />
     </Layout>
   );
+  const locationPath = location && `${location.pathname}${location.search}`;
   return (
     <Route
       render={(
@@ -105,8 +107,11 @@ const WalletRequiredRoute = ({
            * create a colony route, just redirect back to it, since the
            * Wizard can handle creating a username alongside a colony.
            */
-          if (redirectTo === CREATE_COLONY_ROUTE) {
-            return <Redirect to={CREATE_COLONY_ROUTE} />;
+          if (
+            typeof redirectTo == 'string' &&
+            redirectTo.startsWith(CREATE_COLONY_ROUTE)
+          ) {
+            return <Redirect to={redirectTo} />;
           }
           /**
            * This is the next step from the above redirect. If we've just
@@ -132,7 +137,7 @@ const WalletRequiredRoute = ({
                 to={{
                   pathname: CREATE_USER_ROUTE,
                   state: {
-                    redirectTo: path,
+                    redirectTo: locationPath,
                   },
                 }}
               />
@@ -154,7 +159,7 @@ const WalletRequiredRoute = ({
               to={{
                 pathname: CONNECT_ROUTE,
                 state: {
-                  redirectTo: path,
+                  redirectTo: locationPath,
                 },
               }}
             />

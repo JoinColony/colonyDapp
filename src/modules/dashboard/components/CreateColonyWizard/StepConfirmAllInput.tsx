@@ -1,5 +1,7 @@
 import React, { useCallback } from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
+import { parse as parseQS } from 'query-string';
+import { useLocation } from 'react-router-dom';
 
 import { WizardProps } from '~core/Wizard';
 import { mergePayload } from '~utils/actions';
@@ -80,6 +82,7 @@ const StepConfirmAllInput = ({
   },
   wizardValues,
 }: Props) => {
+  const location = useLocation();
   const transform = useCallback(
     mergePayload({
       colonyName,
@@ -93,9 +96,14 @@ const StepConfirmAllInput = ({
     }),
     [username, displayName, colonyName, tokenName, tokenIcon, tokenSymbol],
   );
+
+  const { recover } = parseQS(location.search) as {
+    recover: string | undefined;
+  };
+
   return (
     <ActionForm
-      initialValues={{}}
+      initialValues={{ recover }}
       submit={ActionTypes.COLONY_CREATE}
       success={ActionTypes.COLONY_CREATE_SUCCESS}
       error={ActionTypes.COLONY_CREATE_ERROR}
