@@ -1,13 +1,24 @@
 import { $Values } from 'utility-types';
 import { Channel } from 'redux-saga';
 import { all, call, fork, put } from 'redux-saga/effects';
-import { ClientType, ROOT_DOMAIN_ID, ColonyVersion } from '@colony/colony-js';
+import {
+  ClientType,
+  ROOT_DOMAIN_ID,
+  ColonyVersion,
+  ColonyClient,
+  ColonyRole,
+  TokenClientType,
+} from '@colony/colony-js';
+import { AddressZero } from 'ethers/constants';
 
 import { ContextModule, TEMP_getContext } from '~context/index';
 import { DEFAULT_TOKEN_DECIMALS } from '~constants';
 import {
   getLoggedInUser,
   refetchUserNotifications,
+  ColonyProfileDocument,
+  ColonyProfileQuery,
+  ColonyProfileQueryVariables,
   CreateColonyDocument,
   CreateColonyMutation,
   CreateColonyMutationVariables,
@@ -33,11 +44,106 @@ import {
 } from '../../core/actionCreators';
 import { createTransaction, createTransactionChannels } from '../../core/sagas';
 
+interface ChannelDefinition {
+  channel: Channel<any>;
+  index: number;
+  id: string;
+}
+
+function* getRecoveryInfo(recoveryAddress: string) {
+  const { username, walletAddress } = yield getLoggedInUser();
+  const apolloClient = TEMP_getContext(ContextModule.ApolloClient);
+  const { networkClient } = TEMP_getContext(ContextModule.ColonyManager);
+  const ens = TEMP_getContext(ContextModule.ENS);
+
+  const colonyInfo = {
+    isProfileCreated: false,
+    isNativeTokenColonyToken: false,
+    isTokenAuthoritySetUp: false,
+    isOneTxExtensionDeployed: false,
+    hasOneTxAdminRole: false,
+    hasOneTxFundingRole: false,
+    colonyAddress: '',
+    colonyName: '',
+    tokenAddress: '',
+  };
+
+  if (!username) {
+    throw new Error('User does not have a username associated.');
+  }
+
+  const colonyClient: ColonyClient = yield networkClient.getColonyClient(
+    recoveryAddress,
+  );
+
+  const domain = yield ens.getDomain(colonyClient.address, networkClient);
+  colonyInfo.colonyName = ENS.stripDomainParts('colony', domain);
+
+  const hasRecoveryRole = yield colonyClient.hasUserRole(
+    walletAddress,
+    ROOT_DOMAIN_ID,
+    ColonyRole.Recovery,
+  );
+
+  if (!hasRecoveryRole) {
+    throw new Error('User does not have the permission to recovery colony');
+  }
+
+  try {
+    yield apolloClient.query<ColonyProfileQuery, ColonyProfileQueryVariables>({
+      query: ColonyProfileDocument,
+      variables: {
+        address: colonyClient.address,
+      },
+    });
+    colonyInfo.isProfileCreated = true;
+  } catch {
+    colonyInfo.isProfileCreated = false;
+  }
+
+  const { tokenClient } = colonyClient;
+
+  colonyInfo.colonyAddress = colonyClient.address;
+  colonyInfo.tokenAddress = tokenClient.address;
+
+  if (tokenClient.tokenClientType === TokenClientType.Colony) {
+    colonyInfo.isNativeTokenColonyToken = true;
+    const tokenAuthority = yield tokenClient.authority();
+    if (tokenAuthority !== AddressZero) {
+      colonyInfo.isTokenAuthoritySetUp = true;
+    }
+  }
+
+  const { oneTxPaymentFactoryClient } = networkClient;
+
+  // eslint-disable-next-line max-len
+  const oneTxExtensionAddress = yield oneTxPaymentFactoryClient.deployedExtensions(
+    recoveryAddress,
+  );
+
+  if (oneTxExtensionAddress !== AddressZero) {
+    colonyInfo.isOneTxExtensionDeployed = true;
+    colonyInfo.hasOneTxAdminRole = yield colonyClient.hasUserRole(
+      oneTxExtensionAddress,
+      ROOT_DOMAIN_ID,
+      ColonyRole.Administration,
+    );
+    colonyInfo.hasOneTxFundingRole = yield colonyClient.hasUserRole(
+      oneTxExtensionAddress,
+      ROOT_DOMAIN_ID,
+      ColonyRole.Funding,
+    );
+  }
+
+  return colonyInfo;
+}
+
 function* colonyCreate({
   meta,
   payload: {
     colonyName: givenColonyName,
     displayName,
+    recover: recoveryAddress,
     tokenAddress: givenTokenAddress,
     tokenChoice,
     tokenIcon,
@@ -50,37 +156,57 @@ function* colonyCreate({
   const apolloClient = TEMP_getContext(ContextModule.ApolloClient);
   const { networkClient } = TEMP_getContext(ContextModule.ColonyManager);
 
+  const channelNames: string[] = [];
+
+  let recoveryInfo;
+
+  if (recoveryAddress) {
+    recoveryInfo = yield getRecoveryInfo(recoveryAddress);
+  }
+
+  /*
+   * If the user did not claim a profile yet, define a tx to create the user.
+   */
+  if (!currentUsername && !recoveryAddress) channelNames.push('createUser');
+  /*
+   * If the user opted to create a token, define a tx to create the token.
+   */
+  if (tokenChoice === 'create' && !recoveryAddress) {
+    channelNames.push('createToken');
+  }
+  if (!recoveryAddress) channelNames.push('createColony');
+  /*
+   * If the user opted to create a token,  define txs to manage the token.
+   */
+  if (
+    tokenChoice === 'create' &&
+    (!recoveryAddress || (recoveryInfo && !recoveryInfo.isTokenAuthoritySetUp))
+  ) {
+    channelNames.push('deployTokenAuthority');
+    channelNames.push('setTokenAuthority');
+  }
+
+  if (
+    !recoveryAddress ||
+    (recoveryInfo && !recoveryInfo.isOneTxExtensionDeployed)
+  ) {
+    channelNames.push('deployOneTx');
+  }
+
+  if (!recoveryAddress || (recoveryInfo && !recoveryInfo.hasOneTxAdminRole)) {
+    channelNames.push('setOneTxRoleAdministration');
+  }
+
+  if (!recoveryAddress || (recoveryInfo && !recoveryInfo.hasOneTxFundingRole)) {
+    channelNames.push('setOneTxRoleFunding');
+  }
+
   /*
    * Define a manifest of transaction ids and their respective channels.
    */
   const channels: {
-    [id: string]: { channel: Channel<any>; index: number; id: string };
-  } = yield call(createTransactionChannels, meta.id, [
-    /*
-     * If the user did not claim a profile yet, define a tx to create the user.
-     */
-    ...(!currentUsername ? ['createUser'] : []),
-    /*
-     * If the user opted to create a token, define a tx to create the token.
-     */
-    ...(tokenChoice === 'create' ? ['createToken'] : []),
-    /*
-     * Always create the following transactions..
-     */
-    'createColony',
-    /*
-     * If the user opted to create a token, define txs to manage the token.
-     */
-    ...(tokenChoice === 'create'
-      ? ['deployTokenAuthority', 'setTokenAuthority']
-      : []),
-    /*
-     * Always create the following transactions.
-     */
-    'deployOneTx',
-    'setOneTxRoleAdministration',
-    'setOneTxRoleFunding',
-  ]);
+    [id: string]: ChannelDefinition;
+  } = yield call(createTransactionChannels, meta.id, channelNames);
   const {
     createColony,
     createToken,
@@ -109,7 +235,9 @@ function* colonyCreate({
    * Create all transactions for the group.
    */
   try {
-    const colonyName = ENS.normalize(givenColonyName);
+    const colonyName = ENS.normalize(
+      (recoveryInfo && recoveryInfo.colonyName) || givenColonyName,
+    );
     const username = ENS.normalize(givenUsername);
 
     if (createUser) {
@@ -129,19 +257,23 @@ function* colonyCreate({
       });
     }
 
-    yield createGroupedTransaction(createColony, {
-      context: ClientType.NetworkClient,
-      methodName: 'createColony(address,uint256,string,string,bool)',
-      ready: false,
-    });
+    if (createColony) {
+      yield createGroupedTransaction(createColony, {
+        context: ClientType.NetworkClient,
+        methodName: 'createColony(address,uint256,string,string,bool)',
+        ready: false,
+      });
+    }
 
-    if (createToken) {
+    if (deployTokenAuthority) {
       yield createGroupedTransaction(deployTokenAuthority, {
         context: ClientType.ColonyClient,
         methodName: 'deployTokenAuthority',
         ready: false,
       });
+    }
 
+    if (setTokenAuthority) {
       yield createGroupedTransaction(setTokenAuthority, {
         context: ClientType.TokenClient,
         methodName: 'setAuthority',
@@ -149,25 +281,31 @@ function* colonyCreate({
       });
     }
 
-    yield createGroupedTransaction(deployOneTx, {
-      context: ClientType.OneTxPaymentFactoryClient,
-      methodName: 'deployExtension',
-      ready: false,
-    });
+    if (deployOneTx) {
+      yield createGroupedTransaction(deployOneTx, {
+        context: ClientType.OneTxPaymentFactoryClient,
+        methodName: 'deployExtension',
+        ready: false,
+      });
+    }
 
-    yield createGroupedTransaction(setOneTxRoleAdministration, {
-      context: ClientType.ColonyClient,
-      methodContext: 'setOneTxRoles',
-      methodName: 'setAdministrationRoleWithProofs',
-      ready: false,
-    });
+    if (setOneTxRoleAdministration) {
+      yield createGroupedTransaction(setOneTxRoleAdministration, {
+        context: ClientType.ColonyClient,
+        methodContext: 'setOneTxRoles',
+        methodName: 'setAdministrationRoleWithProofs',
+        ready: false,
+      });
+    }
 
-    yield createGroupedTransaction(setOneTxRoleFunding, {
-      context: ClientType.ColonyClient,
-      methodContext: 'setOneTxRoles',
-      methodName: 'setFundingRoleWithProofs',
-      ready: false,
-    });
+    if (setOneTxRoleFunding) {
+      yield createGroupedTransaction(setOneTxRoleFunding, {
+        context: ClientType.ColonyClient,
+        methodContext: 'setOneTxRoles',
+        methodName: 'setFundingRoleWithProofs',
+        ready: false,
+      });
+    }
 
     /*
      * Wait until all transactions are created.
@@ -226,6 +364,8 @@ function* colonyCreate({
         ActionTypes.TRANSACTION_SUCCEEDED,
       );
       tokenAddress = createAddress(deployedContractAddress);
+    } else if (recoveryInfo && recoveryInfo.tokenAddress) {
+      tokenAddress = recoveryInfo.tokenAddress;
     } else {
       if (!givenTokenAddress) {
         throw new Error('Token address not provided');
@@ -233,98 +373,107 @@ function* colonyCreate({
       tokenAddress = createAddress(givenTokenAddress);
     }
 
-    /*
-     * Pass through tokenAddress after token creation to the colony creation
-     * transaction and wait for it to succeed.
+    /**
+     * If we're not recovering this will be overwritten
      */
+    let colonyAddress = recoveryInfo && recoveryInfo.colonyAddress;
 
-    yield put(
-      transactionAddParams(createColony.id, [
-        tokenAddress,
-        ColonyVersion.BurgundyGlider,
-        colonyName,
-        '',
-        true,
-      ]),
-    );
-    yield put(transactionReady(createColony.id));
-
-    const {
-      payload: {
-        eventData: {
-          ColonyAdded: { colonyAddress },
-        },
-      },
-    } = yield takeFrom(createColony.channel, ActionTypes.TRANSACTION_SUCCEEDED);
-
-    if (!colonyAddress) {
-      return yield putError(
-        ActionTypes.COLONY_CREATE_ERROR,
-        new Error('Missing colony address'),
-        meta,
+    if (createColony) {
+      yield put(
+        transactionAddParams(createColony.id, [
+          tokenAddress,
+          ColonyVersion.BurgundyGlider,
+          colonyName,
+          '',
+          true,
+        ]),
       );
+      yield put(transactionReady(createColony.id));
+
+      const {
+        payload: {
+          eventData: {
+            ColonyAdded: { colonyAddress: createdColonyAddress },
+          },
+        },
+      } = yield takeFrom(
+        createColony.channel,
+        ActionTypes.TRANSACTION_SUCCEEDED,
+      );
+      colonyAddress = createdColonyAddress;
+      if (!colonyAddress) {
+        return yield putError(
+          ActionTypes.COLONY_CREATE_ERROR,
+          new Error('Missing colony address'),
+          meta,
+        );
+      }
+
+      yield put(transactionLoadRelated(createColony.id, true));
     }
 
-    yield put(transactionLoadRelated(createColony.id, true));
-
-    /*
-     * Create the colony in the Mongo Database
-     */
-    yield apolloClient.mutate<
-      CreateColonyMutation,
-      CreateColonyMutationVariables
-    >({
-      mutation: CreateColonyDocument,
-      variables: {
-        input: {
-          colonyAddress,
-          colonyName,
-          displayName,
-          tokenAddress,
-          tokenIsExternal: !createToken,
-          tokenName,
-          tokenSymbol,
-          tokenIconHash: tokenIcon,
-          tokenDecimals: DEFAULT_TOKEN_DECIMALS,
+    if (!recoveryAddress || (recoveryInfo && !recoveryInfo.isProfileCreated)) {
+      /*
+       * Create the colony in the Mongo Database
+       */
+      yield apolloClient.mutate<
+        CreateColonyMutation,
+        CreateColonyMutationVariables
+      >({
+        mutation: CreateColonyDocument,
+        variables: {
+          input: {
+            colonyAddress,
+            colonyName,
+            displayName,
+            tokenAddress,
+            tokenIsExternal: !createToken,
+            tokenName,
+            tokenSymbol,
+            tokenIconHash: tokenIcon,
+            tokenDecimals: DEFAULT_TOKEN_DECIMALS,
+          },
         },
-      },
-      update: (cache) => {
-        try {
-          const cacheData = cache.readQuery<
-            UserColonyAddressesQuery,
-            UserColonyAddressesQueryVariables
-          >({
-            query: UserColonyAddressesDocument,
-            variables: {
-              address: walletAddress,
-            },
-          });
-          if (cacheData) {
-            const colonyAddresses = cacheData.user.colonyAddresses || [];
-            colonyAddresses.push(colonyAddress);
-            cache.writeQuery<
+        update: (cache) => {
+          try {
+            const cacheData = cache.readQuery<
               UserColonyAddressesQuery,
               UserColonyAddressesQueryVariables
             >({
               query: UserColonyAddressesDocument,
-              data: {
-                user: {
-                  ...cacheData.user,
-                  colonyAddresses,
-                },
-              },
               variables: {
                 address: walletAddress,
               },
             });
+            if (cacheData) {
+              const colonyAddresses = cacheData.user.colonyAddresses || [];
+              colonyAddresses.push(colonyAddress);
+              cache.writeQuery<
+                UserColonyAddressesQuery,
+                UserColonyAddressesQueryVariables
+              >({
+                query: UserColonyAddressesDocument,
+                data: {
+                  user: {
+                    ...cacheData.user,
+                    colonyAddresses,
+                  },
+                },
+                variables: {
+                  address: walletAddress,
+                },
+              });
+            }
+          } catch (e) {
+            log.error(e);
           }
-        } catch (e) {
-          log.error(e);
-        }
-      },
-    });
+        },
+      });
 
-    yield put(transactionLoadRelated(createColony.id, false));
+      if (createColony) {
+        yield put(transactionLoadRelated(createColony.id, false));
+      }
+    }
 
     /*
      * Add a colonyAddress identifier to all pending transactions.
@@ -372,51 +521,56 @@ function* colonyCreate({
       );
     }
 
-    /*
-     * Deploy OneTx
-     */
-    yield put(transactionAddParams(deployOneTx.id, [colonyAddress]));
-    yield put(transactionReady(deployOneTx.id));
+    if (deployOneTx) {
+      /*
+       * Deploy OneTx
+       */
+      yield put(transactionAddParams(deployOneTx.id, [colonyAddress]));
+      yield put(transactionReady(deployOneTx.id));
 
-    const {
-      payload: {
-        eventData: {
-          ExtensionDeployed: { _extension: extensionAddress },
+      const {
+        payload: {
+          eventData: {
+            ExtensionDeployed: { _extension: extensionAddress },
+          },
         },
-      },
-    } = yield takeFrom(deployOneTx.channel, ActionTypes.TRANSACTION_SUCCEEDED);
+      } = yield takeFrom(
+        deployOneTx.channel,
+        ActionTypes.TRANSACTION_SUCCEEDED,
+      );
 
-    /*
-     * Set OneTx administration role
-     */
-    yield put(
-      transactionAddParams(setOneTxRoleAdministration.id, [
-        extensionAddress,
-        ROOT_DOMAIN_ID,
-        true,
-      ]),
-    );
-    yield put(transactionReady(setOneTxRoleAdministration.id));
-    yield takeFrom(
-      setOneTxRoleAdministration.channel,
-      ActionTypes.TRANSACTION_SUCCEEDED,
-    );
+      /*
+       * Set OneTx administration role
+       */
+      yield put(
+        transactionAddParams(setOneTxRoleAdministration.id, [
+          extensionAddress,
+          ROOT_DOMAIN_ID,
+          true,
+        ]),
+      );
+      yield put(transactionReady(setOneTxRoleAdministration.id));
+      yield takeFrom(
+        setOneTxRoleAdministration.channel,
+        ActionTypes.TRANSACTION_SUCCEEDED,
+      );
 
-    /*
-     * Set OneTx funding role
-     */
-    yield put(
-      transactionAddParams(setOneTxRoleFunding.id, [
-        extensionAddress,
-        ROOT_DOMAIN_ID,
-        true,
-      ]),
-    );
-    yield put(transactionReady(setOneTxRoleFunding.id));
-    yield takeFrom(
-      setOneTxRoleFunding.channel,
-      ActionTypes.TRANSACTION_SUCCEEDED,
-    );
+      /*
+       * Set OneTx funding role
+       */
+      yield put(
+        transactionAddParams(setOneTxRoleFunding.id, [
+          extensionAddress,
+          ROOT_DOMAIN_ID,
+          true,
+        ]),
+      );
+      yield put(transactionReady(setOneTxRoleFunding.id));
+      yield takeFrom(
+        setOneTxRoleFunding.channel,
+        ActionTypes.TRANSACTION_SUCCEEDED,
+      );
+    }
     return null;
   } catch (error) {
     yield putError(ActionTypes.COLONY_CREATE_ERROR, error, meta);

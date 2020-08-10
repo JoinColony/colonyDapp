@@ -40,6 +40,7 @@ export type ColonyActionTypes =
       {
         colonyName: string;
         displayName: string;
+        recover: string;
         tokenAddress?: Address;
         tokenChoice: 'create' | 'select';
         tokenIcon: string;
