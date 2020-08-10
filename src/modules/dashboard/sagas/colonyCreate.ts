@@ -137,7 +137,7 @@ function* colonyCreate({
 
     if (createToken) {
       yield createGroupedTransaction(deployTokenAuthority, {
-        context: ClientType.TokenClient,
+        context: ClientType.ColonyClient,
         methodName: 'deployTokenAuthority',
         ready: false,
       });
@@ -348,7 +348,6 @@ function* colonyCreate({
       yield put(
         transactionAddParams(deployTokenAuthority.id, [
           tokenAddress,
-          colonyAddress,
           [tokenLockingAddress],
         ]),
       );

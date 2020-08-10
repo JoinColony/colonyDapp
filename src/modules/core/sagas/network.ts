@@ -8,14 +8,11 @@ function* networkFetch() {
   try {
     const colonyManager = TEMP_getContext(ContextModule.ColonyManager);
     const feeInverse = yield colonyManager.networkClient.getFeeInverse();
-    // @TODO any way we could be more precise here?
-    const fee = 1 / feeInverse.toNumber();
     const version = yield colonyManager.networkClient.getCurrentColonyVersion();
 
     yield put<AllActions>({
       type: ActionTypes.NETWORK_FETCH_SUCCESS,
       payload: {
-        fee: fee.toString(),
         feeInverse: feeInverse.toString(),
         version: version.toString(),
       },

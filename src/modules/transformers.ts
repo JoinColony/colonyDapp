@@ -178,7 +178,7 @@ export const getCommunityRoles = (
   const founder = getLegacyFounder(colony);
   const admins = colony.domains.reduce((adminSet, { ethDomainId }) => {
     const currentDomainAdmins = getLegacyAdmins(colony, ethDomainId, founder);
-    currentDomainAdmins.forEach((address) => admins.add(address));
+    currentDomainAdmins.forEach((address) => adminSet.add(address));
     return adminSet;
   }, new Set<string>());
   return {

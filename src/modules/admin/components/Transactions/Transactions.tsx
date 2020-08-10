@@ -12,9 +12,11 @@ interface Props {
 }
 
 const Transactions = ({ colonyAddress }: Props) => {
-  const { data: transactionsData } = useColonyTransfersQuery({
+  const { data: transactionsData, error } = useColonyTransfersQuery({
     variables: { address: colonyAddress },
   });
+
+  if (error) console.warn(error);
 
   return (
     <div className={styles.main}>

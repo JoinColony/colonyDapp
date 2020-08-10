@@ -1,7 +1,12 @@
 import { Resolvers } from 'apollo-client';
 import { AddressZero, HashZero } from 'ethers/constants';
 import { bigNumberify } from 'ethers/utils';
-import { ClientType, ColonyVersion, getColonyRoles } from '@colony/colony-js';
+import {
+  ClientType,
+  ColonyVersion,
+  getColonyRoles,
+  TokenClientType,
+} from '@colony/colony-js';
 
 import ENS from '~lib/ENS';
 import { Address } from '~types/index';
@@ -99,13 +104,16 @@ export const colonyResolvers = ({
         ClientType.ColonyClient,
         colonyAddress,
       );
-      let canUnlockNativeToken = true;
-      try {
-        await colonyClient.tokenClient.estimate.unlock();
-      } catch (error) {
-        canUnlockNativeToken = false;
+      const { tokenClient } = colonyClient;
+      if (tokenClient.tokenClientType === TokenClientType.Colony) {
+        try {
+          await tokenClient.estimate.unlock();
+        } catch (error) {
+          return false;
+        }
+        return true;
       }
-      return canUnlockNativeToken;
+      return false;
     },
     async roles({ colonyAddress }) {
       const colonyClient = await colonyManager.getClient(

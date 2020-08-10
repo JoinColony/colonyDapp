@@ -75,8 +75,8 @@ const Permissions = ({ colony: { colonyAddress, domains }, colony }: Props) => {
   ]);
 
   const domainSelectOptions = sortBy(
-    domains.map(({ id, name }) => ({
-      value: id.toString(),
+    domains.map(({ ethDomainId, name }) => ({
+      value: ethDomainId.toString(),
       label: name,
     })),
     ['value'],
