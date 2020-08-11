@@ -5,4 +5,5 @@ export const tab: string;
 export const tabSelected: string;
 export const tabDisabled: string;
 export const tabPanel: string;
+export const tabPanelSelected: string;
 export const contentWrapper: string;

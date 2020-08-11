@@ -63,10 +63,6 @@ const MSG = defineMessages({
     id: 'dashboard.CreateColonyWizard.StepColonyName.errorDomainTaken',
     defaultMessage: 'This colony domain name is already taken',
   },
-  errorDomainInvalid: {
-    id: 'dashboard.CreateColonyWizard.StepColonyENSName.errorDomainInvalid',
-    defaultMessage: 'Only characters a-z, 0-9, - and . are allowed',
-  },
   statusText: {
     id: 'users.CreateColonyWizard.StepColonyName.statusText',
     defaultMessage: 'Actual Colony Name: {normalized}',

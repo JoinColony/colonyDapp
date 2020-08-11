@@ -83,7 +83,11 @@ const VerticalNavigation = ({
             ))}
           </VerticalTabList>
           {navigationItems.map(({ content, id }) => (
-            <TabPanel key={id} className={styles.tabPanel}>
+            <TabPanel
+              key={id}
+              className={styles.tabPanel}
+              selectedClassName={styles.tabPanelSelected}
+            >
               <div className={styles.contentWrapper}>{content}</div>
             </TabPanel>
           ))}

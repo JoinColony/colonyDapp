@@ -1,15 +1,18 @@
 import React, { useEffect } from 'react';
 import { defineMessages } from 'react-intl';
-import { Redirect } from 'react-router-dom';
+import { Redirect, useLocation } from 'react-router-dom';
 import { useDispatch } from 'redux-react-hook';
+import { parse as parseQS } from 'query-string';
 
 import { WizardProps } from '~core/Wizard';
-import { groupedTransactions } from '../../../core/selectors';
 import Heading from '~core/Heading';
-import GasStationContent from '../../../users/components/GasStation/GasStationContent';
 import { useSelector } from '~utils/hooks';
 import { log } from '~utils/debug';
 import ENS from '~lib/ENS';
+import { DASHBOARD_ROUTE } from '~routes/index';
+
+import GasStationContent from '../../../users/components/GasStation/GasStationContent';
+import { groupedTransactions } from '../../../core/selectors';
 import {
   getGroupStatus,
   findTransactionGroupByKey,
@@ -75,6 +78,7 @@ const displayName = 'dashboard.CreateColonyWizard.StepConfirmTransactions';
 
 const StepConfirmTransactions = ({ wizardValues: { colonyName } }: Props) => {
   const dispatch = useDispatch();
+  const location = useLocation();
 
   // Cancel the saga when the component unmounts
   useEffect(
@@ -87,11 +91,18 @@ const StepConfirmTransactions = ({ wizardValues: { colonyName } }: Props) => {
   const txGroups = useSelector(groupedTransactions);
   const newestGroup = findNewestGroup(txGroups);
 
+  const { recover } = parseQS(location.search) as {
+    recover: string | undefined;
+  };
+
   // Redirect to the colony if a successful creteColony tx group is found
   if (
     getGroupStatus(newestGroup) === TRANSACTION_STATUSES.SUCCEEDED &&
     getGroupKey(newestGroup) === 'group.createColony'
   ) {
+    if (recover) {
+      return <Redirect to={DASHBOARD_ROUTE} />;
+    }
     const normalizedColonyName = ENS.normalizeAsText(colonyName);
     // This should never happen
     if (!normalizedColonyName)
