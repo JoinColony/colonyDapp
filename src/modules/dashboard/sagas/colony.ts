@@ -149,6 +149,7 @@ function* colonyUpgradeContract({
       variables: {
         address: colonyAddress,
       },
+      fetchPolicy: 'network-only',
     });
   } catch (error) {
     return yield putError(
