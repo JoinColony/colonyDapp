@@ -9,11 +9,6 @@ generates:
     schema: 'src/data/graphql/typeDefs.ts'
     config:
       skipTypename: true
-      withComponent: false
-      withHOC: false
-      withHooks: true
-      apolloReactCommonImportFrom: '@apollo/client/react'
-      apolloReactHooksImportFrom: '@apollo/client/react'
     plugins:
       - 'fragment-matcher'
       - 'typescript'
