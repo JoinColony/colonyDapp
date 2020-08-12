@@ -1,4 +1,4 @@
-import { Resolvers } from 'apollo-client';
+import { Resolvers } from '@apollo/client';
 import assignWith from 'lodash/fp/assignWith';
 
 import { LoggedInUserDocument } from '../generated';

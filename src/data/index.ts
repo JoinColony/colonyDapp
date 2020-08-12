@@ -1,4 +1,4 @@
-import { Resolvers } from 'apollo-client';
+import { Resolvers } from '@apollo/client';
 
 import apolloCache from './cache';
 
@@ -9,6 +9,7 @@ import {
   ColonyTransfersQuery,
   DomainFieldsFragment,
   FullColonyFragment,
+  LoggedInUserDocument,
   PayoutsFragment,
   PersistentTaskPayoutsFragment,
   TaskQuery,
@@ -39,11 +40,7 @@ import { taskResolvers } from './resolvers/task';
 type ResolverFactory = (context?: any) => Resolvers;
 
 // Initialize cache
-apolloCache.writeData({
-  data: {
-    ...loggedInUser,
-  },
-});
+apolloCache.writeQuery({ query: LoggedInUserDocument, data: loggedInUser });
 
 export { default as cache } from './cache';
 export { default as cacheUpdates } from './cacheUpdates';

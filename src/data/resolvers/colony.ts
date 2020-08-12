@@ -1,4 +1,4 @@
-import { Resolvers } from 'apollo-client';
+import { Resolvers } from '@apollo/client';
 import { AddressZero, HashZero } from 'ethers/constants';
 import { bigNumberify } from 'ethers/utils';
 import {

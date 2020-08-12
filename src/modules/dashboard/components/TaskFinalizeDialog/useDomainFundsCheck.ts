@@ -1,5 +1,5 @@
 import { useCallback } from 'react';
-import { useApolloClient } from '@apollo/react-hooks';
+import { useApolloClient } from '@apollo/client';
 import moveDecimal from 'move-decimal-point';
 
 import { getTokenDecimalsWithFallback } from '~utils/tokens';

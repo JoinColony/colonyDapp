@@ -1,4 +1,4 @@
-import { Resolvers } from 'apollo-client';
+import { Resolvers } from '@apollo/client';
 import {
   ClientType,
   ROOT_DOMAIN_ID,

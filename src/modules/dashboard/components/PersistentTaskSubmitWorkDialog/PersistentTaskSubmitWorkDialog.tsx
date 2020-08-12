@@ -1,5 +1,5 @@
 import React, { useCallback, useMemo } from 'react';
-import { PureQueryOptions } from 'apollo-client';
+import { PureQueryOptions } from '@apollo/client';
 import { defineMessages, FormattedMessage } from 'react-intl';
 import * as yup from 'yup';
 import { ROOT_DOMAIN_ID } from '@colony/colony-js';

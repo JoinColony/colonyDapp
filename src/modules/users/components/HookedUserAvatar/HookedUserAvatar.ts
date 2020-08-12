@@ -1,4 +1,4 @@
-import { useQuery } from '@apollo/react-hooks';
+import { useQuery } from '@apollo/client';
 
 import { AnyUser, UserDocument } from '~data/index';
 import UserAvatar, { Props as UserAvatarProps } from '~core/UserAvatar';

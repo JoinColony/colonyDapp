@@ -1,4 +1,4 @@
-import { ApolloClient, Resolvers } from 'apollo-client';
+import { ApolloClient, Resolvers } from '@apollo/client';
 import {
   ClientType,
   ColonyClient,

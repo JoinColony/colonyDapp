@@ -1,7 +1,7 @@
 import React, { useCallback } from 'react';
 import { defineMessages, FormattedMessage } from 'react-intl';
 import * as yup from 'yup';
-import { useApolloClient } from '@apollo/react-hooks';
+import { useApolloClient } from '@apollo/client';
 
 import { WizardProps } from '~core/Wizard';
 import { Form, Input } from '~core/Fields';

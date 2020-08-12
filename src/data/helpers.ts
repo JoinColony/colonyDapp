@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import { graphql, DataValue } from '@apollo/react-hoc';
+import { DataValue, graphql } from '@apollo/client/react/hoc';
 
 import { ContextModule, TEMP_getContext } from '~context/index';
 import { Address } from '~types/index';

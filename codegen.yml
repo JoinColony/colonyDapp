@@ -9,9 +9,6 @@ generates:
     schema: 'src/data/graphql/typeDefs.ts'
     config:
       skipTypename: true
-      withComponent: false
-      withHOC: false
-      withHooks: true
     plugins:
       - 'fragment-matcher'
       - 'typescript'

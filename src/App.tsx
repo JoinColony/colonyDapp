@@ -3,13 +3,14 @@ import { Provider as ReduxProvider } from 'react-redux';
 import { BrowserRouter } from 'react-router-dom';
 import { StoreContext } from 'redux-react-hook';
 import { IntlProvider } from 'react-intl';
+import { ApolloProvider } from '@apollo/client';
 
 import layout from '~styles/layout.css';
 import { DialogProvider } from '~core/Dialog';
 
 import messages from './i18n/en.json';
 import Routes from './routes';
-import apolloClient, { ApolloProvider } from './context/apolloClient';
+import apolloClient from './context/apolloClient';
 
 // @ts-ignore
 if (!Intl.RelativeTimeFormat) {
