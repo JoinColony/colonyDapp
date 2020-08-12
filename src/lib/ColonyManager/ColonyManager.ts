@@ -73,7 +73,7 @@ export default class ColonyManager {
         );
   }
 
-  private async setColonyClient(address: Address): Promise<ColonyClient> {
+  async setColonyClient(address: Address): Promise<ColonyClient> {
     const clientPromise = this.getColonyPromise(address);
     this.colonyClients.set(address, clientPromise);
     clientPromise.catch(() => this.colonyClients.delete(address));
