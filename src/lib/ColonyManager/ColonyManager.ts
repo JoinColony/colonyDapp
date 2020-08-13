@@ -132,6 +132,11 @@ export default class ColonyManager {
       }
       case ClientType.OneTxPaymentClient: {
         const colonyClient = await this.getColonyClient(identifier);
+        if (!colonyClient.oneTxPaymentClient) {
+          throw new Error(
+            'OneTxPayment extension not installed on this colony',
+          );
+        }
         return colonyClient.oneTxPaymentClient;
       }
       default: {
