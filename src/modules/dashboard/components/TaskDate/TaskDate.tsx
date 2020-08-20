@@ -28,7 +28,7 @@ const MSG = defineMessages({
 });
 
 interface FormValues {
-  taskDueDate: Date;
+  taskDueDate?: Date;
 }
 
 interface Props {
@@ -68,7 +68,7 @@ const TaskDate = ({ draftId, dueDate: existingDueDate, disabled }: Props) => {
           text={MSG.title}
         />
         {!disabled && (
-          <Form
+          <Form<FormValues>
             initialValues={{
               taskDueDate: existingDueDate
                 ? new Date(existingDueDate)

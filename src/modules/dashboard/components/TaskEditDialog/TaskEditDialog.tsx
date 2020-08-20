@@ -19,7 +19,6 @@ import {
   AnyUser,
   AnyTask,
   useTaskToEditQuery,
-  Payouts,
   useAssignWorkerMutation,
   useUnassignWorkerMutation,
   useSetTaskPayoutMutation,
@@ -128,7 +127,7 @@ const removePayout = (arrayHelpers: ArrayHelpers) => arrayHelpers.pop();
 const resetPayout = (
   arrayHelpers: ArrayHelpers,
   index: number,
-  payouts: Payouts,
+  payouts: FormPayout[],
 ) =>
   payouts.length > 0 && payouts[index].amount !== '.'
     ? arrayHelpers.replace(index, payouts[index])
@@ -178,7 +177,7 @@ const TaskEditDialog = ({
   }, [maxTokens, minTokens]);
 
   const addTokenFunding = useCallback(
-    (values: { payouts?: AnyTask['payouts'] }, helpers: () => void) => {
+    (values: FormValues, helpers: ArrayHelpers) => {
       if (canAddTokens(values, maxTokens))
         (helpers as any).push({
           id: nanoid(),
@@ -348,7 +347,7 @@ const TaskEditDialog = ({
        */
       isDismissable={false}
     >
-      <Form
+      <Form<FormValues>
         initialValues={initialValues}
         onSubmit={onSubmit}
         validationSchema={validateForm}
@@ -408,7 +407,7 @@ const TaskEditDialog = ({
                               appearance={{ theme: 'blue', size: 'small' }}
                               text={MSG.add}
                               onClick={() =>
-                                addTokenFunding(values, arrayHelpers as any)
+                                addTokenFunding(values, arrayHelpers)
                               }
                             />
                           )}
@@ -418,8 +417,7 @@ const TaskEditDialog = ({
                             <Payout
                               canRemove={canRemove}
                               colonyAddress={colonyAddress}
-                              // will have at least one of `id` or `token`
-                              key={payout.id || payout.token}
+                              key={payout.token}
                               name={`payouts.${index}`}
                               payout={payout}
                               reputation={0}

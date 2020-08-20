@@ -98,12 +98,12 @@ const UserProfileEdit = () => {
         appearance={{ theme: 'dark', size: 'medium' }}
         text={MSG.heading}
       />
-      <Form
+      <Form<FormValues>
         initialValues={{
-          displayName: user.profile.displayName,
-          bio: user.profile.bio,
-          website: user.profile.website,
-          location: user.profile.location,
+          displayName: user.profile.displayName || undefined,
+          bio: user.profile.bio || undefined,
+          website: user.profile.website || undefined,
+          location: user.profile.location || undefined,
         }}
         onSubmit={onSubmit}
         validationSchema={validationSchema}

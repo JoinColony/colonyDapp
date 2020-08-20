@@ -34,7 +34,7 @@ const MSG = defineMessages({
 });
 
 interface FormValues {
-  payouts: FormPayout;
+  payouts: FormPayout[];
   workerAddress: Address;
 }
 
@@ -96,10 +96,10 @@ const TaskInviteDialog = ({
 
   return (
     <FullscreenDialog cancel={cancel}>
-      <Form
+      <Form<FormValues>
         initialValues={{
           payouts: initialPayouts,
-          worker: currentUser,
+          workerAddress: walletAddress,
         }}
         onSubmit={onSubmit}
       >
@@ -138,7 +138,7 @@ const TaskInviteDialog = ({
                       ? values.payouts.map((payout, index) => {
                           return (
                             <Payout
-                              key={payout.token.address}
+                              key={payout.token}
                               payout={payout}
                               name={`payouts.${index}`}
                               tokens={tokens}

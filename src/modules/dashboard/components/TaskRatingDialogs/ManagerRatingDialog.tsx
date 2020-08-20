@@ -67,7 +67,7 @@ const MSG = defineMessages({
 });
 
 interface FormValues {
-  rating: 1 | 2 | 3;
+  rating?: 1 | 2 | 3;
   workDescription: string;
 }
 
@@ -99,9 +99,9 @@ const validationSchemaExtended = validationSchema.shape({
 
 const ManagerRatingDialog = ({ close, cancel, submitWork }: Props) => (
   <Dialog cancel={cancel}>
-    <Form
+    <Form<FormValues>
       initialValues={{
-        rating: '',
+        rating: undefined,
         workDescription: '',
       }}
       onSubmit={close}

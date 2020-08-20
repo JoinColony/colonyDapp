@@ -52,7 +52,7 @@ const MSG = defineMessages({
 });
 
 interface FormValues {
-  rating: 1 | 2 | 3;
+  rating?: 1 | 2 | 3;
 }
 
 interface Props {
@@ -75,7 +75,7 @@ const WorkerRatingDialog = ({ close, cancel, workSubmitted }: Props) => (
   <Dialog cancel={cancel}>
     <Form
       initialValues={{
-        rating: '',
+        rating: undefined,
       }}
       onSubmit={close}
       validationSchema={validationSchema}

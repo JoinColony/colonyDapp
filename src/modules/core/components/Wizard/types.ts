@@ -12,9 +12,7 @@ export interface WizardProps<FormValues> {
   stepCompleted: boolean;
   wizardValues: FormValues;
   wizardForm: {
-    initialValues: {
-      [formValue: string]: any;
-    };
+    initialValues: FormValues;
     validateOnMount: boolean;
   };
 }
