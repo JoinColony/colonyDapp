@@ -19,10 +19,11 @@ export type StepsFn<T> = (step: number, values: any, props?: T) => StepType;
 
 type Steps = StepType[] | StepsFn<any>;
 
-type WizardArgs = {
+interface WizardArgs {
+  initialValues?: Record<string, any>[];
   stepCount?: number;
   steps: Steps;
-};
+}
 
 const all = (values: ValueList) =>
   values.reduceRight((map, curr) => map.merge(curr), ImmutableMap()).toJS();
@@ -30,10 +31,11 @@ const all = (values: ValueList) =>
 const getStep = (steps: Steps, step: number, values: any, props?: any) =>
   typeof steps === 'function' ? steps(step, values, props) : steps[step];
 
-const withWizard = ({ steps, stepCount: maxSteps }: WizardArgs) => <P>(
-  OuterComponent: ComponentType,
-  stepsProps?: P,
-) => {
+const withWizard = ({
+  initialValues = [],
+  steps,
+  stepCount: maxSteps,
+}: WizardArgs) => <P>(OuterComponent: ComponentType, stepsProps?: P) => {
   class Wizard extends Component<Props, State> {
     state = { step: 0, values: List() };
 
@@ -76,6 +78,7 @@ const withWizard = ({ steps, stepCount: maxSteps }: WizardArgs) => <P>(
       const stepCount = maxSteps || (steps as any).length;
 
       const stepValues = values.get(step);
+      const initialStepValues = initialValues[step];
 
       return createElement(
         OuterComponent,
@@ -100,7 +103,7 @@ const withWizard = ({ steps, stepCount: maxSteps }: WizardArgs) => <P>(
           // Wizard form helpers to take some shortcuts if needed
           wizardForm: {
             // Get values just for this step
-            initialValues: stepValues || {},
+            initialValues: stepValues || initialStepValues || {},
             // It should be valid if we submitted values for this step before
             validateOnMount: !!stepValues,
           },

@@ -12,15 +12,15 @@ export interface Row {
   valueKey: string | [string, string];
 }
 
-interface FormValues {
+export interface FormValues {
   colonyName: string;
   displayName: string;
-  tokenAddress?: string;
-  tokenChoice: 'create' | 'select';
-  tokenIcon: string;
+  tokenAddress: string;
+  tokenChoice?: 'create' | 'select';
+  tokenIcon?: string;
   tokenName: string;
   tokenSymbol: string;
-  username: string;
+  username?: string;
 }
 
 interface CardProps {
