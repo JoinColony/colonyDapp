@@ -161,7 +161,8 @@ function* colonyCreate({
 }: Action<ActionTypes.COLONY_CREATE>) {
   const { username: currentUsername, walletAddress } = yield getLoggedInUser();
   const apolloClient = TEMP_getContext(ContextModule.ApolloClient);
-  const { networkClient } = TEMP_getContext(ContextModule.ColonyManager);
+  const colonyManager = TEMP_getContext(ContextModule.ColonyManager);
+  const { networkClient } = colonyManager;
 
   const channelNames: string[] = [];
 
@@ -578,6 +579,11 @@ function* colonyCreate({
         ]),
       );
       yield put(transactionReady(setOneTxRoleFunding.id));
+
+      // Re-initialize the colony-client to make sure we have included all the
+      // extensions
+      yield colonyManager.setColonyClient(colonyAddress);
+
       yield takeFrom(
         setOneTxRoleFunding.channel,
         ActionTypes.TRANSACTION_SUCCEEDED,
