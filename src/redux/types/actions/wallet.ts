@@ -13,7 +13,7 @@ export type WalletActionTypes =
   | UniqueActionType<
       ActionTypes.WALLET_CREATE,
       {
-        connnectWalletMnemonic?: string;
+        connectWalletMnemonic?: string;
         hardwareWalletChoice?: string;
         keystore?: string;
         method: WalletMethod;
