@@ -105,10 +105,10 @@ const cacheUpdates = {
         });
         const createLevelData = data && data.createLevel;
         if (cacheData && createLevelData) {
-          const levels = cacheData.program.levels || [];
-          levels.push(createLevelData);
-          const levelIds = cacheData.program.levelIds || [];
-          levelIds.push(createLevelData.id);
+          const existingLevels = cacheData.program.levels || [];
+          const levels = [...existingLevels, createLevelData];
+          const existingLevelIds = cacheData.program.levelIds || [];
+          const levelIds = [...existingLevelIds, createLevelData.id];
           cache.writeQuery<ProgramQuery, ProgramQueryVariables>({
             data: {
               program: {
@@ -222,8 +222,8 @@ const cacheUpdates = {
         });
         const createProgramData = data && data.createProgram;
         if (cacheData && createProgramData) {
-          const programs = cacheData.colony.programs || [];
-          programs.push(createProgramData);
+          const existingPrograms = cacheData.colony.programs || [];
+          const programs = [...existingPrograms, createProgramData];
           cache.writeQuery<ColonyProgramsQuery, ColonyProgramsQueryVariables>({
             data: {
               colony: {
@@ -257,8 +257,8 @@ const cacheUpdates = {
         });
         const createTaskData = data && data.createTask;
         if (cacheData && createTaskData) {
-          const tasks = cacheData.colony.tasks || [];
-          tasks.push(createTaskData);
+          const existingTasks = cacheData.colony.tasks || [];
+          const tasks = [...existingTasks, createTaskData];
           cache.writeQuery<ColonyTasksQuery, ColonyTasksQueryVariables>({
             query: ColonyTasksDocument,
             data: {
@@ -331,8 +331,8 @@ const cacheUpdates = {
         });
         const createTaskData = data && data.createTaskFromSuggestion;
         if (cacheData && createTaskData) {
-          const tasks = cacheData.colony.tasks || [];
-          tasks.push(createTaskData);
+          const existingTasks = cacheData.colony.tasks || [];
+          const tasks = [...existingTasks, createTaskData];
           cache.writeQuery<ColonyTasksQuery, ColonyTasksQueryVariables>({
             query: ColonyTasksDocument,
             data: {

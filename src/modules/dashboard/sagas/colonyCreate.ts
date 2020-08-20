@@ -459,8 +459,12 @@ function* colonyCreate({
               },
             });
             if (cacheData) {
-              const colonyAddresses = cacheData.user.colonyAddresses || [];
-              colonyAddresses.push(colonyAddress);
+              const existingColonyAddresses =
+                cacheData.user.colonyAddresses || [];
+              const colonyAddresses = [
+                ...existingColonyAddresses,
+                colonyAddress,
+              ];
               cache.writeQuery<
                 UserColonyAddressesQuery,
                 UserColonyAddressesQueryVariables

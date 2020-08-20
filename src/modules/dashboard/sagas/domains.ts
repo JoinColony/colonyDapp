@@ -83,8 +83,8 @@ function* domainCreate({
             variables: { colonyAddress },
           });
           if (cacheData && data && data.createDomain) {
-            const domains = cacheData.colony.domains || [];
-            domains.push(data.createDomain);
+            const existingDomains = cacheData.colony.domains || [];
+            const domains = [...existingDomains, data.createDomain];
             cache.writeQuery<ColonyDomainsQuery, ColonyDomainsQueryVariables>({
               query: ColonyDomainsDocument,
               data: {
