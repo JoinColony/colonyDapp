@@ -18,6 +18,7 @@ import {
 import Icon from '~core/Icon';
 import { Table, TableBody } from '~core/Table';
 import Button from '~core/Button';
+import { immutableSort } from '~utils/arrays';
 
 import {
   TasksFilterOptions,
@@ -134,22 +135,22 @@ const TaskList = ({
     [filterOption, filteredDomainId, walletAddress],
   );
 
-  const sortingOrderOption = 'desc';
-  const sort = useCallback(
-    (first: AnyTask, second: AnyTask) => {
-      if (!(first && second)) return 0;
+  const sort = useCallback((first: AnyTask, second: AnyTask) => {
+    if (!(first && second)) return 0;
 
-      return sortingOrderOption === 'desc'
-        ? second.createdAt - first.createdAt
-        : first.createdAt - second.createdAt;
-    },
-    [sortingOrderOption],
-  );
+    // @TODO I guess this can be made dynamic in the future?
+    const sortingOrderOption = 'desc';
+    return sortingOrderOption === 'desc'
+      ? second.createdAt - first.createdAt
+      : first.createdAt - second.createdAt;
+  }, []);
 
   const filteredTasksData: AnyTask[] = useMemo(
     () =>
       filter
-        ? tasks.sort(sort).filter((task) => (task ? filter(task) : true))
+        ? immutableSort(tasks, sort).filter((task) =>
+            task ? filter(task) : true,
+          )
         : tasks,
     [filter, sort, tasks],
   );

@@ -192,3 +192,8 @@ export const arrayToObject = (arr: any[]) =>
 
 // To filter arrays
 export const notUndefined = <T>(x: T | undefined): x is T => x !== undefined;
+
+export const immutableSort = <T>(
+  arr: T[],
+  sortFn?: (a: T, b: T) => number,
+): any[] => [...arr].sort(sortFn);
