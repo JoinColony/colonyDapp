@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { defineMessages, useIntl } from 'react-intl';
 import { Redirect } from 'react-router-dom';
-import BN from 'bn.js';
+import { bigNumberify } from 'ethers/utils';
 
 import BreadCrumb from '~core/BreadCrumb';
 import Button from '~core/Button';
@@ -100,7 +100,9 @@ const CoinMachine = ({
     const nextDate = new Date();
     nextDate.setTime(nextDate.getTime() - idx * 60 * 60 * 1000);
     return {
-      priceEth: new BN(prices[Math.floor(Math.random() * (prices.length - 1))]),
+      priceEth: bigNumberify(
+        prices[Math.floor(Math.random() * (prices.length - 1))],
+      ),
       end: nextDate,
       tokensForSale: 4500,
       tokensSold: 2000,

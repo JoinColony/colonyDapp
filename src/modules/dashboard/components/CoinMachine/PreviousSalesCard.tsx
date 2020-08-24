@@ -9,7 +9,7 @@ import {
   useIntl,
 } from 'react-intl';
 import { useMeasure } from 'react-use';
-import BN from 'bn.js';
+import { BigNumber } from 'ethers/utils';
 
 import { DEFAULT_TOKEN_DECIMALS } from '~constants';
 import Card from '~core/Card';
@@ -82,7 +82,7 @@ enum SaleStatus {
 
 interface Sale {
   end: Date;
-  priceEth: BN;
+  priceEth: BigNumber;
   tokensForSale: number;
   tokensSold: number;
 }
@@ -115,7 +115,7 @@ const SALE_STATUS_ICON: Record<
   [SaleStatus.Push]: 'square',
 };
 
-const getSaleStatus = (price: BN, prevPrice?: BN): SaleStatus => {
+const getSaleStatus = (price: BigNumber, prevPrice?: BigNumber): SaleStatus => {
   if (!prevPrice) {
     return SaleStatus.Push;
   }
