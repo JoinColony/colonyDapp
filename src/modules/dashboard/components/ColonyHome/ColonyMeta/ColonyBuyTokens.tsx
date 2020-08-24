@@ -3,7 +3,7 @@ import { defineMessages } from 'react-intl';
 
 import Heading from '~core/Heading';
 import NavLink from '~core/NavLink';
-import { FullColony } from '~data/index';
+import { Colony } from '~data/index';
 import { Address } from '~types/index';
 
 import styles from './ColonyBuyTokens.css';
@@ -22,7 +22,7 @@ const MSG = defineMessages({
 interface Props {
   colonyName: string;
   nativeTokenAddress: Address;
-  tokens: FullColony['tokens'];
+  tokens: Colony['tokens'];
 }
 
 const displayName = 'dashboard.ColonyHome.ColonyMeta.ColonyBuyTokens';
