@@ -72,9 +72,25 @@ const stepFunction: StepsFn<any> = (
   return stepArray[step] as ComponentType<any>;
 };
 
+const initialValues = [
+  {
+    colonyName: '',
+    displayName: '',
+  },
+  {
+    tokenChoice: '',
+  },
+  {
+    tokenAddress: '',
+    tokenName: '',
+    tokenSymbol: '',
+  },
+];
+
 const CreateColonyContainer = compose(
   withLoggedInUser,
   withWizard({
+    initialValues,
     steps: stepFunction,
   }),
 )(WizardTemplate);

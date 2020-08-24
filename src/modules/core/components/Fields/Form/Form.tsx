@@ -3,14 +3,18 @@ import React from 'react';
 
 import SaveGuard from './SaveGuard';
 
-interface Props extends FormikConfig<any> {
+interface Props<V> extends FormikConfig<V> {
   saveGuard?: boolean;
 }
 
 const displayName = 'Form';
 
-const Form = ({ children, saveGuard = false, ...props }: Props) => (
-  <Formik {...props}>
+const Form = <V extends Record<string, any>>({
+  children,
+  saveGuard = false,
+  ...props
+}: Props<V>) => (
+  <Formik<V> {...props}>
     {(injectedProps) => (
       <FormikForm>
         {saveGuard && <SaveGuard />}

@@ -9,19 +9,8 @@ import Heading from '~core/Heading';
 import Button from '~core/Button';
 import { ActionForm, FormStatus } from '~core/Fields';
 import { ActionTypes } from '~redux/index';
-import CardRow, { Row } from './CreateColonyCardRow';
+import CardRow, { Row, FormValues } from './CreateColonyCardRow';
 import styles from './StepConfirmAllInput.css';
-
-interface FormValues {
-  colonyName: string;
-  displayName: string;
-  tokenAddress?: string;
-  tokenChoice: 'create' | 'select';
-  tokenIcon: string;
-  tokenName: string;
-  tokenSymbol: string;
-  username: string;
-}
 
 type Props = WizardProps<FormValues>;
 
