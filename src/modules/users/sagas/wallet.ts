@@ -69,9 +69,9 @@ function* fetchAccounts(action: Action<ActionTypes.WALLET_FETCH_ACCOUNTS>) {
 }
 
 function* openMnemonicWallet(action: Action<ActionTypes.WALLET_CREATE>) {
-  const { connnectWalletMnemonic } = action.payload;
+  const { connectWalletMnemonic } = action.payload;
   return yield call(purserOpenSoftwareWallet, {
-    mnemonic: connnectWalletMnemonic,
+    mnemonic: connectWalletMnemonic,
   });
 }
 
