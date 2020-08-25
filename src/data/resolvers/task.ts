@@ -56,7 +56,7 @@ const finalizeTaskWithTxHash = async (
     const userAddress = await colonyClient.signer.getAddress();
     const domainRoles = getRolesForUserAndDomain(
       roles,
-      userAddress,
+      createAddress(userAddress),
       ethDomainId,
     );
     if (domainRoles.includes(ColonyRole.Administration)) {
