@@ -58,7 +58,8 @@ export type SimpleMessageValues = Record<string, PrimitiveType>;
  */
 export type ComplexMessageValues = Record<string, ReactNode>;
 
-export type MethodParams = (string | BigNumberish | boolean)[];
+export type MethodParam = string | BigNumberish | boolean;
+export type MethodParams = (MethodParam | MethodParam[])[];
 
 export interface TxConfig {
   context: ClientType;
