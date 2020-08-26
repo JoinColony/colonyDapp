@@ -72,20 +72,34 @@ const stepFunction: StepsFn<any> = (
   return stepArray[step] as ComponentType<any>;
 };
 
-const initialValues = [
-  {
-    colonyName: '',
-    displayName: '',
-  },
-  {
-    tokenChoice: '',
-  },
-  {
-    tokenAddress: '',
-    tokenName: '',
-    tokenSymbol: '',
-  },
-];
+const initialValues = (props?: any) => {
+  const guaranteedStepValues = [
+    {
+      colonyName: '',
+      displayName: '',
+    },
+    {
+      tokenChoice: '',
+    },
+    {
+      tokenAddress: '',
+      tokenName: '',
+      tokenSymbol: '',
+    },
+  ];
+  if (props) {
+    const { username } = props.loggedInUser;
+    if (!username) {
+      return [
+        {
+          username: '',
+        },
+        ...guaranteedStepValues,
+      ];
+    }
+  }
+  return guaranteedStepValues;
+};
 
 const CreateColonyContainer = compose(
   withLoggedInUser,
