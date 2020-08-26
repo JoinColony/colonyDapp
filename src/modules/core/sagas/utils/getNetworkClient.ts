@@ -47,6 +47,7 @@ export default function* getNetworkClient() {
       oneTxPaymentFactoryAddress: getLocalContractAddress(
         'OneTxPaymentFactory',
       ),
+      coinMachineFactoryAddress: getLocalContractAddress('CoinMachineFactory'),
     });
   }
 

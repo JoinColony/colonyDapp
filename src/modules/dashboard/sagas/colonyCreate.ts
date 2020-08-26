@@ -50,17 +50,33 @@ interface ChannelDefinition {
   id: string;
 }
 
+interface ColonyRecoveryInfo {
+  isProfileCreated: boolean;
+  isNativeTokenColonyToken: boolean;
+  isTokenAuthoritySetUp: boolean;
+  isOneTxExtensionDeployed: boolean;
+  isCoinMachineExtensionDeployed: boolean;
+  hasOneTxAdminRole: boolean;
+  hasOneTxFundingRole: boolean;
+  colonyAddress: string;
+  colonyName: string;
+  tokenAddress: string;
+  tokenName: string;
+  tokenSymbol: string;
+}
+
 function* getRecoveryInfo(recoveryAddress: string) {
   const { username, walletAddress } = yield getLoggedInUser();
   const apolloClient = TEMP_getContext(ContextModule.ApolloClient);
   const { networkClient } = TEMP_getContext(ContextModule.ColonyManager);
   const ens = TEMP_getContext(ContextModule.ENS);
 
-  const colonyInfo = {
+  const colonyInfo: ColonyRecoveryInfo = {
     isProfileCreated: false,
     isNativeTokenColonyToken: false,
     isTokenAuthoritySetUp: false,
     isOneTxExtensionDeployed: false,
+    isCoinMachineExtensionDeployed: false,
     hasOneTxAdminRole: false,
     hasOneTxFundingRole: false,
     colonyAddress: '',
@@ -121,7 +137,7 @@ function* getRecoveryInfo(recoveryAddress: string) {
     }
   }
 
-  const { oneTxPaymentFactoryClient } = networkClient;
+  const { oneTxPaymentFactoryClient, coinMachineFactoryClient } = networkClient;
 
   // eslint-disable-next-line max-len
   const oneTxExtensionAddress = yield oneTxPaymentFactoryClient.deployedExtensions(
@@ -140,6 +156,15 @@ function* getRecoveryInfo(recoveryAddress: string) {
       ROOT_DOMAIN_ID,
       ColonyRole.Funding,
     );
+  }
+
+  // eslint-disable-next-line max-len
+  const coinMachineExtensionAddress = yield coinMachineFactoryClient.deployedExtensions(
+    recoveryAddress,
+  );
+
+  if (coinMachineExtensionAddress !== AddressZero) {
+    colonyInfo.isCoinMachineExtensionDeployed = true;
   }
 
   return colonyInfo;
@@ -166,7 +191,7 @@ function* colonyCreate({
 
   const channelNames: string[] = [];
 
-  let recoveryInfo;
+  let recoveryInfo: ColonyRecoveryInfo | undefined;
 
   if (recoveryAddress) {
     recoveryInfo = yield getRecoveryInfo(recoveryAddress);
@@ -209,6 +234,15 @@ function* colonyCreate({
     channelNames.push('setOneTxRoleFunding');
   }
 
+  if (
+    !recoveryAddress ||
+    (recoveryInfo &&
+      recoveryInfo &&
+      !recoveryInfo.isCoinMachineExtensionDeployed)
+  ) {
+    channelNames.push('deployCoinMachine');
+  }
+
   /*
    * Define a manifest of transaction ids and their respective channels.
    */
@@ -220,6 +254,7 @@ function* colonyCreate({
     createToken,
     createUser,
     deployOneTx,
+    deployCoinMachine,
     setOneTxRoleAdministration,
     setOneTxRoleFunding,
     deployTokenAuthority,
@@ -297,6 +332,14 @@ function* colonyCreate({
     if (deployOneTx) {
       yield createGroupedTransaction(deployOneTx, {
         context: ClientType.OneTxPaymentFactoryClient,
+        methodName: 'deployExtension',
+        ready: false,
+      });
+    }
+
+    if (deployCoinMachine) {
+      yield createGroupedTransaction(deployCoinMachine, {
+        context: ClientType.CoinMachineFactoryClient,
         methodName: 'deployExtension',
         ready: false,
       });
@@ -389,7 +432,7 @@ function* colonyCreate({
     /**
      * If we're not recovering this will be overwritten
      */
-    let colonyAddress = recoveryInfo && recoveryInfo.colonyAddress;
+    let colonyAddress = (recoveryInfo && recoveryInfo.colonyAddress) || '';
 
     if (createColony) {
       yield put(
@@ -414,15 +457,16 @@ function* colonyCreate({
         ActionTypes.TRANSACTION_SUCCEEDED,
       );
       colonyAddress = createdColonyAddress;
-      if (!colonyAddress) {
-        return yield putError(
-          ActionTypes.COLONY_CREATE_ERROR,
-          new Error('Missing colony address'),
-          meta,
-        );
-      }
 
       yield put(transactionLoadRelated(createColony.id, true));
+    }
+
+    if (!colonyAddress) {
+      return yield putError(
+        ActionTypes.COLONY_CREATE_ERROR,
+        new Error('Missing colony address'),
+        meta,
+      );
     }
 
     if (!recoveryAddress || (recoveryInfo && !recoveryInfo.isProfileCreated)) {
@@ -539,9 +583,6 @@ function* colonyCreate({
     }
 
     if (deployOneTx) {
-      /*
-       * Deploy OneTx
-       */
       yield put(transactionAddParams(deployOneTx.id, [colonyAddress]));
       yield put(transactionReady(deployOneTx.id));
 
@@ -584,15 +625,21 @@ function* colonyCreate({
       );
       yield put(transactionReady(setOneTxRoleFunding.id));
 
-      // Re-initialize the colony-client to make sure we have included all the
-      // extensions
-      yield colonyManager.setColonyClient(colonyAddress);
-
       yield takeFrom(
         setOneTxRoleFunding.channel,
         ActionTypes.TRANSACTION_SUCCEEDED,
       );
     }
+
+    if (deployCoinMachine) {
+      yield put(transactionAddParams(deployCoinMachine.id, [colonyAddress]));
+      yield put(transactionReady(deployCoinMachine.id));
+    }
+
+    // Re-initialize the colony-client to make sure we have included all the
+    // extensions
+    yield colonyManager.setColonyClient(colonyAddress);
+
     return null;
   } catch (error) {
     yield putError(ActionTypes.COLONY_CREATE_ERROR, error, meta);

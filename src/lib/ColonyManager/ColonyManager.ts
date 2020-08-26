@@ -3,12 +3,15 @@ import { Provider } from 'ethers/providers';
 import {
   getTokenClient,
   ClientType,
+  CoinMachineClient,
+  CoinMachineFactoryClient,
   ColonyClient,
   ContractClient,
   ColonyNetworkClient,
   OneTxPaymentClient,
   OneTxPaymentFactoryClient,
   TokenClient,
+  ColonyVersion,
 } from '@colony/colony-js';
 
 import ENS from '~lib/ENS';
@@ -108,6 +111,16 @@ export default class ColonyManager {
   ): Promise<OneTxPaymentClient>;
 
   async getClient(
+    type: ClientType.CoinMachineClient,
+    identifier?: AddressOrENSName,
+  ): Promise<CoinMachineClient>;
+
+  async getClient(
+    type: ClientType.CoinMachineFactoryClient,
+    identifier?: AddressOrENSName,
+  ): Promise<CoinMachineFactoryClient>;
+
+  async getClient(
     type: ClientType,
     identifier?: AddressOrENSName,
   ): Promise<ContractClient>;
@@ -138,6 +151,24 @@ export default class ColonyManager {
           );
         }
         return colonyClient.oneTxPaymentClient;
+      }
+      case ClientType.CoinMachineFactoryClient: {
+        return this.networkClient.coinMachineFactoryClient;
+      }
+      case ClientType.CoinMachineClient: {
+        const colonyClient = await this.getColonyClient(identifier);
+        if (
+          colonyClient.clientVersion !==
+          ColonyVersion.CeruleanLightweightSpaceship
+        ) {
+          throw new Error(
+            'Coin Machine is not supported on this version of colony',
+          );
+        }
+        if (!colonyClient.coinMachineClient) {
+          throw new Error('CoinMachine extension not installed on this colony');
+        }
+        return colonyClient.coinMachineClient;
       }
       default: {
         throw new Error('A valid contract client type has to be specified');
