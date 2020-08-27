@@ -438,7 +438,7 @@ function* colonyCreate({
       yield put(
         transactionAddParams(createColony.id, [
           tokenAddress,
-          ColonyVersion.BurgundyGlider,
+          ColonyVersion.CeruleanLightweightSpaceship,
           colonyName,
           '',
           true,
