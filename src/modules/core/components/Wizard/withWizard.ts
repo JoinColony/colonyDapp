@@ -19,8 +19,12 @@ export type StepsFn<T> = (step: number, values: any, props?: T) => StepType;
 
 type Steps = StepType[] | StepsFn<any>;
 
+type InitialValues =
+  | Record<string, any>[]
+  | ((props?: any) => Record<string, any>[]);
+
 interface WizardArgs {
-  initialValues?: Record<string, any>[];
+  initialValues?: InitialValues;
   stepCount?: number;
   steps: Steps;
 }
@@ -32,7 +36,7 @@ const getStep = (steps: Steps, step: number, values: any, props?: any) =>
   typeof steps === 'function' ? steps(step, values, props) : steps[step];
 
 const withWizard = ({
-  initialValues = [],
+  initialValues: initialValuesProp = [],
   steps,
   stepCount: maxSteps,
 }: WizardArgs) => <P>(OuterComponent: ComponentType, stepsProps?: P) => {
@@ -78,6 +82,10 @@ const withWizard = ({
       const stepCount = maxSteps || (steps as any).length;
 
       const stepValues = values.get(step);
+      const initialValues =
+        typeof initialValuesProp === 'function'
+          ? initialValuesProp(this.props)
+          : initialValuesProp;
       const initialStepValues = initialValues[step];
 
       return createElement(
