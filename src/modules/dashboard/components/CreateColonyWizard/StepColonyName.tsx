@@ -73,7 +73,7 @@ const MSG = defineMessages({
   },
   tooltipColonyCreationDisabled: {
     id: 'users.CreateColonyWizard.StepColonyName.tooltipColonyCreationDisabled',
-    defaultMessage: `Due to the extraordinarily high Ethereum gas prices, we’ve decided to disable the colony creation flow to prevent new users from incurring unexpectedly high costs in setting up their colony. Colony creation will be accessible again on xDai very soon!`,
+    defaultMessage: `Due to the extraordinarily high Ethereum gas prices, we’ve decided to disable colony creation to prevent new users from incurring unexpectedly high costs. A new and improved Colony V2 will be available on xDai soon!`,
   },
 });
 
