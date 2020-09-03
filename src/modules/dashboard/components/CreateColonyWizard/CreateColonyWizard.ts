@@ -17,7 +17,6 @@ import StepConfirmColonyTransactions from './StepConfirmTransactions';
 import StepConfirmUserTransaction from '../CreateUserWizard/StepConfirmTransaction';
 
 const stepArray: StepType[] = [
-  StepUserName,
   StepColonyName,
   StepTokenChoice,
   StepCreateToken,

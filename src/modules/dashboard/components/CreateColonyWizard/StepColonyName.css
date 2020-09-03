@@ -34,4 +34,5 @@
 
 .tooltipContent {
   min-width: 280px;
+  max-width: 280px;
 }
