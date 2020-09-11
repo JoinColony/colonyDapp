@@ -12,9 +12,8 @@ import StepColonyName from './StepColonyName';
 import StepSelectToken from './StepSelectToken';
 import StepCreateToken from './StepCreateToken';
 import StepConfirmAllInput from './StepConfirmAllInput';
-import StepUserName from '../CreateUserWizard/StepUserName';
-import StepConfirmColonyTransactions from './StepConfirmTransactions';
-import StepConfirmUserTransaction from '../CreateUserWizard/StepConfirmTransaction';
+import StepUserName from './StepUserName';
+import StepConfirmTransactions from './StepConfirmTransactions';
 
 const stepArray: StepType[] = [
   StepUserName,
@@ -22,23 +21,7 @@ const stepArray: StepType[] = [
   StepTokenChoice,
   StepCreateToken,
   StepConfirmAllInput,
-  StepConfirmColonyTransactions,
-];
-
-/**
- * @NOTE Colony Creation Wizard Flow is DISABLED
- *
- * Until the gas costs die down, the create your colony wizard is being disabled, while
- * leaving the User creation flow still operational.
- * Due to this we've had to segment the steps array, and return just the user one in
- * case of a user without claimed account who also wants to create a new colony.
- *
- * This will first register a username, then redirect to the colony flow (which will be
- * skipping the create user step), which currently is disabled
- */
-const stepArrayJustUserRegistration: StepType[] = [
-  StepUserName,
-  StepConfirmUserTransaction,
+  StepConfirmTransactions,
 ];
 
 type StepValues = {
@@ -72,7 +55,7 @@ const stepFunction: StepsFn<any> = (
       if (step === 3) {
         return pickTokenStep(tokenChoice);
       }
-      return stepArrayJustUserRegistration[step] as ComponentType<any>;
+      return stepArray[step] as ComponentType<any>;
     }
 
     /* Standard wizard flow  */
