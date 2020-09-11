@@ -1,4 +1,5 @@
 import { ComponentType } from 'react';
+import { $Values } from 'utility-types';
 import compose from 'recompose/compose';
 
 import WizardTemplate from '~pages/WizardTemplateColony';
@@ -6,9 +7,22 @@ import { StepsFn, StepType } from '~core/Wizard/withWizard';
 import { withLoggedInUser } from '~data/index';
 
 import { withWizard } from '../../../core/components/Wizard';
+import StepTokenChoice from './StepTokenChoice';
 import StepColonyName from './StepColonyName';
+import StepSelectToken from './StepSelectToken';
+import StepCreateToken from './StepCreateToken';
+import StepConfirmAllInput from './StepConfirmAllInput';
 import StepUserName from '../CreateUserWizard/StepUserName';
+import StepConfirmColonyTransactions from './StepConfirmTransactions';
 import StepConfirmUserTransaction from '../CreateUserWizard/StepConfirmTransaction';
+
+const stepArray: StepType[] = [
+  StepColonyName,
+  StepTokenChoice,
+  StepCreateToken,
+  StepConfirmAllInput,
+  StepConfirmColonyTransactions,
+];
 
 /**
  * @NOTE Colony Creation Wizard Flow is DISABLED
@@ -20,9 +34,6 @@ import StepConfirmUserTransaction from '../CreateUserWizard/StepConfirmTransacti
  *
  * This will first register a username, then redirect to the colony flow (which will be
  * skipping the create user step), which currently is disabled
- *
- * Also, this file has been severly gutten to accomodate this change, so please
- * restore it from history when this is no longer needed
  */
 const stepArrayJustUserRegistration: StepType[] = [
   StepUserName,
@@ -33,11 +44,18 @@ type StepValues = {
   tokenChoice: 'create' | 'select';
 };
 
+const pickTokenStep = (tokenChoice: $Values<StepValues>) => {
+  if (tokenChoice === 'create') return StepCreateToken;
+  if (tokenChoice === 'select') return StepSelectToken;
+  return StepCreateToken;
+};
+
 /* This is a step function to allow the wizard flow to branch
  * off into two instead of just stepping through an array in a linear manner
  */
 const stepFunction: StepsFn<any> = (
   step: number,
+  { tokenChoice }: StepValues,
   props?: any,
 ): ComponentType<any> => {
   if (props) {
@@ -50,10 +68,24 @@ const stepFunction: StepsFn<any> = (
 
     /* When username hasn't been created flow through wizard is different */
     if (!username) {
+      if (step === 3) {
+        return pickTokenStep(tokenChoice);
+      }
       return stepArrayJustUserRegistration[step] as ComponentType<any>;
     }
+
+    /* Standard wizard flow  */
+    if (step === 0) {
+      if (username && stepArray[0].stepName === 'StepUserName') {
+        stepArray.shift();
+        return stepArray[step] as ComponentType<any>;
+      }
+    }
+    if (step === 2) {
+      return pickTokenStep(tokenChoice);
+    }
   }
-  return StepColonyName;
+  return stepArray[step] as ComponentType<any>;
 };
 
 const initialValues = (props?: any) => {
