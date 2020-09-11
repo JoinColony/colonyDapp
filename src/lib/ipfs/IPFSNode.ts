@@ -13,7 +13,7 @@ const configMap = {
 };
 
 class IPFSNode {
-  static getIpfsConfig = configMap[NETWORK] || configMap['mainnet'];
+  static getIpfsConfig = configMap[NETWORK] || configMap.mainnet;
 
   _ipfs: IPFS;
 

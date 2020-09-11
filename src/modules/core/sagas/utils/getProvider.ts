@@ -9,9 +9,13 @@ import { DEFAULT_NETWORK } from '~constants';
 const getProvider = (): Provider => {
   const network = DEFAULT_NETWORK as Network;
 
-  return network === Network.Local
-    ? new JsonRpcProvider()
-    : new InfuraProvider(network, process.env.INFURA_ID);
+  if (network === Network.Local) {
+    return new JsonRpcProvider();
+  }
+  if (network === 'xdai') {
+    return new JsonRpcProvider('https://xdai.poanetwork.dev');
+  }
+  return new InfuraProvider(network, process.env.INFURA_ID);
 };
 
 export default getProvider;
