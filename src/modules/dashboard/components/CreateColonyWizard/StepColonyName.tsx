@@ -71,10 +71,6 @@ const MSG = defineMessages({
     id: 'users.CreateColonyWizard.StepColonyName.tooltip',
     defaultMessage: `We use ENS to create a .joincolony.eth subdomain for your colony. You can use this to create a custom URL and invite people to join your colony.`,
   },
-  tooltipColonyCreationDisabled: {
-    id: 'users.CreateColonyWizard.StepColonyName.tooltipColonyCreationDisabled',
-    defaultMessage: `Due to the extraordinarily high Ethereum gas prices, we’ve decided to disable the colony creation flow to prevent new users from incurring unexpectedly high costs in setting up their colony. Colony creation will be accessible again on xDai very soon!`,
-  },
 });
 
 const displayName = 'dashboard.CreateColonyWizard.StepColonyName';
@@ -83,14 +79,6 @@ const validationSchema = yup.object({
   colonyName: yup.string().required().ensAddress(),
   displayName: yup.string().required(),
 });
-
-/**
- * @NOTE Colony Creation DISABLED due to high gas costs
- *
- * Please remove this and re-enable when the time comes, or when we deploy this
- * to xDai
- */
-const DISABLE_COLONY_CREATION_DUE_TO_HIGH_GAS_COSTS = true;
 
 const StepColonyName = ({
   wizardForm,
@@ -238,30 +226,14 @@ const StepColonyName = ({
                 }
               />
               <div className={styles.buttons}>
-                <Tooltip
-                  content={
-                    <div className={styles.tooltipContent}>
-                      <FormattedMessage
-                        {...MSG.tooltipColonyCreationDisabled}
-                      />
-                    </div>
-                  }
-                >
-                  <div>
-                    <Button
-                      appearance={{ theme: 'primary', size: 'large' }}
-                      type="submit"
-                      data-test="claimColonyNameConfirm"
-                      disabled={
-                        DISABLE_COLONY_CREATION_DUE_TO_HIGH_GAS_COSTS ||
-                        !isValid ||
-                        (!dirty && !stepCompleted)
-                      }
-                      loading={isSubmitting}
-                      text={MSG.continue}
-                    />
-                  </div>
-                </Tooltip>
+                <Button
+                  appearance={{ theme: 'primary', size: 'large' }}
+                  type="submit"
+                  data-test="claimColonyNameConfirm"
+                  disabled={!isValid || (!dirty && !stepCompleted)}
+                  loading={isSubmitting}
+                  text={MSG.continue}
+                />
               </div>
             </div>
           </section>
