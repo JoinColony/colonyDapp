@@ -77,7 +77,7 @@ class ENS {
     }
 
     // eslint-disable-next-line max-len
-    const ensName = await networkClient.lookupRegisteredENSDomainWithGoerliPatch(
+    const ensName = await networkClient.lookupRegisteredENSDomainWithNetworkPatches(
       address,
     );
 
