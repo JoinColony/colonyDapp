@@ -38,11 +38,10 @@ type StepValues = {
  */
 const stepFunction: StepsFn<any> = (
   step: number,
-  _,
   props?: any,
 ): ComponentType<any> => {
   if (props) {
-    const { username } = props.loggedInUser;
+    const username = props?.loggedInUser?.username;
 
     /*
      * In case the username is already registered
