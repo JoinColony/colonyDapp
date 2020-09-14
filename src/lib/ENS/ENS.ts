@@ -10,7 +10,7 @@ import { Address, ENSName } from '~types/index';
 import { createAddress, isAddress } from '~utils/web3';
 
 const COLONY_NETWORK_ENS_NAME =
-  process.env.COLONY_NETWORK_ENS_NAME || 'joincolony.eth';
+  process.env.COLONY_NETWORK_ENS_NAME || 'joincolony.colonyxdai';
 const EXTERNAL_PREFIX = '$';
 
 class ENS {
