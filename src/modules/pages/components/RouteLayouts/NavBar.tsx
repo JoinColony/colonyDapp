@@ -19,7 +19,7 @@ const MSG = defineMessages({
     id: `pages.NavBar.mainnetAlert`,
     defaultMessage:
       /* eslint-disable-next-line max-len */
-      'Heads up! Colony is a beta product on the Ethereum mainnet. Please be careful.',
+      'Heads up! Colony is a beta product on the xDai Chain. Please be careful.',
   },
 });
 

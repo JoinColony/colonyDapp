@@ -17,7 +17,7 @@ const MSG = defineMessages({
   bodyText: {
     id: 'users.GasStation.GasStationClaimCard.bodyText',
     defaultMessage: `This is your wallet. You’ll use it to sign transactions
-and pay transaction fees to the Ethereum blockchain. Click confirm below to
+and pay transaction fees to the xDai Chain. Click confirm below to
 sign your first transaction and finish setting up your account.`,
   },
 });
