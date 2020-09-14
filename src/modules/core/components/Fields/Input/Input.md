@@ -22,7 +22,7 @@ import { Form } from '../';
   initialValues={{ input: '' }}
   initialErrors={{ input: 'Wrong!' }}
   touched={{ input: true }}
-  validate={{ input: 'Wrong!' }}  
+  validate={{ input: 'Wrong!' }}
 >
   <Input
     elementOnly
@@ -71,7 +71,7 @@ import { Form } from '../';
   initialValues={{ input: '' }}
   initialErrors={{ input: 'Wrong!' }}
   touched={{ input: true }}
-  validate={{ input: 'Wrong!' }}  
+  validate={{ input: 'Wrong!' }}
 >
   <Input
     name="input"
@@ -135,7 +135,7 @@ import { Form } from '../';
   initialValues={{ input: '' }}
   initialErrors={{ input: 'Wrong!' }}
   touched={{ input: true }}
-  validate={{ input: 'Wrong!' }}  
+  validate={{ input: 'Wrong!' }}
 >
   <Input
     appearance={{ direction: 'horizontal' }}
@@ -158,7 +158,7 @@ import { Form } from '../';
     appearance={{ colorSchema: 'dark' }}
     name="input"
     placeholder="I'm dark!"
-    label="Dark label" 
+    label="Dark label"
   />
 </Form>
 ```
@@ -219,7 +219,7 @@ import { Form } from '../';
   initialValues={{ input: '' }}
   initialErrors={{ input: 'Wrong!' }}
   touched={{ input: true }}
-  validate={{ input: 'Wrong!' }}  
+  validate={{ input: 'Wrong!' }}
 >
   <Input
     appearance={{ theme: 'underlined', direction: 'horizontal' }}
@@ -270,7 +270,7 @@ import { Form } from '../';
     name="input"
     appearance={{ theme: 'fat' }}
     label="Tell me your name"
-    extensionString=".joincolony.eth"
+    extensionString=".joincolony.colonyxdai"
   />
 </Form>
 ```
