@@ -7,7 +7,7 @@ import { useIntl } from 'react-intl';
 import type { Unit } from '~utils/web3';
 
 interface Props extends HTMLAttributes<HTMLSpanElement> {
-  /** When dealing with ethereum units */
+  /** When dealing with xDai chain units */
   ethUnit?: Unit;
   /** Disallow children */
   children?: never;

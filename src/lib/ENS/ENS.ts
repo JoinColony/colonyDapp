@@ -100,7 +100,7 @@ class ENS {
     return !address;
   }
 
-  /* Returns an Ethereum address, when given the human-readable name */
+  /* Returns an xDai Chain address, when given the human-readable name */
   async getAddress(
     domain: string,
     networkClient: ColonyNetworkClient,
