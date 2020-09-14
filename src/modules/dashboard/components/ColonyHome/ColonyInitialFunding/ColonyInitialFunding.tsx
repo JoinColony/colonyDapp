@@ -46,12 +46,12 @@ const MSG = defineMessages({
   qrCodeDescriptionExternal: {
     id: 'dashboard.ColonyInitialFunding.qrCodeDescriptionExternal',
     // eslint-disable-next-line max-len
-    defaultMessage: `Send any ETH or ERC20 tokens to your colony's address below:`,
+    defaultMessage: `Send any XDAI or ERC20 tokens to your colony's address below:`,
   },
   qrCodeDescription: {
     id: 'dashboard.ColonyInitialFunding.qrCodeDescription',
     // eslint-disable-next-line max-len
-    defaultMessage: `Or send any ETH or ERC20 tokens to your colony's address below:`,
+    defaultMessage: `Or send any XDAI or ERC20 tokens to your colony's address below:`,
   },
 });
 

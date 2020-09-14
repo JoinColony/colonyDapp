@@ -13,8 +13,8 @@ import { getTokenDecimalsWithFallback } from '~utils/tokens';
 const ETHER_INFO = Object.freeze({
   id: AddressZero,
   address: AddressZero,
-  name: 'Ether',
-  symbol: 'ETH',
+  name: 'XDAI Token',
+  symbol: 'XDAI',
   decimals: 18,
   verified: true,
   iconHash: '',

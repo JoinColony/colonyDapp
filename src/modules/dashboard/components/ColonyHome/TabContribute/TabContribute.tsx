@@ -150,7 +150,7 @@ const TabContribute = ({
       {nativeToken && nativeTokenBalance.isZero() && ethBalance.isZero() && (
         /*
          * The funding panel should be shown if the colony's balance of
-         * both the native token and ETH is zero.
+         * both the native token and XDAI is zero.
          */
         <ColonyInitialFunding
           canMintTokens={canMintTokens}

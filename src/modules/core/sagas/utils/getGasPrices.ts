@@ -60,7 +60,7 @@ const fetchGasPrices = async (
       fasterWait: data.fastWait * 60,
     };
   } catch (caughtError) {
-    log.warn(`Could not get ETH gas prices: ${caughtError.message}`);
+    log.warn(`Could not get XDAI gas prices: ${caughtError.message}`);
     // Default values
     return {
       timestamp: -Infinity, // Do not cache this
