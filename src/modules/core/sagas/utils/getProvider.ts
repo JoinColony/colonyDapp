@@ -7,7 +7,7 @@ import { DEFAULT_NETWORK } from '~constants';
  * Return an initialized Provider instance.
  */
 const getProvider = (): Provider => {
-  const network = DEFAULT_NETWORK as Network;
+  const network = DEFAULT_NETWORK as Network | 'xdai';
 
   if (network === Network.Local) {
     return new JsonRpcProvider();
