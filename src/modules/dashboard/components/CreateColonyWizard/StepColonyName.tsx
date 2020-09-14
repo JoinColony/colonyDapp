@@ -69,7 +69,7 @@ const MSG = defineMessages({
   },
   tooltip: {
     id: 'users.CreateColonyWizard.StepColonyName.tooltip',
-    defaultMessage: `We use ENS to create a .joincolony.eth subdomain for your colony. You can use this to create a custom URL and invite people to join your colony.`,
+    defaultMessage: `We use ENS to create a .joincolony.colonyxdai subdomain for your colony. You can use this to create a custom URL and invite people to join your colony.`,
   },
 });
 
@@ -201,7 +201,7 @@ const StepColonyName = ({
                 appearance={{ theme: 'fat' }}
                 name="colonyName"
                 data-test="claimColonyNameInput"
-                extensionString=".colony.joincolony.eth"
+                extensionString=".colony.joincolony.colonyxdai"
                 label={MSG.label}
                 status={normalized !== colonyName ? MSG.statusText : undefined}
                 formattingOptions={{ lowercase: true }}
