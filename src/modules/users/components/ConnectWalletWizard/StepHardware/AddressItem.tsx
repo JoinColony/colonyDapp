@@ -27,7 +27,7 @@ const AddressItem = ({ address, checked, balance }: Props) => (
       </Radio>
     </div>
     <div className={styles.choiceBalanceContainer}>
-      <Numeral value={balance} suffix=" ETH" unit={18} />
+      <Numeral value={balance} suffix=" XDAI" unit={18} />
     </div>
   </>
 );

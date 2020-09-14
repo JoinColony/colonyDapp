@@ -50,11 +50,11 @@ const WizardTemplateColony = ({
             <div className={styles.moneyContainer}>
               {ethBalance.isZero() ? (
                 <div className={styles.noMoney}>
-                  <Numeral suffix=" ETH" unit="ether" value={ethBalance} />
+                  <Numeral suffix=" XDAI" unit="ether" value={ethBalance} />
                 </div>
               ) : (
                 <div className={styles.yeihMoney}>
-                  <Numeral suffix=" ETH" unit="ether" value={ethBalance} />
+                  <Numeral suffix=" XDAI" unit="ether" value={ethBalance} />
                 </div>
               )}
             </div>

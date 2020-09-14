@@ -41,7 +41,7 @@ const MSG = defineMessages({
   },
   gotETH: {
     id: 'dashboard.CreateColonyWizard.StepUserName.gotETH',
-    defaultMessage: `Got ETH? You'll need some at the end
+    defaultMessage: `Got XDAI? You'll need some at the end
       to cover Ethereum's transaction fees.`,
   },
   errorDomainTaken: {

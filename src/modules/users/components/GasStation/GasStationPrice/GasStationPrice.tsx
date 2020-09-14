@@ -68,7 +68,7 @@ are expensive. We recommend waiting.`,
   inSufficientFundsNotification: {
     id: 'users.GasStation.GasStationFooter.insufficientFundsNotification',
     defaultMessage: `You do not have enough funds to complete this transaction.
-      Add more ETH to cover the transaction fee.`,
+      Add more XDAI to cover the transaction fee.`,
   },
 });
 
@@ -221,7 +221,7 @@ const GasStationPrice = ({ transaction: { id, gasLimit, error } }: Props) => {
                     {transactionFee ? (
                       <>
                         <Numeral
-                          suffix=" ETH"
+                          suffix=" XDAI"
                           unit="ether"
                           value={transactionFee}
                         />
