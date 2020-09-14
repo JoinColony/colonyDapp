@@ -130,7 +130,7 @@ const StepUserName = ({ stepCompleted, wizardForm, nextStep }: Props) => {
                   appearance={{ theme: 'fat' }}
                   name="username"
                   label={MSG.label}
-                  extensionString=".user.joincolony.eth"
+                  extensionString=".user.joincolony.colonyxdai"
                   status={normalized !== username ? MSG.statusText : undefined}
                   statusValues={{
                     normalized,
