@@ -13,6 +13,8 @@ import {
 } from '../../actionCreators';
 import { getGasPrices } from '../utils';
 
+import { DEFAULT_NETWORK } from '~constants';
+
 /*
  * @area: including a bit of buffer on the gas sent can be a good thing.
  * Your tx might be applied against a different state from when you
@@ -43,12 +45,12 @@ export default function* estimateGasCost({
       .div(SAFE_GAS_LIMIT_MULTIPLIER)
       .add(estimatedGas);
 
-    const { network, suggested } = yield call(getGasPrices);
+    const { network, suggested, fixed } = yield call(getGasPrices);
 
     yield put(
       transactionUpdateGas(id, {
         gasLimit: suggestedGasLimit.toString(),
-        gasPrice: suggested || network,
+        gasPrice: (DEFAULT_NETWORK === 'xdai' ? fixed : suggested) || network,
       }),
     );
   } catch (error) {
