@@ -15,9 +15,6 @@ interface Props {
   /** Address of the token to link to */
   tokenAddress: string;
 
-  /** Optionally override current network */
-  network?: string;
-
   /** A string or a `messageDescriptor` that make up the link's text. Defaults to `tokenAddress`. */
   text?: MessageDescriptor | string;
 
