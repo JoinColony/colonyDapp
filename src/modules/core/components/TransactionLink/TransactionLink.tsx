@@ -15,9 +15,6 @@ interface Props {
   /** Transaction hash */
   hash: string;
 
-  /** Optionally override current network */
-  network?: string;
-
   /** A string or a `messageDescriptor` that make up the link's text. Defaults to `hash`. */
   text?: MessageDescriptor | string;
 
