@@ -36,6 +36,19 @@ export const getEthToUsd = (ethValue: BigNumber): Promise<number | void> => {
     localStorage.getItem(ETH_USD_TIMESTAMP_KEY) || null;
   const currentTimestamp = new Date().getTime();
 
+  /**
+   * Since the xDai token is "stable", it will always have parity to 1 USD
+   */
+  if (DEFAULT_NETWORK === 'xdai') {
+    return new Promise((resolve) => {
+      localStorage.setItem(ETH_USD_KEY, '1');
+      localStorage.setItem(ETH_USD_TIMESTAMP_KEY, currentTimestamp.toString());
+      return resolve(
+        parseFloat(formatUnits(ethValue, 'ether')) * parseFloat('1'),
+      );
+    });
+  }
+
   if (cachedEthUsd && cachedEthUsdTimestamp) {
     /*
       Cache exchange rate for one day
