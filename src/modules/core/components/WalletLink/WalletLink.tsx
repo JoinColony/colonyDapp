@@ -1,10 +1,9 @@
 import { MessageDescriptor } from 'react-intl';
 import React from 'react';
 
-import { DEFAULT_NETWORK } from '~constants';
 import ExternalLink from '~core/ExternalLink';
 import { SimpleMessageValues } from '~types/index';
-import { getEtherscanLink } from '~utils/external';
+import { getBlockExplorerLink } from '~utils/external';
 
 interface Props {
   /*
@@ -28,17 +27,10 @@ interface Props {
 
 const displayName = 'WalletLink';
 
-const WalletLink = ({
-  className,
-  walletAddress,
-  network = DEFAULT_NETWORK,
-  text,
-  textValues,
-}: Props) => (
+const WalletLink = ({ className, walletAddress, text, textValues }: Props) => (
   <ExternalLink
     className={className}
-    href={getEtherscanLink({
-      network,
+    href={getBlockExplorerLink({
       linkType: 'address',
       addressOrHash: walletAddress,
     })}

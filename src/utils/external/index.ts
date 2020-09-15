@@ -15,7 +15,7 @@ interface EthUsdResponse {
   };
 }
 
-interface EtherscanLinkProps {
+interface BlockExplorerLinkProps {
   network?: string;
   linkType?: 'address' | 'tx' | 'token';
   addressOrHash: string;
@@ -72,13 +72,24 @@ export const getEthToUsd = (ethValue: BigNumber): Promise<number | void> => {
     .catch(console.warn);
 };
 
-export const getEtherscanLink = ({
+export const getBlockExplorerLink = ({
   network = DEFAULT_NETWORK,
   linkType = 'address',
   addressOrHash,
-}: EtherscanLinkProps): string => {
+}: BlockExplorerLinkProps): string => {
   if (!addressOrHash) {
     return '';
+  }
+  if (network === 'local') {
+    return '#';
+  }
+  if (network === 'xdai') {
+    const xdaiLinkType = linkType === 'token' ? 'address' : linkType;
+    /**
+     * Using a network string template here since in the future we might wanna
+     * support xdai's test networks as well (eg: sokol)
+     */
+    return `https://blockscout.com/poa/${network}/${xdaiLinkType}/${addressOrHash}`;
   }
   const tld = network === 'tobalaba' ? 'com' : 'io';
   const networkSubdomain =
