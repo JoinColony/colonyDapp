@@ -42,7 +42,7 @@ const MSG = defineMessages({
   },
   receiptViewTxLinkText: {
     id: 'dashboard.TaskFeed.TaskFeedCompleteInfo.receiptViewTxLinkText',
-    defaultMessage: 'View the transaction on Etherscan',
+    defaultMessage: 'View the transaction on Blockscout',
   },
 });
 

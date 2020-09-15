@@ -49,7 +49,7 @@ const TransactionStatus = ({
       <TransactionLink
         className={styles.interaction}
         hash={hash}
-        text="Etherscan"
+        text="Blockscout"
       />
     )}
     <Tooltip

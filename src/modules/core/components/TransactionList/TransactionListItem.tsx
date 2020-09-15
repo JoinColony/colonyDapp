@@ -22,7 +22,7 @@ const MSG = defineMessages({
   },
   buttonEtherscan: {
     id: 'admin.TransactionList.TransactionListItem.buttonEtherscan',
-    defaultMessage: 'Etherscan',
+    defaultMessage: 'Blockscout',
   },
   incomingTransactionTitle: {
     id: 'admin.TransactionList.TransactionListItem.incomingTransactionTitle',
