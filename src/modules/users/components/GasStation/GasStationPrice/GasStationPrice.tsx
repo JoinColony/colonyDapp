@@ -21,6 +21,7 @@ import Icon from '~core/Icon';
 import Numeral from '~core/Numeral';
 import Duration from '~core/Duration';
 import { SpinnerLoader } from '~core/Preloaders';
+import { DEFAULT_NETWORK } from '~constants';
 
 import { gasPrices as gasPricesSelector } from '../../../../core/selectors';
 import {
@@ -65,6 +66,10 @@ are expensive. We recommend waiting.`,
     id: 'users.GasStation.GasStationPrice.transactionSpeedTypeFaster',
     defaultMessage: 'Faster',
   },
+  transactionSpeedTypeFixed: {
+    id: 'users.GasStation.GasStationPrice.transactionSpeedTypeFixed',
+    defaultMessage: 'Fixed',
+  },
   inSufficientFundsNotification: {
     id: 'users.GasStation.GasStationFooter.insufficientFundsNotification',
     defaultMessage: `You do not have enough funds to complete this transaction.
@@ -81,11 +86,17 @@ type FormValues = {
   transactionSpeed: string;
 };
 
-const transactionSpeedOptions: RadioOption[] = [
+let transactionSpeedOptions: RadioOption[] = [
   { value: 'suggested', label: MSG.transactionSpeedTypeSuggested },
   { value: 'cheaper', label: MSG.transactionSpeedTypeCheaper },
   { value: 'faster', label: MSG.transactionSpeedTypeFaster },
 ];
+
+if (DEFAULT_NETWORK === 'xdai') {
+  transactionSpeedOptions = [
+    { value: 'fixed', label: MSG.transactionSpeedTypeFixed },
+  ];
+}
 
 const validationSchema = yup.object().shape({
   transactionId: yup.string(),
