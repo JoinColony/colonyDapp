@@ -15,7 +15,7 @@ const MSG = defineMessages({
   },
   viewOnEtherscan: {
     id: 'InfoPopover.TokenInfoPopover.viewOnEtherscan',
-    defaultMessage: 'View on Etherscan',
+    defaultMessage: 'View on Blockscout',
   },
 });
 

@@ -27,7 +27,8 @@ const MSG = defineMessages({
   },
   hint: {
     id: 'dashboard.CreateColonyWizard.TokenSelector.hint',
-    defaultMessage: 'You can find them here: https://etherscan.io/tokens',
+    defaultMessage:
+      'You can find them here: https://blockscout.com/poa/xdai/tokens',
   },
   preview: {
     id: 'dashboard.CreateColonyWizard.TokenSelector.preview',

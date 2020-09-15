@@ -33,7 +33,7 @@ const MSG = defineMessages({
   },
   linkText: {
     id: 'dashboard.Wallet.linkText',
-    defaultMessage: 'View your transactions on Etherscan {link}',
+    defaultMessage: 'View your transactions on Blockscout {link}',
   },
   linkEditToken: {
     id: 'dashboard.Wallet.linkEditToken',
