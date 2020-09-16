@@ -5,6 +5,7 @@ import { BigNumber, bigNumberify, parseEther } from 'ethers/utils';
 import { defineMessages, FormattedMessage } from 'react-intl';
 import nanoid from 'nanoid';
 import * as yup from 'yup';
+import { Network } from '@colony/colony-js';
 
 import { TransactionType, WalletKind } from '~immutable/index';
 import { RadioOption } from '~core/Fields/RadioGroup';
@@ -92,7 +93,7 @@ let transactionSpeedOptions: RadioOption[] = [
   { value: 'faster', label: MSG.transactionSpeedTypeFaster },
 ];
 
-if (DEFAULT_NETWORK === 'xdai') {
+if (DEFAULT_NETWORK === Network.Xdai) {
   transactionSpeedOptions = [
     { value: 'fixed', label: MSG.transactionSpeedTypeFixed },
   ];
