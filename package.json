@@ -148,7 +148,7 @@
     "eth-contract-metadata": "^1.13.0",
     "eth-ens-namehash-ms": "^2.2.0",
     "ethereumjs-tx": "^2.1.2",
-    "ethers": "^4.0.47",
+    "ethers": "^5.0.0",
     "format-number": "^3.0.0",
     "formik": "2.1.4",
     "graphql-tag": "^2.10.1",
