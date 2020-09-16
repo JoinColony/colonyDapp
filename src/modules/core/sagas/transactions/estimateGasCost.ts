@@ -48,11 +48,19 @@ export default function* estimateGasCost({
 
     const { network, suggested, fixed } = yield call(getGasPrices);
 
+    let gasPrice = suggested || network;
+
+    /**
+     * Setting gas price on local to 0 for the fun of it
+     */
+    if (DEFAULT_NETWORK === Network.Local || DEFAULT_NETWORK === Network.Xdai) {
+      gasPrice = fixed;
+    }
+
     yield put(
       transactionUpdateGas(id, {
         gasLimit: suggestedGasLimit.toString(),
-        gasPrice:
-          (DEFAULT_NETWORK === Network.Xdai ? fixed : suggested) || network,
+        gasPrice,
       }),
     );
   } catch (error) {

@@ -146,7 +146,7 @@ const ProfileEdit = ({ colony }: Props) => {
                      * For the next improvement, we'll need to strip out
                      * the ENS subdomain part, and just truncate the actual
                      * name, so it'll look something like this:
-                     * aaaaaaaaaaaaaaaa... .colony.joincolony.colonyxdai
+                     * aaaaaaaaaaaaaaaa... .colony.joincolony.eth
                      */
                     text={ENS.getFullDomain('colony', colonyName)}
                   />
