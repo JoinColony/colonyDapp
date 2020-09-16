@@ -270,7 +270,7 @@ import { Form } from '../';
     name="input"
     appearance={{ theme: 'fat' }}
     label="Tell me your name"
-    extensionString=".joincolony.colonyxdai"
+    extensionString=".joincolony.eth"
   />
 </Form>
 ```
