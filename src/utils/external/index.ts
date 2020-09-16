@@ -1,4 +1,5 @@
 import { BigNumber, formatUnits } from 'ethers/utils';
+import { Network } from '@colony/colony-js';
 
 import { DEFAULT_NETWORK } from '~constants';
 
@@ -39,7 +40,7 @@ export const getEthToUsd = (ethValue: BigNumber): Promise<number | void> => {
   /**
    * Since the xDai token is "stable", it will always have parity to 1 USD
    */
-  if (DEFAULT_NETWORK === 'xdai') {
+  if (DEFAULT_NETWORK === Network.Xdai) {
     return new Promise((resolve) => {
       localStorage.setItem(ETH_USD_KEY, '1');
       localStorage.setItem(ETH_USD_TIMESTAMP_KEY, currentTimestamp.toString());
@@ -93,10 +94,10 @@ export const getBlockExplorerLink = ({
   if (!addressOrHash) {
     return '';
   }
-  if (network === 'local') {
+  if (network === Network.Local) {
     return '#';
   }
-  if (network === 'xdai') {
+  if (network === Network.Xdai) {
     const xdaiLinkType = linkType === 'token' ? 'address' : linkType;
     /**
      * Using a network string template here since in the future we might wanna

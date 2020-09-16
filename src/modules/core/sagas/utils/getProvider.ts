@@ -12,7 +12,7 @@ const getProvider = (): Provider => {
   if (network === Network.Local) {
     return new JsonRpcProvider();
   }
-  if (network === 'xdai') {
+  if (network === Network.Xdai) {
     return new JsonRpcProvider('https://xdai.poanetwork.dev');
   }
   return new InfuraProvider(network, process.env.INFURA_ID);

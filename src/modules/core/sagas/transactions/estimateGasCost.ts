@@ -1,5 +1,6 @@
 import { call, put } from 'redux-saga/effects';
 import { bigNumberify } from 'ethers/utils';
+import { Network } from '@colony/colony-js';
 
 import { ActionTypes, Action } from '~redux/index';
 import { selectAsJS } from '~utils/saga/effects';
@@ -50,7 +51,8 @@ export default function* estimateGasCost({
     yield put(
       transactionUpdateGas(id, {
         gasLimit: suggestedGasLimit.toString(),
-        gasPrice: (DEFAULT_NETWORK === 'xdai' ? fixed : suggested) || network,
+        gasPrice:
+          (DEFAULT_NETWORK === Network.Xdai ? fixed : suggested) || network,
       }),
     );
   } catch (error) {
