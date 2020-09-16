@@ -1,7 +1,7 @@
 import { ApolloClient, Resolvers } from '@apollo/client';
 import { BigNumber, bigNumberify } from 'ethers/utils';
 import { AddressZero } from 'ethers/constants';
-import { ClientType, ColonyClient } from '@colony/colony-js';
+import { ClientType, ColonyClient, Network } from '@colony/colony-js';
 
 import { Context, ContextModule } from '~context/index';
 import {
