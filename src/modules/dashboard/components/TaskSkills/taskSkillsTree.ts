@@ -1,3 +1,5 @@
+import { Network } from '@colony/colony-js';
+
 import { DEFAULT_NETWORK } from '~constants';
 
 import mainnetTaskSkillsTree from './taskSkillsTree.mainnet';
@@ -7,11 +9,11 @@ import localTaskSkillsTree from './taskSkillsTree.local';
 
 const getTaskSkillsTreeInUse = () => {
   switch (DEFAULT_NETWORK) {
-    case 'mainnet':
+    case Network.Mainnet:
       return mainnetTaskSkillsTree;
-    case 'goerli':
+    case Network.Goerli:
       return goerliTaskSkillsTree;
-    case 'xdai':
+    case Network.Xdai:
       return xdaiTaskSkillsTree;
     default:
       return localTaskSkillsTree;

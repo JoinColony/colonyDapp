@@ -5,6 +5,7 @@ import { call, put, select } from 'redux-saga/effects';
 import { GasPricesProps } from '~immutable/index';
 import { ContextModule, TEMP_getContext } from '~context/index';
 import { log } from '~utils/debug';
+import { DEFAULT_NETWORK } from '~constants';
 
 import { gasPrices as gasPricesSelector } from '../../selectors';
 import { updateGasPrices } from '../../actionCreators';
@@ -60,7 +61,9 @@ const fetchGasPrices = async (
       fasterWait: data.fastWait * 60,
     };
   } catch (caughtError) {
-    log.warn(`Could not get XDAI gas prices: ${caughtError.message}`);
+    log.warn(
+      `Could not get ${DEFAULT_NETWORK} network gas prices: ${caughtError.message}`,
+    );
     // Default values
     return {
       timestamp: -Infinity, // Do not cache this
