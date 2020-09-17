@@ -1,32 +1,24 @@
 import { ApolloClient, Resolvers } from '@apollo/client';
 import { BigNumber, bigNumberify } from 'ethers/utils';
 import { AddressZero } from 'ethers/constants';
-import { ClientType, ColonyClient, Network } from '@colony/colony-js';
+import { ClientType, ColonyClient } from '@colony/colony-js';
 
 import { Context, ContextModule } from '~context/index';
 import {
   COLONY_TOTAL_BALANCE_DOMAIN_ID,
-  XDAI_TOKEN,
-  ETHER_TOKEN,
-  DEFAULT_NETWORK,
+  DEFAULT_NETWORK_TOKEN,
 } from '~constants';
 import { TokenInfo, TokenInfoDocument } from '~data/index';
 import { Address } from '~types/index';
 import { createAddress, isAddress } from '~utils/web3';
 import { getTokenDecimalsWithFallback } from '~utils/tokens';
 
-let TOKEN_DETAILS = { ...ETHER_TOKEN };
-
-if (DEFAULT_NETWORK === Network.Xdai) {
-  TOKEN_DETAILS = { ...TOKEN_DETAILS, ...XDAI_TOKEN };
-}
-
 const TOKEN_INFO = Object.freeze({
   id: AddressZero,
   address: AddressZero,
   verified: true,
   iconHash: '',
-  ...TOKEN_DETAILS,
+  ...DEFAULT_NETWORK_TOKEN,
 });
 
 // Token data is used a lot and never change. They require a custom cache

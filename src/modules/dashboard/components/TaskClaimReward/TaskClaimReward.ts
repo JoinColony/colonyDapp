@@ -57,7 +57,7 @@ const enhance = compose(
         // @ts-ignore
         .filter((payout) => !payout.token.isNative)
         /*
-         * Sort XDAI to the top
+         * Sort the current network's Token (ie: ETH, XDAI, etc) to the top
          */
         .sort(sortObjectsBy({ name: 'isEth', compareFn: isEth }, 'token')),
       nativeTokenPayout: payouts
