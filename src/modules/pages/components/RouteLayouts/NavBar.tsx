@@ -5,6 +5,7 @@ import { useLocation } from 'react-router-dom';
 import Alert from '~core/Alert';
 import { useLoggedInUser } from '~data/index';
 import { getMainClasses } from '~utils/css';
+import { DEFAULT_NETWORK_INFO } from '~constants';
 
 import HistoryNavigation from './HistoryNavigation';
 import UserNavigation from './UserNavigation';
@@ -19,7 +20,7 @@ const MSG = defineMessages({
     id: `pages.NavBar.mainnetAlert`,
     defaultMessage:
       /* eslint-disable-next-line max-len */
-      'Heads up! Colony is a beta product on the xDai Chain. Please be careful.',
+      'Heads up! Colony is a beta product on {networkName}. Please be careful.',
   },
 });
 
@@ -73,6 +74,9 @@ const NavBar = ({
                   borderRadius: 'round',
                 }}
                 text={MSG.mainnetAlert}
+                textValues={{
+                  networkName: DEFAULT_NETWORK_INFO.name,
+                }}
                 isDismissible
               />
             </div>

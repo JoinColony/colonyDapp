@@ -13,6 +13,7 @@ import {
   UserAddressQuery,
   UserAddressQueryVariables,
 } from '~data/index';
+import { DEFAULT_NETWORK_INFO, DEFAULT_NETWORK_TOKEN } from '~constants';
 
 import styles from './StepUserName.css';
 
@@ -41,8 +42,8 @@ const MSG = defineMessages({
   },
   gotETH: {
     id: 'dashboard.CreateColonyWizard.StepUserName.gotETH',
-    defaultMessage: `Got XDAI? You'll need some at the end
-      to cover xDai Chain's transaction fees.`,
+    defaultMessage: `Got {tokenSymbol}? You'll need some at the end
+      to cover {networkName}'s transaction fees.`,
   },
   errorDomainTaken: {
     id: 'dashboard.CreateColonyWizard.StepUserName.errorDomainTaken',
@@ -140,7 +141,13 @@ const StepUserName = ({ stepCompleted, wizardForm, nextStep }: Props) => {
                 />
                 <div className={styles.buttons}>
                   <p className={styles.reminder}>
-                    <FormattedMessage {...MSG.gotETH} />
+                    <FormattedMessage
+                      {...MSG.gotETH}
+                      values={{
+                        tokenSymbol: DEFAULT_NETWORK_TOKEN.symbol,
+                        networkName: DEFAULT_NETWORK_INFO.name,
+                      }}
+                    />
                   </p>
                   <Button
                     appearance={{ theme: 'primary', size: 'large' }}
