@@ -11,6 +11,7 @@ import QRCode from '~core/QRCode';
 import CopyableAddress from '~core/CopyableAddress';
 import { TokenMintForm } from '~admin/Tokens';
 import { useTokenQuery } from '~data/index';
+import { DEFAULT_NETWORK_TOKEN } from '~constants';
 
 import styles from './ColonyInitialFunding.css';
 import { getTokenDecimalsWithFallback } from '~utils/tokens';
@@ -46,12 +47,12 @@ const MSG = defineMessages({
   qrCodeDescriptionExternal: {
     id: 'dashboard.ColonyInitialFunding.qrCodeDescriptionExternal',
     // eslint-disable-next-line max-len
-    defaultMessage: `Send any XDAI or ERC20 tokens to your colony's address below:`,
+    defaultMessage: `Send any {tokenSymbol} or ERC20 tokens to your colony's address below:`,
   },
   qrCodeDescription: {
     id: 'dashboard.ColonyInitialFunding.qrCodeDescription',
     // eslint-disable-next-line max-len
-    defaultMessage: `Or send any XDAI or ERC20 tokens to your colony's address below:`,
+    defaultMessage: `Or send any {tokenSymbol} or ERC20 tokens to your colony's address below:`,
   },
 });
 
@@ -148,6 +149,9 @@ const ColonyInitialFunding = ({
                 {...MSG[
                   isExternal ? 'qrCodeDescriptionExternal' : 'qrCodeDescription'
                 ]}
+                values={{
+                  tokenSymbol: DEFAULT_NETWORK_TOKEN.symbol,
+                }}
               />
             </p>
             <CopyableAddress full>{colonyAddress}</CopyableAddress>

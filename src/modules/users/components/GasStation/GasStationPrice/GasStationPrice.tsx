@@ -22,7 +22,7 @@ import Icon from '~core/Icon';
 import Numeral from '~core/Numeral';
 import Duration from '~core/Duration';
 import { SpinnerLoader } from '~core/Preloaders';
-import { DEFAULT_NETWORK } from '~constants';
+import { DEFAULT_NETWORK, DEFAULT_NETWORK_TOKEN } from '~constants';
 
 import { gasPrices as gasPricesSelector } from '../../../../core/selectors';
 import {
@@ -74,7 +74,7 @@ are expensive. We recommend waiting.`,
   inSufficientFundsNotification: {
     id: 'users.GasStation.GasStationFooter.insufficientFundsNotification',
     defaultMessage: `You do not have enough funds to complete this transaction.
-      Add more XDAI to cover the transaction fee.`,
+      Add more {tokenSymbol} to cover the transaction fee.`,
   },
 });
 
@@ -233,7 +233,7 @@ const GasStationPrice = ({ transaction: { id, gasLimit, error } }: Props) => {
                     {transactionFee ? (
                       <>
                         <Numeral
-                          suffix=" XDAI"
+                          suffix={` ${DEFAULT_NETWORK_TOKEN.symbol}`}
                           unit="ether"
                           value={transactionFee}
                         />
@@ -278,6 +278,7 @@ const GasStationPrice = ({ transaction: { id, gasLimit, error } }: Props) => {
             <Alert
               appearance={{ theme: 'danger', size: 'small' }}
               text={MSG.inSufficientFundsNotification}
+              textValues={{ tokenSymbol: DEFAULT_NETWORK_TOKEN.symbol }}
             />
           )}
         </>

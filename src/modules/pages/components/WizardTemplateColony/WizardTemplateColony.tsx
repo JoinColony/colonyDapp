@@ -7,6 +7,7 @@ import QRCode from '~core/QRCode';
 import CopyableAddress from '~core/CopyableAddress';
 import { HistoryNavigation } from '~pages/RouteLayouts';
 import { useLoggedInUser } from '~data/index';
+import { DEFAULT_NETWORK_TOKEN } from '~constants';
 
 import styles from './WizardTemplateColony.css';
 
@@ -50,11 +51,19 @@ const WizardTemplateColony = ({
             <div className={styles.moneyContainer}>
               {ethBalance.isZero() ? (
                 <div className={styles.noMoney}>
-                  <Numeral suffix=" XDAI" unit="ether" value={ethBalance} />
+                  <Numeral
+                    suffix={` ${DEFAULT_NETWORK_TOKEN.symbol}`}
+                    unit="ether"
+                    value={ethBalance}
+                  />
                 </div>
               ) : (
                 <div className={styles.yeihMoney}>
-                  <Numeral suffix=" XDAI" unit="ether" value={ethBalance} />
+                  <Numeral
+                    suffix={` ${DEFAULT_NETWORK_TOKEN.symbol}`}
+                    unit="ether"
+                    value={ethBalance}
+                  />
                 </div>
               )}
             </div>

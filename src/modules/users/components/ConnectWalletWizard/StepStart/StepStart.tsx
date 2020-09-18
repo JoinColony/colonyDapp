@@ -12,6 +12,7 @@ import { CREATE_WALLET_ROUTE } from '~routes/index';
 import styles from './StepStart.css';
 import { useAutoLogin } from '~utils/autoLogin';
 import { SpinnerLoader } from '~core/Preloaders';
+import { DEFAULT_NETWORK_INFO } from '~constants';
 
 const MSG = defineMessages({
   heading: {
@@ -20,7 +21,7 @@ const MSG = defineMessages({
   },
   subTitle: {
     id: 'users.ConnectWalletWizard.StepStart.subTitle',
-    defaultMessage: `Each Colony account is accessed through an associated xDai Chain wallet. You can use an existing wallet that you own, or create a new wallet below.`,
+    defaultMessage: `Each Colony account is accessed through an associated {networkName} wallet. You can use an existing wallet that you own, or create a new wallet below.`,
   },
   createWalletTitle: {
     id: 'users.ConnectWalletWizard.StepStart.createWalletTitle',
@@ -167,6 +168,7 @@ const StepStart = ({ nextStep, wizardValues, simplified = false }: Props) => {
             <Heading
               appearance={{ size: 'normal', weight: 'thin' }}
               text={MSG.subTitle}
+              textValues={{ networkName: DEFAULT_NETWORK_INFO.name }}
             />
           </div>
         )}

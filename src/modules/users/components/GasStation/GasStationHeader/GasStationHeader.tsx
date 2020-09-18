@@ -8,6 +8,7 @@ import Link from '~core/Link';
 import Numeral from '~core/Numeral';
 import { WALLET_ROUTE } from '~routes/index';
 import { useLoggedInUser } from '~data/index';
+import { DEFAULT_NETWORK_TOKEN } from '~constants';
 
 import styles from './GasStationHeader.css';
 
@@ -39,7 +40,10 @@ const GasStationHeader = ({ close }: Props) => {
           <CopyableAddress>{walletAddress}</CopyableAddress>
         </div>
         <div>
-          <Numeral value={balance} suffix=" XDAI" />
+          <Numeral
+            value={balance}
+            suffix={` ${DEFAULT_NETWORK_TOKEN.symbol}`}
+          />
         </div>
       </div>
       <div className={styles.actionsContainer}>

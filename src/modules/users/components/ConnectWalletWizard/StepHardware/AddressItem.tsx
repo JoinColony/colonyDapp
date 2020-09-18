@@ -6,6 +6,8 @@ import Radio from '~core/Fields/Radio';
 import Numeral from '~core/Numeral';
 import styles from './AddressItem.css';
 
+import { DEFAULT_NETWORK_TOKEN, DEFAULT_TOKEN_DECIMALS } from '~constants';
+
 interface Props {
   address: Address;
   checked: boolean;
@@ -27,7 +29,11 @@ const AddressItem = ({ address, checked, balance }: Props) => (
       </Radio>
     </div>
     <div className={styles.choiceBalanceContainer}>
-      <Numeral value={balance} suffix=" XDAI" unit={18} />
+      <Numeral
+        value={balance}
+        suffix={` ${DEFAULT_NETWORK_TOKEN.symbol}`}
+        unit={DEFAULT_TOKEN_DECIMALS}
+      />
     </div>
   </>
 );
