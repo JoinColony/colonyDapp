@@ -9,6 +9,7 @@ export type TokenInfo = {
 export type NetworkInfo = {
   name: string;
   description?: string;
+  displayENSDomain?: string;
 };
 
 export const DEFAULT_NETWORK = process.env.NETWORK || Network.Goerli;
@@ -35,10 +36,12 @@ export const ETHER_TOKEN: TokenInfo = {
 
 export const XDAI_NETWORK: NetworkInfo = {
   name: 'xDai Chain',
+  displayENSDomain: 'joincolony.colonyxdai',
 };
 
 export const ETHEREUM_NETWORK: NetworkInfo = {
   name: 'Ethereum',
+  displayENSDomain: 'joincolony.eth',
 };
 
 export const DEFAULT_NETWORK_TOKEN =

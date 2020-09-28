@@ -17,6 +17,7 @@ import {
   ColonyAddressQuery,
   ColonyAddressQueryVariables,
 } from '~data/index';
+import { DEFAULT_NETWORK_INFO } from '~constants';
 
 import styles from './StepColonyName.css';
 
@@ -69,7 +70,7 @@ const MSG = defineMessages({
   },
   tooltip: {
     id: 'users.CreateColonyWizard.StepColonyName.tooltip',
-    defaultMessage: `We use ENS to create a .joincolony.colonyxdai subdomain for your colony. You can use this to create a custom URL and invite people to join your colony.`,
+    defaultMessage: `We use ENS to create a .{displayENSDomain} subdomain for your colony. You can use this to create a custom URL and invite people to join your colony.`,
   },
 });
 
@@ -201,7 +202,8 @@ const StepColonyName = ({
                 appearance={{ theme: 'fat' }}
                 name="colonyName"
                 data-test="claimColonyNameInput"
-                extensionString=".colony.joincolony.colonyxdai"
+                // eslint-disable-next-line max-len
+                extensionString={`.colony.${DEFAULT_NETWORK_INFO.displayENSDomain}`}
                 label={MSG.label}
                 status={normalized !== colonyName ? MSG.statusText : undefined}
                 formattingOptions={{ lowercase: true }}
@@ -211,7 +213,13 @@ const StepColonyName = ({
                     placement="right"
                     content={
                       <div className={styles.tooltipContent}>
-                        <FormattedMessage {...MSG.tooltip} />
+                        <FormattedMessage
+                          {...MSG.tooltip}
+                          values={{
+                            displayENSDomain:
+                              DEFAULT_NETWORK_INFO.displayENSDomain,
+                          }}
+                        />
                       </div>
                     }
                   >
