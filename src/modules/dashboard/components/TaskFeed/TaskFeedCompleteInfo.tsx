@@ -11,13 +11,13 @@ import { useUser, useTokenQuery, useColonyQuery, AnyTask } from '~data/index';
 import InfoPopover from '~core/InfoPopover';
 import { createAddress } from '~utils/web3';
 import { getTokenDecimalsWithFallback } from '~utils/tokens';
+import { DEFAULT_TOKEN_DECIMALS, DEFAULT_NETWORK_INFO } from '~constants';
 
 import { Address } from '~types/index';
 
 import { getFriendlyName } from '../../../users/transformers';
 
 import styles from './TaskFeedCompleteInfo.css';
-import { DEFAULT_TOKEN_DECIMALS } from '~constants';
 
 const MSG = defineMessages({
   eventTaskSentMessage: {
@@ -42,7 +42,7 @@ const MSG = defineMessages({
   },
   receiptViewTxLinkText: {
     id: 'dashboard.TaskFeed.TaskFeedCompleteInfo.receiptViewTxLinkText',
-    defaultMessage: 'View the transaction on Blockscout',
+    defaultMessage: 'View the transaction on {blockExplorerName}',
   },
 });
 
@@ -178,6 +178,9 @@ const TaskFeedCompleteInfo = ({
                   className={styles.receiptLink}
                   hash={transactionHash}
                   text={MSG.receiptViewTxLinkText}
+                  textValues={{
+                    blockExplorerName: DEFAULT_NETWORK_INFO.blockExplorerName,
+                  }}
                 />
               </>
             )}

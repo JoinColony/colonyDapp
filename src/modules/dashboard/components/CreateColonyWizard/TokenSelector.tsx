@@ -28,7 +28,7 @@ const MSG = defineMessages({
   },
   hint: {
     id: 'dashboard.CreateColonyWizard.TokenSelector.hint',
-    defaultMessage: 'You can find them here: {tokenScoutLink}',
+    defaultMessage: 'You can find them here: {tokenExplorerLink}',
   },
   preview: {
     id: 'dashboard.CreateColonyWizard.TokenSelector.preview',
@@ -64,7 +64,9 @@ const getStatusText = (isLoading: boolean, tokenData?: OneToken) => {
     ? { status: MSG.preview, statusValues: tokenData }
     : {
         status: MSG.hint,
-        statusValues: { tokenScoutLink: DEFAULT_NETWORK_INFO.tokenScout },
+        statusValues: {
+          tokenExplorerLink: DEFAULT_NETWORK_INFO.tokenExplorerLink,
+        },
       };
 };
 
