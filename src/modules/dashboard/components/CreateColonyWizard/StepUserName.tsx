@@ -131,7 +131,8 @@ const StepUserName = ({ stepCompleted, wizardForm, nextStep }: Props) => {
                   appearance={{ theme: 'fat' }}
                   name="username"
                   label={MSG.label}
-                  extensionString=".user.joincolony.colonyxdai"
+                  // eslint-disable-next-line max-len
+                  extensionString={` .user.${DEFAULT_NETWORK_INFO.displayENSDomain}`}
                   status={normalized !== username ? MSG.statusText : undefined}
                   statusValues={{
                     normalized,
