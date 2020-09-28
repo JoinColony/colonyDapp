@@ -107,6 +107,6 @@ export const getBlockExplorerLink = ({
   }
   const tld = network === 'tobalaba' ? 'com' : 'io';
   const networkSubdomain =
-    network === 'homestead' || network === 'mainnet' ? '' : `${network}.`;
+    network === 'homestead' || network === Network.Mainnet ? '' : `${network}.`;
   return `https://${networkSubdomain}etherscan.${tld}/${linkType}/${addressOrHash}`;
 };
