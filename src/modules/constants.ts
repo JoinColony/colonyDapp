@@ -10,6 +10,13 @@ export type NetworkInfo = {
   name: string;
   description?: string;
   displayENSDomain?: string;
+  /**
+   * Link to a token list from the current network's block scout.
+   * This will just be used for information messages and tooltips.
+   * We actually linking to it we have a method that generates the
+   * link programatically: `getBlockExplorerLink()`
+   */
+  tokenScout?: string;
 };
 
 export const DEFAULT_NETWORK = process.env.NETWORK || Network.Goerli;
@@ -37,11 +44,13 @@ export const ETHER_TOKEN: TokenInfo = {
 export const XDAI_NETWORK: NetworkInfo = {
   name: 'xDai Chain',
   displayENSDomain: 'joincolony.colonyxdai',
+  tokenScout: 'https://blockscout.com/poa/xdai/tokens',
 };
 
 export const ETHEREUM_NETWORK: NetworkInfo = {
   name: 'Ethereum',
   displayENSDomain: 'joincolony.eth',
+  tokenScout: 'https://etherscan.io/tokens',
 };
 
 export const DEFAULT_NETWORK_TOKEN =

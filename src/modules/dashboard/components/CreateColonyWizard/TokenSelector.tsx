@@ -13,6 +13,7 @@ import {
   TokenQuery,
   TokenQueryVariables,
 } from '~data/index';
+import { DEFAULT_NETWORK_INFO } from '~constants';
 
 import styles from './StepSelectToken.css';
 
@@ -27,8 +28,7 @@ const MSG = defineMessages({
   },
   hint: {
     id: 'dashboard.CreateColonyWizard.TokenSelector.hint',
-    defaultMessage:
-      'You can find them here: https://blockscout.com/poa/xdai/tokens',
+    defaultMessage: 'You can find them here: {tokenScoutLink}',
   },
   preview: {
     id: 'dashboard.CreateColonyWizard.TokenSelector.preview',
@@ -62,7 +62,10 @@ const getStatusText = (isLoading: boolean, tokenData?: OneToken) => {
   }
   return tokenData
     ? { status: MSG.preview, statusValues: tokenData }
-    : { status: MSG.hint };
+    : {
+        status: MSG.hint,
+        statusValues: { tokenScoutLink: DEFAULT_NETWORK_INFO.tokenScout },
+      };
 };
 
 const displayName = 'dashboard.CreateColonyWizard.TokenSelector';
