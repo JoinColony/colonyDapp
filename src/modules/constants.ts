@@ -11,12 +11,16 @@ export type NetworkInfo = {
   description?: string;
   displayENSDomain?: string;
   /**
-   * Link to a token list from the current network's block scout.
+   * Used just to display references to the current networks's
+   */
+  blockExplorerName?: string;
+  /**
+   * Link to a token list from the current network's block explorer.
    * This will just be used for information messages and tooltips.
    * We actually linking to it we have a method that generates the
    * link programatically: `getBlockExplorerLink()`
    */
-  tokenScout?: string;
+  tokenExplorerLink?: string;
 };
 
 export const DEFAULT_NETWORK = process.env.NETWORK || Network.Goerli;
@@ -44,13 +48,15 @@ export const ETHER_TOKEN: TokenInfo = {
 export const XDAI_NETWORK: NetworkInfo = {
   name: 'xDai Chain',
   displayENSDomain: 'joincolony.colonyxdai',
-  tokenScout: 'https://blockscout.com/poa/xdai/tokens',
+  blockExplorerName: 'Blockscout',
+  tokenExplorerLink: 'https://blockscout.com/poa/xdai/tokens',
 };
 
 export const ETHEREUM_NETWORK: NetworkInfo = {
   name: 'Ethereum',
+  blockExplorerName: 'Etherscan',
   displayENSDomain: 'joincolony.eth',
-  tokenScout: 'https://etherscan.io/tokens',
+  tokenExplorerLink: 'https://etherscan.io/tokens',
 };
 
 export const DEFAULT_NETWORK_TOKEN =
