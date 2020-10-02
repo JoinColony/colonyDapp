@@ -60,7 +60,11 @@ export const ETHEREUM_NETWORK: NetworkInfo = {
 };
 
 export const DEFAULT_NETWORK_TOKEN =
-  DEFAULT_NETWORK === Network.Xdai ? XDAI_TOKEN : ETHER_TOKEN;
+  DEFAULT_NETWORK === Network.Xdai || DEFAULT_NETWORK === Network.XdaiFork
+    ? XDAI_TOKEN
+    : ETHER_TOKEN;
 
 export const DEFAULT_NETWORK_INFO =
-  DEFAULT_NETWORK === Network.Xdai ? XDAI_NETWORK : ETHEREUM_NETWORK;
+  DEFAULT_NETWORK === Network.Xdai || DEFAULT_NETWORK === Network.XdaiFork
+    ? XDAI_NETWORK
+    : ETHEREUM_NETWORK;

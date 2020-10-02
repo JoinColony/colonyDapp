@@ -15,6 +15,9 @@ const getProvider = (): Provider => {
   if (network === Network.Xdai) {
     return new JsonRpcProvider('https://xdai.poanetwork.dev');
   }
+  if (network === Network.XdaiFork) {
+    return new JsonRpcProvider('https://qaxdai.colony.io/rpc/');
+  }
   return new InfuraProvider(network, process.env.INFURA_ID);
 };
 
