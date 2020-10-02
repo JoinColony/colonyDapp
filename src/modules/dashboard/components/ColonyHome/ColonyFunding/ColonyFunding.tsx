@@ -26,7 +26,7 @@ const MSG = defineMessages({
   },
   title: {
     id: 'dashboard.ColonyHome.ColonyFunding.title',
-    defaultMessage: 'Available Funding',
+    defaultMessage: 'Available funds',
   },
 });
 
