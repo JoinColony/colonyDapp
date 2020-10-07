@@ -1,0 +1,44 @@
+
+.main {
+  display: block;
+  font-weight: var(--weight-bold);
+
+  & + .main {
+    margin-top: 18px;
+  }
+
+  &[aria-disabled="true"] {
+    pointer-events: none;
+
+    & .text {
+      opacity: 0.4;
+    }
+  }
+}
+
+.text {
+  font-size: var(--size-normal);
+  color: var(--text-dark);
+}
+
+.main:hover .text,
+.main:focus .text,
+.active .text {
+  color: var(--primary);
+}
+
+.extra {
+  margin-left: 20px;
+  font-size: var(--size-unreadable);
+}
+
+.showDot .text::after {
+  display: inline-block;
+  margin-bottom: 2px;
+  margin-left: 7px;
+  height: 5px;
+  width: 5px;
+  border-radius: 50%;
+  background-color: var(--colony-blue);
+  content: '';
+}

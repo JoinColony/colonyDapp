@@ -27,22 +27,23 @@ import { ActionTypes } from '~redux/index';
 import appLoadingContext from '~context/appLoadingState';
 
 import {
-  CONNECT_ROUTE,
+  ADMIN_DASHBOARD_ROUTE,
+  COLONY_ACTIONS_ROUTE,
+  COLONY_EVENTS_ROUTE,
+  COLONY_EXTENSIONS_ROUTE,
   COLONY_HOME_ROUTE,
+  CONNECT_ROUTE,
   CREATE_COLONY_ROUTE,
   CREATE_USER_ROUTE,
-  LEVEL_EDIT_ROUTE,
-  NOT_FOUND_ROUTE,
-  PROGRAM_ROUTE,
-  TASK_ROUTE,
   CREATE_WALLET_ROUTE,
   DASHBOARD_ROUTE,
-  ADMIN_DASHBOARD_ROUTE,
   INBOX_ROUTE,
+  LEVEL_EDIT_ROUTE,
+  NOT_FOUND_ROUTE,
+  TASK_ROUTE,
   USER_EDIT_ROUTE,
   USER_ROUTE,
   WALLET_ROUTE,
-  LEVEL_ROUTE,
 } from './routeConstants';
 
 import AlwaysAccesibleRoute from './AlwaysAccesibleRoute';
@@ -160,7 +161,12 @@ const Routes = () => {
         />
         <AlwaysAccesibleRoute
           exact
-          path={[COLONY_HOME_ROUTE, LEVEL_ROUTE, PROGRAM_ROUTE]}
+          path={[
+            COLONY_HOME_ROUTE,
+            COLONY_ACTIONS_ROUTE,
+            COLONY_EVENTS_ROUTE,
+            COLONY_EXTENSIONS_ROUTE,
+          ]}
           component={ColonyHome}
           layout={SimpleNav}
           routeProps={{
