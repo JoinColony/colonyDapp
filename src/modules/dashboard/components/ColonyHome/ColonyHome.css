@@ -12,11 +12,15 @@
 
 .mainContentGrid {
   display: grid;
-  grid-template-columns: 23% auto 26%;
+  grid-template-columns: 23% auto 26.5%;
 }
 
 .leftAside {
-  padding: 17px 5% 20px;
+  padding: 17px 7% 20px 25%;
+}
+
+.leftAsideNav {
+  margin-top: 53px;
 }
 
 .mainContent {
