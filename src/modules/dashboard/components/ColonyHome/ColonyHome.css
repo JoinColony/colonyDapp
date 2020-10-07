@@ -1,50 +1,28 @@
 @value wideButton: 160px;
 
 .main {
-  padding: 11px 18px 16px 18px;
-}
-
-.grid {
   composes: stretchVertical stretchHorizontal from '~styles/layout.css';
   display: grid;
-  grid-template-columns: 300px minmax(360px, auto) minmax(275px, 300px);
-  grid-template-rows: auto 1fr;
-  column-gap: 80px;
+  grid-template-columns: 50px auto;
 }
 
-.colonyInfo {
-  z-index: var(--z-index-nav);
-  grid-column: 1;
-  grid-row: 1;
+.colonyList {
+  border-right: 1px solid #E3E0E3;
 }
 
-.metaContainer {
-  padding-bottom: 17px;
+.mainContentGrid {
+  display: grid;
+  grid-template-columns: 23% auto 26%;
 }
 
-.content {
-  padding-top: 70px;
-  height: 100%;
-  grid-column: 2;
-  grid-row: 1;
+.leftAside {
+  padding: 17px 5% 20px;
 }
 
-.noTasks {
-  margin-bottom: 30px;
-  max-width: 420px;
-  font-size: var(--size-medium-l);
-  line-height: 2em;
+.mainContent {
+  padding: 90px 0 20px;
 }
 
-.breadCrumbContainer {
-  margin-bottom: 16px;
-  margin-left: 10px;
-}
-
-.sidebar {
-  display: flex;
-  justify-content: space-between;
-  margin-top: 160px;
-  grid-column: 3;
-  grid-row: 1;
+.rightAside {
+  padding: 220px 5% 20px;
 }
