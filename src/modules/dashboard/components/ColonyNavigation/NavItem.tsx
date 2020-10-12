@@ -45,6 +45,7 @@ const NavItem = ({
       activeClassName={styles.active}
       aria-disabled={disabled}
       className={classNames.join(' ')}
+      exact
       onKeyDown={handleLinkKeyDown}
       to={linkTo}
     >

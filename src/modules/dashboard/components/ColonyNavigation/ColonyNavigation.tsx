@@ -36,7 +36,7 @@ const ColonyNavigation = () => {
   const items = useMemo<ComponentProps<typeof NavItem>[]>(
     () => [
       {
-        linkTo: `/colony/${colonyName}/actions`,
+        linkTo: `/colony/${colonyName}`,
         showDot: hasNewActions,
         text: MSG.linkTextActions,
       },
