@@ -1,5 +1,7 @@
 export const CONNECT_ROUTE = '/connect';
 export const COLONY_HOME_ROUTE = '/colony/:colonyName';
+export const COLONY_EVENTS_ROUTE = `${COLONY_HOME_ROUTE}/events`;
+export const COLONY_EXTENSIONS_ROUTE = `${COLONY_HOME_ROUTE}/extensions`;
 export const PROGRAM_ROUTE = `${COLONY_HOME_ROUTE}/program/:programId`;
 export const LEVEL_ROUTE = `${PROGRAM_ROUTE}/level/:levelId`;
 export const LEVEL_EDIT_ROUTE = `${PROGRAM_ROUTE}/level/:levelId/edit`;

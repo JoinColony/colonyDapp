@@ -1,14 +1,20 @@
 import React from 'react';
 import { defineMessages } from 'react-intl';
-import { Redirect, RouteChildrenProps } from 'react-router-dom';
+import { Redirect, Route, RouteChildrenProps, Switch } from 'react-router-dom';
 import { parse as parseQS } from 'query-string';
 import { ROOT_DOMAIN_ID } from '@colony/colony-js';
 
 import { COLONY_TOTAL_BALANCE_DOMAIN_ID } from '~constants';
 import { useLoggedInUser } from '~data/helpers';
 import { useColonyFromNameQuery } from '~data/index';
+import ColonyNavigation from '~dashboard/ColonyNavigation';
 import LoadingTemplate from '~pages/LoadingTemplate';
-import { NOT_FOUND_ROUTE } from '~routes/index';
+import {
+  COLONY_EVENTS_ROUTE,
+  COLONY_EXTENSIONS_ROUTE,
+  COLONY_HOME_ROUTE,
+  NOT_FOUND_ROUTE,
+} from '~routes/index';
 import { useTransformer } from '~utils/hooks';
 
 import { getUserRolesForDomain } from '../../../transformers';
@@ -121,8 +127,22 @@ const ColonyHome = ({ match, location }: Props) => {
     <div className={styles.main}>
       <div className={styles.colonyList}>A</div>
       <div className={styles.mainContentGrid}>
-        <aside className={styles.leftAside}>b</aside>
-        <div className={styles.mainContent}>c</div>
+        <aside className={styles.leftAside}>
+          {/* Put new colony home title display (#2268) here */}
+          <div className={styles.leftAsideNav}>
+            <ColonyNavigation />
+          </div>
+        </aside>
+        <div className={styles.mainContent}>
+          <Switch>
+            <Route path={COLONY_EVENTS_ROUTE} component={() => <>Events</>} />
+            <Route
+              path={COLONY_EXTENSIONS_ROUTE}
+              component={() => <>Extensions</>}
+            />
+            <Route path={COLONY_HOME_ROUTE} component={() => <>Actions</>} />
+          </Switch>
+        </div>
         <aside className={styles.rightAside}>
           <ColonyFunding colony={colony} currentDomainId={filteredDomainId} />
         </aside>
